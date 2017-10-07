@@ -15,6 +15,8 @@ Pkg.clone("https://github.com/mforets/Expokit.jl")
 Pkg.clone("https://github.com/mforets/LazySets.jl")
 ```
 
+## Updating
+
 To checkout the current stable version, do `Pkg.checkout("LazySets")`. The latest
 development version can be obtained by specifying the branch, as in
 `Pkg.checkout("LazySets", "develop")`.
