@@ -1,5 +1,4 @@
 #!/usr/bin/env julia
-include("../src/LazySets.jl") # temporal
 using LazySets, Base.Test
 
 # =======================================
