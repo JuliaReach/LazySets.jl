@@ -1,4 +1,4 @@
-r"""
+"""
     Ball2 <: LazySet
 
 Type that represents a ball in the 2-norm.
@@ -35,7 +35,7 @@ struct Ball2 <: LazySet
     Ball2(center, radius) = radius < 0. ? throw(DomainError()) : new(center, radius)
 end
 
-r"""
+"""
     dim(H)
 
 Return the dimension of a Ball2.
