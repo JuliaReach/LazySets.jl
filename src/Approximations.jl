@@ -1,8 +1,16 @@
-"""
-Module `Approximations.jl` -- fast polygonal approximation of convex sets using
-support vectors.
+__precompile__(true)
 
 """
+Module `Approximations.jl` -- polygonal approximation of convex sets through
+support vectors.
+"""
+module Approximations
+
+using LazySets
+
+export decompose, overapproximate, approximate,
+       radius_approximation, diameter_approximation, box_approximation,
+       ballinf_approximation, symmetric_interval_hull
 
 const TOL_DIR = 1e-6
 
@@ -387,14 +395,11 @@ function decompose(X::LazySet)::CartesianProductArray
     result = Array{HPolygon, 1}(b)
     @inbounds for i in 1:b
         result[i] = HPolygon([LinearConstr(DIR_EAST, pe[i]),
-                             LinearConstr(DIR_NORTH, pn[i]),
-                             LinearConstr(DIR_WEST, pw[i]),
-                             LinearConstr(DIR_SOUTH, ps[i])])
+                              LinearConstr(DIR_NORTH, pn[i]),
+                              LinearConstr(DIR_WEST, pw[i]),
+                              LinearConstr(DIR_SOUTH, ps[i])])
     end
     return CartesianProductArray(result)
 end
 
-
-export radius_approximation, diameter_approximation, box_approximation, ballinf_approximation,
-       box_approximation_symmetric, symmetric_interval_hull,
-       overapproximate, refine, approximate, decompose
+end # module
