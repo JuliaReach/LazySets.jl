@@ -6,8 +6,8 @@ makedocs(
 	sitename = "LazySets.jl",
 	pages = [
 		"Home" => "index.md",
-		"Getting started" => "getting_started.md",
-		"Common set representations" => "representations.md", 
+		"Getting Started" => "man/getting_started.md",
+		"Common Set Representations" => "man/representations.md", 
         #=
         [
             "Balls" => "representations/hyperrectangles.md",
@@ -15,8 +15,8 @@ makedocs(
             "More types" => "representations/more_types.md"
         ],
         =#
-		"Common set operations" => "operations.md",
-		"Approximations" => "approximations.md",
+		"Common Set Operations" => "man/operations.md",
+		"Approximations" => "man/approximations.md",
         #=
         "Approximations" => [
             "Cartesian decomposition" => "approximations/cartesian_decomposition.md",

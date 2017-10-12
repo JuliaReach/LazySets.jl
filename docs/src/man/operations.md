@@ -1,4 +1,4 @@
-# Common set operations
+# Common Set Operations
 
 This section of the manual describes the basic symbolic types describing
 operations between sets.
@@ -18,7 +18,7 @@ MinkowskiSum
 MinkowskiSumArray
 ```
 
-## Convex hull
+## Convex Hull
 
 ```@docs
 ConvexHull

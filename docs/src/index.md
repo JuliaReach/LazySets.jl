@@ -1,40 +1,43 @@
 # LazySets.jl
 
-`LazySets` is a [Julia](http://julialang.org) package for calculus with convex sets.
-
-
-```@contents
-```
-
----
+`LazySets` is a [Julia](http://julialang.org) package for calculus with
+convex sets.
 
 ## Features
 
-The core of this package are the following types:
+At the core of `LazySets` there are:
 
-- Lazy (i.e. symbolic) types for most commonly used convex sets, such as:
-    - Convex Polygons
-    - Polyhedra, e.g. Unit balls in different norms, Hyperrectangles
-- Most commonly used set operations, such as:
-    - Minkowski sum
-    - Cartesian product
-    - Convex hull
-    - Linear maps and exponential maps
+- Lazy (i.e. symbolic) types for most commonly used convex sets, such as
+  convex polygons, different classes of polytopes, and special types
+  such as linear constraints.
+- Most commonly used set operations, e.g. Minkowski sum, Cartesian product,
+  convex hull. Moreover, lazy linear maps and lazy exponential maps are
+  also provided.
 
-On top of this, the following functionality is provided:
-
-- Efficient evaluation of the support vector of nested lazy sets 
-- Cartesian decomposition of a convex set
-- Efficient projection from high-dimensions to two-dimensions using Lotov's
-  algorithm
-
-In `LazySets`, each set and operation provides a function to compute its support
-vector in a given (arbitrary) direction. This has the advantage of being able to 
+Each instance of the abstract type `LazySet` implements a function, $\sigma(d, X)$,
+to compute the supoprt vector of a set $\mathcal{X}$ in a given (arbitrary)
+direction $d \in \mathbb{R}^n$. This has the advantage of being able to
 perform only the required operations on-demand.
 
-In the rest of this section we recall the required preliminaries from convex analysis. 
- 
-## Support function and support vector
+On top of the previous basic type representations and operations, the following
+functionality is available:
 
+- Efficient evaluation of the support vector of nested lazy sets.
+- Cartesian decomposition of lazy sets using support vectors.
+- Fast overapproximation of symbolic set computations using a polyhedral
+  approximation.
 
+---
+
+## Manual Outline
+
+```@contents
+Pages = [
+    "getting_started.md",
+    "representations.md",
+    "operations.md",
+    "approximations.md"
+]
+Depth = 2
+```
 

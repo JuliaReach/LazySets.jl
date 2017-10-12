@@ -11,14 +11,14 @@ Pages = ["approximations.md"]
 CurrentModule = LazySets.Approximations
 ```
 
-## Cartesian decomposition
+## Cartesian Decomposition
 
 ```@docs
 decompose
 overapproximate
 ```
 
-## Box approximations
+## Box Approximations
 
 ```@docs
 ballinf_approximation
@@ -28,18 +28,15 @@ diameter_approximation
 radius_approximation
 ```
 
-## Fast polygonal projection of convex sets
+## Fast 2D LPs
+
+Since vectors in the plane can be ordered
+by the angle with respect to the positive real axis, we can efficiently evaluate
+the support vector of a polygon in constraint representation by comparing normal directions, provided that its edges are ordered. We use the symbol $\preceq$ to compare directions, where the increasing direction is counter-clockwise.
 
 
 ```@docs
 jump2pi
 ```
 
-## Iterative refinement
-
-```@docs
-Approximation2D
-approximate
-HPolygonOpt
-```
 

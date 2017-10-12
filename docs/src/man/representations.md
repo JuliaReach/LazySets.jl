@@ -1,4 +1,4 @@
-# Common set representations
+# Common Set Representations
 
 This section of the manual describes the basic set representation types.
 
@@ -27,7 +27,7 @@ plot_polygon
 tovrep
 ```
 
-## More types
+## More Types
 
 ```@docs
 LinearConstraint
