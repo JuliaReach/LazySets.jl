@@ -7,7 +7,7 @@ makedocs(
 	pages = [
 		"Home" => "index.md",
 		"Getting started" => "getting_started.md",
-		"Common set representations" => "representations/representations.md", 
+		"Common set representations" => "representations.md", 
         #=
         [
             "Balls" => "representations/hyperrectangles.md",
@@ -15,8 +15,8 @@ makedocs(
             "More types" => "representations/more_types.md"
         ],
         =#
-		"Common set operations" => "operations/operations.md",
-		"Approximations" => "approximations/approximations.md",
+		"Common set operations" => "operations.md",
+		"Approximations" => "approximations.md",
         #=
         "Approximations" => [
             "Cartesian decomposition" => "approximations/cartesian_decomposition.md",

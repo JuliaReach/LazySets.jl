@@ -1,3 +1,12 @@
+# Common set operations
+
+This section of the manual describes the basic symbolic types describing
+operations between sets.
+
+```@contents
+Pages = ["operations.md"]
+```
+
 ```@meta
 CurrentModule = LazySets
 ```
