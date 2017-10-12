@@ -1,8 +1,10 @@
-```@docs
-LazySets.Approximation2D
-LazySets.approximate
-LazySets.HPolygonOpt
-```
 
-## Polygonal approximation of convex sets
+
+---
+
+```@docs
+LazySets.Approximations.Approximation2D
+LazySets.Approximations.approximate
+LazySets.Approximations.HPolygonOpt
+```
 

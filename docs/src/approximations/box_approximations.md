@@ -1,7 +1,11 @@
+```@meta
+CurrentModule = LazySets.Approximations
+```
+
 ```@docs
-LazySets.ballinf_approximation
-LazySets.box_approximation
-LazySets.box_approximation_symmetric
-LazySets.diameter_approximation
-LazySets.radius_approximation
+Approximations.ballinf_approximation
+Approximations.box_approximation
+Approximations.box_approximation_symmetric
+Approximations.diameter_approximation
+Approximations.radius_approximation
 ```

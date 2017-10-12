@@ -7,29 +7,32 @@ Type that represents a ball in the 2-norm.
 
 ### Fields
 
-- ``c`` -- a real vector, the center
-- ``r`` -- the radius (``≧ 0``)
+- `center` -- center of the ball as a real vector
+- `radius` -- radius of the ball as a scalar (``≧ 0``)
 
 ### Examples
 
-A ten-dimensional ball in the 2-norm centered at the origin, and of radius 0.5:
+A five-dimensional ball in the 2-norm centered at the origin of radius 0.5:
 
-    julia> B = Ball2(zeros(10), 0.5)
-    Ball2([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 0.5)
-    julia> dim(B)
-    10
-    julia> σ(collect(range(0, 0.1, 10)), B)
-    10-element Array{Float64,1}:
-     0.0
-     0.0296174
-     0.0592349
-     0.0888523
-     0.11847
-     0.148087
-     0.177705
-     0.207322
-     0.23694
-     0.266557
+```julia
+julia> using LazySets
+julia> B = Ball2(zeros(5), 0.5)
+LazySets.Ball2([0.0, 0.0, 0.0, 0.0, 0.0], 0.5)
+julia> dim(B)
+5
+```
+
+We evaluate the support vector in a given direction:
+
+```julia
+julia> σ(ones(5), B)
+5-element Array{Float64,1}:
+0.06742
+0.13484
+0.20226
+0.26968
+0.3371
+```
 """
 struct Ball2 <: LazySet
     center::Vector{Float64}
@@ -38,15 +41,15 @@ struct Ball2 <: LazySet
 end
 
 """
-    dim(H)
+    dim(B)
 
 Return the dimension of a Ball2.
 
-INPUT:
+### Input
 
-- ``B`` -- a ball in the 2-norm
+- `B` -- a ball in the 2-norm
 
-OUTPUT:
+### Output
 
 The ambient dimension of the ball.
 """
@@ -54,21 +57,21 @@ function dim(B::Ball2)::Int64
     length(B.center)
 end
 
-r"""
+"""
     σ(d, B)
 
 Return the support vector of a Ball2 in a given direction.
 
-INPUT:
+### Input
 
-- ``d`` -- a direction
-- ``B`` -- a ball in the 2-norm
+- `d` -- a direction
+- `B` -- a ball in the 2-norm
 
-OUTPUT:
+### Output
 
 The support vector in the given direction.
 
-NOTES:
+### Notes
 
 If the given direction has norm zero, the origin is returned.
 """

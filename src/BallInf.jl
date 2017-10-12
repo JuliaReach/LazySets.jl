@@ -8,23 +8,23 @@ Type that represents a ball in the infinity norm,
 
 ### Fields
 
-- ``c`` -- a real vector, the center
-- ``r`` -- the radius ( ``≧ 0`` )
+- `center` -- center of the ball as a real vector
+- `radius` -- radius of the ball as a scalar (``≧ 0``)
 
 ### Examples
 
 We create the two-dimensional unit ball, and compute its support function
-along the direction `[1, 1]`:
+along the direction ``(1, 1)``:
 
 ```julia
-    julia> B = BallInf(zeros(2), 0.1)
-    LazySets.BallInf([0.0, 0.0], 0.1)
+julia> B = BallInf(zeros(2), 0.1)
+LazySets.BallInf([0.0, 0.0], 0.1)
 
-    julia> dim(B)
-    2
+julia> dim(B)
+2
 
-    julia> ρ([1., 1.], B)
-    0.2
+julia> ρ([1., 1.], B)
+0.2
 ```
 """
 struct BallInf <: LazySet
