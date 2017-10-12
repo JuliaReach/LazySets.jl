@@ -8,15 +8,16 @@ makedocs(
 		"Home" => "index.md",
 		"Getting started" => "getting_started.md",
 		"Common set representations" => [
-			"Unit balls" => "representations/unit_balls.md"
-		],
-		"Common set operations" => [
-			"M-sum" => "operations/msum.md"
-		],
-		"Approximations" => [
-            "decompose" => "approximations/decompose.md"
+            "Balls" => "representations/balls.md",
+            "Polygons" => "representations/polygons.md",
+            "Other" => "representations/other.md",
         ],
-		"The lazy_mexp approach" => "approximations/lazy_mexp.md",
+		"Common set operations" => "operations/operations.md",
+		"Approximations" => [
+            "Cartesian decomposition" => "approximations/cartesian_decomposition.md",
+            "Fast polygonal approximation" => "approximations/fast_polygonal_approximation.md",
+            "Iterative refinement" => "approximations/iterative_refinement.md"
+        ],
 		"About" => [
 			"Contributing" => "about/CONTRIBUTING.md",
 			"License" => "about/license.md",

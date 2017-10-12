@@ -1,14 +1,16 @@
-r"""
+export Ball2
+
+"""
     Ball2 <: LazySet
 
 Type that represents a ball in the 2-norm.
 
-FIELDS:
+### Fields
 
 - ``c`` -- a real vector, the center
-- ``r`` -- the radius (>= 0)
+- ``r`` -- the radius (``≧ 0``)
 
-EXAMPLES:
+### Examples
 
 A ten-dimensional ball in the 2-norm centered at the origin, and of radius 0.5:
 
@@ -35,7 +37,7 @@ struct Ball2 <: LazySet
     Ball2(center, radius) = radius < 0. ? throw(DomainError()) : new(center, radius)
 end
 
-r"""
+"""
     dim(H)
 
 Return the dimension of a Ball2.
@@ -79,4 +81,3 @@ function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, B::Ball2)::V
     end
 end
 
-export Ball2

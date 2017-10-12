@@ -14,7 +14,7 @@ A triangle in the first quadrant::
     julia> HPolygon()
 """
 mutable struct HPolygon <: LazySet
-    constraints::Array{LinearConstr, 1}
+    constraints::Array{LinearConstraint, 1}
 end
 HPolygon() = HPolygon([])
 
@@ -59,7 +59,7 @@ INPUT:
 - ``p`` -- a polygon
 - ``c`` -- the linear constraint to add
 """
-function addconstraint!(p::HPolygon, c::LinearConstr)
+function addconstraint!(p::HPolygon, c::LinearConstraint)
     i = length(p.constraints)
     while i > 0 && c.a <= p.constraints[i].a
         i -= 1
@@ -137,7 +137,7 @@ FIELDS:
              evaluate the support functions.
 """
 mutable struct HPolygonOpt <: LazySet
-    constraints::Array{LinearConstr, 1}
+    constraints::Array{LinearConstraint, 1}
     ind::Int64
     HPolygonOpt(constraints) = new(constraints, 1)
     HPolygonOpt(constraints, ind) = new(constraints, ind)
@@ -334,14 +334,14 @@ EXAMPLES:
 This function can receive one polygon, as in:
 
     julia> using LazySets, PyPlot
-    julia> H = HPolygon([LinearConstr([1.0, 0.0], 0.6), LinearConstr([0.0, 1.0], 0.6),
-           LinearConstr([-1.0, 0.0], -0.4), LinearConstr([0.0, -1.0], -0.4)])
+    julia> H = HPolygon([LinearConstraint([1.0, 0.0], 0.6), LinearConstraint([0.0, 1.0], 0.6),
+           LinearConstraint([-1.0, 0.0], -0.4), LinearConstraint([0.0, -1.0], -0.4)])
     julia> plot_polygon(H, backend="pyplot_inline");
 
 Multiple polygons can be plotted passing a list instead of a single element:
 
-    julia> Haux = HPolygon([LinearConstr([1.0, 0.0], 1.2), LinearConstr([0.0, 1.0], 1.2),
-           LinearConstr([-1.0, 0.0], -0.8), LinearConstr([0.0, -1.0], -0.8)])
+    julia> Haux = HPolygon([LinearConstraint([1.0, 0.0], 1.2), LinearConstraint([0.0, 1.0], 1.2),
+           LinearConstraint([-1.0, 0.0], -0.8), LinearConstraint([0.0, -1.0], -0.8)])
     julia> plot_polygon([H, Haux], backend="pyplot_inline");
 """
 function plot_polygon(P::Union{HPolygon, HPolygonOpt, Array{HPolygon, 1},

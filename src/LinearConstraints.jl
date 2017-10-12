@@ -1,5 +1,5 @@
 """
-    LinearConstr
+    LinearConstraint
 
 Type that represents a linear constraint (a half-space) of the form a⋅x ≦ b.
 
@@ -12,10 +12,10 @@ EXAMPLES:
 
 The set `y >= 0` in the plane::
 
-    julia> LinearConstr([0, -1.], 0.)
-    LazySets.LinearConstr([0.0, -1.0], 0.0)
+    julia> LinearConstraint([0, -1.], 0.)
+    LazySets.LinearConstraint([0.0, -1.0], 0.0)
 """
-struct LinearConstr
+struct LinearConstraint
     a::Vector{Float64}
     b::Float64
 end
@@ -42,7 +42,7 @@ struct Line
     b::Float64
     Line(a, b) = length(a) != 2 ? throw(DimensionMismatch) : new(a, b)
 end
-Line(c::LinearConstr) = Line(c.a, c.b)
+Line(c::LinearConstraint) = Line(c.a, c.b)
 
 """
     intersection(Δ1, Δ2)
@@ -74,4 +74,4 @@ function intersection(Δ1::Line, Δ2::Line)::Array{Float64,1}
     return a \ b
 end
 
-export LinearConstr, Line, intersection
+export LinearConstraint, Line, intersection

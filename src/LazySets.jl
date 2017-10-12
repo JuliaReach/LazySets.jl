@@ -1,14 +1,21 @@
 __precompile__(true)
+
 """
 Main module for `LazySets.jl` -- a Julia package for calculus with convex sets.
-
-
-Every LazySet type must define:
- σ(d, sf) -- Vector{Float64}, support vector in a given direction
- dim      -- Int64, dimension
 """
 module LazySets
 
+export LazySet, dim, σ, support_vector, ρ, support_function,
+       Approximations
+
+"""
+    LazySet
+
+Abstract type for a lazy set. Every concrete `LazySet` must define:
+
+    ``σ(d, X)`` -- support vector of ``X`` in a given direction ``d``
+      dim       -- the ambient dimension
+"""
 abstract type LazySet end
 
 # ============================
@@ -25,7 +32,7 @@ include("Singleton.jl")
 include("Ball2.jl")
 include("BallInf.jl")
 include("Hyperrectangle.jl")
-#include("LazySets/Polyhedron.jl")  # optional
+#include("Polyhedron.jl")  # optional (long time)
 include("Polygon.jl")
 
 # =================================
@@ -59,11 +66,9 @@ end
 support_function = ρ
 support_vector = σ
 
-export LazySet, dim, σ, support_vector, ρ, support_function
-
 # =================================================================
 # Algorithms for approximation of convex sets using support vectors
 # =================================================================
-include("Approximations.jl")
+include("Approximations/Approximations.jl")
 
-end
+end # module

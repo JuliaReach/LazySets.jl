@@ -1,3 +1,7 @@
+import LazySets.Approximations:box_approximation,
+                               box_approximation_symmetric,
+                               symmetric_interval_hull
+
 # ==============================
 # Testing box approximation
 # ==============================

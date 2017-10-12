@@ -1,0 +1,3 @@
+```@docs
+LazySets.decompose
+```
