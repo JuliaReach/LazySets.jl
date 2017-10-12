@@ -1,17 +1,26 @@
+using IterTools
+
+export Hyperrectangle, vertices_list, radius, diameter
+
 """
     Hyperrectangle <: LazySet
 
 Type that represents a Hyperrectangle.
 
-FIELDS:
+A [hyperrecatangle](https://en.wikipedia.org/wiki/Hyperrectangle) (also called
+n-orthotope) is the Cartesian product of one-dimensional intervals.
 
-- ``c`` -- the center
-- ``r`` -- the radius, i.e. the width of the rectangle in each direction
+### Fields
+
+- `center` -- center of the hyperrectangle as a real vector
+- `radius` -- radius of the ball as a real vector, i.e. its width along
+              each coordinate direction
 """
 struct Hyperrectangle <: LazySet
     center::Vector{Float64}
     radius::Vector{Float64}
-    Hyperrectangle(center, radius) = length(center) != length(radius) ? throw(DimensionMismatch) : new(center, radius)
+    Hyperrectangle(center, radius) = length(center) != length(radius) ?
+                                throw(DimensionMismatch) : new(center, radius)
 end
 
 """
@@ -19,13 +28,13 @@ end
 
 Return the dimension of a Hyperrectangle.
 
-INPUT:
+### Input
 
-- ``H`` -- a hyperrectangle
+- `H` -- a hyperrectangle
 
-OUTPUT:
+### Output
 
-The ambient dimension of the hyperrectangle.
+The ambient dimension of the hyperrectangle as an integer.
 """
 function dim(H::Hyperrectangle)::Int64
     length(H.center)
@@ -35,17 +44,14 @@ end
     σ(d, H)
 
 Return the support vector of a Hyperrectangle in a given direction.
-
-See also: ``BallInf``.
 """
-function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, H::Hyperrectangle)::Vector{Float64}
+function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}},
+           H::Hyperrectangle)::Vector{Float64}
     return H.center .+ unit_step.(d) .* H.radius
 end
 
-using IterTools
-
 """
-    vertices_list(H)
+    vertices_list(H::Hyperrectangle)
 
 Return the vertices of a hyperrectangle.
 
@@ -100,5 +106,3 @@ The diameter of the hyperrectangle.
 function diameter(H::Hyperrectangle)::Float64
     return 2. * radius(Hyperrectangle(zeros(dim(H)), H.radius))
 end
-
-export Hyperrectangle, vertices_list, radius, diameter

@@ -2,23 +2,23 @@
 b1 = BallInf([0., 0.], 2.)
 b2 = Ball2([0., 0.], 1.)
 # Test Construction
-s1 = MinkowskiSum(b1, b2)
-@test s1.s1 == b1
-@test s1.s2 == b2
+X = MinkowskiSum(b1, b2)
+@test X.X == b1
+@test X.Y == b2
 # Test Dimension
-@test dim(s1) == 2
+@test dim(X) == 2
 # Test Support Vector
 d = [1., 0.]
-v = σ(d, s1)
+v = σ(d, X)
 @test v[1] == 3.
 d = [-1., 0.]
-v = σ(d, s1)
+v = σ(d, X)
 @test v[1] == -3.
 d = [0., 1.]
-v = σ(d, s1)
+v = σ(d, X)
 @test v[2] == 3.
 d = [0., -1.]
-v = σ(d, s1)
+v = σ(d, X)
 @test v[2] == -3.
 
 # Sum of not-centered 2D balls in norm 2 and infinity

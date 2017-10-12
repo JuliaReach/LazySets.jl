@@ -1,28 +1,31 @@
+import Base: *
+
+export CartesianProduct, CartesianProductArray, is_contained
+
 """
     CartesianProduct <: LazySet
 
 Type that represents the cartesian product.
 
-FIELDS:
+### Fields
 
-- ``s1`` -- convex set
-- ``s2`` -- another convex set
+- `X` -- convex set
+- `Y` -- another convex set
 
-For the cartesian product a several sets, it is recommended to use the dedicated
-type ``CartesianProductArray``. 
+For the cartesian product a several sets, there exists a special
+type `CartesianProductArray`. 
 """
 struct CartesianProduct <: LazySet
-    s1::LazySet
-    s2::LazySet
-    CartesianProduct(s1::LazySet, s2::LazySet) = new(s1, s2)
-    CartesianProduct(as::Array{LazySet, 1}) = length(as) == 0 ? VoidSet(1) : (length(as) == 1 ? as[1] : new(as[1], CartesianProduct(as[2:length(as)])))
+    X::LazySet
+    Y::LazySet
+    CartesianProduct(X::LazySet, Y::LazySet) = new(X, Y)
+    CartesianProduct(Xarr::Array{LazySet, 1}) = length(Xarr) == 0 ?
+            VoidSet(1) : (length(Xarr) == 1 ? Xarr[1] :
+            new(Xarr[1], CartesianProduct(Xarr[2:length(Xarr)])))
 end
 
-
-import Base: *
-
-function *(s1::LazySet, s2::LazySet)::CartesianProduct
-    CartesianProduct(s1, s2)
+function *(X::LazySet, Y::LazySet)::CartesianProduct
+    CartesianProduct(X, Y)
 end
 
 """
@@ -30,12 +33,12 @@ end
 
 Ambient dimension of a Cartesian product.
 
-INPUT:
+### Input
 
-- ``cp`` -- cartesian product
+- `cp` -- cartesian product
 """
 function dim(cp::CartesianProduct)::Int64
-    return dim(cp.s1) + dim(cp.s2)
+    return dim(cp.X) + dim(cp.Y)
 end
 
 """
@@ -43,14 +46,14 @@ end
 
 Support vector of a Cartesian product.
 
-INPUT:
+### Input
 
-- ``d`` -- direction
+- `d` -- direction
 
-- ``cp`` -- cartesian product
+- `cp` -- cartesian product
 """
 function σ(d::Vector{Float64}, cp::CartesianProduct)::Vector{Float64}
-    return [σ(d[1:dim(cp.s1)], cp.s1); σ(d[dim(cp.s1)+1:end], cp.s2)]
+    return [σ(d[1:dim(cp.X)], cp.X); σ(d[dim(cp.X)+1:end], cp.Y)]
 end
 
 
@@ -69,11 +72,8 @@ OUTPUT :
 Return true iff d ∈ cp.
 """
 function is_contained(d::Vector{Float64}, cp::CartesianProduct)::Bool
-    return is_contained(d[1:dim(cp.s1)], cp.s1) && is_contained(d[dim(cp.s1)+1:end], cp.s2)
+    return is_contained(d[1:dim(cp.X)], cp.X) && is_contained(d[dim(cp.X)+1:end], cp.Y)
 end
-
-export CartesianProduct
-
 
 # ============ Cartesian product of sets ================
 """
@@ -142,9 +142,9 @@ INPUT:
 function is_contained(d::Vector{Float64}, cp::CartesianProductArray)::Bool
     contained = false
     jinit = 1
-    for sj in cp
-        jend = dim(cp.sj)
-        contained = is_contained(d[jinit:jend], cp.sj)
+    for Xj in cp
+        jend = dim(cp.Xj)
+        contained = is_contained(d[jinit:jend], cp.Xj)
         if !contained
             break
         end
@@ -152,5 +152,3 @@ function is_contained(d::Vector{Float64}, cp::CartesianProductArray)::Bool
     end
     return contained
 end
-
-export CartesianProductArray, is_contained

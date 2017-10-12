@@ -5,30 +5,30 @@ Type that represents the Minkowski sum of two convex sets.
 
 FIELDS:
 
-- s1::LazySet : a convex set
-- s2::LazySet : a convex set
+- X::LazySet : a convex set
+- Y::LazySet : a convex set
 """
 struct MinkowskiSum <: LazySet
-    s1::LazySet
-    s2::LazySet
+    X::LazySet
+    Y::LazySet
 
-    MinkowskiSum(s1, s2) = dim(s1) != dim(s2) ? throw(DimensionMismatch) : new(s1, s2)
+    MinkowskiSum(X, Y) = dim(X) != dim(Y) ? throw(DimensionMismatch) : new(X, Y)
 end
 
 import Base.+
 
-function +(s1::LazySet, s2::LazySet)
-    return MinkowskiSum(s1, s2)
+function +(X::LazySet, Y::LazySet)
+    return MinkowskiSum(X, Y)
 end
 
 # ambient dimension of the Minkowski sum of two sets
 function dim(ms::MinkowskiSum)::Int64
-    return dim(ms.s1)
+    return dim(ms.X)
 end
 
 # support vector of the Minkowski sum of two sets
 function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, ms::MinkowskiSum)::Vector{Float64}
-    return σ(d, ms.s1) + σ(d, ms.s2)
+    return σ(d, ms.X) + σ(d, ms.Y)
 end
 
 export MinkowskiSum

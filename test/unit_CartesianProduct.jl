@@ -4,8 +4,8 @@ b1 = BallInf([0.], 1.)
 b2 = BallInf([0., 0.], 1.)
 # Test Construction
 c1 = CartesianProduct(b1, b2)
-@test c1.s1 == b1
-@test c1.s2 == b2
+@test c1.X == b1
+@test c1.Y == b2
 # Test Dimension
 @test dim(c1) == 3
 # Test Support Vector
@@ -71,9 +71,9 @@ cs = CartesianProduct(as)
 # 3-elements
 as = LazySet[Singleton([1.]), Singleton([2.]), Singleton([3.])]
 cs = CartesianProduct(as)
-@test cs.s1.element == [1.]
-@test cs.s2.s1.element == [2.]
-@test cs.s2.s2.element == [3.]
+@test cs.X.element == [1.]
+@test cs.Y.X.element == [2.]
+@test cs.Y.Y.element == [3.]
 
 # Test containment with respect to CartesianProduct
 p1 = HPolygon()

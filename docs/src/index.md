@@ -3,6 +3,11 @@
 `LazySets` is a [Julia](http://julialang.org) package for calculus with convex sets.
 
 
+```@contents
+```
+
+---
+
 ## Features
 
 The core of this package are the following types:

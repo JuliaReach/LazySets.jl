@@ -1,8 +1,30 @@
+```@meta
+CurrentModule = LazySets
+```
+
+## Minkowski Sum
+
 ```@docs
-LazySets.CartesianProduct
-LazySets.CartesianProductArray
-LazySets.ConvexHull
-LazySets.LinearMap
-LazySets.MinkowskiSum
-LazySets.MinkowskiSumArray
+MinkowskiSum
+MinkowskiSumArray
+```
+
+## Convex hull
+
+```@docs
+ConvexHull
+```
+
+## Cartesian Product
+
+```@docs
+CartesianProduct
+CartesianProductArray
+```
+
+## Linear and Exponential Maps
+
+```@docs
+LinearMap
+ExponentialMap
 ```

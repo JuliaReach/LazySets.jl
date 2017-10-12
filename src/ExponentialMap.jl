@@ -1,18 +1,22 @@
 using Expokit
 
-import Base.*
+import Base: *, size
 
-r"""
+export SparseMatrixExp, ExponentialMap, size,
+       ProjectionSparseMatrixExp, ExponentialProjectionMap,
+       get_row, get_rows, get_column, get_columns
+
+"""
     SparseMatrixExp
 
 Type that represents the matrix exponential of a sparse matrix, and provides
 evaluation of its action on vectors.
 
-FIELDS:
+### Fields
 
 - `M` -- sparse matrix
 
-NOTES:
+### Notes
 
 This class is provided for use with very large and very sparse matrices. The
 evaluation of the exponential matrix action over vectores relies on the
@@ -21,8 +25,6 @@ Expokit package.
 mutable struct SparseMatrixExp
     M::SparseMatrixCSC{Float64,Int64}
 end
-
-import Base.size
 
 function size(spmexp::SparseMatrixExp)::Tuple{Int64,Int64}
     return size(spmexp.M)
@@ -75,24 +77,24 @@ function get_rows(spmexp::SparseMatrixExp, I::AbstractArray)::SparseMatrixCSC{Fl
     return ans
 end
 
-r"""
+"""
     ExponentialMap <: LazySet
 
 Type that represents the action of an exponential map on a set.
 
-FIELDS:
+### Fields
 
-- ``spmexp``  -- a matrix exponential
-- ``sf``      -- a convex set represented by its support function
+- `spmexp`  -- a matrix exponential
+- `X`      -- a convex set represented by its support function
 """
 mutable struct ExponentialMap <: LazySet
     spmexp::SparseMatrixExp
-    sf::LazySet
+    X::LazySet
 end
 
 # instantiate an exponential map from a sparse matrix exponential
-function *(spmexp::SparseMatrixExp, sf::LazySet)
-    return ExponentialMap(spmexp, sf)
+function *(spmexp::SparseMatrixExp, X::LazySet)
+    return ExponentialMap(spmexp, X)
 end
 
 # ambient dimension of the exponential map
@@ -103,7 +105,7 @@ end
 # support vector of the exponential map
 function σ(d::Vector{Float64}, em::ExponentialMap)::Vector{Float64}
     v = expmv(1.0, em.spmexp.M.', d)            # v   <- exp(A') * d
-    res = expmv(1.0, em.spmexp.M, σ(v, em.sf))  # res <- exp(A) * support_vector(v, S) 
+    res = expmv(1.0, em.spmexp.M, σ(v, em.X))  # res <- exp(A) * support_vector(v, S) 
     return res
 end
 
@@ -138,19 +140,19 @@ a given set.
 FIELDS:
 
 - ``spmexp``   -- the projection of an exponential map
-- ``sf``       -- a set represented by its support function
+- ``X``       -- a set represented by its support function
 """
 mutable struct ExponentialProjectionMap <: LazySet
     projspmexp::ProjectionSparseMatrixExp
-    sf::LazySet
+    X::LazySet
 end
 
 # instantiate an exponential map projection from matrix multiplication
-function *(projspmexp::ProjectionSparseMatrixExp, sf::LazySet)
-    return ExponentialProjectionMap(projspmexp, sf)
+function *(projspmexp::ProjectionSparseMatrixExp, X::LazySet)
+    return ExponentialProjectionMap(projspmexp, X)
 end
 
-r"""
+"""
     dim(emap)
 
 The ambient dimension of a ExponentialProjectionMap.
@@ -159,39 +161,35 @@ It is given by the output dimension (left-most matrix).
 
 INPUT:
 
-- ``eprojmap`` -- an ExponentialProjectionMap
+- `eprojmap` -- an ExponentialProjectionMap
 """
 function dim(eprojmap::ExponentialProjectionMap)
     return size(eprojmap.projspmexp.L, 1)
 end
 
-r"""
+"""
     σ(d, eprojmap)
 
-Support vector of an ExponentialProjectionMap.
+Support vector of an `ExponentialProjectionMap`.
 
-INPUT:
+### Input
 
-- ``d``         -- a direction
-- ``eprojmap``  -- the projection of an exponential map
+- `d`         -- a direction
+- `eprojmap`  -- the projection of an exponential map
 
 If `S = (LMR)B`, where `L` and `R` are dense matrices, `M` is a matrix
 exponential, and `B` is a set, it follows that:
 `σ(d, S) = LMR σ(R^T M^T L^T d, B)` for any direction `d`.
 """
-function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, eprojmap::ExponentialProjectionMap)::Vector{Float64}
+function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}},
+           eprojmap::ExponentialProjectionMap)::Vector{Float64}
     daux = transpose(eprojmap.projspmexp.L) * d
     aux1 = expmv(1.0, eprojmap.projspmexp.spmexp.M.', daux)
     daux = transpose(eprojmap.projspmexp.R) * aux1
-    aux1 = σ(daux, eprojmap.sf)
+    aux1 = σ(daux, eprojmap.X)
 
     aux2 = eprojmap.projspmexp.R * aux1
     daux = expmv(1.0, eprojmap.projspmexp.spmexp.M, aux2)
     aux2 = eprojmap.projspmexp.L * daux
     return aux2
 end
-
-export SparseMatrixExp, ExponentialMap, size,
-       ProjectionSparseMatrixExp, ExponentialProjectionMap,
-       get_row, get_rows, get_column, get_columns
-
