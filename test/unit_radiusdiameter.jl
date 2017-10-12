@@ -1,3 +1,6 @@
+import LazySets.Approximations:radius_approximation,
+                               diameter_approximation
+
 # Radius and Diameter Approximation of a centered unit Ball2
 b = Ball2([0., 0., 0.], 1.)
 rexp = norm([1.,1.,1.])

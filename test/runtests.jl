@@ -23,7 +23,7 @@ using LazySets, Base.Test
 # ================================================================
 # Algorithms for approximation of convex sets using support vectors
 # =================================================================
-@time @testset "Approximations.overapproximation" begin include("unit_overapproximation2D.jl") end
-@time @testset "Approximations.box_approximation" begin include("unit_box_approximation.jl") end
-@time @testset "Approximations.ballinf_approximation" begin include("unit_ballinf_approximation.jl") end
-@time @testset "Approximations.radiusdiameter" begin include("unit_radiusdiameter.jl") end
+@time @testset "LazySets.Approximations.overapproximation" begin include("unit_overapproximation2D.jl") end
+@time @testset "LazySets.Approximations.box_approximation" begin include("unit_box_approximation.jl") end
+@time @testset "LazySets.Approximations.ballinf_approximation" begin include("unit_ballinf_approximation.jl") end
+@time @testset "LazySets.Approximations.radiusdiameter" begin include("unit_radiusdiameter.jl") end

@@ -1,3 +1,5 @@
+import LazySets.Approximations.ballinf_approximation
+
 # BallInf approximation of a 3D unit ball centered at [1,2,0] of radius 1
 b = Ball2([1., 2., 0.], 1.)
 bi = ballinf_approximation(b)

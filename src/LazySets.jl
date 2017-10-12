@@ -21,7 +21,7 @@ abstract type LazySet end
 # ============================
 # Auxiliary types or functions
 # ============================
-include("LinearConstraintaints.jl")
+include("LinearConstraints.jl")
 include("HelperFuncs.jl")
 
 # ===============================
@@ -69,6 +69,6 @@ support_vector = σ
 # =================================================================
 # Algorithms for approximation of convex sets using support vectors
 # =================================================================
-include("Approximations.jl")
+include("Approximations/Approximations.jl")
 
 end # module
