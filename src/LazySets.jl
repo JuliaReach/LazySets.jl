@@ -21,7 +21,7 @@ abstract type LazySet end
 # ============================
 # Auxiliary types or functions
 # ============================
-include("LinearConstraints.jl")
+include("LinearConstraintaints.jl")
 include("HelperFuncs.jl")
 
 # ===============================

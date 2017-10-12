@@ -12,7 +12,7 @@ FIELDS:
 - ``dim``    -- dimension
 """
 mutable struct Polyhedron <: LazySet
-    constraints::Array{LinearConstr, 1}
+    constraints::Array{LinearConstraint, 1}
     dim::Int64
 end
 Polyhedron(n) = Polyhedron([], n)
@@ -61,7 +61,7 @@ INPUT:
 - ``P``          -- a polyhedron
 - ``constraint`` -- the linear constraint to add
 """
-function addconstraint!(P::Polyhedron, c::LinearConstr)
+function addconstraint!(P::Polyhedron, c::LinearConstraint)
     push!(P.constraints, c)
 end
 

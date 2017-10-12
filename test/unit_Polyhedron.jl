@@ -1,9 +1,9 @@
 # 2D Polyhedron
 p = Polyhedron(2)
-c1 = LinearConstr([2., 2.], 12.)
-c2 = LinearConstr([-3., 3.], 6.)
-c3 = LinearConstr([-1., -1.], 0.)
-c4 = LinearConstr([2., -4.], 0.)
+c1 = LinearConstraint([2., 2.], 12.)
+c2 = LinearConstraint([-3., 3.], 6.)
+c3 = LinearConstraint([-1., -1.], 0.)
+c4 = LinearConstraint([2., -4.], 0.)
 addconstraint!(p, c3)
 addconstraint!(p, c1)
 addconstraint!(p, c4)

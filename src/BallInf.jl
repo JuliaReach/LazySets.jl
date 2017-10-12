@@ -1,3 +1,5 @@
+export BallInf
+
 """
     BallInf <: LazySet
 
@@ -6,8 +8,8 @@ Type that represents a ball in the infinity norm,
 
 ### Fields
 
-- `c` -- a real vector, the center
-- `r` -- the radius ( ``≧ 0`` )
+- ``c`` -- a real vector, the center
+- ``r`` -- the radius ( ``≧ 0`` )
 
 ### Examples
 
@@ -61,4 +63,3 @@ function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, B::BallInf):
     return B.center .+ unit_step.(d) .* B.radius
 end
 
-export BallInf

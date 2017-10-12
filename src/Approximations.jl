@@ -130,7 +130,7 @@ OUTPUT:
 A polygon in constraint representation.
 """
 function overapproximate(S::LazySet, ɛ::Float64)::HPolygon
-    constraints = [LinearConstr(la.d1, dot(la.d1, la.p1)) for la in approximate(S, ɛ)]
+    constraints = [LinearConstraint(la.d1, dot(la.d1, la.p1)) for la in approximate(S, ɛ)]
     return HPolygon(constraints)
 end
 
@@ -148,16 +148,16 @@ OUTPUT:
 A polygon in constraint representation.
 """
 function overapproximate(S::LazySet)::HPolygon
-    constraints = Array{LinearConstr, 1}(4)
+    constraints = Array{LinearConstraint, 1}(4)
     # evaluate support vector on box directions
     pe = σ(DIR_EAST, S)
     pn = σ(DIR_NORTH, S)
     pw = σ(DIR_WEST, S)
     ps = σ(DIR_SOUTH, S)
-    constraints[1] = LinearConstr(DIR_EAST, dot(pe, DIR_EAST))
-    constraints[2] = LinearConstr(DIR_NORTH, dot(pn, DIR_NORTH))
-    constraints[3] = LinearConstr(DIR_WEST, dot(pw, DIR_WEST))
-    constraints[4] = LinearConstr(DIR_SOUTH, dot(ps, DIR_SOUTH))
+    constraints[1] = LinearConstraint(DIR_EAST, dot(pe, DIR_EAST))
+    constraints[2] = LinearConstraint(DIR_NORTH, dot(pn, DIR_NORTH))
+    constraints[3] = LinearConstraint(DIR_WEST, dot(pw, DIR_WEST))
+    constraints[4] = LinearConstraint(DIR_SOUTH, dot(ps, DIR_SOUTH))
     return HPolygon(constraints)
 end
 
@@ -394,10 +394,10 @@ function decompose(X::LazySet)::CartesianProductArray
 
     result = Array{HPolygon, 1}(b)
     @inbounds for i in 1:b
-        result[i] = HPolygon([LinearConstr(DIR_EAST, pe[i]),
-                              LinearConstr(DIR_NORTH, pn[i]),
-                              LinearConstr(DIR_WEST, pw[i]),
-                              LinearConstr(DIR_SOUTH, ps[i])])
+        result[i] = HPolygon([LinearConstraint(DIR_EAST, pe[i]),
+                              LinearConstraint(DIR_NORTH, pn[i]),
+                              LinearConstraint(DIR_WEST, pw[i]),
+                              LinearConstraint(DIR_SOUTH, ps[i])])
     end
     return CartesianProductArray(result)
 end
