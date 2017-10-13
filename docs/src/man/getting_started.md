@@ -22,7 +22,7 @@ The norm of a set $\mathcal{X}$ is $\norm{\mathcal{X}}_p=\max_{x \in \mathcal{X}
 %$\norm{x}_\infty := \max_i |x_i|$. 
 Let $\Bpn$ be the unit ball of the $p$-norm in $n$ dimensions, i.e., $\Bpn = \{ x : \norm{x}_p \leq 1 \}$. 
 %
-%From the dual norm property~\cite{horn2012matrix}, the matrix norm induced by the $p$-norm on vectors satisfies ${\norm{A^\transp}}_\frac{p}{p-1}=\norm{A}_p$, for any $A \in \mathbb{R}eals^{n\times n}$.
+%From the dual norm property~\cite{horn2012matrix}, the matrix norm induced by the $p$-norm on vectors satisfies ${\norm{A^\mathrm{T}}}_\frac{p}{p-1}=\norm{A}_p$, for any $A \in \mathbb{R}eals^{n\times n}$.
 %
 The Minkowski sum of sets $\mathcal{X}$ and $\Y$ is $\mathcal{X} \oplus \Y := \{ x + y : x \in \mathcal{X} \text{ and } y \in \Y \}.$ Their Cartesian product, $\mathcal{X}\times \Y$, is the set of ordered pairs $(x, y)$, with $x \in \mathcal{X}$ and $y\in \Y$. The origin in $\mathbb{R}^n$ is written \norigin{n}. There is a relation between products of sets and Minkowski sum: if $\mathcal{X} \subseteq \mathbb{R}eals^n$ and $\Y \subseteq \mathbb{R}eals^m$, then
 $\mathcal{X} \times \Y = (\mathcal{X} \times \{  \norigin{m} \} ) \oplus (\{ \norigin{n} \} \times \Y).$
@@ -36,7 +36,7 @@ $\mathcal{X} \subset \mathbb{R}^n$ be a compact convex set.
 The *support function* of $\mathcal{X}$ is the function
 $\rho_\mathcal{X} : \mathbb{R}^n\to \mathbb{R}$, defined as
 
-$\rho_\mathcal{X}(\ell) := \max\limits_{x \in \mathcal{X}} \ell^\transp x.$
+$\rho_\mathcal{X}(\ell) := \max\limits_{x \in \mathcal{X}} \ell^\mathrm{T} x.$
 
 We recall the following elementary properties of the support function.
 
@@ -65,6 +65,8 @@ $\sigma_\mathcal{X}(\ell) := \{ x \in \mathcal{X} : \ell^\mathrm{T} x  = \rho_{\
 
 Since all support vectors in a given direction evaluate to the same value of the support function,
 we often speak of *the support vector*, where the choice of any support vector is implied.
+
+![Illustration of the support function and the support vector](../assets/sfun_svec.png)
 
 **Proposition 2.** Under the same conditions
 as in Proposition 1, the following hold:

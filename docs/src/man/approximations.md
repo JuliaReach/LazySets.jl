@@ -39,4 +39,4 @@ the support vector of a polygon in constraint representation by comparing normal
 jump2pi
 ```
 
-
+![../assets/intuition2dlp.png](../assets/intuition2dlp.png)
