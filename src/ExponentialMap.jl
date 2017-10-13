@@ -120,7 +120,7 @@ FIELDS:
 - ``E`` -- the exponential of a sparse matrix
 - ``R`` -- right multiplication matrix
 
-OUTPUT:
+### Output
 
 A type that abstract the matrix operation L * exp(E.M) * R, for a given sparse
 matrix E.M.
@@ -159,7 +159,7 @@ The ambient dimension of a ExponentialProjectionMap.
 
 It is given by the output dimension (left-most matrix).
 
-INPUT:
+### Input
 
 - `eprojmap` -- an ExponentialProjectionMap
 """

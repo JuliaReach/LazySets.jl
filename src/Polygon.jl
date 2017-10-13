@@ -29,12 +29,12 @@ import Base.<=
 
 States if arg(u) [2π] <= arg(v) [2π].
 
-INPUT:
+### Input
 
 - ``u`` --  a first direction
 - ``v`` --  a second direction
 
-OUTPUT:
+### Output
 
 True iff arg(u) [2π] <= arg(v) [2π]
 
@@ -54,7 +54,7 @@ end
 Add a linear constraint to a polygon keeping the constraints sorted by their
 normal directions.
 
-INPUT:
+### Input
 
 - ``p`` -- a polygon
 - ``c`` -- the linear constraint to add
@@ -75,7 +75,7 @@ Return the support vector of a polygon in a given direction.
 Return the zero vector if there are no constraints (i.e., the universal
 polytope).
 
-INPUT:
+### Input
 
 - ``d`` -- direction
 - ``p`` -- polyhedron in H-representation
@@ -102,12 +102,12 @@ end
 
 Return whether a given vector is contained in the polygon.
 
-INPUT:
+### Input
 
 - ``x`` -- vector
 - ``P`` -- polygon
 
-OUTPUT:
+### Output
 
 ::Bool : true iff x ∈ P
 """
@@ -149,7 +149,7 @@ HPolygonOpt(H::HPolygon) = HPolygonOpt(H.constraints)
 
 Return the ambient dimension of the optimized polygon.
 
-INPUT :
+### Input
 
 - ``P`` -- optimized polyhedron in H-representation
 """
@@ -162,7 +162,7 @@ end
 
 Return the support vector of the optimized polygon in a given direction.
 
-INPUT:
+### Input
 
 - ``d`` -- direction
 - ``P`` -- polyhedron in H-representation
@@ -202,12 +202,12 @@ end
 
 Return whether a given vector is contained in the optimized polygon.
 
-INPUT:
+### Input
 
 - ``x`` -- vector
 - ``P`` -- polygon
 
-OUTPUT:
+### Output
 
 True iff x ∈ P
 """
@@ -243,12 +243,12 @@ VPolygon() = VPolygon([])
 
 Build a vertex representation of the given polygon.
 
-INPUT:
+### Input
 
 - ``s`` -- a polygon in H-representation, HPolygon. The linear constraints are
            assumed sorted by their normal directions.
 
-OUTPUT:
+### Output
 
 The same polygon in a vertex representation, VPolygon.
 """
@@ -269,12 +269,12 @@ end
 
 Build a vertex representation of the given polygon.
 
-INPUT :
+### Input
 
 - ``po`` -- a polygon in H-representation. The linear constraints are
             assumed sorted by their normal directions.
 
-OUTPUT :
+### Output
 
 The same polygon in a vertex representation.
 """
@@ -287,11 +287,11 @@ end
 
 Return the list of vertices of a convex polygon.
 
-INPUT:
+### Input
 
 - ``po`` -- a polygon, which can be either of type HPolygon or the refined type HPolygonOpt
 
-OUTPUT:
+### Output
 
 List of vertices as an array of vertex pairs, Array{Array{Float64,1},1}.
 """
@@ -308,7 +308,7 @@ end
 
 Plot a polygon given in constraint form.
 
-INPUT:
+### Input
 
 - ``P`` -- a polygon, given as a HPolygon or the refined class HPolygonOpt
 

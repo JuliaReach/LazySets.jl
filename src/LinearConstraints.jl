@@ -49,7 +49,7 @@ Line(c::LinearConstraint) = Line(c.a, c.b)
 
 Return the intersection of two 2D lines.
 
-INPUT:
+### Input
 
 - Δ1::Line -- a line
 

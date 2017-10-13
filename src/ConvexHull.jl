@@ -21,7 +21,7 @@ CH = ConvexHull
 
 Return the ambient dimension of the convex hull of two sets.
 
-INPUT:
+### Input
 
 - ``ch`` -- the convex hull of two sets
 """
@@ -34,7 +34,7 @@ end
 
 Return the support vector of a convex hull in a given direction.
 
-INPUT:
+### Input
 
 - ``d``  -- direction
 - ``ch`` -- the convex hull of two sets

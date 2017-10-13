@@ -44,7 +44,7 @@ end
 
 Refine the given approximation.
 
-INPUT:
+### Input
 
 - ``S`` -- the set which is approximated
 
@@ -62,7 +62,7 @@ Return an ɛ-close approximation of the given 2D set (in terms of Hausdorff
 distance) as an inner and an outer approximation composed by sorted local
 Approximation2D.
 
-INPUT:
+### Input
 
 - ``S`` -- a 2D set defined by its support function
 - ``ɛ`` -- the error bound

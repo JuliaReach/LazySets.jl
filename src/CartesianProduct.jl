@@ -62,12 +62,12 @@ end
 
 Return whether a vector belongs to a given cartesian product set.
 
-INPUT :
+### Input
 
 - ``d``    --  a vector
 - ``cp``   -- a cartesian product
 
-OUTPUT :
+### Output
 
 Return true iff d ∈ cp.
 """
@@ -75,15 +75,17 @@ function is_contained(d::Vector{Float64}, cp::CartesianProduct)::Bool
     return is_contained(d[1:dim(cp.X)], cp.X) && is_contained(d[dim(cp.X)+1:end], cp.Y)
 end
 
-# ============ Cartesian product of sets ================
+# ==========================
+#  Cartesian product of sets
+# ==========================
 """
     CartesianProductArray <: LazySet
 
 Type that represents the cartesian product of a finite number of sets.
 
-FIELDS:
+### Fields
 
-- ``sfarray`` -- array of sets
+- `sfarray` -- array of sets
 """
 mutable struct CartesianProductArray <: LazySet
     sfarray::Array{LazySet, 1}
@@ -97,7 +99,7 @@ CartesianProductArray() = CartesianProductArray(Array{LazySet, 1}(0))
 
 Ambient dimension of the Cartesian product of a finite number of sets.
 
-INPUT:
+### Input
 
 - ``cp`` -- cartesian product array
 """
@@ -110,7 +112,7 @@ end
 
 Support vector of the Cartesian product of a finite number of sets.
 
-INPUT:
+### Input
 
 - ``d`` -- direction
 
@@ -133,11 +135,11 @@ end
 Return whether a given vector is contained in the cartesian product of a
 finite number of sets.
 
-INPUT:
+### Input
 
-- ``d`` -- vector
+- `d` -- vector
 
-- ``cp`` -- cartesian product array
+- `cp` -- cartesian product array
 """
 function is_contained(d::Vector{Float64}, cp::CartesianProductArray)::Bool
     contained = false

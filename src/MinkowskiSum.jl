@@ -68,7 +68,7 @@ end
 Adds the support function to the array.
 (This function is overridden for more specific types of `sf`).
 
-INPUT:
+### Input
 
 - ``msa`` -- Minkowski sum array
 - ``sf`` -- general support function
@@ -83,7 +83,7 @@ end
 
 Appends the elements of the second array to the first array.
 
-INPUT:
+### Input
 
 - ``msa1`` -- first Minkowski sum array
 - ``msa2`` -- second Minkowski sum array
@@ -98,7 +98,7 @@ end
 
 Returns the original array because addition with a void set is a no-op.
 
-INPUT:
+### Input
 
 - ``msa`` -- Minkowski sum array
 - ``vs`` -- void set
@@ -112,7 +112,7 @@ end
 
 Ambient dimension of the Minkowski sum of a finite number of sets.
 
-INPUT:
+### Input
 
 - ``ms`` -- Minkowski sum array
 
@@ -129,7 +129,7 @@ end
 
 Support vector of the Minkowski sum of a finite number of sets.
 
-INPUT:
+### Input
 
 - ``d`` -- direction
 

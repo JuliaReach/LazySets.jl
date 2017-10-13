@@ -53,7 +53,7 @@ Ambient dimension of the linear map of a set.
 
 It corresponds to the output dimension of the linear map.
 
-INPUT:
+### Input
 
 - ``lm`` -- a linear map
 """
@@ -69,7 +69,7 @@ Support vector of the linear map of a set.
 If `S = MB`, where `M` is sa matrix and `B` is a set, it follows that
 `σ(d, S) = Mσ(M^T d, B)` for any direction `d`.
 
-INPUT:
+### Input
 
 - ``d``  -- a direction
 - ``lm`` -- a linear map

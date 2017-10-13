@@ -4,7 +4,7 @@
 The unit step function, which returns 1 if and only if x is greater or equal
 than zero.
 
-INPUT:
+### Input
 
 - ``x`` -- a floating point number
 
@@ -27,7 +27,7 @@ unit_step(x::Float64) = ifelse(x < 0, oftype(one(x),-1), one(x))
 
 Return `x + 2*pi` and only if `x` is negative.
 
-INPUT:
+### Input
 
 - ``x`` -- a floating point number
 

@@ -42,24 +42,26 @@ function dim(B::BallInf)::Int64
 end
 
 """
-    σ(d, P)
+    σ(d, B)
 
 Return the support vector of an infinity-norm ball in a given direction.
 
-INPUT:
+### Input
 
-- ``d`` -- direction
-- ``P`` -- polyhedron in H-representation
+- `d` -- direction
+- `B` -- unit ball in the infinity norm
 
-ALGORITHM:
+### Algorithm
 
 This code is a vectorized version of
+
 ```julia
 [(d[i] >= 0) ? B.center[i] + B.radius : B.center[i] - B.radius for i in 1:length(d)]
 ```
-Notice that we cannot use ``B.center + sign.(d) * B.radius``, since the built-in ``sign``
+
+Notice that we cannot use `B.center + sign.(d) * B.radius`, since the built-in `sign`
 function is such that `sign(0) = 0`, instead of 1. For this reason, we use the
-custom ``unit_step`` function, that allows to do: ``B.center + unit_step.(d) * B.radius``
+custom `unit_step` function, that allows to do: `B.center + unit_step.(d) * B.radius`
 (the dot operator performs broadcasting, to accept vector-valued entries).
 """
 function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, B::BallInf)::Vector{Float64}

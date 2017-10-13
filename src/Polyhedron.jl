@@ -22,7 +22,7 @@ Polyhedron(n) = Polyhedron([], n)
 
 Return the ambient dimension of the polyhedron.
 
-INPUT :
+### Input
 
 - ``P``  -- a polyhedron in H-representation
 """
@@ -35,7 +35,7 @@ end
 
 Return the support vector of the polyhedron in a given direction.
 
-INPUT:
+### Input
 
 - ``d`` -- direction
 - ``P`` -- polyhedron in H-representation
@@ -56,7 +56,7 @@ end
 
 Add a linear constraint to a polyhedron.
 
-INPUT:
+### Input
 
 - ``P``          -- a polyhedron
 - ``constraint`` -- the linear constraint to add
@@ -70,7 +70,7 @@ end
 
 Return the list of constraints defining a polyhedron in H-representation.
 
-INPUT:
+### Input
 
 - ``P`` -- polyhedron in H-representation
 """
