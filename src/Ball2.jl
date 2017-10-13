@@ -5,6 +5,10 @@ export Ball2
 
 Type that represents a ball in the 2-norm.
 
+This set is defined by a center and a radius,
+
+    ``B_2(c, r) = \\{ x ∈ \\mathbb{R}^n : ‖x - c‖_2 ≦ r \\}.``
+
 ### Fields
 
 - `center` -- center of the ball as a real vector

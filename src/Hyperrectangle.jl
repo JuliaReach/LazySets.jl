@@ -7,8 +7,8 @@ export Hyperrectangle, vertices_list, radius, diameter
 
 Type that represents a Hyperrectangle.
 
-A [hyperrecatangle](https://en.wikipedia.org/wiki/Hyperrectangle) (also called
-n-orthotope) is the Cartesian product of one-dimensional intervals.
+A [hyperrectangle](https://en.wikipedia.org/wiki/Hyperrectangle) is the Cartesian
+product of one-dimensional intervals.
 
 ### Fields
 
@@ -55,33 +55,33 @@ end
 
 Return the vertices of a hyperrectangle.
 
-INPUT:
+### Input
 
-- ``H`` -- a hyperrectangle
+- `H` -- a hyperrectangle
 
-OUTPUT:
+### Output
 
 The list of vertices as an array of floating-point vectors.
 
-NOTES:
+### Notes
 
-For high-dimensions, it is preferable to develop a ``vertex_iterator`` approach.
+For high-dimensions, it is preferable to develop a `vertex_iterator` approach.
 """
 function vertices_list(H::Hyperrectangle)::Array{Vector{Float64}, 1}
     return [H.center .+ si .* H.radius for si in IterTools.product([[1, -1] for i = 1:dim(H)]...)]
 end
 
 """
-    radius(H)
+    radius(H::Hyperrectangle)
 
 Return the radius of a Hyperrectangle. It is the radius of the enclosing
 hypercube of minimal volume.
 
-INPUT:
+### Input
 
-- ``H`` -- a hyperrectangle
+- `H` -- a hyperrectangle
 
-OUTPUT:
+### Output
 
 A real number representing its radius.
 """
@@ -90,16 +90,16 @@ function radius(H::Hyperrectangle)::Float64
 end
 
 """
-    diameter(H)
+    diameter(H::Hyperrectangle)
 
 Return the diameter of a hyperrectangle. It the maximum norm (measured the
 infinity norm) of any element of the set.
 
-INPUT:
+### Input
 
-- ``H`` -- a hyperrectangle
+- `H` -- a hyperrectangle
 
-OUTPUT:
+### Output
 
 The diameter of the hyperrectangle.
 """

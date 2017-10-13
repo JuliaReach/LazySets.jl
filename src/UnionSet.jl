@@ -1,13 +1,15 @@
+export UnionSet, is_contained
+
 """
-    UnionSet
+    UnionSet <: LazySet
 
 Type that represents a union of convex sets.
 
-FIELDS:
+### Fields
 
-- ``sets`` --  a list of convex sets
+- `sets` --  a list of convex sets
 """
-struct UnionSet
+struct UnionSet <: LazySet
     sets::Array{LazySet, 1}
 end
 
@@ -16,14 +18,14 @@ end
 
 States if a given vector belongs to a given union of sets.
 
-INPUT:
+### Input
 
-- ``x`` -- a vector
-- ``U`` -- a union
+- `x` -- a vector
+- `U` -- a union
 
-OUTPUT:
+### Output
 
-Return true iff x ∈ U.
+Return true iff ``x ∈ U``.
 """
 function is_contained(x::Vector{Float64}, U::UnionSet)::Bool
     res = false
@@ -33,4 +35,3 @@ function is_contained(x::Vector{Float64}, U::UnionSet)::Bool
     return res
 end
 
-export UnionSet, is_contained

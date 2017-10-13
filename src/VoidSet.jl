@@ -1,7 +1,13 @@
+export VoidSet
+
 """
-    VoidSet
+    VoidSet <: LazySet
 
 Type that represents a void (neutral) set with respect to Minkowski sum.
+
+### Fields
+
+- `dim` -- ambient dimension of the `VoidSet` 
 """
 struct VoidSet <: LazySet
     dim::Int64
@@ -13,15 +19,19 @@ import Base.+
 function +(::VoidSet, x)
     return x
 end
+
 function +(x, ::VoidSet)
     return x
 end
+
 function +(::VoidSet, x::LazySet)
     return x
 end
+
 function +(x::LazySet, ::VoidSet)
     return x
 end
+
 function +(v::VoidSet, ::VoidSet)
     return v
 end
@@ -32,15 +42,19 @@ import Base.*
 function *(x, v::VoidSet)
     return v
 end
+
 function *(v::VoidSet, x)
     return v
 end
+
 function *(::LazySet, v::VoidSet)
     return v
 end
+
 function *(v::VoidSet, ::LazySet)
     return v
 end
+
 function *(v::VoidSet, ::VoidSet)
     # NOTE: The result has the dimension of the first argument.
     # This is an arbitrary decision in the interest of avoiding additional
@@ -58,5 +72,3 @@ function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, V::VoidSet):
     #error("evaluating the support vector of a void set is undefined")
     return zeros(length(d))
 end
-
-export VoidSet

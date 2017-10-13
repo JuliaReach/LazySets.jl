@@ -3,8 +3,11 @@ export BallInf
 """
     BallInf <: LazySet
 
-Type that represents a ball in the infinity norm,
-``B_∞(c, r) = \\{ x ∈ \\mathbb{R}^n : ‖x - c‖_∞ ≦ r \\}.``
+Type that represents a ball in the infinity norm.
+
+This set is defined by a center and a radius,
+
+    ``B_∞(c, r) = \\{ x ∈ \\mathbb{R}^n : ‖x - c‖_∞ ≦ r \\}.``
 
 ### Fields
 

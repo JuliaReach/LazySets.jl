@@ -1,11 +1,13 @@
+export Singleton
+
 """
     Singleton <: LazySet
 
 Type that represents a singleton, that is, a set with a unique element.
 
-FIELDS:
+### Fields
 
-- element::Vector{Float64} -- the only element of the set
+- `element` -- the only element of the set
 """
 struct Singleton <: LazySet
     element::Vector{Float64}
@@ -20,5 +22,3 @@ end
 function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, s::Singleton)::Vector{Float64}
     return s.element
 end
-
-export Singleton
