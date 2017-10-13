@@ -3,11 +3,11 @@
 
 Return an approximation of the given 2D set as a polygon, using box directions.
 
-INPUT:
+### Input
 
-- ``S`` -- a 2D set defined by its support function
+- `S` -- a 2D set defined by its support function
 
-OUTPUT:
+### Output
 
 A polygon in constraint representation.
 """
@@ -25,6 +25,40 @@ function overapproximate(S::LazySet)::HPolygon
     return HPolygon(constraints)
 end
 
+"""
+    overapproximate(S, ɛ)
+
+Return an ɛ-close approximation of the given 2D set (in terms of Hausdorff
+distance) as a polygon.
+
+### Input
+
+- `S` -- a 2D set defined by its support function
+- `ɛ` -- the error bound
+
+### Output
+
+A polygon in constraint representation.
+"""
+function overapproximate(X::LazySet, ɛ::Float64)::HPolygon
+    constraints = [LinearConstraint(la.d1, dot(la.d1, la.p1)) for la in approximate(X, ɛ)]
+    return HPolygon(constraints)
+end
+
+"""
+    decompose(X)
+
+Compute an overapproximation of the projections of the given set over each
+two-dimensional subspace using box directions.
+
+### Input
+
+- `X`  -- set represented by support functions
+
+### Output
+
+A CartesianProductArray corresponding to the cartesian product of 2x2 polygons.
+"""
 function decompose(X::LazySet)::CartesianProductArray
     n = LazySets.dim(X)
     b = div(n, 2)
@@ -57,56 +91,32 @@ function decompose(X::LazySet)::CartesianProductArray
 end
 
 """
-    overapproximate(S, ɛ)
-
-Return an ɛ-close approximation of the given 2D set (in terms of Hausdorff
-distance) as a polygon.
-
-INPUT:
-
-- ``S`` -- a 2D set defined by its support function
-- ``ɛ`` -- the error bound
-
-OUTPUT:
-
-A polygon in constraint representation.
-"""
-function overapproximate(S::LazySet, ɛ::Float64)::HPolygon
-    constraints = [LinearConstraint(la.d1, dot(la.d1, la.p1)) for la in approximate(S, ɛ)]
-    return HPolygon(constraints)
-end
-
-"""
     decompose(X, ɛi)
 
 Compute an overapproximation of the projections of the given set over each
-two-dimensional subspace.
+two-dimensional subspace with a certified error bound.
 
-INPUT:
+### Input
 
-- ``X`` -- set represented by support functions
-- ``ɛi`` -- array, error bound for each projection
+- `X`  -- set represented by support functions
+- `ɛi` -- array, error bound for each projection (different error bounds
+          can be passed to different blocks)
 
-OUTPUT:
+### Output
 
 A CartesianProductArray corresponding to the cartesian product of 2x2 polygons.
 
-NOTES:
+### Algorithm
 
-- It assumes blocks of size 2.
-- Different error bounds can be passed to different blocks.
-- If the type of the given X is CartesianProductArray, we cannot do simply
+This algorithm assumes a decomposition into two-dimensional subspaces only,
+i.e. partitions of the form ``[2, 2, ..., 2]``. In particular if `X` is a `CartesianProductArray`
+no check is performed to verify that assumption.
 
-```
-return CartesianProductArray([overapproximate(X.sfarray[i], ɛi[i]) for i in 1:b])
-```
-because the cartesian product could contain objects in different dimension, a priori.
+It proceeds as follows:
 
-ALGORITHM:
-
-1. Project the set X into each partition (assuming two-dimensional subspaces, i.e. partitions of the form [2, 2, ..., 2]),
-with M*X, where M is the identity matrix in the block coordinates and zero otherwise.
-2. Overapproximate the set with a given error bound, ɛi[i], for i = 1,.., b
+1. Project the set `X` into each partition, with ``MX``, where ``M`` is the
+identity matrix in the block coordinates and zero otherwise.
+2. Overapproximate the set with a given error bound, `ɛi[i]`, for ``i = 1, …, b``,
 3. Return the result as an array of support functions.
 """
 function decompose(X::LazySet, ɛi::Vector{Float64})::CartesianProductArray
@@ -120,6 +130,24 @@ function decompose(X::LazySet, ɛi::Vector{Float64})::CartesianProductArray
     return CartesianProductArray(result)
 end
 
+"""
+    decompose(X, ɛ)
+
+Compute an overapproximation of the projections of the given set over each
+two-dimensional subspace with a certified error bound.
+
+This function is a particular case of `decompose(X, ɛi)`, where the same error
+bound for each block is assumed. 
+
+### Input
+
+- `X`  -- set represented by support functions
+- `ɛ` --  error bound
+
+### Output
+
+A CartesianProductArray corresponding to the cartesian product of 2x2 polygons.
+"""
 function decompose(X::LazySet, ɛ::Float64)::CartesianProductArray
     n = LazySets.dim(X)
     b = div(n, 2)

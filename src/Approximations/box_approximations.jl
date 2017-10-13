@@ -3,18 +3,18 @@
 
 Overapproximate a set by a box (hyperrectangle). 
 
-INPUT:
+### Input
 
-``X`` -- a set
+`X` -- a lazy set
 
-OUTPUT:
+### Output
 
-``H`` -- a (tight) hyperrectangle
+`H` -- a (tight) hyperrectangle
 
-ALGORITHM:
+### Algorithm
 
 The center of the hyperrectangle is obtained by averaring the support function
-the given set in the canonical directions, and the lengths of the sides can be
+of the given set in the canonical directions, and the lengths of the sides can be
 recovered from the distance among support functions in the same directions.
 """
 function box_approximation(X::LazySet)::Hyperrectangle
@@ -22,21 +22,20 @@ function box_approximation(X::LazySet)::Hyperrectangle
     return Hyperrectangle(c, r)
 end
 
-
 """
     box_approximation_symmetric(X)
 
 Overapproximation of a set by a hyperrectangle which contains the origin.
 
-INPUT:
+### Input
 
-``X`` -- a set
+`X` -- a lazy set
 
-OUTPUT:
+### Ouptut
 
-``H`` -- a symmetric interval around the origin which tightly contains the given set
+`H` -- a symmetric interval around the origin which tightly contains the given set
 
-ALGORITHM:
+### Algorithm
 
 The center of the box is the origin, and the radius is obtained by computing the
 maximum value of the support function evaluated at the canonical directions.
@@ -48,21 +47,20 @@ end
 # function alias
 symmetric_interval_hull = box_approximation_symmetric
 
-
 """
     box_approximation_helper(X)
 
 Common code of box_approximation and box_approximation_symmetric.
 
-INPUT:
+### Input
 
-``X`` -- a set
+`X` -- a lazy set
 
-OUTPUT:
+### Output
 
-``H`` -- a (tight) hyperrectangle
+`H` -- a (tight) hyperrectangle
 
-ALGORITHM:
+### Algorithm
 
 The center of the hyperrectangle is obtained by averaring the support function
 the given set in the canonical directions, and the lengths of the sides can be
@@ -93,15 +91,15 @@ end
 
 Overapproximation of a set by a ball in the infinity norm.
 
-INPUT:
+### Input
 
-``X`` -- a set
+`X` -- a lazy set
 
-OUTPUT:
+### Output
 
-``H`` -- a ball in the infinity norm which tightly contains the given set
+`H` -- a ball in the infinity norm which tightly contains the given set
 
-ALGORITHM:
+### Algorithm
 
 The center and radius of the box are obtained by evaluating the support function
 of the given set along the canonical directions.
@@ -129,13 +127,15 @@ end
 
 Approximate radius of a given set.
 
+### Input
+
+`X` -- a lazy set
+
+### Algorithm
+
 This is an approximation in the infinity norm. The radius of a BallInf of center
 c and radius r can be approximated by ‖c‖ + r√n, where n is the dimension of the 
 vectorspace.
-
-INPUT:
-
-``X`` -- set
 """
 function radius_approximation(X::LazySet)::Float64
     b = ballinf_approximation(X)
@@ -147,11 +147,14 @@ end
 
 Approximate diameter of a given set.
 
-The diameter is bounded by 2*radius. Relies on radius_approximation.
+### Input
 
-INPUT:
+- `X` -- a lazy set
 
-- ``X`` -- set
+### Algorithm
+
+The diameter is bounded by twice the radius. This function relies on
+`radius_approximation`.
 """
 function diameter_approximation(X::LazySet)::Float64
     return 2.*radius_approximation(X)
