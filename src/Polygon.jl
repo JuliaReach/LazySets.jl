@@ -3,7 +3,7 @@
 
 Type that represents a convex polygon (in H-representation).
 
-FIELDS:
+### Fields
 
 - ``constraints`` --  an array of linear constraints
 
@@ -130,7 +130,7 @@ Type that represents a convex polygon (in H-representation).
 This structure is optimized to evaluate the support function/vector with a large
 sequence of directions, which are one to one close.
 
-FIELDS:
+### Fields
 
 - ``P``   -- polygon
 - ``ind`` -- an index in the list of constraints to begin the search to
@@ -229,7 +229,7 @@ end
 
 Type that represents a polygon by its vertices.
 
-FIELDS:
+### Fields
 
 - ``vl`` -- the list of vertices
 """

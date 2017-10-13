@@ -6,7 +6,7 @@ using GLPKMathProgInterface
 
 Type that represents a convex polyhedron in H-representation.
 
-FIELDS:
+### Fields
 
 - ``consts`` -- a linear array of linear constraints
 - ``dim``    -- dimension

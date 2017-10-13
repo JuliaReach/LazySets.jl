@@ -64,8 +64,8 @@ Return whether a vector belongs to a given cartesian product set.
 
 ### Input
 
-- ``d``    --  a vector
-- ``cp``   -- a cartesian product
+- `d`    --  a vector
+- `cp`   -- a cartesian product
 
 ### Output
 
@@ -101,7 +101,7 @@ Ambient dimension of the Cartesian product of a finite number of sets.
 
 ### Input
 
-- ``cp`` -- cartesian product array
+- `cp` -- cartesian product array
 """
 function dim(cp::CartesianProductArray)::Int64
     return length(cp.sfarray) == 0 ? 0 : sum([dim(sj) for sj in cp.sfarray])
@@ -114,9 +114,9 @@ Support vector of the Cartesian product of a finite number of sets.
 
 ### Input
 
-- ``d`` -- direction
+- `d` -- direction
 
-- ``cp`` -- cartesian product array
+- `cp` -- cartesian product array
 """
 function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, cp::CartesianProductArray)::Vector{Float64}
     svec = Vector{Float64}(length(d))

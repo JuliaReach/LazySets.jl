@@ -114,7 +114,7 @@ r"""
 
 Type that represents the projection of a SparseMatrixExp.
 
-FIELDS:
+### Fields
 
 - ``L`` -- left multiplication matrix
 - ``E`` -- the exponential of a sparse matrix
@@ -137,7 +137,7 @@ r"""
 Type that represents the application of the projection of a SparseMatrixExp over
 a given set.
 
-FIELDS:
+### Fields
 
 - ``spmexp``   -- the projection of an exponential map
 - ``X``       -- a set represented by its support function

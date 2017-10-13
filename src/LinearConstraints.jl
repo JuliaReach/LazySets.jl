@@ -3,7 +3,7 @@
 
 Type that represents a linear constraint (a half-space) of the form a⋅x ≦ b.
 
-FIELDS:
+### Fields
 
 - a::Vector{Float64} : a normal direction
 - b::Float64 : the constraint
@@ -25,7 +25,7 @@ end
 
 Type that represents a line in 2D of the form a⋅x = b.
 
-FIELDS:
+### Fields
 
 - a::Vector{Float64} : a normal direction (size = 2)
 - b::Float64 : the constraint

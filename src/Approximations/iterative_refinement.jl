@@ -1,7 +1,7 @@
 """
 Type that represents a local approximation in 2D.
 
-FIELDS:
+### Fields
 
 - ``p1`` -- the first inner point
 

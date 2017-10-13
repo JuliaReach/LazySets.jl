@@ -3,7 +3,7 @@
 
 Type that represents the Minkowski sum of two convex sets.
 
-FIELDS:
+### Fields
 
 - X::LazySet : a convex set
 - Y::LazySet : a convex set
@@ -40,7 +40,7 @@ export MinkowskiSum
 
 Type that represents the Minkowski sum of a finite number of sets.
 
-FIELDS:
+### Fields
 
 - ``sfarray`` -- array of sets
 

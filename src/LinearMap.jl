@@ -5,7 +5,7 @@ Type that represents a linear transform of a set. This class is a wrapper
 around a linear transformation ``M⋅S`` of a set ``S``, such that it
 changes the behaviour of the support vector of the new set.
 
-FIELDS:
+### Fields
 
 - `M`  -- a linear map, which can a be densem matrix, sparse matrix or a subarray object
 - `sf` -- a convex set represented by its support function

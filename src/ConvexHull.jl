@@ -1,9 +1,11 @@
+export ConvexHull, CH
+
 """
     ConvexHull <: LazySet
 
 Type that represents the convex hull of the union of two convex sets.
 
-FIELDS:
+### Fields
 
 - ``X`` -- a convex set
 - ``Y`` -- another convex set
@@ -51,5 +53,3 @@ function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, ch::ConvexHu
     end
     return res
 end
-
-export ConvexHull, CH
