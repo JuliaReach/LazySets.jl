@@ -44,7 +44,7 @@ Type that represents the Minkowski sum of a finite number of sets.
 
 - ``sfarray`` -- array of sets
 
-NOTE:
+### Notes
 
 This type is optimized to be used on the left-hand side of additions only.
 

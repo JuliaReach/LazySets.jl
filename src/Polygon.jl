@@ -38,7 +38,7 @@ States if arg(u) [2π] <= arg(v) [2π].
 
 True iff arg(u) [2π] <= arg(v) [2π]
 
-NOTE:
+### Notes
 
 The argument is measured in counter-clockwise fashion, with the 0 being the
 direction (1, 0).
