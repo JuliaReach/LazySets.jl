@@ -30,6 +30,7 @@ tovrep
 ## More Types
 
 ```@docs
+intersection
 LinearConstraint
 Line
 Singleton

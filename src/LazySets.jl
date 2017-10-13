@@ -49,12 +49,12 @@ include("MinkowskiSum.jl")
 
 Evaluate the support function of a set in a given direction.
 
-# ### Input
+### Input
 
 - `d`  -- a real vector, the direction investigated
 - `sf` -- a convex set
 
-# ### Output
+### Output
 
 - `ρ(d, sf)` -- the support function
 """

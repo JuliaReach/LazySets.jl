@@ -1,3 +1,5 @@
+export LinearMap
+
 """
     LinearMap <: LazySet
 
@@ -46,7 +48,7 @@ function *(M::Union{Matrix, SparseMatrixCSC}, sf::VoidSet)
     end
 end
 
-r"""
+"""
     dim(lm)
 
 Ambient dimension of the linear map of a set.
@@ -55,13 +57,13 @@ It corresponds to the output dimension of the linear map.
 
 ### Input
 
-- ``lm`` -- a linear map
+- `lm` -- a linear map
 """
 function dim(lm::LinearMap)::Int64
     return size(lm.M, 1)
 end
 
-r"""
+"""
     σ(d, lm)
 
 Support vector of the linear map of a set.
@@ -71,8 +73,8 @@ If `S = MB`, where `M` is sa matrix and `B` is a set, it follows that
 
 ### Input
 
-- ``d``  -- a direction
-- ``lm`` -- a linear map
+- `d`  -- a direction
+- `lm` -- a linear map
 """
 function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, lm::LinearMap)::Vector{Float64}
     return lm.M * σ(lm.M.' * d, lm.sf)
@@ -83,4 +85,3 @@ function *(a::Float64, sf::LazySet)
     return LinearMap(sparse(a*I, dim(sf)), sf)
 end
 
-export LinearMap
