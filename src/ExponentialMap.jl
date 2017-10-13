@@ -109,20 +109,20 @@ function σ(d::Vector{Float64}, em::ExponentialMap)::Vector{Float64}
     return res
 end
 
-r"""
+"""
     ProjectionSparseMatrixExp
 
 Type that represents the projection of a SparseMatrixExp.
 
 ### Fields
 
-- ``L`` -- left multiplication matrix
-- ``E`` -- the exponential of a sparse matrix
-- ``R`` -- right multiplication matrix
+- `L` -- left multiplication matrix
+- `E` -- the exponential of a sparse matrix
+- `R` -- right multiplication matrix
 
 ### Output
 
-A type that abstract the matrix operation L * exp(E.M) * R, for a given sparse
+A type that abstract the matrix operation `L * exp(E.M) * R`, for a given sparse
 matrix E.M.
 """
 mutable struct ProjectionSparseMatrixExp
@@ -131,7 +131,7 @@ mutable struct ProjectionSparseMatrixExp
     R::SparseMatrixCSC{Float64,Int64}
 end
 
-r"""
+"""
     ExponentialProjectionMap
 
 Type that represents the application of the projection of a SparseMatrixExp over
@@ -139,8 +139,8 @@ a given set.
 
 ### Fields
 
-- ``spmexp``   -- the projection of an exponential map
-- ``X``       -- a set represented by its support function
+- `spmexp`   -- the projection of an exponential map
+- `X`       -- a set represented by its support function
 """
 mutable struct ExponentialProjectionMap <: LazySet
     projspmexp::ProjectionSparseMatrixExp

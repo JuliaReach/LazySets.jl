@@ -7,8 +7,8 @@ Type that represents the convex hull of the union of two convex sets.
 
 ### Fields
 
-- ``X`` -- a convex set
-- ``Y`` -- another convex set
+- `X` -- a convex set
+- `Y` -- another convex set
 """
 struct ConvexHull <: LazySet
     X::LazySet
@@ -38,8 +38,8 @@ Return the support vector of a convex hull in a given direction.
 
 ### Input
 
-- ``d``  -- direction
-- ``ch`` -- the convex hull of two sets
+- `d`  -- direction
+- `ch` -- the convex hull of two sets
 """
 function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, ch::ConvexHull)::Vector{Float64}
     σ1 = σ(d, ch.X)
