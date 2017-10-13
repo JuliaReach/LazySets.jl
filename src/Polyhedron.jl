@@ -1,5 +1,6 @@
-using JuMP
-using GLPKMathProgInterface
+using JuMP, GLPKMathProgInterface
+
+export Polyhedron, addconstraint!, constraints_list
 
 """
     Polyhedron <: LazySet
@@ -8,8 +9,8 @@ Type that represents a convex polyhedron in H-representation.
 
 ### Fields
 
-- ``consts`` -- a linear array of linear constraints
-- ``dim``    -- dimension
+- `consts` -- a linear array of linear constraints
+- `dim`    -- dimension
 """
 mutable struct Polyhedron <: LazySet
     constraints::Array{LinearConstraint, 1}
@@ -24,7 +25,7 @@ Return the ambient dimension of the polyhedron.
 
 ### Input
 
-- ``P``  -- a polyhedron in H-representation
+- `P`  -- a polyhedron in H-representation
 """
 function dim(P::Polyhedron)::Int64
     P.dim
@@ -37,8 +38,8 @@ Return the support vector of the polyhedron in a given direction.
 
 ### Input
 
-- ``d`` -- direction
-- ``P`` -- polyhedron in H-representation
+- `d` -- direction
+- `P` -- polyhedron in H-representation
 """
 function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, p::Polyhedron)::Vector{Float64}
     model = Model(solver=GLPKSolverLP())
@@ -50,7 +51,6 @@ function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, p::Polyhedro
     return getvalue(x)
 end
 
-
 """
     addconstraint!(p, c)
 
@@ -58,8 +58,8 @@ Add a linear constraint to a polyhedron.
 
 ### Input
 
-- ``P``          -- a polyhedron
-- ``constraint`` -- the linear constraint to add
+- `P`          -- a polyhedron
+- `constraint` -- the linear constraint to add
 """
 function addconstraint!(P::Polyhedron, c::LinearConstraint)
     push!(P.constraints, c)
@@ -72,10 +72,8 @@ Return the list of constraints defining a polyhedron in H-representation.
 
 ### Input
 
-- ``P`` -- polyhedron in H-representation
+- `P` -- polyhedron in H-representation
 """
 function constraints_list(P::Polyhedron)
     return P.constraints
 end
-
-export Polyhedron, addconstraint!, constraints_list

@@ -1,3 +1,8 @@
+import Base.<=
+
+export HPolygon, HPolygonOpt, addconstraint!, is_contained, plot_polygon,
+       VPolygon, tovrep, vertices_list
+
 """
     HPolygon <: LazySet
 
@@ -5,13 +10,7 @@ Type that represents a convex polygon (in H-representation).
 
 ### Fields
 
-- ``constraints`` --  an array of linear constraints
-
-EXMPLES:
-
-A triangle in the first quadrant::
-
-    julia> HPolygon()
+- `constraints` --  an array of linear constraints
 """
 mutable struct HPolygon <: LazySet
     constraints::Array{LinearConstraint, 1}
@@ -22,32 +21,6 @@ function dim(P::HPolygon)::Int64
     2
 end
 
-import Base.<=
-
-"""
-    u <= v
-
-States if arg(u) [2π] <= arg(v) [2π].
-
-### Input
-
-- ``u`` --  a first direction
-- ``v`` --  a second direction
-
-### Output
-
-True iff arg(u) [2π] <= arg(v) [2π]
-
-### Notes
-
-The argument is measured in counter-clockwise fashion, with the 0 being the
-direction (1, 0).
-"""
-function <=(u::Union{Vector{Float64}, SparseVector{Float64,Int64}},
-            v::Union{Vector{Float64}, SparseVector{Float64,Int64}})
-    return jump2pi(atan2(u[2], u[1])) <= jump2pi(atan2(v[2], v[1]))
-end
-
 """
     addconstraint!(p, c)
 
@@ -56,8 +29,8 @@ normal directions.
 
 ### Input
 
-- ``p`` -- a polygon
-- ``c`` -- the linear constraint to add
+- `p` -- a polygon
+- `c` -- the linear constraint to add
 """
 function addconstraint!(p::HPolygon, c::LinearConstraint)
     i = length(p.constraints)
@@ -77,8 +50,8 @@ polytope).
 
 ### Input
 
-- ``d`` -- direction
-- ``p`` -- polyhedron in H-representation
+- `d` -- direction
+- `p` -- polyhedron in H-representation
 """
 function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, p::HPolygon)::Vector{Float64}
     n = length(p.constraints)
@@ -96,7 +69,6 @@ function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, p::HPolygon)
     end
 end
 
-
 """
     is_contained(x, P)
 
@@ -104,12 +76,12 @@ Return whether a given vector is contained in the polygon.
 
 ### Input
 
-- ``x`` -- vector
-- ``P`` -- polygon
+- `x` -- vector
+- `P` -- polygon
 
 ### Output
 
-::Bool : true iff x ∈ P
+Return rue iff x ∈ P.
 """
 function is_contained(x::Vector{Float64}, P::HPolygon)::Bool
     if (length(x) != 2)
@@ -127,14 +99,17 @@ end
     HPolygonOpt <: LazySet
 
 Type that represents a convex polygon (in H-representation).
-This structure is optimized to evaluate the support function/vector with a large
-sequence of directions, which are one to one close.
 
 ### Fields
 
-- ``P``   -- polygon
-- ``ind`` -- an index in the list of constraints to begin the search to
-             evaluate the support functions.
+- `P`   -- polygon
+- `ind` -- an index in the list of constraints to begin the search to
+           evaluate the support functions.
+
+### Notes
+
+This structure is optimized to evaluate the support function/vector with a large
+sequence of directions, which are one to one close.
 """
 mutable struct HPolygonOpt <: LazySet
     constraints::Array{LinearConstraint, 1}
@@ -151,7 +126,7 @@ Return the ambient dimension of the optimized polygon.
 
 ### Input
 
-- ``P`` -- optimized polyhedron in H-representation
+- `P` -- optimized polyhedron in H-representation
 """
 function dim(P::HPolygonOpt)::Int64
     return 2
@@ -164,8 +139,8 @@ Return the support vector of the optimized polygon in a given direction.
 
 ### Input
 
-- ``d`` -- direction
-- ``P`` -- polyhedron in H-representation
+- `d` -- direction
+- `P` -- polyhedron in H-representation
 """
 function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, p::HPolygonOpt)::Vector{Float64}
     n = length(p.constraints)
@@ -204,12 +179,12 @@ Return whether a given vector is contained in the optimized polygon.
 
 ### Input
 
-- ``x`` -- vector
-- ``P`` -- polygon
+- `x` -- vector
+- `P` -- polygon
 
 ### Output
 
-True iff x ∈ P
+Return true iff x ∈ P.
 """
 function is_contained(x::Vector{Float64}, P::HPolygonOpt)::Bool
     if (length(x) != 2)
@@ -223,7 +198,6 @@ function is_contained(x::Vector{Float64}, P::HPolygonOpt)::Bool
     end
 end
 
-
 """
     VPolygon
 
@@ -231,7 +205,7 @@ Type that represents a polygon by its vertices.
 
 ### Fields
 
-- ``vl`` -- the list of vertices
+- `vl` -- the list of vertices
 """
 mutable struct VPolygon
     vl::Array{Vector{Float64}, 1}
@@ -245,8 +219,8 @@ Build a vertex representation of the given polygon.
 
 ### Input
 
-- ``s`` -- a polygon in H-representation, HPolygon. The linear constraints are
-           assumed sorted by their normal directions.
+- `s` -- a polygon in H-representation, HPolygon. The linear constraints are
+         assumed sorted by their normal directions.
 
 ### Output
 
@@ -271,8 +245,8 @@ Build a vertex representation of the given polygon.
 
 ### Input
 
-- ``po`` -- a polygon in H-representation. The linear constraints are
-            assumed sorted by their normal directions.
+- `po` -- a polygon in H-representation. The linear constraints are
+          assumed sorted by their normal directions.
 
 ### Output
 
@@ -283,13 +257,13 @@ function tovrep(po::HPolygonOpt)
 end
 
 """
-    vertices_list(po::Union{HPolygon, HPolygonOpt})
+    vertices_list(po)
 
 Return the list of vertices of a convex polygon.
 
 ### Input
 
-- ``po`` -- a polygon, which can be either of type HPolygon or the refined type HPolygonOpt
+- `po` -- a polygon, which can be either of type HPolygon or the refined type HPolygonOpt
 
 ### Output
 
@@ -310,9 +284,9 @@ Plot a polygon given in constraint form.
 
 ### Input
 
-- ``P`` -- a polygon, given as a HPolygon or the refined class HPolygonOpt
+- `P` -- a polygon, given as a HPolygon or the refined class HPolygonOpt
 
-- ``backend`` -- (optional, default: ``'pyplot'``): select the plot backend; valid
+- `backend` -- (optional, default: ``'pyplot'``): select the plot backend; valid
   options are:
 
                  -  ``'pyplot_savefig'`` -- use PyPlot package, save to a file
@@ -323,26 +297,30 @@ Plot a polygon given in constraint form.
 
                  - ``''`` -- (empty string), return nothing, without plotting
 
-- ``name`` -- (optional, default: ``'plot.png'``) the filename of the plot
+- `name` -- (optional, default: ``'plot.png'``) the filename of the plot
   (if it is saved to disk)
 
-- ``gridlines`` -- (optional, default: false) to display or not gridlines in
-                   the output plot
+- `gridlines` -- (optional, default: false) to display or not gridlines in
+                 the output plot
 
-EXAMPLES:
+### Examples
 
 This function can receive one polygon, as in:
 
-    julia> using LazySets, PyPlot
-    julia> H = HPolygon([LinearConstraint([1.0, 0.0], 0.6), LinearConstraint([0.0, 1.0], 0.6),
-           LinearConstraint([-1.0, 0.0], -0.4), LinearConstraint([0.0, -1.0], -0.4)])
-    julia> plot_polygon(H, backend="pyplot_inline");
+```julia
+julia> using LazySets, PyPlot
+julia> H = HPolygon([LinearConstraint([1.0, 0.0], 0.6), LinearConstraint([0.0, 1.0], 0.6),
+       LinearConstraint([-1.0, 0.0], -0.4), LinearConstraint([0.0, -1.0], -0.4)])
+julia> plot_polygon(H, backend="pyplot_inline");
+```
 
 Multiple polygons can be plotted passing a list instead of a single element:
 
-    julia> Haux = HPolygon([LinearConstraint([1.0, 0.0], 1.2), LinearConstraint([0.0, 1.0], 1.2),
-           LinearConstraint([-1.0, 0.0], -0.8), LinearConstraint([0.0, -1.0], -0.8)])
-    julia> plot_polygon([H, Haux], backend="pyplot_inline");
+```julia
+julia> Haux = HPolygon([LinearConstraint([1.0, 0.0], 1.2), LinearConstraint([0.0, 1.0], 1.2),
+       LinearConstraint([-1.0, 0.0], -0.8), LinearConstraint([0.0, -1.0], -0.8)])
+julia> plot_polygon([H, Haux], backend="pyplot_inline");
+```
 """
 function plot_polygon(P::Union{HPolygon, HPolygonOpt, Array{HPolygon, 1},
         SubArray{HPolygon, 1}, Array{HPolygonOpt, 1}};
@@ -395,6 +373,3 @@ function plot_polygon(P::Union{HPolygon, HPolygonOpt, Array{HPolygon, 1},
     end
 
 end
-
-export HPolygon, HPolygonOpt, addconstraint!, is_contained, plot_polygon,
-       VPolygon, tovrep, vertices_list
