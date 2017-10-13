@@ -12,6 +12,15 @@ CurrentModule = LazySets
 
 ## Balls
 
+Unit balls are defined by int center (vector) and radius (scalar), such as
+infinity-norm balls,
+
+$B_\infty(c, r) = \{ x ∈ \mathbb{R}^n : \Vert x - c\Vert_\infty \leq r \}.$
+
+and Euclidean (2-norm) balls,
+
+$B_2(c, r) = \{ x ∈ \mathbb{R}^n : \Vert x - c\Vert_2 \leq r \}.$
+
 ```@docs
 Hyperrectangle
 BallInf
@@ -22,6 +31,7 @@ Ball2
 
 ```@docs
 HPolygon
+HPolygonOpt
 VPolygon
 plot_polygon
 tovrep

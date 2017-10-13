@@ -287,18 +287,15 @@ Plot a polygon given in constraint form.
 - `P` -- a polygon, given as a HPolygon or the refined class HPolygonOpt
 
 - `backend` -- (optional, default: ``'pyplot'``): select the plot backend; valid
-  options are:
+               options are:
 
-                 -  ``'pyplot_savefig'`` -- use PyPlot package, save to a file
+    - `pyplot_savefig` -- use PyPlot package, save to a file
+    - `pyplot_inline`  -- use PyPlot package, showing in external program
+    - `gadfly`         -- use Gadfly package, showing in browser
+    - `''`             -- (empty string), return nothing, without plotting
 
-                 -  ``'pyplot_inline'`` -- use PyPlot package, showing in external program
-
-                 - ``'gadfly'`` -- use Gadfly package, showing in browser
-
-                 - ``''`` -- (empty string), return nothing, without plotting
-
-- `name` -- (optional, default: ``'plot.png'``) the filename of the plot
-  (if it is saved to disk)
+- `name` -- (optional, default: `plot.png`) the filename of the plot, if it is
+            saved to disk
 
 - `gridlines` -- (optional, default: false) to display or not gridlines in
                  the output plot

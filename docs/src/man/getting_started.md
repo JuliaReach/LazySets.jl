@@ -31,8 +31,14 @@ The convex hull operator is written $\CH$. Let $\boxdot(\cdot)$ be the symmetric
 
 ## Support Function
 
-We recall the following elementary properties of support functions and support vectors.
+The support function is a basic notion for approximating convex sets. Let
+$\mathcal{X} \subset \mathbb{R}^n$ be a compact convex set.
+The *support function* of $\mathcal{X}$ is the function
+$\rho_\mathcal{X} : \mathbb{R}^n\to \mathbb{R}$, defined as
 
+$\rho_\mathcal{X}(\ell) := \max\limits_{x \in \mathcal{X}} \ell^\transp x.$
+
+We recall the following elementary properties of the support function.
 
 **Proposition.** For all compact convex
 sets $\mathcal{X}$, $\mathcal{Y}$ in $\mathbb{R}^n$, for all $n\times n$ real
@@ -52,8 +58,8 @@ matrices $M$, all scalars $\lambda$, and all vectors $\ell \in \mathbb{R}^n$, we
 ## Support Vector
 
 The farthest points of $\mathcal{X}$ in the direction $\ell$ 
-are the *support vectors* denoted $\sigma_\mathcal{X}(\ell)$.
-Mathematically, these points are optimal for (1), i.e.,
+are the *support vectors* denoted $\sigma_\mathcal{X}(\ell)$. These points correspond
+to the optimal points for the support function, i.e.,
 
 $\sigma_\mathcal{X}(\ell) := \{ x \in \mathcal{X} : \ell^\mathrm{T} x  = \rho_{\mathcal{X}}(\ell)  \}.$
 

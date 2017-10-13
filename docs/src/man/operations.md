@@ -31,9 +31,19 @@ CartesianProduct
 CartesianProductArray
 ```
 
-## Linear and Exponential Maps
+## Linear Maps
 
 ```@docs
 LinearMap
+```
+
+## Exponential Maps
+
+```@docs
 ExponentialMap
+ExponentialProjectionMap
+ProjectionSparseMatrixExp
+SparseMatrixExp
+σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}},
+           eprojmap::ExponentialProjectionMap)
 ```

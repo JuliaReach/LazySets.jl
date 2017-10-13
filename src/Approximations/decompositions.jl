@@ -114,8 +114,8 @@ no check is performed to verify that assumption.
 
 It proceeds as follows:
 
-1. Project the set `X` into each partition, with ``MX``, where ``M`` is the
-identity matrix in the block coordinates and zero otherwise.
+1. Project the set `X` into each partition, with ``MX``, where ``M`` is the identity
+   matrix in the block coordinates and zero otherwise.
 2. Overapproximate the set with a given error bound, `ɛi[i]`, for ``i = 1, …, b``,
 3. Return the result as an array of support functions.
 """
@@ -146,7 +146,7 @@ bound for each block is assumed.
 
 ### Output
 
-A CartesianProductArray corresponding to the cartesian product of 2x2 polygons.
+A `CartesianProductArray` corresponding to the cartesian product of 2x2 polygons.
 """
 function decompose(X::LazySet, ɛ::Float64)::CartesianProductArray
     n = LazySets.dim(X)

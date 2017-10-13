@@ -67,7 +67,7 @@ The intersection point.
 
 ### Examples
 
-The line `y = -x + 1` intersected with `y = x`::
+The line `y = -x + 1` intersected with `y = x`:
 
 ```julia
 julia> intersection(Line([1., 1.], 1.), Line([-1., 1.], 0.))
