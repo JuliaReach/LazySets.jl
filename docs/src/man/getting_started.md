@@ -15,19 +15,6 @@ Let us introduce some notation. Let $\mathbb{I}_n$ be the identity matrix of dim
 For $p \geq 1$, the $p$-norm of an $n$-dimensional vector $x \in \mathbb{R}^n$ is denoted 
 $\Vert x \Vert_p$.
 
-The norm of a set $\mathcal{X}$ is $\norm{\mathcal{X}}_p=\max_{x \in \mathcal{X}} \norm{x}_p$.
-%\mytodo[CS2MF]{I changed $1\leq p \leq \infty$ to $p \geq 1$ because we dropped the infinity norm.}
-%$\norm{x}_p := \left( \sum_{i=1}^n \vert x_i\vert^p \right)^{1/p}$
-% In particular, $p=\infty$ stands for the supremum norm, $\norm{x}_\infty := \max \{ \vert x_i \vert : i = 1,\ldots,n\}$.
-%$\norm{x}_\infty := \max_i |x_i|$. 
-Let $\Bpn$ be the unit ball of the $p$-norm in $n$ dimensions, i.e., $\Bpn = \{ x : \norm{x}_p \leq 1 \}$. 
-%
-%From the dual norm property~\cite{horn2012matrix}, the matrix norm induced by the $p$-norm on vectors satisfies ${\norm{A^\mathrm{T}}}_\frac{p}{p-1}=\norm{A}_p$, for any $A \in \mathbb{R}eals^{n\times n}$.
-%
-The Minkowski sum of sets $\mathcal{X}$ and $\Y$ is $\mathcal{X} \oplus \Y := \{ x + y : x \in \mathcal{X} \text{ and } y \in \Y \}.$ Their Cartesian product, $\mathcal{X}\times \Y$, is the set of ordered pairs $(x, y)$, with $x \in \mathcal{X}$ and $y\in \Y$. The origin in $\mathbb{R}^n$ is written \norigin{n}. There is a relation between products of sets and Minkowski sum: if $\mathcal{X} \subseteq \mathbb{R}eals^n$ and $\Y \subseteq \mathbb{R}eals^m$, then
-$\mathcal{X} \times \Y = (\mathcal{X} \times \{  \norigin{m} \} ) \oplus (\{ \norigin{n} \} \times \Y).$
-%$\mathcal{X} \times \Y = (\mathcal{X} \times \{  \zero[m\times 1] \} ) \oplus (\{ \zero[n\times 1] \} \times \Y).$
-The convex hull operator is written $\CH$. Let $\boxdot(\cdot)$ be the symmetric interval hull operator, defined for any $\mathcal{X} \subset \mathbb{R}^n$ as the $n$-th fold Cartesian product of the intervals $[-\vert \bar{x}_i\vert, \vert \bar{x}_i \vert]$ for all $i=1,\ldots,n$, where $\vert \bar{x}_i \vert := \sup\{\vert x_i \vert: x \in \mathcal{X}\}$.
 
 ## Support Function
 

@@ -35,10 +35,20 @@ functionality is available:
 ```@contents
 Pages = [
     "man/getting_started.md",
-    "man/representations.md",
-    "man/operations.md",
-    "man/approximations.md"
+    "man/support_vectors.md",
+    "man/polyhedral_approximations.md",
+    "man/fast_2d_LPs.md"
 ]
 Depth = 2
 ```
 
+## Library Outline
+
+```@contents
+Pages = [
+    "lib/representations.md",
+    "lib/operations.md",
+    "lib/approximations.md"
+]
+Depth = 2
+```
