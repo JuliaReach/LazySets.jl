@@ -11,6 +11,10 @@ notifications:
 git:
   depth: 99999999
 
+# dependencies that are not in METADATA
+before_script::
+  - julia -e 'Pkg.clone("https://github.com/acroy/Expokit.jl")'
+ 
 ## uncomment the following lines to allow failures on nightly julia
 ## (tests will run but not make your overall status red)
 matrix:
@@ -18,8 +22,6 @@ matrix:
     - julia: nightly
 
 ## uncomment and modify the following lines to manually install system packages
-addons:
-  - julia -e 'Pkg.clone("https://github.com/acroy/Expokit.jl")'
 #  apt: # apt-get for linux
 #    packages:
 #    - gfortran
