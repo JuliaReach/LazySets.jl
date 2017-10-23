@@ -13,7 +13,7 @@ git:
 
 # dependencies that are not in METADATA
 before_script:
-  - julia -e 'Pkg.clone("https://github.com/acroy/Expokit.jl")'
+  - julia -e 'Pkg.clone("git://github.com/acroy/Expokit.jl.git")'
  
 ## uncomment the following lines to allow failures on nightly julia
 ## (tests will run but not make your overall status red)
