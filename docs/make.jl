@@ -19,10 +19,10 @@ makedocs(
 )
 
 deploydocs(
-    repo = "github.com/mforets/LazySets.jl",
+    repo = "github.com/mforets/LazySets.jl.git",
     target = "build",
     osname = "linux",
     julia  = "0.6",
-    deps = nothing,
-    make = nothing,
+    deps = Deps.pip("mkdocs", "python-markdown-math"),
+    make = nothing
 )
