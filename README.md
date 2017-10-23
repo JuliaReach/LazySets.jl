@@ -1,5 +1,7 @@
 # LazySets.jl
 
+[![Build Status](https://travis-ci.org/mforets/LazySets.jl.svg?branch=master)](https://travis-ci.org/mforets/LazySets.jl)
+
 `LazySets` is a [Julia](http://julialang.org) package for calculus with convex sets.
 
 ## Resources
