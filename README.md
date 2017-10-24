@@ -17,7 +17,7 @@
 
 This package requires Julia v0.6 or later. Refer to the official documentation on how to install it for your system. 
 
-To install the [Expokit]() dependency, it use the following command inside Julia's REPL:
+To install the [Expokit](https://github.com/acroy/Expokit.jl) dependency, it use the following command inside Julia's REPL:
 ```julia
 Pkg.clone("https://github.com/acroy/Expokit.jl")
 ```
