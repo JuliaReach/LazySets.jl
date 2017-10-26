@@ -108,11 +108,15 @@ function ballinf_approximation(X::LazySet)::BallInf
     n = dim(X)
     c = Vector{Float64}(n)
     r = 0.
-    dplus(i::Int64) = [zeros(i-1); 1.; zeros(n-i)]
-    dminus(i::Int64) = [zeros(i-1); -1.; zeros(n-i)]
+    dplus = zeros(n)
+    dminus = zeros(n)
     @inbounds for i in 1:n
+        dplus[i] = 1.0
+        dminus[i] = -1.0
         htop = ρ(dplus(i), X)
         hbottom = -ρ(dminus(i), X)
+        dplus[i] = 0.0
+        dminus[i] = 0.0
         c[i] = (htop+hbottom)/2.
         rcur = (htop-hbottom)/2.
         if (rcur > r)
