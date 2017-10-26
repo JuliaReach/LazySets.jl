@@ -5,6 +5,8 @@ Main module for `LazySets.jl` -- a Julia package for calculus with convex sets.
 """
 module LazySets
 
+using RecipesBase
+
 export LazySet, dim, σ, support_vector, ρ, support_function,
        Approximations
 
