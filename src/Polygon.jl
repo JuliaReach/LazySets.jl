@@ -332,14 +332,8 @@ julia> plot([H1, H2])
     seriestype := :shape
     label --> ""
 
-    xs = Float64[]
-    ys = Float64[]
-
     for Pi in P
-        vlist = [hcat(vertices_list(Pi)...).'; [NaN NaN]]
-        (x, y) = vlist[:, 1], vlist[:, 2]
-        append!(xs, x)
-        append!(ys, y)
+        vlist = hcat(vertices_list(Pi)...).'
+        @series (x, y) = vlist[:, 1], vlist[:, 2]
     end
-    xs, ys
 end
