@@ -1,6 +1,6 @@
 import Base.<=
 
-export HPolygon, HPolygonOpt, addconstraint!, is_contained, plot_polygon,
+export HPolygon, HPolygonOpt, addconstraint!, is_contained,
        VPolygon, tovrep, vertices_list
 
 """
@@ -276,97 +276,64 @@ function vertices_list(po::Union{HPolygon, HPolygonOpt})::Array{Array{Float64,1}
     return vlist
 end
 
-
 """
-    plot_polygon(P, backend, [name], [gridlines])
+    plot_Polygon(P::Union{HPolygon, HPolygonOpt})
 
 Plot a polygon given in constraint form.
-
+ 
 ### Input
 
-- `P` -- a polygon, given as a HPolygon or the refined class HPolygonOpt
-
-- `backend` -- (optional, default: ``'pyplot'``): select the plot backend; valid
-               options are:
-
-    - `pyplot_savefig` -- use PyPlot package, save to a file
-    - `pyplot_inline`  -- use PyPlot package, showing in external program
-    - `gadfly`         -- use Gadfly package, showing in browser
-    - `''`             -- (empty string), return nothing, without plotting
-
-- `name` -- (optional, default: `plot.png`) the filename of the plot, if it is
-            saved to disk
-
-- `gridlines` -- (optional, default: false) to display or not gridlines in
-                 the output plot
+- `P` -- a polygon in constraint representation
 
 ### Examples
 
-This function can receive one polygon, as in:
-
 ```julia
-julia> using LazySets, PyPlot
+julia> using LazySets, Plots
 julia> H = HPolygon([LinearConstraint([1.0, 0.0], 0.6), LinearConstraint([0.0, 1.0], 0.6),
-       LinearConstraint([-1.0, 0.0], -0.4), LinearConstraint([0.0, -1.0], -0.4)])
-julia> plot_polygon(H, backend="pyplot_inline");
-```
-
-Multiple polygons can be plotted passing a list instead of a single element:
-
-```julia
-julia> Haux = HPolygon([LinearConstraint([1.0, 0.0], 1.2), LinearConstraint([0.0, 1.0], 1.2),
-       LinearConstraint([-1.0, 0.0], -0.8), LinearConstraint([0.0, -1.0], -0.8)])
-julia> plot_polygon([H, Haux], backend="pyplot_inline");
+                     LinearConstraint([-1.0, 0.0], -0.4), LinearConstraint([0.0, -1.0], -0.4)])
+julia> plot(H)
 ```
 """
-function plot_polygon(P::Union{HPolygon, HPolygonOpt, Array{HPolygon, 1},
-        SubArray{HPolygon, 1}, Array{HPolygonOpt, 1}};
-        backend="pyplot_savefig", name="plot.png", gridlines=false, color="blue",
-        plot_labels::Vector{String}=["", ""])
-    if backend in ["pyplot_inline", "pyplot_savefig"]
-        if !isdefined(:PyPlot)
-            error("this backend requires that your script loads the PyPlot module")
-        end
-        eval(Expr(:using, :PyPlot))
-        if backend == "pyplot_savefig"
-            PyPlot.ioff()  # turn off interactive plotting
-            fig = PyPlot.figure()
-        end
-        gridlines ? grid("on") : grid("off")
-        # check if P is iterable
-        applicable(start, P) ? nothing : P = [P]
-        PyPlot.xlabel(plot_labels[1])
-        PyPlot.ylabel(plot_labels[2])
-        for pi in P
-            vlist = hcat(vertices_list(pi)...).'  # each ROW represents a vertex
-            # we repeat the 1st element (to "close" the rectangle)
-            xcoords = [vlist[:, 1]; vlist[1, 1]]
-            ycoords = [vlist[:, 2]; vlist[1, 2]]
-            PyPlot.plot(xcoords, ycoords, color=color, linewidth=0.6)
-        end
-        if backend == "pyplot_savefig"
-            PyPlot.savefig(name, bbox_inches="tight")
-            PyPlot.close(fig)
-        end
+@recipe function plot_Polygon(P::Union{HPolygon, HPolygonOpt})
 
-    elseif backend in ["gadfly"]
-        if !isdefined(:Gadfly)
-            error("this backend requires that your script loads the Gadfly module")
-        end
-        eval(Expr(:using, :Gadfly))
-        # check if P is iterable
-        applicable(start, P) ? nothing : P = [P]
-        layers_array = Vector{Vector{Gadfly.Layer}}(length(P))
-        for i in eachindex(P)
-            vlist = hcat(vertices_list(P[i])...).'  # each ROW represents a vertex
-            layers_array[i] = Gadfly.layer(x=vlist[:, 1], y=vlist[:, 2], Geom.polygon(preserve_order=false, fill=true))
-        end
-        Gadfly.plot(layers_array...)
+    alpha --> 0.5
+    seriestype := :shape
+    label --> ""
 
-    elseif backend == ""
-        return nothing
-    else
-        error("plot backend not valid")
+    vlist = hcat(vertices_list(P)...).'
+    (x, y) = vlist[:, 1], vlist[:, 2]
+ 
+     x, y
+end
+
+"""
+    plot_Polygon(P::Union{Vector{HPolygon}, Vector{HPolygonOpt}})
+
+Plot an array of polygons given in constraint form.
+ 
+### Input
+
+- `P` -- an array of polygons in constraint representation
+
+### Examples
+
+```julia
+julia> using LazySets, Plots
+julia> H1 = HPolygon([LinearConstraint([1.0, 0.0], 0.6), LinearConstraint([0.0, 1.0], 0.6),
+                      LinearConstraint([-1.0, 0.0], -0.4), LinearConstraint([0.0, -1.0], -0.4)])
+julia> H2 = HPolygon([LinearConstraint([2.0, 0.0], 0.6), LinearConstraint([0.0, 2.0], 0.6),
+                      LinearConstraint([-2.0, 0.0], -0.4), LinearConstraint([0.0, -2.0], -0.4)])
+julia> plot([H1, H2])
+```
+"""
+@recipe function plot_Polygon(P::Union{Vector{HPolygon}, Vector{HPolygonOpt}})
+
+    alpha --> 0.5
+    seriestype := :shape
+    label --> ""
+
+    for Pi in P
+        vlist = hcat(vertices_list(Pi)...).'
+        @series (x, y) = vlist[:, 1], vlist[:, 2]
     end
-
 end

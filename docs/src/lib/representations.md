@@ -22,7 +22,6 @@ and Euclidean (2-norm) balls,
 $B_2(c, r) = \{ x ∈ \mathbb{R}^n : \Vert x - c\Vert_2 \leq r \}.$
 
 ```@docs
-Hyperrectangle
 BallInf
 Ball2
 ```
@@ -32,7 +31,6 @@ Ball2
 ```@docs
 HPolygon
 VPolygon
-plot_polygon
 tovrep
 ```
 
@@ -42,6 +40,13 @@ tovrep
 intersection
 LinearConstraint
 Line
+```
+
+## Hyperrectangle
+
+```@docs
+Hyperrectangle
+radius(H::Hyperrectangle)
 ```
 
 ## VoidSet
