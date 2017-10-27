@@ -1,0 +1,9 @@
+codecov:
+  token: 460b55aa-717c-4e93-915f-add20a22ad57
+  
+coverage:
+  status:
+    project: off
+    patch: off
+
+comment: false
