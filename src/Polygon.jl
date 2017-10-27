@@ -331,6 +331,7 @@ julia> plot([H1, H2])
     alpha --> 0.5
     seriestype := :shape
     label --> ""
+    color --> "blue"
 
     for Pi in P
         vlist = hcat(vertices_list(Pi)...).'
