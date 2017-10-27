@@ -113,8 +113,8 @@ function ballinf_approximation(X::LazySet)::BallInf
     @inbounds for i in 1:n
         dplus[i] = 1.0
         dminus[i] = -1.0
-        htop = ρ(dplus(i), X)
-        hbottom = -ρ(dminus(i), X)
+        htop = ρ(dplus, X)
+        hbottom = -ρ(dminus, X)
         dplus[i] = 0.0
         dminus[i] = 0.0
         c[i] = (htop+hbottom)/2.
