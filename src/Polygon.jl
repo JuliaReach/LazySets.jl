@@ -294,11 +294,10 @@ julia> H = HPolygon([LinearConstraint([1.0, 0.0], 0.6), LinearConstraint([0.0, 1
 julia> plot(H)
 ```
 """
-@recipe function plot_Polygon(P::Union{HPolygon, HPolygonOpt})
+@recipe function plot_Polygon(P::Union{HPolygon, HPolygonOpt};
+                              color="blue", label="", grid=true, alpha=0.5)
 
-    alpha --> 0.5
     seriestype := :shape
-    label --> ""
 
     vlist = hcat(vertices_list(P)...).'
     (x, y) = vlist[:, 1], vlist[:, 2]
@@ -326,12 +325,10 @@ julia> H2 = HPolygon([LinearConstraint([2.0, 0.0], 0.6), LinearConstraint([0.0, 
 julia> plot([H1, H2])
 ```
 """
-@recipe function plot_Polygon(P::Union{Vector{HPolygon}, Vector{HPolygonOpt}})
+@recipe function plot_Polygon(P::Union{Vector{HPolygon}, Vector{HPolygonOpt}};
+                              color="blue", label="", grid=true, alpha=0.5)
 
-    alpha --> 0.5
     seriestype := :shape
-    label --> ""
-    color --> "blue"
 
     for Pi in P
         vlist = hcat(vertices_list(Pi)...).'
