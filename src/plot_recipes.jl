@@ -38,7 +38,7 @@ Plot an array of lazy sets in two-dimensions using an axis-aligned approximation
  
 ### Input
 
-- `X` -- a convex set
+- `X` -- an array of convex sets
 
 ### Examples
 
@@ -49,7 +49,7 @@ julia> B2 = BallInf(ones(2), 0.4)
 julia> plot([B1, B2])
 ```
 """
-@recipe function plot_LazySet(X::Vector{T}; color="blue", label="",
+@recipe function plot_LazySet(X::Vector{T}; seriescolor="blue", label="",
                               grid=true, alpha=0.5) where {T<:LazySet}
 
     seriestype := :shape
@@ -98,7 +98,7 @@ Plot an array of lazy sets in two-dimensions using iterative refinement.
  
 ### Input
 
-- `X` -- a convex set
+- `X` -- an array of convex sets
 - `ε` -- approximation error bound
 
 ### Examples
@@ -110,7 +110,7 @@ julia> B2 = Ball2(ones(2), 0.4)
 julia> plot([B1, B2], 1e-4)
 ```
 """
-@recipe function plot_LazySet(X::Vector{T}, ε::Float64; color="blue", label="",
+@recipe function plot_LazySet(X::Vector{T}, ε::Float64; seriescolor="blue", label="",
                               grid=true, alpha=0.5) where {T<:LazySet}
 
     seriestype := :shape

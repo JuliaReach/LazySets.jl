@@ -326,7 +326,7 @@ julia> plot([H1, H2])
 ```
 """
 @recipe function plot_Polygon(P::Union{Vector{HPolygon}, Vector{HPolygonOpt}};
-                              color="blue", label="", grid=true, alpha=0.5)
+                              seriescolor="blue", label="", grid=true, alpha=0.5)
 
     seriestype := :shape
 
