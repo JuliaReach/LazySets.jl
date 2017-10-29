@@ -277,7 +277,7 @@ function vertices_list(po::Union{HPolygon, HPolygonOpt})::Array{Array{Float64,1}
 end
 
 """
-    plot_Polygon(P::Union{HPolygon, HPolygonOpt})
+    plot_Polygon(P::Union{HPolygon, HPolygonOpt}; ...)
 
 Plot a polygon given in constraint form.
  
@@ -306,7 +306,7 @@ julia> plot(H)
 end
 
 """
-    plot_Polygon(P::Union{Vector{HPolygon}, Vector{HPolygonOpt}})
+    plot_Polygon(P::Union{Vector{HPolygon}, Vector{HPolygonOpt}}; ...)
 
 Plot an array of polygons given in constraint form.
  
