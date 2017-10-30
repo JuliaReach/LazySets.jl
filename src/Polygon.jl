@@ -199,7 +199,7 @@ function is_contained(x::Vector{Float64}, P::HPolygonOpt)::Bool
 end
 
 """
-    VPolygon
+    VPolygon <: LazySet
 
 Type that represents a polygon by its vertices.
 
@@ -207,7 +207,7 @@ Type that represents a polygon by its vertices.
 
 - `vl` -- the list of vertices
 """
-mutable struct VPolygon
+mutable struct VPolygon <: LazySet
     vl::Array{Vector{Float64}, 1}
 end
 VPolygon() = VPolygon([])
