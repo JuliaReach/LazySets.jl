@@ -10,11 +10,12 @@ Type that represents the convex hull of the union of two convex sets.
 - `X` -- a convex set
 - `Y` -- another convex set
 """
-struct ConvexHull <: LazySet
-    X::LazySet
-    Y::LazySet
-    ConvexHull(X, Y) = dim(X) != dim(Y) ? throw(DimensionMismatch) : new(X, Y)
+struct ConvexHull{T1<:LazySet,T2<:LazySet} <: LazySet
+    X::T1
+    Y::T2
+    ConvexHull{T1,T2}(X::T1, Y::T2) where {T1<:LazySet,T2<:LazySet} = dim(X) != dim(Y) ? throw(DimensionMismatch) : new(X, Y)
 end
+ConvexHull(X::T1, Y::T2) where {T1<:LazySet,T2<:LazySet} = ConvexHull{T1,T2}(X, Y)
 # function alias
 CH = ConvexHull
 
