@@ -12,20 +12,21 @@ changes the behaviour of the support vector of the new set.
 - `M`  -- a linear map, which can a be densem matrix, sparse matrix or a subarray object
 - `sf` -- a convex set represented by its support function
 """
-type LinearMap <: LazySet
-    M::Union{Matrix{Float64}, SparseMatrixCSC{Float64,Int64}, SubArray}
-    sf::LazySet
+type LinearMap{MT<:Union{Matrix{Float64}, SparseMatrixCSC{Float64,Int64}, SubArray},ST<:LazySet} <: LazySet
+    M::MT
+    sf::ST
 
     # in case of constructing a linear map from a linear map, the matrix
     # multiplication is performed here 
-    function LinearMap(M, S)
+    function LinearMap{MT,ST}(M, S) where {MT<:Union{Matrix{Float64}, SparseMatrixCSC{Float64,Int64}, SubArray},ST<:LazySet}
         if isa(S, LinearMap)
-            return new(M * S.M, S.sf)
+            return new(M * S::LinearMap.M, S.sf)
         else
             return new(M, S)
         end
     end
 end
+LinearMap(M::MT, sf::ST) where {MT<:Union{Matrix{Float64}, SparseMatrixCSC{Float64,Int64}, SubArray},ST<:LazySet} = LinearMap{MT,ST}(M, sf)
 
 import Base.*
 
