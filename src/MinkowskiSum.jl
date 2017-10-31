@@ -12,12 +12,13 @@ Type that represents the Minkowski sum of two convex sets.
 - `X` -- a convex set
 - `Y` -- a convex set
 """
-struct MinkowskiSum <: LazySet
-    X::LazySet
-    Y::LazySet
+struct MinkowskiSum{T1<:LazySet,T2<:LazySet} <: LazySet
+    X::T1
+    Y::T2
 
-    MinkowskiSum(X, Y) = dim(X) != dim(Y) ? throw(DimensionMismatch) : new(X, Y)
+    MinkowskiSum{T1,T2}(X::T1, Y::T2) where {T1<:LazySet,T2<:LazySet} = dim(X) != dim(Y) ? throw(DimensionMismatch) : new(X, Y)
 end
+MinkowskiSum(X::T1, Y::T2) where {T1<:LazySet,T2<:LazySet} = MinkowskiSum{T1,T2}(X, Y)
 
 function +(X::LazySet, Y::LazySet)
     return MinkowskiSum(X, Y)
@@ -50,12 +51,13 @@ Type that represents the Minkowski sum of a finite number of sets.
 
 This type is optimized to be used on the left-hand side of additions only.
 """
-mutable struct MinkowskiSumArray <: LazySet
-    sfarray::Array{LazySet, 1}
+mutable struct MinkowskiSumArray{T<:LazySet} <: LazySet
+    sfarray::Vector{T}
 
-    MinkowskiSumArray(sfarray) = new(sfarray)
+    MinkowskiSumArray{T}(sfarray::Vector{T}) where {T<:LazySet} = new(sfarray)
 end
-MinkowskiSumArray() = MinkowskiSumArray(Array{LazySet, 1}(0))
+MinkowskiSumArray() = MinkowskiSumArray{LazySet}(Vector{LazySet}(0))
+MinkowskiSumArray(sfarray::Vector{T}) where {T<:LazySet} = MinkowskiSumArray{T}(sfarray)
 
 function MinkowskiSumArray(n::Int64)::MinkowskiSumArray
     arr = Array{LazySet, 1}(0)
