@@ -25,6 +25,7 @@ struct CartesianProduct{T1<:LazySet,T2<:LazySet} <: LazySet
             # NOTE: use array type instead of element type (bit of a mess otherwise)
 end
 CartesianProduct(X::T1, Y::T2) where {T1<:LazySet,T2<:LazySet} = CartesianProduct{T1,T2}(X, Y)
+CartesianProduct(Xarr::Vector{T}) where {T<:LazySet} = CartesianProduct{T}(Xarr)
 
 function *(X::LazySet, Y::LazySet)::CartesianProduct
     CartesianProduct(X, Y)
