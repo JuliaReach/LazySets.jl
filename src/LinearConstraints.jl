@@ -71,7 +71,7 @@ The line `y = -x + 1` intersected with `y = x`:
 
 ```julia
 julia> intersection(Line([1., 1.], 1.), Line([-1., 1.], 0.))
-2-element Vector{Float64}:
+2-element Array{Float64,1}:
  0.5
  0.5
 ```
