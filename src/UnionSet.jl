@@ -9,9 +9,10 @@ Type that represents a union of convex sets.
 
 - `sets` --  a list of convex sets
 """
-struct UnionSet <: LazySet
-    sets::Array{LazySet, 1}
+struct UnionSet{T<:LazySet} <: LazySet
+    sets::Vector{T}
 end
+UnionSet(sets::Vector{T}) where {T<:LazySet} = UnionSet{T}(sets)
 
 """
     is_contained(x, U)

@@ -15,14 +15,17 @@ Type that represents the cartesian product.
 For the cartesian product a several sets, there exists a special
 type `CartesianProductArray`. 
 """
-struct CartesianProduct <: LazySet
-    X::LazySet
-    Y::LazySet
-    CartesianProduct(X::LazySet, Y::LazySet) = new(X, Y)
-    CartesianProduct(Xarr::Array{LazySet, 1}) = length(Xarr) == 0 ?
+struct CartesianProduct{T1<:LazySet,T2<:LazySet} <: LazySet
+    X::T1
+    Y::T2
+    CartesianProduct{T1,T2}(X::T1, Y::T2) where {T1<:LazySet,T2<:LazySet} = new(X, Y)
+    CartesianProduct{T}(Xarr::Vector{T}) where {T<:LazySet} = length(Xarr) == 0 ?
             VoidSet(1) : (length(Xarr) == 1 ? Xarr[1] :
-            new(Xarr[1], CartesianProduct(Xarr[2:length(Xarr)])))
+            new{T,T}(Xarr[1], CartesianProduct{T}(Xarr[2:length(Xarr)])))
+            # NOTE: use array type instead of element type (bit of a mess otherwise)
 end
+CartesianProduct(X::T1, Y::T2) where {T1<:LazySet,T2<:LazySet} = CartesianProduct{T1,T2}(X, Y)
+CartesianProduct(Xarr::Vector{T}) where {T<:LazySet} = CartesianProduct{T}(Xarr)
 
 function *(X::LazySet, Y::LazySet)::CartesianProduct
     CartesianProduct(X, Y)
@@ -87,12 +90,13 @@ Type that represents the cartesian product of a finite number of sets.
 
 - `sfarray` -- array of sets
 """
-mutable struct CartesianProductArray <: LazySet
-    sfarray::Array{LazySet, 1}
+mutable struct CartesianProductArray{T<:LazySet} <: LazySet
+    sfarray::Vector{T}
 
-    CartesianProductArray(sfarray) = new(sfarray)
+    CartesianProductArray{T}(sfarray::Vector{T}) where {T<:LazySet} = new(sfarray)
 end
-CartesianProductArray() = CartesianProductArray(Array{LazySet, 1}(0))
+CartesianProductArray() = CartesianProductArray{LazySet}(Vector{LazySet}(0))
+CartesianProductArray(sfarray::Vector{T}) where {T<:LazySet} = CartesianProductArray{T}(sfarray)
 
 """
     dim(cp)
