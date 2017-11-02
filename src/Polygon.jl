@@ -12,7 +12,7 @@ Type that represents a convex polygon (in H-representation).
 
 - `constraints` --  an array of linear constraints
 """
-mutable struct HPolygon <: LazySet
+struct HPolygon <: LazySet
     constraints::Vector{LinearConstraint}
 end
 HPolygon() = HPolygon([])
@@ -207,7 +207,7 @@ Type that represents a polygon by its vertices.
 
 - `vl` -- the list of vertices
 """
-mutable struct VPolygon <: LazySet
+struct VPolygon <: LazySet
     vl::Vector{Vector{Float64}}
 end
 VPolygon() = VPolygon([])

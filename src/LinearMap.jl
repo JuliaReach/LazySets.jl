@@ -12,7 +12,7 @@ changes the behaviour of the support vector of the new set.
 - `M`  -- a linear map, which can a be densem matrix, sparse matrix or a subarray object
 - `sf` -- a convex set represented by its support function
 """
-type LinearMap{T<:LazySet} <: LazySet
+struct LinearMap{T<:LazySet} <: LazySet
     M::AbstractMatrix{Float64}
     sf::T
 

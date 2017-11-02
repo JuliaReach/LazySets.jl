@@ -22,7 +22,7 @@ This class is provided for use with very large and very sparse matrices. The
 evaluation of the exponential matrix action over vectores relies on the
 Expokit package. 
 """
-mutable struct SparseMatrixExp
+struct SparseMatrixExp
     M::SparseMatrixCSC{Float64,Int64}
 end
 
@@ -87,7 +87,7 @@ Type that represents the action of an exponential map on a set.
 - `spmexp`  -- a matrix exponential
 - `X`      -- a convex set represented by its support function
 """
-mutable struct ExponentialMap{T<:LazySet} <: LazySet
+struct ExponentialMap{T<:LazySet} <: LazySet
     spmexp::SparseMatrixExp
     X::T
 end
@@ -126,7 +126,7 @@ Type that represents the projection of a SparseMatrixExp.
 A type that abstract the matrix operation `L * exp(E.M) * R`, for a given sparse
 matrix E.M.
 """
-mutable struct ProjectionSparseMatrixExp
+struct ProjectionSparseMatrixExp
     L::SparseMatrixCSC{Float64,Int64}
     spmexp::SparseMatrixExp
     R::SparseMatrixCSC{Float64,Int64}
@@ -143,7 +143,7 @@ a given set.
 - `spmexp`   -- the projection of an exponential map
 - `X`       -- a set represented by its support function
 """
-mutable struct ExponentialProjectionMap{T<:LazySet} <: LazySet
+struct ExponentialProjectionMap{T<:LazySet} <: LazySet
     projspmexp::ProjectionSparseMatrixExp
     X::T
 end
