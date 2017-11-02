@@ -43,3 +43,8 @@ d = [-1., -1.]
 @test σ(d, lm) == [-2., -2.]
 d = [1., -1.]
 @test σ(d, lm) == [2., -2.]
+
+# Nested construction
+lm1_copy = LinearMap(eye(2), lm1)
+@test lm1_copy.M == lm1.M
+@test lm1_copy.sf == lm1.sf
