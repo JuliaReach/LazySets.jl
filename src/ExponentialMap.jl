@@ -22,26 +22,26 @@ This class is provided for use with very large and very sparse matrices. The
 evaluation of the exponential matrix action over vectores relies on the
 Expokit package. 
 """
-mutable struct SparseMatrixExp
-    M::SparseMatrixCSC{Float64,Int64}
+mutable struct SparseMatrixExp{Float64}
+    M::SparseMatrixCSC{Float64, 2}
 end
 
-function size(spmexp::SparseMatrixExp)::Tuple{Int64,Int64}
+function size(spmexp::SparseMatrixExp{Float64})::Tuple{Int64,Int64}
     return size(spmexp.M)
 end
 
-function size(spmexp::SparseMatrixExp, ax::Int64)::Int64
+function size(spmexp::SparseMatrixExp{Float64}, ax::Int64)::Int64
     return size(spmexp.M, ax)
 end
 
-function get_column(spmexp::SparseMatrixExp, j::Int64)::Vector{Float64}
+function get_column(spmexp::SparseMatrixExp{Float64}, j::Int64)::Vector{Float64}
     n = size(spmexp, 1)
     aux = zeros(n)
     aux[j] = 1.0
     return expmv(1.0, spmexp.M, aux)
 end
 
-function get_columns(spmexp::SparseMatrixExp, J::AbstractArray)::SparseMatrixCSC{Float64}
+function get_columns(spmexp::SparseMatrixExp{Float64}, J::AbstractArray)::SparseMatrixCSC{Float64}
     n = size(spmexp, 1)
     aux = zeros(n)
     ans = spzeros(n, length(J))
@@ -55,14 +55,14 @@ function get_columns(spmexp::SparseMatrixExp, J::AbstractArray)::SparseMatrixCSC
     return ans
 end
 
-function get_row(spmexp::SparseMatrixExp, i::Int64)::Matrix{Float64}
+function get_row(spmexp::SparseMatrixExp{Float64}, i::Int64)::Matrix{Float64}
     n = size(spmexp, 1)
     aux = zeros(n)
     aux[i] = 1.0
     return transpose(expmv(1.0, spmexp.M.', aux))
 end
 
-function get_rows(spmexp::SparseMatrixExp, I::AbstractArray)::SparseMatrixCSC{Float64}
+function get_rows(spmexp::SparseMatrixExp{Float64}, I::AbstractArray)::SparseMatrixCSC{Float64}
     n = size(spmexp, 1)
     aux = zeros(n)
     ans = spzeros(length(I), n)
@@ -88,13 +88,13 @@ Type that represents the action of an exponential map on a set.
 - `X`      -- a convex set represented by its support function
 """
 mutable struct ExponentialMap{T<:LazySet} <: LazySet
-    spmexp::SparseMatrixExp
+    spmexp::SparseMatrixExp{Float64}
     X::T
 end
 ExponentialMap(spmexp, X::T) where {T<:LazySet} = ExponentialMap{T}(spmexp,X)
 
 # instantiate an exponential map from a sparse matrix exponential
-function *(spmexp::SparseMatrixExp, X::LazySet)
+function *(spmexp::SparseMatrixExp{Float64}, X::LazySet)
     return ExponentialMap(spmexp, X)
 end
 
@@ -126,9 +126,9 @@ Type that represents the projection of a SparseMatrixExp.
 A type that abstract the matrix operation `L * exp(E.M) * R`, for a given sparse
 matrix E.M.
 """
-mutable struct ProjectionSparseMatrixExp
+mutable struct ProjectionSparseMatrixExp{Float64}
     L::SparseMatrixCSC{Float64,Int64}
-    spmexp::SparseMatrixExp
+    spmexp::SparseMatrixExp{Float64}
     R::SparseMatrixCSC{Float64,Int64}
 end
 
@@ -144,13 +144,13 @@ a given set.
 - `X`       -- a set represented by its support function
 """
 mutable struct ExponentialProjectionMap{T<:LazySet} <: LazySet
-    projspmexp::ProjectionSparseMatrixExp
+    projspmexp::ProjectionSparseMatrixExp{Float64}
     X::T
 end
 ExponentialProjectionMap(projspmexp, X::T) where {T<:LazySet} = ExponentialProjectionMap{T}(projspmexp, X)
 
 # instantiate an exponential map projection from matrix multiplication
-function *(projspmexp::ProjectionSparseMatrixExp, X::LazySet)
+function *(projspmexp::ProjectionSparseMatrixExp{Float64}, X::LazySet)
     return ExponentialProjectionMap(projspmexp, X)
 end
 
