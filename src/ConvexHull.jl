@@ -42,7 +42,7 @@ Return the support vector of a convex hull in a given direction.
 - `d`  -- direction
 - `ch` -- the convex hull of two sets
 """
-function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, ch::ConvexHull)::Vector{Float64}
+function σ(d::AbstractVector{Float64}, ch::ConvexHull)::Vector{Float64}
     σ1 = σ(d, ch.X)
     σ2 = σ(d, ch.Y)
     ρ1 = dot(d, σ1)::Float64

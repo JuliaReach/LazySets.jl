@@ -122,7 +122,7 @@ Support vector of the Cartesian product of a finite number of sets.
 
 - `cp` -- cartesian product array
 """
-function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, cp::CartesianProductArray)::Vector{Float64}
+function σ(d::AbstractVector{Float64}, cp::CartesianProductArray)::Vector{Float64}
     svec = Vector{Float64}(length(d))
     jinit = 1
     for sj in cp.sfarray

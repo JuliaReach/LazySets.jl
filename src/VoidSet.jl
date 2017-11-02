@@ -68,7 +68,7 @@ function dim(V::VoidSet)::Int64
 end
 
 # support vector of a VoidSet
-function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, V::VoidSet)::Vector{Float64}
+function σ(d::AbstractVector{Float64}, V::VoidSet)::Vector{Float64}
     #error("evaluating the support vector of a void set is undefined")
     return zeros(length(d))
 end

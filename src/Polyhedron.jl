@@ -13,7 +13,7 @@ Type that represents a convex polyhedron in H-representation.
 - `dim`    -- dimension
 """
 mutable struct Polyhedron <: LazySet
-    constraints::Array{LinearConstraint, 1}
+    constraints::Vector{LinearConstraint}
     dim::Int64
 end
 Polyhedron(n) = Polyhedron([], n)
@@ -41,7 +41,7 @@ Return the support vector of the polyhedron in a given direction.
 - `d` -- direction
 - `P` -- polyhedron in H-representation
 """
-function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, p::Polyhedron)::Vector{Float64}
+function σ(d::AbstractVector{Float64}, p::Polyhedron)::Vector{Float64}
     model = Model(solver=GLPKSolverLP())
     n = length(p.constraints)
     @variable(model, x[1:p.dim])

@@ -13,7 +13,7 @@ Type that represents a convex polygon (in H-representation).
 - `constraints` --  an array of linear constraints
 """
 mutable struct HPolygon <: LazySet
-    constraints::Array{LinearConstraint, 1}
+    constraints::Vector{LinearConstraint}
 end
 HPolygon() = HPolygon([])
 
@@ -53,7 +53,7 @@ polytope).
 - `d` -- direction
 - `p` -- polyhedron in H-representation
 """
-function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, p::HPolygon)::Vector{Float64}
+function σ(d::AbstractVector{Float64}, p::HPolygon)::Vector{Float64}
     n = length(p.constraints)
     if n == 0
         error("this polygon is empty")
@@ -112,7 +112,7 @@ This structure is optimized to evaluate the support function/vector with a large
 sequence of directions, which are one to one close.
 """
 mutable struct HPolygonOpt <: LazySet
-    constraints::Array{LinearConstraint, 1}
+    constraints::Vector{LinearConstraint}
     ind::Int64
     HPolygonOpt(constraints) = new(constraints, 1)
     HPolygonOpt(constraints, ind) = new(constraints, ind)
@@ -142,7 +142,7 @@ Return the support vector of the optimized polygon in a given direction.
 - `d` -- direction
 - `P` -- polyhedron in H-representation
 """
-function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, p::HPolygonOpt)::Vector{Float64}
+function σ(d::AbstractVector{Float64}, p::HPolygonOpt)::Vector{Float64}
     n = length(p.constraints)
     cl = p.constraints
     if (d <= cl[p.ind].a)
@@ -208,7 +208,7 @@ Type that represents a polygon by its vertices.
 - `vl` -- the list of vertices
 """
 mutable struct VPolygon <: LazySet
-    vl::Array{Vector{Float64}, 1}
+    vl::Vector{Vector{Float64}}
 end
 VPolygon() = VPolygon([])
 
@@ -267,9 +267,9 @@ Return the list of vertices of a convex polygon.
 
 ### Output
 
-List of vertices as an array of vertex pairs, Array{Array{Float64,1},1}.
+List of vertices as an array of vertex pairs, Vector{Vector{Float64}}.
 """
-function vertices_list(po::Union{HPolygon, HPolygonOpt})::Array{Array{Float64,1},1}
+function vertices_list(po::Union{HPolygon, HPolygonOpt})::Vector{Vector{Float64}}
     n = length(po.constraints)
     vlist = [intersection(Line(po.constraints[i]), Line(po.constraints[i+1])) for i = 1:n-1]
     push!(vlist, intersection(Line(po.constraints[n]), Line(po.constraints[1])))
