@@ -16,15 +16,10 @@ type LinearMap{MT<:Union{Matrix{Float64}, SparseMatrixCSC{Float64,Int64}, SubArr
     M::MT
     sf::ST
 
+    LinearMap{MT,ST}(M::MT, S::ST) where {MT<:Union{Matrix{Float64}, SparseMatrixCSC{Float64,Int64}, SubArray},ST<:LazySet} = new(M, S)
     # in case of constructing a linear map from a linear map, the matrix
-    # multiplication is performed here 
-    function LinearMap{MT,ST}(M, S) where {MT<:Union{Matrix{Float64}, SparseMatrixCSC{Float64,Int64}, SubArray},ST<:LazySet}
-        if isa(S, LinearMap)
-            return new(M * S::LinearMap.M, S.sf)
-        else
-            return new(M, S)
-        end
-    end
+    # multiplication is performed here
+    LinearMap{MT,LinearMap}(M::MT, S::LinearMap) where {MT<:Union{Matrix{Float64}, SparseMatrixCSC{Float64,Int64}, SubArray}} = new{MT,LinearMap}(M * S.M, S.sf)
 end
 LinearMap(M::MT, sf::ST) where {MT<:Union{Matrix{Float64}, SparseMatrixCSC{Float64,Int64}, SubArray},ST<:LazySet} = LinearMap{MT,ST}(M, sf)
 
