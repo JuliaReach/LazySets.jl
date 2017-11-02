@@ -22,8 +22,8 @@ This class is provided for use with very large and very sparse matrices. The
 evaluation of the exponential matrix action over vectores relies on the
 Expokit package. 
 """
-mutable struct SparseMatrixExp{Float64}
-    M::SparseMatrixCSC{Float64, 2}
+struct SparseMatrixExp{T<:AbstractFloat}
+    M::SparseMatrixCSC{T, Int64}
 end
 
 function size(spmexp::SparseMatrixExp{Float64})::Tuple{Int64,Int64}
@@ -41,7 +41,7 @@ function get_column(spmexp::SparseMatrixExp{Float64}, j::Int64)::Vector{Float64}
     return expmv(1.0, spmexp.M, aux)
 end
 
-function get_columns(spmexp::SparseMatrixExp{Float64}, J::AbstractArray)::SparseMatrixCSC{Float64}
+function get_columns(spmexp::SparseMatrixExp{Float64}, J::AbstractArray)::SparseMatrixCSC{Float64, Int64}
     n = size(spmexp, 1)
     aux = zeros(n)
     ans = spzeros(n, length(J))
@@ -62,7 +62,7 @@ function get_row(spmexp::SparseMatrixExp{Float64}, i::Int64)::Matrix{Float64}
     return transpose(expmv(1.0, spmexp.M.', aux))
 end
 
-function get_rows(spmexp::SparseMatrixExp{Float64}, I::AbstractArray)::SparseMatrixCSC{Float64}
+function get_rows(spmexp::SparseMatrixExp{Float64}, I::AbstractArray)::SparseMatrixCSC{Float64, Int64}
     n = size(spmexp, 1)
     aux = zeros(n)
     ans = spzeros(length(I), n)
