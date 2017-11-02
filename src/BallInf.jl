@@ -60,7 +60,7 @@ function is such that `sign(0) = 0`, instead of 1. For this reason, we use the
 custom `unit_step` function, that allows to do: `B.center + unit_step.(d) * B.radius`
 (the dot operator performs broadcasting, to accept vector-valued entries).
 """
-function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, B::BallInf)::Vector{Float64}
+function σ(d::AbstractVector{Float64}, B::BallInf)::Vector{Float64}
     return B.center .+ unit_step.(d) .* B.radius
 end
 

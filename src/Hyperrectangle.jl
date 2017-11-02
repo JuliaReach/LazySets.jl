@@ -45,8 +45,7 @@ end
 
 Return the support vector of a Hyperrectangle in a given direction.
 """
-function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}},
-           H::Hyperrectangle)::Vector{Float64}
+function σ(d::AbstractVector{Float64}, H::Hyperrectangle)::Vector{Float64}
     return H.center .+ unit_step.(d) .* H.radius
 end
 
@@ -67,7 +66,7 @@ The list of vertices as an array of floating-point vectors.
 
 For high-dimensions, it is preferable to develop a `vertex_iterator` approach.
 """
-function vertices_list(H::Hyperrectangle)::Array{Vector{Float64}, 1}
+function vertices_list(H::Hyperrectangle)::Vector{Vector{Float64}}
     return [H.center .+ si .* H.radius for si in IterTools.product([[1, -1] for i = 1:dim(H)]...)]
 end
 

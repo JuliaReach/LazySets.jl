@@ -71,12 +71,12 @@ The line `y = -x + 1` intersected with `y = x`:
 
 ```julia
 julia> intersection(Line([1., 1.], 1.), Line([-1., 1.], 0.))
-2-element Array{Float64,1}:
+2-element Vector{Float64}:
  0.5
  0.5
 ```
 """
-function intersection(Δ1::Line, Δ2::Line)::Array{Float64,1}
+function intersection(Δ1::Line, Δ2::Line)::Vector{Float64}
     b = [Δ1.b, Δ2.b]
     a = [Δ1.a.' ; Δ2.a.']
     return a \ b

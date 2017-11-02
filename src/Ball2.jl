@@ -26,7 +26,7 @@ We evaluate the support vector in a given direction:
 
 ```julia
 julia> σ(ones(5), B)
-5-element Array{Float64,1}:
+5-element Vector{Float64}:
 0.06742
 0.13484
 0.20226
@@ -75,7 +75,7 @@ The support vector in the given direction.
 
 If the given direction has norm zero, the origin is returned.
 """
-function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, B::Ball2)::Vector{Float64}
+function σ(d::AbstractVector{Float64}, B::Ball2)::Vector{Float64}
     dnorm = norm(d)
     if dnorm > 0
         return B.center .+ d .* (B.radius / dnorm)

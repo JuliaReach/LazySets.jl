@@ -20,7 +20,7 @@ This function can be used with vector-valued arguments via the dot operator.
 
 ```julia
 julia> unit_step([-0.6, 1.3, 0.0])
-3-element Array{Float64,1}:
+3-element Vector{Float64}:
  -1.0
  1.0
  1.0
@@ -69,7 +69,6 @@ True iff arg(u) [2π] <= arg(v) [2π]
 The argument is measured in counter-clockwise fashion, with the 0 being the
 direction (1, 0).
 """
-function <=(u::Union{Vector{Float64}, SparseVector{Float64,Int64}},
-            v::Union{Vector{Float64}, SparseVector{Float64,Int64}})
+function <=(u::AbstractVector{Float64}, v::AbstractVector{Float64})
     return jump2pi(atan2(u[2], u[1])) <= jump2pi(atan2(v[2], v[1]))
 end

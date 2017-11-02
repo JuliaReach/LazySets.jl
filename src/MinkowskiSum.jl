@@ -30,7 +30,7 @@ function dim(ms::MinkowskiSum)::Int64
 end
 
 # support vector of the Minkowski sum of two sets
-function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, ms::MinkowskiSum)::Vector{Float64}
+function σ(d::AbstractVector{Float64}, ms::MinkowskiSum)::Vector{Float64}
     return σ(d, ms.X) + σ(d, ms.Y)
 end
 
@@ -60,7 +60,7 @@ MinkowskiSumArray() = MinkowskiSumArray{LazySet}(Vector{LazySet}(0))
 MinkowskiSumArray(sfarray::Vector{T}) where {T<:LazySet} = MinkowskiSumArray{T}(sfarray)
 
 function MinkowskiSumArray(n::Int64)::MinkowskiSumArray
-    arr = Array{LazySet, 1}(0)
+    arr = Vector{LazySet}(0)
     sizehint!(arr, n)
     return MinkowskiSumArray(arr)
 end
@@ -141,7 +141,7 @@ Support vector of the Minkowski sum of a finite number of sets.
 
 - `ms` -- Minkowski sum array
 """
-function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, ms::MinkowskiSumArray)::Vector{Float64}
+function σ(d::AbstractVector{Float64}, ms::MinkowskiSumArray)::Vector{Float64}
     svec = zeros(length(d))
     for sj in ms.sfarray
         svec += σ(d, sj)

@@ -12,21 +12,21 @@ changes the behaviour of the support vector of the new set.
 - `M`  -- a linear map, which can a be densem matrix, sparse matrix or a subarray object
 - `sf` -- a convex set represented by its support function
 """
-type LinearMap{MT<:Union{Matrix{Float64}, SparseMatrixCSC{Float64,Int64}, SubArray},ST<:LazySet} <: LazySet
-    M::MT
-    sf::ST
+type LinearMap{T<:LazySet} <: LazySet
+    M::AbstractMatrix{Float64}
+    sf::T
 
-    LinearMap{MT,ST}(M::MT, S::ST) where {MT<:Union{Matrix{Float64}, SparseMatrixCSC{Float64,Int64}, SubArray},ST<:LazySet} = new(M, S)
+    LinearMap{T}(M::AbstractMatrix{Float64}, S::T) where {T<:LazySet} = new(M, S)
     # in case of constructing a linear map from a linear map, the matrix
     # multiplication is performed here
-    LinearMap{MT,LinearMap}(M::MT, S::LinearMap) where {MT<:Union{Matrix{Float64}, SparseMatrixCSC{Float64,Int64}, SubArray}} = new{MT,LinearMap}(M * S.M, S.sf)
+    LinearMap(M::AbstractMatrix{Float64}, S::LinearMap{T}) where {T<:LazySet} = new{T}(M * S.M, S.sf)
 end
-LinearMap(M::MT, sf::ST) where {MT<:Union{Matrix{Float64}, SparseMatrixCSC{Float64,Int64}, SubArray},ST<:LazySet} = LinearMap{MT,ST}(M, sf)
+LinearMap(M::AbstractMatrix{Float64}, sf::T) where {T<:LazySet} = LinearMap{T}(M, sf)
 
 import Base.*
 
 # linear map of a set
-function *(M::Union{Matrix, SparseMatrixCSC, SubArray}, sf::LazySet)
+function *(M::AbstractMatrix{Float64}, sf::LazySet)
     if findfirst(M) != 0
         return LinearMap(M, sf)
     else
@@ -35,7 +35,7 @@ function *(M::Union{Matrix, SparseMatrixCSC, SubArray}, sf::LazySet)
 end
 
 # linear map of a void set (has to be overridden due to polymorphism reasons)
-function *(M::Union{Matrix, SparseMatrixCSC}, sf::VoidSet)
+function *(M::AbstractMatrix{Float64}, sf::VoidSet)
     if dim(sf) == size(M, 2)
         return VoidSet(size(M, 1))
     else
@@ -72,7 +72,7 @@ If `S = MB`, where `M` is sa matrix and `B` is a set, it follows that
 - `d`  -- a direction
 - `lm` -- a linear map
 """
-function σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}}, lm::LinearMap)::Vector{Float64}
+function σ(d::AbstractVector{Float64}, lm::LinearMap)::Vector{Float64}
     return lm.M * σ(lm.M.' * d, lm.sf)
 end
 
