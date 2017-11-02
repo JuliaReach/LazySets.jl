@@ -12,7 +12,7 @@ Type that represents a convex polyhedron in H-representation.
 - `consts` -- a linear array of linear constraints
 - `dim`    -- dimension
 """
-mutable struct Polyhedron <: LazySet
+struct Polyhedron <: LazySet
     constraints::Vector{LinearConstraint}
     dim::Int64
 end

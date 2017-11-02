@@ -51,7 +51,7 @@ Type that represents the Minkowski sum of a finite number of sets.
 
 This type is optimized to be used on the left-hand side of additions only.
 """
-mutable struct MinkowskiSumArray{T<:LazySet} <: LazySet
+struct MinkowskiSumArray{T<:LazySet} <: LazySet
     sfarray::Vector{T}
 
     MinkowskiSumArray{T}(sfarray::Vector{T}) where {T<:LazySet} = new(sfarray)

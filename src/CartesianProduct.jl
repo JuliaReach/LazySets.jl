@@ -90,7 +90,7 @@ Type that represents the cartesian product of a finite number of sets.
 
 - `sfarray` -- array of sets
 """
-mutable struct CartesianProductArray{T<:LazySet} <: LazySet
+struct CartesianProductArray{T<:LazySet} <: LazySet
     sfarray::Vector{T}
 
     CartesianProductArray{T}(sfarray::Vector{T}) where {T<:LazySet} = new(sfarray)
