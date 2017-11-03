@@ -26,7 +26,7 @@ We evaluate the support vector in a given direction:
 
 ```julia
 julia> σ(ones(5), B)
-5-element Vector{Float64}:
+5-element Array{Float64,1}:
 0.06742
 0.13484
 0.20226

@@ -87,8 +87,8 @@ Type that represents the action of an exponential map on a set.
 - `spmexp`  -- a matrix exponential
 - `X`      -- a convex set represented by its support function
 """
-mutable struct ExponentialMap{T<:LazySet} <: LazySet
-    spmexp::SparseMatrixExp{Float64}
+struct ExponentialMap{T<:LazySet} <: LazySet
+    spmexp::SparseMatrixExp
     X::T
 end
 ExponentialMap(spmexp, X::T) where {T<:LazySet} = ExponentialMap{T}(spmexp,X)
@@ -126,7 +126,7 @@ Type that represents the projection of a SparseMatrixExp.
 A type that abstract the matrix operation `L * exp(E.M) * R`, for a given sparse
 matrix E.M.
 """
-mutable struct ProjectionSparseMatrixExp{Float64}
+struct ProjectionSparseMatrixExp
     L::SparseMatrixCSC{Float64,Int64}
     spmexp::SparseMatrixExp{Float64}
     R::SparseMatrixCSC{Float64,Int64}
@@ -143,8 +143,8 @@ a given set.
 - `spmexp`   -- the projection of an exponential map
 - `X`       -- a set represented by its support function
 """
-mutable struct ExponentialProjectionMap{T<:LazySet} <: LazySet
-    projspmexp::ProjectionSparseMatrixExp{Float64}
+struct ExponentialProjectionMap{T<:LazySet} <: LazySet
+    projspmexp::ProjectionSparseMatrixExp
     X::T
 end
 ExponentialProjectionMap(projspmexp, X::T) where {T<:LazySet} = ExponentialProjectionMap{T}(projspmexp, X)

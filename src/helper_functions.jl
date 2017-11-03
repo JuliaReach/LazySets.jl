@@ -20,7 +20,7 @@ This function can be used with vector-valued arguments via the dot operator.
 
 ```julia
 julia> unit_step([-0.6, 1.3, 0.0])
-3-element Vector{Float64}:
+3-element Array{Float64,1}:
  -1.0
  1.0
  1.0
