@@ -126,7 +126,7 @@ Type that represents the projection of a SparseMatrixExp.
 A type that abstract the matrix operation `L * exp(E.M) * R`, for a given sparse
 matrix E.M.
 """
-struct ProjectionSparseMatrixExp
+struct ProjectionSparseMatrixExp{Float64}
     L::SparseMatrixCSC{Float64,Int64}
     spmexp::SparseMatrixExp{Float64}
     R::SparseMatrixCSC{Float64,Int64}
