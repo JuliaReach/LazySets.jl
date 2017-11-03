@@ -98,7 +98,15 @@ function *(spmexp::SparseMatrixExp{Float64}, X::LazySet)
     return ExponentialMap(spmexp, X)
 end
 
-# ambient dimension of the exponential map
+"""
+    dim(em)
+
+The ambient dimension of a ExponentialMap.
+
+### Input
+
+- `em` -- an ExponentialMap
+"""
 function dim(em::ExponentialMap)::Int64
     return size(em.spmexp.M, 1)
 end
@@ -155,7 +163,7 @@ function *(projspmexp::ProjectionSparseMatrixExp{Float64}, X::LazySet)
 end
 
 """
-    dim(emap)
+    dim(eprojmap)
 
 The ambient dimension of a ExponentialProjectionMap.
 
@@ -183,8 +191,7 @@ If `S = (LMR)B`, where `L` and `R` are dense matrices, `M` is a matrix
 exponential, and `B` is a set, it follows that:
 `σ(d, S) = LMR σ(R^T M^T L^T d, B)` for any direction `d`.
 """
-function σ(d::AbstractVector{Float64},
-           eprojmap::ExponentialProjectionMap)::Vector{Float64}
+function σ(d::AbstractVector{Float64}, eprojmap::ExponentialProjectionMap)::Vector{Float64}
     daux = transpose(eprojmap.projspmexp.L) * d
     aux1 = expmv(1.0, eprojmap.projspmexp.spmexp.M.', daux)
     daux = transpose(eprojmap.projspmexp.R) * aux1

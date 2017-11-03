@@ -52,10 +52,9 @@ Support vector of a Cartesian product.
 ### Input
 
 - `d` -- direction
-
 - `cp` -- cartesian product
 """
-function σ(d::Vector{Float64}, cp::CartesianProduct)::Vector{Float64}
+function σ(d::AbstractVector{Float64}, cp::CartesianProduct)::AbstractVector{Float64}
     return [σ(d[1:dim(cp.X)], cp.X); σ(d[dim(cp.X)+1:end], cp.Y)]
 end
 
@@ -74,7 +73,7 @@ Return whether a vector belongs to a given cartesian product set.
 
 Return true iff d ∈ cp.
 """
-function is_contained(d::Vector{Float64}, cp::CartesianProduct)::Bool
+function is_contained(d::AbstractVector{Float64}, cp::CartesianProduct)::Bool
     return is_contained(d[1:dim(cp.X)], cp.X) && is_contained(d[dim(cp.X)+1:end], cp.Y)
 end
 
@@ -119,11 +118,10 @@ Support vector of the Cartesian product of a finite number of sets.
 ### Input
 
 - `d` -- direction
-
 - `cp` -- cartesian product array
 """
-function σ(d::AbstractVector{Float64}, cp::CartesianProductArray)::Vector{Float64}
-    svec = Vector{Float64}(length(d))
+function σ(d::AbstractVector{Float64}, cp::CartesianProductArray)::AbstractVector{Float64}
+    svec = similar(d)
     jinit = 1
     for sj in cp.sfarray
         jend = jinit + dim(sj) - 1
@@ -142,10 +140,9 @@ finite number of sets.
 ### Input
 
 - `d` -- vector
-
 - `cp` -- cartesian product array
 """
-function is_contained(d::Vector{Float64}, cp::CartesianProductArray)::Bool
+function is_contained(d::AbstractVector{Float64}, cp::CartesianProductArray)::Bool
     contained = false
     jinit = 1
     for Xj in cp

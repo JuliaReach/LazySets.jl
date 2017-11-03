@@ -26,7 +26,7 @@ Return the ambient dimension of the convex hull of two sets.
 
 ### Input
 
-- ``ch`` -- the convex hull of two sets
+- `ch` -- the convex hull of two sets
 """
 function dim(ch::ConvexHull)::Int64
     dim(ch.X)
