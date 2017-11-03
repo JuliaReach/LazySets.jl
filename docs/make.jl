@@ -13,7 +13,8 @@ makedocs(
         "Library" => Any[
         "Common Set Representations" => "lib/representations.md", 
         "Common Set Operations" => "lib/operations.md",
-        "Approximations" => "lib/approximations.md"],
+        "Approximations" => "lib/approximations.md",
+        "Utility Functions" => "lib/utils.md"],
         "About" => "about.md"
     ]
 )

@@ -24,20 +24,37 @@ function +(X::LazySet, Y::LazySet)
     return MinkowskiSum(X, Y)
 end
 
-# ambient dimension of the Minkowski sum of two sets
+"""
+    dim(ms)
+
+Ambient dimension of a Minkowski product.
+
+### Input
+
+- `ms` -- Minkowski sum
+"""
 function dim(ms::MinkowskiSum)::Int64
     return dim(ms.X)
 end
 
-# support vector of the Minkowski sum of two sets
+"""
+    σ(d::AbstractVector{Float64}, ms::MinkowskiSum)
+
+Support vector of a Minkowski sum.
+
+### Input
+
+- `d`  -- vector
+- `ms` -- Minkowski sum
+"""
 function σ(d::AbstractVector{Float64}, ms::MinkowskiSum)::Vector{Float64}
     return σ(d, ms.X) + σ(d, ms.Y)
 end
 
 
-# =====================
-# Minkowski sum of sets
-# =====================
+# =================================
+# Minkowski sum of an array of sets
+# =================================
 """
     MinkowskiSumArray <: LazySet
 

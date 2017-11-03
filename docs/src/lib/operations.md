@@ -15,7 +15,9 @@ CurrentModule = LazySets
 
 ```@docs
 MinkowskiSum
+dim(ms::MinkowskiSum)
 MinkowskiSumArray
+dim(msa::MinkowskiSumArray)
 ```
 
 ## Convex Hull
@@ -28,7 +30,11 @@ ConvexHull
 
 ```@docs
 CartesianProduct
+dim(cp::CartesianProduct)
 CartesianProductArray
+dim(cp::CartesianProductArray)
+is_contained(d::Vector{Float64}, cp::CartesianProduct)
+σ(d::AbstractVector{Float64}, cp::CartesianProductArray)
 ```
 
 ## Linear Maps

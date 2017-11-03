@@ -10,6 +10,11 @@ Pages = ["representations.md"]
 CurrentModule = LazySets
 ```
 
+```@docs
+LazySets
+LazySets.LazySet
+```
+
 ## Balls
 
 Unit balls are defined by int center (vector) and radius (scalar), such as
@@ -23,15 +28,36 @@ $B_2(c, r) = \{ x ∈ \mathbb{R}^n : \Vert x - c\Vert_2 \leq r \}.$
 
 ```@docs
 BallInf
+dim(B::BallInf)
+σ(d::AbstractVector{Float64}, B::BallInf)
 Ball2
+dim(B::Ball2)
+σ(d::AbstractVector{Float64}, B::Ball2)
 ```
 
 ## Polygons
 
+### Constraint representation
+
 ```@docs
 HPolygon
+tovrep(s::HPolygon)
+addconstraint!(p::HPolygon, c::LinearConstraint)
+σ(d::AbstractVector{Float64}, p::HPolygon)
+```
+
+### Vertex representation
+
+```@docs
 VPolygon
-tovrep
+```
+
+### Optimized constraint representation
+
+```@docs
+HPolygonOpt
+σ(d::AbstractVector{Float64}, p::HPolygonOpt)
+tovrep(po::HPolygonOpt)
 ```
 
 ## Lines and linear constraints
@@ -42,20 +68,22 @@ LinearConstraint
 Line
 ```
 
-## Hyperrectangle
+## Hyperrectangles
 
 ```@docs
 Hyperrectangle
 radius(H::Hyperrectangle)
+dim(H::Hyperrectangle)
+σ(d::AbstractVector{Float64}, H::Hyperrectangle)
 ```
 
-## VoidSet
+## VoidSets
 
 ```@docs
 VoidSet
 ```
 
-## Singleton
+## Singletons
 
 ```@docs
 Singleton

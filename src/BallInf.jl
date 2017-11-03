@@ -32,7 +32,19 @@ struct BallInf <: LazySet
     BallInf(center, radius) = radius < 0. ? throw(DomainError()) : new(center, radius)
 end
 
-# dimension of a ball in the infinity norm
+"""
+    dim(B)
+
+Return the dimension of a BallInf.
+
+### Input
+
+- `B` -- a ball in the infinity norm
+
+### Output
+
+The ambient dimension of the ball.
+"""
 function dim(B::BallInf)::Int64
     return length(B.center)
 end
