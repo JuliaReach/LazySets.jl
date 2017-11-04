@@ -75,7 +75,7 @@ LazySets.LinearMap{LazySets.BallInf}},LazySets.Ball2}
 ```
 
 Now suppose that we are interested in observing the projection of $\mathcal{Y}$ onto
-the variables (1, 500). First we define the $2×1000$ projection matrix and apply it to $\mathcal{Y}$
+the variables number 1 and 500. First we define the $2×1000$ projection matrix and apply it to $\mathcal{Y}$
 as a linear map (i.e. from the left). Second, we use the `overapproximate` method:
 
 ```julia
@@ -84,7 +84,7 @@ proj_mat = [[1. zeros(1, 999)]; [zeros(1, 499) 1. zeros(1, 500)]]
 0.064034 seconds (1.12 k allocations: 7.691 MiB)
 ```
 
-We have calculated a box overapproximation of the exact projection onto the (1, 500) plane.
+We have calculated a box overapproximation of the exact projection onto the $(x_1, x_{500})$ plane.
 Notice that it takes about 0.064 seconds for the whole operation, allocating less than
 10MB or RAM. Let us note that if the set operations where done explicitly,
 this would be much (!) slower. For instance, already the explicit computation of the matrix exponential would
@@ -109,9 +109,8 @@ It can be passed as a second argument to `overapproximate`.
 
 This table shows the runtime and memory consumption for different error tolerances,
 and the results are shown in three plots of above, from left to right. When passing
-to a smaller tolerance, the corners connecting edges are more "rounded", and naturally,
-for increasing accuracy it becomes more expensive computationally, since more
-support vectors have to be evaluated.
+to a smaller tolerance, the corners connecting edges are more "rounded", at the expense
+of computational resources, since more support vectors have to be evaluated.
 
 ## Features
 
