@@ -9,7 +9,8 @@ makedocs(
         "Manual" => Any[
         "Getting Started" => "man/getting_started.md",
         "Support Vectors" => "man/support_vectors.md",
-        "Polyhedral Approximations" => "man/polyhedral_approximations.md"],
+        "Polyhedral Approximations" => "man/polyhedral_approximations.md",
+        "Fast 2D LPs" => "man/fast_2d_LPs.md"],
         "Library" => Any[
         "Common Set Representations" => "lib/representations.md", 
         "Common Set Operations" => "lib/operations.md",

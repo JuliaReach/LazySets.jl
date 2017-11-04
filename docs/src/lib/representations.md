@@ -10,9 +10,13 @@ Pages = ["representations.md"]
 CurrentModule = LazySets
 ```
 
+## Abstract support function and support vector
+
 ```@docs
 LazySets
 LazySets.LazySet
+ρ
+σ
 ```
 
 ## Balls
@@ -44,12 +48,8 @@ HPolygon
 tovrep(s::HPolygon)
 addconstraint!(p::HPolygon, c::LinearConstraint)
 σ(d::AbstractVector{Float64}, p::HPolygon)
-```
-
-### Vertex representation
-
-```@docs
-VPolygon
+vertices_list(po::Union{HPolygon, HPolygonOpt})
+is_contained(x::Vector{Float64}, P::HPolygon)
 ```
 
 ### Optimized constraint representation
@@ -57,7 +57,15 @@ VPolygon
 ```@docs
 HPolygonOpt
 σ(d::AbstractVector{Float64}, p::HPolygonOpt)
+dim(P::HPolygonOpt)
 tovrep(po::HPolygonOpt)
+is_contained(x::Vector{Float64}, P::HPolygonOpt)
+```
+
+### Vertex representation
+
+```@docs
+VPolygon
 ```
 
 ## Lines and linear constraints
@@ -75,6 +83,8 @@ Hyperrectangle
 radius(H::Hyperrectangle)
 dim(H::Hyperrectangle)
 σ(d::AbstractVector{Float64}, H::Hyperrectangle)
+vertices_list(H::Hyperrectangle)
+diameter(H::Hyperrectangle)
 ```
 
 ## VoidSets

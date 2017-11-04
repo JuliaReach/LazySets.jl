@@ -16,14 +16,24 @@ CurrentModule = LazySets
 ```@docs
 MinkowskiSum
 dim(ms::MinkowskiSum)
+σ(d::AbstractVector{Float64}, ms::MinkowskiSum)
+```
+
+```@docs
 MinkowskiSumArray
-dim(msa::MinkowskiSumArray)
+dim(ms::MinkowskiSumArray)
+σ(d::AbstractVector{Float64}, ms::MinkowskiSumArray)
+Base.:+(msa::MinkowskiSumArray, sf::LazySet)
+Base.:+(msa1::MinkowskiSumArray, msa2::MinkowskiSumArray)
+Base.:+(msa::MinkowskiSumArray, sf::VoidSet)
 ```
 
 ## Convex Hull
 
 ```@docs
 ConvexHull
+dim(ch::ConvexHull)
+σ(d::AbstractVector{Float64}, ch::ConvexHull)
 ```
 
 ## Cartesian Product
@@ -31,25 +41,39 @@ ConvexHull
 ```@docs
 CartesianProduct
 dim(cp::CartesianProduct)
+σ(d::AbstractVector{Float64}, cp::CartesianProduct)
+is_contained(d::AbstractVector{Float64}, cp::CartesianProduct)
+```
+
+```@docs
 CartesianProductArray
 dim(cp::CartesianProductArray)
-is_contained(d::Vector{Float64}, cp::CartesianProduct)
 σ(d::AbstractVector{Float64}, cp::CartesianProductArray)
+is_contained(d::AbstractVector{Float64}, cp::CartesianProductArray)
 ```
 
 ## Linear Maps
 
 ```@docs
 LinearMap
+dim(lm::LinearMap)
+σ(d::AbstractVector{Float64}, lm::LinearMap)
 ```
 
 ## Exponential Maps
 
 ```@docs
 ExponentialMap
+dim(emap::ExponentialMap)
+σ(d::AbstractVector{Float64}, eprojmap::ExponentialProjectionMap)
+```
+
+```@docs
 ExponentialProjectionMap
+dim(eprojmap::ExponentialProjectionMap)
+```
+
+```@docs
 ProjectionSparseMatrixExp
 SparseMatrixExp
-σ(d::Union{Vector{Float64}, SparseVector{Float64,Int64}},
-           eprojmap::ExponentialProjectionMap)
 ```
