@@ -21,7 +21,7 @@ makedocs(
 )
 
 deploydocs(
-    repo = "github.com/mforets/LazySets.jl.git",
+    repo = "github.com/JuliaReach/LazySets.jl.git",
     target = "build",
     osname = "linux",
     julia  = "0.6",
