@@ -9,14 +9,12 @@ Type that represents a convex polyhedron in H-representation.
 
 ### Fields
 
-- `consts` -- a linear array of linear constraints
-- `dim`    -- dimension
+- `constraints` -- a vector of linear constraints
 """
 struct Polyhedron <: LazySet
     constraints::Vector{LinearConstraint}
-    dim::Int64
 end
-Polyhedron(n) = Polyhedron([], n)
+Polyhedron() = Polyhedron([])
 
 """
     dim(P)
@@ -28,7 +26,7 @@ Return the ambient dimension of the polyhedron.
 - `P`  -- a polyhedron in H-representation
 """
 function dim(P::Polyhedron)::Int64
-    P.dim
+    return length(P.constraints) == 0 ? -1 : length(P.constraints[1].a)
 end
 
 """
@@ -44,7 +42,7 @@ Return the support vector of the polyhedron in a given direction.
 function σ(d::AbstractVector{Float64}, p::Polyhedron)::Vector{Float64}
     model = Model(solver=GLPKSolverLP())
     n = length(p.constraints)
-    @variable(model, x[1:p.dim])
+    @variable(model, x[1:dim(p)])
     @objective(model, Max, dot(d, x))
     @constraint(model, P[i=1:n], dot(p.constraints[i].a, x) <= p.constraints[i].b)
     solve(model)
@@ -60,6 +58,11 @@ Add a linear constraint to a polyhedron.
 
 - `P`          -- a polyhedron
 - `constraint` -- the linear constraint to add
+
+### Notes
+
+It is left to the user to guarantee that the dimension all linear constraints is
+the same.
 """
 function addconstraint!(P::Polyhedron, c::LinearConstraint)
     push!(P.constraints, c)
