@@ -139,10 +139,9 @@ can be used to:
 ```@contents
 Pages = [
     "man/getting_started.md",
-    "man/support_vectors.md",
     "man/polyhedral_approximations.md",
-    "man/fast_2d_LPs.md",
-    "man/iterative_refinement.md"
+    "man/decompose_example.md",
+    "man/fast_2d_LPs.md"
 ]
 Depth = 2
 ```

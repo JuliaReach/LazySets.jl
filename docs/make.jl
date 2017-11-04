@@ -9,7 +9,7 @@ makedocs(
         "Manual" => Any[
         "Getting Started" => "man/getting_started.md",
         "Polyhedral Approximations" => "man/polyhedral_approximations.md",
-        "Decomposing an Affine Map" => "man/decomposing_example.md",
+        "Decomposing an Affine Map" => "man/decompose_example.md",
         "Fast 2D LPs" => "man/fast_2d_LPs.md"],
         "Library" => Any[
         "Common Set Representations" => "lib/representations.md", 
