@@ -12,6 +12,21 @@ Pages = ["getting_started.md"]
 ## Installation
 
 
+
+## Running the Unit Tests
+
+To run the unit tests run the following command in the terminal:
+
+```julia
+$ julia --color=yes test/runtests.jl
+```
+
+Alternatively, you can test the package in Julia's REPL with the command:
+
+```julia
+julia> Pkg.test("LazySets")
+```
+
 ## First steps
 
 ## Workflow Tips
