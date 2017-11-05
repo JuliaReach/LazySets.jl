@@ -35,3 +35,8 @@ These persons have contributed to `LazySets.jl` (in alphabetic order):
 - Frederic Viry
 
 We are also grateful to Goran Frehse for enlightening discussions.
+
+## Linked Projects
+
+The following projects are linked to `LazySets.jl`:
+- [3PLIB](https://3plib.wordpress.com/) is a Java Library developed by Frederic Viry, specialized in the planar projections of convex polyhedra. It has initially been created to embed this need in Java applications, such as the results viewer of [SpaceEx](http://spaceex.imag.fr/). It is one of the previous works that led to the creation of `LazySets.jl`.
