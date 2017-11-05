@@ -86,7 +86,7 @@ proj_mat = [[1. zeros(1, 999)]; [zeros(1, 499) 1. zeros(1, 500)]]
 
 We have calculated a box overapproximation of the exact projection onto the $(x_1, x_{500})$ plane.
 Notice that it takes about 0.064 seconds for the whole operation, allocating less than
-10MB or RAM. Let us note that if the set operations where done explicitly,
+10MB or RAM. Let us note that if the set operations were done explicitly,
 this would be much (!) slower. For instance, already the explicit computation of the matrix exponential would
 have costed 10x more, and allocated around 300MB. For even higher $n$,
 you'll probably run out of RAM! But this is doable with `LazySets` because the *action* of the matrix exponential over the set

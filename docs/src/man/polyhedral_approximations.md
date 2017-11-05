@@ -1,12 +1,13 @@
 # Polyhedral Approximations
 
-Polyhedral Approximation of a Convex Set
+In this section we review the mathematical notation and results from convex
+geometry that are used throughout `LazySets`.
 
 ## Preliminaries
 
-Let us introduce some notation. Let $\mathbb{I}_n$ be the identity matrix of dimension $n\times n$.
-For $p \geq 1$, the $p$-norm of an $n$-dimensional vector $x \in \mathbb{R}^n$ is denoted 
-$\Vert x \Vert_p$.
+Let us introduce some notation. Let $\mathbb{I}_n$ be the identity matrix of
+dimension $n\times n$. For $p \geq 1$, the $p$-norm of an $n$-dimensional vector
+$x \in \mathbb{R}^n$ is denoted $\Vert x \Vert_p$.
 
 ## Support Function
 
@@ -60,4 +61,8 @@ as in Proposition 1, the following hold:
 
 (2.5) $\sigma_{\mathrm{CH}(\mathcal{X}\cup\mathcal{Y})} (\ell) = \text{argmax}_{x, y} (\ell^\mathrm{T} x, \ell^\mathrm{T} y)$,
       where $x \in \sigma_{\mathcal{X}}(\ell), y \in \sigma_{\mathcal{Y}}(\ell)$
+
+
+## Polyhedral approximation of a convex set
+
 
