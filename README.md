@@ -10,7 +10,7 @@
 ## Resources
 
 - [Manual](http://juliareach.github.io/LazySets.jl/latest/)
-- [Contributing](http://juliareach.github.io/LazySets.jl/latest/about.html)
+- [Contributing](https://juliareach.github.io/LazySets.jl/latest/about.html#Contributing-1)
 
 ## Installing
 
