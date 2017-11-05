@@ -1,11 +1,12 @@
 # About
 
+This page contains some general information about this project, and recommendations
+about contributing.
+
 ```@contents
 Pages = ["about.md"]
 ```
 
-This page contains some general information about this project, and recommendations
-about contributing.
 
 ## Contributing
 
