@@ -1,7 +1,9 @@
 import Base.<=
 
+include("andrew_monotone_chain.jl")
+
 export HPolygon, HPolygonOpt, addconstraint!, is_contained,
-       VPolygon, tovrep, vertices_list
+       VPolygon, tovrep, vertices_list, andrew_monotone_chain
 
 """
     HPolygon <: LazySet
@@ -280,7 +282,7 @@ end
     plot_Polygon(P::Union{HPolygon, HPolygonOpt}; ...)
 
 Plot a polygon given in constraint form.
- 
+
 ### Input
 
 - `P` -- a polygon in constraint representation
@@ -301,7 +303,7 @@ julia> plot(H)
 
     vlist = hcat(vertices_list(P)...).'
     (x, y) = vlist[:, 1], vlist[:, 2]
- 
+
      x, y
 end
 
@@ -309,7 +311,7 @@ end
     plot_Polygon(P::Union{Vector{HPolygon}, Vector{HPolygonOpt}}; ...)
 
 Plot an array of polygons given in constraint form.
- 
+
 ### Input
 
 - `P` -- an array of polygons in constraint representation

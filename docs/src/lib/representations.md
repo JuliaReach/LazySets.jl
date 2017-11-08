@@ -66,6 +66,7 @@ is_contained(x::Vector{Float64}, P::HPolygonOpt)
 
 ```@docs
 VPolygon
+andrew_monotone_chain
 ```
 
 ## Lines and linear constraints
