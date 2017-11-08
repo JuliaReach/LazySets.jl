@@ -42,7 +42,7 @@ vp = tovrep(p)
 @test is_contained([5./4., 7./4.], p)
 @test !is_contained([4., 1.], p)
 @test !is_contained([5., 2.], p)
-@test !is_contained([3., 4.], p) 
+@test !is_contained([3., 4.], p)
 @test !is_contained([-1., 5.], p)
 
 # Optimized Polygon
@@ -73,3 +73,6 @@ d = [0., -1.]
 @test !is_contained([3., 4.], po)
 @test !is_contained([-1., 5.], po)
 
+# test conveh hull algorithm using andrew_monotone_chain
+points = [[0.9,0.2], [0.4,0.6], [0.2,0.1], [0.1,0.3], [0.3,0.28]]
+@test andrew_monotone_chain(points) == [ [0.1,0.3],[0.2,0.1], [0.9,0.2],[0.4,0.6] ]
