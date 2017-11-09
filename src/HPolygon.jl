@@ -1,21 +1,25 @@
 import Base.<=
 
-include("andrew_monotone_chain.jl")
-
-export HPolygon, HPolygonOpt, addconstraint!, is_contained,
-       VPolygon, tovrep, vertices_list, andrew_monotone_chain
+# Polygons in constraint representation
+export HPolygon, HPolygonOpt, addconstraint!, is_contained
 
 """
     HPolygon <: LazySet
 
-Type that represents a convex polygon (in H-representation).
+Type that represents a convex polygon in constraint representation, whose edges are
+sorted in counter-clockwise fashion with respect to their normal directions.
 
 ### Fields
 
 - `constraints` --  an array of linear constraints
+
+### Note
+
+The `HPolygon` constructor *does not perform* sorting of the given list of eddges.
+Use `addconstraint!` to iteratively add and sort the edges.
 """
 struct HPolygon <: LazySet
-    constraints::Vector{LinearConstraint}
+    constraints_list::Vector{LinearConstraint}
 end
 HPolygon() = HPolygon([])
 
@@ -24,23 +28,23 @@ function dim(P::HPolygon)::Int64
 end
 
 """
-    addconstraint!(p, c)
+    addconstraint!(P, constraint)
 
-Add a linear constraint to a polygon keeping the constraints sorted by their
-normal directions.
+Add a linear constraint to a polygon in contraing representation keeping the
+constraints sorted by their normal directions.
 
 ### Input
 
-- `p` -- a polygon
-- `c` -- the linear constraint to add
+- `P`          -- a polygon
+- `constraint` -- the linear constraint to add
 """
-function addconstraint!(p::HPolygon, c::LinearConstraint)
-    i = length(p.constraints)
-    while i > 0 && c.a <= p.constraints[i].a
+function addconstraint!(P::HPolygon, constraint::LinearConstraint)
+    i = length(P.constraints_list)
+    while i > 0 && constraint.a <= P.constraints_list[i].a
         i -= 1
     end
-    # here p.constraints[i] < c
-    insert!(p.constraints, i+1, c)
+    # here P.constraints_list[i] < constraint
+    insert!(P.constraints_list, i+1, constraint)
 end
 
 """
@@ -53,21 +57,21 @@ polytope).
 ### Input
 
 - `d` -- direction
-- `p` -- polyhedron in H-representation
+- `P` -- polyhedron in H-representation
 """
-function σ(d::AbstractVector{Float64}, p::HPolygon)::Vector{Float64}
-    n = length(p.constraints)
+function σ(d::AbstractVector{Float64}, P::HPolygon)::Vector{Float64}
+    n = length(P.constraints_list)
     if n == 0
         error("this polygon is empty")
     end
     i = 1
-    while i <= n && p.constraints[i].a <= d
+    while i <= n && P.constraints_list[i].a <= d
         i += 1
     end
     if i == 1 || i == n+1
-        intersection(Line(p.constraints[1]), Line(p.constraints[n]))
+        intersection(Line(P.constraints_list[1]), Line(P.constraints_list[n]))
     else
-        intersection(Line(p.constraints[i]), Line(p.constraints[i-1]))
+        intersection(Line(P.constraints_list[i]), Line(P.constraints_list[i-1]))
     end
 end
 
@@ -90,7 +94,7 @@ function is_contained(x::Vector{Float64}, P::HPolygon)::Bool
         false
     else
         res = true
-        for c in P.constraints
+        for c in P.constraints_list
             res = res && dot(c.a, x) <= c.b
         end
         res
@@ -114,12 +118,13 @@ This structure is optimized to evaluate the support function/vector with a large
 sequence of directions, which are one to one close.
 """
 mutable struct HPolygonOpt <: LazySet
-    constraints::Vector{LinearConstraint}
+    constraints_list::Vector{LinearConstraint}
     ind::Int64
-    HPolygonOpt(constraints) = new(constraints, 1)
-    HPolygonOpt(constraints, ind) = new(constraints, ind)
+
+    HPolygonOpt(constraints_list) = new(constraints_list, 1)
+    HPolygonOpt(constraints_list, ind) = new(constraints_list, ind)
 end
-HPolygonOpt(H::HPolygon) = HPolygonOpt(H.constraints)
+HPolygonOpt(H::HPolygon) = HPolygonOpt(H.constraints_list)
 
 """
     dim(P)
@@ -145,8 +150,8 @@ Return the support vector of the optimized polygon in a given direction.
 - `P` -- polyhedron in H-representation
 """
 function σ(d::AbstractVector{Float64}, p::HPolygonOpt)::Vector{Float64}
-    n = length(p.constraints)
-    cl = p.constraints
+    n = length(p.constraints_list)
+    cl = p.constraints_list
     if (d <= cl[p.ind].a)
         k = p.ind-1
         while (k >= 1 && d <= cl[k].a)
@@ -193,26 +198,12 @@ function is_contained(x::Vector{Float64}, P::HPolygonOpt)::Bool
         false
     else
         res = true
-        for c in P.constraints
+        for c in P.constraints_list
             res = res && dot(c.a, x) <= c.b
         end
         res
     end
 end
-
-"""
-    VPolygon <: LazySet
-
-Type that represents a polygon by its vertices.
-
-### Fields
-
-- `vl` -- the list of vertices
-"""
-struct VPolygon <: LazySet
-    vl::Vector{Vector{Float64}}
-end
-VPolygon() = VPolygon([])
 
 """
     tovrep(s)
@@ -221,23 +212,27 @@ Build a vertex representation of the given polygon.
 
 ### Input
 
-- `s` -- a polygon in H-representation, HPolygon. The linear constraints are
-         assumed sorted by their normal directions.
+- `s` -- a polygon in H-representation, HPolygon
 
 ### Output
 
 The same polygon in a vertex representation, VPolygon.
+
+### Note
+
+The linear constraints of the input HPolygon are assumed to be sorted by their
+normal directions in counter-clockwise fashion.
 """
 function tovrep(s::HPolygon)
-    n = length(s.constraints)
-    p = VPolygon()
+    n = length(s.constraints_list)
+    p = Vector{Float64}[]
     for i in 1:n-1
-        cur = intersection(Line(s.constraints[i]), Line(s.constraints[i+1]))
-        push!(p.vl, cur)
+        cur = intersection(Line(s.constraints_list[i]), Line(s.constraints_list[i+1]))
+        push!(p, cur)
     end
-    cur = intersection(Line(s.constraints[n]), Line(s.constraints[1]))
-    push!(p.vl, cur)
-    p
+    cur = intersection(Line(s.constraints_list[n]), Line(s.constraints_list[1]))
+    push!(p, cur)
+    return VPolygon(p)
 end
 
 """
@@ -259,9 +254,9 @@ function tovrep(po::HPolygonOpt)
 end
 
 """
-    vertices_list(po)
+    vertices_list(P)
 
-Return the list of vertices of a convex polygon.
+Return the list of vertices of a convex polygon in constraint representation.
 
 ### Input
 
@@ -271,10 +266,10 @@ Return the list of vertices of a convex polygon.
 
 List of vertices as an array of vertex pairs, Vector{Vector{Float64}}.
 """
-function vertices_list(po::Union{HPolygon, HPolygonOpt})::Vector{Vector{Float64}}
-    n = length(po.constraints)
-    vlist = [intersection(Line(po.constraints[i]), Line(po.constraints[i+1])) for i = 1:n-1]
-    push!(vlist, intersection(Line(po.constraints[n]), Line(po.constraints[1])))
+function vertices_list(P::HPolygon)::Vector{Vector{Float64}}
+    n = length(P.constraints_list)
+    vlist = [intersection(Line(P.constraints_list[i]), Line(P.constraints_list[i+1])) for i = 1:n-1]
+    push!(vlist, intersection(Line(P.constraints[n]), Line(P.constraints_list[1])))
     return vlist
 end
 
@@ -327,7 +322,7 @@ julia> H2 = HPolygon([LinearConstraint([2.0, 0.0], 0.6), LinearConstraint([0.0, 
 julia> plot([H1, H2])
 ```
 """
-@recipe function plot_Polygon(P::Union{Vector{HPolygon}, Vector{HPolygonOpt}};
+@recipe function plot_Polygon(P::Vector{HPolygon};
                               seriescolor="blue", label="", grid=true, alpha=0.5)
 
     seriestype := :shape

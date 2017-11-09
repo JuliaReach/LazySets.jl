@@ -7,7 +7,7 @@ Type that represents a void (neutral) set with respect to Minkowski sum.
 
 ### Fields
 
-- `dim` -- ambient dimension of the `VoidSet` 
+- `dim` -- ambient dimension of the `VoidSet`
 """
 struct VoidSet <: LazySet
     dim::Int64

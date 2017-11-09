@@ -1,4 +1,8 @@
-export ConvexHull, CH
+include("convex_hull_algorithms.jl")
+
+export ConvexHull,    # convex hull lazy type
+       CH,            # type alias
+       convex_hull    # explicit convex hull of a list of points in the plane
 
 """
     ConvexHull <: LazySet

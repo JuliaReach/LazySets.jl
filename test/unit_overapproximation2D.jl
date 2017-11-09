@@ -7,7 +7,7 @@ import LazySets.Approximations.overapproximate
 b = Ball2([0., 0.], 1.)
 ɛ = .01
 p = tovrep(overapproximate(b, ɛ))
-for v in p.vl
+for v in p.vertices_list
     @test norm(v) >= 1.
     @test norm(v) <= 1.+ɛ
 end
