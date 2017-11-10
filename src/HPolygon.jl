@@ -269,12 +269,12 @@ List of vertices as an array of vertex pairs, Vector{Vector{Float64}}.
 function vertices_list(P::HPolygon)::Vector{Vector{Float64}}
     n = length(P.constraints_list)
     vlist = [intersection(Line(P.constraints_list[i]), Line(P.constraints_list[i+1])) for i = 1:n-1]
-    push!(vlist, intersection(Line(P.constraints[n]), Line(P.constraints_list[1])))
+    push!(vlist, intersection(Line(P.constraints_list[n]), Line(P.constraints_list[1])))
     return vlist
 end
 
 """
-    plot_Polygon(P::Union{HPolygon, HPolygonOpt}; ...)
+    plot_polygon(P::Union{HPolygon, HPolygonOpt}; ...)
 
 Plot a polygon given in constraint form.
 
@@ -286,12 +286,12 @@ Plot a polygon given in constraint form.
 
 ```julia
 julia> using LazySets, Plots
-julia> H = HPolygon([LinearConstraint([1.0, 0.0], 0.6), LinearConstraint([0.0, 1.0], 0.6),
+julia> P = HPolygon([LinearConstraint([1.0, 0.0], 0.6), LinearConstraint([0.0, 1.0], 0.6),
                      LinearConstraint([-1.0, 0.0], -0.4), LinearConstraint([0.0, -1.0], -0.4)])
-julia> plot(H)
+julia> plot(P)
 ```
 """
-@recipe function plot_Polygon(P::Union{HPolygon, HPolygonOpt};
+@recipe function plot_polygon(P::Union{HPolygon, HPolygonOpt};
                               color="blue", label="", grid=true, alpha=0.5)
 
     seriestype := :shape
@@ -303,7 +303,7 @@ julia> plot(H)
 end
 
 """
-    plot_Polygon(P::Union{Vector{HPolygon}, Vector{HPolygonOpt}}; ...)
+    plot_polygons(P::Union{Vector{HPolygon}, Vector{HPolygonOpt}}; ...)
 
 Plot an array of polygons given in constraint form.
 
@@ -315,14 +315,14 @@ Plot an array of polygons given in constraint form.
 
 ```julia
 julia> using LazySets, Plots
-julia> H1 = HPolygon([LinearConstraint([1.0, 0.0], 0.6), LinearConstraint([0.0, 1.0], 0.6),
+julia> P1 = HPolygon([LinearConstraint([1.0, 0.0], 0.6), LinearConstraint([0.0, 1.0], 0.6),
                       LinearConstraint([-1.0, 0.0], -0.4), LinearConstraint([0.0, -1.0], -0.4)])
-julia> H2 = HPolygon([LinearConstraint([2.0, 0.0], 0.6), LinearConstraint([0.0, 2.0], 0.6),
+julia> P2 = HPolygon([LinearConstraint([2.0, 0.0], 0.6), LinearConstraint([0.0, 2.0], 0.6),
                       LinearConstraint([-2.0, 0.0], -0.4), LinearConstraint([0.0, -2.0], -0.4)])
-julia> plot([H1, H2])
+julia> plot([P1, P2])
 ```
 """
-@recipe function plot_Polygon(P::Vector{HPolygon};
+@recipe function plot_polygons(P::Vector{HPolygon};
                               seriescolor="blue", label="", grid=true, alpha=0.5)
 
     seriestype := :shape

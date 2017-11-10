@@ -21,14 +21,13 @@ convex hull, set the `apply_convex_hull=false` flag when instantiating the const
 struct VPolygon <: LazySet
     vertices_list::Vector{Vector{Float64}}
 
-    function VPolygon(vertices_list; apply_convex_hull=true, algorithm="andrew")
+    function VPolygon(vertices_list; apply_convex_hull=true, algorithm="andrew_monotone_chain")
         if apply_convex_hull
             return new(convex_hull(vertices_list, algorithm=algorithm))
         else
             return new(vertices_list)
         end
     end
-    #VPolygon(vertices_list; apply_convex_hull=true; algorithm=) = new(convex_hull(vertices_list))
 end
 VPolygon() = VPolygon([])
 
@@ -49,26 +48,25 @@ List of vertices as an array of vertex pairs, Vector{Vector{Float64}}.
 function vertices_list(P::VPolygon)::Vector{Vector{Float64}}
     return P.vertices_list
 end
-#=
-"""
-    plot_Polygon(P::Union{HPolygon, HPolygonOpt}; ...)
 
-Plot a polygon given in constraint form.
+"""
+    plot_polygon(P::VPolygon; ...)
+
+Plot a polygon given in vertex representation.
 
 ### Input
 
-- `P` -- a polygon in constraint representation
+- `P` -- a polygon in vertex representation
 
 ### Examples
 
 ```julia
 julia> using LazySets, Plots
-julia> H = HPolygon([LinearConstraint([1.0, 0.0], 0.6), LinearConstraint([0.0, 1.0], 0.6),
-                     LinearConstraint([-1.0, 0.0], -0.4), LinearConstraint([0.0, -1.0], -0.4)])
-julia> plot(H)
+julia> P = VPolygon([[0.6, 0.6], [0.4, 0.6], [0.4, 0.4], [0.6, 0.4]])
+julia> plot(P)
 ```
 """
-@recipe function plot_Polygon(P::Union{HPolygon, HPolygonOpt};
+@recipe function plot_polygon(P::VPolygon;
                               color="blue", label="", grid=true, alpha=0.5)
 
     seriestype := :shape
@@ -80,26 +78,24 @@ julia> plot(H)
 end
 
 """
-    plot_Polygon(P::Union{Vector{HPolygon}, Vector{HPolygonOpt}}; ...)
+    plot_polygons(P::Vector{VPolygon}; ...)
 
-Plot an array of polygons given in constraint form.
+Plot an array of polygons given in vertex representation.
 
 ### Input
 
-- `P` -- an array of polygons in constraint representation
+- `P` -- an array of polygons in vertex representation
 
 ### Examples
 
 ```julia
 julia> using LazySets, Plots
-julia> H1 = HPolygon([LinearConstraint([1.0, 0.0], 0.6), LinearConstraint([0.0, 1.0], 0.6),
-                      LinearConstraint([-1.0, 0.0], -0.4), LinearConstraint([0.0, -1.0], -0.4)])
-julia> H2 = HPolygon([LinearConstraint([2.0, 0.0], 0.6), LinearConstraint([0.0, 2.0], 0.6),
-                      LinearConstraint([-2.0, 0.0], -0.4), LinearConstraint([0.0, -2.0], -0.4)])
-julia> plot([H1, H2])
+julia> P1 = VPolygon([[0.6, 0.6], [0.4, 0.6], [0.4, 0.4], [0.6, 0.4]])
+julia> P2 = VPolygon([[0.3, 0.3], [0.2, 0.3], [0.2, 0.2], [0.3, 0.2]])
+julia> plot([P1, P2])
 ```
 """
-@recipe function plot_Polygon(P::Vector{HPolygon};
+@recipe function plot_polygons(P::Vector{VPolygon};
                               seriescolor="blue", label="", grid=true, alpha=0.5)
 
     seriestype := :shape
@@ -109,4 +105,3 @@ julia> plot([H1, H2])
         @series (x, y) = vlist[:, 1], vlist[:, 2]
     end
 end
-=#

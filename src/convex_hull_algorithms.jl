@@ -8,8 +8,8 @@ Compute the convex hull of points in the plane.
 - `points` -- array of vectors containing the 2D coordinates of the points
 
 """
-function convex_hull(points; algorithm="andrew")
-    if algorithm == "andrew"
+function convex_hull(points; algorithm="andrew_monotone_chain")
+    if algorithm == "andrew_monotone_chain"
         return andrew_monotone_chain(points)
     else
         error("this convex hull algorithm is unknown")
@@ -54,7 +54,7 @@ in ``O(n \\log n)`` time.
 For further details see the wikipedia page:
 [Monotone chain](https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain)
 """
-function andrew_monotone_chain(points::Vector{Vector{T}}) where {T<:Real}
+function andrew_monotone_chain(points::Vector{S}) where{S<:AbstractVector{T}} where{T<:Real}
 
     @inline function build_hull!(semihull, iterator, points, zero_T)
         @inbounds for i in iterator
@@ -71,11 +71,11 @@ function andrew_monotone_chain(points::Vector{Vector{T}}) where {T<:Real}
     zero_T = zero(T)
 
     # build lower hull
-    lower = Vector{Vector{T}}()
+    lower = Vector{S}()
     build_hull!(lower, indices(points, 1), points, zero_T)
 
     # build upper hull
-    upper = Vector{Vector{T}}()
+    upper = Vector{S}()
     build_hull!(upper, size(points, 1):-1:1, points, zero_T)
 
     # remove the last point of each segment because they are repeated

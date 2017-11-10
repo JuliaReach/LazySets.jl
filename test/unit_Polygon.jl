@@ -78,3 +78,11 @@ vp = tovrep(p)
 @test [-1., 1.] ∈ vp.vertices_list
 @test [0., 0.] ∈ vp.vertices_list
 @test [4., 2.] ∈ vp.vertices_list
+
+# test convex hull of a set of points using the default algorithm
+points = [[0.9,0.2], [0.4,0.6], [0.2,0.1], [0.1,0.3], [0.3,0.28]]
+vp = VPolygon(points) # by default, a convex hull is run
+@test vertices_list(vp) == [ [0.1,0.3],[0.2,0.1], [0.9,0.2],[0.4,0.6] ]
+
+vp = VPolygon(points, apply_convex_hull=false) # we can turn it off
+@test vertices_list(vp) == [[0.9,0.2], [0.4,0.6], [0.2,0.1], [0.1,0.3], [0.3,0.28]]
