@@ -56,28 +56,27 @@ For further details see the wikipedia page:
 """
 function andrew_monotone_chain(points::Vector{Vector{T}}) where {T<:Real}
 
+    @inline function build_hull!(semihull, iterator, points, zero_T)
+        @inbounds for i in iterator
+            p = view(points, i, :)
+            while length(semihull) >= 2 && right_turn(semihull[end-1], semihull[end], p) <= zero_T
+                pop!(semihull)
+            end
+            push!(semihull, p)
+        end
+    end
+
     # sort the rows lexicographically (which requires a two-dimensional array)
     points = sortrows(hcat(points...)')
+    zero_T = zero(T)
 
     # build lower hull
     lower = Vector{Vector{T}}()
-    for i in indices(points, 1)
-        p = view(points, i, :)
-        while length(lower) >= 2 && right_turn(lower[end-1], lower[end], p) <= zero(T)
-            pop!(lower)
-        end
-        push!(lower, p)
-    end
+    build_hull!(lower, indices(points, 1), points, zero_T)
 
     # build upper hull
     upper = Vector{Vector{T}}()
-    for i in size(points, 1):-1:1
-        p = view(points, i, :)
-        while length(upper) >= 2 && right_turn(upper[end-1], upper[end], p) <= zero(T)
-            pop!(upper)
-        end
-        push!(upper, p)
-    end
+    build_hull!(upper, size(points, 1):-1:1, points, zero_T)
 
     # remove the last point of each segment because they are repeated
     return [lower[1:end-1]; upper[1:end-1]]
