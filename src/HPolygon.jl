@@ -89,7 +89,7 @@ Return whether a given vector is contained in the polygon.
 
 Return rue iff x ∈ P.
 """
-function is_contained(x::Vector{Float64}, P::HPolygon)::Bool
+function is_contained(x::AbstractVector{Float64}, P::HPolygon)::Bool
     if (length(x) != 2)
         false
     else

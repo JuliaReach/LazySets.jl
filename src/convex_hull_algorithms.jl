@@ -76,7 +76,7 @@ function andrew_monotone_chain(points::Vector{S}) where{S<:AbstractVector{T}} wh
 
     # build upper hull
     upper = Vector{S}()
-    build_hull!(upper, size(points, 1):-1:1, points, zero_T)
+    build_hull!(upper, reverse(indices(points, 1)), points, zero_T)
 
     # remove the last point of each segment because they are repeated
     return [lower[1:end-1]; upper[1:end-1]]
