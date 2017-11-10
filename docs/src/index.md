@@ -8,8 +8,7 @@ problems, such as those encountered in [differential inclusions](https://en.wiki
 or reachability analysis techniques in the domain of [formal verification](https://en.wikipedia.org/wiki/Formal_verification).
 Typically, one is confronted with a set-based recurrence with a given initial set and/or
 input sets, and for visualization purposes the final result has to be obtained through an
-adequate projection onto low-dimensions. This library implements types to construct
-the set formulas with the usual mathematical notation, and methods to efficiently
+adequate projection onto low-dimensions. This library implements types to construct set formulas and methods to efficiently
 and accurately approximate the projection in low-dimensions.
 
 ```@contents
