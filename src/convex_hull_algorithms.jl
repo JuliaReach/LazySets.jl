@@ -16,11 +16,26 @@ function convex_hull(points; algorithm="andrew")
     end
 end
 
-#=
-@inline function right_turn(O, A, B)
+"""
+    right_turn(O, A, B)
 
-end
-=#
+Determine if the acute angle defined by the three points O, A, B in the plane is
+a right turn (counter-clockwise) with respect to the center O.
+
+### Input
+
+- `O` -- center point
+- `A` -- one point
+- `B` -- another point
+
+### Algorithm
+
+The [cross product](https://en.wikipedia.org/wiki/Cross_product) is used to
+determine the sense of rotation. If the result is 0, the points are collinear;
+if it is positive, the three points constitute a positive angle of rotation
+around O from A to B; otherwise a negative angle.
+"""
+@inline right_turn(O, A, B) = (A[1] - O[1])*(B[2]-O[2]) - (A[2] - O[2])*(B[1]-O[1])
 
 """
     andrew_monotone_chain(points)
@@ -41,26 +56,29 @@ For further details see the wikipedia page:
 """
 function andrew_monotone_chain(points::Vector{Vector{T}}) where {T<:Real}
 
-    points = [sortrows(hcat(points...)')[i, :] for i in 1:length(points)]
+    # sort the rows lexicographically (which requires a two-dimensional array)
+    points = sortrows(hcat(points...)')
 
-    # Build lower hull
+    # build lower hull
     lower = Vector{Vector{T}}()
-    for p in points
-        while length(lower) >= 2 && cross([lower[end]-lower[end-1]; zero(T)], [p-lower[end-1]; zero(T)])[3] <= zero(T)
+    for i in indices(points, 1)
+        p = view(points, i, :)
+        while length(lower) >= 2 && right_turn(lower[end-1], lower[end], p) <= zero(T)
             pop!(lower)
         end
         push!(lower, p)
     end
 
-    # Build upper hull
+    # build upper hull
     upper = Vector{Vector{T}}()
-    for i in length(points):-1:1
-        p = points[i]
-        while length(upper) >= 2 && cross([upper[end]-upper[end-1]; zero(T)], [p-upper[end-1]; zero(T)])[3] <= zero(T)
+    for i in size(points, 1):-1:1
+        p = view(points, i, :)
+        while length(upper) >= 2 && right_turn(upper[end-1], upper[end], p) <= zero(T)
             pop!(upper)
         end
         push!(upper, p)
     end
 
+    # remove the last point of each segment because they are repeated
     return [lower[1:end-1]; upper[1:end-1]]
 end
