@@ -1,12 +1,14 @@
 import Base.<=
 
 # Polygon in constraint representation (optimized for large number of constraints)
-export HPolygon, addconstraint!, is_contained, tovrep, vertices_list
+export HPolygonOpt, addconstraint!, is_contained, tovrep, vertices_list
 
 """
     HPolygonOpt <: LazySet
 
-Type that represents a convex polygon (in H-representation).
+Type that represents a convex polygon in constraint representation, whose edges
+are sorted in counter-clockwise fashion with respect to their normal directions.
+This is a refined version of `HPolygon`.
 
 ### Fields
 
@@ -17,7 +19,9 @@ Type that represents a convex polygon (in H-representation).
 ### Notes
 
 This structure is optimized to evaluate the support function/vector with a large
-sequence of directions, which are one to one close.
+sequence of directions, which are one to one close. The strategy is to have an
+index that can be used to warm-start the search for optimal values in the support
+vector computation.
 """
 mutable struct HPolygonOpt <: LazySet
     constraints_list::Vector{LinearConstraint}
@@ -35,7 +39,7 @@ Return the ambient dimension of the optimized polygon.
 
 ### Input
 
-- `P` -- optimized polyhedron in H-representation
+- `P` -- optimized polygon
 """
 function dim(P::HPolygonOpt)::Int64
     return 2
@@ -49,33 +53,33 @@ Return the support vector of the optimized polygon in a given direction.
 ### Input
 
 - `d` -- direction
-- `P` -- polyhedron in H-representation
+- `P` -- optimized polygon in constraint representation
 """
-function σ(d::AbstractVector{Float64}, p::HPolygonOpt)::Vector{Float64}
-    n = length(p.constraints_list)
-    cl = p.constraints_list
-    if (d <= cl[p.ind].a)
-        k = p.ind-1
+function σ(d::AbstractVector{Float64}, P::HPolygonOpt)::Vector{Float64}
+    m = length(P.constraints_list)
+    cl = P.constraints_list
+    if (d <= cl[P.ind].a)
+        k = P.ind-1
         while (k >= 1 && d <= cl[k].a)
             k -= 1
         end
         if (k == 0)
-            p.ind = n
-            return intersection(Line(cl[n]), Line(cl[1]))
+            P.ind = m
+            return intersection(Line(cl[m]), Line(cl[1]))
         else
-            p.ind = k
+            P.ind = k
             return intersection(Line(cl[k]), Line(cl[k+1]))
         end
     else
-        k = p.ind+1
-        while (k <= n && cl[k].a <= d)
+        k = P.ind+1
+        while (k <= m && cl[k].a <= d)
             k += 1
         end
-        if (k == n+1)
-            p.ind = n
-            return intersection(Line(cl[n]), Line(cl[1]))
+        if (k == m+1)
+            P.ind = m
+            return intersection(Line(cl[m]), Line(cl[1]))
         else
-            p.ind = k-1
+            P.ind = k-1
             return intersection(Line(cl[k-1]), Line(cl[k]))
         end
     end
@@ -84,12 +88,13 @@ end
 """
     is_contained(x, P)
 
-Return whether a given vector is contained in a polygon in constraint representation.
+Return whether a given vector is contained in an optimized polygon in constraint
+representation.
 
 ### Input
 
-- `x` -- vector
-- `P` -- polygon
+- `x` -- two-dimensional vector
+- `P` -- optimized polygon in constraint representation
 
 ### Output
 
@@ -106,7 +111,7 @@ Build a vertex representation of the given optimized polygon.
 
 ### Input
 
-- `P` -- an optimized polygon in constraint representation
+- `P` -- optimized polygon in constraint representation
 
 ### Output
 

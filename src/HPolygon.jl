@@ -66,7 +66,7 @@ polytope).
 ### Input
 
 - `d` -- direction
-- `P` -- polyhedron in constraint representation
+- `P` -- polygon in constraint representation
 
 ### Algorithm
 
@@ -96,8 +96,8 @@ Return whether a given vector is contained in the polygon.
 
 ### Input
 
-- `x` -- a two-dimensional vector
-- `P` -- a polygon in constraint representation
+- `x` -- two-dimensional vector
+- `P` -- polygon in constraint representation
 
 ### Output
 
@@ -118,7 +118,7 @@ Build a vertex representation of the given polygon.
 
 ### Input
 
-- `P` -- a polygon in constraint representation
+- `P` -- polygon in constraint representation
 
 ### Output
 
@@ -140,7 +140,7 @@ Return the list of vertices of a convex polygon in constraint representation.
 
 ### Input
 
-- `P` -- an optimized polygon in constraint representation
+- `P` -- polygon in constraint representation
 
 ### Output
 
@@ -152,6 +152,6 @@ function vertices_list(P::HPolygon)::Vector{Vector{Float64}}
     @inbounds for i in 1:m-1
         points[i] = intersection(Line(P.constraints_list[i]), Line(P.constraints_list[i+1]))
     end
-    points[n] = intersection(Line(P.constraints_list[m]), Line(P.constraints_list[1]))
+    points[m] = intersection(Line(P.constraints_list[m]), Line(P.constraints_list[1]))
     return points
 end
