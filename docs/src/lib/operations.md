@@ -36,6 +36,15 @@ dim(ch::ConvexHull)
 σ(d::AbstractVector{Float64}, ch::ConvexHull)
 ```
 
+### Convex Hull Algorithms
+
+```@docs
+convex_hull
+convex_hull!
+right_turn
+andrew_monotone_chain!
+```
+
 ## Cartesian Product
 
 ```@docs

@@ -16,7 +16,6 @@ CurrentModule = LazySets
 LazySets
 LazySets.LazySet
 ρ
-σ
 ```
 
 ## Balls
@@ -46,27 +45,27 @@ dim(B::Ball2)
 ```@docs
 HPolygon
 tovrep(s::HPolygon)
-addconstraint!(p::HPolygon, c::LinearConstraint)
-σ(d::AbstractVector{Float64}, p::HPolygon)
-vertices_list(po::Union{HPolygon, HPolygonOpt})
-is_contained(x::Vector{Float64}, P::HPolygon)
+addconstraint!(P::HPolygon, c::LinearConstraint)
+σ(d::AbstractVector{Float64}, P::HPolygon)
+vertices_list(P::Union{HPolygon, HPolygonOpt})
+is_contained(x::AbstractVector{Float64}, P::HPolygon)
 ```
 
 ### Optimized constraint representation
 
 ```@docs
 HPolygonOpt
-σ(d::AbstractVector{Float64}, p::HPolygonOpt)
+σ(d::AbstractVector{Float64}, P::HPolygonOpt)
 dim(P::HPolygonOpt)
-tovrep(po::HPolygonOpt)
-is_contained(x::Vector{Float64}, P::HPolygonOpt)
+tovrep(P::HPolygonOpt)
+is_contained(x::AbstractVector{Float64}, P::HPolygonOpt)
 ```
 
 ### Vertex representation
 
 ```@docs
 VPolygon
-andrew_monotone_chain
+vertices_list(P::VPolygon)
 ```
 
 ## Lines and linear constraints

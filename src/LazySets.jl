@@ -34,8 +34,9 @@ include("Singleton.jl")
 include("Ball2.jl")
 include("BallInf.jl")
 include("Hyperrectangle.jl")
-#include("Polyhedron.jl")  # optional (long startup time)
+#include("Polyhedron.jl")  # optional (long startup time!)
 include("HPolygon.jl")
+include("HPolygonOpt.jl")
 include("VPolygon.jl")
 
 # =================================
