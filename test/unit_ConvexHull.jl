@@ -16,3 +16,7 @@ d = [0., 1.]
 @test σ(d, ch1) == [1., 3.]
 d = [0., -1.]
 @test σ(d, ch1) == [0., -1.]
+
+# test convex hull of a set of points using the default algorithm
+points = [[0.9,0.2], [0.4,0.6], [0.2,0.1], [0.1,0.3], [0.3,0.28]]
+@test convex_hull(points) == [ [0.1,0.3],[0.2,0.1], [0.9,0.2],[0.4,0.6] ]

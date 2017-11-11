@@ -5,6 +5,7 @@ operations between sets.
 
 ```@contents
 Pages = ["operations.md"]
+Depth = 3
 ```
 
 ```@meta
@@ -34,6 +35,15 @@ Base.:+(msa::MinkowskiSumArray, sf::VoidSet)
 ConvexHull
 dim(ch::ConvexHull)
 σ(d::AbstractVector{Float64}, ch::ConvexHull)
+```
+
+### Convex Hull Algorithms
+
+```@docs
+convex_hull
+convex_hull!
+right_turn
+andrew_monotone_chain!
 ```
 
 ## Cartesian Product
