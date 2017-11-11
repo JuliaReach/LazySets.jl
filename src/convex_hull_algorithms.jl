@@ -5,12 +5,25 @@ Compute the convex hull of points in the plane.
 
 ### Input
 
-- `points` -- array of vectors containing the 2D coordinates of the points
+- `points`    -- array of vectors containing the 2D coordinates of the points
+- `algorithm` -- (optional, default: `"andrew_monotone_chain"`) choose the convex
+                 hull algorithm, valid options are:
 
+    * `"andrew_monotone_chain"`
 """
 function convex_hull(points; algorithm="andrew_monotone_chain")
+    convex_hull!(copy(points), algorithm=algorithm)
+end
+
+"""
+    convex_hull!(points; algorithm)
+
+Compute the convex hull of points in the plane, in-place.
+See also: `convex_hull`.
+"""
+function convex_hull!(points; algorithm="andrew_monotone_chain")
     if algorithm == "andrew_monotone_chain"
-        return andrew_monotone_chain(points)
+        return andrew_monotone_chain!(points)
     else
         error("this convex hull algorithm is unknown")
     end
@@ -38,7 +51,7 @@ around O from A to B; otherwise a negative angle.
 @inline right_turn(O, A, B) = (A[1] - O[1])*(B[2]-O[2]) - (A[2] - O[2])*(B[1]-O[1])
 
 """
-    andrew_monotone_chain(points)
+    andrew_monotone_chain!(points)
 
 Compute the convex hull of points in the plane using Andrew's monotone chain method.
 
@@ -54,29 +67,30 @@ in ``O(n \\log n)`` time.
 For further details see the wikipedia page:
 [Monotone chain](https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain)
 """
-function andrew_monotone_chain(points::Vector{S}) where{S<:AbstractVector{T}} where{T<:Real}
+function andrew_monotone_chain!(points::Vector{S}) where{S<:AbstractVector{T}} where{T<:Real}
 
     @inline function build_hull!(semihull, iterator, points, zero_T)
         @inbounds for i in iterator
-            p = view(points, i, :)
-            while length(semihull) >= 2 && right_turn(semihull[end-1], semihull[end], p) <= zero_T
+            while length(semihull) >= 2 && right_turn(semihull[end-1], semihull[end], points[i]) <= zero_T
                 pop!(semihull)
             end
-            push!(semihull, p)
+            push!(semihull, points[i])
         end
     end
 
     # sort the rows lexicographically (which requires a two-dimensional array)
-    points = sortrows(hcat(points...)')
+    # points = sortrows(hcat(points...)', alg=QuickSort)  # out-of-place version
+    sort!(points, by=x->(x[1], x[2]))                     # inplace version
+
     zero_T = zero(T)
 
     # build lower hull
     lower = Vector{S}()
-    build_hull!(lower, indices(points, 1), points, zero_T)
+    build_hull!(lower, indices(points)[1], points, zero_T)
 
     # build upper hull
     upper = Vector{S}()
-    build_hull!(upper, reverse(indices(points, 1)), points, zero_T)
+    build_hull!(upper, reverse(indices(points)[1]), points, zero_T)
 
     # remove the last point of each segment because they are repeated
     return [lower[1:end-1]; upper[1:end-1]]
