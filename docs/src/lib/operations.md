@@ -5,6 +5,7 @@ operations between sets.
 
 ```@contents
 Pages = ["operations.md"]
+Depth = 3
 ```
 
 ```@meta

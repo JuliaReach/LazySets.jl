@@ -33,6 +33,25 @@ end
 HPolygonOpt(H::HPolygon) = HPolygonOpt(H.constraints_list)
 
 """
+    addconstraint!(P, constraint)
+
+Add a linear constraint to an optimized polygon in constraint representation,
+keeping the constraints sorted by their normal directions.
+
+### Input
+
+- `P`          -- optimized polygon
+- `constraint` -- the linear constraint to add, see `LinearConstraint`
+"""
+function addconstraint!(P::HPolygonOpt, constraint::LinearConstraint)
+    i = length(P.constraints_list)
+    while i > 0 && constraint.a <= P.constraints_list[i].a
+        i -= 1
+    end
+    insert!(P.constraints_list, i+1, constraint)
+end
+
+"""
     dim(P)
 
 Return the ambient dimension of the optimized polygon.

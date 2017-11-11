@@ -185,3 +185,60 @@ julia> plot([P1, P2])
         @series (x, y) = vlist[:, 1], vlist[:, 2]
     end
 end
+
+"""
+    plot_polygon(P::VPolygon; ...)
+
+Plot a polygon given in vertex representation.
+
+### Input
+
+- `P` -- a polygon in vertex representation
+
+### Examples
+
+```julia
+julia> using LazySets, Plots
+julia> P = VPolygon([[0.6, 0.6], [0.4, 0.6], [0.4, 0.4], [0.6, 0.4]])
+julia> plot(P)
+```
+"""
+@recipe function plot_polygon(P::VPolygon;
+                              color="blue", label="", grid=true, alpha=0.5)
+
+    seriestype := :shape
+
+    vlist = hcat(vertices_list(P)...).'
+    (x, y) = vlist[:, 1], vlist[:, 2]
+
+     x, y
+end
+
+"""
+    plot_polygons(P::Vector{VPolygon}; ...)
+
+Plot an array of polygons given in vertex representation.
+
+### Input
+
+- `P` -- an array of polygons in vertex representation
+
+### Examples
+
+```julia
+julia> using LazySets, Plots
+julia> P1 = VPolygon([[0.6, 0.6], [0.4, 0.6], [0.4, 0.4], [0.6, 0.4]])
+julia> P2 = VPolygon([[0.3, 0.3], [0.2, 0.3], [0.2, 0.2], [0.3, 0.2]])
+julia> plot([P1, P2])
+```
+"""
+@recipe function plot_polygons(P::Vector{VPolygon};
+                              seriescolor="blue", label="", grid=true, alpha=0.5)
+
+    seriestype := :shape
+
+    for Pi in P
+        vlist = hcat(vertices_list(Pi)...).'
+        @series (x, y) = vlist[:, 1], vlist[:, 2]
+    end
+end

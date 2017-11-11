@@ -4,6 +4,7 @@ This section of the manual describes the basic set representation types.
 
 ```@contents
 Pages = ["representations.md"]
+Depth = 3
 ```
 
 ```@meta
@@ -44,27 +45,33 @@ dim(B::Ball2)
 
 ```@docs
 HPolygon
-tovrep(s::HPolygon)
 addconstraint!(P::HPolygon, c::LinearConstraint)
+dim(P::HPolygon)
 σ(d::AbstractVector{Float64}, P::HPolygon)
-vertices_list(P::Union{HPolygon, HPolygonOpt})
+
 is_contained(x::AbstractVector{Float64}, P::HPolygon)
+tovrep(P::HPolygon)
+vertices_list(P::HPolygon)
 ```
 
 ### Optimized constraint representation
 
 ```@docs
 HPolygonOpt
-σ(d::AbstractVector{Float64}, P::HPolygonOpt)
+addconstraint!(P::HPolygonOpt, c::LinearConstraint)
 dim(P::HPolygonOpt)
-tovrep(P::HPolygonOpt)
+σ(d::AbstractVector{Float64}, P::HPolygonOpt)
+
 is_contained(x::AbstractVector{Float64}, P::HPolygonOpt)
+tovrep(P::HPolygonOpt)
+vertices_list(P::HPolygonOpt)
 ```
 
 ### Vertex representation
 
 ```@docs
 VPolygon
+dim(P::VPolygon)
 vertices_list(P::VPolygon)
 ```
 

@@ -1,7 +1,7 @@
 import Base.<=
 
 # Polygons in vertex representation
-export VPolygon, tovrep, vertices_list, is_contained
+export VPolygon, vertices_list
 
 """
     VPolygon <: LazySet
@@ -31,6 +31,18 @@ struct VPolygon <: LazySet
 end
 VPolygon() = VPolygon([])
 
+"""
+    dim(P)
+
+Return the ambient dimension of the polygon.
+
+### Input
+
+- `P` -- polygon in vertex representation
+"""
+function dim(P::VPolygon)
+    2
+end
 
 """
     vertices_list(P)
@@ -43,65 +55,8 @@ Return the list of vertices of a convex polygon in vertex representation.
 
 ### Output
 
-List of vertices as an array of vertex pairs, Vector{Vector{Float64}}.
+List of vertices as an array of vertex pairs, `Vector{Vector{Float64}}`.
 """
 function vertices_list(P::VPolygon)::Vector{Vector{Float64}}
     return P.vertices_list
-end
-
-"""
-    plot_polygon(P::VPolygon; ...)
-
-Plot a polygon given in vertex representation.
-
-### Input
-
-- `P` -- a polygon in vertex representation
-
-### Examples
-
-```julia
-julia> using LazySets, Plots
-julia> P = VPolygon([[0.6, 0.6], [0.4, 0.6], [0.4, 0.4], [0.6, 0.4]])
-julia> plot(P)
-```
-"""
-@recipe function plot_polygon(P::VPolygon;
-                              color="blue", label="", grid=true, alpha=0.5)
-
-    seriestype := :shape
-
-    vlist = hcat(vertices_list(P)...).'
-    (x, y) = vlist[:, 1], vlist[:, 2]
-
-     x, y
-end
-
-"""
-    plot_polygons(P::Vector{VPolygon}; ...)
-
-Plot an array of polygons given in vertex representation.
-
-### Input
-
-- `P` -- an array of polygons in vertex representation
-
-### Examples
-
-```julia
-julia> using LazySets, Plots
-julia> P1 = VPolygon([[0.6, 0.6], [0.4, 0.6], [0.4, 0.4], [0.6, 0.4]])
-julia> P2 = VPolygon([[0.3, 0.3], [0.2, 0.3], [0.2, 0.2], [0.3, 0.2]])
-julia> plot([P1, P2])
-```
-"""
-@recipe function plot_polygons(P::Vector{VPolygon};
-                              seriescolor="blue", label="", grid=true, alpha=0.5)
-
-    seriestype := :shape
-
-    for Pi in P
-        vlist = hcat(vertices_list(Pi)...).'
-        @series (x, y) = vlist[:, 1], vlist[:, 2]
-    end
 end
