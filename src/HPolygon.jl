@@ -1,7 +1,7 @@
 import Base.<=
 
 # Polygon in constraint representation
-export HPolygon, addconstraint!, is_contained, vertices_list, tovrep
+export HPolygon, addconstraint!, is_contained, tovrep, vertices_list
 
 """
     HPolygon <: LazySet
@@ -24,6 +24,26 @@ end
 HPolygon() = HPolygon([])
 
 """
+    addconstraint!(P, constraint)
+
+Add a linear constraint to a polygon in constraint representation keeping the
+constraints sorted by their normal directions.
+
+### Input
+
+- `P`          -- a polygon
+- `constraint` -- the linear constraint to add, see `LinearConstraint`
+"""
+function addconstraint!(P::HPolygon, constraint::LinearConstraint)
+    i = length(P.constraints_list)
+    while i > 0 && constraint.a <= P.constraints_list[i].a
+        i -= 1
+    end
+    # here P.constraints_list[i] < constraint
+    insert!(P.constraints_list, i+1, constraint)
+end
+
+"""
     dim(P)
 
 Return the ambient dimension of the polygon.
@@ -37,26 +57,6 @@ function dim(P::HPolygon)
 end
 
 """
-    addconstraint!(P, constraint)
-
-Add a linear constraint to a polygon in constraint representation keeping the
-constraints sorted by their normal directions.
-
-### Input
-
-- `P`          -- a polygon
-- `constraint` -- the linear constraint to add
-"""
-function addconstraint!(P::HPolygon, constraint::LinearConstraint)
-    i = length(P.constraints_list)
-    while i > 0 && constraint.a <= P.constraints_list[i].a
-        i -= 1
-    end
-    # here P.constraints_list[i] < constraint
-    insert!(P.constraints_list, i+1, constraint)
-end
-
-"""
     σ(d, P)
 
 Return the support vector of a polygon in a given direction.
@@ -66,7 +66,12 @@ polytope).
 ### Input
 
 - `d` -- direction
-- `P` -- polyhedron in H-representation
+- `P` -- polyhedron in constraint representation
+
+### Algorithm
+
+Comparison of directions is performed using polar angles, see the overload of
+`<=` for two-dimensional vectors.
 """
 function σ(d::AbstractVector{Float64}, P::HPolygon)::Vector{Float64}
     n = length(P.constraints_list)
@@ -117,7 +122,7 @@ Build a vertex representation of the given polygon.
 
 ### Output
 
-The same polygon in vertex representation, `VPolygon`.
+The same polygon but in vertex representation, `VPolygon`.
 
 ### Note
 
@@ -125,15 +130,7 @@ The linear constraints of the input `HPolygon` are assumed to be sorted by their
 normal directions in counter-clockwise fashion.
 """
 function tovrep(P::HPolygon)::VPolygon
-    m = length(P.constraints_list)
-    points = Vector{Float64}[]
-    for i in 1:m-1
-        current = intersection(Line(P.constraints_list[i]), Line(P.constraints_list[i+1]))
-        push!(points, current)
-    end
-    current = intersection(Line(P.constraints_list[m]), Line(P.constraints_list[1]))
-    push!(points, current)
-    return VPolygon(points)
+    return VPolygon(vertices_list(P))
 end
 
 """
@@ -147,11 +144,14 @@ Return the list of vertices of a convex polygon in constraint representation.
 
 ### Output
 
-List of vertices as an array of vertex pairs, Vector{Vector{Float64}}.
+List of vertices as an array of vertex pairs, `Vector{Vector{Float64}}`.
 """
 function vertices_list(P::HPolygon)::Vector{Vector{Float64}}
-    n = length(P.constraints_list)
-    vlist = [intersection(Line(P.constraints_list[i]), Line(P.constraints_list[i+1])) for i = 1:n-1]
-    push!(vlist, intersection(Line(P.constraints_list[n]), Line(P.constraints_list[1])))
-    return vlist
+    m = length(P.constraints_list)
+    points = Vector{Vector{Float64}}(m)
+    @inbounds for i in 1:m-1
+        points[i] = intersection(Line(P.constraints_list[i]), Line(P.constraints_list[i+1]))
+    end
+    points[n] = intersection(Line(P.constraints_list[m]), Line(P.constraints_list[1]))
+    return points
 end

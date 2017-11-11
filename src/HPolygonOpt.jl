@@ -1,7 +1,7 @@
 import Base.<=
 
 # Polygon in constraint representation (optimized for large number of constraints)
-export HPolygonOpt, addconstraint!, is_contained, vertices_list, tovrep
+export HPolygon, addconstraint!, is_contained, tovrep, vertices_list
 
 """
     HPolygonOpt <: LazySet
