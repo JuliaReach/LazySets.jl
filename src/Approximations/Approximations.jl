@@ -19,6 +19,8 @@ export approximate,
        symmetric_interval_hull
 
 const TOL_DIR = 1e-6
+const TOL_POINTS = 1e-6
+
 const DIR_EAST = [1., 0.]
 const DIR_NORTH = [0., 1.]
 const DIR_WEST = [-1., 0.]
