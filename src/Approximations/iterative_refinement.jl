@@ -3,12 +3,12 @@ Type that represents a local approximation in 2D.
 
 ### Fields
 
-- `p1` -- the first inner point
-- `d1` -- the first direction
-- `p2` -- the second inner point
-- `d2` -- the second direction
-- `err` -- the error made
-- `ndir` -- a normal direction of the inner approximation
+- `p1`        -- the first inner point
+- `d1`        -- the first direction
+- `p2`        -- the second inner point
+- `d2`        -- the second direction
+- `err`       -- the error made
+- `ndir`      -- a normal direction of the inner approximation
 - `refinable` -- states if this approximation is refinable
 """
 struct Approximation2D
@@ -19,6 +19,7 @@ struct Approximation2D
     err::Float64
     ndir::Vector{Float64}
     refinable::Bool
+
     function Approximation2D(p1::Vector{Float64}, d1::Vector{Float64}, p2::Vector{Float64}, d2::Vector{Float64})
         ndir = [p2[2]-p1[2], p1[1]-p2[1]]
         norm_ndir = norm(ndir)
@@ -40,7 +41,7 @@ Refine the given approximation.
 
 ### Input
 
-- `X` -- set which is approximated
+- `X`      -- set which is approximated
 - `approx` -- approximation to refine
 """
 function refine(X::LazySet, approx::Approximation2D)
@@ -61,7 +62,8 @@ distance) as an inner and an outer approximation composed by sorted local
 - `ɛ` -- the error bound
 """
 function approximate(X::LazySet, ɛ::Float64)::Vector{Approximation2D}
-    # box directions
+
+    # start with box directions
     pe = σ(DIR_EAST, X)
     pn = σ(DIR_NORTH, X)
     pw = σ(DIR_WEST, X)
@@ -71,6 +73,7 @@ function approximate(X::LazySet, ɛ::Float64)::Vector{Approximation2D}
     push!(queue, Approximation2D(pn, DIR_NORTH, pw, DIR_WEST))
     push!(queue, Approximation2D(pw, DIR_WEST, ps, DIR_SOUTH))
     push!(queue, Approximation2D(ps, DIR_SOUTH, pe, DIR_EAST))
+
     i = 1
     # iterative refinement
     while i <= length(queue)

@@ -8,9 +8,14 @@ module Approximations
 
 using LazySets
 
-export decompose, overapproximate, approximate,
-       radius_approximation, diameter_approximation, box_approximation,
-       ballinf_approximation, symmetric_interval_hull
+export approximate,
+       ballinf_approximation,
+       box_approximation,
+       decompose,
+       diameter_approximation,
+       overapproximate,
+       radius_approximation,
+       symmetric_interval_hull
 
 const TOL_DIR = 1e-6
 const DIR_EAST = [1., 0.]
