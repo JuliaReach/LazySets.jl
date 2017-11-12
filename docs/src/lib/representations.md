@@ -73,6 +73,7 @@ vertices_list(P::HPolygonOpt)
 VPolygon
 dim(P::VPolygon)
 vertices_list(P::VPolygon)
+singleton_list(P::VPolygon)
 ```
 
 ## Lines and linear constraints
@@ -87,10 +88,11 @@ Line
 
 ```@docs
 Hyperrectangle
-radius(H::Hyperrectangle)
 dim(H::Hyperrectangle)
 σ(d::AbstractVector{Float64}, H::Hyperrectangle)
 vertices_list(H::Hyperrectangle)
+norm(H::Hyperrectangle)
+radius(H::Hyperrectangle)
 diameter(H::Hyperrectangle)
 ```
 
