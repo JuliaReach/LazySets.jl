@@ -242,3 +242,57 @@ julia> plot([P1, P2])
         @series (x, y) = vlist[:, 1], vlist[:, 2]
     end
 end
+
+# ============================
+# Plot recipes for singletons
+# ============================
+
+"""
+    plot_singleton(X::Singleton; ...)
+
+Plot a singleton.
+
+### Input
+
+- `X` -- singleton, i.e. a one-element set
+
+### Examples
+
+```julia
+julia> using LazySets, Plots
+julia> plot(Singleton([0.5, 1.0]))
+```
+"""
+@recipe function plot_singleton(X::Singleton;
+                               color="blue", label="", grid=true,
+                               legend=false)
+
+    seriestype := :scatter
+
+    [Tuple(X.element)]
+end
+
+"""
+    plot_singleton(X::Vector{Singleton}; ...)
+
+Plot a list of singletons.
+
+### Input
+
+- `X` -- a list of singletons, i.e. a vector of one-element sets
+
+### Examples
+
+```julia
+julia> using LazySets, Plots
+julia> plot([Singleton([0.0, 0.0]), Singleton([1., 0]), Singleton([0.5, .5])])
+```
+"""
+@recipe function plot_singleton(X::Vector{Singleton};
+                               color="blue", label="", grid=true,
+                               legend=false)
+
+    seriestype := :scatter
+
+    [Tuple(Xi.element) for Xi in X]
+end
