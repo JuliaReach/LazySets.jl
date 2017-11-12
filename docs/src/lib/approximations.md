@@ -5,6 +5,7 @@ the approximation of high-dimensional convex sets using projections.
 
 ```@contents
 Pages = ["approximations.md"]
+Depth = 3
 ```
 
 ```@meta

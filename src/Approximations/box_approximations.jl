@@ -1,7 +1,7 @@
 """
     box_approximation(X)
 
-Overapproximate a set by a box (hyperrectangle). 
+Overapproximate a set by a box (hyperrectangle).
 
 ### Input
 
@@ -87,7 +87,7 @@ end
 
 
 """
-    ballinf_approximation(S)
+    ballinf_approximation(X)
 
 Overapproximation of a set by a ball in the infinity norm.
 
@@ -138,7 +138,7 @@ Approximate radius of a given set.
 ### Algorithm
 
 This is an approximation in the infinity norm. The radius of a BallInf of center
-c and radius r can be approximated by ‖c‖ + r√n, where n is the dimension of the 
+c and radius r can be approximated by ‖c‖ + r√n, where n is the dimension of the
 vectorspace.
 """
 function radius_approximation(X::LazySet)::Float64

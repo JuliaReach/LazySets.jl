@@ -34,39 +34,38 @@ struct Approximation2D
 end
 
 """
-    refine(S, A)
+    refine(X, A)
 
 Refine the given approximation.
 
 ### Input
 
-- `S` -- the set which is approximated
-
-- `approx` -- the approximation to refine
+- `X` -- set which is approximated
+- `approx` -- approximation to refine
 """
-function refine(S::LazySet, approx::Approximation2D)
-    q = σ(approx.ndir, S)
+function refine(X::LazySet, approx::Approximation2D)
+    q = σ(approx.ndir, X)
     (Approximation2D(approx.p1, approx.d1, q, approx.ndir), Approximation2D(q, approx.ndir, approx.p2, approx.d2))
 end
 
 """
-    approximate(S, ɛ)
+    approximate(X, ɛ)
 
 Return an ɛ-close approximation of the given 2D set (in terms of Hausdorff
 distance) as an inner and an outer approximation composed by sorted local
-Approximation2D.
+`Approximation2D`.
 
 ### Input
 
-- `S` -- a 2D set defined by its support function
+- `X` -- a 2D set defined by its support function
 - `ɛ` -- the error bound
 """
-function approximate(S::LazySet, ɛ::Float64)::Array{Approximation2D, 1}
+function approximate(X::LazySet, ɛ::Float64)::Vector{Approximation2D}
     # box directions
-    pe = σ(DIR_EAST, S)
-    pn = σ(DIR_NORTH, S)
-    pw = σ(DIR_WEST, S)
-    ps = σ(DIR_SOUTH, S)
+    pe = σ(DIR_EAST, X)
+    pn = σ(DIR_NORTH, X)
+    pw = σ(DIR_WEST, X)
+    ps = σ(DIR_SOUTH, X)
     queue = Approximation2D[]
     push!(queue, Approximation2D(pe, DIR_EAST, pn, DIR_NORTH))
     push!(queue, Approximation2D(pn, DIR_NORTH, pw, DIR_WEST))
@@ -79,7 +78,7 @@ function approximate(S::LazySet, ɛ::Float64)::Array{Approximation2D, 1}
             i += 1
         else
 
-            (la1, la2) = refine(S, queue[i])
+            (la1, la2) = refine(X, queue[i])
             queue[i] = la1
             insert!(queue, i+1, la2)
         end
