@@ -1,5 +1,7 @@
 using IterTools
 
+import Base.LinAlg:norm
+
 export Hyperrectangle, vertices_list, radius, diameter
 
 """
@@ -13,14 +15,42 @@ product of one-dimensional intervals.
 ### Fields
 
 - `center` -- center of the hyperrectangle as a real vector
-- `radius` -- radius of the ball as a real vector, i.e. its width along
+- `radius` -- radius of the ball as a real vector, i.e., half of its width along
               each coordinate direction
 """
 struct Hyperrectangle <: LazySet
     center::Vector{Float64}
     radius::Vector{Float64}
-    Hyperrectangle(center, radius) = length(center) != length(radius) ?
-                                throw(DimensionMismatch) : new(center, radius)
+    Hyperrectangle(center::Vector{Float64}, radius::Vector{Float64}) =
+        (length(center) != length(radius)
+            ? throw(DimensionMismatch)
+            : new(center, radius))
+end
+
+"""
+    Hyperrectangle(kwargs...)
+
+Constructs a Hyperrectangle from keyword arguments.
+Two combinations are allowed:
+
+1. `center`, `radius` -- both vectors
+2. `high`, `low`      -- both vectors (if both `center` and `radius` are also
+                            defined, those are chosen instead)
+"""
+function Hyperrectangle(;kwargs...)
+    dict = Dict{Symbol, Any}(kwargs)
+    if length(dict) != 2
+        # error below
+    elseif haskey(dict, :center) && haskey(dict, :radius)
+        return Hyperrectangle(dict[:center], dict[:radius])
+    elseif haskey(dict, :high) && haskey(dict, :low)
+        # compute center and radius from high and low vectors
+        center = (dict[:high] .+ dict[:low]) ./ 2.
+        radius = abs.(dict[:high] .- center)
+        return Hyperrectangle(center, radius)
+    end
+    throw(ArgumentError("Invalid arguments for Hyperrectangle: Use either " *
+        "'center' and 'radius' or 'high' and 'low'."))
 end
 
 """
@@ -71,37 +101,60 @@ function vertices_list(H::Hyperrectangle)::Vector{Vector{Float64}}
 end
 
 """
-    radius(H::Hyperrectangle)
+    norm(H::Hyperrectangle, [p])
 
-Return the radius of a Hyperrectangle. It is the radius of the enclosing
-hypercube of minimal volume.
+Return the norm of a Hyperrectangle. It is the norm of the enclosing ball (of
+the given norm) of minimal volume.
+
+### Input
+
+- `H` -- hyperrectangle
+- `p` -- (optional, default: `Inf`) norm
+
+### Output
+
+A real number representing the norm.
+"""
+function norm(H::Hyperrectangle, p=Inf)
+    return maximum(map(x -> norm(x, p), vertices_list(H)))
+end
+
+"""
+    radius(H::Hyperrectangle, [p])
+
+Return the radius of a Hyperrectangle. It is the radius of the enclosing ball
+(of the given norm) of minimal volume with the same center.
+
+### Input
+
+- `H` -- hyperrectangle
+- `p` -- (optional, default: `Inf`) norm
+
+### Output
+
+A real number representing the radius.
+"""
+function radius(H::Hyperrectangle, p=Inf)
+    # the radius is the same for all corners of the hyperrectangle
+    return norm(H.radius, p)
+end
+
+"""
+    diameter(H::Hyperrectangle, [p])
+
+Return the diameter of a hyperrectangle. It is the maximum distance between any
+two elements of the set, or, equivalently, the diameter of the enclosing ball
+(of the given norm) of minimal volume with the same center.
 
 ### Input
 
 - `H` -- a hyperrectangle
+- `p` -- (optional, default: `Inf`) norm
 
 ### Output
 
-A real number representing its radius.
+A real number representing the diameter.
 """
-function radius(H::Hyperrectangle)::Float64
-    return maximum(map(norm, vertices_list(H)))
-end
-
-"""
-    diameter(H::Hyperrectangle)
-
-Return the diameter of a hyperrectangle. It the maximum norm (measured the
-infinity norm) of any element of the set.
-
-### Input
-
-- `H` -- a hyperrectangle
-
-### Output
-
-The diameter of the hyperrectangle.
-"""
-function diameter(H::Hyperrectangle)::Float64
-    return 2. * radius(Hyperrectangle(zeros(dim(H)), H.radius))
+function diameter(H::Hyperrectangle, p=Inf)
+    return 2. * radius(H, p)
 end
