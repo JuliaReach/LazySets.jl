@@ -13,14 +13,42 @@ product of one-dimensional intervals.
 ### Fields
 
 - `center` -- center of the hyperrectangle as a real vector
-- `radius` -- radius of the ball as a real vector, i.e. its width along
+- `radius` -- radius of the ball as a real vector, i.e., half of its width along
               each coordinate direction
 """
 struct Hyperrectangle <: LazySet
     center::Vector{Float64}
     radius::Vector{Float64}
-    Hyperrectangle(center, radius) = length(center) != length(radius) ?
-                                throw(DimensionMismatch) : new(center, radius)
+    Hyperrectangle(center::Vector{Float64}, radius::Vector{Float64}) =
+        (length(center) != length(radius)
+            ? throw(DimensionMismatch)
+            : new(center, radius))
+end
+
+"""
+    Hyperrectangle(kwargs...)
+
+Constructs a Hyperrectangle from keyword arguments.
+Two combinations are allowed:
+
+1. `center`, `radius` -- both vectors
+2. `high`, `low`      -- both vectors (if both `center` and `radius` are also
+                            defined, those are chosen instead)
+"""
+function Hyperrectangle(;kwargs...)
+    dict = Dict{Symbol, Any}(kwargs)
+    if length(dict) != 2
+        # error below
+    elseif haskey(dict, :center) && haskey(dict, :radius)
+        return Hyperrectangle(dict[:center], dict[:radius])
+    elseif haskey(dict, :high) && haskey(dict, :low)
+        # compute center and radius from high and low vectors
+        center = (dict[:high] .+ dict[:low]) ./ 2.
+        radius = abs.(dict[:high] .- center)
+        return Hyperrectangle(center, radius)
+    end
+    throw(ArgumentError("Invalid arguments for Hyperrectangle: Use either " *
+        "'center' and 'radius' or 'high' and 'low'."))
 end
 
 """
