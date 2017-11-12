@@ -1,5 +1,7 @@
 using IterTools
 
+import Base.LinAlg:norm
+
 export Hyperrectangle, vertices_list, radius, diameter
 
 """
@@ -99,37 +101,60 @@ function vertices_list(H::Hyperrectangle)::Vector{Vector{Float64}}
 end
 
 """
-    radius(H::Hyperrectangle)
+    norm(H::Hyperrectangle, [p])
 
-Return the radius of a Hyperrectangle. It is the radius of the enclosing
-hypercube of minimal volume.
+Return the norm of a Hyperrectangle. It is the norm of the enclosing hypercube
+of minimal volume.
+
+### Input
+
+- `H` -- hyperrectangle
+- `p` -- (optional, default: `Inf`) norm
+
+### Output
+
+A real number representing the norm.
+"""
+function norm(H::Hyperrectangle, p=Inf)
+    return maximum(map(x -> norm(x, p), vertices_list(H)))
+end
+
+"""
+    radius(H::Hyperrectangle, [p])
+
+Return the radius of a Hyperrectangle. It is the radius/norm of the enclosing
+hypercube of minimal volume with the same center.
+
+### Input
+
+- `H` -- hyperrectangle
+- `p` -- (optional, default: `Inf`) norm
+
+### Output
+
+A real number representing the radius.
+"""
+function radius(H::Hyperrectangle, p=Inf)
+    # the radius is the same for all corners of the hyperrectangle
+    return norm(H.radius, p)
+end
+
+"""
+    diameter(H::Hyperrectangle, [p])
+
+Return the diameter of a hyperrectangle. It is the maximum distance between any
+two elements of the set, or, equivalently, the diameter of the enclosing
+hypercube of minimal volume with the same center.
 
 ### Input
 
 - `H` -- a hyperrectangle
+- `p` -- (optional, default: `Inf`) norm
 
 ### Output
 
-A real number representing its radius.
+A real number representing the diameter.
 """
-function radius(H::Hyperrectangle)::Float64
-    return maximum(map(norm, vertices_list(H)))
-end
-
-"""
-    diameter(H::Hyperrectangle)
-
-Return the diameter of a hyperrectangle. It the maximum norm (measured the
-infinity norm) of any element of the set.
-
-### Input
-
-- `H` -- a hyperrectangle
-
-### Output
-
-The diameter of the hyperrectangle.
-"""
-function diameter(H::Hyperrectangle)::Float64
-    return 2. * radius(Hyperrectangle(zeros(dim(H)), H.radius))
+function diameter(H::Hyperrectangle, p=Inf)
+    return 2. * radius(H, p)
 end
