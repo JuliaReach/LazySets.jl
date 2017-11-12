@@ -2,7 +2,7 @@ using IterTools
 
 import Base.LinAlg:norm
 
-export Hyperrectangle, vertices_list, radius, diameter
+export Hyperrectangle, vertices_list, norm, radius, diameter
 
 """
     Hyperrectangle <: LazySet
