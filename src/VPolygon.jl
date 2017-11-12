@@ -1,7 +1,7 @@
 import Base.<=
 
 # Polygons in vertex representation
-export VPolygon, vertices_list
+export VPolygon, vertices_list, singleton_list
 
 """
     VPolygon <: LazySet
@@ -59,4 +59,22 @@ List of vertices as an array of vertex pairs, `Vector{Vector{Float64}}`.
 """
 function vertices_list(P::VPolygon)::Vector{Vector{Float64}}
     return P.vertices_list
+end
+
+"""
+    singleton_list(P)
+
+Return the vertices of a convex polygon in vertex representation as a list of
+singletons.
+
+### Input
+
+- `P` -- a polygon given in vertex representation
+
+### Output
+
+List of vertices as an array of vertex pairs, `Vector{Singleton{Float64}}`.
+"""
+function singleton_list(P::VPolygon)
+    return [Singleton(vi) for vi in P.vertices_list]
 end
