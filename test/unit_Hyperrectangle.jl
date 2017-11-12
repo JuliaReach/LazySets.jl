@@ -69,7 +69,22 @@ vl = vertices_list(h)
 @test isin([1., 3.], vl) == true
 @test isin([5., 1.], vl) == true
 @test isin([5., 3.], vl) == true
-# Test Radius
-@test radius(h) == norm([5., 3.])
-# Test Diameter
-@test diameter(h) == norm([5., 3.] - [1., 1.])
+# norm
+@test norm(h) == norm([5., 3.], Inf)
+# radius
+@test radius(h) == norm([2., 1.], Inf)
+# diameter
+@test diameter(h) == norm([5., 3.] - [1., 1.], Inf)
+
+# alternative constructors
+c = ones(2)
+r = [0.1, 0.2]
+l = [0.9, 0.8]
+h = [1.1, 1.2]
+H1 = Hyperrectangle(c, r)
+H2 = Hyperrectangle(center=c, radius=r)
+H3 = Hyperrectangle(low=l, high=h)
+@test H1.center == H2.center
+@test H2.center ≈ H3.center
+@test H1.radius == H2.radius
+@test H2.radius ≈ H3.radius
