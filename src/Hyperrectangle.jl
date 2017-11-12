@@ -103,8 +103,8 @@ end
 """
     norm(H::Hyperrectangle, [p])
 
-Return the norm of a Hyperrectangle. It is the norm of the enclosing hypercube
-of minimal volume.
+Return the norm of a Hyperrectangle. It is the norm of the enclosing ball (of
+the given norm) of minimal volume.
 
 ### Input
 
@@ -122,8 +122,8 @@ end
 """
     radius(H::Hyperrectangle, [p])
 
-Return the radius of a Hyperrectangle. It is the radius/norm of the enclosing
-hypercube of minimal volume with the same center.
+Return the radius of a Hyperrectangle. It is the radius of the enclosing ball
+(of the given norm) of minimal volume with the same center.
 
 ### Input
 
@@ -143,8 +143,8 @@ end
     diameter(H::Hyperrectangle, [p])
 
 Return the diameter of a hyperrectangle. It is the maximum distance between any
-two elements of the set, or, equivalently, the diameter of the enclosing
-hypercube of minimal volume with the same center.
+two elements of the set, or, equivalently, the diameter of the enclosing ball
+(of the given norm) of minimal volume with the same center.
 
 ### Input
 
