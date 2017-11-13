@@ -134,7 +134,11 @@ enclosing ball (of the given norm) of minimal volume with the same center.
 A real number representing the radius.
 """
 function radius(B::BallInf, p::Real=Inf)
-    return norm(B.radius, p)
+    if p == Inf
+        return B.radius
+    else
+        return norm(fill(B.radius, dim(B)), p)
+    end
 end
 
 """
