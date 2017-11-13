@@ -1,5 +1,3 @@
-using IterTools
-
 import Base.LinAlg:norm
 
 export Hyperrectangle, vertices_list, norm, radius, diameter
@@ -7,7 +5,7 @@ export Hyperrectangle, vertices_list, norm, radius, diameter
 """
     Hyperrectangle <: LazySet
 
-Type that represents a Hyperrectangle.
+Type that represents a hyperrectangle.
 
 A [hyperrectangle](https://en.wikipedia.org/wiki/Hyperrectangle) is the Cartesian
 product of one-dimensional intervals.
@@ -122,7 +120,7 @@ end
 """
     radius(H::Hyperrectangle, [p])
 
-Return the radius of a Hyperrectangle. It is the radius of the enclosing ball
+Return the radius of a hyperrectangle. It is the radius of the enclosing ball
 (of the given norm) of minimal volume with the same center.
 
 ### Input

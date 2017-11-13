@@ -26,8 +26,14 @@ ballinf_approximation
 box_approximation
 box_approximation_symmetric
 box_approximation_helper
-diameter_approximation
-radius_approximation
+```
+
+### Metric properties of sets
+
+```@docs
+norm(X::LazySet, p=Inf)
+radius(X::LazySet, p=Inf)
+diameter(X::LazySet, p=Inf)
 ```
 
 ## Iterative refinement

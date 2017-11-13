@@ -12,9 +12,10 @@ export approximate,
        ballinf_approximation,
        box_approximation,
        decompose,
-       diameter_approximation,
+       diameter,
+       norm,
        overapproximate,
-       radius_approximation,
+       radius,
        symmetric_interval_hull
 
 const TOL_DIR = 1e-6

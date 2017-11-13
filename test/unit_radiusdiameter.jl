@@ -1,23 +1,15 @@
-import LazySets.Approximations:radius_approximation,
-                               diameter_approximation
+import LazySets.Approximations:norm,
+                               radius,
+                               diameter
 
-# Radius and Diameter Approximation of a centered unit Ball2
+# approximation of a centered unit Ball2
 b = Ball2([0., 0., 0.], 1.)
-rexp = norm([1.,1.,1.])
-dexp = norm([2.,2.,2.])
-@test radius_approximation(b) >= rexp
-@test diameter_approximation(b) >= dexp
+@test norm(b) ≈ 1.  # in the infinity norm (default)
+@test radius(b) ≈ 1.  # in the infinity norm (default)
+@test diameter(b) ≈ 2.  # in the infinity norm (default)
 
-# Radius and Diameter Approximation of a not-centered unit Ball2
+# approximations of a non-centered unit Ball2
 b = Ball2([1., 2., 0.], 1.)
-rexp = norm([2.,3.,1.])
-dexp = norm([2.,2.,2.])
-@test radius_approximation(b) >= rexp
-@test diameter_approximation(b) >= dexp
-
-# Radius and Diameter Approximation of a non-unit Ball2
-b = Ball2([0., 0., 0.], 3.)
-rexp = norm([3.,3.,3.])
-dexp = norm([6.,6.,6.])
-@test radius_approximation(b) >= rexp
-@test diameter_approximation(b) >= dexp
+@test norm(b) ≈ 3.  # in the infinity norm (default)
+@test radius(b) ≈ 1.  # in the infinity norm (default)
+@test diameter(b) ≈ 2.  # in the infinity norm (default)

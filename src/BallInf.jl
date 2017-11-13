@@ -1,4 +1,6 @@
-export BallInf
+import Base.LinAlg:norm
+
+export BallInf, vertices_list, norm, radius, diameter
 
 """
     BallInf <: LazySet
@@ -76,3 +78,81 @@ function σ(d::AbstractVector{Float64}, B::BallInf)::Vector{Float64}
     return B.center .+ unit_step.(d) .* B.radius
 end
 
+"""
+    vertices_list(B::BallInf)
+
+Return the list of vertices of a ball in the infinity norm.
+
+### Input
+
+- `B` -- a ball in the infinity norm
+
+### Output
+
+The list of vertices as an array of floating-point vectors.
+
+### Notes
+
+For high-dimensions, it is preferable to develop a `vertex_iterator` approach.
+"""
+function vertices_list(B::BallInf)::Vector{Vector{Float64}}
+    return [B.center .+ si .* B.radius for si in IterTools.product([[1, -1] for i = 1:dim(B)]...)]
+end
+
+"""
+    norm(B::BallInf, [p])
+
+Return the norm of a `BallInf`. It is the norm of the enclosing ball (of
+the given norm) of minimal volume.
+
+### Input
+
+- `B` -- ball in the infinity norm
+- `p` -- (optional, default: `Inf`) norm
+
+### Output
+
+A real number representing the norm.
+"""
+function norm(B::BallInf, p=Inf)
+    return maximum(map(x -> norm(x, p), vertices_list(B)))
+end
+
+"""
+    radius(B::BallInf, [p])
+
+Return the radius of a ball in the infinity norm. It is the radius of the
+enclosing ball (of the given norm) of minimal volume with the same center.
+
+### Input
+
+- `B` -- a ball in the infinity norm
+- `p` -- (optional, default: `Inf`) norm
+
+### Output
+
+A real number representing the radius.
+"""
+function radius(B::BallInf, p=Inf)
+    return norm(B.radius, p)
+end
+
+"""
+    diameter(B::BallInf, [p])
+
+Return the diameter of a ball in the infinity norm. It is the maximum distance
+between any two elements of the set, or, equivalently, the diameter of the
+enclosing ball (of the given norm) of minimal volume with the same center.
+
+### Input
+
+- `B` -- a ball in the infinity norm
+- `p` -- (optional, default: `Inf`) norm
+
+### Output
+
+A real number representing the diameter.
+"""
+function diameter(B::BallInf, p=Inf)
+    return 2. * radius(B, p)
+end
