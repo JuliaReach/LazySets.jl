@@ -3,7 +3,7 @@
 # ====================================
 
 """
-    plot_Polygon(X::T; ...) where {T<:LazySet}
+    plot_lazyset(X::T; ...) where {T<:LazySet}
 
 Plot a lazy set in two-dimensions using an axis-aligned approximation.
 
@@ -19,7 +19,7 @@ julia> B = BallInf(ones(2), 0.1)
 julia> plot(2.0 * B)
 ```
 """
-@recipe function plot_LazySet(X::T; color="blue", label="",
+@recipe function plot_lazyset(X::T; color="blue", label="",
                               grid=true, alpha=0.5) where {T<:LazySet}
 
     seriestype := :shape
@@ -32,7 +32,7 @@ julia> plot(2.0 * B)
 end
 
 """
-    plot_Polygon(X::Vector{T}) where {T<:LazySet}
+    plot_lazyset(X::Vector{T}) where {T<:LazySet}
 
 Plot an array of lazy sets in two-dimensions using an axis-aligned approximation.
 
@@ -49,7 +49,7 @@ julia> B2 = BallInf(ones(2), 0.4)
 julia> plot([B1, B2])
 ```
 """
-@recipe function plot_LazySet(X::Vector{T}; seriescolor="blue", label="",
+@recipe function plot_lazyset(X::Vector{T}; seriescolor="blue", label="",
                               grid=true, alpha=0.5) where {T<:LazySet}
 
     seriestype := :shape
@@ -62,7 +62,7 @@ julia> plot([B1, B2])
 end
 
 """
-    plot_LazySet(X::T, ε::Float64; ...) where {T<:LazySet}
+    plot_lazyset(X::T, ε::Float64; ...) where {T<:LazySet}
 
 Plot a lazy set in two-dimensions using iterative refinement.
 
@@ -79,7 +79,7 @@ julia> B = BallInf(ones(2), 0.1)
 julia> plot(randn(2, 2) * B, 1e-3)
 ```
 """
-@recipe function plot_LazySet(X::T, ε::Float64; color="blue", label="",
+@recipe function plot_lazyset(X::T, ε::Float64; color="blue", label="",
                               grid=true, alpha=0.5) where {T<:LazySet}
 
     seriestype := :shape
@@ -92,7 +92,7 @@ julia> plot(randn(2, 2) * B, 1e-3)
 end
 
 """
-    plot_LazySet(X::Vector{T}, ε::Float64; ...) where {T<:LazySet}
+    plot_lazyset(X::Vector{T}, ε::Float64; ...) where {T<:LazySet}
 
 Plot an array of lazy sets in two-dimensions using iterative refinement.
 
@@ -110,7 +110,7 @@ julia> B2 = Ball2(ones(2), 0.4)
 julia> plot([B1, B2], 1e-4)
 ```
 """
-@recipe function plot_LazySet(X::Vector{T}, ε::Float64; seriescolor="blue", label="",
+@recipe function plot_lazyset(X::Vector{T}, ε::Float64; seriescolor="blue", label="",
                               grid=true, alpha=0.5) where {T<:LazySet}
 
     seriestype := :shape
@@ -286,6 +286,14 @@ Plot a list of singletons.
 ```julia
 julia> using LazySets, Plots
 julia> plot([Singleton([0.0, 0.0]), Singleton([1., 0]), Singleton([0.5, .5])])
+```
+
+Three-dimensional singletons can be plotted as well:
+
+```julia
+julia> using LazySets, Plots
+julia> a, b, c = zeros(3), [1.0, 0, 0], [0.0, 1., 0];
+julia> plot([Singleton(a), Singleton(b), Singleton(c)])
 ```
 """
 @recipe function plot_singleton(X::Vector{Singleton};
