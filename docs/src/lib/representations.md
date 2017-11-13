@@ -30,13 +30,24 @@ and Euclidean (2-norm) balls,
 
 $B_2(c, r) = \{ x ∈ \mathbb{R}^n : \Vert x - c\Vert_2 \leq r \}.$
 
+### Euclidean norm ball
+
+```@docs
+Ball2
+dim(B::Ball2)
+σ(d::AbstractVector{Float64}, B::Ball2)
+```
+
+### Infinity norm ball
+
 ```@docs
 BallInf
 dim(B::BallInf)
 σ(d::AbstractVector{Float64}, B::BallInf)
-Ball2
-dim(B::Ball2)
-σ(d::AbstractVector{Float64}, B::Ball2)
+vertices_list(B::BallInf)
+norm(B::BallInf, p::Real=Inf)
+radius(B::BallInf, p::Real=Inf)
+diameter(B::BallInf, p::Real=Inf)
 ```
 
 ## Polygons
@@ -91,9 +102,9 @@ Hyperrectangle
 dim(H::Hyperrectangle)
 σ(d::AbstractVector{Float64}, H::Hyperrectangle)
 vertices_list(H::Hyperrectangle)
-norm(H::Hyperrectangle)
-radius(H::Hyperrectangle)
-diameter(H::Hyperrectangle)
+norm(H::Hyperrectangle, p::Real=Inf)
+radius(H::Hyperrectangle, p::Real=Inf)
+diameter(H::Hyperrectangle, p::Real=Inf)
 ```
 
 ## VoidSets

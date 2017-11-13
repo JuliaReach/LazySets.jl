@@ -1,3 +1,10 @@
+import Base.LinAlg:norm
+import LazySets:radius, diameter  # visible outside module Approximations
+
+# ====================================
+# Approximations in the infinity norm
+# ====================================
+
 """
     box_approximation(X)
 
@@ -85,7 +92,6 @@ recovered from the distance among support functions in the same directions.
     return n, c, r
 end
 
-
 """
     ballinf_approximation(X)
 
@@ -126,40 +132,76 @@ function ballinf_approximation(X::LazySet)::BallInf
     return BallInf(c, r)
 end
 
-"""
-    radius_approximation(X)
-
-Approximate radius of a given set.
-
-### Input
-
-`X` -- a lazy set
-
-### Algorithm
-
-This is an approximation in the infinity norm. The radius of a BallInf of center
-c and radius r can be approximated by ‖c‖ + r√n, where n is the dimension of the
-vectorspace.
-"""
-function radius_approximation(X::LazySet)::Float64
-    b = ballinf_approximation(X)
-    return norm(b.center) + b.radius * sqrt(dim(X))
-end
+# ========================================================
+# Metric properties of sets computed using Approximations
+# ========================================================
 
 """
-    diameter_approximation(X)
+    norm(X::LazySet, [p])
 
-Approximate diameter of a given set.
+Return the norm of a `LazySet`. It is the norm of the enclosing ball (of
+the given norm) of minimal volume.
 
 ### Input
 
 - `X` -- a lazy set
+- `p` -- (optional, default: `Inf`) norm
 
-### Algorithm
+### Output
 
-The diameter is bounded by twice the radius. This function relies on
-`radius_approximation`.
+A real number representing the norm.
 """
-function diameter_approximation(X::LazySet)::Float64
-    return 2.*radius_approximation(X)
+function norm(X::LazySet, p::Real=Inf)
+    if p == Inf
+        return norm(ballinf_approximation(X), p)
+    else
+        error("The norm for this value of p=$p is not implemented")
+    end
+end
+
+"""
+    radius(X::LazySet, [p])
+
+Return the radius of a `LazySet`. It is the radius of the
+enclosing ball (of the given norm) of minimal volume with the same center.
+
+### Input
+
+- `X` -- lazy set
+- `p` -- (optional, default: `Inf`) norm
+
+### Output
+
+A real number representing the radius.
+"""
+function radius(X::LazySet, p::Real=Inf)
+    if p == Inf
+        return radius(ballinf_approximation(X)::BallInf, p)
+    else
+        error("The radius for this value of p=$p is not implemented")
+    end
+end
+
+"""
+    diameter(X::LazySet, [p])
+
+Return the diameter of a `LazySet`. It is the maximum distance
+between any two elements of the set, or, equivalently, the diameter of the
+enclosing ball (of the given norm) of minimal volume with the same center.
+
+### Input
+
+- `X` -- lazy set
+- `p` -- (optional, default: `Inf`) norm
+
+### Output
+
+A real number representing the diameter.
+"""
+function diameter(X::LazySet, p::Real=Inf)
+    if p == Inf
+        return 2. * radius(X, p)
+    else
+        error("The diameter for this value of p=$p is not implemented")
+    end
 end

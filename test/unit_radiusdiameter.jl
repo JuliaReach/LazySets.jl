@@ -1,23 +1,50 @@
-import LazySets.Approximations:radius_approximation,
-                               diameter_approximation
+import LazySets.Approximations:norm,
+                               radius,
+                               diameter
 
-# Radius and Diameter Approximation of a centered unit Ball2
+# =======
+#  Ball2
+# =======
+
+# approximation of a centered unit Ball2
 b = Ball2([0., 0., 0.], 1.)
-rexp = norm([1.,1.,1.])
-dexp = norm([2.,2.,2.])
-@test radius_approximation(b) >= rexp
-@test diameter_approximation(b) >= dexp
+@test norm(b) ≈ 1.  # in the infinity norm (default)
+@test radius(b) ≈ 1.  # in the infinity norm (default)
+@test diameter(b) ≈ 2.  # in the infinity norm (default)
 
-# Radius and Diameter Approximation of a not-centered unit Ball2
+# approximations of a non-centered unit Ball2
 b = Ball2([1., 2., 0.], 1.)
-rexp = norm([2.,3.,1.])
-dexp = norm([2.,2.,2.])
-@test radius_approximation(b) >= rexp
-@test diameter_approximation(b) >= dexp
+@test norm(b) ≈ 3.  # in the infinity norm (default)
+@test radius(b) ≈ 1.  # in the infinity norm (default)
+@test diameter(b) ≈ 2.  # in the infinity norm (default)
 
-# Radius and Diameter Approximation of a non-unit Ball2
-b = Ball2([0., 0., 0.], 3.)
-rexp = norm([3.,3.,3.])
-dexp = norm([6.,6.,6.])
-@test radius_approximation(b) >= rexp
-@test diameter_approximation(b) >= dexp
+
+# ================
+#  Hyperrectangle
+# ================
+
+# metrics in the infinity norm (default)
+h = Hyperrectangle([-1., 2.], [0.2, 0.5])
+@test norm(h, Inf) ≈ 2.5
+@test radius(h, Inf) ≈ 0.5
+@test diameter(h, Inf) ≈ 1.
+
+# metrics in the 2-norm
+@test norm(h, 2) ≈ sqrt(2.5^2 + 1.2^2)
+@test radius(h, 2) ≈ sqrt(.5^2 + .2^2)
+@test diameter(h, 2) ≈ 2*sqrt(.5^2 + .2^2)
+
+# =========
+#  BallInf
+# =========
+
+# metrics in the infinity norm (default)
+b = BallInf([-1., -2., -4], 0.2)
+@test norm(b, Inf) ≈ 4.2
+@test radius(b, Inf) ≈ 0.2
+@test diameter(b, Inf) ≈ 0.4
+
+# metrics in the 2-norm
+@test norm(b, 2) ≈ sqrt(1.2^2 + 2.2^2 + 4.2^2)
+@test radius(b, 2) ≈ sqrt(0.2^2 * 3)
+@test diameter(b, 2) ≈ 2*sqrt(0.2^2 * 3)
