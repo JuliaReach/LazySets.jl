@@ -31,9 +31,9 @@ box_approximation_helper
 ### Metric properties of sets
 
 ```@docs
-norm(X::LazySet, p=Inf)
-radius(X::LazySet, p=Inf)
-diameter(X::LazySet, p=Inf)
+norm(X::LazySet, p::Real=Inf)
+radius(X::LazySet, p::Real=Inf)
+diameter(X::LazySet, p::Real=Inf)
 ```
 
 ## Iterative refinement

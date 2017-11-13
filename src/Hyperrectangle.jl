@@ -113,7 +113,7 @@ the given norm) of minimal volume.
 
 A real number representing the norm.
 """
-function norm(H::Hyperrectangle, p=Inf)
+function norm(H::Hyperrectangle, p::Real=Inf)
     return maximum(map(x -> norm(x, p), vertices_list(H)))
 end
 
@@ -132,7 +132,7 @@ Return the radius of a hyperrectangle. It is the radius of the enclosing ball
 
 A real number representing the radius.
 """
-function radius(H::Hyperrectangle, p=Inf)
+function radius(H::Hyperrectangle, p::Real=Inf)
     # the radius is the same for all corners of the hyperrectangle
     return norm(H.radius, p)
 end
@@ -153,6 +153,6 @@ two elements of the set, or, equivalently, the diameter of the enclosing ball
 
 A real number representing the diameter.
 """
-function diameter(H::Hyperrectangle, p=Inf)
+function diameter(H::Hyperrectangle, p::Real=Inf)
     return 2. * radius(H, p)
 end

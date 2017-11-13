@@ -151,11 +151,11 @@ the given norm) of minimal volume.
 
 A real number representing the norm.
 """
-function norm(X::LazySet, p=Inf)
+function norm(X::LazySet, p::Real=Inf)
     if p == Inf
         return norm(ballinf_approximation(X), p)
     else
-        error("The norm for this value of `p` is not implemented")
+        error("The norm for this value of p=$p is not implemented")
     end
 end
 
@@ -174,11 +174,11 @@ enclosing ball (of the given norm) of minimal volume with the same center.
 
 A real number representing the radius.
 """
-function radius(X::LazySet, p=Inf)
+function radius(X::LazySet, p::Real=Inf)
     if p == Inf
         return radius(ballinf_approximation(X)::BallInf, p)
     else
-        error("The radius for this value of `p` is not implemented")
+        error("The radius for this value of p=$p is not implemented")
     end
 end
 
@@ -198,10 +198,10 @@ enclosing ball (of the given norm) of minimal volume with the same center.
 
 A real number representing the diameter.
 """
-function diameter(X::LazySet, p=Inf)
+function diameter(X::LazySet, p::Real=Inf)
     if p == Inf
         return 2. * radius(X, p)
     else
-        error("The diameter for this value of `p` is not implemented")
+        error("The diameter for this value of p=$p is not implemented")
     end
 end

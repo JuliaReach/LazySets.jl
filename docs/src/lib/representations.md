@@ -45,9 +45,9 @@ BallInf
 dim(B::BallInf)
 σ(d::AbstractVector{Float64}, B::BallInf)
 vertices_list(B::BallInf)
-norm(B::BallInf, p=Inf)
-radius(B::BallInf, p=Inf)
-diameter(B::BallInf, p=Inf)
+norm(B::BallInf, p::Real=Inf)
+radius(B::BallInf, p::Real=Inf)
+diameter(B::BallInf, p::Real=Inf)
 ```
 
 ## Polygons
@@ -102,9 +102,9 @@ Hyperrectangle
 dim(H::Hyperrectangle)
 σ(d::AbstractVector{Float64}, H::Hyperrectangle)
 vertices_list(H::Hyperrectangle)
-norm(H::Hyperrectangle, p=Inf)
-radius(H::Hyperrectangle, p=Inf)
-diameter(H::Hyperrectangle, p=Inf)
+norm(H::Hyperrectangle, p::Real=Inf)
+radius(H::Hyperrectangle, p::Real=Inf)
+diameter(H::Hyperrectangle, p::Real=Inf)
 ```
 
 ## VoidSets

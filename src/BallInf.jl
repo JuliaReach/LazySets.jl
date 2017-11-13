@@ -114,7 +114,7 @@ the given norm) of minimal volume.
 
 A real number representing the norm.
 """
-function norm(B::BallInf, p=Inf)
+function norm(B::BallInf, p::Real=Inf)
     return maximum(map(x -> norm(x, p), vertices_list(B)))
 end
 
@@ -133,7 +133,7 @@ enclosing ball (of the given norm) of minimal volume with the same center.
 
 A real number representing the radius.
 """
-function radius(B::BallInf, p=Inf)
+function radius(B::BallInf, p::Real=Inf)
     return norm(B.radius, p)
 end
 
@@ -153,6 +153,6 @@ enclosing ball (of the given norm) of minimal volume with the same center.
 
 A real number representing the diameter.
 """
-function diameter(B::BallInf, p=Inf)
+function diameter(B::BallInf, p::Real=Inf)
     return 2. * radius(B, p)
 end
