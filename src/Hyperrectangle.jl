@@ -29,11 +29,32 @@ end
     Hyperrectangle(kwargs...)
 
 Constructs a Hyperrectangle from keyword arguments.
+
+### Input
+
 Two combinations are allowed:
 
 1. `center`, `radius` -- both vectors
 2. `high`, `low`      -- both vectors (if both `center` and `radius` are also
                             defined, those are chosen instead)
+
+### Examples
+
+The following three constructions are equivalent:
+
+```julia
+julia> using LazySets
+julia> c = ones(2);
+julia> r = [0.1, 0.2];
+julia> l = [0.9, 0.8];
+julia> h = [1.1, 1.2];
+julia> H1 = Hyperrectangle(c, r)
+LazySets.Hyperrectangle([1.0, 1.0], [0.1, 0.2])
+julia> H2 = Hyperrectangle(center=c, radius=r)
+LazySets.Hyperrectangle([1.0, 1.0], [0.1, 0.2])
+julia> H3 = Hyperrectangle(low=l, high=h)
+LazySets.Hyperrectangle([1.0, 1.0], [0.1, 0.2])
+```
 """
 function Hyperrectangle(;kwargs...)
     dict = Dict{Symbol, Any}(kwargs)
