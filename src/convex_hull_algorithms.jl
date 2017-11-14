@@ -65,6 +65,14 @@ Compute the convex hull of points in the plane using Andrew's monotone chain met
 Array of vectors containing the 2D coordinates of the corner points of the
 convex hull.
 
+### Notes
+
+For large sets of points, it is convenient to use static vectors to get
+maximum performance. For information on how to convert usual vectors
+into static vectors, see the type `SVector` provided by the
+[StaticArrays](http://juliaarrays.github.io/StaticArrays.jl/stable/)
+package.
+
 ### Algorithm
 
 This function implements Andrew's monotone chain convex hull algorithm
