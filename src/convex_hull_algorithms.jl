@@ -6,12 +6,12 @@ Compute the convex hull of points in the plane.
 ### Input
 
 - `points`    -- array of vectors containing the 2D coordinates of the points
-- `algorithm` -- (optional, default: `"andrew_monotone_chain"`) choose the convex
+- `algorithm` -- (optional, default: `"monotone_chain"`) choose the convex
                  hull algorithm, valid options are:
 
-    * `"andrew_monotone_chain"`
+    * `"monotone_chain"`
 """
-function convex_hull(points; algorithm="andrew_monotone_chain")
+function convex_hull(points; algorithm="monotone_chain")
     convex_hull!(copy(points), algorithm=algorithm)
 end
 
@@ -21,9 +21,9 @@ end
 Compute the convex hull of points in the plane, in-place.
 See also: `convex_hull`.
 """
-function convex_hull!(points; algorithm="andrew_monotone_chain")
-    if algorithm == "andrew_monotone_chain"
-        return andrew_monotone_chain!(points)
+function convex_hull!(points; algorithm="monotone_chain")
+    if algorithm == "monotone_chain"
+        return monotone_chain!(points)
     else
         error("this convex hull algorithm is unknown")
     end
@@ -51,13 +51,19 @@ around O from A to B; otherwise a negative angle.
 @inline right_turn(O, A, B) = (A[1] - O[1])*(B[2]-O[2]) - (A[2] - O[2])*(B[1]-O[1])
 
 """
-    andrew_monotone_chain!(points)
+    monotone_chain!(points)
 
 Compute the convex hull of points in the plane using Andrew's monotone chain method.
 
 ### Input
 
-- `points` -- array of vectors containing the 2D coordinates of the points
+- `points` -- array of vectors containing the 2D coordinates of the points;
+              is sorted in-place inside this function
+
+### Output
+
+Array of vectors containing the 2D coordinates of the corner points of the
+convex hull.
 
 ### Algorithm
 
@@ -67,7 +73,7 @@ in ``O(n \\log n)`` time.
 For further details see the wikipedia page:
 [Monotone chain](https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain)
 """
-function andrew_monotone_chain!(points::Vector{S}) where{S<:AbstractVector{T}} where{T<:Real}
+function monotone_chain!(points::Vector{S}) where{S<:AbstractVector{T}} where{T<:Real}
 
     @inline function build_hull!(semihull, iterator, points, zero_T)
         @inbounds for i in iterator
@@ -80,7 +86,7 @@ function andrew_monotone_chain!(points::Vector{S}) where{S<:AbstractVector{T}} w
 
     # sort the rows lexicographically (which requires a two-dimensional array)
     # points = sortrows(hcat(points...)', alg=QuickSort)  # out-of-place version
-    sort!(points, by=x->(x[1], x[2]))                     # inplace version
+    sort!(points, by=x->(x[1], x[2]))                     # in-place version
 
     zero_T = zero(T)
 

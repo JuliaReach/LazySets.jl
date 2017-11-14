@@ -21,7 +21,7 @@ convex hull, set the `apply_convex_hull=false` flag when instantiating the const
 struct VPolygon <: LazySet
     vertices_list::Vector{Vector{Float64}}
 
-    function VPolygon(vertices_list; apply_convex_hull=true, algorithm="andrew_monotone_chain")
+    function VPolygon(vertices_list; apply_convex_hull=true, algorithm="monotone_chain")
         if apply_convex_hull
             return new(convex_hull(vertices_list, algorithm=algorithm))
         else
