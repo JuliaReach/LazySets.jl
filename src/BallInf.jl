@@ -28,11 +28,18 @@ julia> ρ([1., 1.], B)
 0.2
 ```
 """
-struct BallInf <: LazySet
-    center::Vector{Float64}
-    radius::Float64
-    BallInf(center, radius) = radius < 0. ? throw(DomainError()) : new(center, radius)
+struct BallInf{N<:Real} <: LazySet
+    center::Vector{N}
+    radius::N
+
+    # default constructor with domain constraint for radius
+    BallInf{N}(center, radius) where N =
+        (radius < zero(N)
+            ? throw(DomainError())
+            : new(center, radius))
 end
+# type-less convenience constructor
+BallInf(center::Vector{N}, radius::N) where {N<:Real} = BallInf{N}(center, radius)
 
 """
     dim(B)

@@ -34,11 +34,18 @@ julia> σ(ones(5), B)
 0.3371
 ```
 """
-struct Ball2 <: LazySet
-    center::Vector{Float64}
-    radius::Float64
-    Ball2(center, radius) = radius < 0. ? throw(DomainError()) : new(center, radius)
+struct Ball2{N<:Real} <: LazySet
+    center::Vector{N}
+    radius::N
+
+    # default constructor with domain constraint for radius
+    Ball2{N}(center, radius) where N =
+        (radius < zero(N)
+            ? throw(DomainError())
+            : new(center, radius))
 end
+# type-less convenience constructor
+Ball2(center::Vector{N}, radius::N) where {N<:Real} = Ball2{N}(center, radius)
 
 """
     dim(B)

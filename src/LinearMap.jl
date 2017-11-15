@@ -12,21 +12,25 @@ changes the behaviour of the support vector of the new set.
 - `M`  -- a linear map, which can a be densem matrix, sparse matrix or a subarray object
 - `sf` -- a convex set represented by its support function
 """
-struct LinearMap{T<:LazySet} <: LazySet
-    M::AbstractMatrix{Float64}
+struct LinearMap{T<:LazySet, N<:Real} <: LazySet
+    M::AbstractMatrix{N}
     sf::T
 
-    LinearMap{T}(M::AbstractMatrix{Float64}, S::T) where {T<:LazySet} = new(M, S)
+    # default constructor
+    LinearMap{T,N}(M::AbstractMatrix{N}, S::T) where {T<:LazySet,N<:Real} =
+        new{T,N}(M, S)
     # in case of constructing a linear map from a linear map, the matrix
     # multiplication is performed here
-    LinearMap(M::AbstractMatrix{Float64}, S::LinearMap{T}) where {T<:LazySet} = new{T}(M * S.M, S.sf)
+    LinearMap(M::AbstractMatrix{N}, S::LinearMap{T}) where {T<:LazySet,N<:Real} =
+        new{T,N}(M * S.M, S.sf)
 end
-LinearMap(M::AbstractMatrix{Float64}, sf::T) where {T<:LazySet} = LinearMap{T}(M, sf)
+# type-less convenience constructor
+LinearMap(M::AbstractMatrix{N}, sf::T) where {T<:LazySet,N<:Real} = LinearMap{T,N}(M, sf)
 
 import Base.*
 
 # linear map of a set
-function *(M::AbstractMatrix{Float64}, sf::LazySet)
+function *(M::AbstractMatrix{N}, sf::LazySet) where {N<:Real}
     if findfirst(M) != 0
         return LinearMap(M, sf)
     else
@@ -35,7 +39,7 @@ function *(M::AbstractMatrix{Float64}, sf::LazySet)
 end
 
 # linear map of a void set (has to be overridden due to polymorphism reasons)
-function *(M::AbstractMatrix{Float64}, sf::VoidSet)
+function *(M::AbstractMatrix{N}, sf::VoidSet) where {N<:Real}
     if dim(sf) == size(M, 2)
         return VoidSet(size(M, 1))
     else

@@ -9,8 +9,8 @@ Type that represents a singleton, that is, a set with a unique element.
 
 - `element` -- the only element of the set
 """
-struct Singleton <: LazySet
-    element::Vector{Float64}
+struct Singleton{N<:Real} <: LazySet
+    element::Vector{N}
 end
 
 # dimension of a singleton

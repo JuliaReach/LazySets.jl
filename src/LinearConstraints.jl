@@ -19,9 +19,9 @@ julia> LinearConstraint([0, -1.], 0.)
 LazySets.LinearConstraint([0.0, -1.0], 0.0)
 ```
 """
-struct LinearConstraint
-    a::Vector{Float64}
-    b::Float64
+struct LinearConstraint{N<:Real}
+    a::Vector{N}
+    b::N
 end
 
 """
@@ -43,12 +43,20 @@ julia> Line([1., 1.], 1.)
 LazySets.Line([1.0, 1.0], 1.0)
 ```
 """
-struct Line
-    a::Vector{Float64}
-    b::Float64
-    Line(a, b) = length(a) != 2 ? throw(DimensionMismatch) : new(a, b)
+struct Line{N<:Real}
+    a::Vector{N}
+    b::N
+
+    # default constructor with length constraint
+    Line{N}(a::Vector{N}, b::N) where {N<:Real} =
+        (length(a) != 2
+            ? throw(DimensionMismatch)
+            : new{N}(a, b))
 end
-Line(c::LinearConstraint) = Line(c.a, c.b)
+# type-less convenience constructor
+Line(a::Vector{N}, b::N) where {N<:Real} = Line{N}(a, b)
+# constructor from a LinearConstraint
+Line(c::LinearConstraint{N}) where {N<:Real} = Line{N}(c.a, c.b)
 
 """
     intersection(Δ1, Δ2)
