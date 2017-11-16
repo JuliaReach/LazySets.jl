@@ -1,5 +1,5 @@
 # Empty polygon
-p = HPolygon()
+p = HPolygon{Float64}()
 
 # Test Dimension
 @test dim(p) == 2

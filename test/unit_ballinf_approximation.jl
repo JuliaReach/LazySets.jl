@@ -9,7 +9,7 @@ biexp = BallInf([1., 2., 0.], 1.)
 
 # BallInf approximation of a 2D polygon whose vertices are
 # (0,1), (1,1), (2,-1), (-1,0)
-p = HPolygon()
+p = HPolygon{Float64}()
 addconstraint!(p, LinearConstraint([0., 1.], 1.))
 addconstraint!(p, LinearConstraint([-1., 1.], 1.))
 addconstraint!(p, LinearConstraint([-1., -3.], 1.))
