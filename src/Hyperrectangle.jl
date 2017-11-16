@@ -99,7 +99,7 @@ end
 
 Return the support vector of a Hyperrectangle in a given direction.
 """
-function σ(d::AbstractVector{Float64}, H::Hyperrectangle)::Vector{Float64}
+function σ(d::AbstractVector{<:Real}, H::Hyperrectangle)::Vector{<:Real}
     return H.center .+ unit_step.(d) .* H.radius
 end
 
@@ -120,7 +120,7 @@ The list of vertices as an array of floating-point vectors.
 
 For high-dimensions, it is preferable to develop a `vertex_iterator` approach.
 """
-function vertices_list(H::Hyperrectangle)::Vector{Vector{Float64}}
+function vertices_list(H::Hyperrectangle{N})::Vector{Vector{N}} where {N<:Real}
     return [H.center .+ si .* H.radius for si in IterTools.product([[1, -1] for i = 1:dim(H)]...)]
 end
 
@@ -180,7 +180,7 @@ two elements of the set, or, equivalently, the diameter of the enclosing ball
 A real number representing the diameter.
 """
 function diameter(H::Hyperrectangle, p::Real=Inf)
-    return 2. * radius(H, p)
+    return radius(H, p) * 2
 end
 
 """

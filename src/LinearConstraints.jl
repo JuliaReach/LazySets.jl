@@ -84,7 +84,7 @@ julia> intersection(Line([1., 1.], 1.), Line([-1., 1.], 0.))
  0.5
 ```
 """
-function intersection(Δ1::Line, Δ2::Line)::Vector{Float64}
+function intersection(Δ1::Line{N}, Δ2::Line{N})::Vector{N} where {N<:Real}
     b = [Δ1.b, Δ2.b]
     a = [Δ1.a.' ; Δ2.a.']
     return a \ b

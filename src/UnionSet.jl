@@ -28,7 +28,7 @@ States if a given vector belongs to a given union of sets.
 
 Return true iff ``x ∈ U``.
 """
-function is_contained(x::Vector{Float64}, U::UnionSet)::Bool
+function is_contained(x::Vector, U::UnionSet)::Bool
     res = false
     for s in U.sets
         res = res || in(x, s)

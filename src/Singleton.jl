@@ -19,6 +19,6 @@ function dim(s::Singleton)::Int64
 end
 
 # support vector of a singleton
-function σ(d::AbstractVector{Float64}, s::LazySets.Singleton)::Vector{Float64}
+function σ(d::AbstractVector{<:Real}, s::LazySets.Singleton)::Vector{<:Real}
     return s.element
 end

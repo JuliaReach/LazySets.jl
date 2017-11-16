@@ -23,14 +23,26 @@ sequence of directions, which are one to one close. The strategy is to have an
 index that can be used to warm-start the search for optimal values in the support
 vector computation.
 """
-mutable struct HPolygonOpt <: LazySet
-    constraints_list::Vector{LinearConstraint}
+mutable struct HPolygonOpt{N<:Real} <: LazySet
+    constraints_list::Vector{LinearConstraint{N}}
     ind::Int64
 
-    HPolygonOpt(constraints_list) = new(constraints_list, 1)
-    HPolygonOpt(constraints_list, ind) = new(constraints_list, ind)
+    # default constructor
+    HPolygonOpt{N}(constraints_list::Vector{LinearConstraint{N}},
+                   ind::Int64) where {N<:Real} =
+        new{N}(constraints_list, ind)
 end
-HPolygonOpt(H::HPolygon) = HPolygonOpt(H.constraints_list)
+# type-less convenience constructor
+HPolygonOpt(constraints_list::Vector{LinearConstraint{N}},
+            ind::Int64) where {N<:Real} =
+    HPolygonOpt{N}(constraints_list, ind)
+
+# type-less convenience constructor without index
+HPolygonOpt(constraints_list::Vector{LinearConstraint{N}}) where {N<:Real} =
+    HPolygonOpt{N}(constraints_list, 1)
+
+# constructor from an HPolygon
+HPolygonOpt(H::HPolygon{N}) where {N<:Real} = HPolygonOpt(H.constraints_list)
 
 """
     addconstraint!(P, constraint)
@@ -74,7 +86,7 @@ Return the support vector of the optimized polygon in a given direction.
 - `d` -- direction
 - `P` -- optimized polygon in constraint representation
 """
-function σ(d::AbstractVector{Float64}, P::HPolygonOpt)::Vector{Float64}
+function σ(d::AbstractVector{<:Real}, P::HPolygonOpt)::Vector{<:Real}
     m = length(P.constraints_list)
     cl = P.constraints_list
     if (d <= cl[P.ind].a)
@@ -119,7 +131,7 @@ representation.
 
 Return `true` iff x ∈ P.
 """
-function is_contained(x::AbstractVector{Float64}, P::HPolygonOpt)::Bool
+function is_contained(x::AbstractVector, P::HPolygonOpt)::Bool
     return is_contained(x, HPolygon(P.constraints_list))
 end
 
@@ -158,6 +170,6 @@ Return the list of vertices of a convex polygon in constraint representation.
 
 List of vertices as an array of vertex pairs, `Vector{Vector{Float64}}`.
 """
-function vertices_list(P::HPolygonOpt)::Vector{Vector{Float64}}
+function vertices_list(P::HPolygonOpt{N})::Vector{Vector{N}} where {N<:Real}
     return vertices_list(HPolygon(P.constraints_list))
 end

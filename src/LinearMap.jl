@@ -30,7 +30,7 @@ LinearMap(M::AbstractMatrix{N}, sf::T) where {T<:LazySet,N<:Real} = LinearMap{T,
 import Base.*
 
 # linear map of a set
-function *(M::AbstractMatrix{N}, sf::LazySet) where {N<:Real}
+function *(M::AbstractMatrix, sf::LazySet)
     if findfirst(M) != 0
         return LinearMap(M, sf)
     else
@@ -39,7 +39,7 @@ function *(M::AbstractMatrix{N}, sf::LazySet) where {N<:Real}
 end
 
 # linear map of a void set (has to be overridden due to polymorphism reasons)
-function *(M::AbstractMatrix{N}, sf::VoidSet) where {N<:Real}
+function *(M::AbstractMatrix, sf::VoidSet)
     if dim(sf) == size(M, 2)
         return VoidSet(size(M, 1))
     else
@@ -76,12 +76,12 @@ If `S = MB`, where `M` is sa matrix and `B` is a set, it follows that
 - `d`  -- a direction
 - `lm` -- a linear map
 """
-function σ(d::AbstractVector{Float64}, lm::LinearMap)::Vector{Float64}
+function σ(d::AbstractVector{<:Real}, lm::LinearMap)::Vector{<:Real}
     return lm.M * σ(lm.M.' * d, lm.sf)
 end
 
 # multiplication of a set by a scalar value
-function *(a::Float64, sf::LazySet)
+function *(a::Real, sf::LazySet)
     return LinearMap(sparse(a*I, dim(sf)), sf)
 end
 
