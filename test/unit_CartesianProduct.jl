@@ -76,12 +76,12 @@ cs = CartesianProduct(as)
 @test cs.Y.Y.element == [3.]
 
 # Test containment with respect to CartesianProduct
-p1 = HPolygon{Float64}()
+p1 = HPolygon()
 addconstraint!(p1, LinearConstraint([2., 2.], 12.))
 addconstraint!(p1, LinearConstraint([-3., 3.], 6.))
 addconstraint!(p1, LinearConstraint([-1., -1.], 0.))
 addconstraint!(p1, LinearConstraint([2., -4.], 0.))
-p2 = HPolygon{Float64}()
+p2 = HPolygon()
 addconstraint!(p2, LinearConstraint([1., 0.], 1.))
 addconstraint!(p2, LinearConstraint([-1., 0.], 1.))
 addconstraint!(p2, LinearConstraint([0., 1.], 1.))
