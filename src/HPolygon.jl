@@ -21,7 +21,10 @@ Use `addconstraint!` to iteratively add and sort the edges.
 struct HPolygon{N<:Real} <: LazySet
     constraints_list::Vector{LinearConstraint{N}}
 end
-HPolygon{N}() where {N<:Real} = HPolygon{N}([])
+# constructor for an HPolygon with no constraints
+HPolygon{N}() where {N<:Real} = HPolygon{N}(Vector{N}(0))
+# constructor for an HPolygon with no constraints of type Float64
+HPolygon() = HPolygon{Float64}()
 
 """
     addconstraint!(P, constraint)

@@ -14,7 +14,10 @@ Type that represents a convex polyhedron in H-representation.
 struct Polyhedron{N<:Real} <: LazySet
     constraints::Vector{LinearConstraint{N}}
 end
+# constructor for a Polyhedron with no constraints
 Polyhedron{N}() where {N<:Real} = Polyhedron{N}(Vector{N}(0))
+# constructor for a Polyhedron with no constraints of type Float64
+Polyhedron() = Polyhedron{Float64}()
 
 """
     dim(P)
