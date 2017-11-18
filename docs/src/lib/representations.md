@@ -105,6 +105,8 @@ vertices_list(H::Hyperrectangle)
 norm(H::Hyperrectangle, p::Real=Inf)
 radius(H::Hyperrectangle, p::Real=Inf)
 diameter(H::Hyperrectangle, p::Real=Inf)
+high(H::Hyperrectangle)
+low(H::Hyperrectangle)
 ```
 
 ## VoidSets

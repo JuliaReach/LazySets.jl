@@ -15,7 +15,7 @@ and send your code), add examples to the documentation or propose new features.
 Below we detail some of the guidelines that should be followed when contributing
 to this package.
 
-#### Branches
+### Branches
 
 Each pull request (PR) should be pushed in a new branch with the name of the author
 followed by a descriptive name, e.g. `t/mforets/my_feature`. If the branch is associated
