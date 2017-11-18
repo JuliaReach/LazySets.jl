@@ -192,7 +192,7 @@ Return the higher coordinates of a hyperrectangle.
 A vector with the higher coordinates of the hyperrectangle, one entry per dimension.
 """
 function high(H::Hyperrectangle)
-    return H.center + H.radius
+    return H.center .+ H.radius
 end
 
 """
@@ -209,5 +209,5 @@ Return the lower coordinates of a hyperrectangle.
 A vector with the lower coordinates of the hyperrectangle, one entry per dimension.
 """
 function low(H::Hyperrectangle)
-    return H.center - H.radius
+    return H.center .- H.radius
 end
