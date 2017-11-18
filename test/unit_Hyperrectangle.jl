@@ -89,7 +89,7 @@ H3 = Hyperrectangle(low=l, high=h)
 @test H1.radius == H2.radius
 @test H2.radius ≈ H3.radius
 
-# Test low and high methods for a hyperrectangle with rational coordinates
+# Test low and high methods for a hyperrectangle
 H = Hyperrectangle(center=[-2.1, 5.6, 0.9], radius=fill(0.5, 3))
 @test low(H) == [-2.6, 5.1, 0.4]
 @test high(H) == [-1.6, 6.1, 1.4]
