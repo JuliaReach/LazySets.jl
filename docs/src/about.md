@@ -12,8 +12,8 @@ Pages = ["about.md"]
 If you like this package, consider contributing! You can send bug reports (or fix them
 and send your code), add examples to the documentation or propose new features.
 
-Below we detail some of the guidelines that should be followed when contributing
-to this package.
+Below some conventions that we follow when contributing
+to this package are detailed. For specific guidelines on documentation, see the [Documentations Guidelines wiki](https://github.com/JuliaReach/LazySets.jl/wiki/Documentation-Guidelines).
 
 #### Branches
 
