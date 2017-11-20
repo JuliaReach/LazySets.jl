@@ -1,6 +1,6 @@
 import Base.LinAlg:norm
 
-export Hyperrectangle, vertices_list, norm, radius, diameter
+export Hyperrectangle, vertices_list, norm, radius, diameter, low, high
 
 """
     Hyperrectangle <: LazySet
@@ -176,4 +176,38 @@ A real number representing the diameter.
 """
 function diameter(H::Hyperrectangle, p::Real=Inf)
     return 2. * radius(H, p)
+end
+
+"""
+    high(H::Hyperrectangle)
+
+Return the higher coordinates of a hyperrectangle.
+
+### Input
+
+- `H` -- a hyperrectangle
+
+### Output
+
+A vector with the higher coordinates of the hyperrectangle, one entry per dimension.
+"""
+function high(H::Hyperrectangle)
+    return H.center .+ H.radius
+end
+
+"""
+    low(H::Hyperrectangle)
+
+Return the lower coordinates of a hyperrectangle.
+
+### Input
+
+- `H` -- a hyperrectangle
+
+### Output
+
+A vector with the lower coordinates of the hyperrectangle, one entry per dimension.
+"""
+function low(H::Hyperrectangle)
+    return H.center .- H.radius
 end
