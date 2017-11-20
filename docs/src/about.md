@@ -15,7 +15,7 @@ and send your code), add examples to the documentation or propose new features.
 Below some conventions that we follow when contributing
 to this package are detailed. For specific guidelines on documentation, see the [Documentations Guidelines wiki](https://github.com/JuliaReach/LazySets.jl/wiki/Documentation-Guidelines).
 
-#### Branches
+### Branches
 
 Each pull request (PR) should be pushed in a new branch with the name of the author
 followed by a descriptive name, e.g. `t/mforets/my_feature`. If the branch is associated
