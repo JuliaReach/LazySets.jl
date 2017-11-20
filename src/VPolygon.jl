@@ -56,7 +56,7 @@ Return the support vector of a polygon in a given direction.
 
 ### Algorithm
 
-This algorithm works by brute-force search in the projection of each vector
+This algorithm works by brute-force search, comparing the projection of each vector
 along the given direction. It runs in ``O(n)`` where ``n`` is the number of vertices.
 
 ### Notes
@@ -64,7 +64,7 @@ along the given direction. It runs in ``O(n)`` where ``n`` is the number of vert
 For arbitrary points without structure this is the best one can do. However, a
 more efficient approach can be used if the vertices of the polygon
 have been sorted in counter-clockwise fashion. In that case a binary search
-algorithm can be used that runs in ``O(\\log n)``. See issue
+algorithm can be written that runs in ``O(\\log n)``. See issue
 [#40](https://github.com/JuliaReach/LazySets.jl/issues/40).
 """
 function σ(d::AbstractVector{T}, P::VPolygon)::Vector{T} where{T<:Real}

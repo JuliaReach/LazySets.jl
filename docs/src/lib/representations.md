@@ -83,6 +83,7 @@ vertices_list(P::HPolygonOpt)
 ```@docs
 VPolygon
 dim(P::VPolygon)
+σ(d::AbstractVector{T}, P::VPolygon)::Vector{T} where{T<:Real}
 vertices_list(P::VPolygon)
 singleton_list(P::VPolygon)
 ```
