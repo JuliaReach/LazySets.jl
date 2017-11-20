@@ -60,8 +60,6 @@ end
     σ(d, P)
 
 Return the support vector of a polygon in a given direction.
-Return the zero vector if there are no constraints (i.e., the universal
-polytope).
 
 ### Input
 

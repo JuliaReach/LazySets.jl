@@ -86,3 +86,20 @@ vp = VPolygon(points) # by default, a convex hull is run
 
 vp = VPolygon(points, apply_convex_hull=false) # we can turn it off
 @test vertices_list(vp) == [[0.9,0.2], [0.4,0.6], [0.2,0.1], [0.1,0.3], [0.3,0.28]]
+
+# test support vector of a VPolygon
+p = HPolygon()
+for ci in [c1, c2, c3, c4]
+    addconstraint!(p, ci)
+end
+p = tovrep(p)
+
+# Test Support Vector
+d = [1., 0.]
+@test σ(d, p) == [4., 2.]
+d = [0., 1.]
+@test σ(d, p) == [2., 4.]
+d = [-1., 0.]
+@test σ(d, p) == [-1., 1.]
+d = [0., -1.]
+@test σ(d, p) == [0., 0.]
