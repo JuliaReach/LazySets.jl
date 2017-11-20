@@ -14,7 +14,8 @@
 
 ## Installing
 
-This package requires Julia v0.6 or later. Refer to the official documentation on how to install it for your system.
+This package requires Julia v0.6 or later. Refer to the [official documentation](https://julialang.org/downloads)
+on how to install and run Julia in your system.
 
 To install this package, use the following command inside Julia's REPL:
 ```julia
