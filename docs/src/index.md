@@ -41,7 +41,10 @@ $\mathcal{Y} = CH(e^{A δ} \mathcal{X}_0 ⊕ δ B\mathcal{U}, \mathcal{X}_0),$
 
 where $CH$ is the convex hull operator, $⊕$ denotes Minkowski sum,
 $\mathcal{U}$ is a ball in the infinity norm centered at zero and radius $1.2$,
-and $B$ is a linear map of the appropriate dimensions.
+and $B$ is a linear map of the appropriate dimensions. This equation typically
+arises in the study of dense of discrete approximation models for dense time
+reachability of continuous systems, see for example
+[frehse2011spaceex](https://github.com/JuliaReach/Reachability.jl/wiki/References#frehse2011spaceex).
 
 For concreteness, let's take $A$ to be a random matrix with probability $1\%$ of any entry being nonzero.
 Let's suppose that the input set $\mathcal{U}$ is two-dimensional, and that the linear map $B$ is random.
@@ -98,7 +101,7 @@ We can visualize the result using `plot`, as shown below (left-most plot).
 
 In the second and third plots, we have used a refined method that allows to specify a prescribed accuracy
 for the projection (in terms of [Hausdorff distance](https://en.wikipedia.org/wiki/Hausdorff_distance)).
-It can be passed as a second argument to `overapproximate`. 
+It can be passed as a second argument to `overapproximate`.
 
 |Error tol.|time (s)|memory (MB)|
 |------|------|------|
