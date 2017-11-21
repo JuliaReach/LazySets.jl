@@ -63,30 +63,31 @@ function decompose(X::LazySet)::CartesianProductArray
     n = LazySets.dim(X)
     b = div(n, 2)
 
-    DIR_EAST_b = repeat(DIR_EAST, outer=b)
-    DIR_NORTH_b = repeat(DIR_NORTH, outer=b)
-    DIR_WEST_b = repeat(DIR_WEST, outer=b)
-    DIR_SOUTH_b = repeat(DIR_SOUTH, outer=b)
+    DIR_EAST_bi = Vector{Float64}(n)
+    DIR_NORTH_bi = Vector{Float64}(n)
+    DIR_WEST_bi = Vector{Float64}(n)
+    DIR_SOUTH_bi = Vector{Float64}(n)
+    result = Vector{HPolygon}(b)
 
-    pe = reshape(σ(DIR_EAST_b, X), 2, :)
-    pe = DIR_EAST.' * pe
+    @inbounds for bi in 1:b
+        copy!(DIR_EAST_bi, sparsevec([2*bi-1], [1.], n))
+        pe_bi = dot(DIR_EAST, view(σ(DIR_EAST_bi, X), 2*bi-1:2*bi))
 
-    pn = reshape(σ(DIR_NORTH_b, X), 2, :)
-    pn = DIR_NORTH.' * pn
+        copy!(DIR_NORTH_bi, sparsevec([2*bi], [1.], n))
+        pn_bi = dot(DIR_NORTH, view(σ(DIR_NORTH_bi, X), 2*bi-1:2*bi))
 
-    pw = reshape(σ(DIR_WEST_b, X), 2, :)
-    pw = DIR_WEST.' * pw
+        copy!(DIR_WEST_bi, sparsevec([2*bi-1], [-1.], n))
+        pw_bi = dot(DIR_WEST, view(σ(DIR_WEST_bi, X), 2*bi-1:2*bi))
 
-    ps = reshape(σ(DIR_SOUTH_b, X), 2, :)
-    ps = DIR_SOUTH.' * ps
+        copy!(DIR_SOUTH_bi, sparsevec([2*bi], [-1.], n))
+        ps_bi = dot(DIR_SOUTH, view(σ(DIR_SOUTH_bi, X), 2*bi-1:2*bi))
 
-    result = Array{HPolygon, 1}(b)
-    @inbounds for i in 1:b
-        result[i] = HPolygon([LinearConstraint(DIR_EAST, pe[i]),
-                              LinearConstraint(DIR_NORTH, pn[i]),
-                              LinearConstraint(DIR_WEST, pw[i]),
-                              LinearConstraint(DIR_SOUTH, ps[i])])
+        result[bi] = HPolygon([LinearConstraint(DIR_EAST, pe_bi),
+                               LinearConstraint(DIR_NORTH, pn_bi),
+                               LinearConstraint(DIR_WEST, pw_bi),
+                               LinearConstraint(DIR_SOUTH, ps_bi)])
     end
+
     return CartesianProductArray(result)
 end
 
