@@ -14,7 +14,7 @@ A polygon in constraint representation.
 function overapproximate(X::LazySet)::HPolygon
     @assert dim(X) == 2
 
-    constraints = Vector{LinearConstraint}(4)
+    constraints = Vector{LinearConstraint{Float64}}(4)
     # evaluate support vector on box directions
     pe = σ(DIR_EAST, X)
     pn = σ(DIR_NORTH, X)
