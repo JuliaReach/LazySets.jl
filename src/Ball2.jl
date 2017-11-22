@@ -76,11 +76,14 @@ Return the support vector of a Ball2 in a given direction.
 
 ### Output
 
-The support vector in the given direction.
+The support vector in the given direction. If the given direction has
+norm zero, the origin is returned.
 
 ### Notes
 
-If the given direction has norm zero, the origin is returned.
+This support vector requires computing the 2-norm of the input direction.
+In the case of exact inputs, no conversion is made to recover the actual vertex
+-- a floating point approximation is returned.
 """
 function σ(d::AbstractVector{<:Real}, B::Ball2)::AbstractVector{<:Real}
     dnorm = norm(d)
