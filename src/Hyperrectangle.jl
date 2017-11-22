@@ -99,8 +99,8 @@ end
 
 Return the support vector of a Hyperrectangle in a given direction.
 """
-function σ(d::AbstractVector{<:Real}, H::Hyperrectangle)::Vector{<:Real}
-    return H.center .+ unit_step.(d) .* H.radius
+function σ(d::AbstractVector{<:Real}, H::Hyperrectangle)::AbstractVector{<:Real}
+    return @. H.center + unit_step(d) * H.radius
 end
 
 """

@@ -82,7 +82,7 @@ The support vector in the given direction.
 
 If the given direction has norm zero, the origin is returned.
 """
-function σ(d::AbstractVector{<:Real}, B::Ball2)::Vector{<:Real}
+function σ(d::AbstractVector{<:Real}, B::Ball2)::AbstractVector{<:Real}
     dnorm = norm(d)
     if dnorm > 0
         return B.center .+ d .* (B.radius / dnorm)
@@ -90,4 +90,3 @@ function σ(d::AbstractVector{<:Real}, B::Ball2)::Vector{<:Real}
         return zeros(eltype(d), length(d))
     end
 end
-

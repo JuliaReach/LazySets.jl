@@ -81,8 +81,8 @@ function is such that `sign(0) = 0`, instead of 1. For this reason, we use the
 custom `unit_step` function, that allows to do: `B.center + unit_step.(d) * B.radius`
 (the dot operator performs broadcasting, to accept vector-valued entries).
 """
-function σ(d::AbstractVector{<:Real}, B::BallInf)::Vector{<:Real}
-    return B.center .+ unit_step.(d) .* B.radius
+function σ(d::AbstractVector{<:Real}, B::BallInf)::AbstractVector{<:Real}
+    return @. B.center + unit_step(d) * B.radius
 end
 
 """

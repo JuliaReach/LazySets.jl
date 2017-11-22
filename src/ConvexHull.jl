@@ -49,7 +49,7 @@ Return the support vector of a convex hull in a given direction.
 - `d`  -- direction
 - `ch` -- the convex hull of two sets
 """
-function σ(d::AbstractVector{<:Real}, ch::ConvexHull)::Vector{<:Real}
+function σ(d::AbstractVector{<:Real}, ch::ConvexHull)::AbstractVector{<:Real}
     σ1 = σ(d, ch.X)
     σ2 = σ(d, ch.Y)
     ρ1 = dot(d, σ1)

@@ -20,7 +20,7 @@ evaluation of its action on vectors.
 
 This class is provided for use with very large and very sparse matrices. The
 evaluation of the exponential matrix action over vectores relies on the
-Expokit package. 
+Expokit package.
 """
 struct SparseMatrixExp{N<:Real}
     M::SparseMatrixCSC{N, Int64}
@@ -120,9 +120,9 @@ function dim(em::ExponentialMap)::Int64
 end
 
 # support vector of the exponential map
-function σ(d::Vector{Float64}, em::ExponentialMap)::Vector{Float64}
+function σ(d::Vector{Float64}, em::ExponentialMap)::AbstractVector{Float64}
     v = expmv(1.0, em.spmexp.M.', d)          # v   <- exp(A') * d
-    res = expmv(1.0, em.spmexp.M, σ(v, em.X)) # res <- exp(A) * support_vector(v, S) 
+    res = expmv(1.0, em.spmexp.M, σ(v, em.X)) # res <- exp(A) * support_vector(v, S)
     return res
 end
 

@@ -57,7 +57,7 @@ Support vector of a Cartesian product.
 - `d`  -- direction
 - `cp` -- cartesian product
 """
-function σ(d::AbstractVector{<:Real}, cp::CartesianProduct)::Vector{<:Real}
+function σ(d::AbstractVector{<:Real}, cp::CartesianProduct)::AbstractVector{<:Real}
     return [σ(d[1:dim(cp.X)], cp.X); σ(d[dim(cp.X)+1:end], cp.Y)]
 end
 
