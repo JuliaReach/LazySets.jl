@@ -2,6 +2,11 @@
 using LazySets, Base.Test
 
 # =======================================
+# Testing common API of all LazySet types
+# =======================================
+@time @testset "LazySets.LazySet" begin include("unit_LazySet.jl") end
+
+# =======================================
 # Testing types that inherit from LazySet
 # =======================================
 @time @testset "LazySets.Singleton" begin include("unit_Singleton.jl") end
