@@ -12,8 +12,11 @@ Type that represents the cartesian product.
 - `X` -- convex set
 - `Y` -- another convex set
 
-For the cartesian product a several sets, there exists a special
-type `CartesianProductArray`. 
+### Notes
+
+The Cartesian product of three elements is done recursively. See also
+`CartesianProductArray` for implementation of a cartesian product of
+many sets without recursion, using instead an array.
 """
 struct CartesianProduct{T1<:LazySet,T2<:LazySet} <: LazySet
     X::T1
@@ -51,7 +54,7 @@ Support vector of a Cartesian product.
 
 ### Input
 
-- `d` -- direction
+- `d`  -- direction
 - `cp` -- cartesian product
 """
 function σ(d::AbstractVector{<:Real}, cp::CartesianProduct)::Vector{<:Real}
@@ -117,7 +120,7 @@ Support vector of the Cartesian product of a finite number of sets.
 
 ### Input
 
-- `d` -- direction
+- `d`  -- direction
 - `cp` -- cartesian product array
 """
 function σ(d::AbstractVector{<:Real}, cp::CartesianProductArray)::AbstractVector{<:Real}
@@ -139,7 +142,7 @@ finite number of sets.
 
 ### Input
 
-- `d` -- vector
+- `d`  -- vector
 - `cp` -- cartesian product array
 """
 function is_contained(d::AbstractVector, cp::CartesianProductArray)::Bool
