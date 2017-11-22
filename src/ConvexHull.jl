@@ -18,7 +18,9 @@ Type that represents the convex hull of the union of two convex sets.
 struct ConvexHull{T1<:LazySet,T2<:LazySet} <: LazySet
     X::T1
     Y::T2
-    ConvexHull{T1,T2}(X::T1, Y::T2) where {T1<:LazySet,T2<:LazySet} = dim(X) != dim(Y) ? throw(DimensionMismatch) : new(X, Y)
+
+    ConvexHull{T1,T2}(X::T1, Y::T2) where {T1<:LazySet,T2<:LazySet} =
+        dim(X) != dim(Y) ? throw(DimensionMismatch) : new(X, Y)
 end
 ConvexHull(X::T1, Y::T2) where {T1<:LazySet,T2<:LazySet} = ConvexHull{T1,T2}(X, Y)
 # function alias
@@ -47,15 +49,10 @@ Return the support vector of a convex hull in a given direction.
 - `d`  -- direction
 - `ch` -- the convex hull of two sets
 """
-function σ(d::AbstractVector{Float64}, ch::ConvexHull)::Vector{Float64}
+function σ(d::AbstractVector{<:Real}, ch::ConvexHull)::AbstractVector{<:Real}
     σ1 = σ(d, ch.X)
     σ2 = σ(d, ch.Y)
-    ρ1 = dot(d, σ1)::Float64
-    ρ2 = dot(d, σ2)::Float64
-    if ρ1 >= ρ2
-        res = σ1
-    else
-        res = σ2
-    end
-    return res
+    ρ1 = dot(d, σ1)
+    ρ2 = dot(d, σ2)
+    return ρ1 >= ρ2 ? σ1 : σ2
 end

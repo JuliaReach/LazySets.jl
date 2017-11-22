@@ -27,3 +27,4 @@ using LazySets, Base.Test
 @time @testset "LazySets.Approximations.box_approximation" begin include("unit_box_approximation.jl") end
 @time @testset "LazySets.Approximations.ballinf_approximation" begin include("unit_ballinf_approximation.jl") end
 @time @testset "LazySets.Approximations.radiusdiameter" begin include("unit_radiusdiameter.jl") end
+@time @testset "LazySets.Approximations.decompose" begin include("unit_decompose.jl") end

@@ -18,10 +18,13 @@ are sorted in counter-clockwise fashion with respect to their normal directions.
 The `HPolygon` constructor *does not perform* sorting of the given list of edges.
 Use `addconstraint!` to iteratively add and sort the edges.
 """
-struct HPolygon <: LazySet
-    constraints_list::Vector{LinearConstraint}
+struct HPolygon{N<:Real} <: LazySet
+    constraints_list::Vector{LinearConstraint{N}}
 end
-HPolygon() = HPolygon([])
+# constructor for an HPolygon with no constraints
+HPolygon{N}() where {N<:Real} = HPolygon{N}(Vector{N}(0))
+# constructor for an HPolygon with no constraints of type Float64
+HPolygon() = HPolygon{Float64}()
 
 """
     addconstraint!(P, constraint)
@@ -60,8 +63,6 @@ end
     σ(d, P)
 
 Return the support vector of a polygon in a given direction.
-Return the zero vector if there are no constraints (i.e., the universal
-polytope).
 
 ### Input
 
@@ -73,7 +74,7 @@ polytope).
 Comparison of directions is performed using polar angles, see the overload of
 `<=` for two-dimensional vectors.
 """
-function σ(d::AbstractVector{Float64}, P::HPolygon)::Vector{Float64}
+function σ(d::AbstractVector{<:Real}, P::HPolygon)::Vector{<:Real}
     n = length(P.constraints_list)
     if n == 0
         error("this polygon is empty")
@@ -103,7 +104,7 @@ Return whether a given vector is contained in the polygon.
 
 Return `true` iff x ∈ P.
 """
-function is_contained(x::AbstractVector{Float64}, P::HPolygon)::Bool
+function is_contained(x::AbstractVector, P::HPolygon)::Bool
     res = true
     for c in P.constraints_list
         res = res && dot(c.a, x) <= c.b
@@ -144,11 +145,14 @@ Return the list of vertices of a convex polygon in constraint representation.
 
 ### Output
 
-List of vertices as an array of vertex pairs, `Vector{Vector{Float64}}`.
+List of vertices as an array of vertex pairs, `Vector{Vector{<:Real}}`.
 """
-function vertices_list(P::HPolygon)::Vector{Vector{Float64}}
+function vertices_list(P::HPolygon{N})::Vector{Vector{N}} where {N<:Real}
     m = length(P.constraints_list)
-    points = Vector{Vector{Float64}}(m)
+    points = Vector{Vector{N}}(m)
+    if m == 0
+        return points
+    end
     @inbounds for i in 1:m-1
         points[i] = intersection(Line(P.constraints_list[i]), Line(P.constraints_list[i+1]))
     end

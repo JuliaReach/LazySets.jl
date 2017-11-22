@@ -19,19 +19,19 @@ This function can be used with vector-valued arguments via the dot operator.
 ### Examples
 
 ```julia
-julia> unit_step([-0.6, 1.3, 0.0])
+julia> unit_step.([-0.6, 1.3, 0.0])
 3-element Array{Float64,1}:
  -1.0
- 1.0
- 1.0
+  1.0
+  1.0
 ```
 """
-unit_step(x::Float64) = ifelse(x < 0, oftype(one(x),-1), one(x))
+unit_step(x::Real) = ifelse(x < zero(x), oftype(one(x),-1), one(x))
 
 """
     jump2pi(x)
 
-Return ``x + 2π`` and only if ``x`` is negative.
+Return ``x + 2π`` if `x` is negative, otherwise return `x`.
 
 ### Input
 

@@ -14,16 +14,8 @@
 
 ## Installing
 
-### Dependencies
-
-This package requires Julia v0.6 or later. Refer to the official documentation on how to install it for your system. 
-
-To install the [Expokit](https://github.com/acroy/Expokit.jl) dependency, use the following command inside Julia's REPL:
-```julia
-Pkg.clone("https://github.com/acroy/Expokit.jl")
-```
-
-### Installation
+This package requires Julia v0.6 or later. Refer to the [official documentation](https://julialang.org/downloads)
+on how to install and run Julia in your system.
 
 To install this package, use the following command inside Julia's REPL:
 ```julia
@@ -32,7 +24,7 @@ Pkg.clone("https://github.com/JuliaReach/LazySets.jl")
 
 ## Updating
 
-To checkout the latest version, do 
+To checkout the latest version, do
 ```julia
 Pkg.checkout("LazySets")
 ````

@@ -6,12 +6,36 @@ Compute the convex hull of points in the plane.
 ### Input
 
 - `points`    -- array of vectors containing the 2D coordinates of the points
-- `algorithm` -- (optional, default: `"andrew_monotone_chain"`) choose the convex
+- `algorithm` -- (optional, default: `"monotone_chain"`) choose the convex
                  hull algorithm, valid options are:
 
-    * `"andrew_monotone_chain"`
+    * `"monotone_chain"`
+
+### Output
+
+The convex hull as a list of 2D vectors with the coordinates of the points.
+
+### Examples
+
+Compute the convex hull of a random set of points:
+
+```julia
+julia> points = [randn(2) for i in 1:30]; # 30 random points in 2D
+julia> hull = convex_hull(points);
+julia> typeof(hull)
+Array{Array{Float64,1},1}
+```
+
+We can plot the random points, and the polygon whose vertices are the computed
+convex hull, using `Plots`:
+
+```julia
+julia> using Plots
+julia> plot([Tuple(pi) for pi in points], seriestype=:scatter)
+julia> plot!(VPolygon(hull), alpha=0.2)
+```
 """
-function convex_hull(points; algorithm="andrew_monotone_chain")
+function convex_hull(points; algorithm="monotone_chain")
     convex_hull!(copy(points), algorithm=algorithm)
 end
 
@@ -21,9 +45,9 @@ end
 Compute the convex hull of points in the plane, in-place.
 See also: `convex_hull`.
 """
-function convex_hull!(points; algorithm="andrew_monotone_chain")
-    if algorithm == "andrew_monotone_chain"
-        return andrew_monotone_chain!(points)
+function convex_hull!(points; algorithm="monotone_chain")
+    if algorithm == "monotone_chain"
+        return monotone_chain!(points)
     else
         error("this convex hull algorithm is unknown")
     end
@@ -51,13 +75,27 @@ around O from A to B; otherwise a negative angle.
 @inline right_turn(O, A, B) = (A[1] - O[1])*(B[2]-O[2]) - (A[2] - O[2])*(B[1]-O[1])
 
 """
-    andrew_monotone_chain!(points)
+    monotone_chain!(points)
 
 Compute the convex hull of points in the plane using Andrew's monotone chain method.
 
 ### Input
 
-- `points` -- array of vectors containing the 2D coordinates of the points
+- `points` -- array of vectors containing the 2D coordinates of the points;
+              is sorted in-place inside this function
+
+### Output
+
+Array of vectors containing the 2D coordinates of the corner points of the
+convex hull.
+
+### Notes
+
+For large sets of points, it is convenient to use static vectors to get
+maximum performance. For information on how to convert usual vectors
+into static vectors, see the type `SVector` provided by the
+[StaticArrays](http://juliaarrays.github.io/StaticArrays.jl/stable/)
+package.
 
 ### Algorithm
 
@@ -67,11 +105,11 @@ in ``O(n \\log n)`` time.
 For further details see the wikipedia page:
 [Monotone chain](https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain)
 """
-function andrew_monotone_chain!(points::Vector{S}) where{S<:AbstractVector{T}} where{T<:Real}
+function monotone_chain!(points::Vector{S}) where{S<:AbstractVector{N}} where{N<:Real}
 
-    @inline function build_hull!(semihull, iterator, points, zero_T)
+    @inline function build_hull!(semihull, iterator, points, zero_N)
         @inbounds for i in iterator
-            while length(semihull) >= 2 && right_turn(semihull[end-1], semihull[end], points[i]) <= zero_T
+            while length(semihull) >= 2 && right_turn(semihull[end-1], semihull[end], points[i]) <= zero_N
                 pop!(semihull)
             end
             push!(semihull, points[i])
@@ -80,17 +118,17 @@ function andrew_monotone_chain!(points::Vector{S}) where{S<:AbstractVector{T}} w
 
     # sort the rows lexicographically (which requires a two-dimensional array)
     # points = sortrows(hcat(points...)', alg=QuickSort)  # out-of-place version
-    sort!(points, by=x->(x[1], x[2]))                     # inplace version
+    sort!(points, by=x->(x[1], x[2]))                     # in-place version
 
-    zero_T = zero(T)
+    zero_N = zero(N)
 
     # build lower hull
     lower = Vector{S}()
-    build_hull!(lower, indices(points)[1], points, zero_T)
+    build_hull!(lower, indices(points)[1], points, zero_N)
 
     # build upper hull
     upper = Vector{S}()
-    build_hull!(upper, reverse(indices(points)[1]), points, zero_T)
+    build_hull!(upper, reverse(indices(points)[1]), points, zero_N)
 
     # remove the last point of each segment because they are repeated
     return [lower[1:end-1]; upper[1:end-1]]

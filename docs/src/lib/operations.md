@@ -43,7 +43,7 @@ dim(ch::ConvexHull)
 convex_hull
 convex_hull!
 right_turn
-andrew_monotone_chain!
+monotone_chain!
 ```
 
 ## Cartesian Product
