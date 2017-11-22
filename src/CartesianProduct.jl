@@ -12,8 +12,11 @@ Type that represents the cartesian product.
 - `X` -- convex set
 - `Y` -- another convex set
 
-For the cartesian product a several sets, there exists a special
-type `CartesianProductArray`. 
+### Notes
+
+The Cartesian product of three elements is done recursively. See also
+`CartesianProductArray` for implementation of a cartesian product of
+many sets without recursion, using instead an array.
 """
 struct CartesianProduct{T1<:LazySet,T2<:LazySet} <: LazySet
     X::T1
@@ -51,10 +54,10 @@ Support vector of a Cartesian product.
 
 ### Input
 
-- `d` -- direction
+- `d`  -- direction
 - `cp` -- cartesian product
 """
-function σ(d::AbstractVector{Float64}, cp::CartesianProduct)::AbstractVector{Float64}
+function σ(d::AbstractVector{<:Real}, cp::CartesianProduct)::AbstractVector{<:Real}
     return [σ(d[1:dim(cp.X)], cp.X); σ(d[dim(cp.X)+1:end], cp.Y)]
 end
 
@@ -73,7 +76,7 @@ Return whether a vector belongs to a given cartesian product set.
 
 Return true iff d ∈ cp.
 """
-function is_contained(d::AbstractVector{Float64}, cp::CartesianProduct)::Bool
+function is_contained(d::AbstractVector, cp::CartesianProduct)::Bool
     return is_contained(d[1:dim(cp.X)], cp.X) && is_contained(d[dim(cp.X)+1:end], cp.Y)
 end
 
@@ -117,10 +120,10 @@ Support vector of the Cartesian product of a finite number of sets.
 
 ### Input
 
-- `d` -- direction
+- `d`  -- direction
 - `cp` -- cartesian product array
 """
-function σ(d::AbstractVector{Float64}, cp::CartesianProductArray)::AbstractVector{Float64}
+function σ(d::AbstractVector{<:Real}, cp::CartesianProductArray)::AbstractVector{<:Real}
     svec = similar(d)
     jinit = 1
     for sj in cp.sfarray
@@ -139,10 +142,10 @@ finite number of sets.
 
 ### Input
 
-- `d` -- vector
+- `d`  -- vector
 - `cp` -- cartesian product array
 """
-function is_contained(d::AbstractVector{Float64}, cp::CartesianProductArray)::Bool
+function is_contained(d::AbstractVector, cp::CartesianProductArray)::Bool
     contained = false
     jinit = 1
     for Xj in cp

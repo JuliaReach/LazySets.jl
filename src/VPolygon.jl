@@ -18,18 +18,20 @@ The constructor of `VPolygon` runs a convex hull algorithm, and the given vertic
 are sorted in counter-clockwise fashion. If you don't want to take the
 convex hull, set the `apply_convex_hull=false` flag when instantiating the constructor.
 """
-struct VPolygon <: LazySet
-    vertices_list::Vector{Vector{Float64}}
+struct VPolygon{N<:Real} <: LazySet
+    vertices_list::Vector{Vector{N}}
 
-    function VPolygon(vertices_list; apply_convex_hull=true, algorithm="monotone_chain")
+    # default constructor that applies a convex hull algorithm
+    function VPolygon(vertices_list::Vector{Vector{N}};
+                      apply_convex_hull::Bool=true,
+                      algorithm::String="monotone_chain") where {N<:Real}
         if apply_convex_hull
-            return new(convex_hull(vertices_list, algorithm=algorithm))
+            return new{N}(convex_hull(vertices_list, algorithm=algorithm))
         else
-            return new(vertices_list)
+            return new{N}(vertices_list)
         end
     end
 end
-VPolygon() = VPolygon([])
 
 """
     dim(P)
@@ -91,9 +93,9 @@ Return the list of vertices of a convex polygon in vertex representation.
 
 ### Output
 
-List of vertices as an array of vertex pairs, `Vector{Vector{Float64}}`.
+List of vertices as an array of vertex pairs, `Vector{Vector{N}}`.
 """
-function vertices_list(P::VPolygon)::Vector{Vector{Float64}}
+function vertices_list(P::VPolygon{N})::Vector{Vector{N}} where {N<:Real}
     return P.vertices_list
 end
 
@@ -109,7 +111,7 @@ singletons.
 
 ### Output
 
-List of vertices as an array of vertex pairs, `Vector{Singleton{Float64}}`.
+List of vertices as an array of vertex pairs, `Vector{Singleton{N}}`.
 """
 function singleton_list(P::VPolygon)
     return [Singleton(vi) for vi in P.vertices_list]

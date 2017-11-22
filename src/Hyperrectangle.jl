@@ -16,14 +16,19 @@ product of one-dimensional intervals.
 - `radius` -- radius of the ball as a real vector, i.e., half of its width along
               each coordinate direction
 """
-struct Hyperrectangle <: LazySet
-    center::Vector{Float64}
-    radius::Vector{Float64}
-    Hyperrectangle(center::Vector{Float64}, radius::Vector{Float64}) =
+struct Hyperrectangle{N<:Real} <: LazySet
+    center::Vector{N}
+    radius::Vector{N}
+
+    # default constructor
+    Hyperrectangle{N}(center::Vector{N}, radius::Vector{N}) where {N<:Real} =
         (length(center) != length(radius)
             ? throw(DimensionMismatch)
             : new(center, radius))
 end
+# type-less convenience constructor
+Hyperrectangle(center::Vector{N}, radius::Vector{N}) where {N<:Real} =
+    Hyperrectangle{N}(center, radius)
 
 """
     Hyperrectangle(kwargs...)
@@ -61,12 +66,12 @@ function Hyperrectangle(;kwargs...)
     if length(dict) != 2
         # error below
     elseif haskey(dict, :center) && haskey(dict, :radius)
-        return Hyperrectangle(dict[:center], dict[:radius])
+        return Hyperrectangle{eltype(dict[:center])}(dict[:center], dict[:radius])
     elseif haskey(dict, :high) && haskey(dict, :low)
         # compute center and radius from high and low vectors
-        center = (dict[:high] .+ dict[:low]) ./ 2.
+        center = (dict[:high] .+ dict[:low]) ./ 2
         radius = abs.(dict[:high] .- center)
-        return Hyperrectangle(center, radius)
+        return Hyperrectangle{eltype(center)}(center, radius)
     end
     throw(ArgumentError("Invalid arguments for Hyperrectangle: Use either " *
         "'center' and 'radius' or 'high' and 'low'."))
@@ -94,8 +99,8 @@ end
 
 Return the support vector of a Hyperrectangle in a given direction.
 """
-function σ(d::AbstractVector{Float64}, H::Hyperrectangle)::Vector{Float64}
-    return H.center .+ unit_step.(d) .* H.radius
+function σ(d::AbstractVector{<:Real}, H::Hyperrectangle)::AbstractVector{<:Real}
+    return @. H.center + unit_step(d) * H.radius
 end
 
 """
@@ -115,7 +120,7 @@ The list of vertices as an array of floating-point vectors.
 
 For high-dimensions, it is preferable to develop a `vertex_iterator` approach.
 """
-function vertices_list(H::Hyperrectangle)::Vector{Vector{Float64}}
+function vertices_list(H::Hyperrectangle{N})::Vector{Vector{N}} where {N<:Real}
     return [H.center .+ si .* H.radius for si in IterTools.product([[1, -1] for i = 1:dim(H)]...)]
 end
 
@@ -175,7 +180,7 @@ two elements of the set, or, equivalently, the diameter of the enclosing ball
 A real number representing the diameter.
 """
 function diameter(H::Hyperrectangle, p::Real=Inf)
-    return 2. * radius(H, p)
+    return radius(H, p) * 2
 end
 
 """

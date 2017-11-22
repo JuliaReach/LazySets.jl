@@ -28,11 +28,18 @@ julia> ρ([1., 1.], B)
 0.2
 ```
 """
-struct BallInf <: LazySet
-    center::Vector{Float64}
-    radius::Float64
-    BallInf(center, radius) = radius < 0. ? throw(DomainError()) : new(center, radius)
+struct BallInf{N<:Real} <: LazySet
+    center::Vector{N}
+    radius::N
+
+    # default constructor with domain constraint for radius
+    BallInf{N}(center, radius) where N =
+        (radius < zero(N)
+            ? throw(DomainError())
+            : new(center, radius))
 end
+# type-less convenience constructor
+BallInf(center::Vector{N}, radius::N) where {N<:Real} = BallInf{N}(center, radius)
 
 """
     dim(B)
@@ -74,8 +81,8 @@ function is such that `sign(0) = 0`, instead of 1. For this reason, we use the
 custom `unit_step` function, that allows to do: `B.center + unit_step.(d) * B.radius`
 (the dot operator performs broadcasting, to accept vector-valued entries).
 """
-function σ(d::AbstractVector{Float64}, B::BallInf)::Vector{Float64}
-    return B.center .+ unit_step.(d) .* B.radius
+function σ(d::AbstractVector{<:Real}, B::BallInf)::AbstractVector{<:Real}
+    return @. B.center + unit_step(d) * B.radius
 end
 
 """
@@ -95,7 +102,7 @@ The list of vertices as an array of floating-point vectors.
 
 For high-dimensions, it is preferable to develop a `vertex_iterator` approach.
 """
-function vertices_list(B::BallInf)::Vector{Vector{Float64}}
+function vertices_list(B::BallInf{N})::Vector{Vector{N}} where {N<:Real}
     return [B.center .+ si .* B.radius for si in IterTools.product([[1, -1] for i = 1:dim(B)]...)]
 end
 
@@ -114,7 +121,7 @@ the given norm) of minimal volume.
 
 A real number representing the norm.
 """
-function norm(B::BallInf, p::Real=Inf)
+function norm(B::BallInf, p::Real=Inf)::Real
     return maximum(map(x -> norm(x, p), vertices_list(B)))
 end
 
@@ -133,7 +140,7 @@ enclosing ball (of the given norm) of minimal volume with the same center.
 
 A real number representing the radius.
 """
-function radius(B::BallInf, p::Real=Inf)
+function radius(B::BallInf, p::Real=Inf)::Real
     if p == Inf
         return B.radius
     else
@@ -157,6 +164,6 @@ enclosing ball (of the given norm) of minimal volume with the same center.
 
 A real number representing the diameter.
 """
-function diameter(B::BallInf, p::Real=Inf)
-    return 2. * radius(B, p)
+function diameter(B::BallInf, p::Real=Inf)::Real
+    return radius(B, p) * 2
 end

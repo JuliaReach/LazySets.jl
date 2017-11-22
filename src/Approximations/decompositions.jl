@@ -65,7 +65,7 @@ function decompose(X::LazySet)::CartesianProductArray
     n = LazySets.dim(X)
     b = div(n, 2)
 
-    DIR_EAST_bi = sparsevec([], Float64[], n)
+    DIR_EAST_bi = sparsevec([], Float64[], n)  # TODO: use numeric eltype of X
     DIR_NORTH_bi = sparsevec([], Float64[], n)
     DIR_WEST_bi = sparsevec([], Float64[], n)
     DIR_SOUTH_bi = sparsevec([], Float64[], n)

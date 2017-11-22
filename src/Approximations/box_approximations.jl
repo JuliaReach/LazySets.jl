@@ -75,7 +75,7 @@ recovered from the distance among support functions in the same directions.
 """
 @inline function box_approximation_helper(X::LazySet)
     n = dim(X)
-    c = Vector{Float64}(n)
+    c = Vector{Float64}(n) # TODO: get numerical eltype of X
     r = Vector{Float64}(n)
     dplus = zeros(n)
     dminus = zeros(n)
@@ -112,7 +112,7 @@ of the given set along the canonical directions.
 """
 function ballinf_approximation(X::LazySet)::BallInf
     n = dim(X)
-    c = Vector{Float64}(n)
+    c = Vector{Float64}(n) # TODO: get numerical eltype of X
     r = 0.
     dplus = zeros(n)
     dminus = zeros(n)

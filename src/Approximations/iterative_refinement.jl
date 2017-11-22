@@ -11,26 +11,26 @@ Type that represents a local approximation in 2D.
 - `ndir`      -- a normal direction of the inner approximation
 - `refinable` -- states if this approximation is refinable
 """
-struct Approximation2D
-    p1::Vector{Float64}
-    d1::Vector{Float64}
-    p2::Vector{Float64}
-    d2::Vector{Float64}
-    err::Float64
-    ndir::Vector{Float64}
+struct Approximation2D{N<:AbstractFloat}
+    p1::Vector{N}
+    d1::Vector{N}
+    p2::Vector{N}
+    d2::Vector{N}
+    err::N
+    ndir::Vector{N}
     refinable::Bool
+end
 
-    function Approximation2D(p1::Vector{Float64}, d1::Vector{Float64}, p2::Vector{Float64}, d2::Vector{Float64})
-        ndir = [p2[2]-p1[2], p1[1]-p2[1]]
-        norm_ndir = norm(ndir)
+function Approximation2D(p1::Vector{N}, d1::Vector{N}, p2::Vector{N}, d2::Vector{N}) where{N<:AbstractFloat}
+    ndir = [p2[2]-p1[2], p1[1]-p2[1]]
+    norm_ndir = norm(ndir)
 
-        if norm_ndir > TOL_DIR
-            ndir = ndir/norm_ndir
-            q = intersection(Line(d1, dot(d1, p1)), Line(d2, dot(d2, p2)))
-            new(p1, d1, p2, d2, dot(ndir, q) - dot(ndir, p1), ndir, true)
-        else
-            new(p1, d1, p2, d2, 0., ndir, false)
-        end
+    if norm_ndir > TOL_DIR
+        ndir = ndir/norm_ndir
+        q = intersection(Line(d1, dot(d1, p1)), Line(d2, dot(d2, p2)))
+        Approximation2D(p1, d1, p2, d2, dot(ndir, q) - dot(ndir, p1), ndir, true)
+    else
+        Approximation2D(p1, d1, p2, d2, zero(N), ndir, false)
     end
 end
 
@@ -80,7 +80,6 @@ function approximate(X::LazySet, ɛ::Float64)::Vector{Approximation2D}
         if (queue[i].err <= ɛ)
             i += 1
         else
-
             (la1, la2) = refine(X, queue[i])
             queue[i] = la1
             insert!(queue, i+1, la2)

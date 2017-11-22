@@ -16,8 +16,11 @@ struct MinkowskiSum{T1<:LazySet,T2<:LazySet} <: LazySet
     X::T1
     Y::T2
 
-    MinkowskiSum{T1,T2}(X::T1, Y::T2) where {T1<:LazySet,T2<:LazySet} = dim(X) != dim(Y) ? throw(DimensionMismatch) : new(X, Y)
+    # default constructor with dimension match check
+    MinkowskiSum{T1,T2}(X::T1, Y::T2) where {T1<:LazySet,T2<:LazySet} =
+        dim(X) != dim(Y) ? throw(DimensionMismatch) : new(X, Y)
 end
+# type-less convenience constructor
 MinkowskiSum(X::T1, Y::T2) where {T1<:LazySet,T2<:LazySet} = MinkowskiSum{T1,T2}(X, Y)
 
 function +(X::LazySet, Y::LazySet)
@@ -38,7 +41,7 @@ function dim(ms::MinkowskiSum)::Int64
 end
 
 """
-    σ(d::AbstractVector{Float64}, ms::MinkowskiSum)
+    σ(d, ms)
 
 Support vector of a Minkowski sum.
 
@@ -47,7 +50,7 @@ Support vector of a Minkowski sum.
 - `d`  -- vector
 - `ms` -- Minkowski sum
 """
-function σ(d::AbstractVector{Float64}, ms::MinkowskiSum)::Vector{Float64}
+function σ(d::AbstractVector{<:Real}, ms::MinkowskiSum)::Vector{<:Real}
     return σ(d, ms.X) + σ(d, ms.Y)
 end
 
@@ -148,7 +151,7 @@ function dim(ms::MinkowskiSumArray)::Int64
 end
 
 """
-    σ(d::Vector{Float64}, ms::MinkowskiSumArray)
+    σ(d, ms)
 
 Support vector of the Minkowski sum of a finite number of sets.
 
@@ -158,8 +161,8 @@ Support vector of the Minkowski sum of a finite number of sets.
 
 - `ms` -- Minkowski sum array
 """
-function σ(d::AbstractVector{Float64}, ms::MinkowskiSumArray)::Vector{Float64}
-    svec = zeros(length(d))
+function σ(d::AbstractVector{<:Real}, ms::MinkowskiSumArray)::Vector{<:Real}
+    svec = zeros(eltype(d), length(d))
     for sj in ms.sfarray
         svec += σ(d, sj)
     end

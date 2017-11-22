@@ -34,11 +34,18 @@ julia> σ(ones(5), B)
 0.3371
 ```
 """
-struct Ball2 <: LazySet
-    center::Vector{Float64}
-    radius::Float64
-    Ball2(center, radius) = radius < 0. ? throw(DomainError()) : new(center, radius)
+struct Ball2{N<:Real} <: LazySet
+    center::Vector{N}
+    radius::N
+
+    # default constructor with domain constraint for radius
+    Ball2{N}(center, radius) where N =
+        (radius < zero(N)
+            ? throw(DomainError())
+            : new(center, radius))
 end
+# type-less convenience constructor
+Ball2(center::Vector{N}, radius::N) where {N<:Real} = Ball2{N}(center, radius)
 
 """
     dim(B)
@@ -69,18 +76,19 @@ Return the support vector of a Ball2 in a given direction.
 
 ### Output
 
-The support vector in the given direction.
+The support vector in the given direction. If the given direction has
+norm zero, the origin is returned.
 
 ### Notes
 
-If the given direction has norm zero, the origin is returned.
+This function requires computing the 2-norm of the input direction, and this is
+performed in the given precision of the direction. Exact inputs are not handled.
 """
-function σ(d::AbstractVector{Float64}, B::Ball2)::Vector{Float64}
+function σ(d::AbstractVector{N}, B::Ball2)::AbstractVector{N} where{N<:AbstractFloat}
     dnorm = norm(d)
-    if dnorm > 0
-        return B.center .+ d .* (B.radius / dnorm)
+    if dnorm > zero(N)
+        return @. B.center + d * (B.radius / dnorm)
     else
-        return zeros(length(d))
+        return zeros(eltype(d), length(d))
     end
 end
-

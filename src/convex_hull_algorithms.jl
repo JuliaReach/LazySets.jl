@@ -105,11 +105,11 @@ in ``O(n \\log n)`` time.
 For further details see the wikipedia page:
 [Monotone chain](https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain)
 """
-function monotone_chain!(points::Vector{S}) where{S<:AbstractVector{T}} where{T<:Real}
+function monotone_chain!(points::Vector{S}) where{S<:AbstractVector{N}} where{N<:Real}
 
-    @inline function build_hull!(semihull, iterator, points, zero_T)
+    @inline function build_hull!(semihull, iterator, points, zero_N)
         @inbounds for i in iterator
-            while length(semihull) >= 2 && right_turn(semihull[end-1], semihull[end], points[i]) <= zero_T
+            while length(semihull) >= 2 && right_turn(semihull[end-1], semihull[end], points[i]) <= zero_N
                 pop!(semihull)
             end
             push!(semihull, points[i])
@@ -120,15 +120,15 @@ function monotone_chain!(points::Vector{S}) where{S<:AbstractVector{T}} where{T<
     # points = sortrows(hcat(points...)', alg=QuickSort)  # out-of-place version
     sort!(points, by=x->(x[1], x[2]))                     # in-place version
 
-    zero_T = zero(T)
+    zero_N = zero(N)
 
     # build lower hull
     lower = Vector{S}()
-    build_hull!(lower, indices(points)[1], points, zero_T)
+    build_hull!(lower, indices(points)[1], points, zero_N)
 
     # build upper hull
     upper = Vector{S}()
-    build_hull!(upper, reverse(indices(points)[1]), points, zero_T)
+    build_hull!(upper, reverse(indices(points)[1]), points, zero_N)
 
     # remove the last point of each segment because they are repeated
     return [lower[1:end-1]; upper[1:end-1]]
