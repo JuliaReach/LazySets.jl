@@ -12,6 +12,8 @@ Return an approximation of the given 2D set as a box-shaped polygon.
 A polygon in constraint representation.
 """
 function overapproximate(X::LazySet)::HPolygon
+    @assert dim(X) == 2
+
     constraints = Vector{LinearConstraint}(4)
     # evaluate support vector on box directions
     pe = σ(DIR_EAST, X)
@@ -63,10 +65,10 @@ function decompose(X::LazySet)::CartesianProductArray
     n = LazySets.dim(X)
     b = div(n, 2)
 
-    DIR_EAST_bi = Vector{Float64}(n)
-    DIR_NORTH_bi = Vector{Float64}(n)
-    DIR_WEST_bi = Vector{Float64}(n)
-    DIR_SOUTH_bi = Vector{Float64}(n)
+    DIR_EAST_bi = sparsevec([], Float64[], n)
+    DIR_NORTH_bi = sparsevec([], Float64[], n)
+    DIR_WEST_bi = sparsevec([], Float64[], n)
+    DIR_SOUTH_bi = sparsevec([], Float64[], n)
     result = Vector{HPolygon}(b)
 
     @inbounds for bi in 1:b
@@ -153,5 +155,9 @@ A `CartesianProductArray` corresponding to the cartesian product of 2x2 polygons
 function decompose(X::LazySet, ɛ::Float64)::CartesianProductArray
     n = LazySets.dim(X)
     b = div(n, 2)
-    return decompose(X, [ɛ for i in 1:b])
+    if ɛ == Inf
+        return decompose(X)
+    else
+        return decompose(X, [ɛ for i in 1:b])
+    end
 end
