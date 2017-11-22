@@ -81,14 +81,13 @@ norm zero, the origin is returned.
 
 ### Notes
 
-This support vector requires computing the 2-norm of the input direction.
-In the case of exact inputs, no conversion is made to recover the actual vertex
--- a floating point approximation is returned.
+This function requires computing the 2-norm of the input direction, and this is
+performed in the given precision of the direction. Exact inputs are not handled.
 """
-function σ(d::AbstractVector{<:Real}, B::Ball2)::AbstractVector{<:Real}
+function σ(d::AbstractVector{N}, B::Ball2)::AbstractVector{N} where{N<:AbstractFloat}
     dnorm = norm(d)
-    if dnorm > 0
-        return B.center .+ d .* (B.radius / dnorm)
+    if dnorm > zero(N)
+        return @. B.center + d * (B.radius / dnorm)
     else
         return zeros(eltype(d), length(d))
     end
