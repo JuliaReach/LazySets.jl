@@ -1,6 +1,6 @@
 export ZeroSet
 
-import Base:+,*
+import Base:+, *
 
 """
     ZeroSet <: LazySet
@@ -24,9 +24,7 @@ Return the ambient dimension of this zero set.
 
 - `Z` -- a zero set, i.e. a set which only contains the origin
 """
-function dim(Z::ZeroSet)
-    return Z.dim
-end
+dim(Z::ZeroSet) = Z.dim
 
 """
     σ(d, Z)
@@ -42,6 +40,6 @@ Return the support vector of a zero set.
 The returned value is the origin since it's the only point that belongs to this
 set.
 """
-function σ(d::AbstractVector{Float64}, Z::ZeroSet)::Vector{Float64}
+function σ(d::AbstractVector{<:Real}, Z::ZeroSet)::Vector{<:Real}
     return zeros(d)
 end

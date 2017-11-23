@@ -1,6 +1,6 @@
 export DummySet
 
-import Base:+,*
+import Base:+, *
 
 """
     DummySet <: LazySet

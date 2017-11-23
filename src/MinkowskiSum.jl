@@ -23,6 +23,20 @@ end
 # type-less convenience constructor
 MinkowskiSum(X::T1, Y::T2) where {T1<:LazySet,T2<:LazySet} = MinkowskiSum{T1,T2}(X, Y)
 
+"""
+    X + Y
+
+Convenience constructor for Minkowski sum.
+
+### Input
+
+- `X` -- a convex set
+- `Y` -- another convex set
+
+### Output
+
+The symbolic Minkowski sum of ``X`` and ``Y``.
+"""
 function +(X::LazySet, Y::LazySet)
     return MinkowskiSum(X, Y)
 end
@@ -30,7 +44,7 @@ end
 """
     dim(ms)
 
-Ambient dimension of a Minkowski product.
+Ambient dimension of a Minkowski sum.
 
 ### Input
 
@@ -120,16 +134,16 @@ function +(msa1::MinkowskiSumArray, msa2::MinkowskiSumArray)::MinkowskiSumArray
 end
 
 """
-    +(msa, vs)
+    +(msa, Z)
 
-Returns the original array because addition with a void set is a no-op.
+Returns the original array because addition with an empty set is a no-op.
 
 ### Input
 
 - `msa` -- Minkowski sum array
-- `vs` -- void set
+- `Z`  -- a Zero set
 """
-function +(msa::MinkowskiSumArray, ::VoidSet)::MinkowskiSumArray
+function +(msa::MinkowskiSumArray, Z::ZeroSet)::MinkowskiSumArray
     return msa
 end
 

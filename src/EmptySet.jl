@@ -1,6 +1,6 @@
 export EmptySet
 
-import Base:+,*
+import Base:+, *
 
 """
     EmptySet <: LazySet

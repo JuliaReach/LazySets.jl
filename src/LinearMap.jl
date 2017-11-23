@@ -29,16 +29,31 @@ LinearMap(M::AbstractMatrix{N}, sf::T) where {T<:LazySet,N<:Real} = LinearMap{T,
 
 import Base.*
 
-# linear map of a set
-function *(M::AbstractMatrix, sf::LazySet)
+"""
+    M * X
+
+Linear map of a set.
+
+### Input
+
+- ``M`` -- a matrix, which can be dense or sparse
+- ``X`` -- a lazy set
+
+### Output
+
+If the matrix is null, a `ZeroSet` is returned; otherwise a lazy linear map.
+"""
+function *(M::AbstractMatrix, X::LazySet)
     if findfirst(M) != 0
-        return LinearMap(M, sf)
+        return LinearMap(M, X)
     else
-        return VoidSet(dim(sf))
+        # see also DummySet
+        return ZeroSet(dim(X))
     end
 end
 
 # linear map of a void set (has to be overridden due to polymorphism reasons)
+#=
 function *(M::AbstractMatrix, sf::VoidSet)
     if dim(sf) == size(M, 2)
         return VoidSet(size(M, 1))
@@ -47,6 +62,7 @@ function *(M::AbstractMatrix, sf::VoidSet)
                 " cannot be multiplied by a " * string(eval(size(M))) * " matrix"))
     end
 end
+=#
 
 """
     dim(lm)
@@ -84,4 +100,3 @@ end
 function *(a::Real, sf::LazySet)
     return LinearMap(sparse(a*I, dim(sf)), sf)
 end
-
