@@ -37,9 +37,41 @@ Convenience constructor for Minkowski sum.
 
 The symbolic Minkowski sum of ``X`` and ``Y``.
 """
-function +(X::LazySet, Y::LazySet)
-    return MinkowskiSum(X, Y)
-end
++(X::LazySet, Y::LazySet) = MinkowskiSum(X, Y)
+
+"""
+    X + ∅
+
+Right Minkowski sum of a set by an empty set.
+
+### Input
+
+- `X` -- a convex set
+- `∅` -- an empty set
+
+## Output
+
+An empty set, because the empty set is the absorbing element for the
+Minkowski sum.
+"""
++(X::LazySet, ∅::EmptySet) = EmptySet()
+
+"""
+    ∅ + X
+
+Left Minkowski sum of a set by an empty set.
+
+### Input
+
+- `X` -- a convex set
+- `∅` -- an empty set
+
+## Output
+
+An empty set, because the empty set is the absorbing element for the
+Minkowski sum.
+"""
++(∅::EmptySet, X::LazySet) = EmptySet()
 
 """
     dim(ms)
@@ -50,9 +82,7 @@ Ambient dimension of a Minkowski sum.
 
 - `ms` -- Minkowski sum
 """
-function dim(ms::MinkowskiSum)::Int64
-    return dim(ms.X)
-end
+dim(ms::MinkowskiSum) = dim(ms.X)
 
 """
     σ(d, ms)

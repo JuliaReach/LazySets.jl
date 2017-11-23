@@ -23,16 +23,62 @@ struct CartesianProduct{T1<:LazySet,T2<:LazySet} <: LazySet
     Y::T2
     CartesianProduct{T1,T2}(X::T1, Y::T2) where {T1<:LazySet,T2<:LazySet} = new(X, Y)
     CartesianProduct{T}(Xarr::Vector{T}) where {T<:LazySet} = length(Xarr) == 0 ?
-            VoidSet(1) : (length(Xarr) == 1 ? Xarr[1] :
+            DummySet(1) : (length(Xarr) == 1 ? Xarr[1] :
             new{T,T}(Xarr[1], CartesianProduct{T}(Xarr[2:length(Xarr)])))
             # NOTE: use array type instead of element type (bit of a mess otherwise)
 end
 CartesianProduct(X::T1, Y::T2) where {T1<:LazySet,T2<:LazySet} = CartesianProduct{T1,T2}(X, Y)
 CartesianProduct(Xarr::Vector{T}) where {T<:LazySet} = CartesianProduct{T}(Xarr)
 
-function *(X::LazySet, Y::LazySet)::CartesianProduct
-    CartesianProduct(X, Y)
-end
+"""
+    X * Y
+
+Cartesian product of sets X and Y.
+
+### Input
+
+- `X` -- a convex set
+- `Y` -- another convex set
+
+## Output
+
+The lazy Cartesian product between `X` and `Y`.
+"""
+*(X::LazySet, Y::LazySet) = CartesianProduct(X, Y)
+
+"""
+    X * ∅
+
+Right multiplication of a set by an empty set.
+
+### Input
+
+- `X` -- a convex set
+- `∅` -- an empty set
+
+## Output
+
+An empty set, because the empty set is the absorbing element for the
+Cartesian product.
+"""
+*(X::LazySet, ∅::EmptySet) = EmptySet()
+
+"""
+    ∅ * X
+
+Left multiplication of a set by an empty set.
+
+### Input
+
+- `X` -- a convex set
+- `∅` -- an empty set
+
+## Output
+
+An empty set, because the empty set is the absorbing element for the
+Cartesian product.
+"""
+*(∅::EmptySet, X::LazySet) = EmptySet()
 
 """
     dim(cp)
@@ -80,9 +126,9 @@ function is_contained(d::AbstractVector, cp::CartesianProduct)::Bool
     return is_contained(d[1:dim(cp.X)], cp.X) && is_contained(d[dim(cp.X)+1:end], cp.Y)
 end
 
-# ==========================
-#  Cartesian product of sets
-# ==========================
+# =========================================================
+#  Cartesian product implementation using an array of sets
+# =========================================================
 """
     CartesianProductArray <: LazySet
 
