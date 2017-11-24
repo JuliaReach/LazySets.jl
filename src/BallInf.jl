@@ -7,6 +7,16 @@ export BallInf, vertices_list, norm, radius, diameter
 
 Type that represents a ball in the infinity norm.
 
+It is defined as the set
+
+```math
+\\mathcal{B}_∞^n(c, r) = \\{ x ∈ \\mathbb{R}^n : ‖ x - c ‖_∞ ≦ r \\},
+```
+where ``c ∈ \\mathbb{R}^n`` is its center and ``r ∈ \\mathbb{R}`` its radius.
+Here ``‖ ⋅ ‖_∞`` denotes the infinity norm, defined as
+``‖ x ‖_∞ = \\max\\limits_{i=1,…,n} \\vert x_i \\vert`` for any
+``x ∈ \\mathbb{R}^n``.
+
 ### Fields
 
 - `center` -- center of the ball as a real vector
@@ -15,15 +25,13 @@ Type that represents a ball in the infinity norm.
 ### Examples
 
 We create the two-dimensional unit ball, and compute its support function
-along the direction ``(1, 1)``:
+along the positive ``x=y`` direction:
 
 ```julia
 julia> B = BallInf(zeros(2), 0.1)
 LazySets.BallInf([0.0, 0.0], 0.1)
-
 julia> dim(B)
 2
-
 julia> ρ([1., 1.], B)
 0.2
 ```
@@ -42,9 +50,9 @@ end
 BallInf(center::Vector{N}, radius::N) where {N<:Real} = BallInf{N}(center, radius)
 
 """
-    dim(B)
+    dim(B::BallInf)
 
-Return the dimension of a BallInf.
+Return the dimension of a `BallInf`.
 
 ### Input
 
@@ -54,34 +62,25 @@ Return the dimension of a BallInf.
 
 The ambient dimension of the ball.
 """
-function dim(B::BallInf)::Int64
-    return length(B.center)
-end
+dim(B::BallInf) = length(B.center)
 
 """
-    σ(d, B)
+    σ(d::AbstractVector{<:Real}, B::BallInf)
 
-Return the support vector of an infinity-norm ball in a given direction.
+Return the support vector of an infinity norm ball in a given direction.
 
 ### Input
 
 - `d` -- direction
 - `B` -- unit ball in the infinity norm
-
-### Algorithm
-
-This code is a vectorized version of
-
-```julia
-[(d[i] >= 0) ? B.center[i] + B.radius : B.center[i] - B.radius for i in 1:length(d)]
-```
-
-Notice that we cannot use `B.center + sign.(d) * B.radius`, since the built-in `sign`
-function is such that `sign(0) = 0`, instead of 1. For this reason, we use the
-custom `unit_step` function, that allows to do: `B.center + unit_step.(d) * B.radius`
-(the dot operator performs broadcasting, to accept vector-valued entries).
 """
 function σ(d::AbstractVector{<:Real}, B::BallInf)::AbstractVector{<:Real}
+    #=
+    We cannot use `B.center + sign.(d) * B.radius`, since the built-in `sign`
+    function is such that `sign(0) = 0`, instead of 1 as needed.
+    The custom `unit_step` function allows to do perform broadcasting through
+    the dot operator, thus accepting vector-valued entries.
+    =#
     return @. B.center + unit_step(d) * B.radius
 end
 
@@ -102,7 +101,7 @@ The list of vertices as an array of floating-point vectors.
 
 For high-dimensions, it is preferable to develop a `vertex_iterator` approach.
 """
-function vertices_list(B::BallInf{N})::Vector{Vector{N}} where {N<:Real}
+function vertices_list(B::BallInf)
     return [B.center .+ si .* B.radius for si in IterTools.product([[1, -1] for i = 1:dim(B)]...)]
 end
 
@@ -110,7 +109,7 @@ end
     norm(B::BallInf, [p])
 
 Return the norm of a `BallInf`. It is the norm of the enclosing ball (of
-the given norm) of minimal volume.
+the given ``p``-norm) of minimal volume.
 
 ### Input
 
@@ -129,7 +128,7 @@ end
     radius(B::BallInf, [p])
 
 Return the radius of a ball in the infinity norm. It is the radius of the
-enclosing ball (of the given norm) of minimal volume with the same center.
+enclosing ball (of the given ``p``-norm) of minimal volume with the same center.
 
 ### Input
 
@@ -140,20 +139,14 @@ enclosing ball (of the given norm) of minimal volume with the same center.
 
 A real number representing the radius.
 """
-function radius(B::BallInf, p::Real=Inf)::Real
-    if p == Inf
-        return B.radius
-    else
-        return norm(fill(B.radius, dim(B)), p)
-    end
-end
+radius(B::BallInf, p::Real=Inf) = (p == Inf) ? B.radius : norm(fill(B.radius, dim(B)), p)
 
 """
     diameter(B::BallInf, [p])
 
 Return the diameter of a ball in the infinity norm. It is the maximum distance
 between any two elements of the set, or, equivalently, the diameter of the
-enclosing ball (of the given norm) of minimal volume with the same center.
+enclosing ball (of the given ``p``-norm) of minimal volume with the same center.
 
 ### Input
 
@@ -164,6 +157,4 @@ enclosing ball (of the given norm) of minimal volume with the same center.
 
 A real number representing the diameter.
 """
-function diameter(B::BallInf, p::Real=Inf)::Real
-    return radius(B, p) * 2
-end
+diameter(B::BallInf, p::Real=Inf) = 2 * radius(B, p)

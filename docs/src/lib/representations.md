@@ -21,15 +21,6 @@ LazySets.LazySet
 
 ## Balls
 
-Unit balls are defined by int center (vector) and radius (scalar), such as
-infinity-norm balls,
-
-$B_\infty(c, r) = \{ x ∈ \mathbb{R}^n : \Vert x - c\Vert_\infty \leq r \}.$
-
-and Euclidean (2-norm) balls,
-
-$B_2(c, r) = \{ x ∈ \mathbb{R}^n : \Vert x - c\Vert_2 \leq r \}.$
-
 ### Euclidean norm ball
 
 ```@docs
