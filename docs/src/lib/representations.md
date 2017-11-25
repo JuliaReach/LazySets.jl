@@ -111,3 +111,14 @@ VoidSet
 ```@docs
 Singleton
 ```
+
+## Zonotopes
+
+```@docs
+Zonotope
+Zonotope(center::Vector, G::AbstractMatrix)
+dim(Z::Zonotope)
+vertices_list(Z::Zonotope{Float64})
+σ(d::AbstractVector, Z::Zonotope)
+order(Z::Zonotope)
+```
