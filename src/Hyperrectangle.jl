@@ -33,15 +33,15 @@ Hyperrectangle(center::Vector{N}, radius::Vector{N}) where {N<:Real} =
 """
     Hyperrectangle(kwargs...)
 
-Constructs a Hyperrectangle from keyword arguments.
+Construct a hyperrectangle from keyword arguments.
 
 ### Input
 
 Two combinations are allowed:
 
 1. `center`, `radius` -- both vectors
-2. `high`, `low`      -- both vectors (if both `center` and `radius` are also
-                            defined, those are chosen instead)
+2. `high`, `low`      -- both vectors; if both `center` and `radius` are also
+                         defined, those are chosen instead
 
 ### Examples
 

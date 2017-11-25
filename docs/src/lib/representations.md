@@ -41,6 +41,14 @@ radius(B::BallInf, p::Real=Inf)
 diameter(B::BallInf, p::Real=Inf)
 ```
 
+### p-norm ball
+
+```@docs
+Ballp
+dim(B::Ballp)
+σ(d::AbstractVector{Float64}, B::Ballp)
+```
+
 ## Polygons
 
 ### Constraint representation
@@ -90,6 +98,7 @@ Line
 
 ```@docs
 Hyperrectangle
+Hyperrectangle(;kwargs...)
 dim(H::Hyperrectangle)
 σ(d::AbstractVector{Float64}, H::Hyperrectangle)
 vertices_list(H::Hyperrectangle)
