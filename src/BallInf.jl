@@ -12,7 +12,7 @@ It is defined as the set
 ```math
 \\mathcal{B}_∞^n(c, r) = \\{ x ∈ \\mathbb{R}^n : ‖ x - c ‖_∞ ≦ r \\},
 ```
-where ``c ∈ \\mathbb{R}^n`` is its center and ``r ∈ \\mathbb{R}`` its radius.
+where ``c ∈ \\mathbb{R}^n`` is its center and ``r ∈ \\mathbb{R}_+`` its radius.
 Here ``‖ ⋅ ‖_∞`` denotes the infinity norm, defined as
 ``‖ x ‖_∞ = \\max\\limits_{i=1,…,n} \\vert x_i \\vert`` for any
 ``x ∈ \\mathbb{R}^n``.
@@ -52,7 +52,7 @@ BallInf(center::Vector{N}, radius::N) where {N<:Real} = BallInf{N}(center, radiu
 """
     dim(B::BallInf)
 
-Return the dimension of a `BallInf`.
+Return the dimension of a ball in the infinity norm.
 
 ### Input
 
@@ -100,6 +100,19 @@ The list of vertices as an array of floating-point vectors.
 ### Notes
 
 For high-dimensions, it is preferable to develop a `vertex_iterator` approach.
+
+### Examples
+
+```julia
+julia> B = BallInf(zeros(2), 0.1)
+LazySets.BallInf{Float64}([0.0, 0.0], 0.1)
+julia> vertices_list(B)
+4-element Array{Array{Float64,1},1}:
+ [0.1, 0.1]
+ [-0.1, 0.1]
+ [0.1, -0.1]
+ [-0.1, -0.1]
+```
 """
 function vertices_list(B::BallInf)
     return [B.center .+ si .* B.radius for si in IterTools.product([[1, -1] for i = 1:dim(B)]...)]
@@ -108,8 +121,10 @@ end
 """
     norm(B::BallInf, [p])
 
-Return the norm of a `BallInf`. It is the norm of the enclosing ball (of
-the given ``p``-norm) of minimal volume.
+Return the norm of a ball in the infinity norm.
+
+It is defined as the norm of the enclosing ball, of the given
+``p``-norm, of minimal volume.
 
 ### Input
 
@@ -127,8 +142,10 @@ end
 """
     radius(B::BallInf, [p])
 
-Return the radius of a ball in the infinity norm. It is the radius of the
-enclosing ball (of the given ``p``-norm) of minimal volume with the same center.
+Return the radius of a ball in the infinity norm.
+
+It is defined as the radius of the enclosing ball of the given ``p``-norm of
+minimal volume with the same center.
 
 ### Input
 
@@ -144,9 +161,11 @@ radius(B::BallInf, p::Real=Inf) = (p == Inf) ? B.radius : norm(fill(B.radius, di
 """
     diameter(B::BallInf, [p])
 
-Return the diameter of a ball in the infinity norm. It is the maximum distance
-between any two elements of the set, or, equivalently, the diameter of the
-enclosing ball (of the given ``p``-norm) of minimal volume with the same center.
+Return the diameter of a ball in the infinity norm.
+
+It corresponds to the maximum distance between any two elements of the set.
+Equivalently, it is the diameter of the enclosing ball of the given ``p``-norm
+of minimal volume with the same center.
 
 ### Input
 

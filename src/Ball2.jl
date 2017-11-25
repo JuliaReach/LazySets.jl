@@ -5,6 +5,16 @@ export Ball2
 
 Type that represents a ball in the 2-norm.
 
+It is defined as the set
+
+```math
+\\mathcal{B}_2^n(c, r) = \\{ x ∈ \\mathbb{R}^n : ‖ x - c ‖_2 ≦ r \\},
+```
+where ``c ∈ \\mathbb{R}^n`` is its center and ``r ∈ \\mathbb{R}_+`` its radius.
+Here ``‖ ⋅ ‖_2`` denotes the Euclidean norm (also known as 2-norm), defined as
+``‖ x ‖_2 = \\left( \\sum\\limits_{i=1}^n |x_i|^2 \\right)^{1/2}`` for any
+``x ∈ \\mathbb{R}^n``.
+
 ### Fields
 
 - `center` -- center of the ball as a real vector
@@ -22,16 +32,16 @@ julia> dim(B)
 5
 ```
 
-We evaluate the support vector in a given direction:
+Evaluate its support vector in the ``[1,2,…,5]`` direction:
 
 ```julia
-julia> σ(ones(5), B)
+julia> σ([1.,2,3,4,5], B)
 5-element Array{Float64,1}:
-0.06742
-0.13484
-0.20226
-0.26968
-0.3371
+ 0.06742
+ 0.13484
+ 0.20226
+ 0.26968
+ 0.3371
 ```
 """
 struct Ball2{N<:Real} <: LazySet
@@ -48,9 +58,9 @@ end
 Ball2(center::Vector{N}, radius::N) where {N<:Real} = Ball2{N}(center, radius)
 
 """
-    dim(B)
+    dim(B::Ball2)
 
-Return the dimension of a Ball2.
+Return the dimension of a ball in the 2-norm.
 
 ### Input
 
@@ -60,14 +70,12 @@ Return the dimension of a Ball2.
 
 The ambient dimension of the ball.
 """
-function dim(B::Ball2)::Int64
-    length(B.center)
-end
+dim(B::Ball2) = length(B.center)
 
 """
-    σ(d, B)
+    σ(d::AbstractVector{N}, B::Ball2)::AbstractVector{N} where{N<:AbstractFloat}
 
-Return the support vector of a Ball2 in a given direction.
+Return the support vector of a ball in the 2-norm in a given direction.
 
 ### Input
 
@@ -82,10 +90,10 @@ norm zero, the origin is returned.
 ### Notes
 
 This function requires computing the 2-norm of the input direction, and this is
-performed in the given precision of the direction. Exact inputs are not handled.
+performed in the given precision of the direction's datatype. Exact inputs are not handled.
 """
 function σ(d::AbstractVector{N}, B::Ball2)::AbstractVector{N} where{N<:AbstractFloat}
-    dnorm = norm(d)
+    dnorm = norm(d, 2)
     if dnorm > zero(N)
         return @. B.center + d * (B.radius / dnorm)
     else
