@@ -127,13 +127,13 @@ For high dimensions, it would be preferable to develop a `vertex_iterator` appro
 """
 function vertices_list(Z::Zonotope{N})::Vector{Vector{N}} where {N<:Real}
     p = size(Z.generators, 2)
-    vlist = Vector{Vector{N}}(2*p)
+    vlist = Vector{Vector{N}}()
 
-    for i in 1:p
-        vlist[2*i-1] = Z.center .+ Z.generators[:, i]
-        vlist[2*i] = Z.center .- Z.generators[:, i]
+    for ξi in IterTools.product([[1, -1] for i = 1:p]...)
+        push!(vlist, Z.center .+ Z.generators * collect(ξi))
     end
-    return vlist
+    # take the convex hull at the output
+    return convex_hull(vlist)
 end
 
 """

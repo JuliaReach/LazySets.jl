@@ -332,7 +332,7 @@ julia> plot(Z)
     seriestype := :shape
 
     # we have to take the convex hull for the shape
-    vlist = hcat(convex_hull(vertices_list(Z))...).'
+    vlist = hcat(vertices_list(Z)...).'
     (x, y) = vlist[:, 1], vlist[:, 2]
 
      x, y
@@ -363,7 +363,7 @@ julia> plot([Z1, Z2])
 
     for Zi in Z
         # we have to take the convex hull for the shape
-        vlist = hcat(convex_hull(vertices_list(Zi))...).'
+        vlist = hcat(vertices_list(Zi)...).'
         @series (x, y) = vlist[:, 1], vlist[:, 2]
     end
 end
