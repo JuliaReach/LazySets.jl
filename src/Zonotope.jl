@@ -38,10 +38,10 @@ We can ask for its vertices with the `vertices_list` function:
 ```julia
 julia> vertices_list(X)
 4-element Array{Array{Float64,1},1}:
-[1.1, 0.0]
-[0.9, 0.0]
-[1.0, 0.1]
-[1.0, -0.1]
+[0.9, -0.1]
+[1.1, -0.1]
+[1.1, 0.1]
+[0.9, 0.1]
 ```
 
 Evaluate the support vector in a given direction:
@@ -128,12 +128,13 @@ For high dimensions, it would be preferable to develop a `vertex_iterator` appro
 function vertices_list(Z::Zonotope{N})::Vector{Vector{N}} where {N<:Real}
     p = size(Z.generators, 2)
     vlist = Vector{Vector{N}}()
+    sizehint!(vlist, 2^p)
 
     for ξi in IterTools.product([[1, -1] for i = 1:p]...)
         push!(vlist, Z.center .+ Z.generators * collect(ξi))
     end
     # take the convex hull at the output
-    return convex_hull(vlist)
+    return convex_hull!(vlist)
 end
 
 """
