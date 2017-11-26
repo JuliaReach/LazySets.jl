@@ -42,6 +42,7 @@ include("Hyperrectangle.jl")
 include("HPolygon.jl")
 include("HPolygonOpt.jl")
 include("VPolygon.jl")
+include("Zonotope.jl")
 
 # =================================
 # Types representing set operations
