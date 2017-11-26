@@ -120,7 +120,7 @@ The core functionality of `LazySets` is:
 
 - Lazy (i.e. symbolic) types for several classes of convex sets such as
   balls in different norms, polygons in constraint or vertex representation,
-  special types such as lines and linear constraints, hyperrectangles, and
+  zonotopes, special types such as lines and linear constraints, hyperrectangles, and
   high-dimensional polyhedra.
 - Most commonly used set operations, e.g. Minkowski sum, Cartesian product,
   convex hull and interval hull approximations. Moreover, lazy linear maps and

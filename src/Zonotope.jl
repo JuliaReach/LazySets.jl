@@ -165,7 +165,7 @@ generators and its dimension.
 
 ### Input
 
-- ``Z`` -- a zonotope
+- `Z` -- a zonotope
 
 ### Output
 

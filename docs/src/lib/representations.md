@@ -116,7 +116,7 @@ Singleton
 
 ```@docs
 Zonotope
-Zonotope(center::AbstractVector, generators::AbstractVector{Float64})
+Zonotope(center::AbstractVector, generators::AbstractVector{T}) where{T<:AbstractVector}
 dim(Z::Zonotope)
 vertices_list(Z::Zonotope{Float64})
 σ(d::AbstractVector, Z::Zonotope)
