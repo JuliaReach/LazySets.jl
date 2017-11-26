@@ -78,6 +78,8 @@ A zonotope with the given center and set of generators.
 
 ### Examples
 
+A zonotope in two dimensions with three generators:
+
 ```julia
 julia> X = Zonotope(ones(2), [[1., 0], [0., 1], [1, 1]])
 LazySets.Zonotope{Float64}([1.0, 1.0], [1.0 0.0; 0.0 1.0; 1.0 1.0])
