@@ -304,3 +304,64 @@ julia> plot([Singleton(a), Singleton(b), Singleton(c)])
 
     [Tuple(Xi.element) for Xi in X]
 end
+
+# ============================
+# Plot recipes for zonotopes
+# ============================
+
+"""
+    plot_polygon(Z::Zonotope; ...)
+
+Plot a zonotope, by enumerating its vertices.
+
+### Input
+
+- `Z` -- a zonotope represented by its center and generators
+
+### Examples
+
+```julia
+julia> using LazySets, Plots
+julia> Z = Zonotope(ones(2), 0.2*[[1., 0], [0., 1], [1, 1]])
+julia> plot(Z)
+```
+"""
+@recipe function plot_zonotope(Z::Zonotope;
+                              color="blue", label="", grid=true, alpha=0.5)
+
+    seriestype := :shape
+
+    vlist = hcat(vertices_list(Z)...).'
+    (x, y) = vlist[:, 1], vlist[:, 2]
+
+     x, y
+end
+
+"""
+    plot_zonotopes(Z::Vector{Zonotope}; ...)
+
+Plot an array of zonotopes.
+
+### Input
+
+- `Z` -- a linear array of zonotopes
+
+### Examples
+
+```julia
+julia> using LazySets, Plots
+julia> Z1 = Zonotope(zeros(2), [[0.6, 0.6], [0.4, 0.6], [0.4, 0.4], [0.6, 0.4]])
+julia> Z2 = Zonotope(zeros(2), [[0.3, 0.3], [0.2, 0.3], [0.2, 0.2], [0.3, 0.2]])
+julia> plot([Z1, Z2])
+```
+"""
+@recipe function plot_zonotopes(V::Vector{Zonotope};
+                              seriescolor="blue", label="", grid=true, alpha=0.5)
+
+    seriestype := :shape
+
+    for Zi in Z
+        vlist = hcat(vertices_list(Zi)...).'
+        @series (x, y) = vlist[:, 1], vlist[:, 2]
+    end
+end

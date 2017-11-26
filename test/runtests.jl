@@ -10,6 +10,7 @@ using LazySets, Base.Test
 @time @testset "LazySets.Hyperrectangle" begin include("unit_Hyperrectangle.jl") end
 @time @testset "LazySets.Polygon" begin include("unit_Polygon.jl") end
 #@time @testset "LazySets.Polyhedron" begin include("unit_Polyhedron.jl") end  # optional
+@time @testset "LazySets.Zonotope" begin include("unit_Zonotope.jl") end
 
 # =========================================
 # Testing types representing set operations
