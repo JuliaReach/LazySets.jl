@@ -133,6 +133,7 @@ function monotone_chain!(points::Vector{S}) where{S<:AbstractVector{N}} where{N<
     build_hull!(upper, reverse(indices(points)[1]), points, zero_N)
 
     # remove the last point of each segment because they are repeated
-    copy!(points, [lower[1:end-1]; upper[1:end-1]])
+    copy!(points, @view(lower[1:end-1]))
+    copy!(points, length(lower), @view(upper[1:end-1]))
     return resize!(points, length(lower) + length(upper) - 2)
 end
