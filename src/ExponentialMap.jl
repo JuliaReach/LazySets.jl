@@ -120,7 +120,7 @@ function dim(em::ExponentialMap)::Int64
 end
 
 # support vector of the exponential map
-function σ(d::Vector{Float64}, em::ExponentialMap)::AbstractVector{Float64}
+function σ(d::AbstractVector{Float64}, em::ExponentialMap)::AbstractVector{Float64}
     v = expmv(1.0, em.spmexp.M.', d)          # v   <- exp(A') * d
     res = expmv(1.0, em.spmexp.M, σ(v, em.X)) # res <- exp(A) * support_vector(v, S)
     return res
