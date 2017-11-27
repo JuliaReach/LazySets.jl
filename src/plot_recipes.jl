@@ -18,17 +18,24 @@ julia> using LazySets, Plots
 julia> B = BallInf(ones(2), 0.1)
 julia> plot(2.0 * B)
 ```
+
+### Notes
+
+This recipe detects if the axis aligned approximation is such that the first two
+vertices returned by `vertices_list` are the same. In that case, a scatter plot
+is made (instead of the shape). This use case arises, for example, if you want
+to plot operations on a singleton.
 """
 @recipe function plot_lazyset(X::T; color="blue", label="",
                               grid=true, alpha=0.5) where {T<:LazySet}
-
-    seriestype := :shape
 
     P = Approximations.overapproximate(X)
     vlist = hcat(vertices_list(P)...).'
     (x, y) = vlist[:, 1], vlist[:, 2]
 
-     x, y
+    seriestype := norm(vlist[1, :] - vlist[2, :]) ≈ 0 ? :scatter : :shape
+
+    x, y
 end
 
 """
