@@ -76,7 +76,7 @@ If `S = MB`, where `M` is sa matrix and `B` is a set, it follows that
 - `d`  -- a direction
 - `lm` -- a linear map
 """
-function σ(d::AbstractVector{<:Real}, lm::LinearMap)::Vector{<:Real}
+function σ(d::AbstractVector{<:Real}, lm::LinearMap)::AbstractVector{<:Real}
     return lm.M * σ(lm.M.' * d, lm.sf)
 end
 
