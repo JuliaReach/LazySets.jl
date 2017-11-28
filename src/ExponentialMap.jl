@@ -212,7 +212,7 @@ exponential, and `B` is a set, it follows that:
 `σ(d, S) = LMR σ(R^T M^T L^T d, B)` for any direction `d`.
 """
 function σ(d::AbstractVector{Float64},
-           eprojmap::ExponentialProjectionMap)::Vector{Float64}
+           eprojmap::ExponentialProjectionMap)::AbstractVector{Float64}
     daux = transpose(eprojmap.projspmexp.L) * d
     aux1 = expmv(1.0, eprojmap.projspmexp.spmexp.M.', daux)
     daux = transpose(eprojmap.projspmexp.R) * aux1

@@ -50,7 +50,7 @@ Support vector of a Minkowski sum.
 - `d`  -- vector
 - `ms` -- Minkowski sum
 """
-function σ(d::AbstractVector{<:Real}, ms::MinkowskiSum)::Vector{<:Real}
+function σ(d::AbstractVector{<:Real}, ms::MinkowskiSum)::AbstractVector{<:Real}
     return σ(d, ms.X) + σ(d, ms.Y)
 end
 
