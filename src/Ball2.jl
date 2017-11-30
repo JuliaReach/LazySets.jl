@@ -8,7 +8,7 @@ Type that represents a ball in the 2-norm.
 It is defined as the set
 
 ```math
-\\mathcal{B}_2^n(c, r) = \\{ x ∈ \\mathbb{R}^n : ‖ x - c ‖_2 ≦ r \\},
+\\mathcal{B}_2^n(c, r) = \\{ x ∈ \\mathbb{R}^n : ‖ x - c ‖_2 ≤ r \\},
 ```
 where ``c ∈ \\mathbb{R}^n`` is its center and ``r ∈ \\mathbb{R}_+`` its radius.
 Here ``‖ ⋅ ‖_2`` denotes the Euclidean norm (also known as 2-norm), defined as
@@ -18,7 +18,7 @@ Here ``‖ ⋅ ‖_2`` denotes the Euclidean norm (also known as 2-norm), define
 ### Fields
 
 - `center` -- center of the ball as a real vector
-- `radius` -- radius of the ball as a scalar (``≧ 0``)
+- `radius` -- radius of the ball as a real scalar (``≥ 0``)
 
 ### Examples
 
@@ -32,10 +32,10 @@ julia> dim(B)
 5
 ```
 
-Evaluate its support vector in the ``[1,2,…,5]`` direction:
+Evaluate its support vector in the direction ``[1,2,3,4,5]``:
 
 ```julia
-julia> σ([1.,2,3,4,5], B)
+julia> σ([1.,2.,3.,4.,5.], B)
 5-element Array{Float64,1}:
  0.06742
  0.13484
@@ -50,15 +50,13 @@ struct Ball2{N<:Real} <: LazySet
 
     # default constructor with domain constraint for radius
     Ball2{N}(center, radius) where N =
-        (radius < zero(N)
-            ? throw(DomainError())
-            : new(center, radius))
+        (radius < zero(N) ? throw(DomainError()) : new(center, radius))
 end
 # type-less convenience constructor
 Ball2(center::Vector{N}, radius::N) where {N<:Real} = Ball2{N}(center, radius)
 
 """
-    dim(B::Ball2)
+    dim(B)
 
 Return the dimension of a ball in the 2-norm.
 
@@ -73,7 +71,7 @@ The ambient dimension of the ball.
 dim(B::Ball2) = length(B.center)
 
 """
-    σ(d::AbstractVector{N}, B::Ball2)::AbstractVector{N} where{N<:AbstractFloat}
+    σ(d, B)
 
 Return the support vector of a ball in the 2-norm in a given direction.
 
@@ -84,19 +82,22 @@ Return the support vector of a ball in the 2-norm in a given direction.
 
 ### Output
 
-The support vector in the given direction. If the given direction has
-norm zero, the origin is returned.
+The support vector in the given direction. If the given direction has norm zero,
+the origin is returned.
 
 ### Notes
 
-This function requires computing the 2-norm of the input direction, and this is
-performed in the given precision of the direction's datatype. Exact inputs are not handled.
+This function requires computing the 2-norm of the input direction, which is
+performed in the given precision of the numeric datatype of both the direction
+and the set.
+Exact inputs are not supported.
 """
-function σ(d::AbstractVector{N}, B::Ball2)::AbstractVector{N} where{N<:AbstractFloat}
+function σ(d::AbstractVector{N},
+           B::Ball2)::AbstractVector{<:AbstractFloat} where {N<:AbstractFloat}
     dnorm = norm(d, 2)
-    if dnorm > zero(N)
-        return @. B.center + d * (B.radius / dnorm)
-    else
+    if dnorm <= zero(N)
         return zeros(eltype(d), length(d))
+    else
+        return @. B.center + d * (B.radius / dnorm)
     end
 end
