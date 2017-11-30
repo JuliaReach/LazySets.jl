@@ -18,8 +18,8 @@ export LazySet,
 
 Abstract type for a lazy set.
 
-Every concrete `LazySet` must define a `σ(d, X)`, representing the support
-vector of `X` in a given direction `d`, and `dim`, the ambient dimension
+Every concrete `LazySet` must define a function `σ(d, X)`, representing the
+support vector of `X` in a given direction `d`, and `dim`, the ambient dimension
 of the set `X`.
 """
 abstract type LazySet end
