@@ -3,7 +3,7 @@
 # =============================
 
 """
-    ρ(d, S)
+    ρ(d::Vector{N}, S::LazySet)::N where {N<:Real}
 
 Evaluate the support function of a set in a given direction.
 
