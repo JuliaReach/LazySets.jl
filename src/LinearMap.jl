@@ -10,7 +10,7 @@ changes the behaviour of the support vector of the new set.
 ### Fields
 
 - `M`  -- a linear map, which can a be densem matrix, sparse matrix or a subarray object
-- `sf` -- a convex set represented by its support function
+- `sf` -- a convex set represented by its support function
 """
 struct LinearMap{T<:LazySet, N<:Real} <: LazySet
     M::AbstractMatrix{N}

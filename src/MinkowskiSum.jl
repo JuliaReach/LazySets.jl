@@ -9,7 +9,7 @@ Type that represents the Minkowski sum of two convex sets.
 
 ### Fields
 
-- `X` -- a convex set
+- `X` -- a convex set
 - `Y` -- a convex set
 """
 struct MinkowskiSum{T1<:LazySet,T2<:LazySet} <: LazySet
