@@ -25,20 +25,20 @@ LazySets.LazySet
 
 ```@docs
 Ball2
-dim(B::Ball2)
-σ(d::AbstractVector{Float64}, B::Ball2)
+dim(::Ball2)
+σ(::AbstractVector{Float64}, ::Ball2)
 ```
 
 ### Infinity norm ball
 
 ```@docs
 BallInf
-dim(B::BallInf)
-σ(d::AbstractVector{Float64}, B::BallInf)
-vertices_list(B::BallInf)
-norm(B::BallInf, p::Real=Inf)
-radius(B::BallInf, p::Real=Inf)
-diameter(B::BallInf, p::Real=Inf)
+dim(::BallInf)
+σ(::AbstractVector{Float64}, ::BallInf)
+vertices_list(::BallInf)
+norm(::BallInf, ::Real=Inf)
+radius(::BallInf, ::Real=Inf)
+diameter(::BallInf, ::Real=Inf)
 ```
 
 ## Polygons
@@ -47,57 +47,57 @@ diameter(B::BallInf, p::Real=Inf)
 
 ```@docs
 HPolygon
-addconstraint!(P::HPolygon, c::LinearConstraint)
-dim(P::HPolygon)
-σ(d::AbstractVector{Float64}, P::HPolygon)
-
-is_contained(x::AbstractVector{Float64}, P::HPolygon)
-tovrep(P::HPolygon)
-vertices_list(P::HPolygon)
+addconstraint!(::HPolygon{Float64}, ::LinearConstraint{Float64})
+dim(::HPolygon)
+σ(::AbstractVector{Float64}, ::HPolygon)
+is_contained(::AbstractVector{Float64}, ::HPolygon{Float64})
+tovrep(::HPolygon)
+vertices_list(::HPolygon)
 ```
 
 ### Optimized constraint representation
 
 ```@docs
 HPolygonOpt
-addconstraint!(P::HPolygonOpt, c::LinearConstraint)
-dim(P::HPolygonOpt)
-σ(d::AbstractVector{Float64}, P::HPolygonOpt)
-
-is_contained(x::AbstractVector{Float64}, P::HPolygonOpt)
-tovrep(P::HPolygonOpt)
-vertices_list(P::HPolygonOpt)
+addconstraint!(::HPolygonOpt{Float64}, ::LinearConstraint{Float64})
+dim(::HPolygonOpt)
+σ(::AbstractVector{Float64}, ::HPolygonOpt{Float64})
+is_contained(::AbstractVector{Float64}, ::HPolygonOpt)
+tovrep(::HPolygonOpt)
+vertices_list(::HPolygonOpt)
 ```
 
 ### Vertex representation
 
 ```@docs
 VPolygon
-dim(P::VPolygon)
-vertices_list(P::VPolygon)
-singleton_list(P::VPolygon)
+dim(::VPolygon)
+σ(::AbstractVector{Float64}, ::VPolygon)
+vertices_list(::VPolygon)
+singleton_list(::VPolygon)
 ```
 
 ## Lines and linear constraints
 
 ```@docs
-intersection
 LinearConstraint
 Line
+intersection(::Line{Float64}, L2::Line{Float64})
 ```
 
 ## Hyperrectangles
 
 ```@docs
 Hyperrectangle
-dim(H::Hyperrectangle)
-σ(d::AbstractVector{Float64}, H::Hyperrectangle)
-vertices_list(H::Hyperrectangle)
-norm(H::Hyperrectangle, p::Real=Inf)
-radius(H::Hyperrectangle, p::Real=Inf)
-diameter(H::Hyperrectangle, p::Real=Inf)
-high(H::Hyperrectangle)
-low(H::Hyperrectangle)
+Hyperrectangle(;kwargs...)
+dim(::Hyperrectangle)
+σ(::AbstractVector{Float64}, ::Hyperrectangle)
+vertices_list(::Hyperrectangle)
+norm(::Hyperrectangle, ::Real=Inf)
+radius(::Hyperrectangle, ::Real=Inf)
+diameter(::Hyperrectangle, ::Real=Inf)
+high(::Hyperrectangle)
+low(::Hyperrectangle)
 ```
 
 ## VoidSets
@@ -110,15 +110,17 @@ VoidSet
 
 ```@docs
 Singleton
+dim(::Singleton)
+σ(::AbstractVector{Float64}, ::Singleton)
 ```
 
 ## Zonotopes
 
 ```@docs
 Zonotope
-Zonotope(center::AbstractVector, generators::AbstractVector{T}) where{T<:AbstractVector}
-dim(Z::Zonotope)
-vertices_list(Z::Zonotope{Float64})
-σ(d::AbstractVector, Z::Zonotope)
-order(Z::Zonotope)
+Zonotope(::AbstractVector, ::AbstractVector{T}) where {T<:AbstractVector}
+dim(::Zonotope)
+vertices_list(::Zonotope{Float64})
+σ(::AbstractVector, ::Zonotope)
+order(::Zonotope)
 ```
