@@ -172,7 +172,7 @@ The radius is defined as the radius of the enclosing ball of the given
 ``p``-norm of minimal volume with the same center.
 """
 radius(B::BallInf, p::Real=Inf) =
-    (p == Inf) ? B.radius : norm(repeated(B.radius, dim(B)), p)
+    (p == Inf) ? B.radius : norm(fill(B.radius, dim(B)), p)
 
 """
     diameter(B::BallInf, [p]::Real=Inf)
