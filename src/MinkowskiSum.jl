@@ -10,8 +10,8 @@ Type that represents the Minkowski sum of two convex sets.
 
 ### Fields
 
-- `X` -- a convex set
-- `Y` -- a convex set
+- `X` -- first convex set
+- `Y` -- second convex set
 """
 struct MinkowskiSum{T1<:LazySet, T2<:LazySet} <: LazySet
     X::T1
@@ -63,7 +63,7 @@ end
 """
     σ(d::AbstractVector{<:Real}, ms::MinkowskiSum)::AbstractVector{<:Real}
 
-Support vector of a Minkowski sum.
+Return the support vector of a Minkowski sum.
 
 ### Input
 
@@ -107,7 +107,7 @@ struct MinkowskiSumArray{T<:LazySet} <: LazySet
 end
 # constructor for an empty sum
 MinkowskiSumArray() = MinkowskiSumArray{LazySet}(Vector{LazySet}(0))
-
+# constructor for an empty sum with size hint
 function MinkowskiSumArray(n::Integer)::MinkowskiSumArray
     arr = Vector{LazySet}(0)
     sizehint!(arr, n)
@@ -117,7 +117,8 @@ end
 """
     +(msa::MinkowskiSumArray, S::LazySet)::MinkowskiSumArray
 
-Add a convex set to a Minkowski sum of a finite number of convex sets.
+Add a convex set to a Minkowski sum of a finite number of convex sets from the
+right.
 
 ### Input
 
@@ -136,7 +137,8 @@ end
 """
     +(S::LazySet, msa::MinkowskiSumArray)::MinkowskiSumArray
 
-Add a convex set to a Minkowski sum of a finite number of convex sets.
+Add a convex set to a Minkowski sum of a finite number of convex sets from the
+left.
 
 ### Input
 
