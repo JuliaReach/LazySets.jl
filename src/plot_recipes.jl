@@ -3,13 +3,13 @@
 # ====================================
 
 """
-    plot_lazyset(X::T; ...) where {T<:LazySet}
+    plot_lazyset(S::LazySet; ...)
 
-Plot a lazy set in two-dimensions using an axis-aligned approximation.
+Plot a convex set in two dimensions using an axis-aligned approximation.
 
 ### Input
 
-- `X` -- a convex set
+- `S` -- convex set
 
 ### Examples
 
@@ -21,15 +21,15 @@ julia> plot(2.0 * B)
 
 ### Notes
 
-This recipe detects if the axis aligned approximation is such that the first two
+This recipe detects if the axis-aligned approximation is such that the first two
 vertices returned by `vertices_list` are the same. In that case, a scatter plot
-is made (instead of the shape). This use case arises, for example, if you want
-to plot operations on a singleton.
+is used (instead of a shape plot). This use case arises, for example, when
+plotting singletons.
 """
-@recipe function plot_lazyset(X::T; color="blue", label="",
-                              grid=true, alpha=0.5) where {T<:LazySet}
+@recipe function plot_lazyset(S::LazySet;
+                              color="blue", label="", grid=true, alpha=0.5)
 
-    P = Approximations.overapproximate(X)
+    P = Approximations.overapproximate(S)
     vlist = hcat(vertices_list(P)...).'
     (x, y) = vlist[:, 1], vlist[:, 2]
 
@@ -39,13 +39,14 @@ to plot operations on a singleton.
 end
 
 """
-    plot_lazyset(X::Vector{T}) where {T<:LazySet}
+    plot_lazyset(arr::Vector{<:LazySet})
 
-Plot an array of lazy sets in two-dimensions using an axis-aligned approximation.
+Plot an array of convex sets in two dimensions using an axis-aligned
+approximation.
 
 ### Input
 
-- `X` -- an array of convex sets
+- `arr` -- array of convex sets
 
 ### Examples
 
@@ -56,26 +57,27 @@ julia> B2 = BallInf(ones(2), 0.4)
 julia> plot([B1, B2])
 ```
 """
-@recipe function plot_lazyset(X::Vector{T}; seriescolor="blue", label="",
-                              grid=true, alpha=0.5) where {T<:LazySet}
+@recipe function plot_lazyset(arr::Vector{<:LazySet};
+                              seriescolor="blue", label="", grid=true,
+                              alpha=0.5)
 
     seriestype := :shape
 
-    for Xi in X
-        Pi = Approximations.overapproximate(Xi)
+    for S in arr
+        Pi = Approximations.overapproximate(S)
         vlist = hcat(vertices_list(Pi)...).'
         @series (x, y) = vlist[:, 1], vlist[:, 2]
     end
 end
 
 """
-    plot_lazyset(X::T, ε::Float64; ...) where {T<:LazySet}
+    plot_lazyset(S::LazySet, ε::Float64; ...)
 
-Plot a lazy set in two-dimensions using iterative refinement.
+Plot a lazy set in two dimensions using iterative refinement.
 
 ### Input
 
-- `X` -- a convex set
+- `S` -- convex set
 - `ε` -- approximation error bound
 
 ### Examples
@@ -86,26 +88,26 @@ julia> B = BallInf(ones(2), 0.1)
 julia> plot(randn(2, 2) * B, 1e-3)
 ```
 """
-@recipe function plot_lazyset(X::T, ε::Float64; color="blue", label="",
-                              grid=true, alpha=0.5) where {T<:LazySet}
+@recipe function plot_lazyset(S::LazySet, ε::Float64;
+                              color="blue", label="", grid=true, alpha=0.5)
 
     seriestype := :shape
 
-    P = Approximations.overapproximate(X, ε)
+    P = Approximations.overapproximate(S, ε)
     vlist = hcat(vertices_list(P)...).'
     (x, y) = vlist[:, 1], vlist[:, 2]
 
-     x, y
+    x, y
 end
 
 """
-    plot_lazyset(X::Vector{T}, ε::Float64; ...) where {T<:LazySet}
+    plot_lazyset(arr::Vector{<:LazySet}, ε::Float64; ...)
 
-Plot an array of lazy sets in two-dimensions using iterative refinement.
+Plot an array of lazy sets in two dimensions using iterative refinement.
 
 ### Input
 
-- `X` -- an array of convex sets
+- `arr` -- array of convex sets
 - `ε` -- approximation error bound
 
 ### Examples
@@ -117,13 +119,14 @@ julia> B2 = Ball2(ones(2), 0.4)
 julia> plot([B1, B2], 1e-4)
 ```
 """
-@recipe function plot_lazyset(X::Vector{T}, ε::Float64; seriescolor="blue", label="",
-                              grid=true, alpha=0.5) where {T<:LazySet}
+@recipe function plot_lazyset(arr::Vector{<:LazySet}, ε::Float64;
+                              seriescolor="blue", label="", grid=true,
+                              alpha=0.5)
 
     seriestype := :shape
 
-    for Xi in X
-        Pi = Approximations.overapproximate(Xi, ε)
+    for S in arr
+        Pi = Approximations.overapproximate(S, ε)
         vlist = hcat(vertices_list(Pi)...).'
         @series (x, y) = vlist[:, 1], vlist[:, 2]
     end
@@ -136,18 +139,20 @@ end
 """
     plot_polygon(P::Union{HPolygon, HPolygonOpt}; ...)
 
-Plot a polygon given in constraint form.
+Plot a polygon in constraint representation.
 
 ### Input
 
-- `P` -- a polygon in constraint representation
+- `P` -- polygon in constraint representation
 
 ### Examples
 
 ```julia
 julia> using LazySets, Plots
-julia> P = HPolygon([LinearConstraint([1.0, 0.0], 0.6), LinearConstraint([0.0, 1.0], 0.6),
-                     LinearConstraint([-1.0, 0.0], -0.4), LinearConstraint([0.0, -1.0], -0.4)])
+julia> P = HPolygon([LinearConstraint([1.0, 0.0], 0.6),
+                     LinearConstraint([0.0, 1.0], 0.6),
+                     LinearConstraint([-1.0, 0.0], -0.4),
+                     LinearConstraint([0.0, -1.0], -0.4)])
 julia> plot(P)
 ```
 """
@@ -165,25 +170,30 @@ end
 """
     plot_polygons(P::Union{Vector{HPolygon}, Vector{HPolygonOpt}}; ...)
 
-Plot an array of polygons given in constraint form.
+Plot an array of polygons in constraint representation.
 
 ### Input
 
-- `P` -- an array of polygons in constraint representation
+- `P` -- array of polygons in constraint representation
 
 ### Examples
 
 ```julia
 julia> using LazySets, Plots
-julia> P1 = HPolygon([LinearConstraint([1.0, 0.0], 0.6), LinearConstraint([0.0, 1.0], 0.6),
-                      LinearConstraint([-1.0, 0.0], -0.4), LinearConstraint([0.0, -1.0], -0.4)])
-julia> P2 = HPolygon([LinearConstraint([2.0, 0.0], 0.6), LinearConstraint([0.0, 2.0], 0.6),
-                      LinearConstraint([-2.0, 0.0], -0.4), LinearConstraint([0.0, -2.0], -0.4)])
+julia> P1 = HPolygon([LinearConstraint([1.0, 0.0], 0.6),
+                      LinearConstraint([0.0, 1.0], 0.6),
+                      LinearConstraint([-1.0, 0.0], -0.4),
+                      LinearConstraint([0.0, -1.0], -0.4)])
+julia> P2 = HPolygon([LinearConstraint([2.0, 0.0], 0.6),
+                      LinearConstraint([0.0, 2.0], 0.6),
+                      LinearConstraint([-2.0, 0.0], -0.4),
+                      LinearConstraint([0.0, -2.0], -0.4)])
 julia> plot([P1, P2])
 ```
 """
 @recipe function plot_polygons(P::Union{Vector{HPolygon}, Vector{HPolygonOpt}};
-                              seriescolor="blue", label="", grid=true, alpha=0.5)
+                               seriescolor="blue", label="", grid=true,
+                               alpha=0.5)
 
     seriestype := :shape
 
@@ -196,11 +206,11 @@ end
 """
     plot_polygon(P::VPolygon; ...)
 
-Plot a polygon given in vertex representation.
+Plot a polygon in vertex representation.
 
 ### Input
 
-- `P` -- a polygon in vertex representation
+- `P` -- polygon in vertex representation
 
 ### Examples
 
@@ -224,11 +234,11 @@ end
 """
     plot_polygons(P::Vector{VPolygon}; ...)
 
-Plot an array of polygons given in vertex representation.
+Plot an array of polygons in vertex representation.
 
 ### Input
 
-- `P` -- an array of polygons in vertex representation
+- `P` -- array of polygons in vertex representation
 
 ### Examples
 
@@ -240,7 +250,8 @@ julia> plot([P1, P2])
 ```
 """
 @recipe function plot_polygons(P::Vector{VPolygon};
-                              seriescolor="blue", label="", grid=true, alpha=0.5)
+                               seriescolor="blue", label="", grid=true,
+                               alpha=0.5)
 
     seriestype := :shape
 
@@ -261,7 +272,7 @@ Plot a singleton.
 
 ### Input
 
-- `X` -- singleton, i.e. a one-element set
+- `X` -- singleton, i.e., a one-element set
 
 ### Examples
 
@@ -271,8 +282,8 @@ julia> plot(Singleton([0.5, 1.0]))
 ```
 """
 @recipe function plot_singleton(X::Singleton;
-                               color="blue", label="", grid=true,
-                               legend=false)
+                                color="blue", label="", grid=true,
+                                legend=false)
 
     seriestype := :scatter
 
@@ -280,13 +291,13 @@ julia> plot(Singleton([0.5, 1.0]))
 end
 
 """
-    plot_singleton(X::Vector{Singleton}; ...)
+    plot_singleton(arr::Vector{Singleton}; ...)
 
 Plot a list of singletons.
 
 ### Input
 
-- `X` -- a list of singletons, i.e. a vector of one-element sets
+- `arr` -- list of singletons, i.e., a vector of one-element sets
 
 ### Examples
 
@@ -303,13 +314,12 @@ julia> a, b, c = zeros(3), [1.0, 0, 0], [0.0, 1., 0];
 julia> plot([Singleton(a), Singleton(b), Singleton(c)])
 ```
 """
-@recipe function plot_singleton(X::Vector{Singleton};
-                               color="blue", label="", grid=true,
-                               legend=false)
+@recipe function plot_singleton(arr::Vector{Singleton};
+                                color="blue", label="", grid=true, legend=false)
 
     seriestype := :scatter
 
-    [Tuple(Xi.element) for Xi in X]
+    [Tuple(S.element) for S in arr]
 end
 
 # ============================
@@ -319,11 +329,11 @@ end
 """
     plot_polygon(Z::Zonotope; ...)
 
-Plot a zonotope, by enumerating its vertices.
+Plot a zonotope by enumerating its vertices.
 
 ### Input
 
-- `Z` -- a zonotope represented by its center and generators
+- `Z` -- zonotope
 
 ### Examples
 
@@ -334,7 +344,7 @@ julia> plot(Z)
 ```
 """
 @recipe function plot_zonotope(Z::Zonotope;
-                              color="blue", label="", grid=true, alpha=0.5)
+                               color="blue", label="", grid=true, alpha=0.5)
 
     seriestype := :shape
 
@@ -352,7 +362,7 @@ Plot an array of zonotopes.
 
 ### Input
 
-- `Z` -- a linear array of zonotopes
+- `Z` -- linear array of zonotopes
 
 ### Examples
 
@@ -364,7 +374,8 @@ julia> plot([Z1, Z2])
 ```
 """
 @recipe function plot_zonotopes(V::Vector{Zonotope};
-                              seriescolor="blue", label="", grid=true, alpha=0.5)
+                                seriescolor="blue", label="", grid=true,
+                                alpha=0.5)
 
     seriestype := :shape
 
