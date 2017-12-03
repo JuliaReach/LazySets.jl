@@ -14,19 +14,25 @@ CurrentModule = LazySets
 
 ## Minkowski Sum
 
+### Binary Minkowski Sum
+
 ```@docs
 MinkowskiSum
 dim(ms::MinkowskiSum)
 σ(d::AbstractVector{Float64}, ms::MinkowskiSum)
+Base.:+(::LazySet, ::LazySet)
 ```
+
+### ``n``-ary Minkowski Sum
 
 ```@docs
 MinkowskiSumArray
 dim(ms::MinkowskiSumArray)
 σ(d::AbstractVector{Float64}, ms::MinkowskiSumArray)
-Base.:+(msa::MinkowskiSumArray, sf::LazySet)
-Base.:+(msa1::MinkowskiSumArray, msa2::MinkowskiSumArray)
-Base.:+(msa::MinkowskiSumArray, sf::VoidSet)
+Base.:+(::MinkowskiSumArray, ::LazySet)
+Base.:+(::LazySet, ::MinkowskiSumArray)
+Base.:+(::MinkowskiSumArray, ::MinkowskiSumArray)
+Base.:+(::MinkowskiSumArray, ::VoidSet)
 ```
 
 ## Convex Hull
