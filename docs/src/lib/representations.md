@@ -118,9 +118,8 @@ dim(::Singleton)
 
 ```@docs
 Zonotope
-Zonotope(::AbstractVector, ::AbstractVector{T}) where {T<:AbstractVector}
 dim(::Zonotope)
+σ(d::AbstractVector{Float64}, Z::Zonotope)
 vertices_list(::Zonotope{Float64})
-σ(::AbstractVector, ::Zonotope)
 order(::Zonotope)
 ```
