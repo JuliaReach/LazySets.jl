@@ -68,7 +68,7 @@ LinearMap
 dim(::LinearMap)
 σ(::AbstractVector{Float64}, ::LinearMap)
 *(::AbstractMatrix{Float64}, ::LazySet)
-*(::Float64, ::LazySet)
+*(::Real, ::LazySet)
 ```
 
 ### Exponential Map
@@ -76,17 +76,23 @@ dim(::LinearMap)
 ```@docs
 ExponentialMap
 dim(::ExponentialMap)
-σ(::AbstractVector{Float64}, ::ExponentialProjectionMap)
+σ(::AbstractVector{Float64}, ::ExponentialMap)
 ```
 
 ```@docs
 ExponentialProjectionMap
 dim(::ExponentialProjectionMap)
+σ(::AbstractVector{Float64}, ::ExponentialProjectionMap)
+```
+
+```@docs
+SparseMatrixExp
+*(::SparseMatrixExp, ::LazySet)
 ```
 
 ```@docs
 ProjectionSparseMatrixExp
-SparseMatrixExp
+*(::ProjectionSparseMatrixExp, ::LazySet)
 ```
 
 ## Convex Hull
