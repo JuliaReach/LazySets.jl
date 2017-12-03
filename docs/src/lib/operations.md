@@ -35,40 +35,33 @@ Base.:+(::MinkowskiSumArray, ::MinkowskiSumArray)
 Base.:+(::MinkowskiSumArray, ::VoidSet)
 ```
 
-## Convex Hull
-
-```@docs
-ConvexHull
-dim(ch::ConvexHull)
-σ(d::AbstractVector{Float64}, ch::ConvexHull)
-```
-
-### Convex Hull Algorithms
-
-```@docs
-convex_hull
-convex_hull!
-right_turn
-monotone_chain!
-```
-
 ## Cartesian Product
+
+### Binary Cartesian Product
 
 ```@docs
 CartesianProduct
 dim(cp::CartesianProduct)
 σ(d::AbstractVector{Float64}, cp::CartesianProduct)
+Base.:*(::LazySet, ::LazySet)
 is_contained(d::AbstractVector{Float64}, cp::CartesianProduct)
 ```
+
+### ``n``-ary Cartesian Product
 
 ```@docs
 CartesianProductArray
 dim(cp::CartesianProductArray)
 σ(d::AbstractVector{Float64}, cp::CartesianProductArray)
+Base.:*(::CartesianProductArray, ::LazySet)
+Base.:*(::LazySet, ::CartesianProductArray)
+Base.:*(::CartesianProductArray, ::CartesianProductArray)
 is_contained(d::AbstractVector{Float64}, cp::CartesianProductArray)
 ```
 
-## Linear Maps
+## Maps
+
+### Linear Map
 
 ```@docs
 LinearMap
@@ -76,7 +69,7 @@ dim(lm::LinearMap)
 σ(d::AbstractVector{Float64}, lm::LinearMap)
 ```
 
-## Exponential Maps
+### Exponential Map
 
 ```@docs
 ExponentialMap
@@ -92,4 +85,21 @@ dim(eprojmap::ExponentialProjectionMap)
 ```@docs
 ProjectionSparseMatrixExp
 SparseMatrixExp
+```
+
+## Convex Hull
+
+```@docs
+ConvexHull
+dim(ch::ConvexHull)
+σ(d::AbstractVector{Float64}, ch::ConvexHull)
+```
+
+### Convex Hull Algorithms
+
+```@docs
+convex_hull
+convex_hull!
+right_turn
+monotone_chain!
 ```
