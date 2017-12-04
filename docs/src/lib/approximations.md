@@ -12,6 +12,10 @@ Depth = 3
 CurrentModule = LazySets.Approximations
 ```
 
+```@docs
+Approximations
+```
+
 ## Cartesian Decomposition
 
 ```@docs
@@ -31,14 +35,15 @@ box_approximation_helper
 ### Metric properties of sets
 
 ```@docs
-norm(X::LazySet, p::Real=Inf)
-radius(X::LazySet, p::Real=Inf)
-diameter(X::LazySet, p::Real=Inf)
+norm(::LazySet, ::Real=Inf)
+radius(::LazySet, ::Real=Inf)
+diameter(::LazySet, ::Real=Inf)
 ```
 
 ## Iterative refinement
 
-
 ```@docs
 approximate
 ```
+
+See [Iterative Refinement](@ref) for more details.

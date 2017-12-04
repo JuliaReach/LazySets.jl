@@ -166,7 +166,8 @@ Pages = [
     "man/getting_started.md",
     "man/polyhedral_approximations.md",
     "man/decompose_example.md",
-    "man/fast_2d_LPs.md"
+    "man/fast_2d_LPs.md",
+    "man/iterative_refinement.md"
 ]
 Depth = 2
 ```

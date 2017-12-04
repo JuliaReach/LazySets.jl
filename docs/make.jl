@@ -11,7 +11,8 @@ makedocs(
         "Getting Started" => "man/getting_started.md",
         "Polyhedral Approximations" => "man/polyhedral_approximations.md",
         "Decomposing an Affine Map" => "man/decompose_example.md",
-        "Fast 2D LPs" => "man/fast_2d_LPs.md"],
+        "Fast 2D LPs" => "man/fast_2d_LPs.md",
+        "Iterative refinement" => "man/iterative_refinement.md"],
         "Library" => Any[
         "Common Set Representations" => "lib/representations.md", 
         "Common Set Operations" => "lib/operations.md",

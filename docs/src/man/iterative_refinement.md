@@ -1,7 +1,9 @@
-# Iterative refinement
+# Iterative Refinement
 
 This section of the manual describes the Cartesian decomposition algorithms and
 the approximation of high-dimensional convex sets using projections.
+
+[under construction]
 
 ```@contents
 Pages = ["iterative_refinement.md"]
@@ -12,10 +14,10 @@ CurrentModule = LazySets.Approximations
 ```
 
 ```@docs
-Approximations
 Approximation2D
+Approximation2D(::Vector{Float64}, ::Vector{Float64}, ::Vector{Float64}, ::Vector{Float64})
 ```
 
 ```@docs
-refine(S::LazySet, approx::Approximation2D)
+refine(::LazySet, ::Approximation2D)
 ```
