@@ -1,13 +1,13 @@
 """
-    convex_hull(points; algorithm)
+    convex_hull(points; [algorithm]::String="monotone_chain")
 
 Compute the convex hull of points in the plane.
 
 ### Input
 
-- `points`    -- array of vectors containing the 2D coordinates of the points
-- `algorithm` -- (optional, default: `"monotone_chain"`) choose the convex
-                 hull algorithm, valid options are:
+- `points`    -- list of 2D vectors
+- `algorithm` -- (optional, default: `"monotone_chain"`) the convex hull
+                 algorithm, valid options are:
 
     * `"monotone_chain"`
 
@@ -26,8 +26,7 @@ julia> typeof(hull)
 Array{Array{Float64,1},1}
 ```
 
-We can plot the random points, and the polygon whose vertices are the computed
-convex hull, using `Plots`:
+Plot both the random points and the computed convex hull polygon:
 
 ```julia
 julia> using Plots
@@ -35,31 +34,45 @@ julia> plot([Tuple(pi) for pi in points], seriestype=:scatter)
 julia> plot!(VPolygon(hull), alpha=0.2)
 ```
 """
-function convex_hull(points; algorithm="monotone_chain")
-    convex_hull!(copy(points), algorithm=algorithm)
+function convex_hull(points; algorithm::String="monotone_chain")
+    copy_points = copy(points)
+    convex_hull!(copy_points, algorithm=algorithm)
+    return copy_points
 end
 
 """
-    convex_hull!(points; algorithm)
+    convex_hull!(points; algorithm::String="monotone_chain")::Void
 
 Compute the convex hull of points in the plane, in-place.
-See also: `convex_hull`.
+
+### Input
+
+- `points`    -- list of 2D vectors (is modified)
+- `algorithm` -- (optional, default: `"monotone_chain"`) the convex hull
+                 algorithm, valid options are:
+
+    * `"monotone_chain"`
+
+### Notes
+
+See the non-modifying version `convex_hull` for more details.
 """
-function convex_hull!(points; algorithm="monotone_chain")
-    length(points) == 1 || length(points) == 2 && return points
+function convex_hull!(points; algorithm::String="monotone_chain")::Void
+    length(points) == 1 || length(points) == 2 && return
 
     if algorithm == "monotone_chain"
-        return monotone_chain!(points)
+        monotone_chain!(points)
     else
-        error("this convex hull algorithm is unknown")
+        error("the convex hull algorithm $algorithm is unknown")
     end
+    return
 end
 
 """
     right_turn(O, A, B)
 
-Determine if the acute angle defined by the three points O, A, B in the plane is
-a right turn (counter-clockwise) with respect to the center O.
+Determine if the acute angle defined by the three points `O`, `A`, `B` in the
+plane is a right turn (counter-clockwise) with respect to the center `O`.
 
 ### Input
 
@@ -72,23 +85,24 @@ a right turn (counter-clockwise) with respect to the center O.
 The [cross product](https://en.wikipedia.org/wiki/Cross_product) is used to
 determine the sense of rotation. If the result is 0, the points are collinear;
 if it is positive, the three points constitute a positive angle of rotation
-around O from A to B; otherwise a negative angle.
+around O from A to B; otherwise they constitute a negative angle.
 """
-@inline right_turn(O, A, B) = (A[1] - O[1])*(B[2]-O[2]) - (A[2] - O[2])*(B[1]-O[1])
+@inline right_turn(O, A, B) =
+    (A[1] - O[1]) * (B[2] - O[2]) - (A[2] - O[2]) * (B[1] - O[1])
 
 """
-    monotone_chain!(points)
+    monotone_chain!(points::Vector{S}) where {S<:AbstractVector{N}} where {N<:Real}
 
-Compute the convex hull of points in the plane using Andrew's monotone chain method.
+Compute the convex hull of points in the plane using Andrew's monotone chain
+method.
 
 ### Input
 
-- `points` -- array of vectors containing the 2D coordinates of the points;
-              is sorted in-place inside this function
+- `points` -- list of 2D vectors; is sorted in-place inside this function
 
 ### Output
 
-Array of vectors containing the 2D coordinates of the corner points of the
+List of vectors containing the 2D coordinates of the corner points of the
 convex hull.
 
 ### Notes
@@ -101,17 +115,19 @@ package.
 
 ### Algorithm
 
-This function implements Andrew's monotone chain convex hull algorithm
-to construct the convex hull of a set of ``n`` points in the plane
-in ``O(n \\log n)`` time.
-For further details see the wikipedia page:
+This function implements Andrew's monotone chain convex hull algorithm to
+construct the convex hull of a set of ``n`` points in the plane in
+``O(n \\log n)`` time.
+For further details see
 [Monotone chain](https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain)
 """
-function monotone_chain!(points::Vector{S}) where{S<:AbstractVector{N}} where{N<:Real}
+function monotone_chain!(points::Vector{S}) where {S<:AbstractVector{N}} where {N<:Real}
 
     @inline function build_hull!(semihull, iterator, points, zero_N)
         @inbounds for i in iterator
-            while length(semihull) >= 2 && right_turn(semihull[end-1], semihull[end], points[i]) <= zero_N
+            while length(semihull) >= 2 &&
+                    (right_turn(semihull[end-1], semihull[end], points[i])
+                         <= zero_N)
                 pop!(semihull)
             end
             push!(semihull, points[i])
