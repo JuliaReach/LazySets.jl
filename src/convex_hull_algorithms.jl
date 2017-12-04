@@ -35,13 +35,11 @@ julia> plot!(VPolygon(hull), alpha=0.2)
 ```
 """
 function convex_hull(points; algorithm::String="monotone_chain")
-    copy_points = copy(points)
-    convex_hull!(copy_points, algorithm=algorithm)
-    return copy_points
+    return convex_hull!(copy(points), algorithm=algorithm)
 end
 
 """
-    convex_hull!(points; algorithm::String="monotone_chain")::Void
+    convex_hull!(points; algorithm::String="monotone_chain")
 
 Compute the convex hull of points in the plane, in-place.
 
@@ -57,15 +55,14 @@ Compute the convex hull of points in the plane, in-place.
 
 See the non-modifying version `convex_hull` for more details.
 """
-function convex_hull!(points; algorithm::String="monotone_chain")::Void
-    length(points) == 1 || length(points) == 2 && return
+function convex_hull!(points; algorithm::String="monotone_chain")
+    length(points) == 1 || length(points) == 2 && return points
 
     if algorithm == "monotone_chain"
-        monotone_chain!(points)
+        return monotone_chain!(points)
     else
         error("the convex hull algorithm $algorithm is unknown")
     end
-    return
 end
 
 """
@@ -85,7 +82,7 @@ plane is a right turn (counter-clockwise) with respect to the center `O`.
 The [cross product](https://en.wikipedia.org/wiki/Cross_product) is used to
 determine the sense of rotation. If the result is 0, the points are collinear;
 if it is positive, the three points constitute a positive angle of rotation
-around O from A to B; otherwise they constitute a negative angle.
+around `O` from `A` to `B`; otherwise they constitute a negative angle.
 """
 @inline right_turn(O, A, B) =
     (A[1] - O[1]) * (B[2] - O[2]) - (A[2] - O[2]) * (B[1] - O[1])
