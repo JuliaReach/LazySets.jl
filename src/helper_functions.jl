@@ -1,16 +1,20 @@
 import Base.<=
 
-export unit_step, jump2pi
+export unit_step,
+       jump2pi
 
 """
-    unit_step(x)
+    unit_step(x::Real)
 
-The unit step function, which returns 1 if and only if x is greater or equal
-than zero.
+The unit step function, which returns 1 iff x is greater than or equal to zero.
 
 ### Input
 
-- `x` -- a floating point number
+- `x` -- real scalar
+
+### Output
+
+``1`` if ``x ≥ 0``, ``0`` otherwise.
 
 ### Notes
 
@@ -29,13 +33,17 @@ julia> unit_step.([-0.6, 1.3, 0.0])
 unit_step(x::Real) = ifelse(x < zero(x), oftype(one(x),-1), one(x))
 
 """
-    jump2pi(x)
+    jump2pi(x::Float64)
 
-Return ``x + 2π`` if `x` is negative, otherwise return `x`.
+Return ``x + 2π`` if ``x`` is negative, otherwise return ``x``.
 
 ### Input
 
-- `x` -- a floating point number
+- `x` -- real scalar
+
+### Output
+
+``x + 2π`` if ``x`` is negative, ``x`` otherwise.
 
 ### Examples
 
@@ -53,16 +61,16 @@ jump2pi(x::Float64) = x < 0 ? 2.0 * pi + x : x
 """
     u <= v
 
-States if arg(u) [2π] <= arg(v) [2π].
+Compares two 2D vectors by their direction.
 
 ### Input
 
-- `u` --  a first direction
-- `v` --  a second direction
+- `u` --  first 2D direction
+- `v` --  second 2D direction
 
 ### Output
 
-True iff arg(u) [2π] <= arg(v) [2π]
+True iff ``\\arg(u) [2π] ≤ \\arg(v) [2π]``
 
 ### Notes
 
