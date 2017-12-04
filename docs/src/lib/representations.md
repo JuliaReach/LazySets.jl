@@ -17,6 +17,8 @@ CurrentModule = LazySets
 LazySets
 LazySets.LazySet
 ρ
+support_function
+support_vector
 ```
 
 ## Balls

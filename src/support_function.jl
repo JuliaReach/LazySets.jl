@@ -3,23 +3,33 @@
 # =============================
 
 """
-    ρ(d::Vector{N}, S::LazySet)::N where {N<:Real}
+    ρ(d::AbstractVector{N}, S::LazySet)::N where {N<:Real}
 
 Evaluate the support function of a set in a given direction.
 
 ### Input
 
-- `d` -- a real vector, the direction investigated
-- `S` -- a convex set
+- `d` -- direction
+- `S` -- convex set
 
 ### Output
 
 The support function of the set `S` for the direction `d`.
 """
-function ρ(d::Vector{N}, S::LazySet)::N where {N<:Real}
+function ρ(d::AbstractVector{N}, S::LazySet)::N where {N<:Real}
     return dot(d, σ(d, S))
 end
 
-# aliases
+"""
+    support_function
+
+Alias for the support function ρ.
+"""
 support_function = ρ
+
+"""
+    support_vector
+
+Alias for the support vector σ.
+"""
 support_vector = σ

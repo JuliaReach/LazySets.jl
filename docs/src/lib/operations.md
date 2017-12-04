@@ -99,6 +99,7 @@ ProjectionSparseMatrixExp
 
 ```@docs
 ConvexHull
+CH
 dim(::ConvexHull)
 σ(::AbstractVector{Float64}, ::ConvexHull)
 ```

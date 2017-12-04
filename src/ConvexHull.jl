@@ -25,7 +25,12 @@ end
 # type-less convenience constructor
 ConvexHull(X::S1, Y::S2) where {S1<:LazySet, S2<:LazySet} =
     ConvexHull{S1, S2}(X, Y)
-# alias
+
+"""
+    CH
+
+Alias for `ConvexHull`.
+"""
 CH = ConvexHull
 
 """
