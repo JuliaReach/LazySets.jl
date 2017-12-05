@@ -27,7 +27,7 @@ Here ``‖ ⋅ ‖_2`` denotes the Euclidean norm (also known as 2-norm), define
 Create a five-dimensional ball `B` in the 2-norm centered at the origin with
 radius 0.5:
 
-```julia
+```jldoctest
 julia> B = Ball2(zeros(5), 0.5)
 LazySets.Ball2{Float64}([0.0, 0.0, 0.0, 0.0, 0.0], 0.5)
 julia> dim(B)
@@ -36,7 +36,7 @@ julia> dim(B)
 
 Evaluate `B`'s support vector in the direction ``[1,2,3,4,5]``:
 
-```julia
+```jldoctest
 julia> σ([1.,2.,3.,4.,5.], B)
 5-element Array{Float64,1}:
  0.06742

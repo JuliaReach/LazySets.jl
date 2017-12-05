@@ -56,7 +56,7 @@ A hyperrectangle.
 
 The following three constructions are equivalent:
 
-```julia
+```jldoctest
 julia> c = ones(2);
 julia> r = [0.1, 0.2];
 julia> l = [0.9, 0.8];

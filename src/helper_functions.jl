@@ -22,7 +22,7 @@ This function can be used with vector-valued arguments via the dot operator.
 
 ### Examples
 
-```julia
+```jldoctest
 julia> unit_step.([-0.6, 1.3, 0.0])
 3-element Array{Float64,1}:
  -1.0
@@ -47,7 +47,7 @@ Return ``x + 2π`` if ``x`` is negative, otherwise return ``x``.
 
 ### Examples
 
-```julia
+```jldoctest
 julia> jump2pi(0.0)
 0.0
 julia> jump2pi(-0.5)

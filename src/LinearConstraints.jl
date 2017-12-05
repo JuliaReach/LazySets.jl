@@ -16,7 +16,7 @@ Type that represents a linear constraint (a half-space) of the form ``a⋅x ≤ 
 
 The set ``y ≥ 0`` in the plane:
 
-```julia
+```jldoctest
 julia> LinearConstraint([0, -1.], 0.)
 LazySets.LinearConstraint{Float64}([0.0, -1.0], 0.0)
 ```
@@ -40,7 +40,7 @@ Type that represents a line in 2D of the form ``a⋅x = b``.
 
 The line ``y = -x + 1``:
 
-```julia
+```jldoctest
 julia> Line([1., 1.], 1.)
 LazySets.Line{Float64}([1.0, 1.0], 1.0)
 ```
@@ -78,7 +78,7 @@ Throws a `SingularException` if the lines do not intersect.
 
 The line ``y = -x + 1`` intersected with the line ``y = x``:
 
-```julia
+```jldoctest
 julia> intersection(Line([-1., 1.], 0.), Line([1., 1.], 1.))
 2-element Array{Float64,1}:
  0.5

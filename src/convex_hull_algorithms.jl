@@ -19,7 +19,7 @@ The convex hull as a list of 2D vectors with the coordinates of the points.
 
 Compute the convex hull of a random set of points:
 
-```julia
+```jldoctest
 julia> points = [randn(2) for i in 1:30]; # 30 random points in 2D
 julia> hull = convex_hull(points);
 julia> typeof(hull)
@@ -28,7 +28,7 @@ Array{Array{Float64,1},1}
 
 Plot both the random points and the computed convex hull polygon:
 
-```julia
+```jldoctest
 julia> using Plots
 julia> plot([Tuple(pi) for pi in points], seriestype=:scatter)
 julia> plot!(VPolygon(hull), alpha=0.2)

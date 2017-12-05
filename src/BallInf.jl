@@ -34,7 +34,7 @@ Here ``‖ ⋅ ‖_∞`` denotes the infinity norm, defined as
 Create the two-dimensional unit ball and compute its support function along the
 positive ``x=y`` direction:
 
-```julia
+```jldoctest
 julia> B = BallInf(zeros(2), 1.0)
 LazySets.BallInf{Float64}([0.0, 0.0], 1.0)
 julia> dim(B)
@@ -113,7 +113,7 @@ For high dimensions, it is preferable to develop a `vertex_iterator` approach.
 
 ### Examples
 
-```julia
+```jldoctest
 julia> B = BallInf(zeros(2), 0.1)
 LazySets.BallInf{Float64}([0.0, 0.0], 0.1)
 julia> vertices_list(B)

@@ -13,7 +13,7 @@ Plot a convex set in two dimensions using an axis-aligned approximation.
 
 ### Examples
 
-```julia
+```jldoctest
 julia> using LazySets, Plots
 julia> B = BallInf(ones(2), 0.1)
 julia> plot(2.0 * B)
@@ -50,7 +50,7 @@ approximation.
 
 ### Examples
 
-```julia
+```jldoctest
 julia> using LazySets, Plots
 julia> B1 = BallInf(zeros(2), 0.4)
 julia> B2 = BallInf(ones(2), 0.4)
@@ -82,7 +82,7 @@ Plot a lazy set in two dimensions using iterative refinement.
 
 ### Examples
 
-```julia
+```jldoctest
 julia> using LazySets, Plots
 julia> B = BallInf(ones(2), 0.1)
 julia> plot(randn(2, 2) * B, 1e-3)
@@ -112,7 +112,7 @@ Plot an array of lazy sets in two dimensions using iterative refinement.
 
 ### Examples
 
-```julia
+```jldoctest
 julia> using LazySets, Plots
 julia> B1 = BallInf(zeros(2), 0.4)
 julia> B2 = Ball2(ones(2), 0.4)
@@ -147,7 +147,7 @@ Plot a polygon in constraint representation.
 
 ### Examples
 
-```julia
+```jldoctest
 julia> using LazySets, Plots
 julia> P = HPolygon([LinearConstraint([1.0, 0.0], 0.6),
                      LinearConstraint([0.0, 1.0], 0.6),
@@ -178,7 +178,7 @@ Plot an array of polygons in constraint representation.
 
 ### Examples
 
-```julia
+```jldoctest
 julia> using LazySets, Plots
 julia> P1 = HPolygon([LinearConstraint([1.0, 0.0], 0.6),
                       LinearConstraint([0.0, 1.0], 0.6),
@@ -214,7 +214,7 @@ Plot a polygon in vertex representation.
 
 ### Examples
 
-```julia
+```jldoctest
 julia> using LazySets, Plots
 julia> P = VPolygon([[0.6, 0.6], [0.4, 0.6], [0.4, 0.4], [0.6, 0.4]])
 julia> plot(P)
@@ -242,7 +242,7 @@ Plot an array of polygons in vertex representation.
 
 ### Examples
 
-```julia
+```jldoctest
 julia> using LazySets, Plots
 julia> P1 = VPolygon([[0.6, 0.6], [0.4, 0.6], [0.4, 0.4], [0.6, 0.4]])
 julia> P2 = VPolygon([[0.3, 0.3], [0.2, 0.3], [0.2, 0.2], [0.3, 0.2]])
@@ -276,7 +276,7 @@ Plot a singleton.
 
 ### Examples
 
-```julia
+```jldoctest
 julia> using LazySets, Plots
 julia> plot(Singleton([0.5, 1.0]))
 ```
@@ -301,14 +301,14 @@ Plot a list of singletons.
 
 ### Examples
 
-```julia
+```jldoctest
 julia> using LazySets, Plots
 julia> plot([Singleton([0.0, 0.0]), Singleton([1., 0]), Singleton([0.5, .5])])
 ```
 
 Three-dimensional singletons can be plotted as well:
 
-```julia
+```jldoctest
 julia> using LazySets, Plots
 julia> a, b, c = zeros(3), [1.0, 0, 0], [0.0, 1., 0];
 julia> plot([Singleton(a), Singleton(b), Singleton(c)])
@@ -337,7 +337,7 @@ Plot a zonotope by enumerating its vertices.
 
 ### Examples
 
-```julia
+```jldoctest
 julia> using LazySets, Plots
 julia> Z = Zonotope(ones(2), 0.2*[[1., 0], [0., 1], [1, 1]])
 julia> plot(Z)
@@ -366,7 +366,7 @@ Plot an array of zonotopes.
 
 ### Examples
 
-```julia
+```jldoctest
 julia> using LazySets, Plots
 julia> Z1 = Zonotope(zeros(2), [[0.6, 0.6], [0.4, 0.6], [0.4, 0.4], [0.6, 0.4]])
 julia> Z2 = Zonotope(zeros(2), [[0.3, 0.3], [0.2, 0.3], [0.2, 0.2], [0.3, 0.2]])
