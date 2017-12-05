@@ -10,6 +10,9 @@ Depth = 3
 
 ```@meta
 CurrentModule = LazySets
+DocTestSetup = quote
+    using LazySets
+end
 ```
 
 ## Minkowski Sum

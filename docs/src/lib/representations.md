@@ -9,6 +9,9 @@ Depth = 3
 
 ```@meta
 CurrentModule = LazySets
+DocTestSetup = quote
+    using LazySets
+end
 ```
 
 ## Abstract support function and support vector
