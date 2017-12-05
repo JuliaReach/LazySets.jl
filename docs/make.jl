@@ -1,7 +1,7 @@
 using Documenter, LazySets
 
 makedocs(
-    modules = [LazySets],
+    modules = [LazySets, Approximations],
     format = :html,
     assets = ["assets/juliareach.css"],
     sitename = "LazySets.jl",
