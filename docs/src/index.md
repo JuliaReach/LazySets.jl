@@ -111,7 +111,7 @@ Let us note that if the set operations were done explicitly, this would be much
 For instance, already the explicit computation of the matrix exponential would
 have cost 10x more, and allocated around 300MB.
 For even higher $n$, an evaluation will probably run out of RAM.
-But this is doable with `LazySets` because the *effect* of the matrix
+But this is doable with `LazySets` because the *action* of the matrix
 exponential on the set is only evaluated along the directions of interest.
 Similar comments apply to the Minkowski sum above.
 
@@ -122,6 +122,8 @@ We can visualize the result using `plot`, as shown below (left-most plot).
 In the second and third plots, we have used a refined method that allows to
 specify a prescribed accuracy for the projection (in terms of the
 [Hausdorff distance](https://en.wikipedia.org/wiki/Hausdorff_distance)).
+For the theoretical background, see
+[this reference](https://github.com/JuliaReach/Reachability.jl/wiki/References#polyhedral-approximations).
 It can be passed as a second argument to `overapproximate`.
 
 |Error tol.|time (s)|memory (MB)|

@@ -24,16 +24,20 @@ We recall the following elementary properties of the support function.
 sets ``\mathcal{X}``, ``\mathcal{Y}`` in ``\mathbb{R}^n``, for all ``n\times n`` real
 matrices ``M``, all scalars ``\lambda``, and all vectors ``\ell \in \mathbb{R}^n``, we have:
 
-$(1.1) \quad \rho_{\lambda\mathcal{X}} (\ell) = \rho_{\mathcal{X}} (\lambda \ell),
-\text{ and } \rho_{\lambda\mathcal{X}} (\ell) = \lambda \rho_{\mathcal{X}} (\ell) \text{ if } \lambda > 0.$
-
-$(1.2) \quad \rho_{M\mathcal{X}} (\ell) = \rho_{\mathcal{X}} (M^\mathrm{T} \ell)$
-
-$(1.3) \quad \rho_{\mathcal{X} \oplus \mathcal{Y}} (\ell) = \rho_{\mathcal{X}} (\ell) + \rho_{\mathcal{Y}} (\ell)$
-
-$(1.4) \quad \rho_{\mathcal{X} \times \mathcal{Y}} (\ell) = \ell^\mathrm{T} \sigma_{\mathcal{X} \times \mathcal{Y}}(\ell)$
-
-$(1.5) \quad \rho_{\mathrm{CH}(\mathcal{X}\cup\mathcal{Y})} (\ell) = \max (\rho_{\mathcal{X}} (\ell), \rho_{\mathcal{Y}} (\ell))$
+```math
+\begin{align*}
+\quad \rho_{\lambda\mathcal{X}} (\ell) &= \rho_{\mathcal{X}} (\lambda \ell),
+\text{ and } \rho_{\lambda\mathcal{X}} (\ell) = \lambda \rho_{\mathcal{X}} (\ell) \text{ if } \lambda > 0 \tag{1.1} \\[1mm]
+%
+\quad \rho_{M\mathcal{X}} (\ell) &= \rho_{\mathcal{X}} (M^\mathrm{T} \ell) \tag{1.2} \\[1mm]
+%
+\quad \rho_{\mathcal{X} \oplus \mathcal{Y}} (\ell) &= \rho_{\mathcal{X}} (\ell) + \rho_{\mathcal{Y}} (\ell) \tag{1.3} \\[1mm]
+%
+\quad \rho_{\mathcal{X} \times \mathcal{Y}} (\ell) &= \ell^\mathrm{T} \sigma_{\mathcal{X} \times \mathcal{Y}}(\ell) \tag{1.4} \\[1mm]
+%
+\quad \rho_{\mathrm{CH}(\mathcal{X}\cup\mathcal{Y})} (\ell) &= \max (\rho_{\mathcal{X}} (\ell), \rho_{\mathcal{Y}} (\ell)) \tag{1.5}
+\end{align*}
+```
 
 ## Support Vector
 
@@ -51,18 +55,21 @@ we often speak of *the support vector*, where the choice of any support vector i
 **Proposition 2.** Under the same conditions
 as in Proposition 1, the following hold:
 
-$(2.1) \quad \sigma_{\lambda\mathcal{X}} (\ell) = \lambda \sigma_{\mathcal{X}} (\lambda \ell)$
-
-$(2.2) \quad \sigma_{M\mathcal{X}} (\ell) = M\sigma_{\mathcal{X}} (M^\mathrm{T} \ell)$
-
-$(2.3) \quad \sigma_{\mathcal{X} \oplus \mathcal{Y}} (\ell) = \sigma_{\mathcal{X}} (\ell) \oplus \sigma_{\mathcal{Y}} (\ell)$
-
-$(2.4) \quad \sigma_{\mathcal{X} \times \mathcal{Y}} (\ell) = (\sigma_{\mathcal{X}}(\ell_1), \sigma_{\mathcal{Y}}(\ell_2)), \text{ where } \ell = (\ell_1, \ell_2)$
-
-$(2.5) \quad \sigma_{\mathrm{CH}(\mathcal{X}\cup\mathcal{Y})} (\ell) =
+```math
+\begin{align*}
+\quad \sigma_{\lambda\mathcal{X}} (\ell) &= \lambda \sigma_{\mathcal{X}} (\lambda \ell) \tag{2.1} \\[1mm]
+%
+\quad \sigma_{M\mathcal{X}} (\ell) &= M\sigma_{\mathcal{X}} (M^\mathrm{T} \ell) \tag{2.2} \\[1mm]
+%
+\quad \sigma_{\mathcal{X} \oplus \mathcal{Y}} (\ell) &= \sigma_{\mathcal{X}} (\ell) \oplus \sigma_{\mathcal{Y}} (\ell) \tag{2.3} \\[1mm]
+%
+\quad \sigma_{\mathcal{X} \times \mathcal{Y}} (\ell) &= (\sigma_{\mathcal{X}}(\ell_1), \sigma_{\mathcal{Y}}(\ell_2)), \text{ where } \ell = (\ell_1, \ell_2) \tag{2.4} \\[1mm]
+%
+\quad \sigma_{\mathrm{CH}(\mathcal{X}\cup\mathcal{Y})} (\ell) &=
 \text{argmax}_{x, y} (\ell^\mathrm{T} x, \ell^\mathrm{T} y),
-\text{ where } x \in \sigma_{\mathcal{X}}(\ell), y \in \sigma_{\mathcal{Y}}(\ell)$
-
+\text{ where } x \in \sigma_{\mathcal{X}}(\ell), y \in \sigma_{\mathcal{Y}}(\ell) \tag{2.5}
+\end{align*}
+```
 
 ## Polyhedral approximation of a convex set
 
@@ -78,7 +85,11 @@ unit ball ``\mathcal{B}_p^n`` is
 Given directions ``\ell_1,\ldots,\ell_m``, a tight overapproximation of
 ``\mathcal{X}`` is the *outer polyhedron* given by the constraints 
 
-$(3) \quad \bigwedge_i \ell_i^T x \leq \rho_\mathcal{X}(\ell_i).$
+```math
+\begin{equation*}
+\quad \bigwedge_i \ell_i^T x \leq \rho_\mathcal{X}(\ell_i) \tag{3}
+\end{equation*}
+```
 
 For instance, a bounding box involves evaluating the support function in ``2n``
 directions. To quantify this, we use the following distance measure.
@@ -125,3 +136,6 @@ approximation, and the distance between the facets of the inner and the vertices
 of the outer approximation. Finally, pick the facet normal with the largest
 distance, and add it to the template directions. This procedure is repeated
 until the distance is smaller than the desired error.
+
+For more details we refer to
+[the paper](https://github.com/JuliaReach/Reachability.jl/wiki/References#polyhedral-approximations).
