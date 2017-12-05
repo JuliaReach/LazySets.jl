@@ -58,9 +58,13 @@ The following three constructions are equivalent:
 
 ```jldoctest
 julia> c = ones(2);
+
 julia> r = [0.1, 0.2];
+
 julia> l = [0.9, 0.8];
+
 julia> h = [1.1, 1.2];
+
 julia> H1 = Hyperrectangle(c, r)
 LazySets.Hyperrectangle{Float64}([1.0, 1.0], [0.1, 0.2])
 julia> H2 = Hyperrectangle(center=c, radius=r)

@@ -35,7 +35,7 @@ be equivalently described as the image of a unit infinity-norm ball in
 
 A two-dimensional zonotope with given center and set of generators:
 
-```jldoctest
+```jldoctest zonotope_label
 julia> Z = Zonotope([1.0, 0.0], 0.1*eye(2))
 LazySets.Zonotope{Float64}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
 julia> dim(Z)
@@ -44,18 +44,18 @@ julia> dim(Z)
 
 Compute its vertices:
 
-```jldoctest
+```jldoctest zonotope_label
 julia> vertices_list(Z)
 4-element Array{Array{Float64,1},1}:
-[0.9, -0.1]
-[1.1, -0.1]
-[1.1, 0.1]
-[0.9, 0.1]
+ [0.9, -0.1]
+ [1.1, -0.1]
+ [1.1, 0.1]
+ [0.9, 0.1]
 ```
 
 Evaluate the support vector in a given direction:
 
-```jldoctest
+```jldoctest zonotope_label
 julia> σ([1., 1.], Z)
 2-element Array{Float64,1}:
  1.1
@@ -66,7 +66,7 @@ Alternative constructor: A zonotope in two dimensions with three generators:
 
 ```jldoctest
 julia> Z = Zonotope(ones(2), [[1., 0.], [0., 1.], [1., 1.]])
-LazySets.Zonotope{Float64}([1.0, 1.0], [1.0 0.0; 0.0 1.0; 1.0 1.0])
+LazySets.Zonotope{Float64}([1.0, 1.0], [1.0 0.0 1.0; 0.0 1.0 1.0])
 julia> Z.generators
 2×3 Array{Float64,2}:
  1.0  0.0  1.0
