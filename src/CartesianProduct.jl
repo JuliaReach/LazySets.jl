@@ -40,7 +40,9 @@ CartesianProduct(Xarr::Vector{S}) where {S<:LazySet} =
                                    CartesianProduct(Xarr[2:length(Xarr)])))
 
 """
+```
     *(X::LazySet, Y::LazySet)::CartesianProduct
+```
 
 Return the Cartesian product of two convex sets.
 
@@ -148,7 +150,9 @@ function CartesianProductArray(n::Integer)::CartesianProductArray
 end
 
 """
+```
     *(cpa::CartesianProductArray, S::LazySet)::CartesianProductArray
+```
 
 Multiply a convex set to a Cartesian product of a finite number of convex sets
 from the right.
@@ -168,7 +172,9 @@ function *(cpa::CartesianProductArray, S::LazySet)::CartesianProductArray
 end
 
 """
+```
     *(S::LazySet, cpa::CartesianProductArray)::CartesianProductArray
+```
 
 Multiply a convex set to a Cartesian product of a finite number of convex sets
 from the left.
@@ -188,7 +194,9 @@ function *(S::LazySet, cpa::CartesianProductArray)::CartesianProductArray
 end
 
 """
+```
     *(cpa1::CartesianProductArray, cpa2::CartesianProductArray)::CartesianProductArray
+```
 
 Multiply a finite Cartesian product of convex sets to another finite Cartesian
 product.
