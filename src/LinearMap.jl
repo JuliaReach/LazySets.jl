@@ -21,7 +21,9 @@ LinearMap(M::AbstractMatrix{N}, map::LinearMap{S}) where {S<:LazySet, N<:Real} =
     LinearMap{S,N}(M * map.M, map.sf)
 
 """
+```
     *(M::AbstractMatrix{<:Real}, S::LazySet)
+```
 
 Return the linear map of a convex set.
 
@@ -43,7 +45,9 @@ function *(M::AbstractMatrix{<:Real}, S::LazySet)
 end
 
 """
+```
     *(a::Real, S::LazySet)::LinearMap
+```
 
 Return a linear map of a convex set by a scalar value.
 

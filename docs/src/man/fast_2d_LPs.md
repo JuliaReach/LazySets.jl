@@ -45,7 +45,7 @@ Now assume that the constraints in a polytope ``\mathcal{X}`` are given as
 
 The following pseudocode explains how to find ``\bar{x}``.
 
-```julia
+```
 σ(d, X):
     let i be the smallest index such that a_{i-1} <= d and a_i > d
     return the vertex at the intersection of constraints i and i-1

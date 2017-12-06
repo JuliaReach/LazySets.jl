@@ -100,7 +100,9 @@ struct ExponentialMap{S<:LazySet} <: LazySet
 end
 
 """
+```
     *(spmexp::SparseMatrixExp, X::LazySet)
+```
 
 Return the exponential map of a convex set from a sparse matrix exponential.
 
@@ -195,7 +197,9 @@ struct ExponentialProjectionMap{S<:LazySet} <: LazySet
 end
 
 """
+```
     *(projspmexp::ProjectionSparseMatrixExp, X::LazySet)::ExponentialProjectionMap
+```
 
 Return the application of a projection of a sparse matrix exponential to a
 convex set.
