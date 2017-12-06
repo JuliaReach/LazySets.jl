@@ -1,130 +1,144 @@
 import Base.LinAlg:norm
-import LazySets:radius, diameter  # visible outside module Approximations
+import LazySets:radius,  # visible outside module Approximations
+                diameter
 
-# ====================================
+# ===================================
 # Approximations in the infinity norm
-# ====================================
+# ===================================
 
 """
-    box_approximation(X)
+    box_approximation(S::LazySet)::Hyperrectangle
 
-Overapproximate a set by a box (hyperrectangle).
+Overapproximate a convex set by a tight hyperrectangle.
 
 ### Input
 
-`X` -- a lazy set
+- `S` -- convex set
 
 ### Output
 
-`H` -- a (tight) hyperrectangle
+A tight hyperrectangle.
 
 ### Algorithm
 
-The center of the hyperrectangle is obtained by averaring the support function
-of the given set in the canonical directions, and the lengths of the sides can be
-recovered from the distance among support functions in the same directions.
+The center of the hyperrectangle is obtained by averaging the support function
+of the given set in the canonical directions, and the lengths of the sides can
+be recovered from the distance among support functions in the same directions.
 """
-function box_approximation(X::LazySet)::Hyperrectangle
-    (n, c, r) = box_approximation_helper(X)
+function box_approximation(S::LazySet)::Hyperrectangle
+    (c, r) = box_approximation_helper(S)
     return Hyperrectangle(c, r)
 end
 
 """
-    box_approximation_symmetric(X)
+    interval_hull
 
-Overapproximation of a set by a hyperrectangle which contains the origin.
+Alias for `box_approximation`.
+"""
+interval_hull = box_approximation
+
+"""
+    box_approximation_symmetric(S::LazySet)::Hyperrectangle
+
+Overapproximate a convex set by a tight hyperrectangle centered in the origin.
 
 ### Input
 
-`X` -- a lazy set
+- `S` -- convex set
 
-### Ouptut
+### Output
 
-`H` -- a symmetric interval around the origin which tightly contains the given set
+A tight hyperrectangle centered in the origin.
 
 ### Algorithm
 
 The center of the box is the origin, and the radius is obtained by computing the
 maximum value of the support function evaluated at the canonical directions.
 """
-function box_approximation_symmetric(X::LazySet)::Hyperrectangle
-    (n, c, r) = box_approximation_helper(X)
-    return Hyperrectangle(zeros(n), abs.(c) + r)
+function box_approximation_symmetric(S::LazySet)::Hyperrectangle
+    (c, r) = box_approximation_helper(S)
+    return Hyperrectangle(zeros(length(c)), abs.(c) .+ r)
 end
-# function alias
+
+"""
+    symmetric_interval_hull
+
+Alias for `box_approximation_symmetric`.
+"""
 symmetric_interval_hull = box_approximation_symmetric
 
 """
-    box_approximation_helper(X)
+    box_approximation_helper(S::LazySet)
 
-Common code of box_approximation and box_approximation_symmetric.
+Common code of `box_approximation` and `box_approximation_symmetric`.
 
 ### Input
 
-`X` -- a lazy set
+- `S` -- convex set
 
 ### Output
 
-`H` -- a (tight) hyperrectangle
+A tuple containing the data that is needed to construct a tightly
+overapproximating hyperrectangle.
+
+- `c` -- center
+- `r` -- radius
 
 ### Algorithm
 
-The center of the hyperrectangle is obtained by averaring the support function
-the given set in the canonical directions, and the lengths of the sides can be
-recovered from the distance among support functions in the same directions.
+The center of the hyperrectangle is obtained by averaging the support function
+of the given convex set in the canonical directions.
+The lengths of the sides can be recovered from the distance among support
+functions in the same directions.
 """
-@inline function box_approximation_helper(X::LazySet)
-    n = dim(X)
-    c = Vector{Float64}(n) # TODO: get numerical eltype of X
+@inline function box_approximation_helper(S::LazySet)
+    n = dim(S)
+    c = Vector{Float64}(n) # TODO: get numerical eltype of S
     r = Vector{Float64}(n)
-    dplus = zeros(n)
-    dminus = zeros(n)
-    @inbounds @simd for i in 1:n
-        dplus[i] = 1.0
-        dminus[i] = -1.0
-        htop = ρ(dplus, X)
-        hbottom = -ρ(dminus, X)
-        dplus[i] = 0.0
-        dminus[i] = 0.0
-        c[i] = (htop+hbottom)/2.
-        r[i] = (htop-hbottom)/2.
+    d = zeros(n)
+    @inbounds for i in 1:n
+        d[i] = 1.
+        htop = ρ(d, S)
+        d[i] = -1.
+        hbottom = -ρ(d, S)
+        d[i] = 0.
+        c[i] = (htop + hbottom) / 2.
+        r[i] = (htop - hbottom) / 2.
     end
-    return n, c, r
+    return c, r
 end
 
 """
-    ballinf_approximation(X)
+    ballinf_approximation(S)
 
-Overapproximation of a set by a ball in the infinity norm.
+Overapproximate a convex set by a tight ball in the infinity norm.
 
 ### Input
 
-`X` -- a lazy set
+- `S` -- convex set
 
 ### Output
 
-`H` -- a ball in the infinity norm which tightly contains the given set
+A tight ball in the infinity norm.
 
 ### Algorithm
 
 The center and radius of the box are obtained by evaluating the support function
-of the given set along the canonical directions.
+of the given convex set along the canonical directions.
 """
-function ballinf_approximation(X::LazySet)::BallInf
-    n = dim(X)
-    c = Vector{Float64}(n) # TODO: get numerical eltype of X
+function ballinf_approximation(S::LazySet)::BallInf
+    n = dim(S)
+    c = Vector{Float64}(n) # TODO: get numerical eltype of S
     r = 0.
-    dplus = zeros(n)
-    dminus = zeros(n)
+    d = zeros(n)
     @inbounds for i in 1:n
-        dplus[i] = 1.0
-        dminus[i] = -1.0
-        htop = ρ(dplus, X)
-        hbottom = -ρ(dminus, X)
-        dplus[i] = 0.0
-        dminus[i] = 0.0
-        c[i] = (htop+hbottom)/2.
-        rcur = (htop-hbottom)/2.
+        d[i] = 1.
+        htop = ρ(d, S)
+        d[i] = -1.
+        hbottom = -ρ(d, S)
+        d[i] = 0.
+        c[i] = (htop + hbottom) / 2.
+        rcur = (htop - hbottom) / 2.
         if (rcur > r)
             r = rcur
         end
@@ -132,76 +146,78 @@ function ballinf_approximation(X::LazySet)::BallInf
     return BallInf(c, r)
 end
 
-# ========================================================
+# =======================================================
 # Metric properties of sets computed using Approximations
-# ========================================================
+# =======================================================
 
 """
-    norm(X::LazySet, [p])
+    norm(S::LazySet, [p]::Real=Inf)
 
-Return the norm of a `LazySet`. It is the norm of the enclosing ball (of
-the given norm) of minimal volume.
+Return the norm of a convex set.
+It is the norm of the enclosing ball (of the given norm) of minimal volume.
 
 ### Input
 
-- `X` -- a lazy set
+- `S` -- convex set
 - `p` -- (optional, default: `Inf`) norm
 
 ### Output
 
 A real number representing the norm.
 """
-function norm(X::LazySet, p::Real=Inf)
+function norm(S::LazySet, p::Real=Inf)
     if p == Inf
-        return norm(ballinf_approximation(X), p)
+        return norm(ballinf_approximation(S), p)
     else
-        error("The norm for this value of p=$p is not implemented")
+        error("the norm for this value of p=$p is not implemented")
     end
 end
 
 """
-    radius(X::LazySet, [p])
+    radius(S::LazySet, [p]::Real=Inf)
 
-Return the radius of a `LazySet`. It is the radius of the
-enclosing ball (of the given norm) of minimal volume with the same center.
+Return the radius of a convex set.
+It is the radius of the enclosing ball (of the given norm) of minimal volume
+with the same center.
 
 ### Input
 
-- `X` -- lazy set
+- `S` -- convex set
 - `p` -- (optional, default: `Inf`) norm
 
 ### Output
 
 A real number representing the radius.
 """
-function radius(X::LazySet, p::Real=Inf)
+function radius(S::LazySet, p::Real=Inf)
     if p == Inf
-        return radius(ballinf_approximation(X)::BallInf, p)
+        return radius(ballinf_approximation(S)::BallInf, p)
     else
-        error("The radius for this value of p=$p is not implemented")
+        error("the radius for this value of p=$p is not implemented")
     end
 end
 
 """
-    diameter(X::LazySet, [p])
+    diameter(S::LazySet, [p]::Real=Inf)
 
-Return the diameter of a `LazySet`. It is the maximum distance
-between any two elements of the set, or, equivalently, the diameter of the
-enclosing ball (of the given norm) of minimal volume with the same center.
+Return the diameter of a convex set.
+It is the maximum distance between any two elements of the set, or,
+equivalently, the diameter of the enclosing ball (of the given norm) of minimal
+volume with the same center.
 
 ### Input
 
-- `X` -- lazy set
+- `S` -- convex set
 - `p` -- (optional, default: `Inf`) norm
 
 ### Output
 
 A real number representing the diameter.
 """
-function diameter(X::LazySet, p::Real=Inf)
+function diameter(S::LazySet, p::Real=Inf)
     if p == Inf
-        return 2. * radius(X, p)
+        return radius(S, p) * 2
     else
-        error("The diameter for this value of p=$p is not implemented")
+        error("the diameter for this value of p=$p is not implemented")
     end
 end

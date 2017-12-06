@@ -59,8 +59,8 @@ function isin(e, list)
     return false
 end
 
-# 2D Hyperrectangle not centered, not same radius, for vertex representation, radius,
-# and diameter
+# 2D Hyperrectangle not centered, not same radius, for vertex representation,
+# radius, and diameter
 h = Hyperrectangle([3., 2.], [2., 1.])
 vl = vertices_list(h)
 # Test Vertices

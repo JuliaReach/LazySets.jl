@@ -1,25 +1,25 @@
 """
-  overapproximate(X)
+    overapproximate(S::LazySet)::HPolygon
 
-Return an approximation of the given 2D set as a box-shaped polygon.
+Return an approximation of a given 2D convex set as a box-shaped polygon.
 
 ### Input
 
-- `X` -- lazy set, assumed to be two-dimensional
+- `S` -- convex set, assumed to be two-dimensional
 
 ### Output
 
-A polygon in constraint representation.
+A box-shaped polygon in constraint representation.
 """
-function overapproximate(X::LazySet)::HPolygon
-    @assert dim(X) == 2
+function overapproximate(S::LazySet)::HPolygon
+    @assert dim(S) == 2
 
-    constraints = Vector{LinearConstraint{Float64}}(4)
     # evaluate support vector on box directions
-    pe = σ(DIR_EAST, X)
-    pn = σ(DIR_NORTH, X)
-    pw = σ(DIR_WEST, X)
-    ps = σ(DIR_SOUTH, X)
+    pe = σ(DIR_EAST, S)
+    pn = σ(DIR_NORTH, S)
+    pw = σ(DIR_WEST, S)
+    ps = σ(DIR_SOUTH, S)
+    constraints = Vector{LinearConstraint{eltype(pe)}}(4)
     constraints[1] = LinearConstraint(DIR_EAST, dot(pe, DIR_EAST))
     constraints[2] = LinearConstraint(DIR_NORTH, dot(pn, DIR_NORTH))
     constraints[3] = LinearConstraint(DIR_WEST, dot(pw, DIR_WEST))
@@ -28,61 +28,60 @@ function overapproximate(X::LazySet)::HPolygon
 end
 
 """
-    overapproximate(X, ɛ)
+    overapproximate(S::LazySet, ɛ::Float64)::HPolygon
 
 Return an ɛ-close approximation of the given 2D set (in terms of Hausdorff
 distance) as a polygon.
 
 ### Input
 
-- `X` -- lazy set, assumed to be two-dimensional
-- `ɛ` -- the error bound
+- `S` -- convex set, assumed to be two-dimensional
+- `ɛ` -- error bound
 
 ### Output
 
 A polygon in constraint representation.
 """
-function overapproximate(X::LazySet, ɛ::Float64)::HPolygon
-    constraints = [LinearConstraint(ci.d1, dot(ci.d1, ci.p1)) for ci in approximate(X, ɛ)]
+function overapproximate(S::LazySet, ɛ::Float64)::HPolygon
+    @assert dim(S) == 2
+
+    constraints =
+        [LinearConstraint(ci.d1, dot(ci.d1, ci.p1)) for ci in approximate(S, ɛ)]
     return HPolygon(constraints)
 end
 
 """
-    decompose(X)
+    decompose(S::LazySet)::CartesianProductArray
 
-Compute an overapproximation of the projections of the given set over each
-two-dimensional subspace using box directions.
+Compute an overapproximation of the projections of the given convex set over
+each two-dimensional subspace using box directions.
 
 ### Input
 
-- `X`  -- lazy set
+- `S` -- convex set
 
 ### Output
 
-A `CartesianProductArray` corresponding to the cartesian product of 2x2 polygons.
+A `CartesianProductArray` corresponding to the Cartesian product of
+``2 \\times 2`` box-shaped polygons.
 """
-function decompose(X::LazySet)::CartesianProductArray
-    n = LazySets.dim(X)
+function decompose(S::LazySet)::CartesianProductArray
+    n = dim(S)
     b = div(n, 2)
-
-    DIR_EAST_bi = sparsevec([], Float64[], n)  # TODO: use numeric eltype of X
-    DIR_NORTH_bi = sparsevec([], Float64[], n)
-    DIR_WEST_bi = sparsevec([], Float64[], n)
-    DIR_SOUTH_bi = sparsevec([], Float64[], n)
     result = Vector{HPolygon}(b)
 
     @inbounds for bi in 1:b
-        copy!(DIR_EAST_bi, sparsevec([2*bi-1], [1.], n))
-        pe_bi = dot(DIR_EAST, view(σ(DIR_EAST_bi, X), 2*bi-1:2*bi))
+        pe_bi = dot(DIR_EAST,
+                    view(σ(sparsevec([2*bi-1], [1.], n), S), 2*bi-1:2*bi))
 
-        copy!(DIR_NORTH_bi, sparsevec([2*bi], [1.], n))
-        pn_bi = dot(DIR_NORTH, view(σ(DIR_NORTH_bi, X), 2*bi-1:2*bi))
+        pn_bi = dot(DIR_NORTH,
+                    view(σ(sparsevec([2*bi], [1.], n), S), 2*bi-1:2*bi))
 
-        copy!(DIR_WEST_bi, sparsevec([2*bi-1], [-1.], n))
-        pw_bi = dot(DIR_WEST, view(σ(DIR_WEST_bi, X), 2*bi-1:2*bi))
+        pw_bi = dot(DIR_WEST,
+                    view(σ(sparsevec([2*bi-1], [-1.], n), S), 2*bi-1:2*bi))
 
-        copy!(DIR_SOUTH_bi, sparsevec([2*bi], [-1.], n))
-        ps_bi = dot(DIR_SOUTH, view(σ(DIR_SOUTH_bi, X), 2*bi-1:2*bi))
+        ps_bi = dot(DIR_SOUTH,
+                    view(σ(sparsevec([2*bi], [-1.], n), S), 2*bi-1:2*bi))
 
         result[bi] = HPolygon([LinearConstraint(DIR_EAST, pe_bi),
                                LinearConstraint(DIR_NORTH, pn_bi),
@@ -94,70 +93,73 @@ function decompose(X::LazySet)::CartesianProductArray
 end
 
 """
-    decompose(X, ɛi)
+    decompose(S::LazySet, ɛi::Vector{Float64})::CartesianProductArray
 
-Compute an overapproximation of the projections of the given set over each
-two-dimensional subspace with a certified error bound.
+Compute an overapproximation of the projections of the given convex set over
+each two-dimensional subspace with a certified error bound.
 
 ### Input
 
-- `X`  -- lazy set
+- `S`  -- convex set
 - `ɛi` -- array with the error bound for each projection (different error bounds
-          can be passed to different blocks)
+          can be passed for different blocks)
 
 ### Output
 
-A `CartesianProductArray` corresponding to the cartesian product of 2x2 polygons.
+A `CartesianProductArray` corresponding to the Cartesian product of
+``2 \\times 2`` polygons.
 
 ### Algorithm
 
 This algorithm assumes a decomposition into two-dimensional subspaces only,
-i.e. partitions of the form ``[2, 2, ..., 2]``.
-In particular if `X` is a `CartesianProductArray`, no check is performed
-to verify that assumption.
+i.e., partitions of the form ``[2, 2, …, 2]``.
+In particular, if `S` is a `CartesianProductArray`, no check is performed to
+verify that assumption.
 
-It proceeds as follows:
+The algorithm proceeds as follows:
 
-1. Project the set `X` into each partition, with `MX`, where M is the identity
+1. Project the set `S` into each partition, with `M⋅S`, where M is the identity
    matrix in the block coordinates and zero otherwise.
-2. Overapproximate the set with a given error bound, `ɛi[i]`, for ``i = 1, …, b``,
-3. Return the result as an array of support functions.
+2. Overapproximate the set with a given error bound, `ɛi[i]`, for
+   ``i = 1, …, b``,
+3. Return the result as a `CartesianProductArray`.
 """
-function decompose(X::LazySet, ɛi::Vector{Float64})::CartesianProductArray
-    n = LazySets.dim(X)
+function decompose(S::LazySet, ɛi::Vector{Float64})::CartesianProductArray
+    n = dim(S)
     b = div(n, 2)
-    result = Array{HPolygon, 1}(b)
+    result = Vector{HPolygon}(b)
     @inbounds for i in 1:b
         M = sparse([1, 2], [2*i-1, 2*i], [1., 1.], 2, n)
-        result[i] = overapproximate(M * X, ɛi[i])
+        result[i] = overapproximate(M * S, ɛi[i])
     end
     return CartesianProductArray(result)
 end
 
 """
-    decompose(X, ɛ)
+    decompose(S::LazySet, ɛ::Float64)::CartesianProductArray
 
-Compute an overapproximation of the projections of the given set over each
-two-dimensional subspace with a certified error bound.
-
-This function is a particular case of `decompose(X, ɛi)`, where the same error
-bound for each block is assumed.
+Compute an overapproximation of the projections of the given convex set over
+each two-dimensional subspace with a certified error bound.
 
 ### Input
 
-- `X`  -- lazy set
+- `S` -- convex set
 - `ɛ` --  error bound
 
 ### Output
 
-A `CartesianProductArray` corresponding to the cartesian product of 2x2 polygons.
+A `CartesianProductArray` corresponding to the Cartesian product of
+``2 \\times 2`` polygons.
+
+### Notes
+
+This function is a particular case of `decompose(S, ɛi)`, where the same error
+bound for each block is assumed.
 """
-function decompose(X::LazySet, ɛ::Float64)::CartesianProductArray
-    n = LazySets.dim(X)
-    b = div(n, 2)
+function decompose(S::LazySet, ɛ::Float64)::CartesianProductArray
     if ɛ == Inf
-        return decompose(X)
+        return decompose(S)
     else
-        return decompose(X, [ɛ for i in 1:b])
+        return decompose(S, [ɛ for i in 1:div(dim(S), 2)])
     end
 end
