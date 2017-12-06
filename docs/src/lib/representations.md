@@ -46,6 +46,14 @@ radius(::BallInf, ::Real=Inf)
 diameter(::BallInf, ::Real=Inf)
 ```
 
+### Manhattan norm ball
+
+```@docs
+Ball1
+dim(::Ball1)
+σ(::AbstractVector{Float64}, ::Ball1)
+```
+
 ### p-norm ball
 
 ```@docs

@@ -29,8 +29,7 @@ The special cases ``p=2`` and ``p=∞`` fall back to the specialized types
 
 A five-dimensional ball in the ``p=3/2`` norm centered at the origin of radius 0.5:
 
-```julia
-julia> using LazySets
+```jldoctest ballp_constructor
 julia> B = Ballp(3/2, zeros(5), 0.5)
 LazySets.Ballp([0.0, 0.0, 0.0, 0.0, 0.0], 0.5)
 julia> dim(B)
@@ -39,7 +38,7 @@ julia> dim(B)
 
 We evaluate the support vector in direction ``[1,2,…,5]``:
 
-```julia
+```jldoctest ballp_constructor
 julia> σ(1.:5, B)
 5-element Array{Float64,1}:
  0.013516
@@ -62,6 +61,8 @@ struct Ballp{N<:Real} <: LazySet
             return BallInf(center, radius)
         elseif p == 2
             return Ball2(center, radius)
+        elseif p == 1
+            return Ball1(center, radius)
         elseif 1 < p && p < Inf
             new(p, center, radius)
         else
@@ -123,18 +124,15 @@ function σ(d::AbstractVector{N}, B::Ballp)::AbstractVector{N} where{N<:Abstract
     p = B.p
     q = p/(p-1)
     v = similar(d)
-    if p == one(T)
-        xyz
-    else
-        @inbounds for (i, di) in enumerate(d)
-            v[i] = di == zero(N) ? di : abs.(di).^q / di
-        end
-        vnorm = norm(v, p)
-        svec = vnorm != zero(N) ? @.(B.center + B.radius * (v/vnorm)) : B.center
+    @inbounds for (i, di) in enumerate(d)
+        v[i] = di == zero(N) ? di : abs.(di).^q / di
     end
+    vnorm = norm(v, p)
+    svec = vnorm != zero(N) ? @.(B.center + B.radius * (v/vnorm)) : B.center
     return svec
 end
 
+#=
 function f1(p, d)
     q = p/(p-1)
     v = similar(d)
@@ -142,3 +140,4 @@ function f1(p, d)
     v[2] = d[2] == zero(Float64) ? d[2] : abs.(d[2]).^q / d[2]
     return v, norm(v, p)
 end
+=#

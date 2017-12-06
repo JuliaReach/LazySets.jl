@@ -1,7 +1,7 @@
 using Documenter, LazySets
 
 makedocs(
-#   doctest = false,  # uncomment locally for skipping doctests (saves time!)
+    doctest = true,  # uncomment locally for skipping doctests (saves time!)
     modules = [LazySets, Approximations],
     format = :html,
     assets = ["assets/juliareach.css"],
