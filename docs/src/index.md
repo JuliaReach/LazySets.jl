@@ -1,5 +1,9 @@
 # LazySets.jl
 
+```@meta
+DocTestFilters = [r"[0-9\.]+ seconds \(.*\)"]
+```
+
 `LazySets` is a [Julia](http://julialang.org) package for calculus with convex
 sets.
 
@@ -63,20 +67,26 @@ map $B$ is random.
 Finally, let δ = 0.1.
 Using `LazySets`, we can define this problem as follows:
 
-```julia
-using LazySets
-A = sprandn(1000, 1000, 0.01)
-δ = 0.1
-X0 = Ball2(ones(1000), 0.1)
-B = randn(1000, 2)
-U = BallInf(zeros(2), 1.2)
+```jldoctest index_label
+julia> using LazySets;
+
+julia> A = sprandn(1000, 1000, 0.01);
+
+julia> δ = 0.1;
+
+julia> X0 = Ball2(ones(1000), 0.1);
+
+julia> B = randn(1000, 2);
+
+julia> U = BallInf(zeros(2), 1.2);
+
 ```
 
 The `@time` macro reveals that building $\mathcal{Y}$ with
 `LazySets` is instantaneous:
 
-```julia
-@time Y = CH(SparseMatrixExp(A * δ) * X0 + δ * B * U, X0);
+```jldoctest index_label
+julia> @time Y = CH(SparseMatrixExp(A * δ) * X0 + δ * B * U, X0);
 0.000022 seconds (13 allocations: 16.094 KiB)
 ```
 
@@ -84,10 +94,9 @@ By asking for the concrete type of `Y`, we see that it has a convex hull type,
 parameterized by the types of its arguments, corresponding to the mathematical
 formulation:
 
-```julia
+```jldoctest index_label
 julia> typeof(Y)
-LazySets.ConvexHull{LazySets.MinkowskiSum{LazySets.ExponentialMap{LazySets.Ball2},
-LazySets.LinearMap{LazySets.BallInf}},LazySets.Ball2}
+LazySets.ConvexHull{LazySets.MinkowskiSum{LazySets.ExponentialMap{LazySets.Ball2{Float64}},LazySets.LinearMap{LazySets.BallInf{Float64},Float64}},LazySets.Ball2{Float64}}
 ```
 
 Now suppose that we are interested in observing the projection of $\mathcal{Y}$
@@ -96,9 +105,10 @@ First we define the $2×1000$ projection matrix and apply it to $\mathcal{Y}$ as
 a linear map (i.e., from the left).
 Second, we use the `overapproximate` method:
 
-```julia
-proj_mat = [[1. zeros(1, 999)]; [zeros(1, 499) 1. zeros(1, 500)]]
-@time res = Approximations.overapproximate(proj_mat * Y);
+```jldoctest index_label
+julia> proj_mat = [[1. zeros(1, 999)]; [zeros(1, 499) 1. zeros(1, 500)]];
+
+julia> @time res = Approximations.overapproximate(proj_mat * Y);
 0.064034 seconds (1.12 k allocations: 7.691 MiB)
 ```
 
