@@ -2,6 +2,11 @@
 using LazySets, Base.Test
 
 # =======================================
+# Testing common API of all LazySet types
+# =======================================
+@time @testset "LazySets.LazySet" begin include("unit_LazySet.jl") end
+
+# =======================================
 # Testing types that inherit from LazySet
 # =======================================
 @time @testset "LazySets.Singleton" begin include("unit_Singleton.jl") end
@@ -10,6 +15,7 @@ using LazySets, Base.Test
 @time @testset "LazySets.Hyperrectangle" begin include("unit_Hyperrectangle.jl") end
 @time @testset "LazySets.Polygon" begin include("unit_Polygon.jl") end
 #@time @testset "LazySets.Polyhedron" begin include("unit_Polyhedron.jl") end  # optional
+@time @testset "LazySets.Zonotope" begin include("unit_Zonotope.jl") end
 
 # =========================================
 # Testing types representing set operations

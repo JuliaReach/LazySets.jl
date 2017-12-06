@@ -1,3 +1,10 @@
+```@meta
+CurrentModule = LazySets
+DocTestSetup = quote
+    using LazySets
+end
+```
+
 # Utility functions
 
 ```@docs

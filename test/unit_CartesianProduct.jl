@@ -27,7 +27,7 @@ d = [-1., -1., -1.]
 @test σ(d, c1) == [-1., -1., -1.]
 
 # Cartesian Product of a not-centered 1D BallInf and a not-centered 2D BallInf
-# Here a  Hyperrectangle where c = [1., -3., 4.] and r = [3., 2., 2.]
+# Here a Hyperrectangle where c = [1., -3., 4.] and r = [3., 2., 2.]
 b1 = BallInf([1.], 3.)
 b2 = BallInf([-3., 4.], 2.)
 # Test Construction
@@ -60,7 +60,7 @@ cs2 = s*VoidSet(1)
 @test cs2 isa VoidSet
 
 # Test Cartesian Product of an array
-# 0-elements
+# 0-elements
 as = LazySet[]
 cs = CartesianProduct(as)
 @test cs isa VoidSet

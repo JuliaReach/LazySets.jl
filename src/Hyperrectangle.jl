@@ -1,14 +1,20 @@
 import Base.LinAlg:norm
 
-export Hyperrectangle, vertices_list, norm, radius, diameter, low, high
+export Hyperrectangle,
+       vertices_list,
+       norm,
+       radius,
+       diameter,
+       low,
+       high
 
 """
-    Hyperrectangle <: LazySet
+    Hyperrectangle{N<:Real} <: LazySet
 
 Type that represents a hyperrectangle.
 
-A [hyperrectangle](https://en.wikipedia.org/wiki/Hyperrectangle) is the Cartesian
-product of one-dimensional intervals.
+A [hyperrectangle](https://en.wikipedia.org/wiki/Hyperrectangle) is the
+Cartesian product of one-dimensional intervals.
 
 ### Fields
 
@@ -20,7 +26,7 @@ struct Hyperrectangle{N<:Real} <: LazySet
     center::Vector{N}
     radius::Vector{N}
 
-    # default constructor
+    # default constructor with length comparison
     Hyperrectangle{N}(center::Vector{N}, radius::Vector{N}) where {N<:Real} =
         (length(center) != length(radius)
             ? throw(DimensionMismatch)
@@ -31,104 +37,119 @@ Hyperrectangle(center::Vector{N}, radius::Vector{N}) where {N<:Real} =
     Hyperrectangle{N}(center, radius)
 
 """
-    Hyperrectangle(kwargs...)
+    Hyperrectangle(;kwargs...)
 
 Construct a hyperrectangle from keyword arguments.
 
 ### Input
 
-Two combinations are allowed:
+- `kwargs` -- keyword arguments; two combinations are allowed:
+  1. `center`, `radius` -- vectors
+  2. `high`, `low`      -- vectors (if both `center` and `radius` are also
+                           defined, those are chosen instead)
 
-1. `center`, `radius` -- both vectors
-2. `high`, `low`      -- both vectors; if both `center` and `radius` are also
-                         defined, those are chosen instead
+### Output
+
+A hyperrectangle.
 
 ### Examples
 
 The following three constructions are equivalent:
 
-```julia
-julia> using LazySets
+```jldoctest
 julia> c = ones(2);
+
 julia> r = [0.1, 0.2];
+
 julia> l = [0.9, 0.8];
+
 julia> h = [1.1, 1.2];
+
 julia> H1 = Hyperrectangle(c, r)
-LazySets.Hyperrectangle([1.0, 1.0], [0.1, 0.2])
+LazySets.Hyperrectangle{Float64}([1.0, 1.0], [0.1, 0.2])
 julia> H2 = Hyperrectangle(center=c, radius=r)
-LazySets.Hyperrectangle([1.0, 1.0], [0.1, 0.2])
+LazySets.Hyperrectangle{Float64}([1.0, 1.0], [0.1, 0.2])
 julia> H3 = Hyperrectangle(low=l, high=h)
-LazySets.Hyperrectangle([1.0, 1.0], [0.1, 0.2])
+LazySets.Hyperrectangle{Float64}([1.0, 1.0], [0.1, 0.2])
 ```
 """
 function Hyperrectangle(;kwargs...)
     dict = Dict{Symbol, Any}(kwargs)
-    if length(dict) != 2
-        # error below
-    elseif haskey(dict, :center) && haskey(dict, :radius)
-        return Hyperrectangle{eltype(dict[:center])}(dict[:center], dict[:radius])
+    if haskey(dict, :center) && haskey(dict, :radius)
+        return Hyperrectangle{eltype(dict[:center])}(dict[:center],
+                                                     dict[:radius])
     elseif haskey(dict, :high) && haskey(dict, :low)
         # compute center and radius from high and low vectors
         center = (dict[:high] .+ dict[:low]) ./ 2
         radius = abs.(dict[:high] .- center)
         return Hyperrectangle{eltype(center)}(center, radius)
     end
-    throw(ArgumentError("Invalid arguments for Hyperrectangle: Use either " *
+    throw(ArgumentError("invalid arguments for Hyperrectangle: Use either " *
         "'center' and 'radius' or 'high' and 'low'."))
 end
 
 """
-    dim(H)
+    dim(H::Hyperrectangle)
 
-Return the dimension of a Hyperrectangle.
+Return the dimension of a hyperrectangle.
 
 ### Input
 
-- `H` -- a hyperrectangle
+- `H` -- hyperrectangle
 
 ### Output
 
-The ambient dimension of the hyperrectangle as an integer.
+The ambient dimension of the hyperrectangle.
 """
-function dim(H::Hyperrectangle)::Int64
-    length(H.center)
+function dim(H::Hyperrectangle)
+    return length(H.center)
 end
 
 """
-    σ(d, H)
+    σ(d::AbstractVector{<:Real}, H::Hyperrectangle)::AbstractVector{<:Real}
 
-Return the support vector of a Hyperrectangle in a given direction.
+Return the support vector of a hyperrectangle in a given direction.
+
+### Input
+
+- `d` -- direction
+- `H` -- hyperrectangle
+
+### Output
+
+The support vector in the given direction. If the direction has norm zero, the
+vertex with biggest values is returned.
 """
 function σ(d::AbstractVector{<:Real}, H::Hyperrectangle)::AbstractVector{<:Real}
     return @. H.center + unit_step(d) * H.radius
 end
 
 """
-    vertices_list(H::Hyperrectangle)
+    vertices_list(H::Hyperrectangle{N})::Vector{Vector{N}} where {N<:Real}
 
 Return the vertices of a hyperrectangle.
 
 ### Input
 
-- `H` -- a hyperrectangle
+- `H` -- hyperrectangle
 
 ### Output
 
-The list of vertices as an array of floating-point vectors.
+A list of vertices.
 
 ### Notes
 
-For high-dimensions, it is preferable to develop a `vertex_iterator` approach.
+For high dimensions, it is preferable to develop a `vertex_iterator` approach.
 """
 function vertices_list(H::Hyperrectangle{N})::Vector{Vector{N}} where {N<:Real}
-    return [H.center .+ si .* H.radius for si in IterTools.product([[1, -1] for i = 1:dim(H)]...)]
+    return [H.center .+ si .* H.radius
+        for si in IterTools.product([[1, -1] for i = 1:dim(H)]...)]
 end
 
 """
-    norm(H::Hyperrectangle, [p])
+    norm(H::Hyperrectangle, [p]::Real=Inf)
 
-Return the norm of a Hyperrectangle. It is the norm of the enclosing ball (of
-the given norm) of minimal volume.
+Return the norm of a hyperrectangle.
 
 ### Input
 
@@ -138,16 +159,20 @@ the given norm) of minimal volume.
 ### Output
 
 A real number representing the norm.
+
+### Notes
+
+The norm of a hyperrectangle is defined as the norm of the enclosing ball, of
+the given ``p``-norm, of minimal volume.
 """
 function norm(H::Hyperrectangle, p::Real=Inf)
     return maximum(map(x -> norm(x, p), vertices_list(H)))
 end
 
 """
-    radius(H::Hyperrectangle, [p])
+    radius(H::Hyperrectangle, [p]::Real=Inf)
 
-Return the radius of a hyperrectangle. It is the radius of the enclosing ball
-(of the given norm) of minimal volume with the same center.
+Return the radius of a hyperrectangle.
 
 ### Input
 
@@ -157,6 +182,11 @@ Return the radius of a hyperrectangle. It is the radius of the enclosing ball
 ### Output
 
 A real number representing the radius.
+
+### Notes
+
+The radius is defined as the radius of the enclosing ball of the given
+``p``-norm of minimal volume with the same center.
 """
 function radius(H::Hyperrectangle, p::Real=Inf)
     # the radius is the same for all corners of the hyperrectangle
@@ -164,20 +194,25 @@ function radius(H::Hyperrectangle, p::Real=Inf)
 end
 
 """
-    diameter(H::Hyperrectangle, [p])
+    diameter(H::Hyperrectangle, [p]::Real=Inf)
 
-Return the diameter of a hyperrectangle. It is the maximum distance between any
-two elements of the set, or, equivalently, the diameter of the enclosing ball
-(of the given norm) of minimal volume with the same center.
+Return the diameter of a hyperrectangle.
 
 ### Input
 
-- `H` -- a hyperrectangle
+- `H` -- hyperrectangle
 - `p` -- (optional, default: `Inf`) norm
 
 ### Output
 
 A real number representing the diameter.
+
+### Notes
+
+The diameter is defined as the maximum distance in the given ``p``-norm between
+any two elements of the set.
+Equivalently, it is the diameter of the enclosing ball of the given ``p``-norm
+of minimal volume with the same center.
 """
 function diameter(H::Hyperrectangle, p::Real=Inf)
     return radius(H, p) * 2
@@ -190,11 +225,12 @@ Return the higher coordinates of a hyperrectangle.
 
 ### Input
 
-- `H` -- a hyperrectangle
+- `H` -- hyperrectangle
 
 ### Output
 
-A vector with the higher coordinates of the hyperrectangle, one entry per dimension.
+A vector with the higher coordinates of the hyperrectangle, one entry per
+dimension.
 """
 function high(H::Hyperrectangle)
     return H.center .+ H.radius
@@ -207,11 +243,12 @@ Return the lower coordinates of a hyperrectangle.
 
 ### Input
 
-- `H` -- a hyperrectangle
+- `H` -- hyperrectangle
 
 ### Output
 
-A vector with the lower coordinates of the hyperrectangle, one entry per dimension.
+A vector with the lower coordinates of the hyperrectangle, one entry per
+dimension.
 """
 function low(H::Hyperrectangle)
     return H.center .- H.radius
