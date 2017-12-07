@@ -58,7 +58,7 @@ end
 Ball2(center::Vector{N}, radius::N) where {N<:Real} = Ball2{N}(center, radius)
 
 """
-    dim(B::Ball2)
+    dim(B::Ball2)::Int
 
 Return the dimension of a ball in the 2-norm.
 
@@ -70,7 +70,9 @@ Return the dimension of a ball in the 2-norm.
 
 The ambient dimension of the ball.
 """
-dim(B::Ball2) = length(B.center)
+function dim(B::Ball2)::Int
+    return length(B.center)
+end
 
 """
     σ(d::AbstractVector{N}, B::Ball2)::AbstractVector{<:AbstractFloat} where {N<:AbstractFloat}

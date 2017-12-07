@@ -56,7 +56,7 @@ BallInf(center::Vector{N}, radius::N) where {N<:Real} =
     BallInf{N}(center, radius)
 
 """
-    dim(B::BallInf)
+    dim(B::BallInf)::Int
 
 Return the dimension of a ball in the infinity norm.
 
@@ -68,7 +68,9 @@ Return the dimension of a ball in the infinity norm.
 
 The ambient dimension of the ball.
 """
-dim(B::BallInf) = length(B.center)
+function dim(B::BallInf)::Int
+    return length(B.center)
+end
 
 """
     σ(d::AbstractVector{<:Real}, B::BallInf)::AbstractVector{<:Real}

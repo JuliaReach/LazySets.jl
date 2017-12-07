@@ -120,7 +120,7 @@ function *(spmexp::SparseMatrixExp, X::LazySet)
 end
 
 """
-    dim(em::ExponentialMap)
+    dim(em::ExponentialMap)::Int
 
 Return the dimension of an exponential map.
 
@@ -132,7 +132,7 @@ Return the dimension of an exponential map.
 
 The ambient dimension of the exponential map.
 """
-function dim(em::ExponentialMap)
+function dim(em::ExponentialMap)::Int
     return size(em.spmexp.M, 1)
 end
 
@@ -220,7 +220,7 @@ function *(projspmexp::ProjectionSparseMatrixExp,
 end
 
 """
-    dim(eprojmap::ExponentialProjectionMap)
+    dim(eprojmap::ExponentialProjectionMap)::Int
 
 Return the dimension of a projection of an exponential map.
 
@@ -232,7 +232,7 @@ Return the dimension of a projection of an exponential map.
 
 The ambient dimension of the projection of an exponential map.
 """
-function dim(eprojmap::ExponentialProjectionMap)
+function dim(eprojmap::ExponentialProjectionMap)::Int
     return size(eprojmap.projspmexp.L, 1)
 end
 
