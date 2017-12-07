@@ -134,7 +134,7 @@ Type that represents the Cartesian product of a finite number of convex sets.
 
 - `CartesianProductArray()` -- constructor for an empty Cartesian product
 
-- `CartesianProductArray(n::Integer)`
+- `CartesianProductArray(n::Int)`
   -- constructor for an empty Cartesian product with size hint
 """
 struct CartesianProductArray{S<:LazySet} <: LazySet
@@ -143,7 +143,7 @@ end
 # constructor for an empty Cartesian product
 CartesianProductArray() = CartesianProductArray{LazySet}(Vector{LazySet}(0))
 # constructor for an empty Cartesian product with size hint
-function CartesianProductArray(n::Integer)::CartesianProductArray
+function CartesianProductArray(n::Int)::CartesianProductArray
     arr = Vector{LazySet}(0)
     sizehint!(arr, n)
     return CartesianProductArray(arr)

@@ -28,18 +28,18 @@ The evaluation of the exponential matrix action over vectors relies on the
 [Expokit](https://github.com/acroy/Expokit.jl) package.
 """
 struct SparseMatrixExp{N<:Real}
-    M::SparseMatrixCSC{N, Int64}
+    M::SparseMatrixCSC{N, Int}
 end
 
-function size(spmexp::SparseMatrixExp)::Tuple{Int64, Int64}
+function size(spmexp::SparseMatrixExp)::Tuple{Int, Int}
     return size(spmexp.M)
 end
 
-function size(spmexp::SparseMatrixExp, ax::Int64)::Int64
+function size(spmexp::SparseMatrixExp, ax::Int)::Int
     return size(spmexp.M, ax)
 end
 
-function get_column(spmexp::SparseMatrixExp, j::Int64)::Vector{Float64}
+function get_column(spmexp::SparseMatrixExp, j::Int)::Vector{Float64}
     n = size(spmexp, 1)
     aux = zeros(n)
     aux[j] = 1.0
@@ -47,7 +47,7 @@ function get_column(spmexp::SparseMatrixExp, j::Int64)::Vector{Float64}
 end
 
 function get_columns(spmexp::SparseMatrixExp,
-                     J::AbstractArray)::SparseMatrixCSC{Float64, Int64}
+                     J::AbstractArray)::SparseMatrixCSC{Float64, Int}
     n = size(spmexp, 1)
     aux = zeros(n)
     ans = spzeros(n, length(J))
@@ -61,7 +61,7 @@ function get_columns(spmexp::SparseMatrixExp,
     return ans
 end
 
-function get_row(spmexp::SparseMatrixExp, i::Int64)::Matrix{Float64}
+function get_row(spmexp::SparseMatrixExp, i::Int)::Matrix{Float64}
     n = size(spmexp, 1)
     aux = zeros(n)
     aux[i] = 1.0
@@ -69,7 +69,7 @@ function get_row(spmexp::SparseMatrixExp, i::Int64)::Matrix{Float64}
 end
 
 function get_rows(spmexp::SparseMatrixExp,
-                  I::AbstractArray{Int64})::SparseMatrixCSC{Float64, Int64}
+                  I::AbstractArray{Int})::SparseMatrixCSC{Float64, Int}
     n = size(spmexp, 1)
     aux = zeros(n)
     ans = spzeros(length(I), n)
@@ -175,9 +175,9 @@ Type that represents the projection of a sparse matrix exponential, i.e.,
 - `R` -- right multiplication matrix
 """
 struct ProjectionSparseMatrixExp{N<:Real}
-    L::SparseMatrixCSC{N, Int64}
+    L::SparseMatrixCSC{N, Int}
     spmexp::SparseMatrixExp{N}
-    R::SparseMatrixCSC{N, Int64}
+    R::SparseMatrixCSC{N, Int}
 end
 
 """

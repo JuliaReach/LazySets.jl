@@ -100,7 +100,7 @@ This type assumes that the dimensions of all elements match.
 
 - `MinkowskiSumArray()` -- constructor for an empty sum
 
-- `MinkowskiSumArray(n::Integer)` -- constructor for an empty sum with size hint
+- `MinkowskiSumArray(n::Int)` -- constructor for an empty sum with size hint
 """
 struct MinkowskiSumArray{T<:LazySet} <: LazySet
     sfarray::Vector{T}
@@ -108,7 +108,7 @@ end
 # constructor for an empty sum
 MinkowskiSumArray() = MinkowskiSumArray{LazySet}(Vector{LazySet}(0))
 # constructor for an empty sum with size hint
-function MinkowskiSumArray(n::Integer)::MinkowskiSumArray
+function MinkowskiSumArray(n::Int)::MinkowskiSumArray
     arr = Vector{LazySet}(0)
     sizehint!(arr, n)
     return MinkowskiSumArray(arr)
