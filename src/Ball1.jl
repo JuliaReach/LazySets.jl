@@ -24,7 +24,7 @@ Unit ball in the 1-norm in the plane:
 
 ```jldoctest ball1_constructor
 julia> B = Ball1(zeros(2), 1.)
-LazySets.Ball1([0.0, 0.0], 1.)
+LazySets.Ball1{Float64}([0.0, 0.0], 1.0)
 julia> dim(B)
 2
 ```
@@ -52,11 +52,11 @@ Ball1(center::Vector{N}, radius::N) where {N<:Real} = Ball1{N}(center, radius)
 """
     dim(B)
 
-Return the dimension of a Ball1.
+Return the dimension of a `Ball1`.
 
 ### Input
 
-- `B` -- a ball in the p-norm
+- `B` -- a ball in the 1-norm
 
 ### Output
 
@@ -65,7 +65,7 @@ The ambient dimension of the ball.
 dim(B::Ball1) = length(B.center)
 
 """
-    σ(d::AbstractVector{N}, B::Ball1)::AbstractVector{N} where{N<:AbstractFloat}
+    σ(d::AbstractVector{N}, B::Ball1)::AbstractVector{N} where {N<:AbstractFloat}
 
 Return the support vector of a `Ball1` in a given direction.
 
@@ -76,38 +76,8 @@ Return the support vector of a `Ball1` in a given direction.
 
 ### Output
 
-The support vector in the given direction.
-
-### Algorithm
-
-The support vector of the unit ball in the ``p``-norm along direction ``d`` is:
-
-```math
-σ_{\\mathcal{B}_p^n(0, 1)}(d) = \\dfrac{\\tilde{v}}{‖\\tilde{v}‖_q},
-```
-where ``\\tilde{v}_i = \\frac{|d_i|^q}{d_i}`` if ``d_i ≠ 0`` and ``tilde{v}_i = 0``
-otherwise, for all ``i=1,…,n``, and ``q`` is the conjugate number of ``p``.
-By the affine transformation ``x = r\\tilde{x} + c``, one obtains that
-the support vector of ``\\mathcal{B}_p^n(c, r)`` is
-
-```math
-σ_{\\mathcal{B}_p^n(c, r)}(d) = \\dfrac{v}{‖v‖_q},
-```
-where ``v_i = c_i + r\\frac{|d_i|^q}{d_i}`` if ``d_i ≠ 0`` and ``v_i = 0`` otherwise,
-for all ``i=1,…,n``.
+Support vector in the given direction.
 """
 function σ(d::AbstractVector{N}, B::Ball1)::AbstractVector{N} where{N<:AbstractFloat}
-    p = B.p
-    q = p/(p-1)
-    v = similar(d)
-    if p == one(T)
-        xyz
-    else
-        @inbounds for (i, di) in enumerate(d)
-            v[i] = di == zero(N) ? di : abs.(di).^q / di
-        end
-        vnorm = norm(v, p)
-        svec = vnorm != zero(N) ? @.(B.center + B.radius * (v/vnorm)) : B.center
-    end
-    return svec
-end
+    error("the support vector of a `Ball1` is not implemented")
+end 

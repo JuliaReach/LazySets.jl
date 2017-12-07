@@ -22,8 +22,8 @@ Here ``‖ ⋅ ‖_p`` for ``1 ≤ p ≤ ∞`` denotes the vector ``p``-norm, de
 
 ## Notes
 
-The special cases ``p=2`` and ``p=∞`` fall back to the specialized types
-`Ball2` and `BallInf` respectively.
+The special cases ``p=1``, ``p=2`` and ``p=∞`` fall back to the specialized types
+`Ball1`, `Ball2` and `BallInf` respectively.
 
 ### Examples
 
@@ -89,7 +89,7 @@ The ambient dimension of the ball.
 dim(B::Ballp) = length(B.center)
 
 """
-    σ(d::AbstractVector{N}, B::Ballp)::AbstractVector{N} where{N<:AbstractFloat}
+    σ(d::AbstractVector{N}, B::Ballp)::AbstractVector{N} where {N<:AbstractFloat}
 
 Return the support vector of a `Ballp` in a given direction.
 
@@ -118,9 +118,9 @@ the support vector of ``\\mathcal{B}_p^n(c, r)`` is
 σ_{\\mathcal{B}_p^n(c, r)}(d) = \\dfrac{v}{‖v‖_q},
 ```
 where ``v_i = c_i + r\\frac{|d_i|^q}{d_i}`` if ``d_i ≠ 0`` and ``v_i = 0`` otherwise,
-for all ``i=1,…,n``.
+for all ``i = 1, …, n``.
 """
-function σ(d::AbstractVector{N}, B::Ballp)::AbstractVector{N} where{N<:AbstractFloat}
+function σ(d::AbstractVector{N}, B::Ballp)::AbstractVector{N} where {N<:AbstractFloat}
     p = B.p
     q = p/(p-1)
     v = similar(d)
@@ -131,13 +131,3 @@ function σ(d::AbstractVector{N}, B::Ballp)::AbstractVector{N} where{N<:Abstract
     svec = vnorm != zero(N) ? @.(B.center + B.radius * (v/vnorm)) : B.center
     return svec
 end
-
-#=
-function f1(p, d)
-    q = p/(p-1)
-    v = similar(d)
-    v[1] = d[1] == zero(Float64) ? d[1] : abs.(d[1]).^q / d[1]
-    v[2] = d[2] == zero(Float64) ? d[2] : abs.(d[2]).^q / d[2]
-    return v, norm(v, p)
-end
-=#
