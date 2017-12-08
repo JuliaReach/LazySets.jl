@@ -1,7 +1,5 @@
 export ZeroSet
 
-import Base:+, *
-
 """
     ZeroSet <: LazySet
 
@@ -16,7 +14,7 @@ struct ZeroSet <: LazySet
 end
 
 """
-    dim(Z::ZeroSet)
+    dim(Z::ZeroSet)::Int
 
 Return the ambient dimension of this zero set.
 
@@ -24,7 +22,7 @@ Return the ambient dimension of this zero set.
 
 - `Z` -- a zero set, i.e. a set which only contains the origin
 """
-dim(Z::ZeroSet) = Z.dim
+dim(Z::ZeroSet)::Int = Z.dim
 
 """
     σ(d, Z)
