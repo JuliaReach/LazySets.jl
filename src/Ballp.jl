@@ -31,7 +31,7 @@ A five-dimensional ball in the ``p=3/2`` norm centered at the origin of radius 0
 
 ```jldoctest ballp_constructor
 julia> B = Ballp(3/2, zeros(5), 0.5)
-LazySets.Ballp([0.0, 0.0, 0.0, 0.0, 0.0], 0.5)
+LazySets.Ballp{Float64}(1.5, [0.0, 0.0, 0.0, 0.0, 0.0], 0.5)
 julia> dim(B)
 5
 ```
@@ -74,7 +74,7 @@ end
 Ballp(p::Real, center::Vector{N}, radius::N) where {N<:Real} = Ballp{N}(p, center, radius)
 
 """
-    dim(B)
+    dim(B::Ballp)::Int 
 
 Return the dimension of a Ballp.
 
@@ -86,7 +86,7 @@ Return the dimension of a Ballp.
 
 The ambient dimension of the ball.
 """
-dim(B::Ballp) = length(B.center)
+dim(B::Ballp)::Int = length(B.center)
 
 """
     σ(d::AbstractVector{N}, B::Ballp)::AbstractVector{N} where {N<:AbstractFloat}

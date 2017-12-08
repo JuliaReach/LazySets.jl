@@ -50,7 +50,7 @@ end
 Ball1(center::Vector{N}, radius::N) where {N<:Real} = Ball1{N}(center, radius)
 
 """
-    dim(B)
+    dim(B::Ball1)::Int
 
 Return the dimension of a `Ball1`.
 
@@ -62,7 +62,7 @@ Return the dimension of a `Ball1`.
 
 The ambient dimension of the ball.
 """
-dim(B::Ball1) = length(B.center)
+dim(B::Ball1)::Int = length(B.center)
 
 """
     σ(d::AbstractVector{N}, B::Ball1)::AbstractVector{N} where {N<:AbstractFloat}
@@ -78,6 +78,9 @@ Return the support vector of a `Ball1` in a given direction.
 
 Support vector in the given direction.
 """
-function σ(d::AbstractVector{N}, B::Ball1)::AbstractVector{N} where{N<:AbstractFloat}
-    error("the support vector of a `Ball1` is not implemented")
-end 
+function σ(d::AbstractVector{N}, B::Ball1)::AbstractVector{N} where {N<:AbstractFloat}
+    res = copy(B.center)
+    imax = indmax(abs.(d)) 
+    res[imax] = sign(d[imax]) * B.radius
+    return res
+end
