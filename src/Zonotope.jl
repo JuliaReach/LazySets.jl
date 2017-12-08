@@ -83,7 +83,7 @@ Zonotope(center::AbstractVector{N},
     Zonotope(center, hcat(generators_list...))
 
 """
-    dim(Z::Zonotope)
+    dim(Z::Zonotope)::Int
 
 Return the dimension of a zonotope.
 
@@ -95,7 +95,9 @@ Return the dimension of a zonotope.
 
 The ambient dimension of the zonotope.
 """
-dim(Z::Zonotope) = length(Z.center)
+function dim(Z::Zonotope)::Int
+    return length(Z.center)
+end
 
 """
     σ(d::AbstractVector{<:Real}, Z::Zonotope)::AbstractVector{<:Real}

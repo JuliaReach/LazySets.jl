@@ -14,7 +14,7 @@ struct Singleton{N<:Real} <: LazySet
 end
 
 """
-    dim(S::Singleton)
+    dim(S::Singleton)::Int
 
 Return the dimension of a singleton.
 
@@ -26,7 +26,7 @@ Return the dimension of a singleton.
 
 The ambient dimension of the singleton.
 """
-function dim(S::Singleton)
+function dim(S::Singleton)::Int
     return length(S.element)
 end
 

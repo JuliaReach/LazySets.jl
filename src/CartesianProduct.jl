@@ -60,7 +60,7 @@ function *(X::LazySet, Y::LazySet)::CartesianProduct
 end
 
 """
-    dim(cp::CartesianProduct)
+    dim(cp::CartesianProduct)::Int
 
 Return the dimension of a Cartesian product.
 
@@ -72,7 +72,7 @@ Return the dimension of a Cartesian product.
 
 The ambient dimension of the Cartesian product.
 """
-function dim(cp::CartesianProduct)
+function dim(cp::CartesianProduct)::Int
     return dim(cp.X) + dim(cp.Y)
 end
 
@@ -217,7 +217,7 @@ function *(cpa1::CartesianProductArray,
 end
 
 """
-    dim(cpa::CartesianProductArray)
+    dim(cpa::CartesianProductArray)::Int
 
 Return the dimension of a Cartesian product of a finite number of convex sets.
 
@@ -230,7 +230,7 @@ Return the dimension of a Cartesian product of a finite number of convex sets.
 The ambient dimension of the Cartesian product of a finite number of convex
 sets.
 """
-function dim(cpa::CartesianProductArray)
+function dim(cpa::CartesianProductArray)::Int
     return length(cpa.sfarray) == 0 ? 0 : sum([dim(sj) for sj in cpa.sfarray])
 end
 

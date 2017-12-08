@@ -80,7 +80,7 @@ function addconstraint!(P::HPolygonOpt{N},
 end
 
 """
-    dim(P::HPolygonOpt)
+    dim(P::HPolygonOpt)::Int
 
 Return the dimension of an optimized polygon.
 
@@ -92,7 +92,7 @@ Return the dimension of an optimized polygon.
 
 The ambient dimension of the optimized polygon.
 """
-function dim(P::HPolygonOpt)
+function dim(P::HPolygonOpt)::Int
     return 2
 end
 

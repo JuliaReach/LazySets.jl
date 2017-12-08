@@ -89,7 +89,7 @@ function Hyperrectangle(;kwargs...)
 end
 
 """
-    dim(H::Hyperrectangle)
+    dim(H::Hyperrectangle)::Int
 
 Return the dimension of a hyperrectangle.
 
@@ -101,7 +101,7 @@ Return the dimension of a hyperrectangle.
 
 The ambient dimension of the hyperrectangle.
 """
-function dim(H::Hyperrectangle)
+function dim(H::Hyperrectangle)::Int
     return length(H.center)
 end
 

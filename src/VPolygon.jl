@@ -40,7 +40,7 @@ struct VPolygon{N<:Real} <: LazySet
 end
 
 """
-    dim(P::VPolygon)
+    dim(P::VPolygon)::Int
 
 Return the dimension of a polygon in vertex representation.
 
@@ -52,8 +52,8 @@ Return the dimension of a polygon in vertex representation.
 
 The ambient dimension of the polygon.
 """
-function dim(P::VPolygon)
-    2
+function dim(P::VPolygon)::Int
+    return 2
 end
 
 """

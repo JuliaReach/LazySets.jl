@@ -57,7 +57,7 @@ function addconstraint!(P::HPolygon{N},
 end
 
 """
-    dim(P::HPolygon)
+    dim(P::HPolygon)::Int
 
 Return the dimension of a polygon.
 
@@ -69,7 +69,7 @@ Return the dimension of a polygon.
 
 The ambient dimension of the polygon.
 """
-function dim(P::HPolygon)
+function dim(P::HPolygon)::Int
     return 2
 end
 

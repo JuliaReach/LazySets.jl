@@ -22,7 +22,7 @@ Polyhedron{N}() where {N<:Real} = Polyhedron{N}(Vector{N}(0))
 Polyhedron() = Polyhedron{Float64}()
 
 """
-    dim(P::Polyhedron)
+    dim(P::Polyhedron)::Int
 
 Return the dimension of a polyhedron in H-representation.
 
@@ -35,7 +35,7 @@ Return the dimension of a polyhedron in H-representation.
 The ambient dimension of the polyhedron in H-representation.
 If the polyhedron has no constraints, the result is ``-1``.
 """
-function dim(P::Polyhedron)
+function dim(P::Polyhedron)::Int
     return length(P.constraints) == 0 ? -1 : length(P.constraints[1].a)
 end
 

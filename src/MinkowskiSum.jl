@@ -44,7 +44,7 @@ function +(X::LazySet, Y::LazySet)
 end
 
 """
-    dim(ms::MinkowskiSum)
+    dim(ms::MinkowskiSum)::Int
 
 Return the dimension of a Minkowski sum.
 
@@ -56,7 +56,7 @@ Return the dimension of a Minkowski sum.
 
 The ambient dimension of the Minkowski sum.
 """
-function dim(ms::MinkowskiSum)
+function dim(ms::MinkowskiSum)::Int
     return dim(ms.X)
 end
 
@@ -189,7 +189,7 @@ function +(msa::MinkowskiSumArray, ::VoidSet)::MinkowskiSumArray
 end
 
 """
-    dim(msa::MinkowskiSumArray)
+    dim(msa::MinkowskiSumArray)::Int
 
 Return the dimension of a Minkowski sum of a finite number of sets.
 
@@ -201,7 +201,7 @@ Return the dimension of a Minkowski sum of a finite number of sets.
 
 The ambient dimension of the Minkowski sum of a finite number of sets.
 """
-function dim(msa::MinkowskiSumArray)
+function dim(msa::MinkowskiSumArray)::Int
     return length(msa.sfarray) == 0 ? 0 : dim(msa.sfarray[1])
 end
 

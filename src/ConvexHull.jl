@@ -34,7 +34,7 @@ Alias for `ConvexHull`.
 CH = ConvexHull
 
 """
-    dim(ch::ConvexHull)
+    dim(ch::ConvexHull)::Int
 
 Return the dimension of a convex hull of two convex sets.
 
@@ -46,7 +46,7 @@ Return the dimension of a convex hull of two convex sets.
 
 The ambient dimension of the convex hull of two convex sets.
 """
-function dim(ch::ConvexHull)
+function dim(ch::ConvexHull)::Int
     return dim(ch.X)
 end
 

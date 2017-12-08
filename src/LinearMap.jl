@@ -75,7 +75,7 @@ function *(M::AbstractMatrix, sf::VoidSet)
 end
 
 """
-    dim(lm::LinearMap)
+    dim(lm::LinearMap)::Int
 
 Return the dimension of a linear map.
 
@@ -87,7 +87,7 @@ Return the dimension of a linear map.
 
 The ambient dimension of the linear map.
 """
-function dim(lm::LinearMap)
+function dim(lm::LinearMap)::Int
     return size(lm.M, 1)
 end
 
