@@ -121,7 +121,7 @@ The support vector in the given direction. If the direction has norm zero, the
 vertex with biggest values is returned.
 """
 function σ(d::AbstractVector{<:Real}, H::Hyperrectangle)::AbstractVector{<:Real}
-    return @. H.center + unit_step(d) * H.radius
+    return @. H.center + sign_cadlag(d) * H.radius
 end
 
 """

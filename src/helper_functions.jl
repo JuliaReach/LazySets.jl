@@ -1,12 +1,12 @@
 import Base.<=
 
-export unit_step,
+export sign_cadlag,
        jump2pi
 
 """
-    unit_step(x::Real)
+    sign_cadlag(x::Real)
 
-The unit step function, which returns 1 iff x is greater than or equal to zero.
+This function works like the sign function but is ``1`` for input ``0``.
 
 ### Input
 
@@ -23,14 +23,14 @@ This function can be used with vector-valued arguments via the dot operator.
 ### Examples
 
 ```jldoctest
-julia> unit_step.([-0.6, 1.3, 0.0])
+julia> sign_cadlag.([-0.6, 1.3, 0.0])
 3-element Array{Float64,1}:
  -1.0
   1.0
   1.0
 ```
 """
-unit_step(x::Real) = ifelse(x < zero(x), oftype(one(x),-1), one(x))
+sign_cadlag(x::Real) = ifelse(x < zero(x), oftype(one(x),-1), one(x))
 
 """
     jump2pi(x::Float64)

@@ -114,7 +114,7 @@ Return the support vector of a zonotope in a given direction.
 Support vector in the given direction.
 """
 function σ(d::AbstractVector{<:Real}, Z::Zonotope)::AbstractVector{<:Real}
-    return Z.center .+ Z.generators * unit_step.(Z.generators.' * d)
+    return Z.center .+ Z.generators * sign_cadlag.(Z.generators.' * d)
 end
 
 """
