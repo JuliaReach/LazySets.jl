@@ -1,6 +1,4 @@
-export EmptySet
-
-import Base:+, *
+export EmptySet, ∅
 
 """
     EmptySet <: LazySet
@@ -10,17 +8,22 @@ Type that represents the empty set, i.e. the set with no elements.
 struct EmptySet <: LazySet end
 
 """
-    dim(∅::EmptySet)
+    ∅
+
+Alias for the empty set.
+"""
+∅ = EmptySet
+
+"""
+    dim(S::EmptySet)
 
 Return the dimension of the empty set, which is -1 by convention.
 
 ### Input
 
-- `∅` -- an empty set
+- `S` -- an empty set
 """
-function dim(∅::EmptySet)
-    return -1
-end
+dim(S::EmptySet)::Int = -1
 
 """
     σ(d, ∅)
@@ -31,6 +34,6 @@ Return the support vector of an empty set.
 
 - `∅` -- an empty set
 """
-function σ(d::AbstractVector{Float64}, ∅::EmptySet)::Vector{Float64}
-    error("The support vector of an empty set does not exist")
+function σ(d::AbstractVector, S::EmptySet)
+    error("the support vector of an empty set does not exist")
 end
