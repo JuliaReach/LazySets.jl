@@ -18,9 +18,14 @@ export LazySet,
 
 Abstract type for a lazy set.
 
-Every concrete `LazySet` must define a `σ(d, X)`, representing the support
-vector of `X` in a given direction `d`, and `dim`, the ambient dimension
+### Notes
+
+Every concrete `LazySet` must define a function `σ(d, X)`, representing the
+support vector of `X` in a given direction `d`, and `dim`, the ambient dimension
 of the set `X`.
+
+`LazySet` types should be parameterized with a type `N`, typically `N<:Real`, to
+support computations with different numeric types.
 """
 abstract type LazySet end
 
@@ -39,11 +44,14 @@ include("ZeroSet.jl")
 include("Singleton.jl")
 include("Ball2.jl")
 include("BallInf.jl")
+include("Ball1.jl")
+include("Ballp.jl")
 include("Hyperrectangle.jl")
 #include("Polyhedron.jl")  # optional (long startup time!)
 include("HPolygon.jl")
 include("HPolygonOpt.jl")
 include("VPolygon.jl")
+include("Zonotope.jl")
 
 # =================================
 # Types representing set operations

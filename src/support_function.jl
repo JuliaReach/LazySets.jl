@@ -1,25 +1,35 @@
-# =======================================
-# Support function of an abstract LazySet
-# =======================================
+# =============================
+# Support function of a LazySet
+# =============================
 
 """
-    ρ(d::Vector{Float64}, sf::LazySet)::Float64
+    ρ(d::AbstractVector{N}, S::LazySet)::N where {N<:Real}
 
 Evaluate the support function of a set in a given direction.
 
 ### Input
 
-- `d`  -- a real vector, the direction investigated
-- `sf` -- a convex set
+- `d` -- direction
+- `S` -- convex set
 
 ### Output
 
-- `ρ(d, sf)` -- the support function
+The support function of the set `S` for the direction `d`.
 """
-function ρ(d::Vector{Float64}, sf::LazySet)::Float64
-    return dot(d, σ(d, sf))
+function ρ(d::AbstractVector{N}, S::LazySet)::N where {N<:Real}
+    return dot(d, σ(d, S))
 end
 
-# alias
+"""
+    support_function
+
+Alias for the support function ρ.
+"""
 support_function = ρ
+
+"""
+    support_vector
+
+Alias for the support vector σ.
+"""
 support_vector = σ

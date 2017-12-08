@@ -2,15 +2,20 @@ using Expokit
 
 import Base: *, size
 
-export SparseMatrixExp, ExponentialMap, size,
-       ProjectionSparseMatrixExp, ExponentialProjectionMap,
-       get_row, get_rows, get_column, get_columns
+export SparseMatrixExp,
+       ExponentialMap,
+       size,
+       ProjectionSparseMatrixExp,
+       ExponentialProjectionMap,
+       get_row,
+       get_rows,
+       get_column,
+       get_columns
 
 """
-    SparseMatrixExp
+    SparseMatrixExp{N<:Real}
 
-Type that represents the matrix exponential of a sparse matrix, and provides
-evaluation of its action on vectors.
+Type that represents the matrix exponential, ``\\exp(M)``, of a sparse matrix.
 
 ### Fields
 
@@ -18,29 +23,23 @@ evaluation of its action on vectors.
 
 ### Notes
 
-This class is provided for use with very large and very sparse matrices. The
-evaluation of the exponential matrix action over vectores relies on the
-Expokit package.
+This type is provided for use with very large and very sparse matrices.
+The evaluation of the exponential matrix action over vectors relies on the
+[Expokit](https://github.com/acroy/Expokit.jl) package.
 """
 struct SparseMatrixExp{N<:Real}
-    M::SparseMatrixCSC{N, Int64}
-
-    # default constructor
-    SparseMatrixExp{N}(M::SparseMatrixCSC{N, Int64}) where {N<:Real} = new{N}(M)
+    M::SparseMatrixCSC{N, Int}
 end
-# type-less convenience constructor
-SparseMatrixExp(M::SparseMatrixCSC{N, Int64}) where {N<:Real} =
-    SparseMatrixExp{N}(M)
 
-function size(spmexp::SparseMatrixExp)::Tuple{Int64,Int64}
+function size(spmexp::SparseMatrixExp)::Tuple{Int, Int}
     return size(spmexp.M)
 end
 
-function size(spmexp::SparseMatrixExp, ax::Int64)::Int64
+function size(spmexp::SparseMatrixExp, ax::Int)::Int
     return size(spmexp.M, ax)
 end
 
-function get_column(spmexp::SparseMatrixExp, j::Int64)::Vector{Float64}
+function get_column(spmexp::SparseMatrixExp, j::Int)::Vector{Float64}
     n = size(spmexp, 1)
     aux = zeros(n)
     aux[j] = 1.0
@@ -48,7 +47,7 @@ function get_column(spmexp::SparseMatrixExp, j::Int64)::Vector{Float64}
 end
 
 function get_columns(spmexp::SparseMatrixExp,
-                     J::AbstractArray)::SparseMatrixCSC{Float64, Int64}
+                     J::AbstractArray)::SparseMatrixCSC{Float64, Int}
     n = size(spmexp, 1)
     aux = zeros(n)
     ans = spzeros(n, length(J))
@@ -62,7 +61,7 @@ function get_columns(spmexp::SparseMatrixExp,
     return ans
 end
 
-function get_row(spmexp::SparseMatrixExp, i::Int64)::Matrix{Float64}
+function get_row(spmexp::SparseMatrixExp, i::Int)::Matrix{Float64}
     n = size(spmexp, 1)
     aux = zeros(n)
     aux[i] = 1.0
@@ -70,7 +69,7 @@ function get_row(spmexp::SparseMatrixExp, i::Int64)::Matrix{Float64}
 end
 
 function get_rows(spmexp::SparseMatrixExp,
-                  I::AbstractArray{Int64})::SparseMatrixCSC{Float64, Int64}
+                  I::AbstractArray{Int})::SparseMatrixCSC{Float64, Int}
     n = size(spmexp, 1)
     aux = zeros(n)
     ans = spzeros(length(I), n)
@@ -86,140 +85,186 @@ function get_rows(spmexp::SparseMatrixExp,
 end
 
 """
-    ExponentialMap <: LazySet
+    ExponentialMap{S<:LazySet} <: LazySet
 
-Type that represents the action of an exponential map on a set.
+Type that represents the action of an exponential map on a convex set.
 
 ### Fields
 
-- `spmexp` -- a matrix exponential
-- `X`      -- a convex set represented by its support function
+- `spmexp` -- sparse matrix exponential
+- `X`      -- convex set
 """
 struct ExponentialMap{S<:LazySet} <: LazySet
     spmexp::SparseMatrixExp
     X::S
 end
-ExponentialMap(spmexp, X::S) where {S<:LazySet} = ExponentialMap{S}(spmexp,X)
 
-# instantiate an exponential map from a sparse matrix exponential
+"""
+```
+    *(spmexp::SparseMatrixExp, X::LazySet)
+```
+
+Return the exponential map of a convex set from a sparse matrix exponential.
+
+### Input
+
+- `spmexp` -- sparse matrix exponential
+- `X`      -- convex set
+
+### Output
+
+The exponential map of the convex set.
+"""
 function *(spmexp::SparseMatrixExp, X::LazySet)
     return ExponentialMap(spmexp, X)
 end
 
 """
-    dim(em)
+    dim(em::ExponentialMap)::Int
 
-The ambient dimension of a ExponentialMap.
+Return the dimension of an exponential map.
 
 ### Input
 
 - `em` -- an ExponentialMap
+
+### Output
+
+The ambient dimension of the exponential map.
 """
-function dim(em::ExponentialMap)::Int64
+function dim(em::ExponentialMap)::Int
     return size(em.spmexp.M, 1)
 end
 
-# support vector of the exponential map
-function σ(d::Vector{Float64}, em::ExponentialMap)::AbstractVector{Float64}
-    v = expmv(1.0, em.spmexp.M.', d)          # v   <- exp(A') * d
-    res = expmv(1.0, em.spmexp.M, σ(v, em.X)) # res <- exp(A) * support_vector(v, S)
-    return res
+"""
+    σ(d::AbstractVector{Float64}, em::ExponentialMap)::AbstractVector{Float64}
+
+Return the support vector of the exponential map.
+
+### Input
+
+- `d`  -- direction
+- `em` -- exponential map
+
+### Output
+
+The support vector in the given direction.
+If the direction has norm zero, the result depends on the wrapped set.
+
+### Notes
+
+If ``E = \\exp(M)⋅S``, where ``M`` is a matrix and ``S`` is a convex set, it
+follows that ``σ(d, E) = \\exp(M)⋅σ(\\exp(M)^T d, S)`` for any direction ``d``.
+"""
+function σ(d::AbstractVector{Float64},
+           em::ExponentialMap)::AbstractVector{Float64}
+    v = expmv(1.0, em.spmexp.M.', d)           # v   <- exp(A') * d
+    return expmv(1.0, em.spmexp.M, σ(v, em.X)) # res <- exp(A) * σ(v, S)
 end
 
 """
-    ProjectionSparseMatrixExp
+    ProjectionSparseMatrixExp{N<:Real}
 
-Type that represents the projection of a SparseMatrixExp.
+Type that represents the projection of a sparse matrix exponential, i.e.,
+``L⋅\\exp(M)⋅R`` for a given sparse matrix ``M``.
 
 ### Fields
 
 - `L` -- left multiplication matrix
-- `E` -- the exponential of a sparse matrix
+- `E` -- sparse matrix exponential
 - `R` -- right multiplication matrix
-
-### Output
-
-A type that abstract the matrix operation `L * exp(E.M) * R`, for a given sparse
-matrix E.M.
 """
 struct ProjectionSparseMatrixExp{N<:Real}
-    L::SparseMatrixCSC{N, Int64}
+    L::SparseMatrixCSC{N, Int}
     spmexp::SparseMatrixExp{N}
-    R::SparseMatrixCSC{N, Int64}
-
-    # default constructor
-    ProjectionSparseMatrixExp{N}(L::SparseMatrixCSC{N, Int64},
-                                 spmexp::SparseMatrixExp{N},
-                                 R::SparseMatrixCSC{N, Int64}) where {N<:Real} =
-        new{N}(L, spmexp, R)
+    R::SparseMatrixCSC{N, Int}
 end
-# type-less convenience constructor
-ProjectionSparseMatrixExp(L::SparseMatrixCSC{N, Int64},
-                          spmexp::SparseMatrixExp{N},
-                          R::SparseMatrixCSC{N, Int64}) where {N<:Real} =
-    ProjectionSparseMatrixExp{N}(L, spmexp, R)
 
 """
-    ExponentialProjectionMap
+    ExponentialProjectionMap{S<:LazySet} <: LazySet
 
-Type that represents the application of the projection of a SparseMatrixExp over
-a given set.
+Type that represents the application of a projection of a sparse matrix
+exponential to a convex set.
 
 ### Fields
 
-- `spmexp`   -- the projection of an exponential map
-- `X`       -- a set represented by its support function
+- `spmexp` -- projection of a sparse matrix exponential
+- `X`      -- convex set
 """
 struct ExponentialProjectionMap{S<:LazySet} <: LazySet
     projspmexp::ProjectionSparseMatrixExp
     X::S
 end
-ExponentialProjectionMap(projspmexp, X::S) where {S<:LazySet} =
-    ExponentialProjectionMap{S}(projspmexp, X)
 
-# instantiate an exponential map projection from matrix multiplication
-function *(projspmexp::ProjectionSparseMatrixExp, X::LazySet)
+"""
+```
+    *(projspmexp::ProjectionSparseMatrixExp, X::LazySet)::ExponentialProjectionMap
+```
+
+Return the application of a projection of a sparse matrix exponential to a
+convex set.
+
+### Input
+
+- `projspmexp` -- projection of a sparse matrix exponential
+- `X`          -- convex set
+
+### Output
+
+The application of the projection of a sparse matrix exponential to the convex
+set.
+"""
+function *(projspmexp::ProjectionSparseMatrixExp,
+           X::LazySet)::ExponentialProjectionMap
     return ExponentialProjectionMap(projspmexp, X)
 end
 
 """
-    dim(eprojmap)
+    dim(eprojmap::ExponentialProjectionMap)::Int
 
-The ambient dimension of a ExponentialProjectionMap.
-
-It is given by the output dimension (left-most matrix).
+Return the dimension of a projection of an exponential map.
 
 ### Input
 
-- `eprojmap` -- an ExponentialProjectionMap
+- `eprojmap` -- projection of an exponential map
+
+### Output
+
+The ambient dimension of the projection of an exponential map.
 """
-function dim(eprojmap::ExponentialProjectionMap)
+function dim(eprojmap::ExponentialProjectionMap)::Int
     return size(eprojmap.projspmexp.L, 1)
 end
 
 """
-    σ(d, eprojmap)
+    σ(d::AbstractVector{Float64}, eprojmap::ExponentialProjectionMap)::AbstractVector{Float64}
 
-Support vector of an `ExponentialProjectionMap`.
+Return the support vector of a projection of an exponential map.
 
 ### Input
 
-- `d`         -- a direction
-- `eprojmap`  -- the projection of an exponential map
+- `d`        -- direction
+- `eprojmap` -- projection of an exponential map
 
-If `S = (LMR)B`, where `L` and `R` are dense matrices, `M` is a matrix
-exponential, and `B` is a set, it follows that:
-`σ(d, S) = LMR σ(R^T M^T L^T d, B)` for any direction `d`.
+### Output
+
+The support vector in the given direction.
+If the direction has norm zero, the result depends on the wrapped set.
+
+### Notes
+
+If ``S = (L⋅M⋅R)⋅X``, where ``L`` and ``R`` are matrices, ``M`` is a matrix
+exponential, and ``X`` is a set, it follows that
+``σ(d, S) = L⋅M⋅R⋅σ(R^T⋅M^T⋅L^T⋅d, X)`` for any direction ``d``.
 """
 function σ(d::AbstractVector{Float64},
-           eprojmap::ExponentialProjectionMap)::Vector{Float64}
+           eprojmap::ExponentialProjectionMap)::AbstractVector{Float64}
     daux = transpose(eprojmap.projspmexp.L) * d
     aux1 = expmv(1.0, eprojmap.projspmexp.spmexp.M.', daux)
     daux = transpose(eprojmap.projspmexp.R) * aux1
-    aux1 = σ(daux, eprojmap.X)
+    svec = σ(daux, eprojmap.X)
 
-    aux2 = eprojmap.projspmexp.R * aux1
+    aux2 = eprojmap.projspmexp.R * svec
     daux = expmv(1.0, eprojmap.projspmexp.spmexp.M, aux2)
-    aux2 = eprojmap.projspmexp.L * daux
-    return aux2
+    return eprojmap.projspmexp.L * daux
 end
