@@ -89,9 +89,9 @@ function σ(d::AbstractVector{<:Real}, B::BallInf)::AbstractVector{<:Real}
     #=
     We cannot use `sign.(d)`, since the built-in `sign` function is such that
     `sign(0) = 0`, instead of 1 as needed.
-    The function `unit_step.(d)` does what we want.
+    The function `sign_cadlag.(d)` does what we want.
     =#
-    return @. B.center + unit_step(d) * B.radius
+    return @. B.center + sign_cadlag(d) * B.radius
 end
 
 """
