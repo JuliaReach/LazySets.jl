@@ -30,7 +30,7 @@ The default constructor assumes that the given list of edges is sorted.
 It *does not perform* any sorting.
 Use `addconstraint!` to iteratively add the edges in a sorted way.
 
-- `HPolygonOpt(constraints_list::Vector{LinearConstraint{<:Real}}, ind::Int64)`
+- `HPolygonOpt(constraints_list::Vector{LinearConstraint{<:Real}}, ind::Int)`
   -- default constructor
 - `HPolygonOpt(constraints_list::Vector{LinearConstraint{<:Real}})`
   -- constructor without index
@@ -39,16 +39,16 @@ Use `addconstraint!` to iteratively add the edges in a sorted way.
 """
 mutable struct HPolygonOpt{N<:Real} <: LazySet
     constraints_list::Vector{LinearConstraint{N}}
-    ind::Int64
+    ind::Int
 
     # default constructor
     HPolygonOpt{N}(constraints_list::Vector{LinearConstraint{N}},
-                   ind::Int64) where {N<:Real} =
+                   ind::Int) where {N<:Real} =
         new{N}(constraints_list, ind)
 end
 # type-less convenience constructor
 HPolygonOpt(constraints_list::Vector{LinearConstraint{N}},
-            ind::Int64) where {N<:Real} =
+            ind::Int) where {N<:Real} =
     HPolygonOpt{N}(constraints_list, ind)
 
 # type-less convenience constructor without index
