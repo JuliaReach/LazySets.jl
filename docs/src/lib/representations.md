@@ -44,6 +44,7 @@ vertices_list(::BallInf)
 norm(::BallInf, ::Real=Inf)
 radius(::BallInf, ::Real=Inf)
 diameter(::BallInf, ::Real=Inf)
+∈(::AbstractVector{Float64}, ::BallInf{Float64})
 ```
 
 ### Manhattan norm ball

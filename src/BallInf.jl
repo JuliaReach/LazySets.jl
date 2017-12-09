@@ -1,11 +1,12 @@
 import Base.LinAlg:norm,
-       Base.Iterators.repeated
+       Base.∈
 
 export BallInf,
        vertices_list,
        norm,
        radius,
-       diameter
+       diameter,
+       ∈
 
 """
     BallInf{N<:Real} <: LazySet
@@ -195,4 +196,46 @@ of minimal volume with the same center.
 """
 function diameter(B::BallInf, p::Real=Inf)::Real
     return radius(B, p) * 2
+end
+
+"""
+    ∈(x::AbstractVector{N}, B::BallInf{N})::Bool where {N<:Real}
+
+Check whether a given point is contained in a ball in the infinity norm.
+
+### Input
+
+- `x` -- point/vector
+- `B` -- ball in the infinity norm
+
+### Output
+
+`true` iff ``x ∈ B``.
+
+### Algorithm
+
+Let ``B`` be an ``n``-dimensional ball in the infinity norm with radius ``r``
+and let ``c_i`` and ``x_i`` be the ball's center and the vector ``x`` in
+dimension ``i``, respectively.
+Then ``x ∈ B`` iff ``|c_i - x_i| ≤ r`` for all ``i=1,…,n``.
+
+### Examples
+
+```jldoctest
+julia> B = BallInf([1., 1.], 1.);
+
+julia> ∈([.5, -.5], B)
+false
+julia> ∈([.5, 1.5], B)
+true
+```
+"""
+function ∈(x::AbstractVector{N}, B::BallInf{N})::Bool where {N<:Real}
+    @assert length(x) == dim(B)
+    for i in eachindex(x)
+        if abs(B.center[i] - x[i]) > B.radius
+            return false
+        end
+    end
+    return true
 end
