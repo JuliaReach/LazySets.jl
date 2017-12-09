@@ -8,7 +8,7 @@ end
 # Utility functions
 
 ```@docs
-sign_cadlag(x::Float64)
+sign_cadlag
 jump2pi
-Base.:<=(u::AbstractVector{Float64}, v::AbstractVector{Float64})
+<=(::AbstractVector{Float64}, ::AbstractVector{Float64})
 ```

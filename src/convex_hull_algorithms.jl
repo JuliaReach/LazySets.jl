@@ -1,5 +1,5 @@
 """
-    convex_hull(points; [algorithm]::String="monotone_chain")
+    convex_hull(points::Vector{S}; [algorithm]::String="monotone_chain")::Vector{S} where {S<:AbstractVector{N}} where {N<:Real}
 
 Compute the convex hull of points in the plane.
 
@@ -38,12 +38,14 @@ julia> plot([Tuple(pi) for pi in points], seriestype=:scatter);
 julia> plot!(VPolygon(hull), alpha=0.2);
 ```
 """
-function convex_hull(points; algorithm::String="monotone_chain")
+function convex_hull(points::Vector{S};
+                     algorithm::String="monotone_chain"
+                    )::Vector{S} where {S<:AbstractVector{N}} where {N<:Real}
     return convex_hull!(copy(points), algorithm=algorithm)
 end
 
 """
-    convex_hull!(points; algorithm::String="monotone_chain")
+    convex_hull!(points::Vector{S}; [algorithm]::String="monotone_chain")::Vector{S} where {S<:AbstractVector{N}} where {N<:Real}
 
 Compute the convex hull of points in the plane, in-place.
 
@@ -55,11 +57,17 @@ Compute the convex hull of points in the plane, in-place.
 
     * `"monotone_chain"`
 
+### Output
+
+The convex hull as a list of 2D vectors with the coordinates of the points.
+
 ### Notes
 
 See the non-modifying version `convex_hull` for more details.
 """
-function convex_hull!(points; algorithm::String="monotone_chain")
+function convex_hull!(points::Vector{S};
+                      algorithm::String="monotone_chain"
+                     )::Vector{S} where {S<:AbstractVector{N}} where {N<:Real}
     length(points) == 1 || length(points) == 2 && return points
 
     if algorithm == "monotone_chain"
@@ -70,16 +78,20 @@ function convex_hull!(points; algorithm::String="monotone_chain")
 end
 
 """
-    right_turn(O, A, B)
+    right_turn(O::AbstractVector{N}, A::AbstractVector{N}, B::AbstractVector{N})::N where {N<:Real}
 
 Determine if the acute angle defined by the three points `O`, `A`, `B` in the
 plane is a right turn (counter-clockwise) with respect to the center `O`.
 
 ### Input
 
-- `O` -- center point
-- `A` -- one point
-- `B` -- another point
+- `O` -- 2D center point
+- `A` -- 2D one point
+- `B` -- 2D another point
+
+### Output
+
+Scalar representing the rotation.
 
 ### Algorithm
 
@@ -88,11 +100,14 @@ determine the sense of rotation. If the result is 0, the points are collinear;
 if it is positive, the three points constitute a positive angle of rotation
 around `O` from `A` to `B`; otherwise they constitute a negative angle.
 """
-@inline right_turn(O, A, B) =
-    (A[1] - O[1]) * (B[2] - O[2]) - (A[2] - O[2]) * (B[1] - O[1])
+@inline function right_turn(O::AbstractVector{N},
+                            A::AbstractVector{N},
+                            B::AbstractVector{N})::N where {N<:Real}
+    return (A[1] - O[1]) * (B[2] - O[2]) - (A[2] - O[2]) * (B[1] - O[1])
+end
 
 """
-    monotone_chain!(points::Vector{S}) where {S<:AbstractVector{N}} where {N<:Real}
+    monotone_chain!(points::Vector{S})::Vector{S} where {S<:AbstractVector{N}} where {N<:Real}
 
 Compute the convex hull of points in the plane using Andrew's monotone chain
 method.
@@ -122,7 +137,8 @@ construct the convex hull of a set of ``n`` points in the plane in
 For further details see
 [Monotone chain](https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain)
 """
-function monotone_chain!(points::Vector{S}) where {S<:AbstractVector{N}} where {N<:Real}
+function monotone_chain!(points::Vector{S}
+                        )::Vector{S} where {S<:AbstractVector{N}} where {N<:Real}
 
     @inline function build_hull!(semihull, iterator, points, zero_N)
         @inbounds for i in iterator

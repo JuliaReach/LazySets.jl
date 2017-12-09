@@ -17,17 +17,19 @@ Here ``‖ ⋅ ‖_p`` for ``1 ≤ p ≤ ∞`` denotes the vector ``p``-norm, de
 
 ### Fields
 
+- `p`      -- norm as a real scalar
 - `center` -- center of the ball as a real vector
 - `radius` -- radius of the ball as a scalar (``≥ 0``)
 
 ## Notes
 
-The special cases ``p=1``, ``p=2`` and ``p=∞`` fall back to the specialized types
-`Ball1`, `Ball2` and `BallInf` respectively.
+The special cases ``p=1``, ``p=2`` and ``p=∞`` fall back to the specialized
+types `Ball1`, `Ball2` and `BallInf`, respectively.
 
 ### Examples
 
-A five-dimensional ball in the ``p=3/2`` norm centered at the origin of radius 0.5:
+A five-dimensional ball in the ``p=3/2`` norm centered at the origin of radius
+0.5:
 
 ```jldoctest ballp_constructor
 julia> B = Ballp(3/2, zeros(5), 0.5)
@@ -71,7 +73,8 @@ struct Ballp{N<:Real} <: LazySet
     end
 end
 # type-less convenience constructor
-Ballp(p::Real, center::Vector{N}, radius::N) where {N<:Real} = Ballp{N}(p, center, radius)
+Ballp(p::Real, center::Vector{N}, radius::N) where {N<:Real} =
+    Ballp{N}(p, center, radius)
 
 """
     dim(B::Ballp)::Int 
@@ -86,7 +89,9 @@ Return the dimension of a Ballp.
 
 The ambient dimension of the ball.
 """
-dim(B::Ballp)::Int = length(B.center)
+function dim(B::Ballp)::Int
+    return length(B.center)
+end
 
 """
     σ(d::AbstractVector{N}, B::Ballp)::AbstractVector{N} where {N<:AbstractFloat}
@@ -101,6 +106,7 @@ Return the support vector of a `Ballp` in a given direction.
 ### Output
 
 The support vector in the given direction.
+If the direction has norm zero, the center of the ball is returned.
 
 ### Algorithm
 
@@ -109,18 +115,20 @@ The support vector of the unit ball in the ``p``-norm along direction ``d`` is:
 ```math
 σ_{\\mathcal{B}_p^n(0, 1)}(d) = \\dfrac{\\tilde{v}}{‖\\tilde{v}‖_q},
 ```
-where ``\\tilde{v}_i = \\frac{|d_i|^q}{d_i}`` if ``d_i ≠ 0`` and ``tilde{v}_i = 0``
-otherwise, for all ``i=1,…,n``, and ``q`` is the conjugate number of ``p``.
+where ``\\tilde{v}_i = \\frac{|d_i|^q}{d_i}`` if ``d_i ≠ 0`` and
+``tilde{v}_i = 0`` otherwise, for all ``i=1,…,n``, and ``q`` is the conjugate
+number of ``p``.
 By the affine transformation ``x = r\\tilde{x} + c``, one obtains that
 the support vector of ``\\mathcal{B}_p^n(c, r)`` is
 
 ```math
 σ_{\\mathcal{B}_p^n(c, r)}(d) = \\dfrac{v}{‖v‖_q},
 ```
-where ``v_i = c_i + r\\frac{|d_i|^q}{d_i}`` if ``d_i ≠ 0`` and ``v_i = 0`` otherwise,
-for all ``i = 1, …, n``.
+where ``v_i = c_i + r\\frac{|d_i|^q}{d_i}`` if ``d_i ≠ 0`` and ``v_i = 0``
+otherwise, for all ``i = 1, …, n``.
 """
-function σ(d::AbstractVector{N}, B::Ballp)::AbstractVector{N} where {N<:AbstractFloat}
+function σ(d::AbstractVector{N},
+           B::Ballp)::AbstractVector{N} where {N<:AbstractFloat}
     p = B.p
     q = p/(p-1)
     v = similar(d)

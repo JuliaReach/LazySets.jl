@@ -1,8 +1,8 @@
-import Base.<=
+import Base: <=, ∈
 
 export HPolygon,
        addconstraint!,
-       is_contained,
+       ∈,
        tovrep,
        vertices_list
 
@@ -36,7 +36,7 @@ HPolygon{N}() where {N<:Real} = HPolygon{N}(Vector{N}(0))
 HPolygon() = HPolygon{Float64}()
 
 """
-    addconstraint!(P::HPolygon{N}, constraint::LinearConstraint{N}) where {N<:Real}
+    addconstraint!(P::HPolygon{N}, constraint::LinearConstraint{N})::Void where {N<:Real}
 
 Add a linear constraint to a polygon in constraint representation, keeping the
 constraints sorted by their normal directions.
@@ -45,15 +45,20 @@ constraints sorted by their normal directions.
 
 - `P`          -- polygon
 - `constraint` -- linear constraint to add
+
+### Output
+
+Nothing.
 """
 function addconstraint!(P::HPolygon{N},
-                        constraint::LinearConstraint{N}) where {N<:Real}
+                        constraint::LinearConstraint{N})::Void where {N<:Real}
     i = length(P.constraints_list)
     while i > 0 && constraint.a <= P.constraints_list[i].a
         i -= 1
     end
     # here P.constraints_list[i] < constraint
     insert!(P.constraints_list, i+1, constraint)
+    return nothing
 end
 
 """
@@ -113,7 +118,7 @@ function σ(d::AbstractVector{<:Real}, P::HPolygon{N})::Vector{N} where {N<:Real
 end
 
 """
-    is_contained(x::AbstractVector{<:Real}, P::HPolygon)::Bool
+    ∈(x::AbstractVector{<:Real}, P::HPolygon)::Bool
 
 Return whether a given vector is contained in a polygon.
 
@@ -126,7 +131,7 @@ Return whether a given vector is contained in a polygon.
 
 Return `true` iff ``x ∈ P``.
 """
-function is_contained(x::AbstractVector{<:Real}, P::HPolygon)::Bool
+function ∈(x::AbstractVector{<:Real}, P::HPolygon)::Bool
     for c in P.constraints_list
         if !(dot(c.a, x) <= c.b)
             return false

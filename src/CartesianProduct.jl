@@ -1,8 +1,7 @@
-import Base.*
+import Base: *, ∈
 
 export CartesianProduct,
-       CartesianProductArray,
-       is_contained
+       CartesianProductArray
 
 """
     CartesianProduct{S1<:LazySet,S2<:LazySet} <: LazySet
@@ -98,7 +97,7 @@ function σ(d::AbstractVector{<:Real},
 end
 
 """
-    is_contained(x::AbstractVector{<:Real}, cp::CartesianProduct)::Bool
+    ∈(x::AbstractVector{<:Real}, cp::CartesianProduct)::Bool
 
 Return whether a given vector is contained in a Cartesian product set.
 
@@ -111,9 +110,9 @@ Return whether a given vector is contained in a Cartesian product set.
 
 Return `true` iff ``x ∈ cp``.
 """
-function is_contained(x::AbstractVector{<:Real}, cp::CartesianProduct)::Bool
-    return is_contained(view(x, 1:dim(cp.X)), cp.X) &&
-           is_contained(view(x, dim(cp.X)+1:length(x)), cp.Y)
+function ∈(x::AbstractVector{<:Real}, cp::CartesianProduct)::Bool
+    return ∈(view(x, 1:dim(cp.X)), cp.X) &&
+           ∈(view(x, dim(cp.X)+1:length(x)), cp.Y)
 end
 
 # ======================================
@@ -262,7 +261,7 @@ function σ(d::AbstractVector{<:Real},
 end
 
 """
-    is_contained(x::AbstractVector{<:Real}, cpa::CartesianProductArray)::Bool
+    ∈(x::AbstractVector{<:Real}, cpa::CartesianProductArray)::Bool
 
 Return whether a given vector is contained in a Cartesian product of a finite
 number of sets.
@@ -276,12 +275,11 @@ number of sets.
 
 Return `true` iff ``x ∈ cpa``.
 """
-function is_contained(x::AbstractVector{<:Real},
-                      cpa::CartesianProductArray)::Bool
+function ∈(x::AbstractVector{<:Real}, cpa::CartesianProductArray)::Bool
     jinit = 1
     for sj in cpa
         jend = jinit + dim(sj) - 1
-        if !is_contained(x[jinit:jend], sj)
+        if !∈(x[jinit:jend], sj)
             return false
         end
         jinit = jend + 1

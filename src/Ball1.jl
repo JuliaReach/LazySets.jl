@@ -62,7 +62,9 @@ Return the dimension of a `Ball1`.
 
 The ambient dimension of the ball.
 """
-dim(B::Ball1)::Int = length(B.center)
+function dim(B::Ball1)::Int
+    return length(B.center)
+end
 
 """
     σ(d::AbstractVector{N}, B::Ball1)::AbstractVector{N} where {N<:AbstractFloat}
@@ -78,7 +80,8 @@ Return the support vector of a `Ball1` in a given direction.
 
 Support vector in the given direction.
 """
-function σ(d::AbstractVector{N}, B::Ball1)::AbstractVector{N} where {N<:AbstractFloat}
+function σ(d::AbstractVector{N},
+           B::Ball1)::AbstractVector{N} where {N<:AbstractFloat}
     res = copy(B.center)
     imax = indmax(abs.(d)) 
     res[imax] = sign(d[imax]) * B.radius

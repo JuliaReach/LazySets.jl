@@ -26,7 +26,7 @@ MinkowskiSum(X::T1, Y::T2) where {T1<:LazySet, T2<:LazySet} =
     MinkowskiSum{T1,T2}(X, Y)
 
 """
-    +(X::LazySet, Y::LazySet)
+    +(X::LazySet, Y::LazySet)::MinkowskiSum
 
 Return the Minkowski sum of two convex sets.
 
@@ -39,7 +39,7 @@ Return the Minkowski sum of two convex sets.
 
 The Minkowski sum of the two convex sets.
 """
-function +(X::LazySet, Y::LazySet)
+function +(X::LazySet, Y::LazySet)::MinkowskiSum
     return MinkowskiSum(X, Y)
 end
 
@@ -175,7 +175,7 @@ function +(msa1::MinkowskiSumArray, msa2::MinkowskiSumArray)::MinkowskiSumArray
 end
 
 """
-    +(msa, vs)
+    +(msa::MinkowskiSumArray, ::VoidSet)::MinkowskiSumArray
 
 Returns the original array because addition with a void set is a no-op.
 

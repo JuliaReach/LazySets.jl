@@ -4,7 +4,7 @@ export sign_cadlag,
        jump2pi
 
 """
-    sign_cadlag(x::Real)
+    sign_cadlag(x::N)::N where {N<:Real}
 
 This function works like the sign function but is ``1`` for input ``0``.
 
@@ -14,11 +14,13 @@ This function works like the sign function but is ``1`` for input ``0``.
 
 ### Output
 
-``1`` if ``x ≥ 0``, ``0`` otherwise.
+``1`` if ``x ≥ 0``, ``-1`` otherwise.
 
 ### Notes
 
-This function can be used with vector-valued arguments via the dot operator.
+This is the sign function right-continuous at zero (see
+[càdlàg function](https://en.wikipedia.org/wiki/C%C3%A0dl%C3%A0g)).
+It can be used with vector-valued arguments via the dot operator.
 
 ### Examples
 
@@ -30,10 +32,12 @@ julia> sign_cadlag.([-0.6, 1.3, 0.0])
   1.0
 ```
 """
-sign_cadlag(x::Real) = ifelse(x < zero(x), oftype(one(x),-1), one(x))
+function sign_cadlag(x::N)::N where {N<:Real}
+    return x < zero(x) ? -one(x) : one(x)
+end
 
 """
-    jump2pi(x::Float64)
+    jump2pi(x::Float64)::Float64
 
 Return ``x + 2π`` if ``x`` is negative, otherwise return ``x``.
 
@@ -56,10 +60,12 @@ julia> jump2pi(0.5)
 0.5
 ```
 """
-jump2pi(x::Float64) = x < 0 ? 2.0 * pi + x : x
+function jump2pi(x::Float64)::Float64
+    x < 0.0 ? 2.0 * pi + x : x
+end
 
 """
-    u <= v
+    <=(u::AbstractVector{Float64}, v::AbstractVector{Float64})::Bool
 
 Compares two 2D vectors by their direction.
 
@@ -77,6 +83,6 @@ True iff ``\\arg(u) [2π] ≤ \\arg(v) [2π]``
 The argument is measured in counter-clockwise fashion, with the 0 being the
 direction (1, 0).
 """
-function <=(u::AbstractVector{Float64}, v::AbstractVector{Float64})
+function <=(u::AbstractVector{Float64}, v::AbstractVector{Float64})::Bool
     return jump2pi(atan2(u[2], u[1])) <= jump2pi(atan2(v[2], v[1]))
 end

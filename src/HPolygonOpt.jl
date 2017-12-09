@@ -1,8 +1,8 @@
-import Base.<=
+import Base: <=, ∈
 
 export HPolygonOpt,
        addconstraint!,
-       is_contained,
+       ∈,
        tovrep,
        vertices_list
 
@@ -60,7 +60,7 @@ HPolygonOpt(H::HPolygon{N}) where {N<:Real} =
     HPolygonOpt{N}(H.constraints_list, 1)
 
 """
-    addconstraint!(P::HPolygonOpt{N}, constraint::LinearConstraint{N}) where {N<:Real}
+    addconstraint!(P::HPolygonOpt{N}, constraint::LinearConstraint{N})::Void where {N<:Real}
 
 Add a linear constraint to an optimized polygon in constraint representation,
 keeping the constraints sorted by their normal directions.
@@ -69,14 +69,19 @@ keeping the constraints sorted by their normal directions.
 
 - `P`          -- optimized polygon
 - `constraint` -- linear constraint to add
+
+### Output
+
+Nothing.
 """
 function addconstraint!(P::HPolygonOpt{N},
-                        constraint::LinearConstraint{N}) where {N<:Real}
+                        constraint::LinearConstraint{N})::Void where {N<:Real}
     i = length(P.constraints_list)
     while i > 0 && constraint.a <= P.constraints_list[i].a
         i -= 1
     end
     insert!(P.constraints_list, i+1, constraint)
+    return nothing
 end
 
 """
@@ -155,7 +160,7 @@ function σ(d::AbstractVector{<:Real},
 end
 
 """
-    is_contained(x::AbstractVector{<:Real}, P::HPolygonOpt)::Bool
+    ∈(x::AbstractVector{<:Real}, P::HPolygonOpt)::Bool
 
 Return whether a given vector is contained in an optimized polygon.
 
@@ -168,8 +173,8 @@ Return whether a given vector is contained in an optimized polygon.
 
 Return `true` iff ``x ∈ P``.
 """
-function is_contained(x::AbstractVector{<:Real}, P::HPolygonOpt)::Bool
-    return is_contained(x, HPolygon(P.constraints_list))
+function ∈(x::AbstractVector{<:Real}, P::HPolygonOpt)::Bool
+    return ∈(x, HPolygon(P.constraints_list))
 end
 
 """

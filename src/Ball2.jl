@@ -86,8 +86,8 @@ Return the support vector of a 2-norm ball in a given direction.
 
 ### Output
 
-The support vector in the given direction. If the direction has norm zero, the
-origin is returned.
+The support vector in the given direction.
+If the direction has norm zero, the origin is returned.
 
 ### Notes
 
