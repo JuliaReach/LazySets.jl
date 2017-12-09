@@ -61,8 +61,9 @@ dim(::Ball1)
 
 ```@docs
 Ballp
-dim(B::Ballp)
-σ(d::AbstractVector{Float64}, B::Ballp)
+dim(::Ballp)
+σ(::AbstractVector{Float64}, ::Ballp)
+∈(::AbstractVector{Float64}, ::Ballp{Float64})
 ```
 
 ## Polygons

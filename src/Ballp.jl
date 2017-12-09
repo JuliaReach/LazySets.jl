@@ -1,3 +1,5 @@
+import Base.∈
+
 export Ballp
 
 """
@@ -138,4 +140,53 @@ function σ(d::AbstractVector{N},
     vnorm = norm(v, p)
     svec = vnorm != zero(N) ? @.(B.center + B.radius * (v/vnorm)) : B.center
     return svec
+end
+
+"""
+    ∈(x::AbstractVector{N}, B::Ballp{N})::Bool where {N<:Real}
+
+Check whether a given point is contained in a ball in the p-norm.
+
+### Input
+
+- `x` -- point/vector
+- `B` -- ball in the p-norm
+
+### Output
+
+`true` iff ``x ∈ B``.
+
+### Notes
+
+This implementation is worst-case optimized, i.e., it is optimistic and first
+computes (s. below) the whole sum before comparing to the radius.
+In applications where the point is typically far away from the ball, a fail-fast
+implementation with interleaved comparisons could be more efficient.
+
+### Algorithm
+
+Let ``B`` be an ``n``-dimensional ball in the p-norm with radius ``r`` and let
+``c_i`` and ``x_i`` be the ball's center and the vector ``x`` in dimension
+``i``, respectively.
+Then ``x ∈ B`` iff ``\\left( ∑_{i=1}^n |c_i - x_i|^p \\right)^{1/p} ≤ r``.
+
+### Examples
+
+```jldoctest
+julia> B = Ballp(1.5, [1., 1.], 1.)
+LazySets.Ballp{Float64}(1.5, [1.0, 1.0], 1.0)
+julia> ∈([.5, -.5], B)
+false
+julia> ∈([.5, 1.5], B)
+true
+```
+"""
+function ∈(x::AbstractVector{<:Real},
+           B::Ballp{N})::Bool where {N<:AbstractFloat}
+    @assert length(x) == dim(B)
+    sum = zero(N)
+    for i in eachindex(x)
+        sum += abs(B.center[i] - x[i])^B.p
+    end
+    return sum^(1./B.p) <= B.radius
 end
