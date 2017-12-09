@@ -32,6 +32,7 @@ support_vector
 Ball2
 dim(::Ball2)
 σ(::AbstractVector{Float64}, ::Ball2)
+∈(::AbstractVector{Float64}, ::Ball2{Float64})
 ```
 
 ### Infinity norm ball
