@@ -1,3 +1,5 @@
+import Base.∈
+
 export Ball1
 
 """
@@ -9,7 +11,7 @@ norm.
 It is defined as the set
 
 ```math
-\\mathcal{B}_1^n(c, r) = \\{ x ∈ \\mathbb{R}^n : ∑_{i=1}^n |x_i| ≤ r \\},
+\\mathcal{B}_1^n(c, r) = \\{ x ∈ \\mathbb{R}^n : ∑_{i=1}^n |c_i - x_i| ≤ r \\},
 ```
 where ``c ∈ \\mathbb{R}^n`` is its center and ``r ∈ \\mathbb{R}_+`` its radius.
 
@@ -67,7 +69,7 @@ function dim(B::Ball1)::Int
 end
 
 """
-    σ(d::AbstractVector{N}, B::Ball1)::AbstractVector{N} where {N<:AbstractFloat}
+    σ(d::AbstractVector{N}, B::Ball1)::AbstractVector{N} where {N<:Real}
 
 Return the support vector of a `Ball1` in a given direction.
 
@@ -86,4 +88,52 @@ function σ(d::AbstractVector{N},
     imax = indmax(abs.(d)) 
     res[imax] = sign(d[imax]) * B.radius
     return res
+end
+
+"""
+    ∈(x::AbstractVector{N}, B::Ball1{N})::Bool where {N<:Real}
+
+Check whether a given point is contained in a ball in the 1-norm.
+
+### Input
+
+- `x` -- point/vector
+- `B` -- ball in the 1-norm
+
+### Output
+
+`true` iff ``x ∈ B``.
+
+### Notes
+
+This implementation is worst-case optimized, i.e., it is optimistic and first
+computes (s. below) the whole sum before comparing to the radius.
+In applications where the point is typically far away from the ball, a fail-fast
+implementation with interleaved comparisons could be more efficient.
+
+### Algorithm
+
+Let ``B`` be an ``n``-dimensional ball in the 1-norm with radius ``r`` and let
+``c_i`` and ``x_i`` be the ball's center and the vector ``x`` in dimension
+``i``, respectively.
+Then ``x ∈ B`` iff ``∑_{i=1}^n |c_i - x_i| ≤ r``.
+
+### Examples
+
+```jldoctest
+julia> B = Ball1([1., 1.], 1.);
+
+julia> ∈([.5, -.5], B)
+false
+julia> ∈([.5, 1.5], B)
+true
+```
+"""
+function ∈(x::AbstractVector{N}, B::Ball1{N})::Bool where {N<:Real}
+    @assert length(x) == dim(B)
+    sum = zero(N)
+    for i in eachindex(x)
+        sum += abs(B.center[i] - x[i])
+    end
+    return sum <= B.radius
 end

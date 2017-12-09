@@ -53,6 +53,7 @@ diameter(::BallInf, ::Real=Inf)
 Ball1
 dim(::Ball1)
 σ(::AbstractVector{Float64}, ::Ball1)
+∈(::AbstractVector{Float64}, ::Ball1{Float64})
 ```
 
 ### p-norm ball
