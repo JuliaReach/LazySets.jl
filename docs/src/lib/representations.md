@@ -100,6 +100,7 @@ dim(::VPolygon)
 σ(::AbstractVector{Float64}, ::VPolygon)
 vertices_list(::VPolygon)
 singleton_list(::VPolygon)
+∈(::AbstractVector{Float64}, ::VPolygon{Float64})
 ```
 
 ## Lines and linear constraints

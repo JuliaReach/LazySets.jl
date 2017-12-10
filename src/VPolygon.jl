@@ -1,4 +1,4 @@
-import Base.<=
+import Base: <=, ∈
 
 export VPolygon,
        vertices_list,
@@ -131,4 +131,63 @@ List containing a singleton for each vertex.
 """
 function singleton_list(P::VPolygon{N})::Vector{Singleton{N}} where {N<:Real}
     return [Singleton(vi) for vi in P.vertices_list]
+end
+
+"""
+    ∈(x::AbstractVector{N}, P::VPolygon{N})::Bool where {N<:Real}
+
+Check whether a given point is contained in a polygon in vertex representation.
+
+### Input
+
+- `x` -- point/vector
+- `P` -- polygon in vertex representation
+
+### Output
+
+`true` iff ``x ∈ P``.
+
+### Algorithm
+
+This implementation exploits that the polygon's vertices are sorted in
+counter-clockwise fashion.
+Under this assumption we can just check if the vertex lies on the left of each
+edge, using the dot product.
+
+### Examples
+
+```jldoctest
+julia> P = VPolygon([[2.0, 3.0], [3.0, 1.0], [5.0, 1.0], [4.0, 5.0]];
+                    apply_convex_hull=false);
+
+julia> ∈([4.5, 3.1], P)
+false
+julia> ∈([4.5, 3.0], P)
+true
+julia> ∈([4.4, 3.4], P)  #  point lies on the edge -> floating point error
+false
+julia> P = VPolygon([[2//1, 3//1], [3//1, 1//1], [5//1, 1//1], [4//1, 5//1]];
+                     apply_convex_hull=false);
+
+julia> ∈([44//10, 34//10], P)  #  with rational numbers the answer is correct
+true
+```
+"""
+function ∈(x::AbstractVector{N}, P::VPolygon{N})::Bool where {N<:Real}
+    @assert length(x) == 2
+
+    @inline function side(x, u, v)
+        return (v[2] - u[2]) * (x[1] - u[1]) + (u[1] - v[1]) * (x[2] - u[2])
+    end
+
+    zero_N = zero(N)
+    if side(x, P.vertices_list[1], P.vertices_list[end]) < zero_N
+        return false
+    end
+    for i in 2:length(P.vertices_list)
+        if side(x, P.vertices_list[i], P.vertices_list[i-1]) < zero_N
+            return false
+        end
+    end
+    return true
 end
