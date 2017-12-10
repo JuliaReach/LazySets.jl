@@ -121,6 +121,7 @@ vertices_list(::Hyperrectangle)
 norm(::Hyperrectangle, ::Real=Inf)
 radius(::Hyperrectangle, ::Real=Inf)
 diameter(::Hyperrectangle, ::Real=Inf)
+∈(::AbstractVector{Float64}, ::Hyperrectangle{Float64})
 high(::Hyperrectangle)
 low(::Hyperrectangle)
 ```

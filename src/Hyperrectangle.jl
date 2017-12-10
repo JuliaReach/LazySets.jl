@@ -1,4 +1,5 @@
-import Base.LinAlg:norm
+import Base.LinAlg:norm,
+       Base.∈
 
 export Hyperrectangle,
        vertices_list,
@@ -6,7 +7,8 @@ export Hyperrectangle,
        radius,
        diameter,
        low,
-       high
+       high,
+       ∈
 
 """
     Hyperrectangle{N<:Real} <: LazySet
@@ -252,4 +254,46 @@ dimension.
 """
 function low(H::Hyperrectangle{N})::Vector{N} where {N<:Real}
     return H.center .- H.radius
+end
+
+"""
+    ∈(x::AbstractVector{N}, H::Hyperrectangle{N})::Bool where {N<:Real}
+
+Check whether a given point is contained in a hyperrectangle.
+
+### Input
+
+- `x` -- point/vector
+- `H` -- hyperrectangle
+
+### Output
+
+`true` iff ``x ∈ H``.
+
+### Algorithm
+
+Let ``H`` be an ``n``-dimensional hyperrectangle, ``c_i`` and ``r_i`` be
+the ball's center and radius and ``x_i`` be the vector ``x`` in dimension ``i``,
+respectively.
+Then ``x ∈ H`` iff ``|c_i - x_i| ≤ r_i`` for all ``i=1,…,n``.
+
+### Examples
+
+```jldoctest
+julia> H = Hyperrectangle([1.0, 1.0], [2.0, 3.0]);
+
+julia> ∈([-1.1, 4.1], H)
+false
+julia> ∈([-1.0, 4.0], H)
+true
+```
+"""
+function ∈(x::AbstractVector{N}, H::Hyperrectangle{N})::Bool where {N<:Real}
+    @assert length(x) == dim(H)
+    for i in eachindex(x)
+        if abs(H.center[i] - x[i]) > H.radius[i]
+            return false
+        end
+    end
+    return true
 end
