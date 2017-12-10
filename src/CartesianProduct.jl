@@ -31,7 +31,7 @@ struct CartesianProduct{S1<:LazySet,S2<:LazySet} <: LazySet
 end
 CartesianProduct(Xarr::Vector{S}) where {S<:LazySet} =
     (length(Xarr) == 0
-        ? VoidSet(1)
+        ? ∅
         : length(Xarr) == 1
             ? Xarr[1]
             : length(Xarr) == 2

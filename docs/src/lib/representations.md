@@ -133,13 +133,6 @@ EmptySet
 ZeroSet
 ```
 
-## DummySet
-
-```@docs
-DummySet
-```
-
-
 ## Singletons
 
 ```@docs

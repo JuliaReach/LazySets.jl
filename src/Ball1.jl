@@ -33,9 +33,9 @@ We evaluate the support vector in the East direction:
 
 ```jldoctest ball1_constructor
 julia> σ([0.,1], B)
-1-element Array{Float64,1}:
- 1.0
+2-element Array{Float64,1}:
  0.0
+ 1.0
 ```
 """
 struct Ball1{N<:Real} <: LazySet

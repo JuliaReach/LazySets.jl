@@ -38,7 +38,6 @@ include("helper_functions.jl")
 # ===============================
 # Types that inherit from LazySet
 # ===============================
-include("DummySet.jl")
 include("EmptySet.jl")
 include("ZeroSet.jl")
 include("Singleton.jl")

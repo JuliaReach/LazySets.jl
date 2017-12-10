@@ -1,6 +1,6 @@
 import Base.+
 
-export MinkowskiSum,
+export MinkowskiSum, ⊕,
        MinkowskiSumArray
 
 """
@@ -40,6 +40,13 @@ Convenience constructor for Minkowski sum.
 The symbolic Minkowski sum of ``X`` and ``Y``.
 """
 +(X::LazySet, Y::LazySet) = MinkowskiSum(X, Y)
+
+"""
+    ⊕
+
+Unicode character for the Minkowski sum.
+"""
+⊕ = MinkowskiSum
 
 """
     X + ∅
@@ -215,6 +222,10 @@ Returns the original array because addition with an empty set is a no-op.
 - `Z`  -- a Zero set
 """
 function +(msa::MinkowskiSumArray, Z::ZeroSet)::MinkowskiSumArray
+    return msa
+end
+
+function +(Z::ZeroSet, msa::MinkowskiSumArray)::MinkowskiSumArray
     return msa
 end
 

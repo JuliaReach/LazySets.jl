@@ -10,9 +10,9 @@ struct EmptySet <: LazySet end
 """
     ∅
 
-Alias for the empty set.
+An `EmptySet` instance.
 """
-∅ = EmptySet
+∅ = EmptySet()
 
 """
     dim(S::EmptySet)
