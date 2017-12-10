@@ -144,6 +144,7 @@ ZeroSet
 Singleton
 dim(::Singleton)
 σ(::AbstractVector{Float64}, ::Singleton)
+∈(::AbstractVector{Float64}, ::Singleton{Float64})
 ```
 
 ## Zonotopes
