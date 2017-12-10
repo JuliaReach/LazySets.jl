@@ -24,3 +24,6 @@ msa = MinkowskiSumArray([B, 2.*B, 3.*B])
 # testing that the emptyset is neutral for the convex hull
 @test CH(B, ∅) == B
 @test CH(∅, B) == B
+
+# test convex hull of empty set with itself
+@test CH(∅, ∅) == ∅

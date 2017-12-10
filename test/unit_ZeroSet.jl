@@ -1,0 +1,8 @@
+Z = ZeroSet(2)
+B = BallInf(ones(2), 1.)
+
+# testing that the zero set is neutral element for the Minkowski sum
+@test B ⊕ Z == B && Z ⊕ B == B
+
+cpa = MinkowskiSumArray([B, 2.*B, 3.*B])
+@test cpa ⊕ Z == cpa && Z ⊕ cpa == cpa

@@ -65,6 +65,8 @@ The given set because the empty set is neutral for the convex hull.
 """
 ConvexHull(∅::EmptySet, X::LazySet)::LazySet = X
 
+ConvexHull(::EmptySet, ::EmptySet)::LazySet = ∅
+
 """
     dim(ch::ConvexHull)::Int
 

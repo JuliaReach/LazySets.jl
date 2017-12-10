@@ -77,6 +77,10 @@ Minkowski sum.
 """
 +(∅::EmptySet, X::LazySet) = EmptySet()
 
++(X::LazySet, ::ZeroSet) = X
+
++(::ZeroSet, X::LazySet) = X
+
 """
     dim(ms::MinkowskiSum)::Int
 
