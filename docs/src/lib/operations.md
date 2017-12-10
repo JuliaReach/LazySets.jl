@@ -73,6 +73,7 @@ dim(::LinearMap)
 σ(::AbstractVector{Float64}, ::LinearMap)
 *(::AbstractMatrix{Float64}, ::LazySet)
 *(::Real, ::LazySet)
+∈(::AbstractVector{Float64}, ::LinearMap{<:LazySet, Float64})
 ```
 
 ### Exponential Map

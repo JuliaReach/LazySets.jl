@@ -1,4 +1,4 @@
-import Base.*
+import Base: *, ∈
 
 export LinearMap
 
@@ -123,4 +123,39 @@ that ``σ(d, L) = M⋅σ(M^T d, S)`` for any direction ``d``.
 """
 function σ(d::AbstractVector{<:Real}, lm::LinearMap)::AbstractVector{<:Real}
     return lm.M * σ(lm.M.' * d, lm.sf)
+end
+
+"""
+    ∈(x::AbstractVector{N}, lm::LinearMap{<:LazySet, N})::Bool where {N<:Real}
+
+Check whether a given point is contained in a linear map of a convex set.
+
+### Input
+
+- `x`  -- point/vector
+- `lm` -- linear map of a convex set
+
+### Output
+
+`true` iff ``x ∈ lm``.
+
+### Algorithm
+
+This implementation inverts the matrix: ``x ∈ M⋅S`` iff ``M^{-1}⋅x ∈ S``.
+
+### Examples
+
+```jldoctest
+julia> lm = LinearMap([2.0 0.0; 0.0 1.0], BallInf([1., 1.], 1.));
+
+julia> ∈([5.0, 1.0], lm)
+false
+julia> ∈([3.0, 1.0], lm)
+true
+```
+"""
+function ∈(x::AbstractVector{N},
+           lm::LinearMap{<:LazySet, N})::Bool where {N<:Real}
+    @assert length(x) == dim(lm)
+    return ∈(inv(lm.M) * x, lm.sf)
 end
