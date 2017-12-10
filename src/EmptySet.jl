@@ -12,7 +12,7 @@ struct EmptySet <: LazySet end
 
 An `EmptySet` instance.
 """
-∅ = EmptySet()
+const ∅ = EmptySet()
 
 """
     dim(S::EmptySet)
