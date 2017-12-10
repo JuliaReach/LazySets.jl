@@ -58,7 +58,7 @@ Right Minkowski sum of a set by an empty set.
 - `X` -- a convex set
 - `∅` -- an empty set
 
-## Output
+### Output
 
 An empty set, because the empty set is the absorbing element for the
 Minkowski sum.
@@ -75,7 +75,7 @@ Left Minkowski sum of a set by an empty set.
 - `X` -- a convex set
 - `∅` -- an empty set
 
-## Output
+### Output
 
 An empty set, because the empty set is the absorbing element for the
 Minkowski sum.

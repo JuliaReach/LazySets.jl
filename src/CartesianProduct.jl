@@ -78,7 +78,7 @@ Right multiplication of a set by an empty set.
 - `X` -- a convex set
 - `E` -- an empty set
 
-## Output
+### Output
 
 An empty set, because the empty set is the absorbing element for the
 Cartesian product.
@@ -98,7 +98,7 @@ Left multiplication of a set by an empty set.
 - `X` -- a convex set
 - `E` -- an empty set
 
-## Output
+### Output
 
 An empty set, because the empty set is the absorbing element for the
 Cartesian product.
@@ -252,7 +252,7 @@ Right multiplication of a `CartesianProductArray` by an empty set.
 - `cpa` -- Cartesian product array
 - `E`   -- an empty set
 
-## Output
+### Output
 
 An empty set, because the empty set is the absorbing element for the
 Cartesian product.
@@ -273,7 +273,7 @@ Left multiplication of a set by an empty set.
 - `X` -- a convex set
 - `E` -- an empty set
 
-## Output
+### Output
 
 An empty set, because the empty set is the absorbing element for the
 Cartesian product.
