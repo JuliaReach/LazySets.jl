@@ -156,4 +156,5 @@ dim(::Zonotope)
 σ(d::AbstractVector{Float64}, Z::Zonotope)
 vertices_list(::Zonotope{Float64})
 order(::Zonotope)
+∈(::AbstractVector{Float64}, ::Zonotope{Float64})
 ```
