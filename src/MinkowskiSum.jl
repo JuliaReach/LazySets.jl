@@ -41,12 +41,7 @@ The symbolic Minkowski sum of ``X`` and ``Y``.
 """
 +(X::LazySet, Y::LazySet) = MinkowskiSum(X, Y)
 
-"""
-    ⊕
-
-Unicode character for the Minkowski sum.
-"""
-⊕ = MinkowskiSum
+⊕(X::LazySet, Y::LazySet) = +(X, Y)
 
 """
     X + ∅
@@ -72,8 +67,8 @@ Left Minkowski sum of a set by an empty set.
 
 ### Input
 
-- `X` -- a convex set
 - `∅` -- an empty set
+- `X` -- a convex set
 
 ### Output
 
@@ -228,6 +223,40 @@ end
 function +(Z::ZeroSet, msa::MinkowskiSumArray)::MinkowskiSumArray
     return msa
 end
+
+"""
+    +(msa::MinkowskiSumArray, ∅::EmptySet)
+
+Right Minkowski sum of a set by an empty set.
+
+### Input
+
+- `msa` -- Minkowski sum array
+- `∅`   -- an empty set
+
+### Output
+
+An empty set, because the empty set is the absorbing element for the
+Minkowski sum.
+"""
++(msa::MinkowskiSumArray, ∅::EmptySet) = EmptySet()
+
+"""
+    +(∅::EmptySet, msa::MinkowskiSumArray)
+
+Left Minkowski sum of a set by an empty set.
+
+### Input
+
+- `∅` -- an empty set
+- `msa` -- Minkowski sum array
+
+### Output
+
+An empty set, because the empty set is the absorbing element for the
+Minkowski sum.
+"""
++(∅::EmptySet, msa::MinkowskiSumArray) = EmptySet()
 
 """
     dim(msa::MinkowskiSumArray)::Int
