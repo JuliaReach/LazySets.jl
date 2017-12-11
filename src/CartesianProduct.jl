@@ -83,9 +83,9 @@ Right multiplication of a set by an empty set.
 An empty set, because the empty set is the absorbing element for the
 Cartesian product.
 """
-*(X::LazySet, E::EmptySet) = EmptySet()
+*(X::LazySet, E::EmptySet) = ∅
 
-×(X::LazySet, E::EmptySet) = EmptySet()
+×(X::LazySet, E::EmptySet) = ∅
 
 """
 ```
@@ -103,9 +103,9 @@ Left multiplication of a set by an empty set.
 An empty set, because the empty set is the absorbing element for the
 Cartesian product.
 """
-*(E::EmptySet, X::LazySet) = EmptySet()
+*(E::EmptySet, X::LazySet) = ∅
 
-×(E::EmptySet, X::LazySet) = EmptySet()
+×(E::EmptySet, X::LazySet) = ∅
 
 """
     dim(cp::CartesianProduct)::Int
@@ -257,9 +257,9 @@ Right multiplication of a `CartesianProductArray` by an empty set.
 An empty set, because the empty set is the absorbing element for the
 Cartesian product.
 """
-*(cpa::CartesianProductArray, E::EmptySet) = EmptySet()
+*(cpa::CartesianProductArray, E::EmptySet) = ∅
 
-×(cpa::CartesianProductArray, E::EmptySet) = EmptySet()
+×(cpa::CartesianProductArray, E::EmptySet) = ∅
 
 """
 ```
@@ -278,9 +278,9 @@ Left multiplication of a set by an empty set.
 An empty set, because the empty set is the absorbing element for the
 Cartesian product.
 """
-*(S::EmptySet, cpa::CartesianProductArray) = EmptySet()
+*(S::EmptySet, cpa::CartesianProductArray) = ∅
 
-×(S::EmptySet, cpa::CartesianProductArray) = EmptySet()
+×(S::EmptySet, cpa::CartesianProductArray) = ∅
 
 """
 ```

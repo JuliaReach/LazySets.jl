@@ -58,7 +58,7 @@ Right Minkowski sum of a set by an empty set.
 An empty set, because the empty set is the absorbing element for the
 Minkowski sum.
 """
-+(X::LazySet, ∅::EmptySet) = EmptySet()
++(X::LazySet, ∅::EmptySet) = ∅
 
 """
     ∅ + X
@@ -75,7 +75,7 @@ Left Minkowski sum of a set by an empty set.
 An empty set, because the empty set is the absorbing element for the
 Minkowski sum.
 """
-+(∅::EmptySet, X::LazySet) = EmptySet()
++(∅::EmptySet, X::LazySet) = ∅
 
 +(X::LazySet, ::ZeroSet) = X
 
@@ -243,7 +243,7 @@ Right Minkowski sum of a set by an empty set.
 An empty set, because the empty set is the absorbing element for the
 Minkowski sum.
 """
-+(msa::MinkowskiSumArray, ∅::EmptySet) = EmptySet()
++(msa::MinkowskiSumArray, ∅::EmptySet) = ∅
 
 """
     +(∅::EmptySet, msa::MinkowskiSumArray)
@@ -260,7 +260,7 @@ Left Minkowski sum of a set by an empty set.
 An empty set, because the empty set is the absorbing element for the
 Minkowski sum.
 """
-+(∅::EmptySet, msa::MinkowskiSumArray) = EmptySet()
++(∅::EmptySet, msa::MinkowskiSumArray) = ∅
 
 """
     dim(msa::MinkowskiSumArray)::Int
