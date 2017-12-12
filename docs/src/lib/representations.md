@@ -121,10 +121,16 @@ high(::Hyperrectangle)
 low(::Hyperrectangle)
 ```
 
-## VoidSets
+## EmptySet
 
 ```@docs
-VoidSet
+EmptySet
+```
+
+## ZeroSet
+
+```@docs
+ZeroSet
 ```
 
 ## Singletons

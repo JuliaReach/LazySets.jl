@@ -52,18 +52,18 @@ d = [-1., -1., 1.]
 d = [-1., -1., -1.]
 @test σ(d, c) == [-2., -5., 2.]
 
-# Test Cartesian Product with VoidSet
+# Test Cartesian Product with EmptySet
 s = Singleton([1.])
-cs1 = VoidSet(1)*s
-cs2 = s*VoidSet(1)
-@test cs1 isa VoidSet
-@test cs2 isa VoidSet
+cs1 = ∅ * s
+cs2 = s * ∅
+@test cs1 isa EmptySet
+@test cs2 isa EmptySet
 
 # Test Cartesian Product of an array
 # 0-elements
 as = LazySet[]
 cs = CartesianProduct(as)
-@test cs isa VoidSet
+@test cs isa EmptySet
 # 1-element
 as = LazySet[Singleton([1.])]
 cs = CartesianProduct(as)
@@ -87,6 +87,7 @@ addconstraint!(p2, LinearConstraint([-1., 0.], 1.))
 addconstraint!(p2, LinearConstraint([0., 1.], 1.))
 addconstraint!(p2, LinearConstraint([0., -1.], 1.))
 cp = CartesianProduct(p1, p2)
+
 @test ∈([0., 0., 0., 0.], cp)
 @test ∈([4., 2., 1., 0.], cp)
 @test ∈([2., 4., -1., 0.], cp)
@@ -103,4 +104,3 @@ cp = CartesianProduct(p1, p2)
 @test !∈([2., 3., 3., 1.], cp)
 @test !∈([0., 0., 3., 1.], cp)
 @test !∈([1., 1., 3., 1.], cp)
-

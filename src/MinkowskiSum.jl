@@ -1,6 +1,6 @@
 import Base.+
 
-export MinkowskiSum,
+export MinkowskiSum, ⊕,
        MinkowskiSumArray
 
 """
@@ -26,22 +26,64 @@ MinkowskiSum(X::T1, Y::T2) where {T1<:LazySet, T2<:LazySet} =
     MinkowskiSum{T1,T2}(X, Y)
 
 """
-    +(X::LazySet, Y::LazySet)::MinkowskiSum
+    X + Y
 
-Return the Minkowski sum of two convex sets.
+Convenience constructor for Minkowski sum.
 
 ### Input
 
-- `X` -- convex set
-- `Y` -- convex set
+- `X` -- a convex set
+- `Y` -- another convex set
 
 ### Output
 
-The Minkowski sum of the two convex sets.
+The symbolic Minkowski sum of ``X`` and ``Y``.
 """
-function +(X::LazySet, Y::LazySet)::MinkowskiSum
-    return MinkowskiSum(X, Y)
-end
++(X::LazySet, Y::LazySet) = MinkowskiSum(X, Y)
+
+⊕(X::LazySet, Y::LazySet) = +(X, Y)
+
+"""
+    X + ∅
+
+Right Minkowski sum of a set by an empty set.
+
+### Input
+
+- `X` -- a convex set
+- `∅` -- an empty set
+
+### Output
+
+An empty set, because the empty set is the absorbing element for the
+Minkowski sum.
+"""
++(X::LazySet, ∅::EmptySet) = ∅
+
+"""
+    ∅ + X
+
+Left Minkowski sum of a set by an empty set.
+
+### Input
+
+- `∅` -- an empty set
+- `X` -- a convex set
+
+### Output
+
+An empty set, because the empty set is the absorbing element for the
+Minkowski sum.
+"""
++(∅::EmptySet, X::LazySet) = ∅
+
++(::EmptySet, ::EmptySet) = ∅
+
++(X::LazySet, ::ZeroSet) = X
+
++(X::ZeroSet, ::ZeroSet) = X
+
++(::ZeroSet, X::LazySet) = X
 
 """
     dim(ms::MinkowskiSum)::Int
@@ -56,9 +98,7 @@ Return the dimension of a Minkowski sum.
 
 The ambient dimension of the Minkowski sum.
 """
-function dim(ms::MinkowskiSum)::Int
-    return dim(ms.X)
-end
+dim(ms::MinkowskiSum)::Int = dim(ms.X)
 
 """
     σ(d::AbstractVector{<:Real}, ms::MinkowskiSum)::AbstractVector{<:Real}
@@ -175,18 +215,56 @@ function +(msa1::MinkowskiSumArray, msa2::MinkowskiSumArray)::MinkowskiSumArray
 end
 
 """
-    +(msa::MinkowskiSumArray, ::VoidSet)::MinkowskiSumArray
+    +(msa::MinkowskiSumArray, Z::ZeroSet)::MinkowskiSumArray
 
-Returns the original array because addition with a void set is a no-op.
+Returns the original array because addition with an empty set is a no-op.
 
 ### Input
 
 - `msa` -- Minkowski sum array
-- `vs` -- void set
+- `Z`  -- a Zero set
 """
-function +(msa::MinkowskiSumArray, ::VoidSet)::MinkowskiSumArray
+function +(msa::MinkowskiSumArray, Z::ZeroSet)::MinkowskiSumArray
     return msa
 end
+
+function +(Z::ZeroSet, msa::MinkowskiSumArray)::MinkowskiSumArray
+    return msa
+end
+
+"""
+    +(msa::MinkowskiSumArray, ∅::EmptySet)
+
+Right Minkowski sum of a set by an empty set.
+
+### Input
+
+- `msa` -- Minkowski sum array
+- `∅`   -- an empty set
+
+### Output
+
+An empty set, because the empty set is the absorbing element for the
+Minkowski sum.
+"""
++(msa::MinkowskiSumArray, ∅::EmptySet) = ∅
+
+"""
+    +(∅::EmptySet, msa::MinkowskiSumArray)
+
+Left Minkowski sum of a set by an empty set.
+
+### Input
+
+- `∅` -- an empty set
+- `msa` -- Minkowski sum array
+
+### Output
+
+An empty set, because the empty set is the absorbing element for the
+Minkowski sum.
+"""
++(∅::EmptySet, msa::MinkowskiSumArray) = ∅
 
 """
     dim(msa::MinkowskiSumArray)::Int
