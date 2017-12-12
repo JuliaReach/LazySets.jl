@@ -24,6 +24,7 @@ MinkowskiSum
 dim(::MinkowskiSum)
 σ(::AbstractVector{Float64}, ::MinkowskiSum)
 Base.:+(::LazySet, ::LazySet)
+⊕
 ```
 
 ### ``n``-ary Minkowski Sum
@@ -35,7 +36,7 @@ dim(::MinkowskiSumArray)
 Base.:+(::MinkowskiSumArray, ::LazySet)
 Base.:+(::LazySet, ::MinkowskiSumArray)
 Base.:+(::MinkowskiSumArray, ::MinkowskiSumArray)
-Base.:+(::MinkowskiSumArray, ::VoidSet)
+Base.:+(::MinkowskiSumArray, ::ZeroSet)
 ```
 
 ## Cartesian Product

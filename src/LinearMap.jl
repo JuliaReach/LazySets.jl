@@ -34,13 +34,13 @@ Return the linear map of a convex set.
 
 ### Output
 
-The linear map of the convex set.
+If the matrix is null, a `ZeroSet` is returned; otherwise a lazy linear map.
 """
-function *(M::AbstractMatrix{<:Real}, S::LazySet)
+function *(M::AbstractMatrix, X::LazySet)
     if findfirst(M) != 0
-        return LinearMap(M, S)
+        return LinearMap(M, X)
     else
-        return VoidSet(dim(S))
+        return ZeroSet(dim(X))
     end
 end
 
@@ -64,14 +64,24 @@ function *(a::Real, S::LazySet)::LinearMap
     return LinearMap(sparse(a*I, dim(S)), S)
 end
 
-# linear map of a void set (has to be overridden due to polymorphism reasons)
-function *(M::AbstractMatrix, sf::VoidSet)
-    if dim(sf) == size(M, 2)
-        return VoidSet(size(M, 1))
-    else
-        throw(DimensionMismatch("a VoidSet of dimension " * string(eval(dim(sf))) *
-                " cannot be multiplied by a " * string(eval(size(M))) * " matrix"))
-    end
+"""
+```
+    *(M::AbstractMatrix, Z::ZeroSet)
+````
+Linear map of a zero set.
+
+### Input
+
+- `M` -- abstract matrix
+- `Z` -- zero set
+
+### Output
+
+The zero set with the output dimension of the linear map. 
+"""
+function *(M::AbstractMatrix, Z::ZeroSet)
+    @assert dim(Z) == size(M, 2)
+    return ZeroSet(size(M, 1))
 end
 
 """

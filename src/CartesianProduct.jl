@@ -1,4 +1,4 @@
-import Base.*
+import Base:*, ×
 
 export CartesianProduct,
        CartesianProductArray,
@@ -20,10 +20,10 @@ The Cartesian product of three elements is obtained recursively.
 See also `CartesianProductArray` for an implementation of a Cartesian product of
 many sets without recursion, instead using an array.
 
-- `CartesianProduct{S1<:LazySet,S2<:LazySet}` -- default constructor
+- `CartesianProduct{S1<:LazySet,S2<:LazySet}`            -- default constructor
 
-- `CartesianProduct(Xarr::Vector{S}) where {S<:LazySet}`
-  -- constructor from an array of convex sets
+- `CartesianProduct(Xarr::Vector{S}) where {S<:LazySet}` -- constructor from an
+                                                            array of convex sets
 """
 struct CartesianProduct{S1<:LazySet,S2<:LazySet} <: LazySet
     X::S1
@@ -31,7 +31,7 @@ struct CartesianProduct{S1<:LazySet,S2<:LazySet} <: LazySet
 end
 CartesianProduct(Xarr::Vector{S}) where {S<:LazySet} =
     (length(Xarr) == 0
-        ? VoidSet(1)
+        ? ∅
         : length(Xarr) == 1
             ? Xarr[1]
             : length(Xarr) == 2
@@ -58,6 +58,56 @@ The Cartesian product of the two convex sets.
 function *(X::LazySet, Y::LazySet)::CartesianProduct
     CartesianProduct(X, Y)
 end
+
+"""
+    ×
+
+Alias for the binary Cartesian product.
+"""
+×(X::LazySet, Y::LazySet) = CartesianProduct(X, Y)
+
+"""
+```
+    *(X::LazySet, E::EmptySet)
+```
+
+Right multiplication of a set by an empty set.
+
+### Input
+
+- `X` -- a convex set
+- `E` -- an empty set
+
+### Output
+
+An empty set, because the empty set is the absorbing element for the
+Cartesian product.
+"""
+*(X::LazySet, E::EmptySet) = ∅
+
+*(::EmptySet, ::EmptySet) = ∅
+
+×(X::LazySet, E::EmptySet) = ∅
+
+"""
+```
+    *(E::EmptySet, X::LazySet)
+```
+Left multiplication of a set by an empty set.
+
+### Input
+
+- `X` -- a convex set
+- `E` -- an empty set
+
+### Output
+
+An empty set, because the empty set is the absorbing element for the
+Cartesian product.
+"""
+*(E::EmptySet, X::LazySet) = ∅
+
+×(E::EmptySet, X::LazySet) = ∅
 
 """
     dim(cp::CartesianProduct)::Int
@@ -195,6 +245,47 @@ end
 
 """
 ```
+    *(cpa::CartesianProductArray, E::EmptySet)
+```
+Right multiplication of a `CartesianProductArray` by an empty set.
+
+### Input
+
+- `cpa` -- Cartesian product array
+- `E`   -- an empty set
+
+### Output
+
+An empty set, because the empty set is the absorbing element for the
+Cartesian product.
+"""
+*(cpa::CartesianProductArray, E::EmptySet) = ∅
+
+×(cpa::CartesianProductArray, E::EmptySet) = ∅
+
+"""
+```
+    *(S::EmptySet, cpa::CartesianProductArray)
+```
+
+Left multiplication of a set by an empty set.
+
+### Input
+
+- `X` -- a convex set
+- `E` -- an empty set
+
+### Output
+
+An empty set, because the empty set is the absorbing element for the
+Cartesian product.
+"""
+*(S::EmptySet, cpa::CartesianProductArray) = ∅
+
+×(S::EmptySet, cpa::CartesianProductArray) = ∅
+
+"""
+```
     *(cpa1::CartesianProductArray, cpa2::CartesianProductArray)::CartesianProductArray
 ```
 
@@ -211,6 +302,12 @@ product.
 The modified first Cartesian product.
 """
 function *(cpa1::CartesianProductArray,
+           cpa2::CartesianProductArray)::CartesianProductArray
+    append!(cpa1.sfarray, cpa2.sfarray)
+    return cpa1
+end
+
+function ×(cpa1::CartesianProductArray,
            cpa2::CartesianProductArray)::CartesianProductArray
     append!(cpa1.sfarray, cpa2.sfarray)
     return cpa1

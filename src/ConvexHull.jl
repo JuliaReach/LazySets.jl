@@ -34,6 +34,40 @@ Alias for `ConvexHull`.
 CH = ConvexHull
 
 """
+    ConvexHull(X::LazySet, ∅::EmptySet)::LazySet
+
+Convex hull of a set with the empty set from the right.
+
+### Input
+
+- `X` -- a convex set
+- `∅` -- an empty set
+
+### Output
+
+The given set because the empty set is neutral for the convex hull.
+"""
+ConvexHull(X::LazySet, ∅::EmptySet)::LazySet = X
+
+"""
+    ConvexHull(∅::EmptySet, X::LazySet)::LazySet
+
+Convex hull of a set with the empty set from the left.
+
+### Input
+
+- `∅` -- an empty set
+- `X` -- a convex set
+
+### Output
+
+The given set because the empty set is neutral for the convex hull.
+"""
+ConvexHull(∅::EmptySet, X::LazySet)::LazySet = X
+
+ConvexHull(::EmptySet, ::EmptySet)::LazySet = ∅
+
+"""
     dim(ch::ConvexHull)::Int
 
 Return the dimension of a convex hull of two convex sets.
