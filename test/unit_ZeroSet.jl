@@ -6,3 +6,6 @@ B = BallInf(ones(2), 1.)
 
 cpa = MinkowskiSumArray([B, 2.*B, 3.*B])
 @test cpa ⊕ Z == cpa && Z ⊕ cpa == cpa
+
+# test M-sum of zero set with itself
+@test ZeroSet(2) ⊕ ZeroSet(2) == ZeroSet(2)

@@ -85,6 +85,8 @@ Cartesian product.
 """
 *(X::LazySet, E::EmptySet) = ∅
 
+*(::EmptySet, ::EmptySet) = ∅
+
 ×(X::LazySet, E::EmptySet) = ∅
 
 """

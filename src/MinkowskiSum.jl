@@ -77,7 +77,11 @@ Minkowski sum.
 """
 +(∅::EmptySet, X::LazySet) = ∅
 
++(::EmptySet, ::EmptySet) = ∅
+
 +(X::LazySet, ::ZeroSet) = X
+
++(X::ZeroSet, ::ZeroSet) = X
 
 +(::ZeroSet, X::LazySet) = X
 
