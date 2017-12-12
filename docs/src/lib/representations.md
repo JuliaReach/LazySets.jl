@@ -137,6 +137,9 @@ EmptySet
 
 ```@docs
 ZeroSet
+dim(::ZeroSet)
+σ(::AbstractVector{Float64}, ::ZeroSet)
+∈(::AbstractVector{Float64}, ::ZeroSet)
 ```
 
 ## Singletons
