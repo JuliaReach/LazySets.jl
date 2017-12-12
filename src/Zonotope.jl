@@ -22,10 +22,11 @@ Mathematically, a zonotope is defined as the set
 Z = \\left\\{ c + ∑_{i=1}^p ξ_i g_i,~~ ξ_i \\in [-1, 1]~~ ∀ i = 1,…, p \\right\\},
 ```
 where ``c \\in \\mathbb{R}^n`` is its *center* and ``\\{g_i\\}_{i=1}^p``,
-``g_i \\in \\mathbb{R}^n``, is the set of *generators*. This characterization
-defines a zonotope as the finite Minkowski sum of line elements. Zonotopes can
-be equivalently described as the image of a unit infinity-norm ball in
-``\\mathbb{R}^n`` by an affine transformation.
+``g_i \\in \\mathbb{R}^n``, is the set of *generators*.
+This characterization defines a zonotope as the finite Minkowski sum of line
+elements.
+Zonotopes can be equivalently described as the image of a unit infinity-norm
+ball in ``\\mathbb{R}^n`` by an affine transformation.
 
 - `Zonotope(center::AbstractVector{N},
             generators::AbstractMatrix{N}) where {N<:Real}`
@@ -197,6 +198,8 @@ A zonotope centered in the origin with generators ``g_i`` contains a point ``x``
 iff ``x = ∑_{i=1}^p ξ_i g_i`` for some ``ξ_i \\in [-1, 1]~~ ∀ i = 1,…, p``.
 Thus, we first ask for a solution and then check if it is in this Cartesian
 product of intervals.
+
+Other algorithms exist which test the feasibility of an LP.
 
 ### Examples
 

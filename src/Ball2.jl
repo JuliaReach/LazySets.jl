@@ -129,7 +129,7 @@ Check whether a given point is contained in a ball in the 2-norm.
 ### Notes
 
 This implementation is worst-case optimized, i.e., it is optimistic and first
-computes (s. below) the whole sum before comparing to the radius.
+computes (see below) the whole sum before comparing to the radius.
 In applications where the point is typically far away from the ball, a fail-fast
 implementation with interleaved comparisons could be more efficient.
 
