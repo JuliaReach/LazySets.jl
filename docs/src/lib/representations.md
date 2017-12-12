@@ -87,7 +87,7 @@ HPolygonOpt
 addconstraint!(::HPolygonOpt{Float64}, ::LinearConstraint{Float64})
 dim(::HPolygonOpt)
 σ(::AbstractVector{Float64}, ::HPolygonOpt{Float64})
-∈(::AbstractVector{Float64}, ::HPolygonOpt)
+∈(::AbstractVector{Float64}, ::HPolygonOpt{Float64})
 tovrep(::HPolygonOpt)
 vertices_list(::HPolygonOpt)
 ```
