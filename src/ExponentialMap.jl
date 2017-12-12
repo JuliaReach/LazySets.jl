@@ -1,6 +1,6 @@
 using Expokit
 
-import Base: *, size
+import Base: *, size, ∈
 
 export SparseMatrixExp,
        ExponentialMap,
@@ -160,6 +160,42 @@ function σ(d::AbstractVector{Float64},
            em::ExponentialMap)::AbstractVector{Float64}
     v = expmv(1.0, em.spmexp.M.', d)           # v   <- exp(A') * d
     return expmv(1.0, em.spmexp.M, σ(v, em.X)) # res <- exp(A) * σ(v, S)
+end
+
+"""
+    ∈(x::AbstractVector{<:Real}, em::ExponentialMap{<:LazySet})::Bool
+
+Check whether a given point is contained in an exponential map of a convex set.
+
+### Input
+
+- `x`  -- point/vector
+- `em` -- linear map of a convex set
+
+### Output
+
+`true` iff ``x ∈ em``.
+
+### Algorithm
+
+This implementation exploits that ``x ∈ \\exp(M)⋅S`` iff ``\\exp(-M)⋅x ∈ S``.
+This follows from ``\\exp(-M)⋅\\exp(M) = I`` for any ``M``.
+
+### Examples
+
+```jldoctest
+julia> em = ExponentialMap(SparseMatrixExp(SparseMatrixCSC([2.0 0.0; 0.0 1.0])),
+                           BallInf([1., 1.], 1.));
+
+julia> ∈([5.0, 1.0], em)
+false
+julia> ∈([1.0, 1.0], em)
+true
+```
+"""
+function ∈(x::AbstractVector{<:Real}, em::ExponentialMap{<:LazySet})::Bool
+    @assert length(x) == dim(em)
+    return ∈(exp.(-em.spmexp.M) * x, em.X)
 end
 
 """

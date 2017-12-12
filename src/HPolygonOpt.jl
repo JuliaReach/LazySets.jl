@@ -160,20 +160,21 @@ function σ(d::AbstractVector{<:Real},
 end
 
 """
-    ∈(x::AbstractVector{<:Real}, P::HPolygonOpt)::Bool
+    ∈(x::AbstractVector{N}, P::HPolygonOpt{N})::Bool where {N<:Real}
 
-Return whether a given vector is contained in an optimized polygon.
+Check whether a given 2D point is contained in an optimized polygon in
+constraint representation.
 
 ### Input
 
-- `x` -- two-dimensional vector
+- `x` -- two-dimensional point/vector
 - `P` -- optimized polygon in constraint representation
 
 ### Output
 
-Return `true` iff ``x ∈ P``.
+`true` iff ``x ∈ P``.
 """
-function ∈(x::AbstractVector{<:Real}, P::HPolygonOpt)::Bool
+function ∈(x::AbstractVector{N}, P::HPolygonOpt{N})::Bool where {N<:Real}
     return ∈(x, HPolygon(P.constraints_list))
 end
 

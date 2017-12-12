@@ -1,3 +1,5 @@
+import Base.∈
+
 export Zonotope,
        vertices_list,
        order
@@ -17,13 +19,14 @@ Type that represents a zonotope.
 Mathematically, a zonotope is defined as the set
 
 ```math
-Z = \\left\\{ c + \\sum_{i=1}^p ξ_i g_i,~~ ξ_i \\in [-1, 1]~~ ∀ i = 1,…, p \\right\\},
+Z = \\left\\{ c + ∑_{i=1}^p ξ_i g_i,~~ ξ_i \\in [-1, 1]~~ ∀ i = 1,…, p \\right\\},
 ```
 where ``c \\in \\mathbb{R}^n`` is its *center* and ``\\{g_i\\}_{i=1}^p``,
-``g_i \\in \\mathbb{R}^n``, is the set of *generators*. This characterization
-defines a zonotope as the finite Minkowski sum of line elements. Zonotopes can
-be equivalently described as the image of a unit infinity-norm ball in
-``\\mathbb{R}^n`` by an affine transformation.
+``g_i \\in \\mathbb{R}^n``, is the set of *generators*.
+This characterization defines a zonotope as the finite Minkowski sum of line
+elements.
+Zonotopes can be equivalently described as the image of a unit infinity-norm
+ball in ``\\mathbb{R}^n`` by an affine transformation.
 
 - `Zonotope(center::AbstractVector{N},
             generators::AbstractMatrix{N}) where {N<:Real}`
@@ -171,4 +174,68 @@ and its dimension.
 """
 function order(Z::Zonotope)::Rational
     return size(Z.generators, 2) // dim(Z)
+end
+
+"""
+    ∈(x::AbstractVector{N}, Z::Zonotope{N})::Bool where {N<:Real}
+
+Check whether a given point is contained in a zonotope.
+
+### Input
+
+- `x` -- point/vector
+- `Z` -- zonotope
+
+### Output
+
+`true` iff ``x ∈ Z``.
+
+### Algorithm
+
+This implementation poses the problem as a linear equality system and solves it
+using `Base.:\`.
+A zonotope centered in the origin with generators ``g_i`` contains a point ``x``
+iff ``x = ∑_{i=1}^p ξ_i g_i`` for some ``ξ_i \\in [-1, 1]~~ ∀ i = 1,…, p``.
+Thus, we first ask for a solution and then check if it is in this Cartesian
+product of intervals.
+
+Other algorithms exist which test the feasibility of an LP.
+
+### Examples
+
+```jldoctest
+julia> Z = Zonotope([1.0, 0.0], 0.1*eye(2));
+
+julia> ∈([1.0, 0.2], Z)
+false
+julia> ∈([1.0, 0.1], Z)
+true
+```
+"""
+function ∈(x::AbstractVector{N}, Z::Zonotope{N})::Bool where {N<:Real}
+    @assert length(x) == dim(Z)
+
+    k = length(x)
+    b = similar(x)
+    one_N = one(N)
+    minus_one_N = -one_N
+    for i in 1:k
+        # normalize by moving the zonotope to the origin
+        b[i] = x[i] - Z.center[i]
+    end
+    # matrix A is just Z.generators
+
+    try
+        # results in LAPACKException or SingularException if not solvable
+        res = Z.generators \ b
+
+        for xi in res
+            if xi > one_N || xi < minus_one_N
+                return false
+            end
+        end
+        return true
+    catch
+        return false
+    end
 end

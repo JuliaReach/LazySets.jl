@@ -149,18 +149,20 @@ end
 """
     ∈(x::AbstractVector{<:Real}, cp::CartesianProduct)::Bool
 
-Return whether a given vector is contained in a Cartesian product set.
+Check whether a given point is contained in a Cartesian product set.
 
 ### Input
 
-- `x`  -- vector
+- `x`  -- point/vector
 - `cp` -- Cartesian product
 
 ### Output
 
-Return `true` iff ``x ∈ cp``.
+`true` iff ``x ∈ cp``.
 """
 function ∈(x::AbstractVector{<:Real}, cp::CartesianProduct)::Bool
+    @assert length(x) == dim(cp)
+
     return ∈(view(x, 1:dim(cp.X)), cp.X) &&
            ∈(view(x, dim(cp.X)+1:length(x)), cp.Y)
 end
@@ -360,19 +362,21 @@ end
 """
     ∈(x::AbstractVector{<:Real}, cpa::CartesianProductArray)::Bool
 
-Return whether a given vector is contained in a Cartesian product of a finite
+Check whether a given point is contained in a Cartesian product of a finite
 number of sets.
 
 ### Input
 
-- `x`   -- vector
+- `x`   -- point/vector
 - `cpa` -- Cartesian product array
 
 ### Output
 
-Return `true` iff ``x ∈ cpa``.
+`true` iff ``x ∈ \\text{cpa}``.
 """
 function ∈(x::AbstractVector{<:Real}, cpa::CartesianProductArray)::Bool
+    @assert length(x) == dim(cpa)
+
     jinit = 1
     for sj in cpa
         jend = jinit + dim(sj) - 1

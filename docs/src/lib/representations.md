@@ -32,6 +32,7 @@ support_vector
 Ball2
 dim(::Ball2)
 σ(::AbstractVector{Float64}, ::Ball2)
+∈(::AbstractVector{Float64}, ::Ball2{Float64})
 ```
 
 ### Infinity norm ball
@@ -44,6 +45,7 @@ vertices_list(::BallInf)
 norm(::BallInf, ::Real=Inf)
 radius(::BallInf, ::Real=Inf)
 diameter(::BallInf, ::Real=Inf)
+∈(::AbstractVector{Float64}, ::BallInf{Float64})
 ```
 
 ### Manhattan norm ball
@@ -52,14 +54,16 @@ diameter(::BallInf, ::Real=Inf)
 Ball1
 dim(::Ball1)
 σ(::AbstractVector{Float64}, ::Ball1)
+∈(::AbstractVector{Float64}, ::Ball1{Float64})
 ```
 
 ### p-norm ball
 
 ```@docs
 Ballp
-dim(B::Ballp)
-σ(d::AbstractVector{Float64}, B::Ballp)
+dim(::Ballp)
+σ(::AbstractVector{Float64}, ::Ballp)
+∈(::AbstractVector{Float64}, ::Ballp{Float64})
 ```
 
 ## Polygons
@@ -83,7 +87,7 @@ HPolygonOpt
 addconstraint!(::HPolygonOpt{Float64}, ::LinearConstraint{Float64})
 dim(::HPolygonOpt)
 σ(::AbstractVector{Float64}, ::HPolygonOpt{Float64})
-∈(::AbstractVector{Float64}, ::HPolygonOpt)
+∈(::AbstractVector{Float64}, ::HPolygonOpt{Float64})
 tovrep(::HPolygonOpt)
 vertices_list(::HPolygonOpt)
 ```
@@ -96,6 +100,7 @@ dim(::VPolygon)
 σ(::AbstractVector{Float64}, ::VPolygon)
 vertices_list(::VPolygon)
 singleton_list(::VPolygon)
+∈(::AbstractVector{Float64}, ::VPolygon{Float64})
 ```
 
 ## Lines and linear constraints
@@ -117,6 +122,7 @@ vertices_list(::Hyperrectangle)
 norm(::Hyperrectangle, ::Real=Inf)
 radius(::Hyperrectangle, ::Real=Inf)
 diameter(::Hyperrectangle, ::Real=Inf)
+∈(::AbstractVector{Float64}, ::Hyperrectangle{Float64})
 high(::Hyperrectangle)
 low(::Hyperrectangle)
 ```
@@ -125,12 +131,18 @@ low(::Hyperrectangle)
 
 ```@docs
 EmptySet
+dim(::EmptySet)
+σ(::AbstractVector{Float64}, ::EmptySet)
+∈(::AbstractVector{Float64}, ::EmptySet)
 ```
 
 ## ZeroSet
 
 ```@docs
 ZeroSet
+dim(::ZeroSet)
+σ(::AbstractVector{Float64}, ::ZeroSet)
+∈(::AbstractVector{Float64}, ::ZeroSet)
 ```
 
 ## Singletons
@@ -139,6 +151,7 @@ ZeroSet
 Singleton
 dim(::Singleton)
 σ(::AbstractVector{Float64}, ::Singleton)
+∈(::AbstractVector{Float64}, ::Singleton{Float64})
 ```
 
 ## Zonotopes
@@ -149,4 +162,5 @@ dim(::Zonotope)
 σ(d::AbstractVector{Float64}, Z::Zonotope)
 vertices_list(::Zonotope{Float64})
 order(::Zonotope)
+∈(::AbstractVector{Float64}, ::Zonotope{Float64})
 ```

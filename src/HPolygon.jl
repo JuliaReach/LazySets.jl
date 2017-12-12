@@ -118,22 +118,29 @@ function σ(d::AbstractVector{<:Real}, P::HPolygon{N})::Vector{N} where {N<:Real
 end
 
 """
-    ∈(x::AbstractVector{<:Real}, P::HPolygon)::Bool
+    ∈(x::AbstractVector{N}, P::HPolygon{N})::Bool where {N<:Real}
 
-Return whether a given vector is contained in a polygon.
+Check whether a given 2D point is contained in a polygon in constraint
+representation.
 
 ### Input
 
-- `x` -- two-dimensional vector
+- `x` -- two-dimensional point/vector
 - `P` -- polygon in constraint representation
 
 ### Output
 
-Return `true` iff ``x ∈ P``.
+`true` iff ``x ∈ P``.
+
+### Algorithm
+
+This implementation checks if the point lies on the outside of each edge.
 """
-function ∈(x::AbstractVector{<:Real}, P::HPolygon)::Bool
+function ∈(x::AbstractVector{N}, P::HPolygon{N})::Bool where {N<:Real}
+    @assert length(x) == 2
+
     for c in P.constraints_list
-        if !(dot(c.a, x) <= c.b)
+        if dot(c.a, x) > c.b
             return false
         end
     end
