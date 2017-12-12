@@ -131,6 +131,9 @@ low(::Hyperrectangle)
 
 ```@docs
 EmptySet
+dim(::EmptySet)
+σ(::AbstractVector{Float64}, ::EmptySet)
+∈(::AbstractVector{Float64}, ::EmptySet)
 ```
 
 ## ZeroSet
