@@ -141,7 +141,9 @@ Check whether a given point is contained in a linear map of a convex set.
 
 ### Algorithm
 
-This implementation inverts the matrix: ``x ∈ M⋅S`` iff ``M^{-1}⋅x ∈ S``.
+Note that ``x ∈ M⋅S`` iff ``M^{-1}⋅x ∈ S``.
+This implementation does not explicitly invert the matrix, which is why it also
+works for non-square matrices.
 
 ### Examples
 
@@ -153,9 +155,18 @@ false
 julia> ∈([3.0, 1.0], lm)
 true
 ```
+
+An example with non-square matrix:
+```jldoctest
+julia> B = BallInf(zeros(4), 1.);
+
+julia> M = [1. 0 0 0; 0 1 0 0]/2;
+
+julia> ∈([0.5, 0.5], M*B)
+true
+```
 """
 function ∈(x::AbstractVector{N},
            lm::LinearMap{<:LazySet, N})::Bool where {N<:Real}
-    @assert length(x) == dim(lm)
-    return ∈(inv(lm.M) * x, lm.sf)
+    return ∈(lm.M \ x, lm.sf)
 end
