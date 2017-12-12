@@ -176,16 +176,12 @@ true
 function ∈(x::AbstractVector{N}, P::VPolygon{N})::Bool where {N<:Real}
     @assert length(x) == 2
 
-    @inline function side(x, u, v)
-        return (v[2] - u[2]) * (x[1] - u[1]) + (u[1] - v[1]) * (x[2] - u[2])
-    end
-
     zero_N = zero(N)
-    if side(x, P.vertices_list[1], P.vertices_list[end]) < zero_N
+    if right_turn(P.vertices_list[1], x, P.vertices_list[end]) < zero_N
         return false
     end
     for i in 2:length(P.vertices_list)
-        if side(x, P.vertices_list[i], P.vertices_list[i-1]) < zero_N
+        if right_turn(P.vertices_list[i], x, P.vertices_list[i-1]) < zero_N
             return false
         end
     end
