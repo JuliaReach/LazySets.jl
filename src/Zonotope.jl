@@ -112,6 +112,8 @@ Return the support vector of a zonotope in a given direction.
 ### Output
 
 Support vector in the given direction.
+If the direction has norm zero, the vertex with ``ξ_i = 1 \\ \\ ∀ i = 1,…, p``
+is returned.
 """
 function σ(d::AbstractVector{<:Real}, Z::Zonotope)::AbstractVector{<:Real}
     return Z.center .+ Z.generators * sign_cadlag.(Z.generators.' * d)
@@ -167,4 +169,6 @@ A rational number representing the order of the zonotope.
 The order of a zonotope is defined as the quotient of its number of generators
 and its dimension.
 """
-order(Z::Zonotope)::Rational = size(Z.generators, 2) // dim(Z)
+function order(Z::Zonotope)::Rational
+    return size(Z.generators, 2) // dim(Z)
+end

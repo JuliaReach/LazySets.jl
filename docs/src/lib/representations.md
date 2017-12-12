@@ -71,7 +71,7 @@ HPolygon
 addconstraint!(::HPolygon{Float64}, ::LinearConstraint{Float64})
 dim(::HPolygon)
 σ(::AbstractVector{Float64}, ::HPolygon)
-is_contained(::AbstractVector{Float64}, ::HPolygon{Float64})
+∈(::AbstractVector{Float64}, ::HPolygon{Float64})
 tovrep(::HPolygon)
 vertices_list(::HPolygon)
 ```
@@ -83,7 +83,7 @@ HPolygonOpt
 addconstraint!(::HPolygonOpt{Float64}, ::LinearConstraint{Float64})
 dim(::HPolygonOpt)
 σ(::AbstractVector{Float64}, ::HPolygonOpt{Float64})
-is_contained(::AbstractVector{Float64}, ::HPolygonOpt)
+∈(::AbstractVector{Float64}, ::HPolygonOpt)
 tovrep(::HPolygonOpt)
 vertices_list(::HPolygonOpt)
 ```

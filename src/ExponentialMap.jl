@@ -101,7 +101,7 @@ end
 
 """
 ```
-    *(spmexp::SparseMatrixExp, X::LazySet)
+    *(spmexp::SparseMatrixExp, X::LazySet)::ExponentialMap
 ```
 
 Return the exponential map of a convex set from a sparse matrix exponential.
@@ -115,7 +115,7 @@ Return the exponential map of a convex set from a sparse matrix exponential.
 
 The exponential map of the convex set.
 """
-function *(spmexp::SparseMatrixExp, X::LazySet)
+function *(spmexp::SparseMatrixExp, X::LazySet)::ExponentialMap
     return ExponentialMap(spmexp, X)
 end
 

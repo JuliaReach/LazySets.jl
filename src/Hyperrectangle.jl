@@ -117,8 +117,8 @@ Return the support vector of a hyperrectangle in a given direction.
 
 ### Output
 
-The support vector in the given direction. If the direction has norm zero, the
-vertex with biggest values is returned.
+The support vector in the given direction.
+If the direction has norm zero, the vertex with biggest values is returned.
 """
 function σ(d::AbstractVector{<:Real}, H::Hyperrectangle)::AbstractVector{<:Real}
     return @. H.center + sign_cadlag(d) * H.radius
@@ -147,7 +147,7 @@ function vertices_list(H::Hyperrectangle{N})::Vector{Vector{N}} where {N<:Real}
 end
 
 """
-    norm(H::Hyperrectangle, [p]::Real=Inf)
+    norm(H::Hyperrectangle, [p]::Real=Inf)::Real
 
 Return the norm of a hyperrectangle.
 
@@ -165,12 +165,12 @@ A real number representing the norm.
 The norm of a hyperrectangle is defined as the norm of the enclosing ball, of
 the given ``p``-norm, of minimal volume.
 """
-function norm(H::Hyperrectangle, p::Real=Inf)
+function norm(H::Hyperrectangle, p::Real=Inf)::Real
     return maximum(map(x -> norm(x, p), vertices_list(H)))
 end
 
 """
-    radius(H::Hyperrectangle, [p]::Real=Inf)
+    radius(H::Hyperrectangle, [p]::Real=Inf)::Real
 
 Return the radius of a hyperrectangle.
 
@@ -188,13 +188,13 @@ A real number representing the radius.
 The radius is defined as the radius of the enclosing ball of the given
 ``p``-norm of minimal volume with the same center.
 """
-function radius(H::Hyperrectangle, p::Real=Inf)
+function radius(H::Hyperrectangle, p::Real=Inf)::Real
     # the radius is the same for all corners of the hyperrectangle
     return norm(H.radius, p)
 end
 
 """
-    diameter(H::Hyperrectangle, [p]::Real=Inf)
+    diameter(H::Hyperrectangle, [p]::Real=Inf)::Real
 
 Return the diameter of a hyperrectangle.
 
@@ -214,12 +214,12 @@ any two elements of the set.
 Equivalently, it is the diameter of the enclosing ball of the given ``p``-norm
 of minimal volume with the same center.
 """
-function diameter(H::Hyperrectangle, p::Real=Inf)
+function diameter(H::Hyperrectangle, p::Real=Inf)::Real
     return radius(H, p) * 2
 end
 
 """
-    high(H::Hyperrectangle)
+    high(H::Hyperrectangle{N})::Vector{N} where {N<:Real}
 
 Return the higher coordinates of a hyperrectangle.
 
@@ -232,12 +232,12 @@ Return the higher coordinates of a hyperrectangle.
 A vector with the higher coordinates of the hyperrectangle, one entry per
 dimension.
 """
-function high(H::Hyperrectangle)
+function high(H::Hyperrectangle{N})::Vector{N} where {N<:Real}
     return H.center .+ H.radius
 end
 
 """
-    low(H::Hyperrectangle)
+    low(H::Hyperrectangle{N})::Vector{N} where {N<:Real}
 
 Return the lower coordinates of a hyperrectangle.
 
@@ -250,6 +250,6 @@ Return the lower coordinates of a hyperrectangle.
 A vector with the lower coordinates of the hyperrectangle, one entry per
 dimension.
 """
-function low(H::Hyperrectangle)
+function low(H::Hyperrectangle{N})::Vector{N} where {N<:Real}
     return H.center .- H.radius
 end

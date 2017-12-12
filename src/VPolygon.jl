@@ -68,8 +68,8 @@ Return the support vector of a polygon in a given direction.
 
 ### Output
 
-The support vector in the given direction. If the direction has norm zero, the
-first vertex is returned.
+The support vector in the given direction.
+If the direction has norm zero, the first vertex is returned.
 
 ### Algorithm
 

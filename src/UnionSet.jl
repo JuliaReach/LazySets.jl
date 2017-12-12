@@ -1,5 +1,7 @@
+import Base.∈
+
 export UnionSet,
-       is_contained
+       ∈
 
 """
     UnionSet{S<:LazySet} <: LazySet
@@ -15,7 +17,7 @@ struct UnionSet{S<:LazySet} <: LazySet
 end
 
 """
-    is_contained(x::AbstractVector{<:Real}, U::UnionSet)::Bool
+    ∈(x::AbstractVector{<:Real}, U::UnionSet)::Bool
 
 Return whether a given vector is contained in a union of convex sets.
 
@@ -26,11 +28,11 @@ Return whether a given vector is contained in a union of convex sets.
 
 ### Output
 
-Return `true` iff ``x ∈ U``.
+`true` iff ``x ∈ U``.
 """
-function is_contained(x::AbstractVector{<:Real}, U::UnionSet)::Bool
-    for s in U.sets
-        if in(x, s)
+function ∈(x::AbstractVector{<:Real}, U::UnionSet)::Bool
+    for S in U.sets
+        if ∈(x, S)
             return true
         end
     end

@@ -29,18 +29,18 @@ d = [0., -1.]
 @test σ(d, p) == [0., 0.]
 
 # Test containment
-@test is_contained([0., 0.], p)
-@test is_contained([4., 2.], p)
-@test is_contained([2., 4.], p)
-@test is_contained([-1., 1.], p)
-@test is_contained([2., 3.], p)
-@test is_contained([1., 1.], p)
-@test is_contained([3., 2.], p)
-@test is_contained([5./4., 7./4.], p)
-@test !is_contained([4., 1.], p)
-@test !is_contained([5., 2.], p)
-@test !is_contained([3., 4.], p)
-@test !is_contained([-1., 5.], p)
+@test ∈([0., 0.], p)
+@test ∈([4., 2.], p)
+@test ∈([2., 4.], p)
+@test ∈([-1., 1.], p)
+@test ∈([2., 3.], p)
+@test ∈([1., 1.], p)
+@test ∈([3., 2.], p)
+@test ∈([5./4., 7./4.], p)
+@test !∈([4., 1.], p)
+@test !∈([5., 2.], p)
+@test !∈([3., 4.], p)
+@test !∈([-1., 5.], p)
 
 # Optimized Polygon
 po = HPolygonOpt(p)
@@ -59,18 +59,18 @@ d = [0., -1.]
 @test σ(d, po) == [0., 0.]
 
 # Test containment
-@test is_contained([0., 0.], po)
-@test is_contained([4., 2.], po)
-@test is_contained([2., 4.], po)
-@test is_contained([-1., 1.], po)
-@test is_contained([2., 3.], po)
-@test is_contained([1., 1.], po)
-@test is_contained([3., 2.], po)
-@test is_contained([5./4., 7./4.], po)
-@test !is_contained([4., 1.], po)
-@test !is_contained([5., 2.], po)
-@test !is_contained([3., 4.], po)
-@test !is_contained([-1., 5.], po)
+@test ∈([0., 0.], po)
+@test ∈([4., 2.], po)
+@test ∈([2., 4.], po)
+@test ∈([-1., 1.], po)
+@test ∈([2., 3.], po)
+@test ∈([1., 1.], po)
+@test ∈([3., 2.], po)
+@test ∈([5./4., 7./4.], po)
+@test !∈([4., 1.], po)
+@test !∈([5., 2.], po)
+@test !∈([3., 4.], po)
+@test !∈([-1., 5.], po)
 
 # Test VRepresentation
 vp = tovrep(p)

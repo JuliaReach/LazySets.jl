@@ -70,7 +70,7 @@ function σ(d::AbstractVector{<:Real}, P::Polyhedron)::Vector{<:Real}
 end
 
 """
-    addconstraint!(P::Polyhedron{N}, constraint::LinearConstraint{N}) where {N<:Real}
+    addconstraint!(P::Polyhedron{N}, constraint::LinearConstraint{N})::Void where {N<:Real}
 
 Add a linear constraint to a polyhedron in H-representation.
 
@@ -79,14 +79,19 @@ Add a linear constraint to a polyhedron in H-representation.
 - `P`          -- polyhedron in H-representation
 - `constraint` -- linear constraint to add
 
+### Output
+
+Nothing.
+
 ### Notes
 
 It is left to the user to guarantee that the dimension of all linear constraints
 is the same.
 """
 function addconstraint!(P::Polyhedron{N},
-                        constraint::LinearConstraint{N}) where {N<:Real}
+                        constraint::LinearConstraint{N})::Void where {N<:Real}
     push!(P.constraints, constraint)
+    return nothing
 end
 
 """

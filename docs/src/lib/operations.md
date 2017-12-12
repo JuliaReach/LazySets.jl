@@ -48,7 +48,7 @@ CartesianProduct
 dim(::CartesianProduct)
 σ(::AbstractVector{Float64}, ::CartesianProduct)
 Base.:*(::LazySet, ::LazySet)
-is_contained(::AbstractVector{Float64}, ::CartesianProduct)
+∈(::AbstractVector{Float64}, ::CartesianProduct)
 ```
 
 ### ``n``-ary Cartesian Product
@@ -60,7 +60,7 @@ dim(::CartesianProductArray)
 Base.:*(::CartesianProductArray, ::LazySet)
 Base.:*(::LazySet, ::CartesianProductArray)
 Base.:*(::CartesianProductArray, ::CartesianProductArray)
-is_contained(::AbstractVector{Float64}, ::CartesianProductArray)
+∈(::AbstractVector{Float64}, ::CartesianProductArray)
 ```
 
 ## Maps

@@ -215,7 +215,7 @@ function +(msa1::MinkowskiSumArray, msa2::MinkowskiSumArray)::MinkowskiSumArray
 end
 
 """
-    +(msa, Z)
+    +(msa::MinkowskiSumArray, Z::ZeroSet)::MinkowskiSumArray
 
 Returns the original array because addition with an empty set is a no-op.
 

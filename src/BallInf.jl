@@ -84,15 +84,10 @@ Return the support vector of an infinity norm ball in a given direction.
 
 ### Output
 
-The support vector in the given direction. If the direction has norm zero, the
-vertex with biggest values is returned.
+The support vector in the given direction.
+If the direction has norm zero, the vertex with biggest values is returned.
 """
 function σ(d::AbstractVector{<:Real}, B::BallInf)::AbstractVector{<:Real}
-    #=
-    We cannot use `sign.(d)`, since the built-in `sign` function is such that
-    `sign(0) = 0`, instead of 1 as needed.
-    The function `sign_cadlag.(d)` does what we want.
-    =#
     return @. B.center + sign_cadlag(d) * B.radius
 end
 
@@ -155,7 +150,7 @@ function norm(B::BallInf, p::Real=Inf)::Real
 end
 
 """
-    radius(B::BallInf, [p]::Real=Inf)
+    radius(B::BallInf, [p]::Real=Inf)::Real
 
 Return the radius of a ball in the infinity norm.
 
@@ -173,11 +168,12 @@ A real number representing the radius.
 The radius is defined as the radius of the enclosing ball of the given
 ``p``-norm of minimal volume with the same center.
 """
-radius(B::BallInf, p::Real=Inf) =
-    (p == Inf) ? B.radius : norm(fill(B.radius, dim(B)), p)
+function radius(B::BallInf, p::Real=Inf)::Real
+    return (p == Inf) ? B.radius : norm(fill(B.radius, dim(B)), p)
+end
 
 """
-    diameter(B::BallInf, [p]::Real=Inf)
+    diameter(B::BallInf, [p]::Real=Inf)::Real
 
 Return the diameter of a ball in the infinity norm.
 
@@ -197,4 +193,6 @@ any two elements of the set.
 Equivalently, it is the diameter of the enclosing ball of the given ``p``-norm
 of minimal volume with the same center.
 """
-diameter(B::BallInf, p::Real=Inf) = radius(B, p) * 2
+function diameter(B::BallInf, p::Real=Inf)::Real
+    return radius(B, p) * 2
+end
