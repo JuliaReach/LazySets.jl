@@ -85,3 +85,21 @@ true
 function ∈(x::AbstractVector{N}, S::Singleton{N})::Bool where {N<:Real}
     return x == S.element
 end
+
+"""
+    ∈(x::Singleton, set::LazySet)::Bool
+
+Check whether a given singleton is contained in a convex set.
+
+### Input
+
+- `x`   -- singleton
+- `set` -- convex set
+
+### Output
+
+`true` iff ``x ∈ \text{set}``.
+"""
+function ∈(x::Singleton, set::LazySet)::Bool
+    return ∈(x.element, set)
+end
