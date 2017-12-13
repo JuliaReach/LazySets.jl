@@ -11,37 +11,37 @@ end
 
 ## Balls and singleton plots
 
-Consider a ball in the 2-norm:
+Consider a ball in the 2-norm. By default, the coefficients of this set are 64-bit floating point
+numbers. Other numeric types (such as lower precision floating point, or rational)
+can be defined with the proper argument types in the `Ball2` constructor.
+
+To plot a lazy set, we use the `plot` function. Recall that, by design, lazy sets
+plots overapproximate with box directions only. To have a sharp definition of the
+borders, use the accuracy as a second argument.
+
 
 ```@example
+using LazySets, Plots
+
 X = Ball2(ones(2), 0.5)
-```
-Observe that, by default, the coefficients of this set are 64-bit floating point
-numbers.
-
-We can plot this set using the `plot` function. Recall that, by design, lazy sets
-plots overapproximate with box directions only. To have a sharp definition of the
-borders, use the accuracy as a second argument:
-
-```julia
 plot(X, 1e-3, aspectratio=1)
+
+plot!(Singleton(σ([1., 0], X)))
+plot!(Singleton(σ([1., 1], X)))
+plot!(Singleton(X.center), markershape=:x)
 ```
 
-Let's add to this plot some points of the set which are farthest in some given directions.
+To add plots to the same pair of axes we used the `plot!` functin. We have added some
+points of the set which are farthest in some given directions.
 Single points can be plotted using the `Singleton` type.
-
-To add a new plot to the previous one, use `plot!`. In the third line we plot the
-center of the ball with a cross marker.
 
 !!! note
     To see the list of available plot keyword arguments, use the `plotattr([attr])`
     function, where `attr` is the symbol `:Plot`, `:Series`, `:Axis` or `:Subplot`.
 
-```julia
-plot!(Singleton(σ([1., 0], X)))
-plot!(Singleton(σ([1., 1], X)))
-plot!(Singleton(X.center), markershape=:x)
-```
+
+In the third line we plot the center of the ball with a cross marker.
+
 
 ## Symmetric interval hull
 
