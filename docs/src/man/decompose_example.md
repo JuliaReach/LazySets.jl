@@ -10,11 +10,11 @@ Let ``θ := π/4`` and
 ``Φ := \begin{pmatrix} \cos(θ) & -\sin(θ) \\ \sin(θ) & \cos(θ) \end{pmatrix}``.
 
 ```@example deco_label
-using LazySets, LazySets.Approximations, Plots;
+using LazySets, LazySets.Approximations, Plots
 
-theta = pi/4.;
+theta = pi/4.
 
-Φ = [cos(theta) -sin(theta); sin(theta) cos(theta)];
+Φ = [cos(theta) -sin(theta); sin(theta) cos(theta)]
 
 ```
 
@@ -23,7 +23,7 @@ Now define an arbitrary convex polygon with five vertices with
 ``\mathcal{X} := \operatorname{CH}\big( (1, 0.5), (1.1, 0.2), (1.4, 0.3), (1.7, 0.5), (1.4, 0.8) \big)``
 
 ```@example deco_label
-X = VPolygon([[1.0, 0.5], [1.1, 0.2], [1.4, 0.3], [1.7, 0.5], [1.4, 0.8]]);
+X = VPolygon([[1.0, 0.5], [1.1, 0.2], [1.4, 0.3], [1.7, 0.5], [1.4, 0.8]])
 ```
 
 Applying the linear map ``Φ · \mathcal{X}``, we get a new polygon
@@ -33,10 +33,9 @@ In this package the linear map is not computed explicitly but only wrapped in a
 `LinearMap` instance.
 
 ```@example deco_label
-Xp = Φ * X;
+Xp = Φ * X
 
 typeof(Xp)
-LazySets.LinearMap{LazySets.VPolygon{Float64},Float64}
 ```
 
 Let us plot the two polygons, ``\mathcal{X}`` in green and ``\mathcal{X}'`` in
@@ -63,7 +62,7 @@ That is, we project it to the x-axis and y-axis and then compose these intervals
 again: ``\hat{\mathcal{X}} := \hat{\mathcal{X}}_1 \times \hat{\mathcal{X}}_2``.
 
 ```@example deco_label
-Xhat = overapproximate(X);
+Xhat = overapproximate(X)
 
 plot(Xhat, color="gray", alpha=0.3)
 
@@ -81,7 +80,7 @@ Now let us compute the linear map for the box approximation, and let us call it
 This will be a diamond-like shape (the box turned by `45°`).
 
 ```@example deco_label
-Xphat = Φ * Xhat;
+Xphat = Φ * Xhat
 
 plot(Xhat, color="gray", alpha=0.3)
 
@@ -98,7 +97,7 @@ we have to overapproximate this diamond-like shape again:
 ``\hat{\mathcal{Y}} = \hat{\mathcal{X}}' = \hat{\mathcal{X}}_1' \times \hat{\mathcal{X}}_2'``
 
 ```@example deco_label
-Xhatp = overapproximate(Xphat);
+Xhatp = overapproximate(Xphat)
 
 plot(Xhat, color="gray", alpha=0.3)
 
