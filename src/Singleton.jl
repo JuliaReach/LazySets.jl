@@ -1,4 +1,4 @@
-import Base.∈
+import Base: ∈, ⊆
 
 export Singleton
 
