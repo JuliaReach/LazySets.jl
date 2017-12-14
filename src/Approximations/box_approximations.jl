@@ -30,6 +30,9 @@ function box_approximation(S::LazySet)::Hyperrectangle
     return Hyperrectangle(c, r)
 end
 
+box_approximation(S::Hyperrectangle) = S
+box_approximation(S::BallInf) = Hyperrectangle(S.center, fill(S.radius, dim(S)))
+
 """
     interval_hull
 
