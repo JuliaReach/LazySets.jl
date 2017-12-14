@@ -3,21 +3,18 @@
 In this section we present an illustrative example of the *decomposed image*
 of a linear map.
 
-```@meta
-DocTestSetup = quote
-    using LazySets, LazySets.Approximations
-end
-```
 
 ## Preliminaries: Polygon, Linear Map, and Plotting
 
 Let ``θ := π/4`` and
 ``Φ := \begin{pmatrix} \cos(θ) & -\sin(θ) \\ \sin(θ) & \cos(θ) \end{pmatrix}``.
 
-```jldoctest deco_label
-julia> theta = pi/4.;
+```@example deco_label
+using LazySets, LazySets.Approximations, Plots;
 
-julia> Φ = [cos(theta) -sin(theta); sin(theta) cos(theta)];
+theta = pi/4.;
+
+Φ = [cos(theta) -sin(theta); sin(theta) cos(theta)];
 
 ```
 
@@ -25,9 +22,8 @@ Now define an arbitrary convex polygon with five vertices with
 ``\operatorname{CH}`` denoting the convex hull operation.
 ``\mathcal{X} := \operatorname{CH}\big( (1, 0.5), (1.1, 0.2), (1.4, 0.3), (1.7, 0.5), (1.4, 0.8) \big)``
 
-```jldoctest deco_label
-julia> X = VPolygon([[1.0, 0.5], [1.1, 0.2], [1.4, 0.3], [1.7, 0.5], [1.4, 0.8]])
-LazySets.VPolygon{Float64}(Array{Float64,1}[[1.0, 0.5], [1.1, 0.2], [1.4, 0.3], [1.7, 0.5], [1.4, 0.8]])
+```@example deco_label
+X = VPolygon([[1.0, 0.5], [1.1, 0.2], [1.4, 0.3], [1.7, 0.5], [1.4, 0.8]]);
 ```
 
 Applying the linear map ``Φ · \mathcal{X}``, we get a new polygon
@@ -36,22 +32,20 @@ Applying the linear map ``Φ · \mathcal{X}``, we get a new polygon
 In this package the linear map is not computed explicitly but only wrapped in a
 `LinearMap` instance.
 
-```jldoctest deco_label
-julia> Xp = Φ * X;
+```@example deco_label
+Xp = Φ * X;
 
-julia> typeof(Xp)
+typeof(Xp)
 LazySets.LinearMap{LazySets.VPolygon{Float64},Float64}
 ```
 
 Let us plot the two polygons, ``\mathcal{X}`` in green and ``\mathcal{X}'`` in
 blue.
 
-```jldoctest deco_label
-julia> using Plots;
+```@example deco_label
+plot(X, color="green")
 
-julia> plot(X, color="green")
-
-julia> plot!(Xp, 1e-2, color="blue")
+plot!(Xp, 1e-2, color="blue")
 
 ```
 
@@ -70,14 +64,14 @@ Next we want to decompose ``\mathcal{X}`` into a Cartesian product of intervals.
 That is, we project it to the x-axis and y-axis and then compose these intervals
 again: ``\hat{\mathcal{X}} := \hat{\mathcal{X}}_1 \times \hat{\mathcal{X}}_2``.
 
-```jldoctest deco_label
-julia> Xhat = overapproximate(X);
+```@example deco_label
+Xhat = overapproximate(X);
 
-julia> plot(Xhat, color="gray", alpha=0.3)
+plot(Xhat, color="gray", alpha=0.3)
 
-julia> plot!(X, color="green")
+plot!(X, color="green")
 
-julia> plot!(Xp, 1e-2, color="blue")
+plot!(Xp, 1e-2, color="blue")
 
 ```
 
@@ -90,16 +84,16 @@ Now let us compute the linear map for the box approximation, and let us call it
 ``\mathcal{Y} := Φ · \hat{\mathcal{X}}``.
 This will be a diamond-like shape (the box turned by `45°`).
 
-```jldoctest deco_label
-julia> Xphat = Φ * Xhat;
+```@example deco_label
+Xphat = Φ * Xhat;
 
-julia> plot(Xhat, color="gray", alpha=0.3)
+plot(Xhat, color="gray", alpha=0.3)
 
-julia> plot!(X, color="green")
+plot!(X, color="green")
 
-julia> plot!(Xphat, 1e-2, color="yellow", alpha=0.3)
+plot!(Xphat, 1e-2, color="yellow", alpha=0.3)
 
-julia> plot!(Xp, 1e-2, color="blue")
+plot!(Xp, 1e-2, color="blue")
 
 ```
 
@@ -109,18 +103,18 @@ However, we want our approximation be again a Cartesian product of intervals, so
 we have to overapproximate this diamond-like shape again:
 ``\hat{\mathcal{Y}} = \hat{\mathcal{X}}' = \hat{\mathcal{X}}_1' \times \hat{\mathcal{X}}_2'``
 
-```jldoctest deco_label
-julia> Xhatp = overapproximate(Xphat);
+```@example deco_label
+Xhatp = overapproximate(Xphat);
 
-julia> plot(Xhat, color="gray", alpha=0.3)
+plot(Xhat, color="gray", alpha=0.3)
 
-julia> plot!(X, color="green")
+plot!(X, color="green")
 
-julia> plot!(Xhatp, 1e-2, color="gray", alpha=0.3)
+plot!(Xhatp, 1e-2, color="gray", alpha=0.3)
 
-julia> plot!(Xphat, 1e-2, color="yellow", alpha=0.3)
+plot!(Xphat, 1e-2, color="yellow", alpha=0.3)
 
-julia> plot!(Xp, 1e-2, color="blue")
+plot!(Xp, 1e-2, color="blue")
 
 ```
 
