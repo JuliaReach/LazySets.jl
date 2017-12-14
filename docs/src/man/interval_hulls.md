@@ -26,7 +26,7 @@ using LazySets, Plots
 X = Ball2(ones(2), 0.5)
 ```
 
-To plot a lazy set, we use the `plot` function. Recall that, by design, lazy sets
+To plot a lazy set, we use the `plot` function. By design, lazy sets
 plots overapproximate with box directions only. To have a sharp definition of the
 borders, use the accuracy as a second argument.
 
@@ -37,7 +37,7 @@ plot(X, 1e-3, aspectratio=1)
 To add plots to the same pair of axes we use `plot!`. Let's add some points of
 the set which are farthest in some given directions. Single points can be plotted
 using the `Singleton` type.
-In the third line we plot the center of the ball picking a custom cross marker.
+In the third line of code we plot the center of the ball picking a custom cross marker.
 
 
 ```@example example_ih
@@ -50,8 +50,8 @@ plot!(Singleton(X.center), markershape=:x)
     To see the list of available plot keyword arguments, use the `plotattr([attr])`
     function, where `attr` is the symbol `:Plot`, `:Series`, `:Axis` or `:Subplot`.
 
-For the remaining of this section we define another ball in the 2-norm and their
-convex hull.
+For the remainder of this section we define another ball in the 2-norm and its
+convex hull with `X`.
 
 ```@example example_ih
 Y = Ball2([-3,-.5], 0.8)
@@ -65,7 +65,8 @@ plot!(Z, 1e-3, alpha=0.2)
 ## Ballinf approximation
 
 A simple overapproximation with a `BallInf` is obtained with the `ballinf_approximation`
-function. It overapproximates a convex set by a tight ball in the infinity norm by
+function, from the `Approximations` module.
+It overapproximates a convex set by a tight ball in the infinity norm by
 evaluating the support vector in the canonical directions.
 
 ```@example example_ih
@@ -156,9 +157,12 @@ For instance, compute the support vector in the south-east direction:
 
 ## Norm, radius and diameter
 
-In this part we illustrate some functions to obtain metric properties of sets.
-These functions apply generally to any `LazySet`. For some types, specialized
-methods are triggered automatically through multiple-dispatch.
+In this part we illustrate some functions to obtain metric properties of sets,
+applied to the sets `X`, `Y` and `Z` defined previously, in the infinity
+norm.
+These functions apply generally to any `LazySet`.
+For some types, specialized methods are triggered automatically through
+multiple-dispatch.
 
 The *norm* of a convex set is the norm of the enclosing ball (of the given norm)
 of minimal volume. For instance:
@@ -182,6 +186,3 @@ defined as twice the radius:
 ```@example example_ih
 diameter(X), diameter(Y), diameter(Z)
 ```
-
-In the previous examples, we have used the infinity norm (default). It is possible
-to pass the required `p`-norm as a second argument.
