@@ -1,4 +1,4 @@
-import Base.∈
+import Base: ∈, ⊆
 
 export Singleton
 
@@ -87,19 +87,19 @@ function ∈(x::AbstractVector{N}, S::Singleton{N})::Bool where {N<:Real}
 end
 
 """
-    ∈(x::Singleton, set::LazySet)::Bool
+    ⊆(S::Singleton, set::LazySet)::Bool
 
 Check whether a given singleton is contained in a convex set.
 
 ### Input
 
-- `x`   -- singleton
+- `S`   -- singleton
 - `set` -- convex set
 
 ### Output
 
-`true` iff ``x ∈ \text{set}``.
+`true` iff ``S ⊆ \\text{set}``.
 """
-function ∈(x::Singleton, set::LazySet)::Bool
-    return ∈(x.element, set)
+function ⊆(S::Singleton, set::LazySet)::Bool
+    return ∈(S.element, set)
 end
