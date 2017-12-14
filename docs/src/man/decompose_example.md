@@ -55,8 +55,6 @@ Note that we have passed `1e-2` as additional argument for the `LinearMap` set
 The value `1e-2` is the precision up to which the set is (over-)approximated
 with a polgon, which in this case is sufficient to obtain the actual set again.
 
-![../assets/linmap_deco_1.png](../assets/linmap_deco_1.png)
-
 
 ## Cartesian Decomposition
 
@@ -74,8 +72,6 @@ plot!(X, color="green")
 plot!(Xp, 1e-2, color="blue")
 
 ```
-
-![../assets/linmap_deco_2.png](../assets/linmap_deco_2.png)
 
 
 ## Decomposed Image of a Linear Map
@@ -97,8 +93,6 @@ plot!(Xp, 1e-2, color="blue")
 
 ```
 
-![../assets/linmap_deco_3.png](../assets/linmap_deco_3.png)
-
 However, we want our approximation be again a Cartesian product of intervals, so
 we have to overapproximate this diamond-like shape again:
 ``\hat{\mathcal{Y}} = \hat{\mathcal{X}}' = \hat{\mathcal{X}}_1' \times \hat{\mathcal{X}}_2'``
@@ -117,8 +111,6 @@ plot!(Xphat, 1e-2, color="yellow", alpha=0.3)
 plot!(Xp, 1e-2, color="blue")
 
 ```
-
-![../assets/linmap_deco_4.png](../assets/linmap_deco_4.png)
 
 As we can see, the resulting box ``\hat{\mathcal{X}}'`` is *not* a tight
 overapproximation of ``\mathcal{X}'``.
