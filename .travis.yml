@@ -5,6 +5,7 @@ os:
 julia:
   - 0.6
   - 0.6.1
+  - 0.6.2
   - nightly
 notifications:
   email: false
