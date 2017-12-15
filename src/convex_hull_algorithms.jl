@@ -68,7 +68,7 @@ See the non-modifying version `convex_hull` for more details.
 function convex_hull!(points::Vector{S};
                       algorithm::String="monotone_chain"
                      )::Vector{S} where {S<:AbstractVector{N}} where {N<:Real}
-    length(points) == 1 || length(points) == 2 && return points
+    (length(points) == 1 || length(points) == 2) && return points
 
     if algorithm == "monotone_chain"
         return monotone_chain!(points)
