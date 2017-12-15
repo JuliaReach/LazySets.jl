@@ -4,14 +4,15 @@ In this section we present an illustrative example of the *decomposed image*
 of a linear map.
 
 ```@contents
-Pages = ["interval_hulls.md"]
+Pages = ["decompose_example.md"]
 Depth = 3
 ```
 
 ## Preliminaries: Polygon, Linear Map, and Plotting
 
 Consider the matrix-valued function
-``Φ(θ) := \begin{pmatrix} \cos (θ) & -\sin (θ) \\ \sin (θ) & \cos (θ) \end{pmatrix}``.
+``Φ(θ) := \begin{pmatrix} \cos (θ) & -\sin (θ) \\ \sin (θ) & \cos (θ) \end{pmatrix}``,
+``θ ∈ [π, π]``.
 
 ```@example deco_label
 using LazySets, LazySets.Approximations, Plots
@@ -34,7 +35,9 @@ X = VPolygon([[1.0, 0.5], [1.1, 0.2], [1.4, 0.3], [1.7, 0.5], [1.4, 0.8]])
 !!! note
     You can as well define the convex hull of the one element sets (singletons)
     via
-    `C = CH([Singleton([1.0, 0.5]), Singleton([1.1, 0.2]), Singleton([1.4, 0.3]), Singleton([1.7, 0.5]), Singleton([1.4, 0.8])]`
+    ```julia
+    C = CH([Singleton([1.0, 0.5]), Singleton([1.1, 0.2]), Singleton([1.4, 0.3]), Singleton([1.7, 0.5]), Singleton([1.4, 0.8])])
+    ```
     Observe that `C` is just a lazy convex hull, whereas `X` is a polygon in vertex
     representation.
 
@@ -54,9 +57,9 @@ Let us plot the two polygons, ``\mathcal{X}`` in green and ``\mathcal{X}'`` in
 blue.
 
 ```@example deco_label
-plot(X, color="green")
+example = plot(X, color="green")
 
-plot!(Xp, 1e-2, color="blue")
+plot!(example, Xp, 1e-2, color="blue")
 ```
 
 Note that we have passed `1e-2` as additional argument for the `LinearMap` set
@@ -75,47 +78,29 @@ again: ``\hat{\mathcal{X}} := \hat{\mathcal{X}}_1 \times \hat{\mathcal{X}}_2``.
 ```@example deco_label
 Xhat = overapproximate(X)  # approximation of X with an axis-aligned polygon
 
-plot(Xhat, color="gray", alpha=0.3)
-
-plot!(X, color="green")
-
-plot!(Xp, 1e-2, color="blue")
+plot!(example, Xhat, color="gray", alpha=0.3)
 ```
 
 ## Decomposed Image of a Linear Map
 
 Now let us compute the linear map for the box approximation, and let us call it
-``\mathcal{Y} := Φ(pi/4) · \hat{\mathcal{X}}``.
+``\mathcal{Y} := Φ(π/4) · \hat{\mathcal{X}}``.
 This will be a diamond-like shape (the box turned by `45°`).
 
 ```@example deco_label
 Y = Φ(pi/4) * Xhat
 
-plot(Xhat, color="gray", alpha=0.3)
-
-plot!(X, color="green")
-
-plot!(Y, 1e-2, color="yellow", alpha=0.3)
-
-plot!(Xp, 1e-2, color="blue")
+plot!(example, Y, 1e-2, color="yellow", alpha=0.3)
 ```
 
 However, we want our approximation be again a Cartesian product of intervals, so
 we have to overapproximate this diamond-like shape again:
-``\hat{\mathcal{Y}} = \hat{\mathcal{X}}' = \hat{\mathcal{X}}_1' \times \hat{\mathcal{X}}_2'``
+``\hat{\mathcal{Y}} := \hat{\mathcal{X}}' = \hat{\mathcal{X}}_1' \times \hat{\mathcal{X}}_2'``
 
 ```@example deco_label
-Xhatp = overapproximate(Xphat)
+Xhatp = overapproximate(Y)
 
-plot(Xhat, color="gray", alpha=0.3)
-
-plot!(X, color="green")
-
-plot!(Xhatp, 1e-2, color="gray", alpha=0.3)
-
-plot!(Y, 1e-2, color="yellow", alpha=0.3)
-
-plot!(Xp, 1e-2, color="blue")
+plot!(example, Xhatp, 1e-2, color="gray", alpha=0.3)
 ```
 
 As we can see, the resulting box ``\hat{\mathcal{X}}'`` is *not* a tight
