@@ -1,11 +1,10 @@
 import Base.∈
 
 export Zonotope,
-       vertices_list,
        order
 
 """
-    Zonotope{N<:Real} <: LazySet
+    Zonotope{N<:Real} <: AbstractPointSymmetricPolytope{N}
 
 Type that represents a zonotope.
 
@@ -32,7 +31,8 @@ ball in ``\\mathbb{R}^n`` by an affine transformation.
             generators::AbstractMatrix{N}) where {N<:Real}`
 
 - `Zonotope(center::AbstractVector{N},
-            generators_list::AbstractVector{T}) where {N<:Real, T<:AbstractVector{N}}`
+            generators_list::AbstractVector{T}
+           ) where {N<:Real, T<:AbstractVector{N}}`
 
 ### Examples
 
@@ -76,7 +76,7 @@ julia> Z.generators
  0.0  1.0  1.0
 ```
 """
-struct Zonotope{N<:Real} <: LazySet
+struct Zonotope{N<:Real} <: AbstractPointSymmetricPolytope{N}
     center::AbstractVector{N}
     generators::AbstractMatrix{N}
 end
@@ -85,10 +85,14 @@ Zonotope(center::AbstractVector{N},
          generators_list::AbstractVector{T}) where {N<:Real, T<:AbstractVector{N}} =
     Zonotope(center, hcat(generators_list...))
 
-"""
-    dim(Z::Zonotope)::Int
 
-Return the dimension of a zonotope.
+# --- AbstractPointSymmetric interface functions ---
+
+
+"""
+    center(Z::Zonotope{N})::Vector{N} where {N<:Real}
+
+Return the center of a zonotope.
 
 ### Input
 
@@ -96,31 +100,15 @@ Return the dimension of a zonotope.
 
 ### Output
 
-The ambient dimension of the zonotope.
+The center of the zonotope.
 """
-function dim(Z::Zonotope)::Int
-    return length(Z.center)
+function center(Z::Zonotope{N})::Vector{N} where {N<:Real}
+    return Z.center
 end
 
-"""
-    σ(d::AbstractVector{<:Real}, Z::Zonotope)::AbstractVector{<:Real}
 
-Return the support vector of a zonotope in a given direction.
+# --- AbstractPolytope interface functions ---
 
-### Input
-
-- `d` -- direction
-- `Z` -- zonotope
-
-### Output
-
-Support vector in the given direction.
-If the direction has norm zero, the vertex with ``ξ_i = 1 \\ \\ ∀ i = 1,…, p``
-is returned.
-"""
-function σ(d::AbstractVector{<:Real}, Z::Zonotope)::AbstractVector{<:Real}
-    return Z.center .+ Z.generators * sign_cadlag.(Z.generators.' * d)
-end
 
 """
     vertices_list(Z::Zonotope{N})::Vector{Vector{N}} where {N<:Real}
@@ -154,26 +142,28 @@ function vertices_list(Z::Zonotope{N})::Vector{Vector{N}} where {N<:Real}
     return convex_hull!(vlist)
 end
 
-"""
-    order(Z::Zonotope)::Rational
 
-Return the order of a zonotope.
+# --- LazySet interface functions ---
+
+
+"""
+    σ(d::AbstractVector{<:Real}, Z::Zonotope)::AbstractVector{<:Real}
+
+Return the support vector of a zonotope in a given direction.
 
 ### Input
 
+- `d` -- direction
 - `Z` -- zonotope
 
 ### Output
 
-A rational number representing the order of the zonotope.
-
-### Notes
-
-The order of a zonotope is defined as the quotient of its number of generators
-and its dimension.
+Support vector in the given direction.
+If the direction has norm zero, the vertex with ``ξ_i = 1 \\ \\ ∀ i = 1,…, p``
+is returned.
 """
-function order(Z::Zonotope)::Rational
-    return size(Z.generators, 2) // dim(Z)
+function σ(d::AbstractVector{<:Real}, Z::Zonotope)::AbstractVector{<:Real}
+    return Z.center .+ Z.generators * sign_cadlag.(Z.generators.' * d)
 end
 
 """
@@ -238,4 +228,30 @@ function ∈(x::AbstractVector{N}, Z::Zonotope{N})::Bool where {N<:Real}
     catch
         return false
     end
+end
+
+
+# --- Zonotope functions ---
+
+
+"""
+    order(Z::Zonotope)::Rational
+
+Return the order of a zonotope.
+
+### Input
+
+- `Z` -- zonotope
+
+### Output
+
+A rational number representing the order of the zonotope.
+
+### Notes
+
+The order of a zonotope is defined as the quotient of its number of generators
+and its dimension.
+"""
+function order(Z::Zonotope)::Rational
+    return size(Z.generators, 2) // dim(Z)
 end
