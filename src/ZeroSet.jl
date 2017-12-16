@@ -3,7 +3,7 @@ import Base.∈
 export ZeroSet
 
 """
-    ZeroSet <: LazySet
+    ZeroSet{N<:Real} <: AbstractSingleton{N}
 
 Type that represents the zero set, i.e., the set that only contains the origin.
 
@@ -11,9 +11,54 @@ Type that represents the zero set, i.e., the set that only contains the origin.
 
 - `dim` -- the ambient dimension of this zero set
 """
-struct ZeroSet <: LazySet
+struct ZeroSet{N<:Real} <: AbstractSingleton{N}
     dim::Int
 end
+# type-less convenience constructor
+ZeroSet(dim::Int) = ZeroSet{Float64}(dim)
+
+
+# --- AbstractSingleton interface functions ---
+
+
+"""
+    element(S::ZeroSet{N})::Vector{N} where {N<:Real}
+
+Return the element of a zero set.
+
+### Input
+
+- `S` -- zero set
+
+### Output
+
+The element of the zero set, i.e., a zero vector.
+"""
+function element(S::ZeroSet{N})::Vector{N} where {N<:Real}
+    return zeros(N, S.dim)
+end
+
+"""
+    element(S::ZeroSet{N}, ::Int)::N where {N<:Real}
+
+Return the i-th entry of the element of a zero set.
+
+### Input
+
+- `S` -- zero set
+- `i` -- dimension
+
+### Output
+
+The i-th entry of the element of the zero set, i.e., 0.
+"""
+function element(S::ZeroSet{N}, ::Int)::N where {N<:Real}
+    return zero(N)
+end
+
+
+# --- LazySet interface functions ---
+
 
 """
     dim(Z::ZeroSet)::Int
@@ -33,7 +78,7 @@ function dim(Z::ZeroSet)::Int
 end
 
 """
-    σ(d, Z)
+    σ(d::AbstractVector{N}, Z::ZeroSet)::Vector{N} where {N<:Real}
 
 Return the support vector of a zero set.
 
@@ -51,7 +96,7 @@ function σ(d::AbstractVector{N}, Z::ZeroSet)::Vector{N} where {N<:Real}
 end
 
 """
-    ∈(x::AbstractVector, Z::ZeroSet)::Bool
+    ∈(x::AbstractVector{N}, Z::ZeroSet{N})::Bool where {N<:Real}
 
 Check whether a given point is contained in a zero set.
 
@@ -75,7 +120,7 @@ julia> ∈([0.0, 0.0], Z)
 true
 ```
 """
-function ∈(x::AbstractVector{N}, Z::ZeroSet)::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, Z::ZeroSet{N})::Bool where {N<:Real}
     @assert length(x) == dim(Z)
 
     zero_N = zero(N)
