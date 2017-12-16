@@ -1,13 +1,9 @@
-import Base: <=, ∈
+import Base.<=
 
-export HPolygonOpt,
-       addconstraint!,
-       ∈,
-       tovrep,
-       vertices_list
+export HPolygonOpt
 
 """
-    HPolygonOpt{N<:Real} <: LazySet
+    HPolygonOpt{N<:Real} <: AbstractHPolygon{N}
 
 Type that represents a convex polygon in constraint representation whose edges
 are sorted in counter-clockwise fashion with respect to their normal directions.
@@ -37,7 +33,7 @@ Use `addconstraint!` to iteratively add the edges in a sorted way.
 - `HPolygonOpt(H::HPolygon{<:Real})`
   -- constructor from an HPolygon
 """
-mutable struct HPolygonOpt{N<:Real} <: LazySet
+mutable struct HPolygonOpt{N<:Real} <: AbstractHPolygon{N}
     constraints_list::Vector{LinearConstraint{N}}
     ind::Int
 
@@ -59,47 +55,9 @@ HPolygonOpt(constraints_list::Vector{LinearConstraint{N}}) where {N<:Real} =
 HPolygonOpt(H::HPolygon{N}) where {N<:Real} =
     HPolygonOpt{N}(H.constraints_list, 1)
 
-"""
-    addconstraint!(P::HPolygonOpt{N}, constraint::LinearConstraint{N})::Void where {N<:Real}
 
-Add a linear constraint to an optimized polygon in constraint representation,
-keeping the constraints sorted by their normal directions.
+# --- LazySet interface functions ---
 
-### Input
-
-- `P`          -- optimized polygon
-- `constraint` -- linear constraint to add
-
-### Output
-
-Nothing.
-"""
-function addconstraint!(P::HPolygonOpt{N},
-                        constraint::LinearConstraint{N})::Void where {N<:Real}
-    i = length(P.constraints_list)
-    while i > 0 && constraint.a <= P.constraints_list[i].a
-        i -= 1
-    end
-    insert!(P.constraints_list, i+1, constraint)
-    return nothing
-end
-
-"""
-    dim(P::HPolygonOpt)::Int
-
-Return the dimension of an optimized polygon.
-
-### Input
-
-- `P` -- optimized polygon in constraint representation
-
-### Output
-
-The ambient dimension of the optimized polygon.
-"""
-function dim(P::HPolygonOpt)::Int
-    return 2
-end
 
 """
     σ(d::AbstractVector{<:Real}, P::HPolygonOpt{N})::Vector{N} where {N<:Real}
@@ -157,58 +115,4 @@ function σ(d::AbstractVector{<:Real},
                                 Line(P.constraints_list[k]))
         end
     end
-end
-
-"""
-    ∈(x::AbstractVector{N}, P::HPolygonOpt{N})::Bool where {N<:Real}
-
-Check whether a given 2D point is contained in an optimized polygon in
-constraint representation.
-
-### Input
-
-- `x` -- two-dimensional point/vector
-- `P` -- optimized polygon in constraint representation
-
-### Output
-
-`true` iff ``x ∈ P``.
-"""
-function ∈(x::AbstractVector{N}, P::HPolygonOpt{N})::Bool where {N<:Real}
-    return ∈(x, HPolygon(P.constraints_list))
-end
-
-"""
-    tovrep(P::HPolygonOpt)::VPolygon
-
-Build a vertex representation of the given optimized polygon.
-
-### Input
-
-- `P` -- optimized polygon in constraint representation
-
-### Output
-
-The same polygon but in vertex representation, a `VPolygon`.
-"""
-function tovrep(P::HPolygonOpt)::VPolygon
-    return tovrep(HPolygon(P.constraints_list))
-end
-
-"""
-    vertices_list(P::HPolygonOpt{N})::Vector{Vector{N}} where {N<:Real}
-
-Return the list of vertices of an optimized polygon in constraint
-representation.
-
-### Input
-
-- `P` -- an optimized polygon in constraint representation
-
-### Output
-
-List of vertices.
-"""
-function vertices_list(P::HPolygonOpt{N})::Vector{Vector{N}} where {N<:Real}
-    return vertices_list(HPolygon(P.constraints_list))
 end
