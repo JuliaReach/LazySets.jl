@@ -1,17 +1,11 @@
-import Base.LinAlg:norm,
-       Base.∈
+import Base.LinAlg:norm
 
 export Hyperrectangle,
-       vertices_list,
-       norm,
-       radius,
-       diameter,
        low,
-       high,
-       ∈
+       high
 
 """
-    Hyperrectangle{N<:Real} <: LazySet
+    Hyperrectangle{N<:Real} <: AbstractHyperrectangle{N}
 
 Type that represents a hyperrectangle.
 
@@ -24,7 +18,7 @@ Cartesian product of one-dimensional intervals.
 - `radius` -- radius of the ball as a real vector, i.e., half of its width along
               each coordinate direction
 """
-struct Hyperrectangle{N<:Real} <: LazySet
+struct Hyperrectangle{N<:Real} <: AbstractHyperrectangle{N}
     center::Vector{N}
     radius::Vector{N}
 
@@ -90,10 +84,14 @@ function Hyperrectangle(;kwargs...)
         "'center' and 'radius' or 'high' and 'low'."))
 end
 
-"""
-    dim(H::Hyperrectangle)::Int
 
-Return the dimension of a hyperrectangle.
+# --- AbstractHyperrectangle interface functions ---
+
+
+"""
+    radius_hyperrectangle(H::Hyperrectangle{N}, i::Int)::N where {N<:Real}
+
+Return the box radius of a hyperrectangle in a given dimension.
 
 ### Input
 
@@ -101,35 +99,16 @@ Return the dimension of a hyperrectangle.
 
 ### Output
 
-The ambient dimension of the hyperrectangle.
+Zero.
 """
-function dim(H::Hyperrectangle)::Int
-    return length(H.center)
+function radius_hyperrectangle(H::Hyperrectangle{N}, i::Int)::N where {N<:Real}
+    return H.radius[i]
 end
 
 """
-    σ(d::AbstractVector{<:Real}, H::Hyperrectangle)::AbstractVector{<:Real}
+    radius_hyperrectangle(H::Hyperrectangle{N})::Vector{N} where {N<:Real}
 
-Return the support vector of a hyperrectangle in a given direction.
-
-### Input
-
-- `d` -- direction
-- `H` -- hyperrectangle
-
-### Output
-
-The support vector in the given direction.
-If the direction has norm zero, the vertex with biggest values is returned.
-"""
-function σ(d::AbstractVector{<:Real}, H::Hyperrectangle)::AbstractVector{<:Real}
-    return @. H.center + sign_cadlag(d) * H.radius
-end
-
-"""
-    vertices_list(H::Hyperrectangle{N})::Vector{Vector{N}} where {N<:Real}
-
-Return the vertices of a hyperrectangle.
+Return the box radius of a hyperrectangle in every dimension.
 
 ### Input
 
@@ -137,39 +116,36 @@ Return the vertices of a hyperrectangle.
 
 ### Output
 
-A list of vertices.
-
-### Notes
-
-For high dimensions, it is preferable to develop a `vertex_iterator` approach.
+The box radius of the hyperrectangle.
 """
-function vertices_list(H::Hyperrectangle{N})::Vector{Vector{N}} where {N<:Real}
-    return [H.center .+ si .* H.radius
-        for si in IterTools.product([[1, -1] for i = 1:dim(H)]...)]
+function radius_hyperrectangle(H::Hyperrectangle{N})::Vector{N} where {N<:Real}
+    return H.radius
 end
 
-"""
-    norm(H::Hyperrectangle, [p]::Real=Inf)::Real
 
-Return the norm of a hyperrectangle.
+# --- AbstractPointSymmetric interface functions ---
+
+
+"""
+    center(H::Hyperrectangle{N})::Vector{N} where {N<:Real}
+
+Return the center of a hyperrectangle.
 
 ### Input
 
 - `H` -- hyperrectangle
-- `p` -- (optional, default: `Inf`) norm
 
 ### Output
 
-A real number representing the norm.
-
-### Notes
-
-The norm of a hyperrectangle is defined as the norm of the enclosing ball, of
-the given ``p``-norm, of minimal volume.
+The center of the hyperrectangle.
 """
-function norm(H::Hyperrectangle, p::Real=Inf)::Real
-    return maximum(map(x -> norm(x, p), vertices_list(H)))
+function center(H::Hyperrectangle{N})::Vector{N} where {N<:Real}
+    return H.center
 end
+
+
+# --- LazySet interface functions ---
+
 
 """
     radius(H::Hyperrectangle, [p]::Real=Inf)::Real
@@ -195,30 +171,9 @@ function radius(H::Hyperrectangle, p::Real=Inf)::Real
     return norm(H.radius, p)
 end
 
-"""
-    diameter(H::Hyperrectangle, [p]::Real=Inf)::Real
 
-Return the diameter of a hyperrectangle.
+# --- Hyperrectangle functions ---
 
-### Input
-
-- `H` -- hyperrectangle
-- `p` -- (optional, default: `Inf`) norm
-
-### Output
-
-A real number representing the diameter.
-
-### Notes
-
-The diameter is defined as the maximum distance in the given ``p``-norm between
-any two elements of the set.
-Equivalently, it is the diameter of the enclosing ball of the given ``p``-norm
-of minimal volume with the same center.
-"""
-function diameter(H::Hyperrectangle, p::Real=Inf)::Real
-    return radius(H, p) * 2
-end
 
 """
     high(H::Hyperrectangle{N})::Vector{N} where {N<:Real}
@@ -254,46 +209,4 @@ dimension.
 """
 function low(H::Hyperrectangle{N})::Vector{N} where {N<:Real}
     return H.center .- H.radius
-end
-
-"""
-    ∈(x::AbstractVector{N}, H::Hyperrectangle{N})::Bool where {N<:Real}
-
-Check whether a given point is contained in a hyperrectangle.
-
-### Input
-
-- `x` -- point/vector
-- `H` -- hyperrectangle
-
-### Output
-
-`true` iff ``x ∈ H``.
-
-### Algorithm
-
-Let ``H`` be an ``n``-dimensional hyperrectangle, ``c_i`` and ``r_i`` be
-the ball's center and radius and ``x_i`` be the vector ``x`` in dimension ``i``,
-respectively.
-Then ``x ∈ H`` iff ``|c_i - x_i| ≤ r_i`` for all ``i=1,…,n``.
-
-### Examples
-
-```jldoctest
-julia> H = Hyperrectangle([1.0, 1.0], [2.0, 3.0]);
-
-julia> ∈([-1.1, 4.1], H)
-false
-julia> ∈([-1.0, 4.0], H)
-true
-```
-"""
-function ∈(x::AbstractVector{N}, H::Hyperrectangle{N})::Bool where {N<:Real}
-    @assert length(x) == dim(H)
-    for i in eachindex(x)
-        if abs(H.center[i] - x[i]) > H.radius[i]
-            return false
-        end
-    end
-    return true
 end

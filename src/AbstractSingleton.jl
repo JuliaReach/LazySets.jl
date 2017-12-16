@@ -29,7 +29,7 @@ abstract type AbstractSingleton{N<:Real} <: AbstractHyperrectangle{N} end
 
 
 """
-    radius_b(S::AbstractSingleton{N}, i::Int)::N where {N<:Real}
+    radius_hyperrectangle(S::AbstractSingleton{N}, i::Int)::N where {N<:Real}
 
 Return the box radius of a set with a single value in a given dimension.
 
@@ -41,13 +41,14 @@ Return the box radius of a set with a single value in a given dimension.
 
 Zero.
 """
-function radius_b(S::AbstractSingleton{N}, i::Int)::N where {N<:Real}
+function radius_hyperrectangle(S::AbstractSingleton{N}, i::Int
+                              )::N where {N<:Real}
     return zero(N)
 end
 
 
 """
-    radius_b(S::AbstractSingleton{N})::Vector{N} where {N<:Real}
+    radius_hyperrectangle(S::AbstractSingleton{N})::Vector{N} where {N<:Real}
 
 Return the box radius of a set with a single value in every dimension.
 
@@ -59,7 +60,8 @@ Return the box radius of a set with a single value in every dimension.
 
 The zero vector.
 """
-function radius_b(S::AbstractSingleton{N})::Vector{N} where {N<:Real}
+function radius_hyperrectangle(S::AbstractSingleton{N}
+                              )::Vector{N} where {N<:Real}
     return zeros(N, dim(S))
 end
 

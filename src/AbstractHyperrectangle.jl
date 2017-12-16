@@ -2,7 +2,7 @@ import Base.LinAlg:norm,
        Base.∈
 
 export AbstractHyperrectangle,
-       radius_b
+       radius_hyperrectangle
 
 """
     AbstractHyperrectangle{N<:Real} <: AbstractPointSymmetricPolytope{N}
@@ -12,11 +12,10 @@ Abstract type for box-shaped sets.
 ### Notes
 
 Every concrete `AbstractHyperrectangle` must define the following functions:
-- `radius_b(::AbstractHyperrectangle{N})::Union{Vector{N},N}` -- return the
-    radius, which is a full-dimensional vector for hyperrectangles and a number
-    for infinity balls
-- `radius_b(::AbstractHyperrectangle{N}, i::Int)::N` -- return the radius entry
-    in the `i`-th dimension
+- `radius_hyperrectangle(::AbstractHyperrectangle{N})::Vector{N}` -- return the
+    hyperrectangle's radius, which is a full-dimensional vector
+- `radius_hyperrectangle(::AbstractHyperrectangle{N}, i::Int)::N` -- return the
+    hyperrectangle's radius in the `i`-th dimension
 
 ```jldoctest
 julia> subtypes(AbstractHyperrectangle)
@@ -52,7 +51,7 @@ For high dimensions, it is preferable to develop a `vertex_iterator` approach.
 """
 function vertices_list(B::AbstractHyperrectangle{N}
                       )::Vector{Vector{N}} where {N<:Real}
-    return [center(B) .+ si .* radius_b(B)
+    return [center(B) .+ si .* radius_hyperrectangle(B)
         for si in IterTools.product([[1, -1] for i = 1:dim(B)]...)]
 end
 
@@ -78,7 +77,7 @@ If the direction has norm zero, the vertex with biggest values is returned.
 """
 function σ(d::AbstractVector{N},
            B::AbstractHyperrectangle{N})::AbstractVector{N} where {N<:Real}
-    return center(B) .+ sign_cadlag.(d) .* radius_b(B)
+    return center(B) .+ sign_cadlag.(d) .* radius_hyperrectangle(B)
 end
 
 """
@@ -154,7 +153,7 @@ function ∈(x::AbstractVector{N},
            B::AbstractHyperrectangle{N})::Bool where {N<:Real}
     @assert length(x) == dim(B)
     for i in eachindex(x)
-        if abs(center(B)[i] - x[i]) > radius_b(B, i)
+        if abs(center(B)[i] - x[i]) > radius_hyperrectangle(B, i)
             return false
         end
     end
