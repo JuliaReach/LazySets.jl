@@ -1,11 +1,9 @@
-import Base: <=, ∈
+import Base: ∈
 
-export VPolygon,
-       vertices_list,
-       singleton_list
+export VPolygon
 
 """
-    VPolygon{N<:Real} <: LazySet
+    VPolygon{N<:Real} <: AbstractPolygon{N}
 
 Type that represents a polygon by its vertices.
 
@@ -24,7 +22,7 @@ the convex hull.
             apply_convex_hull::Bool=true,
             algorithm::String="monotone_chain")`
 """
-struct VPolygon{N<:Real} <: LazySet
+struct VPolygon{N<:Real} <: AbstractPolygon{N}
     vertices_list::Vector{Vector{N}}
 
     # default constructor that applies a convex hull algorithm
@@ -39,10 +37,14 @@ struct VPolygon{N<:Real} <: LazySet
     end
 end
 
-"""
-    dim(P::VPolygon)::Int
 
-Return the dimension of a polygon in vertex representation.
+# --- AbstractPolygon interface functions ---
+
+
+"""
+    tovrep(P::VPolygon{N})::VPolygon{N} where {N<:Real}
+
+Build a vertex representation of the given polygon.
 
 ### Input
 
@@ -50,11 +52,53 @@ Return the dimension of a polygon in vertex representation.
 
 ### Output
 
-The ambient dimension of the polygon.
+The identity, i.e., the same polygon instance.
 """
-function dim(P::VPolygon)::Int
-    return 2
+function tovrep(P::VPolygon{N})::VPolygon{N} where {N<:Real}
+    return P
 end
+
+"""
+    tohrep(P::VPolygon{N})::AbstractHPolygon{N} where {N<:Real}
+
+Build a constraint representation of the given polygon.
+
+### Input
+
+- `P` -- polygon in vertex representation
+
+### Output
+
+The same polygon but in constraint representation, an `AbstractHPolygon`.
+"""
+function tohrep(P::VPolygon{N})::AbstractHPolygon{N} where {N<:Real}
+    error("this function is not implemented yet, see issue #5")
+end
+
+
+# --- AbstractPolytope interface functions ---
+
+
+"""
+    vertices_list(P::VPolygon{N})::Vector{Vector{N}} where {N<:Real}
+
+Return the list of vertices of a convex polygon in vertex representation.
+
+### Input
+
+- `P` -- a polygon vertex representation
+
+### Output
+
+List of vertices.
+"""
+function vertices_list(P::VPolygon{N})::Vector{Vector{N}} where {N<:Real}
+    return P.vertices_list
+end
+
+
+# --- LazySet interface functions ---
+
 
 """
     σ(d::AbstractVector{<:Real}, P::VPolygon{N})::Vector{N} where {N<:Real}
@@ -85,7 +129,8 @@ have been sorted in counter-clockwise fashion.
 In that case a binary search algorithm can be used that runs in ``O(\\log n)``.
 See issue [#40](https://github.com/JuliaReach/LazySets.jl/issues/40).
 """
-function σ(d::AbstractVector{<:Real}, P::VPolygon{N})::Vector{N} where {N<:Real}
+function σ(d::AbstractVector{<:Real},
+           P::VPolygon{N})::Vector{N} where {N<:Real}
     if isempty(P.vertices_list)
         error("this polygon is empty")
     end
@@ -96,41 +141,6 @@ function σ(d::AbstractVector{<:Real}, P::VPolygon{N})::Vector{N} where {N<:Real
         end
     end
     return P.vertices_list[i_max]
-end
-
-"""
-    vertices_list(P::VPolygon{N})::Vector{Vector{N}} where {N<:Real}
-
-Return the list of vertices of a convex polygon in vertex representation.
-
-### Input
-
-- `P` -- a polygon vertex representation
-
-### Output
-
-List of vertices.
-"""
-function vertices_list(P::VPolygon{N})::Vector{Vector{N}} where {N<:Real}
-    return P.vertices_list
-end
-
-"""
-    singleton_list(P::VPolygon{N})::Vector{Singleton{N}} where {N<:Real}
-
-Return the vertices of a convex polygon in vertex representation as a list of
-singletons.
-
-### Input
-
-- `P` -- a polygon vertex representation
-
-### Output
-
-List containing a singleton for each vertex.
-"""
-function singleton_list(P::VPolygon{N})::Vector{Singleton{N}} where {N<:Real}
-    return [Singleton(vi) for vi in P.vertices_list]
 end
 
 """
