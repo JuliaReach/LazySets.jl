@@ -3,7 +3,7 @@ import Base.∈
 export Ballp
 
 """
-    Ballp <: LazySet
+    Ballp{N<:Real} <: AbstractPointSymmetric{N}
 
 Type that represents a ball in the p-norm, for ``1 ≤ p ≤ ∞``.
 
@@ -52,7 +52,7 @@ julia> σ(1.:5, B)
  0.3379
 ```
 """
-struct Ballp{N<:Real} <: LazySet
+struct Ballp{N<:Real} <: AbstractPointSymmetric{N}
     p::Real
     center::Vector{N}
     radius::N
@@ -78,22 +78,30 @@ end
 Ballp(p::Real, center::Vector{N}, radius::N) where {N<:Real} =
     Ballp{N}(p, center, radius)
 
-"""
-    dim(B::Ballp)::Int 
 
-Return the dimension of a Ballp.
+# --- AbstractPointSymmetric interface functions ---
+
+
+"""
+    center(B::Ballp{N})::Vector{N} where {N<:Real}
+
+Return the center of a ball in the p-norm.
 
 ### Input
 
-- `B` -- a ball in the p-norm
+- `B` -- ball in the p-norm
 
 ### Output
 
-The ambient dimension of the ball.
+The center of the ball in the p-norm.
 """
-function dim(B::Ballp)::Int
-    return length(B.center)
+function center(B::Ballp{N})::Vector{N} where {N<:Real}
+    return B.center
 end
+
+
+# --- LazySet interface functions ---
+
 
 """
     σ(d::AbstractVector{N}, B::Ballp)::AbstractVector{N} where {N<:AbstractFloat}
@@ -102,8 +110,8 @@ Return the support vector of a `Ballp` in a given direction.
 
 ### Input
 
-- `d` -- a direction
-- `B` -- a ball in the p-norm
+- `d` -- direction
+- `B` -- ball in the p-norm
 
 ### Output
 
