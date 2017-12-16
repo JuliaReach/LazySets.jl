@@ -1,10 +1,10 @@
 #!/usr/bin/env julia
 using LazySets, Base.Test
 
-# =======================================
-# Testing common API of all LazySet types
-# =======================================
-@time @testset "LazySets.LazySet" begin include("unit_LazySet.jl") end
+# ====================================
+# Testing common API of all interfaces
+# ====================================
+@time @testset "LazySets.interfaces" begin include("unit_interfaces.jl") end
 
 # =======================================
 # Testing types that inherit from LazySet
