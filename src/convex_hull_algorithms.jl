@@ -1,5 +1,6 @@
 """
-    convex_hull(points::Vector{S}; [algorithm]::String="monotone_chain")::Vector{S} where {S<:AbstractVector{N}} where {N<:Real}
+    convex_hull(points::Vector{S}; [algorithm]::String="monotone_chain"
+               )::Vector{S} where {S<:AbstractVector{N}} where {N<:Real}
 
 Compute the convex hull of points in the plane.
 
@@ -10,6 +11,7 @@ Compute the convex hull of points in the plane.
                  algorithm, valid options are:
 
     * `"monotone_chain"`
+    * `"monotone_chain_sorted"`
 
 ### Output
 
@@ -38,14 +40,14 @@ julia> plot([Tuple(pi) for pi in points], seriestype=:scatter);
 julia> plot!(VPolygon(hull), alpha=0.2);
 ```
 """
-function convex_hull(points::Vector{S};
-                     algorithm::String="monotone_chain"
+function convex_hull(points::Vector{S}; algorithm::String="monotone_chain"
                     )::Vector{S} where {S<:AbstractVector{N}} where {N<:Real}
     return convex_hull!(copy(points), algorithm=algorithm)
 end
 
 """
-    convex_hull!(points::Vector{S}; [algorithm]::String="monotone_chain")::Vector{S} where {S<:AbstractVector{N}} where {N<:Real}
+    convex_hull!(points::Vector{S}; [algorithm]::String="monotone_chain"
+                )::Vector{S} where {S<:AbstractVector{N}} where {N<:Real}
 
 Compute the convex hull of points in the plane, in-place.
 
@@ -53,9 +55,10 @@ Compute the convex hull of points in the plane, in-place.
 
 - `points`    -- list of 2D vectors (is modified)
 - `algorithm` -- (optional, default: `"monotone_chain"`) the convex hull
-                 algorithm, valid options are:
+                 algorithm; valid options are:
 
     * `"monotone_chain"`
+    * `"monotone_chain_sorted"`
 
 ### Output
 
@@ -72,13 +75,16 @@ function convex_hull!(points::Vector{S};
 
     if algorithm == "monotone_chain"
         return monotone_chain!(points)
+    elseif algorithm == "monotone_chain_sorted"
+        return monotone_chain!(points, sort=false)
     else
         error("the convex hull algorithm $algorithm is unknown")
     end
 end
 
 """
-    right_turn(O::AbstractVector{N}, A::AbstractVector{N}, B::AbstractVector{N})::N where {N<:Real}
+    right_turn(O::AbstractVector{N}, A::AbstractVector{N}, B::AbstractVector{N}
+              )::N where {N<:Real}
 
 Determine if the acute angle defined by the three points `O`, `A`, `B` in the
 plane is a right turn (counter-clockwise) with respect to the center `O`.
@@ -107,7 +113,8 @@ around `O` from `A` to `B`; otherwise they constitute a negative angle.
 end
 
 """
-    monotone_chain!(points::Vector{S})::Vector{S} where {S<:AbstractVector{N}} where {N<:Real}
+    monotone_chain!(points::Vector{S}; sort::Bool=true
+                   )::Vector{S} where {S<:AbstractVector{N}} where {N<:Real}
 
 Compute the convex hull of points in the plane using Andrew's monotone chain
 method.
@@ -115,6 +122,8 @@ method.
 ### Input
 
 - `points` -- list of 2D vectors; is sorted in-place inside this function
+- `sort`   -- (optional, default: `true`) flag for sorting the vertices
+              lexicographically; sortedness is required for correctness
 
 ### Output
 
@@ -137,7 +146,7 @@ construct the convex hull of a set of ``n`` points in the plane in
 For further details see
 [Monotone chain](https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain)
 """
-function monotone_chain!(points::Vector{S}
+function monotone_chain!(points::Vector{S}; sort::Bool=true
                         )::Vector{S} where {S<:AbstractVector{N}} where {N<:Real}
 
     @inline function build_hull!(semihull, iterator, points, zero_N)
@@ -151,9 +160,11 @@ function monotone_chain!(points::Vector{S}
         end
     end
 
-    # sort the rows lexicographically (which requires a two-dimensional array)
-    # points = sortrows(hcat(points...)', alg=QuickSort)  # out-of-place version
-    sort!(points, by=x->(x[1], x[2]))                     # in-place version
+    if sort
+        # sort the rows lexicographically (requires a two-dimensional array)
+        # points = sortrows(hcat(points...)', alg=QuickSort) # out-of-place version
+        sort!(points, by=x->(x[1], x[2]))                    # in-place version
+    end
 
     zero_N = zero(N)
 
