@@ -1,5 +1,6 @@
 export AbstractPointSymmetricPolytope,
        center,
+       an_element,
        vertices_list,
        singleton_list
 
@@ -37,20 +38,39 @@ abstract type AbstractPointSymmetricPolytope{N<:Real} <: LazySet end
 
 
 """
-    dim(S::AbstractPointSymmetricPolytope)::Int
+    dim(P::AbstractPointSymmetricPolytope)::Int
 
 Return the ambient dimension of a point symmetric set.
 
 ### Input
 
-- `S` -- set
+- `P` -- set
 
 ### Output
 
 The ambient dimension of the set.
 """
-@inline function dim(S::AbstractPointSymmetricPolytope)::Int
-    return length(center(S))
+@inline function dim(P::AbstractPointSymmetricPolytope)::Int
+    return length(center(P))
+end
+
+
+"""
+    an_element(P::AbstractPointSymmetricPolytope{N})::Vector{N} where {N<:Real}
+
+Return some element of a point symmetric polytope.
+
+### Input
+
+- `P` -- point symmetric polytope
+
+### Output
+
+The center of the point symmetric polytope.
+"""
+function an_element(P::AbstractPointSymmetricPolytope{N}
+                   )::Vector{N} where {N<:Real}
+    return center(P)
 end
 
 

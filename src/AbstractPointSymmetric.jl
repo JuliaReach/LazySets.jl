@@ -1,5 +1,6 @@
 export AbstractPointSymmetric,
-       center
+       center,
+       an_element
 
 """
     AbstractPointSymmetric{N<:Real} <: LazySet
@@ -36,4 +37,21 @@ The ambient dimension of the set.
 """
 @inline function dim(S::AbstractPointSymmetric)::Int
     return length(center(S))
+end
+
+"""
+    an_element(S::AbstractPointSymmetric{N})::Vector{N} where {N<:Real}
+
+Return some element of a point symmetric set.
+
+### Input
+
+- `S` -- point symmetric set
+
+### Output
+
+The center of the point symmetric set.
+"""
+function an_element(S::AbstractPointSymmetric{N})::Vector{N} where {N<:Real}
+    return center(S)
 end

@@ -1,7 +1,8 @@
 import Base: ∈, ⊆
 
 export AbstractSingleton,
-       element
+       element,
+       an_element
 
 """
     AbstractSingleton{N<:Real} <: AbstractHyperrectangle{N}
@@ -120,7 +121,7 @@ Return the support vector of a set with a single value.
 ### Input
 
 - `d` -- direction
-- `B` -- set with a single value
+- `S` -- set with a single value
 
 ### Output
 
@@ -129,6 +130,24 @@ direction.
 """
 function σ(d::AbstractVector{N},
            S::AbstractSingleton{N})::Vector{N} where {N<:Real}
+    return element(S)
+end
+
+
+"""
+    an_element(S::AbstractSingleton{N})::Vector{N} where {N<:Real}
+
+Return some element of a set with a single value.
+
+### Input
+
+- `S` -- set with a single value
+
+### Output
+
+The only element in the set.
+"""
+function an_element(S::AbstractSingleton{N})::Vector{N} where {N<:Real}
     return element(S)
 end
 
