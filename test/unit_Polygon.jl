@@ -125,3 +125,9 @@ v = VPolygon([[2.0, 3.0], [-1.0, -3.4]])
 # an_element function
 v = VPolygon([[2., 3.]])
 @test an_element(v) ∈ v
+
+# subset
+p = VPolygon([[0., 0.],[2., 0.]])
+@test ⊆(VPolygon([[1., 0.]]), p)
+@test ⊆(HPolygon(), p)
+@test ⊆(p, BallInf([1., 0.], 1.))

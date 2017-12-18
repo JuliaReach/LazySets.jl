@@ -23,3 +23,7 @@ S = Singleton([1., 1.])
 
 # an_element function
 @test an_element(S) ∈ S
+
+# subset
+@test ⊆(Singleton([0., 1.]), VPolygon([[0.,0.],[0., 2.]]))
+@test !⊆(Singleton([0., 3.]), VPolygon([[0.,0.],[0., 2.], [2., 0.]]))

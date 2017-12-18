@@ -1,3 +1,5 @@
+import Base.⊆
+
 export AbstractPolytope,
        vertices_list,
        singleton_list
@@ -23,6 +25,40 @@ julia> subtypes(AbstractPolytope)
 ```
 """
 abstract type AbstractPolytope{N<:Real} <: LazySet end
+
+
+# --- LazySet interface functions ---
+
+
+"""
+    ⊆(P::AbstractPolytope, S::LazySet)::Bool
+
+Check whether a polytope is contained in a convex set.
+
+### Input
+
+- `P` -- polytope (containee?)
+- `S` -- convex set (container?)
+
+### Output
+
+`true` iff ``P ⊆ S``.
+
+### Algorithm
+
+Since ``S`` is convex, ``P ⊆ S`` iff ``v_i ∈ S`` for all vertices ``v_i`` of
+``P``.
+"""
+function ⊆(P::AbstractPolytope, S::LazySet)::Bool
+    @assert dim(P) == dim(S)
+
+    for v in vertices_list(P)
+        if !∈(v, S)
+            return false
+        end
+    end
+    return true
+end
 
 
 # --- common AbstractPolytope functions ---
