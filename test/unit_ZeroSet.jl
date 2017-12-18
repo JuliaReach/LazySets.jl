@@ -12,3 +12,7 @@ cpa = MinkowskiSumArray([B, 2.*B, 3.*B])
 
 # an_element function
 @test an_element(Z) ∈ Z
+
+# subset
+@test ⊆(ZeroSet(1), Singleton([0.])) && !⊆(ZeroSet(1), Singleton([2.]))
+@test ⊆(ZeroSet(1), ZeroSet(1)) && !⊆(ZeroSet(1), ZeroSet(2))

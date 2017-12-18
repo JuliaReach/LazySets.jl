@@ -27,3 +27,6 @@ S = Singleton([1., 1.])
 # subset
 @test ⊆(Singleton([0., 1.]), VPolygon([[0.,0.],[0., 2.]]))
 @test !⊆(Singleton([0., 3.]), VPolygon([[0.,0.],[0., 2.], [2., 0.]]))
+
+# subset
+@test ⊆(Singleton([1.]), Singleton([1.])) && !⊆(Singleton([1.]), Singleton([2.]))

@@ -193,3 +193,23 @@ Check whether a given set with a single value is contained in a convex set.
 function ⊆(S::AbstractSingleton, set::LazySet)::Bool
     return ∈(element(S), set)
 end
+
+
+"""
+    ⊆(S1::AbstractSingleton, S2::AbstractSingleton)::Bool
+
+Check whether a given set with a single value is contained in another set with a
+single value.
+
+### Input
+
+- `S1` -- first set with a single value (containee?)
+- `S2` -- second set with a single value (containee?)
+
+### Output
+
+`true` iff ``S1 ⊆ S2`` iff ``S1 == S2``.
+"""
+function ⊆(S1::AbstractSingleton, S2::AbstractSingleton)::Bool
+    return element(S1) == element(S2)
+end
