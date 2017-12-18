@@ -1,5 +1,6 @@
-import Base.LinAlg:norm,
-       Base.∈
+import Base.LinAlg.norm,
+       Base.∈,
+       Base.⊆
 
 export AbstractHyperrectangle,
        radius_hyperrectangle
@@ -154,6 +155,38 @@ function ∈(x::AbstractVector{N},
     @assert length(x) == dim(B)
     for i in eachindex(x)
         if abs(center(B)[i] - x[i]) > radius_hyperrectangle(B, i)
+            return false
+        end
+    end
+    return true
+end
+
+"""
+    ⊆(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle)::Bool
+
+Check whether a given hyperrectangle is contained in another hyperrectangle.
+
+### Input
+
+- `H1` -- first hyperrectangle (containee?)
+- `H2` -- second hyperrectangle (container?)
+
+### Output
+
+`true` iff ``H1 ⊆ H2``.
+
+### Algorithm
+
+``H1 ⊆ H2`` iff ``c_1 + r_1 ≤ c_2 + r_2 ∧ c_1 - r_1 ≥ c_2 - r_2`` iff
+``r_1 - r_2 ≤ c_1 - c_2 ≤ -(r_1 - r_2)``.
+"""
+function ⊆(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle)::Bool
+    @assert dim(H1) == dim(H2)
+
+    for i in 1:dim(H1)
+        c_dist = center(H1)[i] - center(H2)[i]
+        r_dist = radius_hyperrectangle(H1, i) - radius_hyperrectangle(H2, i)
+        if -r_dist < c_dist || c_dist < r_dist
             return false
         end
     end

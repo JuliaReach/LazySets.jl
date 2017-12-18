@@ -102,3 +102,13 @@ H = Hyperrectangle([1.0, 1.0], [2.0, 3.0])
 # an_element function
 H = Hyperrectangle([1.0, 2.0], [3.0, 4.0])
 @test an_element(H) ∈ H
+
+# subset
+H1 = Hyperrectangle([1.5, 1.5], [0.5, 0.5])
+H2 = Hyperrectangle([2.0, 2.5], [0.5, 0.5])
+H3 = Hyperrectangle([2.0, 2.0], [2.0, 3.0])
+B1 = BallInf([2.0, 2.5], 0.5)
+B2 = BallInf([2.0, 2.0], 1.0)
+@test !⊆(H1, H2) && ⊆(H1, H3) && ⊆(H2, H3)
+@test ⊆(H2, B1) && ⊆(B1, H2)
+@test ⊆(B1, B2) && !⊆(B2, B1)
