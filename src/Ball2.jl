@@ -186,3 +186,26 @@ Check whether a ball in the 2-norm is contained in a set with a single value.
 function ⊆(B::Ball2, S::AbstractSingleton)::Bool
     return B.center == element(S) && B.radius == 0
 end
+
+"""
+    ⊆(B::Ball2, H::AbstractHyperrectangle)::Bool
+
+Check whether a ball in the 2-norm is contained in a hyperrectangle.
+
+### Input
+
+- `B` -- ball in the 2-norm
+- `H` -- hyperrectangle
+
+### Output
+
+`true` iff ``B ⊆ H``.
+
+### Algorithm
+
+This implementation computes the interval hull of the ball and then checks
+containment in the hyperrectangle.
+"""
+function ⊆(B::Ball2, H::AbstractHyperrectangle)::Bool
+    return ⊆(Approximations.box_approximation(B), H)
+end

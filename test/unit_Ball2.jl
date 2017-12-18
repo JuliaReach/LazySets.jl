@@ -55,4 +55,7 @@ b = Ball2([1., 2.], 2.)
 @test an_element(b) ∈ b
 
 # subset
-@test !⊆(Ball2([1., 2.], 2.), Singleton([1., 2.])) && ⊆(Ball2([1., 2.], 0.), Singleton([1., 2.]))
+@test !⊆(Ball2([1., 2.], 2.), Singleton([1., 2.]))
+@test ⊆(Ball2([1., 2.], 0.), Singleton([1., 2.]))
+@test !⊆(Ball2([1., 2.], 2.), BallInf([1., 2.], 1.))
+@test ⊆(Ball2([1., 2.], 0.), BallInf([1., 2.], 2.))

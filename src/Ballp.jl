@@ -215,3 +215,26 @@ Check whether a ball in the p-norm is contained in a set with a single value.
 function ⊆(B::Ballp, S::AbstractSingleton)::Bool
     return B.center == element(S) && B.radius == 0
 end
+
+"""
+    ⊆(B::Ballp, H::AbstractHyperrectangle)::Bool
+
+Check whether a ball in the p-norm is contained in a hyperrectangle.
+
+### Input
+
+- `B` -- ball in the p-norm
+- `H` -- hyperrectangle
+
+### Output
+
+`true` iff ``B ⊆ H``.
+
+### Algorithm
+
+This implementation computes the interval hull of the ball and then checks
+containment in the hyperrectangle.
+"""
+function ⊆(B::Ballp, H::AbstractHyperrectangle)::Bool
+    return ⊆(Approximations.box_approximation(B), H)
+end
