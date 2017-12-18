@@ -87,6 +87,11 @@ vp = VPolygon(points) # by default, a convex hull is run
 vp = VPolygon(points, apply_convex_hull=false) # we can turn it off
 @test vertices_list(vp) == [[0.9,0.2], [0.4,0.6], [0.2,0.1], [0.1,0.3], [0.3,0.28]]
 
+# test for pre-sorted points
+points = [[0.1, 0.3], [0.2, 0.1], [0.4, 0.3], [0.4, 0.6], [0.9, 0.2]]
+vp = VPolygon(points, algorithm="monotone_chain_sorted")
+@test vertices_list(vp) == [[0.1, 0.3], [0.2, 0.1], [0.9, 0.2], [0.4, 0.6]]
+
 # test support vector of a VPolygon
 p = HPolygon()
 for ci in [c1, c2, c3, c4]
