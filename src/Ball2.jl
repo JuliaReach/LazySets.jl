@@ -1,4 +1,4 @@
-import Base.∈
+import Base: ∈, ⊆
 
 export Ball2
 
@@ -167,4 +167,22 @@ function ∈(x::AbstractVector{N}, B::Ball2{N})::Bool where {N<:AbstractFloat}
         sum += (B.center[i] - x[i])^2
     end
     return sqrt(sum) <= B.radius
+end
+
+"""
+    ⊆(B::Ball2, S::AbstractSingleton)::Bool
+
+Check whether a ball in the 2-norm is contained in a set with a single value.
+
+### Input
+
+- `B` -- ball in the 2-norm
+- `S` -- set with a single value
+
+### Output
+
+`true` iff ``B ⊆ S``.
+"""
+function ⊆(B::Ball2, S::AbstractSingleton)::Bool
+    return B.center == element(S) && B.radius == 0
 end

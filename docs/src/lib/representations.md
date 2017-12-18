@@ -33,6 +33,7 @@ dim(::Ball2)
 σ(::AbstractVector{Float64}, ::Ball2)
 ∈(::AbstractVector{Float64}, ::Ball2{Float64})
 an_element(::Ball2{Float64})
+⊆(::Ball2, ::Singleton)
 center(::Ball2{Float64})
 ```
 
@@ -78,6 +79,7 @@ dim(::Ballp)
 σ(::AbstractVector{Float64}, ::Ballp)
 ∈(::AbstractVector{Float64}, ::Ballp{Float64})
 an_element(::Ballp{Float64})
+⊆(::Ballp, ::Singleton)
 center(::Ballp{Float64})
 ```
 

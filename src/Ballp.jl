@@ -1,4 +1,4 @@
-import Base.∈
+import Base: ∈, ⊆
 
 export Ballp
 
@@ -196,4 +196,22 @@ function ∈(x::AbstractVector{N}, B::Ballp{N})::Bool where {N<:AbstractFloat}
         sum += abs(B.center[i] - x[i])^B.p
     end
     return sum^(1./B.p) <= B.radius
+end
+
+"""
+    ⊆(B::Ballp, S::AbstractSingleton)::Bool
+
+Check whether a ball in the p-norm is contained in a set with a single value.
+
+### Input
+
+- `B` -- ball in the p-norm
+- `S` -- set with a single value
+
+### Output
+
+`true` iff ``B ⊆ S``.
+"""
+function ⊆(B::Ballp, S::AbstractSingleton)::Bool
+    return B.center == element(S) && B.radius == 0
 end

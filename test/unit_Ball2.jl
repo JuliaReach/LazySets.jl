@@ -53,3 +53,6 @@ d = [0., -1.]
 # an_element function
 b = Ball2([1., 2.], 2.)
 @test an_element(b) ∈ b
+
+# subset
+@test !⊆(Ball2([1., 2.], 2.), Singleton([1., 2.])) && ⊆(Ball2([1., 2.], 0.), Singleton([1., 2.]))
