@@ -42,6 +42,9 @@ d = [0., -1.]
 @test !∈([3., 4.], p)
 @test !∈([-1., 5.], p)
 
+# an_element function
+@test an_element(p) ∈ p
+
 # Optimized Polygon
 po = HPolygonOpt(p)
 
@@ -71,6 +74,9 @@ d = [0., -1.]
 @test !∈([5., 2.], po)
 @test !∈([3., 4.], po)
 @test !∈([-1., 5.], po)
+
+# an_element function
+@test an_element(po) ∈ po
 
 # Test VRepresentation
 vp = tovrep(p)
@@ -114,3 +120,7 @@ v = VPolygon([[2.0, 3.0]])
 @test [2.0, 3.0] ∈ v
 v = VPolygon([[2.0, 3.0], [-1.0, -3.4]])
 @test [-1.0, -3.4] ∈ v
+
+# an_element function
+v = VPolygon([[2., 3.]])
+@test an_element(v) ∈ v

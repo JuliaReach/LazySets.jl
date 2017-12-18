@@ -9,3 +9,6 @@ cpa = MinkowskiSumArray([B, 2.*B, 3.*B])
 
 # test M-sum of zero set with itself
 @test ZeroSet(2) ⊕ ZeroSet(2) == ZeroSet(2)
+
+# an_element function
+@test an_element(Z) ∈ Z
