@@ -3,7 +3,7 @@ import Base.∈
 export Ball2
 
 """
-    Ball2{N<:Real} <: LazySet
+    Ball2{N<:Real} <: AbstractPointSymmetric{N}
 
 Type that represents a ball in the 2-norm.
 
@@ -48,7 +48,7 @@ julia> σ([1.,2.,3.,4.,5.], B)
  0.3371
 ```
 """
-struct Ball2{N<:Real} <: LazySet
+struct Ball2{N<:Real} <: AbstractPointSymmetric{N}
     center::Vector{N}
     radius::N
 
@@ -59,10 +59,14 @@ end
 # type-less convenience constructor
 Ball2(center::Vector{N}, radius::N) where {N<:Real} = Ball2{N}(center, radius)
 
-"""
-    dim(B::Ball2)::Int
 
-Return the dimension of a ball in the 2-norm.
+# --- AbstractPointSymmetric interface functions ---
+
+
+"""
+    center(B::Ball2{N})::Vector{N} where {N<:Real}
+
+Return the center of a ball in the 2-norm.
 
 ### Input
 
@@ -70,11 +74,15 @@ Return the dimension of a ball in the 2-norm.
 
 ### Output
 
-The ambient dimension of the ball.
+The center of the ball in the 2-norm.
 """
-function dim(B::Ball2)::Int
-    return length(B.center)
+function center(B::Ball2{N})::Vector{N} where {N<:Real}
+    return B.center
 end
+
+
+# --- LazySet interface functions ---
+
 
 """
     σ(d::AbstractVector{N}, B::Ball2)::AbstractVector{<:AbstractFloat} where {N<:AbstractFloat}
@@ -151,8 +159,7 @@ julia> ∈([.5, 1.5], B)
 true
 ```
 """
-function ∈(x::AbstractVector{<:Real},
-           B::Ball2{N})::Bool where {N<:AbstractFloat}
+function ∈(x::AbstractVector{N}, B::Ball2{N})::Bool where {N<:Real}
     @assert length(x) == dim(B)
     sum = zero(N)
     for i in eachindex(x)

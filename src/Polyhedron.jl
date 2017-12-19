@@ -5,7 +5,7 @@ export Polyhedron,
        constraints_list
 
 """
-    Polyhedron{N<:Real} <: LazySet
+    Polyhedron{N<:Real} <: AbstractPolytope{N}
 
 Type that represents a convex polyhedron in H-representation.
 
@@ -13,7 +13,7 @@ Type that represents a convex polyhedron in H-representation.
 
 - `constraints` -- vector of linear constraints
 """
-struct Polyhedron{N<:Real} <: LazySet
+struct Polyhedron{N<:Real} <: AbstractPolytope{N}
     constraints::Vector{LinearConstraint{N}}
 end
 # constructor for a Polyhedron with no constraints
@@ -70,7 +70,8 @@ function σ(d::AbstractVector{<:Real}, P::Polyhedron)::Vector{<:Real}
 end
 
 """
-    addconstraint!(P::Polyhedron{N}, constraint::LinearConstraint{N})::Void where {N<:Real}
+    addconstraint!(P::Polyhedron{N},
+                   constraint::LinearConstraint{N})::Void where {N<:Real}
 
 Add a linear constraint to a polyhedron in H-representation.
 
@@ -103,6 +104,7 @@ Return the list of constraints defining a polyhedron in H-representation.
 
 - `P` -- polyhedron in H-representation
 """
-function constraints_list(P::Polyhedron{N})::Vector{LinearConstraint{N}} where {N<:Real}
+function constraints_list(P::Polyhedron{N}
+                         )::Vector{LinearConstraint{N}} where {N<:Real}
     return P.constraints
 end

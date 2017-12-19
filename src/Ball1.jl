@@ -3,7 +3,7 @@ import Base.∈
 export Ball1
 
 """
-    Ball1 <: LazySet
+    Ball1{N<:Real} <: AbstractPointSymmetricPolytope{N}
 
 Type that represents a ball in the 1-norm, also known as Manhattan or Taxicab
 norm.
@@ -40,7 +40,7 @@ julia> σ([0.,1], B)
  1.0
 ```
 """
-struct Ball1{N<:Real} <: LazySet
+struct Ball1{N<:Real} <: AbstractPointSymmetricPolytope{N}
     center::Vector{N}
     radius::N
 
@@ -51,39 +51,67 @@ end
 # type-less convenience constructor
 Ball1(center::Vector{N}, radius::N) where {N<:Real} = Ball1{N}(center, radius)
 
-"""
-    dim(B::Ball1)::Int
 
-Return the dimension of a `Ball1`.
+# --- AbstractPointSymmetric interface functions ---
+
+
+"""
+    center(B::Ball1{N})::Vector{N} where {N<:Real}
+
+Return the center of a ball in the 1-norm.
 
 ### Input
 
-- `B` -- a ball in the 1-norm
+- `B` -- ball in the 1-norm
 
 ### Output
 
-The ambient dimension of the ball.
+The center of the ball in the 1-norm.
 """
-function dim(B::Ball1)::Int
-    return length(B.center)
+function center(B::Ball1{N})::Vector{N} where {N<:Real}
+    return B.center
 end
+
+
+# --- AbstractPolytope interface functions ---
+
+
+"""
+    vertices_list(B::Ball1{N})::Vector{Vector{N}} where {N<:Real}
+
+Return the list of vertices of a ball in the 1-norm.
+
+### Input
+
+- `B` -- ball in the 1-norm
+
+### Output
+
+A list containing only a single vertex.
+"""
+function vertices_list(B::Ball1{N})::Vector{Vector{N}} where {N<:Real}
+    error("this function is not implemented yet, see issue #84")
+end
+
+
+# --- LazySet interface functions ---
+
 
 """
     σ(d::AbstractVector{N}, B::Ball1)::AbstractVector{N} where {N<:Real}
 
-Return the support vector of a `Ball1` in a given direction.
+Return the support vector of a ball in the 1-norm in a given direction.
 
 ### Input
 
-- `d` -- a direction
-- `B` -- a ball in the p-norm
+- `d` -- direction
+- `B` -- ball in the 1-norm
 
 ### Output
 
 Support vector in the given direction.
 """
-function σ(d::AbstractVector{N},
-           B::Ball1)::AbstractVector{N} where {N<:AbstractFloat}
+function σ(d::AbstractVector{N}, B::Ball1{N})::AbstractVector{N} where {N<:Real}
     res = copy(B.center)
     imax = indmax(abs.(d)) 
     res[imax] = sign(d[imax]) * B.radius

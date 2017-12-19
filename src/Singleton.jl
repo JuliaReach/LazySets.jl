@@ -3,7 +3,7 @@ import Base: ∈, ⊆
 export Singleton
 
 """
-    Singleton{N<:Real} <: LazySet
+    Singleton{N<:Real} <: AbstractSingleton{N}
 
 Type that represents a singleton, that is, a set with a unique element.
 
@@ -11,14 +11,18 @@ Type that represents a singleton, that is, a set with a unique element.
 
 - `element` -- the only element of the set
 """
-struct Singleton{N<:Real} <: LazySet
+struct Singleton{N<:Real} <: AbstractSingleton{N}
     element::Vector{N}
 end
 
-"""
-    dim(S::Singleton)::Int
 
-Return the dimension of a singleton.
+# --- AbstractSingleton interface functions ---
+
+
+"""
+    element(S::Singleton{N})::Vector{N} where {N<:Real}
+
+Return the element of a singleton.
 
 ### Input
 
@@ -26,80 +30,26 @@ Return the dimension of a singleton.
 
 ### Output
 
-The ambient dimension of the singleton.
+The element of the singleton.
 """
-function dim(S::Singleton)::Int
-    return length(S.element)
-end
-
-"""
-    σ(d::AbstractVector{<:Real}, S::LazySets.Singleton{N})::Vector{N} where {N<:Real}
-
-Return the support vector of a singleton.
-
-### Input
-
-- `d` -- direction
-- `B` -- singleton
-
-### Output
-
-The support vector, which is the singleton's vector itself, irrespective of the
-given direction.
-"""
-function σ(d::AbstractVector{<:Real},
-           S::LazySets.Singleton{N})::Vector{N} where {N<:Real}
+function element(S::Singleton{N})::Vector{N} where {N<:Real}
     return S.element
 end
 
 """
-    ∈(x::AbstractVector{N}, S::Singleton{N})::Bool where {N<:Real}
+    element(S::Singleton{N}, i::Int)::N where {N<:Real}
 
-Check whether a given point is contained in a singleton.
+Return the i-th entry of the element of a singleton.
 
 ### Input
 
-- `x` -- point/vector
 - `S` -- singleton
+- `i` -- dimension
 
 ### Output
 
-`true` iff ``x ∈ S``.
-
-### Notes
-
-This implementation performs an exact comparison, which may be insufficient with
-floating point computations.
-
-### Examples
-
-```jldoctest
-julia> S = Singleton([1., 1.]);
-
-julia> ∈([0.9, 1.1], S)
-false
-julia> ∈([1.0, 1.0], S)
-true
-```
+The i-th entry of the element of the singleton.
 """
-function ∈(x::AbstractVector{N}, S::Singleton{N})::Bool where {N<:Real}
-    return x == S.element
-end
-
-"""
-    ⊆(S::Singleton, set::LazySet)::Bool
-
-Check whether a given singleton is contained in a convex set.
-
-### Input
-
-- `S`   -- singleton
-- `set` -- convex set
-
-### Output
-
-`true` iff ``S ⊆ \\text{set}``.
-"""
-function ⊆(S::Singleton, set::LazySet)::Bool
-    return ∈(S.element, set)
+function element(S::Singleton{N}, i::Int)::N where {N<:Real}
+    return S.element[i]
 end

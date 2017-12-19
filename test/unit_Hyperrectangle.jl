@@ -93,3 +93,8 @@ H3 = Hyperrectangle(low=l, high=h)
 H = Hyperrectangle(center=[-2.1, 5.6, 0.9], radius=fill(0.5, 3))
 @test low(H) == [-2.6, 5.1, 0.4]
 @test high(H) == [-1.6, 6.1, 1.4]
+
+# membership
+H = Hyperrectangle([1.0, 1.0], [2.0, 3.0])
+@test !∈([-1.1, 4.1], H)
+@test ∈([-1.0, 4.0], H)

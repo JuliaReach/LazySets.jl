@@ -11,6 +11,9 @@ export LazySet,
        ρ, support_function,
        σ, support_vector,
        dim,
+       norm,
+       radius,
+       diameter,
        Approximations
 
 """
@@ -20,9 +23,10 @@ Abstract type for a lazy set.
 
 ### Notes
 
-Every concrete `LazySet` must define a function `σ(d, X)`, representing the
-support vector of `X` in a given direction `d`, and `dim`, the ambient dimension
-of the set `X`.
+Every concrete `LazySet` must define the following functions:
+- `σ(d::AbstractVector{N}, S::LazySet)::AbstractVector{N}` -- the support vector
+    of `S` in a given direction `d`
+- `dim(::LazySet)::Int` -- the ambient dimension of `S`
 
 `LazySet` types should be parameterized with a type `N`, typically `N<:Real`, to
 support computations with different numeric types.
@@ -38,6 +42,15 @@ include("helper_functions.jl")
 # ===============================
 # Types that inherit from LazySet
 # ===============================
+# abstract types
+include("AbstractPolytope.jl")
+include("AbstractPointSymmetric.jl")
+include("AbstractPointSymmetricPolytope.jl")
+include("AbstractHyperrectangle.jl")
+include("AbstractPolygon.jl")
+include("AbstractHPolygon.jl")
+include("AbstractSingleton.jl")
+# concrete types
 include("EmptySet.jl")
 include("ZeroSet.jl")
 include("Singleton.jl")
