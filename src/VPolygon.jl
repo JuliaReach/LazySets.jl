@@ -206,6 +206,13 @@ true
 function ∈(x::AbstractVector{N}, P::VPolygon{N})::Bool where {N<:Real}
     @assert length(x) == 2
 
+    # special cases: 0 or 1 vertex
+    if length(P.vertices_list) == 0
+        return false
+    elseif length(P.vertices_list) == 1
+        return x == P.vertices_list[1]
+    end
+
     zero_N = zero(N)
     if right_turn(P.vertices_list[1], x, P.vertices_list[end]) < zero_N
         return false
