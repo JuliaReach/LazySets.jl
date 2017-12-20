@@ -118,6 +118,7 @@ d = [0., -1.]
 # test that #83 is fixed
 v = VPolygon([[2.0, 3.0]])
 @test [2.0, 3.0] ∈ v
+@test !([3.0, 2.0] ∈ v)
 v = VPolygon([[2.0, 3.0], [-1.0, -3.4]])
 @test [-1.0, -3.4] ∈ v
 
