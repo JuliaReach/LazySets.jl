@@ -87,10 +87,20 @@ Return the list of vertices of a ball in the 1-norm.
 
 ### Output
 
-A list containing only a single vertex.
+A list containing the vertices of the ball in the 1-norm.
 """
 function vertices_list(B::Ball1{N})::Vector{Vector{N}} where {N<:Real}
-    error("this function is not implemented yet, see issue #84")
+    vertices = Vector{Vector{N}}()
+    sizehint!(vertices, 2 * dim(B))
+    v = copy(B.center)
+    for i in 1:dim(B)
+        v[i] += B.radius
+        push!(vertices, copy(v))
+        v[i] = B.center[i] - B.radius
+        push!(vertices, copy(v))
+        v[i] = B.center[i]
+    end
+    return vertices
 end
 
 
