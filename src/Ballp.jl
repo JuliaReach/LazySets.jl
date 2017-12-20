@@ -3,7 +3,7 @@ import Base.∈
 export Ballp
 
 """
-    Ballp{N<:Real} <: AbstractPointSymmetric{N}
+    Ballp{N<:AbstractFloat} <: AbstractPointSymmetric{N}
 
 Type that represents a ball in the p-norm, for ``1 ≤ p ≤ ∞``.
 
@@ -52,8 +52,8 @@ julia> σ(1.:5, B)
  0.3379
 ```
 """
-struct Ballp{N<:Real} <: AbstractPointSymmetric{N}
-    p::Real
+struct Ballp{N<:AbstractFloat} <: AbstractPointSymmetric{N}
+    p::N
     center::Vector{N}
     radius::N
 
@@ -75,7 +75,7 @@ struct Ballp{N<:Real} <: AbstractPointSymmetric{N}
     end
 end
 # type-less convenience constructor
-Ballp(p::Real, center::Vector{N}, radius::N) where {N<:Real} =
+Ballp(p::N, center::Vector{N}, radius::N) where {N<:AbstractFloat} =
     Ballp{N}(p, center, radius)
 
 
@@ -83,7 +83,7 @@ Ballp(p::Real, center::Vector{N}, radius::N) where {N<:Real} =
 
 
 """
-    center(B::Ballp{N})::Vector{N} where {N<:Real}
+    center(B::Ballp{N})::Vector{N} where {N<:AbstractFloat}
 
 Return the center of a ball in the p-norm.
 
@@ -95,7 +95,7 @@ Return the center of a ball in the p-norm.
 
 The center of the ball in the p-norm.
 """
-function center(B::Ballp{N})::Vector{N} where {N<:Real}
+function center(B::Ballp{N})::Vector{N} where {N<:AbstractFloat}
     return B.center
 end
 
@@ -151,7 +151,7 @@ function σ(d::AbstractVector{N},
 end
 
 """
-    ∈(x::AbstractVector{N}, B::Ballp{N})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N}, B::Ballp{N})::Bool where {N<:AbstractFloat}
 
 Check whether a given point is contained in a ball in the p-norm.
 
@@ -189,8 +189,7 @@ julia> ∈([.5, 1.5], B)
 true
 ```
 """
-function ∈(x::AbstractVector{<:Real},
-           B::Ballp{N})::Bool where {N<:AbstractFloat}
+function ∈(x::AbstractVector{N}, B::Ballp{N})::Bool where {N<:AbstractFloat}
     @assert length(x) == dim(B)
     sum = zero(N)
     for i in eachindex(x)
