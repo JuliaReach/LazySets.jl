@@ -3,7 +3,7 @@ import Base.∈
 export Ball2
 
 """
-    Ball2{N<:Real} <: AbstractPointSymmetric{N}
+    Ball2{N<:AbstractFloat} <: AbstractPointSymmetric{N}
 
 Type that represents a ball in the 2-norm.
 
@@ -48,7 +48,7 @@ julia> σ([1.,2.,3.,4.,5.], B)
  0.3371
 ```
 """
-struct Ball2{N<:Real} <: AbstractPointSymmetric{N}
+struct Ball2{N<:AbstractFloat} <: AbstractPointSymmetric{N}
     center::Vector{N}
     radius::N
 
@@ -57,14 +57,15 @@ struct Ball2{N<:Real} <: AbstractPointSymmetric{N}
         radius < zero(N) ? throw(DomainError()) : new(center, radius)
 end
 # type-less convenience constructor
-Ball2(center::Vector{N}, radius::N) where {N<:Real} = Ball2{N}(center, radius)
+Ball2(center::Vector{N}, radius::N) where {N<:AbstractFloat} =
+    Ball2{N}(center, radius)
 
 
 # --- AbstractPointSymmetric interface functions ---
 
 
 """
-    center(B::Ball2{N})::Vector{N} where {N<:Real}
+    center(B::Ball2{N})::Vector{N} where {N<:AbstractFloat}
 
 Return the center of a ball in the 2-norm.
 
@@ -76,7 +77,7 @@ Return the center of a ball in the 2-norm.
 
 The center of the ball in the 2-norm.
 """
-function center(B::Ball2{N})::Vector{N} where {N<:Real}
+function center(B::Ball2{N})::Vector{N} where {N<:AbstractFloat}
     return B.center
 end
 
@@ -121,7 +122,7 @@ function σ(d::AbstractVector{N},
 end
 
 """
-    ∈(x::AbstractVector{N}, B::Ball2{N})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N}, B::Ball2{N})::Bool where {N<:AbstractFloat}
 
 Check whether a given point is contained in a ball in the 2-norm.
 
@@ -159,7 +160,7 @@ julia> ∈([.5, 1.5], B)
 true
 ```
 """
-function ∈(x::AbstractVector{N}, B::Ball2{N})::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, B::Ball2{N})::Bool where {N<:AbstractFloat}
     @assert length(x) == dim(B)
     sum = zero(N)
     for i in eachindex(x)
