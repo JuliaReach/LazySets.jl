@@ -28,6 +28,7 @@ using LazySets, Base.Test
 @time @testset "LazySets.LinearMap" begin include("unit_LinearMap.jl") end
 @time @testset "LazySets.MinkowskiSum" begin include("unit_MinkowskiSum.jl") end
 @time @testset "LazySets.CartesianProduct" begin include("unit_CartesianProduct.jl") end
+@time @testset "LazySets.SymmetricIntervalHull" begin include("unit_SymmetricIntervalHull.jl") end
 
 # ================================================================
 # Algorithms for approximation of convex sets using support vectors
