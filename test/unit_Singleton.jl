@@ -20,3 +20,6 @@ d = [0., 0.]
 S = Singleton([1., 1.])
 !∈([0.9, 1.1], S)
 ∈([1.0, 1.0], S)
+
+# an_element function
+@test an_element(S) ∈ S

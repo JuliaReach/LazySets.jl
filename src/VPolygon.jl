@@ -144,6 +144,26 @@ function σ(d::AbstractVector{<:Real},
 end
 
 """
+    an_element(P::VPolygon{N})::Vector{N} where {N<:Real}
+
+Return some element of a polygon in vertex representation.
+
+### Input
+
+- `P` -- polygon in vertex representation
+
+### Output
+
+The first vertex of the polygon in vertex representation.
+"""
+function an_element(P::VPolygon{N})::Vector{N} where {N<:Real}
+    if isempty(P.vertices_list)
+        error("this polygon is empty")
+    end
+    return P.vertices_list[1]
+end
+
+"""
     ∈(x::AbstractVector{N}, P::VPolygon{N})::Bool where {N<:Real}
 
 Check whether a given point is contained in a polygon in vertex representation.

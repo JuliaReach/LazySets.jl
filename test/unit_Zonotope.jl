@@ -35,3 +35,6 @@ d = [0., 1.]
 @test σ(d, z) == [2., 3]
 d = [0., -1.]
 @test σ(d, z) == [2., 1.]
+
+# an_element function
+@test an_element(z) ∈ z

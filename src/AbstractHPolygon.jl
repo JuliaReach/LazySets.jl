@@ -1,6 +1,7 @@
 import Base.∈
 
 export AbstractHPolygon,
+       an_element,
        addconstraint!
 
 """
@@ -97,6 +98,28 @@ end
 
 # --- LazySet interface functions ---
 
+
+"""
+    an_element(P::AbstractHPolygon{N})::Vector{N} where {N<:Real}
+
+Return some element of a polygon in constraint representation.
+
+### Input
+
+- `P` -- polygon in constraint representation
+
+### Output
+
+A vertex of the polygon in constraint representation (the first one in the order
+of the constraints).
+"""
+function an_element(P::AbstractHPolygon{N})::Vector{N} where {N<:Real}
+    if length(P.constraints_list) < 2
+        error("a polygon in constraint representation should have at least two constraints")
+    end
+    return intersection(Line(P.constraints_list[1]),
+                        Line(P.constraints_list[2]))
+end
 
 """
     ∈(x::AbstractVector{N}, P::AbstractHPolygon{N})::Bool where {N<:Real}

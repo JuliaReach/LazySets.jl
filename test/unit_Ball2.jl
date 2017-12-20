@@ -49,3 +49,7 @@ d = [0., 1.]
 @test σ(d, b) == [0., 2.]
 d = [0., -1.]
 @test σ(d, b) == [0., -2.]
+
+# an_element function
+b = Ball2([1., 2.], 2.)
+@test an_element(b) ∈ b

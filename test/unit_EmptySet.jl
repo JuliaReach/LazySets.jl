@@ -33,3 +33,6 @@ msa = MinkowskiSumArray([B, 2.*B, 3.*B])
 
 # test convex hull of empty set with itself
 @test CH(∅, ∅) == ∅
+
+# an_element function
+@test_throws ErrorException an_element(∅)

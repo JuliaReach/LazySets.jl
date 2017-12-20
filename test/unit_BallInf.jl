@@ -54,3 +54,7 @@ d = [1., -1.]
 b = BallInf([1., 1.], 1.)
 @test !∈([.5, -.5], b)
 @test ∈([.5, 1.5], b)
+
+# an_element function
+b = BallInf([1.0, 2.0], 3.0)
+@test an_element(b) ∈ b

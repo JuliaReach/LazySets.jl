@@ -98,3 +98,7 @@ H = Hyperrectangle(center=[-2.1, 5.6, 0.9], radius=fill(0.5, 3))
 H = Hyperrectangle([1.0, 1.0], [2.0, 3.0])
 @test !∈([-1.1, 4.1], H)
 @test ∈([-1.0, 4.0], H)
+
+# an_element function
+H = Hyperrectangle([1.0, 2.0], [3.0, 4.0])
+@test an_element(H) ∈ H
