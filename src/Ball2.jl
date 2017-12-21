@@ -176,8 +176,8 @@ Check whether a ball in the 2-norm is contained in a set with a single value.
 
 ### Input
 
-- `B` -- ball in the 2-norm
-- `S` -- set with a single value
+- `B` -- inner ball in the 2-norm
+- `S` -- outer set with a single value
 
 ### Output
 
@@ -194,8 +194,8 @@ Check whether a ball in the 2-norm is contained in a hyperrectangle.
 
 ### Input
 
-- `B` -- ball in the 2-norm
-- `H` -- hyperrectangle
+- `B` -- inner ball in the 2-norm
+- `H` -- outer hyperrectangle
 
 ### Output
 

@@ -44,8 +44,8 @@ Check whether a polytope is contained in a convex set.
 
 ### Input
 
-- `P` -- polytope (containee?)
-- `S` -- convex set (container?)
+- `P` -- inner polytope
+- `S` -- outer convex set
 
 ### Output
 

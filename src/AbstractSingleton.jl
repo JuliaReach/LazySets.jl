@@ -183,8 +183,8 @@ Check whether a given set with a single value is contained in a convex set.
 
 ### Input
 
-- `S`   -- set with a single value
-- `set` -- convex set
+- `S`   -- inner set with a single value
+- `set` -- outer convex set
 
 ### Output
 
@@ -203,8 +203,8 @@ single value.
 
 ### Input
 
-- `S1` -- first set with a single value (containee?)
-- `S2` -- second set with a single value (containee?)
+- `S1` -- inner set with a single value
+- `S2` -- outer set with a single value
 
 ### Output
 

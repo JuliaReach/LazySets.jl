@@ -168,8 +168,8 @@ Check whether a given hyperrectangle is contained in another hyperrectangle.
 
 ### Input
 
-- `H1` -- first hyperrectangle (containee?)
-- `H2` -- second hyperrectangle (container?)
+- `H1` -- inner hyperrectangle
+- `H2` -- outer hyperrectangle
 
 ### Output
 
@@ -178,7 +178,7 @@ Check whether a given hyperrectangle is contained in another hyperrectangle.
 ### Algorithm
 
 ``H1 ⊆ H2`` iff ``c_1 + r_1 ≤ c_2 + r_2 ∧ c_1 - r_1 ≥ c_2 - r_2`` iff
-``r_1 - r_2 ≤ c_1 - c_2 ≤ -(r_1 - r_2)``.
+``r_1 - r_2 ≤ c_1 - c_2 ≤ -(r_1 - r_2)``, where ``≤`` is taken component-wise.
 """
 function ⊆(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle)::Bool
     @assert dim(H1) == dim(H2)
