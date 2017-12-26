@@ -34,11 +34,23 @@ Every convex set in this library implements the main `LazySet` interface.
 LazySet
 ```
 
+## Point symmetric set
+
+Point symmetric sets such as balls of different norms are characterized by a
+center.
+Note that there is a special interface combination
+[Point symmetric polytope](@ref).
+
+```@docs
+AbstractPointSymmetric
+```
+
 ## Polytope
 
 A polytope has finitely many vertices (*V-representation*) resp. facets
 (*H-representation*).
-Note that there are also [Point symmetric polytopes](@ref).
+Note that there is a special interface combination
+[Point symmetric polytope](@ref).
 
 ```@docs
 AbstractPolytope
@@ -60,17 +72,7 @@ An HPolygon is a polygon in H-representation (or constraint representation).
 AbstractHPolygon
 ```
 
-## Point symmetric set
-
-Point symmetric sets such as balls of different norms are characterized by a
-center.
-Note that there are also [Point symmetric polytopes](@ref).
-
-```@docs
-AbstractPointSymmetric
-```
-
-## Point symmetric polytope
+### Point symmetric polytope
 
 A point symmetric polytope is a combination of two other interfaces:
 [Point symmetric set](@ref) and [Polytope](@ref).
@@ -79,7 +81,7 @@ A point symmetric polytope is a combination of two other interfaces:
 AbstractPointSymmetricPolytope
 ```
 
-### Hyperrectangle
+#### Hyperrectangle
 
 A hyperrectangle is a special point symmetric polytope with axis-aligned facets.
 
@@ -87,7 +89,7 @@ A hyperrectangle is a special point symmetric polytope with axis-aligned facets.
 AbstractHyperrectangle
 ```
 
-### Singleton
+#### Singleton
 
 A singleton is a special hyperrectangle consisting of only one point.
 
