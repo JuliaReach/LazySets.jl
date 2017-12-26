@@ -29,6 +29,6 @@ deploydocs(
     target = "build",
     osname = "linux",
     julia  = "0.6",
-    deps = Deps.pip("mkdocs", "python-markdown-math"),
+    deps = nothing,
     make = nothing
 )
