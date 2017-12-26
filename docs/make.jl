@@ -13,7 +13,7 @@ makedocs(
         "Polyhedral Approximations" => "man/polyhedral_approximations.md",
         "Decomposing an Affine Map" => "man/decompose_example.md",
         "Fast 2D LPs" => "man/fast_2d_LPs.md",
-        "Iterative refinement" => "man/iterative_refinement.md",
+        "Iterative Refinement" => "man/iterative_refinement.md",
         "Interval Hulls" => "man/interval_hulls.md"],
         "Library" => Any[
         "Common Set Representations" => "lib/representations.md", 
