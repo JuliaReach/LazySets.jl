@@ -188,6 +188,7 @@ Depth = 2
 
 ```@contents
 Pages = [
+    "lib/interfaces.md",
     "lib/representations.md",
     "lib/operations.md",
     "lib/approximations.md",

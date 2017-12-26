@@ -16,6 +16,7 @@ makedocs(
         "Iterative Refinement" => "man/iterative_refinement.md",
         "Interval Hulls" => "man/interval_hulls.md"],
         "Library" => Any[
+        "Set Interfaces" => "lib/interfaces.md",
         "Common Set Representations" => "lib/representations.md", 
         "Common Set Operations" => "lib/operations.md",
         "Approximations" => "lib/approximations.md",
