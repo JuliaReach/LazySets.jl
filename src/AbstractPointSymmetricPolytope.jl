@@ -5,7 +5,7 @@ export AbstractPointSymmetricPolytope,
        singleton_list
 
 """
-    AbstractPointSymmetricPolytope{N<:Real} <: LazySet
+    AbstractPointSymmetricPolytope{N<:Real} <: AbstractPolytope{N}
 
 Abstract type for point symmetric, polytopic sets.
 It combines the `AbstractPointSymmetric` and `AbstractPolytope` interfaces.
@@ -17,8 +17,8 @@ Such a type combination is necessary as long as Julia does not support
 Every concrete `AbstractPointSymmetricPolytope` must define the following
 functions:
 - from `AbstractPointSymmetric`:
-
-  - `center(::AbstractPointSymmetric{N})::Vector{N}` -- return the center point
+  - `center(::AbstractPointSymmetricPolytope{N})::Vector{N}` -- return the
+     center point
 - from `AbstractPolytope`:
   - `vertices_list(::AbstractPointSymmetricPolytope{N})::Vector{Vector{N}}`
      -- return a list of all vertices
@@ -31,7 +31,7 @@ julia> subtypes(AbstractPointSymmetricPolytope)
  LazySets.Zonotope
 ```
 """
-abstract type AbstractPointSymmetricPolytope{N<:Real} <: LazySet end
+abstract type AbstractPointSymmetricPolytope{N<:Real} <: AbstractPolytope{N} end
 
 
 # --- common AbstractPointSymmetric functions (copy-pasted) ---
@@ -71,27 +71,4 @@ The center of the point symmetric polytope.
 function an_element(P::AbstractPointSymmetricPolytope{N}
                    )::Vector{N} where {N<:Real}
     return center(P)
-end
-
-
-# --- common AbstractPolytope functions (copy-pasted) ---
-
-
-"""
-    singleton_list(P::AbstractPointSymmetricPolytope{N}
-                  )::Vector{Singleton{N}} where {N<:Real}
-
-Return the vertices of a polytopic as a list of singletons.
-
-### Input
-
-- `P` -- a polytopic set
-
-### Output
-
-List containing a singleton for each vertex.
-"""
-function singleton_list(P::AbstractPointSymmetricPolytope{N}
-                       )::Vector{Singleton{N}} where {N<:Real}
-    return [Singleton(vi) for vi in P.vertices_list]
 end
