@@ -35,3 +35,11 @@ subset, point = ⊆(s2, p2, true)
 @test ⊆(s1, s1) && ⊆(s1, s1, true)[1]
 subset, point = ⊆(s1, s2, true)
 @test !⊆(s1, s2) && !subset && point ∈ s1 && !(point ∈ s2)
+
+# intersection
+S1 = Singleton([1.0, 1.0])
+S2 = Singleton([0.0, 0.0])
+S3 = ZeroSet(2)
+@test !∩(S1, S2) && !∩(S1, S2, true)[1]
+intersection, point = ∩(S2, S3, true)
+@test ∩(S2, S3) && intersection && point ∈ S2 && point ∈ S3
