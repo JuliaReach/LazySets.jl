@@ -162,6 +162,29 @@ function ∈(x::AbstractVector{N},
 end
 
 """
+    ⊆(S::LazySet, H::AbstractHyperrectangle)::Bool
+
+Check whether a convex set is contained in a hyperrectangle.
+
+### Input
+
+- `S` -- inner convex set
+- `H` -- outer hyperrectangle
+
+### Output
+
+`true` iff ``S ⊆ H``.
+
+### Algorithm
+
+``S ⊆ H`` iff ``\\operatorname{ihull}(S) ⊆ H``, where  ``\\operatorname{ihull}``
+is the interval hull operator.
+"""
+function ⊆(S::LazySet, H::AbstractHyperrectangle)::Bool
+    return ⊆(Approximations.interval_hull(S), H)
+end
+
+"""
     ⊆(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle)::Bool
 
 Check whether a given hyperrectangle is contained in another hyperrectangle.
