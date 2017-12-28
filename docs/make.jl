@@ -30,5 +30,5 @@ makedocs(
     target = "build",
     julia  = "0.6",
     deps = nothing,
-    make = nothing,
+    make = nothing
 )
