@@ -14,7 +14,7 @@ DocTestSetup = quote
 end
 ```
 
-## Abstract support function and support vector
+## Support function and support vector
 
 ```@docs
 LazySets
