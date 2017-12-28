@@ -14,26 +14,13 @@ DocTestSetup = quote
 end
 ```
 
-## Abstract support function and support vector
+## Support function and support vector
 
 ```@docs
 LazySets
-LazySets.LazySet
 ρ
 support_function
 support_vector
-```
-
-## LazySet interfaces
-
-```@docs
-AbstractSingleton
-AbstractHPolygon
-AbstractPolygon
-AbstractHyperrectangle
-AbstractPointSymmetric
-AbstractPolytope
-AbstractPointSymmetricPolytope
 ```
 
 ## Balls
