@@ -46,5 +46,5 @@ jobs:
       julia: 0.6
       os: linux
       script: julia --color=yes -e 'Pkg.clone(pwd())'
-        && julia --color=yes -e 'Pkg.add("GR"); Pkg.build("Documenter")'
+        && julia --color=yes -e 'Pkg.add("Documenter"); Pkg.add("GR"); Pkg.build("Documenter")'
         && julia --color=yes docs/make.jl deploy
