@@ -36,6 +36,15 @@ after_success:
   - julia -e 'Pkg.add("Documenter"); Pkg.add("GR")'
   - julia -e 'cd(Pkg.dir("LazySets")); include(joinpath("docs", "make.jl"))'
   # push coverage results to Coveralls
-  - julia -e 'cd(Pkg.dir("LazySets")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
+  #- julia -e 'cd(Pkg.dir("LazySets")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
   # push coverage results to Codecov
-  - julia -e 'cd(Pkg.dir("LazySets")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
+  # - julia -e 'cd(Pkg.dir("LazySets")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
+
+jobs:
+  include:
+    - stage: "Deploy docs"
+      julia: 0.6
+      os: linux
+      script: julia --color=yes -e 'Pkg.clone(pwd())'
+        && julia --color=yes -e 'Pkg.add("GR"); Pkg.build("Documenter")'
+        && julia --color=yes docs/make.jl deploy
