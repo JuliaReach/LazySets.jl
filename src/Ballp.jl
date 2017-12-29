@@ -199,42 +199,42 @@ function ∈(x::AbstractVector{N}, B::Ballp{N})::Bool where {N<:AbstractFloat}
 end
 
 """
-    ⊆(B::Ballp, S::AbstractSingleton)::Bool
+    ⊆(B::Ballp{N}, S::AbstractSingleton{N}, witness::Bool=false
+     )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
 
-Check whether a ball in the p-norm is contained in a set with a single value.
+Check whether a ball in the p-norm is contained in a set with a single value,
+and if not, optionally compute a witness.
 
 ### Input
 
 - `B` -- inner ball in the p-norm
 - `S` -- outer set with a single value
+- `witness` -- (optional, default: `false`) compute a witness if activated
 
 ### Output
 
-`true` iff ``B ⊆ S``.
+* If `witness` option is deactivated: `true` iff ``B ⊆ S``
+* If `witness` option is activated:
+  * `(true, [])` iff ``B ⊆ S``
+  * `(false, v)` iff ``B \\not\\subseteq S`` and ``v ∈ B \\setminus S``
 """
-function ⊆(B::Ballp, S::AbstractSingleton)::Bool
-    return B.center == element(S) && B.radius == 0
-end
+function ⊆(B::Ballp{N}, S::AbstractSingleton{N}, witness::Bool=false
+          )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
+    result = B.center == element(S) && B.radius == 0
+    if witness
+        if result
+            return (result, N[])
+        end
+    else
+        return result
+    end
 
-"""
-    ⊆(B::Ballp, H::AbstractHyperrectangle)::Bool
-
-Check whether a ball in the p-norm is contained in a hyperrectangle.
-
-### Input
-
-- `B` -- inner ball in the p-norm
-- `H` -- outer hyperrectangle
-
-### Output
-
-`true` iff ``B ⊆ H``.
-
-### Algorithm
-
-This implementation computes the interval hull of the ball and then checks
-containment in the hyperrectangle.
-"""
-function ⊆(B::Ballp, H::AbstractHyperrectangle)::Bool
-    return ⊆(Approximations.box_approximation(B), H)
+    # compute a witness 'p' in the difference
+    if B.center != element(S)
+        p = B.center
+    else
+        p = copy(B.center)
+        p[1] += B.radius
+    end
+    return (false, p)
 end
