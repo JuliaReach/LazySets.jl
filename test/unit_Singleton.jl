@@ -25,8 +25,13 @@ S = Singleton([1., 1.])
 @test an_element(S) ∈ S
 
 # subset
-@test ⊆(Singleton([0., 1.]), VPolygon([[0.,0.],[0., 2.]]))
-@test !⊆(Singleton([0., 3.]), VPolygon([[0.,0.],[0., 2.], [2., 0.]]))
-
-# subset
-@test ⊆(Singleton([1.]), Singleton([1.])) && !⊆(Singleton([1.]), Singleton([2.]))
+s1 = Singleton([0., 1.])
+s2 = Singleton([0., 3.])
+p1 = VPolygon([[0.,0.],[0., 2.]])
+p2 = VPolygon([[0.,0.],[0., 2.], [2., 0.]])
+@test ⊆(s1, p1) && ⊆(s1, p1, true)[1]
+subset, point = ⊆(s2, p2, true)
+@test !⊆(s2, p2) && !subset && point ∈ s2 && !(point ∈ p2)
+@test ⊆(s1, s1) && ⊆(s1, s1, true)[1]
+subset, point = ⊆(s1, s2, true)
+@test !⊆(s1, s2) && !subset && point ∈ s1 && !(point ∈ s2)

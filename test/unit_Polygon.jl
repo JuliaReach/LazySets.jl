@@ -127,7 +127,8 @@ v = VPolygon([[2., 3.]])
 @test an_element(v) ∈ v
 
 # subset
-p = VPolygon([[0., 0.],[2., 0.]])
-@test ⊆(VPolygon([[1., 0.]]), p)
-@test ⊆(HPolygon(), p)
-@test ⊆(p, BallInf([1., 0.], 1.))
+p1 = VPolygon([[0., 0.],[2., 0.]])
+p2 = VPolygon([[1., 0.]])
+@test ⊆(p2, p1) && ⊆(p2, p1, true)[1]
+@test ⊆(HPolygon(), p1)
+@test ⊆(p1, BallInf([1., 0.], 1.))

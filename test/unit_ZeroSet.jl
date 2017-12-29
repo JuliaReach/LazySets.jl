@@ -14,5 +14,10 @@ cpa = MinkowskiSumArray([B, 2.*B, 3.*B])
 @test an_element(Z) ∈ Z
 
 # subset
-@test ⊆(ZeroSet(1), Singleton([0.])) && !⊆(ZeroSet(1), Singleton([2.]))
-@test ⊆(ZeroSet(1), ZeroSet(1)) && !⊆(ZeroSet(1), ZeroSet(2))
+z = ZeroSet(1)
+s1 = Singleton([0.])
+s2 = Singleton([2.])
+@test ⊆(z, s1) && ⊆(z, s1, true)[1]
+subset, point = ⊆(z, s2, true)
+@test !⊆(z, s2) && !subset && point ∈ z && !(point ∈ s2)
+@test ⊆(z, z) && !⊆(z, ZeroSet(2))

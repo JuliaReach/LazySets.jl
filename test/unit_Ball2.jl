@@ -55,7 +55,11 @@ b = Ball2([1., 2.], 2.)
 @test an_element(b) ∈ b
 
 # subset
-@test !⊆(Ball2([1., 2.], 2.), Singleton([1., 2.]))
-@test ⊆(Ball2([1., 2.], 0.), Singleton([1., 2.]))
-@test !⊆(Ball2([1., 2.], 2.), BallInf([1., 2.], 1.))
-@test ⊆(Ball2([1., 2.], 0.), BallInf([1., 2.], 2.))
+b1 = Ball2([1., 2.], 2.)
+b2 = Ball2([1., 2.], 0.)
+s = Singleton([1., 2.])
+subset, point = ⊆(b1, s, true)
+@test !⊆(b1, s) && !subset && point ∈ b1 && !(point ∈ s)
+@test ⊆(b2, s) && ⊆(b2, s, true)[1]
+@test !⊆(b1, BallInf([1., 2.], 1.))
+@test ⊆(b2, BallInf([1., 2.], 2.))
