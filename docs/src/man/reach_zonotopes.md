@@ -73,12 +73,11 @@ T = 2.
 
 R = Algorithm1(A, δ, X0, μ, 2.*δ); # warm-up
 
-R = Algorithm1(A, δ, X0, μ, T);
-```
+R = Algorithm1(A, δ, X0, μ, T)
 
-```@example example_reach_zonotopes
 plot(R, 1e-2, fillalpha=0.1)
 ```
+
 
 ## Example 2
 
@@ -96,9 +95,7 @@ T = 1.
 R = Algorithm1(A, δ, X0, μ, 2*δ); # warm-up
 
 R = Algorithm1(A, δ, X0, μ, T)
-R = project(R, [1, 3], 5);
-```
+R = project(R, [1, 3], 5)
 
-```@example example_reach_zonotopes
 plot(R, 1e-2, fillalpha=0.1, xlabel="x1", ylabel="x3")
 ```
