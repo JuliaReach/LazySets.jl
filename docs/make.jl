@@ -15,10 +15,11 @@ makedocs(
         "Fast 2D LPs" => "man/fast_2d_LPs.md",
         "Iterative Refinement" => "man/iterative_refinement.md",
         "Interval Hulls" => "man/interval_hulls.md",
-        "Convex Hulls" => "man/convex_hulls.md"],
+        "Convex Hulls" => "man/convex_hulls.md",
+        "A Reachability Algorithm Using Zonotopes" => "man/reach_zonotopes.md"],
         "Library" => Any[
         "Set Interfaces" => "lib/interfaces.md",
-        "Common Set Representations" => "lib/representations.md", 
+        "Common Set Representations" => "lib/representations.md",
         "Common Set Operations" => "lib/operations.md",
         "Approximations" => "lib/approximations.md",
         "Utility Functions" => "lib/utils.md"],
