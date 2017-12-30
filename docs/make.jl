@@ -14,7 +14,8 @@ makedocs(
         "Decomposing an Affine Map" => "man/decompose_example.md",
         "Fast 2D LPs" => "man/fast_2d_LPs.md",
         "Iterative Refinement" => "man/iterative_refinement.md",
-        "Interval Hulls" => "man/interval_hulls.md"],
+        "Interval Hulls" => "man/interval_hulls.md",
+        "Convex Hulls" => "man/convex_hulls.md"],
         "Library" => Any[
         "Set Interfaces" => "lib/interfaces.md",
         "Common Set Representations" => "lib/representations.md", 
