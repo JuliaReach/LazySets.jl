@@ -15,18 +15,9 @@ The approximation is represented by a list of local refinements.
 Each refinement describes a set with one angle and is wrapped in the following
 type.
 
-```@docs
-Approximation2D
-Approximation2D(::Vector{Float64}, ::Vector{Float64}, ::Vector{Float64}, ::Vector{Float64})
-```
-
 The approximation is initialized with box directions, i.e., we have four
 refinement instances, one for each angle.
 Then we just iterate through all refinement instances and check if the error is
 bigger than the threshold individually.
 If so, we refine the instance by splitting into two more precise refinement
 instances and apply the checks recursively.
-
-```@docs
-refine(::LazySet, ::Approximation2D)
-```

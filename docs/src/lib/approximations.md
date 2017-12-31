@@ -49,6 +49,9 @@ diameter(::LazySet, ::Real=Inf)
 
 ```@docs
 approximate
+Approximation2D
+Approximation2D(::Vector{Float64}, ::Vector{Float64}, ::Vector{Float64}, ::Vector{Float64})
+refine(::LazySet, ::Approximation2D)
 ```
 
 See [Iterative Refinement](@ref) for more details.
