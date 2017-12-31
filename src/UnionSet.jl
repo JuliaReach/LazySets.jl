@@ -1,7 +1,10 @@
-export UnionSet, is_contained
+import Base.∈
+
+export UnionSet,
+       ∈
 
 """
-    UnionSet <: LazySet
+    UnionSet{S<:LazySet} <: LazySet
 
 Type that represents a union of convex sets.
 
@@ -9,15 +12,14 @@ Type that represents a union of convex sets.
 
 - `sets` --  a list of convex sets
 """
-struct UnionSet{T<:LazySet} <: LazySet
-    sets::Vector{T}
+struct UnionSet{S<:LazySet} <: LazySet
+    sets::Vector{S}
 end
-UnionSet(sets::Vector{T}) where {T<:LazySet} = UnionSet{T}(sets)
 
 """
-    is_contained(x, U)
+    ∈(x::AbstractVector{<:Real}, U::UnionSet)::Bool
 
-States if a given vector belongs to a given union of sets.
+Return whether a given vector is contained in a union of convex sets.
 
 ### Input
 
@@ -26,13 +28,13 @@ States if a given vector belongs to a given union of sets.
 
 ### Output
 
-Return true iff ``x ∈ U``.
+`true` iff ``x ∈ U``.
 """
-function is_contained(x::Vector{Float64}, U::UnionSet)::Bool
-    res = false
-    for s in U.sets
-        res = res || in(x, s)
+function ∈(x::AbstractVector{<:Real}, U::UnionSet)::Bool
+    for S in U.sets
+        if ∈(x, S)
+            return true
+        end
     end
-    return res
+    return false
 end
-

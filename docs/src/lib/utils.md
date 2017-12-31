@@ -1,7 +1,14 @@
+```@meta
+CurrentModule = LazySets
+DocTestSetup = quote
+    using LazySets
+end
+```
+
 # Utility functions
 
 ```@docs
-unit_step(x::Float64)
+sign_cadlag
 jump2pi
-Base.:<=(u::AbstractVector{Float64}, v::AbstractVector{Float64})
+<=(::AbstractVector{Float64}, ::AbstractVector{Float64})
 ```

@@ -1,7 +1,8 @@
 using Documenter, LazySets
 
 makedocs(
-    modules = [LazySets],
+    doctest = true,  # use this flag to skip doctests (saves time!)
+    modules = [LazySets, Approximations],
     format = :html,
     assets = ["assets/juliareach.css"],
     sitename = "LazySets.jl",
@@ -11,8 +12,12 @@ makedocs(
         "Getting Started" => "man/getting_started.md",
         "Polyhedral Approximations" => "man/polyhedral_approximations.md",
         "Decomposing an Affine Map" => "man/decompose_example.md",
-        "Fast 2D LPs" => "man/fast_2d_LPs.md"],
+        "Fast 2D LPs" => "man/fast_2d_LPs.md",
+        "Iterative Refinement" => "man/iterative_refinement.md",
+        "Interval Hulls" => "man/interval_hulls.md",
+        "Convex Hulls" => "man/convex_hulls.md"],
         "Library" => Any[
+        "Set Interfaces" => "lib/interfaces.md",
         "Common Set Representations" => "lib/representations.md", 
         "Common Set Operations" => "lib/operations.md",
         "Approximations" => "lib/approximations.md",
@@ -26,6 +31,6 @@ deploydocs(
     target = "build",
     osname = "linux",
     julia  = "0.6",
-    deps = Deps.pip("mkdocs", "python-markdown-math"),
+    deps = nothing,
     make = nothing
 )

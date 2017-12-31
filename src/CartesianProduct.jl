@@ -1,129 +1,357 @@
-import Base.*
+import Base:*, ×, ∈
 
-export CartesianProduct, CartesianProductArray, is_contained
+export CartesianProduct,
+       CartesianProductArray
 
 """
-    CartesianProduct <: LazySet
+    CartesianProduct{S1<:LazySet,S2<:LazySet} <: LazySet
 
-Type that represents the cartesian product.
+Type that represents a Cartesian product of two convex sets.
 
 ### Fields
 
-- `X` -- convex set
-- `Y` -- another convex set
+- `X` -- first convex set
+- `Y` -- second convex set
 
-For the cartesian product a several sets, there exists a special
-type `CartesianProductArray`. 
+### Notes
+
+The Cartesian product of three elements is obtained recursively.
+See also `CartesianProductArray` for an implementation of a Cartesian product of
+many sets without recursion, instead using an array.
+
+- `CartesianProduct{S1<:LazySet,S2<:LazySet}`            -- default constructor
+
+- `CartesianProduct(Xarr::Vector{S}) where {S<:LazySet}` -- constructor from an
+                                                            array of convex sets
 """
-struct CartesianProduct{T1<:LazySet,T2<:LazySet} <: LazySet
-    X::T1
-    Y::T2
-    CartesianProduct{T1,T2}(X::T1, Y::T2) where {T1<:LazySet,T2<:LazySet} = new(X, Y)
-    CartesianProduct{T}(Xarr::Vector{T}) where {T<:LazySet} = length(Xarr) == 0 ?
-            VoidSet(1) : (length(Xarr) == 1 ? Xarr[1] :
-            new{T,T}(Xarr[1], CartesianProduct{T}(Xarr[2:length(Xarr)])))
-            # NOTE: use array type instead of element type (bit of a mess otherwise)
+struct CartesianProduct{S1<:LazySet,S2<:LazySet} <: LazySet
+    X::S1
+    Y::S2
 end
-CartesianProduct(X::T1, Y::T2) where {T1<:LazySet,T2<:LazySet} = CartesianProduct{T1,T2}(X, Y)
-CartesianProduct(Xarr::Vector{T}) where {T<:LazySet} = CartesianProduct{T}(Xarr)
+CartesianProduct(Xarr::Vector{S}) where {S<:LazySet} =
+    (length(Xarr) == 0
+        ? ∅
+        : length(Xarr) == 1
+            ? Xarr[1]
+            : length(Xarr) == 2
+                ? CartesianProduct(Xarr[1], Xarr[2])
+                : CartesianProduct(Xarr[1],
+                                   CartesianProduct(Xarr[2:length(Xarr)])))
 
+"""
+```
+    *(X::LazySet, Y::LazySet)::CartesianProduct
+```
+
+Return the Cartesian product of two convex sets.
+
+### Input
+
+- `X` -- convex set
+- `Y` -- convex set
+
+### Output
+
+The Cartesian product of the two convex sets.
+"""
 function *(X::LazySet, Y::LazySet)::CartesianProduct
     CartesianProduct(X, Y)
 end
 
 """
-    dim(cp)
+    ×
 
-Ambient dimension of a Cartesian product.
+Alias for the binary Cartesian product.
+"""
+×(X::LazySet, Y::LazySet) = CartesianProduct(X, Y)
+
+"""
+```
+    *(X::LazySet, E::EmptySet)
+```
+
+Right multiplication of a set by an empty set.
 
 ### Input
 
-- `cp` -- cartesian product
+- `X` -- a convex set
+- `E` -- an empty set
+
+### Output
+
+An empty set, because the empty set is the absorbing element for the
+Cartesian product.
 """
-function dim(cp::CartesianProduct)::Int64
+*(X::LazySet, E::EmptySet) = ∅
+
+*(::EmptySet, ::EmptySet) = ∅
+
+×(X::LazySet, E::EmptySet) = ∅
+
+"""
+```
+    *(E::EmptySet, X::LazySet)
+```
+Left multiplication of a set by an empty set.
+
+### Input
+
+- `X` -- a convex set
+- `E` -- an empty set
+
+### Output
+
+An empty set, because the empty set is the absorbing element for the
+Cartesian product.
+"""
+*(E::EmptySet, X::LazySet) = ∅
+
+×(E::EmptySet, X::LazySet) = ∅
+
+"""
+    dim(cp::CartesianProduct)::Int
+
+Return the dimension of a Cartesian product.
+
+### Input
+
+- `cp` -- Cartesian product
+
+### Output
+
+The ambient dimension of the Cartesian product.
+"""
+function dim(cp::CartesianProduct)::Int
     return dim(cp.X) + dim(cp.Y)
 end
 
 """
-    σ(d, cp)
+    σ(d::AbstractVector{<:Real}, cp::CartesianProduct)::AbstractVector{<:Real}
+
+Return the support vector of a Cartesian product.
+
+### Input
+
+- `d`  -- direction
+- `cp` -- Cartesian product
+
+### Output
+
+The support vector in the given direction.
+If the direction has norm zero, the result depends on the product sets.
+"""
+function σ(d::AbstractVector{<:Real},
+           cp::CartesianProduct)::AbstractVector{<:Real}
+    return [σ(view(d, 1:dim(cp.X)), cp.X);
+            σ(view(d, dim(cp.X)+1:length(d)), cp.Y)]
+end
+
+"""
+    ∈(x::AbstractVector{<:Real}, cp::CartesianProduct)::Bool
+
+Check whether a given point is contained in a Cartesian product set.
+
+### Input
+
+- `x`  -- point/vector
+- `cp` -- Cartesian product
+
+### Output
+
+`true` iff ``x ∈ cp``.
+"""
+function ∈(x::AbstractVector{<:Real}, cp::CartesianProduct)::Bool
+    @assert length(x) == dim(cp)
+
+    return ∈(view(x, 1:dim(cp.X)), cp.X) &&
+           ∈(view(x, dim(cp.X)+1:length(x)), cp.Y)
+end
+
+# ======================================
+#  Cartesian product of an array of sets
+# ======================================
+"""
+    CartesianProductArray{S<:LazySet} <: LazySet
+
+Type that represents the Cartesian product of a finite number of convex sets.
+
+### Fields
+
+- `sfarray` -- array of sets
+
+### Notes
+
+- `CartesianProductArray(sfarray::Vector{<:LazySet})` -- default constructor
+
+- `CartesianProductArray()` -- constructor for an empty Cartesian product
+
+- `CartesianProductArray(n::Int)`
+  -- constructor for an empty Cartesian product with size hint
+"""
+struct CartesianProductArray{S<:LazySet} <: LazySet
+    sfarray::Vector{S}
+end
+# constructor for an empty Cartesian product
+CartesianProductArray() = CartesianProductArray{LazySet}(Vector{LazySet}(0))
+# constructor for an empty Cartesian product with size hint
+function CartesianProductArray(n::Int)::CartesianProductArray
+    arr = Vector{LazySet}(0)
+    sizehint!(arr, n)
+    return CartesianProductArray(arr)
+end
+
+"""
+```
+    *(cpa::CartesianProductArray, S::LazySet)::CartesianProductArray
+```
+
+Multiply a convex set to a Cartesian product of a finite number of convex sets
+from the right.
+
+### Input
+
+- `cpa` -- Cartesian product array (is modified)
+- `S`   -- convex set
+
+### Output
+
+The modified Cartesian product of a finite number of convex sets.
+"""
+function *(cpa::CartesianProductArray, S::LazySet)::CartesianProductArray
+    push!(cpa.sfarray, S)
+    return cpa
+end
+
+"""
+```
+    *(S::LazySet, cpa::CartesianProductArray)::CartesianProductArray
+```
+
+Multiply a convex set to a Cartesian product of a finite number of convex sets
+from the left.
+
+### Input
+
+- `S`   -- convex set
+- `cpa` -- Cartesian product array (is modified)
+
+### Output
+
+The modified Cartesian product of a finite number of convex sets.
+"""
+function *(S::LazySet, cpa::CartesianProductArray)::CartesianProductArray
+    push!(cpa.sfarray, S)
+    return cpa
+end
+
+"""
+```
+    *(cpa::CartesianProductArray, E::EmptySet)
+```
+Right multiplication of a `CartesianProductArray` by an empty set.
+
+### Input
+
+- `cpa` -- Cartesian product array
+- `E`   -- an empty set
+
+### Output
+
+An empty set, because the empty set is the absorbing element for the
+Cartesian product.
+"""
+*(cpa::CartesianProductArray, E::EmptySet) = ∅
+
+×(cpa::CartesianProductArray, E::EmptySet) = ∅
+
+"""
+```
+    *(S::EmptySet, cpa::CartesianProductArray)
+```
+
+Left multiplication of a set by an empty set.
+
+### Input
+
+- `X` -- a convex set
+- `E` -- an empty set
+
+### Output
+
+An empty set, because the empty set is the absorbing element for the
+Cartesian product.
+"""
+*(S::EmptySet, cpa::CartesianProductArray) = ∅
+
+×(S::EmptySet, cpa::CartesianProductArray) = ∅
+
+"""
+```
+    *(cpa1::CartesianProductArray, cpa2::CartesianProductArray)::CartesianProductArray
+```
+
+Multiply a finite Cartesian product of convex sets to another finite Cartesian
+product.
+
+### Input
+
+- `cpa1` -- first Cartesian product array (is modified)
+- `cpa2` -- second Cartesian product array
+
+### Output
+
+The modified first Cartesian product.
+"""
+function *(cpa1::CartesianProductArray,
+           cpa2::CartesianProductArray)::CartesianProductArray
+    append!(cpa1.sfarray, cpa2.sfarray)
+    return cpa1
+end
+
+function ×(cpa1::CartesianProductArray,
+           cpa2::CartesianProductArray)::CartesianProductArray
+    append!(cpa1.sfarray, cpa2.sfarray)
+    return cpa1
+end
+
+"""
+    dim(cpa::CartesianProductArray)::Int
+
+Return the dimension of a Cartesian product of a finite number of convex sets.
+
+### Input
+
+- `cpa` -- Cartesian product array
+
+### Output
+
+The ambient dimension of the Cartesian product of a finite number of convex
+sets.
+"""
+function dim(cpa::CartesianProductArray)::Int
+    return length(cpa.sfarray) == 0 ? 0 : sum([dim(sj) for sj in cpa.sfarray])
+end
+
+"""
+    σ(d::AbstractVector{<:Real}, cpa::CartesianProductArray)::AbstractVector{<:Real}
 
 Support vector of a Cartesian product.
 
 ### Input
 
-- `d` -- direction
-- `cp` -- cartesian product
-"""
-function σ(d::AbstractVector{Float64}, cp::CartesianProduct)::AbstractVector{Float64}
-    return [σ(d[1:dim(cp.X)], cp.X); σ(d[dim(cp.X)+1:end], cp.Y)]
-end
-
-
-"""
-    is_contained(d, cp)
-
-Return whether a vector belongs to a given cartesian product set.
-
-### Input
-
-- `d`    --  a vector
-- `cp`   -- a cartesian product
+- `d`   -- direction
+- `cpa` -- Cartesian product array
 
 ### Output
 
-Return true iff d ∈ cp.
+The support vector in the given direction.
+If the direction has norm zero, the result depends on the product sets.
 """
-function is_contained(d::AbstractVector{Float64}, cp::CartesianProduct)::Bool
-    return is_contained(d[1:dim(cp.X)], cp.X) && is_contained(d[dim(cp.X)+1:end], cp.Y)
-end
-
-# ==========================
-#  Cartesian product of sets
-# ==========================
-"""
-    CartesianProductArray <: LazySet
-
-Type that represents the cartesian product of a finite number of sets.
-
-### Fields
-
-- `sfarray` -- array of sets
-"""
-struct CartesianProductArray{T<:LazySet} <: LazySet
-    sfarray::Vector{T}
-
-    CartesianProductArray{T}(sfarray::Vector{T}) where {T<:LazySet} = new(sfarray)
-end
-CartesianProductArray() = CartesianProductArray{LazySet}(Vector{LazySet}(0))
-CartesianProductArray(sfarray::Vector{T}) where {T<:LazySet} = CartesianProductArray{T}(sfarray)
-
-"""
-    dim(cp)
-
-Ambient dimension of the Cartesian product of a finite number of sets.
-
-### Input
-
-- `cp` -- cartesian product array
-"""
-function dim(cp::CartesianProductArray)::Int64
-    return length(cp.sfarray) == 0 ? 0 : sum([dim(sj) for sj in cp.sfarray])
-end
-
-"""
-    σ(d, cp)
-
-Support vector of the Cartesian product of a finite number of sets.
-
-### Input
-
-- `d` -- direction
-- `cp` -- cartesian product array
-"""
-function σ(d::AbstractVector{Float64}, cp::CartesianProductArray)::AbstractVector{Float64}
+function σ(d::AbstractVector{<:Real},
+           cpa::CartesianProductArray)::AbstractVector{<:Real}
     svec = similar(d)
     jinit = 1
-    for sj in cp.sfarray
+    for sj in cpa.sfarray
         jend = jinit + dim(sj) - 1
         svec[jinit:jend] = σ(d[jinit:jend], sj)
         jinit = jend + 1
@@ -132,26 +360,30 @@ function σ(d::AbstractVector{Float64}, cp::CartesianProductArray)::AbstractVect
 end
 
 """
-    is_contained(d, cp)
+    ∈(x::AbstractVector{<:Real}, cpa::CartesianProductArray)::Bool
 
-Return whether a given vector is contained in the cartesian product of a
-finite number of sets.
+Check whether a given point is contained in a Cartesian product of a finite
+number of sets.
 
 ### Input
 
-- `d` -- vector
-- `cp` -- cartesian product array
+- `x`   -- point/vector
+- `cpa` -- Cartesian product array
+
+### Output
+
+`true` iff ``x ∈ \\text{cpa}``.
 """
-function is_contained(d::AbstractVector{Float64}, cp::CartesianProductArray)::Bool
-    contained = false
+function ∈(x::AbstractVector{<:Real}, cpa::CartesianProductArray)::Bool
+    @assert length(x) == dim(cpa)
+
     jinit = 1
-    for Xj in cp
-        jend = dim(cp.Xj)
-        contained = is_contained(d[jinit:jend], cp.Xj)
-        if !contained
-            break
+    for sj in cpa
+        jend = jinit + dim(sj) - 1
+        if !∈(x[jinit:jend], sj)
+            return false
         end
         jinit = jend + 1
     end
-    return contained
+    return true
 end

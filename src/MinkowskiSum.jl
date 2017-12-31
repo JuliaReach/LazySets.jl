@@ -1,53 +1,121 @@
 import Base.+
 
-export MinkowskiSum, MinkowskiSumArray
+export MinkowskiSum, ⊕,
+       MinkowskiSumArray
 
 """
-    MinkowskiSum <: LazySet
+    MinkowskiSum{T1<:LazySet, T2<:LazySet} <: LazySet
 
 Type that represents the Minkowski sum of two convex sets.
 
 ### Fields
 
-- `X` -- a convex set
-- `Y` -- a convex set
+- `X` -- first convex set
+- `Y` -- second convex set
 """
-struct MinkowskiSum{T1<:LazySet,T2<:LazySet} <: LazySet
+struct MinkowskiSum{T1<:LazySet, T2<:LazySet} <: LazySet
     X::T1
     Y::T2
 
-    MinkowskiSum{T1,T2}(X::T1, Y::T2) where {T1<:LazySet,T2<:LazySet} = dim(X) != dim(Y) ? throw(DimensionMismatch) : new(X, Y)
+    # default constructor with dimension match check
+    MinkowskiSum{T1,T2}(X::T1, Y::T2) where {T1<:LazySet,T2<:LazySet} =
+        dim(X) != dim(Y) ? throw(DimensionMismatch) : new(X, Y)
 end
-MinkowskiSum(X::T1, Y::T2) where {T1<:LazySet,T2<:LazySet} = MinkowskiSum{T1,T2}(X, Y)
-
-function +(X::LazySet, Y::LazySet)
-    return MinkowskiSum(X, Y)
-end
+# type-less convenience constructor
+MinkowskiSum(X::T1, Y::T2) where {T1<:LazySet, T2<:LazySet} =
+    MinkowskiSum{T1,T2}(X, Y)
 
 """
-    dim(ms)
+    X + Y
 
-Ambient dimension of a Minkowski product.
+Convenience constructor for Minkowski sum.
+
+### Input
+
+- `X` -- a convex set
+- `Y` -- another convex set
+
+### Output
+
+The symbolic Minkowski sum of ``X`` and ``Y``.
+"""
++(X::LazySet, Y::LazySet) = MinkowskiSum(X, Y)
+
+⊕(X::LazySet, Y::LazySet) = +(X, Y)
+
+"""
+    X + ∅
+
+Right Minkowski sum of a set by an empty set.
+
+### Input
+
+- `X` -- a convex set
+- `∅` -- an empty set
+
+### Output
+
+An empty set, because the empty set is the absorbing element for the
+Minkowski sum.
+"""
++(X::LazySet, ∅::EmptySet) = ∅
+
+"""
+    ∅ + X
+
+Left Minkowski sum of a set by an empty set.
+
+### Input
+
+- `∅` -- an empty set
+- `X` -- a convex set
+
+### Output
+
+An empty set, because the empty set is the absorbing element for the
+Minkowski sum.
+"""
++(∅::EmptySet, X::LazySet) = ∅
+
++(::EmptySet, ::EmptySet) = ∅
+
++(X::LazySet, ::ZeroSet) = X
+
++(X::ZeroSet, ::ZeroSet) = X
+
++(::ZeroSet, X::LazySet) = X
+
+"""
+    dim(ms::MinkowskiSum)::Int
+
+Return the dimension of a Minkowski sum.
 
 ### Input
 
 - `ms` -- Minkowski sum
+
+### Output
+
+The ambient dimension of the Minkowski sum.
 """
-function dim(ms::MinkowskiSum)::Int64
-    return dim(ms.X)
-end
+dim(ms::MinkowskiSum)::Int = dim(ms.X)
 
 """
-    σ(d::AbstractVector{Float64}, ms::MinkowskiSum)
+    σ(d::AbstractVector{<:Real}, ms::MinkowskiSum)::AbstractVector{<:Real}
 
-Support vector of a Minkowski sum.
+Return the support vector of a Minkowski sum.
 
 ### Input
 
-- `d`  -- vector
+- `d`  -- direction
 - `ms` -- Minkowski sum
+
+### Output
+
+The support vector in the given direction.
+If the direction has norm zero, the result depends on the summand sets.
 """
-function σ(d::AbstractVector{Float64}, ms::MinkowskiSum)::Vector{Float64}
+function σ(d::AbstractVector{<:Real}, ms::MinkowskiSum)::AbstractVector{<:Real}
     return σ(d, ms.X) + σ(d, ms.Y)
 end
 
@@ -56,60 +124,90 @@ end
 # Minkowski sum of an array of sets
 # =================================
 """
-    MinkowskiSumArray <: LazySet
+    MinkowskiSumArray{T<:LazySet} <: LazySet
 
-Type that represents the Minkowski sum of a finite number of sets.
+Type that represents the Minkowski sum of a finite number of convex sets.
 
 ### Fields
 
-- `sfarray` -- array of sets
+- `sfarray` -- array of convex sets
 
 ### Notes
 
-This type is optimized to be used on the left-hand side of additions only.
+This type assumes that the dimensions of all elements match.
+
+- `MinkowskiSumArray(sfarray::Vector{<:LazySet})` -- default constructor
+
+- `MinkowskiSumArray()` -- constructor for an empty sum
+
+- `MinkowskiSumArray(n::Int)` -- constructor for an empty sum with size hint
 """
 struct MinkowskiSumArray{T<:LazySet} <: LazySet
     sfarray::Vector{T}
-
-    MinkowskiSumArray{T}(sfarray::Vector{T}) where {T<:LazySet} = new(sfarray)
 end
+# constructor for an empty sum
 MinkowskiSumArray() = MinkowskiSumArray{LazySet}(Vector{LazySet}(0))
-MinkowskiSumArray(sfarray::Vector{T}) where {T<:LazySet} = MinkowskiSumArray{T}(sfarray)
-
-function MinkowskiSumArray(n::Int64)::MinkowskiSumArray
+# constructor for an empty sum with size hint
+function MinkowskiSumArray(n::Int)::MinkowskiSumArray
     arr = Vector{LazySet}(0)
     sizehint!(arr, n)
     return MinkowskiSumArray(arr)
 end
 
 """
-    +(msa, sf)
+    +(msa::MinkowskiSumArray, S::LazySet)::MinkowskiSumArray
 
-Adds the support function to the array.
+Add a convex set to a Minkowski sum of a finite number of convex sets from the
+right.
 
 ### Input
 
-- `msa` -- Minkowski sum array
-- `sf` -- general support function
+- `msa` -- Minkowski sum array (is modified)
+- `S`   -- convex set
 
-### Notes
+### Output
 
-This function is overridden for more specific types of `sf`.
+The modified Minkowski sum of a finite number of convex sets.
 """
-function +(msa::MinkowskiSumArray, sf::LazySet)::MinkowskiSumArray
-    push!(msa.sfarray, sf)
+function +(msa::MinkowskiSumArray, S::LazySet)::MinkowskiSumArray
+    push!(msa.sfarray, S)
     return msa
 end
 
 """
-    +(msa1, msa2)
+    +(S::LazySet, msa::MinkowskiSumArray)::MinkowskiSumArray
 
-Appends the elements of the second array to the first array.
+Add a convex set to a Minkowski sum of a finite number of convex sets from the
+left.
 
 ### Input
 
-- `msa1` -- first Minkowski sum array
+- `S`   -- convex set
+- `msa` -- Minkowski sum array (is modified)
+
+### Output
+
+The modified Minkowski sum of a finite number of convex sets.
+"""
+function +(S::LazySet, msa::MinkowskiSumArray)::MinkowskiSumArray
+    push!(msa.sfarray, S)
+    return msa
+end
+
+"""
+    +(msa1::MinkowskiSumArray, msa2::MinkowskiSumArray)::MinkowskiSumArray
+
+Add the elements of a finite Minkowski sum of convex sets to another finite
+Minkowski sum.
+
+### Input
+
+- `msa1` -- first Minkowski sum array (is modified)
 - `msa2` -- second Minkowski sum array
+
+### Output
+
+The modified first Minkowski sum of a finite number of convex sets.
 """
 function +(msa1::MinkowskiSumArray, msa2::MinkowskiSumArray)::MinkowskiSumArray
     append!(msa1.sfarray, msa2.sfarray)
@@ -117,50 +215,94 @@ function +(msa1::MinkowskiSumArray, msa2::MinkowskiSumArray)::MinkowskiSumArray
 end
 
 """
-    +(msa, vs)
+    +(msa::MinkowskiSumArray, Z::ZeroSet)::MinkowskiSumArray
 
-Returns the original array because addition with a void set is a no-op.
+Returns the original array because addition with an empty set is a no-op.
 
 ### Input
 
 - `msa` -- Minkowski sum array
-- `vs` -- void set
+- `Z`  -- a Zero set
 """
-function +(msa::MinkowskiSumArray, ::VoidSet)::MinkowskiSumArray
+function +(msa::MinkowskiSumArray, Z::ZeroSet)::MinkowskiSumArray
+    return msa
+end
+
+function +(Z::ZeroSet, msa::MinkowskiSumArray)::MinkowskiSumArray
     return msa
 end
 
 """
-    dim(ms::MinkowskiSumArray)
+    +(msa::MinkowskiSumArray, ∅::EmptySet)
 
-Ambient dimension of the Minkowski sum of a finite number of sets.
+Right Minkowski sum of a set by an empty set.
 
 ### Input
 
-- `ms` -- Minkowski sum array
+- `msa` -- Minkowski sum array
+- `∅`   -- an empty set
 
-### Notes
+### Output
 
-We do not double-check that the dimensions always match.
+An empty set, because the empty set is the absorbing element for the
+Minkowski sum.
 """
-function dim(ms::MinkowskiSumArray)::Int64
-    return length(ms.sfarray) == 0 ? 0 : dim(ms.sfarray[1])
++(msa::MinkowskiSumArray, ∅::EmptySet) = ∅
+
+"""
+    +(∅::EmptySet, msa::MinkowskiSumArray)
+
+Left Minkowski sum of a set by an empty set.
+
+### Input
+
+- `∅` -- an empty set
+- `msa` -- Minkowski sum array
+
+### Output
+
+An empty set, because the empty set is the absorbing element for the
+Minkowski sum.
+"""
++(∅::EmptySet, msa::MinkowskiSumArray) = ∅
+
+"""
+    dim(msa::MinkowskiSumArray)::Int
+
+Return the dimension of a Minkowski sum of a finite number of sets.
+
+### Input
+
+- `msa` -- Minkowski sum array
+
+### Output
+
+The ambient dimension of the Minkowski sum of a finite number of sets.
+"""
+function dim(msa::MinkowskiSumArray)::Int
+    return length(msa.sfarray) == 0 ? 0 : dim(msa.sfarray[1])
 end
 
 """
-    σ(d::Vector{Float64}, ms::MinkowskiSumArray)
+    σ(d::AbstractVector{<:Real}, msa::MinkowskiSumArray)::Vector{<:Real}
 
-Support vector of the Minkowski sum of a finite number of sets.
+Return the support vector of a Minkowski sum of a finite number of sets in a
+given direction.
 
 ### Input
 
-- `d` -- direction
+- `d`   -- direction
 
-- `ms` -- Minkowski sum array
+- `msa` -- Minkowski sum array
+
+### Output
+
+The support vector in the given direction.
+If the direction has norm zero, the result depends on the summand sets.
 """
-function σ(d::AbstractVector{Float64}, ms::MinkowskiSumArray)::Vector{Float64}
-    svec = zeros(length(d))
-    for sj in ms.sfarray
+function σ(d::AbstractVector{<:Real}, msa::MinkowskiSumArray)::Vector{<:Real}
+    svec = zeros(eltype(d), length(d))
+    for sj in msa.sfarray
         svec += σ(d, sj)
     end
     return svec

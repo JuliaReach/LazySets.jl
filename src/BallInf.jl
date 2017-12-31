@@ -1,109 +1,123 @@
 import Base.LinAlg:norm
 
-export BallInf, vertices_list, norm, radius, diameter
+export BallInf
 
 """
-    BallInf <: LazySet
+    BallInf{N<:Real} <: AbstractHyperrectangle{N}
 
 Type that represents a ball in the infinity norm.
 
 ### Fields
 
 - `center` -- center of the ball as a real vector
-- `radius` -- radius of the ball as a scalar (``≧ 0``)
-
-### Examples
-
-We create the two-dimensional unit ball, and compute its support function
-along the direction ``(1, 1)``:
-
-```julia
-julia> B = BallInf(zeros(2), 0.1)
-LazySets.BallInf([0.0, 0.0], 0.1)
-
-julia> dim(B)
-2
-
-julia> ρ([1., 1.], B)
-0.2
-```
-"""
-struct BallInf <: LazySet
-    center::Vector{Float64}
-    radius::Float64
-    BallInf(center, radius) = radius < 0. ? throw(DomainError()) : new(center, radius)
-end
-
-"""
-    dim(B)
-
-Return the dimension of a BallInf.
-
-### Input
-
-- `B` -- a ball in the infinity norm
-
-### Output
-
-The ambient dimension of the ball.
-"""
-function dim(B::BallInf)::Int64
-    return length(B.center)
-end
-
-"""
-    σ(d, B)
-
-Return the support vector of an infinity-norm ball in a given direction.
-
-### Input
-
-- `d` -- direction
-- `B` -- unit ball in the infinity norm
-
-### Algorithm
-
-This code is a vectorized version of
-
-```julia
-[(d[i] >= 0) ? B.center[i] + B.radius : B.center[i] - B.radius for i in 1:length(d)]
-```
-
-Notice that we cannot use `B.center + sign.(d) * B.radius`, since the built-in `sign`
-function is such that `sign(0) = 0`, instead of 1. For this reason, we use the
-custom `unit_step` function, that allows to do: `B.center + unit_step.(d) * B.radius`
-(the dot operator performs broadcasting, to accept vector-valued entries).
-"""
-function σ(d::AbstractVector{Float64}, B::BallInf)::Vector{Float64}
-    return B.center .+ unit_step.(d) .* B.radius
-end
-
-"""
-    vertices_list(B::BallInf)
-
-Return the list of vertices of a ball in the infinity norm.
-
-### Input
-
-- `B` -- a ball in the infinity norm
-
-### Output
-
-The list of vertices as an array of floating-point vectors.
+- `radius` -- radius of the ball as a real scalar (``≥ 0``)
 
 ### Notes
 
-For high-dimensions, it is preferable to develop a `vertex_iterator` approach.
+Mathematically, a ball in the infinity norm is defined as the set
+
+```math
+\\mathcal{B}_∞^n(c, r) = \\{ x ∈ \\mathbb{R}^n : ‖ x - c ‖_∞ ≤ r \\},
+```
+where ``c ∈ \\mathbb{R}^n`` is its center and ``r ∈ \\mathbb{R}_+`` its radius.
+Here ``‖ ⋅ ‖_∞`` denotes the infinity norm, defined as
+``‖ x ‖_∞ = \\max\\limits_{i=1,…,n} \\vert x_i \\vert`` for any
+``x ∈ \\mathbb{R}^n``.
+
+### Examples
+
+Create the two-dimensional unit ball and compute its support function along the
+positive ``x=y`` direction:
+
+```jldoctest
+julia> B = BallInf(zeros(2), 1.0)
+LazySets.BallInf{Float64}([0.0, 0.0], 1.0)
+julia> dim(B)
+2
+julia> ρ([1., 1.], B)
+2.0
+```
 """
-function vertices_list(B::BallInf)::Vector{Vector{Float64}}
-    return [B.center .+ si .* B.radius for si in IterTools.product([[1, -1] for i = 1:dim(B)]...)]
+struct BallInf{N<:Real} <: AbstractHyperrectangle{N}
+    center::Vector{N}
+    radius::N
+
+    # default constructor with domain constraint for radius
+    BallInf{N}(center, radius) where N =
+        radius < zero(N) ? throw(DomainError()) : new(center, radius)
+end
+# type-less convenience constructor
+BallInf(center::Vector{N}, radius::N) where {N<:Real} =
+    BallInf{N}(center, radius)
+
+
+# --- AbstractHyperrectangle interface functions ---
+
+
+"""
+    radius_hyperrectangle(B::BallInf{N}, i::Int)::N where {N<:Real}
+
+Return the box radius of a infinity norm ball in a given dimension.
+
+### Input
+
+- `B` -- infinity norm ball
+
+### Output
+
+The box radius of the ball in the infinity norm in the given dimension.
+"""
+function radius_hyperrectangle(B::BallInf{N}, i::Int)::N where {N<:Real}
+    return B.radius
 end
 
 """
-    norm(B::BallInf, [p])
+    radius_hyperrectangle(B::BallInf{N})::Vector{N} where {N<:Real}
 
-Return the norm of a `BallInf`. It is the norm of the enclosing ball (of
-the given norm) of minimal volume.
+Return the box radius of a infinity norm ball, which is the same in every
+dimension.
+
+### Input
+
+- `B` -- infinity norm ball
+
+### Output
+
+The box radius of the ball in the infinity norm.
+"""
+function radius_hyperrectangle(B::BallInf{N})::Vector{N} where {N<:Real}
+    return fill(B.radius, dim(B))
+end
+
+
+# --- AbstractPointSymmetric interface functions ---
+
+
+"""
+    center(B::BallInf{N})::Vector{N} where {N<:Real}
+
+Return the center of a ball in the infinity norm.
+
+### Input
+
+- `B` -- ball in the infinity norm
+
+### Output
+
+The center of the ball in the infinity norm.
+"""
+function center(B::BallInf{N})::Vector{N} where {N<:Real}
+    return B.center
+end
+
+
+# --- LazySet interface functions ---
+
+
+"""
+    radius(B::BallInf, [p]::Real=Inf)::Real
+
+Return the radius of a ball in the infinity norm.
 
 ### Input
 
@@ -112,51 +126,13 @@ the given norm) of minimal volume.
 
 ### Output
 
-A real number representing the norm.
-"""
-function norm(B::BallInf, p::Real=Inf)
-    return maximum(map(x -> norm(x, p), vertices_list(B)))
-end
-
-"""
-    radius(B::BallInf, [p])
-
-Return the radius of a ball in the infinity norm. It is the radius of the
-enclosing ball (of the given norm) of minimal volume with the same center.
-
-### Input
-
-- `B` -- a ball in the infinity norm
-- `p` -- (optional, default: `Inf`) norm
-
-### Output
-
 A real number representing the radius.
+
+### Notes
+
+The radius is defined as the radius of the enclosing ball of the given
+``p``-norm of minimal volume with the same center.
 """
-function radius(B::BallInf, p::Real=Inf)
-    if p == Inf
-        return B.radius
-    else
-        return norm(fill(B.radius, dim(B)), p)
-    end
-end
-
-"""
-    diameter(B::BallInf, [p])
-
-Return the diameter of a ball in the infinity norm. It is the maximum distance
-between any two elements of the set, or, equivalently, the diameter of the
-enclosing ball (of the given norm) of minimal volume with the same center.
-
-### Input
-
-- `B` -- a ball in the infinity norm
-- `p` -- (optional, default: `Inf`) norm
-
-### Output
-
-A real number representing the diameter.
-"""
-function diameter(B::BallInf, p::Real=Inf)
-    return 2. * radius(B, p)
+function radius(B::BallInf, p::Real=Inf)::Real
+    return (p == Inf) ? B.radius : norm(fill(B.radius, dim(B)), p)
 end

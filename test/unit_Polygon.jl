@@ -29,18 +29,21 @@ d = [0., -1.]
 @test σ(d, p) == [0., 0.]
 
 # Test containment
-@test is_contained([0., 0.], p)
-@test is_contained([4., 2.], p)
-@test is_contained([2., 4.], p)
-@test is_contained([-1., 1.], p)
-@test is_contained([2., 3.], p)
-@test is_contained([1., 1.], p)
-@test is_contained([3., 2.], p)
-@test is_contained([5./4., 7./4.], p)
-@test !is_contained([4., 1.], p)
-@test !is_contained([5., 2.], p)
-@test !is_contained([3., 4.], p)
-@test !is_contained([-1., 5.], p)
+@test ∈([0., 0.], p)
+@test ∈([4., 2.], p)
+@test ∈([2., 4.], p)
+@test ∈([-1., 1.], p)
+@test ∈([2., 3.], p)
+@test ∈([1., 1.], p)
+@test ∈([3., 2.], p)
+@test ∈([5./4., 7./4.], p)
+@test !∈([4., 1.], p)
+@test !∈([5., 2.], p)
+@test !∈([3., 4.], p)
+@test !∈([-1., 5.], p)
+
+# an_element function
+@test an_element(p) ∈ p
 
 # Optimized Polygon
 po = HPolygonOpt(p)
@@ -59,18 +62,21 @@ d = [0., -1.]
 @test σ(d, po) == [0., 0.]
 
 # Test containment
-@test is_contained([0., 0.], po)
-@test is_contained([4., 2.], po)
-@test is_contained([2., 4.], po)
-@test is_contained([-1., 1.], po)
-@test is_contained([2., 3.], po)
-@test is_contained([1., 1.], po)
-@test is_contained([3., 2.], po)
-@test is_contained([5./4., 7./4.], po)
-@test !is_contained([4., 1.], po)
-@test !is_contained([5., 2.], po)
-@test !is_contained([3., 4.], po)
-@test !is_contained([-1., 5.], po)
+@test ∈([0., 0.], po)
+@test ∈([4., 2.], po)
+@test ∈([2., 4.], po)
+@test ∈([-1., 1.], po)
+@test ∈([2., 3.], po)
+@test ∈([1., 1.], po)
+@test ∈([3., 2.], po)
+@test ∈([5./4., 7./4.], po)
+@test !∈([4., 1.], po)
+@test !∈([5., 2.], po)
+@test !∈([3., 4.], po)
+@test !∈([-1., 5.], po)
+
+# an_element function
+@test an_element(po) ∈ po
 
 # Test VRepresentation
 vp = tovrep(p)
@@ -86,3 +92,36 @@ vp = VPolygon(points) # by default, a convex hull is run
 
 vp = VPolygon(points, apply_convex_hull=false) # we can turn it off
 @test vertices_list(vp) == [[0.9,0.2], [0.4,0.6], [0.2,0.1], [0.1,0.3], [0.3,0.28]]
+
+# test for pre-sorted points
+points = [[0.1, 0.3], [0.2, 0.1], [0.4, 0.3], [0.4, 0.6], [0.9, 0.2]]
+vp = VPolygon(points, algorithm="monotone_chain_sorted")
+@test vertices_list(vp) == [[0.1, 0.3], [0.2, 0.1], [0.9, 0.2], [0.4, 0.6]]
+
+# test support vector of a VPolygon
+p = HPolygon()
+for ci in [c1, c2, c3, c4]
+    addconstraint!(p, ci)
+end
+p = tovrep(p)
+
+# Test Support Vector
+d = [1., 0.]
+@test σ(d, p) == [4., 2.]
+d = [0., 1.]
+@test σ(d, p) == [2., 4.]
+d = [-1., 0.]
+@test σ(d, p) == [-1., 1.]
+d = [0., -1.]
+@test σ(d, p) == [0., 0.]
+
+# test that #83 is fixed
+v = VPolygon([[2.0, 3.0]])
+@test [2.0, 3.0] ∈ v
+@test !([3.0, 2.0] ∈ v)
+v = VPolygon([[2.0, 3.0], [-1.0, -3.4]])
+@test [-1.0, -3.4] ∈ v
+
+# an_element function
+v = VPolygon([[2., 3.]])
+@test an_element(v) ∈ v

@@ -1,75 +1,107 @@
 """
+    Approximation2D{N<:AbstractFloat}
+
 Type that represents a local approximation in 2D.
 
 ### Fields
 
-- `p1`        -- the first inner point
-- `d1`        -- the first direction
-- `p2`        -- the second inner point
-- `d2`        -- the second direction
-- `q`         -- intersection of the lines x : d1.x = p1 and x : d2.x = p2
-- `err`       -- the error made
-- `ndir`      -- a normal direction of the inner approximation
+- `p1`        -- first inner point
+- `d1`        -- first direction
+- `p2`        -- second inner point
+- `d2`        -- second direction
+- `q`         -- intersection of the lines `x : d1.x = p1` and `x : d2.x = p2`
+- `err`       -- error made
+- `ndir`      -- normal direction of the inner approximation
 - `refinable` -- states if this approximation is refinable
 """
-struct Approximation2D
-    p1::Vector{Float64}
-    d1::Vector{Float64}
-    p2::Vector{Float64}
-    d2::Vector{Float64}
-    q::Vector{Float64}
-    err::Float64
-    ndir::Vector{Float64}
+struct Approximation2D{N<:AbstractFloat}
+    p1::Vector{N}
+    d1::Vector{N}
+    p2::Vector{N}
+    d2::Vector{N}
+    q::Vector{N}
+    err::N
+    ndir::Vector{N}
     refinable::Bool
+end
 
-    function Approximation2D(p1::Vector{Float64}, d1::Vector{Float64}, p2::Vector{Float64}, d2::Vector{Float64})
-        ndir = [p2[2]-p1[2], p1[1]-p2[1]]
-        norm_ndir = norm(ndir)
+"""
+    Approximation2D(p1::Vector{N}, d1::Vector{N}, p2::Vector{N}, d2::Vector{N}) where {N<:AbstractFloat}
 
-        if norm_ndir > TOL_DIR
-            ndir = ndir/norm_ndir
-            q = intersection(Line(d1, dot(d1, p1)), Line(d2, dot(d2, p2)))
-            new(p1, d1, p2, d2, q, dot(ndir, q) - dot(ndir, p1), ndir, true)
-        else
-            new(p1, d1, p2, d2, p1, 0., ndir, false)
-        end
+Constructor of `Approximation2D` from two inner points and two directions.
+
+### Input
+
+- `p1`        -- first inner point
+- `d1`        -- first direction
+- `p2`        -- second inner point
+- `d2`        -- second direction
+
+### Output
+
+A new `Approximation2D` instance.
+"""
+function Approximation2D(p1::Vector{N},
+                         d1::Vector{N},
+                         p2::Vector{N},
+                         d2::Vector{N}) where {N<:AbstractFloat}
+    ndir = [p2[2]-p1[2], p1[1]-p2[1]]
+    norm_ndir = norm(ndir)
+
+    if norm_ndir > TOL_DIR
+        ndir = ndir/norm_ndir
+        q = intersection(Line(d1, dot(d1, p1)), Line(d2, dot(d2, p2)))
+        Approximation2D(p1, d1, p2, d2, q, dot(ndir, q) - dot(ndir, p1), ndir,
+                        true)
+    else
+        Approximation2D(p1, d1, p2, d2, p1, zero(N), ndir, false)
     end
 end
 
 """
-    refine(X, A)
+    refine(S::LazySet, approx::Approximation2D)::Tuple{Approximation2D, Approximation2D}
 
 Refine the given approximation.
 
 ### Input
 
-- `X`      -- set which is approximated
+- `S`      -- 2D convex set that is approximated
 - `approx` -- approximation to refine
+
+### Output
+
+The refined approximation.
 """
-function refine(X::LazySet, approx::Approximation2D)
-    q = σ(approx.ndir, X)
-    (Approximation2D(approx.p1, approx.d1, q, approx.ndir), Approximation2D(q, approx.ndir, approx.p2, approx.d2))
+function refine(S::LazySet,
+                approx::Approximation2D)::Tuple{Approximation2D, Approximation2D}
+    q = σ(approx.ndir, S)
+    return (Approximation2D(approx.p1, approx.d1, q, approx.ndir),
+            Approximation2D(q, approx.ndir, approx.p2, approx.d2))
 end
 
 """
-    approximate(X, ɛ)
+    approximate(S::LazySet, ɛ::Float64)::Vector{Approximation2D}
 
-Return an ɛ-close approximation of the given 2D set (in terms of Hausdorff
-distance) as an inner and an outer approximation composed by sorted local
-`Approximation2D`.
+Return an ɛ-close approximation of the given 2D convex set (in terms of
+Hausdorff distance) as an inner and an outer approximation composed by sorted
+local `Approximation2D`.
 
 ### Input
 
-- `X` -- a 2D set defined by its support function
-- `ɛ` -- the error bound
+- `S` -- 2D convex set
+- `ɛ` -- error bound
+
+### Output
+
+An ɛ-close approximation of the given 2D convex set.
 """
-function approximate(X::LazySet, ɛ::Float64)::Vector{Approximation2D}
+function approximate(S::LazySet, ɛ::Float64)::Vector{Approximation2D}
 
     # start with box directions
-    pe = σ(DIR_EAST, X)
-    pn = σ(DIR_NORTH, X)
-    pw = σ(DIR_WEST, X)
-    ps = σ(DIR_SOUTH, X)
+    pe = σ(DIR_EAST, S)
+    pn = σ(DIR_NORTH, S)
+    pw = σ(DIR_WEST, S)
+    ps = σ(DIR_SOUTH, S)
     queue = Approximation2D[]
     push!(queue, Approximation2D(pe, DIR_EAST, pn, DIR_NORTH))
     push!(queue, Approximation2D(pn, DIR_NORTH, pw, DIR_WEST))

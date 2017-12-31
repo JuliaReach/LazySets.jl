@@ -1,75 +1,102 @@
 using JuMP, GLPKMathProgInterface
 
-export Polyhedron, addconstraint!, constraints_list
+export Polyhedron,
+       addconstraint!,
+       constraints_list
 
 """
-    Polyhedron <: LazySet
+    Polyhedron{N<:Real} <: AbstractPolytope{N}
 
 Type that represents a convex polyhedron in H-representation.
 
 ### Fields
 
-- `constraints` -- a vector of linear constraints
+- `constraints` -- vector of linear constraints
 """
-struct Polyhedron <: LazySet
-    constraints::Vector{LinearConstraint}
+struct Polyhedron{N<:Real} <: AbstractPolytope{N}
+    constraints::Vector{LinearConstraint{N}}
 end
-Polyhedron() = Polyhedron([])
+# constructor for a Polyhedron with no constraints
+Polyhedron{N}() where {N<:Real} = Polyhedron{N}(Vector{N}(0))
+# constructor for a Polyhedron with no constraints of type Float64
+Polyhedron() = Polyhedron{Float64}()
 
 """
-    dim(P)
+    dim(P::Polyhedron)::Int
 
-Return the ambient dimension of the polyhedron.
+Return the dimension of a polyhedron in H-representation.
 
 ### Input
 
-- `P`  -- a polyhedron in H-representation
+- `P`  -- polyhedron in H-representation
+
+### Output
+
+The ambient dimension of the polyhedron in H-representation.
+If the polyhedron has no constraints, the result is ``-1``.
 """
-function dim(P::Polyhedron)::Int64
+function dim(P::Polyhedron)::Int
     return length(P.constraints) == 0 ? -1 : length(P.constraints[1].a)
 end
 
 """
-    σ(d, P)
+    σ(d::AbstractVector{<:Real}, P::Polyhedron)::Vector{<:Real}
 
-Return the support vector of the polyhedron in a given direction.
+Return the support vector of a polyhedron (in H-representation) in a given
+direction.
 
 ### Input
 
 - `d` -- direction
 - `P` -- polyhedron in H-representation
+
+### Output
+
+The support vector in the given direction.
+
+### Algorithm
+
+This implementation uses `GLPKSolverLP` as linear programming backend.
 """
-function σ(d::AbstractVector{Float64}, p::Polyhedron)::Vector{Float64}
+function σ(d::AbstractVector{<:Real}, P::Polyhedron)::Vector{<:Real}
     model = Model(solver=GLPKSolverLP())
-    n = length(p.constraints)
-    @variable(model, x[1:dim(p)])
+    n = length(P.constraints)
+    @variable(model, x[1:dim(P)])
     @objective(model, Max, dot(d, x))
-    @constraint(model, P[i=1:n], dot(p.constraints[i].a, x) <= p.constraints[i].b)
+    @constraint(model, P[i=1:n],
+                dot(P.constraints[i].a, x) <= P.constraints[i].b)
     solve(model)
     return getvalue(x)
 end
 
 """
-    addconstraint!(p, c)
+    addconstraint!(P::Polyhedron{N},
+                   constraint::LinearConstraint{N})::Void where {N<:Real}
 
-Add a linear constraint to a polyhedron.
+Add a linear constraint to a polyhedron in H-representation.
 
 ### Input
 
-- `P`          -- a polyhedron
-- `constraint` -- the linear constraint to add
+- `P`          -- polyhedron in H-representation
+- `constraint` -- linear constraint to add
+
+### Output
+
+Nothing.
 
 ### Notes
 
-It is left to the user to guarantee that the dimension all linear constraints is
-the same.
+It is left to the user to guarantee that the dimension of all linear constraints
+is the same.
 """
-function addconstraint!(P::Polyhedron, c::LinearConstraint)
-    push!(P.constraints, c)
+function addconstraint!(P::Polyhedron{N},
+                        constraint::LinearConstraint{N})::Void where {N<:Real}
+    push!(P.constraints, constraint)
+    return nothing
 end
 
 """
-    constraints_list(P)
+    constraints_list(P::Polyhedron{N})::Vector{LinearConstraint{N}} where {N<:Real}
 
 Return the list of constraints defining a polyhedron in H-representation.
 
@@ -77,6 +104,7 @@ Return the list of constraints defining a polyhedron in H-representation.
 
 - `P` -- polyhedron in H-representation
 """
-function constraints_list(P::Polyhedron)
+function constraints_list(P::Polyhedron{N}
+                         )::Vector{LinearConstraint{N}} where {N<:Real}
     return P.constraints
 end

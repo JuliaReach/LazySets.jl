@@ -1,6 +1,11 @@
 #!/usr/bin/env julia
 using LazySets, Base.Test
 
+# ====================================
+# Testing common API of all interfaces
+# ====================================
+@time @testset "LazySets.interfaces" begin include("unit_interfaces.jl") end
+
 # =======================================
 # Testing types that inherit from LazySet
 # =======================================
@@ -10,6 +15,9 @@ using LazySets, Base.Test
 @time @testset "LazySets.Hyperrectangle" begin include("unit_Hyperrectangle.jl") end
 @time @testset "LazySets.Polygon" begin include("unit_Polygon.jl") end
 #@time @testset "LazySets.Polyhedron" begin include("unit_Polyhedron.jl") end  # optional
+@time @testset "LazySets.Zonotope" begin include("unit_Zonotope.jl") end
+@time @testset "LazySets.ZeroSet" begin include("unit_ZeroSet.jl") end
+@time @testset "LazySets.EmptySet" begin include("unit_EmptySet.jl") end
 
 # =========================================
 # Testing types representing set operations
@@ -27,3 +35,4 @@ using LazySets, Base.Test
 @time @testset "LazySets.Approximations.box_approximation" begin include("unit_box_approximation.jl") end
 @time @testset "LazySets.Approximations.ballinf_approximation" begin include("unit_ballinf_approximation.jl") end
 @time @testset "LazySets.Approximations.radiusdiameter" begin include("unit_radiusdiameter.jl") end
+@time @testset "LazySets.Approximations.decompose" begin include("unit_decompose.jl") end

@@ -10,31 +10,104 @@ Depth = 3
 
 ```@meta
 CurrentModule = LazySets
+DocTestSetup = quote
+    using LazySets
+end
 ```
 
 ## Minkowski Sum
 
+### Binary Minkowski Sum
+
 ```@docs
 MinkowskiSum
-dim(ms::MinkowskiSum)
-σ(d::AbstractVector{Float64}, ms::MinkowskiSum)
+dim(::MinkowskiSum)
+σ(::AbstractVector{Float64}, ::MinkowskiSum)
+Base.:+(::LazySet, ::LazySet)
+⊕
 ```
+
+### ``n``-ary Minkowski Sum
 
 ```@docs
 MinkowskiSumArray
-dim(ms::MinkowskiSumArray)
-σ(d::AbstractVector{Float64}, ms::MinkowskiSumArray)
-Base.:+(msa::MinkowskiSumArray, sf::LazySet)
-Base.:+(msa1::MinkowskiSumArray, msa2::MinkowskiSumArray)
-Base.:+(msa::MinkowskiSumArray, sf::VoidSet)
+dim(::MinkowskiSumArray)
+σ(::AbstractVector{Float64}, ::MinkowskiSumArray)
+Base.:+(::MinkowskiSumArray, ::LazySet)
+Base.:+(::LazySet, ::MinkowskiSumArray)
+Base.:+(::MinkowskiSumArray, ::MinkowskiSumArray)
+Base.:+(::MinkowskiSumArray, ::ZeroSet)
+```
+
+## Cartesian Product
+
+### Binary Cartesian Product
+
+```@docs
+CartesianProduct
+dim(::CartesianProduct)
+σ(::AbstractVector{Float64}, ::CartesianProduct)
+Base.:*(::LazySet, ::LazySet)
+∈(::AbstractVector{Float64}, ::CartesianProduct)
+```
+
+### ``n``-ary Cartesian Product
+
+```@docs
+CartesianProductArray
+dim(::CartesianProductArray)
+σ(::AbstractVector{Float64}, ::CartesianProductArray)
+Base.:*(::CartesianProductArray, ::LazySet)
+Base.:*(::LazySet, ::CartesianProductArray)
+Base.:*(::CartesianProductArray, ::CartesianProductArray)
+∈(::AbstractVector{Float64}, ::CartesianProductArray)
+```
+
+## Maps
+
+### Linear Map
+
+```@docs
+LinearMap
+dim(::LinearMap)
+σ(::AbstractVector{Float64}, ::LinearMap)
+*(::AbstractMatrix{Float64}, ::LazySet)
+*(::Real, ::LazySet)
+∈(::AbstractVector{Float64}, ::LinearMap{<:LazySet, Float64})
+```
+
+### Exponential Map
+
+```@docs
+ExponentialMap
+dim(::ExponentialMap)
+σ(::AbstractVector{Float64}, ::ExponentialMap)
+∈(::AbstractVector{Float64}, ::ExponentialMap{<:LazySet})
+```
+
+```@docs
+ExponentialProjectionMap
+dim(::ExponentialProjectionMap)
+σ(::AbstractVector{Float64}, ::ExponentialProjectionMap)
+```
+
+```@docs
+SparseMatrixExp
+*(::SparseMatrixExp, ::LazySet)
+```
+
+```@docs
+ProjectionSparseMatrixExp
+*(::ProjectionSparseMatrixExp, ::LazySet)
 ```
 
 ## Convex Hull
 
 ```@docs
 ConvexHull
-dim(ch::ConvexHull)
-σ(d::AbstractVector{Float64}, ch::ConvexHull)
+CH
+dim(::ConvexHull)
+σ(::AbstractVector{Float64}, ::ConvexHull)
 ```
 
 ### Convex Hull Algorithms
@@ -43,47 +116,5 @@ dim(ch::ConvexHull)
 convex_hull
 convex_hull!
 right_turn
-andrew_monotone_chain!
-```
-
-## Cartesian Product
-
-```@docs
-CartesianProduct
-dim(cp::CartesianProduct)
-σ(d::AbstractVector{Float64}, cp::CartesianProduct)
-is_contained(d::AbstractVector{Float64}, cp::CartesianProduct)
-```
-
-```@docs
-CartesianProductArray
-dim(cp::CartesianProductArray)
-σ(d::AbstractVector{Float64}, cp::CartesianProductArray)
-is_contained(d::AbstractVector{Float64}, cp::CartesianProductArray)
-```
-
-## Linear Maps
-
-```@docs
-LinearMap
-dim(lm::LinearMap)
-σ(d::AbstractVector{Float64}, lm::LinearMap)
-```
-
-## Exponential Maps
-
-```@docs
-ExponentialMap
-dim(emap::ExponentialMap)
-σ(d::AbstractVector{Float64}, eprojmap::ExponentialProjectionMap)
-```
-
-```@docs
-ExponentialProjectionMap
-dim(eprojmap::ExponentialProjectionMap)
-```
-
-```@docs
-ProjectionSparseMatrixExp
-SparseMatrixExp
+monotone_chain!
 ```

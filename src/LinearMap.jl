@@ -1,83 +1,172 @@
+import Base: *, ∈
+
 export LinearMap
 
 """
-    LinearMap <: LazySet
+    LinearMap{S<:LazySet, N<:Real} <: LazySet
 
-Type that represents a linear transform of a set. This class is a wrapper
-around a linear transformation ``M⋅S`` of a set ``S``, such that it
-changes the behaviour of the support vector of the new set.
+Type that represents a linear transformation ``M⋅S`` of a convex set ``S``.
 
 ### Fields
 
-- `M`  -- a linear map, which can a be densem matrix, sparse matrix or a subarray object
-- `sf` -- a convex set represented by its support function
+- `M`  -- matrix/linear map
+- `sf` -- convex set
 """
-struct LinearMap{T<:LazySet} <: LazySet
-    M::AbstractMatrix{Float64}
-    sf::T
-
-    LinearMap{T}(M::AbstractMatrix{Float64}, S::T) where {T<:LazySet} = new(M, S)
-    # in case of constructing a linear map from a linear map, the matrix
-    # multiplication is performed here
-    LinearMap(M::AbstractMatrix{Float64}, S::LinearMap{T}) where {T<:LazySet} = new{T}(M * S.M, S.sf)
+struct LinearMap{S<:LazySet, N<:Real} <: LazySet
+    M::AbstractMatrix{N}
+    sf::S
 end
-LinearMap(M::AbstractMatrix{Float64}, sf::T) where {T<:LazySet} = LinearMap{T}(M, sf)
-
-import Base.*
-
-# linear map of a set
-function *(M::AbstractMatrix{Float64}, sf::LazySet)
-    if findfirst(M) != 0
-        return LinearMap(M, sf)
-    else
-        return VoidSet(dim(sf))
-    end
-end
-
-# linear map of a void set (has to be overridden due to polymorphism reasons)
-function *(M::AbstractMatrix{Float64}, sf::VoidSet)
-    if dim(sf) == size(M, 2)
-        return VoidSet(size(M, 1))
-    else
-        throw(DimensionMismatch("a VoidSet of dimension " * string(eval(dim(sf))) *
-                " cannot be multiplied by a " * string(eval(size(M))) * " matrix"))
-    end
-end
+# constructor from a linear map: perform the matrix multiplication immediately
+LinearMap(M::AbstractMatrix{N}, map::LinearMap{S}) where {S<:LazySet, N<:Real} =
+    LinearMap{S,N}(M * map.M, map.sf)
 
 """
-    dim(lm)
+```
+    *(M::AbstractMatrix{<:Real}, S::LazySet)
+```
 
-Ambient dimension of the linear map of a set.
-
-It corresponds to the output dimension of the linear map.
+Return the linear map of a convex set.
 
 ### Input
 
-- `lm` -- a linear map
+- `M` -- matrix/linear map
+- `S` -- convex set
+
+### Output
+
+If the matrix is null, a `ZeroSet` is returned; otherwise a lazy linear map.
 """
-function dim(lm::LinearMap)::Int64
+function *(M::AbstractMatrix, X::LazySet)
+    if findfirst(M) != 0
+        return LinearMap(M, X)
+    else
+        return ZeroSet(dim(X))
+    end
+end
+
+"""
+```
+    *(a::Real, S::LazySet)::LinearMap
+```
+
+Return a linear map of a convex set by a scalar value.
+
+### Input
+
+- `a` -- real scalar
+- `S` -- convex set
+
+### Output
+
+The linear map of the convex set.
+"""
+function *(a::Real, S::LazySet)::LinearMap
+    return LinearMap(sparse(a*I, dim(S)), S)
+end
+
+"""
+```
+    *(M::AbstractMatrix, Z::ZeroSet)
+````
+Linear map of a zero set.
+
+### Input
+
+- `M` -- abstract matrix
+- `Z` -- zero set
+
+### Output
+
+The zero set with the output dimension of the linear map. 
+"""
+function *(M::AbstractMatrix, Z::ZeroSet)
+    @assert dim(Z) == size(M, 2)
+    return ZeroSet(size(M, 1))
+end
+
+"""
+    dim(lm::LinearMap)::Int
+
+Return the dimension of a linear map.
+
+### Input
+
+- `lm` -- linear map
+
+### Output
+
+The ambient dimension of the linear map.
+"""
+function dim(lm::LinearMap)::Int
     return size(lm.M, 1)
 end
 
 """
-    σ(d, lm)
+    σ(d::AbstractVector{<:Real}, lm::LinearMap)::AbstractVector{<:Real}
 
-Support vector of the linear map of a set.
-
-If `S = MB`, where `M` is sa matrix and `B` is a set, it follows that
-`σ(d, S) = Mσ(M^T d, B)` for any direction `d`.
+Return the support vector of the linear map.
 
 ### Input
 
-- `d`  -- a direction
-- `lm` -- a linear map
+- `d`  -- direction
+- `lm` -- linear map
+
+### Output
+
+The support vector in the given direction.
+If the direction has norm zero, the result depends on the wrapped set.
+
+### Notes
+
+If ``L = M⋅S``, where ``M`` is a matrix and ``S`` is a convex set, it follows
+that ``σ(d, L) = M⋅σ(M^T d, S)`` for any direction ``d``.
 """
-function σ(d::AbstractVector{Float64}, lm::LinearMap)::Vector{Float64}
+function σ(d::AbstractVector{<:Real}, lm::LinearMap)::AbstractVector{<:Real}
     return lm.M * σ(lm.M.' * d, lm.sf)
 end
 
-# multiplication of a set by a scalar value
-function *(a::Float64, sf::LazySet)
-    return LinearMap(sparse(a*I, dim(sf)), sf)
-end
+"""
+    ∈(x::AbstractVector{N}, lm::LinearMap{<:LazySet, N})::Bool where {N<:Real}
 
+Check whether a given point is contained in a linear map of a convex set.
+
+### Input
+
+- `x`  -- point/vector
+- `lm` -- linear map of a convex set
+
+### Output
+
+`true` iff ``x ∈ lm``.
+
+### Algorithm
+
+Note that ``x ∈ M⋅S`` iff ``M^{-1}⋅x ∈ S``.
+This implementation does not explicitly invert the matrix, which is why it also
+works for non-square matrices.
+
+### Examples
+
+```jldoctest
+julia> lm = LinearMap([2.0 0.0; 0.0 1.0], BallInf([1., 1.], 1.));
+
+julia> ∈([5.0, 1.0], lm)
+false
+julia> ∈([3.0, 1.0], lm)
+true
+```
+
+An example with non-square matrix:
+```jldoctest
+julia> B = BallInf(zeros(4), 1.);
+
+julia> M = [1. 0 0 0; 0 1 0 0]/2;
+
+julia> ∈([0.5, 0.5], M*B)
+true
+```
+"""
+function ∈(x::AbstractVector{N},
+           lm::LinearMap{<:LazySet, N})::Bool where {N<:Real}
+    return ∈(lm.M \ x, lm.sf)
+end
