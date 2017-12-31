@@ -8,10 +8,25 @@ Depth = 3
 ## Introduction
 
 In this section we present an algorithm implemented using `LazySets` that computes
-the reachable sets of a linear affine ordinary differential equation (ODE). This
+the reach sets of an affine ordinary differential equation (ODE). This
 algorithm is from A. Girard's *"Reachability of uncertain linear systems using zonotopes*,
 HSCC. Vol. 5. 2005. We have chosen this algorithm for the purpose of illustration
 of a complete application of `LazySets`.
+
+Let us introduce some notation. Consider the continuous initial set-valued problem
+(IVP)
+
+```math
+    x'(t) = A x(t) + u(t)
+```
+in the time interval ``t ∈ [0, T]``, where:
+
+-  ``A`` is a real matrix of order ``n``,
+- ``u(t)`` is a non-deterministic input such that ``\Vert u(t) \Vert_∞ ≦ μ`` for all ``t``,
+- ``x(0) ∈ \mathcal{X}_0``, where ``\mathcal{X}_0`` is a convex set.
+
+Given a step size ``δ``, `Algorithm1` returns a sequence of sets that overapproximates
+the states reachable by any trajectory of this IVP.
 
 ## Algorithm
 
@@ -28,7 +43,7 @@ function Algorithm1(A, δ, X0, μ, T)
     # discretized system
     n = size(A, 1)
     ϕ = expm(δ*A)
-    N = floor(Int64, T/δ)
+    N = floor(Int, T/δ)
 
     # preallocate working vector and output
     Q = Vector{LazySets.LazySet}(N)
@@ -37,13 +52,13 @@ function Algorithm1(A, δ, X0, μ, T)
     # initial reach set in the time interval [0, δ]
     ϕp = (I+ϕ)/2
     ϕm = (I-ϕ)/2
-    Ballβ = BallInf(zeros(n), β)
     c = X0.center
     Q1_generators = hcat(ϕp * X0.generators, ϕm * c, ϕm * X0.generators)
     Q[1] = Zonotope(ϕp * c, Q1_generators) ⊕ BallInf(zeros(n), α + β)
     R[1] = Q[1]
 
     # set recurrence for [δ, 2δ], ..., [(N-1)δ, Nδ]
+    Ballβ = BallInf(zeros(n), β)
     for i in 2:N
         Q[i] = ϕ * Q[i-1] ⊕ Ballβ
         R[i] = Q[i]
