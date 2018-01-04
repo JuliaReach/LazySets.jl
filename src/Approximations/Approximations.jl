@@ -18,8 +18,7 @@ export approximate,
        radius,
        symmetric_interval_hull
 
-const TOL_DIR = 1e-6 # TODO: use eps(N)
-const TOL_POINTS = 1e-6
+const TOL = eps(Float64) # TODO: use eps(N)
 
 const DIR_EAST = [1., 0.] # TODO: use given precision N
 const DIR_NORTH = [0., 1.]

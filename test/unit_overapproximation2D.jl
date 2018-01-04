@@ -12,7 +12,7 @@ for v in p.vertices_list
     @test norm(v) <= 1.+ɛ
 end
 
-# Check that there are no redundant constraints
+# Check that there are no redundant constraints for a ballinf
 b = BallInf([0.5,0.5],0.1)
 lcl = overapproximate(b, .001).constraints_list
 @test length(lcl) == 4
@@ -25,7 +25,7 @@ lcl = overapproximate(b, .001).constraints_list
 @test lcl[4].a == [0.0,-1.0]
 @test lcl[4].b == -0.4
 
-# Check that there are no redundant constraints for a HPolygon
+# Check that there are no redundant constraints for a HPolygon (octagon)
 p = HPolygon()
 addconstraint!(p, LinearConstraint([1.0, 0.0], 1.0))
 addconstraint!(p, LinearConstraint([0.0, 1.0], 1.0))
