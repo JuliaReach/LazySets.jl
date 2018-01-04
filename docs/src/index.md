@@ -180,6 +180,9 @@ Pages = [
     "man/decompose_example.md",
     "man/fast_2d_LPs.md",
     "man/iterative_refinement.md"
+    "man/interval_hulls.md"
+    "man/convex_hulls.md"
+    "man/reach_zonotopes.md"
 ]
 Depth = 2
 ```
