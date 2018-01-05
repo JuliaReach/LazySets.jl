@@ -15,7 +15,7 @@ Type that represents a local approximation in 2D.
 
 ### Notes
 
-The criterion for refinable are determined in the method `new_approx`.
+The criteria for refinable are determined in the method `new_approx`.
 """
 struct LocalApproximation{N<:Real}
     p1::Vector{N}
