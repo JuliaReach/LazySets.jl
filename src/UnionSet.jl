@@ -1,7 +1,6 @@
 import Base.∈
 
-export UnionSet,
-       ∈
+export UnionSet
 
 """
     UnionSet{S<:LazySet} <: LazySet
@@ -23,8 +22,8 @@ Return whether a given vector is contained in a union of convex sets.
 
 ### Input
 
-- `x` -- a vector
-- `U` -- a union
+- `x` -- vector
+- `U` -- union
 
 ### Output
 
