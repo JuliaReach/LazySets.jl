@@ -41,6 +41,11 @@ The symbolic Minkowski sum of ``X`` and ``Y``.
 """
 +(X::LazySet, Y::LazySet) = MinkowskiSum(X, Y)
 
+"""
+    ⊕(X::LazySet, Y::LazySet)
+
+Unicode alias constructor `\oplus` for the Minkowski sum operator `+(X, Y)`.
+"""
 ⊕(X::LazySet, Y::LazySet) = +(X, Y)
 
 """
