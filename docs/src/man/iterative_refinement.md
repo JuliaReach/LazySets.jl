@@ -25,7 +25,7 @@ More precisely, a *local approximation* is a triple ``(p_1, p_2, q)``, where:
 - ``p_1`` and ``p_2`` belong to ``S``
 - the segments ``(p_1 q)`` and ``(p_2 q)`` belong to support lines of ``S``
 
-Recall that, since ``S`` assumed to be convex, the segment ``(p_1 p_2)`` is
+Recall that, since ``S`` is assumed to be convex, the segment ``(p_1 p_2)`` is
 inside ``S``. The type `Approximation2D` implements a local approximation in 2D.
 
 ## Initialization
@@ -56,8 +56,8 @@ b = Ball2(zeros(2), 1.)
 ɛ = .5
 p = overapproximate(b, ɛ)
 
-my_plot = plot(b, 1e-3, aspectratio=1)  # use 1e-3 for precise definition of borders
-my_plot = plot!(my_plot, p, alpha=0.4)
+plot(b, 1e-3, aspectratio=1)  # use 1e-3 for precise definition of borders
+plot!(p, alpha=0.4)
 ```
 
 Let's analyze in some detail how `p` was actually computed. The "box" directions
