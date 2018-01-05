@@ -44,10 +44,7 @@ A polygon in constraint representation.
 """
 function overapproximate(S::LazySet, ɛ::Float64)::HPolygon
     @assert dim(S) == 2
-
-    constraints =
-        [LinearConstraint(ci.d1, dot(ci.d1, ci.p1)) for ci in approximate(S, ɛ)]
-    return HPolygon(constraints)
+    return tohrep(approximate(S, ɛ))
 end
 
 """

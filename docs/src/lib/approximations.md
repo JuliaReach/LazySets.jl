@@ -48,7 +48,13 @@ diameter(::LazySet, ::Real=Inf)
 ## Iterative refinement
 
 ```@docs
-approximate
+LocalApproximation
+PolygonalOverapproximation
+new_approx(S::LazySet, p1::Vector{Float64}, d1::Vector{Float64}, p2::Vector{Float64}, d2::Vector{Float64})
+addapproximation!(Ω::PolygonalOverapproximation, p1::Vector{Float64}, d1::Vector{Float64}, p2::Vector{Float64}, d2::Vector{Float64})
+refine(Ω::PolygonalOverapproximation, i::Int)
+tohrep(Ω::PolygonalOverapproximation)
+approximate(S::LazySet, ɛ::Float64)
 ```
 
 See [Iterative Refinement](@ref) for more details.
