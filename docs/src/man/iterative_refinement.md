@@ -20,16 +20,16 @@ end
 ## Local approximations
 
 The polygonal approximation of an arbitrary lazy convex set `S` is represented by a
-list of local approximations or refinements. Each refinement is used to define a
-linear constraint, and the union of all such local approximations constitute an
-overapproximation of `S`.
-More precisely, a *local approximation* is a triple ``(p_1, p_2, q)``, where:
+list of local approximations or refinements. More precisely, a
+*local approximation* is a triple ``(p_1, p_2, q)``, where:
 
 - ``p_1`` and ``p_2`` belong to ``S``
 - the segments ``(p_1 q)`` and ``(p_2 q)`` belong to support lines of ``S``
 
 Since ``S`` is assumed to be convex, the segment ``(p_1 p_2)`` is
-inside ``S``.
+inside ``S``. Taking each support line ``(p_1 q)`` of a given list of local
+approximations of ``S``, we can build a polygon in constraint representation
+that makes a overapproximation of `S`.
 
 The type `LocalApproximation{N}` implements a local
 approximation; it is parametric in the numeric type `N`, and also contains additional
@@ -48,10 +48,11 @@ b = Ball2(zeros(2), 1.)
 
 plot(b, 1e-3, aspectratio=1, alpha=0.3)
 
-plot!(Singleton([1.0, 0.0]), annotations=(1.1, 0.08, text("p1")), color="green")
+plot!(Singleton([1.0, 0.1]), annotations=(1.1, 0.08, text("p1")), color="green")
 plot!(Singleton([0.0, 1.0]), annotations=(0.1, 1.1, text("p2")), color="green")
-plot!(Singleton([1.0, 1.0]), annotations=(1.09, 1.06, text("q")))
-plot!(annotations=(1.5, 0.1, text("d1")))
+plot!(Singleton([1.0, 1.0]), annotations=(1.09, 1.1, text("q")))
+plot!(Singleton([0.0, 0.0]), annotations=(0.1, 0.0, text("0")), color="green")
+plot!(annotations=(1.4, 0.1, text("d1")))
 plot!(annotations=(0.1, 1.4, text("d2")))
 plot!(annotations=(0.75, 0.8, text("ndir")))
 
@@ -64,7 +65,7 @@ plot!(x->x+.6, x->x+.6, -.1, .08, line=1, color="red", linestyle=:solid, arrow=t
 ```
 
 We can instantiate and append this approximation to a fresh `PolygonalOverapproximation`
-object, which is a type that wraps a set and a list of `LocalApproximation`'s.
+object, which is a type that wraps a set and a list of `LocalApproximation`s.
 The approximation is refinable, since it can be "split" along `ndir`, where `ndir`
 is the direction normal to the line ``(p_1 p_2)`` (shown dash-dotted in the figure),
 providing two approximations which are closer to the given set in Hausdorff distance.
@@ -116,14 +117,14 @@ plot!(Approximations.tohrep(Ω), alpha=0.2, color="orange")
 Next we refine the first approximation of the list.
 
 ```@example example_iterative_refinement
-import LazySets.Approximations.refine
+import LazySets.Approximations: refine, tohrep
 
 (r1, r2) = refine(Ω, 1)
 Ω.approx_list[1] = r1
 insert!(Ω.approx_list, 2, r2)
 
 plot(b, 1e-3, aspectratio=1, alpha=0.3)
-plot!(Approximations.tohrep(Ω), alpha=0.2, color="orange")
+plot!(tohrep(Ω), alpha=0.2, color="orange")
 ```
 
 We call `r1` and `r2` the right and left approximations respectively, since
@@ -172,8 +173,8 @@ The algorithm consists of the following steps:
    at position `i+1`. Checking for redundancy amounts to checking for overlap of both
    `p1` and `q`. Then, either substitute at `i+1` or insert (keeping the approximation
     at `i+1`) depending on the redundancy check.
-4. *Stopping criteria*. If the index `i` is smaller or equal than the current length of
-   the approximations list, go again to step 2.
+4. *Stopping criterion*. Terminate if the index `i` exceeds the current length of
+   the approximations list; otherwise continue with step 2.
 
 Observe that the algorithm finishes when all approximations are such that
 their associated error is smaller than `ε`, hence the Hausdorff distance between
@@ -185,7 +186,7 @@ As a final example consider the iterative refinement of the ball `b` for differe
 values of the approximation threshold `ε`.
 
 ```@example example_iterative_refinement
-import LazySets.Approximations.overapproximate
+import LazySets.Approximations:overapproximate, approximate
 
 p0 = plot(b, 1e-6, aspectratio=1)
 p1 = plot!(p0, overapproximate(b, 1.), alpha=0.4, aspectratio=1)
@@ -203,15 +204,15 @@ We can check that the error is getting smaller with `ε` in each case:
 
 ```@example example_iterative_refinement
 f = x -> (minimum(x), maximum(x))
-g = ε ->  f([ai.err for ai in Approximations.approximate(b, ε).approx_list])
+g = ε ->  f([ai.err for ai in approximate(b, ε).approx_list])
 g(1.), g(0.1), g(0.01)
 ```
 
 Meanwhile, the number of constraints of the polygonal overapproximation increases,
-in this example by a factor 4 when the error is divided by a factor 10.
+in this example by a power of 2 when the error is divided by a factor 10.
 
 ```@example example_iterative_refinement
-h = ε ->  length(Approximations.approximate(b, ε).approx_list)
+h = ε ->  length(approximate(b, ε).approx_list)
 h(1.), h(0.1), h(0.01)
 ```
 
@@ -221,4 +222,4 @@ h(1.), h(0.1), h(0.01)
     is such that it receives a numeric argument `ε` and the routine itself calls
     `overapproximate`. However, some sets such as abstract polygons have
     their own plotting recipe hence don't require the error threshold, since
-    they are plotted exactly as the convex hull of its vertices.
+    they are plotted exactly as the convex hull of their vertices.
