@@ -27,6 +27,7 @@ const DIR_SOUTH = [0., -1.]
 
 include("iterative_refinement.jl")
 include("box_approximations.jl")
+include("2D_approximations.jl")
 include("decompositions.jl")
 
 end # module
