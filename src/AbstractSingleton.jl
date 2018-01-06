@@ -223,8 +223,6 @@ single value, and if not, optionally compute a witness.
 
 ### Output
 
-`true` .
-
 * If `witness` option is deactivated: `true` iff ``S1 ⊆ S2`` iff ``S1 == S2``
 * If `witness` option is activated:
   * `(true, [])` iff ``S1 ⊆ S2``
