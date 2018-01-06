@@ -48,7 +48,7 @@ b = Ball2(zeros(2), 1.)
 
 plot(b, 1e-3, aspectratio=1, alpha=0.3)
 
-plot!(Singleton([1.0, 0.0]), annotations=(1.1, 0.08, text("p1")), color="green")
+plot!(Singleton([1.0, 0.0]), annotations=(1.1, 0.1, text("p1")), color="green")
 plot!(Singleton([0.0, 1.0]), annotations=(0.1, 1.1, text("p2")), color="green")
 plot!(Singleton([1.0, 1.0]), annotations=(1.09, 1.1, text("q")))
 plot!(Singleton([0.0, 0.0]), annotations=(0.1, 0.0, text("0")), color="green")
