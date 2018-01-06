@@ -36,10 +36,10 @@ subset, point = ⊆(s2, p2, true)
 subset, point = ⊆(s1, s2, true)
 @test !⊆(s1, s2) && !subset && point ∈ s1 && !(point ∈ s2)
 
-# intersection
+# intersection emptiness
 S1 = Singleton([1.0, 1.0])
 S2 = Singleton([0.0, 0.0])
 S3 = ZeroSet(2)
-@test !∩(S1, S2) && !∩(S1, S2, true)[1]
-intersection, point = ∩(S2, S3, true)
-@test ∩(S2, S3) && intersection && point ∈ S2 && point ∈ S3
+@test !is_intersection_empty(S1, S2) && !is_intersection_empty(S1, S2, true)[1]
+intersection, point = is_intersection_empty(S2, S3, true)
+@test is_intersection_empty(S2, S3) && intersection && point ∈ S2 && point ∈ S3
