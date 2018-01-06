@@ -1,4 +1,4 @@
-import Base.∈
+import Base: ∈, ⊆
 
 export Ball2
 
@@ -167,4 +167,85 @@ function ∈(x::AbstractVector{N}, B::Ball2{N})::Bool where {N<:AbstractFloat}
         sum += (B.center[i] - x[i])^2
     end
     return sqrt(sum) <= B.radius
+end
+
+"""
+    ⊆(B::Ball2{N}, S::AbstractSingleton{N}, witness::Bool=false
+     )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
+
+Check whether a ball in the 2-norm is contained in a set with a single value,
+and if not, optionally compute a witness.
+
+### Input
+
+- `B` -- inner ball in the 2-norm
+- `S` -- outer set with a single value
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``B ⊆ S``
+* If `witness` option is activated:
+  * `(true, [])` iff ``B ⊆ S``
+  * `(false, v)` iff ``B \\not\\subseteq S`` and ``v ∈ B \\setminus S``
+"""
+function ⊆(B::Ball2{N}, S::AbstractSingleton{N}, witness::Bool=false
+          )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
+    result = B.center == element(S) && B.radius == 0
+    if witness
+        if result
+            return (result, N[])
+        end
+    else
+        return result
+    end
+
+    # compute a witness 'p' in the difference
+    if B.center != element(S)
+        p = B.center
+    else
+        p = copy(B.center)
+        p[1] += B.radius
+    end
+    return (false, p)
+end
+
+"""
+    ⊆(B1::Ball2{N}, B2::Ball2{N}, witness::Bool=false
+     )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
+
+Check whether a ball in the 2-norm is contained in another ball in the 2-norm,
+and if not, optionally compute a witness.
+
+### Input
+
+- `B1` -- inner ball in the 2-norm
+- `B2` -- outer ball in the 2-norm
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``B1 ⊆ B2``
+* If `witness` option is activated:
+  * `(true, [])` iff ``B1 ⊆ B2``
+  * `(false, v)` iff ``B1 \\not\\subseteq B2`` and ``v ∈ B1 \\setminus B2``
+
+### Algorithm
+
+``B1 ⊆ B2`` iff ``‖ c_1 - c_2 ‖_2 + r_1 ≤ r_2``
+"""
+function ⊆(B1::Ball2{N}, B2::Ball2{N}, witness::Bool=false
+          )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
+    result = norm(B1.center - B2.center, 2) + B1.radius <= B2.radius
+    if witness
+        if result
+            return (result, N[])
+        end
+    else
+        return result
+    end
+
+    # compute a witness 'v'
+    v = B1.center .+ B1.radius * (B1.center .- B2.center)
+    return (false, v)
 end
