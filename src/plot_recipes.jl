@@ -281,13 +281,13 @@ julia> using LazySets, Plots
 julia> plot(Singleton([0.5, 1.0]))
 ```
 """
-@recipe function plot_singleton(X::AbstractSingleton;
+@recipe function plot_singleton(point::AbstractSingleton;
                                 color="blue", label="", grid=true,
                                 legend=false)
 
     seriestype := :scatter
 
-    [Tuple(X.element)]
+    [Tuple(element(point))]
 end
 
 """
@@ -319,7 +319,7 @@ julia> plot([Singleton(a), Singleton(b), Singleton(c)])
 
     seriestype := :scatter
 
-    [Tuple(S.element) for S in arr]
+    [Tuple(element(point)) for point in arr]
 end
 
 # ============================
