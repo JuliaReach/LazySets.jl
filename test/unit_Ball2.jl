@@ -57,9 +57,13 @@ b = Ball2([1., 2.], 2.)
 # subset
 b1 = Ball2([1., 2.], 2.)
 b2 = Ball2([1., 2.], 0.)
+b3 = Ball2([1.7, 2.7], 1.)
 s = Singleton([1., 2.])
 subset, point = ⊆(b1, s, true)
 @test !⊆(b1, s) && !subset && point ∈ b1 && !(point ∈ s)
 @test ⊆(b2, s) && ⊆(b2, s, true)[1]
 @test !⊆(b1, BallInf([1., 2.], 1.))
 @test ⊆(b2, BallInf([1., 2.], 2.))
+subset, point = ⊆(b1, b3, true)
+@test !⊆(b1, b3) && !subset && point ∈ b1 && !(point ∈ b3)
+@test ⊆(b3, b1) && ⊆(b3, b1, true)[1]
