@@ -101,6 +101,8 @@ To illustrate this, first let's add the remaining three approximations to `Ω`
 along the canonical directions, to build a box overapproximation of `b`.
 
 ```@example example_iterative_refinement
+import LazySets.Approximations: refine, tohrep
+
 plot(b, 1e-3, aspectratio=1, alpha=0.3)
 
 # initialize box directions
@@ -111,14 +113,12 @@ addapproximation!(Ω, pn, DIR_NORTH, pw, DIR_WEST)
 addapproximation!(Ω, pw, DIR_WEST, ps, DIR_SOUTH)
 addapproximation!(Ω, ps, DIR_SOUTH, pe, DIR_EAST)
 
-plot!(Approximations.tohrep(Ω), alpha=0.2, color="orange")
+plot!(tohrep(Ω), alpha=0.2, color="orange")
 ```
 
 Next we refine the first approximation of the list.
 
 ```@example example_iterative_refinement
-import LazySets.Approximations: refine, tohrep
-
 (r1, r2) = refine(Ω, 1)
 Ω.approx_list[1] = r1
 insert!(Ω.approx_list, 2, r2)
@@ -143,7 +143,7 @@ Hence, we can make again a refinement of that approximation.
 insert!(Ω.approx_list, 2, r2)
 
 plot(b, 1e-3, aspectratio=1, alpha=0.3)
-plot!(Approximations.tohrep(Ω), alpha=0.2, color="orange")
+plot!(tohrep(Ω), alpha=0.2, color="orange")
 ```
 
 The criterion for an approximation being refinable is that we can properly define
