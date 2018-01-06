@@ -34,40 +34,6 @@ julia> subtypes(AbstractPointSymmetricPolytope)
 abstract type AbstractPointSymmetricPolytope{N<:Real} <: AbstractPolytope{N} end
 
 
-# --- LazySet interface functions ---
-
-
-"""
-    ⊆(P::AbstractPointSymmetricPolytope, S::LazySet)::Bool
-
-Check whether a polytope is contained in a convex set.
-
-### Input
-
-- `P` -- inner polytope
-- `S` -- outer convex set
-
-### Output
-
-`true` iff ``P ⊆ S``.
-
-### Algorithm
-
-Since ``S`` is convex, ``P ⊆ S`` iff ``v_i ∈ S`` for all vertices ``v_i`` of
-``P``.
-"""
-function ⊆(P::AbstractPointSymmetricPolytope, S::LazySet)::Bool
-    @assert dim(P) == dim(S)
-
-    for v in vertices_list(P)
-        if !∈(v, S)
-            return false
-        end
-    end
-    return true
-end
-
-
 # --- common AbstractPointSymmetric functions (copy-pasted) ---
 
 
