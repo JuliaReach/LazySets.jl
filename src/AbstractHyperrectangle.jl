@@ -1,9 +1,9 @@
 import Base.LinAlg.norm,
        Base.∈,
-       Base.⊆,
-       Base.∩
+       Base.⊆
 
 export AbstractHyperrectangle,
+       is_intersection_empty,
        radius_hyperrectangle
 
 """
@@ -301,8 +301,10 @@ function ⊆(H1::AbstractHyperrectangle{N},
 end
 
 """
-    ∩(H1::AbstractHyperrectangle{N}, H2::AbstractHyperrectangle{N},
-      witness::Bool=false)::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
+    is_intersection_empty(H1::AbstractHyperrectangle{N},
+                          H2::AbstractHyperrectangle{N},
+                          witness::Bool=false
+                         )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
 
 Check whether two hyperrectangles intersect, and if so, optionally compute a
 witness.
@@ -330,10 +332,10 @@ center for as long as the minimum of the radius and the center distance.
 In other words, the witness is the point in `H1` that is closest to the center
 of `H2`.
 """
-function ∩(H1::AbstractHyperrectangle{N},
-           H2::AbstractHyperrectangle{N},
-           witness::Bool=false
-          )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
+function is_intersection_empty(H1::AbstractHyperrectangle{N},
+                               H2::AbstractHyperrectangle{N},
+                               witness::Bool=false
+                              )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
     intersection = true
     center_diff = center(H2) - center(H1)
     for i in eachindex(center_diff)
