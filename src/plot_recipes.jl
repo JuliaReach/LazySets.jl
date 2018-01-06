@@ -266,7 +266,7 @@ end
 # ============================
 
 """
-    plot_singleton(X::Singleton; ...)
+    plot_singleton(X::AbstractSingleton; ...)
 
 Plot a singleton.
 
@@ -281,7 +281,7 @@ julia> using LazySets, Plots
 julia> plot(Singleton([0.5, 1.0]))
 ```
 """
-@recipe function plot_singleton(X::Singleton;
+@recipe function plot_singleton(X::AbstractSingleton;
                                 color="blue", label="", grid=true,
                                 legend=false)
 
@@ -291,7 +291,7 @@ julia> plot(Singleton([0.5, 1.0]))
 end
 
 """
-    plot_singleton(arr::Vector{Singleton}; ...)
+    plot_singleton(arr::Vector{<:AbstractSingleton}; ...)
 
 Plot a list of singletons.
 
@@ -314,7 +314,7 @@ julia> a, b, c = zeros(3), [1.0, 0, 0], [0.0, 1., 0];
 julia> plot([Singleton(a), Singleton(b), Singleton(c)])
 ```
 """
-@recipe function plot_singleton(arr::Vector{Singleton};
+@recipe function plot_singleton(arr::Vector{<:AbstractSingleton};
                                 color="blue", label="", grid=true, legend=false)
 
     seriestype := :scatter
