@@ -1,92 +1,69 @@
 """
-    overapproximate(S::LazySet)::HPolygon
-
-Return an approximation of a given 2D convex set as a box-shaped polygon.
-
-### Input
-
-- `S` -- convex set, assumed to be two-dimensional
-
-### Output
-
-A box-shaped polygon in constraint representation.
-"""
-function overapproximate(S::LazySet)::HPolygon
-    @assert dim(S) == 2
-
-    # evaluate support vector on box directions
-    pe = σ(DIR_EAST, S)
-    pn = σ(DIR_NORTH, S)
-    pw = σ(DIR_WEST, S)
-    ps = σ(DIR_SOUTH, S)
-    constraints = Vector{LinearConstraint{eltype(pe)}}(4)
-    constraints[1] = LinearConstraint(DIR_EAST, dot(pe, DIR_EAST))
-    constraints[2] = LinearConstraint(DIR_NORTH, dot(pn, DIR_NORTH))
-    constraints[3] = LinearConstraint(DIR_WEST, dot(pw, DIR_WEST))
-    constraints[4] = LinearConstraint(DIR_SOUTH, dot(ps, DIR_SOUTH))
-    return HPolygon(constraints)
-end
-
-"""
-    overapproximate(S::LazySet, ɛ::Float64)::HPolygon
-
-Return an ɛ-close approximation of the given 2D set (in terms of Hausdorff
-distance) as a polygon.
-
-### Input
-
-- `S` -- convex set, assumed to be two-dimensional
-- `ɛ` -- error bound
-
-### Output
-
-A polygon in constraint representation.
-"""
-function overapproximate(S::LazySet, ɛ::Float64)::HPolygon
-    @assert dim(S) == 2
-    return tohrep(approximate(S, ɛ))
-end
-
-"""
-    decompose(S::LazySet)::CartesianProductArray
+    decompose(S::LazySet, [set_type]::Type=HPolygon
+             )::CartesianProductArray
 
 Compute an overapproximation of the projections of the given convex set over
-each two-dimensional subspace using box directions.
+each two-dimensional subspace.
 
 ### Input
 
 - `S` -- convex set
+- `set_type` -- (optional, default: `HPolygon`) type of set approximation in 2D
 
 ### Output
 
 A `CartesianProductArray` corresponding to the Cartesian product of
-``2 \\times 2`` box-shaped polygons.
+two-dimensional sets of type `set_type`.
+
+### Algorithm
+
+For each 2D block a specific `decompose_2D` method is called, dispatched on the
+`set_type` argument.
 """
-function decompose(S::LazySet)::CartesianProductArray
+function decompose(S::LazySet, set_type::Type=HPolygon
+                  )::CartesianProductArray
     n = dim(S)
     b = div(n, 2)
-    result = Vector{HPolygon}(b)
-
+    result = Vector{set_type}(b)
     @inbounds for bi in 1:b
-        pe_bi = dot(DIR_EAST,
-                    view(σ(sparsevec([2*bi-1], [1.], n), S), 2*bi-1:2*bi))
-
-        pn_bi = dot(DIR_NORTH,
-                    view(σ(sparsevec([2*bi], [1.], n), S), 2*bi-1:2*bi))
-
-        pw_bi = dot(DIR_WEST,
-                    view(σ(sparsevec([2*bi-1], [-1.], n), S), 2*bi-1:2*bi))
-
-        ps_bi = dot(DIR_SOUTH,
-                    view(σ(sparsevec([2*bi], [-1.], n), S), 2*bi-1:2*bi))
-
-        result[bi] = HPolygon([LinearConstraint(DIR_EAST, pe_bi),
-                               LinearConstraint(DIR_NORTH, pn_bi),
-                               LinearConstraint(DIR_WEST, pw_bi),
-                               LinearConstraint(DIR_SOUTH, ps_bi)])
+        result[bi] = decompose_2D(S, n, bi, set_type)
     end
-
     return CartesianProductArray(result)
+end
+
+# polygon with box directions
+@inline function decompose_2D(S::LazySet, n::Int, bi::Int,
+                              set_type::Type{HPolygon})::HPolygon
+    pe, pn, pw, ps = box_bounds(S, n, bi)
+    block = 2*bi-1:2*bi
+    pe_bi = dot(DIR_EAST, view(pe, block))
+    pn_bi = dot(DIR_NORTH, view(pn, block))
+    pw_bi = dot(DIR_WEST, view(pw, block))
+    ps_bi = dot(DIR_SOUTH, view(ps, block))
+
+    return HPolygon([LinearConstraint(DIR_EAST, pe_bi),
+                     LinearConstraint(DIR_NORTH, pn_bi),
+                     LinearConstraint(DIR_WEST, pw_bi),
+                     LinearConstraint(DIR_SOUTH, ps_bi)])
+end
+
+# hyperrectangle
+@inline function decompose_2D(S::LazySet, n::Int, bi::Int,
+                              set_type::Type{Hyperrectangle})::Hyperrectangle
+    pe, pn, pw, ps = box_bounds(S, n, bi)
+
+    center = [(pn[1] - ps[1]) / 2, (pe[2] - pw[2]) / 2]
+    radius = [(pn[1] - center[1]), (pe[2] - center[2])]
+    return Hyperrectangle(center, radius)
+end
+
+# helper function
+@inline function box_bounds(S::LazySet, n::Int, bi::Int)
+    pe = σ(sparsevec([2*bi-1], [1.], n), S)
+    pn = σ(sparsevec([2*bi], [1.], n), S)
+    pw = σ(sparsevec([2*bi-1], [-1.], n), S)
+    ps = σ(sparsevec([2*bi], [-1.], n), S)
+    return (pe, pn, pw, ps)
 end
 
 """
@@ -103,8 +80,8 @@ each two-dimensional subspace with a certified error bound.
 
 ### Output
 
-A `CartesianProductArray` corresponding to the Cartesian product of
-``2 \\times 2`` polygons.
+A `CartesianProductArray` corresponding to the Cartesian product of ``2 × 2``
+polygons.
 
 ### Algorithm
 
@@ -133,7 +110,8 @@ function decompose(S::LazySet, ɛi::Vector{Float64})::CartesianProductArray
 end
 
 """
-    decompose(S::LazySet, ɛ::Float64)::CartesianProductArray
+    decompose(S::LazySet, ɛ::Float64, [set_type]::Type=HPolygon
+             )::CartesianProductArray
 
 Compute an overapproximation of the projections of the given convex set over
 each two-dimensional subspace with a certified error bound.
@@ -142,20 +120,24 @@ each two-dimensional subspace with a certified error bound.
 
 - `S` -- convex set
 - `ɛ` --  error bound
+- `set_type` -- (optional, default: `HPolygon`) type of set approximation in 2D
 
 ### Output
 
 A `CartesianProductArray` corresponding to the Cartesian product of
-``2 \\times 2`` polygons.
+two-dimensional sets of type `set_type`.
 
 ### Notes
 
 This function is a particular case of `decompose(S, ɛi)`, where the same error
 bound for each block is assumed.
+
+The `set_type` argument is ignored if ``ɛ ≠ \\text{Inf}``.
 """
-function decompose(S::LazySet, ɛ::Float64)::CartesianProductArray
+function decompose(S::LazySet, ɛ::Float64, set_type::Type=HPolygon
+                  )::CartesianProductArray
     if ɛ == Inf
-        return decompose(S)
+        return decompose(S, set_type)
     else
         return decompose(S, [ɛ for i in 1:div(dim(S), 2)])
     end
