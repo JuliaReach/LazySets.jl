@@ -116,3 +116,12 @@ subset, point = ⊆(H1, H3, true)
 @test subset
 @test ⊆(H2, B1) && ⊆(B1, H2)
 @test ⊆(B1, B2) && !⊆(B2, B1)
+
+# intersection
+H1 = Hyperrectangle([1.0, 1.0], [2.0, 2.0])
+H2 = Hyperrectangle([3.0, 3.0], [2.0, 2.0])
+B1 = BallInf([2.0, 4.0], 0.5)
+@test ∩(H1, H2)
+intersection, point = ∩(H1, H2, true)
+@test intersection && point ∈ H1 && point ∈ H2
+@test !∩(H1, B1) && !∩(H1, B1, true)[1]

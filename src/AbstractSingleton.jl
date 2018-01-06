@@ -1,4 +1,4 @@
-import Base: ∈, ⊆
+import Base: ∈, ⊆, ∩
 
 export AbstractSingleton,
        element,
@@ -237,5 +237,108 @@ function ⊆(S1::AbstractSingleton{N},
         return (result, result ? N[] : element(S1))
     else
         return result
+    end
+end
+
+"""
+    ∩(S::AbstractSingleton{N}, set::LazySet, witness::Bool=false
+     )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
+
+Check whether a singleton and a convex set intersect, and if so, optionally
+compute a witness.
+
+### Input
+
+- `S`   -- singleton
+- `set` -- convex set
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``S ∩ \\operatorname{set} ≠ ∅``
+* If `witness` option is activated:
+  * `(true, v)` iff ``S ∩ \\operatorname{set} ≠ ∅`` and `v` = `element(S)`
+  * `(false, [])` iff ``S ∩ \\operatorname{set} = ∅``
+
+### Algorithm
+
+``S ∩ \\operatorname{set} ≠ ∅`` iff `element(S)` ``∈ \\operatorname{set}``.
+"""
+function ∩(S::AbstractSingleton{N}, set::LazySet, witness::Bool=false
+          )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
+    intersection = ∈(element(S), set)
+    if witness
+        return (intersection, intersection ? element(S) : N[])
+    else
+        return intersection
+    end
+end
+
+"""
+    ∩(set::LazySet, S::AbstractSingleton{N}, witness::Bool=false
+     )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
+
+Check whether a convex set and a singleton intersect, and if so, optionally
+compute a witness.
+
+### Input
+
+- `set` -- convex set
+- `S`   -- singleton
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``S ∩ \\operatorname{set} ≠ ∅``
+* If `witness` option is activated:
+  * `(true, v)` iff ``S ∩ \\operatorname{set} ≠ ∅`` and `v` = `element(S)`
+  * `(false, [])` iff ``S ∩ \\operatorname{set} = ∅``
+
+### Algorithm
+
+``S ∩ \\operatorname{set} ≠ ∅`` iff `element(S)` ``∈ \\operatorname{set}``.
+"""
+function ∩(set::LazySet, S::AbstractSingleton{N}, witness::Bool=false
+          )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
+    intersection = ∈(element(S), set)
+    if witness
+        return (intersection, intersection ? element(S) : N[])
+    else
+        return intersection
+    end
+end
+
+"""
+    ∩(S1::AbstractSingleton{N}, S2::AbstractSingleton{N}, witness::Bool=false
+     )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
+
+Check whether two singletons intersect, and if so, optionally compute a witness.
+
+### Input
+
+- `S1` -- first singleton
+- `S2` -- second singleton
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``S1 ∩ S2 ≠ ∅``
+* If `witness` option is activated:
+  * `(true, v)` iff ``S1 ∩ S2 ≠ ∅`` and `v` = `element(S1)`
+  * `(false, [])` iff ``S1 ∩ S2 = ∅``
+
+### Algorithm
+
+``S1 ∩ S2 ≠ ∅`` iff ``S1 = S2``.
+"""
+function ∩(S1::AbstractSingleton{N},
+           S2::AbstractSingleton{N},
+           witness::Bool=false
+          )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
+    intersection = element(S1) == element(S2)
+    if witness
+        return (intersection, intersection ? element(S1) : N[])
+    else
+        return intersection
     end
 end
