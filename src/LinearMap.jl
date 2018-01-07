@@ -61,7 +61,7 @@ Return a linear map of a convex set by a scalar value.
 The linear map of the convex set.
 """
 function *(a::Real, S::LazySet)::LinearMap
-    return LinearMap(sparse(a*I, dim(S)), S)
+    return LinearMap(a * speye(typeof(a), dim(S)), S)
 end
 
 """
