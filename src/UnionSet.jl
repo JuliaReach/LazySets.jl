@@ -3,7 +3,7 @@ import Base.∈
 export UnionSet
 
 """
-    UnionSet{S<:LazySet} <: LazySet
+    UnionSet{N<:Real, S<:LazySet{N}}
 
 Type that represents a union of convex sets.
 
@@ -11,7 +11,7 @@ Type that represents a union of convex sets.
 
 - `sets` --  a list of convex sets
 """
-struct UnionSet{S<:LazySet} <: LazySet
+struct UnionSet{N<:Real, S<:LazySet{N}}
     sets::Vector{S}
 end
 

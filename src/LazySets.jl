@@ -17,7 +17,7 @@ export LazySet,
        Approximations
 
 """
-    LazySet
+    LazySet{N<:Real}
 
 Abstract type for a lazy set.
 
@@ -31,7 +31,7 @@ Every concrete `LazySet` must define the following functions:
 `LazySet` types should be parameterized with a type `N`, typically `N<:Real`, to
 support computations with different numeric types.
 """
-abstract type LazySet end
+abstract type LazySet{N<:Real} end
 
 # ============================
 # Auxiliary types or functions

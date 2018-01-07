@@ -163,7 +163,7 @@ function ∈(x::AbstractVector{N},
 end
 
 """
-    ⊆(S::LazySet, H::AbstractHyperrectangle{N}, witness::Bool=false
+    ⊆(S::LazySet{N}, H::AbstractHyperrectangle{N}, witness::Bool=false
      )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
 
 Check whether a convex set is contained in a hyperrectangle, and if not,
@@ -187,7 +187,7 @@ optionally compute a witness.
 ``S ⊆ H`` iff ``\\operatorname{ihull}(S) ⊆ H``, where  ``\\operatorname{ihull}``
 is the interval hull operator.
 """
-function ⊆(S::LazySet, H::AbstractHyperrectangle{N}, witness::Bool=false
+function ⊆(S::LazySet{N}, H::AbstractHyperrectangle{N}, witness::Bool=false
           )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
     return ⊆(Approximations.interval_hull(S), H, witness)
 end

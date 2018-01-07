@@ -3,7 +3,7 @@ export AbstractPointSymmetric,
        an_element
 
 """
-    AbstractPointSymmetric{N<:Real} <: LazySet
+    AbstractPointSymmetric{N<:Real} <: LazySet{N}
 
 Abstract type for point symmetric sets.
 
@@ -19,7 +19,7 @@ julia> subtypes(AbstractPointSymmetric)
  LazySets.Ballp                   
 ```
 """
-abstract type AbstractPointSymmetric{N<:Real} <: LazySet end
+abstract type AbstractPointSymmetric{N<:Real} <: LazySet{N} end
 
 
 """

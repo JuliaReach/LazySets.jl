@@ -3,7 +3,7 @@
 # =============================
 
 """
-    ρ(d::AbstractVector{N}, S::LazySet)::N where {N<:Real}
+    ρ(d::AbstractVector{N}, S::LazySet{N})::N where {N<:Real}
 
 Evaluate the support function of a set in a given direction.
 
@@ -16,7 +16,7 @@ Evaluate the support function of a set in a given direction.
 
 The support function of the set `S` for the direction `d`.
 """
-function ρ(d::AbstractVector{N}, S::LazySet)::N where {N<:Real}
+function ρ(d::AbstractVector{N}, S::LazySet{N})::N where {N<:Real}
     return dot(d, σ(d, S))
 end
 

@@ -85,7 +85,7 @@ function get_rows(spmexp::SparseMatrixExp,
 end
 
 """
-    ExponentialMap{S<:LazySet} <: LazySet
+    ExponentialMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
 
 Type that represents the action of an exponential map on a convex set.
 
@@ -94,10 +94,13 @@ Type that represents the action of an exponential map on a convex set.
 - `spmexp` -- sparse matrix exponential
 - `X`      -- convex set
 """
-struct ExponentialMap{S<:LazySet} <: LazySet
+struct ExponentialMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
     spmexp::SparseMatrixExp
     X::S
 end
+# type-less convenience constructor
+ExponentialMap(spmexp::SparseMatrixExp, X::S) where {S<:LazySet{N}} where {N<:Real} =
+    ExponentialMap{N, S}(spmexp, X)
 
 """
 ```
@@ -163,7 +166,7 @@ function σ(d::AbstractVector{Float64},
 end
 
 """
-    ∈(x::AbstractVector{<:Real}, em::ExponentialMap{<:LazySet})::Bool
+    ∈(x::AbstractVector{N}, em::ExponentialMap{<:LazySet{N}})::Bool where {N<:Real}
 
 Check whether a given point is contained in an exponential map of a convex set.
 
@@ -193,7 +196,8 @@ julia> ∈([1.0, 1.0], em)
 true
 ```
 """
-function ∈(x::AbstractVector{<:Real}, em::ExponentialMap{<:LazySet})::Bool
+function ∈(x::AbstractVector{N}, em::ExponentialMap{N, <:LazySet{N}}
+          )::Bool where {N<:Real}
     @assert length(x) == dim(em)
     return ∈(exp.(-em.spmexp.M) * x, em.X)
 end
@@ -217,7 +221,7 @@ struct ProjectionSparseMatrixExp{N<:Real}
 end
 
 """
-    ExponentialProjectionMap{S<:LazySet} <: LazySet
+    ExponentialProjectionMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
 
 Type that represents the application of a projection of a sparse matrix
 exponential to a convex set.
@@ -227,14 +231,19 @@ exponential to a convex set.
 - `spmexp` -- projection of a sparse matrix exponential
 - `X`      -- convex set
 """
-struct ExponentialProjectionMap{S<:LazySet} <: LazySet
+struct ExponentialProjectionMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
     projspmexp::ProjectionSparseMatrixExp
     X::S
 end
+# type-less convenience constructor
+ExponentialProjectionMap(projspmexp::ProjectionSparseMatrixExp, X::S
+                        ) where {S<:LazySet{N}} where {N<:Real} =
+    ExponentialProjectionMap{N, S}(projspmexp, X)
 
 """
 ```
-    *(projspmexp::ProjectionSparseMatrixExp, X::LazySet)::ExponentialProjectionMap
+    *(projspmexp::ProjectionSparseMatrixExp,
+      X::LazySet)::ExponentialProjectionMap
 ```
 
 Return the application of a projection of a sparse matrix exponential to a
