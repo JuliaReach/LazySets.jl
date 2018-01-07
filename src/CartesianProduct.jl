@@ -326,7 +326,8 @@ function dim(cpa::CartesianProductArray)::Int
 end
 
 """
-    σ(d::AbstractVector{<:Real}, cpa::CartesianProductArray)::AbstractVector{<:Real}
+    σ(d::AbstractVector{N}, cpa::CartesianProductArray{N, <:LazySet{N}}
+     )::AbstractVector{N} where {N<:Real}
 
 Support vector of a Cartesian product.
 
@@ -340,8 +341,8 @@ Support vector of a Cartesian product.
 The support vector in the given direction.
 If the direction has norm zero, the result depends on the product sets.
 """
-function σ(d::AbstractVector{<:Real},
-           cpa::CartesianProductArray)::AbstractVector{<:Real}
+function σ(d::AbstractVector{N}, cpa::CartesianProductArray{N, <:LazySet{N}}
+          )::AbstractVector{N} where {N<:Real}
     svec = similar(d)
     jinit = 1
     for sj in cpa.sfarray
@@ -353,7 +354,8 @@ function σ(d::AbstractVector{<:Real},
 end
 
 """
-    ∈(x::AbstractVector{<:Real}, cpa::CartesianProductArray)::Bool
+    ∈(x::AbstractVector{N}, cpa::CartesianProductArray{N, <:LazySet{N}}
+     )::Bool  where {N<:Real}
 
 Check whether a given point is contained in a Cartesian product of a finite
 number of sets.
@@ -367,7 +369,8 @@ number of sets.
 
 `true` iff ``x ∈ \\text{cpa}``.
 """
-function ∈(x::AbstractVector{<:Real}, cpa::CartesianProductArray)::Bool
+function ∈(x::AbstractVector{N}, cpa::CartesianProductArray{N, <:LazySet{N}}
+          )::Bool  where {N<:Real}
     @assert length(x) == dim(cpa)
 
     jinit = 1
