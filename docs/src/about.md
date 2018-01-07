@@ -58,9 +58,6 @@ long-term support of your contributions.
 
 ### Contributing to the documentation
 
-
-[Documenter.jl](https://github.com/JuliaDocs/Documenter.jl) :
-
 New functions and types should be documented according to our
 [guidelines](https://github.com/JuliaReach/LazySets.jl/wiki/Documentation-Guidelines)
 directly in the source code.
