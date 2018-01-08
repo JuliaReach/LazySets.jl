@@ -47,8 +47,8 @@ A hyperrectangle.
 function overapproximate(S::LazySet, ::Type{Hyperrectangle})::Hyperrectangle
     @assert dim(S) == 2
     pe, pn, pw, ps = box_bounds(S)
-    radius = [(pe[1] - pw[1]) / 2, (pn[2] - ps[2]) / 2]
-    center = [pw[1] + radius[1], ps[2] + radius[2]]
+    center = [(pe[1] - pw[1]) / 2, (pn[2] - ps[2]) / 2]
+    radius = [pw[1] + center[1], ps[2] + center[2]]
     return Hyperrectangle(center, radius)
 end
 
