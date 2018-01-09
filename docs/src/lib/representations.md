@@ -35,6 +35,7 @@ dim(::Ball2)
 an_element(::Ball2{Float64})
 ⊆(::Ball2, ::Singleton)
 ⊆(::Ball2, ::AbstractHyperrectangle)
+is_intersection_empty(::Ball2{Float64}, ::Ball2{Float64}, ::Bool)
 center(::Ball2{Float64})
 ```
 
