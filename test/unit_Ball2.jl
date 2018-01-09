@@ -72,6 +72,6 @@ subset, point = ⊆(b1, b3, true)
 b1 = Ball2([0., 0.], 2.)
 b2 = Ball2([2., 2.], 2.)
 b3 = Ball2([4., 4.], 2.)
-intersecting, point = is_intersection_empty(b1, b2, true)
-@test is_intersection_empty(b1, b2) && intersecting && point ∈ b1 && point ∈ b2
-@test !is_intersection_empty(b1, b3) && !is_intersection_empty(b1, b3, true)[1]
+intersection_empty, point = is_intersection_empty(b1, b2, true)
+@test !is_intersection_empty(b1, b2) && !intersection_empty && point ∈ b1 && point ∈ b2
+@test is_intersection_empty(b1, b3) && is_intersection_empty(b1, b3, true)[1]
