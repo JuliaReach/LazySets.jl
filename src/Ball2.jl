@@ -257,8 +257,8 @@ end
                           witness::Bool=false
                          )::Union{Bool, Tuple{Bool,Vector{N}}} where {N<:Real}
 
-Check whether two balls in the 2-norm intersect, and if so, optionally compute a
-witness.
+Check whether two balls in the 2-norm do not intersect, and otherwise optionally
+compute a witness.
 
 ### Input
 
@@ -268,14 +268,14 @@ witness.
 
 ### Output
 
-* If `witness` option is deactivated: `true` iff ``B1 ∩ B2 ≠ ∅``
+* If `witness` option is deactivated: `true` iff ``B1 ∩ B2 = ∅``
 * If `witness` option is activated:
-  * `(true, v)` iff ``B1 ∩ B2 ≠ ∅`` and ``v ∈ B1 ∩ B2``
-  * `(false, [])` iff ``B1 ∩ B2 = ∅``
+  * `(true, [])` iff ``B1 ∩ B2 = ∅``
+  * `(false, v)` iff ``B1 ∩ B2 ≠ ∅`` and ``v ∈ B1 ∩ B2``
 
 ### Algorithm
 
-``B1 ∩ B2 ≠ ∅`` iff ``‖ c_2 - c_1 ‖_2 ≤ r_1 + r_2``.
+``B1 ∩ B2 = ∅`` iff ``‖ c_2 - c_1 ‖_2 > r_1 + r_2``.
 
 A witness is computed depending on the smaller/bigger ball (to break ties,
 choose `B1` for the smaller ball) as follows.
@@ -290,12 +290,12 @@ function is_intersection_empty(B1::Ball2{N},
                                witness::Bool=false
                               )::Union{Bool, Tuple{Bool,Vector{N}}} where {N<:Real}
     center_diff_normed = norm(center(B2) - center(B1), 2)
-    intersection = center_diff_normed <= B1.radius + B2.radius
+    empty_intersection = center_diff_normed > B1.radius + B2.radius
 
     if !witness
-        return intersection
-    elseif !intersection
-        return (false, N[])
+        return empty_intersection
+    elseif empty_intersection
+        return (true, N[])
     end
 
     # compute a witness 'v' in the intersection
@@ -314,5 +314,5 @@ function is_intersection_empty(B1::Ball2{N},
 	direction = (bigger.center - smaller.center)
         v = smaller.center + direction / center_diff_normed * smaller.radius
     end
-    return (true, v)
+    return (false, v)
 end

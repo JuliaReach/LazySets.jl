@@ -40,6 +40,7 @@ subset, point = ⊆(s1, s2, true)
 S1 = Singleton([1.0, 1.0])
 S2 = Singleton([0.0, 0.0])
 S3 = ZeroSet(2)
-@test !is_intersection_empty(S1, S2) && !is_intersection_empty(S1, S2, true)[1]
-intersection, point = is_intersection_empty(S2, S3, true)
-@test is_intersection_empty(S2, S3) && intersection && point ∈ S2 && point ∈ S3
+@test is_intersection_empty(S1, S2) && is_intersection_empty(S1, S2, true)[1]
+intersection_empty, point = is_intersection_empty(S2, S3, true)
+@test !is_intersection_empty(S2, S3) &&
+    !intersection_empty && point ∈ S2 && point ∈ S3

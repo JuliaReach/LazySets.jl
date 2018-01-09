@@ -247,8 +247,8 @@ end
                           witness::Bool=false
                          )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
 
-Check whether a singleton and a convex set intersect, and if so, optionally
-compute a witness.
+Check whether a singleton and a convex set do not intersect, and otherwise
+optionally compute a witness.
 
 ### Input
 
@@ -258,24 +258,25 @@ compute a witness.
 
 ### Output
 
-* If `witness` option is deactivated: `true` iff ``S ∩ \\operatorname{set} ≠ ∅``
+* If `witness` option is deactivated: `true` iff ``S ∩ \\operatorname{set} = ∅``
 * If `witness` option is activated:
-  * `(true, v)` iff ``S ∩ \\operatorname{set} ≠ ∅`` and `v` = `element(S)`
-  * `(false, [])` iff ``S ∩ \\operatorname{set} = ∅``
+  * `(true, [])` iff ``S ∩ \\operatorname{set} = ∅``
+  * `(false, v)` iff ``S ∩ \\operatorname{set} ≠ ∅`` and
+    `v` = `element(S)` ``∈ S ∩ \\operatorname{set}``
 
 ### Algorithm
 
-``S ∩ \\operatorname{set} ≠ ∅`` iff `element(S)` ``∈ \\operatorname{set}``.
+``S ∩ \\operatorname{set} = ∅`` iff `element(S)` ``\notin \\operatorname{set}``.
 """
 function is_intersection_empty(S::AbstractSingleton{N},
                                set::LazySet,
                                witness::Bool=false
                               )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
-    intersection = ∈(element(S), set)
+    empty_intersection = !∈(element(S), set)
     if witness
-        return (intersection, intersection ? element(S) : N[])
+        return (empty_intersection, empty_intersection ? N[] : element(S))
     else
-        return intersection
+        return empty_intersection
     end
 end
 
@@ -285,8 +286,8 @@ end
                           witness::Bool=false
                          )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
 
-Check whether a convex set and a singleton intersect, and if so, optionally
-compute a witness.
+Check whether a convex set and a singleton do not intersect, and otherwise
+optionally compute a witness.
 
 ### Input
 
@@ -296,25 +297,21 @@ compute a witness.
 
 ### Output
 
-* If `witness` option is deactivated: `true` iff ``S ∩ \\operatorname{set} ≠ ∅``
+* If `witness` option is deactivated: `true` iff ``S ∩ \\operatorname{set} = ∅``
 * If `witness` option is activated:
-  * `(true, v)` iff ``S ∩ \\operatorname{set} ≠ ∅`` and `v` = `element(S)`
-  * `(false, [])` iff ``S ∩ \\operatorname{set} = ∅``
+  * `(true, [])` iff ``S ∩ \\operatorname{set} = ∅``
+  * `(false, v)` iff ``S ∩ \\operatorname{set} ≠ ∅`` and
+    `v` = `element(S)` ``∈ S ∩ \\operatorname{set}``
 
 ### Algorithm
 
-``S ∩ \\operatorname{set} ≠ ∅`` iff `element(S)` ``∈ \\operatorname{set}``.
+``S ∩ \\operatorname{set} = ∅`` iff `element(S)` ``\notin \\operatorname{set}``.
 """
 function is_intersection_empty(set::LazySet,
                                S::AbstractSingleton{N},
                                witness::Bool=false
                               )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
-    intersection = ∈(element(S), set)
-    if witness
-        return (intersection, intersection ? element(S) : N[])
-    else
-        return intersection
-    end
+    return is_intersection_empty(S, set, witness)
 end
 
 """
@@ -323,7 +320,8 @@ end
                           witness::Bool=false
                          )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
 
-Check whether two singletons intersect, and if so, optionally compute a witness.
+Check whether two singletons do not intersect, and otherwise optionally compute
+a witness.
 
 ### Input
 
@@ -333,23 +331,23 @@ Check whether two singletons intersect, and if so, optionally compute a witness.
 
 ### Output
 
-* If `witness` option is deactivated: `true` iff ``S1 ∩ S2 ≠ ∅``
+* If `witness` option is deactivated: `true` iff ``S1 ∩ S2 = ∅``
 * If `witness` option is activated:
-  * `(true, v)` iff ``S1 ∩ S2 ≠ ∅`` and `v` = `element(S1)`
-  * `(false, [])` iff ``S1 ∩ S2 = ∅``
+  * `(true, [])` iff ``S1 ∩ S2 = ∅``
+  * `(false, v)` iff ``S1 ∩ S2 ≠ ∅`` and `v` = `element(S1)` ``∈ S1 ∩ S2``
 
 ### Algorithm
 
-``S1 ∩ S2 ≠ ∅`` iff ``S1 = S2``.
+``S1 ∩ S2 = ∅`` iff ``S1 ≠ S2``.
 """
 function is_intersection_empty(S1::AbstractSingleton{N},
                                S2::AbstractSingleton{N},
                                witness::Bool=false
                               )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
-    intersection = element(S1) == element(S2)
+    empty_intersection = element(S1) != element(S2)
     if witness
-        return (intersection, intersection ? element(S1) : N[])
+        return (empty_intersection, empty_intersection ? N[] : element(S1))
     else
-        return intersection
+        return empty_intersection
     end
 end
