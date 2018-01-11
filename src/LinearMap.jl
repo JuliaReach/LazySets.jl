@@ -37,7 +37,7 @@ Return the linear map of a convex set.
 If the matrix is null, a `ZeroSet` is returned; otherwise a lazy linear map.
 """
 function *(M::AbstractMatrix, X::LazySet)
-    @assert dim(X) == size(M, 2) "a linear map of size $(size(M)) cannot be applied to a set of dimension of $(dim(X))"
+    @assert dim(X) == size(M, 2) "a linear map of size $(size(M)) cannot be applied to a set of dimension $(dim(X))"
     if findfirst(M) != 0
         return LinearMap(M, X)
     else
