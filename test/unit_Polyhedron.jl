@@ -1,5 +1,5 @@
 # 2D Polyhedron
-p = Polyhedron()
+p = HPolytope()
 c1 = LinearConstraint([2., 2.], 12.)
 c2 = LinearConstraint([-3., 3.], 6.)
 c3 = LinearConstraint([-1., -1.], 0.)
