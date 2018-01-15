@@ -51,8 +51,9 @@ end
 @inline function decompose_2D(S::LazySet, n::Int, bi::Int,
                               set_type::Type{Hyperrectangle})::Hyperrectangle
     pe, pn, pw, ps = box_bounds(S, n, bi)
-    radius = [(pe[1] - pw[1]) / 2, (pn[2] - ps[2]) / 2]
-    center = [pw[1] + radius[1], ps[2] + radius[2]]
+    block = 2*bi-1:2*bi
+    radius = [(pe[block[1]] - pw[block[1]]) / 2, (pn[block[2]] - ps[block[2]]) / 2]
+    center = [pw[block[1]] + radius[1], ps[block[2]] + radius[2]]
     return Hyperrectangle(center, radius)
 end
 
