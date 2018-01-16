@@ -43,7 +43,7 @@ function Algorithm1(A, X0, δ, μ, T)
     # discretized system
     n = size(A, 1)
     ϕ = expm(δ*A)
-    N = div(T, δ)
+    N = Int(div(T, δ))
 
     # preallocate arrays
     Q = Vector{LazySet}(N)
