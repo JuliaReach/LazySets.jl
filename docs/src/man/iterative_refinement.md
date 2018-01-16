@@ -204,7 +204,7 @@ We can check that the error is getting smaller with `ε` in each case:
 
 ```@example example_iterative_refinement
 f = x -> (minimum(x), maximum(x))
-g = ε ->  f([ai.err for ai in approximate(b, ε).approx_list])
+g = ε -> f([ai.err for ai in approximate(b, ε).approx_list])
 g(1.), g(0.1), g(0.01)
 ```
 
