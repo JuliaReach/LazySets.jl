@@ -4,18 +4,18 @@ export EmptySet, ∅,
        an_element
 
 """
-    EmptySet <: LazySet
+    EmptySet{N<:Real} <: LazySet{N}
 
 Type that represents the empty set, i.e., the set with no elements.
 """
-struct EmptySet <: LazySet end
+struct EmptySet{N<:Real} <: LazySet{N} end
 
 """
     ∅
 
-An `EmptySet` instance.
+An `EmptySet` instance of type `Float64`.
 """
-const ∅ = EmptySet()
+const ∅ = EmptySet{Float64}()
 
 """
     dim(∅::EmptySet)

@@ -1,5 +1,5 @@
 """
-    decompose(S::LazySet, [set_type]::Type=HPolygon
+    decompose(S::LazySet, [set_type]::Type=HPolygon{Float64}
              )::CartesianProductArray
 
 Compute an overapproximation of the projections of the given convex set over
@@ -20,7 +20,7 @@ two-dimensional sets of type `set_type`.
 For each 2D block a specific `decompose_2D` method is called, dispatched on the
 `set_type` argument.
 """
-function decompose(S::LazySet, set_type::Type=HPolygon
+function decompose(S::LazySet, set_type::Type=HPolygon{Float64}
                   )::CartesianProductArray
     n = dim(S)
     b = div(n, 2)
@@ -33,7 +33,7 @@ end
 
 # polygon with box directions
 @inline function decompose_2D(S::LazySet, n::Int, bi::Int,
-                              set_type::Type{HPolygon})::HPolygon
+                              set_type::Type{<:HPolygon})::HPolygon
     pe, pn, pw, ps = box_bounds(S, n, bi)
     block = 2*bi-1:2*bi
     pe_bi = dot(DIR_EAST, view(pe, block))
@@ -49,7 +49,7 @@ end
 
 # hyperrectangle
 @inline function decompose_2D(S::LazySet, n::Int, bi::Int,
-                              set_type::Type{Hyperrectangle})::Hyperrectangle
+                              set_type::Type{<:Hyperrectangle})::Hyperrectangle
     pe, pn, pw, ps = box_bounds(S, n, bi)
     block = 2*bi-1:2*bi
     radius = [(pe[block[1]] - pw[block[1]]) / 2, (pn[block[2]] - ps[block[2]]) / 2]
@@ -110,7 +110,7 @@ function decompose(S::LazySet, ɛi::Vector{Float64})::CartesianProductArray
 end
 
 """
-    decompose(S::LazySet, ɛ::Float64, [set_type]::Type=HPolygon
+    decompose(S::LazySet, ɛ::Float64, [set_type]::Type=HPolygon{Float64}
              )::CartesianProductArray
 
 Compute an overapproximation of the projections of the given convex set over
@@ -134,7 +134,7 @@ bound for each block is assumed.
 
 The `set_type` argument is ignored if ``ɛ ≠ \\text{Inf}``.
 """
-function decompose(S::LazySet, ɛ::Float64, set_type::Type=HPolygon
+function decompose(S::LazySet, ɛ::Float64, set_type::Type=HPolygon{Float64}
                   )::CartesianProductArray
     if ɛ == Inf
         return decompose(S, set_type)

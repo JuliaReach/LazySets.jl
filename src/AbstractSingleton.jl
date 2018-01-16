@@ -178,7 +178,7 @@ end
 
 
 """
-    ⊆(S::AbstractSingleton{N}, set::LazySet, witness::Bool=false
+    ⊆(S::AbstractSingleton{N}, set::LazySet{N}, witness::Bool=false
      )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
 
 Check whether a given set with a single value is contained in a convex set, and
@@ -198,7 +198,7 @@ if not, optionally compute a witness.
   * `(false, v)` iff ``S \\not\\subseteq \\text{set}`` and
     ``v ∈ S \\setminus \\text{set}``
 """
-function ⊆(S::AbstractSingleton{N}, set::LazySet, witness::Bool=false
+function ⊆(S::AbstractSingleton{N}, set::LazySet{N}, witness::Bool=false
           )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
     result = ∈(element(S), set)
     if witness
@@ -243,7 +243,7 @@ end
 
 """
     is_intersection_empty(S::AbstractSingleton{N},
-                          set::LazySet,
+                          set::LazySet{N},
                           witness::Bool=false
                          )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
 
@@ -269,7 +269,7 @@ optionally compute a witness.
 ``S ∩ \\operatorname{set} = ∅`` iff `element(S)` ``\notin \\operatorname{set}``.
 """
 function is_intersection_empty(S::AbstractSingleton{N},
-                               set::LazySet,
+                               set::LazySet{N},
                                witness::Bool=false
                               )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
     empty_intersection = !∈(element(S), set)
@@ -281,7 +281,7 @@ function is_intersection_empty(S::AbstractSingleton{N},
 end
 
 """
-    is_intersection_empty(set::LazySet,
+    is_intersection_empty(set::LazySet{N},
                           S::AbstractSingleton{N},
                           witness::Bool=false
                          )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
@@ -307,7 +307,7 @@ optionally compute a witness.
 
 ``S ∩ \\operatorname{set} = ∅`` iff `element(S)` ``\notin \\operatorname{set}``.
 """
-function is_intersection_empty(set::LazySet,
+function is_intersection_empty(set::LazySet{N},
                                S::AbstractSingleton{N},
                                witness::Bool=false
                               )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}

@@ -1,4 +1,4 @@
-E = EmptySet()
+E = ∅
 B = BallInf(ones(2), 1.)
 
 # testing that the empty set is an absorbing element for the cartesian product
@@ -8,7 +8,7 @@ B = BallInf(ones(2), 1.)
 # test ∅ alias
 @test B × E isa EmptySet
 
-cpa = CartesianProductArray([B, 2.*B, 3.*B])
+cpa = CartesianProductArray([B, 2. * B, 3. * B])
 @test cpa * E isa EmptySet && E * cpa isa EmptySet
 @test cpa × E isa EmptySet && E × cpa isa EmptySet
 
@@ -20,7 +20,7 @@ cpa = CartesianProductArray([B, 2.*B, 3.*B])
 # testing the mathematical alias ⊕ 
 @test B ⊕ E isa EmptySet && E ⊕ B isa EmptySet
 
-msa = MinkowskiSumArray([B, 2.*B, 3.*B])
+msa = MinkowskiSumArray([B, 2. * B, 3. * B])
 @test msa + E isa EmptySet && E + msa isa EmptySet
 @test msa ⊕ E isa EmptySet && E ⊕ msa isa EmptySet
 
