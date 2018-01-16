@@ -19,7 +19,7 @@ two-dimensional sets of type `set_type`.
 For each 2D block a specific `decompose_2D` method is called, dispatched on the
 `set_type` argument.
 """
-function decompose(S::LazySet{N}, set_type::Type=HPolygon{N})::CartesianProductArray where {N<:Real}
+function decompose(S::LazySet{N}, set_type::Type=HPolygon{Float64})::CartesianProductArray where {N<:Real}
     n = dim(S)
     b = div(n, 2)
     result = Vector{set_type{N}}(b)
@@ -96,10 +96,10 @@ The algorithm proceeds as follows:
    ``i = 1, …, b``,
 3. Return the result as a `CartesianProductArray`.
 """
-function decompose(S::LazySet, ɛi::Vector{Float64})::CartesianProductArray
+function decompose(S::LazySet{N}, ɛi::Vector{Float64})::CartesianProductArray where {N<:Real}
     n = dim(S)
     b = div(n, 2)
-    result = Vector{HPolygon}(b)
+    result = Vector{HPolygon{N}}(b)
     @inbounds for i in 1:b
         M = sparse([1, 2], [2*i-1, 2*i], [1., 1.], 2, n)
         result[i] = overapproximate(M * S, ɛi[i])
