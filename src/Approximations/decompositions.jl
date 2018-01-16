@@ -1,6 +1,5 @@
 """
-    decompose(S::LazySet, [set_type]::Type=HPolygon{Float64}
-             )::CartesianProductArray
+    decompose(S::LazySet{N}, set_type::Type=HPolygon{N})::CartesianProductArray where {N<:Real}
 
 Compute an overapproximation of the projections of the given convex set over
 each two-dimensional subspace.
@@ -20,11 +19,10 @@ two-dimensional sets of type `set_type`.
 For each 2D block a specific `decompose_2D` method is called, dispatched on the
 `set_type` argument.
 """
-function decompose(S::LazySet, set_type::Type=HPolygon{Float64}
-                  )::CartesianProductArray
+function decompose(S::LazySet{N}, set_type::Type=HPolygon{N})::CartesianProductArray where {N<:Real}
     n = dim(S)
     b = div(n, 2)
-    result = Vector{set_type}(b)
+    result = Vector{set_type{N}}(b)
     @inbounds for bi in 1:b
         result[bi] = decompose_2D(S, n, bi, set_type)
     end
