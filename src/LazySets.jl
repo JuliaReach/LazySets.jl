@@ -73,6 +73,7 @@ include("CartesianProduct.jl")
 include("ExponentialMap.jl")
 include("LinearMap.jl")
 include("MinkowskiSum.jl")
+include("Intersection.jl")
 
 # =================================================================
 # Algorithms for approximation of convex sets using support vectors
