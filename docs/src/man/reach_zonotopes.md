@@ -33,7 +33,7 @@ the states reachable by any trajectory of this IVP.
 ```@example example_reach_zonotopes
 using LazySets, Plots
 
-function Algorithm1(A, δ, X0, μ, T)
+function Algorithm1(A, X0, δ, μ, T)
 
     # bloating factors
     Anorm = norm(A, Inf)
@@ -43,11 +43,11 @@ function Algorithm1(A, δ, X0, μ, T)
     # discretized system
     n = size(A, 1)
     ϕ = expm(δ*A)
-    N = floor(Int, T/δ)
+    N = div(T, δ)
 
-    # preallocate working vector and output
-    Q = Vector{LazySets.LazySet}(N)
-    R = Vector{LazySets.LazySet}(N)
+    # preallocate arrays
+    Q = Vector{LazySet}(N)
+    R = Vector{LazySet}(N)
 
     # initial reach set in the time interval [0, δ]
     ϕp = (I+ϕ)/2
@@ -58,9 +58,9 @@ function Algorithm1(A, δ, X0, μ, T)
     R[1] = Q[1]
 
     # set recurrence for [δ, 2δ], ..., [(N-1)δ, Nδ]
-    Ballβ = BallInf(zeros(n), β)
+    ballβ = BallInf(zeros(n), β)
     for i in 2:N
-        Q[i] = ϕ * Q[i-1] ⊕ Ballβ
+        Q[i] = ϕ * Q[i-1] ⊕ ballβ
         R[i] = Q[i]
     end
     return R
