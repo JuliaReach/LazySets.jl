@@ -3,7 +3,7 @@ import Base: *, ∈
 export LinearMap
 
 """
-    LinearMap{S<:LazySet, N<:Real} <: LazySet
+    LinearMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
 
 Type that represents a linear transformation ``M⋅S`` of a convex set ``S``.
 
@@ -12,13 +12,14 @@ Type that represents a linear transformation ``M⋅S`` of a convex set ``S``.
 - `M`  -- matrix/linear map
 - `sf` -- convex set
 """
-struct LinearMap{S<:LazySet, N<:Real} <: LazySet
+struct LinearMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
     M::AbstractMatrix{N}
     sf::S
 end
 # constructor from a linear map: perform the matrix multiplication immediately
-LinearMap(M::AbstractMatrix{N}, map::LinearMap{S}) where {S<:LazySet, N<:Real} =
-    LinearMap{S,N}(M * map.M, map.sf)
+LinearMap(M::AbstractMatrix{N}, map::LinearMap{N, S}
+         ) where {S<:LazySet{N}} where {N<:Real} =
+    LinearMap{N, S}(M * map.M, map.sf)
 
 """
 ```
@@ -47,7 +48,7 @@ end
 
 """
 ```
-    *(a::Real, S::LazySet)::LinearMap
+    *(a::N, X::S)::LinearMap{N, S} where {S<:LazySet{N}} where {N<:Real}
 ```
 
 Return a linear map of a convex set by a scalar value.
@@ -61,8 +62,8 @@ Return a linear map of a convex set by a scalar value.
 
 The linear map of the convex set.
 """
-function *(a::Real, S::LazySet)::LinearMap
-    return LinearMap(sparse(a*I, dim(S)), S)
+function *(a::N, X::S)::LinearMap{N, S} where {S<:LazySet{N}} where {N<:Real}
+    return LinearMap(a * speye(N, dim(X)), X)
 end
 
 """
@@ -127,7 +128,7 @@ function σ(d::AbstractVector{<:Real}, lm::LinearMap)::AbstractVector{<:Real}
 end
 
 """
-    ∈(x::AbstractVector{N}, lm::LinearMap{<:LazySet, N})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N}, lm::LinearMap{N, <:LazySet})::Bool where {N<:Real}
 
 Check whether a given point is contained in a linear map of a convex set.
 
@@ -168,6 +169,6 @@ true
 ```
 """
 function ∈(x::AbstractVector{N},
-           lm::LinearMap{<:LazySet, N})::Bool where {N<:Real}
+           lm::LinearMap{N, <:LazySet})::Bool where {N<:Real}
     return ∈(lm.M \ x, lm.sf)
 end

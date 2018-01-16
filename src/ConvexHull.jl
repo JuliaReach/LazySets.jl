@@ -5,7 +5,7 @@ export ConvexHull, CH,
        convex_hull!
 
 """
-    ConvexHull{S1<:LazySet, S2<:LazySet} <: LazySet
+    ConvexHull{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
 
 Type that represents the convex hull of the union of two convex sets.
 
@@ -14,27 +14,28 @@ Type that represents the convex hull of the union of two convex sets.
 - `X` -- convex set
 - `Y` -- convex set
 """
-struct ConvexHull{S1<:LazySet, S2<:LazySet} <: LazySet
+struct ConvexHull{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     X::S1
     Y::S2
 
     # default constructor with dimension check
-    ConvexHull{S1,S2}(X::S1, Y::S2) where {S1<:LazySet, S2<:LazySet} =
-        dim(X) != dim(Y) ? throw(DimensionMismatch) : new(X, Y)
+    ConvexHull{N, S1, S2}(X::S1, Y::S2) where
+        {S1<:LazySet{N}, S2<:LazySet{N}} where {N<:Real} =
+            dim(X) != dim(Y) ? throw(DimensionMismatch) : new(X, Y)
 end
 # type-less convenience constructor
-ConvexHull(X::S1, Y::S2) where {S1<:LazySet, S2<:LazySet} =
-    ConvexHull{S1, S2}(X, Y)
+ConvexHull(X::S1, Y::S2) where {S1<:LazySet{N}, S2<:LazySet{N}} where {N<:Real} =
+    ConvexHull{N, S1, S2}(X, Y)
 
 """
     CH
 
 Alias for `ConvexHull`.
 """
-CH = ConvexHull
+const CH = ConvexHull
 
 """
-    ConvexHull(X::LazySet, ∅::EmptySet)::LazySet
+    ConvexHull(X, ∅)
 
 Convex hull of a set with the empty set from the right.
 
@@ -47,10 +48,10 @@ Convex hull of a set with the empty set from the right.
 
 The given set because the empty set is neutral for the convex hull.
 """
-ConvexHull(X::LazySet, ∅::EmptySet)::LazySet = X
+ConvexHull(X::LazySet{N}, ::EmptySet{N}) where {N<:Real} = X
 
 """
-    ConvexHull(∅::EmptySet, X::LazySet)::LazySet
+    ConvexHull(∅, X)
 
 Convex hull of a set with the empty set from the left.
 
@@ -63,9 +64,12 @@ Convex hull of a set with the empty set from the left.
 
 The given set because the empty set is neutral for the convex hull.
 """
-ConvexHull(∅::EmptySet, X::LazySet)::LazySet = X
+ConvexHull(::EmptySet{N}, X::LazySet{N}) where {N<:Real} = X
 
-ConvexHull(::EmptySet, ::EmptySet)::LazySet = ∅
+# special case: pure empty set convex hull (we require the same numeric type)
+(ConvexHull(∅::E, ::E)) where {E<:EmptySet} = ∅
+
+
 
 """
     dim(ch::ConvexHull)::Int

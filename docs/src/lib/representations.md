@@ -29,12 +29,12 @@ support_vector
 
 ```@docs
 Ball2
-dim(::Ball2)
-σ(::AbstractVector{Float64}, ::Ball2)
+dim(::Ball2{Float64})
+σ(::AbstractVector{Float64}, ::Ball2{Float64})
 ∈(::AbstractVector{Float64}, ::Ball2{Float64})
 an_element(::Ball2{Float64})
-⊆(::Ball2, ::Singleton)
-⊆(::Ball2, ::AbstractHyperrectangle)
+⊆(::Ball2{Float64}, ::Singleton{Float64})
+⊆(::Ball2{Float64}, ::AbstractHyperrectangle{Float64})
 is_intersection_empty(::Ball2{Float64}, ::Ball2{Float64}, ::Bool)
 center(::Ball2{Float64})
 ```
@@ -43,16 +43,16 @@ center(::Ball2{Float64})
 
 ```@docs
 BallInf
-dim(::BallInf)
+dim(::BallInf{Float64})
 σ(::AbstractVector{Float64}, ::BallInf{Float64})
 ∈(::AbstractVector{Float64}, ::BallInf{Float64})
 an_element(::BallInf{Float64})
-⊆(::BallInf, ::AbstractHyperrectangle)
-⊆(::BallInf, ::LazySet)
+⊆(::BallInf{Float64}, ::AbstractHyperrectangle{Float64})
+⊆(::BallInf{Float64}, ::LazySet{Float64})
 is_intersection_empty(::BallInf{Float64}, ::AbstractHyperrectangle{Float64}, ::Bool)
-norm(::BallInf, ::Real=Inf)
-radius(::BallInf, ::Real=Inf)
-diameter(::BallInf, ::Real=Inf)
+norm(::BallInf{Float64}, ::Real)
+radius(::BallInf{Float64}, ::Real)
+diameter(::BallInf{Float64}, ::Real)
 vertices_list(::BallInf{Float64})
 singleton_list(::BallInf{Float64})
 center(::BallInf{Float64})
@@ -64,11 +64,11 @@ radius_hyperrectangle(::BallInf{Float64}, ::Int)
 
 ```@docs
 Ball1
-dim(::Ball1)
+dim(::Ball1{Float64})
 σ(::AbstractVector{Float64}, ::Ball1{Float64})
 ∈(::AbstractVector{Float64}, ::Ball1{Float64})
 an_element(::Ball1{Float64})
-⊆(::Ball1, ::LazySet)
+⊆(::Ball1{Float64}, ::LazySet{Float64})
 vertices_list(::Ball1{Float64})
 singleton_list(::Ball1{Float64})
 center(::Ball1{Float64})
@@ -78,12 +78,12 @@ center(::Ball1{Float64})
 
 ```@docs
 Ballp
-dim(::Ballp)
-σ(::AbstractVector{Float64}, ::Ballp)
+dim(::Ballp{Float64})
+σ(::AbstractVector{Float64}, ::Ballp{Float64})
 ∈(::AbstractVector{Float64}, ::Ballp{Float64})
 an_element(::Ballp{Float64})
-⊆(::Ballp, ::Singleton)
-⊆(::Ballp, ::AbstractHyperrectangle)
+⊆(::Ballp{Float64}, ::Singleton{Float64})
+⊆(::Ballp{Float64}, ::AbstractHyperrectangle{Float64})
 center(::Ballp{Float64})
 ```
 
@@ -93,11 +93,11 @@ center(::Ballp{Float64})
 
 ```@docs
 HPolygon
-dim(::HPolygon)
+dim(::HPolygon{Float64})
 σ(::AbstractVector{Float64}, ::HPolygon{Float64})
 ∈(::AbstractVector{Float64}, ::HPolygon{Float64})
 an_element(::HPolygon{Float64})
-⊆(::HPolygon, ::LazySet)
+⊆(::HPolygon{Float64}, ::LazySet{Float64})
 vertices_list(::HPolygon{Float64})
 singleton_list(::HPolygon{Float64})
 tohrep(::HPolygon{Float64})
@@ -109,11 +109,11 @@ addconstraint!(::HPolygon{Float64}, ::LinearConstraint{Float64})
 
 ```@docs
 HPolygonOpt
-dim(::HPolygonOpt)
+dim(::HPolygonOpt{Float64})
 σ(::AbstractVector{Float64}, ::HPolygonOpt{Float64})
 ∈(::AbstractVector{Float64}, ::HPolygonOpt{Float64})
 an_element(::HPolygonOpt{Float64})
-⊆(::HPolygonOpt, ::LazySet)
+⊆(::HPolygonOpt{Float64}, ::LazySet{Float64})
 vertices_list(::HPolygonOpt{Float64})
 singleton_list(::HPolygonOpt{Float64})
 tohrep(::HPolygonOpt{Float64})
@@ -125,11 +125,11 @@ addconstraint!(::HPolygonOpt{Float64}, ::LinearConstraint{Float64})
 
 ```@docs
 VPolygon
-dim(::VPolygon)
+dim(::VPolygon{Float64})
 σ(::AbstractVector{Float64}, ::VPolygon{Float64})
 ∈(::AbstractVector{Float64}, ::VPolygon{Float64})
 an_element(::VPolygon{Float64})
-⊆(::VPolygon, ::LazySet)
+⊆(::VPolygon{Float64}, ::LazySet{Float64})
 vertices_list(::VPolygon{Float64})
 singleton_list(::VPolygon{Float64})
 tohrep(::VPolygon{Float64})
@@ -149,49 +149,49 @@ intersection(::Line{Float64}, L2::Line{Float64})
 ```@docs
 Hyperrectangle
 Hyperrectangle(;kwargs...)
-dim(::Hyperrectangle)
+dim(::Hyperrectangle{Float64})
 σ(::AbstractVector{Float64}, ::Hyperrectangle{Float64})
 ∈(::AbstractVector{Float64}, ::Hyperrectangle{Float64})
 an_element(::Hyperrectangle{Float64})
-⊆(::Hyperrectangle, ::AbstractHyperrectangle)
-⊆(::Hyperrectangle, ::LazySet)
+⊆(::Hyperrectangle{Float64}, ::AbstractHyperrectangle{Float64})
+⊆(::Hyperrectangle{Float64}, ::LazySet{Float64})
 is_intersection_empty(::Hyperrectangle{Float64}, ::AbstractHyperrectangle{Float64}, ::Bool)
-norm(::Hyperrectangle, ::Real=Inf)
-radius(::Hyperrectangle, ::Real=Inf)
-diameter(::Hyperrectangle, ::Real=Inf)
+norm(::Hyperrectangle{Float64}, ::Real)
+radius(::Hyperrectangle{Float64}, ::Real)
+diameter(::Hyperrectangle{Float64}, ::Real)
 vertices_list(::Hyperrectangle{Float64})
 singleton_list(::Hyperrectangle{Float64})
 center(::Hyperrectangle{Float64})
 radius_hyperrectangle(::Hyperrectangle{Float64})
 radius_hyperrectangle(::Hyperrectangle{Float64}, ::Int)
-high(::Hyperrectangle)
-low(::Hyperrectangle)
+high(::Hyperrectangle{Float64})
+low(::Hyperrectangle{Float64})
 ```
 
 ## EmptySet
 
 ```@docs
 EmptySet
-dim(::EmptySet)
-σ(::AbstractVector{Float64}, ::EmptySet)
-∈(::AbstractVector{Float64}, ::EmptySet)
-an_element(::EmptySet)
+dim(::EmptySet{Float64})
+σ(::AbstractVector{Float64}, ::EmptySet{Float64})
+∈(::AbstractVector{Float64}, ::EmptySet{Float64})
+an_element(::EmptySet{Float64})
 ```
 
 ## Singletons
 
 ```@docs
 Singleton
-dim(::Singleton)
+dim(::Singleton{Float64})
 σ(::AbstractVector{Float64}, ::Singleton{Float64})
 ∈(::AbstractVector{Float64}, ::Singleton{Float64})
-⊆(::Singleton, ::AbstractSingleton)
-⊆(::Singleton, ::LazySet)
-is_intersection_empty(::Singleton{Float64}, ::LazySet, ::Bool)
-is_intersection_empty(::LazySet, ::Singleton{Float64}, ::Bool)
+⊆(::Singleton{Float64}, ::AbstractSingleton{Float64})
+⊆(::Singleton{Float64}, ::LazySet{Float64})
+is_intersection_empty(::Singleton{Float64}, ::LazySet{Float64}, ::Bool)
+is_intersection_empty(::LazySet{Float64}, ::Singleton{Float64}, ::Bool)
 is_intersection_empty(::Singleton{Float64}, ::Singleton{Float64}, ::Bool)
-norm(::Singleton, ::Real=Inf)
-diameter(::Singleton, ::Real=Inf)
+norm(::Singleton{Float64}, ::Real)
+diameter(::Singleton{Float64}, ::Real)
 vertices_list(::Singleton{Float64})
 singleton_list(::Singleton{Float64})
 center(::Singleton{Float64})
@@ -206,16 +206,16 @@ element(::Singleton{Float64}, ::Int)
 
 ```@docs
 ZeroSet
-dim(::ZeroSet)
-σ(::AbstractVector{Float64}, ::ZeroSet)
+dim(::ZeroSet{Float64})
+σ(::AbstractVector{Float64}, ::ZeroSet{Float64})
 ∈(::AbstractVector{Float64}, ::ZeroSet{Float64})
-⊆(::ZeroSet, ::AbstractSingleton)
-⊆(::ZeroSet, ::LazySet)
-is_intersection_empty(::ZeroSet{Float64}, ::LazySet, ::Bool)
-is_intersection_empty(::LazySet, ::ZeroSet{Float64}, ::Bool)
+⊆(::ZeroSet{Float64}, ::AbstractSingleton{Float64})
+⊆(::ZeroSet{Float64}, ::LazySet{Float64})
+is_intersection_empty(::ZeroSet{Float64}, ::LazySet{Float64}, ::Bool)
+is_intersection_empty(::LazySet{Float64}, ::ZeroSet{Float64}, ::Bool)
 is_intersection_empty(::ZeroSet{Float64}, ::ZeroSet{Float64}, ::Bool)
-norm(::ZeroSet, ::Real=Inf)
-diameter(::ZeroSet, ::Real=Inf)
+norm(::ZeroSet{Float64}, ::Real)
+diameter(::ZeroSet{Float64}, ::Real)
 vertices_list(::ZeroSet{Float64})
 singleton_list(::ZeroSet{Float64})
 center(::ZeroSet{Float64})
@@ -230,13 +230,13 @@ element(::ZeroSet{Float64}, ::Int)
 
 ```@docs
 Zonotope
-dim(::Zonotope)
-σ(::AbstractVector{Float64}, Z::Zonotope)
+dim(::Zonotope{Float64})
+σ(::AbstractVector{Float64}, ::Zonotope{Float64})
 ∈(::AbstractVector{Float64}, ::Zonotope{Float64})
 an_element(::Zonotope{Float64})
-⊆(::Zonotope, ::LazySet)
+⊆(::Zonotope{Float64}, ::LazySet{Float64})
 center(::Zonotope{Float64})
 vertices_list(::Zonotope{Float64})
 singleton_list(::Zonotope{Float64})
-order(::Zonotope)
+order(::Zonotope{Float64})
 ```

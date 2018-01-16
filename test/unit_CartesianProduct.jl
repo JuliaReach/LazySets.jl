@@ -61,15 +61,15 @@ cs2 = s * ∅
 
 # Test Cartesian Product of an array
 # 0-elements
-as = LazySet[]
+as = LazySet{Float64}[]
 cs = CartesianProduct(as)
 @test cs isa EmptySet
 # 1-element
-as = LazySet[Singleton([1.])]
+as = [Singleton([1.])]
 cs = CartesianProduct(as)
 @test cs.element == [1.]
 # 3-elements
-as = LazySet[Singleton([1.]), Singleton([2.]), Singleton([3.])]
+as = [Singleton([1.]), Singleton([2.]), Singleton([3.])]
 cs = CartesianProduct(as)
 @test cs.X.element == [1.]
 @test cs.Y.X.element == [2.]

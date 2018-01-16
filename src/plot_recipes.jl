@@ -168,7 +168,7 @@ julia> plot(P)
 end
 
 """
-    plot_polygons(P::Union{Vector{HPolygon}, Vector{HPolygonOpt}}; ...)
+    plot_polygons(P::Vector{<:AbstractHPolygon}; ...)
 
 Plot an array of polygons in constraint representation.
 
@@ -191,7 +191,7 @@ julia> P2 = HPolygon([LinearConstraint([2.0, 0.0], 0.6),
 julia> plot([P1, P2])
 ```
 """
-@recipe function plot_polygons(P::Union{Vector{HPolygon}, Vector{HPolygonOpt}};
+@recipe function plot_polygons(P::Vector{<:AbstractHPolygon};
                                seriescolor="blue", label="", grid=true,
                                alpha=0.5)
 
@@ -232,7 +232,7 @@ julia> plot(P)
 end
 
 """
-    plot_polygons(P::Vector{VPolygon}; ...)
+    plot_polygons(P::Vector{<:VPolygon}; ...)
 
 Plot an array of polygons in vertex representation.
 
@@ -249,7 +249,7 @@ julia> P2 = VPolygon([[0.3, 0.3], [0.2, 0.3], [0.2, 0.2], [0.3, 0.2]])
 julia> plot([P1, P2])
 ```
 """
-@recipe function plot_polygons(P::Vector{VPolygon};
+@recipe function plot_polygons(P::Vector{<:VPolygon};
                                seriescolor="blue", label="", grid=true,
                                alpha=0.5)
 
@@ -356,7 +356,7 @@ julia> plot(Z)
 end
 
 """
-    plot_zonotopes(Z::Vector{Zonotope}; ...)
+    plot_zonotopes(Z::Vector{<:Zonotope}; ...)
 
 Plot an array of zonotopes.
 
@@ -373,7 +373,7 @@ julia> Z2 = Zonotope(zeros(2), [[0.3, 0.3], [0.2, 0.3], [0.2, 0.2], [0.3, 0.2]])
 julia> plot([Z1, Z2])
 ```
 """
-@recipe function plot_zonotopes(V::Vector{Zonotope};
+@recipe function plot_zonotopes(V::Vector{<:Zonotope};
                                 seriescolor="blue", label="", grid=true,
                                 alpha=0.5)
 

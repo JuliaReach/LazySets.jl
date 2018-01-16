@@ -5,7 +5,7 @@ export AbstractPolytope,
        singleton_list
 
 """
-    AbstractPolytope{N<:Real} <: LazySet
+    AbstractPolytope{N<:Real} <: LazySet{N}
 
 Abstract type for polytopic sets, i.e., sets with finitely many flat facets, or
 equivalently, sets defined as an intersection of a finite number of halfspaces,
@@ -19,19 +19,20 @@ Every concrete `AbstractPolytope` must define the following functions:
 
 ```jldoctest
 julia> subtypes(AbstractPolytope)
-2-element Array{Union{DataType, UnionAll},1}:
+3-element Array{Union{DataType, UnionAll},1}:
  LazySets.AbstractPointSymmetricPolytope
  LazySets.AbstractPolygon
+ LazySets.HPolytope
 ```
 """
-abstract type AbstractPolytope{N<:Real} <: LazySet end
+abstract type AbstractPolytope{N<:Real} <: LazySet{N} end
 
 
 # --- LazySet interface functions ---
 
 
 """
-    ⊆(P::AbstractPolytope{N}, S::LazySet, witness::Bool=false
+    ⊆(P::AbstractPolytope{N}, S::LazySet{N}, witness::Bool=false
      )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
 
 Check whether a polytope is contained in a convex set, and if not, optionally
@@ -55,7 +56,7 @@ compute a witness.
 Since ``S`` is convex, ``P ⊆ S`` iff ``v_i ∈ S`` for all vertices ``v_i`` of
 ``P``.
 """
-function ⊆(P::AbstractPolytope{N}, S::LazySet, witness::Bool=false
+function ⊆(P::AbstractPolytope{N}, S::LazySet{N}, witness::Bool=false
           )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
     @assert dim(P) == dim(S)
 

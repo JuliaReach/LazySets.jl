@@ -4,7 +4,7 @@ export MinkowskiSum, ⊕,
        MinkowskiSumArray
 
 """
-    MinkowskiSum{T1<:LazySet, T2<:LazySet} <: LazySet
+    MinkowskiSum{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
 
 Type that represents the Minkowski sum of two convex sets.
 
@@ -13,17 +13,18 @@ Type that represents the Minkowski sum of two convex sets.
 - `X` -- first convex set
 - `Y` -- second convex set
 """
-struct MinkowskiSum{T1<:LazySet, T2<:LazySet} <: LazySet
-    X::T1
-    Y::T2
+struct MinkowskiSum{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
+    X::S1
+    Y::S2
 
     # default constructor with dimension match check
-    MinkowskiSum{T1,T2}(X::T1, Y::T2) where {T1<:LazySet,T2<:LazySet} =
-        dim(X) != dim(Y) ? throw(DimensionMismatch) : new(X, Y)
+    MinkowskiSum{N, S1, S2}(X::S1, Y::S2) where
+        {S1<:LazySet{N}, S2<:LazySet{N}} where {N<:Real} =
+            dim(X) != dim(Y) ? throw(DimensionMismatch) : new(X, Y)
 end
 # type-less convenience constructor
-MinkowskiSum(X::T1, Y::T2) where {T1<:LazySet, T2<:LazySet} =
-    MinkowskiSum{T1,T2}(X, Y)
+MinkowskiSum(X::S1, Y::S2) where {S1<:LazySet{N}, S2<:LazySet{N}} where {N<:Real} =
+    MinkowskiSum{N, S1, S2}(X, Y)
 
 """
     X + Y
@@ -63,7 +64,7 @@ Right Minkowski sum of a set by an empty set.
 An empty set, because the empty set is the absorbing element for the
 Minkowski sum.
 """
-+(X::LazySet, ∅::EmptySet) = ∅
++(::LazySet, ∅::EmptySet) = ∅
 
 """
     ∅ + X
@@ -80,15 +81,17 @@ Left Minkowski sum of a set by an empty set.
 An empty set, because the empty set is the absorbing element for the
 Minkowski sum.
 """
-+(∅::EmptySet, X::LazySet) = ∅
++(∅::EmptySet, ::LazySet) = ∅
 
-+(::EmptySet, ::EmptySet) = ∅
+# special case: pure empty set Minkowski sum (we require the same numeric type)
+(+(∅::E, ::E)) where {E<:EmptySet} = ∅
 
 +(X::LazySet, ::ZeroSet) = X
 
-+(X::ZeroSet, ::ZeroSet) = X
-
 +(::ZeroSet, X::LazySet) = X
+
+# special case: pure zero set Minkowski sum (we require the same numeric type)
+(+(X::Z, ::Z)) where {Z<:ZeroSet} = X
 
 """
     dim(ms::MinkowskiSum)::Int
@@ -103,7 +106,9 @@ Return the dimension of a Minkowski sum.
 
 The ambient dimension of the Minkowski sum.
 """
-dim(ms::MinkowskiSum)::Int = dim(ms.X)
+function dim(ms::MinkowskiSum)::Int
+    return dim(ms.X)
+end
 
 """
     σ(d::AbstractVector{<:Real}, ms::MinkowskiSum)::AbstractVector{<:Real}
@@ -129,7 +134,7 @@ end
 # Minkowski sum of an array of sets
 # =================================
 """
-    MinkowskiSumArray{T<:LazySet} <: LazySet
+    MinkowskiSumArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
 
 Type that represents the Minkowski sum of a finite number of convex sets.
 
@@ -145,16 +150,21 @@ This type assumes that the dimensions of all elements match.
 
 - `MinkowskiSumArray()` -- constructor for an empty sum
 
-- `MinkowskiSumArray(n::Int)` -- constructor for an empty sum with size hint
+- `MinkowskiSumArray(n::Int, [N]::Type=Float64)`
+  -- constructor for an empty sum with size hint and numeric type
 """
-struct MinkowskiSumArray{T<:LazySet} <: LazySet
-    sfarray::Vector{T}
+struct MinkowskiSumArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
+    sfarray::Vector{S}
 end
-# constructor for an empty sum
-MinkowskiSumArray() = MinkowskiSumArray{LazySet}(Vector{LazySet}(0))
-# constructor for an empty sum with size hint
-function MinkowskiSumArray(n::Int)::MinkowskiSumArray
-    arr = Vector{LazySet}(0)
+# type-less convenience constructor
+MinkowskiSumArray(arr::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
+    MinkowskiSumArray{N, S}(arr)
+# constructor for an empty sum of float type
+MinkowskiSumArray() =
+    MinkowskiSumArray{Float64, LazySet{Float64}}(Vector{LazySet{Float64}}(0))
+# constructor for an empty sum with size hint and numeric type
+function MinkowskiSumArray(n::Int, N::Type=Float64)::MinkowskiSumArray
+    arr = Vector{LazySet{N}}(0)
     sizehint!(arr, n)
     return MinkowskiSumArray(arr)
 end

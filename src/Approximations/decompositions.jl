@@ -1,6 +1,6 @@
 """
-    decompose(S::LazySet, [set_type]::Type=HPolygon
-             )::CartesianProductArray
+    decompose(S::LazySet{N}, set_type::Type=HPolygon
+             )::CartesianProductArray where {N<:Real}
 
 Compute an overapproximation of the projections of the given convex set over
 each two-dimensional subspace.
@@ -20,11 +20,11 @@ two-dimensional sets of type `set_type`.
 For each 2D block a specific `decompose_2D` method is called, dispatched on the
 `set_type` argument.
 """
-function decompose(S::LazySet, set_type::Type=HPolygon
-                  )::CartesianProductArray
+function decompose(S::LazySet{N}, set_type::Type=HPolygon
+                  )::CartesianProductArray where {N<:Real}
     n = dim(S)
     b = div(n, 2)
-    result = Vector{set_type}(b)
+    result = Vector{set_type{N}}(b)
     @inbounds for bi in 1:b
         result[bi] = decompose_2D(S, n, bi, set_type)
     end
@@ -33,7 +33,7 @@ end
 
 # polygon with box directions
 @inline function decompose_2D(S::LazySet, n::Int, bi::Int,
-                              set_type::Type{HPolygon})::HPolygon
+                              set_type::Type{<:HPolygon})::HPolygon
     pe, pn, pw, ps = box_bounds(S, n, bi)
     block = 2*bi-1:2*bi
     pe_bi = dot(DIR_EAST, view(pe, block))
@@ -49,10 +49,11 @@ end
 
 # hyperrectangle
 @inline function decompose_2D(S::LazySet, n::Int, bi::Int,
-                              set_type::Type{Hyperrectangle})::Hyperrectangle
+                              set_type::Type{<:Hyperrectangle})::Hyperrectangle
     pe, pn, pw, ps = box_bounds(S, n, bi)
-    radius = [(pe[1] - pw[1]) / 2, (pn[2] - ps[2]) / 2]
-    center = [pw[1] + radius[1], ps[2] + radius[2]]
+    block = 2*bi-1:2*bi
+    radius = [(pe[block[1]] - pw[block[1]]) / 2, (pn[block[2]] - ps[block[2]]) / 2]
+    center = [pw[block[1]] + radius[1], ps[block[2]] + radius[2]]
     return Hyperrectangle(center, radius)
 end
 
@@ -97,10 +98,10 @@ The algorithm proceeds as follows:
    ``i = 1, …, b``,
 3. Return the result as a `CartesianProductArray`.
 """
-function decompose(S::LazySet, ɛi::Vector{Float64})::CartesianProductArray
+function decompose(S::LazySet{N}, ɛi::Vector{Float64})::CartesianProductArray where {N<:Real}
     n = dim(S)
     b = div(n, 2)
-    result = Vector{HPolygon}(b)
+    result = Vector{HPolygon{N}}(b)
     @inbounds for i in 1:b
         M = sparse([1, 2], [2*i-1, 2*i], [1., 1.], 2, n)
         result[i] = overapproximate(M * S, ɛi[i])

@@ -21,9 +21,9 @@ end
 
 ```@docs
 MinkowskiSum
-dim(::MinkowskiSum)
-σ(::AbstractVector{Float64}, ::MinkowskiSum)
-Base.:+(::LazySet, ::LazySet)
+dim(::MinkowskiSum{Float64, LazySet{Float64}, LazySet{Float64}})
+σ(::AbstractVector{Float64}, ::MinkowskiSum{Float64, LazySet{Float64}, LazySet{Float64}})
+Base.:+(::LazySet{Float64}, ::LazySet{Float64})
 ⊕
 ```
 
@@ -31,12 +31,12 @@ Base.:+(::LazySet, ::LazySet)
 
 ```@docs
 MinkowskiSumArray
-dim(::MinkowskiSumArray)
-σ(::AbstractVector{Float64}, ::MinkowskiSumArray)
-Base.:+(::MinkowskiSumArray, ::LazySet)
-Base.:+(::LazySet, ::MinkowskiSumArray)
-Base.:+(::MinkowskiSumArray, ::MinkowskiSumArray)
-Base.:+(::MinkowskiSumArray, ::ZeroSet)
+dim(::MinkowskiSumArray{Float64, LazySet{Float64}})
+σ(::AbstractVector{Float64}, ::MinkowskiSumArray{Float64, LazySet{Float64}})
+Base.:+(::MinkowskiSumArray{Float64, LazySet{Float64}}, ::LazySet{Float64})
+Base.:+(::LazySet{Float64}, ::MinkowskiSumArray{Float64, LazySet{Float64}})
+Base.:+(::MinkowskiSumArray{Float64, LazySet{Float64}}, ::MinkowskiSumArray{Float64, LazySet{Float64}})
+Base.:+(::MinkowskiSumArray{Float64, LazySet{Float64}}, ::ZeroSet{Float64})
 ```
 
 ## Cartesian Product
@@ -45,22 +45,22 @@ Base.:+(::MinkowskiSumArray, ::ZeroSet)
 
 ```@docs
 CartesianProduct
-dim(::CartesianProduct)
-σ(::AbstractVector{Float64}, ::CartesianProduct)
-Base.:*(::LazySet, ::LazySet)
-∈(::AbstractVector{Float64}, ::CartesianProduct)
+dim(::CartesianProduct{Float64, LazySet{Float64}, LazySet{Float64}})
+σ(::AbstractVector{Float64}, ::CartesianProduct{Float64, LazySet{Float64}, LazySet{Float64}})
+Base.:*(::LazySet{Float64}, ::LazySet{Float64})
+∈(::AbstractVector{Float64}, ::CartesianProduct{Float64, LazySet{Float64}, LazySet{Float64}})
 ```
 
 ### ``n``-ary Cartesian Product
 
 ```@docs
-CartesianProductArray
-dim(::CartesianProductArray)
-σ(::AbstractVector{Float64}, ::CartesianProductArray)
-Base.:*(::CartesianProductArray, ::LazySet)
-Base.:*(::LazySet, ::CartesianProductArray)
-Base.:*(::CartesianProductArray, ::CartesianProductArray)
-∈(::AbstractVector{Float64}, ::CartesianProductArray)
+CartesianProductArray{Float64, LazySet{Float64}}
+dim(::CartesianProductArray{Float64, LazySet{Float64}})
+σ(::AbstractVector{Float64}, ::CartesianProductArray{Float64, LazySet{Float64}})
+Base.:*(::CartesianProductArray{Float64, LazySet{Float64}}, ::LazySet{Float64})
+Base.:*(::LazySet{Float64}, ::CartesianProductArray{Float64, LazySet{Float64}})
+Base.:*(::CartesianProductArray{Float64, LazySet{Float64}}, ::CartesianProductArray{Float64, LazySet{Float64}})
+∈(::AbstractVector{Float64}, ::CartesianProductArray{Float64, LazySet{Float64}})
 ```
 
 ## Maps
@@ -69,36 +69,36 @@ Base.:*(::CartesianProductArray, ::CartesianProductArray)
 
 ```@docs
 LinearMap
-dim(::LinearMap)
-σ(::AbstractVector{Float64}, ::LinearMap)
-*(::AbstractMatrix{Float64}, ::LazySet)
-*(::Real, ::LazySet)
-∈(::AbstractVector{Float64}, ::LinearMap{<:LazySet, Float64})
+dim(::LinearMap{Float64, LazySet{Float64}})
+σ(::AbstractVector{Float64}, ::LinearMap{Float64, LazySet{Float64}})
+*(::AbstractMatrix{Float64}, ::LazySet{Float64})
+*(::Float64, ::LazySet{Float64})
+∈(::AbstractVector{Float64}, ::LinearMap{Float64, LazySet{Float64}})
 ```
 
 ### Exponential Map
 
 ```@docs
 ExponentialMap
-dim(::ExponentialMap)
-σ(::AbstractVector{Float64}, ::ExponentialMap)
-∈(::AbstractVector{Float64}, ::ExponentialMap{<:LazySet})
+dim(::ExponentialMap{Float64, LazySet{Float64}})
+σ(::AbstractVector{Float64}, ::ExponentialMap{Float64, LazySet{Float64}})
+∈(::AbstractVector{Float64}, ::ExponentialMap{Float64, LazySet{Float64}})
 ```
 
 ```@docs
 ExponentialProjectionMap
-dim(::ExponentialProjectionMap)
-σ(::AbstractVector{Float64}, ::ExponentialProjectionMap)
+dim(::ExponentialProjectionMap{Float64, LazySet{Float64}})
+σ(::AbstractVector{Float64}, ::ExponentialProjectionMap{Float64, LazySet{Float64}})
 ```
 
 ```@docs
 SparseMatrixExp
-*(::SparseMatrixExp, ::LazySet)
+*(::SparseMatrixExp{Float64}, ::LazySet{Float64})
 ```
 
 ```@docs
 ProjectionSparseMatrixExp
-*(::ProjectionSparseMatrixExp, ::LazySet)
+*(::ProjectionSparseMatrixExp{Float64}, ::LazySet{Float64})
 ```
 
 ## Convex Hull
@@ -106,8 +106,8 @@ ProjectionSparseMatrixExp
 ```@docs
 ConvexHull
 CH
-dim(::ConvexHull)
-σ(::AbstractVector{Float64}, ::ConvexHull)
+dim(::ConvexHull{Float64, LazySet{Float64}, LazySet{Float64}})
+σ(::AbstractVector{Float64}, ::ConvexHull{Float64, LazySet{Float64}, LazySet{Float64}})
 ```
 
 ### Convex Hull Algorithms

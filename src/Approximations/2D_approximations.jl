@@ -1,5 +1,5 @@
 """
-    overapproximate(S::LazySet, ::Type{HPolygon})::HPolygon
+    overapproximate(S::LazySet, ::Type{<:HPolygon})::HPolygon
 
 Return an approximation of a given 2D convex set as a box-shaped polygon.
 
@@ -12,7 +12,7 @@ Return an approximation of a given 2D convex set as a box-shaped polygon.
 
 A box-shaped polygon in constraint representation.
 """
-function overapproximate(S::LazySet, ::Type{HPolygon})::HPolygon
+function overapproximate(S::LazySet, ::Type{<:HPolygon})::HPolygon
     @assert dim(S) == 2
     pe, pn, pw, ps = box_bounds(S)
     constraints = Vector{LinearConstraint{eltype(pe)}}(4)
@@ -31,7 +31,7 @@ Alias for `overapproximate(S, HPolygon)`.
 overapproximate(S::LazySet)::HPolygon = overapproximate(S, HPolygon)
 
 """
-    overapproximate(S::LazySet, Type{Hyperrectangle})::Hyperrectangle
+    overapproximate(S::LazySet, Type{<:Hyperrectangle})::Hyperrectangle
 
 Return an approximation of a given 2D convex set as a hyperrectangle.
 
@@ -44,7 +44,7 @@ Return an approximation of a given 2D convex set as a hyperrectangle.
 
 A hyperrectangle.
 """
-function overapproximate(S::LazySet, ::Type{Hyperrectangle})::Hyperrectangle
+function overapproximate(S::LazySet, ::Type{<:Hyperrectangle})::Hyperrectangle
     @assert dim(S) == 2
     pe, pn, pw, ps = box_bounds(S)
     radius = [(pe[1] - pw[1]) / 2, (pn[2] - ps[2]) / 2]
