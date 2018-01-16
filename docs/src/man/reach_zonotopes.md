@@ -43,7 +43,7 @@ function Algorithm1(A, X0, δ, μ, T)
     # discretized system
     n = size(A, 1)
     ϕ = expm(δ*A)
-    N = div(T, δ)
+    N = floor(Int, T/δ)
 
     # preallocate arrays
     Q = Vector{LazySet}(N)
@@ -86,9 +86,9 @@ X0 = Zonotope([1.0, 0.0], 0.1*eye(2))
 δ = 0.02
 T = 2.
 
-R = Algorithm1(A, δ, X0, μ, 2.*δ); # warm-up
+R = Algorithm1(A, X0, δ, μ, 2.*δ); # warm-up
 
-R = Algorithm1(A, δ, X0, μ, T)
+R = Algorithm1(A, X0, δ, μ, T)
 
 plot(R, 1e-2, fillalpha=0.1)
 ```
@@ -107,9 +107,9 @@ X0 = Zonotope([1.0, 0.0, 0.0, 0.0, 0.0], 0.1*eye(5))
 δ = 0.005
 T = 1.
 
-R = Algorithm1(A, δ, X0, μ, 2*δ); # warm-up
+R = Algorithm1(A, X0, δ, μ, 2*δ); # warm-up
 
-R = Algorithm1(A, δ, X0, μ, T)
+R = Algorithm1(A, X0, δ, μ, T)
 R = project(R, [1, 3], 5)
 
 plot(R, 1e-2, fillalpha=0.1, xlabel="x1", ylabel="x3")

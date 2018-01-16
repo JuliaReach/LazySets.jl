@@ -1,6 +1,6 @@
 """
-    decompose(S::LazySet, [set_type]::Type=HPolygon{Float64}
-             )::CartesianProductArray
+    decompose(S::LazySet{N}, set_type::Type=HPolygon
+             )::CartesianProductArray where {N<:Real}
 
 Compute an overapproximation of the projections of the given convex set over
 each two-dimensional subspace.
@@ -20,11 +20,11 @@ two-dimensional sets of type `set_type`.
 For each 2D block a specific `decompose_2D` method is called, dispatched on the
 `set_type` argument.
 """
-function decompose(S::LazySet, set_type::Type=HPolygon{Float64}
-                  )::CartesianProductArray
+function decompose(S::LazySet{N}, set_type::Type=HPolygon
+                  )::CartesianProductArray where {N<:Real}
     n = dim(S)
     b = div(n, 2)
-    result = Vector{set_type}(b)
+    result = Vector{set_type{N}}(b)
     @inbounds for bi in 1:b
         result[bi] = decompose_2D(S, n, bi, set_type)
     end
@@ -98,10 +98,10 @@ The algorithm proceeds as follows:
    ``i = 1, …, b``,
 3. Return the result as a `CartesianProductArray`.
 """
-function decompose(S::LazySet, ɛi::Vector{Float64})::CartesianProductArray
+function decompose(S::LazySet{N}, ɛi::Vector{Float64})::CartesianProductArray where {N<:Real}
     n = dim(S)
     b = div(n, 2)
-    result = Vector{HPolygon}(b)
+    result = Vector{HPolygon{N}}(b)
     @inbounds for i in 1:b
         M = sparse([1, 2], [2*i-1, 2*i], [1., 1.], 2, n)
         result[i] = overapproximate(M * S, ɛi[i])
@@ -110,7 +110,7 @@ function decompose(S::LazySet, ɛi::Vector{Float64})::CartesianProductArray
 end
 
 """
-    decompose(S::LazySet, ɛ::Float64, [set_type]::Type=HPolygon{Float64}
+    decompose(S::LazySet, ɛ::Float64, [set_type]::Type=HPolygon
              )::CartesianProductArray
 
 Compute an overapproximation of the projections of the given convex set over
@@ -134,7 +134,7 @@ bound for each block is assumed.
 
 The `set_type` argument is ignored if ``ɛ ≠ \\text{Inf}``.
 """
-function decompose(S::LazySet, ɛ::Float64, set_type::Type=HPolygon{Float64}
+function decompose(S::LazySet, ɛ::Float64, set_type::Type=HPolygon
                   )::CartesianProductArray
     if ɛ == Inf
         return decompose(S, set_type)
