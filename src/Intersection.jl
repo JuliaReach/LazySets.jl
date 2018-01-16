@@ -28,7 +28,7 @@ Intersection(X::S1, Y::S2) where {S1<:LazySet{N}, S2<:LazySet{N}} where {N<:Real
 
 Alias for `Intersection`.
 """
-function ∩(X, Y) = Intersection(X, Y)
+∩(X, Y) = Intersection(X, Y)
 
 """
     Intersection(X, ∅)
