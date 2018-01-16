@@ -17,7 +17,7 @@ export LazySet,
        Approximations
 
 """
-    LazySet{N<:Real}
+    LazySet{N}
 
 Abstract type for a lazy set.
 
@@ -28,8 +28,8 @@ Every concrete `LazySet` must define the following functions:
     of `S` in a given direction `d`
 - `dim(S::LazySet)::Int` -- the ambient dimension of `S`
 
-`LazySet` types should be parameterized with a type `N`, typically `N<:Real`, to
-support computations with different numeric types.
+`LazySet` types should be parameterized with a type `N`, typically `N<:Real`,
+for using different numeric types.
 """
 abstract type LazySet{N} end
 

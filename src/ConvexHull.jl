@@ -48,7 +48,7 @@ Convex hull of a set with the empty set from the right.
 
 The given set because the empty set is neutral for the convex hull.
 """
-ConvexHull(X::LazySet, ::EmptySet) = X
+ConvexHull(X::LazySet{N}, ::EmptySet{N}) where {N<:Real} = X
 
 """
     ConvexHull(∅, X)
@@ -64,7 +64,6 @@ Convex hull of a set with the empty set from the left.
 
 The given set because the empty set is neutral for the convex hull.
 """
-ConvexHull(X::LazySet{N}, ::EmptySet{N}) where {N<:Real} = X
 ConvexHull(::EmptySet{N}, X::LazySet{N}) where {N<:Real} = X
 
 # special case: pure empty set convex hull (we require the same numeric type)
