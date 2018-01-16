@@ -31,7 +31,7 @@ Every concrete `LazySet` must define the following functions:
 `LazySet` types should be parameterized with a type `N`, typically `N<:Real`, to
 support computations with different numeric types.
 """
-abstract type LazySet{N<:Real} end
+abstract type LazySet{N} end
 
 # ============================
 # Auxiliary types or functions
