@@ -104,9 +104,10 @@ This function computes the symmetric interval hull explicitly.
 function radius_hyperrectangle(sih::SymmetricIntervalHull{N}
                               )::Vector{N} where {N<:Real}
     dim = dim(sih)
+    one_N = one(N)
     for i in 1:dim
         if !sih.known[i]
-            compute_radius(sih, i, dim)
+            compute_radius(sih, i, dim, one_N)
         end
     end
     return sih.radius
@@ -188,12 +189,13 @@ function σ(d::AbstractVector{N}, sih::SymmetricIntervalHull
 
     svec = similar(d)
     zero_N = zero(N)
+    one_N = one(N)
     for i in eachindex(d)
         if d[i] == zero_N
             svec[i] = zero_N
         else
             if !sih.known[i]
-                compute_radius(sih, i, len)
+                compute_radius(sih, i, len, one_N)
             end
             svec[i] = sign(d[i]) * sih.radius[i]
         end
@@ -206,7 +208,10 @@ end
 
 
 """
-    compute_radius(sih::SymmetricIntervalHull, i::Int, [dimension]::Int=dim(sih))
+    compute_radius(sih::SymmetricIntervalHull{N, <:LazySet{N}},
+                   i::Int,
+                   dimension::Int=dim(sih),
+                   one_N::N=one(N))::Void where {N<:Real}
 
 Compute the radius of a symmetric interval hull of a convex in a given
 dimension.
@@ -216,23 +221,24 @@ dimension.
 - `sih`       -- symmetric interval hull of a convex set
 - `i`         -- dimension
 - `dimension` -- (optional, default: `dim(sih)`) set dimension
+- `one_N`     -- (optional, default: `one(N)`) numeric representation of `1`
 
 ### Output
 
-The radius of the symmetric interval hull of a convex set in the given
-direction.
+Nothing.
 
 ### Algorithm
 
 We ask for the support vector of the underlying set for both the positive and
 negative unit vector in the dimension `i`.
 """
-function compute_radius(sih::SymmetricIntervalHull,
+function compute_radius(sih::SymmetricIntervalHull{N, <:LazySet{N}},
                         i::Int,
-                        dimension::Int=dim(sih))
-    one_N = one(N)
+                        dimension::Int=dim(sih),
+                        one_N::N=one(N))::Void where {N<:Real}
     right_bound = σ(sparsevec([i], [one_N], dimension), sih.X)
     left_bound = σ(sparsevec([i], [-one_N], dimension), sih.X)
-    sih.radius[i] = max(right_bound[i], abs(left_bound[i]))
     sih.known[i] = true
+    sih.radius[i] = max(right_bound[i], abs(left_bound[i]))
+    return nothing
 end
