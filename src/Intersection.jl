@@ -1,3 +1,5 @@
+import Base.isempty
+
 export Intersection, ∩
 
 """
