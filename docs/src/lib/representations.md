@@ -136,6 +136,16 @@ tohrep(::VPolygon{Float64})
 tovrep(::VPolygon{Float64})
 ```
 
+## Polytopes
+
+```@docs
+HPolytope
+dim(P::HPolytope)
+addconstraint!(P::HPolytope{Float64}, constraint::LinearConstraint{Float64})
+constraints_list(P::HPolytope{Float64})
+σ(d::AbstractVector{Float64}, P::HPolytope)
+```
+
 ## Lines and linear constraints
 
 ```@docs
