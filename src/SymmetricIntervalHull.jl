@@ -2,7 +2,7 @@ export SymmetricIntervalHull,
        an_element
 
 """
-    SymmetricIntervalHull{N<:Real, S<:LazySet{N}} <: LazySet{N}
+    SymmetricIntervalHull{N<:Real, S<:LazySet{N}} <: AbstractHyperrectangle{N}
 
 Type that represents the symmetric interval hull of a convex set.
 
@@ -26,7 +26,7 @@ To be most efficient in such cases, this type stores the intermediately computed
 bounds in the `radius` field and maintains a `known` bit array to mark already
 computed bounds.
 """
-struct SymmetricIntervalHull{N<:Real, S<:LazySet{N}} <: LazySet{N}
+struct SymmetricIntervalHull{N<:Real, S<:LazySet{N}} <: AbstractHyperrectangle{N}
     X::S
     radius::Vector{N}
     known::Vector{Bool}
@@ -54,6 +54,84 @@ The symmetric interval hull of an empty set.
 The empty set because it is absorbing for the symmetric interval hull.
 """
 SymmetricIntervalHull(∅::EmptySet)::EmptySet = ∅
+
+
+# --- AbstractHyperrectangle interface functions ---
+
+
+"""
+    radius_hyperrectangle(H::SymmetricIntervalHull{N}, i::Int)::N where {N<:Real}
+
+Return the box radius of a symmetric interval hull of a convex set in a given
+dimension.
+
+### Input
+
+- `H` -- symmetric interval hull of a convex set
+
+### Output
+
+The radius in the given dimension.
+If it was computed before, this is just a look-up, otherwise it requires two
+support vector computations.
+"""
+function radius_hyperrectangle(H::SymmetricIntervalHull{N},
+                               i::Int)::N where {N<:Real}
+    if !sih.known[i]
+        compute_radius(sih, i)
+    end
+    return H.radius[i]
+end
+
+"""
+    radius_hyperrectangle(sih::SymmetricIntervalHull{N})::Vector{N} where {N<:Real}
+
+Return the box radius of a symmetric interval hull of a convex set in every
+dimension.
+
+### Input
+
+- `sih` -- symmetric interval hull of a convex set
+
+### Output
+
+The box radius of the symmetric interval hull of a convex set.
+
+### Notes
+
+This function computes the symmetric interval hull explicitly.
+"""
+function radius_hyperrectangle(sih::SymmetricIntervalHull{N}
+                              )::Vector{N} where {N<:Real}
+    dim = dim(sih)
+    for i in 1:dim
+        if !sih.known[i]
+            compute_radius(sih, i, dim)
+        end
+    end
+    return sih.radius
+end
+
+
+# --- AbstractPointSymmetric interface functions ---
+
+
+"""
+    center(sih::SymmetricIntervalHull{N})::Vector{N} where {N<:Real}
+
+Return the center of a symmetric interval hull of a convex set.
+
+### Input
+
+- `sih` -- symmetric interval hull of a convex set
+
+### Output
+
+The origin.
+"""
+function center(sih::SymmetricIntervalHull{N})::Vector{N} where {N<:Real}
+    return zeros(N, dim(sih))
+end
 
 
 # --- LazySet interface functions ---
@@ -110,37 +188,51 @@ function σ(d::AbstractVector{N}, sih::SymmetricIntervalHull
 
     svec = similar(d)
     zero_N = zero(N)
-    one_N = one(N)
     for i in eachindex(d)
         if d[i] == zero_N
             svec[i] = zero_N
-        elseif !sih.known[i]
-            # compute support vector in dimension i
-            right_bound = σ(sparsevec([i], [one_N], len), sih.X)
-            left_bound = σ(sparsevec([i], [-one_N], len), sih.X)
-            sih.radius[i] = max(right_bound[i], abs(left_bound[i]))
-            sih.known[i] = true
+        else
+            if !sih.known[i]
+                compute_radius(sih, i, len)
+            end
+            svec[i] = sign(d[i]) * sih.radius[i]
         end
-        svec[i] = sign(d[i]) * sih.radius[i]
     end
     return svec
 end
 
-"""
-    an_element(sih::SymmetricIntervalHull{N, S}
-              )::Vector{N} where {N<:Real, S<:LazySet{N}}
 
-Return some element of a symmetric interval hull.
+# --- SymmetricIntervalHull functions ---
+
+
+"""
+    compute_radius(sih::SymmetricIntervalHull, i::Int, [dimension]::Int=dim(sih))
+
+Compute the radius of a symmetric interval hull of a convex in a given
+dimension.
 
 ### Input
 
-- `sih` -- symmetric interval hull
+- `sih`       -- symmetric interval hull of a convex set
+- `i`         -- dimension
+- `dimension` -- (optional, default: `dim(sih)`) set dimension
 
 ### Output
 
-The origin.
+The radius of the symmetric interval hull of a convex set in the given
+direction.
+
+### Algorithm
+
+We ask for the support vector of the underlying set for both the positive and
+negative unit vector in the dimension `i`.
 """
-function an_element(sih::SymmetricIntervalHull{N, S}
-                   )::Vector{N} where {N<:Real, S<:LazySet{N}}
-    return zeros(N, dim(sih))
+function compute_radius(sih::SymmetricIntervalHull,
+                        i::Int,
+                        dimension::Int=dim(sih))
+    one_N = one(N)
+    right_bound = σ(sparsevec([i], [one_N], dimension), sih.X)
+    left_bound = σ(sparsevec([i], [-one_N], dimension), sih.X)
+    sih.radius[i] = max(right_bound[i], abs(left_bound[i]))
+    sih.known[i] = true
 end

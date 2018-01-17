@@ -21,10 +21,11 @@ Every concrete `AbstractHyperrectangle` must define the following functions:
 
 ```jldoctest
 julia> subtypes(AbstractHyperrectangle)
-3-element Array{Union{DataType, UnionAll},1}:
+4-element Array{Union{DataType, UnionAll},1}:
  LazySets.AbstractSingleton
- LazySets.BallInf       
+ LazySets.BallInf
  LazySets.Hyperrectangle
+ LazySets.SymmetricIntervalHull
 ```
 """
 abstract type AbstractHyperrectangle{N<:Real} <: AbstractPointSymmetricPolytope{N}
