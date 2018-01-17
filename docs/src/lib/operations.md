@@ -101,6 +101,14 @@ ProjectionSparseMatrixExp
 *(::ProjectionSparseMatrixExp{Float64}, ::LazySet{Float64})
 ```
 
+## Intersection
+
+```@docs
+Intersection
+dim(::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
+σ(::AbstractVector{Float64}, ::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
+```
+
 ## Convex Hull
 
 ```@docs
