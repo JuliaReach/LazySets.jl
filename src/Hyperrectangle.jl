@@ -99,7 +99,7 @@ Return the box radius of a hyperrectangle in a given dimension.
 
 ### Output
 
-Zero.
+The radius in the given dimension.
 """
 function radius_hyperrectangle(H::Hyperrectangle{N}, i::Int)::N where {N<:Real}
     return H.radius[i]
