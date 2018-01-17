@@ -85,12 +85,12 @@ given direction.
 
 ### Input
 
-- `d`  -- direction
+- `d`   -- direction
 - `sih` -- symmetric interval hull of a convex set
 
 ### Output
 
-the support vector of the symmetric interval hull of a convex set in the given
+The support vector of the symmetric interval hull of a convex set in the given
 direction.
 If the direction has norm zero, the origin is returned.
 
@@ -105,7 +105,8 @@ both the positive and negative unit vector in the respective dimension.
 function σ(d::AbstractVector{N}, sih::SymmetricIntervalHull
           )::AbstractVector{<:Real} where {N<:Real}
     len = length(d)
-    @assert(len == dim(sih))
+    @assert len == dim(sih) "cannot compute the support vector of a " *
+        "$(dim(sih))-dimensional set along a vector of length $(length(d))"
 
     svec = similar(d)
     zero_N = zero(N)
