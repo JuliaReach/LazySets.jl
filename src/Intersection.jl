@@ -100,12 +100,12 @@ direction.
 ### Output
 
 The support vector in the given direction.
-If the direction has norm zero, the result TODO.
 """
 function σ(d::AbstractVector{<:Real}, cap::Intersection)::AbstractVector{<:Real}
-    # TODO
-    error("not implemented yet")
+    # TODO document behavior if the direction has norm zero
     # TODO error message if the intersection is empty!
+    # TODO implement
+    error("not implemented yet")
 end
 
 """
