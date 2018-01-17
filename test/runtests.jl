@@ -22,6 +22,7 @@ using LazySets, Base.Test
 # =========================================
 # Testing types representing set operations
 # =========================================
+@time @testset "LazySets.Intersection" begin include("unit_Intersection.jl") end
 @time @testset "LazySets.ConvexHull" begin include("unit_ConvexHull.jl") end
 @time @testset "LazySets.ExponentialMap" begin include("unit_ExponentialMap.jl") end
 @time @testset "LazySets.LinearMap" begin include("unit_LinearMap.jl") end
