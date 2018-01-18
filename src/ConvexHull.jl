@@ -143,12 +143,35 @@ Alias for `ConvexHullArray`.
 """
 const CHArray = ConvexHullArray
 
-ConvexHullArray(X::LazySet{N}, ::EmptySet{N}) where {N<:Real} = X
-ConvexHullArray(::EmptySet{N}, X::LazySet{N}) where {N<:Real} = X
-(ConvexHullArray(∅::E, ::E)) where {E<:EmptySet} = ∅
-dim(ch::ConvexHullArray) = dim(ch.array[1])
+"""
+    dim(cha::ConvexHullArray)::Int
 
-function σ(d::AbstractVector{<:Real}, ch::ConvexHullArray)::AbstractVector{<:Real}
+Return the dimension of the convex hull of a finite number of convex sets.
+
+### Input
+
+- `cha` -- convex hull array
+
+### Output
+
+The ambient dimension of the convex hull of a finite number of convex sets.
+"""
+function dim(cha::ConvexHullArray)::Int
+    @assert !isempty(cha)
+    return dim(cha.array[1])
+end
+
+"""
+    σ(d::AbstractVector{<:Real}, cha::ConvexHullArray)::AbstractVector{<:Real}
+
+Return the support vector of a convex hull array in a given direction.
+
+### Input
+
+- `d`   -- direction
+- `cha` -- convex hull array
+"""
+function σ(d::AbstractVector{<:Real}, cha::ConvexHullArray)::AbstractVector{<:Real}
     s = r = similar(d)
     for (i, ci) in enumerate(ch.array)
        s[i] = σ(d, ci)
