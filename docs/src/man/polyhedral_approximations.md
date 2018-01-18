@@ -3,6 +3,11 @@
 In this section we review the mathematical notation and results from convex
 geometry that are used throughout `LazySets`.
 
+```@contents
+Pages = ["polyhedral_approximations.md"]
+Depth = 3
+```
+
 ## Preliminaries
 
 Let us introduce some notation. Let ``\mathbb{I}_n`` be the identity matrix of
@@ -41,7 +46,7 @@ matrices ``M``, all scalars ``\lambda``, and all vectors ``\ell \in \mathbb{R}^n
 
 ## Support Vector
 
-The farthest points of ``\mathcal{X}`` in the direction ``\ell`` 
+The farthest points of ``\mathcal{X}`` in the direction ``\ell``
 are the *support vectors* denoted ``\sigma_\mathcal{X}(\ell)``. These points correspond
 to the optimal points for the support function, i.e.,
 
@@ -83,7 +88,7 @@ unit ball ``\mathcal{B}_p^n`` is
 ``\rho_{\mathcal{B}_p^n}(\ell) = \Vert{\ell}\Vert_{\frac{p}{p-1}}.``
 
 Given directions ``\ell_1,\ldots,\ell_m``, a tight overapproximation of
-``\mathcal{X}`` is the *outer polyhedron* given by the constraints 
+``\mathcal{X}`` is the *outer polyhedron* given by the constraints
 
 ```math
 \begin{equation*}
