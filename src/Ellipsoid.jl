@@ -12,7 +12,7 @@ E = \\left\\{ x ∈ \\mathbb{R}^n : (x-c)Q^{-1}(x-c) ≤ 1 \\right\\},
 ```
 where ``c \\in \\mathbb{R}^n`` is its *center* and ``Q \\in \\mathbb{R}^{n×n}``
 its *shape matrix*, which should be a positive definite matrix.
-An ellipsoid can also be characterized as the image of an Euclidean ball by an
+An ellipsoid can also be characterized as the image of a Euclidean ball by an
 invertible linear transformation.
 
 ### Fields
@@ -95,7 +95,8 @@ function center(E::Ellipsoid{N})::Vector{N} where {N<:AbstractFloat}
 end
 
 """
-    σ(d, E)
+    σ(d::AbstractVector{N},
+               E::Ellipsoid{N})::AbstractVector{<:AbstractFloat} where {N<:AbstractFloat}
 
 Return the support vector of an ellipsoid in a given direction.
 
