@@ -2,7 +2,8 @@ include("convex_hull_algorithms.jl")
 
 export ConvexHull, CH,
        convex_hull,
-       convex_hull!
+       convex_hull!,
+       ConvexHullArray, CHArray
 
 """
     ConvexHull{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
@@ -105,4 +106,53 @@ function σ(d::AbstractVector{<:Real}, ch::ConvexHull)::AbstractVector{<:Real}
     ρ1 = dot(d, σ1)
     ρ2 = dot(d, σ2)
     return ρ1 >= ρ2 ? σ1 : σ2
+end
+
+# ================================
+#  Convex hull of an array of sets
+# ================================
+"""
+    ConvexHullArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
+
+Type that represents the symbolic convex hull of a finite number of convex sets.
+
+### Fields
+
+- `array` -- array of sets
+"""
+struct ConvexHullArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
+    array::Vector{S}
+end
+# type-less convenience constructor
+ConvexHullArray(a::Vector{S}) where {S<:LazySet{N}} where {N<:Real} = ConvexHullArray{N, S}(a)
+
+# constructor for an empty convex hull array
+ConvexHullArray() = ConvexHullArray{Float64, LazySet{Float64}}(Vector{LazySet{Float64}}(0))
+
+# constructor for an empty convex hull array with size hint and numeric type
+function ConvexHullArray(n::Int, N::Type=Float64)::ConvexHullArray
+    a = Vector{LazySet{N}}(0)
+    sizehint!(a, n)
+    return ConvexHullArray(a)
+end
+
+"""
+    CHArray
+
+Alias for `ConvexHullArray`.
+"""
+const CHArray = ConvexHullArray
+
+ConvexHullArray(X::LazySet{N}, ::EmptySet{N}) where {N<:Real} = X
+ConvexHullArray(::EmptySet{N}, X::LazySet{N}) where {N<:Real} = X
+(ConvexHullArray(∅::E, ::E)) where {E<:EmptySet} = ∅
+dim(ch::ConvexHullArray) = dim(ch.array[1])
+
+function σ(d::AbstractVector{<:Real}, ch::ConvexHullArray)::AbstractVector{<:Real}
+    s = r = similar(d)
+    for (i, ci) in enumerate(ch.array)
+       s[i] = σ(d, ci)
+       r[i] = dot(d, s[i])
+    end
+    return s[indmax(r)]
 end
