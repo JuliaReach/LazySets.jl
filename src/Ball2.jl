@@ -105,7 +105,11 @@ If the direction has norm zero, the origin is returned.
 
 Let ``c`` and ``r`` be the center and radius of a ball ``B`` in the 2-norm,
 respectively.
-For nonzero direction ``d`` we have ``σ(d, B) = c + r * (d / ‖d‖_2)``.
+For nonzero direction ``d`` we have
+
+```math
+σ_B(d) = c + r \\frac{d}{‖d‖_2}.
+```
 
 This function requires computing the 2-norm of the input direction, which is
 performed in the given precision of the numeric datatype of both the direction
