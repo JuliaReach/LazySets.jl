@@ -64,6 +64,7 @@ include("HPolygon.jl")
 include("HPolygonOpt.jl")
 include("VPolygon.jl")
 include("Zonotope.jl")
+include("Ellipsoid.jl")
 
 # =================================
 # Types representing set operations
