@@ -143,6 +143,15 @@ Check whether a given point is contained in an ellipsoid.
 ### Output
 
 `true` iff `x ∈ E`.
+
+### Algorithm
+
+The point ``x`` belongs to the ellipsoid of center ``c`` and shape matrix ``Q``
+if and only if
+
+```math
+(x-c)^\\mathrm{T} Q^{-1} (x-c) ≤ 1.
+```
 """
 function ∈(x::AbstractVector{N}, E::Ellipsoid{N})::Bool where {N<:AbstractFloat}
     @assert length(x) == dim(E)
