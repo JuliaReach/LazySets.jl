@@ -3,6 +3,11 @@
 In this section we explain the implementation of the support vector for the case
 of convex polygons.
 
+```@contents
+Pages = ["fast_2d_LPs.md"]
+Depth = 3
+```
+
 ## Introduction
 
 Since vectors in the plane can be ordered by the angle with respect to the
