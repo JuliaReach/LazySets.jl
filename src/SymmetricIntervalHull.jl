@@ -8,9 +8,10 @@ Type that represents the symmetric interval hull of a convex set.
 
 ### Fields
 
-- `X`      -- convex set
-- `radius` -- partial storage of already computed bounds
-- `known`  -- bit array that marks already computed bounds
+- `X`     -- convex set
+- `cache` -- partial storage of already computed bounds, organized as mapping
+    from dimension to tuples `(bound, valid)`, where `valid` is a flag
+    indicating if the `bound` entry has been computed
 
 ### Notes
 
@@ -23,17 +24,19 @@ queries, where ``k`` is the number of non-zero entries in ``d``.
 However, if one asks for many support vectors in a loop, the number of
 computations may exceed ``2n``.
 To be most efficient in such cases, this type stores the intermediately computed
-bounds in the `radius` field and maintains a `known` bit array to mark already
-computed bounds.
+bounds in the `cache` field.
 """
 struct SymmetricIntervalHull{N<:Real, S<:LazySet{N}} <: AbstractHyperrectangle{N}
     X::S
-    radius::Vector{N}
-    known::Vector{Bool}
+    cache::Vector{Tuple{N, Bool}}
 
     function SymmetricIntervalHull{N, S}(X::S) where {S<:LazySet{N}} where {N<:Real}
-        n = dim(X)
-        return new{N, S}(X, zeros(N, n), falses(n))
+        cache = Vector{Tuple{N, Bool}}(dim(X))
+        zero_N = zero(N)
+        for i in 1:length(cache)
+            cache[i] = (zero_N, false)
+        end
+        return new{N, S}(X, cache)
     end
 end
 # type-less convenience constructor
@@ -77,10 +80,10 @@ support vector computations.
 """
 function radius_hyperrectangle(H::SymmetricIntervalHull{N},
                                i::Int)::N where {N<:Real}
-    if !sih.known[i]
+    if !sih.cache[i][2]
         compute_radius(sih, i)
     end
-    return H.radius[i]
+    return sih.cache[i][1]
 end
 
 """
@@ -106,11 +109,11 @@ function radius_hyperrectangle(sih::SymmetricIntervalHull{N}
     dim = dim(sih)
     one_N = one(N)
     for i in 1:dim
-        if !sih.known[i]
+        if !sih.cache[i][2]
             compute_radius(sih, i, dim, one_N)
         end
     end
-    return sih.radius
+    return sih.cache[i][1]
 end
 
 
@@ -194,10 +197,10 @@ function σ(d::AbstractVector{N}, sih::SymmetricIntervalHull
         if d[i] == zero_N
             svec[i] = zero_N
         else
-            if !sih.known[i]
+            if !sih.cache[i][2]
                 compute_radius(sih, i, len, one_N)
             end
-            svec[i] = sign(d[i]) * sih.radius[i]
+            svec[i] = sign(d[i]) * sih.cache[i][1]
         end
     end
     return svec
@@ -238,7 +241,6 @@ function compute_radius(sih::SymmetricIntervalHull{N, <:LazySet{N}},
                         one_N::N=one(N))::Void where {N<:Real}
     right_bound = σ(sparsevec([i], [one_N], dimension), sih.X)
     left_bound = σ(sparsevec([i], [-one_N], dimension), sih.X)
-    sih.known[i] = true
-    sih.radius[i] = max(right_bound[i], abs(left_bound[i]))
+    sih.cache[i] = (max(right_bound[i], abs(left_bound[i])), true)
     return nothing
 end
