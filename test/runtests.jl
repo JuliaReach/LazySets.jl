@@ -18,6 +18,7 @@ using LazySets, Base.Test
 @time @testset "LazySets.Zonotope" begin include("unit_Zonotope.jl") end
 @time @testset "LazySets.ZeroSet" begin include("unit_ZeroSet.jl") end
 @time @testset "LazySets.EmptySet" begin include("unit_EmptySet.jl") end
+@time @testset "LazySets.Ellipsoid" begin include("unit_Ellipsoid.jl") end
 
 # =========================================
 # Testing types representing set operations

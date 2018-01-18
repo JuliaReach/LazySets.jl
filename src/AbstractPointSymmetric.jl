@@ -10,13 +10,15 @@ Abstract type for point symmetric sets.
 ### Notes
 
 Every concrete `AbstractPointSymmetric` must define the following functions:
+
 - `center(::AbstractPointSymmetric{N})::Vector{N}` -- return the center point
 
 ```jldoctest
 julia> subtypes(AbstractPointSymmetric)
-2-element Array{Union{DataType, UnionAll},1}:
- LazySets.Ball2                   
- LazySets.Ballp                   
+3-element Array{Union{DataType, UnionAll},1}:
+ LazySets.Ball2
+ LazySets.Ballp
+ LazySets.Ellipsoid
 ```
 """
 abstract type AbstractPointSymmetric{N<:Real} <: LazySet{N} end
