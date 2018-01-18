@@ -126,3 +126,12 @@ convex_hull!
 right_turn
 monotone_chain!
 ```
+
+## Symmetric Interval Hull
+
+```@docs
+SymmetricIntervalHull
+dim(::SymmetricIntervalHull{Float64, LazySet{Float64}})
+σ(::AbstractVector{Float64}, ::SymmetricIntervalHull{Float64, LazySet{Float64}})
+an_element(::SymmetricIntervalHull{Float64, LazySet{Float64}})
+```
