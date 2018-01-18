@@ -1,110 +1,98 @@
 export Ellipsoid
 
 """
-    Ellipsoid <: LazySet
+    Ellipsoid{N<:Real} <:  AbstractPointSymmetric{N}
 
 Type that represents an ellipsoid.
 
 It is defined as the set
 
 ```math
-E = \\left\\{ c + \\sum_{i=1}^p ξ_i g_i,~~ ξ_i \\in [-1, 1]~~ ∀ i = 1,…, p \\right\\},
+E = \\left\\{ x ∈ \\mathbb{R}^n : (x-c)Q^{-1}(x-c) ≤ 1 \\right\\},
 ```
-where ``c \\in \\mathbb{R}^n`` is its *center* and ``\\{g_i\\}_{i=1}^p``,
-``g_i \\in \\mathbb{R}^n``, is the set of *generators*. This characterization
-defines a ellipsoid as the finite Minkowski sum of line elements. ellipsoids can be
-equivalently described as the image of a unit infinity-norm ball in ``\\mathbb{R}^n``
-by an affine transformation.
+where ``c \\in \\mathbb{R}^n`` is its *center* and ``Q \\in \\mathbb{R}^{n×n}``
+its *shape matrix*, which should be a positive definite matrix.
+An ellipsoid can also be characterized as the image of an Euclidean ball by an
+invertible linear transformation.
 
 ### Fields
 
-- `center`     -- center of the ellipsoid
-- `generators` -- two dimensional matrix where each column is a generator of the ellipsoid
+- `center`       -- center of the ellipsoid
+- `shape matrix` -- real positive definite matrix, i.e. it is equal to its transpose
+                    and ``x^\\mathrm{T}Qx > 0`` for all nonzero ``x``
 
 ### Examples
 
-A two-dimensional ellipsoid with given center and set of generators:
+If the center is not specified, it is assumed that the center is the origin.
+For instance, a 3D ellipsoid with center at the origin and the shape matrix being
+the identity can be created with:
 
-```julia
-julia> using LazySets
-julia> X = ellipsoid([1.0, 0.0], 0.1*eye(2))
-LazySets.ellipsoid{Float64}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
-julia> dim(X)
-2
+```jldoctest ellipsoid_constructor
+julia> E = Ellipsoid(eye(3))
+LazySets.Ellipsoid{Float64}([0.0, 0.0, 0.0], [1.0 0.0 0.0; 0.0 1.0 0.0; 0.0 0.0 1.0])
+
+julia> dim(E)
+3
+
+julia> an_element(E)
+3-element Array{Float64,1}:
+ 0.0
+ 0.0
+ 0.0
 ```
 
-We can ask for its vertices with the `vertices_list` function:
+This ellipsoid corresponds to the unit Euclidean ball. Let's evaluate its support
+vector in a given direction:
 
-```julia
-julia> vertices_list(X)
-4-element Array{Array{Float64,1},1}:
-[0.9, -0.1]
-[1.1, -0.1]
-[1.1, 0.1]
-[0.9, 0.1]
+```jldoctest ellipsoid_constructor
+julia> σ(ones(3), E)
+3-element Array{Float64,1}:
+ 0.57735
+ 0.57735
+ 0.57735
 ```
 
-Evaluate the support vector in a given direction:
+A two-dimensional ellipsoid with given center and shape matrix:
 
 ```julia
-julia> σ([1., 1.], X)
-2-element Array{Float64,1}:
- 1.1
- 0.1
+julia> E = Ellipsoid(ones(2), diagm([2.0, 0.5]))
+LazySets.Ellipsoid{Float64}([1.0, 1.0], [2.0 0.0; 0.0 0.5])
 ```
 """
-struct ellipsoid{N<:Real} <: LazySet
+struct Ellipsoid{N<:Real} <: AbstractPointSymmetric{N}
     center::AbstractVector{N}
-    generators::AbstractMatrix{N}
+    shape_matrix::AbstractMatrix{N}
 
-    ellipsoid{N}(center, generators) where N = new(center, generators)
+    # default constructor with dimension check
+    function Ellipsoid{N}(c::AbstractVector{N}, Q::AbstractMatrix{N}) where {N<:Real}
+        @assert length(c) == Base.LinAlg.checksquare(Q)
+        return new(c, Q)
+    end
 end
-ellipsoid(center::AbstractVector{N}, generators::AbstractMatrix{N}) where{N<:Real} = ellipsoid{N}(center, generators)
+
+# type-less convenience constructor
+Ellipsoid(c::AbstractVector{N}, Q::AbstractMatrix{N}) where {N<:Real} =
+    Ellipsoid{N}(c, Q)
+
+# convenience constructor for ellipsoid centered in the origin
+Ellipsoid(Q::AbstractMatrix{N}) where {N<:Real} = Ellipsoid(zeros(N, size(Q, 1)), Q)
 
 """
-    ellipsoid(center::AbstractVector, generators::AbstractVector{T}) where{T<:AbstractVector}
+    center(E::Ellipsoid{N})::Vector{N} where {N<:AbstractFloat}
 
-Construct a ellipsoid given its center and the set of generators.
+Return the center of the ellipsoid.
 
 ### Input
 
-- `center`     -- center of the ellipsoid
-- `generators` -- list of generators of the ellipsoid
+- `E` -- ellipsoid
 
 ### Output
 
-An ellipsoid with the given center and set of generators.
-
-### Examples
-
-A ellipsoid in two dimensions with three generators:
-
-```julia
-julia> X = ellipsoid(ones(2), [[1., 0], [0., 1], [1, 1]])
-LazySets.ellipsoid{Float64}([1.0, 1.0], [1.0 0.0; 0.0 1.0; 1.0 1.0])
-julia> X.generators
-2×3 Array{Float64,2}:
- 1.0  0.0  1.0
- 0.0  1.0  1.0
-```
+The center of the ellipsoid.
 """
-ellipsoid(center::AbstractVector, generators::AbstractVector{T}) where{T<:AbstractVector} =
-    ellipsoid(center, hcat(generators...))
-
-"""
-    dim(E::ellipsoid)::Int
-
-Return the ambient dimension of an ellipsoid.
-
-### Input
-
-- `E` -- an ellipsoid
-
-### Output
-
-The ambient dimension of the ellipsoid.
-"""
-dim(E::ellipsoid)::Int = length(E.center)
+function center(E::Ellipsoid{N})::Vector{N} where {N<:AbstractFloat}
+    return E.center
+end
 
 """
     σ(d, E)
@@ -119,7 +107,24 @@ Return the support vector of an ellipsoid in a given direction.
 ### Output
 
 Support vector in the given direction.
+
+### Algorithm
+
+Let ``E`` be an ellipsoid of center ``c`` and shape matrix ``Q = BB^\\mathrm{T}``.
+Its support vector along direction ``d`` can be deduced from that of the unit
+Euclidean ball ``\\mathcal{B}_2`` using the algebraic relations for the support
+vector,
+
+```math
+σ_{B\\mathcal{B}_2 ⊕ c}(d) = c + Bσ_{\\mathcal{B}_2} (B^\\mathrm{T} d)
+= c + \\dfrac{Qd}{\\sqrt{d^\\mathrm{T}Q d}}.
+```
 """
-function σ(d::AbstractVector, E::Ellipsoid)
-    return Z.center + Z.generators * unit_step.(Z.generators.' * d)
+function σ(d::AbstractVector{N},
+           E::Ellipsoid{N})::AbstractVector{<:AbstractFloat} where {N<:AbstractFloat}
+    if norm(d, 2) == zero(N)
+        return an_element(E)
+    end
+    α = sqrt(dot(d, E.shape_matrix * d))
+    return E.center .+ E.shape_matrix * d ./ α
 end

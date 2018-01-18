@@ -87,6 +87,14 @@ an_element(::Ballp{Float64})
 center(::Ballp{Float64})
 ```
 
+## Ellipsoid
+
+```@docs
+Ellipsoid
+σ(::AbstractVector{Float64}, ::Ellipsoid{Float64})
+center(::Ellipsoid{Float64})
+```
+
 ## Polygons
 
 ### Constraint representation
