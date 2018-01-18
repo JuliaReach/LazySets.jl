@@ -146,6 +146,6 @@ Check whether a given point is contained in an ellipsoid.
 """
 function ∈(x::AbstractVector{N}, E::Ellipsoid{N})::Bool where {N<:AbstractFloat}
     @assert length(x) == dim(E)
-    c, Q = E.center, E.shape_matrix
-    return dot(x-c, Q \ (x-c)) ≤ 1
+    w, Q = x-E.center, E.shape_matrix
+    return dot(w, Q \ w) ≤ 1
 end
