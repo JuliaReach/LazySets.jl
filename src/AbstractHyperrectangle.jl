@@ -106,6 +106,30 @@ function norm(H::AbstractHyperrectangle, p::Real=Inf)::Real
 end
 
 """
+    radius(H::AbstractHyperrectangle, [p]::Real=Inf)::Real
+
+Return the radius of a hyperrectangular set.
+
+### Input
+
+- `H` -- hyperrectangular set
+- `p` -- (optional, default: `Inf`) norm
+
+### Output
+
+A real number representing the radius.
+
+### Notes
+
+The radius is defined as the radius of the enclosing ball of the given
+``p``-norm of minimal volume with the same center.
+It is the same for all corners of a hyperrectangular set.
+"""
+function radius(H::AbstractHyperrectangle, p::Real=Inf)::Real
+    return norm(radius_hyperrectangle(H), p)
+end
+
+"""
     diameter(H::AbstractHyperrectangle, [p]::Real=Inf)::Real
 
 Return the diameter of a hyperrectangular set.

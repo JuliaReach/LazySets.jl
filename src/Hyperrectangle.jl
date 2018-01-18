@@ -144,34 +144,6 @@ function center(H::Hyperrectangle{N})::Vector{N} where {N<:Real}
 end
 
 
-# --- LazySet interface functions ---
-
-
-"""
-    radius(H::Hyperrectangle, [p]::Real=Inf)::Real
-
-Return the radius of a hyperrectangle.
-
-### Input
-
-- `H` -- hyperrectangle
-- `p` -- (optional, default: `Inf`) norm
-
-### Output
-
-A real number representing the radius.
-
-### Notes
-
-The radius is defined as the radius of the enclosing ball of the given
-``p``-norm of minimal volume with the same center.
-"""
-function radius(H::Hyperrectangle, p::Real=Inf)::Real
-    # the radius is the same for all corners of the hyperrectangle
-    return norm(H.radius, p)
-end
-
-
 # --- Hyperrectangle functions ---
 
 
