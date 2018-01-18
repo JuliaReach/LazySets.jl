@@ -129,3 +129,23 @@ function σ(d::AbstractVector{N},
     α = sqrt(dot(d, E.shape_matrix * d))
     return E.center .+ E.shape_matrix * d ./ α
 end
+
+"""
+    ∈(x::AbstractVector{N}, E::Ellipsoid{N})::Bool where {N<:AbstractFloat}
+
+Check whether a given point is contained in an ellipsoid.
+
+### Input
+
+- `x` -- point/vector
+- `E` -- ellipsoid
+
+### Output
+
+`true` iff `x ∈ E`.
+"""
+function ∈(x::AbstractVector{N}, E::Ellipsoid{N})::Bool where {N<:AbstractFloat}
+    @assert length(x) == dim(E)
+    c, Q = E.center, E.shape_matrix
+    return dot(x-c, Q \ (x-c)) ≤ 1
+end

@@ -93,6 +93,7 @@ center(::Ballp{Float64})
 Ellipsoid
 σ(::AbstractVector{Float64}, ::Ellipsoid{Float64})
 center(::Ellipsoid{Float64})
+∈(::AbstractVector{Float64}, ::Ellipsoid{Float64})
 ```
 
 ## Polygons

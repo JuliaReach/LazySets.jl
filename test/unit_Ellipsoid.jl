@@ -51,6 +51,6 @@ d = [0., 1.]
 d = [0., -1.]
 @test σ(d, E) ≈ [1., 2. - sqrt(2)]
 
-# an_element function
-#E = Ellipsoid([1., 2.], 2*eye(2))
-#@test an_element(E) ∈ E
+# an_element and set membership functions
+E = Ellipsoid([1., 2.], 2*eye(2))
+@test an_element(E) ∈ E
