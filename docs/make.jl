@@ -1,3 +1,4 @@
+ENV["GKSwstype"] = "100"  # set 'GR environment' to 'no output' (for Travis CI)
 using Documenter, LazySets
 
 makedocs(
