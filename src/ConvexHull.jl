@@ -70,8 +70,6 @@ ConvexHull(::EmptySet{N}, X::LazySet{N}) where {N<:Real} = X
 # special case: pure empty set convex hull (we require the same numeric type)
 (ConvexHull(∅::E, ::E)) where {E<:EmptySet} = ∅
 
-
-
 """
     dim(ch::ConvexHull)::Int
 
@@ -157,7 +155,7 @@ Return the dimension of the convex hull of a finite number of convex sets.
 The ambient dimension of the convex hull of a finite number of convex sets.
 """
 function dim(cha::ConvexHullArray)::Int
-    @assert !isempty(cha)
+    @assert !isempty(cha.array)
     return dim(cha.array[1])
 end
 
@@ -172,10 +170,16 @@ Return the support vector of a convex hull array in a given direction.
 - `cha` -- convex hull array
 """
 function σ(d::AbstractVector{<:Real}, cha::ConvexHullArray)::AbstractVector{<:Real}
-    s = r = similar(d)
-    for (i, ci) in enumerate(ch.array)
-       s[i] = σ(d, ci)
-       r[i] = dot(d, s[i])
+    s = σ(d, cha.array[1])
+    ri = dot(d, s)
+    rmax = ri
+    for (i, chi) in enumerate(cha.array[2:end])
+        si = σ(d, chi)
+        ri = dot(d, si)
+        if ri > rmax
+            rmax = ri
+            s = si
+        end
     end
-    return s[indmax(r)]
+    return s
 end
