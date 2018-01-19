@@ -14,6 +14,19 @@ Type that represents the convex hull of the union of two convex sets.
 
 - `X` -- convex set
 - `Y` -- convex set
+
+### Examples
+
+Convex hull of two 100-dimensional Euclidean balls:
+
+```jldoctest
+julia> b1, b2 = Ball2(zeros(100), 0.1), Ball2(4*ones(100), 0.2);
+
+julia> c = ConvexHull(b1, b2);
+
+julia> typeof(c)
+LazySets.ConvexHull{Float64,LazySets.Ball2{Float64},LazySets.Ball2{Float64}}
+```
 """
 struct ConvexHull{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     X::S1
@@ -117,6 +130,16 @@ Type that represents the symbolic convex hull of a finite number of convex sets.
 ### Fields
 
 - `array` -- array of sets
+
+### Examples
+
+Convex hull of 100 two-dimensional balls whose centers follows a sinusoidal:
+
+```jldoctest
+julia> b = [Ball2([2*pi*i/100, sin(2*pi*i/100)], 0.05) for i in 1:100];
+
+julia> c = ConvexHullArray(b);
+```
 """
 struct ConvexHullArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
