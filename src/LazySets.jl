@@ -65,6 +65,7 @@ include("HPolygonOpt.jl")
 include("VPolygon.jl")
 include("Zonotope.jl")
 include("Ellipsoid.jl")
+include("Hyperplane.jl")
 include("HalfSpace.jl")
 
 # =================================

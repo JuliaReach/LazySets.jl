@@ -260,6 +260,16 @@ singleton_list(::Zonotope{Float64})
 order(::Zonotope{Float64})
 ```
 
+## Hyperplane
+
+```@docs
+Hyperplane
+dim(::Hyperplane{Float64})
+σ(::AbstractVector{Float64}, ::Hyperplane{Float64})
+an_element(::Hyperplane{Float64})
+∈(::AbstractVector{Float64}, ::Hyperplane{Float64})
+```
+
 ## Half-Space
 
 ```@docs

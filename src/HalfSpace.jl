@@ -69,39 +69,7 @@ Otherwise this function throws an error.
 """
 function σ(d::AbstractVector{N},
            hs::HalfSpace)::AbstractVector{<:Real} where {N<:Real}
-    @assert (length(d) == dim(hs)) "cannot compute the support vector of a " *
-        "$(dim(hs))-dimensional half-space along a vector of length $(length(d))"
-
-    @inline function not_solvable(d, hs)
-        error("the support vector for the half-space with normal direction " *
-            "$(hs.a) is not defined along a direction $d")
-    end
-
-    first_nonzero_entry_a = -1
-    if all(d .== 0)
-        # zero vector
-        return an_element(hs)
-    else
-        # not the zero vector, check if it is a normal vector
-        factor = zero(N)
-        for i in 1:length(hs.a)
-            if hs.a[i] == 0
-                if d[i] != 0
-                    not_solvable(d, hs)
-                end
-            else
-                if d[i] == 0
-                    not_solvable(d, hs)
-                elseif first_nonzero_entry_a == -1
-                    factor = hs.a[i] / d[i]
-                    first_nonzero_entry_a = i
-                elseif d[i] * factor != hs.a[i]
-                    not_solvable(d, hs)
-                end
-            end
-        end
-        return an_element_helper(hs, first_nonzero_entry_a)
-    end
+    return σ_helper(d, Hyperplane(hs.a, hs.b), "half-space")
 end
 
 """
@@ -115,10 +83,10 @@ Return some element of a half-space.
 
 ### Output
 
-An element in the half-space.
+An element on the defining hyperplane.
 """
 function an_element(hs::HalfSpace{N})::Vector{N} where {N<:Real}
-    return an_element_helper(hs, findfirst(hs.a))
+    return an_element_helper(Hyperplane(hs.a, hs.b))
 end
 
 """
@@ -141,39 +109,4 @@ We just check if ``x`` satisfies ``a⋅x ≤ b``.
 """
 function ∈(x::AbstractVector{N}, hs::HalfSpace{N})::Bool where {N<:Real}
     return dot(x, hs.a) <= hs.b
-end
-
-
-# --- HalfSpace functions ---
-
-
-"""
-    an_element_helper(hs::HalfSpace{N},
-                      first_nonzero_entry_a::Int)::Vector{N} where {N<:Real}
-
-Helper function that computes an element on a half-space's hyperplane.
-
-### Input
-
-- `hs` -- half-space
-- `first_nonzero_entry_a` -- index such that `hs.a` is different from 0
-
-### Output
-
-An element on a half-space's hyperplane.
-
-### Algorithm
-
-We compute the point on the hyperplane as follows:
-- We already found a nonzero entry of ``a`` in dimension, say, ``i``.
-- We set ``x[j] = 0`` for ``j ≠ i``.
-- We set ``x[i] = b / a[i]``.
-"""
-function an_element_helper(hs::HalfSpace{N},
-                           first_nonzero_entry_a::Int)::Vector{N} where {N<:Real}
-    @assert first_nonzero_entry_a in 1:length(hs.a) "invalid index " *
-        "$first_nonzero_entry_a for half-space"
-    x = zeros(N, dim(hs))
-    x[first_nonzero_entry_a] = hs.b / hs.a[first_nonzero_entry_a]
-    return x
 end
