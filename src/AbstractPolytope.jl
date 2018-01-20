@@ -1,5 +1,3 @@
-import Base.⊆
-
 export AbstractPolytope,
        vertices_list,
        singleton_list
@@ -26,55 +24,6 @@ julia> subtypes(AbstractPolytope)
 ```
 """
 abstract type AbstractPolytope{N<:Real} <: LazySet{N} end
-
-
-# --- LazySet interface functions ---
-
-
-"""
-    ⊆(P::AbstractPolytope{N}, S::LazySet{N}, witness::Bool=false
-     )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
-
-Check whether a polytope is contained in a convex set, and if not, optionally
-compute a witness.
-
-### Input
-
-- `P` -- inner polytope
-- `S` -- outer convex set
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``P ⊆ S``
-* If `witness` option is activated:
-  * `(true, [])` iff ``P ⊆ S``
-  * `(false, v)` iff ``P \\not\\subseteq S`` and ``v ∈ P \\setminus S``
-
-### Algorithm
-
-Since ``S`` is convex, ``P ⊆ S`` iff ``v_i ∈ S`` for all vertices ``v_i`` of
-``P``.
-"""
-function ⊆(P::AbstractPolytope{N}, S::LazySet{N}, witness::Bool=false
-          )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
-    @assert dim(P) == dim(S)
-
-    for v in vertices_list(P)
-        if !∈(v, S)
-            if witness
-                return (false, v)
-            else
-                return false
-            end
-        end
-    end
-    if witness
-        return (true, N[])
-    else
-        return true
-    end
-end
 
 
 # --- common AbstractPolytope functions ---
