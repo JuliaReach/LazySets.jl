@@ -116,9 +116,11 @@ end
 
 
 """
+```
     σ_helper(d::AbstractVector{<:Real},
              hp::Hyperplane,
              [name]::String="hyperplane")::AbstractVector{<:Real}
+```
 
 Return the support vector of a hyperplane.
 
