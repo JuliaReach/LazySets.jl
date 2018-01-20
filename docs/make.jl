@@ -17,6 +17,7 @@ makedocs(
         "Iterative Refinement" => "man/iterative_refinement.md",
         "Interval Hulls" => "man/interval_hulls.md",
         "Convex Hulls" => "man/convex_hulls.md",
+        "Operations on Sets" => "man/set_operations.md",
         "A Reachability Algorithm" => "man/reach_zonotopes.md"],
         "Library" => Any[
         "Set Interfaces" => "lib/interfaces.md",
