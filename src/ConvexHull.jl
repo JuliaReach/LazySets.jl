@@ -164,6 +164,18 @@ Alias for `ConvexHullArray`.
 """
 const CHArray = ConvexHullArray
 
+CH(cha::ConvexHullArray, ∅::EmptySet) = cha
+CH(cha::EmptySet, ::ConvexHullArray) = cha
+
+function CH(cha::ConvexHullArray, X::LazySet)
+    push!(cha.array.X)
+    return cha
+end
+
+CH(X::LazySet, cha::ConvexHullArray) = CH(cha, X)
+
+CH(cha1::ConvexHullArray, cha2::ConvexHullArray) = ConvexHullArray(vcat(cha1.array, cha2.array))
+
 """
     dim(cha::ConvexHullArray)::Int
 
