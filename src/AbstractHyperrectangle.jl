@@ -2,7 +2,6 @@ import Base.LinAlg.norm,
        Base.∈
 
 export AbstractHyperrectangle,
-       is_intersection_empty,
        radius_hyperrectangle
 
 """
@@ -184,72 +183,4 @@ function ∈(x::AbstractVector{N},
         end
     end
     return true
-end
-
-
-"""
-    is_intersection_empty(H1::AbstractHyperrectangle{N},
-                          H2::AbstractHyperrectangle{N},
-                          witness::Bool=false
-                         )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
-
-Check whether two hyperrectangles do not intersect, and otherwise optionally
-compute a witness.
-
-### Input
-
-- `H1` -- first hyperrectangle
-- `H2` -- second hyperrectangle
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``H1 ∩ H2 = ∅``
-* If `witness` option is activated:
-  * `(true, [])` iff ``H1 ∩ H2 = ∅``
-  * `(false, v)` iff ``H1 ∩ H2 ≠ ∅`` and ``v ∈ H1 ∩ H2``
-
-### Algorithm
-
-``H1 ∩ H2 ≠ ∅`` iff ``|c_2 - c_1| ≤ r_1 + r_2``, where ``≤`` is taken
-component-wise.
-
-A witness is computed by starting in one center and moving toward the other
-center for as long as the minimum of the radius and the center distance.
-In other words, the witness is the point in `H1` that is closest to the center
-of `H2`.
-"""
-function is_intersection_empty(H1::AbstractHyperrectangle{N},
-                               H2::AbstractHyperrectangle{N},
-                               witness::Bool=false
-                              )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
-    empty_intersection = false
-    center_diff = center(H2) - center(H1)
-    for i in eachindex(center_diff)
-        if abs(center_diff[i]) >
-                radius_hyperrectangle(H1, i) + radius_hyperrectangle(H2, i)
-            empty_intersection = true
-            break
-        end
-    end
-
-    if !witness
-        return empty_intersection
-    elseif empty_intersection
-        return (true, N[])
-    end
-
-    # compute a witness 'v' in the intersection
-    v = copy(center(H1))
-    c2 = center(H2)
-    for i in eachindex(center_diff)
-        if v[i] <= c2[i]
-            # second center is right of first center
-            v[i] += min(radius_hyperrectangle(H1, i), center_diff[i])
-        else
-            # second center is left of first center
-            v[i] -= max(radius_hyperrectangle(H1, i), -center_diff[i])
-        end
-    end
-    return (false, v)
 end

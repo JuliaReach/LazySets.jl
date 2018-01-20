@@ -1,7 +1,6 @@
 import Base.∈
 
-export Ball2,
-       is_intersection_empty
+export Ball2
 
 """
     Ball2{N<:AbstractFloat} <: AbstractPointSymmetric{N}
@@ -172,71 +171,4 @@ function ∈(x::AbstractVector{N}, B::Ball2{N})::Bool where {N<:AbstractFloat}
         sum += (B.center[i] - x[i])^2
     end
     return sqrt(sum) <= B.radius
-end
-
-
-"""
-    is_intersection_empty(B1::Ball2{N},
-                          B2::Ball2{N},
-                          witness::Bool=false
-                         )::Union{Bool, Tuple{Bool,Vector{N}}} where {N<:Real}
-
-Check whether two balls in the 2-norm do not intersect, and otherwise optionally
-compute a witness.
-
-### Input
-
-- `B1` -- first ball in the 2-norm
-- `B2` -- second ball in the 2-norm
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``B1 ∩ B2 = ∅``
-* If `witness` option is activated:
-  * `(true, [])` iff ``B1 ∩ B2 = ∅``
-  * `(false, v)` iff ``B1 ∩ B2 ≠ ∅`` and ``v ∈ B1 ∩ B2``
-
-### Algorithm
-
-``B1 ∩ B2 = ∅`` iff ``‖ c_2 - c_1 ‖_2 > r_1 + r_2``.
-
-A witness is computed depending on the smaller/bigger ball (to break ties,
-choose `B1` for the smaller ball) as follows.
-- If the smaller ball's center is contained in the bigger ball, we return it.
-- Otherwise start in the smaller ball's center and move toward the other center
-  until hitting the smaller ball's border.
-  In other words, the witness is the point in the smaller ball that is closest
-  to the center of the bigger ball.
-"""
-function is_intersection_empty(B1::Ball2{N},
-                               B2::Ball2{N},
-                               witness::Bool=false
-                              )::Union{Bool, Tuple{Bool,Vector{N}}} where {N<:Real}
-    center_diff_normed = norm(center(B2) - center(B1), 2)
-    empty_intersection = center_diff_normed > B1.radius + B2.radius
-
-    if !witness
-        return empty_intersection
-    elseif empty_intersection
-        return (true, N[])
-    end
-
-    # compute a witness 'v' in the intersection
-    if B1.radius <= B2.radius
-        smaller = B1
-        bigger = B2
-    else
-        smaller = B2
-        bigger = B1
-    end
-    if center_diff_normed <= bigger.radius
-        # smaller ball's center is contained in bigger ball
-        v = smaller.center
-    else
-        # scale center difference with smaller ball's radius
-	direction = (bigger.center - smaller.center)
-        v = smaller.center + direction / center_diff_normed * smaller.radius
-    end
-    return (false, v)
 end
