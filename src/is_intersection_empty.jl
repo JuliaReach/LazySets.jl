@@ -189,6 +189,79 @@ function is_intersection_empty(S1::AbstractSingleton{N},
 end
 
 
+"""
+    is_intersection_empty(H::AbstractHyperrectangle{N},
+                          S::AbstractSingleton{N},
+                          witness::Bool=false
+                         )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
+
+Check whether a hyperrectangle and a singleton do not intersect, and otherwise
+optionally compute a witness.
+
+### Input
+
+- `H` -- hyperrectangle
+- `S` -- singleton
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``H ∩ S = ∅``
+* If `witness` option is activated:
+  * `(true, [])` iff ``H ∩ S = ∅``
+  * `(false, v)` iff ``H ∩ S ≠ ∅`` and `v` = `element(S)` ``∈ H ∩ S``
+
+### Algorithm
+
+``H ∩ S = ∅`` iff `element(S)` ``\notin H``.
+"""
+function is_intersection_empty(H::AbstractHyperrectangle{N},
+                               S::AbstractSingleton{N},
+                               witness::Bool=false
+                              )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
+    empty_intersection = !∈(element(S), H)
+    if witness
+        return (empty_intersection, empty_intersection ? N[] : element(S))
+    else
+        return empty_intersection
+    end
+end
+
+
+"""
+    is_intersection_empty(S::AbstractSingleton{N},
+                          H::AbstractHyperrectangle{N},
+                          witness::Bool=false
+                         )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
+
+Check whether a singleton and a hyperrectangle do not intersect, and otherwise
+optionally compute a witness.
+
+### Input
+
+- `S` -- singleton
+- `H` -- hyperrectangle
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``H ∩ S = ∅``
+* If `witness` option is activated:
+  * `(true, [])` iff ``H ∩ S = ∅``
+  * `(false, v)` iff ``H ∩ S ≠ ∅`` and `v` = `element(S)` ``∈ H ∩ S``
+
+### Algorithm
+
+``S ∩ H = ∅`` iff `element(S)` ``\notin H``.
+"""
+function is_intersection_empty(S::AbstractSingleton{N},
+                               H::AbstractHyperrectangle{N},
+                               witness::Bool=false
+                              )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
+    return is_intersection_empty(H, S, witness)
+end
+
+
 # --- Ball2 ---
 
 
