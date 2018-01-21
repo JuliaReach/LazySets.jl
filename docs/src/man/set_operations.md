@@ -81,7 +81,7 @@ The table entries have the following meaning.
 | `Ellipsoid`                  |        |          |      |    (x)     | x |
 | `EmptySet`                   |        |          |      |     x      | x |
 | `HPolygon`/`HPolygonOpt`     |        |          |      |    (x)     |(x)|
-| `HPolytope`                  |        |          |      |            |   |
+| `HPolytope`                  |        |          |      |            | x |
 | `Hyperrectangle`             |  (x)   |   (x)    | (x)  |    (x)     |(x)|
 | `Singleton`                  |  (x)   |   (x)    | (x)  |    (x)     |(x)|
 | `VPolygon`                   |        |          |      |     x      | x |
@@ -97,7 +97,7 @@ The table entries have the following meaning.
 | `ExponentialProjectionMap`   |        |          |      |            |   |
 | `HalfSpace`                  |        |          |      |     x      | x |
 | `Hyperplane`                 |        |          |      |     x      | x |
-| `Intersection`               |        |          |      |            |   |
+| `Intersection`               |        |          |      |            | x |
 | `LinearMap`                  |        |          |      |            | x |
 | `MinkowskiSum`               |        |          |      |            |   |
 | `MinkowskiSumArray`          |        |          |      |            |   |
