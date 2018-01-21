@@ -8,5 +8,8 @@ I = Intersection(B, H)
 # support vector (error)
 @test_throws ErrorException σ(ones(2), I)
 
+# membership
+@test ∈(ones(2), I) && !∈([5., 5.], I)
+
 # emptiness of intersection
 @test !isempty(I)

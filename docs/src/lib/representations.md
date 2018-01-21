@@ -153,6 +153,7 @@ dim(P::HPolytope)
 addconstraint!(P::HPolytope{Float64}, constraint::LinearConstraint{Float64})
 constraints_list(P::HPolytope{Float64})
 σ(d::AbstractVector{Float64}, P::HPolytope)
+∈(::AbstractVector{Float64}, ::HPolytope{Float64})
 ```
 
 ## Lines and linear constraints

@@ -1,4 +1,4 @@
-import Base.isempty
+import Base: isempty, ∈
 
 export Intersection, ∩
 
@@ -69,6 +69,10 @@ Intersection(∅::EmptySet, ::LazySet) = ∅
 # special case: pure empty set intersection (we require the same numeric type)
 (Intersection(∅::E, ::E)) where {E<:EmptySet} = ∅
 
+
+# --- LazySet interface functions ---
+
+
 """
     dim(cap::Intersection)::Int
 
@@ -107,6 +111,28 @@ function σ(d::AbstractVector{<:Real}, cap::Intersection)::AbstractVector{<:Real
     # TODO implement
     error("not implemented yet")
 end
+
+"""
+    ∈(x::AbstractVector{N}, cap::Intersection{N})::Bool where {N<:Real}
+
+Check whether a given point is contained in a intersection of two convex sets.
+
+### Input
+
+- `x` -- point/vector
+- `cap` -- intersection of two convex sets
+
+### Output
+
+`true` iff ``x ∈ cap``.
+"""
+function ∈(x::AbstractVector{N}, cap::Intersection{N})::Bool where {N<:Real}
+    return (x ∈ cap.X) && (x ∈ cap.Y)
+end
+
+
+# --- Intersection functions ---
+
 
 """
     isempty(cap::Intersection)::Bool
