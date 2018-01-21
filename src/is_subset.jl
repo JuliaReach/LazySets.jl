@@ -238,6 +238,46 @@ end
 
 
 """
+    is_subset(S::AbstractSingleton{N},
+              H::AbstractHyperrectangle{N},
+              witness::Bool=false
+             )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether a given set with a single value is contained in a hyperrectangle,
+and if not, optionally compute a witness.
+
+### Input
+
+- `S`   -- inner set with a single value
+- `set` -- outer hyperrectangle
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``S ⊆ \\text{set}``
+* If `witness` option is activated:
+  * `(true, [])` iff ``S ⊆ \\text{set}``
+  * `(false, v)` iff ``S \\not\\subseteq \\text{set}`` and
+    ``v ∈ S \\setminus \\text{set}``
+
+### Notes
+
+This copy-pasted method just exists to avoid method ambiguities.
+"""
+function is_subset(S::AbstractSingleton{N},
+                   H::AbstractHyperrectangle{N},
+                   witness::Bool=false
+                  )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    result = ∈(element(S), H)
+    if witness
+        return (result, result ? N[] : element(S))
+    else
+        return result
+    end
+end
+
+
+"""
     is_subset(S1::AbstractSingleton{N},
               S2::AbstractSingleton{N},
               witness::Bool=false
