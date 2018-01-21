@@ -107,6 +107,8 @@ ProjectionSparseMatrixExp
 Intersection
 dim(::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
 σ(::AbstractVector{Float64}, ::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
+∈(::AbstractVector{Float64}, ::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
+isempty(::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
 ```
 
 ## Convex Hull
