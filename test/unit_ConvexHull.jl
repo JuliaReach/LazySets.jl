@@ -38,3 +38,11 @@ d = [0., -1.]
 @test σ(d, C) == [0., -1.]
 # test convex hull array of singleton
 C = ConvexHullArray([Singleton([1.0, 0.5]), Singleton([1.1, 0.2]), Singleton([1.4, 0.3]), Singleton([1.7, 0.5]), Singleton([1.4, 0.8])])
+
+# empty set is neutral for CH
+a = ConvexHullArray([Ball2(ones(2), 1.)])
+@test CH(a, ∅) == a
+@test CH(∅, a) == a
+
+# concatenation of two convex hull arrays
+@test CH(a, a) isa ConvexHullArray
