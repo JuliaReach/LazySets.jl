@@ -33,7 +33,7 @@ using LazySets, Base.Test
 @time @testset "LazySets.CartesianProduct" begin include("unit_CartesianProduct.jl") end
 @time @testset "LazySets.SymmetricIntervalHull" begin include("unit_SymmetricIntervalHull.jl") end
 
-# ================================================================
+# =================================================================
 # Algorithms for approximation of convex sets using support vectors
 # =================================================================
 @time @testset "LazySets.Approximations.overapproximation" begin include("unit_overapproximation2D.jl") end
@@ -41,3 +41,8 @@ using LazySets, Base.Test
 @time @testset "LazySets.Approximations.ballinf_approximation" begin include("unit_ballinf_approximation.jl") end
 @time @testset "LazySets.Approximations.radiusdiameter" begin include("unit_radiusdiameter.jl") end
 @time @testset "LazySets.Approximations.decompose" begin include("unit_decompose.jl") end
+
+# ==================
+# Further algorithms
+# ==================
+@time @testset "LazySets.binary_operations" begin include("unit_binary_operations.jl") end
