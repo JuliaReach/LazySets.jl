@@ -79,6 +79,12 @@ include("MinkowskiSum.jl")
 include("Intersection.jl")
 include("SymmetricIntervalHull.jl")
 
+# =======================================
+# Algorithms for check operations on sets
+# =======================================
+include("subset.jl")
+include("is_intersection_empty.jl")
+
 # =================================================================
 # Algorithms for approximation of convex sets using support vectors
 # =================================================================
