@@ -36,7 +36,7 @@ X = VPolygon([[1.0, 0.5], [1.1, 0.2], [1.4, 0.3], [1.7, 0.5], [1.4, 0.8]])
     You can as well define the convex hull of the one element sets (singletons)
     via
     ```julia
-    C = CH([Singleton([1.0, 0.5]), Singleton([1.1, 0.2]), Singleton([1.4, 0.3]), Singleton([1.7, 0.5]), Singleton([1.4, 0.8])])
+    C = CHArray([Singleton([1.0, 0.5]), Singleton([1.1, 0.2]), Singleton([1.4, 0.3]), Singleton([1.7, 0.5]), Singleton([1.4, 0.8])])
     ```
     Observe that `C` is just a lazy convex hull, whereas `X` is a polygon in vertex
     representation.
