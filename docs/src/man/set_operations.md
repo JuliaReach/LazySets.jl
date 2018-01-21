@@ -9,8 +9,8 @@ Depth = 3
 
 ## Unary operations
 
-The following table lists all operations (apart from `dim` and ``, which must be
-supported by all types) that take one convex set as argument in the columns.
+The following table lists all operations (apart from `dim` and `σ`, which must
+be supported by all types) that take one convex set as argument in the columns.
 In the rows we list all set types, both the interfaces (where we abbreviate the
 `Abstract` prefix), the basic set types, and the lazy set operations, each
 sorted alphabetically.
@@ -65,12 +65,14 @@ The table entries have the following meaning.
 ### `radius`
 
 This function returns the radius of a set.
-It is defined as the enclosing ball (of the given norm) of minimal volume.
+It is defined as the radius of the enclosing ball (of the given norm) of
+minimal volume.
 
 ### `diameter`
 
 This function returns the diameter of a set.
-It is defined as the enclosing ball (of the given norm) of minimal volume.
+It is defined as the diameter of the enclosing ball (of the given norm) of
+minimal volume.
 The implementation is inherited for all set types if the norm is the infinity
 norm, in which case the result is defined as twice the radius.
 
