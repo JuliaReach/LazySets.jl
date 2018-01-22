@@ -23,6 +23,7 @@ makedocs(
         "Set Interfaces" => "lib/interfaces.md",
         "Common Set Representations" => "lib/representations.md",
         "Common Set Operations" => "lib/operations.md",
+        "Binary Functions on Sets" => "lib/binary_functions.md",
         "Approximations" => "lib/approximations.md",
         "Utility Functions" => "lib/utils.md"],
         "About" => "about.md"
