@@ -120,3 +120,21 @@ function constraints_list(P::HPolytope{N}
                          )::Vector{LinearConstraint{N}} where {N<:Real}
     return P.constraints
 end
+
+@require Polyhedra begin
+    using CDDLib
+    import Polyhedra:polyhedron, SimpleVRepresentation, SimpleHRepresentation
+
+    #P1 = polyhedron(SimpleVRepresentation(randn(15, 2)), CDDLib.CDDLibrary())
+    #P2 = polyhedron(SimpleVRepresentation(randn(15, 2)), CDDLib.CDDLibrary())
+    #Pint = intersect(P1, P2)
+    #intersect(P1, P2)
+
+    #function minkowsi_sum(P1, P2)
+    #    P1 = polyhedron(SimpleVRepresentation(randn(15, 2)), CDDLibrary())
+    #end
+
+    #function convex_hull(P1, P2)
+    #
+    #end
+end
