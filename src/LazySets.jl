@@ -82,7 +82,7 @@ include("SymmetricIntervalHull.jl")
 # =======================================
 # Algorithms for check operations on sets
 # =======================================
-include("subset.jl")
+include("is_subset.jl")
 include("is_intersection_empty.jl")
 
 # =================================================================
