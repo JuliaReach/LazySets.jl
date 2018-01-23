@@ -281,7 +281,8 @@ function dim(eprojmap::ExponentialProjectionMap)::Int
 end
 
 """
-    σ(d::AbstractVector{Float64}, eprojmap::ExponentialProjectionMap)::AbstractVector{Float64}
+    σ(d::AbstractVector{N},
+               eprojmap::ExponentialProjectionMap) where {N<:Real}::AbstractVector{N}
 
 Return the support vector of a projection of an exponential map.
 
@@ -301,14 +302,14 @@ If ``S = (L⋅M⋅R)⋅X``, where ``L`` and ``R`` are matrices, ``M`` is a matri
 exponential, and ``X`` is a set, it follows that
 ``σ(d, S) = L⋅M⋅R⋅σ(R^T⋅M^T⋅L^T⋅d, X)`` for any direction ``d``.
 """
-function σ(d::AbstractVector{Float64},
-           eprojmap::ExponentialProjectionMap)::AbstractVector{Float64}
+function σ(d::AbstractVector{N},
+           eprojmap::ExponentialProjectionMap) where {N<:Real}::AbstractVector{N}
     daux = transpose(eprojmap.projspmexp.L) * d
-    aux1 = expmv(1.0, eprojmap.projspmexp.spmexp.M.', daux)
+    aux1 = expmv(one(T), eprojmap.projspmexp.spmexp.M.', daux)
     daux = transpose(eprojmap.projspmexp.R) * aux1
     svec = σ(daux, eprojmap.X)
 
     aux2 = eprojmap.projspmexp.R * svec
-    daux = expmv(1.0, eprojmap.projspmexp.spmexp.M, aux2)
+    daux = expmv(one(T), eprojmap.projspmexp.spmexp.M, aux2)
     return eprojmap.projspmexp.L * daux
 end
