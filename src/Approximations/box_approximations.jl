@@ -157,7 +157,8 @@ end
     norm(S::LazySet, [p]::Real=Inf)
 
 Return the norm of a convex set.
-It is the norm of the enclosing ball (of the given norm) of minimal volume.
+It is the norm of the enclosing ball (of the given ``p``-norm) of minimal volume
+that is centered in the origin.
 
 ### Input
 
@@ -180,8 +181,8 @@ end
     radius(S::LazySet, [p]::Real=Inf)
 
 Return the radius of a convex set.
-It is the radius of the enclosing ball (of the given norm) of minimal volume
-with the same center.
+It is the radius of the enclosing ball (of the given ``p``-norm) of minimal
+volume with the same center.
 
 ### Input
 
@@ -205,8 +206,8 @@ end
 
 Return the diameter of a convex set.
 It is the maximum distance between any two elements of the set, or,
-equivalently, the diameter of the enclosing ball (of the given norm) of minimal
-volume with the same center.
+equivalently, the diameter of the enclosing ball (of the given ``p``-norm) of
+minimal volume with the same center.
 
 ### Input
 

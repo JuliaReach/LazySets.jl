@@ -98,7 +98,7 @@ A real number representing the norm.
 ### Notes
 
 The norm of a hyperrectangular set is defined as the norm of the enclosing ball,
-of the given ``p``-norm, of minimal volume.
+of the given ``p``-norm, of minimal volume that is centered in the origin.
 """
 function norm(H::AbstractHyperrectangle, p::Real=Inf)::Real
     return maximum(map(x -> norm(x, p), vertices_list(H)))
