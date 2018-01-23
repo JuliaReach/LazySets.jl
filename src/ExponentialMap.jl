@@ -140,7 +140,7 @@ function dim(em::ExponentialMap)::Int
 end
 
 """
-    σ(d::AbstractVector{Float64}, em::ExponentialMap)::AbstractVector{Float64}
+    σ(d::AbstractVector{N}, em::ExponentialMap) where {N<:Real}::AbstractVector{N}
 
 Return the support vector of the exponential map.
 
@@ -159,10 +159,9 @@ If the direction has norm zero, the result depends on the wrapped set.
 If ``E = \\exp(M)⋅S``, where ``M`` is a matrix and ``S`` is a convex set, it
 follows that ``σ(d, E) = \\exp(M)⋅σ(\\exp(M)^T d, S)`` for any direction ``d``.
 """
-function σ(d::AbstractVector{Float64},
-           em::ExponentialMap)::AbstractVector{Float64}
-    v = expmv(1.0, em.spmexp.M.', d)           # v   <- exp(A') * d
-    return expmv(1.0, em.spmexp.M, σ(v, em.X)) # res <- exp(A) * σ(v, S)
+function σ(d::AbstractVector{N}, em::ExponentialMap)::AbstractVector{N} where {N<:Real}
+    v = expmv(one(N), em.spmexp.M.', d)           # v   <- exp(A') * d
+    return expmv(one(N), em.spmexp.M, σ(v, em.X)) # res <- exp(A) * σ(v, S)
 end
 
 """
