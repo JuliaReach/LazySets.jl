@@ -14,7 +14,7 @@ using LazySets, Base.Test
 @time @testset "LazySets.BallInf" begin include("unit_BallInf.jl") end
 @time @testset "LazySets.Hyperrectangle" begin include("unit_Hyperrectangle.jl") end
 @time @testset "LazySets.Polygon" begin include("unit_Polygon.jl") end
-@time @testset "LazySets.HPolytope" begin include("unit_Polyhedron.jl") end
+@time @testset "LazySets.HPolytope" begin include("unit_Polytope.jl") end
 @time @testset "LazySets.Zonotope" begin include("unit_Zonotope.jl") end
 @time @testset "LazySets.ZeroSet" begin include("unit_ZeroSet.jl") end
 @time @testset "LazySets.EmptySet" begin include("unit_EmptySet.jl") end
@@ -33,7 +33,7 @@ using LazySets, Base.Test
 @time @testset "LazySets.CartesianProduct" begin include("unit_CartesianProduct.jl") end
 @time @testset "LazySets.SymmetricIntervalHull" begin include("unit_SymmetricIntervalHull.jl") end
 
-# ================================================================
+# =================================================================
 # Algorithms for approximation of convex sets using support vectors
 # =================================================================
 @time @testset "LazySets.Approximations.overapproximation" begin include("unit_overapproximation2D.jl") end
@@ -41,3 +41,8 @@ using LazySets, Base.Test
 @time @testset "LazySets.Approximations.ballinf_approximation" begin include("unit_ballinf_approximation.jl") end
 @time @testset "LazySets.Approximations.radiusdiameter" begin include("unit_radiusdiameter.jl") end
 @time @testset "LazySets.Approximations.decompose" begin include("unit_decompose.jl") end
+
+# ==================
+# Further algorithms
+# ==================
+@time @testset "LazySets.binary_operations" begin include("unit_binary_operations.jl") end

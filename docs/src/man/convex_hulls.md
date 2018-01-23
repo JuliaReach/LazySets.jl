@@ -29,6 +29,7 @@ X = Bn(2)
 Y = CH(X, expm(A) * X)
 ```
 
+The name `CH` is an alias for `ConvexHull`, so you can use both interchangeably.
 This type is parametric in the operands's types.
 
 ```@example example_ch
@@ -45,6 +46,18 @@ A = blkdiag([sparse(A) for i in 1:50]...)
 Y = CH(X, expm(full(A)) * X)
 
 dim(Y)
+```
+
+To take the convex hull of a large number of sets, there is the `n`-ary type
+`ConvexHullArray`. For instance, below we create a collection of balls `b` via
+list comprehension, and pass them to create a new `ConvexHullArray` instance.
+
+```@example example_ch
+b = [Ball2([2*pi*i/100, sin(2*pi*i/100)], 0.05) for i in 1:100];
+c = ConvexHullArray(b);
+
+plot(c, 1e-3, alpha=0.1, color="blue")
+plot!(b, 1e-3, alpha=0.5, color="red")
 ```
 
 ## 2D convex hull

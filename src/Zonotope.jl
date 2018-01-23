@@ -1,7 +1,10 @@
 import Base.∈
 
 export Zonotope,
-       order
+       order,
+       minkowski_sum,
+       linear_map,
+       scale
 
 """
     Zonotope{N<:Real} <: AbstractPointSymmetricPolytope{N}
@@ -254,4 +257,65 @@ and its dimension.
 """
 function order(Z::Zonotope)::Rational
     return size(Z.generators, 2) // dim(Z)
+end
+
+"""
+    minkowski_sum(Z1::Zonotope, Z2::Zonotope)
+
+Concrete Minkowski sum of a pair of zonotopes.
+
+### Input
+
+- `Z1` -- one zonotope
+- `Z2` -- another zonotope
+
+### Output
+
+The zonotope obtained by summing the centers and concatenating the generators
+of ``Z_1`` and ``Z_2``.
+"""
+function minkowski_sum(Z1::Zonotope, Z2::Zonotope)
+    return Zonotope(Z1.center + Z2.center, [Z1.generators Z2.generators])
+end
+
+"""
+    linear_map(M::AbstractMatrix, Z::Zonotope)
+
+Concrete linear map of a zonotopes.
+
+### Input
+
+- `M` -- matrix
+- `Z` -- zonotope
+
+### Output
+
+The zonotope obtained by applying the linear map to the center and generators
+of ``Z``.
+"""
+function linear_map(M::AbstractMatrix, Z::Zonotope)
+    c = M * Z.center
+    gi = M * Z.generators
+    return Zonotope(c, gi)
+end
+
+"""
+    scale(α::Real, Z::Zonotope)
+
+Concrete scaling of a zonotope.
+
+### Input
+
+- `α` -- scalar
+- `Z` -- zonotope
+
+### Output
+
+The zonotope obtained by applying the numerical scale to the center and generators
+of ``Z``.
+"""
+function scale(α::Real, Z::Zonotope)
+    c = α .* Z.center
+    gi = α .* Z.generators
+    return Zonotope(c, gi)
 end

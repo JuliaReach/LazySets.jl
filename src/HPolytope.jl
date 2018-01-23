@@ -15,8 +15,9 @@ Type that represents a convex polytope in H-representation.
 
 ### Note
 
-This type is more appropriately a *polyhedron*, because no check in the constructor is made
-that the constraints determine a bounded set from the finite intersection of half-spaces.
+This type is more appropriately a *polyhedron*, because no check in the
+constructor is made that the constraints determine a bounded set from the finite
+intersection of half-spaces.
 This is a running assumption in this type.
 """
 struct HPolytope{N<:Real} <: AbstractPolytope{N}
@@ -26,6 +27,10 @@ end
 HPolytope{N}() where {N<:Real} = HPolytope{N}(Vector{N}(0))
 # constructor for a HPolytope with no constraints of type Float64
 HPolytope() = HPolytope{Float64}()
+
+
+# --- LazySet interface functions ---
+
 
 """
     dim(P::HPolytope)::Int
@@ -82,6 +87,41 @@ function σ(d::AbstractVector{<:Real}, P::HPolytope)::Vector{<:Real}
 end
 
 """
+    ∈(x::AbstractVector{N}, P::HPolytope{N})::Bool where {N<:Real}
+
+Check whether a given 2D point is contained in a polytope in constraint
+representation.
+
+### Input
+
+- `x` -- two-dimensional point/vector
+- `P` -- polytope in constraint representation
+
+### Output
+
+`true` iff ``x ∈ P``.
+
+### Algorithm
+
+This implementation checks if the point lies on the outside of each hyperplane.
+This is equivalent to checking if the point lies in each half-space.
+"""
+function ∈(x::AbstractVector{N}, P::HPolytope{N})::Bool where {N<:Real}
+    @assert length(x) == dim(P)
+
+    for c in P.constraints
+        if dot(c.a, x) > c.b
+            return false
+        end
+    end
+    return true
+end
+
+
+# --- HPolytope functions ---
+
+
+"""
     addconstraint!(P::HPolytope{N},
                    constraint::LinearConstraint{N})::Void where {N<:Real}
 
@@ -115,6 +155,10 @@ Return the list of constraints defining a polyhedron in H-representation.
 ### Input
 
 - `P` -- polytope in H-representation
+
+### Output
+
+The list of constraints of the polyhedron.
 """
 function constraints_list(P::HPolytope{N}
                          )::Vector{LinearConstraint{N}} where {N<:Real}

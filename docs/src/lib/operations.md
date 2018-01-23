@@ -107,15 +107,28 @@ ProjectionSparseMatrixExp
 Intersection
 dim(::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
 σ(::AbstractVector{Float64}, ::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
+∈(::AbstractVector{Float64}, ::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
+isempty(::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
 ```
 
 ## Convex Hull
+
+### Binary Convex Hull
 
 ```@docs
 ConvexHull
 CH
 dim(::ConvexHull{Float64, LazySet{Float64}, LazySet{Float64}})
 σ(::AbstractVector{Float64}, ::ConvexHull{Float64, LazySet{Float64}, LazySet{Float64}})
+```
+
+### ``n``-ary Convex Hull
+
+```@docs
+ConvexHullArray
+CHArray
+dim(cha::ConvexHullArray)
+σ(d::AbstractVector{Float64}, cha::ConvexHullArray)
 ```
 
 ### Convex Hull Algorithms
