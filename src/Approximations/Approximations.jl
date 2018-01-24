@@ -18,12 +18,14 @@ export approximate,
        radius,
        symmetric_interval_hull
 
-const TOL = eps(Float64) # TODO: use eps(N)
+const TOL(N::Type{Float64}) = eps(N)
+const TOL(N::Type{Float32}) = eps(N)
+const TOL(N::Type{Rational{<:Any}}) = zero(N)
 
-const DIR_EAST = [1., 0.] # TODO: use given precision N
-const DIR_NORTH = [0., 1.]
-const DIR_WEST = [-1., 0.]
-const DIR_SOUTH = [0., -1.]
+const DIR_EAST(N) = [one(N), zero(N)]
+const DIR_NORTH(N) = [zero(N), one(N)]
+const DIR_WEST(N) = [-one(N), zero(N)]
+const DIR_SOUTH(N) = [zero(N), -one(N)]
 
 include("iterative_refinement.jl")
 include("box_approximations.jl")

@@ -41,7 +41,7 @@ Alias for `box_approximation`.
 interval_hull = box_approximation
 
 """
-    box_approximation_symmetric(S::LazySet)::Hyperrectangle
+    box_approximation_symmetric(S::LazySet{N})::Hyperrectangle{N} where {N<:Real}
 
 Overapproximate a convex set by a tight hyperrectangle centered in the origin.
 
@@ -58,9 +58,10 @@ A tight hyperrectangle centered in the origin.
 The center of the box is the origin, and the radius is obtained by computing the
 maximum value of the support function evaluated at the canonical directions.
 """
-function box_approximation_symmetric(S::LazySet)::Hyperrectangle
+function box_approximation_symmetric(S::LazySet{N}
+                                    )::Hyperrectangle{N} where {N<:Real}
     (c, r) = box_approximation_helper(S)
-    return Hyperrectangle(zeros(length(c)), abs.(c) .+ r)
+    return Hyperrectangle(zeros(N, length(c)), abs.(c) .+ r)
 end
 
 """
@@ -94,17 +95,19 @@ of the given convex set in the canonical directions.
 The lengths of the sides can be recovered from the distance among support
 functions in the same directions.
 """
-@inline function box_approximation_helper(S::LazySet)
+@inline function box_approximation_helper(S::LazySet{N}) where {N<:Real}
+    zero_N = zero(N)
+    one_N = one(N)
     n = dim(S)
-    c = Vector{Float64}(n) # TODO: get numerical eltype of S
-    r = Vector{Float64}(n)
-    d = zeros(n)
+    c = Vector{N}(n)
+    r = Vector{N}(n)
+    d = zeros(N, n)
     @inbounds for i in 1:n
-        d[i] = 1.
+        d[i] = one_N
         htop = ρ(d, S)
-        d[i] = -1.
+        d[i] = -one_N
         hbottom = -ρ(d, S)
-        d[i] = 0.
+        d[i] = zero_N
         c[i] = (htop + hbottom) / 2.
         r[i] = (htop - hbottom) / 2.
     end
@@ -112,7 +115,7 @@ functions in the same directions.
 end
 
 """
-    ballinf_approximation(S)
+    ballinf_approximation(S::LazySet{N})::BallInf{N} where {N<:Real}
 
 Overapproximate a convex set by a tight ball in the infinity norm.
 
@@ -129,17 +132,19 @@ A tight ball in the infinity norm.
 The center and radius of the box are obtained by evaluating the support function
 of the given convex set along the canonical directions.
 """
-function ballinf_approximation(S::LazySet)::BallInf
+function ballinf_approximation(S::LazySet{N})::BallInf{N} where {N<:Real}
+    zero_N = zero(N)
+    one_N = one(N)
     n = dim(S)
-    c = Vector{Float64}(n) # TODO: get numerical eltype of S
-    r = 0.
-    d = zeros(n)
+    c = Vector{N}(n)
+    r = zero_N
+    d = zeros(N, n)
     @inbounds for i in 1:n
-        d[i] = 1.
+        d[i] = one_N
         htop = ρ(d, S)
-        d[i] = -1.
+        d[i] = -one_N
         hbottom = -ρ(d, S)
-        d[i] = 0.
+        d[i] = zero_N
         c[i] = (htop + hbottom) / 2.
         rcur = (htop - hbottom) / 2.
         if (rcur > r)

@@ -1,5 +1,5 @@
 """
-    overapproximate(S::LazySet, ::Type{<:HPolygon})::HPolygon
+    overapproximate(S::LazySet{N}, ::Type{<:HPolygon})::HPolygon where {N<:Real}
 
 Return an approximation of a given 2D convex set as a box-shaped polygon.
 
@@ -12,14 +12,15 @@ Return an approximation of a given 2D convex set as a box-shaped polygon.
 
 A box-shaped polygon in constraint representation.
 """
-function overapproximate(S::LazySet, ::Type{<:HPolygon})::HPolygon
+function overapproximate(S::LazySet{N},
+                         ::Type{<:HPolygon})::HPolygon where {N<:Real}
     @assert dim(S) == 2
     pe, pn, pw, ps = box_bounds(S)
     constraints = Vector{LinearConstraint{eltype(pe)}}(4)
-    constraints[1] = LinearConstraint(DIR_EAST, dot(pe, DIR_EAST))
-    constraints[2] = LinearConstraint(DIR_NORTH, dot(pn, DIR_NORTH))
-    constraints[3] = LinearConstraint(DIR_WEST, dot(pw, DIR_WEST))
-    constraints[4] = LinearConstraint(DIR_SOUTH, dot(ps, DIR_SOUTH))
+    constraints[1] = LinearConstraint(DIR_EAST(N), dot(pe, DIR_EAST(N)))
+    constraints[2] = LinearConstraint(DIR_NORTH(N), dot(pn, DIR_NORTH(N)))
+    constraints[3] = LinearConstraint(DIR_WEST(N), dot(pw, DIR_WEST(N)))
+    constraints[4] = LinearConstraint(DIR_SOUTH(N), dot(ps, DIR_SOUTH(N)))
     return HPolygon(constraints)
 end
 
@@ -53,17 +54,17 @@ function overapproximate(S::LazySet, ::Type{<:Hyperrectangle})::Hyperrectangle
 end
 
 # helper function
-@inline function box_bounds(S)
+@inline function box_bounds(S::LazySet{N}) where {N<:Real}
     # evaluate support vector on box directions
-    pe = σ(DIR_EAST, S)
-    pn = σ(DIR_NORTH, S)
-    pw = σ(DIR_WEST, S)
-    ps = σ(DIR_SOUTH, S)
+    pe = σ(DIR_EAST(N), S)
+    pn = σ(DIR_NORTH(N), S)
+    pw = σ(DIR_WEST(N), S)
+    ps = σ(DIR_SOUTH(N), S)
     return (pe, pn, pw, ps)
 end
 
 """
-    overapproximate(S::LazySet, ɛ::Float64)::HPolygon
+    overapproximate(S::LazySet, ɛ::Real)::HPolygon
 
 Return an ɛ-close approximation of the given 2D set (in terms of Hausdorff
 distance) as a polygon.
@@ -77,7 +78,7 @@ distance) as a polygon.
 
 A polygon in constraint representation.
 """
-function overapproximate(S::LazySet, ɛ::Float64)::HPolygon
+function overapproximate(S::LazySet, ɛ::Real)::HPolygon
     @assert dim(S) == 2
 
     return tohrep(approximate(S, ɛ))
