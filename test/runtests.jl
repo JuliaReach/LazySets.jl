@@ -1,6 +1,9 @@
 #!/usr/bin/env julia
 using LazySets, Base.Test
 
+# conversion between numeric types
+include("to_N.jl")
+
 # ====================================
 # Testing common API of all interfaces
 # ====================================
