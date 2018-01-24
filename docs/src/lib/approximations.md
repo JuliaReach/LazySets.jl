@@ -40,9 +40,9 @@ box_approximation_helper
 ### Metric properties of sets
 
 ```@docs
-norm(::LazySet, ::Real=Inf)
-radius(::LazySet, ::Real=Inf)
-diameter(::LazySet, ::Real=Inf)
+norm(::LazySet, ::Real)
+radius(::LazySet, ::Real)
+diameter(::LazySet, ::Real)
 ```
 
 ## Iterative refinement
@@ -50,11 +50,11 @@ diameter(::LazySet, ::Real=Inf)
 ```@docs
 LocalApproximation
 PolygonalOverapproximation
-new_approx(S::LazySet, p1::Vector{Float64}, d1::Vector{Float64}, p2::Vector{Float64}, d2::Vector{Float64})
-addapproximation!(Ω::PolygonalOverapproximation, p1::Vector{Float64}, d1::Vector{Float64}, p2::Vector{Float64}, d2::Vector{Float64})
-refine(Ω::PolygonalOverapproximation, i::Int)
-tohrep(Ω::PolygonalOverapproximation)
-approximate(S::LazySet, ɛ::Float64)
+new_approx(::LazySet, ::Vector{Float64}, ::Vector{Float64}, ::Vector{Float64}, ::Vector{Float64})
+addapproximation!(::PolygonalOverapproximation, ::Vector{Float64}, ::Vector{Float64}, ::Vector{Float64}, ::Vector{Float64})
+refine(::PolygonalOverapproximation, ::Int)
+tohrep(::PolygonalOverapproximation)
+approximate(::LazySet{Float64}, ::Float64)
 ```
 
 See [Iterative Refinement](@ref) for more details.
