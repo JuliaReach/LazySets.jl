@@ -127,7 +127,7 @@ function refine(Ω::PolygonalOverapproximation, i::Int)::Tuple{LocalApproximatio
 end
 
 """
-    tohrep(Ω::PolygonalOverapproximation)::AbstractHPolygon
+    tohrep(Ω::PolygonalOverapproximation{N})::AbstractHPolygon where {N<:Real}
 
 Convert a polygonal overapproximation into a concrete polygon.
 
@@ -139,8 +139,8 @@ Convert a polygonal overapproximation into a concrete polygon.
 
 A polygon in constraint representation.
 """
-function tohrep(Ω::PolygonalOverapproximation)::AbstractHPolygon
-    p = HPolygon()
+function tohrep(Ω::PolygonalOverapproximation{N})::AbstractHPolygon where {N<:Real}
+    p = HPolygon{N}()
     for ai in Ω.approx_list
         addconstraint!(p, LinearConstraint(ai.d1, dot(ai.d1, ai.p1)))
     end
