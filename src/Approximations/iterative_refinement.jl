@@ -62,14 +62,14 @@ PolygonalOverapproximation{N}(S::LazySet) where {N<:Real} =
 A local approximation of `S` in the given directions.
 """
 function new_approx(S::LazySet, p1::Vector{N}, d1::Vector{N}, p2::Vector{N}, d2::Vector{N}) where {N<:Real}
-    if norm(p1-p2, 2) < TOL
+    if norm(p1-p2, 2) < TOL(N)
         # this approximation cannot be refined and we set q = p1 by convention
         ap = LocalApproximation{N}(p1, d1, p2, d2, p1, false, zero(N))
     else
         ndir = normalize([p2[2]-p1[2], p1[1]-p2[1]])
         q = intersection(Line(d1, dot(d1, p1)), Line(d2, dot(d2, p2)))
         approx_error = min(norm(q - σ(ndir, S)), dot(ndir, q - p1))
-        refinable = (approx_error > TOL) && !(norm(p1-q, 2) < TOL || norm(q-p2, 2) < TOL)
+        refinable = (approx_error > TOL(N)) && !(norm(p1-q, 2) < TOL(N) || norm(q-p2, 2) < TOL(N))
         ap = LocalApproximation{N}(p1, d1, p2, d2, q, refinable, approx_error)
     end
     return ap
@@ -127,7 +127,7 @@ function refine(Ω::PolygonalOverapproximation, i::Int)::Tuple{LocalApproximatio
 end
 
 """
-    tohrep(Ω::PolygonalOverapproximation)::AbstractHPolygon
+    tohrep(Ω::PolygonalOverapproximation{N})::AbstractHPolygon where {N<:Real}
 
 Convert a polygonal overapproximation into a concrete polygon.
 
@@ -139,8 +139,8 @@ Convert a polygonal overapproximation into a concrete polygon.
 
 A polygon in constraint representation.
 """
-function tohrep(Ω::PolygonalOverapproximation)::AbstractHPolygon
-    p = HPolygon()
+function tohrep(Ω::PolygonalOverapproximation{N})::AbstractHPolygon where {N<:Real}
+    p = HPolygon{N}()
     for ai in Ω.approx_list
         addconstraint!(p, LinearConstraint(ai.d1, dot(ai.d1, ai.p1)))
     end
@@ -148,7 +148,8 @@ function tohrep(Ω::PolygonalOverapproximation)::AbstractHPolygon
 end
 
 """
-    approximate(S::LazySet, ɛ::Float64)::Vector{Approximation2D}
+    approximate(S::LazySet{N},
+                ɛ::N)::PolygonalOverapproximation{N} where {N<:Real}
 
 Return an ɛ-close approximation of the given 2D convex set (in terms of
 Hausdorff distance) as an inner and an outer approximation composed by sorted
@@ -163,20 +164,21 @@ local `Approximation2D`.
 
 An ɛ-close approximation of the given 2D convex set.
 """
-function approximate(S::LazySet, ɛ::N)::PolygonalOverapproximation{N} where {N<:Real}
+function approximate(S::LazySet{N},
+                     ɛ::N)::PolygonalOverapproximation{N} where {N<:Real}
 
     # initialize box directions
-    pe = σ(DIR_EAST, S)
-    pn = σ(DIR_NORTH, S)
-    pw = σ(DIR_WEST, S)
-    ps = σ(DIR_SOUTH, S)
+    pe = σ(DIR_EAST(N), S)
+    pn = σ(DIR_NORTH(N), S)
+    pw = σ(DIR_WEST(N), S)
+    ps = σ(DIR_SOUTH(N), S)
 
     Ω = PolygonalOverapproximation{N}(S)
 
-    addapproximation!(Ω, pe, DIR_EAST, pn, DIR_NORTH)
-    addapproximation!(Ω, pn, DIR_NORTH, pw, DIR_WEST)
-    addapproximation!(Ω, pw, DIR_WEST, ps, DIR_SOUTH)
-    addapproximation!(Ω, ps, DIR_SOUTH, pe, DIR_EAST)
+    addapproximation!(Ω, pe, DIR_EAST(N), pn, DIR_NORTH(N))
+    addapproximation!(Ω, pn, DIR_NORTH(N), pw, DIR_WEST(N))
+    addapproximation!(Ω, pw, DIR_WEST(N), ps, DIR_SOUTH(N))
+    addapproximation!(Ω, ps, DIR_SOUTH(N), pe, DIR_EAST(N))
 
     i = 1
     while i <= length(Ω.approx_list)
@@ -192,7 +194,7 @@ function approximate(S::LazySet, ɛ::N)::PolygonalOverapproximation{N} where {N<
 
             Ω.approx_list[i] = la1
 
-            redundant = inext > length(Ω.approx_list) ? false : (norm(la2.p1-Ω.approx_list[inext].p1) < TOL) && (norm(la2.q-Ω.approx_list[inext].q) < TOL)
+            redundant = inext > length(Ω.approx_list) ? false : (norm(la2.p1-Ω.approx_list[inext].p1) < TOL(N)) && (norm(la2.q-Ω.approx_list[inext].q) < TOL(N))
             if redundant
                 # if it is redundant, keep the refined approximation
                 Ω.approx_list[inext] = la2

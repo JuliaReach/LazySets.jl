@@ -32,19 +32,20 @@ function decompose(S::LazySet{N}, set_type::Type=HPolygon
 end
 
 # polygon with box directions
-@inline function decompose_2D(S::LazySet, n::Int, bi::Int,
-                              set_type::Type{<:HPolygon})::HPolygon
+@inline function decompose_2D(S::LazySet{N}, n::Int, bi::Int,
+                              set_type::Type{<:HPolygon}
+                             )::HPolygon where {N<:Real}
     pe, pn, pw, ps = box_bounds(S, n, bi)
     block = 2*bi-1:2*bi
-    pe_bi = dot(DIR_EAST, view(pe, block))
-    pn_bi = dot(DIR_NORTH, view(pn, block))
-    pw_bi = dot(DIR_WEST, view(pw, block))
-    ps_bi = dot(DIR_SOUTH, view(ps, block))
+    pe_bi = dot(DIR_EAST(N), view(pe, block))
+    pn_bi = dot(DIR_NORTH(N), view(pn, block))
+    pw_bi = dot(DIR_WEST(N), view(pw, block))
+    ps_bi = dot(DIR_SOUTH(N), view(ps, block))
 
-    return HPolygon([LinearConstraint(DIR_EAST, pe_bi),
-                     LinearConstraint(DIR_NORTH, pn_bi),
-                     LinearConstraint(DIR_WEST, pw_bi),
-                     LinearConstraint(DIR_SOUTH, ps_bi)])
+    return HPolygon([LinearConstraint(DIR_EAST(N), pe_bi),
+                     LinearConstraint(DIR_NORTH(N), pn_bi),
+                     LinearConstraint(DIR_WEST(N), pw_bi),
+                     LinearConstraint(DIR_SOUTH(N), ps_bi)])
 end
 
 # hyperrectangle
@@ -58,16 +59,16 @@ end
 end
 
 # helper function
-@inline function box_bounds(S::LazySet, n::Int, bi::Int)
-    pe = σ(sparsevec([2*bi-1], [1.], n), S)
-    pn = σ(sparsevec([2*bi], [1.], n), S)
-    pw = σ(sparsevec([2*bi-1], [-1.], n), S)
-    ps = σ(sparsevec([2*bi], [-1.], n), S)
+@inline function box_bounds(S::LazySet{N}, n::Int, bi::Int) where {N<:Real}
+    pe = σ(sparsevec([2*bi-1], [one(N)], n), S)
+    pn = σ(sparsevec([2*bi], [one(N)], n), S)
+    pw = σ(sparsevec([2*bi-1], [-one(N)], n), S)
+    ps = σ(sparsevec([2*bi], [-one(N)], n), S)
     return (pe, pn, pw, ps)
 end
 
 """
-    decompose(S::LazySet, ɛi::Vector{Float64})::CartesianProductArray
+    decompose(S::LazySet{N}, ɛi::Vector{<:Real})::CartesianProductArray where {N<:Real}
 
 Compute an overapproximation of the projections of the given convex set over
 each two-dimensional subspace with a certified error bound.
@@ -98,19 +99,19 @@ The algorithm proceeds as follows:
    ``i = 1, …, b``,
 3. Return the result as a `CartesianProductArray`.
 """
-function decompose(S::LazySet{N}, ɛi::Vector{Float64})::CartesianProductArray where {N<:Real}
+function decompose(S::LazySet{N}, ɛi::Vector{<:Real})::CartesianProductArray where {N<:Real}
     n = dim(S)
     b = div(n, 2)
     result = Vector{HPolygon{N}}(b)
     @inbounds for i in 1:b
-        M = sparse([1, 2], [2*i-1, 2*i], [1., 1.], 2, n)
+        M = sparse([1, 2], [2*i-1, 2*i], [one(N), one(N)], 2, n)
         result[i] = overapproximate(M * S, ɛi[i])
     end
     return CartesianProductArray(result)
 end
 
 """
-    decompose(S::LazySet, ɛ::Float64, [set_type]::Type=HPolygon
+    decompose(S::LazySet, ɛ::Real, [set_type]::Type=HPolygon
              )::CartesianProductArray
 
 Compute an overapproximation of the projections of the given convex set over
@@ -134,7 +135,7 @@ bound for each block is assumed.
 
 The `set_type` argument is ignored if ``ɛ ≠ \\text{Inf}``.
 """
-function decompose(S::LazySet, ɛ::Float64, set_type::Type=HPolygon
+function decompose(S::LazySet, ɛ::Real, set_type::Type=HPolygon
                   )::CartesianProductArray
     if ɛ == Inf
         return decompose(S, set_type)
