@@ -13,7 +13,7 @@ export SparseMatrixExp,
        get_columns
 
 """
-    SparseMatrixExp{N<:Real}
+    SparseMatrixExp{N}
 
 Type that represents the matrix exponential, ``\\exp(M)``, of a sparse matrix.
 
@@ -27,7 +27,7 @@ This type is provided for use with very large and very sparse matrices.
 The evaluation of the exponential matrix action over vectors relies on the
 [Expokit](https://github.com/acroy/Expokit.jl) package.
 """
-struct SparseMatrixExp{N<:Real}
+struct SparseMatrixExp{N}
     M::SparseMatrixCSC{N, Int}
 end
 
@@ -39,46 +39,50 @@ function size(spmexp::SparseMatrixExp, ax::Int)::Int
     return size(spmexp.M, ax)
 end
 
-function get_column(spmexp::SparseMatrixExp, j::Int)::Vector{Float64}
+function get_column(spmexp::SparseMatrixExp{N}, j::Int)::Vector{N} where {N}
     n = size(spmexp, 1)
     aux = zeros(n)
-    aux[j] = 1.0
-    return expmv(1.0, spmexp.M, aux)
+    aux[j] = one(N)
+    return expmv(one(N), spmexp.M, aux)
 end
 
-function get_columns(spmexp::SparseMatrixExp,
-                     J::AbstractArray)::SparseMatrixCSC{Float64, Int}
+function get_columns(spmexp::SparseMatrixExp{N},
+                     J::AbstractArray)::SparseMatrixCSC{N, Int} where {N}
     n = size(spmexp, 1)
     aux = zeros(n)
     ans = spzeros(n, length(J))
     count = 1
+    one_N = one(N)
+    zero_N = zero(N)
     @inbounds for j in J
-        aux[j] = 1.0
-        ans[:, count] = sparse(expmv(1.0, spmexp.M, aux))
-        aux[j] = 0.0
+        aux[j] = one_N
+        ans[:, count] = sparse(expmv(one_N, spmexp.M, aux))
+        aux[j] = zero_N
         count += 1
     end
     return ans
 end
 
-function get_row(spmexp::SparseMatrixExp, i::Int)::Matrix{Float64}
+function get_row(spmexp::SparseMatrixExp{N}, i::Int)::Matrix{N} where {N}
     n = size(spmexp, 1)
     aux = zeros(n)
-    aux[i] = 1.0
-    return transpose(expmv(1.0, spmexp.M.', aux))
+    aux[i] = one(N)
+    return transpose(expmv(one(N), spmexp.M.', aux))
 end
 
-function get_rows(spmexp::SparseMatrixExp,
-                  I::AbstractArray{Int})::SparseMatrixCSC{Float64, Int}
+function get_rows(spmexp::SparseMatrixExp{N},
+                  I::AbstractArray{Int})::SparseMatrixCSC{N, Int} where {N}
     n = size(spmexp, 1)
     aux = zeros(n)
     ans = spzeros(length(I), n)
     Mtranspose = spmexp.M.'
     count = 1
+    one_N = one(N)
+    zero_N = zero(N)
     @inbounds for i in I
-        aux[i] = 1.0
-        ans[count, :] = sparse(expmv(1.0, Mtranspose, aux))
-        aux[i] = 0.0
+        aux[i] = one_N
+        ans[count, :] = sparse(expmv(one_N, Mtranspose, aux))
+        aux[i] = zero_N
         count += 1
     end
     return ans
@@ -94,12 +98,12 @@ Type that represents the action of an exponential map on a convex set.
 - `spmexp` -- sparse matrix exponential
 - `X`      -- convex set
 """
-struct ExponentialMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
-    spmexp::SparseMatrixExp
+struct ExponentialMap{N, S<:LazySet{N}} <: LazySet{N}
+    spmexp::SparseMatrixExp{N}
     X::S
 end
 # type-less convenience constructor
-ExponentialMap(spmexp::SparseMatrixExp, X::S) where {S<:LazySet{N}} where {N<:Real} =
+ExponentialMap(spmexp::SparseMatrixExp, X::S) where {S<:LazySet{N}} where {N} =
     ExponentialMap{N, S}(spmexp, X)
 
 """
@@ -140,7 +144,7 @@ function dim(em::ExponentialMap)::Int
 end
 
 """
-    σ(d::AbstractVector{Float64}, em::ExponentialMap)::AbstractVector{Float64}
+    σ(d::AbstractVector{N}, em::ExponentialMap)::AbstractVector{N} where {N<:Real}
 
 Return the support vector of the exponential map.
 
@@ -159,10 +163,9 @@ If the direction has norm zero, the result depends on the wrapped set.
 If ``E = \\exp(M)⋅S``, where ``M`` is a matrix and ``S`` is a convex set, it
 follows that ``σ(d, E) = \\exp(M)⋅σ(\\exp(M)^T d, S)`` for any direction ``d``.
 """
-function σ(d::AbstractVector{Float64},
-           em::ExponentialMap)::AbstractVector{Float64}
-    v = expmv(1.0, em.spmexp.M.', d)           # v   <- exp(A') * d
-    return expmv(1.0, em.spmexp.M, σ(v, em.X)) # res <- exp(A) * σ(v, S)
+function σ(d::AbstractVector{N}, em::ExponentialMap)::AbstractVector{N} where {N<:Real}
+    v = expmv(one(N), em.spmexp.M.', d)           # v   <- exp(A') * d
+    return expmv(one(N), em.spmexp.M, σ(v, em.X)) # res <- exp(A) * σ(v, S)
 end
 
 """
@@ -196,8 +199,7 @@ julia> ∈([1.0, 1.0], em)
 true
 ```
 """
-function ∈(x::AbstractVector{N}, em::ExponentialMap{N, <:LazySet{N}}
-          )::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, em::ExponentialMap{N, <:LazySet{N}})::Bool where {N<:Real}
     @assert length(x) == dim(em)
     return ∈(exp.(-em.spmexp.M) * x, em.X)
 end
@@ -282,7 +284,8 @@ function dim(eprojmap::ExponentialProjectionMap)::Int
 end
 
 """
-    σ(d::AbstractVector{Float64}, eprojmap::ExponentialProjectionMap)::AbstractVector{Float64}
+    σ(d::AbstractVector{N},
+      eprojmap::ExponentialProjectionMap)::AbstractVector{N} where {N<:Real}
 
 Return the support vector of a projection of an exponential map.
 
@@ -302,14 +305,14 @@ If ``S = (L⋅M⋅R)⋅X``, where ``L`` and ``R`` are matrices, ``M`` is a matri
 exponential, and ``X`` is a set, it follows that
 ``σ(d, S) = L⋅M⋅R⋅σ(R^T⋅M^T⋅L^T⋅d, X)`` for any direction ``d``.
 """
-function σ(d::AbstractVector{Float64},
-           eprojmap::ExponentialProjectionMap)::AbstractVector{Float64}
+function σ(d::AbstractVector{N},
+           eprojmap::ExponentialProjectionMap)::AbstractVector{N} where {N<:Real}
     daux = transpose(eprojmap.projspmexp.L) * d
-    aux1 = expmv(1.0, eprojmap.projspmexp.spmexp.M.', daux)
+    aux1 = expmv(one(N), eprojmap.projspmexp.spmexp.M.', daux)
     daux = transpose(eprojmap.projspmexp.R) * aux1
     svec = σ(daux, eprojmap.X)
 
     aux2 = eprojmap.projspmexp.R * svec
-    daux = expmv(1.0, eprojmap.projspmexp.spmexp.M, aux2)
+    daux = expmv(one(N), eprojmap.projspmexp.spmexp.M, aux2)
     return eprojmap.projspmexp.L * daux
 end
