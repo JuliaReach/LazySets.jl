@@ -1,6 +1,6 @@
-import Base: isempty, ∈
+import Base: isempty, ∈, ∩
 
-export Intersection, ∩
+export Intersection
 
 """
     Intersection{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
