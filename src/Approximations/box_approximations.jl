@@ -108,8 +108,8 @@ functions in the same directions.
         d[i] = -one_N
         hbottom = -ρ(d, S)
         d[i] = zero_N
-        c[i] = (htop + hbottom) / 2.
-        r[i] = (htop - hbottom) / 2.
+        c[i] = (htop + hbottom) / 2
+        r[i] = (htop - hbottom) / 2
     end
     return c, r
 end
@@ -145,8 +145,8 @@ function ballinf_approximation(S::LazySet{N})::BallInf{N} where {N<:Real}
         d[i] = -one_N
         hbottom = -ρ(d, S)
         d[i] = zero_N
-        c[i] = (htop + hbottom) / 2.
-        rcur = (htop - hbottom) / 2.
+        c[i] = (htop + hbottom) / 2
+        rcur = (htop - hbottom) / 2
         if (rcur > r)
             r = rcur
         end
