@@ -177,6 +177,7 @@ low(::Hyperrectangle{Float64})
 
 ```@docs
 EmptySet
+∅
 dim(::EmptySet{Float64})
 σ(::AbstractVector{Float64}, ::EmptySet{Float64})
 ∈(::AbstractVector{Float64}, ::EmptySet{Float64})
