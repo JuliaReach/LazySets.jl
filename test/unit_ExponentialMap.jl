@@ -1,79 +1,74 @@
-# dimension for this benchs (choose a multiple of 3)
-n = 3*2
+for N in [Float64] # TODO Float32
+    # dimension (choose a multiple of 3)
+    n = 3*2
 
-# occupation probability for these benchs
-p = 0.4
+    # occupation probability for these benchs
+    p = 0.4
 
-# sparse matrix
-m = sprandn(n, n, p);
+    # sparse matrix
+    m = sprandn(n, n, p)
+    m = convert(SparseMatrixCSC{N,Int}, m)
 
-# a set
-b = BallInf(ones(n), 0.1);
+    # a set
+    b = BallInf(ones(N, n), to_N(N, 0.1))
 
-# linear map
-lm = m * b
+    # linear map
+    lm = m * b
 
-# the (lazy) exponential of a sparse matrix
-me = SparseMatrixExp(m)
+    # the (lazy) exponential of a sparse matrix
+    me = SparseMatrixExp(m)
 
-# size
-@test size(me, 1) == n
-@test size(me) == (n, n)
-# product of the exponential maps of two commuting matrices
-# WARNING: assuming commutativity of matrix exponents
-#me * me
+    # size
+    @test size(me, 1) == n
+    @test size(me) == (n, n)
+    # product of the exponential maps of two commuting matrices
+    # WARNING: assuming commutativity of matrix exponents
+    #me * me
 
-# the exponential map of a convex set, same as ExponentialMap(me, b)
-emap = me * b
+    # the exponential map of a convex set, same as ExponentialMap(me, b)
+    emap = me * b
 
-# the support vector of an exponential map
-d = randn(n)
-svec = σ(d, emap)
+    # the support vector of an exponential map
+    d = randn(n)
+    d = convert(Vector{N}, d)
+    svec = σ(d, emap)
 
-# check consistency with respect to explicit computation of the matrix exponential
-svec_explicit = σ(d, expm(full(m)) * b)
-@test svec ≈ svec_explicit
+    # check consistency with respect to explicit computation of the matrix exponential
+    svec_explicit = σ(d, expm(full(m)) * b)
+    @test svec ≈ svec_explicit
 
-# construct an exponential map where we only pass the matrix
-#ExponentialMap(m, b) # ExponentialMap
+    # construct an exponential map where we only pass the matrix
+    #ExponentialMap(m, b) # ExponentialMap
 
-# the exponential map of an exponential map falls back to a Cartesian product
-cpem = emap * emap # CartesianProduct of ExponentialMap
+    # the exponential map of an exponential map falls back to a Cartesian product
+    cpem = emap * emap # CartesianProduct of ExponentialMap
 
-# the exponential map applied to an exponential map
-emap2 = ExponentialMap(SparseMatrixExp(2*m), emap)
+    # the exponential map applied to an exponential map
+    emap2 = ExponentialMap(SparseMatrixExp(2*m), emap)
 
-# for projection tests, let's assume that n is divisible by three
-assert(mod(n, 3) == 0)
-nb = div(n, 3)
-# the projection of exp(A) on the (m, m)-dimensional right-most upper block
-R = [spzeros(nb, nb); spzeros(nb, nb); speye(nb, nb)]
-L = [speye(nb, nb) spzeros(nb, nb) spzeros(nb, nb)]
-proj = ProjectionSparseMatrixExp(L, me, R)
+    # for projection tests, let's assume that n is divisible by three
+    assert(mod(n, 3) == 0)
+    nb = div(n, 3)
+    # the projection of exp(A) on the (m, m)-dimensional right-most upper block
+    R = [spzeros(N, nb, nb); spzeros(N, nb, nb); speye(N, nb, nb)]
+    L = [speye(N, nb, nb) spzeros(N, nb, nb) spzeros(N, nb, nb)]
+    proj = ProjectionSparseMatrixExp(L, me, R)
 
-# build an exponential projection map : it is the application of the projection
-# of exp(A) over a given set
-b = BallInf(ones(nb), 0.1);
-projmap = proj * b
+    # build an exponential projection map : it is the application of the projection
+    # of exp(A) over a given set
+    b = BallInf(ones(N, nb), to_N(N, 0.1))
+    projmap = proj * b
 
-# query the ambient dimension of projmap (hint: it is the output dimension)
-@test dim(projmap) == nb
+    # query the ambient dimension of projmap (hint: it is the output dimension)
+    @test dim(projmap) == nb
 
-#compute the support vector of the projection of an exponential map
-d = randn(nb)
-svec = σ(d, projmap)
+    #compute the support vector of the projection of an exponential map
+    d = randn(nb)
+    d = convert(Vector{N}, d)
+    svec = σ(d, projmap)
 
-# check consistency with respect to explicit computation of the matrix exponential
-P = L * expm(full(m)) * R
-svec_explicit = σ(d, P*b)
-@test svec ≈ svec_explicit
-
-# product of a matrix exponential times a matrix << is a GeneralMapArray
-#MatrixExpSp(m) * m  # left mult
-
-#m * MatrixExpSp(m)  # right mult
-
-# using the general map array
-#m1 = sprandn(10, 10, 0.1); m2 = sprandn(10, 10, 0.1);
-#mpa = GeneralMapArray([m1, me, m2])
-
+    # check consistency with respect to explicit computation of the matrix exponential
+    P = L * expm(full(m)) * R
+    svec_explicit = σ(d, P*b)
+    @test svec ≈ svec_explicit
+end

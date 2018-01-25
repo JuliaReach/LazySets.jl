@@ -39,7 +39,7 @@ function sign_cadlag(x::N)::N where {N<:Real}
 end
 
 """
-    jump2pi(x::Float64)::Float64
+    jump2pi(x::N)::N where {N<:AbstractFloat}
 
 Return ``x + 2π`` if ``x`` is negative, otherwise return ``x``.
 
@@ -62,12 +62,12 @@ julia> jump2pi(0.5)
 0.5
 ```
 """
-function jump2pi(x::Float64)::Float64
-    x < 0.0 ? 2.0 * pi + x : x
+function jump2pi(x::N)::N where {N<:AbstractFloat}
+    x < zero(N) ? 2 * pi + x : x
 end
 
 """
-    <=(u::AbstractVector{Float64}, v::AbstractVector{Float64})::Bool
+    <=(u::AbstractVector{N}, v::AbstractVector{N})::Bool where {N<:AbstractFloat}
 
 Compares two 2D vectors by their direction.
 
@@ -85,7 +85,8 @@ True iff ``\\arg(u) [2π] ≤ \\arg(v) [2π]``
 The argument is measured in counter-clockwise fashion, with the 0 being the
 direction (1, 0).
 """
-function <=(u::AbstractVector{Float64}, v::AbstractVector{Float64})::Bool
+function <=(u::AbstractVector{N},
+            v::AbstractVector{N})::Bool where {N<:AbstractFloat}
     return jump2pi(atan2(u[2], u[1])) <= jump2pi(atan2(v[2], v[1]))
 end
 
