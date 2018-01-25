@@ -2,7 +2,8 @@ using MathProgBase, GLPKMathProgInterface
 
 export HPolytope,
        addconstraint!,
-       constraints_list
+       constraints_list,
+       tosimplehrep
 
 """
     HPolytope{N<:Real} <: AbstractPolytope{N}
@@ -28,6 +29,15 @@ HPolytope{N}() where {N<:Real} = HPolytope{N}(Vector{N}(0))
 # constructor for a HPolytope with no constraints of type Float64
 HPolytope() = HPolytope{Float64}()
 
+# constructor for a HPolytope from a simple H-representation
+function HPolytope(A::Matrix{N}, b::Vector{N}) where {N<:Real}
+    m = size(A, 1)
+    constraints = LinearConstraint{N}[m]
+    @inbounds for i in 1:m
+        push!(constraints, LinearConstraint(A[i, :], b[i]))
+    end
+    return HPolytope(constraints)
+end
 
 # --- LazySet interface functions ---
 
@@ -165,20 +175,79 @@ function constraints_list(P::HPolytope{N}
     return P.constraints
 end
 
+"""
+    tosimplehrep(P::HPolytope)
+
+Return the simple H-representation ``Ax ≤ b`` of a polytope.
+
+### Input
+
+- `P` -- polytope
+
+### Output
+
+The tuple `(A, b)` where `A` is the matrix of normal directions and `b` are the offsets.
+"""
+function tosimplehrep(P::HPolytope)
+    A = hcat([ci.a for ci in P.constraints]...)'
+    b = [ci.b for ci in P.constraints]
+    return (A, b)
+end
+
 @require Polyhedra begin
-    using CDDLib
-    import Polyhedra:polyhedron, SimpleVRepresentation, SimpleHRepresentation
 
-    #P1 = polyhedron(SimpleVRepresentation(randn(15, 2)), CDDLib.CDDLibrary())
-    #P2 = polyhedron(SimpleVRepresentation(randn(15, 2)), CDDLib.CDDLibrary())
-    #Pint = intersect(P1, P2)
-    #intersect(P1, P2)
+using CDDLib # default backend
+import Polyhedra:polyhedron, SimpleHRepresentation, SimpleVRepresentation,
+                 vreps, hreps,
+                 intersect
 
-    #function minkowsi_sum(P1, P2)
-    #    P1 = polyhedron(SimpleVRepresentation(randn(15, 2)), CDDLibrary())
-    #end
+export intersect
 
-    #function convex_hull(P1, P2)
-    #
-    #end
+#=
+function getsimplehrepresentation(P)
+    constraints = LinearConstraint{N}[]
+    for hi in hreps(P)
+        push!(constraints, LinearConstraint(hi.a, hi.β))
+    end
+    return HPolytope(constraints)
+end
+=#
+
+"""
+intersect(P1::HPolytope{N}, P2::HPolytope{N},
+                       backend=CDDLib.CDDLibrary())::HPolytope where {N<Real}
+
+### Input
+
+- `P1`      -- polytope
+- `P2`      -- another polytope
+- `backend` -- (optional, default: `CDDLib.CDDLibrary()`) the polyhedral
+               computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
+               for further information
+
+### Output
+
+The `HPolytope` obtained by the intersection of `P1` and `P2`.
+"""
+function intersect(P1::HPolytope{N}, P2::HPolytope{N},
+                   backend=CDDLib.CDDLibrary())::HPolytope{N} where {N<:Real}
+    P1 = polyhedron(SimpleHRepresentation(tosimplehrep(P1)...), backend)
+    P2 = polyhedron(SimpleHRepresentation(tosimplehrep(P2)...), backend)
+    Pint = intersect(P1, P2)
+
+    constraints = LinearConstraint{N}[]
+    for hi in hreps(Pint)
+        push!(constraints, LinearConstraint(hi.a, hi.β))
+    end
+    return HPolytope(constraints)
+end
+
+#function minkowsi_sum(P1, P2)
+#    P1 = polyhedron(SimpleVRepresentation(randn(15, 2)), CDDLibrary())
+#end
+
+#function convex_hull(P1, P2)
+#
+#end
+
 end
