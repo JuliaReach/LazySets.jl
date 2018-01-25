@@ -71,13 +71,4 @@ for N in [Float64] # TODO Float32
     P = L * expm(full(m)) * R
     svec_explicit = σ(d, P*b)
     @test svec ≈ svec_explicit
-
-    # product of a matrix exponential times a matrix << is a GeneralMapArray
-    #MatrixExpSp(m) * m  # left mult
-
-    #m * MatrixExpSp(m)  # right mult
-
-    # using the general map array
-    #m1 = sprandn(10, 10, 0.1); m2 = sprandn(10, 10, 0.1);
-    #mpa = GeneralMapArray([m1, me, m2])
 end
