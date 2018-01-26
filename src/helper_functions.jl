@@ -132,7 +132,9 @@ function check_method_implementation(interface::Type,
                                      args_funcs::AbstractVector{Function};
                                      print_results::Bool=false
                                     )::Bool
+    has_subtypes = false # NOTE: 'isleaftype' does not work (type parameters)
     for subtype in subtypes(interface)
+        has_subtypes = true
         found = false
         for args_func in args_funcs
             if method_exists(func_name, args_func(subtype))
@@ -152,7 +154,7 @@ function check_method_implementation(interface::Type,
             return false
         end
     end
-    return true
+    return has_subtypes
 end
 
 """
