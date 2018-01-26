@@ -314,7 +314,9 @@ function cartesian_product(P1::HPolytope, P2::HPolytope; backend=CDDLib.CDDLibra
 end
 
 """
-    vertices_list(P::HPolytope{N})::Vector{Vector{N}} where {N<:Real}
+    vertices_list(P::HPolytope{N};
+                  [backend]=CDDLib.CDDLibrary(),
+                  [prunefunc]=removevredundancy!)::Vector{Vector{N}} where {N<:Real}
 
 Return the list of vertices of a polytope in constraint representation.
 
