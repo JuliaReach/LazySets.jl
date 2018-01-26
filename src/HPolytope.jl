@@ -2,7 +2,9 @@ using MathProgBase, GLPKMathProgInterface
 
 export HPolytope,
        addconstraint!,
-       constraints_list
+       constraints_list,
+       tosimplehrep,
+       cartesian_product
 
 """
     HPolytope{N<:Real} <: AbstractPolytope{N}
@@ -25,9 +27,22 @@ struct HPolytope{N<:Real} <: AbstractPolytope{N}
 end
 # constructor for a HPolytope with no constraints
 HPolytope{N}() where {N<:Real} = HPolytope{N}(Vector{N}(0))
+
 # constructor for a HPolytope with no constraints of type Float64
 HPolytope() = HPolytope{Float64}()
 
+# constructor from a polygon in H-representation
+HPolytope(P::HPolygon) = HPolytope(P.constraints_list)
+
+# constructor for a HPolytope from a simple H-representation
+function HPolytope(A::Matrix{N}, b::Vector{N}) where {N<:Real}
+    m = size(A, 1)
+    constraints = LinearConstraint{N}[]
+    @inbounds for i in 1:m
+        push!(constraints, LinearConstraint(A[i, :], b[i]))
+    end
+    return HPolytope(constraints)
+end
 
 # --- LazySet interface functions ---
 
@@ -163,4 +178,143 @@ The list of constraints of the polyhedron.
 function constraints_list(P::HPolytope{N}
                          )::Vector{LinearConstraint{N}} where {N<:Real}
     return P.constraints
+end
+
+"""
+    tosimplehrep(P::HPolytope)
+
+Return the simple H-representation ``Ax ≤ b`` of a polytope.
+
+### Input
+
+- `P` -- polytope
+
+### Output
+
+The tuple `(A, b)` where `A` is the matrix of normal directions and `b` are the offsets.
+"""
+function tosimplehrep(P::HPolytope{N}) where {N}
+    A = hcat([ci.a for ci in P.constraints]...)'
+    b = [ci.b for ci in P.constraints]
+    return (A, b)
+end
+
+@require Polyhedra begin
+
+using CDDLib # default backend
+import Polyhedra:polyhedron, SimpleHRepresentation, HRep,
+                 removehredundancy!,
+                 hreps,
+                 intersect,
+                 convexhull,
+                 hcartesianproduct
+
+export intersect, convex_hull
+
+# HPolytope from an HRep
+# NOTE: alternatively take SimpleHRepresentation(hrep(P)) fields A and b
+function HPolytope(P::HRep{N, T}, backend=CDDLib.CDDLibrary()) where {N, T}
+    constraints = LinearConstraint{T}[]
+    for hi in hreps(P)
+        push!(constraints, LinearConstraint(hi.a, hi.β))
+    end
+    return HPolytope(constraints)
+end
+
+"""
+    polyhedron(P::HPolytope{N}, [backend]=CDDLib.CDDLibrary()) where {N}
+
+Return an `HRep` polyhedron from `Polyhedra.jl` given a polytope in H-representation.
+
+### Input
+
+- `P`       -- polytope
+- `backend` -- (optional, default: `CDDLib.CDDLibrary()`) the polyhedral
+               computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
+               for further information
+
+### Output
+
+An `HRep` polyhedron.
+"""
+function polyhedron(P::HPolytope{N}, backend=CDDLib.CDDLibrary()) where {N}
+    return polyhedron(SimpleHRepresentation(tosimplehrep(P)...), backend)
+end
+
+"""
+    intersect(P1::HPolytope{N}, P2::HPolytope{N};
+              [backend]=CDDLib.CDDLibrary(),
+              [prunefunc]=removehredundancy!)::HPolytope{N} where {N<:Real}
+
+Compute the intersection of two polytopes in H-representation.
+
+### Input
+
+- `P1`         -- polytope
+- `P2`         -- another polytope
+- `backend`    -- (optional, default: `CDDLib.CDDLibrary()`) the polyhedral
+                  computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
+                  for further information
+- `prunefunc` -- (optional, default: `removehredundancy!`) function to post-process
+                  the output of `intersect`
+
+### Output
+
+The `HPolytope` obtained by the intersection of `P1` and `P2`.
+"""
+function intersect(P1::HPolytope{N}, P2::HPolytope{N};
+                   backend=CDDLib.CDDLibrary(),
+                   prunefunc=removehredundancy!)::HPolytope{N} where {N<:Real}
+
+    P1 = polyhedron(P1, backend)
+    P2 = polyhedron(P2, backend)
+    Pint = intersect(P1, P2)
+    prunefunc(Pint)
+    return HPolytope(Pint)
+end
+
+"""
+    convex_hull(P1::HPolytope, P2::HPolytope; [backend]=CDDLib.CDDLibrary())
+
+Compute the convex hull of the set union of two polytopes in H-representation.
+
+### Input
+
+- `P1`         -- polytope
+- `P2`         -- another polytope
+- `backend`    -- (optional, default: `CDDLib.CDDLibrary()`) the polyhedral
+                  computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
+                  for further information
+
+### Output
+
+The `HPolytope` obtained by the concrete convex hull of `P1` and `P2`.
+"""
+function convex_hull(P1::HPolytope, P2::HPolytope; backend=CDDLib.CDDLibrary())
+    Pch = convexhull(polyhedron(P1, backend), polyhedron(P2, backend))
+    return HPolytope(Pch)
+end
+
+"""
+    cartesian_product(P1::HPolytope, P2::HPolytope; [backend]=CDDLib.CDDLibrary())
+
+Compute the Cartesian product of two polytopes in H-representaion.
+
+### Input
+
+- `P1`         -- polytope
+- `P2`         -- another polytope
+- `backend`    -- (optional, default: `CDDLib.CDDLibrary()`) the polyhedral
+                  computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
+                  for further information
+
+### Output
+
+The `HPolytope` obtained by the concrete cartesian product of `P1` and `P2`.
+"""
+function cartesian_product(P1::HPolytope, P2::HPolytope; backend=CDDLib.CDDLibrary())
+    Pcp = hcartesianproduct(polyhedron(P1, backend), polyhedron(P2, backend))
+    return HPolytope(Pcp)
+end
+
 end
