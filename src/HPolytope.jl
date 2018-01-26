@@ -204,9 +204,10 @@ using CDDLib # default backend
 import Polyhedra:polyhedron, SimpleHRepresentation, HRep,
                  removehredundancy!,
                  hreps,
-                 intersect
+                 intersect,
+                 convexhull
 
-export intersect
+export intersect, convex_hull
 
 # HPolytope from an HRep
 function HPolytope(P::HRep{N, T}, backend=CDDLib.CDDLibrary()) where {N, T}
@@ -236,8 +237,10 @@ function polyhedron(P::HPolytope{N}, backend=CDDLib.CDDLibrary()) where {N}
 end
 
 """
-intersect(P1::HPolytope{N}, P2::HPolytope{N},
-                       backend=CDDLib.CDDLibrary())::HPolytope where {N<Real}
+    intersect(P1::HPolytope{N}, P2::HPolytope{N},
+                           backend=CDDLib.CDDLibrary())::HPolytope where {N<Real}
+
+Compute the intersection of two polytopes in H-representation.
 
 ### Input
 
@@ -262,6 +265,28 @@ function intersect(P1::HPolytope{N}, P2::HPolytope{N};
     Pint = intersect(P1, P2)
     prunefunc(Pint)
     return HPolytope(Pint)
+end
+
+"""
+    convex_hull(P1::HPolytope, P2::HPolytope; backend=CDDLib.CDDLibrary())
+
+Compute the convex hull of the set union of two polytopes in H-representation.
+
+### Input
+
+- `P1`         -- polytope
+- `P2`         -- another polytope
+- `backend`    -- (optional, default: `CDDLib.CDDLibrary()`) the polyhedral
+                  computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
+                  for further information
+
+### Output
+
+The `HPolytope` obtained by the concrete convex hull of `P1` and `P2`.
+"""
+function convex_hull(P1::HPolytope, P2::HPolytope; backend=CDDLib.CDDLibrary())
+    Pch = convexhull(polyhedron(P1, backend), polyhedron(P2, backend))
+    return HPolytope(Pch)
 end
 
 end
