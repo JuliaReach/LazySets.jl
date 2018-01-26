@@ -3,7 +3,8 @@ using MathProgBase, GLPKMathProgInterface
 export HPolytope,
        addconstraint!,
        constraints_list,
-       tosimplehrep
+       tosimplehrep,
+       cartesian_product
 
 """
     HPolytope{N<:Real} <: AbstractPolytope{N}
@@ -205,7 +206,8 @@ import Polyhedra:polyhedron, SimpleHRepresentation, HRep,
                  removehredundancy!,
                  hreps,
                  intersect,
-                 convexhull
+                 convexhull,
+                 hcartesianproduct
 
 export intersect, convex_hull
 
@@ -287,6 +289,28 @@ The `HPolytope` obtained by the concrete convex hull of `P1` and `P2`.
 function convex_hull(P1::HPolytope, P2::HPolytope; backend=CDDLib.CDDLibrary())
     Pch = convexhull(polyhedron(P1, backend), polyhedron(P2, backend))
     return HPolytope(Pch)
+end
+
+"""
+    cartesian_product(P1::HPolytope, P2::HPolytope; backend=CDDLib.CDDLibrary())
+
+Compute the Cartesian product of two polytopes in H-representaion.
+
+### Input
+
+- `P1`         -- polytope
+- `P2`         -- another polytope
+- `backend`    -- (optional, default: `CDDLib.CDDLibrary()`) the polyhedral
+                  computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
+                  for further information
+
+### Output
+
+The `HPolytope` obtained by the concrete cartesian product of `P1` and `P2`.
+"""
+function cartesian_product(P1::HPolytope, P2::HPolytope; backend=CDDLib.CDDLibrary())
+    Pcp = hcartesianproduct(polyhedron(P1, backend), polyhedron(P2, backend))
+    return HPolytope(Pcp)
 end
 
 end
