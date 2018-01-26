@@ -3,8 +3,7 @@ using MathProgBase, GLPKMathProgInterface
 export HPolytope,
        addconstraint!,
        constraints_list,
-       tosimplehrep,
-       cartesian_product
+       tosimplehrep
 
 """
     HPolytope{N<:Real} <: AbstractPolytope{N}
@@ -202,14 +201,15 @@ end
 @require Polyhedra begin
 
 using CDDLib # default backend
-import Polyhedra:polyhedron, SimpleHRepresentation, HRep,
-                 removehredundancy!,
-                 hreps,
+import Polyhedra:polyhedron, SimpleHRepresentation, SimpleHRepresentation,
+                 HRep, VRep,
+                 removehredundancy!, removevredundancy!,
+                 hreps, vreps,
                  intersect,
                  convexhull,
                  hcartesianproduct
 
-export intersect, convex_hull
+export intersect, convex_hull, cartesian_product, vertices_list
 
 # HPolytope from an HRep
 function HPolytope(P::HRep{N, T}, backend=CDDLib.CDDLibrary()) where {N, T}
@@ -311,6 +311,32 @@ The `HPolytope` obtained by the concrete cartesian product of `P1` and `P2`.
 function cartesian_product(P1::HPolytope, P2::HPolytope; backend=CDDLib.CDDLibrary())
     Pcp = hcartesianproduct(polyhedron(P1, backend), polyhedron(P2, backend))
     return HPolytope(Pcp)
+end
+
+"""
+    vertices_list(P::HPolytope{N})::Vector{Vector{N}} where {N<:Real}
+
+Return the list of vertices of a polytope in constraint representation.
+
+### Input
+
+- `P`         -- polytope in constraint representation
+- `backend`   -- (optional, default: `CDDLib.CDDLibrary()`) the polyhedral
+                 computations backend, see Polyhedra's documentation
+                 for further information
+- `prunefunc` -- (optional, default: `removevredundancy!`) function to post-process
+                 the output of `vreps`
+
+### Output
+
+List of vertices.
+"""
+function vertices_list(P::HPolytope{N};
+                       backend=CDDLib.CDDLibrary(),
+                       prunefunc=removevredundancy!)::Vector{Vector{N}} where {N<:Real}
+    P = polyhedron(P, backend)
+    prunefunc(P)
+    return [vi for vi in vreps(P)]
 end
 
 end
