@@ -14,15 +14,6 @@ DocTestSetup = quote
 end
 ```
 
-## Support function and support vector
-
-```@docs
-LazySets
-ρ
-support_function
-support_vector
-```
-
 ## Balls
 
 ### Euclidean norm ball
@@ -87,6 +78,66 @@ center(::Ellipsoid{Float64})
 ∈(::AbstractVector{Float64}, ::Ellipsoid{Float64})
 ```
 
+## EmptySet
+
+```@docs
+EmptySet
+∅
+dim(::EmptySet{Float64})
+σ(::AbstractVector{Float64}, ::EmptySet{Float64})
+∈(::AbstractVector{Float64}, ::EmptySet{Float64})
+an_element(::EmptySet{Float64})
+```
+
+## Half-Space
+
+```@docs
+HalfSpace
+dim(::HalfSpace{Float64})
+σ(::AbstractVector{Float64}, ::HalfSpace{Float64})
+an_element(::HalfSpace{Float64})
+∈(::AbstractVector{Float64}, ::HalfSpace{Float64})
+```
+
+## Hyperplane
+
+```@docs
+Hyperplane
+dim(::Hyperplane{Float64})
+σ(::AbstractVector{Float64}, ::Hyperplane{Float64})
+an_element(::Hyperplane{Float64})
+∈(::AbstractVector{Float64}, ::Hyperplane{Float64})
+```
+
+## Hyperrectangles
+
+```@docs
+Hyperrectangle
+Hyperrectangle(;kwargs...)
+dim(::Hyperrectangle{Float64})
+σ(::AbstractVector{Float64}, ::Hyperrectangle{Float64})
+∈(::AbstractVector{Float64}, ::Hyperrectangle{Float64})
+an_element(::Hyperrectangle{Float64})
+norm(::Hyperrectangle{Float64}, ::Real)
+radius(::Hyperrectangle{Float64}, ::Real)
+diameter(::Hyperrectangle{Float64}, ::Real)
+vertices_list(::Hyperrectangle{Float64})
+singleton_list(::Hyperrectangle{Float64})
+center(::Hyperrectangle{Float64})
+radius_hyperrectangle(::Hyperrectangle{Float64})
+radius_hyperrectangle(::Hyperrectangle{Float64}, ::Int)
+high(::Hyperrectangle{Float64})
+low(::Hyperrectangle{Float64})
+```
+
+## Lines and linear constraints
+
+```@docs
+LinearConstraint
+Line
+intersection(::Line{Float64}, L2::Line{Float64})
+```
+
 ## Polygons
 
 ### Constraint representation
@@ -144,46 +195,6 @@ constraints_list(P::HPolytope{Float64})
 ∈(::AbstractVector{Float64}, ::HPolytope{Float64})
 ```
 
-## Lines and linear constraints
-
-```@docs
-LinearConstraint
-Line
-intersection(::Line{Float64}, L2::Line{Float64})
-```
-
-## Hyperrectangles
-
-```@docs
-Hyperrectangle
-Hyperrectangle(;kwargs...)
-dim(::Hyperrectangle{Float64})
-σ(::AbstractVector{Float64}, ::Hyperrectangle{Float64})
-∈(::AbstractVector{Float64}, ::Hyperrectangle{Float64})
-an_element(::Hyperrectangle{Float64})
-norm(::Hyperrectangle{Float64}, ::Real)
-radius(::Hyperrectangle{Float64}, ::Real)
-diameter(::Hyperrectangle{Float64}, ::Real)
-vertices_list(::Hyperrectangle{Float64})
-singleton_list(::Hyperrectangle{Float64})
-center(::Hyperrectangle{Float64})
-radius_hyperrectangle(::Hyperrectangle{Float64})
-radius_hyperrectangle(::Hyperrectangle{Float64}, ::Int)
-high(::Hyperrectangle{Float64})
-low(::Hyperrectangle{Float64})
-```
-
-## EmptySet
-
-```@docs
-EmptySet
-∅
-dim(::EmptySet{Float64})
-σ(::AbstractVector{Float64}, ::EmptySet{Float64})
-∈(::AbstractVector{Float64}, ::EmptySet{Float64})
-an_element(::EmptySet{Float64})
-```
-
 ## Singletons
 
 ```@docs
@@ -203,7 +214,16 @@ element(::Singleton{Float64})
 element(::Singleton{Float64}, ::Int)
 ```
 
-### ZeroSet
+## Support function and support vector
+
+```@docs
+LazySets
+ρ
+support_function
+support_vector
+```
+
+## ZeroSet
 
 ```@docs
 ZeroSet
@@ -237,24 +257,4 @@ order(::Zonotope{Float64})
 minkowski_sum(Z1::Zonotope, Z2::Zonotope)
 linear_map(M::AbstractMatrix, Z::Zonotope)
 scale(α::Real, Z::Zonotope)
-```
-
-## Hyperplane
-
-```@docs
-Hyperplane
-dim(::Hyperplane{Float64})
-σ(::AbstractVector{Float64}, ::Hyperplane{Float64})
-an_element(::Hyperplane{Float64})
-∈(::AbstractVector{Float64}, ::Hyperplane{Float64})
-```
-
-## Half-Space
-
-```@docs
-HalfSpace
-dim(::HalfSpace{Float64})
-σ(::AbstractVector{Float64}, ::HalfSpace{Float64})
-an_element(::HalfSpace{Float64})
-∈(::AbstractVector{Float64}, ::HalfSpace{Float64})
 ```
