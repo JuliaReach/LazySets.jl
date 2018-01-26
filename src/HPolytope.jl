@@ -221,7 +221,9 @@ function HPolytope(P::HRep{N, T}, backend=CDDLib.CDDLibrary()) where {N, T}
 end
 
 """
-    polyhedron(P::HPolytope{N}, backend=CDDLib.CDDLibrary()) where {N}
+    polyhedron(P::HPolytope{N}, [backend]=CDDLib.CDDLibrary()) where {N}
+
+Return an `HRep` polyhedron from `Polyhedra.jl` given a polytope in H-representation.
 
 ### Input
 
@@ -239,8 +241,9 @@ function polyhedron(P::HPolytope{N}, backend=CDDLib.CDDLibrary()) where {N}
 end
 
 """
-    intersect(P1::HPolytope{N}, P2::HPolytope{N},
-                           backend=CDDLib.CDDLibrary())::HPolytope where {N<Real}
+    intersect(P1::HPolytope{N}, P2::HPolytope{N};
+              [backend]=CDDLib.CDDLibrary(),
+              [prunefunc]=removehredundancy!)::HPolytope{N} where {N<:Real}
 
 Compute the intersection of two polytopes in H-representation.
 
@@ -270,7 +273,7 @@ function intersect(P1::HPolytope{N}, P2::HPolytope{N};
 end
 
 """
-    convex_hull(P1::HPolytope, P2::HPolytope; backend=CDDLib.CDDLibrary())
+    convex_hull(P1::HPolytope, P2::HPolytope; [backend]=CDDLib.CDDLibrary())
 
 Compute the convex hull of the set union of two polytopes in H-representation.
 
@@ -292,7 +295,7 @@ function convex_hull(P1::HPolytope, P2::HPolytope; backend=CDDLib.CDDLibrary())
 end
 
 """
-    cartesian_product(P1::HPolytope, P2::HPolytope; backend=CDDLib.CDDLibrary())
+    cartesian_product(P1::HPolytope, P2::HPolytope; [backend]=CDDLib.CDDLibrary())
 
 Compute the Cartesian product of two polytopes in H-representaion.
 
