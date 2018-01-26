@@ -212,6 +212,7 @@ import Polyhedra:polyhedron, SimpleHRepresentation, HRep,
 export intersect, convex_hull
 
 # HPolytope from an HRep
+# NOTE: alternatively take SimpleHRepresentation(hrep(P)) fields A and b
 function HPolytope(P::HRep{N, T}, backend=CDDLib.CDDLibrary()) where {N, T}
     constraints = LinearConstraint{T}[]
     for hi in hreps(P)
