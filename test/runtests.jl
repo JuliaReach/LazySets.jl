@@ -4,11 +4,6 @@ using LazySets, Base.Test
 # conversion between numeric types
 include("to_N.jl")
 
-# ====================================
-# Testing common API of all interfaces
-# ====================================
-@time @testset "LazySets.interfaces" begin include("unit_interfaces.jl") end
-
 # =======================================
 # Testing types that inherit from LazySet
 # =======================================
@@ -49,3 +44,10 @@ include("to_N.jl")
 # Further algorithms
 # ==================
 @time @testset "LazySets.binary_operations" begin include("unit_binary_operations.jl") end
+
+# ====================================
+# Testing common API of all interfaces
+# (must be the last test because it
+#  loads Polyhedra.jl)
+# ====================================
+@time @testset "LazySets.interfaces" begin include("unit_interfaces.jl") end
