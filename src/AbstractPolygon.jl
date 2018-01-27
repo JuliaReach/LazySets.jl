@@ -72,7 +72,7 @@ julia> jump2pi(0.5)
 0.5
 ```
 """
-function jump2pi(x::N)::N where {N<:AbstractFloat}
+@inline function jump2pi(x::N)::N where {N<:AbstractFloat}
     x < zero(N) ? 2 * pi + x : x
 end
 
@@ -117,19 +117,21 @@ Compute the quadrant where the direction `w` belongs.
 
 An integer from 0 to 3, with the following convention:
 
+```
      ^
    1 | 0
   ---+-->
    2 | 3
+```
 
 ### Algorithm
 
-This function is inspired from AGPX's answer for C++ in the stackoverflow question
-[Sort points in clockwise order?](https://stackoverflow.com/questions/6989100/sort-points-in-clockwise-order).
+This function is inspired from AGPX's answer in:
+[Sort points in clockwise order?](https://stackoverflow.com/questions/6989100/sort-points-in-clockwise-order)
 The idea is to encode the following logic function:
-`11 -> 0, 01 -> 1, 00 -> 2, 10 -> 3`, according to the convention of above.
+``11 ↦ 0, 01 ↦ 1, 00 ↦ 2, 10 ↦ 3``, according to the convention of above.
 """
-function quadrant(w::AbstractVector{N})::Int where {N<:Real}
+@inline function quadrant(w::AbstractVector{N})::Int where {N<:Real}
     dwx = w[1] >= zero(N) ? 1 : 0
     dwy = w[2] >= zero(N) ? 1 : 0
     qw = (1 - dwx) + (1 - dwy) + ((dwx & (1 - dwy)) << 1)
