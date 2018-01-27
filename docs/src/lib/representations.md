@@ -184,6 +184,14 @@ tohrep(::VPolygon{Float64})
 tovrep(::VPolygon{Float64})
 ```
 
+### Sorting directions
+
+```@docs
+jump2pi
+<=(::AbstractVector{Float64}, ::AbstractVector{Float64})
+<=(::AbstractVector{Rational{Int}}, ::AbstractVector{Rational{Int}})
+```
+
 ## Polytopes
 
 ```@docs

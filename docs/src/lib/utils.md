@@ -9,6 +9,4 @@ end
 
 ```@docs
 sign_cadlag
-jump2pi
-<=(::AbstractVector{Float64}, ::AbstractVector{Float64})
 ```
