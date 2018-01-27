@@ -11,10 +11,12 @@
 # --- AbstractPolytope ---
 
 # vertices list
+begin using Polyhedra
 @test check_method_implementation(AbstractPolytope, vertices_list,
                                   Function[S -> (S{Float64},)])
 @test check_method_implementation(AbstractPointSymmetricPolytope, vertices_list,
                                   Function[S -> (S{Float64},)])
+end
 
 # --- AbstractPointSymmetric ---
 
