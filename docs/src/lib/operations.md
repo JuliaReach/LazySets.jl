@@ -15,30 +15,6 @@ DocTestSetup = quote
 end
 ```
 
-## Minkowski Sum
-
-### Binary Minkowski Sum
-
-```@docs
-MinkowskiSum
-dim(::MinkowskiSum{Float64, LazySet{Float64}, LazySet{Float64}})
-σ(::AbstractVector{Float64}, ::MinkowskiSum{Float64, LazySet{Float64}, LazySet{Float64}})
-Base.:+(::LazySet{Float64}, ::LazySet{Float64})
-⊕
-```
-
-### ``n``-ary Minkowski Sum
-
-```@docs
-MinkowskiSumArray
-dim(::MinkowskiSumArray{Float64, LazySet{Float64}})
-σ(::AbstractVector{Float64}, ::MinkowskiSumArray{Float64, LazySet{Float64}})
-Base.:+(::MinkowskiSumArray{Float64, LazySet{Float64}}, ::LazySet{Float64})
-Base.:+(::LazySet{Float64}, ::MinkowskiSumArray{Float64, LazySet{Float64}})
-Base.:+(::MinkowskiSumArray{Float64, LazySet{Float64}}, ::MinkowskiSumArray{Float64, LazySet{Float64}})
-Base.:+(::MinkowskiSumArray{Float64, LazySet{Float64}}, ::ZeroSet{Float64})
-```
-
 ## Cartesian Product
 
 ### Binary Cartesian Product
@@ -61,6 +37,69 @@ Base.:*(::CartesianProductArray{Float64, LazySet{Float64}}, ::LazySet{Float64})
 Base.:*(::LazySet{Float64}, ::CartesianProductArray{Float64, LazySet{Float64}})
 Base.:*(::CartesianProductArray{Float64, LazySet{Float64}}, ::CartesianProductArray{Float64, LazySet{Float64}})
 ∈(::AbstractVector{Float64}, ::CartesianProductArray{Float64, LazySet{Float64}})
+```
+
+## Convex Hull
+
+### Binary Convex Hull
+
+```@docs
+ConvexHull
+CH
+dim(::ConvexHull{Float64, LazySet{Float64}, LazySet{Float64}})
+σ(::AbstractVector{Float64}, ::ConvexHull{Float64, LazySet{Float64}, LazySet{Float64}})
+```
+
+### ``n``-ary Convex Hull
+
+```@docs
+ConvexHullArray
+CHArray
+dim(cha::ConvexHullArray)
+σ(d::AbstractVector{Float64}, cha::ConvexHullArray)
+```
+
+### Convex Hull Algorithms
+
+```@docs
+convex_hull
+convex_hull!
+right_turn
+monotone_chain!
+```
+
+## Intersection
+
+```@docs
+Intersection
+dim(::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
+σ(::AbstractVector{Float64}, ::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
+∈(::AbstractVector{Float64}, ::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
+isempty(::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
+```
+
+## Minkowski Sum
+
+### Binary Minkowski Sum
+
+```@docs
+MinkowskiSum
+dim(::MinkowskiSum{Float64, LazySet{Float64}, LazySet{Float64}})
+σ(::AbstractVector{Float64}, ::MinkowskiSum{Float64, LazySet{Float64}, LazySet{Float64}})
+Base.:+(::LazySet{Float64}, ::LazySet{Float64})
+⊕
+```
+
+### ``n``-ary Minkowski Sum
+
+```@docs
+MinkowskiSumArray
+dim(::MinkowskiSumArray{Float64, LazySet{Float64}})
+σ(::AbstractVector{Float64}, ::MinkowskiSumArray{Float64, LazySet{Float64}})
+Base.:+(::MinkowskiSumArray{Float64, LazySet{Float64}}, ::LazySet{Float64})
+Base.:+(::LazySet{Float64}, ::MinkowskiSumArray{Float64, LazySet{Float64}})
+Base.:+(::MinkowskiSumArray{Float64, LazySet{Float64}}, ::MinkowskiSumArray{Float64, LazySet{Float64}})
+Base.:+(::MinkowskiSumArray{Float64, LazySet{Float64}}, ::ZeroSet{Float64})
 ```
 
 ## Maps
@@ -99,45 +138,6 @@ SparseMatrixExp
 ```@docs
 ProjectionSparseMatrixExp
 *(::ProjectionSparseMatrixExp{Float64}, ::LazySet{Float64})
-```
-
-## Intersection
-
-```@docs
-Intersection
-dim(::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
-σ(::AbstractVector{Float64}, ::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
-∈(::AbstractVector{Float64}, ::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
-isempty(::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
-```
-
-## Convex Hull
-
-### Binary Convex Hull
-
-```@docs
-ConvexHull
-CH
-dim(::ConvexHull{Float64, LazySet{Float64}, LazySet{Float64}})
-σ(::AbstractVector{Float64}, ::ConvexHull{Float64, LazySet{Float64}, LazySet{Float64}})
-```
-
-### ``n``-ary Convex Hull
-
-```@docs
-ConvexHullArray
-CHArray
-dim(cha::ConvexHullArray)
-σ(d::AbstractVector{Float64}, cha::ConvexHullArray)
-```
-
-### Convex Hull Algorithms
-
-```@docs
-convex_hull
-convex_hull!
-right_turn
-monotone_chain!
 ```
 
 ## Symmetric Interval Hull

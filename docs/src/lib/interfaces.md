@@ -38,6 +38,16 @@ Every convex set in this library implements the main `LazySet` interface.
 LazySet
 ```
 
+### Support function and support vector
+
+Every `LazySet` type must define a function `σ` to compute the support vector.
+
+```@docs
+support_vector
+ρ
+support_function
+```
+
 ## Point symmetric set
 
 Point symmetric sets such as balls of different norms are characterized by a
