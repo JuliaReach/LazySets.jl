@@ -189,7 +189,7 @@ tovrep(::VPolygon{Float64})
 ```@docs
 jump2pi
 <=(::AbstractVector{Float64}, ::AbstractVector{Float64})
-<=(::AbstractVector{Rational{Int}}, ::AbstractVector{Rational{Int}})
+LazySets.quadrant(w::AbstractVector{Float64})
 ```
 
 ## Polytopes
