@@ -126,10 +126,11 @@ An integer from 0 to 3, with the following convention:
 
 ### Algorithm
 
-This function is inspired from AGPX's answer in:
-[Sort points in clockwise order?](https://stackoverflow.com/questions/6989100/sort-points-in-clockwise-order)
 The idea is to encode the following logic function:
 ``11 ↦ 0, 01 ↦ 1, 00 ↦ 2, 10 ↦ 3``, according to the convention of above.
+
+This function is inspired from AGPX's answer in:
+[Sort points in clockwise order?](https://stackoverflow.com/questions/6989100/sort-points-in-clockwise-order)
 """
 @inline function quadrant(w::AbstractVector{N})::Int where {N<:Real}
     dwx = w[1] >= zero(N) ? 1 : 0
