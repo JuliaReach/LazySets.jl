@@ -214,15 +214,6 @@ element(::Singleton{Float64})
 element(::Singleton{Float64}, ::Int)
 ```
 
-## Support function and support vector
-
-```@docs
-LazySets
-ρ
-support_function
-support_vector
-```
-
 ## ZeroSet
 
 ```@docs
