@@ -74,7 +74,7 @@ y = polyhedron(x)
 typeof(y)
 ```
 
-Moreover, you can specify the backend with an extra argument that specifies the backend.
+Moreover, you can specify the backend with an extra argument.
 For instance, we can use an exact representation through the `CDDLibrary(:exact)`:
 
 ```@example concrete_polyhedra
