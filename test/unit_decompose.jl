@@ -31,9 +31,9 @@ for N in [Float64, Float32] # TODO Rational{Int}
     d = decompose(b, Inf, Hyperrectangle)
     @test d.sfarray[1] isa Hyperrectangle
     d = decompose(b, to_N(N, 1e-2), Hyperrectangle)
-    @test d.sfarray[1] isa HPolygon  # with p not Inf the set type is ignored
+    @test d.sfarray[1] isa HPolygon # with p not Inf the set type is ignored
     d = decompose(b, to_N(N, 1e-2)) # by default uses HPolygon
     @test d.sfarray[1] isa HPolygon
-    d = decompose(b, [to_N(N, 1e-1), to_N(N, 1e-2), to_N(N, 1e-3)])
+    d = decompose(b, to_N(N, [1e-1, 1e-2, 1e-3]))
     @test d.sfarray[1] isa HPolygon
 end

@@ -1,4 +1,4 @@
-for N in [Float64, Float32] # TODO Rational{Int}
+for N in [Float64, Float32, Rational{Int}]
     # Empty polygon
     p = HPolygon{N}()
 
@@ -60,17 +60,17 @@ for N in [Float64, Float32] # TODO Rational{Int}
     @test N[4., 2.] ∈ vp.vertices_list
 
     # test convex hull of a set of points using the default algorithm
-    points = [N[0.9,0.2], N[0.4,0.6], N[0.2,0.1], N[0.1,0.3], N[0.3,0.28]]
+    points = to_N(N, [[0.9,0.2], [0.4,0.6], [0.2,0.1], [0.1,0.3], [0.3,0.28]])
     vp = VPolygon(points) # by default, a convex hull is run
-    @test vertices_list(vp) == [ N[0.1,0.3],N[0.2,0.1], N[0.9,0.2],N[0.4,0.6] ]
+    @test vertices_list(vp) == to_N(N, [[0.1,0.3], [0.2,0.1], [0.9,0.2], [0.4,0.6] ])
 
     vp = VPolygon(points, apply_convex_hull=false) # we can turn it off
-    @test vertices_list(vp) == [N[0.9,0.2], N[0.4,0.6], N[0.2,0.1], N[0.1,0.3], N[0.3,0.28]]
+    @test vertices_list(vp) == to_N(N, [[0.9,0.2], [0.4,0.6], [0.2,0.1], [0.1,0.3], [0.3,0.28]])
 
     # test for pre-sorted points
-    points = [N[0.1, 0.3], N[0.2, 0.1], N[0.4, 0.3], N[0.4, 0.6], N[0.9, 0.2]]
+    points = to_N(N, [[0.1, 0.3], [0.2, 0.1], [0.4, 0.3], [0.4, 0.6], [0.9, 0.2]])
     vp = VPolygon(points, algorithm="monotone_chain_sorted")
-    @test vertices_list(vp) == [N[0.1, 0.3], N[0.2, 0.1], N[0.9, 0.2], N[0.4, 0.6]]
+    @test vertices_list(vp) == to_N(N, [[0.1, 0.3], [0.2, 0.1], [0.9, 0.2], [0.4, 0.6]])
 
     # test support vector of a VPolygon
     p = HPolygon{N}()
@@ -90,19 +90,19 @@ for N in [Float64, Float32] # TODO Rational{Int}
     @test σ(d, p) == N[0., 0.]
 
     # test that #83 is fixed
-    v = VPolygon([N[2.0, 3.0]])
+    v = VPolygon(to_N(N, [[2.0, 3.0]]))
     @test N[2.0, 3.0] ∈ v
     @test !(N[3.0, 2.0] ∈ v)
-    v = VPolygon([N[2.0, 3.0], N[-1.0, -3.4]])
-    @test N[-1.0, -3.4] ∈ v
+    v = VPolygon(to_N(N, [[2.0, 3.0], [-1.0, -3.4]]))
+    @test to_N(N, [-1.0, -3.4]) ∈ v
 
     # an_element function
-    v = VPolygon([N[2., 3.]])
+    v = VPolygon(to_N(N, [[2., 3.]]))
     @test an_element(v) ∈ v
 
     # subset
-    p1 = VPolygon([N[0., 0.],N[2., 0.]])
-    p2 = VPolygon([N[1., 0.]])
+    p1 = VPolygon(to_N(N, [[0., 0.], [2., 0.]]))
+    p2 = VPolygon(to_N(N, [[1., 0.]]))
     @test ⊆(p2, p1) && ⊆(p2, p1, true)[1]
     @test ⊆(HPolygon{N}(), p1)
     @test ⊆(p1, BallInf(N[1., 0.], N(1.)))
@@ -123,23 +123,4 @@ for N in [Float64, Float32] # TODO Rational{Int}
         end
     end
 
-end
-
-# TODO: delete and keep the loop of above
-# Test comparison of directions <= for rational entries
-N = Rational{Int}
-v1 = N[1.0, 0.0]
-v2 = N[1.0, 1.0]
-v3 = N[0.0, 1.0]
-v4 = N[-1.0, 1.0]
-v5 = N[-1.0, 0.0]
-v6 = N[-1.0, -1.0]
-v7 = N[0, -1.0]
-v8 = N[1.0, -1.0]
-v = [v1, v2, v3, v4, v5, v6, v7, v8]
-
-for (i, vi) in enumerate(v)
-    for j in i:8
-            @test vi <= v[j]
-    end
 end

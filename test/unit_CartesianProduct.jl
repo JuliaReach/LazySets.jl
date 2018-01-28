@@ -1,4 +1,4 @@
-for N in [Float64, Float32] # TODO Rational{Int}
+for N in [Float64, Float32, Rational{Int}]
     # Cartesian Product of a centered 1D BallInf and a centered 2D BallInf
     # Here a 3D BallInf
     b1 = BallInf(N[0.], N(1.))

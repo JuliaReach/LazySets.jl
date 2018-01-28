@@ -20,7 +20,7 @@ export approximate,
 
 const TOL(N::Type{Float64}) = eps(N)
 const TOL(N::Type{Float32}) = eps(N)
-const TOL(N::Type{Rational{<:Any}}) = zero(N)
+const TOL(N::Type{Rational{INNER}}) where {INNER} = zero(N)
 
 const DIR_EAST(N) = [one(N), zero(N)]
 const DIR_NORTH(N) = [zero(N), one(N)]
