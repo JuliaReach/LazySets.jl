@@ -1,7 +1,6 @@
 export AbstractPolygon,
        tohrep,
-       tovrep,
-       jump2pi
+       tovrep
 
 import Base.<=
 
@@ -130,13 +129,12 @@ The idea is to encode the following logic function:
 ``11 ↦ 0, 01 ↦ 1, 00 ↦ 2, 10 ↦ 3``, according to the convention of above.
 
 This function is inspired from AGPX's answer in:
-[Sort points in clockwise order?](https://stackoverflow.com/questions/6989100/sort-points-in-clockwise-order)
+[Sort points in clockwise order?](https://stackoverflow.com/a/46635372)
 """
 @inline function quadrant(w::AbstractVector{N})::Int where {N<:Real}
     dwx = w[1] >= zero(N) ? 1 : 0
     dwy = w[2] >= zero(N) ? 1 : 0
-    qw = (1 - dwx) + (1 - dwy) + ((dwx & (1 - dwy)) << 1)
-    return qw
+    return (1 - dwx) + (1 - dwy) + ((dwx & (1 - dwy)) << 1)
 end
 
 """
@@ -165,7 +163,7 @@ using the right-hand rule. In particular, it doesn't use the arctangent.
 """
 function <=(u::AbstractVector{N}, v::AbstractVector{N})::Bool where {N<:Real}
     qu, qv = quadrant(u), quadrant(v)
-    if qu - qv == 0
+    if qu == qv
         # same quadrant, check right-turn with center 0
         ans = u[1] * v[2] - v[1] * u[2] >= zero(N)
     else
