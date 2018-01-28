@@ -1,7 +1,4 @@
-import Base.<=
-
 export sign_cadlag,
-       jump2pi,
        check_method_implementation,
        check_method_ambiguity_binary
 
@@ -36,58 +33,6 @@ julia> sign_cadlag.([-0.6, 1.3, 0.0])
 """
 function sign_cadlag(x::N)::N where {N<:Real}
     return x < zero(x) ? -one(x) : one(x)
-end
-
-"""
-    jump2pi(x::N)::N where {N<:AbstractFloat}
-
-Return ``x + 2π`` if ``x`` is negative, otherwise return ``x``.
-
-### Input
-
-- `x` -- real scalar
-
-### Output
-
-``x + 2π`` if ``x`` is negative, ``x`` otherwise.
-
-### Examples
-
-```jldoctest
-julia> jump2pi(0.0)
-0.0
-julia> jump2pi(-0.5)
-5.783185307179586
-julia> jump2pi(0.5)
-0.5
-```
-"""
-function jump2pi(x::N)::N where {N<:AbstractFloat}
-    x < zero(N) ? 2 * pi + x : x
-end
-
-"""
-    <=(u::AbstractVector{N}, v::AbstractVector{N})::Bool where {N<:AbstractFloat}
-
-Compares two 2D vectors by their direction.
-
-### Input
-
-- `u` --  first 2D direction
-- `v` --  second 2D direction
-
-### Output
-
-True iff ``\\arg(u) [2π] ≤ \\arg(v) [2π]``
-
-### Notes
-
-The argument is measured in counter-clockwise fashion, with the 0 being the
-direction (1, 0).
-"""
-function <=(u::AbstractVector{N},
-            v::AbstractVector{N})::Bool where {N<:AbstractFloat}
-    return jump2pi(atan2(u[2], u[1])) <= jump2pi(atan2(v[2], v[1]))
 end
 
 """

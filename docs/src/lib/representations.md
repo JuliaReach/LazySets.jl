@@ -184,6 +184,14 @@ tohrep(::VPolygon{Float64})
 tovrep(::VPolygon{Float64})
 ```
 
+### Sorting directions
+
+```@docs
+LazySets.jump2pi
+<=(::AbstractVector{Float64}, ::AbstractVector{Float64})
+LazySets.quadrant(w::AbstractVector{Float64})
+```
+
 ## Polytopes
 
 ```@docs

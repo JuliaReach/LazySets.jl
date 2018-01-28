@@ -106,4 +106,40 @@ for N in [Float64, Float32] # TODO Rational{Int}
     @test ⊆(p2, p1) && ⊆(p2, p1, true)[1]
     @test ⊆(HPolygon{N}(), p1)
     @test ⊆(p1, BallInf(N[1., 0.], N(1.)))
+
+    v1 = N[1.0, 0.0]
+    v2 = N[1.0, 1.0]
+    v3 = N[0.0, 1.0]
+    v4 = N[-1.0, 1.0]
+    v5 = N[-1.0, 0.0]
+    v6 = N[-1.0, -1.0]
+    v7 = N[0, -1.0]
+    v8 = N[1.0, -1.0]
+    v = [v1, v2, v3, v4, v5, v6, v7, v8]
+
+    for (i, vi) in enumerate(v)
+        for j in i:8
+                @test vi <= v[j]
+        end
+    end
+
+end
+
+# TODO: delete and keep the loop of above
+# Test comparison of directions <= for rational entries
+N = Rational{Int}
+v1 = N[1.0, 0.0]
+v2 = N[1.0, 1.0]
+v3 = N[0.0, 1.0]
+v4 = N[-1.0, 1.0]
+v5 = N[-1.0, 0.0]
+v6 = N[-1.0, -1.0]
+v7 = N[0, -1.0]
+v8 = N[1.0, -1.0]
+v = [v1, v2, v3, v4, v5, v6, v7, v8]
+
+for (i, vi) in enumerate(v)
+    for j in i:8
+            @test vi <= v[j]
+    end
 end
