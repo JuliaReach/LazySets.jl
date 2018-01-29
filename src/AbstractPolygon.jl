@@ -63,10 +63,14 @@ Return ``x + 2π`` if ``x`` is negative, otherwise return ``x``.
 ### Examples
 
 ```jldoctest
+julia> import LazySets.jump2pi
+
 julia> jump2pi(0.0)
 0.0
+
 julia> jump2pi(-0.5)
 5.783185307179586
+
 julia> jump2pi(0.5)
 0.5
 ```
