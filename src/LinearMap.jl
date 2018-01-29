@@ -23,7 +23,7 @@ LinearMap(M::AbstractMatrix{N}, map::LinearMap{N, S}
 
 """
 ```
-    *(M::AbstractMatrix{<:Real}, S::LazySet)
+    *(M::AbstractMatrix{<:Real}, X::LazySet)
 ```
 
 Return the linear map of a convex set.
@@ -31,7 +31,7 @@ Return the linear map of a convex set.
 ### Input
 
 - `M` -- matrix/linear map
-- `S` -- convex set
+- `X` -- convex set
 
 ### Output
 
@@ -56,7 +56,7 @@ Return a linear map of a convex set by a scalar value.
 ### Input
 
 - `a` -- real scalar
-- `S` -- convex set
+- `X` -- convex set
 
 ### Output
 
@@ -64,6 +64,26 @@ The linear map of the convex set.
 """
 function *(a::N, X::S)::LinearMap{N, S} where {S<:LazySet{N}} where {N<:Real}
     return LinearMap(a * speye(N, dim(X)), X)
+end
+
+"""
+```
+    *(a::N, map::S)::S where {S<:LinearMap{N, S}} where {N<:Real}
+```
+
+Return a linear map scaled by a scalar value.
+
+### Input
+
+- `a` -- real scalar
+- `map` -- linear map
+
+### Output
+
+The scaled linear map.
+"""
+function *(a::N, map::S)::S where {S<:LinearMap{N, T}} where {N<:Real} where {T}
+    return LinearMap(a * map.M, map.sf)
 end
 
 """
