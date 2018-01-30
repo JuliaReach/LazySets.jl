@@ -164,7 +164,7 @@ If ``E = \\exp(M)⋅S``, where ``M`` is a matrix and ``S`` is a convex set, it
 follows that ``σ(d, E) = \\exp(M)⋅σ(\\exp(M)^T d, S)`` for any direction ``d``.
 
 We allow sparse direction vectors, but will convert them to dense vectors to be
-able to use `expmv`
+able to use `expmv`.
 """
 function σ(d::AbstractVector{N}, em::ExponentialMap)::AbstractVector{N} where {N<:Real}
     d_dense = d isa Vector ? d : Vector(d)
@@ -308,10 +308,14 @@ If the direction has norm zero, the result depends on the wrapped set.
 If ``S = (L⋅M⋅R)⋅X``, where ``L`` and ``R`` are matrices, ``M`` is a matrix
 exponential, and ``X`` is a set, it follows that
 ``σ(d, S) = L⋅M⋅R⋅σ(R^T⋅M^T⋅L^T⋅d, X)`` for any direction ``d``.
+
+We allow sparse direction vectors, but will convert them to dense vectors to be
+able to use `expmv`.
 """
 function σ(d::AbstractVector{N},
            eprojmap::ExponentialProjectionMap)::AbstractVector{N} where {N<:Real}
-    daux = transpose(eprojmap.projspmexp.L) * d
+    d_dense = d isa Vector ? d : Vector(d)
+    daux = transpose(eprojmap.projspmexp.L) * d_dense
     aux1 = expmv(one(N), eprojmap.projspmexp.spmexp.M.', daux)
     daux = transpose(eprojmap.projspmexp.R) * aux1
     svec = σ(daux, eprojmap.X)
