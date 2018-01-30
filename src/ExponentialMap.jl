@@ -162,9 +162,13 @@ If the direction has norm zero, the result depends on the wrapped set.
 
 If ``E = \\exp(M)⋅S``, where ``M`` is a matrix and ``S`` is a convex set, it
 follows that ``σ(d, E) = \\exp(M)⋅σ(\\exp(M)^T d, S)`` for any direction ``d``.
+
+We allow sparse direction vectors, but will convert them to dense vectors to be
+able to use `expmv`
 """
 function σ(d::AbstractVector{N}, em::ExponentialMap)::AbstractVector{N} where {N<:Real}
-    v = expmv(one(N), em.spmexp.M.', d)           # v   <- exp(A') * d
+    d_dense = d isa Vector ? d : Vector(d)
+    v = expmv(one(N), em.spmexp.M.', d_dense)     # v   <- exp(A') * d
     return expmv(one(N), em.spmexp.M, σ(v, em.X)) # res <- exp(A) * σ(v, S)
 end
 
