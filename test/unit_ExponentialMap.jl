@@ -29,9 +29,10 @@ for N in [Float64] # TODO Float32
     emap = me * b
 
     # the support vector of an exponential map
-    d = randn(n)
-    d = convert(Vector{N}, d)
+    d = randn(N, n)
     svec = σ(d, emap)
+    # check that it works with sparse vectors
+    σ(sparsevec(d), emap)
 
     # check consistency with respect to explicit computation of the matrix exponential
     svec_explicit = σ(d, expm(full(m)) * b)
@@ -63,9 +64,10 @@ for N in [Float64] # TODO Float32
     @test dim(projmap) == nb
 
     #compute the support vector of the projection of an exponential map
-    d = randn(nb)
-    d = convert(Vector{N}, d)
+    d = randn(N, nb)
     svec = σ(d, projmap)
+    # check that it works with sparse vectors
+    σ(sparsevec(d), projmap)
 
     # check consistency with respect to explicit computation of the matrix exponential
     P = L * expm(full(m)) * R
