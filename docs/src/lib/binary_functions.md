@@ -38,5 +38,7 @@ is_intersection_empty(::AbstractHyperrectangle{Float64}, ::AbstractSingleton{Flo
 is_intersection_empty(::AbstractSingleton{Float64}, ::LazySet{Float64})
 is_intersection_empty(::LazySet{Float64}, ::AbstractSingleton{Float64})
 is_intersection_empty(::AbstractSingleton{Float64}, ::AbstractSingleton{Float64})
+is_intersection_empty(::Zonotope{Float64}, ::Hyperplane{Float64})
+is_intersection_empty(::Hyperplane{Float64}, ::Zonotope{Float64})
 is_intersection_empty(::Ball2{Float64}, ::Ball2{Float64})
 ```
