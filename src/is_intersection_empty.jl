@@ -330,3 +330,58 @@ function is_intersection_empty(B1::Ball2{N},
     end
     return (false, v)
 end
+
+
+"""
+    is_intersection_empty(Z::Zonotope{N}, H::Hyperplane{N}, witness::Bool=false
+                         )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether a zonotope and a hyperplane do not intersect, and otherwise
+optionally compute a witness.
+
+### Input
+
+- `Z` -- zonotope
+- `H` -- hyperplane
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``Z ∩ H = ∅``
+* If `witness` option is activated:
+  * `(true, [])` iff ``Z ∩ H = ∅``
+  * `(false, v)` iff ``Z ∩ H ≠ ∅`` and ``v ∈ Z ∩ H``
+
+### Algorithm
+
+``Z ∩ H = ∅`` iff ``(b - a⋅c) \notin \left[ \pm ∑_{i=1}^p |a⋅g_i| \right]``,
+where ``a``, ``b`` are the hyperplane coefficients, ``c`` is the zonotope's
+center, and ``g_i`` are the zonotope's generators.
+
+### Notes
+
+Witness production is currently not supported.
+"""
+function is_intersection_empty(Z::Zonotope{N},
+                               H::Hyperplane{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    v = H.b - dot(H.a, Z.center)
+    abs_sum = sum(abs(dot(H.a, Z.generators[:, i])) for i = 1:size(Z.generators, 2))
+    empty_intersection = v < -abs_sum || v > abs_sum
+
+    if !witness
+        return empty_intersection
+    elseif empty_intersection
+        return (true, N[])
+    else
+        error("witness production is not supported yet")
+    end
+end
+
+function is_intersection_empty(H::Hyperplane{N},
+                               Z::Zonotope{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    return is_intersection_empty(Z, H, witness)
+end
