@@ -14,8 +14,10 @@ function reach_hybrid(As, Gs, init, δ, μ, T, max_order, must_semantics)
             S = R[i]
             for (guard, tgt_loc) in Gs[loc]
                 if !is_intersection_empty(S, guard)
-                    push!(queue, (S, tgt_loc, δ * (i-1)))
+                    new_t = t + δ * (i-1)
+                    push!(queue, (S, tgt_loc, new_t))
                     found_transition = true
+                    println("transition $loc -> $tgt_loc at time $new_t")
                 end
             end
             if must_semantics && found_transition
@@ -118,10 +120,10 @@ function example()
     μ = 0.05
 
     # discretization step
-    δ = 0.02
+    δ = 0.1
 
     # time bound
-    T = 8.
+    T = 10.
 
     # maximum order of zonotopes
     max_order = 3
