@@ -338,7 +338,7 @@ Integer representing the number of generators.
 ngens(Z::Zonotope)::Int = size(Z.generators, 2)
 
 """
-    reduce_order(Z::Zonotope, r::Int)
+    reduce_order(Z::Zonotope, r::Int)::Zonotope
 
 Reduce the order of a zonotope by overapproximating with a zonotope with less
 generators.
@@ -357,30 +357,30 @@ A new zonotope with less generators, if possible.
 This function implements the algorithm described in A. Girard's
 *Reachability of Uncertain Linear Systems Using Zonotopes*, HSCC. Vol. 5. 2005.
 """
-function reduce_order(Z::Zonotope, r::Int)
+function reduce_order(Z::Zonotope{N}, r::Int)::Zonotope{N} where {N<:Real}
     c, G = Z.center, Z.generators
-    p, d = ngens(Z), dim(Z)
-    h = zeros(p)
-    for i in 1:p
-        h[i] = vecnorm(G[:, i], 1) - vecnorm(G[:, i], Inf)
-    end
-    ind = sortperm(h)
+    d = dim(Z)
 
     if r * d >= p
         # do not reduce
         return Z
     end
+    p = ngens(Z)
+    h = zeros(N, p)
+    for i in 1:p
+        h[i] = vecnorm(G[:, i], 1) - vecnorm(G[:, i], Inf)
+    end
+    ind = sortperm(h)
+
     m = p - floor(Int, d * (r - 1))
-    rg = G[:, ind[1:m]]
+    rg = G[:, ind[1:m]] # reduced generators
 
     # interval hull computation of reduced generators
-    d = sum(abs.(rg), 2)
     Gbox = diagm(sum(abs.(rg), 2)[:])
     if m > p
         Gred = [G[:, ind[m+1]:end] Gbox]
     else
         Gred = Gbox
     end
-    Zred = Zonotope(c, Gred)
-    return Zred
+    return Zonotope(c, Gred)
 end
