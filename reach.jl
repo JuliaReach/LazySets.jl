@@ -1,6 +1,7 @@
 using LazySets
 
-function reach_hybrid(As, Gs, init, δ, μ, T, max_order)
+
+function reach_hybrid(As, Gs, init, δ, μ, T, max_order, must_semantics)
     queue = [(init[1], init[2], 0.)]
 
     res = Zonotope[]
@@ -17,7 +18,7 @@ function reach_hybrid(As, Gs, init, δ, μ, T, max_order)
                     found_transition = true
                 end
             end
-            if found_transition
+            if must_semantics && found_transition
                 break
             end
         end
@@ -125,6 +126,9 @@ function example()
     # maximum order of zonotopes
     max_order = 3
 
+    # use must semantics?
+    must_semantics = true
+
     # run analysis
-    reach_hybrid(As, Gs, init, δ, μ, T, max_order)
+    reach_hybrid(As, Gs, init, δ, μ, T, max_order, must_semantics)
 end
