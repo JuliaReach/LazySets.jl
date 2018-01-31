@@ -152,3 +152,42 @@ function example()
     # run analysis
     reach_hybrid(As, bs, Gs, init, δ, μ, T, max_order, must_semantics)
 end
+
+function example2()
+    # dynamics
+    A1 = [-1 -4; 4 -1]
+    A2 = [1 4; -4 1]
+    As = [A1, A2]
+    b1 = [0.0, 0.0]
+    b2 = [0.0, 0.0]
+    bs = [b1, b2]
+
+    # transitions
+    t1 = [(Hyperplane([1., 0.], -0.5), 2)]
+    t1 = []
+    t2 = [(Hyperplane([1., 0.], 0.3), 1)]
+    Gs = [t1, t2]
+
+    # initial condition
+    X0 = Zonotope([1.0, 0.0], 0.1*eye(2))
+    init_loc = 1
+    init = (X0, init_loc)
+
+    # input uncertainty
+    μ = 0.05
+
+    # discretization step
+    δ = 0.02
+
+    # time bound
+    T = 2.
+
+    # maximum order of zonotopes
+    max_order = 10
+
+    # use must semantics?
+    must_semantics = true
+
+    # run analysis
+    reach_hybrid(As, bs, Gs, init, δ, μ, T, max_order, must_semantics)
+end
