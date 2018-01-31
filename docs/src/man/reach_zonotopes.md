@@ -110,7 +110,7 @@ T = 1.
 R = Algorithm1(A, X0, δ, μ, 2*δ); # warm-up
 
 R = Algorithm1(A, X0, δ, μ, T)
-R = project(R, [1, 3], 5)
+Rproj = project(R, [1, 3], 5)
 
-plot(R, 1e-2, fillalpha=0.1, xlabel="x1", ylabel="x3")
+plot(Rproj, 1e-2, fillalpha=0.1, xlabel="x1", ylabel="x3")
 ```
