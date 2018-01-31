@@ -191,3 +191,16 @@ function example2()
     # run analysis
     reach_hybrid(As, bs, Gs, init, δ, μ, T, max_order, must_semantics)
 end
+
+function plot_res(res)
+    p = plot()
+    for i in 1:length(res)
+        if res[i][2] == 1
+            c = "blue"
+        elseif res[i][2] == 2
+            c = "red"
+        end
+        plot!(p, reduce_order(res[i][1], 2), color=c, alpha=0.1)
+    end
+    return p
+end
