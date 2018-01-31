@@ -69,7 +69,7 @@ function example()
     Gs = [t1, t2, t3, t4]
 
     # initial condition
-    X0 = Zonotope([2., 1.], 0.5*eye(2))
+    X0 = Zonotope([2., 1.], [0.5, 0.])
     init_loc = 3
     init = (X0, init_loc)
 
