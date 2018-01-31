@@ -1,12 +1,12 @@
 using LazySets
 
-function reach_hybrid(As, Gs, init, δ, μ, T)
+function reach_hybrid(As, Gs, init, δ, μ, T, max_order)
     queue = [init]
 
     res = []
     while !isempty(queue)
         init, loc = pop!(queue)
-        R = reach_continuous(As[loc], init, δ, μ, T)
+        R = reach_continuous_ordred(As[loc], init, δ, μ, T, max_order)
         append!(res, R)
         for (guard, tgt_loc) in Gs[loc]
             for S in R
@@ -90,8 +90,6 @@ function reach_continuous_ordred(A, X0, δ, μ, T, max_order)
     return R
 end
 
-
-
 function example()
     # dynamics
     A1 = A2 = [-1.0 0.0; 1.0 0.0]
@@ -120,5 +118,5 @@ function example()
     T = 2.
 
     # run analysis
-    reach_hybrid(As, Gs, init, δ, μ, T)
+    reach_hybrid(As, Gs, init, δ, μ, T, 40)
 end
