@@ -7,8 +7,7 @@ function reach_hybrid(As, bs, Gs, init, δ, μ, T, max_order, must_semantics)
     res = Zonotope[]
     while !isempty(queue)
         init, loc, t = pop!(queue)
-        norm_b = norm(bs[loc], Inf)
-        R = reach_continuous(As[loc], init, δ, norm_b + μ, T-t, max_order)
+        R = reach_continuous(As[loc], bs[loc], init, δ, μ, T-t, max_order)
         append!(res, R)
         found_transition = false
         for i in 1:length(R)-1
@@ -29,7 +28,7 @@ function reach_hybrid(As, bs, Gs, init, δ, μ, T, max_order, must_semantics)
     return res
 end
 
-function reach_continuous(A, X0, δ, μ, T)
+function reach_continuous(A, b, X0, δ, μ, T)
 
     # bloating factors
     Anorm = norm(A, Inf)
@@ -62,7 +61,7 @@ function reach_continuous(A, X0, δ, μ, T)
     return R
 end
 
-function reach_continuous(A, X0, δ, μ, T, max_order)
+function reach_continuous(A, b, X0, δ, μ, T, max_order)
 
     # bloating factors
     Anorm = norm(A, Inf)
@@ -88,7 +87,7 @@ function reach_continuous(A, X0, δ, μ, T, max_order)
     init_order = order(Q[1])
 
     # set recurrence for [δ, 2δ], ..., [(N-1)δ, Nδ]
-    ballβ = Zonotope(zeros(n), β*eye(n))
+    ballβ = Zonotope(b, β*eye(n))
     for i in 2:N
         Q[i] = minkowski_sum(linear_map(ϕ, Q[i-1]), ballβ)
         if order(Q[i]) > max_order
@@ -104,10 +103,10 @@ function example()
     A1 = A2 = [-1.0 0.0; 1.0 0.0]
     A3 = A4 = [-1.0 0.0; 1.0 -1.0]
     As = [A1, A2, A3, A4]
-    b1 = [-2.0 0.0]
-    b2 = [3.0 0.0]
-    b3 = [-2.0 -5.0]
-    b4 = [3.0 -5.0]
+    b1 = [-2.0, 0.0]
+    b2 = [3.0, 0.0]
+    b3 = [-2.0, -5.0]
+    b4 = [3.0, -5.0]
     bs = [b1, b2, b3, b4]
 
     # transitions
