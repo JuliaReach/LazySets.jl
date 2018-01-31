@@ -1,13 +1,14 @@
 using LazySets
 
 
-function reach_hybrid(As, Gs, init, δ, μ, T, max_order, must_semantics)
+function reach_hybrid(As, bs, Gs, init, δ, μ, T, max_order, must_semantics)
     queue = [(init[1], init[2], 0.)]
 
     res = Zonotope[]
     while !isempty(queue)
         init, loc, t = pop!(queue)
-        R = reach_continuous(As[loc], init, δ, μ, T-t, max_order)
+        norm_b = norm(bs[loc], Inf)
+        R = reach_continuous(As[loc], init, δ, norm_b + μ, T-t, max_order)
         append!(res, R)
         found_transition = false
         for i in 1:length(R)-1
@@ -103,6 +104,11 @@ function example()
     A1 = A2 = [-1.0 0.0; 1.0 0.0]
     A3 = A4 = [-1.0 0.0; 1.0 -1.0]
     As = [A1, A2, A3, A4]
+    b1 = [-2.0 0.0]
+    b2 = [3.0 0.0]
+    b3 = [-2.0 -5.0]
+    b4 = [3.0 -5.0]
+    bs = [b1, b2, b3, b4]
 
     # transitions
     t1 = [(Hyperplane([1., 0.], -1.), 2), (Hyperplane([0., 1.], 1.), 3)]
@@ -132,5 +138,5 @@ function example()
     must_semantics = true
 
     # run analysis
-    reach_hybrid(As, Gs, init, δ, μ, T, max_order, must_semantics)
+    reach_hybrid(As, bs, Gs, init, δ, μ, T, max_order, must_semantics)
 end
