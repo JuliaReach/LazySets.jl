@@ -1,6 +1,6 @@
 using LazySets
 
-function Phi1(A, delta)
+function Phi1(A, δ)
     n = size(A, 1)
     P = expm(full([A * δ sparse(δ*I, n, n) spzeros(n, n); spzeros(n, 2*n) sparse(δ*I, n, n); spzeros(n, 3*n)]))
     Phi1Adelta = P[1:n, (n+1):2*n]
@@ -13,10 +13,10 @@ function reach_hybrid(As, bs, Gs, init, δ, μ, T, max_order, must_semantics)
     while !isempty(queue)
         init, loc, t = pop!(queue)
         R = reach_continuous(As[loc], bs[loc], init, δ, μ, T-t, max_order)
-        append!(res, R)
         found_transition = false
         for i in 1:length(R)-1
             S = R[i]
+            push!(res, S)
             for (guard, tgt_loc) in Gs[loc]
                 if !is_intersection_empty(S, guard)
                     new_t = t + δ * i
@@ -28,6 +28,9 @@ function reach_hybrid(As, bs, Gs, init, δ, μ, T, max_order, must_semantics)
             if must_semantics && found_transition
                 break
             end
+        end
+        if !must_semantics || !found_transition
+            push!(res, R[end])
         end
     end
     return res
@@ -134,7 +137,7 @@ function example()
     δ = 0.08
 
     # time bound
-    T = 12.
+    T = 4.
 
     # maximum order of zonotopes
     max_order = 4
