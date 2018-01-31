@@ -9,7 +9,7 @@ function reach_hybrid(As, Gs, init, δ, μ, T, max_order)
         R = reach_continuous(As[loc], init, δ, μ, T-t, max_order)
         append!(res, R)
         for (guard, tgt_loc) in Gs[loc]
-            for i in 1:length(R)
+            for i in 1:length(R)-1
                 S = R[i]
                 if !is_intersection_empty(S, guard)
                     push!(queue, (S, tgt_loc, δ * (i-1)))
