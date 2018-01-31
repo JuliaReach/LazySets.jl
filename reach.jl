@@ -3,7 +3,7 @@ using LazySets
 function reach_hybrid(As, Gs, init, δ, μ, T, max_order)
     queue = [(init[1], init[2], 0)]
 
-    res = []
+    res = Zonotope[]
     while !isempty(queue)
         init, loc, t = pop!(queue)
         R = reach_continuous_ordred(As[loc], init, δ, μ, T-t, max_order)
