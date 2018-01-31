@@ -359,25 +359,25 @@ This function implements the algorithm described in A. Girard's
 """
 function reduce_order(Z::Zonotope{N}, r::Int)::Zonotope{N} where {N<:Real}
     c, G = Z.center, Z.generators
-    d = dim(Z)
+    d, p = dim(Z), ngens(Z)
 
     if r * d >= p
         # do not reduce
         return Z
     end
-    p = ngens(Z)
+
     h = zeros(N, p)
     for i in 1:p
         h[i] = vecnorm(G[:, i], 1) - vecnorm(G[:, i], Inf)
     end
     ind = sortperm(h)
 
-    m = p - floor(Int, d * (r - 1))
+    m = p - floor(Int, d * (r - 1)) # subset of ngens that are reduced
     rg = G[:, ind[1:m]] # reduced generators
 
     # interval hull computation of reduced generators
     Gbox = diagm(sum(abs.(rg), 2)[:])
-    if m > p
+    if m+1 <= p
         Gred = [G[:, ind[m+1]:end] Gbox]
     else
         Gred = Gbox
