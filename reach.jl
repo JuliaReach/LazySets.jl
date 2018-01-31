@@ -30,7 +30,7 @@ function reach_hybrid(As, bs, Gs, init, δ, μ, T, max_order, must_semantics)
                 break
             end
         end
-        if !must_semantics || !found_transition
+        if !must_semantics || !found_transition && length(R) > 0
             push!(res, (R[end], loc))
         end
     end
@@ -52,6 +52,9 @@ function reach_continuous(A, b, X0, δ, μ, T)
     # preallocate arrays
     Q = Vector{LazySet}(N)
     R = Vector{LazySet}(N)
+    if N == 0
+        return R
+    end
 
     # initial reach set in the time interval [0, δ]
     ϕp = (I+ϕ)/2
@@ -85,6 +88,9 @@ function reach_continuous(A, b, X0, δ, μ, T, max_order)
     # preallocate arrays
     Q = Vector{LazySet}(N)
     R = Vector{LazySet}(N)
+    if N == 0
+        return R
+    end
 
     # initial reach set in the time interval [0, δ]
     ϕp = (I+ϕ)/2
