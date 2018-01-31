@@ -53,6 +53,43 @@ function reach_continuous(A, X0, δ, μ, T)
     return R
 end
 
+function reach_continuous_ordred(A, X0, δ, μ, T, max_order)
+
+    # bloating factors
+    Anorm = norm(A, Inf)
+    α = (expm(δ*Anorm) - 1 - δ*Anorm)/norm(X0, Inf)
+    β = (expm(δ*Anorm) - 1)*μ/Anorm
+
+    # discretized system
+    n = size(A, 1)
+    ϕ = expm(δ*A)
+    N = floor(Int, T/δ)
+
+    # preallocate arrays
+    Q = Vector{LazySet}(N)
+    R = Vector{LazySet}(N)
+
+    # initial reach set in the time interval [0, δ]
+    ϕp = (I+ϕ)/2
+    ϕm = (I-ϕ)/2
+    c = X0.center
+    Q1_generators = hcat(ϕp * X0.generators, ϕm * c, ϕm * X0.generators)
+    Q[1] = minkowski_sum(Zonotope(ϕp * c, Q1_generators), Zonotope(zeros(n), (α + β)*eye(n)))
+    R[1] = Q[1]
+    init_order = order(Q[1])
+
+    # set recurrence for [δ, 2δ], ..., [(N-1)δ, Nδ]
+    ballβ = Zonotope(zeros(n), β*eye(n))
+    for i in 2:N
+        Q[i] = minkowski_sum(linear_map(ϕ, Q[i-1]), ballβ)
+        if order(Q[i]) > max_order
+            Q[i] = reduce_order(Q[i], init_order)
+        end
+        R[i] = Q[i]
+    end
+    return R
+end
+
 
 
 function example()
