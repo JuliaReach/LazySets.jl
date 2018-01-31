@@ -90,17 +90,17 @@ function reach_continuous(A, b, X0, δ, μ, T, max_order)
     ϕm = (I-ϕ)/2
     c = X0.center
     Q1_generators = hcat(ϕp * X0.generators, ϕm * c, ϕm * X0.generators)
-    Q[1] = minkowski_sum(Zonotope(ϕp * c, Q1_generators), Zonotope(zeros(n), (α + β)*eye(n)))
+    P1 = Phi1(A, δ)
+    Q[1] = minkowski_sum(Zonotope(ϕp * c, Q1_generators), Zonotope(P1 * b * δ, (α + β)*eye(n)))
     R[1] = Q[1]
-    init_order = order(Q[1])
+#     init_order = order(Q[1])
 
     # set recurrence for [δ, 2δ], ..., [(N-1)δ, Nδ]
     ballβ = Zonotope(zeros(n), β*eye(n))
-    P1 = Phi1(A, δ)
     for i in 2:N
-        Q[i] = minkowski_sum(minkowski_sum(linear_map(ϕ, Q[i-1]), ballβ), Zonotope(P1 * b, zeros(2, 0)))
+        Q[i] = minkowski_sum(minkowski_sum(linear_map(ϕ, Q[i-1]), ballβ), Zonotope(P1 * b * δ, zeros(2, 0)))
         if order(Q[i]) > max_order
-            Q[i] = reduce_order(Q[i], init_order)
+            Q[i] = reduce_order(Q[i], max_order)
         end
         R[i] = Q[i]
     end
