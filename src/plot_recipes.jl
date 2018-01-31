@@ -373,7 +373,7 @@ julia> Z2 = Zonotope(zeros(2), [[0.3, 0.3], [0.2, 0.3], [0.2, 0.2], [0.3, 0.2]])
 julia> plot([Z1, Z2])
 ```
 """
-@recipe function plot_zonotopes(V::Vector{<:Zonotope};
+@recipe function plot_zonotopes(Z::Vector{<:Zonotope};
                                 seriescolor="blue", label="", grid=true,
                                 alpha=0.5)
 
