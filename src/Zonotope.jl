@@ -338,7 +338,7 @@ Integer representing the number of generators.
 ngens(Z::Zonotope)::Int = size(Z.generators, 2)
 
 """
-    reduce_order(Z::Zonotope, r::Int)::Zonotope
+    reduce_order(Z::Zonotope, r)::Zonotope
 
 Reduce the order of a zonotope by overapproximating with a zonotope with less
 generators.
@@ -357,7 +357,7 @@ A new zonotope with less generators, if possible.
 This function implements the algorithm described in A. Girard's
 *Reachability of Uncertain Linear Systems Using Zonotopes*, HSCC. Vol. 5. 2005.
 """
-function reduce_order(Z::Zonotope{N}, r::Int)::Zonotope{N} where {N<:Real}
+function reduce_order(Z::Zonotope{N}, r)::Zonotope{N} where {N<:Real}
     c, G = Z.center, Z.generators
     d, p = dim(Z), ngens(Z)
 
