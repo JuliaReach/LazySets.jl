@@ -92,6 +92,9 @@ function reach_continuous(A, b, X0, δ, μ, T, max_order)
     Q1_generators = hcat(ϕp * X0.generators, ϕm * c, ϕm * X0.generators)
     P1 = Phi1(A, δ)
     Q[1] = minkowski_sum(Zonotope(ϕp * c, Q1_generators), Zonotope(P1 * b * δ, (α + β)*eye(n)))
+    if order(Q[1]) > max_order
+        Q[1] = reduce_order(Q[1], max_order)
+    end
     R[1] = Q[1]
 #     init_order = order(Q[1])
 
