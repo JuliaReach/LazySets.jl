@@ -131,13 +131,13 @@ function example()
     μ = 0.05
 
     # discretization step
-    δ = 0.1
+    δ = 0.08
 
     # time bound
-    T = 10.
+    T = 12.
 
     # maximum order of zonotopes
-    max_order = 3
+    max_order = 4
 
     # use must semantics?
     must_semantics = true
