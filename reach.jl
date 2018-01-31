@@ -9,7 +9,7 @@ end
 function reach_hybrid(As, bs, Gs, init, δ, μ, T, max_order, must_semantics)
     queue = [(init[1], init[2], 0.)]
 
-    res = Zonotope[]
+    res = Tuple{Zonotope, Int}[]
     while !isempty(queue)
         init, loc, t = pop!(queue)
         println("currently in location $loc at time $t")
@@ -17,7 +17,7 @@ function reach_hybrid(As, bs, Gs, init, δ, μ, T, max_order, must_semantics)
         found_transition = false
         for i in 1:length(R)-1
             S = R[i]
-            push!(res, S)
+            push!(res, (S, loc))
             for (guard, tgt_loc) in Gs[loc]
                 if !is_intersection_empty(S, guard)
                     new_t = t + δ * i
@@ -31,7 +31,7 @@ function reach_hybrid(As, bs, Gs, init, δ, μ, T, max_order, must_semantics)
             end
         end
         if !must_semantics || !found_transition
-            push!(res, R[end])
+            push!(res, (R[end], loc))
         end
     end
     return res
@@ -156,7 +156,7 @@ end
 function example2()
     # dynamics
     A1 = [-1 -4; 4 -1]
-    A2 = [1 4; -4 1]
+    A2 = [1 4; -4 -1]
     As = [A1, A2]
     b1 = [0.0, 0.0]
     b2 = [0.0, 0.0]
@@ -164,8 +164,8 @@ function example2()
 
     # transitions
     t1 = [(Hyperplane([1., 0.], -0.5), 2)]
-    t1 = []
-    t2 = [(Hyperplane([1., 0.], 0.3), 1)]
+#     t1 = []
+    t2 = [(Hyperplane([1., 0.], 0.7), 1)]
     Gs = [t1, t2]
 
     # initial condition
@@ -174,10 +174,10 @@ function example2()
     init = (X0, init_loc)
 
     # input uncertainty
-    μ = 0.05
+    μ = 0.001
 
     # discretization step
-    δ = 0.02
+    δ = 0.001
 
     # time bound
     T = 2.
