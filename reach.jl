@@ -12,6 +12,7 @@ function reach_hybrid(As, bs, Gs, init, δ, μ, T, max_order, must_semantics)
     res = Zonotope[]
     while !isempty(queue)
         init, loc, t = pop!(queue)
+        println("currently in location $loc at time $t")
         R = reach_continuous(As[loc], bs[loc], init, δ, μ, T-t, max_order)
         found_transition = false
         for i in 1:length(R)-1
@@ -125,7 +126,7 @@ function example()
     t1 = [(Hyperplane([1., 0.], -1.), 2), (Hyperplane([0., 1.], 1.), 3)]
     t2 = [(Hyperplane([0., 1.], 1.), 3)]
     t3 = [(Hyperplane([0., 1.], 0.), 1), (Hyperplane([1., 0.], -1.), 4)]
-    t4 = [(Hyperplane([0., 1.], 0.),2), (Hyperplane([1., 0.], 1.), 3)]
+    t4 = [(Hyperplane([0., 1.], 0.), 2), (Hyperplane([1., 0.], 1.), 3)]
     Gs = [t1, t2, t3, t4]
 
     # initial condition
