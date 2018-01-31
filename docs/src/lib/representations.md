@@ -256,4 +256,6 @@ order(::Zonotope{Float64})
 minkowski_sum(Z1::Zonotope, Z2::Zonotope)
 linear_map(M::AbstractMatrix, Z::Zonotope)
 scale(α::Real, Z::Zonotope)
+ngens(Z::Zonotope)
+reduce_order(Z::Zonotope, r::Int)
 ```
