@@ -1,21 +1,23 @@
 using LazySets
 
 function reach_hybrid(As, Gs, init, δ, μ, T, max_order)
-    queue = [init]
+    queue = [(init[1], init[2], 0)]
 
     res = []
     while !isempty(queue)
-        init, loc = pop!(queue)
-        R = reach_continuous_ordred(As[loc], init, δ, μ, T, max_order)
+        init, loc, t = pop!(queue)
+        R = reach_continuous_ordred(As[loc], init, δ, μ, T-t, max_order)
         append!(res, R)
         for (guard, tgt_loc) in Gs[loc]
-            for S in R
+            for i in 1:length(R)
+                S = R[i]
                 if !is_intersection_empty(S, guard)
-                    push!(queue, (S, tgt_loc))
+                    push!(queue, (S, tgt_loc, δ * (i-1)))
                 end
             end
         end
     end
+    return res
 end
 
 
