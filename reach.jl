@@ -165,7 +165,7 @@ function example2()
     # transitions
     t1 = [(Hyperplane([1., 0.], -0.5), 2)]
 #     t1 = []
-    t2 = [(Hyperplane([1., 0.], 0.7), 1)]
+    t2 = [(Hyperplane([0., 1.], -0.3), 1)]
     Gs = [t1, t2]
 
     # initial condition
@@ -180,7 +180,7 @@ function example2()
     δ = 0.001
 
     # time bound
-    T = 2.
+    T = 4.
 
     # maximum order of zonotopes
     max_order = 10
