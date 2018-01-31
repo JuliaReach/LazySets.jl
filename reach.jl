@@ -1,5 +1,10 @@
 using LazySets
 
+function Phi1(A, delta)
+    n = size(A, 1)
+    P = expm(full([A * δ sparse(δ*I, n, n) spzeros(n, n); spzeros(n, 2*n) sparse(δ*I, n, n); spzeros(n, 3*n)]))
+    Phi1Adelta = P[1:n, (n+1):2*n]
+end
 
 function reach_hybrid(As, bs, Gs, init, δ, μ, T, max_order, must_semantics)
     queue = [(init[1], init[2], 0.)]
