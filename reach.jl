@@ -1,7 +1,7 @@
 using LazySets
 
 function reach_hybrid(As, Gs, init, δ, μ, T, max_order)
-    queue = [(init[1], init[2], 0)]
+    queue = [(init[1], init[2], 0.)]
 
     res = Zonotope[]
     while !isempty(queue)
@@ -115,7 +115,7 @@ function example()
     δ = 0.02
 
     # time bound
-    T = 2.
+    T = 8.
 
     # maximum order of zonotopes
     max_order = 3
