@@ -8,12 +8,17 @@ function reach_hybrid(As, Gs, init, δ, μ, T, max_order)
         init, loc, t = pop!(queue)
         R = reach_continuous(As[loc], init, δ, μ, T-t, max_order)
         append!(res, R)
-        for (guard, tgt_loc) in Gs[loc]
-            for i in 1:length(R)-1
-                S = R[i]
+        found_transition = false
+        for i in 1:length(R)-1
+            S = R[i]
+            for (guard, tgt_loc) in Gs[loc]
                 if !is_intersection_empty(S, guard)
                     push!(queue, (S, tgt_loc, δ * (i-1)))
+                    found_transition = true
                 end
+            end
+            if found_transition
+                break
             end
         end
     end
