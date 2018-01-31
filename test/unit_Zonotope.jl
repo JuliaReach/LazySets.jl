@@ -65,4 +65,15 @@ for N in [Float64, Rational{Int}, Float32]
           #point ∈ Z1 && point ∈ H1
     H2 = Hyperplane(N[1., 1.], N(-11.))
     @test is_intersection_empty(Z1, H2) && is_intersection_empty(Z1, H2, true)[1]
+
+    # test number of generators
+    Z = Zonotope(N[2, 1.], N[-0.5 1.5 0.5 1.0; 0.5 1.5 1.0 0.5])
+    @test ngens(Z) == 4
+    # test order reduction
+    Zred1 = reduce_order(Z, 1)
+    @test ngens(Zred1) == 2
+    @test order(Zred1) == 1
+    Zred2 = reduce_order(Z, 2)
+    @test ngens(Zred2) == 4
+    @test order(Zred2) == 2
 end

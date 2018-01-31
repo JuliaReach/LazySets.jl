@@ -4,7 +4,9 @@ export Zonotope,
        order,
        minkowski_sum,
        linear_map,
-       scale
+       scale,
+       ngens,
+       reduce_order
 
 """
     Zonotope{N<:Real} <: AbstractPointSymmetricPolytope{N}
@@ -318,4 +320,67 @@ function scale(α::Real, Z::Zonotope)
     c = α .* Z.center
     gi = α .* Z.generators
     return Zonotope(c, gi)
+end
+
+"""
+    ngens(Z::Zonotope)::Int
+
+Return the number of generators of a zonotope.
+
+### Input
+
+- `Z` -- zonotope
+
+### Output
+
+Integer representing the number of generators.
+"""
+ngens(Z::Zonotope)::Int = size(Z.generators, 2)
+
+"""
+    reduce_order(Z::Zonotope, r::Int)::Zonotope
+
+Reduce the order of a zonotope by overapproximating with a zonotope with less
+generators.
+
+### Input
+
+- `Z` -- zonotope
+- `r` -- desired order
+
+### Output
+
+A new zonotope with less generators, if possible.
+
+### Algorithm
+
+This function implements the algorithm described in A. Girard's
+*Reachability of Uncertain Linear Systems Using Zonotopes*, HSCC. Vol. 5. 2005.
+"""
+function reduce_order(Z::Zonotope{N}, r::Int)::Zonotope{N} where {N<:Real}
+    c, G = Z.center, Z.generators
+    d, p = dim(Z), ngens(Z)
+
+    if r * d >= p
+        # do not reduce
+        return Z
+    end
+
+    h = zeros(N, p)
+    for i in 1:p
+        h[i] = vecnorm(G[:, i], 1) - vecnorm(G[:, i], Inf)
+    end
+    ind = sortperm(h)
+
+    m = p - floor(Int, d * (r - 1)) # subset of ngens that are reduced
+    rg = G[:, ind[1:m]] # reduced generators
+
+    # interval hull computation of reduced generators
+    Gbox = diagm(sum(abs.(rg), 2)[:])
+    if m+1 <= p
+        Gred = [G[:, ind[m+1]:end] Gbox]
+    else
+        Gred = Gbox
+    end
+    return Zonotope(c, Gred)
 end
