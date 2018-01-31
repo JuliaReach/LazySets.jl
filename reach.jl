@@ -9,7 +9,7 @@ end
 function reach_hybrid(As, bs, Ts, init, δ, μ, T, max_order, must_semantics)
     queue = [(init[1], init[2], 0.)]
 
-    res = Tuple{Zonotope, Int}[]
+    res = Tuple{LazySet, Int}[]
     while !isempty(queue)
         init, loc, t = pop!(queue)
         println("currently in location $loc at time $t")

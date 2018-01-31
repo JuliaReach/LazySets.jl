@@ -3,7 +3,7 @@ using LazySets
 function reach_hybrid(As, Ts, init, δ, μ, T, max_order, must_semantics)
     queue = [(init[1], init[2], 0.)]
 
-    res = Tuple{Zonotope, Int}[]
+    res = Tuple{LazySet, Int}[]
     while !isempty(queue)
         init, loc, t = pop!(queue)
         println("currently in location $loc at time $t")
@@ -42,8 +42,7 @@ function reach_continuous(A, X0, δ, μ, T, max_order)
     ϕ = expm(δ*A)
     N = floor(Int, T/δ)
 
-    # preallocate arrays
-    Q = Vector{LazySet}(N)
+    # preallocate array
     R = Vector{LazySet}(N)
     if N == 0
         return R
@@ -52,22 +51,19 @@ function reach_continuous(A, X0, δ, μ, T, max_order)
     # initial reach set in the time interval [0, δ]
     ϕp = (I+ϕ)/2
     ϕm = (I-ϕ)/2
-    c = X0.center
-    Q1_generators = hcat(ϕp * X0.generators, ϕm * c, ϕm * X0.generators)
-    Q[1] = minkowski_sum(Zonotope(ϕp * c, Q1_generators), Zonotope(zeros(n), (α + β)*eye(n)))
-    if order(Q[1]) > max_order
-        Q[1] = reduce_order(Q[1], max_order)
+    gens = hcat(ϕp * X0.generators, ϕm * X0.center, ϕm * X0.generators)
+    R[1] = minkowski_sum(Zonotope(ϕp * X0.center, gens), Zonotope(zeros(n), (α + β)*eye(n)))
+    if order(R[1]) > max_order
+        R[1] = reduce_order(R[1], max_order)
     end
-    R[1] = Q[1]
 
     # set recurrence for [δ, 2δ], ..., [(N-1)δ, Nδ]
     ballβ = Zonotope(zeros(n), β*eye(n))
     for i in 2:N
-        Q[i] = minkowski_sum(linear_map(ϕ, Q[i-1]), ballβ)
-        if order(Q[i]) > max_order
-            Q[i] = reduce_order(Q[i], max_order)
+        R[i] = minkowski_sum(linear_map(ϕ, R[i-1]), ballβ)
+        if order(R[i]) > max_order
+            R[i] = reduce_order(R[i], max_order)
         end
-        R[i] = Q[i]
     end
     return R
 end
