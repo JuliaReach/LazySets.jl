@@ -15,7 +15,7 @@ function reach_hybrid(As, bs, Gs, init, δ, μ, T, max_order, must_semantics)
             S = R[i]
             for (guard, tgt_loc) in Gs[loc]
                 if !is_intersection_empty(S, guard)
-                    new_t = t + δ * (i-1)
+                    new_t = t + δ * i
                     push!(queue, (S, tgt_loc, new_t))
                     found_transition = true
                     println("transition $loc -> $tgt_loc at time $new_t")
