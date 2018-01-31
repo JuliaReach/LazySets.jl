@@ -87,7 +87,7 @@ function reach_continuous(A, b, X0, δ, μ, T, max_order)
     init_order = order(Q[1])
 
     # set recurrence for [δ, 2δ], ..., [(N-1)δ, Nδ]
-    ballβ = Zonotope(b, β*eye(n))
+    ballβ = Zonotope(δ*b, β*eye(n))
     for i in 2:N
         Q[i] = minkowski_sum(linear_map(ϕ, Q[i-1]), ballβ)
         if order(Q[i]) > max_order
