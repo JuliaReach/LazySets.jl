@@ -6,7 +6,7 @@ function reach_hybrid(As, Gs, init, δ, μ, T, max_order)
     res = Zonotope[]
     while !isempty(queue)
         init, loc, t = pop!(queue)
-        R = reach_continuous_ordred(As[loc], init, δ, μ, T-t, max_order)
+        R = reach_continuous(As[loc], init, δ, μ, T-t, max_order)
         append!(res, R)
         for (guard, tgt_loc) in Gs[loc]
             for i in 1:length(R)
@@ -19,8 +19,6 @@ function reach_hybrid(As, Gs, init, δ, μ, T, max_order)
     end
     return res
 end
-
-
 
 function reach_continuous(A, X0, δ, μ, T)
 
@@ -55,7 +53,7 @@ function reach_continuous(A, X0, δ, μ, T)
     return R
 end
 
-function reach_continuous_ordred(A, X0, δ, μ, T, max_order)
+function reach_continuous(A, X0, δ, μ, T, max_order)
 
     # bloating factors
     Anorm = norm(A, Inf)
@@ -119,6 +117,9 @@ function example()
     # time bound
     T = 2.
 
+    # maximum order of zonotopes
+    max_order = 3
+
     # run analysis
-    reach_hybrid(As, Gs, init, δ, μ, T, 40)
+    reach_hybrid(As, Gs, init, δ, μ, T, max_order)
 end
