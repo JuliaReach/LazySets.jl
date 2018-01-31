@@ -6,7 +6,7 @@ function Phi1(A, δ)
     Phi1Adelta = P[1:n, (n+1):2*n]
 end
 
-function reach_hybrid(As, bs, Gs, init, δ, μ, T, max_order, must_semantics)
+function reach_hybrid(As, bs, Ts, init, δ, μ, T, max_order, must_semantics)
     queue = [(init[1], init[2], 0.)]
 
     res = Tuple{Zonotope, Int}[]
@@ -18,7 +18,7 @@ function reach_hybrid(As, bs, Gs, init, δ, μ, T, max_order, must_semantics)
         for i in 1:length(R)-1
             S = R[i]
             push!(res, (S, loc))
-            for (guard, tgt_loc) in Gs[loc]
+            for (guard, tgt_loc) in Ts[loc]
                 if !is_intersection_empty(S, guard)
                     new_t = t + δ * i
                     push!(queue, (S, tgt_loc, new_t))
@@ -133,7 +133,7 @@ function example()
     t2 = [(Hyperplane([0., 1.], 1.), 3)]
     t3 = [(Hyperplane([0., 1.], 0.), 1), (Hyperplane([1., 0.], -1.), 4)]
     t4 = [(Hyperplane([0., 1.], 0.), 2), (Hyperplane([1., 0.], 1.), 3)]
-    Gs = [t1, t2, t3, t4]
+    Ts = [t1, t2, t3, t4]
 
     # initial condition
     X0 = Zonotope([2., 1.], [[0.5, 0.]])
@@ -156,7 +156,7 @@ function example()
     must_semantics = true
 
     # run analysis
-    reach_hybrid(As, bs, Gs, init, δ, μ, T, max_order, must_semantics)
+    reach_hybrid(As, bs, Ts, init, δ, μ, T, max_order, must_semantics)
 end
 
 function example2()
@@ -172,7 +172,7 @@ function example2()
     t1 = [(Hyperplane([1., 0.], -0.5), 2)]
 #     t1 = []
     t2 = [(Hyperplane([0., 1.], -0.3), 1)]
-    Gs = [t1, t2]
+    Ts = [t1, t2]
 
     # initial condition
     X0 = Zonotope([1.0, 0.0], 0.1*eye(2))
@@ -195,7 +195,7 @@ function example2()
     must_semantics = true
 
     # run analysis
-    reach_hybrid(As, bs, Gs, init, δ, μ, T, max_order, must_semantics)
+    reach_hybrid(As, bs, Ts, init, δ, μ, T, max_order, must_semantics)
 end
 
 function plot_res(res)
