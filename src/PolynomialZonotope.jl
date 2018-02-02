@@ -1,5 +1,4 @@
-export AbstractNonConvexSet,
-       PolynomialZonotope,
+export PolynomialZonotope,
        dim,
        polynomial_order,
        order,
@@ -8,14 +7,7 @@ export AbstractNonConvexSet,
        minkowsi_sum
 
 """
-    AbstractNonConvexSet
-
-Abstract type for non-convex sets.
-"""
-abstract type AbstractNonConvexSet{N} end
-
-"""
-    PolynomialZonotope{N} <: AbstractNonConvexSet{N}
+    PolynomialZonotope{N} <: LazySet{N}
 
 Type that represents a polynomial zonotope.
 
@@ -90,6 +82,25 @@ Return the ambient dimension of a polynomial zonotope.
 An integer representing the ambient dimension of the polynomial zonotope.
 """
 dim(pz::PolynomialZonotope)::Int = length(pz.c)
+
+
+"""
+    σ(d::AbstractVector{N}, pz::PolynomialZonotope{N})::AbstractVector{N} where {N}
+
+Return the support vector of a polynomial zonotope along direction `d`.
+
+### Input
+
+- `d`  -- direction
+- `pz` -- polynomial zonotope
+
+### Output
+
+Vector representing the support vector.
+"""
+function σ(d::AbstractVector{N}, pz::PolynomialZonotope{N})::AbstractVector{N} where {N}
+    error("this function is not yet implemented")
+end
 
 """
     polynomial_order(pz::PolynomialZonotope)::Int
