@@ -7,13 +7,6 @@ module LazySets
 
 using RecipesBase, IterTools, Requires
 
-export ρ, support_function,
-       σ, support_vector,
-       dim,
-       norm,
-       radius,
-       diameter
-
 # ============================
 # Auxiliary types or functions
 # ============================
@@ -69,19 +62,14 @@ include("SymmetricIntervalHull.jl")
 include("is_intersection_empty.jl")
 include("is_subset.jl")
 
-# =================================================================
-# Algorithms for approximation of convex sets using support vectors
-# =================================================================
-include("support_function.jl")
+# =====================
+# Approximations module
+# =====================
 include("Approximations/Approximations.jl")
 
 # ============
 # Plot recipes
 # ============
 include("plot_recipes.jl")
-
-
-
-
 
 end # module
