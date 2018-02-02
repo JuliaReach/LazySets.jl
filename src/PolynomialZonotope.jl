@@ -41,6 +41,10 @@ julia> order(p)
 7//2
 julia> polynomial_order(p)
 2
+julia> scale(0.5, p)
+LazySets.PolynomialZonotope{Float64}([0.0, 0.0], Array{Float64,2}[[-0.5 0.0; 0.0 0.25], [0.5 0.5; 0.25 0.15]], Array{Float64,2}[[-0.25; 0.5]], [0.15 0.0; 0.0 0.15])
+julia> linear_map([1.0 2.0; 2.0 5.0], p)
+LazySets.PolynomialZonotope{Float64}([0.0, 0.0], Array{Float64,2}[[-1.0 1.0; -2.0 2.5], [2.0 1.6; 4.5 3.5]], Array{Float64,2}[[1.5; 4.0]], [0.3 0.6; 0.6 1.5])
 ```
 """
 struct PolynomialZonotope{N} <: LazySet{N}
