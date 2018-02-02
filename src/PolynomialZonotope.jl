@@ -158,7 +158,7 @@ multiplied by the matrix `M`.
 function linear_map(M::Matrix, pz::PolynomialZonotope)
     c = M * pz.c
     E = [M*Ei for Ei in pz.E]
-    F = [M*Ci for Fi in pz.F]
+    F = [M*Fi for Fi in pz.F]
     G = M * pz.G
     return PolynomialZonotope(c, E, F, G)
 end
@@ -181,7 +181,7 @@ of `pz` by a factor ``α``.
 function scale(α::Number, pz::PolynomialZonotope)
     c = α * pz.c
     E = [α*Ei for Ei in pz.E]
-    F = [α*Ci for Fi in pz.F]
+    F = [α*Fi for Fi in pz.F]
     G = α * pz.G
     return PolynomialZonotope(c, E, F, G)
 end
