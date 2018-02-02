@@ -1,3 +1,5 @@
+import Base.LinAlg:norm
+
 export AbstractConvexSet, LazySet,
        ρ, support_function,
        σ, support_vector,
@@ -94,3 +96,77 @@ function σ end
 Alias for the support vector σ.
 """
 const support_vector = σ
+
+
+"""
+    norm(S::AbstractConvexSet, [p]::Real=Inf)
+
+Return the norm of a convex set.
+It is the norm of the enclosing ball (of the given ``p``-norm) of minimal volume
+that is centered in the origin.
+
+### Input
+
+- `S` -- convex set
+- `p` -- (optional, default: `Inf`) norm
+
+### Output
+
+A real number representing the norm.
+"""
+function norm(S::AbstractConvexSet, p::Real=Inf)
+    if p == Inf
+        return norm(Approximations.ballinf_approximation(S), p)
+    else
+        error("the norm for this value of p=$p is not implemented")
+    end
+end
+
+"""
+    radius(S::AbstractConvexSet, [p]::Real=Inf)
+
+Return the radius of a convex set.
+It is the radius of the enclosing ball (of the given ``p``-norm) of minimal
+volume with the same center.
+
+### Input
+
+- `S` -- convex set
+- `p` -- (optional, default: `Inf`) norm
+
+### Output
+
+A real number representing the radius.
+"""
+function radius(S::AbstractConvexSet, p::Real=Inf)
+    if p == Inf
+        return radius(Approximations.ballinf_approximation(S)::BallInf, p)
+    else
+        error("the radius for this value of p=$p is not implemented")
+    end
+end
+
+"""
+    diameter(S::AbstractConvexSet, [p]::Real=Inf)
+
+Return the diameter of a convex set.
+It is the maximum distance between any two elements of the set, or,
+equivalently, the diameter of the enclosing ball (of the given ``p``-norm) of
+minimal volume with the same center.
+
+### Input
+
+- `S` -- convex set
+- `p` -- (optional, default: `Inf`) norm
+
+### Output
+
+A real number representing the diameter.
+"""
+function diameter(S::AbstractConvexSet, p::Real=Inf)
+    if p == Inf
+        return radius(S, p) * 2
+    else
+        error("the diameter for this value of p=$p is not implemented")
+    end
+end

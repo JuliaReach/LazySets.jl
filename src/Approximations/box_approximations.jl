@@ -1,7 +1,3 @@
-import Base.LinAlg:norm
-import LazySets:radius,  # visible outside module Approximations
-                diameter
-
 # ===================================
 # Approximations in the infinity norm
 # ===================================
@@ -152,81 +148,4 @@ function ballinf_approximation(S::LazySet{N})::BallInf{N} where {N<:Real}
         end
     end
     return BallInf(c, r)
-end
-
-# =======================================================
-# Metric properties of sets computed using Approximations
-# =======================================================
-
-"""
-    norm(S::LazySet, [p]::Real=Inf)
-
-Return the norm of a convex set.
-It is the norm of the enclosing ball (of the given ``p``-norm) of minimal volume
-that is centered in the origin.
-
-### Input
-
-- `S` -- convex set
-- `p` -- (optional, default: `Inf`) norm
-
-### Output
-
-A real number representing the norm.
-"""
-function norm(S::LazySet, p::Real=Inf)
-    if p == Inf
-        return norm(ballinf_approximation(S), p)
-    else
-        error("the norm for this value of p=$p is not implemented")
-    end
-end
-
-"""
-    radius(S::LazySet, [p]::Real=Inf)
-
-Return the radius of a convex set.
-It is the radius of the enclosing ball (of the given ``p``-norm) of minimal
-volume with the same center.
-
-### Input
-
-- `S` -- convex set
-- `p` -- (optional, default: `Inf`) norm
-
-### Output
-
-A real number representing the radius.
-"""
-function radius(S::LazySet, p::Real=Inf)
-    if p == Inf
-        return radius(ballinf_approximation(S)::BallInf, p)
-    else
-        error("the radius for this value of p=$p is not implemented")
-    end
-end
-
-"""
-    diameter(S::LazySet, [p]::Real=Inf)
-
-Return the diameter of a convex set.
-It is the maximum distance between any two elements of the set, or,
-equivalently, the diameter of the enclosing ball (of the given ``p``-norm) of
-minimal volume with the same center.
-
-### Input
-
-- `S` -- convex set
-- `p` -- (optional, default: `Inf`) norm
-
-### Output
-
-A real number representing the diameter.
-"""
-function diameter(S::LazySet, p::Real=Inf)
-    if p == Inf
-        return radius(S, p) * 2
-    else
-        error("the diameter for this value of p=$p is not implemented")
-    end
 end
