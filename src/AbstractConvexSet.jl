@@ -6,7 +6,8 @@ export AbstractConvexSet, LazySet,
        dim,
        norm,
        radius,
-       diameter
+       diameter,
+       an_element
 
 """
     AbstractConvexSet{N}
@@ -169,4 +170,22 @@ function diameter(S::AbstractConvexSet, p::Real=Inf)
     else
         error("the diameter for this value of p=$p is not implemented")
     end
+end
+
+
+"""
+    an_element(S::AbstractConvexSet{N})::AbstractVector{N} where {N<:Real}
+
+Return some element of a convex set.
+
+### Input
+
+- `S` -- convex set
+
+### Output
+
+An element of a convex set.
+"""
+function an_element(S::AbstractConvexSet{N})::AbstractVector{N} where {N<:Real}
+    return σ(sparsevec([1], [one(N)], dim(S)), S)
 end
