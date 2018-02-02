@@ -43,7 +43,7 @@ julia> polynomial_order(p)
 2
 ```
 """
-struct PolynomialZonotope{N} <: AbstractNonConvexSet{N}
+struct PolynomialZonotope{N} <: LazySet{N}
     c::Vector{N}
     E::Vector{Matrix{N}}
     F::Vector{Matrix{N}}
