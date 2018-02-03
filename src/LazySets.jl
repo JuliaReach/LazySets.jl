@@ -16,7 +16,7 @@ include("helper_functions.jl")
 # ==================
 # Abstract set types
 # ==================
-include("AbstractConvexSet.jl")
+include("LazySet.jl")
 include("AbstractPolytope.jl")
 include("AbstractPointSymmetric.jl")
 include("AbstractPointSymmetricPolytope.jl")

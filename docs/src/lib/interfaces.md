@@ -30,18 +30,17 @@ DocTestSetup = quote
 end
 ```
 
-## AbstractConvexSet
+## LazySet
 
-Every convex set in this library implements this convex set interface.
+Every convex set in this library implements this interface.
 
 ```@docs
-AbstractConvexSet
 LazySet
 ```
 
 ### Support function and support vector
 
-Every `AbstractConvexSet` type must define a function `σ` to compute the support vector.
+Every `LazySet` type must define a function `σ` to compute the support vector.
 
 ```@docs
 support_vector

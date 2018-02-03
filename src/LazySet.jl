@@ -1,6 +1,6 @@
 import Base.LinAlg:norm
 
-export AbstractConvexSet, LazySet,
+export LazySet,
        ρ, support_function,
        σ, support_vector,
        dim,
@@ -10,7 +10,7 @@ export AbstractConvexSet, LazySet,
        an_element
 
 """
-    AbstractConvexSet{N}
+    LazySet{N}
 
 Abstract type for convex sets, i.e., sets characterized by a (possibly infinite)
 intersection of halfspaces, or equivalently, sets ``S`` such that for any two
@@ -18,16 +18,16 @@ elements ``x, y ∈ S`` and ``0 ≤ λ ≤ 1`` it holds that ``λ x + (1-λ) y �
 
 ### Notes
 
-`AbstractConvexSet` types should be parameterized with a type `N`, typically
+`LazySet` types should be parameterized with a type `N`, typically
 `N<:Real`, for using different numeric types.
 
-Every concrete `AbstractConvexSet` must define the following functions:
-- `σ(d::AbstractVector{N}, S::AbstractConvexSet)::AbstractVector{N}` -- the
+Every concrete `LazySet` must define the following functions:
+- `σ(d::AbstractVector{N}, S::LazySet)::AbstractVector{N}` -- the
     support vector of `S` in a given direction `d`
-- `dim(S::AbstractConvexSet)::Int` -- the ambient dimension of `S`
+- `dim(S::LazySet)::Int` -- the ambient dimension of `S`
 
 ```jldoctest
-julia> subtypes(AbstractConvexSet)
+julia> subtypes(LazySet)
 15-element Array{Union{DataType, UnionAll},1}:
  LazySets.AbstractPointSymmetric  
  LazySets.AbstractPolytope        
@@ -46,21 +46,14 @@ julia> subtypes(AbstractConvexSet)
  LazySets.MinkowskiSumArray
 ```
 """
-abstract type AbstractConvexSet{N} end
-
-"""
-    LazySet
-
-Alias for `AbstractConvexSet`.
-"""
-const LazySet = AbstractConvexSet
+abstract type LazySet{N} end
 
 
-# --- common AbstractConvexSet functions ---
+# --- common LazySet functions ---
 
 
 """
-    ρ(d::AbstractVector{N}, S::AbstractConvexSet{N})::N where {N<:Real}
+    ρ(d::AbstractVector{N}, S::LazySet{N})::N where {N<:Real}
 
 Evaluate the support function of a set in a given direction.
 
@@ -73,7 +66,7 @@ Evaluate the support function of a set in a given direction.
 
 The support function of the set `S` for the direction `d`.
 """
-function ρ(d::AbstractVector{N}, S::AbstractConvexSet{N})::N where {N<:Real}
+function ρ(d::AbstractVector{N}, S::LazySet{N})::N where {N<:Real}
     return dot(d, σ(d, S))
 end
 
@@ -100,7 +93,7 @@ const support_vector = σ
 
 
 """
-    norm(S::AbstractConvexSet, [p]::Real=Inf)
+    norm(S::LazySet, [p]::Real=Inf)
 
 Return the norm of a convex set.
 It is the norm of the enclosing ball (of the given ``p``-norm) of minimal volume
@@ -115,7 +108,7 @@ that is centered in the origin.
 
 A real number representing the norm.
 """
-function norm(S::AbstractConvexSet, p::Real=Inf)
+function norm(S::LazySet, p::Real=Inf)
     if p == Inf
         return norm(Approximations.ballinf_approximation(S), p)
     else
@@ -124,7 +117,7 @@ function norm(S::AbstractConvexSet, p::Real=Inf)
 end
 
 """
-    radius(S::AbstractConvexSet, [p]::Real=Inf)
+    radius(S::LazySet, [p]::Real=Inf)
 
 Return the radius of a convex set.
 It is the radius of the enclosing ball (of the given ``p``-norm) of minimal
@@ -139,7 +132,7 @@ volume with the same center.
 
 A real number representing the radius.
 """
-function radius(S::AbstractConvexSet, p::Real=Inf)
+function radius(S::LazySet, p::Real=Inf)
     if p == Inf
         return radius(Approximations.ballinf_approximation(S)::BallInf, p)
     else
@@ -148,7 +141,7 @@ function radius(S::AbstractConvexSet, p::Real=Inf)
 end
 
 """
-    diameter(S::AbstractConvexSet, [p]::Real=Inf)
+    diameter(S::LazySet, [p]::Real=Inf)
 
 Return the diameter of a convex set.
 It is the maximum distance between any two elements of the set, or,
@@ -164,7 +157,7 @@ minimal volume with the same center.
 
 A real number representing the diameter.
 """
-function diameter(S::AbstractConvexSet, p::Real=Inf)
+function diameter(S::LazySet, p::Real=Inf)
     if p == Inf
         return radius(S, p) * 2
     else
@@ -174,7 +167,7 @@ end
 
 
 """
-    an_element(S::AbstractConvexSet{N})::AbstractVector{N} where {N<:Real}
+    an_element(S::LazySet{N})::AbstractVector{N} where {N<:Real}
 
 Return some element of a convex set.
 
@@ -186,6 +179,6 @@ Return some element of a convex set.
 
 An element of a convex set.
 """
-function an_element(S::AbstractConvexSet{N})::AbstractVector{N} where {N<:Real}
+function an_element(S::LazySet{N})::AbstractVector{N} where {N<:Real}
     return σ(sparsevec([1], [one(N)], dim(S)), S)
 end
