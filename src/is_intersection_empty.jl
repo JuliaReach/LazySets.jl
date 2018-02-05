@@ -367,7 +367,7 @@ function is_intersection_empty(Z::Zonotope{N},
                                witness::Bool=false
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     v = H.b - dot(H.a, Z.center)
-    abs_sum = sum(abs(dot(H.a, Z.generators[:, i])) for i = 1:size(Z.generators, 2))
+    abs_sum = sum(abs(dot(H.a, Z.generators[:, i])) for i = 1:ngens(Z))
     empty_intersection = v < -abs_sum || v > abs_sum
 
     if !witness
