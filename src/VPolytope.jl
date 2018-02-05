@@ -88,24 +88,17 @@ end
 """
     vertices_list(P::VPolytope{N})::Vector{Vector{N}} where {N<:Real}
 
-Return the list of vertices of a polytope in constraint representation.
+Return the list of vertices of a polytope in V-representation.
 
 ### Input
 
-- `P`         -- polytope in constraint representation
-- `backend`   -- (optional, default: `CDDLib.CDDLibrary()`) the polyhedral
-                 computations backend, see Polyhedra's documentation
-                 for further information
-- `prunefunc` -- (optional, default: `removevredundancy!`) function to post-process
-                 the output of `vreps`
+- `P` -- polytope in vertex representation
 
 ### Output
 
 List of vertices.
 """
-function vertices_list(P::HPolytope{N};
-                       backend=CDDLib.CDDLibrary(),
-                       prunefunc=removevredundancy!)::Vector{Vector{N}} where {N<:Real}
+function vertices_list(P::VPolytope{N})::Vector{Vector{N}} where {N<:Real}
     return P.vertices
 end
 
