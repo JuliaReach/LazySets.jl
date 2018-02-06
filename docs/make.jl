@@ -19,6 +19,7 @@ makedocs(
         "Convex Hulls" => "man/convex_hulls.md",
         "Operations on Sets" => "man/set_operations.md",
         "A Reachability Algorithm" => "man/reach_zonotopes.md",
+        "A Hybrid Reachability Algorithm" => "man/reach_zonotopes_hybrid.md",
         "Concrete Polyhedra" => "man/concrete_polyhedra.md"],
         "Library" => Any[
         "Set Interfaces" => "lib/interfaces.md",

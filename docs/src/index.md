@@ -182,7 +182,9 @@ Pages = [
     "man/iterative_refinement.md",
     "man/interval_hulls.md",
     "man/convex_hulls.md",
-    "man/reach_zonotopes.md"
+    "man/reach_zonotopes.md",
+    "man/reach_zonotopes_hybrid.md",
+    "man/concrete_polyhedra.md"
 ]
 Depth = 2
 ```
