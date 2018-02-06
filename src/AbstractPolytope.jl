@@ -21,6 +21,7 @@ julia> subtypes(AbstractPolytope)
  LazySets.AbstractPointSymmetricPolytope
  LazySets.AbstractPolygon
  LazySets.HPolytope
+ LazySets.VPolytope
 ```
 """
 abstract type AbstractPolytope{N<:Real} <: LazySet{N} end
