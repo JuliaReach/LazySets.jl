@@ -98,7 +98,7 @@ E = Ellipsoid(ones(2), diagm([2.0, 0.5]))
 B = Ball1([2.5, 1.5], .8)
 
 import LazySets.Approximations.overapproximate
-polyoverapprox(x) = HPolytope(overapproximate(x, 1e-3).constraints_list)
+polyoverapprox(x) = HPolytope(overapproximate(x, 1e-3).constraints)
 
 Epoly = polyoverapprox(E)
 Bpoly = polyoverapprox(B)

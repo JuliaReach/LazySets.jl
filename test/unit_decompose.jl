@@ -17,10 +17,10 @@ for N in [Float64, Float32] # TODO Rational{Int}
     dec = decompose(Ω0)
     dec1 = dec.sfarray[1]
 
-    @test dec1.constraints_list[1].b ≈ to_N(N, 2.84042586)
-    @test dec1.constraints_list[2].b ≈ to_N(N, 4.04708832)
-    @test dec1.constraints_list[3].b ≈ to_N(N, -0.667292)
-    @test dec1.constraints_list[4].b ≈ to_N(N, -0.836613)
+    @test dec1.constraints[1].b ≈ to_N(N, 2.84042586)
+    @test dec1.constraints[2].b ≈ to_N(N, 4.04708832)
+    @test dec1.constraints[3].b ≈ to_N(N, -0.667292)
+    @test dec1.constraints[4].b ≈ to_N(N, -0.836613)
 
     # ======================================
     # Run decompose for different set types
