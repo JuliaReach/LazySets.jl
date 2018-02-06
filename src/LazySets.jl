@@ -7,6 +7,8 @@ module LazySets
 
 using RecipesBase, IterTools, Requires
 
+export Approximations
+
 # ============================
 # Auxiliary types or functions
 # ============================
