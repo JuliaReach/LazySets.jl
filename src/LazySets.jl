@@ -44,6 +44,7 @@ include("Hyperplane.jl")
 include("Hyperrectangle.jl")
 include("Singleton.jl")
 include("VPolygon.jl")
+include("VPolytope.jl")
 include("ZeroSet.jl")
 include("Zonotope.jl")
 
