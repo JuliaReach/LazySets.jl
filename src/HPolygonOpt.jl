@@ -11,7 +11,7 @@ This is a refined version of `HPolygon`.
 
 ### Fields
 
-- `constraints_list` -- list of linear constraints
+- `constraints` -- list of linear constraints
 - `ind` -- index in the list of constraints to begin the search to evaluate the
            support function
 
@@ -26,34 +26,34 @@ The default constructor assumes that the given list of edges is sorted.
 It *does not perform* any sorting.
 Use `addconstraint!` to iteratively add the edges in a sorted way.
 
-- `HPolygonOpt(constraints_list::Vector{LinearConstraint{<:Real}}, ind::Int)`
+- `HPolygonOpt(constraints::Vector{LinearConstraint{<:Real}}, ind::Int)`
   -- default constructor
-- `HPolygonOpt(constraints_list::Vector{LinearConstraint{<:Real}})`
+- `HPolygonOpt(constraints::Vector{LinearConstraint{<:Real}})`
   -- constructor without index
 - `HPolygonOpt(H::HPolygon{<:Real})`
   -- constructor from an HPolygon
 """
 mutable struct HPolygonOpt{N<:Real} <: AbstractHPolygon{N}
-    constraints_list::Vector{LinearConstraint{N}}
+    constraints::Vector{LinearConstraint{N}}
     ind::Int
 
     # default constructor
-    HPolygonOpt{N}(constraints_list::Vector{LinearConstraint{N}},
+    HPolygonOpt{N}(constraints::Vector{LinearConstraint{N}},
                    ind::Int) where {N<:Real} =
-        new{N}(constraints_list, ind)
+        new{N}(constraints, ind)
 end
 # type-less convenience constructor
-HPolygonOpt(constraints_list::Vector{LinearConstraint{N}},
+HPolygonOpt(constraints::Vector{LinearConstraint{N}},
             ind::Int) where {N<:Real} =
-    HPolygonOpt{N}(constraints_list, ind)
+    HPolygonOpt{N}(constraints, ind)
 
 # type-less convenience constructor without index
-HPolygonOpt(constraints_list::Vector{LinearConstraint{N}}) where {N<:Real} =
-    HPolygonOpt{N}(constraints_list, 1)
+HPolygonOpt(constraints::Vector{LinearConstraint{N}}) where {N<:Real} =
+    HPolygonOpt{N}(constraints, 1)
 
 # constructor from an HPolygon
 HPolygonOpt(H::HPolygon{N}) where {N<:Real} =
-    HPolygonOpt{N}(H.constraints_list, 1)
+    HPolygonOpt{N}(H.constraints, 1)
 
 
 # --- LazySet interface functions ---
@@ -82,37 +82,37 @@ Comparison of directions is performed using polar angles; see the overload of
 """
 function σ(d::AbstractVector{<:Real},
            P::HPolygonOpt{N})::Vector{N} where {N<:Real}
-    n = length(P.constraints_list)
+    n = length(P.constraints)
     if n == 0
         error("this polygon is empty")
     end
-    if (d <= P.constraints_list[P.ind].a)
+    if (d <= P.constraints[P.ind].a)
         k = P.ind-1
-        while (k >= 1 && d <= P.constraints_list[k].a)
+        while (k >= 1 && d <= P.constraints[k].a)
             k -= 1
         end
         if (k == 0)
             P.ind = n
-            return intersection(Line(P.constraints_list[n]),
-                                Line(P.constraints_list[1]))
+            return intersection(Line(P.constraints[n]),
+                                Line(P.constraints[1]))
         else
             P.ind = k
-            return intersection(Line(P.constraints_list[k]),
-                                Line(P.constraints_list[k+1]))
+            return intersection(Line(P.constraints[k]),
+                                Line(P.constraints[k+1]))
         end
     else
         k = P.ind+1
-        while (k <= n && P.constraints_list[k].a <= d)
+        while (k <= n && P.constraints[k].a <= d)
             k += 1
         end
         if (k == n+1)
             P.ind = n
-            return intersection(Line(P.constraints_list[n]),
-                                Line(P.constraints_list[1]))
+            return intersection(Line(P.constraints[n]),
+                                Line(P.constraints[1]))
         else
             P.ind = k-1
-            return intersection(Line(P.constraints_list[k-1]),
-                                Line(P.constraints_list[k]))
+            return intersection(Line(P.constraints[k-1]),
+                                Line(P.constraints[k]))
         end
     end
 end

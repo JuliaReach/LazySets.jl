@@ -15,7 +15,7 @@ for N in [Float64, Float32] # TODO Rational{Int}
 
     # Check that there are no redundant constraints for a ballinf
     b = BallInf(N[0.5, 0.5], N(0.1))
-    lcl = overapproximate(b, N(.001)).constraints_list
+    lcl = overapproximate(b, N(.001)).constraints
     @test length(lcl) == 4
     @test lcl[1].a == N[1.0, 0.0]
     @test lcl[1].b == N(0.6)
@@ -36,7 +36,7 @@ for N in [Float64, Float32] # TODO Rational{Int}
     addconstraint!(p, LinearConstraint(N[-sqrt(2.0)/2.0, sqrt(2.0)/2.0], N(1.0)))
     addconstraint!(p, LinearConstraint(N[sqrt(2.0)/2.0, -sqrt(2.0)/2.0], N(1.0)))
     addconstraint!(p, LinearConstraint(N[-sqrt(2.0)/2.0, -sqrt(2.0)/2.0], N(1.0)))
-    lcl = overapproximate(p, N(.001)).constraints_list
+    lcl = overapproximate(p, N(.001)).constraints
     @test length(lcl) == 8
     @test lcl[1].a ≈ N[1.0, 0.0]
     @test lcl[1].b ≈ N(1.0)

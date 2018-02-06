@@ -11,10 +11,10 @@ for N in [Float64, Float32, Rational{Int}]
     addconstraint!(p, c1)
     addconstraint!(p, c4)
     addconstraint!(p, c2)
-    @test p.constraints_list[1] == c1
-    @test p.constraints_list[2] == c2
-    @test p.constraints_list[3] == c3
-    @test p.constraints_list[4] == c4
+    @test p.constraints[1] == c1
+    @test p.constraints[2] == c2
+    @test p.constraints[3] == c3
+    @test p.constraints[4] == c4
 
     # Optimized polygon
     po = HPolygonOpt(p)
