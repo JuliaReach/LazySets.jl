@@ -18,7 +18,7 @@ end
 # constructor for a VPolytope with empty vertices list
 VPolytope{N}() where {N<:Real} = VPolytope{N}(Vector{N}(0))
 
-# constructor for a VPolytope with no constraints of type Float64
+# constructor for a VPolytope with no vertices of type Float64
 VPolytope() = VPolytope{Float64}()
 
 # constructor from a polygon in V-representation
@@ -202,7 +202,7 @@ end
 """
     cartesian_product(P1::VPolytope, P2::VPolytope; [backend]=CDDLib.CDDLibrary())
 
-Compute the Cartesian product of two polytopes in V-representaion.
+Compute the Cartesian product of two polytopes in V-representation.
 
 ### Input
 
@@ -214,7 +214,7 @@ Compute the Cartesian product of two polytopes in V-representaion.
 
 ### Output
 
-The `VPolytope` obtained by the concrete cartesian product of `P1` and `P2`.
+The `VPolytope` obtained by the concrete Cartesian product of `P1` and `P2`.
 """
 function cartesian_product(P1::VPolytope, P2::VPolytope; backend=CDDLib.CDDLibrary())
     Pcp = hcartesianproduct(polyhedron(P1, backend), polyhedron(P2, backend))
