@@ -102,11 +102,11 @@ function vertices_list(P::VPolytope{N})::Vector{Vector{N}} where {N<:Real}
     return P.vertices
 end
 
-#=
+
 @require Polyhedra begin
 
 using CDDLib # default backend
-import Polyhedra:polyhedron, SimpleHRepresentation, SimpleHRepresentation,
+import Polyhedra:polyhedron, SimpleHRepresentation, SimpleVRepresentation,
                  HRep, VRep,
                  removehredundancy!, removevredundancy!,
                  hreps, vreps,
@@ -116,20 +116,19 @@ import Polyhedra:polyhedron, SimpleHRepresentation, SimpleHRepresentation,
 
 export intersect, convex_hull, cartesian_product, vertices_list
 
-# HPolytope from an HRep
-# NOTE: alternatively take SimpleHRepresentation(hrep(P)) fields A and b
-function HPolytope(P::HRep{N, T}, backend=CDDLib.CDDLibrary()) where {N, T}
-    constraints = LinearConstraint{T}[]
-    for hi in hreps(P)
-        push!(constraints, LinearConstraint(hi.a, hi.β))
+# VPolytope from a VRep
+function VPolytope(P::VRep{N, T}, backend=CDDLib.CDDLibrary()) where {N, T}
+    vertices = Vector{Vector{T}}()
+    for vi in vreps(P)
+        push!(vertices, vi)
     end
-    return HPolytope(constraints)
+    return VPolytope(vertices)
 end
 
 """
-    polyhedron(P::HPolytope{N}, [backend]=CDDLib.CDDLibrary()) where {N}
+    polyhedron(P::VPolytope{N}, [backend]=CDDLib.CDDLibrary()) where {N}
 
-Return an `HRep` polyhedron from `Polyhedra.jl` given a polytope in H-representation.
+Return an `VRep` polyhedron from `Polyhedra.jl` given a polytope in V-representation.
 
 ### Input
 
@@ -140,18 +139,18 @@ Return an `HRep` polyhedron from `Polyhedra.jl` given a polytope in H-representa
 
 ### Output
 
-An `HRep` polyhedron.
+A `VRep` polyhedron.
 """
-function polyhedron(P::HPolytope{N}, backend=CDDLib.CDDLibrary()) where {N}
-    return polyhedron(SimpleHRepresentation(tosimplehrep(P)...), backend)
+function polyhedron(P::VPolytope{N}, backend=CDDLib.CDDLibrary()) where {N}
+    return polyhedron(SimpleVRepresentation(hcat(vertices_list(P)...)'), backend)
 end
 
 """
-    intersect(P1::HPolytope{N}, P2::HPolytope{N};
+    intersect(P1::VPolytope{N}, P2::VPolytope{N};
               [backend]=CDDLib.CDDLibrary(),
-              [prunefunc]=removehredundancy!)::HPolytope{N} where {N<:Real}
+              [prunefunc]=removehredundancy!)::VPolytope{N} where {N<:Real}
 
-Compute the intersection of two polytopes in H-representation.
+Compute the intersection of two polytopes in V-representation.
 
 ### Input
 
@@ -165,23 +164,23 @@ Compute the intersection of two polytopes in H-representation.
 
 ### Output
 
-The `HPolytope` obtained by the intersection of `P1` and `P2`.
+The `VPolytope` obtained by the intersection of `P1` and `P2`.
 """
-function intersect(P1::HPolytope{N}, P2::HPolytope{N};
+function intersect(P1::VPolytope{N}, P2::VPolytope{N};
                    backend=CDDLib.CDDLibrary(),
-                   prunefunc=removehredundancy!)::HPolytope{N} where {N<:Real}
+                   prunefunc=removehredundancy!)::VPolytope{N} where {N<:Real}
 
     P1 = polyhedron(P1, backend)
     P2 = polyhedron(P2, backend)
     Pint = intersect(P1, P2)
     prunefunc(Pint)
-    return HPolytope(Pint)
+    return VPolytope(Pint)
 end
 
 """
-    convex_hull(P1::HPolytope, P2::HPolytope; [backend]=CDDLib.CDDLibrary())
+    convex_hull(P1::VPolytope, P2::VPolytope; [backend]=CDDLib.CDDLibrary())
 
-Compute the convex hull of the set union of two polytopes in H-representation.
+Compute the convex hull of the set union of two polytopes in V-representation.
 
 ### Input
 
@@ -193,17 +192,17 @@ Compute the convex hull of the set union of two polytopes in H-representation.
 
 ### Output
 
-The `HPolytope` obtained by the concrete convex hull of `P1` and `P2`.
+The `VPolytope` obtained by the concrete convex hull of `P1` and `P2`.
 """
-function convex_hull(P1::HPolytope, P2::HPolytope; backend=CDDLib.CDDLibrary())
+function convex_hull(P1::VPolytope, P2::VPolytope; backend=CDDLib.CDDLibrary())
     Pch = convexhull(polyhedron(P1, backend), polyhedron(P2, backend))
-    return HPolytope(Pch)
+    return VPolytope(Pch)
 end
 
 """
-    cartesian_product(P1::HPolytope, P2::HPolytope; [backend]=CDDLib.CDDLibrary())
+    cartesian_product(P1::VPolytope, P2::VPolytope; [backend]=CDDLib.CDDLibrary())
 
-Compute the Cartesian product of two polytopes in H-representaion.
+Compute the Cartesian product of two polytopes in V-representaion.
 
 ### Input
 
@@ -215,14 +214,11 @@ Compute the Cartesian product of two polytopes in H-representaion.
 
 ### Output
 
-The `HPolytope` obtained by the concrete cartesian product of `P1` and `P2`.
+The `VPolytope` obtained by the concrete cartesian product of `P1` and `P2`.
 """
-function cartesian_product(P1::HPolytope, P2::HPolytope; backend=CDDLib.CDDLibrary())
+function cartesian_product(P1::VPolytope, P2::VPolytope; backend=CDDLib.CDDLibrary())
     Pcp = hcartesianproduct(polyhedron(P1, backend), polyhedron(P2, backend))
-    return HPolytope(Pcp)
+    return VPolytope(Pcp)
 end
 
-
-
 end
-=#
