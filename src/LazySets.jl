@@ -7,31 +7,7 @@ module LazySets
 
 using RecipesBase, IterTools, Requires
 
-export LazySet,
-       ρ, support_function,
-       σ, support_vector,
-       dim,
-       norm,
-       radius,
-       diameter,
-       Approximations
-
-"""
-    LazySet{N}
-
-Abstract type for a lazy set.
-
-### Notes
-
-Every concrete `LazySet` must define the following functions:
-- `σ(d::AbstractVector{N}, S::LazySet)::AbstractVector{N}` -- the support vector
-    of `S` in a given direction `d`
-- `dim(S::LazySet)::Int` -- the ambient dimension of `S`
-
-`LazySet` types should be parameterized with a type `N`, typically `N<:Real`,
-for using different numeric types.
-"""
-abstract type LazySet{N} end
+export Approximations
 
 # ============================
 # Auxiliary types or functions
@@ -39,10 +15,10 @@ abstract type LazySet{N} end
 include("LinearConstraints.jl")
 include("helper_functions.jl")
 
-# ===============================
-# Types that inherit from LazySet
-# ===============================
-# abstract types
+# ==================
+# Abstract set types
+# ==================
+include("LazySet.jl")
 include("AbstractPolytope.jl")
 include("AbstractPointSymmetric.jl")
 include("AbstractPointSymmetricPolytope.jl")
@@ -50,47 +26,53 @@ include("AbstractHyperrectangle.jl")
 include("AbstractPolygon.jl")
 include("AbstractHPolygon.jl")
 include("AbstractSingleton.jl")
-# concrete types
-include("EmptySet.jl")
-include("ZeroSet.jl")
-include("Singleton.jl")
+
+# =============================
+# Types representing basic sets
+# =============================
+include("Ball1.jl")
 include("Ball2.jl")
 include("BallInf.jl")
-include("Ball1.jl")
 include("Ballp.jl")
-include("Hyperrectangle.jl")
+include("Ellipsoid.jl")
+include("EmptySet.jl")
+include("HalfSpace.jl")
 include("HPolygon.jl")
 include("HPolygonOpt.jl")
 include("HPolytope.jl")
+include("Hyperplane.jl")
+include("Hyperrectangle.jl")
+include("Singleton.jl")
 include("VPolygon.jl")
 include("VPolytope.jl")
+include("ZeroSet.jl")
 include("Zonotope.jl")
-include("Ellipsoid.jl")
-include("Hyperplane.jl")
-include("HalfSpace.jl")
 
 # =================================
 # Types representing set operations
 # =================================
-include("ConvexHull.jl")
 include("CartesianProduct.jl")
+include("ConvexHull.jl")
 include("ExponentialMap.jl")
+include("Intersection.jl")
 include("LinearMap.jl")
 include("MinkowskiSum.jl")
-include("Intersection.jl")
 include("SymmetricIntervalHull.jl")
 
 # =======================================
 # Algorithms for check operations on sets
 # =======================================
-include("is_subset.jl")
 include("is_intersection_empty.jl")
+include("is_subset.jl")
 
-# =================================================================
-# Algorithms for approximation of convex sets using support vectors
-# =================================================================
-include("support_function.jl")
+# =====================
+# Approximations module
+# =====================
 include("Approximations/Approximations.jl")
+
+# ============
+# Plot recipes
+# ============
 include("plot_recipes.jl")
 
 end # module
