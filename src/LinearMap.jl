@@ -9,17 +9,17 @@ Type that represents a linear transformation ``M⋅S`` of a convex set ``S``.
 
 ### Fields
 
-- `M`  -- matrix/linear map
-- `sf` -- convex set
+- `M` -- matrix/linear map
+- `X` -- convex set
 """
-struct LinearMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
+struct LinearMap{N, S<:LazySet{N}} <: LazySet{N}
     M::AbstractMatrix{N}
-    sf::S
+    X::S
 end
 # constructor from a linear map: perform the matrix multiplication immediately
 LinearMap(M::AbstractMatrix{N}, map::LinearMap{N, S}
          ) where {S<:LazySet{N}} where {N<:Real} =
-    LinearMap{N, S}(M * map.M, map.sf)
+    LinearMap{N, S}(M * map.M, map.X)
 
 """
 ```
@@ -83,7 +83,7 @@ Return a linear map scaled by a scalar value.
 The scaled linear map.
 """
 function *(a::N, map::S)::S where {S<:LinearMap{N, T}} where {N<:Real} where {T}
-    return LinearMap(a * map.M, map.sf)
+    return LinearMap(a * map.M, map.X)
 end
 
 """
@@ -144,7 +144,7 @@ If ``L = M⋅S``, where ``M`` is a matrix and ``S`` is a convex set, it follows
 that ``σ(d, L) = M⋅σ(M^T d, S)`` for any direction ``d``.
 """
 function σ(d::AbstractVector{<:Real}, lm::LinearMap)::AbstractVector{<:Real}
-    return lm.M * σ(lm.M.' * d, lm.sf)
+    return lm.M * σ(lm.M.' * d, lm.X)
 end
 
 """
@@ -190,5 +190,5 @@ true
 """
 function ∈(x::AbstractVector{N},
            lm::LinearMap{N, <:LazySet})::Bool where {N<:Real}
-    return ∈(lm.M \ x, lm.sf)
+    return ∈(lm.M \ x, lm.X)
 end
