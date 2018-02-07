@@ -1,7 +1,8 @@
 import Base.+
 
 export MinkowskiSum, ⊕,
-       MinkowskiSumArray
+       MinkowskiSumArray,
+       array
 
 """
     MinkowskiSum{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
@@ -140,13 +141,13 @@ Type that represents the Minkowski sum of a finite number of convex sets.
 
 ### Fields
 
-- `sfarray` -- array of convex sets
+- `array` -- array of convex sets
 
 ### Notes
 
 This type assumes that the dimensions of all elements match.
 
-- `MinkowskiSumArray(sfarray::Vector{<:LazySet})` -- default constructor
+- `MinkowskiSumArray(array::Vector{<:LazySet})` -- default constructor
 
 - `MinkowskiSumArray()` -- constructor for an empty sum
 
@@ -154,7 +155,7 @@ This type assumes that the dimensions of all elements match.
   -- constructor for an empty sum with size hint and numeric type
 """
 struct MinkowskiSumArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
-    sfarray::Vector{S}
+    array::Vector{S}
 end
 # type-less convenience constructor
 MinkowskiSumArray(arr::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
@@ -185,7 +186,7 @@ right.
 The modified Minkowski sum of a finite number of convex sets.
 """
 function +(msa::MinkowskiSumArray, S::LazySet)::MinkowskiSumArray
-    push!(msa.sfarray, S)
+    push!(msa.array, S)
     return msa
 end
 
@@ -205,7 +206,7 @@ left.
 The modified Minkowski sum of a finite number of convex sets.
 """
 function +(S::LazySet, msa::MinkowskiSumArray)::MinkowskiSumArray
-    push!(msa.sfarray, S)
+    push!(msa.array, S)
     return msa
 end
 
@@ -225,7 +226,7 @@ Minkowski sum.
 The modified first Minkowski sum of a finite number of convex sets.
 """
 function +(msa1::MinkowskiSumArray, msa2::MinkowskiSumArray)::MinkowskiSumArray
-    append!(msa1.sfarray, msa2.sfarray)
+    append!(msa1.array, msa2.array)
     return msa1
 end
 
@@ -282,6 +283,23 @@ Minkowski sum.
 +(∅::EmptySet, msa::MinkowskiSumArray) = ∅
 
 """
+    array(msa::MinkowskiSumArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
+
+Return the array of a Minkowski sum of a finite number of convex sets.
+
+### Input
+
+- `msa` -- Minkowski sum array
+
+### Output
+
+The array of a Minkowski sum of a finite number of convex sets.
+"""
+function array(msa::MinkowskiSumArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
+    return msa.array
+end
+
+"""
     dim(msa::MinkowskiSumArray)::Int
 
 Return the dimension of a Minkowski sum of a finite number of sets.
@@ -295,7 +313,7 @@ Return the dimension of a Minkowski sum of a finite number of sets.
 The ambient dimension of the Minkowski sum of a finite number of sets.
 """
 function dim(msa::MinkowskiSumArray)::Int
-    return length(msa.sfarray) == 0 ? 0 : dim(msa.sfarray[1])
+    return length(msa.array) == 0 ? 0 : dim(msa.array[1])
 end
 
 """
@@ -317,7 +335,7 @@ If the direction has norm zero, the result depends on the summand sets.
 """
 function σ(d::AbstractVector{<:Real}, msa::MinkowskiSumArray)::Vector{<:Real}
     svec = zeros(eltype(d), length(d))
-    for sj in msa.sfarray
+    for sj in msa.array
         svec += σ(d, sj)
     end
     return svec
