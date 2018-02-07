@@ -135,7 +135,7 @@ low(::Hyperrectangle{Float64})
 ```@docs
 LinearConstraint
 Line
-intersection(::Line{Float64}, L2::Line{Float64})
+intersection(::Line{Float64}, ::Line{Float64})
 ```
 
 ## Polygons
@@ -253,9 +253,10 @@ center(::Zonotope{Float64})
 vertices_list(::Zonotope{Float64})
 singleton_list(::Zonotope{Float64})
 order(::Zonotope{Float64})
-minkowski_sum(Z1::Zonotope, Z2::Zonotope)
-linear_map(M::AbstractMatrix, Z::Zonotope)
-scale(α::Real, Z::Zonotope)
-ngens(Z::Zonotope)
-reduce_order(Z::Zonotope{Float64}, r)
+minkowski_sum(::Zonotope, ::Zonotope)
+linear_map(::AbstractMatrix, ::Zonotope)
+scale(::Real, ::Zonotope)
+ngens(::Zonotope)
+reduce_order(::Zonotope{Float64}, r)
+convert(::Type{Zonotope}, ::AbstractHyperrectangle{Float64})
 ```
