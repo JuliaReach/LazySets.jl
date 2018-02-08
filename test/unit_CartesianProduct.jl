@@ -106,4 +106,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test !∈(N[2., 3., 3., 1.], cp)
     @test !∈(N[0., 0., 3., 1.], cp)
     @test !∈(N[1., 1., 3., 1.], cp)
+
+    # array getter
+    v = Vector{N}(0)
+    @test array(CartesianProductArray()) == v
 end

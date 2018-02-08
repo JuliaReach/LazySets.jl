@@ -49,4 +49,8 @@ for N in [Float64, Rational{Int}, Float32]
     ms = MinkowskiSum(Singleton(N[1.]), MinkowskiSum(Singleton(N[2.]), Singleton(N[3.])))
     @test ρ(N[1.], ms) == N(6.)
     @test ρ(N[-1.], ms) == N(-6.)
+
+    # array getter
+    v = Vector{N}(0)
+    @test array(MinkowskiSumArray()) == v
 end

@@ -3,7 +3,8 @@ include("convex_hull_algorithms.jl")
 export ConvexHull, CH,
        convex_hull,
        convex_hull!,
-       ConvexHullArray, CHArray
+       ConvexHullArray, CHArray,
+       array
 
 """
     ConvexHull{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
@@ -168,6 +169,23 @@ CH(cha::ConvexHullArray, ∅::EmptySet) = cha
 CH(∅::EmptySet, cha::ConvexHullArray) = cha
 
 CH(cha1::ConvexHullArray, cha2::ConvexHullArray) = ConvexHullArray(vcat(cha1.array, cha2.array))
+
+"""
+    array(cha::ConvexHullArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
+
+Return the array of a convex hull of a finite number of convex sets.
+
+### Input
+
+- `cha` -- convex hull array
+
+### Output
+
+The array of a convex hull of a finite number of convex sets.
+"""
+function array(cha::ConvexHullArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
+    return cha.array
+end
 
 """
     dim(cha::ConvexHullArray)::Int

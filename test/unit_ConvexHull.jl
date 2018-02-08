@@ -48,4 +48,8 @@ for N in [Float64, Rational{Int}, Float32]
 
     # concatenation of two convex hull arrays
     @test CH(a, a) isa ConvexHullArray
+
+    # array getter
+    v = Vector{N}(0)
+    @test array(ConvexHullArray()) == v
 end
