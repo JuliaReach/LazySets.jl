@@ -55,8 +55,9 @@ for N in [Float64, Float32, Rational{Int}]
 
     # Test Cartesian Product with EmptySet
     s = Singleton(N[1.])
-    cs1 = ∅ * s
-    cs2 = s * ∅
+    E = EmptySet{N}()
+    cs1 = E * s
+    cs2 = s * E
     @test cs1 isa EmptySet
     @test cs2 isa EmptySet
 
