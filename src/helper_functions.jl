@@ -1,6 +1,7 @@
 export sign_cadlag,
        check_method_implementation,
-       check_method_ambiguity_binary
+       check_method_ambiguity_binary,
+       @commutative_neutral
 
 """
     sign_cadlag(x::N)::N where {N<:Real}
@@ -227,4 +228,40 @@ function check_method_ambiguity_binary(op;
     result = !has_ambiguities
 #     result &= !has_other_problems # also report other errors
     return result
+end
+
+"""
+    @commutative_neutral(SET, NEUT)
+
+Creates functions to make a set type behave like a commutative monoid.
+
+### Input
+
+- `SET`  -- set type
+- `NEUT` -- set type of the neutral element
+
+### Output
+
+Three function definitions.
+
+### Examples
+
+`@commutative_neutral(ConvexHull, EmptySet)` creates the following functions:
+* `ConvexHull(X::LazySet{N}, ::EmptySet{N}) where {N<:Real} = X`
+* `ConvexHull(::EmptySet{N}, X::LazySet{N}) where {N<:Real} = X`
+* `ConvexHull(Y::EmptySet{N}, ::EmptySet{N}) where {N<:Real} = Y`
+"""
+macro commutative_neutral(SET, NEUT)
+    @eval begin
+        function $SET(X::LazySet{N}, ::$NEUT{N}) where {N<:Real}
+            return X
+        end
+        function $SET(::$NEUT{N}, X::LazySet{N}) where {N<:Real}
+            return X
+        end
+        function $SET(Y::$NEUT{N}, ::$NEUT{N}) where {N<:Real}
+            return Y
+        end
+    end
+    return nothing
 end

@@ -9,4 +9,5 @@ end
 
 ```@docs
 sign_cadlag
+@commutative_neutral
 ```
