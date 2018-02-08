@@ -108,8 +108,8 @@ Base.:+(::MinkowskiSumArray{Float64, LazySet{Float64}}, ::ZeroSet{Float64})
 
 ```@docs
 LinearMap
-dim(::LinearMap{Float64, LazySet{Float64}})
-σ(::AbstractVector{Float64}, ::LinearMap{Float64, LazySet{Float64}})
+dim(::LinearMap{Float64, Float64})
+σ(::AbstractVector{Float64}, ::LinearMap{Float64, Float64})
 *(::AbstractMatrix, ::LazySet)
 *(::Float64, ::LazySet)
 ∈(x::AbstractVector{Float64}, ::LinearMap{Float64, Float64})
