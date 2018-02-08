@@ -305,3 +305,47 @@ macro commutative_absorbing(SET, ABS)
     end
     return nothing
 end
+
+
+"""
+    @commutative_neutral_absorbing(SET, NEUT, ABS)
+
+Creates functions to make a set type behave commutative with both a given
+neutral and a given absorbing element set type.
+
+### Input
+
+- `SET`  -- set type
+- `NEUT` -- set type of the neutral element
+- `ABS` -- set type of the absorbing element
+
+### Output
+
+Eight function definitions.
+
+### Examples
+
+`@commutative_neutral_absorbing(MinkowskiSum, ZeroSet, EmptySet))` creates the
+following functions:
+* `MinkowskiSum(X::LazySet{N}, ::ZeroSet{N}) where {N<:Real} = X`
+* `MinkowskiSum(::ZeroSet{N}, X::LazySet{N}) where {N<:Real} = X`
+* `MinkowskiSum(Y::ZeroSet{N}, ::ZeroSet{N}) where {N<:Real} = Y`
+* `MinkowskiSum(::LazySet{N}, Y::EmptySet{N}) where {N<:Real} = Y`
+* `MinkowskiSum(Y::EmptySet{N}, ::LazySet{N}) where {N<:Real} = Y`
+* `MinkowskiSum(::ZeroSet{N}, Y::EmptySet{N}) where {N<:Real} = Y`
+* `MinkowskiSum(Y::EmptySet{N}, ::ZeroSet{N}) where {N<:Real} = Y`
+"""
+macro commutative_neutral_absorbing(SET, NEUT, ABS)
+    @eval begin
+        @commutative_neutral($SET, $NEUT)
+        @commutative_absorbing($SET, $ABS)
+
+        function $SET(::$NEUT{N}, Y::$ABS{N}) where {N<:Real}
+            return Y
+        end
+        function $SET(Y::$ABS{N}, ::$NEUT{N}) where {N<:Real}
+            return Y
+        end
+    end
+    return nothing
+end

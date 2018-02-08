@@ -11,4 +11,5 @@ end
 sign_cadlag
 @commutative_neutral
 @commutative_absorbing
+@commutative_neutral_absorbing
 ```

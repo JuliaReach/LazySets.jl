@@ -50,11 +50,9 @@ Unicode alias constructor `\oplus` for the Minkowski sum operator `+(X, Y)`.
 """
 ⊕(X::LazySet, Y::LazySet) = +(X, Y)
 
-# ZeroSet is the neutral element for MinkowskiSum
-@commutative_neutral(MinkowskiSum, ZeroSet)
-
-# EmptySet is the absorbing element for MinkowskiSum
-@commutative_absorbing(MinkowskiSum, EmptySet)
+# ZeroSet is the neutral element and EmptySet is the absorbing element for
+# MinkowskiSum
+@commutative_neutral_absorbing(MinkowskiSum, ZeroSet, EmptySet)
 
 """
     dim(ms::MinkowskiSum)::Int
@@ -196,11 +194,9 @@ function MinkowskiSumArray(msa1::MinkowskiSumArray,
     return msa1
 end
 
-# ZeroSet is the neutral element for MinkowskiSum
-@commutative_neutral(MinkowskiSumArray, ZeroSet)
-
-# EmptySet is the absorbing element for MinkowskiSum
-@commutative_absorbing(MinkowskiSumArray, EmptySet)
+# ZeroSet is the neutral element and EmptySet is the absorbing element for
+# MinkowskiSumArray
+@commutative_neutral_absorbing(MinkowskiSumArray, ZeroSet, EmptySet)
 
 """
     array(msa::MinkowskiSumArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
