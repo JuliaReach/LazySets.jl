@@ -59,6 +59,11 @@ include("LinearMap.jl")
 include("MinkowskiSum.jl")
 include("SymmetricIntervalHull.jl")
 
+# =============================
+# Conversions between set types
+# =============================
+include("convert.jl")
+
 # =======================================
 # Algorithms for check operations on sets
 # =======================================
