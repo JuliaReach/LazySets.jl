@@ -50,45 +50,11 @@ Unicode alias constructor `\oplus` for the Minkowski sum operator `+(X, Y)`.
 """
 ⊕(X::LazySet, Y::LazySet) = +(X, Y)
 
-"""
-    X + ∅
-
-Right Minkowski sum of a set by an empty set.
-
-### Input
-
-- `X` -- a convex set
-- `∅` -- an empty set
-
-### Output
-
-An empty set, because the empty set is the absorbing element for the
-Minkowski sum.
-"""
-+(::LazySet, ∅::EmptySet) = ∅
-
-"""
-    ∅ + X
-
-Left Minkowski sum of a set by an empty set.
-
-### Input
-
-- `∅` -- an empty set
-- `X` -- a convex set
-
-### Output
-
-An empty set, because the empty set is the absorbing element for the
-Minkowski sum.
-"""
-+(∅::EmptySet, ::LazySet) = ∅
-
-# special case: pure empty set Minkowski sum (we require the same numeric type)
-(+(∅::E, ::E)) where {E<:EmptySet} = ∅
-
 # ZeroSet is the neutral element for MinkowskiSum
 @commutative_neutral(MinkowskiSum, ZeroSet)
+
+# EmptySet is the absorbing element for MinkowskiSum
+@commutative_absorbing(MinkowskiSum, EmptySet)
 
 """
     dim(ms::MinkowskiSum)::Int
@@ -167,7 +133,7 @@ function MinkowskiSumArray(n::Int, N::Type=Float64)::MinkowskiSumArray
 end
 
 """
-    +(msa::MinkowskiSumArray, S::LazySet)::MinkowskiSumArray
+    MinkowskiSumArray(msa::MinkowskiSumArray, S::LazySet)::MinkowskiSumArray
 
 Add a convex set to a Minkowski sum of a finite number of convex sets from the
 right.
@@ -181,13 +147,14 @@ right.
 
 The modified Minkowski sum of a finite number of convex sets.
 """
-function +(msa::MinkowskiSumArray, S::LazySet)::MinkowskiSumArray
+function MinkowskiSumArray(msa::MinkowskiSumArray,
+                           S::LazySet)::MinkowskiSumArray
     push!(msa.array, S)
     return msa
 end
 
 """
-    +(S::LazySet, msa::MinkowskiSumArray)::MinkowskiSumArray
+    MinkowskiSumArray(S::LazySet, msa::MinkowskiSumArray)::MinkowskiSumArray
 
 Add a convex set to a Minkowski sum of a finite number of convex sets from the
 left.
@@ -201,13 +168,15 @@ left.
 
 The modified Minkowski sum of a finite number of convex sets.
 """
-function +(S::LazySet, msa::MinkowskiSumArray)::MinkowskiSumArray
+function MinkowskiSumArray(S::LazySet,
+                           msa::MinkowskiSumArray)::MinkowskiSumArray
     push!(msa.array, S)
     return msa
 end
 
 """
-    +(msa1::MinkowskiSumArray, msa2::MinkowskiSumArray)::MinkowskiSumArray
+    MinkowskiSumArray(msa1::MinkowskiSumArray,
+                      msa2::MinkowskiSumArray)::MinkowskiSumArray
 
 Add the elements of a finite Minkowski sum of convex sets to another finite
 Minkowski sum.
@@ -221,7 +190,8 @@ Minkowski sum.
 
 The modified first Minkowski sum of a finite number of convex sets.
 """
-function +(msa1::MinkowskiSumArray, msa2::MinkowskiSumArray)::MinkowskiSumArray
+function MinkowskiSumArray(msa1::MinkowskiSumArray,
+                           msa2::MinkowskiSumArray)::MinkowskiSumArray
     append!(msa1.array, msa2.array)
     return msa1
 end
@@ -229,39 +199,8 @@ end
 # ZeroSet is the neutral element for MinkowskiSum
 @commutative_neutral(MinkowskiSumArray, ZeroSet)
 
-"""
-    +(msa::MinkowskiSumArray, ∅::EmptySet)
-
-Right Minkowski sum of a set by an empty set.
-
-### Input
-
-- `msa` -- Minkowski sum array
-- `∅`   -- an empty set
-
-### Output
-
-An empty set, because the empty set is the absorbing element for the
-Minkowski sum.
-"""
-+(msa::MinkowskiSumArray, ∅::EmptySet) = ∅
-
-"""
-    +(∅::EmptySet, msa::MinkowskiSumArray)
-
-Left Minkowski sum of a set by an empty set.
-
-### Input
-
-- `∅` -- an empty set
-- `msa` -- Minkowski sum array
-
-### Output
-
-An empty set, because the empty set is the absorbing element for the
-Minkowski sum.
-"""
-+(∅::EmptySet, msa::MinkowskiSumArray) = ∅
+# EmptySet is the absorbing element for MinkowskiSum
+@commutative_absorbing(MinkowskiSumArray, EmptySet)
 
 """
     array(msa::MinkowskiSumArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}

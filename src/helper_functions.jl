@@ -1,7 +1,8 @@
 export sign_cadlag,
        check_method_implementation,
        check_method_ambiguity_binary,
-       @commutative_neutral
+       @commutative_neutral,
+       @commutative_absorbing
 
 """
     sign_cadlag(x::N)::N where {N<:Real}
@@ -233,7 +234,8 @@ end
 """
     @commutative_neutral(SET, NEUT)
 
-Creates functions to make a set type behave like a commutative monoid.
+Creates functions to make a set type behave commutative with a given neutral
+element set type.
 
 ### Input
 
@@ -260,6 +262,44 @@ macro commutative_neutral(SET, NEUT)
             return X
         end
         function $SET(Y::$NEUT{N}, ::$NEUT{N}) where {N<:Real}
+            return Y
+        end
+    end
+    return nothing
+end
+
+"""
+    @commutative_absorbing(SET, ABS)
+
+Creates functions to make a set type behave commutative with a given absorbing
+element set type.
+
+### Input
+
+- `SET`  -- set type
+- `ABS` -- set type of the absorbing element
+
+### Output
+
+Three function definitions.
+
+### Examples
+
+`@commutative_absorbing(MinkowskiSum, EmptySet)` creates the following
+functions:
+* `MinkowskiSum(::LazySet{N}, Y::EmptySet{N}) where {N<:Real} = Y`
+* `MinkowskiSum(Y::EmptySet{N}, ::LazySet{N}) where {N<:Real} = Y`
+* `MinkowskiSum(Y::EmptySet{N}, ::EmptySet{N}) where {N<:Real} = Y`
+"""
+macro commutative_absorbing(SET, ABS)
+    @eval begin
+        function $SET(::LazySet{N}, Y::$ABS{N}) where {N<:Real}
+            return Y
+        end
+        function $SET(Y::$ABS{N}, ::LazySet{N}) where {N<:Real}
+            return Y
+        end
+        function $SET(Y::$ABS{N}, ::$ABS{N}) where {N<:Real}
             return Y
         end
     end

@@ -47,7 +47,7 @@ CartesianProduct(Xarr::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
 
 """
 ```
-    *(X::LazySet, Y::LazySet)::CartesianProduct
+    *(X::LazySet, Y::LazySet)
 ```
 
 Return the Cartesian product of two convex sets.
@@ -61,7 +61,7 @@ Return the Cartesian product of two convex sets.
 
 The Cartesian product of the two convex sets.
 """
-*(X::LazySet, Y::LazySet)::CartesianProduct = CartesianProduct(X, Y)
+*(X::LazySet, Y::LazySet) = CartesianProduct(X, Y)
 
 """
     ×
@@ -70,42 +70,8 @@ Alias for the binary Cartesian product.
 """
 ×(X::LazySet, Y::LazySet) = *(X, Y)
 
-"""
-    X × ∅
-
-Right multiplication of a set by an empty set.
-
-### Input
-
-- `X` -- a convex set
-- `∅` -- an empty set
-
-### Output
-
-An empty set, because the empty set is the absorbing element for the
-Cartesian product.
-"""
-*(::LazySet, ∅::EmptySet) = ∅
-
-"""
-    ∅ × X
-
-Left multiplication of a set by an empty set.
-
-### Input
-
-- `X` -- a convex set
-- `∅` -- an empty set
-
-### Output
-
-An empty set, because the empty set is the absorbing element for the
-Cartesian product.
-"""
-*(∅::EmptySet, ::LazySet) = ∅
-
-# special case: pure empty set multiplication (we require the same numeric type)
-(*(∅::E, ::E)) where {E<:EmptySet} = ∅
+# EmptySet is the absorbing element for CartesianProduct
+@commutative_absorbing(CartesianProduct, EmptySet)
 
 """
     dim(cp::CartesianProduct)::Int
@@ -205,7 +171,8 @@ end
 
 """
 ```
-    *(cpa::CartesianProductArray, S::LazySet)::CartesianProductArray
+    CartesianProductArray(cpa::CartesianProductArray,
+                          S::LazySet)::CartesianProductArray
 ```
 
 Multiply a convex set to a Cartesian product of a finite number of convex sets
@@ -220,14 +187,16 @@ from the right.
 
 The modified Cartesian product of a finite number of convex sets.
 """
-function *(cpa::CartesianProductArray, S::LazySet)::CartesianProductArray
+function CartesianProductArray(cpa::CartesianProductArray,
+                               S::LazySet)::CartesianProductArray
     push!(cpa.array, S)
     return cpa
 end
 
 """
 ```
-    *(S::LazySet, cpa::CartesianProductArray)::CartesianProductArray
+    CartesianProductArray(S::LazySet,
+                          cpa::CartesianProductArray)::CartesianProductArray
 ```
 
 Multiply a convex set to a Cartesian product of a finite number of convex sets
@@ -242,52 +211,15 @@ from the left.
 
 The modified Cartesian product of a finite number of convex sets.
 """
-function *(S::LazySet, cpa::CartesianProductArray)::CartesianProductArray
-    push!(cpa.array, S)
-    return cpa
+function CartesianProductArray(S::LazySet,
+                               cpa::CartesianProductArray)::CartesianProductArray
+    return CartesianProductArray(cpa, S)
 end
 
 """
 ```
-    *(cpa::CartesianProductArray, ∅::EmptySet)
-```
-
-Right multiplication of a `CartesianProductArray` by an empty set.
-
-### Input
-
-- `cpa` -- Cartesian product array
-- `∅`   -- an empty set
-
-### Output
-
-An empty set, because the empty set is the absorbing element for the
-Cartesian product.
-"""
-*(::CartesianProductArray, ∅::EmptySet) = ∅
-
-"""
-```
-    *(S::EmptySet, cpa::CartesianProductArray)
-```
-
-Left multiplication of a set by an empty set.
-
-### Input
-
-- `X` -- a convex set
-- `∅` -- an empty set
-
-### Output
-
-An empty set, because the empty set is the absorbing element for the
-Cartesian product.
-"""
-*(∅::EmptySet, ::CartesianProductArray) = ∅
-
-"""
-```
-    *(cpa1::CartesianProductArray, cpa2::CartesianProductArray)::CartesianProductArray
+    CartesianProductArray(cpa1::CartesianProductArray,
+                          cpa2::CartesianProductArray)::CartesianProductArray
 ```
 
 Multiply a finite Cartesian product of convex sets to another finite Cartesian
@@ -302,11 +234,14 @@ product.
 
 The modified first Cartesian product.
 """
-function *(cpa1::CartesianProductArray,
-           cpa2::CartesianProductArray)::CartesianProductArray
+function CartesianProductArray(cpa1::CartesianProductArray,
+                               cpa2::CartesianProductArray)::CartesianProductArray
     append!(cpa1.array, cpa2.array)
     return cpa1
 end
+
+# EmptySet is the absorbing element for CartesianProduct
+@commutative_absorbing(CartesianProductArray, EmptySet)
 
 """
     array(cpa::CartesianProductArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
