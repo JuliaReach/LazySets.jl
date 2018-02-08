@@ -87,12 +87,8 @@ Minkowski sum.
 # special case: pure empty set Minkowski sum (we require the same numeric type)
 (+(∅::E, ::E)) where {E<:EmptySet} = ∅
 
-+(X::LazySet, ::ZeroSet) = X
-
-+(::ZeroSet, X::LazySet) = X
-
-# special case: pure zero set Minkowski sum (we require the same numeric type)
-(+(X::Z, ::Z)) where {Z<:ZeroSet} = X
+# ZeroSet is the neutral element for MinkowskiSum
+@commutative_neutral(MinkowskiSum, ZeroSet)
 
 """
     dim(ms::MinkowskiSum)::Int
@@ -230,23 +226,8 @@ function +(msa1::MinkowskiSumArray, msa2::MinkowskiSumArray)::MinkowskiSumArray
     return msa1
 end
 
-"""
-    +(msa::MinkowskiSumArray, Z::ZeroSet)::MinkowskiSumArray
-
-Returns the original array because addition with an empty set is a no-op.
-
-### Input
-
-- `msa` -- Minkowski sum array
-- `Z`  -- a Zero set
-"""
-function +(msa::MinkowskiSumArray, Z::ZeroSet)::MinkowskiSumArray
-    return msa
-end
-
-function +(Z::ZeroSet, msa::MinkowskiSumArray)::MinkowskiSumArray
-    return msa
-end
+# ZeroSet is the neutral element for MinkowskiSum
+@commutative_neutral(MinkowskiSumArray, ZeroSet)
 
 """
     +(msa::MinkowskiSumArray, ∅::EmptySet)

@@ -49,40 +49,8 @@ Alias for `ConvexHull`.
 """
 const CH = ConvexHull
 
-"""
-    ConvexHull(X, ∅)
-
-Convex hull of a set with the empty set from the right.
-
-### Input
-
-- `X` -- a convex set
-- `∅` -- an empty set
-
-### Output
-
-The given set because the empty set is neutral for the convex hull.
-"""
-ConvexHull(X::LazySet{N}, ::EmptySet{N}) where {N<:Real} = X
-
-"""
-    ConvexHull(∅, X)
-
-Convex hull of a set with the empty set from the left.
-
-### Input
-
-- `∅` -- an empty set
-- `X` -- a convex set
-
-### Output
-
-The given set because the empty set is neutral for the convex hull.
-"""
-ConvexHull(::EmptySet{N}, X::LazySet{N}) where {N<:Real} = X
-
-# special case: pure empty set convex hull (we require the same numeric type)
-(ConvexHull(∅::E, ::E)) where {E<:EmptySet} = ∅
+# EmptySet is the neutral element for ConvexHull
+@commutative_neutral(ConvexHull, EmptySet)
 
 """
     dim(ch::ConvexHull)::Int
@@ -158,15 +126,15 @@ function ConvexHullArray(n::Int, N::Type=Float64)::ConvexHullArray
     return ConvexHullArray(a)
 end
 
+# EmptySet is the neutral element for ConvexHullArray
+@commutative_neutral(ConvexHullArray, EmptySet)
+
 """
     CHArray
 
 Alias for `ConvexHullArray`.
 """
 const CHArray = ConvexHullArray
-
-CH(cha::ConvexHullArray, ∅::EmptySet) = cha
-CH(∅::EmptySet, cha::ConvexHullArray) = cha
 
 CH(cha1::ConvexHullArray, cha2::ConvexHullArray) = ConvexHullArray(vcat(cha1.array, cha2.array))
 
