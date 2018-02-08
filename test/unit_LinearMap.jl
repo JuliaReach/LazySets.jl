@@ -5,7 +5,7 @@ for N in [Float64, Rational{Int}, Float32]
     # Test Construction
     lm1 = LinearMap(M, b)
     @test lm1.M == M
-    @test lm1.sf == b
+    @test lm1.X == b
     # Test Dimension
     @test dim(lm1) == 2
     # Test Support Vector
@@ -50,5 +50,5 @@ for N in [Float64, Rational{Int}, Float32]
     # Nested construction
     lm1_copy = LinearMap(eye(N, 2), lm1)
     @test lm1_copy.M == lm1.M
-    @test lm1_copy.sf == lm1.sf
+    @test lm1_copy.X == lm1.X
 end
