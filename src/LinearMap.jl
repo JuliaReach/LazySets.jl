@@ -3,7 +3,7 @@ import Base: *, ∈
 export LinearMap
 
 """
-    LinearMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
+    LinearMap{NM, N} <: LazySet{N}
 
 Type that represents a linear transformation ``M⋅S`` of a convex set ``S``.
 
@@ -11,19 +11,26 @@ Type that represents a linear transformation ``M⋅S`` of a convex set ``S``.
 
 - `M` -- matrix/linear map
 - `X` -- convex set
+
+### Notes
+
+This type is parametric in the elements of the linear map, `NM`, and independently
+on the type of elements of the target set (`N`). Typically `NM = N` but it is
+not necessarily always the case e.g. if `NM` is an interval that holds numbers of
+type `N`, where `N` is a floating point number type such as `Float64`.
 """
-struct LinearMap{N, S<:LazySet{N}} <: LazySet{N}
-    M::AbstractMatrix{N}
-    X::S
+struct LinearMap{NM, N} <: LazySet{N}
+    M::AbstractMatrix{NM}
+    X::LazySet{N}
 end
 # constructor from a linear map: perform the matrix multiplication immediately
-LinearMap(M::AbstractMatrix{N}, map::LinearMap{N, S}
-         ) where {S<:LazySet{N}} where {N<:Real} =
-    LinearMap{N, S}(M * map.M, map.X)
+LinearMap(M::AbstractMatrix{NM},
+          map::LinearMap{NM, N}) where {NM, N} = LinearMap{NM, N}(M * map.M, map.X)
+
 
 """
 ```
-    *(M::AbstractMatrix{<:Real}, X::LazySet)
+    *(M::AbstractMatrix, X::LazySet)
 ```
 
 Return the linear map of a convex set.
@@ -48,41 +55,41 @@ end
 
 """
 ```
-    *(a::N, X::S)::LinearMap{N, S} where {S<:LazySet{N}} where {N<:Real}
+    *(a::N, X::LazySet) where {N}
 ```
 
 Return a linear map of a convex set by a scalar value.
 
 ### Input
 
-- `a` -- real scalar
+- `a` -- scalar
 - `X` -- convex set
 
 ### Output
 
 The linear map of the convex set.
 """
-function *(a::N, X::S)::LinearMap{N, S} where {S<:LazySet{N}} where {N<:Real}
+function *(a::N, X::LazySet) where {N}
     return LinearMap(a * speye(N, dim(X)), X)
 end
 
 """
 ```
-    *(a::N, map::S)::S where {S<:LinearMap{N, S}} where {N<:Real}
+    *(a::N, map::S)::S where {S<:LinearMap{NM, N}} where {NM, N}
 ```
 
 Return a linear map scaled by a scalar value.
 
 ### Input
 
-- `a` -- real scalar
+- `a`   -- scalar
 - `map` -- linear map
 
 ### Output
 
 The scaled linear map.
 """
-function *(a::N, map::S)::S where {S<:LinearMap{N, T}} where {N<:Real} where {T}
+function *(a::N, map::S)::S where {S<:LinearMap{NM, N}} where {NM, N}
     return LinearMap(a * map.M, map.X)
 end
 
@@ -148,7 +155,7 @@ function σ(d::AbstractVector{<:Real}, lm::LinearMap)::AbstractVector{<:Real}
 end
 
 """
-    ∈(x::AbstractVector{N}, lm::LinearMap{N, <:LazySet})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N}, lm::LinearMap{NM, N})::Bool where {NM, N<:Real}
 
 Check whether a given point is contained in a linear map of a convex set.
 
@@ -188,7 +195,6 @@ julia> ∈([0.5, 0.5], M*B)
 true
 ```
 """
-function ∈(x::AbstractVector{N},
-           lm::LinearMap{N, <:LazySet})::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, lm::LinearMap{NM, N})::Bool where {NM, N<:Real}
     return ∈(lm.M \ x, lm.X)
 end
