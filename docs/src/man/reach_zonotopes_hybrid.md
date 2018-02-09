@@ -153,6 +153,28 @@ end
 
 ## Example
 
+We consider an extension of the example presented in
+[*"Reachability of uncertain linear systems using zonotopes*, A. Girard, HSCC. Vol. 5. 2005]
+to a hybrid system with two modes ``\ell_i``, ``i = 1, 2``, with initial states
+``[0.9, 1.1] \times [-0.1, 0.1]`` and uncertain inputs from a set ``u`` with
+``\mu = \Vert u \Vert_\infty = 0.001``.
+
+The dynamics matrices ``A_i`` are defined as follows:
+
+```math
+	A_1 = \begin{pmatrix} -1 & -4 \\ 4 & -1 \end{pmatrix}, \qquad A_2 = \begin{pmatrix} 1 & 4 \\ -4 & -1 \end{pmatrix}.
+```
+We add a transition ``t_i`` from mode ``\ell_i`` to ``\ell_{3-i}`` with a
+hyperplane guard ``g_i``:
+
+```math
+	g_1 \triangleq x_1 = -0.5 \qquad g_2 \triangleq x_2 = -0.3
+```
+
+`LazySets` offers an order reduction function for zonotopes, which we used here
+with an upper bound of 10 generators. We plot the reachable states for the time
+interval ``[0, 4]`` and time step ``δ = 0.001``.
+
 ```@example example_reach_zonotopes_hybrid
     # dynamics
     A1 = [-1 -4; 4 -1]
