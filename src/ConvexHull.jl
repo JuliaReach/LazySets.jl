@@ -16,6 +16,10 @@ Type that represents the convex hull of the union of two convex sets.
 - `X` -- convex set
 - `Y` -- convex set
 
+### Notes
+
+The `EmptySet` is the neutral element for `ConvexHull`.
+
 ### Examples
 
 Convex hull of two 100-dimensional Euclidean balls:
@@ -42,15 +46,15 @@ end
 ConvexHull(X::S1, Y::S2) where {S1<:LazySet{N}, S2<:LazySet{N}} where {N<:Real} =
     ConvexHull{N, S1, S2}(X, Y)
 
+# EmptySet is the neutral element for ConvexHull
+@commutative_neutral(ConvexHull, EmptySet)
+
 """
     CH
 
 Alias for `ConvexHull`.
 """
 const CH = ConvexHull
-
-# EmptySet is the neutral element for ConvexHull
-@commutative_neutral(ConvexHull, EmptySet)
 
 """
     dim(ch::ConvexHull)::Int
@@ -100,6 +104,17 @@ Type that represents the symbolic convex hull of a finite number of convex sets.
 
 - `array` -- array of sets
 
+### Notes
+
+The `EmptySet` is the neutral element for `ConvexHullArray`.
+
+Constructors:
+
+- `ConvexHullArray(array::Vector{<:LazySet})` -- default constructor
+
+- `ConvexHullArray([n]::Int=0, [N]::Type=Float64)`
+  -- constructor for an empty hull with optional size hint and numeric type
+
 ### Examples
 
 Convex hull of 100 two-dimensional balls whose centers follows a sinusoidal:
@@ -113,14 +128,13 @@ julia> c = ConvexHullArray(b);
 struct ConvexHullArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
 end
+
 # type-less convenience constructor
-ConvexHullArray(a::Vector{S}) where {S<:LazySet{N}} where {N<:Real} = ConvexHullArray{N, S}(a)
+ConvexHullArray(a::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
+    ConvexHullArray{N, S}(a)
 
-# constructor for an empty convex hull array
-ConvexHullArray() = ConvexHullArray{Float64, LazySet{Float64}}(Vector{LazySet{Float64}}(0))
-
-# constructor for an empty convex hull array with size hint and numeric type
-function ConvexHullArray(n::Int, N::Type=Float64)::ConvexHullArray
+# constructor for an empty hull with optional size hint and numeric type
+function ConvexHullArray(n::Int=0, N::Type=Float64)::ConvexHullArray
     a = Vector{LazySet{N}}(0)
     sizehint!(a, n)
     return ConvexHullArray(a)

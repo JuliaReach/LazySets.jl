@@ -13,6 +13,11 @@ Type that represents the Minkowski sum of two convex sets.
 
 - `X` -- first convex set
 - `Y` -- second convex set
+
+### Notes
+
+The `ZeroSet` is the neutral element and the `EmptySet` is the absorbing element
+for `MinkowskiSum`.
 """
 struct MinkowskiSum{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     X::S1
@@ -26,6 +31,10 @@ end
 # type-less convenience constructor
 MinkowskiSum(X::S1, Y::S2) where {S1<:LazySet{N}, S2<:LazySet{N}} where {N<:Real} =
     MinkowskiSum{N, S1, S2}(X, Y)
+
+# ZeroSet is the neutral element and EmptySet is the absorbing element for
+# MinkowskiSum
+@commutative_neutral_absorbing(MinkowskiSum, ZeroSet, EmptySet)
 
 """
     X + Y
@@ -49,10 +58,6 @@ The symbolic Minkowski sum of ``X`` and ``Y``.
 Unicode alias constructor `\oplus` for the Minkowski sum operator `+(X, Y)`.
 """
 ⊕(X::LazySet, Y::LazySet) = +(X, Y)
-
-# ZeroSet is the neutral element and EmptySet is the absorbing element for
-# MinkowskiSum
-@commutative_neutral_absorbing(MinkowskiSum, ZeroSet, EmptySet)
 
 """
     dim(ms::MinkowskiSum)::Int
@@ -107,24 +112,26 @@ Type that represents the Minkowski sum of a finite number of convex sets.
 
 This type assumes that the dimensions of all elements match.
 
+The `ZeroSet` is the neutral element and the `EmptySet` is the absorbing element
+for `MinkowskiSumArray`.
+
+Constructors:
+
 - `MinkowskiSumArray(array::Vector{<:LazySet})` -- default constructor
 
-- `MinkowskiSumArray()` -- constructor for an empty sum
-
-- `MinkowskiSumArray(n::Int, [N]::Type=Float64)`
-  -- constructor for an empty sum with size hint and numeric type
+- `MinkowskiSumArray([n]::Int=0, [N]::Type=Float64)`
+  -- constructor for an empty sum with optional size hint and numeric type
 """
 struct MinkowskiSumArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
 end
+
 # type-less convenience constructor
 MinkowskiSumArray(arr::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
     MinkowskiSumArray{N, S}(arr)
-# constructor for an empty sum of float type
-MinkowskiSumArray() =
-    MinkowskiSumArray{Float64, LazySet{Float64}}(Vector{LazySet{Float64}}(0))
-# constructor for an empty sum with size hint and numeric type
-function MinkowskiSumArray(n::Int, N::Type=Float64)::MinkowskiSumArray
+
+# constructor for an empty sum with optional size hint and numeric type
+function MinkowskiSumArray(n::Int=0, N::Type=Float64)::MinkowskiSumArray
     arr = Vector{LazySet{N}}(0)
     sizehint!(arr, n)
     return MinkowskiSumArray(arr)
@@ -168,8 +175,7 @@ The modified Minkowski sum of a finite number of convex sets.
 """
 function MinkowskiSumArray(S::LazySet,
                            msa::MinkowskiSumArray)::MinkowskiSumArray
-    push!(msa.array, S)
-    return msa
+    return MinkowskiSumArray(msa, S)
 end
 
 """

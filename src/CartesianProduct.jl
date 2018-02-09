@@ -20,6 +20,10 @@ The Cartesian product of three elements is obtained recursively.
 See also `CartesianProductArray` for an implementation of a Cartesian product of
 many sets without recursion, instead using an array.
 
+The `EmptySet` is the absorbing element for `CartesianProduct`.
+
+Constructors:
+
 - `CartesianProduct{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}}(X1::S1, X2::S2)`
   -- default constructor
 
@@ -45,6 +49,9 @@ CartesianProduct(Xarr::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
                 : CartesianProduct(Xarr[1],
                                    CartesianProduct(Xarr[2:length(Xarr)])))
 
+# EmptySet is the absorbing element for CartesianProduct
+@commutative_absorbing(CartesianProduct, EmptySet)
+
 """
 ```
     *(X::LazySet, Y::LazySet)
@@ -69,9 +76,6 @@ The Cartesian product of the two convex sets.
 Alias for the binary Cartesian product.
 """
 ×(X::LazySet, Y::LazySet) = *(X, Y)
-
-# EmptySet is the absorbing element for CartesianProduct
-@commutative_absorbing(CartesianProduct, EmptySet)
 
 """
     dim(cp::CartesianProduct)::Int
@@ -146,24 +150,25 @@ Type that represents the Cartesian product of a finite number of convex sets.
 
 ### Notes
 
+The `EmptySet` is the absorbing element for `CartesianProductArray`.
+
+Constructors:
+
 - `CartesianProductArray(array::Vector{<:LazySet})` -- default constructor
 
-- `CartesianProductArray()` -- constructor for an empty Cartesian product
-
-- `CartesianProductArray(n::Int, [N]::Type=Float64)`
-  -- constructor for an empty Cartesian product with size hint and numeric type
+- `CartesianProductArray([n]::Int=0, [N]::Type=Float64)`
+  -- constructor for an empty product with optional size hint and numeric type
 """
 struct CartesianProductArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
 end
+
 # type-less convenience constructor
 CartesianProductArray(arr::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
     CartesianProductArray{N, S}(arr)
-# constructor for an empty Cartesian product of floats
-CartesianProductArray() =
-    CartesianProductArray{Float64, LazySet{Float64}}(Vector{LazySet{Float64}}(0))
-# constructor for an empty Cartesian product with size hint and numeric type
-function CartesianProductArray(n::Int, N::Type=Float64)::CartesianProductArray
+
+# constructor for an empty product with optional size hint and numeric type
+function CartesianProductArray(n::Int=0, N::Type=Float64)::CartesianProductArray
     arr = Vector{LazySet{N}}(0)
     sizehint!(arr, n)
     return CartesianProductArray(arr)
