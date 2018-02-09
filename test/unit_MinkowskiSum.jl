@@ -53,4 +53,12 @@ for N in [Float64, Rational{Int}, Float32]
     # array getter
     v = Vector{N}(0)
     @test array(MinkowskiSumArray()) == v
+
+    # neutral and absorbing element
+    z = ZeroSet{N}(2)
+    e = EmptySet{N}()
+    b = BallInf(N[0., 0.], N(2.))
+    @test b + z == z + b == b
+    @test b + e == e + b == e + e == e
+    @test z + e == e + z == e
 end
