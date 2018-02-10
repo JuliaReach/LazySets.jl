@@ -196,6 +196,7 @@ Pages = [
     "lib/interfaces.md",
     "lib/representations.md",
     "lib/operations.md",
+    "lib/conversion.md",
     "lib/approximations.md",
     "lib/utils.md"
 ]
