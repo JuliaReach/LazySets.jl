@@ -2,7 +2,7 @@
 
 """
     convert(::Type{HPOLYGON1}, P::HPOLYGON2) where
-        {HPOLYGON1<:AbstractHPolygon, HPOLYGON2<:AbstractHPolygon}
+        {HPOLYGON1<:Union{HPolygon, HPolygonOpt}, HPOLYGON2<:AbstractHPolygon}
 
 Convert between polygon types in H-representation.
 
@@ -14,9 +14,14 @@ Convert between polygon types in H-representation.
 ### Output
 
 The polygon represented as the target type.
+
+### Notes
+
+We need the `Union` type for `HPOLYGON1` because the target type must be
+concrete.
 """
 function convert(::Type{HPOLYGON1},
-                 P::HPOLYGON2) where {HPOLYGON1<:AbstractHPolygon,
+                 P::HPOLYGON2) where {HPOLYGON1<:Union{HPolygon, HPolygonOpt},
                                       HPOLYGON2<:AbstractHPolygon}
     return HPOLYGON1(P.constraints)
 end

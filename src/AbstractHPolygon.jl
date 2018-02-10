@@ -16,6 +16,8 @@ Abstract type for polygons in H-representation (i.e., constraints).
 Every concrete `AbstractHPolygon` must have the following fields:
 - `constraints::Vector{LinearConstraint{N}}` -- the constraints
 
+New subtypes should be added to the `convert` method in order to be convertible.
+
 ```jldoctest
 julia> subtypes(AbstractHPolygon)
 2-element Array{Union{DataType, UnionAll},1}:
