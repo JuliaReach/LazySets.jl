@@ -15,8 +15,8 @@ This algorithm is an extension of the one presented in
 
 We consider a simple case here where modes do not have invariants and
 transitions do not have updates.
-It makes sense to consider `must` transitions in this case, i.e., that a
-transition is taken as soon as it is enabled, but we also offer the `may`
+It makes sense to consider *must* transitions in this case, i.e., that a
+transition is taken as soon as it is enabled, but we also offer the *may*
 transitions interpretation below.
 
 
@@ -154,7 +154,7 @@ end
 ## Example
 
 We consider an extension of the example presented in
-[*"Reachability of uncertain linear systems using zonotopes*, A. Girard, HSCC. Vol. 5. 2005]
+[*Reachability of uncertain linear systems using zonotopes*, A. Girard, HSCC. Vol. 5. 2005]
 to a hybrid system with two modes ``\ell_i``, ``i = 1, 2``, with initial states
 ``[0.9, 1.1] \times [-0.1, 0.1]`` and uncertain inputs from a set ``u`` with
 ``\mu = \Vert u \Vert_\infty = 0.001``.
