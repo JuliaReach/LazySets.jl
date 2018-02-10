@@ -16,8 +16,21 @@ for N in [Float64, Float32, Rational{Int}]
     @test p.constraints[3] == c3
     @test p.constraints[4] == c4
 
-    # Optimized polygon
+    # conversion to optimized polygon
     po = HPolygonOpt(p)
+    # conversion back
+    HPolygon(po)
+    # conversion from HPolytope
+    polytope = HPolytope{N}()
+    addconstraint!(polytope, c1)
+    addconstraint!(polytope, c2)
+    addconstraint!(polytope, c3)
+    addconstraint!(polytope, c4)
+    HPolygon(polytope)
+    HPolygonOpt(polytope)
+    # conversion to HPolytope
+    HPolytope(p)
+    HPolytope(po)
 
     # HPolygon/HPolygonOpt tests
     for p in [p, po]
@@ -122,5 +135,4 @@ for N in [Float64, Float32, Rational{Int}]
                 @test vi <= v[j]
         end
     end
-
 end
