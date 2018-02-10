@@ -30,8 +30,8 @@ HPolytope{N}() where {N<:Real} = HPolytope{N}(Vector{N}(0))
 # constructor for a HPolytope with no constraints of type Float64
 HPolytope() = HPolytope{Float64}()
 
-# constructor from a polygon in H-representation
-HPolytope(P::HPolygon) = HPolytope(P.constraints_list)
+# conversion constructor
+HPolytope(S::LazySet) = convert(HPolytope, S)
 
 # constructor for a HPolytope from a simple H-representation
 function HPolytope(A::Matrix{N}, b::Vector{N}) where {N<:Real}

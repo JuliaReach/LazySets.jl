@@ -31,6 +31,7 @@ Base.:*(::LazySet{Float64}, ::LazySet{Float64})
 
 ```@docs
 CartesianProductArray{Float64, LazySet{Float64}}
+array(::CartesianProductArray{Float64, LazySet{Float64}})
 dim(::CartesianProductArray{Float64, LazySet{Float64}})
 σ(::AbstractVector{Float64}, ::CartesianProductArray{Float64, LazySet{Float64}})
 Base.:*(::CartesianProductArray{Float64, LazySet{Float64}}, ::LazySet{Float64})
@@ -55,6 +56,7 @@ dim(::ConvexHull{Float64, LazySet{Float64}, LazySet{Float64}})
 ```@docs
 ConvexHullArray
 CHArray
+array(::ConvexHullArray{Float64, LazySet{Float64}})
 dim(cha::ConvexHullArray)
 σ(d::AbstractVector{Float64}, cha::ConvexHullArray)
 ```
@@ -94,6 +96,7 @@ Base.:+(::LazySet{Float64}, ::LazySet{Float64})
 
 ```@docs
 MinkowskiSumArray
+array(::MinkowskiSumArray{Float64, LazySet{Float64}})
 dim(::MinkowskiSumArray{Float64, LazySet{Float64}})
 σ(::AbstractVector{Float64}, ::MinkowskiSumArray{Float64, LazySet{Float64}})
 Base.:+(::MinkowskiSumArray{Float64, LazySet{Float64}}, ::LazySet{Float64})
@@ -108,11 +111,11 @@ Base.:+(::MinkowskiSumArray{Float64, LazySet{Float64}}, ::ZeroSet{Float64})
 
 ```@docs
 LinearMap
-dim(::LinearMap{Float64, LazySet{Float64}})
-σ(::AbstractVector{Float64}, ::LinearMap{Float64, LazySet{Float64}})
-*(::AbstractMatrix{Float64}, ::LazySet{Float64})
-*(::Float64, ::LazySet{Float64})
-∈(::AbstractVector{Float64}, ::LinearMap{Float64, LazySet{Float64}})
+dim(::LinearMap{Float64, Float64})
+σ(::AbstractVector{Float64}, ::LinearMap{Float64, Float64})
+*(::AbstractMatrix, ::LazySet)
+*(::Float64, ::LazySet)
+∈(x::AbstractVector{Float64}, ::LinearMap{Float64, Float64})
 ```
 
 ### Exponential Map

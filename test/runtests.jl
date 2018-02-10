@@ -12,7 +12,7 @@ include("to_N.jl")
 @time @testset "LazySets.BallInf" begin include("unit_BallInf.jl") end
 @time @testset "LazySets.Hyperrectangle" begin include("unit_Hyperrectangle.jl") end
 @time @testset "LazySets.Polygon" begin include("unit_Polygon.jl") end
-@time @testset "LazySets.HPolytope" begin include("unit_Polytope.jl") end
+@time @testset "LazySets.Polytope" begin include("unit_Polytope.jl") end
 @time @testset "LazySets.Zonotope" begin include("unit_Zonotope.jl") end
 @time @testset "LazySets.ZeroSet" begin include("unit_ZeroSet.jl") end
 @time @testset "LazySets.EmptySet" begin include("unit_EmptySet.jl") end

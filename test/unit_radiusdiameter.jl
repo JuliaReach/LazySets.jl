@@ -1,7 +1,3 @@
-import LazySets.Approximations:norm,
-                               radius,
-                               diameter
-
 for N in [Float64, Rational{Int}, Float32]
     # =======
     #  Ball1

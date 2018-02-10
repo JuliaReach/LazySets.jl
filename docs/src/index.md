@@ -96,7 +96,7 @@ formulation:
 
 ```jldoctest index_label
 julia> typeof(Y)
-LazySets.ConvexHull{Float64,LazySets.MinkowskiSum{Float64,LazySets.ExponentialMap{Float64,LazySets.Ball2{Float64}},LazySets.LinearMap{Float64,LazySets.BallInf{Float64}}},LazySets.Ball2{Float64}}
+LazySets.ConvexHull{Float64,LazySets.MinkowskiSum{Float64,LazySets.ExponentialMap{Float64,LazySets.Ball2{Float64}},LazySets.LinearMap{Float64,Float64}},LazySets.Ball2{Float64}}
 ```
 
 Now suppose that we are interested in observing the projection of $\mathcal{Y}$
@@ -182,7 +182,9 @@ Pages = [
     "man/iterative_refinement.md",
     "man/interval_hulls.md",
     "man/convex_hulls.md",
-    "man/reach_zonotopes.md"
+    "man/reach_zonotopes.md",
+    "man/reach_zonotopes_hybrid.md",
+    "man/concrete_polyhedra.md"
 ]
 Depth = 2
 ```
@@ -194,6 +196,7 @@ Pages = [
     "lib/interfaces.md",
     "lib/representations.md",
     "lib/operations.md",
+    "lib/conversion.md",
     "lib/approximations.md",
     "lib/utils.md"
 ]

@@ -2,7 +2,9 @@ import Base.∈
 
 export AbstractHPolygon,
        an_element,
-       addconstraint!
+       addconstraint!,
+       vertices_list,
+       constraints_list
 
 """
     AbstractHPolygon{N<:Real} <: AbstractPolygon{N}
@@ -12,12 +14,14 @@ Abstract type for polygons in H-representation (i.e., constraints).
 ### Notes
 
 Every concrete `AbstractHPolygon` must have the following fields:
-- `constraints_list::Vector{LinearConstraint{N}}` -- the constraints
+- `constraints::Vector{LinearConstraint{N}}` -- the constraints
+
+New subtypes should be added to the `convert` method in order to be convertible.
 
 ```jldoctest
 julia> subtypes(AbstractHPolygon)
 2-element Array{Union{DataType, UnionAll},1}:
- LazySets.HPolygon   
+ LazySets.HPolygon
  LazySets.HPolygonOpt
 ```
 """
@@ -81,20 +85,36 @@ List of vertices.
 """
 function vertices_list(P::AbstractHPolygon{N}
                       )::Vector{Vector{N}} where {N<:Real}
-    n = length(P.constraints_list)
+    n = length(P.constraints)
     points = Vector{Vector{N}}(n)
     if n == 0
         return points
     end
     @inbounds for i in 1:n-1
-        points[i] = intersection(Line(P.constraints_list[i]),
-                                 Line(P.constraints_list[i+1]))
+        points[i] = intersection(Line(P.constraints[i]),
+                                 Line(P.constraints[i+1]))
     end
-    points[n] = intersection(Line(P.constraints_list[n]),
-                             Line(P.constraints_list[1]))
+    points[n] = intersection(Line(P.constraints[n]),
+                             Line(P.constraints[1]))
     return points
 end
 
+"""
+    constraints_list(P::AbstractHPolygon{N})::Vector{LinearConstraint{N}} where {N<:Real}
+
+Return the list of constraints defining a polygon in H-representation.
+
+### Input
+
+- `P` -- polygon in H-representation
+
+### Output
+
+The list of constraints of the polygon.
+"""
+function constraints_list(P::AbstractHPolygon{N})::Vector{LinearConstraint{N}} where {N<:Real}
+    return P.constraints
+end
 
 # --- LazySet interface functions ---
 
@@ -114,11 +134,11 @@ A vertex of the polygon in constraint representation (the first one in the order
 of the constraints).
 """
 function an_element(P::AbstractHPolygon{N})::Vector{N} where {N<:Real}
-    if length(P.constraints_list) < 2
+    if length(P.constraints) < 2
         error("a polygon in constraint representation should have at least two constraints")
     end
-    return intersection(Line(P.constraints_list[1]),
-                        Line(P.constraints_list[2]))
+    return intersection(Line(P.constraints[1]),
+                        Line(P.constraints[2]))
 end
 
 """
@@ -143,7 +163,7 @@ This implementation checks if the point lies on the outside of each edge.
 function ∈(x::AbstractVector{N}, P::AbstractHPolygon{N})::Bool where {N<:Real}
     @assert length(x) == 2
 
-    for c in P.constraints_list
+    for c in P.constraints
         if dot(c.a, x) > c.b
             return false
         end
@@ -173,11 +193,11 @@ Nothing.
 """
 function addconstraint!(P::AbstractHPolygon{N},
                         constraint::LinearConstraint{N})::Void where {N<:Real}
-    i = length(P.constraints_list)
-    while i > 0 && constraint.a <= P.constraints_list[i].a
+    i = length(P.constraints)
+    while i > 0 && constraint.a <= P.constraints[i].a
         i -= 1
     end
-    # here P.constraints_list[i] < constraint
-    insert!(P.constraints_list, i+1, constraint)
+    # here P.constraints[i] < constraint
+    insert!(P.constraints, i+1, constraint)
     return nothing
 end

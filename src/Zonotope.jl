@@ -1,4 +1,5 @@
-import Base.∈
+import Base:∈,
+            convert
 
 export Zonotope,
        order,
@@ -136,7 +137,7 @@ For high dimensions, it would be preferable to develop a `vertex_iterator`
 approach.
 """
 function vertices_list(Z::Zonotope{N})::Vector{Vector{N}} where {N<:Real}
-    p = size(Z.generators, 2)
+    p = ngens(Z)
     vlist = Vector{Vector{N}}()
     sizehint!(vlist, 2^p)
 
@@ -258,7 +259,7 @@ The order of a zonotope is defined as the quotient of its number of generators
 and its dimension.
 """
 function order(Z::Zonotope)::Rational
-    return size(Z.generators, 2) // dim(Z)
+    return ngens(Z) // dim(Z)
 end
 
 """

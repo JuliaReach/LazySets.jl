@@ -15,25 +15,25 @@ for N in [Float64, Float32] # TODO Rational{Int}
                  BallInf(to_N(N, [0.734104, 0.87296]), to_N(N, 0.1))])
     Ω0 = CH(X, Y)
     dec = decompose(Ω0)
-    dec1 = dec.sfarray[1]
+    dec1 = dec.array[1]
 
-    @test dec1.constraints_list[1].b ≈ to_N(N, 2.84042586)
-    @test dec1.constraints_list[2].b ≈ to_N(N, 4.04708832)
-    @test dec1.constraints_list[3].b ≈ to_N(N, -0.667292)
-    @test dec1.constraints_list[4].b ≈ to_N(N, -0.836613)
+    @test dec1.constraints[1].b ≈ to_N(N, 2.84042586)
+    @test dec1.constraints[2].b ≈ to_N(N, 4.04708832)
+    @test dec1.constraints[3].b ≈ to_N(N, -0.667292)
+    @test dec1.constraints[4].b ≈ to_N(N, -0.836613)
 
     # ======================================
     # Run decompose for different set types
     # ======================================
     b = BallInf(zeros(N, 6), one(N))
     d = decompose(b, Inf, HPolygon)
-    @test d.sfarray[1] isa HPolygon
+    @test d.array[1] isa HPolygon
     d = decompose(b, Inf, Hyperrectangle)
-    @test d.sfarray[1] isa Hyperrectangle
+    @test d.array[1] isa Hyperrectangle
     d = decompose(b, to_N(N, 1e-2), Hyperrectangle)
-    @test d.sfarray[1] isa HPolygon # with p not Inf the set type is ignored
+    @test d.array[1] isa HPolygon # with p not Inf the set type is ignored
     d = decompose(b, to_N(N, 1e-2)) # by default uses HPolygon
-    @test d.sfarray[1] isa HPolygon
+    @test d.array[1] isa HPolygon
     d = decompose(b, to_N(N, [1e-1, 1e-2, 1e-3]))
-    @test d.sfarray[1] isa HPolygon
+    @test d.array[1] isa HPolygon
 end

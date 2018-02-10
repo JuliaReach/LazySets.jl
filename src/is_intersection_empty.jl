@@ -325,11 +325,14 @@ function is_intersection_empty(B1::Ball2{N},
         v = smaller.center
     else
         # scale center difference with smaller ball's radius
-	direction = (bigger.center - smaller.center)
+        direction = (bigger.center - smaller.center)
         v = smaller.center + direction / center_diff_normed * smaller.radius
     end
     return (false, v)
 end
+
+
+# --- Zonotope ---
 
 
 """
@@ -367,7 +370,7 @@ function is_intersection_empty(Z::Zonotope{N},
                                witness::Bool=false
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     v = H.b - dot(H.a, Z.center)
-    abs_sum = sum(abs(dot(H.a, Z.generators[:, i])) for i = 1:size(Z.generators, 2))
+    abs_sum = sum(abs(dot(H.a, Z.generators[:, i])) for i = 1:ngens(Z))
     empty_intersection = v < -abs_sum || v > abs_sum
 
     if !witness
@@ -379,6 +382,36 @@ function is_intersection_empty(Z::Zonotope{N},
     end
 end
 
+"""
+    is_intersection_empty(H::Hyperplane{N}, Z::Zonotope{N}, witness::Bool=false
+                         )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether a hyperplane and a zonotope do not intersect, and otherwise
+optionally compute a witness.
+
+### Input
+
+- `H` -- hyperplane
+- `Z` -- zonotope
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``H ∩ Z = ∅``
+* If `witness` option is activated:
+  * `(true, [])` iff ``H ∩ Z = ∅``
+  * `(false, v)` iff ``H ∩ Z ≠ ∅`` and ``v ∈ H ∩ Z``
+
+### Algorithm
+
+``H ∩ Z = ∅`` iff ``(b - a⋅c) \notin \left[ \pm ∑_{i=1}^p |a⋅g_i| \right]``,
+where ``a``, ``b`` are the hyperplane coefficients, ``c`` is the zonotope's
+center, and ``g_i`` are the zonotope's generators.
+
+### Notes
+
+Witness production is currently not supported.
+"""
 function is_intersection_empty(H::Hyperplane{N},
                                Z::Zonotope{N},
                                witness::Bool=false

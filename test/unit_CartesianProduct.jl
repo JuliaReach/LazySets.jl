@@ -55,8 +55,9 @@ for N in [Float64, Float32, Rational{Int}]
 
     # Test Cartesian Product with EmptySet
     s = Singleton(N[1.])
-    cs1 = ∅ * s
-    cs2 = s * ∅
+    E = EmptySet{N}()
+    cs1 = E * s
+    cs2 = s * E
     @test cs1 isa EmptySet
     @test cs2 isa EmptySet
 
@@ -105,4 +106,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test !∈(N[2., 3., 3., 1.], cp)
     @test !∈(N[0., 0., 3., 1.], cp)
     @test !∈(N[1., 1., 3., 1.], cp)
+
+    # array getter
+    v = Vector{N}(0)
+    @test array(CartesianProductArray()) == v
 end

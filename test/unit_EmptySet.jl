@@ -6,8 +6,6 @@ for N in [Float64, Rational{Int}, Float32]
     @test B * E isa EmptySet && E * B isa EmptySet
     # testing the mathematical alias ×
     @test B × E isa EmptySet && E × B isa EmptySet
-    # test ∅ alias
-    @test B × E isa EmptySet
 
     cpa = CartesianProductArray([B, N(2.) * B, N(3.) * B])
     @test cpa * E isa EmptySet && E * cpa isa EmptySet
@@ -40,4 +38,4 @@ for N in [Float64, Rational{Int}, Float32]
 end
 
 # default Float64 constructor
-E = ∅
+@test ∅ == EmptySet{Float64}()

@@ -1,7 +1,8 @@
 import Base:*, ×, ∈
 
 export CartesianProduct,
-       CartesianProductArray
+       CartesianProductArray,
+       array
 
 """
     CartesianProduct{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
@@ -175,11 +176,11 @@ Type that represents the Cartesian product of a finite number of convex sets.
 
 ### Fields
 
-- `sfarray` -- array of sets
+- `array` -- array of sets
 
 ### Notes
 
-- `CartesianProductArray(sfarray::Vector{<:LazySet})` -- default constructor
+- `CartesianProductArray(array::Vector{<:LazySet})` -- default constructor
 
 - `CartesianProductArray()` -- constructor for an empty Cartesian product
 
@@ -187,7 +188,7 @@ Type that represents the Cartesian product of a finite number of convex sets.
   -- constructor for an empty Cartesian product with size hint and numeric type
 """
 struct CartesianProductArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
-    sfarray::Vector{S}
+    array::Vector{S}
 end
 # type-less convenience constructor
 CartesianProductArray(arr::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
@@ -220,7 +221,7 @@ from the right.
 The modified Cartesian product of a finite number of convex sets.
 """
 function *(cpa::CartesianProductArray, S::LazySet)::CartesianProductArray
-    push!(cpa.sfarray, S)
+    push!(cpa.array, S)
     return cpa
 end
 
@@ -242,7 +243,7 @@ from the left.
 The modified Cartesian product of a finite number of convex sets.
 """
 function *(S::LazySet, cpa::CartesianProductArray)::CartesianProductArray
-    push!(cpa.sfarray, S)
+    push!(cpa.array, S)
     return cpa
 end
 
@@ -303,8 +304,25 @@ The modified first Cartesian product.
 """
 function *(cpa1::CartesianProductArray,
            cpa2::CartesianProductArray)::CartesianProductArray
-    append!(cpa1.sfarray, cpa2.sfarray)
+    append!(cpa1.array, cpa2.array)
     return cpa1
+end
+
+"""
+    array(cpa::CartesianProductArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
+
+Return the array of a Cartesian product of a finite number of convex sets.
+
+### Input
+
+- `cpa` -- Cartesian product array
+
+### Output
+
+The array of a Cartesian product of a finite number of convex sets.
+"""
+function array(cpa::CartesianProductArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
+    return cpa.array
 end
 
 """
@@ -322,7 +340,7 @@ The ambient dimension of the Cartesian product of a finite number of convex
 sets.
 """
 function dim(cpa::CartesianProductArray)::Int
-    return length(cpa.sfarray) == 0 ? 0 : sum([dim(sj) for sj in cpa.sfarray])
+    return length(cpa.array) == 0 ? 0 : sum([dim(sj) for sj in cpa.array])
 end
 
 """
@@ -345,7 +363,7 @@ function σ(d::AbstractVector{N}, cpa::CartesianProductArray{N, <:LazySet{N}}
           )::AbstractVector{N} where {N<:Real}
     svec = similar(d)
     jinit = 1
-    for sj in cpa.sfarray
+    for sj in cpa.array
         jend = jinit + dim(sj) - 1
         svec[jinit:jend] = σ(d[jinit:jend], sj)
         jinit = jend + 1

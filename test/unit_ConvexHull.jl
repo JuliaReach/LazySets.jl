@@ -42,9 +42,14 @@ for N in [Float64, Rational{Int}, Float32]
 
     # empty set is neutral for CH
     a = ConvexHullArray([Ball1(ones(N, 2), to_N(N, 1.))])
-    @test CH(a, ∅) == a
-    @test CH(∅, a) == a
+    E = EmptySet{N}()
+    @test CH(a, E) == a
+    @test CH(E, a) == a
 
     # concatenation of two convex hull arrays
     @test CH(a, a) isa ConvexHullArray
+
+    # array getter
+    v = Vector{N}(0)
+    @test array(ConvexHullArray()) == v
 end
