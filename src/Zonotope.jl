@@ -386,21 +386,3 @@ function reduce_order(Z::Zonotope{N}, r)::Zonotope{N} where {N<:Real}
     end
     return Zonotope(c, Gred)
 end
-
-"""
-    convert(::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
-
-Converts a hyperrectangular set to a zonotope.
-
-### Input
-
-- `Zonotope`
-- `H` -- hyperrectangular set
-
-### Output
-
-A zonotope.
-"""
-function convert(::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
-    return Zonotope{N}(center(H), diagm(radius_hyperrectangle(H)))
-end

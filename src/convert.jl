@@ -60,3 +60,21 @@ function convert(::Type{HPOLYGON},
     end
     return HPOLYGON(P.constraints)
 end
+
+"""
+    convert(::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
+
+Converts a hyperrectangular set to a zonotope.
+
+### Input
+
+- `Zonotope`
+- `H` -- hyperrectangular set
+
+### Output
+
+A zonotope.
+"""
+function convert(::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
+    return Zonotope{N}(center(H), diagm(radius_hyperrectangle(H)))
+end
