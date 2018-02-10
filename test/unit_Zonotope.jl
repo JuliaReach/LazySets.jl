@@ -76,4 +76,9 @@ for N in [Float64, Rational{Int}, Float32]
     Zred2 = reduce_order(Z, 2)
     @test ngens(Zred2) == 4
     @test order(Zred2) == 2
+
+    # test conversion from hyperrectangular sets
+    Z = convert(Zonotope, Hyperrectangle(N[2., 3.], N[4., 5.]))
+    @test Z.center == N[2., 3.] && diag(Z.generators) == N[4., 5.]
+    convert(Zonotope, BallInf(N[5., 3.], N(2.)))
 end
