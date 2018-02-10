@@ -1,30 +1,5 @@
-export LinearConstraint,
-       Line,
+export Line,
        intersection
-
-"""
-    LinearConstraint{N<:Real}
-
-Type that represents a linear constraint (a half-space) of the form ``a⋅x ≤ b``.
-
-### Fields
-
-- `a` -- normal direction
-- `b` -- constraint
-
-### Examples
-
-The set ``y ≥ 0`` in the plane:
-
-```jldoctest
-julia> LinearConstraint([0, -1.], 0.)
-LazySets.LinearConstraint{Float64}([0.0, -1.0], 0.0)
-```
-"""
-struct LinearConstraint{N<:Real}
-    a::Vector{N}
-    b::N
-end
 
 """
     Line{N<:Real}
