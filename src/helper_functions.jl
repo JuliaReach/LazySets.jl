@@ -1,8 +1,6 @@
 export sign_cadlag,
        check_method_implementation,
-       check_method_ambiguity_binary,
-       @commutative_neutral,
-       @commutative_absorbing
+       check_method_ambiguity_binary
 
 """
     sign_cadlag(x::N)::N where {N<:Real}
@@ -248,10 +246,10 @@ Three function definitions.
 
 ### Examples
 
-`@commutative_neutral(ConvexHull, EmptySet)` creates the following functions:
-* `ConvexHull(X::LazySet{N}, ::EmptySet{N}) where {N<:Real} = X`
-* `ConvexHull(::EmptySet{N}, X::LazySet{N}) where {N<:Real} = X`
-* `ConvexHull(Y::EmptySet{N}, ::EmptySet{N}) where {N<:Real} = Y`
+`@commutative_neutral(ConvexHull, N)` creates the following functions:
+* `ConvexHull(X, N) = X`
+* `ConvexHull(N, X) = X`
+* `ConvexHull(N, N) = N`
 """
 macro commutative_neutral(SET, NEUT)
     @eval begin
@@ -285,11 +283,10 @@ Three function definitions.
 
 ### Examples
 
-`@commutative_absorbing(MinkowskiSum, EmptySet)` creates the following
-functions:
-* `MinkowskiSum(::LazySet{N}, Y::EmptySet{N}) where {N<:Real} = Y`
-* `MinkowskiSum(Y::EmptySet{N}, ::LazySet{N}) where {N<:Real} = Y`
-* `MinkowskiSum(Y::EmptySet{N}, ::EmptySet{N}) where {N<:Real} = Y`
+`@commutative_absorbing(ConvexHull, A)` creates the following functions:
+* `ConvexHull(X, A) = A`
+* `ConvexHull(A, X) = A`
+* `ConvexHull(A, A) = A`
 """
 macro commutative_absorbing(SET, ABS)
     @eval begin
@@ -325,15 +322,16 @@ Eight function definitions.
 
 ### Examples
 
-`@commutative_neutral_absorbing(MinkowskiSum, ZeroSet, EmptySet))` creates the
-following functions:
-* `MinkowskiSum(X::LazySet{N}, ::ZeroSet{N}) where {N<:Real} = X`
-* `MinkowskiSum(::ZeroSet{N}, X::LazySet{N}) where {N<:Real} = X`
-* `MinkowskiSum(Y::ZeroSet{N}, ::ZeroSet{N}) where {N<:Real} = Y`
-* `MinkowskiSum(::LazySet{N}, Y::EmptySet{N}) where {N<:Real} = Y`
-* `MinkowskiSum(Y::EmptySet{N}, ::LazySet{N}) where {N<:Real} = Y`
-* `MinkowskiSum(::ZeroSet{N}, Y::EmptySet{N}) where {N<:Real} = Y`
-* `MinkowskiSum(Y::EmptySet{N}, ::ZeroSet{N}) where {N<:Real} = Y`
+`@commutative_neutral_absorbing(ConvexHull, N, A)` creates the following
+functions:
+* `ConvexHull(X, N) = X`
+* `ConvexHull(N, X) = X`
+* `ConvexHull(N, N) = N`
+* `ConvexHull(X, A) = A`
+* `ConvexHull(A, X) = A`
+* `ConvexHull(A, A) = A`
+* `ConvexHull(N, A) = A`
+* `ConvexHull(A, N) = A`
 """
 macro commutative_neutral_absorbing(SET, NEUT, ABS)
     @eval begin
