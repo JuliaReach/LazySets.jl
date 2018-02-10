@@ -48,6 +48,14 @@ support_vector
 support_function
 ```
 
+### Other globally defined set functions
+
+```@docs
+neutral(::Type{<:LazySet})
+absorbing(::Type{<:LazySet})
+an_element(S::LazySet{Float64})
+```
+
 ## Point symmetric set
 
 Point symmetric sets such as balls of different norms are characterized by a

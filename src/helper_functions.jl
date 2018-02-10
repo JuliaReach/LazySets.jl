@@ -250,16 +250,16 @@ In order to use a neutral and/or absorbing element, the function `neutral` resp.
 
 ### Examples
 
-`@commutative_neutral_absorbing(ConvexHull, N, A)` creates the following
+`@commutative_neutral_absorbing(MinkowskiSum, N, A)` creates the following
 functions:
-* `ConvexHull(X, N) = X`
-* `ConvexHull(N, X) = X`
-* `ConvexHull(N, N) = N`
-* `ConvexHull(X, A) = A`
-* `ConvexHull(A, X) = A`
-* `ConvexHull(A, A) = A`
-* `ConvexHull(N, A) = A`
-* `ConvexHull(A, N) = A`
+* `MinkowskiSum(X, N) = X`
+* `MinkowskiSum(N, X) = X`
+* `MinkowskiSum(N, N) = N`
+* `MinkowskiSum(X, A) = A`
+* `MinkowskiSum(A, X) = A`
+* `MinkowskiSum(A, A) = A`
+* `MinkowskiSum(N, A) = A`
+* `MinkowskiSum(A, N) = A`
 """
 macro commutative_neutral_absorbing(SET)
     @eval begin
