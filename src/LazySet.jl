@@ -7,7 +7,9 @@ export LazySet,
        norm,
        radius,
        diameter,
-       an_element
+       an_element,
+       neutral,
+       absorbing
 
 """
     LazySet{N}
@@ -181,4 +183,39 @@ An element of a convex set.
 """
 function an_element(S::LazySet{N})::AbstractVector{N} where {N<:Real}
     return σ(sparsevec([1], [one(N)], dim(S)), S)
+end
+
+
+"""
+    neutral(S::Type{<:LazySet})
+
+Returns the neutral element for a set operation.
+
+### Input
+
+- `S` -- a set operation
+
+### Output
+
+The neutral element type, or `nothing` by default.
+"""
+function neutral(S::Type{<:LazySet})
+    return nothing
+end
+
+"""
+    absorbing(S::Type{<:LazySet})
+
+Returns the absorbing element for a set operation.
+
+### Input
+
+- `S` -- a set operation
+
+### Output
+
+The absorbing element type, or `nothing` by default.
+"""
+function absorbing(S::Type{<:LazySet})
+    return nothing
 end

@@ -50,7 +50,10 @@ CartesianProduct(Xarr::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
                                    CartesianProduct(Xarr[2:length(Xarr)])))
 
 # EmptySet is the absorbing element for CartesianProduct
-@commutative_absorbing(CartesianProduct, EmptySet)
+absorbing(::Type{CartesianProduct}) = EmptySet
+
+# create absorbing element functions
+@commutative_neutral_absorbing(CartesianProduct)
 
 """
 ```
@@ -245,8 +248,11 @@ function CartesianProductArray(cpa1::CartesianProductArray,
     return cpa1
 end
 
-# EmptySet is the absorbing element for CartesianProduct
-@commutative_absorbing(CartesianProductArray, EmptySet)
+# EmptySet is the absorbing element for CartesianProductArray
+absorbing(::Type{CartesianProductArray}) = EmptySet
+
+# create absorbing element functions
+@commutative_neutral_absorbing(CartesianProductArray)
 
 """
     array(cpa::CartesianProductArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}

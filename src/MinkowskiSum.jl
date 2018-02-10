@@ -32,9 +32,14 @@ end
 MinkowskiSum(X::S1, Y::S2) where {S1<:LazySet{N}, S2<:LazySet{N}} where {N<:Real} =
     MinkowskiSum{N, S1, S2}(X, Y)
 
-# ZeroSet is the neutral element and EmptySet is the absorbing element for
-# MinkowskiSum
-@commutative_neutral_absorbing(MinkowskiSum, ZeroSet, EmptySet)
+# ZeroSet is the neutral element for MinkowskiSum
+neutral(::Type{MinkowskiSum}) = ZeroSet
+
+# EmptySet is the absorbing element for MinkowskiSum
+absorbing(::Type{MinkowskiSum}) = EmptySet
+
+# create neutral/absorbing element functions
+@commutative_neutral_absorbing(MinkowskiSum)
 
 """
     X + Y
@@ -200,9 +205,14 @@ function MinkowskiSumArray(msa1::MinkowskiSumArray,
     return msa1
 end
 
-# ZeroSet is the neutral element and EmptySet is the absorbing element for
-# MinkowskiSumArray
-@commutative_neutral_absorbing(MinkowskiSumArray, ZeroSet, EmptySet)
+# ZeroSet is the neutral element for MinkowskiSumArray
+neutral(::Type{MinkowskiSumArray}) = ZeroSet
+
+# EmptySet is the absorbing element for MinkowskiSumArray
+absorbing(::Type{MinkowskiSumArray}) = EmptySet
+
+# create neutral element functions
+@commutative_neutral_absorbing(MinkowskiSumArray)
 
 """
     array(msa::MinkowskiSumArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}

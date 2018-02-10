@@ -230,82 +230,7 @@ function check_method_ambiguity_binary(op;
 end
 
 """
-    @commutative_neutral(SET, NEUT)
-
-Creates functions to make a set type behave commutative with a given neutral
-element set type.
-
-### Input
-
-- `SET`  -- set type
-- `NEUT` -- set type of the neutral element
-
-### Output
-
-Three function definitions.
-
-### Examples
-
-`@commutative_neutral(ConvexHull, N)` creates the following functions:
-* `ConvexHull(X, N) = X`
-* `ConvexHull(N, X) = X`
-* `ConvexHull(N, N) = N`
-"""
-macro commutative_neutral(SET, NEUT)
-    @eval begin
-        function $SET(X::LazySet{N}, ::$NEUT{N}) where {N<:Real}
-            return X
-        end
-        function $SET(::$NEUT{N}, X::LazySet{N}) where {N<:Real}
-            return X
-        end
-        function $SET(Y::$NEUT{N}, ::$NEUT{N}) where {N<:Real}
-            return Y
-        end
-    end
-    return nothing
-end
-
-"""
-    @commutative_absorbing(SET, ABS)
-
-Creates functions to make a set type behave commutative with a given absorbing
-element set type.
-
-### Input
-
-- `SET`  -- set type
-- `ABS` -- set type of the absorbing element
-
-### Output
-
-Three function definitions.
-
-### Examples
-
-`@commutative_absorbing(ConvexHull, A)` creates the following functions:
-* `ConvexHull(X, A) = A`
-* `ConvexHull(A, X) = A`
-* `ConvexHull(A, A) = A`
-"""
-macro commutative_absorbing(SET, ABS)
-    @eval begin
-        function $SET(::LazySet{N}, Y::$ABS{N}) where {N<:Real}
-            return Y
-        end
-        function $SET(Y::$ABS{N}, ::LazySet{N}) where {N<:Real}
-            return Y
-        end
-        function $SET(Y::$ABS{N}, ::$ABS{N}) where {N<:Real}
-            return Y
-        end
-    end
-    return nothing
-end
-
-
-"""
-    @commutative_neutral_absorbing(SET, NEUT, ABS)
+    @commutative_neutral_absorbing(SET)
 
 Creates functions to make a set type behave commutative with both a given
 neutral and a given absorbing element set type.
@@ -313,12 +238,15 @@ neutral and a given absorbing element set type.
 ### Input
 
 - `SET`  -- set type
-- `NEUT` -- set type of the neutral element
-- `ABS` -- set type of the absorbing element
 
 ### Output
 
-Eight function definitions.
+Up to eight function definitions.
+
+### Notes
+
+In order to use a neutral and/or absorbing element, the function `neutral` resp.
+`absorbing` must be overridden for the given `SET` type in advance.
 
 ### Examples
 
@@ -333,16 +261,41 @@ functions:
 * `ConvexHull(N, A) = A`
 * `ConvexHull(A, N) = A`
 """
-macro commutative_neutral_absorbing(SET, NEUT, ABS)
+macro commutative_neutral_absorbing(SET)
     @eval begin
-        @commutative_neutral($SET, $NEUT)
-        @commutative_absorbing($SET, $ABS)
-
-        function $SET(::$NEUT{N}, Y::$ABS{N}) where {N<:Real}
-            return Y
+        neutral_el = neutral($SET)
+        if neutral_el != nothing
+            function $SET(X::LazySet{N}, ::neutral_el{N}) where {N<:Real}
+                return X
+            end
+            function $SET(::neutral_el{N}, X::LazySet{N}) where {N<:Real}
+                return X
+            end
+            function $SET(Y::neutral_el{N}, ::neutral_el{N}) where {N<:Real}
+                return Y
+            end
         end
-        function $SET(Y::$ABS{N}, ::$NEUT{N}) where {N<:Real}
-            return Y
+
+        absorbing_el = absorbing($SET)
+        if absorbing_el != nothing
+            function $SET(::LazySet{N}, Y::absorbing_el{N}) where {N<:Real}
+                return Y
+            end
+            function $SET(Y::absorbing_el{N}, ::LazySet{N}) where {N<:Real}
+                return Y
+            end
+            function $SET(Y::absorbing_el{N}, ::absorbing_el{N}) where {N<:Real}
+                return Y
+            end
+        end
+
+        if neutral_el != nothing && absorbing_el != nothing
+            function $SET(::neutral_el{N}, Y::absorbing_el{N}) where {N<:Real}
+                return Y
+            end
+            function $SET(Y::absorbing_el{N}, ::neutral_el{N}) where {N<:Real}
+                return Y
+            end
         end
     end
     return nothing
