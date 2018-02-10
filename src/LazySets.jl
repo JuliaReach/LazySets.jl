@@ -64,9 +64,10 @@ include("SymmetricIntervalHull.jl")
 # =============================
 include("convert.jl")
 
-# =======================================
-# Algorithms for check operations on sets
-# =======================================
+# ===========================
+# Concrete operations on sets
+# ===========================
+include("concrete_intersection.jl")
 include("is_intersection_empty.jl")
 include("is_subset.jl")
 
