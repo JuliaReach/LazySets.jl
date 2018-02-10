@@ -1,18 +1,58 @@
 #= conversion between set types =#
 
-# from polygon in H-representation to polygon in H-representation
+"""
+    convert(::Type{HPOLYGON1}, P::HPOLYGON2) where
+        {HPOLYGON1<:AbstractHPolygon, HPOLYGON2<:AbstractHPolygon}
+
+Convert between polygon types in H-representation.
+
+### Input
+
+- `type` -- target type
+- `P`    -- source polygon
+
+### Output
+
+The polygon represented as the target type.
+"""
 function convert(::Type{HPOLYGON1},
                  P::HPOLYGON2) where {HPOLYGON1<:AbstractHPolygon,
                                       HPOLYGON2<:AbstractHPolygon}
     return HPOLYGON1(P.constraints)
 end
 
-# from polygon in H-representation to polytope in H-representation
+"""
+    convert(::Type{HPolytope}, P::AbstractHPolygon)
+
+Convert from polygon in H-representation to polytope in H-representation.
+
+### Input
+
+- `type` -- target type
+- `P`    -- source polygon
+
+### Output
+
+The polygon represented as 2D polytope.
+"""
 function convert(::Type{HPolytope}, P::AbstractHPolygon)
     return HPolytope(P.constraints)
 end
 
-# from polytope in H-representation to polygon in H-representation
+"""
+    convert(::Type{HPOLYGON}, P::HPolytope) where {HPOLYGON<:AbstractHPolygon}
+
+Convert from 2D polytope in H-representation to polygon in H-representation.
+
+### Input
+
+- `type` -- target type
+- `P`    -- source polytope (must be 2D)
+
+### Output
+
+The 2D polytope represented as polygon.
+"""
 function convert(::Type{HPOLYGON},
                  P::HPolytope) where {HPOLYGON<:AbstractHPolygon}
     if dim(P) != 2
