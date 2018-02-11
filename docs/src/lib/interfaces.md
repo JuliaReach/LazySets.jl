@@ -51,8 +51,6 @@ support_function
 ### Other globally defined set functions
 
 ```@docs
-neutral(::Type{<:LazySet})
-absorbing(::Type{<:LazySet})
 an_element(S::LazySet{Float64})
 ```
 

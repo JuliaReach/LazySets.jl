@@ -47,10 +47,7 @@ ConvexHull(X::S1, Y::S2) where {S1<:LazySet{N}, S2<:LazySet{N}} where {N<:Real} 
     ConvexHull{N, S1, S2}(X, Y)
 
 # EmptySet is the neutral element for ConvexHull
-neutral(::Type{ConvexHull}) = EmptySet
-
-# create neutral element functions
-@commutative_neutral_absorbing(ConvexHull)
+@neutral(ConvexHull, EmptySet)
 
 """
     CH
@@ -144,10 +141,7 @@ function ConvexHullArray(n::Int=0, N::Type=Float64)::ConvexHullArray
 end
 
 # EmptySet is the neutral element for ConvexHullArray
-neutral(::Type{ConvexHullArray}) = EmptySet
-
-# create neutral element functions
-@commutative_neutral_absorbing(ConvexHullArray)
+@neutral(ConvexHullArray, EmptySet)
 
 """
     CHArray

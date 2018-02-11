@@ -230,70 +230,114 @@ function check_method_ambiguity_binary(op;
 end
 
 """
-    @commutative_neutral_absorbing(SET)
+    @neutral(SET, NEUT)
 
-Creates functions to make a set type behave commutative with both a given
-neutral and a given absorbing element set type.
+Creates functions to make a set type behave commutative with a given neutral
+element set type.
 
 ### Input
 
-- `SET`  -- set type
+- `SET` -- set type
 
 ### Output
 
-Up to eight function definitions.
+Nothing.
 
 ### Notes
 
-In order to use a neutral and/or absorbing element, the function `neutral` resp.
-`absorbing` must be overridden for the given `SET` type in advance.
+This macro generates three functions (and possibly two more if `@absorbing` has
+been used in advance).
 
 ### Examples
 
-`@commutative_neutral_absorbing(MinkowskiSum, N, A)` creates the following
-functions:
+`@neutral(MinkowskiSum, N)` creates the following functions:
 * `MinkowskiSum(X, N) = X`
 * `MinkowskiSum(N, X) = X`
 * `MinkowskiSum(N, N) = N`
+"""
+macro neutral(SET, NEUT)
+    @eval begin
+        # create function to obtain the neutral element
+        function neutral(::Type{$SET})
+            return $NEUT
+        end
+
+        # create functions to declare the neutral element
+        function $SET(X::LazySet{N}, ::$NEUT{N}) where {N<:Real}
+            return X
+        end
+        function $SET(::$NEUT{N}, X::LazySet{N}) where {N<:Real}
+            return X
+        end
+        function $SET(Y::$NEUT{N}, ::$NEUT{N}) where {N<:Real}
+            return Y
+        end
+
+        # if the absorbing element has already been defined, create combinations
+        if isdefined(:absorbing) && method_exists(absorbing, (Type{$SET},))
+            ABS = absorbing($SET)
+            function $SET(::$NEUT{N}, Y::ABS{N}) where {N<:Real}
+                return Y
+            end
+            function $SET(Y::ABS{N}, ::$NEUT{N}) where {N<:Real}
+                return Y
+            end
+        end
+    end
+    return nothing
+end
+
+"""
+    @absorbing(SET, ABS)
+
+Creates functions to make a set type behave commutative with a given absorbing
+element set type.
+
+### Input
+
+- `SET` -- set type
+
+### Output
+
+Nothing.
+
+### Notes
+
+This macro generates three functions (and possibly two more if `@absorbing` has
+been used in advance).
+
+### Examples
+
+`@absorbing(MinkowskiSum, A)` creates the following functions:
 * `MinkowskiSum(X, A) = A`
 * `MinkowskiSum(A, X) = A`
 * `MinkowskiSum(A, A) = A`
-* `MinkowskiSum(N, A) = A`
-* `MinkowskiSum(A, N) = A`
 """
-macro commutative_neutral_absorbing(SET)
+macro absorbing(SET, ABS)
     @eval begin
-        neutral_el = neutral($SET)
-        if neutral_el != nothing
-            function $SET(X::LazySet{N}, ::neutral_el{N}) where {N<:Real}
-                return X
-            end
-            function $SET(::neutral_el{N}, X::LazySet{N}) where {N<:Real}
-                return X
-            end
-            function $SET(Y::neutral_el{N}, ::neutral_el{N}) where {N<:Real}
-                return Y
-            end
+        # create function to obtain the absorbing element
+        function absorbing(::Type{$SET})
+            return $ABS
         end
 
-        absorbing_el = absorbing($SET)
-        if absorbing_el != nothing
-            function $SET(::LazySet{N}, Y::absorbing_el{N}) where {N<:Real}
-                return Y
-            end
-            function $SET(Y::absorbing_el{N}, ::LazySet{N}) where {N<:Real}
-                return Y
-            end
-            function $SET(Y::absorbing_el{N}, ::absorbing_el{N}) where {N<:Real}
-                return Y
-            end
+        # create functions to declare the absorbing element
+        function $SET(::LazySet{N}, Y::$ABS{N}) where {N<:Real}
+            return Y
+        end
+        function $SET(Y::$ABS{N}, ::LazySet{N}) where {N<:Real}
+            return Y
+        end
+        function $SET(Y::$ABS{N}, ::$ABS{N}) where {N<:Real}
+            return Y
         end
 
-        if neutral_el != nothing && absorbing_el != nothing
-            function $SET(::neutral_el{N}, Y::absorbing_el{N}) where {N<:Real}
+        # if the neutral element has already been defined, create combinations
+        if isdefined(:neutral) && method_exists(neutral, (Type{$SET},))
+            NEUT = neutral($SET)
+            function $SET(::NEUT{N}, Y::$ABS{N}) where {N<:Real}
                 return Y
             end
-            function $SET(Y::absorbing_el{N}, ::neutral_el{N}) where {N<:Real}
+            function $SET(Y::$ABS{N}, ::NEUT{N}) where {N<:Real}
                 return Y
             end
         end
