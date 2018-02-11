@@ -7,7 +7,9 @@ export LazySet,
        norm,
        radius,
        diameter,
-       an_element
+       an_element,
+       neutral,
+       absorbing
 
 """
     LazySet{N}

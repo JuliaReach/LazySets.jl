@@ -21,9 +21,9 @@ end
 
 ```@docs
 CartesianProduct
+Base.:*(::LazySet{Float64}, ::LazySet{Float64})
 dim(::CartesianProduct{Float64, LazySet{Float64}, LazySet{Float64}})
 σ(::AbstractVector{Float64}, ::CartesianProduct{Float64, LazySet{Float64}, LazySet{Float64}})
-Base.:*(::LazySet{Float64}, ::LazySet{Float64})
 ∈(::AbstractVector{Float64}, ::CartesianProduct{Float64, LazySet{Float64}, LazySet{Float64}})
 ```
 
@@ -34,9 +34,6 @@ CartesianProductArray{Float64, LazySet{Float64}}
 array(::CartesianProductArray{Float64, LazySet{Float64}})
 dim(::CartesianProductArray{Float64, LazySet{Float64}})
 σ(::AbstractVector{Float64}, ::CartesianProductArray{Float64, LazySet{Float64}})
-Base.:*(::CartesianProductArray{Float64, LazySet{Float64}}, ::LazySet{Float64})
-Base.:*(::LazySet{Float64}, ::CartesianProductArray{Float64, LazySet{Float64}})
-Base.:*(::CartesianProductArray{Float64, LazySet{Float64}}, ::CartesianProductArray{Float64, LazySet{Float64}})
 ∈(::AbstractVector{Float64}, ::CartesianProductArray{Float64, LazySet{Float64}})
 ```
 
@@ -86,10 +83,10 @@ isempty(::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
 
 ```@docs
 MinkowskiSum
-dim(::MinkowskiSum{Float64, LazySet{Float64}, LazySet{Float64}})
-σ(::AbstractVector{Float64}, ::MinkowskiSum{Float64, LazySet{Float64}, LazySet{Float64}})
 Base.:+(::LazySet{Float64}, ::LazySet{Float64})
 ⊕
+dim(::MinkowskiSum{Float64, LazySet{Float64}, LazySet{Float64}})
+σ(::AbstractVector{Float64}, ::MinkowskiSum{Float64, LazySet{Float64}, LazySet{Float64}})
 ```
 
 ### ``n``-ary Minkowski Sum
@@ -99,10 +96,6 @@ MinkowskiSumArray
 array(::MinkowskiSumArray{Float64, LazySet{Float64}})
 dim(::MinkowskiSumArray{Float64, LazySet{Float64}})
 σ(::AbstractVector{Float64}, ::MinkowskiSumArray{Float64, LazySet{Float64}})
-Base.:+(::MinkowskiSumArray{Float64, LazySet{Float64}}, ::LazySet{Float64})
-Base.:+(::LazySet{Float64}, ::MinkowskiSumArray{Float64, LazySet{Float64}})
-Base.:+(::MinkowskiSumArray{Float64, LazySet{Float64}}, ::MinkowskiSumArray{Float64, LazySet{Float64}})
-Base.:+(::MinkowskiSumArray{Float64, LazySet{Float64}}, ::ZeroSet{Float64})
 ```
 
 ## Maps
