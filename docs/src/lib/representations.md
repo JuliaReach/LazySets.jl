@@ -93,6 +93,7 @@ an_element(::EmptySet{Float64})
 
 ```@docs
 HalfSpace
+LinearConstraint
 dim(::HalfSpace{Float64})
 σ(::AbstractVector{Float64}, ::HalfSpace{Float64})
 an_element(::HalfSpace{Float64})
@@ -130,10 +131,9 @@ high(::Hyperrectangle{Float64})
 low(::Hyperrectangle{Float64})
 ```
 
-## Lines and linear constraints
+## Line
 
 ```@docs
-LinearConstraint
 Line
 intersection(::Line{Float64}, ::Line{Float64})
 ```

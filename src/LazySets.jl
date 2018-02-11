@@ -9,16 +9,16 @@ using RecipesBase, IterTools, Requires
 
 export Approximations
 
-# ============================
-# Auxiliary types or functions
-# ============================
-include("LinearConstraints.jl")
+# ===================
+# Auxiliary functions
+# ===================
 include("helper_functions.jl")
 
 # ==================
 # Abstract set types
 # ==================
 include("LazySet.jl")
+include("HalfSpace.jl") # must be here to make LinearConstraint available
 include("AbstractPolytope.jl")
 include("AbstractPointSymmetric.jl")
 include("AbstractPointSymmetricPolytope.jl")
@@ -36,12 +36,12 @@ include("BallInf.jl")
 include("Ballp.jl")
 include("Ellipsoid.jl")
 include("EmptySet.jl")
-include("HalfSpace.jl")
 include("HPolygon.jl")
 include("HPolygonOpt.jl")
 include("HPolytope.jl")
 include("Hyperplane.jl")
 include("Hyperrectangle.jl")
+include("Line.jl")
 include("Singleton.jl")
 include("VPolygon.jl")
 include("VPolytope.jl")
@@ -64,9 +64,10 @@ include("SymmetricIntervalHull.jl")
 # =============================
 include("convert.jl")
 
-# =======================================
-# Algorithms for check operations on sets
-# =======================================
+# ===========================
+# Concrete operations on sets
+# ===========================
+include("concrete_intersection.jl")
 include("is_intersection_empty.jl")
 include("is_subset.jl")
 
