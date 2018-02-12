@@ -42,6 +42,7 @@ element set type.
 ### Input
 
 - `SET` -- set type
+- `ABS`  -- set type for absorbing element
 
 ### Output
 
@@ -79,13 +80,9 @@ macro neutral(SET, NEUT)
 
         # if the absorbing element has already been defined, create combinations
         if isdefined(:absorbing) && method_exists(absorbing, (Type{$SET},))
-            ABS = absorbing($SET)
-            function $SET(::$NEUT{N}, Y::ABS{N}) where {N<:Real}
-                return Y
-            end
-            function $SET(Y::ABS{N}, ::$NEUT{N}) where {N<:Real}
-                return Y
-            end
+            @eval(@neutral_absorbing($(esc(SET)),
+                                     $(esc(NEUT)),
+                                     absorbing($(esc(SET)))))
         end
     end
     return nothing
@@ -100,6 +97,7 @@ element set type.
 ### Input
 
 - `SET` -- set type
+- `NEUT` -- set type for neutral element
 
 ### Output
 
@@ -137,16 +135,46 @@ macro absorbing(SET, ABS)
 
         # if the neutral element has already been defined, create combinations
         if isdefined(:neutral) && method_exists(neutral, (Type{$SET},))
-            NEUT = neutral($SET)
-            function $SET(::NEUT{N}, Y::$ABS{N}) where {N<:Real}
-                return Y
-            end
-            function $SET(Y::$ABS{N}, ::NEUT{N}) where {N<:Real}
-                return Y
-            end
+            @eval(@neutral_absorbing($(esc(SET)),
+                                     neutral($(esc(SET))),
+                                     $(esc(ABS))))
         end
     end
     return nothing
+end
+
+"""
+    @neutral_absorbing(SET, NEUT, ABS)
+
+Creates two functions to avoid method ambiguties for a set type with respect to
+neutral and absorbing element set types.
+
+### Input
+
+- `SET`  -- set type
+- `NEUT` -- set type for neutral element
+- `ABS`  -- set type for absorbing element
+
+### Output
+
+A quoted expression containing the function definitions.
+
+### Examples
+
+`@neutral_absorbing(MinkowskiSum, N, A)` creates the following functions as
+quoted expressions:
+* `MinkowskiSum(N, A) = A`
+* `MinkowskiSum(A, N) = A`
+"""
+macro neutral_absorbing(SET, NEUT, ABS)
+    return quote
+        function $SET(::$NEUT{N}, Y::$ABS{N}) where {N<:Real}
+            return Y
+        end
+        function $SET(Y::$ABS{N}, ::$NEUT{N}) where {N<:Real}
+            return Y
+        end
+    end
 end
 
 # TODO document
