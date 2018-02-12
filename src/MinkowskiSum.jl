@@ -139,69 +139,6 @@ function MinkowskiSumArray(n::Int=0, N::Type=Float64)::MinkowskiSumArray
     return MinkowskiSumArray(arr)
 end
 
-"""
-    MinkowskiSumArray(msa::MinkowskiSumArray, S::LazySet)::MinkowskiSumArray
-
-Add a convex set to a Minkowski sum of a finite number of convex sets from the
-right.
-
-### Input
-
-- `msa` -- Minkowski sum array (is modified)
-- `S`   -- convex set
-
-### Output
-
-The modified Minkowski sum of a finite number of convex sets.
-"""
-function MinkowskiSumArray(msa::MinkowskiSumArray,
-                           S::LazySet)::MinkowskiSumArray
-    push!(msa.array, S)
-    return msa
-end
-
-"""
-    MinkowskiSumArray(S::LazySet, msa::MinkowskiSumArray)::MinkowskiSumArray
-
-Add a convex set to a Minkowski sum of a finite number of convex sets from the
-left.
-
-### Input
-
-- `S`   -- convex set
-- `msa` -- Minkowski sum array (is modified)
-
-### Output
-
-The modified Minkowski sum of a finite number of convex sets.
-"""
-function MinkowskiSumArray(S::LazySet,
-                           msa::MinkowskiSumArray)::MinkowskiSumArray
-    return MinkowskiSumArray(msa, S)
-end
-
-"""
-    MinkowskiSumArray(msa1::MinkowskiSumArray,
-                      msa2::MinkowskiSumArray)::MinkowskiSumArray
-
-Add the elements of a finite Minkowski sum of convex sets to another finite
-Minkowski sum.
-
-### Input
-
-- `msa1` -- first Minkowski sum array (is modified)
-- `msa2` -- second Minkowski sum array
-
-### Output
-
-The modified first Minkowski sum of a finite number of convex sets.
-"""
-function MinkowskiSumArray(msa1::MinkowskiSumArray,
-                           msa2::MinkowskiSumArray)::MinkowskiSumArray
-    append!(msa1.array, msa2.array)
-    return msa1
-end
-
 # ZeroSet is the neutral element for MinkowskiSumArray
 @neutral(MinkowskiSumArray, ZeroSet)
 
