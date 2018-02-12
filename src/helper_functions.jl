@@ -36,7 +36,7 @@ end
 """
     @neutral(SET, NEUT)
 
-Creates functions to make a set type behave commutative with a given neutral
+Create functions to make a set type behave commutative with a given neutral
 element set type.
 
 ### Input
@@ -50,12 +50,14 @@ Nothing.
 
 ### Notes
 
-This macro generates three functions (and possibly two more if `@absorbing` has
-been used in advance).
+This macro generates four functions (possibly two more if `@absorbing` has been
+used in advance) (possibly two or four more if `@declare_array_version` has been
+used in advance).
 
 ### Examples
 
-`@neutral(MinkowskiSum, N)` creates the following functions:
+`@neutral(MinkowskiSum, N)` creates at least the following functions:
+* `neutral(::MinkowskiSum) = N`
 * `MinkowskiSum(X, N) = X`
 * `MinkowskiSum(N, X) = X`
 * `MinkowskiSum(N, N) = N`
@@ -84,6 +86,19 @@ macro neutral(SET, NEUT)
                                      $(esc(NEUT)),
                                      absorbing($(esc(SET)))))
         end
+
+        # if the array set type has already been defined, create combinations
+        if isdefined(:array_constructor) &&
+                method_exists(array_constructor, (Type{$SET},))
+            @eval(@array_neutral($(esc(SET)),
+                                 $(esc(NEUT)),
+                                 array_constructor($(esc(SET)))))
+        elseif isdefined(:is_array_constructor) &&
+                method_exists(is_array_constructor, (Type{$SET},))
+            @eval(@array_neutral($(esc(SET)),
+                                 $(esc(NEUT)),
+                                 $(esc(SET))))
+        end
     end
     return nothing
 end
@@ -91,13 +106,13 @@ end
 """
     @absorbing(SET, ABS)
 
-Creates functions to make a set type behave commutative with a given absorbing
+Create functions to make a set type behave commutative with a given absorbing
 element set type.
 
 ### Input
 
 - `SET` -- set type
-- `NEUT` -- set type for neutral element
+- `ABS` -- set type for absorbing element
 
 ### Output
 
@@ -105,12 +120,14 @@ Nothing.
 
 ### Notes
 
-This macro generates three functions (and possibly two more if `@absorbing` has
-been used in advance).
+This macro generates four functions (possibly two more if `@absorbing` has been
+used in advance) (possibly two or four more if `@declare_array_version` has been
+used in advance).
 
 ### Examples
 
-`@absorbing(MinkowskiSum, A)` creates the following functions:
+`@absorbing(MinkowskiSum, A)` creates at least the following functions:
+* `absorbing(::MinkowskiSum) = A`
 * `MinkowskiSum(X, A) = A`
 * `MinkowskiSum(A, X) = A`
 * `MinkowskiSum(A, A) = A`
@@ -139,14 +156,124 @@ macro absorbing(SET, ABS)
                                      neutral($(esc(SET))),
                                      $(esc(ABS))))
         end
+
+        # if the array set type has already been defined, create combinations
+        if isdefined(:array_constructor) &&
+                method_exists(array_constructor, (Type{$SET},))
+            @eval(@array_absorbing($(esc(SET)),
+                                   $(esc(ABS)),
+                                   array_constructor($(esc(SET)))))
+        elseif isdefined(:is_array_constructor) &&
+                method_exists(is_array_constructor, (Type{$SET},))
+            @eval(@array_absorbing($(esc(SET)),
+                                   $(esc(ABS)),
+                                   $(esc(SET))))
+        end
     end
     return nothing
 end
 
 """
+    @declare_array_version(SET, SETARR)
+
+Create functions to connect a set type with its array set type.
+
+### Input
+
+- `SET`    -- set type
+- `SETARR` -- array set type
+
+### Output
+
+Nothing.
+
+### Notes
+
+This macro generates eight functions (and possibly up to eight more if
+`@neutral`/`@absorbing` has been used in advance for the base and/or array set
+type).
+
+### Examples
+
+`@declare_array_version(MinkowskiSum, ARR)` creates at least the following
+functions:
+* `array_constructor(::MinkowskiSum) = ARR`
+* `is_array_constructor(::ARR) = true`
+* `MinkowskiSum(X, ARR) = ARR(X, ARR)`
+* `MinkowskiSum(ARR, X) = ARR(ARR, X)`
+* `MinkowskiSum(ARR, ARR) = ARR(ARR, ARR)`
+* `ARR(X, ARR) = ...`
+* `ARR(ARR, X) = ...`
+* `ARR(ARR, ARR) = ...`
+"""
+macro declare_array_version(SET, SETARR)
+    @eval begin
+        # create function to obtain the array version
+        function array_constructor(::Type{$SET})
+            return $SETARR
+        end
+
+        # create function to check that this is an array version
+        function is_array_constructor(::Type{$SETARR})
+            return true
+        end
+
+        # create functions to use the array version functions
+        function $SET(X::LazySet{N}, arr::$SETARR{N}) where {N<:Real}
+            return $SETARR(arr, X)
+        end
+        function $SET(arr::$SETARR{N}, X::LazySet{N}) where {N<:Real}
+            return $SETARR(arr, X)
+        end
+        function $SET(arr1::$SETARR{N}, arr2::$SETARR{N}) where {N<:Real}
+            return $SETARR(arr1, arr2)
+        end
+
+        # create functions for array version
+        function $SETARR(X::LazySet{N}, arr::$SETARR{N}) where {N<:Real}
+            push!(array(arr), X)
+            return arr
+        end
+        function $SETARR(arr::$SETARR{N}, X::LazySet{N}) where {N<:Real}
+            push!(array(arr), X)
+            return arr
+        end
+        function $SETARR(arr1::$SETARR{N}, arr2::$SETARR{N}) where {N<:Real}
+            append!(array(arr1), array(arr2))
+            return arr1
+        end
+
+        # handle method ambiguities with neutral elements
+        if isdefined(:neutral) && method_exists(neutral, (Type{$SET},))
+            @eval(@array_neutral($(esc(SET)),
+                                 neutral($(esc(SET))),
+                                 $(esc(SETARR))))
+        end
+        if isdefined(:neutral) && method_exists(neutral, (Type{$SETARR},))
+            @eval(@array_neutral($(esc(SETARR)),
+                                 neutral($(esc(SETARR))),
+                                 $(esc(SETARR))))
+        end
+        # handle method ambiguities with absorbing elements
+        if isdefined(:absorbing) && method_exists(absorbing, (Type{$SET},))
+            @eval(@array_absorbing($(esc(SET)),
+                                   absorbing($(esc(SET))),
+                                   $(esc(SETARR))))
+        end
+        if isdefined(:absorbing) && method_exists(absorbing, (Type{$SETARR},))
+            @eval(@array_absorbing($(esc(SETARR)),
+                                   absorbing($(esc(SETARR))),
+                                   $(esc(SETARR))))
+        end
+    end
+    return nothing
+end
+
+
+"""
     @neutral_absorbing(SET, NEUT, ABS)
 
-Creates two functions to avoid method ambiguties for a set type with respect to
+Create two functions to avoid method ambiguties for a set type with respect to
 neutral and absorbing element set types.
 
 ### Input
@@ -177,81 +304,70 @@ macro neutral_absorbing(SET, NEUT, ABS)
     end
 end
 
-# TODO document
-#
-# TODO add ambiguity functions also to the other macros such that the order of
-# calling the macros does not matter
-#
-# TODO remove now redundant function from the three set files
-macro declare_array_version(SET, SETARR)
-    @eval begin
-        # create function to obtain the array version
-        function array_constructor(::Type{$SET})
-            return $SETARR
-        end
+"""
+    @array_neutral(FUN, NEUT, SETARR)
 
-        # create functions to use the array version functions
-        function $SET(X::LazySet{N}, arr::$SETARR{N}) where {N<:Real}
-            return $SETARR(arr, X)
-        end
-        function $SET(arr::$SETARR{N}, X::LazySet{N}) where {N<:Real}
-            return $SETARR(arr, X)
-        end
-        function $SET(arr1::$SETARR{N}, arr2::$SETARR{N}) where {N<:Real}
-            return $SETARR(arr1, arr2)
-        end
+Create two functions to avoid method ambiguties for a set type with respect to
+the neutral element set type and the array set type.
 
-        # create functions for array version
-        function $SETARR(X::LazySet{N}, arr::$SETARR{N}) where {N<:Real}
-            push!(array(arr), X)
-            return arr
-        end
-        function $SETARR(arr::$SETARR{N}, X::LazySet{N}) where {N<:Real}
-            push!(array(arr), X)
-            return arr
-        end
-        function $SETARR(arr1::$SETARR{N}, arr2::$SETARR{N}) where {N<:Real}
-            append!(array(arr1), array(arr2))
-            return arr1
-        end
+### Input
 
-        # handle method ambiguities with neutral elements
-        if isdefined(:neutral) && method_exists(neutral, (Type{$SET},))
-            NEUT = neutral($SET)
-            function $SET(::NEUT{N}, X::$SETARR{N}) where {N<:Real}
-                return X
-            end
-            function $SET(X::$SETARR{N}, ::NEUT{N}) where {N<:Real}
-                return X
-            end
+- `FUN`     -- function name
+- `NEUT`    -- set type for neutral element
+- `SETARR`  -- array set type
+
+### Output
+
+A quoted expression containing the function definitions.
+
+### Examples
+
+`@array_neutral(MinkowskiSum, N, ARR)` creates the following functions as
+quoted expressions:
+* `MinkowskiSum(N, ARR) = ARR`
+* `MinkowskiSum(ARR, N) = ARR`
+"""
+macro array_neutral(FUN, NEUT, SETARR)
+    return quote
+        function $FUN(::$NEUT{N}, X::$SETARR{N}) where {N<:Real}
+            return X
         end
-        if isdefined(:neutral) && method_exists(neutral, (Type{$SETARR},))
-            NEUT = neutral($SETARR)
-            function $SETARR(::NEUT{N}, X::$SETARR{N}) where {N<:Real}
-                return X
-            end
-            function $SETARR(X::$SETARR{N}, ::NEUT{N}) where {N<:Real}
-                return X
-            end
+        function $FUN(X::$SETARR{N}, ::$NEUT{N}) where {N<:Real}
+            return X
         end
-        # handle method ambiguities with absorbing elements
-        if isdefined(:absorbing) && method_exists(absorbing, (Type{$SET},))
-            ABS = absorbing($SET)
-            function $SET(Y::ABS{N}, ::$SETARR{N}) where {N<:Real}
-                return Y
-            end
-            function $SET(::$SETARR{N}, Y::ABS{N}) where {N<:Real}
-                return Y
-            end
+    end
+end
+
+"""
+    @array_absorbing(FUN, ABS, SETARR)
+
+Create two functions to avoid method ambiguties for a set type with respect to
+the absorbing element set type and the array set type.
+
+### Input
+
+- `FUN`     -- function name
+- `ABS`     -- set type for absorbing element
+- `SETARR`  -- array set type
+
+### Output
+
+A quoted expression containing the function definitions.
+
+### Examples
+
+`@array_absorbing(MinkowskiSum, ABS, ARR)` creates the following functions as
+quoted expressions:
+* `MinkowskiSum(ABS, ARR) = ABS`
+* `MinkowskiSum(ARR, ABS) = ABS`
+"""
+macro array_absorbing(FUN, ABS, SETARR)
+    return quote
+        function $FUN(Y::$ABS{N}, ::$SETARR{N}) where {N<:Real}
+            return Y
         end
-        if isdefined(:absorbing) && method_exists(absorbing, (Type{$SETARR},))
-            ABS = absorbing($SETARR)
-            function $SETARR(Y::ABS{N}, ::$SETARR{N}) where {N<:Real}
-                return Y
-            end
-            function $SETARR(::$SETARR{N}, Y::ABS{N}) where {N<:Real}
-                return Y
-            end
+        function $FUN(::$SETARR{N}, Y::$ABS{N}) where {N<:Real}
+            return Y
         end
     end
 end
