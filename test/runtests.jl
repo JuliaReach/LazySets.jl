@@ -40,9 +40,10 @@ include("to_N.jl")
 @time @testset "LazySets.Approximations.radiusdiameter" begin include("unit_radiusdiameter.jl") end
 @time @testset "LazySets.Approximations.decompose" begin include("unit_decompose.jl") end
 
-# ==================
-# Further algorithms
-# ==================
+# ========================
+# Testing method ambiguity
+# ========================
+include("check_method_ambiguity_binary.jl")
 @time @testset "LazySets.binary_operations" begin include("unit_binary_operations.jl") end
 
 # ====================================
@@ -50,4 +51,5 @@ include("to_N.jl")
 # (must be the last test because it
 #  loads Polyhedra.jl)
 # ====================================
+include("check_method_implementation.jl")
 @time @testset "LazySets.interfaces" begin include("unit_interfaces.jl") end
