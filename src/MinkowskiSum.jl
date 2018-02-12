@@ -208,6 +208,9 @@ end
 # EmptySet is the absorbing element for MinkowskiSumArray
 @absorbing(MinkowskiSumArray, EmptySet)
 
+# add functions connecting MinkowskiSum and MinkowskiSumArray
+@declare_array_version(MinkowskiSum, MinkowskiSumArray)
+
 """
     array(msa::MinkowskiSumArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
 

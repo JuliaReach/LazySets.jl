@@ -248,6 +248,9 @@ end
 # EmptySet is the absorbing element for CartesianProductArray
 @absorbing(CartesianProductArray, EmptySet)
 
+# add functions connecting CartesianProduct and CartesianProductArray
+@declare_array_version(CartesianProduct, CartesianProductArray)
+
 """
     array(cpa::CartesianProductArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
 

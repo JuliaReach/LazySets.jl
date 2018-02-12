@@ -148,3 +148,82 @@ macro absorbing(SET, ABS)
     end
     return nothing
 end
+
+# TODO document
+#
+# TODO add ambiguity functions also to the other macros such that the order of
+# calling the macros does not matter
+#
+# TODO remove now redundant function from the three set files
+macro declare_array_version(SET, SETARR)
+    @eval begin
+        # create function to obtain the array version
+        function array_constructor(::Type{$SET})
+            return $SETARR
+        end
+
+        # create functions to use the array version functions
+        function $SET(X::LazySet{N}, arr::$SETARR{N}) where {N<:Real}
+            return $SETARR(arr, X)
+        end
+        function $SET(arr::$SETARR{N}, X::LazySet{N}) where {N<:Real}
+            return $SETARR(arr, X)
+        end
+        function $SET(arr1::$SETARR{N}, arr2::$SETARR{N}) where {N<:Real}
+            return $SETARR(arr1, arr2)
+        end
+
+        # create functions for array version
+        function $SETARR(X::LazySet{N}, arr::$SETARR{N}) where {N<:Real}
+            push!(array(arr), X)
+            return arr
+        end
+        function $SETARR(arr::$SETARR{N}, X::LazySet{N}) where {N<:Real}
+            push!(array(arr), X)
+            return arr
+        end
+        function $SETARR(arr1::$SETARR{N}, arr2::$SETARR{N}) where {N<:Real}
+            append!(array(arr1), array(arr2))
+            return arr1
+        end
+
+        # handle method ambiguities with neutral elements
+        if isdefined(:neutral) && method_exists(neutral, (Type{$SET},))
+            NEUT = neutral($SET)
+            function $SET(::NEUT{N}, X::$SETARR{N}) where {N<:Real}
+                return X
+            end
+            function $SET(X::$SETARR{N}, ::NEUT{N}) where {N<:Real}
+                return X
+            end
+        end
+        if isdefined(:neutral) && method_exists(neutral, (Type{$SETARR},))
+            NEUT = neutral($SETARR)
+            function $SETARR(::NEUT{N}, X::$SETARR{N}) where {N<:Real}
+                return X
+            end
+            function $SETARR(X::$SETARR{N}, ::NEUT{N}) where {N<:Real}
+                return X
+            end
+        end
+        # handle method ambiguities with absorbing elements
+        if isdefined(:absorbing) && method_exists(absorbing, (Type{$SET},))
+            ABS = absorbing($SET)
+            function $SET(Y::ABS{N}, ::$SETARR{N}) where {N<:Real}
+                return Y
+            end
+            function $SET(::$SETARR{N}, Y::ABS{N}) where {N<:Real}
+                return Y
+            end
+        end
+        if isdefined(:absorbing) && method_exists(absorbing, (Type{$SETARR},))
+            ABS = absorbing($SETARR)
+            function $SETARR(Y::ABS{N}, ::$SETARR{N}) where {N<:Real}
+                return Y
+            end
+            function $SETARR(::$SETARR{N}, Y::ABS{N}) where {N<:Real}
+                return Y
+            end
+        end
+    end
+end

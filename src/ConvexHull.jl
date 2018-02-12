@@ -143,6 +143,9 @@ end
 # EmptySet is the neutral element for ConvexHullArray
 @neutral(ConvexHullArray, EmptySet)
 
+# add functions connecting ConvexHull and ConvexHullArray
+@declare_array_version(ConvexHull, ConvexHullArray)
+
 """
     CHArray
 
