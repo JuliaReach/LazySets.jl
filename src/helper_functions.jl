@@ -1,5 +1,3 @@
-export sign_cadlag
-
 """
     sign_cadlag(x::N)::N where {N<:Real}
 
@@ -22,6 +20,8 @@ It can be used with vector-valued arguments via the dot operator.
 ### Examples
 
 ```jldoctest
+julia> import LazySets.sign_cadlag
+
 julia> sign_cadlag.([-0.6, 1.3, 0.0])
 3-element Array{Float64,1}:
  -1.0
