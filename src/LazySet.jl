@@ -28,22 +28,23 @@ Every concrete `LazySet` must define the following functions:
 
 ```jldoctest
 julia> subtypes(LazySet)
-15-element Array{Union{DataType, UnionAll},1}:
- LazySets.AbstractPointSymmetric  
- LazySets.AbstractPolytope        
- LazySets.CartesianProduct        
- LazySets.CartesianProductArray   
- LazySets.ConvexHull              
- LazySets.ConvexHullArray         
- LazySets.EmptySet                
- LazySets.ExponentialMap          
+16-element Array{Union{DataType, UnionAll},1}:
+ LazySets.AbstractPointSymmetric
+ LazySets.AbstractPolytope
+ LazySets.CartesianProduct
+ LazySets.CartesianProductArray
+ LazySets.ConvexHull
+ LazySets.ConvexHullArray
+ LazySets.EmptySet
+ LazySets.ExponentialMap
  LazySets.ExponentialProjectionMap
- LazySets.HalfSpace               
- LazySets.Hyperplane              
- LazySets.Intersection            
- LazySets.LinearMap               
- LazySets.MinkowskiSum            
+ LazySets.HalfSpace
+ LazySets.Hyperplane
+ LazySets.Intersection
+ LazySets.LinearMap
+ LazySets.MinkowskiSum
  LazySets.MinkowskiSumArray
+ LazySets.PolynomialZonotope
 ```
 """
 abstract type LazySet{N} end

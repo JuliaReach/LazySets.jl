@@ -15,3 +15,6 @@ p = PolynomialZonotope(c, E, F, G)
 # type-specific concrete methods
 scale(N(0.5), p)
 linear_map(N[1.0 2.0; 2.0 5.0], p)
+z = Zonotope(N[1., 2.], N(1.) * eye(N, 2))
+minkowski_sum(p, z)
+minkowski_sum(z, p)

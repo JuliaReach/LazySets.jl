@@ -134,7 +134,7 @@ Polynomial order of a polynomial zonotope.
 
 ## Output
 
-The polynomial order, defined as the maximal power of the scalar factors ``β_i``.
+The polynomial order, defined as the maximal power of the scale factors ``β_i``.
 Usually denoted ``η``.
 """
 polynomial_order(pz::PolynomialZonotope)::Int = length(pz.E)
@@ -173,7 +173,7 @@ Return the linear map of a polynomial zonotope.
 
 ## Output
 
-Polynomial zonotope such that its center and generators are those of `pz`
+Polynomial zonotope such that its starting point and generators are those of `pz`
 multiplied by the matrix `M`.
 """
 function linear_map(M::Matrix, pz::PolynomialZonotope)
@@ -187,7 +187,7 @@ end
 """
     scale(α::Number, pz::PolynomialZonotope)
 
-Return a polynomial zonotope modified by a scalar factor.
+Return a polynomial zonotope modified by a scale factor.
 
 ### Input
 
@@ -223,6 +223,8 @@ Polynomial zonotope.
 """
 function minkowski_sum(pz::PolynomialZonotope, z::Zonotope)
     c = pz.c + z.center
-    G = [G z.generators]
+    G = [pz.G z.generators]
     return PolynomialZonotope(c, pz.E, pz.F, G)
 end
+
+minkowski_sum(z::Zonotope, pz::PolynomialZonotope) = minkowski_sum(pz, z)
