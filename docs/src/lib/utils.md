@@ -9,4 +9,6 @@ end
 
 ```@docs
 sign_cadlag
+@neutral
+@absorbing
 ```

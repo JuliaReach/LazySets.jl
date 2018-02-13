@@ -1,6 +1,6 @@
 import Base.∈
 
-export HalfSpace,
+export HalfSpace, LinearConstraint,
        an_element
 
 """
@@ -26,6 +26,13 @@ struct HalfSpace{N<:Real} <: LazySet{N}
     a::Vector{N}
     b::N
 end
+
+"""
+    LinearConstraint
+
+Alias for `HalfSpace`
+"""
+const LinearConstraint = HalfSpace
 
 
 # --- LazySet interface functions ---

@@ -1,7 +1,3 @@
-export sign_cadlag,
-       check_method_implementation,
-       check_method_ambiguity_binary
-
 """
     sign_cadlag(x::N)::N where {N<:Real}
 
@@ -24,6 +20,8 @@ It can be used with vector-valued arguments via the dot operator.
 ### Examples
 
 ```jldoctest
+julia> import LazySets.sign_cadlag
+
 julia> sign_cadlag.([-0.6, 1.3, 0.0])
 3-element Array{Float64,1}:
  -1.0
@@ -36,195 +34,117 @@ function sign_cadlag(x::N)::N where {N<:Real}
 end
 
 """
-    check_method_implementation(interface::Type,
-                                func_name,
-                                args_funcs::AbstractVector{Function},
-                                [print_results]::Bool=false
-                               )::Bool
+    @neutral(SET, NEUT)
 
-Check that a given (interface) function is implemented by all subtypes.
+Creates functions to make a set type behave commutative with a given neutral
+element set type.
 
 ### Input
 
-- `interface`     -- parent interface type
-- `func_name`     -- function name
-- `args_funcs`    -- list of functions that each map a type to an argument
-                     signature tuple
-- `print_results` -- (optional, default: `false`) flag for printing intermediate
-                     results
+- `SET` -- set type
 
 ### Output
 
-`true` iff all subtypes implement the given function.
+Nothing.
 
 ### Notes
 
-It is sufficient that a subinterface implements the function, i.e., it is not
-required that every *concrete* type implements the function.
-
-This function can also print all intermediate results to STDOUT.
+This macro generates three functions (and possibly two more if `@absorbing` has
+been used in advance).
 
 ### Examples
 
-```jldoctest
-julia> check_method_implementation(LazySet, σ,
-        Function[S -> (AbstractVector{Float64}, S)])
-true
-```
+`@neutral(MinkowskiSum, N)` creates the following functions:
+* `MinkowskiSum(X, N) = X`
+* `MinkowskiSum(N, X) = X`
+* `MinkowskiSum(N, N) = N`
 """
-function check_method_implementation(interface::Type,
-                                     func_name,
-                                     args_funcs::AbstractVector{Function};
-                                     print_results::Bool=false
-                                    )::Bool
-    has_subtypes = false # NOTE: 'isleaftype' does not work (type parameters)
-    for subtype in subtypes(interface)
-        has_subtypes = true
-        found = false
-        for args_func in args_funcs
-            if method_exists(func_name, args_func(subtype))
-                if print_results
-                    println("found implementation of $func_name for $subtype")
-                end
-                found = true
-                break
-            end
+macro neutral(SET, NEUT)
+    @eval begin
+        # create function to obtain the neutral element
+        function neutral(::Type{$SET})
+            return $NEUT
         end
-        if !found && !check_method_implementation(subtype, func_name,
-                                                  args_funcs,
-                                                  print_results=print_results)
-            if print_results
-                println("no implementation of $func_name for $subtype")
+
+        # create functions to declare the neutral element
+        function $SET(X::LazySet{N}, ::$NEUT{N}) where {N<:Real}
+            return X
+        end
+        function $SET(::$NEUT{N}, X::LazySet{N}) where {N<:Real}
+            return X
+        end
+        function $SET(Y::$NEUT{N}, ::$NEUT{N}) where {N<:Real}
+            return Y
+        end
+
+        # if the absorbing element has already been defined, create combinations
+        if isdefined(:absorbing) && method_exists(absorbing, (Type{$SET},))
+            ABS = absorbing($SET)
+            function $SET(::$NEUT{N}, Y::ABS{N}) where {N<:Real}
+                return Y
             end
-            return false
+            function $SET(Y::ABS{N}, ::$NEUT{N}) where {N<:Real}
+                return Y
+            end
         end
     end
-    return has_subtypes
+    return nothing
 end
 
 """
-    check_method_ambiguity_binary(op;
-                                  [print_results]::Bool=false,
-                                  [print_warnings::Bool=print_results])::Bool
+    @absorbing(SET, ABS)
 
-Check that a given binary operation does not have method ambiguities for some
-combination of set types.
+Creates functions to make a set type behave commutative with a given absorbing
+element set type.
 
 ### Input
 
-- `op` -- binary set function name
-- `print_results` -- (optional, default: `false`) flag for printing intermediate
-                     results
-- `print_warnings` -- (optional, default: `print_results`) flag for printing
-                      warnings
+- `SET` -- set type
 
 ### Output
 
-`true` iff there is no method ambiguity for any set type combination.
+Nothing.
 
 ### Notes
 
-It is not required that every set type combination is implemented.
-The check is only applied to implemented combinations.
-
-This function can also print all intermediate results to STDOUT.
-Both method ambiguities/other errors and missing implementations are then
-reported as warnings.
-Optionally only the warnings can be printed.
+This macro generates three functions (and possibly two more if `@absorbing` has
+been used in advance).
 
 ### Examples
 
-```julia
-julia> check_method_ambiguity_binary(is_subset)
-```
+`@absorbing(MinkowskiSum, A)` creates the following functions:
+* `MinkowskiSum(X, A) = A`
+* `MinkowskiSum(A, X) = A`
+* `MinkowskiSum(A, A) = A`
 """
-function check_method_ambiguity_binary(op;
-                                       print_results::Bool=false,
-                                       print_warnings::Bool=print_results)::Bool
-    types = [AbstractHPolygon{Float64}, AbstractHyperrectangle{Float64},
-             AbstractPointSymmetric{Float64},
-             AbstractPointSymmetricPolytope{Float64}, AbstractPolygon{Float64},
-             AbstractPolytope{Float64}, AbstractSingleton{Float64}]
+macro absorbing(SET, ABS)
+    @eval begin
+        # create function to obtain the absorbing element
+        function absorbing(::Type{$SET})
+            return $ABS
+        end
 
-    polytope_constraints = [LinearConstraint(ones(2), 1.),
-                            LinearConstraint([1., -1.], 1.)]
-    type2instance = Dict{Type, Vector{LazySet{Float64}}}([
-        (AbstractHPolygon{Float64}, [HPolygon{Float64}(polytope_constraints),
-                            HPolygonOpt{Float64}(polytope_constraints, 1)]),
-        (AbstractHyperrectangle{Float64}, [BallInf(zeros(2), 1.),
-                                  Hyperrectangle(zeros(2), ones(2))]),
-        (AbstractPointSymmetric{Float64}, [Ball2(zeros(2), 1.),
-                                  Ballp(1.5, zeros(2), 1.),
-                                  Ellipsoid(eye(2))]),
-        (AbstractPointSymmetricPolytope{Float64}, [Ball1(zeros(2), 1.),
-                                          Zonotope(zeros(2), eye(2))]),
-        (AbstractPolygon{Float64}, [VPolygon([zeros(2)])]),
-        (AbstractPolytope{Float64}, [HPolytope{Float64}(polytope_constraints)]),
-        (AbstractSingleton{Float64}, [Singleton(zeros(2)), ZeroSet(2)])
-    ])
+        # create functions to declare the absorbing element
+        function $SET(::LazySet{N}, Y::$ABS{N}) where {N<:Real}
+            return Y
+        end
+        function $SET(Y::$ABS{N}, ::LazySet{N}) where {N<:Real}
+            return Y
+        end
+        function $SET(Y::$ABS{N}, ::$ABS{N}) where {N<:Real}
+            return Y
+        end
 
-    ops = "$op"[10:end] # remove prefix 'LazySets.'
-    has_ambiguities = false
-    has_other_problems = false
-    print_results && println("testing operation $ops")
-    for t1 in types
-        print_results && println("type 1: $t1")
-        for t2 in types
-            print_results && println("type 2: $t2")
-            if !method_exists(op, (t1, t2))
-                if print_warnings
-                    warn("no interface operation '$ops(::$(t1), ::$(t2)' exists")
-                end
-                continue
+        # if the neutral element has already been defined, create combinations
+        if isdefined(:neutral) && method_exists(neutral, (Type{$SET},))
+            NEUT = neutral($SET)
+            function $SET(::NEUT{N}, Y::$ABS{N}) where {N<:Real}
+                return Y
             end
-            print_results && println("interface operation exists")
-            for i1 in type2instance[t1]
-                print_results && println("instance 1: $(typeof(i1))")
-                for i2 in type2instance[t2]
-                    print_results && println("instance 2: $(typeof(i2))")
-                    try
-                        op(i1, i2)
-                        print_results && println("test succeeded")
-                    catch ex
-                        # print error message
-#                         showerror(STDOUT, ex); println()
-
-                        # get error message
-                        buf = IOBuffer()
-                        showerror(buf, ex)
-                        msg = String(take!(buf))
-
-                        if startswith(msg, "MethodError: no method matching $ops")
-                            # undefined method error, ignore
-                            if print_warnings
-                                warn("no concrete operation " *
-                                     "'$ops(::$(typeof(i1)), " *
-                                     "::$(typeof(i2)))' exists")
-                            end
-                        elseif contains(msg, "is ambiguous")
-                            # ambiguity error, remember
-                            has_ambiguities = true
-                            if print_warnings
-                                warn("ambiguous method " *
-                                     "'$ops(::$(typeof(i1)), " *
-                                     "::$(typeof(i2)))' found; " *
-                                     "printing full message")
-                                warn(msg)
-                            end
-                        else
-                            # other error, remember
-                            has_other_problems = true
-                            if print_warnings
-                                warn("unknown error message:")
-                                warn(msg)
-                            end
-                        end
-                    end
-                end
+            function $SET(Y::$ABS{N}, ::NEUT{N}) where {N<:Real}
+                return Y
             end
         end
     end
-    result = !has_ambiguities
-#     result &= !has_other_problems # also report other errors
-    return result
+    return nothing
 end

@@ -7,7 +7,9 @@ export LazySet,
        norm,
        radius,
        diameter,
-       an_element
+       an_element,
+       neutral,
+       absorbing
 
 """
     LazySet{N}
@@ -28,7 +30,7 @@ Every concrete `LazySet` must define the following functions:
 
 ```jldoctest
 julia> subtypes(LazySet)
-16-element Array{Union{DataType, UnionAll},1}:
+17-element Array{Union{DataType, UnionAll},1}:
  LazySets.AbstractPointSymmetric
  LazySets.AbstractPolytope
  LazySets.CartesianProduct
@@ -41,6 +43,7 @@ julia> subtypes(LazySet)
  LazySets.HalfSpace
  LazySets.Hyperplane
  LazySets.Intersection
+ LazySets.Line
  LazySets.LinearMap
  LazySets.MinkowskiSum
  LazySets.MinkowskiSumArray
