@@ -42,12 +42,12 @@ include("HPolygonOpt.jl")
 include("HPolytope.jl")
 include("Hyperplane.jl")
 include("Hyperrectangle.jl")
-include("PolynomialZonotope.jl")
 include("Singleton.jl")
 include("VPolygon.jl")
 include("VPolytope.jl")
 include("ZeroSet.jl")
 include("Zonotope.jl")
+include("PolynomialZonotope.jl")
 
 # =================================
 # Types representing set operations

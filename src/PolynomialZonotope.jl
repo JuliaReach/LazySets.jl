@@ -1,5 +1,4 @@
 export PolynomialZonotope,
-       dim,
        polynomial_order,
        order,
        linear_map,
@@ -14,9 +13,9 @@ Type that represents a polynomial zonotope.
 ### Fields
 
 - `c`  -- starting point
-- `E`  -- multi-indexed generators such that *all* indices have the same value
-- `F`  -- multi-indexed generators such that *not all* indices have the same value
-- `G`  -- single-indexed generators
+- `E`  -- matrix of multi-indexed generators such that *all* indices have the same value
+- `F`  -- matrix of multi-indexed generators such that *not all* indices have the same value
+- `G`  -- matrix of single-indexed generators
 
 ### Notes
 
@@ -24,28 +23,46 @@ Polynomial zonotopes were introduced by M. Althoff in *Reachability analysis of 
 systems using conservative polynomialization and non-convex sets*, Hybrid Systems:
 Computation and Control, 2013, pp. 173–182.
 
-### Examples
+Mathematically, it is defined as the tuple ``(c, E, F, G)``, where:
 
-```jldoctest
-julia> c = zeros(2);
-julia> E1, E2 = diagm([-1, 0.5]), [1 1; 0.5 0.3];
-julia> E = [E1, E2];
-julia> F2 = [-0.5 1]';
-julia> F = [F2];
-julia> G = diagm([0.3, 0.3]);
-julia> p = PolynomialZonotope(c, E, F, G)
-LazySets.PolynomialZonotope{Float64}([0.0, 0.0], Array{Float64,2}[[-1.0 0.0; 0.0 0.5], [1.0 1.0; 0.5 0.3]], Array{Float64,2}[[-0.5; 1.0]], [0.3 0.0; 0.0 0.3])
-julia> dim(p)
-2
-julia> order(p)
-7//2
-julia> polynomial_order(p)
-2
-julia> scale(0.5, p)
-LazySets.PolynomialZonotope{Float64}([0.0, 0.0], Array{Float64,2}[[-0.5 0.0; 0.0 0.25], [0.5 0.5; 0.25 0.15]], Array{Float64,2}[[-0.25; 0.5]], [0.15 0.0; 0.0 0.15])
-julia> linear_map([1.0 2.0; 2.0 5.0], p)
-LazySets.PolynomialZonotope{Float64}([0.0, 0.0], Array{Float64,2}[[-1.0 1.0; -2.0 2.5], [2.0 1.6; 4.5 3.5]], Array{Float64,2}[[1.5; 4.0]], [0.3 0.6; 0.6 1.5])
+- ``c ∈ \\mathbb{R}^n`` is the starting point (in some particular cases it corresponds
+  to the center of a usual zonotope),
+
+- ``E = [E^{[1]} ⋯ E^{[η]}]`` is an ``n × p × η(η+1)/2`` matrix with column-blocks
+
+```math
+E^{[i]} = [f^{([i], 1, 1, …, 1)} ⋯ f^{([i], p, p, …, p)}], \\qquad i = 1,…, η
 ```
+called the matrix of *multi-indexed generators with equal indices*, where each
+``f^{([i], k_1, k_2, …, k_i)}`` is an ``n``-vector,
+
+- ``F = [F^{[2]} ⋯ F^{[η]}]`` is a matrix with column-blocks
+
+```math
+F^{[i]} = [f^{([i], 1, 1, …, 1, 2)} f^{([i], 1, 1, …, 1, 3)} ⋯ f^{([i], 1, 1, …, 1, p)} \\\\
+f^{([i], 1, 1, …, 2, 2)} f^{([i], 1, 1, …, 2, 3)} ⋯ f^{([i], 1, 1, …, 2, p)} \\\\
+f^{([i], 1, 1, …, 3, 3)} ⋯], \\qquad i = 1,…, η
+```
+called the matrix of *multi-indexed generators with unequal indices* (or, more accurately,
+not-all-equal indices), where each ``f^{([i], k_1, k_2, …, k_i)}`` is an ``n``-vector,
+
+- ``G = [G^{[1]} ⋯ G^{[q]}]`` is an ``n × q`` matrix with columns
+
+```math
+G^{[i]} = g^{(i)}, \\qquad i = 1,…, q
+```
+called the matrix of *single-indexed generators*, where each ``g^{(i)}`` is an
+``n``-vector.
+
+The polynomial zonotope ``(c, E, F, G)`` defines the set:
+
+```math
+\\mathcal{PZ} = \\left\\{ c + ∑_{j=1}^p β_j f^{([1], j)} + ∑_{j=1}^p ∑_{k=j}^p β_j β_k f^{([2], j, k)} + \\\\
++ … + ∑_{j=1}^p ∑_{k=j}^p ⋯ ∑_{m=ℓ}^p β_j β_k ⋯ β_m f^{([η], j, k, …, m)} + \\\\
++ ∑_{i=1}^q γ_i g^{(i)}, \\qquad β_i, γ_i ∈ [-1, 1] \\right\\},
+```
+where the number of factors in the final product, ``β_j β_k ⋯ β_m``, corresponds to
+the polynomial order ``η``.
 """
 struct PolynomialZonotope{N} <: LazySet{N}
     c::Vector{N}
