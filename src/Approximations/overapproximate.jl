@@ -83,3 +83,31 @@ function overapproximate(S::LazySet, ɛ::Real)::HPolygon
 
     return tohrep(approximate(S, ɛ))
 end
+
+"""
+    overapproximate(S::ConvexHull{N, Zonotope{N}, Zonotope{N}},
+                     ::Type{<:Zonotope})::Zonotope where {N<:Real}
+
+Overapproximate the convex hull of two zonotopes.
+
+### Input
+
+- `S` -- convex set, assumed to be two-dimensional
+- `Zonotope` for dispatch
+
+### Algorithm
+
+This function implements the method proposed in
+*Reachability of Uncertain Linear Systems Using Zonotopes, A. Girard, HSCC 2005*.
+
+It should be noted that the output zonotope is not necessarily the minimal enclosing
+zonotope, which is in general expensive in high dimensions. This is further investigated
+in: *Zonotopes as bounding volumes, L. J. Guibas et al, Proc. of Symposium on Discrete Algorithms, pp. 803-812*.
+"""
+function overapproximate(S::ConvexHull{N, Zonotope{N}, Zonotope{N}},
+                         ::Type{<:Zonotope})::Zonotope where {N<:Real}
+    Z1, Z2 = S.X, S.Y
+    center = (Z1.center+Z2.center)/2
+    generators = [(Z1.generators .+ Z2.generators) (Z1.center - Z2.center) (Z1.generators .- Z2.generators)]/2
+    return Zonotope(center, generators)
+end

@@ -23,6 +23,11 @@ Approximations
 
 ```@docs
 decompose
+```
+
+## Overapproximations
+
+```@docs
 overapproximate
 ```
 
