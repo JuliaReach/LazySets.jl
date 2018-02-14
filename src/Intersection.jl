@@ -5,12 +5,12 @@ export Intersection
 """
     Intersection{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
 
-Type that represents the intersection of two convex sets.
+Type that represents the intersection of two sets.
 
 ### Fields
 
-- `X` -- convex set
-- `Y` -- convex set
+- `X` -- first set
+- `Y` -- second set
 """
 struct Intersection{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     X::S1
@@ -39,7 +39,7 @@ Intersection of a set with the empty set from the right.
 
 ### Input
 
-- `X` -- a convex set
+- `X` -- a set
 - `∅` -- an empty set
 
 ### Output
@@ -57,7 +57,7 @@ Intersection of a set with the empty set from the left.
 ### Input
 
 - `∅` -- an empty set
-- `X` -- a convex set
+- `X` -- a set
 
 ### Output
 
@@ -76,15 +76,15 @@ Intersection(∅::EmptySet, ::LazySet) = ∅
 """
     dim(cap::Intersection)::Int
 
-Return the dimension of an intersection of two convex sets.
+Return the dimension of an intersection of two sets.
 
 ### Input
 
-- `cap` -- intersection of two convex sets
+- `cap` -- intersection of two sets
 
 ### Output
 
-The ambient dimension of the intersection of two convex sets.
+The ambient dimension of the intersection of two sets.
 """
 function dim(cap::Intersection)::Int
     return dim(cap.X)
@@ -93,13 +93,12 @@ end
 """
     σ(d::AbstractVector{<:Real}, cap::Intersection)::AbstractVector{<:Real}
 
-Return the support vector of an intersection of two convex sets in a given
-direction.
+Return the support vector of an intersection of two sets in a given direction.
 
 ### Input
 
 - `d`   -- direction
-- `cap` -- intersection of two convex sets
+- `cap` -- intersection of two sets
 
 ### Output
 
@@ -115,12 +114,12 @@ end
 """
     ∈(x::AbstractVector{N}, cap::Intersection{N})::Bool where {N<:Real}
 
-Check whether a given point is contained in a intersection of two convex sets.
+Check whether a given point is contained in a intersection of two sets.
 
 ### Input
 
-- `x` -- point/vector
-- `cap` -- intersection of two convex sets
+- `x`   -- point/vector
+- `cap` -- intersection of two sets
 
 ### Output
 
@@ -141,7 +140,7 @@ Return if the intersection is empty or not.
 
 ### Input
 
-- `cap` -- intersection of two convex sets
+- `cap` -- intersection of two sets
 
 ### Output
 

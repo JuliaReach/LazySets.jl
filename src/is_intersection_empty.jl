@@ -81,13 +81,13 @@ end
                           witness::Bool=false
                          )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
 
-Check whether a singleton and a convex set do not intersect, and otherwise
-optionally compute a witness.
+Check whether a singleton and a set do not intersect, and otherwise optionally
+compute a witness.
 
 ### Input
 
 - `S`   -- singleton
-- `set` -- convex set
+- `set` -- set
 - `witness` -- (optional, default: `false`) compute a witness if activated
 
 ### Output
@@ -121,12 +121,12 @@ end
                           witness::Bool=false
                          )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
 
-Check whether a convex set and a singleton do not intersect, and otherwise
-optionally compute a witness.
+Check whether a set and a singleton do not intersect, and otherwise optionally
+compute a witness.
 
 ### Input
 
-- `set` -- convex set
+- `set` -- set
 - `S`   -- singleton
 - `witness` -- (optional, default: `false`) compute a witness if activated
 

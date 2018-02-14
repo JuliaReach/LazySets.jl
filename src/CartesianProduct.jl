@@ -7,12 +7,12 @@ export CartesianProduct,
 """
     CartesianProduct{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
 
-Type that represents a Cartesian product of two convex sets.
+Type that represents a Cartesian product of two sets.
 
 ### Fields
 
-- `X` -- first convex set
-- `Y` -- second convex set
+- `X` -- first set
+- `Y` -- second set
 
 ### Notes
 
@@ -28,7 +28,7 @@ Constructors:
   -- default constructor
 
 - `CartesianProduct(Xarr::Vector{S}) where {S<:LazySet}`
-  -- constructor from an array of convex sets
+  -- constructor from an array of sets
 """
 struct CartesianProduct{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     X::S1
@@ -57,16 +57,16 @@ CartesianProduct(Xarr::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
     *(X::LazySet, Y::LazySet)
 ```
 
-Return the Cartesian product of two convex sets.
+Return the Cartesian product of two sets.
 
 ### Input
 
-- `X` -- convex set
-- `Y` -- convex set
+- `X` -- set
+- `Y` -- set
 
 ### Output
 
-The Cartesian product of the two convex sets.
+The Cartesian product of the two sets.
 """
 *(X::LazySet, Y::LazySet) = CartesianProduct(X, Y)
 
@@ -142,7 +142,7 @@ end
 """
     CartesianProductArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
 
-Type that represents the Cartesian product of a finite number of convex sets.
+Type that represents the Cartesian product of a finite number of sets.
 
 ### Fields
 
@@ -251,7 +251,7 @@ end
 """
     array(cpa::CartesianProductArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
 
-Return the array of a Cartesian product of a finite number of convex sets.
+Return the array of a Cartesian product of a finite number of sets.
 
 ### Input
 
@@ -259,7 +259,7 @@ Return the array of a Cartesian product of a finite number of convex sets.
 
 ### Output
 
-The array of a Cartesian product of a finite number of convex sets.
+The array of a Cartesian product of a finite number of sets.
 """
 function array(cpa::CartesianProductArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
     return cpa.array
@@ -268,7 +268,7 @@ end
 """
     dim(cpa::CartesianProductArray)::Int
 
-Return the dimension of a Cartesian product of a finite number of convex sets.
+Return the dimension of a Cartesian product of a finite number of sets.
 
 ### Input
 

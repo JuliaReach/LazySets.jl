@@ -5,12 +5,12 @@ export LinearMap
 """
     LinearMap{NM, N} <: LazySet{N}
 
-Type that represents a linear transformation ``M⋅S`` of a convex set ``S``.
+Type that represents a linear transformation ``M⋅S`` of a set ``S``.
 
 ### Fields
 
 - `M` -- matrix/linear map
-- `X` -- convex set
+- `X` -- set
 
 ### Notes
 
@@ -33,12 +33,12 @@ LinearMap(M::AbstractMatrix{NM},
     *(M::AbstractMatrix, X::LazySet)
 ```
 
-Return the linear map of a convex set.
+Return the linear map of a set.
 
 ### Input
 
 - `M` -- matrix/linear map
-- `X` -- convex set
+- `X` -- set
 
 ### Output
 
@@ -58,16 +58,16 @@ end
     *(a::N, X::LazySet) where {N}
 ```
 
-Return a linear map of a convex set by a scalar value.
+Return a linear map of a set by a scalar value.
 
 ### Input
 
 - `a` -- scalar
-- `X` -- convex set
+- `X` -- set
 
 ### Output
 
-The linear map of the convex set.
+The linear map of the set.
 """
 function *(a::N, X::LazySet) where {N}
     return LinearMap(a * speye(N, dim(X)), X)
@@ -157,12 +157,12 @@ end
 """
     ∈(x::AbstractVector{N}, lm::LinearMap{NM, N})::Bool where {NM, N<:Real}
 
-Check whether a given point is contained in a linear map of a convex set.
+Check whether a given point is contained in a linear map of a set.
 
 ### Input
 
 - `x`  -- point/vector
-- `lm` -- linear map of a convex set
+- `lm` -- linear map of a set
 
 ### Output
 

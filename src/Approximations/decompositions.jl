@@ -2,12 +2,12 @@
     decompose(S::LazySet{N}, set_type::Type=HPolygon
              )::CartesianProductArray where {N<:Real}
 
-Compute an overapproximation of the projections of the given convex set over
-each two-dimensional subspace.
+Compute an overapproximation of the projections of the given set over each
+two-dimensional subspace.
 
 ### Input
 
-- `S` -- convex set
+- `S`        -- set
 - `set_type` -- (optional, default: `HPolygon`) type of set approximation in 2D
 
 ### Output
@@ -70,12 +70,12 @@ end
 """
     decompose(S::LazySet{N}, ɛi::Vector{<:Real})::CartesianProductArray where {N<:Real}
 
-Compute an overapproximation of the projections of the given convex set over
-each two-dimensional subspace with a certified error bound.
+Compute an overapproximation of the projections of the given set over each
+two-dimensional subspace with a certified error bound.
 
 ### Input
 
-- `S`  -- convex set
+- `S`  -- set
 - `ɛi` -- array with the error bound for each projection (different error bounds
           can be passed for different blocks)
 
@@ -114,13 +114,13 @@ end
     decompose(S::LazySet, ɛ::Real, [set_type]::Type=HPolygon
              )::CartesianProductArray
 
-Compute an overapproximation of the projections of the given convex set over
-each two-dimensional subspace with a certified error bound.
+Compute an overapproximation of the projections of the given set over each
+two-dimensional subspace with a certified error bound.
 
 ### Input
 
-- `S` -- convex set
-- `ɛ` --  error bound
+- `S`        -- set
+- `ɛ`        -- error bound
 - `set_type` -- (optional, default: `HPolygon`) type of set approximation in 2D
 
 ### Output

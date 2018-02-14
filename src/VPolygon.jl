@@ -82,7 +82,7 @@ end
 """
     vertices_list(P::VPolygon{N})::Vector{Vector{N}} where {N<:Real}
 
-Return the list of vertices of a convex polygon in vertex representation.
+Return the list of vertices of a polygon in vertex representation.
 
 ### Input
 

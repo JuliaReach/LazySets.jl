@@ -1,10 +1,7 @@
 """
     LocalApproximation{N<:Real}
-
 Type that represents a local approximation in 2D.
-
 ### Fields
-
 - `p1`         -- first inner point
 - `d1`         -- first direction
 - `p2`         -- second inner point
@@ -12,9 +9,7 @@ Type that represents a local approximation in 2D.
 - `q`          -- intersection of the lines l1 ⟂ d1 at p1 and l2 ⟂ d2 at p2
 - `refinable`  -- states if this approximation is refinable
 - `err`        -- error upper bound
-
 ### Notes
-
 The criteria for refinable are determined in the method `new_approx`.
 """
 struct LocalApproximation{N<:Real}
@@ -29,11 +24,8 @@ end
 
 """
     PolygonalOverapproximation{N<:Real}
-
 Type that represents the polygonal approximation of a convex set.
-
 ### Fields
-
 - `S`           -- convex set
 - `approx_list` -- vector of local approximations
 """
@@ -48,17 +40,13 @@ PolygonalOverapproximation{N}(S::LazySet) where {N<:Real} =
 
 """
     new_approx(S::LazySet, p1::Vector{N}, d1::Vector{N}, p2::Vector{N}, d2::Vector{N}) where {N<:Real}
-
 ### Input
-
 - `S`          -- convex set
 - `p1`         -- first inner point
 - `d1`         -- first direction
 - `p2`         -- second inner point
 - `d2`         -- second direction
-
 ### Output
-
 A local approximation of `S` in the given directions.
 """
 function new_approx(S::LazySet, p1::Vector{N}, d1::Vector{N}, p2::Vector{N}, d2::Vector{N}) where {N<:Real}
@@ -78,17 +66,13 @@ end
 """
     addapproximation!(Ω::PolygonalOverapproximation,
         p1::Vector{N}, d1::Vector{N}, p2::Vector{N}, d2::Vector{N}) where {N<:Real}
-
 ### Input
-
 - `Ω`          -- polygonal overapproximation of a convex set
 - `p1`         -- first inner point
 - `d1`         -- first direction
 - `p2`         -- second inner point
 - `d2`         -- second direction
-
 ### Output
-
 The list of local approximations in `Ω` of the set `Ω.S` is updated in-place and
 the new approximation is returned by this function.
 """
@@ -102,17 +86,12 @@ end
 
 """
     refine(Ω::PolygonalOverapproximation, i::Int)::Tuple{LocalApproximation, LocalApproximation}
-
 Refine a given local approximation of the polygonal approximation of a convex set,
 by splitting along the normal direction to the approximation.
-
 ### Input
-
 - `Ω`   -- polygonal overapproximation of a convex set
 - `i`   -- integer index for the local approximation to be refined
-
 ### Output
-
 The tuple consisting of the refined right and left local approximations.
 """
 function refine(Ω::PolygonalOverapproximation, i::Int)::Tuple{LocalApproximation, LocalApproximation}
@@ -128,15 +107,10 @@ end
 
 """
     tohrep(Ω::PolygonalOverapproximation{N})::AbstractHPolygon where {N<:Real}
-
 Convert a polygonal overapproximation into a concrete polygon.
-
 ### Input
-
 - `Ω`   -- polygonal overapproximation of a convex set
-
 ### Output
-
 A polygon in constraint representation.
 """
 function tohrep(Ω::PolygonalOverapproximation{N})::AbstractHPolygon where {N<:Real}
@@ -150,18 +124,13 @@ end
 """
     approximate(S::LazySet{N},
                 ɛ::N)::PolygonalOverapproximation{N} where {N<:Real}
-
 Return an ɛ-close approximation of the given 2D convex set (in terms of
 Hausdorff distance) as an inner and an outer approximation composed by sorted
 local `Approximation2D`.
-
 ### Input
-
 - `S` -- 2D convex set
 - `ɛ` -- error bound
-
 ### Output
-
 An ɛ-close approximation of the given 2D convex set.
 """
 function approximate(S::LazySet{N},

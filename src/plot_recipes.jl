@@ -5,11 +5,11 @@
 """
     plot_lazyset(S::LazySet; ...)
 
-Plot a convex set in two dimensions using an axis-aligned approximation.
+Plot a set in two dimensions using an axis-aligned approximation.
 
 ### Input
 
-- `S` -- convex set
+- `S` -- set
 
 ### Examples
 
@@ -41,12 +41,11 @@ end
 """
     plot_lazyset(arr::Vector{<:LazySet})
 
-Plot an array of convex sets in two dimensions using an axis-aligned
-approximation.
+Plot an array of sets in two dimensions using an axis-aligned approximation.
 
 ### Input
 
-- `arr` -- array of convex sets
+- `arr` -- array of sets
 
 ### Examples
 
@@ -77,7 +76,7 @@ Plot a lazy set in two dimensions using iterative refinement.
 
 ### Input
 
-- `S` -- convex set
+- `S` -- set
 - `ε` -- approximation error bound
 
 ### Examples
@@ -107,8 +106,8 @@ Plot an array of lazy sets in two dimensions using iterative refinement.
 
 ### Input
 
-- `arr` -- array of convex sets
-- `ε` -- approximation error bound
+- `arr` -- array of sets
+- `ε`   -- approximation error bound
 
 ### Examples
 

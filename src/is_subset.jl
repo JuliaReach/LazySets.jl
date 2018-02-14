@@ -212,13 +212,13 @@ end
     is_subset(S::AbstractSingleton{N}, set::LazySet{N}, [witness]::Bool=false
              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
-Check whether a given set with a single value is contained in a convex set, and
-if not, optionally compute a witness.
+Check whether a given set with a single value is contained in a set, and if not,
+optionally compute a witness.
 
 ### Input
 
 - `S`   -- inner set with a single value
-- `set` -- outer convex set
+- `set` -- outer set
 - `witness` -- (optional, default: `false`) compute a witness if activated
 
 ### Output
