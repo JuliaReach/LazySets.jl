@@ -29,7 +29,7 @@ const DIR_SOUTH(N) = [zero(N), -one(N)]
 
 include("iterative_refinement.jl")
 include("box_approximations.jl")
-include("2D_approximations.jl")
+include("overapproximate.jl")
 include("decompositions.jl")
 
 end # module
