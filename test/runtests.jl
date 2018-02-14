@@ -35,7 +35,7 @@ include("to_N.jl")
 # =================================================================
 # Algorithms for approximation of convex sets using support vectors
 # =================================================================
-@time @testset "LazySets.Approximations.overapproximation" begin include("unit_overapproximatejl") end
+@time @testset "LazySets.Approximations.overapproximation" begin include("unit_overapproximate.jl") end
 @time @testset "LazySets.Approximations.box_approximation" begin include("unit_box_approximation.jl") end
 @time @testset "LazySets.Approximations.ballinf_approximation" begin include("unit_ballinf_approximation.jl") end
 @time @testset "LazySets.Approximations.radiusdiameter" begin include("unit_radiusdiameter.jl") end
