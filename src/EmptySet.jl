@@ -4,11 +4,11 @@ export EmptySet, ∅,
        an_element
 
 """
-    EmptySet{N<:Real} <: LazySet{N}
+    EmptySet{N<:Real} <: AbstractConvexSet{N}
 
 Type that represents the empty set, i.e., the set with no elements.
 """
-struct EmptySet{N<:Real} <: LazySet{N} end
+struct EmptySet{N<:Real} <: AbstractConvexSet{N} end
 
 """
     ∅

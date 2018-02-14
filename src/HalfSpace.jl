@@ -4,7 +4,7 @@ export HalfSpace, LinearConstraint,
        an_element
 
 """
-    HalfSpace{N<:Real} <: LazySet{N}
+    HalfSpace{N<:Real} <: AbstractConvexSet{N}
 
 Type that represents a (closed) half-space of the form ``a⋅x ≤ b``.
 
@@ -22,7 +22,7 @@ julia> HalfSpace([0, -1.], 0.)
 LazySets.HalfSpace{Float64}([0.0, -1.0], 0.0)
 ```
 """
-struct HalfSpace{N<:Real} <: LazySet{N}
+struct HalfSpace{N<:Real} <: AbstractConvexSet{N}
     a::Vector{N}
     b::N
 end

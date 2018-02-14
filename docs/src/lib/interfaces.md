@@ -51,7 +51,17 @@ support_function
 ### Other globally defined set functions
 
 ```@docs
+isconvex(S::LazySet{Float64})
 an_element(S::LazySet{Float64})
+```
+
+## Convex set
+
+Common interface for basic convex sets.
+
+```@docs
+AbstractConvexSet
+isconvex(S::AbstractConvexSet{Float64})
 ```
 
 ## Point symmetric set

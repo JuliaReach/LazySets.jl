@@ -3,7 +3,7 @@ export AbstractPointSymmetric,
        an_element
 
 """
-    AbstractPointSymmetric{N<:Real} <: LazySet{N}
+    AbstractPointSymmetric{N<:Real} <: AbstractConvexSet{N}
 
 Abstract type for point symmetric sets.
 
@@ -21,7 +21,7 @@ julia> subtypes(AbstractPointSymmetric)
  LazySets.Ellipsoid
 ```
 """
-abstract type AbstractPointSymmetric{N<:Real} <: LazySet{N} end
+abstract type AbstractPointSymmetric{N<:Real} <: AbstractConvexSet{N} end
 
 
 """
