@@ -203,6 +203,18 @@ constraints_list(P::HPolytope{Float64})
 ∈(::AbstractVector{Float64}, ::HPolytope{Float64})
 ```
 
+## Polynomial Zonotopes
+
+```@docs
+PolynomialZonotope
+dim(pz::PolynomialZonotope)
+σ(d::AbstractVector{Float64}, pz::PolynomialZonotope{Float64})
+polynomial_order(pz::PolynomialZonotope)
+order(pz::PolynomialZonotope)
+linear_map(M::Matrix, pz::PolynomialZonotope)
+scale(α::Number, pz::PolynomialZonotope)
+minkowski_sum(pz::PolynomialZonotope, z::Zonotope)
+```
 ## Singletons
 
 ```@docs

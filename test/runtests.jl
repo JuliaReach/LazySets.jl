@@ -14,6 +14,7 @@ include("to_N.jl")
 @time @testset "LazySets.Polygon" begin include("unit_Polygon.jl") end
 @time @testset "LazySets.Polytope" begin include("unit_Polytope.jl") end
 @time @testset "LazySets.Zonotope" begin include("unit_Zonotope.jl") end
+@time @testset "LazySets.PolynomialZonotope" begin include("unit_PolynomialZonotope.jl") end
 @time @testset "LazySets.ZeroSet" begin include("unit_ZeroSet.jl") end
 @time @testset "LazySets.EmptySet" begin include("unit_EmptySet.jl") end
 @time @testset "LazySets.Ellipsoid" begin include("unit_Ellipsoid.jl") end
