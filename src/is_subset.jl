@@ -7,15 +7,15 @@ export is_subset
 
 
 """
-    is_subset(S::LazySet{N}, H::AbstractHyperrectangle{N}, witness::Bool=false
+    is_subset(S::LazySet{N}, H::AbstractHyperrectangle{N}, [witness]::Bool=false
              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
-Check whether a convex set is contained in a hyperrectangle, and if not,
+Check whether a set is contained in a hyperrectangle, and if not,
 optionally compute a witness.
 
 ### Input
 
-- `S` -- inner convex set
+- `S` -- inner set
 - `H` -- outer hyperrectangle
 - `witness` -- (optional, default: `false`) compute a witness if activated
 
@@ -42,7 +42,7 @@ end
 """
     is_subset(P::AbstractPolytope{N},
               H::AbstractHyperrectangle,
-              witness::Bool=false
+              [witness]::Bool=false
              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
 Check whether a polytope is contained in a hyperrectangle, and if not,
@@ -96,7 +96,7 @@ end
 """
     is_subset(H1::AbstractHyperrectangle{N},
               H2::AbstractHyperrectangle{N},
-              witness::Bool=false
+              [witness]::Bool=false
              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
 Check whether a given hyperrectangle is contained in another hyperrectangle, and
@@ -157,7 +157,8 @@ end
 
 
 """
-    is_subset(P::AbstractPolytope{N}, S::LazySet{N}, witness::Bool=false
+    is_subset(P::AbstractPolytope{N}, S::AbstractConvexSet{N},
+              [witness]::Bool=false
              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
 Check whether a polytope is contained in a convex set, and if not, optionally
@@ -181,7 +182,9 @@ compute a witness.
 Since ``S`` is convex, ``P ⊆ S`` iff ``v_i ∈ S`` for all vertices ``v_i`` of
 ``P``.
 """
-function is_subset(P::AbstractPolytope{N}, S::LazySet{N}, witness::Bool=false
+function is_subset(P::AbstractPolytope{N},
+                   S::AbstractConvexSet{N},
+                   witness::Bool=false
                   )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     @assert dim(P) == dim(S)
 
@@ -206,7 +209,7 @@ end
 
 
 """
-    is_subset(S::AbstractSingleton{N}, set::LazySet{N}, witness::Bool=false
+    is_subset(S::AbstractSingleton{N}, set::LazySet{N}, [witness]::Bool=false
              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
 Check whether a given set with a single value is contained in a convex set, and
@@ -239,8 +242,48 @@ end
 
 """
     is_subset(S::AbstractSingleton{N},
+              C::AbstractConvexSet{N},
+              [witness]::Bool=false
+             )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether a given set with a single value is contained in a convex set, and
+if not, optionally compute a witness.
+
+### Input
+
+- `S`   -- inner set with a single value
+- `C`   -- outer convex set
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``S ⊆ C``
+* If `witness` option is activated:
+  * `(true, [])` iff ``S ⊆ C``
+  * `(false, v)` iff ``S \\not\\subseteq C`` and
+    ``v ∈ S \\setminus C``
+
+### Notes
+
+This copy-pasted method just exists to avoid method ambiguities.
+"""
+function is_subset(S::AbstractSingleton{N},
+                   C::AbstractConvexSet{N},
+                   witness::Bool=false
+                  )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    result = ∈(element(S), C)
+    if witness
+        return (result, result ? N[] : element(S))
+    else
+        return result
+    end
+end
+
+
+"""
+    is_subset(S::AbstractSingleton{N},
               H::AbstractHyperrectangle{N},
-              witness::Bool=false
+              [witness]::Bool=false
              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
 Check whether a given set with a single value is contained in a hyperrectangle,
@@ -249,16 +292,16 @@ and if not, optionally compute a witness.
 ### Input
 
 - `S`   -- inner set with a single value
-- `set` -- outer hyperrectangle
+- `H` -- outer hyperrectangle
 - `witness` -- (optional, default: `false`) compute a witness if activated
 
 ### Output
 
-* If `witness` option is deactivated: `true` iff ``S ⊆ \\text{set}``
+* If `witness` option is deactivated: `true` iff ``S ⊆ H``
 * If `witness` option is activated:
-  * `(true, [])` iff ``S ⊆ \\text{set}``
-  * `(false, v)` iff ``S \\not\\subseteq \\text{set}`` and
-    ``v ∈ S \\setminus \\text{set}``
+  * `(true, [])` iff ``S ⊆ H``
+  * `(false, v)` iff ``S \\not\\subseteq H`` and
+    ``v ∈ S \\setminus H``
 
 ### Notes
 
@@ -280,7 +323,7 @@ end
 """
     is_subset(S1::AbstractSingleton{N},
               S2::AbstractSingleton{N},
-              witness::Bool=false
+              [witness]::Bool=false
              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
 Check whether a given set with a single value is contained in another set with a
@@ -316,7 +359,7 @@ end
 
 
 """
-    is_subset(B1::Ball2{N}, B2::Ball2{N}, witness::Bool=false
+    is_subset(B1::Ball2{N}, B2::Ball2{N}, [witness]::Bool=false
              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
 Check whether a ball in the 2-norm is contained in another ball in the 2-norm,
@@ -362,7 +405,7 @@ end
 """
     is_subset(B::Union{Ball2{N}, Ballp{N}},
               S::AbstractSingleton{N},
-              witness::Bool=false
+              [witness]::Bool=false
              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
 Check whether a ball in the 2-norm is contained in a set with a single value,
@@ -419,6 +462,6 @@ but crashes with a cryptic error message if it is not implemented:
     `MethodError: no method matching start(::FIRST_SET_TYPE)`
 """
 @inline function issubset(S1::LazySet{N}, S2::LazySet{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+                         )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return is_subset(S1, S2, witness)
 end
