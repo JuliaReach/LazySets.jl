@@ -60,4 +60,6 @@ for N in [Float64, Float32] # TODO Rational{Int}
     Y = ConvexHull(Z1, Z2)
     Y_polygon = overapproximate(Y, N(1e-3)) # overapproximate with a polygon
     Y_zonotope = overapproximate(Y, Zonotope) # overapproximate with a zonotope
+    @test Y_polygon ⊆ Y_zonotope
+    @test !(Y_zonotope ⊆ Y_polygon)
 end
