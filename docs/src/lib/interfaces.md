@@ -32,7 +32,7 @@ end
 
 ## LazySet
 
-Every convex set in this library implements this interface.
+Every set in this library implements this interface.
 
 ```@docs
 LazySet

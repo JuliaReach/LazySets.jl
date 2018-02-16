@@ -4,8 +4,7 @@
 DocTestFilters = [r"[0-9\.]+ seconds \(.*\)"]
 ```
 
-`LazySets` is a [Julia](http://julialang.org) package for calculus with convex
-sets.
+`LazySets` is a [Julia](http://julialang.org) package for calculus with sets.
 
 The aim is to provide a scalable library for solving complex set-based problems,
 such as those encountered in
@@ -24,9 +23,9 @@ Pages = ["index.md"]
 
 ## Introduction
 
-In this package we describe convex sets lazily (i.e., symbolically).
+In this package we describe sets lazily (i.e., symbolically).
 This way we provide an exact but abstract representation, in principle for any
-common convex set class or operation between sets.
+common set class or operation between sets.
 Concrete information is obtained through evaluating the set in specific
 directions.
 More precisely, each concrete subtype $\mathcal{X}$ of the abstract type
@@ -153,10 +152,10 @@ have to be evaluated.
 
 The core functionality of `LazySets` is:
 
-- Lazy (i.e., symbolic) types for several classes of convex sets such as balls
-  in different norms, polygons in constraint or vertex representation,
-  zonotopes, special types such as lines and linear constraints,
-  hyperrectangles, and high-dimensional polyhedra.
+- Lazy (i.e., symbolic) types for several classes of sets such as balls in
+  different norms, polygons in constraint or vertex representation, zonotopes,
+  special types such as lines and linear constraints, hyperrectangles, and
+  high-dimensional polyhedra.
 - Lazy implementations for most commonly used set operations, e.g., Minkowski
   sum, Cartesian product, convex hull and interval hull approximations, and
   linear and exponential maps.

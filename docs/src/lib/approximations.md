@@ -1,7 +1,7 @@
 # Approximations
 
 This section of the manual describes the Cartesian decomposition algorithms and
-the approximation of high-dimensional convex sets using projections.
+the approximation of high-dimensional sets using projections.
 
 ```@contents
 Pages = ["approximations.md"]

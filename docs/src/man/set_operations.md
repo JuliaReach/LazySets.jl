@@ -52,7 +52,7 @@ plot1
 ## Unary operations
 
 The following table lists all operations (apart from `dim` and `σ`, which must
-be supported by all types) that take one convex set as argument in the columns.
+be supported by all types) that take one set as argument in the columns.
 In the rows we list all set types, both the interfaces (where we abbreviate the
 `Abstract` prefix), the basic set types, and the lazy set operations, each
 sorted alphabetically.
@@ -177,8 +177,8 @@ plot1
 
 ## Binary operations
 
-The following table lists all operations that take two convex set as argument in
-the entries.
+The following table lists all operations that take two set as argument in the
+entries.
 In the rows we list all set types, both the interfaces (where we abbreviate the
 `Abstract` prefix), the basic set types, and the lazy set operations, each
 sorted alphabetically.
