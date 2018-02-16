@@ -186,17 +186,6 @@ Check whether a given point is contained in a zonotope.
 
 `true` iff ``x ∈ Z``.
 
-### Algorithm
-
-This implementation poses the problem as a linear equality system and solves it
-using `Base.:\`.
-A zonotope centered in the origin with generators ``g_i`` contains a point ``x``
-iff ``x = ∑_{i=1}^p ξ_i g_i`` for some ``ξ_i \\in [-1, 1]~~ ∀ i = 1,…, p``.
-Thus, we first ask for a solution and then check if it is in this Cartesian
-product of intervals.
-
-Other algorithms exist which test the feasibility of an LP.
-
 ### Examples
 
 ```jldoctest
@@ -210,8 +199,13 @@ true
 
 ### Algorithm
 
-The system of equations ``x-c = Gξ`` subject to ``ξ_i ∈ [-1, 1]`` for all ``i``
-is computed by stating and solving a linear program with the simplex method.
+The element membership problem is computed by stating and solving the following
+linear program with the simplex method. Let ``p`` and ``n`` be the number of
+generators and ambient dimension respectively.
+We consider the minimization of ``x_0`` in the ``p+1``-dimensional space of elements
+``(x_0, ξ_1, …, ξ_p)`` constrained to ``0 ≤ x_0 ≤ ∞``, ``ξ_i ∈ [-1, 1]`` for all
+``i = 1, …, p``, and such that ``x-c = Gξ`` holds. If a feasible solution exists,
+the optimal value ``x_0 = 0`` is achieved.
 """
 function ∈(x::AbstractVector{N}, Z::Zonotope{N}; solver=GLPKSolverLP())::Bool where {N<:Real}
     @assert length(x) == dim(Z)
@@ -225,8 +219,7 @@ function ∈(x::AbstractVector{N}, Z::Zonotope{N}; solver=GLPKSolverLP())::Bool 
     obj = [1.; fill(0, p)]
 
     lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
-    res = (lp.status == :Optimal) # Infeasible of Unboudned => false
-    return res
+    return (lp.status == :Optimal) # Infeasible of Unbounded => false
 end
 
 # --- Zonotope functions ---
