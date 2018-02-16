@@ -207,35 +207,27 @@ false
 julia> ∈([1.0, 0.1], Z)
 true
 ```
+
+### Algorithm
+
+The system of equations ``x-c = Gξ`` subject to ``ξ_i ∈ [-1, 1]`` for all ``i``
+is computed by stating and solving a linear program with the simplex method.
 """
-function ∈(x::AbstractVector{N}, Z::Zonotope{N})::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, Z::Zonotope{N}; solver=GLPKSolverLP())::Bool where {N<:Real}
     @assert length(x) == dim(Z)
 
-    k = length(x)
-    b = similar(x)
-    one_N = one(N)
-    minus_one_N = -one_N
-    for i in 1:k
-        # normalize by moving the zonotope to the origin
-        b[i] = x[i] - Z.center[i]
-    end
-    # matrix A is just Z.generators
+    p, n = ngens(Z), dim(Z)
+    A = [[1.; fill(0, p)]'; [fill(0., n) Z.generators]]
+    b = [0.; (x - Z.center)]
+    lbounds = [0; fill(-1., p)]
+    ubounds = [Inf; fill(1., p)]
+    sense = ['>'; fill('=', n)]
+    obj = [1.; fill(0, p)]
 
-    try
-        # results in LAPACKException or SingularException if not solvable
-        res = Z.generators \ b
-
-        for xi in res
-            if xi > one_N || xi < minus_one_N
-                return false
-            end
-        end
-        return true
-    catch
-        return false
-    end
+    lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
+    res = (lp.status == :Optimal) # Infeasible of Unboudned => false
+    return res
 end
-
 
 # --- Zonotope functions ---
 
