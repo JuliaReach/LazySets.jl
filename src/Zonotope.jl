@@ -182,7 +182,7 @@ Check whether a given point is contained in a zonotope.
 
 - `x`      -- point/vector
 - `Z`      -- zonotope
-- `solver` -- (optiona, default: `GLPKSolverLP(method=:Simplex)`) the backend
+- `solver` -- (optional, default: `GLPKSolverLP(method=:Simplex)`) the backend
               used to solve the linear program
 
 ### Output
