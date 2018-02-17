@@ -173,14 +173,17 @@ function σ(d::AbstractVector{<:Real}, Z::Zonotope)::AbstractVector{<:Real}
 end
 
 """
-    ∈(x::AbstractVector{N}, Z::Zonotope{N})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N}, Z::Zonotope{N};
+      solver=GLPKSolverLP(method=:Simplex))::Bool where {N<:Real}
 
 Check whether a given point is contained in a zonotope.
 
 ### Input
 
-- `x` -- point/vector
-- `Z` -- zonotope
+- `x`      -- point/vector
+- `Z`      -- zonotope
+- `solver` -- (optiona, default: `GLPKSolverLP(method=:Simplex)`) the backend
+              used to solve the linear program
 
 ### Output
 
@@ -206,20 +209,26 @@ We consider the minimization of ``x_0`` in the ``p+1``-dimensional space of elem
 ``(x_0, ξ_1, …, ξ_p)`` constrained to ``0 ≤ x_0 ≤ ∞``, ``ξ_i ∈ [-1, 1]`` for all
 ``i = 1, …, p``, and such that ``x-c = Gξ`` holds. If a feasible solution exists,
 the optimal value ``x_0 = 0`` is achieved.
+
+### Notes
+
+This function is parametric in the number type `N`. For exact arithmetic use
+an appropriate backend, e.g. `solver=GLPKSolverLP(method=:Exact)`.
 """
-function ∈(x::AbstractVector{N}, Z::Zonotope{N}; solver=GLPKSolverLP())::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, Z::Zonotope{N}; solver=GLPKSolverLP(method=:Simplex))::Bool where {N<:Real}
     @assert length(x) == dim(Z)
 
     p, n = ngens(Z), dim(Z)
-    A = [[1.; fill(0, p)]'; [fill(0., n) Z.generators]]
-    b = [0.; (x - Z.center)]
-    lbounds = [0; fill(-1., p)]
-    ubounds = [Inf; fill(1., p)]
+    # (n+1) x (p+1) matrix with block-diagonal blocks 1 and Z.generators
+    A = [[one(N); fill(zero(N), p)]'; [fill(zero(N), n) Z.generators]]
+    b = [zero(N); (x - Z.center)]
+    lbounds = [zero(N); fill(-one(N), p)]
+    ubounds = [N(Inf); fill(one(N), p)]
     sense = ['>'; fill('=', n)]
-    obj = [1.; fill(0, p)]
+    obj = [one(N); fill(zero(N), p)]
 
     lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
-    return (lp.status == :Optimal) # Infeasible of Unbounded => false
+    return (lp.status == :Optimal) # Infeasible or Unbounded => false
 end
 
 # --- Zonotope functions ---
