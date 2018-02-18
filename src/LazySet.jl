@@ -1,4 +1,5 @@
-import Base.LinAlg:norm
+import Base.LinAlg:norm,
+       Base.∈
 
 export LazySet,
        ρ, support_function,
@@ -185,4 +186,50 @@ An element of a convex set.
 """
 function an_element(S::LazySet{N})::AbstractVector{N} where {N<:Real}
     return σ(sparsevec([1], [one(N)], dim(S)), S)
+end
+
+"""
+    ∈(x::AbstractVector{N}, S::LazySet{N}, tolerance::N)::Bool
+    where {N<:Real}
+
+Check whether a given point is contained in a set with a given tolerance.
+
+### Input
+
+- `x` -- point/vector
+- `S` -- set
+- `tolerance` -- tolerance for when a point is still considered inside the set
+
+### Output
+
+`true` iff ``x ∈ S'``, where ``S'`` is the set ``S`` bloated by `tolerance`.
+
+### Notes
+
+This is a default implementation that tries different strategies which rely on
+other implementations.
+
+### Algorithm
+
+First we try to check if ``X ∩ S ≠ ∅``, where ``X`` is a ball in the Euclidean
+norm around ``x`` with radius `tolerance`.
+If this fails (because the function is not implemented), we check containment in
+the bloated set ``S' = S + B``, which is a Minkowski sum of ``S`` with a ball in
+the Euclidean norm ``B`` around the origin with radius `tolerance`.
+If this check also fails, we give up.
+"""
+function ∈(x::AbstractVector{N},
+           S::LazySet{N},
+           tolerance::N)::Bool where {N<:Real}
+    @assert length(x) == dim(S)
+    @assert tolerance >= 0
+    try
+        return !is_intersection_empty(Ball2(x, tolerance), S)
+    catch MethodError
+    end
+    try
+        return ∈(x, Ball2(zeros(N, length(x)), tolerance) + S)
+    catch MethodError
+    end
+    error("containment check in $(typeof(S)) with tolerance is not implemented")
 end
