@@ -173,29 +173,21 @@ function σ(d::AbstractVector{<:Real}, Z::Zonotope)::AbstractVector{<:Real}
 end
 
 """
-    ∈(x::AbstractVector{N}, Z::Zonotope{N})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N}, Z::Zonotope{N};
+      solver=GLPKSolverLP(method=:Simplex))::Bool where {N<:Real}
 
 Check whether a given point is contained in a zonotope.
 
 ### Input
 
-- `x` -- point/vector
-- `Z` -- zonotope
+- `x`      -- point/vector
+- `Z`      -- zonotope
+- `solver` -- (optional, default: `GLPKSolverLP(method=:Simplex)`) the backend
+              used to solve the linear program
 
 ### Output
 
 `true` iff ``x ∈ Z``.
-
-### Algorithm
-
-This implementation poses the problem as a linear equality system and solves it
-using `Base.:\`.
-A zonotope centered in the origin with generators ``g_i`` contains a point ``x``
-iff ``x = ∑_{i=1}^p ξ_i g_i`` for some ``ξ_i \\in [-1, 1]~~ ∀ i = 1,…, p``.
-Thus, we first ask for a solution and then check if it is in this Cartesian
-product of intervals.
-
-Other algorithms exist which test the feasibility of an LP.
 
 ### Examples
 
@@ -207,35 +199,37 @@ false
 julia> ∈([1.0, 0.1], Z)
 true
 ```
+
+### Algorithm
+
+The element membership problem is computed by stating and solving the following
+linear program with the simplex method. Let ``p`` and ``n`` be the number of
+generators and ambient dimension respectively.
+We consider the minimization of ``x_0`` in the ``p+1``-dimensional space of elements
+``(x_0, ξ_1, …, ξ_p)`` constrained to ``0 ≤ x_0 ≤ ∞``, ``ξ_i ∈ [-1, 1]`` for all
+``i = 1, …, p``, and such that ``x-c = Gξ`` holds. If a feasible solution exists,
+the optimal value ``x_0 = 0`` is achieved.
+
+### Notes
+
+This function is parametric in the number type `N`. For exact arithmetic use
+an appropriate backend, e.g. `solver=GLPKSolverLP(method=:Exact)`.
 """
-function ∈(x::AbstractVector{N}, Z::Zonotope{N})::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, Z::Zonotope{N}; solver=GLPKSolverLP(method=:Simplex))::Bool where {N<:Real}
     @assert length(x) == dim(Z)
 
-    k = length(x)
-    b = similar(x)
-    one_N = one(N)
-    minus_one_N = -one_N
-    for i in 1:k
-        # normalize by moving the zonotope to the origin
-        b[i] = x[i] - Z.center[i]
-    end
-    # matrix A is just Z.generators
+    p, n = ngens(Z), dim(Z)
+    # (n+1) x (p+1) matrix with block-diagonal blocks 1 and Z.generators
+    A = [[one(N); fill(zero(N), p)]'; [fill(zero(N), n) Z.generators]]
+    b = [zero(N); (x - Z.center)]
+    lbounds = [zero(N); fill(-one(N), p)]
+    ubounds = [N(Inf); fill(one(N), p)]
+    sense = ['>'; fill('=', n)]
+    obj = [one(N); fill(zero(N), p)]
 
-    try
-        # results in LAPACKException or SingularException if not solvable
-        res = Z.generators \ b
-
-        for xi in res
-            if xi > one_N || xi < minus_one_N
-                return false
-            end
-        end
-        return true
-    catch
-        return false
-    end
+    lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
+    return (lp.status == :Optimal) # Infeasible or Unbounded => false
 end
-
 
 # --- Zonotope functions ---
 
