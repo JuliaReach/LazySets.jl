@@ -154,7 +154,9 @@ function diameter(H::AbstractHyperrectangle, p::Real=Inf)::Real
 end
 
 """
-    ∈(x::AbstractVector{N}, H::AbstractHyperrectangle{N})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N},
+      H::AbstractHyperrectangle{N},
+      tolerance::N=zero(N))::Bool where {N<:Real}
 
 Check whether a given point is contained in a hyperrectangular set.
 
@@ -162,10 +164,12 @@ Check whether a given point is contained in a hyperrectangular set.
 
 - `x` -- point/vector
 - `H` -- hyperrectangular set
+- `tolerance` -- (optional, default: `zero(N)`) tolerance for when a point is
+                 still considered inside the set
 
 ### Output
 
-`true` iff ``x ∈ H``.
+`true` iff ``x ∈ H'``, where ``H'`` is the set ``H`` bloated by `tolerance`.
 
 ### Algorithm
 
@@ -175,10 +179,12 @@ respectively.
 Then ``x ∈ H`` iff ``|c_i - x_i| ≤ r_i`` for all ``i=1,…,n``.
 """
 function ∈(x::AbstractVector{N},
-           H::AbstractHyperrectangle{N})::Bool where {N<:Real}
+           H::AbstractHyperrectangle{N},
+           tolerance::N=zero(N))::Bool where {N<:Real}
     @assert length(x) == dim(H)
+    @assert tolerance >= 0
     for i in eachindex(x)
-        if abs(center(H)[i] - x[i]) > radius_hyperrectangle(H, i)
+        if abs(center(H)[i] - x[i]) > radius_hyperrectangle(H, i) + tolerance
             return false
         end
     end
