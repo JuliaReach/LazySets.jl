@@ -142,7 +142,9 @@ function an_element(P::AbstractHPolygon{N})::Vector{N} where {N<:Real}
 end
 
 """
-    ∈(x::AbstractVector{N}, P::AbstractHPolygon{N})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N},
+      P::AbstractHPolygon{N},
+      tolerance::N=zero(N))::Bool where {N<:Real}
 
 Check whether a given 2D point is contained in a polygon in constraint
 representation.
@@ -151,21 +153,28 @@ representation.
 
 - `x` -- two-dimensional point/vector
 - `P` -- polygon in constraint representation
+- `tolerance` -- (optional, default: `zero(N)`) tolerance for when a point is
+                 still considered inside the set
 
 ### Output
 
-`true` iff ``x ∈ P``.
+`true` iff ``x ∈ P'``, where ``P'`` is the set ``P`` bloated by `tolerance`.
 
 ### Algorithm
 
 This implementation checks if the point lies on the outside of each edge.
 """
-function ∈(x::AbstractVector{N}, P::AbstractHPolygon{N})::Bool where {N<:Real}
+function ∈(x::AbstractVector{N},
+           P::AbstractHPolygon{N},
+           tolerance::N=zero(N))::Bool where {N<:Real}
     @assert length(x) == 2
-
+    @assert tolerance >= 0
     for c in P.constraints
+        # first check without tolerance for efficiency reasons
         if dot(c.a, x) > c.b
-            return false
+            if tolerance == 0 || dot(c.a, x - tolerance * c.a / norm(c.a, 2)) > c.b
+                return false
+            end
         end
     end
     return true
