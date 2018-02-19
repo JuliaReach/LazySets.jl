@@ -41,8 +41,8 @@ element set type.
 
 ### Input
 
-- `SET` -- set type
-- `ABS`  -- set type for absorbing element
+- `SET`  -- set type
+- `NEUT` -- set type for neutral element
 
 ### Output
 
@@ -50,7 +50,7 @@ Nothing.
 
 ### Notes
 
-This macro generates four functions (possibly two more if `@absorbing` has been
+This macro generates four functions (possibly two more if `@neutral` has been
 used in advance) (possibly two or four more if `@declare_array_version` has been
 used in advance).
 
@@ -307,7 +307,7 @@ end
 """
     @array_neutral(FUN, NEUT, SETARR)
 
-Create two functions to avoid method ambiguties for a set type with respect to
+Create two functions to avoid method ambiguities for a set type with respect to
 the neutral element set type and the array set type.
 
 ### Input
@@ -341,7 +341,7 @@ end
 """
     @array_absorbing(FUN, ABS, SETARR)
 
-Create two functions to avoid method ambiguties for a set type with respect to
+Create two functions to avoid method ambiguities for a set type with respect to
 the absorbing element set type and the array set type.
 
 ### Input
