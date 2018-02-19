@@ -195,16 +195,13 @@ type).
 
 ### Examples
 
-`@declare_array_version(MinkowskiSum, ARR)` creates at least the following
+`@declare_array_version(MinkowskiSum, MinkowskiSumArray)` creates at least the following
 functions:
-* `array_constructor(::MinkowskiSum) = ARR`
-* `is_array_constructor(::ARR) = true`
-* `MinkowskiSum(X, ARR) = ARR(X, ARR)`
-* `MinkowskiSum(ARR, X) = ARR(ARR, X)`
-* `MinkowskiSum(ARR, ARR) = ARR(ARR, ARR)`
-* `ARR(X, ARR) = ...`
-* `ARR(ARR, X) = ...`
-* `ARR(ARR, ARR) = ...`
+* `array_constructor(::MinkowskiSum) = MinkowskiSumArray`
+* `is_array_constructor(::MinkowskiSumArray) = true`
+* `MinkowskiSum(X, arr) = MinkowskiSum(X, arr)`
+* `MinkowskiSum(arr, X) = MinkowskiSum(arr, X)`
+* `MinkowskiSum(arr1, arr2) = MinkowskiSum(arr1, arr2)`
 """
 macro declare_array_version(SET, SETARR)
     @eval begin
@@ -220,28 +217,29 @@ macro declare_array_version(SET, SETARR)
 
         # create functions to use the array version functions
         function $SET(X::LazySet{N}, arr::$SETARR{N}) where {N<:Real}
-            return $SETARR(arr, X)
+            return $SETARR(vcat(array(arr), [X]))
         end
         function $SET(arr::$SETARR{N}, X::LazySet{N}) where {N<:Real}
-            return $SETARR(arr, X)
+            return $SETARR(vcat(array(arr), [X]))
         end
         function $SET(arr1::$SETARR{N}, arr2::$SETARR{N}) where {N<:Real}
-            return $SETARR(arr1, arr2)
+            return $SETARR(vcat(array(arr2), array(arr2)))
         end
 
-        # create functions for array version
-        function $SETARR(X::LazySet{N}, arr::$SETARR{N}) where {N<:Real}
-            push!(array(arr), X)
-            return arr
-        end
-        function $SETARR(arr::$SETARR{N}, X::LazySet{N}) where {N<:Real}
-            push!(array(arr), X)
-            return arr
-        end
-        function $SETARR(arr1::$SETARR{N}, arr2::$SETARR{N}) where {N<:Real}
-            append!(array(arr1), array(arr2))
-            return arr1
-        end
+        # TODO modify and re-add this in #250 for $SET!(...)
+#         # create functions for array version
+#         function $SETARR(X::LazySet{N}, arr::$SETARR{N}) where {N<:Real}
+#             push!(array(arr), X)
+#             return arr
+#         end
+#         function $SETARR(arr::$SETARR{N}, X::LazySet{N}) where {N<:Real}
+#             push!(array(arr), X)
+#             return arr
+#         end
+#         function $SETARR(arr1::$SETARR{N}, arr2::$SETARR{N}) where {N<:Real}
+#             append!(array(arr1), array(arr2))
+#             return arr1
+#         end
 
         # handle method ambiguities with neutral elements
         if isdefined(:neutral) && method_exists(neutral, (Type{$SET},))
