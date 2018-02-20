@@ -20,6 +20,7 @@ include("to_N.jl")
 @time @testset "LazySets.Ellipsoid" begin include("unit_Ellipsoid.jl") end
 @time @testset "LazySets.Hyperplane" begin include("unit_Hyperplane.jl") end
 @time @testset "LazySets.HalfSpace" begin include("unit_HalfSpace.jl") end
+@time @testset "LazySets.LineSegment" begin include("unit_LineSegment.jl") end
 
 # =========================================
 # Testing types representing set operations
