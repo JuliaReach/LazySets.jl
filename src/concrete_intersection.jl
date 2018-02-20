@@ -1,5 +1,7 @@
 #= concrete implementations of binary intersections between sets =#
 
+export intersection
+
 """
     intersection(L1::Line{N}, L2::Line{N})::Vector{N} where {N<:Real}
 

@@ -1,5 +1,4 @@
-export Line,
-       intersection
+export Line
 
 """
     Line{N<:Real} <: LazySet{N}
