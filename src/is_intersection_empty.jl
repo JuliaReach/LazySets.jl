@@ -418,3 +418,124 @@ function is_intersection_empty(H::Hyperplane{N},
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return is_intersection_empty(Z, H, witness)
 end
+
+"""
+    is_intersection_empty(ls1::LineSegment{N},
+                          ls2::LineSegment{N},
+                          witness::Bool=false
+                         )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether two line segments do not intersect, and otherwise optionally
+compute a witness.
+
+### Input
+
+- `ls1` -- first line segment
+- `ls2` -- second line segment
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``ls1 ∩ ls2 = ∅``
+* If `witness` option is activated:
+  * `(true, [])` iff ``ls1 ∩ ls2 = ∅``
+  * `(false, v)` iff ``ls1 ∩ ls2 ≠ ∅`` and ``v ∈ ls1 ∩ ls2``
+
+### Algorithm
+
+The algorithm is inspired from [here](https://stackoverflow.com/a/565282), which
+again is the special 2D case of a 3D algorithm by R. Goldman, *Intersection of
+two lines in three-space*, 1990.
+
+We first check if the two line segments are parallel, and if so, if they are
+collinear.
+In the latter case, we check containment of any of the end points in the other
+line segment.
+Otherwise the lines are not parallel, so we can solve an equation of the
+intersection point, if it exists.
+"""
+function is_intersection_empty(ls1::LineSegment{N},
+                               ls2::LineSegment{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    function cross(ls1::Vector{N}, ls2::Vector{N})::N where {N<:Real}
+        return ls1[1] * ls2[2] - ls1[2] * ls2[1]
+    end
+
+    r = ls1.q - ls1.p
+    if iszero(r)
+        # first line segment is a point
+        empty_intersection = !∈(ls1.q, ls2)
+        if witness
+            return (empty_intersection, empty_intersection ? N[] : ls1.q)
+        else
+            return empty_intersection
+        end
+    end
+
+    s = ls2.q - ls2.p
+    if iszero(s)
+        # second line segment is a point
+        empty_intersection = !∈(ls2.q, ls1)
+        if witness
+            return (empty_intersection, empty_intersection ? N[] : ls2.q)
+        else
+            return empty_intersection
+        end
+    end
+
+    p1p2 = ls2.p - ls1.p
+    u_numerator = cross(p1p2, r)
+    u_denominator = cross(r, s)
+
+    if u_denominator == 0
+        # line segments are parallel
+        if u_numerator == 0
+            # line segments are collinear
+            if ∈(ls1.p, ls2)
+                empty_intersection = false
+                if witness
+                    v = ls1.p
+                end
+            elseif ∈(ls1.q, ls2)
+                empty_intersection = false
+                if witness
+                    v = ls1.q
+                end
+            elseif ∈(ls2.p, ls1)
+                empty_intersection = false
+                if witness
+                    v = ls2.p
+                end
+            elseif ∈(ls2.q, ls1)
+                empty_intersection = false
+                if witness
+                    v = ls2.q
+                end
+            else
+                empty_intersection = true
+            end
+        else
+            # line segments are parallel and not collinear
+            empty_intersection = true
+        end
+    else
+        # line segments are not parallel
+        u = u_numerator / u_denominator
+        if u < 0 || u > 1
+            empty_intersection = true
+        else
+            t = cross(p1p2, s) / u_denominator
+            empty_intersection = t < 0 || t > 1
+            if witness
+                v = ls1.p + t * r
+            end
+        end
+    end
+
+    if witness
+        return (empty_intersection, empty_intersection ? N[] : v)
+    else
+        return empty_intersection
+    end
+end
