@@ -146,6 +146,7 @@ intersection(::Line{Float64}, ::Line{Float64})
 LineSegment
 dim(::LineSegment{Float64})
 σ(::AbstractVector{Float64}, ::LineSegment{Float64})
+∈(::AbstractVector{Float64}, ::LineSegment{Float64})
 ```
 
 ## Polygons

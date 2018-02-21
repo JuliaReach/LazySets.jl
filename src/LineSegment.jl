@@ -1,3 +1,5 @@
+import Base.∈
+
 export LineSegment
 
 """
@@ -68,4 +70,34 @@ implementation returns ``q``.
 """
 function σ(d::AbstractVector{<:Real}, L::LineSegment)::AbstractVector{<:Real}
     return sign(dot(L.q - L.p, d)) >= 0 ? L.q : L.p
+end
+
+"""
+    ∈(x::AbstractVector{N}, L::LineSegment{N})::Bool where {N<:Real}
+
+Check whether a given point is contained in a line segment.
+
+### Input
+
+- `x` -- point/vector
+- `L` -- line segment
+
+### Output
+
+`true` iff ``x ∈ L``.
+
+### Notes
+
+The algorithm is inspired from [here](https://stackoverflow.com/a/328122).
+"""
+function ∈(x::AbstractVector{N}, L::LineSegment{N})::Bool where {N<:Real}
+    @assert length(x) == dim(L)
+    # check if the point is on the line through the line segment
+    if abs((x[2] - L.p[2]) * (L.q[1] - L.p[1]) -
+            (x[1] - L.p[1]) * (L.q[2] - L.p[2])) > 0
+        return false
+    end
+    # check if the point is inside the box approximation of the line segment
+    return min(L.p[1], L.q[1]) <= x[1] <= max(L.p[1], L.q[1]) &&
+           min(L.p[2], L.q[2]) <= x[2] <= max(L.p[2], L.q[2])
 end
