@@ -25,6 +25,12 @@ for N in [Float64, Rational{Int}, Float32]
     # an_element function
     @test an_element(S) ∈ S
 
+    # vertices_list
+    @test vertices_list(S)[1] ∈ S
+
+    # radius_hyperrectangle
+    @test iszero(radius_hyperrectangle(S))
+
     # subset
     s1 = Singleton(N[0., 1.])
     s2 = Singleton(N[0., 3.])
