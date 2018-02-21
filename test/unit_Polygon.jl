@@ -63,6 +63,16 @@ for N in [Float64, Float32, Rational{Int}]
 
         # an_element function
         @test an_element(p) ∈ p
+        p_shallow = HPolygon{N}()
+        @test_throws ErrorException an_element(p_shallow)
+        addconstraint!(p_shallow, c1)
+        @test_throws ErrorException an_element(p_shallow)
+
+        # hrep conversion
+        @test tohrep(p) == p
+
+        # constraints list getter
+        @test constraints_list(p) == p.constraints
     end
 
     # Test VRepresentation
