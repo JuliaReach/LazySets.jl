@@ -385,3 +385,64 @@ julia> plot([Z1, Z2])
         @series (x, y) = vlist[:, 1], vlist[:, 2]
     end
 end
+
+"""
+    plot_linesegment(L::LineSegment; ...)
+
+Plot a line segment.
+
+### Input
+
+- `L` -- line segment
+
+### Examples
+
+```jldoctest
+julia> using LazySets, Plots
+julia> L = LineSegment([0., 0.], [1., 1.])
+julia> plot(L)
+```
+"""
+@recipe function plot_linesegment(L::LineSegment; color="blue", label="",
+                                  grid=true, alpha=0.5, legend=false,
+                                  add_marker=true)
+
+    seriestype := :path
+    linecolor   --> color
+    markershape --> (add_marker ? :circle : :none)
+    markercolor --> color
+
+    [Tuple(L.p); Tuple(L.q)]
+end
+
+"""
+    plot_linesegments(L::Vector{<:LineSegment}; ...)
+
+Plot an array of line segments.
+
+### Input
+
+- `L` -- linear array of line segments
+
+### Examples
+
+```jldoctest
+julia> using LazySets, Plots
+julia> L1 = LineSegment([0., 0.], [1., 1.])
+julia> L2 = LineSegment([1., 0.], [0., 1.])
+julia> plot([L1, L2])
+```
+"""
+@recipe function plot_linesegments(L::Vector{<:LineSegment}; color="blue",
+                                   label="", grid=true, alpha=0.5, legend=false,
+                                   add_marker=true)
+
+    seriestype := :path
+    linecolor   --> color
+    markershape --> (add_marker ? :circle : :none)
+    markercolor --> color
+
+    for Li in L
+        @series [Tuple(Li.p); Tuple(Li.q)]
+    end
+end
