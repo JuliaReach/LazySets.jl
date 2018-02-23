@@ -365,8 +365,8 @@ end
               witness::Bool=false
              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
-Check whether a ball in the 2-norm is contained in a set with a single value,
-and if not, optionally compute a witness.
+Check whether a ball in the 2-norm or p-norm is contained in a set with a single
+value, and if not, optionally compute a witness.
 
 ### Input
 
@@ -403,6 +403,52 @@ function is_subset(B::Union{Ball2{N}, Ballp{N}},
     end
     return (false, p)
 end
+
+
+# --- LineSegment ---
+
+# TODO commented until AbstractConvexSet is implemented
+# """
+#     is_subset(L::LineSegment{N},
+#               S::AbstractConvexSet{N},
+#               witness::Bool=false
+#              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+#
+# Check whether a line segment is contained in a convex set, and if not,
+# optionally compute a witness.
+#
+# ### Input
+#
+# - `L` -- inner line segment
+# - `S` -- outer convex set
+# - `witness` -- (optional, default: `false`) compute a witness if activated
+#
+# ### Output
+#
+# * If `witness` option is deactivated: `true` iff ``L ⊆ S``
+# * If `witness` option is activated:
+#   * `(true, [])` iff ``L ⊆ S``
+#   * `(false, v)` iff ``L \\not\\subseteq S`` and ``v ∈ L \\setminus S``
+#
+# ### Algorithm
+#
+# Since ``S`` is convex, ``L ⊆ S`` iff ``p ∈ S`` and ``q ∈ S``, where ``p, q`` are
+# the end points of ``L``.
+# """
+# function is_subset(L::LineSegment{N},
+#                    S::AbstractConvexSet{N},
+#                    witness::Bool=false
+#                   )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+#     p_in_S = ∈(L.p, S)
+#     result = p_in_S && ∈(L.q, S)
+#     if !witness
+#         return result
+#     elseif result
+#         return (result, N[])
+#     else
+#         return (result, p_in_S ? L.q : L.p)
+#     end
+# end
 
 
 # --- alias ---
