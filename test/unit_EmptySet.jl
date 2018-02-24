@@ -33,6 +33,16 @@ for N in [Float64, Rational{Int}, Float32]
     # test convex hull of empty set with itself
     @test CH(E, E) == E
 
+    # dim
+    @test dim(E) == -1
+
+    # support vector
+    @test_throws ErrorException σ(N[0.], E)
+
+    # membership
+    @test !∈(N[0.], E)
+    @test !∈(N[0., 0.], E)
+
     # an_element function
     @test_throws ErrorException an_element(E)
 end
