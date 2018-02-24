@@ -26,8 +26,12 @@ function box_approximation(S::LazySet)::Hyperrectangle
     return Hyperrectangle(c, r)
 end
 
+# special case: Hyperrectangle
 box_approximation(S::Hyperrectangle) = S
-box_approximation(S::BallInf) = Hyperrectangle(S.center, fill(S.radius, dim(S)))
+
+# special case: other rectangle
+box_approximation(S::AbstractHyperrectangle) =
+    Hyperrectangle(center(S), radius_hyperrectangle(S))
 
 """
     interval_hull

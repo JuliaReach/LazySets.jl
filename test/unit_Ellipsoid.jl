@@ -25,6 +25,8 @@ for N in [Float64, Float32]
     @test σ(d, E) == N[0., 1.]
     d = N[0., -1.]
     @test σ(d, E) == N[0., -1.]
+    d = N[0., 0.]
+    @test σ(d, E) ∈ E
 
     # 2D Ellipsoid not 0-centered
     E = Ellipsoid(N[1., 2.], diagm(N[1., 1.]))

@@ -20,7 +20,6 @@ for N in [Float64, Rational{Int}, Float32]
     @test h.center ≈ hexp.center
     @test h.radius ≈ hexp.radius
 
-
     # Box approximation of a 3D unit ball in the 1-norm
     b = Ball1(to_N(N, [1., 2., 0.]), to_N(N, 1.))
     h = box_approximation(b)
@@ -28,6 +27,11 @@ for N in [Float64, Rational{Int}, Float32]
     @test h.center ≈ hexp.center
     @test h.radius ≈ hexp.radius
 
+    # Box approximation of a Hyperrectangle
+    hexp = Hyperrectangle(N[0., 0.], N[1., 1.])
+    h = box_approximation(hexp)
+    @test h.center ≈ hexp.center
+    @test h.radius ≈ hexp.radius
 
     # ===================================================================
     # Testing box_approximation_symmetric (= symmetric interval hull)

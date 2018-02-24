@@ -332,7 +332,7 @@ function ∈(x::AbstractVector{N}, cpa::CartesianProductArray{N, <:LazySet{N}}
     @assert length(x) == dim(cpa)
 
     jinit = 1
-    for sj in cpa
+    for sj in cpa.array
         jend = jinit + dim(sj) - 1
         if !∈(x[jinit:jend], sj)
             return false

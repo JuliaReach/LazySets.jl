@@ -45,5 +45,5 @@ List containing a singleton for each vertex.
 """
 function singleton_list(P::AbstractPolytope{N}
                        )::Vector{Singleton{N}} where {N<:Real}
-    return [Singleton(vi) for vi in P.vertices_list]
+    return [Singleton(vi) for vi in vertices_list(P)]
 end

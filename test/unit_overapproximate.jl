@@ -55,6 +55,31 @@ for N in [Float64, Float32] # TODO Rational{Int}
     @test lcl[8].a ≈ N[sqrt(2.0)/2.0, -sqrt(2.0)/2.0]
     @test lcl[8].b ≈ N(1.0)
 
+    # HPolygon approximation with box directions
+    c = N[0., 0.]
+    b = Ball1(c, N(1.))
+    p = overapproximate(b, HPolygon)
+    for d in to_N(N, [[1., 0.], [-1., 0.]])
+        @test σ(d, p)[1] ≈ σ(d, b)[1]
+    end
+    for d in to_N(N, [[0., 1.], [0., -1.]])
+        @test σ(d, p)[2] ≈ σ(d, b)[2]
+    end
+
+    # Hyperrectangle approximation
+    c = N[0., 0.]
+    b = Ball1(c, N(1.))
+    p = overapproximate(b, Hyperrectangle)
+    for d in to_N(N, [[1., 0.], [-1., 0.]])
+        @test σ(d, p)[1] ≈ σ(d, b)[1]
+    end
+    for d in to_N(N, [[0., 1.], [0., -1.]])
+        @test σ(d, p)[2] ≈ σ(d, b)[2]
+    end
+    @test p.center ≈ c
+    @test p.radius ≈ N[1., 1.]
+
+    # Zonotope approximation
     Z1 = Zonotope(ones(N, 2), [N[1., 0.], N[0., 1.], N[1., 1.]])
     Z2 = Zonotope(-ones(N, 2), [N[.5, 1.], N[-.1, .9], N[1., 4.]])
     Y = ConvexHull(Z1, Z2)

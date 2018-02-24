@@ -45,4 +45,13 @@ for N in [Float64, Rational{Int}, Float32]
     @test norm(b, 2) ≈ N(sqrt(1.2^2 + 2.2^2 + 4.2^2))
     @test radius(b, 2) ≈ N(sqrt(0.2^2 * 3))
     @test diameter(b, 2) ≈ N(2*sqrt(0.2^2 * 3))
+
+    # ====================================
+    #  failing case (not implemented yet)
+    # ====================================
+
+    s = MinkowskiSum(b, b)
+    @test_throws ErrorException norm(s, 2)
+    @test_throws ErrorException radius(s, 2)
+    @test_throws ErrorException diameter(s, 2)
 end

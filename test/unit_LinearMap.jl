@@ -51,4 +51,9 @@ for N in [Float64, Rational{Int}, Float32]
     lm1_copy = LinearMap(eye(N, 2), lm1)
     @test lm1_copy.M == lm1.M
     @test lm1_copy.X == lm1.X
+
+    # an_element function (default implementation)
+    lm = N(2.) * BallInf(N[0., 0.], N(1.))
+    an_element(lm)
+#     @test an_element(lm) ∈ lm # TODO results in an error for Rational
 end

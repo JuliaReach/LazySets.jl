@@ -22,6 +22,8 @@ for N in [Float64, Float32]
     @test σ(d, b) == N[0., 1.]
     d = N[0., -1.]
     @test σ(d, b) == N[0., -1.]
+    d = N[0., 0.]
+    @test σ(d, b) == N[0., 0.]
 
     # 2D Ball2 not 0-centered
     b = Ball2(N[1., 2.], N(1.))
