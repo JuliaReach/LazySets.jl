@@ -32,6 +32,11 @@ for N in [Float64, Float32, Rational{Int}]
     HPolytope(p)
     HPolytope(po)
 
+    # support vector of empty polygon
+    @test_throws ErrorException σ([0.], HPolygon())
+    @test_throws ErrorException σ([0.], HPolygonOpt(HPolygon()))
+    @test_throws ErrorException σ([0.], HPolytope())
+
     # HPolygon/HPolygonOpt tests
     for p in [p, po]
         # Test Dimension
@@ -46,6 +51,8 @@ for N in [Float64, Float32, Rational{Int}]
         @test σ(d, p) == N[-1., 1.]
         d = N[0., -1.]
         @test σ(d, p) == N[0., 0.]
+        d = N[1., -1.]
+        @test σ(d, p) == N[4., 2.]
 
         # Test containment
         @test ∈(N[0., 0.], p)
@@ -96,21 +103,14 @@ for N in [Float64, Float32, Rational{Int}]
     @test vertices_list(vp) == to_N(N, [[0.1, 0.3], [0.2, 0.1], [0.9, 0.2], [0.4, 0.6]])
 
     # test support vector of a VPolygon
-    p = HPolygon{N}()
-    for ci in [c1, c2, c3, c4]
-    addconstraint!(p, ci)
-    end
-    p = tovrep(p)
-
-    # Test Support Vector
     d = N[1., 0.]
-    @test σ(d, p) == N[4., 2.]
+    @test σ(d, vp) == points[5]
     d = N[0., 1.]
-    @test σ(d, p) == N[2., 4.]
+    @test σ(d, vp) == points[4]
     d = N[-1., 0.]
-    @test σ(d, p) == N[-1., 1.]
+    @test σ(d, vp) == points[1]
     d = N[0., -1.]
-    @test σ(d, p) == N[0., 0.]
+    @test σ(d, vp) == points[2]
 
     # test that #83 is fixed
     v = VPolygon(to_N(N, [[2.0, 3.0]]))
@@ -146,3 +146,6 @@ for N in [Float64, Float32, Rational{Int}]
         end
     end
 end
+
+# default Float64 constructor
+HPolygon()
