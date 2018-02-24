@@ -174,82 +174,15 @@ function CartesianProductArray(n::Int=0, N::Type=Float64)::CartesianProductArray
     return CartesianProductArray(arr)
 end
 
-"""
-```
-    CartesianProductArray(cpa::CartesianProductArray,
-                          S::LazySet)::CartesianProductArray
-```
-
-Multiply a convex set to a Cartesian product of a finite number of convex sets
-from the right.
-
-### Input
-
-- `cpa` -- Cartesian product array (is modified)
-- `S`   -- convex set
-
-### Output
-
-The modified Cartesian product of a finite number of convex sets.
-"""
-function CartesianProductArray(cpa::CartesianProductArray,
-                               S::LazySet)::CartesianProductArray
-    push!(cpa.array, S)
-    return cpa
-end
-
-"""
-```
-    CartesianProductArray(S::LazySet,
-                          cpa::CartesianProductArray)::CartesianProductArray
-```
-
-Multiply a convex set to a Cartesian product of a finite number of convex sets
-from the left.
-
-### Input
-
-- `S`   -- convex set
-- `cpa` -- Cartesian product array (is modified)
-
-### Output
-
-The modified Cartesian product of a finite number of convex sets.
-"""
-function CartesianProductArray(S::LazySet,
-                               cpa::CartesianProductArray)::CartesianProductArray
-    return CartesianProductArray(cpa, S)
-end
-
-"""
-```
-    CartesianProductArray(cpa1::CartesianProductArray,
-                          cpa2::CartesianProductArray)::CartesianProductArray
-```
-
-Multiply a finite Cartesian product of convex sets to another finite Cartesian
-product.
-
-### Input
-
-- `cpa1` -- first Cartesian product array (is modified)
-- `cpa2` -- second Cartesian product array
-
-### Output
-
-The modified first Cartesian product.
-"""
-function CartesianProductArray(cpa1::CartesianProductArray,
-                               cpa2::CartesianProductArray)::CartesianProductArray
-    append!(cpa1.array, cpa2.array)
-    return cpa1
-end
-
 # EmptySet is the absorbing element for CartesianProductArray
 @absorbing(CartesianProductArray, EmptySet)
 
+# add functions connecting CartesianProduct and CartesianProductArray
+@declare_array_version(CartesianProduct, CartesianProductArray)
+
 """
-    array(cpa::CartesianProductArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
+    array(cpa::CartesianProductArray{N, S}
+         )::Vector{S} where {N<:Real, S<:LazySet{N}}
 
 Return the array of a Cartesian product of a finite number of convex sets.
 
@@ -261,7 +194,8 @@ Return the array of a Cartesian product of a finite number of convex sets.
 
 The array of a Cartesian product of a finite number of convex sets.
 """
-function array(cpa::CartesianProductArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
+function array(cpa::CartesianProductArray{N, S}
+              )::Vector{S} where {N<:Real, S<:LazySet{N}}
     return cpa.array
 end
 

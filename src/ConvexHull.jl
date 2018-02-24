@@ -143,14 +143,15 @@ end
 # EmptySet is the neutral element for ConvexHullArray
 @neutral(ConvexHullArray, EmptySet)
 
+# add functions connecting ConvexHull and ConvexHullArray
+@declare_array_version(ConvexHull, ConvexHullArray)
+
 """
     CHArray
 
 Alias for `ConvexHullArray`.
 """
 const CHArray = ConvexHullArray
-
-CH(cha1::ConvexHullArray, cha2::ConvexHullArray) = ConvexHullArray(vcat(cha1.array, cha2.array))
 
 """
     array(cha::ConvexHullArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
