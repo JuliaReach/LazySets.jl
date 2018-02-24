@@ -92,13 +92,20 @@ Overapproximate the convex hull of two zonotopes.
 
 ### Input
 
-- `S` -- convex set, assumed to be two-dimensional
+- `S` -- convex hull of two zonotopes of the same order
 - `Zonotope` for dispatch
 
 ### Algorithm
 
 This function implements the method proposed in
 *Reachability of Uncertain Linear Systems Using Zonotopes, A. Girard, HSCC 2005*.
+The convex hull of two zonotopes of the same order, that we write
+``Z_j = ⟨c^{(j)}, g^{(j)}_1, …, g^{(j)}_p⟩`` for ``j = 1, 2``, can be
+overapproximated as follows:
+
+```math
+CH(Z_1, Z_2) ⊆ \\frac{1}{2}⟨c^{(1)}+c^{(2)}, g^{(1)}_1+g^{(2)}_1, …, g^{(1)}_p+g^{(2)}_p, c^{(1)}-c^{(2)}, g^{(1)}_1-g^{(2)}_1, …, g^{(1)}_p-g^{(2)}_p⟩.
+```
 
 It should be noted that the output zonotope is not necessarily the minimal enclosing
 zonotope, which is in general expensive in high dimensions. This is further investigated
@@ -107,6 +114,7 @@ in: *Zonotopes as bounding volumes, L. J. Guibas et al, Proc. of Symposium on Di
 function overapproximate(S::ConvexHull{N, Zonotope{N}, Zonotope{N}},
                          ::Type{<:Zonotope})::Zonotope where {N<:Real}
     Z1, Z2 = S.X, S.Y
+    @assert order(Z1) == order(Z2)
     center = (Z1.center+Z2.center)/2
     generators = [(Z1.generators .+ Z2.generators) (Z1.center - Z2.center) (Z1.generators .- Z2.generators)]/2
     return Zonotope(center, generators)
