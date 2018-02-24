@@ -107,7 +107,18 @@ for N in [Float64, Float32, Rational{Int}]
     @test !∈(N[0., 0., 3., 1.], cp)
     @test !∈(N[1., 1., 3., 1.], cp)
 
+    # =====================
+    # CartesianProductArray
+    # =====================
+    v = Vector{LazySet{N}}(0)
+    push!(v, Singleton(N[1., 2.]))
+    push!(v, Singleton(N[3., 4.]))
+    cpa = CartesianProductArray(v)
+
     # array getter
-    v = Vector{N}(0)
-    @test array(CartesianProductArray()) == v
+    @test array(cpa) == v
+
+    # membership
+    @test ∈(N[1., 2., 3., 4.], cpa)
+    @test !∈(N[3., 4., 1., 2.], cpa)
 end
