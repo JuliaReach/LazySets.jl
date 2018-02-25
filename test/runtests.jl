@@ -33,7 +33,7 @@ include("to_N.jl")
 @time @testset "LazySets.SymmetricIntervalHull" begin include("unit_SymmetricIntervalHull.jl") end
 
 # =================================================================
-# Algorithms for approximation of convex sets using support vectors
+# Algorithms for approximation of sets using support vectors
 # =================================================================
 @time @testset "LazySets.Approximations.overapproximation" begin include("unit_overapproximate.jl") end
 @time @testset "LazySets.Approximations.box_approximation" begin include("unit_box_approximation.jl") end

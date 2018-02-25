@@ -16,8 +16,8 @@ dimension ``n\times n``. For ``p \geq 1``, the ``p``-norm of an ``n``-dimensiona
 
 ## Support Function
 
-The support function is a basic notion for approximating convex sets. Let
-``\mathcal{X} \subset \mathbb{R}^n`` be a compact convex set.
+The support function is a basic notion for approximating (usually convex) sets.
+Let ``\mathcal{X} \subset \mathbb{R}^n`` be a compact convex set.
 The *support function* of ``\mathcal{X}`` is the function
 ``\rho_\mathcal{X} : \mathbb{R}^n\to \mathbb{R}``, defined as
 
@@ -76,7 +76,7 @@ as in Proposition 1, the following hold:
 \end{align*}
 ```
 
-## Polyhedral approximation of a convex set
+## Polyhedral approximation of a set
 
 The projection of a set into a low dimensional space (a special case of
 ``M \mathcal{X}``) can be conveniently evaluated using support functions, since

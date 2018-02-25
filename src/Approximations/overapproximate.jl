@@ -1,11 +1,11 @@
 """
     overapproximate(S::LazySet{N}, ::Type{<:HPolygon})::HPolygon where {N<:Real}
 
-Return an approximation of a given 2D convex set as a box-shaped polygon.
+Return an approximation of a given 2D set as a box-shaped polygon.
 
 ### Input
 
-- `S` -- convex set, assumed to be two-dimensional
+- `S` -- set, assumed to be two-dimensional
 - `HPolygon` for dispatch
 
 ### Output
@@ -34,11 +34,11 @@ overapproximate(S::LazySet)::HPolygon = overapproximate(S, HPolygon)
 """
     overapproximate(S::LazySet, Type{<:Hyperrectangle})::Hyperrectangle
 
-Return an approximation of a given 2D convex set as a hyperrectangle.
+Return an approximation of a given 2D set as a hyperrectangle.
 
 ### Input
 
-- `S` -- convex set, assumed to be two-dimensional
+- `S` -- set, assumed to be two-dimensional
 - `Hyperrectangle` for dispatch
 
 ### Output
@@ -71,7 +71,7 @@ distance) as a polygon.
 
 ### Input
 
-- `S` -- convex set, assumed to be two-dimensional
+- `S` -- set, assumed to be two-dimensional
 - `ɛ` -- error bound
 
 ### Output

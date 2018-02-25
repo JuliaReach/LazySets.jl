@@ -3,7 +3,7 @@ export AbstractPolytope,
        singleton_list
 
 """
-    AbstractPolytope{N<:Real} <: LazySet{N}
+    AbstractPolytope{N<:Real} <: AbstractConvexSet{N}
 
 Abstract type for polytopic sets, i.e., sets with finitely many flat facets, or
 equivalently, sets defined as an intersection of a finite number of halfspaces,
@@ -24,7 +24,7 @@ julia> subtypes(AbstractPolytope)
  LazySets.VPolytope
 ```
 """
-abstract type AbstractPolytope{N<:Real} <: LazySet{N} end
+abstract type AbstractPolytope{N<:Real} <: AbstractConvexSet{N} end
 
 
 # --- common AbstractPolytope functions ---

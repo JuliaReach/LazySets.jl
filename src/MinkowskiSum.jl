@@ -7,12 +7,12 @@ export MinkowskiSum, ⊕,
 """
     MinkowskiSum{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
 
-Type that represents the Minkowski sum of two convex sets.
+Type that represents the Minkowski sum of two sets.
 
 ### Fields
 
-- `X` -- first convex set
-- `Y` -- second convex set
+- `X` -- first set
+- `Y` -- second set
 
 ### Notes
 
@@ -45,8 +45,8 @@ Convenience constructor for Minkowski sum.
 
 ### Input
 
-- `X` -- a convex set
-- `Y` -- another convex set
+- `X` -- a set
+- `Y` -- another set
 
 ### Output
 
@@ -104,11 +104,11 @@ end
 """
     MinkowskiSumArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
 
-Type that represents the Minkowski sum of a finite number of convex sets.
+Type that represents the Minkowski sum of a finite number of sets.
 
 ### Fields
 
-- `array` -- array of convex sets
+- `array` -- array of sets
 
 ### Notes
 
@@ -151,7 +151,7 @@ end
 """
     array(msa::MinkowskiSumArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
 
-Return the array of a Minkowski sum of a finite number of convex sets.
+Return the array of a Minkowski sum of a finite number of sets.
 
 ### Input
 
@@ -159,7 +159,7 @@ Return the array of a Minkowski sum of a finite number of convex sets.
 
 ### Output
 
-The array of a Minkowski sum of a finite number of convex sets.
+The array of a Minkowski sum of a finite number of sets.
 """
 function array(msa::MinkowskiSumArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
     return msa.array

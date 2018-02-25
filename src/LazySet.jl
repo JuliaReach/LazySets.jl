@@ -14,9 +14,9 @@ export LazySet,
 """
     LazySet{N}
 
-Abstract type for convex sets, i.e., sets characterized by a (possibly infinite)
-intersection of halfspaces, or equivalently, sets ``S`` such that for any two
-elements ``x, y ∈ S`` and ``0 ≤ λ ≤ 1`` it holds that ``λ x + (1-λ) y ∈ S``.
+Abstract type for set representations and lazy operations between sets.
+Most subtypes of `LazySet` correspond to convex sets; however, convexity is not
+a restriction for subtyping `LazySet`.
 
 ### Notes
 
@@ -64,7 +64,7 @@ Evaluate the support function of a set in a given direction.
 ### Input
 
 - `d` -- direction
-- `S` -- convex set
+- `S` -- set
 
 ### Output
 
@@ -97,15 +97,33 @@ const support_vector = σ
 
 
 """
+    isconvex(S::LazySet)::Bool
+
+Sufficient check if a set is convex.
+
+### Input
+
+- `S` -- set
+
+### Output
+
+`false` by default.
+"""
+function isconvex(S::LazySet)::Bool
+    return false
+end
+
+
+"""
     norm(S::LazySet, [p]::Real=Inf)
 
-Return the norm of a convex set.
+Return the norm of a set.
 It is the norm of the enclosing ball (of the given ``p``-norm) of minimal volume
 that is centered in the origin.
 
 ### Input
 
-- `S` -- convex set
+- `S` -- set
 - `p` -- (optional, default: `Inf`) norm
 
 ### Output
@@ -123,13 +141,13 @@ end
 """
     radius(S::LazySet, [p]::Real=Inf)
 
-Return the radius of a convex set.
+Return the radius of a set.
 It is the radius of the enclosing ball (of the given ``p``-norm) of minimal
 volume with the same center.
 
 ### Input
 
-- `S` -- convex set
+- `S` -- set
 - `p` -- (optional, default: `Inf`) norm
 
 ### Output
@@ -147,14 +165,14 @@ end
 """
     diameter(S::LazySet, [p]::Real=Inf)
 
-Return the diameter of a convex set.
+Return the diameter of a set.
 It is the maximum distance between any two elements of the set, or,
 equivalently, the diameter of the enclosing ball (of the given ``p``-norm) of
 minimal volume with the same center.
 
 ### Input
 
-- `S` -- convex set
+- `S` -- set
 - `p` -- (optional, default: `Inf`) norm
 
 ### Output
@@ -173,15 +191,15 @@ end
 """
     an_element(S::LazySet{N})::AbstractVector{N} where {N<:Real}
 
-Return some element of a convex set.
+Return some element of a set.
 
 ### Input
 
-- `S` -- convex set
+- `S` -- set
 
 ### Output
 
-An element of a convex set.
+An element of a set.
 """
 function an_element(S::LazySet{N})::AbstractVector{N} where {N<:Real}
     return σ(sparsevec([1], [one(N)], dim(S)), S)

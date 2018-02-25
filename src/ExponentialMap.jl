@@ -91,12 +91,12 @@ end
 """
     ExponentialMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
 
-Type that represents the action of an exponential map on a convex set.
+Type that represents the action of an exponential map on a set.
 
 ### Fields
 
 - `spmexp` -- sparse matrix exponential
-- `X`      -- convex set
+- `X`      -- set
 """
 struct ExponentialMap{N, S<:LazySet{N}} <: LazySet{N}
     spmexp::SparseMatrixExp{N}
@@ -111,16 +111,16 @@ ExponentialMap(spmexp::SparseMatrixExp, X::S) where {S<:LazySet{N}} where {N} =
     *(spmexp::SparseMatrixExp, X::LazySet)::ExponentialMap
 ```
 
-Return the exponential map of a convex set from a sparse matrix exponential.
+Return the exponential map of a set from a sparse matrix exponential.
 
 ### Input
 
 - `spmexp` -- sparse matrix exponential
-- `X`      -- convex set
+- `X`      -- set
 
 ### Output
 
-The exponential map of the convex set.
+The exponential map of the set.
 """
 function *(spmexp::SparseMatrixExp, X::LazySet)::ExponentialMap
     return ExponentialMap(spmexp, X)
@@ -175,12 +175,12 @@ end
 """
     ∈(x::AbstractVector{N}, em::ExponentialMap{<:LazySet{N}})::Bool where {N<:Real}
 
-Check whether a given point is contained in an exponential map of a convex set.
+Check whether a given point is contained in an exponential map of a set.
 
 ### Input
 
 - `x`  -- point/vector
-- `em` -- linear map of a convex set
+- `em` -- exponential map of a set
 
 ### Output
 
@@ -230,12 +230,12 @@ end
     ExponentialProjectionMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
 
 Type that represents the application of a projection of a sparse matrix
-exponential to a convex set.
+exponential to a set.
 
 ### Fields
 
 - `spmexp` -- projection of a sparse matrix exponential
-- `X`      -- convex set
+- `X`      -- set
 """
 struct ExponentialProjectionMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
     projspmexp::ProjectionSparseMatrixExp
@@ -252,18 +252,16 @@ ExponentialProjectionMap(projspmexp::ProjectionSparseMatrixExp, X::S
       X::LazySet)::ExponentialProjectionMap
 ```
 
-Return the application of a projection of a sparse matrix exponential to a
-convex set.
+Return the application of a projection of a sparse matrix exponential to a set.
 
 ### Input
 
 - `projspmexp` -- projection of a sparse matrix exponential
-- `X`          -- convex set
+- `X`          -- set
 
 ### Output
 
-The application of the projection of a sparse matrix exponential to the convex
-set.
+The application of the projection of a sparse matrix exponential to the set.
 """
 function *(projspmexp::ProjectionSparseMatrixExp,
            X::LazySet)::ExponentialProjectionMap

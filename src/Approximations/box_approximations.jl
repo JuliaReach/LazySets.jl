@@ -5,11 +5,11 @@
 """
     box_approximation(S::LazySet)::Hyperrectangle
 
-Overapproximate a convex set by a tight hyperrectangle.
+Overapproximate a set by a tight hyperrectangle.
 
 ### Input
 
-- `S` -- convex set
+- `S` -- set
 
 ### Output
 
@@ -43,11 +43,11 @@ interval_hull = box_approximation
 """
     box_approximation_symmetric(S::LazySet{N})::Hyperrectangle{N} where {N<:Real}
 
-Overapproximate a convex set by a tight hyperrectangle centered in the origin.
+Overapproximate a set by a tight hyperrectangle centered in the origin.
 
 ### Input
 
-- `S` -- convex set
+- `S` -- set
 
 ### Output
 
@@ -78,7 +78,7 @@ Common code of `box_approximation` and `box_approximation_symmetric`.
 
 ### Input
 
-- `S` -- convex set
+- `S` -- set
 
 ### Output
 
@@ -91,7 +91,7 @@ overapproximating hyperrectangle.
 ### Algorithm
 
 The center of the hyperrectangle is obtained by averaging the support function
-of the given convex set in the canonical directions.
+of the given set in the canonical directions.
 The lengths of the sides can be recovered from the distance among support
 functions in the same directions.
 """
@@ -117,11 +117,11 @@ end
 """
     ballinf_approximation(S::LazySet{N})::BallInf{N} where {N<:Real}
 
-Overapproximate a convex set by a tight ball in the infinity norm.
+Overapproximate a set by a tight ball in the infinity norm.
 
 ### Input
 
-- `S` -- convex set
+- `S` -- set
 
 ### Output
 
@@ -130,7 +130,7 @@ A tight ball in the infinity norm.
 ### Algorithm
 
 The center and radius of the box are obtained by evaluating the support function
-of the given convex set along the canonical directions.
+of the given set along the canonical directions.
 """
 function ballinf_approximation(S::LazySet{N})::BallInf{N} where {N<:Real}
     zero_N = zero(N)

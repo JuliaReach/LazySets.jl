@@ -1,7 +1,7 @@
 export Line
 
 """
-    Line{N<:Real} <: LazySet{N}
+    Line{N<:Real} <: AbstractConvexSet{N}
 
 Type that represents a line in 2D of the form ``a⋅x = b`` (i.e., a special case
 of a `Hyperplane`).
@@ -20,7 +20,7 @@ julia> Line([1., 1.], 1.)
 LazySets.Line{Float64}([1.0, 1.0], 1.0)
 ```
 """
-struct Line{N<:Real} <: LazySet{N}
+struct Line{N<:Real} <: AbstractConvexSet{N}
     a::Vector{N}
     b::N
 

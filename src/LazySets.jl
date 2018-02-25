@@ -1,7 +1,7 @@
 __precompile__(true)
 
 """
-Main module for `LazySets.jl` -- a Julia package for calculus with convex sets.
+Main module for `LazySets.jl` -- a Julia package for calculus with sets.
 """
 module LazySets
 
@@ -18,6 +18,7 @@ include("helper_functions.jl")
 # Abstract set types
 # ==================
 include("LazySet.jl")
+include("AbstractConvexSet.jl")
 include("HalfSpace.jl") # must be here to make LinearConstraint available
 include("AbstractPolytope.jl")
 include("AbstractPointSymmetric.jl")

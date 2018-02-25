@@ -9,12 +9,12 @@ export ConvexHull, CH,
 """
     ConvexHull{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
 
-Type that represents the convex hull of the union of two convex sets.
+Type that represents the convex hull of the union of two sets.
 
 ### Fields
 
-- `X` -- convex set
-- `Y` -- convex set
+- `X` -- first set
+- `Y` -- second set
 
 ### Notes
 
@@ -59,15 +59,15 @@ const CH = ConvexHull
 """
     dim(ch::ConvexHull)::Int
 
-Return the dimension of a convex hull of two convex sets.
+Return the dimension of a convex hull of two sets.
 
 ### Input
 
-- `ch` -- convex hull of two convex sets
+- `ch` -- convex hull of two sets
 
 ### Output
 
-The ambient dimension of the convex hull of two convex sets.
+The ambient dimension of the convex hull of two sets.
 """
 function dim(ch::ConvexHull)::Int
     return dim(ch.X)
@@ -76,13 +76,12 @@ end
 """
     σ(d::AbstractVector{<:Real}, ch::ConvexHull)::AbstractVector{<:Real}
 
-Return the support vector of a convex hull of two convex sets in a given
-direction.
+Return the support vector of a convex hull of two sets in a given direction.
 
 ### Input
 
 - `d`  -- direction
-- `ch` -- convex hull of two convex sets
+- `ch` -- convex hull of two sets
 """
 function σ(d::AbstractVector{<:Real}, ch::ConvexHull)::AbstractVector{<:Real}
     σ1 = σ(d, ch.X)
@@ -98,7 +97,7 @@ end
 """
     ConvexHullArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
 
-Type that represents the symbolic convex hull of a finite number of convex sets.
+Type that represents the symbolic convex hull of a finite number of sets.
 
 ### Fields
 
@@ -156,7 +155,7 @@ const CHArray = ConvexHullArray
 """
     array(cha::ConvexHullArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
 
-Return the array of a convex hull of a finite number of convex sets.
+Return the array of a convex hull of a finite number of sets.
 
 ### Input
 
@@ -164,7 +163,7 @@ Return the array of a convex hull of a finite number of convex sets.
 
 ### Output
 
-The array of a convex hull of a finite number of convex sets.
+The array of a convex hull of a finite number of sets.
 """
 function array(cha::ConvexHullArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
     return cha.array
@@ -173,7 +172,7 @@ end
 """
     dim(cha::ConvexHullArray)::Int
 
-Return the dimension of the convex hull of a finite number of convex sets.
+Return the dimension of the convex hull of a finite number of sets.
 
 ### Input
 
@@ -181,7 +180,7 @@ Return the dimension of the convex hull of a finite number of convex sets.
 
 ### Output
 
-The ambient dimension of the convex hull of a finite number of convex sets.
+The ambient dimension of the convex hull of a finite number of sets.
 """
 function dim(cha::ConvexHullArray)::Int
     @assert !isempty(cha.array)

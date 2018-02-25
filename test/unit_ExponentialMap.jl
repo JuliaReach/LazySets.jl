@@ -25,7 +25,7 @@ for N in [Float64] # TODO Float32
     # WARNING: assuming commutativity of matrix exponents
     #me * me
 
-    # the exponential map of a convex set, same as ExponentialMap(me, b)
+    # the exponential map of a set, same as ExponentialMap(me, b)
     emap = me * b
 
     # the support vector of an exponential map

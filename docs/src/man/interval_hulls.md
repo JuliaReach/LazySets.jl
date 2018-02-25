@@ -66,8 +66,8 @@ plot!(Z, 1e-3, alpha=0.2)
 
 A simple overapproximation with a `BallInf` is obtained with the `ballinf_approximation`
 function, from the `Approximations` module.
-It overapproximates a convex set by a tight ball in the infinity norm by
-evaluating the support vector in the canonical directions.
+It overapproximates a set by a tight ball in the infinity norm by evaluating the
+support vector in the canonical directions.
 
 ```@example example_ih
 import LazySets.Approximations.ballinf_approximation
@@ -164,8 +164,8 @@ These functions apply generally to any `LazySet`.
 For some types, specialized methods are triggered automatically through
 multiple-dispatch.
 
-The *norm* of a convex set is the norm of the enclosing ball (of the given norm)
-of minimal volume. For instance:
+The *norm* of a set is the norm of the enclosing ball (of the given norm) of
+minimal volume. For instance:
 
 ```@example example_ih
 import LazySets.Approximations: norm, radius, diameter
@@ -173,8 +173,10 @@ import LazySets.Approximations: norm, radius, diameter
 norm(X), norm(Y), norm(Z)
 ```
 
-The *radius* of a convex set. It is the radius of the enclosing ball
-(of the given norm) of minimal volume with the same center. In the previous example,
+The *radius* of a set.
+It is the radius of the enclosing ball (of the given norm) of minimal volume
+with the same center.
+In the previous example,
 
 ```@example example_ih
 radius(X), radius(Y), radius(Z)

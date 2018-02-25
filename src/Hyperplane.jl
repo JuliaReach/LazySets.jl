@@ -4,7 +4,7 @@ export Hyperplane,
        an_element
 
 """
-    Hyperplane{N<:Real} <: LazySet{N}
+    Hyperplane{N<:Real} <: AbstractConvexSet{N}
 
 Type that represents a hyperplane of the form ``a⋅x = b``.
 
@@ -22,7 +22,7 @@ julia> Hyperplane([0, 1.], 0.)
 LazySets.Hyperplane{Float64}([0.0, 1.0], 0.0)
 ```
 """
-struct Hyperplane{N<:Real} <: LazySet{N}
+struct Hyperplane{N<:Real} <: AbstractConvexSet{N}
     a::Vector{N}
     b::N
 end
