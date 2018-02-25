@@ -25,49 +25,15 @@ end
 Intersection(X::S1, Y::S2) where {S1<:LazySet{N}, S2<:LazySet{N}} where {N<:Real} =
     Intersection{N, S1, S2}(X, Y)
 
+# EmptySet is the absorbing element for Intersection
+@absorbing(Intersection, EmptySet)
+
 """
     ∩
 
 Alias for `Intersection`.
 """
 ∩(X, Y) = Intersection(X, Y)
-
-"""
-    Intersection(X, ∅)
-
-Intersection of a set with the empty set from the right.
-
-### Input
-
-- `X` -- a convex set
-- `∅` -- an empty set
-
-### Output
-
-An empty set, because the empty set is the absorbing element for the
-intersection.
-"""
-Intersection(::LazySet, ∅::EmptySet) = ∅
-
-"""
-    Intersection(∅, X)
-
-Intersection of a set with the empty set from the left.
-
-### Input
-
-- `∅` -- an empty set
-- `X` -- a convex set
-
-### Output
-
-An empty set, because the empty set is the absorbing element for the
-intersection.
-"""
-Intersection(∅::EmptySet, ::LazySet) = ∅
-
-# special case: pure empty set intersection (we require the same numeric type)
-(Intersection(∅::E, ::E)) where {E<:EmptySet} = ∅
 
 
 # --- LazySet interface functions ---
