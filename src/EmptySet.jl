@@ -10,6 +10,9 @@ Type that represents the empty set, i.e., the set with no elements.
 """
 struct EmptySet{N<:Real} <: LazySet{N} end
 
+# type-less convenience constructor
+EmptySet() = EmptySet{Float64}()
+
 """
     ∅
 
