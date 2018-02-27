@@ -1,145 +1,176 @@
 """
-    decompose(S::LazySet{N}, set_type::Type=HPolygon
-             )::CartesianProductArray where {N<:Real}
+    default_block_structure(S::LazySet)::AbstractVector{Int}
 
-Compute an overapproximation of the projections of the given convex set over
-each two-dimensional subspace.
+Compute the default block structure.
 
 ### Input
 
-- `S` -- convex set
-- `set_type` -- (optional, default: `HPolygon`) type of set approximation in 2D
+- `S` -- set
 
 ### Output
 
-A `CartesianProductArray` corresponding to the Cartesian product of
-two-dimensional sets of type `set_type`.
+A vector representing the block structure.
+The default is blocks of size 2.
+Depending on the dimension, the last block has size 1 or 2.
+"""
+@inline function default_block_structure(S::LazySet)::AbstractVector{Int}
+    n = dim(S)
+    if n % 2 == 0
+        return fill(2, div(n, 2))
+    else
+        res = fill(2, div(n+1, 2))
+        res[end] = 1
+        return res
+    end
+end
+
+"""
+    decompose(S::LazySet{N};
+              [set_type]::Type{<:Union{Hyperrectangle, HPolygon}}=Hyperrectangle,
+              [ɛ]::Real=Inf,
+              [blocks]::AbstractVector{Int}=default_block_structure(S)
+             )::CartesianProductArray where {N<:Real}
+
+Decompose a high-dimensional set into a Cartesian product of overapproximations
+of the projections over the specified subspaces.
+
+### Input
+
+- `S` -- set
+- `set_type` -- (optional, default: `Hyperrectangle`) type of set approximation
+                for each subspace
+- `ɛ` -- (optional, default: `Inf`) error bound for polytopic approximation
+- `blocks` -- (optional, default: [2, …, 2]) block structure - a vector with the
+              size of each block
+
+### Output
+
+A `CartesianProductArray` containing the low-dimensional approximated
+projections.
 
 ### Algorithm
 
-For each 2D block a specific `decompose_2D` method is called, dispatched on the
+For each block a specific `project` method is called, dispatched on the
 `set_type` argument.
 """
-function decompose(S::LazySet{N}, set_type::Type=HPolygon
+function decompose(S::LazySet{N};
+                   set_type::Type{<:Union{Hyperrectangle, HPolygon}}=Hyperrectangle,
+                   ɛ::Real=Inf,
+                   blocks::AbstractVector{Int}=default_block_structure(S)
                   )::CartesianProductArray where {N<:Real}
     n = dim(S)
-    b = div(n, 2)
-    result = Vector{set_type{N}}(b)
-    @inbounds for bi in 1:b
-        result[bi] = decompose_2D(S, n, bi, set_type)
+    result = Vector{set_type{N}}()
+    block_start = 1
+    @inbounds for bi in blocks
+        push!(result,
+              project(S, block_start:(block_start + bi - 1), set_type, n, ɛ))
+        block_start += bi
     end
     return CartesianProductArray(result)
 end
 
-# polygon with box directions
-@inline function decompose_2D(S::LazySet{N}, n::Int, bi::Int,
-                              set_type::Type{<:HPolygon}
-                             )::HPolygon where {N<:Real}
-    pe, pn, pw, ps = box_bounds(S, n, bi)
-    block = 2*bi-1:2*bi
+
+"""
+    function project(S::LazySet{N},
+                     block::AbstractVector{Int},
+                     set_type::Type{<:HPolygon},
+                     [n]::Int=dim(S),
+                     [ɛ]::Real=Inf
+                    )::HPolygon where {N<:Real}
+
+Project a high-dimensional set to a two-dimensional polygon with a certified
+error bound.
+
+### Input
+
+- `S` -- set
+- `block` -- block structure - a vector with the dimensions of interest
+- `set_type` -- `HPolygon` - used for dispatch
+- `n` -- (optional, default: `dim(S)`) ambient dimension of the set `S`
+- `ɛ` -- (optional, default: `Inf`) error bound for polytopic approximation
+
+### Output
+
+A `HPolygon` representing the epsilon-close approximation of the box
+approximation of the projection of `S`.
+
+### Notes
+
+`block` must have length 2.
+
+### Algorithm
+
+If `ɛ < Inf`, the algorithm proceeds as follows:
+
+1. Project the set `S` with `M⋅S`, where M is the identity matrix in the block coordinates and zero otherwise.
+2. Overapproximate the set with the given error bound `ɛ`.
+
+If `ɛ == Inf`, the algorithm uses a box approximation.
+"""
+@inline function project(S::LazySet{N},
+                         block::AbstractVector{Int},
+                         set_type::Type{<:HPolygon},
+                         n::Int=dim(S),
+                         ɛ::Real=Inf
+                        )::HPolygon where {N<:Real}
+    @assert length(block) == 2 "only 2D HPolygon decomposition is supported"
+
+    # approximation with error bound
+    if ɛ < Inf
+        M = sparse([1, 2], [block[1], block[2]], [one(N), one(N)], 2, n)
+        return overapproximate(M * S, ɛ)
+    end
+
+    # box approximation
+    plus_one = [one(N)]
+    minus_one = [-one(N)]
+    pe = σ(sparsevec([block[1]], plus_one, n), S)
+    pw = σ(sparsevec([block[1]], minus_one, n), S)
+    pn = σ(sparsevec([block[2]], plus_one, n), S)
+    ps = σ(sparsevec([block[2]], minus_one, n), S)
     pe_bi = dot(DIR_EAST(N), view(pe, block))
     pn_bi = dot(DIR_NORTH(N), view(pn, block))
     pw_bi = dot(DIR_WEST(N), view(pw, block))
     ps_bi = dot(DIR_SOUTH(N), view(ps, block))
-
     return HPolygon([LinearConstraint(DIR_EAST(N), pe_bi),
                      LinearConstraint(DIR_NORTH(N), pn_bi),
                      LinearConstraint(DIR_WEST(N), pw_bi),
                      LinearConstraint(DIR_SOUTH(N), ps_bi)])
 end
 
-# hyperrectangle
-@inline function decompose_2D(S::LazySet, n::Int, bi::Int,
-                              set_type::Type{<:Hyperrectangle})::Hyperrectangle
-    pe, pn, pw, ps = box_bounds(S, n, bi)
-    block = 2*bi-1:2*bi
-    radius = [(pe[block[1]] - pw[block[1]]) / 2, (pn[block[2]] - ps[block[2]]) / 2]
-    center = [pw[block[1]] + radius[1], ps[block[2]] + radius[2]]
-    return Hyperrectangle(center, radius)
-end
-
-# helper function
-@inline function box_bounds(S::LazySet{N}, n::Int, bi::Int) where {N<:Real}
-    pe = σ(sparsevec([2*bi-1], [one(N)], n), S)
-    pn = σ(sparsevec([2*bi], [one(N)], n), S)
-    pw = σ(sparsevec([2*bi-1], [-one(N)], n), S)
-    ps = σ(sparsevec([2*bi], [-one(N)], n), S)
-    return (pe, pn, pw, ps)
-end
-
 """
-    decompose(S::LazySet{N}, ɛi::Vector{<:Real})::CartesianProductArray where {N<:Real}
+    function project(S::LazySet{N},
+                     block::AbstractVector{Int},
+                     set_type::Type{<:Hyperrectangle},
+                     [n]::Int=dim(S),
+                     [ɛ]::Real=Inf
+                    )::Hyperrectangle where {N<:Real}
 
-Compute an overapproximation of the projections of the given convex set over
-each two-dimensional subspace with a certified error bound.
+Project a high-dimensional set to a low-dimensional hyperrectangle.
 
 ### Input
 
-- `S`  -- convex set
-- `ɛi` -- array with the error bound for each projection (different error bounds
-          can be passed for different blocks)
+- `S` -- set
+- `block` -- block structure - a vector with the dimensions of interest
+- `set_type` -- `Hyperrectangle` - used for dispatch
+- `n` -- (optional, default: `dim(S)`) ambient dimension of the set `S`
+- `ɛ` -- (optional, default: `Inf`) - used for dispatch, ignored
 
 ### Output
 
-A `CartesianProductArray` corresponding to the Cartesian product of ``2 × 2``
-polygons.
-
-### Algorithm
-
-This algorithm assumes a decomposition into two-dimensional subspaces only,
-i.e., partitions of the form ``[2, 2, …, 2]``.
-In particular, if `S` is a `CartesianProductArray`, no check is performed to
-verify that assumption.
-
-The algorithm proceeds as follows:
-
-1. Project the set `S` into each partition, with `M⋅S`, where M is the identity
-   matrix in the block coordinates and zero otherwise.
-2. Overapproximate the set with a given error bound, `ɛi[i]`, for
-   ``i = 1, …, b``,
-3. Return the result as a `CartesianProductArray`.
+The box approximation of the projection of `S`.
 """
-function decompose(S::LazySet{N}, ɛi::Vector{<:Real})::CartesianProductArray where {N<:Real}
-    n = dim(S)
-    b = div(n, 2)
-    result = Vector{HPolygon{N}}(b)
-    @inbounds for i in 1:b
-        M = sparse([1, 2], [2*i-1, 2*i], [one(N), one(N)], 2, n)
-        result[i] = overapproximate(M * S, ɛi[i])
+@inline function project(S::LazySet{N},
+                         block::AbstractVector{Int},
+                         set_type::Type{<:Hyperrectangle},
+                         n::Int=dim(S),
+                         ɛ::Real=Inf
+                        )::Hyperrectangle where {N<:Real}
+    high = Vector{N}(length(block))
+    low = similar(high)
+    for i in eachindex(block)
+        high[i] = σ(sparsevec([block[i]], [one(N)], n), S)[block[i]]
+        low[i] = σ(sparsevec([block[i]], [-one(N)], n), S)[block[i]]
     end
-    return CartesianProductArray(result)
-end
-
-"""
-    decompose(S::LazySet, ɛ::Real, [set_type]::Type=HPolygon
-             )::CartesianProductArray
-
-Compute an overapproximation of the projections of the given convex set over
-each two-dimensional subspace with a certified error bound.
-
-### Input
-
-- `S` -- convex set
-- `ɛ` --  error bound
-- `set_type` -- (optional, default: `HPolygon`) type of set approximation in 2D
-
-### Output
-
-A `CartesianProductArray` corresponding to the Cartesian product of
-two-dimensional sets of type `set_type`.
-
-### Notes
-
-This function is a particular case of `decompose(S, ɛi)`, where the same error
-bound for each block is assumed.
-
-The `set_type` argument is ignored if ``ɛ ≠ \\text{Inf}``.
-"""
-function decompose(S::LazySet, ɛ::Real, set_type::Type=HPolygon
-                  )::CartesianProductArray
-    if ɛ == Inf
-        return decompose(S, set_type)
-    else
-        return decompose(S, [ɛ for i in 1:div(dim(S), 2)])
-    end
+    return Hyperrectangle(high, low)
 end
