@@ -444,8 +444,8 @@ compute a witness.
 ### Algorithm
 
 The algorithm is inspired from [here](https://stackoverflow.com/a/565282), which
-again is the special 2D case of a 3D algorithm by R. Goldman, *Intersection of
-two lines in three-space*, 1990.
+again is the special 2D case of a 3D algorithm by Ronald Goldman's article on the
+*Intersection of two lines in three-space* in Graphics Gems, Andrew S. (ed.), 1990.
 
 We first check if the two line segments are parallel, and if so, if they are
 collinear.

@@ -33,7 +33,7 @@ true
 ```
 
 We can check the intersection with another line segment, and optionally compute
-a witness (that reduces to the common point in this case):
+a witness (which is just the common point in this case):
 
 ```jldoctest linesegment_constructor
 julia> sn = LineSegment([1., 0], [0., 1.])
@@ -123,8 +123,8 @@ Check whether a given point is contained in a line segment.
 Let ``L = (p, q)`` be the line segment with extremes ``p`` and ``q``, and let
 ``x`` be the given point.
 
-1. A necessary conidition for ``x ∈ (p, q)`` is that they are aligned, thus
-   their cross product should be zero.
+1. A necessary condition for ``x ∈ (p, q)`` is that the three points are aligned,
+   thus their cross product should be zero.
 2. It remains to check that ``x`` belongs to the box approximation of ``L``.
    This amounts to comparing each coordinate with those of the extremes ``p``
    and ``q``.
