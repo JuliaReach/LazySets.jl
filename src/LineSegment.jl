@@ -11,6 +11,37 @@ Type that represents a line segment in 2D between two points ``p`` and ``q``.
 
 - `p` -- first point
 - `q` -- second point
+
+### Examples
+
+A line segment along the ``x = y`` diagonal:
+
+```jldoctest linesegment_constructor
+julia> s = LineSegment([0., 0], [1., 1.])
+LazySets.LineSegment{Float64}([0.0, 0.0], [1.0, 1.0])
+julia> dim(s)
+2
+```
+
+Use ``plot(s)`` to plot the extreme points of `s` and the line
+segment joining them. Membership test is comuted with ∈ (`in`):
+
+```jldoctest linesegment_constructor
+julia> [0., 0] ∈ s && [.25, .25] ∈ s && [1., 1] ∈ s && !([.5, .25] ∈ s)
+true
+```
+
+We can check the intersection with another line segment, and optionally compute
+a witness (that reduces to the common point in this case):
+
+```jldoctest linesegment_constructor
+julia> sn = LineSegment([1., 0], [0., 1.])
+LazySets.LineSegment{Float64}([1.0, 0.0], [0.0, 1.0])
+julia> isempty(s ∩ sn)
+false
+julia> is_intersection_empty(s, sn, true)
+(false, [0.5, 0.5])
+```
 """
 struct LineSegment{N<:Real} <: LazySet{N}
     p::AbstractVector{N}
@@ -86,9 +117,19 @@ Check whether a given point is contained in a line segment.
 
 `true` iff ``x ∈ L``.
 
+### Algorithm
+
+Let ``L = (p, q)`` be the line segment with extremes ``p`` and ``q``, and let
+``x`` be the given point.
+
+1. A necessary conidition for ``x ∈ (p, q)`` is that they are aligned, thus
+   their cross product should be zero.
+2. It remains to check that ``x`` belongs to the box approximation of ``L``. This
+   amounts to comparing each coordinate with those of the extremes ``p`` and ``q``.
+
 ### Notes
 
-The algorithm is inspired from [here](https://stackoverflow.com/a/328122).
+The algorithm is inspired from [here](https://stackoverflow.com/a/328110).
 """
 function ∈(x::AbstractVector{N}, L::LineSegment{N})::Bool where {N<:Real}
     @assert length(x) == dim(L)
