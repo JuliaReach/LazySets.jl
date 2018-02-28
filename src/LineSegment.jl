@@ -136,8 +136,8 @@ The algorithm is inspired from [here](https://stackoverflow.com/a/328110).
 function ∈(x::AbstractVector{N}, L::LineSegment{N})::Bool where {N<:Real}
     @assert length(x) == dim(L)
     # check if the point is on the line through the line segment
-    if abs((x[2] - L.p[2]) * (L.q[1] - L.p[1]) -
-            (x[1] - L.p[1]) * (L.q[2] - L.p[2])) > 0
+    if (x[2] - L.p[2]) * (L.q[1] - L.p[1]) -
+            (x[1] - L.p[1]) * (L.q[2] - L.p[2]) != 0
         return false
     end
     # check if the point is inside the box approximation of the line segment
