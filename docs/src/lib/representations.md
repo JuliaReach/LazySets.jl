@@ -135,7 +135,18 @@ low(::Hyperrectangle{Float64})
 
 ```@docs
 Line
+dim(::Line{Float64})
+σ(::AbstractVector{Float64}, ::Line{Float64})
 intersection(::Line{Float64}, ::Line{Float64})
+```
+
+## Line segment
+
+```@docs
+LineSegment
+dim(::LineSegment{Float64})
+σ(::AbstractVector{Float64}, ::LineSegment{Float64})
+∈(::AbstractVector{Float64}, ::LineSegment{Float64})
 ```
 
 ## Polygons
