@@ -23,8 +23,9 @@ julia> dim(s)
 2
 ```
 
-Use ``plot(s)`` to plot the extreme points of `s` and the line
-segment joining them. Membership test is comuted with ∈ (`in`):
+Use ``plot(s)`` to plot the extreme points of `s` and the line segment joining
+them.
+Membership test is computed with ∈ (`in`):
 
 ```jldoctest linesegment_constructor
 julia> [0., 0] ∈ s && [.25, .25] ∈ s && [1., 1] ∈ s && !([.5, .25] ∈ s)
@@ -124,8 +125,9 @@ Let ``L = (p, q)`` be the line segment with extremes ``p`` and ``q``, and let
 
 1. A necessary conidition for ``x ∈ (p, q)`` is that they are aligned, thus
    their cross product should be zero.
-2. It remains to check that ``x`` belongs to the box approximation of ``L``. This
-   amounts to comparing each coordinate with those of the extremes ``p`` and ``q``.
+2. It remains to check that ``x`` belongs to the box approximation of ``L``.
+   This amounts to comparing each coordinate with those of the extremes ``p``
+   and ``q``.
 
 ### Notes
 
