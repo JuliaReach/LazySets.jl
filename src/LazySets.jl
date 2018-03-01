@@ -48,7 +48,6 @@ include("VPolygon.jl")
 include("VPolytope.jl")
 include("ZeroSet.jl")
 include("Zonotope.jl")
-include("PolynomialZonotope.jl")
 
 # =================================
 # Types representing set operations
