@@ -23,6 +23,8 @@ Approximations
 
 ```@docs
 decompose
+default_block_structure
+project
 ```
 
 ## Overapproximations
