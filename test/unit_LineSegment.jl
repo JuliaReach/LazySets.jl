@@ -62,4 +62,15 @@ for N in [Float64, Rational{Int}, Float32]
     @test is_intersection_empty(l5, l6) && is_intersection_empty(l5, l6, true)[1]
     intersection_empty, point = is_intersection_empty(l6, l6, true)
     @test !is_intersection_empty(l6, l6) && !intersection_empty && point ∈ l6
+
+    # subset
+    l = LineSegment(N[1., 1.], N[2., 2.])
+    b1 = Ball1(N[1.5, 1.5], N(1.1))
+    b2 = Ball1(N[1.5, 1.5], N(.4))
+    @test ⊆(l, b1)
+    @test !⊆(l, b2)
+    h1 = Hyperrectangle(N[1.5, 1.5], N[.6, .8])
+    h2 = Hyperrectangle(N[1.5, 1.5], N[.4, .8])
+    @test ⊆(l, h1)
+    @test !⊆(l, h2)
 end

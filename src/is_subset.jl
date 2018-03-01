@@ -406,48 +406,87 @@ end
 
 # --- LineSegment ---
 
-# TODO commented until AbstractConvexSet is implemented
-# """
-#     is_subset(L::LineSegment{N},
-#               S::AbstractConvexSet{N},
-#               witness::Bool=false
-#              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
-#
-# Check whether a line segment is contained in a convex set, and if not,
-# optionally compute a witness.
-#
-# ### Input
-#
-# - `L` -- inner line segment
-# - `S` -- outer convex set
-# - `witness` -- (optional, default: `false`) compute a witness if activated
-#
-# ### Output
-#
-# * If `witness` option is deactivated: `true` iff ``L ⊆ S``
-# * If `witness` option is activated:
-#   * `(true, [])` iff ``L ⊆ S``
-#   * `(false, v)` iff ``L \\not\\subseteq S`` and ``v ∈ L \\setminus S``
-#
-# ### Algorithm
-#
-# Since ``S`` is convex, ``L ⊆ S`` iff ``p ∈ S`` and ``q ∈ S``, where ``p, q`` are
-# the end points of ``L``.
-# """
-# function is_subset(L::LineSegment{N},
-#                    S::AbstractConvexSet{N},
-#                    witness::Bool=false
-#                   )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
-#     p_in_S = ∈(L.p, S)
-#     result = p_in_S && ∈(L.q, S)
-#     if !witness
-#         return result
-#     elseif result
-#         return (result, N[])
-#     else
-#         return (result, p_in_S ? L.q : L.p)
-#     end
-# end
+
+"""
+    is_subset(L::LineSegment{N}, S::LazySet{N}, [witness]::Bool=false
+             )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether a line segment is contained in a convex set, and if not,
+optionally compute a witness.
+
+### Input
+
+- `L` -- inner line segment
+- `S` -- outer convex set
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``L ⊆ S``
+* If `witness` option is activated:
+  * `(true, [])` iff ``L ⊆ S``
+  * `(false, v)` iff ``L \\not\\subseteq S`` and ``v ∈ L \\setminus S``
+
+### Algorithm
+
+Since ``S`` is convex, ``L ⊆ S`` iff ``p ∈ S`` and ``q ∈ S``, where ``p, q`` are
+the end points of ``L``.
+"""
+function is_subset(L::LineSegment{N}, S::LazySet{N}, witness::Bool=false
+                  )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    p_in_S = ∈(L.p, S)
+    result = p_in_S && ∈(L.q, S)
+    if !witness
+        return result
+    elseif result
+        return (result, N[])
+    else
+        return (result, p_in_S ? L.q : L.p)
+    end
+end
+
+
+"""
+    is_subset(L::LineSegment{N}, H::Hyperrectangle{N}, [witness]::Bool=false
+             )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether a line segment is contained in a hyperrectangle, and if not,
+optionally compute a witness.
+
+### Input
+
+- `L` -- inner line segment
+- `H` -- outer hyperrectangle
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``L ⊆ H``
+* If `witness` option is activated:
+  * `(true, [])` iff ``L ⊆ H``
+  * `(false, v)` iff ``L \\not\\subseteq H`` and ``v ∈ L \\setminus H``
+
+### Notes
+
+This copy-pasted method just exists to avoid method ambiguities.
+
+### Algorithm
+
+Since ``H`` is convex, ``L ⊆ H`` iff ``p ∈ H`` and ``q ∈ H``, where ``p, q`` are
+the end points of ``L``.
+"""
+function is_subset(L::LineSegment{N}, H::Hyperrectangle{N}, witness::Bool=false
+                  )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    p_in_H = ∈(L.p, H)
+    result = p_in_H && ∈(L.q, H)
+    if !witness
+        return result
+    elseif result
+        return (result, N[])
+    else
+        return (result, p_in_H ? L.q : L.p)
+    end
+end
 
 
 # --- alias ---
