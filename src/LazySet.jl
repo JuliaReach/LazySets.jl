@@ -44,8 +44,8 @@ julia> subtypes(LazySet)
  LazySets.Hyperplane
  LazySets.Intersection
  LazySets.Line
- LazySets.LinearMap
  LazySets.LineSegment
+ LazySets.LinearMap
  LazySets.MinkowskiSum
  LazySets.MinkowskiSumArray
  LazySets.PolynomialZonotope
