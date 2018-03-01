@@ -37,21 +37,9 @@ end
 """
     overapproximate(S::LazySet, ɛ::Real)::HPolygon
 
-Return an ɛ-close approximation of the given 2D set (in terms of Hausdorff
-distance) as a polygon.
-
-### Input
-
-- `S` -- convex set, assumed to be two-dimensional
-- `ɛ` -- (optional, default: `Inf`) error bound
-
-### Output
-
-A polygon in constraint representation.
+Alias for `overapproximate(S, HPolygon, ɛ)`.
 """
-function overapproximate(S::LazySet, ɛ::Real=Inf)::HPolygon
-    return overapproximate(S, HPolygon, ɛ)
-end
+overapproximate(S::LazySet, ɛ::Real)::HPolygon = overapproximate(S, HPolygon, ɛ)
 
 """
     overapproximate(S::LazySet, Type{<:Hyperrectangle})::Hyperrectangle
@@ -74,6 +62,13 @@ function overapproximate(S::LazySet, ::Type{<:Hyperrectangle})::Hyperrectangle
     center = [pw[1] + radius[1], ps[2] + radius[2]]
     return Hyperrectangle(center, radius)
 end
+
+"""
+    overapproximate(S::LazySet)::Hyperrectangle
+
+Alias for `overapproximate(S, Hyperrectangle)`.
+"""
+overapproximate(S::LazySet)::Hyperrectangle = overapproximate(S, Hyperrectangle)
 
 # helper function
 @inline function box_bounds(S::LazySet{N}) where {N<:Real}
