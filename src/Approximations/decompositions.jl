@@ -69,6 +69,44 @@ function decompose(S::LazySet{N};
     return CartesianProductArray(result)
 end
 
+"""
+    function project(S::LazySet{N},
+                     block::AbstractVector{Int},
+                     set_type::Type{<:LazySet},
+                     [n]::Int=dim(S),
+                     [ɛ]::Real=Inf
+                    )::LazySet{N} where {N<:Real}
+
+Default implementation for projecting a high-dimensional set to a given set type
+with possible overapproximation.
+
+### Input
+
+- `S` -- set
+- `block` -- block structure - a vector with the dimensions of interest
+- `set_type` -- target set type
+- `n` -- (optional, default: `dim(S)`) ambient dimension of the set `S`
+- `ɛ` -- (optional, default: `Inf`) ignored
+
+### Output
+
+A set of type `set_type` representing an overapproximation of the projection of
+`S`.
+
+### Algorithm
+
+1. Project the set `S` with `M⋅S`, where `M` is the identity matrix in the block coordinates and zero otherwise.
+2. Overapproximate the projected lazy set using `overapproximate`.
+"""
+@inline function project(S::LazySet{N},
+                         block::AbstractVector{Int},
+                         set_type::Type{<:LazySet},
+                         n::Int=dim(S),
+                         ɛ::Real=Inf
+                        )::LazySet{N} where {N<:Real}
+    M = sparse(1:length(block), block, ones(N, length(block)), length(block), n)
+    return overapproximate(M * S, set_type)
+end
 
 """
     function project(S::LazySet{N},
@@ -102,7 +140,7 @@ approximation of the projection of `S`.
 
 If `ɛ < Inf`, the algorithm proceeds as follows:
 
-1. Project the set `S` with `M⋅S`, where M is the identity matrix in the block coordinates and zero otherwise.
+1. Project the set `S` with `M⋅S`, where `M` is the identity matrix in the block coordinates and zero otherwise.
 2. Overapproximate the set with the given error bound `ɛ`.
 
 If `ɛ == Inf`, the algorithm uses a box approximation.
