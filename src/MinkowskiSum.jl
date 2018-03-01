@@ -2,6 +2,7 @@ import Base.+
 
 export MinkowskiSum, ⊕,
        MinkowskiSumArray,
+       MinkowskiSum!,
        array
 
 """
