@@ -41,15 +41,26 @@ for N in [Float64, Rational{Int}, Float32]
     C = ConvexHullArray([Singleton(to_N(N, [1.0, 0.5])), Singleton(to_N(N, [1.1, 0.2])), Singleton(to_N(N, [1.4, 0.3])), Singleton(to_N(N, [1.7, 0.5])), Singleton(to_N(N, [1.4, 0.8]))])
 
     # empty set is neutral for CH
-    a = ConvexHullArray([Ball1(ones(N, 2), to_N(N, 1.))])
+    b = BallInf(N[0., 0.], N(2.))
+    cha = ConvexHullArray([Ball1(ones(N, 2), to_N(N, 1.))])
     E = EmptySet{N}()
-    @test CH(a, E) == a
-    @test CH(E, a) == a
+    @test CH(b, E) == CH(E, b) == b
+    @test CH(cha, E) == CH(E, cha) == cha
 
     # concatenation of two convex hull arrays
-    @test CH(a, a) isa ConvexHullArray
+    @test CH(cha, cha) isa ConvexHull
 
     # array getter
-    v = Vector{N}(0)
-    @test array(ConvexHullArray()) == v
+    v = Vector{LazySet{N}}(0)
+    @test array(ConvexHullArray(v)) ≡ v
+
+    # in-place modification
+    cha = ConvexHullArray(LazySet{N}[])
+    @test ConvexHull!(b, b) isa ConvexHull && length(array(cha)) == 0
+    res = ConvexHull!(b, cha)
+    @test res isa ConvexHullArray && length(array(cha)) == 1
+    res = ConvexHull!(cha, b)
+    @test res isa ConvexHullArray && length(array(cha)) == 2
+    res = ConvexHull!(cha, cha)
+    @test res isa ConvexHullArray && length(array(cha)) == 4
 end

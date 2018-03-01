@@ -204,6 +204,7 @@ functions:
 * `MinkowskiSum(arr1, arr2) = MinkowskiSum(arr1, arr2)`
 """
 macro declare_array_version(SET, SETARR)
+    _SET! = Symbol(string(SET), '!')
     @eval begin
         # create function to obtain the array version
         function array_constructor(::Type{$SET})
@@ -215,32 +216,23 @@ macro declare_array_version(SET, SETARR)
             return true
         end
 
-        # create functions to use the array version functions
-        function $SET(X::LazySet{N}, arr::$SETARR{N}) where {N<:Real}
-            return $SETARR(vcat(array(arr), [X]))
+        # create in-place modification functions for array version
+        function $_SET!(X::LazySet{N}, Y::LazySet{N}) where {N<:Real}
+            # no array type: just use the lazy operation
+            return $SET(X, Y)
         end
-        function $SET(arr::$SETARR{N}, X::LazySet{N}) where {N<:Real}
-            return $SETARR(vcat(array(arr), [X]))
+        function $_SET!(X::LazySet{N}, arr::$SETARR{N}) where {N<:Real}
+            push!(array(arr), X)
+            return arr
         end
-        function $SET(arr1::$SETARR{N}, arr2::$SETARR{N}) where {N<:Real}
-            return $SETARR(vcat(array(arr2), array(arr2)))
+        function $_SET!(arr::$SETARR{N}, X::LazySet{N}) where {N<:Real}
+            push!(array(arr), X)
+            return arr
         end
-
-        # TODO modify and re-add this in #250 for $SET!(...)
-#         # create functions for array version
-#         function $SETARR(X::LazySet{N}, arr::$SETARR{N}) where {N<:Real}
-#             push!(array(arr), X)
-#             return arr
-#         end
-#         function $SETARR(arr::$SETARR{N}, X::LazySet{N}) where {N<:Real}
-#             push!(array(arr), X)
-#             return arr
-#         end
-#         function $SETARR(arr1::$SETARR{N}, arr2::$SETARR{N}) where {N<:Real}
-#             append!(array(arr1), array(arr2))
-#             return arr1
-#         end
-
+        function $_SET!(arr1::$SETARR{N}, arr2::$SETARR{N}) where {N<:Real}
+            append!(array(arr1), array(arr2))
+            return arr1
+        end
         # handle method ambiguities with neutral elements
         if isdefined(:neutral) && method_exists(neutral, (Type{$SET},))
             @eval(@array_neutral($(esc(SET)),

@@ -116,9 +116,21 @@ for N in [Float64, Float32, Rational{Int}]
     cpa = CartesianProductArray(v)
 
     # array getter
-    @test array(cpa) == v
+    @test array(cpa) ≡ v
 
     # membership
     @test ∈(N[1., 2., 3., 4.], cpa)
     @test !∈(N[3., 4., 1., 2.], cpa)
+
+    # in-place modification
+    b = BallInf(N[0., 0.], N(2.))
+    cpa = CartesianProductArray(LazySet{N}[])
+    @test CartesianProduct!(b, b) isa CartesianProduct &&
+          length(array(cpa)) == 0
+    res = CartesianProduct!(b, cpa)
+    @test res isa CartesianProductArray && length(array(cpa)) == 1
+    res = CartesianProduct!(cpa, b)
+    @test res isa CartesianProductArray && length(array(cpa)) == 2
+    res = CartesianProduct!(cpa, cpa)
+    @test res isa CartesianProductArray && length(array(cpa)) == 4
 end

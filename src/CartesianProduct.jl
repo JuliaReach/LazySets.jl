@@ -2,6 +2,7 @@ import Base:*, ×, ∈
 
 export CartesianProduct,
        CartesianProductArray,
+       CartesianProduct!,
        array
 
 """

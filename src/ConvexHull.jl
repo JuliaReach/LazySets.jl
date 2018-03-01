@@ -4,6 +4,7 @@ export ConvexHull, CH,
        convex_hull,
        convex_hull!,
        ConvexHullArray, CHArray,
+       ConvexHull!,
        array
 
 """

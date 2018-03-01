@@ -51,14 +51,26 @@ for N in [Float64, Rational{Int}, Float32]
     @test ρ(N[-1.], ms) == N(-6.)
 
     # array getter
-    v = Vector{N}(0)
-    @test array(MinkowskiSumArray()) == v
+    v = Vector{LazySet{N}}(0)
+    @test array(MinkowskiSumArray(v)) ≡ v
 
     # neutral and absorbing element
     z = ZeroSet{N}(2)
     e = EmptySet{N}()
     b = BallInf(N[0., 0.], N(2.))
+    msa = MinkowskiSumArray(LazySet{N}[])
     @test b + z == z + b == b
-    @test b + e == e + b == e + e == e
+    @test msa + z == z + msa == msa
+    @test b + e == e + b == msa + e == e + msa == e + e == e
     @test z + e == e + z == e
+
+    # in-place modification
+    msa = MinkowskiSumArray(LazySet{N}[])
+    @test MinkowskiSum!(b, b) isa MinkowskiSum && length(array(msa)) == 0
+    res = MinkowskiSum!(b, msa)
+    @test res isa MinkowskiSumArray && length(array(msa)) == 1
+    res = MinkowskiSum!(msa, b)
+    @test res isa MinkowskiSumArray && length(array(msa)) == 2
+    res = MinkowskiSum!(msa, msa)
+    @test res isa MinkowskiSumArray && length(array(msa)) == 4
 end
