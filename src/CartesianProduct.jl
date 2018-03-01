@@ -58,16 +58,7 @@ CartesianProduct(Xarr::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
     *(X::LazySet, Y::LazySet)
 ```
 
-Return the Cartesian product of two convex sets.
-
-### Input
-
-- `X` -- convex set
-- `Y` -- convex set
-
-### Output
-
-The Cartesian product of the two convex sets.
+Alias for the binary Cartesian product.
 """
 *(X::LazySet, Y::LazySet) = CartesianProduct(X, Y)
 
@@ -76,7 +67,7 @@ The Cartesian product of the two convex sets.
 
 Alias for the binary Cartesian product.
 """
-×(X::LazySet, Y::LazySet) = *(X, Y)
+×(X::LazySet, Y::LazySet) = CartesianProduct(X, Y)
 
 """
     dim(cp::CartesianProduct)::Int
