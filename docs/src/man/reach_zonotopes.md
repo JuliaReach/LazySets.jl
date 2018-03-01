@@ -7,11 +7,12 @@ Depth = 3
 
 ## Introduction
 
-In this section we present an algorithm implemented using `LazySets` that computes
-the reach sets of an affine ordinary differential equation (ODE). This
-algorithm is from A. Girard's *"Reachability of uncertain linear systems using zonotopes*,
-HSCC. Vol. 5. 2005. We have chosen this algorithm for the purpose of illustration
-of a complete application of `LazySets`.
+In this section we present an algorithm implemented using `LazySets` that
+computes the reach sets of an affine ordinary differential equation (ODE).
+This algorithm is from A. Girard's
+*"Reachability of uncertain linear systems using zonotopes*, HSCC. Vol. 5. 2005.
+We have chosen this algorithm for the purpose of illustration of a complete
+application of `LazySets`.
 
 Let us introduce some notation. Consider the continuous initial set-valued problem
 (IVP)
@@ -25,8 +26,8 @@ in the time interval ``t ∈ [0, T]``, where:
 - ``u(t)`` is a non-deterministic input such that ``\Vert u(t) \Vert_∞ ≦ μ`` for all ``t``,
 - ``x(0) ∈ \mathcal{X}_0``, where ``\mathcal{X}_0`` is a convex set.
 
-Given a step size ``δ``, `Algorithm1` returns a sequence of sets that overapproximates
-the states reachable by any trajectory of this IVP.
+Given a step size ``δ``, `Algorithm1` returns a sequence of sets that
+overapproximates the states reachable by any trajectory of this IVP.
 
 ## Algorithm
 

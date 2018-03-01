@@ -188,7 +188,8 @@ The table entries consist of subsets of the following list of operations.
 - "∩=∅" stands for the intersection emptiness check operation.
 - "(⋅)" indicates that the operation is inherited from a supertype.
 - "[⋅]" indicates that a possible type ambiguity can occur but is resolved.
-- "{⋅}" indicates that a more efficient implementation is used instead of the inherited one.
+- "{⋅}" indicates that a more efficient implementation is used instead of the
+  inherited one.
 
 
 | type ↓ \ type →              |LazyS|AHPon|AHrec|APSym|APSPol|APgon|APtop|ASingle| B1  | B2  |BInf | Bp  |Ellip|EmpSt|HPgon|HPtop|Hrect |Single |VPgon|ZeroSet|Zonot| CP  | CPA | CH  | CHA |EMap | EPM |HalfS|HypPl|Inter|LMap |MSum | MSA | SIH |

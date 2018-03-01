@@ -154,8 +154,9 @@ end
 ## Example
 
 We consider an extension of the example presented in
-[*Reachability of uncertain linear systems using zonotopes*, A. Girard, HSCC. Vol. 5. 2005]
-to a hybrid system with two modes ``\ell_i``, ``i = 1, 2``, with initial states
+*Reachability of uncertain linear systems using zonotopes*, A. Girard, HSCC.
+Vol. 5. 2005 to a hybrid system with two modes ``\ell_i``, ``i = 1, 2``, with
+initial states
 ``[0.9, 1.1] \times [-0.1, 0.1]`` and uncertain inputs from a set ``u`` with
 ``\mu = \Vert u \Vert_\infty = 0.001``.
 

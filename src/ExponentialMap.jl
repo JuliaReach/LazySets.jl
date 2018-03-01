@@ -180,7 +180,7 @@ Check whether a given point is contained in an exponential map of a convex set.
 ### Input
 
 - `x`  -- point/vector
-- `em` -- linear map of a convex set
+- `em` -- exponential map of a convex set
 
 ### Output
 

@@ -2,7 +2,8 @@
 
 This section of the manual describes an approximation method for an arbitrary
 two-dimensional convex set ``S`` and a given error bound ``ɛ`` using support
-vectors. The basic idea is to add new supporting directions whenever the approximation
+vectors.
+The basic idea is to add new supporting directions whenever the approximation
 error is still bigger than ``ɛ``.
 
 ```@contents
@@ -19,24 +20,24 @@ end
 
 ## Local approximations
 
-The polygonal approximation of an arbitrary lazy convex set `S` is represented by a
-list of local approximations or refinements. More precisely, a
-*local approximation* is a triple ``(p_1, p_2, q)``, where:
+The polygonal approximation of an arbitrary lazy convex set `S` is represented
+by a list of local approximations or refinements.
+More precisely, a *local approximation* is a triple ``(p_1, p_2, q)``, where:
 
 - ``p_1`` and ``p_2`` belong to ``S``
 - the segments ``(p_1 q)`` and ``(p_2 q)`` belong to support lines of ``S``
 
-Since ``S`` is assumed to be convex, the segment ``(p_1 p_2)`` is
-inside ``S``. Taking each support line ``(p_1 q)`` of a given list of local
-approximations of ``S``, we can build a polygon in constraint representation
-that makes a overapproximation of `S`.
+Since ``S`` is assumed to be convex, the segment ``(p_1 p_2)`` is inside ``S``.
+Taking each support line ``(p_1 q)`` of a given list of local approximations of
+``S``, we can build a polygon in constraint representation that overapproximates
+`S`.
 
-The type `LocalApproximation{N}` implements a local
-approximation; it is parametric in the numeric type `N`, and also contains additional
-information regarding the quality of the approximation: the `refinable` field
-is a boolean that is `true` whenever the approximation can be improved, and
-`err` is an upper bound on the exact Hausdorff distance of the approximation with
-respect to the exact set `S`.
+The type `LocalApproximation{N}` implements a local approximation; it is
+parametric in the numeric type `N`, and also contains additional information
+regarding the quality of the approximation:
+The `refinable` field is a boolean that is `true` whenever the approximation can
+be improved, and `err` is an upper bound on the exact Hausdorff distance of the
+approximation with respect to the exact set `S`.
 
 Given the unit ball in the 2-norm, below we plot the local approximation along
 the East and North directions.
@@ -64,11 +65,13 @@ plot!(x->-x, x->x+1, -1.2, .2, line=1., color="black", linestyle=:dashdot)
 plot!(x->x+.6, x->x+.6, -.1, .08, line=1, color="red", linestyle=:solid, arrow=true)
 ```
 
-We can instantiate and append this approximation to a fresh `PolygonalOverapproximation`
-object, which is a type that wraps a set and a list of `LocalApproximation`s.
-The approximation is refinable, since it can be "split" along `ndir`, where `ndir`
-is the direction normal to the line ``(p_1 p_2)`` (shown dash-dotted in the figure),
-providing two approximations which are closer to the given set in Hausdorff distance.
+We can instantiate and append this approximation to a fresh
+`PolygonalOverapproximation` object, which is a type that wraps a set and a list
+of `LocalApproximation`s.
+The approximation is refinable, since it can be "split" along `ndir`, where
+`ndir` is the direction normal to the line ``(p_1 p_2)`` (shown dash-dotted in
+the figure), providing two approximations which are closer to the given set in
+Hausdorff distance.
 
 
 ```@example example_iterative_refinement
@@ -83,7 +86,8 @@ approx_EAST_NORTH.refinable
 
 The associated error is ``\sqrt{2}-1≈0.414213``, which is the distance between
 the point ``q`` and the intersection between the line ``(0 q)`` and the circle.
-Actually this point corresponds to the support vector of the set `b` along `ndir`.
+Actually this point corresponds to the support vector of the set `b` along
+`ndir`.
 
 ```@example example_iterative_refinement
 approx_EAST_NORTH.err
@@ -127,9 +131,9 @@ plot(b, 1e-3, aspectratio=1, alpha=0.3)
 plot!(tohrep(Ω), alpha=0.2, color="orange")
 ```
 
-We call `r1` and `r2` the right and left approximations respectively, since
-they are saved in counter-clockwise order. We can check that the first two
-approximations are still refinable.
+We call `r1` and `r2` the right and left approximations respectively, since they
+are saved in counter-clockwise order.
+We can check that the first two approximations are still refinable.
 
 ```@example example_iterative_refinement
 Ω.approx_list[1].refinable,  Ω.approx_list[2].refinable
@@ -146,9 +150,9 @@ plot(b, 1e-3, aspectratio=1, alpha=0.3)
 plot!(tohrep(Ω), alpha=0.2, color="orange")
 ```
 
-The criterion for an approximation being refinable is that we can properly define
-a normal direction `ndir`. This boils down to checking for the following
-"degenerate" cases:
+The criterion for an approximation being refinable is that we can properly
+define a normal direction `ndir`.
+This boils down to checking for the following "degenerate" cases:
 
 1. ``p_1`` and ``p_2`` overlap.
 2. ``p_1`` and ``q`` overlap.
@@ -166,15 +170,15 @@ The algorithm consists of the following steps:
 
 1. *Initialization*. The approximation is initialized with box directions,
    i.e. it starts with four `LocalApproximation` objects. Let `i=1`.
-2. *Refinement loop*. If the local approximation at index `i` has an error greater
-   than the threshold `ε`, then refine. Otherwise, increment `i <- i+1`.
+2. *Refinement loop*. If the local approximation at index `i` has an error
+   greater than the threshold `ε`, then refine. Otherwise, increment `i <- i+1`.
 3. *Redundancy check*. Insert the refined right approximation at position `i`,
-   and check whether the left approximation is redundant or not with respect to the one
-   at position `i+1`. Checking for redundancy amounts to checking for overlap of both
-   `p1` and `q`. Then, either substitute at `i+1` or insert (keeping the approximation
-    at `i+1`) depending on the redundancy check.
-4. *Stopping criterion*. Terminate if the index `i` exceeds the current length of
-   the approximations list; otherwise continue with step 2.
+   and check whether the left approximation is redundant or not with respect to
+   the one at position `i+1`. Checking for redundancy amounts to checking for
+   overlap of both `p1` and `q`. Then, either substitute at `i+1` or insert
+   (keeping the approximation at `i+1`) depending on the redundancy check.
+4. *Stopping criterion*. Terminate if the index `i` exceeds the current length
+   of the approximations list; otherwise continue with step 2.
 
 Observe that the algorithm finishes when all approximations are such that
 their associated error is smaller than `ε`, hence the Hausdorff distance between
@@ -182,8 +186,8 @@ their associated error is smaller than `ε`, hence the Hausdorff distance betwee
 
 ## Example
 
-As a final example consider the iterative refinement of the ball `b` for different
-values of the approximation threshold `ε`.
+As a final example consider the iterative refinement of the ball `b` for
+different values of the approximation threshold `ε`.
 
 ```@example example_iterative_refinement
 import LazySets.Approximations:overapproximate, approximate
@@ -208,8 +212,9 @@ g = ε -> f([ai.err for ai in approximate(b, ε).approx_list])
 g(1.), g(0.1), g(0.01)
 ```
 
-Meanwhile, the number of constraints of the polygonal overapproximation increases,
-in this example by a power of 2 when the error is divided by a factor 10.
+Meanwhile, the number of constraints of the polygonal overapproximation
+increases, in this example by a power of 2 when the error is divided by a factor
+10.
 
 ```@example example_iterative_refinement
 h = ε ->  length(approximate(b, ε).approx_list)
@@ -218,8 +223,9 @@ h(1.), h(0.1), h(0.01)
 
 !!! note
     Actually, the plotting function for an arbitrary `LazySet` `plot(...)`,
-    called *recipe* in the context of [Plots.jl](https://github.com/JuliaPlots/Plots.jl),
-    is such that it receives a numeric argument `ε` and the routine itself calls
-    `overapproximate`. However, some sets such as abstract polygons have
-    their own plotting recipe hence don't require the error threshold, since
-    they are plotted exactly as the convex hull of their vertices.
+    called *recipe* in the context of
+    [Plots.jl](https://github.com/JuliaPlots/Plots.jl), is such that it receives
+    a numeric argument `ε` and the routine itself calls `overapproximate`.
+    However, some sets such as abstract polygons have their own plotting recipe
+    hence do not require the error threshold, since they are plotted exactly as
+    the convex hull of their vertices.

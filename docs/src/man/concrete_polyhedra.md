@@ -1,17 +1,20 @@
 # Concrete Polyhedra
 
 The focus of `LazySets.jl` is to wrap set representations and operations into
-specialized types, delaying the evaluation of the result of an expression until it is
-necessary. However, sometimes it is necessary to do an explicit computation.
-For concrete operations with polyhedra we rely on the polyhedra manipulation library
-[Polyhedra.jl](https://github.com/JuliaPolyhedra/Polyhedra.jl).
+specialized types, delaying the evaluation of the result of an expression until
+it is necessary.
+However, sometimes it is necessary to do an explicit computation.
+For concrete operations with polyhedra we rely on the polyhedra manipulation
+library [Polyhedra.jl](https://github.com/JuliaPolyhedra/Polyhedra.jl).
 
 Actually, `Polyhedra.jl` provides a unified interface to well-known
-implementations of polyhedral computations, such as CDD or LRS (see the
-complete list [in the documentation of `Polyhedra.jl`](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)).
-This is a great advantage because we can easily use a library that supports floating
-point arithmetic, rational arithmetic, multiple precision, etc.
-The libraries also include projection and elimination of variables through Fourier-Motzkin.
+implementations of polyhedral computations, such as CDD or LRS (see the complete
+list in
+[the documentation of `Polyhedra.jl`](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)).
+This is a great advantage because we can easily use a library that supports
+floating point arithmetic, rational arithmetic, multiple precision, etc.
+The libraries also include projection and elimination of variables through
+Fourier-Motzkin.
 
 Below we give examples of operations that are actually done via `Polyhedra.jl`.
 
@@ -75,7 +78,8 @@ typeof(y)
 ```
 
 Moreover, you can specify the backend with an extra argument.
-For instance, we can use an exact representation through the `CDDLibrary(:exact)`:
+For instance, we can use an exact representation through the
+`CDDLibrary(:exact)`:
 
 ```@example concrete_polyhedra
 A, b = Rational{Int}[1 1;1 -1;-1 0], Rational{Int}[1,0,0]
@@ -86,7 +90,8 @@ polyhedron(p, CDDLib.CDDLibrary(:exact))
 
 ## Methods
 
-The utility methods available are convex hull, intersection and cartesian product.
+The utility methods available are convex hull, intersection and cartesian
+product.
 The dual representation as a list of vertices can be obtained with the
 `vertices_list` function.
 
@@ -113,6 +118,7 @@ plot!(X, 1e-3, alpha=0.4, color="black")
 
 Projection of high-dimensional polyhedra and elimination of variables can be
 performed with the `eliminate` function, which supports three types of methods:
-`:FourierMotzkin`, `:BlockElimination` and `:ProjectGenerators`. See [the documentation
-of Polyhedra.jl](https://juliapolyhedra.github.io/Polyhedra.jl/latest/polyhedron.html#Projecting-a-polyhedron-1)
+`:FourierMotzkin`, `:BlockElimination` and `:ProjectGenerators`.
+See
+[the documentation of Polyhedra.jl](https://juliapolyhedra.github.io/Polyhedra.jl/latest/polyhedron.html#Projecting-a-polyhedron-1)
 for further details.
