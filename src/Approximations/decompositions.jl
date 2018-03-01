@@ -70,12 +70,12 @@ function decompose(S::LazySet{N};
 end
 
 """
-    function project(S::LazySet{N},
-                     block::AbstractVector{Int},
-                     set_type::Type{<:LazySet},
-                     [n]::Int=dim(S),
-                     [ɛ]::Real=Inf
-                    )::LazySet{N} where {N<:Real}
+    project(S::LazySet{N},
+            block::AbstractVector{Int},
+            set_type::Type{<:LazySet},
+            [n]::Int=dim(S),
+            [ɛ]::Real=Inf
+           )::LazySet{N} where {N<:Real}
 
 Default implementation for projecting a high-dimensional set to a given set type
 with possible overapproximation.
@@ -109,12 +109,12 @@ A set of type `set_type` representing an overapproximation of the projection of
 end
 
 """
-    function project(S::LazySet{N},
-                     block::AbstractVector{Int},
-                     set_type::Type{<:HPolygon},
-                     [n]::Int=dim(S),
-                     [ɛ]::Real=Inf
-                    )::HPolygon where {N<:Real}
+    project(S::LazySet{N},
+            block::AbstractVector{Int},
+            set_type::Type{<:HPolygon},
+            [n]::Int=dim(S),
+            [ɛ]::Real=Inf
+           )::HPolygon where {N<:Real}
 
 Project a high-dimensional set to a two-dimensional polygon with a certified
 error bound.
@@ -177,12 +177,12 @@ If `ɛ == Inf`, the algorithm uses a box approximation.
 end
 
 """
-    function project(S::LazySet{N},
-                     block::AbstractVector{Int},
-                     set_type::Type{<:Hyperrectangle},
-                     [n]::Int=dim(S),
-                     [ɛ]::Real=Inf
-                    )::Hyperrectangle where {N<:Real}
+    project(S::LazySet{N},
+            block::AbstractVector{Int},
+            set_type::Type{<:Hyperrectangle},
+            [n]::Int=dim(S),
+            [ɛ]::Real=Inf
+           )::Hyperrectangle where {N<:Real}
 
 Project a high-dimensional set to a low-dimensional hyperrectangle.
 
