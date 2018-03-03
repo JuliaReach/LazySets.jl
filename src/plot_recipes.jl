@@ -30,7 +30,7 @@ plotting singletons.
                               color="blue", label="", grid=true, alpha=0.5)
 
     P = Approximations.overapproximate(S)
-    vlist = hcat(vertices_list(P)...).'
+    vlist = hcat(convex_hull(vertices_list(P))...).'
     (x, y) = vlist[:, 1], vlist[:, 2]
 
     seriestype := norm(vlist[1, :] - vlist[2, :]) ≈ 0 ? :scatter : :shape
