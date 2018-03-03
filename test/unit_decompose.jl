@@ -25,13 +25,20 @@ for N in [Float64, Float32] # TODO Rational{Int}
     # ======================================
     # Run decompose for different set types
     # ======================================
+    function test_directions(set)
+        res = σ(N[1, 0], set)[1] == one(N)
+        res &= σ(N[0, 1], set)[2] == one(N)
+        res &= σ(N[-1, 0], set)[1] == -one(N)
+        res &= σ(N[0, -1], set)[2] == -one(N)
+        return res
+    end
     b = BallInf(zeros(N, 6), one(N))
     d = decompose(b, set_type=HPolygon)
-    @test d.array[1] isa HPolygon
+    @test d.array[1] isa HPolygon && test_directions(d.array[1])
     d = decompose(b, set_type=Hyperrectangle)
-    @test d.array[1] isa Hyperrectangle
+    @test d.array[1] isa Hyperrectangle && test_directions(d.array[1])
     d = decompose(b, set_type=HPolygon, ɛ=to_N(N, 1e-2))
-    @test d.array[1] isa HPolygon
+    @test d.array[1] isa HPolygon && test_directions(d.array[1])
 
     # ===================
     # 1D/3D decomposition
@@ -41,4 +48,14 @@ for N in [Float64, Float32] # TODO Rational{Int}
     @test length(d.array) == 7
     d = decompose(b, set_type=Hyperrectangle, blocks=[1,2,3,1])
     @test length(d.array) == 4
+
+    # =======================
+    # default block structure
+    # =======================
+    # even dimension
+    b = BallInf(zeros(N, 6), one(N))
+    d = decompose(b)
+    # odd dimension
+    b = BallInf(zeros(N, 7), one(N))
+    d = decompose(b)
 end
