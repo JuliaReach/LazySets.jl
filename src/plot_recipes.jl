@@ -79,7 +79,7 @@ correctly.
 
     for S in arr
         Pi = Approximations.overapproximate(S)
-        vlist = hcat(convex_hull(vertices_list(P))...).'
+        vlist = hcat(convex_hull(vertices_list(Pi))...).'
         @series (x, y) = vlist[:, 1], vlist[:, 2]
     end
 end
