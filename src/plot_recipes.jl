@@ -19,6 +19,13 @@ julia> B = BallInf(ones(2), 0.1)
 julia> plot(2.0 * B)
 ```
 
+### Algorithm
+
+For any 2D lazy set we compute its box overapproximation, followed by the list of
+vertices. A post-processing `convex_hull` is applied to the vertices list;
+this ensures that the shaded area inside the convex hull of the vertices is covered
+correctly.
+
 ### Notes
 
 This recipe detects if the axis-aligned approximation is such that the first two
