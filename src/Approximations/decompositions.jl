@@ -210,5 +210,5 @@ The box approximation of the projection of `S`.
         high[i] = σ(sparsevec([block[i]], [one(N)], n), S)[block[i]]
         low[i] = σ(sparsevec([block[i]], [-one(N)], n), S)[block[i]]
     end
-    return Hyperrectangle(high, low)
+    return Hyperrectangle(high=high, low=low)
 end
