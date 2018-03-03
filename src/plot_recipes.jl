@@ -19,6 +19,13 @@ julia> B = BallInf(ones(2), 0.1)
 julia> plot(2.0 * B)
 ```
 
+### Algorithm
+
+For any 2D lazy set we compute its box overapproximation, followed by the list of
+vertices. A post-processing `convex_hull` is applied to the vertices list;
+this ensures that the shaded area inside the convex hull of the vertices is covered
+correctly.
+
 ### Notes
 
 This recipe detects if the axis-aligned approximation is such that the first two
@@ -30,7 +37,7 @@ plotting singletons.
                               color="blue", label="", grid=true, alpha=0.5)
 
     P = Approximations.overapproximate(S)
-    vlist = hcat(vertices_list(P)...).'
+    vlist = hcat(convex_hull(vertices_list(P))...).'
     (x, y) = vlist[:, 1], vlist[:, 2]
 
     seriestype := norm(vlist[1, :] - vlist[2, :]) ≈ 0 ? :scatter : :shape
@@ -56,6 +63,13 @@ julia> B1 = BallInf(zeros(2), 0.4)
 julia> B2 = BallInf(ones(2), 0.4)
 julia> plot([B1, B2])
 ```
+
+### Algorithm
+
+For each 2D lazy set in the array we compute its box overapproximation, followed
+by the list of vertices. A post-processing `convex_hull` is applied to the vertices list;
+this ensures that the shaded area inside the convex hull of the vertices is covered
+correctly.
 """
 @recipe function plot_lazyset(arr::Vector{<:LazySet};
                               seriescolor="blue", label="", grid=true,
@@ -65,7 +79,7 @@ julia> plot([B1, B2])
 
     for S in arr
         Pi = Approximations.overapproximate(S)
-        vlist = hcat(vertices_list(Pi)...).'
+        vlist = hcat(convex_hull(vertices_list(Pi))...).'
         @series (x, y) = vlist[:, 1], vlist[:, 2]
     end
 end
