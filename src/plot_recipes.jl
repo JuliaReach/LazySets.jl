@@ -63,6 +63,13 @@ julia> B1 = BallInf(zeros(2), 0.4)
 julia> B2 = BallInf(ones(2), 0.4)
 julia> plot([B1, B2])
 ```
+
+### Algorithm
+
+For each 2D lazy set in the array we compute its box overapproximation, followed
+by the list of vertices. A post-processing `convex_hull` is applied to the vertices list;
+this ensures that the shaded area inside the convex hull of the vertices is covered
+correctly.
 """
 @recipe function plot_lazyset(arr::Vector{<:LazySet};
                               seriescolor="blue", label="", grid=true,
@@ -72,7 +79,7 @@ julia> plot([B1, B2])
 
     for S in arr
         Pi = Approximations.overapproximate(S)
-        vlist = hcat(vertices_list(Pi)...).'
+        vlist = hcat(convex_hull(vertices_list(P))...).'
         @series (x, y) = vlist[:, 1], vlist[:, 2]
     end
 end
