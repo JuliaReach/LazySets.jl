@@ -8,7 +8,8 @@ Name alias for the interval arithmetic library.
 const IA = IntervalArithmetic
 
 export Interval, IA,
-       dim, σ, center, +, -, *, low, high, vertices_list
+       dim, σ, center, +, -, *, ∈, ⊆,
+       low, high, vertices_list
 
 """
     Interval{N, IN <: IA.AbstractInterval{N}} <: LazySet{N}
@@ -116,13 +117,16 @@ Return the interval's center.
 
 The center, or midpoint, of ``x``.
 """
-center(x::Interval) = IA.mid(x.dat)
+center(x::Interval) = [IA.mid(x.dat)]
 
-import Base:+, -, *
+import Base:+, -, *, ∈, ⊆
 
 +(x::Interval, y::Interval) = Interval(x.dat + y.dat)
 -(x::Interval, y::Interval) = Interval(x.dat - y.dat)
 *(x::Interval, y::Interval) = Interval(x.dat * y.dat)
+∈(v::AbstractVector, x::Interval) = v[1] ∈ x.dat
+∈(v::N, x::Interval) where {N} = v ∈ x.dat
+⊆(x::Interval, y::Interval) = x.dat ⊆ y.dat
 
 """
     low(x::Interval)
@@ -168,5 +172,6 @@ Return the list of vertices of this interval.
 The list of vertices of the interval represented as two one-dimensional vectors.
 """
 vertices_list(x::Interval) = [[low(x)], [high(x)]]
+
 
 end
