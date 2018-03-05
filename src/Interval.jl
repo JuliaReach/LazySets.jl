@@ -1,4 +1,8 @@
-@require IntervalArithmetic begin
+using IntervalArithmetic
+
+# the require block is messed up when using it in Approximations too
+#@require IntervalArithmetic begin ... end
+
 
 """
     IA = IntervalArithmetic
@@ -172,6 +176,3 @@ Return the list of vertices of this interval.
 The list of vertices of the interval represented as two one-dimensional vectors.
 """
 vertices_list(x::Interval) = [[low(x)], [high(x)]]
-
-
-end

@@ -117,6 +117,7 @@ function overapproximate(S::ConvexHull{N, Zonotope{N}, Zonotope{N}},
 end
 
 @require IntervalArithmetic begin
+
 """
     overapproximate(S::LazySets.Interval{N, IN}, ::Type{Hyperrectangle}) where {N, IN <: IA.AbstractInterval{N}}
 
@@ -132,7 +133,7 @@ which is a no-op.
 
 A hyperrectangle.
 """
-function overapproximate(S::LazySets.Interval{N, IN}, ::Type{Hyperrectangle}) where {N, IN <: IntervalArithmetic.AbstractInterval{N}}
-    return Hyperrectangle(low=[low(x)], high=[high(x)])
+function overapproximate(S::LazySets.Interval, ::Type{Hyperrectangle})
+    return Hyperrectangle(low=[low(S)], high=[high(S)])
 end
 end
