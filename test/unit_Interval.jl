@@ -10,10 +10,17 @@ x = LazySets.Interval(0.0, 1.0)
 x = LazySets.Interval(0.0, 1.0)
 
 @test dim(x) == 1
-@test center(x) == 0.5
+@test center(x) == [0.5]
 @test low(x) == 0.0 && high(x) == 1.0
 v = vertices_list(x)
 @test [0.0] in v && [1.0] in v
+# test interface method an_element and membership
+@test an_element(x) ∈ x
+# test containment
+@test (x ⊆ x) && !(x ⊆ 0.2 * x) && (x ⊆ 2. * x)
+@test issubset(x, LazySets.Interval(0.0, 2.0))
+@test !issubset(x, LazySets.Interval(-1.0, 0.5))
+
 
 # + operator (= concrete Minkowski sum of intervals)
 y = LazySets.Interval(-2.0, 0.5)
