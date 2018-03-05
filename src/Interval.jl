@@ -51,6 +51,10 @@ or from a 2-vector:
 julia> x = LazySets.Interval([0.0, 1.0])
 LazySets.Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
 ```
+
+This type is such that the usual pairwise arithmetic operators `+`, `-`, `*` trigger
+the corresponding interval arithmetic backend method, and return a new
+`Interval` object. For the symbolic Minkowksi sum, use `MinkowskiSum` or `⊕`.
 """
 struct Interval{N, IN <: IA.AbstractInterval{N}} <: AbstractPointSymmetricPolytope{N}
    dat::IN
@@ -149,7 +153,6 @@ Return the higher or upper component of an interval.
 The higher (`hi`) component of the interval.
 """
 high(x::Interval) = x.dat.hi
-
 
 """
     vertices_list(x::Interval)
