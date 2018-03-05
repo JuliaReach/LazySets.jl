@@ -1,7 +1,5 @@
 @require IntervalArithmetic begin
 
-import IntervalArithmetic.AbstractInterval
-
 """
     IA = IntervalArithmetic
 
@@ -23,25 +21,49 @@ Type representing an interval on the real line.
 
 ### Examples
 
+Unidimensional intervals are symbolic representations of a real closed interval.
+This type required the user to load the `IntervalArithmetic` library, since
+artithmetic operations rely on that module.
+
+We can create intervals in different ways.
+
 ```jldoctest interval_constructor
 julia> using LazySets, IntervalArithmetic
 
-julia> x = LazySets.Interval(IA.Interval(0.0, 1.0))
+julia> x = LazySets.Interval(IntervalArithmetic.Interval(0.0, 1.0))
 LazySets.Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
-
 julia> dim(x)
 1
-
 julia> center(x)
 0.5
 ```
+Note that we have to prepend the `LazySets` to the interval type, since there is
+a name conflict otherwise. But we can as well construct an interval from a pair
+of numbers:
+
+```jldoctest interval_constructor
+julia> x = LazySets.Interval(0.0, 1.0)
+LazySets.Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
+```
+or from a 2-vector:
+
+```jldoctest interval_constructor
+julia> x = LazySets.Interval([0.0, 1.0])
+LazySets.Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
+```
 """
-struct Interval{N, IN <: AbstractInterval{N}} <: AbstractPointSymmetricPolytope{N}
+struct Interval{N, IN <: IA.AbstractInterval{N}} <: AbstractPointSymmetricPolytope{N}
    dat::IN
 end
 # type-less convenience constructor
-Interval{N, IN <: AbstractInterval{N}}(interval::IN) = Interval{N, IN}(interval)
+Interval{N, IN <: IA.AbstractInterval{N}}(interval::IN) = Interval{N, IN}(interval)
 # TODO: adapt show method
+
+# constructor that takes two numbers
+Interval(lo::N, hi::N) where {N} = Interval(IA.Interval(lo, hi))
+
+# constructor from a vector
+Interval(x::AbstractVector{N}) where {N} = Interval(IA.Interval(x[1], x[2]))
 
 """
     dim(x::Interval)::Int
@@ -81,7 +103,7 @@ import LazySets.center
 """
     center(x::Interval)
 
-Return the center of ther interval.
+Return the interval's center.
 
 ### Input
 
@@ -143,6 +165,6 @@ Return the list of vertices of this interval.
 
 The list of vertices of the interval represented as two one-dimensional vectors.
 """
-vertices_list(x::Interval) = [[low(x::Interval)], [high(x::Interval)]]
+vertices_list(x::Interval) = [[low(x)], [high(x)]]
 
 end
