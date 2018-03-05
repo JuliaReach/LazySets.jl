@@ -46,7 +46,12 @@ v = vertices_list(p)
 r = (x + y) - (d + p)
 @test low(r) == -5.5 && high(r) == 4.0
 
-# Minkowski sum
+# Minkowski sum (test that we get the same results as the concrete operation)
+m = x ⊕ y
+@test m isa MinkowskiSum
+@test dim(m) == 1
+@test σ([1.0], m) == [1.5]
+@test σ([-1.0], m) == [-2.0]
 
 # cartesian product
 cp = x × y
