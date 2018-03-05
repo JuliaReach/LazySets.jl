@@ -95,10 +95,9 @@ Return the support vector of an ellipsoid in a given direction.
 Support vector in the given direction.
 """
 function σ(d::AbstractVector{N}, x::Interval{N, IN})::AbstractVector{N} where {N, IN <: IA.AbstractInterval{N}}
+    @assert length(d) == dim(x)
     return d[1] > 0 ? [x.dat.hi] : [x.dat.lo]
 end
-
-import LazySets.center
 
 """
     center(x::Interval)
