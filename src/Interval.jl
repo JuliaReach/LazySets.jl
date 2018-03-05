@@ -22,7 +22,7 @@ Type representing an interval on the real line.
 ### Examples
 
 Unidimensional intervals are symbolic representations of a real closed interval.
-This type required the user to load the `IntervalArithmetic` library, since
+This type requires the user to load the `IntervalArithmetic` library, since
 artithmetic operations rely on that module.
 
 We can create intervals in different ways.
