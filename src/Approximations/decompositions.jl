@@ -26,7 +26,7 @@ end
 
 """
     decompose(S::LazySet{N};
-              [set_type]::Type{<:Union{Hyperrectangle, HPolygon}}=Hyperrectangle,
+              [set_type]::Type{<:Union{HPolygon, Hyperrectangle, LazySets.Interval}}=Hyperrectangle,
               [ɛ]::Real=Inf,
               [blocks]::AbstractVector{Int}=default_block_structure(S)
              )::CartesianProductArray where {N<:Real}
@@ -54,7 +54,7 @@ For each block a specific `project` method is called, dispatched on the
 `set_type` argument.
 """
 function decompose(S::LazySet{N};
-                   set_type::Type{<:Union{Hyperrectangle, HPolygon}}=Hyperrectangle,
+                   set_type::Type{<:Union{HPolygon, Hyperrectangle, LazySets.Interval}}=Hyperrectangle,
                    ɛ::Real=Inf,
                    blocks::AbstractVector{Int}=default_block_structure(S)
                   )::CartesianProductArray where {N<:Real}
