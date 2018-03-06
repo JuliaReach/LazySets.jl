@@ -103,8 +103,7 @@ A hyperrectangle.
 ### Examples
 
 ```jldoctest convert_hyperrectangle_interval
-julia> using IntervalArithmetic
-julia> convert(Hyperrectangle, LazySets.Interval(0.0, 1.0))
+julia> convert(Hyperrectangle, Interval(0.0, 1.0))
 LazySets.Hyperrectangle{Float64}([0.5], [0.5])
 ```
 """
