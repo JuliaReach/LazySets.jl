@@ -63,6 +63,10 @@ projections.
 For each block a specific `project` method is called, dispatched on the
 `set_type` argument.
 
+### Notes
+
+If `block_types` is given, the options `set_type` and `blocks` are ignored.
+
 ### Examples
 
 The `decompose` function supports different options, such as: supplying different
@@ -153,7 +157,6 @@ For example:
 
 ```jldoctest decompose_examples
 julia> S = Ball2(zeros(3), 1.);
-
 julia> array(decompose(S, block_types=Dict(Interval=>[1:1], Hyperrectangle=>[2:3])))
 
 2-element Array{LazySets.Hyperrectangle{Float64},1}:
@@ -164,13 +167,15 @@ julia> array(decompose(S, block_types=Dict(Interval=>[1:1], Hyperrectangle=>[2:3
 We can the options, and the ``ε`` is passed to the `HPolygon` if it corresponds:
 
 ```jldoctest decompose_examples
-julia> S = Ball2(zeros(5), 1.);
-julia> bt = Dict(Interval=>[1:1], Hyperrectangle=>[2:3], HPolygon=>[2:3]);
-julia> [typeof(ai) for ai in array(decompose(S, block_types=bt, ε=0.01)]
+julia> S = Ball2(zeros(8), 1.);
+julia> bt = Dict(Interval=>[1:1], Hyperrectangle=>[2:4], HPolygon=>[5:6, 7:8]);
+julia> [typeof(ai) for ai in array(decompose(S, block_types=bt, ε=0.01))]
 
-LazySets.Interval{Float64,IntervalArithmetic.Interval{Float64}}
-LazySets.Hyperrectangle{Float64}
-LazySets.HPolygon{Float64}
+4-element Array{DataType,1}:
+ LazySets.Interval{Float64,IntervalArithmetic.Interval{Float64}}
+ LazySets.Hyperrectangle{Float64}
+ LazySets.HPolygon{Float64}
+ LazySets.HPolygon{Float64}
 ```
 """
 function decompose(S::LazySet{N};
@@ -180,7 +185,7 @@ function decompose(S::LazySet{N};
                    block_types=Dict{Type{<:LazySet}, AbstractVector{<:AbstractVector{Int}}}()
                   )::CartesianProductArray where {N<:Real}
     n = dim(S)
-    result = isempty(block_types) ? Vector{set_type{N}}() : Vector{Union{[ki for ki in keys(block_types)]...}}() # or ki{N} ?
+    result = Vector{LazySet{N}}()
 
     if isempty(block_types)
         block_start = 1
@@ -189,7 +194,27 @@ function decompose(S::LazySet{N};
             block_start += bi
         end
     else
-        error("block_types not implemented")
+        # potentially defined options (set_type, blocks) are *ignored*
+        initial_block_indices = Vector{Int}()
+        blocks = Vector{Int}()
+        set_type = Vector{Type{<:LazySet}}()
+        @inbounds for (key, val) in block_types
+            for bi in val
+                push!(set_type, key)
+                push!(initial_block_indices, bi[1])
+                push!(blocks, bi[end]-bi[1]+1)
+            end
+        end
+        # the second component of this tuple is the starting block index; we
+        # assume that blocks do not overlap
+        s = sortperm(initial_block_indices)
+        blocks = blocks[s]
+        set_type = set_type[s]
+        block_start = 1
+        @inbounds for (i, bi) in enumerate(blocks)
+            push!(result, project(S, block_start:(block_start + bi - 1), set_type[i], n, ɛ))
+            block_start += bi
+        end
     end
     return CartesianProductArray(result)
 end
