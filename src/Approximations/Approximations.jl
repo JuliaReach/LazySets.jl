@@ -6,7 +6,7 @@ support vectors.
 """
 module Approximations
 
-using LazySets
+using LazySets, Requires
 
 export approximate,
        ballinf_approximation,

@@ -115,3 +115,25 @@ function overapproximate(S::ConvexHull{N, Zonotope{N}, Zonotope{N}},
     generators = [(Z1.generators .+ Z2.generators) (Z1.center - Z2.center) (Z1.generators .- Z2.generators)]/2
     return Zonotope(center, generators)
 end
+
+@require IntervalArithmetic begin
+
+"""
+    overapproximate(S::LazySets.Interval{N, IN}, ::Type{Hyperrectangle}) where {N, IN <: IA.AbstractInterval{N}}
+
+Return the overapproximation of a real unidimensional interval with a hyperrectangle,
+which is a no-op.
+
+### Input
+
+- `S` -- one-dimensional interval
+- `Hyperrectangle` for dispatch
+
+### Output
+
+A hyperrectangle.
+"""
+function overapproximate(S::LazySets.Interval, ::Type{Hyperrectangle})
+    return Hyperrectangle(low=[low(S)], high=[high(S)])
+end
+end
