@@ -41,7 +41,7 @@ LazySets.Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
 ```
 
 Note that if the package `IntervalArithmetic` is loaded in the current scope,
-have to prepend the `LazySets` to the interval type, since there is
+you have to prepend the `LazySets` to the interval type, since there is
 a name conflict otherwise.
 
 ```jldoctest interval_constructor
