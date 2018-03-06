@@ -482,7 +482,7 @@ julia> I = Interval(0.0, 1.0)
 julia> plot(I)
 ```
 """
-@recipe function plot_linesegment(I::Interval; color="blue", label="",
+@recipe function plot_linesegment(I::Interval; color=:auto, label="",
                                   grid=true, alpha=0.5, legend=false,
                                   add_marker=true, linewidth=2.)
 
@@ -512,7 +512,7 @@ julia> I2 = Interval([0.5, 2.])
 julia> plot(I1, I2])
 ```
 """
-@recipe function plot_intervals(I::Vector{<:Interval}; color="blue",
+@recipe function plot_intervals(I::Vector{<:Interval}; color=:auto,
                                    label="", grid=true, alpha=0.5, legend=false,
                                    add_marker=true, linewidth=2.)
 
