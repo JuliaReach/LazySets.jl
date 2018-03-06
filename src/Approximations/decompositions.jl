@@ -76,7 +76,7 @@ are exemplified below.
 
 #### Different dimensions
 
-By default, `decompose` returns a Cartesian product of `Hyperrectangle` sets.
+By default, `decompose` returns a Cartesian product of 2D `Hyperrectangle` sets.
 For example:
 
 ```jldoctest decompose_examples
@@ -88,7 +88,7 @@ julia> array(decompose(S))
  LazySets.Hyperrectangle{Float64}([0.0, 0.0], [1.0, 1.0])
 ```
 
-Other block sizes can be specified using the `blocks` option, that refers to
+Other block sizes can be specified using the `blocks` option, which refers to
 each block size of the partition:
 
 ```jldoctest decompose_examples
@@ -112,7 +112,11 @@ julia> [ai isa HPolygon for ai in array(decompose(S, set_type=HPolygon))]
 2-element Array{Bool,1}:
  true
  true
+```
 
+For decomposition into 1D subspaces, we can use `Interval`:
+
+```jldoctest decompose_examples
 julia> [ai isa Interval for ai in array(decompose(S, set_type=Interval))]
 4-element Array{Bool,1}:
  true
@@ -151,7 +155,7 @@ julia> [length(constraints_list(d(ε, 1))) for ε in [Inf, 0.1, 0.01]]
 We can define different set types for different blocks, using the
 optional `block_types` input argument. It is a dictionary where the keys correspond
 to set types, and the values correspond to the blocks, namely the initial and final
-block variables should be given.
+block indices should be given.
 
 For example:
 
@@ -164,7 +168,7 @@ julia> array(decompose(S, block_types=Dict(Interval=>[1:1], Hyperrectangle=>[2:3
  LazySets.Hyperrectangle{Float64}([0.0, 0.0], [1.0, 1.0])
 ```
 
-We can the options, and the ``ε`` is passed to the `HPolygon` if it corresponds:
+We can additionally pass ε, which is automatically used for each `HPolygon` type block.
 
 ```jldoctest decompose_examples
 julia> S = Ball2(zeros(8), 1.);
