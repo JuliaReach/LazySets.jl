@@ -36,7 +36,7 @@ LazySets.Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
 or a 2-vector:
 
 ```jldoctest interval_constructor
-julia> x = LazySets.Interval([0.0, 1.0])
+julia> x = Interval([0.0, 1.0])
 LazySets.Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
 ```
 
@@ -46,12 +46,17 @@ a name conflict otherwise.
 
 ```jldoctest interval_constructor
 julia> using IntervalArithmetic
+WARNING: using IntervalArithmetic.Interval in module Main conflicts with an existing identifier.
+
 julia> x = LazySets.Interval(IntervalArithmetic.Interval(0.0, 1.0))
 LazySets.Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
+
 julia> dim(x)
 1
+
 julia> center(x)
-0.5
+1-element Array{Float64,1}:
+ 0.5
 ```
 
 This type is such that the usual pairwise arithmetic operators `+`, `-`, `*` trigger
@@ -122,11 +127,101 @@ center(x::Interval) = [IA.mid(x.dat)]
 
 import Base:+, -, *, ∈, ⊆
 
+"""
+    +(x::Interval, y::Interval)
+
+Return the sum of the intervals.
+
+### Input
+
+- `x` -- interval
+- `y` -- interval
+
+### Output
+
+The sum of the intervals as a new `Interval` set.
+"""
 +(x::Interval, y::Interval) = Interval(x.dat + y.dat)
+
+"""
+    -(x::Interval, y::Interval)
+
+Return the difference of the intervals.
+
+### Input
+
+- `x` -- interval
+- `y` -- interval
+
+### Output
+
+The difference of the intervals as a new `Interval` set.
+"""
 -(x::Interval, y::Interval) = Interval(x.dat - y.dat)
+
+"""
+```
+    *(x::Interval, y::Interval)
+```
+
+Return the product of the intervals.
+
+### Input
+
+- `x` -- interval
+- `y` -- interval
+
+### Output
+
+The product of the intervals as a new `Interval` set.
+"""
 *(x::Interval, y::Interval) = Interval(x.dat * y.dat)
+
+"""
+    ∈(v::AbstractVector, x::Interval)
+
+Return whether a vector is contained in the interval.
+
+### Input
+
+- `v` -- one-dimensional vector
+- `x` -- interval
+
+### Output
+
+`true` iff `x` contains `v`'s first component.
+"""
 ∈(v::AbstractVector, x::Interval) = v[1] ∈ x.dat
+
+"""
+    ∈(v::N, x::Interval) where {N}
+
+Return whether a number is contained in the interval.
+
+### Input
+
+- `v` -- scalar
+- `x` -- interval
+
+### Output
+
+`true` iff `x` contains `v`.
+"""
 ∈(v::N, x::Interval) where {N} = v ∈ x.dat
+
+"""
+    center(x::Interval)
+
+Return the interval's center.
+
+### Input
+
+- `x` -- interval
+
+### Output
+
+The center, or midpoint, of ``x``.
+"""
 ⊆(x::Interval, y::Interval) = x.dat ⊆ y.dat
 
 """

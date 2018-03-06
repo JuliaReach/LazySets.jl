@@ -131,6 +131,24 @@ high(::Hyperrectangle{Float64})
 low(::Hyperrectangle{Float64})
 ```
 
+## Intervals
+
+```@docs
+Interval
+IA
+dim(::Interval)
+σ(::AbstractVector{Float64}, ::Interval{Float64, IntervalArithmetic.AbstractInterval{Float64}})
+center(::Interval)
+low(::Interval)
+high(::Interval)
+vertices_list(::Interval)
++(::Interval, ::Interval)
+-(::Interval, ::Interval)
+*(::Interval, ::Interval)
+∈(::AbstractVector, ::Interval)
+∈(::Float64, ::Interval)
+```
+
 ## Line
 
 ```@docs
