@@ -400,6 +400,10 @@ julia> plot([Z1, Z2])
     end
 end
 
+# =====================================
+# Plot recipes for lines and intervals
+# =====================================
+
 """
     plot_linesegment(L::LineSegment; ...)
 
@@ -458,5 +462,66 @@ julia> plot([L1, L2])
 
     for Li in L
         @series [Tuple(Li.p); Tuple(Li.q)]
+    end
+end
+
+"""
+    plot_interval(I::Interval; ...)
+
+Plot an interval.
+
+### Input
+
+- `I` -- interval
+
+### Examples
+
+```jldoctest
+julia> using LazySets, Plots
+julia> I = Interval(0.0, 1.0)
+julia> plot(I)
+```
+"""
+@recipe function plot_linesegment(I::Interval; color="blue", label="",
+                                  grid=true, alpha=0.5, legend=false,
+                                  add_marker=true, linewidth=2.)
+
+    seriestype := :path
+    linecolor   --> color
+    markershape --> (add_marker ? :circle : :none)
+    markercolor --> color
+
+    [Tuple([low(I), 0.0]); Tuple([high(I), 0.0])]
+end
+
+"""
+    plot_intervals(I::Vector{<:Interval}; ...)
+
+Plot an array of intervals.
+
+### Input
+
+- `I` -- linear array of intervals
+
+### Examples
+
+```jldoctest
+julia> using LazySets, Plots
+julia> I1 = Interval([0., 1.])
+julia> I2 = Interval([0.5, 2.])
+julia> plot(I1, I2])
+```
+"""
+@recipe function plot_intervals(I::Vector{<:Interval}; color="blue",
+                                   label="", grid=true, alpha=0.5, legend=false,
+                                   add_marker=true, linewidth=2.)
+
+    seriestype := :path
+    linecolor   --> color
+    markershape --> (add_marker ? :circle : :none)
+    markercolor --> color
+
+    for Li in L
+        @series [Tuple([low(I), 0.0]); Tuple([high(I), 0.0])]
     end
 end
