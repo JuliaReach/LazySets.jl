@@ -33,9 +33,10 @@ end
 
 """
     decompose(S::LazySet{N};
-              [set_type]::Type{<:Union{HPolygon, Hyperrectangle, LazySets.Interval}}=Hyperrectangle,
+              [set_type]::Type{<:Union{HPolygon, Hyperrectangle, Interval}}=Hyperrectangle,
               [ɛ]::Real=Inf,
               [blocks]::AbstractVector{Int}=default_block_structure(S, set_type),
+              [block_types]::Dict{Type{<:LazySet}, AbstractVector{<:AbstractVector{Int}}}
              )::CartesianProductArray where {N<:Real}
 
 Decompose a high-dimensional set into a Cartesian product of overapproximations
@@ -43,12 +44,14 @@ of the projections over the specified subspaces.
 
 ### Input
 
-- `S`        -- set
-- `set_type` -- (optional, default: `Hyperrectangle`) type of set approximation
-                for each subspace
-- `ɛ`        -- (optional, default: `Inf`) error bound for polytopic approximation
-- `blocks`   -- (optional, default: [2, …, 2] or [1, …, 1] if `set_type` is an interval)
-                block structure - a vector with the size of each block
+- `S`           -- set
+- `set_type`    -- (optional, default: `Hyperrectangle`) type of set approximation
+                   for each subspace
+- `ɛ`           -- (optional, default: `Inf`) error bound for polytopic approximation
+- `blocks`      -- (optional, default: [2, …, 2] or [1, …, 1] if `set_type` is an interval)
+                   block structure - a vector with the size of each block
+- `block_types` -- (optional, default: Interval for 1D and Hyperrectangle
+                   for mD blocks) a mapping from set types to blocks
 
 ### Output
 
@@ -59,19 +62,134 @@ projections.
 
 For each block a specific `project` method is called, dispatched on the
 `set_type` argument.
+
+### Examples
+
+The `decompose` function supports different options, such as: supplying different
+dimensions for the decomposition, defining the target set of the decomposition,
+or specifying the degree of accuracy of the target decomposition. These options
+are exemplified below.
+
+#### Different dimensions
+
+By default, `decompose` returns a Cartesian product of `Hyperrectangle` sets.
+For example:
+
+```jldoctest decompose_examples
+julia> import LazySets.Approximations:decompose
+julia> S = Ball2(zeros(4), 1.);
+julia> array(decompose(S))
+2-element Array{LazySets.Hyperrectangle{Float64},1}:
+ LazySets.Hyperrectangle{Float64}([0.0, 0.0], [1.0, 1.0])
+ LazySets.Hyperrectangle{Float64}([0.0, 0.0], [1.0, 1.0])
+```
+
+Other block sizes can be specified using the `blocks` option, that refers to
+each block size of the partition:
+
+```jldoctest decompose_examples
+julia> array(decompose(S, blocks=[1, 3]))
+2-element Array{LazySets.Hyperrectangle{Float64},1}:
+ LazySets.Hyperrectangle{Float64}([0.0], [1.0])
+ LazySets.Hyperrectangle{Float64}([0.0, 0.0, 0.0], [1.0, 1.0, 1.0])
+
+julia> array(decompose(S, blocks=[4]))
+1-element Array{LazySets.Hyperrectangle{Float64},1}:
+ LazySets.Hyperrectangle{Float64}([0.0, 0.0, 0.0, 0.0], [1.0, 1.0, 1.0, 1.0])
+```
+
+#### Different set types
+
+We can also decompose using polygons in constraint representation, through the
+`set_type` optional argument:
+
+```jldoctest decompose_examples
+julia> [ai isa HPolygon for ai in array(decompose(S, set_type=HPolygon))]
+2-element Array{Bool,1}:
+ true
+ true
+
+julia> [ai isa Interval for ai in array(decompose(S, set_type=Interval))]
+4-element Array{Bool,1}:
+ true
+ true
+ true
+ true
+```
+
+However, if you need to specify different set types for different blocks, the
+interface presented so far does not apply. In the paragraph
+*Advanced different set types input* we explain `block_types`, useful precisely
+for that purpose.
+
+#### Refining the decomposition
+
+The ``ɛ`` option can be used to refine, that is obtain a more accurate decomposition
+in those blocks where `HPolygon` types are used, and it relies on the iterative
+refinement algorithm provided in the `Approximations` module.
+
+To illustrate this, consider the unit 4D ball in the 2-norm. Using smaller ``ɛ``
+implies a better precision, thus more constraints in each 2D decomposition:
+
+```jldoctest decompose_examples
+julia> S = Ball2(zeros(4), 1.);
+julia> d(ε, bi) = array(decompose(S, set_type=HPolygon, ε=ε))[bi]
+julia> [length(constraints_list(d(ε, 1))) for ε in [Inf, 0.1, 0.01]]
+
+3-element Array{Int64,1}:
+  4
+  8
+ 32
+```
+
+#### Advanced different set types input
+
+We can define different set types for different blocks, using the
+optional `block_types` input argument. It is a dictionary where the keys correspond
+to set types, and the values correspond to the blocks, namely the initial and final
+block variables should be given.
+
+For example:
+
+```jldoctest decompose_examples
+julia> S = Ball2(zeros(3), 1.);
+
+julia> array(decompose(S, block_types=Dict(Interval=>[1:1], Hyperrectangle=>[2:3])))
+
+2-element Array{LazySets.Hyperrectangle{Float64},1}:
+ LazySets.Interval{Float64,IntervalArithmetic.Interval{Float64}}([-1, 1])
+ LazySets.Hyperrectangle{Float64}([0.0, 0.0], [1.0, 1.0])
+```
+
+We can the options, and the ``ε`` is passed to the `HPolygon` if it corresponds:
+
+```jldoctest decompose_examples
+julia> S = Ball2(zeros(5), 1.);
+julia> bt = Dict(Interval=>[1:1], Hyperrectangle=>[2:3], HPolygon=>[2:3]);
+julia> [typeof(ai) for ai in array(decompose(S, block_types=bt, ε=0.01)]
+
+LazySets.Interval{Float64,IntervalArithmetic.Interval{Float64}}
+LazySets.Hyperrectangle{Float64}
+LazySets.HPolygon{Float64}
+```
 """
 function decompose(S::LazySet{N};
-                   set_type::Type{<:Union{HPolygon, Hyperrectangle, LazySets.Interval}}=Hyperrectangle,
+                   set_type::Type{<:Union{HPolygon, Hyperrectangle, Interval}}=Hyperrectangle,
                    ɛ::Real=Inf,
-                   blocks::AbstractVector{Int}=default_block_structure(S, set_type)
+                   blocks::AbstractVector{Int}=default_block_structure(S, set_type),
+                   block_types=Dict{Type{<:LazySet}, AbstractVector{<:AbstractVector{Int}}}()
                   )::CartesianProductArray where {N<:Real}
     n = dim(S)
-    result = Vector{set_type{N}}()
-    block_start = 1
-    @inbounds for bi in blocks
-        push!(result,
-              project(S, block_start:(block_start + bi - 1), set_type, n, ɛ))
-        block_start += bi
+    result = isempty(block_types) ? Vector{set_type{N}}() : Vector{Union{[ki for ki in keys(block_types)]...}}() # or ki{N} ?
+
+    if isempty(block_types)
+        block_start = 1
+        @inbounds for bi in blocks
+            push!(result, project(S, block_start:(block_start + bi - 1), set_type, n, ɛ))
+            block_start += bi
+        end
+    else
+        error("block_types not implemented")
     end
     return CartesianProductArray(result)
 end
