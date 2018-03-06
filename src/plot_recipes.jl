@@ -521,7 +521,7 @@ julia> plot(I1, I2])
     markershape --> (add_marker ? :circle : :none)
     markercolor --> color
 
-    for Li in L
-        @series [Tuple([low(I), 0.0]); Tuple([high(I), 0.0])]
+    for Ii in I
+        @series [Tuple([low(Ii), 0.0]); Tuple([high(Ii), 0.0])]
     end
 end
