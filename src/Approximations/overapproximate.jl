@@ -119,21 +119,41 @@ end
 @require IntervalArithmetic begin
 
 """
-    overapproximate(S::LazySets.Interval{N, IN}, ::Type{Hyperrectangle}) where {N, IN <: IA.AbstractInterval{N}}
+    overapproximate(::LazySet{N}, ::Type{LazySets.Interval}) where {N<:Real}
 
-Return the overapproximation of a real unidimensional interval with a hyperrectangle,
-which is a no-op.
+Return the overapproximation of a real unidimensional set with an interval.
 
 ### Input
 
-- `S` -- one-dimensional interval
-- `Hyperrectangle` for dispatch
+- `S` -- one-dimensional set
+- `Interval` for dispatch
 
 ### Output
 
-A hyperrectangle.
+An interval.
 """
-function overapproximate(S::LazySets.Interval, ::Type{Hyperrectangle})
-    return Hyperrectangle(low=[low(S)], high=[high(S)])
+function overapproximate(S::LazySet{N}, ::Type{LazySets.Interval}) where {N<:Real}
+    @assert dim(S) == 1
+    lo = σ([-one(N)], S)[1]
+    hi = σ([one(N)], S)[1]
+    return LazySets.Interval(lo, hi)
+end
+
+"""
+    overapproximate(I::LazySets.Interval, ::Type{LazySets.Interval})
+
+Overapproximating an interval with an interval is a no-op.
+
+### Input
+
+- `I` -- interval
+- `Interval` for dispatch
+
+### Output
+
+The input interval.
+"""
+function overapproximate(I::LazySets.Interval, ::Type{LazySets.Interval})
+    return I
 end
 end

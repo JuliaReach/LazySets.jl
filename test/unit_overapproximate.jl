@@ -1,3 +1,4 @@
+using IntervalArithmetic
 import LazySets.Approximations.overapproximate
 
 for N in [Float64, Float32] # TODO Rational{Int}
@@ -87,4 +88,11 @@ for N in [Float64, Float32] # TODO Rational{Int}
     Y_zonotope = overapproximate(Y, Zonotope) # overapproximate with a zonotope
     @test Y_polygon ⊆ Y_zonotope
     @test !(Y_zonotope ⊆ Y_polygon)
+
+    # Interval approximation
+    b = Ball1(N[0.], N(1.))
+    p = overapproximate(b, LazySets.Interval)
+    for d in to_N(N, [[1.], [-1.]])
+        @test σ(d, p)[1] ≈ σ(d, b)[1]
+    end
 end
