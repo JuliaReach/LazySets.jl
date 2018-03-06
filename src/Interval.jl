@@ -1,9 +1,5 @@
 using IntervalArithmetic
 
-# the require block is messed up when using it in Approximations too
-#@require IntervalArithmetic begin ... end
-
-
 """
     IA = IntervalArithmetic
 
