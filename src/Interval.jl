@@ -12,7 +12,7 @@ export Interval, IA,
        low, high, vertices_list
 
 """
-    Interval{N, IN <: IA.AbstractInterval{N}} <: LazySet{N}
+    Interval{N<:Real, IN <: IA.AbstractInterval{N}} <: AbstractPointSymmetricPolytope{N}
 
 Type representing an interval on the real line.
 
@@ -26,11 +26,26 @@ Unidimensional intervals are symbolic representations of a real closed interval.
 This type requires the user to load the `IntervalArithmetic` library, since
 artithmetic operations rely on that module.
 
-We can create intervals in different ways.
+We can create intervals in different ways, the simpler way is to pass a pair
+of numbers:
 
 ```jldoctest interval_constructor
-julia> using LazySets, IntervalArithmetic
+julia> x = Interval(0.0, 1.0)
+LazySets.Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
+```
+or a 2-vector:
 
+```jldoctest interval_constructor
+julia> x = LazySets.Interval([0.0, 1.0])
+LazySets.Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
+```
+
+Note that if the package `IntervalArithmetic` is loaded in the current scope,
+you have to prepend the `LazySets` to the interval type, since there is
+a name conflict otherwise.
+
+```jldoctest interval_constructor
+julia> using IntervalArithmetic
 julia> x = LazySets.Interval(IntervalArithmetic.Interval(0.0, 1.0))
 LazySets.Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
 julia> dim(x)
@@ -38,26 +53,12 @@ julia> dim(x)
 julia> center(x)
 0.5
 ```
-Note that we have to prepend the `LazySets` to the interval type, since there is
-a name conflict otherwise. But we can as well construct an interval from a pair
-of numbers:
-
-```jldoctest interval_constructor
-julia> x = LazySets.Interval(0.0, 1.0)
-LazySets.Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
-```
-or from a 2-vector:
-
-```jldoctest interval_constructor
-julia> x = LazySets.Interval([0.0, 1.0])
-LazySets.Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
-```
 
 This type is such that the usual pairwise arithmetic operators `+`, `-`, `*` trigger
 the corresponding interval arithmetic backend method, and return a new
 `Interval` object. For the symbolic Minkowksi sum, use `MinkowskiSum` or `⊕`.
 """
-struct Interval{N, IN <: IA.AbstractInterval{N}} <: AbstractPointSymmetricPolytope{N}
+struct Interval{N<:Real, IN <: IA.AbstractInterval{N}} <: AbstractPointSymmetricPolytope{N}
    dat::IN
 end
 # type-less convenience constructor
