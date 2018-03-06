@@ -62,4 +62,7 @@ for N in [Float64, Float32] # TODO Rational{Int}
     # odd dimension
     b = BallInf(zeros(N, 7), one(N))
     d = decompose(b)
+    # 1D intervals
+    d = decompose(b, set_type=LazySets.Interval)
+    @test d isa CartesianProductArray{N,LazySets.Interval{N,IN} where IN<:IntervalArithmetic.AbstractInterval{N}}
 end
