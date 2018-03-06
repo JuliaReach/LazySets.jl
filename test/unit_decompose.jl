@@ -1,4 +1,4 @@
-using IntervalArithmetic
+# using IntervalArithmetic
 import LazySets.Approximations.decompose
 
 for N in [Float64, Float32] # TODO Rational{Int}
@@ -59,10 +59,18 @@ for N in [Float64, Float32] # TODO Rational{Int}
     # even dimension
     b = BallInf(zeros(N, 6), one(N))
     d = decompose(b)
+    for ai in array(d)
+        @test ai isa Hyperrectangle
+    end
     # odd dimension
     b = BallInf(zeros(N, 7), one(N))
     d = decompose(b)
+    for ai in array(d)
+        @test ai isa Hyperrectangle
+    end
     # 1D intervals
     d = decompose(b, set_type=LazySets.Interval)
-    @test d isa CartesianProductArray{N,LazySets.Interval{N,IN} where IN<:IntervalArithmetic.AbstractInterval{N}}
+    for ai in array(d)
+        @test ai isa LazySets.Interval
+    end
 end
