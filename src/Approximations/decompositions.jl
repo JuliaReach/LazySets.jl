@@ -1,26 +1,33 @@
 """
-    default_block_structure(S::LazySet)::AbstractVector{Int}
+    default_block_structure(S::LazySet, set_type::Type{<:LazySet})::AbstractVector{Int}
 
 Compute the default block structure.
 
 ### Input
 
-- `S` -- set
+- `S`        -- set
+- `set_type` -- target set type
 
 ### Output
 
-A vector representing the block structure.
-The default is blocks of size 2.
-Depending on the dimension, the last block has size 1 or 2.
+A vector representing the block structure, such that:
+
+- If the target `set_type` is an interval, the default is blocks of size 1.
+- Otherwise, the default is blocks of size 2. Depending on the dimension,
+  the last block has size 1 or 2.
 """
-@inline function default_block_structure(S::LazySet)::AbstractVector{Int}
+@inline function default_block_structure(S::LazySet, set_type::Type{<:LazySet})::AbstractVector{Int}
     n = dim(S)
-    if n % 2 == 0
-        return fill(2, div(n, 2))
+    if set_type == Interval
+        return fill(1, n)
     else
-        res = fill(2, div(n+1, 2))
-        res[end] = 1
-        return res
+        if n % 2 == 0
+            return fill(2, div(n, 2))
+        else
+            res = fill(2, div(n+1, 2))
+            res[end] = 1
+            return res
+        end
     end
 end
 
@@ -28,7 +35,7 @@ end
     decompose(S::LazySet{N};
               [set_type]::Type{<:Union{HPolygon, Hyperrectangle, LazySets.Interval}}=Hyperrectangle,
               [ɛ]::Real=Inf,
-              [blocks]::AbstractVector{Int}=default_block_structure(S)
+              [blocks]::AbstractVector{Int}=default_block_structure(S, set_type),
              )::CartesianProductArray where {N<:Real}
 
 Decompose a high-dimensional set into a Cartesian product of overapproximations
@@ -36,12 +43,12 @@ of the projections over the specified subspaces.
 
 ### Input
 
-- `S` -- set
+- `S`        -- set
 - `set_type` -- (optional, default: `Hyperrectangle`) type of set approximation
                 for each subspace
-- `ɛ` -- (optional, default: `Inf`) error bound for polytopic approximation
-- `blocks` -- (optional, default: [2, …, 2]) block structure - a vector with the
-              size of each block
+- `ɛ`        -- (optional, default: `Inf`) error bound for polytopic approximation
+- `blocks`   -- (optional, default: [2, …, 2] or [1, …, 1] if `set_type` is an interval)
+                block structure - a vector with the size of each block
 
 ### Output
 
@@ -56,7 +63,7 @@ For each block a specific `project` method is called, dispatched on the
 function decompose(S::LazySet{N};
                    set_type::Type{<:Union{HPolygon, Hyperrectangle, LazySets.Interval}}=Hyperrectangle,
                    ɛ::Real=Inf,
-                   blocks::AbstractVector{Int}=default_block_structure(S)
+                   blocks::AbstractVector{Int}=default_block_structure(S, set_type)
                   )::CartesianProductArray where {N<:Real}
     n = dim(S)
     result = Vector{set_type{N}}()
