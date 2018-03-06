@@ -81,9 +81,12 @@ For example:
 
 ```jldoctest decompose_examples
 julia> import LazySets.Approximations:decompose
+
 julia> S = Ball2(zeros(4), 1.);
+
 julia> array(decompose(S))
-2-element Array{LazySets.Hyperrectangle{Float64},1}:
+
+2-element Array{LazySets.LazySet{Float64},1}:
  LazySets.Hyperrectangle{Float64}([0.0, 0.0], [1.0, 1.0])
  LazySets.Hyperrectangle{Float64}([0.0, 0.0], [1.0, 1.0])
 ```
@@ -93,12 +96,14 @@ each block size of the partition:
 
 ```jldoctest decompose_examples
 julia> array(decompose(S, blocks=[1, 3]))
-2-element Array{LazySets.Hyperrectangle{Float64},1}:
+
+2-element Array{LazySets.LazySet{Float64},1}:
  LazySets.Hyperrectangle{Float64}([0.0], [1.0])
  LazySets.Hyperrectangle{Float64}([0.0, 0.0, 0.0], [1.0, 1.0, 1.0])
 
 julia> array(decompose(S, blocks=[4]))
-1-element Array{LazySets.Hyperrectangle{Float64},1}:
+
+1-element Array{LazySets.LazySet{Float64},1}:
  LazySets.Hyperrectangle{Float64}([0.0, 0.0, 0.0, 0.0], [1.0, 1.0, 1.0, 1.0])
 ```
 
@@ -109,6 +114,7 @@ We can also decompose using polygons in constraint representation, through the
 
 ```jldoctest decompose_examples
 julia> [ai isa HPolygon for ai in array(decompose(S, set_type=HPolygon))]
+
 2-element Array{Bool,1}:
  true
  true
@@ -118,6 +124,7 @@ For decomposition into 1D subspaces, we can use `Interval`:
 
 ```jldoctest decompose_examples
 julia> [ai isa Interval for ai in array(decompose(S, set_type=Interval))]
+
 4-element Array{Bool,1}:
  true
  true
@@ -141,7 +148,10 @@ implies a better precision, thus more constraints in each 2D decomposition:
 
 ```jldoctest decompose_examples
 julia> S = Ball2(zeros(4), 1.);
+
 julia> d(ε, bi) = array(decompose(S, set_type=HPolygon, ε=ε))[bi]
+d (generic function with 1 method)
+
 julia> [length(constraints_list(d(ε, 1))) for ε in [Inf, 0.1, 0.01]]
 
 3-element Array{Int64,1}:
@@ -161,9 +171,10 @@ For example:
 
 ```jldoctest decompose_examples
 julia> S = Ball2(zeros(3), 1.);
+
 julia> array(decompose(S, block_types=Dict(Interval=>[1:1], Hyperrectangle=>[2:3])))
 
-2-element Array{LazySets.Hyperrectangle{Float64},1}:
+2-element Array{LazySets.LazySet{Float64},1}:
  LazySets.Interval{Float64,IntervalArithmetic.Interval{Float64}}([-1, 1])
  LazySets.Hyperrectangle{Float64}([0.0, 0.0], [1.0, 1.0])
 ```
@@ -172,7 +183,9 @@ We can additionally pass ε, which is automatically used for each `HPolygon` typ
 
 ```jldoctest decompose_examples
 julia> S = Ball2(zeros(8), 1.);
+
 julia> bt = Dict(Interval=>[1:1], Hyperrectangle=>[2:4], HPolygon=>[5:6, 7:8]);
+
 julia> [typeof(ai) for ai in array(decompose(S, block_types=bt, ε=0.01))]
 
 4-element Array{DataType,1}:
