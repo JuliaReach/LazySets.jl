@@ -14,11 +14,21 @@ export Interval, IA,
 """
     Interval{N<:Real, IN <: IA.AbstractInterval{N}} <: AbstractPointSymmetricPolytope{N}
 
-Type representing an interval on the real line.
+Type representing an interval on the real line. Mathematically, it is of the
+form
+
+```math
+[a, b] := \{ a \le x \le b \} \subseteq \mathbb{R}.
+```
 
 ### Fields
 
 - `dat` -- data container for the given interval
+
+### Notes
+
+This type relies on the [IntervalArithmetic.jl](https://juliaintervals.github.io/IntervalArithmetic.jl/stable/)
+library for representation of intervals and arithmetic operations.
 
 ### Examples
 
