@@ -77,7 +77,8 @@ struct Interval{N<:Real, IN <: IA.AbstractInterval{N}} <: AbstractPointSymmetric
    dat::IN
 end
 # type-less convenience constructor
-Interval{N, IN <: IA.AbstractInterval{N}}(interval::IN) = Interval{N, IN}(interval)
+Interval(interval::IN) where {N, IN <: IA.AbstractInterval{N}} = Interval{N, IN}(interval)
+
 # TODO: adapt show method
 
 # constructor that takes two numbers
