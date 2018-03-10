@@ -22,7 +22,10 @@ function overapproximate(S::LazySet{N},
                          ɛ::Real=Inf)::HPolygon where {N<:Real}
     @assert dim(S) == 2
     if ɛ == Inf
-        pe, pn, pw, ps = box_bounds(S)
+        pe = σ(DIR_EAST(N), S)
+        pn = σ(DIR_NORTH(N), S)
+        pw = σ(DIR_WEST(N), S)
+        ps = σ(DIR_SOUTH(N), S)
         constraints = Vector{LinearConstraint{eltype(pe)}}(4)
         constraints[1] = LinearConstraint(DIR_EAST(N), dot(pe, DIR_EAST(N)))
         constraints[2] = LinearConstraint(DIR_NORTH(N), dot(pn, DIR_NORTH(N)))
@@ -44,24 +47,18 @@ overapproximate(S::LazySet, ɛ::Real)::HPolygon = overapproximate(S, HPolygon, �
 """
     overapproximate(S::LazySet, Type{<:Hyperrectangle})::Hyperrectangle
 
-Return an approximation of a given 2D convex set as a hyperrectangle.
+Return an approximation of a given set as a hyperrectangle.
 
 ### Input
 
-- `S` -- convex set, assumed to be two-dimensional
+- `S` -- set
 - `Hyperrectangle` for dispatch
 
 ### Output
 
 A hyperrectangle.
 """
-function overapproximate(S::LazySet, ::Type{<:Hyperrectangle})::Hyperrectangle
-    @assert dim(S) == 2
-    pe, pn, pw, ps = box_bounds(S)
-    radius = [(pe[1] - pw[1]) / 2, (pn[2] - ps[2]) / 2]
-    center = [pw[1] + radius[1], ps[2] + radius[2]]
-    return Hyperrectangle(center, radius)
-end
+overapproximate(S::LazySet, ::Type{<:Hyperrectangle}) = box_approximation(S)
 
 """
     overapproximate(S::LazySet)::Hyperrectangle
@@ -69,16 +66,6 @@ end
 Alias for `overapproximate(S, Hyperrectangle)`.
 """
 overapproximate(S::LazySet)::Hyperrectangle = overapproximate(S, Hyperrectangle)
-
-# helper function
-@inline function box_bounds(S::LazySet{N}) where {N<:Real}
-    # evaluate support vector on box directions
-    pe = σ(DIR_EAST(N), S)
-    pn = σ(DIR_NORTH(N), S)
-    pw = σ(DIR_WEST(N), S)
-    ps = σ(DIR_SOUTH(N), S)
-    return (pe, pn, pw, ps)
-end
 
 """
     overapproximate(S::ConvexHull{N, Zonotope{N}, Zonotope{N}},
@@ -156,4 +143,5 @@ The input interval.
 function overapproximate(I::LazySets.Interval, ::Type{LazySets.Interval})
     return I
 end
-end
+
+end # @require
