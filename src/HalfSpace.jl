@@ -23,7 +23,7 @@ LazySets.HalfSpace{Float64}([0.0, -1.0], 0.0)
 ```
 """
 struct HalfSpace{N<:Real} <: LazySet{N}
-    a::Vector{N}
+    a::AbstractVector{N}
     b::N
 end
 

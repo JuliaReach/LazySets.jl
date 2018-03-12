@@ -23,7 +23,7 @@ LazySets.Hyperplane{Float64}([0.0, 1.0], 0.0)
 ```
 """
 struct Hyperplane{N<:Real} <: LazySet{N}
-    a::Vector{N}
+    a::AbstractVector{N}
     b::N
 end
 
