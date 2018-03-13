@@ -57,7 +57,7 @@ function dim(L::Line)::Int
 end
 
 """
-    σ(d::AbstractVector{<:Real}, L::Line)::AbstractVector{<:Real}
+    σ(d::V, L::Line)::V where {N<:Real, V<:AbstractVector{N}}
 
 Return the support vector of a line in a given direction.
 
@@ -71,6 +71,6 @@ Return the support vector of a line in a given direction.
 The support vector in the given direction, which is defined the same way as for
 the more general `Hyperplane`.
 """
-function σ(d::AbstractVector{<:Real}, L::Line)::AbstractVector{<:Real}
+function σ(d::V, L::Line)::V where {N<:Real, V<:AbstractVector{N}}
     return σ(d, Hyperplane(L.a, L.b))
 end

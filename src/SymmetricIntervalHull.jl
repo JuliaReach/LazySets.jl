@@ -159,8 +159,7 @@ function dim(sih::SymmetricIntervalHull)::Int
 end
 
 """
-    σ(d::AbstractVector{N}, sih::SymmetricIntervalHull
-     )::AbstractVector{<:Real} where {N<:Real}
+    σ(d::V, sih::SymmetricIntervalHull)::V where {N<:Real, V<:AbstractVector{N}}
 
 Return the support vector of a symmetric interval hull of a convex set in a
 given direction.
@@ -184,8 +183,7 @@ queries.
 One such computation just asks for the support vector of the underlying set for
 both the positive and negative unit vector in the respective dimension.
 """
-function σ(d::AbstractVector{N}, sih::SymmetricIntervalHull
-          )::AbstractVector{<:Real} where {N<:Real}
+function σ(d::V, sih::SymmetricIntervalHull)::V where {N<:Real, V<:AbstractVector{N}}
     len = length(d)
     @assert len == dim(sih) "cannot compute the support vector of a " *
         "$(dim(sih))-dimensional set along a vector of length $(length(d))"
