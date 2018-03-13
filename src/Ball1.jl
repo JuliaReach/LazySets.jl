@@ -108,7 +108,7 @@ end
 
 
 """
-    σ(d::AbstractVector{N}, B::Ball1)::AbstractVector{N} where {N<:Real}
+    σ(d::V, B::Ball1{N})::V where {N<:Real, V<:AbstractVector{N}}
 
 Return the support vector of a ball in the 1-norm in a given direction.
 
