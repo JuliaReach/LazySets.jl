@@ -96,3 +96,13 @@ for N in [Float64, Float32] # TODO Rational{Int}
         @test σ(d, p)[1] ≈ σ(d, b)[1]
     end
 end
+
+# useful for benchmarking overapproximate and LinearMap's support vector
+# (see #290)
+function overapproximate_lmap(n)
+    B = BallInf(ones(n), 2.)
+    π = sparse([1, 2], [1, 2], ones(2), 2, n)
+    return Approximations.overapproximate(π*B)
+end
+o = overapproximate_lmap(50)
+@test o.center == [1., 1] && o.radius == [2., 2]
