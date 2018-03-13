@@ -43,7 +43,7 @@ julia> dim(B)
 We evaluate the support vector in direction ``[1,2,…,5]``:
 
 ```jldoctest ballp_constructor
-julia> σ(1.:5, B)
+julia> σ([1., 2, 3, 4, 5], B)
 5-element Array{Float64,1}:
  0.013516
  0.054064
