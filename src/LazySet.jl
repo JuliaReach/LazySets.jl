@@ -24,7 +24,7 @@ elements ``x, y ∈ S`` and ``0 ≤ λ ≤ 1`` it holds that ``λ x + (1-λ) y �
 `N<:Real`, for using different numeric types.
 
 Every concrete `LazySet` must define the following functions:
-- `σ(d::AbstractVector{N}, S::LazySet)::AbstractVector{N}` -- the
+- `σ(d::AbstractVector{N}, S::LazySet)` -- the
     support vector of `S` in a given direction `d`
 - `dim(S::LazySet)::Int` -- the ambient dimension of `S`
 
@@ -171,7 +171,7 @@ end
 
 
 """
-    an_element(S::LazySet{N})::AbstractVector{N} where {N<:Real}
+    an_element(S::LazySet{N}) where {N<:Real}
 
 Return some element of a convex set.
 
@@ -183,6 +183,6 @@ Return some element of a convex set.
 
 An element of a convex set.
 """
-function an_element(S::LazySet{N})::AbstractVector{N} where {N<:Real}
+function an_element(S::LazySet{N}) where {N<:Real}
     return σ(sparsevec([1], [one(N)], dim(S)), S)
 end

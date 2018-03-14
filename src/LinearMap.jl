@@ -150,7 +150,7 @@ If the direction has norm zero, the result depends on the wrapped set.
 If ``L = M⋅S``, where ``M`` is a matrix and ``S`` is a convex set, it follows
 that ``σ(d, L) = M⋅σ(M^T d, S)`` for any direction ``d``.
 """
-function σ(d::V, lm::LinearMap)::V where {N<:Real, V<:AbstractVector{N}}
+function σ(d::V, lm::LinearMap) where {N<:Real, V<:AbstractVector{N}}
     return lm.M * σ(lm.M.' * d, lm.X)
 end
 

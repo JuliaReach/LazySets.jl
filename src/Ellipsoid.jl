@@ -95,8 +95,7 @@ function center(E::Ellipsoid{N})::Vector{N} where {N<:AbstractFloat}
 end
 
 """
-    σ(d::AbstractVector{N},
-               E::Ellipsoid{N})::AbstractVector{<:AbstractFloat} where {N<:AbstractFloat}
+    σ(d::V, E::Ellipsoid{N})::V where{N<:AbstractFloat, V<:AbstractVector{N}}
 
 Return the support vector of an ellipsoid in a given direction.
 
@@ -121,8 +120,7 @@ vector,
 = c + \\dfrac{Qd}{\\sqrt{d^\\mathrm{T}Q d}}.
 ```
 """
-function σ(d::AbstractVector{N},
-           E::Ellipsoid{N})::AbstractVector{<:AbstractFloat} where {N<:AbstractFloat}
+function σ(d::V, E::Ellipsoid{N})::V where{N<:AbstractFloat, V<:AbstractVector{N}}
     if norm(d, 2) == zero(N)
         return an_element(E)
     end

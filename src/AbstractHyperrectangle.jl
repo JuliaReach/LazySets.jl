@@ -61,8 +61,7 @@ end
 
 
 """
-    σ(d::AbstractVector{N}, H::AbstractHyperrectangle{N}
-     )::AbstractVector{N} where {N<:Real}
+    σ(d::V, H::AbstractHyperrectangle{N}) where {N<:Real, V<:AbstractVector{N}}
 
 Return the support vector of a hyperrectangular set in a given direction.
 
@@ -76,8 +75,7 @@ Return the support vector of a hyperrectangular set in a given direction.
 The support vector in the given direction.
 If the direction has norm zero, the vertex with biggest values is returned.
 """
-function σ(d::AbstractVector{N},
-           H::AbstractHyperrectangle{N})::AbstractVector{N} where {N<:Real}
+function σ(d::V, H::AbstractHyperrectangle{N}) where {N<:Real, V<:AbstractVector{N}}
     return center(H) .+ sign_cadlag.(d) .* radius_hyperrectangle(H)
 end
 

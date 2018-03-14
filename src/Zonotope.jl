@@ -153,7 +153,7 @@ end
 
 
 """
-    σ(d::AbstractVector{<:Real}, Z::Zonotope)::AbstractVector{<:Real}
+    σ(d::V, Z::Zonotope) where {N<:Real, V<:AbstractVector{N}}
 
 Return the support vector of a zonotope in a given direction.
 
@@ -168,7 +168,7 @@ Support vector in the given direction.
 If the direction has norm zero, the vertex with ``ξ_i = 1 \\ \\ ∀ i = 1,…, p``
 is returned.
 """
-function σ(d::AbstractVector{<:Real}, Z::Zonotope)::AbstractVector{<:Real}
+function σ(d::V, Z::Zonotope) where {N<:Real, V<:AbstractVector{N}}
     return Z.center .+ Z.generators * sign_cadlag.(Z.generators.' * d)
 end
 
