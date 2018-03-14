@@ -22,11 +22,20 @@ type `N`, where `N` is a floating point number type such as `Float64`.
 struct LinearMap{NM, N} <: LazySet{N}
     M::AbstractMatrix{NM}
     X::LazySet{N}
+
+    # default constructor with dimension match check
+    function LinearMap{NM, N}(M::AbstractMatrix{NM}, X::LazySet{N}) where {NM, N}
+        @assert dim(X) == size(M, 2) "a linear map of size $(size(M)) cannot be applied to a set of dimension $(dim(X))"
+        return new(M, X)
+    end
 end
+
+# type-less convenience constructor
+LinearMap(M::AbstractMatrix{NM}, X::LazySet{N}) where {NM, N} = LinearMap{NM, N}(M, X)
+
 # constructor from a linear map: perform the matrix multiplication immediately
 LinearMap(M::AbstractMatrix{NM},
           map::LinearMap{NM, N}) where {NM, N} = LinearMap{NM, N}(M * map.M, map.X)
-
 
 """
 ```
@@ -44,14 +53,8 @@ Return the linear map of a convex set.
 
 If the matrix is null, a `ZeroSet` is returned; otherwise a lazy linear map.
 """
-function *(M::AbstractMatrix, X::LazySet)
-    @assert dim(X) == size(M, 2) "a linear map of size $(size(M)) cannot be applied to a set of dimension $(dim(X))"
-    if findfirst(M) != 0
-        return LinearMap(M, X)
-    else
-        return ZeroSet(dim(X))
-    end
-end
+*(M::AbstractMatrix, X::LazySet) = LinearMap(M, X)
+
 
 """
 ```
