@@ -51,7 +51,7 @@ Return the linear map of a convex set.
 
 ### Output
 
-If the matrix is null, a `ZeroSet` is returned; otherwise a lazy linear map.
+A lazy linear map, i.e. a `LinearMap` instance.
 """
 *(M::AbstractMatrix, X::LazySet) = LinearMap(M, X)
 
