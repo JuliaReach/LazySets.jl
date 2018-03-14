@@ -80,7 +80,7 @@ function dim(ms::MinkowskiSum)::Int
 end
 
 """
-    σ(d::V, ms::MinkowskiSum)::V where {N<:Real, V<:AbstractVector{N}}
+    σ(d::V, ms::MinkowskiSum) where {N<:Real, V<:AbstractVector{N}}
 
 Return the support vector of a Minkowski sum.
 
@@ -94,7 +94,7 @@ Return the support vector of a Minkowski sum.
 The support vector in the given direction.
 If the direction has norm zero, the result depends on the summand sets.
 """
-function σ(d::V, ms::MinkowskiSum)::V where {N<:Real, V<:AbstractVector{N}}
+function σ(d::V, ms::MinkowskiSum) where {N<:Real, V<:AbstractVector{N}}
     return σ(d, ms.X) + σ(d, ms.Y)
 end
 

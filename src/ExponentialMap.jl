@@ -144,7 +144,7 @@ function dim(em::ExponentialMap)::Int
 end
 
 """
-    σ(d::V, em::ExponentialMap)::V where {N<:Real, V<:AbstractVector{N}}
+    σ(d::V, em::ExponentialMap) where {N<:Real, V<:AbstractVector{N}}
 
 Return the support vector of the exponential map.
 
@@ -166,7 +166,7 @@ follows that ``σ(d, E) = \\exp(M)⋅σ(\\exp(M)^T d, S)`` for any direction ``d
 We allow sparse direction vectors, but will convert them to dense vectors to be
 able to use `expmv`.
 """
-function σ(d::V, em::ExponentialMap)::V where {N<:Real, V<:AbstractVector{N}}
+function σ(d::V, em::ExponentialMap) where {N<:Real, V<:AbstractVector{N}}
     d_dense = d isa Vector ? d : Vector(d)
     v = expmv(one(N), em.spmexp.M.', d_dense)     # v   <- exp(A') * d
     return expmv(one(N), em.spmexp.M, σ(v, em.X)) # res <- exp(A) * σ(v, S)
@@ -288,7 +288,7 @@ function dim(eprojmap::ExponentialProjectionMap)::Int
 end
 
 """
-    σ(d::V, eprojmap::ExponentialProjectionMap)::V where {N<:Real, V<:AbstractVector{N}}
+    σ(d::V, eprojmap::ExponentialProjectionMap) where {N<:Real, V<:AbstractVector{N}}
 
 Return the support vector of a projection of an exponential map.
 
@@ -311,7 +311,7 @@ exponential, and ``X`` is a set, it follows that
 We allow sparse direction vectors, but will convert them to dense vectors to be
 able to use `expmv`.
 """
-function σ(d::V, eprojmap::ExponentialProjectionMap)::V where {N<:Real, V<:AbstractVector{N}}
+function σ(d::V, eprojmap::ExponentialProjectionMap) where {N<:Real, V<:AbstractVector{N}}
     d_dense = d isa Vector ? d : Vector(d)
     daux = transpose(eprojmap.projspmexp.L) * d_dense
     aux1 = expmv(one(N), eprojmap.projspmexp.spmexp.M.', daux)

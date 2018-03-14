@@ -87,7 +87,7 @@ function dim(cp::CartesianProduct)::Int
 end
 
 """
-    σ(d::V, cp::CartesianProduct)::V where {N<:Real, V<:AbstractVector{N}}
+    σ(d::V, cp::CartesianProduct) where {N<:Real, V<:AbstractVector{N}}
 
 Return the support vector of a Cartesian product.
 
@@ -105,7 +105,7 @@ If the direction has norm zero, the result depends on the product sets.
 
 
 """
-function σ(d::V, cp::CartesianProduct)::V where {N<:Real, V<:AbstractVector{N}}
+function σ(d::V, cp::CartesianProduct) where {N<:Real, V<:AbstractVector{N}}
     return [σ(d[1:dim(cp.X)], cp.X); σ(d[dim(cp.X)+1:length(d)], cp.Y)]
 end
 
@@ -212,7 +212,7 @@ function dim(cpa::CartesianProductArray)::Int
 end
 
 """
-    σ(d::V, cpa::CartesianProductArray{N, <:LazySet{N}})::V where {N<:Real, V<:AbstractVector{N}}
+    σ(d::V, cpa::CartesianProductArray{N, <:LazySet{N}}) where {N<:Real, V<:AbstractVector{N}}
 
 Support vector of a Cartesian product.
 
@@ -226,7 +226,7 @@ Support vector of a Cartesian product.
 The support vector in the given direction.
 If the direction has norm zero, the result depends on the product sets.
 """
-function σ(d::V, cpa::CartesianProductArray{N, <:LazySet{N}})::V where {N<:Real, V<:AbstractVector{N}}
+function σ(d::V, cpa::CartesianProductArray{N, <:LazySet{N}}) where {N<:Real, V<:AbstractVector{N}}
     svec = similar(d)
     jinit = 1
     for sj in cpa.array

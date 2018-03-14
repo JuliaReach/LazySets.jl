@@ -75,7 +75,7 @@ function dim(ch::ConvexHull)::Int
 end
 
 """
-    σ(d::V, ch::ConvexHull)::V where {N<:Real, V<:AbstractVector{N}}
+    σ(d::V, ch::ConvexHull) where {N<:Real, V<:AbstractVector{N}}
 
 Return the support vector of a convex hull of two convex sets in a given
 direction.
@@ -85,7 +85,7 @@ direction.
 - `d`  -- direction
 - `ch` -- convex hull of two convex sets
 """
-function σ(d::V, ch::ConvexHull)::V where {N<:Real, V<:AbstractVector{N}}
+function σ(d::V, ch::ConvexHull) where {N<:Real, V<:AbstractVector{N}}
     σ1 = σ(d, ch.X)
     σ2 = σ(d, ch.Y)
     ρ1 = dot(d, σ1)
@@ -190,7 +190,7 @@ function dim(cha::ConvexHullArray)::Int
 end
 
 """
-    σ(d::V, cha::ConvexHullArray)::V where {N<:Real, V<:AbstractVector{N}}
+    σ(d::V, cha::ConvexHullArray) where {N<:Real, V<:AbstractVector{N}}
 
 Return the support vector of a convex hull array in a given direction.
 
@@ -199,7 +199,7 @@ Return the support vector of a convex hull array in a given direction.
 - `d`   -- direction
 - `cha` -- convex hull array
 """
-function σ(d::V, cha::ConvexHullArray)::V where {N<:Real, V<:AbstractVector{N}}
+function σ(d::V, cha::ConvexHullArray) where {N<:Real, V<:AbstractVector{N}}
     s = σ(d, cha.array[1])
     ri = dot(d, s)
     rmax = ri

@@ -49,7 +49,7 @@ function dim(hp::Hyperplane)::Int
 end
 
 """
-    σ(d::V, hp::Hyperplane)::V where {N<:Real, V<:AbstractVector{N}}
+    σ(d::V, hp::Hyperplane) where {N<:Real, V<:AbstractVector{N}}
 
 Return the support vector of a hyperplane.
 
@@ -67,7 +67,7 @@ following two cases:
 In both cases the result is any point on the hyperplane.
 Otherwise this function throws an error.
 """
-function σ(d::V, hp::Hyperplane)::V where {N<:Real, V<:AbstractVector{N}}
+function σ(d::V, hp::Hyperplane) where {N<:Real, V<:AbstractVector{N}}
     return σ_helper(d, hp)
 end
 
@@ -118,7 +118,7 @@ end
 ```
     σ_helper(d::V,
              hp::Hyperplane,
-             [name]::String="hyperplane")::V where {N<:Real, V<:AbstractVector{N}}
+             [name]::String="hyperplane") where {N<:Real, V<:AbstractVector{N}}
 ```
 
 Return the support vector of a hyperplane.
@@ -141,7 +141,7 @@ Otherwise this function throws an error.
 @inline function σ_helper(d::V,
                   hp::Hyperplane,
                   name::String="hyperplane"
-                 )::V where {N<:Real, V<:AbstractVector{N}}
+                 ) where {N<:Real, V<:AbstractVector{N}}
     @assert (length(d) == dim(hp)) "cannot compute the support vector of a " *
         "$(dim(hp))-dimensional $name along a vector of length $(length(d))"
 
