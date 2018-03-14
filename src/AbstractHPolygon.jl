@@ -71,19 +71,24 @@ end
 
 
 """
-    vertices_list(P::AbstractHPolygon{N})::Vector{Vector{N}} where {N<:Real}
+    vertices_list(P::AbstractHPolygon{N},
+                  apply_convex_hull::Bool=true
+                 )::Vector{Vector{N}} where {N<:Real}
 
 Return the list of vertices of a polygon in constraint representation.
 
 ### Input
 
-- `P` -- polygon in constraint representation
+- `P`                 -- polygon in constraint representation
+- `apply_convex_hull` -- (optional, default: `true`) to post process or not the
+                         intersection of constraints with a convex hull
 
 ### Output
 
 List of vertices.
 """
-function vertices_list(P::AbstractHPolygon{N}
+function vertices_list(P::AbstractHPolygon{N},
+                       apply_convex_hull::Bool=true
                       )::Vector{Vector{N}} where {N<:Real}
     n = length(P.constraints)
     points = Vector{Vector{N}}(n)
@@ -96,7 +101,11 @@ function vertices_list(P::AbstractHPolygon{N}
     end
     points[n] = intersection(Line(P.constraints[n]),
                              Line(P.constraints[1]))
-    return points
+    if apply_convex_hull
+        return convex_hull(points)
+    else
+        return points
+    end
 end
 
 """
