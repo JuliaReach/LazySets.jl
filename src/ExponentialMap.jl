@@ -47,23 +47,23 @@ function get_column(spmexp::SparseMatrixExp{N}, j::Int)::Vector{N} where {N}
 end
 
 function get_columns(spmexp::SparseMatrixExp{N},
-                     J::AbstractArray)::SparseMatrixCSC{N, Int} where {N}
+                     J::AbstractArray)::Matrix{N} where {N}
     n = size(spmexp, 1)
     aux = zeros(N, n)
-    ans = spzeros(N, n, length(J))
+    ans = zeros(N, n, length(J))
     count = 1
     one_N = one(N)
     zero_N = zero(N)
     @inbounds for j in J
         aux[j] = one_N
-        ans[:, count] = sparse(expmv(one_N, spmexp.M, aux))
+        ans[:, count] = expmv(one_N, spmexp.M, aux)
         aux[j] = zero_N
         count += 1
     end
     return ans
 end
 
-function get_row(spmexp::SparseMatrixExp{N}, i::Int)::Matrix{N} where {N}
+function get_row(spmexp::SparseMatrixExp{N}, i::Int)::RowVector{N} where {N}
     n = size(spmexp, 1)
     aux = zeros(N, n)
     aux[i] = one(N)
@@ -71,17 +71,17 @@ function get_row(spmexp::SparseMatrixExp{N}, i::Int)::Matrix{N} where {N}
 end
 
 function get_rows(spmexp::SparseMatrixExp{N},
-                  I::AbstractArray{Int})::SparseMatrixCSC{N, Int} where {N}
+                  I::AbstractArray{Int})::Matrix{N} where {N}
     n = size(spmexp, 1)
     aux = zeros(N, n)
-    ans = spzeros(N, length(I), n)
+    ans = zeros(N, length(I), n)
     Mtranspose = spmexp.M.'
     count = 1
     one_N = one(N)
     zero_N = zero(N)
     @inbounds for i in I
         aux[i] = one_N
-        ans[count, :] = sparse(expmv(one_N, Mtranspose, aux))
+        ans[count, :] = expmv(one_N, Mtranspose, aux)
         aux[i] = zero_N
         count += 1
     end
