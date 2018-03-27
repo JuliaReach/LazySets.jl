@@ -57,6 +57,13 @@ for N in [Float64, Float32]
     b = Ball2(N[1., 2.], N(2.))
     @test an_element(b) ∈ b
 
+    # membership
+    x = N[0., 0.]
+    b = Ball2(N[1., 1.], N(0.9))
+    @test !in(x, b)
+    @test !in(x, b, N(0.5))
+    @test in(x, b, N(0.55))
+
     # subset
     b1 = Ball2(N[1., 2.], N(2.))
     b2 = Ball2(N[1., 2.], N(0.))

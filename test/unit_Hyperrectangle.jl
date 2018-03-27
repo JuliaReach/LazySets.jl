@@ -99,6 +99,8 @@ for N in [Float64, Rational{Int}, Float32]
     H = Hyperrectangle(N[1.0, 1.0], N[2.0, 3.0])
     @test !∈(N[-1.1, 4.1], H)
     @test ∈(N[-1.0, 4.0], H)
+    @test !∈(N[-1.1, 4.1], H, N(0.09))
+    @test ∈(N[-1.1, 4.1], H, N(0.11))
 
     # an_element function
     H = Hyperrectangle(N[1.0, 2.0], N[3.0, 4.0])

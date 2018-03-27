@@ -52,6 +52,7 @@ support_function
 
 ```@docs
 an_element(S::LazySet{Float64})
+∈(::AbstractVector{Float64}, ::LazySet{Float64}, ::Float64)
 ```
 
 ## Point symmetric set

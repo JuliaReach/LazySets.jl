@@ -55,6 +55,8 @@ for N in [Float64, Rational{Int}, Float32]
     b = BallInf(N[1., 1.], N(1.))
     @test !∈(N[.5, -.5], b)
     @test ∈(N[.5, 1.5], b)
+    @test !∈(N[.5, -.5], b, N(0.4))
+    @test ∈(N[.5, -.5], b, N(0.6))
 
     # an_element function
     b = BallInf(N[1., 2.], N(3.))

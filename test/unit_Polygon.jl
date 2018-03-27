@@ -54,7 +54,7 @@ for N in [Float64, Float32, Rational{Int}]
         d = N[1., -1.]
         @test σ(d, p) == N[4., 2.]
 
-        # Test containment
+        # membership
         @test ∈(N[0., 0.], p)
         @test ∈(N[4., 2.], p)
         @test ∈(N[2., 4.], p)
@@ -67,6 +67,8 @@ for N in [Float64, Float32, Rational{Int}]
         @test !∈(N[5., 2.], p)
         @test !∈(N[3., 4.], p)
         @test !∈(N[-1., 5.], p)
+        @test !∈(N[-1., 0.], p, N(0.6))
+        @test ∈(N[-1., 0.], p, N(0.8))
 
         # an_element function
         @test an_element(p) ∈ p
