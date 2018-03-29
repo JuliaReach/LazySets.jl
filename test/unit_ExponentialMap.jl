@@ -7,7 +7,6 @@ for N in [Float64] # TODO Float32
 
     # sparse matrix
     m = sprandn(n, n, p)
-    m = convert(SparseMatrixCSC{N,Int}, m) # ?
 
     # a set
     b = BallInf(ones(N, n), to_N(N, 0.1))
