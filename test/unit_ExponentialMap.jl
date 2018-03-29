@@ -7,7 +7,6 @@ for N in [Float64] # TODO Float32
 
     # sparse matrix
     m = sprandn(n, n, p)
-    m = convert(SparseMatrixCSC{N,Int}, m)
 
     # a set
     b = BallInf(ones(N, n), to_N(N, 0.1))
@@ -24,6 +23,11 @@ for N in [Float64] # TODO Float32
     # product of the exponential maps of two commuting matrices
     # WARNING: assuming commutativity of matrix exponents
     #me * me
+
+    # check that the eye method is defined
+    @test method_exists(eye, Tuple{typeof(me)})
+    y = eye(me)
+    @test norm(y - diagm(ones(N, n))) == 0
 
     # the exponential map of a convex set, same as ExponentialMap(me, b)
     emap = me * b
@@ -73,4 +77,5 @@ for N in [Float64] # TODO Float32
     P = L * expm(full(m)) * R
     svec_explicit = σ(d, P*b)
     @test svec ≈ svec_explicit
+
 end

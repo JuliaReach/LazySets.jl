@@ -61,6 +61,8 @@ end
 SparseMatrixExp(M::Matrix{N}) where {N} =
         error("only sparse matrices can be used to create a `SparseMatrixExp`")
 
+Base.eye(spmexp::SparseMatrixExp) = eye(spmexp.M)
+
 function size(spmexp::SparseMatrixExp)::Tuple{Int, Int}
     return size(spmexp.M)
 end
