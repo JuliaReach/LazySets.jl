@@ -31,6 +31,8 @@ struct SparseMatrixExp{N}
     M::SparseMatrixCSC{N, Int}
 end
 
+Base.eye(spmexp::SparseMatrixExp) = eye(spmexp.M)
+
 function size(spmexp::SparseMatrixExp)::Tuple{Int, Int}
     return size(spmexp.M)
 end
