@@ -23,7 +23,7 @@ Type that represents the matrix exponential, ``\\exp(M)``, of a sparse matrix.
 
 ### Examples
 
-Take for exammple a random sparse matrix;
+Take for exammple a random sparse matrix:
 
 ```jldoctest SparseMatrixExp_constructor
 julia> A = sprandn(100, 100, 0.1);
@@ -45,7 +45,7 @@ julia> get_column(E, 10); # compute E[:, 10]
 
 julia> get_rows(E, [10]); # same as get_row(E, 10) but a 1x100 matrix is returned
 
-julia> get_columns(E, [10]); # same as get_row(E, 10) but a 100x1 matrix is returned
+julia> get_columns(E, [10]); # same as get_column(E, 10) but a 100x1 matrix is returned
 ```
 
 ### Notes
