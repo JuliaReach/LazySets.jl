@@ -127,6 +127,27 @@ Type that represents the action of an exponential map on a convex set.
 
 - `spmexp` -- sparse matrix exponential
 - `X`      -- convex set
+
+### Examples
+
+The `ExponentialMap` type is overloaded to the usual times `*` operator when the
+linear map is a lazy matrix exponential. For instance,
+
+```jldoctest ExponentialMap_constructor
+julia> A = sprandn(100, 100, 0.1);
+
+julia> E = SparseMatrixExp(A);
+
+julia> B = BallInf(zeros(100), 1.);
+
+julia> M = E * B; # represents the image set: exp(A) * B
+
+julia> M isa ExponentialMap
+true
+
+julia> dim(M)
+100
+```
 """
 struct ExponentialMap{N, S<:LazySet{N}} <: LazySet{N}
     spmexp::SparseMatrixExp{N}
