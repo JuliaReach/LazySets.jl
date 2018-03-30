@@ -30,7 +30,7 @@ julia> A = sprandn(100, 100, 0.1);
 
 julia> E = SparseMatrixExp(A);
 
-julia> size(e)
+julia> size(E)
 (100, 100)
 ```
 
@@ -54,7 +54,7 @@ This type is provided for use with very large and very sparse matrices.
 The evaluation of the exponential matrix action over vectors relies on the
 [Expokit](https://github.com/acroy/Expokit.jl) package.
 """
-struct SparseMatrixExp{N}
+struct SparseMatrixExp{N} <: AbstractMatrix{N}
     M::SparseMatrixCSC{N, Int}
 end
 
