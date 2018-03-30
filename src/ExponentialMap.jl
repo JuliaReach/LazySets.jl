@@ -30,7 +30,7 @@ julia> A = sprandn(100, 100, 0.1);
 
 julia> E = SparseMatrixExp(A);
 
-julia> size(e)
+julia> size(E)
 (100, 100)
 ```
 
