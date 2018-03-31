@@ -58,7 +58,7 @@ struct SparseMatrixExp{N} <: AbstractMatrix{N}
     M::SparseMatrixCSC{N, Int}
 end
 
-SparseMatrixExp(M::Matrix{N}) where {N} =
+SparseMatrixExp(M::Matrix) =
         error("only sparse matrices can be used to create a `SparseMatrixExp`")
 
 Base.eye(spmexp::SparseMatrixExp) = SparseMatrixExp(spzeros(size(spmexp.M)...))
