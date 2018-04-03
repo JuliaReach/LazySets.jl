@@ -1,24 +1,17 @@
-using IntervalArithmetic
+import IntervalArithmetic:@interval, AbstractInterval, mid
 
-"""
-    IA = IntervalArithmetic
-
-Name alias for the interval arithmetic library.
-"""
-const IA = IntervalArithmetic
-
-export Interval, IA,
+export Interval,
        dim, σ, center, +, -, *, ∈, ⊆,
        low, high, vertices_list
 
 """
-    Interval{N<:Real, IN <: IA.AbstractInterval{N}} <: AbstractPointSymmetricPolytope{N}
+    Interval{N<:Real, IN <: AbstractInterval{N}} <: AbstractPointSymmetricPolytope{N}
 
 Type representing an interval on the real line. Mathematically, it is of the
 form
 
 ```math
-[a, b] := \{ a \le x \le b \} \subseteq \mathbb{R}.
+[a, b] := \\{ a ≤ x ≤ b \\} ⊆ \\mathbb{R}.
 ```
 
 ### Fields
@@ -73,19 +66,19 @@ This type is such that the usual pairwise arithmetic operators `+`, `-`, `*` tri
 the corresponding interval arithmetic backend method, and return a new
 `Interval` object. For the symbolic Minkowksi sum, use `MinkowskiSum` or `⊕`.
 """
-struct Interval{N<:Real, IN <: IA.AbstractInterval{N}} <: AbstractPointSymmetricPolytope{N}
+struct Interval{N<:Real, IN <: AbstractInterval{N}} <: AbstractPointSymmetricPolytope{N}
    dat::IN
 end
 # type-less convenience constructor
-Interval(interval::IN) where {N, IN <: IA.AbstractInterval{N}} = Interval{N, IN}(interval)
+Interval(interval::IN) where {N, IN <: AbstractInterval{N}} = Interval{N, IN}(interval)
 
 # TODO: adapt show method
 
 # constructor that takes two numbers
-Interval(lo::N, hi::N) where {N} = Interval(IA.Interval(lo, hi))
+Interval(lo::N, hi::N) where {N} = Interval(@interval(lo, hi))
 
 # constructor from a vector
-Interval(x::AbstractVector{N}) where {N} = Interval(IA.Interval(x[1], x[2]))
+Interval(x::AbstractVector{N}) where {N} = Interval(@interval(x[1], x[2]))
 
 """
     dim(x::Interval)::Int
@@ -103,7 +96,7 @@ The integer 1.
 dim(x::Interval)::Int = 1
 
 """
-    σ(d::V, x::Interval{N, IN})::V where {N, IN <: IA.AbstractInterval{N}, V<:AbstractVector{N}}
+    σ(d::V, x::Interval{N, IN})::V where {N, IN <: AbstractInterval{N}, V<:AbstractVector{N}}
 
 Return the support vector of an ellipsoid in a given direction.
 
@@ -116,7 +109,7 @@ Return the support vector of an ellipsoid in a given direction.
 
 Support vector in the given direction.
 """
-function σ(d::V, x::Interval{N, IN})::V where {N, IN <: IA.AbstractInterval{N}, V<:AbstractVector{N}}
+function σ(d::V, x::Interval{N, IN})::V where {N, IN <: AbstractInterval{N}, V<:AbstractVector{N}}
     @assert length(d) == dim(x)
     return d[1] > 0 ? [x.dat.hi] : [x.dat.lo]
 end
@@ -134,7 +127,7 @@ Return the interval's center.
 
 The center, or midpoint, of ``x``.
 """
-center(x::Interval) = [IA.mid(x.dat)]
+center(x::Interval) = [mid(x.dat)]
 
 import Base:+, -, *, ∈, ⊆
 
