@@ -1,4 +1,3 @@
-using IntervalArithmetic
 import LazySets.Approximations.overapproximate
 
 for N in [Float64, Float32] # TODO Rational{Int}
