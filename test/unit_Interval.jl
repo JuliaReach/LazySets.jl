@@ -1,13 +1,13 @@
-using IntervalArithmetic
+import IntervalArithmetic
 
 # default constructor
-x = LazySets.Interval{Float64, IntervalArithmetic.Interval{Float64}}(IntervalArithmetic.Interval(0.0, 1.0))
+x = Interval{Float64, IntervalArithmetic.Interval{Float64}}(IntervalArithmetic.Interval(0.0, 1.0))
 
 # type-less constructor
-x = LazySets.Interval(0.0, 1.0)
+x = Interval(0.0, 1.0)
 
 # constructor with two numbers
-x = LazySets.Interval(0.0, 1.0)
+x = Interval(0.0, 1.0)
 
 @test dim(x) == 1
 @test center(x) == [0.5]
@@ -18,12 +18,12 @@ v = vertices_list(x)
 @test an_element(x) ∈ x
 # test containment
 @test (x ⊆ x) && !(x ⊆ 0.2 * x) && (x ⊆ 2. * x)
-@test issubset(x, LazySets.Interval(0.0, 2.0))
-@test !issubset(x, LazySets.Interval(-1.0, 0.5))
+@test issubset(x, Interval(0.0, 2.0))
+@test !issubset(x, Interval(-1.0, 0.5))
 
 
 # + operator (= concrete Minkowski sum of intervals)
-y = LazySets.Interval(-2.0, 0.5)
+y = Interval(-2.0, 0.5)
 m = x + y
 @test dim(m) == 1
 @test σ([1.0], m) == [1.5]

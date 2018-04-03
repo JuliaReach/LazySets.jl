@@ -1,4 +1,3 @@
-# using IntervalArithmetic
 import LazySets.Approximations.decompose
 
 for N in [Float64, Float32] # TODO Rational{Int}
@@ -42,8 +41,8 @@ for N in [Float64, Float32] # TODO Rational{Int}
     @test d.array[1] isa HPolygon && test_directions(d.array[1])
 
     if N == Float64
-    d = decompose(b, set_type=LazySets.Interval, blocks=ones(Int, 6))
-    @test d.array[1] isa LazySets.Interval &&
+    d = decompose(b, set_type=Interval, blocks=ones(Int, 6))
+    @test d.array[1] isa Interval &&
         σ(N[1], d.array[1])[1] == one(N) && σ(N[-1], d.array[1])[1] == -one(N)
     end
 
@@ -72,10 +71,8 @@ for N in [Float64, Float32] # TODO Rational{Int}
         @test ai isa Hyperrectangle
     end
     # 1D intervals
-    if N == Float64
-        d = decompose(b, set_type=LazySets.Interval)
-        for ai in array(d)
-            @test ai isa LazySets.Interval
-        end
+    d = decompose(b, set_type=Interval)
+    for ai in array(d)
+        @test ai isa Interval
     end
 end

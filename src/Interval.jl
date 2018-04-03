@@ -1,4 +1,5 @@
-import IntervalArithmetic:@interval, AbstractInterval, mid
+import IntervalArithmetic
+import IntervalArithmetic: AbstractInterval
 
 export Interval,
        dim, σ, center, +, -, *, ∈, ⊆,
@@ -65,6 +66,13 @@ julia> center(x)
 This type is such that the usual pairwise arithmetic operators `+`, `-`, `*` trigger
 the corresponding interval arithmetic backend method, and return a new
 `Interval` object. For the symbolic Minkowksi sum, use `MinkowskiSum` or `⊕`.
+
+Interval of other numeric types can be created as well, eg. a rational interval:
+
+```jldoctest interval_constructor
+julia> Interval(0//1, 2//1)
+LazySets.Interval{Rational{Int64},IntervalArithmetic.Interval{Rational{Int64}}}([0//1, 2//1])
+```
 """
 struct Interval{N<:Real, IN <: AbstractInterval{N}} <: AbstractPointSymmetricPolytope{N}
    dat::IN
@@ -75,10 +83,10 @@ Interval(interval::IN) where {N, IN <: AbstractInterval{N}} = Interval{N, IN}(in
 # TODO: adapt show method
 
 # constructor that takes two numbers
-Interval(lo::N, hi::N) where {N} = Interval(@interval(lo, hi))
+Interval(lo::N, hi::N) where {N} = Interval(IntervalArithmetic.Interval(lo, hi))
 
 # constructor from a vector
-Interval(x::AbstractVector{N}) where {N} = Interval(@interval(x[1], x[2]))
+Interval(x::AbstractVector{N}) where {N} = Interval(IntervalArithmetic.Interval(x[1], x[2]))
 
 """
     dim(x::Interval)::Int
@@ -127,7 +135,7 @@ Return the interval's center.
 
 The center, or midpoint, of ``x``.
 """
-center(x::Interval) = [mid(x.dat)]
+center(x::Interval) = [IntervalArithmetic.mid(x.dat)]
 
 import Base:+, -, *, ∈, ⊆
 
