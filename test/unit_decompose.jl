@@ -40,11 +40,9 @@ for N in [Float64, Float32] # TODO Rational{Int}
     d = decompose(b, set_type=HPolygon, ɛ=to_N(N, 1e-2))
     @test d.array[1] isa HPolygon && test_directions(d.array[1])
 
-    if N == Float64
     d = decompose(b, set_type=Interval, blocks=ones(Int, 6))
     @test d.array[1] isa Interval &&
         σ(N[1], d.array[1])[1] == one(N) && σ(N[-1], d.array[1])[1] == -one(N)
-    end
 
     # ===================
     # 1D/3D decomposition

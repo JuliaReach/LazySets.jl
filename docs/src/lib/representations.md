@@ -135,7 +135,6 @@ low(::Hyperrectangle{Float64})
 
 ```@docs
 Interval
-IA
 dim(::Interval)
 σ(::AbstractVector{Float64}, ::Interval{Float64, IntervalArithmetic.AbstractInterval{Float64}})
 center(::Interval)
