@@ -84,10 +84,10 @@ function convert(::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
     return Zonotope{N}(center(H), diagm(radius_hyperrectangle(H)))
 end
 
-@require IntervalArithmetic begin
+import IntervalArithmetic.AbstractInterval
 
 """
-    convert(::Type{Hyperrectangle}, x::LazySets.Interval{N, IN}) where {N, IN <: IA.AbstractInterval{N}}
+    convert(::Type{Hyperrectangle}, x::LazySets.Interval{N, IN}) where {N, IN <: AbstractInterval{N}}
 
 Converts a unidimensional interval into a hyperrectangular set.
 
@@ -107,7 +107,6 @@ julia> convert(Hyperrectangle, Interval(0.0, 1.0))
 LazySets.Hyperrectangle{Float64}([0.5], [0.5])
 ```
 """
-function convert(::Type{Hyperrectangle}, x::LazySets.Interval{N, IN}) where {N, IN <: IA.AbstractInterval{N}}
+function convert(::Type{Hyperrectangle}, x::LazySets.Interval{N, IN}) where {N, IN <: AbstractInterval{N}}
     return Hyperrectangle(low=[low(x)], high=[high(x)])
-end
 end

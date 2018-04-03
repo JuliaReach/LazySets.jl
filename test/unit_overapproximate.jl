@@ -90,10 +90,16 @@ for N in [Float64, Float32] # TODO Rational{Int}
     @test !(Y_zonotope ⊆ Y_polygon)
 
     # Interval approximation
-    b = Ball1(N[0.], N(1.))
-    p = overapproximate(b, LazySets.Interval)
-    for d in to_N(N, [[1.], [-1.]])
-        @test σ(d, p)[1] ≈ σ(d, b)[1]
+    # for use with other precision, use
+    # setprecision(IntervalArithmetic.Interval, precision(N))
+    # however, this will use BigFloat's of given number of bits, which is a
+    # different numeric type than d, so this will triggeer a MethodError
+    if N == Float64
+        b = Ball1(N[0.], N(1.))
+        p = overapproximate(b, LazySets.Interval)
+        for d in to_N(N, [[1.], [-1.]])
+            @test σ(d, p)[1] ≈ σ(d, b)[1]
+        end
     end
 end
 

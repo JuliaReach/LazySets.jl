@@ -40,9 +40,12 @@ for N in [Float64, Float32] # TODO Rational{Int}
     @test d.array[1] isa Hyperrectangle && test_directions(d.array[1])
     d = decompose(b, set_type=HPolygon, ɛ=to_N(N, 1e-2))
     @test d.array[1] isa HPolygon && test_directions(d.array[1])
+
+    if N == Float64
     d = decompose(b, set_type=LazySets.Interval, blocks=ones(Int, 6))
     @test d.array[1] isa LazySets.Interval &&
         σ(N[1], d.array[1])[1] == one(N) && σ(N[-1], d.array[1])[1] == -one(N)
+    end
 
     # ===================
     # 1D/3D decomposition
@@ -69,8 +72,10 @@ for N in [Float64, Float32] # TODO Rational{Int}
         @test ai isa Hyperrectangle
     end
     # 1D intervals
-    d = decompose(b, set_type=LazySets.Interval)
-    for ai in array(d)
-        @test ai isa LazySets.Interval
+    if N == Float64
+        d = decompose(b, set_type=LazySets.Interval)
+        for ai in array(d)
+            @test ai isa LazySets.Interval
+        end
     end
 end
