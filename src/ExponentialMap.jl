@@ -53,12 +53,24 @@ julia> get_columns(E, [10]); # same as get_column(E, 10) but a 100x1 matrix is r
 This type is provided for use with very large and very sparse matrices.
 The evaluation of the exponential matrix action over vectors relies on the
 [Expokit](https://github.com/acroy/Expokit.jl) package.
+
+Once computed, this type stores the computed results in a cache.
 """
 struct SparseMatrixExp{N} <: AbstractMatrix{N}
     M::SparseMatrixCSC{N, Int}
+    cache::SparseMatrixCSC{N, Int}
+    valid_rows::SparseVector{Bool, Int}
+    valid_cols::SparseVector{Bool, Int}
+
+    SparseMatrixExp{N}(M::SparseMatrixCSC{N, Int}) where {N} =
+        new{N}(M, spzeros(N, size(M, 1), size(M, 2)), spzeros(Bool, size(M, 1)),
+            spzeros(Bool, size(M, 2)))
 end
 
-SparseMatrixExp(M::Matrix) =
+# type-less convenience constructor
+SparseMatrixExp(M::SparseMatrixCSC{N, Int}) where {N} = SparseMatrixExp{N}(M)
+
+SparseMatrixExp(M::AbstractMatrix) =
         error("only sparse matrices can be used to create a `SparseMatrixExp`")
 
 Base.eye(spmexp::SparseMatrixExp) = SparseMatrixExp(spzeros(size(spmexp.M)...))
@@ -75,52 +87,78 @@ function size(spmexp::SparseMatrixExp, ax::Int)::Int
 end
 
 function get_column(spmexp::SparseMatrixExp{N}, j::Int)::Vector{N} where {N}
+    if spmexp.valid_cols[j]
+        return spmexp.cache[:, j]
+    end
     n = size(spmexp, 1)
     aux = zeros(N, n)
     aux[j] = one(N)
-    return expmv(one(N), spmexp.M, aux)
+    column = expmv(one(N), spmexp.M, aux)
+    spmexp.cache[:, j] = column
+    spmexp.valid_cols[j] = true
+    return column
 end
 
 function get_columns(spmexp::SparseMatrixExp{N},
                      J::AbstractArray)::Matrix{N} where {N}
     n = size(spmexp, 1)
     aux = zeros(N, n)
-    ans = zeros(N, n, length(J))
+    res = zeros(N, n, length(J))
     count = 1
     one_N = one(N)
     zero_N = zero(N)
     @inbounds for j in J
-        aux[j] = one_N
-        ans[:, count] = expmv(one_N, spmexp.M, aux)
-        aux[j] = zero_N
+        if spmexp.valid_cols[j]
+            res[:, count] = spmexp.cache[:, j]
+        else
+            aux[j] = one_N
+            column = expmv(one_N, spmexp.M, aux)
+            aux[j] = zero_N
+            spmexp.cache[:, j] = column
+            spmexp.valid_cols[j] = true
+            res[:, count] = column
+        end
         count += 1
     end
-    return ans
+    return res
 end
 
 function get_row(spmexp::SparseMatrixExp{N}, i::Int)::RowVector{N} where {N}
+    if spmexp.valid_rows[i]
+        return spmexp.cache[i, :]
+    end
     n = size(spmexp, 1)
     aux = zeros(N, n)
     aux[i] = one(N)
-    return transpose(expmv(one(N), spmexp.M.', aux))
+    row = transpose(expmv(one(N), spmexp.M.', aux))
+    spmexp.cache[i, :] = row
+    spmexp.valid_rows[i] = true
+    return row
 end
 
 function get_rows(spmexp::SparseMatrixExp{N},
                   I::AbstractArray{Int})::Matrix{N} where {N}
     n = size(spmexp, 1)
     aux = zeros(N, n)
-    ans = zeros(N, length(I), n)
+    res = zeros(N, length(I), n)
     Mtranspose = spmexp.M.'
     count = 1
     one_N = one(N)
     zero_N = zero(N)
     @inbounds for i in I
-        aux[i] = one_N
-        ans[count, :] = expmv(one_N, Mtranspose, aux)
-        aux[i] = zero_N
+        if spmexp.valid_rows[i]
+            res[count, :] = spmexp.cache[i, :]
+        else
+            aux[i] = one_N
+            row = expmv(one_N, Mtranspose, aux)
+            aux[i] = zero_N
+            spmexp.cache[i, :] = row
+            spmexp.valid_rows[i] = true
+            res[count, :] = row
+        end
         count += 1
     end
-    return ans
+    return res
 end
 
 """
