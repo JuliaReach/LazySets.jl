@@ -25,7 +25,7 @@ struct HPolytope{N<:Real} <: AbstractPolytope{N}
     constraints::Vector{LinearConstraint{N}}
 end
 # constructor for a HPolytope with no constraints
-HPolytope{N}() where {N<:Real} = HPolytope{N}(Vector{N}(0))
+HPolytope{N}() where {N<:Real} = HPolytope{N}(Vector{LinearConstraint{N}}(0))
 
 # constructor for a HPolytope with no constraints of type Float64
 HPolytope() = HPolytope{Float64}()
