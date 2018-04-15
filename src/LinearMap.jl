@@ -55,6 +55,7 @@ A lazy linear map, i.e. a `LinearMap` instance.
 """
 *(M::AbstractMatrix, X::LazySet) = LinearMap(M, X)
 
+*(M::AbstractVector, X::LazySet) = LinearMap(reshape(M, length(M), 1), X)
 
 """
 ```

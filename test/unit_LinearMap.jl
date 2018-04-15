@@ -56,4 +56,12 @@ for N in [Float64, Rational{Int}, Float32]
     lm = N(2.) * BallInf(N[0., 0.], N(1.))
     an_element(lm)
 #     @test an_element(lm) ∈ lm # TODO results in an error for Rational
+
+    # check linear map between vector and set
+    X = Interval([0.9, 1.10445])
+    a = [-1., 2.]
+    @test a * X isa LinearMap
+    X = BallInf(N[1.0], N(1.10445))
+    a = N[-1, 2.]
+    @test a * X isa LinearMap{N, N}
 end
