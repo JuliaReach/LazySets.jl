@@ -57,7 +57,7 @@ for N in [Float64, Rational{Int}, Float32]
     an_element(lm)
 #     @test an_element(lm) ∈ lm # TODO results in an error for Rational
 
-    # check lineear map bewteen vector and set
+    # check lineear map between vector and set
     X = Interval([0.9, 1.10445])
     a = [-1., 2.]
     @test a * X isa LinearMap
