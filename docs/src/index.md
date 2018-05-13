@@ -82,12 +82,11 @@ julia> U = BallInf(zeros(2), 1.2);
 
 ```
 
-The `@time` macro reveals that building $\mathcal{Y}$ with
-`LazySets` is instantaneous:
+The `@time` macro shows that building $\mathcal{Y}$ with
+`LazySets` is instantaneous.
 
 ```jldoctest index_label
-julia> @time Y = CH(SparseMatrixExp(A * δ) * X0 + δ * B * U, X0);
-0.000022 seconds (13 allocations: 16.094 KiB)
+julia> Y = CH(SparseMatrixExp(A * δ) * X0 + δ * B * U, X0);
 ```
 
 By asking for the concrete type of `Y`, we see that it has a convex hull type,
@@ -108,8 +107,7 @@ Second, we use the `overapproximate` method:
 ```jldoctest index_label
 julia> proj_mat = [[1. zeros(1, 999)]; [zeros(1, 499) 1. zeros(1, 500)]];
 
-julia> @time res = Approximations.overapproximate(proj_mat * Y);
-0.064034 seconds (1.12 k allocations: 7.691 MiB)
+julia> res = Approximations.overapproximate(proj_mat * Y);
 ```
 
 We have calculated a box overapproximation of the exact projection onto the
