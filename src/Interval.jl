@@ -71,7 +71,7 @@ Interval of other numeric types can be created as well, eg. a rational interval:
 
 ```jldoctest interval_constructor
 julia> Interval(0//1, 2//1)
-LazySets.Interval{Rational{Int64},IntervalArithmetic.Interval{Rational{Int64}}}([0//1, 2//1])
+LazySets.Interval{Rational{Int64},IntervalArithmetic.AbstractInterval{Rational{Int64}}}([0//1, 2//1])
 ```
 """
 struct Interval{N<:Real, IN <: AbstractInterval{N}} <: AbstractPointSymmetricPolytope{N}
@@ -84,6 +84,8 @@ Interval(interval::IN) where {N, IN <: AbstractInterval{N}} = Interval{N, IN}(in
 
 # constructor that takes two numbers
 Interval(lo::N, hi::N) where {N} = Interval(IntervalArithmetic.Interval(lo, hi))
+
+Interval(lo::Rational{N}, hi::Rational{N}) where {N} = Interval{Rational{N}, IntervalArithmetic.AbstractInterval{Rational{N}}}(IntervalArithmetic.Interval(lo, hi))
 
 # constructor from a vector
 Interval(x::AbstractVector{N}) where {N} = Interval(IntervalArithmetic.Interval(x[1], x[2]))
