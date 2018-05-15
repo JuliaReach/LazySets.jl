@@ -29,6 +29,7 @@ const DIR_SOUTH(N) = [zero(N), -one(N)]
 
 include("iterative_refinement.jl")
 include("box_approximations.jl")
+include("template_directions.jl")
 include("overapproximate.jl")
 include("decompositions.jl")
 
