@@ -126,22 +126,22 @@ function overapproximate(S::LazySet{N}, ::Type{LazySets.Interval}) where {N<:Rea
     return LazySets.Interval(lo, hi)
 end
 
-"""
-    overapproximate(I::LazySets.Interval, ::Type{LazySets.Interval})
+end # @require
 
-Overapproximating an interval with an interval is a no-op.
+"""
+    overapproximate(X::S, ::Type{S}) where {S <: LazySet}
+
+Overapproximating a set of type `S` with type `S` is a no-op.
 
 ### Input
 
-- `I` -- interval
-- `Interval` for dispatch
+- `X` -- set
+- `Type{S}` -- set type
 
 ### Output
 
-The input interval.
+The input set.
 """
-function overapproximate(I::LazySets.Interval, ::Type{LazySets.Interval})
-    return I
+function overapproximate(X::S, ::Type{S}) where {S <: LazySet}
+    return X
 end
-
-end # @require
