@@ -17,7 +17,8 @@ export approximate,
        overapproximate,
        radius,
        symmetric_interval_hull,
-       BoxDirections
+       BoxDirections,
+       OctDirections
 
 const TOL(N::Type{Float64}) = eps(N)
 const TOL(N::Type{Float32}) = eps(N)
