@@ -21,7 +21,7 @@ on how to install and run Julia in your system.
 
 To install this package, use the following command inside Julia's REPL:
 ```julia
-Pkg.clone("https://github.com/JuliaReach/LazySets.jl")
+Pkg.clone("LazySets")
 ```
 
 ## Updating
