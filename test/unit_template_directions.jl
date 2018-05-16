@@ -16,7 +16,7 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # template direction approximation
-    for n in 2:3
+    for n in 1:3
         B = BallInf(zeros(N, n), N(2.))
         A = 2.*eye(N, n) + ones(N, n, n)
         X = A * B
@@ -31,6 +31,6 @@ for N in [Float64, Float32, Rational{Int}]
         dir = OctDirections{N}(n)
         @test dim(dir) == n
         oct = overapproximate(X, dir)
-        @test length(dir) == length(oct.constraints) == 2^n + 2*n
+        @test length(dir) == length(oct.constraints) == (n == 1 ? 2 : 2^n + 2*n)
     end
 end

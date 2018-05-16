@@ -113,7 +113,11 @@ function Base.next(od::OctDirections{N}, state::AbstractVector) where N
         i = i+1
     end
     if i > od.n
-        return (copy(state), 1)
+        if od.n == 1
+            return (copy(state), 0) # finish here to avoid duplicates
+        else
+            return (copy(state), 1) # continue with box directions
+        end
     else
         state[i] = -state[i]
         return (copy(state), state)
@@ -123,7 +127,7 @@ function Base.next(od::OctDirections{N}, state::Int) where N
     return next(BoxDirections{N}(od.n), state)
 end
 Base.done(od::OctDirections, state) = state == 0
-Base.length(od::OctDirections) = 2^od.n + 2*od.n
+Base.length(od::OctDirections) = od.n == 1 ? 2 : 2^od.n + 2*od.n
 
 """
     dim(od::OctDirections)::Int
