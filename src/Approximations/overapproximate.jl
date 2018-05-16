@@ -121,6 +121,31 @@ function overapproximate(S::ConvexHull{N, Zonotope{N}, Zonotope{N}},
     return Zonotope(center, generators)
 end
 
+"""
+    overapproximate(X::LazySet, dir::AbstractDirections)::HPolytope
+
+Overapproximating a set with template directions.
+
+### Input
+
+- `X`   -- set
+- `dir` -- direction representation
+
+### Output
+
+A `HPolytope` overapproximating the set `X` with the directions from `dir`.
+"""
+function overapproximate(X::LazySet{N},
+                         dir::AbstractDirections{N})::HPolytope{N} where N
+    halfspaces = Vector{LazySets.LinearConstraint{N}}()
+    sizehint!(halfspaces, length(dir))
+    H = HPolytope(halfspaces)
+    for d in dir
+        addconstraint!(H, LazySets.LinearConstraint(d, ρ(d, X)))
+    end
+    return H
+end
+
 @require IntervalArithmetic begin
 
 """
