@@ -1,4 +1,22 @@
 """
+    overapproximate(X::S, ::Type{S}) where {S <: LazySet}
+
+Overapproximating a set of type `S` with type `S` is a no-op.
+
+### Input
+
+- `X` -- set
+- `Type{S}` -- set type
+
+### Output
+
+The input set.
+"""
+function overapproximate(X::S, ::Type{S}) where {S <: LazySet}
+    return X
+end
+
+"""
     overapproximate(S::LazySet{N},
                     ::Type{<:HPolygon},
                     [ɛ]::Real=Inf)::HPolygon where {N<:Real}
@@ -127,21 +145,3 @@ function overapproximate(S::LazySet{N}, ::Type{LazySets.Interval}) where {N<:Rea
 end
 
 end # @require
-
-"""
-    overapproximate(X::S, ::Type{S}) where {S <: LazySet}
-
-Overapproximating a set of type `S` with type `S` is a no-op.
-
-### Input
-
-- `X` -- set
-- `Type{S}` -- set type
-
-### Output
-
-The input set.
-"""
-function overapproximate(X::S, ::Type{S}) where {S <: LazySet}
-    return X
-end
