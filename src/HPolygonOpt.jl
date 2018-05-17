@@ -44,8 +44,15 @@ HPolygonOpt(constraints::Vector{LinearConstraint{N}},
             ind::Int=1) where {N<:Real} =
     HPolygonOpt{N}(constraints, ind)
 
+# constructor for an HPolygon with no constraints
+HPolygonOpt{N}() where {N<:Real} = HPolygonOpt{N}(Vector{LinearConstraint{N}}(0), 1)
+
+# constructor for an HPolygon with no constraints of type Float64
+HPolygonOpt() = HPolygonOpt{Float64}()
+
 # conversion constructor
 HPolygonOpt(S::LazySet) = convert(HPolygonOpt, S)
+
 
 
 # --- LazySet interface functions ---
