@@ -72,7 +72,7 @@ end
 
 """
     vertices_list(P::AbstractHPolygon{N},
-                  apply_convex_hull::Bool=true
+                  apply_convex_hull::Bool=false
                  )::Vector{Vector{N}} where {N<:Real}
 
 Return the list of vertices of a polygon in constraint representation.
