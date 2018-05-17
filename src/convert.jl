@@ -63,7 +63,12 @@ function convert(::Type{HPOLYGON},
     if dim(P) != 2
         error("polytope must be 2D for conversion")
     end
-    return HPOLYGON(P.constraints)
+    H = HPOLYGON()
+    for ci in constraints_list(P)
+        # guarantee that the edges are correctly sorted for storage
+        addconstraint!(H, ci)
+    end
+    return H
 end
 
 """
