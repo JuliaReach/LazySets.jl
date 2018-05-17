@@ -20,20 +20,20 @@ julia> Line([1., 1.], 1.)
 LazySets.Line{Float64}([1.0, 1.0], 1.0)
 ```
 """
-struct Line{N<:Real} <: LazySet{N}
-    a::Vector{N}
+struct Line{N<:Real, V<:AbstractVector{N}} <: LazySet{N}
+    a::V
     b::N
 
     # default constructor with length constraint
-    Line{N}(a::Vector{N}, b::N) where {N<:Real} =
-        (length(a) != 2 ? throw(DimensionMismatch) : new{N}(a, b))
+    Line{N, V}(a::V, b::N) where {N<:Real, V<:AbstractVector{N}} =
+        (length(a) != 2 ? throw(DimensionMismatch) : new{N, V}(a, b))
 end
 
 # type-less convenience constructor
-Line(a::Vector{N}, b::N) where {N<:Real} = Line{N}(a, b)
+Line(a::V, b::N) where {N<:Real, V<:AbstractVector{N}} = Line{N, V}(a, b)
 
 # constructor from a LinearConstraint
-Line(c::LinearConstraint{N}) where {N<:Real} = Line{N}(c.a, c.b)
+Line(c::LinearConstraint{N}) where {N<:Real} = Line(c.a, c.b)
 
 
 # --- LazySet interface functions ---
