@@ -59,11 +59,16 @@ Convert from 2D polytope in H-representation to polygon in H-representation.
 The 2D polytope represented as polygon.
 """
 function convert(::Type{HPOLYGON},
-                 P::HPolytope) where {HPOLYGON<:AbstractHPolygon}
+                 P::HPolytope{N}) where {N, HPOLYGON<:AbstractHPolygon}
     if dim(P) != 2
         error("polytope must be 2D for conversion")
     end
-    return HPOLYGON(P.constraints)
+    H = HPOLYGON{N}()
+    for ci in constraints_list(P)
+        # guarantee that the edges are correctly sorted for storage
+        addconstraint!(H, ci)
+    end
+    return H
 end
 
 """

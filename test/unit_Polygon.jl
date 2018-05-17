@@ -147,5 +147,6 @@ for N in [Float64, Float32, Rational{Int}]
     end
 end
 
-# default Float64 constructor
-HPolygon()
+# default Float64 constructors
+@test HPolygon() isa LazySets.HPolygon{Float64}
+@test HPolygonOpt() isa LazySets.HPolygonOpt{Float64}
