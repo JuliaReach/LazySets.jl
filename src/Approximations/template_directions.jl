@@ -12,6 +12,23 @@ function `dim(d<:AbstractDirections)::Int`.
 """
 abstract type AbstractDirections{N} end
 
+"""
+    dim(ad::AbstractDirections)::Int
+
+Returns the dimension of the generated directions.
+
+### Input
+
+- `ad` -- box direction representation
+
+### Output
+
+The dimension of the generated directions.
+"""
+function dim(ad::AbstractDirections)::Int
+    return ad.n
+end
+
 # box directions
 
 """
@@ -62,23 +79,6 @@ Base.next(bd::BoxDirections{N}, state) where N = (
 Base.done(bd::BoxDirections, state) = state == 0
 Base.length(bd::BoxDirections) = 2*bd.n
 
-"""
-    dim(bd::BoxDirections)::Int
-
-Returns the dimension of the generated directions.
-
-### Input
-
-- `bd` -- box direction representation
-
-### Output
-
-The dimension of the generated directions.
-"""
-function dim(bd::BoxDirections)::Int
-    return bd.n
-end
-
 # box-diagonal directions
 
 """
@@ -128,20 +128,3 @@ function Base.next(bdd::BoxDiagDirections{N}, state::Int) where N
 end
 Base.done(bdd::BoxDiagDirections, state) = state == 0
 Base.length(bdd::BoxDiagDirections) = bdd.n == 1 ? 2 : 2^bdd.n + 2*bdd.n
-
-"""
-    dim(bdd::BoxDiagDirections)::Int
-
-Returns the dimension of the generated directions.
-
-### Input
-
-- `bdd` -- box-diagonal direction representation
-
-### Output
-
-The dimension of the generated directions.
-"""
-function dim(bdd::BoxDiagDirections)::Int
-    return bdd.n
-end
