@@ -1,6 +1,7 @@
 import LazySets.Approximations,
        Approximations.UnitVector,
        Approximations.BoxDirections,
+       Approximations.OctDirections,
        Approximations.BoxDiagDirections,
        Approximations.overapproximate
 
@@ -26,6 +27,12 @@ for N in [Float64, Float32, Rational{Int}]
         @test dim(dir) == n
         box = overapproximate(X, dir)
         @test length(dir) == length(box.constraints) == 2*n
+
+        # octagon directions
+        dir = OctDirections{N}(n)
+        @test dim(dir) == n
+        oct = overapproximate(X, dir)
+        @test length(dir) == length(oct.constraints) == 2 * n^2
 
         # box-diagonal directions
         dir = BoxDiagDirections{N}(n)
