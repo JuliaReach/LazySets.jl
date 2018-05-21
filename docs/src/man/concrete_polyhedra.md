@@ -39,28 +39,29 @@ using LazySets, Plots, Polyhedra
 
 A = [1. 1;1 -1;-1 0]
 b = [1.,0,0]
-hrep = SimpleHRepresentation(A, b)
+H = Polyhedra.hrep(A, b)
 ```
 
 It is used to instantiate a new polyhedron:
 
 ```@example concrete_polyhedra
-p = polyhedron(hrep)
+p = polyhedron(H)
 ```
 
-Now, `p` is of the generic type `Polyhedra.SimplePolyhedron{2,Float64}`, where
-`2` states for its ambient dimension, and `Float64` the numeric field:
+Now, `p` is of the generic type `Polyhedra.SimplePolyhedron{2,Float64, ...}`, where
+`2` states for its ambient dimension, and `Float64` the numeric field. The remaining
+fields specify the type of representation:
 
 ```@example concrete_polyhedra
 typeof(p)
 ```
 
-Observe that we instantiate a particular backend, such as the `CDD` library:
+Observe that we can use a particular backend, such as the `CDD` library:
 
 ```@example concrete_polyhedra
 using CDDLib
 
-p = polyhedron(hrep, CDDLib.CDDLibrary())
+p = polyhedron(H, CDDLib.CDDLibrary())
 ```
 
 On the other hand, a `LazySets.HPolytope` object can be constructed from `p`:
@@ -119,6 +120,6 @@ plot!(X, 1e-3, alpha=0.4, color="black")
 Projection of high-dimensional polyhedra and elimination of variables can be
 performed with the `eliminate` function, which supports three types of methods:
 `:FourierMotzkin`, `:BlockElimination` and `:ProjectGenerators`.
-See
-[the documentation of Polyhedra.jl](https://juliapolyhedra.github.io/Polyhedra.jl/latest/polyhedron.html#Projecting-a-polyhedron-1)
-for further details.
+
+For further details, see
+[the documentation of Polyhedra.jl](https://juliapolyhedra.github.io/Polyhedra.jl/latest/polyhedron.html#Projecting-a-polyhedron-1).
