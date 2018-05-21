@@ -37,7 +37,7 @@ for N in [Float64, Float32] # TODO Rational{Int}
     @test d.array[1] isa HPolygon && test_directions(d.array[1])
     d = decompose(b, set_type=Hyperrectangle)
     @test d.array[1] isa Hyperrectangle && test_directions(d.array[1])
-    d = decompose(b, set_type=HPolygon, ɛ=to_N(N, 1e-2))
+    d = decompose(b, set_type=HPolygon, ε=to_N(N, 1e-2))
     @test d.array[1] isa HPolygon && test_directions(d.array[1])
 
     d = decompose(b, set_type=Interval, blocks=ones(Int, 6))
