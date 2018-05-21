@@ -3,14 +3,14 @@ import LazySets.Approximations.overapproximate
 for N in [Float64, Float32] # TODO Rational{Int}
     # Approximation of a 2D centered unit ball in norm 1
     # All vertices v should be like this:
-    # ‖v‖ >= 1 and ‖v‖ <= 1+ɛ
-    # Where ɛ is the given error bound
+    # ‖v‖ >= 1 and ‖v‖ <= 1+ε
+    # Where ε is the given error bound
     b = Ball1(N[0., 0.], N(1.))
-    ɛ = N(.01)
-    p = tovrep(overapproximate(b, ɛ))
+    ε = N(.01)
+    p = tovrep(overapproximate(b, ε))
     for v in p.vertices_list
     @test norm(v) >= N(1.)
-    @test norm(v) <= N(1.+ɛ)
+    @test norm(v) <= N(1.+ε)
     end
 
     # Check that there are no redundant constraints for a ballinf

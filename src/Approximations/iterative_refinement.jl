@@ -153,23 +153,23 @@ end
 
 """
     approximate(S::LazySet{N},
-                ɛ::N)::PolygonalOverapproximation{N} where {N<:Real}
+                ε::N)::PolygonalOverapproximation{N} where {N<:Real}
 
-Return an ɛ-close approximation of the given 2D convex set (in terms of
+Return an ε-close approximation of the given 2D convex set (in terms of
 Hausdorff distance) as an inner and an outer approximation composed by sorted
 local `Approximation2D`.
 
 ### Input
 
 - `S` -- 2D convex set
-- `ɛ` -- error bound
+- `ε` -- error bound
 
 ### Output
 
-An ɛ-close approximation of the given 2D convex set.
+An ε-close approximation of the given 2D convex set.
 """
 function approximate(S::LazySet{N},
-                     ɛ::N)::PolygonalOverapproximation{N} where {N<:Real}
+                     ε::N)::PolygonalOverapproximation{N} where {N<:Real}
 
     # initialize box directions
     pe = σ(DIR_EAST(N), S)
@@ -187,7 +187,7 @@ function approximate(S::LazySet{N},
     i = 1
     while i <= length(Ω.approx_list)
         approx = Ω.approx_list[i]
-        if !approx.refinable || approx.err <= ɛ
+        if !approx.refinable || approx.err <= ε
             # if this approximation doesn't need to be refined, consider the next
             # one in the queue (counter-clockwise order wrt d1)
             # if the approximation is not refinable => continue

@@ -34,7 +34,7 @@ end
 """
     decompose(S::LazySet{N};
               [set_type]::Type{<:Union{HPolygon, Hyperrectangle, Interval}}=Hyperrectangle,
-              [ɛ]::Real=Inf,
+              [ε]::Real=Inf,
               [blocks]::AbstractVector{Int}=default_block_structure(S, set_type),
               [block_types]::Dict{Type{<:LazySet}, AbstractVector{<:AbstractVector{Int}}}
              )::CartesianProductArray where {N<:Real}
@@ -47,7 +47,7 @@ of the projections over the specified subspaces.
 - `S`           -- set
 - `set_type`    -- (optional, default: `Hyperrectangle`) type of set approximation
                    for each subspace
-- `ɛ`           -- (optional, default: `Inf`) error bound for polytopic approximation
+- `ε`           -- (optional, default: `Inf`) error bound for polytopic approximation
 - `blocks`      -- (optional, default: [2, …, 2] or [1, …, 1] if `set_type` is an interval)
                    block structure - a vector with the size of each block
 - `block_types` -- (optional, default: Interval for 1D and Hyperrectangle
@@ -134,11 +134,11 @@ for that purpose.
 
 #### Refining the decomposition
 
-The ``ɛ`` option can be used to refine, that is obtain a more accurate decomposition
+The ``ε`` option can be used to refine, that is obtain a more accurate decomposition
 in those blocks where `HPolygon` types are used, and it relies on the iterative
 refinement algorithm provided in the `Approximations` module.
 
-To illustrate this, consider the unit 4D ball in the 2-norm. Using smaller ``ɛ``
+To illustrate this, consider the unit 4D ball in the 2-norm. Using smaller ``ε``
 implies a better precision, thus more constraints in each 2D decomposition:
 
 ```jldoctest decompose_examples
@@ -189,7 +189,7 @@ julia> [typeof(ai) for ai in array(decompose(S, block_types=bt, ε=0.01))]
 """
 function decompose(S::LazySet{N};
                    set_type::Type{<:Union{HPolygon, Hyperrectangle, Interval}}=Hyperrectangle,
-                   ɛ::Real=Inf,
+                   ε::Real=Inf,
                    blocks::AbstractVector{Int}=default_block_structure(S, set_type),
                    block_types=Dict{Type{<:LazySet}, AbstractVector{<:AbstractVector{Int}}}()
                   )::CartesianProductArray where {N<:Real}
@@ -199,7 +199,7 @@ function decompose(S::LazySet{N};
     if isempty(block_types)
         block_start = 1
         @inbounds for bi in blocks
-            push!(result, project(S, block_start:(block_start + bi - 1), set_type, n, ɛ))
+            push!(result, project(S, block_start:(block_start + bi - 1), set_type, n, ε))
             block_start += bi
         end
     else
@@ -221,7 +221,7 @@ function decompose(S::LazySet{N};
         set_type = set_type[s]
         block_start = 1
         @inbounds for (i, bi) in enumerate(blocks)
-            push!(result, project(S, block_start:(block_start + bi - 1), set_type[i], n, ɛ))
+            push!(result, project(S, block_start:(block_start + bi - 1), set_type[i], n, ε))
             block_start += bi
         end
     end
@@ -233,7 +233,7 @@ end
             block::AbstractVector{Int},
             set_type::Type{<:LazySet},
             [n]::Int=dim(S),
-            [ɛ]::Real=Inf
+            [ε]::Real=Inf
            )::LazySet{N} where {N<:Real}
 
 Default implementation for projecting a high-dimensional set to a given set type
@@ -245,7 +245,7 @@ with possible overapproximation.
 - `block` -- block structure - a vector with the dimensions of interest
 - `set_type` -- target set type
 - `n` -- (optional, default: `dim(S)`) ambient dimension of the set `S`
-- `ɛ` -- (optional, default: `Inf`) ignored
+- `ε` -- (optional, default: `Inf`) ignored
 
 ### Output
 
@@ -261,7 +261,7 @@ A set of type `set_type` representing an overapproximation of the projection of
                          block::AbstractVector{Int},
                          set_type::Type{<:LazySet},
                          n::Int=dim(S),
-                         ɛ::Real=Inf
+                         ε::Real=Inf
                         )::LazySet{N} where {N<:Real}
     M = sparse(1:length(block), block, ones(N, length(block)), length(block), n)
     return overapproximate(M * S, set_type)
@@ -272,7 +272,7 @@ end
             block::AbstractVector{Int},
             set_type::Type{<:HPolygon},
             [n]::Int=dim(S),
-            [ɛ]::Real=Inf
+            [ε]::Real=Inf
            )::HPolygon where {N<:Real}
 
 Project a high-dimensional set to a two-dimensional polygon with a certified
@@ -284,7 +284,7 @@ error bound.
 - `block` -- block structure - a vector with the dimensions of interest
 - `set_type` -- `HPolygon` - used for dispatch
 - `n` -- (optional, default: `dim(S)`) ambient dimension of the set `S`
-- `ɛ` -- (optional, default: `Inf`) error bound for polytopic approximation
+- `ε` -- (optional, default: `Inf`) error bound for polytopic approximation
 
 ### Output
 
@@ -297,25 +297,25 @@ approximation of the projection of `S`.
 
 ### Algorithm
 
-If `ɛ < Inf`, the algorithm proceeds as follows:
+If `ε < Inf`, the algorithm proceeds as follows:
 
 1. Project the set `S` with `M⋅S`, where `M` is the identity matrix in the block coordinates and zero otherwise.
-2. Overapproximate the set with the given error bound `ɛ`.
+2. Overapproximate the set with the given error bound `ε`.
 
-If `ɛ == Inf`, the algorithm uses a box approximation.
+If `ε == Inf`, the algorithm uses a box approximation.
 """
 @inline function project(S::LazySet{N},
                          block::AbstractVector{Int},
                          set_type::Type{<:HPolygon},
                          n::Int=dim(S),
-                         ɛ::Real=Inf
+                         ε::Real=Inf
                         )::HPolygon where {N<:Real}
     @assert length(block) == 2 "only 2D HPolygon decomposition is supported"
 
     # approximation with error bound
-    if ɛ < Inf
+    if ε < Inf
         M = sparse([1, 2], [block[1], block[2]], [one(N), one(N)], 2, n)
-        return overapproximate(M * S, ɛ)
+        return overapproximate(M * S, ε)
     end
 
     # box approximation
@@ -340,7 +340,7 @@ end
             block::AbstractVector{Int},
             set_type::Type{<:Hyperrectangle},
             [n]::Int=dim(S),
-            [ɛ]::Real=Inf
+            [ε]::Real=Inf
            )::Hyperrectangle where {N<:Real}
 
 Project a high-dimensional set to a low-dimensional hyperrectangle.
@@ -351,7 +351,7 @@ Project a high-dimensional set to a low-dimensional hyperrectangle.
 - `block` -- block structure - a vector with the dimensions of interest
 - `set_type` -- `Hyperrectangle` - used for dispatch
 - `n` -- (optional, default: `dim(S)`) ambient dimension of the set `S`
-- `ɛ` -- (optional, default: `Inf`) - used for dispatch, ignored
+- `ε` -- (optional, default: `Inf`) - used for dispatch, ignored
 
 ### Output
 
@@ -361,7 +361,7 @@ The box approximation of the projection of `S`.
                          block::AbstractVector{Int},
                          set_type::Type{<:Hyperrectangle},
                          n::Int=dim(S),
-                         ɛ::Real=Inf
+                         ε::Real=Inf
                         )::Hyperrectangle where {N<:Real}
     high = Vector{N}(length(block))
     low = similar(high)
