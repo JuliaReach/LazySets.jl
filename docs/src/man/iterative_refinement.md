@@ -1,10 +1,10 @@
 # Iterative Refinement
 
 This section of the manual describes an approximation method for an arbitrary
-two-dimensional convex set ``S`` and a given error bound ``ɛ`` using support
+two-dimensional convex set ``S`` and a given error bound ``ε`` using support
 vectors.
 The basic idea is to add new supporting directions whenever the approximation
-error is still bigger than ``ɛ``.
+error is still bigger than ``ε``.
 
 ```@contents
 Pages = ["iterative_refinement.md"]

@@ -19,17 +19,17 @@ end
 """
     overapproximate(S::LazySet{N},
                     ::Type{<:HPolygon},
-                    [ɛ]::Real=Inf)::HPolygon where {N<:Real}
+                    [ε]::Real=Inf)::HPolygon where {N<:Real}
 
 Return an approximation of a given 2D convex set.
 If no error tolerance is given, or is `Inf`, the result is a box-shaped polygon.
-Otherwise the result is an ɛ-close approximation as a polygon.
+Otherwise the result is an ε-close approximation as a polygon.
 
 ### Input
 
 - `S` -- convex set, assumed to be two-dimensional
 - `HPolygon` for dispatch
-- `ɛ` -- (optional, default: `Inf`) error bound
+- `ε` -- (optional, default: `Inf`) error bound
 
 ### Output
 
@@ -37,9 +37,9 @@ A polygon in constraint representation.
 """
 function overapproximate(S::LazySet{N},
                          ::Type{<:HPolygon},
-                         ɛ::Real=Inf)::HPolygon where {N<:Real}
+                         ε::Real=Inf)::HPolygon where {N<:Real}
     @assert dim(S) == 2
-    if ɛ == Inf
+    if ε == Inf
         pe = σ(DIR_EAST(N), S)
         pn = σ(DIR_NORTH(N), S)
         pw = σ(DIR_WEST(N), S)
@@ -51,16 +51,16 @@ function overapproximate(S::LazySet{N},
         constraints[4] = LinearConstraint(DIR_SOUTH(N), dot(ps, DIR_SOUTH(N)))
         return HPolygon(constraints)
     else
-        return tohrep(approximate(S, ɛ))
+        return tohrep(approximate(S, ε))
     end
 end
 
 """
-    overapproximate(S::LazySet, ɛ::Real)::HPolygon
+    overapproximate(S::LazySet, ε::Real)::HPolygon
 
-Alias for `overapproximate(S, HPolygon, ɛ)`.
+Alias for `overapproximate(S, HPolygon, ε)`.
 """
-overapproximate(S::LazySet, ɛ::Real)::HPolygon = overapproximate(S, HPolygon, ɛ)
+overapproximate(S::LazySet, ε::Real)::HPolygon = overapproximate(S, HPolygon, ε)
 
 """
     overapproximate(S::LazySet, Type{<:Hyperrectangle})::Hyperrectangle
