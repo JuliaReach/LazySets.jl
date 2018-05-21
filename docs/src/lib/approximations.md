@@ -66,7 +66,7 @@ approximate(::LazySet{Float64}, ::Float64)
 
 See [Iterative Refinement](@ref) for more details.
 
-## Template polyhedra
+## Template directions
 
 ```@docs
 AbstractDirections
