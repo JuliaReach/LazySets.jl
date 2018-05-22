@@ -98,6 +98,15 @@ dim(::MinkowskiSumArray{Float64, LazySet{Float64}})
 σ(::AbstractVector{Float64}, ::MinkowskiSumArray{Float64, LazySet{Float64}})
 ```
 
+### ``n``-ary Minkowski Sum with cache
+
+```@docs
+CacheMinkowskiSum
+array(::CacheMinkowskiSum{Float64, LazySet{Float64}})
+dim(::CacheMinkowskiSum{Float64, LazySet{Float64}})
+σ(::AbstractVector{Float64}, ::CacheMinkowskiSum{Float64, LazySet{Float64}})
+```
+
 ## Maps
 
 ### Linear Map

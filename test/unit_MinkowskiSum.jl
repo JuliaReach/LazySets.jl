@@ -73,4 +73,16 @@ for N in [Float64, Rational{Int}, Float32]
     @test res isa MinkowskiSumArray && length(array(msa)) == 2
     res = MinkowskiSum!(msa, msa)
     @test res isa MinkowskiSumArray && length(array(msa)) == 4
+
+    # caching Minkowski sum
+    cms = CacheMinkowskiSum(2, N);
+    x1 = BallInf(ones(N, 3), N(3.));
+    x2 = Ball1(ones(N, 3), N(5.));
+    d = ones(N, 3);
+    a = array(cms);
+    push!(a, x1);
+    σ(d, cms);
+    push!(a, x2);
+    σ(d, cms);
+    @test dim(cms) == 3
 end
