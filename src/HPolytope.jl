@@ -215,7 +215,6 @@ import Polyhedra:polyhedron, SimpleHRepresentation, SimpleHRepresentation,
 export intersect, convex_hull, cartesian_product, vertices_list
 
 # HPolytope from an HRep
-# NOTE: alternatively take SimpleHRepresentation(hrep(P)) fields A and b
 function HPolytope(P::HRep{N, T}, backend=CDDLib.CDDLibrary()) where {N, T}
     constraints = LinearConstraint{T}[]
     for hi in Polyhedra.allhalfspaces(P)
