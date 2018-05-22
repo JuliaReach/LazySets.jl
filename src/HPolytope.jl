@@ -215,11 +215,10 @@ import Polyhedra:polyhedron, SimpleHRepresentation, SimpleHRepresentation,
 export intersect, convex_hull, cartesian_product, vertices_list
 
 # HPolytope from an HRep
-# NOTE: alternatively take SimpleHRepresentation(hrep(P)) fields A and b
 function HPolytope(P::HRep{N, T}, backend=CDDLib.CDDLibrary()) where {N, T}
     constraints = LinearConstraint{T}[]
-    for hi in hreps(P)
-        push!(constraints, LinearConstraint(hi.a, hi.β))
+    for hi in Polyhedra.allhalfspaces(P)
+        push!(constraints, LazySets.HalfSpace(hi.a, hi.β))
     end
     return HPolytope(constraints)
 end
@@ -241,7 +240,8 @@ Return an `HRep` polyhedron from `Polyhedra.jl` given a polytope in H-representa
 An `HRep` polyhedron.
 """
 function polyhedron(P::HPolytope{N}, backend=CDDLib.CDDLibrary()) where {N}
-    return polyhedron(SimpleHRepresentation(tosimplehrep(P)...), backend)
+    A, b = tosimplehrep(P)
+    return Polyhedra.polyhedron(Polyhedra.hrep(A, b), backend)
 end
 
 """

@@ -119,7 +119,7 @@ export intersect, convex_hull, cartesian_product, vertices_list
 # VPolytope from a VRep
 function VPolytope(P::VRep{N, T}, backend=CDDLib.CDDLibrary()) where {N, T}
     vertices = Vector{Vector{T}}()
-    for vi in vreps(P)
+    for vi in Polyhedra.points(P)
         push!(vertices, vi)
     end
     return VPolytope(vertices)
@@ -142,7 +142,8 @@ Return an `VRep` polyhedron from `Polyhedra.jl` given a polytope in V-representa
 A `VRep` polyhedron.
 """
 function polyhedron(P::VPolytope{N}, backend=CDDLib.CDDLibrary()) where {N}
-    return polyhedron(SimpleVRepresentation(hcat(vertices_list(P)...)'), backend)
+    V = hcat(vertices_list(P)...)'
+    return polyhedron(Polyhedra.vrep(V), backend)
 end
 
 """

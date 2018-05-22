@@ -17,7 +17,7 @@ The line ``y = -x + 1``:
 
 ```jldoctest
 julia> Line([1., 1.], 1.)
-LazySets.Line{Float64}([1.0, 1.0], 1.0)
+LazySets.Line{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
 ```
 """
 struct Line{N<:Real, V<:AbstractVector{N}} <: LazySet{N}

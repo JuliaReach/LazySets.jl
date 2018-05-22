@@ -65,3 +65,14 @@ approximate(::LazySet{Float64}, ::Float64)
 ```
 
 See [Iterative Refinement](@ref) for more details.
+
+## Template directions
+
+```@docs
+AbstractDirections
+BoxDirections
+OctDirections
+BoxDiagDirections
+```
+
+See also `overapproximate(X::LazySet, dir::AbstractDirections)::HPolytope`.

@@ -213,8 +213,7 @@ g(1.), g(0.1), g(0.01)
 ```
 
 Meanwhile, the number of constraints of the polygonal overapproximation
-increases, in this example by a power of 2 when the error is divided by a factor
-10.
+increases, in this example by a power of 2 when the error is divided by a factor 10.
 
 ```@example example_iterative_refinement
 h = ε ->  length(approximate(b, ε).approx_list)
