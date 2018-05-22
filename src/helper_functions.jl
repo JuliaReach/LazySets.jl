@@ -195,13 +195,14 @@ type).
 
 ### Examples
 
-`@declare_array_version(MinkowskiSum, MinkowskiSumArray)` creates at least the following
-functions:
+`@declare_array_version(MinkowskiSum, MinkowskiSumArray)` creates at least the
+following functions:
 * `array_constructor(::MinkowskiSum) = MinkowskiSumArray`
 * `is_array_constructor(::MinkowskiSumArray) = true`
-* `MinkowskiSum(X, arr) = MinkowskiSum(X, arr)`
-* `MinkowskiSum(arr, X) = MinkowskiSum(arr, X)`
-* `MinkowskiSum(arr1, arr2) = MinkowskiSum(arr1, arr2)`
+* `MinkowskiSum!(X, Y)`
+* `MinkowskiSum!(X, arr)`
+* `MinkowskiSum!(arr, X)`
+* `MinkowskiSum!(arr1, arr2)`
 """
 macro declare_array_version(SET, SETARR)
     _SET! = Symbol(string(SET), '!')
