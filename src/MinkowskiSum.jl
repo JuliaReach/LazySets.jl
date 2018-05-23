@@ -3,7 +3,8 @@ import Base.+
 export MinkowskiSum, ⊕,
        MinkowskiSumArray,
        MinkowskiSum!,
-       array
+       array,
+       CacheMinkowskiSum
 
 """
     MinkowskiSum{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
@@ -98,10 +99,10 @@ function σ(d::V, ms::MinkowskiSum) where {N<:Real, V<:AbstractVector{N}}
     return σ(d, ms.X) + σ(d, ms.Y)
 end
 
-
 # =================================
 # Minkowski sum of an array of sets
 # =================================
+
 """
     MinkowskiSumArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
 
@@ -192,7 +193,6 @@ given direction.
 ### Input
 
 - `d`   -- direction
-
 - `msa` -- Minkowski sum array
 
 ### Output
@@ -201,8 +201,160 @@ The support vector in the given direction.
 If the direction has norm zero, the result depends on the summand sets.
 """
 function σ(d::AbstractVector{<:Real}, msa::MinkowskiSumArray)::Vector{<:Real}
+    return _σ_helper(d, msa.array)
+end
+
+# =============================================================
+# Minkowski sum of an array of sets with a support vector cache
+# =============================================================
+
+"""
+    CacheMinkowskiSum{N<:Real, S<:LazySet{N}} <: LazySet{N}
+
+Type that represents the Minkowski sum of a finite number of convex sets.
+Support vector queries are cached.
+
+### Fields
+
+- `array` -- array of convex sets
+- `cache` -- cache of support vector query results
+
+### Notes
+
+This type assumes that the dimensions of all elements match.
+
+The `ZeroSet` is the neutral element and the `EmptySet` is the absorbing element
+for `CacheMinkowskiSum`.
+
+The cache (field `cache`) is implemented as dictionary whose keys are directions
+and whose values are tuples `(k, s)` where `k` is the number of elements in the
+array `array` when the support vector was evaluated last time, and `s` is the
+support vector that was obtained.
+Thus this type assumes that `array` is not modified except by adding new sets at
+the end.
+
+Constructors:
+
+- `CacheMinkowskiSum(array::Vector{<:LazySet})` -- default constructor
+
+- `CacheMinkowskiSum([n]::Int=0, [N]::Type=Float64)`
+  -- constructor for an empty sum with optional size hint and numeric type
+"""
+struct CacheMinkowskiSum{N<:Real, S<:LazySet{N}} <: LazySet{N}
+    array::Vector{S}
+    cache::Dict{AbstractVector{N}, Tuple{Int, AbstractVector{N}}}
+
+    # default constructor that initializes cache
+    CacheMinkowskiSum{N, S}(arr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
+        new{N, S}(arr, Dict{AbstractVector{N}, Tuple{Int, AbstractVector{N}}}())
+end
+
+# type-less convenience constructor
+CacheMinkowskiSum(arr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
+    CacheMinkowskiSum{N, S}(arr)
+
+# constructor for an empty sum with optional size hint and numeric type
+function CacheMinkowskiSum(n::Int=0, N::Type=Float64)::CacheMinkowskiSum
+    arr = Vector{LazySet{N}}(0)
+    sizehint!(arr, n)
+    return CacheMinkowskiSum(arr)
+end
+
+# ZeroSet is the neutral element for CacheMinkowskiSum
+@neutral(CacheMinkowskiSum, ZeroSet)
+
+# EmptySet is the absorbing element for CacheMinkowskiSum
+@absorbing(CacheMinkowskiSum, EmptySet)
+
+"""
+    array(cms::CacheMinkowskiSum{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
+
+Return the array of a caching Minkowski sum.
+
+### Input
+
+- `cms` -- caching Minkowski sum
+
+### Output
+
+The array of a caching Minkowski sum.
+"""
+function array(cms::CacheMinkowskiSum{N, S}
+              )::Vector{S} where {N<:Real, S<:LazySet{N}}
+    return cms.array
+end
+
+"""
+    dim(cms::CacheMinkowskiSum)::Int
+
+Return the dimension of a caching Minkowski sum.
+
+### Input
+
+- `cms` -- caching Minkowski sum
+
+### Output
+
+The ambient dimension of the caching Minkowski sum.
+"""
+function dim(cms::CacheMinkowskiSum)::Int
+    return length(cms.array) == 0 ? 0 : dim(cms.array[1])
+end
+
+"""
+    σ(d::AbstractVector{<:Real}, cms::CacheMinkowskiSum)::Vector{<:Real}
+
+Return the support vector of a caching Minkowski sum in a given direction.
+
+### Input
+
+- `d`   -- direction
+- `cms` -- caching Minkowski sum
+
+### Output
+
+The support vector in the given direction.
+If the direction has norm zero, the result depends on the summand sets.
+
+### Notes
+
+The result is cached, i.e., any further query with the same direction runs in
+constant time.
+When sets are added to the caching Minkowski sum, the query is only performed
+for the new sets.
+"""
+function σ(d::AbstractVector{<:Real}, cms::CacheMinkowskiSum)::Vector{<:Real}
+    arr = array(cms)
+    l = length(arr)
+    cache = cms.cache
+    if haskey(cache, d)
+        tuple = cache[d]
+        k = tuple[1]
+        svec1 = tuple[2]
+        if k == l
+            # has already stored the full support vector
+            return svec1
+        else
+            # has only stored the support vector of the first k sets
+            @assert k < l "invalid cache index"
+            svec = svec1 + _σ_helper(d, @view arr[k+1:l])
+        end
+    else
+        # first-time computation of support vector
+        svec = _σ_helper(d, arr)
+    end
+    cache[d] = (l, svec)
+    return svec
+end
+
+# ================
+# Helper functions
+# ================
+
+@inline function _σ_helper(d::AbstractVector{<:Real},
+                           array::AbstractVector{<:LazySet})::Vector{<:Real}
     svec = zeros(eltype(d), length(d))
-    for sj in msa.array
+    for sj in array
         svec += σ(d, sj)
     end
     return svec

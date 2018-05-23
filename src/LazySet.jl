@@ -33,6 +33,7 @@ julia> subtypes(LazySet)
 17-element Array{Union{DataType, UnionAll},1}:
  LazySets.AbstractPointSymmetric
  LazySets.AbstractPolytope
+ LazySets.CacheMinkowskiSum
  LazySets.CartesianProduct
  LazySets.CartesianProductArray
  LazySets.ConvexHull
