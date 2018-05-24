@@ -36,7 +36,8 @@ end
               [set_type]::Type{<:Union{HPolygon, Hyperrectangle, Interval}}=Hyperrectangle,
               [ε]::Real=Inf,
               [blocks]::AbstractVector{Int}=default_block_structure(S, set_type),
-              [block_types]::Dict{Type{<:LazySet}, AbstractVector{<:AbstractVector{Int}}}
+              [block_types]::Dict{Type{<:LazySet}, AbstractVector{<:AbstractVector{Int}}}(),
+              [directions]::Union{Type{<:AbstractDirections}, Void}=nothing
              )::CartesianProductArray where {N<:Real}
 
 Decompose a high-dimensional set into a Cartesian product of overapproximations
@@ -52,6 +53,8 @@ of the projections over the specified subspaces.
                    block structure - a vector with the size of each block
 - `block_types` -- (optional, default: Interval for 1D and Hyperrectangle
                    for mD blocks) a mapping from set types to blocks
+- `directions`  -- (optional, default: `nothing`) template direction type, or
+                   `nothing`
 
 ### Output
 
@@ -65,7 +68,10 @@ For each block a specific `project` method is called, dispatched on the
 
 ### Notes
 
-If `block_types` is given, the options `set_type` and `blocks` are ignored.
+If `directions` is different from `nothing`, the template directions are used
+together with `blocks`.
+Otherwise, if `block_types` is given, the options `set_type` and `blocks` are
+ignored.
 
 ### Examples
 
@@ -191,12 +197,20 @@ function decompose(S::LazySet{N};
                    set_type::Type{<:Union{HPolygon, Hyperrectangle, Interval}}=Hyperrectangle,
                    ε::Real=Inf,
                    blocks::AbstractVector{Int}=default_block_structure(S, set_type),
-                   block_types=Dict{Type{<:LazySet}, AbstractVector{<:AbstractVector{Int}}}()
+                   block_types=Dict{Type{<:LazySet}, AbstractVector{<:AbstractVector{Int}}}(),
+                   directions::Union{Type{<:AbstractDirections}, Void}=nothing
                   )::CartesianProductArray where {N<:Real}
     n = dim(S)
     result = Vector{LazySet{N}}()
 
-    if isempty(block_types)
+    if directions != nothing
+        # template directions
+        block_start = 1
+        @inbounds for bi in blocks
+            push!(result, project(S, block_start:(block_start + bi - 1), directions(bi), n))
+            block_start += bi
+        end
+    elseif isempty(block_types)
         block_start = 1
         @inbounds for bi in blocks
             push!(result, project(S, block_start:(block_start + bi - 1), set_type, n, ε))
@@ -370,4 +384,34 @@ The box approximation of the projection of `S`.
         low[i] = σ(sparsevec([block[i]], [-one(N)], n), S)[block[i]]
     end
     return Hyperrectangle(high=high, low=low)
+end
+
+"""
+    project(S::LazySet{N},
+            block::AbstractVector{Int},
+            directions::AbstractDirections{N},
+            n::Int
+           )::HPolytope where {N<:Real}
+
+Project a high-dimensional set to a low-dimensional set using template
+directions.
+
+### Input
+
+- `S` -- set
+- `block` -- block structure - a vector with the dimensions of interest
+- `directions` -- template directions
+- `n` -- (optional, default: `dim(S)`) ambient dimension of the set `S`
+
+### Output
+
+The template direction approximation of the projection of `S`.
+"""
+@inline function project(S::LazySet{N},
+                         block::AbstractVector{Int},
+                         directions::AbstractDirections{N},
+                         n::Int=dim(S)
+                        )::HPolytope where {N<:Real}
+    M = sparse(1:length(block), block, ones(N, length(block)), length(block), n)
+    return overapproximate(M * S, directions)
 end
