@@ -36,7 +36,8 @@ end
               [set_type]::Type{<:Union{HPolygon, Hyperrectangle, Interval}}=Hyperrectangle,
               [ε]::Real=Inf,
               [blocks]::AbstractVector{Int}=default_block_structure(S, set_type),
-              [block_types]::Dict{Type{<:LazySet}, AbstractVector{<:AbstractVector{Int}}}
+              [block_types]::Dict{Type{<:LazySet}, AbstractVector{<:AbstractVector{Int}}}(),
+              [directions]::Union{Type{<:AbstractDirections}, Void}=nothing
              )::CartesianProductArray where {N<:Real}
 
 Decompose a high-dimensional set into a Cartesian product of overapproximations
@@ -52,6 +53,8 @@ of the projections over the specified subspaces.
                    block structure - a vector with the size of each block
 - `block_types` -- (optional, default: Interval for 1D and Hyperrectangle
                    for mD blocks) a mapping from set types to blocks
+- `directions`  -- (optional, default: `nothing`) template direction type, or
+                   `nothing`
 
 ### Output
 
@@ -65,14 +68,18 @@ For each block a specific `project` method is called, dispatched on the
 
 ### Notes
 
-If `block_types` is given, the options `set_type` and `blocks` are ignored.
+If `directions` is different from `nothing`, the template directions are used
+together with `blocks`.
+Otherwise, if `block_types` is given, the options `set_type` and `blocks` are
+ignored.
 
 ### Examples
 
 The `decompose` function supports different options, such as: supplying different
 dimensions for the decomposition, defining the target set of the decomposition,
-or specifying the degree of accuracy of the target decomposition. These options
-are exemplified below.
+or specifying the degree of accuracy of the target decomposition. You can also
+choose to make the approximations in low dimensions using template directions.
+These options are exemplified below.
 
 #### Different dimensions
 
@@ -110,29 +117,23 @@ We can also decompose using polygons in constraint representation, through the
 `set_type` optional argument:
 
 ```jldoctest decompose_examples
-julia> [ai isa HPolygon for ai in array(decompose(S, set_type=HPolygon))]
-2-element Array{Bool,1}:
- true
- true
+julia> all([ai isa HPolygon for ai in array(decompose(S, set_type=HPolygon))])
+true
 ```
 
 For decomposition into 1D subspaces, we can use `Interval`:
 
 ```jldoctest decompose_examples
-julia> [ai isa Interval for ai in array(decompose(S, set_type=Interval))]
-4-element Array{Bool,1}:
- true
- true
- true
- true
+julia> all([ai isa Interval for ai in array(decompose(S, set_type=Interval))])
+true
 ```
 
 However, if you need to specify different set types for different blocks, the
 interface presented so far does not apply. In the paragraph
-*Advanced different set types input* we explain `block_types`, useful precisely
-for that purpose.
+*Advanced different set types input* we explain the input `block_types`, that can be
+used precisely for that purpose.
 
-#### Refining the decomposition
+#### Refining the decomposition I:  ``ε``-close approximation
 
 The ``ε`` option can be used to refine, that is obtain a more accurate decomposition
 in those blocks where `HPolygon` types are used, and it relies on the iterative
@@ -152,6 +153,34 @@ julia> [length(constraints_list(d(ε, 1))) for ε in [Inf, 0.1, 0.01]]
   4
   8
  32
+```
+
+#### Refining the decomposition II: template polyhedra
+
+Another way to refine the decomposition is using template polyhedra.
+The idea is to specify a set of template directions, and on
+each block, compute the polytopic overapproximation obtained by evaluating the
+support function of the given input set over the template directions.
+
+For example, octagonal 2D approximations of the ball `S` are obtained with:
+
+```jldoctest decompose_examples
+julia> B = decompose(S, directions=OctDirections);
+
+julia> length(B.array) == 2 && all(dim(bi) == 2 for bi in B.array)
+true
+```
+
+See `template_directions.jl` for the available template directions.
+Note that, in contrast to the polygonal ``ε``-close approximation, this method
+can be applied for blocks of any size.
+
+
+```jldoctest decompose_examples
+julia> B = decompose(S, directions=OctDirections, blocks=[4]);
+
+julia> length(B.array) == 1 && dim(B.array[1]) == 4
+true
 ```
 
 #### Advanced different set types input
@@ -191,12 +220,20 @@ function decompose(S::LazySet{N};
                    set_type::Type{<:Union{HPolygon, Hyperrectangle, Interval}}=Hyperrectangle,
                    ε::Real=Inf,
                    blocks::AbstractVector{Int}=default_block_structure(S, set_type),
-                   block_types=Dict{Type{<:LazySet}, AbstractVector{<:AbstractVector{Int}}}()
+                   block_types=Dict{Type{<:LazySet}, AbstractVector{<:AbstractVector{Int}}}(),
+                   directions::Union{Type{<:AbstractDirections}, Void}=nothing
                   )::CartesianProductArray where {N<:Real}
     n = dim(S)
     result = Vector{LazySet{N}}()
 
-    if isempty(block_types)
+    if directions != nothing
+        # template directions
+        block_start = 1
+        @inbounds for bi in blocks
+            push!(result, project(S, block_start:(block_start + bi - 1), directions(bi), n))
+            block_start += bi
+        end
+    elseif isempty(block_types)
         block_start = 1
         @inbounds for bi in blocks
             push!(result, project(S, block_start:(block_start + bi - 1), set_type, n, ε))
@@ -370,4 +407,34 @@ The box approximation of the projection of `S`.
         low[i] = σ(sparsevec([block[i]], [-one(N)], n), S)[block[i]]
     end
     return Hyperrectangle(high=high, low=low)
+end
+
+"""
+    project(S::LazySet{N},
+            block::AbstractVector{Int},
+            directions::AbstractDirections{N},
+            n::Int
+           )::HPolytope where {N<:Real}
+
+Project a high-dimensional set to a low-dimensional set using template
+directions.
+
+### Input
+
+- `S` -- set
+- `block` -- block structure - a vector with the dimensions of interest
+- `directions` -- template directions
+- `n` -- (optional, default: `dim(S)`) ambient dimension of the set `S`
+
+### Output
+
+The template direction approximation of the projection of `S`.
+"""
+@inline function project(S::LazySet{N},
+                         block::AbstractVector{Int},
+                         directions::AbstractDirections{N},
+                         n::Int=dim(S)
+                        )::HPolytope where {N<:Real}
+    M = sparse(1:length(block), block, ones(N, length(block)), length(block), n)
+    return overapproximate(M * S, directions)
 end
