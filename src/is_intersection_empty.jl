@@ -357,7 +357,7 @@ optionally compute a witness.
 
 ### Algorithm
 
-``Z ∩ H = ∅`` iff ``(b - a⋅c) ∉ \\left[ \pm ∑_{i=1}^p |a⋅g_i| \\right]``,
+``Z ∩ H = ∅`` iff ``(b - a⋅c) ∉ \\left[ ± ∑_{i=1}^p |a⋅g_i| \\right]``,
 where ``a``, ``b`` are the hyperplane coefficients, ``c`` is the zonotope's
 center, and ``g_i`` are the zonotope's generators.
 
@@ -404,7 +404,7 @@ optionally compute a witness.
 
 ### Algorithm
 
-``H ∩ Z = ∅`` iff ``(b - a⋅c) ∉ \\left[ \pm ∑_{i=1}^p |a⋅g_i| \\right]``,
+``H ∩ Z = ∅`` iff ``(b - a⋅c) ∉ \\left[ ± ∑_{i=1}^p |a⋅g_i| \\right]``,
 where ``a``, ``b`` are the hyperplane coefficients, ``c`` is the zonotope's
 center, and ``g_i`` are the zonotope's generators.
 

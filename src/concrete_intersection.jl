@@ -34,7 +34,7 @@ julia> intersection(Line([1., 1.], 1.), Line([1., 1.], 1.))
 """
 function intersection(L1::Line{N}, L2::Line{N})::Vector{N} where {N<:Real}
     b = [L1.b, L2.b]
-    a = [L1.a.'; L2.a.']
+    a = [transpose(L1.a); transpose(L2.a)]
     try
         # results in LAPACKException or SingularException if parallel
         return a \ b
