@@ -85,4 +85,11 @@ for N in [Float64, Rational{Int}, Float32]
     push!(a, x2);
     σ(d, cms);
     @test dim(cms) == 3
+    idx = forget_sets!(cms)
+    @test idx == 2 && isempty(array(cms)) && cms.cache[d][1] == 0
+    push!(a, x1);
+    σ(d, cms);
+    push!(a, x2);
+    idx = forget_sets!(cms)
+    @test idx == 1 && length(array(cms)) == 1 && cms.cache[d][1] == 0
 end

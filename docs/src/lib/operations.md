@@ -105,6 +105,7 @@ CacheMinkowskiSum
 array(::CacheMinkowskiSum{Float64, LazySet{Float64}})
 dim(::CacheMinkowskiSum{Float64, LazySet{Float64}})
 σ(::AbstractVector{Float64}, ::CacheMinkowskiSum{Float64, LazySet{Float64}})
+forget_sets!(::CacheMinkowskiSum)
 ```
 
 ## Maps
