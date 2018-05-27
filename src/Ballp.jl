@@ -194,5 +194,5 @@ function ∈(x::AbstractVector{N}, B::Ballp{N})::Bool where {N<:AbstractFloat}
     for i in eachindex(x)
         sum += abs(B.center[i] - x[i])^B.p
     end
-    return sum^(1./B.p) <= B.radius
+    return sum^(one(N)/B.p) <= B.radius
 end

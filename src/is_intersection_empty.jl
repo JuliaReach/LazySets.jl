@@ -100,7 +100,7 @@ optionally compute a witness.
 
 ### Algorithm
 
-``S ∩ \\operatorname{set} = ∅`` iff `element(S)` ``\notin \\operatorname{set}``.
+``S ∩ \\operatorname{set} = ∅`` iff `element(S)` ``∉ \\operatorname{set}``.
 """
 function is_intersection_empty(S::AbstractSingleton{N},
                                set::LazySet{N},
@@ -140,7 +140,7 @@ optionally compute a witness.
 
 ### Algorithm
 
-``S ∩ \\operatorname{set} = ∅`` iff `element(S)` ``\notin \\operatorname{set}``.
+``S ∩ \\operatorname{set} = ∅`` iff `element(S)` ``∉ \\operatorname{set}``.
 """
 function is_intersection_empty(set::LazySet{N},
                                S::AbstractSingleton{N},
@@ -213,7 +213,7 @@ optionally compute a witness.
 
 ### Algorithm
 
-``H ∩ S = ∅`` iff `element(S)` ``\notin H``.
+``H ∩ S = ∅`` iff `element(S)` ``∉ H``.
 """
 function is_intersection_empty(H::AbstractHyperrectangle{N},
                                S::AbstractSingleton{N},
@@ -252,7 +252,7 @@ optionally compute a witness.
 
 ### Algorithm
 
-``S ∩ H = ∅`` iff `element(S)` ``\notin H``.
+``S ∩ H = ∅`` iff `element(S)` ``∉ H``.
 """
 function is_intersection_empty(S::AbstractSingleton{N},
                                H::AbstractHyperrectangle{N},
@@ -357,7 +357,7 @@ optionally compute a witness.
 
 ### Algorithm
 
-``Z ∩ H = ∅`` iff ``(b - a⋅c) \notin \left[ \pm ∑_{i=1}^p |a⋅g_i| \right]``,
+``Z ∩ H = ∅`` iff ``(b - a⋅c) ∉ \\left[ ± ∑_{i=1}^p |a⋅g_i| \\right]``,
 where ``a``, ``b`` are the hyperplane coefficients, ``c`` is the zonotope's
 center, and ``g_i`` are the zonotope's generators.
 
@@ -404,7 +404,7 @@ optionally compute a witness.
 
 ### Algorithm
 
-``H ∩ Z = ∅`` iff ``(b - a⋅c) \notin \left[ \pm ∑_{i=1}^p |a⋅g_i| \right]``,
+``H ∩ Z = ∅`` iff ``(b - a⋅c) ∉ \\left[ ± ∑_{i=1}^p |a⋅g_i| \\right]``,
 where ``a``, ``b`` are the hyperplane coefficients, ``c`` is the zonotope's
 center, and ``g_i`` are the zonotope's generators.
 

@@ -10,3 +10,4 @@ Requires
 Polyhedra
 CDDLib
 IntervalArithmetic
+Compat
