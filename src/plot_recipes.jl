@@ -37,7 +37,7 @@ plotting singletons.
                               color="blue", label="", grid=true, alpha=0.5)
 
     P = Approximations.overapproximate(S)
-    vlist = copy(transpose(hcat(convex_hull(vertices_list(P))...)))
+    vlist = transpose(hcat(convex_hull(vertices_list(P))...))
     (x, y) = vlist[:, 1], vlist[:, 2]
 
     seriestype := norm(vlist[1, :] - vlist[2, :]) ≈ 0 ? :scatter : :shape
@@ -79,7 +79,7 @@ correctly.
 
     for S in arr
         Pi = Approximations.overapproximate(S)
-        vlist = copy(transpose(hcat(convex_hull(vertices_list(Pi))...)))
+        vlist = transpose(hcat(convex_hull(vertices_list(Pi))...))
         @series (x, y) = vlist[:, 1], vlist[:, 2]
     end
 end
@@ -108,7 +108,7 @@ julia> plot(randn(2, 2) * B, 1e-3)
     seriestype := :shape
 
     P = Approximations.overapproximate(S, ε)
-    vlist = copy(transpose(hcat(vertices_list(P)...)))
+    vlist = transpose(hcat(vertices_list(P)...))
     (x, y) = vlist[:, 1], vlist[:, 2]
 
     x, y
@@ -141,7 +141,7 @@ julia> plot([B1, B2], 1e-4)
 
     for S in arr
         Pi = Approximations.overapproximate(S, ε)
-        vlist = copy(transpose(hcat(vertices_list(Pi)...)))
+        vlist = transpose(hcat(vertices_list(Pi)...))
         @series (x, y) = vlist[:, 1], vlist[:, 2]
     end
 end
@@ -175,7 +175,7 @@ julia> plot(P)
 
     seriestype := :shape
 
-    vlist = copy(transpose(hcat(vertices_list(P)...)))
+    vlist = transpose(hcat(vertices_list(P)...))
     (x, y) = vlist[:, 1], vlist[:, 2]
 
      x, y
@@ -212,7 +212,7 @@ julia> plot([P1, P2])
     seriestype := :shape
 
     for Pi in P
-        vlist = copy(transpose(hcat(vertices_list(Pi)...)))
+        vlist = transpose(hcat(vertices_list(Pi)...))
         @series (x, y) = vlist[:, 1], vlist[:, 2]
     end
 end
@@ -239,7 +239,7 @@ julia> plot(P)
 
     seriestype := :shape
 
-    vlist = copy(transpose(hcat(vertices_list(P)...)))
+    vlist = transpose(hcat(vertices_list(P)...))
     (x, y) = vlist[:, 1], vlist[:, 2]
 
      x, y
@@ -270,7 +270,7 @@ julia> plot([P1, P2])
     seriestype := :shape
 
     for Pi in P
-        vlist = copy(transpose(hcat(vertices_list(Pi)...)))
+        vlist = transpose(hcat(vertices_list(Pi)...))
         @series (x, y) = vlist[:, 1], vlist[:, 2]
     end
 end
@@ -363,7 +363,7 @@ julia> plot(Z)
     seriestype := :shape
 
     # we have to take the convex hull for the shape
-    vlist = copy(transpose(hcat(vertices_list(Z)...)))
+    vlist = transpose(hcat(vertices_list(Z)...))
     (x, y) = vlist[:, 1], vlist[:, 2]
 
      x, y
@@ -395,7 +395,7 @@ julia> plot([Z1, Z2])
 
     for Zi in Z
         # we have to take the convex hull for the shape
-        vlist = copy(transpose(hcat(vertices_list(Zi)...)))
+        vlist = transpose(hcat(vertices_list(Zi)...))
         @series (x, y) = vlist[:, 1], vlist[:, 2]
     end
 end
