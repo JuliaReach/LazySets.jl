@@ -1,4 +1,4 @@
-import Base.LinAlg:norm
+import LinearAlgebra:norm
 
 export LazySet,
        ρ, support_function,

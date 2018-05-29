@@ -21,6 +21,13 @@ export approximate,
        BoxDiagDirections,
        OctDirections
 
+# see also compat.jl in LazySets module
+if VERSION > v"0.7-"
+    using SparseArrays, LinearAlgebra
+else
+    const LinearAlgebra = Base.LinAlg
+end
+
 const TOL(N::Type{Float64}) = eps(N)
 const TOL(N::Type{Float32}) = eps(N)
 const TOL(N::Type{Rational{INNER}}) where {INNER} = zero(N)
