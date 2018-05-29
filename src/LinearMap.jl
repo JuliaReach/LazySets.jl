@@ -155,11 +155,7 @@ If ``L = M⋅S``, where ``M`` is a matrix and ``S`` is a convex set, it follows
 that ``σ(d, L) = M⋅σ(M^T d, S)`` for any direction ``d``.
 """
 function σ(d::V, lm::LinearMap) where {N<:Real, V<:AbstractVector{N}}
-    if VERSION > v"0.7-"
-        return lm.M * σ(transpose(lm.M) * d, lm.X)
-    else
-        return lm.M * σ(At_mul_B(lm.M, d), lm.X)
-    end
+    return lm.M * σ(_At_mul_B(lm.M, d), lm.X)
 end
 
 """

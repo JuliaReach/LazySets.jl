@@ -169,11 +169,7 @@ If the direction has norm zero, the vertex with ``ξ_i = 1 \\ \\ ∀ i = 1,…, 
 is returned.
 """
 function σ(d::V, Z::Zonotope) where {N<:Real, V<:AbstractVector{N}}
-    if VERSION > v"0.7-"
-        return Z.center .+ Z.generators * sign_cadlag.(transpose(Z.generators) * d)
-    else
-        return Z.center .+ Z.generators * sign_cadlag.(At_mul_B(Z.generators, d))
-    end
+    return Z.center .+ Z.generators * sign_cadlag.(_At_mul_B(Z.generators, d))
 end
 
 """
