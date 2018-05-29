@@ -1,5 +1,3 @@
-import LinearAlgebra:norm
-
 export Hyperrectangle,
        low,
        high

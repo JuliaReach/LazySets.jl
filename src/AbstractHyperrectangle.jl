@@ -1,5 +1,4 @@
-import LinearAlgebra.norm,
-       Base.∈
+import Base.∈
 
 export AbstractHyperrectangle,
        radius_hyperrectangle

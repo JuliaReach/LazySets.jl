@@ -1,5 +1,3 @@
-import LinearAlgebra:norm
-
 export LazySet,
        ρ, support_function,
        σ, support_vector,

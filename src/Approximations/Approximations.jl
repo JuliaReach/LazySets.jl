@@ -22,10 +22,14 @@ export approximate,
        OctDirections
 
 # see also compat.jl in LazySets module
-if VERSION > v"0.7-"
-    using SparseArrays, LinearAlgebra
+using Compat
+import Compat.String
+
+if VERSION < v"0.7-"
+    import Base.LinAlg:norm
 else
-    const LinearAlgebra = Base.LinAlg
+    using SparseArrays, LinearAlgebra
+    import LinearAlgebra:norm
 end
 
 const TOL(N::Type{Float64}) = eps(N)

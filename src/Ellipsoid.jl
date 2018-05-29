@@ -65,7 +65,7 @@ struct Ellipsoid{N<:Real} <: AbstractPointSymmetric{N}
 
     # default constructor with dimension check
     function Ellipsoid{N}(c::AbstractVector{N}, Q::AbstractMatrix{N}) where {N<:Real}
-        @assert length(c) == LinearAlgebra.checksquare(Q)
+        @assert length(c) == checksquare(Q)
         return new(c, Q)
     end
 end
