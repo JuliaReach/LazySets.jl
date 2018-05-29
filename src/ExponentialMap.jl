@@ -374,7 +374,11 @@ function σ(d::V, eprojmap::ExponentialProjectionMap) where {N<:Real, V<:Abstrac
     daux = transpose(eprojmap.projspmexp.L) * d_dense
     Mtranspose = copy(transpose(eprojmap.projspmexp.spmexp.M))
     aux1 = expmv(one(N), Mtranspose, daux)
-    daux = transpose(eprojmap.projspmexp.R) * aux1
+    if VERSION > v"0.7-"
+        daux = transpose(eprojmap.projspmexp.R) * aux1
+    else
+        daux = At_mul_B(eprojmap.projspmexp.R, aux1)
+    end
     svec = σ(daux, eprojmap.X)
 
     aux2 = eprojmap.projspmexp.R * svec
