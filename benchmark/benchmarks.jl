@@ -9,13 +9,13 @@ julia> using PkgBenchmark
 julia> results = benchmarkpkg("LazySets")
 ```
 
-To compare current version to another tagged version:
+To compare current version to another tagged version, commit or branch:
 
 ```julia
-julia> results = judge("LazySets", "v1.2.0")
+julia> results = judge("LazySets", <tagged-version-or-branch>)
 ```
 
-To export the benchmark results to a Markwodnfile:
+To export the benchmark results to a Markwodn file:
 
 ```julia
 julia> export_markdown("results.md", results)
