@@ -15,7 +15,7 @@ To compare current version to another tagged version, commit or branch:
 julia> results = judge("LazySets", <tagged-version-or-branch>)
 ```
 
-To export the benchmark results to a Markwodn file:
+To export the benchmark results to a Markdown file:
 
 ```julia
 julia> export_markdown("results.md", results)
