@@ -1,5 +1,3 @@
-import Base.LinAlg:norm
-
 export LazySet,
        ρ, support_function,
        σ, support_vector,

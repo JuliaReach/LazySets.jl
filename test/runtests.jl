@@ -1,5 +1,6 @@
 #!/usr/bin/env julia
-using LazySets, Base.Test
+using LazySets
+using Compat.Test
 
 # conversion between numeric types
 include("to_N.jl")

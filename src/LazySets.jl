@@ -5,8 +5,7 @@ Main module for `LazySets.jl` -- a Julia package for calculus with convex sets.
 """
 module LazySets
 
-using Compat
-import Compat.String
+include("compat.jl")
 
 using RecipesBase, IterTools, Requires
 

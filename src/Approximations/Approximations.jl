@@ -21,6 +21,8 @@ export approximate,
        BoxDiagDirections,
        OctDirections
 
+include("../compat.jl")
+
 const TOL(N::Type{Float64}) = eps(N)
 const TOL(N::Type{Float32}) = eps(N)
 const TOL(N::Type{Rational{INNER}}) where {INNER} = zero(N)
