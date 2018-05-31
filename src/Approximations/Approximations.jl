@@ -21,16 +21,7 @@ export approximate,
        BoxDiagDirections,
        OctDirections
 
-# see also compat.jl in LazySets module
-using Compat
-import Compat.String
-
-if VERSION < v"0.7-"
-    import Base.LinAlg:norm
-else
-    using SparseArrays, LinearAlgebra
-    import LinearAlgebra:norm
-end
+include("../compat.jl")
 
 const TOL(N::Type{Float64}) = eps(N)
 const TOL(N::Type{Float32}) = eps(N)
