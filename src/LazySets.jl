@@ -15,7 +15,6 @@ export Approximations
 # Auxiliary functions
 # ===================
 include("helper_functions.jl")
-include("compat.jl")
 
 # ==================
 # Abstract set types
