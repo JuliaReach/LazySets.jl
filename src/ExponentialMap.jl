@@ -102,8 +102,7 @@ function get_row(spmexp::SparseMatrixExp{N}, i::Int)::RowVector{N} where {N}
     n = size(spmexp, 1)
     aux = zeros(N, n)
     aux[i] = one(N)
-    Mtranspose = copy(transpose(spmexp.M))
-    return transpose(expmv(one(N), Mtranspose, aux))
+    return transpose(expmv(one(N), transpose(spmexp.M), aux))
 end
 
 function get_rows(spmexp::SparseMatrixExp{N},
@@ -111,7 +110,7 @@ function get_rows(spmexp::SparseMatrixExp{N},
     n = size(spmexp, 1)
     aux = zeros(N, n)
     ans = zeros(N, length(I), n)
-    Mtranspose = copy(transpose(spmexp.M))
+    Mtranspose = transpose(spmexp.M)
     count = 1
     one_N = one(N)
     zero_N = zero(N)
@@ -225,8 +224,7 @@ able to use `expmv`.
 """
 function σ(d::V, em::ExponentialMap) where {N<:Real, V<:AbstractVector{N}}
     d_dense = d isa Vector ? d : Vector(d)
-    Mtranspose = copy(transpose(em.spmexp.M))
-    v = expmv(one(N), Mtranspose, d_dense)     # v   <- exp(A') * d
+    v = expmv(one(N), transpose(em.spmexp.M), d_dense) # v   <- exp(A') * d
     return expmv(one(N), em.spmexp.M, σ(v, em.X)) # res <- exp(A) * σ(v, S)
 end
 
@@ -372,8 +370,7 @@ able to use `expmv`.
 function σ(d::V, eprojmap::ExponentialProjectionMap) where {N<:Real, V<:AbstractVector{N}}
     d_dense = d isa Vector ? d : Vector(d)
     daux = transpose(eprojmap.projspmexp.L) * d_dense
-    Mtranspose = copy(transpose(eprojmap.projspmexp.spmexp.M))
-    aux1 = expmv(one(N), Mtranspose, daux)
+    aux1 = expmv(one(N), transpose(eprojmap.projspmexp.spmexp.M), daux)
     daux = _At_mul_B(eprojmap.projspmexp.R, aux1)
     svec = σ(daux, eprojmap.X)
 
