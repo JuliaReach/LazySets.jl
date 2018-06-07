@@ -228,18 +228,21 @@ function decompose(S::LazySet{N};
 
     if directions != nothing
         # template directions
+        # potentially defined option set_type is *ignored*       
         block_start = 1
         @inbounds for bi in blocks
             push!(result, project(S, block_start:(block_start + bi - 1), directions(bi), n))
             block_start += bi
         end
     elseif isempty(block_types)
+        # use the same target set type for each block
         block_start = 1
         @inbounds for bi in blocks
             push!(result, project(S, block_start:(block_start + bi - 1), set_type, n, ε))
             block_start += bi
         end
     else
+        # use potentially different target set type for each block
         # potentially defined options (set_type, blocks) are *ignored*
         initial_block_indices = Vector{Int}()
         blocks = Vector{Int}()
