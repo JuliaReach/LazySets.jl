@@ -81,19 +81,19 @@ macro neutral(SET, NEUT)
         end
 
         # if the absorbing element has already been defined, create combinations
-        if isdefined(:absorbing) && hasmethod(absorbing, (Type{$SET},))
+        if isdefined(@__MODULE__, :absorbing) && hasmethod(absorbing, (Type{$SET},))
             @eval(@neutral_absorbing($(esc(SET)),
                                      $(esc(NEUT)),
                                      absorbing($(esc(SET)))))
         end
 
         # if the array set type has already been defined, create combinations
-        if isdefined(:array_constructor) &&
+        if isdefined(@__MODULE__, :array_constructor) &&
                 hasmethod(array_constructor, (Type{$SET},))
             @eval(@array_neutral($(esc(SET)),
                                  $(esc(NEUT)),
                                  array_constructor($(esc(SET)))))
-        elseif isdefined(:is_array_constructor) &&
+        elseif isdefined(@__MODULE__, :is_array_constructor) &&
                 hasmethod(is_array_constructor, (Type{$SET},))
             @eval(@array_neutral($(esc(SET)),
                                  $(esc(NEUT)),
@@ -151,19 +151,19 @@ macro absorbing(SET, ABS)
         end
 
         # if the neutral element has already been defined, create combinations
-        if isdefined(:neutral) && hasmethod(neutral, (Type{$SET},))
+        if isdefined(@__MODULE__, :neutral) && hasmethod(neutral, (Type{$SET},))
             @eval(@neutral_absorbing($(esc(SET)),
                                      neutral($(esc(SET))),
                                      $(esc(ABS))))
         end
 
         # if the array set type has already been defined, create combinations
-        if isdefined(:array_constructor) &&
+        if isdefined(@__MODULE__, :array_constructor) &&
                 hasmethod(array_constructor, (Type{$SET},))
             @eval(@array_absorbing($(esc(SET)),
                                    $(esc(ABS)),
                                    array_constructor($(esc(SET)))))
-        elseif isdefined(:is_array_constructor) &&
+        elseif isdefined(@__MODULE__, :is_array_constructor) &&
                 hasmethod(is_array_constructor, (Type{$SET},))
             @eval(@array_absorbing($(esc(SET)),
                                    $(esc(ABS)),
@@ -235,23 +235,23 @@ macro declare_array_version(SET, SETARR)
             return arr1
         end
         # handle method ambiguities with neutral elements
-        if isdefined(:neutral) && hasmethod(neutral, (Type{$SET},))
+        if isdefined(@__MODULE__, :neutral) && hasmethod(neutral, (Type{$SET},))
             @eval(@array_neutral($(esc(SET)),
                                  neutral($(esc(SET))),
                                  $(esc(SETARR))))
         end
-        if isdefined(:neutral) && hasmethod(neutral, (Type{$SETARR},))
+        if isdefined(@__MODULE__, :neutral) && hasmethod(neutral, (Type{$SETARR},))
             @eval(@array_neutral($(esc(SETARR)),
                                  neutral($(esc(SETARR))),
                                  $(esc(SETARR))))
         end
         # handle method ambiguities with absorbing elements
-        if isdefined(:absorbing) && hasmethod(absorbing, (Type{$SET},))
+        if isdefined(@__MODULE__, :absorbing) && hasmethod(absorbing, (Type{$SET},))
             @eval(@array_absorbing($(esc(SET)),
                                    absorbing($(esc(SET))),
                                    $(esc(SETARR))))
         end
-        if isdefined(:absorbing) && hasmethod(absorbing, (Type{$SETARR},))
+        if isdefined(@__MODULE__, :absorbing) && hasmethod(absorbing, (Type{$SETARR},))
             @eval(@array_absorbing($(esc(SETARR)),
                                    absorbing($(esc(SETARR))),
                                    $(esc(SETARR))))
