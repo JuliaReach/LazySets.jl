@@ -92,4 +92,7 @@ for N in [Float64, Rational{Int}, Float32]
     push!(a, x2);
     idx = forget_sets!(cms)
     @test idx == 1 && length(array(cms)) == 1 && cms.cache[d][1] == 0
+    # test issue #367: inplace modification of the direction modified the cache
+    d[1] = zero(N)
+    @test haskey(cms.cache, ones(N, 3))
 end
