@@ -368,7 +368,8 @@ function σ(d::AbstractVector{<:Real}, cms::CacheMinkowskiSum)::Vector{<:Real}
         # first-time computation of support vector
         svec = _σ_helper(d, arr)
     end
-    cache[d] = CachedPair(l, svec)
+    # NOTE: make a copy of the direction vector (can be modified outside)
+    cache[copy(d)] = CachedPair(l, svec)
     return svec
 end
 
