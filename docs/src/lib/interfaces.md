@@ -116,3 +116,9 @@ A singleton is a special hyperrectangle consisting of only one point.
 ```@docs
 AbstractSingleton
 ```
+
+This interface defines the following functions:
+
+```@docs
+linear_map(M::AbstractMatrix, S::AbstractSingleton)
+```
