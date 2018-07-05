@@ -278,7 +278,7 @@ end
 """
     linear_map(M::AbstractMatrix, Z::Zonotope)
 
-Concrete linear map of a zonotopes.
+Concrete linear map of a zonotope.
 
 ### Input
 
