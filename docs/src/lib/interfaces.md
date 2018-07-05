@@ -121,4 +121,5 @@ This interface defines the following functions:
 
 ```@docs
 linear_map(M::AbstractMatrix, S::AbstractSingleton)
+linear_map(M::AbstractMatrix, H::AbstractHyperrectangle{Float64})
 ```
