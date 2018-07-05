@@ -52,10 +52,10 @@ for N in [Float64, Rational{Int}, Float32]
     @test lm1_copy.M == lm1.M
     @test lm1_copy.X == lm1.X
 
-    # an_element function (default implementation)
+    # an_element function
     lm = N(2.) * BallInf(N[0., 0.], N(1.))
     an_element(lm)
-#     @test an_element(lm) ∈ lm # TODO results in an error for Rational
+    @test an_element(lm) ∈ lm
 
     # check linear map between vector and set
     X = Interval([0.9, 1.10445])
