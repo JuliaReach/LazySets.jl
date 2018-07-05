@@ -1,7 +1,8 @@
 import Base.∈
 
 export AbstractHyperrectangle,
-       radius_hyperrectangle
+       radius_hyperrectangle,
+       linear_map
 
 """
     AbstractHyperrectangle{N<:Real} <: AbstractPointSymmetricPolytope{N}
@@ -180,4 +181,33 @@ function ∈(x::AbstractVector{N},
         end
     end
     return true
+end
+
+"""
+    linear_map(M::AbstractMatrix, H::AbstractHyperrectangle)
+
+Concrete linear map of an abstract hyperrectangle.
+
+### Input
+
+- `M` -- matrix
+- `S` -- abstract hyperrectangle
+
+### Output
+
+The polytope in V-representation obtained by applying the linear map ``M`` to
+the set ``H``. If the given hyperrectangle is two-dimensional, a polygon instead
+of a general polytope is returned. 
+"""
+function linear_map(M::AbstractMatrix, H::AbstractHyperrectangle{N}) where {N}
+    if dim(H) == 2
+        T = VPolygon
+    else
+        T = VPolytope
+    end
+    vlist = Vector{Vector{N}}()
+    for vi in vertices_list(H)
+        push!(vlist, M * vi)
+    end
+    return T(vlist)
 end
