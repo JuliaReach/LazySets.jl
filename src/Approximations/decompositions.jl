@@ -228,7 +228,7 @@ function decompose(S::LazySet{N};
 
     if directions != nothing
         # template directions
-        # potentially defined option set_type is *ignored*       
+        # potentially defined option set_type is *ignored*
         block_start = 1
         @inbounds for bi in blocks
             push!(result, project(S, block_start:(block_start + bi - 1), directions(bi), n))
@@ -264,6 +264,58 @@ function decompose(S::LazySet{N};
             push!(result, project(S, block_start:(block_start + bi - 1), set_type[i], n, ε))
             block_start += bi
         end
+    end
+    return CartesianProductArray(result)
+end
+
+function decompose_parallel(S::LazySet{N};
+                   set_type::Type{<:Union{HPolygon, Hyperrectangle, Interval}}=Hyperrectangle,
+                   ε::Real=Inf,
+                   blocks::AbstractVector{Int}=default_block_structure(S, set_type),
+                   block_types=Dict{Type{<:LazySet}, AbstractVector{<:AbstractVector{Int}}}(),
+                   directions::Union{Type{<:AbstractDirections}, Void}=nothing
+                  )::CartesianProductArray where {N<:Real}
+    n = dim(S)
+    result = Vector{LazySet{N}}()
+
+    if directions != nothing
+        # template directions
+        # potentially defined option set_type is *ignored*
+        block_start = 1
+        @inbounds for bi in blocks
+            push!(result, project(S, block_start:(block_start + bi - 1), directions(bi), n))
+            block_start += bi
+        end
+    elseif isempty(block_types)
+        # use the same target set type for each block
+        block_start = 1
+        @inbounds for bi in blocks
+            push!(result, project(S, block_start:(block_start + bi - 1), set_type, n, ε))
+            block_start += bi
+        end
+    else
+        # use potentially different target set type for each block
+        # potentially defined options (set_type, blocks) are *ignored*
+        initial_block_indices = Vector{Int}()
+        blocks = Vector{Int}()
+        set_type = Vector{Type{<:LazySet}}()
+        @inbounds for (key, val) in block_types
+            for bi in val
+                push!(set_type, key)
+                push!(initial_block_indices, bi[1])
+                push!(blocks, bi[end]-bi[1]+1)
+            end
+        end
+        # the second component of this tuple is the starting block index; we
+        # assume that blocks do not overlap
+        s = sortperm(initial_block_indices)
+        blocks = blocks[s]
+        set_type = set_type[s]
+
+        @inbounds result = @sync @parallel (vcat) for (i, bi) in collect(enumerate(blocks))
+            project(S, ((i-1)*bi + 1):(i*bi), set_type[i], n, ε)
+        end
+
     end
     return CartesianProductArray(result)
 end

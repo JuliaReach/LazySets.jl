@@ -64,12 +64,19 @@ function box_approximation_symmetric(S::LazySet{N}
     return Hyperrectangle(zeros(N, length(c)), abs.(c) .+ r)
 end
 
+function box_approximation_symmetric_parallel(S::LazySet{N}
+                                    )::Hyperrectangle{N} where {N<:Real}
+    (c, r) = box_approximation_helper_parallel(S)
+    return Hyperrectangle(zeros(N, length(c)), abs.(c) .+ r)
+end
+
 """
     symmetric_interval_hull
 
 Alias for `box_approximation_symmetric`.
 """
 symmetric_interval_hull = box_approximation_symmetric
+symmetric_interval_hull_parallel = box_approximation_symmetric_parallel
 
 """
     box_approximation_helper(S::LazySet)
@@ -103,6 +110,26 @@ functions in the same directions.
     r = Vector{N}(undef, n)
     d = zeros(N, n)
     @inbounds for i in 1:n
+        d[i] = one_N
+        htop = ρ(d, S)
+        d[i] = -one_N
+        hbottom = -ρ(d, S)
+        d[i] = zero_N
+        c[i] = (htop + hbottom) / 2
+        r[i] = (htop - hbottom) / 2
+    end
+    return c, r
+end
+
+@inline function box_approximation_helper_parallel(S::LazySet{N}) where {N<:Real}
+    zero_N = zero(N)
+    one_N = one(N)
+    n = dim(S)
+    c = SharedVector{N}(n)
+    r = SharedVector{N}(n)
+    d = SharedVector{N}(n)
+
+    @inbounds @sync @parallel for i in 1:n
         d[i] = one_N
         htop = ρ(d, S)
         d[i] = -one_N
