@@ -26,8 +26,8 @@ include("AbstractPointSymmetric.jl")
 include("AbstractPointSymmetricPolytope.jl")
 include("AbstractHyperrectangle.jl")
 include("AbstractPolygon.jl")
-include("AbstractHPolygon.jl")
 include("AbstractSingleton.jl")
+include("AbstractHPolygon.jl")
 
 # =============================
 # Types representing basic sets
