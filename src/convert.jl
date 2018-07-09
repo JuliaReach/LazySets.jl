@@ -89,6 +89,34 @@ function convert(::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
     return Zonotope{N}(center(H), diagm(radius_hyperrectangle(H)))
 end
 
+"""
+    convert(::Type{HPOLYGON}, S::AbstractSingleton{N}
+           ) where {N, HPOLYGON<:AbstractHPolygon}
+
+Convert from singleton to polygon in H-representation.
+
+### Input
+
+- `type` -- target type
+- `S`    -- singleton
+
+### Output
+
+A polygon in constraint representation with the minimal number of constraints
+(three).
+"""
+function convert(::Type{HPOLYGON}, S::AbstractSingleton{N}
+                ) where {N, HPOLYGON<:AbstractHPolygon}
+    constraints_list = Vector{LinearConstraint{N}}(3)
+    o = one(N)
+    z = zero(N)
+    v = element(S)
+    constraints_list[1] = LinearConstraint([o, o], v[1] + v[2])
+    constraints_list[2] = LinearConstraint([-o, z], -v[1])
+    constraints_list[3] = LinearConstraint([z, -o], -v[2])
+    return HPOLYGON{N}(constraints_list)
+end
+
 import IntervalArithmetic.AbstractInterval
 
 """
