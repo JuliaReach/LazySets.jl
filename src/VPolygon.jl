@@ -59,20 +59,69 @@ function tovrep(P::VPolygon{N})::VPolygon{N} where {N<:Real}
 end
 
 """
-    tohrep(P::VPolygon{N})::AbstractHPolygon{N} where {N<:Real}
+    tohrep(P::VPolygon{N}, ::Type{HPOLYGON}=HPolygon
+          )::AbstractHPolygon{N} where {N<:Real, HPOLYGON<:AbstractHPolygon}
 
 Build a constraint representation of the given polygon.
 
 ### Input
 
-- `P` -- polygon in vertex representation
+- `P`        -- polygon in vertex representation
+- `HPOLYGON` -- (optional, default: `HPolygon`) type of target polygon
 
 ### Output
 
 The same polygon but in constraint representation, an `AbstractHPolygon`.
 """
-function tohrep(P::VPolygon{N})::AbstractHPolygon{N} where {N<:Real}
-    error("this function is not implemented yet, see issue #5")
+function tohrep(P::VPolygon{N}, ::Type{HPOLYGON}=HPolygon
+               )::AbstractHPolygon{N} where {N<:Real, HPOLYGON<:AbstractHPolygon}
+    n = length(vertices_list(P))
+    if n == 0
+        # no vertex -> no constraint
+        constraints_list = Vector{LinearConstraint{N}}(0)
+    elseif n == 1
+        # only one vertex -> use function for singletons
+        return convert(HPOLYGON, Singleton(P.vertices_list[1]))
+    elseif n == 2
+        # only two vertices -> use function for line segments
+        return convert(HPOLYGON, LineSegment(P.vertices_list[1], P.vertices_list[2]))
+    else
+        # find right-most vertex
+        i = div(n, 2)
+        x = P.vertices_list[i][1]
+        while i > 1 && P.vertices_list[i-1][1] > x
+            # search forward in list
+            i = i - 1
+            x = P.vertices_list[i][1]
+        end
+        while i < n && P.vertices_list[i+1][1] > x
+            # search backward in list
+            i = i + 1
+            x = P.vertices_list[i][1]
+        end
+
+        # create constraints counter-clockwise
+        constraints_list = Vector{LinearConstraint{N}}(n)
+        j = 1
+        i_start = i
+        i_stop = n
+        for it in 1:2
+            while i < i_stop
+                constraints_list[j] =
+                    halfspace_left(P.vertices_list[i], P.vertices_list[i+1])
+                j += 1
+                i += 1
+            end
+            if it == 1
+                constraints_list[j] =
+                    halfspace_left(P.vertices_list[n], P.vertices_list[1])
+                j += 1
+                i = 1
+                i_stop = i_start
+            end
+        end
+    end
+    return HPOLYGON{N}(constraints_list)
 end
 
 
