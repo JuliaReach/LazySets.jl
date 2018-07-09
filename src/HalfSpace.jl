@@ -116,3 +116,30 @@ We just check if ``x`` satisfies ``a⋅x ≤ b``.
 function ∈(x::AbstractVector{N}, hs::HalfSpace{N})::Bool where {N<:Real}
     return dot(x, hs.a) <= hs.b
 end
+
+"""
+    halfspace_left(p::AbstractVector{N},
+                   q::AbstractVector{N})::HalfSpace{N} where {N<:Real}
+
+Return a half-space describing the 'left' of a line segment through two points.
+
+### Input
+
+- `p` -- first point
+- `q` -- second point
+
+### Output
+
+The half-space whose boundary goes through the two points `p` and `q` and which
+describes the left-hand side of the line segment `pq`.
+
+### Algorithm
+
+The implementation is simple: `a = [dy, -dx]` and `b = dot(p, a)`.
+"""
+function halfspace_left(p::AbstractVector{N},
+                        q::AbstractVector{N})::HalfSpace{N} where {N<:Real}
+    @assert p != q "the points must not be equal"
+    a = [q[2] - p[2], p[1] - q[1]]
+    return HalfSpace(a, dot(p, a))
+end
