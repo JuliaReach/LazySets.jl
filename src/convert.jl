@@ -117,6 +117,36 @@ function convert(::Type{HPOLYGON}, S::AbstractSingleton{N}
     return HPOLYGON{N}(constraints_list)
 end
 
+"""
+    convert(::Type{HPOLYGON}, L::LineSegment{N}
+          ) where {N, HPOLYGON<:AbstractHPolygon}
+
+Convert from line segment to polygon in H-representation.
+
+### Input
+
+- `type` -- target type
+- `L`    -- line segment
+
+### Output
+
+A flat polygon in constraint representation with the minimal number of
+constraints (four).
+"""
+function convert(::Type{HPOLYGON}, L::LineSegment{N}
+                ) where {N, HPOLYGON<:AbstractHPolygon}
+    H = HPOLYGON{N}()
+    c = halfspace_left(L.p, L.q)
+    addconstraint!(H, c)
+    addconstraint!(H, LinearConstraint(-c.a, -c.b))
+    line_dir = L.q - L.p
+    c = LinearConstraint(line_dir, dot(L.q, line_dir))
+    addconstraint!(H, c)
+    line_dir = -line_dir
+    addconstraint!(H, LinearConstraint(line_dir, dot(L.p, line_dir)))
+    return H
+end
+
 import IntervalArithmetic.AbstractInterval
 
 """
