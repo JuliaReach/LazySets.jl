@@ -82,7 +82,12 @@ function get_column(spmexp::SparseMatrixExp{N}, j::Int)::Vector{N} where {N}
 end
 
 function get_columns(spmexp::SparseMatrixExp{N},
-                     J::AbstractArray)::Matrix{N} where {N}
+                     J::AbstractArray, parallel::Bool = false)::Matrix{N} where {N}
+
+    if(parallel)
+        return get_columns_parallel(spmexp, J)
+    end
+
     n = size(spmexp, 1)
     aux = zeros(N, n)
     ans = zeros(N, n, length(J))
@@ -97,6 +102,51 @@ function get_columns(spmexp::SparseMatrixExp{N},
     end
     return ans
 end
+
+function get_columns_parallel(spmexp::SparseMatrixExp{N},
+                     J::AbstractArray)::Matrix{N} where {N<:Real}
+
+    tasks = Vector{Future}(length(procs()))
+
+     @sync begin
+         for (i, p) in enumerate(procs())
+             tasks[i] = remotecall(advection_shared_chunk!, p, spmexp, J)
+         end
+     end
+
+    return hcat([fetch(t) for t in tasks]...)
+
+end
+
+# Here's the kernel
+function advection_chunk!(spmexp::SparseMatrixExp{N}, J::AbstractArray, irange::UnitRange{Int64}) where {N<:Real}
+
+    n = size(spmexp, 1)
+    aux = zeros(N, n)
+    ans = zeros(N, n, length(irange))
+    count = 1
+    one_N = one(N)
+    zero_N = zero(N)
+
+    @showprogress 1 "Expmv" for i in irange
+        j = J[i]
+        aux[j] = one_N
+        ans[:, count] = expmv_clone(one_N, spmexp.M, aux)
+        aux[j] = zero_N
+    end
+
+    return ans
+end
+
+# This function retuns the (irange,jrange) indexes assigned to this worker
+function myrange(size)
+    idx = myid()
+    nchunks = length(procs())
+    splits = [round(Int, s) for s in linspace(0,size,nchunks+1)]
+    splits[idx]+1:splits[idx+1]
+end
+
+advection_shared_chunk!(spmexp::SparseMatrixExp{N}, J::AbstractArray) where {N<:Real} = advection_chunk!(spmexp::SparseMatrixExp{N}, J::AbstractArray, myrange(length(J)))
 
 """
     get_row(spmexp::SparseMatrixExp{N}, i::Int) where {N}

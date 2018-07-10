@@ -66,7 +66,7 @@ end
 
 function box_approximation_symmetric_parallel(S::LazySet{N}
                                     )::Hyperrectangle{N} where {N<:Real}
-    (c, r) = box_approximation_helper_parallel(S)
+    (c, r) = @time box_approximation_helper_parallel(S)
     return Hyperrectangle(zeros(N, length(c)), abs.(c) .+ r)
 end
 
@@ -109,7 +109,7 @@ functions in the same directions.
     c = Vector{N}(undef, n)
     r = Vector{N}(undef, n)
     d = zeros(N, n)
-    @inbounds for i in 1:n
+    @time @inbounds for i in 1:n
         d[i] = one_N
         htop = ρ(d, S)
         d[i] = -one_N
@@ -122,24 +122,56 @@ functions in the same directions.
 end
 
 @inline function box_approximation_helper_parallel(S::LazySet{N}) where {N<:Real}
-    zero_N = zero(N)
-    one_N = one(N)
     n = dim(S)
     c = SharedVector{N}(n)
     r = SharedVector{N}(n)
-    d = SharedVector{N}(n)
+    d = Vector{N}(n)
 
-    @inbounds @sync @parallel for i in 1:n
-        d[i] = one_N
+    info("S dimensions: $n")
+
+    @inbounds for i = 1:n
+        d[i] = 0
+    end
+
+    @time advection_shared!(d, c, r, S)
+    return convert(Array,c), convert(Array,r)
+end
+
+# Here's the kernel
+function advection_chunk!(d::Vector{N}, c::SharedVector{N}, r::SharedVector{N}, S::LazySet{N}, irange::UnitRange{Int64}) where {N<:Real}
+    for i in irange
+        d[i] = one(N)
         htop = ρ(d, S)
-        d[i] = -one_N
+        d[i] = -one(N)
         hbottom = -ρ(d, S)
-        d[i] = zero_N
+        d[i] = zero(N)
         c[i] = (htop + hbottom) / 2
         r[i] = (htop - hbottom) / 2
     end
-    return c, r
 end
+
+# This function retuns the (irange,jrange) indexes assigned to this worker
+function myrange(c::SharedVector{N}) where {N<:Real}
+    idx = indexpids(c)
+    if idx == 0
+        # This worker is not assigned a piece
+        return 1:0, 1:0
+    end
+    nchunks = length(procs(c))
+    splits = [round(Int, s) for s in linspace(0,size(c,1),nchunks+1)]
+    splits[idx]+1:splits[idx+1]
+end
+
+advection_shared_chunk!(d::Vector{N}, c::SharedVector{N}, r::SharedVector{N}, S::LazySet{N}) where {N<:Real} = advection_chunk!(d, c, r, S, myrange(c))
+
+function advection_shared!(d::Vector{N}, c::SharedVector{N}, r::SharedVector{N}, S::LazySet{N}) where {N<:Real}
+    @sync begin
+        for p in procs(c)
+            @async remotecall_wait(advection_shared_chunk!, p, d, c, r, S)
+        end
+    end
+end
+
 
 """
     ballinf_approximation(S::LazySet{N})::BallInf{N} where {N<:Real}
@@ -166,6 +198,7 @@ function ballinf_approximation(S::LazySet{N})::BallInf{N} where {N<:Real}
     c = Vector{N}(undef, n)
     r = zero_N
     d = zeros(N, n)
+
     @inbounds for i in 1:n
         d[i] = one_N
         htop = ρ(d, S)

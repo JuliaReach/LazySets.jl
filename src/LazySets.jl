@@ -6,8 +6,11 @@ module LazySets
 include("compat.jl")
 
 using RecipesBase, Requires
+using ProgressMeter
 
 export Approximations
+
+include("expmv.jl")
 
 # ===================
 # Auxiliary functions
