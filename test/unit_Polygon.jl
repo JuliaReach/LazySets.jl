@@ -33,9 +33,9 @@ for N in [Float64, Float32, Rational{Int}]
     HPolytope(po)
 
     # support vector of empty polygon
-    @test_throws ErrorException σ([0.], HPolygon())
-    @test_throws ErrorException σ([0.], HPolygonOpt(HPolygon()))
-    @test_throws ErrorException σ([0.], HPolytope())
+    @test_throws ErrorException σ(N[0.], HPolygon{N}())
+    @test_throws ErrorException σ(N[0.], HPolygonOpt(HPolygon{N}()))
+    @test_throws ErrorException σ(N[0.], HPolytope{N}())
 
     # HPolygon/HPolygonOpt tests
     for p in [p, po]
