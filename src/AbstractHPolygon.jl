@@ -6,6 +6,13 @@ export AbstractHPolygon,
        vertices_list,
        constraints_list
 
+# This constant marks the threshold for the number of constraints of a polygon
+# above which we use a binary search to find the relevant constraint in a
+# support vector query.
+#
+# NOTE: The value must be strictly greater than 2.
+const BINARY_SEARCH_THRESHOLD = 10
+
 """
     AbstractHPolygon{N<:Real} <: AbstractPolygon{N}
 
@@ -203,4 +210,46 @@ function addconstraint!(P::AbstractHPolygon{N},
     # here P.constraints[i] < constraint
     insert!(P.constraints, i+1, constraint)
     return nothing
+end
+
+"""
+    binary_search_constraints(d::AbstractVector{N},
+                              constraints::Vector{LinearConstraint{N}},
+                              n::Int,
+                              k::Int
+                             )::Int where {N<:Real}
+
+Performs a binary search in the constraints.
+
+### Input
+
+- `d`           -- direction
+- `constraints` -- constraints
+- `n`           -- number of constraints
+- `k`           -- start index
+
+### Output
+
+The largest index `k` such that `constraints[k] <= d`.
+"""
+function binary_search_constraints(d::AbstractVector{N},
+                                   constraints::Vector{LinearConstraint{N}},
+                                   n::Int,
+                                   k::Int
+                                  )::Int where {N}
+    lower = 1
+    upper = n+1
+    while lower + 1 < upper
+        if constraints[k].a <= d
+            lower = k
+        else
+            upper = k
+        end
+        k = lower + div(upper - lower, 2)
+    end
+    if lower == 1 && !(constraints[1].a <= d)
+        # special case for index 1
+        return 1
+    end
+    return upper
 end
