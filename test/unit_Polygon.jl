@@ -57,17 +57,22 @@ for N in [Float64, Float32, Rational{Int}]
         # Test Dimension
         @test dim(p) == 2
 
-        # Test Support Vector
+        # test support vector, with linear and binary search
         d = N[1., 0.]
         @test σ(d, p) == N[4., 2.]
+        @test σ(d, p, linear_search=true) == σ(d, p, linear_search=false)
         d = N[0., 1.]
         @test σ(d, p) == N[2., 4.]
+        @test σ(d, p, linear_search=true) == σ(d, p, linear_search=false)
         d = N[-1., 0.]
         @test σ(d, p) == N[-1., 1.]
+        @test σ(d, p, linear_search=true) == σ(d, p, linear_search=false)
         d = N[0., -1.]
         @test σ(d, p) == N[0., 0.]
+        @test σ(d, p, linear_search=true) == σ(d, p, linear_search=false)
         d = N[1., -1.]
         @test σ(d, p) == N[4., 2.]
+        @test σ(d, p, linear_search=true) == σ(d, p, linear_search=false)
 
         # membership
         @test ∈(N[0., 0.], p)
