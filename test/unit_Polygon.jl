@@ -222,6 +222,37 @@ for N in [Float64, Float32, Rational{Int}]
     end
 end
 
+function same_constraints(v::Vector{LinearConstraint{N}})::Bool where N<:Real
+    c1 = v[1]
+    for k = 2:length(v)
+        c2 = v[2]
+        if c1.a != c2.a || c1.b != c2.b
+            return false
+        end
+    end
+    return true
+end
+
+for N in [Float64, Float32]
+    # test adding constraints, with linear and binary search
+    p1 = HPolygon{N}()
+    p2 = HPolygon{N}()
+    po1 = HPolygonOpt{N}()
+    po2 = HPolygonOpt{N}()
+    n = 10
+    for i in 1:n
+        constraint = LinearConstraint(rand(N, 2), rand(N))
+        addconstraint!(p1, constraint, linear_search=true)
+        addconstraint!(p2, constraint, linear_search=i<=2)
+        addconstraint!(po1, constraint, linear_search=true)
+        addconstraint!(po2, constraint, linear_search=i<=2)
+    end
+    for i in 1:n
+        @test same_constraints([p1.constraints[i], p2.constraints[i],
+                                po1.constraints[i], po2.constraints[i]])
+    end
+end
+
 # default Float64 constructors
 @test HPolygon() isa LazySets.HPolygon{Float64}
 @test HPolygonOpt() isa LazySets.HPolygonOpt{Float64}
