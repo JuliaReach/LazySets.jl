@@ -187,7 +187,10 @@ end
 
 """
     addconstraint!(P::AbstractHPolygon{N},
-                   constraint::LinearConstraint{N})::Void where {N<:Real}
+                   constraint::LinearConstraint{N};
+                   [linear_search]::Bool=(
+                    length(P.constraints) < BINARY_SEARCH_THRESHOLD)
+                  )::Void where {N<:Real}
 
 Add a linear constraint to a polygon in constraint representation, keeping the
 constraints sorted by their normal directions.
@@ -202,13 +205,30 @@ constraints sorted by their normal directions.
 Nothing.
 """
 function addconstraint!(P::AbstractHPolygon{N},
-                        constraint::LinearConstraint{N})::Void where {N<:Real}
-    i = length(P.constraints)
-    while i > 0 && constraint.a <= P.constraints[i].a
-        i -= 1
+                        constraint::LinearConstraint{N};
+                        linear_search::Bool=(
+                         length(P.constraints) < BINARY_SEARCH_THRESHOLD)
+                       )::Void where {N<:Real}
+    k = length(P.constraints)
+    if k > 0
+        d = constraint.a
+        if d <= P.constraints[1].a
+            k = 0
+        else
+            if linear_search
+                # linear search
+                while d <= P.constraints[k].a
+                    k -= 1
+                end
+            else
+                # binary search
+                k = binary_search_constraints(
+                    d, P.constraints, k, 1 + div(k, 2), choose_lower=true)
+            end
+        end
     end
-    # here P.constraints[i] < constraint
-    insert!(P.constraints, i+1, constraint)
+    # here P.constraints[k] < constraint
+    insert!(P.constraints, k+1, constraint)
     return nothing
 end
 
@@ -216,26 +236,34 @@ end
     binary_search_constraints(d::AbstractVector{N},
                               constraints::Vector{LinearConstraint{N}},
                               n::Int,
-                              k::Int
+                              k::Int;
+                              [choose_lower]::Bool=false
                              )::Int where {N<:Real}
 
 Performs a binary search in the constraints.
 
 ### Input
 
-- `d`           -- direction
-- `constraints` -- constraints
-- `n`           -- number of constraints
-- `k`           -- start index
+- `d`            -- direction
+- `constraints`  -- constraints
+- `n`            -- number of constraints
+- `k`            -- start index
+- `choose_lower` -- (optional, default: `false`) flag for choosing the lower
+                    index (see the 'Output' section)
 
 ### Output
 
-The largest index `k` such that `constraints[k] <= d`.
+In the default setting, the result is the smallest index `k` such that
+`d <= constraints[k]`, or `n+1` if no such `k` exists.
+If the `choose_lower` flag is set, the result is the largest index `k` such
+that `constraints[k] < d`, which is equivalent to being `k-1` in the normal
+setting.
 """
 function binary_search_constraints(d::AbstractVector{N},
                                    constraints::Vector{LinearConstraint{N}},
                                    n::Int,
-                                   k::Int
+                                   k::Int;
+                                   choose_lower::Bool=false
                                   )::Int where {N}
     lower = 1
     upper = n+1
@@ -247,9 +275,13 @@ function binary_search_constraints(d::AbstractVector{N},
         end
         k = lower + div(upper - lower, 2)
     end
-    if lower == 1 && !(constraints[1].a <= d)
-        # special case for index 1
-        return 1
+    if choose_lower
+        return lower
+    else
+        if lower == 1 && !(constraints[1].a <= d)
+            # special case for index 1
+            return 1
+        end
+        return upper
     end
-    return upper
 end
