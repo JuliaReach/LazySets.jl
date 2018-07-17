@@ -119,6 +119,7 @@ dim(::LinearMap{Float64, Float64})
 *(::AbstractMatrix, ::LazySet)
 *(::Float64, ::LazySet)
 ∈(x::AbstractVector{Float64}, ::LinearMap{Float64, Float64})
+an_element(lm::LinearMap)
 ```
 
 ### Exponential Map
