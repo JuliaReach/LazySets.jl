@@ -1,6 +1,7 @@
 import Base: *, ∈
 
-export LinearMap
+export LinearMap,
+       an_element
 
 """
     LinearMap{NM, N} <: LazySet{N}
@@ -201,4 +202,22 @@ true
 """
 function ∈(x::AbstractVector{N}, lm::LinearMap{NM, N})::Bool where {NM, N<:Real}
     return ∈(lm.M \ x, lm.X)
+end
+
+"""
+    an_element(lm::LinearMap)
+
+Return some element of a linear map.
+
+### Input
+
+- `lmap` -- linear map
+
+### Output
+
+An element in the linear map. It relies on the `an_element` function of the wrapped
+set.
+"""
+function an_element(lm::LinearMap)
+    return lm.M * an_element(lm.X)
 end

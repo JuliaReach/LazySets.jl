@@ -421,12 +421,10 @@ julia> push!(a1, x2); push!(a2, x2);
 
 julia> σ(d, cms1);
 
-# the support vector was computed for both sets
-julia> idx1 = forget_sets!(cms1)
+julia> idx1 = forget_sets!(cms1) # support vector was computed for both sets
 2
 
-# the support vector was only computed for the first set
-julia> idx1 = forget_sets!(cms2)
+julia> idx1 = forget_sets!(cms2) # support vector was only computed for first set
 1
 ```
 """
