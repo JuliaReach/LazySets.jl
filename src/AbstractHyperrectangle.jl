@@ -184,14 +184,14 @@ function ∈(x::AbstractVector{N},
 end
 
 """
-    linear_map(M::AbstractMatrix, H::AbstractHyperrectangle)
+    linear_map(M::AbstractMatrix, H::AbstractHyperrectangle{N}) where {N<:Real}
 
 Concrete linear map of an abstract hyperrectangle.
 
 ### Input
 
 - `M` -- matrix
-- `S` -- abstract hyperrectangle
+- `H` -- abstract hyperrectangle
 
 ### Output
 
@@ -199,7 +199,7 @@ The polytope in V-representation obtained by applying the linear map ``M`` to
 the set ``H``. If the given hyperrectangle is two-dimensional, a polygon instead
 of a general polytope is returned. 
 """
-function linear_map(M::AbstractMatrix, H::AbstractHyperrectangle{N}) where {N}
+function linear_map(M::AbstractMatrix, H::AbstractHyperrectangle{N}) where {N<:Real}
     if dim(H) == 2
         T = VPolygon
     else

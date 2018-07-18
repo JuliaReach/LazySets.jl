@@ -111,7 +111,7 @@ function vertices_list(S::AbstractSingleton{N}
 end
 
 """
-    linear_map(M::AbstractMatrix, S::AbstractSingleton)
+    linear_map(M::AbstractMatrix, S::AbstractSingleton{N}) where {N<:Real}
 
 Concrete linear map of an abstract singleton.
 
