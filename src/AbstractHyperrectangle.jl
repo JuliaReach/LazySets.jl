@@ -205,7 +205,7 @@ function linear_map(M::AbstractMatrix, H::AbstractHyperrectangle{N}) where {N<:R
     else
         T = VPolytope
     end
-    vlist = Vector{Vector{N}}()
+    vlist = Vector{Vector{N}}() # TODO: use size of vertices_list, or replace with iterator
     for vi in vertices_list(H)
         push!(vlist, M * vi)
     end
