@@ -1,6 +1,7 @@
 import Base.∈
 
-export ZeroSet
+export ZeroSet,
+       linear_map
 
 """
     ZeroSet{N<:Real} <: AbstractSingleton{N}
@@ -125,4 +126,23 @@ function ∈(x::AbstractVector{N}, Z::ZeroSet{N})::Bool where {N<:Real}
 
     zero_N = zero(N)
     return all(i -> x[i] == zero_N, eachindex(x))
+end
+
+"""
+    linear_map(M::AbstractMatrix, Z::ZeroSet{N}) where {N<:Real}
+
+Concrete linear map of a zero set.
+
+### Input
+
+- `M` -- matrix
+- `Z` -- zero set
+
+### Output
+
+The zero set whose dimension matches the output dimension of the given matrix.
+"""
+function linear_map(M::AbstractMatrix, Z::ZeroSet{N}) where {N<:Real}
+    m, n = size(M)
+    return ZeroSet(m)
 end

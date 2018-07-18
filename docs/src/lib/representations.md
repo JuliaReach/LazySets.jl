@@ -267,6 +267,7 @@ radius_hyperrectangle(::ZeroSet{Float64}, ::Int)
 an_element(::ZeroSet{Float64})
 element(::ZeroSet{Float64})
 element(::ZeroSet{Float64}, ::Int)
+linear_map(M::AbstractMatrix, Z::ZeroSet{Float64})
 ```
 
 ## Zonotopes
