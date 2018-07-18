@@ -22,4 +22,13 @@ for N in [Float64, Rational{Int}, Float32]
     subset, point = ⊆(z, s2, true)
     @test !⊆(z, s2) && !subset && point ∈ z && !(point ∈ s2)
     @test ⊆(z, z) && !⊆(z, ZeroSet{N}(2))
+
+    # linear map (concrete)
+    M = randn(1, 1)
+    Mz = linear_map(M, z)
+    @test Mz isa ZeroSet && dim(Mz) == 1
+
+    M = randn(1, 2)
+    MZ = linear_map(M, Z)
+    @test MZ isa ZeroSet && dim(MZ) == 1
 end
