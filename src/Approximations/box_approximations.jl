@@ -66,7 +66,7 @@ end
 
 function box_approximation_symmetric_parallel(S::LazySet{N}
                                     )::Hyperrectangle{N} where {N<:Real}
-    (c, r) = @time box_approximation_helper_parallel(S)
+    (c, r) = box_approximation_helper_parallel(S)
     return Hyperrectangle(zeros(N, length(c)), abs.(c) .+ r)
 end
 
@@ -109,7 +109,7 @@ functions in the same directions.
     c = Vector{N}(undef, n)
     r = Vector{N}(undef, n)
     d = zeros(N, n)
-    @time @inbounds for i in 1:n
+    @inbounds for i in 1:n
         d[i] = one_N
         htop = ρ(d, S)
         d[i] = -one_N
@@ -125,20 +125,18 @@ end
     n = dim(S)
     c = SharedVector{N}(n)
     r = SharedVector{N}(n)
-    d = Vector{N}(n)
 
     info("S dimensions: $n")
 
-    @inbounds for i = 1:n
-        d[i] = 0
-    end
-
-    @time advection_shared!(d, c, r, S)
+    advection_shared!(c, r, S)
     return convert(Array,c), convert(Array,r)
 end
 
 # Here's the kernel
-function advection_chunk!(d::Vector{N}, c::SharedVector{N}, r::SharedVector{N}, S::LazySet{N}, irange::UnitRange{Int64}) where {N<:Real}
+function advection_chunk!(c::SharedVector{N}, r::SharedVector{N}, S::LazySet{N}, irange::UnitRange{Int64}) where {N<:Real}
+
+    d = zeros(N, dim(S))
+
     for i in irange
         d[i] = one(N)
         htop = ρ(d, S)
@@ -162,12 +160,12 @@ function myrange(c::SharedVector{N}) where {N<:Real}
     splits[idx]+1:splits[idx+1]
 end
 
-advection_shared_chunk!(d::Vector{N}, c::SharedVector{N}, r::SharedVector{N}, S::LazySet{N}) where {N<:Real} = advection_chunk!(d, c, r, S, myrange(c))
+advection_shared_chunk!(c::SharedVector{N}, r::SharedVector{N}, S::LazySet{N}) where {N<:Real} = advection_chunk!(c, r, S, myrange(c))
 
-function advection_shared!(d::Vector{N}, c::SharedVector{N}, r::SharedVector{N}, S::LazySet{N}) where {N<:Real}
+function advection_shared!(c::SharedVector{N}, r::SharedVector{N}, S::LazySet{N}) where {N<:Real}
     @sync begin
         for p in procs(c)
-            @async remotecall_wait(advection_shared_chunk!, p, d, c, r, S)
+            @async remotecall_wait(advection_shared_chunk!, p, c, r, S)
         end
     end
 end

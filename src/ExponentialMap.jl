@@ -131,8 +131,9 @@ function advection_chunk!(spmexp::SparseMatrixExp{N}, J::AbstractArray, irange::
     @showprogress 1 "Expmv" for i in irange
         j = J[i]
         aux[j] = one_N
-        ans[:, count] = expmv_clone(one_N, spmexp.M, aux)
+        ans[:, count] = expmv(one_N, spmexp.M, aux)
         aux[j] = zero_N
+        count += 1
     end
 
     return ans

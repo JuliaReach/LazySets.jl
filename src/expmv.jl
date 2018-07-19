@@ -9,23 +9,23 @@ and http://www.maths.uq.edu.au/expokit
 Original source code from https://github.com/acroy/Expokit.jl under MIT license
 
 """
-function expmv_clone{T}(t::Number,
-                   A::SparseMatrixCSC{<:Real, Int}, vec::Vector{T};
+function expmv_clone{T}(t::T,
+                   A::SparseMatrixCSC{T, Int}, vec::Vector{T};
                    tol::Real=1e-7,
                    m::Int=min(30, size(A, 1)),
                    norm=Base.norm)
-    result = convert(Vector{promote_type(eltype(A), T, typeof(t))}, vec)
+    result = copy(vec)
     expmv!(t, A, result; tol=tol, m=m, norm=norm)
     return result
 end
 
-expmv_clone!{T}( t::Number,
-           A::SparseMatrixCSC{<:Real, Int}, vec::Vector{T};
+expmv_clone!{T}( t::T,
+           A::SparseMatrixCSC{T, Int}, vec::Vector{T};
            tol::Real=1e-7,
            m::Int=min(30,size(A,1)),
            norm=Base.norm) = expmv!(vec, t, A, vec; tol=tol, m=m, norm=norm)
 
-function expmv_clone!{T}( w::Vector{T}, t::Number, A::SparseMatrixCSC{<:Real, Int}, vec::Vector{T};
+function expmv_clone!{T}( w::Vector{T}, t::T, A::SparseMatrixCSC{T, Int}, vec::Vector{T};
                     tol::Real=1e-7, m::Int=min(30,size(A,1)), norm=Base.norm)
 
     if size(vec,1) != size(A,2)
