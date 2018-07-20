@@ -131,11 +131,14 @@ Return a half-space describing the 'left' of a line segment through two points.
 ### Output
 
 The half-space whose boundary goes through the two points `p` and `q` and which
-describes the left-hand side of the line segment `pq`.
+describes the left-hand side of the directed line segment `pq`.
 
 ### Algorithm
 
-The implementation is simple: `a = [dy, -dx]` and `b = dot(p, a)`.
+The implementation is simple: the half-space ``a⋅x ≤ b`` is calculated as
+`a = [dy, -dx]`, where ``d = (dx, dy)`` denotes the line segment
+`pq`, that is, ``\\vec{d} = \\vec{p} - \\vec{q}``, and `b = dot(p, a)` because
+`p` is on this line (we can equally choose `q` instead of `p`). 
 """
 function halfspace_left(p::AbstractVector{N},
                         q::AbstractVector{N})::HalfSpace{N} where {N<:Real}
