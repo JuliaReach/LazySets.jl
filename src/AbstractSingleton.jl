@@ -2,7 +2,8 @@ import Base.∈
 
 export AbstractSingleton,
        element,
-       an_element
+       an_element,
+       linear_map
 
 """
     AbstractSingleton{N<:Real} <: AbstractHyperrectangle{N}
@@ -109,6 +110,25 @@ function vertices_list(S::AbstractSingleton{N}
     return [element(S)]
 end
 
+"""
+    linear_map(M::AbstractMatrix, S::AbstractSingleton{N}) where {N<:Real}
+
+Concrete linear map of an abstract singleton.
+
+### Input
+
+- `M` -- matrix
+- `S` -- abstract singleton
+
+### Output
+
+The abstract singleton of the same type of ``S`` obtained by applying the
+linear map to the element in ``S``.
+"""
+function linear_map(M::AbstractMatrix, S::AbstractSingleton{N}) where {N<:Real}
+    T = typeof(S)
+    return T(M * element(S))
+end
 
 # --- LazySet interface functions ---
 

@@ -76,6 +76,12 @@ Note that there is a special interface combination
 AbstractPolytope
 ```
 
+This interface defines the following functions:
+
+```@docs
+linear_map(M::AbstractMatrix, P::AbstractPolytope{Float64})
+```
+
 ### Polygon
 
 A polygon is a two-dimensional polytope.
@@ -115,4 +121,10 @@ A singleton is a special hyperrectangle consisting of only one point.
 
 ```@docs
 AbstractSingleton
+```
+
+This interface defines the following functions:
+
+```@docs
+linear_map(M::AbstractMatrix, S::AbstractSingleton{Float64})
 ```
