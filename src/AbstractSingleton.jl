@@ -126,6 +126,9 @@ The abstract singleton of the same type of ``S`` obtained by applying the
 linear map to the element in ``S``.
 """
 function linear_map(M::AbstractMatrix, S::AbstractSingleton{N}) where {N<:Real}
+    @assert dim(S) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
+                                 "applied to a set of dimension $(dim(S))"
+
     T = typeof(S)
     return T(M * element(S))
 end

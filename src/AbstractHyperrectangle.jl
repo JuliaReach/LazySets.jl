@@ -1,8 +1,7 @@
 import Base.∈
 
 export AbstractHyperrectangle,
-       radius_hyperrectangle,
-       linear_map
+       radius_hyperrectangle
 
 """
     AbstractHyperrectangle{N<:Real} <: AbstractPointSymmetricPolytope{N}
