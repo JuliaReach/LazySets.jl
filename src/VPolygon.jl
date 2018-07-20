@@ -72,6 +72,13 @@ Build a constraint representation of the given polygon.
 ### Output
 
 The same polygon but in constraint representation, an `AbstractHPolygon`.
+
+### Algorithm
+
+The algorithms consists of adding an edge for each consecutive pair of vertices.
+Since the vertices are already ordered in counter-clockwise fashion (CWW), the
+constraints will be sorted automatically (CCW) if we start with the first edge
+between the first and second vertex.
 """
 function tohrep(P::VPolygon{N}, ::Type{HPOLYGON}=HPolygon
                )::AbstractHPolygon{N} where {N<:Real, HPOLYGON<:AbstractHPolygon}
