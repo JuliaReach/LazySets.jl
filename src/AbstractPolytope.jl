@@ -47,3 +47,33 @@ function singleton_list(P::AbstractPolytope{N}
                        )::Vector{Singleton{N}} where {N<:Real}
     return [Singleton(vi) for vi in vertices_list(P)]
 end
+
+"""
+    linear_map(M::AbstractMatrix, P::AbstractPolytope{N}) where {N<:Real}
+
+Concrete linear map of an abstract polytype.
+
+### Input
+
+- `M` -- matrix
+- `P` -- abstract polytype
+
+### Output
+
+The polytope in V-representation obtained by applying the linear map ``M`` to
+the set ``P``. If the given polytope is two-dimensional, a polygon instead
+of a general polytope is returned. 
+"""
+function linear_map(M::AbstractMatrix, P::AbstractPolytope{N}) where {N<:Real}
+    if dim(P) == 2
+        T = VPolygon
+    else
+        T = VPolytope
+    end
+    vlist = vertices_list(P)
+    new_vlist = Vector{Vector{N}}(length(vlist))
+    @inbounds for (i, vi) in enumerate(vlist)
+        new_vlist[i] =  M * vi
+    end
+    return T(new_vlist)
+end
