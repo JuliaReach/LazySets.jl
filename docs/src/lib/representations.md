@@ -98,7 +98,7 @@ dim(::HalfSpace{Float64})
 σ(::AbstractVector{Float64}, ::HalfSpace{Float64})
 an_element(::HalfSpace{Float64})
 ∈(::AbstractVector{Float64}, ::HalfSpace{Float64})
-halfspace_left(::AbstractVector, ::AbstractVector)
+LazySets.halfspace_left(::AbstractVector{Float64}, ::AbstractVector{Float64})
 ```
 
 ## Hyperplane
