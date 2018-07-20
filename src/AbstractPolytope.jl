@@ -1,6 +1,7 @@
 export AbstractPolytope,
        vertices_list,
-       singleton_list
+       singleton_list,
+       linear_map
 
 """
     AbstractPolytope{N<:Real} <: LazySet{N}
@@ -65,6 +66,9 @@ the set ``P``. If the given polytope is two-dimensional, a polygon instead
 of a general polytope is returned. 
 """
 function linear_map(M::AbstractMatrix, P::AbstractPolytope{N}) where {N<:Real}
+    @assert dim(P) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
+                                 "applied to a set of dimension $(dim(P))"
+
     if dim(P) == 2
         T = VPolygon
     else

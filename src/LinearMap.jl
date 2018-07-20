@@ -26,7 +26,8 @@ struct LinearMap{NM, N} <: LazySet{N}
 
     # default constructor with dimension match check
     function LinearMap{NM, N}(M::AbstractMatrix{NM}, X::LazySet{N}) where {NM, N}
-        @assert dim(X) == size(M, 2) "a linear map of size $(size(M)) cannot be applied to a set of dimension $(dim(X))"
+        @assert dim(X) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
+                                     "applied to a set of dimension $(dim(X))"
         return new(M, X)
     end
 end
