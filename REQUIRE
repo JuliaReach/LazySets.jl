@@ -9,5 +9,5 @@ GLPKMathProgInterface
 Requires
 Polyhedra
 CDDLib
-IntervalArithmetic
+IntervalArithmetic 0.14
 Compat
