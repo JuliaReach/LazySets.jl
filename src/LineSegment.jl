@@ -144,3 +144,7 @@ function ∈(x::AbstractVector{N}, L::LineSegment{N})::Bool where {N<:Real}
     return min(L.p[1], L.q[1]) <= x[1] <= max(L.p[1], L.q[1]) &&
            min(L.p[2], L.q[2]) <= x[2] <= max(L.p[2], L.q[2])
 end
+
+halfspace_left(L::LineSegment) = halfspace_left(L.p, L.q)
+
+halfspace_right(L::LineSegment) = halfspace_right(L.p, L.q)

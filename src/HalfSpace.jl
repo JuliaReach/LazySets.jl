@@ -181,3 +181,29 @@ function halfspace_left(p::AbstractVector{N},
     a = [q[2] - p[2], p[1] - q[1]]
     return HalfSpace(a, dot(p, a))
 end
+
+"""
+    halfspace_right(p::AbstractVector{N},
+                    q::AbstractVector{N})::HalfSpace{N} where {N<:Real}
+
+Return a half-space describing the 'right' of a two-dimensional line segment through
+two points.
+
+### Input
+
+- `p` -- first point
+- `q` -- second point
+
+### Output
+
+The half-space whose boundary goes through the two points `p` and `q` and which
+describes the right-hand side of the directed line segment `pq`.
+
+### Algorithm
+
+See the documentation of `halfspace_left`. 
+"""
+function halfspace_right(p::AbstractVector{N},
+                         q::AbstractVector{N})::HalfSpace{N} where {N<:Real}
+    return halfspace_right(q, p)
+end
