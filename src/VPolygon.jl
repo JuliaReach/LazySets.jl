@@ -82,51 +82,37 @@ between the first and second vertex.
 """
 function tohrep(P::VPolygon{N}, ::Type{HPOLYGON}=HPolygon
                )::AbstractHPolygon{N} where {N<:Real, HPOLYGON<:AbstractHPolygon}
-    n = length(vertices_list(P))
+    vl = vertices_list(P)
+    n = length(vl)
     if n == 0
         # no vertex -> no constraint
         constraints_list = Vector{LinearConstraint{N}}(0)
     elseif n == 1
         # only one vertex -> use function for singletons
-        return convert(HPOLYGON, Singleton(P.vertices_list[1]))
+        return convert(HPOLYGON, Singleton(vl[1]))
     elseif n == 2
         # only two vertices -> use function for line segments
-        return convert(HPOLYGON, LineSegment(P.vertices_list[1], P.vertices_list[2]))
+        return convert(HPOLYGON, LineSegment(vl[1], vl[2]))
     else
         # find right-most vertex
         i = div(n, 2)
-        x = P.vertices_list[i][1]
-        while i > 1 && P.vertices_list[i-1][1] > x
+        x = vl[i][1]
+        while i > 1 && vl[i-1][1] > x
             # search forward in list
             i = i - 1
-            x = P.vertices_list[i][1]
+            x = vl[i][1]
         end
-        while i < n && P.vertices_list[i+1][1] > x
+        while i < n && vl[i+1][1] > x
             # search backward in list
             i = i + 1
-            x = P.vertices_list[i][1]
+            x = vl[i][1]
         end
 
-        # create constraints counter-clockwise
-        constraints_list = Vector{LinearConstraint{N}}(n)
-        j = 1
-        i_start = i
-        i_stop = n
-        for it in 1:2
-            while i < i_stop
-                constraints_list[j] =
-                    halfspace_left(P.vertices_list[i], P.vertices_list[i+1])
-                j += 1
-                i += 1
-            end
-            if it == 1
-                constraints_list[j] =
-                    halfspace_left(P.vertices_list[n], P.vertices_list[1])
-                j += 1
-                i = 1
-                i_stop = i_start
-            end
-        end
+        # create constraints ordered in CCW starting at the right-most index
+        upper_hull = [halfspace_left(vl[j], vl[j+1]) for j in i:length(vl)-1]
+        mid_hull = [halfspace_left(vl[end], vl[1])]
+        lower_hull = [halfspace_left(vl[j], vl[j+1]) for j in 1:i-1]
+        constraints_list = vcat(upper_hull, mid_hull, lower_hull)
     end
     return HPOLYGON{N}(constraints_list)
 end
