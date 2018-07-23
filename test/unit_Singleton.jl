@@ -17,6 +17,12 @@ for N in [Float64, Rational{Int}, Float32]
     d = N[0., 0.]
     @test σ(d, s) == N[1., 2.]
 
+    # element function
+    @test element(s) == s.element
+    for i in 1:2
+        @test element(s, i) == s.element[i]
+    end
+
     # membership
     S = Singleton(N[1., 1.])
     !∈(N[0.9, 1.1], S)
