@@ -1,4 +1,4 @@
-julia 0.6
+julia 0.6.1
 IterTools
 RecipesBase
 Plots
@@ -9,5 +9,5 @@ GLPKMathProgInterface
 Requires
 Polyhedra
 CDDLib
-IntervalArithmetic
+IntervalArithmetic 0.14
 Compat
