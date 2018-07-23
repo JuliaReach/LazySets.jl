@@ -33,6 +33,6 @@ after_success:
   # code coverage (for both Coveralls and Codecov)
   - julia -e 'Pkg.add("Coverage")'
   # push coverage results to Coveralls
-  - julia -e 'cd(Pkg.dir("LazySets")); using Coverage; Coveralls.submit(Coveralls.process_folder())'
+  #- julia -e 'cd(Pkg.dir("LazySets")); using Coverage; Coveralls.submit(Coveralls.process_folder())'
   # push coverage results to Codecov
   - julia -e 'cd(Pkg.dir("LazySets")); using Coverage; Codecov.submit(Codecov.process_folder())'
