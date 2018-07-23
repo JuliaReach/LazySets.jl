@@ -60,9 +60,7 @@ The 2D polytope represented as polygon.
 """
 function convert(::Type{HPOLYGON},
                  P::HPolytope{N}) where {N, HPOLYGON<:AbstractHPolygon}
-    if dim(P) != 2
-        error("polytope must be 2D for conversion")
-    end
+    @assert dim(P) == 2 "polytope must be two-dimensional for conversion"
     H = HPOLYGON{N}()
     for ci in constraints_list(P)
         # guarantee that the edges are correctly sorted for storage

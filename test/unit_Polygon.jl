@@ -33,9 +33,9 @@ for N in [Float64, Float32, Rational{Int}]
     HPolytope(po)
 
     # support vector of empty polygon
-    @test_throws ErrorException σ(N[0.], HPolygon{N}())
-    @test_throws ErrorException σ(N[0.], HPolygonOpt(HPolygon{N}()))
-    @test_throws ErrorException σ(N[0.], HPolytope{N}())
+    @test_throws AssertionError σ(N[0.], HPolygon{N}())
+    @test_throws AssertionError σ(N[0.], HPolygonOpt(HPolygon{N}()))
+    @test_throws AssertionError σ(N[0.], HPolytope{N}())
 
     # HPolygon/HPolygonOpt tests
     for p in [p, po]
@@ -71,9 +71,9 @@ for N in [Float64, Float32, Rational{Int}]
         # an_element function
         @test an_element(p) ∈ p
         p_shallow = HPolygon{N}()
-        @test_throws ErrorException an_element(p_shallow)
+        @test_throws AssertionError an_element(p_shallow)
         addconstraint!(p_shallow, c1)
-        @test_throws ErrorException an_element(p_shallow)
+        @test_throws AssertionError an_element(p_shallow)
 
         # hrep conversion
         @test tohrep(p) == p

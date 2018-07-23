@@ -139,9 +139,7 @@ A vertex of the polygon in constraint representation (the first one in the order
 of the constraints).
 """
 function an_element(P::AbstractHPolygon{N})::Vector{N} where {N<:Real}
-    if length(P.constraints) < 2
-        error("a polygon in constraint representation should have at least two constraints")
-    end
+    @assert length(P.constraints) >= 2 "polygon has less than two constraints"
     return intersection(Line(P.constraints[1]),
                         Line(P.constraints[2]))
 end

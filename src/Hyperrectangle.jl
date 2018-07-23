@@ -20,11 +20,14 @@ struct Hyperrectangle{N<:Real} <: AbstractHyperrectangle{N}
     center::Vector{N}
     radius::Vector{N}
 
-    # default constructor with length comparison
-    Hyperrectangle{N}(center::Vector{N}, radius::Vector{N}) where {N<:Real} =
-        (length(center) != length(radius)
-            ? throw(DimensionMismatch)
-            : new(center, radius))
+    # default constructor with length comparison & domain constraint for radius
+    function Hyperrectangle{N}(center::Vector{N},
+                               radius::Vector{N}) where {N<:Real}
+        @assert length(center) == length(radius) "length of center and " *
+            "radius must be equal"
+        @assert all(v -> v >= zero(N), radius) "radius must not be negative"
+        return new(center, radius)
+    end
 end
 # type-less convenience constructor
 Hyperrectangle(center::Vector{N}, radius::Vector{N}) where {N<:Real} =

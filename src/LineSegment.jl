@@ -49,8 +49,12 @@ struct LineSegment{N<:Real} <: LazySet{N}
     q::AbstractVector{N}
 
     # default constructor with length constraint
-    LineSegment{N}(p::AbstractVector{N}, q::AbstractVector{N}) where {N<:Real} =
-        (length(p) == length(q) == 2 ? new{N}(p, q) : throw(DimensionMismatch))
+    function LineSegment{N}(p::AbstractVector{N},
+                            q::AbstractVector{N}) where {N<:Real}
+        @assert length(p) == length(q) == 2 "points for line segments must " *
+            "be two-dimensional"
+        return new{N}(p, q)
+    end
 end
 
 # type-less convenience constructor

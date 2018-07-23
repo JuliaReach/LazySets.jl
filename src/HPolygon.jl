@@ -63,9 +63,7 @@ Comparison of directions is performed using polar angles; see the overload of
 """
 function σ(d::AbstractVector{<:Real}, P::HPolygon{N})::Vector{N} where {N<:Real}
     n = length(P.constraints)
-    if n == 0
-        error("this polygon is empty")
-    end
+    @assert n > 0 "the polygon has no constraints"
     k = 1
     while k <= n && P.constraints[k].a <= d
         k += 1
