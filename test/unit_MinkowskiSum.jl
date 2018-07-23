@@ -54,6 +54,9 @@ for N in [Float64, Rational{Int}, Float32]
     v = Vector{LazySet{N}}(0)
     @test array(MinkowskiSumArray(v)) ≡ v
 
+    # constructor with size hint and type
+    MinkowskiSumArray(10, N)
+
     # neutral and absorbing element
     z = ZeroSet{N}(2)
     e = EmptySet{N}()
@@ -74,25 +77,42 @@ for N in [Float64, Rational{Int}, Float32]
     res = MinkowskiSum!(msa, msa)
     @test res isa MinkowskiSumArray && length(array(msa)) == 4
 
+    ms = MinkowskiSum(z, b)
+    msa = MinkowskiSumArray([z, b])
+    
+    # dimension
+    @test dim(msa) == 2
+
+    # support vector
+    d = N[1., 1.]
+    @assert σ(d, ms) == σ(d, msa)
+    d = N[-1., 1.]
+    @assert σ(d, ms) == σ(d, msa)
+
     # caching Minkowski sum
-    cms = CacheMinkowskiSum(2, N);
-    x1 = BallInf(ones(N, 3), N(3.));
-    x2 = Ball1(ones(N, 3), N(5.));
-    d = ones(N, 3);
-    a = array(cms);
-    push!(a, x1);
-    σ(d, cms);
-    push!(a, x2);
-    σ(d, cms);
+    cms = CacheMinkowskiSum(2, N)
+    x1 = BallInf(ones(N, 3), N(3.))
+    x2 = Ball1(ones(N, 3), N(5.))
+    d = ones(N, 3)
+    a = array(cms)
+    push!(a, x1)
+    σ(d, cms)
+    push!(a, x2)
+    svec = σ(d, cms)
+    @test σ(d, cms) == svec
     @test dim(cms) == 3
     idx = forget_sets!(cms)
     @test idx == 2 && isempty(array(cms)) && cms.cache[d][1] == 0
-    push!(a, x1);
-    σ(d, cms);
-    push!(a, x2);
+    push!(a, x1)
+    σ(d, cms)
+    push!(a, x2)
     idx = forget_sets!(cms)
     @test idx == 1 && length(array(cms)) == 1 && cms.cache[d][1] == 0
     # test issue #367: inplace modification of the direction modified the cache
     d[1] = zero(N)
     @test haskey(cms.cache, ones(N, 3))
+    # getindex
+    cp = LazySets.CachedPair(1, N[2.])
+    @test cp[1] == 1 && cp[2] == N[2.]
+    @test_throws ErrorException cp[3]
 end
