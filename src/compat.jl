@@ -8,9 +8,10 @@ import Compat.String
 
 if VERSION < v"0.7-"
     import Base.LinAlg:norm, checksquare
+    import Base: eye, ×
 else
     using SparseArrays, LinearAlgebra
-    import LinearAlgebra:norm, checksquare
+    import LinearAlgebra:norm, checksquare, eye, ×
 end
 
 export _At_mul_B
