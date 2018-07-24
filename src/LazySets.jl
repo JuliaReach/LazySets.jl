@@ -85,4 +85,9 @@ include("Approximations/Approximations.jl")
 # ============
 include("plot_recipes.jl")
 
+# ===================================================
+# Load external packages on-demand (using 'Requires')
+# ===================================================
+include("init.jl")
+
 end # module

@@ -201,7 +201,8 @@ function tosimplehrep(P::HPolytope{N}) where {N}
     return (A, b)
 end
 
-@require Polyhedra begin
+function load_polyhedra_hpolytope() # function to be loaded by Requires
+return quote
 
 using CDDLib # default backend
 import Polyhedra:polyhedron, SimpleHRepresentation, SimpleHRepresentation,
@@ -347,5 +348,5 @@ function vertices_list(P::HPolytope{N};
     prunefunc(P)
     return [vi for vi in vreps(P)]
 end
-
-end
+end # quote
+end # function load_polyhedra_hpolytope()
