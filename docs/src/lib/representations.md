@@ -287,5 +287,4 @@ linear_map(::AbstractMatrix, ::Zonotope)
 scale(::Real, ::Zonotope)
 ngens(::Zonotope)
 reduce_order(::Zonotope{Float64}, r)
-convert(::Type{Zonotope}, ::AbstractHyperrectangle{Float64})
 ```
