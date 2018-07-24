@@ -43,3 +43,10 @@ is_intersection_empty(::Hyperplane{Float64}, ::Zonotope{Float64})
 is_intersection_empty(::Ball2{Float64}, ::Ball2{Float64})
 is_intersection_empty(::LineSegment{Float64}, ::LineSegment{Float64})
 ```
+
+## Intersection of two sets
+
+```@docs
+intersection(::Line{Float64}, ::Line{Float64})
+intersection(::Hyperrectangle{Float64}, ::Hyperrectangle{Float64})
+```
