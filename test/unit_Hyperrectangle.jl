@@ -118,13 +118,18 @@ for N in [Float64, Rational{Int}, Float32]
     @test ⊆(H2, B1) && ⊆(B1, H2)
     @test ⊆(B1, B2) && !⊆(B2, B1)
 
-    # intersection emptiness
+    # intersection & intersection emptiness
     H1 = Hyperrectangle(N[1.0, 1.0], N[2.0, 2.0])
     H2 = Hyperrectangle(N[3.0, 3.0], N[2.0, 2.0])
     B1 = BallInf(N[2.0, 4.0], N(0.5))
     intersection_empty, point = is_intersection_empty(H1, H2, true)
+    cap = intersection(H1, H2)
+    @test cap isa Hyperrectangle{N} && center(cap) == N[2., 2.] &&
+          radius_hyperrectangle(cap) == N[1., 1.]
     @test !is_intersection_empty(H1, H2) &&
-    !intersection_empty && point ∈ H1 && point ∈ H2
+          !intersection_empty && point ∈ H1 && point ∈ H2
+    cap = intersection(H1, B1)
+    @test cap isa EmptySet{N}
     @test is_intersection_empty(H1, B1) && is_intersection_empty(H1, B1, true)[1]
 
     # linear map (concrete)
