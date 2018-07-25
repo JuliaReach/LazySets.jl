@@ -9,7 +9,7 @@ Type that represents a polygon by its vertices.
 
 ### Fields
 
-- `vertices_list` -- the list of vertices
+- `vertices` -- the list of vertices
 
 ### Notes
 
@@ -18,21 +18,21 @@ vertices are sorted in counter-clockwise fashion.
 The constructor flag `apply_convex_hull` can be used to skip the computation of
 the convex hull.
 
-- `VPolygon(vertices_list::Vector{Vector{N}};
+- `VPolygon(vertices::Vector{Vector{N}};
             apply_convex_hull::Bool=true,
             algorithm::String="monotone_chain")`
 """
 struct VPolygon{N<:Real} <: AbstractPolygon{N}
-    vertices_list::Vector{Vector{N}}
+    vertices::Vector{Vector{N}}
 
     # default constructor that applies a convex hull algorithm
-    function VPolygon(vertices_list::Vector{Vector{N}};
+    function VPolygon(vertices::Vector{Vector{N}};
                       apply_convex_hull::Bool=true,
                       algorithm::String="monotone_chain") where {N<:Real}
         if apply_convex_hull
-            return new{N}(convex_hull(vertices_list, algorithm=algorithm))
+            return new{N}(convex_hull(vertices, algorithm=algorithm))
         else
-            return new{N}(vertices_list)
+            return new{N}(vertices)
         end
     end
 end
@@ -93,7 +93,7 @@ Return the list of vertices of a convex polygon in vertex representation.
 List of vertices.
 """
 function vertices_list(P::VPolygon{N})::Vector{Vector{N}} where {N<:Real}
-    return P.vertices_list
+    return P.vertices
 end
 
 
@@ -131,16 +131,16 @@ See issue [#40](https://github.com/JuliaReach/LazySets.jl/issues/40).
 """
 function σ(d::AbstractVector{<:Real},
            P::VPolygon{N})::Vector{N} where {N<:Real}
-    if isempty(P.vertices_list)
+    if isempty(P.vertices)
         error("this polygon is empty")
     end
     i_max = 1
-    @inbounds for i in 2:length(P.vertices_list)
-        if dot(d, P.vertices_list[i] - P.vertices_list[i_max]) > zero(N)
+    @inbounds for i in 2:length(P.vertices)
+        if dot(d, P.vertices[i] - P.vertices[i_max]) > zero(N)
             i_max = i
         end
     end
-    return P.vertices_list[i_max]
+    return P.vertices[i_max]
 end
 
 """
@@ -157,10 +157,10 @@ Return some element of a polygon in vertex representation.
 The first vertex of the polygon in vertex representation.
 """
 function an_element(P::VPolygon{N})::Vector{N} where {N<:Real}
-    if isempty(P.vertices_list)
+    if isempty(P.vertices)
         error("this polygon is empty")
     end
-    return P.vertices_list[1]
+    return P.vertices[1]
 end
 
 """
@@ -207,18 +207,18 @@ function ∈(x::AbstractVector{N}, P::VPolygon{N})::Bool where {N<:Real}
     @assert length(x) == 2
 
     # special cases: 0 or 1 vertex
-    if length(P.vertices_list) == 0
+    if length(P.vertices) == 0
         return false
-    elseif length(P.vertices_list) == 1
-        return x == P.vertices_list[1]
+    elseif length(P.vertices) == 1
+        return x == P.vertices[1]
     end
 
     zero_N = zero(N)
-    if right_turn(P.vertices_list[1], x, P.vertices_list[end]) < zero_N
+    if right_turn(P.vertices[1], x, P.vertices[end]) < zero_N
         return false
     end
-    for i in 2:length(P.vertices_list)
-        if right_turn(P.vertices_list[i], x, P.vertices_list[i-1]) < zero_N
+    for i in 2:length(P.vertices)
+        if right_turn(P.vertices[i], x, P.vertices[i-1]) < zero_N
             return false
         end
     end

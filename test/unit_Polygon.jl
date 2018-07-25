@@ -84,10 +84,10 @@ for N in [Float64, Float32, Rational{Int}]
 
     # Test VRepresentation
     vp = tovrep(p)
-    @test N[2., 4.] ∈ vp.vertices_list
-    @test N[-1., 1.] ∈ vp.vertices_list
-    @test N[0., 0.] ∈ vp.vertices_list
-    @test N[4., 2.] ∈ vp.vertices_list
+    @test N[2., 4.] ∈ vertices_list(vp)
+    @test N[-1., 1.] ∈ vertices_list(vp)
+    @test N[0., 0.] ∈ vertices_list(vp)
+    @test N[4., 2.] ∈ vertices_list(vp)
 
     # test convex hull of a set of points using the default algorithm
     points = to_N(N, [[0.9,0.2], [0.4,0.6], [0.2,0.1], [0.1,0.3], [0.3,0.28]])

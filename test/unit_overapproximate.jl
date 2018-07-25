@@ -8,7 +8,7 @@ for N in [Float64, Float32] # TODO Rational{Int}
     b = Ball1(N[0., 0.], N(1.))
     ε = N(.01)
     p = tovrep(overapproximate(b, ε))
-    for v in p.vertices_list
+    for v in vertices_list(p)
     @test norm(v) >= N(1.)
     @test norm(v) <= N(1.+ε)
     end
