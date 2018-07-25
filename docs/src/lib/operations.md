@@ -69,12 +69,23 @@ monotone_chain!
 
 ## Intersection
 
+### Binary Intersection
+
 ```@docs
 Intersection
 dim(::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
 σ(::AbstractVector{Float64}, ::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
 ∈(::AbstractVector{Float64}, ::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
 isempty(::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
+```
+
+### ``n``-ary Intersection
+
+```@docs
+IntersectionArray
+array(::IntersectionArray{Float64, LazySet{Float64}})
+dim(::IntersectionArray{Float64, LazySet{Float64}})
+σ(::AbstractVector{Float64}, ::IntersectionArray{Float64, LazySet{Float64}})
 ```
 
 ## Minkowski Sum
