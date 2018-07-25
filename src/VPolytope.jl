@@ -76,10 +76,11 @@ The support vector in the given direction.
 """
 function σ(d::AbstractVector{<:Real}, P::VPolytope; algorithm="hrep")::Vector{<:Real}
     if algorithm == "hrep"
-        @assert isdefined(@__MODULE__, :Polyhedra) "you need to load Polyhedra for this algorithm"
+        @assert isdefined(@__MODULE__, :Polyhedra) "this algorithm needs the " *
+            "package 'Polyhedra' loaded"
         return σ(d, tohrep(P))
     else
-        error("the algorithm $(hrep) is not known")
+        error("the algorithm $algorithm is not known")
     end
 end
 
