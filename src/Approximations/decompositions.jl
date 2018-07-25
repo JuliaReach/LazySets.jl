@@ -37,7 +37,7 @@ end
               [ε]::Real=Inf,
               [blocks]::AbstractVector{Int}=default_block_structure(S, set_type),
               [block_types]::Dict{Type{<:LazySet}, AbstractVector{<:AbstractVector{Int}}}(),
-              [directions]::Union{Type{<:AbstractDirections}, Void}=nothing
+              [directions]::Union{Type{<:AbstractDirections}, Nothing}=nothing
              )::CartesianProductArray where {N<:Real}
 
 Decompose a high-dimensional set into a Cartesian product of overapproximations
@@ -221,7 +221,7 @@ function decompose(S::LazySet{N};
                    ε::Real=Inf,
                    blocks::AbstractVector{Int}=default_block_structure(S, set_type),
                    block_types=Dict{Type{<:LazySet}, AbstractVector{<:AbstractVector{Int}}}(),
-                   directions::Union{Type{<:AbstractDirections}, Void}=nothing
+                   directions::Union{Type{<:AbstractDirections}, Nothing}=nothing
                   )::CartesianProductArray where {N<:Real}
     n = dim(S)
     result = Vector{LazySet{N}}()
