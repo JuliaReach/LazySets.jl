@@ -26,4 +26,8 @@ for N in [Float64, Rational{Int}, Float32]
 
     # an_element function and membership function
     @test an_element(hs) ∈ hs
+
+    # halfspace_left & halfspace_right
+    @test N[1., 2.] ∈ halfspace_left(N[1., 1.], N[2., 2.])
+    @test N[2., 1.] ∈ halfspace_right(N[1., 1.], N[2., 2.])
 end

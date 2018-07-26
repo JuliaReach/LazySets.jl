@@ -76,4 +76,8 @@ for N in [Float64, Rational{Int}, Float32]
     h2 = Hyperrectangle(N[1.5, 1.5], N[.4, .8])
     @test ⊆(l, h1)
     @test !⊆(l, h2)
+
+    # halfspace_left & halfspace_right
+    @test N[1., 2.] ∈ halfspace_left(l)
+    @test N[2., 1.] ∈ halfspace_right(l)
 end
