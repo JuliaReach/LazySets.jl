@@ -65,4 +65,11 @@ for N in [Float64, Rational{Int}, Float32]
     @test res isa ConvexHullArray && length(array(cha)) == 2
     res = ConvexHull!(cha, cha)
     @test res isa ConvexHullArray && length(array(cha)) == 4
+
+    # concrete convex hull operation
+    points = to_N(N, [[0.9,0.2], [0.4,0.6], [0.2,0.1], [0.1,0.3], [0.3,0.28]])
+    sorted = to_N(N, [[0.1,0.3],[0.2,0.1], [0.9,0.2],[0.4,0.6]])
+    @test convex_hull!(points, algorithm="monotone_chain") == sorted
+    @test convex_hull!(points, algorithm="monotone_chain_sorted") == sorted
+    @test_throws ErrorException convex_hull!(points, algorithm="")
 end
