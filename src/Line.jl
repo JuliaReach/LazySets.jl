@@ -1,3 +1,5 @@
+import Base.∈
+
 export Line,
        an_element
 
@@ -108,4 +110,27 @@ function an_element(L::Line{N})::Vector{N} where N<:Real
     x[3-i] = one(N)
     x[i] = (L.b - L.a[3-i]) / L.a[i]
     return x
+end
+
+"""
+    ∈(x::AbstractVector{N}, L::Line{N})::Bool where {N<:Real}
+
+Check whether a given point is contained in a line.
+
+### Input
+
+- `x` -- point/vector
+- `L` -- line
+
+### Output
+
+`true` iff `x ∈ L`.
+
+### Algorithm
+
+The point ``x`` belongs to the line if and only if ``a⋅x = b`` holds.
+"""
+function ∈(x::AbstractVector{N}, L::Line{N})::Bool where {N<:Real}
+    @assert length(x) == dim(L)
+    return dot(L.a, x) == L.b
 end
