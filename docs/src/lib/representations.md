@@ -156,7 +156,6 @@ vertices_list(::Interval)
 Line
 dim(::Line{Float64})
 σ(::AbstractVector{Float64}, ::Line{Float64})
-intersection(::Line{Float64}, ::Line{Float64})
 ```
 
 ## Line segment
