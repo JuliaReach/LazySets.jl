@@ -24,6 +24,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test !∈(N[7., 4.], l)
     @test !∈(N[1.5, 1.6], l)
 
+    # an_element function
+    @test an_element(l) ∈ l
+
     # intersection emptiness
     l1 = LineSegment(N[1., 1.], N[2., 2.])
     l2 = LineSegment(N[2., 1.], N[1., 2.])

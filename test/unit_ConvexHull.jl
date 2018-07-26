@@ -24,6 +24,8 @@ for N in [Float64, Rational{Int}, Float32]
 
     # convex hull array of 2 sets
     C = ConvexHullArray([b1, b2])
+    # constructor with size hint and type
+    ConvexHullArray(10, N)
     # test alias
     @test CHArray([b1, b2]) isa ConvexHullArray
     # test dimension

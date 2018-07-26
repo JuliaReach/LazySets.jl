@@ -10,6 +10,7 @@ include("to_N.jl")
 # =======================================
 @time @testset "LazySets.Singleton" begin include("unit_Singleton.jl") end
 @time @testset "LazySets.Ball2" begin include("unit_Ball2.jl") end
+@time @testset "LazySets.Ballp" begin include("unit_Ballp.jl") end
 @time @testset "LazySets.BallInf" begin include("unit_BallInf.jl") end
 @time @testset "LazySets.Hyperrectangle" begin include("unit_Hyperrectangle.jl") end
 @time @testset "LazySets.Polygon" begin include("unit_Polygon.jl") end

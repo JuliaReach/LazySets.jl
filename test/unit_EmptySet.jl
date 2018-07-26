@@ -47,5 +47,6 @@ for N in [Float64, Rational{Int}, Float32]
     @test_throws ErrorException an_element(E)
 end
 
-# default Float64 constructor
+# default Float64 constructors
 @test ∅ == EmptySet{Float64}()
+@test EmptySet() == EmptySet{Float64}()

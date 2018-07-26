@@ -110,10 +110,15 @@ for N in [Float64, Float32, Rational{Int}]
     # =====================
     # CartesianProductArray
     # =====================
+
+    # standard constructor
     v = Vector{LazySet{N}}(0)
     push!(v, Singleton(N[1., 2.]))
     push!(v, Singleton(N[3., 4.]))
     cpa = CartesianProductArray(v)
+
+    # constructor with size hint and type
+    CartesianProductArray(10, N)
 
     # array getter
     @test array(cpa) ≡ v
