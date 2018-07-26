@@ -33,9 +33,9 @@ for N in [Float64, Float32, Rational{Int}]
     HPolytope(po)
 
     # support vector of empty polygon
-    @test_throws ErrorException σ([0.], HPolygon())
-    @test_throws ErrorException σ([0.], HPolygonOpt(HPolygon()))
-    @test_throws ErrorException σ([0.], HPolytope())
+    @test_throws ErrorException σ(N[0.], HPolygon{N}())
+    @test_throws ErrorException σ(N[0.], HPolygonOpt(HPolygon{N}()))
+    @test_throws ErrorException σ(N[0.], HPolytope{N}())
 
     # HPolygon/HPolygonOpt tests
     for p in [p, po]
@@ -144,6 +144,45 @@ for N in [Float64, Float32, Rational{Int}]
         for j in i:8
                 @test vi <= v[j]
         end
+    end
+
+    # hrep conversion
+    v1 = to_N(N, [0.9, 0.2])
+    v2 = to_N(N, [0.4, 0.6])
+    v3 = to_N(N, [0.2, 0.1])
+    v4 = to_N(N, [0.1, 0.3])
+    points5 = [v1, v2, v3, v4]
+    for i in [0, 1, 2, 4]
+        points = i == 0 ? Vector{Vector{N}}() : points5[1:i]
+        vp = VPolygon(points, apply_convex_hull=i > 0)
+        h1 = tohrep(vp)
+        if i == 0
+            @test isempty(h1.constraints)
+        elseif i == 1
+            @test v1 ∈ h1
+        elseif i == 2
+            c = h1.constraints[1]
+            @test c.a ≈ to_N(N, [0.4, 0.5])&& c.b ≈ to_N(N, (0.46))
+            c = h1.constraints[3]
+            @test c.a ≈ to_N(N, [-0.4, -0.5])&& c.b ≈ to_N(N, (-0.46))
+        elseif i == 4
+            @test length(h1.constraints) == 4
+            c = h1.constraints[1]
+            @test c.a ≈ to_N(N, [0.4, 0.5])&& c.b ≈ to_N(N, (0.46))
+            c = h1.constraints[2]
+            @test c.a ≈ to_N(N, [-0.3, 0.3])&& c.b ≈ to_N(N, (0.06))
+            c = h1.constraints[3]
+            @test c.a ≈ to_N(N, [-0.2, -0.1])&& c.b ≈ to_N(N, (-0.05))
+            c = h1.constraints[4]
+            @test c.a ≈ to_N(N, [0.1, -0.7])&& c.b ≈ to_N(N, (-0.05))
+        end
+
+        # check that constraints are sorted correctly
+        h2 = HPolygon{N}()
+        for c in h1.constraints
+            addconstraint!(h2, c)
+        end
+        @test h1.constraints == h2.constraints
     end
 end
 

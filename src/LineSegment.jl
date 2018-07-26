@@ -144,3 +144,37 @@ function ∈(x::AbstractVector{N}, L::LineSegment{N})::Bool where {N<:Real}
     return min(L.p[1], L.q[1]) <= x[1] <= max(L.p[1], L.q[1]) &&
            min(L.p[2], L.q[2]) <= x[2] <= max(L.p[2], L.q[2])
 end
+
+"""
+    halfspace_left(L::LineSegment)
+
+Return a half-space describing the 'left' of a two-dimensional line segment through
+two points.
+
+### Input
+
+ - `L` -- line segment
+
+### Output
+
+The half-space whose boundary goes through the two points `p` and `q` and which
+describes the left-hand side of the directed line segment `pq`.
+"""
+halfspace_left(L::LineSegment) = halfspace_left(L.p, L.q)
+
+"""
+    halfspace_right(L::LineSegment)
+
+Return a half-space describing the 'right' of a two-dimensional line segment through
+two points.
+
+### Input
+
+ - `L` -- line segment
+
+### Output
+
+The half-space whose boundary goes through the two points `p` and `q` and which
+describes the right-hand side of the directed line segment `pq`.
+"""
+halfspace_right(L::LineSegment) = halfspace_right(L.p, L.q)

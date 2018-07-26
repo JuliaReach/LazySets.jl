@@ -98,6 +98,8 @@ dim(::HalfSpace{Float64})
 σ(::AbstractVector{Float64}, ::HalfSpace{Float64})
 an_element(::HalfSpace{Float64})
 ∈(::AbstractVector{Float64}, ::HalfSpace{Float64})
+LazySets.halfspace_left(::AbstractVector{Float64}, ::AbstractVector{Float64})
+LazySets.halfspace_right(::AbstractVector{Float64}, ::AbstractVector{Float64})
 ```
 
 ## Hyperplane
@@ -164,6 +166,8 @@ LineSegment
 dim(::LineSegment{Float64})
 σ(::AbstractVector{Float64}, ::LineSegment{Float64})
 ∈(::AbstractVector{Float64}, ::LineSegment{Float64})
+LazySets.halfspace_left(::LineSegment)
+LazySets.halfspace_right(::LineSegment)
 ```
 
 ## Polygons
