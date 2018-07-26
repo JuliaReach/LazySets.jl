@@ -205,5 +205,5 @@ See the documentation of `halfspace_left`.
 """
 function halfspace_right(p::AbstractVector{N},
                          q::AbstractVector{N})::HalfSpace{N} where {N<:Real}
-    return halfspace_right(q, p)
+    return halfspace_left(q, p)
 end
