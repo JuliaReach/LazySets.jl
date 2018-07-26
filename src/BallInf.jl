@@ -41,8 +41,10 @@ struct BallInf{N<:Real} <: AbstractHyperrectangle{N}
     radius::N
 
     # default constructor with domain constraint for radius
-    BallInf{N}(center, radius) where N =
-        radius < zero(N) ? throw(DomainError()) : new(center, radius)
+    function BallInf{N}(center, radius) where N
+        @assert radius >= zero(N) "radius must not be negative"
+        return new(center, radius)
+    end
 end
 # type-less convenience constructor
 BallInf(center::Vector{N}, radius::N) where {N<:Real} =

@@ -173,9 +173,7 @@ See issue [#40](https://github.com/JuliaReach/LazySets.jl/issues/40).
 """
 function σ(d::AbstractVector{<:Real},
            P::VPolygon{N})::Vector{N} where {N<:Real}
-    if isempty(P.vertices)
-        error("this polygon is empty")
-    end
+    @assert !isempty(P.vertices) "the polygon has no vertices"
     i_max = 1
     @inbounds for i in 2:length(P.vertices)
         if dot(d, P.vertices[i] - P.vertices[i_max]) > zero(N)
@@ -199,9 +197,7 @@ Return some element of a polygon in vertex representation.
 The first vertex of the polygon in vertex representation.
 """
 function an_element(P::VPolygon{N})::Vector{N} where {N<:Real}
-    if isempty(P.vertices)
-        error("this polygon is empty")
-    end
+    @assert !isempty(P.vertices) "the polygon has no vertices"
     return P.vertices[1]
 end
 

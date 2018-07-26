@@ -25,8 +25,10 @@ struct Line{N<:Real, V<:AbstractVector{N}} <: LazySet{N}
     b::N
 
     # default constructor with length constraint
-    Line{N, V}(a::V, b::N) where {N<:Real, V<:AbstractVector{N}} =
-        (length(a) != 2 ? throw(DimensionMismatch) : new{N, V}(a, b))
+    function Line{N, V}(a::V, b::N) where {N<:Real, V<:AbstractVector{N}}
+        @assert length(a) == 2 "lines must be two-dimensional"
+        return new{N, V}(a, b)
+    end
 end
 
 # type-less convenience constructor

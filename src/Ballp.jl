@@ -57,20 +57,18 @@ struct Ballp{N<:AbstractFloat} <: AbstractPointSymmetric{N}
     center::Vector{N}
     radius::N
 
+    # default constructor with domain constraint for radius and p
     function Ballp{N}(p, center, radius) where N
-        if radius < zero(N)
-            throw(DomainError())
-        end
+        @assert radius >= zero(N) "radius must not be negative"
+        @assert p >= 1 "p must not be less than 1"
         if p == Inf
             return BallInf(center, radius)
         elseif p == 2
             return Ball2(center, radius)
         elseif p == 1
             return Ball1(center, radius)
-        elseif 1 < p && p < Inf
-            new(p, center, radius)
         else
-            throw(DomainError())
+            return new(p, center, radius)
         end
     end
 end

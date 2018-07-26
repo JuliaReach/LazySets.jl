@@ -85,12 +85,10 @@ This implementation uses `GLPKSolverLP` as linear programming backend.
 """
 function σ(d::AbstractVector{<:Real}, P::HPolytope)::Vector{<:Real}
     c = -d
-    m = length(constraints_list(P))
-    if m == 0
-        error("this polytope is empty")
-    end
-    A = zeros(m, dim(P))
-    b = zeros(m)
+    n = length(constraints_list(P))
+    @assert n > 0 "the polytope has no constraints"
+    A = zeros(n, dim(P))
+    b = zeros(n)
     for (i, Pi) in enumerate(constraints_list(P))
         A[i, :] = Pi.a
         b[i] = Pi.b

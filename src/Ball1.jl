@@ -45,8 +45,10 @@ struct Ball1{N<:Real} <: AbstractPointSymmetricPolytope{N}
     radius::N
 
     # default constructor with domain constraint for radius
-    Ball1{N}(center, radius) where N =
-        radius < zero(N) ? throw(DomainError()) : new(center, radius)
+    function Ball1{N}(center, radius) where N
+        @assert radius >= zero(N) "radius must not be negative"
+        return new(center, radius)
+    end
 end
 # type-less convenience constructor
 Ball1(center::Vector{N}, radius::N) where {N<:Real} = Ball1{N}(center, radius)
