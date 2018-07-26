@@ -69,7 +69,7 @@ function new_approx(S::LazySet, p1::Vector{N}, d1::Vector{N}, p2::Vector{N},
         ap = LocalApproximation{N}(p1, d1, p2, d2, p1, false, zero(N))
     else
         ndir = normalize([p2[2]-p1[2], p1[1]-p2[1]])
-        q = intersection(Line(d1, dot(d1, p1)), Line(d2, dot(d2, p2)))
+        q = element(intersection(Line(d1, dot(d1, p1)), Line(d2, dot(d2, p2))))
         approx_error = min(norm(q - σ(ndir, S)), dot(ndir, q - p1))
         refinable = (approx_error > TOL(N)) &&
                      !(norm(p1-q, 2) < TOL(N) || norm(q-p2, 2) < TOL(N))

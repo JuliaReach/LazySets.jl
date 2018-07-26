@@ -90,12 +90,12 @@ function σ(d::AbstractVector{<:Real},
         end
         if (k == 0)
             P.ind = n
-            return intersection(Line(P.constraints[n]),
-                                Line(P.constraints[1]))
+            return element(intersection(Line(P.constraints[n]),
+                                        Line(P.constraints[1])))
         else
             P.ind = k
-            return intersection(Line(P.constraints[k]),
-                                Line(P.constraints[k+1]))
+            return element(intersection(Line(P.constraints[k]),
+                                        Line(P.constraints[k+1])))
         end
     else
         k = P.ind+1
@@ -104,12 +104,12 @@ function σ(d::AbstractVector{<:Real},
         end
         if (k == n+1)
             P.ind = n
-            return intersection(Line(P.constraints[n]),
-                                Line(P.constraints[1]))
+            return element(intersection(Line(P.constraints[n]),
+                                        Line(P.constraints[1])))
         else
             P.ind = k-1
-            return intersection(Line(P.constraints[k-1]),
-                                Line(P.constraints[k]))
+            return element(intersection(Line(P.constraints[k-1]),
+                                        Line(P.constraints[k])))
         end
     end
 end
