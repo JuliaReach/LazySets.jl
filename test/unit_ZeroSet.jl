@@ -11,7 +11,8 @@ for N in [Float64, Rational{Int}, Float32]
     # test M-sum of zero set with itself
     @test ZeroSet{N}(2) ⊕ ZeroSet{N}(2) == ZeroSet{N}(2)
 
-    # an_element function
+    # element & an_element function
+    @test element(Z) ∈ Z
     @test an_element(Z) ∈ Z
 
     # subset
