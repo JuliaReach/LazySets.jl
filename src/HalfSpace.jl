@@ -1,7 +1,8 @@
 import Base.∈
 
 export HalfSpace, LinearConstraint,
-       an_element
+       an_element,
+       halfspace_left, halfspace_right
 
 """
     HalfSpace{N<:Real} <: LazySet{N}
@@ -121,8 +122,8 @@ end
     halfspace_left(p::AbstractVector{N},
                    q::AbstractVector{N})::HalfSpace{N} where {N<:Real}
 
-Return a half-space describing the 'left' of a two-dimensional line segment through
-two points.
+Return a half-space describing the 'left' of a two-dimensional line segment
+through two points.
 
 ### Input
 
@@ -142,8 +143,8 @@ The implementation is simple: the half-space ``a⋅x ≤ b`` is calculated as
 
 ### Examples
 
-The left half-space of the "east" and "west" directions in two-dimensions are the
-upper and lower half-spaces:
+The left half-space of the "east" and "west" directions in two-dimensions are
+the upper and lower half-spaces:
 
 ```jldoctest halfspace_left
 julia> import LazySets.halfspace_left
@@ -186,8 +187,8 @@ end
     halfspace_right(p::AbstractVector{N},
                     q::AbstractVector{N})::HalfSpace{N} where {N<:Real}
 
-Return a half-space describing the 'right' of a two-dimensional line segment through
-two points.
+Return a half-space describing the 'right' of a two-dimensional line segment
+through two points.
 
 ### Input
 
@@ -205,5 +206,5 @@ See the documentation of `halfspace_left`.
 """
 function halfspace_right(p::AbstractVector{N},
                          q::AbstractVector{N})::HalfSpace{N} where {N<:Real}
-    return halfspace_right(q, p)
+    return halfspace_left(q, p)
 end

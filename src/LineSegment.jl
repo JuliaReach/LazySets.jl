@@ -1,6 +1,7 @@
 import Base.∈
 
-export LineSegment
+export LineSegment,
+       halfspace_left, halfspace_right
 
 """
     LineSegment{N<:Real} <: LazySet{N}
@@ -152,8 +153,8 @@ end
 """
     halfspace_left(L::LineSegment)
 
-Return a half-space describing the 'left' of a two-dimensional line segment through
-two points.
+Return a half-space describing the 'left' of a two-dimensional line segment
+through two points.
 
 ### Input
 
@@ -169,8 +170,8 @@ halfspace_left(L::LineSegment) = halfspace_left(L.p, L.q)
 """
     halfspace_right(L::LineSegment)
 
-Return a half-space describing the 'right' of a two-dimensional line segment through
-two points.
+Return a half-space describing the 'right' of a two-dimensional line segment
+through two points.
 
 ### Input
 
