@@ -101,9 +101,10 @@ end
 
 """
 ```
-    *(M::AbstractMatrix, Z::ZeroSet)
-````
-Linear map of a zero set.
+    *(M::AbstractMatrix{N}, Z::ZeroSet{N})::ZeroSet{N} where N<:Real
+```
+
+A linear map of a zero set, which is simplified to a zero set.
 
 ### Input
 
@@ -114,9 +115,9 @@ Linear map of a zero set.
 
 The zero set with the output dimension of the linear map.
 """
-function *(M::AbstractMatrix, Z::ZeroSet)
+function *(M::AbstractMatrix{N}, Z::ZeroSet{N})::ZeroSet{N} where N<:Real
     @assert dim(Z) == size(M, 2)
-    return ZeroSet(size(M, 1))
+    return ZeroSet{N}(size(M, 1))
 end
 
 """
