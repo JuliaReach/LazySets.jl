@@ -36,6 +36,9 @@ for N in [Float64, Rational{Int}, Float32]
     v = Vector{LazySet{N}}(0)
     @test array(IntersectionArray(v)) ≡ v
 
+    # constructor with size hint and type
+    IntersectionArray(10, N)
+
     # ---
 
     # absorbing element

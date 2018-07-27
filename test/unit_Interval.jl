@@ -6,9 +6,6 @@ x = Interval{Float64, IntervalArithmetic.Interval{Float64}}(IntervalArithmetic.I
 # type-less constructor
 x = Interval(0.0, 1.0)
 
-# constructor with two numbers
-x = Interval(0.0, 1.0)
-
 @test dim(x) == 1
 @test center(x) == [0.5]
 @test low(x) == 0.0 && high(x) == 1.0
@@ -64,3 +61,7 @@ m = x ⊕ y
 cp = x × y
 @test cp isa CartesianProduct
 @test dim(cp) == 2
+
+# conversion to hyperrectangle
+h = convert(Hyperrectangle, x)
+@test h isa Hyperrectangle && center(h) == radius_hyperrectangle(h) == [0.5]
