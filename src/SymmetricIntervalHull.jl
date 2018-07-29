@@ -28,14 +28,10 @@ bounds in the `cache` field.
 """
 struct SymmetricIntervalHull{N<:Real, S<:LazySet{N}} <: AbstractHyperrectangle{N}
     X::S
-    cache::Vector{Tuple{N, Bool}}
+    cache::Vector{N}
 
     function SymmetricIntervalHull{N, S}(X::S) where {S<:LazySet{N}} where {N<:Real}
-        cache = Vector{Tuple{N, Bool}}(dim(X))
-        zero_N = zero(N)
-        for i in 1:length(cache)
-            cache[i] = (zero_N, false)
-        end
+        cache = fill(-one(N), dim(X))
         return new{N, S}(X, cache)
     end
 end
@@ -63,14 +59,15 @@ SymmetricIntervalHull(∅::EmptySet)::EmptySet = ∅
 
 
 """
-    radius_hyperrectangle(H::SymmetricIntervalHull{N}, i::Int)::N where {N<:Real}
+    radius_hyperrectangle(sih::SymmetricIntervalHull{N},
+                          i::Int)::N where {N<:Real}
 
 Return the box radius of a symmetric interval hull of a convex set in a given
 dimension.
 
 ### Input
 
-- `H` -- symmetric interval hull of a convex set
+- `sih` -- symmetric interval hull of a convex set
 
 ### Output
 
@@ -78,16 +75,14 @@ The radius in the given dimension.
 If it was computed before, this is just a look-up, otherwise it requires two
 support vector computations.
 """
-function radius_hyperrectangle(H::SymmetricIntervalHull{N},
+function radius_hyperrectangle(sih::SymmetricIntervalHull{N},
                                i::Int)::N where {N<:Real}
-    if !sih.cache[i][2]
-        compute_radius(sih, i)
-    end
-    return sih.cache[i][1]
+    return get_radius!(sih, i)
 end
 
 """
-    radius_hyperrectangle(sih::SymmetricIntervalHull{N})::Vector{N} where {N<:Real}
+    radius_hyperrectangle(sih::SymmetricIntervalHull{N}
+                         )::Vector{N} where {N<:Real}
 
 Return the box radius of a symmetric interval hull of a convex set in every
 dimension.
@@ -106,14 +101,11 @@ This function computes the symmetric interval hull explicitly.
 """
 function radius_hyperrectangle(sih::SymmetricIntervalHull{N}
                               )::Vector{N} where {N<:Real}
-    dim = dim(sih)
-    one_N = one(N)
-    for i in 1:dim
-        if !sih.cache[i][2]
-            compute_radius(sih, i, dim, one_N)
-        end
+    n = dim(sih)
+    for i in 1:n
+        get_radius!(sih, i, n)
     end
-    return sih.cache[i][1]
+    return sih.cache
 end
 
 
@@ -159,7 +151,7 @@ function dim(sih::SymmetricIntervalHull)::Int
 end
 
 """
-    σ(d::V, sih::SymmetricIntervalHull) where {N<:Real, V<:AbstractVector{N}}
+    σ(d::V, sih::SymmetricIntervalHull{N}) where {N<:Real, V<:AbstractVector{N}}
 
 Return the support vector of a symmetric interval hull of a convex set in a
 given direction.
@@ -183,22 +175,18 @@ queries.
 One such computation just asks for the support vector of the underlying set for
 both the positive and negative unit vector in the respective dimension.
 """
-function σ(d::V, sih::SymmetricIntervalHull) where {N<:Real, V<:AbstractVector{N}}
-    len = length(d)
-    @assert len == dim(sih) "cannot compute the support vector of a " *
-        "$(dim(sih))-dimensional set along a vector of length $(length(d))"
+function σ(d::V,
+           sih::SymmetricIntervalHull{N}) where {N<:Real, V<:AbstractVector{N}}
+    n = length(d)
+    @assert n == dim(sih) "cannot compute the support vector of a " *
+        "$(dim(sih))-dimensional set along a vector of length $n"
 
     svec = similar(d)
-    zero_N = zero(N)
-    one_N = one(N)
     for i in eachindex(d)
-        if d[i] == zero_N
-            svec[i] = zero_N
+        if d[i] == zero(N)
+            svec[i] = zero(N)
         else
-            if !sih.cache[i][2]
-                compute_radius(sih, i, len, one_N)
-            end
-            svec[i] = sign(d[i]) * sih.cache[i][1]
+            svec[i] = sign(d[i]) * get_radius!(sih, i, n)
         end
     end
     return svec
@@ -209,36 +197,35 @@ end
 
 
 """
-    compute_radius(sih::SymmetricIntervalHull{N, <:LazySet{N}},
-                   i::Int,
-                   dimension::Int=dim(sih),
-                   one_N::N=one(N))::Void where {N<:Real}
+    get_radius!(sih::SymmetricIntervalHull{N},
+                i::Int,
+                n::Int=dim(sih))::N where {N<:Real}
 
-Compute the radius of a symmetric interval hull of a convex in a given
+Compute the radius of a symmetric interval hull of a convex set in a given
 dimension.
 
 ### Input
 
-- `sih`       -- symmetric interval hull of a convex set
-- `i`         -- dimension
-- `dimension` -- (optional, default: `dim(sih)`) set dimension
-- `one_N`     -- (optional, default: `one(N)`) numeric representation of `1`
+- `sih` -- symmetric interval hull of a convex set
+- `i`   -- dimension in which the radius should be computed
+- `n`   -- (optional, default: `dim(sih)`) set dimension
 
 ### Output
 
-Nothing.
+The radius of a symmetric interval hull of a convex set in a given dimension.
 
 ### Algorithm
 
 We ask for the support vector of the underlying set for both the positive and
 negative unit vector in the dimension `i`.
 """
-function compute_radius(sih::SymmetricIntervalHull{N, <:LazySet{N}},
-                        i::Int,
-                        dimension::Int=dim(sih),
-                        one_N::N=one(N))::Void where {N<:Real}
-    right_bound = σ(sparsevec([i], [one_N], dimension), sih.X)
-    left_bound = σ(sparsevec([i], [-one_N], dimension), sih.X)
-    sih.cache[i] = (max(right_bound[i], abs(left_bound[i])), true)
-    return nothing
+function get_radius!(sih::SymmetricIntervalHull{N},
+                     i::Int,
+                     n::Int=dim(sih))::N where {N<:Real}
+    if sih.cache[i] == -one(N)
+        right_bound = σ(sparsevec([i], [one(N)], n), sih.X)
+        left_bound = σ(sparsevec([i], [-one(N)], n), sih.X)
+        sih.cache[i] = max(right_bound[i], abs(left_bound[i]))
+    end
+    return sih.cache[i]
 end
