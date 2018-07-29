@@ -208,7 +208,8 @@ import Polyhedra:polyhedron, SimpleHRepresentation, SimpleHRepresentation,
                  hreps, vreps,
                  intersect,
                  convexhull,
-                 hcartesianproduct
+                 hcartesianproduct,
+                 points
 
 export intersect, convex_hull, cartesian_product, vertices_list
 
@@ -337,13 +338,35 @@ Return the list of vertices of a polytope in constraint representation.
 ### Output
 
 List of vertices.
+
+### Examples
+
+```jldoctest
+julia> using Polyhedra
+
+julia> P = HPolytope(vcat(eye(2), -eye(2)), fill(1., 4));
+
+julia> constraints_list(P)
+4-element Array{LazySets.HalfSpace{Float64},1}:
+ LazySets.HalfSpace{Float64}([1.0, 0.0], 1.0)
+ LazySets.HalfSpace{Float64}([0.0, 1.0], 1.0)
+ LazySets.HalfSpace{Float64}([-1.0, -0.0], 1.0)
+ LazySets.HalfSpace{Float64}([-0.0, -1.0], 1.0)
+
+julia> vertices_list(P)
+4-element Array{Array{Float64,1},1}:
+ [1.0, -1.0]
+ [1.0, 1.0]
+ [-1.0, 1.0]
+ [-1.0, -1.0]
+```
 """
 function vertices_list(P::HPolytope{N};
                        backend=CDDLib.CDDLibrary(),
                        prunefunc=removevredundancy!)::Vector{Vector{N}} where {N<:Real}
     P = polyhedron(P, backend)
     prunefunc(P)
-    return [vi for vi in vreps(P)]
+    return collect(points(P))
 end
 
 end
