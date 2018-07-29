@@ -1,9 +1,14 @@
-import LazySets.Approximations.decompose
+import LazySets.Approximations,
+       Approximations.decompose,
+       Approximations.BoxDirections,
+       Approximations.OctDirections,
+       Approximations.BoxDiagDirections
 
 for N in [Float64, Float32] # TODO Rational{Int}
-    # ==============================
+    # =============================
     # Check that Issue #43 is fixed
-    # ==============================
+    # =============================
+
     const CPA = CartesianProductArray
     X = CPA([BallInf(to_N(N, [0.767292, 0.936613]), to_N(N, 0.1)),
              BallInf(to_N(N, [0.734104, 0.87296]), to_N(N, 0.1))])
@@ -22,9 +27,10 @@ for N in [Float64, Float32] # TODO Rational{Int}
     @test dec1.constraints[3].b ≈ to_N(N, -0.667292)
     @test dec1.constraints[4].b ≈ to_N(N, -0.836613)
 
-    # ======================================
+    # =====================================
     # Run decompose for different set types
-    # ======================================
+    # =====================================
+
     function test_directions(set)
         res = σ(N[1, 0], set)[1] == one(N)
         res &= σ(N[0, 1], set)[2] == one(N)
@@ -47,6 +53,7 @@ for N in [Float64, Float32] # TODO Rational{Int}
     # ===================
     # 1D/3D decomposition
     # ===================
+
     b = Ball2(zeros(N, 7), one(N))
     d = decompose(b, set_type=Hyperrectangle, blocks=ones(Int, 7))
     @test length(d.array) == 7
@@ -56,6 +63,7 @@ for N in [Float64, Float32] # TODO Rational{Int}
     # =======================
     # default block structure
     # =======================
+
     # even dimension
     b = BallInf(zeros(N, 6), one(N))
     d = decompose(b)
@@ -73,4 +81,25 @@ for N in [Float64, Float32] # TODO Rational{Int}
     for ai in array(d)
         @test ai isa Interval
     end
+
+    # ===================
+    # template directions
+    # ===================
+
+    n = 3
+    b = Ball1(zeros(N, n), one(N))
+    for dir in [BoxDirections{N}, OctDirections{N}, BoxDiagDirections{N}]
+        d = decompose(b, directions=dir)
+        @test d isa CartesianProductArray && array(d)[1] isa HPolytope
+    end
+
+    # =========================
+    # different types per block
+    # =========================
+
+    block_types = Dict(Hyperrectangle => [1:2, 5:6], HPolygon => [3:4])
+    b = Ball1(zeros(N, 6), one(N))
+    d = decompose(b, block_types=block_types)
+    @test d isa CartesianProductArray && array(d)[1] isa Hyperrectangle &&
+          array(d)[2] isa HPolygon && array(d)[3] isa Hyperrectangle
 end
