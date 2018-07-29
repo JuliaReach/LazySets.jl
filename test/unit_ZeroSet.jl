@@ -13,6 +13,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # element & an_element function
     @test element(Z) ∈ Z
+    @test element(Z, 1) == 0
     @test an_element(Z) ∈ Z
 
     # subset
