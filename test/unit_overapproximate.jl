@@ -1,6 +1,12 @@
 import LazySets.Approximations.overapproximate
 
 for N in [Float64, Float32] # TODO Rational{Int}
+    # overapproximating a set of type T1 with an unsupported type T2 is the
+    # identity if T1 = T2
+    @test_throws MethodError overapproximate(ZeroSet{N}(2), EmptySet)
+    e = EmptySet{N}()
+    @test overapproximate(e, EmptySet) == e
+
     # Approximation of a 2D centered unit ball in norm 1
     # All vertices v should be like this:
     # ‖v‖ >= 1 and ‖v‖ <= 1+ε
