@@ -50,6 +50,14 @@ for N in [Float64, Rational{Int}, Float32]
     @test ρ(N[1.], ms) == N(6.)
     @test ρ(N[-1.], ms) == N(-6.)
 
+    # =================
+    # MinkowskiSumArray
+    # =================
+
+    # relation to base type (internal helper functions)
+    @test LazySets.array_constructor(MinkowskiSum) == MinkowskiSumArray
+    @test LazySets.is_array_constructor(MinkowskiSumArray)
+
     # array getter
     v = Vector{LazySet{N}}(0)
     @test array(MinkowskiSumArray(v)) ≡ v
@@ -57,28 +65,18 @@ for N in [Float64, Rational{Int}, Float32]
     # constructor with size hint and type
     MinkowskiSumArray(10, N)
 
-    # neutral and absorbing element
-    z = ZeroSet{N}(2)
-    e = EmptySet{N}()
-    b = BallInf(N[0., 0.], N(2.))
-    msa = MinkowskiSumArray(LazySet{N}[])
-    @test b + z == z + b == b
-    @test msa + z == z + msa == msa
-    @test b + e == e + b == msa + e == e + msa == e + e == e
-    @test z + e == e + z == e
-
     # in-place modification
     msa = MinkowskiSumArray(LazySet{N}[])
-    @test MinkowskiSum!(b, b) isa MinkowskiSum && length(array(msa)) == 0
-    res = MinkowskiSum!(b, msa)
+    @test MinkowskiSum!(b1, b1) isa MinkowskiSum && length(array(msa)) == 0
+    res = MinkowskiSum!(b1, msa)
     @test res isa MinkowskiSumArray && length(array(msa)) == 1
-    res = MinkowskiSum!(msa, b)
+    res = MinkowskiSum!(msa, b1)
     @test res isa MinkowskiSumArray && length(array(msa)) == 2
     res = MinkowskiSum!(msa, msa)
     @test res isa MinkowskiSumArray && length(array(msa)) == 4
 
-    ms = MinkowskiSum(z, b)
-    msa = MinkowskiSumArray([z, b])
+    ms = MinkowskiSum(b1, b2)
+    msa = MinkowskiSumArray([b1, b2])
     
     # dimension
     @test dim(msa) == 2
@@ -88,6 +86,10 @@ for N in [Float64, Rational{Int}, Float32]
     @assert σ(d, ms) == σ(d, msa)
     d = N[-1., 1.]
     @assert σ(d, ms) == σ(d, msa)
+
+    # =================
+    # CacheMinkowskiSum
+    # =================
 
     # caching Minkowski sum
     cms = CacheMinkowskiSum(2, N)
@@ -115,4 +117,25 @@ for N in [Float64, Rational{Int}, Float32]
     cp = LazySets.CachedPair(1, N[2.])
     @test cp[1] == 1 && cp[2] == N[2.]
     @test_throws ErrorException cp[3]
+
+    # ================
+    # common functions
+    # ================
+
+    # neutral element
+    z = ZeroSet{N}(2)
+    msa = MinkowskiSumArray(LazySet{N}[])
+    @test neutral(MinkowskiSum) == neutral(MinkowskiSumArray) ==
+          neutral(CacheMinkowskiSum) == ZeroSet
+    @test b1 + z == z + b1 == b1
+    @test msa + z == z + msa == msa
+    @test cms + z == z + cms == cms
+    # absorbing element
+    e = EmptySet{N}()
+    @test absorbing(MinkowskiSum) == absorbing(MinkowskiSumArray) ==
+          absorbing(CacheMinkowskiSum) == EmptySet
+    @test b1 + e == e + b1 == msa + e == e + msa == cms + e == e + cms ==
+          e + e == e
+    # mix of neutral and absorbing element
+    @test z + e == e + z == e
 end

@@ -18,7 +18,13 @@ for N in [Float64, Rational{Int}, Float32]
     # emptiness of intersection
     @test !isempty(I)
 
-    # ---
+    # =================
+    # IntersectionArray
+    # =================
+
+    # relation to base type (internal helper functions)
+    @test LazySets.array_constructor(Intersection) == IntersectionArray
+    @test LazySets.is_array_constructor(IntersectionArray)
 
     # intersection of an array of sets
     IA = IntersectionArray([B, H])
@@ -39,8 +45,11 @@ for N in [Float64, Rational{Int}, Float32]
     # constructor with size hint and type
     IntersectionArray(10, N)
 
-    # ---
+    # ================
+    # common functions
+    # ================
 
     # absorbing element
+    @test absorbing(Intersection) == absorbing(IntersectionArray) == EmptySet
     @test I ∩ E == E ∩ I == IA ∩ E == E ∩ IA == E ∩ E == E
 end

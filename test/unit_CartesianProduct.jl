@@ -111,6 +111,10 @@ for N in [Float64, Float32, Rational{Int}]
     # CartesianProductArray
     # =====================
 
+    # relation to base type (internal helper functions)
+    @test LazySets.array_constructor(CartesianProduct) == CartesianProductArray
+    @test LazySets.is_array_constructor(CartesianProductArray)
+
     # standard constructor
     v = Vector{LazySet{N}}(0)
     push!(v, Singleton(N[1., 2.]))
@@ -138,4 +142,15 @@ for N in [Float64, Float32, Rational{Int}]
     @test res isa CartesianProductArray && length(array(cpa)) == 2
     res = CartesianProduct!(cpa, cpa)
     @test res isa CartesianProductArray && length(array(cpa)) == 4
+
+    # ================
+    # common functions
+    # ================
+
+    # absorbing element
+    e = EmptySet{N}()
+    b = BallInf(N[0., 0.], N(2.))
+    @test absorbing(CartesianProduct) == absorbing(CartesianProductArray) ==
+          EmptySet
+    @test b × e == e × b == cpa × e == e × cpa == e × e == e
 end
