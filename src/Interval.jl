@@ -3,7 +3,7 @@ import IntervalArithmetic: AbstractInterval
 import Base:+, -, *, ∈, ⊆
 
 export Interval,
-       dim, σ, center, +, -, *, ∈, ⊆,
+       dim, σ, center,
        low, high, vertices_list
 
 """
