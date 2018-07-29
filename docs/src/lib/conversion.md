@@ -16,5 +16,9 @@ end
 ```
 
 ```@docs
-convert
+convert(::Type{HPolygonOpt}, ::HPolygon)
+convert(::Type{HPolytope}, ::HPolygon)
+convert(::Type{HPolygon}, ::HPolytope)
+convert(::Type{Zonotope}, ::AbstractHyperrectangle)
+convert(::Type{Hyperrectangle}, ::Interval)
 ```
