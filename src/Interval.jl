@@ -221,17 +221,18 @@ Return whether a number is contained in the interval.
 ∈(v::N, x::Interval) where {N} = v ∈ x.dat
 
 """
-    center(x::Interval)
+    ⊆(x::Interval, y::Interval)
 
-Return the interval's center.
+Check whether an interval is contained in another interval.
 
 ### Input
 
 - `x` -- interval
+- `y` -- interval
 
 ### Output
 
-The center, or midpoint, of ``x``.
+`true` iff ``x ⊆ y``.
 """
 ⊆(x::Interval, y::Interval) = x.dat ⊆ y.dat
 
