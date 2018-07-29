@@ -17,4 +17,11 @@ for N in [Float64, Rational{Int}, Float32]
 
     # an_element function
     @test an_element(h) == N[0., 0.]
+
+    # radius_hyperrectangle function (uncached and cached)
+    h = SymmetricIntervalHull(Ball1(N[2., 3.], N(4.)))
+    for i in 1:2
+        @test radius_hyperrectangle(h, 1) == 6.
+        @test radius_hyperrectangle(h) == N[6., 7.]
+    end
 end
