@@ -13,7 +13,7 @@ for N in [Float64, Rational{Int}, Float32]
         @test σ(N(2.) * d1, hp) ∈ hp
         d2 = N[1., 0., 0.]
         @test_throws ErrorException σ(d2, hp)
-        d3 = N[1., 1., 0.]
+        d3 = N[1., 1., 2.]
         @test_throws ErrorException σ(d3, hp)
         d4 = zeros(N, 3)
         @test σ(d4, hp) ∈ hp
