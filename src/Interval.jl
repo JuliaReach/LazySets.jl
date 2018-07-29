@@ -81,8 +81,6 @@ end
 # type-less convenience constructor
 Interval(interval::IN) where {N, IN <: AbstractInterval{N}} = Interval{N, IN}(interval)
 
-# TODO: adapt show method
-
 # constructor that takes two numbers
 Interval(lo::N, hi::N) where {N} = Interval(IntervalArithmetic.Interval(lo, hi))
 
