@@ -83,9 +83,9 @@ for N in [Float64, Rational{Int}, Float32]
 
     # support vector
     d = N[1., 1.]
-    @assert σ(d, ms) == σ(d, msa)
+    @test σ(d, ms) == σ(d, msa)
     d = N[-1., 1.]
-    @assert σ(d, ms) == σ(d, msa)
+    @test σ(d, ms) == σ(d, msa)
 
     # =================
     # CacheMinkowskiSum
