@@ -1,5 +1,6 @@
 import IntervalArithmetic
 import IntervalArithmetic: AbstractInterval
+import Base:+, -, *, ∈, ⊆
 
 export Interval,
        dim, σ, center, +, -, *, ∈, ⊆,
@@ -138,8 +139,6 @@ Return the interval's center.
 The center, or midpoint, of ``x``.
 """
 center(x::Interval) = [IntervalArithmetic.mid(x.dat)]
-
-import Base:+, -, *, ∈, ⊆
 
 """
     +(x::Interval, y::Interval)
