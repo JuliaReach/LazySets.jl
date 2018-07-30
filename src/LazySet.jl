@@ -42,6 +42,7 @@ julia> subtypes(LazySet)
  LazySets.HalfSpace
  LazySets.Hyperplane
  LazySets.Intersection
+ LazySets.IntersectionArray
  LazySets.Line
  LazySets.LineSegment
  LazySets.LinearMap

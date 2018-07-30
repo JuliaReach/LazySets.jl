@@ -1,8 +1,9 @@
 import IntervalArithmetic
 import IntervalArithmetic: AbstractInterval
+import Base:+, -, *, ∈, ⊆
 
 export Interval,
-       dim, σ, center, +, -, *, ∈, ⊆,
+       dim, σ, center,
        low, high, vertices_list
 
 """
@@ -80,8 +81,6 @@ end
 # type-less convenience constructor
 Interval(interval::IN) where {N, IN <: AbstractInterval{N}} = Interval{N, IN}(interval)
 
-# TODO: adapt show method
-
 # constructor that takes two numbers
 Interval(lo::N, hi::N) where {N} = Interval(IntervalArithmetic.Interval(lo, hi))
 
@@ -138,8 +137,6 @@ Return the interval's center.
 The center, or midpoint, of ``x``.
 """
 center(x::Interval) = [IntervalArithmetic.mid(x.dat)]
-
-import Base:+, -, *, ∈, ⊆
 
 """
     +(x::Interval, y::Interval)
@@ -224,17 +221,18 @@ Return whether a number is contained in the interval.
 ∈(v::N, x::Interval) where {N} = v ∈ x.dat
 
 """
-    center(x::Interval)
+    ⊆(x::Interval, y::Interval)
 
-Return the interval's center.
+Check whether an interval is contained in another interval.
 
 ### Input
 
 - `x` -- interval
+- `y` -- interval
 
 ### Output
 
-The center, or midpoint, of ``x``.
+`true` iff ``x ⊆ y``.
 """
 ⊆(x::Interval, y::Interval) = x.dat ⊆ y.dat
 
