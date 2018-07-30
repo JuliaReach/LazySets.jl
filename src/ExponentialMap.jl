@@ -110,7 +110,7 @@ function get_columns_parallel(spmexp::SparseMatrixExp{N},
 
      @sync begin
          for (i, p) in enumerate(procs())
-             tasks[i] = remotecall(advection_shared_chunk!, p, spmexp, J)
+             tasks[i] = remotecall(assign_chunk!, p, spmexp, J)
          end
      end
 
@@ -119,7 +119,7 @@ function get_columns_parallel(spmexp::SparseMatrixExp{N},
 end
 
 # Here's the kernel
-function advection_chunk!(spmexp::SparseMatrixExp{N}, J::AbstractArray, irange::UnitRange{Int64}) where {N<:Real}
+function process_chunk!(spmexp::SparseMatrixExp{N}, J::AbstractArray, irange::UnitRange{Int64}) where {N<:Real}
 
     n = size(spmexp, 1)
     aux = zeros(N, n)
@@ -128,7 +128,7 @@ function advection_chunk!(spmexp::SparseMatrixExp{N}, J::AbstractArray, irange::
     one_N = one(N)
     zero_N = zero(N)
 
-    @showprogress 1 "Expmv" for i in irange
+    for i in irange
         j = J[i]
         aux[j] = one_N
         ans[:, count] = expmv(one_N, spmexp.M, aux)
@@ -147,7 +147,7 @@ function myrange(size)
     splits[idx]+1:splits[idx+1]
 end
 
-advection_shared_chunk!(spmexp::SparseMatrixExp{N}, J::AbstractArray) where {N<:Real} = advection_chunk!(spmexp::SparseMatrixExp{N}, J::AbstractArray, myrange(length(J)))
+assign_chunk!(spmexp::SparseMatrixExp{N}, J::AbstractArray) where {N<:Real} = process_chunk!(spmexp::SparseMatrixExp{N}, J::AbstractArray, myrange(length(J)))
 
 """
     get_row(spmexp::SparseMatrixExp{N}, i::Int) where {N}

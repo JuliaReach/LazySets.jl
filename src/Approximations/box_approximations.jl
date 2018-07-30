@@ -126,14 +126,12 @@ end
     c = SharedVector{N}(n)
     r = SharedVector{N}(n)
 
-    info("S dimensions: $n")
-
-    advection_shared!(c, r, S)
+    distribute_task!(c, r, S)
     return convert(Array,c), convert(Array,r)
 end
 
 # Here's the kernel
-function advection_chunk!(c::SharedVector{N}, r::SharedVector{N}, S::LazySet{N}, irange::UnitRange{Int64}) where {N<:Real}
+function process_chunk!(c::SharedVector{N}, r::SharedVector{N}, S::LazySet{N}, irange::UnitRange{Int64}) where {N<:Real}
 
     d = zeros(N, dim(S))
 
@@ -160,12 +158,12 @@ function myrange(c::SharedVector{N}) where {N<:Real}
     splits[idx]+1:splits[idx+1]
 end
 
-advection_shared_chunk!(c::SharedVector{N}, r::SharedVector{N}, S::LazySet{N}) where {N<:Real} = advection_chunk!(c, r, S, myrange(c))
+assign_chunk!(c::SharedVector{N}, r::SharedVector{N}, S::LazySet{N}) where {N<:Real} = process_chunk!(c, r, S, myrange(c))
 
-function advection_shared!(c::SharedVector{N}, r::SharedVector{N}, S::LazySet{N}) where {N<:Real}
+function distribute_task!(c::SharedVector{N}, r::SharedVector{N}, S::LazySet{N}) where {N<:Real}
     @sync begin
         for p in procs(c)
-            @async remotecall_wait(advection_shared_chunk!, p, c, r, S)
+            @async remotecall_wait(assign_chunk!, p, c, r, S)
         end
     end
 end

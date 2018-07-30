@@ -281,15 +281,11 @@ function decompose_parallel(S::LazySet{N};
     if directions != nothing
         # template directions
         # potentially defined option set_type is *ignored*
-        info("X1")
-        flush(STDOUT)
         @inbounds result = @sync @parallel (vcat) for (i, bi) in collect(enumerate(blocks))
             project(S, ((i-1)*bi+1):(i*bi), directions(bi), n)
         end
     elseif isempty(block_types)
         # use the same target set type for each block
-        info("X2")
-        flush(STDOUT)
         block_start = 1
         @inbounds for bi in blocks
             push!(result, project(S, block_start:(block_start + bi - 1), set_type, n, ε))
@@ -298,8 +294,6 @@ function decompose_parallel(S::LazySet{N};
     else
         # use potentially different target set type for each block
         # potentially defined options (set_type, blocks) are *ignored*
-        info("X3")
-        flush(STDOUT)
         initial_block_indices = Vector{Int}()
         blocks = Vector{Int}()
         set_type = Vector{Type{<:LazySet}}()
@@ -315,8 +309,6 @@ function decompose_parallel(S::LazySet{N};
         s = sortperm(initial_block_indices)
         blocks = blocks[s]
         set_type = set_type[s]
-        info("X4")
-        flush(STDOUT)
         @inbounds result = @sync @parallel (vcat) for (i, bi) in collect(enumerate(blocks))
             project(S, ((i-1)*bi + 1):(i*bi), set_type[i], n, ε)
         end
