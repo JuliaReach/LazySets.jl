@@ -38,7 +38,7 @@ Intersection(X::S1, Y::S2) where {S1<:LazySet{N}, S2<:LazySet{N}} where {N<:Real
 
 Alias for `Intersection`.
 """
-∩(X, Y) = Intersection(X, Y)
+∩(X::LazySet, Y::LazySet) = Intersection(X, Y)
 
 
 # --- LazySet interface functions ---
