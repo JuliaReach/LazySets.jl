@@ -28,8 +28,8 @@ matrix:
 #script:
 #  - julia -e 'Pkg.clone(pwd()); Pkg.build("LazySets"); Pkg.test("LazySets"; coverage=true)'
 after_success:
-  - julia -e 'Pkg.add("Documenter"); Pkg.add("GR"); Pkg.add("IntervalArithmetic")'
-  - julia -e 'cd(Pkg.dir("LazySets")); include(joinpath("docs", "make.jl"))'
+  # documentation
+  - julia -e 'Pkg.add("Documenter"); cd(Pkg.dir("LazySets")); include(joinpath("docs", "make.jl"))'
   # code coverage (for both Coveralls and Codecov)
   - julia -e 'Pkg.add("Coverage")'
   # push coverage results to Coveralls
