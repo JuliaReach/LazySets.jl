@@ -73,6 +73,7 @@ monotone_chain!
 
 ```@docs
 Intersection
+∩(::LazySet, ::LazySet)
 dim(::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
 σ(::AbstractVector{Float64}, ::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
 ∈(::AbstractVector{Float64}, ::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
