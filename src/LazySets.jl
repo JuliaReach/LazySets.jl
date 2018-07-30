@@ -1,8 +1,6 @@
 __precompile__(true)
 
-"""
-Main module for `LazySets.jl` -- a Julia package for calculus with convex sets.
-"""
+# main module for `LazySets.jl`
 module LazySets
 
 include("compat.jl")
