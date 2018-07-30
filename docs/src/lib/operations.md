@@ -27,6 +27,11 @@ dim(::CartesianProduct)
 σ(::AbstractVector{Real}, ::CartesianProduct{Real})
 ∈(::AbstractVector{Real}, ::CartesianProduct{Real})
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ### ``n``-ary Cartesian Product
 
@@ -37,6 +42,11 @@ dim(::CartesianProductArray)
 ∈(::AbstractVector{Real}, ::CartesianProductArray{Real})
 array(::CartesianProductArray)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ## Convex Hull
 
@@ -48,6 +58,11 @@ CH
 dim(::ConvexHull)
 σ(::AbstractVector{Real}, ::ConvexHull{Real})
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ### ``n``-ary Convex Hull
 
@@ -58,6 +73,11 @@ dim(::ConvexHullArray)
 σ(::AbstractVector{Real}, ::ConvexHullArray{Real})
 array(::ConvexHullArray)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ### Convex Hull Algorithms
 
@@ -80,6 +100,11 @@ dim(::Intersection)
 ∈(::AbstractVector{Real}, ::Intersection{Real})
 isempty(::Intersection)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ### ``n``-ary Intersection
 
@@ -89,6 +114,11 @@ dim(::IntersectionArray)
 σ(::AbstractVector{Real}, ::IntersectionArray{Real})
 array(::IntersectionArray)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ## Minkowski Sum
 
@@ -101,6 +131,11 @@ MinkowskiSum
 dim(::MinkowskiSum)
 σ(::AbstractVector{Real}, ::MinkowskiSum{Real})
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ### ``n``-ary Minkowski Sum
 
@@ -110,6 +145,11 @@ dim(::MinkowskiSumArray)
 σ(::AbstractVector{Real}, ::MinkowskiSumArray{Real})
 array(::MinkowskiSumArray)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ### ``n``-ary Minkowski Sum with cache
 
@@ -120,6 +160,11 @@ dim(::CacheMinkowskiSum)
 array(::CacheMinkowskiSum)
 forget_sets!(::CacheMinkowskiSum)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ## Maps
 
@@ -134,6 +179,10 @@ dim(::LinearMap)
 ∈(::AbstractVector{Real}, ::LinearMap{Real, Real})
 an_element(::LinearMap)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 
 ### Exponential Map
 
@@ -143,22 +192,42 @@ dim(::ExponentialMap)
 σ(::AbstractVector{Real}, ::ExponentialMap{Real})
 ∈(::AbstractVector{Real}, ::ExponentialMap{Real})
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ```@docs
 ExponentialProjectionMap
 dim(::ExponentialProjectionMap)
 σ(::AbstractVector{Real}, ::ExponentialProjectionMap{Real})
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ```@docs
 SparseMatrixExp
 *(::SparseMatrixExp, ::LazySet)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ```@docs
 ProjectionSparseMatrixExp
 *(::ProjectionSparseMatrixExp, ::LazySet)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ## Symmetric Interval Hull
 
@@ -168,3 +237,9 @@ dim(::SymmetricIntervalHull)
 σ(::V, ::SymmetricIntervalHull{N}) where {N<:Real, V<:AbstractVector{N}}
 an_element(::SymmetricIntervalHull{Float64, LazySet{Float64}})
 ```
+Inherited from [`LazySet`](@ref):
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractHyperrectangle`](@ref):
+* [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
+* [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))

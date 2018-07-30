@@ -26,6 +26,10 @@ dim(::Ball2)
 an_element(::Ball2)
 center(::Ball2)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 
 ### Infinity norm ball
 
@@ -41,6 +45,11 @@ radius(::BallInf, ::Real)
 radius_hyperrectangle(::BallInf)
 radius_hyperrectangle(::BallInf, ::Int)
 ```
+Inherited from [`LazySet`](@ref):
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractHyperrectangle`](@ref):
+* [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 
 ### Manhattan norm ball
 
@@ -53,6 +62,10 @@ an_element(::Ball1)
 vertices_list(::Ball1)
 center(::Ball1)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 
 ### p-norm ball
 
@@ -64,6 +77,10 @@ dim(::Ballp)
 an_element(::Ballp)
 center(::Ballp)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 
 ## Ellipsoid
 
@@ -75,6 +92,10 @@ dim(::Ellipsoid)
 an_element(::Ellipsoid)
 center(::Ellipsoid)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 
 ## Empty set
 
@@ -89,6 +110,10 @@ norm(::EmptySet, ::Real)
 radius(::EmptySet, ::Real)
 diameter(::EmptySet, ::Real)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 
 ## Half-Space
 
@@ -102,6 +127,10 @@ an_element(::HalfSpace{N}) where {N<:Real}
 LazySets.halfspace_left(::AbstractVector{Real}, ::AbstractVector{Real})
 LazySets.halfspace_right(::AbstractVector{Real}, ::AbstractVector{Real})
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 
 ## Hyperplane
 
@@ -112,6 +141,10 @@ dim(::Hyperplane)
 ∈(::AbstractVector{Real}, ::Hyperplane{Real})
 an_element(::Hyperplane{N}) where {N<:Real}
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 
 ## Hyperrectangle
 
@@ -129,6 +162,12 @@ radius_hyperrectangle(::Hyperrectangle, ::Int)
 high(::Hyperrectangle)
 low(::Hyperrectangle)
 ```
+Inherited from [`LazySet`](@ref):
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractHyperrectangle`](@ref):
+* [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
+* [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
 
 ## Interval
 
@@ -147,6 +186,12 @@ high(::Interval)
 -(::Interval, ::Interval)
 *(::Interval, ::Interval)
 ```
+Inherited from [`LazySet`](@ref):
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractHyperrectangle`](@ref):
+* [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
+* [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
 
 ## Line
 
@@ -157,6 +202,10 @@ dim(::Line)
 ∈(::AbstractVector{Real}, ::Line{Real})
 an_element(::Line{N}) where {N<:Real}
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 
 ## Line segment
 
@@ -168,6 +217,10 @@ dim(::LineSegment)
 LazySets.halfspace_left(::LineSegment)
 LazySets.halfspace_right(::LineSegment)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 
 ## Polygons
 
@@ -184,6 +237,10 @@ tohrep(::HPolygon)
 tovrep(::HPolygon)
 addconstraint!(::HPolygon{Real}, ::LinearConstraint{Real})
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 
 ### Optimized constraint representation
 
@@ -198,6 +255,10 @@ tohrep(::HPolygonOpt)
 tovrep(::HPolygonOpt)
 addconstraint!(::HPolygonOpt{Real}, ::LinearConstraint{Real})
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 
 ### Vertex representation
 
@@ -211,6 +272,10 @@ vertices_list(::VPolygon)
 tohrep(::VPolygon)
 tovrep(::VPolygon)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 
 ### Sorting directions
 
@@ -233,6 +298,10 @@ addconstraint!(::HPolytope{Real}, ::LinearConstraint{Real})
 constraints_list(::HPolytope)
 tosimplehrep(::HPolytope)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 
 ### Vertex representation
 
@@ -242,6 +311,10 @@ dim(::VPolytope)
 σ(::AbstractVector{Real}, ::VPolytope{Real})
 vertices_list(::VPolytope)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 
 ## Singleton
 
@@ -258,6 +331,12 @@ radius_hyperrectangle(::Singleton, ::Int)
 element(::Singleton)
 element(::Singleton, ::Int)
 ```
+Inherited from [`LazySet`](@ref):
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractHyperrectangle`](@ref):
+* [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
+* [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
 
 ## Zero set
 
@@ -275,6 +354,12 @@ element(::ZeroSet)
 element(::ZeroSet, ::Int)
 linear_map(::AbstractMatrix, ::ZeroSet{N}) where {N<:Real}
 ```
+Inherited from [`LazySet`](@ref):
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractHyperrectangle`](@ref):
+* [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
+* [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
 
 ## Zonotope
 
@@ -293,3 +378,7 @@ scale(::Real, ::Zonotope)
 ngens(::Zonotope)
 reduce_order(::Zonotope, r)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
