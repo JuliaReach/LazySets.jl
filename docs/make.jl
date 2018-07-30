@@ -20,7 +20,8 @@ makedocs(
         "Operations on Sets" => "man/set_operations.md",
         "A Reachability Algorithm" => "man/reach_zonotopes.md",
         "A Hybrid Reachability Algorithm" => "man/reach_zonotopes_hybrid.md",
-        "Concrete Polyhedra" => "man/concrete_polyhedra.md"],
+        "Concrete Polyhedra" => "man/concrete_polyhedra.md",
+        ],
         "Library" => Any[
         "Set Interfaces" => "lib/interfaces.md",
         "Common Set Representations" => "lib/representations.md",
@@ -28,7 +29,9 @@ makedocs(
         "Conversion between set representations" => "lib/conversion.md",
         "Binary Functions on Sets" => "lib/binary_functions.md",
         "Approximations" => "lib/approximations.md",
-        "Utility Functions" => "lib/utils.md"],
+        "Utility Functions" => "lib/utils.md",
+#         "Methods Collection" => "lib/methods_fix.md",
+        ],
         "About" => "about.md"
     ]
 )

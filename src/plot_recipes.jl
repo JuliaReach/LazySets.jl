@@ -2,6 +2,8 @@
 # Plot recipes for an abstract LazySet
 # ====================================
 
+import RecipesBase.apply_recipe
+
 """
     plot_lazyset(S::LazySet; ...)
 
