@@ -19,10 +19,19 @@
 This package requires Julia v0.6 or later. Refer to the [official documentation](https://julialang.org/downloads)
 on how to install and run Julia in your system.
 
-To install this package, use the following command inside Julia's REPL:
+To install the latest release of this package, use the following command inside Julia's REPL:
+
 ```julia
-Pkg.clone("LazySets")
+Pkg.add("LazySets")
 ```
+
+If you want to install the latest development version, do:
+
+
+```julia
+Pkg.clone("https://github.com/JuliaReach/LazySets.jl.git")
+```
+
 
 ## Updating
 
