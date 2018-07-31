@@ -1,7 +1,7 @@
 export Ellipsoid
 
 """
-    Ellipsoid{N<:Real} <:  AbstractPointSymmetric{N}
+    Ellipsoid{N<:AbstractFloat} <:  AbstractPointSymmetric{N}
 
 Type that represents an ellipsoid.
 
@@ -59,23 +59,24 @@ julia> E = Ellipsoid(ones(2), diagm([2.0, 0.5]))
 LazySets.Ellipsoid{Float64}([1.0, 1.0], [2.0 0.0; 0.0 0.5])
 ```
 """
-struct Ellipsoid{N<:Real} <: AbstractPointSymmetric{N}
+struct Ellipsoid{N<:AbstractFloat} <: AbstractPointSymmetric{N}
     center::AbstractVector{N}
     shape_matrix::AbstractMatrix{N}
 
     # default constructor with dimension check
-    function Ellipsoid{N}(c::AbstractVector{N}, Q::AbstractMatrix{N}) where {N<:Real}
+    function Ellipsoid{N}(c::AbstractVector{N}, Q::AbstractMatrix{N}) where {N<:AbstractFloat}
         @assert length(c) == checksquare(Q)
         return new(c, Q)
     end
 end
 
 # type-less convenience constructor
-Ellipsoid(c::AbstractVector{N}, Q::AbstractMatrix{N}) where {N<:Real} =
+Ellipsoid(c::AbstractVector{N}, Q::AbstractMatrix{N}) where {N<:AbstractFloat} =
     Ellipsoid{N}(c, Q)
 
 # convenience constructor for ellipsoid centered in the origin
-Ellipsoid(Q::AbstractMatrix{N}) where {N<:Real} = Ellipsoid(zeros(N, size(Q, 1)), Q)
+Ellipsoid(Q::AbstractMatrix{N}) where {N<:AbstractFloat} =
+    Ellipsoid(zeros(N, size(Q, 1)), Q)
 
 """
     center(E::Ellipsoid{N})::Vector{N} where {N<:AbstractFloat}
