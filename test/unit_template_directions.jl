@@ -42,3 +42,8 @@ for N in [Float64, Float32, Rational{Int}]
               (n == 1 ? 2 : 2^n + 2*n)
     end
 end
+
+# default Float64 constructors
+BoxDirections(3)
+OctDirections(3)
+BoxDiagDirections(3)

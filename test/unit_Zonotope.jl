@@ -76,6 +76,10 @@ for N in [Float64, Rational{Int}, Float32]
     Zred2 = reduce_order(Z, 2)
     @test ngens(Zred2) == 4
     @test order(Zred2) == 2
+    Z = Zonotope(N[2, 1.], N[-0.5 1.5 0.5 1.0 0.0 1.0; 0.5 1.5 1.0 0.5 1.0 0.0])
+    Zred3 = reduce_order(Z, 2)
+    @test ngens(Zred3) == 4
+    @test order(Zred3) == 2
 
     # test conversion from hyperrectangular sets
     Z = convert(Zonotope, Hyperrectangle(N[2., 3.], N[4., 5.]))

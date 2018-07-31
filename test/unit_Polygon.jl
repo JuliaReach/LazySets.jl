@@ -54,7 +54,7 @@ for N in [Float64, Float32, Rational{Int}]
         d = N[1., -1.]
         @test σ(d, p) == N[4., 2.]
 
-        # Test containment
+        # membership
         @test ∈(N[0., 0.], p)
         @test ∈(N[4., 2.], p)
         @test ∈(N[2., 4.], p)
@@ -88,6 +88,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test N[-1., 1.] ∈ vertices_list(vp)
     @test N[0., 0.] ∈ vertices_list(vp)
     @test N[4., 2.] ∈ vertices_list(vp)
+    @test tovrep(vp) == vp
 
     # test convex hull of a set of points using the default algorithm
     points = to_N(N, [[0.9,0.2], [0.4,0.6], [0.2,0.1], [0.1,0.3], [0.3,0.28]])
@@ -123,6 +124,13 @@ for N in [Float64, Float32, Rational{Int}]
     v = VPolygon(to_N(N, [[2., 3.]]))
     @test an_element(v) ∈ v
 
+    # membership
+    point = N[0., 1.]
+    @test point ∉ VPolygon([N[]])
+    @test point ∉ VPolygon([N[0., 2.]])
+    @test point ∈ VPolygon([N[0., 0.], N[0., 2.]])
+    @test point ∉ VPolygon([N[1., 0.], N[1., 2.]])
+
     # subset
     p1 = VPolygon(to_N(N, [[0., 0.], [2., 0.]]))
     p2 = VPolygon(to_N(N, [[1., 0.]]))
@@ -151,8 +159,12 @@ for N in [Float64, Float32, Rational{Int}]
     v2 = to_N(N, [0.4, 0.6])
     v3 = to_N(N, [0.2, 0.1])
     v4 = to_N(N, [0.1, 0.3])
-    points5 = [v1, v2, v3, v4]
-    for i in [0, 1, 2, 4]
+    v5 = to_N(N, [0.7, 0.4])
+    v6 = to_N(N, [0.8, 0.3])
+    v7 = to_N(N, [0.3, 0.55])
+    v8 = to_N(N, [0.2, 0.45])
+    points5 = [v1, v2, v3, v4, v5, v6, v7, v8]
+    for i in [0, 1, 2, 4, 8]
         points = i == 0 ? Vector{Vector{N}}() : points5[1:i]
         vp = VPolygon(points, apply_convex_hull=i > 0)
         h1 = tohrep(vp)
