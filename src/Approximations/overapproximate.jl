@@ -146,8 +146,6 @@ function overapproximate(X::LazySet{N},
     return H
 end
 
-@require IntervalArithmetic begin
-
 """
     overapproximate(::LazySet{N}, ::Type{LazySets.Interval}) where {N<:Real}
 
@@ -168,5 +166,3 @@ function overapproximate(S::LazySet{N}, ::Type{LazySets.Interval}) where {N<:Rea
     hi = σ([one(N)], S)[1]
     return LazySets.Interval(lo, hi)
 end
-
-end # @require

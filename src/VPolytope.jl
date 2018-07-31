@@ -104,7 +104,8 @@ function vertices_list(P::VPolytope{N})::Vector{Vector{N}} where {N<:Real}
 end
 
 
-@require Polyhedra begin
+function load_polyhedra_vpolytope() # function to be loaded by Requires
+return quote
 
 using CDDLib # default backend
 import Polyhedra:polyhedron, SimpleHRepresentation, SimpleVRepresentation,
@@ -223,4 +224,5 @@ function cartesian_product(P1::VPolytope, P2::VPolytope; backend=CDDLib.CDDLibra
     return VPolytope(Pcp)
 end
 
-end
+end # quote
+end # function load_polyhedra_vpolytope()
