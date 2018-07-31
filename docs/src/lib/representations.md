@@ -48,6 +48,10 @@ radius_hyperrectangle(::BallInf, ::Int)
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
+Inherited from [`AbstractPolytope`](@ref):
+* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
+
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 
@@ -66,6 +70,10 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractPolytope`](@ref):
+* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
 
 ### p-norm ball
 
@@ -165,6 +173,10 @@ low(::Hyperrectangle)
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
+Inherited from [`AbstractPolytope`](@ref):
+* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
+
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
@@ -188,6 +200,10 @@ high(::Interval)
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractPolytope`](@ref):
+* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
 
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
@@ -242,6 +258,10 @@ Inherited from [`LazySet`](@ref):
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
+Inherited from [`AbstractPolytope`](@ref):
+* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
+
 ### Optimized constraint representation
 
 ```@docs
@@ -260,6 +280,10 @@ Inherited from [`LazySet`](@ref):
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
+Inherited from [`AbstractPolytope`](@ref):
+* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
+
 ### Vertex representation
 
 ```@docs
@@ -276,6 +300,10 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractPolytope`](@ref):
+* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
 
 ### Sorting directions
 
@@ -303,6 +331,10 @@ Inherited from [`LazySet`](@ref):
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
+Inherited from [`AbstractPolytope`](@ref):
+* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
+
 ### Vertex representation
 
 ```@docs
@@ -315,6 +347,10 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractPolytope`](@ref):
+* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
 
 ## Singleton
 
@@ -333,6 +369,10 @@ element(::Singleton, ::Int)
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractPolytope`](@ref):
+* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
 
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
@@ -356,6 +396,9 @@ linear_map(::AbstractMatrix, ::ZeroSet{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractPolytope`](@ref):
+* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
 
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
@@ -382,3 +425,6 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractPolytope`](@ref):
+* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
