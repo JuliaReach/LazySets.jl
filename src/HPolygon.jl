@@ -69,10 +69,10 @@ function σ(d::AbstractVector{<:Real}, P::HPolygon{N})::Vector{N} where {N<:Real
         k += 1
     end
     if k == 1 || k == n+1
-        return intersection(Line(P.constraints[1]),
-                            Line(P.constraints[n]))
+        return element(intersection(Line(P.constraints[1]),
+                                    Line(P.constraints[n])))
     else
-        return intersection(Line(P.constraints[k]),
-                            Line(P.constraints[k-1]))
+        return element(intersection(Line(P.constraints[k]),
+                                    Line(P.constraints[k-1])))
     end
 end

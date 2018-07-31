@@ -156,6 +156,8 @@ vertices_list(::Interval)
 Line
 dim(::Line{Float64})
 σ(::AbstractVector{Float64}, ::Line{Float64})
+∈(::AbstractVector, ::Line)
+an_element(::Line)
 ```
 
 ## Line segment

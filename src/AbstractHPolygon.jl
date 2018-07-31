@@ -96,11 +96,11 @@ function vertices_list(P::AbstractHPolygon{N},
         return points
     end
     @inbounds for i in 1:n-1
-        points[i] = intersection(Line(P.constraints[i]),
-                                 Line(P.constraints[i+1]))
+        points[i] = element(intersection(Line(P.constraints[i]),
+                                         Line(P.constraints[i+1])))
     end
-    points[n] = intersection(Line(P.constraints[n]),
-                             Line(P.constraints[1]))
+    points[n] = element(intersection(Line(P.constraints[n]),
+                                     Line(P.constraints[1])))
     return apply_convex_hull ? convex_hull(points) : points
 end
 
@@ -140,8 +140,8 @@ of the constraints).
 """
 function an_element(P::AbstractHPolygon{N})::Vector{N} where {N<:Real}
     @assert length(P.constraints) >= 2 "polygon has less than two constraints"
-    return intersection(Line(P.constraints[1]),
-                        Line(P.constraints[2]))
+    return element(intersection(Line(P.constraints[1]),
+                                Line(P.constraints[2])))
 end
 
 """
