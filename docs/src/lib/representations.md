@@ -20,16 +20,18 @@ end
 
 ```@docs
 Ball2
-dim(::Ball2)
 σ(::AbstractVector{AbstractFloat}, ::Ball2{AbstractFloat})
 ∈(::AbstractVector{AbstractFloat}, ::Ball2{AbstractFloat})
-an_element(::Ball2)
 center(::Ball2)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractPointSymmetric`](@ref):
+* [`dim`](@ref dim(::AbstractPointSymmetric))
+* `an_element`
 
 ### Infinity norm ball
 
@@ -79,10 +81,8 @@ Inherited from [`AbstractPolytope`](@ref):
 
 ```@docs
 Ballp
-dim(::Ballp)
 σ(::AbstractVector{AbstractFloat}, ::Ballp{AbstractFloat})
 ∈(::AbstractVector{AbstractFloat}, ::Ballp{AbstractFloat})
-an_element(::Ballp)
 center(::Ballp)
 ```
 Inherited from [`LazySet`](@ref):
@@ -90,20 +90,26 @@ Inherited from [`LazySet`](@ref):
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
+Inherited from [`AbstractPointSymmetric`](@ref):
+* [`dim`](@ref dim(::AbstractPointSymmetric))
+* `an_element`
+
 ## Ellipsoid
 
 ```@docs
 Ellipsoid
-dim(::Ellipsoid)
 σ(::AbstractVector{AbstractFloat}, ::Ellipsoid{AbstractFloat})
 ∈(::AbstractVector{AbstractFloat}, ::Ellipsoid{AbstractFloat})
-an_element(::Ellipsoid)
 center(::Ellipsoid)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractPointSymmetric`](@ref):
+* [`dim`](@ref dim(::AbstractPointSymmetric))
+* `an_element`
 
 ## Empty set
 

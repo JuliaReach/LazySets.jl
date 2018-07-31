@@ -68,6 +68,13 @@ Note that there is a special interface combination
 AbstractPointSymmetric
 ```
 
+This interface defines the following functions:
+
+```@docs
+dim(::AbstractPointSymmetric)
+an_element(::AbstractPointSymmetric{N}) where {N<:Real}
+```
+
 ## Polytope
 
 A polytope has finitely many vertices (*V-representation*) resp. facets
