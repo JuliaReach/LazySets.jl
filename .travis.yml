@@ -29,7 +29,7 @@ matrix:
 #  - julia -e 'Pkg.clone(pwd()); Pkg.build("LazySets"); Pkg.test("LazySets"; coverage=true)'
 after_success:
   # documentation (restrict Documenter to release version 0.18.0 due to problems, see #402)
-  - julia -e 'Pkg.add("Documenter", v"0.18.0", v"0.19.0"); cd(Pkg.dir("LazySets")); include(joinpath("docs", "make.jl"))'
+  - julia -e 'Pkg.add("Documenter"); Pkd.pin("Documenter", v"0.18.0"); cd(Pkg.dir("LazySets")); include(joinpath("docs", "make.jl"))'
   # code coverage (for both Coveralls and Codecov)
   - julia -e 'Pkg.add("Coverage")'
   # push coverage results to Coveralls
