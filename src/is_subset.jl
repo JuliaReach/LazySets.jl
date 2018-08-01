@@ -481,3 +481,21 @@ function ⊆(L::LineSegment{N}, H::Hyperrectangle{N}, witness::Bool=false
         return (result, p_in_H ? L.q : L.p)
     end
 end
+
+"""
+    ⊆(x::Interval, y::Interval)
+
+Check whether an interval is contained in another interval.
+
+### Input
+
+- `x` -- interval
+- `y` -- interval
+
+### Output
+
+`true` iff ``x ⊆ y``.
+"""
+function ⊆(x::Interval, y::Interval)
+    return x.dat ⊆ y.dat
+end

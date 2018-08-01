@@ -26,6 +26,7 @@ end
 ⊆(::AbstractSingleton{Float64}, ::AbstractSingleton{Float64})
 ⊆(::Ball2{Float64}, ::Ball2{Float64})
 ⊆(::Ball2{Float64}, ::AbstractSingleton{Float64})
+⊆(::Interval, ::Interval)
 ```
 
 ## Check for emptiness of intersection
