@@ -267,6 +267,23 @@ The higher (`hi`) component of the interval.
 high(x::Interval) = x.dat.hi
 
 """
+    an_element(x::Interval{N})::Vector{N} where {N<:Real}
+
+Return some element of an interval.
+
+### Input
+
+- `x` -- interval
+
+### Output
+
+The left border (`low(x)`) of the interval.
+"""
+function an_element(x::Interval{N})::Vector{N} where {N<:Real}
+    return [low(x)]
+end
+
+"""
     vertices_list(x::Interval)
 
 Return the list of vertices of this interval.
