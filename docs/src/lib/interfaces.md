@@ -101,6 +101,12 @@ A polygon is a two-dimensional polytope.
 AbstractPolygon
 ```
 
+This interface defines the following functions:
+
+```@docs
+dim(P::AbstractPolygon)
+```
+
 #### HPolygon
 
 An HPolygon is a polygon in H-representation (or constraint representation).

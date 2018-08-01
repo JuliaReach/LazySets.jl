@@ -256,7 +256,6 @@ Inherited from [`LazySet`](@ref):
 
 ```@docs
 HPolygon
-dim(::HPolygon)
 σ(::AbstractVector{Real}, ::HPolygon{Real})
 ∈(::AbstractVector{Real}, ::HPolygon{Real})
 an_element(::HPolygon)
@@ -274,11 +273,13 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
 
+Inherited from [`AbstractPolygon`](@ref):
+* [`dim`](@ref dim(P::AbstractPolygon))
+
 ### Optimized constraint representation
 
 ```@docs
 HPolygonOpt
-dim(::HPolygonOpt)
 σ(::AbstractVector{Real}, ::HPolygonOpt{Real})
 ∈(::AbstractVector{Real}, ::HPolygonOpt{Real})
 an_element(::HPolygonOpt)
@@ -296,11 +297,13 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
 
+Inherited from [`AbstractPolygon`](@ref):
+* [`dim`](@ref dim(P::AbstractPolygon))
+
 ### Vertex representation
 
 ```@docs
 VPolygon
-dim(::VPolygon)
 σ(::AbstractVector{Real}, ::VPolygon{Real})
 ∈(::AbstractVector{Real}, ::VPolygon{Real})
 an_element(::VPolygon{N}) where {N<:Real}
@@ -316,6 +319,9 @@ Inherited from [`LazySet`](@ref):
 Inherited from [`AbstractPolytope`](@ref):
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
+
+Inherited from [`AbstractPolygon`](@ref):
+* [`dim`](@ref dim(P::AbstractPolygon))
 
 ### Sorting directions
 
