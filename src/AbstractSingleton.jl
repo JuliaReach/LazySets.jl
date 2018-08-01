@@ -158,24 +158,6 @@ end
 
 
 """
-    an_element(S::AbstractSingleton{N})::Vector{N} where {N<:Real}
-
-Return some element of a set with a single value.
-
-### Input
-
-- `S` -- set with a single value
-
-### Output
-
-The only element in the set.
-"""
-function an_element(S::AbstractSingleton{N})::Vector{N} where {N<:Real}
-    return element(S)
-end
-
-
-"""
     ∈(x::AbstractVector{N}, S::AbstractSingleton{N})::Bool where {N<:Real}
 
 Check whether a given point is contained in a set with a single value.
