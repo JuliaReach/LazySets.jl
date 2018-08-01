@@ -44,14 +44,6 @@ symmetric_interval_hull
 box_approximation_helper
 ```
 
-### Metric properties of sets
-
-```@docs
-norm(::LazySet, ::Real)
-radius(::LazySet, ::Real)
-diameter(::LazySet, ::Real)
-```
-
 ## Iterative refinement
 
 ```@docs
