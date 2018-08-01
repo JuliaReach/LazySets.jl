@@ -162,11 +162,7 @@ minimal volume with the same center.
 A real number representing the diameter.
 """
 function diameter(S::LazySet, p::Real=Inf)
-    if p == Inf
-        return radius(S, p) * 2
-    else
-        error("the diameter for this value of p=$p is not implemented")
-    end
+    return radius(S, p) * 2
 end
 
 
