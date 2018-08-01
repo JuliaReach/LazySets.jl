@@ -25,10 +25,11 @@ functions:
 
 ```jldoctest
 julia> subtypes(AbstractPointSymmetricPolytope)
-4-element Array{Union{DataType, UnionAll},1}:
+5-element Array{Union{DataType, UnionAll},1}:
  LazySets.AbstractHyperrectangle
  LazySets.Ball1
  LazySets.Interval
+ LazySets.LineSegment
  LazySets.Zonotope
 ```
 """

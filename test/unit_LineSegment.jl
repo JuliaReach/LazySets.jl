@@ -24,8 +24,15 @@ for N in [Float64, Rational{Int}, Float32]
     @test !∈(N[7., 4.], l)
     @test !∈(N[1.5, 1.6], l)
 
+    # center function
+    @test center(l) == N[1.5, 1.5]
+
     # an_element function
     @test an_element(l) ∈ l
+
+    # vertices_list function
+    vl = vertices_list(l)
+    @test length(vl) == 2 && l.p ∈ vl && l.q ∈ vl
 
     # intersection emptiness
     l1 = LineSegment(N[1., 1.], N[2., 2.])
