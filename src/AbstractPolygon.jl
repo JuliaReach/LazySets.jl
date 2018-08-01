@@ -1,8 +1,8 @@
+import Base.<=
+
 export AbstractPolygon,
        tohrep,
        tovrep
-
-import Base.<=
 
 """
     AbstractPolygon{N<:Real} <: AbstractPolytope{N}
@@ -80,34 +80,6 @@ julia> jump2pi(0.5)
 end
 
 """
-    <=(u::AbstractVector{N}, v::AbstractVector{N})::Bool where {N<:AbstractFloat}
-
-Compares two 2D vectors by their direction.
-
-### Input
-
-- `u` --  first 2D direction
-- `v` --  second 2D direction
-
-### Output
-
-True iff ``\\arg(u) [2π] ≤ \\arg(v) [2π]``
-
-### Notes
-
-The argument is measured in counter-clockwise fashion, with the 0 being the
-direction (1, 0).
-
-### Algorithm
-
-The implementation uses the arctangent function with sign, `atan2`.
-"""
-function <=(u::AbstractVector{N},
-            v::AbstractVector{N})::Bool where {N<:AbstractFloat}
-    return jump2pi(atan2(u[2], u[1])) <= jump2pi(atan2(v[2], v[1]))
-end
-
-"""
     quadrant(w::AbstractVector{N})::Int where {N<:Real}
 
 Compute the quadrant where the direction `w` belongs.
@@ -175,4 +147,32 @@ function <=(u::AbstractVector{N}, v::AbstractVector{N})::Bool where {N<:Real}
         ans = qu < qv
     end
     return ans
+end
+
+"""
+    <=(u::AbstractVector{N}, v::AbstractVector{N})::Bool where {N<:AbstractFloat}
+
+Compares two 2D vectors by their direction.
+
+### Input
+
+- `u` --  first 2D direction
+- `v` --  second 2D direction
+
+### Output
+
+True iff ``\\arg(u) [2π] ≤ \\arg(v) [2π]``
+
+### Notes
+
+The argument is measured in counter-clockwise fashion, with the 0 being the
+direction (1, 0).
+
+### Algorithm
+
+The implementation uses the arctangent function with sign, `atan2`.
+"""
+function <=(u::AbstractVector{N},
+            v::AbstractVector{N})::Bool where {N<:AbstractFloat}
+    return jump2pi(atan2(u[2], u[1])) <= jump2pi(atan2(v[2], v[1]))
 end
