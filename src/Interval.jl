@@ -221,22 +221,6 @@ Return whether a number is contained in the interval.
 ∈(v::N, x::Interval) where {N} = v ∈ x.dat
 
 """
-    ⊆(x::Interval, y::Interval)
-
-Check whether an interval is contained in another interval.
-
-### Input
-
-- `x` -- interval
-- `y` -- interval
-
-### Output
-
-`true` iff ``x ⊆ y``.
-"""
-⊆(x::Interval, y::Interval) = x.dat ⊆ y.dat
-
-"""
     low(x::Interval)
 
 Return the lower component of an interval.

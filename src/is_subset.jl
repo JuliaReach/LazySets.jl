@@ -1,14 +1,12 @@
 import Base.issubset
 
-export is_subset
-
 
 # --- AbstractHyperrectangle ---
 
 
 """
-    is_subset(S::LazySet{N}, H::AbstractHyperrectangle{N}, [witness]::Bool=false
-             )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    ⊆(S::LazySet{N}, H::AbstractHyperrectangle{N}, [witness]::Bool=false
+     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
 Check whether a convex set is contained in a hyperrectangle, and if not,
 optionally compute a witness.
@@ -31,19 +29,15 @@ optionally compute a witness.
 ``S ⊆ H`` iff ``\\operatorname{ihull}(S) ⊆ H``, where  ``\\operatorname{ihull}``
 is the interval hull operator.
 """
-function is_subset(S::LazySet{N},
-                   H::AbstractHyperrectangle{N},
-                   witness::Bool=false
-                  )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
-    return is_subset(Approximations.interval_hull(S), H, witness)
+function ⊆(S::LazySet{N}, H::AbstractHyperrectangle{N}, witness::Bool=false
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    return ⊆(Approximations.interval_hull(S), H, witness)
 end
 
 
 """
-    is_subset(P::AbstractPolytope{N},
-              H::AbstractHyperrectangle,
-              [witness]::Bool=false
-             )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    ⊆(P::AbstractPolytope{N}, H::AbstractHyperrectangle, [witness]::Bool=false
+     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
 Check whether a polytope is contained in a hyperrectangle, and if not,
 optionally compute a witness.
@@ -70,10 +64,10 @@ This copy-pasted method just exists to avoid method ambiguities.
 Since ``H`` is convex, ``P ⊆ H`` iff ``v_i ∈ H`` for all vertices ``v_i`` of
 ``P``.
 """
-function is_subset(P::AbstractPolytope{N},
-                   H::AbstractHyperrectangle,
-                   witness::Bool=false
-                  )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+function ⊆(P::AbstractPolytope{N},
+           H::AbstractHyperrectangle,
+           witness::Bool=false
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     @assert dim(P) == dim(H)
 
     for v in vertices_list(P)
@@ -94,10 +88,10 @@ end
 
 
 """
-    is_subset(H1::AbstractHyperrectangle{N},
-              H2::AbstractHyperrectangle{N},
-              [witness]::Bool=false
-             )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    ⊆(H1::AbstractHyperrectangle{N},
+      H2::AbstractHyperrectangle{N},
+      [witness]::Bool=false
+     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
 Check whether a given hyperrectangle is contained in another hyperrectangle, and
 if not, optionally compute a witness.
@@ -120,10 +114,10 @@ if not, optionally compute a witness.
 ``H1 ⊆ H2`` iff ``c_1 + r_1 ≤ c_2 + r_2 ∧ c_1 - r_1 ≥ c_2 - r_2`` iff
 ``r_1 - r_2 ≤ c_1 - c_2 ≤ -(r_1 - r_2)``, where ``≤`` is taken component-wise.
 """
-function is_subset(H1::AbstractHyperrectangle{N},
-                   H2::AbstractHyperrectangle{N},
-                   witness::Bool=false
-                  )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+function ⊆(H1::AbstractHyperrectangle{N},
+           H2::AbstractHyperrectangle{N},
+           witness::Bool=false
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     @assert dim(H1) == dim(H2)
 
     for i in 1:dim(H1)
@@ -157,8 +151,8 @@ end
 
 
 """
-    is_subset(P::AbstractPolytope{N}, S::LazySet{N}, [witness]::Bool=false
-             )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    ⊆(P::AbstractPolytope{N}, S::LazySet{N}, [witness]::Bool=false
+     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
 Check whether a polytope is contained in a convex set, and if not, optionally
 compute a witness.
@@ -181,8 +175,8 @@ compute a witness.
 Since ``S`` is convex, ``P ⊆ S`` iff ``v_i ∈ S`` for all vertices ``v_i`` of
 ``P``.
 """
-function is_subset(P::AbstractPolytope{N}, S::LazySet{N}, witness::Bool=false
-                  )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+function ⊆(P::AbstractPolytope{N}, S::LazySet{N}, witness::Bool=false
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     @assert dim(P) == dim(S)
 
     for v in vertices_list(P)
@@ -206,8 +200,8 @@ end
 
 
 """
-    is_subset(S::AbstractSingleton{N}, set::LazySet{N}, [witness]::Bool=false
-             )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    ⊆(S::AbstractSingleton{N}, set::LazySet{N}, [witness]::Bool=false
+     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
 Check whether a given set with a single value is contained in a convex set, and
 if not, optionally compute a witness.
@@ -226,8 +220,8 @@ if not, optionally compute a witness.
   * `(false, v)` iff ``S \\not\\subseteq \\text{set}`` and
     ``v ∈ S \\setminus \\text{set}``
 """
-function is_subset(S::AbstractSingleton{N}, set::LazySet{N}, witness::Bool=false
-                  )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+function ⊆(S::AbstractSingleton{N}, set::LazySet{N}, witness::Bool=false
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     result = ∈(element(S), set)
     if witness
         return (result, result ? N[] : element(S))
@@ -238,10 +232,10 @@ end
 
 
 """
-    is_subset(S::AbstractSingleton{N},
-              H::AbstractHyperrectangle{N},
-              [witness]::Bool=false
-             )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    ⊆(S::AbstractSingleton{N},
+      H::AbstractHyperrectangle{N},
+      [witness]::Bool=false
+     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
 Check whether a given set with a single value is contained in a hyperrectangle,
 and if not, optionally compute a witness.
@@ -263,10 +257,10 @@ and if not, optionally compute a witness.
 
 This copy-pasted method just exists to avoid method ambiguities.
 """
-function is_subset(S::AbstractSingleton{N},
-                   H::AbstractHyperrectangle{N},
-                   witness::Bool=false
-                  )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+function ⊆(S::AbstractSingleton{N},
+           H::AbstractHyperrectangle{N},
+           witness::Bool=false
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     result = ∈(element(S), H)
     if witness
         return (result, result ? N[] : element(S))
@@ -277,10 +271,10 @@ end
 
 
 """
-    is_subset(S1::AbstractSingleton{N},
-              S2::AbstractSingleton{N},
-              [witness]::Bool=false
-             )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    ⊆(S1::AbstractSingleton{N},
+      S2::AbstractSingleton{N},
+      [witness]::Bool=false
+     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
 Check whether a given set with a single value is contained in another set with a
 single value, and if not, optionally compute a witness.
@@ -298,10 +292,10 @@ single value, and if not, optionally compute a witness.
   * `(true, [])` iff ``S1 ⊆ S2``
   * `(false, v)` iff ``S1 \\not\\subseteq S2`` and ``v ∈ S1 \\setminus S2``
 """
-function is_subset(S1::AbstractSingleton{N},
-                   S2::AbstractSingleton{N},
-                   witness::Bool=false
-                  )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+function ⊆(S1::AbstractSingleton{N},
+           S2::AbstractSingleton{N},
+           witness::Bool=false
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     result = element(S1) == element(S2)
     if witness
         return (result, result ? N[] : element(S1))
@@ -315,8 +309,8 @@ end
 
 
 """
-    is_subset(B1::Ball2{N}, B2::Ball2{N}, [witness]::Bool=false
-             )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    ⊆(B1::Ball2{N}, B2::Ball2{N}, [witness]::Bool=false
+     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
 Check whether a ball in the 2-norm is contained in another ball in the 2-norm,
 and if not, optionally compute a witness.
@@ -338,8 +332,8 @@ and if not, optionally compute a witness.
 
 ``B1 ⊆ B2`` iff ``‖ c_1 - c_2 ‖_2 + r_1 ≤ r_2``
 """
-function is_subset(B1::Ball2{N}, B2::Ball2{N}, witness::Bool=false
-                  )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+function ⊆(B1::Ball2{N}, B2::Ball2{N}, witness::Bool=false
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     result = norm(B1.center - B2.center, 2) + B1.radius <= B2.radius
     if witness
         if result
@@ -359,10 +353,10 @@ end
 
 
 """
-    is_subset(B::Union{Ball2{N}, Ballp{N}},
-              S::AbstractSingleton{N},
-              [witness]::Bool=false
-             )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    ⊆(B::Union{Ball2{N}, Ballp{N}},
+      S::AbstractSingleton{N},
+      [witness]::Bool=false
+     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
 Check whether a ball in the 2-norm or p-norm is contained in a set with a single
 value, and if not, optionally compute a witness.
@@ -380,10 +374,10 @@ value, and if not, optionally compute a witness.
   * `(true, [])` iff ``B ⊆ S``
   * `(false, v)` iff ``B \\not\\subseteq S`` and ``v ∈ B \\setminus S``
 """
-function is_subset(B::Union{Ball2{N}, Ballp{N}},
-                   S::AbstractSingleton{N},
-                   witness::Bool=false
-                  )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+function ⊆(B::Union{Ball2{N}, Ballp{N}},
+           S::AbstractSingleton{N},
+           witness::Bool=false
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     result = B.center == element(S) && B.radius == 0
     if witness
         if result
@@ -408,8 +402,8 @@ end
 
 
 """
-    is_subset(L::LineSegment{N}, S::LazySet{N}, [witness]::Bool=false
-             )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    ⊆(L::LineSegment{N}, S::LazySet{N}, [witness]::Bool=false
+     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
 Check whether a line segment is contained in a convex set, and if not,
 optionally compute a witness.
@@ -432,8 +426,8 @@ optionally compute a witness.
 Since ``S`` is convex, ``L ⊆ S`` iff ``p ∈ S`` and ``q ∈ S``, where ``p, q`` are
 the end points of ``L``.
 """
-function is_subset(L::LineSegment{N}, S::LazySet{N}, witness::Bool=false
-                  )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+function ⊆(L::LineSegment{N}, S::LazySet{N}, witness::Bool=false
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     p_in_S = ∈(L.p, S)
     result = p_in_S && ∈(L.q, S)
     if !witness
@@ -447,8 +441,8 @@ end
 
 
 """
-    is_subset(L::LineSegment{N}, H::Hyperrectangle{N}, [witness]::Bool=false
-             )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    ⊆(L::LineSegment{N}, H::Hyperrectangle{N}, [witness]::Bool=false
+     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
 Check whether a line segment is contained in a hyperrectangle, and if not,
 optionally compute a witness.
@@ -475,8 +469,8 @@ This copy-pasted method just exists to avoid method ambiguities.
 Since ``H`` is convex, ``L ⊆ H`` iff ``p ∈ H`` and ``q ∈ H``, where ``p, q`` are
 the end points of ``L``.
 """
-function is_subset(L::LineSegment{N}, H::Hyperrectangle{N}, witness::Bool=false
-                  )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+function ⊆(L::LineSegment{N}, H::Hyperrectangle{N}, witness::Bool=false
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     p_in_H = ∈(L.p, H)
     result = p_in_H && ∈(L.q, H)
     if !witness
@@ -488,23 +482,20 @@ function is_subset(L::LineSegment{N}, H::Hyperrectangle{N}, witness::Bool=false
     end
 end
 
-
-# --- alias ---
-
-
 """
-    ⊆
+    ⊆(x::Interval, y::Interval)
 
-Alias for `is_subset`.
+Check whether an interval is contained in another interval.
 
-### Notes
+### Input
 
-`⊆` is a Julia-internal function which is defined for every type combination,
-but crashes with a cryptic error message if it is not implemented:
+- `x` -- interval
+- `y` -- interval
 
-    `MethodError: no method matching start(::FIRST_SET_TYPE)`
+### Output
+
+`true` iff ``x ⊆ y``.
 """
-@inline function issubset(S1::LazySet{N}, S2::LazySet{N}, witness::Bool=false
-                         )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
-    return is_subset(S1, S2, witness)
+function ⊆(x::Interval, y::Interval)
+    return x.dat ⊆ y.dat
 end

@@ -31,7 +31,7 @@ Optionally only the warnings can be printed.
 ### Examples
 
 ```julia
-julia> check_method_ambiguity_binary(is_subset)
+julia> check_method_ambiguity_binary(issubset)
 ```
 """
 function check_method_ambiguity_binary(op;
