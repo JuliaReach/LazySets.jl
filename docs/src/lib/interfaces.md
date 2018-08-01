@@ -118,6 +118,13 @@ A point symmetric polytope is a combination of two other interfaces:
 AbstractPointSymmetricPolytope
 ```
 
+This interface defines the following functions:
+
+```@docs
+dim(::AbstractPointSymmetricPolytope)
+an_element(::AbstractPointSymmetricPolytope{N}) where {N<:Real}
+```
+
 #### Hyperrectangle
 
 A hyperrectangle is a special point symmetric polytope with axis-aligned facets.

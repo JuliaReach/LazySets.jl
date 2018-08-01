@@ -233,9 +233,7 @@ Inherited from [`LazySet`](@ref):
 
 ```@docs
 SymmetricIntervalHull
-dim(::SymmetricIntervalHull)
 σ(::V, ::SymmetricIntervalHull{N}) where {N<:Real, V<:AbstractVector{N}}
-an_element(::SymmetricIntervalHull{Float64, LazySet{Float64}})
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
@@ -243,6 +241,10 @@ Inherited from [`LazySet`](@ref):
 Inherited from [`AbstractPolytope`](@ref):
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
+
+Inherited from [`AbstractPointSymmetricPolytope`](@ref):
+* [`dim`](@ref dim(::AbstractPointSymmetricPolytope))
+* `an_element`
 
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))

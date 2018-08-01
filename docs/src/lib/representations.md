@@ -37,10 +37,8 @@ Inherited from [`AbstractPointSymmetric`](@ref):
 
 ```@docs
 BallInf
-dim(::BallInf)
 σ(::AbstractVector{Real}, ::BallInf{Real})
 ∈(::AbstractVector{Real}, ::BallInf{Real})
-an_element(::BallInf)
 vertices_list(::BallInf)
 center(::BallInf)
 radius(::BallInf, ::Real)
@@ -54,6 +52,10 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
 
+Inherited from [`AbstractPointSymmetricPolytope`](@ref):
+* [`dim`](@ref dim(::AbstractPointSymmetricPolytope))
+* `an_element`
+
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 
@@ -61,10 +63,8 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 
 ```@docs
 Ball1
-dim(::Ball1)
 σ(::AbstractVector{Real}, ::Ball1{Real})
 ∈(::AbstractVector{Real}, ::Ball1{Real})
-an_element(::Ball1)
 vertices_list(::Ball1)
 center(::Ball1)
 ```
@@ -76,6 +76,10 @@ Inherited from [`LazySet`](@ref):
 Inherited from [`AbstractPolytope`](@ref):
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
+
+Inherited from [`AbstractPointSymmetricPolytope`](@ref):
+* [`dim`](@ref dim(::AbstractPointSymmetricPolytope))
+* `an_element`
 
 ### p-norm ball
 
@@ -165,10 +169,8 @@ Inherited from [`LazySet`](@ref):
 ```@docs
 Hyperrectangle
 Hyperrectangle(;kwargs...)
-dim(::Hyperrectangle)
 σ(::AbstractVector{Real}, ::Hyperrectangle{Real})
 ∈(::AbstractVector{Real}, ::Hyperrectangle{Real})
-an_element(::Hyperrectangle)
 vertices_list(::Hyperrectangle)
 center(::Hyperrectangle)
 radius_hyperrectangle(::Hyperrectangle)
@@ -182,6 +184,10 @@ Inherited from [`LazySet`](@ref):
 Inherited from [`AbstractPolytope`](@ref):
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
+
+Inherited from [`AbstractPointSymmetricPolytope`](@ref):
+* [`dim`](@ref dim(::AbstractPointSymmetricPolytope))
+* `an_element`
 
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
@@ -362,10 +368,8 @@ Inherited from [`AbstractPolytope`](@ref):
 
 ```@docs
 Singleton
-dim(::Singleton)
 σ(::AbstractVector{Real}, ::Singleton{Real})
 ∈(::AbstractVector{Real}, ::Singleton{Real})
-an_element(::Singleton)
 vertices_list(::Singleton)
 center(::Singleton)
 radius_hyperrectangle(::Singleton)
@@ -380,6 +384,10 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
 
+Inherited from [`AbstractPointSymmetricPolytope`](@ref):
+* [`dim`](@ref dim(::AbstractPointSymmetricPolytope))
+* `an_element`
+
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
@@ -391,7 +399,6 @@ ZeroSet
 dim(::ZeroSet)
 σ(::AbstractVector{N}, ::ZeroSet) where {N<:Real}
 ∈(::AbstractVector{N}, ::ZeroSet{N}) where {N<:Real}
-an_element(::ZeroSet)
 vertices_list(::ZeroSet)
 center(::ZeroSet)
 radius_hyperrectangle(::ZeroSet)
@@ -406,6 +413,9 @@ Inherited from [`LazySet`](@ref):
 Inherited from [`AbstractPolytope`](@ref):
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope))
 
+Inherited from [`AbstractPointSymmetricPolytope`](@ref):
+* `an_element`
+
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
@@ -414,10 +424,8 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 
 ```@docs
 Zonotope
-dim(::Zonotope)
 σ(::AbstractVector{Real}, ::Zonotope{Real})
 ∈(::AbstractVector{Real}, ::Zonotope{Real})
-an_element(::Zonotope)
 vertices_list(::Zonotope)
 center(::Zonotope)
 order(::Zonotope)
@@ -434,3 +442,7 @@ Inherited from [`LazySet`](@ref):
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope))
+
+Inherited from [`AbstractPointSymmetricPolytope`](@ref):
+* [`dim`](@ref dim(::AbstractPointSymmetricPolytope))
+* `an_element`
