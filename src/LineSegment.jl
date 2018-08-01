@@ -4,7 +4,7 @@ export LineSegment,
        halfspace_left, halfspace_right
 
 """
-    LineSegment{N<:Real} <: LazySet{N}
+    LineSegment{N<:Real} <: AbstractPointSymmetricPolytope{N}
 
 Type that represents a line segment in 2D between two points ``p`` and ``q``.
 
@@ -45,7 +45,7 @@ julia> is_intersection_empty(s, sn, true)
 (false, [0.5, 0.5])
 ```
 """
-struct LineSegment{N<:Real} <: LazySet{N}
+struct LineSegment{N<:Real} <: AbstractPointSymmetricPolytope{N}
     p::AbstractVector{N}
     q::AbstractVector{N}
 
@@ -110,6 +110,23 @@ function σ(d::V, L::LineSegment) where {N<:Real, V<:AbstractVector{N}}
 end
 
 """
+    an_element(L::LineSegment{N}) where {N<:Real}
+
+Return some element of a line segment.
+
+### Input
+
+- `L` -- line segment
+
+### Output
+
+The first vertex of the line segment.
+"""
+function an_element(L::LineSegment{N}) where {N<:Real}
+    return L.p
+end
+
+"""
     ∈(x::AbstractVector{N}, L::LineSegment{N})::Bool where {N<:Real}
 
 Check whether a given point is contained in a line segment.
@@ -149,6 +166,54 @@ function ∈(x::AbstractVector{N}, L::LineSegment{N})::Bool where {N<:Real}
     return min(L.p[1], L.q[1]) <= x[1] <= max(L.p[1], L.q[1]) &&
            min(L.p[2], L.q[2]) <= x[2] <= max(L.p[2], L.q[2])
 end
+
+
+# --- AbstractPointSymmetric interface functions ---
+
+
+"""
+    center(L::LineSegment{N})::Vector{N} where {N<:Real}
+
+Return the center of a line segment.
+
+### Input
+
+- `L` -- line segment
+
+### Output
+
+The center of the line segment.
+"""
+function center(L::LineSegment{N})::Vector{N} where {N<:Real}
+    return L.p + (L.q - L.p) / 2
+end
+
+
+# --- AbstractPolytope interface functions ---
+
+
+"""
+    vertices_list(L::LineSegment{N}
+                 )::Vector{<:AbstractVector{N}} where {N<:Real}
+
+Return the list of vertices of a line segment.
+
+### Input
+
+- `L` -- line segment
+
+### Output
+
+The list of end points of the line segment.
+"""
+function vertices_list(L::LineSegment{N}
+                      )::Vector{<:AbstractVector{N}} where {N<:Real}
+    return [L.p, L.q]
+end
+
+
+# --- LineSegment functions ---
+
 
 """
     halfspace_left(L::LineSegment)
