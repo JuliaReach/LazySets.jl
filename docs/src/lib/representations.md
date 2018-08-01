@@ -37,9 +37,6 @@ Inherited from [`AbstractPointSymmetric`](@ref):
 
 ```@docs
 BallInf
-σ(::AbstractVector{Real}, ::BallInf{Real})
-∈(::AbstractVector{Real}, ::BallInf{Real})
-vertices_list(::BallInf)
 center(::BallInf)
 radius(::BallInf, ::Real)
 radius_hyperrectangle(::BallInf)
@@ -57,7 +54,10 @@ Inherited from [`AbstractPointSymmetricPolytope`](@ref):
 * `an_element`
 
 Inherited from [`AbstractHyperrectangle`](@ref):
+* [`σ`](@ref σ(::AbstractVector{Real}, ::AbstractHyperrectangle{Real}))
+* [`∈`](@ref ∈(::AbstractVector{Real}, ::AbstractHyperrectangle{Real}))
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
+* [`vertices_list`](@ref vertices_list(::AbstractHyperrectangle{Real}))
 
 ### Manhattan norm ball
 
@@ -169,9 +169,6 @@ Inherited from [`LazySet`](@ref):
 ```@docs
 Hyperrectangle
 Hyperrectangle(;kwargs...)
-σ(::AbstractVector{Real}, ::Hyperrectangle{Real})
-∈(::AbstractVector{Real}, ::Hyperrectangle{Real})
-vertices_list(::Hyperrectangle)
 center(::Hyperrectangle)
 radius_hyperrectangle(::Hyperrectangle)
 radius_hyperrectangle(::Hyperrectangle, ::Int)
@@ -190,8 +187,11 @@ Inherited from [`AbstractPointSymmetricPolytope`](@ref):
 * `an_element`
 
 Inherited from [`AbstractHyperrectangle`](@ref):
+* [`σ`](@ref σ(::AbstractVector{Real}, ::AbstractHyperrectangle{Real}))
+* [`∈`](@ref ∈(::AbstractVector{Real}, ::AbstractHyperrectangle{Real}))
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
+* [`vertices_list`](@ref vertices_list(::AbstractHyperrectangle{Real}))
 
 ## Interval
 

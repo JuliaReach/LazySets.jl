@@ -247,5 +247,7 @@ Inherited from [`AbstractPointSymmetricPolytope`](@ref):
 * `an_element`
 
 Inherited from [`AbstractHyperrectangle`](@ref):
+* [`∈`](@ref ∈(::AbstractVector{Real}, ::AbstractHyperrectangle{Real}))
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
+* [`vertices_list`](@ref vertices_list(::AbstractHyperrectangle{Real}))
