@@ -154,5 +154,12 @@ AbstractSingleton
 This interface defines the following functions:
 
 ```@docs
-linear_map(::AbstractMatrix, ::AbstractSingleton)
+σ(::AbstractVector{N}, ::AbstractSingleton{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::AbstractSingleton{N}) where {N<:Real}
+an_element(::AbstractSingleton{N}) where {N<:Real}
+center(::AbstractSingleton{Real})
+vertices_list(::AbstractSingleton{N}) where {N<:Real}
+radius_hyperrectangle(::AbstractSingleton{Real})
+radius_hyperrectangle(::AbstractSingleton{Real}, ::Int)
+linear_map(::AbstractMatrix, ::AbstractSingleton{N}) where {N<:Real}
 ```

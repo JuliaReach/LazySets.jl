@@ -368,12 +368,6 @@ Inherited from [`AbstractPolytope`](@ref):
 
 ```@docs
 Singleton
-σ(::AbstractVector{Real}, ::Singleton{Real})
-∈(::AbstractVector{Real}, ::Singleton{Real})
-vertices_list(::Singleton)
-center(::Singleton)
-radius_hyperrectangle(::Singleton)
-radius_hyperrectangle(::Singleton, ::Int)
 element(::Singleton)
 element(::Singleton, ::Int)
 ```
@@ -382,15 +376,23 @@ Inherited from [`LazySet`](@ref):
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope))
-* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
 
 Inherited from [`AbstractPointSymmetricPolytope`](@ref):
 * [`dim`](@ref dim(::AbstractPointSymmetricPolytope))
-* `an_element`
 
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
+
+Inherited from [`AbstractSingleton`](@ref):
+* `σ`
+* `∈`
+* `an_element`
+* [`center`](@ref center(::AbstractSingleton{Real}))
+* `vertices_list`
+* [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton{Real}))
+* [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton{Real}, ::Int))
+* `linear_map`
 
 ## Zero set
 
@@ -399,10 +401,6 @@ ZeroSet
 dim(::ZeroSet)
 σ(::AbstractVector{N}, ::ZeroSet) where {N<:Real}
 ∈(::AbstractVector{N}, ::ZeroSet{N}) where {N<:Real}
-vertices_list(::ZeroSet)
-center(::ZeroSet)
-radius_hyperrectangle(::ZeroSet)
-radius_hyperrectangle(::ZeroSet, ::Int)
 element(::ZeroSet)
 element(::ZeroSet, ::Int)
 linear_map(::AbstractMatrix, ::ZeroSet{N}) where {N<:Real}
@@ -413,12 +411,16 @@ Inherited from [`LazySet`](@ref):
 Inherited from [`AbstractPolytope`](@ref):
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope))
 
-Inherited from [`AbstractPointSymmetricPolytope`](@ref):
-* `an_element`
-
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
+
+Inherited from [`AbstractSingleton`](@ref):
+* [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton{Real}))
+* [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton{Real}, ::Int))
+* `vertices_list`
+* [`center`](@ref center(::AbstractSingleton{Real}))
+* `an_element`
 
 ## Zonotope
 
