@@ -257,12 +257,6 @@ Inherited from [`LazySet`](@ref):
 ```@docs
 HPolygon
 σ(::AbstractVector{Real}, ::HPolygon{Real})
-∈(::AbstractVector{Real}, ::HPolygon{Real})
-an_element(::HPolygon)
-vertices_list(::HPolygon)
-tohrep(::HPolygon)
-tovrep(::HPolygon)
-addconstraint!(::HPolygon{Real}, ::LinearConstraint{Real})
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -275,18 +269,21 @@ Inherited from [`AbstractPolytope`](@ref):
 
 Inherited from [`AbstractPolygon`](@ref):
 * [`dim`](@ref dim(P::AbstractPolygon))
+
+Inherited from [`AbstractHPolygon`](@ref):
+* `an_element`
+* [`∈`](@ref ∈(::AbstractVector{Real}, ::AbstractHPolygon{Real}))
+* [`vertices_list`](@ref vertices_list(::AbstractHPolygon{Real}))
+* [`tohrep`](@ref tohrep(::AbstractHPolygon{Real}))
+* [`tovrep`](@ref tovrep(::AbstractHPolygon{Real}))
+* [`addconstraint!`](@ref addconstraint!(::AbstractHPolygon{Real}, ::LinearConstraint{Real}))
+* [`constraints_list`](@ref constraints_list(::AbstractHPolygon{Real}))
 
 ### Optimized constraint representation
 
 ```@docs
 HPolygonOpt
 σ(::AbstractVector{Real}, ::HPolygonOpt{Real})
-∈(::AbstractVector{Real}, ::HPolygonOpt{Real})
-an_element(::HPolygonOpt)
-vertices_list(::HPolygonOpt)
-tohrep(::HPolygonOpt)
-tovrep(::HPolygonOpt)
-addconstraint!(::HPolygonOpt{Real}, ::LinearConstraint{Real})
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -299,6 +296,15 @@ Inherited from [`AbstractPolytope`](@ref):
 
 Inherited from [`AbstractPolygon`](@ref):
 * [`dim`](@ref dim(P::AbstractPolygon))
+
+Inherited from [`AbstractHPolygon`](@ref):
+* `an_element`
+* [`∈`](@ref ∈(::AbstractVector{Real}, ::AbstractHPolygon{Real}))
+* [`vertices_list`](@ref vertices_list(::AbstractHPolygon{Real}))
+* [`tohrep`](@ref tohrep(::AbstractHPolygon{Real}))
+* [`tovrep`](@ref tovrep(::AbstractHPolygon{Real}))
+* [`addconstraint!`](@ref addconstraint!(::AbstractHPolygon{Real}, ::LinearConstraint{Real}))
+* [`constraints_list`](@ref constraints_list(::AbstractHPolygon{Real}))
 
 ### Vertex representation
 

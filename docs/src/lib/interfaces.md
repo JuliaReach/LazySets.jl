@@ -115,6 +115,18 @@ An HPolygon is a polygon in H-representation (or constraint representation).
 AbstractHPolygon
 ```
 
+This interface defines the following functions:
+
+```@docs
+an_element(::AbstractHPolygon{N}) where {N<:Real}
+∈(::AbstractVector{Real}, ::AbstractHPolygon{Real})
+vertices_list(::AbstractHPolygon{Real})
+tohrep(::AbstractHPolygon{Real})
+tovrep(::AbstractHPolygon{Real})
+addconstraint!(::AbstractHPolygon{Real}, ::LinearConstraint{Real})
+constraints_list(::AbstractHPolygon{Real})
+```
+
 ### Point symmetric polytope
 
 A point symmetric polytope is a combination of two other interfaces:
