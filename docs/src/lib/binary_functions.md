@@ -17,16 +17,15 @@ end
 ## Subset check
 
 ```@docs
-⊆
-is_subset(::LazySet{Float64}, ::AbstractHyperrectangle{Float64})
-is_subset(::AbstractPolytope{Float64}, ::AbstractHyperrectangle{Float64})
-is_subset(::AbstractHyperrectangle{Float64}, ::AbstractHyperrectangle{Float64})
-is_subset(::AbstractPolytope{Float64}, ::LazySet{Float64})
-is_subset(::AbstractSingleton{Float64}, ::LazySet{Float64})
-is_subset(::AbstractSingleton{Float64}, ::AbstractHyperrectangle{Float64})
-is_subset(::AbstractSingleton{Float64}, ::AbstractSingleton{Float64})
-is_subset(::Ball2{Float64}, ::Ball2{Float64})
-is_subset(::Ball2{Float64}, ::AbstractSingleton{Float64})
+⊆(::LazySet{Float64}, ::AbstractHyperrectangle{Float64})
+⊆(::AbstractPolytope{Float64}, ::AbstractHyperrectangle{Float64})
+⊆(::AbstractHyperrectangle{Float64}, ::AbstractHyperrectangle{Float64})
+⊆(::AbstractPolytope{Float64}, ::LazySet{Float64})
+⊆(::AbstractSingleton{Float64}, ::LazySet{Float64})
+⊆(::AbstractSingleton{Float64}, ::AbstractHyperrectangle{Float64})
+⊆(::AbstractSingleton{Float64}, ::AbstractSingleton{Float64})
+⊆(::Ball2{Float64}, ::Ball2{Float64})
+⊆(::Ball2{Float64}, ::AbstractSingleton{Float64})
 ```
 
 ## Check for emptiness of intersection
