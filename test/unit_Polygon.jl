@@ -126,7 +126,7 @@ for N in [Float64, Float32, Rational{Int}]
 
     # membership
     point = N[0., 1.]
-    @test point ∉ VPolygon([N[]])
+    @test point ∉ VPolygon(Vector{Vector{N}}(), apply_convex_hull=false)
     @test point ∉ VPolygon([N[0., 2.]])
     @test point ∈ VPolygon([N[0., 0.], N[0., 2.]])
     @test point ∉ VPolygon([N[1., 0.], N[1., 2.]])
