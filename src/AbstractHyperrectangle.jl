@@ -126,31 +126,6 @@ function radius(H::AbstractHyperrectangle, p::Real=Inf)::Real
 end
 
 """
-    diameter(H::AbstractHyperrectangle, [p]::Real=Inf)::Real
-
-Return the diameter of a hyperrectangular set.
-
-### Input
-
-- `H` -- hyperrectangular set
-- `p` -- (optional, default: `Inf`) norm
-
-### Output
-
-A real number representing the diameter.
-
-### Notes
-
-The diameter is defined as the maximum distance in the given ``p``-norm between
-any two elements of the set.
-Equivalently, it is the diameter of the enclosing ball of the given ``p``-norm
-of minimal volume with the same center.
-"""
-function diameter(H::AbstractHyperrectangle, p::Real=Inf)::Real
-    return radius(H, p) * 2
-end
-
-"""
     ∈(x::AbstractVector{N}, H::AbstractHyperrectangle{N})::Bool where {N<:Real}
 
 Check whether a given point is contained in a hyperrectangular set.
