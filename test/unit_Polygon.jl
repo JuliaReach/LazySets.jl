@@ -40,16 +40,16 @@ for N in [Float64, Float32, Rational{Int}]
     # subset
     b1 = Ball1(N[0., 0.], N(1.))
     b2 = Ball1(N[1., 1.], N(4.))
-    m1 = MinkowskiSum(b1, ZeroSet{N}(2))
-    m2 = MinkowskiSum(b2, ZeroSet{N}(2))
+    l1 = LinearMap(N[1. 0.; 0. 1.], b1)
+    l2 = LinearMap(N[1. 0.; 0. 1.], b2)
     subset, point = ⊆(p, b1, true)
     @test !subset && point ∈ p && !(point ∈ b1)
-    subset, point = ⊆(p, m1, true)
-    @test !subset && point ∈ p
+    subset, point = ⊆(p, l1, true)
+    @test !subset && point ∈ p && !(point ∈ l1)
     subset, point = ⊆(p, b2, true)
     @test subset && ⊆(p, b2) && point == N[]
-    subset, point = ⊆(p, m2, true)
-    @test subset && ⊆(p, m2) && point == N[]
+    subset, point = ⊆(p, l2, true)
+    @test subset && ⊆(p, l2) && point == N[]
 
 
     # HPolygon/HPolygonOpt tests
@@ -149,9 +149,13 @@ for N in [Float64, Float32, Rational{Int}]
     # subset
     p1 = VPolygon(to_N(N, [[0., 0.], [2., 0.]]))
     p2 = VPolygon(to_N(N, [[1., 0.]]))
+    b = BallInf(N[2., 0.], N(1.))
     @test ⊆(p2, p1) && ⊆(p2, p1, true)[1]
     @test ⊆(HPolygon{N}(), p1)
-    @test ⊆(p1, BallInf(N[1., 0.], N(1.)))
+    subset, witness = ⊆(p1, b, true)
+    @test !⊆(p1, b) && !subset && witness ∈ p1 && witness ∉ b
+    subset, witness = ⊆(p2, b, true)
+    @test ⊆(p2, b) && subset
 
     v1 = N[1.0, 0.0]
     v2 = N[1.0, 1.0]
