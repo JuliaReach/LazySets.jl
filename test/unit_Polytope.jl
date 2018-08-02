@@ -1,4 +1,8 @@
 for N in [Float64, Rational{Int}, Float32]
+    # -----
+    # H-rep
+    # -----
+
     # 2D polytope
     p = HPolytope{N}()
     c1 = LinearConstraint(N[2., 2.], N(12.))
@@ -25,5 +29,32 @@ for N in [Float64, Rational{Int}, Float32]
     @test !∈(N[4., 1.], p)
 
     # singleton list (only available with Polyhedra library)
-    @test_throws MethodError singleton_list(p)
+    if !isdefined(@__MODULE__, :Polyhedra)
+        @test_throws MethodError singleton_list(p)
+    end
+
+    # -----
+    # V-rep
+    # -----
+
+    # constructor from a VPolygon
+    polygon = VPolygon([N[0., 0.], N[1., 0.], N[0., 1.]])
+    p = VPolytope(polygon)
+    @test vertices_list(polygon) == vertices_list(p)
+
+    # dim
+    @test dim(p) == 2
+
+    # support vector
+    d = N[1., 0.]
+    @test_throws ErrorException σ(d, p, algorithm="xyz")
+    if !isdefined(@__MODULE__, :Polyhedra)
+        @test_throws AssertionError σ(d, p)
+    end
+
+    # vertices_list function
+    @test vertices_list(p) == p.vertices
 end
+
+# default Float64 constructors
+@test VPolytope() isa LazySets.VPolytope{Float64}
