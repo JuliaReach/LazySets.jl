@@ -22,7 +22,13 @@ VPolytope{N}() where {N<:Real} = VPolytope{N}(Vector{N}(0))
 VPolytope() = VPolytope{Float64}()
 
 # constructor from a polygon in V-representation
-VPolytope(P::VPolygon) = VPolytope(vertices_list(P))
+function VPolytope(P::VPolygon, share::Bool=false)
+    v = vertices_list(P)
+    if !share
+        v = copy(v)
+    end
+    return VPolytope(v)
+end
 
 
 # --- LazySet interface functions ---
