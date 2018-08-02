@@ -3,6 +3,19 @@ for N in [Float64, Rational{Int}, Float32]
     # H-rep
     # -----
 
+    # constructor from matrix and vector
+    A = [N(1.) N(2.); N(-1.) N(1.)]
+    b = [N(1.), N(2.)]
+    p = HPolytope(A, b)
+    c = p.constraints
+    @test c isa Vector{LinearConstraint{N}}
+    @test c[1].a == N[1.0, 2.0] && c[1].b == N(1.0)
+    @test c[2].a == N[-1.0, 1.0] && c[2].b == N(2.0)
+
+    # convert back to matrix and vector
+    A2, b2 = tosimplehrep(p)
+    @test A == A2 && b == b2
+
     # 2D polytope
     p = HPolytope{N}()
     c1 = LinearConstraint(N[2., 2.], N(12.))
@@ -57,4 +70,5 @@ for N in [Float64, Rational{Int}, Float32]
 end
 
 # default Float64 constructors
+@test HPolytope() isa LazySets.HPolytope{Float64}
 @test VPolytope() isa LazySets.VPolytope{Float64}
