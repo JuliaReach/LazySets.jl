@@ -43,8 +43,11 @@ for N in [Float64, Rational{Int}, Float32]
     @test !∈(N[0.], E)
     @test !∈(N[0., 0.], E)
 
-    # an_element function
+    # an_element/norm/radius/diameter functions
     @test_throws ErrorException an_element(E)
+    @test_throws ErrorException norm(E)
+    @test_throws ErrorException radius(E)
+    @test_throws ErrorException diameter(E)
 end
 
 # default Float64 constructors

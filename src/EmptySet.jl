@@ -95,3 +95,64 @@ An error.
 function an_element(∅::EmptySet)
     error("an empty set does not have any element")
 end
+
+"""
+    norm(S::EmptySet, [p]::Real=Inf)
+
+Return the norm of an empty set.
+It is the norm of the enclosing ball (of the given ``p``-norm) of minimal volume
+that is centered in the origin.
+
+### Input
+
+- `S` -- empty set
+- `p` -- (optional, default: `Inf`) norm
+
+### Output
+
+An error.
+"""
+function norm(S::EmptySet, p::Real=Inf)
+    error("an empty set does not have a norm")
+end
+
+"""
+    radius(S::EmptySet, [p]::Real=Inf)
+
+Return the radius of an empty set.
+It is the radius of the enclosing ball (of the given ``p``-norm) of minimal
+volume with the same center.
+
+### Input
+
+- `S` -- empty set
+- `p` -- (optional, default: `Inf`) norm
+
+### Output
+
+An error.
+"""
+function radius(S::EmptySet, p::Real=Inf)
+    error("an empty set does not have a radius")
+end
+
+"""
+    diameter(S::EmptySet, [p]::Real=Inf)
+
+Return the diameter of an empty set.
+It is the maximum distance between any two elements of the set, or,
+equivalently, the diameter of the enclosing ball (of the given ``p``-norm) of
+minimal volume with the same center.
+
+### Input
+
+- `S` -- empty set
+- `p` -- (optional, default: `Inf`) norm
+
+### Output
+
+An error.
+"""
+function diameter(S::EmptySet, p::Real=Inf)
+    error("an empty set does not have a diameter")
+end
