@@ -63,14 +63,14 @@ for N in [Float64, Rational{Int}, Float32]
     S2 = Singleton(N[0.0, 0.0])
     S3 = ZeroSet{N}(2)
     H = BallInf(N[1.0, 1.0], N(0.5))
-    M = MinkowskiSum(S3, H)
+    M = LinearMap(N[1. 0.; 0. 1.], H)
     @test is_intersection_empty(S1, S2) && is_intersection_empty(S1, S2, true)[1]
     intersection_empty, point = is_intersection_empty(S2, S3, true)
     @test !is_intersection_empty(S2, S3) && !intersection_empty &&
         point ∈ S2 && point ∈ S3
     for X in [H, M]
         intersection_empty, point = is_intersection_empty(S1, X, true)
-        @test !is_intersection_empty(S2, S3) && !intersection_empty &&
+        @test !is_intersection_empty(S1, X) && !intersection_empty &&
             point ∈ S1 && point ∈ X
         @test is_intersection_empty(S2, X) &&
             is_intersection_empty(S2, X, true)[1]
