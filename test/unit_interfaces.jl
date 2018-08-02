@@ -34,6 +34,14 @@ end
 @test check_method_implementation(AbstractHyperrectangle, radius_hyperrectangle,
                                   Function[S -> (S{Float64}, Int)])
 
+# --- AbstractSingleton ---
+
+# element
+@test check_method_implementation(AbstractSingleton, element,
+                                  Function[S -> (S{Float64},)])
+@test check_method_implementation(AbstractSingleton, element,
+                                  Function[S -> (S{Float64}, Int)])
+
 # --- AbstractPolygon ---
 
 # tohrep
