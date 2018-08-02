@@ -44,14 +44,17 @@ Every `LazySet` type must define a function `σ` to compute the support vector.
 
 ```@docs
 support_vector
-ρ
+ρ(::AbstractVector{Real}, ::LazySet{Real})
 support_function
 ```
 
 ### Other globally defined set functions
 
 ```@docs
-an_element(S::LazySet{Float64})
+norm(::LazySet, ::Real)
+radius(::LazySet, ::Real)
+diameter(::LazySet, ::Real)
+an_element(::LazySet{Real})
 ```
 
 ## Point symmetric set
@@ -63,6 +66,13 @@ Note that there is a special interface combination
 
 ```@docs
 AbstractPointSymmetric
+```
+
+This interface defines the following functions:
+
+```@docs
+dim(::AbstractPointSymmetric)
+an_element(::AbstractPointSymmetric{N}) where {N<:Real}
 ```
 
 ## Polytope
@@ -79,7 +89,8 @@ AbstractPolytope
 This interface defines the following functions:
 
 ```@docs
-linear_map(M::AbstractMatrix, P::AbstractPolytope{Float64})
+singleton_list(::AbstractPolytope)
+linear_map(::AbstractMatrix, ::AbstractPolytope)
 ```
 
 ### Polygon
@@ -90,12 +101,30 @@ A polygon is a two-dimensional polytope.
 AbstractPolygon
 ```
 
+This interface defines the following functions:
+
+```@docs
+dim(P::AbstractPolygon)
+```
+
 #### HPolygon
 
 An HPolygon is a polygon in H-representation (or constraint representation).
 
 ```@docs
 AbstractHPolygon
+```
+
+This interface defines the following functions:
+
+```@docs
+an_element(::AbstractHPolygon{N}) where {N<:Real}
+∈(::AbstractVector{Real}, ::AbstractHPolygon{Real})
+vertices_list(::AbstractHPolygon{Real})
+tohrep(::AbstractHPolygon{Real})
+tovrep(::AbstractHPolygon{Real})
+addconstraint!(::AbstractHPolygon{Real}, ::LinearConstraint{Real})
+constraints_list(::AbstractHPolygon{Real})
 ```
 
 ### Point symmetric polytope
@@ -107,12 +136,29 @@ A point symmetric polytope is a combination of two other interfaces:
 AbstractPointSymmetricPolytope
 ```
 
+This interface defines the following functions:
+
+```@docs
+dim(::AbstractPointSymmetricPolytope)
+an_element(::AbstractPointSymmetricPolytope{N}) where {N<:Real}
+```
+
 #### Hyperrectangle
 
 A hyperrectangle is a special point symmetric polytope with axis-aligned facets.
 
 ```@docs
 AbstractHyperrectangle
+```
+
+This interface defines the following functions:
+
+```@docs
+norm(::AbstractHyperrectangle, ::Real)
+radius(::AbstractHyperrectangle, ::Real)
+σ(::AbstractVector{Real}, ::AbstractHyperrectangle{Real})
+∈(::AbstractVector{Real}, ::AbstractHyperrectangle{Real})
+vertices_list(::AbstractHyperrectangle{Real})
 ```
 
 #### Singleton
@@ -126,5 +172,12 @@ AbstractSingleton
 This interface defines the following functions:
 
 ```@docs
-linear_map(M::AbstractMatrix, S::AbstractSingleton{Float64})
+σ(::AbstractVector{N}, ::AbstractSingleton{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::AbstractSingleton{N}) where {N<:Real}
+an_element(::AbstractSingleton{N}) where {N<:Real}
+center(::AbstractSingleton{Real})
+vertices_list(::AbstractSingleton{N}) where {N<:Real}
+radius_hyperrectangle(::AbstractSingleton{Real})
+radius_hyperrectangle(::AbstractSingleton{Real}, ::Int)
+linear_map(::AbstractMatrix, ::AbstractSingleton{N}) where {N<:Real}
 ```

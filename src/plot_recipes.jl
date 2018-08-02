@@ -2,6 +2,8 @@
 # Plot recipes for an abstract LazySet
 # ====================================
 
+import RecipesBase.apply_recipe
+
 """
     plot_lazyset(S::LazySet; ...)
 
@@ -15,8 +17,11 @@ Plot a convex set in two dimensions using an axis-aligned approximation.
 
 ```jldoctest
 julia> using LazySets, Plots
-julia> B = BallInf(ones(2), 0.1)
-julia> plot(2.0 * B)
+
+julia> B = BallInf(ones(2), 0.1);
+
+julia> plot(2.0 * B);
+
 ```
 
 ### Algorithm
@@ -58,10 +63,14 @@ approximation.
 ### Examples
 
 ```jldoctest
-julia> using LazySets, Plots
-julia> B1 = BallInf(zeros(2), 0.4)
-julia> B2 = BallInf(ones(2), 0.4)
-julia> plot([B1, B2])
+julia> using LazySets, Plots;
+
+julia> B1 = BallInf(zeros(2), 0.4);
+
+julia> B2 = BallInf(ones(2), 0.4);
+
+julia> plot([B1, B2]);
+
 ```
 
 ### Algorithm
@@ -97,9 +106,12 @@ Plot a lazy set in two dimensions using iterative refinement.
 ### Examples
 
 ```jldoctest
-julia> using LazySets, Plots
-julia> B = BallInf(ones(2), 0.1)
-julia> plot(randn(2, 2) * B, 1e-3)
+julia> using LazySets, Plots;
+
+julia> B = BallInf(ones(2), 0.1);
+
+julia> plot(randn(2, 2) * B, 1e-3);
+
 ```
 """
 @recipe function plot_lazyset(S::LazySet, ε::Float64;
@@ -127,10 +139,14 @@ Plot an array of lazy sets in two dimensions using iterative refinement.
 ### Examples
 
 ```jldoctest
-julia> using LazySets, Plots
-julia> B1 = BallInf(zeros(2), 0.4)
-julia> B2 = Ball2(ones(2), 0.4)
-julia> plot([B1, B2], 1e-4)
+julia> using LazySets, Plots;
+
+julia> B1 = BallInf(zeros(2), 0.4);
+
+julia> B2 = Ball2(ones(2), 0.4);
+
+julia> plot([B1, B2], 1e-4);
+
 ```
 """
 @recipe function plot_lazyset(arr::Vector{<:LazySet}, ε::Float64;
@@ -162,12 +178,15 @@ Plot a polygon in constraint representation.
 ### Examples
 
 ```jldoctest
-julia> using LazySets, Plots
+julia> using LazySets, Plots;
+
 julia> P = HPolygon([LinearConstraint([1.0, 0.0], 0.6),
                      LinearConstraint([0.0, 1.0], 0.6),
                      LinearConstraint([-1.0, 0.0], -0.4),
-                     LinearConstraint([0.0, -1.0], -0.4)])
-julia> plot(P)
+                     LinearConstraint([0.0, -1.0], -0.4)]);
+
+julia> plot(P);
+
 ```
 """
 @recipe function plot_polygon(P::Union{HPolygon, HPolygonOpt};
@@ -193,16 +212,20 @@ Plot an array of polygons in constraint representation.
 ### Examples
 
 ```jldoctest
-julia> using LazySets, Plots
+julia> using LazySets, Plots;
+
 julia> P1 = HPolygon([LinearConstraint([1.0, 0.0], 0.6),
                       LinearConstraint([0.0, 1.0], 0.6),
                       LinearConstraint([-1.0, 0.0], -0.4),
-                      LinearConstraint([0.0, -1.0], -0.4)])
+                      LinearConstraint([0.0, -1.0], -0.4)]);
+
 julia> P2 = HPolygon([LinearConstraint([2.0, 0.0], 0.6),
                       LinearConstraint([0.0, 2.0], 0.6),
                       LinearConstraint([-2.0, 0.0], -0.4),
-                      LinearConstraint([0.0, -2.0], -0.4)])
-julia> plot([P1, P2])
+                      LinearConstraint([0.0, -2.0], -0.4)]);
+
+julia> plot([P1, P2]);
+
 ```
 """
 @recipe function plot_polygons(P::Vector{<:AbstractHPolygon};
@@ -229,9 +252,12 @@ Plot a polygon in vertex representation.
 ### Examples
 
 ```jldoctest
-julia> using LazySets, Plots
-julia> P = VPolygon([[0.6, 0.6], [0.4, 0.6], [0.4, 0.4], [0.6, 0.4]])
-julia> plot(P)
+julia> using LazySets, Plots;
+
+julia> P = VPolygon([[0.6, 0.6], [0.4, 0.6], [0.4, 0.4], [0.6, 0.4]]);
+
+julia> plot(P);
+
 ```
 """
 @recipe function plot_polygon(P::VPolygon;
@@ -257,10 +283,14 @@ Plot an array of polygons in vertex representation.
 ### Examples
 
 ```jldoctest
-julia> using LazySets, Plots
-julia> P1 = VPolygon([[0.6, 0.6], [0.4, 0.6], [0.4, 0.4], [0.6, 0.4]])
-julia> P2 = VPolygon([[0.3, 0.3], [0.2, 0.3], [0.2, 0.2], [0.3, 0.2]])
-julia> plot([P1, P2])
+julia> using LazySets, Plots;
+
+julia> P1 = VPolygon([[0.6, 0.6], [0.4, 0.6], [0.4, 0.4], [0.6, 0.4]]);
+
+julia> P2 = VPolygon([[0.3, 0.3], [0.2, 0.3], [0.2, 0.2], [0.3, 0.2]]);
+
+julia> plot([P1, P2]);
+
 ```
 """
 @recipe function plot_polygons(P::Vector{<:VPolygon};
@@ -291,8 +321,10 @@ Plot a singleton.
 ### Examples
 
 ```jldoctest
-julia> using LazySets, Plots
-julia> plot(Singleton([0.5, 1.0]))
+julia> using LazySets, Plots;
+
+julia> plot(Singleton([0.5, 1.0]));
+
 ```
 """
 @recipe function plot_singleton(point::AbstractSingleton;
@@ -316,16 +348,21 @@ Plot a list of singletons.
 ### Examples
 
 ```jldoctest
-julia> using LazySets, Plots
-julia> plot([Singleton([0.0, 0.0]), Singleton([1., 0]), Singleton([0.5, .5])])
+julia> using LazySets, Plots;
+
+julia> plot([Singleton([0.0, 0.0]), Singleton([1., 0]), Singleton([0.5, .5])]);
+
 ```
 
 Three-dimensional singletons can be plotted as well:
 
 ```jldoctest
-julia> using LazySets, Plots
+julia> using LazySets, Plots;
+
 julia> a, b, c = zeros(3), [1.0, 0, 0], [0.0, 1., 0];
-julia> plot([Singleton(a), Singleton(b), Singleton(c)])
+
+julia> plot([Singleton(a), Singleton(b), Singleton(c)]);
+
 ```
 """
 @recipe function plot_singleton(arr::Vector{<:AbstractSingleton};
@@ -352,9 +389,12 @@ Plot a zonotope by enumerating its vertices.
 ### Examples
 
 ```jldoctest
-julia> using LazySets, Plots
-julia> Z = Zonotope(ones(2), 0.2*[[1., 0], [0., 1], [1, 1]])
-julia> plot(Z)
+julia> using LazySets, Plots;
+
+julia> Z = Zonotope(ones(2), 0.2*[[1., 0], [0., 1], [1, 1]]);
+
+julia> plot(Z);
+
 ```
 """
 @recipe function plot_zonotope(Z::Zonotope;
@@ -381,10 +421,14 @@ Plot an array of zonotopes.
 ### Examples
 
 ```jldoctest
-julia> using LazySets, Plots
-julia> Z1 = Zonotope(zeros(2), [[0.6, 0.6], [0.4, 0.6], [0.4, 0.4], [0.6, 0.4]])
-julia> Z2 = Zonotope(zeros(2), [[0.3, 0.3], [0.2, 0.3], [0.2, 0.2], [0.3, 0.2]])
-julia> plot([Z1, Z2])
+julia> using LazySets, Plots;
+
+julia> Z1 = Zonotope(zeros(2), [[0.6, 0.6], [0.4, 0.6], [0.4, 0.4], [0.6, 0.4]]);
+
+julia> Z2 = Zonotope(zeros(2), [[0.3, 0.3], [0.2, 0.3], [0.2, 0.2], [0.3, 0.2]]);
+
+julia> plot([Z1, Z2]);
+
 ```
 """
 @recipe function plot_zonotopes(Z::Vector{<:Zonotope};
@@ -416,9 +460,12 @@ Plot a line segment.
 ### Examples
 
 ```jldoctest
-julia> using LazySets, Plots
-julia> L = LineSegment([0., 0.], [1., 1.])
-julia> plot(L)
+julia> using LazySets, Plots;
+
+julia> L = LineSegment([0., 0.], [1., 1.]);
+
+julia> plot(L);
+
 ```
 """
 @recipe function plot_linesegment(L::LineSegment; color="blue", label="",
@@ -445,10 +492,14 @@ Plot an array of line segments.
 ### Examples
 
 ```jldoctest
-julia> using LazySets, Plots
-julia> L1 = LineSegment([0., 0.], [1., 1.])
-julia> L2 = LineSegment([1., 0.], [0., 1.])
-julia> plot([L1, L2])
+julia> using LazySets, Plots;
+
+julia> L1 = LineSegment([0., 0.], [1., 1.]);
+
+julia> L2 = LineSegment([1., 0.], [0., 1.]);
+
+julia> plot([L1, L2]);
+
 ```
 """
 @recipe function plot_linesegments(L::Vector{<:LineSegment}; color="blue",
@@ -477,9 +528,12 @@ Plot an interval.
 ### Examples
 
 ```jldoctest
-julia> using LazySets, Plots
-julia> I = Interval(0.0, 1.0)
-julia> plot(I)
+julia> using LazySets, Plots;
+
+julia> I = Interval(0.0, 1.0);
+
+julia> plot(I);
+
 ```
 """
 @recipe function plot_linesegment(I::Interval; color=:auto, label="",
@@ -506,10 +560,14 @@ Plot an array of intervals.
 ### Examples
 
 ```jldoctest
-julia> using LazySets, Plots
-julia> I1 = Interval([0., 1.])
-julia> I2 = Interval([0.5, 2.])
-julia> plot(I1, I2])
+julia> using LazySets, Plots;
+
+julia> I1 = Interval([0., 1.]);
+
+julia> I2 = Interval([0.5, 2.]);
+
+julia> plot([I1, I2]);
+
 ```
 """
 @recipe function plot_intervals(I::Vector{<:Interval}; color=:auto,

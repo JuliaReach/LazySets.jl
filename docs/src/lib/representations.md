@@ -20,156 +20,235 @@ end
 
 ```@docs
 Ball2
-dim(::Ball2{Float64})
-σ(::AbstractVector{Float64}, ::Ball2{Float64})
-∈(::AbstractVector{Float64}, ::Ball2{Float64})
-an_element(::Ball2{Float64})
-center(::Ball2{Float64})
+σ(::AbstractVector{AbstractFloat}, ::Ball2{AbstractFloat})
+∈(::AbstractVector{AbstractFloat}, ::Ball2{AbstractFloat})
+center(::Ball2)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractPointSymmetric`](@ref):
+* [`dim`](@ref dim(::AbstractPointSymmetric))
+* `an_element`
 
 ### Infinity norm ball
 
 ```@docs
 BallInf
-dim(::BallInf{Float64})
-σ(::AbstractVector{Float64}, ::BallInf{Float64})
-∈(::AbstractVector{Float64}, ::BallInf{Float64})
-an_element(::BallInf{Float64})
-norm(::BallInf{Float64}, ::Real)
-radius(::BallInf{Float64}, ::Real)
-diameter(::BallInf{Float64}, ::Real)
-vertices_list(::BallInf{Float64})
-singleton_list(::BallInf{Float64})
-center(::BallInf{Float64})
-radius_hyperrectangle(::BallInf{Float64})
-radius_hyperrectangle(::BallInf{Float64}, ::Int)
+center(::BallInf)
+radius(::BallInf, ::Real)
+radius_hyperrectangle(::BallInf)
+radius_hyperrectangle(::BallInf, ::Int)
 ```
+Inherited from [`LazySet`](@ref):
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractPolytope`](@ref):
+* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
+
+Inherited from [`AbstractPointSymmetricPolytope`](@ref):
+* [`dim`](@ref dim(::AbstractPointSymmetricPolytope))
+* `an_element`
+
+Inherited from [`AbstractHyperrectangle`](@ref):
+* [`σ`](@ref σ(::AbstractVector{Real}, ::AbstractHyperrectangle{Real}))
+* [`∈`](@ref ∈(::AbstractVector{Real}, ::AbstractHyperrectangle{Real}))
+* [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
+* [`vertices_list`](@ref vertices_list(::AbstractHyperrectangle{Real}))
 
 ### Manhattan norm ball
 
 ```@docs
 Ball1
-dim(::Ball1{Float64})
-σ(::AbstractVector{Float64}, ::Ball1{Float64})
-∈(::AbstractVector{Float64}, ::Ball1{Float64})
-an_element(::Ball1{Float64})
-vertices_list(::Ball1{Float64})
-singleton_list(::Ball1{Float64})
-center(::Ball1{Float64})
+σ(::AbstractVector{Real}, ::Ball1{Real})
+∈(::AbstractVector{Real}, ::Ball1{Real})
+vertices_list(::Ball1)
+center(::Ball1)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractPolytope`](@ref):
+* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
+
+Inherited from [`AbstractPointSymmetricPolytope`](@ref):
+* [`dim`](@ref dim(::AbstractPointSymmetricPolytope))
+* `an_element`
 
 ### p-norm ball
 
 ```@docs
 Ballp
-dim(::Ballp{Float64})
-σ(::AbstractVector{Float64}, ::Ballp{Float64})
-∈(::AbstractVector{Float64}, ::Ballp{Float64})
-an_element(::Ballp{Float64})
-center(::Ballp{Float64})
+σ(::AbstractVector{AbstractFloat}, ::Ballp{AbstractFloat})
+∈(::AbstractVector{AbstractFloat}, ::Ballp{AbstractFloat})
+center(::Ballp)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractPointSymmetric`](@ref):
+* [`dim`](@ref dim(::AbstractPointSymmetric))
+* `an_element`
 
 ## Ellipsoid
 
 ```@docs
 Ellipsoid
-σ(::AbstractVector{Float64}, ::Ellipsoid{Float64})
-center(::Ellipsoid{Float64})
-∈(::AbstractVector{Float64}, ::Ellipsoid{Float64})
+σ(::AbstractVector{AbstractFloat}, ::Ellipsoid{AbstractFloat})
+∈(::AbstractVector{AbstractFloat}, ::Ellipsoid{AbstractFloat})
+center(::Ellipsoid)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 
-## EmptySet
+Inherited from [`AbstractPointSymmetric`](@ref):
+* [`dim`](@ref dim(::AbstractPointSymmetric))
+* `an_element`
+
+## Empty set
 
 ```@docs
 EmptySet
 ∅
-dim(::EmptySet{Float64})
-σ(::AbstractVector{Float64}, ::EmptySet{Float64})
-∈(::AbstractVector{Float64}, ::EmptySet{Float64})
-an_element(::EmptySet{Float64})
+dim(::EmptySet)
+σ(::AbstractVector{Real}, ::EmptySet{Real})
+∈(::AbstractVector{Real}, ::EmptySet{Real})
+an_element(::EmptySet)
+norm(::EmptySet, ::Real)
+radius(::EmptySet, ::Real)
+diameter(::EmptySet, ::Real)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 
 ## Half-Space
 
 ```@docs
 HalfSpace
 LinearConstraint
-dim(::HalfSpace{Float64})
-σ(::AbstractVector{Float64}, ::HalfSpace{Float64})
-an_element(::HalfSpace{Float64})
-∈(::AbstractVector{Float64}, ::HalfSpace{Float64})
-LazySets.halfspace_left(::AbstractVector{Float64}, ::AbstractVector{Float64})
-LazySets.halfspace_right(::AbstractVector{Float64}, ::AbstractVector{Float64})
+dim(::HalfSpace)
+σ(::AbstractVector{Real}, ::HalfSpace{Real})
+∈(::AbstractVector{Real}, ::HalfSpace{Real})
+an_element(::HalfSpace{N}) where {N<:Real}
+LazySets.halfspace_left(::AbstractVector{Real}, ::AbstractVector{Real})
+LazySets.halfspace_right(::AbstractVector{Real}, ::AbstractVector{Real})
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 
 ## Hyperplane
 
 ```@docs
 Hyperplane
-dim(::Hyperplane{Float64})
-σ(::AbstractVector{Float64}, ::Hyperplane{Float64})
-an_element(::Hyperplane{Float64})
-∈(::AbstractVector{Float64}, ::Hyperplane{Float64})
+dim(::Hyperplane)
+σ(::AbstractVector{Real}, ::Hyperplane{Real})
+∈(::AbstractVector{Real}, ::Hyperplane{Real})
+an_element(::Hyperplane{N}) where {N<:Real}
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 
-## Hyperrectangles
+## Hyperrectangle
 
 ```@docs
 Hyperrectangle
 Hyperrectangle(;kwargs...)
-dim(::Hyperrectangle{Float64})
-σ(::AbstractVector{Float64}, ::Hyperrectangle{Float64})
-∈(::AbstractVector{Float64}, ::Hyperrectangle{Float64})
-an_element(::Hyperrectangle{Float64})
-norm(::Hyperrectangle{Float64}, ::Real)
-radius(::Hyperrectangle{Float64}, ::Real)
-diameter(::Hyperrectangle{Float64}, ::Real)
-vertices_list(::Hyperrectangle{Float64})
-singleton_list(::Hyperrectangle{Float64})
-center(::Hyperrectangle{Float64})
-radius_hyperrectangle(::Hyperrectangle{Float64})
-radius_hyperrectangle(::Hyperrectangle{Float64}, ::Int)
-high(::Hyperrectangle{Float64})
-low(::Hyperrectangle{Float64})
+center(::Hyperrectangle)
+radius_hyperrectangle(::Hyperrectangle)
+radius_hyperrectangle(::Hyperrectangle, ::Int)
+high(::Hyperrectangle)
+low(::Hyperrectangle)
 ```
+Inherited from [`LazySet`](@ref):
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 
-## Intervals
+Inherited from [`AbstractPolytope`](@ref):
+* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
+
+Inherited from [`AbstractPointSymmetricPolytope`](@ref):
+* [`dim`](@ref dim(::AbstractPointSymmetricPolytope))
+* `an_element`
+
+Inherited from [`AbstractHyperrectangle`](@ref):
+* [`σ`](@ref σ(::AbstractVector{Real}, ::AbstractHyperrectangle{Real}))
+* [`∈`](@ref ∈(::AbstractVector{Real}, ::AbstractHyperrectangle{Real}))
+* [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
+* [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
+* [`vertices_list`](@ref vertices_list(::AbstractHyperrectangle{Real}))
+
+## Interval
 
 ```@docs
 Interval
 dim(::Interval)
-σ(::AbstractVector{Float64}, ::Interval{Float64, IntervalArithmetic.AbstractInterval{Float64}})
+σ(::AbstractVector{Real}, ::Interval{Real, IntervalArithmetic.AbstractInterval{Real}})
+∈(::AbstractVector, ::Interval)
+∈(::Real, ::Interval)
+an_element(::Interval)
+vertices_list(::Interval)
 center(::Interval)
 low(::Interval)
 high(::Interval)
-vertices_list(::Interval)
 +(::Interval, ::Interval)
 -(::Interval, ::Interval)
 *(::Interval, ::Interval)
-∈(::AbstractVector, ::Interval)
-∈(::Float64, ::Interval)
 ```
+Inherited from [`LazySet`](@ref):
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractPolytope`](@ref):
+* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
+
+Inherited from [`AbstractHyperrectangle`](@ref):
+* [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
+* [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
 
 ## Line
 
 ```@docs
 Line
-dim(::Line{Float64})
-σ(::AbstractVector{Float64}, ::Line{Float64})
-∈(::AbstractVector, ::Line)
-an_element(::Line)
+dim(::Line)
+σ(::AbstractVector{Real}, ::Line{Real})
+∈(::AbstractVector{Real}, ::Line{Real})
+an_element(::Line{N}) where {N<:Real}
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 
 ## Line segment
 
 ```@docs
 LineSegment
-dim(::LineSegment{Float64})
-σ(::AbstractVector{Float64}, ::LineSegment{Float64})
-∈(::AbstractVector{Float64}, ::LineSegment{Float64})
+dim(::LineSegment)
+σ(::AbstractVector{Real}, ::LineSegment{Real})
+∈(::AbstractVector{Real}, ::LineSegment{Real})
 LazySets.halfspace_left(::LineSegment)
 LazySets.halfspace_right(::LineSegment)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 
 ## Polygons
 
@@ -177,119 +256,207 @@ LazySets.halfspace_right(::LineSegment)
 
 ```@docs
 HPolygon
-dim(::HPolygon{Float64})
-σ(::AbstractVector{Float64}, ::HPolygon{Float64})
-∈(::AbstractVector{Float64}, ::HPolygon{Float64})
-an_element(::HPolygon{Float64})
-vertices_list(::HPolygon{Float64})
-singleton_list(::HPolygon{Float64})
-tohrep(::HPolygon{Float64})
-tovrep(::HPolygon{Float64})
-addconstraint!(::HPolygon{Float64}, ::LinearConstraint{Float64})
+σ(::AbstractVector{Real}, ::HPolygon{Real})
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractPolytope`](@ref):
+* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
+
+Inherited from [`AbstractPolygon`](@ref):
+* [`dim`](@ref dim(P::AbstractPolygon))
+
+Inherited from [`AbstractHPolygon`](@ref):
+* `an_element`
+* [`∈`](@ref ∈(::AbstractVector{Real}, ::AbstractHPolygon{Real}))
+* [`vertices_list`](@ref vertices_list(::AbstractHPolygon{Real}))
+* [`tohrep`](@ref tohrep(::AbstractHPolygon{Real}))
+* [`tovrep`](@ref tovrep(::AbstractHPolygon{Real}))
+* [`addconstraint!`](@ref addconstraint!(::AbstractHPolygon{Real}, ::LinearConstraint{Real}))
+* [`constraints_list`](@ref constraints_list(::AbstractHPolygon{Real}))
 
 ### Optimized constraint representation
 
 ```@docs
 HPolygonOpt
-dim(::HPolygonOpt{Float64})
-σ(::AbstractVector{Float64}, ::HPolygonOpt{Float64})
-∈(::AbstractVector{Float64}, ::HPolygonOpt{Float64})
-an_element(::HPolygonOpt{Float64})
-vertices_list(::HPolygonOpt{Float64})
-singleton_list(::HPolygonOpt{Float64})
-tohrep(::HPolygonOpt{Float64})
-tovrep(::HPolygonOpt{Float64})
-addconstraint!(::HPolygonOpt{Float64}, ::LinearConstraint{Float64})
+σ(::AbstractVector{Real}, ::HPolygonOpt{Real})
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractPolytope`](@ref):
+* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
+
+Inherited from [`AbstractPolygon`](@ref):
+* [`dim`](@ref dim(P::AbstractPolygon))
+
+Inherited from [`AbstractHPolygon`](@ref):
+* `an_element`
+* [`∈`](@ref ∈(::AbstractVector{Real}, ::AbstractHPolygon{Real}))
+* [`vertices_list`](@ref vertices_list(::AbstractHPolygon{Real}))
+* [`tohrep`](@ref tohrep(::AbstractHPolygon{Real}))
+* [`tovrep`](@ref tovrep(::AbstractHPolygon{Real}))
+* [`addconstraint!`](@ref addconstraint!(::AbstractHPolygon{Real}, ::LinearConstraint{Real}))
+* [`constraints_list`](@ref constraints_list(::AbstractHPolygon{Real}))
 
 ### Vertex representation
 
 ```@docs
 VPolygon
-dim(::VPolygon{Float64})
-σ(::AbstractVector{Float64}, ::VPolygon{Float64})
-∈(::AbstractVector{Float64}, ::VPolygon{Float64})
-an_element(::VPolygon{Float64})
-vertices_list(::VPolygon{Float64})
-singleton_list(::VPolygon{Float64})
-tohrep(::VPolygon{Float64})
-tovrep(::VPolygon{Float64})
+σ(::AbstractVector{Real}, ::VPolygon{Real})
+∈(::AbstractVector{Real}, ::VPolygon{Real})
+an_element(::VPolygon{N}) where {N<:Real}
+vertices_list(::VPolygon)
+tohrep(::VPolygon)
+tovrep(::VPolygon)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractPolytope`](@ref):
+* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
+
+Inherited from [`AbstractPolygon`](@ref):
+* [`dim`](@ref dim(P::AbstractPolygon))
 
 ### Sorting directions
 
 ```@docs
 LazySets.jump2pi
-<=(::AbstractVector{Float64}, ::AbstractVector{Float64})
-LazySets.quadrant(w::AbstractVector{Float64})
+<=(::AbstractVector{AbstractFloat}, ::AbstractVector{AbstractFloat})
+LazySets.quadrant(::AbstractVector{Real})
 ```
 
 ## Polytopes
 
+### Constraint representation
+
 ```@docs
 HPolytope
-dim(P::HPolytope)
-addconstraint!(P::HPolytope{Float64}, constraint::LinearConstraint{Float64})
-constraints_list(P::HPolytope{Float64})
-σ(d::AbstractVector{Float64}, P::HPolytope)
-∈(::AbstractVector{Float64}, ::HPolytope{Float64})
+dim(::HPolytope)
+σ(::AbstractVector{Real}, ::HPolytope{Real})
+∈(::AbstractVector{Real}, ::HPolytope{Real})
+addconstraint!(::HPolytope{Real}, ::LinearConstraint{Real})
+constraints_list(::HPolytope)
+tosimplehrep(::HPolytope)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 
-## Singletons
+Inherited from [`AbstractPolytope`](@ref):
+* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
+
+### Vertex representation
+
+```@docs
+VPolytope
+dim(::VPolytope)
+σ(::AbstractVector{Real}, ::VPolytope{Real})
+vertices_list(::VPolytope)
+```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractPolytope`](@ref):
+* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
+
+## Singleton
 
 ```@docs
 Singleton
-dim(::Singleton{Float64})
-σ(::AbstractVector{Float64}, ::Singleton{Float64})
-∈(::AbstractVector{Float64}, ::Singleton{Float64})
-norm(::Singleton{Float64}, ::Real)
-diameter(::Singleton{Float64}, ::Real)
-vertices_list(::Singleton{Float64})
-singleton_list(::Singleton{Float64})
-center(::Singleton{Float64})
-radius_hyperrectangle(::Singleton{Float64})
-radius_hyperrectangle(::Singleton{Float64}, ::Int)
-an_element(::Singleton{Float64})
-element(::Singleton{Float64})
-element(::Singleton{Float64}, ::Int)
+element(::Singleton)
+element(::Singleton, ::Int)
 ```
+Inherited from [`LazySet`](@ref):
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 
-## ZeroSet
+Inherited from [`AbstractPolytope`](@ref):
+* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
+
+Inherited from [`AbstractPointSymmetricPolytope`](@ref):
+* [`dim`](@ref dim(::AbstractPointSymmetricPolytope))
+
+Inherited from [`AbstractHyperrectangle`](@ref):
+* [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
+* [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
+
+Inherited from [`AbstractSingleton`](@ref):
+* `σ`
+* `∈`
+* `an_element`
+* [`center`](@ref center(::AbstractSingleton{Real}))
+* `vertices_list`
+* [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton{Real}))
+* [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton{Real}, ::Int))
+* `linear_map`
+
+## Zero set
 
 ```@docs
 ZeroSet
-dim(::ZeroSet{Float64})
-σ(::AbstractVector{Float64}, ::ZeroSet{Float64})
-∈(::AbstractVector{Float64}, ::ZeroSet{Float64})
-norm(::ZeroSet{Float64}, ::Real)
-diameter(::ZeroSet{Float64}, ::Real)
-vertices_list(::ZeroSet{Float64})
-singleton_list(::ZeroSet{Float64})
-center(::ZeroSet{Float64})
-radius_hyperrectangle(::ZeroSet{Float64})
-radius_hyperrectangle(::ZeroSet{Float64}, ::Int)
-an_element(::ZeroSet{Float64})
-element(::ZeroSet{Float64})
-element(::ZeroSet{Float64}, ::Int)
-linear_map(M::AbstractMatrix, Z::ZeroSet{Float64})
+dim(::ZeroSet)
+σ(::AbstractVector{N}, ::ZeroSet) where {N<:Real}
+∈(::AbstractVector{N}, ::ZeroSet{N}) where {N<:Real}
+element(::ZeroSet)
+element(::ZeroSet, ::Int)
+linear_map(::AbstractMatrix, ::ZeroSet{N}) where {N<:Real}
 ```
+Inherited from [`LazySet`](@ref):
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 
-## Zonotopes
+Inherited from [`AbstractPolytope`](@ref):
+* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
+
+Inherited from [`AbstractHyperrectangle`](@ref):
+* [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
+* [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
+
+Inherited from [`AbstractSingleton`](@ref):
+* [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton{Real}))
+* [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton{Real}, ::Int))
+* `vertices_list`
+* [`center`](@ref center(::AbstractSingleton{Real}))
+* `an_element`
+
+## Zonotope
 
 ```@docs
 Zonotope
-dim(::Zonotope{Float64})
-σ(::AbstractVector{Float64}, ::Zonotope{Float64})
-∈(::AbstractVector{Float64}, ::Zonotope{Float64})
-an_element(::Zonotope{Float64})
-center(::Zonotope{Float64})
-vertices_list(::Zonotope{Float64})
-singleton_list(::Zonotope{Float64})
-order(::Zonotope{Float64})
+σ(::AbstractVector{Real}, ::Zonotope{Real})
+∈(::AbstractVector{Real}, ::Zonotope{Real})
+vertices_list(::Zonotope)
+center(::Zonotope)
+order(::Zonotope)
 minkowski_sum(::Zonotope, ::Zonotope)
 linear_map(::AbstractMatrix, ::Zonotope)
 scale(::Real, ::Zonotope)
 ngens(::Zonotope)
-reduce_order(::Zonotope{Float64}, r)
+reduce_order(::Zonotope, r)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractPolytope`](@ref):
+* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
+
+Inherited from [`AbstractPointSymmetricPolytope`](@ref):
+* [`dim`](@ref dim(::AbstractPointSymmetricPolytope))
+* `an_element`

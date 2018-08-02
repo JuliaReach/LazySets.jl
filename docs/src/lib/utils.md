@@ -14,10 +14,23 @@ sign_cadlag
 @declare_array_version
 ```
 
-## Helper functions for internal use only
+## Helpers for internal use only
+
+### Functions and Macros
 
 ```@docs
 @neutral_absorbing
 @array_neutral
 @array_absorbing
+
+get_radius!
+an_element_helper
+σ_helper
+```
+
+### Types
+
+```@docs
+CachedPair
+Approximations.UnitVector
 ```

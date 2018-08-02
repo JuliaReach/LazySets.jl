@@ -21,21 +21,32 @@ end
 
 ```@docs
 CartesianProduct
-Base.:*(::LazySet{Float64}, ::LazySet{Float64})
-dim(::CartesianProduct{Float64, LazySet{Float64}, LazySet{Float64}})
-σ(::AbstractVector{Float64}, ::CartesianProduct{Float64, LazySet{Float64}, LazySet{Float64}})
-∈(::AbstractVector{Float64}, ::CartesianProduct{Float64, LazySet{Float64}, LazySet{Float64}})
+×(::LazySet, ::LazySet)
+*(::LazySet, ::LazySet)
+dim(::CartesianProduct)
+σ(::AbstractVector{Real}, ::CartesianProduct{Real})
+∈(::AbstractVector{Real}, ::CartesianProduct{Real})
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ### ``n``-ary Cartesian Product
 
 ```@docs
-CartesianProductArray{Float64, LazySet{Float64}}
-array(::CartesianProductArray{Float64, LazySet{Float64}})
-dim(::CartesianProductArray{Float64, LazySet{Float64}})
-σ(::AbstractVector{Float64}, ::CartesianProductArray{Float64, LazySet{Float64}})
-∈(::AbstractVector{Float64}, ::CartesianProductArray{Float64, LazySet{Float64}})
+CartesianProductArray
+dim(::CartesianProductArray)
+σ(::AbstractVector{Real}, ::CartesianProductArray{Real})
+∈(::AbstractVector{Real}, ::CartesianProductArray{Real})
+array(::CartesianProductArray)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ## Convex Hull
 
@@ -44,19 +55,29 @@ dim(::CartesianProductArray{Float64, LazySet{Float64}})
 ```@docs
 ConvexHull
 CH
-dim(::ConvexHull{Float64, LazySet{Float64}, LazySet{Float64}})
-σ(::AbstractVector{Float64}, ::ConvexHull{Float64, LazySet{Float64}, LazySet{Float64}})
+dim(::ConvexHull)
+σ(::AbstractVector{Real}, ::ConvexHull{Real})
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ### ``n``-ary Convex Hull
 
 ```@docs
 ConvexHullArray
 CHArray
-array(::ConvexHullArray{Float64, LazySet{Float64}})
-dim(cha::ConvexHullArray)
-σ(d::AbstractVector{Float64}, cha::ConvexHullArray)
+dim(::ConvexHullArray)
+σ(::AbstractVector{Real}, ::ConvexHullArray{Real})
+array(::ConvexHullArray)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ### Convex Hull Algorithms
 
@@ -74,20 +95,30 @@ monotone_chain!
 ```@docs
 Intersection
 ∩(::LazySet, ::LazySet)
-dim(::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
-σ(::AbstractVector{Float64}, ::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
-∈(::AbstractVector{Float64}, ::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
-isempty(::Intersection{Float64, LazySet{Float64}, LazySet{Float64}})
+dim(::Intersection)
+σ(::AbstractVector{Real}, ::Intersection{Real})
+∈(::AbstractVector{Real}, ::Intersection{Real})
+isempty(::Intersection)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ### ``n``-ary Intersection
 
 ```@docs
 IntersectionArray
-array(::IntersectionArray{Float64, LazySet{Float64}})
-dim(::IntersectionArray{Float64, LazySet{Float64}})
-σ(::AbstractVector{Float64}, ::IntersectionArray{Float64, LazySet{Float64}})
+dim(::IntersectionArray)
+σ(::AbstractVector{Real}, ::IntersectionArray{Real})
+array(::IntersectionArray)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ## Minkowski Sum
 
@@ -95,30 +126,45 @@ dim(::IntersectionArray{Float64, LazySet{Float64}})
 
 ```@docs
 MinkowskiSum
-Base.:+(::LazySet{Float64}, ::LazySet{Float64})
-⊕
-dim(::MinkowskiSum{Float64, LazySet{Float64}, LazySet{Float64}})
-σ(::AbstractVector{Float64}, ::MinkowskiSum{Float64, LazySet{Float64}, LazySet{Float64}})
+⊕(::LazySet, ::LazySet)
++(::LazySet, ::LazySet)
+dim(::MinkowskiSum)
+σ(::AbstractVector{Real}, ::MinkowskiSum{Real})
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ### ``n``-ary Minkowski Sum
 
 ```@docs
 MinkowskiSumArray
-array(::MinkowskiSumArray{Float64, LazySet{Float64}})
-dim(::MinkowskiSumArray{Float64, LazySet{Float64}})
-σ(::AbstractVector{Float64}, ::MinkowskiSumArray{Float64, LazySet{Float64}})
+dim(::MinkowskiSumArray)
+σ(::AbstractVector{Real}, ::MinkowskiSumArray{Real})
+array(::MinkowskiSumArray)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ### ``n``-ary Minkowski Sum with cache
 
 ```@docs
 CacheMinkowskiSum
-array(::CacheMinkowskiSum{Float64, LazySet{Float64}})
-dim(::CacheMinkowskiSum{Float64, LazySet{Float64}})
-σ(::AbstractVector{Float64}, ::CacheMinkowskiSum{Float64, LazySet{Float64}})
+dim(::CacheMinkowskiSum)
+σ(::AbstractVector{Real}, ::CacheMinkowskiSum{Real})
+array(::CacheMinkowskiSum)
 forget_sets!(::CacheMinkowskiSum)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ## Maps
 
@@ -126,44 +172,82 @@ forget_sets!(::CacheMinkowskiSum)
 
 ```@docs
 LinearMap
-dim(::LinearMap{Float64, Float64})
-σ(::AbstractVector{Float64}, ::LinearMap{Float64, Float64})
 *(::AbstractMatrix, ::LazySet)
-*(::Float64, ::LazySet)
-∈(x::AbstractVector{Float64}, ::LinearMap{Float64, Float64})
-an_element(lm::LinearMap)
+*(::Real, ::LazySet)
+dim(::LinearMap)
+σ(::AbstractVector{Real}, ::LinearMap{Real, Real})
+∈(::AbstractVector{Real}, ::LinearMap{Real, Real})
+an_element(::LinearMap)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 
 ### Exponential Map
 
 ```@docs
 ExponentialMap
-dim(::ExponentialMap{Float64, LazySet{Float64}})
-σ(::AbstractVector{Float64}, ::ExponentialMap{Float64, LazySet{Float64}})
-∈(::AbstractVector{Float64}, ::ExponentialMap{Float64, LazySet{Float64}})
+dim(::ExponentialMap)
+σ(::AbstractVector{Real}, ::ExponentialMap{Real})
+∈(::AbstractVector{Real}, ::ExponentialMap{Real})
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ```@docs
 ExponentialProjectionMap
-dim(::ExponentialProjectionMap{Float64, LazySet{Float64}})
-σ(::AbstractVector{Float64}, ::ExponentialProjectionMap{Float64, LazySet{Float64}})
+dim(::ExponentialProjectionMap)
+σ(::AbstractVector{Real}, ::ExponentialProjectionMap{Real})
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ```@docs
 SparseMatrixExp
-*(::SparseMatrixExp{Float64}, ::LazySet{Float64})
+*(::SparseMatrixExp, ::LazySet)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ```@docs
 ProjectionSparseMatrixExp
-*(::ProjectionSparseMatrixExp{Float64}, ::LazySet{Float64})
+*(::ProjectionSparseMatrixExp, ::LazySet)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ## Symmetric Interval Hull
 
 ```@docs
 SymmetricIntervalHull
-dim(::SymmetricIntervalHull{Float64, LazySet{Float64}})
-σ(::AbstractVector{Float64}, ::SymmetricIntervalHull{Float64, LazySet{Float64}})
-an_element(::SymmetricIntervalHull{Float64, LazySet{Float64}})
+σ(::V, ::SymmetricIntervalHull{N}) where {N<:Real, V<:AbstractVector{N}}
 ```
+Inherited from [`LazySet`](@ref):
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractPolytope`](@ref):
+* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
+
+Inherited from [`AbstractPointSymmetricPolytope`](@ref):
+* [`dim`](@ref dim(::AbstractPointSymmetricPolytope))
+* `an_element`
+
+Inherited from [`AbstractHyperrectangle`](@ref):
+* [`∈`](@ref ∈(::AbstractVector{Real}, ::AbstractHyperrectangle{Real}))
+* [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
+* [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
+* [`vertices_list`](@ref vertices_list(::AbstractHyperrectangle{Real}))
