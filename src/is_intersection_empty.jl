@@ -502,16 +502,6 @@ function is_intersection_empty(ls1::LineSegment{N},
                 if witness
                     v = ls1.q
                 end
-            elseif ∈(ls2.p, ls1)
-                empty_intersection = false
-                if witness
-                    v = ls2.p
-                end
-            elseif ∈(ls2.q, ls1)
-                empty_intersection = false
-                if witness
-                    v = ls2.q
-                end
             else
                 empty_intersection = true
             end
