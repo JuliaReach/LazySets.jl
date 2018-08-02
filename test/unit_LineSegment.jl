@@ -41,6 +41,8 @@ for N in [Float64, Rational{Int}, Float32]
     l4 = LineSegment(N[1., 1.], N[1., 1.])
     l5 = LineSegment(N[0., 0.], N[0., 0.])
     l6 = LineSegment(to_N(N, [1.3, 1.3]), to_N(N, [2.3, 2.3]))
+    l7 = LineSegment(N[3., 3.], N[4., 4.])
+    l1_copy = LineSegment(copy(l1.p), copy(l1.q))
     intersection_empty, point = is_intersection_empty(l1, l1, true)
     @test !is_intersection_empty(l1, l1) && !intersection_empty && point ∈ l1
     intersection_empty, point = is_intersection_empty(l1, l2, true)
@@ -72,6 +74,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test is_intersection_empty(l5, l6) && is_intersection_empty(l5, l6, true)[1]
     intersection_empty, point = is_intersection_empty(l6, l6, true)
     @test !is_intersection_empty(l6, l6) && !intersection_empty && point ∈ l6
+    @test is_intersection_empty(l1, l7) && is_intersection_empty(l1, l7, true)[1]
+    intersection_empty, point = is_intersection_empty(l1, l1_copy, true)
+    @test !is_intersection_empty(l1, l1_copy) && !intersection_empty && point ∈ l1
 
     # subset
     l = LineSegment(N[1., 1.], N[2., 2.])

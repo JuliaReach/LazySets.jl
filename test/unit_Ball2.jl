@@ -75,7 +75,12 @@ for N in [Float64, Float32]
     b1 = Ball2(N[0., 0.], N(2.))
     b2 = Ball2(N[2., 2.], N(2.))
     b3 = Ball2(N[4., 4.], N(2.))
+    b4 = Ball2(N[1., 1.], N(1.))
     intersection_empty, point = is_intersection_empty(b1, b2, true)
     @test !is_intersection_empty(b1, b2) && !intersection_empty && point ∈ b1 && point ∈ b2
     @test is_intersection_empty(b1, b3) && is_intersection_empty(b1, b3, true)[1]
+    intersection_empty, point = is_intersection_empty(b2, b1, true)
+    @test !is_intersection_empty(b2, b1) && !intersection_empty && point ∈ b2 && point ∈ b1
+    intersection_empty, point = is_intersection_empty(b1, b4, true)
+    @test !is_intersection_empty(b1, b4) && !intersection_empty && point ∈ b1 && point ∈ b4
 end
