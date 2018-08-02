@@ -3,6 +3,7 @@ for N in [Float64, Rational{Int}, Float32]
     l1 = Line(N[0., 1.], N(1.))
     l2 = Line(N[1., 0.], N(1.))
     l3 = Line(N[0., 1.], N(2.))
+    l4 = Line(N[1., 1.], N(0.))
     l1_copy = Line(N[0., 1.], N(1.))
 
     # dimension
@@ -17,6 +18,7 @@ for N in [Float64, Rational{Int}, Float32]
     an_element(l1) ∈ l1
     an_element(l2) ∈ l2
     an_element(l3) ∈ l3
+    an_element(l4) ∈ l4
 
     # concrete intersection
     cap11 = intersection(l1, l1_copy)
