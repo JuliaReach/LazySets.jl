@@ -105,7 +105,7 @@ OctDirections(n::Int) = OctDirections{Float64}(n)
 Base.eltype(::Type{OctDirections{N}}) where N = AbstractVector{N}
 function Base.start(od::OctDirections{N}) where N
     if od.n == 1
-        return (1)
+        return 1 # fall back to box directions in 1D case
     end
     vec = zeros(N, od.n)
     vec[1] = one(N)
@@ -113,15 +113,6 @@ function Base.start(od::OctDirections{N}) where N
     return (vec, 1, 2)
 end
 function Base.next(od::OctDirections{N}, state::Tuple) where N
-    if length(state) == 1
-        # 1D case
-        if state == 1
-            return (ones(N, 1), 2)
-        else
-            @assert state == 2
-            return (-ones(N, 1), 0)
-        end
-    end
     vec = state[1]
     i = state[2]
     j = state[3]
