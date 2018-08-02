@@ -15,8 +15,8 @@ v = vertices_list(x)
 @test an_element(x) ∈ x
 # test containment
 @test (x ⊆ x) && !(x ⊆ 0.2 * x) && (x ⊆ 2. * x)
-@test issubset(x, Interval(0.0, 2.0))
-@test !issubset(x, Interval(-1.0, 0.5))
+@test ⊆(x, Interval(0.0, 2.0))
+@test !⊆(x, Interval(-1.0, 0.5))
 
 
 # + operator (= concrete Minkowski sum of intervals)

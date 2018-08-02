@@ -46,19 +46,33 @@ for N in [Float64, Rational{Int}, Float32]
     s2 = Singleton(N[0., 3.])
     p1 = VPolygon([N[0.,0.], N[0., 2.]])
     p2 = VPolygon([N[0.,0.], N[0., 2.], N[2., 0.]])
+    b = BallInf(N[0., 1.], N(1.))
     @test ⊆(s1, p1) && ⊆(s1, p1, true)[1]
     subset, point = ⊆(s2, p2, true)
     @test !⊆(s2, p2) && !subset && point ∈ s2 && !(point ∈ p2)
     @test ⊆(s1, s1) && ⊆(s1, s1, true)[1]
     subset, point = ⊆(s1, s2, true)
     @test !⊆(s1, s2) && !subset && point ∈ s1 && !(point ∈ s2)
+    subset, point = ⊆(s1, b, true)
+    @test subset && ⊆(s1, b)
+    subset, point = ⊆(s2, b, true)
+    @test !⊆(s2, b) && !subset && point ∈ s2 && !(point ∈ b)
 
     # intersection emptiness
     S1 = Singleton(N[1.0, 1.0])
     S2 = Singleton(N[0.0, 0.0])
     S3 = ZeroSet{N}(2)
+    H = BallInf(N[1.0, 1.0], N(0.5))
+    M = MinkowskiSum(S3, H)
     @test is_intersection_empty(S1, S2) && is_intersection_empty(S1, S2, true)[1]
     intersection_empty, point = is_intersection_empty(S2, S3, true)
-    @test !is_intersection_empty(S2, S3) &&
-    !intersection_empty && point ∈ S2 && point ∈ S3
+    @test !is_intersection_empty(S2, S3) && !intersection_empty &&
+        point ∈ S2 && point ∈ S3
+    for X in [H, M]
+        intersection_empty, point = is_intersection_empty(S1, X, true)
+        @test !is_intersection_empty(S2, S3) && !intersection_empty &&
+            point ∈ S1 && point ∈ X
+        @test is_intersection_empty(S2, X) &&
+            is_intersection_empty(S2, X, true)[1]
+    end
 end

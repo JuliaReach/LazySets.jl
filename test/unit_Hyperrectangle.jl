@@ -106,14 +106,16 @@ for N in [Float64, Rational{Int}, Float32]
     @test an_element(H) ∈ H
 
     # subset
-    H1 = Hyperrectangle(N[1.5, 1.5], N[0.5, 0.5])
+    H1 = Hyperrectangle(N[1.0, 3.0], N[0.5, 0.5])
     H2 = Hyperrectangle(N[2.0, 2.5], N[0.5, 0.5])
     H3 = Hyperrectangle(N[2.0, 2.0], N[2.0, 3.0])
     B1 = BallInf(N[2.0, 2.5], N(0.5))
     B2 = BallInf(N[2.0, 2.0], N(1.0))
     @test !⊆(H1, H2) && ⊆(H1, H3) && ⊆(H2, H3)
     subset, point = ⊆(H1, H2, true)
-    @test !subset && point ∈ H1 && !(point ∈ H2)
+    @test !subset && point ∈ H1 && point ∉ H2
+    subset, point = ⊆(H2, H1, true)
+    @test !subset && point ∈ H2 && point ∉ H1
     subset, point = ⊆(H1, H3, true)
     @test subset
     @test ⊆(H2, B1) && ⊆(B1, H2)
@@ -123,12 +125,14 @@ for N in [Float64, Rational{Int}, Float32]
     H1 = Hyperrectangle(N[1.0, 1.0], N[2.0, 2.0])
     H2 = Hyperrectangle(N[3.0, 3.0], N[2.0, 2.0])
     B1 = BallInf(N[2.0, 4.0], N(0.5))
-    intersection_empty, point = is_intersection_empty(H1, H2, true)
-    cap = intersection(H1, H2)
-    @test cap isa Hyperrectangle{N} && center(cap) == N[2., 2.] &&
-          radius_hyperrectangle(cap) == N[1., 1.]
-    @test !is_intersection_empty(H1, H2) &&
-          !intersection_empty && point ∈ H1 && point ∈ H2
+    for (X1, X2) in [(H1, H2), (H2, H1)]
+        intersection_empty, point = is_intersection_empty(X1, X2, true)
+        cap = intersection(X1, X2)
+        @test cap isa Hyperrectangle{N} && center(cap) == N[2., 2.] &&
+              radius_hyperrectangle(cap) == N[1., 1.]
+        @test !is_intersection_empty(X1, X2) &&
+              !intersection_empty && point ∈ X1 && point ∈ X2
+    end
     cap = intersection(H1, B1)
     @test cap isa EmptySet{N}
     @test is_intersection_empty(H1, B1) && is_intersection_empty(H1, B1, true)[1]

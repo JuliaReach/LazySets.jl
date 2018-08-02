@@ -50,6 +50,12 @@ for N in [Float64, Rational{Int}, Float32]
     @test ρ(N[1.], ms) == N(6.)
     @test ρ(N[-1.], ms) == N(-6.)
 
+    # an_element function (falls back to the default implementation
+    X = MinkowskiSum(LineSegment(N[0., 0.], N[1., 1.]),
+                     LineSegment(N[1., 0.], N[0., 1.]))
+    v = an_element(X)
+    @test v ∈ Ball1(N[1., 1.], N(1.))
+
     # =================
     # MinkowskiSumArray
     # =================

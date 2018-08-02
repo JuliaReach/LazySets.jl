@@ -63,8 +63,11 @@ for N in [Float64, Rational{Int}, Float32]
     #intersection_empty, point = is_intersection_empty(Z1, H1, true)
     @test !is_intersection_empty(Z1, H1) #&& !intersection_empty &&
           #point ∈ Z1 && point ∈ H1
+    @test_throws ErrorException is_intersection_empty(Z1, H1, true)
     H2 = Hyperplane(N[1., 1.], N(-11.))
     @test is_intersection_empty(Z1, H2) && is_intersection_empty(Z1, H2, true)[1]
+    @test !is_intersection_empty(H1, Z1)
+    @test is_intersection_empty(H2, Z1) && is_intersection_empty(H2, Z1, true)[1]
 
     # test number of generators
     Z = Zonotope(N[2, 1.], N[-0.5 1.5 0.5 1.0; 0.5 1.5 1.0 0.5])
