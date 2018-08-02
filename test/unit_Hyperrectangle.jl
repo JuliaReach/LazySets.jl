@@ -106,14 +106,16 @@ for N in [Float64, Rational{Int}, Float32]
     @test an_element(H) ∈ H
 
     # subset
-    H1 = Hyperrectangle(N[1.5, 1.5], N[0.5, 0.5])
+    H1 = Hyperrectangle(N[1.0, 3.0], N[0.5, 0.5])
     H2 = Hyperrectangle(N[2.0, 2.5], N[0.5, 0.5])
     H3 = Hyperrectangle(N[2.0, 2.0], N[2.0, 3.0])
     B1 = BallInf(N[2.0, 2.5], N(0.5))
     B2 = BallInf(N[2.0, 2.0], N(1.0))
     @test !⊆(H1, H2) && ⊆(H1, H3) && ⊆(H2, H3)
     subset, point = ⊆(H1, H2, true)
-    @test !subset && point ∈ H1 && !(point ∈ H2)
+    @test !subset && point ∈ H1 && point ∉ H2
+    subset, point = ⊆(H2, H1, true)
+    @test !subset && point ∈ H2 && point ∉ H1
     subset, point = ⊆(H1, H3, true)
     @test subset
     @test ⊆(H2, B1) && ⊆(B1, H2)

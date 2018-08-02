@@ -37,6 +37,21 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws AssertionError σ(N[0.], HPolygonOpt(HPolygon{N}()))
     @test_throws AssertionError σ(N[0.], HPolytope{N}())
 
+    # subset
+    b1 = Ball1(N[0., 0.], N(1.))
+    b2 = Ball1(N[1., 1.], N(4.))
+    m1 = MinkowskiSum(b1, ZeroSet{N}(2))
+    m2 = MinkowskiSum(b2, ZeroSet{N}(2))
+    subset, point = ⊆(p, b1, true)
+    @test !subset && point ∈ p && !(point ∈ b1)
+    subset, point = ⊆(p, m1, true)
+    @test !subset && point ∈ p
+    subset, point = ⊆(p, b2, true)
+    @test subset && ⊆(p, b2) && point == N[]
+    subset, point = ⊆(p, m2, true)
+    @test subset && ⊆(p, m2) && point == N[]
+
+
     # HPolygon/HPolygonOpt tests
     for p in [p, po]
         # Test Dimension

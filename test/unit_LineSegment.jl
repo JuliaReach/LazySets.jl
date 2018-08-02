@@ -82,12 +82,16 @@ for N in [Float64, Rational{Int}, Float32]
     l = LineSegment(N[1., 1.], N[2., 2.])
     b1 = Ball1(N[1.5, 1.5], N(1.1))
     b2 = Ball1(N[1.5, 1.5], N(.4))
-    @test ⊆(l, b1)
-    @test !⊆(l, b2)
+    subset, point = ⊆(l, b1, true)
+    @test ⊆(l, b1) && subset && point == N[]
+    subset, point = ⊆(l, b2, true)
+    @test !⊆(l, b2) && !subset && point ∈ l && point ∉ b2
     h1 = Hyperrectangle(N[1.5, 1.5], N[.6, .8])
     h2 = Hyperrectangle(N[1.5, 1.5], N[.4, .8])
-    @test ⊆(l, h1)
-    @test !⊆(l, h2)
+    subset, point = ⊆(l, h1, true)
+    @test ⊆(l, h1) && subset && point == N[]
+    subset, point = ⊆(l, h2, true)
+    @test !⊆(l, h2) && !subset && point ∈ l && point ∉ h2
 
     # halfspace_left & halfspace_right
     @test N[1., 2.] ∈ halfspace_left(l)
