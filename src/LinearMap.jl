@@ -4,7 +4,7 @@ export LinearMap,
        an_element
 
 """
-    LinearMap{NM, N} <: LazySet{N}
+    LinearMap{N<:Real, NM} <: LazySet{N}
 
 Type that represents a linear transformation ``M⋅S`` of a convex set ``S``.
 
@@ -20,24 +20,26 @@ on the type of elements of the target set (`N`). Typically `NM = N` but it is
 not necessarily always the case e.g. if `NM` is an interval that holds numbers of
 type `N`, where `N` is a floating point number type such as `Float64`.
 """
-struct LinearMap{NM, N} <: LazySet{N}
+struct LinearMap{N<:Real, NM} <: LazySet{N}
     M::AbstractMatrix{NM}
     X::LazySet{N}
 
     # default constructor with dimension match check
-    function LinearMap{NM, N}(M::AbstractMatrix{NM}, X::LazySet{N}) where {NM, N}
-        @assert dim(X) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
-                                     "applied to a set of dimension $(dim(X))"
+    function LinearMap{N, NM}(M::AbstractMatrix{NM},
+                              X::LazySet{N}) where {N<:Real, NM}
+        @assert dim(X) == size(M, 2) "a linear map of size $(size(M)) cannot " *
+            "be applied to a set of dimension $(dim(X))"
         return new(M, X)
     end
 end
 
 # type-less convenience constructor
-LinearMap(M::AbstractMatrix{NM}, X::LazySet{N}) where {NM, N} = LinearMap{NM, N}(M, X)
+LinearMap(M::AbstractMatrix{NM}, X::LazySet{N}) where {N<:Real, NM} =
+    LinearMap{N, NM}(M, X)
 
 # constructor from a linear map: perform the matrix multiplication immediately
-LinearMap(M::AbstractMatrix{NM},
-          map::LinearMap{NM, N}) where {NM, N} = LinearMap{NM, N}(M * map.M, map.X)
+LinearMap(M::AbstractMatrix{NM}, lm::LinearMap{N, NM}) where {N<:Real, NM} =
+    LinearMap{N, NM}(M * lm.M, lm.X)
 
 """
 ```
@@ -81,22 +83,22 @@ end
 
 """
 ```
-    *(a::N, map::S)::S where {S<:LinearMap{NM, N}} where {NM, N}
+    *(a::N, lm::S)::S where {N<:Real, NM, S<:LinearMap{N, NM}}
 ```
 
 Return a linear map scaled by a scalar value.
 
 ### Input
 
-- `a`   -- scalar
-- `map` -- linear map
+- `a`  -- scalar
+- `lm` -- linear map
 
 ### Output
 
 The scaled linear map.
 """
-function *(a::N, map::S)::S where {S<:LinearMap{NM, N}} where {NM, N}
-    return LinearMap(a * map.M, map.X)
+function *(a::N, lm::S)::S where {N<:Real, NM, S<:LinearMap{N, NM}}
+    return LinearMap(a * lm.M, lm.X)
 end
 
 """
@@ -162,7 +164,7 @@ function σ(d::V, lm::LinearMap) where {N<:Real, V<:AbstractVector{N}}
 end
 
 """
-    ∈(x::AbstractVector{N}, lm::LinearMap{NM, N})::Bool where {NM, N<:Real}
+    ∈(x::AbstractVector{N}, lm::LinearMap{N, NM})::Bool where {N<:Real, NM}
 
 Check whether a given point is contained in a linear map of a convex set.
 
@@ -202,7 +204,7 @@ julia> ∈([0.5, 0.5], M*B)
 true
 ```
 """
-function ∈(x::AbstractVector{N}, lm::LinearMap{NM, N})::Bool where {NM, N<:Real}
+function ∈(x::AbstractVector{N}, lm::LinearMap{N, NM})::Bool where {N<:Real, NM}
     return ∈(lm.M \ x, lm.X)
 end
 
@@ -213,12 +215,12 @@ Return some element of a linear map.
 
 ### Input
 
-- `lmap` -- linear map
+- `lm` -- linear map
 
 ### Output
 
-An element in the linear map. It relies on the `an_element` function of the wrapped
-set.
+An element in the linear map.
+It relies on the `an_element` function of the wrapped set.
 """
 function an_element(lm::LinearMap)
     return lm.M * an_element(lm.X)
