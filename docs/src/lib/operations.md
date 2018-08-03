@@ -213,21 +213,11 @@ Inherited from [`LazySet`](@ref):
 SparseMatrixExp
 *(::SparseMatrixExp, ::LazySet)
 ```
-Inherited from [`LazySet`](@ref):
-* [`norm`](@ref norm(::LazySet, ::Real))
-* [`radius`](@ref radius(::LazySet, ::Real))
-* [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ```@docs
 ProjectionSparseMatrixExp
 *(::ProjectionSparseMatrixExp, ::LazySet)
 ```
-Inherited from [`LazySet`](@ref):
-* [`norm`](@ref norm(::LazySet, ::Real))
-* [`radius`](@ref radius(::LazySet, ::Real))
-* [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`an_element`](@ref an_element(::LazySet{Real}))
 
 ## Symmetric Interval Hull
 
