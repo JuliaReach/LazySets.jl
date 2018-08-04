@@ -172,11 +172,11 @@ Inherited from [`LazySet`](@ref):
 
 ```@docs
 LinearMap
-*(::AbstractMatrix, ::LazySet)
-*(::Real, ::LazySet)
+*(::AbstractMatrix{Real}, ::LazySet{Real})
+*(::Real, ::LazySet{Real})
 dim(::LinearMap)
-σ(::AbstractVector{Real}, ::LinearMap{Real, Real})
-∈(::AbstractVector{Real}, ::LinearMap{Real, Real})
+σ(::AbstractVector{Real}, ::LinearMap{Real, LazySet{Real}, Real, Matrix{Real}})
+∈(::AbstractVector{Real}, ::LinearMap{Real, LazySet{Real}, Real, Matrix{Real}})
 an_element(::LinearMap)
 ```
 Inherited from [`LazySet`](@ref):
