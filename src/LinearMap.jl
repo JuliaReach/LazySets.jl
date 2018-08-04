@@ -4,7 +4,7 @@ export LinearMap,
        an_element
 
 """
-    LinearMap{N<:Real, NM} <: LazySet{N}
+    LinearMap{N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} <: LazySet{N}
 
 Type that represents a linear transformation ``M⋅S`` of a convex set ``S``.
 
@@ -15,18 +15,20 @@ Type that represents a linear transformation ``M⋅S`` of a convex set ``S``.
 
 ### Notes
 
-This type is parametric in the elements of the linear map, `NM`, and independently
-on the type of elements of the target set (`N`). Typically `NM = N` but it is
-not necessarily always the case e.g. if `NM` is an interval that holds numbers of
-type `N`, where `N` is a floating point number type such as `Float64`.
+This type is parametric in the elements of the linear map, `NM`, which is
+independent of the numeric type of the target set (`N`).
+Typically `NM = N`, but there may be exceptions, e.g., if `NM` is an interval
+that holds numbers of type `N`, where `N` is a floating point number type such
+as `Float64`.
 """
-struct LinearMap{N<:Real, NM} <: LazySet{N}
-    M::AbstractMatrix{NM}
-    X::LazySet{N}
+struct LinearMap{N<:Real, S<:LazySet{N},
+                 NM, MAT<:AbstractMatrix{NM}} <: LazySet{N}
+    M::MAT
+    X::S
 
     # default constructor with dimension match check
-    function LinearMap{N, NM}(M::AbstractMatrix{NM},
-                              X::LazySet{N}) where {N<:Real, NM}
+    function LinearMap{N, S, NM, MAT}(M::MAT, X::S) where {N<:Real,
+            S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}}
         @assert dim(X) == size(M, 2) "a linear map of size $(size(M)) cannot " *
             "be applied to a set of dimension $(dim(X))"
         return new(M, X)
@@ -34,12 +36,14 @@ struct LinearMap{N<:Real, NM} <: LazySet{N}
 end
 
 # type-less convenience constructor
-LinearMap(M::AbstractMatrix{NM}, X::LazySet{N}) where {N<:Real, NM} =
-    LinearMap{N, NM}(M, X)
+LinearMap(M::MAT,
+          X::S) where {N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} =
+    LinearMap{N, S, NM, MAT}(M, X)
 
 # constructor from a linear map: perform the matrix multiplication immediately
-LinearMap(M::AbstractMatrix{NM}, lm::LinearMap{N, NM}) where {N<:Real, NM} =
-    LinearMap{N, NM}(M * lm.M, lm.X)
+LinearMap(M::MAT, lm::LinearMap{N, S, NM, MAT}) where {N<:Real, S<:LazySet{N},
+        NM, MAT<:AbstractMatrix{NM}} =
+    LinearMap{N, S, NM, MAT}(M * lm.M, lm.X)
 
 """
 ```
@@ -77,13 +81,13 @@ Return a linear map of a convex set by a scalar value.
 
 The linear map of the convex set.
 """
-function *(a::N, X::LazySet) where {N}
+function *(a::N, X::LazySet{N}) where {N}
     return LinearMap(a * speye(N, dim(X)), X)
 end
 
 """
 ```
-    *(a::N, lm::S)::S where {N<:Real, NM, S<:LinearMap{N, NM}}
+    *(a::N, lm::LM)::LM where {N<:Real, S<:LazySet{N}, LM<:LinearMap{N, S}}
 ```
 
 Return a linear map scaled by a scalar value.
@@ -97,16 +101,17 @@ Return a linear map scaled by a scalar value.
 
 The scaled linear map.
 """
-function *(a::N, lm::S)::S where {N<:Real, NM, S<:LinearMap{N, NM}}
+function *(a::N, lm::LM)::LM where {N<:Real, S<:LazySet{N}, LM<:LinearMap{N, S}}
     return LinearMap(a * lm.M, lm.X)
 end
 
 """
 ```
-    *(M::AbstractMatrix{N}, Z::ZeroSet{N})::ZeroSet{N} where N<:Real
+    *(M::MAT, Z::ZeroSet{N})::ZeroSet{N} where {N<:Real, MAT<:AbstractMatrix}
 ```
 
-A linear map of a zero set, which is simplified to a zero set.
+A linear map of a zero set, which is simplified to a zero set (the absorbing
+element).
 
 ### Input
 
@@ -117,8 +122,10 @@ A linear map of a zero set, which is simplified to a zero set.
 
 The zero set with the output dimension of the linear map.
 """
-function *(M::AbstractMatrix{N}, Z::ZeroSet{N})::ZeroSet{N} where N<:Real
-    @assert dim(Z) == size(M, 2)
+function *(M::MAT,
+           Z::ZeroSet{N})::ZeroSet{N} where {N<:Real, MAT<:AbstractMatrix}
+    @assert dim(Z) == size(M, 2) "a linear map of size $(size(M)) cannot " *
+            "be applied to a set of dimension $(dim(Z))"
     return ZeroSet{N}(size(M, 1))
 end
 
@@ -140,7 +147,7 @@ function dim(lm::LinearMap)::Int
 end
 
 """
-    σ(d::AbstractVector{<:Real}, lm::LinearMap)::AbstractVector{<:Real}
+    σ(d::V, lm::LinearMap) where {N<:Real, V<:AbstractVector{N}}
 
 Return the support vector of the linear map.
 
@@ -164,7 +171,7 @@ function σ(d::V, lm::LinearMap) where {N<:Real, V<:AbstractVector{N}}
 end
 
 """
-    ∈(x::AbstractVector{N}, lm::LinearMap{N, NM})::Bool where {N<:Real, NM}
+    ∈(x::AbstractVector{N}, lm::LinearMap{N})::Bool where {N<:Real}
 
 Check whether a given point is contained in a linear map of a convex set.
 
@@ -204,7 +211,7 @@ julia> ∈([0.5, 0.5], M*B)
 true
 ```
 """
-function ∈(x::AbstractVector{N}, lm::LinearMap{N, NM})::Bool where {N<:Real, NM}
+function ∈(x::AbstractVector{N}, lm::LinearMap{N})::Bool where {N<:Real}
     return ∈(lm.M \ x, lm.X)
 end
 
