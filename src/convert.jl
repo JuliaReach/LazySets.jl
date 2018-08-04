@@ -1,3 +1,5 @@
+import Base.convert
+
 #= conversion between set types =#
 
 """

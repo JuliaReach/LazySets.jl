@@ -1,5 +1,4 @@
-import Base:∈,
-            convert
+import Base:∈
 
 export Zonotope,
        order,
