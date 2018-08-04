@@ -143,7 +143,7 @@ end
 
 
 """
-    σ(d::AbstractVector{N}, P::VPolygon)::Vector{N} where {N<:Real}
+    σ(d::AbstractVector{N}, P::VPolygon{N}) where {N<:Real}
 
 Return the support vector of a polygon in a given direction.
 
@@ -171,7 +171,7 @@ have been sorted in counter-clockwise fashion.
 In that case a binary search algorithm can be used that runs in ``O(\\log n)``.
 See issue [#40](https://github.com/JuliaReach/LazySets.jl/issues/40).
 """
-function σ(d::AbstractVector{N}, P::VPolygon)::Vector{N} where {N<:Real}
+function σ(d::AbstractVector{N}, P::VPolygon{N}) where {N<:Real}
     @assert !isempty(P.vertices) "the polygon has no vertices"
     i_max = 1
     @inbounds for i in 2:length(P.vertices)

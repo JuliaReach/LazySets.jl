@@ -85,7 +85,7 @@ function dim(ms::MinkowskiSum)::Int
 end
 
 """
-    σ(d::V, ms::MinkowskiSum) where {N<:Real, V<:AbstractVector{N}}
+    σ(d::AbstractVector{N}, ms::MinkowskiSum{N}) where {N<:Real}
 
 Return the support vector of a Minkowski sum.
 
@@ -99,7 +99,7 @@ Return the support vector of a Minkowski sum.
 The support vector in the given direction.
 If the direction has norm zero, the result depends on the summand sets.
 """
-function σ(d::V, ms::MinkowskiSum) where {N<:Real, V<:AbstractVector{N}}
+function σ(d::AbstractVector{N}, ms::MinkowskiSum{N}) where {N<:Real}
     return σ(d, ms.X) + σ(d, ms.Y)
 end
 
@@ -189,7 +189,7 @@ function dim(msa::MinkowskiSumArray)::Int
 end
 
 """
-    σ(d::AbstractVector{<:Real}, msa::MinkowskiSumArray)::Vector{<:Real}
+    σ(d::AbstractVector{N}, msa::MinkowskiSumArray{N}) where {N<:Real}
 
 Return the support vector of a Minkowski sum of a finite number of sets in a
 given direction.
@@ -204,7 +204,7 @@ given direction.
 The support vector in the given direction.
 If the direction has norm zero, the result depends on the summand sets.
 """
-function σ(d::AbstractVector{<:Real}, msa::MinkowskiSumArray)::Vector{<:Real}
+function σ(d::AbstractVector{N}, msa::MinkowskiSumArray{N}) where {N<:Real}
     return _σ_helper(d, msa.array)
 end
 
@@ -330,7 +330,7 @@ function dim(cms::CacheMinkowskiSum)::Int
 end
 
 """
-    σ(d::AbstractVector{<:Real}, cms::CacheMinkowskiSum)::Vector{<:Real}
+    σ(d::AbstractVector{N}, cms::CacheMinkowskiSum{N}) where {N<:Real}
 
 Return the support vector of a caching Minkowski sum in a given direction.
 
@@ -351,7 +351,7 @@ constant time.
 When sets are added to the caching Minkowski sum, the query is only performed
 for the new sets.
 """
-function σ(d::AbstractVector{<:Real}, cms::CacheMinkowskiSum)::Vector{<:Real}
+function σ(d::AbstractVector{N}, cms::CacheMinkowskiSum{N}) where {N<:Real}
     arr = array(cms)
     l = length(arr)
     cache = cms.cache

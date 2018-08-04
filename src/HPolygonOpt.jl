@@ -59,7 +59,7 @@ HPolygonOpt(S::LazySet) = convert(HPolygonOpt, S)
 
 
 """
-    σ(d::AbstractVector{N}, P::HPolygonOpt)::Vector{N} where {N<:Real}
+    σ(d::AbstractVector{N}, P::HPolygonOpt{N}) where {N<:Real}
 
 Return the support vector of an optimized polygon in a given direction.
 
@@ -79,7 +79,7 @@ norm zero, any vertex is returned.
 Comparison of directions is performed using polar angles; see the overload of
 `<=` for two-dimensional vectors.
 """
-function σ(d::AbstractVector{N}, P::HPolygonOpt)::Vector{N} where {N<:Real}
+function σ(d::AbstractVector{N}, P::HPolygonOpt{N}) where {N<:Real}
     n = length(P.constraints)
     @assert n > 0 "the polygon has no constraints"
     if (d <= P.constraints[P.ind].a)

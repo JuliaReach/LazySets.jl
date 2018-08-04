@@ -69,7 +69,7 @@ function dim(P::VPolytope)::Int
 end
 
 """
-    σ(d::AbstractVector{<:Real}, P::VPolytope; algorithm="hrep")::Vector{<:Real}
+    σ(d::AbstractVector{N}, P::VPolytope{N}; algorithm="hrep") where {N<:Real}
 
 Return the support vector of a polyhedron (in V-representation) in a given
 direction.
@@ -84,7 +84,9 @@ direction.
 
 The support vector in the given direction.
 """
-function σ(d::AbstractVector{<:Real}, P::VPolytope; algorithm="hrep")::Vector{<:Real}
+function σ(d::AbstractVector{N},
+           P::VPolytope{N};
+           algorithm="hrep") where {N<:Real}
     if algorithm == "hrep"
         @assert isdefined(@__MODULE__, :Polyhedra) "this algorithm needs the " *
             "package 'Polyhedra' loaded"

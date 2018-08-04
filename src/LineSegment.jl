@@ -84,7 +84,7 @@ function dim(L::LineSegment)::Int
 end
 
 """
-    σ(d::V, L::LineSegment) where {N<:Real, V<:AbstractVector{N}}
+    σ(d::AbstractVector{N}, L::LineSegment{N}) where {N<:Real}
 
 Return the support vector of a line segment in a given direction.
 
@@ -105,7 +105,7 @@ it is ``q``.
 If the angle is exactly 90° or 270°, or if the direction has norm zero, this
 implementation returns ``q``.
 """
-function σ(d::V, L::LineSegment) where {N<:Real, V<:AbstractVector{N}}
+function σ(d::AbstractVector{N}, L::LineSegment{N}) where {N<:Real}
     return sign(dot(L.q - L.p, d)) >= 0 ? L.q : L.p
 end
 
