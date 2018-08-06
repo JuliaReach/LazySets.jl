@@ -59,14 +59,18 @@ HPolygonOpt(S::LazySet) = convert(HPolygonOpt, S)
 
 
 """
-    σ(d::AbstractVector{N}, P::HPolygonOpt{N}) where {N<:Real}
+    σ(d::AbstractVector{N}, P::HPolygonOpt{N};
+      [linear_search]::Bool=(length(P.constraints) < BINARY_SEARCH_THRESHOLD)
+     ) where {N<:Real}
 
 Return the support vector of an optimized polygon in a given direction.
 
 ### Input
 
-- `d` -- direction
-- `P` -- optimized polygon in constraint representation
+- `d`             -- direction
+- `P`             -- optimized polygon in constraint representation
+- `linear_search` -- (optional, default: see below) flag for controlling whether
+                     to perform a linear search or a binary search
 
 ### Output
 
@@ -78,35 +82,57 @@ norm zero, any vertex is returned.
 
 Comparison of directions is performed using polar angles; see the overload of
 `<=` for two-dimensional vectors.
+
+For polygons with `BINARY_SEARCH_THRESHOLD = 10` or more constraints we use a
+binary search by default.
 """
-function σ(d::AbstractVector{N}, P::HPolygonOpt{N}) where {N<:Real}
+function σ(d::AbstractVector{N}, P::HPolygonOpt{N};
+           linear_search::Bool=(length(P.constraints) < BINARY_SEARCH_THRESHOLD)
+          ) where {N<:Real}
     n = length(P.constraints)
     @assert n > 0 "the polygon has no constraints"
-    if (d <= P.constraints[P.ind].a)
-        k = P.ind-1
-        while (k >= 1 && d <= P.constraints[k].a)
-            k -= 1
-        end
-        if (k == 0)
-            P.ind = n
-            return element(intersection(Line(P.constraints[n]),
-                                        Line(P.constraints[1])))
+    if linear_search
+        # linear search
+        if (d <= P.constraints[P.ind].a)
+            # search backward
+            k = P.ind-1
+            while (k >= 1 && d <= P.constraints[k].a)
+                k -= 1
+            end
+            if (k == 0)
+                P.ind = n
+                # corner case: wrap-around in constraints list
+                return element(intersection(Line(P.constraints[n]),
+                                            Line(P.constraints[1])))
+            else
+                P.ind = k
+            end
         else
-            P.ind = k
-            return element(intersection(Line(P.constraints[k]),
-                                        Line(P.constraints[k+1])))
+            # search forward
+            k = P.ind+1
+            while (k <= n && P.constraints[k].a <= d)
+                k += 1
+            end
+            if (k == n+1)
+                P.ind = n
+                # corner case: wrap-around in constraints list
+                return element(intersection(Line(P.constraints[n]),
+                                            Line(P.constraints[1])))
+            else
+                P.ind = k-1
+            end
         end
+        return element(intersection(Line(P.constraints[P.ind]),
+                                    Line(P.constraints[P.ind + 1])))
     else
-        k = P.ind+1
-        while (k <= n && P.constraints[k].a <= d)
-            k += 1
-        end
-        if (k == n+1)
-            P.ind = n
+        # binary search
+        k = binary_search_constraints(d, P.constraints, n, P.ind)
+        P.ind = k
+        if k == 1 || k == n+1
+            # corner cases: wrap-around in constraints list
             return element(intersection(Line(P.constraints[n]),
                                         Line(P.constraints[1])))
         else
-            P.ind = k-1
             return element(intersection(Line(P.constraints[k-1]),
                                         Line(P.constraints[k])))
         end
