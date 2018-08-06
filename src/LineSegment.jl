@@ -58,7 +58,7 @@ struct LineSegment{N<:Real} <: AbstractPointSymmetricPolytope{N}
     end
 end
 
-# type-less convenience constructor
+# convenience constructor without type parameter
 LineSegment(p::AbstractVector{N}, q::AbstractVector{N}) where {N<:Real} =
     LineSegment{N}(p, q)
 

@@ -24,16 +24,17 @@ This is a running assumption in this type.
 struct HPolytope{N<:Real} <: AbstractPolytope{N}
     constraints::Vector{LinearConstraint{N}}
 end
-# constructor for a HPolytope with no constraints
+
+# constructor for an HPolytope with no constraints
 HPolytope{N}() where {N<:Real} = HPolytope{N}(Vector{LinearConstraint{N}}(0))
 
-# constructor for a HPolytope with no constraints of type Float64
+# constructor for an HPolytope with no constraints of type Float64
 HPolytope() = HPolytope{Float64}()
 
 # conversion constructor
 HPolytope(S::LazySet) = convert(HPolytope, S)
 
-# constructor for a HPolytope from a simple H-representation
+# constructor for an HPolytope from a simple H-representation
 function HPolytope(A::Matrix{N}, b::Vector{N}) where {N<:Real}
     m = size(A, 1)
     constraints = LinearConstraint{N}[]

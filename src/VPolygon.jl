@@ -26,9 +26,9 @@ struct VPolygon{N<:Real} <: AbstractPolygon{N}
     vertices::Vector{Vector{N}}
 
     # default constructor that applies a convex hull algorithm
-    function VPolygon(vertices::Vector{Vector{N}};
-                      apply_convex_hull::Bool=true,
-                      algorithm::String="monotone_chain") where {N<:Real}
+    function VPolygon{N}(vertices::Vector{Vector{N}};
+                         apply_convex_hull::Bool=true,
+                         algorithm::String="monotone_chain") where {N<:Real}
         if apply_convex_hull
             return new{N}(convex_hull(vertices, algorithm=algorithm))
         else
@@ -36,6 +36,13 @@ struct VPolygon{N<:Real} <: AbstractPolygon{N}
         end
     end
 end
+
+# convenience constructor without type parameter
+VPolygon(vertices::Vector{Vector{N}};
+         apply_convex_hull::Bool=true,
+         algorithm::String="monotone_chain") where {N<:Real} =
+    VPolygon{N}(vertices; apply_convex_hull=apply_convex_hull,
+                algorithm=algorithm)
 
 
 # --- AbstractPolygon interface functions ---

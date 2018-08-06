@@ -53,15 +53,15 @@ struct Ball2{N<:AbstractFloat} <: AbstractPointSymmetric{N}
     radius::N
 
     # default constructor with domain constraint for radius
-    function Ball2{N}(center, radius) where N
+    function Ball2{N}(center::Vector{N}, radius::N) where {N<:AbstractFloat}
         @assert radius >= zero(N) "radius must not be negative"
-        return new(center, radius)
+        return new{N}(center, radius)
     end
 end
-# type-less convenience constructor
+
+# convenience constructor without type parameter
 Ball2(center::Vector{N}, radius::N) where {N<:AbstractFloat} =
     Ball2{N}(center, radius)
-
 
 # --- AbstractPointSymmetric interface functions ---
 

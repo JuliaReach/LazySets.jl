@@ -35,12 +35,13 @@ struct CartesianProduct{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     X::S1
     Y::S2
 end
-# type-less convenience constructor
-CartesianProduct(X1::S1, X2::S2
-                ) where {S1<:LazySet{N}, S2<:LazySet{N}} where {N<:Real} =
-    CartesianProduct{N, S1, S2}(X1, X2)
+
+# convenience constructor without type parameter
+CartesianProduct(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} =
+    CartesianProduct{N, S1, S2}(X, Y)
+
 # constructor from an array
-CartesianProduct(Xarr::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
+CartesianProduct(Xarr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
     (length(Xarr) == 0
         ? EmptySet{N}()
         : length(Xarr) == 1
@@ -157,7 +158,7 @@ struct CartesianProductArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
 end
 
-# type-less convenience constructor
+# convenience constructor without type parameter
 CartesianProductArray(arr::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
     CartesianProductArray{N, S}(arr)
 

@@ -78,16 +78,32 @@ LazySets.Interval{Rational{Int64},IntervalArithmetic.AbstractInterval{Rational{I
 struct Interval{N<:Real, IN <: AbstractInterval{N}} <: AbstractPointSymmetricPolytope{N}
    dat::IN
 end
-# type-less convenience constructor
-Interval(interval::IN) where {N, IN <: AbstractInterval{N}} = Interval{N, IN}(interval)
 
-# constructor that takes two numbers
-Interval(lo::N, hi::N) where {N} = Interval(IntervalArithmetic.Interval(lo, hi))
+# convenience constructor without type parameter
+Interval(interval::IN) where {N<:Real, IN <: AbstractInterval{N}} =
+    Interval{N, IN}(interval)
 
-Interval(lo::Rational{N}, hi::Rational{N}) where {N} = Interval{Rational{N}, IntervalArithmetic.AbstractInterval{Rational{N}}}(IntervalArithmetic.Interval(lo, hi))
+# constructor from two numbers
+Interval(lo::N, hi::N) where {N<:Real} =
+    Interval(IntervalArithmetic.Interval(lo, hi))
+
+# constructor from two rational numbers
+Interval(lo::N, hi::N) where {N<:Rational} =
+    Interval{N, IntervalArithmetic.AbstractInterval{N}}(
+        IntervalArithmetic.Interval(lo, hi))
 
 # constructor from a vector
-Interval(x::AbstractVector{N}) where {N} = Interval(IntervalArithmetic.Interval(x[1], x[2]))
+function Interval(x::AbstractVector{N}) where {N<:Real}
+    @assert length(x) == 2 "vector for Interval constructor has to be 2D"
+    Interval(IntervalArithmetic.Interval(x[1], x[2]))
+end
+
+# constructor from a rational vector
+function Interval(x::AbstractVector{N}) where {N<:Rational}
+    @assert length(x) == 2 "vector for Interval constructor has to be 2D"
+    Interval{N, IntervalArithmetic.AbstractInterval{N}}(
+        IntervalArithmetic.Interval(x[1], x[2]))
+end
 
 """
     dim(x::Interval)::Int

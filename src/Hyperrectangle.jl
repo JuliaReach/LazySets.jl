@@ -26,10 +26,11 @@ struct Hyperrectangle{N<:Real} <: AbstractHyperrectangle{N}
         @assert length(center) == length(radius) "length of center and " *
             "radius must be equal"
         @assert all(v -> v >= zero(N), radius) "radius must not be negative"
-        return new(center, radius)
+        return new{N}(center, radius)
     end
 end
-# type-less convenience constructor
+
+# convenience constructor without type parameter
 Hyperrectangle(center::Vector{N}, radius::Vector{N}) where {N<:Real} =
     Hyperrectangle{N}(center, radius)
 

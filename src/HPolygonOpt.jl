@@ -39,13 +39,15 @@ mutable struct HPolygonOpt{N<:Real} <: AbstractHPolygon{N}
                    ind::Int=1) where {N<:Real} =
         new{N}(constraints, ind)
 end
-# type-less convenience constructor with optional index
+
+# convenience constructor without type parameter
 HPolygonOpt(constraints::Vector{LinearConstraint{N}},
             ind::Int=1) where {N<:Real} =
     HPolygonOpt{N}(constraints, ind)
 
 # constructor for an HPolygon with no constraints
-HPolygonOpt{N}() where {N<:Real} = HPolygonOpt{N}(Vector{LinearConstraint{N}}(0), 1)
+HPolygonOpt{N}() where {N<:Real} =
+    HPolygonOpt{N}(Vector{LinearConstraint{N}}(0))
 
 # constructor for an HPolygon with no constraints of type Float64
 HPolygonOpt() = HPolygonOpt{Float64}()
