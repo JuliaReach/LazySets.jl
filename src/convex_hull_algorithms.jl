@@ -1,6 +1,6 @@
 """
     convex_hull(points::Vector{S}; [algorithm]::String="monotone_chain"
-               )::Vector{S} where {S<:AbstractVector{N}} where {N<:Real}
+               )::Vector{S} where {N<:Real, S<:AbstractVector{N}}
 
 Compute the convex hull of points in the plane.
 
@@ -41,13 +41,13 @@ julia> plot!(VPolygon(hull), alpha=0.2);
 ```
 """
 function convex_hull(points::Vector{S}; algorithm::String="monotone_chain"
-                    )::Vector{S} where {S<:AbstractVector{N}} where {N<:Real}
+                    )::Vector{S} where {N<:Real, S<:AbstractVector{N}}
     return convex_hull!(copy(points), algorithm=algorithm)
 end
 
 """
     convex_hull!(points::Vector{S}; [algorithm]::String="monotone_chain"
-                )::Vector{S} where {S<:AbstractVector{N}} where {N<:Real}
+                )::Vector{S} where {N<:Real, S<:AbstractVector{N}}
 
 Compute the convex hull of points in the plane, in-place.
 
@@ -70,7 +70,7 @@ See the non-modifying version `convex_hull` for more details.
 """
 function convex_hull!(points::Vector{S};
                       algorithm::String="monotone_chain"
-                     )::Vector{S} where {S<:AbstractVector{N}} where {N<:Real}
+                     )::Vector{S} where {N<:Real, S<:AbstractVector{N}}
     (length(points) == 1 || length(points) == 2) && return points
 
     if algorithm == "monotone_chain"
@@ -114,7 +114,7 @@ end
 
 """
     monotone_chain!(points::Vector{S}; sort::Bool=true
-                   )::Vector{S} where {S<:AbstractVector{N}} where {N<:Real}
+                   )::Vector{S} where {N<:Real, S<:AbstractVector{N}}
 
 Compute the convex hull of points in the plane using Andrew's monotone chain
 method.
@@ -147,7 +147,7 @@ For further details see
 [Monotone chain](https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain)
 """
 function monotone_chain!(points::Vector{S}; sort::Bool=true
-                        )::Vector{S} where {S<:AbstractVector{N}} where {N<:Real}
+                        )::Vector{S} where {N<:Real, S<:AbstractVector{N}}
 
     @inline function build_hull!(semihull, iterator, points, zero_N)
         @inbounds for i in iterator
