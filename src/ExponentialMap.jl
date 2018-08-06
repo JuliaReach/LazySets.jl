@@ -253,7 +253,7 @@ This follows from ``\\exp(-M)⋅\\exp(M) = I`` for any ``M``.
 julia> em = ExponentialMap(SparseMatrixExp(SparseMatrixCSC([2.0 0.0; 0.0 1.0])),
                            BallInf([1., 1.], 1.));
 
-julia> ∈([5.0, 1.0], em)
+julia> ∈([-1.0, 1.0], em)
 false
 julia> ∈([1.0, 1.0], em)
 true
@@ -261,7 +261,7 @@ true
 """
 function ∈(x::AbstractVector{N}, em::ExponentialMap{N, <:LazySet{N}})::Bool where {N<:Real}
     @assert length(x) == dim(em)
-    return ∈(exp.(-em.spmexp.M) * x, em.X)
+    return ∈(expmv(-one(N), em.spmexp.M, x), em.X)
 end
 
 """

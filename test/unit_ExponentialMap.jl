@@ -74,7 +74,11 @@ for N in [Float64, Float32]
     end
 
     # membership
-    # @test fill(N(e), n) ∈ me2 * b # TODO
+    x = ones(N, n)
+    @test x ∈ b
+    @test me2 * x ∈ me2 * b
+    @test -x ∉ b
+    @test me2 * -x ∉ me2 * b
 
     # construct an exponential map where we only pass the matrix
     #ExponentialMap(m, b) # ExponentialMap
