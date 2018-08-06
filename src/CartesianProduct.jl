@@ -36,9 +36,11 @@ struct CartesianProduct{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     Y::S2
 end
 
-# convenience constructor without type parameter
-CartesianProduct(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} =
-    CartesianProduct{N, S1, S2}(X, Y)
+if VERSION < v"0.7-"
+    # convenience constructor without type parameter
+    CartesianProduct(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} =
+        CartesianProduct{N, S1, S2}(X, Y)
+end
 
 # constructor from an array
 CartesianProduct(Xarr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
@@ -158,9 +160,11 @@ struct CartesianProductArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
 end
 
-# convenience constructor without type parameter
-CartesianProductArray(arr::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
-    CartesianProductArray{N, S}(arr)
+if VERSION < v"0.7-"
+    # convenience constructor without type parameter
+    CartesianProductArray(arr::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
+        CartesianProductArray{N, S}(arr)
+end
 
 # constructor for an empty product with optional size hint and numeric type
 function CartesianProductArray(n::Int=0, N::Type=Float64)::CartesianProductArray

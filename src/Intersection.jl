@@ -154,9 +154,11 @@ struct IntersectionArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
 end
 
-# convenience constructor without type parameter
-IntersectionArray(arr::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
-    IntersectionArray{N, S}(arr)
+if VERSION < v"0.7-"
+    # convenience constructor without type parameter
+    IntersectionArray(arr::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
+        IntersectionArray{N, S}(arr)
+end
 
 # constructor for an empty sum with optional size hint and numeric type
 function IntersectionArray(n::Int=0, N::Type=Float64)::IntersectionArray

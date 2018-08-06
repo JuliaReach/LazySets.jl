@@ -135,9 +135,11 @@ struct MinkowskiSumArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
 end
 
-# convenience constructor without type parameter
-MinkowskiSumArray(arr::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
-    MinkowskiSumArray{N, S}(arr)
+if VERSION < v"0.7-"
+    # convenience constructor without type parameter
+    MinkowskiSumArray(arr::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
+        MinkowskiSumArray{N, S}(arr)
+end
 
 # constructor for an empty sum with optional size hint and numeric type
 function MinkowskiSumArray(n::Int=0, N::Type=Float64)::MinkowskiSumArray
