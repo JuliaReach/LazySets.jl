@@ -137,7 +137,7 @@ end
 
 
 """
-    σ(d::AbstractVector{N}, S::AbstractSingleton{N})::Vector{N} where {N<:Real}
+    σ(d::AbstractVector{N}, S::AbstractSingleton{N}) where {N<:Real}
 
 Return the support vector of a set with a single value.
 
@@ -151,8 +151,7 @@ Return the support vector of a set with a single value.
 The support vector, which is the set's vector itself, irrespective of the given
 direction.
 """
-function σ(d::AbstractVector{N},
-           S::AbstractSingleton{N})::Vector{N} where {N<:Real}
+function σ(d::AbstractVector{N}, S::AbstractSingleton{N}) where {N<:Real}
     return element(S)
 end
 

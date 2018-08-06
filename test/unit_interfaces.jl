@@ -4,7 +4,7 @@
 
 # support vector
 @test check_method_implementation(LazySet, σ,
-                                  Function[S -> (Vector{Float64}, S)])
+                                  Function[S -> (Vector{Float64}, S{Float64})])
 # dimension
 @test check_method_implementation(LazySet, dim, Function[S -> (S,)])
 

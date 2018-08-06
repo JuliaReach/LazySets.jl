@@ -105,7 +105,7 @@ The integer 1.
 dim(x::Interval)::Int = 1
 
 """
-    σ(d::V, x::Interval{N})::V where {N, V<:AbstractVector{N}}
+    σ(d::AbstractVector{N}, x::Interval{N}) where {N<:Real}
 
 Return the support vector of an ellipsoid in a given direction.
 
@@ -118,7 +118,7 @@ Return the support vector of an ellipsoid in a given direction.
 
 Support vector in the given direction.
 """
-function σ(d::V, x::Interval{N})::V where {N, V<:AbstractVector{N}}
+function σ(d::AbstractVector{N}, x::Interval{N}) where {N<:Real}
     @assert length(d) == dim(x)
     return d[1] > 0 ? [x.dat.hi] : [x.dat.lo]
 end

@@ -41,7 +41,7 @@ HPolygon(S::LazySet) = convert(HPolygon, S)
 
 
 """
-    σ(d::AbstractVector{N}, P::HPolygon)::Vector{N} where {N<:Real}
+    σ(d::AbstractVector{N}, P::HPolygon{N}) where {N<:Real}
 
 Return the support vector of a polygon in a given direction.
 
@@ -61,7 +61,7 @@ norm zero, any vertex is returned.
 Comparison of directions is performed using polar angles; see the overload of
 `<=` for two-dimensional vectors.
 """
-function σ(d::AbstractVector{N}, P::HPolygon)::Vector{N} where {N<:Real}
+function σ(d::AbstractVector{N}, P::HPolygon{N}) where {N<:Real}
     n = length(P.constraints)
     @assert n > 0 "the polygon has no constraints"
     k = 1

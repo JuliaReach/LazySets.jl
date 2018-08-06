@@ -38,7 +38,7 @@ function dim(∅::EmptySet)::Int
 end
 
 """
-    σ(d, ∅)
+    σ(d::AbstractVector{N}, ∅::EmptySet{N}) where {N<:Real}
 
 Return the support vector of an empty set.
 
@@ -50,7 +50,7 @@ Return the support vector of an empty set.
 
 An error.
 """
-function σ(d::AbstractVector, ∅::EmptySet)
+function σ(d::AbstractVector{N}, ∅::EmptySet{N}) where {N<:Real}
     error("the support vector of an empty set does not exist")
 end
 

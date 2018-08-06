@@ -110,7 +110,7 @@ end
 
 
 """
-    σ(d::V, B::Ball1{N}) where {N<:Real, V<:AbstractVector{N}}
+    σ(d::AbstractVector{N}, B::Ball1{N}) where {N<:Real}
 
 Return the support vector of a ball in the 1-norm in a given direction.
 
@@ -123,7 +123,7 @@ Return the support vector of a ball in the 1-norm in a given direction.
 
 Support vector in the given direction.
 """
-function σ(d::V, B::Ball1{N}) where {N<:Real, V<:AbstractVector{N}}
+function σ(d::AbstractVector{N}, B::Ball1{N}) where {N<:Real}
     res = copy(B.center)
     imax = indmax(abs.(d))
     res[imax] += sign(d[imax]) * B.radius

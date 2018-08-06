@@ -62,7 +62,7 @@ function dim(cap::Intersection)::Int
 end
 
 """
-    σ(d::V, cap::Intersection) where {N<:Real, V<:AbstractVector{N}}
+    σ(d::AbstractVector{N}, cap::Intersection{N}) where {N<:Real}
 
 Return the support vector of an intersection of two convex sets in a given
 direction.
@@ -76,7 +76,7 @@ direction.
 
 The support vector in the given direction.
 """
-function σ(d::V, cap::Intersection) where {N<:Real, V<:AbstractVector{N}}
+function σ(d::AbstractVector{N}, cap::Intersection{N}) where {N<:Real}
     # TODO document behavior if the direction has norm zero
     # TODO error message if the intersection is empty!
     # TODO implement

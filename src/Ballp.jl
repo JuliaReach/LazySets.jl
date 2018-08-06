@@ -102,7 +102,7 @@ end
 
 
 """
-    σ(d::V, B::Ballp) where {N<:AbstractFloat, V<:AbstractVector{N}}
+    σ(d::AbstractVector{N}, B::Ballp{N}) where {N<:AbstractFloat}
 
 Return the support vector of a `Ballp` in a given direction.
 
@@ -135,7 +135,7 @@ the support vector of ``\\mathcal{B}_p^n(c, r)`` is
 where ``v_i = c_i + r\\frac{|d_i|^q}{d_i}`` if ``d_i ≠ 0`` and ``v_i = 0``
 otherwise, for all ``i = 1, …, n``.
 """
-function σ(d::V, B::Ballp) where {N<:AbstractFloat, V<:AbstractVector{N}}
+function σ(d::AbstractVector{N}, B::Ballp{N}) where {N<:AbstractFloat}
     p = B.p
     q = p/(p-1)
     v = similar(d)

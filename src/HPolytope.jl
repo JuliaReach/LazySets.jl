@@ -65,7 +65,7 @@ function dim(P::HPolytope)::Int
 end
 
 """
-    σ(d::AbstractVector{<:Real}, P::HPolytope)::Vector{<:Real}
+    σ(d::AbstractVector{N}, P::HPolytope{N}) where {N<:Real}
 
 Return the support vector of a polyhedron (in H-representation) in a given
 direction.
@@ -83,7 +83,7 @@ The support vector in the given direction.
 
 This implementation uses `GLPKSolverLP` as linear programming backend.
 """
-function σ(d::AbstractVector{<:Real}, P::HPolytope)::Vector{<:Real}
+function σ(d::AbstractVector{N}, P::HPolytope{N}) where {N<:Real}
     c = -d
     n = length(constraints_list(P))
     @assert n > 0 "the polytope has no constraints"

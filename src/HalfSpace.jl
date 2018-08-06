@@ -57,7 +57,7 @@ function dim(hs::HalfSpace)::Int
 end
 
 """
-    σ(d::V, hs::HalfSpace) where {N<:Real, V<:AbstractVector{N}}
+    σ(d::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
 
 Return the support vector of a half-space.
 
@@ -75,7 +75,7 @@ following two cases:
 In both cases the result is any point on the boundary (the defining hyperplane).
 Otherwise this function throws an error.
 """
-function σ(d::V, hs::HalfSpace) where {N<:Real, V<:AbstractVector{N}}
+function σ(d::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
     return σ_helper(d, Hyperplane(hs.a, hs.b), "half-space")
 end
 

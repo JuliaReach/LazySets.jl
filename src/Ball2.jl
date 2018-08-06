@@ -88,7 +88,7 @@ end
 
 
 """
-    σ(d::V, B::Ball2{N}) where {N<:AbstractFloat, V<:AbstractVector{N}}
+    σ(d::AbstractVector{N}, B::Ball2{N}) where {N<:AbstractFloat}
 
 Return the support vector of a 2-norm ball in a given direction.
 
@@ -117,7 +117,7 @@ performed in the given precision of the numeric datatype of both the direction
 and the set.
 Exact inputs are not supported.
 """
-function σ(d::V, B::Ball2{N}) where {N<:AbstractFloat, V<:AbstractVector{N}}
+function σ(d::AbstractVector{N}, B::Ball2{N}) where {N<:AbstractFloat}
     dnorm = norm(d, 2)
     if dnorm <= zero(N)
         return zeros(eltype(d), length(d))

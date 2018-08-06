@@ -79,7 +79,7 @@ function dim(Z::ZeroSet)::Int
 end
 
 """
-    σ(d::AbstractVector{N}, Z::ZeroSet)::Vector{N} where {N<:Real}
+    σ(d::AbstractVector{N}, Z::ZeroSet{N}) where {N<:Real}
 
 Return the support vector of a zero set.
 
@@ -92,7 +92,7 @@ Return the support vector of a zero set.
 The returned value is the origin since it is the only point that belongs to this
 set.
 """
-function σ(d::AbstractVector{N}, Z::ZeroSet)::Vector{N} where {N<:Real}
+function σ(d::AbstractVector{N}, Z::ZeroSet{N}) where {N<:Real}
     return zeros(d)
 end
 

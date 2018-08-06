@@ -14,16 +14,18 @@ export LazySet,
 
 Abstract type for convex sets, i.e., sets characterized by a (possibly infinite)
 intersection of halfspaces, or equivalently, sets ``S`` such that for any two
-elements ``x, y ∈ S`` and ``0 ≤ λ ≤ 1`` it holds that ``λ x + (1-λ) y ∈ S``.
+elements ``x, y ∈ S`` and ``0 ≤ λ ≤ 1`` it holds that ``λ·x + (1-λ)·y ∈ S``.
 
 ### Notes
 
-`LazySet` types should be parameterized with a type `N`, typically
-`N<:Real`, for using different numeric types.
+`LazySet` types should be parameterized with a type `N`, typically `N<:Real`,
+for using different numeric types.
 
 Every concrete `LazySet` must define the following functions:
-- `σ(d::AbstractVector{N}, S::LazySet)` -- the
-    support vector of `S` in a given direction `d`
+- `σ(d::AbstractVector{N}, S::LazySet{N}) where {N<:Real}` -- the support vector
+    of `S` in a given direction `d`; note that the numeric type `N` of `d` and
+    `S` must be identical; for some set types `N` may be more restrictive than
+    `Real`
 - `dim(S::LazySet)::Int` -- the ambient dimension of `S`
 
 ```jldoctest
@@ -68,6 +70,10 @@ Evaluate the support function of a set in a given direction.
 ### Output
 
 The support function of the set `S` for the direction `d`.
+
+### Notes
+
+The numeric type of the direction and the set must be identical.
 """
 function ρ(d::AbstractVector{N}, S::LazySet{N})::N where {N<:Real}
     return dot(d, σ(d, S))
