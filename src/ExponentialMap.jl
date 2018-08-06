@@ -261,7 +261,7 @@ true
 """
 function ∈(x::AbstractVector{N}, em::ExponentialMap{N, <:LazySet{N}})::Bool where {N<:Real}
     @assert length(x) == dim(em)
-    return ∈(exp.(-em.spmexp.M) * x, em.X)
+    return ∈(expmv(-one(N), em.spmexp.M, x), em.X)
 end
 
 """
