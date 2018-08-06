@@ -198,7 +198,7 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 ```@docs
 Interval
 dim(::Interval)
-σ(::AbstractVector{Real}, ::Interval{Real, IntervalArithmetic.AbstractInterval{Real}})
+σ(::AbstractVector{Real}, ::Interval{Real})
 ∈(::AbstractVector, ::Interval)
 ∈(::Real, ::Interval)
 an_element(::Interval)
@@ -411,7 +411,7 @@ Inherited from [`AbstractSingleton`](@ref):
 ```@docs
 ZeroSet
 dim(::ZeroSet)
-σ(::AbstractVector{N}, ::ZeroSet) where {N<:Real}
+σ(::AbstractVector{N}, ::ZeroSet{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::ZeroSet{N}) where {N<:Real}
 element(::ZeroSet)
 element(::ZeroSet, ::Int)

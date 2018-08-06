@@ -175,7 +175,7 @@ LinearMap
 *(::AbstractMatrix{Real}, ::LazySet{Real})
 *(::Real, ::LazySet{Real})
 dim(::LinearMap)
-σ(::AbstractVector{Real}, ::LinearMap{Real, LazySet{Real}, Real, Matrix{Real}})
+σ(::AbstractVector{Real}, ::LinearMap{Real})
 ∈(::AbstractVector{Real}, ::LinearMap{Real, LazySet{Real}, Real, Matrix{Real}})
 an_element(::LinearMap)
 ```
@@ -223,7 +223,7 @@ ProjectionSparseMatrixExp
 
 ```@docs
 SymmetricIntervalHull
-σ(::V, ::SymmetricIntervalHull{N}) where {N<:Real, V<:AbstractVector{N}}
+σ(::AbstractVector{N}, ::SymmetricIntervalHull{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
