@@ -190,7 +190,7 @@ end
                    constraint::LinearConstraint{N};
                    [linear_search]::Bool=(
                     length(P.constraints) < BINARY_SEARCH_THRESHOLD)
-                  )::Void where {N<:Real}
+                  )::Nothing where {N<:Real}
 
 Add a linear constraint to a polygon in constraint representation, keeping the
 constraints sorted by their normal directions.
@@ -208,7 +208,7 @@ function addconstraint!(P::AbstractHPolygon{N},
                         constraint::LinearConstraint{N};
                         linear_search::Bool=(
                          length(P.constraints) < BINARY_SEARCH_THRESHOLD)
-                       )::Void where {N<:Real}
+                       )::Nothing where {N<:Real}
     k = length(P.constraints)
     if k > 0
         d = constraint.a

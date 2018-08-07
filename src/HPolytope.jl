@@ -139,7 +139,7 @@ end
 
 """
     addconstraint!(P::HPolytope{N},
-                   constraint::LinearConstraint{N})::Void where {N<:Real}
+                   constraint::LinearConstraint{N})::Nothing where {N<:Real}
 
 Add a linear constraint to a polyhedron in H-representation.
 
@@ -158,7 +158,7 @@ It is left to the user to guarantee that the dimension of all linear constraints
 is the same.
 """
 function addconstraint!(P::HPolytope{N},
-                        constraint::LinearConstraint{N})::Void where {N<:Real}
+                        constraint::LinearConstraint{N})::Nothing where {N<:Real}
     push!(P.constraints, constraint)
     return nothing
 end
