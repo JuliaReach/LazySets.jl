@@ -31,11 +31,11 @@ struct LinearMap{N<:Real, S<:LazySet{N},
             S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}}
         @assert dim(X) == size(M, 2) "a linear map of size $(size(M)) cannot " *
             "be applied to a set of dimension $(dim(X))"
-        return new(M, X)
+        return new{N, S, NM, MAT}(M, X)
     end
 end
 
-# type-less convenience constructor
+# convenience constructor without type parameter
 LinearMap(M::MAT,
           X::S) where {N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} =
     LinearMap{N, S, NM, MAT}(M, X)

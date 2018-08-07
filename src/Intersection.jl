@@ -23,11 +23,12 @@ struct Intersection{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
             {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}}
         @assert dim(X) == dim(Y) "sets in an intersection must have the same " *
             "dimension"
-        return new(X, Y)
+        return new{N, S1, S2}(X, Y)
     end
 end
-# type-less convenience constructor
-Intersection(X::S1, Y::S2) where {S1<:LazySet{N}, S2<:LazySet{N}} where {N<:Real} =
+
+# convenience constructor without type parameter
+Intersection(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} =
     Intersection{N, S1, S2}(X, Y)
 
 # EmptySet is the absorbing element for Intersection
@@ -153,9 +154,11 @@ struct IntersectionArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
 end
 
-# type-less convenience constructor
-IntersectionArray(arr::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
-    IntersectionArray{N, S}(arr)
+if VERSION < v"0.7-"
+    # convenience constructor without type parameter
+    IntersectionArray(arr::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
+        IntersectionArray{N, S}(arr)
+end
 
 # constructor for an empty sum with optional size hint and numeric type
 function IntersectionArray(n::Int=0, N::Type=Float64)::IntersectionArray

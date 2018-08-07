@@ -15,6 +15,7 @@ Type that represents a convex polytope in V-representation.
 struct VPolytope{N<:Real} <: AbstractPolytope{N}
     vertices::Vector{Vector{N}}
 end
+
 # constructor for a VPolytope with empty vertices list
 VPolytope{N}() where {N<:Real} = VPolytope{N}(Vector{N}(0))
 

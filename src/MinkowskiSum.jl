@@ -31,11 +31,12 @@ struct MinkowskiSum{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
             {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}}
         @assert dim(X) == dim(Y) "sets in a Minkowski sum must have the " *
             "same dimension"
-        return new(X, Y)
+        return new{N, S1, S2}(X, Y)
     end
 end
-# type-less convenience constructor
-MinkowskiSum(X::S1, Y::S2) where {S1<:LazySet{N}, S2<:LazySet{N}} where {N<:Real} =
+
+# convenience constructor without type parameter
+MinkowskiSum(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} =
     MinkowskiSum{N, S1, S2}(X, Y)
 
 # ZeroSet is the neutral element for MinkowskiSum
@@ -134,9 +135,11 @@ struct MinkowskiSumArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
 end
 
-# type-less convenience constructor
-MinkowskiSumArray(arr::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
-    MinkowskiSumArray{N, S}(arr)
+if VERSION < v"0.7-"
+    # convenience constructor without type parameter
+    MinkowskiSumArray(arr::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
+        MinkowskiSumArray{N, S}(arr)
+end
 
 # constructor for an empty sum with optional size hint and numeric type
 function MinkowskiSumArray(n::Int=0, N::Type=Float64)::MinkowskiSumArray
@@ -277,7 +280,7 @@ struct CacheMinkowskiSum{N<:Real, S<:LazySet{N}} <: LazySet{N}
         new{N, S}(arr, Dict{AbstractVector{N}, CachedPair{N}}())
 end
 
-# type-less convenience constructor
+# convenience constructor without type parameter
 CacheMinkowskiSum(arr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
     CacheMinkowskiSum{N, S}(arr)
 

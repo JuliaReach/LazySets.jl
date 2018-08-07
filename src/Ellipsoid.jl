@@ -65,13 +65,14 @@ struct Ellipsoid{N<:AbstractFloat} <: AbstractPointSymmetric{N}
     shape_matrix::AbstractMatrix{N}
 
     # default constructor with dimension check
-    function Ellipsoid{N}(c::AbstractVector{N}, Q::AbstractMatrix{N}) where {N<:AbstractFloat}
+    function Ellipsoid{N}(c::AbstractVector{N},
+                          Q::AbstractMatrix{N}) where {N<:AbstractFloat}
         @assert length(c) == checksquare(Q)
-        return new(c, Q)
+        return new{N}(c, Q)
     end
 end
 
-# type-less convenience constructor
+# convenience constructor without type parameter
 Ellipsoid(c::AbstractVector{N}, Q::AbstractMatrix{N}) where {N<:AbstractFloat} =
     Ellipsoid{N}(c, Q)
 

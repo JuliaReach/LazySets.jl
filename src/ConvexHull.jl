@@ -43,11 +43,12 @@ struct ConvexHull{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
             {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}}
         @assert dim(X) == dim(Y) "sets in a convex hull must have the same " *
             "dimension"
-        return new(X, Y)
+        return new{N, S1, S2}(X, Y)
     end
 end
-# type-less convenience constructor
-ConvexHull(X::S1, Y::S2) where {S1<:LazySet{N}, S2<:LazySet{N}} where {N<:Real} =
+
+# convenience constructor without type parameter
+ConvexHull(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} =
     ConvexHull{N, S1, S2}(X, Y)
 
 # EmptySet is the neutral element for ConvexHull
@@ -133,9 +134,11 @@ struct ConvexHullArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
 end
 
-# type-less convenience constructor
-ConvexHullArray(a::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
-    ConvexHullArray{N, S}(a)
+if VERSION < v"0.7-"
+    # convenience constructor without type parameter
+    ConvexHullArray(a::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
+        ConvexHullArray{N, S}(a)
+end
 
 # constructor for an empty hull with optional size hint and numeric type
 function ConvexHullArray(n::Int=0, N::Type=Float64)::ConvexHullArray

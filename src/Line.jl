@@ -35,7 +35,7 @@ struct Line{N<:Real, V<:AbstractVector{N}} <: LazySet{N}
     end
 end
 
-# type-less convenience constructor
+# convenience constructor without type parameter
 Line(a::V, b::N) where {N<:Real, V<:AbstractVector{N}} = Line{N, V}(a, b)
 
 # constructor from a LinearConstraint

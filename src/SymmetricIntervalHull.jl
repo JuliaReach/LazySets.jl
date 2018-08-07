@@ -30,13 +30,15 @@ struct SymmetricIntervalHull{N<:Real, S<:LazySet{N}} <: AbstractHyperrectangle{N
     X::S
     cache::Vector{N}
 
-    function SymmetricIntervalHull{N, S}(X::S) where {S<:LazySet{N}} where {N<:Real}
+    # default constructor that initializes cache
+    function SymmetricIntervalHull{N, S}(X::S) where {N<:Real, S<:LazySet{N}}
         cache = fill(-one(N), dim(X))
         return new{N, S}(X, cache)
     end
 end
-# type-less convenience constructor
-SymmetricIntervalHull(X::S) where {S<:LazySet{N}} where {N<:Real} =
+
+# convenience constructor without type parameter
+SymmetricIntervalHull(X::S) where {N<:Real, S<:LazySet{N}} =
     SymmetricIntervalHull{N, S}(X)
 
 """

@@ -27,6 +27,7 @@ Use `addconstraint!` to iteratively add the edges in a sorted way.
 struct HPolygon{N<:Real} <: AbstractHPolygon{N}
     constraints::Vector{LinearConstraint{N}}
 end
+
 # constructor for an HPolygon with no constraints
 HPolygon{N}() where {N<:Real} = HPolygon{N}(Vector{LinearConstraint{N}}(0))
 

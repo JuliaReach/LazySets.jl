@@ -15,7 +15,8 @@ Type that represents the zero set, i.e., the set that only contains the origin.
 struct ZeroSet{N<:Real} <: AbstractSingleton{N}
     dim::Int
 end
-# type-less convenience constructor
+
+# default constructor of type Float64
 ZeroSet(dim::Int) = ZeroSet{Float64}(dim)
 
 

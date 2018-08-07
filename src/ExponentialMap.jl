@@ -158,9 +158,6 @@ struct ExponentialMap{N, S<:LazySet{N}} <: LazySet{N}
     spmexp::SparseMatrixExp{N}
     X::S
 end
-# type-less convenience constructor
-ExponentialMap(spmexp::SparseMatrixExp, X::S) where {S<:LazySet{N}} where {N} =
-    ExponentialMap{N, S}(spmexp, X)
 
 """
 ```
@@ -297,10 +294,13 @@ struct ExponentialProjectionMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
     projspmexp::ProjectionSparseMatrixExp
     X::S
 end
-# type-less convenience constructor
-ExponentialProjectionMap(projspmexp::ProjectionSparseMatrixExp, X::S
-                        ) where {S<:LazySet{N}} where {N<:Real} =
-    ExponentialProjectionMap{N, S}(projspmexp, X)
+
+if VERSION < v"0.7-"
+    # convenience constructor without type parameter
+    ExponentialProjectionMap(projspmexp::ProjectionSparseMatrixExp, X::S
+                            ) where {S<:LazySet{N}} where {N<:Real} =
+        ExponentialProjectionMap{N, S}(projspmexp, X)
+end
 
 """
 ```
