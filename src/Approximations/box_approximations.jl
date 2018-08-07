@@ -99,8 +99,8 @@ functions in the same directions.
     zero_N = zero(N)
     one_N = one(N)
     n = dim(S)
-    c = Vector{N}(n)
-    r = Vector{N}(n)
+    c = Vector{N}(undef, n)
+    r = Vector{N}(undef, n)
     d = zeros(N, n)
     @inbounds for i in 1:n
         d[i] = one_N
