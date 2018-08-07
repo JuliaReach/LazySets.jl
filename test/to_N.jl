@@ -19,7 +19,7 @@ function to_N(N::Type{NUM}, a::AbstractVector{NUM}) where {NUM<:Real}
 end
 
 function to_N(N::Type{<:Real}, a::AbstractVector{<:Real})
-    r = Vector{N}(length(a))
+    r = Vector{N}(undef, length(a))
     for i in eachindex(a)
         r[i] = to_N(N, a[i])
     end
@@ -49,10 +49,10 @@ function to_N(N::Type{NUM}, a::AbstractVector{<:AbstractVector{NUM}}) where {NUM
 end
 
 function to_N(N::Type{<:Real}, a::AbstractVector{<:AbstractVector{<:Real}})
-    r = Vector{Vector{N}}(length(a))
+    r = Vector{Vector{N}}(undef, length(a))
     for i in eachindex(a)
         v = a[i]
-        b = Vector{N}(length(v))
+        b = Vector{N}(undef, length(v))
         for j in eachindex(v)
             b[j] = to_N(N, v[j])
         end
