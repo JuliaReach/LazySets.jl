@@ -51,25 +51,16 @@ for N in [Float64, Rational{Int}, Float32]
     d = N[1., -1.]
     @test σ(d, h) == N[1., -2.]
 
-    function isin(e, list)
-    for x in list
-        if x == e
-        return true
-        end
-    end
-    return false
-    end
-
     # 2D Hyperrectangle not centered, not same radius, for vertex representation,
     # radius, and diameter
     h = Hyperrectangle(N[3., 2.], N[2., 1.])
     vl = vertices_list(h)
     # Test Vertices
     @test length(vl) == 4
-    @test isin(N[1., 1.], vl) == true
-    @test isin(N[1., 3.], vl) == true
-    @test isin(N[5., 1.], vl) == true
-    @test isin(N[5., 3.], vl) == true
+    @test N[1., 1.] ∈ vl
+    @test N[1., 3.] ∈ vl
+    @test N[5., 1.] ∈ vl
+    @test N[5., 3.] ∈ vl
     # norm
     @test norm(h) == norm(N[5., 3.], Inf)
     # radius
