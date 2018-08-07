@@ -4,6 +4,7 @@ different Julia versions.
 =#
 
 using Compat
+using Compat: copyto!, axes
 import Compat.String
 export _At_mul_B
 
