@@ -170,14 +170,14 @@ function monotone_chain!(points::Vector{S}; sort::Bool=true
 
     # build lower hull
     lower = Vector{S}()
-    build_hull!(lower, indices(points)[1], points, zero_N)
+    build_hull!(lower, axes(points)[1], points, zero_N)
 
     # build upper hull
     upper = Vector{S}()
-    build_hull!(upper, reverse(indices(points)[1]), points, zero_N)
+    build_hull!(upper, reverse(axes(points)[1]), points, zero_N)
 
     # remove the last point of each segment because they are repeated
-    copy!(points, @view(lower[1:end-1]))
-    copy!(points, length(lower), @view(upper[1:end-1]))
+    copyto!(points, @view(lower[1:end-1]))
+    copyto!(points, length(lower), @view(upper[1:end-1]))
     return resize!(points, length(lower) + length(upper) - 2)
 end
