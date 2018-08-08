@@ -16,7 +16,7 @@ for N in [Float64, Float32] # TODO Rational{Int}
     p = tovrep(overapproximate(b, ε))
     for v in vertices_list(p)
     @test norm(v) >= N(1.)
-    @test norm(v) <= N(1.+ε)
+    @test norm(v) <= N(1. + ε)
     end
 
     # Check that there are no redundant constraints for a ballinf
