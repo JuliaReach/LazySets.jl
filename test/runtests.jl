@@ -1,6 +1,9 @@
 #!/usr/bin/env julia
 using LazySets
-using Compat, Compat.Test
+
+# compatibility between Julia versions
+include("../src/compat.jl")
+using Compat.Test
 
 # conversion between numeric types
 include("to_N.jl")
