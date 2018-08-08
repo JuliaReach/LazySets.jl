@@ -1,9 +1,8 @@
-import LazySets.Approximations,
-       Approximations.UnitVector,
-       Approximations.BoxDirections,
-       Approximations.OctDirections,
-       Approximations.BoxDiagDirections,
-       Approximations.overapproximate
+import LazySets.Approximations: UnitVector,
+                                BoxDirections,
+                                OctDirections,
+                                BoxDiagDirections,
+                                overapproximate
 
 for N in [Float64, Float32, Rational{Int}]
     # unit vector

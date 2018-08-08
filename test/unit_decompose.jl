@@ -1,8 +1,7 @@
-import LazySets.Approximations,
-       Approximations.decompose,
-       Approximations.BoxDirections,
-       Approximations.OctDirections,
-       Approximations.BoxDiagDirections
+import LazySets.Approximations: decompose,
+                                BoxDirections,
+                                OctDirections,
+                                BoxDiagDirections
 
 for N in [Float64, Float32] # TODO Rational{Int}
     # =============================
