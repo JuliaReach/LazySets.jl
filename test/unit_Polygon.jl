@@ -53,53 +53,53 @@ for N in [Float64, Float32, Rational{Int}]
 
 
     # HPolygon/HPolygonOpt tests
-    for p in [p, po]
+    for hp in [p, po]
         # Test Dimension
-        @test dim(p) == 2
+        @test dim(hp) == 2
 
         # test support vector, with linear and binary search
         d = N[1., 0.]
-        @test σ(d, p) == N[4., 2.]
-        @test σ(d, p, linear_search=true) == σ(d, p, linear_search=false)
+        @test σ(d, hp) == N[4., 2.]
+        @test σ(d, hp, linear_search=true) == σ(d, hp, linear_search=false)
         d = N[0., 1.]
-        @test σ(d, p) == N[2., 4.]
-        @test σ(d, p, linear_search=true) == σ(d, p, linear_search=false)
+        @test σ(d, hp) == N[2., 4.]
+        @test σ(d, hp, linear_search=true) == σ(d, hp, linear_search=false)
         d = N[-1., 0.]
-        @test σ(d, p) == N[-1., 1.]
-        @test σ(d, p, linear_search=true) == σ(d, p, linear_search=false)
+        @test σ(d, hp) == N[-1., 1.]
+        @test σ(d, hp, linear_search=true) == σ(d, hp, linear_search=false)
         d = N[0., -1.]
-        @test σ(d, p) == N[0., 0.]
-        @test σ(d, p, linear_search=true) == σ(d, p, linear_search=false)
+        @test σ(d, hp) == N[0., 0.]
+        @test σ(d, hp, linear_search=true) == σ(d, hp, linear_search=false)
         d = N[1., -1.]
-        @test σ(d, p) == N[4., 2.]
-        @test σ(d, p, linear_search=true) == σ(d, p, linear_search=false)
+        @test σ(d, hp) == N[4., 2.]
+        @test σ(d, hp, linear_search=true) == σ(d, hp, linear_search=false)
 
         # membership
-        @test ∈(N[0., 0.], p)
-        @test ∈(N[4., 2.], p)
-        @test ∈(N[2., 4.], p)
-        @test ∈(N[-1., 1.], p)
-        @test ∈(N[2., 3.], p)
-        @test ∈(N[1., 1.], p)
-        @test ∈(N[3., 2.], p)
-        @test ∈(N[5./4., 7./4.], p)
-        @test !∈(N[4., 1.], p)
-        @test !∈(N[5., 2.], p)
-        @test !∈(N[3., 4.], p)
-        @test !∈(N[-1., 5.], p)
+        @test ∈(N[0., 0.], hp)
+        @test ∈(N[4., 2.], hp)
+        @test ∈(N[2., 4.], hp)
+        @test ∈(N[-1., 1.], hp)
+        @test ∈(N[2., 3.], hp)
+        @test ∈(N[1., 1.], hp)
+        @test ∈(N[3., 2.], hp)
+        @test ∈(N[5./4., 7./4.], hp)
+        @test !∈(N[4., 1.], hp)
+        @test !∈(N[5., 2.], hp)
+        @test !∈(N[3., 4.], hp)
+        @test !∈(N[-1., 5.], hp)
 
         # an_element function
-        @test an_element(p) ∈ p
-        p_shallow = HPolygon{N}()
-        @test_throws AssertionError an_element(p_shallow)
-        addconstraint!(p_shallow, c1)
-        @test_throws AssertionError an_element(p_shallow)
+        @test an_element(hp) ∈ hp
+        hp_shallow = HPolygon{N}()
+        @test_throws AssertionError an_element(hp_shallow)
+        addconstraint!(hp_shallow, c1)
+        @test_throws AssertionError an_element(hp_shallow)
 
         # hrep conversion
-        @test tohrep(p) == p
+        @test tohrep(hp) == hp
 
         # constraints list getter
-        @test constraints_list(p) == p.constraints
+        @test constraints_list(hp) == hp.constraints
     end
 
     # Test VRepresentation
