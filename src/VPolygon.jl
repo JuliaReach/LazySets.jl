@@ -44,6 +44,13 @@ VPolygon(vertices::Vector{Vector{N}};
     VPolygon{N}(vertices; apply_convex_hull=apply_convex_hull,
                 algorithm=algorithm)
 
+# constructor with empty vertices list
+VPolygon{N}() where {N<:Real} =
+    VPolygon{N}(Vector{Vector{N}}(), apply_convex_hull=false)
+
+# constructor with no vertices of type Float64
+VPolygon() = VPolygon{Float64}()
+
 
 # --- AbstractPolygon interface functions ---
 
