@@ -126,7 +126,7 @@ Support vector in the given direction.
 """
 function σ(d::AbstractVector{N}, B::Ball1{N}) where {N<:Real}
     res = copy(B.center)
-    imax = indmax(abs.(d))
+    imax = argmax(abs.(d))
     res[imax] += sign(d[imax]) * B.radius
     return res
 end
