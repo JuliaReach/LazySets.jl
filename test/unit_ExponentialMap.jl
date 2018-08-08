@@ -47,7 +47,7 @@ for N in [Float64, Float32]
     @test norm(y - diagm(ones(N, n))) == 0
 
     # columns & rows
-    me2 = SparseMatrixExp(speye(N, n))
+    me2 = SparseMatrixExp(sparse(N(1) * I, n, n))
     v = zeros(N, n)
     v[1] = N(e)
     @test get_columns(me2, [1, 2])[:, 1] == get_column(me2, 1) == v
@@ -93,8 +93,8 @@ for N in [Float64, Float32]
     assert(mod(n, 3) == 0)
     nb = div(n, 3)
     # the projection of exp(A) on the (m, m)-dimensional right-most upper block
-    R = [spzeros(N, nb, nb); spzeros(N, nb, nb); speye(N, nb, nb)]
-    L = [speye(N, nb, nb) spzeros(N, nb, nb) spzeros(N, nb, nb)]
+    R = [spzeros(N, nb, nb); spzeros(N, nb, nb); sparse(N(1) * I, nb, nb)]
+    L = [sparse(N(1) * I, nb, nb) spzeros(N, nb, nb) spzeros(N, nb, nb)]
     proj = ProjectionSparseMatrixExp(L, me, R)
 
     # build an exponential projection map : it is the application of the projection
