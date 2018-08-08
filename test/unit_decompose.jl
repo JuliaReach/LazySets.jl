@@ -9,7 +9,7 @@ for N in [Float64, Float32] # TODO Rational{Int}
     # Check that Issue #43 is fixed
     # =============================
 
-    const CPA = CartesianProductArray
+    CPA = CartesianProductArray
     X = CPA([BallInf(to_N(N, [0.767292, 0.936613]), to_N(N, 0.1)),
              BallInf(to_N(N, [0.734104, 0.87296]), to_N(N, 0.1))])
     Y = to_N(N, [1.92664 1.00674 1.0731 -0.995149;
