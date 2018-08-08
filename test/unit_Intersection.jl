@@ -39,7 +39,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test ∈(ones(N, 2), IA) && !∈(N[5., 5.], IA)
 
     # array getter
-    v = Vector{LazySet{N}}(0)
+    v = Vector{LazySet{N}}()
     @test array(IntersectionArray(v)) ≡ v
 
     # constructor with size hint and type

@@ -65,7 +65,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test LazySets.is_array_constructor(MinkowskiSumArray)
 
     # array getter
-    v = Vector{LazySet{N}}(0)
+    v = Vector{LazySet{N}}()
     @test array(MinkowskiSumArray(v)) ≡ v
 
     # constructor with size hint and type

@@ -51,7 +51,7 @@ for N in [Float64, Rational{Int}, Float32]
     C = ConvexHullArray([Singleton(to_N(N, [1.0, 0.5])), Singleton(to_N(N, [1.1, 0.2])), Singleton(to_N(N, [1.4, 0.3])), Singleton(to_N(N, [1.7, 0.5])), Singleton(to_N(N, [1.4, 0.8]))])
 
     # array getter
-    v = Vector{LazySet{N}}(0)
+    v = Vector{LazySet{N}}()
     @test array(ConvexHullArray(v)) ≡ v
 
     # in-place modification
