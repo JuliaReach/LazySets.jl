@@ -70,5 +70,5 @@ for N in [Float64, Rational{Int}, Float32]
 end
 
 # default Float64 constructors
-@test HPolytope() isa LazySets.HPolytope{Float64}
-@test VPolytope() isa LazySets.VPolytope{Float64}
+@test HPolytope() isa HPolytope{Float64}
+@test VPolytope() isa VPolytope{Float64}
