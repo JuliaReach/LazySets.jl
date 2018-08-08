@@ -116,7 +116,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test LazySets.is_array_constructor(CartesianProductArray)
 
     # standard constructor
-    v = Vector{LazySet{N}}(0)
+    v = Vector{LazySet{N}}()
     push!(v, Singleton(N[1., 2.]))
     push!(v, Singleton(N[3., 4.]))
     cpa = CartesianProductArray(v)
