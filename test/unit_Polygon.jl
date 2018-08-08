@@ -82,7 +82,7 @@ for N in [Float64, Float32, Rational{Int}]
         @test ∈(N[2., 3.], hp)
         @test ∈(N[1., 1.], hp)
         @test ∈(N[3., 2.], hp)
-        @test ∈(N[5./4., 7./4.], hp)
+        @test ∈(N[5. / 4., 7. / 4.], hp)
         @test !∈(N[4., 1.], hp)
         @test !∈(N[5., 2.], hp)
         @test !∈(N[3., 4.], hp)
