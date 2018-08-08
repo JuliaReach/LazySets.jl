@@ -142,7 +142,7 @@ end
 
 # constructor for an empty hull with optional size hint and numeric type
 function ConvexHullArray(n::Int=0, N::Type=Float64)::ConvexHullArray
-    a = Vector{LazySet{N}}(0)
+    a = Vector{LazySet{N}}()
     sizehint!(a, n)
     return ConvexHullArray(a)
 end

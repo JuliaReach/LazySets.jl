@@ -162,7 +162,7 @@ end
 
 # constructor for an empty sum with optional size hint and numeric type
 function IntersectionArray(n::Int=0, N::Type=Float64)::IntersectionArray
-    arr = Vector{LazySet{N}}(0)
+    arr = Vector{LazySet{N}}()
     sizehint!(arr, n)
     return IntersectionArray(arr)
 end

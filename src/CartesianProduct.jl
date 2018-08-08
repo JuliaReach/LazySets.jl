@@ -168,7 +168,7 @@ end
 
 # constructor for an empty product with optional size hint and numeric type
 function CartesianProductArray(n::Int=0, N::Type=Float64)::CartesianProductArray
-    arr = Vector{LazySet{N}}(0)
+    arr = Vector{LazySet{N}}()
     sizehint!(arr, n)
     return CartesianProductArray(arr)
 end
