@@ -47,7 +47,7 @@ HPolygonOpt(constraints::Vector{LinearConstraint{N}},
 
 # constructor for an HPolygon with no constraints
 HPolygonOpt{N}() where {N<:Real} =
-    HPolygonOpt{N}(Vector{LinearConstraint{N}}(0))
+    HPolygonOpt{N}(Vector{LinearConstraint{N}}())
 
 # constructor for an HPolygon with no constraints of type Float64
 HPolygonOpt() = HPolygonOpt{Float64}()

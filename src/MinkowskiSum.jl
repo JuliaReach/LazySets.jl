@@ -143,7 +143,7 @@ end
 
 # constructor for an empty sum with optional size hint and numeric type
 function MinkowskiSumArray(n::Int=0, N::Type=Float64)::MinkowskiSumArray
-    arr = Vector{LazySet{N}}(0)
+    arr = Vector{LazySet{N}}()
     sizehint!(arr, n)
     return MinkowskiSumArray(arr)
 end
@@ -286,7 +286,7 @@ CacheMinkowskiSum(arr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
 
 # constructor for an empty sum with optional size hint and numeric type
 function CacheMinkowskiSum(n::Int=0, N::Type=Float64)::CacheMinkowskiSum
-    arr = Vector{LazySet{N}}(0)
+    arr = Vector{LazySet{N}}()
     sizehint!(arr, n)
     return CacheMinkowskiSum(arr)
 end

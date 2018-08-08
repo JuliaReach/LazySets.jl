@@ -84,8 +84,8 @@ function intersection(H1::AbstractHyperrectangle{N},
     c2 = center(H2)
     r1 = radius_hyperrectangle(H1)
     r2 = radius_hyperrectangle(H2)
-    high = Vector{N}(n)
-    low = Vector{N}(n)
+    high = Vector{N}(undef, n)
+    low = Vector{N}(undef, n)
     for i in 1:n
         high1 = c1[i] + r1[i]
         low1 = c1[i] - r1[i]

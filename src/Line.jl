@@ -106,7 +106,7 @@ function an_element(L::Line{N})::Vector{N} where N<:Real
         return zeros(N, 2)
     end
     i = L.a[1] == zero(N) ? 2 : 1
-    x = Vector{N}(2)
+    x = Vector{N}(undef, 2)
     x[3-i] = one(N)
     x[i] = (L.b - L.a[3-i]) / L.a[i]
     return x

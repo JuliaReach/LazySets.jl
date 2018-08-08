@@ -136,7 +136,7 @@ function ballinf_approximation(S::LazySet{N})::BallInf{N} where {N<:Real}
     zero_N = zero(N)
     one_N = one(N)
     n = dim(S)
-    c = Vector{N}(n)
+    c = Vector{N}(undef, n)
     r = zero_N
     d = zeros(N, n)
     @inbounds for i in 1:n

@@ -44,6 +44,13 @@ VPolygon(vertices::Vector{Vector{N}};
     VPolygon{N}(vertices; apply_convex_hull=apply_convex_hull,
                 algorithm=algorithm)
 
+# constructor with empty vertices list
+VPolygon{N}() where {N<:Real} =
+    VPolygon{N}(Vector{Vector{N}}(), apply_convex_hull=false)
+
+# constructor with no vertices of type Float64
+VPolygon() = VPolygon{Float64}()
+
 
 # --- AbstractPolygon interface functions ---
 
@@ -93,7 +100,7 @@ function tohrep(P::VPolygon{N}, ::Type{HPOLYGON}=HPolygon
     n = length(vl)
     if n == 0
         # no vertex -> no constraint
-        constraints_list = Vector{LinearConstraint{N}}(0)
+        constraints_list = Vector{LinearConstraint{N}}(undef, 0)
     elseif n == 1
         # only one vertex -> use function for singletons
         return convert(HPOLYGON, Singleton(vl[1]))

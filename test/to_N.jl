@@ -33,7 +33,7 @@ function to_N(N::Type{NUM}, m::AbstractMatrix{NUM}) where {NUM<:Real}
 end
 
 function to_N(N::Type{<:Real}, m::AbstractMatrix{<:Real})
-    r = Matrix{N}(size(m))
+    r = Matrix{N}(undef, size(m))
     for j = 1:size(m,2)
         for i = 1:size(m,1)
             r[i, j] = to_N(N, m[i, j])
