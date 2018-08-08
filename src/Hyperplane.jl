@@ -82,7 +82,7 @@ Return some element of a hyperplane.
 
 ### Output
 
-An element in the hyperplane.
+An element on the hyperplane.
 """
 function an_element(hp::Hyperplane{N})::Vector{N} where {N<:Real}
     return an_element_helper(hp)
@@ -178,32 +178,33 @@ end
 
 """
     an_element_helper(hp::Hyperplane{N},
-                      first_nonzero_entry_a::Int)::Vector{N} where {N<:Real}
+                      [nonzero_entry_a]::Int)::Vector{N} where {N<:Real}
 
 Helper function that computes an element on a hyperplane's hyperplane.
 
 ### Input
 
 - `hp` -- hyperplane
-- `first_nonzero_entry_a` -- index such that `hp.a` is different from 0
+- `nonzero_entry_a` -- (optional, default: computes the first index) index `i`
+                       such that `hp.a[i]` is different from 0
 
 ### Output
 
-An element on a hyperplane's hyperplane.
+An element on a hyperplane.
 
 ### Algorithm
 
 We compute the point on the hyperplane as follows:
 - We already found a nonzero entry of ``a`` in dimension, say, ``i``.
-- We set ``x[j] = 0`` for ``j ≠ i``.
 - We set ``x[i] = b / a[i]``.
+- We set ``x[j] = 0`` for all ``j ≠ i``.
 """
 @inline function an_element_helper(hp::Hyperplane{N},
-                                   first_nonzero_entry_a::Int=findfirst(hp.a)
+                                   nonzero_entry_a::Int=findnext(x -> x!=zero(N), hp.a, 1)
                                   )::Vector{N} where {N<:Real}
-    @assert first_nonzero_entry_a in 1:length(hp.a) "invalid index " *
-        "$first_nonzero_entry_a for hyperplane"
+    @assert nonzero_entry_a in 1:length(hp.a) "invalid index " *
+        "$nonzero_entry_a for hyperplane"
     x = zeros(N, dim(hp))
-    x[first_nonzero_entry_a] = hp.b / hp.a[first_nonzero_entry_a]
+    x[nonzero_entry_a] = hp.b / hp.a[nonzero_entry_a]
     return x
 end
