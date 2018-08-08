@@ -85,6 +85,10 @@ if VERSION < v"0.7-"
         Interval{N, IN}(interval)
 end
 
+# convenience constructor without type parameter for Rational
+Interval(interval::IN) where {N<:Rational, IN <: AbstractInterval{N}} =
+    Interval{N, IntervalArithmetic.AbstractInterval{N}}(interval)
+
 # constructor from two numbers
 Interval(lo::N, hi::N) where {N<:Real} =
     Interval(IntervalArithmetic.Interval(lo, hi))
