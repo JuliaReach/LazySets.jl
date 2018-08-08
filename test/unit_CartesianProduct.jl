@@ -97,7 +97,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test ∈(N[2., 3., -.8, .9], cp)
     @test ∈(N[1., 1., -1., 0.], cp)
     @test ∈(N[3., 2., 0., 1.], cp)
-    @test ∈(N[5./4., 7./4., 1., 1.], cp)
+    @test ∈(N[5. / 4., 7. / 4., 1., 1.], cp)
     @test !∈(N[4., 1., 0., 0.], cp)
     @test !∈(N[5., 2., 0., 0.], cp)
     @test !∈(N[3., 4., 0., 0.], cp)
