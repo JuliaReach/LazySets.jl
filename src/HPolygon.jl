@@ -29,7 +29,7 @@ struct HPolygon{N<:Real} <: AbstractHPolygon{N}
 end
 
 # constructor for an HPolygon with no constraints
-HPolygon{N}() where {N<:Real} = HPolygon{N}(Vector{LinearConstraint{N}}(0))
+HPolygon{N}() where {N<:Real} = HPolygon{N}(Vector{LinearConstraint{N}}())
 
 # constructor for an HPolygon with no constraints of type Float64
 HPolygon() = HPolygon{Float64}()

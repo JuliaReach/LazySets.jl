@@ -17,7 +17,7 @@ struct VPolytope{N<:Real} <: AbstractPolytope{N}
 end
 
 # constructor for a VPolytope with empty vertices list
-VPolytope{N}() where {N<:Real} = VPolytope{N}(Vector{N}(0))
+VPolytope{N}() where {N<:Real} = VPolytope{N}(Vector{Vector{N}}())
 
 # constructor for a VPolytope with no vertices of type Float64
 VPolytope() = VPolytope{Float64}()
