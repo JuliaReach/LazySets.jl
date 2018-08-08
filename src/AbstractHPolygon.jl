@@ -98,7 +98,7 @@ function vertices_list(P::AbstractHPolygon{N},
                        apply_convex_hull::Bool=false
                       )::Vector{Vector{N}} where {N<:Real}
     n = length(P.constraints)
-    points = Vector{Vector{N}}(n)
+    points = Vector{Vector{N}}(undef, n)
     if n == 0
         return points
     end

@@ -75,7 +75,7 @@ function linear_map(M::AbstractMatrix, P::AbstractPolytope{N}) where {N<:Real}
         T = VPolytope
     end
     vlist = vertices_list(P)
-    new_vlist = Vector{Vector{N}}(length(vlist))
+    new_vlist = Vector{Vector{N}}(undef, length(vlist))
     @inbounds for (i, vi) in enumerate(vlist)
         new_vlist[i] =  M * vi
     end

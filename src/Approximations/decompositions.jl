@@ -403,7 +403,7 @@ The box approximation of the projection of `S`.
                          n::Int=dim(S),
                          ε::Real=Inf
                         )::Hyperrectangle where {N<:Real}
-    high = Vector{N}(length(block))
+    high = Vector{N}(undef, length(block))
     low = similar(high)
     for i in eachindex(block)
         high[i] = σ(sparsevec([block[i]], [one(N)], n), S)[block[i]]
