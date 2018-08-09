@@ -170,9 +170,11 @@ direction (1, 0).
 
 ### Algorithm
 
-The implementation uses the arctangent function with sign, `atan2`.
+The implementation uses the arctangent function with sign, `atan`, which for two
+arguments implements the
+[`atan2` function](https://en.wikipedia.org/wiki/Atan2).
 """
 function <=(u::AbstractVector{N},
             v::AbstractVector{N})::Bool where {N<:AbstractFloat}
-    return jump2pi(atan2(u[2], u[1])) <= jump2pi(atan2(v[2], v[1]))
+    return jump2pi(atan(u[2], u[1])) <= jump2pi(atan(v[2], v[1]))
 end
