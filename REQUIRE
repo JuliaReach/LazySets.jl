@@ -3,7 +3,7 @@ IterTools 0.2.1
 RecipesBase 0.3.1
 Plots 0.17.4
 GR 0.31.0
-Expokit 0.0.1
+Expokit 0.1.0
 MathProgBase 0.7.1
 GLPKMathProgInterface 0.4.2
 Requires 0.4.4
