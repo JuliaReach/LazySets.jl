@@ -168,7 +168,6 @@ Inherited from [`LazySet`](@ref):
 
 ```@docs
 Hyperrectangle
-Hyperrectangle(;kwargs...)
 center(::Hyperrectangle)
 radius_hyperrectangle(::Hyperrectangle)
 radius_hyperrectangle(::Hyperrectangle, ::Int)
