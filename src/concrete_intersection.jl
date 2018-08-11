@@ -78,7 +78,7 @@ Otherwise the result uses these borders in each dimension.
 """
 function intersection(H1::AbstractHyperrectangle{N},
                       H2::AbstractHyperrectangle{N}
-                     )::Union{<:Hyperrectangle{N}, EmptySet{N}} where {N<:Real}
+                     )::Union{Hyperrectangle{N}, EmptySet{N}} where {N<:Real}
     n = dim(H1)
     c1 = center(H1)
     c2 = center(H2)
