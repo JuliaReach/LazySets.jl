@@ -208,7 +208,7 @@ The support vector in the given direction.
 If the direction has norm zero, the result depends on the summand sets.
 """
 function σ(d::AbstractVector{N}, msa::MinkowskiSumArray{N}) where {N<:Real}
-    return _σ_helper(d, msa.array)
+    return σ_helper(d, msa.array)
 end
 
 # =============================================================
@@ -368,11 +368,11 @@ function σ(d::AbstractVector{N}, cms::CacheMinkowskiSum{N}) where {N<:Real}
         else
             # has only stored the support vector of the first k sets
             @assert k < l "invalid cache index"
-            svec = svec1 + _σ_helper(d, @view arr[k+1:l])
+            svec = svec1 + σ_helper(d, @view arr[k+1:l])
         end
     else
         # first-time computation of support vector
-        svec = _σ_helper(d, arr)
+        svec = σ_helper(d, arr)
     end
     # NOTE: make a copy of the direction vector (can be modified outside)
     cache[copy(d)] = CachedPair(l, svec)
@@ -467,9 +467,10 @@ end
 # Helper functions
 # ================
 
-@inline function _σ_helper(d::AbstractVector{<:Real},
-                           array::AbstractVector{<:LazySet})::Vector{<:Real}
-    svec = zeros(eltype(d), length(d))
+@inline function σ_helper(d::AbstractVector{N},
+                          array::AbstractVector{<:LazySet}
+                         )::Vector{N} where {N<:Real}
+    svec = zeros(N, length(d))
     for sj in array
         svec += σ(d, sj)
     end

@@ -120,7 +120,7 @@ Exact inputs are not supported.
 function σ(d::AbstractVector{N}, B::Ball2{N}) where {N<:AbstractFloat}
     dnorm = norm(d, 2)
     if dnorm <= zero(N)
-        return zeros(eltype(d), length(d))
+        return zeros(N, length(d))
     else
         return @. B.center + d * (B.radius / dnorm)
     end
