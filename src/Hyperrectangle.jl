@@ -74,13 +74,12 @@ LazySets.Hyperrectangle{Float64}([1.0, 1.0], [0.1, 0.2])
 function Hyperrectangle(;kwargs...)
     dict = Dict{Symbol, Any}(kwargs)
     if haskey(dict, :center) && haskey(dict, :radius)
-        return Hyperrectangle{eltype(dict[:center])}(dict[:center],
-                                                     dict[:radius])
+        return Hyperrectangle(dict[:center], dict[:radius])
     elseif haskey(dict, :high) && haskey(dict, :low)
         # compute center and radius from high and low vectors
         center = (dict[:high] .+ dict[:low]) ./ 2
         radius = abs.(dict[:high] .- center)
-        return Hyperrectangle{eltype(center)}(center, radius)
+        return Hyperrectangle(center, radius)
     end
     throw(ArgumentError("invalid arguments for Hyperrectangle: Use either " *
         "'center' and 'radius' or 'high' and 'low'."))

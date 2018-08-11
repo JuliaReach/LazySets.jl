@@ -44,7 +44,7 @@ function overapproximate(S::LazySet{N},
         pn = σ(DIR_NORTH(N), S)
         pw = σ(DIR_WEST(N), S)
         ps = σ(DIR_SOUTH(N), S)
-        constraints = Vector{LinearConstraint{eltype(pe)}}(undef, 4)
+        constraints = Vector{LinearConstraint{N}}(undef, 4)
         constraints[1] = LinearConstraint(DIR_EAST(N), dot(pe, DIR_EAST(N)))
         constraints[2] = LinearConstraint(DIR_NORTH(N), dot(pn, DIR_NORTH(N)))
         constraints[3] = LinearConstraint(DIR_WEST(N), dot(pw, DIR_WEST(N)))

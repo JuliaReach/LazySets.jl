@@ -467,9 +467,10 @@ end
 # Helper functions
 # ================
 
-@inline function _σ_helper(d::AbstractVector{<:Real},
-                           array::AbstractVector{<:LazySet})::Vector{<:Real}
-    svec = zeros(eltype(d), length(d))
+@inline function _σ_helper(d::AbstractVector{N},
+                           array::AbstractVector{<:LazySet}
+                          )::Vector{N} where {N<:Real}
+    svec = zeros(N, length(d))
     for sj in array
         svec += σ(d, sj)
     end
