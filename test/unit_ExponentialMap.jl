@@ -49,7 +49,7 @@ for N in [Float64, Float32]
     # columns & rows
     me2 = SparseMatrixExp(sparse(N(1) * I, n, n))
     v = zeros(N, n)
-    v[1] = N(e)
+    v[1] = N(ℯ)
     @test get_columns(me2, [1, 2])[:, 1] == get_column(me2, 1) == v
     @test get_rows(me2, [1, 2])[1, :] == transpose(get_row(me2, 1)) == v
 
