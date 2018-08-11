@@ -68,7 +68,7 @@ for N in [Float64, Float32]
     σ(sparsevec(d), emap)
 
     # check consistency with respect to explicit computation of the matrix exponential
-    svec_explicit = σ(d, expm(Matrix(m)) * b)
+    svec_explicit = σ(d, expmat(Matrix(m)) * b)
     if N == Float64
         # precision with Float32 is not sufficient
         @test svec ≈ svec_explicit
@@ -114,7 +114,7 @@ for N in [Float64, Float32]
     σ(sparsevec(d), projmap)
 
     # check consistency with respect to explicit computation of the matrix exponential
-    P = L * expm(Matrix(m)) * R
+    P = L * expmat(Matrix(m)) * R
     svec_explicit = σ(d, P*b)
     @test svec ≈ svec_explicit
 end
