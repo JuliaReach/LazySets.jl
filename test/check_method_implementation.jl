@@ -63,7 +63,7 @@ function check_method_implementation(interface::Type,
     for subtype in base_types
         found = false
         for args_func in args_funcs
-            if method_exists(func_name, args_func(subtype))
+            if hasmethod(func_name, args_func(subtype))
                 if print_results
                     println("found implementation of $func_name for $subtype")
                 end

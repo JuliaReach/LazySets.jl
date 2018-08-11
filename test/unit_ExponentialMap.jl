@@ -42,7 +42,7 @@ for N in [Float64, Float32]
     #me * me
 
     # check that the eye method is defined
-    @test method_exists(eye, Tuple{typeof(me)})
+    @test hasmethod(eye, Tuple{typeof(me)})
     y = to_N(N, eye(me))
     @test norm(y - diagm(ones(N, n))) == 0
 
