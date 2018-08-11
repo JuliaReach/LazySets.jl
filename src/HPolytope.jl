@@ -88,8 +88,8 @@ function σ(d::AbstractVector{N}, P::HPolytope{N}) where {N<:Real}
     c = -d
     n = length(constraints_list(P))
     @assert n > 0 "the polytope has no constraints"
-    A = zeros(n, dim(P))
-    b = zeros(n)
+    A = zeros(N, n, dim(P))
+    b = zeros(N, n)
     for (i, Pi) in enumerate(constraints_list(P))
         A[i, :] = Pi.a
         b[i] = Pi.b

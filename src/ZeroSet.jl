@@ -94,7 +94,8 @@ The returned value is the origin since it is the only point that belongs to this
 set.
 """
 function σ(d::AbstractVector{N}, Z::ZeroSet{N}) where {N<:Real}
-    return zeros(d)
+    @assert length(d) == dim(Z) "the direction has the wrong dimension"
+    return element(Z)
 end
 
 """
