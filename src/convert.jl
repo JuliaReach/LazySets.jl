@@ -86,7 +86,7 @@ Converts a hyperrectangular set to a zonotope.
 A zonotope.
 """
 function convert(::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
-    return Zonotope{N}(center(H), diagm(radius_hyperrectangle(H)))
+    return Zonotope{N}(center(H), Diagonal(radius_hyperrectangle(H)))
 end
 
 """
