@@ -6,6 +6,7 @@ different Julia versions.
 using Compat
 using Compat: copyto!, axes, argmax
 import Compat.String
+import Compat.InteractiveUtils.subtypes
 export _At_mul_B
 
 if VERSION < v"0.7-"
