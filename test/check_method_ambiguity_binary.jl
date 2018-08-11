@@ -67,7 +67,7 @@ function check_method_ambiguity_binary(op;
         print_results && println("type 1: $t1")
         for t2 in types
             print_results && println("type 2: $t2")
-            if !method_exists(op, (t1, t2))
+            if !hasmethod(op, (t1, t2))
                 if print_warnings
                     warn("no interface operation '$ops(::$(t1), ::$(t2)' exists")
                 end
