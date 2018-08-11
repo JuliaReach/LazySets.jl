@@ -18,7 +18,7 @@ for N in [Float64, Float32, Rational{Int}]
     # template direction approximation
     for n in 1:3
         B = BallInf(zeros(N, n), N(2.))
-        A = N(2.) * eye(N, n) + ones(N, n, n)
+        A = Matrix{N}(2I, n, n) + ones(N, n, n)
         X = A * B
 
         # box directions

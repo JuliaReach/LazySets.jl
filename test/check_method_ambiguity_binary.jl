@@ -51,9 +51,9 @@ function check_method_ambiguity_binary(op;
                                   Hyperrectangle(zeros(2), ones(2))]),
         (AbstractPointSymmetric{Float64}, [Ball2(zeros(2), 1.),
                                   Ballp(1.5, zeros(2), 1.),
-                                  Ellipsoid(eye(2))]),
+                                  Ellipsoid([1. 0.; 0. 1.])]),
         (AbstractPointSymmetricPolytope{Float64}, [Ball1(zeros(2), 1.),
-                                          Zonotope(zeros(2), eye(2))]),
+                                          Zonotope(zeros(2), [1. 0.; 0. 1.])]),
         (AbstractPolygon{Float64}, [VPolygon([zeros(2)])]),
         (AbstractPolytope{Float64}, [HPolytope{Float64}(polytope_constraints)]),
         (AbstractSingleton{Float64}, [Singleton(zeros(2)), ZeroSet(2)])
