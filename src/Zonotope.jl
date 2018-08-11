@@ -366,7 +366,7 @@ function reduce_order(Z::Zonotope{N}, r)::Zonotope{N} where {N<:Real}
 
     h = zeros(N, p)
     for i in 1:p
-        h[i] = vecnorm(G[:, i], 1) - vecnorm(G[:, i], Inf)
+        h[i] = norm(G[:, i], 1) - norm(G[:, i], Inf)
     end
     ind = sortperm(h)
 
