@@ -1,6 +1,6 @@
 for N in [Float64, Rational{Int}, Float32]
     # 1D Zonotope
-    z = Zonotope(N[0.], eye(N, 1))
+    z = Zonotope(N[0.], Matrix{N}(I, 1, 1))
     # Test Dimension
     @test dim(z) == 1
     # Test Support Vector
@@ -10,7 +10,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test σ(d, z) == N[-1.]
 
     # 2D Zonotope
-    z = Zonotope(N[0., 0.], N(1.) * eye(N, 2))
+    z = Zonotope(N[0., 0.], Matrix{N}(I, 2, 2))
     # Test Dimension
     @test dim(z) == 2
     # Test Support Vector
@@ -24,7 +24,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test σ(d, z) == N[1., -1.] || N[-1., -1]
 
     # 2D Zonotope not 0-centered
-    z = Zonotope(N[1., 2.], N(1.) * eye(N, 2))
+    z = Zonotope(N[1., 2.], Matrix{N}(I, 2, 2))
     # Test Dimension
     @test dim(z) == 2
     # Test Support Vector
@@ -42,7 +42,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # concrete operations
     Z1 = Zonotope(N[1, 1.], N[1 1; -1 1.])
-    Z2 = Zonotope(N[-1, 1.], eye(N, 2))
+    Z2 = Zonotope(N[-1, 1.], Matrix{N}(I, 2, 2))
     A = N[0.5 1; 1 0.5]
 
     # concrete Minkowski sum

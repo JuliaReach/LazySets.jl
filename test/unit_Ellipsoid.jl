@@ -55,6 +55,6 @@ for N in [Float64, Float32]
     @test σ(d, E) ≈ N[1., 2. - sqrt(2)]
 
     # an_element and set membership functions
-    E = Ellipsoid(N[1., 2.], 2*eye(N, 2))
+    E = Ellipsoid(N[1., 2.], Matrix{N}(2I, 2, 2))
     @test an_element(E) ∈ E
 end

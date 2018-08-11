@@ -48,7 +48,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test σ(d, lm) == N[2., -2.]
 
     # Nested construction
-    lm1_copy = LinearMap(eye(N, 2), lm1)
+    lm1_copy = LinearMap(Matrix{N}(I, 2, 2), lm1)
     @test lm1_copy.M == lm1.M
     @test lm1_copy.X == lm1.X
 
