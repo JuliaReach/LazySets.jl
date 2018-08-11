@@ -91,7 +91,7 @@ for N in [Float64, Float32]
     ExponentialMap(SparseMatrixExp(2*m), emap)
 
     # for projection tests, let's assume that n is divisible by three
-    assert(mod(n, 3) == 0)
+    @assert mod(n, 3) == 0
     nb = div(n, 3)
     # the projection of exp(A) on the (m, m)-dimensional right-most upper block
     R = [spzeros(N, nb, nb); spzeros(N, nb, nb); sparse(N(1) * I, nb, nb)]
