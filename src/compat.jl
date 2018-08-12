@@ -15,6 +15,7 @@ if VERSION < v"0.7-"
     @inline function _At_mul_B(A, B)
         return At_mul_B(A, B)
     end
+    expmat = expm
 else
     using SparseArrays, LinearAlgebra
     import LinearAlgebra: norm, checksquare, LAPACKException, SingularException,
@@ -22,4 +23,5 @@ else
     @inline function _At_mul_B(A, B)
         return transpose(A) * B
     end
+    expmat = exp
 end
