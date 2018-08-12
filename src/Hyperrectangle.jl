@@ -15,6 +15,27 @@ Cartesian product of one-dimensional intervals.
 - `center` -- center of the hyperrectangle as a real vector
 - `radius` -- radius of the ball as a real vector, i.e., half of its width along
               each coordinate direction
+
+### Examples
+
+There is also a constructor from lower and upper bounds with keyword arguments
+`high` and `low`.
+The following two constructions are equivalent:
+
+```jldoctest
+julia> c = ones(2);
+
+julia> r = [0.1, 0.2];
+
+julia> l = [0.9, 0.8];
+
+julia> h = [1.1, 1.2];
+
+julia> Hyperrectangle(c, r)
+LazySets.Hyperrectangle{Float64}([1.0, 1.0], [0.1, 0.2])
+julia> Hyperrectangle(low=l, high=h)
+LazySets.Hyperrectangle{Float64}([1.0, 1.0], [0.1, 0.2])
+```
 """
 struct Hyperrectangle{N<:Real} <: AbstractHyperrectangle{N}
     center::Vector{N}
@@ -34,56 +55,38 @@ end
 Hyperrectangle(center::Vector{N}, radius::Vector{N}) where {N<:Real} =
     Hyperrectangle{N}(center, radius)
 
-"""
-    Hyperrectangle(;kwargs...)
+# constructor from keyword arguments (lower and upper bounds)
+if VERSION < v"0.7-"
+@eval begin
 
-Construct a hyperrectangle from keyword arguments.
-
-### Input
-
-- `kwargs` -- keyword arguments; two combinations are allowed:
-  1. `center`, `radius` -- vectors
-  2. `high`, `low`      -- vectors (if both `center` and `radius` are also
-                           defined, those are chosen instead)
-
-### Output
-
-A hyperrectangle.
-
-### Examples
-
-The following three constructions are equivalent:
-
-```jldoctest
-julia> c = ones(2);
-
-julia> r = [0.1, 0.2];
-
-julia> l = [0.9, 0.8];
-
-julia> h = [1.1, 1.2];
-
-julia> H1 = Hyperrectangle(c, r)
-LazySets.Hyperrectangle{Float64}([1.0, 1.0], [0.1, 0.2])
-julia> H2 = Hyperrectangle(center=c, radius=r)
-LazySets.Hyperrectangle{Float64}([1.0, 1.0], [0.1, 0.2])
-julia> H3 = Hyperrectangle(low=l, high=h)
-LazySets.Hyperrectangle{Float64}([1.0, 1.0], [0.1, 0.2])
-```
-"""
 function Hyperrectangle(;kwargs...)
     dict = Dict{Symbol, Any}(kwargs)
-    if haskey(dict, :center) && haskey(dict, :radius)
-        return Hyperrectangle(dict[:center], dict[:radius])
-    elseif haskey(dict, :high) && haskey(dict, :low)
+    if haskey(dict, :high) && haskey(dict, :low)
         # compute center and radius from high and low vectors
-        center = (dict[:high] .+ dict[:low]) ./ 2
-        radius = abs.(dict[:high] .- center)
+        high = dict[:high]
+        center = (high .+ dict[:low]) ./ 2
+        radius = abs.(high .- center)
         return Hyperrectangle(center, radius)
     end
-    throw(ArgumentError("invalid arguments for Hyperrectangle: Use either " *
-        "'center' and 'radius' or 'high' and 'low'."))
+    throw(ArgumentError("invalid arguments for Hyperrectangle: " *
+        "use 'high' and 'low'"))
 end
+
+end # @eval
+else
+@eval begin
+
+function Hyperrectangle(;
+                        high::AbstractVector{N},
+                        low::AbstractVector{N}) where {N<:Real}
+    # compute center and radius from high and low vectors
+    center = (high .+ low) ./ 2
+    radius = abs.(high .- center)
+    return Hyperrectangle(center, radius)
+end
+
+end # @eval
+end # if
 
 
 # --- AbstractHyperrectangle interface functions ---
