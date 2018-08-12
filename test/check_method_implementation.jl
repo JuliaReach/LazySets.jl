@@ -1,7 +1,3 @@
-if VERSION >= v"0.7-"
-    @eval using InteractiveUtils
-end
-
 """
     check_method_implementation(interface::Type,
                                 func_name,
