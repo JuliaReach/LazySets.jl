@@ -5,6 +5,7 @@ os:
 julia:
   - 0.6.4
   - 0.7.0
+  - nightly
 notifications:
   email: false
 git:
