@@ -56,7 +56,7 @@ julia> σ(ones(3), E)
 A two-dimensional ellipsoid with given center and shape matrix:
 
 ```julia
-julia> E = Ellipsoid(ones(2), diagm([2.0, 0.5]))
+julia> E = Ellipsoid(ones(2), Diagonal([2.0, 0.5]))
 LazySets.Ellipsoid{Float64}([1.0, 1.0], [2.0 0.0; 0.0 0.5])
 ```
 """
