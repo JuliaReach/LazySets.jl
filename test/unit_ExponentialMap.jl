@@ -32,7 +32,7 @@ for N in [Float64, Float32]
     me = SparseMatrixExp(m)
 
     # constructor from a dense matrix
-    @test_throws ErrorException SparseMatrixExp(eye(N, 2))
+    @test_throws ErrorException SparseMatrixExp(Matrix{N}(I, 2, 2))
 
     # size
     @test size(me, 1) == n
