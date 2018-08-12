@@ -32,7 +32,7 @@ for N in [Float64, Float32]
     me = SparseMatrixExp(m)
 
     # constructor from a dense matrix
-    @test_throws ErrorException SparseMatrixExp(eye(N, 2))
+    @test_throws ErrorException SparseMatrixExp(Matrix{N}(I, 2, 2))
 
     # size
     @test size(me, 1) == n
@@ -44,7 +44,7 @@ for N in [Float64, Float32]
     # check that the eye method is defined
     @test hasmethod(eye, Tuple{typeof(me)})
     y = to_N(N, eye(me))
-    @test norm(y - diagm(ones(N, n))) == 0
+    @test norm(y - Diagonal(ones(N, n))) == 0
 
     # columns & rows
     me2 = SparseMatrixExp(sparse(N(1) * I, n, n))
