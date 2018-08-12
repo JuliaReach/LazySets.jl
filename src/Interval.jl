@@ -28,8 +28,6 @@ library for representation of intervals and arithmetic operations.
 ### Examples
 
 Unidimensional intervals are symbolic representations of a real closed interval.
-This type requires the user to load the `IntervalArithmetic` library, since
-artithmetic operations rely on that module.
 
 We can create intervals in different ways, the simpler way is to pass a pair
 of numbers:
