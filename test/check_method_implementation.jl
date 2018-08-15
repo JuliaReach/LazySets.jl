@@ -1,7 +1,8 @@
 """
     check_method_implementation(interface::Type,
                                 func_name,
-                                args_funcs::AbstractVector{Function},
+                                args_funcs::AbstractVector{Function};
+                                [ignore_types]::Vector{Type}=Type[],
                                 [print_results]::Bool=false
                                )::Bool
 

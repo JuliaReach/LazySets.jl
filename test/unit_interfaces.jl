@@ -11,12 +11,18 @@
 # --- AbstractPolytope ---
 
 # vertices list
-begin using Polyhedra
+global test_suite_polyhedra
+if test_suite_polyhedra
+    using Polyhedra
+    exclusions = Type[]
+else
+    exclusions = Type[HPolytope, VPolytope]
+end
 @test check_method_implementation(AbstractPolytope, vertices_list,
-                                  Function[S -> (S{Float64},)])
+                                  Function[S -> (S{Float64},)],
+                                  ignore_types=exclusions)
 @test check_method_implementation(AbstractPointSymmetricPolytope, vertices_list,
                                   Function[S -> (S{Float64},)])
-end
 
 # --- AbstractPointSymmetric ---
 
