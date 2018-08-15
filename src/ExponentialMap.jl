@@ -98,7 +98,27 @@ function get_columns(spmexp::SparseMatrixExp{N},
     return ans
 end
 
-function get_row(spmexp::SparseMatrixExp{N}, i::Int)::RowVector{N} where {N}
+"""
+    get_row(spmexp::SparseMatrixExp{N}, i::Int) where {N}
+
+Return a single row of a sparse matrix exponential.
+
+### Input
+
+- `spmexp` -- sparse matrix exponential
+- `i`      -- row index
+
+### Output
+
+A row vector corresponding to the `i`th row of the matrix exponential.
+
+### Notes
+
+This function uses Julia's `transpose` function to create the result.
+The result is of type `Transpose`; in Julia versions older than v0.7, the result
+was of type `RowVector`.
+"""
+function get_row(spmexp::SparseMatrixExp{N}, i::Int) where {N}
     n = size(spmexp, 1)
     aux = zeros(N, n)
     aux[i] = one(N)
