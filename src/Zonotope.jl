@@ -44,7 +44,7 @@ ball in ``\\mathbb{R}^n`` by an affine transformation.
 A two-dimensional zonotope with given center and set of generators:
 
 ```jldoctest zonotope_label
-julia> Z = Zonotope([1.0, 0.0], 0.1*eye(2))
+julia> Z = Zonotope([1.0, 0.0], [0.1 0.0; 0.0 0.1])
 LazySets.Zonotope{Float64}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
 julia> dim(Z)
 2
@@ -192,7 +192,7 @@ Check whether a given point is contained in a zonotope.
 ### Examples
 
 ```jldoctest
-julia> Z = Zonotope([1.0, 0.0], 0.1*eye(2));
+julia> Z = Zonotope([1.0, 0.0], [0.1 0.0; 0.0 0.1]);
 
 julia> ∈([1.0, 0.2], Z)
 false
