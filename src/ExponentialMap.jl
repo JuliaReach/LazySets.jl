@@ -267,6 +267,8 @@ This follows from ``\\exp(-M)⋅\\exp(M) = I`` for any ``M``.
 ### Examples
 
 ```jldoctest
+julia> using Compat.SparseArrays: SparseMatrixCSC;
+
 julia> em = ExponentialMap(SparseMatrixExp(SparseMatrixCSC([2.0 0.0; 0.0 1.0])),
                            BallInf([1., 1.], 1.));
 
