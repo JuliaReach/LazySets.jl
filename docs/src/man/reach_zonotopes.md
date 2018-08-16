@@ -38,21 +38,21 @@ function Algorithm1(A, X0, δ, μ, T)
 
     # bloating factors
     Anorm = norm(A, Inf)
-    α = (expm(δ*Anorm) - 1 - δ*Anorm)/norm(X0, Inf)
-    β = (expm(δ*Anorm) - 1)*μ/Anorm
+    α = (expm(δ * Anorm) - 1 - δ * Anorm) / norm(X0, Inf)
+    β = (expm(δ * Anorm) - 1) * μ / Anorm
 
     # discretized system
     n = size(A, 1)
-    ϕ = expm(δ*A)
-    N = floor(Int, T/δ)
+    ϕ = expm(δ * A)
+    N = floor(Int, T / δ)
 
     # preallocate arrays
     Q = Vector{LazySet}(N)
     R = Vector{LazySet}(N)
 
     # initial reach set in the time interval [0, δ]
-    ϕp = (I+ϕ)/2
-    ϕm = (I-ϕ)/2
+    ϕp = (I+ϕ) / 2
+    ϕm = (I-ϕ) / 2
     c = X0.center
     Q1_generators = hcat(ϕp * X0.generators, ϕm * c, ϕm * X0.generators)
     Q[1] = Zonotope(ϕp * c, Q1_generators) ⊕ BallInf(zeros(n), α + β)
@@ -82,12 +82,12 @@ end
 
 ```@example example_reach_zonotopes
 A = [-1 -4; 4 -1]
-X0 = Zonotope([1.0, 0.0], 0.1*eye(2))
+X0 = Zonotope([1.0, 0.0], 0.1 * eye(2))
 μ = 0.05
 δ = 0.02
 T = 2.
 
-R = Algorithm1(A, X0, δ, μ, 2.*δ); # warm-up
+R = Algorithm1(A, X0, δ, μ, 2 * δ); # warm-up
 
 R = Algorithm1(A, X0, δ, μ, T)
 
@@ -103,12 +103,12 @@ A = Matrix{Float64}([-1 -4 0 0 0;
                       0 0 -3 1 0;
                       0 0 -1 -3 0;
                       0 0 0 0 -2])
-X0 = Zonotope([1.0, 0.0, 0.0, 0.0, 0.0], 0.1*eye(5))
+X0 = Zonotope([1.0, 0.0, 0.0, 0.0, 0.0], 0.1 * eye(5))
 μ = 0.01
 δ = 0.005
 T = 1.
 
-R = Algorithm1(A, X0, δ, μ, 2*δ); # warm-up
+R = Algorithm1(A, X0, δ, μ, 2 * δ); # warm-up
 
 R = Algorithm1(A, X0, δ, μ, T)
 Rproj = project(R, [1, 3], 5)
