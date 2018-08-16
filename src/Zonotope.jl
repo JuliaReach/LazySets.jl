@@ -141,7 +141,7 @@ function vertices_list(Z::Zonotope{N})::Vector{Vector{N}} where {N<:Real}
     vlist = Vector{Vector{N}}()
     sizehint!(vlist, 2^p)
 
-    for ξi in IterTools.product([[1, -1] for i = 1:p]...)
+    for ξi in Iterators.product([[1, -1] for i = 1:p]...)
         push!(vlist, Z.center .+ Z.generators * collect(ξi))
     end
 

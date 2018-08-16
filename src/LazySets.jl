@@ -5,7 +5,7 @@ module LazySets
 
 include("compat.jl")
 
-using RecipesBase, IterTools, Requires
+using RecipesBase, Requires
 
 export Approximations
 
