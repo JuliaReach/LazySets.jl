@@ -158,7 +158,7 @@ Type that represents the action of an exponential map on a convex set.
 The `ExponentialMap` type is overloaded to the usual times `*` operator when the
 linear map is a lazy matrix exponential. For instance,
 
-```jldoctest ExponentialMap_constructor
+```jldoctest
 julia> A = sprandn(100, 100, 0.1);
 
 julia> E = SparseMatrixExp(A);
