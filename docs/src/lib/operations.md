@@ -12,6 +12,7 @@ Depth = 3
 CurrentModule = LazySets
 DocTestSetup = quote
     using LazySets
+    using Compat.SparseArrays, Compat.LinearAlgebra
 end
 ```
 
@@ -212,6 +213,7 @@ Inherited from [`LazySet`](@ref):
 ```@docs
 SparseMatrixExp
 *(::SparseMatrixExp, ::LazySet)
+get_row(::SparseMatrixExp, ::Int)
 ```
 
 ```@docs

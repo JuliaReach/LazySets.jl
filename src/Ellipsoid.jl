@@ -29,7 +29,7 @@ For instance, a 3D ellipsoid with center at the origin and the shape matrix bein
 the identity can be created with:
 
 ```jldoctest ellipsoid_constructor
-julia> E = Ellipsoid(eye(3))
+julia> E = Ellipsoid(Matrix{Float64}(I, 3, 3))
 LazySets.Ellipsoid{Float64}([0.0, 0.0, 0.0], [1.0 0.0 0.0; 0.0 1.0 0.0; 0.0 0.0 1.0])
 
 julia> dim(E)
