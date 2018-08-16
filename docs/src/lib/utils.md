@@ -22,7 +22,6 @@ sign_cadlag
 @neutral_absorbing
 @array_neutral
 @array_absorbing
-
 get_radius!
 an_element_helper
 σ_helper
