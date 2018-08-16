@@ -212,6 +212,7 @@ Inherited from [`LazySet`](@ref):
 ```@docs
 SparseMatrixExp
 *(::SparseMatrixExp, ::LazySet)
+get_row(::SparseMatrixExp, ::Int)
 ```
 
 ```@docs
