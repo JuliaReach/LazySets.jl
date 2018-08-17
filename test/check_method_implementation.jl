@@ -1,7 +1,8 @@
 """
     check_method_implementation(interface::Type,
                                 func_name,
-                                args_funcs::AbstractVector{Function},
+                                args_funcs::AbstractVector{Function};
+                                [ignore_types]::Vector{Type}=Type[],
                                 [print_results]::Bool=false
                                )::Bool
 
@@ -13,6 +14,8 @@ Check that a given (interface) function is implemented by all subtypes.
 - `func_name`     -- function name
 - `args_funcs`    -- list of functions that each map a type to an argument
                      signature tuple
+- `ignore_types`  -- (optional, default: `Type[]`) list of types that should be
+                     ignored
 - `print_results` -- (optional, default: `false`) flag for printing intermediate
                      results
 
@@ -38,6 +41,7 @@ true
 function check_method_implementation(interface::Type,
                                      func_name,
                                      args_funcs::AbstractVector{Function};
+                                     ignore_types::Vector{Type}=Type[],
                                      print_results::Bool=false
                                     )::Bool
     # first collect all base types that are subtypes of this interface
@@ -61,6 +65,12 @@ function check_method_implementation(interface::Type,
 
     # now check all base types
     for subtype in base_types
+        if subtype ∈ ignore_types
+            if print_results
+                println("ignoring type $subtype")
+            end
+            continue
+        end
         found = false
         for args_func in args_funcs
             if hasmethod(func_name, args_func(subtype))
