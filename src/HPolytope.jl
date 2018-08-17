@@ -352,8 +352,8 @@ julia> constraints_list(P)
 4-element Array{LazySets.HalfSpace{Float64},1}:
  LazySets.HalfSpace{Float64}([1.0, 0.0], 1.0)
  LazySets.HalfSpace{Float64}([0.0, 1.0], 1.0)
- LazySets.HalfSpace{Float64}([-1.0, -0.0], 1.0)
- LazySets.HalfSpace{Float64}([-0.0, -1.0], 1.0)
+ LazySets.HalfSpace{Float64}([-1.0, 0.0], 1.0)
+ LazySets.HalfSpace{Float64}([0.0, -1.0], 1.0)
 
 julia> vertices_list(P)
 4-element Array{Array{Float64,1},1}:
