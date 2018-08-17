@@ -346,7 +346,7 @@ List of vertices.
 ```jldoctest
 julia> using Polyhedra
 
-julia> P = HPolytope([1.0 0.0; 0.0 1.0; 1.0 0.0; 0.0 1.0], fill(1., 4));
+julia> P = HPolytope([1.0 0.0; 0.0 1.0; -1.0 0.0; 0.0 -1.0], fill(1., 4));
 
 julia> constraints_list(P)
 4-element Array{LazySets.HalfSpace{Float64},1}:
