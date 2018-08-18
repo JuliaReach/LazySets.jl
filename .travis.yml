@@ -3,8 +3,8 @@ language: julia
 os:
   - linux
 julia:
-  - 0.6.4
-  - 0.7.0
+  - 0.6
+  - 0.7
   - nightly
 notifications:
   email: false
@@ -28,9 +28,11 @@ matrix:
 #  - julia -e 'Pkg.clone(pwd()); Pkg.build("LazySets"); Pkg.test("LazySets"; coverage=true)'
 after_success:
   # documentation (restrict Documenter to release version 0.18.0 due to problems, see #402)
-  - julia -e 'Pkg.add("Documenter"); Pkg.pin("Documenter", v"0.18.0");
-              Pkg.add("Polyhedra"); Pkg.pin("Polyhedra", v"0.3.4");
-              Pkg.add("CDDLib"); Pkg.pin("CDDLib", v"0.3.2");'
+  - julia -e 'VERSION >= v"0.7-" && using Pkg;
+              Pkg.add("Documenter");
+              VERSION < v"0.7-" && Pkg.pin("Documenter", v"0.18.0");
+              Pkg.add("Polyhedra");
+              Pkg.add("CDDLib");'
   - julia -e 'cd(Pkg.dir("LazySets")); include(joinpath("docs", "make.jl"))'
   # code coverage (for both Coveralls and Codecov)
   - julia -e 'Pkg.add("Coverage")'
