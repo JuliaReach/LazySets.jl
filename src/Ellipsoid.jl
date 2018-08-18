@@ -30,7 +30,7 @@ the identity can be created with:
 
 ```jldoctest ellipsoid_constructor
 julia> E = Ellipsoid(Matrix{Float64}(I, 3, 3))
-LazySets.Ellipsoid{Float64}([0.0, 0.0, 0.0], [1.0 0.0 0.0; 0.0 1.0 0.0; 0.0 0.0 1.0])
+Ellipsoid{Float64}([0.0, 0.0, 0.0], [1.0 0.0 0.0; 0.0 1.0 0.0; 0.0 0.0 1.0])
 
 julia> dim(E)
 3
@@ -57,7 +57,7 @@ A two-dimensional ellipsoid with given center and shape matrix:
 
 ```julia
 julia> E = Ellipsoid(ones(2), Diagonal([2.0, 0.5]))
-LazySets.Ellipsoid{Float64}([1.0, 1.0], [2.0 0.0; 0.0 0.5])
+Ellipsoid{Float64}([1.0, 1.0], [2.0 0.0; 0.0 0.5])
 ```
 """
 struct Ellipsoid{N<:AbstractFloat} <: AbstractPointSymmetric{N}

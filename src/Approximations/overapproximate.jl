@@ -137,17 +137,17 @@ A `HPolytope` overapproximating the set `X` with the directions from `dir`.
 """
 function overapproximate(X::LazySet{N},
                          dir::AbstractDirections{N})::HPolytope{N} where N
-    halfspaces = Vector{LazySets.LinearConstraint{N}}()
+    halfspaces = Vector{LinearConstraint{N}}()
     sizehint!(halfspaces, length(dir))
     H = HPolytope(halfspaces)
     for d in dir
-        addconstraint!(H, LazySets.LinearConstraint(d, ρ(d, X)))
+        addconstraint!(H, LinearConstraint(d, ρ(d, X)))
     end
     return H
 end
 
 """
-    overapproximate(::LazySet{N}, ::Type{LazySets.Interval}) where {N<:Real}
+    overapproximate(::LazySet{N}, ::Type{Interval}) where {N<:Real}
 
 Return the overapproximation of a real unidimensional set with an interval.
 
@@ -160,9 +160,9 @@ Return the overapproximation of a real unidimensional set with an interval.
 
 An interval.
 """
-function overapproximate(S::LazySet{N}, ::Type{LazySets.Interval}) where {N<:Real}
+function overapproximate(S::LazySet{N}, ::Type{Interval}) where {N<:Real}
     @assert dim(S) == 1
     lo = σ([-one(N)], S)[1]
     hi = σ([one(N)], S)[1]
-    return LazySets.Interval(lo, hi)
+    return Interval(lo, hi)
 end

@@ -219,7 +219,7 @@ export intersect, convex_hull, cartesian_product, vertices_list
 function HPolytope(P::HRep{N, T}, backend=CDDLib.CDDLibrary()) where {N, T}
     constraints = LinearConstraint{T}[]
     for hi in Polyhedra.allhalfspaces(P)
-        push!(constraints, LazySets.HalfSpace(hi.a, hi.β))
+        push!(constraints, HalfSpace(hi.a, hi.β))
     end
     return HPolytope(constraints)
 end
@@ -349,11 +349,11 @@ julia> using Polyhedra
 julia> P = HPolytope([1.0 0.0; 0.0 1.0; -1.0 0.0; 0.0 -1.0], fill(1., 4));
 
 julia> constraints_list(P)
-4-element Array{LazySets.HalfSpace{Float64},1}:
- LazySets.HalfSpace{Float64}([1.0, 0.0], 1.0)
- LazySets.HalfSpace{Float64}([0.0, 1.0], 1.0)
- LazySets.HalfSpace{Float64}([-1.0, 0.0], 1.0)
- LazySets.HalfSpace{Float64}([0.0, -1.0], 1.0)
+4-element Array{HalfSpace{Float64},1}:
+ HalfSpace{Float64}([1.0, 0.0], 1.0)
+ HalfSpace{Float64}([0.0, 1.0], 1.0)
+ HalfSpace{Float64}([-1.0, 0.0], 1.0)
+ HalfSpace{Float64}([0.0, -1.0], 1.0)
 
 julia> vertices_list(P)
 4-element Array{Array{Float64,1},1}:

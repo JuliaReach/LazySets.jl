@@ -31,7 +31,7 @@ radius 0.5:
 
 ```jldoctest ball2_label
 julia> B = Ball2(zeros(5), 0.5)
-LazySets.Ball2{Float64}([0.0, 0.0, 0.0, 0.0, 0.0], 0.5)
+Ball2{Float64}([0.0, 0.0, 0.0, 0.0, 0.0], 0.5)
 julia> dim(B)
 5
 ```
@@ -158,7 +158,7 @@ Then ``x ∈ B`` iff ``\\left( ∑_{i=1}^n |c_i - x_i|^2 \\right)^{1/2} ≤ r``.
 
 ```jldoctest
 julia> B = Ball2([1., 1.], sqrt(0.5))
-LazySets.Ball2{Float64}([1.0, 1.0], 0.7071067811865476)
+Ball2{Float64}([1.0, 1.0], 0.7071067811865476)
 julia> ∈([.5, 1.6], B)
 false
 julia> ∈([.5, 1.5], B)

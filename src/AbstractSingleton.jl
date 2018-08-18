@@ -20,8 +20,8 @@ Every concrete `AbstractSingleton` must define the following functions:
 ```jldoctest
 julia> subtypes(AbstractSingleton)
 2-element Array{Union{DataType, UnionAll},1}:
- LazySets.Singleton
- LazySets.ZeroSet
+ Singleton
+ ZeroSet
 ```
 """
 abstract type AbstractSingleton{N<:Real} <: AbstractHyperrectangle{N} end

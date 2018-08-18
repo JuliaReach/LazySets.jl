@@ -58,7 +58,7 @@ julia> dim(v) > 0
 false
 
 julia> v = VPolytope([ones(3)])
-LazySets.VPolytope{Float64}(Array{Float64,1}[[1.0, 1.0, 1.0]])
+VPolytope{Float64}(Array{Float64,1}[[1.0, 1.0, 1.0]])
 
 julia> dim(v) == 3
 true

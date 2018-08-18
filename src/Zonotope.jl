@@ -45,7 +45,7 @@ A two-dimensional zonotope with given center and set of generators:
 
 ```jldoctest zonotope_label
 julia> Z = Zonotope([1.0, 0.0], [0.1 0.0; 0.0 0.1])
-LazySets.Zonotope{Float64}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
+Zonotope{Float64}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
 julia> dim(Z)
 2
 ```
@@ -74,7 +74,7 @@ Alternative constructor: A zonotope in two dimensions with three generators:
 
 ```jldoctest
 julia> Z = Zonotope(ones(2), [[1., 0.], [0., 1.], [1., 1.]])
-LazySets.Zonotope{Float64}([1.0, 1.0], [1.0 0.0 1.0; 0.0 1.0 1.0])
+Zonotope{Float64}([1.0, 1.0], [1.0 0.0 1.0; 0.0 1.0 1.0])
 julia> Z.generators
 2×3 Array{Float64,2}:
  1.0  0.0  1.0

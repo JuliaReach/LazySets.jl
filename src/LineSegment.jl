@@ -19,7 +19,7 @@ A line segment along the ``x = y`` diagonal:
 
 ```jldoctest linesegment_constructor
 julia> s = LineSegment([0., 0], [1., 1.])
-LazySets.LineSegment{Float64}([0.0, 0.0], [1.0, 1.0])
+LineSegment{Float64}([0.0, 0.0], [1.0, 1.0])
 julia> dim(s)
 2
 ```
@@ -38,7 +38,7 @@ a witness (which is just the common point in this case):
 
 ```jldoctest linesegment_constructor
 julia> sn = LineSegment([1., 0], [0., 1.])
-LazySets.LineSegment{Float64}([1.0, 0.0], [0.0, 1.0])
+LineSegment{Float64}([1.0, 0.0], [0.0, 1.0])
 julia> isempty(s ∩ sn)
 false
 julia> is_intersection_empty(s, sn, true)

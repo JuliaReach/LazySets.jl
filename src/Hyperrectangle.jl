@@ -32,9 +32,9 @@ julia> l = [0.9, 0.8];
 julia> h = [1.1, 1.2];
 
 julia> Hyperrectangle(c, r)
-LazySets.Hyperrectangle{Float64}([1.0, 1.0], [0.1, 0.2])
+Hyperrectangle{Float64}([1.0, 1.0], [0.1, 0.2])
 julia> Hyperrectangle(low=l, high=h)
-LazySets.Hyperrectangle{Float64}([1.0, 1.0], [0.1, 0.2])
+Hyperrectangle{Float64}([1.0, 1.0], [0.1, 0.2])
 ```
 """
 struct Hyperrectangle{N<:Real} <: AbstractHyperrectangle{N}

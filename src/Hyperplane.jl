@@ -19,7 +19,7 @@ The plane ``y = 0``:
 
 ```jldoctest
 julia> Hyperplane([0, 1.], 0.)
-LazySets.Hyperplane{Float64}([0.0, 1.0], 0.0)
+Hyperplane{Float64}([0.0, 1.0], 0.0)
 ```
 """
 struct Hyperplane{N<:Real} <: LazySet{N}

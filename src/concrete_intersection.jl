@@ -25,9 +25,9 @@ The line ``y = -x + 1`` intersected with the line ``y = x``:
 
 ```jldoctest
 julia> intersection(Line([-1., 1.], 0.), Line([1., 1.], 1.))
-LazySets.Singleton{Float64}([0.5, 0.5])
+Singleton{Float64}([0.5, 0.5])
 julia> intersection(Line([1., 1.], 1.), Line([1., 1.], 1.))
-LazySets.Line{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
+Line{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
 
 ```
 """

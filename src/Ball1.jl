@@ -26,7 +26,7 @@ Unit ball in the 1-norm in the plane:
 
 ```jldoctest ball1_constructor
 julia> B = Ball1(zeros(2), 1.)
-LazySets.Ball1{Float64}([0.0, 0.0], 1.0)
+Ball1{Float64}([0.0, 0.0], 1.0)
 julia> dim(B)
 2
 ```

@@ -150,7 +150,7 @@ end
 import IntervalArithmetic.AbstractInterval
 
 """
-    convert(::Type{Hyperrectangle}, x::LazySets.Interval{N, IN}) where {N, IN <: AbstractInterval{N}}
+    convert(::Type{Hyperrectangle}, x::Interval{N, IN}) where {N, IN <: AbstractInterval{N}}
 
 Converts a unidimensional interval into a hyperrectangular set.
 
@@ -167,9 +167,9 @@ A hyperrectangle.
 
 ```jldoctest convert_hyperrectangle_interval
 julia> convert(Hyperrectangle, Interval(0.0, 1.0))
-LazySets.Hyperrectangle{Float64}([0.5], [0.5])
+Hyperrectangle{Float64}([0.5], [0.5])
 ```
 """
-function convert(::Type{Hyperrectangle}, x::LazySets.Interval{N, IN}) where {N, IN <: AbstractInterval{N}}
+function convert(::Type{Hyperrectangle}, x::Interval{N, IN}) where {N, IN <: AbstractInterval{N}}
     return Hyperrectangle(low=[low(x)], high=[high(x)])
 end

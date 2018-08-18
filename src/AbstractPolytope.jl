@@ -19,10 +19,10 @@ Every concrete `AbstractPolytope` must define the following functions:
 ```jldoctest
 julia> subtypes(AbstractPolytope)
 4-element Array{Union{DataType, UnionAll},1}:
- LazySets.AbstractPointSymmetricPolytope
- LazySets.AbstractPolygon
- LazySets.HPolytope
- LazySets.VPolytope
+ AbstractPointSymmetricPolytope
+ AbstractPolygon
+ HPolytope
+ VPolytope
 ```
 """
 abstract type AbstractPolytope{N<:Real} <: LazySet{N} end
