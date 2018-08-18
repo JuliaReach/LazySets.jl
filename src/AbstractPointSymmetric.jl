@@ -15,7 +15,7 @@ Every concrete `AbstractPointSymmetric` must define the following functions:
 
 ```jldoctest
 julia> subtypes(AbstractPointSymmetric)
-3-element Array{Union{DataType, UnionAll},1}:
+3-element Array{Any,1}:
  Ball2
  Ballp
  Ellipsoid

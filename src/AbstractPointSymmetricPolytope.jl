@@ -25,7 +25,7 @@ functions:
 
 ```jldoctest
 julia> subtypes(AbstractPointSymmetricPolytope)
-5-element Array{Union{DataType, UnionAll},1}:
+5-element Array{Any,1}:
  AbstractHyperrectangle
  Ball1
  Interval

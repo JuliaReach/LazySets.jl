@@ -19,7 +19,7 @@ Every concrete `AbstractPolygon` must define the following functions:
 
 ```jldoctest
 julia> subtypes(AbstractPolygon)
-2-element Array{Union{DataType, UnionAll},1}:
+2-element Array{Any,1}:
  AbstractHPolygon
  VPolygon
 ```

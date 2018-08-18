@@ -27,7 +27,7 @@ New subtypes should be added to the `convert` method in order to be convertible.
 
 ```jldoctest
 julia> subtypes(AbstractHPolygon)
-2-element Array{Union{DataType, UnionAll},1}:
+2-element Array{Any,1}:
  HPolygon
  HPolygonOpt
 ```
