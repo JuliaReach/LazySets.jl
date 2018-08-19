@@ -64,11 +64,11 @@ for N in [Float64, Float32, Rational{Int}]
         d = N[0., 1.]
         @test σ(d, hp) == N[2., 4.]
         @test σ(d, hp, linear_search=true) == σ(d, hp, linear_search=false)
-        d = N[-1., 0.]
-        @test σ(d, hp) == N[-1., 1.]
-        @test σ(d, hp, linear_search=true) == σ(d, hp, linear_search=false)
         d = N[0., -1.]
         @test σ(d, hp) == N[0., 0.]
+        @test σ(d, hp, linear_search=true) == σ(d, hp, linear_search=false)
+        d = N[-1., 0.]
+        @test σ(d, hp) == N[-1., 1.]
         @test σ(d, hp, linear_search=true) == σ(d, hp, linear_search=false)
         d = N[1., -1.]
         @test σ(d, hp) == N[4., 2.]
