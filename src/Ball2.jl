@@ -41,11 +41,11 @@ Evaluate `B`'s support vector in the direction ``[1,2,3,4,5]``:
 ```jldoctest ball2_label
 julia> σ([1.,2.,3.,4.,5.], B)
 5-element Array{Float64,1}:
- 0.06742
- 0.13484
- 0.20226
- 0.26968
- 0.3371
+ 0.06741998624632421
+ 0.13483997249264842
+ 0.20225995873897262
+ 0.26967994498529685
+ 0.3370999312316211
 ```
 """
 struct Ball2{N<:AbstractFloat} <: AbstractPointSymmetric{N}

@@ -48,9 +48,9 @@ vector in a given direction:
 ```jldoctest ellipsoid_constructor
 julia> σ(ones(3), E)
 3-element Array{Float64,1}:
- 0.57735
- 0.57735
- 0.57735
+ 0.5773502691896258
+ 0.5773502691896258
+ 0.5773502691896258
 ```
 
 A two-dimensional ellipsoid with given center and shape matrix:

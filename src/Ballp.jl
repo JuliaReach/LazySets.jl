@@ -45,11 +45,11 @@ We evaluate the support vector in direction ``[1,2,…,5]``:
 ```jldoctest ballp_constructor
 julia> σ([1., 2, 3, 4, 5], B)
 5-element Array{Float64,1}:
- 0.013516
- 0.054064
- 0.121644
- 0.216256
- 0.3379
+ 0.013516004434607558
+ 0.05406401773843023
+ 0.12164403991146802
+ 0.21625607095372093
+ 0.33790011086518895
 ```
 """
 struct Ballp{N<:AbstractFloat} <: AbstractPointSymmetric{N}
