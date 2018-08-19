@@ -129,12 +129,13 @@ function σ(d::AbstractVector{N}, P::HPolygonOpt{N};
     else
         # binary search
         k = binary_search_constraints(d, P.constraints, n, P.ind)
-        P.ind = k
         if k == 1 || k == n+1
+            P.ind = 1
             # corner cases: wrap-around in constraints list
             return element(intersection(Line(P.constraints[n]),
                                         Line(P.constraints[1])))
         else
+            P.ind = k
             return element(intersection(Line(P.constraints[k-1]),
                                         Line(P.constraints[k])))
         end
