@@ -50,6 +50,12 @@ for N in [Float64, Rational{Int}, Float32]
         @test_throws MethodError singleton_list(p)
     end
 
+    if test_suite_polyhedra
+        # conversion to and from Polyhedra's VRep data structure
+        cl = constraints_list(HPolytope(polyhedron(p)))
+        @test length(p.constraints) == length(cl)
+    end
+
     # -----
     # V-rep
     # -----
@@ -88,6 +94,40 @@ end
 # Polyhedra tests that only work with Float64
 if test_suite_polyhedra
     for N in [Float64]
+        # -----
+        # H-rep
+        # -----
+
+        # intersection
+        A = [N(0.) N(1.); N(1.) N(0.); N(2.) N(2.)]
+        b = N[0., 0., 1.]
+        p1 = HPolytope(A, b)
+        A = [N(0.) N(-1.); N(-1.) N(0.); N(1.) N(1.)]
+        b = N[-0.25, -0.25, -0.]
+        p2 = HPolytope(A, b)
+        cap = intersect(p1, p2)
+        # currently broken, see #565
+
+        # convex hull
+        ch = convex_hull(p1, p2)
+        # currently broken, see #566
+
+        # Cartesian product
+        A = [N(1.) N(-1.)]'
+        b = N[1., 0.]
+        p1 = HPolytope(A, b)
+        p2 = HPolytope(A, b)
+        cp = cartesian_product(p1, p2)
+        cl = constraints_list(cp)
+        @test length(cl) == 4
+
+        # vertices_list
+        A = [N(1.) N(-1.)]'
+        b = N[1., 0.]
+        p = HPolytope(A, b)
+        vl = vertices_list(p)
+        @test length(vl) == 2 && N[0.] ∈ vl && [1.] ∈ vl
+
         # -----
         # V-rep
         # -----
