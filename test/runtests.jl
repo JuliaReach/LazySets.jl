@@ -86,11 +86,8 @@ if test_suite_basic
 end
 
 if test_suite_doctests
-    if VERSION >= v"0.7-"
-        using Pkg
-    end
-    Pkg.add("Documenter")
     if VERSION < v"0.7-"
+        Pkg.add("Documenter")
         Pkg.pin("Documenter", v"0.18.0")
     end
     using Documenter
