@@ -27,6 +27,16 @@ else
     error("unknown parameter 1: $(ARGS[1])")
 end
 
+if test_suite_polyhedra
+    using Polyhedra
+
+    # fix namespace conflicts with Polyhedra
+    dim = LazySets.dim
+    HalfSpace = LazySets.HalfSpace
+    Interval = LazySets.Interval
+    Line = LazySets.Line
+end
+
 if test_suite_basic
     # =======================================
     # Testing types that inherit from LazySet

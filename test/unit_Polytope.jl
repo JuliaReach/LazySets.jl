@@ -1,3 +1,5 @@
+global test_suite_polyhedra
+
 for N in [Float64, Rational{Int}, Float32]
     # -----
     # H-rep
@@ -42,7 +44,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test !∈(N[4., 1.], p)
 
     # singleton list (only available with Polyhedra library)
-    if !isdefined(@__MODULE__, :Polyhedra)
+    if !test_suite_polyhedra
         @test_throws MethodError singleton_list(p)
     end
 
@@ -61,7 +63,7 @@ for N in [Float64, Rational{Int}, Float32]
     # support vector
     d = N[1., 0.]
     @test_throws ErrorException σ(d, p, algorithm="xyz")
-    if !isdefined(@__MODULE__, :Polyhedra)
+    if !test_suite_polyhedra
         @test_throws AssertionError σ(d, p)
     end
 

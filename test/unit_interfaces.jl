@@ -13,7 +13,6 @@
 # vertices list
 global test_suite_polyhedra
 if test_suite_polyhedra
-    using Polyhedra
     exclusions = Type[]
 else
     exclusions = Type[HPolytope, VPolytope]
