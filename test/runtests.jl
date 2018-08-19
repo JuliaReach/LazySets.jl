@@ -8,11 +8,15 @@ using Compat.Test
 # conversion between numeric types
 include("to_N.jl")
 
-global test_suite_default = true
+global test_suite_basic = true
+global test_suite_doctests = VERSION < v"0.7-" # only run doctests with old Julia version
 global test_suite_polyhedra = false
 
 if (length(ARGS) == 0) || (ARGS[1] == "--default")
-    # default test suite
+    # default test suite including doctests
+elseif ARGS[1] == "--basic"
+    # basic test suite
+    test_suite_doctests = false
 elseif ARGS[1] == "--polyhedra"
     # Polyhedra.jl test suite
     test_suite_polyhedra = true
@@ -23,7 +27,7 @@ else
     error("unknown parameter 1: $(ARGS[1])")
 end
 
-if test_suite_default
+if test_suite_basic
     # =======================================
     # Testing types that inherit from LazySet
     # =======================================
@@ -79,4 +83,16 @@ if test_suite_default
     # ====================================
     include("check_method_implementation.jl")
     @time @testset "LazySets.interfaces" begin include("unit_interfaces.jl") end
+end
+
+if test_suite_doctests
+    if VERSION >= v"0.7-"
+        using Pkg
+    end
+    Pkg.add("Documenter")
+    if VERSION < v"0.7-"
+        Pkg.pin("Documenter", v"0.18.0")
+    end
+    using Documenter
+    @time @testset "LazySets.doctests" begin include("../docs/make_doctests_only.jl") end
 end

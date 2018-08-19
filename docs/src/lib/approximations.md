@@ -56,8 +56,6 @@ tohrep(::PolygonalOverapproximation)
 approximate(::LazySet{Float64}, ::Float64)
 ```
 
-See [Iterative Refinement](@ref) for more details.
-
 ## Template directions
 
 ```@docs
