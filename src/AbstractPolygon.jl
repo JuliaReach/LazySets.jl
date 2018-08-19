@@ -19,9 +19,9 @@ Every concrete `AbstractPolygon` must define the following functions:
 
 ```jldoctest
 julia> subtypes(AbstractPolygon)
-2-element Array{Union{DataType, UnionAll},1}:
- LazySets.AbstractHPolygon
- LazySets.VPolygon
+2-element Array{Any,1}:
+ AbstractHPolygon
+ VPolygon
 ```
 """
 abstract type AbstractPolygon{N<:Real} <: AbstractPolytope{N} end

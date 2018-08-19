@@ -15,10 +15,10 @@ Every concrete `AbstractPointSymmetric` must define the following functions:
 
 ```jldoctest
 julia> subtypes(AbstractPointSymmetric)
-3-element Array{Union{DataType, UnionAll},1}:
- LazySets.Ball2
- LazySets.Ballp
- LazySets.Ellipsoid
+3-element Array{Any,1}:
+ Ball2
+ Ballp
+ Ellipsoid
 ```
 """
 abstract type AbstractPointSymmetric{N<:Real} <: LazySet{N} end

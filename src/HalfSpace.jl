@@ -20,7 +20,7 @@ The set ``y ≥ 0`` in the plane:
 
 ```jldoctest
 julia> HalfSpace([0, -1.], 0.)
-LazySets.HalfSpace{Float64}([0.0, -1.0], 0.0)
+HalfSpace{Float64}([0.0, -1.0], 0.0)
 ```
 """
 struct HalfSpace{N<:Real} <: LazySet{N}
@@ -150,10 +150,10 @@ the upper and lower half-spaces:
 julia> import LazySets.halfspace_left
 
 julia> halfspace_left([0.0, 0.0], [1.0, 0.0])
-LazySets.HalfSpace{Float64}([0.0, -1.0], 0.0)
+HalfSpace{Float64}([0.0, -1.0], 0.0)
 
 julia> halfspace_left([0.0, 0.0], [-1.0, 0.0])
-LazySets.HalfSpace{Float64}([0.0, 1.0], 0.0)
+HalfSpace{Float64}([0.0, 1.0], 0.0)
 ```
 
 We create a box from the sequence of line segments that describe its edges:

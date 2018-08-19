@@ -29,7 +29,7 @@ positive ``x=y`` direction:
 
 ```jldoctest
 julia> B = BallInf(zeros(2), 1.0)
-LazySets.BallInf{Float64}([0.0, 0.0], 1.0)
+BallInf{Float64}([0.0, 0.0], 1.0)
 julia> dim(B)
 2
 julia> ρ([1., 1.], B)
