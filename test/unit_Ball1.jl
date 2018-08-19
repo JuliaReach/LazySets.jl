@@ -1,4 +1,4 @@
-for N in [Float64, Float32]
+for N in [Float64, Rational{Int}, Float32]
     # 1D Ball1
     b = Ball1(N[0.], N(1.))
     # dimension
@@ -54,7 +54,7 @@ for N in [Float64, Float32]
     @test σ(d, b) == N[0., -2.]
 
     # center
-    @test center(b) = N(2.)
+    @test center(b) == N[0., 0.]
 
     # an_element & membership function
     @test an_element(b) ∈ b
