@@ -96,10 +96,14 @@ if test_suite_basic
 end
 
 if test_suite_doctests
-    if VERSION < v"0.7-"
-        Pkg.add("Documenter")
-        Pkg.pin("Documenter", v"0.18.0")
+    if isdefined(@__MODULE__, :Polyhedra)
+        println("skipping doctests due to a clash with Polyhedra")
+    else
+        if VERSION < v"0.7-"
+            Pkg.add("Documenter")
+            Pkg.pin("Documenter", v"0.18.0")
+        end
+        using Documenter
+        @time @testset "LazySets.doctests" begin include("../docs/make_doctests_only.jl") end
     end
-    using Documenter
-    @time @testset "LazySets.doctests" begin include("../docs/make_doctests_only.jl") end
 end
