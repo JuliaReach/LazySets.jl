@@ -131,6 +131,7 @@ for N in [Float64, Rational{Int}, Float32]
     # neutral element
     z = ZeroSet{N}(2)
     msa = MinkowskiSumArray(LazySet{N}[])
+    cms = CacheMinkowskiSum(LazySet{N}[])
     @test neutral(MinkowskiSum) == neutral(MinkowskiSumArray) ==
           neutral(CacheMinkowskiSum) == ZeroSet
     @test b1 + z == z + b1 == b1
