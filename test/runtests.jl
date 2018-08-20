@@ -11,6 +11,7 @@ include("to_N.jl")
 global test_suite_basic = true
 global test_suite_doctests = VERSION >= v"0.7-" # only run doctests with new Julia version
 global test_suite_polyhedra = false
+global test_suite_plotting = false
 
 if (length(ARGS) == 0) || (ARGS[1] == "--default")
     # default test suite including doctests
@@ -20,9 +21,13 @@ elseif ARGS[1] == "--basic"
 elseif ARGS[1] == "--polyhedra"
     # Polyhedra.jl test suite
     test_suite_polyhedra = true
+elseif ARGS[1] == "--plot"
+    # plotting test suite
+    test_suite_plotting = true
 elseif ARGS[1] == "--all"
     # complete test suite
     test_suite_polyhedra = true
+    test_suite_plotting = true
 else
     error("unknown parameter 1: $(ARGS[1])")
 end
@@ -83,6 +88,10 @@ if test_suite_basic
     # ====================================
     include("check_method_implementation.jl")
     @time @testset "LazySets.interfaces" begin include("unit_interfaces.jl") end
+end
+
+if test_suite_plotting
+    @time @testset "LazySets.plotting" begin include("unit_plot.jl") end
 end
 
 if test_suite_doctests
