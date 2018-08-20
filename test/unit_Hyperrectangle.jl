@@ -77,7 +77,7 @@ for N in [Float64, Rational{Int}, Float32]
     H2 = Hyperrectangle(low=l, high=h)
     @test H1.center ≈ H2.center
     @test H1.radius ≈ H2.radius
-    if VERSION < v"0.7-"
+    @static if VERSION < v"0.7-"
         @test_throws ArgumentError Hyperrectangle(xyz="zyx")
     end
 

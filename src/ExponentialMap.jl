@@ -317,7 +317,7 @@ struct ExponentialProjectionMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
     X::S
 end
 
-if VERSION < v"0.7-"
+@static if VERSION < v"0.7-"
     # convenience constructor without type parameter
     ExponentialProjectionMap(projspmexp::ProjectionSparseMatrixExp, X::S
                             ) where {S<:LazySet{N}} where {N<:Real} =

@@ -12,7 +12,7 @@ import Compat.LinearAlgebra: norm, checksquare, LAPACKException,
 import Compat.InteractiveUtils.subtypes
 export _At_mul_B
 
-if VERSION < v"0.7-"
+@static if VERSION < v"0.7-"
     @inline function _At_mul_B(A, B)
         return At_mul_B(A, B)
     end

@@ -99,7 +99,7 @@ if test_suite_doctests
     if isdefined(@__MODULE__, :Polyhedra)
         println("skipping doctests due to a clash with Polyhedra")
     else
-        if VERSION < v"0.7-"
+        @static if VERSION < v"0.7-"
             Pkg.add("Documenter")
             Pkg.pin("Documenter", v"0.18.0")
         end
