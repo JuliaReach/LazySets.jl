@@ -35,7 +35,6 @@ overapproximates the states reachable by any trajectory of this IVP.
 using LazySets, Plots
 
 function Algorithm1(A, X0, δ, μ, T)
-
     # bloating factors
     Anorm = norm(A, Inf)
     α = (expm(δ * Anorm) - 1 - δ * Anorm) / norm(X0, Inf)
@@ -66,6 +65,7 @@ function Algorithm1(A, X0, δ, μ, T)
     end
     return R
 end
+nothing # hide
 ```
 
 ## Projection
@@ -76,6 +76,7 @@ function project(R, vars, n)
     M = sparse(1:2, vars, [1., 1.], 2, n)
     return [M * Ri for Ri in R]
 end
+nothing # hide
 ```
 
 ## Example 1

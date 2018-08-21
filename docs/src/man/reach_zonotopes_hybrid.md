@@ -15,9 +15,11 @@ This algorithm is an extension of the one presented in
 
 We consider a simple case here where modes do not have invariants and
 transitions do not have updates.
-It makes sense to consider *must* transitions in this case, i.e., that a
-transition is taken as soon as it is enabled, but we also offer the *may*
-transitions interpretation below.
+In set-based analysis like ours, it may make sense to take a transition as soon
+as one state in the current set of states can take it.
+Note that this is not equivalent to *must* semantics of hybrid automata (also
+called *urgent transitions*), which is defined on single trajectories.
+We also offer the usual *may* transitions interpretation.
 
 
 ## Hybrid algorithm
@@ -36,7 +38,7 @@ queue and continue with the next iteration until the queue is empty.
 ```@example example_reach_zonotopes_hybrid
 using LazySets, Plots
 
-function reach_hybrid(As, Ts, init, δ, μ, T, max_order, must_semantics)
+function reach_hybrid(As, Ts, init, δ, μ, T, max_order, instant_transitions)
     # initialize queue with initial mode and states at time t=0
     queue = [(init[1], init[2], 0.)]
 
@@ -57,16 +59,17 @@ function reach_hybrid(As, Ts, init, δ, μ, T, max_order, must_semantics)
                     println("transition $loc -> $tgt_loc at time $new_t")
                 end
             end
-            if must_semantics && found_transition
+            if instant_transitions && found_transition
                 break
             end
         end
-        if !must_semantics || !found_transition && length(R) > 0
+        if !instant_transitions || !found_transition && length(R) > 0
             push!(res, (R[end], loc))
         end
     end
     return res
 end
+nothing # hide
 ```
 
 ### Continuous algorithm
@@ -115,6 +118,7 @@ function reach_continuous(A, X0, δ, μ, T, max_order)
     end
     return R
 end
+nothing # hide
 ```
 
 The function `Phi1` represents the approximation model.
@@ -128,6 +132,7 @@ function Phi1(A, δ)
                    spzeros(n, 3*n)]))
     return P[1:n, (n+1):2*n]
 end
+nothing # hide
 ```
 
 ### Plotting results
@@ -149,6 +154,7 @@ function plot_res(res)
     end
     return p
 end
+nothing # hide
 ```
 
 ## Example
@@ -204,11 +210,11 @@ interval ``[0, 4]`` and time step ``δ = 0.001``.
     # maximum order of zonotopes
     max_order = 10
 
-    # use must semantics?
-    must_semantics = true
+    # take transitions only the first time they are enabled?
+    instant_transitions = true
 
     # run analysis
-    res = reach_hybrid(As, Ts, init, δ, μ, T, max_order, must_semantics)
+    res = reach_hybrid(As, Ts, init, δ, μ, T, max_order, instant_transitions)
 
     # plot result
     plot_res(res)
