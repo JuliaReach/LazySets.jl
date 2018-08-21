@@ -77,7 +77,7 @@ struct Interval{N<:Real, IN <: AbstractInterval{N}} <: AbstractPointSymmetricPol
    dat::IN
 end
 
-if VERSION < v"0.7-"
+@static if VERSION < v"0.7-"
     # convenience constructor without type parameter
     Interval(interval::IN) where {N<:Real, IN <: AbstractInterval{N}} =
         Interval{N, IN}(interval)

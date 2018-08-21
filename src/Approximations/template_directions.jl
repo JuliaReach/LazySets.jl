@@ -74,7 +74,7 @@ BoxDirections(n::Int) = BoxDirections{Float64}(n)
 Base.eltype(::Type{BoxDirections{N}}) where N = AbstractVector{N}
 Base.length(bd::BoxDirections) = 2 * bd.n
 
-if VERSION < v"0.7-"
+@static if VERSION < v"0.7-"
 @eval begin
 
 Base.start(bd::BoxDirections) = 1
@@ -125,7 +125,7 @@ OctDirections(n::Int) = OctDirections{Float64}(n)
 Base.eltype(::Type{OctDirections{N}}) where N = AbstractVector{N}
 Base.length(od::OctDirections) = 2 * od.n^2
 
-if VERSION < v"0.7-"
+@static if VERSION < v"0.7-"
 @eval begin
 
 function Base.start(od::OctDirections{N}) where N
@@ -267,7 +267,7 @@ BoxDiagDirections(n::Int) = BoxDiagDirections{Float64}(n)
 Base.eltype(::Type{BoxDiagDirections{N}}) where N = AbstractVector{N}
 Base.length(bdd::BoxDiagDirections) = bdd.n == 1 ? 2 : 2^bdd.n + 2 * bdd.n
 
-if VERSION < v"0.7-"
+@static if VERSION < v"0.7-"
 @eval begin
 
 Base.start(bdd::BoxDiagDirections{N}) where N = ones(N, bdd.n)

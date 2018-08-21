@@ -56,7 +56,7 @@ Hyperrectangle(center::Vector{N}, radius::Vector{N}) where {N<:Real} =
     Hyperrectangle{N}(center, radius)
 
 # constructor from keyword arguments (lower and upper bounds)
-if VERSION < v"0.7-"
+@static if VERSION < v"0.7-"
 @eval begin
 
 function Hyperrectangle(;kwargs...)
