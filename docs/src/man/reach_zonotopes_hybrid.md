@@ -69,6 +69,7 @@ function reach_hybrid(As, Ts, init, δ, μ, T, max_order, instant_transitions)
     end
     return res
 end
+nothing # hide
 ```
 
 ### Continuous algorithm
@@ -117,6 +118,7 @@ function reach_continuous(A, X0, δ, μ, T, max_order)
     end
     return R
 end
+nothing # hide
 ```
 
 The function `Phi1` represents the approximation model.
@@ -130,6 +132,7 @@ function Phi1(A, δ)
                    spzeros(n, 3*n)]))
     return P[1:n, (n+1):2*n]
 end
+nothing # hide
 ```
 
 ### Plotting results
@@ -151,6 +154,7 @@ function plot_res(res)
     end
     return p
 end
+nothing # hide
 ```
 
 ## Example
