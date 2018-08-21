@@ -64,7 +64,7 @@ A local approximation of `S` in the given directions.
 """
 function new_approx(S::LazySet, p1::Vector{N}, d1::Vector{N}, p2::Vector{N},
                     d2::Vector{N}) where {N<:Real}
-    if norm(p1-p2, 2) < TOL(N)
+    if norm(p1-p2, 2) <= TOL(N)
         # this approximation cannot be refined and we set q = p1 by convention
         ap = LocalApproximation{N}(p1, d1, p2, d2, p1, false, zero(N))
     else
@@ -72,7 +72,7 @@ function new_approx(S::LazySet, p1::Vector{N}, d1::Vector{N}, p2::Vector{N},
         q = element(intersection(Line(d1, dot(d1, p1)), Line(d2, dot(d2, p2))))
         approx_error = min(norm(q - σ(ndir, S)), dot(ndir, q - p1))
         refinable = (approx_error > TOL(N)) &&
-                     !(norm(p1-q, 2) < TOL(N) || norm(q-p2, 2) < TOL(N))
+                     !(norm(p1-q, 2) <= TOL(N) || norm(q-p2, 2) <= TOL(N))
         ap = LocalApproximation{N}(p1, d1, p2, d2, q, refinable, approx_error)
     end
     return ap
@@ -200,8 +200,8 @@ function approximate(S::LazySet{N},
             Ω.approx_list[i] = la1
 
             redundant = inext > length(Ω.approx_list) ? false :
-                (norm(la2.p1-Ω.approx_list[inext].p1) < TOL(N)) &&
-                (norm(la2.q-Ω.approx_list[inext].q) < TOL(N))
+                (norm(la2.p1-Ω.approx_list[inext].p1) <= TOL(N)) &&
+                (norm(la2.q-Ω.approx_list[inext].q) <= TOL(N))
             if redundant
                 # if it is redundant, keep the refined approximation
                 Ω.approx_list[inext] = la2
