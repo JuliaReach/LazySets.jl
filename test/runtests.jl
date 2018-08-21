@@ -27,6 +27,16 @@ else
     error("unknown parameter 1: $(ARGS[1])")
 end
 
+if test_suite_polyhedra
+    using Polyhedra
+
+    # fix namespace conflicts with Polyhedra
+    dim = LazySets.dim
+    HalfSpace = LazySets.HalfSpace
+    Interval = LazySets.Interval
+    Line = LazySets.Line
+end
+
 if test_suite_basic
     # =======================================
     # Testing types that inherit from LazySet
@@ -86,10 +96,14 @@ if test_suite_basic
 end
 
 if test_suite_doctests
-    if VERSION < v"0.7-"
-        Pkg.add("Documenter")
-        Pkg.pin("Documenter", v"0.18.0")
+    if isdefined(@__MODULE__, :Polyhedra)
+        println("skipping doctests due to a clash with Polyhedra")
+    else
+        if VERSION < v"0.7-"
+            Pkg.add("Documenter")
+            Pkg.pin("Documenter", v"0.18.0")
+        end
+        using Documenter
+        @time @testset "LazySets.doctests" begin include("../docs/make_doctests_only.jl") end
     end
-    using Documenter
-    @time @testset "LazySets.doctests" begin include("../docs/make_doctests_only.jl") end
 end
