@@ -1,12 +1,56 @@
 import LazySets.Approximations.overapproximate
 
-for N in [Float64, Float32] # TODO Rational{Int}
+for N in [Float64, Rational{Int}, Float32]
     # overapproximating a set of type T1 with an unsupported type T2 is the
     # identity if T1 = T2
     @test_throws MethodError overapproximate(ZeroSet{N}(2), EmptySet)
     e = EmptySet{N}()
     @test overapproximate(e, EmptySet) == e
 
+    # HPolygon approximation with box directions
+    c = N[0., 0.]
+    b = Ball1(c, N(1.))
+    p = overapproximate(b, HPolygon)
+    for d in to_N(N, [[1., 0.], [-1., 0.]])
+        @test σ(d, p)[1] ≈ σ(d, b)[1]
+    end
+    for d in to_N(N, [[0., 1.], [0., -1.]])
+        @test σ(d, p)[2] ≈ σ(d, b)[2]
+    end
+
+    # Hyperrectangle approximation
+    c = N[0., 0.]
+    b = Ball1(c, N(1.))
+    p = overapproximate(b, Hyperrectangle)
+    for d in to_N(N, [[1., 0.], [-1., 0.]])
+        @test σ(d, p)[1] ≈ σ(d, b)[1]
+    end
+    for d in to_N(N, [[0., 1.], [0., -1.]])
+        @test σ(d, p)[2] ≈ σ(d, b)[2]
+    end
+    @test p.center ≈ c
+    @test p.radius ≈ N[1., 1.]
+
+    # Interval approximation
+    b = Ball1(N[0.], N(1.))
+    p = overapproximate(b, LazySets.Interval)
+    for d in to_N(N, [[1.], [-1.]])
+        @test σ(d, p)[1] ≈ σ(d, b)[1]
+    end
+end
+
+# useful for benchmarking overapproximate and LinearMap's support vector
+# (see #290)
+function overapproximate_lmap(n)
+    B = BallInf(ones(n), 2.)
+    π = sparse([1, 2], [1, 2], ones(2), 2, n)
+    return Approximations.overapproximate(π*B)
+end
+o = overapproximate_lmap(50)
+@test o.center == [1., 1] && o.radius == [2., 2]
+
+# tests that do not work with Rational{Int}
+for N in [Float64, Float32]
     # Approximation of a 2D centered unit ball in norm 1
     # All vertices v should be like this:
     # ‖v‖ >= 1 and ‖v‖ <= 1+ε
@@ -61,30 +105,6 @@ for N in [Float64, Float32] # TODO Rational{Int}
     @test lcl[8].a ≈ N[sqrt(2.0)/2.0, -sqrt(2.0)/2.0]
     @test lcl[8].b ≈ N(1.0)
 
-    # HPolygon approximation with box directions
-    c = N[0., 0.]
-    b = Ball1(c, N(1.))
-    p = overapproximate(b, HPolygon)
-    for d in to_N(N, [[1., 0.], [-1., 0.]])
-        @test σ(d, p)[1] ≈ σ(d, b)[1]
-    end
-    for d in to_N(N, [[0., 1.], [0., -1.]])
-        @test σ(d, p)[2] ≈ σ(d, b)[2]
-    end
-
-    # Hyperrectangle approximation
-    c = N[0., 0.]
-    b = Ball1(c, N(1.))
-    p = overapproximate(b, Hyperrectangle)
-    for d in to_N(N, [[1., 0.], [-1., 0.]])
-        @test σ(d, p)[1] ≈ σ(d, b)[1]
-    end
-    for d in to_N(N, [[0., 1.], [0., -1.]])
-        @test σ(d, p)[2] ≈ σ(d, b)[2]
-    end
-    @test p.center ≈ c
-    @test p.radius ≈ N[1., 1.]
-
     # Zonotope approximation
     Z1 = Zonotope(ones(N, 2), [N[1., 0.], N[0., 1.], N[1., 1.]])
     Z2 = Zonotope(-ones(N, 2), [N[.5, 1.], N[-.1, .9], N[1., 4.]])
@@ -93,21 +113,4 @@ for N in [Float64, Float32] # TODO Rational{Int}
     Y_zonotope = overapproximate(Y, Zonotope) # overapproximate with a zonotope
     @test Y_polygon ⊆ Y_zonotope
     @test !(Y_zonotope ⊆ Y_polygon)
-
-    # Interval approximation
-    b = Ball1(N[0.], N(1.))
-    p = overapproximate(b, LazySets.Interval)
-    for d in to_N(N, [[1.], [-1.]])
-        @test σ(d, p)[1] ≈ σ(d, b)[1]
-    end
 end
-
-# useful for benchmarking overapproximate and LinearMap's support vector
-# (see #290)
-function overapproximate_lmap(n)
-    B = BallInf(ones(n), 2.)
-    π = sparse([1, 2], [1, 2], ones(2), 2, n)
-    return Approximations.overapproximate(π*B)
-end
-o = overapproximate_lmap(50)
-@test o.center == [1., 1] && o.radius == [2., 2]
