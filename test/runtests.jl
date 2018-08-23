@@ -111,6 +111,10 @@ if test_suite_doctests
         @static if VERSION < v"0.7-"
             Pkg.add("Documenter")
             Pkg.pin("Documenter", v"0.18.0")
+        else
+            # NOTE: can be removed when using a Project.toml file
+            using Pkg
+            Pkg.add("Documenter")
         end
         using Documenter
         @time @testset "LazySets.doctests" begin include("../docs/make_doctests_only.jl") end
