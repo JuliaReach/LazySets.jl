@@ -234,8 +234,8 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
 
-Inherited from [`AbstractPointSymmetricPolytope`](@ref):
-* [`dim`](@ref dim(::AbstractPointSymmetricPolytope))
+Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
+* [`dim`](@ref dim(::AbstractCentrallySymmetricPolytope))
 * `an_element`
 
 Inherited from [`AbstractHyperrectangle`](@ref):

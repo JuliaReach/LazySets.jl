@@ -4,7 +4,7 @@ export AbstractHyperrectangle,
        radius_hyperrectangle
 
 """
-    AbstractHyperrectangle{N<:Real} <: AbstractPointSymmetricPolytope{N}
+    AbstractHyperrectangle{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
 
 Abstract type for hyperrectangular sets.
 
@@ -25,7 +25,7 @@ julia> subtypes(AbstractHyperrectangle)
  SymmetricIntervalHull
 ```
 """
-abstract type AbstractHyperrectangle{N<:Real} <: AbstractPointSymmetricPolytope{N}
+abstract type AbstractHyperrectangle{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
 end
 
 

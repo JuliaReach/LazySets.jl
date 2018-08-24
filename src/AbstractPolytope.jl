@@ -19,7 +19,7 @@ Every concrete `AbstractPolytope` must define the following functions:
 ```jldoctest
 julia> subtypes(AbstractPolytope)
 4-element Array{Any,1}:
- AbstractPointSymmetricPolytope
+ AbstractCentrallySymmetricPolytope
  AbstractPolygon
  HPolytope
  VPolytope

@@ -66,14 +66,14 @@ Note that there is a special interface combination
 [Centrally symmetric polytope](@ref).
 
 ```@docs
-AbstractPointSymmetric
+AbstractCentrallySymmetric
 ```
 
 This interface defines the following functions:
 
 ```@docs
-dim(::AbstractPointSymmetric)
-an_element(::AbstractPointSymmetric{N}) where {N<:Real}
+dim(::AbstractCentrallySymmetric)
+an_element(::AbstractCentrallySymmetric{N}) where {N<:Real}
 ```
 
 ## Polytope
@@ -134,14 +134,14 @@ A centrally symmetric polytope is a combination of two other interfaces:
 [Centrally symmetric set](@ref) and [Polytope](@ref).
 
 ```@docs
-AbstractPointSymmetricPolytope
+AbstractCentrallySymmetricPolytope
 ```
 
 This interface defines the following functions:
 
 ```@docs
-dim(::AbstractPointSymmetricPolytope)
-an_element(::AbstractPointSymmetricPolytope{N}) where {N<:Real}
+dim(::AbstractCentrallySymmetricPolytope)
+an_element(::AbstractCentrallySymmetricPolytope{N}) where {N<:Real}
 ```
 
 #### Hyperrectangle

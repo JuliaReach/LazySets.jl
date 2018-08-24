@@ -68,7 +68,7 @@ function radius_hyperrectangle(S::AbstractSingleton{N}
 end
 
 
-# --- AbstractPointSymmetric interface functions ---
+# --- AbstractCentrallySymmetric interface functions ---
 
 
 """

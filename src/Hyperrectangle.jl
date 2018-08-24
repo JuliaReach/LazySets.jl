@@ -127,7 +127,7 @@ function radius_hyperrectangle(H::Hyperrectangle{N})::Vector{N} where {N<:Real}
 end
 
 
-# --- AbstractPointSymmetric interface functions ---
+# --- AbstractCentrallySymmetric interface functions ---
 
 
 """

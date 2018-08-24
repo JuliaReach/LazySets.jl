@@ -3,7 +3,7 @@ import Base.∈
 export Ballp
 
 """
-    Ballp{N<:AbstractFloat} <: AbstractPointSymmetric{N}
+    Ballp{N<:AbstractFloat} <: AbstractCentrallySymmetric{N}
 
 Type that represents a ball in the p-norm, for ``1 ≤ p ≤ ∞``.
 
@@ -52,7 +52,7 @@ julia> σ([1., 2, 3, 4, 5], B)
  0.33790011086518895
 ```
 """
-struct Ballp{N<:AbstractFloat} <: AbstractPointSymmetric{N}
+struct Ballp{N<:AbstractFloat} <: AbstractCentrallySymmetric{N}
     p::N
     center::Vector{N}
     radius::N
@@ -78,7 +78,7 @@ end
 Ballp(p::N, center::Vector{N}, radius::N) where {N<:AbstractFloat} =
     Ballp{N}(p, center, radius)
 
-# --- AbstractPointSymmetric interface functions ---
+# --- AbstractCentrallySymmetric interface functions ---
 
 
 """

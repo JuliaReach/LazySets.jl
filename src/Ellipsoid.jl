@@ -1,7 +1,7 @@
 export Ellipsoid
 
 """
-    Ellipsoid{N<:AbstractFloat} <:  AbstractPointSymmetric{N}
+    Ellipsoid{N<:AbstractFloat} <:  AbstractCentrallySymmetric{N}
 
 Type that represents an ellipsoid.
 
@@ -60,7 +60,7 @@ julia> E = Ellipsoid(ones(2), Diagonal([2.0, 0.5]))
 Ellipsoid{Float64}([1.0, 1.0], [2.0 0.0; 0.0 0.5])
 ```
 """
-struct Ellipsoid{N<:AbstractFloat} <: AbstractPointSymmetric{N}
+struct Ellipsoid{N<:AbstractFloat} <: AbstractCentrallySymmetric{N}
     center::AbstractVector{N}
     shape_matrix::AbstractMatrix{N}
 
