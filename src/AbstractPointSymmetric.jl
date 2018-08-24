@@ -5,7 +5,7 @@ export AbstractPointSymmetric,
 """
     AbstractPointSymmetric{N<:Real} <: LazySet{N}
 
-Abstract type for point symmetric sets.
+Abstract type for centrally symmetric sets.
 
 ### Notes
 
@@ -27,7 +27,7 @@ abstract type AbstractPointSymmetric{N<:Real} <: LazySet{N} end
 """
     dim(S::AbstractPointSymmetric)::Int
 
-Return the ambient dimension of a point symmetric set.
+Return the ambient dimension of a centrally symmetric set.
 
 ### Input
 
@@ -44,15 +44,15 @@ end
 """
     an_element(S::AbstractPointSymmetric{N})::Vector{N} where {N<:Real}
 
-Return some element of a point symmetric set.
+Return some element of a centrally symmetric set.
 
 ### Input
 
-- `S` -- point symmetric set
+- `S` -- centrally symmetric set
 
 ### Output
 
-The center of the point symmetric set.
+The center of the centrally symmetric set.
 """
 function an_element(S::AbstractPointSymmetric{N})::Vector{N} where {N<:Real}
     return center(S)

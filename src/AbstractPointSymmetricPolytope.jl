@@ -7,7 +7,7 @@ export AbstractPointSymmetricPolytope,
 """
     AbstractPointSymmetricPolytope{N<:Real} <: AbstractPolytope{N}
 
-Abstract type for point symmetric, polytopic sets.
+Abstract type for centrally symmetric, polytopic sets.
 It combines the `AbstractPointSymmetric` and `AbstractPolytope` interfaces.
 Such a type combination is necessary as long as Julia does not support
 [multiple inheritance](https://github.com/JuliaLang/julia/issues/5).
@@ -42,7 +42,7 @@ abstract type AbstractPointSymmetricPolytope{N<:Real} <: AbstractPolytope{N} end
 """
     dim(P::AbstractPointSymmetricPolytope)::Int
 
-Return the ambient dimension of a point symmetric set.
+Return the ambient dimension of a centrally symmetric set.
 
 ### Input
 
@@ -60,15 +60,15 @@ end
 """
     an_element(P::AbstractPointSymmetricPolytope{N})::Vector{N} where {N<:Real}
 
-Return some element of a point symmetric polytope.
+Return some element of a centrally symmetric polytope.
 
 ### Input
 
-- `P` -- point symmetric polytope
+- `P` -- centrally symmetric polytope
 
 ### Output
 
-The center of the point symmetric polytope.
+The center of the centrally symmetric polytope.
 """
 function an_element(P::AbstractPointSymmetricPolytope{N}
                    )::Vector{N} where {N<:Real}

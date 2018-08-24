@@ -58,12 +58,12 @@ diameter(::LazySet, ::Real)
 an_element(::LazySet{Real})
 ```
 
-## Point symmetric set
+## Centrally symmetric set
 
-Point symmetric sets such as balls of different norms are characterized by a
+Centrally symmetric sets such as balls of different norms are characterized by a
 center.
 Note that there is a special interface combination
-[Point symmetric polytope](@ref).
+[Centrally symmetric polytope](@ref).
 
 ```@docs
 AbstractPointSymmetric
@@ -81,7 +81,7 @@ an_element(::AbstractPointSymmetric{N}) where {N<:Real}
 A polytope has finitely many vertices (*V-representation*) resp. facets
 (*H-representation*).
 Note that there is a special interface combination
-[Point symmetric polytope](@ref).
+[Centrally symmetric polytope](@ref).
 
 ```@docs
 AbstractPolytope
@@ -128,10 +128,10 @@ addconstraint!(::AbstractHPolygon{Real}, ::LinearConstraint{Real})
 constraints_list(::AbstractHPolygon{Real})
 ```
 
-### Point symmetric polytope
+### Centrally symmetric polytope
 
-A point symmetric polytope is a combination of two other interfaces:
-[Point symmetric set](@ref) and [Polytope](@ref).
+A centrally symmetric polytope is a combination of two other interfaces:
+[Centrally symmetric set](@ref) and [Polytope](@ref).
 
 ```@docs
 AbstractPointSymmetricPolytope
@@ -146,7 +146,8 @@ an_element(::AbstractPointSymmetricPolytope{N}) where {N<:Real}
 
 #### Hyperrectangle
 
-A hyperrectangle is a special point symmetric polytope with axis-aligned facets.
+A hyperrectangle is a special centrally symmetric polytope with axis-aligned
+facets.
 
 ```@docs
 AbstractHyperrectangle
