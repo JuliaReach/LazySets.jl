@@ -3,7 +3,7 @@ import Base.∈
 export Ball1
 
 """
-    Ball1{N<:Real} <: AbstractPointSymmetricPolytope{N}
+    Ball1{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
 
 Type that represents a ball in the 1-norm, also known as Manhattan or Taxicab
 norm.
@@ -40,7 +40,7 @@ julia> σ([0.,1], B)
  1.0
 ```
 """
-struct Ball1{N<:Real} <: AbstractPointSymmetricPolytope{N}
+struct Ball1{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
     center::Vector{N}
     radius::N
 
@@ -55,7 +55,7 @@ end
 Ball1(center::Vector{N}, radius::N) where {N<:Real} = Ball1{N}(center, radius)
 
 
-# --- AbstractPointSymmetric interface functions ---
+# --- AbstractCentrallySymmetric interface functions ---
 
 
 """

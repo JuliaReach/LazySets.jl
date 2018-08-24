@@ -20,15 +20,15 @@ end
 @test check_method_implementation(AbstractPolytope, vertices_list,
                                   Function[S -> (S{Float64},)],
                                   ignore_types=exclusions)
-@test check_method_implementation(AbstractPointSymmetricPolytope, vertices_list,
+@test check_method_implementation(AbstractCentrallySymmetricPolytope, vertices_list,
                                   Function[S -> (S{Float64},)])
 
-# --- AbstractPointSymmetric ---
+# --- AbstractCentrallySymmetric ---
 
 # center
-@test check_method_implementation(AbstractPointSymmetric, center,
+@test check_method_implementation(AbstractCentrallySymmetric, center,
                                   Function[S -> (S{Float64},)])
-@test check_method_implementation(AbstractPointSymmetricPolytope, center,
+@test check_method_implementation(AbstractCentrallySymmetricPolytope, center,
                                   Function[S -> (S{Float64},)])
 
 # --- AbstractHyperrectangle ---

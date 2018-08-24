@@ -4,7 +4,7 @@ export LineSegment,
        halfspace_left, halfspace_right
 
 """
-    LineSegment{N<:Real} <: AbstractPointSymmetricPolytope{N}
+    LineSegment{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
 
 Type that represents a line segment in 2D between two points ``p`` and ``q``.
 
@@ -45,7 +45,7 @@ julia> is_intersection_empty(s, sn, true)
 (false, [0.5, 0.5])
 ```
 """
-struct LineSegment{N<:Real} <: AbstractPointSymmetricPolytope{N}
+struct LineSegment{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
     p::AbstractVector{N}
     q::AbstractVector{N}
 
@@ -168,7 +168,7 @@ function ∈(x::AbstractVector{N}, L::LineSegment{N})::Bool where {N<:Real}
 end
 
 
-# --- AbstractPointSymmetric interface functions ---
+# --- AbstractCentrallySymmetric interface functions ---
 
 
 """

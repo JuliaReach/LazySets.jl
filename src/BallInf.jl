@@ -90,7 +90,7 @@ function radius_hyperrectangle(B::BallInf{N})::Vector{N} where {N<:Real}
 end
 
 
-# --- AbstractPointSymmetric interface functions ---
+# --- AbstractCentrallySymmetric interface functions ---
 
 
 """

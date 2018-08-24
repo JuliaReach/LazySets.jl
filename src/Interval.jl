@@ -7,7 +7,8 @@ export Interval,
        low, high, vertices_list
 
 """
-    Interval{N<:Real, IN <: AbstractInterval{N}} <: AbstractPointSymmetricPolytope{N}
+    Interval{N<:Real, IN <: AbstractInterval{N}}
+        <: AbstractCentrallySymmetricPolytope{N}
 
 Type representing an interval on the real line. Mathematically, it is of the
 form
@@ -22,7 +23,8 @@ form
 
 ### Notes
 
-This type relies on the [IntervalArithmetic.jl](https://juliaintervals.github.io/IntervalArithmetic.jl/stable/)
+This type relies on the
+[IntervalArithmetic.jl](https://juliaintervals.github.io/IntervalArithmetic.jl/stable/)
 library for representation of intervals and arithmetic operations.
 
 ### Examples
@@ -73,7 +75,7 @@ julia> Interval(0//1, 2//1)
 Interval{Rational{Int64},IntervalArithmetic.AbstractInterval{Rational{Int64}}}([0//1, 2//1])
 ```
 """
-struct Interval{N<:Real, IN <: AbstractInterval{N}} <: AbstractPointSymmetricPolytope{N}
+struct Interval{N<:Real, IN <: AbstractInterval{N}} <: AbstractCentrallySymmetricPolytope{N}
    dat::IN
 end
 

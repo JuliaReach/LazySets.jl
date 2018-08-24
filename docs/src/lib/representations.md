@@ -30,8 +30,8 @@ Inherited from [`LazySet`](@ref):
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
-Inherited from [`AbstractPointSymmetric`](@ref):
-* [`dim`](@ref dim(::AbstractPointSymmetric))
+Inherited from [`AbstractCentrallySymmetric`](@ref):
+* [`dim`](@ref dim(::AbstractCentrallySymmetric))
 * `an_element`
 
 ### Infinity norm ball
@@ -50,8 +50,8 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
 
-Inherited from [`AbstractPointSymmetricPolytope`](@ref):
-* [`dim`](@ref dim(::AbstractPointSymmetricPolytope))
+Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
+* [`dim`](@ref dim(::AbstractCentrallySymmetricPolytope))
 * `an_element`
 
 Inherited from [`AbstractHyperrectangle`](@ref):
@@ -78,8 +78,8 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
 
-Inherited from [`AbstractPointSymmetricPolytope`](@ref):
-* [`dim`](@ref dim(::AbstractPointSymmetricPolytope))
+Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
+* [`dim`](@ref dim(::AbstractCentrallySymmetricPolytope))
 * `an_element`
 
 ### p-norm ball
@@ -95,8 +95,8 @@ Inherited from [`LazySet`](@ref):
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
-Inherited from [`AbstractPointSymmetric`](@ref):
-* [`dim`](@ref dim(::AbstractPointSymmetric))
+Inherited from [`AbstractCentrallySymmetric`](@ref):
+* [`dim`](@ref dim(::AbstractCentrallySymmetric))
 * `an_element`
 
 ## Ellipsoid
@@ -112,8 +112,8 @@ Inherited from [`LazySet`](@ref):
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
-Inherited from [`AbstractPointSymmetric`](@ref):
-* [`dim`](@ref dim(::AbstractPointSymmetric))
+Inherited from [`AbstractCentrallySymmetric`](@ref):
+* [`dim`](@ref dim(::AbstractCentrallySymmetric))
 * `an_element`
 
 ## Empty set
@@ -182,8 +182,8 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
 
-Inherited from [`AbstractPointSymmetricPolytope`](@ref):
-* [`dim`](@ref dim(::AbstractPointSymmetricPolytope))
+Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
+* [`dim`](@ref dim(::AbstractCentrallySymmetricPolytope))
 * `an_element`
 
 Inherited from [`AbstractHyperrectangle`](@ref):
@@ -389,8 +389,8 @@ Inherited from [`LazySet`](@ref):
 Inherited from [`AbstractPolytope`](@ref):
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope))
 
-Inherited from [`AbstractPointSymmetricPolytope`](@ref):
-* [`dim`](@ref dim(::AbstractPointSymmetricPolytope))
+Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
+* [`dim`](@ref dim(::AbstractCentrallySymmetricPolytope))
 
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
@@ -457,6 +457,6 @@ Inherited from [`LazySet`](@ref):
 Inherited from [`AbstractPolytope`](@ref):
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope))
 
-Inherited from [`AbstractPointSymmetricPolytope`](@ref):
-* [`dim`](@ref dim(::AbstractPointSymmetricPolytope))
+Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
+* [`dim`](@ref dim(::AbstractCentrallySymmetricPolytope))
 * `an_element`

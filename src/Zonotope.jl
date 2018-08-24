@@ -9,7 +9,7 @@ export Zonotope,
        reduce_order
 
 """
-    Zonotope{N<:Real} <: AbstractPointSymmetricPolytope{N}
+    Zonotope{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
 
 Type that represents a zonotope.
 
@@ -81,7 +81,7 @@ julia> Z.generators
  0.0  1.0  1.0
 ```
 """
-struct Zonotope{N<:Real} <: AbstractPointSymmetricPolytope{N}
+struct Zonotope{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
     center::AbstractVector{N}
     generators::AbstractMatrix{N}
 end
@@ -92,7 +92,7 @@ Zonotope(center::AbstractVector{N}, generators_list::AbstractVector{T}
     Zonotope(center, hcat(generators_list...))
 
 
-# --- AbstractPointSymmetric interface functions ---
+# --- AbstractCentrallySymmetric interface functions ---
 
 
 """

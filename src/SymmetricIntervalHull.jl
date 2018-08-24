@@ -111,7 +111,7 @@ function radius_hyperrectangle(sih::SymmetricIntervalHull{N}
 end
 
 
-# --- AbstractPointSymmetric interface functions ---
+# --- AbstractCentrallySymmetric interface functions ---
 
 
 """

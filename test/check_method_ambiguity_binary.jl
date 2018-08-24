@@ -38,22 +38,24 @@ function check_method_ambiguity_binary(op;
                                        print_results::Bool=false,
                                        print_warnings::Bool=print_results)::Bool
     types = [AbstractHPolygon{Float64}, AbstractHyperrectangle{Float64},
-             AbstractPointSymmetric{Float64},
-             AbstractPointSymmetricPolytope{Float64}, AbstractPolygon{Float64},
-             AbstractPolytope{Float64}, AbstractSingleton{Float64}]
+             AbstractCentrallySymmetric{Float64},
+             AbstractCentrallySymmetricPolytope{Float64},
+             AbstractPolygon{Float64}, AbstractPolytope{Float64},
+             AbstractSingleton{Float64}]
 
     polytope_constraints = [LinearConstraint(ones(2), 1.),
                             LinearConstraint([1., -1.], 1.)]
     type2instance = Dict{Type, Vector{LazySet{Float64}}}([
-        (AbstractHPolygon{Float64}, [HPolygon{Float64}(polytope_constraints),
-                            HPolygonOpt{Float64}(polytope_constraints, 1)]),
-        (AbstractHyperrectangle{Float64}, [BallInf(zeros(2), 1.),
-                                  Hyperrectangle(zeros(2), ones(2))]),
-        (AbstractPointSymmetric{Float64}, [Ball2(zeros(2), 1.),
-                                  Ballp(1.5, zeros(2), 1.),
-                                  Ellipsoid([1. 0.; 0. 1.])]),
-        (AbstractPointSymmetricPolytope{Float64}, [Ball1(zeros(2), 1.),
-                                          Zonotope(zeros(2), [1. 0.; 0. 1.])]),
+        (AbstractHPolygon{Float64},
+         [HPolygon{Float64}(polytope_constraints),
+          HPolygonOpt{Float64}(polytope_constraints, 1)]),
+        (AbstractHyperrectangle{Float64},
+         [BallInf(zeros(2), 1.), Hyperrectangle(zeros(2), ones(2))]),
+        (AbstractCentrallySymmetric{Float64},
+         [Ball2(zeros(2), 1.), Ballp(1.5, zeros(2), 1.),
+          Ellipsoid([1. 0.; 0. 1.])]),
+        (AbstractCentrallySymmetricPolytope{Float64},
+         [Ball1(zeros(2), 1.), Zonotope(zeros(2), [1. 0.; 0. 1.])]),
         (AbstractPolygon{Float64}, [VPolygon([zeros(2)])]),
         (AbstractPolytope{Float64}, [HPolytope{Float64}(polytope_constraints)]),
         (AbstractSingleton{Float64}, [Singleton(zeros(2)), ZeroSet(2)])

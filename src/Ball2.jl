@@ -3,7 +3,7 @@ import Base.∈
 export Ball2
 
 """
-    Ball2{N<:AbstractFloat} <: AbstractPointSymmetric{N}
+    Ball2{N<:AbstractFloat} <: AbstractCentrallySymmetric{N}
 
 Type that represents a ball in the 2-norm.
 
@@ -48,7 +48,7 @@ julia> σ([1.,2.,3.,4.,5.], B)
  0.3370999312316211
 ```
 """
-struct Ball2{N<:AbstractFloat} <: AbstractPointSymmetric{N}
+struct Ball2{N<:AbstractFloat} <: AbstractCentrallySymmetric{N}
     center::Vector{N}
     radius::N
 
@@ -63,7 +63,7 @@ end
 Ball2(center::Vector{N}, radius::N) where {N<:AbstractFloat} =
     Ball2{N}(center, radius)
 
-# --- AbstractPointSymmetric interface functions ---
+# --- AbstractCentrallySymmetric interface functions ---
 
 
 """
