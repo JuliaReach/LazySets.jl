@@ -137,7 +137,7 @@ for N in [Float64, Rational{Int}, Float32]
     # check that vertices_list is computed correctly if the hyperrectangle
     # is "degenerate" in the sense that its radius is zero in at least one dimension
     # this test would take very long if all 2^100 vertices are computed (see #92)
-    H = Hyperrectangle(fill(N(1.), 100), [fill(N(2.), 99); 0.])
+    H = Hyperrectangle(fill(N(1.), 100), N[fill(2., 99); 0.])
     vl = vertices_list(H)
     @test length(vl) == 1 && vl[1] == H.center
 end
