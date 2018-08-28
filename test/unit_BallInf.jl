@@ -63,5 +63,5 @@ for N in [Float64, Rational{Int}, Float32]
     # check that vertices_list for zero radius doesn't repeat vertices
     b = BallInf(N[1., 2.], N(0.0))
     vl = vertices_list(b)
-    @test length(vl) == 1 && vl[1] = b.center
+    @test length(vl) == 1 && vl[1] == b.center
 end
