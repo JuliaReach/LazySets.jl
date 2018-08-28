@@ -51,8 +51,8 @@ For high dimensions, it is preferable to develop a `vertex_iterator` approach.
 """
 function vertices_list(H::AbstractHyperrectangle{N}
                       )::Vector{Vector{N}} where {N<:Real}
-    # fast evaluation if B has radius 0
-    if contains(==, radius_hyperrectangle(H), zero(N))
+    # fast evaluation if H has radius 0
+    if radius_hyperrectangle(H) == zeros(N, dim(H))
         return [center(H)]
     end
     return [center(H) .+ si .* radius_hyperrectangle(H)
