@@ -83,6 +83,9 @@ end
 
 Return the norm of a hyperrectangular set.
 
+The norm of a hyperrectangular set is defined as the norm of the enclosing ball,
+of the given ``p``-norm, of minimal volume that is centered in the origin.
+
 ### Input
 
 - `H` -- hyperrectangular set
@@ -92,13 +95,37 @@ Return the norm of a hyperrectangular set.
 
 A real number representing the norm.
 
-### Notes
+### Algorithm
 
-The norm of a hyperrectangular set is defined as the norm of the enclosing ball,
-of the given ``p``-norm, of minimal volume that is centered in the origin.
+Recall that the norm is defined as
+
+```math
+‖ X ‖ = \\max_{x ∈ X} ‖ x ‖_p = max_{x ∈ \\text{vertices}(X)} ‖ x ‖_p.
+```
+The last equality holds because the optimum of a convex function over a polytope
+is attained at one of its vertices.
+
+This implementation uses the fact that the maximum is achieved in the vertex
+``c + \\text{diag}(\\text{sign}(c)) r``, for any ``p``-norm, hence it suffices to
+take the ``p``-norm of this particular vertex. This statement is proved below.
+Note that, in particular, there is no need to compute the ``p``-norm for *each*
+vertex, which can be very expensive. 
+
+If ``X`` is an axis-aligned hyperrectangle. If the ``n``-vectors center and radius
+of the hyperrectangle are denoted ``c`` and ``r`` respectively, then reasoning on
+the ``2^n`` vertices we have that:
+
+```math
+\\max_{x ∈ \\text{vertices}(X)} ‖ x ‖_p = max_{α1, …, αn ∈ {-1, 1}} (|c1 + α1 r1|^p + ... |cn + αn rn|^p)^(1/p).
+```
+
+The function ``x-> x^p``, ``p > 0``, is monotonically increasing and thus the
+maximum of each term ``|ci + αi ri|^p`` is given by ``|ci + sign(ci) ri|^p``
+for each ``i``. Hence, ``x^* := argmax_{x ∈ X} ‖ x ‖_p`` is achieved at ``c + diag(sign(c)) r``.
 """
 function norm(H::AbstractHyperrectangle, p::Real=Inf)::Real
-    return maximum(map(x -> norm(x, p), vertices_list(H)))
+    c, r = center(H), radius_hyperrectangle(H)
+    return norm((@. c + sign_cadlag(c) * r), p)
 end
 
 """
