@@ -1,7 +1,7 @@
 for N in [Float64, Rational{Int}, Float32]
     # ConvexHull of two 2D Ball1
-    b1 = Ball1(to_N(N, [0., 0.]), to_N(N, 1.))
-    b2 = Ball1(to_N(N, [1., 2.]), to_N(N, 1.))
+    b1 = Ball1(N[0., 0.], N(1.))
+    b2 = Ball1(N[1., 2.], N(1.))
     # Test Construction
     ch1 = ConvexHull(b1, b2)
     ch2 = CH(b1, b2)
@@ -9,14 +9,14 @@ for N in [Float64, Rational{Int}, Float32]
     # Test Dimension
     @test dim(ch1) == 2
     # Test Support Vector
-    d = to_N(N, [1., 0.])
-    @test σ(d, ch1) == to_N(N, [2., 2.])
-    d = to_N(N, [-1., 0.])
-    @test σ(d, ch1) == to_N(N, [-1., 0.])
-    d = to_N(N, [0., 1.])
-    @test σ(d, ch1) == to_N(N, [1., 3.])
-    d = to_N(N, [0., -1.])
-    @test σ(d, ch1) == to_N(N, [0., -1.])
+    d = N[1., 0.]
+    @test σ(d, ch1) == N[2., 2.]
+    d = N[-1., 0.]
+    @test σ(d, ch1) == N[-1., 0.]
+    d = N[0., 1.]
+    @test σ(d, ch1) == N[1., 3.]
+    d = N[0., -1.]
+    @test σ(d, ch1) == N[0., -1.]
 
     # test convex hull of a set of points using the default algorithm
     points = to_N(N, [[0.9,0.2], [0.4,0.6], [0.2,0.1], [0.1,0.3], [0.3,0.28]])
@@ -39,14 +39,14 @@ for N in [Float64, Rational{Int}, Float32]
     # test dimension
     @test dim(C) == 2
     # test support vector
-    d = to_N(N, [1., 0.])
-    @test σ(d, C) == to_N(N, [2., 2.])
-    d = to_N(N, [-1., 0.])
-    @test σ(d, C) == to_N(N, [-1., 0.])
-    d = to_N(N, [0., 1.])
-    @test σ(d, C) == to_N(N, [1., 3.])
-    d = to_N(N, [0., -1.])
-    @test σ(d, C) == to_N(N, [0., -1.])
+    d = N[1., 0.]
+    @test σ(d, C) == N[2., 2.]
+    d = N[-1., 0.]
+    @test σ(d, C) == N[-1., 0.]
+    d = N[0., 1.]
+    @test σ(d, C) == N[1., 3.]
+    d = N[0., -1.]
+    @test σ(d, C) == N[0., -1.]
     # test convex hull array of singleton
     C = ConvexHullArray([Singleton(to_N(N, [1.0, 0.5])), Singleton(to_N(N, [1.1, 0.2])), Singleton(to_N(N, [1.4, 0.3])), Singleton(to_N(N, [1.7, 0.5])), Singleton(to_N(N, [1.4, 0.8]))])
 

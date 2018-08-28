@@ -11,10 +11,10 @@ for N in [Float64, Rational{Int}, Float32]
     c = N[0., 0.]
     b = Ball1(c, N(1.))
     p = overapproximate(b, HPolygon)
-    for d in to_N(N, [[1., 0.], [-1., 0.]])
+    for d in [N[1., 0.], N[-1., 0.]]
         @test σ(d, p)[1] ≈ σ(d, b)[1]
     end
-    for d in to_N(N, [[0., 1.], [0., -1.]])
+    for d in [N[0., 1.], N[0., -1.]]
         @test σ(d, p)[2] ≈ σ(d, b)[2]
     end
 
@@ -22,10 +22,10 @@ for N in [Float64, Rational{Int}, Float32]
     c = N[0., 0.]
     b = Ball1(c, N(1.))
     p = overapproximate(b, Hyperrectangle)
-    for d in to_N(N, [[1., 0.], [-1., 0.]])
+    for d in [N[1., 0.], N[-1., 0.]]
         @test σ(d, p)[1] ≈ σ(d, b)[1]
     end
-    for d in to_N(N, [[0., 1.], [0., -1.]])
+    for d in [N[0., 1.], N[0., -1.]]
         @test σ(d, p)[2] ≈ σ(d, b)[2]
     end
     @test p.center ≈ c
@@ -34,7 +34,7 @@ for N in [Float64, Rational{Int}, Float32]
     # Interval approximation
     b = Ball1(N[0.], N(1.))
     p = overapproximate(b, LazySets.Interval)
-    for d in to_N(N, [[1.], [-1.]])
+    for d in [N[1.], N[-1.]]
         @test σ(d, p)[1] ≈ σ(d, b)[1]
     end
 end

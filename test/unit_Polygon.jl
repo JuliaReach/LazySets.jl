@@ -134,14 +134,14 @@ for N in [Float64, Float32, Rational{Int}]
     @test σ(d, vp) == points[2]
 
     # test that #83 is fixed
-    v = VPolygon(to_N(N, [[2.0, 3.0]]))
+    v = VPolygon([N[2.0, 3.0]])
     @test N[2.0, 3.0] ∈ v
     @test !(N[3.0, 2.0] ∈ v)
-    v = VPolygon(to_N(N, [[2.0, 3.0], [-1.0, -3.4]]))
+    v = VPolygon([N[2.0, 3.0], to_N(N, [-1.0, -3.4])])
     @test to_N(N, [-1.0, -3.4]) ∈ v
 
     # an_element function
-    v = VPolygon(to_N(N, [[2., 3.]]))
+    v = VPolygon([N[2., 3.]])
     @test an_element(v) ∈ v
 
     # membership
@@ -152,8 +152,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test point ∉ VPolygon([N[1., 0.], N[1., 2.]])
 
     # subset
-    p1 = VPolygon(to_N(N, [[0., 0.], [2., 0.]]))
-    p2 = VPolygon(to_N(N, [[1., 0.]]))
+    p1 = VPolygon([N[0., 0.], N[2., 0.]])
+    p2 = VPolygon([N[1., 0.]])
     b = BallInf(N[2., 0.], N(1.))
     @test ⊆(p2, p1) && ⊆(p2, p1, true)[1]
     @test ⊆(HPolygon{N}(), p1)
