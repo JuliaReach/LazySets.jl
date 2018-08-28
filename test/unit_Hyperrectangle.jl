@@ -133,4 +133,11 @@ for N in [Float64, Rational{Int}, Float32]
     P = linear_map(Diagonal(N[1., 2., 3., 4.]),
                    Approximations.overapproximate(H1 * H1))
     @test P isa VPolytope # in 4D we get a VPolytope
+
+    # check that vertices_list is computed correctly if the hyperrectangle
+    # is "degenerate" in the sense that its radius is zero in all dimensions
+    # this test would take very long if all 2^100 vertices are computed (see #92)
+    H = Hyperrectangle(fill(N(1.), 100), fill(N(0.), 100))
+    vl = vertices_list(H)
+    @test length(vl) == 1 && vl[1] == H.center
 end
