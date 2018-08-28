@@ -111,17 +111,18 @@ take the ``p``-norm of this particular vertex. This statement is proved below.
 Note that, in particular, there is no need to compute the ``p``-norm for *each*
 vertex, which can be very expensive. 
 
-If ``X`` is an axis-aligned hyperrectangle. If the ``n``-vectors center and radius
-of the hyperrectangle are denoted ``c`` and ``r`` respectively, then reasoning on
-the ``2^n`` vertices we have that:
+If ``X`` is an axis-aligned hyperrectangle and the ``n``-dimensional vectors center
+and radius of the hyperrectangle are denoted ``c`` and ``r`` respectively, then
+reasoning on the ``2^n`` vertices we have that:
 
 ```math
 \\max_{x ∈ \\text{vertices}(X)} ‖ x ‖_p = max_{α1, …, αn ∈ {-1, 1}} (|c1 + α1 r1|^p + ... |cn + αn rn|^p)^(1/p).
 ```
 
-The function ``x-> x^p``, ``p > 0``, is monotonically increasing and thus the
+The function ``x ↦ x^p``, ``p > 0``, is monotonically increasing and thus the
 maximum of each term ``|ci + αi ri|^p`` is given by ``|ci + sign(ci) ri|^p``
-for each ``i``. Hence, ``x^* := argmax_{x ∈ X} ‖ x ‖_p`` is achieved at ``c + diag(sign(c)) r``.
+for each ``i``. Hence, ``x^* := argmax_{x ∈ X} ‖ x ‖_p`` is the vertex
+``c + diag(sign(c)) r``.
 """
 function norm(H::AbstractHyperrectangle, p::Real=Inf)::Real
     c, r = center(H), radius_hyperrectangle(H)
