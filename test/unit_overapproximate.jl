@@ -39,18 +39,18 @@ for N in [Float64, Rational{Int}, Float32]
     end
 end
 
-# useful for benchmarking overapproximate and LinearMap's support vector
-# (see #290)
-function overapproximate_lmap(n)
-    B = BallInf(ones(n), 2)
-    π = sparse([1, 2], [1, 2], ones(2), 2, n)
-    return Approximations.overapproximate(π*B)
-end
-o = overapproximate_lmap(50)
-@test o.center == [1, 1] && o.radius == [2, 2]
-
 # tests that do not work with Rational{Int}
 for N in [Float64, Float32]
+    # useful for benchmarking overapproximate and LinearMap's support vector
+    # (see #290)
+    function overapproximate_lmap(n)
+        B = BallInf(ones(N, n), N(2))
+        π = sparse(N[1, 2], N[1, 2], ones(N, 2), 2, n)
+        return Approximations.overapproximate(π*B)
+    end
+    o = overapproximate_lmap(50)
+    @test o.center == N[1, 1] && o.radius == N[2, 2]
+
     # Approximation of a 2D centered unit ball in norm 1
     # All vertices v should be like this:
     # ‖v‖ >= 1 and ‖v‖ <= 1+ε
