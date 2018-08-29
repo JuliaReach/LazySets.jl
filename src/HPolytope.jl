@@ -213,7 +213,7 @@ import Polyhedra:polyhedron, SimpleHRepresentation, SimpleHRepresentation,
                  hcartesianproduct,
                  points
 
-export intersect, convex_hull, cartesian_product, vertices_list
+export intersection, convex_hull, cartesian_product, vertices_list
 
 # HPolytope from an HRep
 function HPolytope(P::HRep{N, T}, backend=CDDLib.CDDLibrary()) where {N, T}
@@ -246,9 +246,9 @@ function polyhedron(P::HPolytope{N}, backend=CDDLib.CDDLibrary()) where {N}
 end
 
 """
-    intersect(P1::HPolytope{N}, P2::HPolytope{N};
-              [backend]=CDDLib.CDDLibrary(),
-              [prunefunc]=removehredundancy!)::HPolytope{N} where {N<:Real}
+    intersection(P1::HPolytope{N}, P2::HPolytope{N};
+                 [backend]=CDDLib.CDDLibrary(),
+                 [prunefunc]=removehredundancy!)::HPolytope{N} where {N<:Real}
 
 Compute the intersection of two polytopes in H-representation.
 
@@ -266,13 +266,13 @@ Compute the intersection of two polytopes in H-representation.
 
 The `HPolytope` obtained by the intersection of `P1` and `P2`.
 """
-function intersect(P1::HPolytope{N}, P2::HPolytope{N};
-                   backend=CDDLib.CDDLibrary(),
-                   prunefunc=removehredundancy!)::HPolytope{N} where {N<:Real}
+function intersection(P1::HPolytope{N}, P2::HPolytope{N};
+                      backend=CDDLib.CDDLibrary(),
+                      prunefunc=removehredundancy!)::HPolytope{N} where {N<:Real}
 
     P1 = polyhedron(P1, backend)
     P2 = polyhedron(P2, backend)
-    Pint = intersect(P1, P2)
+    Pint = Polyhedra.intersect(P1, P2)
     prunefunc(Pint)
     return HPolytope(Pint)
 end
