@@ -108,7 +108,7 @@ polyoverapprox(x) = HPolytope(overapproximate(x, 1e-3).constraints)
 
 Epoly = polyoverapprox(E)
 Bpoly = polyoverapprox(B)
-X = intersect(Epoly, Bpoly)
+X = intersecttion(Epoly, Bpoly)
 
 plot(E, 1e-3, aspectratio=1, alpha=0.4)
 plot!(B, 1e-3, alpha=0.4)

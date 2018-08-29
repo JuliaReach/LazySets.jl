@@ -349,6 +349,7 @@ dim(::HPolytope)
 addconstraint!(::HPolytope{Real}, ::LinearConstraint{Real})
 constraints_list(::HPolytope)
 tosimplehrep(::HPolytope)
+intersection(::HPolytope, ::HPolytope)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -366,6 +367,7 @@ VPolytope
 dim(::VPolytope)
 σ(::AbstractVector{Real}, ::VPolytope{Real})
 vertices_list(::VPolytope)
+intersection(::VPolytope, ::VPolytope)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
