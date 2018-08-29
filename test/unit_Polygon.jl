@@ -3,10 +3,10 @@ for N in [Float64, Float32, Rational{Int}]
     p = HPolygon{N}()
 
     # Test that constraints are automatically sorted
-    c1 = LinearConstraint(N[2., 2.], N(12.))
-    c2 = LinearConstraint(N[-3., 3.], N(6.))
-    c3 = LinearConstraint(N[-1., -1.], N(0.))
-    c4 = LinearConstraint(N[2., -4.], N(0.))
+    c1 = LinearConstraint(N[2, 2], N(12))
+    c2 = LinearConstraint(N[-3, 3], N(6))
+    c3 = LinearConstraint(N[-1, -1], N(0))
+    c4 = LinearConstraint(N[2, -4], N(0))
     addconstraint!(p, c3)
     addconstraint!(p, c1)
     addconstraint!(p, c4)
@@ -33,15 +33,15 @@ for N in [Float64, Float32, Rational{Int}]
     HPolytope(po)
 
     # support vector of empty polygon
-    @test_throws AssertionError σ(N[0.], HPolygon{N}())
-    @test_throws AssertionError σ(N[0.], HPolygonOpt(HPolygon{N}()))
-    @test_throws AssertionError σ(N[0.], HPolytope{N}())
+    @test_throws AssertionError σ(N[0], HPolygon{N}())
+    @test_throws AssertionError σ(N[0], HPolygonOpt(HPolygon{N}()))
+    @test_throws AssertionError σ(N[0], HPolytope{N}())
 
     # subset
-    b1 = Ball1(N[0., 0.], N(1.))
-    b2 = Ball1(N[1., 1.], N(4.))
-    l1 = LinearMap(N[1. 0.; 0. 1.], b1)
-    l2 = LinearMap(N[1. 0.; 0. 1.], b2)
+    b1 = Ball1(N[0, 0], N(1))
+    b2 = Ball1(N[1, 1], N(4))
+    l1 = LinearMap(N[1 0; 0 1], b1)
+    l2 = LinearMap(N[1 0; 0 1], b2)
     subset, point = ⊆(p, b1, true)
     @test !subset && point ∈ p && !(point ∈ b1)
     subset, point = ⊆(p, l1, true)
@@ -58,35 +58,35 @@ for N in [Float64, Float32, Rational{Int}]
         @test dim(hp) == 2
 
         # test support vector, with linear and binary search
-        d = N[1., 0.]
-        @test σ(d, hp) == N[4., 2.]
+        d = N[1, 0]
+        @test σ(d, hp) == N[4, 2]
         @test σ(d, hp, linear_search=true) == σ(d, hp, linear_search=false)
-        d = N[0., 1.]
-        @test σ(d, hp) == N[2., 4.]
+        d = N[0, 1]
+        @test σ(d, hp) == N[2, 4]
         @test σ(d, hp, linear_search=true) == σ(d, hp, linear_search=false)
-        d = N[0., -1.]
-        @test σ(d, hp) == N[0., 0.]
+        d = N[0, -1]
+        @test σ(d, hp) == N[0, 0]
         @test σ(d, hp, linear_search=true) == σ(d, hp, linear_search=false)
-        d = N[-1., 0.]
-        @test σ(d, hp) == N[-1., 1.]
+        d = N[-1, 0]
+        @test σ(d, hp) == N[-1, 1]
         @test σ(d, hp, linear_search=true) == σ(d, hp, linear_search=false)
-        d = N[1., -1.]
-        @test σ(d, hp) == N[4., 2.]
+        d = N[1, -1]
+        @test σ(d, hp) == N[4, 2]
         @test σ(d, hp, linear_search=true) == σ(d, hp, linear_search=false)
 
         # membership
-        @test ∈(N[0., 0.], hp)
-        @test ∈(N[4., 2.], hp)
-        @test ∈(N[2., 4.], hp)
-        @test ∈(N[-1., 1.], hp)
-        @test ∈(N[2., 3.], hp)
-        @test ∈(N[1., 1.], hp)
-        @test ∈(N[3., 2.], hp)
-        @test ∈(N[5. / 4., 7. / 4.], hp)
-        @test !∈(N[4., 1.], hp)
-        @test !∈(N[5., 2.], hp)
-        @test !∈(N[3., 4.], hp)
-        @test !∈(N[-1., 5.], hp)
+        @test ∈(N[0, 0], hp)
+        @test ∈(N[4, 2], hp)
+        @test ∈(N[2, 4], hp)
+        @test ∈(N[-1, 1], hp)
+        @test ∈(N[2, 3], hp)
+        @test ∈(N[1, 1], hp)
+        @test ∈(N[3, 2], hp)
+        @test ∈(N[5 / 4, 7 / 4], hp)
+        @test !∈(N[4, 1], hp)
+        @test !∈(N[5, 2], hp)
+        @test !∈(N[3, 4], hp)
+        @test !∈(N[-1, 5], hp)
 
         # an_element function
         @test an_element(hp) ∈ hp
@@ -104,10 +104,10 @@ for N in [Float64, Float32, Rational{Int}]
 
     # Test VRepresentation
     vp = tovrep(p)
-    @test N[2., 4.] ∈ vertices_list(vp)
-    @test N[-1., 1.] ∈ vertices_list(vp)
-    @test N[0., 0.] ∈ vertices_list(vp)
-    @test N[4., 2.] ∈ vertices_list(vp)
+    @test N[2, 4] ∈ vertices_list(vp)
+    @test N[-1, 1] ∈ vertices_list(vp)
+    @test N[0, 0] ∈ vertices_list(vp)
+    @test N[4, 2] ∈ vertices_list(vp)
     @test tovrep(vp) == vp
 
     # test convex hull of a set of points using the default algorithm
@@ -124,37 +124,37 @@ for N in [Float64, Float32, Rational{Int}]
     @test vertices_list(vp) == to_N(N, [[0.1, 0.3], [0.2, 0.1], [0.9, 0.2], [0.4, 0.6]])
 
     # test support vector of a VPolygon
-    d = N[1., 0.]
+    d = N[1, 0]
     @test σ(d, vp) == points[5]
-    d = N[0., 1.]
+    d = N[0, 1]
     @test σ(d, vp) == points[4]
-    d = N[-1., 0.]
+    d = N[-1, 0]
     @test σ(d, vp) == points[1]
-    d = N[0., -1.]
+    d = N[0, -1]
     @test σ(d, vp) == points[2]
 
     # test that #83 is fixed
-    v = VPolygon(to_N(N, [[2.0, 3.0]]))
-    @test N[2.0, 3.0] ∈ v
-    @test !(N[3.0, 2.0] ∈ v)
-    v = VPolygon(to_N(N, [[2.0, 3.0], [-1.0, -3.4]]))
-    @test to_N(N, [-1.0, -3.4]) ∈ v
+    v = VPolygon([N[2, 3]])
+    @test N[2, 3] ∈ v
+    @test !(N[3, 2] ∈ v)
+    v = VPolygon([N[2, 3], to_N(N, [-1, -3.4])])
+    @test to_N(N, [-1, -3.4]) ∈ v
 
     # an_element function
-    v = VPolygon(to_N(N, [[2., 3.]]))
+    v = VPolygon([N[2, 3]])
     @test an_element(v) ∈ v
 
     # membership
-    point = N[0., 1.]
+    point = N[0, 1]
     @test point ∉ VPolygon(Vector{Vector{N}}(), apply_convex_hull=false)
-    @test point ∉ VPolygon([N[0., 2.]])
-    @test point ∈ VPolygon([N[0., 0.], N[0., 2.]])
-    @test point ∉ VPolygon([N[1., 0.], N[1., 2.]])
+    @test point ∉ VPolygon([N[0, 2]])
+    @test point ∈ VPolygon([N[0, 0], N[0, 2]])
+    @test point ∉ VPolygon([N[1, 0], N[1, 2]])
 
     # subset
-    p1 = VPolygon(to_N(N, [[0., 0.], [2., 0.]]))
-    p2 = VPolygon(to_N(N, [[1., 0.]]))
-    b = BallInf(N[2., 0.], N(1.))
+    p1 = VPolygon([N[0, 0], N[2, 0]])
+    p2 = VPolygon([N[1, 0]])
+    b = BallInf(N[2, 0], N(1))
     @test ⊆(p2, p1) && ⊆(p2, p1, true)[1]
     @test ⊆(HPolygon{N}(), p1)
     subset, witness = ⊆(p1, b, true)
@@ -162,14 +162,14 @@ for N in [Float64, Float32, Rational{Int}]
     subset, witness = ⊆(p2, b, true)
     @test ⊆(p2, b) && subset
 
-    v1 = N[1.0, 0.0]
-    v2 = N[1.0, 1.0]
-    v3 = N[0.0, 1.0]
-    v4 = N[-1.0, 1.0]
-    v5 = N[-1.0, 0.0]
-    v6 = N[-1.0, -1.0]
-    v7 = N[0, -1.0]
-    v8 = N[1.0, -1.0]
+    v1 = N[1, 0]
+    v2 = N[1, 1]
+    v3 = N[0, 1]
+    v4 = N[-1, 1]
+    v5 = N[-1, 0]
+    v6 = N[-1, -1]
+    v7 = N[0, -1]
+    v8 = N[1, -1]
     v = [v1, v2, v3, v4, v5, v6, v7, v8]
 
     for (i, vi) in enumerate(v)
@@ -198,19 +198,19 @@ for N in [Float64, Float32, Rational{Int}]
             @test v1 ∈ h1
         elseif i == 2
             c = h1.constraints[1]
-            @test c.a ≈ to_N(N, [0.4, 0.5])&& c.b ≈ to_N(N, (0.46))
+            @test c.a ≈ to_N(N, [0.4, 0.5]) && c.b ≈ to_N(N, (0.46))
             c = h1.constraints[3]
-            @test c.a ≈ to_N(N, [-0.4, -0.5])&& c.b ≈ to_N(N, (-0.46))
+            @test c.a ≈ to_N(N, [-0.4, -0.5]) && c.b ≈ to_N(N, (-0.46))
         elseif i == 4
             @test length(h1.constraints) == 4
             c = h1.constraints[1]
-            @test c.a ≈ to_N(N, [0.4, 0.5])&& c.b ≈ to_N(N, (0.46))
+            @test c.a ≈ to_N(N, [0.4, 0.5]) && c.b ≈ to_N(N, (0.46))
             c = h1.constraints[2]
-            @test c.a ≈ to_N(N, [-0.3, 0.3])&& c.b ≈ to_N(N, (0.06))
+            @test c.a ≈ to_N(N, [-0.3, 0.3]) && c.b ≈ to_N(N, (0.06))
             c = h1.constraints[3]
-            @test c.a ≈ to_N(N, [-0.2, -0.1])&& c.b ≈ to_N(N, (-0.05))
+            @test c.a ≈ to_N(N, [-0.2, -0.1]) && c.b ≈ to_N(N, (-0.05))
             c = h1.constraints[4]
-            @test c.a ≈ to_N(N, [0.1, -0.7])&& c.b ≈ to_N(N, (-0.05))
+            @test c.a ≈ to_N(N, [0.1, -0.7]) && c.b ≈ to_N(N, (-0.05))
         end
 
         # check that constraints are sorted correctly

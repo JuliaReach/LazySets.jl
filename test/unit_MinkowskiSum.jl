@@ -1,7 +1,7 @@
 for N in [Float64, Rational{Int}, Float32]
     # Sum of 2D centered balls in norm 1 and infinity
-    b1 = BallInf(N[0., 0.], N(2.))
-    b2 = Ball1(N[0., 0.], N(1.))
+    b1 = BallInf(N[0, 0], N(2))
+    b2 = Ball1(N[0, 0], N(1))
     # Test Construction
     X = MinkowskiSum(b1, b2)
     @test X.X == b1
@@ -9,52 +9,52 @@ for N in [Float64, Rational{Int}, Float32]
     # Test Dimension
     @test dim(X) == 2
     # Test Support Vector
-    d = N[1., 0.]
+    d = N[1, 0]
     v = σ(d, X)
-    @test v[1] == N(3.)
-    d = N[-1., 0.]
+    @test v[1] == N(3)
+    d = N[-1, 0]
     v = σ(d, X)
-    @test v[1] == N(-3.)
-    d = N[0., 1.]
+    @test v[1] == N(-3)
+    d = N[0, 1]
     v = σ(d, X)
-    @test v[2] == N(3.)
-    d = N[0., -1.]
+    @test v[2] == N(3)
+    d = N[0, -1]
     v = σ(d, X)
-    @test v[2] == N(-3.)
+    @test v[2] == N(-3)
 
     # Sum of not-centered 2D balls in norm 1 and infinity
-    b1 = BallInf(N[-1., 3.], N(2.))
-    b2 = Ball1(N[1., 2.], N(1.))
+    b1 = BallInf(N[-1, 3], N(2))
+    b2 = Ball1(N[1, 2], N(1))
     s = b1 + b2
     # Test Support Vector
-    d = N[1., 0.]
+    d = N[1, 0]
     v = σ(d, s)
-    @test v[1] == N(3.)
-    d = N[-1., 0.]
+    @test v[1] == N(3)
+    d = N[-1, 0]
     v = σ(d, s)
-    @test v[1] == N(-3.)
-    d = N[0., 1.]
+    @test v[1] == N(-3)
+    d = N[0, 1]
     v = σ(d, s)
-    @test v[2] == N(8.)
-    d = N[0., -1.]
+    @test v[2] == N(8)
+    d = N[0, -1]
     v = σ(d, s)
-    @test v[2] == N(2.)
+    @test v[2] == N(2)
 
     # Sum of array of LazySet
     # 2-elements
-    ms = MinkowskiSum(Singleton(N[1.]), Singleton(N[2.]))
-    @test ρ(N[1.], ms) == 3.
-    @test ρ(N[-1.], ms) == -3.
+    ms = MinkowskiSum(Singleton(N[1]), Singleton(N[2]))
+    @test ρ(N[1], ms) == 3
+    @test ρ(N[-1], ms) == -3
     # 3-elements
-    ms = MinkowskiSum(Singleton(N[1.]), MinkowskiSum(Singleton(N[2.]), Singleton(N[3.])))
-    @test ρ(N[1.], ms) == N(6.)
-    @test ρ(N[-1.], ms) == N(-6.)
+    ms = MinkowskiSum(Singleton(N[1]), MinkowskiSum(Singleton(N[2]), Singleton(N[3])))
+    @test ρ(N[1], ms) == N(6)
+    @test ρ(N[-1], ms) == N(-6)
 
     # an_element function (falls back to the default implementation
-    X = MinkowskiSum(LineSegment(N[0., 0.], N[1., 1.]),
-                     LineSegment(N[1., 0.], N[0., 1.]))
+    X = MinkowskiSum(LineSegment(N[0, 0], N[1, 1]),
+                     LineSegment(N[1, 0], N[0, 1]))
     v = an_element(X)
-    @test v ∈ Ball1(N[1., 1.], N(1.))
+    @test v ∈ Ball1(N[1, 1], N(1))
 
     # =================
     # MinkowskiSumArray
@@ -88,9 +88,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test dim(msa) == 2
 
     # support vector
-    d = N[1., 1.]
+    d = N[1, 1]
     @test σ(d, ms) == σ(d, msa)
-    d = N[-1., 1.]
+    d = N[-1, 1]
     @test σ(d, ms) == σ(d, msa)
 
     # =================
@@ -99,8 +99,8 @@ for N in [Float64, Rational{Int}, Float32]
 
     # caching Minkowski sum
     cms = CacheMinkowskiSum(2, N)
-    x1 = BallInf(ones(N, 3), N(3.))
-    x2 = Ball1(ones(N, 3), N(5.))
+    x1 = BallInf(ones(N, 3), N(3))
+    x2 = Ball1(ones(N, 3), N(5))
     d = ones(N, 3)
     a = array(cms)
     push!(a, x1)
@@ -120,8 +120,8 @@ for N in [Float64, Rational{Int}, Float32]
     d[1] = zero(N)
     @test haskey(cms.cache, ones(N, 3))
     # getindex
-    cp = LazySets.CachedPair(1, N[2.])
-    @test cp[1] == 1 && cp[2] == N[2.]
+    cp = LazySets.CachedPair(1, N[2])
+    @test cp[1] == 1 && cp[2] == N[2]
     @test_throws ErrorException cp[3]
 
     # ================

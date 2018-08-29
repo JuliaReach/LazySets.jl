@@ -1,27 +1,27 @@
 for N in [Float64, Rational{Int}, Float32]
     # construction
-    p, q = N[1., 1.], N[2., 2.]
+    p, q = N[1, 1], N[2, 2]
     l = LineSegment(p, q)
 
     # dimension
     @test dim(l) == 2
 
     # support vector
-    @test σ(N[1., 1.], l) == q
-    @test σ(N[0., 1.], l) == q
-    @test σ(N[-1., 1.], l) == q
-    @test σ(N[-1., 0.], l) == p
-    @test σ(N[-1., -1.], l) == p
-    @test σ(N[0., -1.], l) == p
-    @test σ(N[1., -1.], l) == q
-    @test σ(N[1., 0.], l) == q
+    @test σ(N[1, 1], l) == q
+    @test σ(N[0, 1], l) == q
+    @test σ(N[-1, 1], l) == q
+    @test σ(N[-1, 0], l) == p
+    @test σ(N[-1, -1], l) == p
+    @test σ(N[0, -1], l) == p
+    @test σ(N[1, -1], l) == q
+    @test σ(N[1, 0], l) == q
 
     # membership
-    @test !∈(N[0., 0.], l)
-    @test ∈(N[1., 1.], l)
+    @test !∈(N[0, 0], l)
+    @test ∈(N[1, 1], l)
     @test ∈(N[1.5, 1.5], l)
-    @test !∈(N[3., 4.], l)
-    @test !∈(N[7., 4.], l)
+    @test !∈(N[3, 4], l)
+    @test !∈(N[7, 4], l)
     @test !∈(N[1.5, 1.6], l)
 
     # center function
@@ -35,14 +35,14 @@ for N in [Float64, Rational{Int}, Float32]
     @test length(vl) == 2 && l.p ∈ vl && l.q ∈ vl
 
     # intersection emptiness
-    l1 = LineSegment(N[1., 1.], N[2., 2.])
-    l2 = LineSegment(N[2., 1.], N[1., 2.])
-    l3 = LineSegment(N[0., 1.], N[0., 2.])
-    l4 = LineSegment(N[1., 1.], N[1., 1.])
-    l5 = LineSegment(N[0., 0.], N[0., 0.])
+    l1 = LineSegment(N[1, 1], N[2, 2])
+    l2 = LineSegment(N[2, 1], N[1, 2])
+    l3 = LineSegment(N[0, 1], N[0, 2])
+    l4 = LineSegment(N[1, 1], N[1, 1])
+    l5 = LineSegment(N[0, 0], N[0, 0])
     l6 = LineSegment(to_N(N, [1.3, 1.3]), to_N(N, [2.3, 2.3]))
-    l7 = LineSegment(N[3., 3.], N[4., 4.])
-    l8 = LineSegment(N[1., 2.], N[2., 3.])
+    l7 = LineSegment(N[3, 3], N[4, 4])
+    l8 = LineSegment(N[1, 2], N[2, 3])
     l1_copy = LineSegment(copy(l1.p), copy(l1.q))
     intersection_empty, point = is_intersection_empty(l1, l1, true)
     @test !is_intersection_empty(l1, l1) && !intersection_empty && point ∈ l1
@@ -81,21 +81,21 @@ for N in [Float64, Rational{Int}, Float32]
     @test !is_intersection_empty(l1, l1_copy) && !intersection_empty && point ∈ l1
 
     # subset
-    l = LineSegment(N[1., 1.], N[2., 2.])
+    l = LineSegment(N[1, 1], N[2, 2])
     b1 = Ball1(N[1.5, 1.5], N(1.1))
-    b2 = Ball1(N[1.5, 1.5], N(.4))
+    b2 = Ball1(N[1.5, 1.5], N(0.4))
     subset, point = ⊆(l, b1, true)
     @test ⊆(l, b1) && subset && point == N[]
     subset, point = ⊆(l, b2, true)
     @test !⊆(l, b2) && !subset && point ∈ l && point ∉ b2
-    h1 = Hyperrectangle(N[1.5, 1.5], N[.6, .8])
-    h2 = Hyperrectangle(N[1.5, 1.5], N[.4, .8])
+    h1 = Hyperrectangle(N[1.5, 1.5], N[0.6, 0.8])
+    h2 = Hyperrectangle(N[1.5, 1.5], N[0.4, 0.8])
     subset, point = ⊆(l, h1, true)
     @test ⊆(l, h1) && subset && point == N[]
     subset, point = ⊆(l, h2, true)
     @test !⊆(l, h2) && !subset && point ∈ l && point ∉ h2
 
     # halfspace_left & halfspace_right
-    @test N[1., 2.] ∈ halfspace_left(l)
-    @test N[2., 1.] ∈ halfspace_right(l)
+    @test N[1, 2] ∈ halfspace_left(l)
+    @test N[2, 1] ∈ halfspace_right(l)
 end

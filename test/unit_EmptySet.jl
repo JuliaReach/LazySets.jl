@@ -1,13 +1,13 @@
 for N in [Float64, Rational{Int}, Float32]
     E = EmptySet{N}()
-    B = BallInf(ones(N, 2), N(1.))
+    B = BallInf(ones(N, 2), N(1))
 
     # testing that the empty set is an absorbing element for the cartesian product
     @test B * E isa EmptySet && E * B isa EmptySet
     # testing the mathematical alias ×
     @test B × E isa EmptySet && E × B isa EmptySet
 
-    cpa = CartesianProductArray([B, N(2.) * B, N(3.) * B])
+    cpa = CartesianProductArray([B, N(2) * B, N(3) * B])
     @test cpa * E isa EmptySet && E * cpa isa EmptySet
     @test cpa × E isa EmptySet && E × cpa isa EmptySet
 
@@ -19,7 +19,7 @@ for N in [Float64, Rational{Int}, Float32]
     # testing the mathematical alias ⊕
     @test B ⊕ E isa EmptySet && E ⊕ B isa EmptySet
 
-    msa = MinkowskiSumArray([B, N(2.) * B, N(3.) * B])
+    msa = MinkowskiSumArray([B, N(2) * B, N(3) * B])
     @test msa + E isa EmptySet && E + msa isa EmptySet
     @test msa ⊕ E isa EmptySet && E ⊕ msa isa EmptySet
 
@@ -37,11 +37,11 @@ for N in [Float64, Rational{Int}, Float32]
     @test dim(E) == -1
 
     # support vector
-    @test_throws ErrorException σ(N[0.], E)
+    @test_throws ErrorException σ(N[0], E)
 
     # membership
-    @test !∈(N[0.], E)
-    @test !∈(N[0., 0.], E)
+    @test !∈(N[0], E)
+    @test !∈(N[0, 0], E)
 
     # an_element/norm/radius/diameter functions
     @test_throws ErrorException an_element(E)

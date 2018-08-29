@@ -42,7 +42,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # unary set operations
     sih = SymmetricIntervalHull(b1)
-    lm = LinearMap(N[2. 1.; 1. 2.], bi)
+    lm = LinearMap(N[2 1; 1 2], bi)
 
     # binary set operations
     ch = ConvexHull(b1, bi)
