@@ -105,7 +105,7 @@ if test_suite_polyhedra
         A = [N(0) N(-1); N(-1) N(0); N(1) N(1)]
         b = N[-0.25, -0.25, -0]
         p2 = HPolytope(A, b)
-        cap = intersect(p1, p2)
+        cap = intersection(p1, p2)
         # currently broken, see #565
 
         # convex hull
@@ -135,7 +135,7 @@ if test_suite_polyhedra
         # intersection
         p1 = VPolytope(vertices_list(BallInf(N[0, 0], N(1))))
         p2 = VPolytope(vertices_list(BallInf(N[2, 2], N(1))))
-        cap = intersect(p1, p2)
+        cap = intersection(p1, p2)
         @test vertices_list(cap) == [N[1, 1]]
 
         # convex hull

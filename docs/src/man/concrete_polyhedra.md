@@ -96,8 +96,8 @@ product.
 The dual representation as a list of vertices can be obtained with the
 `vertices_list` function.
 
-For example, the intersection of two polytopes is performed with the `intersect`
-method.
+For example, the concrete intersection of two polytopes is performed with the
+`intersection` method.
 
 ```@example concrete_polyhedra
 E = Ellipsoid(ones(2), diagm([2.0, 0.5]))
@@ -108,7 +108,7 @@ polyoverapprox(x) = HPolytope(overapproximate(x, 1e-3).constraints)
 
 Epoly = polyoverapprox(E)
 Bpoly = polyoverapprox(B)
-X = intersect(Epoly, Bpoly)
+X = intersection(Epoly, Bpoly)
 
 plot(E, 1e-3, aspectratio=1, alpha=0.4)
 plot!(B, 1e-3, alpha=0.4)
