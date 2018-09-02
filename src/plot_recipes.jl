@@ -162,14 +162,14 @@ julia> plot([B1, B2], 1e-4);
     end
 end
 
-# =========================================
-# Plot recipes for polygons or 2D polytopes
-# =========================================
+# ==============================
+# Plot recipes for 2D polytopes
+# ==============================
 
 """
-    plot_polygon(P::Union{AbstractPolygon, HPolytope, VPolytope}; ...)
+    plot_polygon(P::Union{AbstractPolytope}; ...)
 
-Plot a polygon or a 2D polytope.
+Plot a 2D polytope as the convex hull of its vertices.
 
 ### Input
 
@@ -177,7 +177,7 @@ Plot a polygon or a 2D polytope.
 
 ### Examples
 
-```jldoctest plotting_polygons
+```jldoctest plotting_polytope
 julia> using LazySets, Plots;
 
 julia> P = HPolygon([LinearConstraint([1.0, 0.0], 0.6),
@@ -191,17 +191,18 @@ julia> plot(P);
 
 This recipe also applies if the polygon is given in vertex representation:
     
-```jldoctest plotting_polygons
+```jldoctest plotting_polytope
 julia> P = VPolygon([[0.6, 0.6], [0.4, 0.6], [0.4, 0.4], [0.6, 0.4]]);
 
 julia> plot(P);
 
 ```
 """
-@recipe function plot_polygon(P::Union{AbstractPolygon, HPolytope, VPolytope};
+@recipe function plot_polytope(P::Union{AbstractPolytope,};
                               color="blue", label="", grid=true, alpha=0.5)
 
-    @assert dim(P) == 2  "this recipe can only be used to plot two-dimensional sets" # for polytopes
+    # for polytopes
+    @assert dim(P) == 2  "this recipe can only be used to plot two-dimensional sets"
     seriestype := :shape
 
     vlist = transpose(hcat(vertices_list(P)...))
@@ -211,19 +212,17 @@ julia> plot(P);
 end
 
 """
-    plot_polygons(P::Union{Vector{<:AbstractPolygon},
-                           Vector{<:HPolytope},
-                           Vector{<:VPolytope}}; ...)
+    plot_polytopes(P::Vector{<:AbstractPolytope}; ...)
 
-Plot an array of polygons in constraint representation.
+Plot an array of 2D polytopes.
 
 ### Input
 
-- `P` -- array of polygons in constraint representation
+- `P` -- array of polytopes
 
 ### Examples
 
-```jldoctest plotting_polygons_vector
+```jldoctest plotting_polytopes
 julia> using LazySets, Plots;
 
 julia> P1 = HPolygon([LinearConstraint([1.0, 0.0], 0.6),
@@ -240,7 +239,7 @@ julia> plot([P1, P2]);
 
 ```
 
-```jldoctest plotting_polygons_vector
+```jldoctest plotting_polytopes
 julia> P1 = VPolygon([[0.6, 0.6], [0.4, 0.6], [0.4, 0.4], [0.6, 0.4]]);
 
 julia> P2 = VPolygon([[0.3, 0.3], [0.2, 0.3], [0.2, 0.2], [0.3, 0.2]]);
@@ -248,15 +247,16 @@ julia> P2 = VPolygon([[0.3, 0.3], [0.2, 0.3], [0.2, 0.2], [0.3, 0.2]]);
 julia> plot([P1, P2]);
 
 ```
+
+### Notes
+
+It is assumed that the given vector of polytopes is two-dimensional.
 """
-@recipe function plot_polygons(P::Union{Vector{<:AbstractPolygon},
-                                        Vector{<:HPolytope},
-                                        Vector{<:VPolytope}};
+@recipe function plot_polytopes(P::Vector{<:AbstractPolygon};
                                seriescolor="blue", label="", grid=true,
                                alpha=0.5)
 
     # it is assumed that the polytopes are two-dimensional
-
     seriestype := :shape
 
     for Pi in P
@@ -331,77 +331,6 @@ julia> plot([Singleton(a), Singleton(b), Singleton(c)]);
     seriestype := :scatter
 
     [Tuple(element(point)) for point in arr]
-end
-
-# ============================
-# Plot recipes for zonotopes
-# ============================
-
-"""
-    plot_polygon(Z::Zonotope; ...)
-
-Plot a zonotope by enumerating its vertices.
-
-### Input
-
-- `Z` -- zonotope
-
-### Examples
-
-```jldoctest
-julia> using LazySets, Plots;
-
-julia> Z = Zonotope(ones(2), 0.2*[[1., 0], [0., 1], [1, 1]]);
-
-julia> plot(Z);
-
-```
-"""
-@recipe function plot_zonotope(Z::Zonotope;
-                               color="blue", label="", grid=true, alpha=0.5)
-
-    seriestype := :shape
-
-    # we have to take the convex hull for the shape
-    vlist = transpose(hcat(vertices_list(Z)...))
-    (x, y) = vlist[:, 1], vlist[:, 2]
-
-     x, y
-end
-
-"""
-    plot_zonotopes(Z::Vector{<:Zonotope}; ...)
-
-Plot an array of zonotopes.
-
-### Input
-
-- `Z` -- linear array of zonotopes
-
-### Examples
-
-```jldoctest
-julia> using LazySets, Plots;
-
-julia> Z1 = Zonotope(zeros(2), [[0.6, 0.6], [0.4, 0.6], [0.4, 0.4], [0.6, 0.4]]);
-
-julia> Z2 = Zonotope(zeros(2), [[0.3, 0.3], [0.2, 0.3], [0.2, 0.2], [0.3, 0.2]]);
-
-julia> plot([Z1, Z2]);
-
-```
-"""
-@recipe function plot_zonotopes(Z::Vector{<:Zonotope};
-                                seriescolor="blue", label="", grid=true,
-                                alpha=0.5)
-
-    seriestype := :shape
-
-    for Zi in Z
-        # we have to take the convex hull for the shape
-        vlist = transpose(hcat(vertices_list(Zi)...))
-        @series (x, y) = vlist[:, 1], vlist[:, 2]
-    end
 end
 
 # =====================================
