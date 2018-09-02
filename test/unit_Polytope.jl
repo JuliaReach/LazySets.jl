@@ -128,6 +128,12 @@ if test_suite_polyhedra
         vl = vertices_list(p)
         @test length(vl) == 2 && N[0] ∈ vl && [1] ∈ vl
 
+        # tovrep from HPolytope
+        A = [N(0) N(-1); N(-1) N(0); N(1) N(1)]
+        b = N[-0.25, -0.25, -0]
+        P = HPolytope(A, b)
+        @test tovrep(P) isa VPolytope
+
         # -----
         # V-rep
         # -----
@@ -160,5 +166,9 @@ if test_suite_polyhedra
         cp = cartesian_product(p1, p2)
         vl = vertices_list(cp)
         @test length(vl) == 2 && N[0, 0, 2] ∈ vl && N[1, 1, 2] ∈ vl
+
+        # tohrep from VPolytope
+        P = VPolytope([v1, v2, v3, v4, v5])
+        @test tohrep(P) isa HPolytope
     end
 end
