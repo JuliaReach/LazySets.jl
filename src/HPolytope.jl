@@ -213,7 +213,7 @@ import Polyhedra:polyhedron, SimpleHRepresentation, SimpleHRepresentation,
                  hcartesianproduct,
                  points
 
-export intersection, convex_hull, cartesian_product, vertices_list
+export intersection, convex_hull, cartesian_product, vertices_list, tovrep
 
 # HPolytope from an HRep
 function HPolytope(P::HRep{N, T}, backend=CDDLib.CDDLibrary()) where {N, T}
@@ -370,5 +370,29 @@ function vertices_list(P::HPolytope{N};
     prunefunc(P)
     return collect(points(P))
 end
+
+"""
+    tovrep(P::HPolytope; backend=CDDLib.CDDLibrary())
+
+Transform a polytope in H-representation to a polytope in V-representation.
+
+### Input
+
+- `P`          -- polytope in constraint representation
+- `backend`    -- (optional, default: `CDDLib.CDDLibrary()`) the polyhedral
+                  computations backend,
+                  see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
+                  for further information
+
+### Output
+
+The `VPolytope` which is the vertex representation of the given polytope
+in constraint representation.
+"""
+function tohrep(P::HPolytope; backend=CDDLib.CDDLibrary())
+    P = polyhedron(P, backend)
+    return VPolytope(P)
+end
+
 end # quote
 end # function load_polyhedra_hpolytope()

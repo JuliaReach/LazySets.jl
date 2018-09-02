@@ -129,7 +129,7 @@ import Polyhedra:polyhedron, SimpleHRepresentation, SimpleVRepresentation,
                  convexhull,
                  hcartesianproduct
 
-export intersection, convex_hull, cartesian_product, vertices_list
+export intersection, convex_hull, cartesian_product, vertices_list, tohrep
 
 # VPolytope from a VRep
 function VPolytope(P::VRep{N, T}, backend=CDDLib.CDDLibrary()) where {N, T}
@@ -235,6 +235,29 @@ The `VPolytope` obtained by the concrete Cartesian product of `P1` and `P2`.
 function cartesian_product(P1::VPolytope, P2::VPolytope; backend=CDDLib.CDDLibrary())
     Pcp = hcartesianproduct(polyhedron(P1, backend), polyhedron(P2, backend))
     return VPolytope(Pcp)
+end
+
+"""
+    tohrep(P::VPolytope; backend=CDDLib.CDDLibrary())
+
+Transform a polytope in V-representation to a polytope in H-representation.
+
+### Input
+
+- `P`          -- polytope in vertex representation
+- `backend`    -- (optional, default: `CDDLib.CDDLibrary()`) the polyhedral
+                  computations backend,
+                  see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
+                  for further information
+
+### Output
+
+The `HPolytope` which is the constraint representation of the given polytope
+in vertex representation.
+"""
+function tohrep(P::VPolytope; backend=CDDLib.CDDLibrary())
+    P = polyhedron(P, backend)
+    return HPolytope(P)
 end
 
 end # quote
