@@ -167,7 +167,7 @@ end
 # ==============================
 
 """
-    plot_polygon(P::Union{AbstractPolytope}; ...)
+    plot_polygon(P::AbstractPolytope; ...)
 
 Plot a 2D polytope as the convex hull of its vertices.
 
@@ -198,8 +198,8 @@ julia> plot(P);
 
 ```
 """
-@recipe function plot_polytope(P::Union{AbstractPolytope,};
-                              color="blue", label="", grid=true, alpha=0.5)
+@recipe function plot_polytope(P::AbstractPolytope;
+                               color="blue", label="", grid=true, alpha=0.5)
 
     # for polytopes
     @assert dim(P) == 2  "this recipe can only be used to plot two-dimensional sets"
@@ -252,7 +252,7 @@ julia> plot([P1, P2]);
 
 It is assumed that the given vector of polytopes is two-dimensional.
 """
-@recipe function plot_polytopes(P::Vector{<:AbstractPolygon};
+@recipe function plot_polytopes(P::Vector{<:AbstractPolytope};
                                seriescolor="blue", label="", grid=true,
                                alpha=0.5)
 
