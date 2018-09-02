@@ -162,22 +162,22 @@ julia> plot([B1, B2], 1e-4);
     end
 end
 
-# =========================
-# Plot recipes for polygons
-# =========================
+# =========================================
+# Plot recipes for polygons or 2D polytopes
+# =========================================
 
 """
-    plot_polygon(P::Union{HPolygon, HPolygonOpt}; ...)
+    plot_polygon(P::Union{AbstractPolygon, HPolytope, VPolytope}; ...)
 
-Plot a polygon in constraint representation.
+Plot a polygon or a 2D polytope.
 
 ### Input
 
-- `P` -- polygon in constraint representation
+- `P` -- polygon or polytope
 
 ### Examples
 
-```jldoctest
+```jldoctest plotting_polygons
 julia> using LazySets, Plots;
 
 julia> P = HPolygon([LinearConstraint([1.0, 0.0], 0.6),
@@ -188,10 +188,20 @@ julia> P = HPolygon([LinearConstraint([1.0, 0.0], 0.6),
 julia> plot(P);
 
 ```
+
+This recipe also applies if the polygon is given in vertex representation:
+    
+```jldoctest plotting_polygons
+julia> P = VPolygon([[0.6, 0.6], [0.4, 0.6], [0.4, 0.4], [0.6, 0.4]]);
+
+julia> plot(P);
+
+```
 """
-@recipe function plot_polygon(P::Union{HPolygon, HPolygonOpt};
+@recipe function plot_polygon(P::Union{AbstractPolygon, HPolytope, VPolytope};
                               color="blue", label="", grid=true, alpha=0.5)
 
+    @assert dim(P) == 2  "this recipe can only be used to plot two-dimensional sets" # for polytopes
     seriestype := :shape
 
     vlist = transpose(hcat(vertices_list(P)...))
@@ -201,7 +211,9 @@ julia> plot(P);
 end
 
 """
-    plot_polygons(P::Vector{<:AbstractHPolygon}; ...)
+    plot_polygons(P::Union{Vector{<:AbstractPolygon},
+                           Vector{<:HPolytope},
+                           Vector{<:VPolytope}}; ...)
 
 Plot an array of polygons in constraint representation.
 
@@ -211,7 +223,7 @@ Plot an array of polygons in constraint representation.
 
 ### Examples
 
-```jldoctest
+```jldoctest plotting_polygons_vector
 julia> using LazySets, Plots;
 
 julia> P1 = HPolygon([LinearConstraint([1.0, 0.0], 0.6),
@@ -227,64 +239,8 @@ julia> P2 = HPolygon([LinearConstraint([2.0, 0.0], 0.6),
 julia> plot([P1, P2]);
 
 ```
-"""
-@recipe function plot_polygons(P::Vector{<:AbstractHPolygon};
-                               seriescolor="blue", label="", grid=true,
-                               alpha=0.5)
 
-    seriestype := :shape
-
-    for Pi in P
-        vlist = transpose(hcat(vertices_list(Pi)...))
-        @series (x, y) = vlist[:, 1], vlist[:, 2]
-    end
-end
-
-"""
-    plot_polygon(P::VPolygon; ...)
-
-Plot a polygon in vertex representation.
-
-### Input
-
-- `P` -- polygon in vertex representation
-
-### Examples
-
-```jldoctest
-julia> using LazySets, Plots;
-
-julia> P = VPolygon([[0.6, 0.6], [0.4, 0.6], [0.4, 0.4], [0.6, 0.4]]);
-
-julia> plot(P);
-
-```
-"""
-@recipe function plot_polygon(P::VPolygon;
-                              color="blue", label="", grid=true, alpha=0.5)
-
-    seriestype := :shape
-
-    vlist = transpose(hcat(vertices_list(P)...))
-    (x, y) = vlist[:, 1], vlist[:, 2]
-
-     x, y
-end
-
-"""
-    plot_polygons(P::Vector{<:VPolygon}; ...)
-
-Plot an array of polygons in vertex representation.
-
-### Input
-
-- `P` -- array of polygons in vertex representation
-
-### Examples
-
-```jldoctest
-julia> using LazySets, Plots;
-
+```jldoctest plotting_polygons_vector
 julia> P1 = VPolygon([[0.6, 0.6], [0.4, 0.6], [0.4, 0.4], [0.6, 0.4]]);
 
 julia> P2 = VPolygon([[0.3, 0.3], [0.2, 0.3], [0.2, 0.2], [0.3, 0.2]]);
@@ -293,9 +249,13 @@ julia> plot([P1, P2]);
 
 ```
 """
-@recipe function plot_polygons(P::Vector{<:VPolygon};
+@recipe function plot_polygons(P::Union{Vector{<:AbstractPolygon},
+                                        Vector{<:HPolytope},
+                                        Vector{<:VPolytope}};
                                seriescolor="blue", label="", grid=true,
                                alpha=0.5)
+
+    # it is assumed that the polytopes are two-dimensional
 
     seriestype := :shape
 
