@@ -72,7 +72,7 @@ for N in [Float64, Rational{Int}, Float32]
     d = N[1, 0]
     @test_throws ErrorException σ(d, p, algorithm="xyz")
     if test_suite_polyhedra
-        @test_throws MethodError σ(d, p) # not implemented yet
+        @test σ(d, p) == N[1.0, 0.0]
     else
         @test_throws AssertionError σ(d, p)
     end
@@ -133,6 +133,7 @@ if test_suite_polyhedra
         b = N[-0.25, -0.25, -0]
         P = HPolytope(A, b)
         @test tovrep(P) isa VPolytope
+        @test tohrep(P) isa HPolytope # test no-op
 
         # -----
         # V-rep
@@ -170,5 +171,6 @@ if test_suite_polyhedra
         # tohrep from VPolytope
         P = VPolytope([v1, v2, v3, v4, v5])
         @test tohrep(P) isa HPolytope
+        @test tovrep(P) isa VPolytope # no-op
     end
 end

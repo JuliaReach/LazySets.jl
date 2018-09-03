@@ -129,7 +129,7 @@ import Polyhedra:polyhedron, SimpleHRepresentation, SimpleVRepresentation,
                  convexhull,
                  hcartesianproduct
 
-export intersection, convex_hull, cartesian_product, vertices_list, tohrep
+export intersection, convex_hull, cartesian_product, vertices_list, tohrep, tovrep
 
 # VPolytope from a VRep
 function VPolytope(P::VRep{N, T}, backend=CDDLib.CDDLibrary()) where {N, T}
@@ -258,6 +258,24 @@ in vertex representation.
 function tohrep(P::VPolytope; backend=CDDLib.CDDLibrary())
     P = polyhedron(P, backend)
     return HPolytope(P)
+end
+
+"""
+    tovrep(P::VPolytope)
+
+Return a vertex representation of the given polytope in vertex
+representation (no-op).
+
+### Input
+
+- `P` -- polytope in vertex representation
+
+### Output
+
+The same polytope instance.
+"""
+function tovrep(P::VPolytope)
+    return P
 end
 
 end # quote
