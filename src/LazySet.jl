@@ -1,3 +1,5 @@
+import Base.==
+
 export LazySet,
        ρ, support_function,
        σ, support_vector,
@@ -186,4 +188,15 @@ An element of a convex set.
 """
 function an_element(S::LazySet{N}) where {N<:Real}
     return σ(sparsevec([1], [one(N)], dim(S)), S)
+end
+
+
+# catch-all definition for ==
+function ==(a::L, b::L) where L<:LazySet
+    for f in fieldnames(a)
+        if getfield(a, f) != getfield(b, f)
+            return false
+        end
+    end
+    return true
 end
