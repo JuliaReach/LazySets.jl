@@ -100,7 +100,7 @@ formulation:
 
 ```jldoctest index_label
 julia> typeof(Y)
-LazySets.ConvexHull{Float64,LazySets.MinkowskiSum{Float64,LazySets.ExponentialMap{Float64,LazySets.Ball2{Float64}},LazySets.LinearMap{Float64,LazySets.BallInf{Float64},Float64,Array{Float64,2}}},LazySets.Ball2{Float64}}
+ConvexHull{Float64,MinkowskiSum{Float64,ExponentialMap{Float64,Ball2{Float64}},LinearMap{Float64,BallInf{Float64},Float64,Array{Float64,2}}},Ball2{Float64}}
 ```
 
 Now suppose that we are interested in observing the projection of $\mathcal{Y}$
