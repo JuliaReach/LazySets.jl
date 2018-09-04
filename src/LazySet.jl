@@ -1,3 +1,5 @@
+import Base.==
+
 export LazySet,
        ρ, support_function,
        σ, support_vector,
@@ -186,4 +188,53 @@ An element of a convex set.
 """
 function an_element(S::LazySet{N}) where {N<:Real}
     return σ(sparsevec([1], [one(N)], dim(S)), S)
+end
+
+
+"""
+    ==(X::LazySet, Y::LazySet)
+
+Return whether two LazySets of the same type are exactly equal by recursively
+comparing their fields until a mismatch is found.
+
+### Input
+
+- `X` -- any `LazySet`
+- `Y` -- another `LazySet` of the same type as `X`
+
+### Output
+
+- `true` iff `X` is equal to `Y`.
+
+### Notes
+
+The check is purely syntactic and the sets need to have the same base type.
+I.e. `X::VPolytope == Y::HPolytope` returns `false` even if `X` and `Y` represent the
+same polytope. However `X::HPolytope{Int64} == Y::HPolytope{Float64}` is a valid comparison.
+
+### Examples
+```jldoctest
+julia> HalfSpace([1], 1) == HalfSpace([1], 1)
+true
+
+julia> HalfSpace([1], 1) == HalfSpace([1.0], 1.0)
+true
+
+julia> Ball1([0.], 1.) == Ball2([0.], 1.)
+false
+```
+"""
+function ==(X::LazySet, Y::LazySet)
+    # if the common supertype of X and Y is abstract, they cannot be compared
+    if Compat.isabstracttype(promote_type(typeof(X), typeof(Y)))
+        return false
+    end
+
+    for f in fieldnames(typeof(X))
+        if getfield(X, f) != getfield(Y, f)
+            return false
+        end
+    end
+
+    return true
 end
