@@ -205,7 +205,8 @@ julia> plot(P);
     @assert dim(P) == 2  "this recipe can only be used to plot two-dimensional sets"
     seriestype := :shape
 
-    vlist = transpose(hcat(vertices_list(P)...))
+    points = convex_hull(vertices_list(P))
+    vlist = transpose(hcat(points...))
     (x, y) = vlist[:, 1], vlist[:, 2]
 
      x, y
@@ -260,7 +261,8 @@ It is assumed that the given vector of polytopes is two-dimensional.
     seriestype := :shape
 
     for Pi in P
-        vlist = transpose(hcat(vertices_list(Pi)...))
+        points = convex_hull(vertices_list(Pi))
+        vlist = transpose(hcat(points...))
         @series (x, y) = vlist[:, 1], vlist[:, 2]
     end
 end
