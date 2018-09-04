@@ -56,6 +56,7 @@ norm(::LazySet, ::Real)
 radius(::LazySet, ::Real)
 diameter(::LazySet, ::Real)
 an_element(::LazySet{Real})
+==(::LazySet, ::LazySet)
 ```
 
 ## Centrally symmetric set

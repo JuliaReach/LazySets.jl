@@ -230,7 +230,7 @@ function ==(X::LazySet, Y::LazySet)
         return false
     end
 
-    for f in fieldnames(X)
+    for f in fieldnames(typeof(X))
         if getfield(X, f) != getfield(Y, f)
             return false
         end
