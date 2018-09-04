@@ -192,25 +192,25 @@ end
 
 
 """
-    ==(a::LazySet, b::LazySet)
+    ==(X::LazySet, Y::LazySet)
 
 Return whether two LazySets of the same type are exactly equal by recursively
 comparing their fields until a mismatch is found.
 
 ### Input
 
-- `a` -- any `LazySet`
-- `b` -- another `LazySet` of the same type as `a`
+- `X` -- any `LazySet`
+- `Y` -- another `LazySet` of the same type as `X`
 
 ### Output
 
-- `true` iff `a` is equal to `b`.
+- `true` iff `X` is equal to `Y`.
 
 ### Notes
 
 The check is purely syntactic and the sets need to have the same base type.
-I.e. `a::VPolytope == b::HPolytope` returns `false` even if `a` and `b` represent the
-same polytope. However `a::HPolytope{Int64} == b::HPolytope{Float64}` is a valid comparison.
+I.e. `X::VPolytope == Y::HPolytope` returns `false` even if `X` and `Y` represent the
+same polytope. However `X::HPolytope{Int64} == Y::HPolytope{Float64}` is a valid comparison.
 
 ### Examples
 ```jldoctest
@@ -225,7 +225,7 @@ false
 ```
 """
 function ==(X::LazySet, Y::LazySet)
-    # if the common supertype of a and b is abstract, they cannot be compared
+    # if the common supertype of X and Y is abstract, they cannot be compared
     if Compat.isabstracttype(promote_type(typeof(X), typeof(Y)))
         return false
     end
