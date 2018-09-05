@@ -103,6 +103,7 @@ approximations computed with [SpaceEx](http://spaceex.imag.fr/).
 
 These persons have contributed to `LazySets.jl` (in alphabetic order):
 
+- Tomer Arnon
 - [Marcelo Forets](http://marcelo-forets.fr)
 - [Christian Schilling](http://swt.informatik.uni-freiburg.de/staff/christian_schilling/)
 - Frédéric Viry
