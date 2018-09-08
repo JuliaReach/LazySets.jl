@@ -13,6 +13,38 @@ Type that represents the intersection of two convex sets.
 
 - `X` -- convex set
 - `Y` -- convex set
+
+### Examples
+
+Create an expression, ``Z``, that lazily represents the intersection of two squares
+``X`` and ``Y``:
+
+```jldoctest lazy_intersection
+julia> X, Y = BallInf([0,0.], 0.5), BallInf([1,0.], 0.65);
+
+julia> Z = X ∩ Y;
+
+julia> typeof(Z)
+Intersection{Float64,BallInf{Float64},BallInf{Float64}}
+
+julia> dim(Z)
+2
+```
+
+We can check if the intersection is empty with `isempty`:
+
+````jldoctest lazy_intersection
+julia> isempty(Z)
+false
+```
+
+Do not confuse `Intersection` with the concrete operation, that is computed with
+the lowercase `intersection`:
+
+```jldoctest lazy_intersection
+julia> W = intersection(X, Y)
+Hyperrectangle{Float64}([0.425, 0.0], [0.075, 0.5])
+```
 """
 struct Intersection{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     X::S1
