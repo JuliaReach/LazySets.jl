@@ -13,6 +13,30 @@ Type that represents the intersection of two convex sets.
 
 - `X` -- convex set
 - `Y` -- convex set
+
+### Examples
+
+Create the intersection of two balls:
+
+```jldoctest lazy_intersection
+julia> X = Ball2([0,0.], 0.5)
+LazySets.Ball2{Float64}([0.0, 0.0], 0.5)
+
+julia> Y = Ball2([1,0.], 0.65)
+LazySets.Ball2{Float64}([1.0, 0.0], 0.65)
+
+julia> Z = X ∩ Y;
+
+julia> dim(Z)
+2
+```
+
+We can check if the intersection is empty with `isempty`:
+
+````jldoctest lazy_intersection
+julia> isempty(Z)
+false
+```
 """
 struct Intersection{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     X::S1
