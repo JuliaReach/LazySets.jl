@@ -16,16 +16,16 @@ Type that represents the intersection of two convex sets.
 
 ### Examples
 
-Create the intersection of two balls:
+Create an expression, ``Z``, that lazily represents the intersection of two circles
+``X`` and ``Y``:
 
 ```jldoctest lazy_intersection
-julia> X = Ball2([0,0.], 0.5)
-LazySets.Ball2{Float64}([0.0, 0.0], 0.5)
-
-julia> Y = Ball2([1,0.], 0.65)
-LazySets.Ball2{Float64}([1.0, 0.0], 0.65)
+julia> X, Y = Ball2([0,0.], 0.5), Ball2([1,0.], 0.65);
 
 julia> Z = X ∩ Y;
+
+julia> typeof(Z)
+LazySets.Intersection{Float64,LazySets.Ball2{Float64},LazySets.Ball2{Float64}}
 
 julia> dim(Z)
 2
