@@ -76,11 +76,12 @@ A list of linear constraints.
 function constraints_list(H::AbstractHyperrectangle{N})::Vector{LinearConstraint{N}} where {N<:Real}
     n = dim(H)
     constraints = Vector{LinearConstraint{N}}(2*n)
-    A, b, c = eye(n), high(H), -low(H)
-    
+    b, c = high(H), -low(H)
+
     for i in 1:n
-        constraints[i] = HalfSpace(A[i, :], b[i])
-        constraints[i+n] = HalfSpace(-A[i, :], c[i])
+        ei = LazySets.Approximations.UnitVector(i, n, 1.0)
+        constraints[i] = HalfSpace(ei, b[i])
+        constraints[i+n] = HalfSpace(-ei, c[i])
     end
     return constraints
 end
