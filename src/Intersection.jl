@@ -33,7 +33,7 @@ julia> dim(Z)
 
 We can check if the intersection is empty with `isempty`:
 
-````jldoctest lazy_intersection
+```jldoctest lazy_intersection
 julia> isempty(Z)
 false
 ```
