@@ -191,3 +191,21 @@ A polytope in constraint representation.
 function convert(::Type{HPolytope}, H::AbstractHyperrectangle{N}) where {N}
     return HPolytope{N}(constraints_list(H))
 end
+
+"""
+    convert(::Type{HPolytope}, H::AbstractHyperrectangle{N}) where {N}
+
+Converts a hyperrectangular set to a polytope in constraint representation.
+
+### Input
+
+- `HPolytope` -- type used for dispatch
+- `H`         -- hyperrectangular set
+
+### Output
+
+A polytope in constraint representation.
+"""
+function convert(::Type{HPOLYGON}, H::AbstractHyperrectangle{N}) where {N, HPOLYGON<:AbstractHPolygon}
+    return HPOLYGON{N}(constraints_list(H))
+end

@@ -22,4 +22,5 @@ convert(::Type{HPolygon}, ::HPolytope)
 convert(::Type{Zonotope}, ::AbstractHyperrectangle)
 convert(::Type{Hyperrectangle}, ::Interval)
 convert(::Type{HPolytope}, ::AbstractHyperrectangle)
+convert(::Type{HPolygon}, ::AbstractHyperrectangle)
 ```
