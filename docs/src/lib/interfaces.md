@@ -162,6 +162,7 @@ radius(::AbstractHyperrectangle, ::Real)
 σ(::AbstractVector{Real}, ::AbstractHyperrectangle{Real})
 ∈(::AbstractVector{Real}, ::AbstractHyperrectangle{Real})
 vertices_list(::AbstractHyperrectangle{Real})
+constraints_list(::AbstractHyperrectangle{Real})
 ```
 
 #### Singleton
