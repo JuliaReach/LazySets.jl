@@ -204,7 +204,7 @@ Converts a hyperrectangular set to a polygon in constraint representation.
 
 ### Output
 
-A polytope in constraint representation.
+A polygon in constraint representation.
 """
 function convert(X::Type{HPOLYGON}, H::AbstractHyperrectangle{N}) where {N, HPOLYGON<:AbstractHPolygon}
     @assert dim(H) == 2 "cannot convert a $(dim(H))-dimensional hyperrectangle into a two-dimensional polygon"

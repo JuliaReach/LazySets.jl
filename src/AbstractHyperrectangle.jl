@@ -77,9 +77,9 @@ function constraints_list(H::AbstractHyperrectangle{N})::Vector{LinearConstraint
     n = dim(H)
     constraints = Vector{LinearConstraint{N}}(2*n)
     b, c = high(H), -low(H)
-
+    one_N = one(N)
     for i in 1:n
-        ei = LazySets.Approximations.UnitVector(i, n, 1.0)
+        ei = LazySets.Approximations.UnitVector(i, n, one_N)
         constraints[i] = HalfSpace(ei, b[i])
         constraints[i+n] = HalfSpace(-ei, c[i])
     end

@@ -140,4 +140,10 @@ for N in [Float64, Rational{Int}, Float32]
     H = Hyperrectangle(fill(N(1.), 100), fill(N(0.), 100))
     vl = vertices_list(H)
     @test length(vl) == 1 && vl[1] == H.center
+
+    # transform a hyperrectangle into a polygon
+    H1pol = convert(HPolygon, H1)
+    vlist = vertices_list(H1pol)
+    @test length(vlist) == 4
+    @test all([vi ∈ vlist for vi in [N[3, 3], N[3, -1], N[-1, -1], N[-1, 3]]]) 
 end

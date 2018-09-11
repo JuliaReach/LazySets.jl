@@ -56,6 +56,13 @@ for N in [Float64, Rational{Int}, Float32]
         @test length(p.constraints) == length(cl)
     end
 
+    # convert a hyperrectangle to a HPolytope
+    H = Hyperrectangle(N[1, 1], N[2, 2])
+    P = convert(HPolytope, H1)
+    vlist = vertices_list(P)
+    @test length(vlist) == 4
+    @test all([vi ∈ vlist for vi in [N[3, 3], N[3, -1], N[-1, -1], N[-1, 3]]]) 
+
     # -----
     # V-rep
     # -----
