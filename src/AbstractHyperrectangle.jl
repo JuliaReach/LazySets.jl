@@ -75,7 +75,7 @@ A list of linear constraints.
 """
 function constraints_list(H::AbstractHyperrectangle{N})::Vector{LinearConstraint{N}} where {N<:Real}
     n = dim(H)
-    constraints = Vector{LinearConstraint{N}}(2*n)
+    constraints = Vector{LinearConstraint{N}}(undef, 2*n)
     b, c = high(H), -low(H)
     one_N = one(N)
     for i in 1:n
