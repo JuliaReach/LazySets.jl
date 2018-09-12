@@ -213,7 +213,13 @@ import Polyhedra:polyhedron, SimpleHRepresentation, SimpleHRepresentation,
                  hcartesianproduct,
                  points
 
-export intersection, convex_hull, cartesian_product, vertices_list, tovrep, tohrep
+export intersection,
+       convex_hull,
+       cartesian_product,
+       vertices_list,
+       tovrep,
+       tohrep,
+       is_intersection_empty
 
 # HPolytope from an HRep
 function HPolytope(P::HRep{N, T}, backend=CDDLib.CDDLibrary()) where {N, T}
