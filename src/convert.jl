@@ -173,3 +173,40 @@ Hyperrectangle{Float64}([0.5], [0.5])
 function convert(::Type{Hyperrectangle}, x::Interval{N, IN}) where {N, IN <: AbstractInterval{N}}
     return Hyperrectangle(low=[low(x)], high=[high(x)])
 end
+
+"""
+    convert(::Type{HPolytope}, H::AbstractHyperrectangle{N}) where {N}
+
+Converts a hyperrectangular set to a polytope in constraint representation.
+
+### Input
+
+- `HPolytope` -- type used for dispatch
+- `H`         -- hyperrectangular set
+
+### Output
+
+A polytope in constraint representation.
+"""
+function convert(::Type{HPolytope}, H::AbstractHyperrectangle{N}) where {N}
+    return HPolytope{N}(constraints_list(H))
+end
+
+"""
+    convert(::Type{HPOLYGON}, H::AbstractHyperrectangle{N}) where {N, HPOLYGON<:AbstractHPolygon}
+
+Converts a hyperrectangular set to a polygon in constraint representation.
+
+### Input
+
+- `HPOLYGON`  -- type used for dispatch
+- `H`         -- hyperrectangular set
+
+### Output
+
+A polygon in constraint representation.
+"""
+function convert(X::Type{HPOLYGON}, H::AbstractHyperrectangle{N}) where {N, HPOLYGON<:AbstractHPolygon}
+    @assert dim(H) == 2 "cannot convert a $(dim(H))-dimensional hyperrectangle into a two-dimensional polygon"
+    return HPOLYGON{N}(constraints_list(H))
+end

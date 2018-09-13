@@ -1,7 +1,8 @@
 import Base.∈
 
 export AbstractHyperrectangle,
-       radius_hyperrectangle
+       radius_hyperrectangle,
+       constraints_list
 
 """
     AbstractHyperrectangle{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
@@ -59,6 +60,31 @@ function vertices_list(H::AbstractHyperrectangle{N}
         for si in Iterators.product([[1, -1] for i = 1:dim(H)]...)][:]
 end
 
+"""
+    constraints_list(H::AbstractHyperrectangle{N})::Vector{Vector{N}} where {N<:Real}
+
+Return the list of constraints of an axis-aligned hyperrectangular set.
+
+### Input
+
+- `H` -- hyperrectangular set
+
+### Output
+
+A list of linear constraints.
+"""
+function constraints_list(H::AbstractHyperrectangle{N})::Vector{LinearConstraint{N}} where {N<:Real}
+    n = dim(H)
+    constraints = Vector{LinearConstraint{N}}(undef, 2*n)
+    b, c = high(H), -low(H)
+    one_N = one(N)
+    for i in 1:n
+        ei = LazySets.Approximations.UnitVector(i, n, one_N)
+        constraints[i] = HalfSpace(ei, b[i])
+        constraints[i+n] = HalfSpace(-ei, c[i])
+    end
+    return constraints
+end
 
 # --- LazySet interface functions ---
 
