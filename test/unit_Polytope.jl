@@ -88,8 +88,14 @@ for N in [Float64, Rational{Int}, Float32]
 end
 
 # default Float64 constructors
-@test HPolytope() isa HPolytope{Float64}
-@test VPolytope() isa VPolytope{Float64}
+empty_H_polytope = HPolytope()
+empty_V_polytope = VPolytope()
+@test empty_H_polytope isa HPolytope{Float64}
+@test empty_V_polytope isa VPolytope{Float64}
+
+# check isempty function of the AbstractPolytope interface
+@test isempty(empty_H_polytope)
+@test isempty(empty_V_polytope)
 
 # Polyhedra tests that only work with Float64
 if test_suite_polyhedra
