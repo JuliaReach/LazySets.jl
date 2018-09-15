@@ -93,10 +93,12 @@ empty_V_polytope = VPolytope()
 @test empty_H_polytope isa HPolytope{Float64}
 @test empty_V_polytope isa VPolytope{Float64}
 
-# check isempty function of the AbstractPolytope interface
-@test isempty(empty_H_polytope)
-@test isempty(empty_V_polytope)
-is_intersection_empty(empty_H_polytope, empty_V_polytope)
+if test_suite_polyhedra
+    # check isempty function of the AbstractPolytope interface
+    @test isempty(empty_H_polytope)
+    @test isempty(empty_V_polytope)
+    is_intersection_empty(empty_H_polytope, empty_V_polytope)
+end
 
 # Polyhedra tests that only work with Float64
 if test_suite_polyhedra
