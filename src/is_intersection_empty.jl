@@ -538,7 +538,7 @@ end
                           witness::Bool=false
                           )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
-Check whether a pair of polytopes do not intersect, and otherwise optionally
+Check whether two polytopes do not intersect, and otherwise optionally
 compute a witness.
 
 ### Input
