@@ -574,3 +574,24 @@ function is_intersection_empty(P::AbstractPolytope{N},
         return isempty_flag
     end
 end
+
+# method disambiguation
+function is_intersection_empty(point::AbstractSingleton{N},
+                               set::AbstractPolytope{N},
+                               witness::Bool=false
+                              )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
+    empty_intersection = !∈(element(point), set)
+    if witness
+        return (empty_intersection, empty_intersection ? N[] : element(S))
+    else
+        return empty_intersection
+    end
+end
+
+# symmetric function
+function is_intersection_empty(set::AbstractPolytope{N},
+                               point::AbstractSingleton{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    return is_intersection_empty(point, set, witness)
+end
