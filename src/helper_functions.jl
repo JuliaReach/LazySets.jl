@@ -34,6 +34,59 @@ function sign_cadlag(x::N)::N where {N<:Real}
 end
 
 """
+    ispermutation(u::AbstractVector{T}, v::AbstractVector{T})::Bool where T
+
+Check that two vectors contain the same elements up to reordering.
+
+### Input
+
+- `u` -- first vector
+- `v` -- second vector
+
+### Output
+
+`true` iff the vectors are identical up to reordering.
+
+### Examples
+
+```jldoctest
+julia> LazySets.ispermutation([1, 2, 2], [2, 2, 1])
+true
+
+julia> LazySets.ispermutation([1, 2, 2], [1, 1, 2])
+false
+
+```
+"""
+function ispermutation(u::AbstractVector{T}, v::AbstractVector{T})::Bool where T
+    if length(u) != length(v)
+        return false
+    end
+    occurrence_map = Dict{T, Int}()
+    has_duplicates = false
+    for e in u
+        if e ∉ v
+            return false
+        end
+        if haskey(occurrence_map, e)
+            occurrence_map[e] += 1
+            has_duplicates = true
+        else
+            occurrence_map[e] = 1
+        end
+    end
+    if has_duplicates
+        for e in v
+            occurrence_map[e] -= 1
+            if occurrence_map[e] < 0
+                return false
+            end
+        end
+    end
+    return true
+end
+
+"""
     @neutral(SET, NEUT)
 
 Create functions to make a lazy set operation commutative with a given neutral
