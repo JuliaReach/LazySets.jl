@@ -68,6 +68,42 @@ function radius_hyperrectangle(S::AbstractSingleton{N}
 end
 
 
+"""
+    high(S::AbstractSingleton{N})::Vector{N} where {N<:Real}
+
+Return the higher coordinates of a set with a single value.
+
+### Input
+
+- `S` -- set with a single value
+
+### Output
+
+A vector with the higher coordinates of the set with a single value.
+"""
+function high(S::AbstractSingleton{N})::Vector{N} where {N<:Real}
+    return element(S)
+end
+
+"""
+    low(S::AbstractSingleton{N})::Vector{N} where {N<:Real}
+
+Return the lower coordinates of a set with a single value.
+
+### Input
+
+- `S` -- set with a single value
+
+### Output
+
+A vector with the lower coordinates of the set with a single value.
+"""
+function low(S::AbstractSingleton{N})::Vector{N} where {N<:Real}
+    return element(S)
+end
+
+
+
 # --- AbstractCentrallySymmetric interface functions ---
 
 
