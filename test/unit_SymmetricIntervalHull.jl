@@ -24,4 +24,9 @@ for N in [Float64, Rational{Int}, Float32]
         @test radius_hyperrectangle(h, 1) == 6
         @test radius_hyperrectangle(h) == N[6, 7]
     end
+
+    # high and low
+    h = SymmetricIntervalHull(Singleton(N[1, 2]))
+    @test high(h) == N[1, 2]
+    @test low(h) == N[-1, -2]
 end
