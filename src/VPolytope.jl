@@ -124,8 +124,8 @@ return quote
 export intersection, convex_hull, cartesian_product, vertices_list, tohrep, tovrep
 
 # VPolytope from a VRep
-function VPolytope(P::VRep{N, T}, backend=default_polyhedra_backend(N)) where {N, T}
-    vertices = Vector{Vector{T}}()
+function VPolytope(P::VRep{T, N}, backend=default_polyhedra_backend(N)) where {T, N}
+    vertices = Vector{Vector{N}}()
     for vi in Polyhedra.points(P)
         push!(vertices, vi)
     end

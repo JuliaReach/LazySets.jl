@@ -207,8 +207,8 @@ return quote
 export intersection, convex_hull, cartesian_product, vertices_list, tovrep, tohrep
 
 # HPolytope from an HRep
-function HPolytope(P::HRep{N, T}, backend=default_polyhedra_backend(N)) where {N, T}
-    constraints = LinearConstraint{T}[]
+function HPolytope(P::HRep{T, N}, backend=default_polyhedra_backend(N)) where {T, N}
+    constraints = LinearConstraint{N}[]
     for hi in Polyhedra.allhalfspaces(P)
         push!(constraints, HalfSpace(hi.a, hi.β))
     end

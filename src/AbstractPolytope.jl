@@ -97,11 +97,11 @@ import Polyhedra:polyhedron, SimpleHRepresentation, SimpleHRepresentation,
                  hcartesianproduct,
                  points
 
-function default_polyhedra_backend(N::AbstractFloat)
+function default_polyhedra_backend(N::Type{<:AbstractFloat})
     return CDDLib.CDDLibrary()
 end
 
-function default_polyhedra_backend(N::Rational)
+function default_polyhedra_backend(N::Type{<:Rational})
     return CDDLib.CDDLibrary(:exact)
 end
 
