@@ -81,3 +81,33 @@ function linear_map(M::AbstractMatrix, P::AbstractPolytope{N}) where {N<:Real}
     end
     return T(new_vlist)
 end
+
+
+function load_polyhedra_abstractpolytope() # function to be loaded by Requires
+
+return quote
+
+using CDDLib # default backend
+import Polyhedra:polyhedron, SimpleHRepresentation, SimpleHRepresentation,
+                 HRep, VRep,
+                 removehredundancy!, removevredundancy!,
+                 hreps, vreps,
+                 intersect,
+                 convexhull,
+                 hcartesianproduct,
+                 points
+
+function default_polyhedra_backend(N::AbstractFloat)
+    return CDDLib.CDDLibrary()
+end
+
+function default_polyhedra_backend(N::Rational)
+    return CDDLib.CDDLibrary(:exact)
+end
+
+function default_polyhedra_backend(N)
+    error("no default backend for numeric type $N")
+end
+
+end # quote
+end # function load_polyhedra_hpolytope()

@@ -3,6 +3,7 @@ function __init__()
 end
 
 function load_polyhedra()
+    eval(load_polyhedra_abstractpolytope())
     eval(load_polyhedra_hpolytope())
     eval(load_polyhedra_vpolytope())
 end
