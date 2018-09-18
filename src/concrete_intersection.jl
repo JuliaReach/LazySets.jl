@@ -99,3 +99,49 @@ function intersection(H1::AbstractHyperrectangle{N},
     end
     return Hyperrectangle(high=high, low=low)
 end
+
+function load_polyhedra_concrete_intersection() # function to be loaded by Requires
+return quote
+
+export intersection
+
+"""
+    intersection(P1::Union{HPolytope{N}, VPolytope{N}},
+                 P2::Union{HPolytope{N}, VPolytope{N}},
+                 [backend]=default_polyhedra_backend(N),
+                 [prunefunc]=removehredundancy!) where {N<:Real}
+
+Compute the intersection of two polytopes in either H-representation or
+V-representation.
+
+### Input
+
+- `P1`         -- polytope
+- `P2`         -- another polytope
+- `backend`    -- (optional, default: `default_polyhedra_backend(N)`) the polyhedral
+                  computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
+                  for further information
+- `prunefunc` -- (optional, default: `removehredundancy!`) function to post-process
+                  the output of `intersect`
+
+### Output
+
+The polytope obtained by the intersection of `P1` and `P2`. If both `P1` and `P2`
+are polytopes in V-representation, the output is a polytope in V-representation.
+Otherwis, a polytope in H-representation is returned.
+"""
+function intersection(P1::Union{HPolytope{N}, VPolytope{N}},
+                      P2::Union{HPolytope{N}, VPolytope{N}},
+                      backend=default_polyhedra_backend(N),
+                      prunefunc=removehredundancy!) where {N<:Real}
+
+    T = (P1 isa VPolytope && P2 isa VPolytope) ? VPolytope : HPolytope
+    P1 = polyhedron(P1, backend)
+    P2 = polyhedron(P2, backend)
+    Pint = Polyhedra.intersect(P1, P2)
+    prunefunc(Pint)
+    return T(Pint)
+end
+
+end # quote
+end # function load_polyhedra_hpolytope()

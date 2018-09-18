@@ -6,4 +6,5 @@ function load_polyhedra()
     eval(load_polyhedra_abstractpolytope())
     eval(load_polyhedra_hpolytope())
     eval(load_polyhedra_vpolytope())
+    eval(load_polyhedra_concrete_intersection())
 end
