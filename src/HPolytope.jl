@@ -269,7 +269,7 @@ function intersection(P1::HPolytope{N}, P2::HPolytope{N};
 end
 
 """
-    convex_hull(P1::HPolytope, P2::HPolytope; backend=default_polyhedra_backend(N)) where {N}
+    convex_hull(P1::HPolytope{N}, P2::HPolytope{N}; [backend]=default_polyhedra_backend(N)) where {N}
 
 Compute the convex hull of the set union of two polytopes in H-representation.
 
@@ -291,7 +291,7 @@ function convex_hull(P1::HPolytope{N}, P2::HPolytope{N}; backend=default_polyhed
 end
 
 """
-    cartesian_product(P1::HPolytope{N}, P2::HPolytope{N}; backend=default_polyhedra_backend(N)) where {N}
+    cartesian_product(P1::HPolytope{N}, P2::HPolytope{N}; [backend]=default_polyhedra_backend(N)) where {N}
 
 Compute the Cartesian product of two polytopes in H-representaion.
 
@@ -363,7 +363,7 @@ function vertices_list(P::HPolytope{N};
 end
 
 """
-    tovrep(P::HPolytope{N}; backend=default_polyhedra_backend(N)) where {N}
+    tovrep(P::HPolytope{N}; [backend]=default_polyhedra_backend(N)) where {N}
 
 Transform a polytope in H-representation to a polytope in V-representation.
 

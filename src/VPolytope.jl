@@ -186,7 +186,8 @@ function intersection(P1::VPolytope{N}, P2::VPolytope{N};
 end
 
 """
-    convex_hull(P1::VPolytope{N}, P2::VPolytope{N}; backend=default_polyhedra_backend(N)) where {N}
+    convex_hull(P1::VPolytope{N}, P2::VPolytope{N};
+                [backend]=default_polyhedra_backend(N)) where {N}
 
 Compute the convex hull of the set union of two polytopes in V-representation.
 
@@ -202,13 +203,15 @@ Compute the convex hull of the set union of two polytopes in V-representation.
 
 The `VPolytope` obtained by the concrete convex hull of `P1` and `P2`.
 """
-function convex_hull(P1::VPolytope{N}, P2::VPolytope{N}; backend=default_polyhedra_backend(N)) where {N}
+function convex_hull(P1::VPolytope{N}, P2::VPolytope{N};
+                     backend=default_polyhedra_backend(N)) where {N}
     Pch = convexhull(polyhedron(P1, backend), polyhedron(P2, backend))
     return VPolytope(Pch)
 end
 
 """
-    cartesian_product(P1::VPolytope{N}, P2::VPolytope{N}; backend=default_polyhedra_backend(N)) where {N}
+    cartesian_product(P1::VPolytope{N}, P2::VPolytope{N};
+                      [backend]=default_polyhedra_backend(N)) where {N}
 
 Compute the Cartesian product of two polytopes in V-representation.
 
@@ -224,13 +227,14 @@ Compute the Cartesian product of two polytopes in V-representation.
 
 The `VPolytope` obtained by the concrete Cartesian product of `P1` and `P2`.
 """
-function cartesian_product(P1::VPolytope{N}, P2::VPolytope{N}; backend=default_polyhedra_backend(N)) where {N}
+function cartesian_product(P1::VPolytope{N}, P2::VPolytope{N};
+                           backend=default_polyhedra_backend(N)) where {N}
     Pcp = hcartesianproduct(polyhedron(P1, backend), polyhedron(P2, backend))
     return VPolytope(Pcp)
 end
 
 """
-    tohrep(P::VPolytope{N}; backend=default_polyhedra_backend(N)) where {N}
+    tohrep(P::VPolytope{N}; [backend]=default_polyhedra_backend(N)) where {N}
 
 Transform a polytope in V-representation to a polytope in H-representation.
 
@@ -247,7 +251,8 @@ Transform a polytope in V-representation to a polytope in H-representation.
 The `HPolytope` which is the constraint representation of the given polytope
 in vertex representation.
 """
-function tohrep(P::VPolytope{N}; backend=default_polyhedra_backend(N)) where {N}
+function tohrep(P::VPolytope{N};
+                backend=default_polyhedra_backend(N)) where {N}
     P = polyhedron(P, backend)
     return HPolytope(P)
 end
