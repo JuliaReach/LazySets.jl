@@ -214,3 +214,41 @@ function ∈(x::AbstractVector{N},
     end
     return true
 end
+
+
+# --- common AbstractHyperrectangle functions ---
+
+
+"""
+    high(H::AbstractHyperrectangle{N})::Vector{N} where {N<:Real}
+
+Return the higher coordinates of a hyperrectangular set.
+
+### Input
+
+- `H` -- hyperrectangular set
+
+### Output
+
+A vector with the higher coordinates of the hyperrectangular set.
+"""
+function high(H::AbstractHyperrectangle{N})::Vector{N} where {N<:Real}
+    return center(H) .+ radius_hyperrectangle(H)
+end
+
+"""
+    low(H::AbstractHyperrectangle{N})::Vector{N} where {N<:Real}
+
+Return the lower coordinates of a hyperrectangular set.
+
+### Input
+
+- `H` -- hyperrectangular set
+
+### Output
+
+A vector with the lower coordinates of the hyperrectangular set.
+"""
+function low(H::AbstractHyperrectangle{N})::Vector{N} where {N<:Real}
+    return center(H) .- radius_hyperrectangle(H)
+end

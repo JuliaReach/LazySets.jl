@@ -20,6 +20,10 @@ for N in [Float64, Rational{Int}, Float32]
     @test element(Z, 1) == 0
     @test an_element(Z) ∈ Z
 
+    # high and low
+    @test high(Z) == zeros(N, 2)
+    @test low(Z) == zeros(N, 2)
+
     # subset
     z = ZeroSet{N}(1)
     s1 = Singleton(N[0])

@@ -1,7 +1,10 @@
+import Base.isempty
+
 export AbstractPolytope,
        vertices_list,
        singleton_list,
-       linear_map
+       linear_map,
+       isempty
 
 """
     AbstractPolytope{N<:Real} <: LazySet{N}
@@ -82,6 +85,27 @@ function linear_map(M::AbstractMatrix, P::AbstractPolytope{N}) where {N<:Real}
     return T(new_vlist)
 end
 
+"""
+    isempty(P::AbstractPolytope{N})::Bool where {N<:Real}
+
+Determine whether a polytope is empty.
+
+### Input
+
+- `P` -- abstract polytope
+
+### Output
+
+`true` if the given polytope contains no vertices, and `false` otherwise.
+
+### Algorithm
+
+This algorithm checks whether the `vertices_list` of the given polytope is empty
+or not.
+"""
+function isempty(P::AbstractPolytope{N})::Bool where {N<:Real}
+    return isempty(vertices_list(P))
+end
 
 function load_polyhedra_abstractpolytope() # function to be loaded by Requires
 
