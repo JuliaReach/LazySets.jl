@@ -28,7 +28,7 @@ Z = \\left\\{ c + ∑_{i=1}^p ξ_i g_i,~~ ξ_i \\in [-1, 1]~~ ∀ i = 1,…, p \
 where ``c \\in \\mathbb{R}^n`` is its *center* and ``\\{g_i\\}_{i=1}^p``,
 ``g_i \\in \\mathbb{R}^n``, is the set of *generators*.
 This characterization defines a zonotope as the finite Minkowski sum of line
-elements.
+segments.
 Zonotopes can be equivalently described as the image of a unit infinity-norm
 ball in ``\\mathbb{R}^n`` by an affine transformation.
 
@@ -202,20 +202,22 @@ true
 
 ### Algorithm
 
-The element membership problem is computed by stating and solving the following
-linear program with the simplex method. Let ``p`` and ``n`` be the number of
-generators and ambient dimension respectively.
-We consider the minimization of ``x_0`` in the ``p+1``-dimensional space of elements
-``(x_0, ξ_1, …, ξ_p)`` constrained to ``0 ≤ x_0 ≤ ∞``, ``ξ_i ∈ [-1, 1]`` for all
-``i = 1, …, p``, and such that ``x-c = Gξ`` holds. If a feasible solution exists,
-the optimal value ``x_0 = 0`` is achieved.
+The membership problem is computed by stating and solving the following linear
+program with the simplex method.
+Let ``p`` and ``n`` be the number of generators and ambient dimension,
+respectively.
+We consider the minimization of ``x_0`` in the ``p+1``-dimensional space of
+elements ``(x_0, ξ_1, …, ξ_p)`` constrained to ``0 ≤ x_0 ≤ ∞``,
+``ξ_i ∈ [-1, 1]`` for all ``i = 1, …, p``, and such that ``x-c = Gξ`` holds.
+If a feasible solution exists, the optimal value ``x_0 = 0`` is achieved.
 
 ### Notes
 
 This function is parametric in the number type `N`. For exact arithmetic use
 an appropriate backend, e.g. `solver=GLPKSolverLP(method=:Exact)`.
 """
-function ∈(x::AbstractVector{N}, Z::Zonotope{N}; solver=GLPKSolverLP(method=:Simplex))::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, Z::Zonotope{N};
+           solver=GLPKSolverLP(method=:Simplex))::Bool where {N<:Real}
     @assert length(x) == dim(Z)
 
     p, n = ngens(Z), dim(Z)
@@ -311,8 +313,8 @@ Concrete scaling of a zonotope.
 
 ### Output
 
-The zonotope obtained by applying the numerical scale to the center and generators
-of ``Z``.
+The zonotope obtained by applying the numerical scale to the center and
+generators of ``Z``.
 """
 function scale(α::Real, Z::Zonotope)
     c = α .* Z.center
