@@ -106,3 +106,32 @@ or not.
 function isempty(P::AbstractPolytope{N})::Bool where {N<:Real}
     return isempty(vertices_list(P))
 end
+
+function load_polyhedra_abstractpolytope() # function to be loaded by Requires
+
+return quote
+
+using CDDLib # default backend
+import Polyhedra:polyhedron, SimpleHRepresentation, SimpleHRepresentation,
+                 HRep, VRep,
+                 removehredundancy!, removevredundancy!,
+                 hreps, vreps,
+                 intersect,
+                 convexhull,
+                 hcartesianproduct,
+                 points
+
+function default_polyhedra_backend(N::Type{<:AbstractFloat})
+    return CDDLib.CDDLibrary()
+end
+
+function default_polyhedra_backend(N::Type{<:Rational})
+    return CDDLib.CDDLibrary(:exact)
+end
+
+function default_polyhedra_backend(N)
+    error("no default backend for numeric type $N")
+end
+
+end # quote
+end # function load_polyhedra_hpolytope()

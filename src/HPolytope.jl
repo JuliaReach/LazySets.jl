@@ -208,16 +208,7 @@ end
 
 function load_polyhedra_hpolytope() # function to be loaded by Requires
 return quote
-
-using CDDLib # default backend
-import Polyhedra:polyhedron, SimpleHRepresentation, SimpleHRepresentation,
-                 HRep, VRep,
-                 removehredundancy!, removevredundancy!,
-                 hreps, vreps,
-                 intersect,
-                 convexhull,
-                 hcartesianproduct,
-                 points
+# see the interface file AbstractPolytope.jl for the imports
 
 export intersection,
        convex_hull,
@@ -228,8 +219,8 @@ export intersection,
        is_intersection_empty
 
 # HPolytope from an HRep
-function HPolytope(P::HRep{N, T}, backend=CDDLib.CDDLibrary()) where {N, T}
-    constraints = LinearConstraint{T}[]
+function HPolytope(P::HRep{T, N}, backend=default_polyhedra_backend(N)) where {T, N}
+    constraints = LinearConstraint{N}[]
     for hi in Polyhedra.allhalfspaces(P)
         push!(constraints, HalfSpace(hi.a, hi.β))
     end
@@ -237,14 +228,14 @@ function HPolytope(P::HRep{N, T}, backend=CDDLib.CDDLibrary()) where {N, T}
 end
 
 """
-    polyhedron(P::HPolytope{N}, [backend]=CDDLib.CDDLibrary()) where {N}
+    polyhedron(P::HPolytope{N}, [backend]=default_polyhedra_backend(N)) where {N}
 
 Return an `HRep` polyhedron from `Polyhedra.jl` given a polytope in H-representation.
 
 ### Input
 
 - `P`       -- polytope
-- `backend` -- (optional, default: `CDDLib.CDDLibrary()`) the polyhedral
+- `backend` -- (optional, default: `default_polyhedra_backend(N)`) the polyhedral
                computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
                for further information
 
@@ -252,14 +243,14 @@ Return an `HRep` polyhedron from `Polyhedra.jl` given a polytope in H-representa
 
 An `HRep` polyhedron.
 """
-function polyhedron(P::HPolytope{N}, backend=CDDLib.CDDLibrary()) where {N}
+function polyhedron(P::HPolytope{N}, backend=default_polyhedra_backend(N)) where {N}
     A, b = tosimplehrep(P)
     return Polyhedra.polyhedron(Polyhedra.hrep(A, b), backend)
 end
 
 """
     intersection(P1::HPolytope{N}, P2::HPolytope{N};
-                 [backend]=CDDLib.CDDLibrary(),
+                 [backend]=default_polyhedra_backend(N),
                  [prunefunc]=removehredundancy!)::HPolytope{N} where {N<:Real}
 
 Compute the intersection of two polytopes in H-representation.
@@ -268,7 +259,7 @@ Compute the intersection of two polytopes in H-representation.
 
 - `P1`         -- polytope
 - `P2`         -- another polytope
-- `backend`    -- (optional, default: `CDDLib.CDDLibrary()`) the polyhedral
+- `backend`    -- (optional, default: `default_polyhedra_backend(N)`) the polyhedral
                   computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
                   for further information
 - `prunefunc` -- (optional, default: `removehredundancy!`) function to post-process
@@ -279,7 +270,7 @@ Compute the intersection of two polytopes in H-representation.
 The `HPolytope` obtained by the intersection of `P1` and `P2`.
 """
 function intersection(P1::HPolytope{N}, P2::HPolytope{N};
-                      backend=CDDLib.CDDLibrary(),
+                      backend=default_polyhedra_backend(N),
                       prunefunc=removehredundancy!)::HPolytope{N} where {N<:Real}
 
     P1 = polyhedron(P1, backend)
@@ -290,7 +281,7 @@ function intersection(P1::HPolytope{N}, P2::HPolytope{N};
 end
 
 """
-    convex_hull(P1::HPolytope, P2::HPolytope; [backend]=CDDLib.CDDLibrary())
+    convex_hull(P1::HPolytope{N}, P2::HPolytope{N}; [backend]=default_polyhedra_backend(N)) where {N}
 
 Compute the convex hull of the set union of two polytopes in H-representation.
 
@@ -298,7 +289,7 @@ Compute the convex hull of the set union of two polytopes in H-representation.
 
 - `P1`         -- polytope
 - `P2`         -- another polytope
-- `backend`    -- (optional, default: `CDDLib.CDDLibrary()`) the polyhedral
+- `backend`    -- (optional, default: `default_polyhedra_backend(N)`) the polyhedral
                   computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
                   for further information
 
@@ -306,13 +297,13 @@ Compute the convex hull of the set union of two polytopes in H-representation.
 
 The `HPolytope` obtained by the concrete convex hull of `P1` and `P2`.
 """
-function convex_hull(P1::HPolytope, P2::HPolytope; backend=CDDLib.CDDLibrary())
+function convex_hull(P1::HPolytope{N}, P2::HPolytope{N}; backend=default_polyhedra_backend(N)) where {N}
     Pch = convexhull(polyhedron(P1, backend), polyhedron(P2, backend))
     return HPolytope(Pch)
 end
 
 """
-    cartesian_product(P1::HPolytope, P2::HPolytope; [backend]=CDDLib.CDDLibrary())
+    cartesian_product(P1::HPolytope{N}, P2::HPolytope{N}; [backend]=default_polyhedra_backend(N)) where {N}
 
 Compute the Cartesian product of two polytopes in H-representaion.
 
@@ -320,7 +311,7 @@ Compute the Cartesian product of two polytopes in H-representaion.
 
 - `P1`         -- polytope
 - `P2`         -- another polytope
-- `backend`    -- (optional, default: `CDDLib.CDDLibrary()`) the polyhedral
+- `backend`    -- (optional, default: `default_polyhedra_backend(N)`) the polyhedral
                   computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
                   for further information
 
@@ -328,14 +319,14 @@ Compute the Cartesian product of two polytopes in H-representaion.
 
 The `HPolytope` obtained by the concrete cartesian product of `P1` and `P2`.
 """
-function cartesian_product(P1::HPolytope, P2::HPolytope; backend=CDDLib.CDDLibrary())
+function cartesian_product(P1::HPolytope{N}, P2::HPolytope{N}; backend=default_polyhedra_backend(N)) where {N}
     Pcp = hcartesianproduct(polyhedron(P1, backend), polyhedron(P2, backend))
     return HPolytope(Pcp)
 end
 
 """
     vertices_list(P::HPolytope{N};
-                  [backend]=CDDLib.CDDLibrary(),
+                  [backend]=default_polyhedra_backend(N),
                   [prunefunc]=removevredundancy!)::Vector{Vector{N}} where {N<:Real}
 
 Return the list of vertices of a polytope in constraint representation.
@@ -343,7 +334,7 @@ Return the list of vertices of a polytope in constraint representation.
 ### Input
 
 - `P`         -- polytope in constraint representation
-- `backend`   -- (optional, default: `CDDLib.CDDLibrary()`) the polyhedral
+- `backend`   -- (optional, default: `default_polyhedra_backend(N)`) the polyhedral
                  computations backend, see Polyhedra's documentation
                  for further information
 - `prunefunc` -- (optional, default: `removevredundancy!`) function to post-process
@@ -376,7 +367,7 @@ julia> vertices_list(P)
 ```
 """
 function vertices_list(P::HPolytope{N};
-                       backend=CDDLib.CDDLibrary(),
+                       backend=default_polyhedra_backend(N),
                        prunefunc=removevredundancy!)::Vector{Vector{N}} where {N<:Real}
     if length(P.constraints) == 0
         return Vector{N}(undef, Vector{N}(undef, 0))
@@ -387,14 +378,14 @@ function vertices_list(P::HPolytope{N};
 end
 
 """
-    tovrep(P::HPolytope; backend=CDDLib.CDDLibrary())
+    tovrep(P::HPolytope{N}; [backend]=default_polyhedra_backend(N)) where {N}
 
 Transform a polytope in H-representation to a polytope in V-representation.
 
 ### Input
 
 - `P`          -- polytope in constraint representation
-- `backend`    -- (optional, default: `CDDLib.CDDLibrary()`) the polyhedral
+- `backend`    -- (optional, default: `default_polyhedra_backend(N)`) the polyhedral
                   computations backend,
                   see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
                   for further information
@@ -404,7 +395,7 @@ Transform a polytope in H-representation to a polytope in V-representation.
 The `VPolytope` which is the vertex representation of the given polytope
 in constraint representation.
 """
-function tovrep(P::HPolytope; backend=CDDLib.CDDLibrary())
+function tovrep(P::HPolytope{N}; backend=default_polyhedra_backend(N)) where {N}
     P = polyhedron(P, backend)
     return VPolytope(P)
 end
