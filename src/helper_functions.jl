@@ -77,10 +77,10 @@ function ispermutation(u::AbstractVector{T}, v::AbstractVector{T})::Bool where T
     end
     if has_duplicates
         for e in v
-            occurrence_map[e] -= 1
-            if occurrence_map[e] < 0
+            if !haskey(occurrence_map, e) || occurrence_map[e] == 0
                 return false
             end
+            occurrence_map[e] -= 1
         end
     end
     return true
