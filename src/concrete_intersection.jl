@@ -144,4 +144,4 @@ function intersection(P1::Union{HPolytope{N}, VPolytope{N}},
 end
 
 end # quote
-end # function load_polyhedra_hpolytope()
+end # function load_polyhedra_concrete_intersection()
