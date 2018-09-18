@@ -529,3 +529,69 @@ function is_intersection_empty(ls1::LineSegment{N},
         return empty_intersection
     end
 end
+
+# --- AbstractPolytope ---
+
+"""
+    is_intersection_empty(P::AbstractPolytope{N},
+                          Q::AbstractPolytope{N},
+                          witness::Bool=false
+                          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether two polytopes do not intersect, and otherwise optionally
+compute a witness.
+
+### Input
+
+- `P`       -- polytope
+- `Q`       -- another polytope
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``P ∩ Q = ∅``
+* If `witness` option is activated:
+  * `(true, [])` iff ``P ∩ Q = ∅``
+  * `(false, v)` iff ``P ∩ Q ≠ ∅`` and ``v ∈ P ∩ Q``
+
+### Algorithm
+
+This is a fallback implementation of the `AbstractPolytope` interface that computes
+the concrete intersection, `intersection`, of the given pair of polytopes. If a
+witness is required, the first vertex of the resulting intersection polytope is
+returned.
+"""
+function is_intersection_empty(P::AbstractPolytope{N},
+                               Q::AbstractPolytope{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    X = intersection(P, Q)
+    isempty_flag = isempty(X)
+    if witness
+        witness_vertex = isempty_flag ? N[] : vertices_list(X)[1]
+        return (isempty_flag, witness_vertex)
+    else
+        return isempty_flag
+    end
+end
+
+# method disambiguation
+function is_intersection_empty(point::AbstractSingleton{N},
+                               set::AbstractPolytope{N},
+                               witness::Bool=false
+                              )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
+    empty_intersection = !∈(element(point), set)
+    if witness
+        return (empty_intersection, empty_intersection ? N[] : element(S))
+    else
+        return empty_intersection
+    end
+end
+
+# symmetric function
+function is_intersection_empty(set::AbstractPolytope{N},
+                               point::AbstractSingleton{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    return is_intersection_empty(point, set, witness)
+end

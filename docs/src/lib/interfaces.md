@@ -93,6 +93,7 @@ This interface defines the following functions:
 ```@docs
 singleton_list(::AbstractPolytope)
 linear_map(::AbstractMatrix, ::AbstractPolytope)
+isempty(::AbstractPolytope{N}) where {N<:Real}
 ```
 
 ### Polygon

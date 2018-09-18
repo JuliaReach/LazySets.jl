@@ -195,6 +195,12 @@ Return the simple H-representation ``Ax ≤ b`` of a polytope.
 The tuple `(A, b)` where `A` is the matrix of normal directions and `b` are the offsets.
 """
 function tosimplehrep(P::HPolytope{N}) where {N}
+    if length(P.constraints) == 0
+        A = Matrix{N}(undef, 0, 0)
+        b = Vector{N}(undef, 0)
+        return (A, b)
+    end
+
     A = hcat([ci.a for ci in P.constraints]...)'
     b = [ci.b for ci in P.constraints]
     return (A, b)
@@ -213,7 +219,13 @@ import Polyhedra:polyhedron, SimpleHRepresentation, SimpleHRepresentation,
                  hcartesianproduct,
                  points
 
-export intersection, convex_hull, cartesian_product, vertices_list, tovrep, tohrep
+export intersection,
+       convex_hull,
+       cartesian_product,
+       vertices_list,
+       tovrep,
+       tohrep,
+       is_intersection_empty
 
 # HPolytope from an HRep
 function HPolytope(P::HRep{N, T}, backend=CDDLib.CDDLibrary()) where {N, T}
@@ -366,6 +378,9 @@ julia> vertices_list(P)
 function vertices_list(P::HPolytope{N};
                        backend=CDDLib.CDDLibrary(),
                        prunefunc=removevredundancy!)::Vector{Vector{N}} where {N<:Real}
+    if length(P.constraints) == 0
+        return Vector{N}(undef, Vector{N}(undef, 0))
+    end
     P = polyhedron(P, backend)
     prunefunc(P)
     return collect(points(P))
