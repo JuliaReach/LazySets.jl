@@ -243,3 +243,5 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
 * [`vertices_list`](@ref vertices_list(::AbstractHyperrectangle{Real}))
+* [`high`](@ref high(::AbstractHyperrectangle{Real}))
+* [`low`](@ref low(::AbstractHyperrectangle{Real}))

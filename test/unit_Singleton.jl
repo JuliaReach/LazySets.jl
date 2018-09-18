@@ -37,6 +37,10 @@ for N in [Float64, Rational{Int}, Float32]
     # radius_hyperrectangle
     @test iszero(radius_hyperrectangle(S))
 
+    # high and low
+    @test high(S) == N[1, 1]
+    @test low(S) == N[1, 1]
+
     # concrete linear map
     M = N[0 1; -1 0]
     @test element(linear_map(M, S)) == an_element(M * S)

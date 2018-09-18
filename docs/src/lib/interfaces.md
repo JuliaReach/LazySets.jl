@@ -93,6 +93,7 @@ This interface defines the following functions:
 ```@docs
 singleton_list(::AbstractPolytope)
 linear_map(::AbstractMatrix, ::AbstractPolytope)
+isempty(::AbstractPolytope{N}) where {N<:Real}
 ```
 
 ### Polygon
@@ -163,6 +164,8 @@ radius(::AbstractHyperrectangle, ::Real)
 ∈(::AbstractVector{Real}, ::AbstractHyperrectangle{Real})
 vertices_list(::AbstractHyperrectangle{Real})
 constraints_list(::AbstractHyperrectangle{Real})
+high(::AbstractHyperrectangle{Real})
+low(::AbstractHyperrectangle{Real})
 ```
 
 #### Singleton

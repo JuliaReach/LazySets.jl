@@ -61,7 +61,12 @@ for N in [Float64, Rational{Int}, Float32]
     @test an_element(b) ∈ b
 
     # check that vertices_list for zero radius doesn't repeat vertices
-    b = BallInf(N[1., 2.], N(0.0))
+    b = BallInf(N[1, 2], N(0))
     vl = vertices_list(b)
     @test length(vl) == 1 && vl[1] == b.center
+
+    # high and low
+    b = BallInf(N[1, 2], N(1))
+    @test high(b) == N[2, 3]
+    @test low(b) == N[0, 1]
 end
