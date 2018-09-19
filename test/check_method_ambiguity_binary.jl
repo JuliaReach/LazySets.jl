@@ -99,7 +99,7 @@ function check_method_ambiguity_binary(op;
                                      "'$ops(::$(typeof(i1)), " *
                                      "::$(typeof(i2)))' exists")
                             end
-                        elseif contains(msg, "is ambiguous")
+                        elseif occursin("is ambiguous", msg)
                             # ambiguity error, remember
                             has_ambiguities = true
                             if print_warnings
