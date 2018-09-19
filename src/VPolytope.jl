@@ -121,7 +121,11 @@ function load_polyhedra_vpolytope() # function to be loaded by Requires
 return quote
 # see the interface file AbstractPolytope.jl for the imports
 
-export intersection, convex_hull, cartesian_product, vertices_list, tohrep, tovrep
+export convex_hull,
+       cartesian_product,
+       vertices_list,
+       tohrep,
+       tovrep
 
 # VPolytope from a VRep
 function VPolytope(P::VRep{T, N}, backend=default_polyhedra_backend(N)) where {T, N}
@@ -151,38 +155,6 @@ A `VRep` polyhedron.
 function polyhedron(P::VPolytope{N}, backend=default_polyhedra_backend(N)) where {N}
     V = hcat(vertices_list(P)...)'
     return polyhedron(Polyhedra.vrep(V), backend)
-end
-
-"""
-    intersection(P1::VPolytope{N}, P2::VPolytope{N};
-                [backend]=default_polyhedra_backend(N),
-                [prunefunc]=removehredundancy!)::VPolytope{N} where {N<:Real}
-
-Compute the intersection of two polytopes in V-representation.
-
-### Input
-
-- `P1`         -- polytope
-- `P2`         -- another polytope
-- `backend`    -- (optional, default: `default_polyhedra_backend(N)`) the polyhedral
-                  computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
-                  for further information
-- `prunefunc` -- (optional, default: `removehredundancy!`) function to post-process
-                  the output of `intersect`
-
-### Output
-
-The `VPolytope` obtained by the intersection of `P1` and `P2`.
-"""
-function intersection(P1::VPolytope{N}, P2::VPolytope{N};
-                      backend=default_polyhedra_backend(N),
-                      prunefunc=removehredundancy!)::VPolytope{N} where {N<:Real}
-
-    P1 = polyhedron(P1, backend)
-    P2 = polyhedron(P2, backend)
-    Pint = Polyhedra.intersect(P1, P2)
-    prunefunc(Pint)
-    return VPolytope(Pint)
 end
 
 """

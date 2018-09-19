@@ -99,3 +99,60 @@ function intersection(H1::AbstractHyperrectangle{N},
     end
     return Hyperrectangle(high=high, low=low)
 end
+
+function load_polyhedra_concrete_intersection() # function to be loaded by Requires
+return quote
+
+export intersection
+
+function default_intersection_output_type(P1::Union{HPolytope{N}, VPolytope{N}},
+                                          P2::Union{HPolytope{N}, VPolytope{N}}) where {N}
+    T = (P1 isa VPolytope && P2 isa VPolytope) ? VPolytope : HPolytope
+    return T
+end
+
+"""
+    intersection(P1::Union{HPolytope{N}, VPolytope{N}},
+                 P2::Union{HPolytope{N}, VPolytope{N}},
+                 [backend]=default_polyhedra_backend(N),
+                 [prunefunc]=removehredundancy!,
+                 [output_type]=default_intersection_output_type(P1, P2)) where {N}
+
+Compute the intersection of two polytopes in either H-representation or
+V-representation.
+
+### Input
+
+- `P1`          -- polytope
+- `P2`          -- another polytope
+- `backend`     -- (optional, default: `default_polyhedra_backend(N)`) the polyhedral
+                   computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
+                   for further information
+- `prunefunc`   -- (optional, default: `removehredundancy!`) function to post-process
+                    the output of `intersect`
+- `output_type` -- (optional, default: `default_intersection_output_type(P1, P2)`)
+                   choose the type for the output polytope 
+
+### Output
+
+The polytope obtained by the intersection of `P1` and `P2`.
+
+The type of the output polytope can be passed optionally. By default, if both
+`P1` and `P2` are polytopes in V-representation, the output is a polytope in
+V-representation. Otherwise, a polytope in H-representation is returned. 
+"""
+function intersection(P1::Union{HPolytope{N}, VPolytope{N}},
+                      P2::Union{HPolytope{N}, VPolytope{N}},
+                      backend=default_polyhedra_backend(N),
+                      prunefunc=removehredundancy!,
+                      output_type=default_intersection_output_type(P1, P2)) where {N}
+
+    P1 = polyhedron(P1, backend)
+    P2 = polyhedron(P2, backend)
+    Pint = Polyhedra.intersect(P1, P2)
+    prunefunc(Pint)
+    return output_type(Pint)
+end
+
+end # quote
+end # function load_polyhedra_concrete_intersection()
