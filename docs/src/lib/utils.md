@@ -9,6 +9,7 @@ end
 
 ```@docs
 sign_cadlag
+ispermutation
 @neutral
 @absorbing
 @declare_array_version

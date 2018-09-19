@@ -56,11 +56,7 @@ for N in [Float64, Rational{Int}, Float32]
     h = Hyperrectangle(N[3, 2], N[2, 1])
     vl = vertices_list(h)
     # Test Vertices
-    @test length(vl) == 4
-    @test N[1, 1] ∈ vl
-    @test N[1, 3] ∈ vl
-    @test N[5, 1] ∈ vl
-    @test N[5, 3] ∈ vl
+    @test ispermutation(vl, [N[1, 1], N[1, 3], N[5, 1], N[5, 3]])
     # norm
     @test norm(h) == norm(N[5, 3], Inf)
     # radius
@@ -139,19 +135,16 @@ for N in [Float64, Rational{Int}, Float32]
     # this test would take very long if all 2^100 vertices are computed (see #92)
     H = Hyperrectangle(fill(N(1.), 100), fill(N(0.), 100))
     vl = vertices_list(H)
-    @test length(vl) == 1 && vl[1] == H.center
+    @test vl == [H.center]
 
     # transform hyperrectangle into a polygon
     H1pol = convert(HPolygon, H1)
     vlist = vertices_list(H1pol)
-    @test length(vlist) == 4
-    @test all([vi ∈ vlist for vi in [N[3, 3], N[3, -1], N[-1, -1], N[-1, 3]]]) 
+    @test ispermutation(vlist, [N[3, 3], N[3, -1], N[-1, -1], N[-1, 3]])
 
     # test that we can produce the list of constraints
     clist = constraints_list(H1)
-    @test length(clist) == 4
-    @test any([HalfSpace(N[1, 0], N(3)) == ci for ci in constraints_list(H1)]) &&
-          any([HalfSpace(N[0, 1], N(3)) == ci for ci in constraints_list(H1)]) && 
-          any([HalfSpace(N[-1, 0], N(1)) == ci for ci in constraints_list(H1)]) && 
-          any([HalfSpace(N[0, -1], N(1)) == ci for ci in constraints_list(H1)])
+    @test ispermutation(clist,
+                        [HalfSpace(N[1, 0], N(3)), HalfSpace(N[0, 1], N(3)),
+                         HalfSpace(N[-1, 0], N(1)), HalfSpace(N[0, -1], N(1))])
 end

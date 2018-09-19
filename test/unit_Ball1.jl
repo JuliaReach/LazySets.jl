@@ -61,11 +61,10 @@ for N in [Float64, Rational{Int}, Float32]
 
     # vertices_list
     vl = vertices_list(b)
-    @test length(vl) == 4 && N[2, 0] ∈ vl && N[0, 2] ∈ vl &&
-          N[-2, 0] ∈ vl && N[0, -2] ∈ vl
+    @test ispermutation(vl, [N[2, 0], N[0, 2], N[-2, 0], N[0, -2]])
 
     # check that vertices_list for zero radius doesn't repeat vertices
     b = Ball1(N[1, 2], N(0))
     vl = vertices_list(b)
-    @test length(vl) == 1 && vl[1] == b.center
+    @test vl == [center(b)]
 end

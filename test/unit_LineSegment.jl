@@ -32,7 +32,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # vertices_list function
     vl = vertices_list(l)
-    @test length(vl) == 2 && l.p ∈ vl && l.q ∈ vl
+    @test ispermutation(vl, [l.p, l.q])
 
     # intersection emptiness
     l1 = LineSegment(N[1, 1], N[2, 2])

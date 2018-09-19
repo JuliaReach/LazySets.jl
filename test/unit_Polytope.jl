@@ -61,8 +61,7 @@ for N in [Float64, Rational{Int}, Float32]
         H = Hyperrectangle(N[1, 1], N[2, 2])
         P = convert(HPolytope, H)
         vlist = vertices_list(P)
-        @test length(vlist) == 4
-        @test all([vi ∈ vlist for vi in [N[3, 3], N[3, -1], N[-1, -1], N[-1, 3]]])
+        @test ispermutation(vlist, [N[3, 3], N[3, -1], N[-1, -1], N[-1, 3]])
     end
 
     # -----
@@ -144,7 +143,7 @@ if test_suite_polyhedra
         b = N[1, 0]
         p = HPolytope(A, b)
         vl = vertices_list(p)
-        @test length(vl) == 2 && N[0] ∈ vl && [1] ∈ vl
+        @test ispermutation(vl, N[0, 1])
 
         # tovrep from HPolytope
         A = [N(0) N(-1); N(-1) N(0); N(1) N(1)]
@@ -184,7 +183,7 @@ if test_suite_polyhedra
         p2 = VPolytope([N[2]])
         cp = cartesian_product(p1, p2)
         vl = vertices_list(cp)
-        @test length(vl) == 2 && N[0, 0, 2] ∈ vl && N[1, 1, 2] ∈ vl
+        @test ispermutation(vl, [N[0, 0, 2], N[1, 1, 2]])
 
         # tohrep from VPolytope
         P = VPolytope([v1, v2, v3, v4, v5])

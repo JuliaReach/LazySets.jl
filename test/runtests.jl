@@ -8,6 +8,9 @@ using Compat.Test
 # conversion between numeric types
 include("to_N.jl")
 
+# non-exported helper functions
+using LazySets.ispermutation
+
 global test_suite_basic = true
 global test_suite_doctests = VERSION >= v"0.7-" # only run doctests with new Julia version
 global test_suite_polyhedra = false
