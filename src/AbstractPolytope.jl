@@ -68,21 +68,9 @@ The polytope in V-representation obtained by applying the linear map ``M`` to
 the set ``P``. If the given polytope is two-dimensional, a polygon instead
 of a general polytope is returned. 
 """
-function linear_map(M::AbstractMatrix, P::AbstractPolytope{N}) where {N<:Real}
-    @assert dim(P) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
-                                 "applied to a set of dimension $(dim(P))"
-
-    if dim(P) == 2
-        T = VPolygon
-    else
-        T = VPolytope
-    end
-    vlist = vertices_list(P)
-    new_vlist = Vector{Vector{N}}(undef, length(vlist))
-    @inbounds for (i, vi) in enumerate(vlist)
-        new_vlist[i] =  M * vi
-    end
-    return T(new_vlist)
+function linear_map(M::AbstractMatrix, P::AbstractPolytope{N})::VPolytope{N} where {N<:Real}
+    @assert dim(P) == size(M, 2)
+    return broadcast(v -> M * v, vertices_list(P)) |> VPolytope{N}
 end
 
 """

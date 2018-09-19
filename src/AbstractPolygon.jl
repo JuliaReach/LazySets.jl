@@ -178,3 +178,9 @@ function <=(u::AbstractVector{N},
             v::AbstractVector{N})::Bool where {N<:AbstractFloat}
     return jump2pi(atan(u[2], u[1])) <= jump2pi(atan(v[2], v[1]))
 end
+
+function linear_map(M::AbstractMatrix, P::T)::T where T<:AbstractPolygon{N} where N
+    @assert dim(P) == size(M, 2)
+    V = VPolygon(broadcast(v -> M * v, vertices_list(P)))
+    return convert(T, V)
+end
