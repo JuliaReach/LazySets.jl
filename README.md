@@ -31,7 +31,7 @@ If you want to install the latest development version, do:
 Pkg.clone("https://github.com/JuliaReach/LazySets.jl.git")
 ```
 
-To update your local copy to the current development version, do
+To update your local copy to the current development version, do:
 
 ```julia
 Pkg.checkout("LazySets")
