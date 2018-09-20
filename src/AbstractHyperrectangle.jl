@@ -146,12 +146,12 @@ and radius of the hyperrectangle are denoted ``c`` and ``r`` respectively, then
 reasoning on the ``2^n`` vertices we have that:
 
 ```math
-\\max_{x ∈ \\text{vertices}(X)} ‖ x ‖_p = \\max_{α_1, …, α_n ∈ {-1, 1}} (|c_1 + α_1 r_1|^p + ... |c_n + α_n r_n|^p)^{(1/p)}.
+\\max_{x ∈ \\text{vertices}(X)} ‖ x ‖_p = \\max_{α_1, …, α_n ∈ \{-1, 1\}} (|c_1 + α_1 r_1|^p + ... + |c_n + α_n r_n|^p)^{1/p}.
 ```
 
 The function ``x ↦ x^p``, ``p > 0``, is monotonically increasing and thus the
 maximum of each term ``|c_i + α_i r_i|^p`` is given by ``|c_i + \\text{sign}(c_i) r_i|^p``
-for each ``i``. Hence, ``x^* := \\text{argmax}{x ∈ X} ‖ x ‖_p`` is the vertex
+for each ``i``. Hence, ``x^* := \\text{argmax}_{x ∈ X} ‖ x ‖_p`` is the vertex
 ``c + \\text{diag}(\\text{sign}(c)) r``.
 """
 function norm(H::AbstractHyperrectangle, p::Real=Inf)::Real
