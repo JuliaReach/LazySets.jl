@@ -146,7 +146,7 @@ and radius of the hyperrectangle are denoted ``c`` and ``r`` respectively, then
 reasoning on the ``2^n`` vertices we have that:
 
 ```math
-\\max_{x ∈ \\text{vertices}(X)} ‖ x ‖_p = \\max_{α_1, …, α_n ∈ \{-1, 1\}} (|c_1 + α_1 r_1|^p + ... + |c_n + α_n r_n|^p)^{1/p}.
+\\max_{x ∈ \\text{vertices}(X)} ‖ x ‖_p = \\max_{α_1, …, α_n ∈ \\{-1, 1\\}} (|c_1 + α_1 r_1|^p + ... + |c_n + α_n r_n|^p)^{1/p}.
 ```
 
 The function ``x ↦ x^p``, ``p > 0``, is monotonically increasing and thus the
