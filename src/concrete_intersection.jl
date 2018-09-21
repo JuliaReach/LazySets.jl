@@ -116,7 +116,7 @@ end
                  P2::Union{HPolytope{N}, VPolytope{N}},
                  [backend]=default_polyhedra_backend(N),
                  [prunefunc]=removehredundancy!,
-                 [output_type]=default_intersection_output_type(P1, P2)) where {N}
+                 [output_type]=default_intersection_output_type(P1, P2)) where N
 
 Compute the intersection of two polytopes in either H-representation or
 V-representation.
@@ -145,13 +145,49 @@ function intersection(P1::Union{HPolytope{N}, VPolytope{N}},
                       P2::Union{HPolytope{N}, VPolytope{N}},
                       backend=default_polyhedra_backend(N),
                       prunefunc=removehredundancy!,
-                      output_type=default_intersection_output_type(P1, P2)) where {N}
+                      output_type=default_intersection_output_type(P1, P2)) where N
 
     P1 = polyhedron(P1, backend)
     P2 = polyhedron(P2, backend)
     Pint = Polyhedra.intersect(P1, P2)
     prunefunc(Pint)
     return output_type(Pint)
+end
+
+"""
+    intersection(P1::S1, P2::S2) where {S1<:AbstractPolytope{N},
+                                        S2<:AbstractPolytope{N}} where N
+
+Compute the intersection of two polytopic sets.
+
+### Input
+
+- `P1`          -- polytope
+- `P2`          -- another polytope
+
+### Output
+
+The polytope obtained by the intersection of `P1` and `P2`.
+Usually the V-representation is used.
+
+### Notes
+
+This fallback implementation requires `Polyhedra` to evaluate the concrete
+intersection.
+Inputs that are not of type `HPolytope` or `VPolytope` are converted to a
+`VPolytope` through the `vertices_list` function.
+"""
+function intersection(P1::S1, P2::S2) where {S1<:AbstractPolytope{N},
+                                             S2<:AbstractPolytope{N}} where N
+    function get_polytope(P::T) where T<:AbstractPolytope
+        if T <: Union{HPolytope, VPolytope}
+            return P
+        else
+            return VPolytope(vertices_list(P))
+        end
+    end
+
+    return intersection(get_polytope(P1), get_polytope(P2))
 end
 
 end # quote
