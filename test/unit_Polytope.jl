@@ -161,6 +161,13 @@ if test_suite_polyhedra
         p2 = VPolytope(vertices_list(BallInf(N[2, 2], N(1))))
         cap = intersection(p1, p2)
         @test vertices_list(cap) == [N[1, 1]]
+        # other polytopic sets
+        p3 = VPolygon(vertices_list(p2))
+        cap = intersection(p1, p3)
+        @test vertices_list(cap) == [N[1, 1]]
+        p4 = BallInf(N[2, 2], N(1))
+        cap = intersection(p1, p4)
+        @test vertices_list(cap) == [N[1, 1]]
 
         # convex hull
         v1 = N[1, 0]
