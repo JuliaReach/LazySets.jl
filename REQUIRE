@@ -2,7 +2,6 @@ julia 0.6
 Compat 1.0
 Expokit 0.1
 GLPKMathProgInterface 0.4
-GR 0.32
 IntervalArithmetic 0.14
 MathProgBase 0.7
 RecipesBase 0.3

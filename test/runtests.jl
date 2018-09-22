@@ -119,6 +119,7 @@ if test_suite_doctests
             using Pkg
             Pkg.add("Documenter")
             Pkg.add("Plots")
+            Pkg.add("GR")
         end
         using Documenter
         @time @testset "LazySets.doctests" begin include("../docs/make_doctests_only.jl") end
