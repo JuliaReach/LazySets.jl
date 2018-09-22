@@ -556,10 +556,11 @@ compute a witness.
 
 ### Algorithm
 
-This is a fallback implementation of the `AbstractPolytope` interface that computes
-the concrete intersection, `intersection`, of the given pair of polytopes. If a
-witness is required, the first vertex of the resulting intersection polytope is
-returned.
+This is a fallback implementation of the `AbstractPolytope` interface that
+computes the concrete intersection, `intersection`, of the given pair of
+polytopes.
+If a witness is required, the first vertex of the resulting intersection
+polytope is returned.
 """
 function is_intersection_empty(P::AbstractPolytope{N},
                                Q::AbstractPolytope{N},
@@ -594,4 +595,86 @@ function is_intersection_empty(set::AbstractPolytope{N},
                                witness::Bool=false
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return is_intersection_empty(point, set, witness)
+end
+
+# --- Hyperplane ---
+
+"""
+    is_intersection_empty(X::LazySet{N},
+                          hp::Union{Hyperplane{N}, Line{N}},
+                          [witness]::Bool=false
+                         )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
+
+Check whether a compact set an a hyperplane do not intersect, and otherwise
+optionally compute a witness.
+
+### Input
+
+- `X`       -- compact set
+- `hp`      -- hyperplane
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``X ∩ hp = ∅``
+* If `witness` option is activated:
+  * `(true, [])` iff ``X ∩ hp = ∅``
+  * `(false, v)` iff ``X ∩ hp ≠ ∅`` and ``v ∈ X ∩ hp``
+
+### Notes
+
+We assume that `X` is compact.
+Otherwise, the support vector queries may fail.
+
+### Algorithm
+
+A compact convex set intersects with a hyperplane iff the support function in
+the negative resp. positive direction of the hyperplane's normal vector ``a`` is
+to the left resp. right of the hyperplane's constraint ``b``:
+
+```math
+-ρ(-a) ≤ b ≤ ρ(a)
+```
+
+For witness generation, we compute a line connecting the support vectors to the
+left and right, and then take the intersection of the line with the hyperplane.
+We follow
+[this algorithm](https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection#Algebraic_form)
+for the line-hyperplane intersection.
+"""
+function is_intersection_empty(X::LazySet{N},
+                               hp::Union{Hyperplane{N}, Line{N}},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
+    normal_hp = hp.a
+    sv_left = σ(-normal_hp, X)
+    if -dot(sv_left, -normal_hp) <= hp.b
+        sv_right = σ(normal_hp, X)
+        empty_intersection = (hp.b > dot(sv_right, normal_hp))
+    else
+        empty_intersection = true
+    end
+    if witness
+        if empty_intersection
+            v = N[]
+        else
+            point_hp = an_element(hp)
+            point_line = sv_left
+            dir_line = sv_right - sv_left
+            d = dot((point_hp - point_line), normal_hp) /
+                dot(dir_line, normal_hp)
+            v = d * dir_line + point_line
+        end
+        return (empty_intersection, v)
+    else
+        return empty_intersection
+    end
+end
+
+# symmetric function
+function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
+                               X::LazySet{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
+    return is_intersection_empty(X, hp, witness)
 end
