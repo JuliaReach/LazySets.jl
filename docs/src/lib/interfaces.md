@@ -59,6 +59,13 @@ an_element(::LazySet{Real})
 ==(::LazySet, ::LazySet)
 ```
 
+### Aliases for set types
+
+```@docs
+CompactSet
+NonCompactSet
+```
+
 ## Centrally symmetric set
 
 Centrally symmetric sets such as balls of different norms are characterized by a
