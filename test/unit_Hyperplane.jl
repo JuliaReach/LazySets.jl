@@ -27,4 +27,15 @@ for N in [Float64, Rational{Int}, Float32]
 
     # an_element function and membership function
     @test an_element(hp) ∈ hp
+
+    # intersection emptiness
+    b = BallInf(zeros(N, 3), N(1))
+    empty_intersection, v = is_intersection_empty(b, hp, true)
+    @test empty_intersection && is_intersection_empty(b, hp) && v == N[]
+    b = BallInf(N[3, 3, 3], N(1))
+    empty_intersection, v = is_intersection_empty(b, hp, true)
+    @test empty_intersection && is_intersection_empty(b, hp) && v == N[]
+    b = BallInf(N[2, 2, 2], N(1))
+    empty_intersection, v = is_intersection_empty(b, hp, true)
+    @test !empty_intersection && !is_intersection_empty(b, hp) && v ∈ hp && v ∈ b
 end
