@@ -73,6 +73,11 @@ include("concrete_intersection.jl")
 include("is_intersection_empty.jl")
 include("is_subset.jl")
 
+# =======
+# Aliases
+# =======
+include("aliases.jl")
+
 # =====================
 # Approximations module
 # =====================
