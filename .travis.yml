@@ -31,6 +31,8 @@ after_success:
   - julia -e 'VERSION >= v"0.7-" && using Pkg;
               Pkg.add("Documenter");
               VERSION < v"0.7-" && Pkg.pin("Documenter", v"0.18.0");
+              Pkg.add("Plots");
+              Pkg.add("GR");
               Pkg.add("Polyhedra");
               Pkg.add("CDDLib");'
   - julia -e 'cd(Pkg.dir("LazySets")); include(joinpath("docs", "make.jl"))'
