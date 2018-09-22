@@ -78,6 +78,11 @@ if test_suite_basic
     @time @testset "LazySets.CartesianProduct" begin include("unit_CartesianProduct.jl") end
     @time @testset "LazySets.SymmetricIntervalHull" begin include("unit_SymmetricIntervalHull.jl") end
 
+    # ======================
+    # Testing set interfaces
+    # ======================
+    @time @testset "LazySets.CompactSet" begin include("unit_CompactSet.jl") end
+
     # =================================================================
     # Algorithms for approximation of convex sets using support vectors
     # =================================================================
