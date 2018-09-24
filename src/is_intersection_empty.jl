@@ -1,4 +1,5 @@
-export is_intersection_empty
+export is_intersection_empty,
+       isdisjoint
 
 
 # --- AbstractHyperrectangle ---
@@ -678,3 +679,14 @@ function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
                               )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
     return is_intersection_empty(X, hp, witness)
 end
+
+
+# --- alias ---
+
+
+"""
+    isdisjoint(X, Y)
+
+An alternative name for `is_intersection_empty(X, Y)`.
+"""
+const isdisjoint = is_intersection_empty
