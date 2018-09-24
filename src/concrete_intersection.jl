@@ -156,7 +156,7 @@ function intersection(P1::AbstractHPolygon{N},
     elseif length(c2) == 0
         return P1
     end
-    c = Vector{LinearConstraint{N}}(length(c1) + length(c2))
+    c = Vector{LinearConstraint{N}}(undef, length(c1) + length(c2))
     i1 = 1
     i2 = 1
     duplicates = 0
