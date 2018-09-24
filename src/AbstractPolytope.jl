@@ -53,24 +53,32 @@ function singleton_list(P::AbstractPolytope{N}
 end
 
 """
-    linear_map(M::AbstractMatrix, P::AbstractPolytope{N}) where {N<:Real}
+    linear_map(M::AbstractMatrix, P::AbstractPolytope{N};
+               output_type::Type{<:LazySet}=VPolytope{N}) where {N<:Real}
 
 Concrete linear map of an abstract polytype.
 
 ### Input
 
-- `M` -- matrix
-- `P` -- abstract polytype
+- `M`           -- matrix
+- `P`           -- abstract polytype
+- `output_type` -- (optional, default: `VPolytope`) type of the result
 
 ### Output
 
-The polytope in V-representation obtained by applying the linear map ``M`` to
-the set ``P``. If the given polytope is two-dimensional, a polygon instead
-of a general polytope is returned. 
+A set of type `output_type`.
+
+### Algorithm
+
+The linear map ``M`` is applied to each vertex of the given set ``P``,
+obtaining a polytope in V-representation. Optionally, a conversion to the given
+output type is calculated.
 """
-function linear_map(M::AbstractMatrix, P::AbstractPolytope{N})::VPolytope{N} where {N<:Real}
+function linear_map(M::AbstractMatrix, P::AbstractPolytope{N};
+                    output_type::Type{<:LazySet}=VPolytope{N}) where {N<:Real}
     @assert dim(P) == size(M, 2)
-    return broadcast(v -> M * v, vertices_list(P)) |> VPolytope{N}
+    MP = broadcast(v -> M * v, vertices_list(P)) |> VPolytope{N}
+    return convert(output_type, MP)
 end
 
 """
