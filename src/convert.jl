@@ -29,7 +29,7 @@ function convert(::Type{HPOLYGON1},
 end
 
 """
-    convert(T::Type{HPOLYGON}, P::VPolygon) where {HPOLYGON<:AbstractHPolygon}
+    convert(T::Type{<:AbstractHPolygon}, P::VPolygon)
 
 Converts a polygon in vertex representation to a polygon in constraint representation.
 
@@ -42,12 +42,12 @@ Converts a polygon in vertex representation to a polygon in constraint represent
 
 A polygon in constraint representation.
 """
-function convert(T::Type{HPOLYGON}, P::VPolygon) where {HPOLYGON<:AbstractHPolygon}
+function convert(T::Type{<:AbstractHPolygon}, P::VPolygon)
     return tohrep(P, T)
 end
 
 """
-    convert(::Type{VPolygon}, P::HPOLYGON) where {HPOLYGON<:AbstractHPolygon}
+    convert(::Type{VPolygon}, P<:AbstractHPolygon)
 
 Converts a polygon in constraint representation to a polygon in vertex representation.
 
@@ -60,7 +60,7 @@ Converts a polygon in constraint representation to a polygon in vertex represent
 
 A polygon in vertex representation.
 """
-function convert(::Type{VPolygon}, P::HPOLYGON) where {HPOLYGON<:AbstractHPolygon}
+function convert(::Type{VPolygon}, P<:AbstractHPolygon)
     return tovrep(P)
 end
 
@@ -83,27 +83,27 @@ function convert(::Type{HPolytope}, P::AbstractHPolygon)
 end
 
 """
-    convert(::Type{VPolytope}, P::VPolygon)
+    convert(::Type{VPolytope}, P::AbstractPolytope)
 
-Convert from polygon in V-representation to polytope in V-representation.
+Convert polytopic type to polytope in V-representation.
 
 ### Input
 
 - `type` -- target type
-- `P`    -- source polygon
+- `P`    -- source polytope
 
 ### Output
 
-The polygon represented as 2D polytope.
+The set `P` represented as a `VPolytope`.
 """
-function convert(::Type{VPolytope}, P::VPolygon)
+function convert(::Type{VPolytope}, P::AbstractPolytope)
     return VPolytope(vertices_list(P))
 end
 
 """
-    convert(::Type{VPolygon}, P::VPolytope)
+    convert(::Type{VPolygon}, P::AbstractPolytope)
 
-Convert from polytope in V-representation to polygon in V-representation.
+Convert polytopic set to polygon in V-representation.
 
 ### Input
 
@@ -114,31 +114,32 @@ Convert from polytope in V-representation to polygon in V-representation.
 
 The 2D polytope represented as a polygon.
 """
-function convert(::Type{VPolygon}, P::VPolytope)
+function convert(::Type{VPolygon}, P::AbstractPolytope)
     @assert dim(P) == 2 "polytope must be two-dimensional for conversion"
     return VPolygon(vertices_list(P))
 end
 
 """
-    convert(::Type{HPolytope}, P::VPolygon)
+    convert(::Type{HPolytope}, P::AbstractPolytope)
 
-Convert from polygon in V-representation to polytope in H-representation.
+Convert polytopic set to polytope in H-representation.
 
 ### Input
 
 - `type` -- target type
-- `P`    -- source polygon
+- `P`    -- source polytope
 
 ### Output
 
-The polygon represented as 2D polytope.
+The given polytope represented as a polytope in constraint representation.
 
 ### Algorithm
 
-``P`` is first converted to a polytope in V-representation, then the conversion
-method to a polytope in H-representation is invoked.
+``P`` is first converted to a polytope in V-representation.
+Then, the conversion method to a polytope in H-representation is invoked.
+This conversion may require the `Polyhedra` library.
 """
-function convert(::Type{HPolytope}, P::VPolygon)
+function convert(::Type{HPolytope}, P::AbstractPolytope)
     return convert(HPolytope, convert(VPolytope, P))
 end
 
