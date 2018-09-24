@@ -101,6 +101,25 @@ function convert(::Type{VPolytope}, P::VPolygon)
 end
 
 """
+    convert(::Type{VPolygon}, P::VPolytope)
+
+Convert from polytope in V-representation to polygon in V-representation.
+
+### Input
+
+- `type` -- target type
+- `P`    -- source polytope
+
+### Output
+
+The 2D polytope represented as a polygon.
+"""
+function convert(::Type{VPolygon}, P::VPolytope)
+    @assert dim(P) == 2 "polytope must be two-dimensional for conversion"
+    return VPolygon(vertices_list(P))
+end
+
+"""
     convert(::Type{HPolytope}, P::VPolygon)
 
 Convert from polygon in V-representation to polytope in H-representation.
