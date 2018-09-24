@@ -47,7 +47,7 @@ function convert(T::Type{<:AbstractHPolygon}, P::VPolygon)
 end
 
 """
-    convert(::Type{VPolygon}, P<:AbstractHPolygon)
+    convert(::Type{VPolygon}, P::AbstractHPolygon)
 
 Converts a polygon in constraint representation to a polygon in vertex representation.
 
@@ -60,7 +60,7 @@ Converts a polygon in constraint representation to a polygon in vertex represent
 
 A polygon in vertex representation.
 """
-function convert(::Type{VPolygon}, P<:AbstractHPolygon)
+function convert(::Type{VPolygon}, P::AbstractHPolygon)
     return tovrep(P)
 end
 
@@ -186,6 +186,10 @@ The `tovrep` function is invoked. It requires the `Polyhedra` package.
 function convert(::Type{VPolytope}, P::HPolytope)
     return tovrep(P)
 end
+
+# no-op's
+convert(::Type{HPolytope}, P::HPolytope) = P
+convert(::Type{VPolytope}, P::VPolytope) = P
 
 """
     convert(::Type{HPOLYGON}, P::HPolytope) where {HPOLYGON<:AbstractHPolygon}
