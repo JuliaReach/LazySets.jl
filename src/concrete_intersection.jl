@@ -193,7 +193,6 @@ function intersection(P1::AbstractHPolygon{N},
             i2 += 1
         end
     end
-    println("duplicates: $duplicates")
     if duplicates > 0
         deleteat!(c, length(c)-duplicates+1:length(c))
     end
