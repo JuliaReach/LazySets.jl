@@ -1,6 +1,68 @@
 export is_intersection_empty
 
 
+# --- fallback implementation that swaps arguments ---
+
+
+global FALLBACK_CACHE_is_intersection_empty = Vector{Tuple{LazySet, LazySet}}()
+
+
+"""
+    is_intersection_empty(X::S1, Y::S2, witness::Bool=false
+                         )::Union{Bool, Tuple{Bool, Vector{N}}} where
+                          {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}}
+
+Check whether two sets do not intersect, and otherwise optionally compute a
+witness.
+
+### Input
+
+- `X`       -- first set
+- `Y`       -- second set
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``X ∩ Y = ∅``
+* If `witness` option is activated:
+  * `(true, [])` iff ``X ∩ Y = ∅``
+  * `(false, v)` iff ``X ∩ Y ≠ ∅`` and ``v ∈ X ∩ Y``
+
+### Notes
+
+This is a fallback implementation that just swaps the arguments.
+To prevent infinite recursion, we store the input tuples on a global stack.
+This allows the commutative definition (if it exists) to make use of this
+implementation recursively.
+"""
+function is_intersection_empty(X::S1, Y::S2, witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
+                               {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}}
+    print_error = false
+    if S1 == S2
+        # same set types, commutation does not help
+        print_error = true
+    elseif !isempty(FALLBACK_CACHE_is_intersection_empty)
+        # compare with arguments on the stack
+        last = FALLBACK_CACHE_is_intersection_empty[end]
+        if last[1] ≡ Y && last[2] ≡ X
+            pop!(FALLBACK_CACHE_is_intersection_empty)
+            print_error = true
+        end
+    end
+    if print_error
+        error("is_intersection_empty(::$S1, ::$S2) and its commutation are " *
+              "not defined")
+    end
+
+    # try with arguments swapped
+    push!(FALLBACK_CACHE_is_intersection_empty, (X, Y))
+    res = is_intersection_empty(Y, X, witness)
+    pop!(FALLBACK_CACHE_is_intersection_empty)
+    return res
+end
+
+
 # --- AbstractHyperrectangle ---
 
 

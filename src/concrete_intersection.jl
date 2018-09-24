@@ -2,6 +2,64 @@
 
 export intersection
 
+
+# --- fallback implementation that swaps arguments ---
+
+
+global FALLBACK_CACHE_intersection = Vector{Tuple{LazySet, LazySet}}()
+
+
+"""
+    intersection(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}}
+
+Return the intersection of two sets.
+
+### Input
+
+- `X` -- first set
+- `Y` -- second set
+
+### Output
+
+If the sets do not intersect, the result is the empty set.
+Otherwise the result depends on the concrete set types.
+
+### Notes
+
+This is a fallback implementation that just swaps the arguments.
+To prevent infinite recursion, we store the input tuples on a global stack.
+This allows the commutative definition (if it exists) to make use of this
+implementation recursively.
+"""
+function intersection(X::S1, Y::S2) where
+                     {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}}
+    print_error = false
+    if S1 == S2
+        # same set types, commutation does not help
+        print_error = true
+    elseif !isempty(FALLBACK_CACHE_intersection)
+        # compare with arguments on the stack
+        last = FALLBACK_CACHE_intersection[end]
+        if last[1] ≡ Y && last[2] ≡ X
+            pop!(FALLBACK_CACHE_intersection)
+            print_error = true
+        end
+    end
+    if print_error
+        error("intersection(::$S2, ::$S1) and its commutation are not defined")
+    end
+
+    # try with arguments swapped
+    push!(FALLBACK_CACHE_intersection, (X, Y))
+    res = intersection(Y, X)
+    pop!(FALLBACK_CACHE_intersection)
+    return res
+end
+
+
+# --- normal implementations ---
+
+
 """
     intersection(L1::Line{N}, L2::Line{N}
                 )::Union{Singleton{N}, Line{N}, EmptySet{N}} where {N<:Real}
