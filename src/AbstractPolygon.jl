@@ -179,8 +179,32 @@ function <=(u::AbstractVector{N},
     return jump2pi(atan(u[2], u[1])) <= jump2pi(atan(v[2], v[1]))
 end
 
-function linear_map(M::AbstractMatrix, P::T)::T where T<:AbstractPolygon{N} where N
+"""
+    linear_map(M::AbstractMatrix, P::POLYGON;
+               output_type::Type{<:LazySet}=typeof(P)) where {POLYGON<:AbstractPolygon{N}} where {N}
+
+Concrete linear map of an abstract polygon.
+
+### Input
+
+- `M`           -- matrix
+- `P`           -- abstract polygon
+- `output_type` -- (optional, default: type of `P`) type of the result
+
+### Output
+
+A set of type `output_type`.
+
+### Algorithm
+
+The linear map ``M`` is applied to each vertex of the given set ``P``,
+obtaining a polygon in V-representation. Since polygons are closed under linear
+map, by default ``MP`` is converted to the concrete type of ``P``. If an
+`output_type` is given, the corresponding `convert` method is invoked.
+"""
+function linear_map(M::AbstractMatrix, P::POLYGON;
+                    output_type::Type{<:LazySet}=typeof(P)) where {POLYGON<:AbstractPolygon{N}} where {N}
     @assert dim(P) == size(M, 2)
-    V = VPolygon(broadcast(v -> M * v, vertices_list(P)))
-    return convert(T, V)
+    MP = broadcast(v -> M * v, vertices_list(P)) |> VPolygon{N}
+    return convert(output_type, MP)
 end
