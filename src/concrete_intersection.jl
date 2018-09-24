@@ -251,9 +251,9 @@ function intersection(P1::Union{HPolytope{N}, VPolytope{N}},
                       prunefunc=removehredundancy!,
                       output_type=default_intersection_output_type(P1, P2)) where N
 
-    P1 = polyhedron(P1, backend)
-    P2 = polyhedron(P2, backend)
-    Pint = Polyhedra.intersect(P1, P2)
+    Q1 = polyhedron(P1, backend)
+    Q2 = polyhedron(P2, backend)
+    Pint = Polyhedra.intersect(Q1, Q2)
     prunefunc(Pint)
     return output_type(Pint)
 end
