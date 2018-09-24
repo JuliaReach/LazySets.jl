@@ -70,9 +70,11 @@ A set of type `output_type`.
 
 ### Algorithm
 
-The linear map ``M`` is applied to each vertex of the given set ``P``,
-obtaining a polytope in V-representation. Optionally, a conversion to the given
-output type is calculated.
+The linear map ``M`` is applied to each vertex of the given set ``P``, obtaining
+a polytope in V-representation. Since some set representations (e.g. axis-aligned
+hyperrectangles) are not closed under linear maps, the default output is a
+`VPolytope`. If an `output_type` is given, the corresponding `convert` method
+is invoked.
 """
 function linear_map(M::AbstractMatrix, P::AbstractPolytope{N};
                     output_type::Type{<:LazySet}=VPolytope{N}) where {N<:Real}
