@@ -180,7 +180,7 @@ function <=(u::AbstractVector{N},
 end
 
 """
-    linear_map(M::AbstractMatrix, P<:AbstractPolygon{N};
+    linear_map(M::AbstractMatrix, P::AbstractPolygon{N};
                output_type::Type{<:LazySet}=typeof(P)) where {N}
 
 Concrete linear map of an abstract polygon.
