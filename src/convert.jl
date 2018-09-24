@@ -3,8 +3,9 @@ import Base.convert
 #= conversion between set types =#
 
 """
-    convert(::Type{HPOLYGON1}, P::HPOLYGON2) where
-        {HPOLYGON1<:Union{HPolygon, HPolygonOpt}, HPOLYGON2<:AbstractHPolygon}
+    convert(::Type{HPOLYGON1},
+            P::HPOLYGON2) where {HPOLYGON1<:Union{HPolygon, HPolygonOpt},
+                                 HPOLYGON2<:AbstractHPolygon}
 
 Convert between polygon types in H-representation.
 
