@@ -108,6 +108,7 @@ This interface defines the following functions:
 
 ```@docs
 dim(P::AbstractPolygon)
+linear_map(::AbstractMatrix, P<:AbstractPolygon{N}, ::Type{<:LazySet}=typeof(P)) where {N}
 ```
 
 #### HPolygon
