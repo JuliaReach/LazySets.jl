@@ -102,6 +102,19 @@ for N in [Float64, Float32, Rational{Int}]
         @test constraints_list(hp) == hp.constraints
     end
 
+    # concrete intersection of H-rep
+    p2 = HPolygon{N}()
+    c1 = LinearConstraint(N[2, 2], N(14))
+    c2 = LinearConstraint(N[-3, 3], N(6))
+    c3 = LinearConstraint(N[-1, -1], N(-2))
+    c4 = LinearConstraint(N[2, -4], N(0))
+    addconstraint!(p2, c3)
+    addconstraint!(p2, c1)
+    addconstraint!(p2, c4)
+    addconstraint!(p2, c2)
+    p3 = intersection(p, p2)
+    @test length(constraints_list(p3)) == 4
+
     # Test VRepresentation
     vp = tovrep(p)
     @test N[2, 4] ∈ vertices_list(vp)

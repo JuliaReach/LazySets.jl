@@ -100,6 +100,110 @@ function intersection(H1::AbstractHyperrectangle{N},
     return Hyperrectangle(high=high, low=low)
 end
 
+"""
+    intersection(P1::AbstractHPolygon{N},
+                 P2::AbstractHPolygon{N}
+                )::Union{HPolygon{N}, EmptySet{N}} where N<:Real
+
+Return the intersection of two polygons in constraint representation.
+
+### Input
+
+- `P1` -- first polygon
+- `P2` -- second polygon
+
+### Output
+
+If the polygons do not intersect, the result is the empty set.
+Otherwise the result is the polygon that describes the intersection.
+
+### Algorithm
+
+We just combine the constraints of both polygons.
+To obtain a linear-time algorithm, we interleave the constraints.
+If there are two constraints with the same normal vector, we choose the tighter
+one.
+"""
+function intersection(P1::AbstractHPolygon{N},
+                      P2::AbstractHPolygon{N}
+                     )::Union{HPolygon{N}, EmptySet{N}} where N<:Real
+    @inline function choose_first_diff_dir(i, i1, i2, c1, c2)
+        c[i] = c1[i1]
+        if i1 == length(c1)
+            c[i+1:length(c)] = c2[i2:length(c2)]
+            return true
+        end
+        return false
+    end
+    @inline function choose_first_same_dir(i, i1, i2, c1, c2)
+        c[i] = c1[i1]
+        if i1 == length(c1)
+            if i2 < length(c2)
+                c[i+1:length(c)] = c2[i2+1:length(c2)]
+            end
+            return true
+        end
+        return false
+    end
+    @inline function is_first_constraint_tighter(lc1, lc2)
+        return lc1.a[1]/lc1.b <= lc2.a[1]/lc2.b
+    end
+
+    c1 = constraints_list(P1)
+    c2 = constraints_list(P2)
+    if length(c1) == 0
+        return P2
+    elseif length(c2) == 0
+        return P1
+    end
+    c = Vector{LinearConstraint{N}}(length(c1) + length(c2))
+    i1 = 1
+    i2 = 1
+    duplicates = 0
+    for i in 1:length(c)
+        if c1[i1].a <= c2[i2].a
+            if c2[i2].a <= c1[i1].a
+                duplicates += 1
+                # constraints have the same normal vector: take the tighter one
+                if is_first_constraint_tighter(c1[i1], c2[i2])
+                    # first constraint is tighter
+                    if choose_first_same_dir(i, i1, i2, c1, c2)
+                        break
+                    end
+                else
+                    # second constraint is tighter
+                    if choose_first_same_dir(i, i2, i1, c2, c1)
+                        break
+                    end
+                end
+                i1 += 1
+                i2 += 1
+            else
+                # first constraint comes first
+                if choose_first_diff_dir(i, i1, i2, c1, c2)
+                    break
+                end
+                i1 += 1
+            end
+        else
+            # second constraint comes first
+            if choose_first_diff_dir(i, i2, i1, c2, c1)
+                break
+            end
+            i2 += 1
+        end
+    end
+    println("duplicates: $duplicates")
+    if duplicates > 0
+        deleteat!(c, length(c)-duplicates+1:length(c))
+    end
+
+    P = HPolygon(c)
+
+    # TODO: remove redundant constraints (#582) and return an EmptySet if empty
+    return P
+end
+
 function load_polyhedra_concrete_intersection() # function to be loaded by Requires
 return quote
 

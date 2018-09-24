@@ -52,4 +52,5 @@ is_intersection_empty(::AbstractPolytope{N}, ::AbstractPolytope{N}, ::Bool=false
 ```@docs
 intersection(::Line{N}, ::Line{N}) where {N<:Real}
 intersection(::Hyperrectangle{N}, ::Hyperrectangle{N}) where {N<:Real}
+intersection(::AbstractHPolygon{N}, ::AbstractHPolygon{N}) where {N<:Real}
 ```
