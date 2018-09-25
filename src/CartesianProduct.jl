@@ -333,13 +333,10 @@ function vertices_list(cpa::CartesianProductArray{N})::Vector{Vector{N}} where N
     vlist_low = [vertices_list(X) for X in array(cpa)]
 
     # create high-dimensional vertices list
-    m = 1
-    for vl in vlist_low
-        m *= length(vl)
-    end
+    indices_max = [length(vl) for vl in vlist_low]
+    m = prod(indices_max)
     vlist = Vector{Vector{N}}(undef, m)
     indices = ones(Int, length(vlist_low))
-    indices_max = [length(vl) for vl in vlist_low]
     v = zeros(N, dim(cpa))
     j = 1
     for vl in vlist_low
