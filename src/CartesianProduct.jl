@@ -338,11 +338,11 @@ function vertices_list(cpa::CartesianProductArray{N})::Vector{Vector{N}} where N
     vlist = Vector{Vector{N}}(undef, m)
     indices = ones(Int, length(vlist_low))
     v = zeros(N, dim(cpa))
-    j = 1
+    dim_start_j = 1
     for vl in vlist_low
         v_low = vl[1]
-        v[j:j+length(v_low)-1] = v_low
-        j += 1
+        v[dim_start_j:dim_start_j+length(v_low)-1] = v_low
+        dim_start_j += length(v_low)
     end
     i = 1
     j = 1
