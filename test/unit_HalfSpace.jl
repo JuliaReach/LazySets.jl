@@ -30,4 +30,12 @@ for N in [Float64, Rational{Int}, Float32]
     # halfspace_left & halfspace_right
     @test N[1, 2] ∈ halfspace_left(N[1, 1], N[2, 2])
     @test N[2, 1] ∈ halfspace_right(N[1, 1], N[2, 2])
+
+    # intersection emptiness
+    b = BallInf(N[3, 3, 3], N(1))
+    empty_intersection, v = is_intersection_empty(b, hs, true)
+    @test is_intersection_empty(b, hs) && empty_intersection
+    b = BallInf(N[1, 1, 1], N(1))
+    empty_intersection, v = is_intersection_empty(b, hs, true)
+    @test !is_intersection_empty(b, hs) && !empty_intersection && v ∈ hs
 end

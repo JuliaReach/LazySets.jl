@@ -680,6 +680,55 @@ function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
     return is_intersection_empty(X, hp, witness)
 end
 
+# --- HalfSpace ---
+
+"""
+    is_intersection_empty(X::LazySet{N},
+                          hs::HalfSpace,
+                          [witness]::Bool=false
+                         )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
+
+Check whether a compact set an a half-space do not intersect, and otherwise
+optionally compute a witness.
+
+### Input
+
+- `X`       -- compact set
+- `hs`      -- half-space
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``X ∩ hs = ∅``
+* If `witness` option is activated:
+  * `(true, [])` iff ``X ∩ hs = ∅``
+  * `(false, v)` iff ``X ∩ hs ≠ ∅`` and ``v ∈ X ∩ hs``
+
+### Notes
+
+We assume that `X` is compact.
+Otherwise, the support vector queries may fail.
+
+### Algorithm
+
+A compact convex set intersects with a half-space iff the support vector in
+the negative direction of the half-space's normal vector ``a`` is contained in
+the half-space: ``σ(-a) ∈ hs``.
+The support vector is thus also a witness.
+"""
+function is_intersection_empty(X::LazySet{N},
+                               hs::HalfSpace,
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
+    svec = σ(-hs.a, X)
+    empty_intersection = !(svec ∈ hs)
+    if witness
+       v = empty_intersection ? N[] : svec
+       return (empty_intersection, v)
+    end
+    return empty_intersection
+end
+
 
 # --- alias ---
 

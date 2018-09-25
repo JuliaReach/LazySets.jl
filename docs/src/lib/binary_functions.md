@@ -48,6 +48,7 @@ is_intersection_empty(::LineSegment{N}, ::LineSegment{N}, ::Bool=false) where {N
 is_intersection_empty(::AbstractPolytope{N}, ::AbstractPolytope{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::AbstractSingleton{N}, ::AbstractPolytope{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::LazySet{N}, ::Union{Hyperplane{N}, Line{N}}, ::Bool=false) where {N<:Real}
+is_intersection_empty(::LazySet{N}, ::HalfSpace{N}, ::Bool=false) where {N<:Real}
 ```
 
 ## Intersection of two sets
