@@ -24,3 +24,7 @@ else
     end
     expmat = exp
 end
+
+if VERSION > v"1.0-"
+    export eye
+end
