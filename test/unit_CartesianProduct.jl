@@ -149,6 +149,14 @@ for N in [Float64, Float32, Rational{Int}]
     res = CartesianProduct!(cpa, cpa)
     @test res isa CartesianProductArray && length(array(cpa)) == 4
 
+    # vertices_list
+    i1 = Interval(N[0, 1])
+    i2 = Interval(N[2, 3])
+    i3 = Interval(N[4, 5])
+    vlist = vertices_list(CartesianProductArray([i1, i2, i3]))
+    @test LazySets.ispermutation(vlist, [N[0, 2, 4], N[0, 3, 4], N[1, 2, 4],
+        N[1, 3, 4], N[0, 2, 5], N[0, 3, 5], N[1, 2, 5], N[1, 3, 5]])
+
     # ================
     # common functions
     # ================
