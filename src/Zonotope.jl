@@ -55,10 +55,10 @@ Compute its vertices:
 ```jldoctest zonotope_label
 julia> vertices_list(Z)
 4-element Array{Array{Float64,1},1}:
- [0.9, -0.1]
- [1.1, -0.1]
  [1.1, 0.1]
  [0.9, 0.1]
+ [1.1, -0.1]
+ [0.9, -0.1]
 ```
 
 Evaluate the support vector in a given direction:
@@ -127,11 +127,15 @@ Return the vertices of a zonotope.
 
 ### Output
 
-List of vertices.
+List of vertices as a vector of vectors.
+
+### Algorithm
+
+If the zonotope has ``p`` generators, each of the ``2^p`` vertices is computed
+by taking the sum of the center and a linear combination of generators, where
+the combination factors are ``ξ_i ∈ \\{-1, 1\\}``.
 
 ### Notes
-
-This implementation computes a convex hull.
 
 For high dimensions, it would be preferable to develop a `vertex_iterator`
 approach.
@@ -145,7 +149,7 @@ function vertices_list(Z::Zonotope{N})::Vector{Vector{N}} where {N<:Real}
         push!(vlist, Z.center .+ Z.generators * collect(ξi))
     end
 
-    return convex_hull!(vlist)
+    return vlist
 end
 
 
