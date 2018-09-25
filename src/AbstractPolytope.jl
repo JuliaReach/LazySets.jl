@@ -53,36 +53,34 @@ function singleton_list(P::AbstractPolytope{N}
 end
 
 """
-    linear_map(M::AbstractMatrix, P::AbstractPolytope{N}) where {N<:Real}
+    linear_map(M::AbstractMatrix, P::AbstractPolytope{N};
+               output_type::Type{<:LazySet}=VPolytope{N}) where {N<:Real}
 
 Concrete linear map of an abstract polytype.
 
 ### Input
 
-- `M` -- matrix
-- `P` -- abstract polytype
+- `M`           -- matrix
+- `P`           -- abstract polytype
+- `output_type` -- (optional, default: `VPolytope`) type of the result
 
 ### Output
 
-The polytope in V-representation obtained by applying the linear map ``M`` to
-the set ``P``. If the given polytope is two-dimensional, a polygon instead
-of a general polytope is returned. 
-"""
-function linear_map(M::AbstractMatrix, P::AbstractPolytope{N}) where {N<:Real}
-    @assert dim(P) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
-                                 "applied to a set of dimension $(dim(P))"
+A set of type `output_type`.
 
-    if dim(P) == 2
-        T = VPolygon
-    else
-        T = VPolytope
-    end
-    vlist = vertices_list(P)
-    new_vlist = Vector{Vector{N}}(undef, length(vlist))
-    @inbounds for (i, vi) in enumerate(vlist)
-        new_vlist[i] =  M * vi
-    end
-    return T(new_vlist)
+### Algorithm
+
+The linear map ``M`` is applied to each vertex of the given set ``P``, obtaining
+a polytope in V-representation. Since some set representations (e.g. axis-aligned
+hyperrectangles) are not closed under linear maps, the default output is a
+`VPolytope`. If an `output_type` is given, the corresponding `convert` method
+is invoked.
+"""
+function linear_map(M::AbstractMatrix, P::AbstractPolytope{N};
+                    output_type::Type{<:LazySet}=VPolytope{N}) where {N<:Real}
+    @assert dim(P) == size(M, 2)
+    MP = broadcast(v -> M * v, vertices_list(P)) |> VPolytope{N}
+    return convert(output_type, MP)
 end
 
 """

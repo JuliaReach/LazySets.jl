@@ -125,7 +125,10 @@ for N in [Float64, Rational{Int}, Float32]
 
     # linear map (concrete)
     P = linear_map(N[1 0; 0 2], H1)
-    @test P isa VPolygon # in 2D we get a polygon
+    @test P isa VPolytope # in 2D is a VPolytope, see #631
+    P = linear_map(N[1 0; 0 2], H1, output_type=VPolygon)
+    @test P isa VPolygon
+
     P = linear_map(Diagonal(N[1, 2, 3, 4]),
                    Approximations.overapproximate(H1 * H1))
     @test P isa VPolytope # in 4D we get a VPolytope
