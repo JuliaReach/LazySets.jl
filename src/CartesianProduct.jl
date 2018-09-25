@@ -133,6 +133,42 @@ function ∈(x::AbstractVector{<:Real}, cp::CartesianProduct)::Bool
            ∈(view(x, dim(cp.X)+1:length(x)), cp.Y)
 end
 
+"""
+    vertices_list(cp::CartesianProduct{N})::Vector{Vector{N}} where N<:Real
+
+Return the list of vertices of a (polytopic) Cartesian product.
+
+### Input
+
+- `cp` -- Cartesian product
+
+### Output
+
+A list of vertices.
+
+### Algorithm
+
+We assume that the underlying sets are polytopic.
+Then the high-dimensional set of vertices is just the Cartesian product of the
+low-dimensional sets of vertices.
+"""
+function vertices_list(cp::CartesianProduct{N})::Vector{Vector{N}} where N<:Real
+    # collect low-dimensional vertices lists
+    vlist_low = (vertices_list(cp.X), vertices_list(cp.Y))
+
+    # create high-dimensional vertices list
+    vlist = Vector{Vector{N}}()
+    m = length(vlist_low[1]) * length(vlist_low[2])
+    sizehint!(vlist, m)
+    for v1 in vlist_low[1]
+        for v2 in vlist_low[2]
+            push!(vlist, vcat(v1, v2))
+        end
+    end
+
+    return vlist
+end
+
 # ======================================
 #  Cartesian product of an array of sets
 # ======================================

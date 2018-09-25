@@ -107,6 +107,12 @@ for N in [Float64, Float32, Rational{Int}]
     @test !∈(N[0, 0, 3, 1], cp)
     @test !∈(N[1, 1, 3, 1], cp)
 
+    # vertices_list
+    i1 = Interval(N[0, 1])
+    i2 = Interval(N[2, 3])
+    vlist = vertices_list(CartesianProduct(i1, i2))
+    @test LazySets.ispermutation(vlist, [N[0, 2], N[0, 3], N[1, 2], N[1, 3]])
+
     # =====================
     # CartesianProductArray
     # =====================
