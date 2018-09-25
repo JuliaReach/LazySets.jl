@@ -12,6 +12,8 @@ export SparseMatrixExp,
        get_column,
        get_columns
 
+# --- SparseMatrixExp & ExponentialMap ---
+
 """
     SparseMatrixExp{N}
 
@@ -282,6 +284,40 @@ function ∈(x::AbstractVector{N}, em::ExponentialMap{N, <:LazySet{N}})::Bool wh
     @assert length(x) == dim(em)
     return ∈(expmv(-one(N), em.spmexp.M, x), em.X)
 end
+
+"""
+    vertices_list(em::ExponentialMap{N})::Vector{Vector{N}} where N<:Real
+
+Return the list of vertices of a (polytopic) exponential map.
+
+### Input
+
+- `em` -- exponential map
+
+### Output
+
+A list of vertices.
+
+### Algorithm
+
+We assume that the underlying set `X` is polytopic.
+Then the result is just the exponential map applied to the vertices of `X`.
+"""
+function vertices_list(em::ExponentialMap{N})::Vector{Vector{N}} where N<:Real
+    # collect low-dimensional vertices lists
+    vlist_X = vertices_list(em.X)
+
+    # create resulting vertices list
+    vlist = Vector{Vector{N}}()
+    sizehint!(vlist, length(vlist_X))
+    for v in vlist_X
+        push!(vlist, expmv(one(N), em.spmexp.M, v))
+    end
+
+    return vlist
+end
+
+# --- ProjectionSparseMatrixExp & ExponentialProjectionMap ---
 
 """
     ProjectionSparseMatrixExp{N<:Real}

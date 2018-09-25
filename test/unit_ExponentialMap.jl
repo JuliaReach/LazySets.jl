@@ -117,4 +117,14 @@ for N in [Float64, Float32]
     P = L * expmat(Matrix(m)) * R
     svec_explicit = σ(d, P*b)
     @test svec ≈ svec_explicit
+
+    # vertices_list
+    b = BallInf(N[0, 0], N(1))
+    M = SparseMatrixExp(spzeros(N, 2, 2))
+    vlist = vertices_list(ExponentialMap(M, b))
+    if N == Float64
+        # precision with Float32 is not sufficient
+        @test LazySets.ispermutation(vlist,
+                                     [N[1, 1], N[-1, 1], N[1, -1], N[-1, -1]])
+    end
 end

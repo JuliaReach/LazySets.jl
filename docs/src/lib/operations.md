@@ -194,6 +194,7 @@ ExponentialMap
 dim(::ExponentialMap)
 σ(::AbstractVector{Real}, ::ExponentialMap{Real})
 ∈(::AbstractVector{Real}, ::ExponentialMap{Real})
+vertices_list(::ExponentialMap{Real})
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
