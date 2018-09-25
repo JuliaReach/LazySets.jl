@@ -233,3 +233,40 @@ It relies on the `an_element` function of the wrapped set.
 function an_element(lm::LinearMap)
     return lm.M * an_element(lm.X)
 end
+
+"""
+    vertices_list(lm::LinearMap{N})::Vector{Vector{N}} where N<:Real
+
+Return the list of vertices of a (polytopic) linear map.
+
+### Input
+
+- `lm` -- linear map
+
+### Output
+
+A list of vertices.
+
+### Algorithm
+
+We assume that the underlying set `X` is polytopic.
+Then the result is just the linear map applied to the vertices of `X`.
+"""
+function vertices_list(lm::LinearMap{N})::Vector{Vector{N}} where N<:Real
+    # for a zero map, the result is just the list containing the origin
+    if iszero(lm.M)
+        return [zeros(N, dim(lm))]
+    end
+
+    # collect low-dimensional vertices lists
+    vlist_X = vertices_list(lm.X)
+
+    # create resulting vertices list
+    vlist = Vector{Vector{N}}()
+    sizehint!(vlist, length(vlist_X))
+    for v in vlist_X
+        push!(vlist, lm.M * v)
+    end
+
+    return vlist
+end

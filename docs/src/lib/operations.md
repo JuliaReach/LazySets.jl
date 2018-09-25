@@ -180,6 +180,7 @@ dim(::LinearMap)
 σ(::AbstractVector{Real}, ::LinearMap{Real})
 ∈(::AbstractVector{Real}, ::LinearMap{Real, LazySet{Real}, Real, Matrix{Real}})
 an_element(::LinearMap)
+vertices_list(::LinearMap{Real})
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
