@@ -55,10 +55,10 @@ Compute its vertices:
 ```jldoctest zonotope_label
 julia> vertices_list(Z)
 4-element Array{Array{Float64,1},1}:
- [0.9, -0.1]
- [1.1, -0.1]
  [1.1, 0.1]
  [0.9, 0.1]
+ [1.1, -0.1]
+ [0.9, -0.1]
 ```
 
 Evaluate the support vector in a given direction:
