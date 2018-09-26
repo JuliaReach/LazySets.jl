@@ -287,3 +287,64 @@ function ∈(x::AbstractVector{N}, ia::IntersectionArray{N})::Bool where {N<:Rea
     end
     return true
 end
+
+function ρ(ℓ::AbstractVector{N},
+           cap::Intersection{N, <:LazySet, <:HalfSpace};
+           algorithm::String="line_search", kwargs...) where {N<:AbstractFloat}
+    
+    X = cap.X    # compact set
+    H = cap.Y    # halfspace
+
+    # if the intersection is empty => stop
+    if is_intersection_empty(X, H) 
+        return N[]
+    end
+    
+    if algorithm == "line_search"
+        @assert isdefined(Main, :Optim) "this algorithm needs " *
+            "the package 'Optim' to be loaded"
+        (s, _) = _line_search(ℓ, X, H; kwargs...)
+    else
+        error("algorithm $(algorithm) unknown")
+    end
+    return s
+end
+
+using Optim # to be "required"
+
+function _line_search(ℓ, X, H; kwargs...)
+    options = Dict(kwargs)
+   
+    # Initialization
+    a, b = H.a, H.b
+    f(λ) = ρ(ℓ - λ[1] * a, X) + λ[1] * b
+
+    if haskey(options, :lower)
+        lower = pop!(options, :lower)
+    else
+        lower = 0.0
+    end
+
+    if haskey(options, :upper)
+        upper = pop!(options, :upper)
+    else
+        upper = 1e6 # TODO: relate with f(λ)
+    end
+
+    if haskey(options, :method)
+        method = pop!(options, :method)
+    else
+        method = Optim.Brent()
+    end
+    
+    # Optimization
+    sol = Optim.optimize(f, lower, upper, method=method, options...)
+    
+    # Recover results
+    fmin, λmin = sol.minimum, sol.minimizer
+    return (fmin, λmin)
+end
+
+# Symmetric case
+ρ(ℓ::AbstractVector{N}, cap::Intersection{N, <:HalfSpace, <:LazySet};
+  algorithm::String="line_search", kwargs...) where {N<:AbstractFloat} = ρ(ℓ, cap.Y ∩ cap.X; algorithm=algorithm, kwargs...)
