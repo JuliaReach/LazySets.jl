@@ -133,6 +133,42 @@ function ∈(x::AbstractVector{<:Real}, cp::CartesianProduct)::Bool
            ∈(view(x, dim(cp.X)+1:length(x)), cp.Y)
 end
 
+"""
+    vertices_list(cp::CartesianProduct{N})::Vector{Vector{N}} where N<:Real
+
+Return the list of vertices of a (polytopic) Cartesian product.
+
+### Input
+
+- `cp` -- Cartesian product
+
+### Output
+
+A list of vertices.
+
+### Algorithm
+
+We assume that the underlying sets are polytopic.
+Then the high-dimensional set of vertices is just the Cartesian product of the
+low-dimensional sets of vertices.
+"""
+function vertices_list(cp::CartesianProduct{N})::Vector{Vector{N}} where N<:Real
+    # collect low-dimensional vertices lists
+    vlist_low = (vertices_list(cp.X), vertices_list(cp.Y))
+
+    # create high-dimensional vertices list
+    vlist = Vector{Vector{N}}()
+    m = length(vlist_low[1]) * length(vlist_low[2])
+    sizehint!(vlist, m)
+    for v1 in vlist_low[1]
+        for v2 in vlist_low[2]
+            push!(vlist, vcat(v1, v2))
+        end
+    end
+
+    return vlist
+end
+
 # ======================================
 #  Cartesian product of an array of sets
 # ======================================
@@ -271,4 +307,71 @@ function ∈(x::AbstractVector{N}, cpa::CartesianProductArray{N, <:LazySet{N}}
         jinit = jend + 1
     end
     return true
+end
+
+"""
+    vertices_list(cpa::CartesianProductArray{N})::Vector{Vector{N}} where N<:Real
+
+Return the list of vertices of a (polytopic) Cartesian product.
+
+### Input
+
+- `cpa` -- Cartesian product
+
+### Output
+
+A list of vertices.
+
+### Algorithm
+
+We assume that the underlying sets are polytopic.
+Then the high-dimensional set of vertices is just the Cartesian product of the
+low-dimensional sets of vertices.
+"""
+function vertices_list(cpa::CartesianProductArray{N})::Vector{Vector{N}} where N<:Real
+    # collect low-dimensional vertices lists
+    vlist_low = [vertices_list(X) for X in array(cpa)]
+
+    # create high-dimensional vertices list
+    indices_max = [length(vl) for vl in vlist_low]
+    m = prod(indices_max)
+    vlist = Vector{Vector{N}}(undef, m)
+    indices = ones(Int, length(vlist_low))
+    v = zeros(N, dim(cpa))
+    dim_start_j = 1
+    for vl in vlist_low
+        v_low = vl[1]
+        v[dim_start_j:dim_start_j+length(v_low)-1] = v_low
+        dim_start_j += length(v_low)
+    end
+    i = 1
+    j = 1
+    # iterate through all index combinations
+    while true
+        indices[1] = 0
+        while indices[1] < indices_max[1]
+            indices[1] += 1
+            v_low = vlist_low[1][indices[1]]
+            v[1:length(v_low)] = v_low
+            vlist[i] = copy(v)
+            i += 1
+        end
+        if i > m
+            break
+        end
+        j = 1
+        dim_start_j = 1
+        while indices[j] == indices_max[j]
+            indices[j] = 1
+            v_low = vlist_low[j][1]
+            v[dim_start_j:dim_start_j+length(v_low)-1] = v_low
+            dim_start_j += length(v_low)
+            j += 1
+        end
+        indices[j] += 1
+        v_low = vlist_low[j][indices[j]]
+        v[dim_start_j:dim_start_j+length(v_low)-1] = v_low
+    end
+
+    return vlist
 end

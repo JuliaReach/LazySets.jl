@@ -27,6 +27,7 @@ CartesianProduct
 dim(::CartesianProduct)
 σ(::AbstractVector{Real}, ::CartesianProduct{Real})
 ∈(::AbstractVector{Real}, ::CartesianProduct{Real})
+vertices_list(::CartesianProduct{Real})
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -41,6 +42,7 @@ CartesianProductArray
 dim(::CartesianProductArray)
 σ(::AbstractVector{Real}, ::CartesianProductArray{Real})
 ∈(::AbstractVector{Real}, ::CartesianProductArray{Real})
+vertices_list(::CartesianProductArray{Real})
 array(::CartesianProductArray)
 ```
 Inherited from [`LazySet`](@ref):
@@ -179,6 +181,7 @@ dim(::LinearMap)
 σ(::AbstractVector{Real}, ::LinearMap{Real})
 ∈(::AbstractVector{Real}, ::LinearMap{Real, LazySet{Real}, Real, Matrix{Real}})
 an_element(::LinearMap)
+vertices_list(::LinearMap{Real})
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -192,6 +195,7 @@ ExponentialMap
 dim(::ExponentialMap)
 σ(::AbstractVector{Real}, ::ExponentialMap{Real})
 ∈(::AbstractVector{Real}, ::ExponentialMap{Real})
+vertices_list(::ExponentialMap{Real})
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

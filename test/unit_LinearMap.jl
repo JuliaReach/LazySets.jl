@@ -65,4 +65,13 @@ for N in [Float64, Rational{Int}, Float32]
     # linear map with a ZeroSet
     X = N[0 -1 ; 1 0] * ZeroSet{N}(2)
     @test X isa ZeroSet{N} && dim(X) == 2
+
+    # vertices_list
+    b = BallInf(N[0, 0], N(1))
+    M = N[1 2; 3 4]
+    vlist = vertices_list(LinearMap(M, b))
+    @test LazySets.ispermutation(vlist, [N[3, 7], N[1, 1], N[-1, -1], N[-3, -7]])
+    M = zeros(N, 2, 2)
+    vlist = vertices_list(LinearMap(M, b))
+    @test vlist == [zeros(N, 2)]
 end
