@@ -288,6 +288,27 @@ function ∈(x::AbstractVector{N}, ia::IntersectionArray{N})::Bool where {N<:Rea
     return true
 end
 
+"""
+    ρ(ℓ::AbstractVector{N},
+      cap::Intersection{N, <:LazySet, <:HalfSpace};
+      algorithm::String="line_search", kwargs...) where {N<:AbstractFloat}
+
+Return the support function of the intersection of a compact set and a half-space
+in a given direction.
+
+### Input
+
+- `ℓ`         -- direction
+- `cap`       -- lazy intersection of a compact set and a half-space 
+- `algorithm` -- (optional, default: `"linear_search"`): the algorithm to calculate
+                 the support function, valid options are:
+                 
+    * `"linear_search"`
+
+### Output
+
+The scalar value of the support function of the set `cap` in the given direction.
+"""
 function ρ(ℓ::AbstractVector{N},
            cap::Intersection{N, <:LazySet, <:HalfSpace};
            algorithm::String="line_search", kwargs...) where {N<:AbstractFloat}
@@ -297,7 +318,7 @@ function ρ(ℓ::AbstractVector{N},
 
     # if the intersection is empty => stop
     if is_intersection_empty(X, H) 
-        return N[]
+        return zero(N) # TODO use this convention? error?
     end
     
     if algorithm == "line_search"
@@ -348,3 +369,11 @@ end
 # Symmetric case
 ρ(ℓ::AbstractVector{N}, cap::Intersection{N, <:HalfSpace, <:LazySet};
   algorithm::String="line_search", kwargs...) where {N<:AbstractFloat} = ρ(ℓ, cap.Y ∩ cap.X; algorithm=algorithm, kwargs...)
+
+function σ(ℓ::AbstractVector{N},
+           cap::Intersection{N, <:LazySet, <:HalfSpace};
+           algorithm::String="line_search", kwargs...) where {N<:AbstractFloat}
+
+    ℓvec = normalize(ℓ)
+    return ρ(ℓvec, cap) * ℓvec
+end
