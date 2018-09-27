@@ -370,10 +370,12 @@ end
 ρ(ℓ::AbstractVector{N}, cap::Intersection{N, <:HalfSpace, <:LazySet};
   algorithm::String="line_search", kwargs...) where {N<:AbstractFloat} = ρ(ℓ, cap.Y ∩ cap.X; algorithm=algorithm, kwargs...)
 
+#= 
 function σ(ℓ::AbstractVector{N},
            cap::Intersection{N, <:LazySet, <:HalfSpace};
            algorithm::String="line_search", kwargs...) where {N<:AbstractFloat}
 
     ℓvec = normalize(ℓ)
-    return ρ(ℓvec, cap) * ℓvec
+    return ρ(ℓvec, cap) * ℓvec # wrong: needs to add the condition that the intersection point belongs to he set cap.X
 end
+=#
