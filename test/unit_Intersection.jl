@@ -62,4 +62,7 @@ end
 X = Ball1(zeros(2), 1.0);
 H = HalfSpace([-1.0, 0.0], -1.0); # x >= 0 
 d = normalize([1.0, 0.0])
+
+# line search using Optim
+using Optim
 @test ρ(d, X ∩ H) == ρ(d, X ∩ H) == 1.0
