@@ -102,7 +102,9 @@ dim(::Intersection)
 σ(::AbstractVector{Real}, ::Intersection{Real})
 ∈(::AbstractVector{Real}, ::Intersection{Real})
 isempty(::Intersection)
+ρ(::AbstractVector{N}, ::Intersection{N, <:LazySet, <:HalfSpace}) where {N<:AbstractFloat}
 ```
+
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))

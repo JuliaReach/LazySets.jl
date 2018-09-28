@@ -287,3 +287,182 @@ function ∈(x::AbstractVector{N}, ia::IntersectionArray{N})::Bool where {N<:Rea
     end
     return true
 end
+
+"""
+    ρ(d::AbstractVector{N},
+      cap::Intersection{N, <:LazySet, <:HalfSpace};
+      algorithm::String="line_search", kwargs...) where {N<:AbstractFloat}
+
+Return the support function of the intersection of a compact set and a half-space
+in a given direction.
+
+### Input
+
+- `d`         -- direction
+- `cap`       -- lazy intersection of a compact set and a half-space 
+- `algorithm` -- (optional, default: `"line_search"`): the algorithm to calculate
+                 the support function, valid options are:
+                 
+    * `"line_search"` -- solve the associated univariate optimization problem
+                         using a line search method (either Brent or the
+                         Golden Section method) 
+
+- `check_intersection` -- (optional, default: `true`) if `true`, check if the 
+                          intersection is empty before actually calculating the
+                          support function
+
+### Output
+
+The scalar value of the support function of the set `cap` in the given direction.
+
+### Notes
+
+The `check_intersection` flag can be useful if you know in advance that the
+intersection is non-empty.
+
+Any additional number of arguments to the algorithm backend can be passed as
+keyword arguments.
+
+### Algorithm
+
+The algorithms are based on solving the associated optimization problem
+
+```math
+\\min_\\{ λ ≥ 0 \\} ρ(ℓ - λa, X) + λb.
+```
+
+For additional information we refer to:
+
+- [G. Frehse, R. Ray. Flowpipe-Guard Intersection for Reachability Computations with
+  Support Functions](https://www.sciencedirect.com/science/article/pii/S1474667015371809).
+- [C. Le Guernic. Reachability Analysis of Hybrid Systems with Linear Continuous
+  Dynamics, PhD thesis](https://tel.archives-ouvertes.fr/tel-00422569v2).
+- [T. Rockafellar, R. Wets.
+  Variational Analysis](https://www.springer.com/us/book/9783540627722).
+"""
+function ρ(d::AbstractVector{N},
+           cap::Intersection{N, <:LazySet, <:HalfSpace};
+           algorithm::String="line_search",
+           check_intersection::Bool=true,
+           kwargs...) where {N<:AbstractFloat}
+    
+    X = cap.X    # compact set
+    H = cap.Y    # halfspace
+
+    # if the intersection is empty => stop
+    if check_intersection
+        is_intersection_empty(X, H) && return zero(N) # TODO use this convention? error?
+    end
+    
+    if algorithm == "line_search"
+        @assert isdefined(Main, :Optim) "the algorithm $algorithm needs " *
+            "the package 'Optim' to be loaded"
+        (s, _) = _line_search(d, X, H; kwargs...)
+    else
+        error("algorithm $(algorithm) unknown")
+    end
+    return s
+end
+
+function load_optim_intersection()
+return quote
+
+using Optim
+
+"""
+    _line_search(ℓ, X, H; kwargs...)
+
+Given a compact and convex set ``X`` and a hyperplane ``H = \\{x: a^T x ≤ b \\}``,
+calculate:
+
+```math
+\\min_\\{ λ ≥ 0 \\} ρ(ℓ - λa, X) + λb.
+```
+
+### Input
+
+- `ℓ`      -- direction
+- `X`      -- set
+- `H`      -- hyperplane
+
+### Output
+
+The tuple `(fmin, λmin)`, where `fmin` is the minimum value of the function
+``f(λ) = ρ(ℓ - λa) + λb`` over the feasible set ``λ ≥ 0``, and ``λmin`` is the
+minimizer.
+
+### Notes
+
+This function requires the `Optim` package, and relies on the univariate
+optimization interface `Optim.optimize(...)`.
+     
+Additional arguments to the `optimize` backend can be passed as keyword arguments.
+The default method is `Optim.Brent()`.
+
+### Examples
+
+```jldoctest _line_search
+julia> X = Ball1(zeros(2), 1.0);
+
+julia> H = HalfSpace([-1.0, 0.0], -1.0); # x >= 0 
+
+julia> using Optim
+
+julia> import LazySets._line_search
+
+julia> _line_search([1.0, 0.0], X, H) # uses Brent's method by default
+(1.0, 999999.9849478417)
+```
+
+We can specify the upper bound in Brent's method:
+
+```julia _line_search
+julia> _line_search([1.0, 0.0], X, H, upper=1e3)
+(1.0, 999.9999849478418)
+```
+
+Instead of using Brent, we use the Golden Section method:
+
+```julia _line_search
+julia> _line_search([1.0, 0.0], X, H, upper=1e3, method=GoldenSection())
+(1.0, 381.9660112501051)
+```
+"""
+function _line_search(ℓ, X, H; kwargs...)
+    options = Dict(kwargs)
+   
+    # Initialization
+    a, b = H.a, H.b
+    f(λ) = ρ(ℓ - λ[1] * a, X) + λ[1] * b
+
+    if haskey(options, :lower)
+        lower = pop!(options, :lower)
+    else
+        lower = 0.0
+    end
+
+    if haskey(options, :upper)
+        upper = pop!(options, :upper)
+    else
+        upper = 1e6 # TODO: relate with f(λ)
+    end
+
+    if haskey(options, :method)
+        method = pop!(options, :method)
+    else
+        method = Optim.Brent()
+    end
+
+    # Optimization
+    sol = Optim.optimize(f, lower, upper, method=method, options...)
+    
+    # Recover results
+    fmin, λmin = sol.minimum, sol.minimizer
+    return (fmin, λmin)
+end # _line_search
+end # quote
+end # load_optim
+
+# Symmetric case
+ρ(ℓ::AbstractVector{N}, cap::Intersection{N, <:HalfSpace, <:LazySet};
+  algorithm::String="line_search", kwargs...) where {N<:AbstractFloat} = ρ(ℓ, cap.Y ∩ cap.X; algorithm=algorithm, kwargs...)
