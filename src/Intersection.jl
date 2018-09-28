@@ -406,6 +406,8 @@ julia> X = Ball1(zeros(2), 1.0);
 
 julia> H = HalfSpace([-1.0, 0.0], -1.0); # x >= 0 
 
+julia> using Optim
+
 julia> import LazySets._line_search
 
 julia> _line_search([1.0, 0.0], X, H) # uses Brent's method by default
