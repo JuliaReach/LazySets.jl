@@ -45,7 +45,7 @@ Every `LazySet` type must define a function `σ` to compute the support vector.
 
 ```@docs
 support_vector
-ρ(::AbstractVector{Real}, ::LazySet{Real})
+ρ(::AbstractVector{N}, ::LazySet{N}) where {N<:Real}
 support_function
 ```
 

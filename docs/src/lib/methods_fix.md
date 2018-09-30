@@ -35,6 +35,7 @@ vertices_list
 +
 <=
 σ
+ρ
 ∈
 ⊆
 ```
