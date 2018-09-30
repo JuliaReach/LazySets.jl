@@ -133,7 +133,7 @@ if test_suite_polyhedra
         b = N[1, 0]
         p = HPolytope(A, b)
         vl = vertices_list(p)
-        @test ispermutation(vl, N[0, 1])
+        @test ispermutation(vl, [N[0], N[1]])
 
         # tovrep from HPolytope
         A = [N(0) N(-1); N(-1) N(0); N(1) N(1)]
