@@ -36,7 +36,9 @@ else
 end
 
 if test_suite_polyhedra || test_suite_plotting
-    VERSION < v"0.7-" && Pkg.add("Polyhedra") && Pkg.add("CDDLib")
+    if VERSION < v"0.7-"
+        Pkg.add("Polyhedra"); Pkg.add("CDDLib")
+    end
     using Polyhedra
 
     # fix namespace conflicts with Polyhedra
