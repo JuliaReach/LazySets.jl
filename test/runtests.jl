@@ -35,7 +35,7 @@ else
     error("unknown parameter 1: $(ARGS[1])")
 end
 
-if test_suite_polyhedra
+if test_suite_polyhedra || test_suite_plotting
     using Polyhedra
 
     # fix namespace conflicts with Polyhedra
