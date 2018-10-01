@@ -19,10 +19,11 @@ Every concrete `AbstractHyperrectangle` must define the following functions:
 
 ```jldoctest
 julia> subtypes(AbstractHyperrectangle)
-4-element Array{Any,1}:
+5-element Array{Any,1}:
  AbstractSingleton
  BallInf
  Hyperrectangle
+ Interval
  SymmetricIntervalHull
 ```
 """
