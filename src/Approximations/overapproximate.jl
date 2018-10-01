@@ -166,3 +166,24 @@ function overapproximate(S::LazySet{N}, ::Type{Interval}) where {N<:Real}
     hi = σ([one(N)], S)[1]
     return Interval(lo, hi)
 end
+
+# overapproximate an intersection with a polytope in H-representation given a
+# set of template directions.
+function overapproximate(cap::Intersection{N, <:LazySet, S},
+                         dir::AbstractDirections{N};
+                         kwargs...) where {N<:Real, S<:AbstractPolytope{N}}
+
+    X = cap.X    # compact set
+    P = cap.Y    # polytope
+
+    Q = HPolytope{N}()
+
+    for Hi in constraints_list(P)
+        for di in dir
+            # can overwrite defaults through kwargs
+            ρ_X_Hi = ρ(di, X∩Hi, kwargs...)
+            addconstraint!(Q, HalfSpace(Hi.a, ρ_X_Hi))
+        end
+    end
+    return Q
+end
