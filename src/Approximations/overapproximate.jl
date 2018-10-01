@@ -185,8 +185,8 @@ function overapproximate(cap::Intersection{N, <:LazySet, S},
         for (i, Hi) in enumerate(clist)
             ρ_X_Hi[i] = ρ(di, X∩Hi, kwargs...)
         end
-        min_ρ_X_Hi = minimum(ρ_X_Hi)
-        addconstraint!(Q, HalfSpace(Hi.a, min_ρ_X_Hi))
+        i_min = indmin(ρ_X_Hi)
+        addconstraint!(Q, HalfSpace(clist[i_min].a, ρ_X_Hi[i_min]))
     end
     return Q
 end
