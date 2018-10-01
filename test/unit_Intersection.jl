@@ -65,4 +65,4 @@ d = normalize([1.0, 0.0])
 
 # line search using Optim
 using Optim
-@test ρ(d, X ∩ H) == ρ(d, X ∩ H) == 1.0
+@test ρ(d, X ∩ H) == ρ(d, H ∩ X) == 1.0

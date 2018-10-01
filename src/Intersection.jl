@@ -291,7 +291,9 @@ end
 """
     ρ(d::AbstractVector{N},
       cap::Intersection{N, <:LazySet, <:HalfSpace};
-      algorithm::String="line_search", kwargs...) where {N<:AbstractFloat}
+      algorithm::String="line_search",
+      check_intersection::Bool=true,
+      kwargs...) where {N<:AbstractFloat}
 
 Return the support function of the intersection of a compact set and a half-space
 in a given direction.
@@ -465,4 +467,6 @@ end # load_optim
 
 # Symmetric case
 ρ(ℓ::AbstractVector{N}, cap::Intersection{N, <:HalfSpace, <:LazySet};
-  algorithm::String="line_search", kwargs...) where {N<:AbstractFloat} = ρ(ℓ, cap.Y ∩ cap.X; algorithm=algorithm, kwargs...)
+  algorithm::String="line_search", check_intersection::Bool=true,
+  kwargs...) where {N<:AbstractFloat} = ρ(ℓ, cap.Y ∩ cap.X;
+  algorithm=algorithm, check_intersection=check_intersection, kwargs...)
