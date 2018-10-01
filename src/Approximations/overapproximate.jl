@@ -176,14 +176,17 @@ function overapproximate(cap::Intersection{N, <:LazySet, S},
     X = cap.X    # compact set
     P = cap.Y    # polytope
 
+    clist = constraints_list(P)
+    m = length(clist)
     Q = HPolytope{N}()
+    ρ_X_Hi = Vector{N}(undef, m)
 
-    for Hi in constraints_list(P)
-        for di in dir
-            # can overwrite defaults through kwargs
-            ρ_X_Hi = ρ(di, X∩Hi, kwargs...)
-            addconstraint!(Q, HalfSpace(Hi.a, ρ_X_Hi))
+    for di in dir
+        for (i, Hi) in enumerate(clist)
+            ρ_X_Hi[i] = ρ(di, X∩Hi, kwargs...))
         end
+        min_ρ_X_Hi = minimum(ρ_X_Hi)
+        addconstraint!(Q, HalfSpace(Hi.a, min_ρ_X_Hi))
     end
     return Q
 end
