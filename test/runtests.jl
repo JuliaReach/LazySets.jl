@@ -37,7 +37,7 @@ end
 
 if test_suite_polyhedra || test_suite_plotting
     if VERSION < v"0.7-"
-        Pkg.add("Polyhedra"); Pkg.add("CDDLib"); Pkg.add("Optim")
+        Pkg.add("Polyhedra"); Pkg.add("CDDLib"); Pkg.add("Optim"); Pkg.add("Plots")
     end
     using Polyhedra
 
