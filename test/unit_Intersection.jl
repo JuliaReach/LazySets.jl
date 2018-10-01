@@ -58,11 +58,15 @@ end
 # Tests for Float64 only
 # ======================
 
-# halfspace - ball1 intersection
+# Half-space - Ball1 intersection
 X = Ball1(zeros(2), 1.0);
-H = HalfSpace([-1.0, 0.0], -1.0); # x >= 0 
+H = HalfSpace([-1.0, 0.0], -1.0); # x >= 0
 d = normalize([1.0, 0.0])
 
 # line search using Optim
 using Optim
 @test ρ(d, X ∩ H) == ρ(d, H ∩ X) == 1.0
+
+# Hyperplane - Ball1 intersection
+H = HalfSpace([1.0, 0.0], 0.0); # x = 0
+@test ρ(d, X ∩ H) < 1e-6 && ρ(d, H ∩ X) < 1e-6

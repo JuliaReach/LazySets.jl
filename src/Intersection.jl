@@ -290,18 +290,18 @@ end
 
 """
     ρ(d::AbstractVector{N},
-      cap::Intersection{N, <:LazySet, <:HalfSpace};
+      cap::Intersection{N, <:LazySet, S};
       algorithm::String="line_search",
       check_intersection::Bool=true,
-      kwargs...) where {N<:AbstractFloat}
+      kwargs...) where {N<:AbstractFloat, S<:Union{HalfSpace, Hyperplane}}
 
 Return the support function of the intersection of a compact set and a half-space
-in a given direction.
+or a hyperplane in a given direction.
 
 ### Input
 
 - `d`         -- direction
-- `cap`       -- lazy intersection of a compact set and a half-space 
+- `cap`       -- lazy intersection of a compact set and a half-space or hyperplane
 - `algorithm` -- (optional, default: `"line_search"`): the algorithm to calculate
                  the support function, valid options are:
                  
@@ -330,8 +330,10 @@ keyword arguments.
 The algorithms are based on solving the associated optimization problem
 
 ```math
-\\min_\\{ λ ≥ 0 \\} ρ(ℓ - λa, X) + λb.
+\\min_\\{ λ ∈ D_h \\} ρ(ℓ - λa, X) + λb.
 ```
+where ``D_h = \\{ λ : λ ≥ 0 \\}`` if ``H`` is a half-space or
+``D_h = \\{ λ : λ ∈ \\mathbb{R} \\}`` if ``H`` is a hyperplane.
 
 For additional information we refer to:
 
@@ -343,13 +345,13 @@ For additional information we refer to:
   Variational Analysis](https://www.springer.com/us/book/9783540627722).
 """
 function ρ(d::AbstractVector{N},
-           cap::Intersection{N, <:LazySet, <:HalfSpace};
+           cap::Intersection{N, <:LazySet, S};
            algorithm::String="line_search",
            check_intersection::Bool=true,
-           kwargs...) where {N<:AbstractFloat}
+           kwargs...) where {N<:AbstractFloat, S<:Union{HalfSpace, Hyperplane}}
     
     X = cap.X    # compact set
-    H = cap.Y    # halfspace
+    H = cap.Y    # halfspace or hyperplane
 
     # if the intersection is empty => stop
     if check_intersection
@@ -374,18 +376,20 @@ using Optim
 """
     _line_search(ℓ, X, H; kwargs...)
 
-Given a compact and convex set ``X`` and a hyperplane ``H = \\{x: a^T x ≤ b \\}``,
-calculate:
+Given a compact and convex set ``X`` and a halfspace ``H = \\{x: a^T x ≤ b \\}``
+or a hyperplane ``H = \\{x: a^T x = b \\}``, calculate:
 
 ```math
-\\min_\\{ λ ≥ 0 \\} ρ(ℓ - λa, X) + λb.
+\\min_\\{ λ ∈ D_h \\} ρ(ℓ - λa, X) + λb.
 ```
+where ``D_h = \\{ λ : λ ≥ 0 \\}`` if ``H`` is a half-space or
+``D_h = \\{ λ : λ ∈ \\mathbb{R} \\}`` if ``H`` is a hyperplane.
 
 ### Input
 
 - `ℓ`      -- direction
 - `X`      -- set
-- `H`      -- hyperplane
+- `H`      -- halfspace or hyperplane
 
 ### Output
 
@@ -430,9 +434,9 @@ julia> _line_search([1.0, 0.0], X, H, upper=1e3, method=GoldenSection())
 (1.0, 381.9660112501051)
 ```
 """
-function _line_search(ℓ, X, H; kwargs...)
+function _line_search(ℓ, X, H::Union{HalfSpace, Hyperplane}; kwargs...)
     options = Dict(kwargs)
-   
+
     # Initialization
     a, b = H.a, H.b
     f(λ) = ρ(ℓ - λ[1] * a, X) + λ[1] * b
@@ -440,13 +444,17 @@ function _line_search(ℓ, X, H; kwargs...)
     if haskey(options, :lower)
         lower = pop!(options, :lower)
     else
-        lower = 0.0
+        if H isa HalfSpace
+            lower = 0.0
+        elseif H isa Hyperplane
+            lower = -1e6 # "big": TODO relate with f(λ)
+        end
     end
 
     if haskey(options, :upper)
         upper = pop!(options, :upper)
     else
-        upper = 1e6 # TODO: relate with f(λ)
+        upper = 1e6 # "big": TODO relate with f(λ)
     end
 
     if haskey(options, :method)
@@ -466,7 +474,7 @@ end # quote
 end # load_optim
 
 # Symmetric case
-ρ(ℓ::AbstractVector{N}, cap::Intersection{N, <:HalfSpace, <:LazySet};
+ρ(ℓ::AbstractVector{N}, cap::Intersection{N, S, <:LazySet};
   algorithm::String="line_search", check_intersection::Bool=true,
-  kwargs...) where {N<:AbstractFloat} = ρ(ℓ, cap.Y ∩ cap.X;
+  kwargs...) where {N<:AbstractFloat, S<:Union{HalfSpace, Hyperplane}} = ρ(ℓ, cap.Y ∩ cap.X;
   algorithm=algorithm, check_intersection=check_intersection, kwargs...)
