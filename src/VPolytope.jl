@@ -225,8 +225,7 @@ in vertex representation.
 """
 function tohrep(P::VPolytope{N};
                 backend=default_polyhedra_backend(N)) where {N}
-    P = polyhedron(P, backend)
-    return HPolytope(P)
+    return HPolytope(polyhedron(P, backend))
 end
 
 """

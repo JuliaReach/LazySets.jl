@@ -104,7 +104,7 @@ for N in [Float64, Rational{Int}, Float32]
         plot(hpgo, ε)
         plot(hpt, ε)
         plot(vpg, ε)
-        @test_throws AssertionError plot(vpt, ε) # TODO see #574
+        plot(vpt, ε)
         @test_throws AssertionError plot(es, ε) # TODO see #577
         @test_throws ErrorException plot(hs, ε) # TODO see #576/#578
         @test_throws ErrorException plot(hp, ε) # TODO see #576/#578

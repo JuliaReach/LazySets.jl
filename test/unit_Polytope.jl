@@ -76,15 +76,6 @@ for N in [Float64, Rational{Int}, Float32]
     # dim
     @test dim(p) == 2
 
-    # support vector (only available with Polyhedra library)
-    d = N[1, 0]
-    @test_throws ErrorException σ(d, p, algorithm="xyz")
-    if test_suite_polyhedra
-        @test σ(d, p) == N[1.0, 0.0]
-    else
-        @test_throws AssertionError σ(d, p)
-    end
-
     # vertices_list function
     @test vertices_list(p) == p.vertices
 
@@ -105,7 +96,6 @@ if test_suite_polyhedra
     # check isempty function of the AbstractPolytope interface
     @test isempty(empty_H_polytope)
     @test isempty(empty_V_polytope)
-    is_intersection_empty(empty_H_polytope, empty_V_polytope)
 end
 
 # Polyhedra tests that only work with Float64
@@ -143,7 +133,7 @@ if test_suite_polyhedra
         b = N[1, 0]
         p = HPolytope(A, b)
         vl = vertices_list(p)
-        @test ispermutation(vl, N[0, 1])
+        @test ispermutation(vl, [N[0], N[1]])
 
         # tovrep from HPolytope
         A = [N(0) N(-1); N(-1) N(0); N(1) N(1)]
@@ -155,6 +145,17 @@ if test_suite_polyhedra
         # -----
         # V-rep
         # -----
+
+        # support vector (only available with Polyhedra library)
+        polygon = VPolygon([N[0, 0], N[1, 0], N[0, 1]])
+        p = VPolytope(polygon)
+        d = N[1, 0]
+        @test_throws ErrorException σ(d, p, algorithm="xyz")
+        if test_suite_polyhedra
+            @test σ(d, p) == N[1, 0]
+        else
+            @test_throws AssertionError σ(d, p)
+        end
 
         # intersection
         p1 = VPolytope(vertices_list(BallInf(N[0, 0], N(1))))

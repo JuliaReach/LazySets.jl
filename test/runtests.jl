@@ -13,8 +13,8 @@ import LazySets.ispermutation
 
 global test_suite_basic = true
 global test_suite_doctests = VERSION >= v"0.7-" # only run doctests with new Julia version
-global test_suite_polyhedra = false
-global test_suite_plotting = false
+global test_suite_polyhedra = VERSION < v"0.7-" # only run doctests with old Julia version (for now)
+global test_suite_plotting = VERSION < v"0.7-" # only run doctests with old Julia version (for now)
 
 if (length(ARGS) == 0) || (ARGS[1] == "--default")
     # default test suite including doctests
@@ -35,7 +35,10 @@ else
     error("unknown parameter 1: $(ARGS[1])")
 end
 
-if test_suite_polyhedra
+if test_suite_polyhedra || test_suite_plotting
+    if VERSION < v"0.7-"
+        Pkg.add("Polyhedra"); Pkg.add("CDDLib"); Pkg.add("Optim"); Pkg.add("Plots")
+    end
     using Polyhedra
 
     # fix namespace conflicts with Polyhedra

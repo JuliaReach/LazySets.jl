@@ -37,7 +37,7 @@ abstract type AbstractPolytope{N<:Real} <: LazySet{N} end
 """
     singleton_list(P::AbstractPolytope{N})::Vector{Singleton{N}} where {N<:Real}
 
-Return the vertices of a polytopic as a list of singletons.
+Return the vertices of a polytopic set as a list of singletons.
 
 ### Input
 
