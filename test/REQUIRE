@@ -7,5 +7,3 @@ MathProgBase 0.7
 RecipesBase 0.3
 Requires 0.4
 Optim 0.14.1
-Polyhedra 0.3.4
-CDDLib 0.3.2
