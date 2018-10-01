@@ -25,10 +25,9 @@ functions:
 
 ```jldoctest
 julia> subtypes(AbstractCentrallySymmetricPolytope)
-5-element Array{Any,1}:
+4-element Array{Any,1}:
  AbstractHyperrectangle
  Ball1
- Interval
  LineSegment
  Zonotope
 ```

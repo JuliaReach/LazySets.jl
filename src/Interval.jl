@@ -7,11 +7,10 @@ export Interval,
        low, high, vertices_list
 
 """
-    Interval{N<:Real, IN <: AbstractInterval{N}}
-        <: AbstractCentrallySymmetricPolytope{N}
+    Interval{N<:Real, IN <: AbstractInterval{N}} <: AbstractHyperrectangle{N}
 
-Type representing an interval on the real line. Mathematically, it is of the
-form
+Type representing an interval on the real line.
+Mathematically, it is of the form
 
 ```math
 [a, b] := \\{ a ≤ x ≤ b \\} ⊆ \\mathbb{R}.
@@ -75,7 +74,7 @@ julia> Interval(0//1, 2//1)
 Interval{Rational{Int64},IntervalArithmetic.AbstractInterval{Rational{Int64}}}([0//1, 2//1])
 ```
 """
-struct Interval{N<:Real, IN <: AbstractInterval{N}} <: AbstractCentrallySymmetricPolytope{N}
+struct Interval{N<:Real, IN <: AbstractInterval{N}} <: AbstractHyperrectangle{N}
    dat::IN
 end
 
@@ -211,7 +210,7 @@ The product of the intervals as a new `Interval` set.
 *(x::Interval, y::Interval) = Interval(x.dat * y.dat)
 
 """
-    ∈(v::AbstractVector, x::Interval)
+    ∈(v::AbstractVector{N}, x::Interval{N}) where {N<:Real})
 
 Return whether a vector is contained in the interval.
 
@@ -224,7 +223,7 @@ Return whether a vector is contained in the interval.
 
 `true` iff `x` contains `v`'s first component.
 """
-∈(v::AbstractVector, x::Interval) = v[1] ∈ x.dat
+∈(v::AbstractVector{N}, x::Interval{N}) where {N<:Real} = v[1] ∈ x.dat
 
 """
     ∈(v::N, x::Interval) where {N}
@@ -303,3 +302,43 @@ Return the list of vertices of this interval.
 The list of vertices of the interval represented as two one-dimensional vectors.
 """
 vertices_list(x::Interval) = [[low(x)], [high(x)]]
+
+
+# --- AbstractHyperrectangle interface functions ---
+
+
+"""
+    radius_hyperrectangle(I::Interval{N}, i::Int)::N where {N<:Real}
+
+Return the box radius of an interval in a given dimension.
+
+### Input
+
+- `I` -- interval
+- `i` -- dimension index (must be `1`)
+
+### Output
+
+The box radius in the given dimension.
+"""
+function radius_hyperrectangle(I::Interval{N}, i::Int)::N where {N<:Real}
+    @assert i == 1 "an interval is one-dimensional"
+    return high(x) - low(x)
+end
+
+"""
+    radius_hyperrectangle(I::Interval{N})::Vector{N} where {N<:Real}
+
+Return the box radius of an interval in every dimension.
+
+### Input
+
+- `I` -- interval
+
+### Output
+
+The box radius of the interval (a one-dimensional vector).
+"""
+function radius_hyperrectangle(I::Interval{N})::Vector{N} where {N<:Real}
+    return [high(x) - low(x)]
+end
