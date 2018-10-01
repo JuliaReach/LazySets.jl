@@ -348,7 +348,7 @@ function ρ(d::AbstractVector{N},
            cap::Intersection{N, <:LazySet, S};
            algorithm::String="line_search",
            check_intersection::Bool=true,
-           kwargs...) where {N<:AbstractFloat, S <: Union{HalfSpace, Hyperplane}}
+           kwargs...) where {N<:AbstractFloat, S<:Union{HalfSpace, Hyperplane}}
     
     X = cap.X    # compact set
     H = cap.Y    # halfspace or hyperplane
@@ -436,7 +436,7 @@ julia> _line_search([1.0, 0.0], X, H, upper=1e3, method=GoldenSection())
 """
 function _line_search(ℓ, X, H::Union{HalfSpace, Hyperplane}; kwargs...)
     options = Dict(kwargs)
-   
+
     # Initialization
     a, b = H.a, H.b
     f(λ) = ρ(ℓ - λ[1] * a, X) + λ[1] * b
