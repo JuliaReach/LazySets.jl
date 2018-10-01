@@ -210,7 +210,7 @@ The product of the intervals as a new `Interval` set.
 *(x::Interval, y::Interval) = Interval(x.dat * y.dat)
 
 """
-    ∈(v::AbstractVector, x::Interval)
+    ∈(v::AbstractVector{N}, x::Interval{N}) where {N<:Real})
 
 Return whether a vector is contained in the interval.
 
@@ -223,7 +223,7 @@ Return whether a vector is contained in the interval.
 
 `true` iff `x` contains `v`'s first component.
 """
-∈(v::AbstractVector, x::Interval) = v[1] ∈ x.dat
+∈(v::AbstractVector{N}, x::Interval{N}) where {N<:Real} = v[1] ∈ x.dat
 
 """
     ∈(v::N, x::Interval) where {N}
