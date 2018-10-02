@@ -179,7 +179,7 @@ polytope given a set of template directions.
 
 - `cap`    -- intersection of a compact set and a polytope
 - `dir`    -- template directions
-- `kwargs` -- additional arguents that are passed to the support fumction algorithm
+- `kwargs` -- additional arguents that are passed to the support function algorithm
 
 ### Output
 
@@ -189,14 +189,15 @@ is given by an element of `dir`.
 ### Algorithm
 
 Let `di` be a direction drawn from the set of template directions `dir`.
-Let `X` be the compact set and let `P` be the polytope; that we would like
-to overapproximate the set `X ∩ H`.
+Let `X` be the compact set and let `P` be the polytope. We overapproximate the
+set `X ∩ H` with a polytope in constraint representation using a given set of
+template directions `dir`.
 
-Solving the univariate optimization problem `ρ(di, X ∩ Hi)` for each
-half-space in the set `P` and then taking the minimum gives an overapproximation
+The idea is to solve the univariate optimization problem `ρ(di, X ∩ Hi)` for each
+half-space in the set `P` and then take the minimum. This gives an overapproximation
 of the exact support function.
 
-This algorithm is inspired  from [G. Frehse, R. Ray. Flowpipe-Guard Intersection
+This algorithm is inspired from [G. Frehse, R. Ray. Flowpipe-Guard Intersection
 for Reachability Computations with Support
 Functions](https://www.sciencedirect.com/science/article/pii/S1474667015371809).
 
