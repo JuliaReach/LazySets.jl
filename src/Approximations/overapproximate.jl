@@ -166,3 +166,69 @@ function overapproximate(S::LazySet{N}, ::Type{Interval}) where {N<:Real}
     hi = σ([one(N)], S)[1]
     return Interval(lo, hi)
 end
+
+"""
+    overapproximate(cap::Intersection{N, <:LazySet, S},
+                    dir::AbstractDirections{N};
+                    kwargs...) where {N<:Real, S<:AbstractPolytope{N}}
+
+Return the overapproximation of the intersection between a compact set and a
+polytope given a set of template directions.
+
+### Input
+
+- `cap`    -- intersection of a compact set and a polytope
+- `dir`    -- template directions
+- `kwargs` -- additional arguents that are passed to the support function algorithm
+
+### Output
+
+A polytope in H-representation such that the normal direction of each half-space
+is given by an element of `dir`.
+
+### Algorithm
+
+Let `di` be a direction drawn from the set of template directions `dir`.
+Let `X` be the compact set and let `P` be the polytope. We overapproximate the
+set `X ∩ H` with a polytope in constraint representation using a given set of
+template directions `dir`.
+
+The idea is to solve the univariate optimization problem `ρ(di, X ∩ Hi)` for each
+half-space in the set `P` and then take the minimum. This gives an overapproximation
+of the exact support function.
+
+This algorithm is inspired from [G. Frehse, R. Ray. Flowpipe-Guard Intersection
+for Reachability Computations with Support
+Functions](https://www.sciencedirect.com/science/article/pii/S1474667015371809).
+
+### Notes
+
+This method relies on having available the `constraints_list` of the polytope
+`P`.
+
+This method of overapproximations can return a non-empty set even if the original
+intersection is empty.
+"""
+function overapproximate(cap::Intersection{N, <:LazySet, S},
+                         dir::AbstractDirections{N};
+                         kwargs...) where {N<:Real, S<:AbstractPolytope{N}}
+
+    X = cap.X    # compact set
+    P = cap.Y    # polytope
+
+    Hi = constraints_list(P)
+    m = length(Hi)
+    Q = HPolytope{N}()
+
+    for di in dir
+        ρ_X_Hi_min = ρ(di, X ∩ Hi[1], kwargs...) 
+        for i in 2:m
+            ρ_X_Hi = ρ(di, X ∩ Hi[i], kwargs...)
+            if ρ_X_Hi < ρ_X_Hi_min
+                ρ_X_Hi_min = ρ_X_Hi
+            end
+        end
+        addconstraint!(Q, HalfSpace(di, ρ_X_Hi_min))
+    end
+    return Q
+end

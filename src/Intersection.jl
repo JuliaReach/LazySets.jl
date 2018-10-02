@@ -319,6 +319,8 @@ The scalar value of the support function of the set `cap` in the given direction
 
 ### Notes
 
+It is assumed that the set `cap.X` is compact.
+
 The `check_intersection` flag can be useful if you know in advance that the
 intersection is non-empty.
 
@@ -349,7 +351,7 @@ function ρ(d::AbstractVector{N},
            algorithm::String="line_search",
            check_intersection::Bool=true,
            kwargs...) where {N<:AbstractFloat, S<:Union{HalfSpace, Hyperplane}}
-    
+
     X = cap.X    # compact set
     H = cap.Y    # halfspace or hyperplane
 
