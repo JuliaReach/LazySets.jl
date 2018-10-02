@@ -167,8 +167,47 @@ function overapproximate(S::LazySet{N}, ::Type{Interval}) where {N<:Real}
     return Interval(lo, hi)
 end
 
-# overapproximate an intersection with a polytope in H-representation given a
-# set of template directions.
+"""
+    overapproximate(cap::Intersection{N, <:LazySet, S},
+                    dir::AbstractDirections{N};
+                    kwargs...) where {N<:Real, S<:AbstractPolytope{N}}
+
+Return the overapproximation of the intersection between a compact set and a
+polytope given a set of template directions.
+
+### Input
+
+- `cap`    -- intersection of a compact set and a polytope
+- `dir`    -- template directions
+- `kwargs` -- additional arguents that are passed to the support fumction algorithm
+
+### Output
+
+A polytope in H-representation such that the normal direction of each half-space
+is given by an element of `dir`.
+
+### Algorithm
+
+Let `di` be a direction drawn from the set of template directions `dir`.
+Let `X` be the compact set and let `P` be the polytope; that we would like
+to overapproximate the set `X ∩ H`.
+
+Solving the univariate optimization problem `ρ(di, X ∩ Hi)` for each
+half-space in the set `P` and then taking the minimum gives an overapproximation
+of the exact support function.
+
+This algorithm is inspired  from [G. Frehse, R. Ray. Flowpipe-Guard Intersection
+for Reachability Computations with Support
+Functions](https://www.sciencedirect.com/science/article/pii/S1474667015371809).
+
+### Notes
+
+This method relies on having available the `constraints_list` of the polytope
+`P`.
+
+This method of overapproximations can return a non-empty set even if the original
+intersection is empty.
+"""
 function overapproximate(cap::Intersection{N, <:LazySet, S},
                          dir::AbstractDirections{N};
                          kwargs...) where {N<:Real, S<:AbstractPolytope{N}}
@@ -176,17 +215,19 @@ function overapproximate(cap::Intersection{N, <:LazySet, S},
     X = cap.X    # compact set
     P = cap.Y    # polytope
 
-    clist = constraints_list(P)
-    m = length(clist)
+    Hi = constraints_list(P)
+    m = length(Hi)
     Q = HPolytope{N}()
-    ρ_X_Hi = Vector{N}(undef, m)
 
     for di in dir
-        for (i, Hi) in enumerate(clist)
-            ρ_X_Hi[i] = ρ(di, X∩Hi, kwargs...)
+        ρ_X_Hi_min = ρ(di, X ∩ Hi[1], kwargs...) 
+        for i in 2:m
+            ρ_X_Hi = ρ(di, X ∩ Hi[i], kwargs...)
+            if ρ_X_Hi < ρ_X_Hi_min
+                ρ_X_Hi_min = ρ_X_Hi
+            end
         end
-        i_min = indmin(ρ_X_Hi)
-        addconstraint!(Q, HalfSpace(clist[i_min].a, ρ_X_Hi[i_min]))
+        addconstraint!(Q, HalfSpace(di, ρ_X_Hi_min))
     end
     return Q
 end
