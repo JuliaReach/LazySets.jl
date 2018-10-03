@@ -293,7 +293,7 @@ end
       cap::Intersection{N, <:LazySet, S};
       algorithm::String="line_search",
       check_intersection::Bool=true,
-      kwargs...) where {N<:AbstractFloat, S<:Union{HalfSpace, Hyperplane}}
+      kwargs...) where {N<:AbstractFloat, S<:Union{HalfSpace, Hyperplane, Line}}
 
 Return the support function of the intersection of a compact set and a half-space
 or a hyperplane in a given direction.
@@ -355,7 +355,7 @@ function ρ(d::AbstractVector{N},
            cap::Intersection{N, <:LazySet, S};
            algorithm::String="line_search",
            check_intersection::Bool=true,
-           kwargs...) where {N<:AbstractFloat, S<:Union{HalfSpace, Hyperplane}}
+           kwargs...) where {N<:AbstractFloat, S<:Union{HalfSpace, Hyperplane, Line}}
 
     X = cap.X    # compact set
     H = cap.Y    # halfspace or hyperplane
@@ -372,7 +372,7 @@ function ρ(d::AbstractVector{N},
     elseif algorithm == "projection"
         @assert H isa Hyperplane "the algorithm $algorithm cannot be used with a
                                   $(typeof(H)); it only works with hyperplanes"
-        (s, _) = _projection(d, X, H)
+        (s, _) = _projection(d, X, H; kwargs...)
     else
         error("algorithm $(algorithm) unknown")
     end
@@ -382,7 +382,7 @@ end
 # Symmetric case
 ρ(ℓ::AbstractVector{N}, cap::Intersection{N, S, <:LazySet};
   algorithm::String="line_search", check_intersection::Bool=true,
-  kwargs...) where {N<:AbstractFloat, S<:Union{HalfSpace, Hyperplane}} = ρ(ℓ, cap.Y ∩ cap.X;
+  kwargs...) where {N<:AbstractFloat, S<:Union{HalfSpace, Hyperplane, Line}} = ρ(ℓ, cap.Y ∩ cap.X;
   algorithm=algorithm, check_intersection=check_intersection, kwargs...)
 
 function load_optim_intersection()
@@ -451,7 +451,7 @@ julia> _line_search([1.0, 0.0], X, H, upper=1e3, method=GoldenSection())
 (1.0, 381.9660112501051)
 ```
 """
-function _line_search(ℓ, X, H::Union{HalfSpace, Hyperplane}; kwargs...)
+function _line_search(ℓ, X, H::Union{HalfSpace, Hyperplane, Line}; kwargs...)
     options = Dict(kwargs)
 
     # Initialization
@@ -490,14 +490,46 @@ end # _line_search
 end # quote
 end # load_optim
 
-# use lazy intersection for Snℓ ∩ Lγ ? give both options?
-function _projection(ℓ, X, H::Hyperplane{N}) where {N}
+"""
+    _projection(ℓ, X, H::Union{Hyperplane{N}, Line{N}}; kwargs...) where {N}
+
+Given a compact and convex set ``X`` and a hyperplane ``H = \\{x: n ⋅ x = γ \\}``,
+calculate ...
+
+### Input
+
+- `ℓ`      -- direction
+- `X`      -- set
+- `H`      -- hyperplane
+
+### Output
+
+The support function of ``X ∩ H`` along direction ``ℓ``.
+"""
+function _projection(ℓ, X, H::Union{Hyperplane{N}, Line{N}}; kwargs...) where {N}
+
+    options = Dict(kwargs)
+    if haskey(options, :lazy_2d_intersection)
+        lazy_2d_intersection = pop!(options, :lazy_2d_intersection)
+    else
+        lazy_2d_intersection = true
+    end
+
     n = H.a                  # normal vector to the hyperplane
     γ = H.b                  # displacement of the hyperplane
     Πnℓ = vcat(n', ℓ')       # projection map
-    Snℓ = LinearMap(Πnℓ, X)
+
     x_dir = [one(N), zero(N)]
     y_dir = [zero(N), one(N)]
+
     Lγ = Line(x_dir, γ)
-    return ρ(y_direction, Snℓ ∩ Lγ)
+
+    if lazy_2d_intersection 
+        Snℓ = LinearMap(Πnℓ, X)
+        cap = Intersection(Snℓ, Lγ)
+    else
+        Snℓ = linear_map(Πnℓ, X)
+        cap = intersection(Snℓ, Lγ)
+    end
+    return ρ(y_dir, cap) # add kwargs...
 end

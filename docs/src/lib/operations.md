@@ -102,7 +102,7 @@ dim(::Intersection)
 σ(::AbstractVector{Real}, ::Intersection{Real})
 ∈(::AbstractVector{Real}, ::Intersection{Real})
 isempty(::Intersection)
-ρ(::AbstractVector{N}, ::Intersection{N, <:LazySet, S}) where {N<:AbstractFloat, S<:Union{HalfSpace, Hyperplane}}
+ρ(::AbstractVector{N}, ::Intersection{N, <:LazySet, S}) where {N<:AbstractFloat, S<:Union{HalfSpace, Hyperplane, Line}}
 ```
 
 Inherited from [`LazySet`](@ref):
