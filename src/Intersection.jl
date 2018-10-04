@@ -372,7 +372,7 @@ function ρ(d::AbstractVector{N},
     elseif algorithm == "projection"
         @assert H isa Hyperplane "the algorithm $algorithm cannot be used with a
                                   $(typeof(H)); it only works with hyperplanes"
-        (s, _) = _projection(d, X, H; kwargs...)
+        s = _projection(d, X, H; kwargs...)
     else
         error("algorithm $(algorithm) unknown")
     end
@@ -463,7 +463,7 @@ function _line_search(ℓ, X, H::Union{HalfSpace, Hyperplane, Line}; kwargs...)
     else
         if H isa HalfSpace
             lower = 0.0
-        elseif H isa Hyperplane
+        elseif (H isa Hyperplane) || (H isa Line)
             lower = -1e6 # "big": TODO relate with f(λ)
         end
     end
@@ -506,15 +506,12 @@ calculate ...
 
 The support function of ``X ∩ H`` along direction ``ℓ``.
 """
-function _projection(ℓ, X, H::Union{Hyperplane{N}, Line{N}}; kwargs...) where {N}
+function _projection(ℓ, X, H::Union{Hyperplane{N}, Line{N}};
+                     lazy_linear_map=false,
+                     lazy_2d_intersection=true,
+                     kwargs...) where {N}
 
     options = Dict(kwargs)
-    if haskey(options, :lazy_2d_intersection)
-        lazy_2d_intersection = pop!(options, :lazy_2d_intersection)
-    else
-        lazy_2d_intersection = true
-    end
-
     n = H.a                  # normal vector to the hyperplane
     γ = H.b                  # displacement of the hyperplane
     Πnℓ = vcat(n', ℓ')       # projection map
@@ -524,12 +521,7 @@ function _projection(ℓ, X, H::Union{Hyperplane{N}, Line{N}}; kwargs...) where 
 
     Lγ = Line(x_dir, γ)
 
-    if lazy_2d_intersection 
-        Snℓ = LinearMap(Πnℓ, X)
-        cap = Intersection(Snℓ, Lγ)
-    else
-        Snℓ = linear_map(Πnℓ, X)
-        cap = intersection(Snℓ, Lγ)
-    end
-    return ρ(y_dir, cap) # add kwargs...
+    Snℓ = lazy_linear_map ? LinearMap(Πnℓ, X) : linear_map(Πnℓ, X)
+    cap = lazy_2d_intersection ? Intersection(Snℓ, Lγ) : intersection(Snℓ, Lγ)
+    return ρ(y_dir, cap; kwargs...)
 end
