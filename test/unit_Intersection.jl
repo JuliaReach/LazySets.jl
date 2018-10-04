@@ -67,6 +67,14 @@ d = normalize([1.0, 0.0])
 using Optim
 @test ρ(d, X ∩ H) == ρ(d, H ∩ X) == 1.0
 
-# Hyperplane - Ball1 intersection
+# Ball1 vs HalfSpace intersection using default algorithm
 H = HalfSpace([1.0, 0.0], 0.0); # x = 0
 @test ρ(d, X ∩ H) < 1e-6 && ρ(d, H ∩ X) < 1e-6
+# specify  line search algorithm
+@test ρ(d, X ∩ H, algorithm="line_search") < 1e-6 &&
+      ρ(d, H ∩ X, algorithm="line_search") < 1e-6
+
+# Ball1 vs Hyperplane intersection
+H = Hyperplane([1.0, 0.0], 0.5); # x = 0.5
+@test isapprox(ρ(d, X ∩ H, algorithm="line_search"), 0.5, atol=1e-6) &&
+      isapprox(ρ(d, X ∩ H, algorithm="projection"), 0.5, atol=1e-6)
