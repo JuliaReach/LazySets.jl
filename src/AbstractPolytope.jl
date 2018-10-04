@@ -109,7 +109,7 @@ function load_polyhedra_abstractpolytope() # function to be loaded by Requires
 
 return quote
 
-using CDDLib # default backend
+import CDDLib # default backend
 import Polyhedra:polyhedron, SimpleHRepresentation, SimpleHRepresentation,
                  HRep, VRep,
                  removehredundancy!, removevredundancy!,

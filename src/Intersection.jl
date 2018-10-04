@@ -388,7 +388,7 @@ end
 function load_optim_intersection()
 return quote
 
-using Optim
+import Optim
 
 """
     _line_search(ℓ, X, H; kwargs...)
