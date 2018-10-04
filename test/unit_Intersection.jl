@@ -83,4 +83,3 @@ H = Hyperplane([1.0, 0.0], 0.5); # x = 0.5
 # need Polyhedra (in the general case), for the concrete linear map. As a valid workaround
 # if we don't want to load Polyhedra here is to convert the given set to a polygon in V-representation
 @test isapprox(ρ(d, convert(VPolygon, X) ∩ H, algorithm="projection", lazy_linear_map=false), 0.5, atol=1e-6)
-      
