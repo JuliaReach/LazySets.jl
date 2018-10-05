@@ -737,6 +737,54 @@ function is_intersection_empty(hs::HalfSpace{N},
     return is_intersection_empty(X, hs, witness)
 end
 
+"""
+    is_intersection_empty(X::LazySet{N},
+                          P::Union{HPolytope{N}, AbstractHPolygon{N}}
+                         )::Bool where {N<:Real}
+
+Check whether a compact set and a polytope do not intersect.
+
+### Input
+
+- `X`       -- compact set
+- `hs`      -- polytope or polygon in constraint-representation
+
+### Output
+
+`true` iff ``X ∩ P = ∅``.
+
+### Notes
+
+We assume that `X` is compact. Otherwise, the support vector queries may fail.
+Witness production is not supported.
+
+### Algorithm
+
+The algorithm relies on the intersection check between the set ``X`` and each constraint
+in ``P``. It costs ``m`` support vector evaluations of ``X``, where ``m`` is
+the number of constraints in ``P``.
+
+Note that method can be used with any set ``P`` whose constraints are known.
+"""
+function is_intersection_empty(X::LazySet{N},
+                               P::Union{HPolytope{N}, AbstractHPolygon{N}}
+                              )::Bool where N<:Real
+
+    for Hi in constraints_list(P)
+        if is_intersection_empty(X, Hi)
+            return true
+        end
+    end
+    return false
+end
+
+# symmetric function
+function is_intersection_empty(P::Union{HPolytope{N}, AbstractHPolygon{N}},
+                               X::LazySet{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
+    return is_intersection_empty(X, P, witness)
+end
 
 # --- alias ---
 
