@@ -780,10 +780,9 @@ end
 
 # symmetric function
 function is_intersection_empty(P::Union{HPolytope{N}, AbstractHPolygon{N}},
-                               X::LazySet{N},
-                               witness::Bool=false
-                              )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
-    return is_intersection_empty(X, P, witness)
+                               X::LazySet{N}
+                              )::Bool where N<:Real
+    return is_intersection_empty(X, P)
 end
 
 # --- alias ---
