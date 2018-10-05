@@ -270,3 +270,11 @@ end
 @test HPolygon() isa HPolygon{Float64}
 @test HPolygonOpt() isa HPolygonOpt{Float64}
 @test VPolygon() isa VPolygon{Float64}
+
+# is intersection empty
+p = convert(HPolygon, Hyperrectangle(low=[-1.0, -1.0], high=[1.0, 1.0]))
+I1 = Interval(0.9, 1.1)
+I2 = Interval(0.2, 0.3)
+I3 = Interval(4.0, 5.0)
+@test is_intersection_empty(I1 × I2 , p)
+@test !is_intersection_empty(I1 × I3 , p)
