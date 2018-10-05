@@ -172,6 +172,30 @@ function σ(d::AbstractVector{N}, lm::LinearMap{N}) where {N<:Real}
 end
 
 """
+    ρ(d::AbstractVector{N}, lm::LinearMap{N}) where {N<:Real}
+
+Return the support function of the linear map.
+
+### Input
+
+- `d`  -- direction
+- `lm` -- linear map
+
+### Output
+
+The support function in the given direction.
+If the direction has norm zero, the result depends on the wrapped set.
+
+### Notes
+
+If ``L = M⋅S``, where ``M`` is a matrix and ``S`` is a convex set, it follows
+that ``ρ(d, L) = ρ(M^T d, S)`` for any direction ``d``.
+"""
+function ρ(d::AbstractVector{N}, lm::LinearMap{N}) where {N<:Real}
+    return ρ(_At_mul_B(lm.M, d), lm.X)
+end
+
+"""
     ∈(x::AbstractVector{N}, lm::LinearMap{N})::Bool where {N<:Real}
 
 Check whether a given point is contained in a linear map of a convex set.
