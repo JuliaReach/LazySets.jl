@@ -746,8 +746,8 @@ Check whether a compact set and a polytope do not intersect.
 
 ### Input
 
-- `X`       -- compact set
-- `hs`      -- polytope or polygon in constraint-representation
+- `X`  -- compact set
+- `P`  -- polytope or polygon in constraint-representation
 
 ### Output
 
