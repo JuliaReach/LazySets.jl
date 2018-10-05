@@ -764,7 +764,7 @@ The algorithm relies on the intersection check between the set ``X`` and each co
 in ``P``. It costs ``m`` support vector evaluations of ``X``, where ``m`` is
 the number of constraints in ``P``.
 
-Note that method can be used with any set ``P`` whose constraints are known.
+Note that this method can be used with any set ``P`` whose constraints are known.
 """
 function is_intersection_empty(X::LazySet{N},
                                P::Union{HPolytope{N}, AbstractHPolygon{N}}
