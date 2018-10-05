@@ -107,7 +107,7 @@ function is_intersection_empty(S::AbstractSingleton{N},
                                set::LazySet{N},
                                witness::Bool=false
                               )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
-    empty_intersection = !∈(element(S), set)
+    empty_intersection = element(S) ∉ set
     if witness
         return (empty_intersection, empty_intersection ? N[] : element(S))
     else
@@ -220,7 +220,7 @@ function is_intersection_empty(H::AbstractHyperrectangle{N},
                                S::AbstractSingleton{N},
                                witness::Bool=false
                               )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
-    empty_intersection = !∈(element(S), H)
+    empty_intersection = element(S) ∉ H
     if witness
         return (empty_intersection, empty_intersection ? N[] : element(S))
     else
@@ -466,7 +466,7 @@ function is_intersection_empty(ls1::LineSegment{N},
     r = ls1.q - ls1.p
     if iszero(r)
         # first line segment is a point
-        empty_intersection = !∈(ls1.q, ls2)
+        empty_intersection = ls1.q ∉ ls2
         if witness
             return (empty_intersection, empty_intersection ? N[] : ls1.q)
         else
@@ -477,7 +477,7 @@ function is_intersection_empty(ls1::LineSegment{N},
     s = ls2.q - ls2.p
     if iszero(s)
         # second line segment is a point
-        empty_intersection = !∈(ls2.q, ls1)
+        empty_intersection = ls2.q ∉ ls1
         if witness
             return (empty_intersection, empty_intersection ? N[] : ls2.q)
         else
@@ -493,12 +493,12 @@ function is_intersection_empty(ls1::LineSegment{N},
         # line segments are parallel
         if u_numerator == 0
             # line segments are collinear
-            if ∈(ls1.p, ls2)
+            if ls1.p ∈ ls2
                 empty_intersection = false
                 if witness
                     v = ls1.p
                 end
-            elseif ∈(ls1.q, ls2)
+            elseif ls1.q ∈ ls2
                 empty_intersection = false
                 if witness
                     v = ls1.q
@@ -582,7 +582,7 @@ function is_intersection_empty(point::AbstractSingleton{N},
                                set::AbstractPolytope{N},
                                witness::Bool=false
                               )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
-    empty_intersection = !∈(element(point), set)
+    empty_intersection = element(point) ∉ set
     if witness
         return (empty_intersection, empty_intersection ? N[] : element(S))
     else
@@ -720,13 +720,15 @@ function is_intersection_empty(X::LazySet{N},
                                hs::HalfSpace{N},
                                witness::Bool=false
                               )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
-    svec = σ(-hs.a, X)
-    empty_intersection = !(svec ∈ hs)
-    if witness
-       v = empty_intersection ? N[] : svec
-       return (empty_intersection, v)
+    if !witness
+        return -ρ(-hs.a, X) > hs.b
     end
-    return empty_intersection
+
+    # for witness production, we compute the support vector instead
+    svec = σ(-hs.a, X)
+    empty_intersection = svec ∉ hs
+    v = empty_intersection ? N[] : svec
+    return (empty_intersection, v)
 end
 
 # symmetric function
