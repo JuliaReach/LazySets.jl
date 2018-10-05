@@ -115,6 +115,14 @@ for N in [Float64, Float32, Rational{Int}]
     p3 = intersection(p, p2)
     @test length(constraints_list(p3)) == 4
 
+    # is intersection empty
+    p3 = convert(HPolygon, Hyperrectangle(low=N[-1, -1], high=N[1, 1]))
+    I1 = Interval(N(0.9), N(1.1))
+    I2 = Interval(N(0.2), N(0.3))
+    I3 = Interval(N(4.0), N(5.0))
+    @test !is_intersection_empty(I1 × I2 , p3)
+    @test is_intersection_empty(I1 × I3 , p3)
+
     # Test VRepresentation
     vp = tovrep(p)
     @test N[2, 4] ∈ vertices_list(vp)
@@ -270,11 +278,3 @@ end
 @test HPolygon() isa HPolygon{Float64}
 @test HPolygonOpt() isa HPolygonOpt{Float64}
 @test VPolygon() isa VPolygon{Float64}
-
-# is intersection empty
-p = convert(HPolygon, Hyperrectangle(low=[-1.0, -1.0], high=[1.0, 1.0]))
-I1 = Interval(0.9, 1.1)
-I2 = Interval(0.2, 0.3)
-I3 = Interval(4.0, 5.0)
-@test is_intersection_empty(I1 × I2 , p)
-@test !is_intersection_empty(I1 × I3 , p)
