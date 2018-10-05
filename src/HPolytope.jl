@@ -99,7 +99,12 @@ function σ(d::AbstractVector{N}, P::HPolytope{N}) where {N<:Real}
     u = Inf
     solver = GLPKSolverLP()
     lp = linprog(c, A, sense, b, l, u, solver)
-    return lp.sol
+    if lp.status == :Unbounded
+        error("the support vector in direction $(d) is undefined because " *
+              "the polytope is unbounded")
+    else
+        return lp.sol
+    end
 end
 
 """
