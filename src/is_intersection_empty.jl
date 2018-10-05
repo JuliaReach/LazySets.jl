@@ -720,13 +720,15 @@ function is_intersection_empty(X::LazySet{N},
                                hs::HalfSpace{N},
                                witness::Bool=false
                               )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
+    if !witness
+        return ρ(-hs.a, X) < hs.b
+    end
+
+    # for witness production, we compute the support vector instead
     svec = σ(-hs.a, X)
     empty_intersection = !(svec ∈ hs)
-    if witness
-       v = empty_intersection ? N[] : svec
-       return (empty_intersection, v)
-    end
-    return empty_intersection
+    v = empty_intersection ? N[] : svec
+    return (empty_intersection, v)
 end
 
 # symmetric function
