@@ -684,7 +684,7 @@ end
 
 """
     is_intersection_empty(X::LazySet{N},
-                          hs::HalfSpace,
+                          hs::HalfSpace{N},
                           [witness]::Bool=false
                          )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
 
@@ -717,7 +717,7 @@ the half-space: ``σ(-a) ∈ hs``.
 The support vector is thus also a witness.
 """
 function is_intersection_empty(X::LazySet{N},
-                               hs::HalfSpace,
+                               hs::HalfSpace{N},
                                witness::Bool=false
                               )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
     svec = σ(-hs.a, X)
@@ -727,6 +727,14 @@ function is_intersection_empty(X::LazySet{N},
        return (empty_intersection, v)
     end
     return empty_intersection
+end
+
+# symmetric function
+function is_intersection_empty(hs::HalfSpace{N},
+                               X::LazySet{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
+    return is_intersection_empty(X, hs, witness)
 end
 
 
