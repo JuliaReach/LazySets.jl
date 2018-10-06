@@ -105,8 +105,8 @@ for N in [Float64, Rational{Int}, Float32]
     l = LineSegment(N[0, 0], N[1, 1])
     clist = constraints_list(l)
 
-    @test ispermutation(clist, [HalfSpace([1.0, -1.0], 0.0),  # x <= y
-                                HalfSpace([-1.0, 1.0], 0.0),  # x >= y
-                                HalfSpace([-1.0, -1.0], 0.0), # y >= -x
-                                HalfSpace([1.0, 1.0], 2.0)])  # y <= 2-x
+    @test ispermutation(clist, [HalfSpace{N}([1.0, -1.0], 0.0),  # x <= y
+                                HalfSpace{N}([-1.0, 1.0], 0.0),  # x >= y
+                                HalfSpace{N}([-1.0, -1.0], 0.0), # y >= -x
+                                HalfSpace{N}([1.0, 1.0], 2.0)])  # y <= 2-x
 end
