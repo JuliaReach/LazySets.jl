@@ -113,7 +113,35 @@ function σ(d::AbstractVector{N}, cap::Intersection{N}) where {N<:Real}
     # TODO document behavior if the direction has norm zero
     # TODO error message if the intersection is empty!
     # TODO implement
-    error("not implemented yet")
+    error("the exact support vector of an intersection is not implemented yet")
+end
+
+"""
+    ρ(d::AbstractVector{N}, cap::Intersection{N};
+      upper_bound=false, kwargs...) where {N<:Real}
+
+Return the support function of the intersection of two convex sets in a given
+direction.
+
+### Input
+
+- `d`           -- direction
+- `cap`         -- intersection of two convex sets
+- `upper_bound` -- (optional, default: `false`) if `false`, compute the support
+                   function exactly; otherwise use an overapproximative algorithm
+
+### Output
+
+The support function in the given direction.
+"""
+function ρ(d::AbstractVector{N}, cap::Intersection{N};
+           upper_bound=false, kwargs...) where {N<:Real}
+    if upper_bound
+        return LazySets.Approximations.ρ_upper_bound(d, cap; kwargs...)
+    else
+        error("the exact support function of an intersection is not implemented; " *
+              "try using `upper_bound=true`")
+    end
 end
 
 """
