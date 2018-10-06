@@ -28,7 +28,7 @@ end
 
 """
     ρ_upper_bound(d::AbstractVector{N},
-                  cap::Intersection{N, <:LazySet{N}, <:LazySet{N}}) where {N<:Real}
+                  cap::Intersection{N}; kwargs...) where {N<:Real}
 
 Return an upper bound of the support function of the intersection of two sets.
 
@@ -53,7 +53,7 @@ end
 
 """
     ρ_upper_bound(d::AbstractVector{N},
-                  cap::Intersection{N, <:LazySet, <:AbstractPolytope{N}};
+                  cap::Intersection{N, <:LazySet{N}, <:AbstractPolytope{N}};
                   kwargs...) where {N<:Real}
 
 Return an upper bound of the intersection between a compact set and a
