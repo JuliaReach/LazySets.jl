@@ -47,7 +47,7 @@ The support function of an intersection of ``X`` and ``Y`` is upper bounded by
 the minimum of the support functions of ``X`` and ``Y``.
 """
 function ρ_upper_bound(d::AbstractVector{N},
-                       cap::Intersection{N, <:LazySet, <:LazySet}; kwargs...) where {N<:Real}
+                       cap::Intersection{N}; kwargs...) where {N<:Real}
     return min(ρ_upper_bound(d, cap.X; kwargs...), ρ_upper_bound(d, cap.Y; kwargs...))
 end
 
@@ -88,12 +88,12 @@ This method of overapproximation can return a non-empty set even if the original
 intersection is empty.
 """
 function ρ_upper_bound(d::AbstractVector{N},
-                       cap::Intersection{N, <:LazySet, <:AbstractPolytope{N}};
+                       cap::Intersection{N, <:LazySet{N}, <:AbstractPolytope{N}};
                        kwargs...) where {N<:Real}
 
     X = cap.X    # compact set
     P = cap.Y    # polytope
-    return min([ρ_upper_bound(d, X ∩ Hi, kwargs...) for Hi in constraints_list(P)])
+    return minimum([ρ_upper_bound(d, X ∩ Hi, kwargs...) for Hi in constraints_list(P)])
 end
 
 # disambiguation
@@ -102,7 +102,7 @@ function ρ_upper_bound(d::AbstractVector{N},
                        kwargs...) where {N<:Real}
     X = cap.X    # compact set
     P = cap.Y    # polytope
-    return min([ρ_upper_bound(d, X ∩ Hi, kwargs...) for Hi in constraints_list(P)])
+    return minimum([ρ_upper_bound(d, X ∩ Hi, kwargs...) for Hi in constraints_list(P)])
 end
 
 # symmetric function
