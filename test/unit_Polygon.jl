@@ -103,7 +103,7 @@ for N in [Float64, Float32, Rational{Int}]
 
         # test constraints list of a VPolygon
         vp = tovrep(hp)
-        @test constraints_list(vp) == hp.constraints
+        @test ispermutation(constraints_list(vp), hp.constraints)
     end
 
     # concrete intersection of H-rep

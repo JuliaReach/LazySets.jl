@@ -87,8 +87,7 @@ for N in [Float64, Rational{Int}, Float32]
         @test length(p.vertices) == length(vl) && vl ⊆ p.vertices
 
         # list of constraints of a VPolytope; calculates tohrep
-        cl = constraints_list(V)
-        @test length(cl) == constraints_list(tohrep(V))
+        @test ispermutation(constraints_list(V), constraints_list(tohrep(V)))
     end
 end
 
