@@ -66,3 +66,9 @@ BoxDiagDirections
 ```
 
 See also `overapproximate(X::LazySet, dir::AbstractDirections)::HPolytope`.
+
+## Upper bounds
+
+```@docs
+ρ_upper_bound
+```
