@@ -80,9 +80,15 @@ for N in [Float64, Rational{Int}, Float32]
     @test vertices_list(p) == p.vertices
 
     if test_suite_polyhedra
+        V = VPolytope(polyhedron(p))
+
         # conversion to and from Polyhedra's VRep data structure
-        vl = vertices_list(VPolytope(polyhedron(p)))
+        vl = vertices_list(V)
         @test length(p.vertices) == length(vl) && vl ⊆ p.vertices
+
+        # list of constraints of a VPolytope; calculates tohrep
+        cl = constraints_list(V)
+        @test length(cl) == constraints_list(tohrep(V))
     end
 end
 
