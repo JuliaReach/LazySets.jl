@@ -249,10 +249,6 @@ describes the right-hand side of the directed line segment `pq`.
 """
 halfspace_right(L::LineSegment) = halfspace_right(L.p, L.q)
 
-function constraints_list(L::LineSegment)
-    
-end
-
 """
     constraints_list(L::LineSegment{N})::Vector{LinearConstraint{N}} where {N<:Real}
 
