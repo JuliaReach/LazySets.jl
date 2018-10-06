@@ -102,14 +102,31 @@ Return the support vector of a Cartesian product.
 ### Output
 
 The support vector in the given direction.
-If the direction has norm zero, the result depends on the product sets.
-
-### Algorithm
-
-
+If the direction has norm zero, the result depends on the wrapped sets.
 """
 function σ(d::AbstractVector{N}, cp::CartesianProduct{N}) where {N<:Real}
-    return [σ(d[1:dim(cp.X)], cp.X); σ(d[dim(cp.X)+1:length(d)], cp.Y)]
+    n1 = dim(cp.X)
+    return [σ(d[1:n1], cp.X); σ(d[n1+1:length(d)], cp.Y)]
+end
+
+"""
+    ρ(d::AbstractVector{N}, cp::CartesianProduct{N}) where {N<:Real}
+
+Return the support function of a Cartesian product.
+
+### Input
+
+- `d`  -- direction
+- `cp` -- Cartesian product
+
+### Output
+
+The support function in the given direction.
+If the direction has norm zero, the result depends on the wrapped sets.
+"""
+function ρ(d::AbstractVector{N}, cp::CartesianProduct{N}) where {N<:Real}
+    n1 = dim(cp.X)
+    return ρ(d[1:n1], cp.X) + ρ(d[n1+1:length(d)], cp.Y)
 end
 
 """
@@ -129,8 +146,9 @@ Check whether a given point is contained in a Cartesian product set.
 function ∈(x::AbstractVector{<:Real}, cp::CartesianProduct)::Bool
     @assert length(x) == dim(cp)
 
-    return ∈(view(x, 1:dim(cp.X)), cp.X) &&
-           ∈(view(x, dim(cp.X)+1:length(x)), cp.Y)
+    n1 = dim(cp.X)
+    return ∈(view(x, 1:n1), cp.X) &&
+           ∈(view(x, n1+1:length(x)), cp.Y)
 end
 
 """
@@ -249,13 +267,13 @@ The ambient dimension of the Cartesian product of a finite number of convex
 sets.
 """
 function dim(cpa::CartesianProductArray)::Int
-    return length(cpa.array) == 0 ? 0 : sum([dim(sj) for sj in cpa.array])
+    return length(cpa.array) == 0 ? 0 : sum([dim(Xi) for Xi in cpa.array])
 end
 
 """
     σ(d::AbstractVector{N}, cpa::CartesianProductArray{N}) where {N<:Real}
 
-Support vector of a Cartesian product.
+Support vector of a Cartesian product array.
 
 ### Input
 
@@ -269,13 +287,39 @@ If the direction has norm zero, the result depends on the product sets.
 """
 function σ(d::AbstractVector{N}, cpa::CartesianProductArray{N}) where {N<:Real}
     svec = similar(d)
-    jinit = 1
-    for sj in cpa.array
-        jend = jinit + dim(sj) - 1
-        svec[jinit:jend] = σ(d[jinit:jend], sj)
-        jinit = jend + 1
+    i0 = 1
+    for Xi in cpa.array
+        i1 = i0 + dim(Xi) - 1
+        svec[i0:i1] = σ(d[i0:i1], Xi)
+        i0 = i1 + 1
     end
     return svec
+end
+
+"""
+    ρ(d::AbstractVector{N}, cp::CartesianProductArray{N}) where {N<:Real}
+
+Return the support function of a Cartesian product array.
+
+### Input
+
+- `d`  -- direction
+- `cpa` -- Cartesian product array
+
+### Output
+
+The support function in the given direction.
+If the direction has norm zero, the result depends on the wrapped sets.
+"""
+function ρ(d::AbstractVector{N}, cpa::CartesianProductArray{N}) where {N<:Real}
+    sfun = zero(N)
+    i0 = 1
+    for Xi in cpa.array
+        i1 = i0 + dim(Xi) - 1
+        sfun += ρ(d[i0:i1], Xi)
+        i0 = i1 + 1
+    end
+    return sfun
 end
 
 """
@@ -298,13 +342,13 @@ function ∈(x::AbstractVector{N}, cpa::CartesianProductArray{N, <:LazySet{N}}
           )::Bool  where {N<:Real}
     @assert length(x) == dim(cpa)
 
-    jinit = 1
-    for sj in cpa.array
-        jend = jinit + dim(sj) - 1
-        if !∈(x[jinit:jend], sj)
+    i0 = 1
+    for Xi in cpa.array
+        i1 = i0 + dim(Xi) - 1
+        if !∈(x[i0:i1], Xi)
             return false
         end
-        jinit = jend + 1
+        i0 = i1 + 1
     end
     return true
 end
