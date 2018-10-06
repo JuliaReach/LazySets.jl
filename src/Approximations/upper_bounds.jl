@@ -28,7 +28,7 @@ end
 
 """
     ρ_upper_bound(d::AbstractVector{N},
-                  cap::Intersection{N}) where {N<:Real}
+                  cap::Intersection{N, <:LazySet{N}, <:LazySet{N}}) where {N<:Real}
 
 Return an upper bound of the support function of the intersection of two sets.
 
@@ -47,8 +47,8 @@ The support function of an intersection of ``X`` and ``Y`` is upper bounded by
 the minimum of the support functions of ``X`` and ``Y``.
 """
 function ρ_upper_bound(d::AbstractVector{N},
-                       cap::Intersection{N}) where {N<:Real}
-    return min(ρ_upper_bound(d, cap.X), ρ_upper_bound(d, cap.Y))
+                       cap::Intersection{N, <:LazySet, <:LazySet}; kwargs...) where {N<:Real}
+    return min(ρ_upper_bound(d, cap.X; kwargs...), ρ_upper_bound(d, cap.Y; kwargs...))
 end
 
 """
@@ -107,7 +107,7 @@ end
 
 # symmetric function
 function ρ_upper_bound(d::AbstractVector{N},
-                       cap::Intersection{N, <:AbstractPolytope{N}, <:LazySet};
+                       cap::Intersection{N, <:AbstractPolytope{N}, <:LazySet{N}};
                        kwargs...) where {N<:Real}
     return ρ_upper_bound(d, cap.Y ∩ cap.X; kwargs...)
 end
