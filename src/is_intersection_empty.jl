@@ -717,7 +717,7 @@ the half-space: ``σ(-a) ∈ hs``.
 The support vector is thus also a witness.
 
 Optional keyword arguments can be passed to the `ρ` function. In particular, if
-`X` is an lazy intersection, the option `upper_bound=true` may be useful.
+`X` is a lazy intersection, the option `upper_bound=true` may be useful.
 """
 function is_intersection_empty(X::LazySet{N},
                                hs::HalfSpace{N},
