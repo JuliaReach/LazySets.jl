@@ -40,7 +40,7 @@ matrices ``M``, all scalars ``\lambda``, and all vectors
 %
 \quad \rho_{\mathcal{X} \oplus \mathcal{Y}} (\ell) &= \rho_{\mathcal{X}} (\ell) + \rho_{\mathcal{Y}} (\ell) \tag{1.3} \\[1mm]
 %
-\quad \rho_{\mathcal{X} \times \mathcal{Y}} (\ell) &= \ell^\mathrm{T} \sigma_{\mathcal{X} \times \mathcal{Y}}(\ell) \tag{1.4} \\[1mm]
+\quad \rho_{\mathcal{X} \times \mathcal{Y}} (\ell) &= \ell^\mathrm{T} \sigma_{\mathcal{X} \times \mathcal{Y}}(\ell) = \rho_{\mathcal{X}}(\ell_1^\mathrm{T}) + \rho_{\mathcal{Y}}(\ell_2^\mathrm{T}) \tag{1.4} \\[1mm]
 %
 \quad \rho_{\mathrm{CH}(\mathcal{X}\cup\mathcal{Y})} (\ell) &= \max (\rho_{\mathcal{X}} (\ell), \rho_{\mathcal{Y}} (\ell)) \tag{1.5}
 \end{align*}
