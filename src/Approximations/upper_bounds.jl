@@ -2,7 +2,7 @@ export ρ_upper_bound
 
 """
     ρ_upper_bound(d::AbstractVector{N},
-                  X::LazySet) where {N<:AbstractFloat}
+                  X::LazySet) where {N<:Real}
 
 Return an upper bound of the support function of a given set.
 
@@ -13,7 +13,7 @@ Return an upper bound of the support function of a given set.
 
 ### Output
 
-An upper bound of the support function of the given intersection.
+An upper bound of the support function of the given set.
 
 ### Algorithm
 
@@ -26,8 +26,33 @@ end
 
 """
     ρ_upper_bound(d::AbstractVector{N},
+                  cap::Intersection{N, <:LazySet, S}) where {N<:Real, S<:AbstractPolytope{N}}
+
+Return an upper bound of the support function of the intersection of two sets.
+
+### Input
+
+- `d`   -- direction
+- `cap` -- intersection
+
+### Output
+
+An upper bound of the support function of the given intersection.
+
+### Algorithm
+
+The support function of an intersection of ``X`` and ``Y`` is upper bounded by
+the minimum of the support functions of ``X`` and ``Y``.
+"""
+function ρ_upper_bound(d::AbstractVector{N},
+                       cap::Intersection{N, <:LazySet, S}) where {N<:Real, S<:AbstractPolytope{N}}
+    return min(ρ_upper_bound(d, cap.X), ρ_upper_bound(d, cap.Y))
+end
+
+"""
+    ρ_upper_bound(d::AbstractVector{N},
                   cap::Intersection{N, <:LazySet, S};
-                  kwargs...) where {N<:AbstractFloat, S<:AbstractPolytope{N}}
+                  kwargs...) where {N<:Real, S<:AbstractPolytope{N}}
 
 Return an upper bound of the intersection between a compact set and a
 polytope along a given direction.
@@ -62,7 +87,7 @@ intersection is empty.
 """
 function ρ_upper_bound(d::AbstractVector{N},
                        cap::Intersection{N, <:LazySet, S};
-                       kwargs...) where {N<:AbstractFloat, S<:AbstractPolytope{N}}
+                       kwargs...) where {N<:Real, S<:AbstractPolytope{N}}
 
     X = cap.X    # compact set
     P = cap.Y    # polytope
