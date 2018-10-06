@@ -2,7 +2,8 @@ export ρ_upper_bound
 
 """
     ρ_upper_bound(d::AbstractVector{N},
-                  X::LazySet) where {N<:Real}
+                  X::LazySet{N};
+                  kwargs...) where {N<:Real}
 
 Return an upper bound of the support function of a given set.
 
@@ -20,13 +21,14 @@ An upper bound of the support function of the given set.
 The default implementation of `ρ_upper_bound` is the exact `ρ(d, X)`.
 """
 function ρ_upper_bound(d::AbstractVector{N},
-                       X::LazySet) where {N<:Real}
+                       X::LazySet{N};
+                       kwargs...) where {N<:Real}
     return ρ(d, X)
 end
 
 """
     ρ_upper_bound(d::AbstractVector{N},
-                  cap::Intersection{N, <:LazySet, S}) where {N<:Real, S<:AbstractPolytope{N}}
+                  cap::Intersection{N}) where {N<:Real}
 
 Return an upper bound of the support function of the intersection of two sets.
 
@@ -45,14 +47,21 @@ The support function of an intersection of ``X`` and ``Y`` is upper bounded by
 the minimum of the support functions of ``X`` and ``Y``.
 """
 function ρ_upper_bound(d::AbstractVector{N},
-                       cap::Intersection{N, <:LazySet, S}) where {N<:Real, S<:AbstractPolytope{N}}
+                       cap::Intersection{N}) where {N<:Real}
+    return min(ρ_upper_bound(d, cap.X), ρ_upper_bound(d, cap.Y))
+end
+
+# disambiguation
+function ρ_upper_bound(d::AbstractVector{N},
+                       cap::Intersection{N, <:AbstractPolytope{N}, <:AbstractPolytope{N}};
+                       kwargs...) where {N<:Real}
     return min(ρ_upper_bound(d, cap.X), ρ_upper_bound(d, cap.Y))
 end
 
 """
     ρ_upper_bound(d::AbstractVector{N},
-                  cap::Intersection{N, <:LazySet, S};
-                  kwargs...) where {N<:Real, S<:AbstractPolytope{N}}
+                  cap::Intersection{N, <:LazySet, <:AbstractPolytope{N}};
+                  kwargs...) where {N<:Real}
 
 Return an upper bound of the intersection between a compact set and a
 polytope along a given direction.
@@ -86,10 +95,17 @@ This method of overapproximation can return a non-empty set even if the original
 intersection is empty.
 """
 function ρ_upper_bound(d::AbstractVector{N},
-                       cap::Intersection{N, <:LazySet, S};
-                       kwargs...) where {N<:Real, S<:AbstractPolytope{N}}
+                       cap::Intersection{N, <:LazySet, <:AbstractPolytope{N}};
+                       kwargs...) where {N<:Real}
 
     X = cap.X    # compact set
     P = cap.Y    # polytope
     return min([ρ_upper_bound(d, X ∩ Hi, kwargs...) for Hi in constraints_list(P)])
+end
+
+# symmetric function
+function ρ_upper_bound(d::AbstractVector{N},
+                       cap::Intersection{N, <:AbstractPolytope{N}, <:LazySet};
+                       kwargs...) where {N<:Real}
+    return ρ_upper_bound(d, cap.Y ∩ cap.X; kwargs...)
 end
