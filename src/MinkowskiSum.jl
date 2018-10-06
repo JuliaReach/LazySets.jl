@@ -103,8 +103,8 @@ If the direction has norm zero, the result depends on the summand sets.
 ### Algorithm
 
 The support vector in direction ``d`` of the Minkowski sum of two sets ``X``
-and ``Y`` is the sum of the support vectors of ``X`` and ``Y`` in
-direction ``d``. 
+and ``Y`` is the sum of the support vectors of ``X`` and ``Y`` in direction
+``d``.
 """
 function σ(d::AbstractVector{N}, ms::MinkowskiSum{N}) where {N<:Real}
     return σ(d, ms.X) + σ(d, ms.Y)
@@ -127,8 +127,8 @@ The support function in the given direction.
 ### Algorithm
 
 The support function in direction ``d`` of the Minkowski sum of two sets ``X``
-and ``Y`` is the sum of the support function of ``X`` and ``Y`` in
-direction ``d``. 
+and ``Y`` is the sum of the support functions of ``X`` and ``Y`` in direction
+``d``.
 """
 function ρ(d::AbstractVector{N}, ms::MinkowskiSum{N}) where {N<:Real}
     return ρ(d, ms.X) + ρ(d, ms.Y)

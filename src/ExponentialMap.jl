@@ -243,8 +243,8 @@ able to use `expmv`.
 """
 function σ(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
     d_dense = d isa Vector ? d : Vector(d)
-    v = expmv(one(N), transpose(em.spmexp.M), d_dense) # v   <- exp(A') * d
-    return expmv(one(N), em.spmexp.M, σ(v, em.X)) # res <- exp(A) * σ(v, S)
+    v = expmv(one(N), transpose(em.spmexp.M), d_dense) # v   <- exp(M') * d
+    return expmv(one(N), em.spmexp.M, σ(v, em.X)) # res <- exp(M) * σ(v, S)
 end
 
 """

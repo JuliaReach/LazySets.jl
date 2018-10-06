@@ -104,7 +104,7 @@ end
 """
     ρ(d::AbstractVector{N}, ch::ConvexHull{N}) where {N<:Real}
 
-Return the support vector of a convex hull of two convex sets in a given
+Return the support function of a convex hull of two convex sets in a given
 direction.
 
 ### Input
@@ -259,8 +259,8 @@ The support function of the convex hull array in the given direction.
 
 ### Algorithm
 
-This algorihm calculates the maximum over all ``ρ(d, Xi)`` where ``X_1, …, X_k``
-are the sets in the array `cha.`
+This algorihm calculates the maximum over all ``ρ(d, X_i)`` where the
+``X_1, …, X_k`` are the sets in the array `cha`.
 """
 function ρ(d::AbstractVector{N}, cha::ConvexHullArray{N}) where {N<:Real}
     return maximum([ρ(d, Xi) for Xi in array(cha)])
