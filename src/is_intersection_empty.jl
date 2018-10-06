@@ -715,13 +715,17 @@ A compact convex set intersects with a half-space iff the support vector in
 the negative direction of the half-space's normal vector ``a`` is contained in
 the half-space: ``σ(-a) ∈ hs``.
 The support vector is thus also a witness.
+
+Optional keyword arguments can be passed to the `ρ` function. In particular, if
+`X` is an lazy intersection, the option `upper_bound=true` may be useful.
 """
 function is_intersection_empty(X::LazySet{N},
                                hs::HalfSpace{N},
-                               witness::Bool=false
-                              )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
+                               witness::Bool=false;
+                               kwargs...
+                               )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
     if !witness
-        return -ρ(-hs.a, X) > hs.b
+        return -ρ(-hs.a, X; kwargs...) > hs.b
     end
 
     # for witness production, we compute the support vector instead
@@ -734,9 +738,10 @@ end
 # symmetric function
 function is_intersection_empty(hs::HalfSpace{N},
                                X::LazySet{N},
-                               witness::Bool=false
+                               witness::Bool=false;
+                               kwargs...
                               )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
-    return is_intersection_empty(X, hs, witness)
+    return is_intersection_empty(X, hs, witness; kwargs...)
 end
 
 """
