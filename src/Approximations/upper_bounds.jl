@@ -51,13 +51,6 @@ function ρ_upper_bound(d::AbstractVector{N},
     return min(ρ_upper_bound(d, cap.X), ρ_upper_bound(d, cap.Y))
 end
 
-# disambiguation
-function ρ_upper_bound(d::AbstractVector{N},
-                       cap::Intersection{N, <:AbstractPolytope{N}, <:AbstractPolytope{N}};
-                       kwargs...) where {N<:Real}
-    return min(ρ_upper_bound(d, cap.X), ρ_upper_bound(d, cap.Y))
-end
-
 """
     ρ_upper_bound(d::AbstractVector{N},
                   cap::Intersection{N, <:LazySet, <:AbstractPolytope{N}};
@@ -98,6 +91,15 @@ function ρ_upper_bound(d::AbstractVector{N},
                        cap::Intersection{N, <:LazySet, <:AbstractPolytope{N}};
                        kwargs...) where {N<:Real}
 
+    X = cap.X    # compact set
+    P = cap.Y    # polytope
+    return min([ρ_upper_bound(d, X ∩ Hi, kwargs...) for Hi in constraints_list(P)])
+end
+
+# disambiguation
+function ρ_upper_bound(d::AbstractVector{N},
+                       cap::Intersection{N, <:AbstractPolytope{N}, <:AbstractPolytope{N}};
+                       kwargs...) where {N<:Real}
     X = cap.X    # compact set
     P = cap.Y    # polytope
     return min([ρ_upper_bound(d, X ∩ Hi, kwargs...) for Hi in constraints_list(P)])
