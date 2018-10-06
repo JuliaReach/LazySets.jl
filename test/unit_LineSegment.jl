@@ -1,3 +1,5 @@
+import LazySets.ispermutation
+
 for N in [Float64, Rational{Int}, Float32]
     # construction
     p, q = N[1, 1], N[2, 2]
@@ -98,4 +100,13 @@ for N in [Float64, Rational{Int}, Float32]
     # halfspace_left & halfspace_right
     @test N[1, 2] ∈ halfspace_left(l)
     @test N[2, 1] ∈ halfspace_right(l)
+
+    # constraints list
+    l = LineSegment(N[0, 0], N[1, 1])
+    clist = constraints_list(l)
+
+    @test ispermutation(clist, [HalfSpace([1.0, -1.0], 0.0),  # x <= y
+                                HalfSpace([-1.0, 1.0], 0.0),  # x >= y
+                                HalfSpace([-1.0, -1.0], 0.0), # y >= -x
+                                HalfSpace([1.0, 1.0], 2.0)])  # y <= 2-x
 end

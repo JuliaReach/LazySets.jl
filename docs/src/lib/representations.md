@@ -246,6 +246,7 @@ dim(::LineSegment)
 ∈(::AbstractVector{Real}, ::LineSegment{Real})
 LazySets.halfspace_left(::LineSegment)
 LazySets.halfspace_right(::LineSegment)
+LazySets.constraints_list(::LineSegment)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
