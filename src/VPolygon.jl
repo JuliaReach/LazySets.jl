@@ -275,3 +275,25 @@ function ∈(x::AbstractVector{N}, P::VPolygon{N})::Bool where {N<:Real}
     end
     return true
 end
+
+"""
+    constraints_list(P::VPolygon{N})::Vector{LinearConstraint{N}} where {N<:Real}
+
+Return the list of constraints defining a polygon in V-representation.
+
+### Input
+
+- `P` -- polygon in V-representation
+
+### Output
+
+The list of constraints of the polygon.
+
+### Algorithm
+
+First the H-representation of ``P`` is computed, then its list of constraints
+is returned. 
+"""
+function constraints_list(P::VPolygon{N})::Vector{LinearConstraint{N}} where {N<:Real}
+    return constraints_list(tohrep(P))
+end

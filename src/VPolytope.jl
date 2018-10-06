@@ -116,6 +116,27 @@ function vertices_list(P::VPolytope{N})::Vector{Vector{N}} where {N<:Real}
     return P.vertices
 end
 
+"""
+    constraints_list(P::VPolytope{N})::Vector{LinearConstraint{N}} where {N<:Real}
+
+Return the list of constraints defining a polytope in V-representation.
+
+### Input
+
+- `P` -- polytope in V-representation
+
+### Output
+
+The list of constraints of the polytope.
+
+### Algorithm
+
+First the H-representation of ``P`` is computed, then its list of constraints
+is returned. 
+"""
+function constraints_list(P::VPolytope{N})::Vector{LinearConstraint{N}} where {N<:Real}
+    return constraints_list(tohrep(P))
+end
 
 function load_polyhedra_vpolytope() # function to be loaded by Requires
 return quote
