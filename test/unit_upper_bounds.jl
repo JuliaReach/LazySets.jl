@@ -7,4 +7,4 @@ d = [1.0, 2.0]
 using Optim
 @test ρ(d, X) == ρ_upper_bound(d, X ∩ X)
 M = [1.0 1.0; 1.0 1.0]
-@test isapprox(ρ_upper_bound(d, X ∩ (M * X)), 2.5, atol=1e-6)
+@test isapprox(ρ_upper_bound(d, X ∩ (M * X)), 3.0, atol=1e-6)
