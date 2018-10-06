@@ -36,7 +36,7 @@ polytope along a given direction.
 
 - `d`      -- direction
 - `cap`    -- intersection of a compact set and a polytope
-- `kwargs` -- additional arguents that are passed to the support function algorithm
+- `kwargs` -- additional arguments that are passed to the support function algorithm
 
 ### Output
 
