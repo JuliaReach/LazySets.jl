@@ -262,6 +262,6 @@ The support function of the convex hull array in the given direction.
 This algorihm calculates the maximum over all ``ρ(d, Xi)`` where ``X_1, …, X_k``
 are the sets in the array `cha.`
 """
-function ρρ(d::AbstractVector{N}, cha::ConvexHullArray{N}) where {N<:Real}
+function ρ(d::AbstractVector{N}, cha::ConvexHullArray{N}) where {N<:Real}
     return maximum([ρ(d, Xi) for Xi in array(cha)])
 end
