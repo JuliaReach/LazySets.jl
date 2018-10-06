@@ -243,8 +243,36 @@ able to use `expmv`.
 """
 function σ(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
     d_dense = d isa Vector ? d : Vector(d)
-    v = expmv(one(N), transpose(em.spmexp.M), d_dense) # v   <- exp(A') * d
-    return expmv(one(N), em.spmexp.M, σ(v, em.X)) # res <- exp(A) * σ(v, S)
+    v = expmv(one(N), transpose(em.spmexp.M), d_dense) # v   <- exp(M') * d
+    return expmv(one(N), em.spmexp.M, σ(v, em.X)) # res <- exp(M) * σ(v, S)
+end
+
+"""
+    ρ(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
+
+Return the support function of the exponential map.
+
+### Input
+
+- `d`  -- direction
+- `em` -- exponential map
+
+### Output
+
+The support function in the given direction.
+
+### Notes
+
+If ``E = \\exp(M)⋅S``, where ``M`` is a matrix and ``S`` is a convex set, it
+follows that ``ρ(d, E) = ρ(\\exp(M)^T d, S)`` for any direction ``d``.
+
+We allow sparse direction vectors, but will convert them to dense vectors to be
+able to use `expmv`.
+"""
+function ρ(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
+    d_dense = d isa Vector ? d : Vector(d)
+    v = expmv(one(N), transpose(em.spmexp.M), d_dense) # v <- exp(M^T) * d
+    return ρ(v, em.X)
 end
 
 """

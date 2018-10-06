@@ -99,9 +99,39 @@ Return the support vector of a Minkowski sum.
 
 The support vector in the given direction.
 If the direction has norm zero, the result depends on the summand sets.
+
+### Algorithm
+
+The support vector in direction ``d`` of the Minkowski sum of two sets ``X``
+and ``Y`` is the sum of the support vectors of ``X`` and ``Y`` in direction
+``d``.
 """
 function σ(d::AbstractVector{N}, ms::MinkowskiSum{N}) where {N<:Real}
     return σ(d, ms.X) + σ(d, ms.Y)
+end
+
+"""
+    ρ(d::AbstractVector{N}, ms::MinkowskiSum{N}) where {N<:Real}
+
+Return the support function of a Minkowski sum.
+
+### Input
+
+- `d`  -- direction
+- `ms` -- Minkowski sum
+
+### Output
+
+The support function in the given direction.
+
+### Algorithm
+
+The support function in direction ``d`` of the Minkowski sum of two sets ``X``
+and ``Y`` is the sum of the support functions of ``X`` and ``Y`` in direction
+``d``.
+"""
+function ρ(d::AbstractVector{N}, ms::MinkowskiSum{N}) where {N<:Real}
+    return ρ(d, ms.X) + ρ(d, ms.Y)
 end
 
 # =================================
@@ -210,6 +240,31 @@ If the direction has norm zero, the result depends on the summand sets.
 function σ(d::AbstractVector{N}, msa::MinkowskiSumArray{N}) where {N<:Real}
     return σ_helper(d, msa.array)
 end
+
+"""
+    ρ(d::AbstractVector{N}, msa::MinkowskiSumArray{N}) where {N<:Real}
+
+Return the support function of a Minkowski sum array of a finite number of sets
+in a given direction.
+
+### Input
+
+- `d`   -- direction
+- `msa` -- Minkowski sum array
+
+### Output
+
+The support function in the given direction.
+
+### Algorithm
+
+The support function of the Minkowski sum of sets is the sum of the support
+functions of each set. 
+"""
+function ρ(d::AbstractVector{N}, msa::MinkowskiSumArray{N}) where {N<:Real}
+    return sum([ρ(d, Xi) for Xi in msa.array])
+end
+
 
 # =============================================================
 # Minkowski sum of an array of sets with a support vector cache

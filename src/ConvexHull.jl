@@ -88,6 +88,10 @@ direction.
 
 - `d`  -- direction
 - `ch` -- convex hull of two convex sets
+
+### Output
+
+The support vector of the convex hull in the given direction.
 """
 function σ(d::AbstractVector{N}, ch::ConvexHull{N}) where {N<:Real}
     σ1 = σ(d, ch.X)
@@ -95,6 +99,25 @@ function σ(d::AbstractVector{N}, ch::ConvexHull{N}) where {N<:Real}
     ρ1 = dot(d, σ1)
     ρ2 = dot(d, σ2)
     return ρ1 >= ρ2 ? σ1 : σ2
+end
+
+"""
+    ρ(d::AbstractVector{N}, ch::ConvexHull{N}) where {N<:Real}
+
+Return the support function of a convex hull of two convex sets in a given
+direction.
+
+### Input
+
+- `d`  -- direction
+- `ch` -- convex hull of two convex sets
+
+### Output
+
+The support function of the convex hull in the given direction.
+"""
+function ρ(d::AbstractVector{N}, ch::ConvexHull{N}) where {N<:Real}
+    return max(ρ(d, ch.X), ρ(d, ch.Y))
 end
 
 # ================================
@@ -218,4 +241,27 @@ function σ(d::AbstractVector{N}, cha::ConvexHullArray{N}) where {N<:Real}
         end
     end
     return s
+end
+
+"""
+    ρ(d::AbstractVector{N}, cha::ConvexHullArray{N}) where {N<:Real}
+
+Return the support function of a convex hull array in a given direction.
+
+### Input
+
+- `d`   -- direction
+- `cha` -- convex hull array
+
+### Output
+
+The support function of the convex hull array in the given direction.
+
+### Algorithm
+
+This algorihm calculates the maximum over all ``ρ(d, X_i)`` where the
+``X_1, …, X_k`` are the sets in the array `cha`.
+"""
+function ρ(d::AbstractVector{N}, cha::ConvexHullArray{N}) where {N<:Real}
+    return maximum([ρ(d, Xi) for Xi in array(cha)])
 end
