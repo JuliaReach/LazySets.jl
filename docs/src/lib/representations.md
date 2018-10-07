@@ -70,6 +70,7 @@ Ball1
 ∈(::AbstractVector{Real}, ::Ball1{Real})
 vertices_list(::Ball1)
 center(::Ball1)
+constraints_list(::Ball1)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
