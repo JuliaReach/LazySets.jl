@@ -182,3 +182,34 @@ function ∈(x::AbstractVector{N}, B::Ball1{N})::Bool where {N<:Real}
     end
     return sum <= B.radius
 end
+
+"""
+    constraints_list(P::Ball1{N})::Vector{LinearConstraint{N}} where {N<:Real}
+
+Return the list of constraints defining a ball in the 1-norm.
+
+### Input
+
+- `B` -- ball in the 1-norm
+
+### Output
+
+The list of constraints of the ball.
+
+### Algorithm
+
+The constraints can be defined as ``d_i^T (x-c) ≤ r`` for all ``d_i``, where
+``d_i`` is a vector with elements ``1`` or ``-1`` in ``n`` dimensions. To span
+all possible ``d_i``, the function `Iterators.product` is used.
+"""
+function constraints_list(B::Ball1{N})::Vector{LinearConstraint{N}} where {N<:Real}
+    n = LazySets.dim(B)
+    c, r = B.center, B.radius
+    clist = Vector{LinearConstraint{N}}(undef)
+    sizehint!(clist, 2^n)
+    for (i, di) in enumerate(Iterators.product([[one(N), -one(N)] for i = 1:n]...))
+        di = collect(di) # tuple -> vector
+        push!(clist, LinearConstraint(di, dot(di, c) + r))
+    end
+    return clist
+end
