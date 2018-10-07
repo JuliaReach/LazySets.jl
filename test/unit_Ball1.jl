@@ -67,4 +67,12 @@ for N in [Float64, Rational{Int}, Float32]
     b = Ball1(N[1, 2], N(0))
     vl = vertices_list(b)
     @test vl == [center(b)]
+
+    # list of constraints
+    b = Ball1(N[0, 0], N(1))
+    clist = constraints_list(b)
+    @test ispermutation(clist, [HalfSpace(N[1, 1], N(1)),  # x + y <= 1
+                                HalfSpace(N[-1, 1], N(1)),  # -x + y <= 1
+                                HalfSpace(N[1, -1], N(1)), # x - y <= 1
+                                HalfSpace(N[-1, -1], N(1))])  # x + y >= -1
 end
