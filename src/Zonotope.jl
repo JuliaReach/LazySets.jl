@@ -6,7 +6,8 @@ export Zonotope,
        linear_map,
        scale,
        ngens,
-       reduce_order
+       reduce_order,
+       constraints_list
 
 """
     Zonotope{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
@@ -388,4 +389,27 @@ function reduce_order(Z::Zonotope{N}, r)::Zonotope{N} where {N<:Real}
         Gred = Gbox
     end
     return Zonotope(c, Gred)
+end
+
+"""
+    constraints_list(P::Zonotope{N})::Vector{LinearConstraint{N}} where {N<:Real}
+
+Return the list of constraints defining a zonotope.
+
+### Input
+
+- `Z` -- zonotope
+
+### Output
+
+The list of constraints of the polyhedron.
+
+### Algorithm
+
+This is a naive implementation that calculates all vertices and transforms
+to the H-representation of the zonotope. The transformation to the dual
+representation requires the concrete polyhedra package `Polyhedra`.
+"""
+function constraints_list(Z::Zonotope{N})::Vector{LinearConstraint{N}} where {N<:Real}
+    return constraints_list(convert(HPolytope, Z))
 end
