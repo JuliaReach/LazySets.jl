@@ -207,8 +207,8 @@ function constraints_list(B::Ball1{N})::Vector{LinearConstraint{N}} where {N<:Re
     c, r = B.center, B.radius
     clist = Vector{LinearConstraint{N}}(undef, 2^n)
     for (i, di) in enumerate(Iterators.product([[one(N), -one(N)] for i = 1:n]...))
-        di = collect(di) # tuple -> vector
-        clist[i] = LinearConstraint(di, dot(di, c) + r)
+        d = collect(di) # tuple -> vector
+        clist[i] = LinearConstraint(d, dot(d, c) + r)
     end
     return clist
 end
