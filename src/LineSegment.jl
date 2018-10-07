@@ -279,9 +279,8 @@ function constraints_list(L::LineSegment{N})::Vector{LinearConstraint{N}} where 
     clist[1] = halfspace_left(L)
     clist[2] = halfspace_right(L)
     p, q = L.p, L.q
-    r = [p[1] - (q[2]-p[2]), p[2] + (q[1]-p[1])]
-    clist[3] = halfspace_right(L.p, r)
-    s = [q[1] - (q[2]-p[2]), q[2] + (q[1]-p[1])]
-    clist[4] = halfspace_left(L.q, s)
+    d = [(p[2]-q[2]), (q[1]-p[1])]
+    clist[3] = halfspace_right(p, p + d)
+    clist[4] = halfspace_left(q, q + d)
     return clist
 end
