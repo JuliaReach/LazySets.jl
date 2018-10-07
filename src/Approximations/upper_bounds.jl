@@ -28,6 +28,28 @@ end
 
 """
     ρ_upper_bound(d::AbstractVector{N},
+                  lm::LinearMap{N};
+                  kwargs...) where {N<:Real}
+
+Return an upper bound of the support function of a given linear map.
+
+### Input
+
+- `d`  -- direction
+- `lm` -- linear map
+
+### Output
+
+An upper bound of the support function of the given linear map.
+"""
+function ρ_upper_bound(d::AbstractVector{N},
+                       lm::LinearMap{N};
+                       kwargs...) where {N<:Real}
+    return ρ_upper_bound(_At_mul_B(lm.M, d), lm.X)
+end
+
+"""
+    ρ_upper_bound(d::AbstractVector{N},
                   cap::Intersection{N}; kwargs...) where {N<:Real}
 
 Return an upper bound of the support function of the intersection of two sets.
