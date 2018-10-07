@@ -1,7 +1,8 @@
 import Base.∈
 
 export LineSegment,
-       halfspace_left, halfspace_right
+       halfspace_left, halfspace_right,
+       constraints_list
 
 """
     LineSegment{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
@@ -24,9 +25,8 @@ julia> dim(s)
 2
 ```
 
-Use ``plot(s)`` to plot the extreme points of `s` and the line segment joining
-them.
-Membership test is computed with ∈ (`in`):
+Use `plot(s)` to plot the extreme points of `s` and the line segment joining
+them. Membership test is computed with ∈ (`in`):
 
 ```jldoctest linesegment_constructor
 julia> [0., 0] ∈ s && [.25, .25] ∈ s && [1., 1] ∈ s && !([.5, .25] ∈ s)
@@ -248,3 +248,39 @@ The half-space whose boundary goes through the two points `p` and `q` and which
 describes the right-hand side of the directed line segment `pq`.
 """
 halfspace_right(L::LineSegment) = halfspace_right(L.p, L.q)
+
+"""
+    constraints_list(L::LineSegment{N})::Vector{LinearConstraint{N}} where {N<:Real}
+
+Return the list of constraints defining a line segment in 2D.
+
+### Input
+
+- `L` -- line segment
+
+### Output
+
+A vector of constraints that define the line segment.
+
+### Algorithm
+
+``L`` is defined by 4 constraints. In this algorithm, the first two constraints
+are returned by ``halfspace_right`` and ``halfspace_left``, and the other two
+are obtained by considering the vector normal to the line segment that passes
+through each opposite vertex.
+
+### Notes
+
+This function returns a vector of halfspaces. It does not return equality
+constraints.
+"""
+function constraints_list(L::LineSegment{N})::Vector{LinearConstraint{N}} where {N<:Real}
+    clist = Vector{LinearConstraint{N}}(undef, 4)
+    clist[1] = halfspace_left(L)
+    clist[2] = halfspace_right(L)
+    p, q = L.p, L.q
+    d = [(p[2]-q[2]), (q[1]-p[1])]
+    clist[3] = halfspace_right(p, p + d)
+    clist[4] = halfspace_left(q, q + d)
+    return clist
+end
