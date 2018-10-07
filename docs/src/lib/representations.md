@@ -318,6 +318,7 @@ an_element(::VPolygon{N}) where {N<:Real}
 vertices_list(::VPolygon)
 tohrep(::VPolygon)
 tovrep(::VPolygon)
+constraints_list(::VPolygon)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
