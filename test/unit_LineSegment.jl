@@ -1,5 +1,3 @@
-import LazySets.ispermutation
-
 for N in [Float64, Rational{Int}, Float32]
     # construction
     p, q = N[1, 1], N[2, 2]
