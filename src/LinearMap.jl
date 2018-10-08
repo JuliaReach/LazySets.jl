@@ -172,14 +172,16 @@ function σ(d::AbstractVector{N}, lm::LinearMap{N}) where {N<:Real}
 end
 
 """
-    ρ(d::AbstractVector{N}, lm::LinearMap{N}) where {N<:Real}
+    ρ(d::AbstractVector{N}, lm::LinearMap{N}; kwargs...) where {N<:Real}
 
 Return the support function of the linear map.
 
 ### Input
 
-- `d`  -- direction
-- `lm` -- linear map
+- `d`      -- direction
+- `lm`     -- linear map
+- `kwargs` -- additional arguments that are passed to the support function
+              algorithm
 
 ### Output
 
@@ -191,8 +193,8 @@ If the direction has norm zero, the result depends on the wrapped set.
 If ``L = M⋅S``, where ``M`` is a matrix and ``S`` is a convex set, it follows
 that ``ρ(d, L) = ρ(M^T d, S)`` for any direction ``d``.
 """
-function ρ(d::AbstractVector{N}, lm::LinearMap{N}) where {N<:Real}
-    return ρ(_At_mul_B(lm.M, d), lm.X)
+function ρ(d::AbstractVector{N}, lm::LinearMap{N}; kwargs...) where {N<:Real}
+    return ρ(_At_mul_B(lm.M, d), lm.X; kwargs...)
 end
 
 """
