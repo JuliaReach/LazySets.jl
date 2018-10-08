@@ -1,4 +1,4 @@
-import Base.∈
+import Base: ∈, isempty
 
 export EmptySet, ∅,
        an_element
@@ -94,6 +94,23 @@ An error.
 """
 function an_element(∅::EmptySet)
     error("an empty set does not have any element")
+end
+
+"""
+    isempty(∅::EmptySet)
+
+Return if the empty set is empty or not.
+
+### Input
+
+- `∅` -- empty set
+
+### Output
+
+`true`.
+"""
+function isempty(∅::EmptySet)
+    return true
 end
 
 """
