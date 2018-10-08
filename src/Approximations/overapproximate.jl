@@ -71,7 +71,8 @@ function overapproximate(S::LazySet,
 end
 
 """
-    overapproximate(S::LazySet, Type{<:Hyperrectangle})::Hyperrectangle
+    overapproximate(S::LazySet,
+                    Type{<:Hyperrectangle})::Union{Hyperrectangle, EmptySet}
 
 Return an approximation of a given set as a hyperrectangle.
 
@@ -89,16 +90,18 @@ A hyperrectangle.
 function overapproximate(S::LazySet,
                          ::Type{<:Hyperrectangle};
                          upper_bound::Bool=false
-                        )::Hyperrectangle
+                        )::Union{Hyperrectangle, EmptySet}
     box_approximation(S; upper_bound=upper_bound)
 end
 
 """
-    overapproximate(S::LazySet)::Hyperrectangle
+    overapproximate(S::LazySet)::Union{Hyperrectangle, EmptySet}
 
 Alias for `overapproximate(S, Hyperrectangle)`.
 """
-overapproximate(S::LazySet; upper_bound::Bool=false)::Hyperrectangle =
+overapproximate(S::LazySet;
+                upper_bound::Bool=false
+               )::Union{Hyperrectangle, EmptySet} =
     overapproximate(S, Hyperrectangle; upper_bound=upper_bound)
 
 """
