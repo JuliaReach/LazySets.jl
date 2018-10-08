@@ -118,16 +118,17 @@ end
 ```
     σ_helper(d::AbstractVector{N},
              hp::Hyperplane{N},
-             [name]::String="hyperplane") where {N<:Real}
+             [halfspace]::Bool=false) where {N<:Real}
 ```
 
 Return the support vector of a hyperplane.
 
 ### Input
 
-- `d`  -- direction
-- `hp` -- hyperplane
-- `name` -- (optional, default: "hyperplane") name for error messages
+- `d`         -- direction
+- `hp`        -- hyperplane
+- `halfspace` -- (optional, default: false) `true` if the support vector should
+                 be computed for a half-space
 
 ### Output
 
@@ -140,13 +141,15 @@ Otherwise this function throws an error.
 """
 @inline function σ_helper(d::AbstractVector{N},
                           hp::Hyperplane{N},
-                          name::String="hyperplane") where {N<:Real}
+                          halfspace::Bool=false) where {N<:Real}
     @assert (length(d) == dim(hp)) "cannot compute the support vector of a " *
-        "$(dim(hp))-dimensional $name along a vector of length $(length(d))"
+        "$(dim(hp))-dimensional " * (halfspace ? "halfspace" : "hyperplane") *
+        " along a vector of length $(length(d))"
 
     @inline function not_solvable(d, hp)
-        error("the support vector for the $name with normal direction " *
-            "$(hp.a) is not defined along a direction $d")
+        error("the support vector for the " *
+            (halfspace ? "halfspace" : "hyperplane") * " with normal " *
+            "direction $(hp.a) is not defined along a direction $d")
     end
 
     first_nonzero_entry_a = -1
@@ -167,6 +170,9 @@ Otherwise this function throws an error.
                 elseif first_nonzero_entry_a == -1
                     factor = hp.a[i] / d[i]
                     first_nonzero_entry_a = i
+                    if halfspace && factor < 0
+                        not_solvable(d, hp)
+                    end
                 elseif d[i] * factor != hp.a[i]
                     not_solvable(d, hp)
                 end
