@@ -43,6 +43,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test !∈(N[0], E)
     @test !∈(N[0, 0], E)
 
+    # emptiness check
+    @test isempty(E)
+
     # an_element/norm/radius/diameter functions
     @test_throws ErrorException an_element(E)
     @test_throws ErrorException norm(E)
