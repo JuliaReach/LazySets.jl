@@ -28,6 +28,33 @@ end
 
 """
     ρ_upper_bound(d::AbstractVector{N},
+                  X::LazySet{N};
+                  kwargs...) where {N<:Real}
+
+Return an upper bound of the support function of a given set.
+
+### Input
+
+- `d` -- direction
+- `X` -- set
+
+### Output
+
+An upper bound of the support function of the given set.
+
+### Algorithm
+
+The default implementation of `ρ_upper_bound` for lazy operations is to pass
+all keyword arguments to `ρ(d, X; kwargs...)` if that method exists.
+"""
+function ρ_upper_bound(d::AbstractVector{N},
+                       X::Union{LinearMap{N}};
+                       kwargs...) where {N<:Real}
+    return ρ(d, X, upper_bound=true, kwargs...)
+end
+
+"""
+    ρ_upper_bound(d::AbstractVector{N},
                   cap::Intersection{N}; kwargs...) where {N<:Real}
 
 Return an upper bound of the support function of the intersection of two sets.
