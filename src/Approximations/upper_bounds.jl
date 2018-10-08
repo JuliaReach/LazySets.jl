@@ -141,8 +141,8 @@ end
 
 """
     ρ_upper_bound(d::AbstractVector{N},
-                  cap::Intersection{N, <:LazySet,
-                                       <:Union{HalfSpace, Hyperplane, Line}};
+                  cap::Intersection{N, <:LazySet{N},
+                                       <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}};
                   [algorithm]::String="line_search",
                   [check_intersection]::Bool=true,
                   [kwargs...]) where N<:Real
@@ -193,8 +193,8 @@ We fall back to the implementation of `ρ` with the same arguments.
 """
 function ρ_upper_bound(d::AbstractVector{N},
                        cap::Intersection{N,
-                                         <:LazySet,
-                                         <:Union{HalfSpace, Hyperplane, Line}};
+                                         <:LazySet{N},
+                                         <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}};
                        algorithm::String="line_search",
                        check_intersection::Bool=true,
                        kwargs...
@@ -206,8 +206,34 @@ end
 # symmetric case
 function ρ_upper_bound(d::AbstractVector{N},
                        cap::Intersection{N,
-                                         <:Union{HalfSpace, Hyperplane, Line},
-                                         <:LazySet};
+                                         <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
+                                         <:LazySet{N}};
+                       algorithm::String="line_search",
+                       check_intersection::Bool=true,
+                       kwargs...
+                      ) where N<:Real
+    return ρ(d, cap; algorithm=algorithm, check_intersection=check_intersection,
+             kwargs...)
+end
+
+# disambiguation
+function ρ_upper_bound(d::AbstractVector{N},
+                       cap::Intersection{N,
+                                         <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
+                                         <:AbstractPolytope{N}};
+                       algorithm::String="line_search",
+                       check_intersection::Bool=true,
+                       kwargs...
+                      ) where N<:Real
+    return ρ(d, cap; algorithm=algorithm, check_intersection=check_intersection,
+             kwargs...)
+end
+
+# disambiguation symmetric case
+function ρ_upper_bound(d::AbstractVector{N},
+                       cap::Intersection{N,
+                                         <:AbstractPolytope{N},
+                                         <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}};
                        algorithm::String="line_search",
                        check_intersection::Bool=true,
                        kwargs...

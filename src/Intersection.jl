@@ -318,7 +318,9 @@ end
 
 """
     ρ(d::AbstractVector{N},
-      cap::Intersection{N, <:LazySet, <:Union{HalfSpace, Hyperplane, Line}};
+      cap::Intersection{N,
+                        <:LazySet{N},
+                        <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}};
       [algorithm]::String="line_search",
       [check_intersection]::Bool=true,
       [kwargs...]) where N<:Real
@@ -383,7 +385,9 @@ For additional information we refer to:
   Variational Analysis](https://www.springer.com/us/book/9783540627722).
 """
 function ρ(d::AbstractVector{N},
-           cap::Intersection{N, <:LazySet, <:Union{HalfSpace, Hyperplane, Line}};
+           cap::Intersection{N,
+                             <:LazySet{N},
+                             <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}};
            algorithm::String="line_search",
            check_intersection::Bool=true,
            kwargs...) where N<:Real
@@ -412,7 +416,9 @@ end
 
 # Symmetric case
 ρ(ℓ::AbstractVector{N},
-  cap::Intersection{N, <:Union{HalfSpace, Hyperplane, Line}, <:LazySet};
+  cap::Intersection{N,
+                    <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
+                    <:LazySet{N}};
   algorithm::String="line_search", check_intersection::Bool=true,
   kwargs...) where N<:Real =
     ρ(ℓ, cap.Y ∩ cap.X; algorithm=algorithm,
