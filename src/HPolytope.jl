@@ -102,6 +102,8 @@ function σ(d::AbstractVector{N}, P::HPolytope{N}) where {N<:Real}
     if lp.status == :Unbounded
         error("the support vector in direction $(d) is undefined because " *
               "the polytope is unbounded")
+    elseif lp.status == :Infeasible
+        error("the support vector is undefined because the polytope is empty")
     else
         return lp.sol
     end
