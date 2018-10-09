@@ -158,6 +158,11 @@ if test_suite_polyhedra
         @test_throws ErrorException σ(d, p, algorithm="xyz")
         if test_suite_polyhedra
             @test σ(d, p) == N[1, 0]
+            p_unbounded = HPolytope([LinearConstraint(N[-1, 0], N(0))])
+            @test_throws ErrorException σ(d, p_unbounded)
+            p_infeasible = HPolytope([LinearConstraint(N[1], N(0)),
+                                      LinearConstraint(N[-1], N(-1))])
+            @test_throws ErrorException σ(N[1], p_infeasible)
         else
             @test_throws AssertionError σ(d, p)
         end
