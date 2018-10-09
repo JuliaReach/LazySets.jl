@@ -1,5 +1,4 @@
 import Base: isempty, ∈, ∩
-import LazySets.Approximations.ρ_upper_bound
 
 export Intersection,
        IntersectionArray,
@@ -138,7 +137,7 @@ The support function in the given direction.
 function ρ(d::AbstractVector{N}, cap::Intersection{N};
            upper_bound=false, kwargs...) where {N<:Real}
     if upper_bound
-        return ρ_upper_bound(d, cap; kwargs...)
+        return LazySets.Approximations.ρ_upper_bound(d, cap; kwargs...)
     else
         error("the exact support function of an intersection is not implemented; " *
               "try using `upper_bound=true`")
@@ -502,7 +501,7 @@ function _line_search(ℓ, X, H::Union{HalfSpace, Hyperplane, Line};
 
     # Initialization
     a, b = H.a, H.b
-    ρ_rec = upper_bound ? ρ_upper_bound : ρ
+    ρ_rec = upper_bound ? LazySets.Approximations.ρ_upper_bound : ρ
     f(λ) = ρ_rec(ℓ - λ[1] * a, X) + λ[1] * b
 
     if haskey(options, :lower)
@@ -613,7 +612,7 @@ function _projection(ℓ, X, H::Union{Hyperplane{N}, Line{N}};
     Xnℓ = lazy_linear_map ? LinearMap(Πnℓ, X) : linear_map(Πnℓ, X)
     Xnℓ⋂Lγ = lazy_2d_intersection ? Intersection(Xnℓ, Lγ) : intersection(Xnℓ, Lγ)
 
-    ρ_rec = upper_bound ? ρ_upper_bound : ρ
+    ρ_rec = upper_bound ? LazySets.Approximations.ρ_upper_bound : ρ
     if algorithm_2d_intersection == nothing
         return ρ_rec(y_dir, Xnℓ⋂Lγ; kwargs...)
     else
