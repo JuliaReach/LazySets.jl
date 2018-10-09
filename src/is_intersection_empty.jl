@@ -722,10 +722,12 @@ Optional keyword arguments can be passed to the `ρ` function. In particular, if
 function is_intersection_empty(X::LazySet{N},
                                hs::HalfSpace{N},
                                witness::Bool=false;
+                               upper_bound::Bool=false,
                                kwargs...
                                )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
     if !witness
-        return -ρ(-hs.a, X; kwargs...) > hs.b
+        ρ_rec = upper_bound ? LazySets.Approximations.ρ_upper_bound : ρ
+        return -ρ_rec(-hs.a, X; kwargs...) > hs.b
     end
 
     # for witness production, we compute the support vector instead

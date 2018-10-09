@@ -1,4 +1,5 @@
 import Base: isempty, ∈, ∩
+import LazySets.Approximations.ρ_upper_bound
 
 export Intersection,
        IntersectionArray,
@@ -137,7 +138,7 @@ The support function in the given direction.
 function ρ(d::AbstractVector{N}, cap::Intersection{N};
            upper_bound=false, kwargs...) where {N<:Real}
     if upper_bound
-        return LazySets.Approximations.ρ_upper_bound(d, cap; kwargs...)
+        return ρ_upper_bound(d, cap; kwargs...)
     else
         error("the exact support function of an intersection is not implemented; " *
               "try using `upper_bound=true`")
@@ -390,24 +391,26 @@ function ρ(d::AbstractVector{N},
                              <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}};
            algorithm::String="line_search",
            check_intersection::Bool=true,
+           upper_bound::Bool=false,
            kwargs...) where N<:Real
 
     X = cap.X    # compact set
     H = cap.Y    # halfspace or hyperplane
 
     # if the intersection is empty => stop
-    if check_intersection && is_intersection_empty(X, H)
+    if check_intersection &&
+            is_intersection_empty(X, H, false; upper_bound=upper_bound)
         error("the intersection is empty")
     end
     
     if algorithm == "line_search"
         @assert isdefined(Main, :Optim) "the algorithm $algorithm needs " *
                                         "the package 'Optim' to be loaded"
-        (s, _) = _line_search(d, X, H; kwargs...)
+        (s, _) = _line_search(d, X, H; upper_bound=upper_bound, kwargs...)
     elseif algorithm == "projection"
         @assert H isa Hyperplane "the algorithm $algorithm cannot be used with a
                                   $(typeof(H)); it only works with hyperplanes"
-        s = _projection(d, X, H; kwargs...)
+        s = _projection(d, X, H; upper_bound=upper_bound, kwargs...)
     else
         error("algorithm $(algorithm) unknown")
     end
@@ -430,7 +433,7 @@ return quote
 import Optim
 
 """
-    _line_search(ℓ, X, H; kwargs...)
+    _line_search(ℓ, X, H; [upper_bound]=false, [kwargs...])
 
 Given a compact and convex set ``X`` and a halfspace ``H = \\{x: a^T x ≤ b \\}``
 or a hyperplane ``H = \\{x: a^T x = b \\}``, calculate:
@@ -443,9 +446,12 @@ where ``D_h = \\{ λ : λ ≥ 0 \\}`` if ``H`` is a half-space or
 
 ### Input
 
-- `ℓ`      -- direction
-- `X`      -- set
-- `H`      -- halfspace or hyperplane
+- `ℓ`           -- direction
+- `X`           -- set
+- `H`           -- halfspace or hyperplane
+- `upper_bound` -- (optional, default: `false`) if `false`, compute the support
+                   function exactly; otherwise use an overapproximative
+                   algorithm
 
 ### Output
 
@@ -490,12 +496,14 @@ julia> _line_search([1.0, 0.0], X, H, upper=1e3, method=GoldenSection())
 (1.0, 381.9660112501051)
 ```
 """
-function _line_search(ℓ, X, H::Union{HalfSpace, Hyperplane, Line}; kwargs...)
+function _line_search(ℓ, X, H::Union{HalfSpace, Hyperplane, Line};
+                      upper_bound::Bool=false, kwargs...)
     options = Dict(kwargs)
 
     # Initialization
     a, b = H.a, H.b
-    f(λ) = ρ(ℓ - λ[1] * a, X) + λ[1] * b
+    ρ_rec = upper_bound ? ρ_upper_bound : ρ
+    f(λ) = ρ_rec(ℓ - λ[1] * a, X) + λ[1] * b
 
     if haskey(options, :lower)
         lower = pop!(options, :lower)
@@ -531,10 +539,11 @@ end # load_optim
 
 """
     _projection(ℓ, X, H::Union{Hyperplane{N}, Line{N}};
-                lazy_linear_map=false,
-                lazy_2d_intersection=true,
-                algorithm_2d_intersection=nothing,
-                kwargs...) where {N}
+                [lazy_linear_map]=false,
+                [lazy_2d_intersection]=true,
+                [algorithm_2d_intersection]=nothing,
+                [upper_bound]::Bool=false,
+                [kwargs...]) where {N}
 
 Given a compact and convex set ``X`` and a hyperplane ``H = \\{x: n ⋅ x = γ \\}``,
 calculate the support function of the intersection between the
@@ -553,6 +562,9 @@ rank-2 projection ``Π_{nℓ} X`` and the line ``Lγ = \\{(x, y): x = γ \\}``.
 - `algorithm_2d_intersection` -- (optional, default: `nothing`) if given, fixes the
                                  support function algorithm used for the intersection
                                  in 2D; otherwise the default is implied
+- `upper_bound`          -- (optional, default: `false`) if `false`, compute the
+                            support function exactly; otherwise use an
+                            overapproximative algorithm
 
 ### Output
 
@@ -586,6 +598,7 @@ function _projection(ℓ, X, H::Union{Hyperplane{N}, Line{N}};
                      lazy_linear_map=false,
                      lazy_2d_intersection=true,
                      algorithm_2d_intersection=nothing,
+                     upper_bound::Bool=false,
                      kwargs...) where {N}
 
     n = H.a                  # normal vector to the hyperplane
@@ -599,10 +612,11 @@ function _projection(ℓ, X, H::Union{Hyperplane{N}, Line{N}};
 
     Xnℓ = lazy_linear_map ? LinearMap(Πnℓ, X) : linear_map(Πnℓ, X)
     Xnℓ⋂Lγ = lazy_2d_intersection ? Intersection(Xnℓ, Lγ) : intersection(Xnℓ, Lγ)
-    
+
+    ρ_rec = upper_bound ? ρ_upper_bound : ρ
     if algorithm_2d_intersection == nothing
-        return ρ(y_dir, Xnℓ⋂Lγ; kwargs...)
+        return ρ_rec(y_dir, Xnℓ⋂Lγ; kwargs...)
     else
-        return ρ(y_dir, Xnℓ⋂Lγ, algorithm=algorithm_2d_intersection; kwargs...)
+        return ρ_rec(y_dir, Xnℓ⋂Lγ, algorithm=algorithm_2d_intersection; kwargs...)
     end
 end

@@ -200,7 +200,7 @@ function ρ_upper_bound(d::AbstractVector{N},
                        kwargs...
                       ) where N<:Real
     return ρ(d, cap; algorithm=algorithm, check_intersection=check_intersection,
-             kwargs...)
+             upper_bound=true, kwargs...)
 end
 
 # symmetric case
@@ -213,7 +213,7 @@ function ρ_upper_bound(d::AbstractVector{N},
                        kwargs...
                       ) where N<:Real
     return ρ(d, cap; algorithm=algorithm, check_intersection=check_intersection,
-             kwargs...)
+             upper_bound=true, kwargs...)
 end
 
 # disambiguation
@@ -226,7 +226,7 @@ function ρ_upper_bound(d::AbstractVector{N},
                        kwargs...
                       ) where N<:Real
     return ρ(d, cap; algorithm=algorithm, check_intersection=check_intersection,
-             kwargs...)
+             upper_bound=true, kwargs...)
 end
 
 # disambiguation symmetric case
@@ -239,5 +239,5 @@ function ρ_upper_bound(d::AbstractVector{N},
                        kwargs...
                       ) where N<:Real
     return ρ(d, cap; algorithm=algorithm, check_intersection=check_intersection,
-             kwargs...)
+             upper_bound=true, kwargs...)
 end
