@@ -603,7 +603,8 @@ end
 """
     is_intersection_empty(X::LazySet{N},
                           hp::Union{Hyperplane{N}, Line{N}},
-                          [witness]::Bool=false
+                          [witness]::Bool=false;
+                          [kwargs...]
                          )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
 
 Check whether a compact set an a hyperplane do not intersect, and otherwise
@@ -614,6 +615,7 @@ optionally compute a witness.
 - `X`       -- compact set
 - `hp`      -- hyperplane
 - `witness` -- (optional, default: `false`) compute a witness if activated
+- `kwargs`  -- additional arguments (currently ignored)
 
 ### Output
 
@@ -645,7 +647,8 @@ for the line-hyperplane intersection.
 """
 function is_intersection_empty(X::LazySet{N},
                                hp::Union{Hyperplane{N}, Line{N}},
-                               witness::Bool=false
+                               witness::Bool=false;
+                               kwargs...
                               )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
     normal_hp = hp.a
     sv_left = σ(-normal_hp, X)
@@ -675,7 +678,8 @@ end
 # symmetric function
 function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
                                X::LazySet{N},
-                               witness::Bool=false
+                               witness::Bool=false;
+                               kwargs...
                               )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
     return is_intersection_empty(X, hp, witness)
 end
