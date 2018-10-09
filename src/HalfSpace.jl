@@ -76,7 +76,7 @@ In both cases the result is any point on the boundary (the defining hyperplane).
 Otherwise this function throws an error.
 """
 function σ(d::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
-    return σ_helper(d, Hyperplane(hs.a, hs.b), "half-space")
+    return σ_helper(d, Hyperplane(hs.a, hs.b), true)
 end
 
 """

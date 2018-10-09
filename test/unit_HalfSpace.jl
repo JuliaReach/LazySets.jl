@@ -24,6 +24,9 @@ for N in [Float64, Rational{Int}, Float32]
     d = zeros(N, 3); d[3] = 1
     test_svec(HalfSpace(normal, N(5)), d)
 
+    # check that support vector in opposite direction of normal does not work
+    @test_throws ErrorException σ(N[-1], HalfSpace(N[1], N(1)))
+
     # an_element function and membership function
     @test an_element(hs) ∈ hs
 
