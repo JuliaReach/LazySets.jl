@@ -20,6 +20,10 @@ for N in [Float64, Rational{Int}, Float32]
     an_element(l3) ∈ l3
     an_element(l4) ∈ l4
 
+    # constrained dimensions
+    @test constrained_dimensions(l1) == [2]
+    @test constrained_dimensions(l4) == [1, 2]
+
     # concrete intersection
     cap11 = intersection(l1, l1_copy)
     cap12 = intersection(l1, l2)

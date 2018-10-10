@@ -30,6 +30,10 @@ for N in [Float64, Rational{Int}, Float32]
     # an_element function and membership function
     @test an_element(hs) ∈ hs
 
+    # constrained dimensions
+    @test constrained_dimensions(HalfSpace(N[1, 0, 1], N(1))) == [1, 3]
+    @test constrained_dimensions(HalfSpace(N[0, 1, 0], N(1))) == [2]
+
     # halfspace_left & halfspace_right
     @test N[1, 2] ∈ halfspace_left(N[1, 1], N[2, 2])
     @test N[2, 1] ∈ halfspace_right(N[1, 1], N[2, 2])

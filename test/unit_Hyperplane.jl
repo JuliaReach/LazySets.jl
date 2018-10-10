@@ -6,7 +6,7 @@ for N in [Float64, Rational{Int}, Float32]
     # dimension
     @test dim(hp) == 3
 
-    # support vector and membership function
+    # support vector and membership
     function test_svec(hp)
         d1 = copy(hp.a)
         @test σ(d1, hp) ∈ hp
@@ -25,8 +25,12 @@ for N in [Float64, Rational{Int}, Float32]
     a = zeros(N, 3); a[3] = N(1)
     test_svec(Hyperplane(a, N(5)))
 
-    # an_element function and membership function
+    # an_element and membership
     @test an_element(hp) ∈ hp
+
+    # constrained dimensions
+    @test constrained_dimensions(Hyperplane(N[1, 0, 1], N(1))) == [1, 3]
+    @test constrained_dimensions(Hyperplane(N[0, 1, 0], N(1))) == [2]
 
     # intersection emptiness
     b = BallInf(zeros(N, 3), N(1))
