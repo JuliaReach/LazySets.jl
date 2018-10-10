@@ -166,19 +166,34 @@ A list of constraints.
 """
 function constraints_list(cp::CartesianProduct{N})::Vector{LinearConstraint{N}} where N<:Real
     # collect low-dimensional constraints lists
-    clist_low = (constraints_list(cp.X), constraints_list(cp.Y))
+    clist_low = []
+    if cp.X isa LinearConstraint
+        push!(clist_low, [cp.X])
+        n += 1
+    else
+        push!(clist_low, constraints_list(cp.X))
+    end
+    if cp.Y isa LinearConstraint
+        push!(clist_low, [cp.Y])
+        n += 1
+    else
+        push!(clist_low, constraints_list(cp.Y))
+    end
 
     clist = Vector{LinearConstraint{N}}()
     m = length(clist_low[1]) + length(clist_low[2])
     sizehint!(clist, m)
     prev_step = 1
     # create high-dimensional constraints list
-    for X in clist_low
-        for constr in X
+    for c_low in clist_low
+        if !isempty(c_low)
+            indices = prev_step : (dim(c_low[1]) + prev_step-1)
+        end
+        for constr in c_low
             new_constr = LinearConstraint(sparsevec(prev_step : (dim(constr) + prev_step-1), constr.a), constr.b)
             push!(clist, new_constr)
         end
-        prev_step += dim(X[1])
+        prev_step += dim(c_low[1])
     end
 
     return clist
@@ -384,6 +399,53 @@ function ∈(x::AbstractVector{N}, cpa::CartesianProductArray{N, <:LazySet{N}}
         i0 = i1 + 1
     end
     return true
+end
+
+"""
+    constraints_list(cpa::CartesianProductArray{N})::Vector{LinearConstraint{N}} where N<:Real
+
+Return the list of constraints of a (polytopic) Cartesian product.
+
+### Input
+
+- `cpa` -- Cartesian product
+
+### Output
+
+A list of constraints.
+
+"""
+function constraints_list(cpa::CartesianProductArray{N})::Vector{LinearConstraint{N}} where N<:Real
+    # collect low-dimensional constraints lists
+    clist_low = []
+    n = 0
+    for c_low in array(cpa)
+        if c_low isa LinearConstraint
+            push!(clist_low, [c_low])
+            n += 1
+        else
+            constraints = constraints_list(c_low)
+            push!(clist_low, constraints)
+            n += length(constraints)
+        end
+    end
+
+    clist = Vector{LinearConstraint{N}}()
+    sizehint!(clist, n)
+    prev_step = 1
+    # create high-dimensional constraints list
+    for c_low in clist_low
+        if !isempty(c_low)
+            indices = prev_step : (dim(c_low[1]) + prev_step - 1)
+        end
+        for constr in c_low
+            new_constr = LinearConstraint(sparsevec(prev_step : (dim(constr) + prev_step-1), constr.a), constr.b)
+            push!(clist, new_constr)
+        end
+        prev_step += dim(c_low[1])
+    end
+
+    return clist
 end
 
 """
