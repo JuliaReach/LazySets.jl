@@ -110,6 +110,28 @@ function ∈(x::AbstractVector{N}, hp::Hyperplane{N})::Bool where {N<:Real}
     return dot(x, hp.a) == hp.b
 end
 
+"""
+    constrained_dimensions(hp::Hyperplane{N})::Vector{Int} where N<:Real
+
+Return the indices in which a hyperplane is constrained.
+
+### Input
+
+- `hp` -- hyperplane
+
+### Output
+
+A vector of ascending indices `i` such that the hyperplane is constrained in
+dimension `i`.
+
+### Notes
+
+A 2D hyperplane with constraint ``x1 = 0`` is constrained in dimension 1 only.
+"""
+function constrained_dimensions(hp::Hyperplane{N})::Vector{Int} where N<:Real
+    return nonzero_indices(hp.a)
+end
+
 
 # --- Hyperplane functions ---
 
