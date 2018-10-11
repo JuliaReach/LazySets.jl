@@ -147,6 +147,7 @@ dim(::HalfSpace)
 σ(::AbstractVector{Real}, ::HalfSpace{Real})
 ∈(::AbstractVector{Real}, ::HalfSpace{Real})
 an_element(::HalfSpace{N}) where {N<:Real}
+constraints_list(::HalfSpace{N}) where {N<:Real}
 constrained_dimensions(::HalfSpace{N}) where {N<:Real}
 LazySets.halfspace_left(::AbstractVector{Real}, ::AbstractVector{Real})
 LazySets.halfspace_right(::AbstractVector{Real}, ::AbstractVector{Real})

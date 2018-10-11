@@ -120,6 +120,25 @@ function ∈(x::AbstractVector{N}, hs::HalfSpace{N})::Bool where {N<:Real}
 end
 
 """
+    constraints_list(hs::HalfSpace{N})::Vector{LinearConstraint{N}}
+        where {N<:Real}
+
+Return the list of constraints of a half-space.
+
+### Input
+
+- `hs` -- half-space
+
+### Output
+
+A singleton list containing the half-space.
+"""
+function constraints_list(hs::HalfSpace{N}
+                         )::Vector{LinearConstraint{N}} where {N<:Real}
+    return [hs]
+end
+
+"""
     constrained_dimensions(hs::HalfSpace{N})::Vector{Int} where N<:Real
 
 Return the indices in which a half-space is constrained.
