@@ -391,10 +391,10 @@ function constraints_list(cpa::CartesianProductArray{N, <:LazySet{N}})::Vector{L
     for c_low in array(cpa)
         c_low_list = constraints_list(c_low)
         if !isempty(c_low_list)
-            indices = prev_step : (dim(c_low_list[1]) + prev_step - 1)
+            indices = collect(prev_step : (dim(c_low_list[1]) + prev_step - 1))
         end
         for constr in c_low_list
-            new_constr = LinearConstraint(sparsevec(indices, constr.a), constr.b)
+            new_constr = LinearConstraint(SparseVector(dim(cpa), indices, constr.a), constr.b)
             push!(clist, new_constr)
         end
         prev_step += dim(c_low_list[1])
