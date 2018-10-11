@@ -62,7 +62,8 @@ function vertices_list(H::AbstractHyperrectangle{N}
 end
 
 """
-    constraints_list(H::AbstractHyperrectangle{N})::Vector{Vector{N}} where {N<:Real}
+    constraints_list(H::AbstractHyperrectangle{N})::Vector{LinearConstraint{N}}
+        where {N<:Real}
 
 Return the list of constraints of an axis-aligned hyperrectangular set.
 
