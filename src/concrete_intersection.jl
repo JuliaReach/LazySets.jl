@@ -203,10 +203,51 @@ function intersection(P1::AbstractHPolygon{N},
     return P
 end
 
+"""
+    intersection(P::HPolytope{N},
+                 hs::HalfSpace{N},
+                 prunefunc=removehredundancy!) where N<:Real
+
+Compute the intersection of a polytope in H-representation and a half-space.
+
+### Input
+
+- `P`         -- polytope
+- `hs`        -- half-space
+- `prunefunc` -- (optional, default: `removehredundancy!`) function to
+                 post-process the polytope after adding the additional
+                 constraint
+
+### Output
+
+The same polytope in H-representation with just one more constraint.
+"""
+function intersection(P::HPolytope{N},
+                      hs::HalfSpace{N},
+                      prunefunc=removehredundancy!) where N<:Real
+    Q = HPolytope([constraints_list(P); constraints_list(hs)])
+
+    if prunefunc == removehredundancy!
+        # convert to polyhedron
+        ph = polyhedron(Q)
+        prunefunc(ph)
+        Q = HPolytope(ph)
+    else
+        prunefunc(Q)
+    end
+
+    return Q
+end
+
+# symmetric method
+function intersection(hs::HalfSpace{N},
+                      P::HPolytope{N},
+                      prunefunc=removehredundancy!) where N<:Real
+    return intersection(P, hs, prunefunc)
+end
+
 function load_polyhedra_concrete_intersection() # function to be loaded by Requires
 return quote
-
-export intersection
 
 function default_intersection_output_type(P1::Union{HPolytope{N}, VPolytope{N}},
                                           P2::Union{HPolytope{N}, VPolytope{N}}) where {N}
