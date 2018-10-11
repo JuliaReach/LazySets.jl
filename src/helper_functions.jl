@@ -87,6 +87,36 @@ function ispermutation(u::AbstractVector{T}, v::AbstractVector{T})::Bool where T
 end
 
 """
+    nonzero_indices(v::AbstractVector{N})::Vector{Int} where N<:Real
+
+Return the indices in which a vector is non-zero.
+
+### Input
+
+- `v` -- vector
+
+### Output
+
+A vector of ascending indices `i` such that the vector is non-zero in dimension
+`i`.
+"""
+function nonzero_indices(v::AbstractVector{N})::Vector{Int} where N<:Real
+    n = length(v)
+    res = Vector{Int}()
+    sizehint!(res, n)
+    for i in 1:n
+        if v[i] != zero(N)
+            push!(res, i)
+        end
+    end
+    return res
+end
+
+function nonzero_indices(v::SparseVector{N})::Vector{Int} where N<:Real
+    return x.nzind
+end
+
+"""
     @neutral(SET, NEUT)
 
 Create functions to make a lazy set operation commutative with a given neutral

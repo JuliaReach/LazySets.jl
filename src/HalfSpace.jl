@@ -2,6 +2,7 @@ import Base.∈
 
 export HalfSpace, LinearConstraint,
        an_element,
+       constrained_dimensions,
        halfspace_left, halfspace_right
 
 """
@@ -116,6 +117,47 @@ We just check if ``x`` satisfies ``a⋅x ≤ b``.
 """
 function ∈(x::AbstractVector{N}, hs::HalfSpace{N})::Bool where {N<:Real}
     return dot(x, hs.a) <= hs.b
+end
+
+"""
+    constraints_list(hs::HalfSpace{N})::Vector{LinearConstraint{N}}
+        where {N<:Real}
+
+Return the list of constraints of a half-space.
+
+### Input
+
+- `hs` -- half-space
+
+### Output
+
+A singleton list containing the half-space.
+"""
+function constraints_list(hs::HalfSpace{N}
+                         )::Vector{LinearConstraint{N}} where {N<:Real}
+    return [hs]
+end
+
+"""
+    constrained_dimensions(hs::HalfSpace{N})::Vector{Int} where N<:Real
+
+Return the indices in which a half-space is constrained.
+
+### Input
+
+- `hs` -- half-space
+
+### Output
+
+A vector of ascending indices `i` such that the half-space is constrained in
+dimension `i`.
+
+### Notes
+
+A 2D half-space with constraint ``x1 ≥ 0`` is constrained in dimension 1 only.
+"""
+function constrained_dimensions(hs::HalfSpace{N})::Vector{Int} where N<:Real
+    return nonzero_indices(hs.a)
 end
 
 """

@@ -58,4 +58,5 @@ is_intersection_empty(::LazySet{N}, ::Union{HPolytope{N}, AbstractHPolygon{N}}) 
 intersection(::Line{N}, ::Line{N}) where {N<:Real}
 intersection(::Hyperrectangle{N}, ::Hyperrectangle{N}) where {N<:Real}
 intersection(::AbstractHPolygon{N}, ::AbstractHPolygon{N}) where {N<:Real}
+intersection(::HPolytope{N}, ::HalfSpace{N}) where {N<:Real}
 ```

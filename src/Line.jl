@@ -134,3 +134,25 @@ function ∈(x::AbstractVector{N}, L::Line{N})::Bool where {N<:Real}
     @assert length(x) == dim(L)
     return dot(L.a, x) == L.b
 end
+
+"""
+    constrained_dimensions(L::Line{N})::Vector{Int} where N<:Real
+
+Return the indices in which a line is constrained.
+
+### Input
+
+- `L` -- line
+
+### Output
+
+A vector of ascending indices `i` such that the line is constrained in dimension
+`i`.
+
+### Notes
+
+A line with constraint ``x1 = 0`` is constrained in dimension 1 only.
+"""
+function constrained_dimensions(L::Line{N})::Vector{Int} where N<:Real
+    return nonzero_indices(L.a)
+end
