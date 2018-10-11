@@ -41,64 +41,15 @@ function HPolytope(A::Matrix{N}, b::Vector{N}) where {N<:Real}
     return HPolytope(constraints)
 end
 
-# --- LazySet interface functions ---
-
-"""
-    σ(d::AbstractVector{N}, P::HPolytope{N}) where {N<:Real}
-
-Return the support vector of a polyhedron (in H-representation) in a given
-direction.
-
-### Input
-
-- `d` -- direction
-- `P` -- polyhedron in H-representation
-
-### Output
-
-The support vector in the given direction.
-
-### Algorithm
-
-This implementation uses `GLPKSolverLP` as linear programming backend.
-"""
-function σ(d::AbstractVector{N}, P::HPolytope{N}) where {N<:Real}
-    c = -d
-    n = length(constraints_list(P))
-    @assert n > 0 "the polytope has no constraints"
-    A = zeros(N, n, dim(P))
-    b = zeros(N, n)
-    for (i, Pi) in enumerate(constraints_list(P))
-        A[i, :] = Pi.a
-        b[i] = Pi.b
-    end
-    sense = '<'
-    l = -Inf
-    u = Inf
-    solver = GLPKSolverLP()
-    lp = linprog(c, A, sense, b, l, u, solver)
-    if lp.status == :Unbounded
-        error("the support vector in direction $(d) is undefined because " *
-              "the polytope is unbounded")
-    elseif lp.status == :Infeasible
-        error("the support vector is undefined because the polytope is empty")
-    else
-        return lp.sol
-    end
-end
+# ==========================================
+# Lower level methods that use Polyhedra.jl
+# ==========================================
 
 function load_polyhedra_hpolytope() # function to be loaded by Requires
 return quote
 # see the interface file AbstractPolytope.jl for the imports
 
-export convex_hull,
-       cartesian_product,
-       vertices_list,
-       tovrep,
-       tohrep
-
-# HPolytope from an HRep
-function HPolytope(P::HRep{T, N}, backend=default_polyhedra_backend(N)) where {T, N}
+function convert(::Type{HPolytope}, P::HRep)
     constraints = LinearConstraint{N}[]
     for hi in Polyhedra.allhalfspaces(P)
         push!(constraints, HalfSpace(hi.a, hi.β))
@@ -107,162 +58,21 @@ function HPolytope(P::HRep{T, N}, backend=default_polyhedra_backend(N)) where {T
 end
 
 """
-    polyhedron(P::HPolytope{N}, [backend]=default_polyhedra_backend(N)) where {N}
+    HPolytope(P::HRep{T, N}, backend=default_polyhedra_backend(N)) where {T, N}
 
-Return an `HRep` polyhedron from `Polyhedra.jl` given a polytope in H-representation.
-
-### Input
-
-- `P`       -- polytope
-- `backend` -- (optional, default: `default_polyhedra_backend(N)`) the polyhedral
-               computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
-               for further information
-
-### Output
-
-An `HRep` polyhedron.
-"""
-function polyhedron(P::HPolytope{N}, backend=default_polyhedra_backend(N)) where {N}
-    A, b = tosimplehrep(P)
-    return Polyhedra.polyhedron(Polyhedra.hrep(A, b), backend)
-end
-
-"""
-    convex_hull(P1::HPolytope{N}, P2::HPolytope{N}; [backend]=default_polyhedra_backend(N)) where {N}
-
-Compute the convex hull of the set union of two polytopes in H-representation.
+Return a polytope in H-representation given a `HRep` polyhedron
+from `Polyhedra.jl`.
 
 ### Input
 
-- `P1`         -- polytope
-- `P2`         -- another polytope
-- `backend`    -- (optional, default: `default_polyhedra_backend(N)`) the polyhedral
-                  computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
-                  for further information
+- `P` -- `HRep` polyhedron
 
 ### Output
 
-The `HPolytope` obtained by the concrete convex hull of `P1` and `P2`.
+An `HPolytope`.
 """
-function convex_hull(P1::HPolytope{N}, P2::HPolytope{N}; backend=default_polyhedra_backend(N)) where {N}
-    Pch = convexhull(polyhedron(P1, backend), polyhedron(P2, backend))
-    return HPolytope(Pch)
-end
-
-"""
-    cartesian_product(P1::HPolytope{N}, P2::HPolytope{N}; [backend]=default_polyhedra_backend(N)) where {N}
-
-Compute the Cartesian product of two polytopes in H-representaion.
-
-### Input
-
-- `P1`         -- polytope
-- `P2`         -- another polytope
-- `backend`    -- (optional, default: `default_polyhedra_backend(N)`) the polyhedral
-                  computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
-                  for further information
-
-### Output
-
-The `HPolytope` obtained by the concrete cartesian product of `P1` and `P2`.
-"""
-function cartesian_product(P1::HPolytope{N}, P2::HPolytope{N}; backend=default_polyhedra_backend(N)) where {N}
-    Pcp = hcartesianproduct(polyhedron(P1, backend), polyhedron(P2, backend))
-    return HPolytope(Pcp)
-end
-
-"""
-    vertices_list(P::HPolytope{N};
-                  [backend]=default_polyhedra_backend(N),
-                  [prunefunc]=removevredundancy!)::Vector{Vector{N}} where {N<:Real}
-
-Return the list of vertices of a polytope in constraint representation.
-
-### Input
-
-- `P`         -- polytope in constraint representation
-- `backend`   -- (optional, default: `default_polyhedra_backend(N)`) the polyhedral
-                 computations backend, see Polyhedra's documentation
-                 for further information
-- `prunefunc` -- (optional, default: `removevredundancy!`) function to post-process
-                 the output of `vreps`
-
-### Output
-
-List of vertices.
-
-### Examples
-
-```jldoctest
-julia> using Polyhedra
-
-julia> P = HPolytope([1.0 0.0; 0.0 1.0; -1.0 0.0; 0.0 -1.0], fill(1., 4));
-
-julia> constraints_list(P)
-4-element Array{HalfSpace{Float64},1}:
- HalfSpace{Float64}([1.0, 0.0], 1.0)
- HalfSpace{Float64}([0.0, 1.0], 1.0)
- HalfSpace{Float64}([-1.0, 0.0], 1.0)
- HalfSpace{Float64}([0.0, -1.0], 1.0)
-
-julia> vertices_list(P)
-4-element Array{Array{Float64,1},1}:
- [1.0, -1.0]
- [1.0, 1.0]
- [-1.0, 1.0]
- [-1.0, -1.0]
-```
-"""
-function vertices_list(P::HPolytope{N};
-                       backend=default_polyhedra_backend(N),
-                       prunefunc=removevredundancy!)::Vector{Vector{N}} where {N<:Real}
-    if length(P.constraints) == 0
-        return Vector{N}(undef, Vector{N}(undef, 0))
-    end
-    P = polyhedron(P, backend)
-    prunefunc(P)
-    return collect(points(P))
-end
-
-"""
-    tovrep(P::HPolytope{N}; [backend]=default_polyhedra_backend(N)) where {N}
-
-Transform a polytope in H-representation to a polytope in V-representation.
-
-### Input
-
-- `P`          -- polytope in constraint representation
-- `backend`    -- (optional, default: `default_polyhedra_backend(N)`) the polyhedral
-                  computations backend,
-                  see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
-                  for further information
-
-### Output
-
-The `VPolytope` which is the vertex representation of the given polytope
-in constraint representation.
-"""
-function tovrep(P::HPolytope{N}; backend=default_polyhedra_backend(N)) where {N}
-    P = polyhedron(P, backend)
-    return VPolytope(P)
-end
-
-"""
-    tohrep(P::HPolytope)
-
-Return a constraint representation of the given polytope in constraint
-representation (no-op).
-
-### Input
-
-- `P` -- polytope in constraint representation
-
-### Output
-
-The same polytope instance.
-"""
-function tohrep(P::HPolytope)
-    return P
+function HPolytope(P::HRep{T, N}) where {T, N}
+    convert(HPolytope, P)
 end
 
 end # quote

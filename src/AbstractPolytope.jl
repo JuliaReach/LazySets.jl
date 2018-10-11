@@ -107,6 +107,12 @@ function isempty(P::AbstractPolytope{N})::Bool where {N<:Real}
     return isempty(vertices_list(P))
 end
 
+function default_polyhedra_backend(N)
+    @assert isdefined(Main, :Polyhedra) "the function `default_polyhedra_backend` needs " *
+                                        "the package 'Polyhedra' to be loaded"
+    error("no default backend for numeric type $N")
+end
+
 function load_polyhedra_abstractpolytope() # function to be loaded by Requires
 
 return quote
@@ -127,10 +133,6 @@ end
 
 function default_polyhedra_backend(N::Type{<:Rational})
     return CDDLib.CDDLibrary(:exact)
-end
-
-function default_polyhedra_backend(N)
-    error("no default backend for numeric type $N")
 end
 
 end # quote
