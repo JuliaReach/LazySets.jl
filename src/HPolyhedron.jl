@@ -29,7 +29,7 @@ HPolyhedron{N}() where {N<:Real} = HPolyhedron{N}(Vector{LinearConstraint{N}}())
 # constructor for an HPolyhedron with no constraints of type Float64
 HPolyhedron() = HPolyhedron{Float64}()
 
-# constructor for an HPolytope from a simple H-representation
+# constructor for an HPolyhedron from a simple H-representation
 function HPolyhedron(A::Matrix{N}, b::Vector{N}) where {N<:Real}
     m = size(A, 1)
     constraints = LinearConstraint{N}[]
@@ -168,7 +168,7 @@ Return the list of constraints defining a polyhedron in H-representation.
 
 ### Input
 
-- `P` -- polytope in H-representation
+- `P` -- polyhedron in H-representation
 
 ### Output
 
@@ -281,11 +281,12 @@ The polyhedron obtained by the concrete cartesian product of `P1` and `P2`.
 For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/).
 """
-function cartesian_product(P1::HPOLY, P2::HPOLY; backend=default_polyhedra_backend(N)) where {N, HPOLY<:HPolytope{N}}
+function cartesian_product(P1::HPoly{N}, P2::HPoly{N};
+                          backend=default_polyhedra_backend(N)) where {N}
     @assert isdefined(Main, :Polyhedra) "the function `cartesian_product` needs " *
                                         "the package 'Polyhedra' to be loaded"
     Pcp = hcartesianproduct(polyhedron(P1, backend), polyhedron(P2, backend))
-    return convert(HPOLY, Pcp)
+    return convert(typeof(P1), Pcp)
 end
 
 """
@@ -410,11 +411,7 @@ from `Polyhedra.jl`.
 An `HPolyhedron`.
 """
 function HPolyhedron(P::HRep{T, N}) where {T, N}
-    constraints = LinearConstraint{N}[]
-    for hi in Polyhedra.allhalfspaces(P)
-        push!(constraints, HalfSpace(hi.a, hi.β))
-    end
-    return HPolyhedron(constraints)
+    convert(HPolyhedron{N}, P)
 end
 
 """

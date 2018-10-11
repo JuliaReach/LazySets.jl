@@ -68,7 +68,7 @@ from `Polyhedra.jl`.
 An `HPolytope`.
 """
 function HPolytope(P::HRep{T, N}) where {T, N}
-    convert(HPolytope, P)
+    convert(HPolytope{N}, P)
 end
 
 end # quote
