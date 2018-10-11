@@ -97,8 +97,9 @@ function σ(d::AbstractVector{N}, P::HPoly{N}) where {N<:Real}
         elseif lp.status == :Infeasible
             error("the support vector is undefined because the polyhedron is " *
                   "empty")
+        else
+            unbounded = false
         end
-        unbounded = false
     end
     if unbounded
         error("the support vector in direction $(d) is undefined because " *
