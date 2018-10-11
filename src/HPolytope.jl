@@ -2,8 +2,7 @@ using MathProgBase, GLPKMathProgInterface
 
 export HPolytope,
        addconstraint!,
-       constraints_list,
-       tosimplehrep
+       constraints_list
 
 """
     HPolytope{N<:Real} <: AbstractPolytope{N}
@@ -43,25 +42,6 @@ function HPolytope(A::Matrix{N}, b::Vector{N}) where {N<:Real}
 end
 
 # --- LazySet interface functions ---
-
-
-"""
-    dim(P::HPolytope)::Int
-
-Return the dimension of a polytope in H-representation.
-
-### Input
-
-- `P`  -- polytope in H-representation
-
-### Output
-
-The ambient dimension of the polytope in H-representation.
-If it has no constraints, the result is ``-1``.
-"""
-function dim(P::HPolytope)::Int
-    return length(P.constraints) == 0 ? -1 : length(P.constraints[1].a)
-end
 
 """
     σ(d::AbstractVector{N}, P::HPolytope{N}) where {N<:Real}
@@ -106,87 +86,6 @@ function σ(d::AbstractVector{N}, P::HPolytope{N}) where {N<:Real}
         return lp.sol
     end
 end
-
-"""
-    ∈(x::AbstractVector{N}, P::HPolytope{N})::Bool where {N<:Real}
-
-Check whether a given 2D point is contained in a polytope in constraint
-representation.
-
-### Input
-
-- `x` -- two-dimensional point/vector
-- `P` -- polytope in constraint representation
-
-### Output
-
-`true` iff ``x ∈ P``.
-
-### Algorithm
-
-This implementation checks if the point lies on the outside of each hyperplane.
-This is equivalent to checking if the point lies in each half-space.
-"""
-function ∈(x::AbstractVector{N}, P::HPolytope{N})::Bool where {N<:Real}
-    @assert length(x) == dim(P)
-
-    for c in P.constraints
-        if dot(c.a, x) > c.b
-            return false
-        end
-    end
-    return true
-end
-
-
-# --- HPolytope functions ---
-
-
-"""
-    addconstraint!(P::HPolytope{N},
-                   constraint::LinearConstraint{N})::Nothing where {N<:Real}
-
-Add a linear constraint to a polyhedron in H-representation.
-
-### Input
-
-- `P`          -- polyhedron in H-representation
-- `constraint` -- linear constraint to add
-
-### Output
-
-Nothing.
-
-### Notes
-
-It is left to the user to guarantee that the dimension of all linear constraints
-is the same.
-"""
-function addconstraint!(P::HPolytope{N},
-                        constraint::LinearConstraint{N})::Nothing where {N<:Real}
-    push!(P.constraints, constraint)
-    return nothing
-end
-
-"""
-    constraints_list(P::HPolytope{N})::Vector{LinearConstraint{N}} where {N<:Real}
-
-Return the list of constraints defining a polyhedron in H-representation.
-
-### Input
-
-- `P` -- polytope in H-representation
-
-### Output
-
-The list of constraints of the polyhedron.
-"""
-function constraints_list(P::HPolytope{N}
-                         )::Vector{LinearConstraint{N}} where {N<:Real}
-    return P.constraints
-end
-
-
 
 function load_polyhedra_hpolytope() # function to be loaded by Requires
 return quote
