@@ -1,8 +1,4 @@
-using MathProgBase, GLPKMathProgInterface
-
-export HPolytope,
-       addconstraint!,
-       constraints_list
+export HPolytope
 
 """
     HPolytope{N<:Real} <: AbstractPolytope{N}
@@ -49,7 +45,7 @@ function load_polyhedra_hpolytope() # function to be loaded by Requires
 return quote
 # see the interface file AbstractPolytope.jl for the imports
 
-function convert(::Type{HPolytope}, P::HRep)
+function convert(::Type{HPolytope{N}}, P::HRep{T, N}) where {T, N}
     constraints = LinearConstraint{N}[]
     for hi in Polyhedra.allhalfspaces(P)
         push!(constraints, HalfSpace(hi.a, hi.β))
