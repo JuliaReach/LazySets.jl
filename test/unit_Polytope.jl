@@ -47,7 +47,7 @@ for N in [Float64, Rational{Int}, Float32]
     if test_suite_polyhedra
         @test length(singleton_list(p)) == 4
     else
-        @test_throws MethodError singleton_list(p)
+        @test_throws AssertionError singleton_list(p)
     end
 
     if test_suite_polyhedra
