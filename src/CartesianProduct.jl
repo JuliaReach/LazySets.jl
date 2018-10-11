@@ -320,7 +320,7 @@ Return the support function of a Cartesian product array.
 
 ### Input
 
-- `d`  -- direction
+- `d`   -- direction
 - `cpa` -- Cartesian product array
 
 ### Output
@@ -371,22 +371,25 @@ function ∈(x::AbstractVector{N}, cpa::CartesianProductArray{N, <:LazySet{N}}
 end
 
 """
-    constraints_list(cpa::CartesianProductArray{N, <:LazySet{N}})::Vector{LinearConstraint{N}} where N<:Real
+    constraints_list(cpa::CartesianProductArray{N, <:LazySet{N}}
+                    )::Vector{LinearConstraint{N}} where N<:Real
 
-Return the list of constraints of a (polytopic) Cartesian product.
+Return the list of constraints of a (polytopic) Cartesian product of a finite
+number of sets.
 
 ### Input
 
-- `cpa` -- Cartesian product
+- `cpa` -- Cartesian product array
 
 ### Output
 
 A list of constraints.
 """
-function constraints_list(cpa::CartesianProductArray{N, <:LazySet{N}})::Vector{LinearConstraint{N}} where N<:Real
+function constraints_list(cpa::CartesianProductArray{N, <:LazySet{N}}
+                         )::Vector{LinearConstraint{N}} where N<:Real
     clist = Vector{LinearConstraint{N}}()
-    s_dim = dim(cpa)
-    sizehint!(clist, s_dim)
+    n = dim(cpa)
+    sizehint!(clist, n)
     prev_step = 1
     # create high-dimensional constraints list
     for c_low in array(cpa)
@@ -395,7 +398,8 @@ function constraints_list(cpa::CartesianProductArray{N, <:LazySet{N}})::Vector{L
             indices = prev_step : (dim(c_low_list[1]) + prev_step - 1)
         end
         for constr in c_low_list
-            new_constr = LinearConstraint(sparsevec(indices, constr.a, s_dim), constr.b)
+            new_constr = LinearConstraint(sparsevec(indices, constr.a, n),
+                                          constr.b)
             push!(clist, new_constr)
         end
         prev_step += dim(c_low_list[1])
@@ -407,11 +411,12 @@ end
 """
     vertices_list(cpa::CartesianProductArray{N})::Vector{Vector{N}} where N<:Real
 
-Return the list of vertices of a (polytopic) Cartesian product.
+Return the list of vertices of a (polytopic) Cartesian product of a finite
+number of sets.
 
 ### Input
 
-- `cpa` -- Cartesian product
+- `cpa` -- Cartesian product array
 
 ### Output
 
