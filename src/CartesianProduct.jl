@@ -152,6 +152,23 @@ function ∈(x::AbstractVector{<:Real}, cp::CartesianProduct)::Bool
 end
 
 """
+    constraints_list(cp::CartesianProduct{N, <:LazySet{N}})::Vector{LinearConstraint{N}} where N<:Real
+
+Return the list of constraints of a (polytopic) Cartesian product.
+
+### Input
+
+- `cp` -- Cartesian product
+
+### Output
+
+A list of constraints.
+"""
+function constraints_list(cp::CartesianProduct{N, <:LazySet{N}})::Vector{LinearConstraint{N}} where N<:Real
+    return constraints_list(CartesianProductArray([cp.X, cp.Y]))
+end
+
+"""
     vertices_list(cp::CartesianProduct{N})::Vector{Vector{N}} where N<:Real
 
 Return the list of vertices of a (polytopic) Cartesian product.
@@ -303,7 +320,7 @@ Return the support function of a Cartesian product array.
 
 ### Input
 
-- `d`  -- direction
+- `d`   -- direction
 - `cpa` -- Cartesian product array
 
 ### Output
@@ -354,13 +371,52 @@ function ∈(x::AbstractVector{N}, cpa::CartesianProductArray{N, <:LazySet{N}}
 end
 
 """
-    vertices_list(cpa::CartesianProductArray{N})::Vector{Vector{N}} where N<:Real
+    constraints_list(cpa::CartesianProductArray{N, <:LazySet{N}}
+                    )::Vector{LinearConstraint{N}} where N<:Real
 
-Return the list of vertices of a (polytopic) Cartesian product.
+Return the list of constraints of a (polytopic) Cartesian product of a finite
+number of sets.
 
 ### Input
 
-- `cpa` -- Cartesian product
+- `cpa` -- Cartesian product array
+
+### Output
+
+A list of constraints.
+"""
+function constraints_list(cpa::CartesianProductArray{N, <:LazySet{N}}
+                         )::Vector{LinearConstraint{N}} where N<:Real
+    clist = Vector{LinearConstraint{N}}()
+    n = dim(cpa)
+    sizehint!(clist, n)
+    prev_step = 1
+    # create high-dimensional constraints list
+    for c_low in array(cpa)
+        c_low_list = constraints_list(c_low)
+        if !isempty(c_low_list)
+            indices = prev_step : (dim(c_low_list[1]) + prev_step - 1)
+        end
+        for constr in c_low_list
+            new_constr = LinearConstraint(sparsevec(indices, constr.a, n),
+                                          constr.b)
+            push!(clist, new_constr)
+        end
+        prev_step += dim(c_low_list[1])
+    end
+
+    return clist
+end
+
+"""
+    vertices_list(cpa::CartesianProductArray{N})::Vector{Vector{N}} where N<:Real
+
+Return the list of vertices of a (polytopic) Cartesian product of a finite
+number of sets.
+
+### Input
+
+- `cpa` -- Cartesian product array
 
 ### Output
 

@@ -27,6 +27,7 @@ CartesianProduct
 dim(::CartesianProduct)
 σ(::AbstractVector{Real}, ::CartesianProduct{Real})
 ∈(::AbstractVector{Real}, ::CartesianProduct{Real})
+constraints_list(::CartesianProduct{Real})
 vertices_list(::CartesianProduct{Real})
 ```
 Inherited from [`LazySet`](@ref):
@@ -42,6 +43,7 @@ CartesianProductArray
 dim(::CartesianProductArray)
 σ(::AbstractVector{Real}, ::CartesianProductArray{Real})
 ∈(::AbstractVector{Real}, ::CartesianProductArray{Real})
+constraints_list(::CartesianProductArray{Real})
 vertices_list(::CartesianProductArray{Real})
 array(::CartesianProductArray)
 ```
