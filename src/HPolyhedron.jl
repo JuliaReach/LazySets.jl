@@ -236,6 +236,10 @@ function tohrep(P::HPoly{N}) where {N}
     return P
 end
 
+function isempty(P::HPolyhedron{N})::Bool where {N<:Real}
+    return isempty(vertices_list(P))
+end
+
 # ========================================================
 # External methods that require Polyhedra.jl to be loaded
 # ========================================================
