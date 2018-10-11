@@ -321,7 +321,8 @@ in constraint representation.
 For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/).
 """
-function tovrep(P::HPoly{N}; backend=default_polyhedra_backend(N)) where {N}
+function tovrep(P::HPoly{N};
+                backend=default_polyhedra_backend(N)) where {N}
     @assert isdefined(Main, :Polyhedra) "the function `tovrep` needs " *
                                         "the package 'Polyhedra' to be loaded"
     P = polyhedron(P, backend)
@@ -376,16 +377,13 @@ julia> vertices_list(P)
 """
 function vertices_list(P::HPoly{N};
                        backend=default_polyhedra_backend(N),
-                       prunefunc=nothing)::Vector{Vector{N}} where {N<:Real}
+                       prunefunc=removevredundancy!)::Vector{Vector{N}} where {N<:Real}
     if length(P.constraints) == 0
         return Vector{N}(undef, Vector{N}(undef, 0))
     end
     @assert isdefined(Main, :Polyhedra) "the function `vertices_list` needs " *
                                         "the package 'Polyhedra' to be loaded"
     P = polyhedron(P, backend)
-    if prunefunc == nothing
-        prunefunc = removevredundancy!
-    end
     prunefunc(P)
     return collect(points(P))
 end
