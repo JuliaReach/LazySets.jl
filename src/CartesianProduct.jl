@@ -164,7 +164,7 @@ Return the list of constraints of a (polytopic) Cartesian product.
 
 A list of constraints.
 """
-function constraints_list(cp::CartesianProduct{N})::Vector{LinearConstraint{N}} where N<:Real
+function constraints_list(cp::CartesianProduct{N, <:AbstractPolytope})::Vector{LinearConstraint{N}} where N<:Real
     return constraints_list(CartesianProductArray([cp.X, cp.Y]))
 end
 
@@ -384,7 +384,7 @@ Return the list of constraints of a (polytopic) Cartesian product.
 A list of constraints.
 
 """
-function constraints_list(cpa::CartesianProductArray{N})::Vector{LinearConstraint{N}} where N<:Real
+function constraints_list(cpa::CartesianProductArray{N, <:AbstractPolytope})::Vector{LinearConstraint{N}} where N<:Real
     # collect low-dimensional constraints lists
     c_array = array(cpa)
     clist = Vector{LinearConstraint{N}}()
@@ -392,22 +392,15 @@ function constraints_list(cpa::CartesianProductArray{N})::Vector{LinearConstrain
     prev_step = 1
     # create high-dimensional constraints list
     for c_low in c_array
-        if c_low isa LinearConstraint
-            indices = prev_step : (dim(c_low) + prev_step - 1)
-            new_constr = LinearConstraint(sparsevec(indices, c_low.a), c_low.b)
-            push!(clist, new_constr)
-            prev_step += dim(c_low)
-        else
-            c_low_list = constraints_list(c_low)
-            if !isempty(c_low_list)
-                indices = prev_step : (dim(c_low_list[1]) + prev_step - 1)
-            end
-            for constr in c_low_list
-                new_constr = LinearConstraint(sparsevec(indices, constr.a), constr.b)
-                push!(clist, new_constr)
-            end
-            prev_step += dim(c_low_list[1])
+        c_low_list = constraints_list(c_low)
+        if !isempty(c_low_list)
+            indices = prev_step : (dim(c_low_list[1]) + prev_step - 1)
         end
+        for constr in c_low_list
+            new_constr = LinearConstraint(sparsevec(indices, constr.a), constr.b)
+            push!(clist, new_constr)
+        end
+        prev_step += dim(c_low_list[1])
     end
 
     return clist
