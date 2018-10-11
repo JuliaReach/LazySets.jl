@@ -120,6 +120,12 @@ if test_suite_polyhedra
         cap = intersection(p1, p2)
         # currently broken, see #565
 
+        # intersection with half-space
+        hs = HalfSpace(N[2, 2], N(-1))
+        c1 = constraints_list(intersection(p1, hs))
+        c2 = constraints_list(intersection(hs, p1))
+        @test length(c1) == 3 && ispermutation(c1, c2)
+
         # convex hull
         ch = convex_hull(p1, p2)
         # currently broken, see #566
