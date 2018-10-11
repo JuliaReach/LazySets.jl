@@ -152,7 +152,7 @@ function ∈(x::AbstractVector{<:Real}, cp::CartesianProduct)::Bool
 end
 
 """
-    constraints_list(cp::CartesianProduct{N, <:AbstractPolytope})::Vector{LinearConstraint{N}} where N<:Real
+    constraints_list(cp::CartesianProduct{N, <:LazySet{N}})::Vector{LinearConstraint{N}} where N<:Real
 
 Return the list of constraints of a (polytopic) Cartesian product.
 
@@ -164,7 +164,7 @@ Return the list of constraints of a (polytopic) Cartesian product.
 
 A list of constraints.
 """
-function constraints_list(cp::CartesianProduct{N, <:AbstractPolytope})::Vector{LinearConstraint{N}} where N<:Real
+function constraints_list(cp::CartesianProduct{N, <:LazySet{N}})::Vector{LinearConstraint{N}} where N<:Real
     return constraints_list(CartesianProductArray([cp.X, cp.Y]))
 end
 
@@ -371,7 +371,7 @@ function ∈(x::AbstractVector{N}, cpa::CartesianProductArray{N, <:LazySet{N}}
 end
 
 """
-    constraints_list(cpa::CartesianProductArray{N, <:AbstractPolytope})::Vector{LinearConstraint{N}} where N<:Real
+    constraints_list(cpa::CartesianProductArray{N, <:LazySet{N}})::Vector{LinearConstraint{N}} where N<:Real
 
 Return the list of constraints of a (polytopic) Cartesian product.
 
@@ -383,13 +383,12 @@ Return the list of constraints of a (polytopic) Cartesian product.
 
 A list of constraints.
 """
-function constraints_list(cpa::CartesianProductArray{N, <:AbstractPolytope})::Vector{LinearConstraint{N}} where N<:Real
-    c_array = array(cpa)
+function constraints_list(cpa::CartesianProductArray{N, <:LazySet{N}})::Vector{LinearConstraint{N}} where N<:Real
     clist = Vector{LinearConstraint{N}}()
-    sizehint!(clist, sum(dim(s_low) for s_low in c_array))
+    sizehint!(clist, dim(cpa))
     prev_step = 1
     # create high-dimensional constraints list
-    for c_low in c_array
+    for c_low in array(cpa)
         c_low_list = constraints_list(c_low)
         if !isempty(c_low_list)
             indices = prev_step : (dim(c_low_list[1]) + prev_step - 1)
