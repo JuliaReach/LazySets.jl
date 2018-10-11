@@ -16,10 +16,8 @@ Type that represents a convex polytope in H-representation.
 
 ### Note
 
-This type is more appropriately a *polyhedron*, because no check in the
-constructor is made that the constraints determine a bounded set from the finite
-intersection of half-spaces.
-This is a running assumption in this type.
+Recall that a polytope is a bounded polyhedron. Boundedness is a running
+assumption in this type.
 """
 struct HPolytope{N<:Real} <: AbstractPolytope{N}
     constraints::Vector{LinearConstraint{N}}
@@ -188,30 +186,7 @@ function constraints_list(P::HPolytope{N}
     return P.constraints
 end
 
-"""
-    tosimplehrep(P::HPolytope)
 
-Return the simple H-representation ``Ax ≤ b`` of a polytope.
-
-### Input
-
-- `P` -- polytope
-
-### Output
-
-The tuple `(A, b)` where `A` is the matrix of normal directions and `b` are the offsets.
-"""
-function tosimplehrep(P::HPolytope{N}) where {N}
-    if length(P.constraints) == 0
-        A = Matrix{N}(undef, 0, 0)
-        b = Vector{N}(undef, 0)
-        return (A, b)
-    end
-
-    A = hcat([ci.a for ci in P.constraints]...)'
-    b = [ci.b for ci in P.constraints]
-    return (A, b)
-end
 
 function load_polyhedra_hpolytope() # function to be loaded by Requires
 return quote
