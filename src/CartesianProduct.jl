@@ -385,16 +385,17 @@ A list of constraints.
 """
 function constraints_list(cpa::CartesianProductArray{N, <:LazySet{N}})::Vector{LinearConstraint{N}} where N<:Real
     clist = Vector{LinearConstraint{N}}()
-    sizehint!(clist, dim(cpa))
+    s_dim = dim(cpa)
+    sizehint!(clist, s_dim)
     prev_step = 1
     # create high-dimensional constraints list
     for c_low in array(cpa)
         c_low_list = constraints_list(c_low)
         if !isempty(c_low_list)
-            indices = collect(prev_step : (dim(c_low_list[1]) + prev_step - 1))
+            indices = prev_step : (dim(c_low_list[1]) + prev_step - 1)
         end
         for constr in c_low_list
-            new_constr = LinearConstraint(SparseVector(dim(cpa), indices, constr.a), constr.b)
+            new_constr = LinearConstraint(sparsevec(indices, constr.a, s_dim), constr.b)
             push!(clist, new_constr)
         end
         prev_step += dim(c_low_list[1])
