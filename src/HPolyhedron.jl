@@ -84,16 +84,25 @@ This implementation uses `GLPKSolverLP` as linear programming backend.
 function σ(d::AbstractVector{N}, P::HPoly{N}) where {N<:Real}
     c = -d
     (A, b) = tosimplehrep(P)
-    sense = '<'
-    l = -Inf
-    u = Inf
-    solver = GLPKSolverLP()
-    lp = linprog(c, A, sense, b, l, u, solver)
-    if lp.status == :Unbounded
+    if length(b) == 0
+        unbounded = true
+    else
+        sense = '<'
+        l = -Inf
+        u = Inf
+        solver = GLPKSolverLP()
+        lp = linprog(c, A, sense, b, l, u, solver)
+        if lp.status == :Unbounded
+            unbounded = true
+        elseif lp.status == :Infeasible
+            error("the support vector is undefined because the polyhedron is " *
+                  "empty")
+        end
+        unbounded = false
+    end
+    if unbounded
         error("the support vector in direction $(d) is undefined because " *
               "the polyhedron is unbounded")
-    elseif lp.status == :Infeasible
-        error("the support vector is undefined because the polyhedron is empty")
     else
         return lp.sol
     end
