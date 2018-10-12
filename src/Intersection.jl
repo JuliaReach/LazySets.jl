@@ -424,7 +424,8 @@ function ρ(d::AbstractVector{N},
 
     if upper_bound && depth < 0
         # return a naive overapproximation
-        return ρ(d, cap.X)
+        ρ_rec = upper_bound ? LazySets.Approximations.ρ_upper_bound : ρ
+        return ρ_rec(d, cap.X)
     elseif algorithm == "line_search"
         @assert isdefined(Main, :Optim) "the algorithm $algorithm needs " *
                                         "the package 'Optim' to be loaded"
