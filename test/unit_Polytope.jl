@@ -47,7 +47,7 @@ for N in [Float64, Rational{Int}, Float32]
     if test_suite_polyhedra
         @test length(singleton_list(p)) == 4
     else
-        @test_throws MethodError singleton_list(p)
+        @test_throws AssertionError singleton_list(p)
     end
 
     if test_suite_polyhedra
@@ -99,7 +99,7 @@ empty_V_polytope = VPolytope()
 
 if test_suite_polyhedra
     # check isempty function of the AbstractPolytope interface
-    @test isempty(empty_H_polytope)
+    @test !isempty(empty_H_polytope)
     @test isempty(empty_V_polytope)
 end
 
@@ -152,6 +152,12 @@ if test_suite_polyhedra
         P = HPolytope(A, b)
         @test tovrep(P) isa VPolytope
         @test tohrep(P) isa HPolytope # test no-op
+
+        # checking for emptiness
+        P = HPolytope([LinearConstraint(N[1, 0], N(0))])    # x <= 0
+        @test !isempty(P)
+        addconstraint!(P, LinearConstraint(N[-1, 0], N(-1)))  # x >= 1
+        @test isempty(P)
 
         # -----
         # V-rep

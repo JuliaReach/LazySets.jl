@@ -6,7 +6,7 @@
 @test check_method_implementation(LazySet, σ,
                                   Function[S -> (Vector{Float64}, S{Float64})])
 # dimension
-@test check_method_implementation(LazySet, dim, Function[S -> (S,)])
+check_method_implementation(LazySet, dim, Function[S -> (S{Float64},)])
 
 # --- AbstractPolytope ---
 

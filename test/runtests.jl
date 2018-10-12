@@ -60,6 +60,7 @@ if test_suite_basic
     @time @testset "LazySets.Hyperrectangle" begin include("unit_Hyperrectangle.jl") end
     @time @testset "LazySets.Polygon" begin include("unit_Polygon.jl") end
     @time @testset "LazySets.Polytope" begin include("unit_Polytope.jl") end
+    @time @testset "LazySets.Polyhedron" begin include("unit_Polyhedron.jl") end
     @time @testset "LazySets.Zonotope" begin include("unit_Zonotope.jl") end
     @time @testset "LazySets.ZeroSet" begin include("unit_ZeroSet.jl") end
     @time @testset "LazySets.EmptySet" begin include("unit_EmptySet.jl") end

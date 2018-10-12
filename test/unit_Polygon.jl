@@ -35,7 +35,7 @@ for N in [Float64, Float32, Rational{Int}]
     # support vector of empty polygon
     @test_throws AssertionError σ(N[0], HPolygon{N}())
     @test_throws AssertionError σ(N[0], HPolygonOpt(HPolygon{N}()))
-    @test_throws AssertionError σ(N[0], HPolytope{N}())
+    @test_throws ErrorException σ(N[0], HPolytope{N}())
 
     # subset
     b1 = Ball1(N[0, 0], N(1))

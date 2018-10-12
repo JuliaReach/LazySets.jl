@@ -346,20 +346,37 @@ LazySets.jump2pi
 <=(::AbstractVector{AbstractFloat}, ::AbstractVector{AbstractFloat})
 LazySets.quadrant(::AbstractVector{Real})
 ```
+## Polyhedra and Polytopes
 
-## Polytopes
 
 ### Constraint representation
 
+[Convex polytopes](https://en.wikipedia.org/wiki/Polytope) are bounded polyhedra.
+The types `HPolytope` and `HPolyhedron` are used to represent polytopes and
+general polyhedra respectively, the difference being that for `HPolytope` there
+is a running assumption about the boundedness of the set.
+
 ```@docs
 HPolytope
-dim(::HPolytope)
-σ(::AbstractVector{Real}, ::HPolytope{Real})
-∈(::AbstractVector{Real}, ::HPolytope{Real})
-addconstraint!(::HPolytope{Real}, ::LinearConstraint{Real})
-constraints_list(::HPolytope)
-tosimplehrep(::HPolytope)
+HPolyhedron
 ```
+
+The following methods are shared between polyhedra and polytopes. 
+
+```@docs
+dim(P::HPoly{Real})
+σ(d::AbstractVector{Real}, P::HPoly{Real})
+∈(x::AbstractVector{Real}, P::HPoly{Real})
+addconstraint!(::HPoly{Real}, ::LinearConstraint{Real})
+constraints_list(::HPoly{Real})
+tosimplehrep(P::HPoly{Real})
+tohrep(P::HPoly{Real}) 
+convex_hull(P1::HPoly{Real}, P2::HPoly{Real})
+cartesian_product(P1::HPoly{Real}, P2::HPoly{Real})
+tovrep(P::HPoly{Real})
+vertices_list(P::HPoly{Real})
+```
+
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
