@@ -315,10 +315,6 @@ V-representation.
 ### Output
 
 The polytope obtained by the intersection of `P1` and `P2`.
-
-The type of the output polytope can be passed optionally. By default, if both
-`P1` and `P2` are polytopes in V-representation, the output is a polytope in
-V-representation. Otherwise, a polytope in H-representation is returned. 
 """
 function intersection(P1::HPoly{N},
                       P2::VPolytope{N};
@@ -353,6 +349,44 @@ function intersection(P1::VPolytope{N},
 end
 
 """
+    intersection(P1::HPoly{N},
+                 P2::AbstractPolytope{N};
+                 backend=default_polyhedra_backend(N),
+                 prunefunc=removehredundancy!) where N
+
+Compute the intersection of a polyhedron and a polytope.
+
+### Input
+
+- `P1`        -- polyhedron
+- `P2`        -- polytope
+- `backend`   -- (optional, default: `default_polyhedra_backend(N)`) the
+                 polyhedral computations backend, see
+                 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
+                 for further information
+- `prunefunc` -- (optional, default: `removehredundancy!`) function to
+                 post-process the output of `intersect`
+
+### Output
+
+The polytope in H-representation obtained by the intersection of `P1` and `P2`.
+"""
+function intersection(P1::HPoly{N},
+                      P2::AbstractPolytope{N};
+                      backend=default_polyhedra_backend(N),
+                      prunefunc=removehredundancy!) where N
+    return intersection(P1, HPolytope(constraints_list(P2)))
+end
+
+# symmetric function
+function intersection(P1::AbstractPolytope{N},
+                      P2::HPoly{N};
+                      backend=default_polyhedra_backend(N),
+                      prunefunc=removehredundancy!) where N
+    return intersection(P2, P1)
+end
+
+"""
     intersection(P1::S1, P2::S2) where {S1<:AbstractPolytope{N},
                                         S2<:AbstractPolytope{N}} where N
 
@@ -381,7 +415,7 @@ function intersection(P1::S1, P2::S2) where {S1<:AbstractPolytope{N},
         if T <: Union{HPolytope, VPolytope}
             return P
         else
-            return VPolytope(vertices_list(P))
+            return HPolytope(constraints_list(P))
         end
     end
 
