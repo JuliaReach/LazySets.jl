@@ -110,6 +110,12 @@ function σ(d::AbstractVector{N}, ms::MinkowskiSum{N}) where {N<:Real}
     return σ(d, ms.X) + σ(d, ms.Y)
 end
 
+@inline function ρ_helper(d::AbstractVector{N},
+                          ms::MinkowskiSum{N},
+                          ρ_rec::Function) where {N<:Real}
+    return ρ_rec(d, ms.X) + ρ_rec(d, ms.Y)
+end
+
 """
     ρ(d::AbstractVector{N}, ms::MinkowskiSum{N}) where {N<:Real}
 
@@ -131,7 +137,25 @@ and ``Y`` is the sum of the support functions of ``X`` and ``Y`` in direction
 ``d``.
 """
 function ρ(d::AbstractVector{N}, ms::MinkowskiSum{N}) where {N<:Real}
-    return ρ(d, ms.X) + ρ(d, ms.Y)
+    return ρ_helper(d, ms, ρ)
+end
+
+"""
+    ρ_upper_bounds(d::AbstractVector{N}, ms::MinkowskiSum{N}) where {N<:Real}
+
+Return an upper bound of the support function of a Minkowski sum.
+
+### Input
+
+- `d`  -- direction
+- `ms` -- Minkowski sum
+
+### Output
+
+An upper bound of the support function in the given direction.
+"""
+function ρ_upper_bounds(d::AbstractVector{N}, ms::MinkowskiSum{N}) where {N<:Real}
+    return ρ_helper(d, ms, ρ_upper_bounds)
 end
 
 # =================================
@@ -241,6 +265,12 @@ function σ(d::AbstractVector{N}, msa::MinkowskiSumArray{N}) where {N<:Real}
     return σ_helper(d, msa.array)
 end
 
+@inline function ρ_helper(d::AbstractVector{N},
+                          msa::MinkowskiSumArray{N},
+                          ρ_rec::Function) where {N<:Real}
+    return sum([ρ_rec(d, Xi) for Xi in msa.array])
+end
+
 """
     ρ(d::AbstractVector{N}, msa::MinkowskiSumArray{N}) where {N<:Real}
 
@@ -262,7 +292,28 @@ The support function of the Minkowski sum of sets is the sum of the support
 functions of each set. 
 """
 function ρ(d::AbstractVector{N}, msa::MinkowskiSumArray{N}) where {N<:Real}
-    return sum([ρ(d, Xi) for Xi in msa.array])
+    return ρ_helper(d, msa, ρ)
+end
+
+"""
+    ρ_upper_bounds(d::AbstractVector{N},
+                   msa::MinkowskiSumArray{N}) where {N<:Real}
+
+Return the support function of a Minkowski sum array of a finite number of sets
+in a given direction.
+
+### Input
+
+- `d`  -- direction
+- `ms` -- Minkowski sum array
+
+### Output
+
+An upper bound of the support function in the given direction.
+"""
+function ρ_upper_bounds(d::AbstractVector{N},
+                        msa::MinkowskiSumArray{N}) where {N<:Real}
+    return ρ_helper(d, msa, ρ_upper_bounds)
 end
 
 
