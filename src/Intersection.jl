@@ -4,6 +4,8 @@ export Intersection,
        IntersectionArray,
        array
 
+global ρ_options = (false, 2, false)
+
 """
     Intersection{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
 
@@ -323,6 +325,8 @@ end
                         <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}};
       [algorithm]::String="line_search",
       [check_intersection]::Bool=true,
+      [upper_bound]::Bool=false,
+      [depth]::Int=1,
       [kwargs...]) where N<:Real
 
 Return the support function of the intersection of a compact set and a
@@ -349,6 +353,10 @@ half-space/hyperplane/line in a given direction.
 - `check_intersection` -- (optional, default: `true`) if `true`, check if the
                           intersection is empty before actually calculating the
                           support function
+- `upper_bound` -- (optional, default: `false`) if `false`, compute the support
+                   function exactly; otherwise use an overapproximative
+                   algorithm
+- `depth`       -- (optional, default: 1) recursion depth
 
 ### Output
 
@@ -391,18 +399,33 @@ function ρ(d::AbstractVector{N},
            algorithm::String="line_search",
            check_intersection::Bool=true,
            upper_bound::Bool=false,
+           depth::Int=2,
            kwargs...) where N<:Real
 
     X = cap.X    # compact set
     H = cap.Y    # halfspace or hyperplane
+
+    global ρ_options
+    first_execution = !ρ_options[1]
+    if !first_execution
+        check_intersection = false
+        depth = min(ρ_options[2] - 1, -1)
+        upper_bound = ρ_options[3]
+    else
+        depth = min(depth - 1, -1)
+    end
+    ρ_options = (true, depth, upper_bound)
 
     # if the intersection is empty => stop
     if check_intersection &&
             is_intersection_empty(X, H, false; upper_bound=upper_bound)
         error("the intersection is empty")
     end
-    
-    if algorithm == "line_search"
+
+    if upper_bound && depth < 0
+        # return a naive overapproximation
+        return ρ(d, cap.X)
+    elseif algorithm == "line_search"
         @assert isdefined(Main, :Optim) "the algorithm $algorithm needs " *
                                         "the package 'Optim' to be loaded"
         (s, _) = _line_search(d, X, H; upper_bound=upper_bound, kwargs...)
@@ -413,6 +436,11 @@ function ρ(d::AbstractVector{N},
     else
         error("algorithm $(algorithm) unknown")
     end
+    if first_execution
+        ρ_options = (false, 1, false)
+    else
+        ρ_options = (true, depth + 1, upper_bound)
+    end
     return s
 end
 
@@ -422,9 +450,10 @@ end
                     <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
                     <:LazySet{N}};
   algorithm::String="line_search", check_intersection::Bool=true,
-  kwargs...) where N<:Real =
+  upper_bound::Bool=false, depth::Int=1, kwargs...) where N<:Real =
     ρ(ℓ, cap.Y ∩ cap.X; algorithm=algorithm,
-      check_intersection=check_intersection, kwargs...)
+      check_intersection=check_intersection, upper_bound=upper_bound,
+      depth=depth, kwargs...)
 
 function load_optim_intersection()
 return quote
@@ -451,6 +480,7 @@ where ``D_h = \\{ λ : λ ≥ 0 \\}`` if ``H`` is a half-space or
 - `upper_bound` -- (optional, default: `false`) if `false`, compute the support
                    function exactly; otherwise use an overapproximative
                    algorithm
+- `kwargs`      -- additional keyword arguments
 
 ### Output
 
@@ -498,7 +528,6 @@ julia> _line_search([1.0, 0.0], X, H, upper=1e3, method=GoldenSection())
 function _line_search(ℓ, X, H::Union{HalfSpace, Hyperplane, Line};
                       upper_bound::Bool=false, kwargs...)
     options = Dict(kwargs)
-
     # Initialization
     a, b = H.a, H.b
     ρ_rec = upper_bound ? LazySets.Approximations.ρ_upper_bound : ρ
