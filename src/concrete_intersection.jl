@@ -204,7 +204,7 @@ function intersection(P1::AbstractHPolygon{N},
 end
 
 """
-    intersection(P::HPolytope{N},
+    intersection(P::HPoly{N},
                  hs::HalfSpace{N};
                  backend=default_polyhedra_backend(N),
                  prunefunc=removehredundancy!) where N<:Real
@@ -215,6 +215,10 @@ Compute the intersection of a polytope in H-representation and a half-space.
 
 - `P`         -- polytope
 - `hs`        -- half-space
+- `backend`   -- (optional, default: `default_polyhedra_backend(N)`) the
+                 polyhedral computations backend, see
+                 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
+                 for further information
 - `prunefunc` -- (optional, default: `removehredundancy!`) function to
                  post-process the polytope after adding the additional
                  constraint
@@ -227,18 +231,7 @@ function intersection(P::HPoly{N},
                       hs::HalfSpace{N};
                       backend=default_polyhedra_backend(N),
                       prunefunc=removehredundancy!) where {N<:Real}
-    HPOLY = typeof(P)
-    Q = HPOLY([constraints_list(P); constraints_list(hs)])
-
-    if prunefunc == removehredundancy!
-        # convert to polyhedron
-        ph = polyhedron(Q, backend)
-        prunefunc(ph)
-        Q = convert(HPOLY, ph)
-    else
-        prunefunc(Q)
-    end
-    return Q
+    return intersection(P, HPolyhedron([hs]))
 end
 
 # symmetric method
@@ -249,10 +242,40 @@ function intersection(hs::HalfSpace{N},
     return intersection(P, hs, backend=backend, prunefunc=prunefunc)
 end
 
-function intersection(P1::HPoly{N}, P2::HPoly{N},
+"""
+    intersection(P1::HPoly{N},
+                      P2::HPoly{N};
                       backend=default_polyhedra_backend(N),
                       prunefunc=removehredundancy!) where N
-    HPOLY = typeof(P1)
+
+Compute the intersection of two polyhedra in H-representation.
+
+### Input
+
+- `P1`        -- polytope
+- `P2`        -- polytope
+- `backend`   -- (optional, default: `default_polyhedra_backend(N)`) the
+                 polyhedral computations backend, see
+                 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
+                 for further information
+- `prunefunc` -- (optional, default: `removehredundancy!`) function to
+                 post-process the polytope after adding the additional
+                 constraint
+
+### Output
+
+A new same polytope in H-representation with just one more constraint.
+"""
+function intersection(P1::HPoly{N},
+                      P2::HPoly{N};
+                      backend=default_polyhedra_backend(N),
+                      prunefunc=removehredundancy!) where N
+    if typeof(P1) == typeof(P2)
+        HPOLY = typeof(P1)
+    else
+        # one of them must be a polyhedron
+        HPOLY = HPolyhedron{N}
+    end
     # concatenate the linear constraints
     Q = HPOLY([constraints_list(P1);
                constraints_list(P2)])
@@ -280,13 +303,14 @@ V-representation.
 
 ### Input
 
-- `P1`          -- polytope
-- `P2`          -- another polytope
-- `backend`     -- (optional, default: `default_polyhedra_backend(N)`) the polyhedral
-                   computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
-                   for further information
-- `prunefunc`   -- (optional, default: `removehredundancy!`) function to post-process
-                    the output of `intersect`
+- `P1`        -- polytope
+- `P2`        -- polytope
+- `backend`   -- (optional, default: `default_polyhedra_backend(N)`) the
+                 polyhedral computations backend, see
+                 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
+                 for further information
+- `prunefunc` -- (optional, default: `removehredundancy!`) function to
+                 post-process the output of `intersect`
 
 ### Output
 
