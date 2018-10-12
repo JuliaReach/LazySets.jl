@@ -273,8 +273,8 @@ function intersection(P1::HPoly{N},
     if typeof(P1) == typeof(P2)
         HPOLY = typeof(P1)
     else
-        # one of them must be a polyhedron
-        HPOLY = HPolyhedron{N}
+        # one of them must be a polytope, so the intersection will be bounded
+        HPOLY = HPolytope{N}
     end
     # concatenate the linear constraints
     Q = HPOLY([constraints_list(P1);
