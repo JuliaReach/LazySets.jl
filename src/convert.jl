@@ -144,6 +144,10 @@ function convert(::Type{HPolytope}, P::AbstractPolytope)
     return convert(HPolytope, convert(VPolytope, P))
 end
 
+function convert(::Type{HPolyhedron}, P::AbstractPolytope)
+    return HPolyhedron(constraints_list(P))
+end
+
 """
     convert(::Type{HPolytope}, P::VPolytope)
 

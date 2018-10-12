@@ -8,8 +8,10 @@ export HPolyhedron,
        tohrep, tovrep,
        convex_hull,
        cartesian_product,
-       vertices_list
-       
+       vertices_list,
+       singleton_list,
+       isempty
+
 """
     HPolyhedron{N<:Real} <: LazySet{N}
 
@@ -236,10 +238,6 @@ function tohrep(P::HPoly{N}) where {N}
     return P
 end
 
-function isempty(P::HPolyhedron{N})::Bool where {N<:Real}
-    return isempty(vertices_list(P))
-end
-
 # ========================================================
 # External methods that require Polyhedra.jl to be loaded
 # ========================================================
@@ -392,6 +390,57 @@ function vertices_list(P::HPoly{N};
     return collect(points(P))
 end
 
+"""
+    singleton_list(P::HPolyhedron{N})::Vector{Singleton{N}} where {N<:Real}
+
+Return the vertices of a polyhedron in H-representation set as a
+list of singletons.
+
+### Input
+
+- `P` -- polyhedron
+
+### Output
+
+List containing a singleton for each vertex.
+"""
+function singleton_list(P::HPolyhedron{N})::Vector{Singleton{N}} where {N<:Real}
+    return [Singleton(vi) for vi in vertices_list(P)]
+end
+
+
+import Base.isempty
+
+"""
+   isempty(P::HPoly{N})::Bool where {N<:Real}
+
+Return the vertices of a polyhedron in H-representation as a list of singletons.
+
+### Input
+
+- `P` -- polyhedron
+
+### Output
+
+`true` if and only if the constraints are inconsistent.
+
+### Algorithm
+
+This function uses `Polyhedra.isempty` which evaluates the feasibility of the
+LP whose feasible set is determined by the set of constraints and whose objective
+function is zero.
+"""
+function isempty(P::HPoly{N})::Bool where {N<:Real}
+    @assert isdefined(Main, :Polyhedra) "the function `isempty` needs the " *
+                                        "package 'Polyhedra' to be loaded"
+    return Polyhedra.isempty(polyhedron(P))
+end
+
+import Base.convert
+
+convert(::Type{HPolytope}, P::HPolyhedron{N}) where N = HPolytope{N}(copy(constraints_list(P)))
+convert(::Type{HPolyhedron}, P::HPolytope{N}) where N = HPolyhedron{N}(copy(constraints_list(P)))
+
 # ==========================================
 # Lower level methods that use Polyhedra.jl
 # ==========================================
@@ -407,6 +456,11 @@ function convert(::Type{HPolyhedron{N}}, P::HRep{T, N}) where {T, N}
     end
     return HPolyhedron(constraints)
 end
+
+function convert(::Type{HPolyhedron}, P::HRep{T, N}) where {T, N}
+    return convert(HPolyhedron{N}, P)
+end
+
 
 """
     HPolyhedron(P::HRep{T, N}, backend=nothing) where {T, N}

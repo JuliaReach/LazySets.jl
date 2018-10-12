@@ -53,6 +53,10 @@ function convert(::Type{HPolytope{N}}, P::HRep{T, N}) where {T, N}
     return HPolytope(constraints)
 end
 
+function convert(::Type{HPolytope}, P::HRep{T, N}) where {T, N}
+    return convert(HPolytope{N}, P)
+end
+
 """
     HPolytope(P::HRep{T, N}, backend=default_polyhedra_backend(N)) where {T, N}
 

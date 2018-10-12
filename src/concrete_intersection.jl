@@ -205,7 +205,8 @@ end
 
 """
     intersection(P::HPolytope{N},
-                 hs::HalfSpace{N},
+                 hs::HalfSpace{N};
+                 backend=default_polyhedra_backend(N),
                  prunefunc=removehredundancy!) where N<:Real
 
 Compute the intersection of a polytope in H-representation and a half-space.
@@ -222,45 +223,57 @@ Compute the intersection of a polytope in H-representation and a half-space.
 
 The same polytope in H-representation with just one more constraint.
 """
-function intersection(P::HPolytope{N},
-                      hs::HalfSpace{N},
-                      prunefunc=removehredundancy!) where N<:Real
-    Q = HPolytope([constraints_list(P); constraints_list(hs)])
+function intersection(P::HPoly{N},
+                      hs::HalfSpace{N};
+                      backend=default_polyhedra_backend(N),
+                      prunefunc=removehredundancy!) where {N<:Real}
+    HPOLY = typeof(P)
+    Q = HPOLY([constraints_list(P); constraints_list(hs)])
 
     if prunefunc == removehredundancy!
         # convert to polyhedron
-        ph = polyhedron(Q)
+        ph = polyhedron(Q, backend)
         prunefunc(ph)
-        Q = HPolytope(ph)
+        Q = convert(HPOLY, ph)
     else
         prunefunc(Q)
     end
-
     return Q
 end
 
 # symmetric method
 function intersection(hs::HalfSpace{N},
-                      P::HPolytope{N},
-                      prunefunc=removehredundancy!) where N<:Real
-    return intersection(P, hs, prunefunc)
+                      P::HPoly{N};
+                      backend=default_polyhedra_backend(N),
+                      prunefunc=removehredundancy!) where {N<:Real}
+    return intersection(P, hs, backend=backend, prunefunc=prunefunc)
 end
 
-function load_polyhedra_concrete_intersection() # function to be loaded by Requires
-return quote
+function intersection(P1::HPoly{N}, P2::HPoly{N},
+                      backend=default_polyhedra_backend(N),
+                      prunefunc=removehredundancy!) where N
+    HPOLY = typeof(P1)
+    # concatenate the linear constraints
+    Q = HPOLY([constraints_list(P1);
+               constraints_list(P2)])
 
-function default_intersection_output_type(P1::Union{HPolytope{N}, VPolytope{N}},
-                                          P2::Union{HPolytope{N}, VPolytope{N}}) where {N}
-    T = (P1 isa VPolytope && P2 isa VPolytope) ? VPolytope : HPolytope
-    return T
+    # remove redundant constraints
+    if prunefunc == removehredundancy!
+        # convert to polyhedron
+        ph = polyhedron(Q, backend)
+        prunefunc(ph)
+        Q = convert(HPOLY, ph)
+    else
+        prunefunc(Q)
+    end
+    return Q
 end
 
 """
-    intersection(P1::Union{HPolytope{N}, VPolytope{N}},
-                 P2::Union{HPolytope{N}, VPolytope{N}},
-                 [backend]=default_polyhedra_backend(N),
-                 [prunefunc]=removehredundancy!,
-                 [output_type]=default_intersection_output_type(P1, P2)) where N
+    intersection(P1::HPoly{N},
+                 P2::VPolytope{N};
+                 backend=default_polyhedra_backend(N),
+                 prunefunc=removehredundancy!) where N
 
 Compute the intersection of two polytopes in either H-representation or
 V-representation.
@@ -274,8 +287,6 @@ V-representation.
                    for further information
 - `prunefunc`   -- (optional, default: `removehredundancy!`) function to post-process
                     the output of `intersect`
-- `output_type` -- (optional, default: `default_intersection_output_type(P1, P2)`)
-                   choose the type for the output polytope 
 
 ### Output
 
@@ -285,17 +296,32 @@ The type of the output polytope can be passed optionally. By default, if both
 `P1` and `P2` are polytopes in V-representation, the output is a polytope in
 V-representation. Otherwise, a polytope in H-representation is returned. 
 """
-function intersection(P1::Union{HPolytope{N}, VPolytope{N}},
-                      P2::Union{HPolytope{N}, VPolytope{N}},
+function intersection(P1::HPoly{N},
+                      P2::VPolytope{N};
                       backend=default_polyhedra_backend(N),
-                      prunefunc=removehredundancy!,
-                      output_type=default_intersection_output_type(P1, P2)) where N
+                      prunefunc=removehredundancy!) where N
 
     Q1 = polyhedron(P1, backend)
     Q2 = polyhedron(P2, backend)
     Pint = Polyhedra.intersect(Q1, Q2)
     prunefunc(Pint)
-    return output_type(Pint)
+    return convert(typeof(P1), Pint)
+end
+
+# symmetric one
+function intersection(P1::VPolytope{N},
+                      P2::HPoly{N};
+                      backend=default_polyhedra_backend(N),
+                      prunefunc=removehredundancy!) where N
+    return intersection(P2, P1; backend=backend, prunefunc=prunefunc)
+end
+
+# missing case
+function intersection(P1::VPolytope{N},
+                      P2::VPolytope{N};
+                      backend=default_polyhedra_backend(N),
+                      prunefunc=removehredundancy!) where N
+    return intersection(tohrep(P1), P2; backend=backend, prunefunc=prunefunc)
 end
 
 """
@@ -306,8 +332,8 @@ Compute the intersection of two polytopic sets.
 
 ### Input
 
-- `P1`          -- polytope
-- `P2`          -- another polytope
+- `P1` -- polytope
+- `P2` -- another polytope
 
 ### Output
 
@@ -333,6 +359,3 @@ function intersection(P1::S1, P2::S2) where {S1<:AbstractPolytope{N},
 
     return intersection(get_polytope(P1), get_polytope(P2))
 end
-
-end # quote
-end # function load_polyhedra_concrete_intersection()
