@@ -120,7 +120,8 @@ function ρ_upper_bound(d::AbstractVector{N},
 
     X = cap.X    # compact set
     P = cap.Y    # polytope
-    return minimum([ρ(d, X ∩ Hi; kwargs...) for Hi in constraints_list(P)])
+    return minimum([ρ(d, X ∩ Hi; upper_bound=true, kwargs...)
+                    for Hi in constraints_list(P)])
 end
 
 # disambiguation
@@ -129,7 +130,8 @@ function ρ_upper_bound(d::AbstractVector{N},
                        kwargs...) where {N<:Real}
     X = cap.X    # compact set
     P = cap.Y    # polytope
-    return minimum([ρ(d, X ∩ Hi; kwargs...) for Hi in constraints_list(P)])
+    return minimum([ρ(d, X ∩ Hi; upper_bound=true, kwargs...)
+                    for Hi in constraints_list(P)])
 end
 
 # symmetric function
