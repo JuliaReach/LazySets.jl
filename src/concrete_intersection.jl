@@ -381,7 +381,7 @@ function intersection(P1::S1, P2::S2) where {S1<:AbstractPolytope{N},
         if T <: Union{HPolytope, VPolytope}
             return P
         else
-            return VPolytope(vertices_list(P))
+            return HPolytope(constraints_list(P))
         end
     end
 
