@@ -81,14 +81,23 @@ if test_suite_polyhedra
         # -----
 
         # intersection
+        # TODO these polyhedra are empty. do the tests make any sense?
         A = [N(0) N(1); N(1) N(0); N(2) N(2)]
         b = N[0, 0, 1]
         p1 = HPolyhedron(A, b)
         A = [N(0) N(-1); N(-1) N(0); N(1) N(1)]
-        b = N[-0.25, -0.25, -0]
+        b = N[-0.25, -0.25, 0]
         p2 = HPolyhedron(A, b)
         cap = intersection(p1, p2)
         # currently broken, see #565
+
+        # intersection with polytope
+        A = [N(1) N(0); N(0) N(1); N(-1) N(-1)]
+        b = N[1, 1, -1]
+        p = HPolyhedron(A, b)
+        b = BallInf(N[1, 1], N(0.5))
+        cap = intersection(p, b)
+        cap = intersection(b, p)
 
         # intersection with half-space
         hs = HalfSpace(N[2, 2], N(-1))
