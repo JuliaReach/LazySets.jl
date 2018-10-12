@@ -340,12 +340,16 @@ function intersection(P1::VPolytope{N},
     return intersection(P2, P1; backend=backend, prunefunc=prunefunc)
 end
 
-# missing case
+# missing case: VRep wiht VRep
 function intersection(P1::VPolytope{N},
                       P2::VPolytope{N};
                       backend=default_polyhedra_backend(N),
                       prunefunc=removehredundancy!) where N
-    return intersection(tohrep(P1), P2; backend=backend, prunefunc=prunefunc)
+    Q1 = polyhedron(P1, backend)
+    Q2 = polyhedron(P2, backend)
+    Pint = Polyhedra.intersect(Q1, Q2)
+    prunefunc(Pint)
+    return convert(typeof(P1), Pint)
 end
 
 """
