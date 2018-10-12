@@ -247,6 +247,14 @@ function σ(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
     return expmv(one(N), em.spmexp.M, σ(v, em.X)) # res <- exp(M) * σ(v, S)
 end
 
+@inline function ρ_helper(d::AbstractVector{N},
+                          em::ExponentialMap{N},
+                          ρ_rec::Function) where {N<:Real}
+    d_dense = d isa Vector ? d : Vector(d)
+    v = expmv(one(N), transpose(em.spmexp.M), d_dense) # v <- exp(M^T) * d
+    return ρ_rec(v, em.X)
+end
+
 """
     ρ(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
 
@@ -270,9 +278,30 @@ We allow sparse direction vectors, but will convert them to dense vectors to be
 able to use `expmv`.
 """
 function ρ(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
-    d_dense = d isa Vector ? d : Vector(d)
-    v = expmv(one(N), transpose(em.spmexp.M), d_dense) # v <- exp(M^T) * d
-    return ρ(v, em.X)
+    return ρ_helper(d, em, ρ)
+end
+
+"""
+    ρ_upper_bound(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
+
+Return an upper bound of the support function of an exponential map.
+
+### Input
+
+- `d`  -- direction
+- `em` -- exponential map
+
+### Output
+
+An upper bound of the support function in the given direction.
+
+### Notes
+
+We allow sparse direction vectors, but will convert them to dense vectors to be
+able to use `expmv`.
+"""
+function ρ_upper_bound(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
+    return ρ_helper(d, em, ρ_upper_bound)
 end
 
 """

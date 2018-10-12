@@ -128,7 +128,9 @@ direction.
 - `d`           -- direction
 - `cap`         -- intersection of two convex sets
 - `upper_bound` -- (optional, default: `false`) if `false`, compute the support
-                   function exactly; otherwise use an overapproximative algorithm
+                   function exactly; otherwise use an overapproximative
+                   algorithm
+- `kwargs`      -- additional keyword arguments
 
 ### Output
 

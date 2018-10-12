@@ -109,6 +109,13 @@ function σ(d::AbstractVector{N}, cp::CartesianProduct{N}) where {N<:Real}
     return [σ(d[1:n1], cp.X); σ(d[n1+1:length(d)], cp.Y)]
 end
 
+@inline function ρ_helper(d::AbstractVector{N},
+                          cp::CartesianProduct{N},
+                          ρ_rec::Function) where {N<:Real}
+    n1 = dim(cp.X)
+    return ρ_rec(d[1:n1], cp.X) + ρ_rec(d[n1+1:length(d)], cp.Y)
+end
+
 """
     ρ(d::AbstractVector{N}, cp::CartesianProduct{N}) where {N<:Real}
 
@@ -125,8 +132,26 @@ The support function in the given direction.
 If the direction has norm zero, the result depends on the wrapped sets.
 """
 function ρ(d::AbstractVector{N}, cp::CartesianProduct{N}) where {N<:Real}
-    n1 = dim(cp.X)
-    return ρ(d[1:n1], cp.X) + ρ(d[n1+1:length(d)], cp.Y)
+    return ρ_helper(d, cp, ρ)
+end
+
+"""
+    ρ_upper_bound(d::AbstractVector{N}, cp::CartesianProduct{N}) where {N<:Real}
+
+Return the support function of a Cartesian product.
+
+### Input
+
+- `d`  -- direction
+- `cp` -- Cartesian product
+
+### Output
+
+The support function in the given direction.
+"""
+function ρ_upper_bound(d::AbstractVector{N},
+                       cp::CartesianProduct{N}) where {N<:Real}
+    return ρ_helper(d, cp, ρ_upper_bound)
 end
 
 """
@@ -313,8 +338,21 @@ function σ(d::AbstractVector{N}, cpa::CartesianProductArray{N}) where {N<:Real}
     return svec
 end
 
+@inline function ρ_helper(d::AbstractVector{N},
+                          cpa::CartesianProductArray{N},
+                          ρ_rec::Function) where {N<:Real}
+    sfun = zero(N)
+    i0 = 1
+    for Xi in cpa.array
+        i1 = i0 + dim(Xi) - 1
+        sfun += ρ_rec(d[i0:i1], Xi)
+        i0 = i1 + 1
+    end
+    return sfun
+end
+
 """
-    ρ(d::AbstractVector{N}, cp::CartesianProductArray{N}) where {N<:Real}
+    ρ(d::AbstractVector{N}, cpa::CartesianProductArray{N}) where {N<:Real}
 
 Return the support function of a Cartesian product array.
 
@@ -329,14 +367,27 @@ The support function in the given direction.
 If the direction has norm zero, the result depends on the wrapped sets.
 """
 function ρ(d::AbstractVector{N}, cpa::CartesianProductArray{N}) where {N<:Real}
-    sfun = zero(N)
-    i0 = 1
-    for Xi in cpa.array
-        i1 = i0 + dim(Xi) - 1
-        sfun += ρ(d[i0:i1], Xi)
-        i0 = i1 + 1
-    end
-    return sfun
+    return ρ_helper(d, cpa, ρ)
+end
+
+"""
+    ρ_upper_bound(d::AbstractVector{N},
+                  cpa::CartesianProductArray{N}) where {N<:Real}
+
+Return the support function of a Cartesian product array.
+
+### Input
+
+- `d`   -- direction
+- `cpa` -- Cartesian product array
+
+### Output
+
+The support function in the given direction.
+"""
+function ρ_upper_bound(d::AbstractVector{N},
+                       cpa::CartesianProductArray{N}) where {N<:Real}
+    return ρ_helper(d, cpa, ρ_upper_bound)
 end
 
 """

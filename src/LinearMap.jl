@@ -171,6 +171,12 @@ function σ(d::AbstractVector{N}, lm::LinearMap{N}) where {N<:Real}
     return lm.M * σ(_At_mul_B(lm.M, d), lm.X)
 end
 
+@inline function ρ_helper(d::AbstractVector{N},
+                          lm::LinearMap{N},
+                          ρ_rec::Function) where {N<:Real}
+    return ρ_rec(_At_mul_B(lm.M, d), lm.X)
+end
+
 """
     ρ(d::AbstractVector{N}, lm::LinearMap{N}; kwargs...) where {N<:Real}
 
@@ -194,7 +200,25 @@ If ``L = M⋅S``, where ``M`` is a matrix and ``S`` is a convex set, it follows
 that ``ρ(d, L) = ρ(M^T d, S)`` for any direction ``d``.
 """
 function ρ(d::AbstractVector{N}, lm::LinearMap{N}; kwargs...) where {N<:Real}
-    return ρ(_At_mul_B(lm.M, d), lm.X; kwargs...)
+    return ρ_helper(d, lm, ρ)
+end
+
+"""
+    ρ_upper_bound(d::AbstractVector{N}, lm::LinearMap{N}) where {N<:Real}
+
+Return an upper bound of the support function of a linear map.
+
+### Input
+
+- `d`  -- direction
+- `lm` -- linear map
+
+### Output
+
+An upper bound of the support function in the given direction.
+"""
+function ρ_upper_bound(d::AbstractVector{N}, lm::LinearMap{N}) where {N<:Real}
+    return ρ_helper(d, lm, ρ_upper_bound)
 end
 
 """
