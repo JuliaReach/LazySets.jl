@@ -752,7 +752,7 @@ end
 
 """
     is_intersection_empty(X::LazySet{N},
-                          P::Union{HPolytope{N}, AbstractHPolygon{N}}
+                          P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}}
                          )::Bool where {N<:Real}
 
 Check whether a compact set and a polytope do not intersect.
@@ -780,7 +780,7 @@ the number of constraints in ``P``.
 Note that this method can be used with any set ``P`` whose constraints are known.
 """
 function is_intersection_empty(X::LazySet{N},
-                               P::Union{HPolytope{N}, AbstractHPolygon{N}}
+                               P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}}
                               )::Bool where N<:Real
 
     for Hi in constraints_list(P)
@@ -792,7 +792,7 @@ function is_intersection_empty(X::LazySet{N},
 end
 
 # symmetric function
-function is_intersection_empty(P::Union{HPolytope{N}, AbstractHPolygon{N}},
+function is_intersection_empty(P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
                                X::LazySet{N}
                               )::Bool where N<:Real
     return is_intersection_empty(X, P)
