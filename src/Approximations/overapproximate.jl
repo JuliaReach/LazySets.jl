@@ -156,7 +156,7 @@ function overapproximate(X::LazySet{N},
     sizehint!(halfspaces, length(dir))
     H = HPolytope(halfspaces)
     for d in dir
-        addconstraint!(H, LinearConstraint(d, ρ_(d, X)))
+        addconstraint!(H, LinearConstraint(d, ρ(d, X)))
     end
     return H
 end
