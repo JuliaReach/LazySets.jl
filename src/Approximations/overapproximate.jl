@@ -209,7 +209,7 @@ end
                     dir::AbstractDirections{N};
                     [upper_bound]::Bool=false,
                     kwargs...
-                   ) where {N<:Real, S<:AbstractPolytope{N}}
+                   ) where {N<:Real, S<:Union{AbstractPolytope{N}, HPolyhedron{N}}}
 
 Return the overapproximation of the intersection between a compact set and a
 polytope given a set of template directions.
@@ -255,7 +255,7 @@ function overapproximate(cap::Intersection{N, <:LazySet, S},
                          dir::AbstractDirections{N};
                          upper_bound::Bool=false,
                          kwargs...
-                        ) where {N<:Real, S<:AbstractPolytope{N}}
+                        ) where {N<:Real, S<:Union{AbstractPolytope{N}, HPolyhedron{N}}}
 
     X = cap.X    # compact set
     P = cap.Y    # polytope
@@ -276,4 +276,16 @@ function overapproximate(cap::Intersection{N, <:LazySet, S},
         addconstraint!(Q, HalfSpace(di, ρ_X_Hi_min))
     end
     return Q
+end
+
+# symmetric method
+function overapproximate(cap::Intersection{N,
+                                           <:Union{AbstractPolytope{N}, HPolyhedron{N}},
+                                           <:LazySet},
+                         dir::AbstractDirections{N};
+                         upper_bound::Bool=false,
+                         kwargs...
+                        ) where N<:Real
+    return overapproximate(cap.Y ∩ cap.X, dir; upper_bound=upper_bound,
+                           kwargs...)
 end
