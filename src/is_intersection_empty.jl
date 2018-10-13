@@ -751,6 +751,62 @@ function is_intersection_empty(hs::HalfSpace{N},
 end
 
 """
+    is_intersection_empty(X::AbstractPolytope{N},
+                          hs::HalfSpace{N},
+                          [witness]::Bool=false
+                         )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
+
+Check whether a polytope an a half-space do not intersect, and otherwise
+optionally compute a witness.
+
+### Input
+
+- `P`       -- polytope
+- `hs`      -- half-space
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+`true` iff ``P ∩ hs = ∅``
+
+### Notes
+
+Witness production is currently not supported.
+
+### Algorithm
+
+We ask for emptiness of the polytope constrained by the additional half-space.
+"""
+function is_intersection_empty(P::AbstractPolytope{N},
+                               hs::HalfSpace{N},
+                               witness::Bool=false;
+                               upper_bound::Bool=false,
+                               kwargs...
+                               )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
+    Q = HPolytope{N}()
+    c = constraints_list(Q)
+    append!(c, constraints_list(P))
+    push!(c, hs)
+    empty_intersection = isempty(Q)
+    if witness
+        if empty_intersection
+            return (true, N[])
+        end
+        error("witness production is not supported yet")
+    end
+    return empty_intersection
+end
+
+# symmetric function
+function is_intersection_empty(hs::HalfSpace{N},
+                               P::AbstractPolytope{N},
+                               witness::Bool=false;
+                               kwargs...
+                              )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
+    return is_intersection_empty(P, hs, witness; kwargs...)
+end
+
+"""
     is_intersection_empty(X::LazySet{N},
                           P::Union{HPolytope{N}, AbstractHPolygon{N}}
                          )::Bool where {N<:Real}

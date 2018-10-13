@@ -126,6 +126,13 @@ if test_suite_polyhedra
         c2 = constraints_list(intersection(hs, p1))
         @test length(c1) == 3 && ispermutation(c1, c2)
 
+        # emptiness of intersection with half-space
+        A = [N(0) N(1); N(1) N(0); N(-1) N(-1)]
+        b = N[1, 1, -1]
+        p3 = HPolytope(A, b)
+        hs = HalfSpace(N[1, 0], N(0.5))
+        @test isdisjoint(p3, hs) == isdisjoint(hs, p3) == false
+
         # convex hull
         ch = convex_hull(p1, p2)
         # currently broken, see #566
