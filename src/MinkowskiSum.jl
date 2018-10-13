@@ -112,9 +112,8 @@ end
 
 @inline function ρ_helper(d::AbstractVector{N},
                           ms::MinkowskiSum{N},
-                          ρ_rec::Function;
-                          kwargs...) where {N<:Real}
-    return ρ_rec(d, ms.X; kwargs...) + ρ_rec(d, ms.Y; kwargs...)
+                          ρ_rec::Function) where {N<:Real}
+    return ρ_rec(d, ms.X) + ρ_rec(d, ms.Y)
 end
 
 """
@@ -273,9 +272,8 @@ end
 
 @inline function ρ_helper(d::AbstractVector{N},
                           msa::MinkowskiSumArray{N},
-                          ρ_rec::Function;
-                          kwargs...) where {N<:Real}
-    return sum([ρ_rec(d, Xi; kwargs...) for Xi in msa.array])
+                          ρ_rec::Function) where {N<:Real}
+    return sum([ρ_rec(d, Xi) for Xi in msa.array])
 end
 
 """

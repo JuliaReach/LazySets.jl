@@ -103,9 +103,8 @@ end
 
 @inline function ρ_helper(d::AbstractVector{N},
                           ch::ConvexHull{N},
-                          ρ_rec::Function;
-                          kwargs...) where {N<:Real}
-    return max(ρ_rec(d, ch.X; kwargs...), ρ_rec(d, ch.Y; kwargs...))
+                          ρ_rec::Function) where {N<:Real}
+    return max(ρ_rec(d, ch.X), ρ_rec(d, ch.Y))
 end
 
 """
@@ -277,9 +276,8 @@ end
 
 @inline function ρ_helper(d::AbstractVector{N},
                           cha::ConvexHullArray{N},
-                          ρ_rec::Function;
-                          kwargs...) where {N<:Real}
-    return maximum([ρ_rec(d, Xi; kwargs...) for Xi in array(cha)])
+                          ρ_rec::Function) where {N<:Real}
+    return maximum([ρ_rec(d, Xi) for Xi in array(cha)])
 end
 
 """

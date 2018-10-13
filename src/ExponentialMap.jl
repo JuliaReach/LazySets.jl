@@ -249,11 +249,10 @@ end
 
 @inline function ρ_helper(d::AbstractVector{N},
                           em::ExponentialMap{N},
-                          ρ_rec::Function;
-                          kwargs...) where {N<:Real}
+                          ρ_rec::Function) where {N<:Real}
     d_dense = d isa Vector ? d : Vector(d)
     v = expmv(one(N), transpose(em.spmexp.M), d_dense) # v <- exp(M^T) * d
-    return ρ_rec(v, em.X; kwargs...)
+    return ρ_rec(v, em.X)
 end
 
 """

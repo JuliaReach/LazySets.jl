@@ -111,11 +111,9 @@ end
 
 @inline function ρ_helper(d::AbstractVector{N},
                           cp::CartesianProduct{N},
-                          ρ_rec::Function;
-                          kwargs...) where {N<:Real}
+                          ρ_rec::Function) where {N<:Real}
     n1 = dim(cp.X)
-    return ρ_rec(d[1:n1], cp.X; kwargs...) +
-           ρ_rec(d[n1+1:length(d)], cp.Y; kwargs...)
+    return ρ_rec(d[1:n1], cp.X) + ρ_rec(d[n1+1:length(d)], cp.Y)
 end
 
 """
@@ -348,13 +346,12 @@ end
 
 @inline function ρ_helper(d::AbstractVector{N},
                           cpa::CartesianProductArray{N},
-                          ρ_rec::Function;
-                          kwargs...) where {N<:Real}
+                          ρ_rec::Function) where {N<:Real}
     sfun = zero(N)
     i0 = 1
     for Xi in cpa.array
         i1 = i0 + dim(Xi) - 1
-        sfun += ρ_rec(d[i0:i1], Xi; kwargs...)
+        sfun += ρ_rec(d[i0:i1], Xi)
         i0 = i1 + 1
     end
     return sfun
