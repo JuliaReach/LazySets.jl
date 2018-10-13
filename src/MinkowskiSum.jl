@@ -112,19 +112,21 @@ end
 
 @inline function ρ_helper(d::AbstractVector{N},
                           ms::MinkowskiSum{N},
-                          ρ_rec::Function) where {N<:Real}
-    return ρ_rec(d, ms.X) + ρ_rec(d, ms.Y)
+                          ρ_rec::Function;
+                          kwargs...) where {N<:Real}
+    return ρ_rec(d, ms.X; kwargs...) + ρ_rec(d, ms.Y; kwargs...)
 end
 
 """
-    ρ(d::AbstractVector{N}, ms::MinkowskiSum{N}) where {N<:Real}
+    ρ(d::AbstractVector{N}, ms::MinkowskiSum{N}; kwargs...) where {N<:Real}
 
 Return the support function of a Minkowski sum.
 
 ### Input
 
-- `d`  -- direction
-- `ms` -- Minkowski sum
+- `d`      -- direction
+- `ms`     -- Minkowski sum
+- `kwargs` -- additional keyword arguments
 
 ### Output
 
@@ -136,26 +138,30 @@ The support function in direction ``d`` of the Minkowski sum of two sets ``X``
 and ``Y`` is the sum of the support functions of ``X`` and ``Y`` in direction
 ``d``.
 """
-function ρ(d::AbstractVector{N}, ms::MinkowskiSum{N}) where {N<:Real}
-    return ρ_helper(d, ms, ρ)
+function ρ(d::AbstractVector{N}, ms::MinkowskiSum{N}; kwargs...) where {N<:Real}
+    return ρ_helper(d, ms, ρ; kwargs...)
 end
 
 """
-    ρ_upper_bound(d::AbstractVector{N}, ms::MinkowskiSum{N}) where {N<:Real}
+    ρ_upper_bound(d::AbstractVector{N}, ms::MinkowskiSum{N}; kwargs...) where
+        {N<:Real}
 
 Return an upper bound of the support function of a Minkowski sum.
 
 ### Input
 
-- `d`  -- direction
-- `ms` -- Minkowski sum
+- `d`      -- direction
+- `ms`     -- Minkowski sum
+- `kwargs` -- additional keyword arguments
 
 ### Output
 
 An upper bound of the support function in the given direction.
 """
-function ρ_upper_bound(d::AbstractVector{N}, ms::MinkowskiSum{N}) where {N<:Real}
-    return ρ_helper(d, ms, ρ_upper_bound)
+function ρ_upper_bound(d::AbstractVector{N},
+                        ms::MinkowskiSum{N};
+                        kwargs...) where {N<:Real}
+    return ρ_helper(d, ms, ρ_upper_bound; kwargs...)
 end
 
 # =================================
@@ -267,20 +273,23 @@ end
 
 @inline function ρ_helper(d::AbstractVector{N},
                           msa::MinkowskiSumArray{N},
-                          ρ_rec::Function) where {N<:Real}
-    return sum([ρ_rec(d, Xi) for Xi in msa.array])
+                          ρ_rec::Function;
+                          kwargs...) where {N<:Real}
+    return sum([ρ_rec(d, Xi; kwargs...) for Xi in msa.array])
 end
 
 """
-    ρ(d::AbstractVector{N}, msa::MinkowskiSumArray{N}) where {N<:Real}
+    ρ(d::AbstractVector{N}, msa::MinkowskiSumArray{N}; kwargs...) where
+        {N<:Real}
 
 Return the support function of a Minkowski sum array of a finite number of sets
 in a given direction.
 
 ### Input
 
-- `d`   -- direction
-- `msa` -- Minkowski sum array
+- `d`      -- direction
+- `msa`    -- Minkowski sum array
+- `kwargs` -- additional keyword arguments
 
 ### Output
 
@@ -291,29 +300,33 @@ The support function in the given direction.
 The support function of the Minkowski sum of sets is the sum of the support
 functions of each set. 
 """
-function ρ(d::AbstractVector{N}, msa::MinkowskiSumArray{N}) where {N<:Real}
-    return ρ_helper(d, msa, ρ)
+function ρ(d::AbstractVector{N},
+           msa::MinkowskiSumArray{N};
+           kwargs...) where {N<:Real}
+    return ρ_helper(d, msa, ρ; kwargs...)
 end
 
 """
-    ρ_upper_bound(d::AbstractVector{N},
-                   msa::MinkowskiSumArray{N}) where {N<:Real}
+    ρ_upper_bound(d::AbstractVector{N}, msa::MinkowskiSumArray{N};
+                   kwargs...) where {N<:Real}
 
 Return the support function of a Minkowski sum array of a finite number of sets
 in a given direction.
 
 ### Input
 
-- `d`  -- direction
-- `ms` -- Minkowski sum array
+- `d`      -- direction
+- `ms`     -- Minkowski sum array
+- `kwargs` -- additional keyword arguments
 
 ### Output
 
 An upper bound of the support function in the given direction.
 """
 function ρ_upper_bound(d::AbstractVector{N},
-                        msa::MinkowskiSumArray{N}) where {N<:Real}
-    return ρ_helper(d, msa, ρ_upper_bound)
+                        msa::MinkowskiSumArray{N};
+                        kwargs...) where {N<:Real}
+    return ρ_helper(d, msa, ρ_upper_bound; kwargs...)
 end
 
 

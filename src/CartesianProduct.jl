@@ -111,47 +111,55 @@ end
 
 @inline function ρ_helper(d::AbstractVector{N},
                           cp::CartesianProduct{N},
-                          ρ_rec::Function) where {N<:Real}
+                          ρ_rec::Function;
+                          kwargs...) where {N<:Real}
     n1 = dim(cp.X)
-    return ρ_rec(d[1:n1], cp.X) + ρ_rec(d[n1+1:length(d)], cp.Y)
+    return ρ_rec(d[1:n1], cp.X; kwargs...) +
+           ρ_rec(d[n1+1:length(d)], cp.Y; kwargs...)
 end
 
 """
-    ρ(d::AbstractVector{N}, cp::CartesianProduct{N}) where {N<:Real}
+    ρ(d::AbstractVector{N}, cp::CartesianProduct{N}; kwargs...) where {N<:Real}
 
 Return the support function of a Cartesian product.
 
 ### Input
 
-- `d`  -- direction
-- `cp` -- Cartesian product
+- `d`      -- direction
+- `cp`     -- Cartesian product
+- `kwargs` -- additional keyword arguments
 
 ### Output
 
 The support function in the given direction.
 If the direction has norm zero, the result depends on the wrapped sets.
 """
-function ρ(d::AbstractVector{N}, cp::CartesianProduct{N}) where {N<:Real}
-    return ρ_helper(d, cp, ρ)
+function ρ(d::AbstractVector{N},
+           cp::CartesianProduct{N};
+           kwargs...) where {N<:Real}
+    return ρ_helper(d, cp, ρ; kwargs...)
 end
 
 """
-    ρ_upper_bound(d::AbstractVector{N}, cp::CartesianProduct{N}) where {N<:Real}
+    ρ_upper_bound(d::AbstractVector{N}, cp::CartesianProduct{N}; kwargs...)
+        where {N<:Real}
 
 Return the support function of a Cartesian product.
 
 ### Input
 
-- `d`  -- direction
-- `cp` -- Cartesian product
+- `d`      -- direction
+- `cp`     -- Cartesian product
+- `kwargs` -- additional keyword arguments
 
 ### Output
 
 The support function in the given direction.
 """
 function ρ_upper_bound(d::AbstractVector{N},
-                       cp::CartesianProduct{N}) where {N<:Real}
-    return ρ_helper(d, cp, ρ_upper_bound)
+                       cp::CartesianProduct{N};
+                       kwargs...) where {N<:Real}
+    return ρ_helper(d, cp, ρ_upper_bound; kwargs...)
 end
 
 """
@@ -340,54 +348,62 @@ end
 
 @inline function ρ_helper(d::AbstractVector{N},
                           cpa::CartesianProductArray{N},
-                          ρ_rec::Function) where {N<:Real}
+                          ρ_rec::Function;
+                          kwargs...) where {N<:Real}
     sfun = zero(N)
     i0 = 1
     for Xi in cpa.array
         i1 = i0 + dim(Xi) - 1
-        sfun += ρ_rec(d[i0:i1], Xi)
+        sfun += ρ_rec(d[i0:i1], Xi; kwargs...)
         i0 = i1 + 1
     end
     return sfun
 end
 
 """
-    ρ(d::AbstractVector{N}, cpa::CartesianProductArray{N}) where {N<:Real}
+    ρ(d::AbstractVector{N}, cpa::CartesianProductArray{N}; kwargs...)
+        where {N<:Real}
 
 Return the support function of a Cartesian product array.
 
 ### Input
 
-- `d`   -- direction
-- `cpa` -- Cartesian product array
+- `d`      -- direction
+- `cpa`    -- Cartesian product array
+- `kwargs` -- additional keyword arguments
 
 ### Output
 
 The support function in the given direction.
 If the direction has norm zero, the result depends on the wrapped sets.
 """
-function ρ(d::AbstractVector{N}, cpa::CartesianProductArray{N}) where {N<:Real}
-    return ρ_helper(d, cpa, ρ)
+function ρ(d::AbstractVector{N},
+           cpa::CartesianProductArray{N};
+           kwargs...) where {N<:Real}
+    return ρ_helper(d, cpa, ρ; kwargs...)
 end
 
 """
     ρ_upper_bound(d::AbstractVector{N},
-                  cpa::CartesianProductArray{N}) where {N<:Real}
+                  cpa::CartesianProductArray{N};
+                  kwargs...) where {N<:Real}
 
 Return the support function of a Cartesian product array.
 
 ### Input
 
-- `d`   -- direction
-- `cpa` -- Cartesian product array
+- `d`      -- direction
+- `cpa`    -- Cartesian product array
+- `kwargs` -- additional keyword arguments
 
 ### Output
 
 The support function in the given direction.
 """
 function ρ_upper_bound(d::AbstractVector{N},
-                       cpa::CartesianProductArray{N}) where {N<:Real}
-    return ρ_helper(d, cpa, ρ_upper_bound)
+                       cpa::CartesianProductArray{N};
+                       kwargs...) where {N<:Real}
+    return ρ_helper(d, cpa, ρ_upper_bound; kwargs...)
 end
 
 """

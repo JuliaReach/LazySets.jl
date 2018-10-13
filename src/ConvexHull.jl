@@ -103,47 +103,53 @@ end
 
 @inline function ρ_helper(d::AbstractVector{N},
                           ch::ConvexHull{N},
-                          ρ_rec::Function) where {N<:Real}
-    return max(ρ_rec(d, ch.X), ρ_rec(d, ch.Y))
+                          ρ_rec::Function;
+                          kwargs...) where {N<:Real}
+    return max(ρ_rec(d, ch.X; kwargs...), ρ_rec(d, ch.Y; kwargs...))
 end
 
 """
-    ρ(d::AbstractVector{N}, ch::ConvexHull{N}) where {N<:Real}
+    ρ(d::AbstractVector{N}, ch::ConvexHull{N}; kwargs...) where {N<:Real}
 
 Return the support function of a convex hull of two convex sets in a given
 direction.
 
 ### Input
 
-- `d`  -- direction
-- `ch` -- convex hull of two convex sets
+- `d`      -- direction
+- `ch`     -- convex hull of two convex sets
+- `kwargs` -- additional keyword arguments
 
 ### Output
 
 The support function of the convex hull in the given direction.
 """
-function ρ(d::AbstractVector{N}, ch::ConvexHull{N}) where {N<:Real}
-    return ρ_helper(d, ch, ρ)
+function ρ(d::AbstractVector{N}, ch::ConvexHull{N}; kwargs...) where {N<:Real}
+    return ρ_helper(d, ch, ρ; kwargs...)
 end
 
 """
-    ρ_upper_bound(d::AbstractVector{N}, ch::ConvexHull{N}) where {N<:Real}
+    ρ_upper_bound(d::AbstractVector{N}, ch::ConvexHull{N}; kwargs...) where
+        {N<:Real}
 
 Return an upper bound of the support function of a convex hull of two convex
 sets in a given direction.
 
 ### Input
 
-- `d`  -- direction
-- `ch` -- convex hull of two convex sets
+- `d`      -- direction
+- `ch`     -- convex hull of two convex sets
+- `kwargs` -- additional keyword arguments
 
 ### Output
 
 An upper bound of the support function of the convex hull in the given
 direction.
 """
-function ρ_upper_bound(d::AbstractVector{N}, ch::ConvexHull{N}) where {N<:Real}
-    return ρ_helper(d, ch, ρ_upper_bound)
+function ρ_upper_bound(d::AbstractVector{N},
+                       ch::ConvexHull{N};
+                       kwargs...) where {N<:Real}
+    return ρ_helper(d, ch, ρ_upper_bound; kwargs...)
 end
 
 # ================================
@@ -271,19 +277,21 @@ end
 
 @inline function ρ_helper(d::AbstractVector{N},
                           cha::ConvexHullArray{N},
-                          ρ_rec::Function) where {N<:Real}
-    return maximum([ρ_rec(d, Xi) for Xi in array(cha)])
+                          ρ_rec::Function;
+                          kwargs...) where {N<:Real}
+    return maximum([ρ_rec(d, Xi; kwargs...) for Xi in array(cha)])
 end
 
 """
-    ρ(d::AbstractVector{N}, cha::ConvexHullArray{N}) where {N<:Real}
+    ρ(d::AbstractVector{N}, cha::ConvexHullArray{N}; kwargs...) where {N<:Real}
 
 Return the support function of a convex hull array in a given direction.
 
 ### Input
 
-- `d`   -- direction
-- `cha` -- convex hull array
+- `d`      -- direction
+- `cha`    -- convex hull array
+- `kwargs` -- additional keyword arguments
 
 ### Output
 
@@ -294,20 +302,24 @@ The support function of the convex hull array in the given direction.
 This algorihm calculates the maximum over all ``ρ(d, X_i)`` where the
 ``X_1, …, X_k`` are the sets in the array `cha`.
 """
-function ρ(d::AbstractVector{N}, cha::ConvexHullArray{N}) where {N<:Real}
-    return ρ_helper(d, cha, ρ)
+function ρ(d::AbstractVector{N},
+           cha::ConvexHullArray{N};
+           kwargs...) where {N<:Real}
+    return ρ_helper(d, cha, ρ; kwargs...)
 end
 
 """
-    ρ_upper_bound(d::AbstractVector{N}, cha::ConvexHullArray{N}) where {N<:Real}
+    ρ_upper_bound(d::AbstractVector{N}, cha::ConvexHullArray{N}; kwargs...)
+        where {N<:Real}
 
 Return an upper bound of the support function of a convex hull array in a given
 direction.
 
 ### Input
 
-- `d`   -- direction
-- `cha` -- convex hull array
+- `d`      -- direction
+- `cha`    -- convex hull array
+- `kwargs` -- additional keyword arguments
 
 ### Output
 
@@ -315,6 +327,7 @@ An upper bound of the support function of the convex hull array in the given
 direction.
 """
 function ρ_upper_bound(d::AbstractVector{N},
-                       cha::ConvexHullArray{N}) where {N<:Real}
-    return ρ_helper(d, cha, ρ_upper_bound)
+                       cha::ConvexHullArray{N};
+                       kwargs...) where {N<:Real}
+    return ρ_helper(d, cha, ρ_upper_bound; kwargs...)
 end

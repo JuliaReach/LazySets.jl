@@ -173,8 +173,9 @@ end
 
 @inline function ρ_helper(d::AbstractVector{N},
                           lm::LinearMap{N},
-                          ρ_rec::Function) where {N<:Real}
-    return ρ_rec(_At_mul_B(lm.M, d), lm.X)
+                          ρ_rec::Function;
+                          kwargs...) where {N<:Real}
+    return ρ_rec(_At_mul_B(lm.M, d), lm.X; kwargs...)
 end
 
 """
@@ -186,8 +187,7 @@ Return the support function of the linear map.
 
 - `d`      -- direction
 - `lm`     -- linear map
-- `kwargs` -- additional arguments that are passed to the support function
-              algorithm
+- `kwargs` -- additional keyword arguments
 
 ### Output
 
@@ -200,25 +200,29 @@ If ``L = M⋅S``, where ``M`` is a matrix and ``S`` is a convex set, it follows
 that ``ρ(d, L) = ρ(M^T d, S)`` for any direction ``d``.
 """
 function ρ(d::AbstractVector{N}, lm::LinearMap{N}; kwargs...) where {N<:Real}
-    return ρ_helper(d, lm, ρ)
+    return ρ_helper(d, lm, ρ; kwargs...)
 end
 
 """
-    ρ_upper_bound(d::AbstractVector{N}, lm::LinearMap{N}) where {N<:Real}
+    ρ_upper_bound(d::AbstractVector{N}, lm::LinearMap{N}; kwargs...) where
+        {N<:Real}
 
 Return an upper bound of the support function of a linear map.
 
 ### Input
 
-- `d`  -- direction
-- `lm` -- linear map
+- `d`      -- direction
+- `lm`     -- linear map
+- `kwargs` -- additional keyword arguments
 
 ### Output
 
 An upper bound of the support function in the given direction.
 """
-function ρ_upper_bound(d::AbstractVector{N}, lm::LinearMap{N}) where {N<:Real}
-    return ρ_helper(d, lm, ρ_upper_bound)
+function ρ_upper_bound(d::AbstractVector{N},
+                        lm::LinearMap{N};
+                        kwargs...) where {N<:Real}
+    return ρ_helper(d, lm, ρ_upper_bound; kwargs...)
 end
 
 """
