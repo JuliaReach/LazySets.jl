@@ -137,6 +137,33 @@ function ρ(d::AbstractVector{N}, cap::Intersection{N}) where {N<:Real}
     return min(ρ(d, cap.X), ρ(d, cap.Y))
 end
 
+function ρ_helper(d::AbstractVector{N},
+                  cap::Intersection{N},
+                  algorithm::String,
+                  check_intersection::Bool;
+                  kwargs...) where N<:Real
+    X = cap.X # compact set
+    H = cap.Y # halfspace or hyperplane or line
+
+    # if the intersection is empty => stop
+    if check_intersection && is_intersection_empty(X, H, false)
+        error("the intersection is empty")
+    end
+
+    if algorithm == "line_search"
+        @assert isdefined(Main, :Optim) "the algorithm $algorithm needs " *
+                                        "the package 'Optim' to be loaded"
+        (s, _) = _line_search(d, X, H; kwargs...)
+    elseif algorithm == "projection"
+        @assert H isa Hyperplane "the algorithm $algorithm cannot be used with a
+                                  $(typeof(H)); it only works with hyperplanes"
+        s = _projection(d, X, H; kwargs...)
+    else
+        error("algorithm $(algorithm) unknown")
+    end
+    return s
+end
+
 """
     ρ(d::AbstractVector{N},
       cap::Intersection{N,
@@ -212,38 +239,19 @@ function ρ(d::AbstractVector{N},
            algorithm::String="line_search",
            check_intersection::Bool=true,
            kwargs...) where N<:Real
-
-    X = cap.X    # compact set
-    H = cap.Y    # halfspace or hyperplane
-
-    # if the intersection is empty => stop
-    if check_intersection && is_intersection_empty(X, H, false)
-        error("the intersection is empty")
-    end
-    
-    if algorithm == "line_search"
-        @assert isdefined(Main, :Optim) "the algorithm $algorithm needs " *
-                                        "the package 'Optim' to be loaded"
-        (s, _) = _line_search(d, X, H; kwargs...)
-    elseif algorithm == "projection"
-        @assert H isa Hyperplane "the algorithm $algorithm cannot be used with a
-                                  $(typeof(H)); it only works with hyperplanes"
-        s = _projection(d, X, H; kwargs...)
-    else
-        error("algorithm $(algorithm) unknown")
-    end
-    return s
+    return ρ_helper(d, cap, algorithm, check_intersection, kwargs...)
 end
 
-# Symmetric case
-ρ(ℓ::AbstractVector{N},
-  cap::Intersection{N,
-                    <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
-                    <:LazySet{N}};
-  algorithm::String="line_search", check_intersection::Bool=true,
-  kwargs...) where N<:Real =
-    ρ(ℓ, cap.Y ∩ cap.X; algorithm=algorithm,
-      check_intersection=check_intersection, kwargs...)
+# symmetric method
+function ρ(ℓ::AbstractVector{N},
+           cap::Intersection{N,
+                             <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
+                             <:LazySet{N}};
+           algorithm::String="line_search",
+           check_intersection::Bool=true,
+           kwargs...) where N<:Real
+    return ρ_helper(d, cap.Y ∩ cap.X, algorithm, check_intersection, kwargs...)
+end
 
 """
     ρ(d::AbstractVector{N},
@@ -290,7 +298,7 @@ function ρ(d::AbstractVector{N},
     return minimum([ρ(d, X ∩ Hi; kwargs...) for Hi in constraints_list(P)])
 end
 
-# symmetric function
+# symmetric method
 function ρ(d::AbstractVector{N},
            cap::Intersection{N, <:AbstractPolytope{N}, <:LazySet{N}};
            kwargs...) where {N<:Real}
@@ -304,6 +312,28 @@ function ρ(d::AbstractVector{N},
     X = cap.X    # compact set
     P = cap.Y    # polytope
     return minimum([ρ(d, X ∩ Hi; kwargs...) for Hi in constraints_list(P)])
+end
+
+# disambiguation
+function ρ(d::AbstractVector{N},
+           cap::Intersection{N,
+                             <:AbstractPolytope{N},
+                             <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}};
+           algorithm::String="line_search",
+           check_intersection::Bool=true,
+           kwargs...) where N<:Real
+    return ρ_helper(d, cap, algorithm, check_intersection; kwargs...)
+end
+
+# symmetric method
+function ρ(d::AbstractVector{N},
+           cap::Intersection{N,
+                             <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
+                             <:AbstractPolytope{N}};
+           algorithm::String="line_search",
+           check_intersection::Bool=true,
+           kwargs...) where N<:Real
+    return ρ_helper(d, cap.Y ∩ cap.X, algorithm, check_intersection; kwargs...)
 end
 
 """
