@@ -721,17 +721,15 @@ the half-space: ``σ(-a) ∈ hs``.
 The support vector is thus also a witness.
 
 Optional keyword arguments can be passed to the `ρ` function. In particular, if
-`X` is a lazy intersection, the option `upper_bound=true` may be useful.
+`X` is a lazy intersection, options can be passed to the line search algorithm.
 """
 function is_intersection_empty(X::LazySet{N},
                                hs::HalfSpace{N},
                                witness::Bool=false;
-                               upper_bound::Bool=false,
                                kwargs...
                                )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
     if !witness
-        ρ_rec = upper_bound ? LazySets.Approximations.ρ_upper_bound : ρ
-        return -ρ_rec(-hs.a, X; kwargs...) > hs.b
+        return -ρ(-hs.a, X; kwargs...) > hs.b
     end
 
     # for witness production, we compute the support vector instead
