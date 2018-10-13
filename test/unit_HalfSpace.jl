@@ -48,4 +48,14 @@ for N in [Float64, Rational{Int}, Float32]
     b = BallInf(N[1, 1, 1], N(1))
     empty_intersection, v = is_intersection_empty(b, hs, true)
     @test !is_intersection_empty(b, hs) && !empty_intersection && v ∈ hs
+    hs1 = HalfSpace(N[1, 0], N(1)) # x <= 1
+    hs2 = HalfSpace(N[-1, 0], N(-2)) # x >= 2
+    empty_intersection, v = is_intersection_empty(hs1, hs2, true)
+    @test is_intersection_empty(hs1, hs2) && empty_intersection && v == N[]
+    hs3 = HalfSpace(N[-1, 0], N(-1)) # x >= 1
+    empty_intersection, v = is_intersection_empty(hs1, hs3, true)
+    @test !is_intersection_empty(hs1, hs3) && !empty_intersection && v == N[1, 0]
+    hs4 = HalfSpace(N[-1, 0], N(0)) # x >= 0
+    empty_intersection, v = is_intersection_empty(hs1, hs4, true)
+    @test !is_intersection_empty(hs1, hs4) && !empty_intersection && v ∈ hs1 && v ∈ hs4
 end
