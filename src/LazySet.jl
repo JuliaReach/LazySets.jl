@@ -2,6 +2,7 @@ import Base.==
 
 export LazySet,
        ρ, support_function,
+       ρ_upper_bound,
        σ, support_vector,
        dim,
        norm,
@@ -59,6 +60,16 @@ abstract type LazySet{N} end
 # --- common LazySet functions ---
 
 
+@inline function ρ_helper(d::AbstractVector{N},
+                          S::LazySet{N},
+                          ρ_rec::Function)::N where {N<:Real}
+    return dot(d, σ(d, S))
+end
+
+ρ_args(kwargs...) = (d, X) -> ρ(d, X, kwargs...)
+
+ρ_upper_bound_args(kwargs...) = (d, X) -> ρ_upper_bound(d, X, kwargs...)
+
 """
     ρ(d::AbstractVector{N}, S::LazySet{N})::N where {N<:Real}
 
@@ -66,19 +77,93 @@ Evaluate the support function of a set in a given direction.
 
 ### Input
 
-- `d` -- direction
-- `S` -- convex set
+- `d`      -- direction
+- `S`      -- convex set
 
 ### Output
 
-The support function of the set `S` for the direction `d`.
+The support function of the set `S` in the direction `d`.
 
-### Notes
+### Algorithm
 
-The numeric type of the direction and the set must be identical.
+This is the default implementation that relies on the computation of the support
+vector, `σ`.
 """
-function ρ(d::AbstractVector{N}, S::LazySet{N})::N where {N<:Real}
-    return dot(d, σ(d, S))
+function ρ(d::AbstractVector{N}, X::LazySet{N}) where {N<:Real}
+    return ρ_helper(d, X, ρ)
+end
+
+"""
+    ρ(d::AbstractVector{N}, S::LazySet{N}; kwargs...)::N where {N<:Real}
+
+Evaluate the support function of a set in a given direction.
+
+### Input
+
+- `d`      -- direction
+- `S`      -- convex set
+- `kwargs` -- additional keyword arguments
+
+### Output
+
+The support function of the set `S` in the direction `d`.
+
+### Algorithm
+
+This is the default implementation that relies on the computation of the support
+vector, `σ`.
+"""
+function ρ(d::AbstractVector{N}, X::LazySet{N}, kwargs...) where {N<:Real}
+    return ρ_helper(d, X, ρ_args(kwargs...))
+end
+
+"""
+    ρ_upper_bound(d::AbstractVector{N}, X::LazySet{N}) where {N<:Real}
+
+Return an upper bound of the support function of a given set.
+
+### Input
+
+- `d` -- direction
+- `X` -- set
+
+### Output
+
+An upper bound of the support function of the given set.
+
+### Algorithm
+
+The default implementation of `ρ_upper_bound` is the exact `ρ(d, X)`.
+"""
+function ρ_upper_bound(d::AbstractVector{N}, X::LazySet{N}) where {N<:Real}
+    return ρ_helper(d, X, ρ_upper_bound)
+end
+
+"""
+    ρ_upper_bound(d::AbstractVector{N},
+                  X::LazySet{N};
+                  kwargs...) where {N<:Real}
+
+Return an upper bound of the support function of a given set.
+
+### Input
+
+- `d`      -- direction
+- `X`      -- set
+- `kwargs` -- additional keyword arguments
+
+### Output
+
+An upper bound of the support function of the given set.
+
+### Algorithm
+
+The default implementation of `ρ_upper_bound` is the exact `ρ(d, X)`.
+"""
+function ρ_upper_bound(d::AbstractVector{N},
+                       X::LazySet{N},
+                       kwargs...) where {N<:Real}
+    return ρ_helper(d, X, ρ_upper_bound_args(kwargs...))
 end
 
 """
