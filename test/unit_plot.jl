@@ -47,8 +47,11 @@ for N in [Float64, Rational{Int}, Float32]
     # binary set operations
     ch = ConvexHull(b1, bi)
     cha = ConvexHullArray([b1, bi])
+
+    using Optim
     its = Intersection(b1, bi)
     itsa = IntersectionArray([b1, bi])
+
     ms = MinkowskiSum(b1, bi)
     msa = MinkowskiSumArray([b1, bi])
     cms = CacheMinkowskiSum([b1, bi])
@@ -79,7 +82,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test_throws ErrorException plot(l) # TODO see #576
     plot(ch)
     plot(cha)
-    @test_throws ErrorException plot(its) # TODO not implemented yet
+    plot(its)
     @test_throws ErrorException plot(itsa) # TODO not implemented yet
     plot(sih)
     plot(lm)
