@@ -401,7 +401,7 @@ function ρ(d::AbstractVector{N},
             is_intersection_empty(X, H, false; upper_bound=upper_bound)
         error("the intersection is empty")
     end
-    
+
     if algorithm == "line_search"
         @assert isdefined(Main, :Optim) "the algorithm $algorithm needs " *
                                         "the package 'Optim' to be loaded"
@@ -462,7 +462,7 @@ minimizer.
 
 This function requires the `Optim` package, and relies on the univariate
 optimization interface `Optim.optimize(...)`.
-     
+
 Additional arguments to the `optimize` backend can be passed as keyword arguments.
 The default method is `Optim.Brent()`.
 
@@ -471,7 +471,7 @@ The default method is `Optim.Brent()`.
 ```jldoctest _line_search
 julia> X = Ball1(zeros(2), 1.0);
 
-julia> H = HalfSpace([-1.0, 0.0], -1.0); # x >= 0 
+julia> H = HalfSpace([-1.0, 0.0], -1.0); # x >= 0
 
 julia> using Optim
 
@@ -528,13 +528,72 @@ function _line_search(ℓ, X, H::Union{HalfSpace, Hyperplane, Line};
 
     # Optimization
     sol = Optim.optimize(f, lower, upper, method=method, options...)
-    
+
     # Recover results
     fmin, λmin = sol.minimum, sol.minimizer
     return (fmin, λmin)
 end # _line_search
+
+function _sandwich_search(ℓ, X, H::Union{HalfSpace, Hyperplane, Line};
+                      upper_bound::Bool=false, kwargs...)
+    options = Dict(kwargs)
+
+    # Initialization
+    a, b = H.a, H.b
+    r⁻, r⁺ = -Inf, Inf
+
+    if haskey(options, :lower)
+        lower = pop!(options, :lower)
+    else
+        if H isa HalfSpace
+            lower = 0.0
+        elseif (H isa Hyperplane) || (H isa Line)
+            lower = -1e6 # "big": TODO relate with f(λ)
+        end
+    end
+
+    if haskey(options, :upper)
+        upper = pop!(options, :upper)
+    else
+        upper = 1e6 # "big": TODO relate with f(λ)
+    end
+
+    if haskey(options, :method)
+        method = pop!(options, :method)
+    else
+        method = Optim.Brent()
+    end
+
+    λi, λj = 0, 0 #TODO Generate two samples, such that λi < λj
+    f⁻ij(λ) = ((f(λj) - f(λi))/(λj - λi))(λj - λi) + f(λi)
+
+    for i in 3:length(λ)
+        λ1, λ2, λ3 = λ[i], λ[i-1], λ[i-2]
+        f_1(λ) = ρ(ℓ - λ1 * a, X) + λ1 * b
+        f_2(λ) = ρ(ℓ - λ2 * a, X) + λ2 * b
+        f_3(λ) = ρ(ℓ - λ3 * a, X) + λ3 * b
+
+        if (f_1(λ) <= f_2(λ) && f_2(λ) <= f_3(λ))
+            while (true)
+                #TODO make exponential growth
+            end
+        end
+
+        sol_r⁻ = Optim.optimize(f⁻, lower, upper, method=method, options...)
+        fmin_r⁻, λmin_r⁻ = sol_r⁻.minimum, sol_r⁻.minimize
+        sol_r⁺ = Optim.optimize(f, lower, upper, method=method, options...)
+        fmin_r⁺, λmin_r⁺ = sol_r⁺.minimum, sol_r⁺.minimize
+        if (r⁺ - r⁻ < ε)
+            return Interval([r⁻, r⁺])
+        end
+    end
+
+end # _sandwich_search
 end # quote
 end # load_optim
+
+
+
 
 """
     _projection(ℓ, X, H::Union{Hyperplane{N}, Line{N}};
