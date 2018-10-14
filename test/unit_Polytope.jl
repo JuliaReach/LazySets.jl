@@ -39,6 +39,9 @@ for N in [Float64, Rational{Int}, Float32]
     d = N[0, -1]
     @test σ(d, p) == N[0, 0]
 
+    # support vector of polytope with no constraints
+    @test_throws ErrorException σ(N[0], HPolytope{N}())
+
     # membership
     @test ∈(N[5 / 4, 7 / 4], p)
     @test !∈(N[4, 1], p)
@@ -109,6 +112,14 @@ if test_suite_polyhedra
         # -----
         # H-rep
         # -----
+        # support function/vector
+        d = N[1, 0]
+        p_unbounded = HPolytope([LinearConstraint(N[-1, 0], N(0))])
+        @test_throws ErrorException σ(d, p_unbounded)
+        @test_throws ErrorException ρ(d, p_unbounded)
+        p_infeasible = HPolytope([LinearConstraint(N[1], N(0)),
+                                  LinearConstraint(N[-1], N(-1))])
+        @test_throws ErrorException σ(N[1], p_infeasible)
 
         # intersection
         A = [N(0) N(1); N(1) N(0); N(2) N(2)]
@@ -168,16 +179,7 @@ if test_suite_polyhedra
         p = VPolytope(polygon)
         d = N[1, 0]
         @test_throws ErrorException σ(d, p, algorithm="xyz")
-        if test_suite_polyhedra
-            @test σ(d, p) == N[1, 0]
-            p_unbounded = HPolytope([LinearConstraint(N[-1, 0], N(0))])
-            @test_throws ErrorException σ(d, p_unbounded)
-            p_infeasible = HPolytope([LinearConstraint(N[1], N(0)),
-                                      LinearConstraint(N[-1], N(-1))])
-            @test_throws ErrorException σ(N[1], p_infeasible)
-        else
-            @test_throws AssertionError σ(d, p)
-        end
+        @test σ(d, p) == N[1, 0]
 
         # intersection
         p1 = VPolytope(vertices_list(BallInf(N[0, 0], N(1))))

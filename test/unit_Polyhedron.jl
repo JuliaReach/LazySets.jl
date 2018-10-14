@@ -39,6 +39,9 @@ for N in [Float64, Rational{Int}, Float32]
     d = N[0, -1]
     @test σ(d, p) == N[0, 0]
 
+    # support vector of polyhedron with no constraints
+    @test σ(N[1], HPolyhedron{N}()) == N[Inf]
+
     # membership
     @test ∈(N[5 / 4, 7 / 4], p)
     @test !∈(N[4, 1], p)
@@ -79,6 +82,14 @@ if test_suite_polyhedra
         # -----
         # H-rep
         # -----
+        # support function/vector
+        d = N[1, 0]
+        p_unbounded = HPolyhedron([LinearConstraint(N[-1, 0], N(0))])
+        @test σ(d, p_unbounded) == N[Inf, 0]
+        @test ρ(d, p_unbounded) == N(Inf)
+        p_infeasible = HPolyhedron([LinearConstraint(N[1], N(0)),
+                                  LinearConstraint(N[-1], N(-1))])
+        @test_throws ErrorException σ(N[1], p_infeasible)
 
         # intersection
         # TODO these polyhedra are empty. do the tests make any sense?
@@ -112,8 +123,8 @@ if test_suite_polyhedra
         # Cartesian product
         A = [N(1) N(-1)]'
         b = N[1, 0]
-        p1 = HPolytope(A, b)
-        p2 = HPolytope(A, b)
+        p1 = HPolyhedron(A, b)
+        p2 = HPolyhedron(A, b)
         cp = cartesian_product(p1, p2)
         cl = constraints_list(cp)
         @test length(cl) == 4
