@@ -277,7 +277,7 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
 
 Inherited from [`AbstractPolygon`](@ref):
-* [`dim`](@ref dim(P::AbstractPolygon))
+* [`dim`](@ref dim(::AbstractPolygon))
 
 Inherited from [`AbstractHPolygon`](@ref):
 * `an_element`
@@ -304,7 +304,7 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
 
 Inherited from [`AbstractPolygon`](@ref):
-* [`dim`](@ref dim(P::AbstractPolygon))
+* [`dim`](@ref dim(::AbstractPolygon))
 
 Inherited from [`AbstractHPolygon`](@ref):
 * `an_element`
@@ -337,7 +337,7 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
 
 Inherited from [`AbstractPolygon`](@ref):
-* [`dim`](@ref dim(P::AbstractPolygon))
+* [`dim`](@ref dim(::AbstractPolygon))
 
 ### Sorting directions
 
@@ -364,17 +364,19 @@ HPolyhedron
 The following methods are shared between polyhedra and polytopes. 
 
 ```@docs
-dim(P::HPoly{Real})
-σ(d::AbstractVector{Real}, P::HPoly{Real})
-∈(x::AbstractVector{Real}, P::HPoly{Real})
+dim(::HPoly{Real})
+σ(::AbstractVector{Real}, ::HPoly{Real})
+∈(::AbstractVector{Real}, ::HPoly{Real})
 addconstraint!(::HPoly{Real}, ::LinearConstraint{Real})
 constraints_list(::HPoly{Real})
-tosimplehrep(P::HPoly{Real})
-tohrep(P::HPoly{Real}) 
+tosimplehrep(::HPoly{Real})
+tohrep(::HPoly{Real})
+isempty(::HPoly{N}) where {N<:Real}
 convex_hull(P1::HPoly{Real}, P2::HPoly{Real})
 cartesian_product(P1::HPoly{Real}, P2::HPoly{Real})
-tovrep(P::HPoly{Real})
-vertices_list(P::HPoly{Real})
+tovrep(::HPoly{Real})
+vertices_list(::HPoly{Real})
+singleton_list(::HPolyhedron{N}) where {N<:Real}
 ```
 
 Inherited from [`LazySet`](@ref):

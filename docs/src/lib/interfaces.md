@@ -98,7 +98,7 @@ AbstractPolytope
 This interface defines the following functions:
 
 ```@docs
-singleton_list(::AbstractPolytope)
+singleton_list(::AbstractPolytope{N}) where {N<:Real}
 linear_map(::AbstractMatrix, ::AbstractPolytope)
 isempty(::AbstractPolytope{N}) where {N<:Real}
 ```

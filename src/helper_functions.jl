@@ -99,19 +99,21 @@ Check whether two vectors point in the same direction.
 
 ### Output
 
-`true` iff the vectors are identical up to a positive scaling factor.
+`(true, k)` iff the vectors are identical up to a positive scaling factor `k`,
+and `(false, 0)` otherwise.
+
 
 ### Examples
 
 ```jldoctest
 julia> LazySets.samedir([1, 2, 3], [2, 4, 6])
-true, 0.5
+(true, 0.5)
 
 julia> LazySets.samedir([1, 2, 3], [3, 2, 1])
-false
+(false, 0)
 
 julia> LazySets.samedir([1, 2, 3], [-1, -2, -3])
-false
+(false, 0)
 
 ```
 """
