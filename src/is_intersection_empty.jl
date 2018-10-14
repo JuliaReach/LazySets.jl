@@ -778,23 +778,23 @@ Two half-spaces do not intersect if and only if their normal vectors point in
 the opposite direction and there is a gap between the two defining hyperplanes.
 
 The latter can be checked as follows:
-Let ``hs1 == a1⋅x = b1`` and ``hs2 == a2⋅x = b2``.
-Then we already know that ``a2 == -k⋅a1`` for some positive scaling factor
+Let ``hs_1 : a_1⋅x = b_1`` and ``hs2 : a_2⋅x = b_2``.
+Then we already know that ``a_2 = -k⋅a_1`` for some positive scaling factor
 ``k``.
-Let ``x1`` be a point on the defining hyperplane of ``hs1``.
-We construct a line segment from ``x1`` to the point ``x2`` on the defining
-hyperplane of ``hs2`` by shooting a ray from ``x1`` with direction ``a1``.
-Thus we look for a factor ``s`` such that ``(x1 + s⋅a1)⋅a2 == b2``.
-This gives us ``s = (b2 - (x1⋅a2)) / (-k⋅(a⋅a))``.
+Let ``x_1`` be a point on the defining hyperplane of ``hs_1``.
+We construct a line segment from ``x_1`` to the point ``x_2`` on the defining
+hyperplane of ``hs_2`` by shooting a ray from ``x_1`` with direction ``a_1``.
+Thus we look for a factor ``s`` such that ``(x_1 + s⋅a_1)⋅a_2 = b_2``.
+This gives us ``s = (b_2 - x_1⋅a_2) / (-k a_1⋅a_1)``.
 The gap exists if and only if ``s`` is positive.
 
 If the normal vectors do not point in opposite directions, then the defining
 hyperplanes intersect and we can produce a witness as follows.
-All points ``x`` in this intersection satisfy ``a1⋅x = b1`` and ``a2⋅x = b2``.
-Thus we have ``(a1+a2)⋅x = b1+b2``.
-We now find a dimension where ``a1+a2`` is non-zero, say, ``i``.
+All points ``x`` in this intersection satisfy ``a_1⋅x = b_1`` and ``a_2⋅x = b_2``.
+Thus we have ``(a_1 + a_2)⋅x = b_1+b_2``.
+We now find a dimension where ``a_1 + a_2`` is non-zero, say, ``i``.
 Then the result is a vector with one non-zero entry in dimension ``i``, defined
-as ``[0, …, 0, (b1+b2)/(a1[i]+a2[i]), 0, …, 0]``.
+as ``[0, …, 0, (b_1 + b_2)/(a_1[i] + a_2[i]), 0, …, 0]``.
 Such a dimension ``i`` always exists.
 """
 function is_intersection_empty(hs1::HalfSpace{N},
@@ -822,13 +822,12 @@ function is_intersection_empty(hs1::HalfSpace{N},
         empty_intersection = false
         if witness
             v = zeros(N, length(a1))
-            a_sum = a1 + a2
-        println(a_sum)
-            for i in length(a1)
+            for i in 1:length(a1)
+                a_sum_i = a1[i] + a2[i]
                 if a_sum[i] != 0
-                    v[i] = (hs1.b + hs2.b) / a_sum[i]
+                    v[i] = (hs1.b + hs2.b) / a_sum_i
+                    break
                 end
-                break
             end
         end
     end

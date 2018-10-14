@@ -121,7 +121,7 @@ function samedir(u::AbstractVector{N},
     @assert length(u) == length(v) "wrong dimension"
     no_factor = true
     factor = 0
-    for i in 1:length(u)
+    @inbounds for i in 1:length(u)
         if u[i] == 0
             if v[i] != 0
                 return (false, 0)
