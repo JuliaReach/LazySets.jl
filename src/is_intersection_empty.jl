@@ -749,6 +749,95 @@ function is_intersection_empty(hs::HalfSpace{N},
 end
 
 """
+    is_intersection_empty(hs1::HalfSpace{N},
+                          hs2::HalfSpace{N},
+                          [witness]::Bool=false
+                         )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
+
+Check whether two half-spaces do not intersect, and otherwise optionally compute
+a witness.
+
+### Input
+
+- `hs1`     -- half-space
+- `hs2`     -- half-space
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``hs1 ∩ hs2 = ∅``
+* If `witness` option is activated:
+  * `(true, [])` iff ``hs1 ∩ hs2 = ∅``
+  * `(false, v)` iff ``hs1 ∩ hs2 ≠ ∅`` and ``v ∈ hs1 ∩ hs2``
+
+### Algorithm
+
+Two half-spaces do not intersect if and only if their normal vectors point in
+the opposite direction and there is a gap between the two defining hyperplanes.
+
+The latter can be checked as follows:
+Let ``hs_1 : a_1⋅x = b_1`` and ``hs2 : a_2⋅x = b_2``.
+Then we already know that ``a_2 = -k⋅a_1`` for some positive scaling factor
+``k``.
+Let ``x_1`` be a point on the defining hyperplane of ``hs_1``.
+We construct a line segment from ``x_1`` to the point ``x_2`` on the defining
+hyperplane of ``hs_2`` by shooting a ray from ``x_1`` with direction ``a_1``.
+Thus we look for a factor ``s`` such that ``(x_1 + s⋅a_1)⋅a_2 = b_2``.
+This gives us ``s = (b_2 - x_1⋅a_2) / (-k a_1⋅a_1)``.
+The gap exists if and only if ``s`` is positive.
+
+If the normal vectors do not point in opposite directions, then the defining
+hyperplanes intersect and we can produce a witness as follows.
+All points ``x`` in this intersection satisfy ``a_1⋅x = b_1`` and ``a_2⋅x = b_2``.
+Thus we have ``(a_1 + a_2)⋅x = b_1+b_2``.
+We now find a dimension where ``a_1 + a_2`` is non-zero, say, ``i``.
+Then the result is a vector with one non-zero entry in dimension ``i``, defined
+as ``[0, …, 0, (b_1 + b_2)/(a_1[i] + a_2[i]), 0, …, 0]``.
+Such a dimension ``i`` always exists.
+"""
+function is_intersection_empty(hs1::HalfSpace{N},
+                               hs2::HalfSpace{N},
+                               witness::Bool=false;
+                               kwargs...
+                              )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
+    a1 = hs1.a
+    a2 = hs2.a
+    issamedir, k = samedir(a1, -a2)
+    if issamedir
+        x1 = an_element(Hyperplane(a1, hs1.b))
+        b2 = hs2.b
+        s = (b2 - dot(x1, a2)) / (-k * dot(a1, a1))
+        empty_intersection = s > 0
+        if witness
+            if empty_intersection
+                v = N[]
+            else
+                # both defining hyperplanes are contained in each half-space
+                v = x1
+            end
+        end
+    else
+        empty_intersection = false
+        if witness
+            v = zeros(N, length(a1))
+            for i in 1:length(a1)
+                a_sum_i = a1[i] + a2[i]
+                if a_sum[i] != 0
+                    v[i] = (hs1.b + hs2.b) / a_sum_i
+                    break
+                end
+            end
+        end
+    end
+
+    if !witness
+        return empty_intersection
+    else
+        return (empty_intersection, v)
+    end
+end
+
+"""
     is_intersection_empty(X::LazySet{N},
                           P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}}
                          )::Bool where {N<:Real}
