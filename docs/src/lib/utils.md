@@ -28,6 +28,7 @@ an_element_helper
 σ_helper
 binary_search_constraints
 nonzero_indices
+samedir
 ```
 
 ### Types
