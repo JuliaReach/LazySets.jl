@@ -233,7 +233,9 @@ function ρ_helper(d::AbstractVector{N},
         @assert H isa Hyperplane "the algorithm $algorithm cannot be used with a
                                   $(typeof(H)); it only works with hyperplanes"
         s = _projection(d, X, H; kwargs...)
-    else
+    elseif algorithm == "_sandwich_search"
+        s = _sandwich_search(d, X, H; kwargs...)
+    else 
         error("algorithm $(algorithm) unknown")
     end
     return s
@@ -688,8 +690,7 @@ function _line_search(ℓ, X, H::Union{HalfSpace, Hyperplane, Line}; kwargs...)
     return (fmin, λmin)
 end # _line_search
 
-function _sandwich_search(ℓ, X, H::Union{HalfSpace, Hyperplane, Line};
-                      upper_bound::Bool=false, kwargs...)
+function _sandwich_search(ℓ, X, H::Union{HalfSpace, Hyperplane, Line}; kwargs...)
     options = Dict(kwargs)
 
     # Initialization
@@ -718,7 +719,8 @@ function _sandwich_search(ℓ, X, H::Union{HalfSpace, Hyperplane, Line};
         method = Optim.Brent()
     end
 
-
+    # initialization
+    
     for i in 3:length(λ)
         λ1, λ2, λ3 = λ[i], λ[i-1], λ[i-2]
         f_1(λ) = ρ(ℓ - λ1 * a, X) + λ1 * b
@@ -744,9 +746,6 @@ function _sandwich_search(ℓ, X, H::Union{HalfSpace, Hyperplane, Line};
 end # _sandwich_search
 end # quote
 end # load_optim
-
-
-
 
 """
     _projection(ℓ, X, H::Union{Hyperplane{N}, Line{N}};
