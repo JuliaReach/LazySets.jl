@@ -30,7 +30,6 @@ Otherwise the result is an ε-close approximation as a polygon.
 - `S`           -- convex set, assumed to be two-dimensional
 - `HPolygon`    -- type for dispatch
 - `ε`           -- (optional, default: `Inf`) error bound
-- `upper_bound` -- (optional, default: `false`) currently ignored
 
 ### Output
 
@@ -38,8 +37,7 @@ A polygon in constraint representation.
 """
 function overapproximate(S::LazySet{N},
                          ::Type{<:HPolygon},
-                         ε::Real=Inf;
-                         upper_bound::Bool=false
+                         ε::Real=Inf
                         )::HPolygon where {N<:Real}
     @assert dim(S) == 2
     if ε == Inf
@@ -59,15 +57,14 @@ function overapproximate(S::LazySet{N},
 end
 
 """
-    overapproximate(S::LazySet, ε::Real; [upper_bound]::Bool=false)::HPolygon
+    overapproximate(S::LazySet, ε::Real)::HPolygon
 
-Alias for `overapproximate(S, HPolygon, ε, upper_bound=upper_bound)`.
+Alias for `overapproximate(S, HPolygon, ε)`.
 """
 function overapproximate(S::LazySet,
                          ε::Real;
-                         upper_bound::Bool=false
                         )::HPolygon
-    return overapproximate(S, HPolygon, ε; upper_bound=upper_bound)
+    return overapproximate(S, HPolygon, ε)
 end
 
 """
@@ -80,8 +77,6 @@ Return an approximation of a given set as a hyperrectangle.
 
 - `S`              -- set
 - `Hyperrectangle` -- type for dispatch
-- `upper_bound`    -- (optional, default: `false`) use overapproximation in
-                      support function computation?
 
 ### Output
 
@@ -89,9 +84,8 @@ A hyperrectangle.
 """
 function overapproximate(S::LazySet,
                          ::Type{<:Hyperrectangle};
-                         upper_bound::Bool=false
                         )::Union{Hyperrectangle, EmptySet}
-    box_approximation(S; upper_bound=upper_bound)
+    box_approximation(S)
 end
 
 """
@@ -100,14 +94,12 @@ end
 Alias for `overapproximate(S, Hyperrectangle)`.
 """
 overapproximate(S::LazySet;
-                upper_bound::Bool=false
                )::Union{Hyperrectangle, EmptySet} =
-    overapproximate(S, Hyperrectangle; upper_bound=upper_bound)
+    overapproximate(S, Hyperrectangle)
 
 """
     overapproximate(S::ConvexHull{N, Zonotope{N}, Zonotope{N}},
-                    ::Type{<:Zonotope};
-                    [upper_bound]::Bool=false)::Zonotope where {N<:Real}
+                    ::Type{<:Zonotope})::Zonotope where {N<:Real}
 
 Overapproximate the convex hull of two zonotopes.
 
@@ -115,7 +107,6 @@ Overapproximate the convex hull of two zonotopes.
 
 - `S`           -- convex hull of two zonotopes of the same order
 - `Zonotope`    -- type for dispatch
-- `upper_bound` -- (optional, default: `false`) currently ignored
 
 ### Algorithm
 
@@ -134,8 +125,7 @@ zonotope, which is in general expensive in high dimensions. This is further inve
 in: *Zonotopes as bounding volumes, L. J. Guibas et al, Proc. of Symposium on Discrete Algorithms, pp. 803-812*.
 """
 function overapproximate(S::ConvexHull{N, Zonotope{N}, Zonotope{N}},
-                         ::Type{<:Zonotope};
-                         upper_bound::Bool=false)::Zonotope where {N<:Real}
+                         ::Type{<:Zonotope})::Zonotope where {N<:Real}
     Z1, Z2 = S.X, S.Y
     @assert order(Z1) == order(Z2)
     center = (Z1.center+Z2.center)/2
@@ -145,8 +135,7 @@ end
 
 """
     overapproximate(X::LazySet,
-                    dir::AbstractDirections;
-                    [upper_bound]::Bool=false
+                    dir::AbstractDirections
                    )::HPolytope
 
 Overapproximating a set with template directions.
@@ -155,8 +144,6 @@ Overapproximating a set with template directions.
 
 - `X`           -- set
 - `dir`         -- direction representation
-- `upper_bound` -- (optional, default: `false`) use overapproximation in support
-                   function computation?
 
 ### Output
 
@@ -164,22 +151,19 @@ A `HPolytope` overapproximating the set `X` with the directions from `dir`.
 """
 function overapproximate(X::LazySet{N},
                          dir::AbstractDirections{N};
-                         upper_bound::Bool=false
                         )::HPolytope{N} where N
-    ρ_rec = upper_bound ? ρ_upper_bound : ρ
     halfspaces = Vector{LinearConstraint{N}}()
     sizehint!(halfspaces, length(dir))
     H = HPolytope(halfspaces)
     for d in dir
-        addconstraint!(H, LinearConstraint(d, ρ_rec(d, X)))
+        addconstraint!(H, LinearConstraint(d, ρ(d, X)))
     end
     return H
 end
 
 """
     overapproximate(S::LazySet{N},
-                    ::Type{Interval};
-                    [upper_bound]::Bool=false
+                    ::Type{Interval}
                    ) where {N<:Real}
 
 Return the overapproximation of a real unidimensional set with an interval.
@@ -188,15 +172,13 @@ Return the overapproximation of a real unidimensional set with an interval.
 
 - `S`           -- one-dimensional set
 - `Interval`    -- type for dispatch
-- `upper_bound` -- (optional, default: `false`) currently ignored
 
 ### Output
 
 An interval.
 """
 function overapproximate(S::LazySet{N},
-                         ::Type{Interval};
-                         upper_bound::Bool=false
+                         ::Type{Interval}
                         ) where {N<:Real}
     @assert dim(S) == 1
     lo = σ([-one(N)], S)[1]
@@ -205,11 +187,12 @@ function overapproximate(S::LazySet{N},
 end
 
 """
-    overapproximate(cap::Intersection{N, <:LazySet, S},
+    overapproximate(cap::Intersection{N,
+                                      <:LazySet,
+                                      <:Union{AbstractPolytope{N}, HPolyhedron{N}}},
                     dir::AbstractDirections{N};
-                    [upper_bound]::Bool=false,
                     kwargs...
-                   ) where {N<:Real, S<:AbstractPolytope{N}}
+                   ) where {N<:Real}
 
 Return the overapproximation of the intersection between a compact set and a
 polytope given a set of template directions.
@@ -218,8 +201,6 @@ polytope given a set of template directions.
 
 - `cap`         -- intersection of a compact set and a polytope
 - `dir`         -- template directions
-- `upper_bound` -- (optional, default: `false`) use overapproximation in support
-                   function computation?
 - `kwargs`      -- additional arguments that are passed to the support function
                    algorithm
 
@@ -251,11 +232,12 @@ This method relies on having available the `constraints_list` of the polytope
 This method of overapproximations can return a non-empty set even if the original
 intersection is empty.
 """
-function overapproximate(cap::Intersection{N, <:LazySet, S},
+function overapproximate(cap::Intersection{N,
+                                           <:LazySet,
+                                           Union{AbstractPolytope{N}, HPolyhedron{N}}},
                          dir::AbstractDirections{N};
-                         upper_bound::Bool=false,
                          kwargs...
-                        ) where {N<:Real, S<:AbstractPolytope{N}}
+                        ) where {N<:Real}
 
     X = cap.X    # compact set
     P = cap.Y    # polytope
@@ -263,12 +245,11 @@ function overapproximate(cap::Intersection{N, <:LazySet, S},
     Hi = constraints_list(P)
     m = length(Hi)
     Q = HPolytope{N}()
-    ρ_rec = upper_bound ? ρ_upper_bound : ρ
 
     for di in dir
-        ρ_X_Hi_min = ρ_rec(di, X ∩ Hi[1], kwargs...)
+        ρ_X_Hi_min = ρ(di, X ∩ Hi[1], kwargs...)
         for i in 2:m
-            ρ_X_Hi = ρ_rec(di, X ∩ Hi[i], kwargs...)
+            ρ_X_Hi = ρ(di, X ∩ Hi[i], kwargs...)
             if ρ_X_Hi < ρ_X_Hi_min
                 ρ_X_Hi_min = ρ_X_Hi
             end
@@ -276,4 +257,58 @@ function overapproximate(cap::Intersection{N, <:LazySet, S},
         addconstraint!(Q, HalfSpace(di, ρ_X_Hi_min))
     end
     return Q
+end
+
+# symmetric method
+function overapproximate(cap::Intersection{N,
+                                           <:Union{AbstractPolytope{N}, HPolyhedron{N}},
+                                           <:LazySet},
+                         dir::AbstractDirections{N};
+                         kwargs...
+                        ) where N<:Real
+    return overapproximate(cap.Y ∩ cap.X, dir; kwargs...)
+end
+
+"""
+    overapproximate(cap::Intersection{N, <:HalfSpace{N}, <:AbstractPolytope{N}},
+                    dir::AbstractDirections{N};
+                    [kwargs]...
+                   ) where {N<:Real}
+
+Return the overapproximation of the intersection between a half-space and a
+polytope given a set of template directions.
+
+### Input
+
+- `cap`         -- intersection of a half-space and a polytope
+- `dir`         -- template directions
+- `kwargs`      -- additional arguments that are passed to the support function
+                   algorithm
+
+### Output
+
+A polytope in H-representation such that the normal direction of each half-space
+is given by an element of `dir`.
+"""
+function overapproximate(cap::Intersection{N,
+                                           <:HalfSpace{N},
+                                           <:AbstractPolytope{N}},
+                         dir::AbstractDirections{N};
+                         kwargs...
+                        ) where {N<:Real}
+    H = HPolytope{N}()
+    c = constraints_list(H)
+    append!(c, constraints_list(cap.X))
+    append!(c, constraints_list(cap.Y))
+    return overapproximate(H, dir; kwargs...)
+end
+
+# symmetric method
+function overapproximate(cap::Intersection{N,
+                                           <:AbstractPolytope{N},
+                                           <:HalfSpace{N}},
+                         dir::AbstractDirections{N};
+                         kwargs...
+                        ) where {N<:Real}
+    return overapproximate(cap.Y ∩ cap.X, dir; kwargs...)
 end

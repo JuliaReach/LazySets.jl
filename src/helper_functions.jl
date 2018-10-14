@@ -87,6 +87,67 @@ function ispermutation(u::AbstractVector{T}, v::AbstractVector{T})::Bool where T
 end
 
 """
+    samedir(u::AbstractVector{N},
+            v::AbstractVector{N})::Tuple{Bool, Real} where N<:Real
+
+Check whether two vectors point in the same direction.
+
+### Input
+
+- `u` -- first vector
+- `v` -- second vector
+
+### Output
+
+`true` iff the vectors are identical up to a positive scaling factor.
+
+### Examples
+
+```jldoctest
+julia> LazySets.samedir([1, 2, 3], [2, 4, 6])
+true, 0.5
+
+julia> LazySets.samedir([1, 2, 3], [3, 2, 1])
+false
+
+julia> LazySets.samedir([1, 2, 3], [-1, -2, -3])
+false
+
+```
+"""
+function samedir(u::AbstractVector{N},
+                 v::AbstractVector{N}
+                )::Tuple{Bool, Real} where N<:Real
+    @assert length(u) == length(v) "wrong dimension"
+    no_factor = true
+    factor = 0
+    @inbounds for i in 1:length(u)
+        if u[i] == 0
+            if v[i] != 0
+                return (false, 0)
+            end
+            continue
+        elseif v[i] == 0
+            return (false, 0)
+        end
+        if no_factor
+            no_factor = false
+            factor = u[i] / v[i]
+            if factor < 0
+                return (false, 0)
+            end
+        elseif factor != u[i] / v[i]
+            return (false, 0)
+        end
+    end
+    if no_factor
+        # both vectors are zero
+        return (true, 0)
+    end
+    return (true, factor)
+end
+
+"""
     nonzero_indices(v::AbstractVector{N})::Vector{Int} where N<:Real
 
 Return the indices in which a vector is non-zero.

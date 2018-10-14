@@ -3,15 +3,13 @@
 # ===================================
 
 """
-    box_approximation(S::LazySet; upper_bound::Bool=false)::Hyperrectangle
+    box_approximation(S::LazySet)::Hyperrectangle
 
 Overapproximate a convex set by a tight hyperrectangle.
 
 ### Input
 
 - `S`           -- convex set
-- `upper_bound` -- (optional, default: `false`) use overapproximation in support
-                   function computation?
 
 ### Output
 
@@ -24,20 +22,19 @@ of the given set in the canonical directions, and the lengths of the sides can
 be recovered from the distance among support functions in the same directions.
 """
 function box_approximation(S::LazySet{N};
-                           upper_bound::Bool=false
                           )::Union{Hyperrectangle{N}, EmptySet{N}} where N<:Real
-    (c, r) = box_approximation_helper(S; upper_bound=upper_bound)
-    if upper_bound && r[1] < 0
+    (c, r) = box_approximation_helper(S)
+    if r[1] < 0
         return EmptySet{N}()
     end
     return Hyperrectangle(c, r)
 end
 
 # special case: Hyperrectangle
-box_approximation(S::Hyperrectangle; upper_bound::Bool=false) = S
+box_approximation(S::Hyperrectangle) = S
 
 # special case: other rectangle
-box_approximation(S::AbstractHyperrectangle; upper_bound::Bool=false) =
+box_approximation(S::AbstractHyperrectangle) =
     Hyperrectangle(center(S), radius_hyperrectangle(S))
 
 """
@@ -48,7 +45,7 @@ Alias for `box_approximation`.
 interval_hull = box_approximation
 
 """
-    box_approximation_symmetric(S::LazySet{N}; upper_bound::Bool=false
+    box_approximation_symmetric(S::LazySet{N}
                                )::Union{Hyperrectangle{N}, EmptySet{N}}
                                 where {N<:Real}
 
@@ -57,8 +54,6 @@ Overapproximate a convex set by a tight hyperrectangle centered in the origin.
 ### Input
 
 - `S`           -- convex set
-- `upper_bound` -- (optional, default: `false`) use overapproximation in support
-                   function computation?
 
 ### Output
 
@@ -70,11 +65,10 @@ The center of the box is the origin, and the radius is obtained by computing the
 maximum value of the support function evaluated at the canonical directions.
 """
 function box_approximation_symmetric(S::LazySet{N};
-                                     upper_bound::Bool=false
                                     )::Union{Hyperrectangle{N},
                                              EmptySet{N}} where {N<:Real}
-    (c, r) = box_approximation_helper(S; upper_bound=upper_bound)
-    if upper_bound && r[1] < 0
+    (c, r) = box_approximation_helper(S)
+    if r[1] < 0
         return EmptySet{N}()
     end
     return Hyperrectangle(zeros(N, length(c)), abs.(c) .+ r)
@@ -88,7 +82,7 @@ Alias for `box_approximation_symmetric`.
 symmetric_interval_hull = box_approximation_symmetric
 
 """
-    box_approximation_helper(S::LazySet{N}; upper_bound::Bool=false
+    box_approximation_helper(S::LazySet{N};
                             ) where {N<:Real}
 
 Common code of `box_approximation` and `box_approximation_symmetric`.
@@ -96,8 +90,6 @@ Common code of `box_approximation` and `box_approximation_symmetric`.
 ### Input
 
 - `S`           -- convex set
-- `upper_bound` -- (optional, default: `false`) use overapproximation in support
-                   function computation?
 
 ### Output
 
@@ -115,24 +107,22 @@ The lengths of the sides can be recovered from the distance among support
 functions in the same directions.
 """
 @inline function box_approximation_helper(S::LazySet{N};
-                                          upper_bound::Bool=false
                                          ) where {N<:Real}
     zero_N = zero(N)
     one_N = one(N)
-    ρ_rec = upper_bound ? ρ_upper_bound : ρ
     n = dim(S)
     c = Vector{N}(undef, n)
     r = Vector{N}(undef, n)
     d = zeros(N, n)
     @inbounds for i in 1:n
         d[i] = one_N
-        htop = ρ_rec(d, S)
+        htop = ρ(d, S)
         d[i] = -one_N
-        hbottom = -ρ_rec(d, S)
+        hbottom = -ρ(d, S)
         d[i] = zero_N
         c[i] = (htop + hbottom) / 2
         r[i] = (htop - hbottom) / 2
-        if upper_bound && r[i] < 0
+        if r[i] < 0
             # contradicting bounds => set is empty
             # terminate with first radius entry being negative
             r[1] = r[i]
@@ -143,7 +133,7 @@ functions in the same directions.
 end
 
 """
-    ballinf_approximation(S::LazySet{N}; upper_bound::Bool=false
+    ballinf_approximation(S::LazySet{N};
                          )::BallInf{N} where {N<:Real}
 
 Overapproximate a convex set by a tight ball in the infinity norm.
@@ -151,8 +141,6 @@ Overapproximate a convex set by a tight ball in the infinity norm.
 ### Input
 
 - `S`           -- convex set
-- `upper_bound` -- (optional, default: `false`) use overapproximation in support
-                   function computation?
 
 ### Output
 
@@ -164,26 +152,24 @@ The center and radius of the box are obtained by evaluating the support function
 of the given convex set along the canonical directions.
 """
 function ballinf_approximation(S::LazySet{N};
-                               upper_bound::Bool=false
                               )::Union{BallInf{N}, EmptySet{N}} where {N<:Real}
     zero_N = zero(N)
     one_N = one(N)
-    ρ_rec = upper_bound ? ρ_upper_bound : ρ
     n = dim(S)
     c = Vector{N}(undef, n)
     r = zero_N
     d = zeros(N, n)
     @inbounds for i in 1:n
         d[i] = one_N
-        htop = ρ_rec(d, S)
+        htop = ρ(d, S)
         d[i] = -one_N
-        hbottom = -ρ_rec(d, S)
+        hbottom = -ρ(d, S)
         d[i] = zero_N
         c[i] = (htop + hbottom) / 2
         rcur = (htop - hbottom) / 2
         if (rcur > r)
             r = rcur
-        elseif upper_bound && rcur < 0
+        elseif rcur < 0
             # contradicting bounds => set is empty
             return EmptySet{N}()
         end

@@ -1,3 +1,5 @@
+using Optim
+
 for N in [Float64, Rational{Int}, Float32]
     B = BallInf(ones(N, 2), N(3))
     H = Hyperrectangle(ones(N, 2), ones(N, 2))
@@ -16,6 +18,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test ∈(ones(N, 2), I) && !∈(N[5, 5], I)
 
     # emptiness of intersection
+    @test !isempty_known(I)
+    @test !isempty(I)
+    @test isempty_known(I)
     @test !isempty(I)
 
     # =================
@@ -58,23 +63,31 @@ end
 # Tests for Float64 only
 # ======================
 
-# Half-space - Ball1 intersection
+# HalfSpace vs. Ball1 intersection
 X = Ball1(zeros(2), 1.0);
-H = HalfSpace([-1.0, 0.0], -1.0); # x >= 0
 d = normalize([1.0, 0.0])
 
-# line search using Optim
-using Optim
+# flat intersection at x = 1
+H = HalfSpace([-1.0, 0.0], -1.0); # x >= 1
+
+# default algorithm
 @test ρ(d, X ∩ H) == ρ(d, H ∩ X) == 1.0
 
-# Ball1 vs HalfSpace intersection using default algorithm
-H = HalfSpace([1.0, 0.0], 0.0); # x = 0
+# intersection at x = 0
+H = HalfSpace([1.0, 0.0], 0.0); # x <= 0
+
+# default algorithm
 @test ρ(d, X ∩ H) < 1e-6 && ρ(d, H ∩ X) < 1e-6
+
 # specify  line search algorithm
 @test ρ(d, X ∩ H, algorithm="line_search") < 1e-6 &&
       ρ(d, H ∩ X, algorithm="line_search") < 1e-6
 
-# Ball1 vs Hyperplane intersection
+# HalfSpace vs. Ball2 intersection
+B2 = Ball2(zeros(2), 1.0);
+@test ρ(d, B2 ∩ H) < 1e-6 && ρ(d, H ∩ B2) < 1e-6
+
+# Ball1 vs. Hyperplane intersection
 H = Hyperplane([1.0, 0.0], 0.5); # x = 0.5
 @test isapprox(ρ(d, X ∩ H, algorithm="line_search"), 0.5, atol=1e-6)
 # For the projection algorithm, if the linear map is taken lazily we can use Ball1

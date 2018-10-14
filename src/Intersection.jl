@@ -1,8 +1,45 @@
 import Base: isempty, ∈, ∩
 
 export Intersection,
+       isempty_known,
+       set_isempty!,
        IntersectionArray,
        array
+
+"""
+    IntersectionCache
+
+Container for information cached by a lazy `Intersection` object.
+
+### Fields
+
+- `isempty` -- is the intersection empty? There are three possible states,
+               encoded as `Int8` values -1, 0, 1:
+
+    * ``-1`` - it is currently unknown whether the intersection is empty or not
+    *  ``0`` - intersection is not empty
+    *  ``1`` - intersection is empty
+"""
+mutable struct IntersectionCache
+    isempty::Int8
+
+    # default constructor
+    IntersectionCache() = new(Int8(-1))
+end
+
+function isempty_known(c::IntersectionCache)::Bool
+    return c.isempty != Int8(-1)
+end
+
+function isempty(c::IntersectionCache)::Bool
+    @assert isempty_known(c) "'isempty_known' only works if 'isempty' " *
+        "returns 'true'"
+    return c.isempty == Int8(1)
+end
+
+function set_isempty!(c::IntersectionCache, isempty::Bool)
+    c.isempty = isempty ? Int8(1) : Int8(0)
+end
 
 """
     Intersection{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
@@ -11,13 +48,15 @@ Type that represents the intersection of two convex sets.
 
 ### Fields
 
-- `X` -- convex set
-- `Y` -- convex set
+- `X`     -- convex set
+- `Y`     -- convex set
+- `cache` -- internal cache for avoiding recomputation; see
+             [`IntersectionCache`](@ref)
 
 ### Examples
 
-Create an expression, ``Z``, that lazily represents the intersection of two squares
-``X`` and ``Y``:
+Create an expression, ``Z``, which lazily represents the intersection of two
+squares ``X`` and ``Y``:
 
 ```jldoctest lazy_intersection
 julia> X, Y = BallInf([0,0.], 0.5), BallInf([1,0.], 0.65);
@@ -38,8 +77,8 @@ julia> isempty(Z)
 false
 ```
 
-Do not confuse `Intersection` with the concrete operation, that is computed with
-the lowercase `intersection`:
+Do not confuse `Intersection` with the concrete operation, which is computed
+with the lowercase `intersection` function:
 
 ```jldoctest lazy_intersection
 julia> W = intersection(X, Y)
@@ -49,13 +88,14 @@ Hyperrectangle{Float64}([0.425, 0.0], [0.075, 0.5])
 struct Intersection{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     X::S1
     Y::S2
+    cache::IntersectionCache
 
     # default constructor with dimension check
     function Intersection{N, S1, S2}(X::S1, Y::S2) where
             {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}}
         @assert dim(X) == dim(Y) "sets in an intersection must have the same " *
             "dimension"
-        return new{N, S1, S2}(X, Y)
+        return new{N, S1, S2}(X, Y, IntersectionCache())
     end
 end
 
@@ -72,6 +112,42 @@ Intersection(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} =
 Alias for `Intersection`.
 """
 ∩(X::LazySet, Y::LazySet) = Intersection(X, Y)
+
+
+# --- cache propagation functions ---
+
+
+"""
+    isempty_known(cap::Intersection)
+
+Ask whether the status of emptiness is known.
+
+### Input
+
+- `cap` -- intersection of two convex sets
+
+### Output
+
+`true` iff the emptiness status is known.
+In this case, `isempty(cap)` can be used to obtain the status.
+"""
+function isempty_known(cap::Intersection)
+    return isempty_known(cap.cache)
+end
+
+"""
+    set_isempty!(cap::Intersection, isempty::Bool)
+
+Set the status of emptiness in the cache.
+
+### Input
+
+- `cap`     -- intersection of two convex sets
+- `isempty` -- new status of emptiness
+"""
+function set_isempty!(cap::Intersection, isempty::Bool)
+    return set_isempty!(cap.cache, isempty)
+end
 
 
 # --- LazySet interface functions ---
@@ -110,38 +186,217 @@ direction.
 The support vector in the given direction.
 """
 function σ(d::AbstractVector{N}, cap::Intersection{N}) where {N<:Real}
-    # TODO document behavior if the direction has norm zero
-    # TODO error message if the intersection is empty!
-    # TODO implement
-    error("the exact support vector of an intersection is not implemented yet")
+    error("the exact support vector of an intersection is not implemented")
 end
 
 """
-    ρ(d::AbstractVector{N}, cap::Intersection{N};
-      upper_bound=false, kwargs...) where {N<:Real}
+    ρ(d::AbstractVector{N}, cap::Intersection{N}) where {N<:Real}
 
-Return the support function of the intersection of two convex sets in a given
-direction.
+Return an upper bound on the support function of the intersection of two convex
+sets in a given direction.
 
 ### Input
 
-- `d`           -- direction
-- `cap`         -- intersection of two convex sets
-- `upper_bound` -- (optional, default: `false`) if `false`, compute the support
-                   function exactly; otherwise use an overapproximative algorithm
+- `d`    -- direction
+- `cap`  -- intersection of two convex sets
 
 ### Output
 
-The support function in the given direction.
+An uper bound on the support function in the given direction.
+
+### Algorithm
+
+The support function of an intersection of ``X`` and ``Y`` is upper bounded by
+the minimum of the support functions of ``X`` and ``Y``.
 """
-function ρ(d::AbstractVector{N}, cap::Intersection{N};
-           upper_bound=false, kwargs...) where {N<:Real}
-    if upper_bound
-        return LazySets.Approximations.ρ_upper_bound(d, cap; kwargs...)
-    else
-        error("the exact support function of an intersection is not implemented; " *
-              "try using `upper_bound=true`")
+function ρ(d::AbstractVector{N}, cap::Intersection{N}) where {N<:Real}
+    return min(ρ(d, cap.X), ρ(d, cap.Y))
+end
+
+function ρ_helper(d::AbstractVector{N},
+                  cap::Intersection{N},
+                  algorithm::String;
+                  kwargs...) where N<:Real
+    X = cap.X # compact set
+    H = cap.Y # halfspace or hyperplane or line
+
+    # if the intersection is empty => stop
+    if is_intersection_empty(X, H, false)
+        error("the intersection is empty")
     end
+
+    if algorithm == "line_search"
+        @assert isdefined(Main, :Optim) "the algorithm $algorithm needs " *
+                                        "the package 'Optim' to be loaded"
+        (s, _) = _line_search(d, X, H; kwargs...)
+    elseif algorithm == "projection"
+        @assert H isa Hyperplane "the algorithm $algorithm cannot be used with a
+                                  $(typeof(H)); it only works with hyperplanes"
+        s = _projection(d, X, H; kwargs...)
+    else
+        error("algorithm $(algorithm) unknown")
+    end
+    return s
+end
+
+"""
+    ρ(d::AbstractVector{N},
+      cap::Intersection{N,
+                        <:LazySet{N},
+                        <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}};
+      [algorithm]::String="line_search",
+      [kwargs...]) where N<:Real
+
+Return the support function of the intersection of a compact set and a
+half-space/hyperplane/line in a given direction.
+
+### Input
+
+- `d`         -- direction
+- `cap`       -- lazy intersection of a compact set and a half-space/hyperplane/
+                 line
+- `algorithm` -- (optional, default: `"line_search"`): the algorithm to
+                 calculate the support function; valid options are:
+
+    * `"line_search"` -- solve the associated univariate optimization problem
+                         using a line search method (either Brent or the
+                         Golden Section method)
+    * `"projection"`  -- only valid for intersection with a hyperplane;
+                         evaluates the support function by reducing the problem
+                         to the 2D intersection of a rank 2 linear
+                         transformation of the given compact set in the plane
+                         generated by the given direction `d` and the
+                         hyperplane's normal vector `n`
+
+### Output
+
+The scalar value of the support function of the set `cap` in the given
+direction.
+
+### Notes
+
+It is assumed that the set `cap.X` is compact.
+
+Any additional number of arguments to the algorithm backend can be passed as
+keyword arguments.
+
+### Algorithm
+
+The algorithms are based on solving the associated optimization problem
+
+```math
+\\min_\\{ λ ∈ D_h \\} ρ(ℓ - λa, X) + λb.
+```
+where ``D_h = \\{ λ : λ ≥ 0 \\}`` if ``H`` is a half-space or
+``D_h = \\{ λ : λ ∈ \\mathbb{R} \\}`` if ``H`` is a hyperplane.
+
+For additional information we refer to:
+
+- [G. Frehse, R. Ray. Flowpipe-Guard Intersection for Reachability Computations with
+  Support Functions](https://www.sciencedirect.com/science/article/pii/S1474667015371809).
+- [C. Le Guernic. Reachability Analysis of Hybrid Systems with Linear Continuous
+  Dynamics, PhD thesis](https://tel.archives-ouvertes.fr/tel-00422569v2).
+- [T. Rockafellar, R. Wets.
+  Variational Analysis](https://www.springer.com/us/book/9783540627722).
+"""
+function ρ(d::AbstractVector{N},
+           cap::Intersection{N,
+                             <:LazySet{N},
+                             <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}};
+           algorithm::String="line_search",
+           kwargs...) where N<:Real
+    return ρ_helper(d, cap, algorithm; kwargs...)
+end
+
+# symmetric method
+function ρ(d::AbstractVector{N},
+           cap::Intersection{N,
+                             <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
+                             <:LazySet{N}};
+           algorithm::String="line_search",
+           kwargs...) where N<:Real
+    return ρ_helper(d, cap.Y ∩ cap.X, algorithm; kwargs...)
+end
+
+"""
+    ρ(d::AbstractVector{N},
+      cap::Intersection{N, <:LazySet{N}, <:AbstractPolytope{N}};
+      kwargs...) where {N<:Real}
+
+Return an upper bound of the intersection between a compact set and a
+polytope along a given direction.
+
+### Input
+
+- `d`      -- direction
+- `cap`    -- intersection of a compact set and a polytope
+- `kwargs` -- additional arguments that are passed to the support function algorithm
+
+### Output
+
+An upper bound of the support function of the given intersection.
+
+### Algorithm
+
+The idea is to solve the univariate optimization problem `ρ(di, X ∩ Hi)` for each
+half-space in the set `P` and then take the minimum. This gives an overapproximation
+of the exact support function.
+
+This algorithm is inspired from [G. Frehse, R. Ray. Flowpipe-Guard Intersection
+for Reachability Computations with Support
+Functions](https://www.sciencedirect.com/science/article/pii/S1474667015371809).
+
+### Notes
+
+This method relies on having available the `constraints_list` of the polytope
+`P`.
+
+This method of overapproximation can return a non-empty set even if the original
+intersection is empty.
+"""
+function ρ(d::AbstractVector{N},
+           cap::Intersection{N, <:LazySet{N}, <:AbstractPolytope{N}};
+           kwargs...) where {N<:Real}
+
+    X = cap.X    # compact set
+    P = cap.Y    # polytope
+    return minimum([ρ(d, X ∩ Hi; kwargs...) for Hi in constraints_list(P)])
+end
+
+# symmetric method
+function ρ(d::AbstractVector{N},
+           cap::Intersection{N, <:AbstractPolytope{N}, <:LazySet{N}};
+           kwargs...) where {N<:Real}
+    return ρ(d, cap.Y ∩ cap.X; kwargs...)
+end
+
+# disambiguation
+function ρ(d::AbstractVector{N},
+           cap::Intersection{N, <:AbstractPolytope{N}, <:AbstractPolytope{N}};
+           kwargs...) where {N<:Real}
+    X = cap.X    # compact set
+    P = cap.Y    # polytope
+    return minimum([ρ(d, X ∩ Hi; kwargs...) for Hi in constraints_list(P)])
+end
+
+# disambiguation
+function ρ(d::AbstractVector{N},
+           cap::Intersection{N,
+                             <:AbstractPolytope{N},
+                             <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}};
+           algorithm::String="line_search",
+           kwargs...) where N<:Real
+    return ρ_helper(d, cap, algorithm; kwargs...)
+end
+
+# symmetric method
+function ρ(d::AbstractVector{N},
+           cap::Intersection{N,
+                             <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
+                             <:AbstractPolytope{N}};
+           algorithm::String="line_search",
+           kwargs...) where N<:Real
+    return ρ_helper(d, cap.Y ∩ cap.X, algorithm; kwargs...)
 end
 
 """
@@ -178,15 +433,29 @@ Return if the intersection is empty or not.
 ### Output
 
 `true` iff the intersection is empty.
+
+### Notes
+
+The result will be cached, so a second query will be fast.
 """
 function isempty(cap::Intersection)::Bool
-    return is_intersection_empty(cap.X, cap.Y)
+    if isempty_known(cap)
+        # use cached result
+        return isempty(cap.cache)
+    end
+    # compute result
+    empty_intersection = is_intersection_empty(cap.X, cap.Y)
+    # update cache
+    set_isempty!(cap, empty_intersection)
+
+    return empty_intersection
 end
 
 
 # ================================
 # intersection of an array of sets
 # ================================
+
 
 """
     IntersectionArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
@@ -316,123 +585,13 @@ function ∈(x::AbstractVector{N}, ia::IntersectionArray{N})::Bool where {N<:Rea
     return true
 end
 
-"""
-    ρ(d::AbstractVector{N},
-      cap::Intersection{N,
-                        <:LazySet{N},
-                        <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}};
-      [algorithm]::String="line_search",
-      [check_intersection]::Bool=true,
-      [kwargs...]) where N<:Real
-
-Return the support function of the intersection of a compact set and a
-half-space/hyperplane/line in a given direction.
-
-### Input
-
-- `d`         -- direction
-- `cap`       -- lazy intersection of a compact set and a half-space/hyperplane/
-                 line
-- `algorithm` -- (optional, default: `"line_search"`): the algorithm to
-                 calculate the support function; valid options are:
-
-    * `"line_search"` -- solve the associated univariate optimization problem
-                         using a line search method (either Brent or the
-                         Golden Section method)
-    * `"projection"`  -- only valid for intersection with a hyperplane;
-                         evaluates the support function by reducing the problem
-                         to the 2D intersection of a rank 2 linear
-                         transformation of the given compact set in the plane
-                         generated by the given direction `d` and the
-                         hyperplane's normal vector `n`
-
-- `check_intersection` -- (optional, default: `true`) if `true`, check if the
-                          intersection is empty before actually calculating the
-                          support function
-
-### Output
-
-The scalar value of the support function of the set `cap` in the given
-direction.
-
-### Notes
-
-It is assumed that the set `cap.X` is compact.
-
-The `check_intersection` flag can be useful if it is known in advance that the
-intersection is non-empty.
-
-Any additional number of arguments to the algorithm backend can be passed as
-keyword arguments.
-
-### Algorithm
-
-The algorithms are based on solving the associated optimization problem
-
-```math
-\\min_\\{ λ ∈ D_h \\} ρ(ℓ - λa, X) + λb.
-```
-where ``D_h = \\{ λ : λ ≥ 0 \\}`` if ``H`` is a half-space or
-``D_h = \\{ λ : λ ∈ \\mathbb{R} \\}`` if ``H`` is a hyperplane.
-
-For additional information we refer to:
-
-- [G. Frehse, R. Ray. Flowpipe-Guard Intersection for Reachability Computations with
-  Support Functions](https://www.sciencedirect.com/science/article/pii/S1474667015371809).
-- [C. Le Guernic. Reachability Analysis of Hybrid Systems with Linear Continuous
-  Dynamics, PhD thesis](https://tel.archives-ouvertes.fr/tel-00422569v2).
-- [T. Rockafellar, R. Wets.
-  Variational Analysis](https://www.springer.com/us/book/9783540627722).
-"""
-function ρ(d::AbstractVector{N},
-           cap::Intersection{N,
-                             <:LazySet{N},
-                             <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}};
-           algorithm::String="line_search",
-           check_intersection::Bool=true,
-           upper_bound::Bool=false,
-           kwargs...) where N<:Real
-
-    X = cap.X    # compact set
-    H = cap.Y    # halfspace or hyperplane
-
-    # if the intersection is empty => stop
-    if check_intersection &&
-            is_intersection_empty(X, H, false; upper_bound=upper_bound)
-        error("the intersection is empty")
-    end
-
-    if algorithm == "line_search"
-        @assert isdefined(Main, :Optim) "the algorithm $algorithm needs " *
-                                        "the package 'Optim' to be loaded"
-        (s, _) = _line_search(d, X, H; upper_bound=upper_bound, kwargs...)
-    elseif algorithm == "projection"
-        @assert H isa Hyperplane "the algorithm $algorithm cannot be used with a
-                                  $(typeof(H)); it only works with hyperplanes"
-        s = _projection(d, X, H; upper_bound=upper_bound, kwargs...)
-    else
-        error("algorithm $(algorithm) unknown")
-    end
-    return s
-end
-
-# Symmetric case
-ρ(ℓ::AbstractVector{N},
-  cap::Intersection{N,
-                    <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
-                    <:LazySet{N}};
-  algorithm::String="line_search", check_intersection::Bool=true,
-  kwargs...) where N<:Real =
-    ρ(ℓ, cap.Y ∩ cap.X; algorithm=algorithm,
-      check_intersection=check_intersection, kwargs...)
-
 function load_optim_intersection()
 return quote
 
 import Optim
 
 """
-    _line_search(ℓ, X, H; [upper_bound]=false, [kwargs...])
+    _line_search(ℓ, X, H; [kwargs...])
 
 Given a compact and convex set ``X`` and a halfspace ``H = \\{x: a^T x ≤ b \\}``
 or a hyperplane ``H = \\{x: a^T x = b \\}``, calculate:
@@ -448,9 +607,6 @@ where ``D_h = \\{ λ : λ ≥ 0 \\}`` if ``H`` is a half-space or
 - `ℓ`           -- direction
 - `X`           -- set
 - `H`           -- halfspace or hyperplane
-- `upper_bound` -- (optional, default: `false`) if `false`, compute the support
-                   function exactly; otherwise use an overapproximative
-                   algorithm
 
 ### Output
 
@@ -495,14 +651,12 @@ julia> _line_search([1.0, 0.0], X, H, upper=1e3, method=GoldenSection())
 (1.0, 381.9660112501051)
 ```
 """
-function _line_search(ℓ, X, H::Union{HalfSpace, Hyperplane, Line};
-                      upper_bound::Bool=false, kwargs...)
+function _line_search(ℓ, X, H::Union{HalfSpace, Hyperplane, Line}; kwargs...)
     options = Dict(kwargs)
 
     # Initialization
     a, b = H.a, H.b
-    ρ_rec = upper_bound ? LazySets.Approximations.ρ_upper_bound : ρ
-    f(λ) = ρ_rec(ℓ - λ[1] * a, X) + λ[1] * b
+    f(λ) = ρ(ℓ - λ[1] * a, X) + λ[1] * b
 
     if haskey(options, :lower)
         lower = pop!(options, :lower)
@@ -599,7 +753,6 @@ end # load_optim
                 [lazy_linear_map]=false,
                 [lazy_2d_intersection]=true,
                 [algorithm_2d_intersection]=nothing,
-                [upper_bound]::Bool=false,
                 [kwargs...]) where {N}
 
 Given a compact and convex set ``X`` and a hyperplane ``H = \\{x: n ⋅ x = γ \\}``,
@@ -619,9 +772,6 @@ rank-2 projection ``Π_{nℓ} X`` and the line ``Lγ = \\{(x, y): x = γ \\}``.
 - `algorithm_2d_intersection` -- (optional, default: `nothing`) if given, fixes the
                                  support function algorithm used for the intersection
                                  in 2D; otherwise the default is implied
-- `upper_bound`          -- (optional, default: `false`) if `false`, compute the
-                            support function exactly; otherwise use an
-                            overapproximative algorithm
 
 ### Output
 
@@ -655,7 +805,6 @@ function _projection(ℓ, X, H::Union{Hyperplane{N}, Line{N}};
                      lazy_linear_map=false,
                      lazy_2d_intersection=true,
                      algorithm_2d_intersection=nothing,
-                     upper_bound::Bool=false,
                      kwargs...) where {N}
 
     n = H.a                  # normal vector to the hyperplane
@@ -670,10 +819,9 @@ function _projection(ℓ, X, H::Union{Hyperplane{N}, Line{N}};
     Xnℓ = lazy_linear_map ? LinearMap(Πnℓ, X) : linear_map(Πnℓ, X)
     Xnℓ⋂Lγ = lazy_2d_intersection ? Intersection(Xnℓ, Lγ) : intersection(Xnℓ, Lγ)
 
-    ρ_rec = upper_bound ? LazySets.Approximations.ρ_upper_bound : ρ
     if algorithm_2d_intersection == nothing
-        return ρ_rec(y_dir, Xnℓ⋂Lγ; kwargs...)
+        return ρ(y_dir, Xnℓ⋂Lγ; kwargs...)
     else
-        return ρ_rec(y_dir, Xnℓ⋂Lγ, algorithm=algorithm_2d_intersection; kwargs...)
+        return ρ(y_dir, Xnℓ⋂Lγ, algorithm=algorithm_2d_intersection; kwargs...)
     end
 end

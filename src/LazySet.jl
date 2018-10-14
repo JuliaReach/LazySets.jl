@@ -32,7 +32,7 @@ Every concrete `LazySet` must define the following functions:
 
 ```jldoctest
 julia> subtypes(LazySet)
-18-element Array{Any,1}:
+19-element Array{Any,1}:
  AbstractCentrallySymmetric
  AbstractPolytope
  CacheMinkowskiSum
@@ -43,6 +43,7 @@ julia> subtypes(LazySet)
  EmptySet
  ExponentialMap
  ExponentialProjectionMap
+ HPolyhedron
  HalfSpace
  Hyperplane
  Intersection
