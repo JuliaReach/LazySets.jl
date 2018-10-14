@@ -365,6 +365,7 @@ The following methods are shared between polyhedra and polytopes.
 
 ```@docs
 dim(::HPoly{Real})
+ρ(::AbstractVector{Real}, ::HPoly{Real})
 σ(::AbstractVector{Real}, ::HPoly{Real})
 ∈(::AbstractVector{Real}, ::HPoly{Real})
 addconstraint!(::HPoly{Real}, ::LinearConstraint{Real})

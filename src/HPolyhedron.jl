@@ -68,6 +68,39 @@ function dim(P::HPoly{N})::Int where {N<:Real}
 end
 
 """
+    ρ(d::AbstractVector{N}, P::HPoly{N})::N where {N<:Real}
+
+Evaluate the support function of a polyhedron (in H-representation) in a given
+direction.
+
+### Input
+
+- `d` -- direction
+- `P` -- polyhedron in H-representation
+
+### Output
+
+The support function of the polyhedron.
+If a polytope is unbounded in the given direction, we throw an error.
+If a polyhedron is unbounded in the given direction, the result is `Inf`.
+
+### Algorithm
+
+This implementation uses `GLPKSolverLP` as linear programming backend.
+"""
+function ρ(d::AbstractVector{N}, P::HPoly{N})::N where {N<:Real}
+    lp, unbounded = σ_helper(d, P)
+    if unbounded
+        if P isa HPolytope
+            error("the support function in direction $(d) is undefined " *
+                  "because the polytope is unbounded")
+        end
+        return N(Inf)
+    end
+    return dot(d, lp.sol)
+end
+
+"""
     σ(d::AbstractVector{N}, P::HPoly{N}) where {N<:Real}
 
 Return the support vector of a polyhedron (in H-representation) in a given
@@ -87,10 +120,36 @@ The support vector in the given direction.
 This implementation uses `GLPKSolverLP` as linear programming backend.
 """
 function σ(d::AbstractVector{N}, P::HPoly{N}) where {N<:Real}
+    lp, unbounded = σ_helper(d, P)
+    if unbounded
+        if P isa HPolytope
+            error("the support vector in direction $(d) is undefined because " *
+                  "the polytope is unbounded")
+        end
+        # construct the solution from the solver's ray result
+        ray = (lp == nothing) ? d : lp.attrs[:unboundedray]
+        res = Vector{N}(undef, length(ray))
+        @inbounds for i in 1:length(ray)
+            if ray[i] == zero(N)
+                res[i] = zero(N)
+            elseif ray[i] > zero(N)
+                res[i] = N(Inf)
+            else
+                res[i] = N(-Inf)
+            end
+        end
+        return res
+    else
+        return lp.sol
+    end
+end
+
+function σ_helper(d::AbstractVector{N}, P::HPoly{N}) where {N<:Real}
     c = -d
     (A, b) = tosimplehrep(P)
     if length(b) == 0
         unbounded = true
+        lp = nothing
     else
         sense = '<'
         l = -Inf
@@ -106,12 +165,7 @@ function σ(d::AbstractVector{N}, P::HPoly{N}) where {N<:Real}
             unbounded = false
         end
     end
-    if unbounded
-        error("the support vector in direction $(d) is undefined because " *
-              "the polyhedron is unbounded")
-    else
-        return lp.sol
-    end
+    return (lp, unbounded)
 end
 
 """
