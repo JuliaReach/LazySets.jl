@@ -243,7 +243,7 @@ function ρ(d::AbstractVector{N},
 end
 
 # symmetric method
-function ρ(ℓ::AbstractVector{N},
+function ρ(d::AbstractVector{N},
            cap::Intersection{N,
                              <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
                              <:LazySet{N}};
