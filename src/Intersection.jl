@@ -1,8 +1,45 @@
 import Base: isempty, ∈, ∩
 
 export Intersection,
+       isempty_known,
+       set_isempty!,
        IntersectionArray,
        array
+
+"""
+    IntersectionCache
+
+Container for information cached by a lazy `Intersection` object.
+
+### Fields
+
+- `isempty` -- is the intersection empty? There are three possible states,
+               encoded as `Int8` values -1, 0, 1:
+
+    * ``-1`` - it is currently unknown whether the intersection is empty or not
+    *  ``0`` - intersection is not empty
+    *  ``1`` - intersection is empty
+"""
+mutable struct IntersectionCache
+    isempty::Int8
+
+    # default constructor
+    IntersectionCache() = new(Int8(-1))
+end
+
+function isempty_known(c::IntersectionCache)::Bool
+    return c.isempty != Int8(-1)
+end
+
+function isempty(c::IntersectionCache)::Bool
+    @assert isempty_known(c) "'isempty_known' only works if 'isempty' " *
+        "returns 'true'"
+    return c.isempty == Int8(1)
+end
+
+function set_isempty!(c::IntersectionCache, isempty::Bool)
+    c.isempty = isempty ? Int8(1) : Int8(0)
+end
 
 """
     Intersection{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
@@ -11,13 +48,15 @@ Type that represents the intersection of two convex sets.
 
 ### Fields
 
-- `X` -- convex set
-- `Y` -- convex set
+- `X`     -- convex set
+- `Y`     -- convex set
+- `cache` -- internal cache for avoiding recomputation; see
+             [`IntersectionCache`](@ref)
 
 ### Examples
 
-Create an expression, ``Z``, that lazily represents the intersection of two squares
-``X`` and ``Y``:
+Create an expression, ``Z``, which lazily represents the intersection of two
+squares ``X`` and ``Y``:
 
 ```jldoctest lazy_intersection
 julia> X, Y = BallInf([0,0.], 0.5), BallInf([1,0.], 0.65);
@@ -38,8 +77,8 @@ julia> isempty(Z)
 false
 ```
 
-Do not confuse `Intersection` with the concrete operation, that is computed with
-the lowercase `intersection`:
+Do not confuse `Intersection` with the concrete operation, which is computed
+with the lowercase `intersection` function:
 
 ```jldoctest lazy_intersection
 julia> W = intersection(X, Y)
@@ -49,13 +88,14 @@ Hyperrectangle{Float64}([0.425, 0.0], [0.075, 0.5])
 struct Intersection{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     X::S1
     Y::S2
+    cache::IntersectionCache
 
     # default constructor with dimension check
     function Intersection{N, S1, S2}(X::S1, Y::S2) where
             {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}}
         @assert dim(X) == dim(Y) "sets in an intersection must have the same " *
             "dimension"
-        return new{N, S1, S2}(X, Y)
+        return new{N, S1, S2}(X, Y, IntersectionCache())
     end
 end
 
@@ -72,6 +112,42 @@ Intersection(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} =
 Alias for `Intersection`.
 """
 ∩(X::LazySet, Y::LazySet) = Intersection(X, Y)
+
+
+# --- cache propagation functions ---
+
+
+"""
+    isempty_known(cap::Intersection)
+
+Ask whether the status of emptiness is known.
+
+### Input
+
+- `cap` -- intersection of two convex sets
+
+### Output
+
+`true` iff the emptiness status is known.
+In this case, `isempty(cap)` can be used to obtain the status.
+"""
+function isempty_known(cap::Intersection)
+    return isempty_known(cap.cache)
+end
+
+"""
+    set_isempty!(cap::Intersection, isempty::Bool)
+
+Set the status of emptiness in the cache.
+
+### Input
+
+- `cap`     -- intersection of two convex sets
+- `isempty` -- new status of emptiness
+"""
+function set_isempty!(cap::Intersection, isempty::Bool)
+    return set_isempty!(cap.cache, isempty)
+end
 
 
 # --- LazySet interface functions ---
@@ -370,15 +446,29 @@ Return if the intersection is empty or not.
 ### Output
 
 `true` iff the intersection is empty.
+
+### Notes
+
+The result will be cached, so a second query will be fast.
 """
 function isempty(cap::Intersection)::Bool
-    return is_intersection_empty(cap.X, cap.Y)
+    if isempty_known(cap)
+        # use cached result
+        return isempty(cap.cache)
+    end
+    # compute result
+    empty_intersection = is_intersection_empty(cap.X, cap.Y)
+    # update cache
+    set_isempty!(cap, empty_intersection)
+
+    return empty_intersection
 end
 
 
 # ================================
 # intersection of an array of sets
 # ================================
+
 
 """
     IntersectionArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
