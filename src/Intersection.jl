@@ -358,8 +358,13 @@ function ρ(d::AbstractVector{N},
            cap::Intersection{N, <:LazySet{N}, <:AbstractPolytope{N}};
            kwargs...) where {N<:Real}
 
-    X = cap.X    # compact set
-    P = cap.Y    # polytope
+    if cap.X isa HPolyhedron # possibly unbounded
+        X = cap.Y  # compact set
+        P = cap.X  # polyhedron
+    else
+        X = cap.X    # compact set
+        P = cap.Y    # polytope
+    end
     return minimum([ρ(d, X ∩ Hi; kwargs...) for Hi in constraints_list(P)])
 end
 
