@@ -18,6 +18,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test ∈(ones(N, 2), I) && !∈(N[5, 5], I)
 
     # emptiness of intersection
+    @test !isempty_known(I)
+    @test !isempty(I)
+    @test isempty_known(I)
     @test !isempty(I)
 
     # =================
