@@ -187,10 +187,12 @@ function overapproximate(S::LazySet{N},
 end
 
 """
-    overapproximate(cap::Intersection{N, <:LazySet, S},
+    overapproximate(cap::Intersection{N,
+                                      <:LazySet,
+                                      <:Union{AbstractPolytope{N}, HPolyhedron{N}}},
                     dir::AbstractDirections{N};
                     kwargs...
-                   ) where {N<:Real, S<:Union{AbstractPolytope{N}, HPolyhedron{N}}}
+                   ) where {N<:Real}
 
 Return the overapproximation of the intersection between a compact set and a
 polytope given a set of template directions.
@@ -230,10 +232,12 @@ This method relies on having available the `constraints_list` of the polytope
 This method of overapproximations can return a non-empty set even if the original
 intersection is empty.
 """
-function overapproximate(cap::Intersection{N, <:LazySet, S},
+function overapproximate(cap::Intersection{N,
+                                           <:LazySet,
+                                           Union{AbstractPolytope{N}, HPolyhedron{N}}},
                          dir::AbstractDirections{N};
                          kwargs...
-                        ) where {N<:Real, S<:Union{AbstractPolytope{N}, HPolyhedron{N}}}
+                        ) where {N<:Real}
 
     X = cap.X    # compact set
     P = cap.Y    # polytope
@@ -260,9 +264,51 @@ function overapproximate(cap::Intersection{N,
                                            <:Union{AbstractPolytope{N}, HPolyhedron{N}},
                                            <:LazySet},
                          dir::AbstractDirections{N};
-                         upper_bound::Bool=false,
                          kwargs...
                         ) where N<:Real
-    return overapproximate(cap.Y ∩ cap.X, dir; upper_bound=upper_bound,
-                           kwargs...)
+    return overapproximate(cap.Y ∩ cap.X, dir; kwargs...)
+end
+
+"""
+    overapproximate(cap::Intersection{N, <:HalfSpace{N}, <:AbstractPolytope{N}},
+                    dir::AbstractDirections{N};
+                    [kwargs]...
+                   ) where {N<:Real}
+
+Return the overapproximation of the intersection between a half-space and a
+polytope given a set of template directions.
+
+### Input
+
+- `cap`         -- intersection of a half-space and a polytope
+- `dir`         -- template directions
+- `kwargs`      -- additional arguments that are passed to the support function
+                   algorithm
+
+### Output
+
+A polytope in H-representation such that the normal direction of each half-space
+is given by an element of `dir`.
+"""
+function overapproximate(cap::Intersection{N,
+                                           <:HalfSpace{N},
+                                           <:AbstractPolytope{N}},
+                         dir::AbstractDirections{N};
+                         kwargs...
+                        ) where {N<:Real}
+    H = HPolytope{N}()
+    c = constraints_list(H)
+    append!(c, constraints_list(cap.X))
+    append!(c, constraints_list(cap.Y))
+    return overapproximate(H, dir; kwargs...)
+end
+
+# symmetric method
+function overapproximate(cap::Intersection{N,
+                                           <:AbstractPolytope{N},
+                                           <:HalfSpace{N}},
+                         dir::AbstractDirections{N};
+                         kwargs...
+                        ) where {N<:Real}
+    return overapproximate(cap.Y ∩ cap.X, dir; kwargs...)
 end
