@@ -215,7 +215,9 @@ function ρ(d::AbstractVector{N}, cap::Intersection{N}) where {N<:Real}
 end
 
 function ρ_helper(d::AbstractVector{N},
-                  cap::Intersection{N},
+                  cap::Intersection{N,
+                                    <:LazySet{N},
+                                    <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}},
                   algorithm::String;
                   kwargs...) where N<:Real
     X = cap.X # compact set
