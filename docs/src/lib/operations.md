@@ -101,10 +101,16 @@ monotone_chain!
 Intersection
 ∩(::LazySet, ::LazySet)
 dim(::Intersection)
+ρ(::AbstractVector{N}, ::Intersection{N}) where {N<:Real}
+ρ(::AbstractVector{N}, ::Intersection{N, <:LazySet{N}, <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}}) where {N<:Real}
+ρ(::AbstractVector{N}, ::Intersection{N, <:LazySet{N}, <:AbstractPolytope{N}}) where {N<:Real}
+isempty(::Intersection)
 σ(::AbstractVector{Real}, ::Intersection{Real})
 ∈(::AbstractVector{Real}, ::Intersection{Real})
-isempty(::Intersection)
-ρ(::AbstractVector{N}, ::Intersection{N, <:LazySet, S}) where {N<:AbstractFloat, S<:Union{HalfSpace, Hyperplane, Line}}
+isempty_known(::Intersection)
+set_isempty!(::Intersection, ::Bool)
+_line_search
+_projection
 ```
 
 Inherited from [`LazySet`](@ref):
@@ -112,6 +118,12 @@ Inherited from [`LazySet`](@ref):
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`an_element`](@ref an_element(::LazySet{Real}))
+
+#### Intersection cache
+
+```@docs
+IntersectionCache
+```
 
 ### ``n``-ary Intersection
 
