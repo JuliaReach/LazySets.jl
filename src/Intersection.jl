@@ -230,8 +230,8 @@ function ρ_helper(d::AbstractVector{N},
                                         "the package 'Optim' to be loaded"
         (s, _) = _line_search(d, X, H; kwargs...)
     elseif algorithm == "projection"
-        @assert H isa Hyperplane "the algorithm $algorithm cannot be used with a
-                                  $(typeof(H)); it only works with hyperplanes"
+        @assert H isa Hyperplane "the algorithm $algorithm cannot be used " *
+            "with a $(typeof(H)); it only works with hyperplanes"
         s = _projection(d, X, H; kwargs...)
     else
         error("algorithm $(algorithm) unknown")
