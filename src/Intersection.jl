@@ -564,8 +564,6 @@ function _sandwich_search(ℓ, X, H::Union{HalfSpace, Hyperplane, Line};
         method = Optim.Brent()
     end
 
-    λi, λj = 0, 0 #TODO Generate two samples, such that λi < λj
-    f⁻ij(λ) = ((f(λj) - f(λi))/(λj - λi))(λj - λi) + f(λi)
 
     for i in 3:length(λ)
         λ1, λ2, λ3 = λ[i], λ[i-1], λ[i-2]
@@ -573,11 +571,12 @@ function _sandwich_search(ℓ, X, H::Union{HalfSpace, Hyperplane, Line};
         f_2(λ) = ρ(ℓ - λ2 * a, X) + λ2 * b
         f_3(λ) = ρ(ℓ - λ3 * a, X) + λ3 * b
 
-        if (f_1(λ) <= f_2(λ) && f_2(λ) <= f_3(λ))
-            while (true)
-                #TODO make exponential growth
-            end
+        while (!(f_1(λ) <= f_2(λ) && f_2(λ) <= f_3(λ)))
+            #TODO make exponential growth
         end
+
+        λi, λj = 0, 0 #TODO Generate two samples, such that λi < λj
+        f⁻ij(λ) = ((f(λj) - f(λi))/(λj - λi))(λj - λi) + f(λi)
 
         sol_r⁻ = Optim.optimize(f⁻, lower, upper, method=method, options...)
         fmin_r⁻, λmin_r⁻ = sol_r⁻.minimum, sol_r⁻.minimize
