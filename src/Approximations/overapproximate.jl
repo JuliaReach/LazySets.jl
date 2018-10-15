@@ -234,13 +234,18 @@ intersection is empty.
 """
 function overapproximate(cap::Intersection{N,
                                            <:LazySet,
-                                           Union{AbstractPolytope{N}, HPolyhedron{N}}},
+                                           <:Union{AbstractPolytope{N}, HPolyhedron{N}}},
                          dir::AbstractDirections{N};
                          kwargs...
                         ) where {N<:Real}
 
-    X = cap.X    # compact set
-    P = cap.Y    # polytope
+    if cap.X isa HPolyhedron # possibly unbounded
+        X = cap.Y  # compact set
+        P = cap.X  # polyhedron
+    else
+        X = cap.X    # compact set
+        P = cap.Y    # polytope
+    end
 
     Hi = constraints_list(P)
     m = length(Hi)
@@ -257,16 +262,6 @@ function overapproximate(cap::Intersection{N,
         addconstraint!(Q, HalfSpace(di, ρ_X_Hi_min))
     end
     return Q
-end
-
-# symmetric method
-function overapproximate(cap::Intersection{N,
-                                           <:Union{AbstractPolytope{N}, HPolyhedron{N}},
-                                           <:LazySet},
-                         dir::AbstractDirections{N};
-                         kwargs...
-                        ) where N<:Real
-    return overapproximate(cap.Y ∩ cap.X, dir; kwargs...)
 end
 
 """
