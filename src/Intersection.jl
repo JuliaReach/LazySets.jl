@@ -379,7 +379,7 @@ function ρ(d::AbstractVector{N},
                              <:LazySet{N}};
            algorithm::String="line_search",
            kwargs...) where N<:Real
-    return ρ_helper(d, cap.Y ∩ cap.X, algorithm; kwargs...)
+    return ρ_helper(d, swap(cap), algorithm; kwargs...)
 end
 
 """
@@ -435,7 +435,7 @@ end
 function ρ(d::AbstractVector{N},
            cap::Intersection{N, <:AbstractPolytope{N}, <:LazySet{N}};
            kwargs...) where {N<:Real}
-    return ρ(d, cap.Y ∩ cap.X; kwargs...)
+    return ρ(d, swap(cap); kwargs...)
 end
 
 # disambiguation
@@ -464,7 +464,7 @@ function ρ(d::AbstractVector{N},
                              <:AbstractPolytope{N}};
            algorithm::String="line_search",
            kwargs...) where N<:Real
-    return ρ_helper(d, cap.Y ∩ cap.X, algorithm; kwargs...)
+    return ρ_helper(d, swap(cap), algorithm; kwargs...)
 end
 
 """

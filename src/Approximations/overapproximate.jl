@@ -305,5 +305,5 @@ function overapproximate(cap::Intersection{N,
                          dir::AbstractDirections{N};
                          kwargs...
                         ) where {N<:Real}
-    return overapproximate(cap.Y ∩ cap.X, dir; kwargs...)
+    return overapproximate(swap(cap), dir; kwargs...)
 end
