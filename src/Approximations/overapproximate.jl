@@ -186,6 +186,29 @@ function overapproximate(S::LazySet{N},
     return Interval(lo, hi)
 end
 
+function overapproximate_cap_helper(X::LazySet{N},                # compact set
+                                    P::Union{AbstractPolytope{N}, # polyhedron
+                                             HPolyhedron{N}},
+                                    dir::AbstractDirections{N};
+                                    kwargs...
+                                   ) where {N<:Real}
+    Hi = constraints_list(P)
+    m = length(Hi)
+    Q = HPolytope{N}()
+
+    for di in dir
+        ρ_X_Hi_min = ρ(di, X ∩ Hi[1], kwargs...)
+        for i in 2:m
+            ρ_X_Hi = ρ(di, X ∩ Hi[i], kwargs...)
+            if ρ_X_Hi < ρ_X_Hi_min
+                ρ_X_Hi_min = ρ_X_Hi
+            end
+        end
+        addconstraint!(Q, HalfSpace(di, ρ_X_Hi_min))
+    end
+    return Q
+end
+
 """
     overapproximate(cap::Intersection{N,
                                       <:LazySet,
@@ -238,30 +261,57 @@ function overapproximate(cap::Intersection{N,
                          dir::AbstractDirections{N};
                          kwargs...
                         ) where {N<:Real}
+    return overapproximate_cap_helper(cap.X, cap.Y, dir; kwargs...)
+end
 
-    if cap.X isa HPolyhedron # possibly unbounded
-        X = cap.Y  # compact set
-        P = cap.X  # polyhedron
-    else
-        X = cap.X    # compact set
-        P = cap.Y    # polytope
-    end
+# symmetric method
+function overapproximate(cap::Intersection{N,
+                                           <:Union{AbstractPolytope{N}, HPolyhedron{N}},
+                                           <:LazySet},
+                         dir::AbstractDirections{N};
+                         kwargs...
+                        ) where N<:Real
+    return overapproximate_cap_helper(cap.Y, cap.X, dir; kwargs...)
+end
 
-    Hi = constraints_list(P)
-    m = length(Hi)
-    Q = HPolytope{N}()
+# disambiguation
+function overapproximate(cap::Intersection{N,
+                                           <:AbstractPolytope{N},
+                                           <:Union{AbstractPolytope{N}, HPolyhedron{N}}},
+                         dir::AbstractDirections{N};
+                         kwargs...
+                        ) where N<:Real
+    return overapproximate_cap_helper(cap.X, cap.Y, dir; kwargs...)
+end
 
-    for di in dir
-        ρ_X_Hi_min = ρ(di, X ∩ Hi[1], kwargs...)
-        for i in 2:m
-            ρ_X_Hi = ρ(di, X ∩ Hi[i], kwargs...)
-            if ρ_X_Hi < ρ_X_Hi_min
-                ρ_X_Hi_min = ρ_X_Hi
-            end
-        end
-        addconstraint!(Q, HalfSpace(di, ρ_X_Hi_min))
-    end
-    return Q
+# symmetric method
+function overapproximate(cap::Intersection{N,
+                                           <:Union{AbstractPolytope{N}, HPolyhedron{N}},
+                                           <:AbstractPolytope{N}},
+                         dir::AbstractDirections{N};
+                         kwargs...
+                        ) where N<:Real
+    return overapproximate_cap_helper(cap.Y, cap.X, dir; kwargs...)
+end
+
+# disambiguation
+function overapproximate(cap::Intersection{N,
+                                           <:AbstractPolytope{N},
+                                           <:HPolyhedron{N}},
+                         dir::AbstractDirections{N};
+                         kwargs...
+                        ) where N<:Real
+    return overapproximate_cap_helper(cap.X, cap.Y, dir; kwargs...)
+end
+
+# symmetric method
+function overapproximate(cap::Intersection{N,
+                                           <:HPolyhedron{N},
+                                           <:AbstractPolytope{N}},
+                         dir::AbstractDirections{N};
+                         kwargs...
+                        ) where N<:Real
+    return overapproximate_cap_helper(cap.Y, cap.X, dir; kwargs...)
 end
 
 """
