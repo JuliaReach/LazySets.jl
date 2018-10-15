@@ -3,6 +3,7 @@ import Base: isempty, ∈, ∩
 export Intersection,
        isempty_known,
        set_isempty!,
+       swap,
        use_precise_ρ,
        IntersectionArray,
        array
@@ -92,11 +93,14 @@ struct Intersection{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     cache::IntersectionCache
 
     # default constructor with dimension check
-    function Intersection{N, S1, S2}(X::S1, Y::S2) where
+    function Intersection{N, S1, S2}(X::S1,
+                                     Y::S2;
+                                     cache::IntersectionCache=IntersectionCache()
+                                    ) where
             {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}}
         @assert dim(X) == dim(Y) "sets in an intersection must have the same " *
             "dimension"
-        return new{N, S1, S2}(X, Y, IntersectionCache())
+        return new{N, S1, S2}(X, Y, cache)
     end
 end
 
@@ -148,6 +152,30 @@ Set the status of emptiness in the cache.
 """
 function set_isempty!(cap::Intersection, isempty::Bool)
     return set_isempty!(cap.cache, isempty)
+end
+
+"""
+    swap(cap::Intersection{N, S1, S2})::Intersection{N} where {N<:Real, S1, S2}
+
+Return a new `Intersection` object with the arguments swapped.
+
+### Input
+
+- `cap` -- intersection of two convex sets
+
+### Output
+
+A new `Intersection` object with the arguments swapped.
+The old cache is shared between the old and new objects.
+
+### Notes
+
+The advantage of using this function instead of manually swapping the arguments
+is that the cache is shared.
+"""
+function swap(cap::Intersection{N, S1, S2}
+             )::Intersection{N} where {N<:Real, S1, S2}
+    return Intersection{N, S2, S1}(cap.Y, cap.X, cache=cap.cache)
 end
 
 
