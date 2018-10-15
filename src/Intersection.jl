@@ -221,7 +221,7 @@ function ρ_helper(d::AbstractVector{N},
     H = cap.Y # halfspace or hyperplane or line
 
     # if the intersection is empty => stop
-    if is_intersection_empty(X, H, false)
+    if isempty(cap)
         error("the intersection is empty")
     end
 
