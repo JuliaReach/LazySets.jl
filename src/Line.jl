@@ -62,7 +62,7 @@ Given two points ``p = (x₁, y₁)`` and ``q = (x₂, y₂)`` the line that pas
 two points is
 
 ```math
-ℓ:~~y - y₁ = \\dfrac{(y₂ - y₁){(x₂ - x₁)} ⋅ (x-x₁).
+ℓ:~~y - y₁ = \\dfrac{(y₂ - y₁)}{(x₂ - x₁)} ⋅ (x-x₁).
 ```
 The particular case ``x₂ = x₁`` defines a line parallel to the ``y``-axis (vertical line).
 """
