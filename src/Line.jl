@@ -42,6 +42,46 @@ Line(a::V, b::N) where {N<:Real, V<:AbstractVector{N}} = Line{N, V}(a, b)
 Line(c::LinearConstraint{N}) where {N<:Real} = Line(c.a, c.b)
 
 
+"""
+    Line(p::AbstractVector{N}, q::AbstractVector{N}) where {N<:Real}
+
+Constructor a line give two points.
+
+### Input
+
+- `p` -- point in 2D
+- `q` -- another point in 2D
+
+### Output
+
+The line which passes through `p` and `q`.
+
+### Algorithm
+
+Given two points ``p = (x₁, y₁)`` and ``q = (x₂, y₂)`` the line that passes through these
+two points is
+
+```math
+ℓ:~~y - y₁ = \\dfrac{(y₂ - y₁)}{(x₂ - x₁)} ⋅ (x-x₁).
+```
+The particular case ``x₂ = x₁`` defines a line parallel to the ``y``-axis (vertical line).
+"""
+function Line(p::AbstractVector{N}, q::AbstractVector{N}) where {N<:Real}
+    x₁, y₁ = p[1], p[2]
+    x₂, y₂ = q[1], q[2]
+    
+    if x₁ == x₂  # line is vertical
+        a = [one(N), zero(N)]
+        b = x₁
+        return LazySets.Line(a, b)
+    end
+
+    k = (y₁ - y₂)/(x₂ - x₁)
+    a = [k, one(N)]
+    b = y₁ + k * x₁
+    return Line(a, b)
+end
+
 # --- LazySet interface functions ---
 
 
