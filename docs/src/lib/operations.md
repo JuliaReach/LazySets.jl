@@ -109,6 +109,7 @@ isempty(::Intersection)
 ∈(::AbstractVector{Real}, ::Intersection{Real})
 isempty_known(::Intersection)
 set_isempty!(::Intersection, ::Bool)
+use_precise_ρ
 _projection
 ```
 
