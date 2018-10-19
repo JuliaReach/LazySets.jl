@@ -148,13 +148,27 @@ export convex_hull,
        tohrep,
        tovrep
 
-# VPolytope from a VRep
-function VPolytope(P::VRep{T, N}, backend=default_polyhedra_backend(N)) where {T, N}
-    vertices = Vector{Vector{N}}()
-    for vi in Polyhedra.points(P)
-        push!(vertices, vi)
+@static if VERSION < v"0.7-"
+
+    # VPolytope from a VRep
+    function VPolytope(P::VRep{T, N}, backend=default_polyhedra_backend(N)) where {T, N}
+        vertices = Vector{Vector{N}}()
+        for vi in Polyhedra.points(P)
+            push!(vertices, vi)
+        end
+        return VPolytope(vertices)
     end
-    return VPolytope(vertices)
+
+else
+
+    # VPolytope from a VRep
+    function VPolytope(P::VRep{N}, backend=default_polyhedra_backend(N)) where {N}
+        vertices = Vector{Vector{N}}()
+        for vi in Polyhedra.points(P)
+            push!(vertices, vi)
+        end
+        return VPolytope(vertices)
+    end
 end
 
 """
