@@ -556,8 +556,6 @@ end
         convert(HPolyhedron{N}, P)
     end
 
-    else
-
     function HPolyhedron(P::HRep{T, N}) where {T, N}
         convert(HPolyhedron{N}, P)
     end
@@ -567,8 +565,6 @@ else
     function HPolyhedron(P::HRep{N}) where {N}
         convert(HPolyhedron{N}, P)
     end
-
-    else
 
     function HPolyhedron(P::HRep{N}) where {N}
         convert(HPolyhedron{N}, P)
