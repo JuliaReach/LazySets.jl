@@ -117,7 +117,7 @@ function load_polyhedra_abstractpolytope() # function to be loaded by Requires
 return quote
 
 import CDDLib # default backend
-import Polyhedra:polyhedron, SimpleHRepresentation, SimpleHRepresentation,
+import Polyhedra:polyhedron,
                  HRep, VRep,
                  removehredundancy!, removevredundancy!,
                  hreps, vreps,
@@ -125,6 +125,10 @@ import Polyhedra:polyhedron, SimpleHRepresentation, SimpleHRepresentation,
                  convexhull,
                  hcartesianproduct,
                  points
+
+@static if VERSION < v"0.7-"
+    import Polyhedra:SimpleHRepresentation, SimpleHRepresentation
+end
 
 function default_polyhedra_backend(N::Type{<:AbstractFloat})
     return CDDLib.CDDLibrary()
