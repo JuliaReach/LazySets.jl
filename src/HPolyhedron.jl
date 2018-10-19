@@ -522,21 +522,6 @@ return quote
     function convert(::Type{HPolyhedron}, P::HRep{T, N}) where {T, N}
         return convert(HPolyhedron{N}, P)
     end
-else
-    function convert(::Type{HPolyhedron{N}}, P::HRep{N}) where {N}
-        constraints = LinearConstraint{N}[]
-        for hi in Polyhedra.allhalfspaces(P)
-            push!(constraints, HalfSpace(hi.a, hi.β))
-        end
-        return HPolyhedron(constraints)
-    end
-
-    function convert(::Type{HPolyhedron}, P::HRep{N}) where {N}
-        return convert(HPolyhedron{N}, P)
-    end
-end
-
-@static if VERSION < v"0.7-"
 
     """
         HPolyhedron(P::HRep{T, N}, backend=nothing) where {T, N}
@@ -556,21 +541,24 @@ end
         convert(HPolyhedron{N}, P)
     end
 
-    function HPolyhedron(P::HRep{T, N}) where {T, N}
-        convert(HPolyhedron{N}, P)
-    end
-
 else
+    function convert(::Type{HPolyhedron{N}}, P::HRep{N}) where {N}
+        constraints = LinearConstraint{N}[]
+        for hi in Polyhedra.allhalfspaces(P)
+            push!(constraints, HalfSpace(hi.a, hi.β))
+        end
+        return HPolyhedron(constraints)
+    end
 
-    function HPolyhedron(P::HRep{N}) where {N}
-        convert(HPolyhedron{N}, P)
+    function convert(::Type{HPolyhedron}, P::HRep{N}) where {N}
+        return convert(HPolyhedron{N}, P)
     end
 
     function HPolyhedron(P::HRep{N}) where {N}
         convert(HPolyhedron{N}, P)
     end
-
 end # if VERSION < v"0.7-"
+
 """
     polyhedron(P::HPoly{N}, [backend]=default_polyhedra_backend(N)) where {N}
 
