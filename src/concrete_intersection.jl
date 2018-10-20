@@ -406,18 +406,16 @@ Usually the V-representation is used.
 
 This fallback implementation requires `Polyhedra` to evaluate the concrete
 intersection.
-Inputs that are not of type `HPolytope` or `VPolytope` are converted to a
-`VPolytope` through the `vertices_list` function.
+Inputs that are not of type `HPolytope` or `VPolytope` are converted to an
+`HPolytope` through the `constraints_list` function.
 """
 function intersection(P1::S1, P2::S2) where {S1<:AbstractPolytope{N},
                                              S2<:AbstractPolytope{N}} where N
-    function get_polytope(P::T) where T<:AbstractPolytope
-        if T <: Union{HPolytope, VPolytope}
-            return P
-        else
-            return HPolytope(constraints_list(P))
-        end
+    function get_polytope(P::Union{HPolytope, VPolytope})
+        return P
     end
-
+    function get_polytope(P::AbstractPolytope)
+        return HPolytope(constraints_list(P))
+    end
     return intersection(get_polytope(P1), get_polytope(P2))
 end
