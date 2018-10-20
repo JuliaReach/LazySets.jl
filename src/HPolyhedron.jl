@@ -35,7 +35,7 @@ HPolyhedron{N}() where {N<:Real} = HPolyhedron{N}(Vector{LinearConstraint{N}}())
 HPolyhedron() = HPolyhedron{Float64}()
 
 # constructor for an HPolyhedron from a simple H-representation
-function HPolyhedron(A::Matrix{N}, b::Vector{N}) where {N<:Real}
+function HPolyhedron(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real}
     m = size(A, 1)
     constraints = LinearConstraint{N}[]
     @inbounds for i in 1:m
