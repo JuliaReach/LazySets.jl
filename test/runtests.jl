@@ -42,13 +42,17 @@ else
     error("unknown parameter 1: $(ARGS[1])")
 end
 
+@static if VERSION >= v"0.7-"
+    using Pkg
+end
+
+Pkg.add("Optim")
+
 if test_suite_polyhedra || test_suite_plotting
-    @static if VERSION >= v"0.7-"
-        using Pkg
-    else
+    @static if VERSION < v"0.7-"
         Pkg.add("CDDLib")
     end
-    Pkg.add("Polyhedra"); Pkg.add("Optim")
+    Pkg.add("Polyhedra")
     using Polyhedra
 
     # fix namespace conflicts with Polyhedra
@@ -123,9 +127,6 @@ if test_suite_basic
 end
 
 if test_suite_plotting
-    @static if VERSION >= v"0.7-"
-        using Pkg
-    end
     Pkg.add("Plots")
     using Plots
 
@@ -138,7 +139,6 @@ if test_suite_doctests
         Pkg.pin("Documenter", v"0.18.0")
     else
         # NOTE: can be removed when using a Project.toml file
-        using Pkg
         Pkg.add("Documenter")
         Pkg.add("Plots")
         Pkg.add("GR")
