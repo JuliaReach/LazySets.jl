@@ -83,7 +83,7 @@ nothing # hide
 
 ```@example example_reach_zonotopes
 A = [-1 -4; 4 -1]
-X0 = Zonotope([1.0, 0.0], 0.1 * eye(2))
+X0 = Zonotope([1.0, 0.0], Matrix(0.1*I, 2, 2))
 μ = 0.05
 δ = 0.02
 T = 2.
@@ -104,7 +104,7 @@ A = Matrix{Float64}([-1 -4 0 0 0;
                       0 0 -3 1 0;
                       0 0 -1 -3 0;
                       0 0 0 0 -2])
-X0 = Zonotope([1.0, 0.0, 0.0, 0.0, 0.0], 0.1 * eye(5))
+X0 = Zonotope([1.0, 0.0, 0.0, 0.0, 0.0], Matrix(0.1*I, 5, 5))
 μ = 0.01
 δ = 0.005
 T = 1.
