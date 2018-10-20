@@ -63,8 +63,6 @@ end
 SparseMatrixExp(M::Matrix) =
         error("only sparse matrices can be used to create a `SparseMatrixExp`")
 
-eye(spmexp::SparseMatrixExp) = SparseMatrixExp(spzeros(size(spmexp.M)...))
-
 Base.IndexStyle(::Type{<:SparseMatrixExp}) = IndexCartesian()
 Base.getindex(spmexp::SparseMatrixExp, I::Vararg{Int, 2}) = get_column(spmexp, I[2])[I[1]]
 
