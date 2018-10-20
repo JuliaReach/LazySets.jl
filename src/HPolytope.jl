@@ -28,7 +28,7 @@ HPolytope() = HPolytope{Float64}()
 HPolytope(S::LazySet) = convert(HPolytope, S)
 
 # constructor for an HPolytope from a simple H-representation
-function HPolytope(A::AbstractMatrix{N}, b::AbstraVector{N}) where {N<:Real}
+function HPolytope(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real}
     m = size(A, 1)
     constraints = LinearConstraint{N}[]
     @inbounds for i in 1:m
