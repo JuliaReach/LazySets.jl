@@ -56,10 +56,10 @@ if test_suite_polyhedra || test_suite_plotting
     using Polyhedra
 
     # fix namespace conflicts with Polyhedra
-    dim = LazySets.dim
-    HalfSpace = LazySets.HalfSpace
-    Interval = LazySets.Interval
-    Line = LazySets.Line
+    import LazySets.dim
+    import LazySets.HalfSpace
+    import LazySets.Interval
+    import LazySets.Line
 end
 
 if test_suite_basic
@@ -129,6 +129,9 @@ end
 if test_suite_plotting
     Pkg.add("Plots")
     using Plots
+
+    # fix namespace conflicts with Plots
+    import LazySets.center
 
     @time @testset "LazySets.plotting" begin include("unit_plot.jl") end
 end
