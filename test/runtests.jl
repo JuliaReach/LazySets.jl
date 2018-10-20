@@ -13,32 +13,46 @@ import LazySets.ispermutation
 
 global test_suite_basic = true
 global test_suite_doctests = VERSION >= v"0.7-" # only run doctests with new Julia version
-global test_suite_polyhedra = VERSION < v"0.7-" # only run doctests with old Julia version (for now)
-global test_suite_plotting = VERSION < v"0.7-" # only run doctests with old Julia version (for now)
+global test_suite_polyhedra = true
+global test_suite_plotting = true
 
 if (length(ARGS) == 0) || (ARGS[1] == "--default")
     # default test suite including doctests
 elseif ARGS[1] == "--basic"
     # basic test suite
     test_suite_doctests = false
+    test_suite_polyhedra = false
+    test_suite_plotting = false
 elseif ARGS[1] == "--polyhedra"
     # Polyhedra.jl test suite
+    test_suite_doctests = false
     test_suite_polyhedra = true
+    test_suite_plotting = false
 elseif ARGS[1] == "--plot"
     # plotting test suite
+    test_suite_doctests = false
+    test_suite_polyhedra = false
     test_suite_plotting = true
 elseif ARGS[1] == "--all"
     # complete test suite
+    test_suite_doctests = true
     test_suite_polyhedra = true
     test_suite_plotting = true
 else
     error("unknown parameter 1: $(ARGS[1])")
 end
 
+@static if VERSION >= v"0.7-"
+    using Pkg
+end
+
+Pkg.add("Optim")
+
 if test_suite_polyhedra || test_suite_plotting
-    if VERSION < v"0.7-"
-        Pkg.add("Polyhedra"); Pkg.add("CDDLib"); Pkg.add("Optim"); Pkg.add("Plots")
+    @static if VERSION < v"0.7-"
+        Pkg.add("CDDLib")
     end
+    Pkg.add("Polyhedra")
     using Polyhedra
 
     # fix namespace conflicts with Polyhedra
@@ -113,24 +127,22 @@ if test_suite_basic
 end
 
 if test_suite_plotting
+    Pkg.add("Plots")
+    using Plots
+
     @time @testset "LazySets.plotting" begin include("unit_plot.jl") end
 end
 
 if test_suite_doctests
-    if isdefined(@__MODULE__, :Polyhedra)
-        println("skipping doctests due to a clash with Polyhedra")
+    @static if VERSION < v"0.7-"
+        Pkg.add("Documenter")
+        Pkg.pin("Documenter", v"0.18.0")
     else
-        @static if VERSION < v"0.7-"
-            Pkg.add("Documenter")
-            Pkg.pin("Documenter", v"0.18.0")
-        else
-            # NOTE: can be removed when using a Project.toml file
-            using Pkg
-            Pkg.add("Documenter")
-            Pkg.add("Plots")
-            Pkg.add("GR")
-        end
-        using Documenter
-        @time @testset "LazySets.doctests" begin include("../docs/make_doctests_only.jl") end
+        # NOTE: can be removed when using a Project.toml file
+        Pkg.add("Documenter")
+        Pkg.add("Plots")
+        Pkg.add("GR")
     end
+    using Documenter
+    @time @testset "LazySets.doctests" begin include("../docs/make_doctests_only.jl") end
 end

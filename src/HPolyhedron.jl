@@ -435,9 +435,9 @@ julia> constraints_list(P)
 
 julia> vertices_list(P)
 4-element Array{Array{Float64,1},1}:
- [1.0, -1.0]
  [1.0, 1.0]
  [-1.0, 1.0]
+ [1.0, -1.0]
  [-1.0, -1.0]
 ```
 """
@@ -473,13 +473,16 @@ function singleton_list(P::HPolyhedron{N})::Vector{Singleton{N}} where {N<:Real}
 end
 
 """
-   isempty(P::HPoly{N})::Bool where {N<:Real}
+   isempty(P::HPoly{N}; [solver]=GLPKSolverLP())::Bool where {N<:Real}
 
 Determine whether a polyhedron is empty.
 
 ### Input
 
-- `P` -- polyhedron
+- `P`       -- polyhedron
+- `backend` -- (optional, default: `default_polyhedra_backend(N)`)
+               the polyhedral computations backend
+- `solver`  -- (optional, default: `GLPKSolverLP()`) LP solver backend
 
 ### Output
 
@@ -490,11 +493,18 @@ Determine whether a polyhedron is empty.
 This function uses `Polyhedra.isempty` which evaluates the feasibility of the
 LP whose feasible set is determined by the set of constraints and whose
 objective function is zero.
+
+### Notes
+
+This implementation uses `GLPKSolverLP` as linear programming backend by
+default.
 """
-function isempty(P::HPoly{N})::Bool where {N<:Real}
+function isempty(P::HPoly{N};
+                 backend=default_polyhedra_backend(N),
+                 solver=GLPKSolverLP())::Bool where {N<:Real}
     @assert isdefined(Main, :Polyhedra) "the function `isempty` needs the " *
                                         "package 'Polyhedra' to be loaded"
-    return Polyhedra.isempty(polyhedron(P))
+    return Polyhedra.isempty(polyhedron(P, backend), solver)
 end
 
 convert(::Type{HPolytope}, P::HPolyhedron{N}) where N =
