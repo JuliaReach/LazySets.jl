@@ -116,27 +116,45 @@ function load_polyhedra_abstractpolytope() # function to be loaded by Requires
 
 return quote
 
-import CDDLib # default backend
-import Polyhedra:polyhedron,
-                 HRep, VRep,
-                 removehredundancy!, removevredundancy!,
-                 hreps, vreps,
-                 intersect,
-                 convexhull,
-                 hcartesianproduct,
-                 points
-
 @static if VERSION < v"0.7-"
+    import Polyhedra:polyhedron,
+                     HRep, VRep,
+                     removehredundancy!, removevredundancy!,
+                     hreps, vreps,
+                     intersect,
+                     convexhull,
+                     hcartesianproduct,
+                     points
+
+    import CDDLib # default backend
     import Polyhedra:SimpleHRepresentation, SimpleHRepresentation
-end
 
-function default_polyhedra_backend(N::Type{<:AbstractFloat})
-    return CDDLib.CDDLibrary()
-end
+    function default_polyhedra_backend(N::Type{<:AbstractFloat})
+        return CDDLib.CDDLibrary()
+    end
 
-function default_polyhedra_backend(N::Type{<:Rational})
-    return CDDLib.CDDLibrary(:exact)
-end
+    function default_polyhedra_backend(N::Type{<:Rational})
+        return CDDLib.CDDLibrary(:exact)
+    end
 
+else
+    import .Polyhedra:polyhedron,
+                     HRep, VRep,
+                     removehredundancy!, removevredundancy!,
+                     hreps, vreps,
+                     intersect,
+                     convexhull,
+                     hcartesianproduct,
+                     points,
+                     default_library
+
+    function default_polyhedra_backend(N::Type{<:AbstractFloat})
+        return default_library(2, Float64)
+    end
+
+    function default_polyhedra_backend(N::Type{<:Rational})
+        return default_library(2, Rational{Int})
+    end
+end
 end # quote
 end # function load_polyhedra_hpolytope()
