@@ -36,7 +36,8 @@ after_success:
               Pkg.add("GR");
               Pkg.add("Polyhedra");
               Pkg.add("CDDLib");
-              Pkg.add("Optim");'
+              Pkg.add("Optim");
+              Pkg.add("StaticArrays");'
   - julia -e 'cd(Pkg.dir("LazySets")); include(joinpath("docs", "make.jl"))'
   # code coverage (for both Coveralls and Codecov)
   - julia -e 'Pkg.add("Coverage")'
