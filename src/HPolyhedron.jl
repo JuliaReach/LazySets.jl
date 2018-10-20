@@ -479,8 +479,10 @@ Determine whether a polyhedron is empty.
 
 ### Input
 
-- `P`      -- polyhedron
-- `solver` -- (optional, default: `GLPKSolverLP()`) LP solver backend
+- `P`       -- polyhedron
+- `backend` -- (optional, default: `default_polyhedra_backend(N)`)
+               the polyhedral computations backend
+- `solver`  -- (optional, default: `GLPKSolverLP()`) LP solver backend
 
 ### Output
 
@@ -497,10 +499,12 @@ objective function is zero.
 This implementation uses `GLPKSolverLP` as linear programming backend by
 default.
 """
-function isempty(P::HPoly{N}; solver=GLPKSolverLP())::Bool where {N<:Real}
+function isempty(P::HPoly{N};
+                 backend=default_polyhedra_backend(N),
+                 solver=GLPKSolverLP())::Bool where {N<:Real}
     @assert isdefined(Main, :Polyhedra) "the function `isempty` needs the " *
                                         "package 'Polyhedra' to be loaded"
-    return Polyhedra.isempty(polyhedron(P), solver)
+    return Polyhedra.isempty(polyhedron(P, backend), solver)
 end
 
 convert(::Type{HPolytope}, P::HPolyhedron{N}) where N =
