@@ -48,7 +48,7 @@ if test_suite_polyhedra || test_suite_plotting
     else
         Pkg.add("CDDLib")
     end
-    Pkg.add("Polyhedra"); Pkg.add("Optim"); Pkg.add("Plots")
+    Pkg.add("Polyhedra"); Pkg.add("Optim")
     using Polyhedra
 
     # fix namespace conflicts with Polyhedra
@@ -123,6 +123,12 @@ if test_suite_basic
 end
 
 if test_suite_plotting
+    @static if VERSION >= v"0.7-"
+        using Pkg
+    end
+    Pkg.add("Plots")
+    using Plots
+
     @time @testset "LazySets.plotting" begin include("unit_plot.jl") end
 end
 
