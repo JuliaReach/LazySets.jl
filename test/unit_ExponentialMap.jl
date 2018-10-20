@@ -41,11 +41,6 @@ for N in [Float64, Float32]
     # WARNING: assuming commutativity of matrix exponents
     #me * me
 
-    # check that the eye method is defined
-    @test hasmethod(eye, Tuple{typeof(me)})
-    y = to_N(N, eye(me))
-    @test norm(y - Diagonal(ones(N, n))) == 0
-
     # columns & rows
     me2 = SparseMatrixExp(sparse(N(1) * I, n, n))
     v = zeros(N, n)
