@@ -8,7 +8,7 @@ using Compat: copyto!, axes, argmax
 import Compat.String
 using Compat.LinearAlgebra
 import Compat.LinearAlgebra: norm, checksquare, LAPACKException,
-                             SingularException, eye, ×
+                             SingularException, ×
 import Compat.InteractiveUtils.subtypes
 export _At_mul_B
 
@@ -23,8 +23,4 @@ else
         return transpose(A) * B
     end
     expmat = exp
-end
-
-if VERSION > v"1.0-"
-    export eye
 end
