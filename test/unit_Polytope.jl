@@ -185,7 +185,7 @@ if test_suite_polyhedra
         p1 = VPolytope(vertices_list(BallInf(N[0, 0], N(1))))
         p2 = VPolytope(vertices_list(BallInf(N[2, 2], N(1))))
         cap = intersection(p1, p2)
-        @test vertices_list(cap) == [N[1, 1]]
+        @test vertices_list(cap) ≈ [N[1, 1]]
         # other polytopic sets
         p3 = VPolygon(vertices_list(p2))
         cap = intersection(p1, p3)
