@@ -435,9 +435,9 @@ julia> constraints_list(P)
 
 julia> vertices_list(P)
 4-element Array{Array{Float64,1},1}:
- [1.0, -1.0]
  [1.0, 1.0]
  [-1.0, 1.0]
+ [1.0, -1.0]
  [-1.0, -1.0]
 ```
 """
