@@ -1,5 +1,5 @@
 ENV["GKSwstype"] = "100"  # set 'GR environment' to 'no output' (for Travis CI)
-using Documenter, LazySets
+using Documenter, LazySets, Polyhedra
 
 makedocs(
     doctest = true,  # use this flag to skip doctests (saves time!)
