@@ -34,6 +34,7 @@ after_success:
               VERSION < v"0.7-" && Pkg.pin("Documenter", v"0.18.0");
               Pkg.add("Plots");
               Pkg.add("GR");
+              VERSION < v"1.0-" && Pkg.pin("GR", v"0.33.1");
               Pkg.add("Polyhedra");
               Pkg.add("CDDLib");
               Pkg.add("Optim");
