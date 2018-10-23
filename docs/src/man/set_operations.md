@@ -51,94 +51,76 @@ plot1
 
 ## Unary operations
 
-The following table lists all operations (apart from `dim` and `σ`, which must
-be supported by all types) that take one convex set as argument in the columns.
+The following table lists all operations that take one convex set as argument in
+the columns.
 In the rows we list all set types, both the interfaces (where we abbreviate the
 `Abstract` prefix), the basic set types, and the lazy set operations, each
 sorted alphabetically.
 The table entries have the following meaning.
-- An "x" indicates that the operation is implemented for the respective set.
-- "(⋅)" indicates that the operation is inherited from a supertype.
+- "x" indicates that the operation is implemented for the respective set type.
+- "i" indicates that the operation is inherited from a supertype.
 
 
-| type ↓ \ operation →         | radius | diameter | norm | an_element | ∈ |
-|------------------------------|--------|----------|------|------------|---|
-| **Interfaces**               |        |          |      |            |   |
-| `LazySet`                    |        |          |      |            |   |
-| `AHPolygon`                  |        |          |      |     x      | x |
-| `AHyperrectangle`            |   x    |    x     |  x   |    (x)     | x |
-| `ACentrallySymmetric`        |        |          |      |     x      |   |
-| `ACentrallySymmetricPolytope`|        |          |      |     x      |   |
-| `APolygon`                   |        |          |      |            |   |
-| `APolytope`                  |        |          |      |            |   |
-| `ASingleton`                 |  (x)   |   (x)    | (x)  |     x      | x |
-|                              |        |          |      |            |   |
-| **Basic set types**          |        |          |      |            |   |
-| `Ball1`                      |        |          |      |    (x)     | x |
-| `Ball2`                      |        |          |      |    (x)     | x |
-| `BallInf`                    |   x    |   (x)    | (x)  |    (x)     |(x)|
-| `Ballp`                      |        |          |      |    (x)     | x |
-| `Ellipsoid`                  |        |          |      |    (x)     | x |
-| `EmptySet`                   |        |          |      |     x      | x |
-| `HPolygon`/`HPolygonOpt`     |        |          |      |    (x)     |(x)|
-| `HPolytope`                  |        |          |      |            | x |
-| `Hyperrectangle`             |  (x)   |   (x)    | (x)  |    (x)     |(x)|
-| `Singleton`                  |  (x)   |   (x)    | (x)  |    (x)     |(x)|
-| `VPolygon`                   |        |          |      |     x      | x |
-| `ZeroSet`                    |  (x)   |   (x)    | (x)  |    (x)     | x |
-| `Zonotope`                   |        |          |      |    (x)     | x |
-|                              |        |          |      |            |   |
-| **Lazy set operation types** |        |          |      |            |   |
-| `CartesianProduct`           |        |          |      |            | x |
-| `CartesianProductArray`      |        |          |      |            | x |
-| `ConvexHull`                 |        |          |      |            |   |
-| `ConvexHullArray`            |        |          |      |            |   |
-| `ExponentialMap`             |        |          |      |            | x |
-| `ExponentialProjectionMap`   |        |          |      |            |   |
-| `HalfSpace`                  |        |          |      |     x      | x |
-| `Hyperplane`                 |        |          |      |     x      | x |
-| `Intersection`               |        |          |      |            | x |
-| `LinearMap`                  |        |          |      |            | x |
-| `MinkowskiSum`               |        |          |      |            |   |
-| `MinkowskiSumArray`          |        |          |      |            |   |
-| `SymmetricIntervalHull`      |  (x)   |   (x)    | (x)  |    (x)     |(x)|
+| type ↓ \ operation →         | dim | ρ | σ | an_element | ∈ | isempty | linear_map | norm | radius | diameter |
+|------------------------------|-----|---|---|------------|---|---------|------------|------|--------|----------|
+| **Interfaces**               |     |   |   |            |   |         |            |      |        |          |
+| `LazySet`                    |     | x |   | x          |   |         |            |      |        | x        |
+| `APolytope`                  |     | i |   | i          |   | x       | x          |      |        | i        |
+| `ACentrallySymmetric`        | x   | i |   | x          |   |         |            |      |        | i        |
+| `ACentrallySymmetricPolytope`| i   | i |   | i          |   | i       | i          |      |        | i        |
+| `APolygon`                   | x   | i |   | i          |   | i       | i          |      |        | i        |
+| `AHyperrectangle`            | i   | i | x | i          | x | i       | i          | x    | x      | i        |
+| `AHPolygon`                  | i   | i |   | x          | x | i       | i          |      |        | i        |
+| `ASingleton`                 | i   | i | x | i          | x | i       | x          | i    | i      | i        |
+|                              |     |   |   |            |   |         |            |      |        |          |
+| **Basic set types**          |     |   |   |            |   |         |            |      |        |          |
+| `Ball1`                      | i   | i | x | i          | x | i       | i          |      |        | i        |
+| `Ball2`                      | i   | i | x | i          | x |         |            |      |        | i        |
+| `BallInf`                    | i   | i | i | i          | i | i       | i          | i    | x      | i        |
+| `Ballp`                      | i   | i | x | i          | x |         |            |      |        | i        |
+| `Ellipsoid`                  | i   | i | x | i          | x |         |            |      |        | i        |
+| `EmptySet`                   | x   | i | x | x          | x | x       |            | x    | x      | x        |
+| `HalfSpace`                  | x   | i | x | x          | x |         |            |      |        | i        |
+| `HPolygon`/`HPolygonOpt`     | i   | i | x | i          | i | i       | i          |      |        | i        |
+| `HPolyhedron`                | x   | x | x | i          | x | x       |            |      |        | i        |
+| `HPolytope`                  | x   | x | x | i          | x | x       | i          |      |        | i        |
+| `Hyperplane`                 | x   | i | x | x          | x |         |            |      |        | i        |
+| `Hyperrectangle`             | i   | i | i | i          | i | i       | i          | i    | i      | i        |
+| `Interval`                   | x   | i | x | x          | x | i       | i          | i    | i      | i        |
+| `Line`                       | x   | i | x | x          | x |         |            |      |        | i        |
+| `LineSegment`                | x   | i | x | x          | x | i       | i          |      |        | i        |
+| `Singleton`                  | i   | i | i | i          | i | i       | i          | i    | i      | i        |
+| `VPolygon`                   | i   | i | x | x          | x | x       | x          |      |        | i        |
+| `VPolytope`                  | x   | i | x | i          |   | x       | x          |      |        | i        |
+| `ZeroSet`                    | x   | i | x | i          | x | i       | x          | i    | i      | i        |
+| `Zonotope`                   | i   | i | x | i          | x | x       | x          |      |        | i        |
+|                              |     |   |   |            |   |         |            |      |        |          |
+| **Lazy set operation types** |     |   |   |            |   |         |            |      |        |          |
+| `CartesianProduct`           | x   | x | x | i          | x |         |            |      |        | i        |
+| `CartesianProductArray`      | x   | x | x | i          | x |         |            |      |        | i        |
+| `ConvexHull`                 | x   | x | x | i          |   |         |            |      |        | i        |
+| `ConvexHullArray`            | x   | x | x | i          |   |         |            |      |        | i        |
+| `ExponentialMap`             | x   | x | x | i          | x |         |            |      |        | i        |
+| `ExponentialProjectionMap`   | x   | i | x | i          |   |         |            |      |        | i        |
+| `Intersection`               | x   | x |   | i          | x | x       |            |      |        | i        |
+| `IntersectionArray`          | x   | i |   | i          | x |         |            |      |        | i        |
+| `LinearMap`                  | x   | x | x | x          | x |         |            |      |        | i        |
+| `MinkowskiSum`               | x   | x | x | i          |   |         |            |      |        | i        |
+| `MinkowskiSumArray`          | x   | x | x | i          |   |         |            |      |        | i        |
+| `CacheMinkowskiSum`          | x   | i | x | i          |   |         |            |      |        | i        |
+| `SymmetricIntervalHull`      | x   | i | x | i          | i | i       | i          | i    | i      | i        |
 
+### `dim`
 
-### `radius`
-
-This function returns the radius of a set.
-It is defined as the radius of the enclosing ball (of the given norm) of
-minimal volume with the same center.
-
-```@example set_operations
-radius(B1), radius(B2), radius(BI), radius(H)
-```
-
-### `diameter`
-
-This function returns the diameter of a set.
-It is defined as the diameter of the enclosing ball (of the given norm) of
-minimal volume with the same center.
-The implementation is inherited for all set types if the norm is the infinity
-norm, in which case the result is defined as twice the radius.
+This function returns the dimension of the set.
 
 ```@example set_operations
-diameter(B1), diameter(B2), diameter(BI), diameter(H)
+dim(B1), dim(B2), dim(BI), dim(H)
 ```
 
-### `norm`
+### `ρ`/`σ`
 
-This function returns the norm of a set.
-It is defined as the norm of the enclosing ball (of the given norm) of minimal
-volume centered in the origin.
-
-```@example set_operations
-# print 1-norm, 2-norm, and infinity norm (if available)
-println(("-", "-", norm(B1, Inf)))
-println(("-", "-", norm(B2, Inf)))
-println((norm(BI, 1), norm(BI, 2), norm(BI, Inf)))
-println((norm(H, 1), norm(H, 2), norm(H, Inf)))
-```
+These functions return the support function resp. the support vector of the set.
 
 ### `an_element`
 
@@ -172,6 +154,51 @@ plot1 = plot()
 plot_sets(sets)
 plot_points(points, "p")
 plot1
+```
+
+### `isempty`
+
+This function checks if the set is empty.
+
+### `linear_map`
+
+This function applies a concrete linear map to the set.
+The resulting set may be of a different type.
+
+### `norm`
+
+This function returns the norm of a set.
+It is defined as the norm of the enclosing ball (of the given norm) of minimal
+volume centered in the origin.
+
+```@example set_operations
+# print 1-norm, 2-norm, and infinity norm (if available)
+println(("-", "-", norm(B1, Inf)))
+println(("-", "-", norm(B2, Inf)))
+println((norm(BI, 1), norm(BI, 2), norm(BI, Inf)))
+println((norm(H, 1), norm(H, 2), norm(H, Inf)))
+```
+
+### `radius`
+
+This function returns the radius of a set.
+It is defined as the radius of the enclosing ball (of the given norm) of
+minimal volume with the same center.
+
+```@example set_operations
+radius(B1), radius(B2), radius(BI), radius(H)
+```
+
+### `diameter`
+
+This function returns the diameter of a set.
+It is defined as the diameter of the enclosing ball (of the given norm) of
+minimal volume with the same center.
+The implementation is inherited for all set types if the norm is the infinity
+norm, in which case the result is defined as twice the radius.
+
+```@example set_operations
+diameter(B1), diameter(B2), diameter(BI), diameter(H)
 ```
 
 
