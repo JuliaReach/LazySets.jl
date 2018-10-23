@@ -34,11 +34,12 @@ after_success:
               VERSION < v"0.7-" && Pkg.pin("Documenter", v"0.18.0");
               Pkg.add("Plots");
               Pkg.add("GR");
-              VERSION >= v"0.7-" && VERSION < v"1.0-" && Pkg.pin(PackageSpec(name="GR", version="0.33.1"));
               Pkg.add("Polyhedra");
               Pkg.add("CDDLib");
               Pkg.add("Optim");
-              Pkg.add("StaticArrays");'
+              Pkg.add("StaticArrays");
+              VERSION >= v"0.7-" && VERSION < v"1.0-" && Pkg.pin(PackageSpec(name="GR", version="0.33.1"));'
+              # pinning must be the last command because otherwise it is ignored
   - julia -e 'cd(Pkg.dir("LazySets")); include(joinpath("docs", "make.jl"))'
   # code coverage (for both Coveralls and Codecov)
   - julia -e 'Pkg.add("Coverage")'
