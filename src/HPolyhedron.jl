@@ -303,7 +303,7 @@ end
 
 """
     convex_hull(P1::HPoly{N}, P2::HPoly{N};
-               [backend]=default_polyhedra_backend(N)) where {N}
+               [backend]=default_polyhedra_backend(P1, N)) where {N}
 
 Compute the convex hull of the set union of two polyhedra in H-representation.
 
@@ -311,7 +311,7 @@ Compute the convex hull of the set union of two polyhedra in H-representation.
 
 - `P1`         -- polyhedron
 - `P2`         -- another polyhedron
-- `backend`    -- (optional, default: `default_polyhedra_backend(N)`)
+- `backend`    -- (optional, default: `default_polyhedra_backend(P1, N)`)
                   the polyhedral computations backend
 
 ### Output
@@ -326,7 +326,7 @@ For further information on the supported backends see
 """
 function convex_hull(P1::HPoly{N},
                      P2::HPoly{N};
-                     backend=default_polyhedra_backend(N)) where {N}
+                     backend=default_polyhedra_backend(P1, N)) where {N}
     @assert isdefined(Main, :Polyhedra) "the function `convex_hull` needs " *
                                         "the package 'Polyhedra' to be loaded"
     Pch = convexhull(polyhedron(P1, backend), polyhedron(P2, backend))
@@ -335,7 +335,7 @@ end
 
 """
     cartesian_product(P1::HPOLY, P2::HPOLY;
-                      [backend]=default_polyhedra_backend(N)
+                      [backend]=default_polyhedra_backend(P1, N)
                      ) where {N, HPOLY<:HPolytope{N}}
 
 Compute the Cartesian product of two polyhedra in H-representaion.
@@ -344,7 +344,7 @@ Compute the Cartesian product of two polyhedra in H-representaion.
 
 - `P1`         -- polyhedron
 - `P2`         -- another polyhedron
-- `backend`    -- (optional, default: `default_polyhedra_backend(N)`)
+- `backend`    -- (optional, default: `default_polyhedra_backend(P1, N)`)
                   the polyhedral computations backend
 
 ### Output
@@ -357,7 +357,7 @@ For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/).
 """
 function cartesian_product(P1::HPoly{N}, P2::HPoly{N};
-                          backend=default_polyhedra_backend(N)) where {N}
+                          backend=default_polyhedra_backend(P1, N)) where {N}
     @assert isdefined(Main, :Polyhedra) "the function `cartesian_product` " *
         "needs the package 'Polyhedra' to be loaded"
     Pcp = hcartesianproduct(polyhedron(P1, backend), polyhedron(P2, backend))
@@ -366,14 +366,14 @@ end
 
 """
     tovrep(P::HPoly{N};
-          [backend]=default_polyhedra_backend(N)) where {N}
+          [backend]=default_polyhedra_backend(P, N)) where {N}
 
 Transform a polyhedron in H-representation to a polytope in V-representation.
 
 ### Input
 
 - `P`          -- polyhedron in constraint representation
-- `backend`    -- (optional, default: `default_polyhedra_backend(N)`)
+- `backend`    -- (optional, default: `default_polyhedra_backend(P, N)`)
                   the polyhedral computations backend
 
 ### Output
@@ -387,7 +387,7 @@ For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/).
 """
 function tovrep(P::HPoly{N};
-                backend=default_polyhedra_backend(N)) where {N}
+                backend=default_polyhedra_backend(P, N)) where {N}
     @assert isdefined(Main, :Polyhedra) "the function `tovrep` needs " *
                                         "the package 'Polyhedra' to be loaded"
     P = polyhedron(P, backend)
@@ -396,7 +396,7 @@ end
 
 """
     vertices_list(P::HPoly{N};
-                  [backend]=default_polyhedra_backend(N),
+                  [backend]=default_polyhedra_backend(P, N),
                   [prunefunc]=removevredundancy!)::Vector{Vector{N}} where
                   {N<:Real}
 
@@ -405,7 +405,7 @@ Return the list of vertices of a polytope in constraint representation.
 ### Input
 
 - `P`         -- polytope in constraint representation
-- `backend`   -- (optional, default: `default_polyhedra_backend(N)`)
+- `backend`   -- (optional, default: `default_polyhedra_backend(P, N)`)
                   the polyhedral computations backend
 - `prunefunc` -- (optional, default: `removevredundancy!`) function to
                  post-process the output of `vreps`
@@ -442,7 +442,7 @@ julia> vertices_list(P)
 ```
 """
 function vertices_list(P::HPoly{N};
-                       backend=default_polyhedra_backend(N),
+                       backend=default_polyhedra_backend(P, N),
                        prunefunc=removevredundancy!
                       )::Vector{Vector{N}} where {N<:Real}
     if length(P.constraints) == 0
@@ -480,7 +480,7 @@ Determine whether a polyhedron is empty.
 ### Input
 
 - `P`       -- polyhedron
-- `backend` -- (optional, default: `default_polyhedra_backend(N)`)
+- `backend` -- (optional, default: `default_polyhedra_backend(P, N)`)
                the polyhedral computations backend
 - `solver`  -- (optional, default: `GLPKSolverLP()`) LP solver backend
 
@@ -500,7 +500,7 @@ This implementation uses `GLPKSolverLP` as linear programming backend by
 default.
 """
 function isempty(P::HPoly{N};
-                 backend=default_polyhedra_backend(N),
+                 backend=default_polyhedra_backend(P, N),
                  solver=GLPKSolverLP())::Bool where {N<:Real}
     @assert isdefined(Main, :Polyhedra) "the function `isempty` needs the " *
                                         "package 'Polyhedra' to be loaded"
@@ -570,7 +570,7 @@ else
 end # if VERSION < v"0.7-"
 
 """
-    polyhedron(P::HPoly{N}, [backend]=default_polyhedra_backend(N)) where {N}
+    polyhedron(P::HPoly{N}, [backend]=default_polyhedra_backend(P, N)) where {N}
 
 Return an `HRep` polyhedron from `Polyhedra.jl` given a polytope in
 H-representation.
@@ -578,7 +578,7 @@ H-representation.
 ### Input
 
 - `P`       -- polytope
-- `backend` -- (optional, default: call `default_polyhedra_backend(N)`)
+- `backend` -- (optional, default: call `default_polyhedra_backend(P, N)`)
                 the polyhedral computations backend
 
 ### Output
@@ -590,7 +590,7 @@ An `HRep` polyhedron.
 For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/).
 """
-function polyhedron(P::HPoly{N}, backend=default_polyhedra_backend(N)) where {N}
+function polyhedron(P::HPoly{N}, backend=default_polyhedra_backend(P, N)) where {N}
     A, b = tosimplehrep(P)
     return Polyhedra.polyhedron(Polyhedra.hrep(A, b), backend)
 end

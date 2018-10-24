@@ -60,7 +60,7 @@ return quote
     end
 
     """
-        HPolytope(P::HRep{T, N}, backend=default_polyhedra_backend(N)) where {T, N}
+        HPolytope(P::HRep{T, N}) where {T, N}
 
     Return a polytope in H-representation given a `HRep` polyhedron
     from `Polyhedra.jl`.

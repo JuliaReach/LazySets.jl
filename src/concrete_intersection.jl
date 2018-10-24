@@ -206,7 +206,7 @@ end
 """
     intersection(P::HPoly{N},
                  hs::HalfSpace{N};
-                 backend=default_polyhedra_backend(N),
+                 backend=default_polyhedra_backend(P, N),
                  prunefunc=removehredundancy!) where N<:Real
 
 Compute the intersection of a polytope in H-representation and a half-space.
@@ -215,7 +215,7 @@ Compute the intersection of a polytope in H-representation and a half-space.
 
 - `P`         -- polytope
 - `hs`        -- half-space
-- `backend`   -- (optional, default: `default_polyhedra_backend(N)`) the
+- `backend`   -- (optional, default: `default_polyhedra_backend(P, N)`) the
                  polyhedral computations backend, see
                  [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
                  for further information
@@ -229,24 +229,24 @@ The same polytope in H-representation with just one more constraint.
 """
 function intersection(P::HPoly{N},
                       hs::HalfSpace{N};
-                      backend=default_polyhedra_backend(N),
+                      backend=default_polyhedra_backend(P, N),
                       prunefunc=removehredundancy!) where {N<:Real}
-    return intersection(P, HPolyhedron([hs]))
+    return intersection(P, HPolyhedron([hs]), backend=backend, prunefunc=prunefunc)
 end
 
 # symmetric method
 function intersection(hs::HalfSpace{N},
                       P::HPoly{N};
-                      backend=default_polyhedra_backend(N),
+                      backend=default_polyhedra_backend(P, N),
                       prunefunc=removehredundancy!) where {N<:Real}
     return intersection(P, hs, backend=backend, prunefunc=prunefunc)
 end
 
 """
     intersection(P1::HPoly{N},
-                      P2::HPoly{N};
-                      backend=default_polyhedra_backend(N),
-                      prunefunc=removehredundancy!) where N
+                 P2::HPoly{N};
+                 backend=default_polyhedra_backend(P1, N),
+                 prunefunc=removehredundancy!) where N
 
 Compute the intersection of two polyhedra in H-representation.
 
@@ -254,7 +254,7 @@ Compute the intersection of two polyhedra in H-representation.
 
 - `P1`        -- polytope
 - `P2`        -- polytope
-- `backend`   -- (optional, default: `default_polyhedra_backend(N)`) the
+- `backend`   -- (optional, default: `default_polyhedra_backend(P1, N)`) the
                  polyhedral computations backend, see
                  [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
                  for further information
@@ -268,7 +268,7 @@ A new same polytope in H-representation with just one more constraint.
 """
 function intersection(P1::HPoly{N},
                       P2::HPoly{N};
-                      backend=default_polyhedra_backend(N),
+                      backend=default_polyhedra_backend(P1, N),
                       prunefunc=removehredundancy!) where N
     if typeof(P1) == typeof(P2)
         HPOLY = typeof(P1)
@@ -295,7 +295,7 @@ end
 """
     intersection(P1::HPoly{N},
                  P2::VPolytope{N};
-                 backend=default_polyhedra_backend(N),
+                 backend=default_polyhedra_backend(P1, N),
                  prunefunc=removehredundancy!) where N
 
 Compute the intersection of two polytopes in either H-representation or
@@ -305,7 +305,7 @@ V-representation.
 
 - `P1`        -- polytope
 - `P2`        -- polytope
-- `backend`   -- (optional, default: `default_polyhedra_backend(N)`) the
+- `backend`   -- (optional, default: `default_polyhedra_backend(P1, N)`) the
                  polyhedral computations backend, see
                  [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
                  for further information
@@ -318,7 +318,7 @@ The polytope obtained by the intersection of `P1` and `P2`.
 """
 function intersection(P1::HPoly{N},
                       P2::VPolytope{N};
-                      backend=default_polyhedra_backend(N),
+                      backend=default_polyhedra_backend(P1, N),
                       prunefunc=removehredundancy!) where N
 
     Q1 = polyhedron(P1, backend)
@@ -331,7 +331,7 @@ end
 # symmetric one
 function intersection(P1::VPolytope{N},
                       P2::HPoly{N};
-                      backend=default_polyhedra_backend(N),
+                      backend=default_polyhedra_backend(P1, N),
                       prunefunc=removehredundancy!) where N
     return intersection(P2, P1; backend=backend, prunefunc=prunefunc)
 end
@@ -339,7 +339,7 @@ end
 # missing case: VRep with VRep
 function intersection(P1::VPolytope{N},
                       P2::VPolytope{N};
-                      backend=default_polyhedra_backend(N),
+                      backend=default_polyhedra_backend(P1, N),
                       prunefunc=removehredundancy!) where N
     Q1 = polyhedron(P1, backend)
     Q2 = polyhedron(P2, backend)
@@ -351,7 +351,7 @@ end
 """
     intersection(P1::HPoly{N},
                  P2::AbstractPolytope{N};
-                 backend=default_polyhedra_backend(N),
+                 backend=default_polyhedra_backend(P1, N),
                  prunefunc=removehredundancy!) where N
 
 Compute the intersection of a polyhedron and a polytope.
@@ -360,7 +360,7 @@ Compute the intersection of a polyhedron and a polytope.
 
 - `P1`        -- polyhedron
 - `P2`        -- polytope
-- `backend`   -- (optional, default: `default_polyhedra_backend(N)`) the
+- `backend`   -- (optional, default: `default_polyhedra_backend(P1, N)`) the
                  polyhedral computations backend, see
                  [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
                  for further information
@@ -373,7 +373,7 @@ The polytope in H-representation obtained by the intersection of `P1` and `P2`.
 """
 function intersection(P1::HPoly{N},
                       P2::AbstractPolytope{N};
-                      backend=default_polyhedra_backend(N),
+                      backend=default_polyhedra_backend(P1, N),
                       prunefunc=removehredundancy!) where N
     return intersection(P1, HPolytope(constraints_list(P2)))
 end
@@ -381,7 +381,7 @@ end
 # symmetric function
 function intersection(P1::AbstractPolytope{N},
                       P2::HPoly{N};
-                      backend=default_polyhedra_backend(N),
+                      backend=default_polyhedra_backend(P1, N),
                       prunefunc=removehredundancy!) where N
     return intersection(P2, P1)
 end
