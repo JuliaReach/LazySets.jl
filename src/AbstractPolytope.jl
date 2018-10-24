@@ -129,11 +129,11 @@ return quote
     import CDDLib # default backend
     import Polyhedra:SimpleHRepresentation, SimpleHRepresentation
 
-    function default_polyhedra_backend(P::HPoly, N::Type{<:AbstractFloat})
+    function default_polyhedra_backend(P, N::Type{<:AbstractFloat})
         return CDDLib.CDDLibrary()
     end
 
-    function default_polyhedra_backend(P::HPoly, N::Type{<:Rational})
+    function default_polyhedra_backend(P, N::Type{<:Rational})
         return CDDLib.CDDLibrary(:exact)
     end
 
