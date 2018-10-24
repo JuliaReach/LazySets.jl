@@ -151,7 +151,7 @@ export convex_hull,
 @static if VERSION < v"0.7-"
 
     # VPolytope from a VRep
-    function VPolytope(P::VRep{T, N}, backend=default_polyhedra_backend(P, N)) where {T, N}
+    function VPolytope(P::VRep{T, N}) where {T, N}
         vertices = Vector{Vector{N}}()
         for vi in Polyhedra.points(P)
             push!(vertices, vi)
@@ -162,7 +162,7 @@ export convex_hull,
 else
 
     # VPolytope from a VRep
-    function VPolytope(P::VRep{N}, backend=default_polyhedra_backend(P, N)) where {N}
+    function VPolytope(P::VRep{N}) where {N}
         vertices = Vector{Vector{N}}()
         for vi in Polyhedra.points(P)
             push!(vertices, vi)
