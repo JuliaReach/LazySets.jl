@@ -27,6 +27,7 @@ CartesianProduct
 dim(::CartesianProduct)
 σ(::AbstractVector{Real}, ::CartesianProduct{Real})
 ∈(::AbstractVector{Real}, ::CartesianProduct{Real})
+isempty(::CartesianProduct)
 constraints_list(::CartesianProduct{Real})
 vertices_list(::CartesianProduct{Real})
 ```
@@ -43,6 +44,7 @@ CartesianProductArray
 dim(::CartesianProductArray)
 σ(::AbstractVector{Real}, ::CartesianProductArray{Real})
 ∈(::AbstractVector{Real}, ::CartesianProductArray{Real})
+isempty(::CartesianProductArray)
 constraints_list(::CartesianProductArray{Real})
 vertices_list(::CartesianProductArray{Real})
 array(::CartesianProductArray)
@@ -62,6 +64,7 @@ ConvexHull
 CH
 dim(::ConvexHull)
 σ(::AbstractVector{Real}, ::ConvexHull{Real})
+isempty(::ConvexHull)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -77,6 +80,7 @@ CHArray
 dim(::ConvexHullArray)
 σ(::AbstractVector{Real}, ::ConvexHullArray{Real})
 array(::ConvexHullArray)
+isempty(::ConvexHullArray)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -150,6 +154,7 @@ MinkowskiSum
 +(::LazySet, ::LazySet)
 dim(::MinkowskiSum)
 σ(::AbstractVector{Real}, ::MinkowskiSum{Real})
+isempty(::MinkowskiSum)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -163,6 +168,7 @@ Inherited from [`LazySet`](@ref):
 MinkowskiSumArray
 dim(::MinkowskiSumArray)
 σ(::AbstractVector{Real}, ::MinkowskiSumArray{Real})
+isempty(::MinkowskiSumArray)
 array(::MinkowskiSumArray)
 ```
 Inherited from [`LazySet`](@ref):
@@ -177,6 +183,7 @@ Inherited from [`LazySet`](@ref):
 CacheMinkowskiSum
 dim(::CacheMinkowskiSum)
 σ(::AbstractVector{Real}, ::CacheMinkowskiSum{Real})
+isempty(::CacheMinkowskiSum)
 array(::CacheMinkowskiSum)
 forget_sets!(::CacheMinkowskiSum)
 ```
@@ -198,6 +205,7 @@ dim(::LinearMap)
 σ(::AbstractVector{Real}, ::LinearMap{Real})
 ∈(::AbstractVector{Real}, ::LinearMap{Real, LazySet{Real}, Real, Matrix{Real}})
 an_element(::LinearMap)
+isempty(::LinearMap)
 vertices_list(::LinearMap{Real})
 ```
 Inherited from [`LazySet`](@ref):
@@ -212,6 +220,7 @@ ExponentialMap
 dim(::ExponentialMap)
 σ(::AbstractVector{Real}, ::ExponentialMap{Real})
 ∈(::AbstractVector{Real}, ::ExponentialMap{Real})
+isempty(::ExponentialMap)
 vertices_list(::ExponentialMap{Real})
 ```
 Inherited from [`LazySet`](@ref):
@@ -224,6 +233,7 @@ Inherited from [`LazySet`](@ref):
 ExponentialProjectionMap
 dim(::ExponentialProjectionMap)
 σ(::AbstractVector{Real}, ::ExponentialProjectionMap{Real})
+isempty(::ExponentialProjectionMap)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -257,6 +267,7 @@ Inherited from [`AbstractPolytope`](@ref):
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetricPolytope))
+* [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
 * `an_element`
 
 Inherited from [`AbstractHyperrectangle`](@ref):
