@@ -75,7 +75,7 @@ function check_method_ambiguity_binary(op;
             print_results && println("type 2: $t2")
             if !hasmethod(op, (t1, t2))
                 if print_warnings
-                    warn("no interface operation '$ops(::$(t1), ::$(t2)' exists")
+                    @warn "no interface operation '$ops(::$(t1), ::$(t2)' exists"
                 end
                 continue
             end
@@ -99,26 +99,26 @@ function check_method_ambiguity_binary(op;
                         if startswith(msg, "MethodError: no method matching $ops")
                             # undefined method error, ignore
                             if print_warnings
-                                warn("no concrete operation " *
+                                @warn "no concrete operation " *
                                      "'$ops(::$(typeof(i1)), " *
-                                     "::$(typeof(i2)))' exists")
+                                     "::$(typeof(i2)))' exists"
                             end
                         elseif occursin("is ambiguous", msg)
                             # ambiguity error, remember
                             has_ambiguities = true
                             if print_warnings
-                                warn("ambiguous method " *
+                                @warn "ambiguous method " *
                                      "'$ops(::$(typeof(i1)), " *
                                      "::$(typeof(i2)))' found; " *
-                                     "printing full message")
-                                warn(msg)
+                                     "printing full message"
+                                @warn msg
                             end
                         else
                             # other error, remember
                             has_other_problems = true
                             if print_warnings
-                                warn("unknown error message:")
-                                warn(msg)
+                                @warn "unknown error message:"
+                                @warn msg
                             end
                         end
                     end
