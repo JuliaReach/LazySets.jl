@@ -1,6 +1,5 @@
 export HPolytope,
-       vertices_list,
-       singleton_list
+       vertices_list
 
 """
     HPolytope{N<:Real} <: AbstractPolytope{N}
@@ -162,21 +161,4 @@ function vertices_list(P::HPolytope{N};
     P = polyhedron(P, backend)
     prunefunc(P)
     return collect(points(P))
-end
-
-"""
-    singleton_list(P::HPolytope{N})::Vector{Singleton{N}} where {N<:Real}
-
-Return the vertices of a polytope in H-representation as a list of singletons.
-
-### Input
-
-- `P` -- polytope
-
-### Output
-
-List containing a singleton for each vertex.
-"""
-function singleton_list(P::HPolytope{N}) where {N<:Real}
-    return [Singleton(vi) for vi in vertices_list(P)]
 end
