@@ -447,7 +447,7 @@ If `P` is known to be bounded, try converting to `HPolytope` first.
 """
 function singleton_list(P::HPolyhedron{N}) where {N<:Real}
     error("the list of singletons of a (possibly unbounded) polyhedron is not defined; " *
-          "if the polyhedron is bounded try converting to `HPolytope` first")
+          "if the polyhedron is bounded, try converting to `HPolytope` first")
 end
 
 """
