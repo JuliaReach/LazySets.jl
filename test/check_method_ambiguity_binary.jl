@@ -61,7 +61,11 @@ function check_method_ambiguity_binary(op;
         (AbstractSingleton{Float64}, [Singleton(zeros(2)), ZeroSet(2)])
     ])
 
-    ops = "$op"[10:end] # remove prefix 'LazySets.'
+    if startswith("$op", "LazySets.")
+        ops = "$op"[10:end] # remove prefix 'LazySets.'
+    else
+        ops = op
+    end
     has_ambiguities = false
     has_other_problems = false
     print_results && println("testing operation $ops")
