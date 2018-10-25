@@ -1,4 +1,4 @@
-import Base.∈
+import Base: ∈, isempty
 
 export HalfSpace, LinearConstraint,
        an_element,
@@ -117,6 +117,23 @@ We just check if ``x`` satisfies ``a⋅x ≤ b``.
 """
 function ∈(x::AbstractVector{N}, hs::HalfSpace{N})::Bool where {N<:Real}
     return dot(x, hs.a) <= hs.b
+end
+
+"""
+    isempty(hs::HalfSpace)::Bool
+
+Return if a half-space is empty or not.
+
+### Input
+
+- `hs` -- half-space
+
+### Output
+
+`false`.
+"""
+function isempty(hs::HalfSpace)::Bool
+    return false
 end
 
 """

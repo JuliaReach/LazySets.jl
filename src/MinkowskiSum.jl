@@ -1,4 +1,4 @@
-import Base:+, getindex
+import Base: +, getindex, isempty
 
 export MinkowskiSum, ⊕,
        MinkowskiSumArray,
@@ -134,6 +134,23 @@ function ρ(d::AbstractVector{N}, ms::MinkowskiSum{N}) where {N<:Real}
     return ρ(d, ms.X) + ρ(d, ms.Y)
 end
 
+"""
+    isempty(ms::MinkowskiSum)::Bool
+
+Return if a Minkowski sum is empty or not.
+
+### Input
+
+- `ms` -- Minkowski sum
+
+### Output
+
+`true` iff any of the wrapped sets are empty.
+"""
+function isempty(ms::MinkowskiSum)::Bool
+    return isempty(ms.X) || isempty(ms.Y)
+end
+
 # =================================
 # Minkowski sum of an array of sets
 # =================================
@@ -263,6 +280,23 @@ functions of each set.
 """
 function ρ(d::AbstractVector{N}, msa::MinkowskiSumArray{N}) where {N<:Real}
     return sum([ρ(d, Xi) for Xi in msa.array])
+end
+
+"""
+    isempty(msa::MinkowskiSumArray)::Bool
+
+Return if a Minkowski sum array is empty or not.
+
+### Input
+
+- `cp` -- Minkowski sum array
+
+### Output
+
+`true` iff any of the wrapped sets are empty.
+"""
+function isempty(msa::MinkowskiSumArray)::Bool
+    return any(X -> isempty(X), array(msa))
 end
 
 
@@ -432,6 +466,30 @@ function σ(d::AbstractVector{N}, cms::CacheMinkowskiSum{N}) where {N<:Real}
     # NOTE: make a copy of the direction vector (can be modified outside)
     cache[copy(d)] = CachedPair(l, svec)
     return svec
+end
+
+"""
+    isempty(cms::CacheMinkowskiSum)::Bool
+
+Return if a caching Minkowski sum array is empty or not.
+
+### Input
+
+- `cp` -- caching Minkowski sum
+
+### Output
+
+`true` iff any of the wrapped sets are empty.
+
+### Notes
+
+Forgotten sets cannot be checked anymore.
+Usually they have been empty because otherwise the support vector query should
+have crashed before.
+In that case, the caching Minkowski sum should not be used further.
+"""
+function isempty(cms::CacheMinkowskiSum)::Bool
+    return any(X -> isempty(X), array(cms))
 end
 
 """
