@@ -1,6 +1,51 @@
 export is_intersection_empty,
        isdisjoint
 
+"""
+    is_intersection_empty(X::LazySet{N},
+                          Y::LazySet{N},
+                          witness::Bool=false
+                          )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
+
+Check whether two sets do not intersect, and otherwise optionally compute a
+witness.
+
+### Input
+
+- `X`       -- set
+- `Y`       -- another set
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``X ∩ Y = ∅``
+* If `witness` option is activated:
+  * `(true, [])` iff ``X ∩ Y = ∅``
+  * `(false, v)` iff ``X ∩ Y ≠ ∅`` and ``v ∈ X ∩ Y``
+
+### Algorithm
+
+This is a fallback implementation that computes the concrete intersection,
+`intersection`, of the given sets.
+
+A witness is constructed using the `an_element` implementation of the result.
+"""
+function is_intersection_empty(X::LazySet{N},
+                               Y::LazySet{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
+    cap = intersection(X, Y)
+    empty_intersection = isempty(cap)
+    if witness
+        if empty_intersection
+            return (true, N[])
+        else
+            return (false, an_element(cap))
+        end
+    end
+    return empty_intersection
+end
+
 
 # --- AbstractHyperrectangle ---
 
@@ -531,74 +576,9 @@ function is_intersection_empty(ls1::LineSegment{N},
     end
 end
 
-# --- AbstractPolytope ---
-
-"""
-    is_intersection_empty(P::AbstractPolytope{N},
-                          Q::AbstractPolytope{N},
-                          witness::Bool=false
-                          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
-
-Check whether two polytopes do not intersect, and otherwise optionally
-compute a witness.
-
-### Input
-
-- `P`       -- polytope
-- `Q`       -- another polytope
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``P ∩ Q = ∅``
-* If `witness` option is activated:
-  * `(true, [])` iff ``P ∩ Q = ∅``
-  * `(false, v)` iff ``P ∩ Q ≠ ∅`` and ``v ∈ P ∩ Q``
-
-### Algorithm
-
-This is a fallback implementation of the `AbstractPolytope` interface that
-computes the concrete intersection, `intersection`, of the given pair of
-polytopes.
-If a witness is required, the first vertex of the resulting intersection
-polytope is returned.
-"""
-function is_intersection_empty(P::AbstractPolytope{N},
-                               Q::AbstractPolytope{N},
-                               witness::Bool=false
-                              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
-    X = intersection(P, Q)
-    isempty_flag = isempty(X)
-    if witness
-        witness_vertex = isempty_flag ? N[] : vertices_list(X)[1]
-        return (isempty_flag, witness_vertex)
-    else
-        return isempty_flag
-    end
-end
-
-# method disambiguation
-function is_intersection_empty(point::AbstractSingleton{N},
-                               set::AbstractPolytope{N},
-                               witness::Bool=false
-                              )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
-    empty_intersection = element(point) ∉ set
-    if witness
-        return (empty_intersection, empty_intersection ? N[] : element(S))
-    else
-        return empty_intersection
-    end
-end
-
-# symmetric function
-function is_intersection_empty(set::AbstractPolytope{N},
-                               point::AbstractSingleton{N},
-                               witness::Bool=false
-                              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
-    return is_intersection_empty(point, set, witness)
-end
 
 # --- Hyperplane ---
+
 
 """
     is_intersection_empty(X::LazySet{N},
@@ -869,7 +849,6 @@ Note that this method can be used with any set ``P`` whose constraints are known
 function is_intersection_empty(X::LazySet{N},
                                P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}}
                               )::Bool where N<:Real
-
     for Hi in constraints_list(P)
         if is_intersection_empty(X, Hi)
             return true
@@ -878,11 +857,37 @@ function is_intersection_empty(X::LazySet{N},
     return false
 end
 
-# symmetric function
+# symmetric method
 function is_intersection_empty(P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
                                X::LazySet{N}
                               )::Bool where N<:Real
     return is_intersection_empty(X, P)
+end
+
+# disambiguity
+function is_intersection_empty(P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
+                               Q::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}}
+                              )::Bool where N<:Real
+    for Hi in constraints_list(P)
+        if is_intersection_empty(Q, Hi)
+            return true
+        end
+    end
+    return false
+end
+
+# disambiguity
+function is_intersection_empty(P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
+                               hs::HalfSpace{N}
+                              )::Bool where N<:Real
+    return -ρ(-hs.a, P; kwargs...) > hs.b
+end
+
+# symmetric method
+function is_intersection_empty(hs::HalfSpace{N},
+                               P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}}
+                              )::Bool where N<:Real
+    return is_intersection_empty(P, hs)
 end
 
 # --- alias ---
