@@ -41,6 +41,8 @@ plotting singletons.
 @recipe function plot_lazyset(S::LazySet;
                               color="blue", label="", grid=true, alpha=0.5)
 
+    @assert dim(S) == 2  "cannot plot a $(dim(S))-dimensional set"
+
     P = Approximations.overapproximate(S)
     vlist = transpose(hcat(convex_hull(vertices_list(P))...))
     (x, y) = vlist[:, 1], vlist[:, 2]
@@ -87,6 +89,7 @@ correctly.
     seriestype := :shape
 
     for S in arr
+        @assert dim(S) == 2  "cannot plot a $(dim(S))-dimensional set"
         Pi = Approximations.overapproximate(S)
         vlist = transpose(hcat(convex_hull(vertices_list(Pi))...))
         @series (x, y) = vlist[:, 1], vlist[:, 2]
@@ -117,6 +120,7 @@ julia> plot(randn(2, 2) * B, 1e-3);
 @recipe function plot_lazyset(S::LazySet, ε::Float64;
                               color="blue", label="", grid=true, alpha=0.5)
 
+    @assert dim(S) == 2  "cannot plot a $(dim(S))-dimensional set"
     seriestype := :shape
 
     P = Approximations.overapproximate(S, ε)
@@ -156,6 +160,7 @@ julia> plot([B1, B2], 1e-4);
     seriestype := :shape
 
     for S in arr
+        @assert dim(S) == 2  "cannot plot a $(dim(S))-dimensional set"
         Pi = Approximations.overapproximate(S, ε)
         vlist = transpose(hcat(vertices_list(Pi)...))
         @series (x, y) = vlist[:, 1], vlist[:, 2]
@@ -202,7 +207,7 @@ julia> plot(P);
                                color="blue", label="", grid=true, alpha=0.5)
 
     # for polytopes
-    @assert dim(P) == 2  "this recipe can only be used to plot two-dimensional sets"
+    @assert dim(P) == 2  "cannot plot a $(dim(P))-dimensional polytope"
     seriestype := :shape
 
     points = convex_hull(vertices_list(P))
@@ -261,6 +266,7 @@ It is assumed that the given vector of polytopes is two-dimensional.
     seriestype := :shape
 
     for Pi in P
+        @assert dim(Pi) == 2  "cannot plot a $(dim(Pi))-dimensional polytope"
         points = convex_hull(vertices_list(Pi))
         vlist = transpose(hcat(points...))
         @series (x, y) = vlist[:, 1], vlist[:, 2]
