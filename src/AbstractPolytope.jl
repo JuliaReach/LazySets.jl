@@ -107,7 +107,7 @@ function isempty(P::AbstractPolytope{N})::Bool where {N<:Real}
     return isempty(vertices_list(P))
 end
 
-function default_polyhedra_backend(N)
+function default_polyhedra_backend(P, N)
     @assert isdefined(Main, :Polyhedra) "this function needs the package 'Polyhedra' to be loaded"
     error("no default backend for numeric type $N")
 end
@@ -129,11 +129,11 @@ return quote
     import CDDLib # default backend
     import Polyhedra:SimpleHRepresentation, SimpleHRepresentation
 
-    function default_polyhedra_backend(N::Type{<:AbstractFloat})
+    function default_polyhedra_backend(P, N::Type{<:AbstractFloat})
         return CDDLib.CDDLibrary()
     end
 
-    function default_polyhedra_backend(N::Type{<:Rational})
+    function default_polyhedra_backend(P, N::Type{<:Rational})
         return CDDLib.CDDLibrary(:exact)
     end
 
@@ -148,12 +148,12 @@ else
                      points,
                      default_library
 
-    function default_polyhedra_backend(N::Type{<:AbstractFloat})
-        return default_library(2, Float64)
+    function default_polyhedra_backend(P, N::Type{<:AbstractFloat})
+        return default_library(LazySets.dim(P), Float64)
     end
 
-    function default_polyhedra_backend(N::Type{<:Rational})
-        return default_library(2, Rational{Int})
+    function default_polyhedra_backend(P, N::Type{<:Rational})
+        return default_library(LazySets.dim(P), Rational{Int})
     end
 end
 end # quote
