@@ -427,7 +427,7 @@ julia> vertices_list(P_as_polytope)
 ```
 """
 function vertices_list(P::HPolyhedron{N}) where {N<:Real}
-    error("the list of vertices of a (possibly unbounded) polyhedron is not defined;" *
+    error("the list of vertices of a (possibly unbounded) polyhedron is not defined; " *
           "if the polyhedron is bounded try converting to `HPolytope` first")
 end
 
