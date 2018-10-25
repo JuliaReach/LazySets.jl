@@ -1,4 +1,6 @@
-export HPolytope
+export HPolytope,
+       vertices_list,
+       singleton_list
 
 """
     HPolytope{N<:Real} <: AbstractPolytope{N}
@@ -100,3 +102,81 @@ end
 
 end # quote
 end # function load_polyhedra_hpolytope()
+
+"""
+    vertices_list(P::HPolytope{N};
+                  [backend]=default_polyhedra_backend(P, N),
+                  [prunefunc]=removevredundancy!)::Vector{Vector{N}} where
+                  {N<:Real}
+
+Return the list of vertices of a polytope in constraint representation.
+
+### Input
+
+- `P`         -- polytope in constraint representation
+- `backend`   -- (optional, default: `default_polyhedra_backend(P, N)`)
+                  the polyhedral computations backend
+- `prunefunc` -- (optional, default: `removevredundancy!`) function to
+                 post-process the output of `vreps`
+
+### Output
+
+List of vertices.
+
+### Notes
+
+For further information on the supported backends see
+[Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/).
+
+### Examples
+
+```jldoctest
+julia> using Polyhedra
+
+julia> P = HPolytope([1.0 0.0; 0.0 1.0; -1.0 0.0; 0.0 -1.0], fill(1., 4));
+
+julia> constraints_list(P)
+4-element Array{HalfSpace{Float64},1}:
+ HalfSpace{Float64}([1.0, 0.0], 1.0)
+ HalfSpace{Float64}([0.0, 1.0], 1.0)
+ HalfSpace{Float64}([-1.0, 0.0], 1.0)
+ HalfSpace{Float64}([0.0, -1.0], 1.0)
+
+julia> vertices_list(P)
+4-element Array{Array{Float64,1},1}:
+ [1.0, 1.0]
+ [-1.0, 1.0]
+ [1.0, -1.0]
+ [-1.0, -1.0]
+```
+"""
+function vertices_list(P::HPolytope{N};
+                       backend=default_polyhedra_backend(P, N),
+                       prunefunc=removevredundancy!
+                      )::Vector{Vector{N}} where {N<:Real}
+    if length(P.constraints) == 0
+        return Vector{N}(undef, Vector{N}(undef, 0))
+    end
+    @assert isdefined(Main, :Polyhedra) "the function `vertices_list` needs " *
+                                        "the package 'Polyhedra' to be loaded"
+    P = polyhedron(P, backend)
+    prunefunc(P)
+    return collect(points(P))
+end
+
+"""
+    singleton_list(P::HPolytope{N})::Vector{Singleton{N}} where {N<:Real}
+
+Return the vertices of a polytope in H-representation as a list of singletons.
+
+### Input
+
+- `P` -- polytope
+
+### Output
+
+List containing a singleton for each vertex.
+"""
+function singleton_list(P::HPolytope{N}) where {N<:Real}
+    return [Singleton(vi) for vi in vertices_list(P)]
+end

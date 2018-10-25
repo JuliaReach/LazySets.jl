@@ -395,45 +395,30 @@ function tovrep(P::HPoly{N};
 end
 
 """
-    vertices_list(P::HPoly{N};
-                  [backend]=default_polyhedra_backend(P, N),
-                  [prunefunc]=removevredundancy!)::Vector{Vector{N}} where
-                  {N<:Real}
+    vertices_list(P::HPolyhedron{N}) where {N<:Real}
 
-Return the list of vertices of a polytope in constraint representation.
+Return the list of vertices of a polyhedron in constraint representation.
 
 ### Input
 
-- `P`         -- polytope in constraint representation
-- `backend`   -- (optional, default: `default_polyhedra_backend(P, N)`)
-                  the polyhedral computations backend
-- `prunefunc` -- (optional, default: `removevredundancy!`) function to
-                 post-process the output of `vreps`
+- `P` -- polyhedron in constraint representation
 
 ### Output
 
-List of vertices.
-
-### Notes
-
-For further information on the supported backends see
-[Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/).
-
-### Examples
+This function returns an error because the polyhedron is possibly unbounded.
+If `P` is known to be bounded, try converting to `HPolytope` first:
 
 ```jldoctest
-julia> using Polyhedra
+julia> P = HPolyhedron([HalfSpace([1.0, 0.0], 1.0),
+                        HalfSpace([0.0, 1.0], 1.0),
+                        HalfSpace([-1.0, 0.0], 1.0),
+                        HalfSpace([0.0, -1.0], 1.0)])
 
-julia> P = HPolytope([1.0 0.0; 0.0 1.0; -1.0 0.0; 0.0 -1.0], fill(1., 4));
+julia> P_as_polytope = convert(HPolytope, P);
 
-julia> constraints_list(P)
-4-element Array{HalfSpace{Float64},1}:
- HalfSpace{Float64}([1.0, 0.0], 1.0)
- HalfSpace{Float64}([0.0, 1.0], 1.0)
- HalfSpace{Float64}([-1.0, 0.0], 1.0)
- HalfSpace{Float64}([0.0, -1.0], 1.0)
+julia> using Polyhedra # needed to compute the dual representation
 
-julia> vertices_list(P)
+julia> vertices_list(P_as_polytope)
 4-element Array{Array{Float64,1},1}:
  [1.0, 1.0]
  [-1.0, 1.0]
@@ -441,18 +426,9 @@ julia> vertices_list(P)
  [-1.0, -1.0]
 ```
 """
-function vertices_list(P::HPoly{N};
-                       backend=default_polyhedra_backend(P, N),
-                       prunefunc=removevredundancy!
-                      )::Vector{Vector{N}} where {N<:Real}
-    if length(P.constraints) == 0
-        return Vector{N}(undef, Vector{N}(undef, 0))
-    end
-    @assert isdefined(Main, :Polyhedra) "the function `vertices_list` needs " *
-                                        "the package 'Polyhedra' to be loaded"
-    P = polyhedron(P, backend)
-    prunefunc(P)
-    return collect(points(P))
+function vertices_list(P::HPolyhedron{N}) where {N<:Real}
+    error("the list of vertices of a (possibly unbounded) polyhedron is not defined;" *
+          "if the polyhedron is bounded try converting to `HPolytope` first")
 end
 
 """
@@ -462,14 +438,16 @@ Return the vertices of a polyhedron in H-representation as a list of singletons.
 
 ### Input
 
-- `P` -- polyhedron
+- `P` -- polytope in constraint representation
 
 ### Output
 
-List containing a singleton for each vertex.
+This function returns an error because the polyhedron is possibly unbounded.
+If `P` is known to be bounded, try converting to `HPolytope` first.
 """
-function singleton_list(P::HPolyhedron{N})::Vector{Singleton{N}} where {N<:Real}
-    return [Singleton(vi) for vi in vertices_list(P)]
+function singleton_list(P::HPolyhedron{N}) where {N<:Real}
+    error("the list of singletons of a (possibly unbounded) polyhedron is not defined;" *
+          "if the polyhedron is bounded try converting to `HPolytope` first")
 end
 
 """
