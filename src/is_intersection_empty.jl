@@ -849,7 +849,6 @@ Note that this method can be used with any set ``P`` whose constraints are known
 function is_intersection_empty(X::LazySet{N},
                                P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}}
                               )::Bool where N<:Real
-
     for Hi in constraints_list(P)
         if is_intersection_empty(X, Hi)
             return true
@@ -858,11 +857,37 @@ function is_intersection_empty(X::LazySet{N},
     return false
 end
 
-# symmetric function
+# symmetric method
 function is_intersection_empty(P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
                                X::LazySet{N}
                               )::Bool where N<:Real
     return is_intersection_empty(X, P)
+end
+
+# disambiguity
+function is_intersection_empty(P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
+                               Q::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}}
+                              )::Bool where N<:Real
+    for Hi in constraints_list(P)
+        if is_intersection_empty(Q, Hi)
+            return true
+        end
+    end
+    return false
+end
+
+# disambiguity
+function is_intersection_empty(P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
+                               hs::HalfSpace{N}
+                              )::Bool where N<:Real
+    return -ρ(-hs.a, P; kwargs...) > hs.b
+end
+
+# symmetric method
+function is_intersection_empty(hs::HalfSpace{N},
+                               P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}}
+                              )::Bool where N<:Real
+    return is_intersection_empty(P, hs)
 end
 
 # --- alias ---
