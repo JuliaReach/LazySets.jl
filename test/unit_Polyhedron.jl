@@ -46,13 +46,6 @@ for N in [Float64, Rational{Int}, Float32]
     @test ∈(N[5 / 4, 7 / 4], p)
     @test !∈(N[4, 1], p)
 
-    # singleton list (only available with Polyhedra library)
-    if test_suite_polyhedra
-        @test length(singleton_list(p)) == 4
-    else
-        @test_throws AssertionError singleton_list(p)
-    end
-
     if test_suite_polyhedra
         # conversion to and from Polyhedra's VRep data structure
         cl = constraints_list(HPolyhedron(polyhedron(p)))
@@ -61,8 +54,7 @@ for N in [Float64, Rational{Int}, Float32]
         # convert hyperrectangle to a HPolyhedron
         H = Hyperrectangle(N[1, 1], N[2, 2])
         P = convert(HPolyhedron, H)
-        vlist = vertices_list(P)
-        @test ispermutation(vlist, [N[3, 3], N[3, -1], N[-1, -1], N[-1, 3]])
+        @test_throws ArgumentError vertices_list(P) # the vertices list is not defined, see #820
 
         # checking for emptiness
         P = HPolyhedron([LinearConstraint(N[1, 0], N(0))])    # x <= 0
@@ -133,8 +125,7 @@ if test_suite_polyhedra
         A = [N(1) N(-1)]'
         b = N[1, 0]
         p = HPolyhedron(A, b)
-        vl = vertices_list(p)
-        @test ispermutation(vl, [N[0], N[1]])
+        @test_throws ArgumentError vertices_list(p)
 
         # tovrep from HPolyhedron
         A = [N(0) N(-1); N(-1) N(0); N(1) N(1)]
