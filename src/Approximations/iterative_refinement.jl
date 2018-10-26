@@ -35,16 +35,16 @@ Type that represents the polygonal approximation of a convex set.
 ### Fields
 
 - `S`                -- convex set
-- `approx_list_done` -- vector of local approximations that are already finished
 - `approx_list_open` -- vector of local approximations that are not finished yet
+- `approx_list_done` -- vector of linear constraints that are already finished
 """
 struct PolygonalOverapproximation{N<:Real}
     S::LazySet{N}
-    approx_list_done::Vector{LocalApproximation{N}}
     approx_list_open::Vector{LocalApproximation{N}}
+    approx_list_done::Vector{LinearConstraint{N}}
 
     PolygonalOverapproximation(S::LazySet{N}) where N<:Real = new{N}(
-        S, Vector{LocalApproximation{N}}(), Vector{LocalApproximation{N}}())
+        S, Vector{LocalApproximation{N}}(), Vector{LinearConstraint{N}}())
 end
 
 """
@@ -149,8 +149,8 @@ A polygon in constraint representation.
 """
 function tohrep(Ω::PolygonalOverapproximation{N})::AbstractHPolygon where N<:Real
     p = HPolygon{N}()
-    for ai in Ω.approx_list_done
-        addconstraint!(p, LinearConstraint(ai.d1, dot(ai.d1, ai.p1)))
+    for c in Ω.approx_list_done
+        addconstraint!(p, c)
     end
     return p
 end
@@ -192,9 +192,10 @@ function approximate(S::LazySet{N},
     done = Ω.approx_list_done
     while !isempty(open)
         approx = pop!(open)
+
         if !approx.refinable || approx.err <= ε
             # if the approximation is not refinable => continue
-            push!(done, approx)
+            push!(done, LinearConstraint(approx.d1, dot(approx.d1, approx.p1)))
             continue
         end
 
