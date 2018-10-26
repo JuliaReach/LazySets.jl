@@ -34,21 +34,22 @@ Type that represents the polygonal approximation of a convex set.
 
 ### Fields
 
-- `S`           -- convex set
-- `approx_list` -- vector of local approximations
+- `S`                -- convex set
+- `approx_list_done` -- vector of local approximations that are already finished
+- `approx_list_open` -- vector of local approximations that are not finished yet
 """
 struct PolygonalOverapproximation{N<:Real}
-    S::LazySet
-    approx_list::Vector{LocalApproximation{N}}
-end
+    S::LazySet{N}
+    approx_list_done::Vector{LocalApproximation{N}}
+    approx_list_open::Vector{LocalApproximation{N}}
 
-# initialize a polygonal overapproximation with an empty list
-PolygonalOverapproximation{N}(S::LazySet) where {N<:Real} =
-    PolygonalOverapproximation(S::LazySet, LocalApproximation{N}[])
+    PolygonalOverapproximation(S::LazySet{N}) where N<:Real = new{N}(
+        S, Vector{LocalApproximation{N}}(), Vector{LocalApproximation{N}}())
+end
 
 """
     new_approx(S::LazySet, p1::Vector{N}, d1::Vector{N}, p2::Vector{N},
-               d2::Vector{N}) where {N<:Real}
+               d2::Vector{N}) where N<:Real
 
 ### Input
 
@@ -63,7 +64,7 @@ PolygonalOverapproximation{N}(S::LazySet) where {N<:Real} =
 A local approximation of `S` in the given directions.
 """
 function new_approx(S::LazySet, p1::Vector{N}, d1::Vector{N}, p2::Vector{N},
-                    d2::Vector{N}) where {N<:Real}
+                    d2::Vector{N}) where N<:Real
     if norm(p1-p2, 2) <= TOL(N)
         # this approximation cannot be refined and we set q = p1 by convention
         ap = LocalApproximation{N}(p1, d1, p2, d2, p1, false, zero(N))
@@ -79,8 +80,8 @@ function new_approx(S::LazySet, p1::Vector{N}, d1::Vector{N}, p2::Vector{N},
 end
 
 """
-    addapproximation!(Ω::PolygonalOverapproximation,
-        p1::Vector{N}, d1::Vector{N}, p2::Vector{N}, d2::Vector{N}) where {N<:Real}
+    addapproximation!(Ω::PolygonalOverapproximation, p1::Vector{N},
+        d1::Vector{N}, p2::Vector{N}, d2::Vector{N}) where N<:Real
 
 ### Input
 
@@ -97,15 +98,17 @@ the new approximation is returned by this function.
 """
 function addapproximation!(Ω::PolygonalOverapproximation,
                            p1::Vector{N}, d1::Vector{N}, p2::Vector{N},
-                           d2::Vector{N})::LocalApproximation{N} where {N<:Real}
+                           d2::Vector{N})::LocalApproximation{N} where N<:Real
 
     approx = new_approx(Ω.S, p1, d1, p2, d2)
-    push!(Ω.approx_list, approx)
+    push!(Ω.approx_list_open, approx)
     return approx
 end
 
 """
-    refine(Ω::PolygonalOverapproximation, i::Int)::Tuple{LocalApproximation, LocalApproximation}
+    refine(Ω::PolygonalOverapproximation,
+           R::LocalApproximation
+          )::Tuple{LocalApproximation, LocalApproximation}
 
 Refine a given local approximation of the polygonal approximation of a convex set,
 by splitting along the normal direction to the approximation.
@@ -119,8 +122,9 @@ by splitting along the normal direction to the approximation.
 
 The tuple consisting of the refined right and left local approximations.
 """
-function refine(Ω::PolygonalOverapproximation, i::Int)::Tuple{LocalApproximation, LocalApproximation}
-    R = Ω.approx_list[i]
+function refine(Ω::PolygonalOverapproximation,
+                R::LocalApproximation
+               )::Tuple{LocalApproximation, LocalApproximation}
     @assert R.refinable
 
     ndir = normalize([R.p2[2]-R.p1[2], R.p1[1]-R.p2[1]])
@@ -131,7 +135,7 @@ function refine(Ω::PolygonalOverapproximation, i::Int)::Tuple{LocalApproximatio
 end
 
 """
-    tohrep(Ω::PolygonalOverapproximation{N})::AbstractHPolygon where {N<:Real}
+    tohrep(Ω::PolygonalOverapproximation{N})::AbstractHPolygon where N<:Real
 
 Convert a polygonal overapproximation into a concrete polygon.
 
@@ -143,9 +147,9 @@ Convert a polygonal overapproximation into a concrete polygon.
 
 A polygon in constraint representation.
 """
-function tohrep(Ω::PolygonalOverapproximation{N})::AbstractHPolygon where {N<:Real}
+function tohrep(Ω::PolygonalOverapproximation{N})::AbstractHPolygon where N<:Real
     p = HPolygon{N}()
-    for ai in Ω.approx_list
+    for ai in Ω.approx_list_done
         addconstraint!(p, LinearConstraint(ai.d1, dot(ai.d1, ai.p1)))
     end
     return p
@@ -153,7 +157,7 @@ end
 
 """
     approximate(S::LazySet{N},
-                ε::N)::PolygonalOverapproximation{N} where {N<:Real}
+                ε::N)::PolygonalOverapproximation{N} where N<:Real
 
 Return an ε-close approximation of the given 2D convex set (in terms of
 Hausdorff distance) as an inner and an outer approximation composed by sorted
@@ -169,7 +173,7 @@ local `Approximation2D`.
 An ε-close approximation of the given 2D convex set.
 """
 function approximate(S::LazySet{N},
-                     ε::N)::PolygonalOverapproximation{N} where {N<:Real}
+                     ε::N)::PolygonalOverapproximation{N} where N<:Real
 
     # initialize box directions
     pe = σ(DIR_EAST(N), S)
@@ -177,38 +181,40 @@ function approximate(S::LazySet{N},
     pw = σ(DIR_WEST(N), S)
     ps = σ(DIR_SOUTH(N), S)
 
-    Ω = PolygonalOverapproximation{N}(S)
+    Ω = PolygonalOverapproximation(S)
 
-    addapproximation!(Ω, pe, DIR_EAST(N), pn, DIR_NORTH(N))
-    addapproximation!(Ω, pn, DIR_NORTH(N), pw, DIR_WEST(N))
-    addapproximation!(Ω, pw, DIR_WEST(N), ps, DIR_SOUTH(N))
     addapproximation!(Ω, ps, DIR_SOUTH(N), pe, DIR_EAST(N))
+    addapproximation!(Ω, pw, DIR_WEST(N), ps, DIR_SOUTH(N))
+    addapproximation!(Ω, pn, DIR_NORTH(N), pw, DIR_WEST(N))
+    addapproximation!(Ω, pe, DIR_EAST(N), pn, DIR_NORTH(N))
 
-    i = 1
-    while i <= length(Ω.approx_list)
-        approx = Ω.approx_list[i]
+    open = Ω.approx_list_open
+    done = Ω.approx_list_done
+    while !isempty(open)
+        approx = pop!(open)
         if !approx.refinable || approx.err <= ε
-            # if this approximation doesn't need to be refined, consider the next
-            # one in the queue (counter-clockwise order wrt d1)
             # if the approximation is not refinable => continue
-            i += 1
-        else
-            inext = i + 1
-
-            (la1, la2) = refine(Ω, i)
-
-            Ω.approx_list[i] = la1
-
-            redundant = inext > length(Ω.approx_list) ? false :
-                (norm(la2.p1-Ω.approx_list[inext].p1) <= TOL(N)) &&
-                (norm(la2.q-Ω.approx_list[inext].q) <= TOL(N))
-            if redundant
-                # if it is redundant, keep the refined approximation
-                Ω.approx_list[inext] = la2
-            else
-                insert!(Ω.approx_list, inext, la2)
-            end
+            push!(done, approx)
+            continue
         end
+
+        (la1, la2) = refine(Ω, approx)
+
+        if isempty(open)
+            redundant = false
+        else
+            next = open[end]
+            redundant = (norm(la2.p1-next.p1) <= TOL(N)) &&
+                (norm(la2.q-next.q) <= TOL(N))
+        end
+        if redundant
+            # replace redundant old constraint
+            open[end] = la2
+        else
+            # add new constraint
+            push!(open, la2)
+        end
+        push!(open, la1)
     end
     return Ω
 end
