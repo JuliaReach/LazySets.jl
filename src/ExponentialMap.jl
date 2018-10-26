@@ -1,6 +1,6 @@
 using Expokit
 
-import Base: *, size, ∈
+import Base: *, size, ∈, isempty
 
 export SparseMatrixExp,
        ExponentialMap,
@@ -312,6 +312,23 @@ function ∈(x::AbstractVector{N}, em::ExponentialMap{N, <:LazySet{N}})::Bool wh
 end
 
 """
+    isempty(em::ExponentialMap)::Bool
+
+Return if an exponential map is empty or not.
+
+### Input
+
+- `em` -- exponential map
+
+### Output
+
+`true` iff the wrapped set is empty.
+"""
+function isempty(em::ExponentialMap)::Bool
+    return isempty(em.X)
+end
+
+"""
     vertices_list(em::ExponentialMap{N})::Vector{Vector{N}} where N<:Real
 
 Return the list of vertices of a (polytopic) exponential map.
@@ -463,4 +480,21 @@ function σ(d::AbstractVector{N},
     aux2 = eprojmap.projspmexp.R * svec
     daux = expmv(one(N), eprojmap.projspmexp.spmexp.M, aux2)
     return eprojmap.projspmexp.L * daux
+end
+
+"""
+    isempty(eprojmap::ExponentialProjectionMap)::Bool
+
+Return if an exponential projection map is empty or not.
+
+### Input
+
+- `eprojmap` -- exponential projection map
+
+### Output
+
+`true` iff the wrapped set is empty.
+"""
+function isempty(eprojmap::ExponentialProjectionMap)::Bool
+    return isempty(eprojmap.X)
 end

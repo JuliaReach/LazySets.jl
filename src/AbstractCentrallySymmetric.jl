@@ -1,3 +1,5 @@
+import Base.isempty
+
 export AbstractCentrallySymmetric,
        center,
        an_element
@@ -57,4 +59,21 @@ The center of the centrally symmetric set.
 """
 function an_element(S::AbstractCentrallySymmetric{N})::Vector{N} where {N<:Real}
     return center(S)
+end
+
+"""
+    isempty(S::AbstractCentrallySymmetric)::Bool
+
+Return if a centrally symmetric set is empty or not.
+
+### Input
+
+- `S` -- centrally symmetric set
+
+### Output
+
+`false`.
+"""
+function isempty(S::AbstractCentrallySymmetric)::Bool
+    return false
 end

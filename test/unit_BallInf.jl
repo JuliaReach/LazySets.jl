@@ -51,6 +51,9 @@ for N in [Float64, Rational{Int}, Float32]
     d = N[1, -1]
     @test σ(d, b) == N[2, -2]
 
+    # isempty
+    @test !isempty(b)
+
     # membership
     b = BallInf(N[1, 1], N(1))
     @test !∈(N[0.5, -0.5], b)

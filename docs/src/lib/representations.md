@@ -32,6 +32,7 @@ Inherited from [`LazySet`](@ref):
 
 Inherited from [`AbstractCentrallySymmetric`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetric))
+* [`isempty`](@ref isempty(::AbstractCentrallySymmetric))
 * `an_element`
 
 ### Infinity norm ball
@@ -52,6 +53,7 @@ Inherited from [`AbstractPolytope`](@ref):
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetricPolytope))
+* [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
 * `an_element`
 
 Inherited from [`AbstractHyperrectangle`](@ref):
@@ -83,6 +85,7 @@ Inherited from [`AbstractPolytope`](@ref):
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetricPolytope))
+* [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
 * `an_element`
 
 ### p-norm ball
@@ -100,6 +103,7 @@ Inherited from [`LazySet`](@ref):
 
 Inherited from [`AbstractCentrallySymmetric`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetric))
+* [`isempty`](@ref isempty(::AbstractCentrallySymmetric))
 * `an_element`
 
 ## Ellipsoid
@@ -117,6 +121,7 @@ Inherited from [`LazySet`](@ref):
 
 Inherited from [`AbstractCentrallySymmetric`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetric))
+* [`isempty`](@ref isempty(::AbstractCentrallySymmetric))
 * `an_element`
 
 ## Empty set
@@ -147,6 +152,7 @@ dim(::HalfSpace)
 σ(::AbstractVector{Real}, ::HalfSpace{Real})
 ∈(::AbstractVector{Real}, ::HalfSpace{Real})
 an_element(::HalfSpace{N}) where {N<:Real}
+isempty(::HalfSpace)
 constraints_list(::HalfSpace{N}) where {N<:Real}
 constrained_dimensions(::HalfSpace{N}) where {N<:Real}
 LazySets.halfspace_left(::AbstractVector{Real}, ::AbstractVector{Real})
@@ -165,6 +171,7 @@ dim(::Hyperplane)
 σ(::AbstractVector{Real}, ::Hyperplane{Real})
 ∈(::AbstractVector{Real}, ::Hyperplane{Real})
 an_element(::Hyperplane{N}) where {N<:Real}
+isempty(::Hyperplane)
 constrained_dimensions(::Hyperplane{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
@@ -189,6 +196,7 @@ Inherited from [`AbstractPolytope`](@ref):
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetricPolytope))
+* [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
 * `an_element`
 
 Inherited from [`AbstractHyperrectangle`](@ref):
@@ -224,6 +232,9 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
 
+Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
+* [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
+
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
@@ -236,6 +247,7 @@ dim(::Line)
 σ(::AbstractVector{Real}, ::Line{Real})
 ∈(::AbstractVector{Real}, ::Line{Real})
 an_element(::Line{N}) where {N<:Real}
+isempty(::Line)
 constrained_dimensions(::Line{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
@@ -259,6 +271,9 @@ Inherited from [`LazySet`](@ref):
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
+Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
+* [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
+
 ## Polygons
 
 ### Constraint representation
@@ -273,6 +288,7 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
 Inherited from [`AbstractPolytope`](@ref):
+* [`isempty`](@ref isempty(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
 
@@ -300,6 +316,7 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
 Inherited from [`AbstractPolytope`](@ref):
+* [`isempty`](@ref isempty(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
 
@@ -333,6 +350,7 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
 Inherited from [`AbstractPolytope`](@ref):
+* [`isempty`](@ref isempty(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
 
@@ -403,6 +421,7 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
 Inherited from [`AbstractPolytope`](@ref):
+* [`isempty`](@ref isempty(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
 
@@ -421,6 +440,7 @@ Inherited from [`AbstractPolytope`](@ref):
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetricPolytope))
+* [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
 
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
@@ -454,6 +474,9 @@ Inherited from [`LazySet`](@ref):
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope))
+
+Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
+* [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
 
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
@@ -493,4 +516,5 @@ Inherited from [`AbstractPolytope`](@ref):
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetricPolytope))
+* [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
 * `an_element`

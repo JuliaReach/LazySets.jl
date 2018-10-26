@@ -1,4 +1,4 @@
-import Base.∈
+import Base: ∈, isempty
 
 export Hyperplane,
        an_element
@@ -108,6 +108,23 @@ We just check if ``x`` satisfies ``a⋅x = b``.
 """
 function ∈(x::AbstractVector{N}, hp::Hyperplane{N})::Bool where {N<:Real}
     return dot(x, hp.a) == hp.b
+end
+
+"""
+    isempty(hp::Hyperplane)::Bool
+
+Return if a hyperplane is empty or not.
+
+### Input
+
+- `hp` -- hyperplane
+
+### Output
+
+`false`.
+"""
+function isempty(hp::Hyperplane)::Bool
+    return false
 end
 
 """

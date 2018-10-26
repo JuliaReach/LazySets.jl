@@ -1,4 +1,4 @@
-import Base.∈
+import Base: ∈, isempty
 
 export Line,
        an_element
@@ -173,6 +173,23 @@ The point ``x`` belongs to the line if and only if ``a⋅x = b`` holds.
 function ∈(x::AbstractVector{N}, L::Line{N})::Bool where {N<:Real}
     @assert length(x) == dim(L)
     return dot(L.a, x) == L.b
+end
+
+"""
+    isempty(L::Line)::Bool
+
+Return if a line is empty or not.
+
+### Input
+
+- `L` -- line
+
+### Output
+
+`false`.
+"""
+function isempty(L::Line)::Bool
+    return false
 end
 
 """

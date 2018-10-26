@@ -1,4 +1,4 @@
-import Base:*, ∈
+import Base: *, ∈, isempty
 
 export CartesianProduct,
        CartesianProductArray,
@@ -132,7 +132,7 @@ end
 """
     ∈(x::AbstractVector{<:Real}, cp::CartesianProduct)::Bool
 
-Check whether a given point is contained in a Cartesian product set.
+Check whether a given point is contained in a Cartesian product.
 
 ### Input
 
@@ -152,7 +152,25 @@ function ∈(x::AbstractVector{<:Real}, cp::CartesianProduct)::Bool
 end
 
 """
-    constraints_list(cp::CartesianProduct{N, <:LazySet{N}})::Vector{LinearConstraint{N}} where N<:Real
+    isempty(cp::CartesianProduct)::Bool
+
+Return if a Cartesian product is empty or not.
+
+### Input
+
+- `cp` -- Cartesian product
+
+### Output
+
+`true` iff any of the sub-blocks is empty.
+"""
+function isempty(cp::CartesianProduct)::Bool
+    return isempty(cp.X) || isempty(cp.Y)
+end
+
+"""
+    constraints_list(cp::CartesianProduct{N, <:LazySet{N}}
+                    )::Vector{LinearConstraint{N}} where N<:Real
 
 Return the list of constraints of a (polytopic) Cartesian product.
 
@@ -164,7 +182,8 @@ Return the list of constraints of a (polytopic) Cartesian product.
 
 A list of constraints.
 """
-function constraints_list(cp::CartesianProduct{N, <:LazySet{N}})::Vector{LinearConstraint{N}} where N<:Real
+function constraints_list(cp::CartesianProduct{N, <:LazySet{N}}
+                         )::Vector{LinearConstraint{N}} where N<:Real
     return constraints_list(CartesianProductArray([cp.X, cp.Y]))
 end
 
@@ -368,6 +387,23 @@ function ∈(x::AbstractVector{N}, cpa::CartesianProductArray{N, <:LazySet{N}}
         i0 = i1 + 1
     end
     return true
+end
+
+"""
+    isempty(cpa::CartesianProductArray)::Bool
+
+Return if a Cartesian product is empty or not.
+
+### Input
+
+- `cp` -- Cartesian product
+
+### Output
+
+`true` iff any of the sub-blocks is empty.
+"""
+function isempty(cpa::CartesianProductArray)::Bool
+    return any(X -> isempty(X), array(cpa))
 end
 
 """

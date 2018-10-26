@@ -97,7 +97,7 @@ function an_element(∅::EmptySet)
 end
 
 """
-    isempty(∅::EmptySet)
+    isempty(∅::EmptySet)::Bool
 
 Return if the empty set is empty or not.
 
@@ -109,7 +109,7 @@ Return if the empty set is empty or not.
 
 `true`.
 """
-function isempty(∅::EmptySet)
+function isempty(∅::EmptySet)::Bool
     return true
 end
 

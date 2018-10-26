@@ -1,4 +1,4 @@
-import Base: *, ∈
+import Base: *, ∈, isempty
 
 export LinearMap,
        an_element
@@ -258,6 +258,23 @@ It relies on the `an_element` function of the wrapped set.
 """
 function an_element(lm::LinearMap)
     return lm.M * an_element(lm.X)
+end
+
+"""
+    isempty(lm::LinearMap)::Bool
+
+Return if a linear map is empty or not.
+
+### Input
+
+- `lm` -- linear map
+
+### Output
+
+`true` iff the wrapped set is empty.
+"""
+function isempty(lm::LinearMap)::Bool
+    return isempty(lm.X)
 end
 
 """

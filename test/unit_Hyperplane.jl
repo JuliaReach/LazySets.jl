@@ -25,6 +25,9 @@ for N in [Float64, Rational{Int}, Float32]
     a = zeros(N, 3); a[3] = N(1)
     test_svec(Hyperplane(a, N(5)))
 
+    # isempty
+    @test !isempty(hp)
+
     # an_element and membership
     @test an_element(hp) ∈ hp
 

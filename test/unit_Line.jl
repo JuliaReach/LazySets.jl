@@ -23,10 +23,13 @@ for N in [Float64, Rational{Int}, Float32]
     # dimension
     @test dim(l1) == 2
 
-    # support vector & membership
+    # support vector
     σ(N[0, 1], l1)
     σ(N[1, 0], l2)
     σ(N[0, 1], l3)
+
+    # isempty
+    @test !isempty(l1)
 
     # an_element and membership
     an_element(l1) ∈ l1

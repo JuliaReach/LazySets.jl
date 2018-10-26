@@ -82,6 +82,7 @@ This interface defines the following functions:
 ```@docs
 dim(::AbstractCentrallySymmetric)
 an_element(::AbstractCentrallySymmetric{N}) where {N<:Real}
+isempty(::AbstractCentrallySymmetric)
 ```
 
 ## Polytope
@@ -152,6 +153,7 @@ This interface defines the following functions:
 ```@docs
 dim(::AbstractCentrallySymmetricPolytope)
 an_element(::AbstractCentrallySymmetricPolytope{N}) where {N<:Real}
+isempty(::AbstractCentrallySymmetricPolytope)
 ```
 
 #### Hyperrectangle

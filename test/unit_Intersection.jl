@@ -40,6 +40,9 @@ for N in [Float64, Rational{Int}, Float32]
     # support vector (currently throws an error)
     @test_throws ErrorException σ(ones(N, 2), IA)
 
+    # isempty
+    @test_throws MethodError isempty(IA)
+
     # membership
     @test ∈(ones(N, 2), IA) && !∈(N[5, 5], IA)
 

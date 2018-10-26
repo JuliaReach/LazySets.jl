@@ -23,6 +23,9 @@ for N in [Float64, Rational{Int}, Float32]
         @test element(s, i) == s.element[i]
     end
 
+    # isempty
+    @test !isempty(s)
+
     # membership
     S = Singleton(N[1, 1])
     !∈(N[0.9, 1.1], S)

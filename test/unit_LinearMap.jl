@@ -52,6 +52,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test lm1_copy.M == lm1.M
     @test lm1_copy.X == lm1.X
 
+    # isempty
+    @test !isempty(lm)
+
     # an_element function
     lm = N(2) * BallInf(N[0, 0], N(1))
     an_element(lm)

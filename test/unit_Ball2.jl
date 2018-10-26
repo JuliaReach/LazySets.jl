@@ -53,6 +53,9 @@ for N in [Float64, Float32]
     d = N[0, -1]
     @test σ(d, b) == N[0, -2]
 
+    # isempty
+    @test !isempty(b)
+
     # an_element function
     b = Ball2(N[1, 2], N(2))
     @test an_element(b) ∈ b

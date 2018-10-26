@@ -18,6 +18,9 @@ for N in [Float64, Rational{Int}, Float32]
     d = N[0, -1]
     @test σ(d, ch1) == N[0, -1]
 
+    # isempty
+    @test !isempty(ch1)
+
     # test convex hull of a set of points using the default algorithm
     points = to_N(N, [[0.9, 0.2], [0.4, 0.6], [0.2, 0.1], [0.1, 0.3], [0.3, 0.28]])
     @test convex_hull(points) == to_N(N, [[0.1, 0.3], [0.2, 0.1], [0.9, 0.2], [0.4, 0.6]])
@@ -47,6 +50,10 @@ for N in [Float64, Rational{Int}, Float32]
     @test σ(d, C) == N[1, 3]
     d = N[0, -1]
     @test σ(d, C) == N[0, -1]
+
+    # isempty
+    @test !isempty(C)
+
     # test convex hull array of singleton
     C = ConvexHullArray(
         [Singleton(to_N(N, [10, 0.5])), Singleton(to_N(N, [1.1, 0.2])),
