@@ -148,11 +148,7 @@ Convert a polygonal overapproximation into a concrete polygon.
 A polygon in constraint representation.
 """
 function tohrep(Ω::PolygonalOverapproximation{N})::AbstractHPolygon where N<:Real
-    p = HPolygon{N}()
-    for c in Ω.approx_list_done
-        addconstraint!(p, c)
-    end
-    return p
+    return HPolygon{N}(Ω.approx_list_done)
 end
 
 """
