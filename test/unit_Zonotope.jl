@@ -37,6 +37,9 @@ for N in [Float64, Rational{Int}, Float32]
     d = N[0, -1]
     @test σ(d, z) == N[2, 1]
 
+    # isempty
+    @test !isempty(z)
+
     # an_element function
     @test an_element(z) ∈ z
 

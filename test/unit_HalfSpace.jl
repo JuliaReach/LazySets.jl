@@ -27,6 +27,9 @@ for N in [Float64, Rational{Int}, Float32]
     # check that support vector in opposite direction of normal does not work
     @test_throws ErrorException σ(N[-1], HalfSpace(N[1], N(1)))
 
+    # isempty
+    @test !isempty(hs)
+
     # an_element function and membership function
     @test an_element(hs) ∈ hs
 

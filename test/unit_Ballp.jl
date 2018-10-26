@@ -34,6 +34,9 @@ for N in [Float64, Float32]
     @test center(b) == b.center
     @test an_element(b) isa AbstractVector{N}
 
+    # isempty
+    @test !isempty(b)
+
     # membership & an_element
     @test an_element(b) ∈ b
 end

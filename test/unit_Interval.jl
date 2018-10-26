@@ -53,6 +53,9 @@ for N in [Float64, Float32, Rational{Int}]
     r = (x + y) - (d + p)
     @test low(r) == N(-5.5) && high(r) == N(4)
 
+    # isempty
+    @test !isempty(x)
+
     # Minkowski sum (test that we get the same results as the concrete operation)
     m = x ⊕ y
     @test m isa MinkowskiSum

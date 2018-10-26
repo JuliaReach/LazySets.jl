@@ -69,6 +69,9 @@ for N in [Float64, Float32]
         @test svec ≈ svec_explicit
     end
 
+    # isempty
+    @test !isempty(emap)
+
     # membership
     x = ones(N, n)
     @test x ∈ b
@@ -100,6 +103,9 @@ for N in [Float64, Float32]
 
     # query the ambient dimension of projmap (hint: it is the output dimension)
     @test dim(projmap) == nb
+
+    # isempty
+    @test !isempty(projmap)
 
     #compute the support vector of the projection of an exponential map
 #     d = randn(N, nb)

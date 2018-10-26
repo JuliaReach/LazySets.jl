@@ -27,6 +27,9 @@ for N in [Float64, Float32, Rational{Int}]
     d = N[-1, -1, -1]
     @test σ(d, c1) == N[-1, -1, -1]
 
+    # isempty
+    @test !isempty(c1)
+
     # Cartesian Product of a not-centered 1D BallInf and a not-centered 2D BallInf
     # Here a Hyperrectangle where c = [1, -3, 4] and r = [3, 2, 2]
     b1 = BallInf(N[1], N(3))

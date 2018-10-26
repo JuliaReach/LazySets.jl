@@ -36,6 +36,10 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws AssertionError σ(N[0], HPolygon{N}())
     @test_throws AssertionError σ(N[0], HPolygonOpt(HPolygon{N}()))
 
+    # isempty
+    @test !isempty(p)
+    @test !isempty(po)
+
     # subset
     b1 = Ball1(N[0, 0], N(1))
     b2 = Ball1(N[1, 1], N(4))

@@ -50,6 +50,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test ρ(N[1], ms) == N(6)
     @test ρ(N[-1], ms) == N(-6)
 
+    # isempty
+    @test !isempty(ms)
+
     # an_element function (falls back to the default implementation
     X = MinkowskiSum(LineSegment(N[0, 0], N[1, 1]),
                      LineSegment(N[1, 0], N[0, 1]))
@@ -93,6 +96,9 @@ for N in [Float64, Rational{Int}, Float32]
     d = N[-1, 1]
     @test σ(d, ms) == σ(d, msa)
 
+    # isempty
+    @test !isempty(msa)
+
     # =================
     # CacheMinkowskiSum
     # =================
@@ -123,6 +129,9 @@ for N in [Float64, Rational{Int}, Float32]
     cp = LazySets.CachedPair(1, N[2])
     @test cp[1] == 1 && cp[2] == N[2]
     @test_throws ErrorException cp[3]
+
+    # isempty
+    @test !isempty(cms)
 
     # ================
     # common functions

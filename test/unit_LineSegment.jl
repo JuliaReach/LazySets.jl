@@ -27,6 +27,9 @@ for N in [Float64, Rational{Int}, Float32]
     # center function
     @test center(l) == N[1.5, 1.5]
 
+    # isempty
+    @test !isempty(l)
+
     # an_element function
     @test an_element(l) ∈ l
 

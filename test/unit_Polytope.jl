@@ -65,6 +65,10 @@ for N in [Float64, Rational{Int}, Float32]
         P = convert(HPolytope, H)
         vlist = vertices_list(P)
         @test ispermutation(vlist, [N[3, 3], N[3, -1], N[-1, -1], N[-1, 3]])
+
+        # isempty
+        @test !isempty(p)
+        @test !isempty(HPolytope{N}())
     end
 
     # -----
@@ -78,6 +82,10 @@ for N in [Float64, Rational{Int}, Float32]
 
     # dim
     @test dim(p) == 2
+
+    # isempty
+    @test !isempty(p)
+    @test isempty(VPolytope{N}())
 
     # vertices_list function
     @test vertices_list(p) == p.vertices
@@ -95,16 +103,8 @@ for N in [Float64, Rational{Int}, Float32]
 end
 
 # default Float64 constructors
-empty_H_polytope = HPolytope()
-empty_V_polytope = VPolytope()
-@test empty_H_polytope isa HPolytope{Float64}
-@test empty_V_polytope isa VPolytope{Float64}
-
-if test_suite_polyhedra
-    # check isempty function of the AbstractPolytope interface
-    @test !isempty(empty_H_polytope)
-    @test isempty(empty_V_polytope)
-end
+@test HPolytope() isa HPolytope{Float64}
+@test VPolytope() isa VPolytope{Float64}
 
 # Polyhedra tests that only work with Float64
 if test_suite_polyhedra

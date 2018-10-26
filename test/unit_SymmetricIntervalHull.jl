@@ -15,6 +15,9 @@ for N in [Float64, Rational{Int}, Float32]
     d = N[0, 1]
     @test σ(d, h)[2] == N(7) && σ(-d, h)[2] == N(-7)
 
+    # isempty
+    @test !isempty(h)
+
     # an_element function
     @test an_element(h) == N[0, 0]
 

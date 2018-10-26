@@ -24,6 +24,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test high(Z) == zeros(N, 2)
     @test low(Z) == zeros(N, 2)
 
+    # isempty
+    @test !isempty(Z)
+
     # subset
     z = ZeroSet{N}(1)
     s1 = Singleton(N[0])

@@ -56,6 +56,9 @@ for N in [Float64, Rational{Int}, Float32]
     # center
     @test center(b) == N[0, 0]
 
+    # isempty
+    @test !isempty(b)
+
     # an_element & membership function
     @test an_element(b) ∈ b
 

@@ -82,6 +82,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test low(H) ≈ to_N(N, [-2.6, 5.1, 0.4])
     @test high(H) ≈ to_N(N, [-1.6, 6.1, 1.4])
 
+    # isempty
+    @test !isempty(H)
+
     # membership
     H = Hyperrectangle(N[1, 1], N[2, 3])
     @test !∈(N[-1.1, 4.1], H)
