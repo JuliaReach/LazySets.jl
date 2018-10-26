@@ -54,7 +54,7 @@ end
     is_intersection_empty(H1::AbstractHyperrectangle{N},
                           H2::AbstractHyperrectangle{N},
                           witness::Bool=false
-                         )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
+                         )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
 
 Check whether two hyperrectangles do not intersect, and otherwise optionally
 compute a witness.
@@ -85,7 +85,7 @@ of `H2`.
 function is_intersection_empty(H1::AbstractHyperrectangle{N},
                                H2::AbstractHyperrectangle{N},
                                witness::Bool=false
-                              )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
     empty_intersection = false
     center_diff = center(H2) - center(H1)
     for i in eachindex(center_diff)
@@ -122,9 +122,9 @@ end
 
 
 # common code for singletons
-@inline function is_intersection_empty_helper(
+@inline function is_intersection_empty_helper_singleton(
         S::AbstractSingleton{N}, X::LazySet{N}, witness::Bool=false
-       )::Union{Bool, Tuple{Bool,Vector{N}} } where N<:Real
+       )::Union{Bool, Tuple{Bool, Vector{N}} } where N<:Real
     empty_intersection = element(S) ∉ X
     if witness
         return (empty_intersection, empty_intersection ? N[] : element(S))
@@ -137,7 +137,7 @@ end
     is_intersection_empty(S::AbstractSingleton{N},
                           X::LazySet{N},
                           witness::Bool=false
-                         )::Union{Bool,Tuple{Bool,Vector{N}}} where N<:Real
+                         )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
 
 Check whether a singleton and a convex set do not intersect, and otherwise
 optionally compute a witness.
@@ -163,8 +163,8 @@ optionally compute a witness.
 function is_intersection_empty(S::AbstractSingleton{N},
                                X::LazySet{N},
                                witness::Bool=false
-                              )::Union{Bool,Tuple{Bool,Vector{N}}} where N<:Real
-    return is_intersection_empty_helper(S, X, witness)
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
+    return is_intersection_empty_helper_singleton(S, X, witness)
 end
 
 
@@ -172,7 +172,7 @@ end
     is_intersection_empty(X::LazySet{N},
                           S::AbstractSingleton{N},
                           witness::Bool=false
-                         )::Union{Bool,Tuple{Bool,Vector{N}}} where N<:Real
+                         )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
 
 Check whether a convex set and a singleton do not intersect, and otherwise
 optionally compute a witness.
@@ -198,8 +198,8 @@ optionally compute a witness.
 function is_intersection_empty(X::LazySet{N},
                                S::AbstractSingleton{N},
                                witness::Bool=false
-                              )::Union{Bool,Tuple{Bool,Vector{N}}} where N<:Real
-    return is_intersection_empty_helper(S, X, witness)
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
+    return is_intersection_empty_helper_singleton(S, X, witness)
 end
 
 
@@ -207,7 +207,7 @@ end
     is_intersection_empty(S1::AbstractSingleton{N},
                           S2::AbstractSingleton{N},
                           witness::Bool=false
-                         )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
+                         )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
 
 Check whether two singletons do not intersect, and otherwise optionally compute
 a witness.
@@ -232,7 +232,7 @@ a witness.
 function is_intersection_empty(S1::AbstractSingleton{N},
                                S2::AbstractSingleton{N},
                                witness::Bool=false
-                              )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
     empty_intersection = element(S1) != element(S2)
     if witness
         return (empty_intersection, empty_intersection ? N[] : element(S1))
@@ -246,7 +246,7 @@ end
     is_intersection_empty(H::AbstractHyperrectangle{N},
                           S::AbstractSingleton{N},
                           witness::Bool=false
-                         )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
+                         )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
 
 Check whether a hyperrectangle and a singleton do not intersect, and otherwise
 optionally compute a witness.
@@ -271,8 +271,8 @@ optionally compute a witness.
 function is_intersection_empty(H::AbstractHyperrectangle{N},
                                S::AbstractSingleton{N},
                                witness::Bool=false
-                              )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
-    return is_intersection_empty_helper(S, H, witness)
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
+    return is_intersection_empty_helper_singleton(S, H, witness)
 end
 
 
@@ -280,7 +280,7 @@ end
     is_intersection_empty(S::AbstractSingleton{N},
                           H::AbstractHyperrectangle{N},
                           witness::Bool=false
-                         )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
+                         )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
 
 Check whether a singleton and a hyperrectangle do not intersect, and otherwise
 optionally compute a witness.
@@ -305,8 +305,8 @@ optionally compute a witness.
 function is_intersection_empty(S::AbstractSingleton{N},
                                H::AbstractHyperrectangle{N},
                                witness::Bool=false
-                              )::Union{Bool,Tuple{Bool,Vector{N}}} where {N<:Real}
-    return is_intersection_empty_helper(S, H, witness)
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
+    return is_intersection_empty_helper_singleton(S, H, witness)
 end
 
 
@@ -317,7 +317,7 @@ end
     is_intersection_empty(B1::Ball2{N},
                           B2::Ball2{N},
                           witness::Bool=false
-                         )::Union{Bool, Tuple{Bool,Vector{N}}} where {N<:Real}
+                         )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
 
 Check whether two balls in the 2-norm do not intersect, and otherwise optionally
 compute a witness.
@@ -350,7 +350,7 @@ choose `B1` for the smaller ball) as follows.
 function is_intersection_empty(B1::Ball2{N},
                                B2::Ball2{N},
                                witness::Bool=false
-                              )::Union{Bool, Tuple{Bool,Vector{N}}} where {N<:Real}
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
     center_diff_normed = norm(center(B2) - center(B1), 2)
     empty_intersection = center_diff_normed > B1.radius + B2.radius
 
@@ -385,7 +385,7 @@ end
 
 """
     is_intersection_empty(Z::Zonotope{N}, H::Hyperplane{N}, witness::Bool=false
-                         )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+                         )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
 
 Check whether a zonotope and a hyperplane do not intersect, and otherwise
 optionally compute a witness.
@@ -416,7 +416,7 @@ Witness production is currently not supported.
 function is_intersection_empty(Z::Zonotope{N},
                                H::Hyperplane{N},
                                witness::Bool=false
-                              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
     v = H.b - dot(H.a, Z.center)
     abs_sum = sum(abs(dot(H.a, Z.generators[:, i])) for i = 1:ngens(Z))
     empty_intersection = v < -abs_sum || v > abs_sum
@@ -432,7 +432,7 @@ end
 
 """
     is_intersection_empty(H::Hyperplane{N}, Z::Zonotope{N}, witness::Bool=false
-                         )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+                         )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
 
 Check whether a hyperplane and a zonotope do not intersect, and otherwise
 optionally compute a witness.
@@ -463,7 +463,7 @@ Witness production is currently not supported.
 function is_intersection_empty(H::Hyperplane{N},
                                Z::Zonotope{N},
                                witness::Bool=false
-                              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
     return is_intersection_empty(Z, H, witness)
 end
 
@@ -471,7 +471,7 @@ end
     is_intersection_empty(ls1::LineSegment{N},
                           ls2::LineSegment{N},
                           witness::Bool=false
-                         )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+                         )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
 
 Check whether two line segments do not intersect, and otherwise optionally
 compute a witness.
@@ -505,8 +505,8 @@ intersection point, if it exists.
 function is_intersection_empty(ls1::LineSegment{N},
                                ls2::LineSegment{N},
                                witness::Bool=false
-                              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
-    function cross(ls1::Vector{N}, ls2::Vector{N})::N where {N<:Real}
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
+    function cross(ls1::Vector{N}, ls2::Vector{N})::N where N<:Real
         return ls1[1] * ls2[2] - ls1[2] * ls2[1]
     end
 
@@ -582,12 +582,42 @@ end
 # --- Hyperplane ---
 
 
+@inline function is_intersection_empty_helper_hyperplane(
+        hp::Union{Hyperplane{N}, Line{N}},
+        X::LazySet{N},
+        witness::Bool=false
+       )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
+    normal_hp = hp.a
+    sv_left = σ(-normal_hp, X)
+    if -dot(sv_left, -normal_hp) <= hp.b
+        sv_right = σ(normal_hp, X)
+        empty_intersection = (hp.b > dot(sv_right, normal_hp))
+    else
+        empty_intersection = true
+    end
+    if witness
+        if empty_intersection
+            v = N[]
+        else
+            point_hp = an_element(hp)
+            point_line = sv_left
+            dir_line = sv_right - sv_left
+            d = dot((point_hp - point_line), normal_hp) /
+                dot(dir_line, normal_hp)
+            v = d * dir_line + point_line
+        end
+        return (empty_intersection, v)
+    else
+        return empty_intersection
+    end
+end
+
+
 """
     is_intersection_empty(X::LazySet{N},
                           hp::Union{Hyperplane{N}, Line{N}},
-                          [witness]::Bool=false;
-                          [kwargs...]
-                         )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
+                          [witness]::Bool=false
+                         )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
 
 Check whether a compact set an a hyperplane do not intersect, and otherwise
 optionally compute a witness.
@@ -597,7 +627,6 @@ optionally compute a witness.
 - `X`       -- compact set
 - `hp`      -- hyperplane
 - `witness` -- (optional, default: `false`) compute a witness if activated
-- `kwargs`  -- additional arguments (currently ignored)
 
 ### Output
 
@@ -629,50 +658,68 @@ for the line-hyperplane intersection.
 """
 function is_intersection_empty(X::LazySet{N},
                                hp::Union{Hyperplane{N}, Line{N}},
-                               witness::Bool=false;
-                               kwargs...
-                              )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
-    normal_hp = hp.a
-    sv_left = σ(-normal_hp, X)
-    if -dot(sv_left, -normal_hp) <= hp.b
-        sv_right = σ(normal_hp, X)
-        empty_intersection = (hp.b > dot(sv_right, normal_hp))
-    else
-        empty_intersection = true
-    end
-    if witness
-        if empty_intersection
-            v = N[]
-        else
-            point_hp = an_element(hp)
-            point_line = sv_left
-            dir_line = sv_right - sv_left
-            d = dot((point_hp - point_line), normal_hp) /
-                dot(dir_line, normal_hp)
-            v = d * dir_line + point_line
-        end
-        return (empty_intersection, v)
-    else
-        return empty_intersection
-    end
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
+    return is_intersection_empty_helper_hyperplane(hp, X, witness)
 end
 
 # symmetric function
 function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
                                X::LazySet{N},
-                               witness::Bool=false;
-                               kwargs...
-                              )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
-    return is_intersection_empty(X, hp, witness)
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
+    return is_intersection_empty_helper_hyperplane(hp, X, witness)
 end
 
+# disambiguation
+function is_intersection_empty(hp1::Union{Hyperplane{N}, Line{N}},
+                               hp2::Union{Hyperplane{N}, Line{N}},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
+    return is_intersection_empty_helper_hyperplane(hp1, hp2, witness)
+end
+
+# disambiguation
+function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
+                               S::AbstractSingleton{N},
+                               witness::Bool=false
+                              )::Bool where N<:Real
+    return is_intersection_empty_helper_singleton(S, hp, witness)
+end
+
+# symmetric method
+function is_intersection_empty(S::AbstractSingleton{N},
+                               hp::Union{Hyperplane{N}, Line{N}},
+                               witness::Bool=false
+                              )::Bool where N<:Real
+    return is_intersection_empty_helper_singleton(S, hp, witness)
+end
+
+
 # --- HalfSpace ---
+
+
+@inline function is_intersection_empty_helper_halfspace(
+        hs::HalfSpace{N},
+        X::LazySet{N},
+        witness::Bool=false
+       )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
+    if !witness
+        return -ρ(-hs.a, X) > hs.b
+    end
+
+    # for witness production, we compute the support vector instead
+    svec = σ(-hs.a, X)
+    empty_intersection = svec ∉ hs
+    v = empty_intersection ? N[] : svec
+    return (empty_intersection, v)
+end
 
 """
     is_intersection_empty(X::LazySet{N},
                           hs::HalfSpace{N},
                           [witness]::Bool=false
-                         )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
+                         )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
 
 Check whether a compact set an a half-space do not intersect, and otherwise
 optionally compute a witness.
@@ -707,34 +754,24 @@ Optional keyword arguments can be passed to the `ρ` function. In particular, if
 """
 function is_intersection_empty(X::LazySet{N},
                                hs::HalfSpace{N},
-                               witness::Bool=false;
-                               kwargs...
-                               )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
-    if !witness
-        return -ρ(-hs.a, X; kwargs...) > hs.b
-    end
-
-    # for witness production, we compute the support vector instead
-    svec = σ(-hs.a, X)
-    empty_intersection = svec ∉ hs
-    v = empty_intersection ? N[] : svec
-    return (empty_intersection, v)
+                               witness::Bool=false
+                               )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
+    return is_intersection_empty_helper_halfspace(hs, X, witness)
 end
 
 # symmetric function
 function is_intersection_empty(hs::HalfSpace{N},
                                X::LazySet{N},
-                               witness::Bool=false;
-                               kwargs...
-                              )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
-    return is_intersection_empty(X, hs, witness; kwargs...)
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
+    return is_intersection_empty_helper_halfspace(hs, X, witness)
 end
 
 """
     is_intersection_empty(hs1::HalfSpace{N},
                           hs2::HalfSpace{N},
                           [witness]::Bool=false
-                         )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
+                         )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
 
 Check whether two half-spaces do not intersect, and otherwise optionally compute
 a witness.
@@ -779,9 +816,8 @@ Such a dimension ``i`` always exists.
 """
 function is_intersection_empty(hs1::HalfSpace{N},
                                hs2::HalfSpace{N},
-                               witness::Bool=false;
-                               kwargs...
-                              )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
     a1 = hs1.a
     a2 = hs2.a
     issamedir, k = samedir(a1, -a2)
@@ -822,25 +858,44 @@ end
 # disambiguation
 function is_intersection_empty(H::HalfSpace{N},
                                S::AbstractSingleton{N},
-                               witness::Bool=false;
-                               kwargs...
-                              )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
-    return is_intersection_empty_helper(S, H, witness)
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
+    return is_intersection_empty_helper_singleton(S, H, witness)
 end
 
 # symmetric method
 function is_intersection_empty(S::AbstractSingleton{N},
                                H::HalfSpace{N},
-                               witness::Bool=false;
-                               kwargs...
-                              )::Union{Bool, Tuple{Bool,Vector{N}}} where N<:Real
-    return is_intersection_empty_helper(S, H, witness)
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
+    return is_intersection_empty_helper_singleton(S, H, witness)
 end
+
+# disambiguation
+function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
+                               hs::HalfSpace{N},
+                               witness::Bool=false
+                              )::Bool where N<:Real
+    return is_intersection_empty_helper_halfspace(hs, hp, witness)
+end
+
+# symmetric method
+function is_intersection_empty(hs::HalfSpace{N},
+                               hp::Union{Hyperplane{N}, Line{N}},
+                               witness::Bool=false
+                              )::Bool where N<:Real
+    return is_intersection_empty_helper_halfspace(hs, hp, witness)
+end
+
+
+# --- polyhedra ---
+
 
 """
     is_intersection_empty(X::LazySet{N},
-                          P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}}
-                         )::Bool where {N<:Real}
+                          P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
+                          witness::Bool=false
+                         )::Bool where N<:Real
 
 Check whether a compact set and a polytope do not intersect.
 
@@ -867,47 +922,80 @@ the number of constraints in ``P``.
 Note that this method can be used with any set ``P`` whose constraints are known.
 """
 function is_intersection_empty(X::LazySet{N},
-                               P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}}
+                               P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
+                               witness::Bool=false
                               )::Bool where N<:Real
     for Hi in constraints_list(P)
         if is_intersection_empty(X, Hi)
+            if witness
+                return (true, N[])
+            end
             return true
         end
+    end
+    if witness
+        error("witness production is not supported yet")
     end
     return false
 end
 
 # symmetric method
 function is_intersection_empty(P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
-                               X::LazySet{N}
+                               X::LazySet{N},
+                               witness::Bool=false
                               )::Bool where N<:Real
-    return is_intersection_empty(X, P)
+    return is_intersection_empty(X, P, witness)
 end
 
-# disambiguity
+# disambiguation
 function is_intersection_empty(P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
-                               Q::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}}
+                               Q::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
+                               witness::Bool=false
                               )::Bool where N<:Real
     for Hi in constraints_list(P)
         if is_intersection_empty(Q, Hi)
+            if witness
+                return (true, N[])
+            end
             return true
         end
+    end
+    if witness
+        error("witness production is not supported yet")
     end
     return false
 end
 
-# disambiguity
+# disambiguation
 function is_intersection_empty(P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
-                               hs::HalfSpace{N}
+                               hs::HalfSpace{N},
+                               witness::Bool=false
                               )::Bool where N<:Real
-    return -ρ(-hs.a, P; kwargs...) > hs.b
+    return is_intersection_empty_helper_halfspace(hs, P, witness)
 end
 
 # symmetric method
 function is_intersection_empty(hs::HalfSpace{N},
-                               P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}}
+                               P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
+                               witness::Bool=false
                               )::Bool where N<:Real
-    return is_intersection_empty(P, hs)
+    return is_intersection_empty_helper_halfspace(hs, P, witness)
+end
+
+# disambiguation
+function is_intersection_empty(P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
+                               S::AbstractSingleton{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
+    return is_intersection_empty_helper_singleton(S, P, witness)
+end
+
+# symmetric method
+function is_intersection_empty(S::AbstractSingleton{N},
+                               P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
+    return is_intersection_empty_helper_singleton(S, P, witness)
 end
 
 # --- alias ---
