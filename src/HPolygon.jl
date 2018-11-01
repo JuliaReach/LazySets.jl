@@ -76,7 +76,8 @@ function σ(d::AbstractVector{N}, P::HPolygon{N};
     if linear_search
         # linear search
         k = 1
-        while k <= n && P.constraints[k].a <= d
+        quadrant_d = quadrant(d)
+        while k <= n && le_quadrant(P.constraints[k].a, d, quadrant_d)
             k += 1
         end
     else

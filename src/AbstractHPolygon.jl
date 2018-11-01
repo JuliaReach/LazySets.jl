@@ -217,7 +217,8 @@ function addconstraint!(P::AbstractHPolygon{N},
         else
             if linear_search
                 # linear search
-                while d <= P.constraints[k].a
+                quadrant_d = quadrant(d)
+                while le_quadrant(d, quadrant_d, P.constraints[k].a)
                     k -= 1
                 end
             else
@@ -267,8 +268,9 @@ function binary_search_constraints(d::AbstractVector{N},
                                   )::Int where {N}
     lower = 1
     upper = n+1
+    quadrant_d = quadrant(d)
     while lower + 1 < upper
-        if constraints[k].a <= d
+        if le_quadrant(constraints[k].a, d, quadrant_d)
             lower = k
         else
             upper = k
@@ -278,7 +280,7 @@ function binary_search_constraints(d::AbstractVector{N},
     if choose_lower
         return lower
     else
-        if lower == 1 && !(constraints[1].a <= d)
+        if lower == 1 && !le_quadrant(constraints[1].a, d, quadrant_d)
             # special case for index 1
             return 1
         end

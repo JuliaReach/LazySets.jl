@@ -93,10 +93,11 @@ function σ(d::AbstractVector{N}, P::HPolygonOpt{N};
     @assert n > 0 "the polygon has no constraints"
     if linear_search
         # linear search
-        if (d <= P.constraints[P.ind].a)
+        quadrant_d = quadrant(d)
+        if le_quadrant(d, quadrant_d, P.constraints[P.ind].a)
             # search backward
             k = P.ind-1
-            while (k >= 1 && d <= P.constraints[k].a)
+            while (k >= 1 && le_quadrant(d, quadrant_d, P.constraints[k].a))
                 k -= 1
             end
             if (k == 0)
@@ -110,7 +111,7 @@ function σ(d::AbstractVector{N}, P::HPolygonOpt{N};
         else
             # search forward
             k = P.ind+1
-            while (k <= n && P.constraints[k].a <= d)
+            while (k <= n && le_quadrant(P.constraints[k].a, d, quadrant_d))
                 k += 1
             end
             if (k == n+1)

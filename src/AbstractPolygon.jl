@@ -114,14 +114,19 @@ This function is inspired from AGPX's answer in:
 end
 
 """
-    le_quadrant(u::AbstractVector{N}, v::AbstractVector{N})::Bool where N<:Real
+    le_quadrant(u::AbstractVector{N},
+                [quadrant_u]::Int=quadrant(u),
+                v::AbstractVector{N},
+                [quadrant_v]::Int=quadrant(v))::Bool where N<:Real
 
 Compares two 2D vectors by their direction.
 
 ### Input
 
-- `u` -- first 2D direction
-- `v` -- second 2D direction
+- `u`          -- first 2D direction
+- `quadrant_u` -- (optional, default: `quadrant(u)`) quadrant of `u`
+- `v`          -- second 2D direction
+- `quadrant_v` -- (optional, default: `quadrant(v)`) quadrant of `v`
 
 ### Output
 
@@ -136,19 +141,40 @@ direction (1, 0).
 
 The implementation checks the quadrant of each direction, and compares
 directions using the right-hand rule.
-In particular, it doesn't use the arctangent.
+In particular, it does not use the arctangent.
 """
 function le_quadrant(u::AbstractVector{N},
-                     v::AbstractVector{N})::Bool where N<:Real
-    qu, qv = quadrant(u), quadrant(v)
-    if qu == qv
+                     quadrant_u::Int,
+                     v::AbstractVector{N},
+                     quadrant_v::Int)::Bool where N<:Real
+    if quadrant_u == quadrant_v
         # same quadrant, check right-turn with center 0
         le = u[1] * v[2] - v[1] * u[2] >= zero(N)
     else
         # different quadrant
-        le = qu < qv
+        le = quadrant_u < quadrant_v
     end
     return le
+end
+
+# quadrant of u known
+@inline function le_quadrant(u::AbstractVector{N},
+                             quadrant_u::Int,
+                             v::AbstractVector{N})::Bool where N<:Real
+    return le_quadrant(u, quadrant_u, v, quadrant(v))
+end
+
+# quadrant of v known
+@inline function le_quadrant(u::AbstractVector{N},
+                             v::AbstractVector{N},
+                             quadrant_v::Int)::Bool where N<:Real
+    return le_quadrant(u, quadrant(u), v, quadrant_v)
+end
+
+# no quadrant known
+@inline function le_quadrant(u::AbstractVector{N},
+                             v::AbstractVector{N})::Bool where N<:Real
+    return le_quadrant(u, quadrant(u), v, quadrant(v))
 end
 
 """
