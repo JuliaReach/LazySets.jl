@@ -185,7 +185,7 @@ end
 """
     <=(u::AbstractVector{N},
        v::AbstractVector{N};
-       [algorithm]="quadrant")::Bool where N<:Real
+       [algorithm]::String="quadrant")::Bool where N<:Real
 
 Compares two 2D vectors by their direction.
 
@@ -204,23 +204,38 @@ True iff ``\\arg(u) [2π] ≤ \\arg(v) [2π]``
 The argument is measured in counter-clockwise fashion, with the 0 being the
 direction (1, 0).
 """
-function <=(u::AbstractVector{N},
-            v::AbstractVector{N},
-            algorithm::String)::Bool where N<:Real
-    if algorithm == "quadrant"
-        res = le_quadrant(u, v)
-    elseif algorithm == "jump2pi"
-        res = le_jump2pi(u, v)
-    else
-        error("unknown algorithm $algorithm")
+@static if VERSION < v"0.7-"
+    function <=(u::AbstractVector{N},
+                v::AbstractVector{N},
+                algorithm::String)::Bool where N<:Real
+        if algorithm == "quadrant"
+            res = le_quadrant(u, v)
+        elseif algorithm == "jump2pi"
+            res = le_jump2pi(u, v)
+        else
+            error("unknown algorithm $algorithm")
+        end
+        return res
     end
-    return res
-end
 
-# faster default implementation
-function <=(u::AbstractVector{N},
-            v::AbstractVector{N})::Bool where N<:Real
-    return le_quadrant(u, v)
+    # faster default implementation
+    function <=(u::AbstractVector{N},
+                v::AbstractVector{N})::Bool where N<:Real
+        return le_quadrant(u, v)
+    end
+else
+    function <=(u::AbstractVector{N},
+                v::AbstractVector{N};
+                algorithm::String="quadrant")::Bool where N<:Real
+        if algorithm == "quadrant"
+            res = le_quadrant(u, v)
+        elseif algorithm == "jump2pi"
+            res = le_jump2pi(u, v)
+        else
+            error("unknown algorithm $algorithm")
+        end
+        return res
+    end
 end
 
 """
