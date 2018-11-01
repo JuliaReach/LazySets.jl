@@ -180,6 +180,31 @@ function nonzero_indices(v::SparseVector{N})::Vector{Int} where N<:Real
 end
 
 """
+    reseed(rng::AbstractRNG, seed::Union{Int, Nothing})::AbstractRNG
+
+Reset the RNG seed if the seed argument is a number.
+
+### Input
+
+- `rng`  -- random number generator
+- `seed` -- seed for reseeding
+
+### Output
+
+The input RNG if the seed is `nothing`, and a reseeded RNG otherwise.
+"""
+function reseed(rng::AbstractRNG, seed::Union{Int, Nothing})::AbstractRNG
+    if seed != nothing
+        @static if VERSION < v"0.7-"
+            return Random.srand(rng, seed)
+        else
+            return Random.seed!(rng, seed)
+        end
+    end
+    return rng
+end
+
+"""
     @neutral(SET, NEUT)
 
 Create functions to make a lazy set operation commutative with a given neutral

@@ -239,3 +239,11 @@ function ==(X::LazySet, Y::LazySet)
 
     return true
 end
+
+@static if VERSION >= v"0.7-"
+    # hook into random API
+    import Random.rand
+    function rand(rng::AbstractRNG, ::SamplerType{T}) where T<:LazySet
+        rand(T, rng=rng)
+    end
+end

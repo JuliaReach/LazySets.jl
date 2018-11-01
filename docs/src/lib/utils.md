@@ -29,6 +29,7 @@ an_element_helper
 binary_search_constraints
 nonzero_indices
 samedir
+reseed
 ```
 
 ### Types
