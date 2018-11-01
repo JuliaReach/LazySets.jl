@@ -28,9 +28,10 @@ git:
 #script:
 #  - julia -e 'Pkg.clone(pwd()); Pkg.build("LazySets"); Pkg.test("LazySets"; coverage=true)'
 after_success:
-  # documentation
+  # documentation (restrict Documenter to release version 0.19.7 (breaking release) for now)
   - julia -e 'VERSION >= v"0.7-" && using Pkg;
               Pkg.add("Documenter");
+              VERSION >= v"0.7-" && Pkg.pin(PackageSpec(name="Documenter", version="0.19.7"));
               Pkg.add("Plots");
               Pkg.add("GR");
               Pkg.add("Polyhedra");
