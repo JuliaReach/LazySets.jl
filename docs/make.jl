@@ -40,7 +40,7 @@ deploydocs(
     repo = "github.com/JuliaReach/LazySets.jl.git",
     target = "build",
     osname = "linux",
-    julia  = "0.6",
+    julia  = "0.7",
     deps = nothing,
     make = nothing
 )
