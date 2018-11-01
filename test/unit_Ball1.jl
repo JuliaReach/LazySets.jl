@@ -1,4 +1,7 @@
 for N in [Float64, Rational{Int}, Float32]
+    # random ball
+    rand(Ball1)
+
     # 1D Ball1
     b = Ball1(N[0], N(1))
     # dimension

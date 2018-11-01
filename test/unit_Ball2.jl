@@ -1,4 +1,7 @@
 for N in [Float64, Float32]
+    # random ball
+    rand(Ball2)
+
     # 1D Ball2
     b = Ball2(N[0], N(1))
     # Test Dimension

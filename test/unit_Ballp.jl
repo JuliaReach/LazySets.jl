@@ -1,4 +1,7 @@
 for N in [Float64, Float32]
+    # random ball
+    rand(Ballp)
+
     # 1D Ball3
     b = Ballp(N(3), N[0], N(1))
     # dimension

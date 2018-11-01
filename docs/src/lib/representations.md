@@ -24,6 +24,7 @@ Ball2
 σ(::AbstractVector{AbstractFloat}, ::Ball2{AbstractFloat})
 ∈(::AbstractVector{AbstractFloat}, ::Ball2{AbstractFloat})
 center(::Ball2)
+rand(::Type{Ball2})
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -43,6 +44,7 @@ center(::BallInf)
 radius(::BallInf, ::Real)
 radius_hyperrectangle(::BallInf)
 radius_hyperrectangle(::BallInf, ::Int)
+rand(::Type{BallInf})
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
@@ -72,6 +74,7 @@ Ball1
 ∈(::AbstractVector{Real}, ::Ball1{Real})
 vertices_list(::Ball1)
 center(::Ball1)
+rand(::Type{Ball1})
 constraints_list(::Ball1)
 ```
 Inherited from [`LazySet`](@ref):
@@ -95,6 +98,7 @@ Ballp
 σ(::AbstractVector{AbstractFloat}, ::Ballp{AbstractFloat})
 ∈(::AbstractVector{AbstractFloat}, ::Ballp{AbstractFloat})
 center(::Ballp)
+rand(::Type{Ballp})
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
