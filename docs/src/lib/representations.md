@@ -394,7 +394,7 @@ isempty(::HPoly{N}) where {N<:Real}
 convex_hull(P1::HPoly{Real}, P2::HPoly{Real})
 cartesian_product(P1::HPoly{Real}, P2::HPoly{Real})
 tovrep(::HPoly{Real})
-vertices_list(::HPoly{Real})
+vertices_list(::HPolyhedron{Real})
 singleton_list(::HPolyhedron{N}) where {N<:Real}
 ```
 
