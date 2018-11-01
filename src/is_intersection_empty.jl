@@ -134,41 +134,6 @@ end
 end
 
 """
-    is_intersection_empty(S::AbstractSingleton{N},
-                          X::LazySet{N},
-                          witness::Bool=false
-                         )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
-
-Check whether a singleton and a convex set do not intersect, and otherwise
-optionally compute a witness.
-
-### Input
-
-- `S`       -- singleton
-- `X`       -- convex set
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``S ∩ X = ∅``
-* If `witness` option is activated:
-  * `(true, [])` iff ``S ∩ X = ∅``
-  * `(false, v)` iff ``S ∩ X ≠ ∅`` and
-    `v` = `element(S)` ``∈ S ∩ X``
-
-### Algorithm
-
-``S ∩ X = ∅`` iff `element(S)` ``∉ X``.
-"""
-function is_intersection_empty(S::AbstractSingleton{N},
-                               X::LazySet{N},
-                               witness::Bool=false
-                              )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
-    return is_intersection_empty_helper_singleton(S, X, witness)
-end
-
-
-"""
     is_intersection_empty(X::LazySet{N},
                           S::AbstractSingleton{N},
                           witness::Bool=false
@@ -202,6 +167,13 @@ function is_intersection_empty(X::LazySet{N},
     return is_intersection_empty_helper_singleton(S, X, witness)
 end
 
+# symmetric method
+function is_intersection_empty(S::AbstractSingleton{N},
+                               X::LazySet{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
+    return is_intersection_empty_helper_singleton(S, X, witness)
+end
 
 """
     is_intersection_empty(S1::AbstractSingleton{N},
@@ -241,7 +213,6 @@ function is_intersection_empty(S1::AbstractSingleton{N},
     end
 end
 
-
 """
     is_intersection_empty(H::AbstractHyperrectangle{N},
                           S::AbstractSingleton{N},
@@ -275,33 +246,7 @@ function is_intersection_empty(H::AbstractHyperrectangle{N},
     return is_intersection_empty_helper_singleton(S, H, witness)
 end
 
-
-"""
-    is_intersection_empty(S::AbstractSingleton{N},
-                          H::AbstractHyperrectangle{N},
-                          witness::Bool=false
-                         )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
-
-Check whether a singleton and a hyperrectangle do not intersect, and otherwise
-optionally compute a witness.
-
-### Input
-
-- `S` -- singleton
-- `H` -- hyperrectangle
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``H ∩ S = ∅``
-* If `witness` option is activated:
-  * `(true, [])` iff ``H ∩ S = ∅``
-  * `(false, v)` iff ``H ∩ S ≠ ∅`` and `v` = `element(S)` ``∈ H ∩ S``
-
-### Algorithm
-
-``S ∩ H = ∅`` iff `element(S)` ``∉ H``.
-"""
+# symmetric method
 function is_intersection_empty(S::AbstractSingleton{N},
                                H::AbstractHyperrectangle{N},
                                witness::Bool=false
@@ -430,36 +375,7 @@ function is_intersection_empty(Z::Zonotope{N},
     end
 end
 
-"""
-    is_intersection_empty(H::Hyperplane{N}, Z::Zonotope{N}, witness::Bool=false
-                         )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
-
-Check whether a hyperplane and a zonotope do not intersect, and otherwise
-optionally compute a witness.
-
-### Input
-
-- `H` -- hyperplane
-- `Z` -- zonotope
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``H ∩ Z = ∅``
-* If `witness` option is activated:
-  * `(true, [])` iff ``H ∩ Z = ∅``
-  * `(false, v)` iff ``H ∩ Z ≠ ∅`` and ``v ∈ H ∩ Z``
-
-### Algorithm
-
-``H ∩ Z = ∅`` iff ``(b - a⋅c) ∉ \\left[ ± ∑_{i=1}^p |a⋅g_i| \\right]``,
-where ``a``, ``b`` are the hyperplane coefficients, ``c`` is the zonotope's
-center, and ``g_i`` are the zonotope's generators.
-
-### Notes
-
-Witness production is currently not supported.
-"""
+# symmetric method
 function is_intersection_empty(H::Hyperplane{N},
                                Z::Zonotope{N},
                                witness::Bool=false
