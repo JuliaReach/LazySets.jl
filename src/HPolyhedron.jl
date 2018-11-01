@@ -416,15 +416,6 @@ julia> P = HPolyhedron([HalfSpace([1.0, 0.0], 1.0),
                         HalfSpace([0.0, -1.0], 1.0)]);
 
 julia> P_as_polytope = convert(HPolytope, P);
-
-julia> using Polyhedra # needed to compute the dual representation
-
-julia> vertices_list(P_as_polytope)
-4-element Array{Array{Float64,1},1}:
- [1.0, 1.0]
- [-1.0, 1.0]
- [1.0, -1.0]
- [-1.0, -1.0]
 ```
 """
 function vertices_list(P::HPolyhedron{N}) where {N<:Real}
