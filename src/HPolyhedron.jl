@@ -413,7 +413,7 @@ If `P` is known to be bounded, try converting to `HPolytope` first:
 julia> P = HPolyhedron([HalfSpace([1.0, 0.0], 1.0),
                         HalfSpace([0.0, 1.0], 1.0),
                         HalfSpace([-1.0, 0.0], 1.0),
-                        HalfSpace([0.0, -1.0], 1.0)])
+                        HalfSpace([0.0, -1.0], 1.0)]);
 
 julia> P_as_polytope = convert(HPolytope, P);
 
