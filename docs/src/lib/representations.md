@@ -391,11 +391,12 @@ constraints_list(::HPoly{Real})
 tosimplehrep(::HPoly{Real})
 tohrep(::HPoly{Real})
 isempty(::HPoly{N}) where {N<:Real}
-convex_hull(P1::HPoly{Real}, P2::HPoly{Real})
-cartesian_product(P1::HPoly{Real}, P2::HPoly{Real})
+convex_hull(::HPoly{Real}, ::HPoly{Real})
+cartesian_product(::HPoly{N}, ::HPoly{N}) where {N<:Real}
 tovrep(::HPoly{Real})
 vertices_list(::HPolyhedron{Real})
 singleton_list(::HPolyhedron{N}) where {N<:Real}
+polyhedron(::HPoly)
 ```
 
 Inherited from [`LazySet`](@ref):
@@ -414,6 +415,8 @@ VPolytope
 dim(::VPolytope)
 σ(::AbstractVector{Real}, ::VPolytope{Real})
 vertices_list(::VPolytope)
+cartesian_product(::VPolytope{N}, ::VPolytope{N}) where N
+polyhedron(::VPolytope)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
