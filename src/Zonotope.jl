@@ -227,12 +227,12 @@ function ∈(x::AbstractVector{N}, Z::Zonotope{N};
 
     p, n = ngens(Z), dim(Z)
     # (n+1) x (p+1) matrix with block-diagonal blocks 1 and Z.generators
-    A = [[one(N); fill(zero(N), p)]'; [fill(zero(N), n) Z.generators]]
+    A = [[one(N); zeros(N, p)]'; [zeros(N, n) Z.generators]]
     b = [zero(N); (x - Z.center)]
     lbounds = [zero(N); fill(-one(N), p)]
-    ubounds = [N(Inf); fill(one(N), p)]
+    ubounds = [N(Inf); ones(N, p)]
     sense = ['>'; fill('=', n)]
-    obj = [one(N); fill(zero(N), p)]
+    obj = [one(N); zeros(N, p)]
 
     lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
     return (lp.status == :Optimal) # Infeasible or Unbounded => false
