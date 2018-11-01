@@ -354,25 +354,23 @@ optionally compute a witness.
 where ``a``, ``b`` are the hyperplane coefficients, ``c`` is the zonotope's
 center, and ``g_i`` are the zonotope's generators.
 
-### Notes
-
-Witness production is currently not supported.
+For witness production we fall back to a less efficient implementation for
+general sets as the first argument.
 """
 function is_intersection_empty(Z::Zonotope{N},
                                H::Hyperplane{N},
                                witness::Bool=false
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
+    if witness
+        # use less efficient implementation that supports witness production
+        return invoke(is_intersection_empty,
+                      Tuple{LazySet{N}, Hyperplane{N}, Bool},
+                      Z, H, witness)
+    end
+
     v = H.b - dot(H.a, Z.center)
     abs_sum = sum(abs(dot(H.a, Z.generators[:, i])) for i = 1:ngens(Z))
-    empty_intersection = v < -abs_sum || v > abs_sum
-
-    if !witness
-        return empty_intersection
-    elseif empty_intersection
-        return (true, N[])
-    else
-        error("witness production is not supported yet")
-    end
+    return v < -abs_sum || v > abs_sum
 end
 
 # symmetric method
