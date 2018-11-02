@@ -192,7 +192,7 @@ Otherwise this function throws an error.
     end
 
     first_nonzero_entry_a = -1
-    if all(d .== 0)
+    if iszero(d)
         # zero vector
         return an_element(hp)
     else
