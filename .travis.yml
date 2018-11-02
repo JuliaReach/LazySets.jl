@@ -30,6 +30,7 @@ git:
 after_success:
   # documentation (restrict Documenter to release version 0.19.7 (breaking release) for now)
   - julia -e 'VERSION >= v"0.7-" && using Pkg;
+              Pkg.add("Compat");
               Pkg.add("Documenter");
               Pkg.add("Plots");
               Pkg.add("GR");
