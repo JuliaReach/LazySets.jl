@@ -116,6 +116,7 @@ Inherited from [`AbstractCentrallySymmetric`](@ref):
 Ellipsoid
 σ(::AbstractVector{AbstractFloat}, ::Ellipsoid{AbstractFloat})
 ∈(::AbstractVector{AbstractFloat}, ::Ellipsoid{AbstractFloat})
+rand(::Type{Ellipsoid})
 center(::Ellipsoid)
 ```
 Inherited from [`LazySet`](@ref):

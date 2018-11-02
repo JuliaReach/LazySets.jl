@@ -1,3 +1,5 @@
+import Base.rand
+
 export Ellipsoid
 
 """
@@ -68,6 +70,8 @@ struct Ellipsoid{N<:AbstractFloat} <: AbstractCentrallySymmetric{N}
     function Ellipsoid{N}(c::AbstractVector{N},
                           Q::AbstractMatrix{N}) where {N<:AbstractFloat}
         @assert length(c) == checksquare(Q)
+        @assert isposdef(Q) "an ellipsoid's shape matrix must be positive " *
+            "definite"
         return new{N}(c, Q)
     end
 end
@@ -79,6 +83,10 @@ Ellipsoid(c::AbstractVector{N}, Q::AbstractMatrix{N}) where {N<:AbstractFloat} =
 # convenience constructor for ellipsoid centered in the origin
 Ellipsoid(Q::AbstractMatrix{N}) where {N<:AbstractFloat} =
     Ellipsoid(zeros(N, size(Q, 1)), Q)
+
+
+# --- AbstractCentrallySymmetric interface functions ---
+
 
 """
     center(E::Ellipsoid{N})::Vector{N} where {N<:AbstractFloat}
@@ -96,6 +104,10 @@ The center of the ellipsoid.
 function center(E::Ellipsoid{N})::Vector{N} where {N<:AbstractFloat}
     return E.center
 end
+
+
+# --- LazySet interface functions ---
+
 
 """
     σ(d::AbstractVector{N}, E::Ellipsoid{N}) where {N<:AbstractFloat}
@@ -158,4 +170,47 @@ function ∈(x::AbstractVector{N}, E::Ellipsoid{N})::Bool where {N<:AbstractFloa
     @assert length(x) == dim(E)
     w, Q = x-E.center, E.shape_matrix
     return dot(w, Q \ w) ≤ 1
+end
+
+"""
+    rand(::Type{Ellipsoid}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
+        )::Ellipsoid{N}
+
+Create a random ellipsoid.
+
+### Input
+
+- `Ellipsoid` -- type for dispatch
+- `N`         -- (optional, default: `Float64`) numeric type
+- `dim`       -- (optional, default: 2) dimension
+- `rng`       -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed`      -- (optional, default: `nothing`) seed for reseeding
+
+### Output
+
+A random ellipsoid.
+
+### Algorithm
+
+The center is a normally distributed vector with entries of mean 0 and standard
+deviation 1.
+
+The idea for the shape matrix comes from
+[here](https://math.stackexchange.com/a/358092).
+The matrix is symmetric positive definite, but also diagonally dominant.
+"""
+function rand(::Type{Ellipsoid};
+              N::Type{<:Real}=Float64,
+              dim::Int=2,
+              rng::AbstractRNG=GLOBAL_RNG,
+              seed::Union{Int, Nothing}=nothing
+             )::Ellipsoid{N}
+    rng = reseed(rng, seed)
+    center = randn(rng, N, dim)
+    # random entries in [-1, 1]
+    shape_matrix = rand(N(-1):N(.0001):N(1), dim, dim)
+    shape_matrix = N(0.5) * (shape_matrix + shape_matrix') +
+                   Matrix{N}(dim*I, dim, dim)
+    return Ellipsoid(center, shape_matrix)
 end
