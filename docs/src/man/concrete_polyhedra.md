@@ -96,6 +96,19 @@ product.
 The dual representation as a list of vertices can be obtained with the
 `vertices_list` function.
 
+```@example concrete_polyhedra
+p = HPolytope([LinearConstraint([1.0, 0.0], 1.0),
+               LinearConstraint([0.0, 1.0], 1.0),
+               LinearConstraint([-1.0, 0.0], 1.0),
+               LinearConstraint([0.0, -1.0], 1.0)])
+
+constraints_list(p)
+```
+
+```@example concrete_polyhedra
+vertices_list(p)
+```
+
 For example, the concrete intersection of two polytopes is performed with the
 `intersection` method.
 

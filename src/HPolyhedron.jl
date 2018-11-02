@@ -334,9 +334,8 @@ function convex_hull(P1::HPoly{N},
 end
 
 """
-    cartesian_product(P1::HPOLY, P2::HPOLY;
-                      [backend]=default_polyhedra_backend(P1, N)
-                     ) where {N, HPOLY<:HPolytope{N}}
+    cartesian_product(P1::HPoly{N}, P2::HPoly{N};
+                      [backend]=default_polyhedra_backend(P1, N)) where N<:Real
 
 Compute the Cartesian product of two polyhedra in H-representaion.
 
@@ -356,8 +355,10 @@ The polyhedron obtained by the concrete cartesian product of `P1` and `P2`.
 For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/).
 """
-function cartesian_product(P1::HPoly{N}, P2::HPoly{N};
-                          backend=default_polyhedra_backend(P1, N)) where {N}
+function cartesian_product(P1::HPoly{N},
+                           P2::HPoly{N};
+                           backend=default_polyhedra_backend(P1, N)
+                          ) where N<:Real
     @assert isdefined(Main, :Polyhedra) "the function `cartesian_product` " *
         "needs the package 'Polyhedra' to be loaded"
     Pcp = hcartesianproduct(polyhedron(P1, backend), polyhedron(P2, backend))
@@ -412,18 +413,9 @@ If `P` is known to be bounded, try converting to `HPolytope` first:
 julia> P = HPolyhedron([HalfSpace([1.0, 0.0], 1.0),
                         HalfSpace([0.0, 1.0], 1.0),
                         HalfSpace([-1.0, 0.0], 1.0),
-                        HalfSpace([0.0, -1.0], 1.0)])
+                        HalfSpace([0.0, -1.0], 1.0)]);
 
 julia> P_as_polytope = convert(HPolytope, P);
-
-julia> using Polyhedra # needed to compute the dual representation
-
-julia> vertices_list(P_as_polytope)
-4-element Array{Array{Float64,1},1}:
- [1.0, 1.0]
- [-1.0, 1.0]
- [1.0, -1.0]
- [-1.0, -1.0]
 ```
 """
 function vertices_list(P::HPolyhedron{N}) where {N<:Real}

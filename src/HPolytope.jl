@@ -126,28 +126,6 @@ List of vertices.
 
 For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/).
-
-### Examples
-
-```jldoctest
-julia> using Polyhedra
-
-julia> P = HPolytope([1.0 0.0; 0.0 1.0; -1.0 0.0; 0.0 -1.0], fill(1., 4));
-
-julia> constraints_list(P)
-4-element Array{HalfSpace{Float64},1}:
- HalfSpace{Float64}([1.0, 0.0], 1.0)
- HalfSpace{Float64}([0.0, 1.0], 1.0)
- HalfSpace{Float64}([-1.0, 0.0], 1.0)
- HalfSpace{Float64}([0.0, -1.0], 1.0)
-
-julia> vertices_list(P)
-4-element Array{Array{Float64,1},1}:
- [1.0, 1.0]
- [-1.0, 1.0]
- [1.0, -1.0]
- [-1.0, -1.0]
-```
 """
 function vertices_list(P::HPolytope{N};
                        backend=default_polyhedra_backend(P, N),
