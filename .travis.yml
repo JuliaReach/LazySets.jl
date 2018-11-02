@@ -31,14 +31,14 @@ after_success:
   # documentation (restrict Documenter to release version 0.19.7 (breaking release) for now)
   - julia -e 'VERSION >= v"0.7-" && using Pkg;
               Pkg.add("Documenter");
-              VERSION >= v"0.7-" && Pkg.pin(PackageSpec(name="Documenter", version="0.19.7"));
               Pkg.add("Plots");
               Pkg.add("GR");
               Pkg.add("Polyhedra");
               Pkg.add("CDDLib");
               Pkg.add("Optim");
               Pkg.add("StaticArrays");
-              VERSION >= v"0.7-" && VERSION < v"1.0-" && Pkg.pin(PackageSpec(name="GR", version="0.33.1"));'
+              VERSION >= v"0.7-" && VERSION < v"1.0-" && Pkg.pin([PackageSpec(name="Documenter", version="0.19.7"), PackageSpec(name="GR", version="0.33.1")]);
+              VERSION >= v"1.0-"&& Pkg.pin(PackageSpec(name="GR", version="0.33.1"));'
               # pinning must be the last command because otherwise it is ignored
   - julia -e 'cd(Pkg.dir("LazySets")); include(joinpath("docs", "make.jl"))'
   # code coverage (for both Coveralls and Codecov)
