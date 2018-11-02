@@ -1,4 +1,7 @@
 for N in [Float64, Rational{Int}, Float32]
+    # random hyperrectangle
+    rand(Hyperrectangle)
+
     # 1D Hyperrectangle
     h = Hyperrectangle(N[0], N[1])
     # Test Dimension

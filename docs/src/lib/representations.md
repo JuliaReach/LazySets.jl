@@ -187,6 +187,7 @@ Inherited from [`LazySet`](@ref):
 
 ```@docs
 Hyperrectangle
+rand(::Type{Hyperrectangle})
 center(::Hyperrectangle)
 radius_hyperrectangle(::Hyperrectangle)
 radius_hyperrectangle(::Hyperrectangle, ::Int)
