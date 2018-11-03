@@ -174,7 +174,16 @@ Hence we do not need to use `addconstraint!` when creating the `HPolygon`.
 """
 function tohrep(Ω::PolygonalOverapproximation{N}
                )::AbstractHPolygon{N} where N<:Real
-    return HPolygon{N}(Ω.constraints)
+    # already finalized
+    if isempty(Ω.approx_stack)
+        return HPolygon(Ω.constraints)
+    end
+    # some constraints not finalized yet
+    constraints = copy(Ω.constraints)
+    for approx in Ω.approx_stack
+        push!(constraints, constraint(approx))
+    end
+    return HPolygon(constraints)
 end
 
 """
