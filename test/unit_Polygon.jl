@@ -1,4 +1,9 @@
 for N in [Float64, Float32, Rational{Int}]
+    # random polygons
+    rand(HPolygon)
+    rand(HPolygonOpt)
+    rand(VPolygon)
+
     # Empty polygon
     p = HPolygon{N}()
 

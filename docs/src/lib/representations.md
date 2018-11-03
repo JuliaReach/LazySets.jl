@@ -351,6 +351,7 @@ VPolygon
 σ(::AbstractVector{Real}, ::VPolygon{Real})
 ∈(::AbstractVector{Real}, ::VPolygon{Real})
 an_element(::VPolygon{N}) where {N<:Real}
+rand(::Type{VPolygon})
 vertices_list(::VPolygon)
 tohrep(::VPolygon)
 tovrep(::VPolygon)
@@ -391,7 +392,7 @@ HPolytope
 HPolyhedron
 ```
 
-The following methods are shared between polyhedra and polytopes. 
+The following methods are shared between `HPolytope` and `HPolyhedron`.
 
 ```@docs
 dim(::HPoly{Real})
@@ -406,8 +407,6 @@ isempty(::HPoly{N}) where {N<:Real}
 convex_hull(::HPoly{Real}, ::HPoly{Real})
 cartesian_product(::HPoly{N}, ::HPoly{N}) where {N<:Real}
 tovrep(::HPoly{Real})
-vertices_list(::HPolyhedron{Real})
-singleton_list(::HPolyhedron{N}) where {N<:Real}
 polyhedron(::HPoly)
 ```
 
@@ -417,8 +416,29 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
 Inherited from [`AbstractPolytope`](@ref):
-* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
+
+#### Polytopes in constraint representation
+
+The following methods are specific for `HPolytope`.
+
+```@docs
+rand(::Type{HPolytope})
+vertices_list(::HPolytope{Real})
+```
+
+Inherited from [`AbstractPolytope`](@ref):
+* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
+The following methods are specific for polytopes.
+
+#### Polyhedra
+
+The following methods are specific for `HPolyhedron`.
+
+```@docs
+vertices_list(::HPolyhedron{Real})
+singleton_list(::HPolyhedron{N}) where {N<:Real}
+```
 
 ### Vertex representation
 
@@ -426,6 +446,7 @@ Inherited from [`AbstractPolytope`](@ref):
 VPolytope
 dim(::VPolytope)
 σ(::AbstractVector{Real}, ::VPolytope{Real})
+rand(::Type{VPolytope})
 vertices_list(::VPolytope)
 cartesian_product(::VPolytope{N}, ::VPolytope{N}) where N
 polyhedron(::VPolytope)
