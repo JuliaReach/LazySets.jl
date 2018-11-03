@@ -158,6 +158,7 @@ dim(::HalfSpace)
 σ(::AbstractVector{Real}, ::HalfSpace{Real})
 ∈(::AbstractVector{Real}, ::HalfSpace{Real})
 an_element(::HalfSpace{N}) where {N<:Real}
+rand(::Type{HalfSpace})
 isempty(::HalfSpace)
 constraints_list(::HalfSpace{N}) where {N<:Real}
 constrained_dimensions(::HalfSpace{N}) where {N<:Real}
@@ -177,6 +178,7 @@ dim(::Hyperplane)
 σ(::AbstractVector{Real}, ::Hyperplane{Real})
 ∈(::AbstractVector{Real}, ::Hyperplane{Real})
 an_element(::Hyperplane{N}) where {N<:Real}
+rand(::Type{Hyperplane})
 isempty(::Hyperplane)
 constrained_dimensions(::Hyperplane{N}) where {N<:Real}
 ```
@@ -255,6 +257,7 @@ dim(::Line)
 σ(::AbstractVector{Real}, ::Line{Real})
 ∈(::AbstractVector{Real}, ::Line{Real})
 an_element(::Line{N}) where {N<:Real}
+rand(::Type{Line})
 isempty(::Line)
 constrained_dimensions(::Line{N}) where {N<:Real}
 ```
