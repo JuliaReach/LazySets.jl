@@ -514,6 +514,7 @@ Inherited from [`AbstractSingleton`](@ref):
 Zonotope
 σ(::AbstractVector{Real}, ::Zonotope{Real})
 ∈(::AbstractVector{Real}, ::Zonotope{Real})
+rand(::Type{Zonotope})
 vertices_list(::Zonotope)
 center(::Zonotope)
 order(::Zonotope)

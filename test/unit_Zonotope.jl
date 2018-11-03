@@ -1,4 +1,7 @@
 for N in [Float64, Rational{Int}, Float32]
+    # random zonotope
+    rand(Zonotope)
+
     # 1D Zonotope
     z = Zonotope(N[0], Matrix{N}(I, 1, 1))
     # Test Dimension
