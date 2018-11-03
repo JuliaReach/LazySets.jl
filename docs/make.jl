@@ -2,7 +2,7 @@ ENV["GKSwstype"] = "100"  # set 'GR environment' to 'no output' (for Travis CI)
 using Documenter, LazySets, Polyhedra
 
 makedocs(
-    doctest = true,  # use this flag to skip doctests (saves time!)
+    doctest = false,
     modules = [LazySets, Approximations],
     format = :html,
     assets = ["assets/juliareach.css"],
