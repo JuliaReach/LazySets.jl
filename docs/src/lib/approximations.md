@@ -51,7 +51,7 @@ LocalApproximation
 PolygonalOverapproximation
 new_approx(::LazySet, ::Vector{Float64}, ::Vector{Float64}, ::Vector{Float64}, ::Vector{Float64})
 addapproximation!(::PolygonalOverapproximation, ::Vector{Float64}, ::Vector{Float64}, ::Vector{Float64}, ::Vector{Float64})
-refine(::PolygonalOverapproximation, ::Int)
+refine(::LocalApproximation, ::LazySet)
 tohrep(::PolygonalOverapproximation)
 approximate(::LazySet{Float64}, ::Float64)
 ```
