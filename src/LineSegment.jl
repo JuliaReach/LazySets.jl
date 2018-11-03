@@ -1,4 +1,5 @@
-import Base.∈
+import Base: rand,
+             ∈
 
 export LineSegment,
        halfspace_left, halfspace_right,
@@ -209,6 +210,46 @@ The list of end points of the line segment.
 function vertices_list(L::LineSegment{N}
                       )::Vector{<:AbstractVector{N}} where {N<:Real}
     return [L.p, L.q]
+end
+
+
+# --- LazySet interface functions ---
+
+
+"""
+    rand(::Type{LineSegment}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
+        )::LineSegment{N}
+
+Create a random line segment.
+
+### Input
+
+- `LineSegment` -- type for dispatch
+- `N`           -- (optional, default: `Float64`) numeric type
+- `dim`         -- (optional, default: 2) dimension
+- `rng`         -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed`        -- (optional, default: `nothing`) seed for reseeding
+
+### Output
+
+A random line segment.
+
+### Algorithm
+
+All numbers are normally distributed with mean 0 and standard deviation 1.
+"""
+function rand(::Type{LineSegment};
+              N::Type{<:Real}=Float64,
+              dim::Int=2,
+              rng::AbstractRNG=GLOBAL_RNG,
+              seed::Union{Int, Nothing}=nothing
+             )::LineSegment{N}
+    @assert dim == 2 "a LineSegment must have dimension 2"
+    rng = reseed(rng, seed)
+    p = randn(rng, N, dim)
+    q = randn(rng, N, dim)
+    return LineSegment(p, q)
 end
 
 

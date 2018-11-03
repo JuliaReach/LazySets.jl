@@ -1,4 +1,7 @@
 for N in [Float64, Rational{Int}, Float32]
+    # random zero set
+    rand(ZeroSet)
+
     Z = ZeroSet{N}(2)
     B = BallInf(ones(N, 2), N(1))
 

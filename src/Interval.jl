@@ -1,6 +1,6 @@
 import IntervalArithmetic
 import IntervalArithmetic: AbstractInterval
-import Base:+, -, *, ∈, ⊆
+import Base: +, -, *, ∈, ⊆, rand
 
 export Interval,
        dim, σ, center,
@@ -286,6 +286,42 @@ The left border (`low(x)`) of the interval.
 """
 function an_element(x::Interval{N})::Vector{N} where {N<:Real}
     return [low(x)]
+end
+
+"""
+    rand(::Type{Interval}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
+        )::Interval{N}
+
+Create a random interval.
+
+### Input
+
+- `Interval` -- type for dispatch
+- `N`        -- (optional, default: `Float64`) numeric type
+- `dim`      -- (optional, default: 1) dimension
+- `rng`      -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed`     -- (optional, default: `nothing`) seed for reseeding
+
+### Output
+
+A random interval.
+
+### Algorithm
+
+All numbers are normally distributed with mean 0 and standard deviation 1.
+"""
+function rand(::Type{Interval};
+              N::Type{<:Real}=Float64,
+              dim::Int=1,
+              rng::AbstractRNG=GLOBAL_RNG,
+              seed::Union{Int, Nothing}=nothing
+             )::Interval{N}
+    @assert dim == 1 "an Interval must have dimension 1"
+    rng = reseed(rng, seed)
+    x = randn(rng, N)
+    y = randn(rng, N)
+    return x < y ? Interval(x, y) : Interval(y, x)
 end
 
 """

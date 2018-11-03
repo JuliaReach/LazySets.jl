@@ -138,6 +138,7 @@ dim(::EmptySet)
 σ(::AbstractVector{Real}, ::EmptySet{Real})
 ∈(::AbstractVector{Real}, ::EmptySet{Real})
 an_element(::EmptySet)
+rand(::Type{EmptySet})
 isempty(::EmptySet)
 norm(::EmptySet, ::Real)
 radius(::EmptySet, ::Real)
@@ -230,6 +231,7 @@ high(::Interval)
 +(::Interval, ::Interval)
 -(::Interval, ::Interval)
 *(::Interval, ::Interval)
+rand(::Type{Interval})
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
@@ -268,6 +270,7 @@ LineSegment
 dim(::LineSegment)
 σ(::AbstractVector{Real}, ::LineSegment{Real})
 ∈(::AbstractVector{Real}, ::LineSegment{Real})
+rand(::Type{LineSegment})
 LazySets.halfspace_left(::LineSegment)
 LazySets.halfspace_right(::LineSegment)
 LazySets.constraints_list(::LineSegment)
@@ -438,6 +441,7 @@ Inherited from [`AbstractPolytope`](@ref):
 
 ```@docs
 Singleton
+rand(::Type{Singleton})
 element(::Singleton)
 element(::Singleton, ::Int)
 ```
@@ -474,6 +478,7 @@ ZeroSet
 dim(::ZeroSet)
 σ(::AbstractVector{N}, ::ZeroSet{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::ZeroSet{N}) where {N<:Real}
+rand(::Type{ZeroSet})
 element(::ZeroSet)
 element(::ZeroSet, ::Int)
 linear_map(::AbstractMatrix, ::ZeroSet{N}) where {N<:Real}
