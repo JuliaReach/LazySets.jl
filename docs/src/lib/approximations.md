@@ -54,6 +54,7 @@ addapproximation!(::PolygonalOverapproximation, ::Vector{Float64}, ::Vector{Floa
 refine(::LocalApproximation, ::LazySet)
 tohrep(::PolygonalOverapproximation)
 approximate(::LazySet{Float64}, ::Float64)
+constraint(::LocalApproximation)
 ```
 
 ## Template directions
