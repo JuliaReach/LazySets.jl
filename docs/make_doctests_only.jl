@@ -4,5 +4,5 @@ makedocs(
     doctest = true,
     modules = Module[LazySets, Approximations],
     source = "src/lib",
-    strict = false
+    strict = true
 )

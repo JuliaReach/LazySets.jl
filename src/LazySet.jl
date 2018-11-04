@@ -44,10 +44,10 @@ julia> subtypes(LazySet)
  ExponentialMap
  ExponentialProjectionMap
  HPolyhedron
+ HalfSpace
  Hyperplane
  Intersection
  IntersectionArray
- HalfSpace
  Line
  LinearMap
  MinkowskiSum
