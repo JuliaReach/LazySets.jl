@@ -77,7 +77,7 @@ Hausdorff distance.
 ```@example example_iterative_refinement
 import LazySets.Approximations:PolygonalOverapproximation, addapproximation!
 
-Ω = PolygonalOverapproximation{Float64}(b)
+Ω = PolygonalOverapproximation(b)
 p1, d1, p2, d2 = [1.0, 0.0], [1.0, 0.0], [0.0, 1.0], [0.0, 1.0]
 approx_EAST_NORTH = addapproximation!(Ω, p1, d1, p2, d2)
 
@@ -113,9 +113,11 @@ plot(b, 1e-3, aspectratio=1, alpha=0.3)
 DIR_EAST, DIR_NORTH, DIR_WEST, DIR_SOUTH = [1., 0.], [0., 1.], [-1., 0.], [0., -1.]
 pe, pn, pw, ps = σ(DIR_EAST, b), σ(DIR_NORTH, b), σ(DIR_WEST, b), σ(DIR_SOUTH, b)
 
-addapproximation!(Ω, pn, DIR_NORTH, pw, DIR_WEST)
-addapproximation!(Ω, pw, DIR_WEST, ps, DIR_SOUTH)
+Ω = PolygonalOverapproximation(b)
 addapproximation!(Ω, ps, DIR_SOUTH, pe, DIR_EAST)
+addapproximation!(Ω, pw, DIR_WEST, ps, DIR_SOUTH)
+addapproximation!(Ω, pn, DIR_NORTH, pw, DIR_WEST)
+addapproximation!(Ω, pe, DIR_EAST, pn, DIR_NORTH)
 
 plot!(tohrep(Ω), alpha=0.2, color="orange")
 ```
@@ -123,9 +125,10 @@ plot!(tohrep(Ω), alpha=0.2, color="orange")
 Next we refine the first approximation of the list.
 
 ```@example example_iterative_refinement
-(r1, r2) = refine(Ω, 1)
-Ω.approx_list[1] = r1
-insert!(Ω.approx_list, 2, r2)
+approx = pop!(Ω.approx_stack)
+(r1, r2) = refine(approx, Ω.S)
+push!(Ω.approx_stack, r2)
+push!(Ω.approx_stack, r1)
 
 plot(b, 1e-3, aspectratio=1, alpha=0.3)
 plot!(tohrep(Ω), alpha=0.2, color="orange")
@@ -136,15 +139,16 @@ are saved in counter-clockwise order.
 We can check that the first two approximations are still refinable.
 
 ```@example example_iterative_refinement
-Ω.approx_list[1].refinable,  Ω.approx_list[2].refinable
+Ω.approx_stack[end].refinable,  Ω.approx_stack[end-1].refinable
 ```
 
 Hence, we can make again a refinement of that approximation.
 
 ```@example example_iterative_refinement
-(r1, r2) = refine(Ω, 1)
-Ω.approx_list[1] = r1
-insert!(Ω.approx_list, 2, r2)
+approx = pop!(Ω.approx_stack)
+(r1, r2) = refine(approx, Ω.S)
+push!(Ω.approx_stack, r2)
+push!(Ω.approx_stack, r1)
 
 plot(b, 1e-3, aspectratio=1, alpha=0.3)
 plot!(tohrep(Ω), alpha=0.2, color="orange")
@@ -204,19 +208,11 @@ p3 = plot!(p0, overapproximate(b, 0.01), alpha=0.4, aspectratio=1)
 plot(p1, p2, p3, layout=(1, 3))
 ```
 
-We can check that the error is getting smaller with `ε` in each case:
-
-```@example example_iterative_refinement
-f = x -> (minimum(x), maximum(x))
-g = ε -> f([ai.err for ai in approximate(b, ε).approx_list])
-g(1.), g(0.1), g(0.01)
-```
-
 Meanwhile, the number of constraints of the polygonal overapproximation
 increases, in this example by a power of 2 when the error is divided by a factor 10.
 
 ```@example example_iterative_refinement
-h = ε ->  length(approximate(b, ε).approx_list)
+h = ε ->  length(approximate(b, ε).constraints)
 h(1.), h(0.1), h(0.01)
 ```
 
@@ -226,5 +222,5 @@ h(1.), h(0.1), h(0.01)
     [Plots.jl](https://github.com/JuliaPlots/Plots.jl), is such that it receives
     a numeric argument `ε` and the routine itself calls `overapproximate`.
     However, some sets such as abstract polygons have their own plotting recipe
-    hence do not require the error threshold, since they are plotted exactly as
-    the convex hull of their vertices.
+    and hence do not require the error threshold, since they are plotted exactly
+    as the convex hull of their vertices.

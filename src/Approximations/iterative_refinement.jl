@@ -28,6 +28,23 @@ struct LocalApproximation{N<:Real}
 end
 
 """
+    constraint(approx::LocalApproximation)
+
+Convert a local approximation to a linear constraint.
+
+### Input
+
+- `approx` -- local approximation
+
+### Output
+
+A linear constraint.
+"""
+function constraint(approx::LocalApproximation)
+    return LinearConstraint(approx.d1, dot(approx.d1, approx.p1))
+end
+
+"""
     PolygonalOverapproximation{N<:Real}
 
 Type that represents the polygonal approximation of a convex set.
@@ -157,7 +174,16 @@ Hence we do not need to use `addconstraint!` when creating the `HPolygon`.
 """
 function tohrep(Ω::PolygonalOverapproximation{N}
                )::AbstractHPolygon{N} where N<:Real
-    return HPolygon{N}(Ω.constraints)
+    # already finalized
+    if isempty(Ω.approx_stack)
+        return HPolygon(Ω.constraints)
+    end
+    # some constraints not finalized yet
+    constraints = copy(Ω.constraints)
+    for approx in Ω.approx_stack
+        push!(constraints, constraint(approx))
+    end
+    return HPolygon(constraints)
 end
 
 """
@@ -200,8 +226,7 @@ function approximate(S::LazySet{N},
 
         if !approx.refinable || approx.err <= ε
             # if the approximation is not refinable => continue
-            push!(Ω.constraints,
-                  LinearConstraint(approx.d1, dot(approx.d1, approx.p1)))
+            push!(Ω.constraints, constraint(approx))
             continue
         end
 
