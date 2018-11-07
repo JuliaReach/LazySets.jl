@@ -146,7 +146,7 @@ function intersection(P1::AbstractHPolygon{N},
         return false
     end
     @inline function is_first_constraint_tighter(lc1, lc2)
-        return lc1.a[1]/lc1.b <= lc2.a[1]/lc2.b
+        return lc1.b <= lc1.a[1]/lc2.a[1] * lc2.b
     end
 
     c1 = constraints_list(P1)
