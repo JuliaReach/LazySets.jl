@@ -22,6 +22,10 @@ for N in [Float64, Float32, Rational{Int}]
     @test ⊆(x, Interval(N(0), N(2)))
     @test !⊆(x, Interval(N(-1), N(0.5)))
 
+    # radius_hyperrectangle
+    @test radius_hyperrectangle(x) == [N(0.5)]
+    @test radius_hyperrectangle(x, 1) == N(0.5)
+
     # + operator (= concrete Minkowski sum of intervals)
     y = Interval(N(-2), N(0.5))
     m = x + y
