@@ -127,27 +127,38 @@ one.
 function intersection(P1::AbstractHPolygon{N},
                       P2::AbstractHPolygon{N}
                      )::Union{HPolygon{N}, EmptySet{N}} where N<:Real
+    # all constraints of one polygon are processed; now add the other polygon's
+    # constraints
+    @inline function add_remaining_constraints!(c, i, c1, i1, duplicates)
+        c[i+1:length(c)-duplicates] = c1[i1:length(c1)]
+        return true
+    end
+
+    # choose the constraint of c1; the directions are different
     @inline function choose_first_diff_dir!(c, i, i1, i2, c1, c2, duplicates)
         c[i] = c1[i1]
         if i1 == length(c1)
-            c[i+1:length(c)-duplicates] = c2[i2:length(c2)]
-            return true
+            return add_remaining_constraints!(c, i, c2, i2, duplicates)
         end
         return false
     end
+
+    # choose the constraint of c1; the directions are equivalent (i.e., linearly
+    # dependent)
     @inline function choose_first_same_dir!(c, i, i1, i2, c1, c2, duplicates)
         c[i] = c1[i1]
         if i1 == length(c1)
             if i2 < length(c2)
-                c[i+1:length(c)-duplicates] = c2[i2+1:length(c2)]
+                return add_remaining_constraints!(c, i, c2, i2+1, duplicates)
             end
             return true
         elseif i2 == length(c2)
-            c[i+1:length(c)-duplicates] = c1[i1+1:length(c1)]
-            return true
+            return add_remaining_constraints!(c, i, c1, i1+1, duplicates)
         end
         return false
     end
+
+    # check if the first of two constraint with equivalent direction is tighter
     @inline function is_first_constraint_tighter(lc1::LinearConstraint{N},
                                                  lc2::LinearConstraint{N}
                                                 ) where {N<:Real}
