@@ -71,7 +71,21 @@ See the non-modifying version `convex_hull` for more details.
 function convex_hull!(points::Vector{S};
                       algorithm::String="monotone_chain"
                      )::Vector{S} where {N<:Real, S<:AbstractVector{N}}
-    (length(points) == 1 || length(points) == 2) && return points
+
+    # treat 1-vertex and 2-vertex corner cases (see #876)
+    if length(points) == 1
+        return points
+    elseif length(points) == 2
+        p1, p2 = points[1], points[2]
+        if p1 == p2  # check for redundancy
+            pop!(points)
+        elseif p1 <= p2
+            nothing
+        else
+            points[1], points[2] = p2, p1
+        end
+        return points
+    end
 
     if algorithm == "monotone_chain"
         return monotone_chain!(points)

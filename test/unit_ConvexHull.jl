@@ -96,4 +96,11 @@ for N in [Float64, Rational{Int}, Float32]
     @test convex_hull!(points, algorithm="monotone_chain") == sorted
     @test convex_hull!(points, algorithm="monotone_chain_sorted") == sorted
     @test_throws ErrorException convex_hull!(points, algorithm="")
+
+    # test corner cases with one and two vectors (see #876)
+     p1 = [1., 2.]
+     p2 = [1., 3.]
+     @test convex_hull([p1]) == [p1]
+     @test convex_hull([p1, p2]) == [p1, p2]
+     @test convex_hull([p2, p1]) == [p1, p2]
 end
