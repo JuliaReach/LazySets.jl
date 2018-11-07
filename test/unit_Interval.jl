@@ -82,4 +82,7 @@ for N in [Float64, Float32, Rational{Int}]
     C = intersection(A, B)
     @test C isa Interval
     @test low(C) == N(5) && high(C) == N(6)
+    # check empty intersection
+    E = intersection(A, Interval(N(0), N(1)))
+    @test isempty(E)
 end
