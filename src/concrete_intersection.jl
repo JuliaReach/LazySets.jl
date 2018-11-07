@@ -127,25 +127,27 @@ one.
 function intersection(P1::AbstractHPolygon{N},
                       P2::AbstractHPolygon{N}
                      )::Union{HPolygon{N}, EmptySet{N}} where N<:Real
-    @inline function choose_first_diff_dir(i, i1, i2, c1, c2)
+    @inline function choose_first_diff_dir!(c, i, i1, i2, c1, c2, duplicates)
         c[i] = c1[i1]
         if i1 == length(c1)
-            c[i+1:length(c)] = c2[i2:length(c2)]
+            c[i+1:length(c)-duplicates] = c2[i2:length(c2)]
             return true
         end
         return false
     end
-    @inline function choose_first_same_dir(i, i1, i2, c1, c2)
+    @inline function choose_first_same_dir!(c, i, i1, i2, c1, c2, duplicates)
         c[i] = c1[i1]
         if i1 == length(c1)
             if i2 < length(c2)
-                c[i+1:length(c)] = c2[i2+1:length(c2)]
+                c[i+1:length(c)-duplicates] = c2[i2+1:length(c2)]
             end
             return true
         end
         return false
     end
-    @inline function is_first_constraint_tighter(lc1::LinearConstraint{N}, lc2) where {N<:Real}
+    @inline function is_first_constraint_tighter(lc1::LinearConstraint{N},
+                                                 lc2::LinearConstraint{N}
+                                                ) where {N<:Real}
         if lc1.a[1] == zero(N)
             @assert lc2.a[1] == zero(N)
             return lc1.b <= lc1.a[2]/lc2.a[2] * lc2.b
@@ -171,12 +173,12 @@ function intersection(P1::AbstractHPolygon{N},
                 # constraints have the same normal vector: take the tighter one
                 if is_first_constraint_tighter(c1[i1], c2[i2])
                     # first constraint is tighter
-                    if choose_first_same_dir(i, i1, i2, c1, c2)
+                    if choose_first_same_dir!(c, i, i1, i2, c1, c2, duplicates)
                         break
                     end
                 else
                     # second constraint is tighter
-                    if choose_first_same_dir(i, i2, i1, c2, c1)
+                    if choose_first_same_dir!(c, i, i2, i1, c2, c1, duplicates)
                         break
                     end
                 end
@@ -184,14 +186,14 @@ function intersection(P1::AbstractHPolygon{N},
                 i2 += 1
             else
                 # first constraint comes first
-                if choose_first_diff_dir(i, i1, i2, c1, c2)
+                if choose_first_diff_dir!(c, i, i1, i2, c1, c2, duplicates)
                     break
                 end
                 i1 += 1
             end
         else
             # second constraint comes first
-            if choose_first_diff_dir(i, i2, i1, c2, c1)
+            if choose_first_diff_dir!(c, i, i2, i1, c2, c1, duplicates)
                 break
             end
             i2 += 1
