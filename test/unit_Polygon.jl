@@ -122,6 +122,28 @@ for N in [Float64, Float32, Rational{Int}]
     p3 = intersection(p, p2)
     @test length(constraints_list(p3)) == 4
 
+    # check that tighter constraints are used in intersection (#883)
+    h1 = HalfSpace([N(1), N(0)], N(3))
+    h2 = HalfSpace([N(-1), N(0)], N(-3))
+    h3 = HalfSpace([N(0), N(1)], N(7))
+    h4 = HalfSpace([N(0), N(-1)], N(-5))
+    h5 = HalfSpace([N(0), N(1)], N(6))
+    h6 = HalfSpace([N(0), N(-1)], N(-4))
+    p1 = HPolygon([h1, h3, h2, h4])
+    p2 = HPolygon([h1, h5, h2, h6])
+    c = intersection(p1, p2).constraints
+    @test c == [h1, h5, h2, h4]
+    h1 = HalfSpace([N(1), N(1)], N(1))
+    h2 = HalfSpace([N(-1), N(1)], N(1))
+    h3 = HalfSpace([N(0), N(-1)], N(0))
+    p1 = HPolygon([h1, h2, h3])
+    h4 = HalfSpace([N(0), N(1)], N(1))
+    h5 = HalfSpace([N(-1), N(-1)], N(0))
+    h6 = HalfSpace([N(1), N(-1)], N(0))
+    p2 = HPolygon([h4, h5, h6])
+    c = intersection(p1, p2).constraints
+    @test c == [h1, h4, h2, h5, h3, h6]
+
     # is intersection empty
     p3 = convert(HPolygon, Hyperrectangle(low=N[-1, -1], high=N[1, 1]))
     I1 = Interval(N(0.9), N(1.1))
