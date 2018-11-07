@@ -142,6 +142,9 @@ function intersection(P1::AbstractHPolygon{N},
                 c[i+1:length(c)-duplicates] = c2[i2+1:length(c2)]
             end
             return true
+        elseif i2 == length(c2)
+            c[i+1:length(c)-duplicates] = c1[i1+1:length(c1)]
+            return true
         end
         return false
     end
