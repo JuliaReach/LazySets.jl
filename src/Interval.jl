@@ -308,37 +308,37 @@ vertices_list(x::Interval) = [[low(x)], [high(x)]]
 
 
 """
-    radius_hyperrectangle(I::Interval{N}, i::Int)::N where {N<:Real}
+    radius_hyperrectangle(x::Interval{N}, i::Int)::N where {N<:Real}
 
 Return the box radius of an interval in a given dimension.
 
 ### Input
 
-- `I` -- interval
+- `x` -- interval
 - `i` -- dimension index (must be `1`)
 
 ### Output
 
 The box radius in the given dimension.
 """
-function radius_hyperrectangle(I::Interval{N}, i::Int)::N where {N<:Real}
+function radius_hyperrectangle(x::Interval{N}, i::Int)::N where {N<:Real}
     @assert i == 1 "an interval is one-dimensional"
-    return high(x) - low(x)
+    return (high(x) - low(x)) / N(2)
 end
 
 """
-    radius_hyperrectangle(I::Interval{N})::Vector{N} where {N<:Real}
+    radius_hyperrectangle(x::Interval{N})::Vector{N} where {N<:Real}
 
 Return the box radius of an interval in every dimension.
 
 ### Input
 
-- `I` -- interval
+- `x` -- interval
 
 ### Output
 
 The box radius of the interval (a one-dimensional vector).
 """
-function radius_hyperrectangle(I::Interval{N})::Vector{N} where {N<:Real}
-    return [high(x) - low(x)]
+function radius_hyperrectangle(x::Interval{N})::Vector{N} where {N<:Real}
+    return [radius_hyperrectangle(x, 1)]
 end
