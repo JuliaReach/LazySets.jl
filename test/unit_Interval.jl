@@ -75,4 +75,11 @@ for N in [Float64, Float32, Rational{Int}]
     # conversion to hyperrectangle
     h = convert(Hyperrectangle, x)
     @test h isa Hyperrectangle && center(h) == radius_hyperrectangle(h) == N[0.5]
+
+    # concrete intersection
+    A = Interval(N(5), N(7))
+    B = Interval(N(3), N(6))
+    C = intersection(A, B)
+    @test C isa Interval
+    @test low(C) == N(5) && high(C) == N(6)
 end
