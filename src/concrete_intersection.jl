@@ -145,7 +145,11 @@ function intersection(P1::AbstractHPolygon{N},
         end
         return false
     end
-    @inline function is_first_constraint_tighter(lc1, lc2)
+    @inline function is_first_constraint_tighter(lc1::LinearConstraint{N}, lc2) where {N<:Real}
+        if lc1.a[1] == zero(N)
+            @assert lc2.a[1] == zero(N)
+            return lc1.b <= lc1.a[2]/lc2.a[2] * lc2.b
+        end
         return lc1.b <= lc1.a[1]/lc2.a[1] * lc2.b
     end
 
