@@ -40,6 +40,7 @@ mutable struct HPolygonOpt{N<:Real} <: AbstractHPolygon{N}
                             sort_constraints::Bool=true) where {N<:Real}
         if sort_constraints
             sorted_constraints = Vector{LinearConstraint{N}}()
+            sizehint!(sorted_constraints, length(constraints))
             for ci in constraints
                 addconstraint!(sorted_constraints, ci)
             end
