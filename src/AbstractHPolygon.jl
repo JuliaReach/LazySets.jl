@@ -215,7 +215,7 @@ end
                    [linear_search]::Bool=(length(P.constraints) < BINARY_SEARCH_THRESHOLD)
                   )::Nothing where {N<:Real}
 
-Add a linear constraint to a polygon in constraint representation, keeping the
+Add a linear constraint to a sorted vector of constrains, keeping the
 constraints sorted by their normal directions.
 
 ### Input
