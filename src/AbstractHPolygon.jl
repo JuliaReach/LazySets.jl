@@ -185,7 +185,8 @@ end
 
 """
     rand(::Type{HPOLYGON}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
-         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing,
+         [num_constraints]::Int=-1
         )::HPOLYGON{N} where {HPOLYGON<:AbstractHPolygon}
 
 Create a random polygon in constraint representation.
@@ -198,7 +199,7 @@ Create a random polygon in constraint representation.
 - `rng`             -- (optional, default: `GLOBAL_RNG`) random number generator
 - `seed`            -- (optional, default: `nothing`) seed for reseeding
 - `num_constraints` -- (optional, default: `-1`) number of constraints of the
-                       polygon (see comment below)
+                       polygon (must be 3 or bigger; see comment below)
 
 ### Output
 
@@ -209,6 +210,8 @@ A random polygon in constraint representation.
 We create a random polygon in vertex representation and convert it to constraint
 representation.
 See [`rand(::Type{VPolygon})`](@ref).
+For non-flat polygons the number of vertices and the number of constraints are
+identical.
 """
 function rand(::Type{HPOLYGON};
               N::Type{<:Real}=Float64,
@@ -217,7 +220,9 @@ function rand(::Type{HPOLYGON};
               seed::Union{Int, Nothing}=nothing,
               num_constraints::Int=-1
              )::HPOLYGON{N} where {HPOLYGON<:AbstractHPolygon}
-    @assert dim == 2 "a polygon must have dimension 2"
+    @assert dim == 2 "cannot create a random $HPOLYGON of dimension $dim"
+    @assert num_constraints < 0 || num_constraints >= 3 "cannot construct a " *
+        "random $HPOLYGON with only $num_constraints constraints"
     rng = reseed(rng, seed)
     vpolygon = rand(VPolygon; N=N, dim=dim, rng=rng, seed=seed,
                     num_vertices=num_constraints)

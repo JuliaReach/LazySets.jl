@@ -245,7 +245,7 @@ function rand(::Type{LineSegment};
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int, Nothing}=nothing
              )::LineSegment{N}
-    @assert dim == 2 "a LineSegment must have dimension 2"
+    @assert dim == 2 "cannot create a random LineSegment of dimension $dim"
     rng = reseed(rng, seed)
     p = randn(rng, N, dim)
     q = randn(rng, N, dim)

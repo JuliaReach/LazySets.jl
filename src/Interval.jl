@@ -317,7 +317,7 @@ function rand(::Type{Interval};
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int, Nothing}=nothing
              )::Interval{N}
-    @assert dim == 1 "an Interval must have dimension 1"
+    @assert dim == 1 "cannot create a random Interval of dimension $dim"
     rng = reseed(rng, seed)
     x = randn(rng, N)
     y = randn(rng, N)

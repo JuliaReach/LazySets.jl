@@ -87,6 +87,28 @@ function ispermutation(u::AbstractVector{T}, v::AbstractVector{T})::Bool where T
 end
 
 """
+    remove_duplicates_sorted!(v::AbstractVector)
+
+Remove duplicate entries in a sorted vector.
+
+### Input
+
+- `v` -- sorted vector
+
+### Output
+
+The input vector without duplicates.
+"""
+function remove_duplicates_sorted!(v::AbstractVector)
+    for i in length(v)-1:-1:1
+        if v[i] == v[i+1]
+            splice!(v, i+1)
+        end
+    end
+    return v
+end
+
+"""
     samedir(u::AbstractVector{N},
             v::AbstractVector{N})::Tuple{Bool, Real} where N<:Real
 

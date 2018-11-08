@@ -103,7 +103,7 @@ function an_element(∅::EmptySet)
 end
 
 """
-    rand(::Type{EmptySet}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
+    rand(::Type{EmptySet}; [N]::Type{<:Real}=Float64, [dim]::Int=0,
          [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
         )::EmptySet{N}
 

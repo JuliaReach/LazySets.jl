@@ -207,7 +207,7 @@ function rand(::Type{Line};
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int, Nothing}=nothing
              )::Line{N}
-    @assert dim == 2 "a Line must have dimension 2"
+    @assert dim == 2 "cannot create a random Line of dimension $dim"
     rng = reseed(rng, seed)
     a = randn(rng, N, dim)
     while iszero(a)

@@ -278,6 +278,60 @@ function ∈(x::AbstractVector{N}, P::VPolygon{N})::Bool where {N<:Real}
 end
 
 """
+    _random_zero_sum_vector(rng::AbstractRNG, N::Type{<:Real}, n::Int)
+
+Create a random vector with entries whose sum is zero.
+
+### Input
+
+- `rng` -- random number generator
+- `N`   -- numeric type
+- `n`   -- length of vector
+
+### Output
+
+A random vector of random numbers such that all positive entries come first and
+all negative entries come last, and such that the total sum is zero.
+
+### Algorithm
+
+This is a preprocessing step of the algorithm
+[here](https://stackoverflow.com/a/47358689) based on
+[P. Valtr. Probability that n random points are in convex
+position](https://link.springer.com/article/10.1007%2FBF01271274).
+"""
+function _random_zero_sum_vector(rng::AbstractRNG, N::Type{<:Real}, n::Int)
+    # generate a sorted list of random x and y coordinates
+    list = sort!(randn(rng, N, n))
+    while (length(remove_duplicates_sorted!(list)) < n)
+        # make sure that no duplicates exist
+        list = sort!(append!(list, randn(rng, N, length(list) - n)))
+    end
+    # lists of consecutive points
+    in_l1 = rand(rng, Bool, n-2)
+    l1 = Vector{N}() # normal
+    l2 = Vector{N}() # inverted
+    push!(l1, list[1])
+    push!(l2, list[1])
+    for i in 2:n-1
+        push!(in_l1[i-1] ? l1 : l2, list[i])
+    end
+    push!(l1, list[end])
+    push!(l2, list[end])
+    # convert to vectors representing the distance (order does not matter)
+    dist = Vector{N}()
+    sizehint!(dist, n)
+    for i in 1:length(l1)-1
+        push!(dist, l1[i+1] - l1[i])
+    end
+    for i in 1:length(l2)-1
+        push!(dist, l2[i] - l2[i+1])
+    end
+    @assert isapprox(sum(dist), zero(N), atol=1e-6)
+    return dist
+end
+
+"""
     rand(::Type{VPolygon}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
          [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
         )::VPolygon{N}
@@ -303,9 +357,11 @@ A random polygon in vertex representation.
 We follow the idea [here](https://stackoverflow.com/a/47358689) based on
 [P. Valtr. Probability that n random points are in convex
 position](https://link.springer.com/article/10.1007%2FBF01271274).
+There is also a nice video available
+[here](http://cglab.ca/~sander/misc/ConvexGeneration/convex.html).
 
 The number of vertices can be controlled with the argument `num_vertices`.
-For a negative value we choose a random number in the range `1:10`.
+For a negative value we choose a random number in the range `3:10`.
 """
 function rand(::Type{VPolygon};
               N::Type{<:Real}=Float64,
@@ -314,63 +370,24 @@ function rand(::Type{VPolygon};
               seed::Union{Int, Nothing}=nothing,
               num_vertices::Int=-1
              )::VPolygon{N}
-    @assert dim == 2 "a polygon must have dimension 2"
+    @assert dim == 2 "cannot create a random VPolygon of dimension $dim"
     rng = reseed(rng, seed)
     if num_vertices < 0
-        num_vertices = rand(1:10)
+        num_vertices = rand(3:10)
     end
 
     # special cases, 0 or 1 vertex
-    if num_vertices <= 1
-        vertices = [randn(rng, N, 2) for i in 1:num_vertices]
-        return VPolygon(vertices; apply_convex_hull=false)
+    if num_vertices == 0
+        return VPolygon{N}()
+    elseif num_vertices == 1
+        return VPolygon([randn(rng, N, 2)])
     end
 
     # general case, >= 2 vertices
 
-    function remove_duplicates_sorted!(v::AbstractVector)
-        for i in length(v)-1:-1:1
-            if v[i] == v[i+1]
-                splice!(v, i+1)
-            end
-        end
-        return v
-    end
-
-    function random_axis_aligned_vectors(rng, N, n)
-        # generate a sorted list of random x and y coordinates
-        list = sort!(randn(rng, N, n))
-        while (length(remove_duplicates_sorted!(list)) < n)
-            # make sure that no duplicates exist
-            list = sort!(append!(list, randn(rng, N, length(list) - n)))
-        end
-        # lists of consecutive points
-        in_l1 = rand(rng, Bool, n-2)
-        l1 = Vector{N}() # normal
-        l2 = Vector{N}() # inverted
-        push!(l1, list[1])
-        push!(l2, list[1])
-        for i in 2:n-1
-            push!(in_l1[i-1] ? l1 : l2, list[i])
-        end
-        push!(l1, list[end])
-        push!(l2, list[end])
-        # convert to vectors representing the distance (order does not matter)
-        dist = Vector{N}()
-        sizehint!(dist, n)
-        for i in 1:length(l1)-1
-            push!(dist, l1[i+1] - l1[i])
-        end
-        for i in 1:length(l2)-1
-            push!(dist, l2[i] - l2[i+1])
-        end
-        @assert isapprox(sum(dist), zero(N), atol=1e-6)
-        return dist
-    end
-
     # get random horizontal and vertical vectors
-    horiz = random_axis_aligned_vectors(rng, N, num_vertices)
-    vert = random_axis_aligned_vectors(rng, N, num_vertices)
+    horiz = _random_zero_sum_vector(rng, N, num_vertices)
+    vert = _random_zero_sum_vector(rng, N, num_vertices)
 
     # randomly combine horizontal and vertical vectors
     m = num_vertices

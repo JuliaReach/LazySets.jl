@@ -199,6 +199,12 @@ deviation 1.
 The idea for the shape matrix comes from
 [here](https://math.stackexchange.com/a/358092).
 The matrix is symmetric positive definite, but also diagonally dominant.
+
+```math
+Q =  \frac{1}{2}(S + S^T) + nI,
+```
+where ``n`` = `dim` (defaults to 2), and ``S`` is a ``n \\times n`` random
+matrix whose coefficients are uniformly distributed in the interval ``[-1, 1]``.
 """
 function rand(::Type{Ellipsoid};
               N::Type{<:Real}=Float64,
@@ -209,7 +215,18 @@ function rand(::Type{Ellipsoid};
     rng = reseed(rng, seed)
     center = randn(rng, N, dim)
     # random entries in [-1, 1]
-    shape_matrix = rand(N(-1):N(.0001):N(1), dim, dim)
+    # this needs a bit of code because 'rand' only samples from [0, 1]
+    shape_matrix = Matrix{N}(undef, dim, dim)
+    for j in 1:dim
+        for i in 1:dim
+            entry = rand(N)
+            if rand(Bool)
+                entry = -entry
+            end
+            shape_matrix[i, j] = entry
+        end
+    end
+    # make diagonally dominant
     shape_matrix = N(0.5) * (shape_matrix + shape_matrix') +
                    Matrix{N}(dim*I, dim, dim)
     return Ellipsoid(center, shape_matrix)
