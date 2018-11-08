@@ -50,7 +50,7 @@ function overapproximate(S::LazySet{N},
         constraints[2] = LinearConstraint(DIR_NORTH(N), dot(pn, DIR_NORTH(N)))
         constraints[3] = LinearConstraint(DIR_WEST(N), dot(pw, DIR_WEST(N)))
         constraints[4] = LinearConstraint(DIR_SOUTH(N), dot(ps, DIR_SOUTH(N)))
-        return HPolygon(constraints)
+        return HPolygon(constraints, sort_constraints=false)
     else
         return tohrep(approximate(S, ε))
     end
