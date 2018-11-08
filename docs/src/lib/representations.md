@@ -436,6 +436,7 @@ The following methods are specific for polytopes.
 The following methods are specific for `HPolyhedron`.
 
 ```@docs
+rand(::Type{HPolyhedron})
 vertices_list(::HPolyhedron{Real})
 singleton_list(::HPolyhedron{N}) where {N<:Real}
 ```
