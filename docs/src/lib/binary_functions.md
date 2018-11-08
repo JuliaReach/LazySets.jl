@@ -54,6 +54,7 @@ is_intersection_empty(::LazySet{N}, ::Union{HPolytope{N}, AbstractHPolygon{N}}) 
 ```@docs
 intersection(::Line{N}, ::Line{N}) where {N<:Real}
 intersection(::Hyperrectangle{N}, ::Hyperrectangle{N}) where {N<:Real}
+intersection(::Interval{N}, ::Interval{N}) where {N<:Real}
 intersection(::AbstractHPolygon{N}, ::AbstractHPolygon{N}) where {N<:Real}
 intersection(::HPolytope{N}, ::HalfSpace{N}) where {N<:Real}
 intersection(::HPolyhedron{N}, ::AbstractPolytope{N}) where {N<:Real}

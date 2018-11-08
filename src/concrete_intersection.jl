@@ -101,6 +101,33 @@ function intersection(H1::AbstractHyperrectangle{N},
 end
 
 """
+    intersection(x::Interval{N},
+                 y::Interval{N}
+                 )::Union{Interval{N}, EmptySet{N}} where {N<:Real}
+
+Return the intersection of two intervals.
+
+### Input
+
+- `x` -- first interval
+- `y` -- second interval
+
+### Output
+
+If the intervals do not intersect, the result is the empty set.
+Otherwise the result is the interval that describes the intersection.
+"""
+function intersection(x::Interval{N},
+                      y::Interval{N}
+                     )::Union{Interval{N}, EmptySet{N}} where {N<:Real}
+    if low(y) > high(x) || low(x) > high(y)
+        return EmptySet{N}()
+    else
+        return Interval(max(low(x), low(y)), min(high(x), high(y)))
+    end
+end
+
+"""
     intersection(P1::AbstractHPolygon{N},
                  P2::AbstractHPolygon{N}
                 )::Union{HPolygon{N}, EmptySet{N}} where N<:Real
