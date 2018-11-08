@@ -114,18 +114,39 @@ This function is inspired from AGPX's answer in:
 end
 
 """
-    <=(u::AbstractVector{N}, v::AbstractVector{N})::Bool where {N<:Real}
+    is_right_turn(u::AbstractVector{N},
+                  v::AbstractVector{N})::Bool where {N<:Real}
 
-Compares two 2D vectors by their direction.
+Determine if the acute angle defined by two 2D vectors is a right turn (< 180°
+counter-clockwise).
 
 ### Input
 
-- `u` --  first 2D direction
-- `v` --  second 2D direction
+- `u` -- first 2D direction
+- `v` -- second 2D direction
 
 ### Output
 
-True iff ``\\arg(u) [2π] ≤ \\arg(v) [2π]``
+`true` iff the two vectors constitute a right turn.
+"""
+@inline function is_right_turn(u::AbstractVector{N},
+                               v::AbstractVector{N})::Bool where {N<:Real}
+    return u[1] * v[2] - v[1] * u[2] >= zero(N)
+end
+
+"""
+    <=(u::AbstractVector{N}, v::AbstractVector{N})::Bool where {N<:Real}
+
+Compare two 2D vectors by their direction.
+
+### Input
+
+- `u` -- first 2D direction
+- `v` -- second 2D direction
+
+### Output
+
+`true` iff ``\\arg(u) [2π] ≤ \\arg(v) [2π]``.
 
 ### Notes
 
@@ -134,19 +155,18 @@ direction (1, 0).
 
 ### Algorithm
 
-The implementation checks the quadrant of each direction, and compares directions
-using the right-hand rule. In particular, it doesn't use the arctangent.
+The implementation checks the quadrant of each direction, and compares
+directions using the right-hand rule (see [`is_right_turn`](@ref)).
+In particular, this method does not use the arctangent.
 """
 function <=(u::AbstractVector{N}, v::AbstractVector{N})::Bool where {N<:Real}
     qu, qv = quadrant(u), quadrant(v)
     if qu == qv
         # same quadrant, check right-turn with center 0
-        ans = u[1] * v[2] - v[1] * u[2] >= zero(N)
-    else
-        # different quadrant
-        ans = qu < qv
+        return is_right_turn(u, v)
     end
-    return ans
+    # different quadrant
+    return qu < qv
 end
 
 """

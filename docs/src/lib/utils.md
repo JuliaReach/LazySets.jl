@@ -18,6 +18,7 @@ cross_product(::AbstractMatrix{N}) where {N<:Real}
 get_radius!
 isinvertible
 ispermutation
+is_right_turn
 nonzero_indices
 samedir
 sign_cadlag
