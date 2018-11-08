@@ -244,7 +244,7 @@ function intersection(P1::AbstractHPolygon{N},
         deleteat!(c, length(c)-duplicates+1:length(c))
     end
 
-    P = HPolygon(c)
+    P = HPolygon(c, sort_constraints=false)
 
     # TODO: remove redundant constraints (#582) and return an EmptySet if empty
     return P
