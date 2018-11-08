@@ -229,7 +229,7 @@ Nothing.
 """
 function addconstraint!(constraints::Vector{LinearConstraint{N}},
                         new_constraint::LinearConstraint{N};
-                        linear_search::Bool=(length(P.constraints) < BINARY_SEARCH_THRESHOLD)
+                        linear_search::Bool=(length(constraints) < BINARY_SEARCH_THRESHOLD)
                        )::Nothing where {N<:Real}
     k = length(constraints)
     if k > 0

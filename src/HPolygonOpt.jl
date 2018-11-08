@@ -34,10 +34,20 @@ mutable struct HPolygonOpt{N<:Real} <: AbstractHPolygon{N}
     constraints::Vector{LinearConstraint{N}}
     ind::Int
 
-    # default constructor
-    HPolygonOpt{N}(constraints::Vector{LinearConstraint{N}},
-                   ind::Int=1) where {N<:Real} =
-        new{N}(constraints, ind)
+    # default constructor that applies sorting of the given constraints
+    function HPolygonOpt{N}(constraints::Vector{LinearConstraint{N}},
+                            ind::Int=1;
+                            sort_constraints::Bool=true) where {N<:Real}
+        if sort_constraints
+            sorted_constraints = Vector{LinearConstraint{N}}()
+            for ci in constraints
+                addconstraint!(sorted_constraints, ci)
+            end
+            return new{N}(sorted_constraints, ind)
+        else
+            return new{N}(constraints, ind)
+        end
+    end
 end
 
 # convenience constructor without type parameter
