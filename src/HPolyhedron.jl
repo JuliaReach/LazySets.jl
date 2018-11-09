@@ -14,7 +14,8 @@ export HPolyhedron,
        cartesian_product,
        vertices_list,
        singleton_list,
-       isempty
+       isempty,
+       remove_redundant_constraints
 
 """
     HPolyhedron{N<:Real} <: LazySet{N}
@@ -44,6 +45,8 @@ function HPolyhedron(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real}
     end
     return HPolyhedron(constraints)
 end
+
+HPolyhedron{N}(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real} = HPolyhedron(A, b)
 
 # convenience union type
 const HPoly{N} = Union{HPolytope{N}, HPolyhedron{N}}
@@ -338,6 +341,63 @@ The same polyhedron instance.
 """
 function tohrep(P::HPoly{N}) where {N}
     return P
+end
+
+"""
+    remove_redundant_constraints(P::PT;
+                                 backend=GLPKSolverLP()) where {N, HPoly{N}}
+
+## Input
+
+- `P`       -- polyhedron
+- `backend` -- (optional, default: `GLPKSolverLP`) the numeric LP solver backend
+
+## Output
+
+The polyhedron obtained by removing the redundant constraints in `P`.
+
+## Algorithm
+
+If the polyhedron `P` has `m` constraints and its dimension is `n`,
+this function checks one by one if each of the `m` constraints is
+implied by the `m-1` others. To check if the `k`-th constraint
+is redundant, an LP is formulated.
+
+For details, see [Fukuda's Polyhedra
+FAQ](https://www.cs.mcgill.ca/~fukuda/soft/polyfaq/node24.html).
+"""
+function remove_redundant_constraints(P::PT;
+                                      backend=GLPKSolverLP()) where {N, HPoly{N}}
+    
+    A, b = tosimplehrep(P)
+    m, n = size(A)
+    non_redundant_indices = 1:m
+
+    i = 1 # counter over reduced constraints
+    j = 1 # counter over original constraints
+
+    while j <= m
+        α = A[j, :]
+        Ar = A[non_redundant_indices, :]
+        br = b[non_redundant_indices]
+        br[i] = b[j] + one(N)
+        lp = linprog(-α, Ar, '<', br, -Inf, Inf, GLPKSolverLP())
+        objval = -lp.objval
+        if lp.status != :Optimal
+            error("LP is not optimal")
+        end
+        if objval <= b[j]
+            # the constraint is redundant
+            non_redundant_indices = setdiff(non_redundant_indices, j)
+        else
+            # the constraint is not redundant
+            i = i+1
+        end
+        j = j+1
+    end
+    Ar = A[non_redundant_indices, :]
+    br = b[non_redundant_indices]
+    return PT(Ar, br)
 end
 
 # ========================================================
