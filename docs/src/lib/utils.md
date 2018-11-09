@@ -29,6 +29,9 @@ an_element_helper
 binary_search_constraints
 nonzero_indices
 samedir
+_random_zero_sum_vector
+remove_duplicates_sorted!
+reseed
 ```
 
 ### Types

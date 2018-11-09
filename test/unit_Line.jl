@@ -1,4 +1,7 @@
 for N in [Float64, Rational{Int}, Float32]
+    # random line
+    rand(Line)
+
     # construction
     l1 = Line(N[0, 1], N(1))
     l2 = Line(N[1, 0], N(1))

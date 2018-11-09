@@ -1,6 +1,7 @@
 using MathProgBase, GLPKMathProgInterface
 
 import Base: isempty,
+             rand,
              convert
 
 export HPolyhedron,
@@ -197,6 +198,48 @@ function ∈(x::AbstractVector{N}, P::HPoly{N})::Bool where {N<:Real}
         end
     end
     return true
+end
+
+"""
+    rand(::Type{HPolyhedron}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
+        )::HPolyhedron{N}
+
+Create a polyhedron.
+
+### Input
+
+- `HPolyhedron` -- type for dispatch
+- `N`           -- (optional, default: `Float64`) numeric type
+- `dim`         -- (optional, default: 2) dimension (is ignored)
+- `rng`         -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed`        -- (optional, default: `nothing`) seed for reseeding
+
+### Output
+
+A polyhedron.
+
+### Algorithm
+
+We first create a random polytope and then randomly remove some of the
+constraints.
+"""
+function rand(::Type{HPolyhedron};
+              N::Type{<:Real}=Float64,
+              dim::Int=2,
+              rng::AbstractRNG=GLOBAL_RNG,
+              seed::Union{Int, Nothing}=nothing
+             )::HPolyhedron{N}
+    rng = reseed(rng, seed)
+    P = rand(HPolytope; N=N, dim=dim, rng=rng)
+    constraints_P = constraints_list(P)
+    constraints_Q = Vector{LinearConstraint{N}}()
+    for i in 1:length(constraints_P)
+        if rand(Bool)
+            push!(constraints_Q, constraints_P[i])
+        end
+    end
+    return HPolyhedron(constraints_Q)
 end
 
 

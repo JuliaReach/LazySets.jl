@@ -1,4 +1,7 @@
 for N in [Float64, Rational{Int}, Float32]
+    # random empty set
+    rand(EmptySet)
+
     E = EmptySet{N}()
     B = BallInf(ones(N, 2), N(1))
 

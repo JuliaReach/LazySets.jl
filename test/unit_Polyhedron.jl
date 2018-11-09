@@ -1,9 +1,8 @@
 global test_suite_polyhedra
 
 for N in [Float64, Rational{Int}, Float32]
-    # -----
-    # H-rep
-    # -----
+    # random polyhedron
+    rand(HPolyhedron)
 
     # constructor from matrix and vector
     A = [N(1) N(2); N(-1) N(1)]
@@ -71,9 +70,6 @@ unconstrained_HPolyhedron = HPolyhedron()
 # Polyhedra tests that only work with Float64
 if test_suite_polyhedra
     for N in [Float64]
-        # -----
-        # H-rep
-        # -----
         # support function/vector
         d = N[1, 0]
         p_unbounded = HPolyhedron([LinearConstraint(N[-1, 0], N(0))])

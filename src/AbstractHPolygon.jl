@@ -1,4 +1,5 @@
-import Base.∈
+import Base: rand,
+             ∈
 
 export AbstractHPolygon,
        an_element,
@@ -128,6 +129,7 @@ function constraints_list(P::AbstractHPolygon{N})::Vector{LinearConstraint{N}} w
     return P.constraints
 end
 
+
 # --- LazySet interface functions ---
 
 
@@ -179,6 +181,52 @@ function ∈(x::AbstractVector{N}, P::AbstractHPolygon{N})::Bool where {N<:Real}
         end
     end
     return true
+end
+
+"""
+    rand(::Type{HPOLYGON}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing,
+         [num_constraints]::Int=-1
+        )::HPOLYGON{N} where {HPOLYGON<:AbstractHPolygon}
+
+Create a random polygon in constraint representation.
+
+### Input
+
+- `HPOLYGON`        -- type for dispatch
+- `N`               -- (optional, default: `Float64`) numeric type
+- `dim`             -- (optional, default: 2) dimension
+- `rng`             -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed`            -- (optional, default: `nothing`) seed for reseeding
+- `num_constraints` -- (optional, default: `-1`) number of constraints of the
+                       polygon (must be 3 or bigger; see comment below)
+
+### Output
+
+A random polygon in constraint representation.
+
+### Algorithm
+
+We create a random polygon in vertex representation and convert it to constraint
+representation.
+See [`rand(::Type{VPolygon})`](@ref).
+For non-flat polygons the number of vertices and the number of constraints are
+identical.
+"""
+function rand(::Type{HPOLYGON};
+              N::Type{<:Real}=Float64,
+              dim::Int=2,
+              rng::AbstractRNG=GLOBAL_RNG,
+              seed::Union{Int, Nothing}=nothing,
+              num_constraints::Int=-1
+             )::HPOLYGON{N} where {HPOLYGON<:AbstractHPolygon}
+    @assert dim == 2 "cannot create a random $HPOLYGON of dimension $dim"
+    @assert num_constraints < 0 || num_constraints >= 3 "cannot construct a " *
+        "random $HPOLYGON with only $num_constraints constraints"
+    rng = reseed(rng, seed)
+    vpolygon = rand(VPolygon; N=N, dim=dim, rng=rng, seed=seed,
+                    num_vertices=num_constraints)
+    return convert(HPOLYGON, vpolygon)
 end
 
 

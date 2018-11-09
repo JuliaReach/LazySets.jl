@@ -1,3 +1,5 @@
+import Base.rand
+
 export Hyperrectangle,
        low,
        high
@@ -145,4 +147,44 @@ The center of the hyperrectangle.
 """
 function center(H::Hyperrectangle{N})::Vector{N} where {N<:Real}
     return H.center
+end
+
+
+# --- LazySet interface functions ---
+
+
+"""
+    rand(::Type{Hyperrectangle}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
+        )::Hyperrectangle{N}
+
+Create a random hyperrectangle.
+
+### Input
+
+- `Hyperrectangle` -- type for dispatch
+- `N`              -- (optional, default: `Float64`) numeric type
+- `dim`            -- (optional, default: 2) dimension
+- `rng`            -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed`           -- (optional, default: `nothing`) seed for reseeding
+
+### Output
+
+A random hyperrectangle.
+
+### Algorithm
+
+All numbers are normally distributed with mean 0 and standard deviation 1.
+Additionally, the radius is nonnegative.
+"""
+function rand(::Type{Hyperrectangle};
+              N::Type{<:Real}=Float64,
+              dim::Int=2,
+              rng::AbstractRNG=GLOBAL_RNG,
+              seed::Union{Int, Nothing}=nothing
+             )::Hyperrectangle{N}
+    rng = reseed(rng, seed)
+    center = randn(rng, N, dim)
+    radius = abs.(randn(rng, N, dim))
+    return Hyperrectangle(center, radius)
 end

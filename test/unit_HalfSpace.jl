@@ -1,4 +1,7 @@
 for N in [Float64, Rational{Int}, Float32]
+    # random half-space
+    rand(HalfSpace)
+
     # normal constructor
     normal = ones(N, 3)
     hs = HalfSpace(normal, N(5))

@@ -1,4 +1,6 @@
-import Base: ∈, isempty
+import Base: rand,
+             ∈,
+             isempty
 
 export Hyperplane,
        an_element
@@ -108,6 +110,45 @@ We just check if ``x`` satisfies ``a⋅x = b``.
 """
 function ∈(x::AbstractVector{N}, hp::Hyperplane{N})::Bool where {N<:Real}
     return dot(x, hp.a) == hp.b
+end
+
+"""
+    rand(::Type{Hyperplane}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
+        )::Hyperplane{N}
+
+Create a random hyperplane.
+
+### Input
+
+- `Hyperplane` -- type for dispatch
+- `N`          -- (optional, default: `Float64`) numeric type
+- `dim`        -- (optional, default: 2) dimension
+- `rng`        -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed`       -- (optional, default: `nothing`) seed for reseeding
+
+### Output
+
+A random hyperplane.
+
+### Algorithm
+
+All numbers are normally distributed with mean 0 and standard deviation 1.
+Additionally, the constraint `a` is nonzero.
+"""
+function rand(::Type{Hyperplane};
+              N::Type{<:Real}=Float64,
+              dim::Int=2,
+              rng::AbstractRNG=GLOBAL_RNG,
+              seed::Union{Int, Nothing}=nothing
+             )::Hyperplane{N}
+    rng = reseed(rng, seed)
+    a = randn(rng, N, dim)
+    while iszero(a)
+        a = randn(rng, N, dim)
+    end
+    b = randn(rng, N)
+    return Hyperplane(a, b)
 end
 
 """

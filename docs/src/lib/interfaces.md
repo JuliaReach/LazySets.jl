@@ -132,6 +132,7 @@ This interface defines the following functions:
 ```@docs
 an_element(::AbstractHPolygon{N}) where {N<:Real}
 ∈(::AbstractVector{Real}, ::AbstractHPolygon{Real})
+rand(::Type{HPOLYGON}) where {HPOLYGON<:AbstractHPolygon}
 vertices_list(::AbstractHPolygon{Real})
 tohrep(::AbstractHPolygon{Real})
 tovrep(::AbstractHPolygon{Real})

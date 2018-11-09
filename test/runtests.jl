@@ -63,6 +63,11 @@ if test_suite_polyhedra || test_suite_plotting
 end
 
 if test_suite_basic
+    # =========================
+    # Testing utility functions
+    # =========================
+    @time @testset "LazySets.Util" begin include("unit_util.jl") end
+
     # =======================================
     # Testing types that inherit from LazySet
     # =======================================

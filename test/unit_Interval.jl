@@ -1,6 +1,9 @@
 import IntervalArithmetic
 
 for N in [Float64, Float32, Rational{Int}]
+    # random interval
+    rand(Interval)
+
     # constructor from IntervalArithmetic.Interval
     x = Interval(IntervalArithmetic.Interval(N(0), N(1)))
 

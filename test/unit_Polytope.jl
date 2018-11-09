@@ -1,6 +1,14 @@
 global test_suite_polyhedra
 
 for N in [Float64, Rational{Int}, Float32]
+    # random polytopes
+    if test_suite_polyhedra
+        rand(HPolytope)
+    else
+        @test_throws AssertionError rand(HPolytope)
+    end
+    rand(VPolytope)
+
     # -----
     # H-rep
     # -----

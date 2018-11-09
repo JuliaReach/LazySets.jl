@@ -87,6 +87,28 @@ function ispermutation(u::AbstractVector{T}, v::AbstractVector{T})::Bool where T
 end
 
 """
+    remove_duplicates_sorted!(v::AbstractVector)
+
+Remove duplicate entries in a sorted vector.
+
+### Input
+
+- `v` -- sorted vector
+
+### Output
+
+The input vector without duplicates.
+"""
+function remove_duplicates_sorted!(v::AbstractVector)
+    for i in length(v)-1:-1:1
+        if v[i] == v[i+1]
+            splice!(v, i+1)
+        end
+    end
+    return v
+end
+
+"""
     samedir(u::AbstractVector{N},
             v::AbstractVector{N})::Tuple{Bool, Real} where N<:Real
 
@@ -177,6 +199,31 @@ end
 
 function nonzero_indices(v::SparseVector{N})::Vector{Int} where N<:Real
     return x.nzind
+end
+
+"""
+    reseed(rng::AbstractRNG, seed::Union{Int, Nothing})::AbstractRNG
+
+Reset the RNG seed if the seed argument is a number.
+
+### Input
+
+- `rng`  -- random number generator
+- `seed` -- seed for reseeding
+
+### Output
+
+The input RNG if the seed is `nothing`, and a reseeded RNG otherwise.
+"""
+function reseed(rng::AbstractRNG, seed::Union{Int, Nothing})::AbstractRNG
+    if seed != nothing
+        @static if VERSION < v"0.7-"
+            return Random.srand(rng, seed)
+        else
+            return Random.seed!(rng, seed)
+        end
+    end
+    return rng
 end
 
 """

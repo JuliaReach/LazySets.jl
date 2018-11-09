@@ -1,4 +1,7 @@
 for N in [Float64, Rational{Int}, Float32]
+    # random hyperplane
+    rand(Hyperplane)
+
     # normal constructor
     a = ones(N, 3)
     hp = Hyperplane(a, N(5))

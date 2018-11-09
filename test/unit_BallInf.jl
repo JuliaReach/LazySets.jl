@@ -1,4 +1,7 @@
 for N in [Float64, Rational{Int}, Float32]
+    # random ball
+    rand(BallInf)
+
     # 1D BallInf
     b = BallInf(N[0], N(1))
     # Test Dimension

@@ -1,4 +1,6 @@
-import Base: ∈, isempty
+import Base: rand,
+             ∈,
+             isempty
 
 export EmptySet, ∅,
        an_element
@@ -19,6 +21,10 @@ EmptySet() = EmptySet{Float64}()
 An `EmptySet` instance of type `Float64`.
 """
 const ∅ = EmptySet{Float64}()
+
+
+# --- LazySet interface functions ---
+
 
 """
     dim(∅::EmptySet)
@@ -94,6 +100,35 @@ An error.
 """
 function an_element(∅::EmptySet)
     error("an empty set does not have any element")
+end
+
+"""
+    rand(::Type{EmptySet}; [N]::Type{<:Real}=Float64, [dim]::Int=0,
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
+        )::EmptySet{N}
+
+Create an empty set (note that there is nothing to randomize).
+
+### Input
+
+- `EmptySet` -- type for dispatch
+- `N`        -- (optional, default: `Float64`) numeric type
+- `dim`      -- (optional, default: 0) dimension (is ignored)
+- `rng`      -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed`     -- (optional, default: `nothing`) seed for reseeding
+
+### Output
+
+The (only) empty set of the given numeric type.
+"""
+function rand(::Type{EmptySet};
+              N::Type{<:Real}=Float64,
+              dim::Int=0,
+              rng::AbstractRNG=GLOBAL_RNG,
+              seed::Union{Int, Nothing}=nothing
+             )::EmptySet{N}
+    rng = reseed(rng, seed)
+    return EmptySet{N}()
 end
 
 """

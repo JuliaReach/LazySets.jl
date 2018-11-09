@@ -1,4 +1,7 @@
 for N in [Float64, Float32]
+    # random ellipsoid
+    rand(Ellipsoid)
+
     # 1D ellipsoid
     E = Ellipsoid(N[0], Diagonal(N[1]))
     # Test Dimension

@@ -1,4 +1,7 @@
 for N in [Float64, Rational{Int}, Float32]
+    # random singleton
+    rand(Singleton)
+
     # 1D singleton
     s = Singleton(N[1])
     d = N[1]

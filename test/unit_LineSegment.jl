@@ -1,4 +1,7 @@
 for N in [Float64, Rational{Int}, Float32]
+    # random line segment
+    rand(LineSegment)
+
     # construction
     p, q = N[1, 1], N[2, 2]
     l = LineSegment(p, q)
