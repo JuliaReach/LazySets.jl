@@ -367,7 +367,7 @@ For details, see [Fukuda's Polyhedra
 FAQ](https://www.cs.mcgill.ca/~fukuda/soft/polyfaq/node24.html).
 """
 function remove_redundant_constraints(P::PT;
-                                      backend=GLPKSolverLP()) where {N, HPoly{N}}
+                                      backend=GLPKSolverLP()) where {N, PT<:HPoly{N}}
     
     A, b = tosimplehrep(P)
     m, n = size(A)
