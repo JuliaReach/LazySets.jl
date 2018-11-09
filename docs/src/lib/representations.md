@@ -410,6 +410,7 @@ convex_hull(::HPoly{Real}, ::HPoly{Real})
 cartesian_product(::HPoly{N}, ::HPoly{N}) where {N<:Real}
 tovrep(::HPoly{Real})
 polyhedron(::HPoly)
+remove_redundant_constraints
 ```
 
 Inherited from [`LazySet`](@ref):
