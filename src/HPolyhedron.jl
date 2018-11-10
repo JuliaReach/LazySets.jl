@@ -390,7 +390,7 @@ The polyhedron obtained by removing the redundant constraints in `P`.
 
 If the polyhedron `P` has `m` constraints and its dimension is `n`,
 this function checks one by one if each of the `m` constraints is
-implied by the `m-1` others. To check if the `k`-th constraint
+implied by the remaining ones. To check if the `k`-th constraint
 is redundant, an LP is formulated.
 
 For details, see [Fukuda's Polyhedra
