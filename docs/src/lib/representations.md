@@ -403,6 +403,7 @@ dim(::HPoly{Real})
 ∈(::AbstractVector{Real}, ::HPoly{Real})
 addconstraint!(::HPoly{Real}, ::LinearConstraint{Real})
 constraints_list(::HPoly{Real})
+copy(P::PT) where {N, PT<:HPoly{N}}
 tosimplehrep(::HPoly{Real})
 tohrep(::HPoly{Real})
 isempty(::HPoly{N}) where {N<:Real}
@@ -411,6 +412,7 @@ cartesian_product(::HPoly{N}, ::HPoly{N}) where {N<:Real}
 tovrep(::HPoly{Real})
 polyhedron(::HPoly)
 remove_redundant_constraints
+remove_redundant_constraints!
 ```
 
 Inherited from [`LazySet`](@ref):
