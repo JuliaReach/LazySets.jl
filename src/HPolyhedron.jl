@@ -359,7 +359,7 @@ constraints.
 
 ## Output
 
-The polyhedron obtained by removing the redundant constraints in `P`.
+A new polyhedron obtained by removing the redundant constraints in `P`.
 
 ## Algorithm
 
