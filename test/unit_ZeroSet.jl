@@ -1,4 +1,7 @@
 for N in [Float64, Rational{Int}, Float32]
+    # random zero set
+    rand(ZeroSet)
+
     Z = ZeroSet{N}(2)
     B = BallInf(ones(N, 2), N(1))
 
@@ -19,6 +22,13 @@ for N in [Float64, Rational{Int}, Float32]
     @test element(Z) ∈ Z
     @test element(Z, 1) == 0
     @test an_element(Z) ∈ Z
+
+    # high and low
+    @test high(Z) == zeros(N, 2)
+    @test low(Z) == zeros(N, 2)
+
+    # isempty
+    @test !isempty(Z)
 
     # subset
     z = ZeroSet{N}(1)

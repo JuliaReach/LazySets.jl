@@ -1,4 +1,7 @@
 for N in [Float64, Rational{Int}, Float32]
+    # random empty set
+    rand(EmptySet)
+
     E = EmptySet{N}()
     B = BallInf(ones(N, 2), N(1))
 
@@ -42,6 +45,9 @@ for N in [Float64, Rational{Int}, Float32]
     # membership
     @test !∈(N[0], E)
     @test !∈(N[0, 0], E)
+
+    # emptiness check
+    @test isempty(E)
 
     # an_element/norm/radius/diameter functions
     @test_throws ErrorException an_element(E)

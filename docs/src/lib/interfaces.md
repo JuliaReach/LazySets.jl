@@ -45,7 +45,7 @@ Every `LazySet` type must define a function `σ` to compute the support vector.
 
 ```@docs
 support_vector
-ρ(::AbstractVector{Real}, ::LazySet{Real})
+ρ(::AbstractVector{N}, ::LazySet{N}) where {N<:Real}
 support_function
 ```
 
@@ -57,6 +57,13 @@ radius(::LazySet, ::Real)
 diameter(::LazySet, ::Real)
 an_element(::LazySet{Real})
 ==(::LazySet, ::LazySet)
+```
+
+### Aliases for set types
+
+```@docs
+CompactSet
+NonCompactSet
 ```
 
 ## Centrally symmetric set
@@ -75,6 +82,7 @@ This interface defines the following functions:
 ```@docs
 dim(::AbstractCentrallySymmetric)
 an_element(::AbstractCentrallySymmetric{N}) where {N<:Real}
+isempty(::AbstractCentrallySymmetric)
 ```
 
 ## Polytope
@@ -91,8 +99,9 @@ AbstractPolytope
 This interface defines the following functions:
 
 ```@docs
-singleton_list(::AbstractPolytope)
+singleton_list(::AbstractPolytope{N}) where {N<:Real}
 linear_map(::AbstractMatrix, ::AbstractPolytope)
+isempty(::AbstractPolytope{N}) where {N<:Real}
 ```
 
 ### Polygon
@@ -107,6 +116,7 @@ This interface defines the following functions:
 
 ```@docs
 dim(P::AbstractPolygon)
+linear_map(::AbstractMatrix, P::AbstractPolygon{N}) where N
 ```
 
 #### HPolygon
@@ -122,6 +132,7 @@ This interface defines the following functions:
 ```@docs
 an_element(::AbstractHPolygon{N}) where {N<:Real}
 ∈(::AbstractVector{Real}, ::AbstractHPolygon{Real})
+rand(::Type{HPOLYGON}) where {HPOLYGON<:AbstractHPolygon}
 vertices_list(::AbstractHPolygon{Real})
 tohrep(::AbstractHPolygon{Real})
 tovrep(::AbstractHPolygon{Real})
@@ -143,6 +154,7 @@ This interface defines the following functions:
 ```@docs
 dim(::AbstractCentrallySymmetricPolytope)
 an_element(::AbstractCentrallySymmetricPolytope{N}) where {N<:Real}
+isempty(::AbstractCentrallySymmetricPolytope)
 ```
 
 #### Hyperrectangle
@@ -162,6 +174,9 @@ radius(::AbstractHyperrectangle, ::Real)
 σ(::AbstractVector{Real}, ::AbstractHyperrectangle{Real})
 ∈(::AbstractVector{Real}, ::AbstractHyperrectangle{Real})
 vertices_list(::AbstractHyperrectangle{Real})
+constraints_list(::AbstractHyperrectangle{Real})
+high(::AbstractHyperrectangle{Real})
+low(::AbstractHyperrectangle{Real})
 ```
 
 #### Singleton

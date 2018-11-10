@@ -61,7 +61,7 @@ Observe that we can use a particular backend, such as the `CDD` library:
 ```@example concrete_polyhedra
 using CDDLib
 
-p = polyhedron(H, CDDLib.CDDLibrary())
+p = polyhedron(H, CDDLib.Library())
 ```
 
 On the other hand, a `LazySets.HPolytope` object can be constructed from `p`:
@@ -80,13 +80,13 @@ typeof(y)
 
 Moreover, you can specify the backend with an extra argument.
 For instance, we can use an exact representation through the
-`CDDLibrary(:exact)`:
+`Library(:exact)`:
 
 ```@example concrete_polyhedra
 A, b = Rational{Int}[1 1;1 -1;-1 0], Rational{Int}[1,0,0]
 p = HPolytope(A, b)
 
-polyhedron(p, CDDLib.CDDLibrary(:exact))
+polyhedron(p, CDDLib.Library(:exact))
 ```
 
 ## Methods
@@ -95,6 +95,19 @@ The utility methods available are convex hull, intersection and cartesian
 product.
 The dual representation as a list of vertices can be obtained with the
 `vertices_list` function.
+
+```@example concrete_polyhedra
+p = HPolytope([LinearConstraint([1.0, 0.0], 1.0),
+               LinearConstraint([0.0, 1.0], 1.0),
+               LinearConstraint([-1.0, 0.0], 1.0),
+               LinearConstraint([0.0, -1.0], 1.0)])
+
+constraints_list(p)
+```
+
+```@example concrete_polyhedra
+vertices_list(p)
+```
 
 For example, the concrete intersection of two polytopes is performed with the
 `intersection` method.

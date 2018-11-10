@@ -41,11 +41,6 @@ for N in [Float64, Float32]
     # WARNING: assuming commutativity of matrix exponents
     #me * me
 
-    # check that the eye method is defined
-    @test hasmethod(eye, Tuple{typeof(me)})
-    y = to_N(N, eye(me))
-    @test norm(y - Diagonal(ones(N, n))) == 0
-
     # columns & rows
     me2 = SparseMatrixExp(sparse(N(1) * I, n, n))
     v = zeros(N, n)
@@ -73,6 +68,9 @@ for N in [Float64, Float32]
         # precision with Float32 is not sufficient
         @test svec ≈ svec_explicit
     end
+
+    # isempty
+    @test !isempty(emap)
 
     # membership
     x = ones(N, n)
@@ -106,6 +104,9 @@ for N in [Float64, Float32]
     # query the ambient dimension of projmap (hint: it is the output dimension)
     @test dim(projmap) == nb
 
+    # isempty
+    @test !isempty(projmap)
+
     #compute the support vector of the projection of an exponential map
 #     d = randn(N, nb)
     d = to_N(N, [0.152811, 0.22498])
@@ -117,4 +118,14 @@ for N in [Float64, Float32]
     P = L * expmat(Matrix(m)) * R
     svec_explicit = σ(d, P*b)
     @test svec ≈ svec_explicit
+
+    # vertices_list
+    b = BallInf(N[0, 0], N(1))
+    M = SparseMatrixExp(spzeros(N, 2, 2))
+    vlist = vertices_list(ExponentialMap(M, b))
+    if N == Float64
+        # precision with Float32 is not sufficient
+        @test LazySets.ispermutation(vlist,
+                                     [N[1, 1], N[-1, 1], N[1, -1], N[-1, -1]])
+    end
 end

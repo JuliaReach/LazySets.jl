@@ -1,7 +1,10 @@
-import Base.∈
+import Base: rand,
+             ∈,
+             isempty
 
 export HalfSpace, LinearConstraint,
        an_element,
+       constrained_dimensions,
        halfspace_left, halfspace_right
 
 """
@@ -76,7 +79,7 @@ In both cases the result is any point on the boundary (the defining hyperplane).
 Otherwise this function throws an error.
 """
 function σ(d::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
-    return σ_helper(d, Hyperplane(hs.a, hs.b), "half-space")
+    return σ_helper(d, Hyperplane(hs.a, hs.b), true)
 end
 
 """
@@ -116,6 +119,103 @@ We just check if ``x`` satisfies ``a⋅x ≤ b``.
 """
 function ∈(x::AbstractVector{N}, hs::HalfSpace{N})::Bool where {N<:Real}
     return dot(x, hs.a) <= hs.b
+end
+
+"""
+    rand(::Type{HalfSpace}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
+        )::HalfSpace{N}
+
+Create a random half-space.
+
+### Input
+
+- `HalfSpace` -- type for dispatch
+- `N`         -- (optional, default: `Float64`) numeric type
+- `dim`       -- (optional, default: 2) dimension
+- `rng`       -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed`      -- (optional, default: `nothing`) seed for reseeding
+
+### Output
+
+A random half-space.
+
+### Algorithm
+
+All numbers are normally distributed with mean 0 and standard deviation 1.
+Additionally, the constraint `a` is nonzero.
+"""
+function rand(::Type{HalfSpace};
+              N::Type{<:Real}=Float64,
+              dim::Int=2,
+              rng::AbstractRNG=GLOBAL_RNG,
+              seed::Union{Int, Nothing}=nothing
+             )::HalfSpace{N}
+    rng = reseed(rng, seed)
+    a = randn(rng, N, dim)
+    while iszero(a)
+        a = randn(rng, N, dim)
+    end
+    b = randn(rng, N)
+    return HalfSpace(a, b)
+end
+
+"""
+    isempty(hs::HalfSpace)::Bool
+
+Return if a half-space is empty or not.
+
+### Input
+
+- `hs` -- half-space
+
+### Output
+
+`false`.
+"""
+function isempty(hs::HalfSpace)::Bool
+    return false
+end
+
+"""
+    constraints_list(hs::HalfSpace{N})::Vector{LinearConstraint{N}}
+        where {N<:Real}
+
+Return the list of constraints of a half-space.
+
+### Input
+
+- `hs` -- half-space
+
+### Output
+
+A singleton list containing the half-space.
+"""
+function constraints_list(hs::HalfSpace{N}
+                         )::Vector{LinearConstraint{N}} where {N<:Real}
+    return [hs]
+end
+
+"""
+    constrained_dimensions(hs::HalfSpace{N})::Vector{Int} where N<:Real
+
+Return the indices in which a half-space is constrained.
+
+### Input
+
+- `hs` -- half-space
+
+### Output
+
+A vector of ascending indices `i` such that the half-space is constrained in
+dimension `i`.
+
+### Notes
+
+A 2D half-space with constraint ``x1 ≥ 0`` is constrained in dimension 1 only.
+"""
+function constrained_dimensions(hs::HalfSpace{N})::Vector{Int} where N<:Real
+    return nonzero_indices(hs.a)
 end
 
 """

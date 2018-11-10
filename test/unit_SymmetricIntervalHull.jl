@@ -15,6 +15,9 @@ for N in [Float64, Rational{Int}, Float32]
     d = N[0, 1]
     @test σ(d, h)[2] == N(7) && σ(-d, h)[2] == N(-7)
 
+    # isempty
+    @test !isempty(h)
+
     # an_element function
     @test an_element(h) == N[0, 0]
 
@@ -24,4 +27,9 @@ for N in [Float64, Rational{Int}, Float32]
         @test radius_hyperrectangle(h, 1) == 6
         @test radius_hyperrectangle(h) == N[6, 7]
     end
+
+    # high and low
+    h = SymmetricIntervalHull(Singleton(N[1, 2]))
+    @test high(h) == N[1, 2]
+    @test low(h) == N[-1, -2]
 end

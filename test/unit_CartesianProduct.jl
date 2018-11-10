@@ -27,6 +27,9 @@ for N in [Float64, Float32, Rational{Int}]
     d = N[-1, -1, -1]
     @test σ(d, c1) == N[-1, -1, -1]
 
+    # isempty
+    @test !isempty(c1)
+
     # Cartesian Product of a not-centered 1D BallInf and a not-centered 2D BallInf
     # Here a Hyperrectangle where c = [1, -3, 4] and r = [3, 2, 2]
     b1 = BallInf(N[1], N(3))
@@ -107,6 +110,20 @@ for N in [Float64, Float32, Rational{Int}]
     @test !∈(N[0, 0, 3, 1], cp)
     @test !∈(N[1, 1, 3, 1], cp)
 
+    # vertices_list
+    i1 = Interval(N[0, 1])
+    i2 = Interval(N[2, 3])
+    vlist = vertices_list(CartesianProduct(i1, i2))
+    @test LazySets.ispermutation(vlist, [N[0, 2], N[0, 3], N[1, 2], N[1, 3]])
+
+    #constraints_list
+    hlist = constraints_list(CartesianProduct(i1, i2))
+    @test LazySets.ispermutation(hlist,
+        [LinearConstraint(sparsevec(N[1], N[1], 2), N(1)),
+        LinearConstraint(sparsevec(N[1], N[-1], 2), N(0)),
+        LinearConstraint(sparsevec(N[2], N[1], 2),  N(3)),
+        LinearConstraint(sparsevec(N[2], N[-1], 2), N(-2))])
+    @test all(H -> dim(H) == 2, hlist)
     # =====================
     # CartesianProductArray
     # =====================
@@ -142,6 +159,26 @@ for N in [Float64, Float32, Rational{Int}]
     @test res isa CartesianProductArray && length(array(cpa)) == 2
     res = CartesianProduct!(cpa, cpa)
     @test res isa CartesianProductArray && length(array(cpa)) == 4
+
+    # vertices_list
+    i1 = Interval(N[0, 1])
+    i2 = Interval(N[2, 3])
+    i3 = Interval(N[4, 5])
+    vlist = vertices_list(CartesianProductArray([i1, i2, i3]))
+    @test LazySets.ispermutation(vlist, [N[0, 2, 4], N[0, 3, 4], N[1, 2, 4],
+        N[1, 3, 4], N[0, 2, 5], N[0, 3, 5], N[1, 2, 5], N[1, 3, 5]])
+
+    #constraints_list
+    hlist = constraints_list(CartesianProductArray([i1, i2, i3]))
+    @test LazySets.ispermutation(hlist,
+        [LinearConstraint(sparsevec(N[1], N[1], 3), N(1)),
+        LinearConstraint(sparsevec(N[1], N[-1], 3), N(0)),
+        LinearConstraint(sparsevec(N[2], N[1], 3), N(3)),
+        LinearConstraint(sparsevec(N[2], N[-1], 3), N(-2)),
+        LinearConstraint(sparsevec(N[3], N[1], 3), N(5)),
+        LinearConstraint(sparsevec(N[3], N[-1], 3), N(-4)),
+        ])
+    @test all(H -> dim(H) == 3, hlist)
 
     # ================
     # common functions

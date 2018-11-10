@@ -1,4 +1,7 @@
 for N in [Float64, Rational{Int}, Float32]
+    # random zonotope
+    rand(Zonotope)
+
     # 1D Zonotope
     z = Zonotope(N[0], Matrix{N}(I, 1, 1))
     # Test Dimension
@@ -37,6 +40,9 @@ for N in [Float64, Rational{Int}, Float32]
     d = N[0, -1]
     @test σ(d, z) == N[2, 1]
 
+    # isempty
+    @test !isempty(z)
+
     # an_element function
     @test an_element(z) ∈ z
 
@@ -60,10 +66,9 @@ for N in [Float64, Rational{Int}, Float32]
 
     # intersection with a hyperplane
     H1 = Hyperplane(N[1, 1], N(3))
-    #intersection_empty, point = is_intersection_empty(Z1, H1, true)
-    @test !is_intersection_empty(Z1, H1) #&& !intersection_empty &&
-          #point ∈ Z1 && point ∈ H1
-    @test_throws ErrorException is_intersection_empty(Z1, H1, true)
+    intersection_empty, point = is_intersection_empty(Z1, H1, true)
+    @test !is_intersection_empty(Z1, H1) && !intersection_empty &&
+          point ∈ Z1 && point ∈ H1
     H2 = Hyperplane(N[1, 1], N(-11))
     @test is_intersection_empty(Z1, H2) && is_intersection_empty(Z1, H2, true)[1]
     @test !is_intersection_empty(H1, Z1)

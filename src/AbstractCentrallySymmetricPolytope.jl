@@ -1,3 +1,5 @@
+import Base.isempty
+
 export AbstractCentrallySymmetricPolytope,
        center,
        an_element,
@@ -25,10 +27,9 @@ functions:
 
 ```jldoctest
 julia> subtypes(AbstractCentrallySymmetricPolytope)
-5-element Array{Any,1}:
+4-element Array{Any,1}:
  AbstractHyperrectangle
  Ball1
- Interval
  LineSegment
  Zonotope
 ```
@@ -43,15 +44,15 @@ end
 """
     dim(P::AbstractCentrallySymmetricPolytope)::Int
 
-Return the ambient dimension of a centrally symmetric set.
+Return the ambient dimension of a centrally symmetric, polytopic set.
 
 ### Input
 
-- `P` -- set
+- `P` -- centrally symmetric, polytopic set
 
 ### Output
 
-The ambient dimension of the set.
+The ambient dimension of the polytopic set.
 """
 @inline function dim(P::AbstractCentrallySymmetricPolytope)::Int
     return length(center(P))
@@ -75,4 +76,21 @@ The center of the centrally symmetric polytope.
 function an_element(P::AbstractCentrallySymmetricPolytope{N}
                    )::Vector{N} where {N<:Real}
     return center(P)
+end
+
+"""
+    isempty(P::AbstractCentrallySymmetricPolytope)::Bool
+
+Return if a centrally symmetric, polytopic set is empty or not.
+
+### Input
+
+- `P` -- centrally symmetric, polytopic set
+
+### Output
+
+`false`.
+"""
+function isempty(P::AbstractCentrallySymmetricPolytope)::Bool
+    return false
 end

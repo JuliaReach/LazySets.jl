@@ -1,7 +1,10 @@
+import Base.isempty
+
 export AbstractPolytope,
        vertices_list,
        singleton_list,
-       linear_map
+       linear_map,
+       isempty
 
 """
     AbstractPolytope{N<:Real} <: LazySet{N}
@@ -13,6 +16,8 @@ or equivalently, sets with finitely many vertices.
 ### Notes
 
 Every concrete `AbstractPolytope` must define the following functions:
+- `constraints_list(::AbstractPolytope{N})::Vector{LinearConstraint{N}}` --
+    return a list of all facet constraints
 - `vertices_list(::AbstractPolytope{N})::Vector{Vector{N}}` -- return a list of
     all vertices
 
@@ -34,7 +39,7 @@ abstract type AbstractPolytope{N<:Real} <: LazySet{N} end
 """
     singleton_list(P::AbstractPolytope{N})::Vector{Singleton{N}} where {N<:Real}
 
-Return the vertices of a polytopic as a list of singletons.
+Return the vertices of a polytopic set as a list of singletons.
 
 ### Input
 
@@ -50,34 +55,106 @@ function singleton_list(P::AbstractPolytope{N}
 end
 
 """
-    linear_map(M::AbstractMatrix, P::AbstractPolytope{N}) where {N<:Real}
+    linear_map(M::AbstractMatrix, P::AbstractPolytope{N};
+               output_type::Type{<:LazySet}=VPolytope{N}) where {N<:Real}
 
 Concrete linear map of an abstract polytype.
 
 ### Input
 
-- `M` -- matrix
-- `P` -- abstract polytype
+- `M`           -- matrix
+- `P`           -- abstract polytype
+- `output_type` -- (optional, default: `VPolytope`) type of the result
 
 ### Output
 
-The polytope in V-representation obtained by applying the linear map ``M`` to
-the set ``P``. If the given polytope is two-dimensional, a polygon instead
-of a general polytope is returned. 
-"""
-function linear_map(M::AbstractMatrix, P::AbstractPolytope{N}) where {N<:Real}
-    @assert dim(P) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
-                                 "applied to a set of dimension $(dim(P))"
+A set of type `output_type`.
 
-    if dim(P) == 2
-        T = VPolygon
-    else
-        T = VPolytope
-    end
-    vlist = vertices_list(P)
-    new_vlist = Vector{Vector{N}}(undef, length(vlist))
-    @inbounds for (i, vi) in enumerate(vlist)
-        new_vlist[i] =  M * vi
-    end
-    return T(new_vlist)
+### Algorithm
+
+The linear map ``M`` is applied to each vertex of the given set ``P``, obtaining
+a polytope in V-representation. Since some set representations (e.g. axis-aligned
+hyperrectangles) are not closed under linear maps, the default output is a
+`VPolytope`. If an `output_type` is given, the corresponding `convert` method
+is invoked.
+"""
+function linear_map(M::AbstractMatrix, P::AbstractPolytope{N};
+                    output_type::Type{<:LazySet}=VPolytope{N}) where {N<:Real}
+    @assert dim(P) == size(M, 2)
+    MP = broadcast(v -> M * v, vertices_list(P)) |> VPolytope{N}
+    return convert(output_type, MP)
 end
+
+"""
+    isempty(P::AbstractPolytope{N})::Bool where {N<:Real}
+
+Determine whether a polytope is empty.
+
+### Input
+
+- `P` -- abstract polytope
+
+### Output
+
+`true` if the given polytope contains no vertices, and `false` otherwise.
+
+### Algorithm
+
+This algorithm checks whether the `vertices_list` of the given polytope is empty
+or not.
+"""
+function isempty(P::AbstractPolytope{N})::Bool where {N<:Real}
+    return isempty(vertices_list(P))
+end
+
+function default_polyhedra_backend(P, N)
+    @assert isdefined(Main, :Polyhedra) "this function needs the package 'Polyhedra' to be loaded"
+    error("no default backend for numeric type $N")
+end
+
+function load_polyhedra_abstractpolytope() # function to be loaded by Requires
+
+return quote
+
+@static if VERSION < v"0.7-"
+    import Polyhedra:polyhedron,
+                     HRep, VRep,
+                     removehredundancy!, removevredundancy!,
+                     hreps, vreps,
+                     intersect,
+                     convexhull,
+                     hcartesianproduct,
+                     points
+
+    import CDDLib # default backend
+    import Polyhedra:SimpleHRepresentation, SimpleHRepresentation
+
+    function default_polyhedra_backend(P, N::Type{<:AbstractFloat})
+        return CDDLib.CDDLibrary()
+    end
+
+    function default_polyhedra_backend(P, N::Type{<:Rational})
+        return CDDLib.CDDLibrary(:exact)
+    end
+
+else
+    import .Polyhedra:polyhedron,
+                     HRep, VRep,
+                     removehredundancy!, removevredundancy!,
+                     hreps, vreps,
+                     intersect,
+                     convexhull,
+                     hcartesianproduct,
+                     points,
+                     default_library
+
+    function default_polyhedra_backend(P, N::Type{<:AbstractFloat})
+        return default_library(LazySets.dim(P), Float64)
+    end
+
+    function default_polyhedra_backend(P, N::Type{<:Rational})
+        return default_library(LazySets.dim(P), Rational{Int})
+    end
+end
+end # quote
+end # function load_polyhedra_hpolytope()

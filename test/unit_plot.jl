@@ -1,4 +1,4 @@
-using Plots
+using Plots, Optim
 
 for N in [Float64, Rational{Int}, Float32]
     p0 = zero(N)
@@ -47,8 +47,7 @@ for N in [Float64, Rational{Int}, Float32]
     # binary set operations
     ch = ConvexHull(b1, bi)
     cha = ConvexHullArray([b1, bi])
-    its = Intersection(b1, bi)
-    itsa = IntersectionArray([b1, bi])
+
     ms = MinkowskiSum(b1, bi)
     msa = MinkowskiSumArray([b1, bi])
     cms = CacheMinkowskiSum([b1, bi])
@@ -73,14 +72,12 @@ for N in [Float64, Rational{Int}, Float32]
     plot(hpt)
     plot(vpg)
     plot(vpt)
-    @test_throws ErrorException plot(es) # TODO see #577
+    @test_throws AssertionError plot(es) # TODO see #577
     @test_throws ErrorException plot(hs) # TODO see #576
     @test_throws ErrorException plot(hp) # TODO see #576
     @test_throws ErrorException plot(l) # TODO see #576
     plot(ch)
     plot(cha)
-    @test_throws ErrorException plot(its) # TODO not implemented yet
-    @test_throws ErrorException plot(itsa) # TODO not implemented yet
     plot(sih)
     plot(lm)
     plot(ms)
@@ -104,13 +101,11 @@ for N in [Float64, Rational{Int}, Float32]
         plot(hpgo, ε)
         plot(hpt, ε)
         plot(vpg, ε)
-        @test_throws AssertionError plot(vpt, ε) # TODO see #574
+        plot(vpt, ε)
         @test_throws AssertionError plot(es, ε) # TODO see #577
         @test_throws ErrorException plot(hs, ε) # TODO see #576/#578
         @test_throws ErrorException plot(hp, ε) # TODO see #576/#578
         @test_throws ErrorException plot(l, ε) # TODO see #576/#578
-        @test_throws ErrorException plot(its, ε) # TODO not implemented yet
-        @test_throws ErrorException plot(itsa, ε) # TODO not implemented yet
         plot(ch, ε)
         plot(cha, ε)
         plot(sih, ε)
@@ -168,4 +163,29 @@ for N in [Float64, Float32]
     else
         @test_throws ErrorException plot(b2, ε) # TODO see #578
     end
+end
+
+# set types that only work with Float64
+for N in [Float64]
+    v0 = zeros(N, 2)
+    p1 = one(N)
+
+    b1 = Ball1(v0, p1)
+    bi = BallInf(v0, p1)
+
+    # binary set operations
+    its = Intersection(b1, bi)
+    itsa = IntersectionArray([b1, bi])
+
+    # -----
+    # plots
+    # -----
+
+    plot(its)
+    @test_throws ErrorException plot(itsa) # TODO not implemented yet
+
+    # ε-close
+    ε = N(1e-2)
+    plot(its)
+    @test_throws ErrorException plot(itsa, ε) # TODO not implemented yet
 end

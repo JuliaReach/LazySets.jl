@@ -8,41 +8,66 @@ using Compat.Test
 # conversion between numeric types
 include("to_N.jl")
 
+# non-exported helper functions
+import LazySets.ispermutation
+
 global test_suite_basic = true
 global test_suite_doctests = VERSION >= v"0.7-" # only run doctests with new Julia version
-global test_suite_polyhedra = false
-global test_suite_plotting = false
+global test_suite_polyhedra = true
+global test_suite_plotting = true
 
 if (length(ARGS) == 0) || (ARGS[1] == "--default")
     # default test suite including doctests
 elseif ARGS[1] == "--basic"
     # basic test suite
     test_suite_doctests = false
+    test_suite_polyhedra = false
+    test_suite_plotting = false
 elseif ARGS[1] == "--polyhedra"
     # Polyhedra.jl test suite
+    test_suite_doctests = false
     test_suite_polyhedra = true
+    test_suite_plotting = false
 elseif ARGS[1] == "--plot"
     # plotting test suite
+    test_suite_doctests = false
+    test_suite_polyhedra = false
     test_suite_plotting = true
 elseif ARGS[1] == "--all"
     # complete test suite
+    test_suite_doctests = true
     test_suite_polyhedra = true
     test_suite_plotting = true
 else
     error("unknown parameter 1: $(ARGS[1])")
 end
 
-if test_suite_polyhedra
+@static if VERSION >= v"0.7-"
+    using Pkg
+end
+
+Pkg.add("Optim")
+
+if test_suite_polyhedra || test_suite_plotting
+    @static if VERSION < v"0.7-"
+        Pkg.add("CDDLib")
+    end
+    Pkg.add("Polyhedra")
     using Polyhedra
 
     # fix namespace conflicts with Polyhedra
-    dim = LazySets.dim
-    HalfSpace = LazySets.HalfSpace
-    Interval = LazySets.Interval
-    Line = LazySets.Line
+    import LazySets.dim
+    import LazySets.HalfSpace
+    import LazySets.Interval
+    import LazySets.Line
 end
 
 if test_suite_basic
+    # =========================
+    # Testing utility functions
+    # =========================
+    @time @testset "LazySets.Util" begin include("unit_util.jl") end
+
     # =======================================
     # Testing types that inherit from LazySet
     # =======================================
@@ -54,6 +79,7 @@ if test_suite_basic
     @time @testset "LazySets.Hyperrectangle" begin include("unit_Hyperrectangle.jl") end
     @time @testset "LazySets.Polygon" begin include("unit_Polygon.jl") end
     @time @testset "LazySets.Polytope" begin include("unit_Polytope.jl") end
+    @time @testset "LazySets.Polyhedron" begin include("unit_Polyhedron.jl") end
     @time @testset "LazySets.Zonotope" begin include("unit_Zonotope.jl") end
     @time @testset "LazySets.ZeroSet" begin include("unit_ZeroSet.jl") end
     @time @testset "LazySets.EmptySet" begin include("unit_EmptySet.jl") end
@@ -74,6 +100,11 @@ if test_suite_basic
     @time @testset "LazySets.MinkowskiSum" begin include("unit_MinkowskiSum.jl") end
     @time @testset "LazySets.CartesianProduct" begin include("unit_CartesianProduct.jl") end
     @time @testset "LazySets.SymmetricIntervalHull" begin include("unit_SymmetricIntervalHull.jl") end
+
+    # ======================
+    # Testing set interfaces
+    # ======================
+    @time @testset "LazySets.CompactSet" begin include("unit_CompactSet.jl") end
 
     # =================================================================
     # Algorithms for approximation of convex sets using support vectors
@@ -101,22 +132,26 @@ if test_suite_basic
 end
 
 if test_suite_plotting
+    Pkg.add("Plots")
+    using Plots
+
+    # fix namespace conflicts with Plots
+    import LazySets.center
+
     @time @testset "LazySets.plotting" begin include("unit_plot.jl") end
 end
 
 if test_suite_doctests
-    if isdefined(@__MODULE__, :Polyhedra)
-        println("skipping doctests due to a clash with Polyhedra")
+    @static if VERSION < v"0.7-"
+        Pkg.add("Documenter")
     else
-        @static if VERSION < v"0.7-"
-            Pkg.add("Documenter")
-            Pkg.pin("Documenter", v"0.18.0")
-        else
-            # NOTE: can be removed when using a Project.toml file
-            using Pkg
-            Pkg.add("Documenter")
-        end
-        using Documenter
-        @time @testset "LazySets.doctests" begin include("../docs/make_doctests_only.jl") end
+        # NOTE: can be removed when using a Project.toml file
+        Pkg.add("Documenter")
+        Pkg.add("Plots")
+        Pkg.add("GR")
+        # NOTE: restrict Documenter to 0.19.7 (breaking release) for now
+        Pkg.pin(PackageSpec(name="Documenter", version="0.19.7"));
     end
+    using Documenter
+    @time @testset "LazySets.doctests" begin include("../docs/make_doctests_only.jl") end
 end

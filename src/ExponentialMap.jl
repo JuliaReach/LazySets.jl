@@ -1,6 +1,6 @@
 using Expokit
 
-import Base: *, size, ∈
+import Base: *, size, ∈, isempty
 
 export SparseMatrixExp,
        ExponentialMap,
@@ -11,6 +11,8 @@ export SparseMatrixExp,
        get_rows,
        get_column,
        get_columns
+
+# --- SparseMatrixExp & ExponentialMap ---
 
 """
     SparseMatrixExp{N}
@@ -60,8 +62,6 @@ end
 
 SparseMatrixExp(M::Matrix) =
         error("only sparse matrices can be used to create a `SparseMatrixExp`")
-
-eye(spmexp::SparseMatrixExp) = SparseMatrixExp(spzeros(size(spmexp.M)...))
 
 Base.IndexStyle(::Type{<:SparseMatrixExp}) = IndexCartesian()
 Base.getindex(spmexp::SparseMatrixExp, I::Vararg{Int, 2}) = get_column(spmexp, I[2])[I[1]]
@@ -292,8 +292,36 @@ able to use `expmv`.
 """
 function σ(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
     d_dense = d isa Vector ? d : Vector(d)
-    v = expmv(one(N), transpose(em.spmexp.M), d_dense) # v   <- exp(A') * d
-    return expmv(one(N), em.spmexp.M, σ(v, em.X)) # res <- exp(A) * σ(v, S)
+    v = expmv(one(N), transpose(em.spmexp.M), d_dense) # v   <- exp(M') * d
+    return expmv(one(N), em.spmexp.M, σ(v, em.X)) # res <- exp(M) * σ(v, S)
+end
+
+"""
+    ρ(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
+
+Return the support function of the exponential map.
+
+### Input
+
+- `d`  -- direction
+- `em` -- exponential map
+
+### Output
+
+The support function in the given direction.
+
+### Notes
+
+If ``E = \\exp(M)⋅S``, where ``M`` is a matrix and ``S`` is a convex set, it
+follows that ``ρ(d, E) = ρ(\\exp(M)^T d, S)`` for any direction ``d``.
+
+We allow sparse direction vectors, but will convert them to dense vectors to be
+able to use `expmv`.
+"""
+function ρ(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
+    d_dense = d isa Vector ? d : Vector(d)
+    v = expmv(one(N), transpose(em.spmexp.M), d_dense) # v <- exp(M^T) * d
+    return ρ(v, em.X)
 end
 
 """
@@ -333,6 +361,57 @@ function ∈(x::AbstractVector{N}, em::ExponentialMap{N, <:LazySet{N}})::Bool wh
     @assert length(x) == dim(em)
     return ∈(expmv(-one(N), em.spmexp.M, x), em.X)
 end
+
+"""
+    isempty(em::ExponentialMap)::Bool
+
+Return if an exponential map is empty or not.
+
+### Input
+
+- `em` -- exponential map
+
+### Output
+
+`true` iff the wrapped set is empty.
+"""
+function isempty(em::ExponentialMap)::Bool
+    return isempty(em.X)
+end
+
+"""
+    vertices_list(em::ExponentialMap{N})::Vector{Vector{N}} where N<:Real
+
+Return the list of vertices of a (polytopic) exponential map.
+
+### Input
+
+- `em` -- exponential map
+
+### Output
+
+A list of vertices.
+
+### Algorithm
+
+We assume that the underlying set `X` is polytopic.
+Then the result is just the exponential map applied to the vertices of `X`.
+"""
+function vertices_list(em::ExponentialMap{N})::Vector{Vector{N}} where N<:Real
+    # collect low-dimensional vertices lists
+    vlist_X = vertices_list(em.X)
+
+    # create resulting vertices list
+    vlist = Vector{Vector{N}}()
+    sizehint!(vlist, length(vlist_X))
+    for v in vlist_X
+        push!(vlist, expmv(one(N), em.spmexp.M, v))
+    end
+
+    return vlist
+end
+
+# --- ProjectionSparseMatrixExp & ExponentialProjectionMap ---
 
 """
     ProjectionSparseMatrixExp{N<:Real}
@@ -452,4 +531,21 @@ function σ(d::AbstractVector{N},
     aux2 = eprojmap.projspmexp.R * svec
     daux = expmv(one(N), eprojmap.projspmexp.spmexp.M, aux2)
     return eprojmap.projspmexp.L * daux
+end
+
+"""
+    isempty(eprojmap::ExponentialProjectionMap)::Bool
+
+Return if an exponential projection map is empty or not.
+
+### Input
+
+- `eprojmap` -- exponential projection map
+
+### Output
+
+`true` iff the wrapped set is empty.
+"""
+function isempty(eprojmap::ExponentialProjectionMap)::Bool
+    return isempty(eprojmap.X)
 end

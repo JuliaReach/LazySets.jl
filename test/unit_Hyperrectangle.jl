@@ -1,4 +1,7 @@
 for N in [Float64, Rational{Int}, Float32]
+    # random hyperrectangle
+    rand(Hyperrectangle)
+
     # 1D Hyperrectangle
     h = Hyperrectangle(N[0], N[1])
     # Test Dimension
@@ -56,11 +59,7 @@ for N in [Float64, Rational{Int}, Float32]
     h = Hyperrectangle(N[3, 2], N[2, 1])
     vl = vertices_list(h)
     # Test Vertices
-    @test length(vl) == 4
-    @test N[1, 1] ∈ vl
-    @test N[1, 3] ∈ vl
-    @test N[5, 1] ∈ vl
-    @test N[5, 3] ∈ vl
+    @test ispermutation(vl, [N[1, 1], N[1, 3], N[5, 1], N[5, 3]])
     # norm
     @test norm(h) == norm(N[5, 3], Inf)
     # radius
@@ -85,6 +84,9 @@ for N in [Float64, Rational{Int}, Float32]
     H = Hyperrectangle(to_N(N, [-2.1, 5.6, 0.9]), fill(to_N(N, 0.5), 3))
     @test low(H) ≈ to_N(N, [-2.6, 5.1, 0.4])
     @test high(H) ≈ to_N(N, [-1.6, 6.1, 1.4])
+
+    # isempty
+    @test !isempty(H)
 
     # membership
     H = Hyperrectangle(N[1, 1], N[2, 3])
@@ -129,7 +131,10 @@ for N in [Float64, Rational{Int}, Float32]
 
     # linear map (concrete)
     P = linear_map(N[1 0; 0 2], H1)
-    @test P isa VPolygon # in 2D we get a polygon
+    @test P isa VPolytope # in 2D is a VPolytope, see #631
+    P = linear_map(N[1 0; 0 2], H1, output_type=VPolygon)
+    @test P isa VPolygon
+
     P = linear_map(Diagonal(N[1, 2, 3, 4]),
                    Approximations.overapproximate(H1 * H1))
     @test P isa VPolytope # in 4D we get a VPolytope
@@ -139,5 +144,16 @@ for N in [Float64, Rational{Int}, Float32]
     # this test would take very long if all 2^100 vertices are computed (see #92)
     H = Hyperrectangle(fill(N(1.), 100), fill(N(0.), 100))
     vl = vertices_list(H)
-    @test length(vl) == 1 && vl[1] == H.center
+    @test vl == [H.center]
+
+    # transform hyperrectangle into a polygon
+    H1pol = convert(HPolygon, H1)
+    vlist = vertices_list(H1pol)
+    @test ispermutation(vlist, [N[3, 3], N[3, -1], N[-1, -1], N[-1, 3]])
+
+    # test that we can produce the list of constraints
+    clist = constraints_list(H1)
+    @test ispermutation(clist,
+                        [HalfSpace(N[1, 0], N(3)), HalfSpace(N[0, 1], N(3)),
+                         HalfSpace(N[-1, 0], N(1)), HalfSpace(N[0, -1], N(1))])
 end

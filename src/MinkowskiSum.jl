@@ -1,4 +1,4 @@
-import Base:+, getindex
+import Base: +, getindex, isempty
 
 export MinkowskiSum, ⊕,
        MinkowskiSumArray,
@@ -99,9 +99,56 @@ Return the support vector of a Minkowski sum.
 
 The support vector in the given direction.
 If the direction has norm zero, the result depends on the summand sets.
+
+### Algorithm
+
+The support vector in direction ``d`` of the Minkowski sum of two sets ``X``
+and ``Y`` is the sum of the support vectors of ``X`` and ``Y`` in direction
+``d``.
 """
 function σ(d::AbstractVector{N}, ms::MinkowskiSum{N}) where {N<:Real}
     return σ(d, ms.X) + σ(d, ms.Y)
+end
+
+"""
+    ρ(d::AbstractVector{N}, ms::MinkowskiSum{N}) where {N<:Real}
+
+Return the support function of a Minkowski sum.
+
+### Input
+
+- `d`  -- direction
+- `ms` -- Minkowski sum
+
+### Output
+
+The support function in the given direction.
+
+### Algorithm
+
+The support function in direction ``d`` of the Minkowski sum of two sets ``X``
+and ``Y`` is the sum of the support functions of ``X`` and ``Y`` in direction
+``d``.
+"""
+function ρ(d::AbstractVector{N}, ms::MinkowskiSum{N}) where {N<:Real}
+    return ρ(d, ms.X) + ρ(d, ms.Y)
+end
+
+"""
+    isempty(ms::MinkowskiSum)::Bool
+
+Return if a Minkowski sum is empty or not.
+
+### Input
+
+- `ms` -- Minkowski sum
+
+### Output
+
+`true` iff any of the wrapped sets are empty.
+"""
+function isempty(ms::MinkowskiSum)::Bool
+    return isempty(ms.X) || isempty(ms.Y)
 end
 
 # =================================
@@ -210,6 +257,48 @@ If the direction has norm zero, the result depends on the summand sets.
 function σ(d::AbstractVector{N}, msa::MinkowskiSumArray{N}) where {N<:Real}
     return σ_helper(d, msa.array)
 end
+
+"""
+    ρ(d::AbstractVector{N}, msa::MinkowskiSumArray{N}) where {N<:Real}
+
+Return the support function of a Minkowski sum array of a finite number of sets
+in a given direction.
+
+### Input
+
+- `d`   -- direction
+- `msa` -- Minkowski sum array
+
+### Output
+
+The support function in the given direction.
+
+### Algorithm
+
+The support function of the Minkowski sum of sets is the sum of the support
+functions of each set. 
+"""
+function ρ(d::AbstractVector{N}, msa::MinkowskiSumArray{N}) where {N<:Real}
+    return sum([ρ(d, Xi) for Xi in msa.array])
+end
+
+"""
+    isempty(msa::MinkowskiSumArray)::Bool
+
+Return if a Minkowski sum array is empty or not.
+
+### Input
+
+- `cp` -- Minkowski sum array
+
+### Output
+
+`true` iff any of the wrapped sets are empty.
+"""
+function isempty(msa::MinkowskiSumArray)::Bool
+    return any(X -> isempty(X), array(msa))
+end
+
 
 # =============================================================
 # Minkowski sum of an array of sets with a support vector cache
@@ -377,6 +466,30 @@ function σ(d::AbstractVector{N}, cms::CacheMinkowskiSum{N}) where {N<:Real}
     # NOTE: make a copy of the direction vector (can be modified outside)
     cache[copy(d)] = CachedPair(l, svec)
     return svec
+end
+
+"""
+    isempty(cms::CacheMinkowskiSum)::Bool
+
+Return if a caching Minkowski sum array is empty or not.
+
+### Input
+
+- `cp` -- caching Minkowski sum
+
+### Output
+
+`true` iff any of the wrapped sets are empty.
+
+### Notes
+
+Forgotten sets cannot be checked anymore.
+Usually they have been empty because otherwise the support vector query should
+have crashed before.
+In that case, the caching Minkowski sum should not be used further.
+"""
+function isempty(cms::CacheMinkowskiSum)::Bool
+    return any(X -> isempty(X), array(cms))
 end
 
 """

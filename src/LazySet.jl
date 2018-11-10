@@ -32,7 +32,7 @@ Every concrete `LazySet` must define the following functions:
 
 ```jldoctest
 julia> subtypes(LazySet)
-18-element Array{Any,1}:
+19-element Array{Any,1}:
  AbstractCentrallySymmetric
  AbstractPolytope
  CacheMinkowskiSum
@@ -43,6 +43,7 @@ julia> subtypes(LazySet)
  EmptySet
  ExponentialMap
  ExponentialProjectionMap
+ HPolyhedron
  HalfSpace
  Hyperplane
  Intersection
@@ -237,4 +238,12 @@ function ==(X::LazySet, Y::LazySet)
     end
 
     return true
+end
+
+@static if VERSION >= v"0.7-"
+    # hook into random API
+    import Random.rand
+    function rand(rng::AbstractRNG, ::SamplerType{T}) where T<:LazySet
+        rand(T, rng=rng)
+    end
 end

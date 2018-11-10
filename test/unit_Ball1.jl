@@ -1,4 +1,7 @@
 for N in [Float64, Rational{Int}, Float32]
+    # random ball
+    rand(Ball1)
+
     # 1D Ball1
     b = Ball1(N[0], N(1))
     # dimension
@@ -56,16 +59,26 @@ for N in [Float64, Rational{Int}, Float32]
     # center
     @test center(b) == N[0, 0]
 
+    # isempty
+    @test !isempty(b)
+
     # an_element & membership function
     @test an_element(b) ∈ b
 
     # vertices_list
     vl = vertices_list(b)
-    @test length(vl) == 4 && N[2, 0] ∈ vl && N[0, 2] ∈ vl &&
-          N[-2, 0] ∈ vl && N[0, -2] ∈ vl
+    @test ispermutation(vl, [N[2, 0], N[0, 2], N[-2, 0], N[0, -2]])
 
     # check that vertices_list for zero radius doesn't repeat vertices
     b = Ball1(N[1, 2], N(0))
     vl = vertices_list(b)
-    @test length(vl) == 1 && vl[1] == b.center
+    @test vl == [center(b)]
+
+    # list of constraints
+    b = Ball1(N[0, 0], N(1))
+    clist = constraints_list(b)
+    @test ispermutation(clist, [HalfSpace(N[1, 1], N(1)),  # x + y <= 1
+                                HalfSpace(N[-1, 1], N(1)),  # -x + y <= 1
+                                HalfSpace(N[1, -1], N(1)), # x - y <= 1
+                                HalfSpace(N[-1, -1], N(1))])  # x + y >= -1
 end

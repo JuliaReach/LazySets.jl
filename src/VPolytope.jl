@@ -1,5 +1,7 @@
 using MathProgBase, GLPKMathProgInterface
 
+import Base.rand
+
 export VPolytope,
        vertices_list
 
@@ -97,7 +99,54 @@ function σ(d::AbstractVector{N},
     end
 end
 
-# --- VPolytope functions ---
+"""
+    rand(::Type{VPolytope}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
+        )::VPolytope{N}
+
+Create a random polytope in vertex representation.
+
+### Input
+
+- `VPolytope`    -- type for dispatch
+- `N`            -- (optional, default: `Float64`) numeric type
+- `dim`          -- (optional, default: 2) dimension
+- `rng`          -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed`         -- (optional, default: `nothing`) seed for reseeding
+- `num_vertices` -- (optional, default: `-1`) upper bound on the number of
+                    vertices of the polytope (see comment below)
+
+### Output
+
+A random polytope in vertex representation.
+
+### Algorithm
+
+All numbers are normally distributed with mean 0 and standard deviation 1.
+
+The number of vertices can be controlled with the argument `num_vertices`.
+For a negative value we choose a random number in the range `dim:5*dim` (except
+if `dim == 1`, in which case we choose in the range `1:2`).
+Note that we do not guarantee that the vertices are not redundant.
+"""
+function rand(::Type{VPolytope};
+              N::Type{<:Real}=Float64,
+              dim::Int=2,
+              rng::AbstractRNG=GLOBAL_RNG,
+              seed::Union{Int, Nothing}=nothing,
+              num_vertices::Int=-1
+             )::VPolytope{N}
+    rng = reseed(rng, seed)
+    if num_vertices < 0
+        num_vertices = (dim == 1) ? rand(1:2) : rand(dim:5*dim)
+    end
+    vertices = [randn(rng, N, dim) for i in 1:num_vertices]
+    return VPolytope(vertices)
+end
+
+
+# --- AbstractPolytope interface functions ---
+
 
 """
     vertices_list(P::VPolytope{N})::Vector{Vector{N}} where {N<:Real}
@@ -116,39 +165,74 @@ function vertices_list(P::VPolytope{N})::Vector{Vector{N}} where {N<:Real}
     return P.vertices
 end
 
+"""
+    constraints_list(P::VPolytope{N})::Vector{LinearConstraint{N}} where {N<:Real}
+
+Return the list of constraints defining a polytope in V-representation.
+
+### Input
+
+- `P` -- polytope in V-representation
+
+### Output
+
+The list of constraints of the polytope.
+
+### Algorithm
+
+First the H-representation of ``P`` is computed, then its list of constraints
+is returned. 
+"""
+function constraints_list(P::VPolytope{N})::Vector{LinearConstraint{N}} where {N<:Real}
+    return constraints_list(tohrep(P))
+end
+
+
+# --- functions that use Polyhedra.jl ---
+
 
 function load_polyhedra_vpolytope() # function to be loaded by Requires
 return quote
+# see the interface file AbstractPolytope.jl for the imports
 
-using CDDLib # default backend
-import Polyhedra:polyhedron, SimpleHRepresentation, SimpleVRepresentation,
-                 HRep, VRep,
-                 removehredundancy!, removevredundancy!,
-                 hreps, vreps,
-                 intersect,
-                 convexhull,
-                 hcartesianproduct
+export convex_hull,
+       cartesian_product,
+       vertices_list,
+       tohrep,
+       tovrep
 
-export intersection, convex_hull, cartesian_product, vertices_list, tohrep, tovrep
+@static if VERSION < v"0.7-"
 
-# VPolytope from a VRep
-function VPolytope(P::VRep{N, T}, backend=CDDLib.CDDLibrary()) where {N, T}
-    vertices = Vector{Vector{T}}()
-    for vi in Polyhedra.points(P)
-        push!(vertices, vi)
+    # VPolytope from a VRep
+    function VPolytope(P::VRep{T, N}) where {T, N}
+        vertices = Vector{Vector{N}}()
+        for vi in Polyhedra.points(P)
+            push!(vertices, vi)
+        end
+        return VPolytope(vertices)
     end
-    return VPolytope(vertices)
+
+else
+
+    # VPolytope from a VRep
+    function VPolytope(P::VRep{N}) where {N}
+        vertices = Vector{Vector{N}}()
+        for vi in Polyhedra.points(P)
+            push!(vertices, vi)
+        end
+        return VPolytope(vertices)
+    end
 end
 
 """
-    polyhedron(P::VPolytope{N}, [backend]=CDDLib.CDDLibrary()) where {N}
+    polyhedron(P::VPolytope{N}, [backend]=default_polyhedra_backend(P, N)) where {N}
 
 Return an `VRep` polyhedron from `Polyhedra.jl` given a polytope in V-representation.
 
 ### Input
 
 - `P`       -- polytope
-- `backend` -- (optional, default: `CDDLib.CDDLibrary()`) the polyhedral
+- `backend` -- (optional, default: `default_polyhedra_backend(P, N)`) the polyhedral
                computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
                for further information
 
@@ -156,45 +240,14 @@ Return an `VRep` polyhedron from `Polyhedra.jl` given a polytope in V-representa
 
 A `VRep` polyhedron.
 """
-function polyhedron(P::VPolytope{N}, backend=CDDLib.CDDLibrary()) where {N}
+function polyhedron(P::VPolytope{N}, backend=default_polyhedra_backend(P, N)) where {N}
     V = hcat(vertices_list(P)...)'
     return polyhedron(Polyhedra.vrep(V), backend)
 end
 
 """
-    intersection(P1::VPolytope{N}, P2::VPolytope{N};
-                [backend]=CDDLib.CDDLibrary(),
-                [prunefunc]=removehredundancy!)::VPolytope{N} where {N<:Real}
-
-Compute the intersection of two polytopes in V-representation.
-
-### Input
-
-- `P1`         -- polytope
-- `P2`         -- another polytope
-- `backend`    -- (optional, default: `CDDLib.CDDLibrary()`) the polyhedral
-                  computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
-                  for further information
-- `prunefunc` -- (optional, default: `removehredundancy!`) function to post-process
-                  the output of `intersect`
-
-### Output
-
-The `VPolytope` obtained by the intersection of `P1` and `P2`.
-"""
-function intersection(P1::VPolytope{N}, P2::VPolytope{N};
-                      backend=CDDLib.CDDLibrary(),
-                      prunefunc=removehredundancy!)::VPolytope{N} where {N<:Real}
-
-    P1 = polyhedron(P1, backend)
-    P2 = polyhedron(P2, backend)
-    Pint = Polyhedra.intersect(P1, P2)
-    prunefunc(Pint)
-    return VPolytope(Pint)
-end
-
-"""
-    convex_hull(P1::VPolytope, P2::VPolytope; [backend]=CDDLib.CDDLibrary())
+    convex_hull(P1::VPolytope{N}, P2::VPolytope{N};
+                [backend]=default_polyhedra_backend(P1, N)) where {N}
 
 Compute the convex hull of the set union of two polytopes in V-representation.
 
@@ -202,7 +255,7 @@ Compute the convex hull of the set union of two polytopes in V-representation.
 
 - `P1`         -- polytope
 - `P2`         -- another polytope
-- `backend`    -- (optional, default: `CDDLib.CDDLibrary()`) the polyhedral
+- `backend`    -- (optional, default: `default_polyhedra_backend(P1, N)`) the polyhedral
                   computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
                   for further information
 
@@ -210,13 +263,15 @@ Compute the convex hull of the set union of two polytopes in V-representation.
 
 The `VPolytope` obtained by the concrete convex hull of `P1` and `P2`.
 """
-function convex_hull(P1::VPolytope, P2::VPolytope; backend=CDDLib.CDDLibrary())
+function convex_hull(P1::VPolytope{N}, P2::VPolytope{N};
+                     backend=default_polyhedra_backend(P1, N)) where {N}
     Pch = convexhull(polyhedron(P1, backend), polyhedron(P2, backend))
     return VPolytope(Pch)
 end
 
 """
-    cartesian_product(P1::VPolytope, P2::VPolytope; [backend]=CDDLib.CDDLibrary())
+    cartesian_product(P1::VPolytope{N}, P2::VPolytope{N};
+                      [backend]=default_polyhedra_backend(P1, N)) where {N}
 
 Compute the Cartesian product of two polytopes in V-representation.
 
@@ -224,7 +279,7 @@ Compute the Cartesian product of two polytopes in V-representation.
 
 - `P1`         -- polytope
 - `P2`         -- another polytope
-- `backend`    -- (optional, default: `CDDLib.CDDLibrary()`) the polyhedral
+- `backend`    -- (optional, default: `default_polyhedra_backend(P1, N)`) the polyhedral
                   computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
                   for further information
 
@@ -232,20 +287,21 @@ Compute the Cartesian product of two polytopes in V-representation.
 
 The `VPolytope` obtained by the concrete Cartesian product of `P1` and `P2`.
 """
-function cartesian_product(P1::VPolytope, P2::VPolytope; backend=CDDLib.CDDLibrary())
+function cartesian_product(P1::VPolytope{N}, P2::VPolytope{N};
+                           backend=default_polyhedra_backend(P1, N)) where {N}
     Pcp = hcartesianproduct(polyhedron(P1, backend), polyhedron(P2, backend))
     return VPolytope(Pcp)
 end
 
 """
-    tohrep(P::VPolytope; backend=CDDLib.CDDLibrary())
+    tohrep(P::VPolytope{N}; [backend]=default_polyhedra_backend(P, N)) where {N}
 
 Transform a polytope in V-representation to a polytope in H-representation.
 
 ### Input
 
 - `P`          -- polytope in vertex representation
-- `backend`    -- (optional, default: `CDDLib.CDDLibrary()`) the polyhedral
+- `backend`    -- (optional, default: `default_polyhedra_backend(P, N)`) the polyhedral
                   computations backend,
                   see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
                   for further information
@@ -255,9 +311,9 @@ Transform a polytope in V-representation to a polytope in H-representation.
 The `HPolytope` which is the constraint representation of the given polytope
 in vertex representation.
 """
-function tohrep(P::VPolytope; backend=CDDLib.CDDLibrary())
-    P = polyhedron(P, backend)
-    return HPolytope(P)
+function tohrep(P::VPolytope{N};
+                backend=default_polyhedra_backend(P, N)) where {N}
+    return HPolytope(polyhedron(P, backend))
 end
 
 """

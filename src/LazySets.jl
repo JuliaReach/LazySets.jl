@@ -42,6 +42,7 @@ include("EmptySet.jl")
 include("HPolygon.jl")
 include("HPolygonOpt.jl")
 include("HPolytope.jl")
+include("HPolyhedron.jl")
 include("Hyperplane.jl")
 include("Hyperrectangle.jl")
 include("Interval.jl")
@@ -75,6 +76,11 @@ include("convert.jl")
 include("concrete_intersection.jl")
 include("is_intersection_empty.jl")
 include("is_subset.jl")
+
+# =======
+# Aliases
+# =======
+include("aliases.jl")
 
 # =====================
 # Approximations module

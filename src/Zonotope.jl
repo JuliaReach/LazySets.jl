@@ -1,4 +1,5 @@
-import Base:∈
+import Base: rand,
+             ∈
 
 export Zonotope,
        order,
@@ -6,7 +7,8 @@ export Zonotope,
        linear_map,
        scale,
        ngens,
-       reduce_order
+       reduce_order,
+       constraints_list
 
 """
     Zonotope{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
@@ -28,7 +30,7 @@ Z = \\left\\{ c + ∑_{i=1}^p ξ_i g_i,~~ ξ_i \\in [-1, 1]~~ ∀ i = 1,…, p \
 where ``c \\in \\mathbb{R}^n`` is its *center* and ``\\{g_i\\}_{i=1}^p``,
 ``g_i \\in \\mathbb{R}^n``, is the set of *generators*.
 This characterization defines a zonotope as the finite Minkowski sum of line
-elements.
+segments.
 Zonotopes can be equivalently described as the image of a unit infinity-norm
 ball in ``\\mathbb{R}^n`` by an affine transformation.
 
@@ -55,10 +57,10 @@ Compute its vertices:
 ```jldoctest zonotope_label
 julia> vertices_list(Z)
 4-element Array{Array{Float64,1},1}:
- [0.9, -0.1]
- [1.1, -0.1]
  [1.1, 0.1]
  [0.9, 0.1]
+ [1.1, -0.1]
+ [0.9, -0.1]
 ```
 
 Evaluate the support vector in a given direction:
@@ -127,11 +129,15 @@ Return the vertices of a zonotope.
 
 ### Output
 
-List of vertices.
+List of vertices as a vector of vectors.
+
+### Algorithm
+
+If the zonotope has ``p`` generators, each of the ``2^p`` vertices is computed
+by taking the sum of the center and a linear combination of generators, where
+the combination factors are ``ξ_i ∈ \\{-1, 1\\}``.
 
 ### Notes
-
-This implementation computes a convex hull.
 
 For high dimensions, it would be preferable to develop a `vertex_iterator`
 approach.
@@ -145,7 +151,7 @@ function vertices_list(Z::Zonotope{N})::Vector{Vector{N}} where {N<:Real}
         push!(vlist, Z.center .+ Z.generators * collect(ξi))
     end
 
-    return convex_hull!(vlist)
+    return vlist
 end
 
 
@@ -202,34 +208,82 @@ true
 
 ### Algorithm
 
-The element membership problem is computed by stating and solving the following
-linear program with the simplex method. Let ``p`` and ``n`` be the number of
-generators and ambient dimension respectively.
-We consider the minimization of ``x_0`` in the ``p+1``-dimensional space of elements
-``(x_0, ξ_1, …, ξ_p)`` constrained to ``0 ≤ x_0 ≤ ∞``, ``ξ_i ∈ [-1, 1]`` for all
-``i = 1, …, p``, and such that ``x-c = Gξ`` holds. If a feasible solution exists,
-the optimal value ``x_0 = 0`` is achieved.
+The membership problem is computed by stating and solving the following linear
+program with the simplex method.
+Let ``p`` and ``n`` be the number of generators and ambient dimension,
+respectively.
+We consider the minimization of ``x_0`` in the ``p+1``-dimensional space of
+elements ``(x_0, ξ_1, …, ξ_p)`` constrained to ``0 ≤ x_0 ≤ ∞``,
+``ξ_i ∈ [-1, 1]`` for all ``i = 1, …, p``, and such that ``x-c = Gξ`` holds.
+If a feasible solution exists, the optimal value ``x_0 = 0`` is achieved.
 
 ### Notes
 
 This function is parametric in the number type `N`. For exact arithmetic use
 an appropriate backend, e.g. `solver=GLPKSolverLP(method=:Exact)`.
 """
-function ∈(x::AbstractVector{N}, Z::Zonotope{N}; solver=GLPKSolverLP(method=:Simplex))::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, Z::Zonotope{N};
+           solver=GLPKSolverLP(method=:Simplex))::Bool where {N<:Real}
     @assert length(x) == dim(Z)
 
     p, n = ngens(Z), dim(Z)
     # (n+1) x (p+1) matrix with block-diagonal blocks 1 and Z.generators
-    A = [[one(N); fill(zero(N), p)]'; [fill(zero(N), n) Z.generators]]
+    A = [[one(N); zeros(N, p)]'; [zeros(N, n) Z.generators]]
     b = [zero(N); (x - Z.center)]
     lbounds = [zero(N); fill(-one(N), p)]
-    ubounds = [N(Inf); fill(one(N), p)]
+    ubounds = [N(Inf); ones(N, p)]
     sense = ['>'; fill('=', n)]
-    obj = [one(N); fill(zero(N), p)]
+    obj = [one(N); zeros(N, p)]
 
     lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
     return (lp.status == :Optimal) # Infeasible or Unbounded => false
 end
+
+"""
+    rand(::Type{Zonotope}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
+        )::Zonotope{N}
+
+Create a random zonotope.
+
+### Input
+
+- `Zonotope`       -- type for dispatch
+- `N`              -- (optional, default: `Float64`) numeric type
+- `dim`            -- (optional, default: 2) dimension
+- `rng`            -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed`           -- (optional, default: `nothing`) seed for reseeding
+- `num_generators` -- (optional, default: `-1`) number of generators of the
+                      zonotope (see comment below)
+
+### Output
+
+A random zonotope.
+
+### Algorithm
+
+All numbers are normally distributed with mean 0 and standard deviation 1.
+
+The number of generators can be controlled with the argument `num_generators`.
+For a negative value we choose a random number in the range `dim:2*dim` (except
+if `dim == 1`, in which case we only create a single generator).
+"""
+function rand(::Type{Zonotope};
+              N::Type{<:Real}=Float64,
+              dim::Int=2,
+              rng::AbstractRNG=GLOBAL_RNG,
+              seed::Union{Int, Nothing}=nothing,
+              num_generators::Int=-1
+             )::Zonotope{N}
+    rng = reseed(rng, seed)
+    center = randn(rng, N, dim)
+    if num_generators < 0
+        num_generators = (dim == 1) ? 1 : rand(dim:2*dim)
+    end
+    generators = randn(rng, N, dim, num_generators)
+    return Zonotope(center, generators)
+end
+
 
 # --- Zonotope functions ---
 
@@ -311,8 +365,8 @@ Concrete scaling of a zonotope.
 
 ### Output
 
-The zonotope obtained by applying the numerical scale to the center and generators
-of ``Z``.
+The zonotope obtained by applying the numerical scale to the center and
+generators of ``Z``.
 """
 function scale(α::Real, Z::Zonotope)
     c = α .* Z.center
@@ -382,4 +436,27 @@ function reduce_order(Z::Zonotope{N}, r)::Zonotope{N} where {N<:Real}
         Gred = Gbox
     end
     return Zonotope(c, Gred)
+end
+
+"""
+    constraints_list(P::Zonotope{N})::Vector{LinearConstraint{N}} where {N<:Real}
+
+Return the list of constraints defining a zonotope.
+
+### Input
+
+- `Z` -- zonotope
+
+### Output
+
+The list of constraints of the polyhedron.
+
+### Algorithm
+
+This is a naive implementation that calculates all vertices and transforms
+to the H-representation of the zonotope. The transformation to the dual
+representation requires the concrete polyhedra package `Polyhedra`.
+"""
+function constraints_list(Z::Zonotope{N})::Vector{LinearConstraint{N}} where {N<:Real}
+    return constraints_list(convert(HPolytope, Z))
 end

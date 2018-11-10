@@ -1,4 +1,9 @@
 for N in [Float64, Float32, Rational{Int}]
+    # random polygons
+    rand(HPolygon)
+    rand(HPolygonOpt)
+    rand(VPolygon)
+
     # Empty polygon
     p = HPolygon{N}()
 
@@ -32,10 +37,13 @@ for N in [Float64, Float32, Rational{Int}]
     HPolytope(p)
     HPolytope(po)
 
-    # support vector of empty polygon
+    # support vector of polygon with no constraints
     @test_throws AssertionError σ(N[0], HPolygon{N}())
     @test_throws AssertionError σ(N[0], HPolygonOpt(HPolygon{N}()))
-    @test_throws AssertionError σ(N[0], HPolytope{N}())
+
+    # isempty
+    @test !isempty(p)
+    @test !isempty(po)
 
     # subset
     b1 = Ball1(N[0, 0], N(1))
@@ -100,7 +108,54 @@ for N in [Float64, Float32, Rational{Int}]
 
         # constraints list getter
         @test constraints_list(hp) == hp.constraints
+
+        # test constraints list of a VPolygon
+        vp = tovrep(hp)
+        @test ispermutation(constraints_list(vp), hp.constraints)
     end
+
+    # concrete intersection of H-rep
+    p2 = HPolygon{N}()
+    c1 = LinearConstraint(N[2, 2], N(14))
+    c2 = LinearConstraint(N[-3, 3], N(6))
+    c3 = LinearConstraint(N[-1, -1], N(-2))
+    c4 = LinearConstraint(N[2, -4], N(0))
+    addconstraint!(p2, c3)
+    addconstraint!(p2, c1)
+    addconstraint!(p2, c4)
+    addconstraint!(p2, c2)
+    p3 = intersection(p, p2)
+    @test length(constraints_list(p3)) == 4
+
+    # check that tighter constraints are used in intersection (#883)
+    h1 = HalfSpace([N(1), N(0)], N(3))
+    h2 = HalfSpace([N(-1), N(0)], N(-3))
+    h3 = HalfSpace([N(0), N(1)], N(7))
+    h4 = HalfSpace([N(0), N(-1)], N(-5))
+    h5 = HalfSpace([N(0), N(1)], N(6))
+    h6 = HalfSpace([N(0), N(-1)], N(-4))
+    p1 = HPolygon([h1, h3, h2, h4])
+    p2 = HPolygon([h1, h5, h2, h6])
+    c = intersection(p1, p2).constraints
+    @test c == [h1, h5, h2, h4]
+    h1 = HalfSpace([N(1), N(1)], N(1))
+    h2 = HalfSpace([N(-1), N(1)], N(1))
+    h3 = HalfSpace([N(0), N(-1)], N(0))
+    p1 = HPolygon([h1, h2, h3])
+    h4 = HalfSpace([N(0), N(1)], N(1))
+    h5 = HalfSpace([N(-1), N(-1)], N(0))
+    h6 = HalfSpace([N(1), N(-1)], N(0))
+    p2 = HPolygon([h4, h5, h6])
+    c = intersection(p1, p2).constraints
+    @test c == [h1, h4, h2, h5, h3, h6]
+
+    # is intersection empty
+    p3 = convert(HPolygon, Hyperrectangle(low=N[-1, -1], high=N[1, 1]))
+    I1 = Interval(N(0.9), N(1.1))
+    I2 = Interval(N(0.2), N(0.3))
+    I3 = Interval(N(4.0), N(5.0))
+    @test !is_intersection_empty(I1 × I2 , p3)
+    @test is_intersection_empty(I1 × I3 , p3)
 
     # Test VRepresentation
     vp = tovrep(p)

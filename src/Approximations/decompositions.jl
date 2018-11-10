@@ -421,7 +421,8 @@ If `ε == Inf`, the algorithm uses a box approximation.
     return HPolygon([LinearConstraint(DIR_EAST(N), pe_bi),
                      LinearConstraint(DIR_NORTH(N), pn_bi),
                      LinearConstraint(DIR_WEST(N), pw_bi),
-                     LinearConstraint(DIR_SOUTH(N), ps_bi)])
+                     LinearConstraint(DIR_SOUTH(N), ps_bi)],
+                     sort_constraints=false)
 end
 
 """

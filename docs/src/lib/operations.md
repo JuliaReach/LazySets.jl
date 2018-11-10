@@ -27,6 +27,9 @@ CartesianProduct
 dim(::CartesianProduct)
 σ(::AbstractVector{Real}, ::CartesianProduct{Real})
 ∈(::AbstractVector{Real}, ::CartesianProduct{Real})
+isempty(::CartesianProduct)
+constraints_list(::CartesianProduct{Real})
+vertices_list(::CartesianProduct{Real})
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -41,6 +44,9 @@ CartesianProductArray
 dim(::CartesianProductArray)
 σ(::AbstractVector{Real}, ::CartesianProductArray{Real})
 ∈(::AbstractVector{Real}, ::CartesianProductArray{Real})
+isempty(::CartesianProductArray)
+constraints_list(::CartesianProductArray{Real})
+vertices_list(::CartesianProductArray{Real})
 array(::CartesianProductArray)
 ```
 Inherited from [`LazySet`](@ref):
@@ -58,6 +64,7 @@ ConvexHull
 CH
 dim(::ConvexHull)
 σ(::AbstractVector{Real}, ::ConvexHull{Real})
+isempty(::ConvexHull)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -73,6 +80,7 @@ CHArray
 dim(::ConvexHullArray)
 σ(::AbstractVector{Real}, ::ConvexHullArray{Real})
 array(::ConvexHullArray)
+isempty(::ConvexHullArray)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -97,15 +105,31 @@ monotone_chain!
 Intersection
 ∩(::LazySet, ::LazySet)
 dim(::Intersection)
+ρ(::AbstractVector{N}, ::Intersection{N}) where {N<:Real}
+ρ(::AbstractVector{N}, ::Intersection{N, <:LazySet{N}, <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}}) where {N<:Real}
+ρ(::AbstractVector{N}, ::Intersection{N, <:LazySet{N}, <:AbstractPolytope{N}}) where {N<:Real}
+isempty(::Intersection)
 σ(::AbstractVector{Real}, ::Intersection{Real})
 ∈(::AbstractVector{Real}, ::Intersection{Real})
-isempty(::Intersection)
+isempty_known(::Intersection)
+set_isempty!(::Intersection, ::Bool)
+swap(::Intersection)
+use_precise_ρ
+_line_search
+_projection
 ```
+
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`an_element`](@ref an_element(::LazySet{Real}))
+
+#### Intersection cache
+
+```@docs
+IntersectionCache
+```
 
 ### ``n``-ary Intersection
 
@@ -131,6 +155,7 @@ MinkowskiSum
 +(::LazySet, ::LazySet)
 dim(::MinkowskiSum)
 σ(::AbstractVector{Real}, ::MinkowskiSum{Real})
+isempty(::MinkowskiSum)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -144,6 +169,7 @@ Inherited from [`LazySet`](@ref):
 MinkowskiSumArray
 dim(::MinkowskiSumArray)
 σ(::AbstractVector{Real}, ::MinkowskiSumArray{Real})
+isempty(::MinkowskiSumArray)
 array(::MinkowskiSumArray)
 ```
 Inherited from [`LazySet`](@ref):
@@ -158,6 +184,7 @@ Inherited from [`LazySet`](@ref):
 CacheMinkowskiSum
 dim(::CacheMinkowskiSum)
 σ(::AbstractVector{Real}, ::CacheMinkowskiSum{Real})
+isempty(::CacheMinkowskiSum)
 array(::CacheMinkowskiSum)
 forget_sets!(::CacheMinkowskiSum)
 ```
@@ -179,6 +206,8 @@ dim(::LinearMap)
 σ(::AbstractVector{Real}, ::LinearMap{Real})
 ∈(::AbstractVector{Real}, ::LinearMap{Real, LazySet{Real}, Real, Matrix{Real}})
 an_element(::LinearMap)
+isempty(::LinearMap)
+vertices_list(::LinearMap{Real})
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -192,6 +221,8 @@ ExponentialMap
 dim(::ExponentialMap)
 σ(::AbstractVector{Real}, ::ExponentialMap{Real})
 ∈(::AbstractVector{Real}, ::ExponentialMap{Real})
+isempty(::ExponentialMap)
+vertices_list(::ExponentialMap{Real})
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -203,6 +234,7 @@ Inherited from [`LazySet`](@ref):
 ExponentialProjectionMap
 dim(::ExponentialProjectionMap)
 σ(::AbstractVector{Real}, ::ExponentialProjectionMap{Real})
+isempty(::ExponentialProjectionMap)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -236,6 +268,7 @@ Inherited from [`AbstractPolytope`](@ref):
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetricPolytope))
+* [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
 * `an_element`
 
 Inherited from [`AbstractHyperrectangle`](@ref):
@@ -243,3 +276,5 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
 * [`vertices_list`](@ref vertices_list(::AbstractHyperrectangle{Real}))
+* [`high`](@ref high(::AbstractHyperrectangle{Real}))
+* [`low`](@ref low(::AbstractHyperrectangle{Real}))

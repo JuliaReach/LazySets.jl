@@ -1,6 +1,9 @@
 import IntervalArithmetic
 
 for N in [Float64, Float32, Rational{Int}]
+    # random interval
+    rand(Interval)
+
     # constructor from IntervalArithmetic.Interval
     x = Interval(IntervalArithmetic.Interval(N(0), N(1)))
 
@@ -21,6 +24,10 @@ for N in [Float64, Float32, Rational{Int}]
     @test (x ⊆ x) && !(x ⊆ N(0.2) * x) && (x ⊆ N(2) * x)
     @test ⊆(x, Interval(N(0), N(2)))
     @test !⊆(x, Interval(N(-1), N(0.5)))
+
+    # radius_hyperrectangle
+    @test radius_hyperrectangle(x) == [N(0.5)]
+    @test radius_hyperrectangle(x, 1) == N(0.5)
 
     # + operator (= concrete Minkowski sum of intervals)
     y = Interval(N(-2), N(0.5))
@@ -53,6 +60,9 @@ for N in [Float64, Float32, Rational{Int}]
     r = (x + y) - (d + p)
     @test low(r) == N(-5.5) && high(r) == N(4)
 
+    # isempty
+    @test !isempty(x)
+
     # Minkowski sum (test that we get the same results as the concrete operation)
     m = x ⊕ y
     @test m isa MinkowskiSum
@@ -68,4 +78,14 @@ for N in [Float64, Float32, Rational{Int}]
     # conversion to hyperrectangle
     h = convert(Hyperrectangle, x)
     @test h isa Hyperrectangle && center(h) == radius_hyperrectangle(h) == N[0.5]
+
+    # concrete intersection
+    A = Interval(N(5), N(7))
+    B = Interval(N(3), N(6))
+    C = intersection(A, B)
+    @test C isa Interval
+    @test low(C) == N(5) && high(C) == N(6)
+    # check empty intersection
+    E = intersection(A, Interval(N(0), N(1)))
+    @test isempty(E)
 end

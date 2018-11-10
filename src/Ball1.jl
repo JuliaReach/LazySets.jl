@@ -1,4 +1,5 @@
-import Base.∈
+import Base: rand,
+             ∈
 
 export Ball1
 
@@ -181,4 +182,70 @@ function ∈(x::AbstractVector{N}, B::Ball1{N})::Bool where {N<:Real}
         sum += abs(B.center[i] - x[i])
     end
     return sum <= B.radius
+end
+
+"""
+    rand(::Type{Ball1}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
+        )::Ball1{N}
+
+Create a random ball in the 1-norm.
+
+### Input
+
+- `Ball1` -- type for dispatch
+- `N`     -- (optional, default: `Float64`) numeric type
+- `dim`   -- (optional, default: 2) dimension
+- `rng`   -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed`  -- (optional, default: `nothing`) seed for reseeding
+
+### Output
+
+A random ball in the 1-norm.
+
+### Algorithm
+
+All numbers are normally distributed with mean 0 and standard deviation 1.
+Additionally, the radius is nonnegative.
+"""
+function rand(::Type{Ball1};
+              N::Type{<:Real}=Float64,
+              dim::Int=2,
+              rng::AbstractRNG=GLOBAL_RNG,
+              seed::Union{Int, Nothing}=nothing
+             )::Ball1{N}
+    rng = reseed(rng, seed)
+    center = randn(rng, N, dim)
+    radius = abs(randn(rng, N))
+    return Ball1(center, radius)
+end
+
+"""
+    constraints_list(P::Ball1{N})::Vector{LinearConstraint{N}} where {N<:Real}
+
+Return the list of constraints defining a ball in the 1-norm.
+
+### Input
+
+- `B` -- ball in the 1-norm
+
+### Output
+
+The list of constraints of the ball.
+
+### Algorithm
+
+The constraints can be defined as ``d_i^T (x-c) ≤ r`` for all ``d_i``, where
+``d_i`` is a vector with elements ``1`` or ``-1`` in ``n`` dimensions. To span
+all possible ``d_i``, the function `Iterators.product` is used.
+"""
+function constraints_list(B::Ball1{N})::Vector{LinearConstraint{N}} where {N<:Real}
+    n = LazySets.dim(B)
+    c, r = B.center, B.radius
+    clist = Vector{LinearConstraint{N}}(undef, 2^n)
+    for (i, di) in enumerate(Iterators.product([[one(N), -one(N)] for i = 1:n]...))
+        d = collect(di) # tuple -> vector
+        clist[i] = LinearConstraint(d, dot(d, c) + r)
+    end
+    return clist
 end

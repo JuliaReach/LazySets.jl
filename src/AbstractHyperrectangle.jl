@@ -1,7 +1,8 @@
 import Base.∈
 
 export AbstractHyperrectangle,
-       radius_hyperrectangle
+       radius_hyperrectangle,
+       constraints_list
 
 """
     AbstractHyperrectangle{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
@@ -18,10 +19,11 @@ Every concrete `AbstractHyperrectangle` must define the following functions:
 
 ```jldoctest
 julia> subtypes(AbstractHyperrectangle)
-4-element Array{Any,1}:
+5-element Array{Any,1}:
  AbstractSingleton
  BallInf
  Hyperrectangle
+ Interval
  SymmetricIntervalHull
 ```
 """
@@ -59,6 +61,32 @@ function vertices_list(H::AbstractHyperrectangle{N}
         for si in Iterators.product([[1, -1] for i = 1:dim(H)]...)][:]
 end
 
+"""
+    constraints_list(H::AbstractHyperrectangle{N})::Vector{LinearConstraint{N}}
+        where {N<:Real}
+
+Return the list of constraints of an axis-aligned hyperrectangular set.
+
+### Input
+
+- `H` -- hyperrectangular set
+
+### Output
+
+A list of linear constraints.
+"""
+function constraints_list(H::AbstractHyperrectangle{N})::Vector{LinearConstraint{N}} where {N<:Real}
+    n = dim(H)
+    constraints = Vector{LinearConstraint{N}}(undef, 2*n)
+    b, c = high(H), -low(H)
+    one_N = one(N)
+    for i in 1:n
+        ei = LazySets.Approximations.UnitVector(i, n, one_N)
+        constraints[i] = HalfSpace(ei, b[i])
+        constraints[i+n] = HalfSpace(-ei, c[i])
+    end
+    return constraints
+end
 
 # --- LazySet interface functions ---
 
@@ -120,13 +148,13 @@ and radius of the hyperrectangle are denoted ``c`` and ``r`` respectively, then
 reasoning on the ``2^n`` vertices we have that:
 
 ```math
-\\max_{x ∈ \\text{vertices}(X)} ‖ x ‖_p = max_{α1, …, αn ∈ {-1, 1}} (|c1 + α1 r1|^p + ... |cn + αn rn|^p)^(1/p).
+\\max_{x ∈ \\text{vertices}(X)} ‖ x ‖_p = \\max_{α_1, …, α_n ∈ \\{-1, 1\\}} (|c_1 + α_1 r_1|^p + ... + |c_n + α_n r_n|^p)^{1/p}.
 ```
 
 The function ``x ↦ x^p``, ``p > 0``, is monotonically increasing and thus the
-maximum of each term ``|ci + αi ri|^p`` is given by ``|ci + sign(ci) ri|^p``
-for each ``i``. Hence, ``x^* := argmax_{x ∈ X} ‖ x ‖_p`` is the vertex
-``c + diag(sign(c)) r``.
+maximum of each term ``|c_i + α_i r_i|^p`` is given by ``|c_i + \\text{sign}(c_i) r_i|^p``
+for each ``i``. Hence, ``x^* := \\text{argmax}_{x ∈ X} ‖ x ‖_p`` is the vertex
+``c + \\text{diag}(\\text{sign}(c)) r``.
 """
 function norm(H::AbstractHyperrectangle, p::Real=Inf)::Real
     c, r = center(H), radius_hyperrectangle(H)
@@ -187,4 +215,42 @@ function ∈(x::AbstractVector{N},
         end
     end
     return true
+end
+
+
+# --- common AbstractHyperrectangle functions ---
+
+
+"""
+    high(H::AbstractHyperrectangle{N})::Vector{N} where {N<:Real}
+
+Return the higher coordinates of a hyperrectangular set.
+
+### Input
+
+- `H` -- hyperrectangular set
+
+### Output
+
+A vector with the higher coordinates of the hyperrectangular set.
+"""
+function high(H::AbstractHyperrectangle{N})::Vector{N} where {N<:Real}
+    return center(H) .+ radius_hyperrectangle(H)
+end
+
+"""
+    low(H::AbstractHyperrectangle{N})::Vector{N} where {N<:Real}
+
+Return the lower coordinates of a hyperrectangular set.
+
+### Input
+
+- `H` -- hyperrectangular set
+
+### Output
+
+A vector with the lower coordinates of the hyperrectangular set.
+"""
+function low(H::AbstractHyperrectangle{N})::Vector{N} where {N<:Real}
+    return center(H) .- radius_hyperrectangle(H)
 end

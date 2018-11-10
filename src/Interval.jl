@@ -1,17 +1,16 @@
 import IntervalArithmetic
 import IntervalArithmetic: AbstractInterval
-import Base:+, -, *, ∈, ⊆
+import Base: +, -, *, ∈, ⊆, rand
 
 export Interval,
        dim, σ, center,
        low, high, vertices_list
 
 """
-    Interval{N<:Real, IN <: AbstractInterval{N}}
-        <: AbstractCentrallySymmetricPolytope{N}
+    Interval{N<:Real, IN <: AbstractInterval{N}} <: AbstractHyperrectangle{N}
 
-Type representing an interval on the real line. Mathematically, it is of the
-form
+Type representing an interval on the real line.
+Mathematically, it is of the form
 
 ```math
 [a, b] := \\{ a ≤ x ≤ b \\} ⊆ \\mathbb{R}.
@@ -72,10 +71,10 @@ Interval of other numeric types can be created as well, eg. a rational interval:
 
 ```jldoctest interval_constructor
 julia> Interval(0//1, 2//1)
-Interval{Rational{Int64},IntervalArithmetic.AbstractInterval{Rational{Int64}}}([0//1, 2//1])
+Interval{Rational{Int64},AbstractInterval{Rational{Int64}}}([0//1, 2//1])
 ```
 """
-struct Interval{N<:Real, IN <: AbstractInterval{N}} <: AbstractCentrallySymmetricPolytope{N}
+struct Interval{N<:Real, IN <: AbstractInterval{N}} <: AbstractHyperrectangle{N}
    dat::IN
 end
 
@@ -211,7 +210,7 @@ The product of the intervals as a new `Interval` set.
 *(x::Interval, y::Interval) = Interval(x.dat * y.dat)
 
 """
-    ∈(v::AbstractVector, x::Interval)
+    ∈(v::AbstractVector{N}, x::Interval{N}) where {N<:Real})
 
 Return whether a vector is contained in the interval.
 
@@ -224,7 +223,7 @@ Return whether a vector is contained in the interval.
 
 `true` iff `x` contains `v`'s first component.
 """
-∈(v::AbstractVector, x::Interval) = v[1] ∈ x.dat
+∈(v::AbstractVector{N}, x::Interval{N}) where {N<:Real} = v[1] ∈ x.dat
 
 """
     ∈(v::N, x::Interval) where {N}
@@ -290,6 +289,42 @@ function an_element(x::Interval{N})::Vector{N} where {N<:Real}
 end
 
 """
+    rand(::Type{Interval}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
+        )::Interval{N}
+
+Create a random interval.
+
+### Input
+
+- `Interval` -- type for dispatch
+- `N`        -- (optional, default: `Float64`) numeric type
+- `dim`      -- (optional, default: 1) dimension
+- `rng`      -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed`     -- (optional, default: `nothing`) seed for reseeding
+
+### Output
+
+A random interval.
+
+### Algorithm
+
+All numbers are normally distributed with mean 0 and standard deviation 1.
+"""
+function rand(::Type{Interval};
+              N::Type{<:Real}=Float64,
+              dim::Int=1,
+              rng::AbstractRNG=GLOBAL_RNG,
+              seed::Union{Int, Nothing}=nothing
+             )::Interval{N}
+    @assert dim == 1 "cannot create a random Interval of dimension $dim"
+    rng = reseed(rng, seed)
+    x = randn(rng, N)
+    y = randn(rng, N)
+    return x < y ? Interval(x, y) : Interval(y, x)
+end
+
+"""
     vertices_list(x::Interval)
 
 Return the list of vertices of this interval.
@@ -303,3 +338,43 @@ Return the list of vertices of this interval.
 The list of vertices of the interval represented as two one-dimensional vectors.
 """
 vertices_list(x::Interval) = [[low(x)], [high(x)]]
+
+
+# --- AbstractHyperrectangle interface functions ---
+
+
+"""
+    radius_hyperrectangle(x::Interval{N}, i::Int)::N where {N<:Real}
+
+Return the box radius of an interval in a given dimension.
+
+### Input
+
+- `x` -- interval
+- `i` -- dimension index (must be `1`)
+
+### Output
+
+The box radius in the given dimension.
+"""
+function radius_hyperrectangle(x::Interval{N}, i::Int)::N where {N<:Real}
+    @assert i == 1 "an interval is one-dimensional"
+    return (high(x) - low(x)) / N(2)
+end
+
+"""
+    radius_hyperrectangle(x::Interval{N})::Vector{N} where {N<:Real}
+
+Return the box radius of an interval in every dimension.
+
+### Input
+
+- `x` -- interval
+
+### Output
+
+The box radius of the interval (a one-dimensional vector).
+"""
+function radius_hyperrectangle(x::Interval{N})::Vector{N} where {N<:Real}
+    return [radius_hyperrectangle(x, 1)]
+end

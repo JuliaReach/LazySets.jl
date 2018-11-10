@@ -26,7 +26,27 @@ Use `addconstraint!` to iteratively add the edges in a sorted way.
 """
 struct HPolygon{N<:Real} <: AbstractHPolygon{N}
     constraints::Vector{LinearConstraint{N}}
+
+    # default constructor that applies sorting of the given constraints
+    function HPolygon{N}(constraints::Vector{LinearConstraint{N}};
+                         sort_constraints::Bool=true) where {N<:Real}
+        if sort_constraints
+            sorted_constraints = Vector{LinearConstraint{N}}()
+            sizehint!(sorted_constraints, length(constraints))
+            for ci in constraints
+                addconstraint!(sorted_constraints, ci)
+            end
+            return new{N}(sorted_constraints)
+        else
+            return new{N}(constraints)
+        end
+    end
 end
+
+# convenience constructor without type parameter
+HPolygon(constraints::Vector{LinearConstraint{N}};
+         sort_constraints::Bool=true) where {N<:Real} =
+    HPolygon{N}(constraints; sort_constraints=sort_constraints)
 
 # constructor for an HPolygon with no constraints
 HPolygon{N}() where {N<:Real} = HPolygon{N}(Vector{LinearConstraint{N}}())

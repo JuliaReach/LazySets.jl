@@ -1,4 +1,7 @@
 for N in [Float64, Rational{Int}, Float32]
+    # random line segment
+    rand(LineSegment)
+
     # construction
     p, q = N[1, 1], N[2, 2]
     l = LineSegment(p, q)
@@ -27,12 +30,15 @@ for N in [Float64, Rational{Int}, Float32]
     # center function
     @test center(l) == N[1.5, 1.5]
 
+    # isempty
+    @test !isempty(l)
+
     # an_element function
     @test an_element(l) ∈ l
 
     # vertices_list function
     vl = vertices_list(l)
-    @test length(vl) == 2 && l.p ∈ vl && l.q ∈ vl
+    @test ispermutation(vl, [l.p, l.q])
 
     # intersection emptiness
     l1 = LineSegment(N[1, 1], N[2, 2])
@@ -98,4 +104,12 @@ for N in [Float64, Rational{Int}, Float32]
     # halfspace_left & halfspace_right
     @test N[1, 2] ∈ halfspace_left(l)
     @test N[2, 1] ∈ halfspace_right(l)
+
+    # constraints list
+    l = LineSegment(N[0, 0], N[1, 1])
+    clist = constraints_list(l)
+    @test ispermutation(clist, [HalfSpace(N[1, -1], N(0)),  # x <= y
+                                HalfSpace(N[-1, 1], N(0)),  # x >= y
+                                HalfSpace(N[-1, -1], N(0)), # y >= -x
+                                HalfSpace(N[1, 1], N(2))])  # y <= 2-x
 end

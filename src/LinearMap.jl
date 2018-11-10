@@ -1,4 +1,4 @@
-import Base: *, ∈
+import Base: *, ∈, isempty
 
 export LinearMap,
        an_element
@@ -172,6 +172,32 @@ function σ(d::AbstractVector{N}, lm::LinearMap{N}) where {N<:Real}
 end
 
 """
+    ρ(d::AbstractVector{N}, lm::LinearMap{N}; kwargs...) where {N<:Real}
+
+Return the support function of the linear map.
+
+### Input
+
+- `d`      -- direction
+- `lm`     -- linear map
+- `kwargs` -- additional arguments that are passed to the support function
+              algorithm
+
+### Output
+
+The support function in the given direction.
+If the direction has norm zero, the result depends on the wrapped set.
+
+### Notes
+
+If ``L = M⋅S``, where ``M`` is a matrix and ``S`` is a convex set, it follows
+that ``ρ(d, L) = ρ(M^T d, S)`` for any direction ``d``.
+"""
+function ρ(d::AbstractVector{N}, lm::LinearMap{N}; kwargs...) where {N<:Real}
+    return ρ(_At_mul_B(lm.M, d), lm.X; kwargs...)
+end
+
+"""
     ∈(x::AbstractVector{N}, lm::LinearMap{N})::Bool where {N<:Real}
 
 Check whether a given point is contained in a linear map of a convex set.
@@ -232,4 +258,58 @@ It relies on the `an_element` function of the wrapped set.
 """
 function an_element(lm::LinearMap)
     return lm.M * an_element(lm.X)
+end
+
+"""
+    isempty(lm::LinearMap)::Bool
+
+Return if a linear map is empty or not.
+
+### Input
+
+- `lm` -- linear map
+
+### Output
+
+`true` iff the wrapped set is empty.
+"""
+function isempty(lm::LinearMap)::Bool
+    return isempty(lm.X)
+end
+
+"""
+    vertices_list(lm::LinearMap{N})::Vector{Vector{N}} where N<:Real
+
+Return the list of vertices of a (polytopic) linear map.
+
+### Input
+
+- `lm` -- linear map
+
+### Output
+
+A list of vertices.
+
+### Algorithm
+
+We assume that the underlying set `X` is polytopic.
+Then the result is just the linear map applied to the vertices of `X`.
+"""
+function vertices_list(lm::LinearMap{N})::Vector{Vector{N}} where N<:Real
+    # for a zero map, the result is just the list containing the origin
+    if iszero(lm.M)
+        return [zeros(N, dim(lm))]
+    end
+
+    # collect low-dimensional vertices lists
+    vlist_X = vertices_list(lm.X)
+
+    # create resulting vertices list
+    vlist = Vector{Vector{N}}()
+    sizehint!(vlist, length(vlist_X))
+    for v in vlist_X
+        push!(vlist, lm.M * v)
+    end
+
+    return vlist
 end

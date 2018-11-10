@@ -34,16 +34,19 @@ end
 ## Check for emptiness of intersection
 
 ```@docs
+isdisjoint
+is_intersection_empty(::LazySet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
-is_intersection_empty(::AbstractHyperrectangle{N}, ::AbstractSingleton{N}, ::Bool=false) where {N<:Real}
-is_intersection_empty(::AbstractSingleton{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-is_intersection_empty(::AbstractSingleton{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
-is_intersection_empty(::AbstractSingleton{N}, ::AbstractSingleton{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::LazySet{N}, ::AbstractSingleton{N}, ::Bool=false) where {N<:Real}
+is_intersection_empty(::AbstractHyperrectangle{N}, ::AbstractSingleton{N}, ::Bool=false) where {N<:Real}
+is_intersection_empty(::AbstractSingleton{N}, ::AbstractSingleton{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::Zonotope{N}, ::Hyperplane{N}, ::Bool=false) where {N<:Real}
-is_intersection_empty(::Hyperplane{N}, ::Zonotope{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::Ball2{N}, ::Ball2{N}, ::Bool=false) where {N<:AbstractFloat}
 is_intersection_empty(::LineSegment{N}, ::LineSegment{N}, ::Bool=false) where {N<:Real}
+is_intersection_empty(::LazySet{N}, ::Union{Hyperplane{N}, Line{N}}, ::Bool=false) where {N<:Real}
+is_intersection_empty(::LazySet{N}, ::HalfSpace{N}, ::Bool=false) where {N<:Real}
+is_intersection_empty(::HalfSpace{N}, ::HalfSpace{N}, ::Bool=false) where {N<:Real}
+is_intersection_empty(::LazySet{N}, ::Union{HPolytope{N}, AbstractHPolygon{N}}) where {N<:Real}
 ```
 
 ## Intersection of two sets
@@ -51,4 +54,8 @@ is_intersection_empty(::LineSegment{N}, ::LineSegment{N}, ::Bool=false) where {N
 ```@docs
 intersection(::Line{N}, ::Line{N}) where {N<:Real}
 intersection(::Hyperrectangle{N}, ::Hyperrectangle{N}) where {N<:Real}
+intersection(::Interval{N}, ::Interval{N}) where {N<:Real}
+intersection(::AbstractHPolygon{N}, ::AbstractHPolygon{N}) where {N<:Real}
+intersection(::HPolytope{N}, ::HalfSpace{N}) where {N<:Real}
+intersection(::HPolyhedron{N}, ::AbstractPolytope{N}) where {N<:Real}
 ```

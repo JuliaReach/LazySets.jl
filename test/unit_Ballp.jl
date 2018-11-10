@@ -1,4 +1,7 @@
 for N in [Float64, Float32]
+    # random ball
+    rand(Ballp)
+
     # 1D Ball3
     b = Ballp(N(3), N[0], N(1))
     # dimension
@@ -33,6 +36,9 @@ for N in [Float64, Float32]
     # center
     @test center(b) == b.center
     @test an_element(b) isa AbstractVector{N}
+
+    # isempty
+    @test !isempty(b)
 
     # membership & an_element
     @test an_element(b) ∈ b

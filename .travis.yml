@@ -5,16 +5,17 @@ os:
 julia:
   - 0.6
   - 0.7
-  - nightly
+  - 1.0
+  #- nightly
 notifications:
   email: false
 git:
   depth: 99999999
 
 ## allow failures (tests will run but not make your overall status red)
-matrix:
-  allow_failures:
-    - julia: nightly
+#matrix:
+  #allow_failures:
+    #- julia: nightly
 
 ## uncomment and modify the following lines to manually install system packages
 #  apt: # apt-get for linux
@@ -27,16 +28,24 @@ matrix:
 #script:
 #  - julia -e 'Pkg.clone(pwd()); Pkg.build("LazySets"); Pkg.test("LazySets"; coverage=true)'
 after_success:
-  # documentation (restrict Documenter to release version 0.18.0 due to problems, see #402)
+  # documentation (restrict Documenter to release version 0.19.7 (breaking release) for now)
   - julia -e 'VERSION >= v"0.7-" && using Pkg;
+              VERSION >= v"0.7-" && Pkg.add("Compat");
+              VERSION >= v"0.7-" && Pkg.add("IntervalArithmetic");
+              VERSION >= v"0.7-" && Pkg.add("RecipesBase");
               Pkg.add("Documenter");
-              VERSION < v"0.7-" && Pkg.pin("Documenter", v"0.18.0");
+              Pkg.add("Plots");
+              Pkg.add("GR");
               Pkg.add("Polyhedra");
-              Pkg.add("CDDLib");'
-  - julia -e 'cd(Pkg.dir("LazySets")); include(joinpath("docs", "make.jl"))'
+              Pkg.add("CDDLib");
+              Pkg.add("Optim");
+              Pkg.add("StaticArrays");
+              VERSION >= v"0.7-" && VERSION < v"1.0-" && Pkg.pin([PackageSpec(name="Documenter", version="0.19.7"), PackageSpec(name="GR", version="0.33.1")]);'
+              # pinning must be the last command because otherwise it is ignored
+  - julia -e 'VERSION >= v"0.7-" && using Pkg; cd(Pkg.dir("LazySets")); include(joinpath("docs", "make.jl"))'
   # code coverage (for both Coveralls and Codecov)
-  - julia -e 'Pkg.add("Coverage")'
+  - julia -e 'VERSION >= v"0.7-" && using Pkg; Pkg.add("Coverage")'
   # push coverage results to Coveralls
   #- julia -e 'cd(Pkg.dir("LazySets")); using Coverage; Coveralls.submit(Coveralls.process_folder())'
   # push coverage results to Codecov
-  - julia -e 'cd(Pkg.dir("LazySets")); using Coverage; Codecov.submit(Codecov.process_folder())'
+  - julia -e 'VERSION >= v"0.7-" && using Pkg; cd(Pkg.dir("LazySets")); using Coverage; Codecov.submit(Codecov.process_folder())'

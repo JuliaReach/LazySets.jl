@@ -1,4 +1,4 @@
-import Base:*, ∈
+import Base: *, ∈, isempty
 
 export CartesianProduct,
        CartesianProductArray,
@@ -102,20 +102,37 @@ Return the support vector of a Cartesian product.
 ### Output
 
 The support vector in the given direction.
-If the direction has norm zero, the result depends on the product sets.
-
-### Algorithm
-
-
+If the direction has norm zero, the result depends on the wrapped sets.
 """
 function σ(d::AbstractVector{N}, cp::CartesianProduct{N}) where {N<:Real}
-    return [σ(d[1:dim(cp.X)], cp.X); σ(d[dim(cp.X)+1:length(d)], cp.Y)]
+    n1 = dim(cp.X)
+    return [σ(d[1:n1], cp.X); σ(d[n1+1:length(d)], cp.Y)]
+end
+
+"""
+    ρ(d::AbstractVector{N}, cp::CartesianProduct{N}) where {N<:Real}
+
+Return the support function of a Cartesian product.
+
+### Input
+
+- `d`  -- direction
+- `cp` -- Cartesian product
+
+### Output
+
+The support function in the given direction.
+If the direction has norm zero, the result depends on the wrapped sets.
+"""
+function ρ(d::AbstractVector{N}, cp::CartesianProduct{N}) where {N<:Real}
+    n1 = dim(cp.X)
+    return ρ(d[1:n1], cp.X) + ρ(d[n1+1:length(d)], cp.Y)
 end
 
 """
     ∈(x::AbstractVector{<:Real}, cp::CartesianProduct)::Bool
 
-Check whether a given point is contained in a Cartesian product set.
+Check whether a given point is contained in a Cartesian product.
 
 ### Input
 
@@ -129,8 +146,81 @@ Check whether a given point is contained in a Cartesian product set.
 function ∈(x::AbstractVector{<:Real}, cp::CartesianProduct)::Bool
     @assert length(x) == dim(cp)
 
-    return ∈(view(x, 1:dim(cp.X)), cp.X) &&
-           ∈(view(x, dim(cp.X)+1:length(x)), cp.Y)
+    n1 = dim(cp.X)
+    return ∈(view(x, 1:n1), cp.X) &&
+           ∈(view(x, n1+1:length(x)), cp.Y)
+end
+
+"""
+    isempty(cp::CartesianProduct)::Bool
+
+Return if a Cartesian product is empty or not.
+
+### Input
+
+- `cp` -- Cartesian product
+
+### Output
+
+`true` iff any of the sub-blocks is empty.
+"""
+function isempty(cp::CartesianProduct)::Bool
+    return isempty(cp.X) || isempty(cp.Y)
+end
+
+"""
+    constraints_list(cp::CartesianProduct{N, <:LazySet{N}}
+                    )::Vector{LinearConstraint{N}} where N<:Real
+
+Return the list of constraints of a (polytopic) Cartesian product.
+
+### Input
+
+- `cp` -- Cartesian product
+
+### Output
+
+A list of constraints.
+"""
+function constraints_list(cp::CartesianProduct{N, <:LazySet{N}}
+                         )::Vector{LinearConstraint{N}} where N<:Real
+    return constraints_list(CartesianProductArray([cp.X, cp.Y]))
+end
+
+"""
+    vertices_list(cp::CartesianProduct{N})::Vector{Vector{N}} where N<:Real
+
+Return the list of vertices of a (polytopic) Cartesian product.
+
+### Input
+
+- `cp` -- Cartesian product
+
+### Output
+
+A list of vertices.
+
+### Algorithm
+
+We assume that the underlying sets are polytopic.
+Then the high-dimensional set of vertices is just the Cartesian product of the
+low-dimensional sets of vertices.
+"""
+function vertices_list(cp::CartesianProduct{N})::Vector{Vector{N}} where N<:Real
+    # collect low-dimensional vertices lists
+    vlist_low = (vertices_list(cp.X), vertices_list(cp.Y))
+
+    # create high-dimensional vertices list
+    vlist = Vector{Vector{N}}()
+    m = length(vlist_low[1]) * length(vlist_low[2])
+    sizehint!(vlist, m)
+    for v1 in vlist_low[1]
+        for v2 in vlist_low[2]
+            push!(vlist, vcat(v1, v2))
+        end
+    end
+
+    return vlist
 end
 
 # ======================================
@@ -213,13 +303,13 @@ The ambient dimension of the Cartesian product of a finite number of convex
 sets.
 """
 function dim(cpa::CartesianProductArray)::Int
-    return length(cpa.array) == 0 ? 0 : sum([dim(sj) for sj in cpa.array])
+    return length(cpa.array) == 0 ? 0 : sum([dim(Xi) for Xi in cpa.array])
 end
 
 """
     σ(d::AbstractVector{N}, cpa::CartesianProductArray{N}) where {N<:Real}
 
-Support vector of a Cartesian product.
+Support vector of a Cartesian product array.
 
 ### Input
 
@@ -233,13 +323,39 @@ If the direction has norm zero, the result depends on the product sets.
 """
 function σ(d::AbstractVector{N}, cpa::CartesianProductArray{N}) where {N<:Real}
     svec = similar(d)
-    jinit = 1
-    for sj in cpa.array
-        jend = jinit + dim(sj) - 1
-        svec[jinit:jend] = σ(d[jinit:jend], sj)
-        jinit = jend + 1
+    i0 = 1
+    for Xi in cpa.array
+        i1 = i0 + dim(Xi) - 1
+        svec[i0:i1] = σ(d[i0:i1], Xi)
+        i0 = i1 + 1
     end
     return svec
+end
+
+"""
+    ρ(d::AbstractVector{N}, cp::CartesianProductArray{N}) where {N<:Real}
+
+Return the support function of a Cartesian product array.
+
+### Input
+
+- `d`   -- direction
+- `cpa` -- Cartesian product array
+
+### Output
+
+The support function in the given direction.
+If the direction has norm zero, the result depends on the wrapped sets.
+"""
+function ρ(d::AbstractVector{N}, cpa::CartesianProductArray{N}) where {N<:Real}
+    sfun = zero(N)
+    i0 = 1
+    for Xi in cpa.array
+        i1 = i0 + dim(Xi) - 1
+        sfun += ρ(d[i0:i1], Xi)
+        i0 = i1 + 1
+    end
+    return sfun
 end
 
 """
@@ -262,13 +378,136 @@ function ∈(x::AbstractVector{N}, cpa::CartesianProductArray{N, <:LazySet{N}}
           )::Bool  where {N<:Real}
     @assert length(x) == dim(cpa)
 
-    jinit = 1
-    for sj in cpa.array
-        jend = jinit + dim(sj) - 1
-        if !∈(x[jinit:jend], sj)
+    i0 = 1
+    for Xi in cpa.array
+        i1 = i0 + dim(Xi) - 1
+        if !∈(x[i0:i1], Xi)
             return false
         end
-        jinit = jend + 1
+        i0 = i1 + 1
     end
     return true
+end
+
+"""
+    isempty(cpa::CartesianProductArray)::Bool
+
+Return if a Cartesian product is empty or not.
+
+### Input
+
+- `cp` -- Cartesian product
+
+### Output
+
+`true` iff any of the sub-blocks is empty.
+"""
+function isempty(cpa::CartesianProductArray)::Bool
+    return any(X -> isempty(X), array(cpa))
+end
+
+"""
+    constraints_list(cpa::CartesianProductArray{N, <:LazySet{N}}
+                    )::Vector{LinearConstraint{N}} where N<:Real
+
+Return the list of constraints of a (polytopic) Cartesian product of a finite
+number of sets.
+
+### Input
+
+- `cpa` -- Cartesian product array
+
+### Output
+
+A list of constraints.
+"""
+function constraints_list(cpa::CartesianProductArray{N, <:LazySet{N}}
+                         )::Vector{LinearConstraint{N}} where N<:Real
+    clist = Vector{LinearConstraint{N}}()
+    n = dim(cpa)
+    sizehint!(clist, n)
+    prev_step = 1
+    # create high-dimensional constraints list
+    for c_low in array(cpa)
+        c_low_list = constraints_list(c_low)
+        if !isempty(c_low_list)
+            indices = prev_step : (dim(c_low_list[1]) + prev_step - 1)
+        end
+        for constr in c_low_list
+            new_constr = LinearConstraint(sparsevec(indices, constr.a, n),
+                                          constr.b)
+            push!(clist, new_constr)
+        end
+        prev_step += dim(c_low_list[1])
+    end
+
+    return clist
+end
+
+"""
+    vertices_list(cpa::CartesianProductArray{N})::Vector{Vector{N}} where N<:Real
+
+Return the list of vertices of a (polytopic) Cartesian product of a finite
+number of sets.
+
+### Input
+
+- `cpa` -- Cartesian product array
+
+### Output
+
+A list of vertices.
+
+### Algorithm
+
+We assume that the underlying sets are polytopic.
+Then the high-dimensional set of vertices is just the Cartesian product of the
+low-dimensional sets of vertices.
+"""
+function vertices_list(cpa::CartesianProductArray{N})::Vector{Vector{N}} where N<:Real
+    # collect low-dimensional vertices lists
+    vlist_low = [vertices_list(X) for X in array(cpa)]
+
+    # create high-dimensional vertices list
+    indices_max = [length(vl) for vl in vlist_low]
+    m = prod(indices_max)
+    vlist = Vector{Vector{N}}(undef, m)
+    indices = ones(Int, length(vlist_low))
+    v = zeros(N, dim(cpa))
+    dim_start_j = 1
+    for vl in vlist_low
+        v_low = vl[1]
+        v[dim_start_j:dim_start_j+length(v_low)-1] = v_low
+        dim_start_j += length(v_low)
+    end
+    i = 1
+    j = 1
+    # iterate through all index combinations
+    while true
+        indices[1] = 0
+        while indices[1] < indices_max[1]
+            indices[1] += 1
+            v_low = vlist_low[1][indices[1]]
+            v[1:length(v_low)] = v_low
+            vlist[i] = copy(v)
+            i += 1
+        end
+        if i > m
+            break
+        end
+        j = 1
+        dim_start_j = 1
+        while indices[j] == indices_max[j]
+            indices[j] = 1
+            v_low = vlist_low[j][1]
+            v[dim_start_j:dim_start_j+length(v_low)-1] = v_low
+            dim_start_j += length(v_low)
+            j += 1
+        end
+        indices[j] += 1
+        v_low = vlist_low[j][indices[j]]
+        v[dim_start_j:dim_start_j+length(v_low)-1] = v_low
+    end
+
+    return vlist
 end

@@ -26,6 +26,7 @@ low
 norm
 is_intersection_empty
 linear_map
+polyhedron
 radius
 radius_hyperrectangle
 tohrep
@@ -35,6 +36,7 @@ vertices_list
 +
 <=
 σ
+ρ
 ∈
 ⊆
 ```

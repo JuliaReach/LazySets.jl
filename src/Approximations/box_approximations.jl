@@ -9,7 +9,7 @@ Overapproximate a convex set by a tight hyperrectangle.
 
 ### Input
 
-- `S` -- convex set
+- `S`           -- convex set
 
 ### Output
 
@@ -21,8 +21,12 @@ The center of the hyperrectangle is obtained by averaging the support function
 of the given set in the canonical directions, and the lengths of the sides can
 be recovered from the distance among support functions in the same directions.
 """
-function box_approximation(S::LazySet)::Hyperrectangle
+function box_approximation(S::LazySet{N};
+                          )::Union{Hyperrectangle{N}, EmptySet{N}} where N<:Real
     (c, r) = box_approximation_helper(S)
+    if r[1] < 0
+        return EmptySet{N}()
+    end
     return Hyperrectangle(c, r)
 end
 
@@ -41,13 +45,15 @@ Alias for `box_approximation`.
 interval_hull = box_approximation
 
 """
-    box_approximation_symmetric(S::LazySet{N})::Hyperrectangle{N} where {N<:Real}
+    box_approximation_symmetric(S::LazySet{N}
+                               )::Union{Hyperrectangle{N}, EmptySet{N}}
+                                where {N<:Real}
 
 Overapproximate a convex set by a tight hyperrectangle centered in the origin.
 
 ### Input
 
-- `S` -- convex set
+- `S`           -- convex set
 
 ### Output
 
@@ -58,9 +64,13 @@ A tight hyperrectangle centered in the origin.
 The center of the box is the origin, and the radius is obtained by computing the
 maximum value of the support function evaluated at the canonical directions.
 """
-function box_approximation_symmetric(S::LazySet{N}
-                                    )::Hyperrectangle{N} where {N<:Real}
+function box_approximation_symmetric(S::LazySet{N};
+                                    )::Union{Hyperrectangle{N},
+                                             EmptySet{N}} where {N<:Real}
     (c, r) = box_approximation_helper(S)
+    if r[1] < 0
+        return EmptySet{N}()
+    end
     return Hyperrectangle(zeros(N, length(c)), abs.(c) .+ r)
 end
 
@@ -79,13 +89,14 @@ symmetric_interval_hull = box_approximation_symmetric
 symmetric_interval_hull_parallel = box_approximation_symmetric_parallel
 
 """
-    box_approximation_helper(S::LazySet)
+    box_approximation_helper(S::LazySet{N};
+                            ) where {N<:Real}
 
 Common code of `box_approximation` and `box_approximation_symmetric`.
 
 ### Input
 
-- `S` -- convex set
+- `S`           -- convex set
 
 ### Output
 
@@ -102,7 +113,8 @@ of the given convex set in the canonical directions.
 The lengths of the sides can be recovered from the distance among support
 functions in the same directions.
 """
-@inline function box_approximation_helper(S::LazySet{N}) where {N<:Real}
+@inline function box_approximation_helper(S::LazySet{N};
+                                         ) where {N<:Real}
     zero_N = zero(N)
     one_N = one(N)
     n = dim(S)
@@ -117,6 +129,12 @@ functions in the same directions.
         d[i] = zero_N
         c[i] = (htop + hbottom) / 2
         r[i] = (htop - hbottom) / 2
+        if r[i] < 0
+            # contradicting bounds => set is empty
+            # terminate with first radius entry being negative
+            r[1] = r[i]
+            break
+        end
     end
     return c, r
 end
@@ -170,13 +188,14 @@ end
 
 
 """
-    ballinf_approximation(S::LazySet{N})::BallInf{N} where {N<:Real}
+    ballinf_approximation(S::LazySet{N};
+                         )::BallInf{N} where {N<:Real}
 
 Overapproximate a convex set by a tight ball in the infinity norm.
 
 ### Input
 
-- `S` -- convex set
+- `S`           -- convex set
 
 ### Output
 
@@ -187,7 +206,8 @@ A tight ball in the infinity norm.
 The center and radius of the box are obtained by evaluating the support function
 of the given convex set along the canonical directions.
 """
-function ballinf_approximation(S::LazySet{N})::BallInf{N} where {N<:Real}
+function ballinf_approximation(S::LazySet{N};
+                              )::Union{BallInf{N}, EmptySet{N}} where {N<:Real}
     zero_N = zero(N)
     one_N = one(N)
     n = dim(S)
@@ -205,6 +225,9 @@ function ballinf_approximation(S::LazySet{N})::BallInf{N} where {N<:Real}
         rcur = (htop - hbottom) / 2
         if (rcur > r)
             r = rcur
+        elseif rcur < 0
+            # contradicting bounds => set is empty
+            return EmptySet{N}()
         end
     end
     return BallInf(c, r)

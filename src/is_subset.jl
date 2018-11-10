@@ -8,13 +8,13 @@ import Base.issubset
     ⊆(S::LazySet{N}, H::AbstractHyperrectangle{N}, [witness]::Bool=false
      )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
-Check whether a convex set is contained in a hyperrectangle, and if not,
+Check whether a convex set is contained in a hyperrectangular set, and if not,
 optionally compute a witness.
 
 ### Input
 
 - `S` -- inner convex set
-- `H` -- outer hyperrectangle
+- `H` -- outer hyperrectangular set
 - `witness` -- (optional, default: `false`) compute a witness if activated
 
 ### Output
@@ -39,13 +39,13 @@ end
     ⊆(P::AbstractPolytope{N}, H::AbstractHyperrectangle, [witness]::Bool=false
      )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
-Check whether a polytope is contained in a hyperrectangle, and if not,
+Check whether a polytope is contained in a hyperrectangular set, and if not,
 optionally compute a witness.
 
 ### Input
 
 - `P` -- inner polytope
-- `H` -- outer hyperrectangle
+- `H` -- outer hyperrectangular set
 - `witness` -- (optional, default: `false`) compute a witness if activated
 
 ### Output
@@ -93,13 +93,13 @@ end
       [witness]::Bool=false
      )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
-Check whether a given hyperrectangle is contained in another hyperrectangle, and
-if not, optionally compute a witness.
+Check whether a given hyperrectangular set is contained in another
+hyperrectangular set, and if not, optionally compute a witness.
 
 ### Input
 
-- `H1` -- inner hyperrectangle
-- `H2` -- outer hyperrectangle
+- `H1` -- inner hyperrectangular set
+- `H2` -- outer hyperrectangular set
 - `witness` -- (optional, default: `false`) compute a witness if activated
 
 ### Output
@@ -237,13 +237,13 @@ end
       [witness]::Bool=false
      )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
-Check whether a given set with a single value is contained in a hyperrectangle,
-and if not, optionally compute a witness.
+Check whether a given set with a single value is contained in a hyperrectangular
+set, and if not, optionally compute a witness.
 
 ### Input
 
 - `S` -- inner set with a single value
-- `H` -- outer hyperrectangle
+- `H` -- outer hyperrectangular set
 - `witness` -- (optional, default: `false`) compute a witness if activated
 
 ### Output
@@ -441,16 +441,16 @@ end
 
 
 """
-    ⊆(L::LineSegment{N}, H::Hyperrectangle{N}, [witness]::Bool=false
+    ⊆(L::LineSegment{N}, H::AbstractHyperrectangle{N}, [witness]::Bool=false
      )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
-Check whether a line segment is contained in a hyperrectangle, and if not,
+Check whether a line segment is contained in a hyperrectangular set, and if not,
 optionally compute a witness.
 
 ### Input
 
 - `L` -- inner line segment
-- `H` -- outer hyperrectangle
+- `H` -- outer hyperrectangular set
 - `witness` -- (optional, default: `false`) compute a witness if activated
 
 ### Output
@@ -469,7 +469,7 @@ This copy-pasted method just exists to avoid method ambiguities.
 Since ``H`` is convex, ``L ⊆ H`` iff ``p ∈ H`` and ``q ∈ H``, where ``p, q`` are
 the end points of ``L``.
 """
-function ⊆(L::LineSegment{N}, H::Hyperrectangle{N}, witness::Bool=false
+function ⊆(L::LineSegment{N}, H::AbstractHyperrectangle{N}, witness::Bool=false
           )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     p_in_H = ∈(L.p, H)
     result = p_in_H && ∈(L.q, H)

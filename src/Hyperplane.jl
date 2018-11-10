@@ -1,4 +1,6 @@
-import Base.∈
+import Base: rand,
+             ∈,
+             isempty
 
 export Hyperplane,
        an_element
@@ -110,6 +112,84 @@ function ∈(x::AbstractVector{N}, hp::Hyperplane{N})::Bool where {N<:Real}
     return dot(x, hp.a) == hp.b
 end
 
+"""
+    rand(::Type{Hyperplane}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
+        )::Hyperplane{N}
+
+Create a random hyperplane.
+
+### Input
+
+- `Hyperplane` -- type for dispatch
+- `N`          -- (optional, default: `Float64`) numeric type
+- `dim`        -- (optional, default: 2) dimension
+- `rng`        -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed`       -- (optional, default: `nothing`) seed for reseeding
+
+### Output
+
+A random hyperplane.
+
+### Algorithm
+
+All numbers are normally distributed with mean 0 and standard deviation 1.
+Additionally, the constraint `a` is nonzero.
+"""
+function rand(::Type{Hyperplane};
+              N::Type{<:Real}=Float64,
+              dim::Int=2,
+              rng::AbstractRNG=GLOBAL_RNG,
+              seed::Union{Int, Nothing}=nothing
+             )::Hyperplane{N}
+    rng = reseed(rng, seed)
+    a = randn(rng, N, dim)
+    while iszero(a)
+        a = randn(rng, N, dim)
+    end
+    b = randn(rng, N)
+    return Hyperplane(a, b)
+end
+
+"""
+    isempty(hp::Hyperplane)::Bool
+
+Return if a hyperplane is empty or not.
+
+### Input
+
+- `hp` -- hyperplane
+
+### Output
+
+`false`.
+"""
+function isempty(hp::Hyperplane)::Bool
+    return false
+end
+
+"""
+    constrained_dimensions(hp::Hyperplane{N})::Vector{Int} where N<:Real
+
+Return the indices in which a hyperplane is constrained.
+
+### Input
+
+- `hp` -- hyperplane
+
+### Output
+
+A vector of ascending indices `i` such that the hyperplane is constrained in
+dimension `i`.
+
+### Notes
+
+A 2D hyperplane with constraint ``x1 = 0`` is constrained in dimension 1 only.
+"""
+function constrained_dimensions(hp::Hyperplane{N})::Vector{Int} where N<:Real
+    return nonzero_indices(hp.a)
+end
+
 
 # --- Hyperplane functions ---
 
@@ -118,16 +198,17 @@ end
 ```
     σ_helper(d::AbstractVector{N},
              hp::Hyperplane{N},
-             [name]::String="hyperplane") where {N<:Real}
+             [halfspace]::Bool=false) where {N<:Real}
 ```
 
 Return the support vector of a hyperplane.
 
 ### Input
 
-- `d`  -- direction
-- `hp` -- hyperplane
-- `name` -- (optional, default: "hyperplane") name for error messages
+- `d`         -- direction
+- `hp`        -- hyperplane
+- `halfspace` -- (optional, default: false) `true` if the support vector should
+                 be computed for a half-space
 
 ### Output
 
@@ -140,17 +221,19 @@ Otherwise this function throws an error.
 """
 @inline function σ_helper(d::AbstractVector{N},
                           hp::Hyperplane{N},
-                          name::String="hyperplane") where {N<:Real}
+                          halfspace::Bool=false) where {N<:Real}
     @assert (length(d) == dim(hp)) "cannot compute the support vector of a " *
-        "$(dim(hp))-dimensional $name along a vector of length $(length(d))"
+        "$(dim(hp))-dimensional " * (halfspace ? "halfspace" : "hyperplane") *
+        " along a vector of length $(length(d))"
 
     @inline function not_solvable(d, hp)
-        error("the support vector for the $name with normal direction " *
-            "$(hp.a) is not defined along a direction $d")
+        error("the support vector for the " *
+            (halfspace ? "halfspace" : "hyperplane") * " with normal " *
+            "direction $(hp.a) is not defined along a direction $d")
     end
 
     first_nonzero_entry_a = -1
-    if all(d .== 0)
+    if iszero(d)
         # zero vector
         return an_element(hp)
     else
@@ -167,6 +250,9 @@ Otherwise this function throws an error.
                 elseif first_nonzero_entry_a == -1
                     factor = hp.a[i] / d[i]
                     first_nonzero_entry_a = i
+                    if halfspace && factor < 0
+                        not_solvable(d, hp)
+                    end
                 elseif d[i] * factor != hp.a[i]
                     not_solvable(d, hp)
                 end

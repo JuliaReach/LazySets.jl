@@ -4,21 +4,24 @@ different Julia versions.
 =#
 
 using Compat
-using Compat: copyto!, axes, argmax
+using Compat: copyto!, axes, argmax, @warn
 import Compat.String
 using Compat.LinearAlgebra
 import Compat.LinearAlgebra: norm, checksquare, LAPACKException,
-                             SingularException, eye, ×
+                             SingularException, ×
 import Compat.InteractiveUtils.subtypes
 export _At_mul_B
 
 @static if VERSION < v"0.7-"
+    using Compat.Random
     @inline function _At_mul_B(A, B)
         return At_mul_B(A, B)
     end
     expmat = expm
 else
     using SparseArrays
+    using Random
+    using Random: GLOBAL_RNG, SamplerType
     @inline function _At_mul_B(A, B)
         return transpose(A) * B
     end

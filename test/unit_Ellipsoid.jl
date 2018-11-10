@@ -1,4 +1,7 @@
 for N in [Float64, Float32]
+    # random ellipsoid
+    rand(Ellipsoid)
+
     # 1D ellipsoid
     E = Ellipsoid(N[0], Diagonal(N[1]))
     # Test Dimension
@@ -53,6 +56,9 @@ for N in [Float64, Float32]
     @test σ(d, E) ≈ N[1, 2 + sqrt(2)]
     d = N[0, -1]
     @test σ(d, E) ≈ N[1, 2 - sqrt(2)]
+
+    # isempty
+    @test !isempty(E)
 
     # an_element and set membership functions
     E = Ellipsoid(N[1, 2], Matrix{N}(2I, 2, 2))

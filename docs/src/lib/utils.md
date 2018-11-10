@@ -9,6 +9,7 @@ end
 
 ```@docs
 sign_cadlag
+ispermutation
 @neutral
 @absorbing
 @declare_array_version
@@ -26,6 +27,11 @@ get_radius!
 an_element_helper
 σ_helper
 binary_search_constraints
+nonzero_indices
+samedir
+_random_zero_sum_vector
+remove_duplicates_sorted!
+reseed
 ```
 
 ### Types

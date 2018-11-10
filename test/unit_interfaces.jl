@@ -6,7 +6,7 @@
 @test check_method_implementation(LazySet, σ,
                                   Function[S -> (Vector{Float64}, S{Float64})])
 # dimension
-@test check_method_implementation(LazySet, dim, Function[S -> (S,)])
+check_method_implementation(LazySet, dim, Function[S -> (S{Float64},)])
 
 # --- AbstractPolytope ---
 
@@ -20,7 +20,7 @@ end
 @test check_method_implementation(AbstractPolytope, vertices_list,
                                   Function[S -> (S{Float64},)],
                                   ignore_types=exclusions)
-@test check_method_implementation(AbstractCentrallySymmetricPolytope, vertices_list,
+@test check_method_implementation(AbstractPolytope, constraints_list,
                                   Function[S -> (S{Float64},)])
 
 # --- AbstractCentrallySymmetric ---

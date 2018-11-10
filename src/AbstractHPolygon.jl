@@ -1,4 +1,5 @@
-import Base.∈
+import Base: rand,
+             ∈
 
 export AbstractHPolygon,
        an_element,
@@ -128,6 +129,7 @@ function constraints_list(P::AbstractHPolygon{N})::Vector{LinearConstraint{N}} w
     return P.constraints
 end
 
+
 # --- LazySet interface functions ---
 
 
@@ -181,15 +183,59 @@ function ∈(x::AbstractVector{N}, P::AbstractHPolygon{N})::Bool where {N<:Real}
     return true
 end
 
+"""
+    rand(::Type{HPOLYGON}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing,
+         [num_constraints]::Int=-1
+        )::HPOLYGON{N} where {HPOLYGON<:AbstractHPolygon}
+
+Create a random polygon in constraint representation.
+
+### Input
+
+- `HPOLYGON`        -- type for dispatch
+- `N`               -- (optional, default: `Float64`) numeric type
+- `dim`             -- (optional, default: 2) dimension
+- `rng`             -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed`            -- (optional, default: `nothing`) seed for reseeding
+- `num_constraints` -- (optional, default: `-1`) number of constraints of the
+                       polygon (must be 3 or bigger; see comment below)
+
+### Output
+
+A random polygon in constraint representation.
+
+### Algorithm
+
+We create a random polygon in vertex representation and convert it to constraint
+representation.
+See [`rand(::Type{VPolygon})`](@ref).
+For non-flat polygons the number of vertices and the number of constraints are
+identical.
+"""
+function rand(::Type{HPOLYGON};
+              N::Type{<:Real}=Float64,
+              dim::Int=2,
+              rng::AbstractRNG=GLOBAL_RNG,
+              seed::Union{Int, Nothing}=nothing,
+              num_constraints::Int=-1
+             )::HPOLYGON{N} where {HPOLYGON<:AbstractHPolygon}
+    @assert dim == 2 "cannot create a random $HPOLYGON of dimension $dim"
+    @assert num_constraints < 0 || num_constraints >= 3 "cannot construct a " *
+        "random $HPOLYGON with only $num_constraints constraints"
+    rng = reseed(rng, seed)
+    vpolygon = rand(VPolygon; N=N, dim=dim, rng=rng, seed=seed,
+                    num_vertices=num_constraints)
+    return convert(HPOLYGON, vpolygon)
+end
+
 
 # --- common AbstractHPolygon functions ---
-
 
 """
     addconstraint!(P::AbstractHPolygon{N},
                    constraint::LinearConstraint{N};
-                   [linear_search]::Bool=(
-                    length(P.constraints) < BINARY_SEARCH_THRESHOLD)
+                   linear_search::Bool=(length(P.constraints) < BINARY_SEARCH_THRESHOLD)
                   )::Nothing where {N<:Real}
 
 Add a linear constraint to a polygon in constraint representation, keeping the
@@ -206,29 +252,53 @@ Nothing.
 """
 function addconstraint!(P::AbstractHPolygon{N},
                         constraint::LinearConstraint{N};
-                        linear_search::Bool=(
-                         length(P.constraints) < BINARY_SEARCH_THRESHOLD)
+                        linear_search::Bool=(length(P.constraints) < BINARY_SEARCH_THRESHOLD)
                        )::Nothing where {N<:Real}
-    k = length(P.constraints)
+    return addconstraint!(P.constraints, constraint, linear_search=linear_search)
+end
+
+"""
+    addconstraint!(constraints::Vector{LinearConstraint{N}},
+                   new_constraint::LinearConstraint{N};
+                   [linear_search]::Bool=(length(P.constraints) < BINARY_SEARCH_THRESHOLD)
+                  )::Nothing where {N<:Real}
+
+Add a linear constraint to a sorted vector of constrains, keeping the
+constraints sorted by their normal directions.
+
+### Input
+
+- `constraints`    -- vector of linear constraintspolygon in constraint representation
+- `new_constraint` -- linear constraint to add
+
+### Output
+
+Nothing.
+"""
+function addconstraint!(constraints::Vector{LinearConstraint{N}},
+                        new_constraint::LinearConstraint{N};
+                        linear_search::Bool=(length(constraints) < BINARY_SEARCH_THRESHOLD)
+                       )::Nothing where {N<:Real}
+    k = length(constraints)
     if k > 0
-        d = constraint.a
-        if d <= P.constraints[1].a
+        d = new_constraint.a
+        if d <= constraints[1].a
             k = 0
         else
             if linear_search
                 # linear search
-                while d <= P.constraints[k].a
+                while d <= constraints[k].a
                     k -= 1
                 end
             else
                 # binary search
                 k = binary_search_constraints(
-                    d, P.constraints, k, 1 + div(k, 2), choose_lower=true)
+                    d, constraints, k, 1 + div(k, 2), choose_lower=true)
             end
         end
     end
-    # here P.constraints[k] < constraint
-    insert!(P.constraints, k+1, constraint)
+    # here constraints[k] < new_constraint
+    insert!(constraints, k+1, new_constraint)
     return nothing
 end
 

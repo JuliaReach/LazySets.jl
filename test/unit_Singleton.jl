@@ -1,4 +1,7 @@
 for N in [Float64, Rational{Int}, Float32]
+    # random singleton
+    rand(Singleton)
+
     # 1D singleton
     s = Singleton(N[1])
     d = N[1]
@@ -23,6 +26,9 @@ for N in [Float64, Rational{Int}, Float32]
         @test element(s, i) == s.element[i]
     end
 
+    # isempty
+    @test !isempty(s)
+
     # membership
     S = Singleton(N[1, 1])
     !∈(N[0.9, 1.1], S)
@@ -36,6 +42,10 @@ for N in [Float64, Rational{Int}, Float32]
 
     # radius_hyperrectangle
     @test iszero(radius_hyperrectangle(S))
+
+    # high and low
+    @test high(S) == N[1, 1]
+    @test low(S) == N[1, 1]
 
     # concrete linear map
     M = N[0 1; -1 0]

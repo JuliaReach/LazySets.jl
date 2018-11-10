@@ -100,16 +100,15 @@ function reach_continuous(A, X0, δ, μ, T, max_order)
     ϕp = (I+ϕ)/2
     ϕm = (I-ϕ)/2
     c = X0.center
-    Q1_generators = hcat(ϕp * X0.generators, ϕm * c, ϕm * X0.generators)
-    P1 = Phi1(A, δ)
-    R[1] = minkowski_sum(Zonotope(ϕp * c, Q1_generators),
-                         Zonotope(zeros(n), (α + β)*eye(n)))
+    gens = hcat(ϕp * X0.generators, ϕm * c, ϕm * X0.generators)
+    R[1] = minkowski_sum(Zonotope(ϕp * c, gens),
+                         Zonotope(zeros(n), Matrix((α + β)*I, n, n)))
     if order(R[1]) > max_order
         R[1] = reduce_order(R[1], max_order)
     end
 
     # set recurrence for [δ, 2δ], ..., [(N-1)δ, Nδ]
-    ballβ = Zonotope(zeros(n), β*eye(n))
+    ballβ = Zonotope(zeros(n), Matrix(β*I, n, n))
     for i in 2:N
         R[i] = minkowski_sum(linear_map(ϕ, R[i-1]), ballβ)
         if order(R[i]) > max_order
@@ -117,20 +116,6 @@ function reach_continuous(A, X0, δ, μ, T, max_order)
         end
     end
     return R
-end
-nothing # hide
-```
-
-The function `Phi1` represents the approximation model.
-We use the following implementation here.
-
-```@example example_reach_zonotopes_hybrid
-function Phi1(A, δ)
-    n = size(A, 1)
-    P = expm(full([A * δ sparse(δ*I, n, n) spzeros(n, n);
-                   spzeros(n, 2*n) sparse(δ*I, n, n);
-                   spzeros(n, 3*n)]))
-    return P[1:n, (n+1):2*n]
 end
 nothing # hide
 ```
@@ -194,7 +179,7 @@ interval ``[0, 4]`` and time step ``δ = 0.001``.
     Ts = [t1, t2]
 
     # initial condition
-    X0 = Zonotope([1.0, 0.0], 0.1*eye(2))
+    X0 = Zonotope([1.0, 0.0], Matrix(0.1*I, 2, 2))
     init_loc = 1
     init = (X0, init_loc)
 

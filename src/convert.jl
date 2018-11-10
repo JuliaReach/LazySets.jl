@@ -3,8 +3,9 @@ import Base.convert
 #= conversion between set types =#
 
 """
-    convert(::Type{HPOLYGON1}, P::HPOLYGON2) where
-        {HPOLYGON1<:Union{HPolygon, HPolygonOpt}, HPOLYGON2<:AbstractHPolygon}
+    convert(::Type{HPOLYGON1},
+            P::HPOLYGON2) where {HPOLYGON1<:Union{HPolygon, HPolygonOpt},
+                                 HPOLYGON2<:AbstractHPolygon}
 
 Convert between polygon types in H-representation.
 
@@ -29,6 +30,42 @@ function convert(::Type{HPOLYGON1},
 end
 
 """
+    convert(T::Type{<:AbstractHPolygon}, P::VPolygon)
+
+Converts a polygon in vertex representation to a polygon in constraint representation.
+
+### Input
+
+- `HPOLYGON` -- type used for dispatch
+- `P`        -- polygon in vertex representation
+
+### Output
+
+A polygon in constraint representation.
+"""
+function convert(T::Type{<:AbstractHPolygon}, P::VPolygon)
+    return tohrep(P, T)
+end
+
+"""
+    convert(::Type{VPolygon}, P::AbstractHPolygon)
+
+Converts a polygon in constraint representation to a polygon in vertex representation.
+
+### Input
+
+- `VPolygon` -- type used for dispatch
+- `P`        -- polygon in constraint representation
+
+### Output
+
+A polygon in vertex representation.
+"""
+function convert(::Type{VPolygon}, P::AbstractHPolygon)
+    return tovrep(P)
+end
+
+"""
     convert(::Type{HPolytope}, P::AbstractHPolygon)
 
 Convert from polygon in H-representation to polytope in H-representation.
@@ -45,6 +82,119 @@ The polygon represented as 2D polytope.
 function convert(::Type{HPolytope}, P::AbstractHPolygon)
     return HPolytope(P.constraints)
 end
+
+"""
+    convert(::Type{VPolytope}, P::AbstractPolytope)
+
+Convert polytopic type to polytope in V-representation.
+
+### Input
+
+- `type` -- target type
+- `P`    -- source polytope
+
+### Output
+
+The set `P` represented as a `VPolytope`.
+"""
+function convert(::Type{VPolytope}, P::AbstractPolytope)
+    return VPolytope(vertices_list(P))
+end
+
+"""
+    convert(::Type{VPolygon}, P::AbstractPolytope)
+
+Convert polytopic set to polygon in V-representation.
+
+### Input
+
+- `type` -- target type
+- `P`    -- source polytope
+
+### Output
+
+The 2D polytope represented as a polygon.
+"""
+function convert(::Type{VPolygon}, P::AbstractPolytope)
+    @assert dim(P) == 2 "polytope must be two-dimensional for conversion"
+    return VPolygon(vertices_list(P))
+end
+
+"""
+    convert(::Type{HPolytope}, P::AbstractPolytope)
+
+Convert polytopic set to polytope in H-representation.
+
+### Input
+
+- `type` -- target type
+- `P`    -- source polytope
+
+### Output
+
+The given polytope represented as a polytope in constraint representation.
+
+### Algorithm
+
+``P`` is first converted to a polytope in V-representation.
+Then, the conversion method to a polytope in H-representation is invoked.
+This conversion may require the `Polyhedra` library.
+"""
+function convert(::Type{HPolytope}, P::AbstractPolytope)
+    return convert(HPolytope, convert(VPolytope, P))
+end
+
+function convert(::Type{HPolyhedron}, P::AbstractPolytope)
+    return HPolyhedron(constraints_list(P))
+end
+
+"""
+    convert(::Type{HPolytope}, P::VPolytope)
+
+Convert from polytope in V-representation to polytope in H-representation.
+
+### Input
+
+- `type` -- target type
+- `P`    -- source polytope
+
+### Output
+
+The polytope in the dual representation.
+
+### Algorithm
+
+The `tohrep` function is invoked. It requires the `Polyhedra` package.
+"""
+function convert(::Type{HPolytope}, P::VPolytope)
+    return tohrep(P)
+end
+
+"""
+    convert(::Type{VPolytope}, P::HPolytope)
+
+Convert from polytope in H-representation to polytope in V-representation.
+
+### Input
+
+- `type` -- target type
+- `P`    -- source polytope
+
+### Output
+
+The polytope in the dual representation.
+
+### Algorithm
+
+The `tovrep` function is invoked. It requires the `Polyhedra` package.
+"""
+function convert(::Type{VPolytope}, P::HPolytope)
+    return tovrep(P)
+end
+
+# no-op's
+convert(::Type{HPolytope}, P::HPolytope) = P
+convert(::Type{VPolytope}, P::VPolytope) = P
 
 """
     convert(::Type{HPOLYGON}, P::HPolytope) where {HPOLYGON<:AbstractHPolygon}
@@ -172,4 +322,41 @@ Hyperrectangle{Float64}([0.5], [0.5])
 """
 function convert(::Type{Hyperrectangle}, x::Interval{N, IN}) where {N, IN <: AbstractInterval{N}}
     return Hyperrectangle(low=[low(x)], high=[high(x)])
+end
+
+"""
+    convert(::Type{HPolytope}, H::AbstractHyperrectangle{N}) where {N}
+
+Converts a hyperrectangular set to a polytope in constraint representation.
+
+### Input
+
+- `HPolytope` -- type used for dispatch
+- `H`         -- hyperrectangular set
+
+### Output
+
+A polytope in constraint representation.
+"""
+function convert(::Type{HPolytope}, H::AbstractHyperrectangle{N}) where {N}
+    return HPolytope{N}(constraints_list(H))
+end
+
+"""
+    convert(::Type{HPOLYGON}, H::AbstractHyperrectangle{N}) where {N, HPOLYGON<:AbstractHPolygon}
+
+Converts a hyperrectangular set to a polygon in constraint representation.
+
+### Input
+
+- `HPOLYGON`  -- type used for dispatch
+- `H`         -- hyperrectangular set
+
+### Output
+
+A polygon in constraint representation.
+"""
+function convert(X::Type{HPOLYGON}, H::AbstractHyperrectangle{N}) where {N, HPOLYGON<:AbstractHPolygon}
+    @assert dim(H) == 2 "cannot convert a $(dim(H))-dimensional hyperrectangle into a two-dimensional polygon"
+    return HPOLYGON{N}(constraints_list(H))
 end

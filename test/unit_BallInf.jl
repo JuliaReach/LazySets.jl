@@ -1,4 +1,7 @@
 for N in [Float64, Rational{Int}, Float32]
+    # random ball
+    rand(BallInf)
+
     # 1D BallInf
     b = BallInf(N[0], N(1))
     # Test Dimension
@@ -51,6 +54,9 @@ for N in [Float64, Rational{Int}, Float32]
     d = N[1, -1]
     @test σ(d, b) == N[2, -2]
 
+    # isempty
+    @test !isempty(b)
+
     # membership
     b = BallInf(N[1, 1], N(1))
     @test !∈(N[0.5, -0.5], b)
@@ -61,7 +67,12 @@ for N in [Float64, Rational{Int}, Float32]
     @test an_element(b) ∈ b
 
     # check that vertices_list for zero radius doesn't repeat vertices
-    b = BallInf(N[1., 2.], N(0.0))
+    b = BallInf(N[1, 2], N(0))
     vl = vertices_list(b)
-    @test length(vl) == 1 && vl[1] == b.center
+    @test vl == [center(b)]
+
+    # high and low
+    b = BallInf(N[1, 2], N(1))
+    @test high(b) == N[2, 3]
+    @test low(b) == N[0, 1]
 end
