@@ -8,6 +8,9 @@ module Parallel
 
 using LazySets
 
+using SharedArrays: SharedMatrix, SharedVector
+using Distributed: remotecall_wait, procs
+
 #=======================================================
 Utility functions for distribution of tasks in parallel
 =======================================================#
