@@ -412,10 +412,10 @@ function remove_redundant_constraints!(P::PT;
         br = b[non_redundant_indices]
         br[i] = b[j] + one(N)
         lp = linprog(-α, Ar, '<', br, -Inf, Inf, GLPKSolverLP())
-        objval = -lp.objval
         if lp.status != :Optimal
             error("LP is not optimal")
         end
+        objval = -lp.objval
         if objval <= b[j]
             # the constraint is redundant
             non_redundant_indices = setdiff(non_redundant_indices, j)
