@@ -79,6 +79,30 @@ for N in [Float64, Rational{Int}, Float32]
         @test !isempty(HPolytope{N}())
     end
 
+    # remove redundant constraints
+    P = HPolytope([HalfSpace([1.0, 0.0], 1.0),
+                   HalfSpace([0.0, 1.0], 1.0),
+                   HalfSpace([-1.0, -0.0], 1.0),
+                   HalfSpace([-0.0, -1.0], 1.0),
+                   HalfSpace([2.0, 0.0], 2.0)]) # redundant
+
+    Pred = remove_redundant_constraints(P)
+    @test length(Pred.constraints) == 4
+
+    # test in-place removal of redundancies
+    remove_redundant_constraints!(P)
+    @test length(P.constraints) == 4
+
+    # removing a redundant constraint in a 2D polytope (see #565)
+    A = [0. 1.;    # y <= 0
+         1. 0.;    # x <= 0
+         2. 2.]    # 2x + 2y <= 1   (this constraint is implied by the other two)
+    b = [0., 0., 1.];
+    p1 = HPolytope(A, b);
+    remove_redundant_constraints!(p1)
+    Ar, br = tosimplehrep(p1)
+    @test Ar == A[1:2, :] && br == b[1:2]
+
     # -----
     # V-rep
     # -----

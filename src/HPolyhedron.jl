@@ -2,7 +2,8 @@ using MathProgBase, GLPKMathProgInterface
 
 import Base: isempty,
              rand,
-             convert
+             convert,
+             copy
 
 export HPolyhedron,
        dim, σ, ∈,
@@ -15,7 +16,8 @@ export HPolyhedron,
        vertices_list,
        singleton_list,
        isempty,
-       remove_redundant_constraints
+       remove_redundant_constraints,
+       remove_redundant_constraints!
 
 """
     HPolyhedron{N<:Real} <: LazySet{N}
@@ -347,6 +349,34 @@ end
     remove_redundant_constraints(P::PT;
                                  backend=GLPKSolverLP()) where {N, HPoly{N}}
 
+Given a polyhedron in H-representation, return a new polyhedron with no reundant
+constraints.
+
+## Input
+
+- `P`       -- polyhedron
+- `backend` -- (optional, default: `GLPKSolverLP`) the numeric LP solver backend
+
+## Output
+
+The polyhedron obtained by removing the redundant constraints in `P`.
+
+## Algorithm
+
+See `remove_redundant_constraints!`. 
+"""
+function remove_redundant_constraints(P::PT;
+                                      backend=GLPKSolverLP()) where {N, PT<:HPoly{N}}
+    return remove_redundant_constraints!(copy(P), backend=backend)
+end
+
+"""
+    remove_redundant_constraints!(P::PT;
+                                  backend=GLPKSolverLP()) where {N, HPoly{N}}
+
+Remove the reundant constraints in a polyhedron in H-representation; the polyhedron
+is updated inplace.
+
 ## Input
 
 - `P`       -- polyhedron
@@ -366,9 +396,9 @@ is redundant, an LP is formulated.
 For details, see [Fukuda's Polyhedra
 FAQ](https://www.cs.mcgill.ca/~fukuda/soft/polyfaq/node24.html).
 """
-function remove_redundant_constraints(P::PT;
-                                      backend=GLPKSolverLP()) where {N, PT<:HPoly{N}}
-    
+function remove_redundant_constraints!(P::PT;
+                                       backend=GLPKSolverLP()) where {N, PT<:HPoly{N}}
+
     A, b = tosimplehrep(P)
     m, n = size(A)
     non_redundant_indices = 1:m
@@ -395,9 +425,26 @@ function remove_redundant_constraints(P::PT;
         end
         j = j+1
     end
-    Ar = A[non_redundant_indices, :]
-    br = b[non_redundant_indices]
-    return PT(Ar, br)
+
+    deleteat!(P.constraints, setdiff(1:m, non_redundant_indices))
+    return P
+end
+
+"""
+    copy(P::PT) where {N, PT<:HPoly{N}}
+
+Create a copy of a polyhedron.
+
+## Input
+
+- `P`       -- polyhedron
+
+## Output
+
+The polyhedron obtained by copying the constraints in `P` using `Base.copy`.
+"""
+function copy(P::PT) where {N, PT<:HPoly{N}}
+    return PT(copy(P.constraints))
 end
 
 # ========================================================
