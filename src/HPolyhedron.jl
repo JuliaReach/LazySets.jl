@@ -372,7 +372,7 @@ end
 
 """
     remove_redundant_constraints!(P::PT;
-                                  backend=GLPKSolverLP()) where {N, HPoly{N}}
+                                  backend=GLPKSolverLP()) where {N, PT<:HPoly{N}}
 
 Remove the redundant constraints in a polyhedron in H-representation; the polyhedron
 is updated inplace.
