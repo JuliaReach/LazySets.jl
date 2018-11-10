@@ -74,19 +74,12 @@ function box_approximation_symmetric(S::LazySet{N};
     return Hyperrectangle(zeros(N, length(c)), abs.(c) .+ r)
 end
 
-function box_approximation_symmetric_parallel(S::LazySet{N}
-                                    )::Hyperrectangle{N} where {N<:Real}
-    (c, r) = box_approximation_helper_parallel(S)
-    return Hyperrectangle(zeros(N, length(c)), abs.(c) .+ r)
-end
-
 """
     symmetric_interval_hull
 
 Alias for `box_approximation_symmetric`.
 """
 symmetric_interval_hull = box_approximation_symmetric
-symmetric_interval_hull_parallel = box_approximation_symmetric_parallel
 
 """
     box_approximation_helper(S::LazySet{N};
@@ -138,54 +131,6 @@ functions in the same directions.
     end
     return c, r
 end
-
-@inline function box_approximation_helper_parallel(S::LazySet{N}) where {N<:Real}
-    n = dim(S)
-    c = SharedVector{N}(n)
-    r = SharedVector{N}(n)
-
-    distribute_task!(c, r, S)
-    return convert(Array,c), convert(Array,r)
-end
-
-# Here's the kernel
-function process_chunk!(c::SharedVector{N}, r::SharedVector{N}, S::LazySet{N}, irange::UnitRange{Int64}) where {N<:Real}
-
-    d = zeros(N, dim(S))
-
-    for i in irange
-        d[i] = one(N)
-        htop = ρ(d, S)
-        d[i] = -one(N)
-        hbottom = -ρ(d, S)
-        d[i] = zero(N)
-        c[i] = (htop + hbottom) / 2
-        r[i] = (htop - hbottom) / 2
-    end
-end
-
-# This function retuns the (irange,jrange) indexes assigned to this worker
-function myrange(c::SharedVector{N}) where {N<:Real}
-    idx = indexpids(c)
-    if idx == 0
-        # This worker is not assigned a piece
-        return 1:0, 1:0
-    end
-    nchunks = length(procs(c))
-    splits = [round(Int, s) for s in linspace(0,size(c,1),nchunks+1)]
-    splits[idx]+1:splits[idx+1]
-end
-
-assign_chunk!(c::SharedVector{N}, r::SharedVector{N}, S::LazySet{N}) where {N<:Real} = process_chunk!(c, r, S, myrange(c))
-
-function distribute_task!(c::SharedVector{N}, r::SharedVector{N}, S::LazySet{N}) where {N<:Real}
-    @sync begin
-        for p in procs(c)
-            @async remotecall_wait(assign_chunk!, p, c, r, S)
-        end
-    end
-end
-
 
 """
     ballinf_approximation(S::LazySet{N};
