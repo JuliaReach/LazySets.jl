@@ -437,7 +437,7 @@ Create a copy of a polyhedron.
 
 ## Input
 
-- `P`       -- polyhedron
+- `P` -- polyhedron
 
 ## Output
 
