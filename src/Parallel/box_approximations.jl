@@ -1,7 +1,6 @@
 export box_approximation_symmetric_parallel
 
-function box_approximation_symmetric_parallel(S::LazySet{N}
-                                    )::Hyperrectangle{N} where {N<:Real}
+function box_approximation_symmetric_parallel(S::LazySet{N}) where {N<:Real}
     (c, r) = box_approximation_helper_parallel(S)
     return Hyperrectangle(zeros(N, length(c)), abs.(c) .+ r)
 end
@@ -12,7 +11,7 @@ end
     r = SharedVector{N}(n)
 
     distribute_task!(c, r, S)
-    return convert(Array,c), convert(Array,r)
+    return convert(Array, c), convert(Array, r)
 end
 
 # Here's the kernel

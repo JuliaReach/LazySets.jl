@@ -20,6 +20,6 @@ function myrange(c::SharedVector{N}) where {N<:Real}
         return 1:0, 1:0
     end
     nchunks = length(procs(c))
-    splits = [round(Int, s) for s in linspace(0,size(c,1),nchunks+1)]
+    splits = [round(Int, s) for s in range(0, stop=length(c), length=nchunks+1)]
     splits[idx]+1:splits[idx+1]
 end

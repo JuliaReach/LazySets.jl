@@ -1,14 +1,13 @@
 __precompile__(true)
 
 """
-Module `Approximations.Parallel.jl` -- parallel implementations of some approximation
-algorithms.
+Module `Parallel.jl` -- LazySets algorithms that are parallelized.
 """
 module Parallel
 
 using LazySets
 
-using SharedArrays: SharedMatrix, SharedVector
+using SharedArrays: SharedMatrix, SharedVector, indexpids
 using Distributed: remotecall_wait, procs
 
 #=======================================================
@@ -19,6 +18,6 @@ include("distribute.jl")
 #==================================================
 Approximations using boxes implemented in parallel
 ==================================================#
-include("box_approximation.jl")
+include("box_approximations.jl")
 
 end # module
