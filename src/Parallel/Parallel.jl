@@ -7,8 +7,11 @@ module Parallel
 
 using LazySets
 
-using SharedArrays: SharedMatrix, SharedVector, indexpids
-using Distributed: remotecall_wait, procs
+# compatibility of different julia versions
+@static if VERSION >= v"0.7-"
+    using SharedArrays: SharedMatrix, SharedVector, indexpids
+    using Distributed: remotecall_wait, procs
+end
 
 #=======================================================
 Utility functions for distribution of tasks in parallel
