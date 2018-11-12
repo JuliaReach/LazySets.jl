@@ -21,6 +21,15 @@ for N in [Float64, Float32, Rational{Int}]
     @test p.constraints[3] == c3
     @test p.constraints[4] == c4
 
+    # redundancy of constraints
+    h1 = HalfSpace([N(1), N(1)], N(1))
+    h2 = HalfSpace([N(0), N(1)], N(1)) # redundant
+    h3 = HalfSpace([N(-1), N(1)], N(1))
+    h4 = HalfSpace([N(0), N(-1)], N(0))
+    @test LazySets.isredundant(h2, h1, h3)
+    @test !LazySets.isredundant(h3, h2, h4)
+    @test LazySets.isredundant(h2, h2, h3) && LazySets.isredundant(h3, h2, h3)
+
     # conversion to optimized polygon
     po = convert(HPolygonOpt, p)
     # conversion back

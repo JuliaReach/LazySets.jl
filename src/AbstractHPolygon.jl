@@ -3,6 +3,7 @@ import Base: rand,
 
 export AbstractHPolygon,
        an_element,
+       isredundant,
        addconstraint!,
        vertices_list,
        constraints_list,
@@ -255,6 +256,69 @@ end
 
 
 # --- common AbstractHPolygon functions ---
+
+"""
+    isredundant(c::LinearConstraint{N}, c1::LinearConstraint{N},
+                c2::LinearConstraint{N})::Bool where {N<:Real}
+
+Check whether a linear constraint is redundant wrt. two surrounding constraints.
+
+### Input
+
+- `c`  -- linear constraint of concern
+- `c1` -- linear constraint to the right (clockwise turn)
+- `c2` -- linear constraint to the left (counter-clockwise turn)
+
+### Output
+
+`true` iff the constraint is redundant.
+
+### Algorithm
+
+We first check whether the angle between the surrounding constraints is < 180°,
+which is a necessary condition (unless the direction is identical to one of the
+other two constraints).
+If so, we next check if the angle is 0°, in which case the constraint `c` is
+redundant unless it is strictly tighter than the other two constraints.
+If the angle is strictly between 0° and 180°, the constraint `c` is redundant if
+and only if the vertex defined by the other two constraints lies inside the set
+defined by `c`.
+"""
+function isredundant(c::LinearConstraint{N},
+                     c1::LinearConstraint{N},
+                     c2::LinearConstraint{N})::Bool where {N<:Real}
+    samedir_check = false
+    # determine angle between surrounding constraints
+    if !is_right_turn(c1.a, c2.a)
+        # angle is > 180°
+        samedir_check = true
+    elseif is_right_turn(c2.a, c1.a)
+        # angle is 0° or 180°
+        if samedir(c1.a, c2.a)[1]
+            # angle is 0°, i.e., all three constraints have the same direction
+            # constraint is redundant unless it is tighter than the other two
+            @assert samedir(c1.a, c.a)[1] && samedir(c2.a, c.a)[1]
+            return !is_tighter_same_dir_2D(c, c1, strict=true) &&
+                   !is_tighter_same_dir_2D(c, c2, strict=true)
+        else
+            # angle is 180°
+            samedir_check = true
+        end
+    end
+    if samedir_check
+        # check if the constraint has the same direction as one of the two
+        if samedir(c1.a, c.a)[1]
+            return !is_tighter_same_dir_2D(c, c1, strict=true)
+        elseif samedir(c2.a, c.a)[1]
+            return !is_tighter_same_dir_2D(c, c2, strict=true)
+        end
+        # not the same direction => constraint is not redundant
+        return false
+    end
+    cap = intersection(Line(c1), Line(c2))
+    @assert cap isa Singleton
+    return cap ⊆ c
+end
 
 """
     addconstraint!(P::AbstractHPolygon{N},

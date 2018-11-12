@@ -157,6 +157,7 @@ addconstraint!(::Vector{LinearConstraint{N}}, ::LinearConstraint{N}) where {N<:R
 constraints_list(::AbstractHPolygon{N}) where {N<:Real}
 vertices_list(::AbstractHPolygon{N}, ::Bool=false, ::Bool=true) where {N<:Real}
 isbounded(::AbstractHPolygon, ::Bool=true)
+isredundant(::LinearConstraint{N}, ::LinearConstraint{N}, ::LinearConstraint{N}) where {N<:Real}
 ```
 
 ### Centrally symmetric polytope

@@ -344,6 +344,7 @@ Inherited from [`AbstractHPolygon`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractHPolygon, ::Bool=true))
 * [`addconstraint!`](@ref addconstraint!(::AbstractHPolygon{N}, ::LinearConstraint{N}) where {N<:Real})
 * [`constraints_list`](@ref constraints_list(::AbstractHPolygon{N}) where {N<:Real})
+* [`isredundant`](@ref isredundant(::LinearConstraint{N}, ::LinearConstraint{N}, ::LinearConstraint{N}) where {N<:Real})
 
 ### Optimized constraint representation
 
@@ -373,6 +374,7 @@ Inherited from [`AbstractHPolygon`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractHPolygon, ::Bool=true))
 * [`addconstraint!`](@ref addconstraint!(::AbstractHPolygon{N}, ::LinearConstraint{N}) where {N<:Real})
 * [`constraints_list`](@ref constraints_list(::AbstractHPolygon{N}) where {N<:Real})
+* [`isredundant`](@ref isredundant(::LinearConstraint{N}, ::LinearConstraint{N}, ::LinearConstraint{N}) where {N<:Real})
 
 ### Vertex representation
 
