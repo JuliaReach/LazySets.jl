@@ -1,11 +1,40 @@
 export assign_chunk!,
        distribute_task!,
-       myrange
+       prange
 
+"""
+    assign_chunk!(c::SharedVector{N}, r::SharedVector{N},
+                  S::LazySet{N})
+
+Return the function that assigns the work for each process in the
+overapproximation of a set by a hyperrectangle.
+
+### Input
+
+- `c` -- center of the hyperrectangle
+- `c` -- radius of the hyperrectangle
+- `S` -- convex set
+
+### Output
+
+The function `process_chunk!` that equally distributes the load for each worker.
+"""
 assign_chunk!(c::SharedVector{N},
               r::SharedVector{N},
-              S::LazySet{N}) where {N<:Real} = process_chunk!(c, r, S, myrange(c))
+              S::LazySet{N}) where {N<:Real} = process_chunk!(c, r, S, prange(c))
 
+"""
+    distribute_task!(c::SharedVector{N}, r::SharedVector{N},
+                     S::LazySet{N}) where {N<:Real}
+
+Distribute the assignment of each chunk among the available processes. 
+
+### Input
+
+- `c` -- center of the hyperrectangle
+- `c` -- radius of the hyperrectangle
+- `S` -- convex set
+"""
 function distribute_task!(c::SharedVector{N}, r::SharedVector{N}, S::LazySet{N}) where {N<:Real}
     @sync begin
         for p in procs(c)
@@ -14,8 +43,21 @@ function distribute_task!(c::SharedVector{N}, r::SharedVector{N}, S::LazySet{N})
     end
 end
 
-# This function retuns the (irange,jrange) indexes assigned to this worker
-function myrange(c::SharedVector{N}) where {N<:Real}
+"""
+    prange(c::SharedVector{N}) where {N<:Real}
+
+Returns the indexes assigned to this process, given a shared vector of
+length `n`. 
+
+### Input
+
+- `c` -- shared vector of length `n`
+
+### Output
+
+The tuple `(irange, jrange)` assigned to each process.
+"""
+function prange(c::SharedVector{N}) where {N<:Real}
     idx = indexpids(c)
     if idx == 0
         # This worker is not assigned a piece

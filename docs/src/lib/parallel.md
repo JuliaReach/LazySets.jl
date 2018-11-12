@@ -26,4 +26,15 @@ Parallel
 LazySets.Parallel.interval_hull
 LazySets.Parallel.box_approximation
 LazySets.Parallel.symmetric_interval_hull
+LazySets.Parallel.box_approximation_symmetric
+LazySets.Parallel.box_approximation_helper_parallel
+LazySets.Parallel.process_chunk!
+```
+
+## Distributed functions
+
+```@docs
+LazySets.Parallel.assign_chunk!
+LazySets.Parallel.distribute_task!
+LazySets.Parallel.prange
 ```

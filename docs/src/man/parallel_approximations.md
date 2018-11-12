@@ -18,7 +18,8 @@ used must be fully qualified, eg. `LazySets.Approximations.box_approximation` fo
 sequential function or `LazySets.Parallel.box_approximation` for the parallel version.
 
 The parallelization strategy that is available uses processes. To set the number
-of processes use the flag `-p` at julia startup. For example, do
+of processes use the flag `-p N` at julia startup, where `N` is the number of
+desired processes. For example, do
 
 ```julia
 $ julia -p 4
@@ -105,7 +106,6 @@ For the parallel benchmark, we start Julia with 4 processes with the command
 `$ julia -p 4` and call `LazySets.Parallel.symmetric_interval_hull(Y(n))`. 
 
 ```julia
-
 import LazySets.Parallel
 
 for n in [50, 100, 500, 1000]

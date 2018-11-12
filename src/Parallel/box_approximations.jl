@@ -31,11 +31,59 @@ function box_approximation(S::LazySet{N};
     return Hyperrectangle(c, r)
 end
 
+"""
+    box_approximation_symmetric(S::LazySet{N}
+                               )::Union{Hyperrectangle{N}, EmptySet{N}}
+                                where {N<:Real}
+
+Overapproximate a convex set by a tight hyperrectangle centered in the origin,
+using a parallel algorithm.
+
+### Input
+
+- `S` -- convex set
+
+### Output
+
+A tight hyperrectangle centered in the origin.
+
+### Algorithm
+
+The center of the box is the origin, and the radius is obtained by computing the
+maximum value of the support function evaluated at the canonical directions.
+"""
 function box_approximation_symmetric(S::LazySet{N}) where {N<:Real}
     (c, r) = box_approximation_helper_parallel(S)
     return Hyperrectangle(zeros(N, length(c)), abs.(c) .+ r)
 end
 
+"""
+    box_approximation_helper_parallel(S::LazySet{N}) where {N<:Real}
+
+Parallel implementation for the common code of `box_approximation` and
+`box_approximation_symmetric`.
+
+### Input
+
+- `S` -- convex set
+
+### Output
+
+A tuple containing the data that is needed to construct a tightly
+overapproximating hyperrectangle.
+
+- `c` -- center
+- `r` -- radius
+
+### Algorithm
+
+The center of the hyperrectangle is obtained by averaging the support function
+of the given convex set in the canonical directions.
+The lengths of the sides can be recovered from the distance among support
+functions in the same directions.
+
+The same load is distributed among all available workers, see `distribute_task!`.
+"""
 @inline function box_approximation_helper_parallel(S::LazySet{N}) where {N<:Real}
     n = dim(S)
     c = SharedVector{N}(n)
@@ -45,8 +93,32 @@ end
     return convert(Array, c), convert(Array, r)
 end
 
-# Here's the kernel
-function process_chunk!(c::SharedVector{N}, r::SharedVector{N}, S::LazySet{N}, irange::UnitRange{Int64}) where {N<:Real}
+"""
+    process_chunk!(c::SharedVector{N}, r::SharedVector{N},
+                   S::LazySet{N}, irange::UnitRange{Int64}) where {N<:Real}
+
+Kernel to process a given chunk 
+
+### Input
+
+- `c`      -- shared vector with the center of the hyperrectangle
+- `r`      -- shared vector with the center of the hyperrectangle
+- `S`      -- set
+- `irange` -- indices range of the given worker
+
+### Algorithm
+
+The center of the hyperrectangle is obtained by averaging the support function
+of the given convex set in the canonical directions.
+The lengths of the sides can be recovered from the distance among support
+functions in the same directions.
+
+The load for each worker is passed through the `irange` argument. By default,
+the same load is distributed among all available workers. For details
+see `distribute_task!`.
+"""
+function process_chunk!(c::SharedVector{N}, r::SharedVector{N},
+                        S::LazySet{N}, irange::UnitRange{Int64}) where {N<:Real}
 
     d = zeros(N, dim(S))
 
