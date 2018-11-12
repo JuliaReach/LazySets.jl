@@ -1,0 +1,29 @@
+# Parallel
+
+This section of the manual describes the parallel implementation of some
+algorithms in the `LazySets` library. These algorithms are implemented in the
+`LazySets.Parallel` module.
+
+```@contents
+Pages = ["parallel.md"]
+Depth = 3
+```
+
+```@meta
+CurrentModule = LazySets.Parallel
+DocTestSetup = quote
+    using LazySets, LazySets.Parallel
+end
+```
+
+```@docs
+Parallel
+```
+
+## Box approximations
+
+```@docs
+LazySets.Parallel.interval_hull
+LazySets.Parallel.box_approximation
+LazySets.Parallel.symmetric_interval_hull
+```

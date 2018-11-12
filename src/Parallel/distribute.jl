@@ -2,7 +2,9 @@ export assign_chunk!,
        distribute_task!,
        myrange
 
-assign_chunk!(c::SharedVector{N}, r::SharedVector{N}, S::LazySet{N}) where {N<:Real} = process_chunk!(c, r, S, myrange(c))
+assign_chunk!(c::SharedVector{N},
+              r::SharedVector{N},
+              S::LazySet{N}) where {N<:Real} = process_chunk!(c, r, S, myrange(c))
 
 function distribute_task!(c::SharedVector{N}, r::SharedVector{N}, S::LazySet{N}) where {N<:Real}
     @sync begin

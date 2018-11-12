@@ -9,7 +9,7 @@ Overapproximate a convex set by a tight hyperrectangle.
 
 ### Input
 
-- `S`           -- convex set
+- `S` -- convex set
 
 ### Output
 
@@ -53,7 +53,7 @@ Overapproximate a convex set by a tight hyperrectangle centered in the origin.
 
 ### Input
 
-- `S`           -- convex set
+- `S` -- convex set
 
 ### Output
 
@@ -89,7 +89,7 @@ Common code of `box_approximation` and `box_approximation_symmetric`.
 
 ### Input
 
-- `S`           -- convex set
+- `S` -- convex set
 
 ### Output
 
@@ -140,7 +140,7 @@ Overapproximate a convex set by a tight ball in the infinity norm.
 
 ### Input
 
-- `S`           -- convex set
+- `S` -- convex set
 
 ### Output
 
