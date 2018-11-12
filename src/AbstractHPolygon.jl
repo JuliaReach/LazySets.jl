@@ -4,6 +4,7 @@ import Base: rand,
 export AbstractHPolygon,
        an_element,
        isredundant,
+       remove_redundant_constraints!,
        addconstraint!,
        vertices_list,
        constraints_list,
@@ -318,6 +319,55 @@ function isredundant(c::LinearConstraint{N},
     cap = intersection(Line(c1), Line(c2))
     @assert cap isa Singleton
     return cap ⊆ c
+end
+
+"""
+    remove_redundant_constraints!(P::AbstractHPolygon)
+
+Remove all redundant constraints of a polygon in constraint representation.
+
+### Input
+
+- `P` -- polygon in constraint representation
+
+### Output
+
+The same polygon with all redundant constraints removed.
+
+### Notes
+
+Since we only consider bounded polygons and a polygon needs at least three
+constraints to be bounded, we stop removing redundant constraints if there are
+three or less constraints left.
+This means that for non-bounded polygons the result may be unexpected.
+
+### Algorithm
+
+We go through all consecutive triples of constraints and check if the one in the
+middle is redundant.
+For this we assume that the constraints are sorted.
+"""
+function remove_redundant_constraints!(P::AbstractHPolygon)
+    C = P.constraints
+    i = 1
+    go_on = true
+    c1 = C[length(C)] # define initial c1 here
+    while length(C) >= 3 && go_on
+        c2 = C[i]
+        if i < length(C)
+            c3 = C[i+1]
+        elseif i == length(C)
+            c3 = C[1]
+            go_on = false
+        end
+        if isredundant(c2, c1, c3)
+            deleteat!(C, i)
+        else
+            i += 1
+            c1 = C[i-1] # update c1 (updates less often than c2/c3)
+        end
+    end
+    return P
 end
 
 """

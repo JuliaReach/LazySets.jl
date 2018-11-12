@@ -154,10 +154,11 @@ tohrep(::HPOLYGON) where {HPOLYGON<:AbstractHPolygon}
 tovrep(::AbstractHPolygon{N}) where {N<:Real}
 addconstraint!(::AbstractHPolygon{N}, ::LinearConstraint{N}) where {N<:Real}
 addconstraint!(::Vector{LinearConstraint{N}}, ::LinearConstraint{N}) where {N<:Real}
+isredundant(::LinearConstraint{N}, ::LinearConstraint{N}, ::LinearConstraint{N}) where {N<:Real}
+remove_redundant_constraints!(::AbstractHPolygon)
 constraints_list(::AbstractHPolygon{N}) where {N<:Real}
 vertices_list(::AbstractHPolygon{N}, ::Bool=false, ::Bool=true) where {N<:Real}
 isbounded(::AbstractHPolygon, ::Bool=true)
-isredundant(::LinearConstraint{N}, ::LinearConstraint{N}, ::LinearConstraint{N}) where {N<:Real}
 ```
 
 ### Centrally symmetric polytope
