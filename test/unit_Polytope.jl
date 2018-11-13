@@ -88,6 +88,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     Pred = remove_redundant_constraints(P)
     @test length(Pred.constraints) == 4
+    @test length(P) == 5
 
     # test in-place removal of redundancies
     remove_redundant_constraints!(P)

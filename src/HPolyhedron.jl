@@ -352,16 +352,16 @@ end
 Given a polyhedron in H-representation, return a new polyhedron with no reundant
 constraints.
 
-## Input
+### Input
 
 - `P`       -- polyhedron
 - `backend` -- (optional, default: `GLPKSolverLP`) the numeric LP solver backend
 
-## Output
+### Output
 
 A new polyhedron obtained by removing the redundant constraints in `P`.
 
-## Algorithm
+### Algorithm
 
 See `remove_redundant_constraints!`. 
 """
@@ -377,16 +377,16 @@ end
 Remove the redundant constraints in a polyhedron in H-representation; the polyhedron
 is updated inplace.
 
-## Input
+### Input
 
 - `P`       -- polyhedron
 - `backend` -- (optional, default: `GLPKSolverLP`) the numeric LP solver backend
 
-## Output
+### Output
 
 The polyhedron obtained by removing the redundant constraints in `P`.
 
-## Algorithm
+### Algorithm
 
 If the polyhedron `P` has `m` constraints and its dimension is `n`,
 this function checks one by one if each of the `m` constraints is
@@ -404,9 +404,8 @@ function remove_redundant_constraints!(P::PT;
     non_redundant_indices = 1:m
 
     i = 1 # counter over reduced constraints
-    j = 1 # counter over original constraints
 
-    while j <= m
+    for j in 1:m    # loop over original constraints
         α = A[j, :]
         Ar = A[non_redundant_indices, :]
         br = b[non_redundant_indices]
@@ -423,7 +422,6 @@ function remove_redundant_constraints!(P::PT;
             # the constraint is not redundant
             i = i+1
         end
-        j = j+1
     end
 
     deleteat!(P.constraints, setdiff(1:m, non_redundant_indices))
@@ -435,11 +433,11 @@ end
 
 Create a copy of a polyhedron.
 
-## Input
+### Input
 
 - `P` -- polyhedron
 
-## Output
+### Output
 
 The polyhedron obtained by copying the constraints in `P` using `Base.copy`.
 """
