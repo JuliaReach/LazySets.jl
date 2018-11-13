@@ -29,6 +29,10 @@ for N in [Float64, Float32, Rational{Int}]
     @test LazySets.isredundant(h2, h1, h3)
     @test !LazySets.isredundant(h3, h2, h4)
     @test LazySets.isredundant(h2, h2, h3) && LazySets.isredundant(h3, h2, h3)
+    p2 = HPolygon{N}([h1, h2, h3, h4]) # sorted in the right order
+    @test length(p2.constraints) == 4
+    remove_redundant_constraints!(p2)
+    @test length(p2.constraints) == 3
 
     # conversion to optimized polygon
     po = convert(HPolygonOpt, p)
