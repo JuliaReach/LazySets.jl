@@ -128,5 +128,15 @@ if test_suite_polyhedra
         b = N[-0.25, -0.25, -0]
         P = HPolyhedron(A, b)
         @test tohrep(P) isa HPolyhedron # test no-op
+
+        # removing a redundant constraint in a 2D polyhedron (see #565)
+        A = [0. 1.;    # y <= 0
+             1. 0.;    # x <= 0
+             2. 2.]    # 2x + 2y <= 1   (this constraint is implied by the other two)
+        b = [0., 0., 1.];
+        p1 = HPolyhedron(A, b);
+        remove_redundant_constraints!(p1)
+        Ar, br = tosimplehrep(p1)
+        @test Ar == A[1:2, :] && br == b[1:2]
     end
 end
