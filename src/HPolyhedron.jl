@@ -2,7 +2,8 @@ using MathProgBase, GLPKMathProgInterface
 
 import Base: isempty,
              rand,
-             convert
+             convert,
+             copy
 
 export HPolyhedron,
        dim, σ, ∈,
@@ -14,7 +15,9 @@ export HPolyhedron,
        cartesian_product,
        vertices_list,
        singleton_list,
-       isempty
+       isempty,
+       remove_redundant_constraints,
+       remove_redundant_constraints!
 
 """
     HPolyhedron{N<:Real} <: LazySet{N}
@@ -44,6 +47,8 @@ function HPolyhedron(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real}
     end
     return HPolyhedron(constraints)
 end
+
+HPolyhedron{N}(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real} = HPolyhedron(A, b)
 
 # convenience union type
 const HPoly{N} = Union{HPolytope{N}, HPolyhedron{N}}
@@ -338,6 +343,106 @@ The same polyhedron instance.
 """
 function tohrep(P::HPoly{N}) where {N}
     return P
+end
+
+"""
+    remove_redundant_constraints(P::PT;
+                                 backend=GLPKSolverLP()) where {N, PT<:HPoly{N}}
+
+Given a polyhedron in H-representation, return a new polyhedron with no reundant
+constraints.
+
+### Input
+
+- `P`       -- polyhedron
+- `backend` -- (optional, default: `GLPKSolverLP`) the numeric LP solver backend
+
+### Output
+
+A new polyhedron obtained by removing the redundant constraints in `P`.
+
+### Algorithm
+
+See `remove_redundant_constraints!`. 
+"""
+function remove_redundant_constraints(P::PT;
+                                      backend=GLPKSolverLP()) where {N, PT<:HPoly{N}}
+    return remove_redundant_constraints!(copy(P), backend=backend)
+end
+
+"""
+    remove_redundant_constraints!(P::PT;
+                                  backend=GLPKSolverLP()) where {N, PT<:HPoly{N}}
+
+Remove the redundant constraints in a polyhedron in H-representation; the polyhedron
+is updated inplace.
+
+### Input
+
+- `P`       -- polyhedron
+- `backend` -- (optional, default: `GLPKSolverLP`) the numeric LP solver backend
+
+### Output
+
+The polyhedron obtained by removing the redundant constraints in `P`.
+
+### Algorithm
+
+If the polyhedron `P` has `m` constraints and its dimension is `n`,
+this function checks one by one if each of the `m` constraints is
+implied by the remaining ones. To check if the `k`-th constraint
+is redundant, an LP is formulated.
+
+For details, see [Fukuda's Polyhedra
+FAQ](https://www.cs.mcgill.ca/~fukuda/soft/polyfaq/node24.html).
+"""
+function remove_redundant_constraints!(P::PT;
+                                       backend=GLPKSolverLP()) where {N, PT<:HPoly{N}}
+
+    A, b = tosimplehrep(P)
+    m, n = size(A)
+    non_redundant_indices = 1:m
+
+    i = 1 # counter over reduced constraints
+
+    for j in 1:m    # loop over original constraints
+        α = A[j, :]
+        Ar = A[non_redundant_indices, :]
+        br = b[non_redundant_indices]
+        br[i] = b[j] + one(N)
+        lp = linprog(-α, Ar, '<', br, -Inf, Inf, GLPKSolverLP())
+        if lp.status != :Optimal
+            error("LP is not optimal")
+        end
+        objval = -lp.objval
+        if objval <= b[j]
+            # the constraint is redundant
+            non_redundant_indices = setdiff(non_redundant_indices, j)
+        else
+            # the constraint is not redundant
+            i = i+1
+        end
+    end
+
+    deleteat!(P.constraints, setdiff(1:m, non_redundant_indices))
+    return P
+end
+
+"""
+    copy(P::PT) where {N, PT<:HPoly{N}}
+
+Create a copy of a polyhedron.
+
+### Input
+
+- `P` -- polyhedron
+
+### Output
+
+The polyhedron obtained by copying the constraints in `P` using `Base.copy`.
+"""
+function copy(P::PT) where {N, PT<:HPoly{N}}
+    return PT(copy(P.constraints))
 end
 
 # ========================================================

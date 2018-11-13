@@ -40,6 +40,7 @@ function HPolytope(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real}
     return HPolytope(constraints)
 end
 
+HPolytope{N}(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real} = HPolytope(A, b)
 
 # --- LazySet interface functions ---
 
