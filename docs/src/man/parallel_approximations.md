@@ -15,7 +15,7 @@ Parallel.box_approximation(S)
 
 Note that after importing or using `LazySets.Parallel`, the version of the function
 used must be fully qualified, eg. `LazySets.Approximations.box_approximation` for the
-sequential function or `LazySets.Parallel.box_approximation` for the parallel version.
+sequential version or `LazySets.Parallel.box_approximation` for the parallel version.
 
 The parallelization strategy that is available uses processes. To set the number
 of processes use the flag `-p N` at julia startup, where `N` is the number of
