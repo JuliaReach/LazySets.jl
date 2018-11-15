@@ -18,7 +18,7 @@ used must be fully qualified, eg. `LazySets.Approximations.box_approximation` fo
 sequential version or `LazySets.Parallel.box_approximation` for the parallel version.
 
 The parallelization strategy that is available uses processes. To set the number
-of processes use the flag `-p N` at julia startup, where `N` is the number of
+of processes `N`, use the flag `-p N` at julia startup. For example, do
 desired processes. For example, do
 
 ```julia
