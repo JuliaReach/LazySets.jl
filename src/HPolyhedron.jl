@@ -475,7 +475,7 @@ For further information on the supported backends see
 function convex_hull(P1::HPoly{N},
                      P2::HPoly{N};
                      backend=default_polyhedra_backend(P1, N)) where {N}
-    @assert isdefined(Main, :Polyhedra) "the function `convex_hull` needs " *
+    @assert isdefined(@__MODULE__, :Polyhedra) "the function `convex_hull` needs " *
                                         "the package 'Polyhedra' to be loaded"
     Pch = convexhull(polyhedron(P1, backend), polyhedron(P2, backend))
     return convert(typeof(P1), Pch)
@@ -507,7 +507,7 @@ function cartesian_product(P1::HPoly{N},
                            P2::HPoly{N};
                            backend=default_polyhedra_backend(P1, N)
                           ) where N<:Real
-    @assert isdefined(Main, :Polyhedra) "the function `cartesian_product` " *
+    @assert isdefined(@__MODULE__, :Polyhedra) "the function `cartesian_product` " *
         "needs the package 'Polyhedra' to be loaded"
     Pcp = hcartesianproduct(polyhedron(P1, backend), polyhedron(P2, backend))
     return convert(typeof(P1), Pcp)
@@ -537,7 +537,7 @@ For further information on the supported backends see
 """
 function tovrep(P::HPoly{N};
                 backend=default_polyhedra_backend(P, N)) where {N}
-    @assert isdefined(Main, :Polyhedra) "the function `tovrep` needs " *
+    @assert isdefined(@__MODULE__, :Polyhedra) "the function `tovrep` needs " *
                                         "the package 'Polyhedra' to be loaded"
     P = polyhedron(P, backend)
     return VPolytope(P)
@@ -620,7 +620,7 @@ default.
 function isempty(P::HPoly{N};
                  backend=default_polyhedra_backend(P, N),
                  solver=GLPKSolverLP())::Bool where {N<:Real}
-    @assert isdefined(Main, :Polyhedra) "the function `isempty` needs the " *
+    @assert isdefined(@__MODULE__, :Polyhedra) "the function `isempty` needs the " *
                                         "package 'Polyhedra' to be loaded"
     return Polyhedra.isempty(polyhedron(P, backend), solver)
 end

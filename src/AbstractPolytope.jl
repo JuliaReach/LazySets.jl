@@ -108,7 +108,7 @@ function isempty(P::AbstractPolytope{N})::Bool where {N<:Real}
 end
 
 function default_polyhedra_backend(P, N)
-    @assert isdefined(Main, :Polyhedra) "this function needs the package 'Polyhedra' to be loaded"
+    @assert isdefined(@__MODULE__, :Polyhedra) "this function needs the package 'Polyhedra' to be loaded"
     error("no default backend for numeric type $N")
 end
 
