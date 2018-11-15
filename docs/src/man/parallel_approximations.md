@@ -44,7 +44,7 @@ end
 
 ## Parallel interval hulls 
 
-Consider the symmetric interval hull approximation
+Consider the [symmetric interval hull approximation](@ref Symmetric interval hull)
 of a nested lazy set in `n` dimensions, where `n` is a positive integer.
 The calculation, a modified version of that given in the Introduction,
 and that is used for example in the discretization of set-based ODEs, is defined
