@@ -262,7 +262,7 @@ function ρ_helper(d::AbstractVector{N},
         # return min(ρ(d, X; kwargs...), ρ(d, H; kwargs...))
         return ρ(d, X; kwargs...)
     elseif algorithm == "line_search"
-        @assert isdefined(Main, :Optim) "the algorithm $algorithm needs " *
+        @assert isdefined(@__MODULE__, :Optim) "the algorithm $algorithm needs " *
             "the package 'Optim' to be loaded"
         (s, _) = _line_search(d, X, H; kwargs...)
         return s
