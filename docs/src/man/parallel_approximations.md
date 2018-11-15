@@ -81,7 +81,7 @@ Given the lazy set `Y(n)`, we want to calculate the symmetric interval hull, whi
 corresponds to finding the smallest `n`-dimensional hyperrectangle that contains
 the set `Y(n)` and is symmetric with respect to the origin. Notice that this operation
 is inherently parallel, since one can evaluate the support function of `Y` independently
-on each dimension from `1` to `n`.
+in each dimension from `1` to `n`.
 
 The sequential algorithm returns the following execution times. We use
 the `@btime` macro from the `BenchmarkTools` package to have a more accurate
