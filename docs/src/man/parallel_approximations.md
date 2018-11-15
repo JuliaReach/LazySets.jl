@@ -28,7 +28,7 @@ as in
 ```julia
 $ julia -p auto
 ```
-to launch as many workers as the number of local CPU threads.
+to launch as many workers as the number of local CPU cores.
 
 
 ```@contents
