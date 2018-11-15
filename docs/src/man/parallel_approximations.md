@@ -46,9 +46,8 @@ end
 
 Consider the [symmetric interval hull approximation](@ref Symmetric interval hull)
 of a nested lazy set in `n` dimensions, where `n` is a positive integer.
-The calculation, a modified version of that given in the Introduction,
-and that is used for example in the discretization of set-based ODEs, is defined
-below.
+The calculation, that can be found in the discretization of set-based ODEs,
+is defined below for an artificial example.
 
 ```julia
 using LazySets
@@ -129,16 +128,17 @@ In the following table we summarize the speedup.
 We haven't used `@btime` macro for the parallel benchmark, because it gives
 `ERROR: SystemError: shm_open() ... Too many open files`.
 
-!!! note
-    The results in this section were obtained with a standard MacBook Pro laptop
-    with the following specifications:
-    ```julia
-    Julia Version 0.7.0
-    Commit a4cb80f3ed (2018-08-08 06:46 UTC)
-    Platform Info:
-      OS: macOS (x86_64-apple-darwin14.5.0)
-      CPU: Intel(R) Core(TM) i7-4770HQ CPU @ 2.20GHz
-      WORD_SIZE: 64
-      LIBM: libopenlibm
-      LLVM: libLLVM-6.0.0 (ORCJIT, haswell)
-    ```
+
+The results in this section were obtained with a standard MacBook Pro laptop
+with the following specifications:
+
+```julia
+Julia Version 0.7.0
+Commit a4cb80f3ed (2018-08-08 06:46 UTC)
+Platform Info:
+  OS: macOS (x86_64-apple-darwin14.5.0)
+  CPU: Intel(R) Core(TM) i7-4770HQ CPU @ 2.20GHz
+  WORD_SIZE: 64
+  LIBM: libopenlibm
+  LLVM: libLLVM-6.0.0 (ORCJIT, haswell)
+```
