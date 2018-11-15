@@ -19,7 +19,6 @@ sequential version or `LazySets.Parallel.box_approximation` for the parallel ver
 
 The parallelization strategy that is available uses processes. To set the number
 of processes `N`, use the flag `-p N` at julia startup. For example, do
-desired processes. For example, do
 
 ```julia
 $ julia -p 4
