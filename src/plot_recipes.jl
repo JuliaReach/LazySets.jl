@@ -300,7 +300,8 @@ julia> plot(Singleton([0.5, 1.0]));
                                 legend=false)
 
     seriestype := :scatter
-
+    @assert dim(point) == 2 ||
+            dim(point) == 3 "cannot plot a $(dim(point))-dimensional singleton"
     [Tuple(element(point))]
 end
 
@@ -337,6 +338,14 @@ julia> plot([Singleton(a), Singleton(b), Singleton(c)]);
                                 color="blue", label="", grid=true, legend=false)
 
     seriestype := :scatter
+
+    if dim(arr[1]) == 2
+        @assert all([dim(pi) == 2 for pi in arr]) "all points in this vector should have the same dimension"
+    elseif dim(arr[1]) == 3
+        @assert all([dim(pi) == 3 for pi in arr]) "all points in this vector should have the same dimension"
+    else
+        error("can only plot 2D or 3D vectors of singletons")
+    end
 
     [Tuple(element(point)) for point in arr]
 end
