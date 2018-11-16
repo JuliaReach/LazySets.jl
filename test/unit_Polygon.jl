@@ -184,6 +184,11 @@ for N in [Float64, Float32, Rational{Int}]
         HalfSpace([0.0, -1.0], -1.0)])
     @test vertices_list(P) == Vector{Vector{N}}()
 
+    # empty intersection results in empty set
+    p3 = tohrep(VPolygon([N[0, 0]]))
+    p4 = tohrep(VPolygon([N[1, 1]]))
+    @test intersection(p3, p4) isa EmptySet{N}
+
     # is intersection empty
     p3 = convert(HPolygon, Hyperrectangle(low=N[-1, -1], high=N[1, 1]))
     I1 = Interval(N(0.9), N(1.1))

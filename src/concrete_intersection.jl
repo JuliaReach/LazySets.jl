@@ -185,8 +185,9 @@ Return the intersection of two polygons in constraint representation.
 
 ### Input
 
-- `P1` -- first polygon
-- `P2` -- second polygon
+- `P1`    -- first polygon
+- `P2`    -- second polygon
+- `prune` -- (optional, default: `true`) flag for removing redundant constraints
 
 ### Output
 
@@ -199,9 +200,13 @@ We just combine the constraints of both polygons.
 To obtain a linear-time algorithm, we interleave the constraints.
 If there are two constraints with the same normal vector, we choose the tighter
 one.
+
+Redundancy of constraints is checked with [`remove_redundant_constraints!`
+](@ref remove_redundant_constraints!(::AbstractHPolygon)).
 """
 function intersection(P1::AbstractHPolygon{N},
-                      P2::AbstractHPolygon{N}
+                      P2::AbstractHPolygon{N},
+                      prune::Bool=true
                      )::Union{HPolygon{N}, EmptySet{N}} where {N<:Real}
     # all constraints of one polygon are processed; now add the other polygon's
     # constraints
@@ -283,8 +288,12 @@ function intersection(P1::AbstractHPolygon{N},
     end
 
     P = HPolygon(c, sort_constraints=false)
-
-    # TODO: remove redundant constraints (#582) and return an EmptySet if empty
+    if prune
+        remove_redundant_constraints!(P)
+        if isempty(P)
+            return EmptySet{N}()
+        end
+    end
     return P
 end
 
