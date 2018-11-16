@@ -36,7 +36,7 @@ Depending on the transition semantics, we add the discrete successors to the
 queue and continue with the next iteration until the queue is empty.
 
 ```@example example_reach_zonotopes_hybrid
-using LazySets, Plots
+using Plots, LazySets
 
 function reach_hybrid(As, Ts, init, δ, μ, T, max_order, instant_transitions)
     # initialize queue with initial mode and states at time t=0

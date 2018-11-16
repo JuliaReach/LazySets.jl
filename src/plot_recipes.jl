@@ -16,7 +16,7 @@ Plot a convex set in two dimensions using an axis-aligned approximation.
 ### Examples
 
 ```jldoctest
-julia> using LazySets, Plots
+julia> using Plots, LazySets
 
 julia> B = BallInf(ones(2), 0.1);
 
@@ -65,7 +65,7 @@ approximation.
 ### Examples
 
 ```jldoctest
-julia> using LazySets, Plots;
+julia> using Plots, LazySets;
 
 julia> B1 = BallInf(zeros(2), 0.4);
 
@@ -109,7 +109,7 @@ Plot a lazy set in two dimensions using iterative refinement.
 ### Examples
 
 ```jldoctest
-julia> using LazySets, Plots;
+julia> using Plots, LazySets;
 
 julia> B = BallInf(ones(2), 0.1);
 
@@ -143,7 +143,7 @@ Plot an array of lazy sets in two dimensions using iterative refinement.
 ### Examples
 
 ```jldoctest
-julia> using LazySets, Plots;
+julia> using Plots, LazySets;
 
 julia> B1 = BallInf(zeros(2), 0.4);
 
@@ -183,7 +183,7 @@ Plot a 2D polytope as the convex hull of its vertices.
 ### Examples
 
 ```jldoctest plotting_polytope
-julia> using LazySets, Plots;
+julia> using Plots, LazySets;
 
 julia> P = HPolygon([LinearConstraint([1.0, 0.0], 0.6),
                      LinearConstraint([0.0, 1.0], 0.6),
@@ -229,7 +229,7 @@ Plot an array of 2D polytopes.
 ### Examples
 
 ```jldoctest plotting_polytopes
-julia> using LazySets, Plots;
+julia> using Plots, LazySets;
 
 julia> P1 = HPolygon([LinearConstraint([1.0, 0.0], 0.6),
                       LinearConstraint([0.0, 1.0], 0.6),
@@ -289,7 +289,7 @@ Plot a singleton.
 ### Examples
 
 ```jldoctest
-julia> using LazySets, Plots;
+julia> using Plots, LazySets;
 
 julia> plot(Singleton([0.5, 1.0]));
 
@@ -316,7 +316,7 @@ Plot a list of singletons.
 ### Examples
 
 ```jldoctest
-julia> using LazySets, Plots;
+julia> using Plots, LazySets;
 
 julia> plot([Singleton([0.0, 0.0]), Singleton([1., 0]), Singleton([0.5, .5])]);
 
@@ -325,7 +325,7 @@ julia> plot([Singleton([0.0, 0.0]), Singleton([1., 0]), Singleton([0.5, .5])]);
 Three-dimensional singletons can be plotted as well:
 
 ```jldoctest
-julia> using LazySets, Plots;
+julia> using Plots, LazySets;
 
 julia> a, b, c = zeros(3), [1.0, 0, 0], [0.0, 1., 0];
 
@@ -357,7 +357,7 @@ Plot a line segment.
 ### Examples
 
 ```jldoctest
-julia> using LazySets, Plots;
+julia> using Plots, LazySets;
 
 julia> L = LineSegment([0., 0.], [1., 1.]);
 
@@ -389,7 +389,7 @@ Plot an array of line segments.
 ### Examples
 
 ```jldoctest
-julia> using LazySets, Plots;
+julia> using Plots, LazySets;
 
 julia> L1 = LineSegment([0., 0.], [1., 1.]);
 
@@ -425,7 +425,7 @@ Plot an interval.
 ### Examples
 
 ```jldoctest
-julia> using LazySets, Plots;
+julia> using Plots, LazySets;
 
 julia> I = Interval(0.0, 1.0);
 
@@ -457,7 +457,7 @@ Plot an array of intervals.
 ### Examples
 
 ```jldoctest
-julia> using LazySets, Plots;
+julia> using Plots, LazySets;
 
 julia> I1 = Interval([0., 1.]);
 

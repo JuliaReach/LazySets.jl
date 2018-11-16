@@ -10,7 +10,7 @@ Depth = 3
 
 ```@meta
 DocTestSetup = quote
-    using LazySets, Plots, LazySets.Approximations
+    using Plots, LazySets, LazySets.Approximations
 end
 ```
 
@@ -22,7 +22,7 @@ Other numeric types (such as lower precision floating point, or rational) can be
 defined with the proper argument types in the `Ball2` constructor.
 
 ```@example example_ih
-using LazySets, Plots
+using Plots, LazySets
 
 X = Ball2(ones(2), 0.5)
 ```

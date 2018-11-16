@@ -12,7 +12,7 @@ Depth = 3
 
 ```@meta
 DocTestSetup = quote
-    using LazySets, Plots, LazySets.Approximations
+    using Plots, LazySets, LazySets.Approximations
 end
 ```
 
@@ -22,7 +22,7 @@ The lazy convex hull, `ConvexHull`, is the binary operator that implements the
 convex hull of the union between two convex sets.
 
 ```@example example_ch
-using LazySets, Plots
+using Plots, LazySets
 
 A = 1/sqrt(2.) * [1 -1; 1 1]
 Bn = n -> BallInf(ones(n), 0.2)
