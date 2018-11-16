@@ -410,7 +410,7 @@ function remove_redundant_constraints!(P::PT;
         Ar = A[non_redundant_indices, :]
         br = b[non_redundant_indices]
         br[i] = b[j] + one(N)
-        lp = linprog(-α, Ar, '<', br, -Inf, Inf, GLPKSolverLP())
+        lp = linprog(-α, Ar, '<', br, -Inf, Inf, backend)
         if lp.status != :Optimal
             error("LP is not optimal")
         end
