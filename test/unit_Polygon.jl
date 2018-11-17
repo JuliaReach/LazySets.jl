@@ -59,7 +59,6 @@ for N in [Float64, Float32, Rational{Int}]
     subset, point = ⊆(p, l2, true)
     @test subset && ⊆(p, l2) && point == N[]
 
-
     # HPolygon/HPolygonOpt tests
     for hp in [p, po]
         # Test Dimension
@@ -148,6 +147,11 @@ for N in [Float64, Float32, Rational{Int}]
     p2 = HPolygon([h4, h5, h6])
     c = intersection(p1, p2).constraints
     @test c == [h1, h4, h2, h5, h3, h6]
+
+    # check that empty polygon (infeasible constraints) has no vertices (#918)
+    P = HPolygon([HalfSpace([1.0, 1.0], 0.0), HalfSpace([-1.0, 0.0], -1.0),
+        HalfSpace([0.0, -1.0], -1.0)])
+    @test vertices_list(P) == Vector{Vector{N}}()
 
     # is intersection empty
     p3 = convert(HPolygon, Hyperrectangle(low=N[-1, -1], high=N[1, 1]))
