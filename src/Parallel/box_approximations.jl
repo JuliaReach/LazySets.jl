@@ -82,7 +82,8 @@ of the given convex set in the canonical directions.
 The lengths of the sides can be recovered from the distance among support
 functions in the same directions.
 
-The same load is distributed among all available workers, see `distribute_task!`.
+The same load is distributed among all available workers, see
+[`distribute_task!`](@ref).
 """
 @inline function box_approximation_helper_parallel(S::LazySet{N}) where {N<:Real}
     n = dim(S)
