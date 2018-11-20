@@ -343,8 +343,9 @@ Inherited from [`AbstractHPolygon`](@ref):
 * [`tovrep`](@ref tovrep(::AbstractHPolygon{N}) where {N<:Real})
 * [`isbounded`](@ref isbounded(::AbstractHPolygon, ::Bool=true))
 * [`addconstraint!`](@ref addconstraint!(::AbstractHPolygon{N}, ::LinearConstraint{N}) where {N<:Real})
-* [`constraints_list`](@ref constraints_list(::AbstractHPolygon{N}) where {N<:Real})
 * [`isredundant`](@ref isredundant(::LinearConstraint{N}, ::LinearConstraint{N}, ::LinearConstraint{N}) where {N<:Real})
+* [`remove_redundant_constraints!`](@ref remove_redundant_constraints!(::AbstractHPolygon))
+* [`constraints_list`](@ref constraints_list(::AbstractHPolygon{N}) where {N<:Real})
 
 ### Optimized constraint representation
 
@@ -373,8 +374,9 @@ Inherited from [`AbstractHPolygon`](@ref):
 * [`tovrep`](@ref tovrep(::AbstractHPolygon{N}) where {N<:Real})
 * [`isbounded`](@ref isbounded(::AbstractHPolygon, ::Bool=true))
 * [`addconstraint!`](@ref addconstraint!(::AbstractHPolygon{N}, ::LinearConstraint{N}) where {N<:Real})
-* [`constraints_list`](@ref constraints_list(::AbstractHPolygon{N}) where {N<:Real})
 * [`isredundant`](@ref isredundant(::LinearConstraint{N}, ::LinearConstraint{N}, ::LinearConstraint{N}) where {N<:Real})
+* [`remove_redundant_constraints!`](@ref remove_redundant_constraints!(::AbstractHPolygon))
+* [`constraints_list`](@ref constraints_list(::AbstractHPolygon{N}) where {N<:Real})
 
 ### Vertex representation
 
@@ -439,13 +441,13 @@ addconstraint!(::HPoly{N}, ::LinearConstraint{N}) where {N<:Real}
 constraints_list(::HPoly{N}) where {N<:Real}
 tosimplehrep(::HPoly{N}) where {N<:Real}
 tohrep(::HPoly{N}) where {N<:Real}
+tovrep(::HPoly{N}) where {N<:Real}
+polyhedron(::HPoly{N}) where {N<:Real}
 isempty(::HPoly{N}) where {N<:Real}
 cartesian_product(::HPoly{N}, ::HPoly{N}) where {N<:Real}
 linear_map(M::AbstractMatrix{N}, P::PT) where {N<:Real, PT<:HPoly{N}}
-tovrep(::HPoly{N}) where {N<:Real}
-polyhedron(::HPoly{N}) where {N<:Real}
-remove_redundant_constraints
-remove_redundant_constraints!
+remove_redundant_constraints(::HPoly{N}) where {N<:Real}
+remove_redundant_constraints!(::HPoly{N}) where {N<:Real}
 ```
 
 Inherited from [`LazySet`](@ref):

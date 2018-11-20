@@ -201,8 +201,8 @@ To obtain a linear-time algorithm, we interleave the constraints.
 If there are two constraints with the same normal vector, we choose the tighter
 one.
 
-Redundancy of constraints is checked with [`remove_redundant_constraints!`
-](@ref remove_redundant_constraints!(::AbstractHPolygon)).
+Redundancy of constraints is checked with
+[`remove_redundant_constraints!(::AbstractHPolygon)`](@ref).
 """
 function intersection(P1::AbstractHPolygon{N},
                       P2::AbstractHPolygon{N},
