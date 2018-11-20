@@ -61,6 +61,7 @@ include("Intersection.jl")
 include("LinearMap.jl")
 include("MinkowskiSum.jl")
 include("SymmetricIntervalHull.jl")
+include("UnionSet.jl")
 
 # =============================
 # Conversions between set types
