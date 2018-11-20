@@ -306,13 +306,12 @@ function isredundant(c::LinearConstraint{N},
             samedir_check = true
         end
     end
-    if samedir_check
-        # check if the constraint has the same direction as one of the two
-        if samedir(c1.a, c.a)[1]
-            return !is_tighter_same_dir_2D(c, c1, strict=true)
-        elseif samedir(c2.a, c.a)[1]
-            return !is_tighter_same_dir_2D(c, c2, strict=true)
-        end
+    # check if the constraint has the same direction as one of the two
+    if samedir(c1.a, c.a)[1]
+        return !is_tighter_same_dir_2D(c, c1, strict=true)
+    elseif samedir(c2.a, c.a)[1]
+        return !is_tighter_same_dir_2D(c, c2, strict=true)
+    elseif samedir_check
         # not the same direction => constraint is not redundant
         return false
     end

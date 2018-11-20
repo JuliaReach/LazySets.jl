@@ -362,6 +362,17 @@ for N in [Float64, Float32]
         @test same_constraints([p1.constraints[i], p2.constraints[i],
                                 po1.constraints[i], po2.constraints[i]])
     end
+
+    # check redundancy removal
+    p2 = HPolygon([
+        HalfSpace(N[-1.29817, 1.04012], N(6.07731)),
+        HalfSpace(N[-1.29348, -0.0920708], N(1.89515)),
+        HalfSpace(N[-1.42909, -0.347449], N(1.50577)),
+        HalfSpace(N[0.349446, -0.130477], N(-0.575904)),
+        HalfSpace(N[1.50108, -0.339291], N(-2.18331)),
+        HalfSpace(N[2.17022, -0.130831], N(-2.14411))])
+    addconstraint!(p2, p2.constraints[2])
+    @test length(p2.constraints) == 6
 end
 
 # default Float64 constructors
