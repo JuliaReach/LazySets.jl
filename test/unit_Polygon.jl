@@ -33,6 +33,20 @@ for N in [Float64, Float32, Rational{Int}]
     @test length(p2.constraints) == 4
     remove_redundant_constraints!(p2)
     @test length(p2.constraints) == 3
+    h1 = HalfSpace([N(1), N(0)], N(1))
+    h2 = HalfSpace([N(0), N(1)], N(1))
+    h3 = HalfSpace([N(-1), N(0)], N(1))
+    h4 = HalfSpace([N(0), N(-1)], N(1))
+    p2 = HPolygon{N}()
+    addconstraint!(p2, h1)
+    addconstraint!(p2, h2)
+    addconstraint!(p2, h3)
+    addconstraint!(p2, h4)
+    addconstraint!(p2, h1)
+    @test ispermutation(p2.constraints, [h1, h2, h3, h4])
+    h5 = HalfSpace([N(1), N(1)], N(0))
+    addconstraint!(p2, h5)
+    @test ispermutation(p2.constraints, [h3, h4, h5])
 
     # conversion to optimized polygon
     po = convert(HPolygonOpt, p)

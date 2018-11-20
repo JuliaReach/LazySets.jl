@@ -373,7 +373,9 @@ end
 """
     addconstraint!(P::AbstractHPolygon{N},
                    constraint::LinearConstraint{N};
-                   linear_search::Bool=(length(P.constraints) < BINARY_SEARCH_THRESHOLD)
+                   [linear_search]::Bool=(length(P.constraints) <
+                                          BINARY_SEARCH_THRESHOLD),
+                   [prune]::Bool=true
                   )::Nothing where {N<:Real}
 
 Add a linear constraint to a polygon in constraint representation, keeping the
@@ -383,6 +385,11 @@ constraints sorted by their normal directions.
 
 - `P`          -- polygon in constraint representation
 - `constraint` -- linear constraint to add
+- `linear_search`  -- (optional, default: `length(constraints) <
+                      BINARY_SEARCH_THRESHOLD`) flag to choose between linear
+                      and binary search
+- `prune`          -- (optional, default: `true`) flag for removing redundant
+                      constraints in the end
 
 ### Output
 
@@ -390,15 +397,20 @@ Nothing.
 """
 function addconstraint!(P::AbstractHPolygon{N},
                         constraint::LinearConstraint{N};
-                        linear_search::Bool=(length(P.constraints) < BINARY_SEARCH_THRESHOLD)
+                        linear_search::Bool=(length(P.constraints) <
+                                             BINARY_SEARCH_THRESHOLD),
+                        prune::Bool=true
                        )::Nothing where {N<:Real}
-    return addconstraint!(P.constraints, constraint, linear_search=linear_search)
+    return addconstraint!(P.constraints, constraint,
+                          linear_search=linear_search, prune=prune)
 end
 
 """
     addconstraint!(constraints::Vector{LinearConstraint{N}},
                    new_constraint::LinearConstraint{N};
-                   [linear_search]::Bool=(length(P.constraints) < BINARY_SEARCH_THRESHOLD)
+                   [linear_search]::Bool=(length(P.constraints) <
+                                          BINARY_SEARCH_THRESHOLD),
+                   [prune]::Bool=true
                   )::Nothing where {N<:Real}
 
 Add a linear constraint to a sorted vector of constrains, keeping the
@@ -406,37 +418,94 @@ constraints sorted by their normal directions.
 
 ### Input
 
-- `constraints`    -- vector of linear constraintspolygon in constraint representation
+- `constraints`    -- vector of linear constraintspolygon in constraint
+                      representation
 - `new_constraint` -- linear constraint to add
+- `linear_search`  -- (optional, default: `length(constraints) <
+                      BINARY_SEARCH_THRESHOLD`) flag to choose between linear
+                      and binary search
+- `prune`          -- (optional, default: `true`) flag for removing redundant
+                      constraints in the end
 
 ### Output
 
 Nothing.
+
+### Algorithm
+
+If `prune` is active, we check if the new constraint is redundant.
+If the constraint is not redundant, we perform the same check to the left and to
+the right until we find the first constraint that is not redundant.
 """
 function addconstraint!(constraints::Vector{LinearConstraint{N}},
                         new_constraint::LinearConstraint{N};
-                        linear_search::Bool=(length(constraints) < BINARY_SEARCH_THRESHOLD)
+                        linear_search::Bool=(length(constraints) <
+                                             BINARY_SEARCH_THRESHOLD),
+                        prune::Bool=true
                        )::Nothing where {N<:Real}
-    k = length(constraints)
+    m = length(constraints)
+    k = m
     if k > 0
         d = new_constraint.a
         if d <= constraints[1].a
             k = 0
-        else
-            if linear_search
-                # linear search
-                while d <= constraints[k].a
-                    k -= 1
-                end
-            else
-                # binary search
-                k = binary_search_constraints(
-                    d, constraints, k, 1 + div(k, 2), choose_lower=true)
+        elseif linear_search
+            # linear search
+            while d <= constraints[k].a
+                k -= 1
             end
+        else
+            # binary search
+            k = binary_search_constraints(
+                d, constraints, k, 1 + div(k, 2), choose_lower=true)
         end
     end
-    # here constraints[k] < new_constraint
-    insert!(constraints, k+1, new_constraint)
+
+    # here constraints[k] <= new_constraint <= constraints[(k%m)+1]
+    if prune && m >= 2
+        # check if new constraint is redundant
+        k += 1
+        below = k == 1 ? m : k - 1
+        above = k == m + 1 ? 1 : k
+        if isredundant(new_constraint, constraints[below], constraints[above])
+            return nothing
+        end
+        # insert new constraint
+        insert!(constraints, k, new_constraint)
+        m += 1
+        # check if old constraints below became redundant
+        while m > 2
+            center = k == 1 ? m : k - 1
+            below = center == 1 ? m : center - 1
+            if isredundant(constraints[center], constraints[below],
+                           new_constraint)
+                deleteat!(constraints, center)
+                if center < k
+                    k -= 1
+                end
+                m -= 1
+            else
+                break
+            end
+        end
+        # check if old constraints above became redundant
+        while m > 2
+            center = k == m ? 1 : k + 1
+            above = center == m ? 1 : center + 1
+            if isredundant(constraints[center], new_constraint,
+                            constraints[above])
+                deleteat!(constraints, center)
+                if center < k
+                    k -= 1
+                end
+                m -= 1
+            else
+                break
+            end
+        end
+    else
+        insert!(constraints, k+1, new_constraint)
+    end
     return nothing
 end
 
