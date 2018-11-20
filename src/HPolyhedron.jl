@@ -417,8 +417,8 @@ function tohrep(P::HPoly{N}) where {N<:Real}
 end
 
 """
-    remove_redundant_constraints(P::PT;
-                                 backend=GLPKSolverLP()) where {N, PT<:HPoly{N}}
+    remove_redundant_constraints(P::HPoly{N};
+                                 backend=GLPKSolverLP()) where {N<:Real}
 
 Given a polyhedron in H-representation, return a new polyhedron with no reundant
 constraints.
@@ -444,8 +444,8 @@ function remove_redundant_constraints(P::PT;
 end
 
 """
-    remove_redundant_constraints!(P::PT;
-                                  backend=GLPKSolverLP()) where {N, PT<:HPoly{N}}
+    remove_redundant_constraints!(P::HPoly{N};
+                                  backend=GLPKSolverLP()) where {N<:Real}
 
 Remove the redundant constraints in a polyhedron in H-representation; the polyhedron
 is updated inplace.
@@ -469,8 +469,8 @@ is redundant, an LP is formulated.
 For details, see [Fukuda's Polyhedra
 FAQ](https://www.cs.mcgill.ca/~fukuda/soft/polyfaq/node24.html).
 """
-function remove_redundant_constraints!(P::PT;
-                                       backend=GLPKSolverLP()) where {N, PT<:HPoly{N}}
+function remove_redundant_constraints!(P::HPoly{N};
+                                       backend=GLPKSolverLP()) where {N<:Real}
 
     A, b = tosimplehrep(P)
     m, n = size(A)
