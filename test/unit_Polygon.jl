@@ -355,6 +355,9 @@ for N in [Float64, Float32]
         addconstraint!(po1, constraint, linear_search=true)
         addconstraint!(po2, constraint, linear_search=i<=2)
     end
+    n = length(p1.constraints)
+    @test n == length(p2.constraints) == length(po2.constraints) ==
+          length(po2.constraints)
     for i in 1:n
         @test same_constraints([p1.constraints[i], p2.constraints[i],
                                 po1.constraints[i], po2.constraints[i]])
