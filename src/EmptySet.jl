@@ -61,7 +61,7 @@ function σ(d::AbstractVector{N}, ∅::EmptySet{N}) where {N<:Real}
 end
 
 """
-    ∈(x::AbstractVector, ∅::EmptySet)::Bool
+    ∈(x::AbstractVector{N}, ∅::EmptySet{N})::Bool where {N<:Real}
 
 Check whether a given point is contained in an empty set.
 
@@ -81,7 +81,7 @@ julia> ∈([1.0, 0.0], ∅)
 false
 ```
 """
-function ∈(x::AbstractVector{<:Real}, ∅::EmptySet)::Bool
+function ∈(x::AbstractVector{N}, ∅::EmptySet{N})::Bool where {N<:Real}
     return false
 end
 

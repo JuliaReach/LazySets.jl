@@ -328,7 +328,7 @@ function tosimplehrep(P::HPoly{N}) where {N<:Real}
 end
 
 """
-    tohrep(P::HPoly{N}) where {N}
+    tohrep(P::HPoly{N}) where {N<:Real}
 
 Return a constraint representation of the given polyhedron in constraint
 representation (no-op).
@@ -341,7 +341,7 @@ representation (no-op).
 
 The same polyhedron instance.
 """
-function tohrep(P::HPoly{N}) where {N}
+function tohrep(P::HPoly{N}) where {N<:Real}
     return P
 end
 
@@ -515,7 +515,7 @@ end
 
 """
     tovrep(P::HPoly{N};
-          [backend]=default_polyhedra_backend(P, N)) where {N}
+          [backend]=default_polyhedra_backend(P, N)) where {N<:Real}
 
 Transform a polyhedron in H-representation to a polytope in V-representation.
 
@@ -536,7 +536,7 @@ For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/).
 """
 function tovrep(P::HPoly{N};
-                backend=default_polyhedra_backend(P, N)) where {N}
+                backend=default_polyhedra_backend(P, N)) where {N<:Real}
     @assert isdefined(@__MODULE__, :Polyhedra) "the function `tovrep` needs " *
                                         "the package 'Polyhedra' to be loaded"
     P = polyhedron(P, backend)

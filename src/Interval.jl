@@ -145,7 +145,7 @@ function σ(d::AbstractVector{N}, x::Interval{N}) where {N<:Real}
 end
 
 """
-    center(x::Interval)
+    center(x::Interval{N})::Vector{N} where {N<:Real}
 
 Return the interval's center.
 
@@ -157,7 +157,9 @@ Return the interval's center.
 
 The center, or midpoint, of ``x``.
 """
-center(x::Interval) = [IntervalArithmetic.mid(x.dat)]
+function center(x::Interval{N})::Vector{N} where {N<:Real}
+    return [IntervalArithmetic.mid(x.dat)]
+end
 
 """
     +(x::Interval, y::Interval)
@@ -226,7 +228,7 @@ Return whether a vector is contained in the interval.
 ∈(v::AbstractVector{N}, x::Interval{N}) where {N<:Real} = v[1] ∈ x.dat
 
 """
-    ∈(v::N, x::Interval) where {N}
+    ∈(v::N, x::Interval{N}) where {N<:Real}
 
 Return whether a number is contained in the interval.
 
@@ -239,7 +241,9 @@ Return whether a number is contained in the interval.
 
 `true` iff `x` contains `v`.
 """
-∈(v::N, x::Interval) where {N} = v ∈ x.dat
+function ∈(v::N, x::Interval{N}) where {N<:Real}
+    return v ∈ x.dat
+end
 
 """
     low(x::Interval)
@@ -325,7 +329,7 @@ function rand(::Type{Interval};
 end
 
 """
-    vertices_list(x::Interval)
+    vertices_list(x::Interval{N})::Vector{Vector{N}} where {N<:Real}
 
 Return the list of vertices of this interval.
 
@@ -337,7 +341,9 @@ Return the list of vertices of this interval.
 
 The list of vertices of the interval represented as two one-dimensional vectors.
 """
-vertices_list(x::Interval) = [[low(x)], [high(x)]]
+function vertices_list(x::Interval{N})::Vector{Vector{N}} where {N<:Real}
+    return [[low(x)], [high(x)]]
+end
 
 
 # --- AbstractHyperrectangle interface functions ---
