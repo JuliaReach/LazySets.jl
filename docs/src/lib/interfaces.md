@@ -58,6 +58,10 @@ radius(::LazySet, ::Real=Inf)
 diameter(::LazySet, ::Real=Inf)
 an_element(::LazySet{N}) where {N<:Real}
 ==(::LazySet, ::LazySet)
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet)
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:LazySet}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet, ::Float64)
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}, ::Float64) where {S<:LazySet}
 ```
 
 ### Aliases for set types
@@ -103,6 +107,8 @@ This interface defines the following functions:
 singleton_list(::AbstractPolytope{N}) where {N<:Real}
 linear_map(::AbstractMatrix, ::AbstractPolytope{N}) where {N<:Real}
 isempty(::AbstractPolytope{N}) where {N<:Real}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractPolytope)
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:AbstractPolytope}
 ```
 
 ### Polygon
@@ -202,4 +208,6 @@ radius_hyperrectangle(::AbstractSingleton{N}, ::Int) where {N<:Real}
 high(::AbstractSingleton{N}) where {N<:Real}
 low(::AbstractSingleton{N}) where {N<:Real}
 linear_map(::AbstractMatrix, ::AbstractSingleton{N}) where {N<:Real}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractSingleton)
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:AbstractSingleton}
 ```

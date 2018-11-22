@@ -236,6 +236,8 @@ radius_hyperrectangle(::Interval{N}, ::Int) where {N<:Real}
 -(::Interval, ::Interval)
 *(::Interval, ::Interval)
 rand(::Type{Interval})
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Interval)
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:Interval}
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
@@ -282,6 +284,8 @@ halfspace_left(::LineSegment)
 halfspace_right(::LineSegment)
 vertices_list(::LineSegment{N}) where {N<:Real}
 constraints_list(::LineSegment{N}) where {N<:Real}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LineSegment)
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:LineSegment}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
