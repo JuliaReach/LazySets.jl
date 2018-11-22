@@ -26,6 +26,9 @@ concrete.
 function convert(::Type{HPOLYGON1},
                  P::HPOLYGON2) where {HPOLYGON1<:AbstractHPolygon,
                                       HPOLYGON2<:AbstractHPolygon}
+    if P isa HPOLYGON1
+        return P
+    end
     return HPOLYGON1(P.constraints)
 end
 

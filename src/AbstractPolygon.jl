@@ -14,8 +14,8 @@ Abstract type for polygons (i.e., 2D polytopes).
 Every concrete `AbstractPolygon` must define the following functions:
 - `tovrep(::AbstractPolygon{N})::VPolygon{N}`         -- transform into
     V-representation
-- `tohrep(::AbstractPolygon{N})::AbstractHPolygon{N}` -- transform into
-    H-representation
+- `tohrep(::AbstractPolygon{N})::S where {S<:AbstractHPolygon{N}}` -- transform
+    into H-representation
 
 ```jldoctest
 julia> subtypes(AbstractPolygon)
