@@ -21,9 +21,9 @@ end
 
 ```@docs
 Ball2
-σ(::AbstractVector{AbstractFloat}, ::Ball2{AbstractFloat})
-∈(::AbstractVector{AbstractFloat}, ::Ball2{AbstractFloat})
-center(::Ball2)
+σ(::AbstractVector{N}, ::Ball2{N}) where {N<:AbstractFloat}
+∈(::AbstractVector{N}, ::Ball2{N}) where {N<:AbstractFloat}
+center(::Ball2{N}) where {N<:AbstractFloat}
 rand(::Type{Ball2})
 ```
 Inherited from [`LazySet`](@ref):
@@ -40,10 +40,10 @@ Inherited from [`AbstractCentrallySymmetric`](@ref):
 
 ```@docs
 BallInf
-center(::BallInf)
-radius(::BallInf, ::Real)
-radius_hyperrectangle(::BallInf)
-radius_hyperrectangle(::BallInf, ::Int)
+center(::BallInf{N}) where {N<:Real}
+radius(::BallInf, ::Real=Inf)
+radius_hyperrectangle(::BallInf{N}) where {N<:Real}
+radius_hyperrectangle(::BallInf{N}, ::Int) where {N<:Real}
 rand(::Type{BallInf})
 ```
 Inherited from [`LazySet`](@ref):
@@ -70,12 +70,12 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 
 ```@docs
 Ball1
-σ(::AbstractVector{Real}, ::Ball1{Real})
-∈(::AbstractVector{Real}, ::Ball1{Real})
-vertices_list(::Ball1)
-center(::Ball1)
+σ(::AbstractVector{N}, ::Ball1{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::Ball1{N}) where {N<:Real}
+vertices_list(::Ball1{N}) where {N<:Real}
+center(::Ball1{N}) where {N<:Real}
 rand(::Type{Ball1})
-constraints_list(::Ball1)
+constraints_list(::Ball1{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -95,9 +95,9 @@ Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 
 ```@docs
 Ballp
-σ(::AbstractVector{AbstractFloat}, ::Ballp{AbstractFloat})
-∈(::AbstractVector{AbstractFloat}, ::Ballp{AbstractFloat})
-center(::Ballp)
+σ(::AbstractVector{N}, ::Ballp{N}) where {N<:AbstractFloat}
+∈(::AbstractVector{N}, ::Ballp{N}) where {N<:AbstractFloat}
+center(::Ballp{N}) where {N<:AbstractFloat}
 rand(::Type{Ballp})
 ```
 Inherited from [`LazySet`](@ref):
@@ -114,10 +114,10 @@ Inherited from [`AbstractCentrallySymmetric`](@ref):
 
 ```@docs
 Ellipsoid
-σ(::AbstractVector{AbstractFloat}, ::Ellipsoid{AbstractFloat})
-∈(::AbstractVector{AbstractFloat}, ::Ellipsoid{AbstractFloat})
+σ(::AbstractVector{N}, ::Ellipsoid{N}) where {N<:AbstractFloat}
+∈(::AbstractVector{N}, ::Ellipsoid{N}) where {N<:AbstractFloat}
 rand(::Type{Ellipsoid})
-center(::Ellipsoid)
+center(::Ellipsoid{N}) where {N<:AbstractFloat}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -135,14 +135,14 @@ Inherited from [`AbstractCentrallySymmetric`](@ref):
 EmptySet
 ∅
 dim(::EmptySet)
-σ(::AbstractVector{Real}, ::EmptySet{Real})
-∈(::AbstractVector{Real}, ::EmptySet{Real})
+σ(::AbstractVector{N}, ::EmptySet{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::EmptySet{N}) where {N<:Real}
 an_element(::EmptySet)
 rand(::Type{EmptySet})
 isempty(::EmptySet)
-norm(::EmptySet, ::Real)
-radius(::EmptySet, ::Real)
-diameter(::EmptySet, ::Real)
+norm(::EmptySet, ::Real=Inf)
+radius(::EmptySet, ::Real=Inf)
+diameter(::EmptySet, ::Real=Inf)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -155,15 +155,15 @@ Inherited from [`LazySet`](@ref):
 HalfSpace
 LinearConstraint
 dim(::HalfSpace)
-σ(::AbstractVector{Real}, ::HalfSpace{Real})
-∈(::AbstractVector{Real}, ::HalfSpace{Real})
+σ(::AbstractVector{N}, ::HalfSpace{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::HalfSpace{N}) where {N<:Real}
 an_element(::HalfSpace{N}) where {N<:Real}
 rand(::Type{HalfSpace})
 isempty(::HalfSpace)
 constraints_list(::HalfSpace{N}) where {N<:Real}
 constrained_dimensions(::HalfSpace{N}) where {N<:Real}
-LazySets.halfspace_left(::AbstractVector{Real}, ::AbstractVector{Real})
-LazySets.halfspace_right(::AbstractVector{Real}, ::AbstractVector{Real})
+halfspace_left(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
+halfspace_right(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -175,8 +175,8 @@ Inherited from [`LazySet`](@ref):
 ```@docs
 Hyperplane
 dim(::Hyperplane)
-σ(::AbstractVector{Real}, ::Hyperplane{Real})
-∈(::AbstractVector{Real}, ::Hyperplane{Real})
+σ(::AbstractVector{N}, ::Hyperplane{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::Hyperplane{N}) where {N<:Real}
 an_element(::Hyperplane{N}) where {N<:Real}
 rand(::Type{Hyperplane})
 isempty(::Hyperplane)
@@ -192,9 +192,9 @@ Inherited from [`LazySet`](@ref):
 ```@docs
 Hyperrectangle
 rand(::Type{Hyperrectangle})
-center(::Hyperrectangle)
-radius_hyperrectangle(::Hyperrectangle)
-radius_hyperrectangle(::Hyperrectangle, ::Int)
+center(::Hyperrectangle{N}) where {N<:Real}
+radius_hyperrectangle(::Hyperrectangle{N}) where {N<:Real}
+radius_hyperrectangle(::Hyperrectangle{N}, ::Int) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
@@ -222,16 +222,16 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 ```@docs
 Interval
 dim(::Interval)
-σ(::AbstractVector{Real}, ::Interval{Real})
-∈(::AbstractVector, ::Interval)
-∈(::Real, ::Interval)
-an_element(::Interval)
-vertices_list(::Interval)
-center(::Interval)
+σ(::AbstractVector{N}, ::Interval{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::Interval{N}) where {N<:Real}
+∈(::N, ::Interval{N}) where {N<:Real}
+an_element(::Interval{N}) where {N<:Real}
+vertices_list(::Interval{N}) where {N<:Real}
+center(::Interval{N}) where {N<:Real}
 low(::Interval)
 high(::Interval)
-radius_hyperrectangle(::Interval)
-radius_hyperrectangle(::Interval, ::Int)
+radius_hyperrectangle(::Interval{N}) where {N<:Real}
+radius_hyperrectangle(::Interval{N}, ::Int) where {N<:Real}
 +(::Interval, ::Interval)
 -(::Interval, ::Interval)
 *(::Interval, ::Interval)
@@ -256,8 +256,8 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 ```@docs
 Line
 dim(::Line)
-σ(::AbstractVector{Real}, ::Line{Real})
-∈(::AbstractVector{Real}, ::Line{Real})
+σ(::AbstractVector{N}, ::Line{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::Line{N}) where {N<:Real}
 an_element(::Line{N}) where {N<:Real}
 rand(::Type{Line})
 isempty(::Line)
@@ -273,12 +273,15 @@ Inherited from [`LazySet`](@ref):
 ```@docs
 LineSegment
 dim(::LineSegment)
-σ(::AbstractVector{Real}, ::LineSegment{Real})
-∈(::AbstractVector{Real}, ::LineSegment{Real})
+σ(::AbstractVector{N}, ::LineSegment{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::LineSegment{N}) where {N<:Real}
+center(::LineSegment{N}) where {N<:Real}
+an_element(::LineSegment{N}) where {N<:Real}
 rand(::Type{LineSegment})
-LazySets.halfspace_left(::LineSegment)
-LazySets.halfspace_right(::LineSegment)
-LazySets.constraints_list(::LineSegment)
+halfspace_left(::LineSegment)
+halfspace_right(::LineSegment)
+vertices_list(::LineSegment{N}) where {N<:Real}
+constraints_list(::LineSegment{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -294,7 +297,7 @@ Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 
 ```@docs
 HPolygon
-σ(::AbstractVector{Real}, ::HPolygon{Real})
+σ(::AbstractVector{N}, ::HPolygon{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -322,7 +325,7 @@ Inherited from [`AbstractHPolygon`](@ref):
 
 ```@docs
 HPolygonOpt
-σ(::AbstractVector{Real}, ::HPolygonOpt{Real})
+σ(::AbstractVector{N}, ::HPolygonOpt{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -350,14 +353,14 @@ Inherited from [`AbstractHPolygon`](@ref):
 
 ```@docs
 VPolygon
-σ(::AbstractVector{Real}, ::VPolygon{Real})
-∈(::AbstractVector{Real}, ::VPolygon{Real})
+σ(::AbstractVector{N}, ::VPolygon{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::VPolygon{N}) where {N<:Real}
 an_element(::VPolygon{N}) where {N<:Real}
 rand(::Type{VPolygon})
-vertices_list(::VPolygon)
-tohrep(::VPolygon)
-tovrep(::VPolygon)
-constraints_list(::VPolygon)
+vertices_list(::VPolygon{N}) where {N<:Real}
+tohrep(::VPolygon{N}, ::Type{HPOLYGON}=HPolygon) where {N<:Real, HPOLYGON<:AbstractHPolygon}
+tovrep(::VPolygon{N}) where {N<:Real}
+constraints_list(::VPolygon{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -376,7 +379,8 @@ Inherited from [`AbstractPolygon`](@ref):
 
 ```@docs
 LazySets.jump2pi
-<=(::AbstractVector{AbstractFloat}, ::AbstractVector{AbstractFloat})
+<=(::AbstractVector{N}, ::AbstractVector{N}) where {N<:AbstractFloat}
+<=(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
 LazySets.quadrant(::AbstractVector{Real})
 ```
 ## Polyhedra and Polytopes
@@ -397,20 +401,20 @@ HPolyhedron
 The following methods are shared between `HPolytope` and `HPolyhedron`.
 
 ```@docs
-dim(::HPoly{Real})
-ρ(::AbstractVector{Real}, ::HPoly{Real})
-σ(::AbstractVector{Real}, ::HPoly{Real})
-∈(::AbstractVector{Real}, ::HPoly{Real})
-addconstraint!(::HPoly{Real}, ::LinearConstraint{Real})
-constraints_list(::HPoly{Real})
-copy(P::PT) where {N, PT<:HPoly{N}}
-tosimplehrep(::HPoly{Real})
-tohrep(::HPoly{Real})
+dim(::HPoly{N}) where {N<:Real}
+ρ(::AbstractVector{N}, ::HPoly{N}) where {N<:Real}
+σ(::AbstractVector{N}, ::HPoly{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::HPoly{N}) where {N<:Real}
+addconstraint!(::HPoly{N}, ::LinearConstraint{N}) where {N<:Real}
+constraints_list(::HPoly{N}) where {N<:Real}
+copy(P::PT) where {N, PT<:HPoly{N}} where {N<:Real}
+tosimplehrep(::HPoly{N}) where {N<:Real}
+tohrep(::HPoly{N}) where {N<:Real}
 isempty(::HPoly{N}) where {N<:Real}
-convex_hull(::HPoly{Real}, ::HPoly{Real})
+convex_hull(::HPoly{N}, ::HPoly{N}) where {N<:Real}
 cartesian_product(::HPoly{N}, ::HPoly{N}) where {N<:Real}
-tovrep(::HPoly{Real})
-polyhedron(::HPoly)
+tovrep(::HPoly{N}) where {N<:Real}
+polyhedron(::HPoly{N}) where {N<:Real}
 remove_redundant_constraints
 remove_redundant_constraints!
 ```
@@ -429,7 +433,7 @@ The following methods are specific for `HPolytope`.
 
 ```@docs
 rand(::Type{HPolytope})
-vertices_list(::HPolytope{Real})
+vertices_list(::HPolytope{N}) where {N<:Real}
 ```
 
 Inherited from [`AbstractPolytope`](@ref):
@@ -442,7 +446,7 @@ The following methods are specific for `HPolyhedron`.
 
 ```@docs
 rand(::Type{HPolyhedron})
-vertices_list(::HPolyhedron{Real})
+vertices_list(::HPolyhedron{N}) where {N<:Real}
 singleton_list(::HPolyhedron{N}) where {N<:Real}
 ```
 
@@ -451,11 +455,14 @@ singleton_list(::HPolyhedron{N}) where {N<:Real}
 ```@docs
 VPolytope
 dim(::VPolytope)
-σ(::AbstractVector{Real}, ::VPolytope{Real})
+σ(::AbstractVector{N}, ::VPolytope{N}) where {N<:Real}
 rand(::Type{VPolytope})
-vertices_list(::VPolytope)
+vertices_list(::VPolytope{N}) where {N<:Real}
+constraints_list(::VPolytope{N}) where {N<:Real}
+tohrep(::VPolytope{N}) where {N<:Real}
+tovrep(::VPolytope)
 cartesian_product(::VPolytope{N}, ::VPolytope{N}) where N
-polyhedron(::VPolytope)
+polyhedron(::VPolytope{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -472,8 +479,8 @@ Inherited from [`AbstractPolytope`](@ref):
 ```@docs
 Singleton
 rand(::Type{Singleton})
-element(::Singleton)
-element(::Singleton, ::Int)
+element(::Singleton{N}) where {N<:Real}
+element(::Singleton{N}, ::Int) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
@@ -509,8 +516,8 @@ dim(::ZeroSet)
 σ(::AbstractVector{N}, ::ZeroSet{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::ZeroSet{N}) where {N<:Real}
 rand(::Type{ZeroSet})
-element(::ZeroSet)
-element(::ZeroSet, ::Int)
+element(::ZeroSet{N}) where {N<:Real}
+element(::ZeroSet{N}, ::Int) where {N<:Real}
 linear_map(::AbstractMatrix, ::ZeroSet{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
@@ -539,11 +546,12 @@ Inherited from [`AbstractSingleton`](@ref):
 
 ```@docs
 Zonotope
-σ(::AbstractVector{Real}, ::Zonotope{Real})
-∈(::AbstractVector{Real}, ::Zonotope{Real})
+σ(::AbstractVector{N}, ::Zonotope{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::Zonotope{N}) where {N<:Real}
 rand(::Type{Zonotope})
-vertices_list(::Zonotope)
-center(::Zonotope)
+vertices_list(::Zonotope{N}) where {N<:Real}
+constraints_list(::Zonotope{N}) where {N<:Real}
+center(::Zonotope{N}) where {N<:Real}
 order(::Zonotope)
 minkowski_sum(::Zonotope, ::Zonotope)
 linear_map(::AbstractMatrix, ::Zonotope)

@@ -25,11 +25,12 @@ CartesianProduct
 ×(::LazySet, ::LazySet)
 *(::LazySet, ::LazySet)
 dim(::CartesianProduct)
-σ(::AbstractVector{Real}, ::CartesianProduct{Real})
-∈(::AbstractVector{Real}, ::CartesianProduct{Real})
+ρ(::AbstractVector{N}, ::CartesianProduct{N}) where {N<:Real}
+σ(::AbstractVector{N}, ::CartesianProduct{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::CartesianProduct{N}) where {N<:Real}
 isempty(::CartesianProduct)
-constraints_list(::CartesianProduct{Real})
-vertices_list(::CartesianProduct{Real})
+constraints_list(::CartesianProduct{N}) where {N<:Real}
+vertices_list(::CartesianProduct{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -42,12 +43,13 @@ Inherited from [`LazySet`](@ref):
 ```@docs
 CartesianProductArray
 dim(::CartesianProductArray)
-σ(::AbstractVector{Real}, ::CartesianProductArray{Real})
-∈(::AbstractVector{Real}, ::CartesianProductArray{Real})
+ρ(::AbstractVector{N}, ::CartesianProductArray{N}) where {N<:Real}
+σ(::AbstractVector{N}, ::CartesianProductArray{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::CartesianProductArray{N}) where {N<:Real}
 isempty(::CartesianProductArray)
-constraints_list(::CartesianProductArray{Real})
-vertices_list(::CartesianProductArray{Real})
-array(::CartesianProductArray)
+constraints_list(::CartesianProductArray{N}) where {N<:Real}
+vertices_list(::CartesianProductArray{N}) where {N<:Real}
+array(::CartesianProductArray{N, S}) where {N<:Real, S<:LazySet{N}}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -63,7 +65,8 @@ Inherited from [`LazySet`](@ref):
 ConvexHull
 CH
 dim(::ConvexHull)
-σ(::AbstractVector{Real}, ::ConvexHull{Real})
+ρ(::AbstractVector{N}, ::ConvexHull{N}) where {N<:Real}
+σ(::AbstractVector{N}, ::ConvexHull{N}) where {N<:Real}
 isempty(::ConvexHull)
 ```
 Inherited from [`LazySet`](@ref):
@@ -78,8 +81,9 @@ Inherited from [`LazySet`](@ref):
 ConvexHullArray
 CHArray
 dim(::ConvexHullArray)
-σ(::AbstractVector{Real}, ::ConvexHullArray{Real})
-array(::ConvexHullArray)
+ρ(::AbstractVector{N}, ::ConvexHullArray{N}) where {N<:Real}
+σ(::AbstractVector{N}, ::ConvexHullArray{N}) where {N<:Real}
+array(::ConvexHullArray{N, S}) where {N<:Real, S<:LazySet{N}}
 isempty(::ConvexHullArray)
 ```
 Inherited from [`LazySet`](@ref):
@@ -106,11 +110,11 @@ Intersection
 ∩(::LazySet, ::LazySet)
 dim(::Intersection)
 ρ(::AbstractVector{N}, ::Intersection{N}) where {N<:Real}
-ρ(::AbstractVector{N}, ::Intersection{N, <:LazySet{N}, <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}}) where {N<:Real}
-ρ(::AbstractVector{N}, ::Intersection{N, <:LazySet{N}, <:AbstractPolytope{N}}) where {N<:Real}
+ρ(::AbstractVector{N}, ::Intersection{N, S1, S2}) where {N<:Real, S1<:LazySet{N}, S2<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}}
+ρ(::AbstractVector{N}, ::Intersection{N, S1, S2}) where {N<:Real, S1<:LazySet{N}, S2<:AbstractPolytope{N}}
 isempty(::Intersection)
-σ(::AbstractVector{Real}, ::Intersection{Real})
-∈(::AbstractVector{Real}, ::Intersection{Real})
+σ(::AbstractVector{N}, ::Intersection{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::Intersection{N}) where {N<:Real}
 isempty_known(::Intersection)
 set_isempty!(::Intersection, ::Bool)
 swap(::Intersection)
@@ -136,8 +140,9 @@ IntersectionCache
 ```@docs
 IntersectionArray
 dim(::IntersectionArray)
-σ(::AbstractVector{Real}, ::IntersectionArray{Real})
-array(::IntersectionArray)
+σ(::AbstractVector{N}, ::IntersectionArray{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::IntersectionArray{N}) where {N<:Real}
+array(::IntersectionArray{N, S}) where {N<:Real, S<:LazySet{N}}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -154,7 +159,8 @@ MinkowskiSum
 ⊕(::LazySet, ::LazySet)
 +(::LazySet, ::LazySet)
 dim(::MinkowskiSum)
-σ(::AbstractVector{Real}, ::MinkowskiSum{Real})
+ρ(::AbstractVector{N}, ::MinkowskiSum{N}) where {N<:Real}
+σ(::AbstractVector{N}, ::MinkowskiSum{N}) where {N<:Real}
 isempty(::MinkowskiSum)
 ```
 Inherited from [`LazySet`](@ref):
@@ -168,9 +174,10 @@ Inherited from [`LazySet`](@ref):
 ```@docs
 MinkowskiSumArray
 dim(::MinkowskiSumArray)
-σ(::AbstractVector{Real}, ::MinkowskiSumArray{Real})
+ρ(::AbstractVector{N}, ::MinkowskiSumArray{N}) where {N<:Real}
+σ(::AbstractVector{N}, ::MinkowskiSumArray{N}) where {N<:Real}
 isempty(::MinkowskiSumArray)
-array(::MinkowskiSumArray)
+array(::MinkowskiSumArray{N, S}) where {N<:Real, S<:LazySet{N}}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -183,9 +190,9 @@ Inherited from [`LazySet`](@ref):
 ```@docs
 CacheMinkowskiSum
 dim(::CacheMinkowskiSum)
-σ(::AbstractVector{Real}, ::CacheMinkowskiSum{Real})
+σ(::AbstractVector{N}, ::CacheMinkowskiSum{N}) where {N<:Real}
 isempty(::CacheMinkowskiSum)
-array(::CacheMinkowskiSum)
+array(::CacheMinkowskiSum{N, S}) where {N<:Real, S<:LazySet{N}}
 forget_sets!(::CacheMinkowskiSum)
 ```
 Inherited from [`LazySet`](@ref):
@@ -200,14 +207,17 @@ Inherited from [`LazySet`](@ref):
 
 ```@docs
 LinearMap
-*(::AbstractMatrix{Real}, ::LazySet{Real})
-*(::Real, ::LazySet{Real})
+*(::AbstractMatrix{N}, ::LazySet{N}) where {N<:Real}
+*(::N, ::LazySet{N}) where {N<:Real}
+*(::N, ::LM) where {N<:Real, LM<:LinearMap{N}}
+*(::AbstractMatrix{N}, ::ZeroSet{N}) where {N<:Real}
 dim(::LinearMap)
-σ(::AbstractVector{Real}, ::LinearMap{Real})
-∈(::AbstractVector{Real}, ::LinearMap{Real, LazySet{Real}, Real, Matrix{Real}})
-an_element(::LinearMap)
+ρ(::AbstractVector{N}, ::LinearMap{N}) where {N<:Real}
+σ(::AbstractVector{N}, ::LinearMap{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::LinearMap{N}) where {N<:Real}
+an_element(::LinearMap{N}) where {N<:Real}
 isempty(::LinearMap)
-vertices_list(::LinearMap{Real})
+vertices_list(::LinearMap{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -219,10 +229,11 @@ Inherited from [`LazySet`](@ref):
 ```@docs
 ExponentialMap
 dim(::ExponentialMap)
-σ(::AbstractVector{Real}, ::ExponentialMap{Real})
-∈(::AbstractVector{Real}, ::ExponentialMap{Real})
+ρ(::AbstractVector{N}, ::ExponentialMap{N}) where {N<:Real}
+σ(::AbstractVector{N}, ::ExponentialMap{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::ExponentialMap{N}) where {N<:Real}
 isempty(::ExponentialMap)
-vertices_list(::ExponentialMap{Real})
+vertices_list(::ExponentialMap{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -233,7 +244,7 @@ Inherited from [`LazySet`](@ref):
 ```@docs
 ExponentialProjectionMap
 dim(::ExponentialProjectionMap)
-σ(::AbstractVector{Real}, ::ExponentialProjectionMap{Real})
+σ(::AbstractVector{N}, ::ExponentialProjectionMap{N}) where {N<:Real}
 isempty(::ExponentialProjectionMap)
 ```
 Inherited from [`LazySet`](@ref):
@@ -244,7 +255,7 @@ Inherited from [`LazySet`](@ref):
 
 ```@docs
 SparseMatrixExp
-*(::SparseMatrixExp, ::LazySet)
+*(::SparseMatrixExp{N}, ::LazySet{N}) where {N<:Real}
 get_row(::SparseMatrixExp, ::Int)
 ```
 
@@ -257,7 +268,11 @@ ProjectionSparseMatrixExp
 
 ```@docs
 SymmetricIntervalHull
+dim(::SymmetricIntervalHull)
 σ(::AbstractVector{N}, ::SymmetricIntervalHull{N}) where {N<:Real}
+center(::SymmetricIntervalHull{N}) where {N<:Real}
+radius_hyperrectangle(::SymmetricIntervalHull{N}) where {N<:Real}
+radius_hyperrectangle(::SymmetricIntervalHull{N}, ::Int) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
@@ -267,7 +282,6 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
-* [`dim`](@ref dim(::AbstractCentrallySymmetricPolytope))
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
 * `an_element`
 
