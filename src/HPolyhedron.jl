@@ -477,7 +477,7 @@ function convex_hull(P1::HPoly{N},
                      backend=default_polyhedra_backend(P1, N)) where {N}
     @assert isdefined(@__MODULE__, :Polyhedra) "the function `convex_hull` needs " *
                                         "the package 'Polyhedra' to be loaded"
-    Pch = convexhull(polyhedron(P1, backend), polyhedron(P2, backend))
+    Pch = convexhull(polyhedron(P1; backend=backend), polyhedron(P2; backend=backend))
     return convert(typeof(P1), Pch)
 end
 
@@ -509,7 +509,7 @@ function cartesian_product(P1::HPoly{N},
                           ) where N<:Real
     @assert isdefined(@__MODULE__, :Polyhedra) "the function `cartesian_product` " *
         "needs the package 'Polyhedra' to be loaded"
-    Pcp = hcartesianproduct(polyhedron(P1, backend), polyhedron(P2, backend))
+    Pcp = hcartesianproduct(polyhedron(P1; backend=backend), polyhedron(P2; backend=backend))
     return convert(typeof(P1), Pcp)
 end
 
@@ -539,7 +539,7 @@ function tovrep(P::HPoly{N};
                 backend=default_polyhedra_backend(P, N)) where {N<:Real}
     @assert isdefined(@__MODULE__, :Polyhedra) "the function `tovrep` needs " *
                                         "the package 'Polyhedra' to be loaded"
-    P = polyhedron(P, backend)
+    P = polyhedron(P; backend=backend)
     return VPolytope(P)
 end
 
@@ -622,7 +622,7 @@ function isempty(P::HPoly{N};
                  solver=GLPKSolverLP())::Bool where {N<:Real}
     @assert isdefined(@__MODULE__, :Polyhedra) "the function `isempty` needs the " *
                                         "package 'Polyhedra' to be loaded"
-    return Polyhedra.isempty(polyhedron(P, backend), solver)
+    return Polyhedra.isempty(polyhedron(P; backend=backend), solver)
 end
 
 convert(::Type{HPolytope}, P::HPolyhedron{N}) where N =
@@ -688,7 +688,8 @@ else
 end # if VERSION < v"0.7-"
 
 """
-    polyhedron(P::HPoly{N}, [backend]=default_polyhedra_backend(P, N)) where {N}
+    polyhedron(P::HPoly{N};
+               [backend]=default_polyhedra_backend(P, N)) where {N<:Real}
 
 Return an `HRep` polyhedron from `Polyhedra.jl` given a polytope in
 H-representation.
@@ -708,7 +709,8 @@ An `HRep` polyhedron.
 For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/).
 """
-function polyhedron(P::HPoly{N}, backend=default_polyhedra_backend(P, N)) where {N}
+function polyhedron(P::HPoly{N};
+                    backend=default_polyhedra_backend(P, N)) where {N<:Real}
     A, b = tosimplehrep(P)
     return Polyhedra.polyhedron(Polyhedra.hrep(A, b), backend)
 end

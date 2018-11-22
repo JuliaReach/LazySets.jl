@@ -330,7 +330,7 @@ function intersection(P1::HPoly{N},
     # remove redundant constraints
     if prunefunc == removehredundancy!
         # convert to polyhedron
-        ph = polyhedron(Q, backend)
+        ph = polyhedron(Q; backend=backend)
         prunefunc(ph)
         Q = convert(HPOLY, ph)
     else
@@ -368,8 +368,8 @@ function intersection(P1::HPoly{N},
                       backend=default_polyhedra_backend(P1, N),
                       prunefunc=removehredundancy!) where {N<:Real}
 
-    Q1 = polyhedron(P1, backend)
-    Q2 = polyhedron(P2, backend)
+    Q1 = polyhedron(P1; backend=backend)
+    Q2 = polyhedron(P2; backend=backend)
     Pint = Polyhedra.intersect(Q1, Q2)
     prunefunc(Pint)
     return convert(typeof(P1), Pint)
@@ -388,8 +388,8 @@ function intersection(P1::VPolytope{N},
                       P2::VPolytope{N};
                       backend=default_polyhedra_backend(P1, N),
                       prunefunc=removehredundancy!) where {N<:Real}
-    Q1 = polyhedron(P1, backend)
-    Q2 = polyhedron(P2, backend)
+    Q1 = polyhedron(P1; backend=backend)
+    Q2 = polyhedron(P2; backend=backend)
     Pint = Polyhedra.intersect(Q1, Q2)
     prunefunc(Pint)
     return VPolytope(Pint)

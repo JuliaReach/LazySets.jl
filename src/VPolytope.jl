@@ -225,7 +225,8 @@ else
 end
 
 """
-    polyhedron(P::VPolytope{N}, [backend]=default_polyhedra_backend(P, N)) where {N}
+    polyhedron(P::VPolytope{N};
+               [backend]=default_polyhedra_backend(P, N)) where {N<:Real}
 
 Return an `VRep` polyhedron from `Polyhedra.jl` given a polytope in V-representation.
 
@@ -240,7 +241,8 @@ Return an `VRep` polyhedron from `Polyhedra.jl` given a polytope in V-representa
 
 A `VRep` polyhedron.
 """
-function polyhedron(P::VPolytope{N}, backend=default_polyhedra_backend(P, N)) where {N}
+function polyhedron(P::VPolytope{N};
+                    backend=default_polyhedra_backend(P, N)) where {N<:Real}
     V = hcat(vertices_list(P)...)'
     return polyhedron(Polyhedra.vrep(V), backend)
 end
@@ -265,7 +267,8 @@ The `VPolytope` obtained by the concrete convex hull of `P1` and `P2`.
 """
 function convex_hull(P1::VPolytope{N}, P2::VPolytope{N};
                      backend=default_polyhedra_backend(P1, N)) where {N}
-    Pch = convexhull(polyhedron(P1, backend), polyhedron(P2, backend))
+    Pch = convexhull(polyhedron(P1; backend=backend),
+                     polyhedron(P2; backend=backend))
     return VPolytope(Pch)
 end
 
@@ -289,12 +292,14 @@ The `VPolytope` obtained by the concrete Cartesian product of `P1` and `P2`.
 """
 function cartesian_product(P1::VPolytope{N}, P2::VPolytope{N};
                            backend=default_polyhedra_backend(P1, N)) where {N}
-    Pcp = hcartesianproduct(polyhedron(P1, backend), polyhedron(P2, backend))
+    Pcp = hcartesianproduct(polyhedron(P1; backend=backend),
+                            polyhedron(P2; backend=backend))
     return VPolytope(Pcp)
 end
 
 """
-    tohrep(P::VPolytope{N}; [backend]=default_polyhedra_backend(P, N)) where {N}
+    tohrep(P::VPolytope{N};
+           [backend]=default_polyhedra_backend(P, N)) where {N<:Real}
 
 Transform a polytope in V-representation to a polytope in H-representation.
 
@@ -312,8 +317,8 @@ The `HPolytope` which is the constraint representation of the given polytope
 in vertex representation.
 """
 function tohrep(P::VPolytope{N};
-                backend=default_polyhedra_backend(P, N)) where {N}
-    return HPolytope(polyhedron(P, backend))
+                backend=default_polyhedra_backend(P, N)) where {N<:Real}
+    return HPolytope(polyhedron(P; backend=backend))
 end
 
 """
