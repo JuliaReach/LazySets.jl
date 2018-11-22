@@ -53,7 +53,7 @@ plotting singletons.
 end
 
 """
-    plot_lazyset(arr::Vector{<:LazySet})
+    plot_lazyset(arr::Vector{S}) where {S<:LazySet}
 
 Plot an array of convex sets in two dimensions using an axis-aligned
 approximation.
@@ -82,15 +82,15 @@ by the list of vertices. A post-processing `convex_hull` is applied to the verti
 this ensures that the shaded area inside the convex hull of the vertices is covered
 correctly.
 """
-@recipe function plot_lazyset(arr::Vector{<:LazySet};
+@recipe function plot_lazyset(arr::Vector{S};
                               seriescolor="blue", label="", grid=true,
-                              alpha=0.5)
+                              alpha=0.5) where {S<:LazySet}
 
     seriestype := :shape
 
-    for S in arr
-        @assert dim(S) == 2  "cannot plot a $(dim(S))-dimensional set"
-        Pi = Approximations.overapproximate(S)
+    for X in arr
+        @assert dim(X) == 2  "cannot plot a $(dim(X))-dimensional set"
+        Pi = Approximations.overapproximate(X)
         vlist = transpose(hcat(convex_hull(vertices_list(Pi))...))
         @series (x, y) = vlist[:, 1], vlist[:, 2]
     end
@@ -131,7 +131,7 @@ julia> plot(randn(2, 2) * B, 1e-3);
 end
 
 """
-    plot_lazyset(arr::Vector{<:LazySet}, ε::Float64; ...)
+    plot_lazyset(arr::Vector{S}, ε::Float64; ...) where {S<:LazySet}
 
 Plot an array of lazy sets in two dimensions using iterative refinement.
 
@@ -153,15 +153,15 @@ julia> plot([B1, B2], 1e-4);
 
 ```
 """
-@recipe function plot_lazyset(arr::Vector{<:LazySet}, ε::Float64;
+@recipe function plot_lazyset(arr::Vector{S}, ε::Float64;
                               seriescolor="blue", label="", grid=true,
-                              alpha=0.5)
+                              alpha=0.5) where {S<:LazySet}
 
     seriestype := :shape
 
-    for S in arr
-        @assert dim(S) == 2  "cannot plot a $(dim(S))-dimensional set"
-        Pi = Approximations.overapproximate(S, ε)
+    for X in arr
+        @assert dim(X) == 2  "cannot plot a $(dim(X))-dimensional set"
+        Pi = Approximations.overapproximate(X, ε)
         vlist = transpose(hcat(vertices_list(Pi)...))
         @series (x, y) = vlist[:, 1], vlist[:, 2]
     end
@@ -218,7 +218,7 @@ julia> plot(P);
 end
 
 """
-    plot_polytopes(P::Vector{<:AbstractPolytope}; ...)
+    plot_polytopes(P::Vector{S}; ...)
 
 Plot an array of 2D polytopes.
 
@@ -258,9 +258,9 @@ julia> plot([P1, P2]);
 
 It is assumed that the given vector of polytopes is two-dimensional.
 """
-@recipe function plot_polytopes(P::Vector{<:AbstractPolytope};
+@recipe function plot_polytopes(P::Vector{S};
                                seriescolor="blue", label="", grid=true,
-                               alpha=0.5)
+                               alpha=0.5) where {S<:AbstractPolytope}
 
     # it is assumed that the polytopes are two-dimensional
     seriestype := :shape
@@ -306,7 +306,7 @@ julia> plot(Singleton([0.5, 1.0]));
 end
 
 """
-    plot_singleton(arr::Vector{<:AbstractSingleton}; ...)
+    plot_singleton(arr::Vector{S}; ...) where {S<:AbstractSingleton}
 
 Plot a list of singletons.
 
@@ -334,8 +334,9 @@ julia> plot([Singleton(a), Singleton(b), Singleton(c)]);
 
 ```
 """
-@recipe function plot_singleton(arr::Vector{<:AbstractSingleton};
-                                color="blue", label="", grid=true, legend=false)
+@recipe function plot_singleton(arr::Vector{S};
+                                color="blue", label="", grid=true, legend=false
+                               ) where {S<:AbstractSingleton}
 
     seriestype := :scatter
 
@@ -387,7 +388,7 @@ julia> plot(L);
 end
 
 """
-    plot_linesegments(L::Vector{<:LineSegment}; ...)
+    plot_linesegments(L::Vector{S}; ...) where {S<:LineSegment}
 
 Plot an array of line segments.
 
@@ -408,9 +409,9 @@ julia> plot([L1, L2]);
 
 ```
 """
-@recipe function plot_linesegments(L::Vector{<:LineSegment}; color="blue",
+@recipe function plot_linesegments(L::Vector{S}; color="blue",
                                    label="", grid=true, alpha=0.5, legend=false,
-                                   add_marker=true)
+                                   add_marker=true) where {S<:LineSegment}
 
     seriestype := :path
     linecolor   --> color
@@ -455,7 +456,7 @@ julia> plot(I);
 end
 
 """
-    plot_intervals(I::Vector{<:Interval}; ...)
+    plot_intervals(I::Vector{S}; ...) where {S<:Interval}
 
 Plot an array of intervals.
 
@@ -476,9 +477,10 @@ julia> plot([I1, I2]);
 
 ```
 """
-@recipe function plot_intervals(I::Vector{<:Interval}; color=:auto,
-                                   label="", grid=true, alpha=0.5, legend=false,
-                                   add_marker=true, linewidth=2.)
+@recipe function plot_intervals(I::Vector{S}; color=:auto,
+                                label="", grid=true, alpha=0.5, legend=false,
+                                add_marker=true, linewidth=2.0
+                               ) where {S<:Interval}
 
     seriestype := :path
     linecolor   --> color
