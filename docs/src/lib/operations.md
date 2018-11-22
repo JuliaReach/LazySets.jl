@@ -36,7 +36,7 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`an_element`](@ref an_element(::LazySet{Real}))
+* [`an_element`](@ref an_element(::LazySet{N}) where {N<:Real})
 
 ### ``n``-ary Cartesian Product
 
@@ -55,7 +55,7 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`an_element`](@ref an_element(::LazySet{Real}))
+* [`an_element`](@ref an_element(::LazySet{N}) where {N<:Real})
 
 ## Convex Hull
 
@@ -73,7 +73,7 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`an_element`](@ref an_element(::LazySet{Real}))
+* [`an_element`](@ref an_element(::LazySet{N}) where {N<:Real})
 
 ### ``n``-ary Convex Hull
 
@@ -90,7 +90,7 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`an_element`](@ref an_element(::LazySet{Real}))
+* [`an_element`](@ref an_element(::LazySet{N}) where {N<:Real})
 
 ### Convex Hull Algorithms
 
@@ -127,7 +127,7 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`an_element`](@ref an_element(::LazySet{Real}))
+* [`an_element`](@ref an_element(::LazySet{N}) where {N<:Real})
 
 #### Intersection cache
 
@@ -148,7 +148,7 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`an_element`](@ref an_element(::LazySet{Real}))
+* [`an_element`](@ref an_element(::LazySet{N}) where {N<:Real})
 
 ## Minkowski Sum
 
@@ -167,7 +167,7 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`an_element`](@ref an_element(::LazySet{Real}))
+* [`an_element`](@ref an_element(::LazySet{N}) where {N<:Real})
 
 ### ``n``-ary Minkowski Sum
 
@@ -183,7 +183,7 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`an_element`](@ref an_element(::LazySet{Real}))
+* [`an_element`](@ref an_element(::LazySet{N}) where {N<:Real})
 
 ### ``n``-ary Minkowski Sum with cache
 
@@ -199,7 +199,7 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`an_element`](@ref an_element(::LazySet{Real}))
+* [`an_element`](@ref an_element(::LazySet{N}) where {N<:Real})
 
 ## Maps
 
@@ -239,7 +239,7 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`an_element`](@ref an_element(::LazySet{Real}))
+* [`an_element`](@ref an_element(::LazySet{N}) where {N<:Real})
 
 ```@docs
 ExponentialProjectionMap
@@ -251,7 +251,7 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`an_element`](@ref an_element(::LazySet{Real}))
+* [`an_element`](@ref an_element(::LazySet{N}) where {N<:Real})
 
 ```@docs
 SparseMatrixExp
@@ -278,17 +278,17 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
 Inherited from [`AbstractPolytope`](@ref):
-* [`singleton_list`](@ref singleton_list(::AbstractPolytope))
-* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolytope))
+* [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
+* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real})
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
-* `an_element`
+* [`an_element`](@ref an_element(::AbstractCentrallySymmetricPolytope{N}) where {N<:Real})
 
 Inherited from [`AbstractHyperrectangle`](@ref):
-* [`∈`](@ref ∈(::AbstractVector{Real}, ::AbstractHyperrectangle{Real}))
+* [`∈`](@ref ∈(::AbstractVector{N}, ::AbstractHyperrectangle{N}) where {N<:Real})
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
-* [`vertices_list`](@ref vertices_list(::AbstractHyperrectangle{Real}))
-* [`high`](@ref high(::AbstractHyperrectangle{Real}))
-* [`low`](@ref low(::AbstractHyperrectangle{Real}))
+* [`vertices_list`](@ref vertices_list(::AbstractHyperrectangle{N}) where {N<:Real})
+* [`high`](@ref high(::AbstractHyperrectangle{N}) where {N<:Real})
+* [`low`](@ref low(::AbstractHyperrectangle{N}) where {N<:Real})
