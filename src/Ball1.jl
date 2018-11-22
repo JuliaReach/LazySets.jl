@@ -1,5 +1,6 @@
 import Base: rand,
-             ∈
+             ∈,
+             show
 
 export Ball1
 
@@ -54,6 +55,15 @@ end
 
 # convenience constructor without type parameter
 Ball1(center::Vector{N}, radius::N) where {N<:Real} = Ball1{N}(center, radius)
+
+function show(io::IO, B::Ball1)
+    if get(io, :compact, false)
+        print(io, "Ball1 of center=", B.center, " and radius=", B.radius)
+    else
+        print(io, "Ball1(c=", B.center, ", r=", round(B.radius, sigdigits=6),
+                  ")")
+    end
+end
 
 
 # --- AbstractCentrallySymmetric interface functions ---
