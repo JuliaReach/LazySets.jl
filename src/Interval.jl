@@ -162,7 +162,7 @@ function center(x::Interval{N})::Vector{N} where {N<:Real}
 end
 
 """
-    +(x::Interval, y::Interval)
+    +(x::Interval{N}, y::Interval{N}) where {N<:Real}
 
 Return the sum of the intervals.
 
@@ -175,10 +175,12 @@ Return the sum of the intervals.
 
 The sum of the intervals as a new `Interval` set.
 """
-+(x::Interval, y::Interval) = Interval(x.dat + y.dat)
+function +(x::Interval{N}, y::Interval{N}) where {N<:Real}
+    return Interval(x.dat + y.dat)
+end
 
 """
-    -(x::Interval, y::Interval)
+    -(x::Interval{N}, y::Interval{N}) where {N<:Real}
 
 Return the difference of the intervals.
 
@@ -191,11 +193,13 @@ Return the difference of the intervals.
 
 The difference of the intervals as a new `Interval` set.
 """
--(x::Interval, y::Interval) = Interval(x.dat - y.dat)
+function -(x::Interval{N}, y::Interval{N}) where {N<:Real}
+    return Interval(x.dat - y.dat)
+end
 
 """
 ```
-    *(x::Interval, y::Interval)
+    *(x::Interval{N}, y::Interval{N}) where {N<:Real}
 ```
 
 Return the product of the intervals.
@@ -209,7 +213,9 @@ Return the product of the intervals.
 
 The product of the intervals as a new `Interval` set.
 """
-*(x::Interval, y::Interval) = Interval(x.dat * y.dat)
+function *(x::Interval{N}, y::Interval{N}) where {N<:Real}
+    return Interval(x.dat * y.dat)
+end
 
 """
     ∈(v::AbstractVector{N}, x::Interval{N}) where {N<:Real})
@@ -225,7 +231,9 @@ Return whether a vector is contained in the interval.
 
 `true` iff `x` contains `v`'s first component.
 """
-∈(v::AbstractVector{N}, x::Interval{N}) where {N<:Real} = v[1] ∈ x.dat
+function ∈(v::AbstractVector{N}, x::Interval{N}) where {N<:Real}
+    return v[1] ∈ x.dat
+end
 
 """
     ∈(v::N, x::Interval{N}) where {N<:Real}
@@ -246,7 +254,7 @@ function ∈(v::N, x::Interval{N}) where {N<:Real}
 end
 
 """
-    low(x::Interval)
+    low(x::Interval{N})::N where {N<:Real}
 
 Return the lower component of an interval.
 
@@ -258,10 +266,12 @@ Return the lower component of an interval.
 
 The lower (`lo`) component of the interval.
 """
-low(x::Interval) = x.dat.lo
+function low(x::Interval{N})::N where {N<:Real}
+    return x.dat.lo
+end
 
 """
-    high(x::Interval)
+    high(x::Interval{N})::N where {N<:Real}
 
 Return the higher or upper component of an interval.
 
@@ -273,7 +283,9 @@ Return the higher or upper component of an interval.
 
 The higher (`hi`) component of the interval.
 """
-high(x::Interval) = x.dat.hi
+function high(x::Interval{N})::N where {N<:Real}
+    return x.dat.hi
+end
 
 """
     an_element(x::Interval{N})::Vector{N} where {N<:Real}

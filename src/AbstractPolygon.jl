@@ -180,7 +180,7 @@ function <=(u::AbstractVector{N},
 end
 
 """
-    linear_map(M::AbstractMatrix, P::AbstractPolygon{N};
+    linear_map(M::AbstractMatrix{N}, P::AbstractPolygon{N};
                output_type::Type{<:LazySet}=typeof(P)) where {N<:Real}
 
 Concrete linear map of an abstract polygon.
@@ -202,7 +202,7 @@ obtaining a polygon in V-representation. Since polygons are closed under linear
 map, by default ``MP`` is converted to the concrete type of ``P``. If an
 `output_type` is given, the corresponding `convert` method is invoked.
 """
-function linear_map(M::AbstractMatrix, P::AbstractPolygon{N};
+function linear_map(M::AbstractMatrix{N}, P::AbstractPolygon{N};
                     output_type::Type{<:LazySet}=typeof(P)) where {N<:Real}
     @assert dim(P) == size(M, 2)
     MP = broadcast(v -> M * v, vertices_list(P)) |> VPolygon{N}

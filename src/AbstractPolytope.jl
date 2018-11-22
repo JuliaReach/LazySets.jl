@@ -55,7 +55,7 @@ function singleton_list(P::AbstractPolytope{N}
 end
 
 """
-    linear_map(M::AbstractMatrix, P::AbstractPolytope{N};
+    linear_map(M::AbstractMatrix{N}, P::AbstractPolytope{N};
                output_type::Type{<:LazySet}=VPolytope{N}) where {N<:Real}
 
 Concrete linear map of an abstract polytype.
@@ -78,7 +78,7 @@ hyperrectangles) are not closed under linear maps, the default output is a
 `VPolytope`. If an `output_type` is given, the corresponding `convert` method
 is invoked.
 """
-function linear_map(M::AbstractMatrix, P::AbstractPolytope{N};
+function linear_map(M::AbstractMatrix{N}, P::AbstractPolytope{N};
                     output_type::Type{<:LazySet}=VPolytope{N}) where {N<:Real}
     @assert dim(P) == size(M, 2)
     MP = broadcast(v -> M * v, vertices_list(P)) |> VPolytope{N}
@@ -86,7 +86,7 @@ function linear_map(M::AbstractMatrix, P::AbstractPolytope{N};
 end
 
 """
-    isempty(P::AbstractPolytope{N})::Bool where {N<:Real}
+    isempty(P::AbstractPolytope)::Bool
 
 Determine whether a polytope is empty.
 
@@ -103,7 +103,7 @@ Determine whether a polytope is empty.
 This algorithm checks whether the `vertices_list` of the given polytope is empty
 or not.
 """
-function isempty(P::AbstractPolytope{N})::Bool where {N<:Real}
+function isempty(P::AbstractPolytope)::Bool
     return isempty(vertices_list(P))
 end
 

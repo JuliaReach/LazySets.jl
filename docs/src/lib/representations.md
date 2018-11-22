@@ -228,13 +228,13 @@ dim(::Interval)
 an_element(::Interval{N}) where {N<:Real}
 vertices_list(::Interval{N}) where {N<:Real}
 center(::Interval{N}) where {N<:Real}
-low(::Interval)
-high(::Interval)
+low(::Interval{N}) where {N<:Real}
+high(::Interval{N}) where {N<:Real}
 radius_hyperrectangle(::Interval{N}) where {N<:Real}
 radius_hyperrectangle(::Interval{N}, ::Int) where {N<:Real}
-+(::Interval, ::Interval)
--(::Interval, ::Interval)
-*(::Interval, ::Interval)
++(::Interval{N}, ::Interval{N}) where {N<:Real}
+-(::Interval{N}, ::Interval{N}) where {N<:Real}
+*(::Interval{N}, ::Interval{N}) where {N<:Real}
 rand(::Type{Interval})
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Interval)
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:Interval}
@@ -522,7 +522,7 @@ dim(::ZeroSet)
 rand(::Type{ZeroSet})
 element(::ZeroSet{N}) where {N<:Real}
 element(::ZeroSet{N}, ::Int) where {N<:Real}
-linear_map(::AbstractMatrix, ::ZeroSet{N}) where {N<:Real}
+linear_map(::AbstractMatrix{N}, ::ZeroSet{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
@@ -557,8 +557,8 @@ vertices_list(::Zonotope{N}) where {N<:Real}
 constraints_list(::Zonotope{N}) where {N<:Real}
 center(::Zonotope{N}) where {N<:Real}
 order(::Zonotope)
-minkowski_sum(::Zonotope, ::Zonotope)
-linear_map(::AbstractMatrix, ::Zonotope)
+minkowski_sum(::Zonotope{N}, ::Zonotope{N}) where {N<:Real}
+linear_map(::AbstractMatrix{N}, ::Zonotope{N}) where {N<:Real}
 scale(::Real, ::Zonotope)
 ngens(::Zonotope)
 reduce_order(::Zonotope, r)

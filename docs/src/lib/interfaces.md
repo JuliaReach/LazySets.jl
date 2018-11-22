@@ -105,8 +105,8 @@ This interface defines the following functions:
 
 ```@docs
 singleton_list(::AbstractPolytope{N}) where {N<:Real}
-linear_map(::AbstractMatrix, ::AbstractPolytope{N}) where {N<:Real}
-isempty(::AbstractPolytope{N}) where {N<:Real}
+linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real}
+isempty(::AbstractPolytope)
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractPolytope)
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:AbstractPolytope}
 ```
@@ -123,7 +123,7 @@ This interface defines the following functions:
 
 ```@docs
 dim(P::AbstractPolygon)
-linear_map(::AbstractMatrix, P::AbstractPolygon{N}) where {N<:Real}
+linear_map(::AbstractMatrix{N}, P::AbstractPolygon{N}) where {N<:Real}
 ```
 
 #### HPolygon
@@ -207,7 +207,7 @@ radius_hyperrectangle(::AbstractSingleton{N}) where {N<:Real}
 radius_hyperrectangle(::AbstractSingleton{N}, ::Int) where {N<:Real}
 high(::AbstractSingleton{N}) where {N<:Real}
 low(::AbstractSingleton{N}) where {N<:Real}
-linear_map(::AbstractMatrix, ::AbstractSingleton{N}) where {N<:Real}
+linear_map(::AbstractMatrix{N}, ::AbstractSingleton{N}) where {N<:Real}
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractSingleton)
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:AbstractSingleton}
 ```
