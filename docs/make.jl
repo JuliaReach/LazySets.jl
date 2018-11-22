@@ -30,7 +30,6 @@ makedocs(
         "Binary Functions on Sets" => "lib/binary_functions.md",
         "Approximations" => "lib/approximations.md",
         "Utility Functions" => "lib/utils.md",
-#         "Methods Collection" => "lib/methods_fix.md",
         ],
         "About" => "about.md"
     ]
