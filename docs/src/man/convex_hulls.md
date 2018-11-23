@@ -46,8 +46,8 @@ We can as well work with a 100-dimensional set:
 using SparseArrays
 
 X = Bn(100)
-A = blkdiag([sparse(A) for i in 1:50]...)
-Y = CH(X, exp(full(A)) * X)
+A = blockdiag([sparse(A) for i in 1:50]...)
+Y = CH(X, exp(Matrix(A)) * X)
 
 dim(Y)
 ```
