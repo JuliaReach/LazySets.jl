@@ -530,8 +530,60 @@ function ⊆(∅::EmptySet{N}, X::LazySet{N}, witness::Bool=false
     return witness ? (true, N[]) : true
 end
 
-# disambiguity
+# disambiguation
 function ⊆(∅::EmptySet{N}, H::AbstractHyperrectangle{N}, witness::Bool=false
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    return witness ? (true, N[]) : true
+end
+
+"""
+    ⊆(X::LazySet{N}, ∅::EmptySet{N}, [witness]::Bool=false
+     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether a set is contained in an empty set.
+
+### Input
+
+- `X`       -- another set
+- `∅`       -- empty set
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+`true` iff `X` is empty.
+
+### Algorithm
+
+We rely on `isempty(X)` for the emptiness check and on `an_element(X)` for
+witness production.
+"""
+function ⊆(X::LazySet{N}, ∅::EmptySet{N}, witness::Bool=false
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    if isempty(X)
+        return witness ? (true, N[]) : true
+    else
+        return witness ? (false, an_element(X)) : false
+    end
+end
+
+# disambiguation
+function ⊆(X::AbstractPolytope{N}, ∅::EmptySet{N}, witness::Bool=false
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    if isempty(X)
+        return witness ? (true, N[]) : true
+    else
+        return witness ? (false, an_element(X)) : false
+    end
+end
+function ⊆(X::AbstractSingleton{N}, ∅::EmptySet{N}, witness::Bool=false
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    return witness ? (false, an_element(X)) : false
+end
+function ⊆(X::LineSegment{N}, ∅::EmptySet{N}, witness::Bool=false
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    return witness ? (false, an_element(X)) : false
+end
+function ⊆(X::EmptySet{N}, ∅::EmptySet{N}, witness::Bool=false
           )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return witness ? (true, N[]) : true
 end

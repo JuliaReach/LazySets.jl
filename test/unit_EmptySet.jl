@@ -48,6 +48,9 @@ for N in [Float64, Rational{Int}, Float32]
 
     # subset
     @test ⊆(E, B) && ⊆(E, B, true)[1]
+    subset, point = ⊆(B, E, true)
+    @test !⊆(B, E) && !subset && point ∈ B
+    @test ⊆(E, E) && ⊆(E, E, true)[1]
 
     # emptiness check
     @test isempty(E)

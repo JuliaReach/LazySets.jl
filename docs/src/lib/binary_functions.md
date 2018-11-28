@@ -30,6 +30,7 @@ end
 ⊆(::LineSegment{N}, ::Hyperrectangle{N}, ::Bool=false) where {N<:Real}
 ⊆(::Interval, ::Interval)
 ⊆(::EmptySet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
+⊆(::LazySet{N}, ::EmptySet{N}, ::Bool=false) where {N<:Real}
 ```
 
 ## Check for emptiness of intersection
