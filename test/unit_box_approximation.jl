@@ -33,6 +33,10 @@ for N in [Float64, Rational{Int}, Float32]
     @test h.center ≈ hexp.center
     @test h.radius ≈ hexp.radius
 
+    # empty set
+    E = EmptySet{N}()
+    @test box_approximation(E) == E
+
     # ===================================================================
     # Testing box_approximation_symmetric (= symmetric interval hull)
     # ===================================================================
@@ -67,4 +71,8 @@ for N in [Float64, Rational{Int}, Float32]
 
     # Testing alias symmetric_interval_hull
     h = symmetric_interval_hull(b)
+
+    # empty set
+    E = EmptySet{N}()
+    @test box_approximation_symmetric(E) == E
 end
