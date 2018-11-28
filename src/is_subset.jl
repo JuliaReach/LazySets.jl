@@ -482,6 +482,10 @@ function ⊆(L::LineSegment{N}, H::AbstractHyperrectangle{N}, witness::Bool=fals
     end
 end
 
+
+# --- Interval ---
+
+
 """
     ⊆(x::Interval, y::Interval)
 
@@ -498,4 +502,36 @@ Check whether an interval is contained in another interval.
 """
 function ⊆(x::Interval, y::Interval)
     return x.dat ⊆ y.dat
+end
+
+
+# --- EmptySet ---
+
+
+"""
+    ⊆(∅::EmptySet{N}, X::LazySet{N}, [witness]::Bool=false
+     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether an empty set is contained in another set.
+
+### Input
+
+- `∅`       -- empty set
+- `X`       -- another set
+- `witness` -- (optional, default: `false`) compute a witness if activated
+               (ignored, just kept for interface reasons)
+
+### Output
+
+`true`.
+"""
+function ⊆(∅::EmptySet{N}, X::LazySet{N}, witness::Bool=false
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    return witness ? (true, N[]) : true
+end
+
+# disambiguity
+function ⊆(∅::EmptySet{N}, H::AbstractHyperrectangle{N}, witness::Bool=false
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    return witness ? (true, N[]) : true
 end

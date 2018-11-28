@@ -46,6 +46,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test !∈(N[0], E)
     @test !∈(N[0, 0], E)
 
+    # subset
+    @test ⊆(E, B) && ⊆(E, B, true)[1]
+
     # emptiness check
     @test isempty(E)
 
