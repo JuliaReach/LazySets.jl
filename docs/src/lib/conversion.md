@@ -16,18 +16,21 @@ end
 ```
 
 ```@docs
-convert(T::Type{<:AbstractHPolygon}, P::VPolygon)
+convert(::Type{HPOLYGON1}, ::HPOLYGON2) where {HPOLYGON1<:AbstractHPolygon, HPOLYGON2<:AbstractHPolygon}
+convert(::Type{HPOLYGON}, ::VPolygon) where {HPOLYGON<:AbstractHPolygon}
 convert(::Type{Hyperrectangle}, ::Interval)
-convert(::Type{HPolygon}, ::AbstractHyperrectangle)
-convert(::Type{HPolygon}, ::HPolytope)
-convert(::Type{HPolygonOpt}, ::HPolygon)
-convert(::Type{HPolytope}, P::AbstractHPolygon)
+convert(::Type{HPOLYGON}, ::AbstractHyperrectangle) where {HPOLYGON<:AbstractHPolygon}
+convert(::Type{HPOLYGON}, ::HPolytope{N}) where {N<:Real, HPOLYGON<:AbstractHPolygon}
+convert(::Type{HPOLYGON}, ::AbstractSingleton{N}) where {N<:Real, HPOLYGON<:AbstractHPolygon}
+convert(::Type{HPOLYGON}, ::LineSegment{N}) where {N<:Real, HPOLYGON<:AbstractHPolygon}
+convert(::Type{HPolyhedron}, ::AbstractPolytope)
+convert(::Type{HPolytope}, ::AbstractHPolygon)
 convert(::Type{HPolytope}, ::AbstractHyperrectangle)
-convert(::Type{HPolytope}, P::AbstractPolytope)
-convert(::Type{HPolytope}, P::VPolytope)
-convert(::Type{VPolygon}, P::AbstractHPolygon)
-convert(::Type{VPolygon}, P::AbstractPolytope)
-convert(::Type{VPolytope}, P::AbstractPolytope)
-convert(::Type{VPolytope}, P::HPolytope)
+convert(::Type{HPolytope}, ::AbstractPolytope)
+convert(::Type{HPolytope}, ::VPolytope)
+convert(::Type{VPolygon}, ::AbstractHPolygon)
+convert(::Type{VPolygon}, ::AbstractPolytope)
+convert(::Type{VPolytope}, ::AbstractPolytope)
+convert(::Type{VPolytope}, ::HPolytope)
 convert(::Type{Zonotope}, ::AbstractHyperrectangle)
 ```

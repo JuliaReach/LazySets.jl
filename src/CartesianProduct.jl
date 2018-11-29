@@ -130,7 +130,7 @@ function ρ(d::AbstractVector{N}, cp::CartesianProduct{N}) where {N<:Real}
 end
 
 """
-    ∈(x::AbstractVector{<:Real}, cp::CartesianProduct)::Bool
+    ∈(x::AbstractVector{N}, cp::CartesianProduct{N})::Bool where {N<:Real}
 
 Check whether a given point is contained in a Cartesian product.
 
@@ -143,7 +143,7 @@ Check whether a given point is contained in a Cartesian product.
 
 `true` iff ``x ∈ cp``.
 """
-function ∈(x::AbstractVector{<:Real}, cp::CartesianProduct)::Bool
+function ∈(x::AbstractVector{N}, cp::CartesianProduct{N})::Bool where {N<:Real}
     @assert length(x) == dim(cp)
 
     n1 = dim(cp.X)
@@ -169,7 +169,7 @@ function isempty(cp::CartesianProduct)::Bool
 end
 
 """
-    constraints_list(cp::CartesianProduct{N, <:LazySet{N}}
+    constraints_list(cp::CartesianProduct{N}
                     )::Vector{LinearConstraint{N}} where N<:Real
 
 Return the list of constraints of a (polytopic) Cartesian product.
@@ -182,7 +182,7 @@ Return the list of constraints of a (polytopic) Cartesian product.
 
 A list of constraints.
 """
-function constraints_list(cp::CartesianProduct{N, <:LazySet{N}}
+function constraints_list(cp::CartesianProduct{N}
                          )::Vector{LinearConstraint{N}} where N<:Real
     return constraints_list(CartesianProductArray([cp.X, cp.Y]))
 end
@@ -359,8 +359,8 @@ function ρ(d::AbstractVector{N}, cpa::CartesianProductArray{N}) where {N<:Real}
 end
 
 """
-    ∈(x::AbstractVector{N}, cpa::CartesianProductArray{N, <:LazySet{N}}
-     )::Bool  where {N<:Real}
+    ∈(x::AbstractVector{N}, cpa::CartesianProductArray{N}
+     )::Bool where {N<:Real}
 
 Check whether a given point is contained in a Cartesian product of a finite
 number of sets.
@@ -374,8 +374,8 @@ number of sets.
 
 `true` iff ``x ∈ \\text{cpa}``.
 """
-function ∈(x::AbstractVector{N}, cpa::CartesianProductArray{N, <:LazySet{N}}
-          )::Bool  where {N<:Real}
+function ∈(x::AbstractVector{N}, cpa::CartesianProductArray{N}
+          )::Bool where {N<:Real}
     @assert length(x) == dim(cpa)
 
     i0 = 1
@@ -407,7 +407,7 @@ function isempty(cpa::CartesianProductArray)::Bool
 end
 
 """
-    constraints_list(cpa::CartesianProductArray{N, <:LazySet{N}}
+    constraints_list(cpa::CartesianProductArray{N}
                     )::Vector{LinearConstraint{N}} where N<:Real
 
 Return the list of constraints of a (polytopic) Cartesian product of a finite
@@ -421,7 +421,7 @@ number of sets.
 
 A list of constraints.
 """
-function constraints_list(cpa::CartesianProductArray{N, <:LazySet{N}}
+function constraints_list(cpa::CartesianProductArray{N}
                          )::Vector{LinearConstraint{N}} where N<:Real
     clist = Vector{LinearConstraint{N}}()
     n = dim(cpa)

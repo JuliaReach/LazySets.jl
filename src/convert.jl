@@ -4,7 +4,7 @@ import Base.convert
 
 """
     convert(::Type{HPOLYGON1},
-            P::HPOLYGON2) where {HPOLYGON1<:Union{HPolygon, HPolygonOpt},
+            P::HPOLYGON2) where {HPOLYGON1<:AbstractHPolygon,
                                  HPOLYGON2<:AbstractHPolygon}
 
 Convert between polygon types in H-representation.
@@ -24,13 +24,16 @@ We need the `Union` type for `HPOLYGON1` because the target type must be
 concrete.
 """
 function convert(::Type{HPOLYGON1},
-                 P::HPOLYGON2) where {HPOLYGON1<:Union{HPolygon, HPolygonOpt},
+                 P::HPOLYGON2) where {HPOLYGON1<:AbstractHPolygon,
                                       HPOLYGON2<:AbstractHPolygon}
+    if P isa HPOLYGON1
+        return P
+    end
     return HPOLYGON1(P.constraints)
 end
 
 """
-    convert(T::Type{<:AbstractHPolygon}, P::VPolygon)
+    convert(T::Type{HPOLYGON}, P::VPolygon) where {HPOLYGON<:AbstractHPolygon}
 
 Converts a polygon in vertex representation to a polygon in constraint representation.
 
@@ -43,7 +46,7 @@ Converts a polygon in vertex representation to a polygon in constraint represent
 
 A polygon in constraint representation.
 """
-function convert(T::Type{<:AbstractHPolygon}, P::VPolygon)
+function convert(T::Type{HPOLYGON}, P::VPolygon) where {HPOLYGON<:AbstractHPolygon}
     return tohrep(P, T)
 end
 
@@ -123,7 +126,7 @@ end
 """
     convert(::Type{HPolytope}, P::AbstractPolytope)
 
-Convert polytopic set to polytope in H-representation.
+Convert a polytopic set to a polytope in H-representation.
 
 ### Input
 
@@ -144,6 +147,20 @@ function convert(::Type{HPolytope}, P::AbstractPolytope)
     return convert(HPolytope, convert(VPolytope, P))
 end
 
+"""
+    convert(::Type{HPolyhedron}, P::AbstractPolytope)
+
+Convert a polytopic set to a polyhedron in H-representation.
+
+### Input
+
+- `type` -- target type
+- `P`    -- source polytope
+
+### Output
+
+The given polytope represented as a polyhedron in constraint representation.
+"""
 function convert(::Type{HPolyhedron}, P::AbstractPolytope)
     return HPolyhedron(constraints_list(P))
 end
@@ -197,7 +214,8 @@ convert(::Type{HPolytope}, P::HPolytope) = P
 convert(::Type{VPolytope}, P::VPolytope) = P
 
 """
-    convert(::Type{HPOLYGON}, P::HPolytope) where {HPOLYGON<:AbstractHPolygon}
+    convert(::Type{HPOLYGON}, P::HPolytope{N}) where
+        {N<:Real, HPOLYGON<:AbstractHPolygon}
 
 Convert from 2D polytope in H-representation to polygon in H-representation.
 
@@ -211,7 +229,7 @@ Convert from 2D polytope in H-representation to polygon in H-representation.
 The 2D polytope represented as polygon.
 """
 function convert(::Type{HPOLYGON},
-                 P::HPolytope{N}) where {N, HPOLYGON<:AbstractHPolygon}
+                 P::HPolytope{N}) where {N<:Real, HPOLYGON<:AbstractHPolygon}
     @assert dim(P) == 2 "polytope must be two-dimensional for conversion"
     H = HPOLYGON{N}()
     for ci in constraints_list(P)
@@ -222,7 +240,7 @@ function convert(::Type{HPOLYGON},
 end
 
 """
-    convert(::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
+    convert(::Type{Zonotope}, H::AbstractHyperrectangle)
 
 Converts a hyperrectangular set to a zonotope.
 
@@ -235,13 +253,13 @@ Converts a hyperrectangular set to a zonotope.
 
 A zonotope.
 """
-function convert(::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
-    return Zonotope{N}(center(H), Diagonal(radius_hyperrectangle(H)))
+function convert(::Type{Zonotope}, H::AbstractHyperrectangle)
+    return Zonotope(center(H), Diagonal(radius_hyperrectangle(H)))
 end
 
 """
     convert(::Type{HPOLYGON}, S::AbstractSingleton{N}
-           ) where {N, HPOLYGON<:AbstractHPolygon}
+           ) where {N<:Real, HPOLYGON<:AbstractHPolygon}
 
 Convert from singleton to polygon in H-representation.
 
@@ -256,7 +274,7 @@ A polygon in constraint representation with the minimal number of constraints
 (three).
 """
 function convert(::Type{HPOLYGON}, S::AbstractSingleton{N}
-                ) where {N, HPOLYGON<:AbstractHPolygon}
+                ) where {N<:Real, HPOLYGON<:AbstractHPolygon}
     constraints_list = Vector{LinearConstraint{N}}(undef, 3)
     o = one(N)
     z = zero(N)
@@ -269,7 +287,7 @@ end
 
 """
     convert(::Type{HPOLYGON}, L::LineSegment{N}
-          ) where {N, HPOLYGON<:AbstractHPolygon}
+          ) where {N<:Real, HPOLYGON<:AbstractHPolygon}
 
 Convert from line segment to polygon in H-representation.
 
@@ -284,7 +302,7 @@ A flat polygon in constraint representation with the minimal number of
 constraints (four).
 """
 function convert(::Type{HPOLYGON}, L::LineSegment{N}
-                ) where {N, HPOLYGON<:AbstractHPolygon}
+                ) where {N<:Real, HPOLYGON<:AbstractHPolygon}
     H = HPOLYGON{N}()
     c = halfspace_left(L.p, L.q)
     addconstraint!(H, c)
@@ -300,7 +318,7 @@ end
 import IntervalArithmetic.AbstractInterval
 
 """
-    convert(::Type{Hyperrectangle}, x::Interval{N, IN}) where {N, IN <: AbstractInterval{N}}
+    convert(::Type{Hyperrectangle}, x::Interval)
 
 Converts a unidimensional interval into a hyperrectangular set.
 
@@ -320,12 +338,12 @@ julia> convert(Hyperrectangle, Interval(0.0, 1.0))
 Hyperrectangle{Float64}([0.5], [0.5])
 ```
 """
-function convert(::Type{Hyperrectangle}, x::Interval{N, IN}) where {N, IN <: AbstractInterval{N}}
+function convert(::Type{Hyperrectangle}, x::Interval)
     return Hyperrectangle(low=[low(x)], high=[high(x)])
 end
 
 """
-    convert(::Type{HPolytope}, H::AbstractHyperrectangle{N}) where {N}
+    convert(::Type{HPolytope}, H::AbstractHyperrectangle)
 
 Converts a hyperrectangular set to a polytope in constraint representation.
 
@@ -338,12 +356,14 @@ Converts a hyperrectangular set to a polytope in constraint representation.
 
 A polytope in constraint representation.
 """
-function convert(::Type{HPolytope}, H::AbstractHyperrectangle{N}) where {N}
-    return HPolytope{N}(constraints_list(H))
+function convert(::Type{HPolytope},
+                 H::AbstractHyperrectangle)
+    return HPolytope(constraints_list(H))
 end
 
 """
-    convert(::Type{HPOLYGON}, H::AbstractHyperrectangle{N}) where {N, HPOLYGON<:AbstractHPolygon}
+    convert(::Type{HPOLYGON}, H::AbstractHyperrectangle) where
+        {HPOLYGON<:AbstractHPolygon}
 
 Converts a hyperrectangular set to a polygon in constraint representation.
 
@@ -356,7 +376,9 @@ Converts a hyperrectangular set to a polygon in constraint representation.
 
 A polygon in constraint representation.
 """
-function convert(X::Type{HPOLYGON}, H::AbstractHyperrectangle{N}) where {N, HPOLYGON<:AbstractHPolygon}
-    @assert dim(H) == 2 "cannot convert a $(dim(H))-dimensional hyperrectangle into a two-dimensional polygon"
-    return HPOLYGON{N}(constraints_list(H))
+function convert(X::Type{HPOLYGON},
+                 H::AbstractHyperrectangle) where {HPOLYGON<:AbstractHPolygon}
+    @assert dim(H) == 2 "cannot convert a $(dim(H))-dimensional " *
+        "hyperrectangle into a two-dimensional polygon"
+    return HPOLYGON(constraints_list(H))
 end

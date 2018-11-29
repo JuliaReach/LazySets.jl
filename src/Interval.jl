@@ -145,7 +145,7 @@ function σ(d::AbstractVector{N}, x::Interval{N}) where {N<:Real}
 end
 
 """
-    center(x::Interval)
+    center(x::Interval{N})::Vector{N} where {N<:Real}
 
 Return the interval's center.
 
@@ -157,10 +157,12 @@ Return the interval's center.
 
 The center, or midpoint, of ``x``.
 """
-center(x::Interval) = [IntervalArithmetic.mid(x.dat)]
+function center(x::Interval{N})::Vector{N} where {N<:Real}
+    return [IntervalArithmetic.mid(x.dat)]
+end
 
 """
-    +(x::Interval, y::Interval)
+    +(x::Interval{N}, y::Interval{N}) where {N<:Real}
 
 Return the sum of the intervals.
 
@@ -173,10 +175,12 @@ Return the sum of the intervals.
 
 The sum of the intervals as a new `Interval` set.
 """
-+(x::Interval, y::Interval) = Interval(x.dat + y.dat)
+function +(x::Interval{N}, y::Interval{N}) where {N<:Real}
+    return Interval(x.dat + y.dat)
+end
 
 """
-    -(x::Interval, y::Interval)
+    -(x::Interval{N}, y::Interval{N}) where {N<:Real}
 
 Return the difference of the intervals.
 
@@ -189,11 +193,13 @@ Return the difference of the intervals.
 
 The difference of the intervals as a new `Interval` set.
 """
--(x::Interval, y::Interval) = Interval(x.dat - y.dat)
+function -(x::Interval{N}, y::Interval{N}) where {N<:Real}
+    return Interval(x.dat - y.dat)
+end
 
 """
 ```
-    *(x::Interval, y::Interval)
+    *(x::Interval{N}, y::Interval{N}) where {N<:Real}
 ```
 
 Return the product of the intervals.
@@ -207,7 +213,9 @@ Return the product of the intervals.
 
 The product of the intervals as a new `Interval` set.
 """
-*(x::Interval, y::Interval) = Interval(x.dat * y.dat)
+function *(x::Interval{N}, y::Interval{N}) where {N<:Real}
+    return Interval(x.dat * y.dat)
+end
 
 """
     ∈(v::AbstractVector{N}, x::Interval{N}) where {N<:Real})
@@ -223,10 +231,12 @@ Return whether a vector is contained in the interval.
 
 `true` iff `x` contains `v`'s first component.
 """
-∈(v::AbstractVector{N}, x::Interval{N}) where {N<:Real} = v[1] ∈ x.dat
+function ∈(v::AbstractVector{N}, x::Interval{N}) where {N<:Real}
+    return v[1] ∈ x.dat
+end
 
 """
-    ∈(v::N, x::Interval) where {N}
+    ∈(v::N, x::Interval{N}) where {N<:Real}
 
 Return whether a number is contained in the interval.
 
@@ -239,10 +249,12 @@ Return whether a number is contained in the interval.
 
 `true` iff `x` contains `v`.
 """
-∈(v::N, x::Interval) where {N} = v ∈ x.dat
+function ∈(v::N, x::Interval{N}) where {N<:Real}
+    return v ∈ x.dat
+end
 
 """
-    low(x::Interval)
+    low(x::Interval{N})::N where {N<:Real}
 
 Return the lower component of an interval.
 
@@ -254,10 +266,12 @@ Return the lower component of an interval.
 
 The lower (`lo`) component of the interval.
 """
-low(x::Interval) = x.dat.lo
+function low(x::Interval{N})::N where {N<:Real}
+    return x.dat.lo
+end
 
 """
-    high(x::Interval)
+    high(x::Interval{N})::N where {N<:Real}
 
 Return the higher or upper component of an interval.
 
@@ -269,7 +283,9 @@ Return the higher or upper component of an interval.
 
 The higher (`hi`) component of the interval.
 """
-high(x::Interval) = x.dat.hi
+function high(x::Interval{N})::N where {N<:Real}
+    return x.dat.hi
+end
 
 """
     an_element(x::Interval{N})::Vector{N} where {N<:Real}
@@ -325,7 +341,7 @@ function rand(::Type{Interval};
 end
 
 """
-    vertices_list(x::Interval)
+    vertices_list(x::Interval{N})::Vector{Vector{N}} where {N<:Real}
 
 Return the list of vertices of this interval.
 
@@ -337,7 +353,9 @@ Return the list of vertices of this interval.
 
 The list of vertices of the interval represented as two one-dimensional vectors.
 """
-vertices_list(x::Interval) = [[low(x)], [high(x)]]
+function vertices_list(x::Interval{N})::Vector{Vector{N}} where {N<:Real}
+    return [[low(x)], [high(x)]]
+end
 
 
 # --- AbstractHyperrectangle interface functions ---

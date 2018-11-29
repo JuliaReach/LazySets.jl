@@ -310,7 +310,7 @@ end
 
 """
     ⊆(B1::Ball2{N}, B2::Ball2{N}, [witness]::Bool=false
-     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:AbstractFloat}
 
 Check whether a ball in the 2-norm is contained in another ball in the 2-norm,
 and if not, optionally compute a witness.
@@ -333,7 +333,7 @@ and if not, optionally compute a witness.
 ``B1 ⊆ B2`` iff ``‖ c_1 - c_2 ‖_2 + r_1 ≤ r_2``
 """
 function ⊆(B1::Ball2{N}, B2::Ball2{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:AbstractFloat}
     result = norm(B1.center - B2.center, 2) + B1.radius <= B2.radius
     if witness
         if result
@@ -356,7 +356,7 @@ end
     ⊆(B::Union{Ball2{N}, Ballp{N}},
       S::AbstractSingleton{N},
       [witness]::Bool=false
-     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:AbstractFloat}
 
 Check whether a ball in the 2-norm or p-norm is contained in a set with a single
 value, and if not, optionally compute a witness.
@@ -377,7 +377,7 @@ value, and if not, optionally compute a witness.
 function ⊆(B::Union{Ball2{N}, Ballp{N}},
            S::AbstractSingleton{N},
            witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:AbstractFloat}
     result = B.center == element(S) && B.radius == 0
     if witness
         if result

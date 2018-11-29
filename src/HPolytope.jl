@@ -185,7 +185,7 @@ function vertices_list(P::HPolytope{N};
     end
     @assert isdefined(@__MODULE__, :Polyhedra) "the function `vertices_list` needs " *
                                         "the package 'Polyhedra' to be loaded"
-    P = polyhedron(P, backend)
+    P = polyhedron(P; backend=backend)
     prunefunc(P)
     return collect(points(P))
 end
