@@ -442,7 +442,6 @@ vertices_list(::HPolytope{N}) where {N<:Real}
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
-The following methods are specific for polytopes.
 
 #### Polyhedra
 
@@ -452,6 +451,7 @@ The following methods are specific for `HPolyhedron`.
 rand(::Type{HPolyhedron})
 vertices_list(::HPolyhedron{N}) where {N<:Real}
 singleton_list(::HPolyhedron{N}) where {N<:Real}
+constrained_dimensions(::HPolyhedron{N}) where {N<:Real}
 ```
 
 ### Vertex representation
