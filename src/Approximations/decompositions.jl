@@ -228,7 +228,7 @@ function decompose(S::LazySet{N};
 
     if directions != nothing
         # template directions
-        # potentially defined option set_type is *ignored*       
+        # potentially defined option set_type is *ignored*
         block_start = 1
         @inbounds for bi in blocks
             push!(result, project(S, block_start:(block_start + bi - 1), directions(bi), n))
@@ -265,6 +265,42 @@ function decompose(S::LazySet{N};
             block_start += bi
         end
     end
+    return CartesianProductArray(result)
+end
+
+
+"""
+    decompose_explicit(S::LazySet{N};
+                       blocks::AbstractVector{Int}=default_block_structure(S, set_type)
+                      )::CartesianProductArray where {N<:Real}
+
+Decompose a high-dimensional set into a Cartesian product of overapproximations
+of the projections over the specified subspaces.
+
+### Input
+
+- `S`           -- set
+- `blocks`      -- (optional, default: [2, …, 2] or [1, …, 1])
+                   block structure - a vector with the size of each block
+
+### Output
+
+A `CartesianProductArray` containing lazy low-dimensional exact
+projections.
+"""
+
+function decompose_explicit(S::LazySet{N};
+                   blocks::AbstractVector{Int}=default_block_structure(S, Interval)
+                  )::CartesianProductArray where {N<:Real}
+    n = dim(S)
+    result = Vector{LazySet{N}}()
+
+    block_start = 1
+    @inbounds for bi in blocks
+        push!(result, project(S, block_start:(block_start + bi - 1), n))
+        block_start += bi
+    end
+
     return CartesianProductArray(result)
 end
 
@@ -441,4 +477,30 @@ The template direction approximation of the projection of `S`.
                         )::HPolytope where {N<:Real}
     M = sparse(1:length(block), block, ones(N, length(block)), length(block), n)
     return overapproximate(M * S, directions)
+end
+
+"""
+    project(S::LazySet{N},
+            block::AbstractVector{Int},
+            n::Int
+           )::HPolytope where {N<:Real}
+
+Project a high-dimensional set to a low-dimensional set.
+
+### Input
+
+- `S` -- set
+- `block` -- block structure - a vector with the dimensions of interest
+- `n` -- (optional, default: `dim(S)`) ambient dimension of the set `S`
+
+### Output
+
+The lazy linear map of the projection of `S`.
+"""
+@inline function project(S::LazySet{N},
+                         block::AbstractVector{Int},
+                         n::Int=dim(S)
+                        )::LinearMap where {N<:Real}
+    M = sparse(1:length(block), block, ones(N, length(block)), length(block), n)
+    return M * S
 end
