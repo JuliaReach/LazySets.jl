@@ -217,7 +217,7 @@ julia> [typeof(ai) for ai in array(decompose(S, block_types=bt, ε=0.01))]
 ```
 """
 function decompose(S::LazySet{N};
-                   set_type::Type{<:Union{HPolygon, Hyperrectangle, Interval}}=Hyperrectangle,
+                   set_type::Type{<:Union{HPolygon, Hyperrectangle, Interval, LinearMap}}=Hyperrectangle,
                    ε::Real=Inf,
                    blocks::AbstractVector{Int}=default_block_structure(S, set_type),
                    block_types=Dict{Type{<:LazySet}, AbstractVector{<:AbstractVector{Int}}}(),
@@ -226,7 +226,13 @@ function decompose(S::LazySet{N};
     n = dim(S)
     result = Vector{LazySet{N}}()
 
-    if directions != nothing
+    if set_type == LinearMap
+        block_start = 1
+        @inbounds for bi in blocks
+            push!(result, project(S, block_start:(block_start + bi - 1), n))
+            block_start += bi
+    end
+    elseif directions != nothing
         # template directions
         # potentially defined option set_type is *ignored*
         block_start = 1
@@ -268,41 +274,6 @@ function decompose(S::LazySet{N};
     return CartesianProductArray(result)
 end
 
-
-"""
-    decompose_explicit(S::LazySet{N};
-                       blocks::AbstractVector{Int}=default_block_structure(S, set_type)
-                      )::CartesianProductArray where {N<:Real}
-
-Decompose a high-dimensional set into a Cartesian product of overapproximations
-of the projections over the specified subspaces.
-
-### Input
-
-- `S`           -- set
-- `blocks`      -- (optional, default: [2, …, 2] or [1, …, 1])
-                   block structure - a vector with the size of each block
-
-### Output
-
-A `CartesianProductArray` containing lazy low-dimensional exact
-projections.
-"""
-
-function decompose_explicit(S::LazySet{N};
-                   blocks::AbstractVector{Int}=default_block_structure(S, Interval)
-                  )::CartesianProductArray where {N<:Real}
-    n = dim(S)
-    result = Vector{LazySet{N}}()
-
-    block_start = 1
-    @inbounds for bi in blocks
-        push!(result, project(S, block_start:(block_start + bi - 1), n))
-        block_start += bi
-    end
-
-    return CartesianProductArray(result)
-end
 
 """
     project(S::LazySet{N},
@@ -483,7 +454,7 @@ end
     project(S::LazySet{N},
             block::AbstractVector{Int},
             n::Int
-           )::HPolytope where {N<:Real}
+           )::LinearMap where {N<:Real}
 
 Project a high-dimensional set to a low-dimensional set.
 
