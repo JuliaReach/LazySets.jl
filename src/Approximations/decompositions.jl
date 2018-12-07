@@ -226,13 +226,7 @@ function decompose(S::LazySet{N};
     n = dim(S)
     result = Vector{LazySet{N}}()
 
-    if set_type == LinearMap
-        block_start = 1
-        @inbounds for bi in blocks
-            push!(result, project(S, block_start:(block_start + bi - 1), n))
-            block_start += bi
-    end
-    elseif directions != nothing
+    if directions != nothing
         # template directions
         # potentially defined option set_type is *ignored*
         block_start = 1
@@ -469,9 +463,10 @@ Project a high-dimensional set to a low-dimensional set.
 The lazy linear map of the projection of `S`.
 """
 @inline function project(S::LazySet{N},
-                         block::AbstractVector{Int},
-                         n::Int=dim(S)
-                        )::LinearMap where {N<:Real}
+                block::AbstractVector{Int},
+                set_type::Type{<:LinearMap},
+                n::Int=dim(S),
+                ε::Real=Inf)::LinearMap where {N<:Real}
     M = sparse(1:length(block), block, ones(N, length(block)), length(block), n)
     return M * S
 end
