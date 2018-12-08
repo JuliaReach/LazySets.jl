@@ -75,7 +75,7 @@ end
 
 """
     tohrep(P::VPolygon{N}, ::Type{HPOLYGON}=HPolygon
-          )::AbstractHPolygon{N} where {N<:Real, HPOLYGON<:AbstractHPolygon}
+          )::HPOLYGON{N} where {N<:Real, HPOLYGON<:AbstractHPolygon}
 
 Build a constraint representation of the given polygon.
 
@@ -96,7 +96,7 @@ constraints will be sorted automatically (CCW) if we start with the first edge
 between the first and second vertex.
 """
 function tohrep(P::VPolygon{N}, ::Type{HPOLYGON}=HPolygon
-               )::AbstractHPolygon{N} where {N<:Real, HPOLYGON<:AbstractHPolygon}
+               )::HPOLYGON{N} where {N<:Real, HPOLYGON<:AbstractHPolygon}
     vl = vertices_list(P)
     n = length(vl)
     if n == 0
@@ -129,7 +129,7 @@ function tohrep(P::VPolygon{N}, ::Type{HPOLYGON}=HPolygon
         lower_hull = [halfspace_left(vl[j], vl[j+1]) for j in 1:i-1]
         constraints_list = vcat(upper_hull, mid_hull, lower_hull)
     end
-    return HPOLYGON{N}(constraints_list)
+    return HPOLYGON(constraints_list)
 end
 
 

@@ -311,7 +311,7 @@ function order(Z::Zonotope)::Rational
 end
 
 """
-    minkowski_sum(Z1::Zonotope, Z2::Zonotope)
+    minkowski_sum(Z1::Zonotope{N}, Z2::Zonotope{N}) where {N<:Real}
 
 Concrete Minkowski sum of a pair of zonotopes.
 
@@ -325,12 +325,12 @@ Concrete Minkowski sum of a pair of zonotopes.
 The zonotope obtained by summing the centers and concatenating the generators
 of ``Z_1`` and ``Z_2``.
 """
-function minkowski_sum(Z1::Zonotope, Z2::Zonotope)
+function minkowski_sum(Z1::Zonotope{N}, Z2::Zonotope{N}) where {N<:Real}
     return Zonotope(Z1.center + Z2.center, [Z1.generators Z2.generators])
 end
 
 """
-    linear_map(M::AbstractMatrix, Z::Zonotope)
+    linear_map(M::AbstractMatrix{N}, Z::Zonotope{N}) where {N<:Real}
 
 Concrete linear map of a zonotope.
 
@@ -344,7 +344,7 @@ Concrete linear map of a zonotope.
 The zonotope obtained by applying the linear map to the center and generators
 of ``Z``.
 """
-function linear_map(M::AbstractMatrix, Z::Zonotope)
+function linear_map(M::AbstractMatrix{N}, Z::Zonotope{N}) where {N<:Real}
     @assert dim(Z) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
                                  "applied to a set of dimension $(dim(Z))"
 

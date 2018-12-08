@@ -58,7 +58,7 @@ end
 
 
 """
-    tohrep(P::AbstractHPolygon{N})::AbstractHPolygon{N} where {N<:Real}
+    tohrep(P::HPOLYGON)::HPOLYGON where {HPOLYGON<:AbstractHPolygon}
 
 Build a contraint representation of the given polygon.
 
@@ -70,7 +70,7 @@ Build a contraint representation of the given polygon.
 
 The identity, i.e., the same polygon instance.
 """
-function tohrep(P::AbstractHPolygon{N})::AbstractHPolygon{N} where {N<:Real}
+function tohrep(P::HPOLYGON)::HPOLYGON where {HPOLYGON<:AbstractHPolygon}
     return P
 end
 

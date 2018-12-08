@@ -86,7 +86,7 @@ For instance, we can use an exact representation through the
 A, b = Rational{Int}[1 1;1 -1;-1 0], Rational{Int}[1,0,0]
 p = HPolytope(A, b)
 
-polyhedron(p, CDDLib.Library(:exact))
+polyhedron(p; backend=CDDLib.Library(:exact))
 ```
 
 ## Methods
