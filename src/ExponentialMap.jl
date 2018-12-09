@@ -182,7 +182,8 @@ end
 
 """
 ```
-    *(spmexp::SparseMatrixExp, X::LazySet)::ExponentialMap
+    *(spmexp::SparseMatrixExp{N},
+      X::LazySet{N})::ExponentialMap{N} where {N<:Real}
 ```
 
 Return the exponential map of a convex set from a sparse matrix exponential.
@@ -196,7 +197,8 @@ Return the exponential map of a convex set from a sparse matrix exponential.
 
 The exponential map of the convex set.
 """
-function *(spmexp::SparseMatrixExp, X::LazySet)::ExponentialMap
+function *(spmexp::SparseMatrixExp{N},
+           X::LazySet{N})::ExponentialMap{N} where {N<:Real}
     return ExponentialMap(spmexp, X)
 end
 
@@ -275,7 +277,7 @@ function ρ(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
 end
 
 """
-    ∈(x::AbstractVector{N}, em::ExponentialMap{<:LazySet{N}})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N}, em::ExponentialMap{N})::Bool where {N<:Real}
 
 Check whether a given point is contained in an exponential map of a convex set.
 
@@ -307,7 +309,7 @@ julia> ∈([1.0, 1.0], em)
 true
 ```
 """
-function ∈(x::AbstractVector{N}, em::ExponentialMap{N, <:LazySet{N}})::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, em::ExponentialMap{N})::Bool where {N<:Real}
     @assert length(x) == dim(em)
     return ∈(expmv(-one(N), em.spmexp.M, x), em.X)
 end

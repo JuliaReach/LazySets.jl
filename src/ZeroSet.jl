@@ -161,7 +161,7 @@ function rand(::Type{ZeroSet};
 end
 
 """
-    linear_map(M::AbstractMatrix, Z::ZeroSet{N}) where {N<:Real}
+    linear_map(M::AbstractMatrix{N}, Z::ZeroSet{N}) where {N<:Real}
 
 Concrete linear map of a zero set.
 
@@ -174,7 +174,7 @@ Concrete linear map of a zero set.
 
 The zero set whose dimension matches the output dimension of the given matrix.
 """
-function linear_map(M::AbstractMatrix, Z::ZeroSet{N}) where {N<:Real}
+function linear_map(M::AbstractMatrix{N}, Z::ZeroSet{N}) where {N<:Real}
     @assert dim(Z) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
                                  "applied to a set of dimension $(dim(Z))"
 

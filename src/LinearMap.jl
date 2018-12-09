@@ -47,7 +47,7 @@ LinearMap(M::MAT, lm::LinearMap{N, S, NM, MAT}) where {N<:Real, S<:LazySet{N},
 
 """
 ```
-    *(M::AbstractMatrix, X::LazySet)
+    *(M::AbstractMatrix{N}, X::LazySet{N}) where {N<:Real}
 ```
 
 Return the linear map of a convex set.
@@ -61,13 +61,17 @@ Return the linear map of a convex set.
 
 A lazy linear map, i.e. a `LinearMap` instance.
 """
-*(M::AbstractMatrix, X::LazySet) = LinearMap(M, X)
+function *(M::AbstractMatrix{N}, X::LazySet{N}) where {N<:Real}
+    return LinearMap(M, X)
+end
 
-*(M::AbstractVector, X::LazySet) = LinearMap(reshape(M, length(M), 1), X)
+function *(M::AbstractVector{N}, X::LazySet{N}) where {N<:Real}
+    return LinearMap(reshape(M, length(M), 1), X)
+end
 
 """
 ```
-    *(a::N, X::LazySet) where {N}
+    *(a::N, X::LazySet{N}) where {N<:Real}
 ```
 
 Return a linear map of a convex set by a scalar value.
@@ -81,14 +85,14 @@ Return a linear map of a convex set by a scalar value.
 
 The linear map of the convex set.
 """
-function *(a::N, X::LazySet{N}) where {N}
+function *(a::N, X::LazySet{N}) where {N<:Real}
     n = dim(X)
     return LinearMap(sparse(a * I, n, n), X)
 end
 
 """
 ```
-    *(a::N, lm::LM)::LM where {N<:Real, S<:LazySet{N}, LM<:LinearMap{N, S}}
+    *(a::N, lm::LM)::LM where {N<:Real, LM<:LinearMap{N}}
 ```
 
 Return a linear map scaled by a scalar value.
@@ -102,13 +106,13 @@ Return a linear map scaled by a scalar value.
 
 The scaled linear map.
 """
-function *(a::N, lm::LM)::LM where {N<:Real, S<:LazySet{N}, LM<:LinearMap{N, S}}
+function *(a::N, lm::LM)::LM where {N<:Real, LM<:LinearMap{N}}
     return LinearMap(a * lm.M, lm.X)
 end
 
 """
 ```
-    *(M::MAT, Z::ZeroSet{N})::ZeroSet{N} where {N<:Real, MAT<:AbstractMatrix}
+    *(M::AbstractMatrix{N}, Z::ZeroSet{N})::ZeroSet{N} where {N<:Real}
 ```
 
 A linear map of a zero set, which is simplified to a zero set (the absorbing
@@ -123,8 +127,7 @@ element).
 
 The zero set with the output dimension of the linear map.
 """
-function *(M::MAT,
-           Z::ZeroSet{N})::ZeroSet{N} where {N<:Real, MAT<:AbstractMatrix}
+function *(M::AbstractMatrix{N}, Z::ZeroSet{N})::ZeroSet{N} where {N<:Real}
     @assert dim(Z) == size(M, 2) "a linear map of size $(size(M)) cannot " *
             "be applied to a set of dimension $(dim(Z))"
     return ZeroSet{N}(size(M, 1))
@@ -243,7 +246,7 @@ function ∈(x::AbstractVector{N}, lm::LinearMap{N})::Bool where {N<:Real}
 end
 
 """
-    an_element(lm::LinearMap)
+    an_element(lm::LinearMap{N})::Vector{N} where {N<:Real}
 
 Return some element of a linear map.
 
@@ -256,7 +259,7 @@ Return some element of a linear map.
 An element in the linear map.
 It relies on the `an_element` function of the wrapped set.
 """
-function an_element(lm::LinearMap)
+function an_element(lm::LinearMap{N})::Vector{N} where {N<:Real}
     return lm.M * an_element(lm.X)
 end
 

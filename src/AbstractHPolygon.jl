@@ -58,7 +58,7 @@ end
 
 
 """
-    tohrep(P::AbstractHPolygon{N})::AbstractHPolygon{N} where {N<:Real}
+    tohrep(P::HPOLYGON)::HPOLYGON where {HPOLYGON<:AbstractHPolygon}
 
 Build a contraint representation of the given polygon.
 
@@ -70,7 +70,7 @@ Build a contraint representation of the given polygon.
 
 The identity, i.e., the same polygon instance.
 """
-function tohrep(P::AbstractHPolygon{N})::AbstractHPolygon{N} where {N<:Real}
+function tohrep(P::HPOLYGON)::HPOLYGON where {HPOLYGON<:AbstractHPolygon}
     return P
 end
 
@@ -80,7 +80,8 @@ end
 
 """
     vertices_list(P::AbstractHPolygon{N},
-                  apply_convex_hull::Bool=false
+                  apply_convex_hull::Bool=false,
+                  check_feasibility::Bool=true
                  )::Vector{Vector{N}} where {N<:Real}
 
 Return the list of vertices of a polygon in constraint representation.
@@ -88,15 +89,28 @@ Return the list of vertices of a polygon in constraint representation.
 ### Input
 
 - `P`                 -- polygon in constraint representation
-- `apply_convex_hull` -- (optional, default: `false`) to post process or not the
+- `apply_convex_hull` -- (optional, default: `false`) flag to post-process the
                          intersection of constraints with a convex hull
+- `check_feasibility` -- (optional, default: `true`) flag to check whether the
+                         polygon was empty (required for correctness in case of
+                         empty polygons)
 
 ### Output
 
 List of vertices.
+
+### Algorithm
+
+We compute each vertex as the intersection of consecutive lines defined by the
+half-spaces.
+If `check_feasibility` is active, we then check if the constraints of the
+polygon were actually feasible (i.e., they pointed in the *right* direction).
+For this we compute the *average* of all vertices and check membership in each
+constraint.
 """
 function vertices_list(P::AbstractHPolygon{N},
-                       apply_convex_hull::Bool=false
+                       apply_convex_hull::Bool=false,
+                       check_feasibility::Bool=true
                       )::Vector{Vector{N}} where {N<:Real}
     n = length(P.constraints)
     points = Vector{Vector{N}}(undef, n)
@@ -109,6 +123,15 @@ function vertices_list(P::AbstractHPolygon{N},
     end
     points[n] = element(intersection(Line(P.constraints[n]),
                                      Line(P.constraints[1])))
+
+    # check if polygon was empty
+    if check_feasibility
+        avg = sum(points) / length(points)
+        if avg ∉ P
+            return Vector{Vector{N}}(undef, 0)
+        end
+    end
+
     return apply_convex_hull ? convex_hull(points) : points
 end
 

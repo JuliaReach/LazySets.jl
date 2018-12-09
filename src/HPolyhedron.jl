@@ -2,7 +2,8 @@ using MathProgBase, GLPKMathProgInterface
 
 import Base: isempty,
              rand,
-             convert
+             convert,
+             copy
 
 export HPolyhedron,
        dim, σ, ∈,
@@ -14,7 +15,10 @@ export HPolyhedron,
        cartesian_product,
        vertices_list,
        singleton_list,
-       isempty
+       isempty,
+       remove_redundant_constraints,
+       remove_redundant_constraints!,
+       constrained_dimensions
 
 """
     HPolyhedron{N<:Real} <: LazySet{N}
@@ -44,6 +48,8 @@ function HPolyhedron(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real}
     end
     return HPolyhedron(constraints)
 end
+
+HPolyhedron{N}(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real} = HPolyhedron(A, b)
 
 # convenience union type
 const HPoly{N} = Union{HPolytope{N}, HPolyhedron{N}}
@@ -242,6 +248,35 @@ function rand(::Type{HPolyhedron};
     return HPolyhedron(constraints_Q)
 end
 
+"""
+    constrained_dimensions(P::HPolyhedron{N})::Vector{Int} where {N<:Real}
+
+Return the indices in which a polyhedron in constraint representation is
+constrained.
+
+### Input
+
+- `P` -- polyhedron in constraint representation
+
+### Output
+
+A vector of ascending indices `i` such that the polyhedron is constrained in
+dimension `i`.
+
+### Examples
+
+A 2D polyhedron with constraint ``x1 ≥ 0`` is constrained in dimension 1 only.
+"""
+function constrained_dimensions(P::HPolyhedron{N})::Vector{Int} where {N<:Real}
+    zero_indices = zeros(Int, dim(P))
+    for constraint in P.constraints
+        for i in constrained_dimensions(constraint)
+            zero_indices[i] = i
+        end
+    end
+    return filter(x -> x != 0, zero_indices)
+end
+
 
 # ===========================================
 # HPolyhedron and HPolytope's shared methods
@@ -323,7 +358,7 @@ function tosimplehrep(P::HPoly{N}) where {N<:Real}
 end
 
 """
-    tohrep(P::HPoly{N}) where {N}
+    tohrep(P::HPoly{N}) where {N<:Real}
 
 Return a constraint representation of the given polyhedron in constraint
 representation (no-op).
@@ -336,8 +371,108 @@ representation (no-op).
 
 The same polyhedron instance.
 """
-function tohrep(P::HPoly{N}) where {N}
+function tohrep(P::HPoly{N}) where {N<:Real}
     return P
+end
+
+"""
+    remove_redundant_constraints(P::PT;
+                                 backend=GLPKSolverLP()) where {N, PT<:HPoly{N}}
+
+Given a polyhedron in H-representation, return a new polyhedron with no reundant
+constraints.
+
+### Input
+
+- `P`       -- polyhedron
+- `backend` -- (optional, default: `GLPKSolverLP`) the numeric LP solver backend
+
+### Output
+
+A new polyhedron obtained by removing the redundant constraints in `P`.
+
+### Algorithm
+
+See `remove_redundant_constraints!`. 
+"""
+function remove_redundant_constraints(P::PT;
+                                      backend=GLPKSolverLP()) where {N, PT<:HPoly{N}}
+    return remove_redundant_constraints!(copy(P), backend=backend)
+end
+
+"""
+    remove_redundant_constraints!(P::PT;
+                                  backend=GLPKSolverLP()) where {N, PT<:HPoly{N}}
+
+Remove the redundant constraints in a polyhedron in H-representation; the polyhedron
+is updated inplace.
+
+### Input
+
+- `P`       -- polyhedron
+- `backend` -- (optional, default: `GLPKSolverLP`) the numeric LP solver backend
+
+### Output
+
+The polyhedron obtained by removing the redundant constraints in `P`.
+
+### Algorithm
+
+If the polyhedron `P` has `m` constraints and its dimension is `n`,
+this function checks one by one if each of the `m` constraints is
+implied by the remaining ones. To check if the `k`-th constraint
+is redundant, an LP is formulated.
+
+For details, see [Fukuda's Polyhedra
+FAQ](https://www.cs.mcgill.ca/~fukuda/soft/polyfaq/node24.html).
+"""
+function remove_redundant_constraints!(P::PT;
+                                       backend=GLPKSolverLP()) where {N, PT<:HPoly{N}}
+
+    A, b = tosimplehrep(P)
+    m, n = size(A)
+    non_redundant_indices = 1:m
+
+    i = 1 # counter over reduced constraints
+
+    for j in 1:m    # loop over original constraints
+        α = A[j, :]
+        Ar = A[non_redundant_indices, :]
+        br = b[non_redundant_indices]
+        br[i] = b[j] + one(N)
+        lp = linprog(-α, Ar, '<', br, -Inf, Inf, backend)
+        if lp.status != :Optimal
+            error("LP is not optimal")
+        end
+        objval = -lp.objval
+        if objval <= b[j]
+            # the constraint is redundant
+            non_redundant_indices = setdiff(non_redundant_indices, j)
+        else
+            # the constraint is not redundant
+            i = i+1
+        end
+    end
+
+    deleteat!(P.constraints, setdiff(1:m, non_redundant_indices))
+    return P
+end
+
+"""
+    copy(P::PT) where {N, PT<:HPoly{N}}
+
+Create a copy of a polyhedron.
+
+### Input
+
+- `P` -- polyhedron
+
+### Output
+
+The polyhedron obtained by copying the constraints in `P` using `Base.copy`.
+"""
+function copy(P::PT) where {N, PT<:HPoly{N}}
+    return PT(copy(P.constraints))
 end
 
 # ========================================================
@@ -370,9 +505,9 @@ For further information on the supported backends see
 function convex_hull(P1::HPoly{N},
                      P2::HPoly{N};
                      backend=default_polyhedra_backend(P1, N)) where {N}
-    @assert isdefined(Main, :Polyhedra) "the function `convex_hull` needs " *
+    @assert isdefined(@__MODULE__, :Polyhedra) "the function `convex_hull` needs " *
                                         "the package 'Polyhedra' to be loaded"
-    Pch = convexhull(polyhedron(P1, backend), polyhedron(P2, backend))
+    Pch = convexhull(polyhedron(P1; backend=backend), polyhedron(P2; backend=backend))
     return convert(typeof(P1), Pch)
 end
 
@@ -402,15 +537,15 @@ function cartesian_product(P1::HPoly{N},
                            P2::HPoly{N};
                            backend=default_polyhedra_backend(P1, N)
                           ) where N<:Real
-    @assert isdefined(Main, :Polyhedra) "the function `cartesian_product` " *
+    @assert isdefined(@__MODULE__, :Polyhedra) "the function `cartesian_product` " *
         "needs the package 'Polyhedra' to be loaded"
-    Pcp = hcartesianproduct(polyhedron(P1, backend), polyhedron(P2, backend))
+    Pcp = hcartesianproduct(polyhedron(P1; backend=backend), polyhedron(P2; backend=backend))
     return convert(typeof(P1), Pcp)
 end
 
 """
     tovrep(P::HPoly{N};
-          [backend]=default_polyhedra_backend(P, N)) where {N}
+          [backend]=default_polyhedra_backend(P, N)) where {N<:Real}
 
 Transform a polyhedron in H-representation to a polytope in V-representation.
 
@@ -431,10 +566,10 @@ For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/).
 """
 function tovrep(P::HPoly{N};
-                backend=default_polyhedra_backend(P, N)) where {N}
-    @assert isdefined(Main, :Polyhedra) "the function `tovrep` needs " *
+                backend=default_polyhedra_backend(P, N)) where {N<:Real}
+    @assert isdefined(@__MODULE__, :Polyhedra) "the function `tovrep` needs " *
                                         "the package 'Polyhedra' to be loaded"
-    P = polyhedron(P, backend)
+    P = polyhedron(P; backend=backend)
     return VPolytope(P)
 end
 
@@ -515,9 +650,9 @@ default.
 function isempty(P::HPoly{N};
                  backend=default_polyhedra_backend(P, N),
                  solver=GLPKSolverLP())::Bool where {N<:Real}
-    @assert isdefined(Main, :Polyhedra) "the function `isempty` needs the " *
+    @assert isdefined(@__MODULE__, :Polyhedra) "the function `isempty` needs the " *
                                         "package 'Polyhedra' to be loaded"
-    return Polyhedra.isempty(polyhedron(P, backend), solver)
+    return Polyhedra.isempty(polyhedron(P; backend=backend), solver)
 end
 
 convert(::Type{HPolytope}, P::HPolyhedron{N}) where N =
@@ -583,7 +718,8 @@ else
 end # if VERSION < v"0.7-"
 
 """
-    polyhedron(P::HPoly{N}, [backend]=default_polyhedra_backend(P, N)) where {N}
+    polyhedron(P::HPoly{N};
+               [backend]=default_polyhedra_backend(P, N)) where {N<:Real}
 
 Return an `HRep` polyhedron from `Polyhedra.jl` given a polytope in
 H-representation.
@@ -603,7 +739,8 @@ An `HRep` polyhedron.
 For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/).
 """
-function polyhedron(P::HPoly{N}, backend=default_polyhedra_backend(P, N)) where {N}
+function polyhedron(P::HPoly{N};
+                    backend=default_polyhedra_backend(P, N)) where {N<:Real}
     A, b = tosimplehrep(P)
     return Polyhedra.polyhedron(Polyhedra.hrep(A, b), backend)
 end

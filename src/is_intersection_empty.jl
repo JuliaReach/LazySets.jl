@@ -262,7 +262,7 @@ end
     is_intersection_empty(B1::Ball2{N},
                           B2::Ball2{N},
                           witness::Bool=false
-                         )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
+                         )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:AbstractFloat
 
 Check whether two balls in the 2-norm do not intersect, and otherwise optionally
 compute a witness.
@@ -295,7 +295,7 @@ choose `B1` for the smaller ball) as follows.
 function is_intersection_empty(B1::Ball2{N},
                                B2::Ball2{N},
                                witness::Bool=false
-                              )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:Real
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where N<:AbstractFloat
     center_diff_normed = norm(center(B2) - center(B1), 2)
     empty_intersection = center_diff_normed > B1.radius + B2.radius
 

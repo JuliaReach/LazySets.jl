@@ -210,7 +210,7 @@ Return the indices in which a half-space is constrained.
 A vector of ascending indices `i` such that the half-space is constrained in
 dimension `i`.
 
-### Notes
+### Examples
 
 A 2D half-space with constraint ``x1 ≥ 0`` is constrained in dimension 1 only.
 """

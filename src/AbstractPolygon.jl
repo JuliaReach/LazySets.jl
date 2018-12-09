@@ -14,8 +14,8 @@ Abstract type for polygons (i.e., 2D polytopes).
 Every concrete `AbstractPolygon` must define the following functions:
 - `tovrep(::AbstractPolygon{N})::VPolygon{N}`         -- transform into
     V-representation
-- `tohrep(::AbstractPolygon{N})::AbstractHPolygon{N}` -- transform into
-    H-representation
+- `tohrep(::AbstractPolygon{N})::S where {S<:AbstractHPolygon{N}}` -- transform
+    into H-representation
 
 ```jldoctest
 julia> subtypes(AbstractPolygon)
@@ -180,8 +180,8 @@ function <=(u::AbstractVector{N},
 end
 
 """
-    linear_map(M::AbstractMatrix, P::AbstractPolygon{N};
-               output_type::Type{<:LazySet}=typeof(P)) where {N}
+    linear_map(M::AbstractMatrix{N}, P::AbstractPolygon{N};
+               output_type::Type{<:LazySet}=typeof(P)) where {N<:Real}
 
 Concrete linear map of an abstract polygon.
 
@@ -202,8 +202,8 @@ obtaining a polygon in V-representation. Since polygons are closed under linear
 map, by default ``MP`` is converted to the concrete type of ``P``. If an
 `output_type` is given, the corresponding `convert` method is invoked.
 """
-function linear_map(M::AbstractMatrix, P::AbstractPolygon{N};
-                    output_type::Type{<:LazySet}=typeof(P)) where {N}
+function linear_map(M::AbstractMatrix{N}, P::AbstractPolygon{N};
+                    output_type::Type{<:LazySet}=typeof(P)) where {N<:Real}
     @assert dim(P) == size(M, 2)
     MP = broadcast(v -> M * v, vertices_list(P)) |> VPolygon{N}
     return convert(output_type, MP)
