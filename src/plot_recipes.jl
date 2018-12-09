@@ -47,6 +47,10 @@ plotting singletons.
     vlist = transpose(hcat(convex_hull(vertices_list(P))...))
     (x, y) = vlist[:, 1], vlist[:, 2]
 
+    # add first vertex to "close" the polygon
+    push!(x, vlist[1, 1])
+    push!(y, vlist[1, 2])
+
     seriestype := norm(vlist[1, :] - vlist[2, :]) ≈ 0 ? :scatter : :shape
 
     x, y
@@ -92,7 +96,13 @@ correctly.
         @assert dim(X) == 2  "cannot plot a $(dim(X))-dimensional set"
         Pi = Approximations.overapproximate(X)
         vlist = transpose(hcat(convex_hull(vertices_list(Pi))...))
-        @series (x, y) = vlist[:, 1], vlist[:, 2]
+        x, y = vlist[:, 1], vlist[:, 2]
+
+        # add first vertex to "close" the polygon
+        push!(x, vlist[1, 1])
+        push!(y, vlist[1, 2])
+
+        @series (x, y)
     end
 end
 
@@ -126,6 +136,10 @@ julia> plot(randn(2, 2) * B, 1e-3);
     P = Approximations.overapproximate(S, ε)
     vlist = transpose(hcat(vertices_list(P)...))
     (x, y) = vlist[:, 1], vlist[:, 2]
+
+    # add first vertex to "close" the polygon
+    push!(x, vlist[1, 1])
+    push!(y, vlist[1, 2])
 
     x, y
 end
@@ -163,7 +177,13 @@ julia> plot([B1, B2], 1e-4);
         @assert dim(X) == 2  "cannot plot a $(dim(X))-dimensional set"
         Pi = Approximations.overapproximate(X, ε)
         vlist = transpose(hcat(vertices_list(Pi)...))
-        @series (x, y) = vlist[:, 1], vlist[:, 2]
+        x, y = vlist[:, 1], vlist[:, 2]
+
+        # add first vertex to "close" the polygon
+        push!(x, vlist[1, 1])
+        push!(y, vlist[1, 2])
+
+        @series (x, y)
     end
 end
 
@@ -214,7 +234,11 @@ julia> plot(P);
     vlist = transpose(hcat(points...))
     (x, y) = vlist[:, 1], vlist[:, 2]
 
-     x, y
+    # add first vertex to "close" the polygon
+    push!(x, vlist[1, 1])
+    push!(y, vlist[1, 2])
+
+    x, y
 end
 
 """
@@ -269,7 +293,13 @@ It is assumed that the given vector of polytopes is two-dimensional.
         @assert dim(Pi) == 2  "cannot plot a $(dim(Pi))-dimensional polytope"
         points = convex_hull(vertices_list(Pi))
         vlist = transpose(hcat(points...))
-        @series (x, y) = vlist[:, 1], vlist[:, 2]
+        x, y = vlist[:, 1], vlist[:, 2]
+
+        # add first vertex to "close" the polygon
+        push!(x, vlist[1, 1])
+        push!(y, vlist[1, 2])
+
+        @series (x, y)
     end
 end
 
