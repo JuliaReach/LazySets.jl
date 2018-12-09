@@ -185,6 +185,7 @@ Pages = [
     "man/iterative_refinement.md",
     "man/interval_hulls.md",
     "man/convex_hulls.md",
+    "man/set_operations.md",
     "man/reach_zonotopes.md",
     "man/reach_zonotopes_hybrid.md",
     "man/concrete_polyhedra.md"
@@ -199,7 +200,9 @@ Pages = [
     "lib/interfaces.md",
     "lib/representations.md",
     "lib/operations.md",
+    "lib/comparisons.md",
     "lib/conversion.md",
+    "lib/binary_functions.md",
     "lib/approximations.md",
     "lib/utils.md"
 ]
