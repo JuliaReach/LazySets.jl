@@ -19,4 +19,8 @@ for N in [Float64, Float32, Rational{Int}]
     biexp = BallInf(N[0.5, 0], N(1.5))
     @test bi.center ≈ biexp.center
     @test bi.radius ≈ biexp.radius
+
+    # empty set
+    E = EmptySet{N}()
+    @test ballinf_approximation(E) == E
 end

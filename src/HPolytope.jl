@@ -40,6 +40,7 @@ function HPolytope(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real}
     return HPolytope(constraints)
 end
 
+HPolytope{N}(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real} = HPolytope(A, b)
 
 # --- LazySet interface functions ---
 
@@ -78,7 +79,7 @@ function rand(::Type{HPolytope};
               seed::Union{Int, Nothing}=nothing,
               num_vertices::Int=-1
              )::HPolytope{N}
-    @assert isdefined(Main, :Polyhedra) "the function `rand` needs the " *
+    @assert isdefined(@__MODULE__, :Polyhedra) "the function `rand` needs the " *
                                         "package 'Polyhedra' loaded"
     rng = reseed(rng, seed)
     vpolytope = rand(VPolytope; N=N, dim=dim, rng=rng, seed=seed,
@@ -182,9 +183,9 @@ function vertices_list(P::HPolytope{N};
     if length(P.constraints) == 0
         return Vector{N}(undef, Vector{N}(undef, 0))
     end
-    @assert isdefined(Main, :Polyhedra) "the function `vertices_list` needs " *
+    @assert isdefined(@__MODULE__, :Polyhedra) "the function `vertices_list` needs " *
                                         "the package 'Polyhedra' to be loaded"
-    P = polyhedron(P, backend)
+    P = polyhedron(P; backend=backend)
     prunefunc(P)
     return collect(points(P))
 end

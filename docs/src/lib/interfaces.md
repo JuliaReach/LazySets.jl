@@ -47,16 +47,21 @@ Every `LazySet` type must define a function `σ` to compute the support vector.
 support_vector
 ρ(::AbstractVector{N}, ::LazySet{N}) where {N<:Real}
 support_function
+σ
 ```
 
 ### Other globally defined set functions
 
 ```@docs
-norm(::LazySet, ::Real)
-radius(::LazySet, ::Real)
-diameter(::LazySet, ::Real)
-an_element(::LazySet{Real})
+norm(::LazySet, ::Real=Inf)
+radius(::LazySet, ::Real=Inf)
+diameter(::LazySet, ::Real=Inf)
+an_element(::LazySet{N}) where {N<:Real}
 ==(::LazySet, ::LazySet)
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet)
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:LazySet}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet, ::Float64)
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}, ::Float64) where {S<:LazySet}
 ```
 
 ### Aliases for set types
@@ -100,8 +105,10 @@ This interface defines the following functions:
 
 ```@docs
 singleton_list(::AbstractPolytope{N}) where {N<:Real}
-linear_map(::AbstractMatrix, ::AbstractPolytope)
-isempty(::AbstractPolytope{N}) where {N<:Real}
+linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real}
+isempty(::AbstractPolytope)
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractPolytope)
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:AbstractPolytope}
 ```
 
 ### Polygon
@@ -116,7 +123,7 @@ This interface defines the following functions:
 
 ```@docs
 dim(P::AbstractPolygon)
-linear_map(::AbstractMatrix, P::AbstractPolygon{N}) where N
+linear_map(::AbstractMatrix{N}, P::AbstractPolygon{N}) where {N<:Real}
 ```
 
 #### HPolygon
@@ -131,13 +138,14 @@ This interface defines the following functions:
 
 ```@docs
 an_element(::AbstractHPolygon{N}) where {N<:Real}
-∈(::AbstractVector{Real}, ::AbstractHPolygon{Real})
+∈(::AbstractVector{N}, ::AbstractHPolygon{N}) where {N<:Real}
 rand(::Type{HPOLYGON}) where {HPOLYGON<:AbstractHPolygon}
-vertices_list(::AbstractHPolygon{Real})
-tohrep(::AbstractHPolygon{Real})
-tovrep(::AbstractHPolygon{Real})
-addconstraint!(::AbstractHPolygon{Real}, ::LinearConstraint{Real})
-constraints_list(::AbstractHPolygon{Real})
+tohrep(::HPOLYGON) where {HPOLYGON<:AbstractHPolygon}
+tovrep(::AbstractHPolygon{N}) where {N<:Real}
+addconstraint!(::AbstractHPolygon{N}, ::LinearConstraint{N}) where {N<:Real}
+addconstraint!(::Vector{LinearConstraint{N}}, ::LinearConstraint{N}) where {N<:Real}
+constraints_list(::AbstractHPolygon{N}) where {N<:Real}
+vertices_list(::AbstractHPolygon{N}, ::Bool=false, ::Bool=true) where {N<:Real}
 ```
 
 ### Centrally symmetric polytope
@@ -169,14 +177,14 @@ AbstractHyperrectangle
 This interface defines the following functions:
 
 ```@docs
-norm(::AbstractHyperrectangle, ::Real)
-radius(::AbstractHyperrectangle, ::Real)
-σ(::AbstractVector{Real}, ::AbstractHyperrectangle{Real})
-∈(::AbstractVector{Real}, ::AbstractHyperrectangle{Real})
-vertices_list(::AbstractHyperrectangle{Real})
-constraints_list(::AbstractHyperrectangle{Real})
-high(::AbstractHyperrectangle{Real})
-low(::AbstractHyperrectangle{Real})
+norm(::AbstractHyperrectangle, ::Real=Inf)
+radius(::AbstractHyperrectangle, ::Real=Inf)
+σ(::AbstractVector{N}, ::AbstractHyperrectangle{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::AbstractHyperrectangle{N}) where {N<:Real}
+vertices_list(::AbstractHyperrectangle{N}) where {N<:Real}
+constraints_list(::AbstractHyperrectangle{N}) where {N<:Real}
+high(::AbstractHyperrectangle{N}) where {N<:Real}
+low(::AbstractHyperrectangle{N}) where {N<:Real}
 ```
 
 #### Singleton
@@ -193,9 +201,13 @@ This interface defines the following functions:
 σ(::AbstractVector{N}, ::AbstractSingleton{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::AbstractSingleton{N}) where {N<:Real}
 an_element(::AbstractSingleton{N}) where {N<:Real}
-center(::AbstractSingleton{Real})
+center(::AbstractSingleton{N}) where {N<:Real}
 vertices_list(::AbstractSingleton{N}) where {N<:Real}
-radius_hyperrectangle(::AbstractSingleton{Real})
-radius_hyperrectangle(::AbstractSingleton{Real}, ::Int)
-linear_map(::AbstractMatrix, ::AbstractSingleton{N}) where {N<:Real}
+radius_hyperrectangle(::AbstractSingleton{N}) where {N<:Real}
+radius_hyperrectangle(::AbstractSingleton{N}, ::Int) where {N<:Real}
+high(::AbstractSingleton{N}) where {N<:Real}
+low(::AbstractSingleton{N}) where {N<:Real}
+linear_map(::AbstractMatrix{N}, ::AbstractSingleton{N}) where {N<:Real}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractSingleton)
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:AbstractSingleton}
 ```

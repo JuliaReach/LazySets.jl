@@ -14,7 +14,7 @@ Depth = 3
 ```@meta
 CurrentModule = LazySets.Approximations
 DocTestSetup = quote
-    using LazySets, Plots, LazySets.Approximations
+    using Plots, LazySets, LazySets.Approximations
 end
 ```
 
@@ -43,7 +43,7 @@ Given the unit ball in the 2-norm, below we plot the local approximation along
 the East and North directions.
 
 ```@example example_iterative_refinement
-using LazySets, Plots, LazySets.Approximations
+using Plots, LazySets, LazySets.Approximations
 
 b = Ball2(zeros(2), 1.)
 

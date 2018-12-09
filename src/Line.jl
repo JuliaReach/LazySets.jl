@@ -248,7 +248,7 @@ Return the indices in which a line is constrained.
 A vector of ascending indices `i` such that the line is constrained in dimension
 `i`.
 
-### Notes
+### Examples
 
 A line with constraint ``x1 = 0`` is constrained in dimension 1 only.
 """

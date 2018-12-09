@@ -79,6 +79,21 @@ for N in [Float64, Rational{Int}, Float32]
         @test !isempty(HPolytope{N}())
     end
 
+    # remove redundant constraints
+    P = HPolytope([HalfSpace([1.0, 0.0], 1.0),
+                   HalfSpace([0.0, 1.0], 1.0),
+                   HalfSpace([-1.0, -0.0], 1.0),
+                   HalfSpace([-0.0, -1.0], 1.0),
+                   HalfSpace([2.0, 0.0], 2.0)]) # redundant
+
+    Pred = remove_redundant_constraints(P)
+    @test length(Pred.constraints) == 4
+    @test length(P.constraints) == 5
+
+    # test in-place removal of redundancies
+    remove_redundant_constraints!(P)
+    @test length(P.constraints) == 4
+
     # -----
     # V-rep
     # -----

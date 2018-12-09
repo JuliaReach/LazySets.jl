@@ -32,7 +32,7 @@ overapproximates the states reachable by any trajectory of this IVP.
 ## Algorithm
 
 ```@example example_reach_zonotopes
-using LazySets, Plots
+using Plots, LazySets
 
 function Algorithm1(A, X0, δ, μ, T)
     # bloating factors

@@ -247,7 +247,7 @@ function ρ_helper(d::AbstractVector{N},
                                     <:LazySet{N},
                                     <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}},
                   algorithm::String;
-                  kwargs...) where N<:Real
+                  kwargs...) where {N<:Real}
     X = cap.X # compact set
     H = cap.Y # halfspace or hyperplane or line
 
@@ -262,7 +262,7 @@ function ρ_helper(d::AbstractVector{N},
         # return min(ρ(d, X; kwargs...), ρ(d, H; kwargs...))
         return ρ(d, X; kwargs...)
     elseif algorithm == "line_search"
-        @assert isdefined(Main, :Optim) "the algorithm $algorithm needs " *
+        @assert isdefined(@__MODULE__, :Optim) "the algorithm $algorithm needs " *
             "the package 'Optim' to be loaded"
         (s, _) = _line_search(d, X, H; kwargs...)
         return s
@@ -276,7 +276,7 @@ function ρ_helper(d::AbstractVector{N},
 end
 
 """
-    use_precise_ρ(cap::Intersection{N})::Bool where N<:Real
+    use_precise_ρ(cap::Intersection{N})::Bool where {N<:Real}
 
 Determine whether a precise algorithm for computing ``ρ`` shall be applied.
 
@@ -297,17 +297,17 @@ returned.
 
 This function can be overwritten by the user to control the policy.
 """
-function use_precise_ρ(cap::Intersection{N})::Bool where N<:Real
+function use_precise_ρ(cap::Intersection{N})::Bool where {N<:Real}
     return true
 end
 
 """
     ρ(d::AbstractVector{N},
-      cap::Intersection{N,
-                        <:LazySet{N},
-                        <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}};
+      cap::Intersection{N, S1, S2};
       [algorithm]::String="line_search",
-      [kwargs...]) where N<:Real
+      [kwargs...]) where {N<:Real,
+                          S1<:LazySet{N},
+                          S2<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}}
 
 Return the support function of the intersection of a compact set and a
 half-space/hyperplane/line in a given direction.
@@ -364,28 +364,28 @@ For additional information we refer to:
   Variational Analysis](https://www.springer.com/us/book/9783540627722).
 """
 function ρ(d::AbstractVector{N},
-           cap::Intersection{N,
-                             <:LazySet{N},
-                             <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}};
+           cap::Intersection{N, S1, S2};
            algorithm::String="line_search",
-           kwargs...) where N<:Real
+           kwargs...) where {N<:Real,
+                             S1<:LazySet{N},
+                             S2<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}}
     return ρ_helper(d, cap, algorithm; kwargs...)
 end
 
 # symmetric method
 function ρ(d::AbstractVector{N},
-           cap::Intersection{N,
-                             <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
-                             <:LazySet{N}};
+           cap::Intersection{N, S1, S2};
            algorithm::String="line_search",
-           kwargs...) where N<:Real
+           kwargs...) where {N<:Real,
+                             S1<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
+                             S2<:LazySet{N}}
     return ρ_helper(d, swap(cap), algorithm; kwargs...)
 end
 
 """
     ρ(d::AbstractVector{N},
-      cap::Intersection{N, <:LazySet{N}, <:AbstractPolytope{N}};
-      kwargs...) where {N<:Real}
+      cap::Intersection{N, S1, S2};
+      kwargs...) where {N<:Real, S1<:LazySet{N}, S2<:AbstractPolytope{N}}
 
 Return an upper bound of the intersection between a compact set and a
 polytope along a given direction.
@@ -419,9 +419,9 @@ This method of overapproximation can return a non-empty set even if the original
 intersection is empty.
 """
 function ρ(d::AbstractVector{N},
-           cap::Intersection{N, <:LazySet{N}, <:AbstractPolytope{N}};
-           kwargs...) where {N<:Real}
-    if cap.X isa HPolyhedron # possibly unbounded
+           cap::Intersection{N, S1, S2};
+           kwargs...) where {N<:Real, S1<:LazySet{N}, S2<:AbstractPolytope{N}}
+    if S1 == HPolyhedron # possibly unbounded
         X = cap.Y  # compact set
         P = cap.X  # polyhedron
     else
@@ -433,15 +433,16 @@ end
 
 # symmetric method
 function ρ(d::AbstractVector{N},
-           cap::Intersection{N, <:AbstractPolytope{N}, <:LazySet{N}};
-           kwargs...) where {N<:Real}
+           cap::Intersection{N, S1, S2};
+           kwargs...) where {N<:Real, S1<:AbstractPolytope{N}, S2<:LazySet{N}}
     return ρ(d, swap(cap); kwargs...)
 end
 
 # disambiguation
 function ρ(d::AbstractVector{N},
-           cap::Intersection{N, <:AbstractPolytope{N}, <:AbstractPolytope{N}};
-           kwargs...) where {N<:Real}
+           cap::Intersection{N, S1, S2};
+           kwargs...) where {N<:Real, S1<:AbstractPolytope{N},
+                             S2<:AbstractPolytope{N}}
     X = cap.X    # compact set
     P = cap.Y    # polytope
     return minimum([ρ(d, X ∩ Hi; kwargs...) for Hi in constraints_list(P)])
@@ -449,21 +450,20 @@ end
 
 # disambiguation
 function ρ(d::AbstractVector{N},
-           cap::Intersection{N,
-                             <:AbstractPolytope{N},
-                             <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}};
+           cap::Intersection{N, S1, S2};
            algorithm::String="line_search",
-           kwargs...) where N<:Real
+           kwargs...) where {N<:Real, S1<:AbstractPolytope{N},
+                             S2<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}}
     return ρ_helper(d, cap, algorithm; kwargs...)
 end
 
 # symmetric method
 function ρ(d::AbstractVector{N},
-           cap::Intersection{N,
-                             <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
-                             <:AbstractPolytope{N}};
+           cap::Intersection{N, S1, S2};
            algorithm::String="line_search",
-           kwargs...) where N<:Real
+           kwargs...) where {N<:Real,
+                             S1<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
+                             S2<:AbstractPolytope{N}}
     return ρ_helper(d, swap(cap), algorithm; kwargs...)
 end
 
@@ -609,7 +609,7 @@ function dim(ia::IntersectionArray)::Int
 end
 
 """
-    σ(d::AbstractVector{<:Real}, ia::IntersectionArray)::Vector{<:Real}
+    σ(d::AbstractVector{N}, ia::IntersectionArray{N})::Vector{N} where {N<:Real}
 
 Return the support vector of an intersection of a finite number of sets in a
 given direction.
@@ -624,7 +624,8 @@ given direction.
 The support vector in the given direction.
 If the direction has norm zero, the result depends on the individual sets.
 """
-function σ(d::AbstractVector{<:Real}, ia::IntersectionArray)::Vector{<:Real}
+function σ(d::AbstractVector{N},
+           ia::IntersectionArray{N})::Vector{N} where {N<:Real}
     # TODO implement
     error("not implemented yet")
 end

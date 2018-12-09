@@ -182,7 +182,7 @@ Return the indices in which a hyperplane is constrained.
 A vector of ascending indices `i` such that the hyperplane is constrained in
 dimension `i`.
 
-### Notes
+### Examples
 
 A 2D hyperplane with constraint ``x1 = 0`` is constrained in dimension 1 only.
 """

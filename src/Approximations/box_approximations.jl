@@ -37,6 +37,9 @@ box_approximation(S::Hyperrectangle) = S
 box_approximation(S::AbstractHyperrectangle) =
     Hyperrectangle(center(S), radius_hyperrectangle(S))
 
+# special case: empty set
+box_approximation(∅::EmptySet) = ∅
+
 """
     interval_hull
 
@@ -73,6 +76,9 @@ function box_approximation_symmetric(S::LazySet{N};
     end
     return Hyperrectangle(zeros(N, length(c)), abs.(c) .+ r)
 end
+
+# special case: empty set
+box_approximation_symmetric(∅::EmptySet) = ∅
 
 """
     symmetric_interval_hull
@@ -177,3 +183,6 @@ function ballinf_approximation(S::LazySet{N};
     end
     return BallInf(c, r)
 end
+
+# special case: empty set
+ballinf_approximation(∅::EmptySet) = ∅
