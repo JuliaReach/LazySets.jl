@@ -304,8 +304,8 @@ A set of type `set_type` representing an overapproximation of the projection of
                          n::Int=dim(S),
                          ε::Real=Inf
                         )::LazySet{N} where {N<:Real}
-    M = sparse(1:length(block), block, ones(N, length(block)), length(block), n)
-    return overapproximate(M * S, set_type)
+    lm = project(S, block, LinearMap, n)
+    return overapproximate(lm, set_type)
 end
 
 """
@@ -440,8 +440,8 @@ The template direction approximation of the projection of `S`.
                          directions::AbstractDirections{N},
                          n::Int=dim(S)
                         )::HPolytope where {N<:Real}
-    M = sparse(1:length(block), block, ones(N, length(block)), length(block), n)
-    return overapproximate(M * S, directions)
+    lm = project(S, block, LinearMap, n)
+    return overapproximate(lm, directions)
 end
 
 """
