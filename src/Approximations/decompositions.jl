@@ -445,22 +445,25 @@ The template direction approximation of the projection of `S`.
 end
 
 """
-    project(S::LazySet{N},
-            block::AbstractVector{Int},
-            n::Int
-           )::LinearMap where {N<:Real}
+    function project(S::LazySet{N},
+                    block::AbstractVector{Int},
+                    set_type::Type{<:LinearMap},
+                    n::Int=dim(S),
+                    ε::Real=Inf)::LinearMap
 
-Project a high-dimensional set to a low-dimensional set.
+Project a high-dimensional set to a low-dimensional set by a lazy linear map.
 
 ### Input
 
 - `S` -- set
 - `block` -- block structure - a vector with the dimensions of interest
+- `set_type` -- `Hyperrectangle` - used for dispatch
 - `n` -- (optional, default: `dim(S)`) ambient dimension of the set `S`
+- `ε` -- (optional, default: `Inf`) - used for dispatch, ignored
 
 ### Output
 
-The lazy linear map of the projection of `S`.
+A lazy `LinearMap` representing a projection of the high-dimensional set to a low-dimensional.
 """
 @inline function project(S::LazySet{N},
                 block::AbstractVector{Int},
