@@ -259,16 +259,16 @@ end
 # --- common AbstractHPolygon functions ---
 
 """
-    isredundant(c::LinearConstraint{N}, c1::LinearConstraint{N},
-                c2::LinearConstraint{N})::Bool where {N<:Real}
+    isredundant(cmid::LinearConstraint{N}, cright::LinearConstraint{N},
+                cleft::LinearConstraint{N})::Bool where {N<:Real}
 
 Check whether a linear constraint is redundant wrt. two surrounding constraints.
 
 ### Input
 
-- `c`  -- linear constraint of concern
-- `c1` -- linear constraint to the right (clockwise turn)
-- `c2` -- linear constraint to the left (counter-clockwise turn)
+- `cmid`   -- linear constraint of concern
+- `cright` -- linear constraint to the right (clockwise turn)
+- `cleft`  -- linear constraint to the left (counter-clockwise turn)
 
 ### Output
 
@@ -279,45 +279,45 @@ Check whether a linear constraint is redundant wrt. two surrounding constraints.
 We first check whether the angle between the surrounding constraints is < 180°,
 which is a necessary condition (unless the direction is identical to one of the
 other two constraints).
-If so, we next check if the angle is 0°, in which case the constraint `c` is
+If so, we next check if the angle is 0°, in which case the constraint `cmid` is
 redundant unless it is strictly tighter than the other two constraints.
-If the angle is strictly between 0° and 180°, the constraint `c` is redundant if
-and only if the vertex defined by the other two constraints lies inside the set
-defined by `c`.
+If the angle is strictly between 0° and 180°, the constraint `cmid` is redundant
+if and only if the vertex defined by the other two constraints lies inside the
+set defined by `cmid`.
 """
-function isredundant(c::LinearConstraint{N},
-                     c1::LinearConstraint{N},
-                     c2::LinearConstraint{N})::Bool where {N<:Real}
+function isredundant(cmid::LinearConstraint{N},
+                     cright::LinearConstraint{N},
+                     cleft::LinearConstraint{N})::Bool where {N<:Real}
     samedir_check = false
     # determine angle between surrounding constraints
-    if !is_right_turn(c1.a, c2.a)
+    if !is_right_turn(cright.a, cleft.a)
         # angle is > 180°
         samedir_check = true
-    elseif is_right_turn(c2.a, c1.a)
+    elseif is_right_turn(cleft.a, cright.a)
         # angle is 0° or 180°
-        if samedir(c1.a, c2.a)[1]
+        if samedir(cright.a, cleft.a)[1]
             # angle is 0°, i.e., all three constraints have the same direction
             # constraint is redundant unless it is tighter than the other two
-            @assert samedir(c1.a, c.a)[1] && samedir(c2.a, c.a)[1]
-            return !is_tighter_same_dir_2D(c, c1, strict=true) &&
-                   !is_tighter_same_dir_2D(c, c2, strict=true)
+            @assert samedir(cright.a, cmid.a)[1] && samedir(cleft.a, cmid.a)[1]
+            return !is_tighter_same_dir_2D(cmid, cright, strict=true) &&
+                   !is_tighter_same_dir_2D(cmid, cleft, strict=true)
         else
             # angle is 180°
             samedir_check = true
         end
     end
     # check if the constraint has the same direction as one of the two
-    if samedir(c1.a, c.a)[1]
-        return !is_tighter_same_dir_2D(c, c1, strict=true)
-    elseif samedir(c2.a, c.a)[1]
-        return !is_tighter_same_dir_2D(c, c2, strict=true)
+    if samedir(cright.a, cmid.a)[1]
+        return !is_tighter_same_dir_2D(cmid, cright, strict=true)
+    elseif samedir(cleft.a, cmid.a)[1]
+        return !is_tighter_same_dir_2D(cmid, cleft, strict=true)
     elseif samedir_check
         # not the same direction => constraint is not redundant
         return false
     end
-    cap = intersection(Line(c1), Line(c2))
+    cap = intersection(Line(cright), Line(cleft))
     @assert cap isa Singleton
-    return cap ⊆ c
+    return cap ⊆ cmid
 end
 
 """
@@ -350,20 +350,20 @@ function remove_redundant_constraints!(P::AbstractHPolygon)
     C = P.constraints
     i = 1
     go_on = true
-    c1 = C[length(C)] # define initial c1 here
+    cright = C[length(C)] # define initial cright here
     while length(C) >= 3 && go_on
-        c2 = C[i]
+        cmid = C[i]
         if i < length(C)
-            c3 = C[i+1]
+            cleft = C[i+1]
         elseif i == length(C)
-            c3 = C[1]
+            cleft = C[1]
             go_on = false
         end
-        if isredundant(c2, c1, c3)
+        if isredundant(cmid, cright, cleft)
             deleteat!(C, i)
         else
             i += 1
-            c1 = C[i-1] # update c1 (updates less often than c2/c3)
+            cright = C[i-1] # update cright (updates less often than cmid/cleft)
         end
     end
     return P
