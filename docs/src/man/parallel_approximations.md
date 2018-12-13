@@ -44,10 +44,10 @@ end
 
 ## Parallel interval hulls 
 
-Consider the [symmetric interval hull approximation](@ref Symmetric interval hull)
-of a nested lazy set in `n` dimensions, where `n` is a positive integer.
-The calculation, that can be found in the discretization of set-based ODEs,
-is defined below for an artificial example.
+As an illustration of the [symmetric interval hull approximation](@ref Symmetric interval hull)
+of a nested lazy set computed in parallel, consider the following calculation.
+It arises in the discretization of set-based ODEs, and is defined below for an artificial
+example of a tridiagonal matrix of order `n`, where `n` is a positive integer.
 
 ```julia
 using LazySets
@@ -73,8 +73,8 @@ Y(n) = ConvexHull(eAδ(n) * X0(n) ⊕ (δ * B(n) * U), X0(n))
 ```
 
 The set `Y(n)` is parametric in the system's dimension `n`, to facilitate
-benchmarking. We will explore the increase in the computational cost by increasing
-the dimension `n`, and compare the sequential algorithm with the parallel algorithm.
+benchmarking. We will explore the computational cost as the dimension `n` increases,
+and compare the sequential algorithm with the parallel algorithm.
 
 Given the lazy set `Y(n)`, we want to calculate the symmetric interval hull, which
 corresponds to finding the smallest `n`-dimensional hyperrectangle that contains

@@ -33,8 +33,7 @@ end
 
 """
     box_approximation_symmetric(S::LazySet{N}
-                               )::Union{Hyperrectangle{N}, EmptySet{N}}
-                                where {N<:Real}
+                               )::Union{Hyperrectangle{N}, EmptySet{N}} where {N<:Real}
 
 Overapproximate a convex set by a tight hyperrectangle centered in the origin,
 using a parallel algorithm.
@@ -52,7 +51,8 @@ A tight hyperrectangle centered in the origin.
 The center of the box is the origin, and the radius is obtained by computing the
 maximum value of the support function evaluated at the canonical directions.
 """
-function box_approximation_symmetric(S::LazySet{N}) where {N<:Real}
+function box_approximation_symmetric(S::LazySet{N}
+                                    )::Union{Hyperrectangle{N}, EmptySet{N}} where {N<:Real}
     (c, r) = box_approximation_helper_parallel(S)
     return Hyperrectangle(zeros(N, length(c)), abs.(c) .+ r)
 end
@@ -91,12 +91,12 @@ The same load is distributed among all available workers, see
     r = SharedVector{N}(n)
 
     distribute_task!(c, r, S)
-    return convert(Array, c), convert(Array, r)
+    return convert(Array{N}, c), convert(Array{N}, r)
 end
 
 """
     process_chunk!(c::SharedVector{N}, r::SharedVector{N},
-                   S::LazySet{N}, irange::UnitRange{Int64}) where {N<:Real}
+                   S::LazySet{N}, irange::UnitRange{Int}) where {N<:Real}
 
 Kernel to process a given chunk 
 
@@ -119,7 +119,7 @@ the same load is distributed among all available workers. For details
 see `distribute_task!`.
 """
 function process_chunk!(c::SharedVector{N}, r::SharedVector{N},
-                        S::LazySet{N}, irange::UnitRange{Int64}) where {N<:Real}
+                        S::LazySet{N}, irange::UnitRange{Int}) where {N<:Real}
 
     d = zeros(N, dim(S))
 
