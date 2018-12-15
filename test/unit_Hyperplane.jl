@@ -9,6 +9,12 @@ for N in [Float64, Rational{Int}, Float32]
     # dimension
     @test dim(hp) == 3
 
+    # support function
+    hp2 = Hyperplane(N[1, 0], N(1))
+    @test ρ(N[2, 0], hp2) == N(2)
+    @test ρ(N[-2, 0], hp2) == N(-2)
+    @test ρ(N[1, 1], hp2) == N(Inf)
+
     # support vector and membership
     function test_svec(hp)
         d1 = copy(hp.a)
@@ -27,6 +33,12 @@ for N in [Float64, Rational{Int}, Float32]
     # tests 2
     a = zeros(N, 3); a[3] = N(1)
     test_svec(Hyperplane(a, N(5)))
+
+    # support vector in opposite direction
+    hp2 = Hyperplane(N[1], N(1))
+    @test σ(N[-1], hp2) ∈ hp2
+    # support vector in other directions throws an error (but see #750)
+    @test_throws ErrorException σ(N[1, 1], Hyperplane(N[1, 0], N(1)))
 
     # isempty
     @test !isempty(hp)

@@ -73,8 +73,8 @@ for N in [Float64, Rational{Int}, Float32]
     plot(vpg)
     plot(vpt)
     @test_throws AssertionError plot(es) # TODO see #577
-    @test_throws ErrorException plot(hs) # TODO see #576
-    @test_throws ErrorException plot(hp) # TODO see #576
+    @test_throws Exception plot(hs) # TODO see #576
+    @test_throws Exception plot(hp) # TODO see #576
     @test_throws ErrorException plot(l) # TODO see #576
     plot(ch)
     plot(cha)

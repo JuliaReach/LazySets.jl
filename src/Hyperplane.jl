@@ -51,6 +51,29 @@ function dim(hp::Hyperplane)::Int
 end
 
 """
+    ρ(d::AbstractVector{N}, hp::Hyperplane{N})::N where {N<:Real}
+
+Evaluate the support function of a hyperplane in a given direction.
+
+### Input
+
+- `d`  -- direction
+- `hp` -- hyperplane
+
+### Output
+
+The support function of the hyperplane.
+If the set is unbounded in the given direction, the result is `Inf`.
+"""
+function ρ(d::AbstractVector{N}, hp::Hyperplane{N})::N where {N<:Real}
+    v, unbounded = σ_helper(d, hp, error_unbounded=false)
+    if unbounded
+        return N(Inf)
+    end
+    return dot(d, v)
+end
+
+"""
     σ(d::AbstractVector{N}, hp::Hyperplane{N}) where {N<:Real}
 
 Return the support vector of a hyperplane.
@@ -65,12 +88,13 @@ Return the support vector of a hyperplane.
 The support vector in the given direction, which is only defined in the
 following two cases:
 1. The direction has norm zero.
-2. The direction is the hyperplane's normal direction.
-In both cases the result is any point on the hyperplane.
+2. The direction is the hyperplane's normal direction or its opposite direction.
+In all cases, the result is any point on the hyperplane.
 Otherwise this function throws an error.
 """
 function σ(d::AbstractVector{N}, hp::Hyperplane{N}) where {N<:Real}
-    return σ_helper(d, hp)
+    v, unbounded = σ_helper(d, hp, error_unbounded=true)
+    return v
 end
 
 """
@@ -197,7 +221,8 @@ end
 """
 ```
     σ_helper(d::AbstractVector{N},
-             hp::Hyperplane{N},
+             hp::Hyperplane{N};
+             error_unbounded::Bool,
              [halfspace]::Bool=false) where {N<:Real}
 ```
 
@@ -207,58 +232,74 @@ Return the support vector of a hyperplane.
 
 - `d`         -- direction
 - `hp`        -- hyperplane
+- `error_unbounded` -- `true` if an error should be thrown whenever the set is
+                 unbounded in the given direction
 - `halfspace` -- (optional, default: false) `true` if the support vector should
                  be computed for a half-space
 
 ### Output
 
-The support vector in the given direction, which is only defined in the
-following two cases:
+A pair `(v, b)` where `v` is a vector and `b` is a Boolean flag.
+The flag `b` is `false` in one of the following cases:
 1. The direction has norm zero.
 2. The direction is the hyperplane's normal direction.
-In both cases the result is any point on the hyperplane.
-Otherwise this function throws an error.
+3. The direction is the opposite of the hyperplane's normal direction and
+`halfspace` is `false`.
+In all cases, `v` is any point on the hyperplane.
+Otherwise, the set is unbounded in the given direction and `v` is any vector.
+
+If `error_unbounded` is `true`, this function throws an error in the latter
+case.
 """
 @inline function σ_helper(d::AbstractVector{N},
-                          hp::Hyperplane{N},
+                          hp::Hyperplane{N};
+                          error_unbounded::Bool,
                           halfspace::Bool=false) where {N<:Real}
     @assert (length(d) == dim(hp)) "cannot compute the support vector of a " *
         "$(dim(hp))-dimensional " * (halfspace ? "halfspace" : "hyperplane") *
         " along a vector of length $(length(d))"
 
-    @inline function not_solvable(d, hp)
-        error("the support vector for the " *
-            (halfspace ? "halfspace" : "hyperplane") * " with normal " *
-            "direction $(hp.a) is not defined along a direction $d")
-    end
-
     first_nonzero_entry_a = -1
+    unbounded = false
     if iszero(d)
         # zero vector
-        return an_element(hp)
+        return (an_element(hp), false)
     else
         # not the zero vector, check if it is a normal vector
         factor = zero(N)
         for i in 1:length(hp.a)
             if hp.a[i] == 0
                 if d[i] != 0
-                    not_solvable(d, hp)
+                    unbounded = true
+                    break
                 end
             else
                 if d[i] == 0
-                    not_solvable(d, hp)
+                    unbounded = true
+                    break
                 elseif first_nonzero_entry_a == -1
                     factor = hp.a[i] / d[i]
                     first_nonzero_entry_a = i
                     if halfspace && factor < 0
-                        not_solvable(d, hp)
+                        unbounded = true
+                        break
                     end
                 elseif d[i] * factor != hp.a[i]
-                    not_solvable(d, hp)
+                    unbounded = true
+                    break
                 end
             end
         end
-        return an_element_helper(hp, first_nonzero_entry_a)
+        if !unbounded
+            return (an_element_helper(hp, first_nonzero_entry_a), false)
+        end
+        if error_unbounded
+            error("the support vector for the " *
+                (halfspace ? "halfspace" : "hyperplane") * " with normal " *
+                "direction $(hp.a) is not defined along a direction $d")
+        end
+        # the first return value does not have a meaning here
+        return (d, true)
     end
 end
 

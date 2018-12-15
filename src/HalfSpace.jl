@@ -60,6 +60,30 @@ function dim(hs::HalfSpace)::Int
 end
 
 """
+    ρ(d::AbstractVector{N}, hs::HalfSpace{N})::N where {N<:Real}
+
+Evaluate the support function of a half-space in a given direction.
+
+### Input
+
+- `d`  -- direction
+- `hs` -- half-space
+
+### Output
+
+The support function of the half-space.
+If the set is unbounded in the given direction, the result is `Inf`.
+"""
+function ρ(d::AbstractVector{N}, hs::HalfSpace{N})::N where {N<:Real}
+    v, unbounded = σ_helper(d, Hyperplane(hs.a, hs.b); error_unbounded=false,
+                            halfspace=true)
+    if unbounded
+        return N(Inf)
+    end
+    return dot(d, v)
+end
+
+"""
     σ(d::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
 
 Return the support vector of a half-space.
@@ -79,7 +103,9 @@ In both cases the result is any point on the boundary (the defining hyperplane).
 Otherwise this function throws an error.
 """
 function σ(d::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
-    return σ_helper(d, Hyperplane(hs.a, hs.b), true)
+    v, unbounded = σ_helper(d, Hyperplane(hs.a, hs.b); error_unbounded=true,
+                            halfspace=true)
+    return v
 end
 
 """
