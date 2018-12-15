@@ -222,7 +222,7 @@ end
 ```
     σ_helper(d::AbstractVector{N},
              hp::Hyperplane{N};
-             error_unbounded::Bool,
+             error_unbounded::Bool=true,
              [halfspace]::Bool=false) where {N<:Real}
 ```
 
@@ -232,10 +232,11 @@ Return the support vector of a hyperplane.
 
 - `d`         -- direction
 - `hp`        -- hyperplane
-- `error_unbounded` -- `true` if an error should be thrown whenever the set is
+- `error_unbounded` -- (optional, default: `true`) `true` if an error should be
+                 thrown whenever the set is
                  unbounded in the given direction
-- `halfspace` -- (optional, default: false) `true` if the support vector should
-                 be computed for a half-space
+- `halfspace` -- (optional, default: `false`) `true` if the support vector
+                 should be computed for a half-space
 
 ### Output
 
@@ -253,7 +254,7 @@ case.
 """
 @inline function σ_helper(d::AbstractVector{N},
                           hp::Hyperplane{N};
-                          error_unbounded::Bool,
+                          error_unbounded::Bool=true,
                           halfspace::Bool=false) where {N<:Real}
     @assert (length(d) == dim(hp)) "cannot compute the support vector of a " *
         "$(dim(hp))-dimensional " * (halfspace ? "halfspace" : "hyperplane") *
