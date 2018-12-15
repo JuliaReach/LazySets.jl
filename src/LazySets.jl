@@ -5,7 +5,7 @@ module LazySets
 
 include("compat.jl")
 
-using RecipesBase, Requires
+using MathematicalSets, RecipesBase, Requires
 
 export Approximations
 

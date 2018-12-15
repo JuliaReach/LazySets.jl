@@ -12,13 +12,16 @@ export LazySet,
        absorbing
 
 """
-    LazySet{N}
+    LazySet{N} <: MathematicalSets.AbstractSet
 
 Abstract type for convex sets, i.e., sets characterized by a (possibly infinite)
 intersection of halfspaces, or equivalently, sets ``S`` such that for any two
 elements ``x, y ∈ S`` and ``0 ≤ λ ≤ 1`` it holds that ``λ·x + (1-λ)·y ∈ S``.
 
 ### Notes
+
+`LazySet`s implement parts of the `AbstractSet` interface from
+`MathematicalSets.jl`.
 
 `LazySet` types should be parameterized with a type `N`, typically `N<:Real`,
 for using different numeric types.
@@ -54,7 +57,7 @@ julia> subtypes(LazySet)
  MinkowskiSumArray
 ```
 """
-abstract type LazySet{N} end
+abstract type LazySet{N} <: MathematicalSets.AbstractSet end
 
 
 # --- common LazySet functions ---
