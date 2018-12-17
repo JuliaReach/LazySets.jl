@@ -42,10 +42,6 @@ julia> plot!(VPolygon(hull), alpha=0.2);
 """
 function convex_hull(points::Vector{S}; algorithm::String="monotone_chain"
                     )::Vector{S} where {N<:Real, S<:AbstractVector{N}}
-    @assert length(points) > 0 "tried to compute the convex hull of the empty set"
-    @assert length(points[1]) == 2 "this function can only be used for 2-dimensional " *
-                                   "sets; try converting `points` to `VPolytope` first"
-
     return convex_hull!(copy(points), algorithm=algorithm)
 end
 
@@ -76,10 +72,16 @@ function convex_hull!(points::Vector{S};
                       algorithm::String="monotone_chain"
                      )::Vector{S} where {N<:Real, S<:AbstractVector{N}}
 
-    # treat 1-vertex and 2-vertex corner cases (see #876)
-    if length(points) == 1
+    if length(points) == 0
+        return Vector{S}()
+    elseif length(points) == 1
         return points
-    elseif length(points) == 2
+    end
+
+    @assert length(points[1]) == 2 "this function can only be used for 2-dimensional " *
+            "point clouds; try converting the points to a `VPolytope` first"
+
+    if length(points) == 2 # See #876
         p1, p2 = points[1], points[2]
         if p1 == p2  # check for redundancy
             pop!(points)
