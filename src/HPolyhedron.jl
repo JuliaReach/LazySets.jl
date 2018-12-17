@@ -499,6 +499,8 @@ The `HPolyhedron` (resp. `HPolytope`) obtained by the concrete convex hull of
 
 ### Notes
 
+It is suggested to use the `CDDLib.Library()` backend.
+
 For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/).
 """
