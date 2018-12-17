@@ -506,8 +506,9 @@ function convex_hull(P1::HPoly{N},
                      P2::HPoly{N};
                      backend=default_polyhedra_backend(P1, N)) where {N}
     @assert isdefined(@__MODULE__, :Polyhedra) "the function `convex_hull` needs " *
-                                        "the package 'Polyhedra' to be loaded"
+                                               "the package 'Polyhedra' to be loaded"
     Pch = convexhull(polyhedron(P1; backend=backend), polyhedron(P2; backend=backend))
+    removehredundancy!(Pch)
     return convert(typeof(P1), Pch)
 end
 
