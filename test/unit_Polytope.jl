@@ -229,8 +229,7 @@ if test_suite_polyhedra
         p2 = VPolytope([v3, v4])
         ch = convex_hull(p1, p2)
         vl = vertices_list(ch)
-        @test length(vl) == 4
-        @test v1 ∈ vl && v2 ∈ vl && v3 ∈ vl && v4 ∈ vl
+        @test ispermutation(vl, [v1, v2, v3, v4])
 
         # Cartesian product
         p1 = VPolytope([N[0, 0], N[1, 1]])
