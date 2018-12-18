@@ -3,7 +3,8 @@ using MathProgBase, GLPKMathProgInterface
 import Base.rand
 
 export VPolytope,
-       vertices_list
+       vertices_list,
+       convex_hull
 
 """
     VPolytope{N<:Real} <: AbstractPolytope{N}
@@ -187,16 +188,48 @@ function constraints_list(P::VPolytope{N})::Vector{LinearConstraint{N}} where {N
     return constraints_list(tohrep(P))
 end
 
+"""
+    convex_hull(P1::VPolytope{N}, P2::VPolytope{N};
+                [backend]=default_polyhedra_backend(P1, N)) where {N}
 
-# --- functions that use Polyhedra.jl ---
+Compute the convex hull of the set union of two polytopes in V-representation.
 
+### Input
+
+- `P1`         -- polytope
+- `P2`         -- another polytope
+- `backend`    -- (optional, default: `default_polyhedra_backend(P1, N)`) the polyhedral
+                  computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
+                  for further information
+
+### Output
+
+The `VPolytope` obtained by the concrete convex hull of `P1` and `P2`.
+
+### Notes
+
+For performance reasons, it is suggested to use the `CDDLib.Library()` backend
+for the `convex_hull`.
+"""
+function convex_hull(P1::VPolytope{N}, P2::VPolytope{N};
+                     backend=default_polyhedra_backend(P1, N)) where {N}
+    @assert isdefined(@__MODULE__, :Polyhedra) "the function `convex_hull` needs " *
+                                               "the package 'Polyhedra' to be loaded"
+    Pch = convexhull(polyhedron(P1; backend=backend),
+                     polyhedron(P2; backend=backend))
+    removevredundancy!(Pch)
+    return VPolytope(Pch)
+end
+
+# ==========================================
+# Lower level methods that use Polyhedra.jl
+# ==========================================
 
 function load_polyhedra_vpolytope() # function to be loaded by Requires
 return quote
 # see the interface file AbstractPolytope.jl for the imports
 
-export convex_hull,
-       cartesian_product,
+export cartesian_product,
        vertices_list,
        tohrep,
        tovrep
@@ -245,31 +278,6 @@ function polyhedron(P::VPolytope{N};
                     backend=default_polyhedra_backend(P, N)) where {N<:Real}
     V = hcat(vertices_list(P)...)'
     return polyhedron(Polyhedra.vrep(V), backend)
-end
-
-"""
-    convex_hull(P1::VPolytope{N}, P2::VPolytope{N};
-                [backend]=default_polyhedra_backend(P1, N)) where {N}
-
-Compute the convex hull of the set union of two polytopes in V-representation.
-
-### Input
-
-- `P1`         -- polytope
-- `P2`         -- another polytope
-- `backend`    -- (optional, default: `default_polyhedra_backend(P1, N)`) the polyhedral
-                  computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
-                  for further information
-
-### Output
-
-The `VPolytope` obtained by the concrete convex hull of `P1` and `P2`.
-"""
-function convex_hull(P1::VPolytope{N}, P2::VPolytope{N};
-                     backend=default_polyhedra_backend(P1, N)) where {N}
-    Pch = convexhull(polyhedron(P1; backend=backend),
-                     polyhedron(P2; backend=backend))
-    return VPolytope(Pch)
 end
 
 """
