@@ -208,7 +208,8 @@ The `VPolytope` obtained by the concrete convex hull of `P1` and `P2`.
 
 ### Notes
 
-It is suggested to use the `CDDLib.Library()` backend.
+For performance reasons, it is suggested to use the `CDDLib.Library()` backend
+for the `convex_hull`.
 """
 function convex_hull(P1::VPolytope{N}, P2::VPolytope{N};
                      backend=default_polyhedra_backend(P1, N)) where {N}
