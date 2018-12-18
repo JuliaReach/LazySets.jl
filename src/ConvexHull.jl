@@ -1,5 +1,3 @@
-include("convex_hull_algorithms.jl")
-
 import Base.isempty
 
 export ConvexHull, CH,
