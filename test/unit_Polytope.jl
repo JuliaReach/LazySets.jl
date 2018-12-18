@@ -229,11 +229,8 @@ if test_suite_polyhedra
         p2 = VPolytope([v3, v4])
         ch = convex_hull(p1, p2)
         vl = vertices_list(ch)
+        @test length(vl) == 4
         @test v1 ∈ vl && v2 ∈ vl && v3 ∈ vl && v4 ∈ vl
-        # Note: The redundant vertex v5 is not removed (see #561).
-        # This test can be removed (and the length above should be corrected)
-        # when that issue is resolved.
-        @test length(vl) == 5 && v5 ∈ vl
 
         # Cartesian product
         p1 = VPolytope([N[0, 0], N[1, 1]])
