@@ -221,6 +221,34 @@ function convex_hull(P1::VPolytope{N}, P2::VPolytope{N};
     return VPolytope(Pch)
 end
 
+"""
+    convex_hull(P::VPolygon{N};
+                backend=default_polyhedra_backend(P, N)) where {N}
+
+Take the convex hull of the vertices of the given polytope.
+
+### Input
+
+- `P` -- polytope in vertex representation
+
+### Output
+
+A new polytope such that its vertices are the convex hull of the given polytope.
+
+### Notes
+
+For performance reasons, it is suggested to use the `CDDLib.Library()` backend
+for the `convex_hull`.
+"""
+function convex_hull(P::VPolytope{N};
+                     backend=default_polyhedra_backend(P, N)) where {N}
+    @assert isdefined(@__MODULE__, :Polyhedra) "the function `convex_hull` needs " *
+                                               "the package 'Polyhedra' to be loaded"
+    Q = polyhedron(P; backend=backend)
+    removevredundancy!(Q)
+    return VPolytope(Q)
+end
+
 # ==========================================
 # Lower level methods that use Polyhedra.jl
 # ==========================================
