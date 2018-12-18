@@ -1,7 +1,8 @@
 import Base: rand,
              ∈
 
-export VPolygon
+export VPolygon,
+       convex_hull
 
 """
     VPolygon{N<:Real} <: AbstractPolygon{N}
@@ -52,6 +53,24 @@ VPolygon{N}() where {N<:Real} =
 # constructor with no vertices of type Float64
 VPolygon() = VPolygon{Float64}()
 
+"""
+    convex_hull(P::VPolygon{N}; [algorithm])::VPolygon{N} where {N<:Real}
+
+Take the convex hull of the vertices of the given polygon.
+
+### Input
+
+- `P` -- polygon in vertex representation
+
+### Output
+
+A new polygon such that its vertices are the convex hull of the given polygon. 
+"""
+function convex_hull(P::VPolygon{N};
+                     algorithm::String="monotone_chain")::VPolygon{N} where {N<:Real}
+    Pch = convex_hull(P.vertices; algorithm=algorithm)                  
+    return VPolygon(Pch, apply_convex_hull=false)
+end
 
 # --- AbstractPolygon interface functions ---
 
