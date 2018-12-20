@@ -542,7 +542,7 @@ function cartesian_product(P1::HPoly{N},
                            backend=default_polyhedra_backend(P1, N)
                           ) where N<:Real
     @assert isdefined(@__MODULE__, :Polyhedra) "the function `cartesian_product` " *
-        "needs the package 'Polyhedra' to be loaded"
+                                               "needs the package 'Polyhedra' to be loaded"
     Pcp = hcartesianproduct(polyhedron(P1; backend=backend), polyhedron(P2; backend=backend))
     return convert(typeof(P1), Pcp)
 end
