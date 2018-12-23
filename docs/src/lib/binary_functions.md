@@ -14,25 +14,6 @@ DocTestSetup = quote
 end
 ```
 
-## Subset check
-
-```@docs
-⊆(::LazySet{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
-⊆(::AbstractPolytope{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-⊆(::AbstractPolytope{N}, ::AbstractHyperrectangle, ::Bool=false) where {N<:Real}
-⊆(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
-⊆(::AbstractSingleton{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-⊆(::AbstractSingleton{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
-⊆(::AbstractSingleton{N}, ::AbstractSingleton{N}, ::Bool=false) where {N<:Real}
-⊆(::Ball2{N}, ::Ball2{N}, ::Bool=false) where {N<:AbstractFloat}
-⊆(::Union{Ball2{N}, Ballp{N}}, ::AbstractSingleton{N}, ::Bool=false) where {N<:AbstractFloat}
-⊆(::LineSegment{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-⊆(::LineSegment{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
-⊆(::Interval, ::Interval)
-⊆(::EmptySet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-⊆(::LazySet{N}, ::EmptySet{N}, ::Bool=false) where {N<:Real}
-```
-
 ## Check for emptiness of intersection
 
 ```@docs
@@ -52,6 +33,12 @@ is_intersection_empty(::LazySet{N}, ::Union{HPolyhedron{N}, HPolytope{N}, Abstra
 is_intersection_empty(::HPolytope{N}, ::HPolytope{N}, ::Bool=false) where {N<:Real}
 ```
 
+## Convex hull
+
+```@docs
+
+```
+
 ## Intersection of two sets
 
 ```@docs
@@ -64,4 +51,23 @@ intersection(::HPoly{N}, ::HPoly{N}) where {N<:Real}
 intersection(::HPoly{N}, ::VPolytope{N}) where {N<:Real}
 intersection(::HPoly{N}, ::AbstractPolytope{N}) where {N<:Real}
 intersection(::S1, ::S2) where {N<:Real, S1<:AbstractPolytope{N}, S2<:AbstractPolytope{N}}
+```
+
+## Subset check
+
+```@docs
+⊆(::LazySet{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
+⊆(::AbstractPolytope{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
+⊆(::AbstractPolytope{N}, ::AbstractHyperrectangle, ::Bool=false) where {N<:Real}
+⊆(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
+⊆(::AbstractSingleton{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
+⊆(::AbstractSingleton{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
+⊆(::AbstractSingleton{N}, ::AbstractSingleton{N}, ::Bool=false) where {N<:Real}
+⊆(::Ball2{N}, ::Ball2{N}, ::Bool=false) where {N<:AbstractFloat}
+⊆(::Union{Ball2{N}, Ballp{N}}, ::AbstractSingleton{N}, ::Bool=false) where {N<:AbstractFloat}
+⊆(::LineSegment{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
+⊆(::LineSegment{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
+⊆(::Interval, ::Interval)
+⊆(::EmptySet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
+⊆(::LazySet{N}, ::EmptySet{N}, ::Bool=false) where {N<:Real}
 ```

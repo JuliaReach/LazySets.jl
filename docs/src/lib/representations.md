@@ -365,6 +365,8 @@ vertices_list(::VPolygon{N}) where {N<:Real}
 tohrep(::VPolygon{N}, ::Type{HPOLYGON}=HPolygon) where {N<:Real, HPOLYGON<:AbstractHPolygon}
 tovrep(::VPolygon{N}) where {N<:Real}
 constraints_list(::VPolygon{N}) where {N<:Real}
+remove_redundant_vertices(::VPolygon{N}; ::String="monotone_chain") where {N<:Real}
+remove_redundant_vertices!(::VPolygon{N}; ::String="monotone_chain") where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
