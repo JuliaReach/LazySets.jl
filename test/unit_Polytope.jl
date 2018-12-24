@@ -50,6 +50,9 @@ for N in [Float64, Rational{Int}, Float32]
     # support vector of polytope with no constraints
     @test_throws ErrorException σ(N[0], HPolytope{N}())
 
+    # boundedness
+    @test isbounded(p)
+
     # membership
     @test ∈(N[5 / 4, 7 / 4], p)
     @test !∈(N[4, 1], p)
@@ -105,6 +108,9 @@ for N in [Float64, Rational{Int}, Float32]
 
     # dim
     @test dim(p) == 2
+
+    # boundedness
+    @test isbounded(p)
 
     # isempty
     @test !isempty(p)

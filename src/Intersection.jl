@@ -468,6 +468,31 @@ function ρ(d::AbstractVector{N},
 end
 
 """
+    isbounded(cap::Intersection)::Bool
+
+Determine whether an intersection of two convex sets is bounded.
+
+### Input
+
+- `cap` -- intersection of two convex sets
+
+### Output
+
+`true` iff the intersection is bounded.
+
+### Algorithm
+
+We first check if any of the wrapped sets is bounded.
+Otherwise, we check boundedness via `isbounded_unit_dims`.
+"""
+function isbounded(cap::Intersection)::Bool
+    if isbounded(cap.X) || isbounded(cap.Y)
+        return true
+    end
+    return isbounded_unit_dims(cap)
+end
+
+"""
     ∈(x::AbstractVector{N}, cap::Intersection{N})::Bool where {N<:Real}
 
 Check whether a given point is contained in an intersection of two convex sets.
@@ -628,6 +653,31 @@ function σ(d::AbstractVector{N},
            ia::IntersectionArray{N})::Vector{N} where {N<:Real}
     # TODO implement
     error("not implemented yet")
+end
+
+"""
+    isbounded(ia::IntersectionArray)::Bool
+
+Determine whether an intersection of a finite number of convex sets is bounded.
+
+### Input
+
+- `ia` -- intersection of a finite number of convex sets
+
+### Output
+
+`true` iff the intersection is bounded.
+
+### Algorithm
+
+We first check if any of the wrapped sets is bounded.
+Otherwise, we check boundedness via `isbounded_unit_dims`.
+"""
+function isbounded(ia::IntersectionArray)::Bool
+    if any(x -> isbounded(x), ia.array)
+        return true
+    end
+    return isbounded_unit_dims(ia)
 end
 
 """

@@ -98,6 +98,23 @@ function σ(d::AbstractVector{N}, hp::Hyperplane{N}) where {N<:Real}
 end
 
 """
+    isbounded(hp::Hyperplane)::Bool
+
+Determine whether a hyperplane is bounded.
+
+### Input
+
+- `hp` -- hyperplane
+
+### Output
+
+`false`.
+"""
+function isbounded(::Hyperplane)::Bool
+    return false
+end
+
+"""
     an_element(hp::Hyperplane{N})::Vector{N} where {N<:Real}
 
 Return some element of a hyperplane.

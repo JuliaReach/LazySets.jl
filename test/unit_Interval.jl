@@ -70,6 +70,9 @@ for N in [Float64, Float32, Rational{Int}]
     @test σ(N[1], m) == N[1.5]
     @test σ(N[-1], m) == N[-2]
 
+    # boundedness
+    @test isbounded(x)
+
     # cartesian product
     cp = x × y
     @test cp isa CartesianProduct

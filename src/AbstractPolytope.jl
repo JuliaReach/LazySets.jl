@@ -37,13 +37,30 @@ abstract type AbstractPolytope{N<:Real} <: LazySet{N} end
 
 
 """
+    isbounded(P::AbstractPolytope)::Bool
+
+Determine whether a polytopic set is bounded.
+
+### Input
+
+- `P` -- polytopic set
+
+### Output
+
+`true` (since a polytope must be bounded).
+"""
+function isbounded(::AbstractPolytope)::Bool
+    return true
+end
+
+"""
     singleton_list(P::AbstractPolytope{N})::Vector{Singleton{N}} where {N<:Real}
 
 Return the vertices of a polytopic set as a list of singletons.
 
 ### Input
 
-- `P` -- a polytopic set
+- `P` -- polytopic set
 
 ### Output
 

@@ -39,6 +39,9 @@ for N in [Float64, Rational{Int}, Float32]
     # any other direction
     @test_throws ErrorException σ(N[1, 1], HalfSpace(N[1, 0], N(1)))
 
+    # boundedness
+    @test !isbounded(hs)
+
     # isempty
     @test !isempty(hs)
 

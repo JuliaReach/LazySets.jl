@@ -135,6 +135,23 @@ function ρ(d::AbstractVector{N}, ms::MinkowskiSum{N}) where {N<:Real}
 end
 
 """
+    isbounded(ms::MinkowskiSum)::Bool
+
+Determine whether a Minkowski sum is bounded.
+
+### Input
+
+- `ms` -- Minkowski sum
+
+### Output
+
+`true` iff both wrapped sets are bounded.
+"""
+function isbounded(ms::MinkowskiSum)::Bool
+    return isbounded(ms.X) && isbounded(ms.Y)
+end
+
+"""
     isempty(ms::MinkowskiSum)::Bool
 
 Return if a Minkowski sum is empty or not.
@@ -283,13 +300,30 @@ function ρ(d::AbstractVector{N}, msa::MinkowskiSumArray{N}) where {N<:Real}
 end
 
 """
+	isbounded(msa::MinkowskiSumArray)::Bool
+
+Determine whether a Minkowski sum of a finite number of convex sets is bounded.
+
+### Input
+
+- `msa` -- Minkowski sum of a finite number of convex sets
+
+### Output
+
+`true` iff all wrapped sets are bounded.
+"""
+function isbounded(msa::MinkowskiSumArray)::Bool
+    return all(x -> isbounded(x), msa.array)
+end
+
+"""
     isempty(msa::MinkowskiSumArray)::Bool
 
 Return if a Minkowski sum array is empty or not.
 
 ### Input
 
-- `cp` -- Minkowski sum array
+- `msa` -- Minkowski sum array
 
 ### Output
 
@@ -469,13 +503,30 @@ function σ(d::AbstractVector{N}, cms::CacheMinkowskiSum{N}) where {N<:Real}
 end
 
 """
+	isbounded(cms::CacheMinkowskiSum)::Bool
+
+Determine whether a caching Minkowski sum is bounded.
+
+### Input
+
+- `cms` -- caching Minkowski sum
+
+### Output
+
+`true` iff all wrapped sets are bounded.
+"""
+function isbounded(cms::CacheMinkowskiSum)::Bool
+    return all(x -> isbounded(x), cms.array)
+end
+
+"""
     isempty(cms::CacheMinkowskiSum)::Bool
 
 Return if a caching Minkowski sum array is empty or not.
 
 ### Input
 
-- `cp` -- caching Minkowski sum
+- `cms` -- caching Minkowski sum
 
 ### Output
 

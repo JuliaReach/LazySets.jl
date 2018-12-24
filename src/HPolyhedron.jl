@@ -176,6 +176,32 @@ function σ_helper(d::AbstractVector{N}, P::HPoly{N}) where {N<:Real}
 end
 
 """
+    isbounded(P::HPolyhedron)::Bool
+
+Determine whether a polyhedron in constraint representation is bounded.
+
+### Input
+
+- `P` -- polyhedron in constraint representation
+
+### Output
+
+`true` iff the polyhedron is bounded.
+
+### Algorithm
+
+We first check if the polyhedron has at least `max(dim(P), 1)` constraints,
+which is a necessary condition for boundedness.
+If so, we check boundedness via `isbounded_unit_dims`.
+"""
+function isbounded(P::HPolyhedron)::Bool
+    if length(P.constraints) <= max(dim(P), 1)
+        return false
+    end
+    return isbounded_unit_dims(P)
+end
+
+"""
     ∈(x::AbstractVector{N}, P::HPoly{N})::Bool where {N<:Real}
 
 Check whether a given point is contained in a polyhedron in constraint

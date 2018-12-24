@@ -20,6 +20,9 @@ for N in [Float64, Rational{Int}, Float32]
     d = N[0, 0]
     @test σ(d, s) == N[1, 2]
 
+    # boundedness
+    @test isbounded(s)
+
     # element function
     @test element(s) == s.element
     for i in 1:2

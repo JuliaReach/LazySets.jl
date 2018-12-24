@@ -15,6 +15,9 @@ for N in [Float64, Rational{Int}, Float32]
     d = N[0, 1]
     @test σ(d, h)[2] == N(7) && σ(-d, h)[2] == N(-7)
 
+    # boundedness
+    @test isbounded(h)
+
     # isempty
     @test !isempty(h)
 

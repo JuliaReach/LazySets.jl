@@ -54,6 +54,9 @@ for N in [Float64, Rational{Int}, Float32]
     d = N[1, -1]
     @test σ(d, b) == N[2, -2]
 
+    # boundedness
+    @test isbounded(b)
+
     # isempty
     @test !isempty(b)
 

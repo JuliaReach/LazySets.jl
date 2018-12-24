@@ -40,6 +40,9 @@ for N in [Float64, Rational{Int}, Float32]
     # support vector in other directions throws an error (but see #750)
     @test_throws ErrorException σ(N[1, 1], Hyperplane(N[1, 0], N(1)))
 
+    # boundedness
+    @test !isbounded(hp)
+
     # isempty
     @test !isempty(hp)
 

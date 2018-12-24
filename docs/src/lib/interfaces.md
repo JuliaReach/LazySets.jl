@@ -56,6 +56,8 @@ support_function
 norm(::LazySet, ::Real=Inf)
 radius(::LazySet, ::Real=Inf)
 diameter(::LazySet, ::Real=Inf)
+isbounded(::LazySet)
+isbounded_unit_dims(::LazySet{N}) where {N<:Real}
 an_element(::LazySet{N}) where {N<:Real}
 ==(::LazySet, ::LazySet)
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet)
@@ -86,6 +88,7 @@ This interface defines the following functions:
 
 ```@docs
 dim(::AbstractCentrallySymmetric)
+isbounded(::AbstractCentrallySymmetric)
 an_element(::AbstractCentrallySymmetric{N}) where {N<:Real}
 isempty(::AbstractCentrallySymmetric)
 ```
@@ -104,6 +107,7 @@ AbstractPolytope
 This interface defines the following functions:
 
 ```@docs
+isbounded(::AbstractPolytope)
 singleton_list(::AbstractPolytope{N}) where {N<:Real}
 linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real}
 isempty(::AbstractPolytope)
