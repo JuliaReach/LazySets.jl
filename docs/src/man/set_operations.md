@@ -27,7 +27,7 @@ end
 function plot_points(points, prefix)
     for i in eachindex(points)
         p = points[i]
-        num_occur = length(find(x -> x == p, points[1:i]))
+        num_occur = length(findfirst(x -> x == p, points[1:i]))
         x = p[1]
         y = p[2]
         if num_occur == 1
