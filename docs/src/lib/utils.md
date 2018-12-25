@@ -23,6 +23,7 @@ ispermutation
 @neutral_absorbing
 @array_neutral
 @array_absorbing
+cross_product(::AbstractMatrix{N}) where {N<:Real}
 get_radius!
 an_element_helper
 σ_helper

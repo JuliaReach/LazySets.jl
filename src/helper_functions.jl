@@ -225,3 +225,47 @@ function reseed(rng::AbstractRNG, seed::Union{Int, Nothing})::AbstractRNG
     end
     return rng
 end
+
+"""
+    cross_product(M::AbstractMatrix{N}) where {N<:Real}
+
+Compute the high-dimensional cross product of ``n-1`` ``n``-dimensional vectors.
+
+### Input
+
+- `M` -- ``n \times n - 1``-dimensional matrix
+
+### Output
+
+A vector.
+
+### Algorithm
+
+The cross product is defined as follows:
+
+```math
+\\left[ \\dots, (-1)^{n+1} \\det(M^{[i]}), \\dots \\right]^T
+```
+where ``M^{[i]}`` is defined as ``M`` with the ``i``-th row removed.
+See *Althoff, Stursberg, Buss: Computing Reachable Sets of Hybrid Systems Using
+a Combination of Zonotopes and Polytopes. 2009.*
+"""
+function cross_product(M::AbstractMatrix{N})::Vector{N} where {N<:Real}
+    n = size(M, 1)
+    @assert 1 < n == size(M, 2) + 1 "the matrix must be n x (n-1) dimensional"
+
+    v = Vector{N}(undef, n)
+    minus = false
+    for i in 1:n
+        Mi = view(M, 1:n .!= i, :)  # remove i-th row
+        d = det(Mi)
+        if minus
+            v[i] = -d
+            minus = false
+        else
+            v[i] = d
+            minus = true
+        end
+    end
+    return v
+end
