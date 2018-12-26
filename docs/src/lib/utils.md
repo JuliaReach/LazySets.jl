@@ -40,4 +40,5 @@ reseed
 ```@docs
 CachedPair
 Approximations.UnitVector
+StrictlyIncreasingIndices
 ```
