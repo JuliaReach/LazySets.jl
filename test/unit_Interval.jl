@@ -15,7 +15,7 @@ for N in [Float64, Float32, Rational{Int}]
 
     @test dim(x) == 1
     @test center(x) == N[0.5]
-    @test low(x) == N(0) && high(x) == N(1)
+    @test min(x) == N(0) && max(x) == N(1)
     v = vertices_list(x)
     @test N[0] in v && N[1] in v
     # test interface method an_element and membership
@@ -35,7 +35,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test dim(m) == 1
     @test σ(N[1], m) == N[1.5]
     @test σ(N[-1], m) == N[-2]
-    @test low(m) == N(-2) && high(m) == N(1.5)
+    @test min(m) == N(-2) && max(m) == N(1.5)
     v = vertices_list(m)
     @test N[1.5] in v && N[-2] in v
 
@@ -44,7 +44,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test dim(d) == 1
     @test σ(N[1], d) == N[3]
     @test σ(N[-1], d) == N[-0.5]
-    @test low(d) == N(-0.5) && high(d) == N(3)
+    @test min(d) == N(-0.5) && max(d) == N(3)
     v = vertices_list(d)
     @test N[-0.5] in v && N[3] in v
 
@@ -58,7 +58,7 @@ for N in [Float64, Float32, Rational{Int}]
 
     # test different arithmetic operations
     r = (x + y) - (d + p)
-    @test low(r) == N(-5.5) && high(r) == N(4)
+    @test min(r) == N(-5.5) && max(r) == N(4)
 
     # isempty
     @test !isempty(x)
@@ -84,7 +84,7 @@ for N in [Float64, Float32, Rational{Int}]
     B = Interval(N(3), N(6))
     C = intersection(A, B)
     @test C isa Interval
-    @test low(C) == N(5) && high(C) == N(6)
+    @test min(C) == N(5) && max(C) == N(6)
     # check empty intersection
     E = intersection(A, Interval(N(0), N(1)))
     @test isempty(E)

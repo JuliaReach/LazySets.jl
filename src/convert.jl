@@ -339,7 +339,7 @@ Hyperrectangle{Float64}([0.5], [0.5])
 ```
 """
 function convert(::Type{Hyperrectangle}, x::Interval)
-    return Hyperrectangle(low=[low(x)], high=[high(x)])
+    return Hyperrectangle(low=[min(x)], high=[max(x)])
 end
 
 """
