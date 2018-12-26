@@ -28,6 +28,7 @@ convert(::Type{HPolytope}, ::AbstractHPolygon)
 convert(::Type{HPolytope}, ::AbstractHyperrectangle)
 convert(::Type{HPolytope}, ::AbstractPolytope)
 convert(::Type{HPolytope}, ::VPolytope)
+convert(::Type{HPolytope}, ::Zonotope{N}) where {N<:Real}
 convert(::Type{VPolygon}, ::AbstractHPolygon)
 convert(::Type{VPolygon}, ::AbstractPolytope)
 convert(::Type{VPolytope}, ::AbstractPolytope)
