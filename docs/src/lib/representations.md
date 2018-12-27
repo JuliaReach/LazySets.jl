@@ -239,8 +239,8 @@ dim(::Interval)
 an_element(::Interval{N}) where {N<:Real}
 vertices_list(::Interval{N}) where {N<:Real}
 center(::Interval{N}) where {N<:Real}
-low(::Interval{N}) where {N<:Real}
-high(::Interval{N}) where {N<:Real}
+min(::Interval{N}) where {N<:Real}
+max(::Interval{N}) where {N<:Real}
 radius_hyperrectangle(::Interval{N}) where {N<:Real}
 radius_hyperrectangle(::Interval{N}, ::Int) where {N<:Real}
 +(::Interval{N}, ::Interval{N}) where {N<:Real}

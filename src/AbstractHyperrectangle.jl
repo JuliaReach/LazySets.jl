@@ -2,7 +2,8 @@ import Base.∈
 
 export AbstractHyperrectangle,
        radius_hyperrectangle,
-       constraints_list
+       constraints_list,
+       low, high
 
 """
     AbstractHyperrectangle{N<:Real} <: AbstractCentrallySymmetricPolytope{N}

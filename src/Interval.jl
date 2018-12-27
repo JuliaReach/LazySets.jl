@@ -1,10 +1,10 @@
 import IntervalArithmetic
 import IntervalArithmetic: AbstractInterval
-import Base: +, -, *, ∈, ⊆, rand
+import Base: +, -, *, ∈, ⊆, rand, min, max
 
 export Interval,
        dim, σ, center,
-       low, high, vertices_list
+       vertices_list
 
 """
     Interval{N<:Real, IN <: AbstractInterval{N}} <: AbstractHyperrectangle{N}
@@ -254,7 +254,7 @@ function ∈(v::N, x::Interval{N}) where {N<:Real}
 end
 
 """
-    low(x::Interval{N})::N where {N<:Real}
+    min(x::Interval{N})::N where {N<:Real}
 
 Return the lower component of an interval.
 
@@ -266,12 +266,12 @@ Return the lower component of an interval.
 
 The lower (`lo`) component of the interval.
 """
-function low(x::Interval{N})::N where {N<:Real}
+function min(x::Interval{N})::N where {N<:Real}
     return x.dat.lo
 end
 
 """
-    high(x::Interval{N})::N where {N<:Real}
+    max(x::Interval{N})::N where {N<:Real}
 
 Return the higher or upper component of an interval.
 
@@ -283,7 +283,7 @@ Return the higher or upper component of an interval.
 
 The higher (`hi`) component of the interval.
 """
-function high(x::Interval{N})::N where {N<:Real}
+function max(x::Interval{N})::N where {N<:Real}
     return x.dat.hi
 end
 
@@ -298,10 +298,10 @@ Return some element of an interval.
 
 ### Output
 
-The left border (`low(x)`) of the interval.
+The left border (`min(x)`) of the interval.
 """
 function an_element(x::Interval{N})::Vector{N} where {N<:Real}
-    return [low(x)]
+    return [min(x)]
 end
 
 """
@@ -354,7 +354,7 @@ Return the list of vertices of this interval.
 The list of vertices of the interval represented as two one-dimensional vectors.
 """
 function vertices_list(x::Interval{N})::Vector{Vector{N}} where {N<:Real}
-    return [[low(x)], [high(x)]]
+    return [[min(x)], [max(x)]]
 end
 
 
@@ -377,7 +377,7 @@ The box radius in the given dimension.
 """
 function radius_hyperrectangle(x::Interval{N}, i::Int)::N where {N<:Real}
     @assert i == 1 "an interval is one-dimensional"
-    return (high(x) - low(x)) / N(2)
+    return (max(x) - min(x)) / N(2)
 end
 
 """

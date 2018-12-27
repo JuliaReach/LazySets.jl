@@ -120,10 +120,10 @@ Otherwise the result is the interval that describes the intersection.
 function intersection(x::Interval{N},
                       y::Interval{N}
                      )::Union{Interval{N}, EmptySet{N}} where {N<:Real}
-    if low(y) > high(x) || low(x) > high(y)
+    if min(y) > max(x) || min(x) > max(y)
         return EmptySet{N}()
     else
-        return Interval(max(low(x), low(y)), min(high(x), high(y)))
+        return Interval(max(min(x), min(y)), min(max(x), max(y)))
     end
 end
 

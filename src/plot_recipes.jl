@@ -484,7 +484,7 @@ julia> plot(I);
     markershape --> (add_marker ? :circle : :none)
     markercolor --> color
 
-    [Tuple([low(I), 0.0]); Tuple([high(I), 0.0])]
+    [Tuple([min(I), 0.0]); Tuple([max(I), 0.0])]
 end
 
 """
@@ -519,6 +519,6 @@ julia> plot([I1, I2]);
     markercolor --> color
 
     for Ii in Xk
-        @series [Tuple([low(Ii), 0.0]); Tuple([high(Ii), 0.0])]
+        @series [Tuple([min(Ii), 0.0]); Tuple([max(Ii), 0.0])]
     end
 end
