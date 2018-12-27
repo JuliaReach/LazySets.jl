@@ -241,16 +241,29 @@ Return the support vector of a hyperplane.
 ### Output
 
 A pair `(v, b)` where `v` is a vector and `b` is a Boolean flag.
+
 The flag `b` is `false` in one of the following cases:
 1. The direction has norm zero.
 2. The direction is the hyperplane's normal direction.
 3. The direction is the opposite of the hyperplane's normal direction and
 `halfspace` is `false`.
-In all cases, `v` is any point on the hyperplane.
-Otherwise, the set is unbounded in the given direction and `v` is any vector.
+In all these cases, `v` is any point on the hyperplane.
 
-If `error_unbounded` is `true`, this function throws an error in the latter
-case.
+Otherwise, the flag `b` is `true`, the set is unbounded in the given direction,
+and `v` is any vector.
+
+If `error_unbounded` is `true` and the set is unbounded in the given direction,
+this function throws an error instead of returning.
+
+### Notes
+
+For correctness, consider the [weak duality of LPs](
+https://en.wikipedia.org/wiki/Linear_programming#Duality):
+If the primal is unbounded, then the dual is infeasible.
+Since there is only a single constraint, the feasible set of the dual problem is
+`hp.a ⋅ y == d`, `y >= 0` (with objective function `hp.b ⋅ y`).
+It is easy to see that this problem is infeasible whenever `a` is not parallel
+to `d`.
 """
 @inline function σ_helper(d::AbstractVector{N},
                           hp::Hyperplane{N};
