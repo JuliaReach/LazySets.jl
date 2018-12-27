@@ -521,10 +521,8 @@ matrix is zero.
 Otherwise, we check boundedness via [`isbounded_unit_dimensions`](@ref).
 """
 function isbounded(eprojmap::ExponentialProjectionMap)::Bool
-    if isbounded(eprojmap.X)
-        return true
-    end
-    if iszero(eprojmap.projspmexp.L) || iszero(eprojmap.projspmexp.R)
+    if iszero(eprojmap.projspmexp.L) || iszero(eprojmap.projspmexp.R) ||
+            isbounded(eprojmap.X)
         return true
     end
     return isbounded_unit_dimensions(eprojmap)
