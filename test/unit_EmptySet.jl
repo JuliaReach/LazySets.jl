@@ -42,6 +42,9 @@ for N in [Float64, Rational{Int}, Float32]
     # support vector
     @test_throws ErrorException σ(N[0], E)
 
+    # boundedness
+    @test isbounded(E)
+
     # membership
     @test !∈(N[0], E)
     @test !∈(N[0, 0], E)

@@ -37,6 +37,9 @@ for N in [Float64, Float32]
     @test center(b) == b.center
     @test an_element(b) isa AbstractVector{N}
 
+    # boundedness
+    @test isbounded(b)
+
     # isempty
     @test !isempty(b)
 

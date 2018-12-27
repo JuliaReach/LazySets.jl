@@ -18,6 +18,9 @@ for N in [Float64, Rational{Int}, Float32]
     # test M-sum of zero set with itself
     @test ZeroSet{N}(2) ⊕ ZeroSet{N}(2) == ZeroSet{N}(2)
 
+    # boundedness
+    @test isbounded(Z)
+
     # element & an_element function
     @test element(Z) ∈ Z
     @test element(Z, 1) == 0

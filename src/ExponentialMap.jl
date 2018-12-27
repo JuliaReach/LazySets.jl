@@ -276,6 +276,23 @@ function ρ(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
 end
 
 """
+    isbounded(em::ExponentialMap)::Bool
+
+Determine whether an exponential map is bounded.
+
+### Input
+
+- `em` -- exponential map
+
+### Output
+
+`true` iff the exponential map is bounded.
+"""
+function isbounded(em::ExponentialMap)::Bool
+    return isbounded(em.X)
+end
+
+"""
     ∈(x::AbstractVector{N}, em::ExponentialMap{N})::Bool where {N<:Real}
 
 Check whether a given point is contained in an exponential map of a convex set.
@@ -482,6 +499,33 @@ function σ(d::AbstractVector{N},
     aux2 = eprojmap.projspmexp.R * svec
     daux = expmv(one(N), eprojmap.projspmexp.spmexp.M, aux2)
     return eprojmap.projspmexp.L * daux
+end
+
+"""
+    isbounded(eprojmap::ExponentialProjectionMap)::Bool
+
+Determine whether an exponential projection map is bounded.
+
+### Input
+
+- `eprojmap` -- exponential projection map
+
+### Output
+
+`true` iff the exponential projection map is bounded.
+
+### Algorithm
+
+We first check if the left or right projection matrix is zero or the wrapped set
+is bounded.
+Otherwise, we check boundedness via [`isbounded_unit_dimensions`](@ref).
+"""
+function isbounded(eprojmap::ExponentialProjectionMap)::Bool
+    if iszero(eprojmap.projspmexp.L) || iszero(eprojmap.projspmexp.R) ||
+            isbounded(eprojmap.X)
+        return true
+    end
+    return isbounded_unit_dimensions(eprojmap)
 end
 
 """

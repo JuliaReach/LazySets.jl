@@ -19,6 +19,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test σ(N[1, -1], l) == q
     @test σ(N[1, 0], l) == q
 
+    # boundedness
+    @test isbounded(l)
+
     # membership
     @test !∈(N[0, 0], l)
     @test ∈(N[1, 1], l)

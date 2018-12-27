@@ -45,6 +45,23 @@ The ambient dimension of the set.
 end
 
 """
+    isbounded(S::AbstractCentrallySymmetric)::Bool
+
+Determine whether a centrally symmetric set is bounded.
+
+### Input
+
+- `S` -- centrally symmetric set
+
+### Output
+
+`true` (since a set with a unique center must be bounded).
+"""
+function isbounded(::AbstractCentrallySymmetric)::Bool
+    return true
+end
+
+"""
     an_element(S::AbstractCentrallySymmetric{N})::Vector{N} where {N<:Real}
 
 Return some element of a centrally symmetric set.
@@ -74,6 +91,6 @@ Return if a centrally symmetric set is empty or not.
 
 `false`.
 """
-function isempty(S::AbstractCentrallySymmetric)::Bool
+function isempty(::AbstractCentrallySymmetric)::Bool
     return false
 end

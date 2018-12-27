@@ -59,6 +59,9 @@ for N in [Float64, Rational{Int}, Float32]
     # center
     @test center(b) == N[0, 0]
 
+    # boundedness
+    @test isbounded(b)
+
     # isempty
     @test !isempty(b)
 

@@ -61,6 +61,23 @@ function σ(d::AbstractVector{N}, ∅::EmptySet{N}) where {N<:Real}
 end
 
 """
+    isbounded(∅::EmptySet)::Bool
+
+Determine whether an empty set is bounded.
+
+### Input
+
+- `∅` -- empty set
+
+### Output
+
+`true`.
+"""
+function isbounded(::EmptySet)::Bool
+    return true
+end
+
+"""
     ∈(x::AbstractVector{N}, ∅::EmptySet{N})::Bool where {N<:Real}
 
 Check whether a given point is contained in an empty set.

@@ -109,6 +109,23 @@ function σ(d::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
 end
 
 """
+    isbounded(hs::HalfSpace)::Bool
+
+Determine whether a half-space is bounded.
+
+### Input
+
+- `hs` -- half-space
+
+### Output
+
+`false`.
+"""
+function isbounded(::HalfSpace)::Bool
+    return false
+end
+
+"""
     an_element(hs::HalfSpace{N})::Vector{N} where {N<:Real}
 
 Return some element of a half-space.

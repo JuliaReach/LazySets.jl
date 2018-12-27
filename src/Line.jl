@@ -124,6 +124,23 @@ function σ(d::AbstractVector{N}, L::Line{N}) where {N<:Real}
 end
 
 """
+    isbounded(L::Line)::Bool
+
+Determine whether a line is bounded.
+
+### Input
+
+- `L` -- line
+
+### Output
+
+`false`.
+"""
+function isbounded(::Line)::Bool
+    return false
+end
+
+"""
     an_element(L::Line{N})::Vector{N} where N<:Real
 
 Return some element of a line.
