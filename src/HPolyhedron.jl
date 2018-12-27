@@ -190,7 +190,7 @@ Determine whether a polyhedron in constraint representation is bounded.
 
 ### Algorithm
 
-We first check if the polyhedron has at least `max(dim(P), 1)` constraints,
+We first check if the polyhedron has more than `max(dim(P), 1)` constraints,
 which is a necessary condition for boundedness.
 If so, we check boundedness via [`isbounded_unit_dimensions`](@ref).
 """
