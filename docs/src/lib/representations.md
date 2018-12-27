@@ -155,6 +155,7 @@ Inherited from [`LazySet`](@ref):
 HalfSpace
 LinearConstraint
 dim(::HalfSpace)
+ρ(::AbstractVector{N}, ::HalfSpace{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::HalfSpace{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::HalfSpace{N}) where {N<:Real}
 an_element(::HalfSpace{N}) where {N<:Real}
@@ -175,6 +176,7 @@ Inherited from [`LazySet`](@ref):
 ```@docs
 Hyperplane
 dim(::Hyperplane)
+ρ(::AbstractVector{N}, ::Hyperplane{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::Hyperplane{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::Hyperplane{N}) where {N<:Real}
 an_element(::Hyperplane{N}) where {N<:Real}

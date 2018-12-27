@@ -80,11 +80,11 @@ The table entries have the following meaning.
 | `Ballp`                      | i   | i | x | i          | x | i       |            |      |        | i        |
 | `Ellipsoid`                  | i   | i | x | i          | x | i       |            |      |        | i        |
 | `EmptySet`                   | x   | i | x | x          | x | x       |            | x    | x      | x        |
-| `HalfSpace`                  | x   | i | x | x          | x | x       |            |      |        | i        |
+| `HalfSpace`                  | x   | x | x | x          | x | x       |            |      |        | i        |
 | `HPolygon`/`HPolygonOpt`     | i   | i | x | i          | i | i       | i          |      |        | i        |
 | `HPolyhedron`                | x   | x | x | i          | x | x       |            |      |        | i        |
 | `HPolytope`                  | x   | x | x | i          | x | x       | i          |      |        | i        |
-| `Hyperplane`                 | x   | i | x | x          | x | x       |            |      |        | i        |
+| `Hyperplane`                 | x   | x | x | x          | x | x       |            |      |        | i        |
 | `Hyperrectangle`             | i   | i | i | i          | i | i       | i          | i    | i      | i        |
 | `Interval`                   | x   | i | x | x          | x | i       | i          | i    | i      | i        |
 | `Line`                       | x   | i | x | x          | x | x       |            |      |        | i        |
