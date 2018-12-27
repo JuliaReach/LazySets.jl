@@ -518,7 +518,7 @@ Determine whether an exponential projection map is bounded.
 
 We first check if the wrapped set is bounded or if the left or right projection
 matrix is zero.
-Otherwise, we check boundedness via `isbounded_unit_dims`.
+Otherwise, we check boundedness via [`isbounded_unit_dimensions`](@ref).
 """
 function isbounded(eprojmap::ExponentialProjectionMap)::Bool
     if isbounded(eprojmap.X)
@@ -527,7 +527,7 @@ function isbounded(eprojmap::ExponentialProjectionMap)::Bool
     if iszero(eprojmap.projspmexp.L) || iszero(eprojmap.projspmexp.R)
         return true
     end
-    return isbounded_unit_dims(eprojmap)
+    return isbounded_unit_dimensions(eprojmap)
 end
 
 """

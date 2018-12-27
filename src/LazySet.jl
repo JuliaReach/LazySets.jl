@@ -8,7 +8,7 @@ export LazySet,
        radius,
        diameter,
        an_element,
-       isbounded, isbounded_unit_dims,
+       isbounded, isbounded_unit_dimensions,
        neutral,
        absorbing
 
@@ -119,14 +119,14 @@ Determine whether a set is bounded.
 
 ### Algorithm
 
-We check boundedness via `isbounded_unit_dims`.
+We check boundedness via [`isbounded_unit_dimensions`](@ref).
 """
 function isbounded(S::LazySet)::Bool
-    return isbounded_unit_dims(S)
+    return isbounded_unit_dimensions(S)
 end
 
 """
-    isbounded_unit_dims(S::LazySet{N})::Bool where {N<:Real}
+    isbounded_unit_dimensions(S::LazySet{N})::Bool where {N<:Real}
 
 Determine whether a set is bounded in each unit dimension.
 
@@ -143,7 +143,7 @@ Determine whether a set is bounded in each unit dimension.
 This function performs ``2n`` support function checks, where ``n`` is the
 ambient dimension of `S`.
 """
-function isbounded_unit_dims(S::LazySet{N})::Bool where {N<:Real}
+function isbounded_unit_dimensions(S::LazySet{N})::Bool where {N<:Real}
     n = dim(S)
     for i in 1:n
         for o in [one(N), -one(N)]

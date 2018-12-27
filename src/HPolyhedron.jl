@@ -192,13 +192,13 @@ Determine whether a polyhedron in constraint representation is bounded.
 
 We first check if the polyhedron has at least `max(dim(P), 1)` constraints,
 which is a necessary condition for boundedness.
-If so, we check boundedness via `isbounded_unit_dims`.
+If so, we check boundedness via [`isbounded_unit_dimensions`](@ref).
 """
 function isbounded(P::HPolyhedron)::Bool
     if length(P.constraints) <= max(dim(P), 1)
         return false
     end
-    return isbounded_unit_dims(P)
+    return isbounded_unit_dimensions(P)
 end
 
 """

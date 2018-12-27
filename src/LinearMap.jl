@@ -216,7 +216,7 @@ Determine whether a linear map is bounded.
 ### Algorithm
 
 We first check if the wrapped set is bounded or the matrix is zero.
-Otherwise, we check boundedness via `isbounded_unit_dims`.
+Otherwise, we check boundedness via [`isbounded_unit_dimensions`](@ref).
 """
 function isbounded(lm::LinearMap)::Bool
     if isbounded(lm.X)
@@ -225,7 +225,7 @@ function isbounded(lm::LinearMap)::Bool
     if iszero(lm.M)
         return true
     end
-    return isbounded_unit_dims(lm)
+    return isbounded_unit_dimensions(lm)
 end
 
 """

@@ -57,7 +57,7 @@ norm(::LazySet, ::Real=Inf)
 radius(::LazySet, ::Real=Inf)
 diameter(::LazySet, ::Real=Inf)
 isbounded(::LazySet)
-isbounded_unit_dims(::LazySet{N}) where {N<:Real}
+isbounded_unit_dimensions(::LazySet{N}) where {N<:Real}
 an_element(::LazySet{N}) where {N<:Real}
 ==(::LazySet, ::LazySet)
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet)
