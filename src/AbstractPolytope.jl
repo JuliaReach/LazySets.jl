@@ -123,7 +123,7 @@ return quote
                      hreps, vreps,
                      intersect,
                      convexhull,
-                     hcartesianproduct,
+                     hcartesianproduct, vcartesianproduct,
                      points
 
     import CDDLib # default backend
@@ -144,7 +144,7 @@ else
                      hreps, vreps,
                      intersect,
                      convexhull,
-                     hcartesianproduct,
+                     hcartesianproduct, vcartesianproduct,
                      points,
                      default_library
 

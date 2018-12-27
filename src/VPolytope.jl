@@ -4,7 +4,8 @@ import Base.rand
 
 export VPolytope,
        vertices_list,
-       convex_hull
+       convex_hull,
+       cartesian_product
 
 """
     VPolytope{N<:Real} <: AbstractPolytope{N}
@@ -221,6 +222,34 @@ function convex_hull(P1::VPolytope{N}, P2::VPolytope{N};
     return VPolytope(Pch)
 end
 
+"""
+    cartesian_product(P1::VPolytope{N}, P2::VPolytope{N};
+                      [backend]=default_polyhedra_backend(P1, N)) where {N}
+
+Compute the Cartesian product of two polytopes in V-representation.
+
+### Input
+
+- `P1`         -- polytope
+- `P2`         -- another polytope
+- `backend`    -- (optional, default: `default_polyhedra_backend(P1, N)`) the polyhedral
+                  computations backend, see
+                  [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
+                  for further information
+
+### Output
+
+The `VPolytope` obtained by the concrete Cartesian product of `P1` and `P2`.
+"""
+function cartesian_product(P1::VPolytope{N}, P2::VPolytope{N};
+                           backend=default_polyhedra_backend(P1, N)) where {N}
+    @assert isdefined(@__MODULE__, :Polyhedra) "the function `cartesian_product` needs " *
+                                               "the package 'Polyhedra' to be loaded"
+    Pcp = vcartesianproduct(polyhedron(P1; backend=backend),
+                            polyhedron(P2; backend=backend))
+    return VPolytope(Pcp)
+end
+
 # ==========================================
 # Lower level methods that use Polyhedra.jl
 # ==========================================
@@ -229,8 +258,7 @@ function load_polyhedra_vpolytope() # function to be loaded by Requires
 return quote
 # see the interface file AbstractPolytope.jl for the imports
 
-export cartesian_product,
-       vertices_list,
+export vertices_list,
        tohrep,
        tovrep
 
@@ -278,31 +306,6 @@ function polyhedron(P::VPolytope{N};
                     backend=default_polyhedra_backend(P, N)) where {N<:Real}
     V = hcat(vertices_list(P)...)'
     return polyhedron(Polyhedra.vrep(V), backend)
-end
-
-"""
-    cartesian_product(P1::VPolytope{N}, P2::VPolytope{N};
-                      [backend]=default_polyhedra_backend(P1, N)) where {N}
-
-Compute the Cartesian product of two polytopes in V-representation.
-
-### Input
-
-- `P1`         -- polytope
-- `P2`         -- another polytope
-- `backend`    -- (optional, default: `default_polyhedra_backend(P1, N)`) the polyhedral
-                  computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
-                  for further information
-
-### Output
-
-The `VPolytope` obtained by the concrete Cartesian product of `P1` and `P2`.
-"""
-function cartesian_product(P1::VPolytope{N}, P2::VPolytope{N};
-                           backend=default_polyhedra_backend(P1, N)) where {N}
-    Pcp = hcartesianproduct(polyhedron(P1; backend=backend),
-                            polyhedron(P2; backend=backend))
-    return VPolytope(Pcp)
 end
 
 """
