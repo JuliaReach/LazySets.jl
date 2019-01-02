@@ -250,6 +250,50 @@ function cartesian_product(P1::VPolytope{N}, P2::VPolytope{N};
     return VPolytope(Pcp)
 end
 
+"""
+    tohrep(P::VPolytope{N};
+           [backend]=default_polyhedra_backend(P, N)) where {N<:Real}
+
+Transform a polytope in V-representation to a polytope in H-representation.
+
+### Input
+
+- `P`          -- polytope in vertex representation
+- `backend`    -- (optional, default: `default_polyhedra_backend(P, N)`) the polyhedral
+                  computations backend,
+                  see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
+                  for further information
+
+### Output
+
+The `HPolytope` which is the constraint representation of the given polytope
+in vertex representation.
+"""
+function tohrep(P::VPolytope{N};
+                backend=default_polyhedra_backend(P, N)) where {N<:Real}
+    @assert isdefined(@__MODULE__, :Polyhedra) "the function `tohrep` needs the " *
+                                               "package 'Polyhedra' to be loaded"
+    return HPolytope(polyhedron(P; backend=backend))
+end
+
+"""
+    tovrep(P::VPolytope)
+
+Return a vertex representation of the given polytope in vertex
+representation (no-op).
+
+### Input
+
+- `P` -- polytope in vertex representation
+
+### Output
+
+The same polytope instance.
+"""
+function tovrep(P::VPolytope)
+    return P
+end
+
 # ==========================================
 # Lower level methods that use Polyhedra.jl
 # ==========================================
@@ -306,48 +350,6 @@ function polyhedron(P::VPolytope{N};
                     backend=default_polyhedra_backend(P, N)) where {N<:Real}
     V = hcat(vertices_list(P)...)'
     return polyhedron(Polyhedra.vrep(V), backend)
-end
-
-"""
-    tohrep(P::VPolytope{N};
-           [backend]=default_polyhedra_backend(P, N)) where {N<:Real}
-
-Transform a polytope in V-representation to a polytope in H-representation.
-
-### Input
-
-- `P`          -- polytope in vertex representation
-- `backend`    -- (optional, default: `default_polyhedra_backend(P, N)`) the polyhedral
-                  computations backend,
-                  see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
-                  for further information
-
-### Output
-
-The `HPolytope` which is the constraint representation of the given polytope
-in vertex representation.
-"""
-function tohrep(P::VPolytope{N};
-                backend=default_polyhedra_backend(P, N)) where {N<:Real}
-    return HPolytope(polyhedron(P; backend=backend))
-end
-
-"""
-    tovrep(P::VPolytope)
-
-Return a vertex representation of the given polytope in vertex
-representation (no-op).
-
-### Input
-
-- `P` -- polytope in vertex representation
-
-### Output
-
-The same polytope instance.
-"""
-function tovrep(P::VPolytope)
-    return P
 end
 
 end # quote
