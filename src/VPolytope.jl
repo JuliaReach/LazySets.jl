@@ -5,7 +5,8 @@ import Base.rand
 export VPolytope,
        vertices_list,
        convex_hull,
-       cartesian_product
+       cartesian_product,
+       remove_redundant_vertices
 
 """
     VPolytope{N<:Real} <: AbstractPolytope{N}
@@ -35,9 +36,7 @@ function VPolytope(P::VPolygon, share::Bool=false)
     return VPolytope(v)
 end
 
-
 # --- LazySet interface functions ---
-
 
 """
     dim(P::VPolytope)::Int
@@ -248,6 +247,34 @@ function cartesian_product(P1::VPolytope{N}, P2::VPolytope{N};
     Pcp = vcartesianproduct(polyhedron(P1; backend=backend),
                             polyhedron(P2; backend=backend))
     return VPolytope(Pcp)
+end
+
+"""
+    remove_redundant_vertices(P::VPolytope{N};
+                              backend=default_polyhedra_backend(P, N))::VPolytope{N} where {N}
+
+Return the polytope obtained by taking the convex hull of the vertices of the
+given polytope.
+
+### Input
+
+- `P`         -- polytope in vertex representation
+- `backend`   -- (optional, default: `default_polyhedra_backend(P1, N)`) the polyhedral
+                 computations backend, see
+                 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
+                 for further information
+
+### Output
+
+A new polytope such that its vertices are the convex hull of the given polytope.
+"""
+function remove_redundant_vertices(P::VPolytope{N};
+                                   backend=default_polyhedra_backend(P, N))::VPolytope{N} where {N}
+    @assert isdefined(@__MODULE__, :Polyhedra) "the function `remove_redundant_vertices` needs " *
+                                               "the package 'Polyhedra' to be loaded"
+    Q = polyhedron(P; backend=backend)
+    removevredundancy!(Q)
+    return VPolytope(Q)
 end
 
 # ==========================================

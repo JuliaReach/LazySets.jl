@@ -2,7 +2,8 @@ import Base: rand,
              ∈
 
 export VPolygon,
-       remove_redundant_vertices
+       remove_redundant_vertices,
+       remove_redundant_vertices!
 
 """
     VPolygon{N<:Real} <: AbstractPolygon{N}
