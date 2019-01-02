@@ -201,6 +201,31 @@ function ρ(d::AbstractVector{N}, lm::LinearMap{N}; kwargs...) where {N<:Real}
 end
 
 """
+    isbounded(lm::LinearMap)::Bool
+
+Determine whether a linear map is bounded.
+
+### Input
+
+- `lm` -- linear map
+
+### Output
+
+`true` iff the linear map is bounded.
+
+### Algorithm
+
+We first check if the matrix is zero or the wrapped set is bounded.
+Otherwise, we check boundedness via [`isbounded_unit_dimensions`](@ref).
+"""
+function isbounded(lm::LinearMap)::Bool
+    if iszero(lm.M) || isbounded(lm.X)
+        return true
+    end
+    return isbounded_unit_dimensions(lm)
+end
+
+"""
     ∈(x::AbstractVector{N}, lm::LinearMap{N})::Bool where {N<:Real}
 
 Check whether a given point is contained in a linear map of a convex set.

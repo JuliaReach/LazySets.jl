@@ -176,6 +176,32 @@ function σ_helper(d::AbstractVector{N}, P::HPoly{N}) where {N<:Real}
 end
 
 """
+    isbounded(P::HPolyhedron)::Bool
+
+Determine whether a polyhedron in constraint representation is bounded.
+
+### Input
+
+- `P` -- polyhedron in constraint representation
+
+### Output
+
+`true` iff the polyhedron is bounded.
+
+### Algorithm
+
+We first check if the polyhedron has more than `max(dim(P), 1)` constraints,
+which is a necessary condition for boundedness.
+If so, we check boundedness via [`isbounded_unit_dimensions`](@ref).
+"""
+function isbounded(P::HPolyhedron)::Bool
+    if length(P.constraints) <= max(dim(P), 1)
+        return false
+    end
+    return isbounded_unit_dimensions(P)
+end
+
+"""
     ∈(x::AbstractVector{N}, P::HPoly{N})::Bool where {N<:Real}
 
 Check whether a given point is contained in a polyhedron in constraint
@@ -542,7 +568,7 @@ function cartesian_product(P1::HPoly{N},
                            backend=default_polyhedra_backend(P1, N)
                           ) where N<:Real
     @assert isdefined(@__MODULE__, :Polyhedra) "the function `cartesian_product` " *
-        "needs the package 'Polyhedra' to be loaded"
+                                               "needs the package 'Polyhedra' to be loaded"
     Pcp = hcartesianproduct(polyhedron(P1; backend=backend), polyhedron(P2; backend=backend))
     return convert(typeof(P1), Pcp)
 end

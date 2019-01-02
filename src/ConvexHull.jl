@@ -121,6 +121,23 @@ function ρ(d::AbstractVector{N}, ch::ConvexHull{N}) where {N<:Real}
 end
 
 """
+    isbounded(ch::ConvexHull)::Bool
+
+Determine whether a convex hull of two convex sets is bounded.
+
+### Input
+
+- `ch` -- convex hull of two convex sets
+
+### Output
+
+`true` iff both wrapped sets are bounded.
+"""
+function isbounded(ch::ConvexHull)::Bool
+    return isbounded(ch.X) && isbounded(ch.Y)
+end
+
+"""
     isempty(ch::ConvexHull)::Bool
 
 Return if a convex hull of two convex sets is empty or not.
@@ -281,6 +298,24 @@ This algorihm calculates the maximum over all ``ρ(d, X_i)`` where the
 """
 function ρ(d::AbstractVector{N}, cha::ConvexHullArray{N}) where {N<:Real}
     return maximum([ρ(d, Xi) for Xi in array(cha)])
+end
+
+"""
+    isbounded(cha::ConvexHullArray)::Bool
+
+Determine whether a convex hull of a finite number of convex sets is
+bounded.
+
+### Input
+
+- `cha` -- convex hull of a finite number of convex sets
+
+### Output
+
+`true` iff all wrapped sets are bounded.
+"""
+function isbounded(cha::ConvexHullArray)::Bool
+    return all(x -> isbounded(x), cha.array)
 end
 
 """

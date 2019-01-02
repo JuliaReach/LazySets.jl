@@ -130,6 +130,23 @@ function ρ(d::AbstractVector{N}, cp::CartesianProduct{N}) where {N<:Real}
 end
 
 """
+    isbounded(cp::CartesianProduct)::Bool
+
+Determine whether a Cartesian product is bounded.
+
+### Input
+
+- `cp` -- Cartesian product
+
+### Output
+
+`true` iff both wrapped sets are bounded.
+"""
+function isbounded(cp::CartesianProduct)::Bool
+    return isbounded(cp.X) && isbounded(cp.Y)
+end
+
+"""
     ∈(x::AbstractVector{N}, cp::CartesianProduct{N})::Bool where {N<:Real}
 
 Check whether a given point is contained in a Cartesian product.
@@ -356,6 +373,24 @@ function ρ(d::AbstractVector{N}, cpa::CartesianProductArray{N}) where {N<:Real}
         i0 = i1 + 1
     end
     return sfun
+end
+
+"""
+    isbounded(cpa::CartesianProductArray)::Bool
+
+Determine whether a Cartesian product of a finite number of convex sets is
+bounded.
+
+### Input
+
+- `cpa` -- Cartesian product of a finite number of convex sets
+
+### Output
+
+`true` iff all wrapped sets are bounded.
+"""
+function isbounded(cpa::CartesianProductArray)::Bool
+    return all(x -> isbounded(x), cpa.array)
 end
 
 """
