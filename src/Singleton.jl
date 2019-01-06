@@ -3,7 +3,7 @@ import Base.rand
 export Singleton
 
 """
-    Singleton{N<:Real} <: AbstractSingleton{N}
+    Singleton{N<:Real, VN<:AbstractVector{N}} <: AbstractSingleton{N}
 
 Type that represents a singleton, that is, a set with a unique element.
 
@@ -11,8 +11,8 @@ Type that represents a singleton, that is, a set with a unique element.
 
 - `element` -- the only element of the set
 """
-struct Singleton{N<:Real} <: AbstractSingleton{N}
-    element::Vector{N}
+struct Singleton{N<:Real, VN<:AbstractVector{N}} <: AbstractSingleton{N}
+    element::VN
 end
 
 
@@ -20,7 +20,7 @@ end
 
 
 """
-    element(S::Singleton{N})::Vector{N} where {N<:Real}
+    element(S::Singleton{N}) where {N<:Real}
 
 Return the element of a singleton.
 
@@ -32,7 +32,7 @@ Return the element of a singleton.
 
 The element of the singleton.
 """
-function element(S::Singleton{N})::Vector{N} where {N<:Real}
+function element(S::Singleton{N}) where {N<:Real}
     return S.element
 end
 
