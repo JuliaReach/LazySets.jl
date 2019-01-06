@@ -15,6 +15,9 @@ struct Singleton{N<:Real, VN<:AbstractVector{N}} <: AbstractSingleton{N}
     element::VN
 end
 
+@static if VERSION < v"0.7-"
+    Singleton{N<:Real, VN<:AbstractVector{N}}(x::VN) = Singleton{N, VN}(x)
+end
 
 # --- AbstractSingleton interface functions ---
 
