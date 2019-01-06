@@ -219,7 +219,6 @@ for N in [Float64, Float32, Rational{Int}]
     p2 = VPolygon([N[1, 0]])
     b = BallInf(N[2, 0], N(1))
     @test ⊆(p2, p1) && ⊆(p2, p1, true)[1]
-    @test ⊆(HPolygon{N}(), p1)
     subset, witness = ⊆(p1, b, true)
     @test !⊆(p1, b) && !subset && witness ∈ p1 && witness ∉ b
     subset, witness = ⊆(p2, b, true)
