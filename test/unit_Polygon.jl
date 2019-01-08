@@ -42,8 +42,10 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws AssertionError σ(N[0], HPolygonOpt(HPolygon{N}()))
 
     # boundedness
-    @test isbounded(p)
-    @test isbounded(po)
+    @test isbounded(p) && isbounded(po)
+    @test validate_boundedness(p) && validate_boundedness(po)
+    @test !validate_boundedness(HPolygon{N}()) &&
+          !validate_boundedness(HPolygonOpt{N}())
 
     # isempty
     @test !isempty(p)

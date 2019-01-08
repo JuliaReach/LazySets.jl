@@ -1,7 +1,8 @@
 import Base.rand
 
 export HPolytope,
-       vertices_list
+       vertices_list,
+       validate_boundedness
 
 """
     HPolytope{N<:Real} <: AbstractPolytope{N}
@@ -41,6 +42,7 @@ function HPolytope(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real}
 end
 
 HPolytope{N}(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real} = HPolytope(A, b)
+
 
 # --- LazySet interface functions ---
 
@@ -85,6 +87,33 @@ function rand(::Type{HPolytope};
     vpolytope = rand(VPolytope; N=N, dim=dim, rng=rng, seed=seed,
                     num_vertices=num_vertices)
     return convert(HPolytope, vpolytope)
+end
+
+"""
+    validate_boundedness(P::HPolytope)::Bool
+
+Check whether a polytope in constraint representation is indeed bounded.
+
+### Input
+
+- `P` -- polytope in constraint representation
+
+### Output
+
+`true` iff `P` is bounded.
+
+### Algorithm
+
+We convert `P` to an `HPolyhedron` `P2` and then use `isbounded(P2)`.
+
+### Notes
+
+This function is offered in addition to [`isbounded(P::AbstractPolytope)`](@ref)
+which actually always returns `true` because boundedness is an implicit
+assumption of `AbstractPolytope`.
+"""
+function validate_boundedness(P::HPolytope)::Bool
+    return isbounded(HPolyhedron(P.constraints))
 end
 
 

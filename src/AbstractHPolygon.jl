@@ -5,7 +5,8 @@ export AbstractHPolygon,
        an_element,
        addconstraint!,
        vertices_list,
-       constraints_list
+       constraints_list,
+       validate_boundedness
 
 # This constant marks the threshold for the number of constraints of a polygon
 # above which we use a binary search to find the relevant constraint in a
@@ -377,4 +378,31 @@ function binary_search_constraints(d::AbstractVector{N},
         end
         return upper
     end
+end
+
+"""
+    validate_boundedness(P::AbstractHPolygon)::Bool
+
+Check whether a polygon in constraint representation is indeed bounded.
+
+### Input
+
+- `P` -- polygon in constraint representation
+
+### Output
+
+`true` iff `P` is bounded.
+
+### Algorithm
+
+We convert `P` to an `HPolyhedron` `P2` and then use `isbounded(P2)`.
+
+### Notes
+
+This function is offered in addition to [`isbounded(P::AbstractPolytope)`](@ref)
+which actually always returns `true` because boundedness is an implicit
+assumption of `AbstractPolytope`.
+"""
+function validate_boundedness(P::AbstractHPolygon)::Bool
+    return isbounded(HPolyhedron(P.constraints))
 end

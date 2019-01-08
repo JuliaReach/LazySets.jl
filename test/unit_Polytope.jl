@@ -52,6 +52,8 @@ for N in [Float64, Rational{Int}, Float32]
 
     # boundedness
     @test isbounded(p)
+    @test validate_boundedness(p)
+    @test !validate_boundedness(HPolytope{N}())
 
     # membership
     @test ∈(N[5 / 4, 7 / 4], p)

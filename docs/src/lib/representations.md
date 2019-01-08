@@ -460,6 +460,7 @@ The following methods are specific for `HPolytope`.
 ```@docs
 rand(::Type{HPolytope})
 vertices_list(::HPolytope{N}) where {N<:Real}
+validate_boundedness(::HPolytope)
 ```
 
 Inherited from [`AbstractPolytope`](@ref):
