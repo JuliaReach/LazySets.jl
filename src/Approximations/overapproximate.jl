@@ -1,5 +1,5 @@
 """
-    overapproximate(X::S, ::Type{S}) where {S <: LazySet}
+    overapproximate(X::S, ::Type{S}) where {S<:LazySet}
 
 Overapproximating a set of type `S` with type `S` is a no-op.
 
@@ -12,7 +12,7 @@ Overapproximating a set of type `S` with type `S` is a no-op.
 
 The input set.
 """
-function overapproximate(X::S, ::Type{S}) where {S <: LazySet}
+function overapproximate(X::S, ::Type{S}) where {S<:LazySet}
     return X
 end
 
