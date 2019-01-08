@@ -288,6 +288,40 @@ function max(x::Interval{N})::N where {N<:Real}
 end
 
 """
+    low(x::Interval{N})::Vector{N} where {N<:Real}
+
+Return the lower coordinate of an interval set.
+
+### Input
+
+- `x` -- interval
+
+### Output
+
+A vector with the lower coordinate of the interval.
+"""
+function low(x::Interval{N})::Vector{N} where {N<:Real}
+    return N[x.dat.lo]
+end
+
+"""
+    high(x::Interval{N})::Vector{N} where {N<:Real}
+
+Return the higher coordinate of an interval set.
+
+### Input
+
+- `x` -- interval
+
+### Output
+
+A vector with the higher coordinate of the interval.
+"""
+function high(x::Interval{N})::Vector{N} where {N<:Real}
+    return N[x.dat.hi]
+end
+
+"""
     an_element(x::Interval{N})::Vector{N} where {N<:Real}
 
 Return some element of an interval.
