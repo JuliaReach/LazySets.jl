@@ -543,7 +543,8 @@ end
 
 """
     cartesian_product(P1::HPoly{N}, P2::HPoly{N};
-                      [backend]=default_polyhedra_backend(P1, N)) where N<:Real
+                      [backend]=default_polyhedra_backend(P1, N)
+                     ) where {N<:Real}
 
 Compute the Cartesian product of two polyhedra in H-representaion.
 
@@ -566,7 +567,7 @@ For further information on the supported backends see
 function cartesian_product(P1::HPoly{N},
                            P2::HPoly{N};
                            backend=default_polyhedra_backend(P1, N)
-                          ) where N<:Real
+                          ) where {N<:Real}
     @assert isdefined(@__MODULE__, :Polyhedra) "the function `cartesian_product` " *
                                                "needs the package 'Polyhedra' to be loaded"
     Pcp = hcartesianproduct(polyhedron(P1; backend=backend), polyhedron(P2; backend=backend))
@@ -685,9 +686,9 @@ function isempty(P::HPoly{N};
     return Polyhedra.isempty(polyhedron(P; backend=backend), solver)
 end
 
-convert(::Type{HPolytope}, P::HPolyhedron{N}) where N =
+convert(::Type{HPolytope}, P::HPolyhedron{N}) where {N<:Real} =
     HPolytope{N}(copy(constraints_list(P)))
-convert(::Type{HPolyhedron}, P::HPolytope{N}) where N =
+convert(::Type{HPolyhedron}, P::HPolytope{N}) where {N<:Real} =
     HPolyhedron{N}(copy(constraints_list(P)))
 
 # ==========================================

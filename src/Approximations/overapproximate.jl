@@ -134,9 +134,8 @@ function overapproximate(S::ConvexHull{N, Zonotope{N}, Zonotope{N}},
 end
 
 """
-    overapproximate(X::LazySet,
-                    dir::AbstractDirections
-                   )::HPolytope
+    overapproximate(X::LazySet{N}, dir::AbstractDirections{N})::HPolytope{N}
+        where {N}
 
 Overapproximating a set with template directions.
 
@@ -150,8 +149,8 @@ Overapproximating a set with template directions.
 A `HPolytope` overapproximating the set `X` with the directions from `dir`.
 """
 function overapproximate(X::LazySet{N},
-                         dir::AbstractDirections{N};
-                        )::HPolytope{N} where N
+                         dir::AbstractDirections{N}
+                        )::HPolytope{N} where {N}
     halfspaces = Vector{LinearConstraint{N}}()
     sizehint!(halfspaces, length(dir))
     H = HPolytope(halfspaces)
@@ -162,9 +161,7 @@ function overapproximate(X::LazySet{N},
 end
 
 """
-    overapproximate(S::LazySet{N},
-                    ::Type{Interval}
-                   ) where {N<:Real}
+    overapproximate(S::LazySet{N}, ::Type{Interval}) where {N<:Real}
 
 Return the overapproximation of a real unidimensional set with an interval.
 
@@ -177,9 +174,7 @@ Return the overapproximation of a real unidimensional set with an interval.
 
 An interval.
 """
-function overapproximate(S::LazySet{N},
-                         ::Type{Interval}
-                        ) where {N<:Real}
+function overapproximate(S::LazySet{N}, ::Type{Interval}) where {N<:Real}
     @assert dim(S) == 1
     lo = σ([-one(N)], S)[1]
     hi = σ([one(N)], S)[1]
@@ -270,7 +265,7 @@ function overapproximate(cap::Intersection{N,
                                            <:LazySet},
                          dir::AbstractDirections{N};
                          kwargs...
-                        ) where N<:Real
+                        ) where {N<:Real}
     return overapproximate_cap_helper(cap.Y, cap.X, dir; kwargs...)
 end
 
@@ -280,7 +275,7 @@ function overapproximate(cap::Intersection{N,
                                            <:Union{AbstractPolytope{N}, HPolyhedron{N}}},
                          dir::AbstractDirections{N};
                          kwargs...
-                        ) where N<:Real
+                        ) where {N<:Real}
     return overapproximate_cap_helper(cap.X, cap.Y, dir; kwargs...)
 end
 
@@ -290,7 +285,7 @@ function overapproximate(cap::Intersection{N,
                                            <:AbstractPolytope{N}},
                          dir::AbstractDirections{N};
                          kwargs...
-                        ) where N<:Real
+                        ) where {N<:Real}
     return overapproximate_cap_helper(cap.Y, cap.X, dir; kwargs...)
 end
 
@@ -300,7 +295,7 @@ function overapproximate(cap::Intersection{N,
                                            <:HPolyhedron{N}},
                          dir::AbstractDirections{N};
                          kwargs...
-                        ) where N<:Real
+                        ) where {N<:Real}
     return overapproximate_cap_helper(cap.X, cap.Y, dir; kwargs...)
 end
 
@@ -310,7 +305,7 @@ function overapproximate(cap::Intersection{N,
                                            <:AbstractPolytope{N}},
                          dir::AbstractDirections{N};
                          kwargs...
-                        ) where N<:Real
+                        ) where {N<:Real}
     return overapproximate_cap_helper(cap.Y, cap.X, dir; kwargs...)
 end
 

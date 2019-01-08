@@ -339,7 +339,7 @@ end
 # =============================================================
 
 """
-    CachedPair{N} where N
+    CachedPair{N}
 
 A mutable pair of an index and a vector.
 

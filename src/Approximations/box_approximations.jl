@@ -3,7 +3,8 @@
 # ===================================
 
 """
-    box_approximation(S::LazySet)::Hyperrectangle
+    box_approximation(S::LazySet{N})::Union{Hyperrectangle{N}, EmptySet{N}}
+        where {N<:Real}
 
 Overapproximate a convex set by a tight hyperrectangle.
 
@@ -21,8 +22,8 @@ The center of the hyperrectangle is obtained by averaging the support function
 of the given set in the canonical directions, and the lengths of the sides can
 be recovered from the distance among support functions in the same directions.
 """
-function box_approximation(S::LazySet{N};
-                          )::Union{Hyperrectangle{N}, EmptySet{N}} where N<:Real
+function box_approximation(S::LazySet{N}
+                          )::Union{Hyperrectangle{N}, EmptySet{N}} where {N<:Real}
     (c, r) = box_approximation_helper(S)
     if r[1] < 0
         return EmptySet{N}()

@@ -141,7 +141,7 @@ function isbounded(::Line)::Bool
 end
 
 """
-    an_element(L::Line{N})::Vector{N} where N<:Real
+    an_element(L::Line{N})::Vector{N} where {N<:Real}
 
 Return some element of a line.
 
@@ -160,7 +160,7 @@ Otherwise the result is some ``x = [x1, x2]`` such that ``a·[x1, x2] = b``.
 We first find out in which dimension ``a`` is nonzero, say, dimension 1, and
 then choose ``x1 = 1`` and accordingly ``x2 = \\frac{b - a1}{a2}``.
 """
-function an_element(L::Line{N})::Vector{N} where N<:Real
+function an_element(L::Line{N})::Vector{N} where {N<:Real}
     if L.b == zero(N)
         return zeros(N, 2)
     end
@@ -252,7 +252,7 @@ function isempty(L::Line)::Bool
 end
 
 """
-    constrained_dimensions(L::Line{N})::Vector{Int} where N<:Real
+    constrained_dimensions(L::Line{N})::Vector{Int} where {N<:Real}
 
 Return the indices in which a line is constrained.
 
@@ -269,6 +269,6 @@ A vector of ascending indices `i` such that the line is constrained in dimension
 
 A line with constraint ``x1 = 0`` is constrained in dimension 1 only.
 """
-function constrained_dimensions(L::Line{N})::Vector{Int} where N<:Real
+function constrained_dimensions(L::Line{N})::Vector{Int} where {N<:Real}
     return nonzero_indices(L.a)
 end

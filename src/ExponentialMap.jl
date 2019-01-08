@@ -348,7 +348,7 @@ function isempty(em::ExponentialMap)::Bool
 end
 
 """
-    vertices_list(em::ExponentialMap{N})::Vector{Vector{N}} where N<:Real
+    vertices_list(em::ExponentialMap{N})::Vector{Vector{N}} where {N<:Real}
 
 Return the list of vertices of a (polytopic) exponential map.
 
@@ -365,7 +365,7 @@ A list of vertices.
 We assume that the underlying set `X` is polytopic.
 Then the result is just the exponential map applied to the vertices of `X`.
 """
-function vertices_list(em::ExponentialMap{N})::Vector{Vector{N}} where N<:Real
+function vertices_list(em::ExponentialMap{N})::Vector{Vector{N}} where {N<:Real}
     # collect low-dimensional vertices lists
     vlist_X = vertices_list(em.X)
 
