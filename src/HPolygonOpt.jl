@@ -37,34 +37,49 @@ mutable struct HPolygonOpt{N<:Real} <: AbstractHPolygon{N}
     # default constructor that applies sorting of the given constraints
     function HPolygonOpt{N}(constraints::Vector{LinearConstraint{N}},
                             ind::Int=1;
-                            sort_constraints::Bool=true) where {N<:Real}
+                            sort_constraints::Bool=true,
+                            validate_boundedness::Bool=false) where {N<:Real}
         if sort_constraints
             sorted_constraints = Vector{LinearConstraint{N}}()
             sizehint!(sorted_constraints, length(constraints))
             for ci in constraints
                 addconstraint!(sorted_constraints, ci)
             end
-            return new{N}(sorted_constraints, ind)
+            P = new{N}(sorted_constraints, ind)
         else
-            return new{N}(constraints, ind)
+            P = new{N}(constraints, ind)
         end
+        @assert (!validate_boundedness ||
+                 LazySets.validate_boundedness(P)) "the polygon is not bounded"
+        return P
     end
 end
 
 # convenience constructor without type parameter
 HPolygonOpt(constraints::Vector{LinearConstraint{N}},
-            ind::Int=1) where {N<:Real} =
-    HPolygonOpt{N}(constraints, ind)
+            ind::Int=1;
+            sort_constraints::Bool=true,
+            validate_boundedness::Bool=false) where {N<:Real} =
+    HPolygonOpt{N}(constraints, ind;
+                sort_constraints=sort_constraints,
+                validate_boundedness=validate_boundedness)
 
-# constructor for an HPolygon with no constraints
-HPolygonOpt{N}() where {N<:Real} =
-    HPolygonOpt{N}(Vector{LinearConstraint{N}}())
+# constructor for an HPolygonOpt with no constraints
+HPolygonOpt{N}() where {N<:Real} = HPolygonOpt{N}(Vector{LinearConstraint{N}}())
 
-# constructor for an HPolygon with no constraints of type Float64
+# constructor for an HPolygonOpt with no constraints of type Float64
 HPolygonOpt() = HPolygonOpt{Float64}()
 
 # conversion constructor
-HPolygonOpt(S::LazySet) = convert(HPolygonOpt, S)
+# conversion constructor
+function HPolygonOpt(S::LazySet; validate_boundedness::Bool=false)
+    P = convert(HPolygonOpt, S)
+    if validate_boundedness
+        # trigger boundedness check in constructor
+        HPolygonOpt(P.constraints; validate_boundedness=true)
+    end
+    return P
+end
 
 
 

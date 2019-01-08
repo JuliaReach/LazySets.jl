@@ -20,7 +20,21 @@ assumption in this type.
 """
 struct HPolytope{N<:Real} <: AbstractPolytope{N}
     constraints::Vector{LinearConstraint{N}}
+
+    function HPolytope{N}(constraints::Vector{LinearConstraint{N}};
+                          validate_boundedness::Bool=false
+                         ) where {N<:Real}
+        P = new{N}(constraints)
+        @assert (!validate_boundedness ||
+                 LazySets.validate_boundedness(P)) "the polytope is not bounded"
+        return P
+    end
 end
+
+# convenience constructor without type parameter
+HPolytope(constraints::Vector{LinearConstraint{N}};
+          validate_boundedness::Bool=false) where {N<:Real} =
+    HPolytope{N}(constraints; validate_boundedness=validate_boundedness)
 
 # constructor for an HPolytope with no constraints
 HPolytope{N}() where {N<:Real} = HPolytope{N}(Vector{LinearConstraint{N}}())
@@ -29,19 +43,29 @@ HPolytope{N}() where {N<:Real} = HPolytope{N}(Vector{LinearConstraint{N}}())
 HPolytope() = HPolytope{Float64}()
 
 # conversion constructor
-HPolytope(S::LazySet) = convert(HPolytope, S)
+function HPolytope(S::LazySet; validate_boundedness::Bool=false)
+    P = convert(HPolytope, S)
+    if validate_boundedness
+        # trigger boundedness check in constructor
+        HPolytope(P.constraints; validate_boundedness=true)
+    end
+    return P
+end
 
 # constructor for an HPolytope from a simple H-representation
-function HPolytope(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real}
+function HPolytope(A::AbstractMatrix{N}, b::AbstractVector{N};
+                   validate_boundedness::Bool=false) where {N<:Real}
     m = size(A, 1)
     constraints = LinearConstraint{N}[]
     @inbounds for i in 1:m
         push!(constraints, LinearConstraint(A[i, :], b[i]))
     end
-    return HPolytope(constraints)
+    return HPolytope(constraints; validate_boundedness=validate_boundedness)
 end
 
-HPolytope{N}(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real} = HPolytope(A, b)
+HPolytope{N}(A::AbstractMatrix{N}, b::AbstractVector{N};
+             validate_boundedness::Bool=false) where {N<:Real} =
+    HPolytope(A, b; validate_boundedness=validate_boundedness)
 
 
 # --- LazySet interface functions ---

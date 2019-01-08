@@ -37,6 +37,14 @@ for N in [Float64, Float32, Rational{Int}]
     HPolytope(p)
     HPolytope(po)
 
+    # conversion from other set type
+    H = Hyperrectangle(low=N[-1, -1], high=N[1, 1])
+    HPolygon(H)
+    HPolygonOpt(H)
+    # check boundedness after conversion
+    HPolygon(H; validate_boundedness=true)
+    HPolygonOpt(H; validate_boundedness=true)
+
     # support vector of polygon with no constraints
     @test_throws AssertionError σ(N[0], HPolygon{N}())
     @test_throws AssertionError σ(N[0], HPolygonOpt(HPolygon{N}()))
@@ -46,6 +54,10 @@ for N in [Float64, Float32, Rational{Int}]
     @test validate_boundedness(p) && validate_boundedness(po)
     @test !validate_boundedness(HPolygon{N}()) &&
           !validate_boundedness(HPolygonOpt{N}())
+    @test_throws AssertionError HPolygon(LinearConstraint{N}[];
+                                        validate_boundedness=true)
+    @test_throws AssertionError HPolygonOpt(LinearConstraint{N}[];
+                                           validate_boundedness=true)
 
     # isempty
     @test !isempty(p)

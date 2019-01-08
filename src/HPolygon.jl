@@ -29,24 +29,31 @@ struct HPolygon{N<:Real} <: AbstractHPolygon{N}
 
     # default constructor that applies sorting of the given constraints
     function HPolygon{N}(constraints::Vector{LinearConstraint{N}};
-                         sort_constraints::Bool=true) where {N<:Real}
+                         sort_constraints::Bool=true,
+                         validate_boundedness::Bool=false) where {N<:Real}
         if sort_constraints
             sorted_constraints = Vector{LinearConstraint{N}}()
             sizehint!(sorted_constraints, length(constraints))
             for ci in constraints
                 addconstraint!(sorted_constraints, ci)
             end
-            return new{N}(sorted_constraints)
+            P = new{N}(sorted_constraints)
         else
-            return new{N}(constraints)
+            P = new{N}(constraints)
         end
+        @assert (!validate_boundedness ||
+                 LazySets.validate_boundedness(P)) "the polygon is not bounded"
+        return P
     end
 end
 
 # convenience constructor without type parameter
 HPolygon(constraints::Vector{LinearConstraint{N}};
-         sort_constraints::Bool=true) where {N<:Real} =
-    HPolygon{N}(constraints; sort_constraints=sort_constraints)
+         sort_constraints::Bool=true,
+         validate_boundedness::Bool=false) where {N<:Real} =
+    HPolygon{N}(constraints;
+                sort_constraints=sort_constraints,
+                validate_boundedness=validate_boundedness)
 
 # constructor for an HPolygon with no constraints
 HPolygon{N}() where {N<:Real} = HPolygon{N}(Vector{LinearConstraint{N}}())
@@ -55,7 +62,14 @@ HPolygon{N}() where {N<:Real} = HPolygon{N}(Vector{LinearConstraint{N}}())
 HPolygon() = HPolygon{Float64}()
 
 # conversion constructor
-HPolygon(S::LazySet) = convert(HPolygon, S)
+function HPolygon(S::LazySet; validate_boundedness::Bool=false)
+    P = convert(HPolygon, S)
+    if validate_boundedness
+        # trigger boundedness check in constructor
+        HPolygon(P.constraints; validate_boundedness=true)
+    end
+    return P
+end
 
 
 # --- LazySet interface functions ---
