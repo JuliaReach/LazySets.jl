@@ -274,8 +274,8 @@ this function throws an error instead of returning.
 
 ### Notes
 
-For correctness, consider the [weak duality of LPs](
-https://en.wikipedia.org/wiki/Linear_programming#Duality):
+For correctness, consider the [weak duality of
+LPs](https://en.wikipedia.org/wiki/Linear_programming#Duality):
 If the primal is unbounded, then the dual is infeasible.
 Since there is only a single constraint, the feasible set of the dual problem is
 `hp.a ⋅ y == d`, `y >= 0` (with objective function `hp.b ⋅ y`).
