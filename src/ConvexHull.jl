@@ -195,7 +195,7 @@ end
 
 @static if VERSION < v"0.7-"
     # convenience constructor without type parameter
-    ConvexHullArray(a::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
+    ConvexHullArray(a::Vector{S}) where {N<:Real, S<:LazySet{N}} =
         ConvexHullArray{N, S}(a)
 end
 

@@ -270,7 +270,7 @@ end
 
 @static if VERSION < v"0.7-"
     # convenience constructor without type parameter
-    CartesianProductArray(arr::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
+    CartesianProductArray(arr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
         CartesianProductArray{N, S}(arr)
 end
 

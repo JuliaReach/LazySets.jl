@@ -578,7 +578,7 @@ end
 
 @static if VERSION < v"0.7-"
     # convenience constructor without type parameter
-    IntersectionArray(arr::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
+    IntersectionArray(arr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
         IntersectionArray{N, S}(arr)
 end
 

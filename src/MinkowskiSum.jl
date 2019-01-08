@@ -201,7 +201,7 @@ end
 
 @static if VERSION < v"0.7-"
     # convenience constructor without type parameter
-    MinkowskiSumArray(arr::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
+    MinkowskiSumArray(arr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
         MinkowskiSumArray{N, S}(arr)
 end
 
