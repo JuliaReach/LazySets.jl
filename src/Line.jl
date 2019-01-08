@@ -6,7 +6,7 @@ export Line,
        an_element
 
 """
-    Line{N<:Real} <: LazySet{N}
+    Line{N<:Real, VN<:AbstractVector{N}} <: LazySet{N}
 
 Type that represents a line in 2D of the form ``a⋅x = b`` (i.e., a special case
 of a `Hyperplane`).
@@ -25,20 +25,20 @@ julia> Line([1., 1.], 1.)
 Line{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
 ```
 """
-struct Line{N<:Real, V<:AbstractVector{N}} <: LazySet{N}
-    a::V
+struct Line{N<:Real, VN<:AbstractVector{N}} <: LazySet{N}
+    a::VN
     b::N
 
     # default constructor with length constraint
-    function Line{N, V}(a::V, b::N) where {N<:Real, V<:AbstractVector{N}}
+    function Line{N, VN}(a::VN, b::N) where {N<:Real, VN<:AbstractVector{N}}
         @assert length(a) == 2 "lines must be two-dimensional"
         @assert a != zeros(N, 2) "the normal vector of a line must not be zero"
-        return new{N, V}(a, b)
+        return new{N, VN}(a, b)
     end
 end
 
 # convenience constructor without type parameter
-Line(a::V, b::N) where {N<:Real, V<:AbstractVector{N}} = Line{N, V}(a, b)
+Line(a::VN, b::N) where {N<:Real, VN<:AbstractVector{N}} = Line{N, VN}(a, b)
 
 # constructor from a LinearConstraint
 Line(c::LinearConstraint{N}) where {N<:Real} = Line(c.a, c.b)
