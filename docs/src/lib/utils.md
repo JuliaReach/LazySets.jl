@@ -7,32 +7,29 @@ end
 
 # Utility functions
 
-```@docs
-sign_cadlag
-ispermutation
-@neutral
-@absorbing
-@declare_array_version
-```
-
 ## Helpers for internal use only
 
 ### Functions and Macros
 
 ```@docs
-@neutral_absorbing
-@array_neutral
-@array_absorbing
+an_element_helper
+binary_search_constraints
 cross_product(::AbstractMatrix{N}) where {N<:Real}
 get_radius!
-an_element_helper
-σ_helper
-binary_search_constraints
+ispermutation
 nonzero_indices
 samedir
+sign_cadlag
 _random_zero_sum_vector
 remove_duplicates_sorted!
 reseed
+σ_helper
+@neutral
+@absorbing
+@neutral_absorbing
+@declare_array_version
+@array_neutral
+@array_absorbing
 ```
 
 ### Types
