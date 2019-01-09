@@ -82,8 +82,8 @@ The table entries have the following meaning.
 | `EmptySet`                   | x   | i | x | x          | x | x       | x         |            | x    | x      | x        |
 | `HalfSpace`                  | x   | x | x | x          | x | x       | x         |            |      |        | i        |
 | `HPolygon`/`HPolygonOpt`     | i   | i | x | i          | i | i       | i         | i          |      |        | i        |
-| `HPolyhedron`                | x   | x | x | i          | x | x       | x         |            |      |        | i        |
-| `HPolytope`                  | x   | x | x | i          | x | x       | i         | i          |      |        | i        |
+| `HPolyhedron`                | x   | x | x | i          | x | x       | x         | x          |      |        | i        |
+| `HPolytope`                  | x   | x | x | i          | x | x       | i         | x          |      |        | i        |
 | `Hyperplane`                 | x   | x | x | x          | x | x       | x         |            |      |        | i        |
 | `Hyperrectangle`             | i   | i | i | i          | i | i       | i         | i          | i    | i      | i        |
 | `Interval`                   | x   | i | x | x          | x | i       | i         | i          | i    | i      | i        |

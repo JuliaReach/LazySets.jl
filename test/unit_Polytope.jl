@@ -106,6 +106,12 @@ for N in [Float64, Rational{Int}, Float32]
     @test BallInf(N[0, 0], N(1)) ⊆ P
     @test !(BallInf(N[0, 0], N(1.01)) ⊆ P)
 
+    # concrete linear map
+    linear_map(N[2 3; 1 2], P)  # invertible matrix
+    if test_suite_polyhedra
+        linear_map(N[2 3; 0 0], P)  # noninvertible matrix
+    end
+
     # -----
     # V-rep
     # -----

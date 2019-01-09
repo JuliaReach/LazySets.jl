@@ -439,6 +439,7 @@ tosimplehrep(::HPoly{N}) where {N<:Real}
 tohrep(::HPoly{N}) where {N<:Real}
 isempty(::HPoly{N}) where {N<:Real}
 cartesian_product(::HPoly{N}, ::HPoly{N}) where {N<:Real}
+linear_map(M::AbstractMatrix{N}, P::PT) where {N<:Real, PT<:HPoly{N}}
 tovrep(::HPoly{N}) where {N<:Real}
 polyhedron(::HPoly{N}) where {N<:Real}
 remove_redundant_constraints
@@ -449,9 +450,6 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
-
-Inherited from [`AbstractPolytope`](@ref):
-* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real})
 
 #### Polytopes in constraint representation
 
