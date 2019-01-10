@@ -110,7 +110,7 @@ end
 
 """
     samedir(u::AbstractVector{N},
-            v::AbstractVector{N})::Tuple{Bool, Real} where N<:Real
+            v::AbstractVector{N})::Tuple{Bool, Real} where {N<:Real}
 
 Check whether two vectors point in the same direction.
 
@@ -141,7 +141,7 @@ julia> LazySets.samedir([1, 2, 3], [-1, -2, -3])
 """
 function samedir(u::AbstractVector{N},
                  v::AbstractVector{N}
-                )::Tuple{Bool, Real} where N<:Real
+                )::Tuple{Bool, Real} where {N<:Real}
     @assert length(u) == length(v) "wrong dimension"
     no_factor = true
     factor = 0
@@ -172,7 +172,7 @@ function samedir(u::AbstractVector{N},
 end
 
 """
-    nonzero_indices(v::AbstractVector{N})::Vector{Int} where N<:Real
+    nonzero_indices(v::AbstractVector{N})::Vector{Int} where {N<:Real}
 
 Return the indices in which a vector is non-zero.
 
@@ -185,7 +185,7 @@ Return the indices in which a vector is non-zero.
 A vector of ascending indices `i` such that the vector is non-zero in dimension
 `i`.
 """
-function nonzero_indices(v::AbstractVector{N})::Vector{Int} where N<:Real
+function nonzero_indices(v::AbstractVector{N})::Vector{Int} where {N<:Real}
     n = length(v)
     res = Vector{Int}()
     sizehint!(res, n)
@@ -197,7 +197,7 @@ function nonzero_indices(v::AbstractVector{N})::Vector{Int} where N<:Real
     return res
 end
 
-function nonzero_indices(v::SparseVector{N})::Vector{Int} where N<:Real
+function nonzero_indices(v::SparseVector{N})::Vector{Int} where {N<:Real}
     return x.nzind
 end
 

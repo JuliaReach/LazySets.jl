@@ -7,7 +7,7 @@ export Interval,
        vertices_list
 
 """
-    Interval{N<:Real, IN <: AbstractInterval{N}} <: AbstractHyperrectangle{N}
+    Interval{N<:Real, IN<:AbstractInterval{N}} <: AbstractHyperrectangle{N}
 
 Type representing an interval on the real line.
 Mathematically, it is of the form
@@ -74,18 +74,18 @@ julia> Interval(0//1, 2//1)
 Interval{Rational{Int64},AbstractInterval{Rational{Int64}}}([0//1, 2//1])
 ```
 """
-struct Interval{N<:Real, IN <: AbstractInterval{N}} <: AbstractHyperrectangle{N}
+struct Interval{N<:Real, IN<:AbstractInterval{N}} <: AbstractHyperrectangle{N}
    dat::IN
 end
 
 @static if VERSION < v"0.7-"
     # convenience constructor without type parameter
-    Interval(interval::IN) where {N<:Real, IN <: AbstractInterval{N}} =
+    Interval(interval::IN) where {N<:Real, IN<:AbstractInterval{N}} =
         Interval{N, IN}(interval)
 end
 
 # convenience constructor without type parameter for Rational
-Interval(interval::IN) where {N<:Rational, IN <: AbstractInterval{N}} =
+Interval(interval::IN) where {N<:Rational, IN<:AbstractInterval{N}} =
     Interval{N, IntervalArithmetic.AbstractInterval{N}}(interval)
 
 # constructor from two numbers

@@ -1,6 +1,6 @@
 """
-    convex_hull(points::Vector{S}; [algorithm]::String="monotone_chain"
-               )::Vector{S} where {N<:Real, S<:AbstractVector{N}}
+    convex_hull(points::Vector{VN}; [algorithm]::String="monotone_chain"
+               )::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
 
 Compute the convex hull of points in the plane.
 
@@ -40,14 +40,14 @@ julia> plot([Tuple(pi) for pi in points], seriestype=:scatter);
 julia> plot!(VPolygon(hull), alpha=0.2);
 ```
 """
-function convex_hull(points::Vector{S}; algorithm::String="monotone_chain"
-                    )::Vector{S} where {N<:Real, S<:AbstractVector{N}}
+function convex_hull(points::Vector{VN}; algorithm::String="monotone_chain"
+                    )::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
     return convex_hull!(copy(points), algorithm=algorithm)
 end
 
 """
-    convex_hull!(points::Vector{S}; [algorithm]::String="monotone_chain"
-                )::Vector{S} where {N<:Real, S<:AbstractVector{N}}
+    convex_hull!(points::Vector{VN}; [algorithm]::String="monotone_chain"
+                )::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
 
 Compute the convex hull of points in the plane, in-place.
 
@@ -68,9 +68,9 @@ The convex hull as a list of 2D vectors with the coordinates of the points.
 
 See the non-modifying version `convex_hull` for more details.
 """
-function convex_hull!(points::Vector{S};
+function convex_hull!(points::Vector{VN};
                       algorithm::String="monotone_chain"
-                     )::Vector{S} where {N<:Real, S<:AbstractVector{N}}
+                     )::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
 
     isempty(points) && return points
 
@@ -131,8 +131,8 @@ around `O` from `A` to `B`; otherwise they constitute a negative angle.
 end
 
 """
-    monotone_chain!(points::Vector{S}; sort::Bool=true
-                   )::Vector{S} where {N<:Real, S<:AbstractVector{N}}
+    monotone_chain!(points::Vector{VN}; sort::Bool=true
+                   )::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
 
 Compute the convex hull of points in the plane using Andrew's monotone chain
 method.
@@ -164,8 +164,8 @@ construct the convex hull of a set of ``n`` points in the plane in
 For further details see
 [Monotone chain](https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain)
 """
-function monotone_chain!(points::Vector{S}; sort::Bool=true
-                        )::Vector{S} where {N<:Real, S<:AbstractVector{N}}
+function monotone_chain!(points::Vector{VN}; sort::Bool=true
+                        )::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
 
     @inline function build_hull!(semihull, iterator, points, zero_N)
         @inbounds for i in iterator
@@ -187,11 +187,11 @@ function monotone_chain!(points::Vector{S}; sort::Bool=true
     zero_N = zero(N)
 
     # build lower hull
-    lower = Vector{S}()
+    lower = Vector{VN}()
     build_hull!(lower, axes(points)[1], points, zero_N)
 
     # build upper hull
-    upper = Vector{S}()
+    upper = Vector{VN}()
     build_hull!(upper, reverse(axes(points)[1]), points, zero_N)
 
     # remove the last point of each segment because they are repeated

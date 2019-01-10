@@ -348,7 +348,7 @@ function isempty(em::ExponentialMap)::Bool
 end
 
 """
-    vertices_list(em::ExponentialMap{N})::Vector{Vector{N}} where N<:Real
+    vertices_list(em::ExponentialMap{N})::Vector{Vector{N}} where {N<:Real}
 
 Return the list of vertices of a (polytopic) exponential map.
 
@@ -365,7 +365,7 @@ A list of vertices.
 We assume that the underlying set `X` is polytopic.
 Then the result is just the exponential map applied to the vertices of `X`.
 """
-function vertices_list(em::ExponentialMap{N})::Vector{Vector{N}} where N<:Real
+function vertices_list(em::ExponentialMap{N})::Vector{Vector{N}} where {N<:Real}
     # collect low-dimensional vertices lists
     vlist_X = vertices_list(em.X)
 
@@ -418,7 +418,7 @@ end
 @static if VERSION < v"0.7-"
     # convenience constructor without type parameter
     ExponentialProjectionMap(projspmexp::ProjectionSparseMatrixExp, X::S
-                            ) where {S<:LazySet{N}} where {N<:Real} =
+                            ) where {N<:Real, S<:LazySet{N}} =
         ExponentialProjectionMap{N, S}(projspmexp, X)
 end
 

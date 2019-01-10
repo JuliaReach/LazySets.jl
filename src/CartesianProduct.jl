@@ -187,7 +187,7 @@ end
 
 """
     constraints_list(cp::CartesianProduct{N}
-                    )::Vector{LinearConstraint{N}} where N<:Real
+                    )::Vector{LinearConstraint{N}} where {N<:Real}
 
 Return the list of constraints of a (polytopic) Cartesian product.
 
@@ -200,12 +200,12 @@ Return the list of constraints of a (polytopic) Cartesian product.
 A list of constraints.
 """
 function constraints_list(cp::CartesianProduct{N}
-                         )::Vector{LinearConstraint{N}} where N<:Real
+                         )::Vector{LinearConstraint{N}} where {N<:Real}
     return constraints_list(CartesianProductArray([cp.X, cp.Y]))
 end
 
 """
-    vertices_list(cp::CartesianProduct{N})::Vector{Vector{N}} where N<:Real
+    vertices_list(cp::CartesianProduct{N})::Vector{Vector{N}} where {N<:Real}
 
 Return the list of vertices of a (polytopic) Cartesian product.
 
@@ -223,7 +223,8 @@ We assume that the underlying sets are polytopic.
 Then the high-dimensional set of vertices is just the Cartesian product of the
 low-dimensional sets of vertices.
 """
-function vertices_list(cp::CartesianProduct{N})::Vector{Vector{N}} where N<:Real
+function vertices_list(cp::CartesianProduct{N}
+                      )::Vector{Vector{N}} where {N<:Real}
     # collect low-dimensional vertices lists
     vlist_low = (vertices_list(cp.X), vertices_list(cp.Y))
 
@@ -269,7 +270,7 @@ end
 
 @static if VERSION < v"0.7-"
     # convenience constructor without type parameter
-    CartesianProductArray(arr::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
+    CartesianProductArray(arr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
         CartesianProductArray{N, S}(arr)
 end
 
@@ -443,7 +444,7 @@ end
 
 """
     constraints_list(cpa::CartesianProductArray{N}
-                    )::Vector{LinearConstraint{N}} where N<:Real
+                    )::Vector{LinearConstraint{N}} where {N<:Real}
 
 Return the list of constraints of a (polytopic) Cartesian product of a finite
 number of sets.
@@ -457,7 +458,7 @@ number of sets.
 A list of constraints.
 """
 function constraints_list(cpa::CartesianProductArray{N}
-                         )::Vector{LinearConstraint{N}} where N<:Real
+                         )::Vector{LinearConstraint{N}} where {N<:Real}
     clist = Vector{LinearConstraint{N}}()
     n = dim(cpa)
     sizehint!(clist, n)
@@ -480,7 +481,8 @@ function constraints_list(cpa::CartesianProductArray{N}
 end
 
 """
-    vertices_list(cpa::CartesianProductArray{N})::Vector{Vector{N}} where N<:Real
+    vertices_list(cpa::CartesianProductArray{N}
+                 )::Vector{Vector{N}} where {N<:Real}
 
 Return the list of vertices of a (polytopic) Cartesian product of a finite
 number of sets.
@@ -499,7 +501,8 @@ We assume that the underlying sets are polytopic.
 Then the high-dimensional set of vertices is just the Cartesian product of the
 low-dimensional sets of vertices.
 """
-function vertices_list(cpa::CartesianProductArray{N})::Vector{Vector{N}} where N<:Real
+function vertices_list(cpa::CartesianProductArray{N}
+                      )::Vector{Vector{N}} where {N<:Real}
     # collect low-dimensional vertices lists
     vlist_low = [vertices_list(X) for X in array(cpa)]
 
