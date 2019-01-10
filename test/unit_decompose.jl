@@ -21,6 +21,9 @@ for N in [Float64, Rational{Int}, Float32]
     d = decompose(b, set_type=Hyperrectangle)
     @test d.array[1] isa Hyperrectangle && test_directions(d.array[1])
 
+    d = decompose(b, set_type=LinearMap)
+    @test d.array[1] isa LinearMap && test_directions(d.array[1])
+
     d = decompose(b, set_type=Interval, blocks=ones(Int, 6))
     @test d.array[1] isa Interval &&
         σ(N[1], d.array[1])[1] == one(N) && σ(N[-1], d.array[1])[1] == -one(N)

@@ -40,6 +40,9 @@ for N in [Float64, Rational{Int}, Float32]
     d = N[0, -1]
     @test σ(d, z) == N[2, 1]
 
+    # boundedness
+    @test isbounded(z)
+
     # isempty
     @test !isempty(z)
 

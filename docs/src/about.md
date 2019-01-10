@@ -105,7 +105,7 @@ These persons have contributed to `LazySets.jl` (in alphabetic order):
 
 - Tomer Arnon
 - [Marcelo Forets](http://marcelo-forets.fr)
-- [Christian Schilling](http://swt.informatik.uni-freiburg.de/staff/christian_schilling/)
+- [Christian Schilling](https://schillic.github.io/)
 - Frédéric Viry
 
 We are also grateful to Goran Frehse for enlightening discussions.

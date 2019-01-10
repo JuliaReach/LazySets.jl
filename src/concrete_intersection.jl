@@ -25,10 +25,10 @@ The line ``y = -x + 1`` intersected with the line ``y = x``:
 
 ```jldoctest
 julia> intersection(Line([-1., 1.], 0.), Line([1., 1.], 1.))
-Singleton{Float64}([0.5, 0.5])
+Singleton{Float64,Array{Float64,1}}([0.5, 0.5])
+
 julia> intersection(Line([1., 1.], 1.), Line([1., 1.], 1.))
 Line{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
-
 ```
 """
 function intersection(L1::Line{N}, L2::Line{N}
@@ -120,10 +120,10 @@ Otherwise the result is the interval that describes the intersection.
 function intersection(x::Interval{N},
                       y::Interval{N}
                      )::Union{Interval{N}, EmptySet{N}} where {N<:Real}
-    if low(y) > high(x) || low(x) > high(y)
+    if min(y) > max(x) || min(x) > max(y)
         return EmptySet{N}()
     else
-        return Interval(max(low(x), low(y)), min(high(x), high(y)))
+        return Interval(max(min(x), min(y)), min(max(x), max(y)))
     end
 end
 

@@ -27,6 +27,7 @@ CartesianProduct
 dim(::CartesianProduct)
 ρ(::AbstractVector{N}, ::CartesianProduct{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::CartesianProduct{N}) where {N<:Real}
+isbounded(::CartesianProduct)
 ∈(::AbstractVector{N}, ::CartesianProduct{N}) where {N<:Real}
 isempty(::CartesianProduct)
 constraints_list(::CartesianProduct{N}) where {N<:Real}
@@ -45,6 +46,7 @@ CartesianProductArray
 dim(::CartesianProductArray)
 ρ(::AbstractVector{N}, ::CartesianProductArray{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::CartesianProductArray{N}) where {N<:Real}
+isbounded(::CartesianProductArray)
 ∈(::AbstractVector{N}, ::CartesianProductArray{N}) where {N<:Real}
 isempty(::CartesianProductArray)
 constraints_list(::CartesianProductArray{N}) where {N<:Real}
@@ -67,6 +69,7 @@ CH
 dim(::ConvexHull)
 ρ(::AbstractVector{N}, ::ConvexHull{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::ConvexHull{N}) where {N<:Real}
+isbounded(::ConvexHull)
 isempty(::ConvexHull)
 ```
 Inherited from [`LazySet`](@ref):
@@ -83,6 +86,7 @@ CHArray
 dim(::ConvexHullArray)
 ρ(::AbstractVector{N}, ::ConvexHullArray{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::ConvexHullArray{N}) where {N<:Real}
+isbounded(::ConvexHullArray)
 array(::ConvexHullArray{N, S}) where {N<:Real, S<:LazySet{N}}
 isempty(::ConvexHullArray)
 ```
@@ -112,8 +116,9 @@ dim(::Intersection)
 ρ(::AbstractVector{N}, ::Intersection{N}) where {N<:Real}
 ρ(::AbstractVector{N}, ::Intersection{N, S1, S2}) where {N<:Real, S1<:LazySet{N}, S2<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}}
 ρ(::AbstractVector{N}, ::Intersection{N, S1, S2}) where {N<:Real, S1<:LazySet{N}, S2<:AbstractPolytope{N}}
-isempty(::Intersection)
 σ(::AbstractVector{N}, ::Intersection{N}) where {N<:Real}
+isbounded(::Intersection)
+isempty(::Intersection)
 ∈(::AbstractVector{N}, ::Intersection{N}) where {N<:Real}
 isempty_known(::Intersection)
 set_isempty!(::Intersection, ::Bool)
@@ -141,6 +146,7 @@ IntersectionCache
 IntersectionArray
 dim(::IntersectionArray)
 σ(::AbstractVector{N}, ::IntersectionArray{N}) where {N<:Real}
+isbounded(::IntersectionArray)
 ∈(::AbstractVector{N}, ::IntersectionArray{N}) where {N<:Real}
 array(::IntersectionArray{N, S}) where {N<:Real, S<:LazySet{N}}
 ```
@@ -161,6 +167,7 @@ MinkowskiSum
 dim(::MinkowskiSum)
 ρ(::AbstractVector{N}, ::MinkowskiSum{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::MinkowskiSum{N}) where {N<:Real}
+isbounded(::MinkowskiSum)
 isempty(::MinkowskiSum)
 ```
 Inherited from [`LazySet`](@ref):
@@ -176,6 +183,7 @@ MinkowskiSumArray
 dim(::MinkowskiSumArray)
 ρ(::AbstractVector{N}, ::MinkowskiSumArray{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::MinkowskiSumArray{N}) where {N<:Real}
+isbounded(::MinkowskiSumArray)
 isempty(::MinkowskiSumArray)
 array(::MinkowskiSumArray{N, S}) where {N<:Real, S<:LazySet{N}}
 ```
@@ -191,6 +199,7 @@ Inherited from [`LazySet`](@ref):
 CacheMinkowskiSum
 dim(::CacheMinkowskiSum)
 σ(::AbstractVector{N}, ::CacheMinkowskiSum{N}) where {N<:Real}
+isbounded(::CacheMinkowskiSum)
 isempty(::CacheMinkowskiSum)
 array(::CacheMinkowskiSum{N, S}) where {N<:Real, S<:LazySet{N}}
 forget_sets!(::CacheMinkowskiSum)
@@ -216,6 +225,7 @@ dim(::LinearMap)
 σ(::AbstractVector{N}, ::LinearMap{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::LinearMap{N}) where {N<:Real}
 an_element(::LinearMap{N}) where {N<:Real}
+isbounded(::LinearMap)
 isempty(::LinearMap)
 vertices_list(::LinearMap{N}) where {N<:Real}
 ```
@@ -232,6 +242,7 @@ dim(::ExponentialMap)
 ρ(::AbstractVector{N}, ::ExponentialMap{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::ExponentialMap{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::ExponentialMap{N}) where {N<:Real}
+isbounded(::ExponentialMap)
 isempty(::ExponentialMap)
 vertices_list(::ExponentialMap{N}) where {N<:Real}
 ```
@@ -245,6 +256,7 @@ Inherited from [`LazySet`](@ref):
 ExponentialProjectionMap
 dim(::ExponentialProjectionMap)
 σ(::AbstractVector{N}, ::ExponentialProjectionMap{N}) where {N<:Real}
+isbounded(::ExponentialProjectionMap)
 isempty(::ExponentialProjectionMap)
 ```
 Inherited from [`LazySet`](@ref):
@@ -278,6 +290,7 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
 Inherited from [`AbstractPolytope`](@ref):
+* [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 * [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real})
 

@@ -33,6 +33,7 @@ Inherited from [`LazySet`](@ref):
 
 Inherited from [`AbstractCentrallySymmetric`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetric))
+* [`isbounded`](@ref isbounded(::AbstractCentrallySymmetric))
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetric))
 * [`an_element`](@ref an_element(::AbstractCentrallySymmetric{N}) where {N<:Real})
 
@@ -50,6 +51,7 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
 Inherited from [`AbstractPolytope`](@ref):
+* [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 * [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real})
 
@@ -83,6 +85,7 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
 Inherited from [`AbstractPolytope`](@ref):
+* [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 * [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real})
 
@@ -107,6 +110,7 @@ Inherited from [`LazySet`](@ref):
 
 Inherited from [`AbstractCentrallySymmetric`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetric))
+* [`isbounded`](@ref isbounded(::AbstractCentrallySymmetric))
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetric))
 * [`an_element`](@ref an_element(::AbstractCentrallySymmetric{N}) where {N<:Real})
 
@@ -126,6 +130,7 @@ Inherited from [`LazySet`](@ref):
 
 Inherited from [`AbstractCentrallySymmetric`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetric))
+* [`isbounded`](@ref isbounded(::AbstractCentrallySymmetric))
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetric))
 * [`an_element`](@ref an_element(::AbstractCentrallySymmetric{N}) where {N<:Real})
 
@@ -139,6 +144,7 @@ dim(::EmptySet)
 ∈(::AbstractVector{N}, ::EmptySet{N}) where {N<:Real}
 an_element(::EmptySet)
 rand(::Type{EmptySet})
+isbounded(::EmptySet)
 isempty(::EmptySet)
 norm(::EmptySet, ::Real=Inf)
 radius(::EmptySet, ::Real=Inf)
@@ -155,10 +161,12 @@ Inherited from [`LazySet`](@ref):
 HalfSpace
 LinearConstraint
 dim(::HalfSpace)
+ρ(::AbstractVector{N}, ::HalfSpace{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::HalfSpace{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::HalfSpace{N}) where {N<:Real}
 an_element(::HalfSpace{N}) where {N<:Real}
 rand(::Type{HalfSpace})
+isbounded(::HalfSpace)
 isempty(::HalfSpace)
 constraints_list(::HalfSpace{N}) where {N<:Real}
 constrained_dimensions(::HalfSpace{N}) where {N<:Real}
@@ -175,10 +183,12 @@ Inherited from [`LazySet`](@ref):
 ```@docs
 Hyperplane
 dim(::Hyperplane)
+ρ(::AbstractVector{N}, ::Hyperplane{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::Hyperplane{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::Hyperplane{N}) where {N<:Real}
 an_element(::Hyperplane{N}) where {N<:Real}
 rand(::Type{Hyperplane})
+isbounded(::Hyperplane)
 isempty(::Hyperplane)
 constrained_dimensions(::Hyperplane{N}) where {N<:Real}
 ```
@@ -200,6 +210,7 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
 Inherited from [`AbstractPolytope`](@ref):
+* [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 * [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real})
 
@@ -228,6 +239,8 @@ dim(::Interval)
 an_element(::Interval{N}) where {N<:Real}
 vertices_list(::Interval{N}) where {N<:Real}
 center(::Interval{N}) where {N<:Real}
+min(::Interval{N}) where {N<:Real}
+max(::Interval{N}) where {N<:Real}
 low(::Interval{N}) where {N<:Real}
 high(::Interval{N}) where {N<:Real}
 radius_hyperrectangle(::Interval{N}) where {N<:Real}
@@ -243,6 +256,7 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
 Inherited from [`AbstractPolytope`](@ref):
+* [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 * [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real})
 
@@ -262,6 +276,7 @@ dim(::Line)
 ∈(::AbstractVector{N}, ::Line{N}) where {N<:Real}
 an_element(::Line{N}) where {N<:Real}
 rand(::Type{Line})
+isbounded(::Line)
 isempty(::Line)
 constrained_dimensions(::Line{N}) where {N<:Real}
 ```
@@ -292,6 +307,9 @@ Inherited from [`LazySet`](@ref):
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
+Inherited from [`AbstractPolytope`](@ref):
+* [`isbounded`](@ref isbounded(::AbstractPolytope))
+
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
 
@@ -309,6 +327,7 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
 Inherited from [`AbstractPolytope`](@ref):
+* [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`isempty`](@ref isempty(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 * [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real})
@@ -337,6 +356,7 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
 Inherited from [`AbstractPolytope`](@ref):
+* [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`isempty`](@ref isempty(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 * [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real})
@@ -372,6 +392,7 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
 Inherited from [`AbstractPolytope`](@ref):
+* [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`isempty`](@ref isempty(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 * [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real})
@@ -441,6 +462,7 @@ vertices_list(::HPolytope{N}) where {N<:Real}
 ```
 
 Inherited from [`AbstractPolytope`](@ref):
+* [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 
 #### Polyhedra
@@ -449,6 +471,7 @@ The following methods are specific for `HPolyhedron`.
 
 ```@docs
 rand(::Type{HPolyhedron})
+isbounded(::HPolyhedron)
 vertices_list(::HPolyhedron{N}) where {N<:Real}
 singleton_list(::HPolyhedron{N}) where {N<:Real}
 constrained_dimensions(::HPolyhedron{N}) where {N<:Real}
@@ -474,6 +497,7 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
 Inherited from [`AbstractPolytope`](@ref):
+* [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`isempty`](@ref isempty(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 * [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real})
@@ -490,6 +514,7 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
 Inherited from [`AbstractPolytope`](@ref):
+* [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
@@ -528,6 +553,7 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
 Inherited from [`AbstractPolytope`](@ref):
+* [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
@@ -569,6 +595,7 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
 Inherited from [`AbstractPolytope`](@ref):
+* [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
