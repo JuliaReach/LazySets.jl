@@ -1,6 +1,7 @@
 import Base: rand,
              ∈,
-             isempty
+             isempty,
+             convert
 
 export HalfSpace, LinearConstraint,
        an_element,
@@ -29,6 +30,10 @@ HalfSpace{Float64}([0.0, -1.0], 0.0)
 struct HalfSpace{N<:Real} <: LazySet{N}
     a::AbstractVector{N}
     b::N
+end
+
+function convert(::Type{HalfSpace{N}}, hs::HalfSpace) where {N<:Real}
+    return HalfSpace{N}(hs.a, hs.b)
 end
 
 """
