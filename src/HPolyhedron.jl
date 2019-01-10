@@ -601,7 +601,11 @@ function tovrep(P::HPoly{N};
     @assert isdefined(@__MODULE__, :Polyhedra) "the function `tovrep` needs " *
                                         "the package 'Polyhedra' to be loaded"
     P = polyhedron(P; backend=backend)
-    return VPolytope(P)
+    Q = VPolytope(P)
+    if Q isa VPolytope{N}
+        return Q
+    end
+    return VPolytope{N}(vertices_list(Q))
 end
 
 """

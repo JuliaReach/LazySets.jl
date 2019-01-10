@@ -273,7 +273,11 @@ function tohrep(P::VPolytope{N};
                 backend=default_polyhedra_backend(P, N)) where {N<:Real}
     @assert isdefined(@__MODULE__, :Polyhedra) "the function `tohrep` needs the " *
                                                "package 'Polyhedra' to be loaded"
-    return HPolytope(polyhedron(P; backend=backend))
+    Q = HPolytope(polyhedron(P; backend=backend))
+    if Q isa HPolytope{N}
+        return Q
+    end
+    return HPolytope{N}(constraints_list(Q))
 end
 
 """

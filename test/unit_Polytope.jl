@@ -190,8 +190,8 @@ if test_suite_polyhedra
         A = [N(0) N(-1); N(-1) N(0); N(1) N(1)]
         b = N[-0.25, -0.25, -0]
         P = HPolytope(A, b)
-        @test tovrep(P) isa VPolytope
-        @test tohrep(P) isa HPolytope # test no-op
+        @test tovrep(P) isa VPolytope{N}
+        @test tohrep(P) isa HPolytope{N}  # no-op
 
         # checking for emptiness
         P = HPolytope([LinearConstraint(N[1, 0], N(0))])    # x <= 0
@@ -246,7 +246,7 @@ if test_suite_polyhedra
 
         # tohrep from VPolytope
         P = VPolytope([v1, v2, v3, v4, v5])
-        @test tohrep(P) isa HPolytope
-        @test tovrep(P) isa VPolytope # no-op
+        @test tohrep(P) isa HPolytope{N}
+        @test tovrep(P) isa VPolytope{N}  # no-op
     end
 end
