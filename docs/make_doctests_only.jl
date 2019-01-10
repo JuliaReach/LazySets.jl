@@ -1,4 +1,4 @@
-using Documenter, LazySets
+using Documenter, LazySets, Polyhedra, Optim
 
 makedocs(
     doctest = true,
