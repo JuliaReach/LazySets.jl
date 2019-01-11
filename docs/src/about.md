@@ -108,4 +108,4 @@ These persons have contributed to `LazySets.jl` (in alphabetic order):
 - [Christian Schilling](https://schillic.github.io/)
 - Frédéric Viry
 
-We are also grateful to Goran Frehse for enlightening discussions.
+We are also grateful to [Goran Frehse](https://sites.google.com/site/frehseg/) for enlightening discussions.
