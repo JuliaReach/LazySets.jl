@@ -63,16 +63,15 @@ end
 """
     _prange(v::SharedVector{N}) where {N<:Real}
 
-Returns the indexes assigned to this process, given a shared vector of
-length `n`. 
+Returns the indexes assigned to a process.
 
 ### Input
 
-- `v` -- shared vector
+- `v` -- shared vector of length `n`
 
 ### Output
 
-The tuple of start and end indices assigned to each process.
+The indices range assigned to each process.
 
 ### Notes
 
