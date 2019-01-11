@@ -45,14 +45,14 @@ Return the dimension of the set union of two convex sets.
 
 ### Output
 
-The ambient dimension of the intersection of two convex sets.
+The ambient dimension of the union of two convex sets.
 """
 function dim(cup::Union)::Int
     return dim(cup.X)
 end
 
 """
-    UnionSetArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
+    UnionSetArray{N<:Real, S<:LazySet{N}}
 
 Type that represents the set union of a finite number of convex sets.
 
@@ -60,6 +60,32 @@ Type that represents the set union of a finite number of convex sets.
 
 - `array` -- array of convex sets
 """
-struct UnionSetArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
+struct UnionSetArray{N<:Real, S<:LazySet{N}}
     array::Vector{S}
+
+    # default constructor with dimension check
+    function UnionSetArray{N, S}(X::Vector{S}) where {N<:Real, S<:LazySet{N}}
+        @assert !isempty(X) "the array in this `UnionSetArray` is empty"
+        n = dim(X[1])
+        @assert all(x -> dim(x) == n, X) "sets in a union must have the same dimension"
+
+        return new{N, S}(X)
+    end
+end
+
+"""
+    dim(cup::UnionSetArray)::Int
+
+Return the dimension of the set union of a finite number of convex sets.
+
+### Input
+
+- `cup` -- union of a finite number of convex sets
+
+### Output
+
+The ambient dimension of the union of a finite number of convex sets.
+"""
+function dim(cup::UnionSetArray)::Int
+    return dim(cup.array[1])
 end
