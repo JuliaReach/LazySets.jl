@@ -135,6 +135,28 @@ end
 @test HPolytope() isa HPolytope{Float64}
 @test VPolytope() isa VPolytope{Float64}
 
+# Polyhedra tests that do not work with Float32
+if test_suite_polyhedra
+    for N in [Float64, Rational{Int}]
+        # tovrep from HPolytope
+        A = [N(0) N(-1); N(-1) N(0); N(1) N(1)]
+        b = N[-0.25, -0.25, -0]
+        P = HPolytope(A, b)
+        @test tovrep(P) isa VPolytope{N}
+        @test tohrep(P) isa HPolytope{N}  # no-op
+
+        # tohrep from VPolytope
+        v1 = N[1, 0]
+        v2 = N[0, 1]
+        v3 = N[-1, 0]
+        v4 = N[0, -1]
+        v5 = N[0, 0]
+        P = VPolytope([v1, v2, v3, v4, v5])
+        @test tohrep(P) isa HPolytope{N}
+        @test tovrep(P) isa VPolytope{N}  # no-op
+    end
+end
+
 # Polyhedra tests that only work with Float64
 if test_suite_polyhedra
     for N in [Float64]
@@ -186,13 +208,6 @@ if test_suite_polyhedra
         vl = vertices_list(p)
         @test ispermutation(vl, [N[0], N[1]])
 
-        # tovrep from HPolytope
-        A = [N(0) N(-1); N(-1) N(0); N(1) N(1)]
-        b = N[-0.25, -0.25, -0]
-        P = HPolytope(A, b)
-        @test tovrep(P) isa VPolytope{N}
-        @test tohrep(P) isa HPolytope{N}  # no-op
-
         # checking for emptiness
         P = HPolytope([LinearConstraint(N[1, 0], N(0))])    # x <= 0
         @test !isempty(P)
@@ -243,10 +258,5 @@ if test_suite_polyhedra
         cp = cartesian_product(p1, p2)
         vl = vertices_list(cp)
         @test ispermutation(vl, [N[0, 0, 2], N[1, 1, 2]])
-
-        # tohrep from VPolytope
-        P = VPolytope([v1, v2, v3, v4, v5])
-        @test tohrep(P) isa HPolytope{N}
-        @test tovrep(P) isa VPolytope{N}  # no-op
     end
 end

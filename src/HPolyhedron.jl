@@ -582,9 +582,9 @@ Transform a polyhedron in H-representation to a polytope in V-representation.
 
 ### Input
 
-- `P`          -- polyhedron in constraint representation
-- `backend`    -- (optional, default: `default_polyhedra_backend(P, N)`)
-                  the polyhedral computations backend
+- `P`       -- polyhedron in constraint representation
+- `backend` -- (optional, default: `default_polyhedra_backend(P, N)`) the
+               backend for polyhedral computations
 
 ### Output
 
@@ -594,7 +594,7 @@ in constraint representation.
 ### Notes
 
 For further information on the supported backends see
-[Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/).
+[Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1).
 """
 function tovrep(P::HPoly{N};
                 backend=default_polyhedra_backend(P, N)) where {N<:Real}
@@ -602,10 +602,9 @@ function tovrep(P::HPoly{N};
                                         "the package 'Polyhedra' to be loaded"
     P = polyhedron(P; backend=backend)
     Q = VPolytope(P)
-    if Q isa VPolytope{N}
-        return Q
-    end
-    return VPolytope{N}(vertices_list(Q))
+    @assert Q isa VPolytope{N} "'polyhedron' did not preserve the numeric " *
+        "type; consider using a different polyhedra backend"
+    return Q
 end
 
 """
