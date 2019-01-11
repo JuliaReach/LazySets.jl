@@ -83,6 +83,7 @@ end
 
 function get_columns(spmexp::SparseMatrixExp{N},
                      J::AbstractArray)::Matrix{N} where {N}
+
     n = size(spmexp, 1)
     aux = zeros(N, n)
     ans = zeros(N, n, length(J))

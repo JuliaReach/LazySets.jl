@@ -187,7 +187,8 @@ Pages = [
     "man/convex_hulls.md",
     "man/reach_zonotopes.md",
     "man/reach_zonotopes_hybrid.md",
-    "man/concrete_polyhedra.md"
+    "man/concrete_polyhedra.md",
+    "man/parallel_approximations.md"
 ]
 Depth = 2
 ```
@@ -201,7 +202,8 @@ Pages = [
     "lib/operations.md",
     "lib/conversion.md",
     "lib/approximations.md",
-    "lib/utils.md"
+    "lib/utils.md",
+    "lib/parallel.md"
 ]
 Depth = 2
 ```

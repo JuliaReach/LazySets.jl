@@ -10,7 +10,7 @@ Overapproximate a convex set by a tight hyperrectangle.
 
 ### Input
 
-- `S`           -- convex set
+- `S` -- convex set
 
 ### Output
 
@@ -57,7 +57,7 @@ Overapproximate a convex set by a tight hyperrectangle centered in the origin.
 
 ### Input
 
-- `S`           -- convex set
+- `S` -- convex set
 
 ### Output
 
@@ -96,7 +96,7 @@ Common code of `box_approximation` and `box_approximation_symmetric`.
 
 ### Input
 
-- `S`           -- convex set
+- `S` -- convex set
 
 ### Output
 
@@ -147,7 +147,7 @@ Overapproximate a convex set by a tight ball in the infinity norm.
 
 ### Input
 
-- `S`           -- convex set
+- `S` -- convex set
 
 ### Output
 
@@ -166,6 +166,7 @@ function ballinf_approximation(S::LazySet{N};
     c = Vector{N}(undef, n)
     r = zero_N
     d = zeros(N, n)
+
     @inbounds for i in 1:n
         d[i] = one_N
         htop = ρ(d, S)

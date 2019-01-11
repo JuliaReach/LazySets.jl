@@ -85,6 +85,11 @@ include("aliases.jl")
 # =====================
 include("Approximations/Approximations.jl")
 
+# ==========================
+# Parallel algorithms module
+# ==========================
+include("Parallel/Parallel.jl")
+
 # ============
 # Plot recipes
 # ============
