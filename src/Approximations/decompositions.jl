@@ -217,7 +217,7 @@ julia> [typeof(ai) for ai in array(decompose(S, block_types=bt, ε=0.01))]
 ```
 """
 function decompose(S::LazySet{N};
-                   set_type::Type{<:Union{HPolygon, Hyperrectangle, Interval}}=Hyperrectangle,
+                   set_type::Type{<:Union{HPolygon, Hyperrectangle, Interval, LinearMap}}=Hyperrectangle,
                    ε::Real=Inf,
                    blocks::AbstractVector{Int}=default_block_structure(S, set_type),
                    block_types=Dict{Type{<:LazySet}, AbstractVector{<:AbstractVector{Int}}}(),
@@ -228,7 +228,7 @@ function decompose(S::LazySet{N};
 
     if directions != nothing
         # template directions
-        # potentially defined option set_type is *ignored*       
+        # potentially defined option set_type is *ignored*
         block_start = 1
         @inbounds for bi in blocks
             push!(result, project(S, block_start:(block_start + bi - 1), directions(bi), n))
@@ -268,6 +268,7 @@ function decompose(S::LazySet{N};
     return CartesianProductArray(result)
 end
 
+
 """
     project(S::LazySet{N},
             block::AbstractVector{Int},
@@ -303,8 +304,8 @@ A set of type `set_type` representing an overapproximation of the projection of
                          n::Int=dim(S),
                          ε::Real=Inf
                         )::LazySet{N} where {N<:Real}
-    M = sparse(1:length(block), block, ones(N, length(block)), length(block), n)
-    return overapproximate(M * S, set_type)
+    lm = project(S, block, LinearMap, n)
+    return overapproximate(lm, set_type)
 end
 
 """
@@ -439,6 +440,36 @@ The template direction approximation of the projection of `S`.
                          directions::AbstractDirections{N},
                          n::Int=dim(S)
                         )::HPolytope where {N<:Real}
+    lm = project(S, block, LinearMap, n)
+    return overapproximate(lm, directions)
+end
+
+"""
+    function project(S::LazySet{N},
+                    block::AbstractVector{Int},
+                    set_type::Type{<:LinearMap},
+                    n::Int=dim(S),
+                    ε::Real=Inf)::LinearMap
+
+Project a high-dimensional set to a low-dimensional set by a lazy linear map.
+
+### Input
+
+- `S` -- set
+- `block` -- block structure - a vector with the dimensions of interest
+- `set_type` -- `Hyperrectangle` - used for dispatch
+- `n` -- (optional, default: `dim(S)`) ambient dimension of the set `S`
+- `ε` -- (optional, default: `Inf`) - used for dispatch, ignored
+
+### Output
+
+A lazy `LinearMap` representing a projection of the high-dimensional set to a low-dimensional.
+"""
+@inline function project(S::LazySet{N},
+                block::AbstractVector{Int},
+                set_type::Type{<:LinearMap},
+                n::Int=dim(S),
+                ε::Real=Inf)::LinearMap where {N<:Real}
     M = sparse(1:length(block), block, ones(N, length(block)), length(block), n)
-    return overapproximate(M * S, directions)
+    return M * S
 end

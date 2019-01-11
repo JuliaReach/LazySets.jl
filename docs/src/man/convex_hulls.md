@@ -28,7 +28,7 @@ A = 1/sqrt(2.) * [1 -1; 1 1]
 Bn = n -> BallInf(ones(n), 0.2)
 
 X = Bn(2)
-Y = CH(X, expm(A) * X)
+Y = CH(X, exp(A) * X)
 ```
 
 The name `CH` is an alias for `ConvexHull`, so you can use both interchangeably.
@@ -36,16 +36,18 @@ This type is parametric in the operands's types.
 
 ```@example example_ch
 p = plot(X, 1e-2, color="blue")
-plot!(p, expm(A) * X, 1e-2, color="green")
+plot!(p, exp(A) * X, 1e-2, color="green")
 plot!(p, Y, 1e-2, color="red", alpha=0.2)
 ```
 
 We can as well work with a 100-dimensional set:
 
 ```@example example_ch
+using SparseArrays
+
 X = Bn(100)
-A = blkdiag([sparse(A) for i in 1:50]...)
-Y = CH(X, expm(full(A)) * X)
+A = blockdiag([sparse(A) for i in 1:50]...)
+Y = CH(X, exp(Matrix(A)) * X)
 
 dim(Y)
 ```

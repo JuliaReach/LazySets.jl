@@ -41,9 +41,18 @@ for N in [Float64, Rational{Int}, Float32]
     # support vector of polyhedron with no constraints
     @test σ(N[1], HPolyhedron{N}()) == N[Inf]
 
+    # boundedness
+    @test isbounded(p)
+    @test !isbounded(HPolyhedron{N}())
+
     # membership
     @test ∈(N[5 / 4, 7 / 4], p)
     @test !∈(N[4, 1], p)
+
+    # constrained dimensions
+    @test constrained_dimensions(p) == [1, 2]
+    @test constrained_dimensions(
+        HPolyhedron{N}([LinearConstraint(N[1, 0], N(1))])) == [1]
 
     if test_suite_polyhedra
         # conversion to and from Polyhedra's VRep data structure

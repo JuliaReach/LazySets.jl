@@ -85,6 +85,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test low(H) ≈ to_N(N, [-2.6, 5.1, 0.4])
     @test high(H) ≈ to_N(N, [-1.6, 6.1, 1.4])
 
+    # boundedness
+    @test isbounded(H)
+
     # isempty
     @test !isempty(H)
 

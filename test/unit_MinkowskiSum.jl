@@ -50,6 +50,10 @@ for N in [Float64, Rational{Int}, Float32]
     @test ρ(N[1], ms) == N(6)
     @test ρ(N[-1], ms) == N(-6)
 
+    # boundedness
+    @test isbounded(ms)
+    @test !isbounded(Singleton(N[1]) + HalfSpace(N[1], N(1)))
+
     # isempty
     @test !isempty(ms)
 
@@ -96,6 +100,10 @@ for N in [Float64, Rational{Int}, Float32]
     d = N[-1, 1]
     @test σ(d, ms) == σ(d, msa)
 
+    # boundedness
+    @test isbounded(msa)
+    @test !isbounded(MinkowskiSumArray([Singleton(N[1]), HalfSpace(N[1], N(1))]))
+
     # isempty
     @test !isempty(msa)
 
@@ -129,6 +137,10 @@ for N in [Float64, Rational{Int}, Float32]
     cp = LazySets.CachedPair(1, N[2])
     @test cp[1] == 1 && cp[2] == N[2]
     @test_throws ErrorException cp[3]
+
+    # boundedness
+    @test isbounded(cms)
+    @test !isbounded(CacheMinkowskiSum([Singleton(N[1]), HalfSpace(N[1], N(1))]))
 
     # isempty
     @test !isempty(cms)

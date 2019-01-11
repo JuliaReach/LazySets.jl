@@ -60,6 +60,30 @@ function dim(hs::HalfSpace)::Int
 end
 
 """
+    ρ(d::AbstractVector{N}, hs::HalfSpace{N})::N where {N<:Real}
+
+Evaluate the support function of a half-space in a given direction.
+
+### Input
+
+- `d`  -- direction
+- `hs` -- half-space
+
+### Output
+
+The support function of the half-space.
+If the set is unbounded in the given direction, the result is `Inf`.
+"""
+function ρ(d::AbstractVector{N}, hs::HalfSpace{N})::N where {N<:Real}
+    v, unbounded = σ_helper(d, Hyperplane(hs.a, hs.b); error_unbounded=false,
+                            halfspace=true)
+    if unbounded
+        return N(Inf)
+    end
+    return dot(d, v)
+end
+
+"""
     σ(d::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
 
 Return the support vector of a half-space.
@@ -79,7 +103,26 @@ In both cases the result is any point on the boundary (the defining hyperplane).
 Otherwise this function throws an error.
 """
 function σ(d::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
-    return σ_helper(d, Hyperplane(hs.a, hs.b), true)
+    v, unbounded = σ_helper(d, Hyperplane(hs.a, hs.b); error_unbounded=true,
+                            halfspace=true)
+    return v
+end
+
+"""
+    isbounded(hs::HalfSpace)::Bool
+
+Determine whether a half-space is bounded.
+
+### Input
+
+- `hs` -- half-space
+
+### Output
+
+`false`.
+"""
+function isbounded(::HalfSpace)::Bool
+    return false
 end
 
 """
@@ -197,7 +240,7 @@ function constraints_list(hs::HalfSpace{N}
 end
 
 """
-    constrained_dimensions(hs::HalfSpace{N})::Vector{Int} where N<:Real
+    constrained_dimensions(hs::HalfSpace{N})::Vector{Int} where {N<:Real}
 
 Return the indices in which a half-space is constrained.
 
@@ -210,11 +253,11 @@ Return the indices in which a half-space is constrained.
 A vector of ascending indices `i` such that the half-space is constrained in
 dimension `i`.
 
-### Notes
+### Examples
 
 A 2D half-space with constraint ``x1 ≥ 0`` is constrained in dimension 1 only.
 """
-function constrained_dimensions(hs::HalfSpace{N})::Vector{Int} where N<:Real
+function constrained_dimensions(hs::HalfSpace{N})::Vector{Int} where {N<:Real}
     return nonzero_indices(hs.a)
 end
 

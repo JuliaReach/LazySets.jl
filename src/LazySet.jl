@@ -8,6 +8,7 @@ export LazySet,
        radius,
        diameter,
        an_element,
+       isbounded, isbounded_unit_dimensions,
        neutral,
        absorbing
 
@@ -105,6 +106,57 @@ Alias for the support vector σ.
 """
 const support_vector = σ
 
+"""
+    isbounded(S::LazySet)::Bool
+
+Determine whether a set is bounded.
+
+### Input
+
+- `S` -- set
+
+### Output
+
+`true` iff the set is bounded.
+
+### Algorithm
+
+We check boundedness via [`isbounded_unit_dimensions`](@ref).
+"""
+function isbounded(S::LazySet)::Bool
+    return isbounded_unit_dimensions(S)
+end
+
+"""
+    isbounded_unit_dimensions(S::LazySet{N})::Bool where {N<:Real}
+
+Determine whether a set is bounded in each unit dimension.
+
+### Input
+
+- `S` -- set
+
+### Output
+
+`true` iff the set is bounded in each unit dimension.
+
+### Algorithm
+
+This function performs ``2n`` support function checks, where ``n`` is the
+ambient dimension of `S`.
+"""
+function isbounded_unit_dimensions(S::LazySet{N})::Bool where {N<:Real}
+    n = dim(S)
+    @inbounds for i in 1:n
+        for o in [one(N), -one(N)]
+            d = LazySets.Approximations.UnitVector(i, n, o)
+            if ρ(d, S) == N(Inf)
+                return false
+            end
+        end
+    end
+    return true
+end
 
 """
     norm(S::LazySet, [p]::Real=Inf)

@@ -71,14 +71,14 @@ end
 # constructor for type Float64
 BoxDirections(n::Int) = BoxDirections{Float64}(n)
 
-Base.eltype(::Type{BoxDirections{N}}) where N = AbstractVector{N}
+Base.eltype(::Type{BoxDirections{N}}) where {N} = AbstractVector{N}
 Base.length(bd::BoxDirections) = 2 * bd.n
 
 @static if VERSION < v"0.7-"
 @eval begin
 
 Base.start(bd::BoxDirections) = 1
-Base.next(bd::BoxDirections{N}, state) where N = (
+Base.next(bd::BoxDirections{N}, state) where {N} = (
     UnitVector{N}(abs(state), bd.n, convert(N, sign(state))), # value
     state == bd.n ? -bd.n : state + 1) # next state
 Base.done(bd::BoxDirections, state) = state == 0
@@ -87,7 +87,7 @@ end # @eval
 else
 @eval begin
 
-function Base.iterate(bd::BoxDirections{N}, state::Int=1) where N
+function Base.iterate(bd::BoxDirections{N}, state::Int=1) where {N}
     if state == 0
         return nothing
     end
@@ -122,13 +122,13 @@ end
 # constructor for type Float64
 OctDirections(n::Int) = OctDirections{Float64}(n)
 
-Base.eltype(::Type{OctDirections{N}}) where N = AbstractVector{N}
+Base.eltype(::Type{OctDirections{N}}) where {N} = AbstractVector{N}
 Base.length(od::OctDirections) = 2 * od.n^2
 
 @static if VERSION < v"0.7-"
 @eval begin
 
-function Base.start(od::OctDirections{N}) where N
+function Base.start(od::OctDirections{N}) where {N}
     if od.n == 1
         return 1 # fall back to box directions in 1D case
     end
@@ -138,7 +138,7 @@ function Base.start(od::OctDirections{N}) where N
     return (vec, 1, 2)
 end
 
-function Base.next(od::OctDirections{N}, state::Tuple) where N
+function Base.next(od::OctDirections{N}, state::Tuple) where {N}
     vec = state[1]
     i = state[2]
     j = state[3]
@@ -172,7 +172,7 @@ function Base.next(od::OctDirections{N}, state::Tuple) where N
     return (copy(vec), (vec, i, j))
 end
 
-Base.next(od::OctDirections{N}, state::Int) where N =
+Base.next(od::OctDirections{N}, state::Int) where {N} =
     next(BoxDirections{N}(od.n), state)
 
 Base.done(od::OctDirections, state) = state == 0
@@ -181,7 +181,7 @@ end # @eval
 else
 @eval begin
 
-function Base.iterate(od::OctDirections{N}) where N
+function Base.iterate(od::OctDirections{N}) where {N}
     if od.n == 1
         # fall back to box directions in 1D case
         return iterate(od, 1)
@@ -198,7 +198,7 @@ end
 # - i = i + 1, j = i + 1
 # - for any pair (i, j) create four vectors [..., i: ±1, ..., j: ±1, ...]
 # in the end continue with box directions
-function Base.iterate(od::OctDirections{N}, state::Tuple) where N
+function Base.iterate(od::OctDirections{N}, state::Tuple) where {N}
     # continue with octagon directions
     vec = state[1]
     i = state[2]
@@ -231,7 +231,7 @@ function Base.iterate(od::OctDirections{N}, state::Tuple) where N
     return (copy(vec), (vec, i, j))
 end
 
-function Base.iterate(od::OctDirections{N}, state::Int) where N
+function Base.iterate(od::OctDirections{N}, state::Int) where {N}
     # continue with box directions
     return iterate(BoxDirections{N}(od.n), state)
 end
@@ -264,15 +264,15 @@ end
 # constructor for type Float64
 BoxDiagDirections(n::Int) = BoxDiagDirections{Float64}(n)
 
-Base.eltype(::Type{BoxDiagDirections{N}}) where N = AbstractVector{N}
+Base.eltype(::Type{BoxDiagDirections{N}}) where {N} = AbstractVector{N}
 Base.length(bdd::BoxDiagDirections) = bdd.n == 1 ? 2 : 2^bdd.n + 2 * bdd.n
 
 @static if VERSION < v"0.7-"
 @eval begin
 
-Base.start(bdd::BoxDiagDirections{N}) where N = ones(N, bdd.n)
+Base.start(bdd::BoxDiagDirections{N}) where {N} = ones(N, bdd.n)
 
-function Base.next(bdd::BoxDiagDirections{N}, state::AbstractVector) where N
+function Base.next(bdd::BoxDiagDirections{N}, state::AbstractVector) where {N}
     i = 1
     while i <= bdd.n && state[i] < 0
         state[i] = -state[i]
@@ -290,7 +290,7 @@ function Base.next(bdd::BoxDiagDirections{N}, state::AbstractVector) where N
     end
 end
 
-Base.next(bdd::BoxDiagDirections{N}, state::Int) where N =
+Base.next(bdd::BoxDiagDirections{N}, state::Int) where {N} =
     next(BoxDirections{N}(bdd.n), state)
 Base.done(bdd::BoxDiagDirections, state) = state == 0
 
@@ -298,10 +298,11 @@ end # @eval
 else
 @eval begin
 
-Base.iterate(bdd::BoxDiagDirections{N}) where N =
+Base.iterate(bdd::BoxDiagDirections{N}) where {N} =
     (ones(N, bdd.n), ones(N, bdd.n))
 
-function Base.iterate(bdd::BoxDiagDirections{N}, state::AbstractVector) where N
+function Base.iterate(bdd::BoxDiagDirections{N},
+                      state::AbstractVector) where {N}
     # continue with diagonal directions
     i = 1
     while i <= bdd.n && state[i] < 0
@@ -322,7 +323,7 @@ function Base.iterate(bdd::BoxDiagDirections{N}, state::AbstractVector) where N
     end
 end
 
-function Base.iterate(bdd::BoxDiagDirections{N}, state::Int) where N
+function Base.iterate(bdd::BoxDiagDirections{N}, state::Int) where {N}
     # continue with box directions
     return iterate(BoxDirections{N}(bdd.n), state)
 end

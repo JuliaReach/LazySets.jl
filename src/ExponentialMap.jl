@@ -83,6 +83,7 @@ end
 
 function get_columns(spmexp::SparseMatrixExp{N},
                      J::AbstractArray)::Matrix{N} where {N}
+
     n = size(spmexp, 1)
     aux = zeros(N, n)
     ans = zeros(N, n, length(J))
@@ -181,7 +182,8 @@ end
 
 """
 ```
-    *(spmexp::SparseMatrixExp, X::LazySet)::ExponentialMap
+    *(spmexp::SparseMatrixExp{N},
+      X::LazySet{N})::ExponentialMap{N} where {N<:Real}
 ```
 
 Return the exponential map of a convex set from a sparse matrix exponential.
@@ -195,7 +197,8 @@ Return the exponential map of a convex set from a sparse matrix exponential.
 
 The exponential map of the convex set.
 """
-function *(spmexp::SparseMatrixExp, X::LazySet)::ExponentialMap
+function *(spmexp::SparseMatrixExp{N},
+           X::LazySet{N})::ExponentialMap{N} where {N<:Real}
     return ExponentialMap(spmexp, X)
 end
 
@@ -274,7 +277,24 @@ function ρ(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
 end
 
 """
-    ∈(x::AbstractVector{N}, em::ExponentialMap{<:LazySet{N}})::Bool where {N<:Real}
+    isbounded(em::ExponentialMap)::Bool
+
+Determine whether an exponential map is bounded.
+
+### Input
+
+- `em` -- exponential map
+
+### Output
+
+`true` iff the exponential map is bounded.
+"""
+function isbounded(em::ExponentialMap)::Bool
+    return isbounded(em.X)
+end
+
+"""
+    ∈(x::AbstractVector{N}, em::ExponentialMap{N})::Bool where {N<:Real}
 
 Check whether a given point is contained in an exponential map of a convex set.
 
@@ -306,7 +326,7 @@ julia> ∈([1.0, 1.0], em)
 true
 ```
 """
-function ∈(x::AbstractVector{N}, em::ExponentialMap{N, <:LazySet{N}})::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, em::ExponentialMap{N})::Bool where {N<:Real}
     @assert length(x) == dim(em)
     return ∈(expmv(-one(N), em.spmexp.M, x), em.X)
 end
@@ -329,7 +349,7 @@ function isempty(em::ExponentialMap)::Bool
 end
 
 """
-    vertices_list(em::ExponentialMap{N})::Vector{Vector{N}} where N<:Real
+    vertices_list(em::ExponentialMap{N})::Vector{Vector{N}} where {N<:Real}
 
 Return the list of vertices of a (polytopic) exponential map.
 
@@ -346,7 +366,7 @@ A list of vertices.
 We assume that the underlying set `X` is polytopic.
 Then the result is just the exponential map applied to the vertices of `X`.
 """
-function vertices_list(em::ExponentialMap{N})::Vector{Vector{N}} where N<:Real
+function vertices_list(em::ExponentialMap{N})::Vector{Vector{N}} where {N<:Real}
     # collect low-dimensional vertices lists
     vlist_X = vertices_list(em.X)
 
@@ -399,7 +419,7 @@ end
 @static if VERSION < v"0.7-"
     # convenience constructor without type parameter
     ExponentialProjectionMap(projspmexp::ProjectionSparseMatrixExp, X::S
-                            ) where {S<:LazySet{N}} where {N<:Real} =
+                            ) where {N<:Real, S<:LazySet{N}} =
         ExponentialProjectionMap{N, S}(projspmexp, X)
 end
 
@@ -480,6 +500,33 @@ function σ(d::AbstractVector{N},
     aux2 = eprojmap.projspmexp.R * svec
     daux = expmv(one(N), eprojmap.projspmexp.spmexp.M, aux2)
     return eprojmap.projspmexp.L * daux
+end
+
+"""
+    isbounded(eprojmap::ExponentialProjectionMap)::Bool
+
+Determine whether an exponential projection map is bounded.
+
+### Input
+
+- `eprojmap` -- exponential projection map
+
+### Output
+
+`true` iff the exponential projection map is bounded.
+
+### Algorithm
+
+We first check if the left or right projection matrix is zero or the wrapped set
+is bounded.
+Otherwise, we check boundedness via [`isbounded_unit_dimensions`](@ref).
+"""
+function isbounded(eprojmap::ExponentialProjectionMap)::Bool
+    if iszero(eprojmap.projspmexp.L) || iszero(eprojmap.projspmexp.R) ||
+            isbounded(eprojmap.X)
+        return true
+    end
+    return isbounded_unit_dimensions(eprojmap)
 end
 
 """

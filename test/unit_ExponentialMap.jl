@@ -69,6 +69,10 @@ for N in [Float64, Float32]
         @test svec ≈ svec_explicit
     end
 
+    # boundedness
+    @test isbounded(emap)
+    @test !isbounded(me * HalfSpace(ones(N, n), N(1)))
+
     # isempty
     @test !isempty(emap)
 
@@ -103,6 +107,13 @@ for N in [Float64, Float32]
 
     # query the ambient dimension of projmap (hint: it is the output dimension)
     @test dim(projmap) == nb
+
+    # boundedness
+    @test isbounded(projmap)
+    @test isbounded(ProjectionSparseMatrixExp(spzeros(N, nb, nb), me, R) * HalfSpace(ones(N, nb), N(1)))
+    @test isbounded(ProjectionSparseMatrixExp(L, me, spzeros(N, nb, nb)) * HalfSpace(ones(N, nb), N(1)))
+    # the following test crashes because ρ(::ExponentialProjectionMap) is not implemented yet
+    @test_throws ErrorException !isbounded(proj * HalfSpace(ones(N, nb), N(1)))
 
     # isempty
     @test !isempty(projmap)

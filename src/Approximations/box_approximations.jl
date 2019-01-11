@@ -3,13 +3,14 @@
 # ===================================
 
 """
-    box_approximation(S::LazySet)::Hyperrectangle
+    box_approximation(S::LazySet{N})::Union{Hyperrectangle{N}, EmptySet{N}}
+        where {N<:Real}
 
 Overapproximate a convex set by a tight hyperrectangle.
 
 ### Input
 
-- `S`           -- convex set
+- `S` -- convex set
 
 ### Output
 
@@ -21,8 +22,8 @@ The center of the hyperrectangle is obtained by averaging the support function
 of the given set in the canonical directions, and the lengths of the sides can
 be recovered from the distance among support functions in the same directions.
 """
-function box_approximation(S::LazySet{N};
-                          )::Union{Hyperrectangle{N}, EmptySet{N}} where N<:Real
+function box_approximation(S::LazySet{N}
+                          )::Union{Hyperrectangle{N}, EmptySet{N}} where {N<:Real}
     (c, r) = box_approximation_helper(S)
     if r[1] < 0
         return EmptySet{N}()
@@ -36,6 +37,9 @@ box_approximation(S::Hyperrectangle) = S
 # special case: other rectangle
 box_approximation(S::AbstractHyperrectangle) =
     Hyperrectangle(center(S), radius_hyperrectangle(S))
+
+# special case: empty set
+box_approximation(∅::EmptySet) = ∅
 
 """
     interval_hull
@@ -53,7 +57,7 @@ Overapproximate a convex set by a tight hyperrectangle centered in the origin.
 
 ### Input
 
-- `S`           -- convex set
+- `S` -- convex set
 
 ### Output
 
@@ -74,6 +78,9 @@ function box_approximation_symmetric(S::LazySet{N};
     return Hyperrectangle(zeros(N, length(c)), abs.(c) .+ r)
 end
 
+# special case: empty set
+box_approximation_symmetric(∅::EmptySet) = ∅
+
 """
     symmetric_interval_hull
 
@@ -89,7 +96,7 @@ Common code of `box_approximation` and `box_approximation_symmetric`.
 
 ### Input
 
-- `S`           -- convex set
+- `S` -- convex set
 
 ### Output
 
@@ -140,7 +147,7 @@ Overapproximate a convex set by a tight ball in the infinity norm.
 
 ### Input
 
-- `S`           -- convex set
+- `S` -- convex set
 
 ### Output
 
@@ -159,6 +166,7 @@ function ballinf_approximation(S::LazySet{N};
     c = Vector{N}(undef, n)
     r = zero_N
     d = zeros(N, n)
+
     @inbounds for i in 1:n
         d[i] = one_N
         htop = ρ(d, S)
@@ -176,3 +184,6 @@ function ballinf_approximation(S::LazySet{N};
     end
     return BallInf(c, r)
 end
+
+# special case: empty set
+ballinf_approximation(∅::EmptySet) = ∅

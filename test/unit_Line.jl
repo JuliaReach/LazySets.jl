@@ -31,6 +31,9 @@ for N in [Float64, Rational{Int}, Float32]
     σ(N[1, 0], l2)
     σ(N[0, 1], l3)
 
+    # boundedness
+    @test !isbounded(l1)
+
     # isempty
     @test !isempty(l1)
 

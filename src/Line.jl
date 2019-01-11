@@ -6,7 +6,7 @@ export Line,
        an_element
 
 """
-    Line{N<:Real} <: LazySet{N}
+    Line{N<:Real, VN<:AbstractVector{N}} <: LazySet{N}
 
 Type that represents a line in 2D of the form ``a⋅x = b`` (i.e., a special case
 of a `Hyperplane`).
@@ -25,20 +25,20 @@ julia> Line([1., 1.], 1.)
 Line{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
 ```
 """
-struct Line{N<:Real, V<:AbstractVector{N}} <: LazySet{N}
-    a::V
+struct Line{N<:Real, VN<:AbstractVector{N}} <: LazySet{N}
+    a::VN
     b::N
 
     # default constructor with length constraint
-    function Line{N, V}(a::V, b::N) where {N<:Real, V<:AbstractVector{N}}
+    function Line{N, VN}(a::VN, b::N) where {N<:Real, VN<:AbstractVector{N}}
         @assert length(a) == 2 "lines must be two-dimensional"
         @assert a != zeros(N, 2) "the normal vector of a line must not be zero"
-        return new{N, V}(a, b)
+        return new{N, VN}(a, b)
     end
 end
 
 # convenience constructor without type parameter
-Line(a::V, b::N) where {N<:Real, V<:AbstractVector{N}} = Line{N, V}(a, b)
+Line(a::VN, b::N) where {N<:Real, VN<:AbstractVector{N}} = Line{N, VN}(a, b)
 
 # constructor from a LinearConstraint
 Line(c::LinearConstraint{N}) where {N<:Real} = Line(c.a, c.b)
@@ -124,7 +124,24 @@ function σ(d::AbstractVector{N}, L::Line{N}) where {N<:Real}
 end
 
 """
-    an_element(L::Line{N})::Vector{N} where N<:Real
+    isbounded(L::Line)::Bool
+
+Determine whether a line is bounded.
+
+### Input
+
+- `L` -- line
+
+### Output
+
+`false`.
+"""
+function isbounded(::Line)::Bool
+    return false
+end
+
+"""
+    an_element(L::Line{N})::Vector{N} where {N<:Real}
 
 Return some element of a line.
 
@@ -143,7 +160,7 @@ Otherwise the result is some ``x = [x1, x2]`` such that ``a·[x1, x2] = b``.
 We first find out in which dimension ``a`` is nonzero, say, dimension 1, and
 then choose ``x1 = 1`` and accordingly ``x2 = \\frac{b - a1}{a2}``.
 """
-function an_element(L::Line{N})::Vector{N} where N<:Real
+function an_element(L::Line{N})::Vector{N} where {N<:Real}
     if L.b == zero(N)
         return zeros(N, 2)
     end
@@ -235,7 +252,7 @@ function isempty(L::Line)::Bool
 end
 
 """
-    constrained_dimensions(L::Line{N})::Vector{Int} where N<:Real
+    constrained_dimensions(L::Line{N})::Vector{Int} where {N<:Real}
 
 Return the indices in which a line is constrained.
 
@@ -248,10 +265,10 @@ Return the indices in which a line is constrained.
 A vector of ascending indices `i` such that the line is constrained in dimension
 `i`.
 
-### Notes
+### Examples
 
 A line with constraint ``x1 = 0`` is constrained in dimension 1 only.
 """
-function constrained_dimensions(L::Line{N})::Vector{Int} where N<:Real
+function constrained_dimensions(L::Line{N})::Vector{Int} where {N<:Real}
     return nonzero_indices(L.a)
 end

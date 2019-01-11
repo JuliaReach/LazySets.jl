@@ -50,6 +50,9 @@ for N in [Float64, Rational{Int}, Float32]
     # support vector of polytope with no constraints
     @test_throws ErrorException σ(N[0], HPolytope{N}())
 
+    # boundedness
+    @test isbounded(p)
+
     # membership
     @test ∈(N[5 / 4, 7 / 4], p)
     @test !∈(N[4, 1], p)
@@ -105,6 +108,9 @@ for N in [Float64, Rational{Int}, Float32]
 
     # dim
     @test dim(p) == 2
+
+    # boundedness
+    @test isbounded(p)
 
     # isempty
     @test !isempty(p)
@@ -229,11 +235,7 @@ if test_suite_polyhedra
         p2 = VPolytope([v3, v4])
         ch = convex_hull(p1, p2)
         vl = vertices_list(ch)
-        @test v1 ∈ vl && v2 ∈ vl && v3 ∈ vl && v4 ∈ vl
-        # Note: The redundant vertex v5 is not removed (see #561).
-        # This test can be removed (and the length above should be corrected)
-        # when that issue is resolved.
-        @test length(vl) == 5 && v5 ∈ vl
+        @test ispermutation(vl, [v1, v2, v3, v4])
 
         # Cartesian product
         p1 = VPolytope([N[0, 0], N[1, 1]])

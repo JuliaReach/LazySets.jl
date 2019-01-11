@@ -147,7 +147,7 @@ function vertices_list(S::AbstractSingleton{N}
 end
 
 """
-    linear_map(M::AbstractMatrix, S::AbstractSingleton{N}) where {N<:Real}
+    linear_map(M::AbstractMatrix{N}, S::AbstractSingleton{N}) where {N<:Real}
 
 Concrete linear map of an abstract singleton.
 
@@ -161,7 +161,8 @@ Concrete linear map of an abstract singleton.
 The abstract singleton of the same type of ``S`` obtained by applying the
 linear map to the element in ``S``.
 """
-function linear_map(M::AbstractMatrix, S::AbstractSingleton{N}) where {N<:Real}
+function linear_map(M::AbstractMatrix{N},
+                    S::AbstractSingleton{N}) where {N<:Real}
     @assert dim(S) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
                                  "applied to a set of dimension $(dim(S))"
 

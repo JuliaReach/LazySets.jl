@@ -1,13 +1,13 @@
 import IntervalArithmetic
 import IntervalArithmetic: AbstractInterval
-import Base: +, -, *, ∈, ⊆, rand
+import Base: +, -, *, ∈, ⊆, rand, min, max
 
 export Interval,
        dim, σ, center,
-       low, high, vertices_list
+       vertices_list
 
 """
-    Interval{N<:Real, IN <: AbstractInterval{N}} <: AbstractHyperrectangle{N}
+    Interval{N<:Real, IN<:AbstractInterval{N}} <: AbstractHyperrectangle{N}
 
 Type representing an interval on the real line.
 Mathematically, it is of the form
@@ -74,18 +74,18 @@ julia> Interval(0//1, 2//1)
 Interval{Rational{Int64},AbstractInterval{Rational{Int64}}}([0//1, 2//1])
 ```
 """
-struct Interval{N<:Real, IN <: AbstractInterval{N}} <: AbstractHyperrectangle{N}
+struct Interval{N<:Real, IN<:AbstractInterval{N}} <: AbstractHyperrectangle{N}
    dat::IN
 end
 
 @static if VERSION < v"0.7-"
     # convenience constructor without type parameter
-    Interval(interval::IN) where {N<:Real, IN <: AbstractInterval{N}} =
+    Interval(interval::IN) where {N<:Real, IN<:AbstractInterval{N}} =
         Interval{N, IN}(interval)
 end
 
 # convenience constructor without type parameter for Rational
-Interval(interval::IN) where {N<:Rational, IN <: AbstractInterval{N}} =
+Interval(interval::IN) where {N<:Rational, IN<:AbstractInterval{N}} =
     Interval{N, IntervalArithmetic.AbstractInterval{N}}(interval)
 
 # constructor from two numbers
@@ -145,7 +145,7 @@ function σ(d::AbstractVector{N}, x::Interval{N}) where {N<:Real}
 end
 
 """
-    center(x::Interval)
+    center(x::Interval{N})::Vector{N} where {N<:Real}
 
 Return the interval's center.
 
@@ -157,10 +157,12 @@ Return the interval's center.
 
 The center, or midpoint, of ``x``.
 """
-center(x::Interval) = [IntervalArithmetic.mid(x.dat)]
+function center(x::Interval{N})::Vector{N} where {N<:Real}
+    return [IntervalArithmetic.mid(x.dat)]
+end
 
 """
-    +(x::Interval, y::Interval)
+    +(x::Interval{N}, y::Interval{N}) where {N<:Real}
 
 Return the sum of the intervals.
 
@@ -173,10 +175,12 @@ Return the sum of the intervals.
 
 The sum of the intervals as a new `Interval` set.
 """
-+(x::Interval, y::Interval) = Interval(x.dat + y.dat)
+function +(x::Interval{N}, y::Interval{N}) where {N<:Real}
+    return Interval(x.dat + y.dat)
+end
 
 """
-    -(x::Interval, y::Interval)
+    -(x::Interval{N}, y::Interval{N}) where {N<:Real}
 
 Return the difference of the intervals.
 
@@ -189,11 +193,13 @@ Return the difference of the intervals.
 
 The difference of the intervals as a new `Interval` set.
 """
--(x::Interval, y::Interval) = Interval(x.dat - y.dat)
+function -(x::Interval{N}, y::Interval{N}) where {N<:Real}
+    return Interval(x.dat - y.dat)
+end
 
 """
 ```
-    *(x::Interval, y::Interval)
+    *(x::Interval{N}, y::Interval{N}) where {N<:Real}
 ```
 
 Return the product of the intervals.
@@ -207,7 +213,9 @@ Return the product of the intervals.
 
 The product of the intervals as a new `Interval` set.
 """
-*(x::Interval, y::Interval) = Interval(x.dat * y.dat)
+function *(x::Interval{N}, y::Interval{N}) where {N<:Real}
+    return Interval(x.dat * y.dat)
+end
 
 """
     ∈(v::AbstractVector{N}, x::Interval{N}) where {N<:Real})
@@ -223,10 +231,12 @@ Return whether a vector is contained in the interval.
 
 `true` iff `x` contains `v`'s first component.
 """
-∈(v::AbstractVector{N}, x::Interval{N}) where {N<:Real} = v[1] ∈ x.dat
+function ∈(v::AbstractVector{N}, x::Interval{N}) where {N<:Real}
+    return v[1] ∈ x.dat
+end
 
 """
-    ∈(v::N, x::Interval) where {N}
+    ∈(v::N, x::Interval{N}) where {N<:Real}
 
 Return whether a number is contained in the interval.
 
@@ -239,10 +249,12 @@ Return whether a number is contained in the interval.
 
 `true` iff `x` contains `v`.
 """
-∈(v::N, x::Interval) where {N} = v ∈ x.dat
+function ∈(v::N, x::Interval{N}) where {N<:Real}
+    return v ∈ x.dat
+end
 
 """
-    low(x::Interval)
+    min(x::Interval{N})::N where {N<:Real}
 
 Return the lower component of an interval.
 
@@ -254,10 +266,12 @@ Return the lower component of an interval.
 
 The lower (`lo`) component of the interval.
 """
-low(x::Interval) = x.dat.lo
+function min(x::Interval{N})::N where {N<:Real}
+    return x.dat.lo
+end
 
 """
-    high(x::Interval)
+    max(x::Interval{N})::N where {N<:Real}
 
 Return the higher or upper component of an interval.
 
@@ -269,7 +283,43 @@ Return the higher or upper component of an interval.
 
 The higher (`hi`) component of the interval.
 """
-high(x::Interval) = x.dat.hi
+function max(x::Interval{N})::N where {N<:Real}
+    return x.dat.hi
+end
+
+"""
+    low(x::Interval{N})::Vector{N} where {N<:Real}
+
+Return the lower coordinate of an interval set.
+
+### Input
+
+- `x` -- interval
+
+### Output
+
+A vector with the lower coordinate of the interval.
+"""
+function low(x::Interval{N})::Vector{N} where {N<:Real}
+    return N[x.dat.lo]
+end
+
+"""
+    high(x::Interval{N})::Vector{N} where {N<:Real}
+
+Return the higher coordinate of an interval set.
+
+### Input
+
+- `x` -- interval
+
+### Output
+
+A vector with the higher coordinate of the interval.
+"""
+function high(x::Interval{N})::Vector{N} where {N<:Real}
+    return N[x.dat.hi]
+end
 
 """
     an_element(x::Interval{N})::Vector{N} where {N<:Real}
@@ -282,10 +332,10 @@ Return some element of an interval.
 
 ### Output
 
-The left border (`low(x)`) of the interval.
+The left border (`min(x)`) of the interval.
 """
 function an_element(x::Interval{N})::Vector{N} where {N<:Real}
-    return [low(x)]
+    return [min(x)]
 end
 
 """
@@ -325,7 +375,7 @@ function rand(::Type{Interval};
 end
 
 """
-    vertices_list(x::Interval)
+    vertices_list(x::Interval{N})::Vector{Vector{N}} where {N<:Real}
 
 Return the list of vertices of this interval.
 
@@ -337,7 +387,9 @@ Return the list of vertices of this interval.
 
 The list of vertices of the interval represented as two one-dimensional vectors.
 """
-vertices_list(x::Interval) = [[low(x)], [high(x)]]
+function vertices_list(x::Interval{N})::Vector{Vector{N}} where {N<:Real}
+    return [[min(x)], [max(x)]]
+end
 
 
 # --- AbstractHyperrectangle interface functions ---
@@ -359,7 +411,7 @@ The box radius in the given dimension.
 """
 function radius_hyperrectangle(x::Interval{N}, i::Int)::N where {N<:Real}
     @assert i == 1 "an interval is one-dimensional"
-    return (high(x) - low(x)) / N(2)
+    return (max(x) - min(x)) / N(2)
 end
 
 """
