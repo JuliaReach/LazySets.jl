@@ -36,5 +36,5 @@ LazySets.Parallel.process_chunk!
 ```@docs
 LazySets.Parallel.assign_chunk!
 LazySets.Parallel.distribute_task!
-LazySets.Parallel.prange
+LazySets.Parallel._prange
 ```

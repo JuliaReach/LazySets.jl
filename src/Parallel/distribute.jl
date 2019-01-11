@@ -1,69 +1,92 @@
 export assign_chunk!,
-       distribute_task!,
-       prange
+       distribute_task!
 
 """
-    assign_chunk!(c::SharedVector{N}, r::SharedVector{N},
-                  S::LazySet{N})
+    distribute_task!(S::LazySet{N}, v::SharedVector{N}...) where {N<:Real}
 
-Return the function that assigns the work for each process in the
-overapproximation of a set by a hyperrectangle.
+Distribute the assignment of each chunk among the available processes.
 
 ### Input
 
-- `c` -- center of the hyperrectangle
-- `c` -- radius of the hyperrectangle
 - `S` -- convex set
+- `v` -- variable number of shared vectors
 
 ### Output
 
-The function `process_chunk!` that equally distributes the load for each worker.
+Nothing.
+
+### Notes
+
+Use this function to distribute a given task acting on a set `S` and a pool `v`
+of shared vectors.
+
+The task for each processor is distributed through `remotecall_wait` using a
+function `assign_chunk!` that should be defined elsewhere. The vectors `v`
+contain one or more shared vectors in which the values of the task are written.
+
+Typically, the function `assign_chunk!` is a wrapper around some problem-specific
+`process_chunk!` function.
 """
-assign_chunk!(c::SharedVector{N},
-              r::SharedVector{N},
-              S::LazySet{N}) where {N<:Real} = process_chunk!(c, r, S, prange(c))
-
-"""
-    distribute_task!(c::SharedVector{N}, r::SharedVector{N},
-                     S::LazySet{N}) where {N<:Real}
-
-Distribute the assignment of each chunk among the available processes. 
-
-### Input
-
-- `c` -- center of the hyperrectangle
-- `c` -- radius of the hyperrectangle
-- `S` -- convex set
-"""
-function distribute_task!(c::SharedVector{N}, r::SharedVector{N}, S::LazySet{N}) where {N<:Real}
+function distribute_task!(S::LazySet{N}, v::SharedVector{N}...) where {N<:Real}
     @sync begin
-        for p in procs(c)
-            @async remotecall_wait(assign_chunk!, p, c, r, S)
+        for p in procs(v[1])
+            @async remotecall_wait(assign_chunk!, p, S, v...)
         end
     end
 end
 
 """
-    prange(c::SharedVector{N}) where {N<:Real}
+    assign_chunk!(S::LazySet{N}, v::SharedVector{N}...) where {N<:Real}
+
+Return the function that assigns the work for each process.
+
+### Input
+
+- `S` -- convex set
+- `v` -- variable number of shared vectors
+
+### Output
+
+The function `process_chunk!` that equally distributes the load for each worker.
+
+### Notes
+
+Use this function to distribute a given task acting on a set `S` and a pool `v`
+of shared vectors. The tasks are equally distributed among the number of processes.
+
+See also [`distribute_task!`](@ref).
+"""
+function assign_chunk!(S::LazySet{N}, v::SharedVector{N}...) where {N<:Real}
+    return process_chunk!(S, _prange(v[1]), v...)
+end
+
+"""
+    _prange(v::SharedVector{N}) where {N<:Real}
 
 Returns the indexes assigned to this process, given a shared vector of
 length `n`. 
 
 ### Input
 
-- `c` -- shared vector of length `n`
+- `v` -- shared vector
 
 ### Output
 
-The tuple `(irange, jrange)` assigned to each process.
+The tuple of start and end indices assigned to each process.
+
+### Notes
+
+The indices are assigned such that the vector is equally distributed among the
+processes. If the worker is not assigned a piece, the unit range `1:0` is
+returned.
 """
-function prange(c::SharedVector{N}) where {N<:Real}
-    idx = indexpids(c)
+function _prange(v::SharedVector{N}) where {N<:Real}
+    idx = indexpids(v)
     if idx == 0
-        # This worker is not assigned a piece
-        return 1:0, 1:0
+        # this worker is not assigned a piece
+        return 1:0
     end
-    nchunks = length(procs(c))
-    splits = [round(Int, s) for s in range(0, stop=length(c), length=nchunks+1)]
+    nchunks = length(procs(v))
+    splits = [round(Int, s) for s in range(0, stop=length(v), length=nchunks+1)]
     splits[idx]+1:splits[idx+1]
 end

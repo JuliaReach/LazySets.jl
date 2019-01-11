@@ -90,13 +90,14 @@ The same load is distributed among all available workers, see
     c = SharedVector{N}(n)
     r = SharedVector{N}(n)
 
-    distribute_task!(c, r, S)
-    return convert(Array{N}, c), convert(Array{N}, r)
+    distribute_task!(S, c, r)
+    return convert(Vector{N}, c), convert(Vector{N}, r)
 end
 
 """
-    process_chunk!(c::SharedVector{N}, r::SharedVector{N},
-                   S::LazySet{N}, irange::UnitRange{Int}) where {N<:Real}
+    process_chunk!(S::LazySet{N},
+                   irange::UnitRange{Int},
+                   c::SharedVector{N}, r::SharedVector{N}) where {N<:Real}
 
 Kernel to process a given chunk 
 
@@ -118,8 +119,9 @@ The load for each worker is passed through the `irange` argument. By default,
 the same load is distributed among all available workers. For details
 see `distribute_task!`.
 """
-function process_chunk!(c::SharedVector{N}, r::SharedVector{N},
-                        S::LazySet{N}, irange::UnitRange{Int}) where {N<:Real}
+function process_chunk!(S::LazySet{N},
+                        irange::UnitRange{Int},
+                        c::SharedVector{N}, r::SharedVector{N}) where {N<:Real}
 
     d = zeros(N, dim(S))
 
