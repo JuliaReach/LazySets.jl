@@ -1,7 +1,7 @@
 # basic package information
 name = "LazySets"
 uuid = "b4f0291d-fe17-52bc-9479-3d1a343d9043"
-version = "1.3.0"
+version = "1.5.2"
 author = ["Marcelo Forets",
           "Christian Schilling",
           "Frédéric Viry"]
