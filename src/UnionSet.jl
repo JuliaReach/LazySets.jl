@@ -4,7 +4,7 @@ export UnionSet,
        UnionSetArray
 
 """
-    UnionSet{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
+    UnionSet{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}}
 
 Type that represents the set union of two convex sets.
 
@@ -13,7 +13,7 @@ Type that represents the set union of two convex sets.
 - `X` -- convex set
 - `Y` -- convex set
 """
-struct UnionSet{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
+struct UnionSet{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}}
     X::S1
     Y::S2
 
@@ -52,24 +52,6 @@ function dim(cup::Union)::Int
 end
 
 """
-    σ(d::AbstractVector{N}, cup::UnionSet{N}) where {N<:Real}
-
-Return the support vector of the union of two convex sets.
-
-### Input
-
-- `d`    -- direction
-- `cup`  -- union of two convex sets
-
-### Output
-
-An error; this function is not implemented yet.
-"""
-function σ(d::AbstractVector{N}, cup::UnionSet{N}) where {N<:Real}
-    return error("the support vector of the union of two convex sets is not implemented")
-end
-
-"""
     UnionSetArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
 
 Type that represents the set union of a finite number of convex sets.
@@ -80,22 +62,4 @@ Type that represents the set union of a finite number of convex sets.
 """
 struct UnionSetArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
-end
-
-"""
-    σ(d::AbstractVector{N}, cup::UnionSetArray{N}) where {N<:Real}
-
-Return the support vector of the union of two convex sets.
-
-### Input
-
-- `d`    -- direction
-- `cup`  -- union of a finite number of convex sets
-
-### Output
-
-An error; this function is not implemented yet.
-"""
-function σ(d::AbstractVector{N}, cup::UnionSetArray{N}) where {N<:Real}
-    return error("the support vector of the union of an array of convex sets is not implemented")
 end
