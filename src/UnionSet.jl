@@ -57,14 +57,14 @@ function dim(cup::Union)::Int
 end
 
 """
-    σ(d::AbstractVector{N}, cap::UnionSet{N}; algorithm="support_vector") where {N<:Real}
+    σ(d::AbstractVector{N}, cup::UnionSet{N}; algorithm="support_vector") where {N<:Real}
 
 Return the support vector of the union of two convex sets in a given direction.
 
 ### Input
 
 - `d`         -- direction
-- `cap`       -- union of two convex sets
+- `cup`       -- union of two convex sets
 - `algorithm` -- (optional, default: "support_vector"): the algorithm to compute
                  the support vector; if "support_vector", use the support
                  vector of each argument; if "support_function" use the support
@@ -90,8 +90,8 @@ computed (without passing through the support vector), consider using the altern
 of each set directly and then calls only the support vector of either ``X`` *or*
 ``Y``.
 """
-function σ(d::AbstractVector{N}, cap::UnionSet{N}; algorithm="support_vector") where {N<:Real}
-    X, Y = cap.X, cap.Y
+function σ(d::AbstractVector{N}, cup::UnionSet{N}; algorithm="support_vector") where {N<:Real}
+    X, Y = cup.X, cup.Y
     if algorithm == "support_vector"
         σX, σY = σ(d, X), σ(d, Y)
         return dot(d, σX) > dot(d, σY) ? σX : σY
@@ -104,14 +104,14 @@ function σ(d::AbstractVector{N}, cap::UnionSet{N}; algorithm="support_vector") 
 end
 
 """
-    ρ(d::AbstractVector{N}, cap::UnionSet{N}) where {N<:Real}
+    ρ(d::AbstractVector{N}, cup::UnionSet{N}) where {N<:Real}
 
 Return the support function of the union of two convex sets in a given direction.
 
 ### Input
 
 - `d`   -- direction
-- `cap` -- union of two convex sets
+- `cup` -- union of two convex sets
 
 ### Output
 
@@ -122,8 +122,8 @@ The support function in the given direction.
 The support function of the union of two convex sets ``X`` and ``Y`` is the
 maximum of the support functions of ``X`` and ``Y``.
 """
-function ρ(d::AbstractVector{N}, cap::UnionSet{N}) where {N<:Real}
-    X, Y = cap.X, cap.Y
+function ρ(d::AbstractVector{N}, cup::UnionSet{N}) where {N<:Real}
+    X, Y = cup.X, cup.Y
     return max(ρ(d, X), ρ(d, Y))
 end
 
@@ -147,6 +147,12 @@ end
 # add functions connecting UnionSet and UnionSetArray
 @declare_array_version(UnionSet, UnionSetArray)
 
+@static if VERSION < v"0.7-"
+    # convenience constructor without type parameter
+    UnionSetArray(arr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
+        UnionSetArray{N, S}(arr)
+end
+
 """
     dim(cup::UnionSetArray)::Int
 
@@ -165,24 +171,24 @@ function dim(cup::UnionSetArray)::Int
 end
 
 """
-    array(cap::UnionSetArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
+    array(cup::UnionSetArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
 
 Return the array of a union of a finite number of convex sets.
 
 ### Input
 
-- `cap` -- union of a finite number of convex sets
+- `cup` -- union of a finite number of convex sets
 
 ### Output
 
 The array that holds the union of a finite number of convex sets.
 """
-function array(cap::UnionSetArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
-    return cap.array
+function array(cup::UnionSetArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
+    return cup.array
 end
 
 """
-    σ(d::AbstractVector{N}, cap::UnionSetArray{N}; algorithm="support_vector") where {N<:Real}
+    σ(d::AbstractVector{N}, cup::UnionSetArray{N}; algorithm="support_vector") where {N<:Real}
 
 Return the support vector of the union of a finite number of convex sets in
 a given direction.
@@ -190,7 +196,7 @@ a given direction.
 ### Input
 
 - `d`         -- direction
-- `cap`       -- union of a finite number of convex sets
+- `cup`       -- union of a finite number of convex sets
 - `algorithm` -- (optional, default: "support_vector"): the algorithm to compute
                  the support vector; if "support_vector", use the support
                  vector of each argument; if "support_function" use the support
@@ -215,8 +221,8 @@ computed (without passing through the support vector), consider using the altern
 `algorithm="support_function"` implementation, which evaluates the support function
 of each set directly and then calls only the support vector of only one of the ``Xᵢ``.
 """
-function σ(d::AbstractVector{N}, cap::UnionSetArray{N}; algorithm="support_vector") where {N<:Real}
-    A = array(cap)
+function σ(d::AbstractVector{N}, cup::UnionSetArray{N}; algorithm="support_vector") where {N<:Real}
+    A = array(cup)
     if algorithm == "support_vector"
         σarray = map(Xi -> σ(d, Xi), A)
         ρarray = map(vi -> dot(d, vi), σarray)
@@ -232,7 +238,7 @@ function σ(d::AbstractVector{N}, cap::UnionSetArray{N}; algorithm="support_vect
 end
 
 """
-    ρ(d::AbstractVector{N}, cap::UnionSetArray{N}) where {N<:Real}
+    ρ(d::AbstractVector{N}, cup::UnionSetArray{N}) where {N<:Real}
 
 Return the support function of the union of a finite number of convex sets in
 a given direction.
@@ -240,7 +246,7 @@ a given direction.
 ### Input
 
 - `d`   -- direction
-- `cap` -- union of a finite number of convex sets
+- `cup` -- union of a finite number of convex sets
 
 ### Output
 
@@ -251,8 +257,8 @@ The support function in the given direction.
 The support function of the union of a finite number of convex sets ``X₁, X₂, ...``
 can be obtained as the maximum of ``ρ(d, X₂), ρ(d, X₂), ...``.
 """
-function ρ(d::AbstractVector{N}, cap::UnionSetArray{N}) where {N<:Real}
-    A = array(cap)
+function ρ(d::AbstractVector{N}, cup::UnionSetArray{N}) where {N<:Real}
+    A = array(cup)
     ρarray = map(Xi -> ρ(d, Xi), A)
     return maximum(ρarray)
 end
