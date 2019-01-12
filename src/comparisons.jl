@@ -48,28 +48,7 @@ them as faithfully as possible.
 _leq(x::N, y::M) where {N<:Real, M<:Real} = _leq(promote(x, y)...)
 
 """
-    _geq(x::N, y::N) where {N<:Real}
-
-Determine if `x` is greater than or equal to `y`.
-
-### Input
-
-- `x` -- number
-- `y` -- another number (of the same numeric type as `x`)
-
-### Output
-
-A boolean that is `true` iff `x >= y`.
-
-### Algorithm
-
-This function falls back to `_leq(y, x)`. See the documentation of `_leq` for
-further details. 
-"""
-_geq(x::N, y::N) where {N<:Real} = _leq(y, x)
-
-"""
-    _geq(x::N, y::M) where {N<:Real, M<:Real}
+    _geq(x::Real, y::Real)
 
 Determine if `x` is greater than or equal to `y`.
 
@@ -87,7 +66,7 @@ A boolean that is `true` iff `x >= y`.
 This function falls back to `_leq(y, x)`, with type promotion if needed. See the
 documentation of `_leq` for further details.
 """
-_geq(x::N, y::M) where {N<:Real, M<:Real} = _geq(promote(x, y)...)
+_geq(x::Real, y::Real) = _leq(y, x)
 
 """
     isapproxzero(x::N; kwargs...) where {N<:Real}
