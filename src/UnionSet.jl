@@ -57,7 +57,7 @@ function dim(cup::Union)::Int
 end
 
 """
-    σ(d::AbstractVector{N}, cup::UnionSet{N}; algorithm="support_vector") where {N<:Real}
+    σ(d::AbstractVector{N}, cup::UnionSet{N}; [algorithm]="support_vector") where {N<:Real}
 
 Return the support vector of the union of two convex sets in a given direction.
 
@@ -188,7 +188,7 @@ function array(cup::UnionSetArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N
 end
 
 """
-    σ(d::AbstractVector{N}, cup::UnionSetArray{N}; algorithm="support_vector") where {N<:Real}
+    σ(d::AbstractVector{N}, cup::UnionSetArray{N}; [algorithm]="support_vector") where {N<:Real}
 
 Return the support vector of the union of a finite number of convex sets in
 a given direction.
