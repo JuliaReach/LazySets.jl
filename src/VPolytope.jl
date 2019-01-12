@@ -269,6 +269,8 @@ in vertex representation.
 
 ### Notes
 
+The conversion may not preserve the numeric type (e.g., with `N == Float32`)
+depending on the backend.
 For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1).
 """
@@ -276,10 +278,7 @@ function tohrep(P::VPolytope{N};
                 backend=default_polyhedra_backend(P, N)) where {N<:Real}
     @assert isdefined(@__MODULE__, :Polyhedra) "the function `tohrep` needs the " *
                                                "package 'Polyhedra' to be loaded"
-    Q = HPolytope(polyhedron(P; backend=backend))
-    @assert Q isa HPolytope{N} "'polyhedron' did not preserve the numeric " *
-        "type; consider using a different polyhedra backend"
-    return Q
+    return HPolytope(polyhedron(P; backend=backend))
 end
 
 """

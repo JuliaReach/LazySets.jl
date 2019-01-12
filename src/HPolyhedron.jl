@@ -593,6 +593,8 @@ in constraint representation.
 
 ### Notes
 
+The conversion may not preserve the numeric type (e.g., with `N == Float32`)
+depending on the backend.
 For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1).
 """
@@ -601,10 +603,7 @@ function tovrep(P::HPoly{N};
     @assert isdefined(@__MODULE__, :Polyhedra) "the function `tovrep` needs " *
                                         "the package 'Polyhedra' to be loaded"
     P = polyhedron(P; backend=backend)
-    Q = VPolytope(P)
-    @assert Q isa VPolytope{N} "'polyhedron' did not preserve the numeric " *
-        "type; consider using a different polyhedra backend"
-    return Q
+    return VPolytope(P)
 end
 
 """
