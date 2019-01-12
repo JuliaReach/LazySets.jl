@@ -314,6 +314,8 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 UnionSet
 ∪(::LazySet, ::LazySet)
 dim(::Union)
+σ(::AbstractVector{N}, ::UnionSet{N}; algorithm="support_vector") where {N<:Real}
+ρ(::AbstractVector{N}, ::UnionSet{N}) where {N<:Real}
 ```
 
 ### ``n``-ary Set Union
@@ -321,4 +323,7 @@ dim(::Union)
 ```@docs
 UnionSetArray
 dim(::UnionSetArray)
+array(::UnionSetArray{N, S}) where {N<:Real, S<:LazySet{N}}
+σ(::AbstractVector{N}, ::UnionSetArray{N}; algorithm="support_vector") where {N<:Real}
+ρ(::AbstractVector{N}, ::UnionSetArray{N}) where {N<:Real}
 ```
