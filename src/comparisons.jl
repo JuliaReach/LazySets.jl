@@ -9,7 +9,7 @@ Return `true` if the real `x` is smaller or equal than `y` and false otherwise.
 ### Input
 
 - `x` -- number
-- `y` -- another number (of the same numeric type than `x`)
+- `y` -- another number (of the same numeric type as `x`)
 
 ### Output
 
