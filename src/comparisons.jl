@@ -25,7 +25,7 @@ _leq(x::N, y::N) where {N<:Real} = x <= y
 """
     _leq(x::N, y::M) where {N<:Real, M<:Real}
 
-Return `true` if the real `x` is smaller or equal than `y` and false otherwise.
+Determine if `x` is smaller than or equal to `y`.
 
 ### Input
 
