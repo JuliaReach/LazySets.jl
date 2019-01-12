@@ -113,7 +113,7 @@ end
 """
     isapproxzero(x::N; ztol::Real=ABSZTOL(N)) where {N<:AbstractFloat}
 
-Returns `true` if `x` is approximately zero `false` otherwise.
+Determine if `x` is approximately zero.
 
 ### Input
 
