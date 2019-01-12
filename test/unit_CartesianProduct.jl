@@ -4,31 +4,35 @@ for N in [Float64, Float32, Rational{Int}]
     b1 = BallInf(N[0], N(1))
     b2 = BallInf(N[0, 0], N(1))
     # Test Construction
-    c1 = CartesianProduct(b1, b2)
-    @test c1.X == b1
-    @test c1.Y == b2
+    cp = CartesianProduct(b1, b2)
+    @test cp.X == b1
+    @test cp.Y == b2
     # Test Dimension
-    @test dim(c1) == 3
+    @test dim(cp) == 3
     # Test Support Vector
     d = N[1, 1, 1]
-    @test σ(d, c1) == N[1, 1, 1]
+    @test σ(d, cp) == N[1, 1, 1]
     d = N[1, 1, -1]
-    @test σ(d, c1) == N[1, 1, -1]
+    @test σ(d, cp) == N[1, 1, -1]
     d = N[1, -1, 1]
-    @test σ(d, c1) == N[1, -1, 1]
+    @test σ(d, cp) == N[1, -1, 1]
     d = N[1, -1, -1]
-    @test σ(d, c1) == N[1, -1, -1]
+    @test σ(d, cp) == N[1, -1, -1]
     d = N[-1, 1, 1]
-    @test σ(d, c1) == N[-1, 1, 1]
+    @test σ(d, cp) == N[-1, 1, 1]
     d = N[-1, 1, -1]
-    @test σ(d, c1) == N[-1, 1, -1]
+    @test σ(d, cp) == N[-1, 1, -1]
     d = N[-1, -1, 1]
-    @test σ(d, c1) == N[-1, -1, 1]
+    @test σ(d, cp) == N[-1, -1, 1]
     d = N[-1, -1, -1]
-    @test σ(d, c1) == N[-1, -1, -1]
+    @test σ(d, cp) == N[-1, -1, -1]
+
+    # boundedness
+    @test isbounded(cp)
+    @test !isbounded(Singleton(N[1]) * HalfSpace(N[1], N(1)))
 
     # isempty
-    @test !isempty(c1)
+    @test !isempty(cp)
 
     # Cartesian Product of a not-centered 1D BallInf and a not-centered 2D BallInf
     # Here a Hyperrectangle where c = [1, -3, 4] and r = [3, 2, 2]
@@ -143,6 +147,10 @@ for N in [Float64, Float32, Rational{Int}]
 
     # array getter
     @test array(cpa) ≡ v
+
+    # boundedness
+    @test isbounded(cpa)
+    @test !isbounded(CartesianProductArray([Singleton(N[1]), HalfSpace(N[1], N(1))]))
 
     # membership
     @test ∈(N[1, 2, 3, 4], cpa)

@@ -130,6 +130,23 @@ function ρ(d::AbstractVector{N}, cp::CartesianProduct{N}) where {N<:Real}
 end
 
 """
+    isbounded(cp::CartesianProduct)::Bool
+
+Determine whether a Cartesian product is bounded.
+
+### Input
+
+- `cp` -- Cartesian product
+
+### Output
+
+`true` iff both wrapped sets are bounded.
+"""
+function isbounded(cp::CartesianProduct)::Bool
+    return isbounded(cp.X) && isbounded(cp.Y)
+end
+
+"""
     ∈(x::AbstractVector{N}, cp::CartesianProduct{N})::Bool where {N<:Real}
 
 Check whether a given point is contained in a Cartesian product.
@@ -170,7 +187,7 @@ end
 
 """
     constraints_list(cp::CartesianProduct{N}
-                    )::Vector{LinearConstraint{N}} where N<:Real
+                    )::Vector{LinearConstraint{N}} where {N<:Real}
 
 Return the list of constraints of a (polytopic) Cartesian product.
 
@@ -183,12 +200,12 @@ Return the list of constraints of a (polytopic) Cartesian product.
 A list of constraints.
 """
 function constraints_list(cp::CartesianProduct{N}
-                         )::Vector{LinearConstraint{N}} where N<:Real
+                         )::Vector{LinearConstraint{N}} where {N<:Real}
     return constraints_list(CartesianProductArray([cp.X, cp.Y]))
 end
 
 """
-    vertices_list(cp::CartesianProduct{N})::Vector{Vector{N}} where N<:Real
+    vertices_list(cp::CartesianProduct{N})::Vector{Vector{N}} where {N<:Real}
 
 Return the list of vertices of a (polytopic) Cartesian product.
 
@@ -206,7 +223,8 @@ We assume that the underlying sets are polytopic.
 Then the high-dimensional set of vertices is just the Cartesian product of the
 low-dimensional sets of vertices.
 """
-function vertices_list(cp::CartesianProduct{N})::Vector{Vector{N}} where N<:Real
+function vertices_list(cp::CartesianProduct{N}
+                      )::Vector{Vector{N}} where {N<:Real}
     # collect low-dimensional vertices lists
     vlist_low = (vertices_list(cp.X), vertices_list(cp.Y))
 
@@ -252,7 +270,7 @@ end
 
 @static if VERSION < v"0.7-"
     # convenience constructor without type parameter
-    CartesianProductArray(arr::Vector{S}) where {S<:LazySet{N}} where {N<:Real} =
+    CartesianProductArray(arr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
         CartesianProductArray{N, S}(arr)
 end
 
@@ -359,6 +377,24 @@ function ρ(d::AbstractVector{N}, cpa::CartesianProductArray{N}) where {N<:Real}
 end
 
 """
+    isbounded(cpa::CartesianProductArray)::Bool
+
+Determine whether a Cartesian product of a finite number of convex sets is
+bounded.
+
+### Input
+
+- `cpa` -- Cartesian product of a finite number of convex sets
+
+### Output
+
+`true` iff all wrapped sets are bounded.
+"""
+function isbounded(cpa::CartesianProductArray)::Bool
+    return all(x -> isbounded(x), cpa.array)
+end
+
+"""
     ∈(x::AbstractVector{N}, cpa::CartesianProductArray{N}
      )::Bool where {N<:Real}
 
@@ -408,7 +444,7 @@ end
 
 """
     constraints_list(cpa::CartesianProductArray{N}
-                    )::Vector{LinearConstraint{N}} where N<:Real
+                    )::Vector{LinearConstraint{N}} where {N<:Real}
 
 Return the list of constraints of a (polytopic) Cartesian product of a finite
 number of sets.
@@ -422,7 +458,7 @@ number of sets.
 A list of constraints.
 """
 function constraints_list(cpa::CartesianProductArray{N}
-                         )::Vector{LinearConstraint{N}} where N<:Real
+                         )::Vector{LinearConstraint{N}} where {N<:Real}
     clist = Vector{LinearConstraint{N}}()
     n = dim(cpa)
     sizehint!(clist, n)
@@ -445,7 +481,8 @@ function constraints_list(cpa::CartesianProductArray{N}
 end
 
 """
-    vertices_list(cpa::CartesianProductArray{N})::Vector{Vector{N}} where N<:Real
+    vertices_list(cpa::CartesianProductArray{N}
+                 )::Vector{Vector{N}} where {N<:Real}
 
 Return the list of vertices of a (polytopic) Cartesian product of a finite
 number of sets.
@@ -464,7 +501,8 @@ We assume that the underlying sets are polytopic.
 Then the high-dimensional set of vertices is just the Cartesian product of the
 low-dimensional sets of vertices.
 """
-function vertices_list(cpa::CartesianProductArray{N})::Vector{Vector{N}} where N<:Real
+function vertices_list(cpa::CartesianProductArray{N}
+                      )::Vector{Vector{N}} where {N<:Real}
     # collect low-dimensional vertices lists
     vlist_low = [vertices_list(X) for X in array(cpa)]
 

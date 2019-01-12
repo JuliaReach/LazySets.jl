@@ -52,6 +52,11 @@ for N in [Float64, Rational{Int}, Float32]
     @test lm1_copy.M == lm1.M
     @test lm1_copy.X == lm1.X
 
+    # boundedness
+    @test isbounded(lm)
+    @test isbounded(zeros(N, 2, 2) * HalfSpace(N[1, 1], N(1)))
+    @test !isbounded(ones(N, 2, 2) * HalfSpace(N[1, 1], N(1)))
+
     # isempty
     @test !isempty(lm)
 

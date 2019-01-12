@@ -36,7 +36,8 @@ Depending on the transition semantics, we add the discrete successors to the
 queue and continue with the next iteration until the queue is empty.
 
 ```@example example_reach_zonotopes_hybrid
-using Plots, LazySets
+using Plots, LazySets, Compat.LinearAlgebra
+import LazySets.expmat
 
 function reach_hybrid(As, Ts, init, δ, μ, T, max_order, instant_transitions)
     # initialize queue with initial mode and states at time t=0
@@ -82,16 +83,16 @@ concrete operations on zonotopes.
 function reach_continuous(A, X0, δ, μ, T, max_order)
     # bloating factors
     Anorm = norm(A, Inf)
-    α = (expm(δ*Anorm) - 1 - δ*Anorm)/norm(X0, Inf)
-    β = (expm(δ*Anorm) - 1)*μ/Anorm
+    α = (expmat(δ*Anorm) - 1 - δ*Anorm)/norm(X0, Inf)
+    β = (expmat(δ*Anorm) - 1)*μ/Anorm
 
     # discretized system
     n = size(A, 1)
-    ϕ = expm(δ*A)
+    ϕ = expmat(δ*A)
     N = floor(Int, T/δ)
 
     # preallocate array
-    R = Vector{LazySet}(N)
+    R = Vector{LazySet}(undef, N)
     if N == 0
         return R
     end

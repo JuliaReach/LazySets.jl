@@ -1,8 +1,6 @@
 import Base.rand
 
-export Hyperrectangle,
-       low,
-       high
+export Hyperrectangle
 
 """
     Hyperrectangle{N<:Real} <: AbstractHyperrectangle{N}

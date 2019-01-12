@@ -61,13 +61,13 @@ struct PolygonalOverapproximation{N<:Real}
     approx_stack::Vector{LocalApproximation{N}}
     constraints::Vector{LinearConstraint{N}}
 
-    PolygonalOverapproximation(S::LazySet{N}) where N<:Real = new{N}(
+    PolygonalOverapproximation(S::LazySet{N}) where {N<:Real} = new{N}(
         S, Vector{LocalApproximation{N}}(), Vector{LinearConstraint{N}}())
 end
 
 """
     new_approx(S::LazySet, p1::Vector{N}, d1::Vector{N}, p2::Vector{N},
-               d2::Vector{N}) where N<:Real
+               d2::Vector{N}) where {N<:Real}
 
 Create a `LocalApproximation` instance for the given excerpt of a polygonal
 approximation.
@@ -85,7 +85,7 @@ approximation.
 A local approximation of `S` in the given directions.
 """
 function new_approx(S::LazySet, p1::Vector{N}, d1::Vector{N}, p2::Vector{N},
-                    d2::Vector{N}) where N<:Real
+                    d2::Vector{N}) where {N<:Real}
     if norm(p1-p2, 2) <= TOL(N)
         # this approximation cannot be refined and we set q = p1 by convention
         ap = LocalApproximation{N}(p1, d1, p2, d2, p1, false, zero(N))
@@ -102,7 +102,7 @@ end
 
 """
     addapproximation!(Ω::PolygonalOverapproximation, p1::Vector{N},
-        d1::Vector{N}, p2::Vector{N}, d2::Vector{N}) where N<:Real
+        d1::Vector{N}, p2::Vector{N}, d2::Vector{N}) where {N<:Real}
 
 ### Input
 
@@ -119,7 +119,7 @@ the new approximation is returned by this function.
 """
 function addapproximation!(Ω::PolygonalOverapproximation,
                            p1::Vector{N}, d1::Vector{N}, p2::Vector{N},
-                           d2::Vector{N})::LocalApproximation{N} where N<:Real
+                           d2::Vector{N})::LocalApproximation{N} where {N<:Real}
 
     approx = new_approx(Ω.S, p1, d1, p2, d2)
     push!(Ω.approx_stack, approx)
@@ -155,7 +155,8 @@ function refine(approx::LocalApproximation,
 end
 
 """
-    tohrep(Ω::PolygonalOverapproximation{N})::AbstractHPolygon{N} where N<:Real
+    tohrep(Ω::PolygonalOverapproximation{N})::AbstractHPolygon{N}
+        where {N<:Real}
 
 Convert a polygonal overapproximation into a concrete polygon.
 
@@ -173,7 +174,7 @@ Internally we keep the constraints sorted.
 Hence we do not need to use `addconstraint!` when creating the `HPolygon`.
 """
 function tohrep(Ω::PolygonalOverapproximation{N}
-               )::AbstractHPolygon{N} where N<:Real
+               )::AbstractHPolygon{N} where {N<:Real}
     # already finalized
     if isempty(Ω.approx_stack)
         return HPolygon(Ω.constraints, sort_constraints=false)
@@ -188,7 +189,7 @@ end
 
 """
     approximate(S::LazySet{N},
-                ε::N)::PolygonalOverapproximation{N} where N<:Real
+                ε::N)::PolygonalOverapproximation{N} where {N<:Real}
 
 Return an ε-close approximation of the given 2D convex set (in terms of
 Hausdorff distance) as an inner and an outer approximation composed by sorted
@@ -204,7 +205,7 @@ local `Approximation2D`.
 An ε-close approximation of the given 2D convex set.
 """
 function approximate(S::LazySet{N},
-                     ε::N)::PolygonalOverapproximation{N} where N<:Real
+                     ε::N)::PolygonalOverapproximation{N} where {N<:Real}
 
     # initialize box directions
     pe = σ(DIR_EAST(N), S)

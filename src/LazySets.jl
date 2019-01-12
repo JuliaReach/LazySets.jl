@@ -14,6 +14,7 @@ export Approximations
 # ===================
 include("helper_functions.jl")
 include("comparisons.jl")
+include("macros.jl")
 
 # ==================
 # Abstract set types
@@ -84,6 +85,11 @@ include("aliases.jl")
 # Approximations module
 # =====================
 include("Approximations/Approximations.jl")
+
+# ==========================
+# Parallel algorithms module
+# ==========================
+include("Parallel/Parallel.jl")
 
 # ============
 # Plot recipes

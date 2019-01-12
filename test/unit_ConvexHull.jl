@@ -3,23 +3,26 @@ for N in [Float64, Rational{Int}, Float32]
     b1 = Ball1(N[0, 0], N(1))
     b2 = Ball1(N[1, 2], N(1))
     # Test Construction
-    ch1 = ConvexHull(b1, b2)
-    ch2 = CH(b1, b2)
-    @test ch1 == ch2
+    ch = ConvexHull(b1, b2)
+    @test ch == CH(b1, b2)
     # Test Dimension
-    @test dim(ch1) == 2
+    @test dim(ch) == 2
     # Test Support Vector
     d = N[1, 0]
-    @test σ(d, ch1) == N[2, 2]
+    @test σ(d, ch) == N[2, 2]
     d = N[-1, 0]
-    @test σ(d, ch1) == N[-1, 0]
+    @test σ(d, ch) == N[-1, 0]
     d = N[0, 1]
-    @test σ(d, ch1) == N[1, 3]
+    @test σ(d, ch) == N[1, 3]
     d = N[0, -1]
-    @test σ(d, ch1) == N[0, -1]
+    @test σ(d, ch) == N[0, -1]
+
+    # boundedness
+    @test isbounded(ch)
+    @test !isbounded(CH(Singleton(N[1]), HalfSpace(N[1], N(1))))
 
     # isempty
-    @test !isempty(ch1)
+    @test !isempty(ch)
 
     # test convex hull of a set of points using the default algorithm
     points = to_N(N, [[0.9, 0.2], [0.4, 0.6], [0.2, 0.1], [0.1, 0.3], [0.3, 0.28]])
@@ -34,28 +37,32 @@ for N in [Float64, Rational{Int}, Float32]
     @test LazySets.is_array_constructor(ConvexHullArray)
 
     # convex hull array of 2 sets
-    C = ConvexHullArray([b1, b2])
+    cha = ConvexHullArray([b1, b2])
     # constructor with size hint and type
     ConvexHullArray(10, N)
     # test alias
     @test CHArray([b1, b2]) isa ConvexHullArray
     # test dimension
-    @test dim(C) == 2
+    @test dim(cha) == 2
     # test support vector
     d = N[1, 0]
-    @test σ(d, C) == N[2, 2]
+    @test σ(d, cha) == N[2, 2]
     d = N[-1, 0]
-    @test σ(d, C) == N[-1, 0]
+    @test σ(d, cha) == N[-1, 0]
     d = N[0, 1]
-    @test σ(d, C) == N[1, 3]
+    @test σ(d, cha) == N[1, 3]
     d = N[0, -1]
-    @test σ(d, C) == N[0, -1]
+    @test σ(d, cha) == N[0, -1]
+
+    # boundedness
+    @test isbounded(cha)
+    @test !isbounded(ConvexHullArray([Singleton(N[1]), HalfSpace(N[1], N(1))]))
 
     # isempty
-    @test !isempty(C)
+    @test !isempty(cha)
 
     # test convex hull array of singleton
-    C = ConvexHullArray(
+    ConvexHullArray(
         [Singleton(to_N(N, [10, 0.5])), Singleton(to_N(N, [1.1, 0.2])),
          Singleton(to_N(N, [1.4, 0.3])), Singleton(to_N(N, [1.7, 0.5])),
          Singleton(to_N(N, [1.4, 0.8]))])

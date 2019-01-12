@@ -176,6 +176,32 @@ function σ_helper(d::AbstractVector{N}, P::HPoly{N}) where {N<:Real}
 end
 
 """
+    isbounded(P::HPolyhedron)::Bool
+
+Determine whether a polyhedron in constraint representation is bounded.
+
+### Input
+
+- `P` -- polyhedron in constraint representation
+
+### Output
+
+`true` iff the polyhedron is bounded.
+
+### Algorithm
+
+We first check if the polyhedron has more than `max(dim(P), 1)` constraints,
+which is a necessary condition for boundedness.
+If so, we check boundedness via [`isbounded_unit_dimensions`](@ref).
+"""
+function isbounded(P::HPolyhedron)::Bool
+    if length(P.constraints) <= max(dim(P), 1)
+        return false
+    end
+    return isbounded_unit_dimensions(P)
+end
+
+"""
     ∈(x::AbstractVector{N}, P::HPoly{N})::Bool where {N<:Real}
 
 Check whether a given point is contained in a polyhedron in constraint
@@ -499,6 +525,9 @@ The `HPolyhedron` (resp. `HPolytope`) obtained by the concrete convex hull of
 
 ### Notes
 
+For performance reasons, it is suggested to use the `CDDLib.Library()` backend
+for the `convex_hull`.
+
 For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/).
 """
@@ -506,14 +535,16 @@ function convex_hull(P1::HPoly{N},
                      P2::HPoly{N};
                      backend=default_polyhedra_backend(P1, N)) where {N}
     @assert isdefined(@__MODULE__, :Polyhedra) "the function `convex_hull` needs " *
-                                        "the package 'Polyhedra' to be loaded"
+                                               "the package 'Polyhedra' to be loaded"
     Pch = convexhull(polyhedron(P1; backend=backend), polyhedron(P2; backend=backend))
+    removehredundancy!(Pch)
     return convert(typeof(P1), Pch)
 end
 
 """
     cartesian_product(P1::HPoly{N}, P2::HPoly{N};
-                      [backend]=default_polyhedra_backend(P1, N)) where N<:Real
+                      [backend]=default_polyhedra_backend(P1, N)
+                     ) where {N<:Real}
 
 Compute the Cartesian product of two polyhedra in H-representaion.
 
@@ -536,9 +567,9 @@ For further information on the supported backends see
 function cartesian_product(P1::HPoly{N},
                            P2::HPoly{N};
                            backend=default_polyhedra_backend(P1, N)
-                          ) where N<:Real
+                          ) where {N<:Real}
     @assert isdefined(@__MODULE__, :Polyhedra) "the function `cartesian_product` " *
-        "needs the package 'Polyhedra' to be loaded"
+                                               "needs the package 'Polyhedra' to be loaded"
     Pcp = hcartesianproduct(polyhedron(P1; backend=backend), polyhedron(P2; backend=backend))
     return convert(typeof(P1), Pcp)
 end
@@ -655,9 +686,9 @@ function isempty(P::HPoly{N};
     return Polyhedra.isempty(polyhedron(P; backend=backend), solver)
 end
 
-convert(::Type{HPolytope}, P::HPolyhedron{N}) where N =
+convert(::Type{HPolytope}, P::HPolyhedron{N}) where {N<:Real} =
     HPolytope{N}(copy(constraints_list(P)))
-convert(::Type{HPolyhedron}, P::HPolytope{N}) where N =
+convert(::Type{HPolyhedron}, P::HPolytope{N}) where {N<:Real} =
     HPolyhedron{N}(copy(constraints_list(P)))
 
 # ==========================================

@@ -25,7 +25,7 @@ Depth = 3
 
 ```@meta
 DocTestSetup = quote
-    using Plots, LazySets, LazySets.Approximations, Polyhedra
+    using Plots, LazySets, LazySets.Approximations, Polyhedra, Compat.LinearAlgebra
 end
 ```
 
@@ -35,7 +35,7 @@ To use the `Polyhedra.jl` interface, you need to load the package with `using Po
 Let's create an H-representation object:
 
 ```@example concrete_polyhedra
-using Plots, LazySets, Polyhedra
+using Plots, LazySets, Polyhedra, Compat.LinearAlgebra
 
 A = [1. 1;1 -1;-1 0]
 b = [1.,0,0]
@@ -113,7 +113,7 @@ For example, the concrete intersection of two polytopes is performed with the
 `intersection` method.
 
 ```@example concrete_polyhedra
-E = Ellipsoid(ones(2), diagm([2.0, 0.5]))
+E = Ellipsoid(ones(2), Diagonal([2.0, 0.5]))
 B = Ball1([2.5, 1.5], .8)
 
 import LazySets.Approximations.overapproximate

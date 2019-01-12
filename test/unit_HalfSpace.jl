@@ -9,6 +9,12 @@ for N in [Float64, Rational{Int}, Float32]
     # dimension
     @test dim(hs) == 3
 
+    # support function
+    hs2 = HalfSpace(N[1, 0], N(1))
+    @test ρ(N[2, 0], hs2) == N(2)
+    @test ρ(N[-2, 0], hs2) == N(Inf)
+    @test ρ(N[1, 1], hs2) == N(Inf)
+
     # support vector and membership function
     function test_svec(hs, d)
         @test σ(d, hs) ∈ hs
@@ -27,8 +33,14 @@ for N in [Float64, Rational{Int}, Float32]
     d = zeros(N, 3); d[3] = 1
     test_svec(HalfSpace(normal, N(5)), d)
 
-    # check that support vector in opposite direction of normal does not work
+    # support vector in other directions throws an error (but see #750)
+    # opposite direction
     @test_throws ErrorException σ(N[-1], HalfSpace(N[1], N(1)))
+    # any other direction
+    @test_throws ErrorException σ(N[1, 1], HalfSpace(N[1, 0], N(1)))
+
+    # boundedness
+    @test !isbounded(hs)
 
     # isempty
     @test !isempty(hs)

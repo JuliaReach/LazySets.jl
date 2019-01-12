@@ -38,8 +38,8 @@ ball in ``\\mathbb{R}^n`` by an affine transformation.
             generators::AbstractMatrix{N}) where {N<:Real}`
 
 - `Zonotope(center::AbstractVector{N},
-            generators_list::AbstractVector{T}
-           ) where {N<:Real, T<:AbstractVector{N}}`
+            generators_list::AbstractVector{VN}
+           ) where {N<:Real, VN<:AbstractVector{N}}`
 
 ### Examples
 
@@ -89,8 +89,8 @@ struct Zonotope{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
 end
 
 # constructor from center and list of generators
-Zonotope(center::AbstractVector{N}, generators_list::AbstractVector{T}
-        ) where {N<:Real, T<:AbstractVector{N}} =
+Zonotope(center::AbstractVector{N}, generators_list::AbstractVector{VN}
+        ) where {N<:Real, VN<:AbstractVector{N}} =
     Zonotope(center, hcat(generators_list...))
 
 
