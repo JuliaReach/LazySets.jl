@@ -219,7 +219,7 @@ the support vector of all ``X₁, X₂, ...`` and then compares the support func
 a dot product. If it happens that the support function can be more efficiently
 computed (without passing through the support vector), consider using the alternative
 `algorithm="support_function"` implementation, which evaluates the support function
-of each set directly and then calls only the support vector of only one of the ``Xᵢ``.
+of each set directly and then calls only the support vector of one of the ``Xᵢ``.
 """
 function σ(d::AbstractVector{N}, cup::UnionSetArray{N}; algorithm="support_vector") where {N<:Real}
     A = array(cup)
