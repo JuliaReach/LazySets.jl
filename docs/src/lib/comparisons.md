@@ -18,7 +18,7 @@ end
 _leq(x::N, y::N) where {N<:Real}
 _leq(x::N, y::M) where {N<:Real, M<:Real}
 _geq(x::Real, y::Real)
-isapproxzero(x::N; kwargs...) where {N<:Real}
+isapproxzero(x::Real; kwargs...)
 isapproxzero(x::N; ztol::Real=ABSZTOL(N)) where {N<:AbstractFloat}
 _isapprox(x::N, y::N; rtol::Real=Base.rtoldefault(N), ztol::Real=ABSZTOL(N), atol::Real=zero(N)) where {N<:AbstractFloat}
 _leq(x::N, y::N; rtol::Real=Base.rtoldefault(N), ztol::Real=ABSZTOL(N), atol::Real=zero(N)) where {N<:AbstractFloat}
