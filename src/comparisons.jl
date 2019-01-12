@@ -176,7 +176,7 @@ end
          ztol::Real=ABSZTOL(N),
          atol::Real=zero(N)) where {N<:AbstractFloat}
 
-Returns `true` if the real `x` is smaller or equal than `y` and false otherwise.
+Determine if `x` is smaller than or equal to `y`.
 
 ### Input
 
