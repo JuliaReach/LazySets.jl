@@ -68,7 +68,7 @@ Return the support vector of the union of two convex sets in a given direction.
 - `algorithm` -- (optional, default: "support_vector"): the algorithm to compute
                  the support vector; if "support_vector", use the support
                  vector of each argument; if "support_function" use the support
-                 function of each argument and evalute the support vector of only
+                 function of each argument and evaluate the support vector of only
                  one of them
 
 ### Output
