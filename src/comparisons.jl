@@ -90,7 +90,7 @@ _geq(x::N, y::M) where {N<:Real, M<:Real} = _geq(promote(x, y)...)
 """
     isapproxzero(x::N; kwargs...) where {N<:Real}
 
-Returns `true` if the real `x` is greater or equal than `y` and false otherwise.
+Determine if `x` is approximately zero.
 
 ### Input
 
