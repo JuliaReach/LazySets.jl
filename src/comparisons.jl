@@ -53,7 +53,7 @@ Determine if `x` is greater than or equal to `y`.
 ### Input
 
 - `x` -- number
-- `y` -- another number (of the same numeric type than `x`)
+- `y` -- another number (of the same numeric type as `x`)
 
 ### Output
 
