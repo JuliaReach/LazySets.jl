@@ -48,7 +48,7 @@ _leq(x::N, y::M) where {N<:Real, M<:Real} = _leq(promote(x, y)...)
 """
     _geq(x::N, y::N) where {N<:Real}
 
-Returns `true` if the real `x` is greater or equal than `y` and false otherwise.
+Determine if `x` is greater than or equal to `y`.
 
 ### Input
 
