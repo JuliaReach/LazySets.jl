@@ -139,7 +139,7 @@ end
               ztol::Real=ABSZTOL(N),
               atol::Real=zero(N)) where {N<:AbstractFloat}
 
-Returns `true` if `x` is approximately equal than `y` and false otherwise.
+Determine if `x` is approximately equal to `y`.
 
 ### Input
 
