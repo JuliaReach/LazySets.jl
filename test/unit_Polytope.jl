@@ -141,8 +141,8 @@ if test_suite_polyhedra
         # CDDLib does not preserve the Rational{Int} type
         if VERSION >= v"0.7" || N == Float64
             # tovrep from HPolytope
-            A = [N(0) N(-1); N(-1) N(0); N(1) N(1)]
-            b = N[-0.25, -0.25, -0]
+            A = N[0 1; 1 0; -1 -1]
+            b = N[0.25, 0.25, -0]
             P = HPolytope(A, b)
             @test tovrep(P) isa VPolytope{N}
             @test tohrep(P) isa HPolytope{N}  # no-op
