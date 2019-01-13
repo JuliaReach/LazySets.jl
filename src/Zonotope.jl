@@ -449,14 +449,68 @@ Return the list of constraints defining a zonotope.
 
 ### Output
 
-The list of constraints of the polyhedron.
+The list of constraints of the zonotope.
+
+### Notes
+
+The algorithm assumes that no generator is redundant.
+The result has ``2 \binom{p}{n-1}`` (with ``p`` being the number of generators
+and ``n`` being the ambient dimension) constraints, which is optimal under this
+assumption.
 
 ### Algorithm
 
-This is a naive implementation that calculates all vertices and transforms
-to the H-representation of the zonotope. The transformation to the dual
-representation requires the concrete polyhedra package `Polyhedra`.
+We follow the algorithm presented in *Althoff, Stursberg, Buss: Computing
+Reachable Sets of Hybrid Systems Using a Combination of Zonotopes and Polytopes.
+2009.*
+
+The one-dimensional case is not covered by that algorithm; we manually handle
+this case, assuming that there is only one generator.
 """
 function constraints_list(Z::Zonotope{N})::Vector{LinearConstraint{N}} where {N<:Real}
-    return constraints_list(convert(HPolytope, Z))
+    p = ngens(Z)
+    n = dim(Z)
+    if p < n
+        error("can only convert a zonotope of order >= 1")
+    end
+
+    G = Z.generators
+    m = binomial(p, n - 1)
+    constraints = Vector{LinearConstraint{N}}(undef, 2 * m)
+
+    # special handling of 1D case
+    if n == 1
+        if p > 1
+            error("1D-zonotope conversion only supports a single generator")
+        end
+
+        c = Z.center[1]
+        g = G[:, 1][1]
+        constraints[1] = LinearConstraint([N(1)], c + g)
+        constraints[2] = LinearConstraint([N(-1)], g - c)
+        return constraints
+    end
+
+    @assert N <: AbstractFloat "cannot convert rational zonotopes"
+    i = 0
+    c = Z.center
+    for columns in StrictlyIncreasingIndices(p, n-1)
+        i += 1
+        c⁺ = cross_product(view(G, :, columns))
+        c⁺ /= norm(c⁺, 2)
+
+        Δd = 0
+        for v in 1:p
+            Δd += abs(dot(c⁺, G[:, v]))
+        end
+
+        d⁺ = dot(c⁺, c) + Δd
+        c⁻ = -c⁺
+        d⁻ = dot(c⁻, c) + Δd
+
+        constraints[i] = LinearConstraint(c⁺, d⁺)
+        constraints[i + p] = LinearConstraint(c⁻, d⁻)
+    end
+    @assert i == m
+    return constraints
 end
