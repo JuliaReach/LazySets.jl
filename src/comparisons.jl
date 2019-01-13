@@ -109,7 +109,7 @@ It is considered that `x ≈ 0` whenever `x` (in absolute value) is smaller than
 tolerance for zero, `ztol`.
 """
 function isapproxzero(x::N; ztol::Real=ABSZTOL(N)) where {N<:AbstractFloat}
-    return abs(x) < ztol
+    return abs(x) <= ztol
 end
 
 """
