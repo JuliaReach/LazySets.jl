@@ -70,6 +70,9 @@ for N in [Float64, Rational{Int}, Float32]
         @test length(p.constraints) == length(cl)
     end
 
+    # vertices_list of "universal polytope" (strictly speaking: illegal input)
+    @test vertices_list(HPolytope{N}()) == Vector{Vector{N}}()
+
     if test_suite_polyhedra
         # convert hyperrectangle to a HPolytope
         H = Hyperrectangle(N[1, 1], N[2, 2])
