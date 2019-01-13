@@ -1,6 +1,7 @@
 using MathProgBase, GLPKMathProgInterface
 
-import Base.rand
+import Base: rand,
+             ∈
 
 export VPolytope,
        vertices_list,
@@ -98,6 +99,77 @@ function σ(d::AbstractVector{N},
     else
         error("the algorithm $algorithm is not known")
     end
+end
+
+"""
+    ∈(x::AbstractVector{N}, P::VPolytope{N};
+      solver=GLPKSolverLP(method=:Simplex))::Bool where {N<:Real}
+
+Check whether a given point is contained in a polytope in vertex representation.
+
+### Input
+
+- `x` -- point/vector
+- `P` -- polytope in vertex representation
+
+### Output
+
+`true` iff ``x ∈ P``.
+
+### Algorithm
+
+We check, using linear programming, the definition of a convex polytope that a
+point is in the set if and only if it is a convex combination of the vertices.
+
+Let ``v_j`` be the ``m`` vertices of `P`.
+Then we solve the following ``m``-dimensional linear program.
+
+```math
+\\max 0 \\text{s.t.}
+\bigwedge_{i=1}^n \\sum_{j=1}^m λ_j v_j[i] = x[i]
+\\sum_{j=1}^m λ_j = 1
+\bigwedge_{j=1}^m λ_j ≥ 0
+```
+"""
+function ∈(x::AbstractVector{N}, P::VPolytope{N};
+           solver=GLPKSolverLP(method=:Simplex))::Bool where {N<:Real}
+    vertices = P.vertices
+
+    # special cases: 0 or 1 vertex
+    if length(vertices) == 0
+        return false
+    elseif length(vertices) == 1
+        return x == vertices[1]
+    end
+
+    @assert length(x) == dim(P)
+
+    m, n = length(vertices), length(x)
+    A = Matrix{N}(undef, n+1, m)
+    b = [x; one(N)]
+
+    for j in 1:m
+        v_j = vertices[j]
+        # ⋀_i Σ_j λ_j v_j[i] = x[i]
+        for i in 1:n
+            A[i, j] = v_j[i]
+        end
+        # Σ_j λ_j = 1
+        A[n+1, j] = one(N)
+    end
+
+    lbounds = zeros(N, m)
+    ubounds = Inf
+    sense = [fill('=', n); '<']
+    obj = zeros(N, m)
+
+    lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
+    if lp.status == :Optimal
+        return true
+    elseif lp.status == :Infeasible
+        return false
+    end
+    @assert false "LP returned status $(lp.status) unexpectedly"
 end
 
 """

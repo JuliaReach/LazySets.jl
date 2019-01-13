@@ -484,6 +484,7 @@ constrained_dimensions(::HPolyhedron{N}) where {N<:Real}
 VPolytope
 dim(::VPolytope)
 σ(::AbstractVector{N}, ::VPolytope{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::VPolytope{N}) where {N<:Real}
 rand(::Type{VPolytope})
 vertices_list(::VPolytope{N}) where {N<:Real}
 remove_redundant_vertices(::VPolytope{N}) where {N<:Real}

@@ -91,7 +91,7 @@ The table entries have the following meaning.
 | `LineSegment`                | x   | i | x | x          | x | i       | i         | i          |      |        | i        |
 | `Singleton`                  | i   | i | i | i          | i | i       | i         | i          | i    | i      | i        |
 | `VPolygon`                   | i   | i | x | x          | x | i       | i         | x          |      |        | i        |
-| `VPolytope`                  | x   | i | x | i          |   | i       | i         | x          |      |        | i        |
+| `VPolytope`                  | x   | i | x | i          | x | i       | i         | x          |      |        | i        |
 | `ZeroSet`                    | x   | i | x | i          | x | i       | i         | x          | i    | i      | i        |
 | `Zonotope`                   | i   | i | x | i          | x | i       | i         | x          |      |        | i        |
 |                              |     |   |   |            |   |         |           |            |      |        |          |
