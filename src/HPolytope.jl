@@ -181,7 +181,7 @@ function vertices_list(P::HPolytope{N};
                        prunefunc=removevredundancy!
                       )::Vector{Vector{N}} where {N<:Real}
     if length(P.constraints) == 0
-        return Vector{N}(undef, Vector{N}(undef, 0))
+        return Vector{N}(Vector{N}(undef, 0))
     end
     @assert isdefined(@__MODULE__, :Polyhedra) "the function `vertices_list` needs " *
                                         "the package 'Polyhedra' to be loaded"
