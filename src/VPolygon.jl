@@ -17,9 +17,9 @@ Type that represents a polygon by its vertices.
 ### Notes
 
 The constructor of `VPolygon` runs a convex hull algorithm on its vertices by
-default, to remove the possibly redundant constraints. The vertices are sorted in
-counter-clockwise fashion. Use the flag `apply_convex_hull` to skip the computation
-of the convex hull.
+default, to remove the possibly redundant vertices. The vertices are sorted in
+counter-clockwise fashion. Use the flag `apply_convex_hull=false` to skip the
+computation of the convex hull.
 
 - `VPolygon(vertices::Vector{Vector{N}};
             apply_convex_hull::Bool=true,
@@ -58,7 +58,7 @@ VPolygon() = VPolygon{Float64}()
     remove_redundant_vertices!(P::VPolygon{N};
                                [algorithm]::String="monotone_chain")::VPolygon{N} where {N<:Real}
 
-Return the polygon obtained by taking the convex hull of the vertices of the given polygon.
+Remove the redundant vertices of the given polygon.
 
 ### Input
 
@@ -70,8 +70,10 @@ Return the polygon obtained by taking the convex hull of the vertices of the giv
 
 A new polygon such that its vertices are the convex hull of the given polygon.
 
-### Notes
+### Algorithm
 
+A convex hull algorithm is used to compute the convex hull of the vertices of the
+given input polygon `P`; see `?convex_hull` for details on the available algorithms.
 The vertices of the output polygon are sorted in counter-clockwise fashion.
 """
 function remove_redundant_vertices!(P::VPolygon{N};
@@ -83,7 +85,7 @@ end
     remove_redundant_vertices(P::VPolygon{N};
                               [algorithm]::String="monotone_chain")::VPolygon{N} where {N<:Real}
 
-Return the polygon obtained by taking the convex hull of the vertices of the given polygon.
+Return the polygon obtained by removing the redundant vertices of the given polygon.
 
 ### Input
 
@@ -95,8 +97,10 @@ Return the polygon obtained by taking the convex hull of the vertices of the giv
 
 A new polygon such that its vertices are the convex hull of the given polygon.
 
-### Notes
+### Algorithm
 
+A convex hull algorithm is used to compute the convex hull of the vertices of the
+given input polygon `P`; see `?convex_hull` for details on the available algorithms.
 The vertices of the output polygon are sorted in counter-clockwise fashion.
 """
 function remove_redundant_vertices(P::VPolygon{N};
