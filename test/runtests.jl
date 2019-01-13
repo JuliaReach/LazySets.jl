@@ -90,6 +90,11 @@ if test_suite_basic
     @time @testset "LazySets.LineSegment" begin include("unit_LineSegment.jl") end
     @time @testset "LazySets.Line" begin include("unit_Line.jl") end
 
+    # =========================================================
+    # Testing other set types that do not inherit from LazySet
+    # =========================================================
+    @time @testset "UnionSet" begin include("unit_UnionSet.jl") end
+
     # =========================================
     # Testing types representing set operations
     # =========================================

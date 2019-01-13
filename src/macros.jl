@@ -154,7 +154,7 @@ Nothing.
 
 ### Notes
 
-This macro generates eight functions (and possibly up to eight more if
+This macro generates six functions (and possibly up to eight more if
 `@neutral`/`@absorbing` has been used in advance for the base and/or array set
 type).
 

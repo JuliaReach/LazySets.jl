@@ -305,3 +305,25 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`vertices_list`](@ref vertices_list(::AbstractHyperrectangle{N}) where {N<:Real})
 * [`high`](@ref high(::AbstractHyperrectangle{N}) where {N<:Real})
 * [`low`](@ref low(::AbstractHyperrectangle{N}) where {N<:Real})
+
+## Union
+
+### Binary Set Union
+
+```@docs
+UnionSet
+∪(::LazySet, ::LazySet)
+dim(::Union)
+σ(::AbstractVector{N}, ::UnionSet{N}; algorithm="support_vector") where {N<:Real}
+ρ(::AbstractVector{N}, ::UnionSet{N}) where {N<:Real}
+```
+
+### ``n``-ary Set Union
+
+```@docs
+UnionSetArray
+dim(::UnionSetArray)
+array(::UnionSetArray{N, S}) where {N<:Real, S<:LazySet{N}}
+σ(::AbstractVector{N}, ::UnionSetArray{N}; algorithm="support_vector") where {N<:Real}
+ρ(::AbstractVector{N}, ::UnionSetArray{N}) where {N<:Real}
+```

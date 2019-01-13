@@ -306,7 +306,7 @@ function isempty(lm::LinearMap)::Bool
 end
 
 """
-    vertices_list(lm::LinearMap{N})::Vector{Vector{N}} where N<:Real
+    vertices_list(lm::LinearMap{N})::Vector{Vector{N}} where {N<:Real}
 
 Return the list of vertices of a (polytopic) linear map.
 
@@ -323,7 +323,7 @@ A list of vertices.
 We assume that the underlying set `X` is polytopic.
 Then the result is just the linear map applied to the vertices of `X`.
 """
-function vertices_list(lm::LinearMap{N})::Vector{Vector{N}} where N<:Real
+function vertices_list(lm::LinearMap{N})::Vector{Vector{N}} where {N<:Real}
     # for a zero map, the result is just the list containing the origin
     if iszero(lm.M)
         return [zeros(N, dim(lm))]

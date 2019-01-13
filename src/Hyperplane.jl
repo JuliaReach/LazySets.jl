@@ -210,7 +210,7 @@ function isempty(hp::Hyperplane)::Bool
 end
 
 """
-    constrained_dimensions(hp::Hyperplane{N})::Vector{Int} where N<:Real
+    constrained_dimensions(hp::Hyperplane{N})::Vector{Int} where {N<:Real}
 
 Return the indices in which a hyperplane is constrained.
 
@@ -227,7 +227,7 @@ dimension `i`.
 
 A 2D hyperplane with constraint ``x1 = 0`` is constrained in dimension 1 only.
 """
-function constrained_dimensions(hp::Hyperplane{N})::Vector{Int} where N<:Real
+function constrained_dimensions(hp::Hyperplane{N})::Vector{Int} where {N<:Real}
     return nonzero_indices(hp.a)
 end
 
@@ -274,8 +274,8 @@ this function throws an error instead of returning.
 
 ### Notes
 
-For correctness, consider the [weak duality of LPs](
-https://en.wikipedia.org/wiki/Linear_programming#Duality):
+For correctness, consider the [weak duality of
+LPs](https://en.wikipedia.org/wiki/Linear_programming#Duality):
 If the primal is unbounded, then the dual is infeasible.
 Since there is only a single constraint, the feasible set of the dual problem is
 `hp.a ⋅ y == d`, `y >= 0` (with objective function `hp.b ⋅ y`).

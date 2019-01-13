@@ -543,7 +543,8 @@ end
 
 """
     cartesian_product(P1::HPoly{N}, P2::HPoly{N};
-                      [backend]=default_polyhedra_backend(P1, N)) where N<:Real
+                      [backend]=default_polyhedra_backend(P1, N)
+                     ) where {N<:Real}
 
 Compute the Cartesian product of two polyhedra in H-representaion.
 
@@ -566,7 +567,7 @@ For further information on the supported backends see
 function cartesian_product(P1::HPoly{N},
                            P2::HPoly{N};
                            backend=default_polyhedra_backend(P1, N)
-                          ) where N<:Real
+                          ) where {N<:Real}
     @assert isdefined(@__MODULE__, :Polyhedra) "the function `cartesian_product` " *
                                                "needs the package 'Polyhedra' to be loaded"
     Pcp = hcartesianproduct(polyhedron(P1; backend=backend), polyhedron(P2; backend=backend))
@@ -581,9 +582,9 @@ Transform a polyhedron in H-representation to a polytope in V-representation.
 
 ### Input
 
-- `P`          -- polyhedron in constraint representation
-- `backend`    -- (optional, default: `default_polyhedra_backend(P, N)`)
-                  the polyhedral computations backend
+- `P`       -- polyhedron in constraint representation
+- `backend` -- (optional, default: `default_polyhedra_backend(P, N)`) the
+               backend for polyhedral computations
 
 ### Output
 
@@ -592,8 +593,10 @@ in constraint representation.
 
 ### Notes
 
+The conversion may not preserve the numeric type (e.g., with `N == Float32`)
+depending on the backend.
 For further information on the supported backends see
-[Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/).
+[Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1).
 """
 function tovrep(P::HPoly{N};
                 backend=default_polyhedra_backend(P, N)) where {N<:Real}
@@ -685,9 +688,9 @@ function isempty(P::HPoly{N};
     return Polyhedra.isempty(polyhedron(P; backend=backend), solver)
 end
 
-convert(::Type{HPolytope}, P::HPolyhedron{N}) where N =
+convert(::Type{HPolytope}, P::HPolyhedron{N}) where {N<:Real} =
     HPolytope{N}(copy(constraints_list(P)))
-convert(::Type{HPolyhedron}, P::HPolytope{N}) where N =
+convert(::Type{HPolyhedron}, P::HPolytope{N}) where {N<:Real} =
     HPolyhedron{N}(copy(constraints_list(P)))
 
 # ==========================================

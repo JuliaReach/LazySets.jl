@@ -67,6 +67,7 @@ include("Intersection.jl")
 include("LinearMap.jl")
 include("MinkowskiSum.jl")
 include("SymmetricIntervalHull.jl")
+include("UnionSet.jl")
 
 # =============================
 # Conversions between set types
@@ -89,6 +90,11 @@ include("aliases.jl")
 # Approximations module
 # =====================
 include("Approximations/Approximations.jl")
+
+# ==========================
+# Parallel algorithms module
+# ==========================
+include("Parallel/Parallel.jl")
 
 # ============
 # Plot recipes

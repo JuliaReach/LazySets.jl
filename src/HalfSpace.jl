@@ -1,6 +1,7 @@
 import Base: rand,
              ∈,
-             isempty
+             isempty,
+             convert
 
 export HalfSpace, LinearConstraint,
        an_element,
@@ -29,6 +30,10 @@ HalfSpace{Float64}([0.0, -1.0], 0.0)
 struct HalfSpace{N<:Real} <: LazySet{N}
     a::AbstractVector{N}
     b::N
+end
+
+function convert(::Type{HalfSpace{N}}, hs::HalfSpace) where {N<:Real}
+    return HalfSpace{N}(hs.a, hs.b)
 end
 
 """
@@ -240,7 +245,7 @@ function constraints_list(hs::HalfSpace{N}
 end
 
 """
-    constrained_dimensions(hs::HalfSpace{N})::Vector{Int} where N<:Real
+    constrained_dimensions(hs::HalfSpace{N})::Vector{Int} where {N<:Real}
 
 Return the indices in which a half-space is constrained.
 
@@ -257,7 +262,7 @@ dimension `i`.
 
 A 2D half-space with constraint ``x1 ≥ 0`` is constrained in dimension 1 only.
 """
-function constrained_dimensions(hs::HalfSpace{N})::Vector{Int} where N<:Real
+function constrained_dimensions(hs::HalfSpace{N})::Vector{Int} where {N<:Real}
     return nonzero_indices(hs.a)
 end
 
