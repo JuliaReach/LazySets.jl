@@ -439,7 +439,33 @@ function reduce_order(Z::Zonotope{N}, r)::Zonotope{N} where {N<:Real}
 end
 
 """
-    constraints_list(P::Zonotope{N})::Vector{LinearConstraint{N}} where {N<:Real}
+    constraints_list(P::Zonotope{N}
+                    )::Vector{LinearConstraint{N}} where {N<:Real}
+
+Return the list of constraints defining a zonotope.
+
+### Input
+
+- `Z` -- zonotope
+
+### Output
+
+The list of constraints of the zonotope.
+
+### Algorithm
+
+This is the (inefficient) fallback implementation for rational numbers.
+It first computes the vertices and then converts the corresponding polytope
+to constraint representation.
+"""
+function constraints_list(Z::Zonotope{N}
+                         )::Vector{LinearConstraint{N}} where {N<:Real}
+    return constraints_list(VPolytope(vertices_list(Z)))
+end
+
+"""
+    constraints_list(P::Zonotope{N}
+                    )::Vector{LinearConstraint{N}} where {N<:AbstractFloat}
 
 Return the list of constraints defining a zonotope.
 
@@ -467,7 +493,8 @@ Reachable Sets of Hybrid Systems Using a Combination of Zonotopes and Polytopes.
 The one-dimensional case is not covered by that algorithm; we manually handle
 this case, assuming that there is only one generator.
 """
-function constraints_list(Z::Zonotope{N})::Vector{LinearConstraint{N}} where {N<:Real}
+function constraints_list(Z::Zonotope{N}
+                         )::Vector{LinearConstraint{N}} where {N<:AbstractFloat}
     p = ngens(Z)
     n = dim(Z)
     if p < n
@@ -491,7 +518,6 @@ function constraints_list(Z::Zonotope{N})::Vector{LinearConstraint{N}} where {N<
         return constraints
     end
 
-    @assert N <: AbstractFloat "cannot convert rational zonotopes"
     i = 0
     c = Z.center
     for columns in StrictlyIncreasingIndices(p, n-1)
