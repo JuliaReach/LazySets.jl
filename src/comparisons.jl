@@ -87,7 +87,7 @@ A boolean that is `true` iff `x ≈ 0`.
 This is a fallback implementation for any real `x` such that `x ≈ 0` is `true`
 whenever `x` is equal to zero in the same numeric type as `x`.
 """
-isapproxzero(x::Real; kwargs...) = x == zero(N)
+isapproxzero(x::Real; kwargs...) = x == zero(x)
 
 """
     isapproxzero(x::N; ztol::Real=ABSZTOL(N)) where {N<:AbstractFloat}
