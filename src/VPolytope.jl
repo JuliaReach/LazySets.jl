@@ -258,16 +258,21 @@ Transform a polytope in V-representation to a polytope in H-representation.
 
 ### Input
 
-- `P`          -- polytope in vertex representation
-- `backend`    -- (optional, default: `default_polyhedra_backend(P, N)`) the polyhedral
-                  computations backend,
-                  see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
-                  for further information
+- `P`       -- polytope in vertex representation
+- `backend` -- (optional, default: `default_polyhedra_backend(P, N)`) the
+               backend for polyhedral computations
 
 ### Output
 
 The `HPolytope` which is the constraint representation of the given polytope
 in vertex representation.
+
+### Notes
+
+The conversion may not preserve the numeric type (e.g., with `N == Float32`)
+depending on the backend.
+For further information on the supported backends see
+[Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1).
 """
 function tohrep(P::VPolytope{N};
                 backend=default_polyhedra_backend(P, N)) where {N<:Real}
