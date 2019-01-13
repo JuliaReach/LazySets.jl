@@ -179,5 +179,5 @@ function _leq(x::N, y::N;
               rtol::Real=Base.rtoldefault(N),
               ztol::Real=ABSZTOL(N),
               atol::Real=zero(N)) where {N<:AbstractFloat}
-    return x < y || _isapprox(x, y, rtol=rtol, ztol=ztol, atol=atol)
+    return x <= y || _isapprox(x, y, rtol=rtol, ztol=ztol, atol=atol)
 end
