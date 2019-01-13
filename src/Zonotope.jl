@@ -511,6 +511,6 @@ function constraints_list(Z::Zonotope{N})::Vector{LinearConstraint{N}} where {N<
         constraints[i] = LinearConstraint(c⁺, d⁺)
         constraints[i + p] = LinearConstraint(c⁻, d⁻)
     end
-    @assert i == m
+    @assert i == m "expected 2*$m constraints, but only created 2*$i"
     return constraints
 end
