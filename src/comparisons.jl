@@ -126,7 +126,7 @@ Determine if `x` is approximately equal to `y`.
 - `y`    -- another number (of the same numeric type as `x`)
 - `rtol` -- (optional, default: `Base.rtoldefault(N)`) relative tolerance
 - `ztol` -- (optional, default: `ABSZTOL(N)`) absolute tolerance for comparison against zero
-- `atol` -- absolute tolerance
+- `atol` -- (optional, default: `zero(N)`) absolute tolerance
 
 ### Output
 
@@ -145,7 +145,7 @@ function _isapprox(x::N, y::N;
     if isapproxzero(x, ztol=ztol) && isapproxzero(y, ztol=ztol)
         return true
     else
-        return isapprox(x, y, rtol=rtol, atol=zero(N))
+        return isapprox(x, y, rtol=rtol, atol=atol)
     end
 end
 
