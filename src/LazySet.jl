@@ -317,7 +317,6 @@ A copy of `S`.
 
 This function performs a `deepcopy` of each field in `S`, resulting in a
 completely independent object.
-```
 """
 function copy(S::LazySet)
     T = typeof(S)
