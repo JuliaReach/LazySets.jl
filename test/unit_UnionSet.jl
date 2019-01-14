@@ -20,5 +20,8 @@ for N in [Float64, Rational{Int}, Float32]
 
         # support function
         @test ρ(d, U) == N(2)
+
+        # an_element and membership
+        @test an_element(U) ∈ U
     end
 end

@@ -148,6 +148,24 @@ function an_element(cup::UnionSet{N})::Vector{N} where {N<:Real}
     return an_element(cup.X)
 end
 
+"""
+    ∈(x::AbstractVector{N}, cup::UnionSet{N})::Bool where {N<:Real}
+
+Check whether a given point is contained in a union of two convex sets.
+
+### Input
+
+- `x`   -- point/vector
+- `cup` -- union of two convex sets
+
+### Output
+
+`true` iff ``x ∈ cup``.
+"""
+function ∈(x::AbstractVector{N}, cup::UnionSet{N})::Bool where {N<:Real}
+    return x ∈ cup.X || x ∈ cup.Y
+end
+
 # ========================================
 # n-ary set union
 # ========================================
@@ -303,4 +321,23 @@ We use `an_element` on the first wrapped set.
 """
 function an_element(cup::UnionSetArray{N})::Vector{N} where {N<:Real}
     return an_element(array(cup)[1])
+end
+
+"""
+    ∈(x::AbstractVector{N}, cup::UnionSetArray{N})::Bool where {N<:Real}
+
+Check whether a given point is contained in a union of a finite number of convex
+sets.
+
+### Input
+
+- `x`   -- point/vector
+- `cup` -- union of a finite number of convex sets
+
+### Output
+
+`true` iff ``x ∈ cup``.
+"""
+function ∈(x::AbstractVector{N}, cup::UnionSetArray{N})::Bool where {N<:Real}
+    return any(X -> x ∈ X, array(cup))
 end
