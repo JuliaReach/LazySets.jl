@@ -308,6 +308,9 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 
 ## Union
 
+Note that a union of convex sets is generally not convex.
+Hence these set types are not part of the convex-set family `LazySet`.
+
 ### Binary Set Union
 
 ```@docs
@@ -316,6 +319,7 @@ UnionSet
 dim(::Union)
 σ(::AbstractVector{N}, ::UnionSet{N}; algorithm="support_vector") where {N<:Real}
 ρ(::AbstractVector{N}, ::UnionSet{N}) where {N<:Real}
+an_element(::UnionSet{N}) where {N<:Real}
 ```
 
 ### ``n``-ary Set Union
@@ -326,4 +330,5 @@ dim(::UnionSetArray)
 array(::UnionSetArray{N, S}) where {N<:Real, S<:LazySet{N}}
 σ(::AbstractVector{N}, ::UnionSetArray{N}; algorithm="support_vector") where {N<:Real}
 ρ(::AbstractVector{N}, ::UnionSetArray{N}) where {N<:Real}
+an_element(::UnionSetArray{N}) where {N<:Real}
 ```

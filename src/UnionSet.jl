@@ -127,6 +127,27 @@ function ρ(d::AbstractVector{N}, cup::UnionSet{N}) where {N<:Real}
     return max(ρ(d, X), ρ(d, Y))
 end
 
+"""
+    an_element(cup::UnionSet{N})::Vector{N} where {N<:Real}
+
+Return some element of a union of two convex sets.
+
+### Input
+
+- `cup` -- union of two convex sets
+
+### Output
+
+An element in the union of two convex sets.
+
+### Algorithm
+
+We use `an_element` on the first wrapped set.
+"""
+function an_element(cup::UnionSet{N})::Vector{N} where {N<:Real}
+    return an_element(cup.X)
+end
+
 # ========================================
 # n-ary set union
 # ========================================
@@ -261,4 +282,25 @@ function ρ(d::AbstractVector{N}, cup::UnionSetArray{N}) where {N<:Real}
     A = array(cup)
     ρarray = map(Xi -> ρ(d, Xi), A)
     return maximum(ρarray)
+end
+
+"""
+    an_element(cup::UnionSetArray{N})::Vector{N} where {N<:Real}
+
+Return some element of a union of a finite number of convex sets.
+
+### Input
+
+- `cup` -- union of a finite number of convex sets
+
+### Output
+
+An element in the union of a finite number of convex sets.
+
+### Algorithm
+
+We use `an_element` on the first wrapped set.
+"""
+function an_element(cup::UnionSetArray{N})::Vector{N} where {N<:Real}
+    return an_element(array(cup)[1])
 end
