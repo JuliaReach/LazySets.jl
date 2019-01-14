@@ -59,11 +59,17 @@ diameter(::LazySet, ::Real=Inf)
 isbounded(::LazySet)
 isbounded_unit_dimensions(::LazySet{N}) where {N<:Real}
 an_element(::LazySet{N}) where {N<:Real}
-==(::LazySet, ::LazySet)
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet)
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:LazySet}
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet, ::Float64)
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}, ::Float64) where {S<:LazySet}
+```
+
+### Set functions that override Base functions
+
+```@docs
+==(::LazySet, ::LazySet)
+copy(::LazySet)
 ```
 
 ### Aliases for set types

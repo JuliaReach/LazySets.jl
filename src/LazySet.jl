@@ -1,4 +1,4 @@
-import Base.==
+import Base: ==, copy
 
 export LazySet,
        ρ, support_function,
@@ -298,4 +298,28 @@ end
     function rand(rng::AbstractRNG, ::SamplerType{T}) where T<:LazySet
         rand(T, rng=rng)
     end
+end
+
+"""
+    copy(S::LazySet)
+
+Return a new set independent of the given one by copying its values recursively.
+
+### Input
+
+- `S` -- any `LazySet`
+
+### Output
+
+A copy of `S`.
+
+### Notes
+
+This function performs a `deepcopy` of each field in `S`, resulting in a
+completely independent object.
+```
+"""
+function copy(S::LazySet)
+    T = typeof(S)
+    return T([deepcopy(getfield(S, fi)) for fi in fieldnames(T)]...)
 end
