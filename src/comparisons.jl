@@ -137,6 +137,14 @@ A boolean that is `true` iff `x ≈ y`.
 This comparison is split into both `x` and `y` approximately zero checked using
 `isapproxzero(x, y)`, or `x ≈ y` checked using Julia's `isapprox(x, y)`. In the
 latter function we use zero absolute tolerance and `rtol` relative tolerance.
+
+Comparing to zero with default tolerances is a special case in Julia's `isapprox`,
+see the last paragraph in `?isapprox`. This function tries to combine `isapprox`
+with its default values and a branch for `x ≈ y ≈ 0` which includes
+`x == y == 0` but also admits a tolerance `ztol`.
+
+Note that if `x = ztol` and `y = -ztol`, then `|x-y| = 2*ztol` and still
+`_isapprox` returns `true`.
 """
 function _isapprox(x::N, y::N;
                    rtol::Real=Base.rtoldefault(N),
