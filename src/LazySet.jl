@@ -1,4 +1,4 @@
-import Base.==
+import Base: ==, copy
 
 export LazySet,
        ρ, support_function,
@@ -299,3 +299,24 @@ end
         rand(T, rng=rng)
     end
 end
+
+"""
+    copy(S::LazySet)
+
+Return a deep copy of the given set by copying its values recursively.
+
+### Input
+
+- `S` -- any `LazySet`
+
+### Output
+
+A copy of `S`.
+
+### Notes
+
+This function performs a `deepcopy` of each field in `S`, resulting in a
+completely independent object. See the documentation of `?deepcopy` for further
+details.
+"""
+copy(S::LazySet) = deepcopy(S)

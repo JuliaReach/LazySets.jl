@@ -484,23 +484,6 @@ function remove_redundant_constraints!(P::PT;
     return P
 end
 
-"""
-    copy(P::PT) where {N, PT<:HPoly{N}}
-
-Create a copy of a polyhedron.
-
-### Input
-
-- `P` -- polyhedron
-
-### Output
-
-The polyhedron obtained by copying the constraints in `P` using `Base.copy`.
-"""
-function copy(P::PT) where {N, PT<:HPoly{N}}
-    return PT(copy(P.constraints))
-end
-
 # ========================================================
 # External methods that require Polyhedra.jl to be loaded
 # ========================================================

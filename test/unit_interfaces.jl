@@ -8,6 +8,9 @@
 # dimension
 check_method_implementation(LazySet, dim, Function[S -> (S{Float64},)])
 
+# copy
+check_method_implementation(LazySet, copy, Function[S -> (S,)])
+
 # --- AbstractPolytope ---
 
 # vertices list
