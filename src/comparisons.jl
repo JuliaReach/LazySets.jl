@@ -6,7 +6,7 @@ const ABSZTOL(N::Type{Rational{INNER}}) where {INNER} = zero(N)
 """
     _leq(x::N, y::N) where {N<:Real}
 
-Return `true` if the real `x` is smaller or equal than `y` and false otherwise.
+Determine if `x` is smaller than or equal to `y`.
 
 ### Input
 
