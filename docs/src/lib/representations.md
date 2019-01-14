@@ -79,6 +79,7 @@ center(::Ball1{N}) where {N<:Real}
 rand(::Type{Ball1})
 constraints_list(::Ball1{N}) where {N<:Real}
 ```
+
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
@@ -432,7 +433,6 @@ dim(::HPoly{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::HPoly{N}) where {N<:Real}
 addconstraint!(::HPoly{N}, ::LinearConstraint{N}) where {N<:Real}
 constraints_list(::HPoly{N}) where {N<:Real}
-copy(P::PT) where {N, PT<:HPoly{N}} where {N<:Real}
 tosimplehrep(::HPoly{N}) where {N<:Real}
 tohrep(::HPoly{N}) where {N<:Real}
 isempty(::HPoly{N}) where {N<:Real}
