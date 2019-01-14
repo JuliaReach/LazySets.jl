@@ -23,5 +23,16 @@ for N in [Float64, Rational{Int}, Float32]
 
         # an_element and membership
         @test an_element(U) ∈ U
+
+        # emptiness
+        @test !isempty(U)
     end
+
+    # emptiness
+    emptyP = HPolyhedron([HalfSpace(N[1, 0], N(0)), HalfSpace(N[-1, 0], N(-1))])
+    @test !isempty(emptyP ∪ B1) && !isempty(B1 ∪ emptyP) &&
+          isempty(emptyP ∪ emptyP)
+    @test !isempty(UnionSetArray([emptyP, B1])) &&
+          !isempty(UnionSetArray([B1, B2, emptyP])) &&
+          isempty(UnionSetArray([emptyP, emptyP]))
 end

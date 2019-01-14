@@ -321,6 +321,7 @@ dim(::Union)
 ρ(::AbstractVector{N}, ::UnionSet{N}) where {N<:Real}
 an_element(::UnionSet{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::UnionSet{N}) where {N<:Real}
+isempty(::UnionSet)
 ```
 
 ### ``n``-ary Set Union
@@ -333,4 +334,5 @@ array(::UnionSetArray{N, S}) where {N<:Real, S<:LazySet{N}}
 ρ(::AbstractVector{N}, ::UnionSetArray{N}) where {N<:Real}
 an_element(::UnionSetArray{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::UnionSetArray{N}) where {N<:Real}
+isempty(::UnionSetArray)
 ```

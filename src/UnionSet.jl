@@ -166,6 +166,23 @@ function ∈(x::AbstractVector{N}, cup::UnionSet{N})::Bool where {N<:Real}
     return x ∈ cup.X || x ∈ cup.Y
 end
 
+"""
+    isempty(cup::UnionSet)::Bool
+
+Check whether a union of two convex sets is empty.
+
+### Input
+
+- `cup` -- union of two convex sets
+
+### Output
+
+`true` iff the union is empty.
+"""
+function isempty(cup::UnionSet)::Bool
+    return isempty(cup.X) && isempty(cup.Y)
+end
+
 # ========================================
 # n-ary set union
 # ========================================
@@ -340,4 +357,21 @@ sets.
 """
 function ∈(x::AbstractVector{N}, cup::UnionSetArray{N})::Bool where {N<:Real}
     return any(X -> x ∈ X, array(cup))
+end
+
+"""
+    isempty(cup::UnionSetArray)::Bool
+
+Check whether a union of a finite number of convex sets is empty.
+
+### Input
+
+- `cup` -- union of a finite number of convex sets
+
+### Output
+
+`true` iff the union is empty.
+"""
+function isempty(cup::UnionSetArray)::Bool
+    return all(isempty, array(cup))
 end
