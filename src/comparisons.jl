@@ -168,7 +168,7 @@ Determine if `x` is smaller than or equal to `y`.
 ### Input
 
 - `x`    -- number
-- `y`    -- another number (of the same numeric type than `x`)
+- `y`    -- another number (of the same numeric type as `x`)
 - `rtol` -- (optional, default: `Base.rtoldefault(N)`) relative tolerance
 - `ztol` -- (optional, default: `ABSZTOL(N)`) absolute tolerance for comparison against zero
 - `atol` -- absolute tolerance
