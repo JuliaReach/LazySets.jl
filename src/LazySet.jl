@@ -301,7 +301,7 @@ end
 end
 
 """
-    copy(S::LazySet)
+    copy(S::T)::T where {T<:LazySet}
 
 Return a new set independent of the given one by copying its values recursively.
 
@@ -318,7 +318,6 @@ A copy of `S`.
 This function performs a `deepcopy` of each field in `S`, resulting in a
 completely independent object.
 """
-function copy(S::LazySet)
-    T = typeof(S)
-    return T([deepcopy(getfield(S, fi)) for fi in fieldnames(T)]...)
+function copy(S::T)::T where {T<:LazySet}
+    return T([copy(getfield(S, fi)) for fi in fieldnames(T)]...)
 end

@@ -69,7 +69,7 @@ RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}, ::Float64) where {S<:L
 
 ```@docs
 ==(::LazySet, ::LazySet)
-copy(::LazySet)
+copy(::T)::T where {T<:LazySet}
 ```
 
 ### Aliases for set types
