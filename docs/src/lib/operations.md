@@ -322,6 +322,7 @@ dim(::Union)
 an_element(::UnionSet{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::UnionSet{N}) where {N<:Real}
 isempty(::UnionSet)
+isbounded(::UnionSet)
 ```
 
 ### ``n``-ary Set Union
@@ -335,4 +336,5 @@ array(::UnionSetArray{N, S}) where {N<:Real, S<:LazySet{N}}
 an_element(::UnionSetArray{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::UnionSetArray{N}) where {N<:Real}
 isempty(::UnionSetArray)
+isbounded(::UnionSetArray)
 ```

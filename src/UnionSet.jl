@@ -183,6 +183,23 @@ function isempty(cup::UnionSet)::Bool
     return isempty(cup.X) && isempty(cup.Y)
 end
 
+"""
+    isbounded(cup::UnionSet)::Bool
+
+Determine whether a union of two convex sets is bounded.
+
+### Input
+
+- `cup` -- union of two convex sets
+
+### Output
+
+`true` iff the union is bounded.
+"""
+function isbounded(cup::UnionSet)::Bool
+    return isbounded(cup.X) && isbounded(cup.Y)
+end
+
 # ========================================
 # n-ary set union
 # ========================================
@@ -374,4 +391,21 @@ Check whether a union of a finite number of convex sets is empty.
 """
 function isempty(cup::UnionSetArray)::Bool
     return all(isempty, array(cup))
+end
+
+"""
+    isbounded(cup::UnionSetArray)::Bool
+
+Determine whether a union of a finite number of convex sets is bounded.
+
+### Input
+
+- `cup` -- union of a finite number of convex sets
+
+### Output
+
+`true` iff the union is bounded.
+"""
+function isbounded(cup::UnionSetArray)::Bool
+    return all(isbounded, array(cup))
 end

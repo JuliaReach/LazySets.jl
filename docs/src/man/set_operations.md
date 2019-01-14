@@ -109,8 +109,8 @@ The table entries have the following meaning.
 | `MinkowskiSumArray`          | x   | x | x | i          |   | x       | x         |            |      |        | i        |
 | `CacheMinkowskiSum`          | x   | i | x | i          |   | x       | x         |            |      |        | i        |
 | `SymmetricIntervalHull`      | x   | i | x | i          | i | i       | i         | i          | i    | i      | i        |
-| `UnionSet`                   | x   | x | x | x          | x | x       |           |            |      |        |          |
-| `UnionSetArray`              | x   | x | x | x          | x | x       |           |            |      |        |          |
+| `UnionSet`                   | x   | x | x | x          | x | x       | x         |            |      |        |          |
+| `UnionSetArray`              | x   | x | x | x          | x | x       | x         |            |      |        |          |
 
 
 ### `dim`

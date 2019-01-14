@@ -26,6 +26,9 @@ for N in [Float64, Rational{Int}, Float32]
 
         # emptiness
         @test !isempty(U)
+
+        # boundedness
+        @test isbounded(U)
     end
 
     # emptiness
@@ -35,4 +38,10 @@ for N in [Float64, Rational{Int}, Float32]
     @test !isempty(UnionSetArray([emptyP, B1])) &&
           !isempty(UnionSetArray([B1, B2, emptyP])) &&
           isempty(UnionSetArray([emptyP, emptyP]))
+
+    # boundedness
+    unboundedP = HPolyhedron([HalfSpace(N[1, 0], N(0))])
+    @test !isbounded(unboundedP ∪ B1) && !isbounded(B1 ∪ unboundedP)
+    @test !isbounded(UnionSetArray([unboundedP, B1])) &&
+          !isbounded(UnionSetArray([B1, B2, unboundedP]))
 end
