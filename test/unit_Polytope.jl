@@ -134,12 +134,12 @@ for N in [Float64, Rational{Int}, Float32]
     end
 
     # copy (see #1002)
-    p, q = [1], [2]
+    p, q = [N(1)], [N(2)]
     P = VPolytope([p, q])
     Pcopy = copy(P)
-    p[1] = 5
+    p[1] = N(5)
     # test that Pcopy is independent of P ( = deepcopy)
-    @test Pcopy.vertices[1] == [1]
+    @test Pcopy.vertices[1] == [N(1)]
 end
 
 # default Float64 constructors
