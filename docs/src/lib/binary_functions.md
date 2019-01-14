@@ -73,4 +73,6 @@ intersection(::S1, ::S2) where {N<:Real, S1<:AbstractPolytope{N}, S2<:AbstractPo
 ⊆(::Interval, ::Interval)
 ⊆(::EmptySet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 ⊆(::LazySet{N}, ::EmptySet{N}, ::Bool=false) where {N<:Real}
+⊆(::UnionSet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
+⊆(::UnionSetArray{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 ```

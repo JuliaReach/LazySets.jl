@@ -1,6 +1,7 @@
 for N in [Float64, Rational{Int}, Float32]
     B1 = BallInf(zeros(N, 2), N(1))
     B2 = Ball1(ones(N, 2), N(1))
+    B3 = Hyperrectangle(low=N[-1, -1], high=N[2, 2])
     UXY = UnionSet(B1, B2)
 
     # type alias
@@ -29,6 +30,12 @@ for N in [Float64, Rational{Int}, Float32]
 
         # boundedness
         @test isbounded(U)
+
+        # inclusion
+        subset, point = ⊆(U, B3, true)
+        @test U ⊆ B3 && subset && point == N[]
+        subset, point = ⊆(U, B2, true)
+        @test !(U ⊆ B2) && !subset && point ∈ U && point ∉ B2
     end
 
     # emptiness
