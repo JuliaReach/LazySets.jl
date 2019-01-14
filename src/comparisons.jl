@@ -134,9 +134,9 @@ A boolean that is `true` iff `x ≈ y`.
 
 ### Algorithm
 
-This comparison is split into both `x` and `y` approximately zero checked using
-`isapproxzero(x, y)`, or `x ≈ y` checked using Julia's `isapprox(x, y)`. In the
-latter function we use zero absolute tolerance and `rtol` relative tolerance.
+We first check if `x` and `y` are both approximately zero, using `isapproxzero(x, y)`.
+If that fails, we check if `x ≈ y`, using Julia's `isapprox(x, y)`.
+In the latter check we use `atol` absolute tolerance and `rtol` relative tolerance.
 
 Comparing to zero with default tolerances is a special case in Julia's `isapprox`,
 see the last paragraph in `?isapprox`. This function tries to combine `isapprox`
