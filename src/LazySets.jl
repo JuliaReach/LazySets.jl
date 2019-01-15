@@ -13,6 +13,7 @@ export Approximations
 # Auxiliary functions
 # ===================
 include("helper_functions.jl")
+include("comparisons.jl")
 include("macros.jl")
 
 # ==================
