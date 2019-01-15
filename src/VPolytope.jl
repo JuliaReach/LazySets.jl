@@ -251,7 +251,7 @@ end
 
 """
     remove_redundant_vertices(P::VPolytope{N};
-                              [backend]=default_polyhedra_backend(P, N))::VPolytope{N} where {N}
+                              [backend]=default_polyhedra_backend(P, N))::VPolytope{N} where {N<:Real}
 
 Return the polytope obtained by removing the redundant vertices of the given polytope.
 
@@ -268,7 +268,7 @@ Return the polytope obtained by removing the redundant vertices of the given pol
 A new polytope such that its vertices are the convex hull of the given polytope.
 """
 function remove_redundant_vertices(P::VPolytope{N};
-                                   backend=default_polyhedra_backend(P, N))::VPolytope{N} where {N}
+                                   backend=default_polyhedra_backend(P, N))::VPolytope{N} where {N<:Real}
     @assert isdefined(@__MODULE__, :Polyhedra) "the function `remove_redundant_vertices` needs " *
                                                "the package 'Polyhedra' to be loaded"
     Q = polyhedron(P; backend=backend)
