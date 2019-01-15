@@ -438,7 +438,6 @@ constraints_list(::HPoly{N}) where {N<:Real}
 tosimplehrep(::HPoly{N}) where {N<:Real}
 tohrep(::HPoly{N}) where {N<:Real}
 isempty(::HPoly{N}) where {N<:Real}
-convex_hull(::HPoly{N}, ::HPoly{N}) where {N<:Real}
 cartesian_product(::HPoly{N}, ::HPoly{N}) where {N<:Real}
 tovrep(::HPoly{N}) where {N<:Real}
 polyhedron(::HPoly{N}) where {N<:Real}

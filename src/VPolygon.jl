@@ -3,7 +3,8 @@ import Base: rand,
 
 export VPolygon,
        remove_redundant_vertices,
-       remove_redundant_vertices!
+       remove_redundant_vertices!,
+       convex_hull
 
 """
     VPolygon{N<:Real} <: AbstractPolygon{N}
@@ -486,4 +487,35 @@ is returned.
 """
 function constraints_list(P::VPolygon{N})::Vector{LinearConstraint{N}} where {N<:Real}
     return constraints_list(tohrep(P))
+end
+
+"""
+    convex_hull(P::VPolygon{N}, Q::VPolygon{N};
+                [algorithm]::String="monotone_chain")::VPolygon{N} where {N<:Real}
+
+Return the convex hull of two polygons in vertex representation.
+
+### Input
+
+- `P`         -- polygon in vertex representation
+- `Q`         -- another polygon in vertex representation
+- `algorithm` -- (optional, default: "monotone_chain") the algorithm used to
+                 compute the convex hull
+
+### Output
+
+A new polygon such that its vertices are the convex hull of the given two polygons.
+
+### Algorithm
+
+A convex hull algorithm is used to compute the convex hull of the vertices of the
+given input polygons `P` and `Q`; see `?convex_hull` for details on the available
+algorithms. The vertices of the output polygon are sorted in counter-clockwise
+fashion.
+"""
+function convex_hull(P::VPolygon{N}, Q::VPolygon{N};
+                     algorithm::String="monotone_chain")::VPolygon{N} where {N<:Real}
+    vunion = [P.vertices; Q.vertices]
+    convex_hull!(vunion; algorithm=algorithm)
+    return VPolygon(vunion, apply_convex_hull=false)
 end
