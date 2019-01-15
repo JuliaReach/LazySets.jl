@@ -250,9 +250,8 @@ function cartesian_product(P1::VPolytope{N}, P2::VPolytope{N};
 end
 
 """
-
     remove_redundant_vertices(P::VPolytope{N};
-                              backend=default_polyhedra_backend(P, N))::VPolytope{N} where {N}
+                              [backend]=default_polyhedra_backend(P, N))::VPolytope{N} where {N}
 
 Return the polytope obtained by removing the redundant vertices of the given polytope.
 

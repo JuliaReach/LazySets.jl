@@ -487,6 +487,7 @@ dim(::VPolytope)
 σ(::AbstractVector{N}, ::VPolytope{N}) where {N<:Real}
 rand(::Type{VPolytope})
 vertices_list(::VPolytope{N}) where {N<:Real}
+remove_redundant_vertices(::VPolytope{N}) where {N<:Real}
 constraints_list(::VPolytope{N}) where {N<:Real}
 tohrep(::VPolytope{N}) where {N<:Real}
 tovrep(::VPolytope)
