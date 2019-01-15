@@ -48,10 +48,6 @@ for N in [Float64, Rational{Int}, Float32]
         disjoint2, point2 = isdisjoint(S, U, true)
         @test isdisjoint(U, S) && isdisjoint(S, U) && disjoint1 &&
               disjoint2 && point1 == point2 == N[]
-
-        # intersection
-        @test !isempty(intersection(U, B3)) && !isempty(intersection(B3, U))
-        @test isempty(intersection(U, S)) && isempty(intersection(S, U))
     end
 
     # emptiness
@@ -70,6 +66,12 @@ for N in [Float64, Rational{Int}, Float32]
 
     # tests that only work with Float64
     if N in [Float64]
+        for U in [UXY, Uarr]
+            # intersection
+            @test !isempty(intersection(U, B3)) && !isempty(intersection(B3, U))
+            @test isempty(intersection(U, S)) && isempty(intersection(S, U))
+        end
+
         # isdisjoint
         disjoint1, point1 = isdisjoint(UXY, UXY, true)
         disjoint2, point2 = isdisjoint(UXY, Uarr, true)

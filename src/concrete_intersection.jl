@@ -4,7 +4,7 @@ export intersection
 
 """
     intersection(S::AbstractSingleton{N},
-                 X::Union{LazySet{N}, UnionSet{N}, UnionSetArray{N}}
+                 X::LazySet{N}
                 )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
 
 Return the intersection of a singleton with another set.
@@ -20,13 +20,13 @@ If the sets intersect, the result is `S`.
 Otherwise, the result is the empty set.
 """
 function intersection(S::AbstractSingleton{N},
-                      X::Union{LazySet{N}, UnionSet{N}, UnionSetArray{N}}
+                      X::LazySet{N}
                      )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
     return element(S) ∈ X ? S : EmptySet{N}()
 end
 
 # symmetric method
-function intersection(X::Union{LazySet{N}, UnionSet{N}, UnionSetArray{N}},
+function intersection(X::LazySet{N},
                       S::AbstractSingleton{N}
                      )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
     return intersection(S, X)
@@ -536,8 +536,75 @@ function intersection(S::AbstractSingleton{N},
                      )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
     return invoke(intersection, Tuple{typeof(S), LazySet{N}}, S, P)
 end
+
 function intersection(P::AbstractPolytope{N},
                       S::AbstractSingleton{N}
                      )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
     return invoke(intersection, Tuple{typeof(S), LazySet{N}}, S, P)
+end
+
+"""
+    intersection(cup::UnionSet{N}, X::LazySet{N}) where {N<:Real}
+
+Return the intersection of a union of two convex sets and another convex set.
+
+### Input
+
+- `cup` -- union of two convex sets
+- `X`   -- convex set
+
+### Output
+
+The union of the pairwise intersections, expressed as a `UnionSet`.
+If one of those sets is empty, only the other set is returned.
+"""
+function intersection(cup::UnionSet{N}, X::LazySet{N}) where {N<:Real}
+    return intersection(cup.X, X) ∪ intersection(cup.Y, X)
+end
+
+# symmetric method
+function intersection(X::LazySet{N}, cup::UnionSet{N}) where {N<:Real}
+    return intersection(cup, X)
+end
+
+# disambiguation
+function intersection(cup::UnionSet{N}, S::AbstractSingleton{N}) where {N<:Real}
+    return element(S) ∈ cup ? S : EmptySet{N}()
+end
+function intersection(S::AbstractSingleton{N}, cup::UnionSet{N}) where {N<:Real}
+    return invoke(intersection, Tuple{UnionSet{N}, typeof(S)}, cup, S)
+end
+
+"""
+    intersection(cup::UnionSetArray{N}, X::LazySet{N}) where {N<:Real}
+
+Return the intersection of a union of a finite number of convex sets and another
+convex set.
+
+### Input
+
+- `cup` -- union of a finite number of convex sets
+- `X`   -- convex set
+
+### Output
+
+The union of the pairwise intersections, expressed as a `UnionSetArray`.
+"""
+function intersection(cup::UnionSetArray{N}, X::LazySet{N}) where {N<:Real}
+    return UnionSetArray([intersection(Y, X) for Y in array(cup)])
+end
+
+# symmetric method
+function intersection(X::LazySet{N}, cup::UnionSetArray{N}) where {N<:Real}
+    return intersection(cup, X)
+end
+
+# disambiguation
+function intersection(cup::UnionSetArray{N},
+                      S::AbstractSingleton{N}) where {N<:Real}
+    return element(S) ∈ cup ? S : EmptySet{N}()
+end
+function intersection(S::AbstractSingleton{N},
+                      cup::UnionSetArray{N}) where {N<:Real}
+    return invoke(intersection, Tuple{UnionSetArray{N}, typeof(S)}, cup, S)
 end
