@@ -67,6 +67,7 @@ if test_suite_basic
     # Testing utility functions
     # =========================
     @time @testset "LazySets.Util" begin include("unit_util.jl") end
+    @time @testset "LazySets.Comparisons" begin include("unit_comparisons.jl") end
 
     # =======================================
     # Testing types that inherit from LazySet

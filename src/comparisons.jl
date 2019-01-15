@@ -4,14 +4,15 @@ const ABSZTOL(N::Type{<:AbstractFloat}) = sqrt(eps(N))
 const ABSZTOL(N::Type{Rational{INNER}}) where {INNER} = zero(N)
 
 """
-    _leq(x::N, y::N) where {N<:Real}
+    _leq(x::N, y::N; [kwargs...]) where {N<:Real}
 
 Determine if `x` is smaller than or equal to `y`.
 
 ### Input
 
-- `x` -- number
-- `y` -- another number (of the same numeric type as `x`)
+- `x`      -- number
+- `y`      -- another number (of the same numeric type as `x`)
+- `kwargs` -- not used
 
 ### Output
 
@@ -22,17 +23,18 @@ A boolean that is `true` iff `x <= y`.
 This is a fallback implementation for numbers of type `Real`. If the arguments
 are floating point numbers, see `_leq(x::AbstractFloat, y::AbstractFloat)`.
 """
-_leq(x::N, y::N) where {N<:Real} = x <= y
+_leq(x::N, y::N; kwargs...) where {N<:Real} = x <= y
 
 """
-    _leq(x::N, y::M) where {N<:Real, M<:Real}
+    _leq(x::N, y::M; [kwargs...]) where {N<:Real, M<:Real}
 
 Determine if `x` is smaller than or equal to `y`.
 
 ### Input
 
-- `x` -- number
-- `y` -- another number (of possibly different numeric type than `x`)
+- `x`      -- number
+- `y`      -- another number (of possibly different numeric type than `x`)
+- `kwargs` -- optional arguments; see `?_leq` for the available options 
 
 ### Output
 
@@ -45,10 +47,10 @@ arguments to a common numeric type, returning them as a tuple. The conversion
 is such that the common type to which the values are converted can represent
 them as faithfully as possible.
 """
-_leq(x::N, y::M) where {N<:Real, M<:Real} = _leq(promote(x, y)...)
+_leq(x::N, y::M; kwargs...) where {N<:Real, M<:Real} = _leq(promote(x, y)...; kwargs...)
 
 """
-    _geq(x::Real, y::Real)
+    _geq(x::Real, y::Real; [kwargs...])
 
 Determine if `x` is greater than or equal to `y`.
 
@@ -66,10 +68,10 @@ A boolean that is `true` iff `x >= y`.
 This function falls back to `_leq(y, x)`, with type promotion if needed. See the
 documentation of `_leq` for further details.
 """
-_geq(x::Real, y::Real) = _leq(y, x)
+_geq(x::Real, y::Real; kwargs...) = _leq(y, x; kwargs...)
 
 """
-    isapproxzero(x::Real; kwargs...)
+    isapproxzero(x::Real; [kwargs...])
 
 Determine if `x` is approximately zero.
 
