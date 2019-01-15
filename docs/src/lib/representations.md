@@ -386,6 +386,8 @@ vertices_list(::VPolygon{N}) where {N<:Real}
 tohrep(::VPolygon{N}, ::Type{HPOLYGON}=HPolygon) where {N<:Real, HPOLYGON<:AbstractHPolygon}
 tovrep(::VPolygon{N}) where {N<:Real}
 constraints_list(::VPolygon{N}) where {N<:Real}
+remove_redundant_vertices(::VPolygon{N}; ::String="monotone_chain") where {N<:Real}
+remove_redundant_vertices!(::VPolygon{N}; ::String="monotone_chain") where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -436,7 +438,6 @@ constraints_list(::HPoly{N}) where {N<:Real}
 tosimplehrep(::HPoly{N}) where {N<:Real}
 tohrep(::HPoly{N}) where {N<:Real}
 isempty(::HPoly{N}) where {N<:Real}
-convex_hull(::HPoly{N}, ::HPoly{N}) where {N<:Real}
 cartesian_product(::HPoly{N}, ::HPoly{N}) where {N<:Real}
 tovrep(::HPoly{N}) where {N<:Real}
 polyhedron(::HPoly{N}) where {N<:Real}
@@ -485,6 +486,7 @@ dim(::VPolytope)
 σ(::AbstractVector{N}, ::VPolytope{N}) where {N<:Real}
 rand(::Type{VPolytope})
 vertices_list(::VPolytope{N}) where {N<:Real}
+remove_redundant_vertices(::VPolytope{N}) where {N<:Real}
 constraints_list(::VPolytope{N}) where {N<:Real}
 tohrep(::VPolytope{N}) where {N<:Real}
 tovrep(::VPolytope)

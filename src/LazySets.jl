@@ -53,6 +53,11 @@ include("VPolytope.jl")
 include("ZeroSet.jl")
 include("Zonotope.jl")
 
+# ===================================================
+# Algorithms to compute the convex hull of polygons
+# ===================================================
+include("concrete_convex_hull.jl")
+
 # =================================
 # Types representing set operations
 # =================================
