@@ -152,7 +152,7 @@ function σ(d::AbstractVector{N}, P::HPoly{N}) where {N<:Real}
 end
 
 function σ_helper(d::AbstractVector{N}, P::HPoly{N}) where {N<:Real}
-    c = -d
+    c = convert(Vector{N}, -d)
     (A, b) = tosimplehrep(P)
     if length(b) == 0
         unbounded = true

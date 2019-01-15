@@ -274,3 +274,9 @@ if test_suite_polyhedra
         @test ispermutation(vl, [N[0, 0, 2], N[1, 1, 2]])
     end
 end
+
+# test that one can pass a sparse vector as the direction (see #1011)
+P = HPolytope([HalfSpace([1.0, 0.0], 1.0),
+               HalfSpace([0.0, 1.0], 1.0),
+               HalfSpace([-1.0, -1.0], -1.0)])
+@test an_element(P) ∈ P
