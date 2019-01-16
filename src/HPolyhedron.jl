@@ -151,7 +151,7 @@ function σ(d::AbstractVector{N}, P::HPoly{N}) where {N<:Real}
     end
 end
 
-@inline function _to_minus_vector(d::SparseVector)
+@inline function _to_minus_vector(d::SparseVector{N}) where {N}
     c = zeros(length(d))
     for (ni, i) in enumerate(d.nzind)
         @inbounds c[i] = -d.nzval[ni]
