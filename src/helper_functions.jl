@@ -322,7 +322,9 @@ Base.length(sii::StrictlyIncreasingIndices) = binomial(sii.n, sii.m)
 # returns [1, 2, ..., m-2, m-1, m-1]
 function Base.start(sii::StrictlyIncreasingIndices)
     v = [1:sii.m;]
-    v[end] -= 1
+    if sii.n > sii.m
+        v[end] -= 1
+    end
     return v
 end
 
@@ -330,6 +332,9 @@ function Base.next(sii::StrictlyIncreasingIndices, state)
     v = state
     i = sii.m
     diff = sii.n
+    if i == diff
+        return (v, nothing)
+    end
     while v[i] == diff
         i -= 1
         diff -= 1
@@ -363,6 +368,9 @@ function Base.iterate(sii::StrictlyIncreasingIndices, state::AbstractVector{Int}
     v = state
     i = sii.m
     diff = sii.n
+    if i == diff
+        return nothing
+    end
     while v[i] == diff
         i -= 1
         diff -= 1
