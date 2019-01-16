@@ -134,6 +134,37 @@ function overapproximate(S::ConvexHull{N, Zonotope{N}, Zonotope{N}},
 end
 
 """
+    overapproximate(Z::Zonotope, ::Type{<:Hyperrectangle})::Hyperrectangle
+
+Return a tight overapproximation of a zonotope with an axis-aligned box.
+
+### Input
+
+- `Z`              -- zonotope
+- `Hyperrectangle` -- type for dispatch
+
+### Output
+
+A hyperrectangle.
+
+### Algorithm
+
+This function implements the method in [Section 5.1.2, 1]. A zonotope
+``Z = ⟨c, G⟩`` can be overapproximated tightly by an axis-aligned box
+(i.e. an `Hyperrectangle`) such that its center is ``c`` and the radius along
+dimension ``i`` is the column-sum of the absolute values of the ``i``-th row
+of ``G`` for ``i = 1,…, p``, where ``p`` is the number of generators of ``Z``.
+
+[1] *Althoff, M., Stursberg, O., & Buss, M. (2010). Computing reachable sets of
+hybrid systems using a combination of zonotopes and polytopes. Nonlinear analysis:
+hybrid systems, 4(2), 233-249.*
+"""
+function overapproximate(Z::Zonotope, ::Type{<:Hyperrectangle})::Hyperrectangle
+    r = sum(abs.(Z.generators), dims=2)[:]
+    return Hyperrectangle(Z.center, r)
+end
+
+"""
     overapproximate(X::LazySet{N}, dir::AbstractDirections{N})::HPolytope{N}
         where {N}
 
