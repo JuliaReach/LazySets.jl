@@ -151,8 +151,23 @@ function σ(d::AbstractVector{N}, P::HPoly{N}) where {N<:Real}
     end
 end
 
+@inline function _to_minus_vector(d::SparseVector)
+    c = zeros(length(d))
+    for (ni, i) in enumerate(d.nzind)
+        @inbounds c[i] = -d.nzval[ni]
+    end
+    return c
+end
+
+@inline function _to_minus_vector(d::AbstractVector{N}) where {N}
+    return convert(Vector{N}, -d)
+end
+
 function σ_helper(d::AbstractVector{N}, P::HPoly{N}) where {N<:Real}
-    c = convert(Vector{N}, -d)
+
+    # let c = -d as a Vector, since GLPK doesn't accept sparse vectors (see #1011)
+    c = _to_minus_vector(d)
+
     (A, b) = tosimplehrep(P)
     if length(b) == 0
         unbounded = true
