@@ -523,16 +523,13 @@ function constraints_list(Z::Zonotope{N}
     for columns in StrictlyIncreasingIndices(p, n-1)
         i += 1
         c⁺ = cross_product(view(G, :, columns))
-        c⁺ /= norm(c⁺, 2)
+        normalize!(c⁺, 2)
 
-        Δd = 0
-        for v in 1:p
-            Δd += abs(dot(c⁺, G[:, v]))
-        end
+        Δd = sum(abs.(transpose(G) * c⁺))
 
         d⁺ = dot(c⁺, c) + Δd
         c⁻ = -c⁺
-        d⁻ = dot(c⁻, c) + Δd
+        d⁻ = -d⁺ + 2 * Δd  # identical to dot(c⁻, c) + Δd
 
         constraints[i] = LinearConstraint(c⁺, d⁺)
         constraints[i + p] = LinearConstraint(c⁻, d⁻)
