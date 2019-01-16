@@ -480,7 +480,7 @@ The list of constraints of the zonotope.
 ### Notes
 
 The algorithm assumes that no generator is redundant.
-The result has ``2 \binom{p}{n-1}`` (with ``p`` being the number of generators
+The result has ``2 \\binom{p}{n-1}`` (with ``p`` being the number of generators
 and ``n`` being the ambient dimension) constraints, which is optimal under this
 assumption.
 
