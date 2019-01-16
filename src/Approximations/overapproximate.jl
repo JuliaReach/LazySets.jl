@@ -151,7 +151,7 @@ A hyperrectangle.
 
 This function implements the method in [Section 5.1.2, 1]. A zonotope
 ``Z = ⟨c, G⟩`` can be overapproximated tightly by an axis-aligned box
-(i.e. an `Hyperrectangle`) such that its center is ``c`` and the radius along
+(i.e. a `Hyperrectangle`) such that its center is ``c`` and the radius along
 dimension ``i`` is the column-sum of the absolute values of the ``i``-th row
 of ``G`` for ``i = 1,…, p``, where ``p`` is the number of generators of ``Z``.
 
