@@ -233,7 +233,7 @@ Compute the high-dimensional cross product of ``n-1`` ``n``-dimensional vectors.
 
 ### Input
 
-- `M` -- ``n \times n - 1``-dimensional matrix
+- `M` -- ``n × n - 1``-dimensional matrix
 
 ### Output
 
