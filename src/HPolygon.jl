@@ -10,7 +10,13 @@ are sorted in counter-clockwise fashion with respect to their normal directions.
 
 ### Fields
 
-- `constraints` -- list of linear constraints, sorted by the angle
+- `constraints`          -- list of linear constraints, sorted by the angle
+- `sort_constraints`     -- (optional, default: `true`) flag for sorting the
+                            constraints (sortedness is a running assumption of
+                            this type)
+- `validate_boundedness` -- (optional, default: `true`) flag for checking if the
+                            constraints make the polygon bounded; (boundedness
+                            is a running assumption of this type)
 
 ### Notes
 

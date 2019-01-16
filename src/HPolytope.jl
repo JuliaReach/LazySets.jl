@@ -11,7 +11,10 @@ Type that represents a convex polytope in H-representation.
 
 ### Fields
 
-- `constraints` -- vector of linear constraints
+- `constraints`          -- vector of linear constraints
+- `validate_boundedness` -- (optional, default: `true`) flag for checking if the
+                            constraints make the polytope bounded; (boundedness
+                            is a running assumption of this type)
 
 ### Note
 

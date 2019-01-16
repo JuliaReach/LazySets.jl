@@ -11,9 +11,15 @@ This is a refined version of `HPolygon`.
 
 ### Fields
 
-- `constraints` -- list of linear constraints
-- `ind` -- index in the list of constraints to begin the search to evaluate the
-           support function
+- `constraints`          -- list of linear constraints
+- `ind`                  -- index in the list of constraints to begin the search
+                            to evaluate the support function
+- `sort_constraints`     -- (optional, default: `true`) flag for sorting the
+                            constraints (sortedness is a running assumption of
+                            this type)
+- `validate_boundedness` -- (optional, default: `true`) flag for checking if the
+                            constraints make the polygon bounded; (boundedness
+                            is a running assumption of this type)
 
 ### Notes
 
