@@ -1,5 +1,6 @@
 import Base: rand,
-             ∈
+             ∈,
+             split
 
 export Zonotope,
        order,
@@ -436,6 +437,58 @@ function reduce_order(Z::Zonotope{N}, r)::Zonotope{N} where {N<:Real}
         Gred = Gbox
     end
     return Zonotope(c, Gred)
+end
+
+"""
+    split(Z::Zonotope, j::Int)
+
+Return two zonotopes obtained by splitting the given zonotope.
+
+### Input
+
+- `Z` -- zonotope
+- `j` -- index of the generator to be split
+
+### Output
+
+The zonotope obtained by splitting `Z` into two zonotopes such that
+their union is `Z` and their intersection is possibly non-empty.
+
+### Algorithm
+
+This function implements [Prop. 3, 1], that we state next. The zonotope
+``Z = ⟨c, g^{(1, …, p)}⟩`` is split into:
+
+```math
+Z₁ = ⟨c - \\frac{1}{2}g^{(j)}, g^{(1, …,j-1)}, \\frac{1}{2}g^{(j)}, g^{(j+1, …, p)}⟩ \\\\
+Z₂ = ⟨c + \\frac{1}{2}g^{(j)}, g^{(1, …,j-1)}, \\frac{1}{2}g^{(j)}, g^{(j+1, …, p)}⟩,
+```
+such that ``Z₁ ∪ Z₂ = Z`` and ``Z₁ ∩ Z₂ = Z^*``, where
+
+```math
+Z^* = ⟨c, g^{(1,…,j-1)}, g^{(j+1,…, p)}⟩.
+```
+
+[1] *Althoff, M., Stursberg, O., & Buss, M. (2008). Reachability analysis of
+nonlinear systems with uncertain parameters using conservative linearization.
+In Proc. of the 47th IEEE Conference on Decision and Control.*
+"""
+function split(Z::Zonotope, j::Int)
+    @assert 1 <= j <= ngens(Z) "cannot split along index $j a zonotope with $(ngens(Z)) generators"
+    c, G = Z.center, Z.generators
+    Gj = G[:, j]
+    Gj_half = Gj / 2
+
+    c₁ = c - Gj_half
+    c₂ = c + Gj_half
+
+    G₁ = copy(G)
+    G₁[:, j] = Gj_half
+    G₂ = G₁
+
+    Z₁ = Zonotope(c₁, G₁)
+    Z₂ = Zonotope(c₂, G₂)
+    return Z₁, Z₂
 end
 
 """
