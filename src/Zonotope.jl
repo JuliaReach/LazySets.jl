@@ -460,13 +460,13 @@ This function implements [Prop. 3, 1], that we state next. The zonotope
 ``Z = ⟨c, g^{(1, …, p)}⟩`` is split into:
 
 ```math
-Z₁ = ⟨c - \\frac{1}{2}g^{(j)}, g^{(1, …,j-1)}, \\frac{1}{2}g^{(j)}, g^{(j+1, …, p)}⟩ \\\\
-Z₂ = ⟨c + \\frac{1}{2}g^{(j)}, g^{(1, …,j-1)}, \\frac{1}{2}g^{(j)}, g^{(j+1, …, p)}⟩,
+Z₁ = ⟨c - \\frac{1}{2}g^{(j)}, (g^{(1, …,j-1)}, \\frac{1}{2}g^{(j)}, g^{(j+1, …, p)})⟩ \\\\
+Z₂ = ⟨c + \\frac{1}{2}g^{(j)}, (g^{(1, …,j-1)}, \\frac{1}{2}g^{(j)}, g^{(j+1, …, p)})⟩,
 ```
 such that ``Z₁ ∪ Z₂ = Z`` and ``Z₁ ∩ Z₂ = Z^*``, where
 
 ```math
-Z^* = ⟨c, g^{(1,…,j-1)}, g^{(j+1,…, p)}⟩.
+Z^* = ⟨c, (g^{(1,…,j-1)}, g^{(j+1,…, p)})⟩.
 ```
 
 [1] *Althoff, M., Stursberg, O., & Buss, M. (2008). Reachability analysis of
