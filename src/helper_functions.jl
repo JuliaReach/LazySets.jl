@@ -291,7 +291,7 @@ first.
 
 ### Examples
 
-```julia
+```jldoctest
 julia> for v in LazySets.StrictlyIncreasingIndices(4, 2)
            println(v)
        end
