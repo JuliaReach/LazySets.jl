@@ -284,7 +284,7 @@ Iterator over the vectors of `m` strictly increasing indices from 1 to `n`.
 
 The vectors are modified in-place.
 
-The iterator ranges over ``\binom{n}{m}`` (`n` choose `m`) possible vectors.
+The iterator ranges over ``\\binom{n}{m}`` (`n` choose `m`) possible vectors.
 
 This implementation results in a lexicographic order with the last index growing
 first.
