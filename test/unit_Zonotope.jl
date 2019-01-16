@@ -109,7 +109,7 @@ for N in [Float64, Rational{Int}]
     # 2D
     Z = Zonotope(N[0, 0], Matrix{N}(I, 2, 2))
     P = HPolytope(constraints_list(Z))
-    for d in [N[1, 0], N[-1, 0], N[0, 1], N[0, -1], N[1, 1]]
+    for d in LazySets.Approximations.BoxDiagDirections{N}(2)
         @test ρ(d, P) == ρ(d, Z)
     end
 end
