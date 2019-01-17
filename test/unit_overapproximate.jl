@@ -1,4 +1,4 @@
-import LazySets.Approximations.overapproximate
+import LazySets.Approximations: overapproximate, box_approximation
 
 for N in [Float64, Rational{Int}, Float32]
     # overapproximating a set of type T1 with an unsupported type T2 is the
@@ -37,6 +37,12 @@ for N in [Float64, Rational{Int}, Float32]
     for d in [N[1], N[-1]]
         @test σ(d, p)[1] ≈ σ(d, b)[1]
     end
+
+    # approximation with an axis-aligned hyperrectangle
+    Z = Zonotope(N[-1.0, -1.0], N[-1/2 0; -1.2 -1])
+    Zoa = overapproximate(Z, Hyperrectangle) # faster o.a.
+    Zba = box_approximation(Z) # default o.a. implementation that uses supp function
+    @test Zoa.center ≈ Zba.center && Zoa.radius ≈ Zba.radius
 end
 
 # tests that do not work with Rational{Int}
