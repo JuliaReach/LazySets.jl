@@ -97,3 +97,19 @@ for N in [Float64, Rational{Int}, Float32]
     @test Z.center == N[2, 3] && diag(Z.generators) == N[4, 5]
     convert(Zonotope, BallInf(N[5, 3], N(2)))
 end
+
+for N in [Float64, Rational{Int}]
+    # conversion to HPolytope
+    # 1D
+    Z = Zonotope(N[0], Matrix{N}(I, 1, 1))
+    P = HPolytope(constraints_list(Z))
+    for d in [N[1], N[-1]]
+        @test ρ(d, P) == ρ(d, Z)
+    end
+    # 2D
+    Z = Zonotope(N[0, 0], Matrix{N}(I, 2, 2))
+    P = HPolytope(constraints_list(Z))
+    for d in LazySets.Approximations.BoxDiagDirections{N}(2)
+        @test ρ(d, P) == ρ(d, Z)
+    end
+end

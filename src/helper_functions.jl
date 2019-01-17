@@ -225,3 +225,172 @@ function reseed(rng::AbstractRNG, seed::Union{Int, Nothing})::AbstractRNG
     end
     return rng
 end
+
+"""
+    cross_product(M::AbstractMatrix{N}) where {N<:Real}
+
+Compute the high-dimensional cross product of ``n-1`` ``n``-dimensional vectors.
+
+### Input
+
+- `M` -- ``n × n - 1``-dimensional matrix
+
+### Output
+
+A vector.
+
+### Algorithm
+
+The cross product is defined as follows:
+
+```math
+\\left[ \\dots, (-1)^{n+1} \\det(M^{[i]}), \\dots \\right]^T
+```
+where ``M^{[i]}`` is defined as ``M`` with the ``i``-th row removed.
+See *Althoff, Stursberg, Buss: Computing Reachable Sets of Hybrid Systems Using
+a Combination of Zonotopes and Polytopes. 2009.*
+"""
+function cross_product(M::AbstractMatrix{N})::Vector{N} where {N<:Real}
+    n = size(M, 1)
+    @assert 1 < n == size(M, 2) + 1 "the matrix must be n x (n-1) dimensional"
+
+    v = Vector{N}(undef, n)
+    minus = false
+    for i in 1:n
+        Mi = view(M, 1:n .!= i, :)  # remove i-th row
+        d = det(Mi)
+        if minus
+            v[i] = -d
+            minus = false
+        else
+            v[i] = d
+            minus = true
+        end
+    end
+    return v
+end
+
+"""
+    StrictlyIncreasingIndices
+
+Iterator over the vectors of `m` strictly increasing indices from 1 to `n`.
+
+### Fields
+
+- `n` -- size of the index domain
+- `m` -- number of indices to choose (resp. length of the vectors)
+
+### Notes
+
+The vectors are modified in-place.
+
+The iterator ranges over ``\\binom{n}{m}`` (`n` choose `m`) possible vectors.
+
+This implementation results in a lexicographic order with the last index growing
+first.
+
+### Examples
+
+```jldoctest
+julia> for v in LazySets.StrictlyIncreasingIndices(4, 2)
+           println(v)
+       end
+[1, 2]
+[1, 3]
+[1, 4]
+[2, 3]
+[2, 4]
+[3, 4]
+```
+"""
+struct StrictlyIncreasingIndices
+    n::Int
+    m::Int
+
+    function StrictlyIncreasingIndices(n::Int, m::Int)
+        @assert n >= m > 0 "require n >= m > 0"
+        new(n, m)
+    end
+end
+
+Base.eltype(::Type{StrictlyIncreasingIndices}) = Vector{Int}
+Base.length(sii::StrictlyIncreasingIndices) = binomial(sii.n, sii.m)
+
+@static if VERSION < v"0.7-"
+@eval begin
+
+# returns [1, 2, ..., m-2, m-1, m-1]
+function Base.start(sii::StrictlyIncreasingIndices)
+    v = [1:sii.m;]
+    if sii.n > sii.m
+        v[end] -= 1
+    end
+    return v
+end
+
+function Base.next(sii::StrictlyIncreasingIndices, state)
+    v = state
+    i = sii.m
+    diff = sii.n
+    if i == diff
+        return (v, nothing)
+    end
+    while v[i] == diff
+        i -= 1
+        diff -= 1
+    end
+    # update vector
+    v[i] += 1
+    for j in i+1:sii.m
+        v[j] = v[j-1] + 1
+    end
+    # detect termination: first index has maximum value
+    if i == 1 && v[1] == (sii.n - sii.m + 1)
+        return (v, nothing)
+    end
+    return (v, v)
+end
+
+Base.done(sii::StrictlyIncreasingIndices, state) = state == nothing
+
+end # @eval
+else
+@eval begin
+
+# initialization
+function Base.iterate(sii::StrictlyIncreasingIndices)
+    v = [1:sii.m;]
+    return (v, v)
+end
+
+# normal iteration
+function Base.iterate(sii::StrictlyIncreasingIndices, state::AbstractVector{Int})
+    v = state
+    i = sii.m
+    diff = sii.n
+    if i == diff
+        return nothing
+    end
+    while v[i] == diff
+        i -= 1
+        diff -= 1
+    end
+    # update vector
+    v[i] += 1
+    for j in i+1:sii.m
+        v[j] = v[j-1] + 1
+    end
+    # detect termination: first index has maximum value
+    if i == 1 && v[1] == (sii.n - sii.m + 1)
+        return (v, nothing)
+    end
+    return (v, v)
+end
+
+# termination
+function Base.iterate(sii::StrictlyIncreasingIndices, state::Nothing)
+    return nothing
+end
+
+end # @eval
+end # if

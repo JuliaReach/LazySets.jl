@@ -583,6 +583,7 @@ Zonotope
 rand(::Type{Zonotope})
 vertices_list(::Zonotope{N}) where {N<:Real}
 constraints_list(::Zonotope{N}) where {N<:Real}
+constraints_list(::Zonotope{N}) where {N<:AbstractFloat}
 center(::Zonotope{N}) where {N<:Real}
 order(::Zonotope)
 minkowski_sum(::Zonotope{N}, ::Zonotope{N}) where {N<:Real}
