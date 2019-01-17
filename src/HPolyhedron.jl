@@ -2,8 +2,7 @@ using MathProgBase, GLPKMathProgInterface
 
 import Base: isempty,
              rand,
-             convert,
-             copy
+             convert
 
 export HPolyhedron,
        dim, σ, ∈,
@@ -438,8 +437,10 @@ A new polyhedron obtained by removing the redundant constraints in `P`.
 See `remove_redundant_constraints!`. 
 """
 function remove_redundant_constraints(P::PT;
-                                      backend=GLPKSolverLP()) where {N, PT<:HPoly{N}}
-    return remove_redundant_constraints!(copy(P), backend=backend)
+                                      backend=GLPKSolverLP()
+                                     ) where {N, PT<:HPoly{N}}
+    return remove_redundant_constraints!(PT(copy(constraints_list(P))),
+                                         backend=backend)
 end
 
 """
@@ -535,23 +536,6 @@ function linear_map(M::AbstractMatrix{N}, P::PT) where {N<:Real, PT<:HPoly{N}}
         push!(constraints, LinearConstraint(vec(c.a' * invM), c.b))
     end
     return PT(constraints)
-end
-
-"""
-    copy(P::PT) where {N, PT<:HPoly{N}}
-
-Create a copy of a polyhedron.
-
-### Input
-
-- `P` -- polyhedron
-
-### Output
-
-The polyhedron obtained by copying the constraints in `P` using `Base.copy`.
-"""
-function copy(P::PT) where {N, PT<:HPoly{N}}
-    return PT(copy(P.constraints))
 end
 
 # ========================================================
