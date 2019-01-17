@@ -77,12 +77,15 @@ for N in [Float64, Rational{Int}, Float32]
     subset, point = ⊆(s2, b, true)
     @test !⊆(s2, b) && !subset && point ∈ s2 && !(point ∈ b)
 
-    # intersection emptiness
+    # intersection
     S1 = Singleton(N[1, 1])
     S2 = Singleton(N[0, 0])
     S3 = ZeroSet{N}(2)
     H = BallInf(N[1, 1], N(0.5))
     M = LinearMap(N[1 0; 0 1], H)
+    @test intersection(S1, H) == intersection(H, S1) == S1
+    @test intersection(S2, H) == intersection(H, S2) == EmptySet{N}()
+    @test intersection(S3, H) == intersection(H, S3) == EmptySet{N}()
     @test is_intersection_empty(S1, S2) && is_intersection_empty(S1, S2, true)[1]
     intersection_empty, point = is_intersection_empty(S2, S3, true)
     @test !is_intersection_empty(S2, S3) && !intersection_empty &&

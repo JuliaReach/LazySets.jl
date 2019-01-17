@@ -44,6 +44,7 @@ convex_hull(::VPolygon{N}, ::VPolygon{N}) where {N<:Real}
 ## Intersection of two sets
 
 ```@docs
+intersection(::AbstractSingleton{N}, ::Union{LazySet{N}, UnionSet{N}, UnionSetArray{N}}) where {N<:Real}
 intersection(::Line{N}, ::Line{N}) where {N<:Real}
 intersection(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}) where {N<:Real}
 intersection(::Interval{N}, ::Interval{N}) where {N<:Real}
