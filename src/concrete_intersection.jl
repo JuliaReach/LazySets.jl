@@ -3,6 +3,43 @@
 export intersection
 
 """
+    intersection(S::AbstractSingleton{N},
+                 X::Union{LazySet{N}, UnionSet{N}, UnionSetArray{N}}
+                )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+
+Return the intersection of a singleton with another set.
+
+### Input
+
+- `S` -- singleton
+- `X` -- another set
+
+### Output
+
+If the sets intersect, the result is `S`.
+Otherwise, the result is the empty set.
+"""
+function intersection(S::AbstractSingleton{N},
+                      X::Union{LazySet{N}, UnionSet{N}, UnionSetArray{N}}
+                     )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+    return element(S) ∈ X ? S : EmptySet{N}()
+end
+
+# symmetric method
+function intersection(X::Union{LazySet{N}, UnionSet{N}, UnionSetArray{N}},
+                      S::AbstractSingleton{N}
+                     )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+    return intersection(S, X)
+end
+
+# disambiguation
+function intersection(S1::AbstractSingleton{N},
+                      S2::AbstractSingleton{N}
+                     )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+    return element(S1) == element(S2) ? S1 : EmptySet{N}()
+end
+
+"""
     intersection(L1::Line{N}, L2::Line{N}
                 )::Union{Singleton{N}, Line{N}, EmptySet{N}} where {N<:Real}
 
@@ -98,6 +135,18 @@ function intersection(H1::AbstractHyperrectangle{N},
         end
     end
     return Hyperrectangle(high=high, low=low)
+end
+
+# disambiguation
+function intersection(S::AbstractSingleton{N},
+                      H::AbstractHyperrectangle{N}
+                     )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+    return invoke(intersection, Tuple{typeof(S), LazySet{N}}, S, H)
+end
+function intersection(H::AbstractHyperrectangle{N},
+                      S::AbstractSingleton{N}
+                     )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+    return invoke(intersection, Tuple{typeof(S), LazySet{N}}, S, H)
 end
 
 """
@@ -433,6 +482,19 @@ function intersection(P1::AbstractPolytope{N},
     return intersection(P2, P1)
 end
 
+# disambiguation
+function intersection(S::AbstractSingleton{N},
+                      P::HPoly{N}
+                     )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+    return invoke(intersection, Tuple{typeof(S), LazySet{N}}, S, P)
+end
+function intersection(P::HPoly{N},
+                      S::AbstractSingleton{N}
+                     )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+    return invoke(intersection, Tuple{typeof(S), LazySet{N}}, S, P)
+end
+
+
 """
     intersection(P1::S1, P2::S2) where {S1<:AbstractPolytope{N},
                                         S2<:AbstractPolytope{N}} where {N<:Real}
@@ -466,4 +528,16 @@ function intersection(P1::S1, P2::S2) where {S1<:AbstractPolytope{N},
         return HPolytope(constraints_list(P))
     end
     return intersection(get_polytope(P1), get_polytope(P2))
+end
+
+# disambiguation
+function intersection(S::AbstractSingleton{N},
+                      P::AbstractPolytope{N}
+                     )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+    return invoke(intersection, Tuple{typeof(S), LazySet{N}}, S, P)
+end
+function intersection(P::AbstractPolytope{N},
+                      S::AbstractSingleton{N}
+                     )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+    return invoke(intersection, Tuple{typeof(S), LazySet{N}}, S, P)
 end
