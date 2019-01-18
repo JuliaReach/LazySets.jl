@@ -86,11 +86,11 @@ for N in [Float64, Rational{Int}, Float32]
     end
 
     # remove redundant constraints
-    P = HPolytope([HalfSpace([1.0, 0.0], 1.0),
-                   HalfSpace([0.0, 1.0], 1.0),
-                   HalfSpace([-1.0, -0.0], 1.0),
-                   HalfSpace([-0.0, -1.0], 1.0),
-                   HalfSpace([2.0, 0.0], 2.0)]) # redundant
+    P = HPolytope([HalfSpace(N[1, 0], N(1)),
+                   HalfSpace(N[0, 1], N(1)),
+                   HalfSpace(N[-1, -0], N(1)),
+                   HalfSpace(N[-0, -1], N(1)),
+                   HalfSpace(N[2, 0], N(2))]) # redundant
 
     Pred = remove_redundant_constraints(P)
     @test length(Pred.constraints) == 4
@@ -228,6 +228,12 @@ if test_suite_polyhedra
         addconstraint!(P, LinearConstraint(N[-1, 0], N(-1)))  # x >= 1
         @test isempty(P)
 
+        # test that one can pass a sparse vector as the direction (see #1011)
+        P = HPolytope([HalfSpace(N[1, 0], N(1)),
+                       HalfSpace(N[0, 1], N(1)),
+                       HalfSpace(N[-1, -1], N(-1))])
+        @test an_element(P) ∈ P
+
         # -----
         # V-rep
         # -----
@@ -274,9 +280,3 @@ if test_suite_polyhedra
         @test ispermutation(vl, [N[0, 0, 2], N[1, 1, 2]])
     end
 end
-
-# test that one can pass a sparse vector as the direction (see #1011)
-P = HPolytope([HalfSpace([1.0, 0.0], 1.0),
-               HalfSpace([0.0, 1.0], 1.0),
-               HalfSpace([-1.0, -1.0], -1.0)])
-@test an_element(P) ∈ P
