@@ -127,6 +127,79 @@ function ρ(d::AbstractVector{N}, cup::UnionSet{N}) where {N<:Real}
     return max(ρ(d, X), ρ(d, Y))
 end
 
+"""
+    an_element(cup::UnionSet{N})::Vector{N} where {N<:Real}
+
+Return some element of a union of two convex sets.
+
+### Input
+
+- `cup` -- union of two convex sets
+
+### Output
+
+An element in the union of two convex sets.
+
+### Algorithm
+
+We use `an_element` on the first wrapped set.
+"""
+function an_element(cup::UnionSet{N})::Vector{N} where {N<:Real}
+    return an_element(cup.X)
+end
+
+"""
+    ∈(x::AbstractVector{N}, cup::UnionSet{N})::Bool where {N<:Real}
+
+Check whether a given point is contained in a union of two convex sets.
+
+### Input
+
+- `x`   -- point/vector
+- `cup` -- union of two convex sets
+
+### Output
+
+`true` iff ``x ∈ cup``.
+"""
+function ∈(x::AbstractVector{N}, cup::UnionSet{N})::Bool where {N<:Real}
+    return x ∈ cup.X || x ∈ cup.Y
+end
+
+"""
+    isempty(cup::UnionSet)::Bool
+
+Check whether a union of two convex sets is empty.
+
+### Input
+
+- `cup` -- union of two convex sets
+
+### Output
+
+`true` iff the union is empty.
+"""
+function isempty(cup::UnionSet)::Bool
+    return isempty(cup.X) && isempty(cup.Y)
+end
+
+"""
+    isbounded(cup::UnionSet)::Bool
+
+Determine whether a union of two convex sets is bounded.
+
+### Input
+
+- `cup` -- union of two convex sets
+
+### Output
+
+`true` iff the union is bounded.
+"""
+function isbounded(cup::UnionSet)::Bool
+    return isbounded(cup.X) && isbounded(cup.Y)
+end
+
 # ========================================
 # n-ary set union
 # ========================================
@@ -261,4 +334,78 @@ function ρ(d::AbstractVector{N}, cup::UnionSetArray{N}) where {N<:Real}
     A = array(cup)
     ρarray = map(Xi -> ρ(d, Xi), A)
     return maximum(ρarray)
+end
+
+"""
+    an_element(cup::UnionSetArray{N})::Vector{N} where {N<:Real}
+
+Return some element of a union of a finite number of convex sets.
+
+### Input
+
+- `cup` -- union of a finite number of convex sets
+
+### Output
+
+An element in the union of a finite number of convex sets.
+
+### Algorithm
+
+We use `an_element` on the first wrapped set.
+"""
+function an_element(cup::UnionSetArray{N})::Vector{N} where {N<:Real}
+    return an_element(array(cup)[1])
+end
+
+"""
+    ∈(x::AbstractVector{N}, cup::UnionSetArray{N})::Bool where {N<:Real}
+
+Check whether a given point is contained in a union of a finite number of convex
+sets.
+
+### Input
+
+- `x`   -- point/vector
+- `cup` -- union of a finite number of convex sets
+
+### Output
+
+`true` iff ``x ∈ cup``.
+"""
+function ∈(x::AbstractVector{N}, cup::UnionSetArray{N})::Bool where {N<:Real}
+    return any(X -> x ∈ X, array(cup))
+end
+
+"""
+    isempty(cup::UnionSetArray)::Bool
+
+Check whether a union of a finite number of convex sets is empty.
+
+### Input
+
+- `cup` -- union of a finite number of convex sets
+
+### Output
+
+`true` iff the union is empty.
+"""
+function isempty(cup::UnionSetArray)::Bool
+    return all(isempty, array(cup))
+end
+
+"""
+    isbounded(cup::UnionSetArray)::Bool
+
+Determine whether a union of a finite number of convex sets is bounded.
+
+### Input
+
+- `cup` -- union of a finite number of convex sets
+
+### Output
+
+`true` iff the union is bounded.
+"""
+function isbounded(cup::UnionSetArray)::Bool
+    return all(isbounded, array(cup))
 end

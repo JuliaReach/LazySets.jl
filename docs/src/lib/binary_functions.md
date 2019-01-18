@@ -31,6 +31,8 @@ is_intersection_empty(::LazySet{N}, ::HalfSpace{N}, ::Bool=false) where {N<:Real
 is_intersection_empty(::HalfSpace{N}, ::HalfSpace{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::LazySet{N}, ::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::HPolytope{N}, ::HPolytope{N}, ::Bool=false) where {N<:Real}
+is_intersection_empty(::UnionSet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
+is_intersection_empty(::UnionSetArray{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 ```
 
 ## Convex hull
@@ -44,7 +46,7 @@ convex_hull(::VPolygon{N}, ::VPolygon{N}) where {N<:Real}
 ## Intersection of two sets
 
 ```@docs
-intersection(::AbstractSingleton{N}, ::Union{LazySet{N}, UnionSet{N}, UnionSetArray{N}}) where {N<:Real}
+intersection(::AbstractSingleton{N}, ::LazySet{N}) where {N<:Real}
 intersection(::Line{N}, ::Line{N}) where {N<:Real}
 intersection(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}) where {N<:Real}
 intersection(::Interval{N}, ::Interval{N}) where {N<:Real}
@@ -54,6 +56,8 @@ intersection(::HPoly{N}, ::HPoly{N}) where {N<:Real}
 intersection(::HPoly{N}, ::VPolytope{N}) where {N<:Real}
 intersection(::HPoly{N}, ::AbstractPolytope{N}) where {N<:Real}
 intersection(::S1, ::S2) where {N<:Real, S1<:AbstractPolytope{N}, S2<:AbstractPolytope{N}}
+intersection(::UnionSet{N}, ::LazySet{N}) where {N<:Real}
+intersection(::UnionSetArray{N}, ::LazySet{N}) where {N<:Real}
 ```
 
 ## Subset check
@@ -73,4 +77,6 @@ intersection(::S1, ::S2) where {N<:Real, S1<:AbstractPolytope{N}, S2<:AbstractPo
 ⊆(::Interval, ::Interval)
 ⊆(::EmptySet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 ⊆(::LazySet{N}, ::EmptySet{N}, ::Bool=false) where {N<:Real}
+⊆(::UnionSet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
+⊆(::UnionSetArray{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 ```

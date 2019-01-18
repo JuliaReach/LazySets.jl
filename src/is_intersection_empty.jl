@@ -597,7 +597,7 @@ end
 function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
                                S::AbstractSingleton{N},
                                witness::Bool=false
-                              )::Bool where {N<:Real}
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return is_intersection_empty_helper_singleton(S, hp, witness)
 end
 
@@ -605,7 +605,7 @@ end
 function is_intersection_empty(S::AbstractSingleton{N},
                                hp::Union{Hyperplane{N}, Line{N}},
                                witness::Bool=false
-                              )::Bool where {N<:Real}
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return is_intersection_empty_helper_singleton(S, hp, witness)
 end
 
@@ -789,7 +789,7 @@ end
 function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
                                hs::HalfSpace{N},
                                witness::Bool=false
-                              )::Bool where {N<:Real}
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return is_intersection_empty_helper_halfspace(hs, hp, witness)
 end
 
@@ -797,7 +797,7 @@ end
 function is_intersection_empty(hs::HalfSpace{N},
                                hp::Union{Hyperplane{N}, Line{N}},
                                witness::Bool=false
-                              )::Bool where {N<:Real}
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return is_intersection_empty_helper_halfspace(hs, hp, witness)
 end
 
@@ -809,7 +809,7 @@ end
     is_intersection_empty(X::LazySet{N},
                           P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
                           witness::Bool=false
-                         )::Bool where {N<:Real}
+                         )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
 Check whether a compact set and a polytope do not intersect.
 
@@ -838,7 +838,7 @@ Note that this method can be used with any set ``P`` whose constraints are known
 function is_intersection_empty(X::LazySet{N},
                                P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
                                witness::Bool=false
-                              )::Bool where {N<:Real}
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     for Hi in constraints_list(P)
         if is_intersection_empty(X, Hi)
             if witness
@@ -857,7 +857,7 @@ end
 function is_intersection_empty(P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
                                X::LazySet{N},
                                witness::Bool=false
-                              )::Bool where {N<:Real}
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return is_intersection_empty(X, P, witness)
 end
 
@@ -865,7 +865,7 @@ end
 function is_intersection_empty(P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
                                Q::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
                                witness::Bool=false
-                              )::Bool where {N<:Real}
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     for Hi in constraints_list(P)
         if is_intersection_empty(Q, Hi)
             if witness
@@ -884,7 +884,7 @@ end
 function is_intersection_empty(P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
                                hs::HalfSpace{N},
                                witness::Bool=false
-                              )::Bool where {N<:Real}
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return is_intersection_empty_helper_halfspace(hs, P, witness)
 end
 
@@ -892,7 +892,7 @@ end
 function is_intersection_empty(hs::HalfSpace{N},
                                P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
                                witness::Bool=false
-                              )::Bool where {N<:Real}
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return is_intersection_empty_helper_halfspace(hs, P, witness)
 end
 
@@ -911,6 +911,141 @@ function is_intersection_empty(S::AbstractSingleton{N},
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return is_intersection_empty_helper_singleton(S, P, witness)
 end
+
+
+# --- union ---
+
+
+"""
+    is_intersection_empty(cup::UnionSet{N}, X::LazySet{N}, [witness]::Bool=false
+                         )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether a union of two convex sets and another set do not intersect.
+
+### Input
+
+- `cup` -- union of two convex sets
+- `X`   -- another set
+
+### Output
+
+`true` iff ``\\text{cup} ∩ X = ∅``.
+"""
+function is_intersection_empty(cup::UnionSet{N},
+                               X::LazySet{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
+                                  {N<:Real}
+    return is_intersection_empty(UnionSetArray([cup.X, cup.Y]), X, witness)
+end
+
+# symmetric method
+function is_intersection_empty(X::LazySet{N},
+                               cup::UnionSet{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
+                                  {N<:Real}
+    return is_intersection_empty(cup, X, witness)
+end
+
+# disambiguation
+function is_intersection_empty(cup1::UnionSet{N},
+                               cup2::UnionSet{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
+                                  {N<:Real}
+    return is_intersection_empty(UnionSetArray([cup1.X, cup1.Y]),
+                                 UnionSetArray([cup2.X, cup2.Y]), witness)
+end
+
+"""
+    is_intersection_empty(cup::UnionSetArray{N},
+                          X::LazySet{N},
+                          [witness]::Bool=false
+                         )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether a union of a finite number of convex sets and another set do not
+intersect.
+
+### Input
+
+- `cup` -- union of a finite number of convex sets
+- `X`   -- another set
+
+### Output
+
+`true` iff ``\\text{cup} ∩ X = ∅``.
+"""
+function is_intersection_empty(cup::UnionSetArray{N},
+                               X::LazySet{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
+                                  {N<:Real}
+    result = true
+    w = N[]
+    for Y in array(cup)
+        if witness
+            result, w = is_intersection_empty(Y, X, witness)
+        else
+            result = is_intersection_empty(Y, X, witness)
+        end
+        if !result
+            break
+        end
+    end
+    return witness ? (result, w) : result
+end
+
+# symmetric method
+function is_intersection_empty(X::LazySet{N},
+                               cup::UnionSetArray{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
+                                  {N<:Real}
+    return is_intersection_empty(cup, X, witness)
+end
+
+# disambiguation
+function is_intersection_empty(cup1::UnionSet{N},
+                               cup2::UnionSetArray{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
+                                  {N<:Real}
+    return is_intersection_empty(UnionSetArray([cup1.X, cup1.Y]), cup2, witness)
+end
+
+# disambiguation
+function is_intersection_empty(cup1::UnionSetArray{N},
+                               cup2::UnionSet{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
+                                  {N<:Real}
+    return is_intersection_empty(cup1, UnionSetArray([cup2.X, cup2.Y]), witness)
+end
+
+# disambiguation
+function is_intersection_empty(cup1::UnionSetArray{N},
+                               cup2::UnionSetArray{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
+                                  {N<:Real}
+    result = true
+    w = N[]
+    for X in array(cup1)
+        for Y in array(cup2)
+            if witness
+                result, w = is_intersection_empty(Y, X, witness)
+            else
+                result = is_intersection_empty(Y, X, witness)
+            end
+            if !result
+                break
+            end
+        end
+    end
+    return witness ? (result, w) : result
+end
+
 
 # --- alias ---
 

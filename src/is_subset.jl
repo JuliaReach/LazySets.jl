@@ -587,3 +587,70 @@ function ⊆(X::EmptySet{N}, ∅::EmptySet{N}, witness::Bool=false
           )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return witness ? (true, N[]) : true
 end
+
+
+# --- UnionSet ---
+
+
+"""
+    ⊆(cup::UnionSet{N}, X::LazySet{N}, [witness]::Bool=false
+     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether a union of two convex sets is contained in another set.
+
+### Input
+
+- `cup`     -- union of two convex sets
+- `X`       -- another set
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``\\text{cup} ⊆ X``
+* If `witness` option is activated:
+  * `(true, [])` iff ``\\text{cup} ⊆ X``
+  * `(false, v)` iff ``\\text{cup} \\not\\subseteq X`` and
+    ``v ∈ \\text{cup} \\setminus X``
+"""
+function ⊆(cup::UnionSet{N}, X::LazySet{N}, witness::Bool=false
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    return ⊆(UnionSetArray([cup.X, cup.Y]), X, witness)
+end
+
+"""
+    ⊆(cup::UnionSetArray{N}, X::LazySet{N}, [witness]::Bool=false
+     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether a union of a finite number of convex sets is contained in another
+set.
+
+### Input
+
+- `cup`     -- union of a finite number of convex sets
+- `X`       -- another set
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``\\text{cup} ⊆ X``
+* If `witness` option is activated:
+  * `(true, [])` iff ``\\text{cup} ⊆ X``
+  * `(false, v)` iff ``\\text{cup} \\not\\subseteq X`` and
+    ``v ∈ \\text{cup} \\setminus X``
+"""
+function ⊆(cup::UnionSetArray{N}, X::LazySet{N}, witness::Bool=false
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    result = true
+    w = N[]
+    for Y in array(cup)
+        if witness
+            result, w = ⊆(Y, X, witness)
+        else
+            result = ⊆(Y, X, witness)
+        end
+        if !result
+            break
+        end
+    end
+    return witness ? (result, w) : result
+end
