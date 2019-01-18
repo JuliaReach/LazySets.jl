@@ -134,20 +134,20 @@ Then we solve the following ``m``-dimensional linear program.
 function ∈(x::AbstractVector{N}, P::VPolytope{N};
            solver=GLPKSolverLP(method=:Simplex))::Bool where {N<:Real}
     vertices = P.vertices
+    m = length(vertices)
 
     # special cases: 0 or 1 vertex
-    if length(vertices) == 0
+    if m == 0
         return false
-    elseif length(vertices) == 1
+    elseif m == 1
         return x == vertices[1]
     end
 
-    @assert length(x) == dim(P) "a vector of length $(length(x)) cannot be contained in a polytope of dimension $(dim(P))"
+    n = length(x)
+    @assert n == dim(P) "a vector of length $(length(x)) cannot be " *
+        "contained in a polytope of dimension $(dim(P))"
 
-    m, n = length(vertices), length(x)
     A = Matrix{N}(undef, n+1, m)
-    b = [x; one(N)]
-
     for j in 1:m
         v_j = vertices[j]
         # ⋀_i Σ_j λ_j v_j[i] = x[i]
@@ -157,6 +157,7 @@ function ∈(x::AbstractVector{N}, P::VPolytope{N};
         # Σ_j λ_j = 1
         A[n+1, j] = one(N)
     end
+    b = [x; one(N)]
 
     lbounds = zeros(N, m)
     ubounds = Inf
