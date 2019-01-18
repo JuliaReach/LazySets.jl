@@ -45,16 +45,6 @@ HPolytope{N}() where {N<:Real} = HPolytope{N}(Vector{LinearConstraint{N}}())
 # constructor for an HPolytope with no constraints of type Float64
 HPolytope() = HPolytope{Float64}()
 
-# conversion constructor
-function HPolytope(S::LazySet; validate_boundedness::Bool=false)
-    P = convert(HPolytope, S)
-    if validate_boundedness
-        # trigger boundedness check in constructor
-        HPolytope(P.constraints; validate_boundedness=true)
-    end
-    return P
-end
-
 # constructor for an HPolytope from a simple H-representation
 function HPolytope(A::AbstractMatrix{N}, b::AbstractVector{N};
                    validate_boundedness::Bool=false) where {N<:Real}

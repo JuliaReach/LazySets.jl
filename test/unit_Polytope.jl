@@ -85,7 +85,7 @@ for N in [Float64, Rational{Int}, Float32]
         vlist = vertices_list(P)
         @test ispermutation(vlist, [N[3, 3], N[3, -1], N[-1, -1], N[-1, 3]])
         # check boundedness after conversion
-        HPolytope(H; validate_boundedness=true)
+        HPolytope(constraints_list(H); validate_boundedness=true)
 
         # isempty
         @test !isempty(p)

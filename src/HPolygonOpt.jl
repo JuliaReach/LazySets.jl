@@ -34,7 +34,6 @@ Use `addconstraint!` to iteratively add the edges in a sorted way.
 
 - `HPolygonOpt(constraints::Vector{LinearConstraint{<:Real}}, [ind]::Int)`
   -- default constructor with optional index
-- `HPolygonOpt(S::LazySet)` -- constructor from another set
 """
 mutable struct HPolygonOpt{N<:Real} <: AbstractHPolygon{N}
     constraints::Vector{LinearConstraint{N}}
@@ -75,18 +74,6 @@ HPolygonOpt{N}() where {N<:Real} = HPolygonOpt{N}(Vector{LinearConstraint{N}}())
 
 # constructor for an HPolygonOpt with no constraints of type Float64
 HPolygonOpt() = HPolygonOpt{Float64}()
-
-# conversion constructor
-# conversion constructor
-function HPolygonOpt(S::LazySet; validate_boundedness::Bool=false)
-    P = convert(HPolygonOpt, S)
-    if validate_boundedness
-        # trigger boundedness check in constructor
-        HPolygonOpt(P.constraints; validate_boundedness=true)
-    end
-    return P
-end
-
 
 
 # --- LazySet interface functions ---
