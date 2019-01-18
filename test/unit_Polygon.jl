@@ -42,8 +42,8 @@ for N in [Float64, Float32, Rational{Int}]
     HPolygon(constraints_list(H))
     HPolygonOpt(constraints_list(H))
     # check boundedness after conversion
-    HPolygon(constraints_list(H); validate_boundedness=true)
-    HPolygonOpt(constraints_list(H); validate_boundedness=true)
+    HPolygon(constraints_list(H); check_boundedness=true)
+    HPolygonOpt(constraints_list(H); check_boundedness=true)
 
     # support vector of polygon with no constraints
     @test_throws AssertionError σ(N[0], HPolygon{N}())
@@ -51,13 +51,13 @@ for N in [Float64, Float32, Rational{Int}]
 
     # boundedness
     @test isbounded(p) && isbounded(po)
-    @test validate_boundedness(p) && validate_boundedness(po)
-    @test !validate_boundedness(HPolygon{N}()) &&
-          !validate_boundedness(HPolygonOpt{N}())
+    @test isbounded(p, false) && isbounded(po, false)
+    @test !isbounded(HPolygon{N}(), false) &&
+          !isbounded(HPolygonOpt{N}(), false)
     @test_throws AssertionError HPolygon(LinearConstraint{N}[];
-                                        validate_boundedness=true)
+                                        check_boundedness=true)
     @test_throws AssertionError HPolygonOpt(LinearConstraint{N}[];
-                                           validate_boundedness=true)
+                                           check_boundedness=true)
 
     # isempty
     @test !isempty(p)

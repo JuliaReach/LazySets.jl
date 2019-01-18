@@ -10,13 +10,13 @@ are sorted in counter-clockwise fashion with respect to their normal directions.
 
 ### Fields
 
-- `constraints`          -- list of linear constraints, sorted by the angle
-- `sort_constraints`     -- (optional, default: `true`) flag for sorting the
-                            constraints (sortedness is a running assumption of
-                            this type)
-- `validate_boundedness` -- (optional, default: `true`) flag for checking if the
-                            constraints make the polygon bounded; (boundedness
-                            is a running assumption of this type)
+- `constraints`       -- list of linear constraints, sorted by the angle
+- `sort_constraints`  -- (optional, default: `true`) flag for sorting the
+                         constraints (sortedness is a running assumption of this
+                         type)
+- `check_boundedness` -- (optional, default: `false`) flag for checking if the
+                         constraints make the polygon bounded; (boundedness is a
+                         running assumption of this type)
 
 ### Notes
 
@@ -35,7 +35,7 @@ struct HPolygon{N<:Real} <: AbstractHPolygon{N}
     # default constructor that applies sorting of the given constraints
     function HPolygon{N}(constraints::Vector{LinearConstraint{N}};
                          sort_constraints::Bool=true,
-                         validate_boundedness::Bool=false) where {N<:Real}
+                         check_boundedness::Bool=false) where {N<:Real}
         if sort_constraints
             sorted_constraints = Vector{LinearConstraint{N}}()
             sizehint!(sorted_constraints, length(constraints))
@@ -46,8 +46,8 @@ struct HPolygon{N<:Real} <: AbstractHPolygon{N}
         else
             P = new{N}(constraints)
         end
-        @assert (!validate_boundedness ||
-                 LazySets.validate_boundedness(P)) "the polygon is not bounded"
+        @assert (!check_boundedness ||
+                 isbounded(P, false)) "the polygon is not bounded"
         return P
     end
 end
@@ -55,10 +55,10 @@ end
 # convenience constructor without type parameter
 HPolygon(constraints::Vector{LinearConstraint{N}};
          sort_constraints::Bool=true,
-         validate_boundedness::Bool=false) where {N<:Real} =
+         check_boundedness::Bool=false) where {N<:Real} =
     HPolygon{N}(constraints;
                 sort_constraints=sort_constraints,
-                validate_boundedness=validate_boundedness)
+                check_boundedness=check_boundedness)
 
 # constructor for an HPolygon with no constraints
 HPolygon{N}() where {N<:Real} = HPolygon{N}(Vector{LinearConstraint{N}}())
