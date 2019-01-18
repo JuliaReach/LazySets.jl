@@ -121,7 +121,7 @@ Check whether a given point is contained in a polytope in vertex representation.
 We check, using linear programming, the definition of a convex polytope that a
 point is in the set if and only if it is a convex combination of the vertices.
 
-Let ``v_j`` be the ``m`` vertices of `P`.
+Let ``\\{v_j\\}`` be the ``m`` vertices of `P`.
 Then we solve the following ``m``-dimensional linear program.
 
 ```math
