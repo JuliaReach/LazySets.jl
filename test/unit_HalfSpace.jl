@@ -8,7 +8,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # numeric-type conversion preserves vector base type
     hs1 = HalfSpace(spzeros(4), 1.)
-    hs2 = convert(HalfSpace{N}, hs1)
+    hs2 = convert(HalfSpace{N, SparseVector{N}}, hs1)
     @test hs2.a isa SparseVector{N}
 
     # dimension

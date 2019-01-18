@@ -9,7 +9,7 @@ export HalfSpace, LinearConstraint,
        halfspace_left, halfspace_right
 
 """
-    HalfSpace{N<:Real} <: LazySet{N}
+    HalfSpace{N<:Real, VN<:AbstractVector{N}} <: LazySet{N}
 
 Type that represents a (closed) half-space of the form ``a⋅x ≤ b``.
 
@@ -27,13 +27,13 @@ julia> HalfSpace([0, -1.], 0.)
 HalfSpace{Float64}([0.0, -1.0], 0.0)
 ```
 """
-struct HalfSpace{N<:Real} <: LazySet{N}
-    a::AbstractVector{N}
+struct HalfSpace{N<:Real, VN<:AbstractVector{N}} <: LazySet{N}
+    a::VN
     b::N
 end
 
-function convert(::Type{HalfSpace{N}}, hs::HalfSpace) where {N<:Real}
-    return HalfSpace{N}(hs.a, hs.b)
+function convert(::Type{HalfSpace{N, VN}}, hs::HalfSpace{T, VT}) where {N<:Real, VN<:AbstractVector{N}, T, VT<:AbstractVector{T}}
+    return HalfSpace{N, VN}(convert(VN, hs.a), convert(N, hs.b))
 end
 
 """
