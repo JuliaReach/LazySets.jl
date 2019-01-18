@@ -142,7 +142,7 @@ function ∈(x::AbstractVector{N}, P::VPolytope{N};
         return x == vertices[1]
     end
 
-    @assert length(x) == dim(P)
+    @assert length(x) == dim(P) "a vector of length $(length(x)) cannot be contained in a polytope of dimension $(dim(P))"
 
     m, n = length(vertices), length(x)
     A = Matrix{N}(undef, n+1, m)
