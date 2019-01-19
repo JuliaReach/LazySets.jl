@@ -225,7 +225,7 @@ function isbounded(lm::LinearMap)::Bool
     if iszero(lm.M) || isbounded(lm.X)
         return true
     end
-    if isinvertible_sufficient(lm.M)
+    if isinvertible(lm.M)
         return false
     end
     return isbounded_unit_dimensions(lm)

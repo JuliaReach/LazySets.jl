@@ -16,7 +16,7 @@ an_element_helper
 binary_search_constraints
 cross_product(::AbstractMatrix{N}) where {N<:Real}
 get_radius!
-isinvertible_sufficient
+isinvertible
 ispermutation
 nonzero_indices
 samedir
