@@ -590,7 +590,9 @@ linear_map(::AbstractMatrix{N}, ::Zonotope{N}) where {N<:Real}
 scale(::Real, ::Zonotope)
 ngens(::Zonotope)
 reduce_order(::Zonotope, r)
+split(::Zonotope, ::Int)
 ```
+
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
