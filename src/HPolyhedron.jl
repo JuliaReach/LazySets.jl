@@ -502,14 +502,17 @@ function remove_redundant_constraints!(P::PT;
 end
 
 """
-    linear_map(M::AbstractMatrix{N}, P::PT) where {N<:Real, PT<:HPoly{N}}
+    linear_map(M::AbstractMatrix{N}, P::PT; [cond_tol=DEFAULT_COND_TOL]::Number)
+        where {N<:Real, PT<:HPoly{N}}
 
 Concrete linear map of a polyhedron in constraint representation.
 
 ### Input
 
-- `M` -- matrix
-- `P` -- polyhedron in constraint representation
+- `M`        -- matrix
+- `P`        -- polyhedron in constraint representation
+- `cond_tol` -- (optional) tolerance of matrix condition (used to check whether
+                the matrix is invertible)
 
 ### Output
 
@@ -521,8 +524,11 @@ If the matrix ``M`` is invertible (which we check with a sufficient condition),
 then ``y = M x`` implies ``x = \\text{inv}(M) y`` and we transform the
 constraint system ``A x ≤ b`` to ``A \\text{inv}(M) y ≤ b``.
 """
-function linear_map(M::AbstractMatrix{N}, P::PT) where {N<:Real, PT<:HPoly{N}}
-    if !isinvertible(M)
+function linear_map(M::AbstractMatrix{N},
+                    P::PT;
+                    cond_tol::Number=DEFAULT_COND_TOL
+                   ) where {N<:Real, PT<:HPoly{N}}
+    if !isinvertible(M; cond_tol=cond_tol)
         if P isa HPolyhedron
             error("linear maps for polyhedra need to be invertible")
         end
