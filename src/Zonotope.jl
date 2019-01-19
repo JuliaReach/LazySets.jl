@@ -484,7 +484,7 @@ function split(Z::Zonotope, j::Int)
 
     G₁ = copy(G)
     G₁[:, j] = Gj_half
-    G₂ = G₁
+    G₂ = copy(G₁)
 
     Z₁ = Zonotope(c₁, G₁)
     Z₂ = Zonotope(c₂, G₂)
