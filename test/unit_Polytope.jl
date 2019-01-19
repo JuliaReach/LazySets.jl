@@ -100,6 +100,12 @@ for N in [Float64, Rational{Int}, Float32]
     remove_redundant_constraints!(P)
     @test length(P.constraints) == 4
 
+    # subset
+    H = BallInf(N[0, 0], N(1))
+    P = convert(HPolytope, H)
+    @test BallInf(N[0, 0], N(1)) ⊆ P
+    @test !(BallInf(N[0, 0], N(1.01)) ⊆ P)
+
     # -----
     # V-rep
     # -----
@@ -282,5 +288,16 @@ if test_suite_polyhedra
         cp = cartesian_product(p1, p2)
         vl = vertices_list(cp)
         @test ispermutation(vl, [N[0, 0, 2], N[1, 1, 2]])
+
+        # tohrep from VPolytope
+        P = VPolytope([v1, v2, v3, v4, v5])
+        @test tohrep(P) isa HPolytope
+        @test tovrep(P) isa VPolytope # no-op
+
+        # subset (see #974)
+        H = BallInf(N[0, 0], N(1))
+        P = convert(VPolytope, H)
+        @test BallInf(N[0, 0], N(1)) ⊆ P
+        @test !(BallInf(N[0, 0], N(1.01)) ⊆ P)
     end
 end
