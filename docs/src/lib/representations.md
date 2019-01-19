@@ -328,7 +328,6 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
 Inherited from [`AbstractPolytope`](@ref):
-* [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`isempty`](@ref isempty(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 * [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real})
@@ -342,6 +341,7 @@ Inherited from [`AbstractHPolygon`](@ref):
 * [`vertices_list`](@ref vertices_list(::AbstractHPolygon{N}, ::Bool=false, ::Bool=true) where {N<:Real})
 * [`tohrep`](@ref tohrep(::HPOLYGON) where {HPOLYGON<:AbstractHPolygon})
 * [`tovrep`](@ref tovrep(::AbstractHPolygon{N}) where {N<:Real})
+* [`isbounded`](@ref isbounded(::AbstractHPolygon, ::Bool=true))
 * [`addconstraint!`](@ref addconstraint!(::AbstractHPolygon{N}, ::LinearConstraint{N}) where {N<:Real})
 * [`constraints_list`](@ref constraints_list(::AbstractHPolygon{N}) where {N<:Real})
 
@@ -357,7 +357,6 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
 Inherited from [`AbstractPolytope`](@ref):
-* [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`isempty`](@ref isempty(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 * [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real})
@@ -371,6 +370,7 @@ Inherited from [`AbstractHPolygon`](@ref):
 * [`vertices_list`](@ref vertices_list(::AbstractHPolygon{N}, ::Bool=false, ::Bool=true) where {N<:Real})
 * [`tohrep`](@ref tohrep(::HPOLYGON) where {HPOLYGON<:AbstractHPolygon})
 * [`tovrep`](@ref tovrep(::AbstractHPolygon{N}) where {N<:Real})
+* [`isbounded`](@ref isbounded(::AbstractHPolygon, ::Bool=true))
 * [`addconstraint!`](@ref addconstraint!(::AbstractHPolygon{N}, ::LinearConstraint{N}) where {N<:Real})
 * [`constraints_list`](@ref constraints_list(::AbstractHPolygon{N}) where {N<:Real})
 
@@ -458,10 +458,10 @@ The following methods are specific for `HPolytope`.
 ```@docs
 rand(::Type{HPolytope})
 vertices_list(::HPolytope{N}) where {N<:Real}
+isbounded(::HPolytope, ::Bool=true)
 ```
 
 Inherited from [`AbstractPolytope`](@ref):
-* [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 
 #### Polyhedra

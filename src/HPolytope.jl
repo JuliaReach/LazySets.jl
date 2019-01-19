@@ -1,7 +1,8 @@
 import Base.rand
 
 export HPolytope,
-       vertices_list
+       vertices_list,
+       isbounded
 
 """
     HPolytope{N<:Real} <: AbstractPolytope{N}
@@ -10,7 +11,10 @@ Type that represents a convex polytope in H-representation.
 
 ### Fields
 
-- `constraints` -- vector of linear constraints
+- `constraints`       -- vector of linear constraints
+- `check_boundedness` -- (optional, default: `false`) flag for checking if the
+                         constraints make the polytope bounded; (boundedness is
+                         a running assumption of this type)
 
 ### Note
 
@@ -19,7 +23,21 @@ assumption in this type.
 """
 struct HPolytope{N<:Real} <: AbstractPolytope{N}
     constraints::Vector{LinearConstraint{N}}
+
+    function HPolytope{N}(constraints::Vector{LinearConstraint{N}};
+                          check_boundedness::Bool=false
+                         ) where {N<:Real}
+        P = new{N}(constraints)
+        @assert (!check_boundedness ||
+                 isbounded(P, false)) "the polytope is not bounded"
+        return P
+    end
 end
+
+# convenience constructor without type parameter
+HPolytope(constraints::Vector{LinearConstraint{N}};
+          check_boundedness::Bool=false) where {N<:Real} =
+    HPolytope{N}(constraints; check_boundedness=check_boundedness)
 
 # constructor for an HPolytope with no constraints
 HPolytope{N}() where {N<:Real} = HPolytope{N}(Vector{LinearConstraint{N}}())
@@ -27,20 +45,21 @@ HPolytope{N}() where {N<:Real} = HPolytope{N}(Vector{LinearConstraint{N}}())
 # constructor for an HPolytope with no constraints of type Float64
 HPolytope() = HPolytope{Float64}()
 
-# conversion constructor
-HPolytope(S::LazySet) = convert(HPolytope, S)
-
 # constructor for an HPolytope from a simple H-representation
-function HPolytope(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real}
+function HPolytope(A::AbstractMatrix{N}, b::AbstractVector{N};
+                   check_boundedness::Bool=false) where {N<:Real}
     m = size(A, 1)
     constraints = LinearConstraint{N}[]
     @inbounds for i in 1:m
         push!(constraints, LinearConstraint(A[i, :], b[i]))
     end
-    return HPolytope(constraints)
+    return HPolytope(constraints; check_boundedness=check_boundedness)
 end
 
-HPolytope{N}(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real} = HPolytope(A, b)
+HPolytope{N}(A::AbstractMatrix{N}, b::AbstractVector{N};
+             check_boundedness::Bool=false) where {N<:Real} =
+    HPolytope(A, b; check_boundedness=check_boundedness)
+
 
 # --- LazySet interface functions ---
 
@@ -86,6 +105,35 @@ function rand(::Type{HPolytope};
                     num_vertices=num_vertices)
     return convert(HPolytope, vpolytope)
 end
+
+"""
+    isbounded(P::HPolytope, [use_type_assumption]::Bool=true)::Bool
+
+Determine whether a polytope in constraint representation is bounded.
+
+### Input
+
+- `P`                   -- polytope in constraint representation
+- `use_type_assumption` -- (optional, default: `true`) flag for ignoring the
+                           type assumption that polytopes are bounded
+
+### Output
+
+`true` if `use_type_assumption` is activated.
+Otherwise, `true` iff `P` is bounded.
+
+### Algorithm
+
+If `!use_type_assumption`, we convert `P` to an `HPolyhedron` `P2` and then use
+`isbounded(P2)`.
+"""
+function isbounded(P::HPolytope, use_type_assumption::Bool=true)::Bool
+    if use_type_assumption
+        return true
+    end
+    return isbounded(HPolyhedron(P.constraints))
+end
+
 
 
 # --- functions that use Polyhedra.jl ---

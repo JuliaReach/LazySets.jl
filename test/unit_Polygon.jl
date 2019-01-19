@@ -22,28 +22,42 @@ for N in [Float64, Float32, Rational{Int}]
     @test p.constraints[4] == c4
 
     # conversion to optimized polygon
-    po = HPolygonOpt(p)
+    po = convert(HPolygonOpt, p)
     # conversion back
-    HPolygon(po)
+    convert(HPolygon, po)
     # conversion from HPolytope
     polytope = HPolytope{N}()
     addconstraint!(polytope, c1)
     addconstraint!(polytope, c2)
     addconstraint!(polytope, c3)
     addconstraint!(polytope, c4)
-    HPolygon(polytope)
-    HPolygonOpt(polytope)
+    convert(HPolygon, polytope)
+    convert(HPolygonOpt, polytope)
     # conversion to HPolytope
-    HPolytope(p)
-    HPolytope(po)
+    HPolytope(constraints_list(p))
+    HPolytope(constraints_list(po))
+
+    # conversion from other set type
+    H = Hyperrectangle(low=N[-1, -1], high=N[1, 1])
+    HPolygon(constraints_list(H))
+    HPolygonOpt(constraints_list(H))
+    # check boundedness after conversion
+    HPolygon(constraints_list(H); check_boundedness=true)
+    HPolygonOpt(constraints_list(H); check_boundedness=true)
 
     # support vector of polygon with no constraints
     @test_throws AssertionError σ(N[0], HPolygon{N}())
-    @test_throws AssertionError σ(N[0], HPolygonOpt(HPolygon{N}()))
+    @test_throws AssertionError σ(N[0], HPolygonOpt{N}())
 
     # boundedness
-    @test isbounded(p)
-    @test isbounded(po)
+    @test isbounded(p) && isbounded(po)
+    @test isbounded(p, false) && isbounded(po, false)
+    @test !isbounded(HPolygon{N}(), false) &&
+          !isbounded(HPolygonOpt{N}(), false)
+    @test_throws AssertionError HPolygon(LinearConstraint{N}[];
+                                        check_boundedness=true)
+    @test_throws AssertionError HPolygonOpt(LinearConstraint{N}[];
+                                           check_boundedness=true)
 
     # isempty
     @test !isempty(p)

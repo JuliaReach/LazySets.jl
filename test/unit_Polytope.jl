@@ -21,6 +21,8 @@ for N in [Float64, Rational{Int}, Float32]
     @test c isa Vector{LinearConstraint{N}}
     @test c[1].a == N[1, 2] && c[1].b == N(1)
     @test c[2].a == N[-1, 1] && c[2].b == N(2)
+    @test_throws AssertionError HPolytope(N[1 0; 0 1], N[1, 1];
+                                         check_boundedness=true)
 
     # convert back to matrix and vector
     A2, b2 = tosimplehrep(p)
@@ -51,7 +53,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test_throws ErrorException σ(N[0], HPolytope{N}())
 
     # boundedness
-    @test isbounded(p)
+    @test isbounded(p) && isbounded(p, false)
+    p2 = HPolytope{N}()
+    @test isbounded(p2) && !isbounded(p2, false)
 
     # membership
     @test N[5 / 4, 7 / 4] ∈ p
@@ -79,6 +83,8 @@ for N in [Float64, Rational{Int}, Float32]
         P = convert(HPolytope, H)
         vlist = vertices_list(P)
         @test ispermutation(vlist, [N[3, 3], N[3, -1], N[-1, -1], N[-1, 3]])
+        # check boundedness after conversion
+        HPolytope(constraints_list(H); check_boundedness=true)
 
         # isempty
         @test !isempty(p)

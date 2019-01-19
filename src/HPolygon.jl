@@ -10,7 +10,13 @@ are sorted in counter-clockwise fashion with respect to their normal directions.
 
 ### Fields
 
-- `constraints` -- list of linear constraints, sorted by the angle
+- `constraints`       -- list of linear constraints, sorted by the angle
+- `sort_constraints`  -- (optional, default: `true`) flag for sorting the
+                         constraints (sortedness is a running assumption of this
+                         type)
+- `check_boundedness` -- (optional, default: `false`) flag for checking if the
+                         constraints make the polygon bounded; (boundedness is a
+                         running assumption of this type)
 
 ### Notes
 
@@ -22,40 +28,43 @@ Use `addconstraint!` to iteratively add the edges in a sorted way.
   -- default constructor
 - `HPolygon()`
   -- constructor with no constraints
-- `HPolygon(S::LazySet)` -- constructor from another set
 """
 struct HPolygon{N<:Real} <: AbstractHPolygon{N}
     constraints::Vector{LinearConstraint{N}}
 
     # default constructor that applies sorting of the given constraints
     function HPolygon{N}(constraints::Vector{LinearConstraint{N}};
-                         sort_constraints::Bool=true) where {N<:Real}
+                         sort_constraints::Bool=true,
+                         check_boundedness::Bool=false) where {N<:Real}
         if sort_constraints
             sorted_constraints = Vector{LinearConstraint{N}}()
             sizehint!(sorted_constraints, length(constraints))
             for ci in constraints
                 addconstraint!(sorted_constraints, ci)
             end
-            return new{N}(sorted_constraints)
+            P = new{N}(sorted_constraints)
         else
-            return new{N}(constraints)
+            P = new{N}(constraints)
         end
+        @assert (!check_boundedness ||
+                 isbounded(P, false)) "the polygon is not bounded"
+        return P
     end
 end
 
 # convenience constructor without type parameter
 HPolygon(constraints::Vector{LinearConstraint{N}};
-         sort_constraints::Bool=true) where {N<:Real} =
-    HPolygon{N}(constraints; sort_constraints=sort_constraints)
+         sort_constraints::Bool=true,
+         check_boundedness::Bool=false) where {N<:Real} =
+    HPolygon{N}(constraints;
+                sort_constraints=sort_constraints,
+                check_boundedness=check_boundedness)
 
 # constructor for an HPolygon with no constraints
 HPolygon{N}() where {N<:Real} = HPolygon{N}(Vector{LinearConstraint{N}}())
 
 # constructor for an HPolygon with no constraints of type Float64
 HPolygon() = HPolygon{Float64}()
-
-# conversion constructor
-HPolygon(S::LazySet) = convert(HPolygon, S)
 
 
 # --- LazySet interface functions ---
