@@ -1,5 +1,5 @@
 # default tolerance for matrix condition number (see 'isinvertible')
-DEFAULT_COND_TOL = 1e6
+const DEFAULT_COND_TOL = 1e6
 
 """
     sign_cadlag(x::N)::N where {N<:Real}
