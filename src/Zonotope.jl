@@ -474,7 +474,7 @@ nonlinear systems with uncertain parameters using conservative linearization.
 In Proc. of the 47th IEEE Conference on Decision and Control.*
 """
 function split(Z::Zonotope, j::Int)
-    @assert 1 <= j <= ngens(Z) "cannot split along index $j a zonotope with $(ngens(Z)) generators"
+    @assert 1 <= j <= ngens(Z) "cannot split a zonotope with $(ngens(Z)) generators along index $j"
     c, G = Z.center, Z.generators
     Gj = G[:, j]
     Gj_half = Gj / 2
