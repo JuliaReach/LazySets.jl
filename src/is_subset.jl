@@ -22,7 +22,7 @@ optionally compute a witness.
 * If `witness` option is deactivated: `true` iff ``S ⊆ H``
 * If `witness` option is activated:
   * `(true, [])` iff ``S ⊆ H``
-  * `(false, v)` iff ``S \\not\\subseteq H`` and ``v ∈ S \\setminus H``
+  * `(false, v)` iff ``S ⊈ H`` and ``v ∈ S \\setminus H``
 
 ### Algorithm
 
@@ -53,7 +53,7 @@ optionally compute a witness.
 * If `witness` option is deactivated: `true` iff ``P ⊆ H``
 * If `witness` option is activated:
   * `(true, [])` iff ``P ⊆ H``
-  * `(false, v)` iff ``P \\not\\subseteq H`` and ``v ∈ P \\setminus H``
+  * `(false, v)` iff ``P ⊈ H`` and ``v ∈ P \\setminus H``
 
 ### Notes
 
@@ -107,7 +107,7 @@ hyperrectangular set, and if not, optionally compute a witness.
 * If `witness` option is deactivated: `true` iff ``H1 ⊆ H2``
 * If `witness` option is activated:
   * `(true, [])` iff ``H1 ⊆ H2``
-  * `(false, v)` iff ``H1 \\not\\subseteq H2`` and ``v ∈ H1 \\setminus H2``
+  * `(false, v)` iff ``H1 ⊈ H2`` and ``v ∈ H1 \\setminus H2``
 
 ### Algorithm
 
@@ -168,7 +168,7 @@ compute a witness.
 * If `witness` option is deactivated: `true` iff ``P ⊆ S``
 * If `witness` option is activated:
   * `(true, [])` iff ``P ⊆ S``
-  * `(false, v)` iff ``P \\not\\subseteq S`` and ``v ∈ P \\setminus S``
+  * `(false, v)` iff ``P ⊈ S`` and ``v ∈ P \\setminus S``
 
 ### Algorithm
 
@@ -195,6 +195,69 @@ function ⊆(P::AbstractPolytope{N}, S::LazySet{N}, witness::Bool=false
     end
 end
 
+"""
+    ⊆(S::LazySet{N},
+      P::Union{AbstractPolytope{N}, HPolyhedron{N}, HalfSpace{N}},
+      witness::Bool=false
+     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether a convex set is contained in a polyhedron, and if not, optionally
+compute a witness.
+
+### Input
+
+- `S` -- inner convex set
+- `P` -- outer polyhedron (including a half-space)
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``S ⊆ P``
+* If `witness` option is activated:
+  * `(true, [])` iff ``S ⊆ P``
+  * `(false, v)` iff ``S ⊈ P`` and ``v ∈ P \\setminus S``
+
+### Algorithm
+
+Since ``S`` is convex, we can compare the support function of ``S`` and ``P`` in
+each direction of the constraints of ``P``.
+
+For witness generation, we use the support vector in the first direction where
+the above check fails.
+"""
+function ⊆(S::LazySet{N},
+           P::Union{AbstractPolytope{N}, HPolyhedron{N}, HalfSpace{N}},
+           witness::Bool=false
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    @inbounds for H in constraints_list(P)
+        if ρ(H.a, S) > H.b
+            if witness
+                return (false, σ(H.a, S))
+            else
+                return false
+            end
+        end
+    end
+    return witness ? (true, N[]) : true
+end
+
+# disambiguation
+function ⊆(S::Union{AbstractPolytope{N}, AbstractHyperrectangle{N},
+                    AbstractSingleton{N}, LineSegment{N}},
+           P::Union{AbstractPolytope{N}, HPolyhedron{N}, HalfSpace{N}},
+           witness::Bool=false
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    return invoke(⊆, Tuple{LazySet{N}, typeof(P), Bool}, S, P, witness)
+end
+function ⊆(P::AbstractPolytope{N},
+           H::AbstractHyperrectangle{N},
+           witness::Bool=false
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    return invoke(⊆,
+                  Tuple{LazySet{N}, AbstractHyperrectangle{N}, Bool},
+                  P, H, witness)
+end
+
 
 # --- AbstractSingleton ---
 
@@ -217,7 +280,7 @@ if not, optionally compute a witness.
 * If `witness` option is deactivated: `true` iff ``S ⊆ \\text{set}``
 * If `witness` option is activated:
   * `(true, [])` iff ``S ⊆ \\text{set}``
-  * `(false, v)` iff ``S \\not\\subseteq \\text{set}`` and
+  * `(false, v)` iff ``S ⊈ \\text{set}`` and
     ``v ∈ S \\setminus \\text{set}``
 """
 function ⊆(S::AbstractSingleton{N}, set::LazySet{N}, witness::Bool=false
@@ -251,7 +314,7 @@ set, and if not, optionally compute a witness.
 * If `witness` option is deactivated: `true` iff ``S ⊆ H``
 * If `witness` option is activated:
   * `(true, [])` iff ``S ⊆ H``
-  * `(false, v)` iff ``S \\not\\subseteq H`` and ``v ∈ S \\setminus H``
+  * `(false, v)` iff ``S ⊈ H`` and ``v ∈ S \\setminus H``
 
 ### Notes
 
@@ -290,7 +353,7 @@ single value, and if not, optionally compute a witness.
 * If `witness` option is deactivated: `true` iff ``S1 ⊆ S2`` iff ``S1 == S2``
 * If `witness` option is activated:
   * `(true, [])` iff ``S1 ⊆ S2``
-  * `(false, v)` iff ``S1 \\not\\subseteq S2`` and ``v ∈ S1 \\setminus S2``
+  * `(false, v)` iff ``S1 ⊈ S2`` and ``v ∈ S1 \\setminus S2``
 """
 function ⊆(S1::AbstractSingleton{N},
            S2::AbstractSingleton{N},
@@ -326,7 +389,7 @@ and if not, optionally compute a witness.
 * If `witness` option is deactivated: `true` iff ``B1 ⊆ B2``
 * If `witness` option is activated:
   * `(true, [])` iff ``B1 ⊆ B2``
-  * `(false, v)` iff ``B1 \\not\\subseteq B2`` and ``v ∈ B1 \\setminus B2``
+  * `(false, v)` iff ``B1 ⊈ B2`` and ``v ∈ B1 \\setminus B2``
 
 ### Algorithm
 
@@ -372,7 +435,7 @@ value, and if not, optionally compute a witness.
 * If `witness` option is deactivated: `true` iff ``B ⊆ S``
 * If `witness` option is activated:
   * `(true, [])` iff ``B ⊆ S``
-  * `(false, v)` iff ``B \\not\\subseteq S`` and ``v ∈ B \\setminus S``
+  * `(false, v)` iff ``B ⊈ S`` and ``v ∈ B \\setminus S``
 """
 function ⊆(B::Union{Ball2{N}, Ballp{N}},
            S::AbstractSingleton{N},
@@ -419,7 +482,7 @@ optionally compute a witness.
 * If `witness` option is deactivated: `true` iff ``L ⊆ S``
 * If `witness` option is activated:
   * `(true, [])` iff ``L ⊆ S``
-  * `(false, v)` iff ``L \\not\\subseteq S`` and ``v ∈ L \\setminus S``
+  * `(false, v)` iff ``L ⊈ S`` and ``v ∈ L \\setminus S``
 
 ### Algorithm
 
@@ -458,7 +521,7 @@ optionally compute a witness.
 * If `witness` option is deactivated: `true` iff ``L ⊆ H``
 * If `witness` option is activated:
   * `(true, [])` iff ``L ⊆ H``
-  * `(false, v)` iff ``L \\not\\subseteq H`` and ``v ∈ L \\setminus H``
+  * `(false, v)` iff ``L ⊈ H`` and ``v ∈ L \\setminus H``
 
 ### Notes
 
@@ -531,7 +594,15 @@ function ⊆(∅::EmptySet{N}, X::LazySet{N}, witness::Bool=false
 end
 
 # disambiguation
-function ⊆(∅::EmptySet{N}, H::AbstractHyperrectangle{N}, witness::Bool=false
+function ⊆(∅::EmptySet{N},
+           S::Union{AbstractPolytope{N}, HPolyhedron{N}, HalfSpace{N}},
+           witness::Bool=false
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    return witness ? (true, N[]) : true
+end
+function ⊆(∅::EmptySet{N},
+           H::AbstractHyperrectangle{N},
+           witness::Bool=false
           )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return witness ? (true, N[]) : true
 end
@@ -586,4 +657,71 @@ end
 function ⊆(X::EmptySet{N}, ∅::EmptySet{N}, witness::Bool=false
           )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return witness ? (true, N[]) : true
+end
+
+
+# --- UnionSet ---
+
+
+"""
+    ⊆(cup::UnionSet{N}, X::LazySet{N}, [witness]::Bool=false
+     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether a union of two convex sets is contained in another set.
+
+### Input
+
+- `cup`     -- union of two convex sets
+- `X`       -- another set
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``\\text{cup} ⊆ X``
+* If `witness` option is activated:
+  * `(true, [])` iff ``\\text{cup} ⊆ X``
+  * `(false, v)` iff ``\\text{cup} \\not\\subseteq X`` and
+    ``v ∈ \\text{cup} \\setminus X``
+"""
+function ⊆(cup::UnionSet{N}, X::LazySet{N}, witness::Bool=false
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    return ⊆(UnionSetArray([cup.X, cup.Y]), X, witness)
+end
+
+"""
+    ⊆(cup::UnionSetArray{N}, X::LazySet{N}, [witness]::Bool=false
+     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether a union of a finite number of convex sets is contained in another
+set.
+
+### Input
+
+- `cup`     -- union of a finite number of convex sets
+- `X`       -- another set
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``\\text{cup} ⊆ X``
+* If `witness` option is activated:
+  * `(true, [])` iff ``\\text{cup} ⊆ X``
+  * `(false, v)` iff ``\\text{cup} \\not\\subseteq X`` and
+    ``v ∈ \\text{cup} \\setminus X``
+"""
+function ⊆(cup::UnionSetArray{N}, X::LazySet{N}, witness::Bool=false
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    result = true
+    w = N[]
+    for Y in array(cup)
+        if witness
+            result, w = ⊆(Y, X, witness)
+        else
+            result = ⊆(Y, X, witness)
+        end
+        if !result
+            break
+        end
+    end
+    return witness ? (result, w) : result
 end

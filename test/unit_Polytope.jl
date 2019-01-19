@@ -54,8 +54,8 @@ for N in [Float64, Rational{Int}, Float32]
     @test isbounded(p)
 
     # membership
-    @test ∈(N[5 / 4, 7 / 4], p)
-    @test !∈(N[4, 1], p)
+    @test N[5 / 4, 7 / 4] ∈ p
+    @test N[4, 1] ∉ p
 
     # singleton list (only available with Polyhedra library)
     if test_suite_polyhedra
@@ -86,11 +86,11 @@ for N in [Float64, Rational{Int}, Float32]
     end
 
     # remove redundant constraints
-    P = HPolytope([HalfSpace([1.0, 0.0], 1.0),
-                   HalfSpace([0.0, 1.0], 1.0),
-                   HalfSpace([-1.0, -0.0], 1.0),
-                   HalfSpace([-0.0, -1.0], 1.0),
-                   HalfSpace([2.0, 0.0], 2.0)]) # redundant
+    P = HPolytope([HalfSpace(N[1, 0], N(1)),
+                   HalfSpace(N[0, 1], N(1)),
+                   HalfSpace(N[-1, -0], N(1)),
+                   HalfSpace(N[-0, -1], N(1)),
+                   HalfSpace(N[2, 0], N(2))]) # redundant
 
     Pred = remove_redundant_constraints(P)
     @test length(Pred.constraints) == 4
@@ -99,6 +99,12 @@ for N in [Float64, Rational{Int}, Float32]
     # test in-place removal of redundancies
     remove_redundant_constraints!(P)
     @test length(P.constraints) == 4
+
+    # subset
+    H = BallInf(N[0, 0], N(1))
+    P = convert(HPolytope, H)
+    @test BallInf(N[0, 0], N(1)) ⊆ P
+    @test !(BallInf(N[0, 0], N(1.01)) ⊆ P)
 
     # -----
     # V-rep
@@ -132,6 +138,10 @@ for N in [Float64, Rational{Int}, Float32]
         # list of constraints of a VPolytope; calculates tohrep
         @test ispermutation(constraints_list(V), constraints_list(tohrep(V)))
     end
+
+    # membership
+    @test N[.49, .49] ∈ p
+    @test N[.51, .51] ∉ p
 
     # copy (see #1002)
     p, q = [N(1)], [N(2)]
@@ -228,6 +238,12 @@ if test_suite_polyhedra
         addconstraint!(P, LinearConstraint(N[-1, 0], N(-1)))  # x >= 1
         @test isempty(P)
 
+        # test that one can pass a sparse vector as the direction (see #1011)
+        P = HPolytope([HalfSpace(N[1, 0], N(1)),
+                       HalfSpace(N[0, 1], N(1)),
+                       HalfSpace(N[-1, -1], N(-1))])
+        @test an_element(P) ∈ P
+
         # -----
         # V-rep
         # -----
@@ -272,11 +288,16 @@ if test_suite_polyhedra
         cp = cartesian_product(p1, p2)
         vl = vertices_list(cp)
         @test ispermutation(vl, [N[0, 0, 2], N[1, 1, 2]])
+
+        # tohrep from VPolytope
+        P = VPolytope([v1, v2, v3, v4, v5])
+        @test tohrep(P) isa HPolytope
+        @test tovrep(P) isa VPolytope # no-op
+
+        # subset (see #974)
+        H = BallInf(N[0, 0], N(1))
+        P = convert(VPolytope, H)
+        @test BallInf(N[0, 0], N(1)) ⊆ P
+        @test !(BallInf(N[0, 0], N(1.01)) ⊆ P)
     end
 end
-
-# test that one can pass a sparse vector as the direction (see #1011)
-P = HPolytope([HalfSpace([1.0, 0.0], 1.0),
-               HalfSpace([0.0, 1.0], 1.0),
-               HalfSpace([-1.0, -1.0], -1.0)])
-@test an_element(P) ∈ P

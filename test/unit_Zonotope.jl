@@ -102,3 +102,19 @@ for N in [Float64, Rational{Int}, Float32]
     Z1, Z2 = split(Z, 1) # in this case the splitting is exact
     @test Z1 ⊆ Z && Z2 ⊆ Z
 end
+
+for N in [Float64, Rational{Int}]
+    # conversion to HPolytope
+    # 1D
+    Z = Zonotope(N[0], Matrix{N}(I, 1, 1))
+    P = HPolytope(constraints_list(Z))
+    for d in [N[1], N[-1]]
+        @test ρ(d, P) == ρ(d, Z)
+    end
+    # 2D
+    Z = Zonotope(N[0, 0], Matrix{N}(I, 2, 2))
+    P = HPolytope(constraints_list(Z))
+    for d in LazySets.Approximations.BoxDiagDirections{N}(2)
+        @test ρ(d, P) == ρ(d, Z)
+    end
+end

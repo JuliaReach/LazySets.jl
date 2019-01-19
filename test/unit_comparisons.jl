@@ -14,12 +14,10 @@ import LazySets: _leq, _geq, isapproxzero, _isapprox, ABSZTOL
 @test _geq(2e-15, 1e-15, ztol=1e-15) && !_geq(1e-15, 2e-15, ztol=1e-15)
 
 # default absolute zero tolerance for rational
-x = 1/100; N = Rational{Int}
-ABSZTOL(eltype(x)) == zero(N)
+ABSZTOL(eltype(1/100)) == zero(Rational{Int})
 
 # default absolute zero tolerance for FP
-x = 0.01; N = eltype(x)
-ABSZTOL(eltype(x)) == sqrt(eps(Float64))
+ABSZTOL(eltype(0.01)) == sqrt(eps(Float64))
 
 # approximately zero tests
 @test isapproxzero(0//1)
