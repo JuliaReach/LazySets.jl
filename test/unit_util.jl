@@ -14,4 +14,8 @@ for _dummy_ in 1:1 # avoid global variable warnings
         push!(vectors, copy(v))
     end
     @test vectors == [[1, 2, 3, 4], [1, 2, 3, 5], [1, 2, 4, 5], [1, 3, 4, 5], [2, 3, 4, 5]]
+
+    # invertible matrix
+    @test LazySets.isinvertible([2 3; 1 2])
+    @test !LazySets.isinvertible([2 3; 0 0])
 end

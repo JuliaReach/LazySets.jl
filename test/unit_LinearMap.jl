@@ -53,9 +53,10 @@ for N in [Float64, Rational{Int}, Float32]
     @test lm1_copy.X == lm1.X
 
     # boundedness
-    @test isbounded(lm)
-    @test isbounded(zeros(N, 2, 2) * HalfSpace(N[1, 1], N(1)))
-    @test !isbounded(ones(N, 2, 2) * HalfSpace(N[1, 1], N(1)))
+    @test isbounded(ones(N, 2, 2) * Singleton(N[1, 2]))  # bounded set
+    @test isbounded(zeros(N, 2, 2) * HalfSpace(N[1, 1], N(1)))  # zero map
+    @test !isbounded(N[2 3; 1 2] * HalfSpace(N[1, 1], N(1)))  # invertible matrix
+    @test !isbounded(N[2 3; 0 0] * HalfSpace(N[1, 1], N(1)))  # singular matrix (expensive check)
 
     # isempty
     @test !isempty(lm)

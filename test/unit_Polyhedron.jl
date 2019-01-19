@@ -54,6 +54,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test constrained_dimensions(
         HPolyhedron{N}([LinearConstraint(N[1, 0], N(1))])) == [1]
 
+    # concrete linear map with invertible matrix
+    linear_map(N[2 3; 1 2], p)
+
     if test_suite_polyhedra
         # conversion to and from Polyhedra's VRep data structure
         cl = constraints_list(HPolyhedron(polyhedron(p)))
@@ -69,6 +72,9 @@ for N in [Float64, Rational{Int}, Float32]
         @test !isempty(P)
         addconstraint!(P, LinearConstraint(N[-1, 0], N(-1)))  # x >= 1
         @test isempty(P)
+
+        # concrete linear map with noninvertible matrix throws an error
+        @test_throws ErrorException linear_map(N[2 3; 0 0], P)
     end
 end
 

@@ -1,3 +1,6 @@
+# default tolerance for matrix condition number (see 'isinvertible')
+const DEFAULT_COND_TOL = 1e6
+
 """
     sign_cadlag(x::N)::N where {N<:Real}
 
@@ -84,6 +87,32 @@ function ispermutation(u::AbstractVector{T}, v::AbstractVector{T})::Bool where T
         end
     end
     return true
+end
+
+"""
+    isinvertible(M::AbstractMatrix; [cond_tol]::Number=DEFAULT_COND_TOL)
+
+A sufficient check of a matrix being invertible (or nonsingular).
+
+### Input
+
+- `M`        -- matrix
+- `cond_tol` -- (optional, default: `DEFAULT_COND_TOL`) tolerance of matrix
+                condition
+
+### Output
+
+If the result is `true`, `M` is invertible.
+If the result is `false`, this function could not conclude.
+
+### Algorithm
+
+We check whether the
+[matrix condition number](https://en.wikipedia.org/wiki/Condition_number#Matrices)
+`cond(M)` is below some prescribed tolerance.
+"""
+function isinvertible(M::AbstractMatrix; cond_tol::Number=DEFAULT_COND_TOL)
+    return cond(M) < cond_tol
 end
 
 """

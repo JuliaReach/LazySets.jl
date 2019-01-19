@@ -2,8 +2,7 @@ using MathProgBase, GLPKMathProgInterface
 
 import Base: isempty,
              rand,
-             convert,
-             copy
+             convert
 
 export HPolyhedron,
        dim, σ, ∈,
@@ -16,6 +15,7 @@ export HPolyhedron,
        vertices_list,
        singleton_list,
        isempty,
+       linear_map,
        remove_redundant_constraints,
        remove_redundant_constraints!,
        constrained_dimensions
@@ -437,8 +437,10 @@ A new polyhedron obtained by removing the redundant constraints in `P`.
 See `remove_redundant_constraints!`. 
 """
 function remove_redundant_constraints(P::PT;
-                                      backend=GLPKSolverLP()) where {N, PT<:HPoly{N}}
-    return remove_redundant_constraints!(copy(P), backend=backend)
+                                      backend=GLPKSolverLP()
+                                     ) where {N, PT<:HPoly{N}}
+    return remove_redundant_constraints!(PT(copy(constraints_list(P))),
+                                         backend=backend)
 end
 
 """
@@ -497,6 +499,49 @@ function remove_redundant_constraints!(P::PT;
 
     deleteat!(P.constraints, setdiff(1:m, non_redundant_indices))
     return P
+end
+
+"""
+    linear_map(M::AbstractMatrix{N}, P::PT; [cond_tol=DEFAULT_COND_TOL]::Number)
+        where {N<:Real, PT<:HPoly{N}}
+
+Concrete linear map of a polyhedron in constraint representation.
+
+### Input
+
+- `M`        -- matrix
+- `P`        -- polyhedron in constraint representation
+- `cond_tol` -- (optional) tolerance of matrix condition (used to check whether
+                the matrix is invertible)
+
+### Output
+
+A polyhedron of the same type as the input (`PT`).
+
+### Algorithm
+
+If the matrix ``M`` is invertible (which we check with a sufficient condition),
+then ``y = M x`` implies ``x = \\text{inv}(M) y`` and we transform the
+constraint system ``A x ≤ b`` to ``A \\text{inv}(M) y ≤ b``.
+"""
+function linear_map(M::AbstractMatrix{N},
+                    P::PT;
+                    cond_tol::Number=DEFAULT_COND_TOL
+                   ) where {N<:Real, PT<:HPoly{N}}
+    if !isinvertible(M; cond_tol=cond_tol)
+        if P isa HPolyhedron
+            error("linear maps for polyhedra need to be invertible")
+        end
+        # use the implementation for general polytopes
+        return invoke(linear_map, Tuple{typeof(M), AbstractPolytope{N}}, M, P)
+    end
+    # matrix is invertible
+    invM = inv(M)
+    constraints = Vector{LinearConstraint{N}}(undef, length(constraints_list(P)))
+    for c in constraints_list(P)
+        push!(constraints, LinearConstraint(vec(c.a' * invM), c.b))
+    end
+    return PT(constraints)
 end
 
 # ========================================================

@@ -8,7 +8,7 @@ using Compat: copyto!, axes, argmax, @warn
 import Compat.String
 using Compat.LinearAlgebra
 import Compat.LinearAlgebra: norm, checksquare, LAPACKException,
-                             SingularException, ×
+                             SingularException, ×, cond
 import Compat.InteractiveUtils.subtypes
 export _At_mul_B
 
