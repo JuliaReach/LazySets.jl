@@ -100,5 +100,5 @@ for N in [Float64, Rational{Int}, Float32]
     # split a zonotope
     Z = Zonotope(N[0, 0], N[1 1; -1 1])
     Z1, Z2 = split(Z, 1) # in this case the splitting is exact
-    Z1 ⊆ Z && Z2 ⊆ Z
+    @test Z1 ⊆ Z && Z2 ⊆ Z
 end
