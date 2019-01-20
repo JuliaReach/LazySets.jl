@@ -538,8 +538,8 @@ function linear_map(M::AbstractMatrix{N},
     # matrix is invertible
     invM = inv(M)
     constraints = Vector{LinearConstraint{N}}(undef, length(constraints_list(P)))
-    for c in constraints_list(P)
-        push!(constraints, LinearConstraint(vec(c.a' * invM), c.b))
+    @inbounds for (i, c) in enumerate(constraints_list(P))
+        constraints[i] = LinearConstraint(vec(c.a' * invM), c.b)
     end
     return PT(constraints)
 end
