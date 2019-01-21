@@ -806,82 +806,112 @@ end
 
 
 """
-    is_intersection_empty(X::LazySet{N},
-                          P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
-                          witness::Bool=false
-                         )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    is_intersection_empty(P::Union{HPolyhedron{N}, AbstractPolytope{N}},
+                          X::LazySet{N},
+                          witness::Bool=false;
+                          solver=GLPKSolverLP(method=:Simplex)
+                         ) where {N<:Real}
 
-Check whether a compact set and a polytope do not intersect.
+Check whether two polyhedra do not intersect.
 
 ### Input
 
-- `X`  -- compact set
-- `P`  -- polytope or polygon in constraint-representation
+- `P`         -- polyhedron
+- `X`         -- another set (see the Notes section below)
+- `witness`   -- (optional, default: `false`) compute a witness if activated
+- `solver`    -- (optional, default: `GLPKSolverLP(method=:Simplex)`) LP solver
+                 backend
+- `algorithm` -- (optional, default: `"exact check"`) algorithm keyword, one of:
+                 * `"exact check" (exact, uses a feasibility LP)
+                 * `"sufficient check" (sufficient, uses half-space checks)
 
 ### Output
 
-`true` iff ``X ∩ P = ∅``.
+* If `witness` option is deactivated: `true` iff ``P ∩ X = ∅``
+* If `witness` option is activated:
+  * `(true, [])` iff ``P ∩ X = ∅``
+  * `(false, v)` iff ``P ∩ X ≠ ∅`` and ``v ∈ P ∩ X``
 
 ### Notes
 
-We assume that `X` is compact. Otherwise, the support vector queries may fail.
-Witness production is not supported.
+For `algorithm == "exact check"`, we assume that `constraints_list(X)` is
+defined.
+For `algorithm == "sufficient check"`, witness production is not supported.
 
 ### Algorithm
 
-The algorithm relies on the intersection check between the set ``X`` and each constraint
-in ``P``. It costs ``m`` support vector evaluations of ``X``, where ``m`` is
-the number of constraints in ``P``.
+For `algorithm == "exact check"`, we set up a feasibility LP for the union of
+constraints of `P` and `X`.
 
-Note that this method can be used with any set ``P`` whose constraints are known.
+For `algorithm == "sufficient check"`, we rely on the intersection check between
+the set `X` and each constraint in `P`.
+This means one support function evaluation of `X` for each constraint of `P`.
 """
-function is_intersection_empty(X::LazySet{N},
-                               P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
-                               witness::Bool=false
-                              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
-    for Hi in constraints_list(P)
-        if is_intersection_empty(X, Hi)
-            if witness
-                return (true, N[])
+function is_intersection_empty(P::Union{HPolyhedron{N}, AbstractPolytope{N}},
+                               X::LazySet{N},
+                               witness::Bool=false;
+                               solver=GLPKSolverLP(method=:Simplex),
+                               algorithm="exact check"
+                              ) where {N<:Real}
+    if algorithm == "sufficient check"
+        # sufficient check for empty intersection using half-space checks
+        for Hi in constraints_list(P)
+            if is_intersection_empty(X, Hi)
+                if witness
+                    return (true, N[])
+                end
+                return true
             end
-            return true
         end
+        if witness
+            error("witness production is not supported yet")
+        end
+        return false
+    elseif algorithm == "exact check"
+        # exact check for empty intersection using a feasibility LP
+        A1, b1 = tosimplehrep(HPolyhedron(constraints_list(P)))
+        A2, b2 = tosimplehrep(HPolyhedron(constraints_list(X)))
+        A = [A1; A2]
+        b = [b1; b2]
+
+        lbounds, ubounds = -Inf, Inf
+        sense = '<'
+        obj = zeros(N, size(A, 2))
+        lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
+        if lp.status == :Optimal
+            return witness ? (false, lp.sol) : false
+        elseif lp.status == :Infeasible
+            return witness ? (true, N[]) : true
+        end
+        @assert false "LP returned status $(lp.status) unexpectedly"
     end
-    if witness
-        error("witness production is not supported yet")
-    end
-    return false
 end
 
 # symmetric method
-function is_intersection_empty(P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
-                               X::LazySet{N},
-                               witness::Bool=false
+function is_intersection_empty(X::LazySet{N},
+                               P::Union{HPolyhedron{N}, AbstractPolytope{N}},
+                               witness::Bool=false;
+                               solver=GLPKSolverLP(method=:Simplex),
+                               algorithm="exact check"
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
-    return is_intersection_empty(X, P, witness)
+    return is_intersection_empty(P, X, witness;
+                                 solver=solver, algorithm=algorithm)
 end
 
 # disambiguation
-function is_intersection_empty(P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
-                               Q::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
-                               witness::Bool=false
+function is_intersection_empty(P::Union{HPolyhedron{N}, AbstractPolytope{N}},
+                               Q::Union{HPolyhedron{N}, AbstractPolytope{N}},
+                               witness::Bool=false;
+                               solver=GLPKSolverLP(method=:Simplex),
+                               algorithm="exact check"
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
-    for Hi in constraints_list(P)
-        if is_intersection_empty(Q, Hi)
-            if witness
-                return (true, N[])
-            end
-            return true
-        end
-    end
-    if witness
-        error("witness production is not supported yet")
-    end
-    return false
+    return invoke(is_intersection_empty,
+                  Tuple{typeof(P), LazySet{N}, Bool},
+                  P, Q, witness; solver=solver, algorithm=algorithm)
 end
 
 # disambiguation
-function is_intersection_empty(P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
+function is_intersection_empty(P::Union{HPolyhedron{N}, AbstractPolytope{N}},
                                hs::HalfSpace{N},
                                witness::Bool=false
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
@@ -890,14 +920,14 @@ end
 
 # symmetric method
 function is_intersection_empty(hs::HalfSpace{N},
-                               P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
+                               P::Union{HPolyhedron{N}, AbstractPolytope{N}},
                                witness::Bool=false
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return is_intersection_empty_helper_halfspace(hs, P, witness)
 end
 
 # disambiguation
-function is_intersection_empty(P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
+function is_intersection_empty(P::Union{HPolyhedron{N}, AbstractPolytope{N}},
                                S::AbstractSingleton{N},
                                witness::Bool=false
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
@@ -906,10 +936,34 @@ end
 
 # symmetric method
 function is_intersection_empty(S::AbstractSingleton{N},
-                               P::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}},
+                               P::Union{HPolyhedron{N}, AbstractPolytope{N}},
                                witness::Bool=false
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return is_intersection_empty_helper_singleton(S, P, witness)
+end
+
+# disambiguation
+function is_intersection_empty(P::Union{HPolyhedron{N}, AbstractPolytope{N}},
+                               hp::Union{Hyperplane{N}, Line{N}},
+                               witness::Bool=false;
+                               solver=GLPKSolverLP(method=:Simplex),
+                               algorithm="exact check"
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    return invoke(is_intersection_empty,
+                  Tuple{typeof(P), LazySet{N}, Bool},
+                  P, hp, witness, solver=solver, algorithm=algorithm)
+end
+
+# symmetric method
+function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
+                               P::Union{HPolyhedron{N}, AbstractPolytope{N}},
+                               witness::Bool=false;
+                               solver=GLPKSolverLP(method=:Simplex),
+                               algorithm="exact check"
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    return invoke(is_intersection_empty,
+                  Tuple{typeof(P), LazySet{N}, Bool},
+                  P, hp, witness, solver=solver, algorithm=algorithm)
 end
 
 
