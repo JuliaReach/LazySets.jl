@@ -3,47 +3,51 @@ import Base: *, ∈, isempty
 export LinearMap,
        an_element
 
-"""
-    LinearMap{N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} <: LazySet{N}
+# ======================================================
+# === OPTION 1 : use parameter MAT
+# ======================================================
+# 9.303867 seconds (5.90 M allocations: 2.132 GiB, 5.94% gc time)
+#   9.437 s (5904264 allocations: 2.13 GiB)
 
-Type that represents a linear transformation ``M⋅S`` of a convex set ``S``.
-
-### Fields
-
-- `M` -- matrix/linear map
-- `X` -- convex set
-
-### Notes
-
-This type is parametric in the elements of the linear map, `NM`, which is
-independent of the numeric type of the target set (`N`).
-Typically `NM = N`, but there may be exceptions, e.g., if `NM` is an interval
-that holds numbers of type `N`, where `N` is a floating point number type such
-as `Float64`.
-"""
-struct LinearMap{N<:Real, S<:LazySet{N},
-                 NM, MAT<:AbstractMatrix{NM}} <: LazySet{N}
+struct LinearMap{N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} <: LazySet{N}
     M::MAT
     X::S
 
     # default constructor with dimension match check
-    function LinearMap{N, S, NM, MAT}(M::MAT, X::S) where {N<:Real,
-            S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}}
+    function LinearMap(M::MAT, X::S) where {N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}}
         @assert dim(X) == size(M, 2) "a linear map of size $(size(M)) cannot " *
             "be applied to a set of dimension $(dim(X))"
         return new{N, S, NM, MAT}(M, X)
     end
 end
+LinearMap(M::MAT, lm::LinearMap{N, S, NM, MAT}) where {N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} = LinearMap(M * lm.M, lm.X)
+
+
+# ======================================================
+# === OPTION 2 : use abstract type in M 
+# ======================================================
+#=
+struct LinearMap{N<:Real, S<:LazySet{N}, NM} <: LazySet{N}
+    M::AbstractMatrix{NM}
+    X::S
+
+    # default constructor with dimension match check
+    function LinearMap(M::AbstractMatrix{NM}, X::S) where {N<:Real, S<:LazySet{N}, NM}
+        @assert dim(X) == size(M, 2) "a linear map of size $(size(M)) cannot " *
+            "be applied to a set of dimension $(dim(X))"
+        return new{N, S, NM}(M, X)
+    end
+end
+LinearMap(M::AbstractMatrix{NM}, lm::LinearMap{N, S, NM}) where {N<:Real, S<:LazySet{N}, NM} = LinearMap(M * lm.M, lm.X)
+=#
 
 # convenience constructor without type parameter
-LinearMap(M::MAT,
-          X::S) where {N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} =
-    LinearMap{N, S, NM, MAT}(M, X)
+#LinearMap(M::MAT,
+#          X::S) where {N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} =
+#    LinearMap{N, S, NM, MAT}(M, X)
 
 # constructor from a linear map: perform the matrix multiplication immediately
-LinearMap(M::MAT, lm::LinearMap{N, S, NM, MAT}) where {N<:Real, S<:LazySet{N},
-        NM, MAT<:AbstractMatrix{NM}} =
-    LinearMap{N, S, NM, MAT}(M * lm.M, lm.X)
+
 
 """
 ```
