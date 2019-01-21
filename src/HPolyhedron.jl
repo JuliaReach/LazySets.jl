@@ -490,7 +490,7 @@ function remove_redundant_constraints!(P::PT;
             error("LP is not optimal; the status of the LP is $(lp.status)")
         end
         objval = -lp.objval
-        if objval <= b[j]
+        if _leq(objval, b[j])
             # the constraint is redundant
             non_redundant_indices = setdiff(non_redundant_indices, j)
         else
