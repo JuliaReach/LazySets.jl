@@ -144,7 +144,6 @@ return quote
                      points
 
     import CDDLib # default backend
-    import Polyhedra:SimpleHRepresentation, SimpleHRepresentation
 
     function default_polyhedra_backend(P, N::Type{<:AbstractFloat})
         return CDDLib.CDDLibrary()
