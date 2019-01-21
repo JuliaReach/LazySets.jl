@@ -484,8 +484,10 @@ function remove_redundant_constraints!(P::PT;
         br = b[non_redundant_indices]
         br[i] = b[j] + one(N)
         lp = linprog(-α, Ar, '<', br, -Inf, Inf, backend)
-        if lp.status != :Optimal
-            error("LP is not optimal")
+        if lp.status == :Infeasible
+            throw(DomainError(P, "the polyhedron is empty"))
+        else
+            error("LP is not optimal; the status of the LP is $(lp.status)")
         end
         objval = -lp.objval
         if objval <= b[j]
