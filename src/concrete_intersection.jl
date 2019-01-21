@@ -364,23 +364,33 @@ A new same polytope in H-representation with just one more constraint.
 """
 function intersection(P1::HPoly{N},
                       P2::HPoly{N};
-                      backend=default_polyhedra_backend(P1, N),
-                      prunefunc=removehredundancy!) where {N<:Real}
+                      backend=nothing,
+                      prunefunc=remove_redundant_constraints!) where {N<:Real}
     if typeof(P1) == typeof(P2)
         HPOLY = typeof(P1)
     else
         # one of them must be a polytope, so the intersection will be bounded
         HPOLY = HPolytope{N}
     end
+
     # concatenate the linear constraints
     Q = HPOLY([constraints_list(P1);
                constraints_list(P2)])
 
     # remove redundant constraints
-    if prunefunc == removehredundancy!
+    if prunefunc == remove_redundant_constraints!
+        if backend == nothing
+            backend = GLPKSolverLP()
+        end
+        # here, detection of empty intersection may be reported as an infeasible LP
+        remove_redundant_constraints!(Q, backend=backend)
+    elseif prunefunc == removehredundancy!
+        if backend == nothing
+            backend = default_polyhedra_backend(P1, N)
+        end
         # convert to polyhedron
         ph = polyhedron(Q; backend=backend)
-        prunefunc(ph)
+        removehredundancy!(ph)
         Q = convert(HPOLY, ph)
     else
         prunefunc(Q)
