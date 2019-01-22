@@ -136,7 +136,6 @@ for N in [Float64, Float32]
     vlist = vertices_list(ExponentialMap(M, b))
     if N == Float64
         # precision with Float32 is not sufficient
-        @test LazySets.ispermutation(vlist,
-                                     [N[1, 1], N[-1, 1], N[1, -1], N[-1, -1]])
+        @test ispermutation(vlist, [N[1, 1], N[-1, 1], N[1, -1], N[-1, -1]])
     end
 end

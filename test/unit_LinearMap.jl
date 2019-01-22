@@ -79,7 +79,7 @@ for N in [Float64, Rational{Int}, Float32]
     b = BallInf(N[0, 0], N(1))
     M = N[1 2; 3 4]
     vlist = vertices_list(LinearMap(M, b))
-    @test LazySets.ispermutation(vlist, [N[3, 7], N[1, 1], N[-1, -1], N[-3, -7]])
+    @test ispermutation(vlist, [N[3, 7], N[1, 1], N[-1, -1], N[-3, -7]])
     M = zeros(N, 2, 2)
     vlist = vertices_list(LinearMap(M, b))
     @test vlist == [zeros(N, 2)]

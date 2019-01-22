@@ -118,11 +118,11 @@ for N in [Float64, Float32, Rational{Int}]
     i1 = Interval(N[0, 1])
     i2 = Interval(N[2, 3])
     vlist = vertices_list(CartesianProduct(i1, i2))
-    @test LazySets.ispermutation(vlist, [N[0, 2], N[0, 3], N[1, 2], N[1, 3]])
+    @test ispermutation(vlist, [N[0, 2], N[0, 3], N[1, 2], N[1, 3]])
 
     #constraints_list
     hlist = constraints_list(CartesianProduct(i1, i2))
-    @test LazySets.ispermutation(hlist,
+    @test ispermutation(hlist,
         [LinearConstraint(sparsevec(N[1], N[1], 2), N(1)),
         LinearConstraint(sparsevec(N[1], N[-1], 2), N(0)),
         LinearConstraint(sparsevec(N[2], N[1], 2),  N(3)),
@@ -173,12 +173,12 @@ for N in [Float64, Float32, Rational{Int}]
     i2 = Interval(N[2, 3])
     i3 = Interval(N[4, 5])
     vlist = vertices_list(CartesianProductArray([i1, i2, i3]))
-    @test LazySets.ispermutation(vlist, [N[0, 2, 4], N[0, 3, 4], N[1, 2, 4],
+    @test ispermutation(vlist, [N[0, 2, 4], N[0, 3, 4], N[1, 2, 4],
         N[1, 3, 4], N[0, 2, 5], N[0, 3, 5], N[1, 2, 5], N[1, 3, 5]])
 
     #constraints_list
     hlist = constraints_list(CartesianProductArray([i1, i2, i3]))
-    @test LazySets.ispermutation(hlist,
+    @test ispermutation(hlist,
         [LinearConstraint(sparsevec(N[1], N[1], 3), N(1)),
         LinearConstraint(sparsevec(N[1], N[-1], 3), N(0)),
         LinearConstraint(sparsevec(N[2], N[1], 3), N(3)),

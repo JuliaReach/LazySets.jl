@@ -94,7 +94,7 @@ if test_suite_basic
     # =========================================================
     # Testing other set types that do not inherit from LazySet
     # =========================================================
-    @time @testset "UnionSet" begin include("unit_UnionSet.jl") end
+    @time @testset "LazySets.UnionSet" begin include("unit_UnionSet.jl") end
 
     # =========================================
     # Testing types representing set operations
