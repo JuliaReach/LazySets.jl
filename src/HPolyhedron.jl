@@ -418,7 +418,7 @@ end
 
 """
     remove_redundant_constraints(P::PT;
-                                 backend=GLPKSolverLP())::Union{PT, EmptySet} where {N, PT<:HPoly{N}}
+                                 backend=GLPKSolverLP())::Union{PT, EmptySet{N}} where {N, PT<:HPoly{N}}
 
 Remove the redundant constraints in a polyhedron in H-representation.
 
