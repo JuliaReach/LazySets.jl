@@ -256,6 +256,7 @@ if test_suite_polyhedra
         R = convert(HPolytope, BallInf(3*ones(N, 2), N(1)))
         res, w = isdisjoint(P, Q, true)
         @test !isdisjoint(P, Q) && !res && w ∈ P && w ∈ Q
+        @test !isdisjoint(P, Q; algorithm="sufficient")
         res, w = isdisjoint(Q, P, true)
         @test !isdisjoint(Q, P) && !res && w ∈ P && w ∈ Q
         res, w = isdisjoint(Q, R, true)
@@ -266,6 +267,8 @@ if test_suite_polyhedra
         @test isdisjoint(P, R) && res && w == N[]
         res, w = isdisjoint(R, P, true)
         @test isdisjoint(R, P) && res && w == N[]
+        res, w = isdisjoint(P, R, true; algorithm="sufficient")
+        @test isdisjoint(P, R; algorithm="sufficient") && res && w == N[]
 
         # test that one can pass a sparse vector as the direction (see #1011)
         P = HPolytope([HalfSpace(N[1, 0], N(1)),

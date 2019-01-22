@@ -821,9 +821,9 @@ Check whether two polyhedra do not intersect.
 - `witness`   -- (optional, default: `false`) compute a witness if activated
 - `solver`    -- (optional, default: `GLPKSolverLP(method=:Simplex)`) LP solver
                  backend
-- `algorithm` -- (optional, default: `"exact check"`) algorithm keyword, one of:
-                 * `"exact check" (exact, uses a feasibility LP)
-                 * `"sufficient check" (sufficient, uses half-space checks)
+- `algorithm` -- (optional, default: `"exact"`) algorithm keyword, one of:
+                 * `"exact" (exact, uses a feasibility LP)
+                 * `"sufficient" (sufficient, uses half-space checks)
 
 ### Output
 
@@ -834,26 +834,25 @@ Check whether two polyhedra do not intersect.
 
 ### Notes
 
-For `algorithm == "exact check"`, we assume that `constraints_list(X)` is
-defined.
-For `algorithm == "sufficient check"`, witness production is not supported.
+For `algorithm == "exact"`, we assume that `constraints_list(X)` is defined.
+For `algorithm == "sufficient"`, witness production is not supported.
 
 ### Algorithm
 
-For `algorithm == "exact check"`, we set up a feasibility LP for the union of
+For `algorithm == "exact"`, we set up a feasibility LP for the union of
 constraints of `P` and `X`.
 
-For `algorithm == "sufficient check"`, we rely on the intersection check between
-the set `X` and each constraint in `P`.
+For `algorithm == "sufficient"`, we rely on the intersection check between the
+set `X` and each constraint in `P`.
 This means one support function evaluation of `X` for each constraint of `P`.
 """
 function is_intersection_empty(P::Union{HPolyhedron{N}, AbstractPolytope{N}},
                                X::LazySet{N},
                                witness::Bool=false;
                                solver=GLPKSolverLP(method=:Simplex),
-                               algorithm="exact check"
+                               algorithm="exact"
                               ) where {N<:Real}
-    if algorithm == "sufficient check"
+    if algorithm == "sufficient"
         # sufficient check for empty intersection using half-space checks
         for Hi in constraints_list(P)
             if is_intersection_empty(X, Hi)
@@ -867,10 +866,10 @@ function is_intersection_empty(P::Union{HPolyhedron{N}, AbstractPolytope{N}},
             error("witness production is not supported yet")
         end
         return false
-    elseif algorithm == "exact check"
+    elseif algorithm == "exact"
         # exact check for empty intersection using a feasibility LP
-        A1, b1 = tosimplehrep(HPolyhedron(constraints_list(P)))
-        A2, b2 = tosimplehrep(HPolyhedron(constraints_list(X)))
+        A1, b1 = tosimplehrep(P)
+        A2, b2 = tosimplehrep(X)
         A = [A1; A2]
         b = [b1; b2]
 
@@ -883,7 +882,9 @@ function is_intersection_empty(P::Union{HPolyhedron{N}, AbstractPolytope{N}},
         elseif lp.status == :Infeasible
             return witness ? (true, N[]) : true
         end
-        @assert false "LP returned status $(lp.status) unexpectedly"
+        error("LP returned status $(lp.status) unexpectedly")
+    else
+        error("algorithm $algorithm unknown")
     end
 end
 
@@ -892,7 +893,7 @@ function is_intersection_empty(X::LazySet{N},
                                P::Union{HPolyhedron{N}, AbstractPolytope{N}},
                                witness::Bool=false;
                                solver=GLPKSolverLP(method=:Simplex),
-                               algorithm="exact check"
+                               algorithm="exact"
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return is_intersection_empty(P, X, witness;
                                  solver=solver, algorithm=algorithm)
@@ -903,7 +904,7 @@ function is_intersection_empty(P::Union{HPolyhedron{N}, AbstractPolytope{N}},
                                Q::Union{HPolyhedron{N}, AbstractPolytope{N}},
                                witness::Bool=false;
                                solver=GLPKSolverLP(method=:Simplex),
-                               algorithm="exact check"
+                               algorithm="exact"
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return invoke(is_intersection_empty,
                   Tuple{typeof(P), LazySet{N}, Bool},
@@ -947,7 +948,7 @@ function is_intersection_empty(P::Union{HPolyhedron{N}, AbstractPolytope{N}},
                                hp::Union{Hyperplane{N}, Line{N}},
                                witness::Bool=false;
                                solver=GLPKSolverLP(method=:Simplex),
-                               algorithm="exact check"
+                               algorithm="exact"
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return invoke(is_intersection_empty,
                   Tuple{typeof(P), LazySet{N}, Bool},
@@ -959,7 +960,7 @@ function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
                                P::Union{HPolyhedron{N}, AbstractPolytope{N}},
                                witness::Bool=false;
                                solver=GLPKSolverLP(method=:Simplex),
-                               algorithm="exact check"
+                               algorithm="exact"
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return invoke(is_intersection_empty,
                   Tuple{typeof(P), LazySet{N}, Bool},
