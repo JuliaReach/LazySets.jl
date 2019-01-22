@@ -393,5 +393,5 @@ end
 # internal helper function
 function _constraints_list_hyperplane(a::AbstractVector{N}, b::N
                                      )::Vector{LinearConstraint{N}} where {N<:Real}
-    return [HalfSpace(a, b), HalfSpace(a, -b)]
+    return [HalfSpace(a, b), HalfSpace(-a, -b)]
 end

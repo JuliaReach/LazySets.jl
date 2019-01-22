@@ -51,7 +51,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # constraints_list
     @test ispermutation(constraints_list(l1),
-                        [HalfSpace(a1, b1), HalfSpace(a1, -b1)])
+                        [HalfSpace(a1, b1), HalfSpace(-a1, -b1)])
 
     # concrete intersection
     cap11 = intersection(l1, l1_copy)

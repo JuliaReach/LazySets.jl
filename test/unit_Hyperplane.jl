@@ -54,7 +54,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # constraints_list
     @test ispermutation(constraints_list(hp),
-                        [HalfSpace(a, b), HalfSpace(a, -b)])
+                        [HalfSpace(a, b), HalfSpace(-a, -b)])
 
     # intersection emptiness
     b = BallInf(zeros(N, 3), N(1))
