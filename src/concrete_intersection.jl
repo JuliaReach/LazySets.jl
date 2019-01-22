@@ -370,7 +370,7 @@ and `default_polyhedra_backend(P1, N)` respectively.
 Note that if `use_polyhedra_interface` is set to `true`, there is no guarantee
 that the removal of constraints keep the set empty (see #1038 and Polyhedra#146),
 so it is better to check for emptiness of intersection before using this function
-if that case.
+in that case.
 
 The method implemented in this function can be used for any pair of sets that can
 handle the `constraints_list` option.
