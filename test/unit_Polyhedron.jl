@@ -153,5 +153,22 @@ if test_suite_polyhedra
         remove_redundant_constraints!(p1)
         Ar, br = tosimplehrep(p1)
         @test Ar == A[1:2, :] && br == b[1:2]
+
+        # checking for empty intersection (also test symmetric calls)
+        P = convert(HPolytope, BallInf(zeros(N, 2), N(1)))
+        Q = convert(HPolytope, BallInf(ones(N, 2), N(1)))
+        R = HPolyhedron([HalfSpace(N[1, 0], N(3)), HalfSpace(N[-1, 0], N(-2))])
+        res, w = isdisjoint(P, Q, true)
+        @test !isdisjoint(P, Q) && !res && w ∈ P && w ∈ Q
+        res, w = isdisjoint(Q, P, true)
+        @test !isdisjoint(Q, P) && !res && w ∈ P && w ∈ Q
+        res, w = isdisjoint(Q, R, true)
+        @test !isdisjoint(Q, R) && !res && w ∈ Q && w ∈ R
+        res, w = isdisjoint(R, Q, true)
+        @test !isdisjoint(R, Q) && !res && w ∈ Q && w ∈ R
+        res, w = isdisjoint(P, R, true)
+        @test isdisjoint(P, R) && res && w == N[]
+        res, w = isdisjoint(R, P, true)
+        @test isdisjoint(R, P) && res && w == N[]
     end
 end

@@ -55,6 +55,11 @@ for N in [Float64, Rational{Int}, Float32]
     # constraints_list
     @test ispermutation(constraints_list(hp),
                         [HalfSpace(a, b), HalfSpace(-a, -b)])
+end
+
+# Polyhedra tests that only work with Float64
+for N in [Float64]
+    hp = Hyperplane(ones(N, 3), N(5))
 
     # intersection emptiness
     b = BallInf(zeros(N, 3), N(1))
