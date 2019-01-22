@@ -437,7 +437,7 @@ if `P` is detected to be empty (which happens if the constraints are infeasible)
 See [`remove_redundant_constraints!`](@ref) for details.
 """
 function remove_redundant_constraints(P::PT;
-                                      backend=GLPKSolverLP())::Union{PT, EmptySet} where {N, PT<:HPoly{N}}
+                                      backend=GLPKSolverLP())::Union{PT, EmptySet{N}} where {N, PT<:HPoly{N}}
     Pred = copy(P)
     if remove_redundant_constraints!(Pred, backend=backend)
         return Pred
