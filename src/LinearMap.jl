@@ -4,7 +4,7 @@ export LinearMap,
        an_element
 
 """
-    LinearMap{N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} <: LazySet{N}
+    LinearMap{N<:Real, S<:LazySet{N}, NM} <: LazySet{N}
 
 Type that represents a linear transformation ``M⋅S`` of a convex set ``S``.
 
@@ -21,29 +21,28 @@ Typically `NM = N`, but there may be exceptions, e.g., if `NM` is an interval
 that holds numbers of type `N`, where `N` is a floating point number type such
 as `Float64`.
 """
-struct LinearMap{N<:Real, S<:LazySet{N},
-                 NM, MAT<:AbstractMatrix{NM}} <: LazySet{N}
-    M::MAT
+struct LinearMap{N<:Real, S<:LazySet{N}, NM} <: LazySet{N}
+    M::AbstractMatrix{NM}
     X::S
 
     # default constructor with dimension match check
-    function LinearMap{N, S, NM, MAT}(M::MAT, X::S) where {N<:Real,
+    function LinearMap{N, S, NM}(M::MAT, X::S) where {N<:Real,
             S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}}
         @assert dim(X) == size(M, 2) "a linear map of size $(size(M)) cannot " *
             "be applied to a set of dimension $(dim(X))"
-        return new{N, S, NM, MAT}(M, X)
+        return new{N, S, NM}(M, X)
     end
 end
 
 # convenience constructor without type parameter
 LinearMap(M::MAT,
           X::S) where {N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} =
-    LinearMap{N, S, NM, MAT}(M, X)
+    LinearMap{N, S, NM}(M, X)
 
 # constructor from a linear map: perform the matrix multiplication immediately
-LinearMap(M::MAT, lm::LinearMap{N, S, NM, MAT}) where {N<:Real, S<:LazySet{N},
+LinearMap(M::MAT, lm::LinearMap{N, S, NM}) where {N<:Real, S<:LazySet{N},
         NM, MAT<:AbstractMatrix{NM}} =
-    LinearMap{N, S, NM, MAT}(M * lm.M, lm.X)
+    LinearMap{N, S, NM}(M * lm.M, lm.X)
 
 """
 ```

@@ -69,7 +69,7 @@ for N in [Float64, Rational{Int}, Float32]
     # check linear map between vector and set
     X = BallInf(N[1], N(1.10445))
     a = N[-1, 2]
-    @test a * X isa LinearMap{N, BallInf{N}, N, Matrix{N}}
+    @test a * X isa LinearMap{N, BallInf{N}, N}
 
     # linear map with a ZeroSet
     X = N[0 -1 ; 1 0] * ZeroSet{N}(2)
