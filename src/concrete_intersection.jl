@@ -394,15 +394,18 @@ function intersection(P1::HPoly{N},
         # convert to an hrep, remove the redundancies and convert back to HPOLY
         ph = polyhedron(Q; backend=backend)
         removehredundancy!(ph)
-        Q = convert(HPOLY, ph)
+        return convert(HPOLY, ph)
     else
         if backend == nothing
             backend = GLPKSolverLP()
         end
         # here, detection of empty intersection may be reported as an infeasible LP
-        remove_redundant_constraints!(Q, backend=backend)
+        if remove_redundant_constraints!(Q, backend=backend)
+            return Q
+        else
+            return EmptySet{N}()
+        end
     end
-    return Q
 end
 
 """
