@@ -394,7 +394,7 @@ function intersection(P1::HPoly{N},
         # convert to an hrep, remove the redundancies and convert back to HPOLY
         ph = polyhedron(Q; backend=backend)
         removehredundancy!(ph)
-        Q = convert(HPOLY, ph)
+        return convert(HPOLY, ph)
     else
         if backend == nothing
             backend = GLPKSolverLP()
@@ -406,7 +406,6 @@ function intersection(P1::HPoly{N},
             return EmptySet{N}()
         end
     end
-    return Q
 end
 
 """
