@@ -418,10 +418,9 @@ end
 
 """
     remove_redundant_constraints(P::PT;
-                                 backend=GLPKSolverLP()) where {N, PT<:HPoly{N}}
+                                 backend=GLPKSolverLP())::Union{PT, EmptySet{N}} where {N, PT<:HPoly{N}}
 
-Given a polyhedron in H-representation, return a new polyhedron with no reundant
-constraints.
+Remove the redundant constraints in a polyhedron in H-representation.
 
 ### Input
 
@@ -430,25 +429,29 @@ constraints.
 
 ### Output
 
-A new polyhedron obtained by removing the redundant constraints in `P`.
+A polyhedron equivalent to `P` but with no redundant constraints, or an empty set
+if `P` is detected to be empty (which happens if the constraints are infeasible).
 
 ### Algorithm
 
-See `remove_redundant_constraints!`. 
+See [`remove_redundant_constraints!`](@ref) for details.
 """
 function remove_redundant_constraints(P::PT;
-                                      backend=GLPKSolverLP()
-                                     ) where {N, PT<:HPoly{N}}
-    return remove_redundant_constraints!(PT(copy(constraints_list(P))),
-                                         backend=backend)
+                                      backend=GLPKSolverLP())::Union{PT, EmptySet{N}} where {N, PT<:HPoly{N}}
+    Pred = copy(P)
+    if remove_redundant_constraints!(Pred, backend=backend)
+        return Pred
+    else # the polyhedron P is empty
+        return EmptySet{N}()
+    end
 end
 
 """
     remove_redundant_constraints!(P::PT;
-                                  backend=GLPKSolverLP()) where {N, PT<:HPoly{N}}
+                                  backend=GLPKSolverLP())::Bool where {N, PT<:HPoly{N}}
 
 Remove the redundant constraints in a polyhedron in H-representation; the polyhedron
-is updated inplace.
+is updated in-place.
 
 ### Input
 
@@ -457,7 +460,9 @@ is updated inplace.
 
 ### Output
 
-The polyhedron obtained by removing the redundant constraints in `P`.
+`true` if the method was successful and the polyhedron `P` is modified by
+removing its redundant constraints, and `false` if `P` is detected to be empty
+(which happens if the constraints are infeasible).
 
 ### Algorithm
 
@@ -470,7 +475,7 @@ For details, see [Fukuda's Polyhedra
 FAQ](https://www.cs.mcgill.ca/~fukuda/soft/polyfaq/node24.html).
 """
 function remove_redundant_constraints!(P::PT;
-                                       backend=GLPKSolverLP()) where {N, PT<:HPoly{N}}
+                                       backend=GLPKSolverLP())::Bool where {N, PT<:HPoly{N}}
 
     A, b = tosimplehrep(P)
     m, n = size(A)
@@ -484,21 +489,25 @@ function remove_redundant_constraints!(P::PT;
         br = b[non_redundant_indices]
         br[i] = b[j] + one(N)
         lp = linprog(-α, Ar, '<', br, -Inf, Inf, backend)
-        if lp.status != :Optimal
-            error("LP is not optimal")
-        end
-        objval = -lp.objval
-        if objval <= b[j]
-            # the constraint is redundant
-            non_redundant_indices = setdiff(non_redundant_indices, j)
+        if lp.status == :Infeasible
+            # the polyhedron is empty
+            return false
+        elseif lp.status == :Optimal
+            objval = -lp.objval
+            if objval <= b[j]
+                # the constraint is redundant
+                non_redundant_indices = setdiff(non_redundant_indices, j)
+            else
+                # the constraint is not redundant
+                i = i+1
+            end
         else
-            # the constraint is not redundant
-            i = i+1
+            error("LP is not optimal; the status of the LP is $(lp.status)")
         end
     end
 
     deleteat!(P.constraints, setdiff(1:m, non_redundant_indices))
-    return P
+    return true
 end
 
 """

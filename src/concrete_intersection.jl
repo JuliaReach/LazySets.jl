@@ -311,79 +311,96 @@ Compute the intersection of a polytope in H-representation and a half-space.
 
 - `P`         -- polytope
 - `hs`        -- half-space
-- `backend`   -- (optional, default: `default_polyhedra_backend(P, N)`) the
-                 polyhedral computations backend, see
-                 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
-                 for further information
-- `prunefunc` -- (optional, default: `removehredundancy!`) function to
-                 post-process the polytope after adding the additional
-                 constraint
-
+- `backend`   -- (optional, default: `nothing`) the LP solver or the the
+                 polyhedral computations backend; its value is set internally,
+                 see see below in the Notes for details
+- `use_polyhedra_interface` -- (optional, default: `false`) if `true`, use the
+                 `Polyhedra` interface for the removal of constraints
 ### Output
 
 The same polytope in H-representation with just one more constraint.
 """
 function intersection(P::HPoly{N},
                       hs::HalfSpace{N};
-                      backend=default_polyhedra_backend(P, N),
-                      prunefunc=removehredundancy!) where {N<:Real}
-    return intersection(P, HPolyhedron([hs]), backend=backend, prunefunc=prunefunc)
+                      backend=nothing,
+                      use_polyhedra_interface=false) where {N<:Real}
+    return intersection(P, HPolyhedron([hs]), backend=backend, use_polyhedra_interface=use_polyhedra_interface)
 end
 
 # symmetric method
 function intersection(hs::HalfSpace{N},
                       P::HPoly{N};
-                      backend=default_polyhedra_backend(P, N),
-                      prunefunc=removehredundancy!) where {N<:Real}
-    return intersection(P, hs, backend=backend, prunefunc=prunefunc)
+                      backend=nothing,
+                      use_polyhedra_interface=false) where {N<:Real}
+    return intersection(P, hs, backend=backend, use_polyhedra_interface=use_polyhedra_interface)
 end
 
 """
     intersection(P1::HPoly{N},
                  P2::HPoly{N};
-                 backend=default_polyhedra_backend(P1, N),
-                 prunefunc=removehredundancy!) where {N<:Real}
+                 backend=nothing,
+                 use_polyhedra_interface=false) where {N<:Real}
 
 Compute the intersection of two polyhedra in H-representation.
 
 ### Input
 
-- `P1`        -- polytope
-- `P2`        -- polytope
-- `backend`   -- (optional, default: `default_polyhedra_backend(P1, N)`) the
-                 polyhedral computations backend, see
-                 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
-                 for further information
-- `prunefunc` -- (optional, default: `removehredundancy!`) function to
-                 post-process the polytope after adding the additional
-                 constraint
+- `P1`        -- polyhedron
+- `P2`        -- polyhedron
+- `backend`   -- (optional, default: `nothing`) the LP solver or the the
+                 polyhedral computations backend; its value is set internally,
+                 see see below in the Notes for details
+- `use_polyhedra_interface` -- (optional, default: `false`) if `true`, use the
+                 `Polyhedra` interface for the removal of constraints
 
 ### Output
 
-A new same polytope in H-representation with just one more constraint.
+A polyhedron resulting from the intersection of `P1` and `P2`, with the redundant
+constraints removed, or an empty set if the intersection is empty.
+
+### Notes
+
+The default value of the backend is set internally and depends on whether the
+Polyhedra backend is used or not. The default backends are `GLPKSolverLP()`
+and `default_polyhedra_backend(P1, N)` respectively.
+
+Note that if `use_polyhedra_interface` is set to `true`, there is no guarantee
+that the removal of constraints keep the set empty (see #1038 and Polyhedra#146),
+so it is better to check for emptiness of intersection before using this function
+in that case.
+
+The method implemented in this function can be used for any pair of sets that can
+handle the `constraints_list` option.
 """
 function intersection(P1::HPoly{N},
                       P2::HPoly{N};
-                      backend=default_polyhedra_backend(P1, N),
-                      prunefunc=removehredundancy!) where {N<:Real}
+                      backend=nothing,
+                      use_polyhedra_interface=false) where {N<:Real}
     if typeof(P1) == typeof(P2)
         HPOLY = typeof(P1)
     else
         # one of them must be a polytope, so the intersection will be bounded
         HPOLY = HPolytope{N}
     end
+
     # concatenate the linear constraints
-    Q = HPOLY([constraints_list(P1);
-               constraints_list(P2)])
+    Q = HPOLY([constraints_list(P1); constraints_list(P2)])
 
     # remove redundant constraints
-    if prunefunc == removehredundancy!
-        # convert to polyhedron
+    if use_polyhedra_interface
+        if backend == nothing
+            backend = default_polyhedra_backend(P1, N)
+        end
+        # convert to an hrep, remove the redundancies and convert back to HPOLY
         ph = polyhedron(Q; backend=backend)
-        prunefunc(ph)
+        removehredundancy!(ph)
         Q = convert(HPOLY, ph)
     else
-        prunefunc(Q)
+        if backend == nothing
+            backend = GLPKSolverLP()
+        end
+        # here, detection of empty intersection may be reported as an infeasible LP
+        remove_redundant_constraints!(Q, backend=backend)
     end
     return Q
 end
