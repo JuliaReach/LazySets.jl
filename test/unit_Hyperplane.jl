@@ -4,7 +4,8 @@ for N in [Float64, Rational{Int}, Float32]
 
     # normal constructor
     a = ones(N, 3)
-    hp = Hyperplane(a, N(5))
+    b = N(5)
+    hp = Hyperplane(a, b)
 
     # dimension
     @test dim(hp) == 3
@@ -28,11 +29,9 @@ for N in [Float64, Rational{Int}, Float32]
         @test σ(d4, hp) ∈ hp
     end
     # tests 1
-    a = ones(N, 3)
-    test_svec(Hyperplane(a, N(5)))
+    test_svec(hp)
     # tests 2
-    a = zeros(N, 3); a[3] = N(1)
-    test_svec(Hyperplane(a, N(5)))
+    test_svec(Hyperplane(N[0, 0, 1], b))
 
     # support vector in opposite direction
     hp2 = Hyperplane(N[1], N(1))
@@ -52,6 +51,10 @@ for N in [Float64, Rational{Int}, Float32]
     # constrained dimensions
     @test constrained_dimensions(Hyperplane(N[1, 0, 1], N(1))) == [1, 3]
     @test constrained_dimensions(Hyperplane(N[0, 1, 0], N(1))) == [2]
+
+    # constraints_list
+    @test ispermutation(constraints_list(hp),
+                        [HalfSpace(a, b), HalfSpace(a, -b)])
 
     # intersection emptiness
     b = BallInf(zeros(N, 3), N(1))

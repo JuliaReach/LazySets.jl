@@ -192,6 +192,7 @@ rand(::Type{Hyperplane})
 isbounded(::Hyperplane)
 isempty(::Hyperplane)
 constrained_dimensions(::Hyperplane{N}) where {N<:Real}
+constraints_list(::Hyperplane{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -280,6 +281,7 @@ rand(::Type{Line})
 isbounded(::Line)
 isempty(::Line)
 constrained_dimensions(::Line{N}) where {N<:Real}
+constraints_list(::Line{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
