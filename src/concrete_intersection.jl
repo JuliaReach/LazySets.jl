@@ -311,31 +311,28 @@ Compute the intersection of a polytope in H-representation and a half-space.
 
 - `P`         -- polytope
 - `hs`        -- half-space
-- `backend`   -- (optional, default: `default_polyhedra_backend(P, N)`) the
-                 polyhedral computations backend, see
-                 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
-                 for further information
-- `prunefunc` -- (optional, default: `removehredundancy!`) function to
-                 post-process the polytope after adding the additional
-                 constraint
-
+- `backend`   -- (optional, default: `nothing`) the LP solver or the the
+                 polyhedral computations backend; its value is set internally,
+                 see see below in the Notes for details
+- `use_polyhedra_interface` -- (optional, default: `false`) if `true`, use the
+                 `Polyhedra` interface for the removal of constraints
 ### Output
 
 The same polytope in H-representation with just one more constraint.
 """
 function intersection(P::HPoly{N},
                       hs::HalfSpace{N};
-                      backend=default_polyhedra_backend(P, N),
-                      prunefunc=removehredundancy!) where {N<:Real}
-    return intersection(P, HPolyhedron([hs]), backend=backend, prunefunc=prunefunc)
+                      backend=nothing,
+                      use_polyhedra_interface=false) where {N<:Real}
+    return intersection(P, HPolyhedron([hs]), backend=backend, use_polyhedra_interface=use_polyhedra_interface)
 end
 
 # symmetric method
 function intersection(hs::HalfSpace{N},
                       P::HPoly{N};
-                      backend=default_polyhedra_backend(P, N),
-                      prunefunc=removehredundancy!) where {N<:Real}
-    return intersection(P, hs, backend=backend, prunefunc=prunefunc)
+                      backend=nothing,
+                      use_polyhedra_interface=false) where {N<:Real}
+    return intersection(P, hs, backend=backend, use_polyhedra_interface=use_polyhedra_interface)
 end
 
 """
