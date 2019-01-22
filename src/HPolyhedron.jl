@@ -494,7 +494,7 @@ function remove_redundant_constraints!(P::PT;
             return false
         elseif lp.status == :Optimal
             objval = -lp.objval
-            if _leq(objval, b[j])
+            if objval <= b[j]
                 # the constraint is redundant
                 non_redundant_indices = setdiff(non_redundant_indices, j)
             else
