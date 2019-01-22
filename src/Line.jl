@@ -84,6 +84,30 @@ function Line(p::AbstractVector{N}, q::AbstractVector{N}) where {N<:Real}
     return Line(a, b)
 end
 
+
+# --- polyhedron interface functions ---
+
+
+"""
+    constraints_list(L::Line{N})::Vector{LinearConstraint{N}}
+        where {N<:Real}
+
+Return the list of constraints of a line.
+
+### Input
+
+- `L` -- line
+
+### Output
+
+A list containing two half-spaces.
+"""
+function constraints_list(L::Line{N}
+                         )::Vector{LinearConstraint{N}} where {N<:Real}
+    return _constraints_list_hyperplane(L.a, L.b)
+end
+
+
 # --- LazySet interface functions ---
 
 

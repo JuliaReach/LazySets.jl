@@ -30,6 +30,29 @@ struct Hyperplane{N<:Real} <: LazySet{N}
 end
 
 
+# --- polyhedron interface functions ---
+
+
+"""
+    constraints_list(hp::Hyperplane{N})::Vector{LinearConstraint{N}}
+        where {N<:Real}
+
+Return the list of constraints of a hyperplane.
+
+### Input
+
+- `hp` -- hyperplane
+
+### Output
+
+A list containing two half-spaces.
+"""
+function constraints_list(hp::Hyperplane{N}
+                         )::Vector{LinearConstraint{N}} where {N<:Real}
+    return _constraints_list_hyperplane(hp.a, hp.b)
+end
+
+
 # --- LazySet interface functions ---
 
 
@@ -365,4 +388,10 @@ We compute the point on the hyperplane as follows:
     x = zeros(N, dim(hp))
     x[nonzero_entry_a] = hp.b / hp.a[nonzero_entry_a]
     return x
+end
+
+# internal helper function
+function _constraints_list_hyperplane(a::AbstractVector{N}, b::N
+                                     )::Vector{LinearConstraint{N}} where {N<:Real}
+    return [HalfSpace(a, b), HalfSpace(a, -b)]
 end
