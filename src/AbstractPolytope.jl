@@ -124,9 +124,8 @@ function isempty(P::AbstractPolytope)::Bool
     return isempty(vertices_list(P))
 end
 
-# TODO simplify this
 function tosimplehrep(P::LazySet)
-    return tosimplehrep(HPolyhedron(constraints_list(P)))
+    return tosimplehrep(constraints_list(P))
 end
 
 function default_polyhedra_backend(P, N)
