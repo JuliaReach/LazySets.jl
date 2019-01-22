@@ -6,7 +6,8 @@ export Intersection,
        swap,
        use_precise_ρ,
        IntersectionArray,
-       array
+       array,
+       constraints_list
 
 """
     IntersectionCache
@@ -510,6 +511,11 @@ function ∈(x::AbstractVector{N}, cap::Intersection{N})::Bool where {N<:Real}
     return (x ∈ cap.X) && (x ∈ cap.Y)
 end
 
+function constraints_list(cap::Intersection{N, S1, S2}) where {N<:Real,
+                          S1<:AbstractPolytope{N}, S2<:AbstractPolytope{N}}
+    constraints = [constraints_list(cap.X); constraints_list(cap.Y)]
+    return remove_redundant_constraints!(constraints)
+end
 
 # --- Intersection functions ---
 

@@ -383,17 +383,37 @@ The tuple `(A, b)` where `A` is the matrix of normal directions and `b` are the
 offsets.
 """
 function tosimplehrep(P::HPoly{N}) where {N<:Real}
-    n = length(constraints_list(P))
+    return tosimplehrep(P.constraints)
+end
+
+"""
+    tosimplehrep(constraints::AbstractVector{LinearConstraint{N}}) where {N<:Real}
+
+Return the simple H-representation ``Ax ≤ b`` of a list of constraints.
+
+### Input
+
+- `constraints` -- a list of constraints
+
+### Output
+
+The tuple `(A, b)` where `A` is the matrix of normal directions and `b` are the
+offsets.
+"""
+function tosimplehrep(constraints::AbstractVector{LinearConstraint{N}}) where {N<:Real}
+    n = length(constraints)
     if n == 0
         A = Matrix{N}(undef, 0, 0)
         b = Vector{N}(undef, 0)
         return (A, b)
     end
-    A = zeros(N, n, dim(P))
+    A = zeros(N, n, dim(first(constraints)))
     b = zeros(N, n)
-    for (i, Pi) in enumerate(constraints_list(P))
-        A[i, :] = Pi.a
-        b[i] = Pi.b
+    @inbounds begin
+        for (i, Pi) in enumerate(constraints)
+            A[i, :] = Pi.a
+            b[i] = Pi.b
+        end
     end
     return (A, b)
 end
@@ -476,8 +496,40 @@ FAQ](https://www.cs.mcgill.ca/~fukuda/soft/polyfaq/node24.html).
 """
 function remove_redundant_constraints!(P::PT;
                                        backend=GLPKSolverLP())::Bool where {N, PT<:HPoly{N}}
+    remove_redundant_constraints!(P.constraints, backend=backend)
+end
 
-    A, b = tosimplehrep(P)
+"""
+     remove_redundant_constraints!(constraints::Vector{LinearConstraint{N}};
+                                   backend=GLPKSolverLP())::Bool where {N}
+
+Remove the redundant constraints of a given list of linear constraints; the list
+is updated in-place.
+
+### Input
+
+- `constraints` -- list of constraints
+- `backend`     -- (optional, default: `GLPKSolverLP`) the numeric LP solver backend
+
+### Output
+
+`true` if the method was successful and the list of constraints `constraints` is
+modified by removing the redundant constraints, and `false` if the constraints
+are infeasible.
+
+### Algorithm
+
+If there are `m` constraints in `n` dimensions, this function checks one by one
+if each of the `m` constraints is implied by the remaining ones.
+To check if the `k`-th constraint is redundant, an LP is formulated.
+
+For details, see [Fukuda's Polyhedra
+FAQ](https://www.cs.mcgill.ca/~fukuda/soft/polyfaq/node24.html).
+"""
+function remove_redundant_constraints!(constraints::AbstractVector{LinearConstraint{N}};
+                                       backend=GLPKSolverLP())::Bool where {N}
+
+    A, b = tosimplehrep(constraints)
     m, n = size(A)
     non_redundant_indices = 1:m
 
@@ -506,8 +558,18 @@ function remove_redundant_constraints!(P::PT;
         end
     end
 
-    deleteat!(P.constraints, setdiff(1:m, non_redundant_indices))
+    deleteat!(constraints, setdiff(1:m, non_redundant_indices))
     return true
+end
+
+function remove_redundant_constraints(constraints::AbstractVector{LinearConstraint{N}};
+                                      backend=GLPKSolverLP())::Bool where {N}
+    constraints_copy = copy(constraints)
+    if remove_redundant_constraints!(constraints_copy, backend=backend)
+        return constraints_copy
+    else # the constraints are infeasible
+        return N[]
+    end
 end
 
 """
