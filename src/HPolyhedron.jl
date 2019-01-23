@@ -8,7 +8,6 @@ export HPolyhedron,
        dim, σ, ∈,
        addconstraint!,
        constraints_list,
-       tosimplehrep,
        tohrep, tovrep,
        convex_hull,
        cartesian_product,
@@ -366,24 +365,6 @@ The list of constraints of the polyhedron.
 function constraints_list(P::HPoly{N}
                          )::Vector{LinearConstraint{N}} where {N<:Real}
     return P.constraints
-end
-
-"""
-    tosimplehrep(P::HPoly{N}) where {N}
-
-Return the simple H-representation ``Ax ≤ b`` of a polyhedron.
-
-### Input
-
-- `P` -- polyhedron
-
-### Output
-
-The tuple `(A, b)` where `A` is the matrix of normal directions and `b` are the
-offsets.
-"""
-function tosimplehrep(P::HPoly{N}) where {N<:Real}
-    return tosimplehrep(P.constraints)
 end
 
 """
