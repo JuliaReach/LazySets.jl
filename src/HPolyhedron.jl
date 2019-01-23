@@ -566,7 +566,7 @@ end
     remove_redundant_constraints(constraints::AbstractVector{LinearConstraint{N}};
                                  backend=GLPKSolverLP())::Union{AbstractVector{LinearConstraint{N}}, EmptySet{N}} where {N}
 
-Remove the redundant constraints of a given list of linear constraints
+Remove the redundant constraints of a given list of linear constraints.
 
 ### Input
 
