@@ -10,7 +10,8 @@ export LazySet,
        an_element,
        isbounded, isbounded_unit_dimensions,
        neutral,
-       absorbing
+       absorbing,
+       tosimplehrep
 
 """
     LazySet{N}
