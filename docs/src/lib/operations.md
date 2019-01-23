@@ -149,6 +149,7 @@ dim(::IntersectionArray)
 isbounded(::IntersectionArray)
 ∈(::AbstractVector{N}, ::IntersectionArray{N}) where {N<:Real}
 array(::IntersectionArray{N, S}) where {N<:Real, S<:LazySet{N}}
+constraints_list(::IntersectionArray{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

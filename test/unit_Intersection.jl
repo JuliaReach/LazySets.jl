@@ -71,6 +71,13 @@ for N in [Float64, Rational{Int}, Float32]
     # constructor with size hint and type
     IntersectionArray(10, N)
 
+    # constraints_list for polytopic intersection
+    @test ispermutation(constraints_list(IA),
+                        [HalfSpace{Float64}(N[1, 0], N(2)),
+                         HalfSpace{Float64}(N[0, 1], N(2)),
+                         HalfSpace{Float64}(N[-1, 0], N(0)),
+                         HalfSpace{Float64}(N[0, -1], N(0))])
+
     # ================
     # common functions
     # ================

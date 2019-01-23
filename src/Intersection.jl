@@ -511,12 +511,37 @@ function ∈(x::AbstractVector{N}, cap::Intersection{N})::Bool where {N<:Real}
     return (x ∈ cap.X) && (x ∈ cap.Y)
 end
 
+"""
+    constraints_list(cap::Intersection{N, S1, S2}) where {N<:Real,
+                     S1<:AbstractPolytope{N}, S2<:AbstractPolytope{N}}
+
+Return the list of constraints of an intersection of two (polyhedral) sets.
+
+### Input
+
+- `cap` -- intersection of two (polyhedral) sets
+
+### Output
+
+The list of constraints of the intersection.
+
+### Notes
+
+We assume that the underlying sets are polyhedral, i.e., offer a method
+`constraints_list`.
+
+### Algorithm
+
+We create the polyhedron from the `constraints_list`s of the sets and remove
+redundant constraints.
+"""
 function constraints_list(cap::Intersection{N, S1, S2}) where {N<:Real,
                           S1<:AbstractPolytope{N}, S2<:AbstractPolytope{N}}
     constraints = [constraints_list(cap.X); constraints_list(cap.Y)]
     remove_redundant_constraints!(constraints)
     return constraints
 end
+
 
 # --- Intersection functions ---
 
@@ -709,6 +734,39 @@ function ∈(x::AbstractVector{N}, ia::IntersectionArray{N})::Bool where {N<:Rea
         end
     end
     return true
+end
+
+"""
+    constraints_list(ia::IntersectionArray{N}) where {N<:Real}
+
+Return the list of constraints of an intersection of a finite number of
+(polyhedral) sets.
+
+### Input
+
+- `ia` -- intersection of a finite number of (polyhedral) sets
+
+### Output
+
+The list of constraints of the intersection.
+
+### Notes
+
+We assume that the underlying sets are polyhedral, i.e., offer a method
+`constraints_list`.
+
+### Algorithm
+
+We create the polyhedron from the `constraints_list`s of the sets and remove
+redundant constraints.
+"""
+function constraints_list(ia::IntersectionArray{N}) where {N<:Real}
+    constraints = Vector{LinearConstraint{N}}()
+    for X in array(ia)
+        append!(constraints, constraints_list(X))
+    end
+    remove_redundant_constraints!(constraints)
+    return constraints
 end
 
 # ==================================
