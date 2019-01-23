@@ -1,7 +1,8 @@
 import Base: *, ∈, isempty
 
 export LinearMap,
-       an_element
+       an_element,
+       constraints_list
 
 """
     LinearMap{N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} <: LazySet{N}
@@ -316,7 +317,7 @@ end
 """
     vertices_list(lm::LinearMap{N})::Vector{Vector{N}} where {N<:Real}
 
-Return the list of vertices of a (polytopic) linear map.
+Return the list of vertices of a (polyhedral) linear map.
 
 ### Input
 
@@ -328,7 +329,7 @@ A list of vertices.
 
 ### Algorithm
 
-We assume that the underlying set `X` is polytopic.
+We assume that the underlying set `X` is polyhedral.
 Then the result is just the linear map applied to the vertices of `X`.
 """
 function vertices_list(lm::LinearMap{N})::Vector{Vector{N}} where {N<:Real}
@@ -348,4 +349,32 @@ function vertices_list(lm::LinearMap{N})::Vector{Vector{N}} where {N<:Real}
     end
 
     return vlist
+end
+
+"""
+    constraints_list(lm::LinearMap{N, S}) where
+        {N<:Real, S<:Union{AbstractPolytope{N}, HPolyhedron{N}}}
+
+Return the list of constraints of a (polyhedral) linear map.
+
+### Input
+
+- `lm` -- linear map
+
+### Output
+
+The list of constraints of the linear map.
+
+### Notes
+
+We assume that the underlying set `X` is polyhedral, i.e., offers a method
+`constraints_list(X)`.
+
+### Algorithm
+
+We fall back to a concrete set representation and apply `linear_map`.
+"""
+function constraints_list(lm::LinearMap{N, S}) where
+        {N<:Real, S<:Union{AbstractPolytope{N}, HPolyhedron{N}}}
+    return constraints_list(linear_map(lm.M, lm.X))
 end
