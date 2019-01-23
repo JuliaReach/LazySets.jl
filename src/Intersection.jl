@@ -514,7 +514,8 @@ end
 function constraints_list(cap::Intersection{N, S1, S2}) where {N<:Real,
                           S1<:AbstractPolytope{N}, S2<:AbstractPolytope{N}}
     constraints = [constraints_list(cap.X); constraints_list(cap.Y)]
-    return remove_redundant_constraints!(constraints)
+    remove_redundant_constraints!(constraints)
+    return constraints
 end
 
 # --- Intersection functions ---
