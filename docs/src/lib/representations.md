@@ -438,7 +438,6 @@ dim(::HPoly{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::HPoly{N}) where {N<:Real}
 addconstraint!(::HPoly{N}, ::LinearConstraint{N}) where {N<:Real}
 constraints_list(::HPoly{N}) where {N<:Real}
-tosimplehrep(::HPoly{N}) where {N<:Real}
 tohrep(::HPoly{N}) where {N<:Real}
 isempty(::HPoly{N}) where {N<:Real}
 cartesian_product(::HPoly{N}, ::HPoly{N}) where {N<:Real}
