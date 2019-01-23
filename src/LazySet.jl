@@ -320,3 +320,26 @@ completely independent object. See the documentation of `?deepcopy` for further
 details.
 """
 copy(S::LazySet) = deepcopy(S)
+
+"""
+    tosimplehrep(S::LazySet)
+
+Return the simple H-representation ``Ax ≤ b`` of a set from its list of
+constraints.
+
+### Input
+
+- `S` -- set
+
+### Output
+
+The tuple `(A, b)` where `A` is the matrix of normal directions and `b` are the
+offsets.
+
+### Notes
+
+This is a fallback implementation that works only for those sets that can be
+represented by a list of linear constraints, and that this list can be calculated
+through the `constraints_list` function.
+"""
+tosimplehrep(S::LazySet) = tosimplehrep(constraints_list(S))

@@ -124,10 +124,6 @@ function isempty(P::AbstractPolytope)::Bool
     return isempty(vertices_list(P))
 end
 
-function tosimplehrep(P::LazySet)
-    return tosimplehrep(constraints_list(P))
-end
-
 function default_polyhedra_backend(P, N)
     @assert isdefined(@__MODULE__, :Polyhedra) "this function needs the package 'Polyhedra' to be loaded"
     error("no default backend for numeric type $N")

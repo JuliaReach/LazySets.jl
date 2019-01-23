@@ -562,13 +562,33 @@ function remove_redundant_constraints!(constraints::AbstractVector{LinearConstra
     return true
 end
 
+"""
+    remove_redundant_constraints(constraints::AbstractVector{LinearConstraint{N}};
+                                 backend=GLPKSolverLP())::Union{AbstractVector{LinearConstraint{N}}, EmptySet{N}} where {N}
+
+Remove the redundant constraints of a given list of linear constraints
+
+### Input
+
+- `constraints` -- list of constraints
+- `backend`     -- (optional, default: `GLPKSolverLP`) the numeric LP solver backend
+
+### Output
+
+A listr of equivalent constraints but removing the redundant ones, or an empty set
+if the given constraints are infeasible.
+
+### Algorithm
+
+See [`remove_redundant_constraints!`](@ref) for details.
+"""
 function remove_redundant_constraints(constraints::AbstractVector{LinearConstraint{N}};
-                                      backend=GLPKSolverLP())::Bool where {N}
+                                      backend=GLPKSolverLP())::Union{AbstractVector{LinearConstraint{N}}, EmptySet{N}} where {N}
     constraints_copy = copy(constraints)
     if remove_redundant_constraints!(constraints_copy, backend=backend)
         return constraints_copy
     else # the constraints are infeasible
-        return N[]
+        return EmptySet{N}()
     end
 end
 
