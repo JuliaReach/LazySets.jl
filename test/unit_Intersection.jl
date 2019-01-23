@@ -27,6 +27,13 @@ for N in [Float64, Rational{Int}, Float32]
     @test isempty_known(I)
     @test !isempty(I)
 
+    # constraints_list for polytopic intersection
+    @test ispermutation(constraints_list(I),
+                        [HalfSpace{Float64}(N[1, 0], N(2)),
+                         HalfSpace{Float64}(N[0, 1], N(2)),
+                         HalfSpace{Float64}(N[-1, 0], N(0)),
+                         HalfSpace{Float64}(N[0, -1], N(0))])
+
     # =================
     # IntersectionArray
     # =================
