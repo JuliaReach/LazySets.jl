@@ -575,7 +575,7 @@ Remove the redundant constraints of a given list of linear constraints.
 
 ### Output
 
-A listr of equivalent constraints but removing the redundant ones, or an empty set
+The list of constraints with the redundant ones removed, or an empty set
 if the given constraints are infeasible.
 
 ### Algorithm
