@@ -338,8 +338,9 @@ offsets.
 
 ### Notes
 
-This is a fallback implementation that works only for those sets that can be
-represented by a list of linear constraints, and that this list can be calculated
-through the `constraints_list` function.
+This function uses `constraints_list(S)`. It is a fallback implementation that
+works only for those sets that can be represented exactly by a list of linear
+constraints, and that this list is available through the `constraints_list(S)`
+function.
 """
 tosimplehrep(S::LazySet) = tosimplehrep(constraints_list(S))
