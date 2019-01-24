@@ -773,38 +773,70 @@ function singleton_list(P::HPolyhedron{N}) where {N<:Real}
 end
 
 """
-   isempty(P::HPoly{N}; [solver]=GLPKSolverLP())::Bool where {N<:Real}
+   isempty(P::HPoly{N}, witness::Bool=false;
+           [use_polyhedra_interface]::Bool=false, [solver]=GLPKSolverLP(),
+           [backend]=nothing
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
 Determine whether a polyhedron is empty.
 
 ### Input
 
 - `P`       -- polyhedron
-- `backend` -- (optional, default: `default_polyhedra_backend(P, N)`)
-               the polyhedral computations backend
-- `solver`  -- (optional, default: `GLPKSolverLP()`) LP solver backend
+- `witness` -- (optional, default: `false`) compute a witness if activated
+- `use_polyhedra_interface` -- (optional, default: `false`) if `true`, we use
+               the `Polyhedra` interface for the emptiness test
+- `solver`  -- (optional, default: `GLPKSolverLP()`) LP-solver backend
+- `backend` -- (optional, default: `default_polyhedra_backend(P, N)`) backend
+               for polyhedral computations in `Polyhedra`
 
 ### Output
 
-`true` if and only if the constraints are inconsistent.
-
-### Algorithm
-
-This function uses `Polyhedra.isempty` which evaluates the feasibility of the
-LP whose feasible set is determined by the set of constraints and whose
-objective function is zero.
+* If `witness` option is deactivated: `true` iff ``P = ∅``
+* If `witness` option is activated:
+  * `(true, [])` iff ``P = ∅``
+  * `(false, v)` iff ``P ≠ ∅`` and ``v ∈ P``
 
 ### Notes
 
-This implementation uses `GLPKSolverLP` as linear programming backend by
-default.
+Witness production is not supported if `use_polyhedra_interface` is `true`.
+
+### Algorithm
+
+The algorithm sets up a feasibility LP for the constraints of `P`.
+If `use_polyhedra_interface` is `true`, we call `Polyhedra.isempty`.
+Otherwise, we set up the LP internally.
 """
-function isempty(P::HPoly{N};
-                 backend=default_polyhedra_backend(P, N),
-                 solver=GLPKSolverLP())::Bool where {N<:Real}
-    @assert isdefined(@__MODULE__, :Polyhedra) "the function `isempty` needs the " *
-                                        "package 'Polyhedra' to be loaded"
-    return Polyhedra.isempty(polyhedron(P; backend=backend), solver)
+function isempty(P::HPoly{N},
+                 witness::Bool=false;
+                 use_polyhedra_interface::Bool=false,
+                 solver=GLPKSolverLP(),
+                 backend=default_polyhedra_backend(P, N)
+                )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    if use_polyhedra_interface
+        @assert isdefined(@__MODULE__, :Polyhedra) "the function `isempty` " *
+            "with the given options requires the package 'Polyhedra'"
+        result = Polyhedra.isempty(polyhedron(P; backend=backend), solver)
+        if result
+            return witness ? (true, N[]) : true
+        elseif witness
+            error("witness production is not supported yet")
+        else
+            return false
+        end
+    else
+        A, b = tosimplehrep(P)
+        lbounds, ubounds = -Inf, Inf
+        sense = '<'
+        obj = zeros(N, size(A, 2))
+        lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
+        if lp.status == :Optimal
+            return witness ? (false, lp.sol) : false
+        elseif lp.status == :Infeasible
+            return witness ? (true, N[]) : true
+        end
+        error("LP returned status $(lp.status) unexpectedly")
+    end
 end
 
 convert(::Type{HPolytope}, P::HPolyhedron{N}) where {N<:Real} =

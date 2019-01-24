@@ -229,6 +229,7 @@ an_element(::LinearMap{N}) where {N<:Real}
 isbounded(::LinearMap)
 isempty(::LinearMap)
 vertices_list(::LinearMap{N}) where {N<:Real}
+constraints_list(::LinearMap{N, S}) where {N<:Real, S<:Union{AbstractPolytope{N}, HPolyhedron{N}}}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

@@ -439,7 +439,7 @@ dim(::HPoly{N}) where {N<:Real}
 addconstraint!(::HPoly{N}, ::LinearConstraint{N}) where {N<:Real}
 constraints_list(::HPoly{N}) where {N<:Real}
 tohrep(::HPoly{N}) where {N<:Real}
-isempty(::HPoly{N}) where {N<:Real}
+isempty(::HPoly{N}, ::Bool=false) where {N<:Real}
 cartesian_product(::HPoly{N}, ::HPoly{N}) where {N<:Real}
 linear_map(M::AbstractMatrix{N}, P::PT) where {N<:Real, PT<:HPoly{N}}
 tovrep(::HPoly{N}) where {N<:Real}

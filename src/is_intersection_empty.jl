@@ -810,7 +810,7 @@ end
                           X::LazySet{N},
                           witness::Bool=false;
                           solver=GLPKSolverLP(method=:Simplex)
-                         ) where {N<:Real}
+                         )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
 Check whether two polyhedra do not intersect.
 
@@ -839,8 +839,7 @@ For `algorithm == "sufficient"`, witness production is not supported.
 
 ### Algorithm
 
-For `algorithm == "exact"`, we set up a feasibility LP for the union of
-constraints of `P` and `X`.
+For `algorithm == "exact"`, see @ref(isempty(P::HPoly{N}, ::Bool)).
 
 For `algorithm == "sufficient"`, we rely on the intersection check between the
 set `X` and each constraint in `P`.
@@ -851,7 +850,7 @@ function is_intersection_empty(P::Union{HPolyhedron{N}, AbstractPolytope{N}},
                                witness::Bool=false;
                                solver=GLPKSolverLP(method=:Simplex),
                                algorithm="exact"
-                              ) where {N<:Real}
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     if algorithm == "sufficient"
         # sufficient check for empty intersection using half-space checks
         for Hi in constraints_list(P)
@@ -868,21 +867,8 @@ function is_intersection_empty(P::Union{HPolyhedron{N}, AbstractPolytope{N}},
         return false
     elseif algorithm == "exact"
         # exact check for empty intersection using a feasibility LP
-        A1, b1 = tosimplehrep(P)
-        A2, b2 = tosimplehrep(X)
-        A = [A1; A2]
-        b = [b1; b2]
-
-        lbounds, ubounds = -Inf, Inf
-        sense = '<'
-        obj = zeros(N, size(A, 2))
-        lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
-        if lp.status == :Optimal
-            return witness ? (false, lp.sol) : false
-        elseif lp.status == :Infeasible
-            return witness ? (true, N[]) : true
-        end
-        error("LP returned status $(lp.status) unexpectedly")
+        return isempty(HPolyhedron([constraints_list(P); constraints_list(X)]),
+                       witness; solver=solver)
     else
         error("algorithm $algorithm unknown")
     end
