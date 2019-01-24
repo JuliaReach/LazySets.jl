@@ -167,7 +167,7 @@ if test_suite_polyhedra
         result = remove_redundant_constraints!(constraints)
         @test result
         @test ispermutation(constraints, constraints2)
-        constraints = [HalfSpace(N[1], N(0)), HalfSpace(N[-1], N(-1))]
+        constraints = [HalfSpace(N[1], N(0)), HalfSpace(N[-1], N(-1)), HalfSpace(N[-1], N(-1))]
         result = remove_redundant_constraints!(constraints)
         @test !result
 
