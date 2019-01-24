@@ -1,3 +1,5 @@
+import LazySets.Approximations.BoxDiagDirections
+
 for N in [Float64, Rational{Int}, Float32]
     # π/2 trigonometric rotation
     b = BallInf(N[1, 2], N(1))
@@ -83,4 +85,21 @@ for N in [Float64, Rational{Int}, Float32]
     M = zeros(N, 2, 2)
     vlist = vertices_list(LinearMap(M, b))
     @test vlist == [zeros(N, 2)]
+
+    if test_suite_polyhedra
+        # constraints_list
+        b = BallInf(N[0, 0], N(1))
+        M = N[2 3; 1 2]  # invertible
+        lm1 = LinearMap(M, b)
+        clist = constraints_list(lm1)
+        p1 = HPolygon(clist)
+        M = N[2 3; 0 0]  # not invertible
+        lm2 = LinearMap(M, b)
+        clist = constraints_list(lm2)
+        p2 = HPolygon(clist)
+        for d in BoxDiagDirections{N}(2)
+            @test ρ(d, lm1) ≈ ρ(d, p1)
+            @test ρ(d, lm2) ≈ ρ(d, p2)
+        end
+    end
 end
