@@ -512,8 +512,7 @@ function ∈(x::AbstractVector{N}, cap::Intersection{N})::Bool where {N<:Real}
 end
 
 """
-    constraints_list(cap::Intersection{N, S1, S2}) where {N<:Real,
-                     S1<:AbstractPolytope{N}, S2<:AbstractPolytope{N}}
+    constraints_list(cap::Intersection{N}) where {N<:Real}
 
 Return the list of constraints of an intersection of two (polyhedral) sets.
 
@@ -539,8 +538,7 @@ This function ignores the boolean output from the in-place `remove_redundant_con
 which may inform the user that the constraints are infeasible. In that case, the
 list of constraints at the moment when the infeasibility was detected is returned.
 """
-function constraints_list(cap::Intersection{N, S1, S2}) where {N<:Real,
-                          S1<:AbstractPolytope{N}, S2<:AbstractPolytope{N}}
+function constraints_list(cap::Intersection{N}) where {N<:Real}
     constraints = [constraints_list(cap.X); constraints_list(cap.Y)]
     remove_redundant_constraints!(constraints)
     return constraints
