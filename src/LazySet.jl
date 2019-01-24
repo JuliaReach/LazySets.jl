@@ -10,7 +10,8 @@ export LazySet,
        an_element,
        isbounded, isbounded_unit_dimensions,
        neutral,
-       absorbing
+       absorbing,
+       tosimplehrep
 
 """
     LazySet{N}
@@ -320,3 +321,27 @@ completely independent object. See the documentation of `?deepcopy` for further
 details.
 """
 copy(S::LazySet) = deepcopy(S)
+
+"""
+    tosimplehrep(S::LazySet)
+
+Return the simple H-representation ``Ax ≤ b`` of a set from its list of
+constraints.
+
+### Input
+
+- `S` -- set
+
+### Output
+
+The tuple `(A, b)` where `A` is the matrix of normal directions and `b` are the
+offsets.
+
+### Notes
+
+This function uses `constraints_list(S)`. It is a fallback implementation that
+works only for those sets that can be represented exactly by a list of linear
+constraints, which is available through the `constraints_list(S)`
+function.
+"""
+tosimplehrep(S::LazySet) = tosimplehrep(constraints_list(S))

@@ -120,6 +120,7 @@ dim(::Intersection)
 isbounded(::Intersection)
 isempty(::Intersection)
 ∈(::AbstractVector{N}, ::Intersection{N}) where {N<:Real}
+constraints_list(::Intersection{N}) where {N<:Real}
 isempty_known(::Intersection)
 set_isempty!(::Intersection, ::Bool)
 swap(::Intersection)
@@ -149,6 +150,7 @@ dim(::IntersectionArray)
 isbounded(::IntersectionArray)
 ∈(::AbstractVector{N}, ::IntersectionArray{N}) where {N<:Real}
 array(::IntersectionArray{N, S}) where {N<:Real, S<:LazySet{N}}
+constraints_list(::IntersectionArray{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
