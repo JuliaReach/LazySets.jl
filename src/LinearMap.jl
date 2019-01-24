@@ -352,8 +352,7 @@ function vertices_list(lm::LinearMap{N})::Vector{Vector{N}} where {N<:Real}
 end
 
 """
-    constraints_list(lm::LinearMap{N, S}) where
-        {N<:Real, S<:Union{AbstractPolytope{N}, HPolyhedron{N}}}
+    constraints_list(lm::LinearMap{N}) where {N<:Real}
 
 Return the list of constraints of a (polyhedral) linear map.
 
@@ -374,7 +373,6 @@ We assume that the underlying set `X` is polyhedral, i.e., offers a method
 
 We fall back to a concrete set representation and apply `linear_map`.
 """
-function constraints_list(lm::LinearMap{N, S}) where
-        {N<:Real, S<:Union{AbstractPolytope{N}, HPolyhedron{N}}}
+function constraints_list(lm::LinearMap{N}) where {N<:Real}
     return constraints_list(linear_map(lm.M, lm.X))
 end
