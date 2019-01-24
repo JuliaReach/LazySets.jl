@@ -431,11 +431,12 @@ Remove the redundant constraints in a polyhedron in H-representation.
 ### Output
 
 A polyhedron equivalent to `P` but with no redundant constraints, or an empty set
-if `P` is detected to be empty (which happens if the constraints are infeasible).
+if `P` is detected to be empty, which may happen if the constraints are infeasible.
 
 ### Algorithm
 
-See [`remove_redundant_constraints!`](@ref) for details.
+See [`remove_redundant_constraints!(::Vector{LinearConstraint{N}})`](@ref) for
+details.
 """
 function remove_redundant_constraints(P::PT;
                                       backend=GLPKSolverLP())::Union{PT, EmptySet{N}} where {N, PT<:HPoly{N}}
@@ -462,18 +463,13 @@ is updated in-place.
 ### Output
 
 `true` if the method was successful and the polyhedron `P` is modified by
-removing its redundant constraints, and `false` if `P` is detected to be empty
-(which happens if the constraints are infeasible).
+removing its redundant constraints, and `false` if `P` is detected to be empty,
+which may happen if the constraints are infeasible.
 
 ### Algorithm
 
-If the polyhedron `P` has `m` constraints and its dimension is `n`,
-this function checks one by one if each of the `m` constraints is
-implied by the remaining ones. To check if the `k`-th constraint
-is redundant, an LP is formulated.
-
-For details, see [Fukuda's Polyhedra
-FAQ](https://www.cs.mcgill.ca/~fukuda/soft/polyfaq/node24.html).
+See [`remove_redundant_constraints!(::Vector{LinearConstraint{N}})`](@ref) for
+details.
 """
 function remove_redundant_constraints!(P::PT;
                                        backend=GLPKSolverLP())::Bool where {N, PT<:HPoly{N}}
@@ -502,7 +498,15 @@ are infeasible.
 
 If there are `m` constraints in `n` dimensions, this function checks one by one
 if each of the `m` constraints is implied by the remaining ones.
-To check if the `k`-th constraint is redundant, an LP is formulated.
+
+To check if the `k`-th constraint is redundant, an LP is formulated using the
+constraints that have not yet being removed. If, at an intermediate step, it is
+detected that a subgruop of the constraints is infeasible, this function returns
+`false`; if the calculation finished successfully it returns `true`.
+
+Note that `false` does not imply that the set of constraints is empty; for example,
+`x <= 0 && x >= 0` will return `true` without removing any constraint. To check
+if the constraints are infeasible use `isempty(HPolyhedron(constraints)`.
 
 For details, see [Fukuda's Polyhedra
 FAQ](https://www.cs.mcgill.ca/~fukuda/soft/polyfaq/node24.html).
