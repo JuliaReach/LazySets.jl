@@ -505,7 +505,7 @@ detected that a subgruop of the constraints is infeasible, this function returns
 `false`; if the calculation finished successfully it returns `true`.
 
 Note that `false` does not imply that the set of constraints is empty; for example,
-`x <= 0 && x >= 0` will return `true` without removing any constraint. To check
+`x <= 0 && x >= 1` will return `true` without removing any constraint. To check
 if the constraints are infeasible use `isempty(HPolyhedron(constraints)`.
 
 For details, see [Fukuda's Polyhedra
