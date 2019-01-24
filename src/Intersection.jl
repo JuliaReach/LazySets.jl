@@ -535,10 +535,9 @@ We assume that the underlying sets are polyhedral, i.e., offer a method
 We create the polyhedron by taking the intersection of the `constraints_list`s of
 the sets and remove redundant constraints.
 
-If the constraints are infeasible, which may be detected by the in-place version
-of this function, then the constraints returned when the infeasibility was detected.
-If you want to check for feasibility use the output flag of
-`remove_redundant_constraints!`.
+This function ignores the boolean output from the in-place `remove_redundant_constraints!`,
+which may inform the user that the constraints are infeasible. In that case, the
+list of constraints at the moment when the infeasibility was detected is returned.
 """
 function constraints_list(cap::Intersection{N, S1, S2}) where {N<:Real,
                           S1<:AbstractPolytope{N}, S2<:AbstractPolytope{N}}
