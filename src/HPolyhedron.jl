@@ -504,9 +504,9 @@ constraints that have not yet being removed. If, at an intermediate step, it is
 detected that a subgruop of the constraints is infeasible, this function returns
 `false`; if the calculation finished successfully it returns `true`.
 
-Note that `false` does not imply that the set of constraints is empty; for example,
-`x <= 0 && x >= 1` will return `true` without removing any constraint. To check
-if the constraints are infeasible use `isempty(HPolyhedron(constraints)`.
+Note that the constraints being infeasible does not imply that `false` is returned.
+For example, `x <= 0 && x >= 1` will return `true` without removing any constraint.
+To check if the constraints are infeasible use `isempty(HPolyhedron(constraints)`.
 
 For details, see [Fukuda's Polyhedra
 FAQ](https://www.cs.mcgill.ca/~fukuda/soft/polyfaq/node24.html).
