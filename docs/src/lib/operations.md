@@ -120,6 +120,7 @@ dim(::Intersection)
 isbounded(::Intersection)
 isempty(::Intersection)
 ∈(::AbstractVector{N}, ::Intersection{N}) where {N<:Real}
+constraints_list(::Intersection{N}) where {N<:Real}
 isempty_known(::Intersection)
 set_isempty!(::Intersection, ::Bool)
 swap(::Intersection)

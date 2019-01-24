@@ -435,8 +435,9 @@ if `P` is detected to be empty, which may happen if the constraints are infeasib
 
 ### Algorithm
 
-See [`remove_redundant_constraints!(::Vector{LinearConstraint{N}})`](@ref) for
-details.
+See
+[`remove_redundant_constraints!(::Vector{LinearConstraint{N}}) where {N<:Real}`](@ref)
+for details.
 """
 function remove_redundant_constraints(P::PT;
                                       backend=GLPKSolverLP())::Union{PT, EmptySet{N}} where {N, PT<:HPoly{N}}
@@ -468,8 +469,9 @@ which may happen if the constraints are infeasible.
 
 ### Algorithm
 
-See [`remove_redundant_constraints!(::Vector{LinearConstraint{N}})`](@ref) for
-details.
+See
+[`remove_redundant_constraints!(::Vector{LinearConstraint{N}}) where {N<:Real}`](@ref)
+for details.
 """
 function remove_redundant_constraints!(P::PT;
                                        backend=GLPKSolverLP())::Bool where {N, PT<:HPoly{N}}
@@ -565,7 +567,9 @@ if the given constraints are infeasible.
 
 ### Algorithm
 
-See [`remove_redundant_constraints!`](@ref) for details.
+See
+[`remove_redundant_constraints!(::AbstractVector{LinearConstraint{N}}) where {N<:Real}`](@ref)
+for details.
 """
 function remove_redundant_constraints(constraints::AbstractVector{LinearConstraint{N}};
                                       backend=GLPKSolverLP())::Union{AbstractVector{LinearConstraint{N}}, EmptySet{N}} where {N}
