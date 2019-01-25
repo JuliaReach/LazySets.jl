@@ -110,3 +110,16 @@ for N in [Float64, Rational{Int}, Float32]
     V = linear_map(M, LinearMap(M, b))
     @test M * M * an_element(b) ∈ V
 end
+
+# tests that only work with Float64
+for N in [Float64]
+    b = BallInf(N[0, 0], N(1))
+
+    if test_suite_polyhedra
+        # concrete intersection with lazy linear map
+        M = N[2 3; 1 2]
+        L = M * b
+        Lb = intersection(L, b)
+        @test M * an_element(b) ∈ Lb
+    end
+end

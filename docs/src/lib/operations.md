@@ -233,6 +233,7 @@ isempty(::LinearMap)
 vertices_list(::LinearMap{N}) where {N<:Real}
 constraints_list(::LinearMap{N}) where {N<:Real}
 linear_map(::AbstractMatrix{N}, ::LinearMap{N}) where {N}
+intersection(::LinearMap{N}, ::LazySet{N}) where {N}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
