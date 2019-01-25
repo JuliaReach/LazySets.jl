@@ -63,7 +63,7 @@ for N in [Float64, Rational{Int}, Float32]
     # isempty
     @test !isempty(lm)
 
-    # an_element functionintersection
+    # an_element function
     lm = N(2) * BallInf(N[0, 0], N(1))
     an_element(lm)
     @test an_element(lm) ∈ lm
@@ -101,8 +101,14 @@ for N in [Float64, Rational{Int}, Float32]
             @test ρ(d, lm1) ≈ ρ(d, p1)
             @test ρ(d, lm2) ≈ ρ(d, p2)
         end
-        
-        
+    end
+end
+
+# tests that only work with Float64
+for N in [Float64]
+    b = BallInf(N[0, 0], N(1))
+
+    if test_suite_polyhedra
         # concrete intersection with lazy linear map
         M = N[2 3; 1 2]
         L = M * b
