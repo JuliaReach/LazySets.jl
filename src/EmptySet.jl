@@ -230,7 +230,7 @@ end
 """
     linear_map(M::AbstractMatrix{N}, ∅::EmptySet{N}) where {N}
 
-Return the linear map of an empt set
+Return the linear map of an empty set.
 
 ### Input
 
