@@ -102,4 +102,11 @@ for N in [Float64, Rational{Int}, Float32]
             @test ρ(d, lm2) ≈ ρ(d, p2)
         end
     end
+
+    # concrete linera map of a LinearMap
+    b = BallInf(N[0, 0], N(1))
+    M = rand(N, 2, 2)
+    L = LinearMap(M, b)
+    V = linear_map(M, LinearMap(M, b))
+    @test M * M * an_element(L) ∈ V
 end
