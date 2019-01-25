@@ -376,3 +376,21 @@ We fall back to a concrete set representation and apply `linear_map`.
 function constraints_list(lm::LinearMap{N}) where {N<:Real}
     return constraints_list(linear_map(lm.M, lm.X))
 end
+
+"""
+    linear_map(M::AbstractMatrix{N}, lm::LinearMap{N}) where {N}
+
+Return the linear map of a lazy linear map.
+
+### Input
+
+- `M`  -- matrix
+- `lm` -- linear map
+
+### Output
+
+The polytope representing the linear map of the lazy linear map of a set.  
+"""
+function linear_map(M::AbstractMatrix{N}, lm::LinearMap{N}) where {N}
+     return linear_map(M * lm.M, lm.X)
+end
