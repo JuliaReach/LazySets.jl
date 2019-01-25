@@ -63,7 +63,7 @@ for N in [Float64, Rational{Int}, Float32]
     # isempty
     @test !isempty(lm)
 
-    # an_element function
+    # an_element functionintersection
     lm = N(2) * BallInf(N[0, 0], N(1))
     an_element(lm)
     @test an_element(lm) ∈ lm
@@ -101,5 +101,12 @@ for N in [Float64, Rational{Int}, Float32]
             @test ρ(d, lm1) ≈ ρ(d, p1)
             @test ρ(d, lm2) ≈ ρ(d, p2)
         end
+        
+        
+        # concrete intersection with lazy linear map
+        M = N[2 3; 1 2]
+        L = M * b
+        Lb = intersection(L, b)
+        @test M * an_element(b) ∈ Lb
     end
 end

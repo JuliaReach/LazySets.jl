@@ -628,3 +628,21 @@ function intersection(S::AbstractSingleton{N},
                       cup::UnionSetArray{N}) where {N<:Real}
     return invoke(intersection, Tuple{UnionSetArray{N}, typeof(S)}, cup, S)
 end
+
+"""
+    intersection(L::LinearMap{N}, S::LazySet{N}) where {N}
+
+Return the intersection of a lazy linear map and a convex set.
+
+### Input
+
+ - `L` -- linear map
+ - `S` -- lazy set
+  
+### Output
+
+The polytope obtained by the intersection of `l.M * L.X` and `S`.
+"""
+function intersection(L::LinearMap{N}, S::LazySet{N}) where {N}
+    return intersection(linear_map(L.M, L.X), S)
+end
