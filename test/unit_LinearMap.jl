@@ -103,9 +103,9 @@ for N in [Float64, Rational{Int}, Float32]
         end
     end
 
-    # concrete linera map of a LinearMap
+    # concrete linear map of a LinearMap
     b = BallInf(N[0, 0], N(1))
-    M = rand(N, 2, 2)
+    M = N[2 3; 1 2]
     L = LinearMap(M, b)
     V = linear_map(M, LinearMap(M, b))
     @test M * M * an_element(b) ∈ V
