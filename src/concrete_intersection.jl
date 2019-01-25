@@ -637,7 +637,7 @@ Return the intersection of a lazy linear map and a convex set.
 ### Input
 
  - `L` -- linear map
- - `S` -- lazy set
+ - `S` -- convex set
   
 ### Output
 
