@@ -127,6 +127,7 @@ swap(::Intersection)
 use_precise_ρ
 _line_search
 _projection
+linear_map(::AbstractMatrix{N}, ::Intersection{N}) where {N}
 ```
 
 Inherited from [`LazySet`](@ref):
