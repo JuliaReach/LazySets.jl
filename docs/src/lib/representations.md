@@ -175,6 +175,7 @@ constrained_dimensions(::HalfSpace{N}) where {N<:Real}
 halfspace_left(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
 halfspace_right(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
 tosimplehrep(::AbstractVector{HalfSpace{N}}) where {N<:Real}
+linear_map(::AbstractMatrix{N}, ::HalfSpace{N}) where {N}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

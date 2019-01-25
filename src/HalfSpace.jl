@@ -6,7 +6,8 @@ import Base: rand,
 export HalfSpace, LinearConstraint,
        an_element,
        constrained_dimensions,
-       halfspace_left, halfspace_right
+       halfspace_left, halfspace_right,
+       linear_map
 
 """
     HalfSpace{N<:Real} <: LazySet{N}
@@ -355,4 +356,22 @@ See the documentation of `halfspace_left`.
 function halfspace_right(p::AbstractVector{N},
                          q::AbstractVector{N})::HalfSpace{N} where {N<:Real}
     return halfspace_left(q, p)
+end
+
+"""
+    linear_map(M::AbstractMatrix{N}, hs::HalfSpace{N}) where {N}
+
+Return the concrete linear map of a half-space.
+
+### Input
+
+- `M`  -- matrix
+- `hs` -- half-space
+
+### Output
+
+The half-space obtained by applying the given linear map to the half-space.
+"""
+function linear_map(M::AbstractMatrix{N}, hs::HalfSpace{N}) where {N}
+    return linear_map(M, HPolyhedron([hs]))
 end
