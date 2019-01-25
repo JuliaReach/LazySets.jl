@@ -108,5 +108,5 @@ for N in [Float64, Rational{Int}, Float32]
     M = rand(N, 2, 2)
     L = LinearMap(M, b)
     V = linear_map(M, LinearMap(M, b))
-    @test M * M * an_element(L) ∈ V
+    @test M * M * an_element(b) ∈ V
 end
