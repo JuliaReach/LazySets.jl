@@ -7,7 +7,8 @@ export Intersection,
        use_precise_ρ,
        IntersectionArray,
        array,
-       constraints_list
+       constraints_list,
+       linear_map
 
 """
     IntersectionCache
@@ -769,6 +770,33 @@ function constraints_list(ia::IntersectionArray{N}) where {N<:Real}
     end
     remove_redundant_constraints!(constraints)
     return constraints
+end
+
+# ==========================================================
+# Concrete operations that dispatch on a lazy Intersection
+# ==========================================================
+
+"""
+    linear_map(M::AbstractMatrix{N}, cap::Intersection{N}) where {N}
+
+Return the concrete linear map of a lazy intersection.
+
+### Input
+
+- `M`   -- matrix
+- `cap` -- lazy intersection
+
+### Output
+
+The set obtained by applying the given linear map to the lazy intersection.
+
+### Notes
+
+This function relies on computing `cap` concretely (i.e. as a set representation),
+and then applying the linear map.
+"""
+function linear_map(M::AbstractMatrix{N}, cap::Intersection{N}) where {N}
+    return linear_map(M, intersection(cap.X, cap.Y))
 end
 
 # ==================================

@@ -85,6 +85,13 @@ for N in [Float64, Rational{Int}, Float32]
     # absorbing element
     @test absorbing(Intersection) == absorbing(IntersectionArray) == EmptySet
     @test I ∩ E == E ∩ I == IA ∩ E == E ∩ IA == E ∩ E == E
+
+    # =====================
+    # concrete operations
+    # =====================
+    cap =  HPolytope([HalfSpace(N[1], N(1))]) ∩ HPolytope([HalfSpace(N[-1], N(1))])  # x <= 1 && x >= -1
+    p = linear_map(reshape([N(1/2)], 1, 1), cap)
+    @test (N[-0.5] ∈ p && N[0.5] ∈ p) && !(N[1.0] ∈ p && N[1.0] ∈ p)
 end
 
 # ======================
