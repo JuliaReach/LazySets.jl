@@ -646,3 +646,13 @@ The polytope obtained by the intersection of `l.M * L.X` and `S`.
 function intersection(L::LinearMap{N}, S::LazySet{N}) where {N}
     return intersection(linear_map(L.M, L.X), S)
 end
+
+# symmetric method
+function intersection(S::LazySet{N}, L::LinearMap{N}) where {N}
+    return intersection(L, S)
+end
+
+# disambiguation
+function intersection(L1::LinearMap{N}, L2::LinearMap{N}) where {N}
+    return intersection(linear_map(L1.M, L1.X), linear_map(L2.M, L2.X))
+end
