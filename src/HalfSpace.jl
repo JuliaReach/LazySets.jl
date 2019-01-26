@@ -10,7 +10,7 @@ export HalfSpace, LinearConstraint,
        linear_map
 
 """
-    HalfSpace{N<:Real} <: LazySet{N}
+    HalfSpace{N<:Real} <: AbstractPolyhedron{N}
 
 Type that represents a (closed) half-space of the form ``a⋅x ≤ b``.
 
@@ -28,7 +28,7 @@ julia> HalfSpace([0, -1.], 0.)
 HalfSpace{Float64}([0.0, -1.0], 0.0)
 ```
 """
-struct HalfSpace{N<:Real} <: LazySet{N}
+struct HalfSpace{N<:Real} <: AbstractPolyhedron{N}
     a::AbstractVector{N}
     b::N
 end

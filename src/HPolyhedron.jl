@@ -20,7 +20,7 @@ export HPolyhedron,
        constrained_dimensions
 
 """
-    HPolyhedron{N<:Real} <: LazySet{N}
+    HPolyhedron{N<:Real} <: AbstractPolyhedron{N}
 
 Type that represents a convex polyhedron in H-representation.
 
@@ -28,7 +28,7 @@ Type that represents a convex polyhedron in H-representation.
 
 - `constraints` -- vector of linear constraints
 """
-struct HPolyhedron{N<:Real} <: LazySet{N}
+struct HPolyhedron{N<:Real} <: AbstractPolyhedron{N}
     constraints::Vector{LinearConstraint{N}}
 end
 
@@ -53,7 +53,9 @@ HPolyhedron{N}(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real} = HPo
 # convenience union type
 const HPoly{N} = Union{HPolytope{N}, HPolyhedron{N}}
 
+
 # --- LazySet interface functions ---
+
 
 """
     dim(P::HPoly{N})::Int where {N<:Real}

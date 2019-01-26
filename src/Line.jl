@@ -6,7 +6,7 @@ export Line,
        an_element
 
 """
-    Line{N<:Real, VN<:AbstractVector{N}} <: LazySet{N}
+    Line{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
 
 Type that represents a line in 2D of the form ``a⋅x = b`` (i.e., a special case
 of a `Hyperplane`).
@@ -25,7 +25,7 @@ julia> Line([1., 1.], 1.)
 Line{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
 ```
 """
-struct Line{N<:Real, VN<:AbstractVector{N}} <: LazySet{N}
+struct Line{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
     a::VN
     b::N
 
