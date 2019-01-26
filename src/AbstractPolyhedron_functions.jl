@@ -1,6 +1,7 @@
 import Base.∈
 
-export constrained_dimensions
+export constrained_dimensions,
+       tosimplehrep
 
 """
     ∈(x::AbstractVector{N}, P::AbstractPolyhedron{N})::Bool where {N<:Real}
@@ -60,4 +61,38 @@ function constrained_dimensions(P::AbstractPolyhedron{N}
         end
     end
     return filter(x -> x != 0, zero_indices)
+end
+
+"""
+    tosimplehrep(constraints::AbstractVector{LinearConstraint{N}})
+        where {N<:Real}
+
+Return the simple H-representation ``Ax ≤ b`` from a list of linear constraints.
+
+### Input
+
+- `constraints` -- a list of linear constraints
+
+### Output
+
+The tuple `(A, b)` where `A` is the matrix of normal directions and `b` is the
+vector of offsets.
+"""
+function tosimplehrep(constraints::AbstractVector{LinearConstraint{N}}
+                     ) where {N<:Real}
+    n = length(constraints)
+    if n == 0
+        A = Matrix{N}(undef, 0, 0)
+        b = Vector{N}(undef, 0)
+        return (A, b)
+    end
+    A = zeros(N, n, dim(first(constraints)))
+    b = zeros(N, n)
+    @inbounds begin
+        for (i, Pi) in enumerate(constraints)
+            A[i, :] = Pi.a
+            b[i] = Pi.b
+        end
+    end
+    return (A, b)
 end

@@ -311,38 +311,6 @@ function constraints_list(P::HPoly{N}
 end
 
 """
-    tosimplehrep(constraints::AbstractVector{LinearConstraint{N}}) where {N<:Real}
-
-Return the simple H-representation ``Ax ≤ b`` of a list of constraints.
-
-### Input
-
-- `constraints` -- a list of constraints
-
-### Output
-
-The tuple `(A, b)` where `A` is the matrix of normal directions and `b` are the
-offsets.
-"""
-function tosimplehrep(constraints::AbstractVector{LinearConstraint{N}}) where {N<:Real}
-    n = length(constraints)
-    if n == 0
-        A = Matrix{N}(undef, 0, 0)
-        b = Vector{N}(undef, 0)
-        return (A, b)
-    end
-    A = zeros(N, n, dim(first(constraints)))
-    b = zeros(N, n)
-    @inbounds begin
-        for (i, Pi) in enumerate(constraints)
-            A[i, :] = Pi.a
-            b[i] = Pi.b
-        end
-    end
-    return (A, b)
-end
-
-"""
     tohrep(P::HPoly{N}) where {N<:Real}
 
 Return a constraint representation of the given polyhedron in constraint
