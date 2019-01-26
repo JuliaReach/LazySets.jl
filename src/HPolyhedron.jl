@@ -48,7 +48,8 @@ function HPolyhedron(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real}
     return HPolyhedron(constraints)
 end
 
-HPolyhedron{N}(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real} = HPolyhedron(A, b)
+HPolyhedron{N}(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real} =
+    HPolyhedron(A, b)
 
 # convenience union type
 const HPoly{N} = Union{HPolytope{N}, HPolyhedron{N}}
@@ -166,7 +167,8 @@ end
 
 function σ_helper(d::AbstractVector{N}, P::HPoly{N}) where {N<:Real}
 
-    # let c = -d as a Vector, since GLPK doesn't accept sparse vectors (see #1011)
+    # let c = -d as a Vector, since GLPK doesn't accept sparse vectors
+    # (see #1011)
     c = _to_minus_vector(d)
 
     (A, b) = tosimplehrep(P)
@@ -330,7 +332,9 @@ end
 
 """
     remove_redundant_constraints(P::PT;
-                                 backend=GLPKSolverLP())::Union{PT, EmptySet{N}} where {N, PT<:HPoly{N}}
+                                 backend=GLPKSolverLP()
+                                )::Union{PT, EmptySet{N}} where {N<:Real,
+                                                                 PT<:HPoly{N}}
 
 Remove the redundant constraints in a polyhedron in H-representation.
 
@@ -341,17 +345,20 @@ Remove the redundant constraints in a polyhedron in H-representation.
 
 ### Output
 
-A polyhedron equivalent to `P` but with no redundant constraints, or an empty set
-if `P` is detected to be empty, which may happen if the constraints are infeasible.
+A polyhedron equivalent to `P` but with no redundant constraints, or an empty
+set if `P` is detected to be empty, which may happen if the constraints are
+infeasible.
 
 ### Algorithm
 
 See
-[`remove_redundant_constraints!(::Vector{LinearConstraint{N}}) where {N<:Real}`](@ref)
+[`remove_redundant_constraints!(::Vector{LinearConstraint{<:Real}})`](@ref)
 for details.
 """
 function remove_redundant_constraints(P::PT;
-                                      backend=GLPKSolverLP())::Union{PT, EmptySet{N}} where {N, PT<:HPoly{N}}
+                                      backend=GLPKSolverLP()
+                                     )::Union{PT, EmptySet{N}} where {N<:Real,
+                                                                      PT<:HPoly{N}}
     Pred = copy(P)
     if remove_redundant_constraints!(Pred, backend=backend)
         return Pred
@@ -361,11 +368,11 @@ function remove_redundant_constraints(P::PT;
 end
 
 """
-    remove_redundant_constraints!(P::PT;
-                                  backend=GLPKSolverLP())::Bool where {N, PT<:HPoly{N}}
+    remove_redundant_constraints!(P::HPoly{N};
+                                  backend=GLPKSolverLP())::Bool where {N<:Real}
 
-Remove the redundant constraints in a polyhedron in H-representation; the polyhedron
-is updated in-place.
+Remove the redundant constraints in a polyhedron in H-representation; the
+polyhedron is updated in-place.
 
 ### Input
 
@@ -381,115 +388,13 @@ which may happen if the constraints are infeasible.
 ### Algorithm
 
 See
-[`remove_redundant_constraints!(::Vector{LinearConstraint{N}}) where {N<:Real}`](@ref)
+[`remove_redundant_constraints!(::Vector{LinearConstraint{<:Real}})`](@ref)
 for details.
 """
-function remove_redundant_constraints!(P::PT;
-                                       backend=GLPKSolverLP())::Bool where {N, PT<:HPoly{N}}
+function remove_redundant_constraints!(P::HPoly{N};
+                                       backend=GLPKSolverLP()
+                                      )::Bool where {N<:Real}
     remove_redundant_constraints!(P.constraints, backend=backend)
-end
-
-"""
-     remove_redundant_constraints!(constraints::Vector{LinearConstraint{N}};
-                                   backend=GLPKSolverLP())::Bool where {N}
-
-Remove the redundant constraints of a given list of linear constraints; the list
-is updated in-place.
-
-### Input
-
-- `constraints` -- list of constraints
-- `backend`     -- (optional, default: `GLPKSolverLP`) the numeric LP solver backend
-
-### Output
-
-`true` if the method was successful and the list of constraints `constraints` is
-modified by removing the redundant constraints, and `false` if the constraints
-are infeasible.
-
-### Algorithm
-
-If there are `m` constraints in `n` dimensions, this function checks one by one
-if each of the `m` constraints is implied by the remaining ones.
-
-To check if the `k`-th constraint is redundant, an LP is formulated using the
-constraints that have not yet being removed. If, at an intermediate step, it is
-detected that a subgruop of the constraints is infeasible, this function returns
-`false`; if the calculation finished successfully it returns `true`.
-
-Note that the constraints being infeasible does not imply that `false` is returned.
-For example, `x <= 0 && x >= 1` will return `true` without removing any constraint.
-To check if the constraints are infeasible use `isempty(HPolyhedron(constraints)`.
-
-For details, see [Fukuda's Polyhedra
-FAQ](https://www.cs.mcgill.ca/~fukuda/soft/polyfaq/node24.html).
-"""
-function remove_redundant_constraints!(constraints::AbstractVector{LinearConstraint{N}};
-                                       backend=GLPKSolverLP())::Bool where {N}
-
-    A, b = tosimplehrep(constraints)
-    m, n = size(A)
-    non_redundant_indices = 1:m
-
-    i = 1 # counter over reduced constraints
-
-    for j in 1:m    # loop over original constraints
-        α = A[j, :]
-        Ar = A[non_redundant_indices, :]
-        br = b[non_redundant_indices]
-        br[i] = b[j] + one(N)
-        lp = linprog(-α, Ar, '<', br, -Inf, Inf, backend)
-        if lp.status == :Infeasible
-            # the polyhedron is empty
-            return false
-        elseif lp.status == :Optimal
-            objval = -lp.objval
-            if objval <= b[j]
-                # the constraint is redundant
-                non_redundant_indices = setdiff(non_redundant_indices, j)
-            else
-                # the constraint is not redundant
-                i = i+1
-            end
-        else
-            error("LP is not optimal; the status of the LP is $(lp.status)")
-        end
-    end
-
-    deleteat!(constraints, setdiff(1:m, non_redundant_indices))
-    return true
-end
-
-"""
-    remove_redundant_constraints(constraints::AbstractVector{LinearConstraint{N}};
-                                 backend=GLPKSolverLP())::Union{AbstractVector{LinearConstraint{N}}, EmptySet{N}} where {N}
-
-Remove the redundant constraints of a given list of linear constraints.
-
-### Input
-
-- `constraints` -- list of constraints
-- `backend`     -- (optional, default: `GLPKSolverLP`) the numeric LP solver backend
-
-### Output
-
-The list of constraints with the redundant ones removed, or an empty set
-if the given constraints are infeasible.
-
-### Algorithm
-
-See
-[`remove_redundant_constraints!(::AbstractVector{LinearConstraint{N}}) where {N<:Real}`](@ref)
-for details.
-"""
-function remove_redundant_constraints(constraints::AbstractVector{LinearConstraint{N}};
-                                      backend=GLPKSolverLP())::Union{AbstractVector{LinearConstraint{N}}, EmptySet{N}} where {N}
-    constraints_copy = copy(constraints)
-    if remove_redundant_constraints!(constraints_copy, backend=backend)
-        return constraints_copy
-    else # the constraints are infeasible
-        return EmptySet{N}()
-    end
 end
 
 """
@@ -528,7 +433,8 @@ function linear_map(M::AbstractMatrix{N},
     end
     # matrix is invertible
     invM = inv(M)
-    constraints = Vector{LinearConstraint{N}}(undef, length(constraints_list(P)))
+    constraints = Vector{LinearConstraint{N}}(undef,
+                                              length(constraints_list(P)))
     @inbounds for (i, c) in enumerate(constraints_list(P))
         constraints[i] = LinearConstraint(vec(c.a' * invM), c.b)
     end
@@ -568,9 +474,10 @@ For further information on the supported backends see
 function convex_hull(P1::HPoly{N},
                      P2::HPoly{N};
                      backend=default_polyhedra_backend(P1, N)) where {N}
-    @assert isdefined(@__MODULE__, :Polyhedra) "the function `convex_hull` needs " *
-                                               "the package 'Polyhedra' to be loaded"
-    Pch = convexhull(polyhedron(P1; backend=backend), polyhedron(P2; backend=backend))
+    @assert isdefined(@__MODULE__, :Polyhedra) "the function `convex_hull` "*
+        "needs the package 'Polyhedra'"
+    Pch = convexhull(polyhedron(P1; backend=backend),
+                     polyhedron(P2; backend=backend))
     removehredundancy!(Pch)
     return convert(typeof(P1), Pch)
 end
@@ -602,9 +509,10 @@ function cartesian_product(P1::HPoly{N},
                            P2::HPoly{N};
                            backend=default_polyhedra_backend(P1, N)
                           ) where {N<:Real}
-    @assert isdefined(@__MODULE__, :Polyhedra) "the function `cartesian_product` " *
-                                               "needs the package 'Polyhedra' to be loaded"
-    Pcp = hcartesianproduct(polyhedron(P1; backend=backend), polyhedron(P2; backend=backend))
+    @assert isdefined(@__MODULE__, :Polyhedra) "the function " *
+        "`cartesian_product` needs the package 'Polyhedra'"
+    Pcp = hcartesianproduct(polyhedron(P1; backend=backend),
+                            polyhedron(P2; backend=backend))
     return convert(typeof(P1), Pcp)
 end
 
@@ -635,7 +543,7 @@ For further information on the supported backends see
 function tovrep(P::HPoly{N};
                 backend=default_polyhedra_backend(P, N)) where {N<:Real}
     @assert isdefined(@__MODULE__, :Polyhedra) "the function `tovrep` needs " *
-                                        "the package 'Polyhedra' to be loaded"
+        "the package 'Polyhedra'"
     P = polyhedron(P; backend=backend)
     return VPolytope(P)
 end
@@ -664,8 +572,9 @@ julia> P_as_polytope = convert(HPolytope, P);
 ```
 """
 function vertices_list(P::HPolyhedron{N}) where {N<:Real}
-    throw(ArgumentError("the list of vertices of a (possibly unbounded) polyhedron is not defined; " *
-          "if the polyhedron is bounded, try converting to `HPolytope` first"))
+    throw(ArgumentError("the list of vertices of a (possibly unbounded) " *
+        "polyhedron is not defined; if the polyhedron is bounded, try " *
+        "converting to `HPolytope` first"))
 end
 
 """
@@ -683,8 +592,9 @@ This function returns an error because the polyhedron is possibly unbounded.
 If `P` is known to be bounded, try converting to `HPolytope` first.
 """
 function singleton_list(P::HPolyhedron{N}) where {N<:Real}
-    throw(ArgumentError("the list of singletons of a (possibly unbounded) polyhedron is not defined; " *
-          "if the polyhedron is bounded, try converting to `HPolytope` first"))
+    throw(ArgumentError("the list of singletons of a (possibly unbounded) " *
+        "polyhedron is not defined; if the polyhedron is bounded, try " *
+        "converting to `HPolytope` first"))
 end
 
 """

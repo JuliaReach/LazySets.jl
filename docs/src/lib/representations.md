@@ -174,8 +174,10 @@ constraints_list(::HalfSpace{N}) where {N<:Real}
 constrained_dimensions(::HalfSpace{N}) where {N<:Real}
 halfspace_left(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
 halfspace_right(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
-tosimplehrep(::AbstractVector{HalfSpace{N}}) where {N<:Real}
 linear_map(::AbstractMatrix{N}, ::HalfSpace{N}) where {N}
+tosimplehrep(::AbstractVector{HalfSpace{N}}) where {N<:Real}
+remove_redundant_constraints(::AbstractVector{LinearConstraint{N}}) where {N<:Real}
+remove_redundant_constraints!(::AbstractVector{LinearConstraint{N}}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -442,11 +444,11 @@ constraints_list(::HPoly{N}) where {N<:Real}
 tohrep(::HPoly{N}) where {N<:Real}
 isempty(::HPoly{N}, ::Bool=false) where {N<:Real}
 cartesian_product(::HPoly{N}, ::HPoly{N}) where {N<:Real}
-linear_map(M::AbstractMatrix{N}, P::PT) where {N<:Real, PT<:HPoly{N}}
+linear_map(::AbstractMatrix{N}, ::PT) where {N<:Real, PT<:HPoly{N}}
 tovrep(::HPoly{N}) where {N<:Real}
 polyhedron(::HPoly{N}) where {N<:Real}
-remove_redundant_constraints
-remove_redundant_constraints!
+remove_redundant_constraints(::PT) where {N<:Real, PT<:HPoly{N}}
+remove_redundant_constraints!(::HPoly{N}) where {N<:Real}
 ```
 
 Inherited from [`LazySet`](@ref):
