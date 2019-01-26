@@ -423,7 +423,7 @@ intersection is empty.
 function ρ(d::AbstractVector{N},
            cap::Intersection{N, S1, S2};
            kwargs...) where {N<:Real, S1<:LazySet{N}, S2<:AbstractPolytope{N}}
-    if S1 == HPolyhedron # possibly unbounded
+    if S1 <: HPolyhedron # possibly unbounded
         X = cap.Y  # compact set
         P = cap.X  # polyhedron
     else
