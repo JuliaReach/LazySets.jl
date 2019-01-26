@@ -259,39 +259,11 @@ function rand(::Type{HPolyhedron};
     return HPolyhedron(constraints_Q)
 end
 
-"""
-    constrained_dimensions(P::HPolyhedron{N})::Vector{Int} where {N<:Real}
-
-Return the indices in which a polyhedron in constraint representation is
-constrained.
-
-### Input
-
-- `P` -- polyhedron in constraint representation
-
-### Output
-
-A vector of ascending indices `i` such that the polyhedron is constrained in
-dimension `i`.
-
-### Examples
-
-A 2D polyhedron with constraint ``x1 ≥ 0`` is constrained in dimension 1 only.
-"""
-function constrained_dimensions(P::HPolyhedron{N})::Vector{Int} where {N<:Real}
-    zero_indices = zeros(Int, dim(P))
-    for constraint in P.constraints
-        for i in constrained_dimensions(constraint)
-            zero_indices[i] = i
-        end
-    end
-    return filter(x -> x != 0, zero_indices)
-end
-
 
 # ===========================================
 # HPolyhedron and HPolytope's shared methods
 # ===========================================
+
 
 """
     addconstraint!(P::HPoly{N},

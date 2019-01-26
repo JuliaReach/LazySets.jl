@@ -456,6 +456,7 @@ Inherited from [`LazySet`](@ref):
 
 Inherited from [`AbstractPolyhedron`](@ref):
 * [`∈`](@ref ∈(::AbstractVector{N}, ::AbstractPolyhedron{N}) where {N<:Real})
+* [`constrained_dimensions`](@ref constrained_dimensions(::AbstractPolyhedron{N}) where {N<:Real})
 
 #### Polytopes in constraint representation
 
@@ -479,7 +480,6 @@ rand(::Type{HPolyhedron})
 isbounded(::HPolyhedron)
 vertices_list(::HPolyhedron{N}) where {N<:Real}
 singleton_list(::HPolyhedron{N}) where {N<:Real}
-constrained_dimensions(::HPolyhedron{N}) where {N<:Real}
 ```
 
 ### Vertex representation
