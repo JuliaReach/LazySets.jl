@@ -437,7 +437,6 @@ The following methods are shared between `HPolytope` and `HPolyhedron`.
 dim(::HPoly{N}) where {N<:Real}
 ρ(::AbstractVector{N}, ::HPoly{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::HPoly{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::HPoly{N}) where {N<:Real}
 addconstraint!(::HPoly{N}, ::LinearConstraint{N}) where {N<:Real}
 constraints_list(::HPoly{N}) where {N<:Real}
 tohrep(::HPoly{N}) where {N<:Real}
@@ -454,6 +453,9 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractPolyhedron`](@ref):
+* [`∈`](@ref ∈(::AbstractVector{N}, ::AbstractPolyhedron{N}) where {N<:Real})
 
 #### Polytopes in constraint representation
 

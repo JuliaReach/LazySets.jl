@@ -218,37 +218,6 @@ function isbounded(P::HPolyhedron)::Bool
 end
 
 """
-    ∈(x::AbstractVector{N}, P::HPoly{N})::Bool where {N<:Real}
-
-Check whether a given point is contained in a polyhedron in constraint
-representation.
-
-### Input
-
-- `x` -- vector with the coordinates of the point
-- `P` -- polyhedron in constraint representation
-
-### Output
-
-`true` iff ``x ∈ P``.
-
-### Algorithm
-
-This implementation checks if the point lies on the outside of each hyperplane.
-This is equivalent to checking if the point lies in each half-space.
-"""
-function ∈(x::AbstractVector{N}, P::HPoly{N})::Bool where {N<:Real}
-    @assert length(x) == dim(P)
-
-    for c in P.constraints
-        if dot(c.a, x) > c.b
-            return false
-        end
-    end
-    return true
-end
-
-"""
     rand(::Type{HPolyhedron}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
          [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
         )::HPolyhedron{N}

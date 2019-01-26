@@ -109,6 +109,12 @@ necessarily bounded.
 AbstractPolyhedron
 ```
 
+This interface defines the following functions:
+
+```@docs
+∈(::AbstractVector{N}, ::AbstractPolyhedron{N}) where {N<:Real}
+```
+
 ### Polytope
 
 A polytope is a bounded set with finitely many vertices (*V-representation*)
