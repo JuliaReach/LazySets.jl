@@ -4,7 +4,7 @@ export AbstractPolyhedron
     AbstractPolyhedron{N<:Real} <: LazySet{N}
 
 Abstract type for polyhedral sets, i.e., sets with finitely many flat facets, or
-equivalently, sets defined as an intersection of a finite number of halfspaces.
+equivalently, sets defined as an intersection of a finite number of half-spaces.
 
 ### Notes
 

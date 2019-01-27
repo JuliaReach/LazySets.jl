@@ -11,7 +11,8 @@ export AbstractPolytope,
 
 Abstract type for polytopic sets, i.e., bounded sets with finitely many flat
 facets, or equivalently, bounded sets defined as an intersection of a finite
-number of halfspaces, or equivalently, bounded sets with finitely many vertices.
+number of half-spaces, or equivalently, bounded sets with finitely many
+vertices.
 
 ### Notes
 
