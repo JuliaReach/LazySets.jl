@@ -34,9 +34,9 @@ Every concrete `LazySet` must define the following functions:
 
 ```jldoctest
 julia> subtypes(LazySet)
-19-element Array{Any,1}:
+15-element Array{Any,1}:
  AbstractCentrallySymmetric
- AbstractPolytope
+ AbstractPolyhedron
  CacheMinkowskiSum
  CartesianProduct
  CartesianProductArray
@@ -45,12 +45,8 @@ julia> subtypes(LazySet)
  EmptySet
  ExponentialMap
  ExponentialProjectionMap
- HPolyhedron
- HalfSpace
- Hyperplane
  Intersection
  IntersectionArray
- Line
  LinearMap
  MinkowskiSum
  MinkowskiSumArray
@@ -325,7 +321,7 @@ copy(S::LazySet) = deepcopy(S)
 """
     tosimplehrep(S::LazySet)
 
-Return the simple H-representation ``Ax ≤ b`` of a set from its list of
+Return the simple H-representation ``Ax ≤ b`` of a set from its list of linear
 constraints.
 
 ### Input
@@ -334,14 +330,13 @@ constraints.
 
 ### Output
 
-The tuple `(A, b)` where `A` is the matrix of normal directions and `b` are the
-offsets.
+The tuple `(A, b)` where `A` is the matrix of normal directions and `b` is the
+vector of offsets.
 
 ### Notes
 
-This function uses `constraints_list(S)`. It is a fallback implementation that
-works only for those sets that can be represented exactly by a list of linear
-constraints, which is available through the `constraints_list(S)`
-function.
+This function only works for sets that can be represented exactly by a finite
+list of linear constraints.
+This fallback implementation relies on `constraints_list(S)`.
 """
 tosimplehrep(S::LazySet) = tosimplehrep(constraints_list(S))

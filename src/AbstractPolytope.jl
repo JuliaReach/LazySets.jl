@@ -7,11 +7,12 @@ export AbstractPolytope,
        isempty
 
 """
-    AbstractPolytope{N<:Real} <: LazySet{N}
+    AbstractPolytope{N<:Real} <: AbstractPolyhedron{N}
 
-Abstract type for polytopic sets, i.e., sets with finitely many flat facets, or
-equivalently, sets defined as an intersection of a finite number of halfspaces,
-or equivalently, sets with finitely many vertices.
+Abstract type for polytopic sets, i.e., bounded sets with finitely many flat
+facets, or equivalently, bounded sets defined as an intersection of a finite
+number of half-spaces, or equivalently, bounded sets with finitely many
+vertices.
 
 ### Notes
 
@@ -30,7 +31,7 @@ julia> subtypes(AbstractPolytope)
  VPolytope
 ```
 """
-abstract type AbstractPolytope{N<:Real} <: LazySet{N} end
+abstract type AbstractPolytope{N<:Real} <: AbstractPolyhedron{N} end
 
 
 # --- common AbstractPolytope functions ---
