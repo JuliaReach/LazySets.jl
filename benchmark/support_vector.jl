@@ -1,6 +1,7 @@
-function tridiagm(a, b, c, n)  # to generate tridiagonal matrices
+# generate a tridiagonal matrix
+function tridiagm(a, b, c, n)
        dd, du = ones(n), ones(n - 1)
-       b*diagm(dd) + a*diagm(du, -1) + c*diagm(du, 1)
+       b*diagm(0 => dd) + a*diagm(-1 => du) + c*diagm(1 => du)
 end
 
 SUITE["Balls"] = BenchmarkGroup()
