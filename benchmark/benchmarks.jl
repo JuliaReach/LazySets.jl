@@ -29,6 +29,11 @@ julia> writeresults("results.json", results)
 =#
 using BenchmarkTools, LazySets
 
+@static if VERSION > v"0.7.0"
+    using LinearAlgebra, SparseArrays
+end
+ 
 SUITE = BenchmarkGroup()  # parent BenchmarkGroup to contain our suite
 
 include("support_vector.jl")
+include("linear_map.jl")
