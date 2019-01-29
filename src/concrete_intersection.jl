@@ -638,7 +638,7 @@ Return the intersection of a lazy linear map and a convex set.
 
  - `L` -- linear map
  - `S` -- convex set
-  
+
 ### Output
 
 The polytope obtained by the intersection of `l.M * L.X` and `S`.
@@ -655,4 +655,28 @@ end
 # disambiguation
 function intersection(L1::LinearMap{N}, L2::LinearMap{N}) where {N}
     return intersection(linear_map(L1.M, L1.X), linear_map(L2.M, L2.X))
+end
+
+"""
+intersection(ca1::CartesianProductArray{N, S}, L2::CartesianProductArray{N, S}, nonzero_blocks::Vector{Int})
+              ) where {N<:Real, S<:LazySet{N}}
+
+Return the intersection of two CartesianProductArray's only for necessary blocks.
+
+### Input
+
+ - `ca1` -- Cartesian Product Array of convex sets
+ - `ca2` -- Cartesian Product Array of LazySets (it might by unbounded sets)
+ - `nonzero_blocks` -- Required blocks to intersect
+
+### Output
+
+The Cartesian Product Array obtained by the intersection nonzero blocks of `ca1` and `ca2`.
+"""
+function intersection(ca1::CartesianProductArray{N, S}, L2::CartesianProductArray{N, S}, nonzero_blocks::Vector{Int})
+              ) where {N<:Real, S<:LazySet{N}}
+    for i in nonzero_blocks
+        ca1.array[i] = intersection(ca1.array[i], ca2.array[i])
+    end
+    return ca1
 end
