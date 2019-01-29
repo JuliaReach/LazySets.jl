@@ -431,12 +431,13 @@ function linear_map(M::AbstractMatrix{N},
         # use the implementation for general polytopes
         return invoke(linear_map, Tuple{typeof(M), AbstractPolytope{N}}, M, P)
     end
-    # matrix is invertible
-    invM = inv(M)
+    # matrix M is invertible: the normal vectors are vec(c.a' * inv(M)), or taking
+    # the left division for each constraint c, transpose(M) \ c.a
+    Mt = tranpose(M)
     constraints = Vector{LinearConstraint{N}}(undef,
                                               length(constraints_list(P)))
     @inbounds for (i, c) in enumerate(constraints_list(P))
-        constraints[i] = LinearConstraint(vec(c.a' * invM), c.b)
+        constraints[i] = LinearConstraint(Mt \ c.a, c.b)
     end
     return PT(constraints)
 end
