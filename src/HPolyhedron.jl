@@ -433,7 +433,7 @@ function linear_map(M::AbstractMatrix{N},
     end
     # matrix M is invertible: the normal vectors are vec(c.a' * inv(M)), or taking
     # the left division for each constraint c, transpose(M) \ c.a
-    Mt = tranpose(M)
+    Mt = transpose(M)
     constraints = Vector{LinearConstraint{N}}(undef,
                                               length(constraints_list(P)))
     @inbounds for (i, c) in enumerate(constraints_list(P))
