@@ -661,22 +661,31 @@ end
 intersection(ca1::CartesianProductArray{N, S}, L2::CartesianProductArray{N, S}, nonzero_blocks::Vector{Int})
               ) where {N<:Real, S<:LazySet{N}}
 
-Return the intersection of two CartesianProductArray's only for necessary blocks.
+Return the intersection of two CartesianProductArray's.
 
 ### Input
 
  - `ca1` -- Cartesian Product Array of convex sets
  - `ca2` -- Cartesian Product Array of LazySets (it might by unbounded sets)
- - `nonzero_blocks` -- Required blocks to intersect
+ - `nonzero_blocks` -- Required blocks to intersect (all blocks by default)
 
 ### Output
 
 The Cartesian Product Array obtained by the intersection nonzero blocks of `ca1` and `ca2`.
+
+### Notes
+
+This function computes an intersection of two CartesianProductArray's only for blocks, which are defined by nonzero_blocks argument. By default it takes intersection of all blocks. 
+
 """
-function intersection(ca1::CartesianProductArray{N, S}, L2::CartesianProductArray{N, S}, nonzero_blocks::Vector{Int})
-              ) where {N<:Real, S<:LazySet{N}}
-    for i in nonzero_blocks
-        ca1.array[i] = intersection(ca1.array[i], ca2.array[i])
+function intersection(ca1::CartesianProductArray{N, S}, ca2::CartesianProductArray{N, S},                   nonzero_blocks::Vector{Int}=[1:length(ca1)]) where {N<:Real, S<:LazySet{N}}
+    result = CartesianProductArray(length(ca1), N)
+    for i in length(ca1)
+        if i in nonzero_blocks
+            result.array[i] = intersection(ca1.array[i], ca2.array[i])
+        else
+            result.array[i] = ca1.array[i]
+        end
     end
-    return ca1
+    return result
 end
