@@ -675,16 +675,17 @@ The Cartesian Product Array obtained by the intersection nonzero blocks of `ca1`
 
 ### Notes
 
-This function computes an intersection of two CartesianProductArray's only for blocks, which are defined by nonzero_blocks argument. By default it takes intersection of all blocks. 
+This function computes an intersection of two CartesianProductArray's only for blocks, which are defined by nonzero_blocks argument. By default it takes intersection of all blocks.
 
 """
-function intersection(ca1::CartesianProductArray{N, S}, ca2::CartesianProductArray{N, S},                   nonzero_blocks::Vector{Int}=[1:length(ca1)]) where {N<:Real, S<:LazySet{N}}
-    result = CartesianProductArray(length(ca1), N)
-    for i in length(ca1)
+function intersection(ca1::CartesianProductArray{N, S}, ca2::CartesianProductArray{N, S},
+    nonzero_blocks::Vector{Int}=Vector(1:length(ca1.array))) where {N<:Real, S<:LazySet{N}}
+    result = CartesianProductArray(length(ca1.array), N)
+    for i in 1:length(ca1.array)
         if i in nonzero_blocks
-            result.array[i] = intersection(ca1.array[i], ca2.array[i])
+            push!(result.array, intersection(ca1.array[i], ca2.array[i]))
         else
-            result.array[i] = ca1.array[i]
+            push!(result.array, ca1.array[i])
         end
     end
     return result
