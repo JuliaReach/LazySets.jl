@@ -20,7 +20,9 @@ include("macros.jl")
 # Abstract set types
 # ==================
 include("LazySet.jl")
+include("AbstractPolyhedron.jl")
 include("HalfSpace.jl") # must be here to make LinearConstraint available
+include("AbstractPolyhedron_functions.jl")
 include("AbstractPolytope.jl")
 include("AbstractCentrallySymmetric.jl")
 include("AbstractCentrallySymmetricPolytope.jl")

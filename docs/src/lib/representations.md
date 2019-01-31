@@ -150,6 +150,7 @@ isempty(::EmptySet)
 norm(::EmptySet, ::Real=Inf)
 radius(::EmptySet, ::Real=Inf)
 diameter(::EmptySet, ::Real=Inf)
+linear_map(::AbstractMatrix{N}, ::EmptySet{N}) where {N}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -173,6 +174,10 @@ constraints_list(::HalfSpace{N}) where {N<:Real}
 constrained_dimensions(::HalfSpace{N}) where {N<:Real}
 halfspace_left(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
 halfspace_right(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
+linear_map(::AbstractMatrix{N}, ::HalfSpace{N}) where {N}
+tosimplehrep(::AbstractVector{HalfSpace{N}}) where {N<:Real}
+remove_redundant_constraints(::AbstractVector{LinearConstraint{N}}) where {N<:Real}
+remove_redundant_constraints!(::AbstractVector{LinearConstraint{N}}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -192,6 +197,7 @@ rand(::Type{Hyperplane})
 isbounded(::Hyperplane)
 isempty(::Hyperplane)
 constrained_dimensions(::Hyperplane{N}) where {N<:Real}
+constraints_list(::Hyperplane{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -280,6 +286,7 @@ rand(::Type{Line})
 isbounded(::Line)
 isempty(::Line)
 constrained_dimensions(::Line{N}) where {N<:Real}
+constraints_list(::Line{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -436,17 +443,15 @@ The following methods are shared between `HPolytope` and `HPolyhedron`.
 dim(::HPoly{N}) where {N<:Real}
 ρ(::AbstractVector{N}, ::HPoly{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::HPoly{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::HPoly{N}) where {N<:Real}
 addconstraint!(::HPoly{N}, ::LinearConstraint{N}) where {N<:Real}
 constraints_list(::HPoly{N}) where {N<:Real}
-tosimplehrep(::HPoly{N}) where {N<:Real}
 tohrep(::HPoly{N}) where {N<:Real}
 tovrep(::HPoly{N}) where {N<:Real}
-polyhedron(::HPoly{N}) where {N<:Real}
-isempty(::HPoly{N}) where {N<:Real}
+isempty(::HPoly{N}, ::Bool=false) where {N<:Real}
 cartesian_product(::HPoly{N}, ::HPoly{N}) where {N<:Real}
-linear_map(M::AbstractMatrix{N}, P::PT) where {N<:Real, PT<:HPoly{N}}
-remove_redundant_constraints(::HPoly{N}) where {N<:Real}
+linear_map(::AbstractMatrix{N}, ::PT) where {N<:Real, PT<:HPoly{N}}
+polyhedron(::HPoly{N}) where {N<:Real}
+remove_redundant_constraints(::PT) where {N<:Real, PT<:HPoly{N}}
 remove_redundant_constraints!(::HPoly{N}) where {N<:Real}
 ```
 
@@ -454,6 +459,10 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
+
+Inherited from [`AbstractPolyhedron`](@ref):
+* [`∈`](@ref ∈(::AbstractVector{N}, ::AbstractPolyhedron{N}) where {N<:Real})
+* [`constrained_dimensions`](@ref constrained_dimensions(::AbstractPolyhedron{N}) where {N<:Real})
 
 #### Polytopes in constraint representation
 
@@ -477,7 +486,6 @@ rand(::Type{HPolyhedron})
 isbounded(::HPolyhedron)
 vertices_list(::HPolyhedron{N}) where {N<:Real}
 singleton_list(::HPolyhedron{N}) where {N<:Real}
-constrained_dimensions(::HPolyhedron{N}) where {N<:Real}
 ```
 
 ### Vertex representation

@@ -6,10 +6,11 @@ import Base: rand,
 export HalfSpace, LinearConstraint,
        an_element,
        constrained_dimensions,
-       halfspace_left, halfspace_right
+       halfspace_left, halfspace_right,
+       linear_map
 
 """
-    HalfSpace{N<:Real} <: LazySet{N}
+    HalfSpace{N<:Real} <: AbstractPolyhedron{N}
 
 Type that represents a (closed) half-space of the form ``a⋅x ≤ b``.
 
@@ -27,7 +28,7 @@ julia> HalfSpace([0, -1.], 0.)
 HalfSpace{Float64}([0.0, -1.0], 0.0)
 ```
 """
-struct HalfSpace{N<:Real} <: LazySet{N}
+struct HalfSpace{N<:Real} <: AbstractPolyhedron{N}
     a::AbstractVector{N}
     b::N
 end
@@ -388,4 +389,22 @@ function is_tighter_same_dir_2D(c1::LinearConstraint{N},
         return lt(c1.b, c1.a[2] / c2.a[2] * c2.b)
     end
     return lt(c1.b, c1.a[1] / c2.a[1] * c2.b)
+end
+
+"""
+    linear_map(M::AbstractMatrix{N}, hs::HalfSpace{N}) where {N}
+
+Return the concrete linear map of a half-space.
+
+### Input
+
+- `M`  -- matrix
+- `hs` -- half-space
+
+### Output
+
+The half-space obtained by applying the given linear map to the half-space.
+"""
+function linear_map(M::AbstractMatrix{N}, hs::HalfSpace{N}) where {N}
+    return linear_map(M, HPolyhedron([hs]))
 end

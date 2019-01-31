@@ -6,7 +6,9 @@ export Intersection,
        swap,
        use_precise_ρ,
        IntersectionArray,
-       array
+       array,
+       constraints_list,
+       linear_map
 
 """
     IntersectionCache
@@ -421,7 +423,7 @@ intersection is empty.
 function ρ(d::AbstractVector{N},
            cap::Intersection{N, S1, S2};
            kwargs...) where {N<:Real, S1<:LazySet{N}, S2<:AbstractPolytope{N}}
-    if S1 == HPolyhedron # possibly unbounded
+    if S1 <: HPolyhedron # possibly unbounded
         X = cap.Y  # compact set
         P = cap.X  # polyhedron
     else
@@ -508,6 +510,39 @@ Check whether a given point is contained in an intersection of two convex sets.
 """
 function ∈(x::AbstractVector{N}, cap::Intersection{N})::Bool where {N<:Real}
     return (x ∈ cap.X) && (x ∈ cap.Y)
+end
+
+"""
+    constraints_list(cap::Intersection{N}) where {N<:Real}
+
+Return the list of constraints of an intersection of two (polyhedral) sets.
+
+### Input
+
+- `cap` -- intersection of two (polyhedral) sets
+
+### Output
+
+The list of constraints of the intersection.
+
+### Notes
+
+We assume that the underlying sets are polyhedral, i.e., offer a method
+`constraints_list`.
+
+### Algorithm
+
+We create the polyhedron by taking the intersection of the `constraints_list`s of
+the sets and remove redundant constraints.
+
+This function ignores the boolean output from the in-place `remove_redundant_constraints!`,
+which may inform the user that the constraints are infeasible. In that case, the
+list of constraints at the moment when the infeasibility was detected is returned.
+"""
+function constraints_list(cap::Intersection{N}) where {N<:Real}
+    constraints = [constraints_list(cap.X); constraints_list(cap.Y)]
+    remove_redundant_constraints!(constraints)
+    return constraints
 end
 
 
@@ -702,6 +737,66 @@ function ∈(x::AbstractVector{N}, ia::IntersectionArray{N})::Bool where {N<:Rea
         end
     end
     return true
+end
+
+"""
+    constraints_list(ia::IntersectionArray{N}) where {N<:Real}
+
+Return the list of constraints of an intersection of a finite number of
+(polyhedral) sets.
+
+### Input
+
+- `ia` -- intersection of a finite number of (polyhedral) sets
+
+### Output
+
+The list of constraints of the intersection.
+
+### Notes
+
+We assume that the underlying sets are polyhedral, i.e., offer a method
+`constraints_list`.
+
+### Algorithm
+
+We create the polyhedron from the `constraints_list`s of the sets and remove
+redundant constraints.
+"""
+function constraints_list(ia::IntersectionArray{N}) where {N<:Real}
+    constraints = Vector{LinearConstraint{N}}()
+    for X in array(ia)
+        append!(constraints, constraints_list(X))
+    end
+    remove_redundant_constraints!(constraints)
+    return constraints
+end
+
+# ==========================================================
+# Concrete operations that dispatch on a lazy Intersection
+# ==========================================================
+
+"""
+    linear_map(M::AbstractMatrix{N}, cap::Intersection{N}) where {N}
+
+Return the concrete linear map of a lazy intersection.
+
+### Input
+
+- `M`   -- matrix
+- `cap` -- lazy intersection
+
+### Output
+
+The set obtained by applying the given linear map to the lazy intersection.
+
+### Notes
+
+This function relies on computing `cap` concretely (i.e. as a set representation),
+and then applying the linear map.
+"""
+function linear_map(M::AbstractMatrix{N}, cap::Intersection{N}) where {N}
+    return linear_map(M, intersection(cap.X, cap.Y))
 end
 
 # ==================================

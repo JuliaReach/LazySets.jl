@@ -300,6 +300,7 @@ for N in [Float64, Float32, Rational{Int}]
         points = i == 0 ? Vector{Vector{N}}() : points5[1:i]
         vp = VPolygon(points, apply_convex_hull=i > 0)
         h1 = tohrep(vp)
+        @test convert(HPolygon, vp) == h1
         if i == 0
             @test isempty(h1.constraints)
         elseif i == 1

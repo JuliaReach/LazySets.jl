@@ -1,3 +1,5 @@
+import LazySets.Approximations.BoxDiagDirections
+
 for N in [Float64, Rational{Int}, Float32]
     # π/2 trigonometric rotation
     b = BallInf(N[1, 2], N(1))
@@ -79,8 +81,45 @@ for N in [Float64, Rational{Int}, Float32]
     b = BallInf(N[0, 0], N(1))
     M = N[1 2; 3 4]
     vlist = vertices_list(LinearMap(M, b))
-    @test LazySets.ispermutation(vlist, [N[3, 7], N[1, 1], N[-1, -1], N[-3, -7]])
+    @test ispermutation(vlist, [N[3, 7], N[1, 1], N[-1, -1], N[-3, -7]])
     M = zeros(N, 2, 2)
     vlist = vertices_list(LinearMap(M, b))
     @test vlist == [zeros(N, 2)]
+
+    if test_suite_polyhedra
+        # constraints_list
+        b = BallInf(N[0, 0], N(1))
+        M = N[2 3; 1 2]  # invertible
+        lm1 = LinearMap(M, b)
+        clist = constraints_list(lm1)
+        p1 = HPolygon(clist)
+        M = N[2 3; 0 0]  # not invertible
+        lm2 = LinearMap(M, b)
+        clist = constraints_list(lm2)
+        p2 = HPolygon(clist)
+        for d in BoxDiagDirections{N}(2)
+            @test ρ(d, lm1) ≈ ρ(d, p1)
+            @test ρ(d, lm2) ≈ ρ(d, p2)
+        end
+    end
+
+    # concrete linear map of a LinearMap
+    b = BallInf(N[0, 0], N(1))
+    M = N[2 3; 1 2]
+    L = LinearMap(M, b)
+    V = linear_map(M, LinearMap(M, b))
+    @test M * M * an_element(b) ∈ V
+end
+
+# tests that only work with Float64
+for N in [Float64]
+    b = BallInf(N[0, 0], N(1))
+
+    if test_suite_polyhedra
+        # concrete intersection with lazy linear map
+        M = N[2 3; 1 2]
+        L = M * b
+        Lb = intersection(L, b)
+        @test M * an_element(b) ∈ Lb
+    end
 end

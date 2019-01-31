@@ -3,7 +3,9 @@ for N in [Float64, Rational{Int}, Float32]
     rand(Line)
 
     # construction
-    l1 = Line(N[0, 1], N(1))
+    a1 = N[0, 1]
+    b1 = N(1)
+    l1 = Line(a1, b1)
     l2 = Line(N[1, 0], N(1))
     l3 = Line(N[0, 1], N(2))
     l4 = Line(N[1, 1], N(0))
@@ -46,6 +48,10 @@ for N in [Float64, Rational{Int}, Float32]
     # constrained dimensions
     @test constrained_dimensions(l1) == [2]
     @test constrained_dimensions(l4) == [1, 2]
+
+    # constraints_list
+    @test ispermutation(constraints_list(l1),
+                        [HalfSpace(a1, b1), HalfSpace(-a1, -b1)])
 
     # concrete intersection
     cap11 = intersection(l1, l1_copy)

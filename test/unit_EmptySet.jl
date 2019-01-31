@@ -63,6 +63,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test_throws ErrorException norm(E)
     @test_throws ErrorException radius(E)
     @test_throws ErrorException diameter(E)
+
+    # linear map of an empty set
+    linear_map(ones(N, 2, 2), E) == E
 end
 
 # default Float64 constructors

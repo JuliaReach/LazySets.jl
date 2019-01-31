@@ -120,12 +120,14 @@ dim(::Intersection)
 isbounded(::Intersection)
 isempty(::Intersection)
 ∈(::AbstractVector{N}, ::Intersection{N}) where {N<:Real}
+constraints_list(::Intersection{N}) where {N<:Real}
 isempty_known(::Intersection)
 set_isempty!(::Intersection, ::Bool)
 swap(::Intersection)
 use_precise_ρ
 _line_search
 _projection
+linear_map(::AbstractMatrix{N}, ::Intersection{N}) where {N}
 ```
 
 Inherited from [`LazySet`](@ref):
@@ -149,6 +151,7 @@ dim(::IntersectionArray)
 isbounded(::IntersectionArray)
 ∈(::AbstractVector{N}, ::IntersectionArray{N}) where {N<:Real}
 array(::IntersectionArray{N, S}) where {N<:Real, S<:LazySet{N}}
+constraints_list(::IntersectionArray{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -228,6 +231,9 @@ an_element(::LinearMap{N}) where {N<:Real}
 isbounded(::LinearMap)
 isempty(::LinearMap)
 vertices_list(::LinearMap{N}) where {N<:Real}
+constraints_list(::LinearMap{N}) where {N<:Real}
+linear_map(::AbstractMatrix{N}, ::LinearMap{N}) where {N}
+intersection(::LinearMap{N}, ::LazySet{N}) where {N}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

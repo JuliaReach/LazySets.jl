@@ -28,6 +28,13 @@ for N in [Float64, Rational{Int}, Float32]
     addconstraint!(p, c4)
     addconstraint!(p, c2)
 
+    # tosimplehrep for other polytopic types
+    A, b = tosimplehrep(BallInf(N[0], N(2)))
+    @test (A == hcat(N[1; -1]) || A == hcat(N[-1; 1])) && b == N[2, 2]
+    # tosimplehrep from list of constraints
+    A, b = tosimplehrep([HalfSpace(N[1], N(2)), HalfSpace(N[-1], N(2))])
+    @test (A == hcat(N[1; -1]) || A == hcat(N[-1; 1])) && b == N[2, 2]
+
     # support vector
     d = N[1, 0]
     @test σ(d, p) == N[4, 2]
@@ -153,5 +160,32 @@ if test_suite_polyhedra
         remove_redundant_constraints!(p1)
         Ar, br = tosimplehrep(p1)
         @test Ar == A[1:2, :] && br == b[1:2]
+
+        # removing redundant constraints from a list of constraints
+        constraints = [HalfSpace(N[1], N(1)), HalfSpace(N[1], N(0))]
+        constraints2 = remove_redundant_constraints(constraints)
+        result = remove_redundant_constraints!(constraints)
+        @test result
+        @test ispermutation(constraints, constraints2)
+        constraints = [HalfSpace(N[1], N(0)), HalfSpace(N[-1], N(-1)), HalfSpace(N[-1], N(-1))]
+        result = remove_redundant_constraints!(constraints)
+        @test !result
+
+        # checking for empty intersection (also test symmetric calls)
+        P = convert(HPolytope, BallInf(zeros(N, 2), N(1)))
+        Q = convert(HPolytope, BallInf(ones(N, 2), N(1)))
+        R = HPolyhedron([HalfSpace(N[1, 0], N(3)), HalfSpace(N[-1, 0], N(-2))])
+        res, w = isdisjoint(P, Q, true)
+        @test !isdisjoint(P, Q) && !res && w ∈ P && w ∈ Q
+        res, w = isdisjoint(Q, P, true)
+        @test !isdisjoint(Q, P) && !res && w ∈ P && w ∈ Q
+        res, w = isdisjoint(Q, R, true)
+        @test !isdisjoint(Q, R) && !res && w ∈ Q && w ∈ R
+        res, w = isdisjoint(R, Q, true)
+        @test !isdisjoint(R, Q) && !res && w ∈ Q && w ∈ R
+        res, w = isdisjoint(P, R, true)
+        @test isdisjoint(P, R) && res && w == N[]
+        res, w = isdisjoint(R, P, true)
+        @test isdisjoint(R, P) && res && w == N[]
     end
 end

@@ -63,6 +63,7 @@ RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet)
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:LazySet}
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet, ::Float64)
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}, ::Float64) where {S<:LazySet}
+tosimplehrep(::LazySet)
 ```
 
 ### Set functions that override Base functions
@@ -99,10 +100,26 @@ an_element(::AbstractCentrallySymmetric{N}) where {N<:Real}
 isempty(::AbstractCentrallySymmetric)
 ```
 
-## Polytope
+## Polyhedron
 
-A polytope has finitely many vertices (*V-representation*) resp. facets
-(*H-representation*).
+A polyhedron has finitely many facets (*H-representation*) and is not
+necessarily bounded.
+
+```@docs
+AbstractPolyhedron
+```
+
+This interface defines the following functions:
+
+```@docs
+∈(::AbstractVector{N}, ::AbstractPolyhedron{N}) where {N<:Real}
+constrained_dimensions(::AbstractPolyhedron{N}) where {N<:Real}
+```
+
+### Polytope
+
+A polytope is a bounded set with finitely many vertices (*V-representation*)
+resp. facets (*H-representation*).
 Note that there is a special interface combination
 [Centrally symmetric polytope](@ref).
 
@@ -121,7 +138,7 @@ RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractPolytope)
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:AbstractPolytope}
 ```
 
-### Polygon
+#### Polygon
 
 A polygon is a two-dimensional polytope.
 
@@ -136,7 +153,7 @@ dim(P::AbstractPolygon)
 linear_map(::AbstractMatrix{N}, P::AbstractPolygon{N}) where {N<:Real}
 ```
 
-#### HPolygon
+##### HPolygon
 
 An HPolygon is a polygon in H-representation (or constraint representation).
 
@@ -161,7 +178,7 @@ vertices_list(::AbstractHPolygon{N}, ::Bool=false, ::Bool=true) where {N<:Real}
 isbounded(::AbstractHPolygon, ::Bool=true)
 ```
 
-### Centrally symmetric polytope
+#### Centrally symmetric polytope
 
 A centrally symmetric polytope is a combination of two other interfaces:
 [Centrally symmetric set](@ref) and [Polytope](@ref).
@@ -178,7 +195,7 @@ an_element(::AbstractCentrallySymmetricPolytope{N}) where {N<:Real}
 isempty(::AbstractCentrallySymmetricPolytope)
 ```
 
-#### Hyperrectangle
+##### Hyperrectangle
 
 A hyperrectangle is a special centrally symmetric polytope with axis-aligned
 facets.
@@ -200,7 +217,7 @@ high(::AbstractHyperrectangle{N}) where {N<:Real}
 low(::AbstractHyperrectangle{N}) where {N<:Real}
 ```
 
-#### Singleton
+##### Singleton
 
 A singleton is a special hyperrectangle consisting of only one point.
 

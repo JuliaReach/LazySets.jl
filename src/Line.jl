@@ -6,7 +6,7 @@ export Line,
        an_element
 
 """
-    Line{N<:Real, VN<:AbstractVector{N}} <: LazySet{N}
+    Line{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
 
 Type that represents a line in 2D of the form ``a⋅x = b`` (i.e., a special case
 of a `Hyperplane`).
@@ -25,7 +25,7 @@ julia> Line([1., 1.], 1.)
 Line{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
 ```
 """
-struct Line{N<:Real, VN<:AbstractVector{N}} <: LazySet{N}
+struct Line{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
     a::VN
     b::N
 
@@ -83,6 +83,30 @@ function Line(p::AbstractVector{N}, q::AbstractVector{N}) where {N<:Real}
     b = y₁ + k * x₁
     return Line(a, b)
 end
+
+
+# --- polyhedron interface functions ---
+
+
+"""
+    constraints_list(L::Line{N})::Vector{LinearConstraint{N}}
+        where {N<:Real}
+
+Return the list of constraints of a line.
+
+### Input
+
+- `L` -- line
+
+### Output
+
+A list containing two half-spaces.
+"""
+function constraints_list(L::Line{N}
+                         )::Vector{LinearConstraint{N}} where {N<:Real}
+    return _constraints_list_hyperplane(L.a, L.b)
+end
+
 
 # --- LazySet interface functions ---
 

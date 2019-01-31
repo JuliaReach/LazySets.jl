@@ -29,8 +29,8 @@ is_intersection_empty(::LineSegment{N}, ::LineSegment{N}, ::Bool=false) where {N
 is_intersection_empty(::LazySet{N}, ::Union{Hyperplane{N}, Line{N}}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::LazySet{N}, ::HalfSpace{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::HalfSpace{N}, ::HalfSpace{N}, ::Bool=false) where {N<:Real}
-is_intersection_empty(::LazySet{N}, ::Union{HPolyhedron{N}, HPolytope{N}, AbstractHPolygon{N}}, ::Bool=false) where {N<:Real}
-is_intersection_empty(::HPolytope{N}, ::HPolytope{N}, ::Bool=false) where {N<:Real}
+is_intersection_empty(::Union{HPolyhedron{N}, AbstractPolytope{N}}, ::LazySet{N}, ::Bool=false) where {N<:Real}
+is_intersection_empty(::Union{HPolyhedron{N}, AbstractPolytope{N}}, ::Union{HPolyhedron{N}, AbstractPolytope{N}}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::UnionSet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::UnionSetArray{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 ```

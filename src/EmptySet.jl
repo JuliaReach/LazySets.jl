@@ -3,7 +3,8 @@ import Base: rand,
              isempty
 
 export EmptySet, ∅,
-       an_element
+       an_element,
+       linear_map
 
 """
     EmptySet{N<:Real} <: LazySet{N}
@@ -225,3 +226,19 @@ An error.
 function diameter(S::EmptySet, p::Real=Inf)
     error("an empty set does not have a diameter")
 end
+
+"""
+    linear_map(M::AbstractMatrix{N}, ∅::EmptySet{N}) where {N}
+
+Return the linear map of an empty set.
+
+### Input
+
+- `M` -- matrix
+- `∅` -- empty set
+
+### Output
+
+The empty set.
+"""
+linear_map(M::AbstractMatrix{N}, ∅::EmptySet{N}) where {N} = ∅

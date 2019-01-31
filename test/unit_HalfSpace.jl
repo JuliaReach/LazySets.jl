@@ -90,4 +90,11 @@ for N in [Float64, Rational{Int}, Float32]
           LazySets.is_tighter_same_dir_2D(c3, c2)
     @test !LazySets.is_tighter_same_dir_2D(c1, c2, strict=true) &&
           LazySets.is_tighter_same_dir_2D(c3, c2, strict=true)
+
+    # test linear map of a half-space
+    H = HalfSpace(N[1.0, -1.0], N(0.0)) # x <= y
+    M = Matrix(-N(1.0)*I, 2, 2)
+    MH = linear_map(M, H)
+    @test constraints_list(MH)[1] == HalfSpace(N[-1.0, 1.0], N(0.0)) # x >= y
+
 end
