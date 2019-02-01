@@ -43,12 +43,13 @@ mutable struct HPolygonOpt{N<:Real} <: AbstractHPolygon{N}
     function HPolygonOpt{N}(constraints::Vector{LinearConstraint{N}},
                             ind::Int=1;
                             sort_constraints::Bool=true,
-                            check_boundedness::Bool=false) where {N<:Real}
+                            check_boundedness::Bool=false,
+                            prune::Bool=true) where {N<:Real}
         if sort_constraints
             sorted_constraints = Vector{LinearConstraint{N}}()
             sizehint!(sorted_constraints, length(constraints))
             for ci in constraints
-                addconstraint!(sorted_constraints, ci)
+                addconstraint!(sorted_constraints, ci; prune=prune)
             end
             P = new{N}(sorted_constraints, ind)
         else
@@ -64,11 +65,13 @@ end
 HPolygonOpt(constraints::Vector{LinearConstraint{N}},
             ind::Int=1;
             sort_constraints::Bool=true,
-            check_boundedness::Bool=false) where {N<:Real} =
+            check_boundedness::Bool=false,
+            prune::Bool=true) where {N<:Real} =
     HPolygonOpt{N}(constraints,
                    ind;
                    sort_constraints=sort_constraints,
-                   check_boundedness=check_boundedness)
+                   check_boundedness=check_boundedness,
+                   prune=prune)
 
 # constructor for an HPolygonOpt with no constraints
 HPolygonOpt{N}() where {N<:Real} = HPolygonOpt{N}(Vector{LinearConstraint{N}}())
