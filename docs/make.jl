@@ -21,7 +21,8 @@ makedocs(
         "A Reachability Algorithm" => "man/reach_zonotopes.md",
         "A Hybrid Reachability Algorithm" => "man/reach_zonotopes_hybrid.md",
         "Concrete Polyhedra" => "man/concrete_polyhedra.md",
-        "Parallel Approximations" => "man/parallel_approximations.md"
+        "Parallel Approximations" => "man/parallel_approximations.md",
+        "Lazy Intersections" => "man/lazy_intersections.md"
         ],
         "Library" => Any[
         "Set Interfaces" => "lib/interfaces.md",
