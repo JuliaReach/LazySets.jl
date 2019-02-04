@@ -50,7 +50,7 @@ intersection(::AbstractSingleton{N}, ::LazySet{N}) where {N<:Real}
 intersection(::Line{N}, ::Line{N}) where {N<:Real}
 intersection(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}) where {N<:Real}
 intersection(::Interval{N}, ::Interval{N}) where {N<:Real}
-intersection(::AbstractHPolygon{N}, ::AbstractHPolygon{N}) where {N<:Real}
+intersection(::AbstractHPolygon{N}, ::AbstractHPolygon{N}, ::Bool=true) where {N<:Real}
 intersection(::HPoly{N}, ::HalfSpace{N}) where {N<:Real}
 intersection(::HPoly{N}, ::HPoly{N}) where {N<:Real}
 intersection(::HPoly{N}, ::VPolytope{N}) where {N<:Real}

@@ -185,8 +185,9 @@ Return the intersection of two polygons in constraint representation.
 
 ### Input
 
-- `P1` -- first polygon
-- `P2` -- second polygon
+- `P1`    -- first polygon
+- `P2`    -- second polygon
+- `prune` -- (optional, default: `true`) flag for removing redundant constraints
 
 ### Output
 
@@ -199,9 +200,13 @@ We just combine the constraints of both polygons.
 To obtain a linear-time algorithm, we interleave the constraints.
 If there are two constraints with the same normal vector, we choose the tighter
 one.
+
+Redundancy of constraints is checked with
+[`remove_redundant_constraints!(::AbstractHPolygon)`](@ref).
 """
 function intersection(P1::AbstractHPolygon{N},
-                      P2::AbstractHPolygon{N}
+                      P2::AbstractHPolygon{N},
+                      prune::Bool=true
                      )::Union{HPolygon{N}, EmptySet{N}} where {N<:Real}
     # all constraints of one polygon are processed; now add the other polygon's
     # constraints
@@ -234,17 +239,6 @@ function intersection(P1::AbstractHPolygon{N},
         return false
     end
 
-    # check if the first of two constraint with equivalent direction is tighter
-    @inline function is_first_constraint_tighter(lc1::LinearConstraint{N},
-                                                 lc2::LinearConstraint{N}
-                                                ) where {N<:Real}
-        if lc1.a[1] == zero(N)
-            @assert lc2.a[1] == zero(N)
-            return lc1.b <= lc1.a[2]/lc2.a[2] * lc2.b
-        end
-        return lc1.b <= lc1.a[1]/lc2.a[1] * lc2.b
-    end
-
     c1 = constraints_list(P1)
     c2 = constraints_list(P2)
     if length(c1) == 0
@@ -261,7 +255,7 @@ function intersection(P1::AbstractHPolygon{N},
             if c2[i2].a <= c1[i1].a
                 duplicates += 1
                 # constraints have the same normal vector: take the tighter one
-                if is_first_constraint_tighter(c1[i1], c2[i2])
+                if is_tighter_same_dir_2D(c1[i1], c2[i2])
                     # first constraint is tighter
                     if choose_first_same_dir!(c, i, i1, i2, c1, c2, duplicates)
                         break
@@ -294,8 +288,12 @@ function intersection(P1::AbstractHPolygon{N},
     end
 
     P = HPolygon(c, sort_constraints=false)
-
-    # TODO: remove redundant constraints (#582) and return an EmptySet if empty
+    if prune
+        remove_redundant_constraints!(P)
+        if isempty(P)
+            return EmptySet{N}()
+        end
+    end
     return P
 end
 

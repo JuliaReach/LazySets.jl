@@ -234,7 +234,7 @@ function convert(::Type{HPOLYGON},
     H = HPOLYGON{N}()
     for ci in constraints_list(P)
         # guarantee that the edges are correctly sorted for storage
-        addconstraint!(H, ci)
+        addconstraint!(H, ci; prune=false)
     end
     return H
 end
@@ -305,13 +305,14 @@ function convert(::Type{HPOLYGON}, L::LineSegment{N}
                 ) where {N<:Real, HPOLYGON<:AbstractHPolygon}
     H = HPOLYGON{N}()
     c = halfspace_left(L.p, L.q)
-    addconstraint!(H, c)
-    addconstraint!(H, LinearConstraint(-c.a, -c.b))
+    addconstraint!(H, c; prune=false)
+    addconstraint!(H, LinearConstraint(-c.a, -c.b); prune=false)
     line_dir = L.q - L.p
     c = LinearConstraint(line_dir, dot(L.q, line_dir))
-    addconstraint!(H, c)
+    addconstraint!(H, c; prune=false)
     line_dir = -line_dir
-    addconstraint!(H, LinearConstraint(line_dir, dot(L.p, line_dir)))
+    addconstraint!(H, LinearConstraint(line_dir, dot(L.p, line_dir));
+                   prune=false)
     return H
 end
 
