@@ -656,28 +656,30 @@ function intersection(L1::LinearMap{N}, L2::LinearMap{N}) where {N}
 end
 
 """
-intersection(ca1::CartesianProductArray{N, S}, L2::CartesianProductArray{N, S}, nonzero_blocks::Vector{Int})
-              ) where {N<:Real, S<:LazySet{N}}
+    intersection(ca1::CartesianProductArray{N, S}, ca2::CartesianProductArray{N, S},
+                 nonzero_blocks::Vector{Int}=Vector(1:length(ca1.array))) where {N<:Real, S<:LazySet{N}}
 
-Return the intersection of two CartesianProductArray's.
+Return the intersection of the Cartesian product array of a finite number of convex sets.
 
 ### Input
 
- - `ca1` -- Cartesian Product Array of convex sets
- - `ca2` -- Cartesian Product Array of LazySets (it might by unbounded sets)
+ - `ca1`            -- Cartesian Product Array of convex sets
+ - `ca2`            -- Cartesian Product Array of LazySets (it might by unbounded sets)
  - `nonzero_blocks` -- Required blocks to intersect (all blocks by default)
 
 ### Output
 
-The Cartesian Product Array obtained by the intersection nonzero blocks of `ca1` and `ca2`.
+The Cartesian product obtained by the intersection of the nonzero blocks of `ca1`
+and `ca2`.
 
 ### Notes
 
-This function computes an intersection of two CartesianProductArray's only for blocks, which are defined by nonzero_blocks argument. By default it takes intersection of all blocks.
-
+This function computes an intersection of two `CartesianProductArray` only for
+blocks, which are defined by `nonzero_blocks` argument. By default it takes the
+intersection of all blocks.
 """
 function intersection(ca1::CartesianProductArray{N, S}, ca2::CartesianProductArray{N, S},
-    nonzero_blocks::Vector{Int}=Vector(1:length(ca1.array))) where {N<:Real, S<:LazySet{N}}
+                      nonzero_blocks::Vector{Int}=Vector(1:length(ca1.array))) where {N<:Real, S<:LazySet{N}}
     result = CartesianProductArray(length(ca1.array), N)
     for i in 1:length(ca1.array)
         if i in nonzero_blocks
