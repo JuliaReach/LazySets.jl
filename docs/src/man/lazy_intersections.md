@@ -8,20 +8,19 @@ Pages = ["lazy_intersections.md"]
 Depth = 3
 ```
 
-```@meta
-CurrentModule = LazySets.Approximations
-DocTestSetup = quote
-    using Plots, LazySets, LazySets.Approximations
-end
-```
+An ellipsoid ``E`` can be created by giving its center ``c`` and its shape matrix ``Q``,
+which should be positive definite, i.e. its eigenvalues must be positive.
+Mathematically, it is the set
 
-An ellipsoid $E$ can be created by giving its center $c$ and its shape matrix ``Q``,
-which should be positive definite, i.e. its eigenvaues must be positive.
-Mathematically, it is the set ``E = \\{ x \in \\mathbb{R}^n : (x-c)Q^{-1}(x-c) ≦ 1\\}``.
+```math
+E = \\{ x ∈ \\mathbb{R}^n : (x-c)Q^{-1}(x-c) ≤ 1\\}.
+```
 
 Let's make two rotated ellipsoids and plot them in the same pair of axes.
 
-```@example
+```@example ellipsoids
+using Plots, LazySets, LazySets.Approximations
+
 E₁ = Ellipsoid(zeros(2), [1 0; 0 2.])
 E₂ = Ellipsoid(ones(2), [2 0; 0 1.])
 
@@ -30,21 +29,21 @@ pell = plot!(pell, E₂, 1e-3, alpha=.5)
 ```
 
 !!! note
-    If you are wondering about the paremeter $1e-3$ passed to `plot`, this
+    If you are wondering about the paremeter `1e-3` passed to `plot`, this
     parameter controls the accuracy to which the set is plotted (because the set that
     we actually plot is a polygonal overapproximation of the ellipses!).
 
 Now let's take the *lazy* intersection of the ellipses:
 
 
-```@example
+```@example ellipsoids
 E₁ ∩ E₂
 ```
 
 On the other hand, the *concrete* intersection of sets, called `intersection` in
 `LazySets`, is not yet available for ellipsoids:
 
-```@example
+```@example ellipsoids
 hasmethod(intersection, Tuple{typeof(E₁), typeof(E₂)})
 ```
 
@@ -54,11 +53,11 @@ One way is to overapproximate them by polygons (or polytopes in higher dims) and
 then take their intersection, because this function is defined, whose return
 type is again a `HPolytope`:
 
-```@example
+```@example ellipsoids
 hasmethod(intersection, Tuple{HPolytope{Float64}, HPolytope{Float64}})
 ```
 
-```@example
+```@example ellipsoids
 import LazySets.Approximations.overapproximate
 
 # the parameter epsilon controls the accuracy of the iterative refinement,
@@ -70,7 +69,7 @@ H₂(ε) = overapproximate(E₂, HPolygon, ε)
 Hint(ε) = intersection(convert.(HPolytope, [H₁(ε), H₂(ε)])...);
 ```
 
-```@example
+```@example ellipsoids
 pell = plot(E₁, 1e-3, aspectratio=1, alpha=.5)
 pell = plot!(pell, E₂, 1e-3, alpha=.5)
 pεsmaller = plot!(pell, convert(HPolygon, Hint(0.5)), alpha=.4)
@@ -93,7 +92,7 @@ This method is actually more efficient, because we don't have to calculate the
 polytopic overapproximations of the ellipsoids, but only the support function of
 the (lazy) intersection.
 
-```@example
+```@example ellipsoids
 import LazySets.Approximations.overapproximate
 using LazySets.Approximations, Polyhedra
 
@@ -121,7 +120,7 @@ the resulting set is quite tight.
 
 Let's time it!
 
-```@example
+```@example ellipsoids
 using BenchmarkTools
 
 @btime overapproximate($E₁ ∩ $E₂, BoxDirections(2))
@@ -130,7 +129,7 @@ using BenchmarkTools
 
 We can work with higher dimensional ellipsoids as well:
 
-```@example
+```@example ellipsoids
 using LinearAlgebra
 
 # a random ellipsoid in n-dimensions
@@ -141,7 +140,7 @@ function rand_ellipsoid(n)
 end
 ```
 
-```@example
+```@example ellipsoids
 for n in [2, 5, 50, 100]
     println("\nn = $n\n")
     E₁, E₂ = rand_ellipsoid(n), rand_ellipsoid(n)
