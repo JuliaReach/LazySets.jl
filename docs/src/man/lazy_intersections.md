@@ -13,7 +13,7 @@ which should be positive definite, i.e. its eigenvalues must be positive.
 Mathematically, it is the set
 
 ```math
-E = \\{ x ∈ \\mathbb{R}^n : (x-c)Q^{-1}(x-c) ≤ 1\\}.
+    E = \{ x ∈ \mathbb{R}^n : (x-c)Q^{-1}(x-c) ≤ 1\}.
 ```
 
 Let's make two rotated ellipsoids and plot them in the same pair of axes.
@@ -37,7 +37,8 @@ Now let's take the *lazy* intersection of the ellipses:
 
 
 ```@example ellipsoids
-E₁ ∩ E₂
+Z = E₁ ∩ E₂
+typeof(Z)
 ```
 
 On the other hand, the *concrete* intersection of sets, called `intersection` in
@@ -137,7 +138,7 @@ function rand_ellipsoid(n)
     A = rand(n,n)
     Q = (A+transpose(A))/2 + n * I
     Ellipsoid(rand(n), Q)
-end
+end;
 ```
 
 ```@example ellipsoids
