@@ -58,7 +58,7 @@ intersection(::HPoly{N}, ::AbstractPolytope{N}) where {N<:Real}
 intersection(::S1, ::S2) where {N<:Real, S1<:AbstractPolytope{N}, S2<:AbstractPolytope{N}}
 intersection(::UnionSet{N}, ::LazySet{N}) where {N<:Real}
 intersection(::UnionSetArray{N}, ::LazySet{N}) where {N<:Real}
-intersection(::CartesianProductArray{N, S}, ::CartesianProductArray{N, S}, ::Vector{Int}) where {N<:Real, S<:LazySet{N}}
+intersection(::CartesianProductArray{N, S}, ::CartesianProductArray{N, S}) where {N<:Real, S<:LazySet{N}}
 ```
 
 ## Subset check
