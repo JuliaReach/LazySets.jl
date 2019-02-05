@@ -206,13 +206,8 @@ for N in [Float64, Float32, Rational{Int}]
     set2 = Hyperrectangle(low=[0.5;0.5], high=[1.5; 1.5]);
 
     ca1 = decompose(set1, blocks=[1, dim(set1)-1])
-    ca2 = decompose(set2, blocks=[1, dim(set1)-1])
 
-    intersect1 = intersection(ca1,ca2)
-    intersect2 = intersection(ca1,ca2, [1,2])
+    intersect1 = intersection(ca1,set2)
 
-    @test intersect1 == intersect2
     @test Hyperrectangle(low=[0.5;0.5], high=[1.; 1.]) == project(intersect1,[1,2], Hyperrectangle)
-    intersect3 = intersection(ca1, ca2, [1])
-    @test Hyperrectangle(low=[0.5;0.], high=[1.; 1.]) == project(intersect3,[1,2], Hyperrectangle)
 end

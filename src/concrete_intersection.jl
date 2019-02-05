@@ -1,6 +1,10 @@
+using LazySets.Approximations: project
+
 #= concrete implementations of binary intersections between sets =#
 
-export intersection
+export intersection,
+       block_indices,
+       variable_indices
 
 """
     intersection(S::AbstractSingleton{N},
@@ -655,35 +659,77 @@ function intersection(L1::LinearMap{N}, L2::LinearMap{N}) where {N}
     return intersection(linear_map(L1.M, L1.X), linear_map(L2.M, L2.X))
 end
 
-"""
-intersection(ca1::CartesianProductArray{N, S}, L2::CartesianProductArray{N, S}, nonzero_blocks::Vector{Int})
-              ) where {N<:Real, S<:LazySet{N}}
 
-Return the intersection of two CartesianProductArray's.
+function block_indices(ca::CartesianProductArray{N}, free_variables::Vector{Int}) where {N}
+    #key is the index of block, value is the index of the starting variable
+    result = Dict{Int,Int}()
+    start_index = 1
+    if isempty(free_variables)
+        for i in 1:length(ca.array)
+            result[i] = start_index
+            start_index += dim(ca.array[i])
+        end
+    else
+        for var in 1:free_variables
+            for i in 1:length(ca.array)
+                if (start_index <= var < (start_index + length(ca.array[i])))
+                    result[i] = start_index
+                    start_index += dim(ca.array[i])
+                end
+            end
+        end
+    end
+    return result
+end
+
+function variable_indices(ca::CartesianProductArray{N}, block_index::Int, start_dim::Int) where {N}
+    result = Vector{Int}()
+    for i in start_dim:(start_dim + dim(ca.array[block_index]) - 1)
+        push!(result,i)
+    end
+    return result
+end
+
+"""
+function intersection(X::CartesianProductArray{N},
+                      Y::AbstractPolyhedron{N}) where {N}
+
+Return the intersection of CartesianProductArray and AbstractPolyhedron.
 
 ### Input
 
- - `ca1` -- Cartesian Product Array of convex sets
- - `ca2` -- Cartesian Product Array of LazySets (it might by unbounded sets)
- - `nonzero_blocks` -- Required blocks to intersect (all blocks by default)
+ - `X` -- Cartesian Product Array of convex sets
+ - `Y` -- AbstractPolyhedron
 
 ### Output
 
-The Cartesian Product Array obtained by the intersection nonzero blocks of `ca1` and `ca2`.
+The Cartesian Product Array obtained by the intersection nonzero blocks of `X` and `Y`.
 
 ### Notes
 
-This function computes an intersection of two CartesianProductArray's only for blocks, which are defined by nonzero_blocks argument. By default it takes intersection of all blocks.
-
+This function computes an intersection of CartesianProductArray and AbstractPolyhedron only for blocks, which are not free in AbstractPolyhedron object.
 """
-function intersection(ca1::CartesianProductArray{N, S}, ca2::CartesianProductArray{N, S},
-    nonzero_blocks::Vector{Int}=Vector(1:length(ca1.array))) where {N<:Real, S<:LazySet{N}}
-    result = CartesianProductArray(length(ca1.array), N)
-    for i in 1:length(ca1.array)
-        if i in nonzero_blocks
-            push!(result.array, intersection(ca1.array[i], ca2.array[i]))
+function intersection(X::CartesianProductArray{N},
+                      Y::AbstractPolyhedron{N}) where {N}
+
+    # preallocate the resulting CartesianProductArray with size hint
+    result = CartesianProductArray(length(X.array), N)
+
+    if isbounded(Y)
+        # no free variables
+        free_variables =  Vector{Int}()
+    else
+        free_variables = setdiff(1:dim(Y), constrained_dimensions(Y))
+    end
+    nonfree_blocks = block_indices(X, free_variables)
+
+    for bi in 1:length(X.array)
+        if haskey(nonfree_blocks, bi)
+            # otherwise, make the intersection with the projection of the halfspace
+            push!(result.array, intersection(X.array[bi], project(Y,variable_indices(X, bi, nonfree_blocks[bi]), Hyperrectangle)))
         else
-            push!(result.array, ca1.array[i])
+            # if this block is not constrained, just push the set
+            push!(result.array, X.array[bi])
         end
     end
     return result
