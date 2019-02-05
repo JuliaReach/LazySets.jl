@@ -3,7 +3,9 @@ import Base: *, ∈, isempty
 export CartesianProduct,
        CartesianProductArray,
        CartesianProduct!,
-       array
+       array,
+       block_indices,
+       variable_indices
 
 """
     CartesianProduct{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
@@ -548,4 +550,69 @@ function vertices_list(cpa::CartesianProductArray{N}
     end
 
     return vlist
+end
+
+"""
+
+    block_indices(ca::CartesianProductArray{N}, vars::Vector{Int}) where {N}
+
+Return the dictionary of non-universal blocks (a key is the index of the block and a value is the index of the first variable in the block according to the whole set) of a (polytopic) Cartesian product of a finite
+number of sets.
+
+### Input
+
+- `ca` -- Cartesian product array
+- `vars` -- List of non free variables
+
+### Output
+
+A dictionary of block indices and indices of their first variables in the whole system.
+
+"""
+function block_indices(ca::CartesianProductArray{N}, vars::Vector{Int}) where {N}
+    #key is the index of block, value is the index of the starting variable
+    result = Dict{Int,Int}()
+    start_index = 1
+    if isempty(vars)
+        for i in 1:length(ca.array)
+            result[i] = start_index
+            start_index += dim(ca.array[i])
+        end
+    else
+        for var in vars
+            for i in 1:length(ca.array)
+                if (start_index <= var < (start_index + dim(ca.array[i])))
+                    result[var] = start_index
+                    start_index += dim(ca.array[i])
+                    break
+                end
+            end
+        end
+    end
+    return result
+end
+
+"""
+    variable_indices(ca::CartesianProductArray{N}, block_index::Int, start_dim::Int) where {N}
+
+Return the dictionary of non-universal blocks (a key is the index of the block and a value is the index of the first variable in the block according to the whole set) of a (polytopic) Cartesian product of a finite
+number of sets.
+
+### Input
+
+- `ca` -- Cartesian product array
+- `block_index` -- block index
+- `start_dim` -- index of the first variable in the block, according to the whole system
+
+### Output
+
+List of the variables in the block
+
+"""
+function variable_indices(ca::CartesianProductArray{N}, block_index::Int, start_dim::Int) where {N}
+    result = Vector{Int}()
+    for i in start_dim:(start_dim + dim(ca.array[block_index]) - 1)
+        push!(result,i)
+    end
+    return result
 end

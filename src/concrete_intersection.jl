@@ -2,9 +2,7 @@ using LazySets.Approximations: project
 
 #= concrete implementations of binary intersections between sets =#
 
-export intersection,
-       block_indices,
-       variable_indices
+export intersection
 
 """
     intersection(S::AbstractSingleton{N},
@@ -659,37 +657,6 @@ function intersection(L1::LinearMap{N}, L2::LinearMap{N}) where {N}
     return intersection(linear_map(L1.M, L1.X), linear_map(L2.M, L2.X))
 end
 
-
-function block_indices(ca::CartesianProductArray{N}, free_variables::Vector{Int}) where {N}
-    #key is the index of block, value is the index of the starting variable
-    result = Dict{Int,Int}()
-    start_index = 1
-    if isempty(free_variables)
-        for i in 1:length(ca.array)
-            result[i] = start_index
-            start_index += dim(ca.array[i])
-        end
-    else
-        for var in 1:free_variables
-            for i in 1:length(ca.array)
-                if (start_index <= var < (start_index + length(ca.array[i])))
-                    result[i] = start_index
-                    start_index += dim(ca.array[i])
-                end
-            end
-        end
-    end
-    return result
-end
-
-function variable_indices(ca::CartesianProductArray{N}, block_index::Int, start_dim::Int) where {N}
-    result = Vector{Int}()
-    for i in start_dim:(start_dim + dim(ca.array[block_index]) - 1)
-        push!(result,i)
-    end
-    return result
-end
-
 """
 function intersection(X::CartesianProductArray{N},
                       Y::AbstractPolyhedron{N}) where {N}
@@ -703,7 +670,7 @@ Return the intersection of CartesianProductArray and AbstractPolyhedron.
 
 ### Output
 
-The Cartesian Product Array obtained by the intersection nonzero blocks of `X` and `Y`.
+The Cartesian Product Array obtained by the intersection of the nonzero blocks of `X` and `Y`.
 
 ### Notes
 
@@ -717,16 +684,16 @@ function intersection(X::CartesianProductArray{N},
 
     if isbounded(Y)
         # no free variables
-        free_variables =  Vector{Int}()
+        vars = Vector{Int}(1:dim(Y))
     else
-        free_variables = setdiff(1:dim(Y), constrained_dimensions(Y))
+        vars = constrained_dimensions(Y)
     end
-    nonfree_blocks = block_indices(X, free_variables)
+    blocks = block_indices(X, vars)
 
     for bi in 1:length(X.array)
-        if haskey(nonfree_blocks, bi)
+        if haskey(blocks,bi)
             # otherwise, make the intersection with the projection of the halfspace
-            push!(result.array, intersection(X.array[bi], project(Y,variable_indices(X, bi, nonfree_blocks[bi]), Hyperrectangle)))
+            push!(result.array, intersection(X.array[bi], project(Y,variable_indices(X, bi, blocks[bi]), Hyperrectangle)))
         else
             # if this block is not constrained, just push the set
             push!(result.array, X.array[bi])

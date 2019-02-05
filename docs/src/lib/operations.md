@@ -52,6 +52,8 @@ isempty(::CartesianProductArray)
 constraints_list(::CartesianProductArray{N}) where {N<:Real}
 vertices_list(::CartesianProductArray{N}) where {N<:Real}
 array(::CartesianProductArray{N, S}) where {N<:Real, S<:LazySet{N}}
+block_indices(::CartesianProductArray{N}, ::Vector{Int}) where {N}
+variable_indices(::CartesianProductArray{N}, ::Int, ::Int) where {N}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
