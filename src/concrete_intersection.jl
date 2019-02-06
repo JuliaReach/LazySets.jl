@@ -1,4 +1,3 @@
-using LazySets.Approximations: project
 
 #= concrete implementations of binary intersections between sets =#
 
@@ -693,7 +692,7 @@ function intersection(X::CartesianProductArray{N},
     for bi in 1:length(X.array)
         if haskey(blocks,bi)
             # otherwise, make the intersection with the projection of the halfspace
-            push!(result.array, intersection(X.array[bi], project(Y,variable_indices(X, bi, blocks[bi]), Hyperrectangle)))
+            push!(result.array, intersection(X.array[bi], LazySets.Approximations.project(Y,variable_indices(X, bi, blocks[bi]), Hyperrectangle)))
         else
             # if this block is not constrained, just push the set
             push!(result.array, X.array[bi])
