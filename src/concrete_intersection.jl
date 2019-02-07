@@ -1,4 +1,3 @@
-
 #= concrete implementations of binary intersections between sets =#
 
 export intersection
@@ -660,20 +659,22 @@ end
 function intersection(X::CartesianProductArray{N},
                       Y::AbstractPolyhedron{N}) where {N}
 
-Return the intersection of CartesianProductArray and AbstractPolyhedron.
+Return the intersection of the cartesian product of a finite number of convex sets and a polyhedron.
 
 ### Input
 
- - `X` -- Cartesian Product Array of convex sets
- - `Y` -- AbstractPolyhedron
+ - `X` -- cartesian product of a finite number of convex sets
+ - `Y` -- polyhedron
 
 ### Output
 
-The Cartesian Product Array obtained by the intersection of the nonzero blocks of `X` and `Y`.
+The concrete intersection between `X` and `Y`
 
-### Notes
+### Algorithm
 
-This function computes an intersection of CartesianProductArray and AbstractPolyhedron only for blocks, which are not free in AbstractPolyhedron object.
+This function takes into account that if the polyhedron is unbounded, the intersection
+is only needed to be taken in the elements of the cartesian product array (subsets of
+variables, or "blocks") which are constrained; those which are not constrained do not need to be intersected.
 """
 function intersection(X::CartesianProductArray{N},
                       Y::AbstractPolyhedron{N}) where {N}
@@ -683,20 +684,25 @@ function intersection(X::CartesianProductArray{N},
 
     if isbounded(Y)
         # no free variables
-        vars = Vector{Int}(1:dim(Y))
+        constrained_vars = Vector{Int}(1:dim(Y))
     else
-        vars = constrained_dimensions(Y)
+        constrained_vars = constrained_dimensions(Y)
     end
-    blocks = block_indices(X, vars)
+    blocks = block_indices(X, constrained_vars)
 
     for bi in 1:length(X.array)
         if haskey(blocks,bi)
             # otherwise, make the intersection with the projection of the halfspace
-            push!(result.array, intersection(X.array[bi], LazySets.Approximations.project(Y,variable_indices(X, bi, blocks[bi]), Hyperrectangle)))
+            push!(result.array, intersection(X.array[bi], Approximations.project(Y,variable_indices(X, bi, blocks[bi]), Hyperrectangle)))
         else
             # if this block is not constrained, just push the set
             push!(result.array, X.array[bi])
         end
     end
     return result
+end
+
+# symmetric method
+function intersection(Y::AbstractPolyhedron{N}, X::CartesianProductArray{N}) where {N}
+    intersection(X, Y)
 end
