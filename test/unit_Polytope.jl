@@ -112,11 +112,20 @@ for N in [Float64, Rational{Int}, Float32]
     @test BallInf(N[0, 0], N(1)) ⊆ P
     @test !(BallInf(N[0, 0], N(1.01)) ⊆ P)
 
-    # concrete linear map
-    linear_map(N[2 3; 1 2], P)  # invertible matrix
+    # =====================
+    # Concrete linear map
+    # =====================
+    linear_map(N[2 3; 1 2], P) # invertible matrix
     if test_suite_polyhedra
         linear_map(N[2 3; 0 0], P)  # noninvertible matrix
     end
+
+    M = N[2 1; 0 1]
+    linear_map(M, P)
+    L1 = linear_map(M, P, use_inv=true)  # calculates inv(M) explicitly
+    L2 = linear_map(M, P, use_inv=false) # uses transpose(M) \ c.a for each constraint c of P
+    L3 = linear_map(M, P, cond_tol=1e3)  # set a custom tolerance for the condition number (invertibility check)
+    @test all([M * an_element(P) ∈ Li for Li in [L1, L2, L3]])
 
     # -----
     # V-rep

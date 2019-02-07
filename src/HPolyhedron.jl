@@ -409,7 +409,7 @@ Concrete linear map of a polyhedron in constraint representation.
 - `M`        -- matrix
 - `P`        -- polyhedron in constraint representation
 - `cond_tol` -- (optional) tolerance of matrix condition (used to check whether
-                         the matrix is invertible)
+                the matrix is invertible)
 - `use_inv`  -- (optional, default: `false` if `M` is sparse and `true`
                 otherwise) whether to compute the full left division through
                 `inv(M)`, or to use the left division for each vector; see below 
