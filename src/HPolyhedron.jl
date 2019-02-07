@@ -433,11 +433,9 @@ function linear_map(M::AbstractMatrix{N},
     end
     # matrix M is invertible: the normal vectors are vec(c.a' * inv(M)), or taking
     # the left division for each constraint c, transpose(M) \ c.a
-    Mt = transpose(M)
-    constraints = Vector{LinearConstraint{N}}(undef,
-                                              length(constraints_list(P)))
+    constraints = similar(constraints_list(P))
     @inbounds for (i, c) in enumerate(constraints_list(P))
-        constraints[i] = LinearConstraint(Mt \ c.a, c.b)
+        constraints[i] = LinearConstraint(_At_ldiv_B(M, c.a), c.b)
     end
     return PT(constraints)
 end
