@@ -389,8 +389,26 @@ Return the linear map of a lazy linear map.
 
 ### Output
 
-The polytope representing the linear map of the lazy linear map of a set.  
+The polytope representing the linear map of the lazy linear map of a set.
 """
 function linear_map(M::AbstractMatrix{N}, lm::LinearMap{N}) where {N}
      return linear_map(M * lm.M, lm.X)
+end
+
+
+function linear_map(M::AbstractMatrix{N}, cp::CartesianProductArray{N}) where {N}
+    result = CartesianProductArray(length(cp.array), N)
+    start_block_variable = 1
+    for ls in cp.array
+        block_dim = dim(ls)
+        proj = view(M, start_block_variable:(start_block_variable+block_dim-1), start_block_variable:(start_block_variable+block_dim-1))
+
+        push!(result.array, LinearMap(Array(proj), ls))
+        start_block_variable+=block_dim
+    end
+    return result
+end
+
+function linear_map(cp::CartesianProductArray{N}, M::AbstractMatrix{N}) where {N}
+    return linear_map(M,cp)
 end
