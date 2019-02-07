@@ -350,6 +350,8 @@ Inherited from [`AbstractHPolygon`](@ref):
 * [`tovrep`](@ref tovrep(::AbstractHPolygon{N}) where {N<:Real})
 * [`isbounded`](@ref isbounded(::AbstractHPolygon, ::Bool=true))
 * [`addconstraint!`](@ref addconstraint!(::AbstractHPolygon{N}, ::LinearConstraint{N}) where {N<:Real})
+* [`isredundant`](@ref isredundant(::LinearConstraint{N}, ::LinearConstraint{N}, ::LinearConstraint{N}) where {N<:Real})
+* [`remove_redundant_constraints!`](@ref remove_redundant_constraints!(::AbstractHPolygon))
 * [`constraints_list`](@ref constraints_list(::AbstractHPolygon{N}) where {N<:Real})
 
 ### Optimized constraint representation
@@ -379,6 +381,8 @@ Inherited from [`AbstractHPolygon`](@ref):
 * [`tovrep`](@ref tovrep(::AbstractHPolygon{N}) where {N<:Real})
 * [`isbounded`](@ref isbounded(::AbstractHPolygon, ::Bool=true))
 * [`addconstraint!`](@ref addconstraint!(::AbstractHPolygon{N}, ::LinearConstraint{N}) where {N<:Real})
+* [`isredundant`](@ref isredundant(::LinearConstraint{N}, ::LinearConstraint{N}, ::LinearConstraint{N}) where {N<:Real})
+* [`remove_redundant_constraints!`](@ref remove_redundant_constraints!(::AbstractHPolygon))
 * [`constraints_list`](@ref constraints_list(::AbstractHPolygon{N}) where {N<:Real})
 
 ### Vertex representation
@@ -442,10 +446,10 @@ dim(::HPoly{N}) where {N<:Real}
 addconstraint!(::HPoly{N}, ::LinearConstraint{N}) where {N<:Real}
 constraints_list(::HPoly{N}) where {N<:Real}
 tohrep(::HPoly{N}) where {N<:Real}
+tovrep(::HPoly{N}) where {N<:Real}
 isempty(::HPoly{N}, ::Bool=false) where {N<:Real}
 cartesian_product(::HPoly{N}, ::HPoly{N}) where {N<:Real}
 linear_map(::AbstractMatrix{N}, ::PT) where {N<:Real, PT<:HPoly{N}}
-tovrep(::HPoly{N}) where {N<:Real}
 polyhedron(::HPoly{N}) where {N<:Real}
 remove_redundant_constraints(::PT) where {N<:Real, PT<:HPoly{N}}
 remove_redundant_constraints!(::HPoly{N}) where {N<:Real}

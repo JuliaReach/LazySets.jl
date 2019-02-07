@@ -359,6 +359,39 @@ function halfspace_right(p::AbstractVector{N},
 end
 
 """
+    is_tighter_same_dir_2D(c1::LinearConstraint{N},
+                           c2::LinearConstraint{N}) where {N<:Real}
+
+Check if the first of two two-dimensional constraints with equivalent normal
+direction is tighter.
+
+### Input
+
+- `c1`     -- first linear constraint
+- `c2`     -- second linear constraint
+- `strict` -- (optional; default: `false`) check for strictly tighter
+              constraints?
+
+### Output
+
+`true` iff the first constraint is tighter.
+"""
+function is_tighter_same_dir_2D(c1::LinearConstraint{N},
+                                c2::LinearConstraint{N};
+                                strict::Bool=false) where {N<:Real}
+    @assert dim(c1) == dim(c2) == 2 "this method requires 2D constraints"
+    @assert c1.a <= c2.a <= c1.a "the constraints must have the same " *
+        "normal direction"
+
+    lt = strict ? (<) : (<=)
+    if c1.a[1] == zero(N)
+        @assert c2.a[1] == zero(N)
+        return lt(c1.b, c1.a[2] / c2.a[2] * c2.b)
+    end
+    return lt(c1.b, c1.a[1] / c2.a[1] * c2.b)
+end
+
+"""
     linear_map(M::AbstractMatrix{N}, hs::HalfSpace{N}) where {N}
 
 Return the concrete linear map of a half-space.

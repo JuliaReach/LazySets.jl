@@ -82,9 +82,19 @@ for N in [Float64, Rational{Int}, Float32]
     empty_intersection, v = is_intersection_empty(hs1, hs4, true)
     @test !is_intersection_empty(hs1, hs4) && !empty_intersection && v ∈ hs1 && v ∈ hs4
 
+    # check for tighter constraint
+    c1 = HalfSpace([1., 0.], 1.)
+    c2 = HalfSpace([2., 0.], 2.)
+    c3 = HalfSpace([2., 0.], 1.)
+    @test LazySets.is_tighter_same_dir_2D(c1, c2) &&
+          LazySets.is_tighter_same_dir_2D(c3, c2)
+    @test !LazySets.is_tighter_same_dir_2D(c1, c2, strict=true) &&
+          LazySets.is_tighter_same_dir_2D(c3, c2, strict=true)
+
     # test linear map of a half-space
     H = HalfSpace(N[1.0, -1.0], N(0.0)) # x <= y
     M = Matrix(-N(1.0)*I, 2, 2)
     MH = linear_map(M, H)
     @test constraints_list(MH)[1] == HalfSpace(N[-1.0, 1.0], N(0.0)) # x >= y
+
 end

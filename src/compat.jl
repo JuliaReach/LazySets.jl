@@ -14,6 +14,7 @@ export _At_mul_B
 
 @static if VERSION < v"0.7-"
     using Compat.Random
+    import Compat.Random: GLOBAL_RNG
     @inline _At_mul_B(A, B) = At_mul_B(A, B)
     @inline _At_ldiv_B(A, B) = At_ldiv_B(A, B)
     expmat = expm

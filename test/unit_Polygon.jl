@@ -21,6 +21,33 @@ for N in [Float64, Float32, Rational{Int}]
     @test p.constraints[3] == c3
     @test p.constraints[4] == c4
 
+    # redundancy of constraints
+    h1 = HalfSpace([N(1), N(1)], N(1))
+    h2 = HalfSpace([N(0), N(1)], N(1)) # redundant
+    h3 = HalfSpace([N(-1), N(1)], N(1))
+    h4 = HalfSpace([N(0), N(-1)], N(0))
+    @test LazySets.isredundant(h2, h1, h3)
+    @test !LazySets.isredundant(h3, h2, h4)
+    @test LazySets.isredundant(h2, h2, h3) && LazySets.isredundant(h3, h2, h3)
+    p2 = HPolygon{N}([h1, h2, h3, h4]; sort_constraints=false) # sorted in the right order
+    @test length(p2.constraints) == 4
+    remove_redundant_constraints!(p2)
+    @test length(p2.constraints) == 3
+    h1 = HalfSpace([N(1), N(0)], N(1))
+    h2 = HalfSpace([N(0), N(1)], N(1))
+    h3 = HalfSpace([N(-1), N(0)], N(1))
+    h4 = HalfSpace([N(0), N(-1)], N(1))
+    p2 = HPolygon{N}()
+    addconstraint!(p2, h1)
+    addconstraint!(p2, h2)
+    addconstraint!(p2, h3)
+    addconstraint!(p2, h4)
+    addconstraint!(p2, h1)
+    @test ispermutation(p2.constraints, [h1, h2, h3, h4])
+    h5 = HalfSpace([N(1), N(1)], N(0))
+    addconstraint!(p2, h5)
+    @test ispermutation(p2.constraints, [h3, h4, h5])
+
     # conversion to optimized polygon
     po = convert(HPolygonOpt, p)
     # conversion back
@@ -164,12 +191,17 @@ for N in [Float64, Float32, Rational{Int}]
     h6 = HalfSpace([N(1), N(-1)], N(0))
     p2 = HPolygon([h4, h5, h6])
     c = intersection(p1, p2).constraints
-    @test c == [h1, h4, h2, h5, h3, h6]
+    @test c == [h1, h2, h5, h6]
 
     # check that empty polygon (infeasible constraints) has no vertices (#918)
     P = HPolygon([HalfSpace([1.0, 1.0], 0.0), HalfSpace([-1.0, 0.0], -1.0),
         HalfSpace([0.0, -1.0], -1.0)])
     @test vertices_list(P) == Vector{Vector{N}}()
+
+    # empty intersection results in empty set
+    p3 = tohrep(VPolygon([N[0, 0]]))
+    p4 = tohrep(VPolygon([N[1, 1]]))
+    @test intersection(p3, p4) isa EmptySet{N}
 
     # is intersection empty
     p3 = convert(HPolygon, Hyperrectangle(low=N[-1, -1], high=N[1, 1]))
@@ -324,10 +356,24 @@ for N in [Float64, Float32]
         addconstraint!(po1, constraint, linear_search=true)
         addconstraint!(po2, constraint, linear_search=i<=2)
     end
+    n = length(p1.constraints)
+    @test n == length(p2.constraints) == length(po2.constraints) ==
+          length(po2.constraints)
     for i in 1:n
         @test same_constraints([p1.constraints[i], p2.constraints[i],
                                 po1.constraints[i], po2.constraints[i]])
     end
+
+    # check redundancy removal
+    p2 = HPolygon([
+        HalfSpace(N[-1.29817, 1.04012], N(6.07731)),
+        HalfSpace(N[-1.29348, -0.0920708], N(1.89515)),
+        HalfSpace(N[-1.42909, -0.347449], N(1.50577)),
+        HalfSpace(N[0.349446, -0.130477], N(-0.575904)),
+        HalfSpace(N[1.50108, -0.339291], N(-2.18331)),
+        HalfSpace(N[2.17022, -0.130831], N(-2.14411))])
+    addconstraint!(p2, p2.constraints[2])
+    @test length(p2.constraints) == 6
 end
 
 # default Float64 constructors
