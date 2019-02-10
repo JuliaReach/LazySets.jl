@@ -36,8 +36,7 @@ function ∈(x::AbstractVector{N}, P::AbstractPolyhedron{N})::Bool where {N<:Rea
 end
 
 """
-    constrained_dimensions(P::AbstractPolyhedron{N})::Vector{Int}
-        where {N<:Real}
+    constrained_dimensions(P::AbstractPolyhedron)::Vector{Int} where {N<:Real}
 
 Return the indices in which a polyhedron is constrained.
 
@@ -54,8 +53,7 @@ dimension `i`.
 
 A 2D polyhedron with constraint ``x1 ≥ 0`` is constrained in dimension 1 only.
 """
-function constrained_dimensions(P::AbstractPolyhedron{N}
-                               )::Vector{Int} where {N<:Real}
+function constrained_dimensions(P::AbstractPolyhedron)::Vector{Int}
     zero_indices = zeros(Int, dim(P))
     for constraint in constraints_list(P)
         for i in constrained_dimensions(constraint)

@@ -17,8 +17,6 @@ vertices.
 ### Notes
 
 Every concrete `AbstractPolytope` must define the following functions:
-- `constraints_list(::AbstractPolytope{N})::Vector{LinearConstraint{N}}` --
-    return a list of all facet constraints
 - `vertices_list(::AbstractPolytope{N})::Vector{Vector{N}}` -- return a list of
     all vertices
 

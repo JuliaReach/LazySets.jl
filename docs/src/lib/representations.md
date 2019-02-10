@@ -462,7 +462,7 @@ Inherited from [`LazySet`](@ref):
 
 Inherited from [`AbstractPolyhedron`](@ref):
 * [`∈`](@ref ∈(::AbstractVector{N}, ::AbstractPolyhedron{N}) where {N<:Real})
-* [`constrained_dimensions`](@ref constrained_dimensions(::AbstractPolyhedron{N}) where {N<:Real})
+* [`constrained_dimensions`](@ref constrained_dimensions(::AbstractPolyhedron)
 
 #### Polytopes in constraint representation
 
