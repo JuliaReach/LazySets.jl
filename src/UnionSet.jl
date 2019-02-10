@@ -32,6 +32,9 @@ end
 # convenience constructor without type parameter
 UnionSet(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} = UnionSet{N, S1, S2}(X, Y)
 
+# Universe is the absorbing element for UnionSet
+@absorbing(UnionSet, Universe)
+
 """
     ∪
 
@@ -216,6 +219,9 @@ Type that represents the set union of a finite number of convex sets.
 struct UnionSetArray{N<:Real, S<:LazySet{N}}
     array::Vector{S}
 end
+
+# Universe is the absorbing element for UnionSetArray
+@absorbing(UnionSetArray, Universe)
 
 # add functions connecting UnionSet and UnionSetArray
 @declare_array_version(UnionSet, UnionSetArray)
