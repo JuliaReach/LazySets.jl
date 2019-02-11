@@ -56,6 +56,12 @@ for N in [Float64, Rational{Int}, Float32]
     # constraints list
     @test constraints_list(hs) == [hs]
 
+    # constraints list from matrix-vector representation
+    A = N[2 0; 1 3]
+    b = N[-1, 1]
+    @test constraints_list(A, b) ==
+          [HalfSpace(N[2, 0], N(-1)), HalfSpace(N[1, 3], N(1))]
+
     # constrained dimensions
     @test constrained_dimensions(HalfSpace(N[1, 0, 1], N(1))) == [1, 3]
     @test constrained_dimensions(HalfSpace(N[0, 1, 0], N(1))) == [2]

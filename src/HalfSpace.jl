@@ -246,6 +246,34 @@ function constraints_list(hs::HalfSpace{N}
 end
 
 """
+    constraints_list(A::AbstractMatrix{N}, b::AbstractVector{N}
+                    )::Vector{LinearConstraint{N}} where {N<:Real}
+
+Convert a matrix-vector representation to a linear-constraint representation.
+
+### Input
+
+- `A` -- matrix
+- `b` -- vector
+
+### Output
+
+A list of linear constraints.
+"""
+function constraints_list(A::AbstractMatrix{N}, b::AbstractVector{N}
+                         )::Vector{LinearConstraint{N}} where {N<:Real}
+    m = size(A, 1)
+    @assert m == length(b) "a matrix with $m rows is incompatible with a " *
+                           "vector of length $(length(b))"
+
+    constraints = Vector{LinearConstraint{N}}(undef, m)
+    @inbounds for i in 1:m
+        constraints[i] = LinearConstraint{N}(A[i, :], b[i])
+    end
+    return constraints
+end
+
+"""
     constrained_dimensions(hs::HalfSpace{N})::Vector{Int} where {N<:Real}
 
 Return the indices in which a half-space is constrained.

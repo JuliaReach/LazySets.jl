@@ -171,6 +171,7 @@ rand(::Type{HalfSpace})
 isbounded(::HalfSpace)
 isempty(::HalfSpace)
 constraints_list(::HalfSpace{N}) where {N<:Real}
+constraints_list(::AbstractMatrix{N}, ::AbstractVector{N}) where {N<:Real}
 constrained_dimensions(::HalfSpace{N}) where {N<:Real}
 halfspace_left(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
 halfspace_right(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
