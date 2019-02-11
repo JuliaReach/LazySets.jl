@@ -73,11 +73,29 @@ HPolygonOpt(constraints::Vector{LinearConstraint{N}},
                    check_boundedness=check_boundedness,
                    prune=prune)
 
-# constructor for an HPolygonOpt with no constraints
+# constructor with no constraints
 HPolygonOpt{N}() where {N<:Real} = HPolygonOpt{N}(Vector{LinearConstraint{N}}())
 
-# constructor for an HPolygonOpt with no constraints of type Float64
+# constructor with no constraints of type Float64
 HPolygonOpt() = HPolygonOpt{Float64}()
+
+# constructor from a simple H-representation
+HPolygonOpt(A::AbstractMatrix{N},
+            b::AbstractVector{N};
+            sort_constraints::Bool=true,
+            check_boundedness::Bool=false,
+            prune::Bool=true) where {N<:Real} =
+    HPolygonOpt(constraints_list(A, b); sort_constraints=sort_constraints,
+                check_boundedness=check_boundedness, prune=prune)
+
+# constructor from a simple H-representation with type parameter
+HPolygonOpt{N}(A::AbstractMatrix{N},
+               b::AbstractVector{N};
+               sort_constraints::Bool=true,
+               check_boundedness::Bool=false,
+               prune::Bool=true) where {N<:Real} =
+    HPolygonOpt(A, b; sort_constraints=sort_constraints,
+                check_boundedness=check_boundedness, prune=prune)
 
 
 # --- LazySet interface functions ---

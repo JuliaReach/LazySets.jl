@@ -32,22 +32,17 @@ struct HPolyhedron{N<:Real} <: AbstractPolyhedron{N}
     constraints::Vector{LinearConstraint{N}}
 end
 
-# constructor for an HPolyhedron with no constraints
+# constructor with no constraints
 HPolyhedron{N}() where {N<:Real} = HPolyhedron{N}(Vector{LinearConstraint{N}}())
 
-# constructor for an HPolyhedron with no constraints of type Float64
+# constructor with no constraints of type Float64
 HPolyhedron() = HPolyhedron{Float64}()
 
-# constructor for an HPolyhedron from a simple H-representation
-function HPolyhedron(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real}
-    m = size(A, 1)
-    constraints = LinearConstraint{N}[]
-    @inbounds for i in 1:m
-        push!(constraints, LinearConstraint(A[i, :], b[i]))
-    end
-    return HPolyhedron(constraints)
-end
+# constructor from a simple H-representation
+HPolyhedron(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real} =
+    HPolyhedron(constraints_list(A, b))
 
+# constructor from a simple H-representation with type parameter
 HPolyhedron{N}(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real} =
     HPolyhedron(A, b)
 

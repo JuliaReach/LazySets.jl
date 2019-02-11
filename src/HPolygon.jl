@@ -70,6 +70,24 @@ HPolygon{N}() where {N<:Real} = HPolygon{N}(Vector{LinearConstraint{N}}())
 # constructor for an HPolygon with no constraints of type Float64
 HPolygon() = HPolygon{Float64}()
 
+# constructor from a simple H-representation
+HPolygon(A::AbstractMatrix{N},
+         b::AbstractVector{N};
+         sort_constraints::Bool=true,
+         check_boundedness::Bool=false,
+         prune::Bool=true) where {N<:Real} =
+    HPolygon(constraints_list(A, b); sort_constraints=sort_constraints,
+             check_boundedness=check_boundedness, prune=prune)
+
+# constructor from a simple H-representation with type parameter
+HPolygon{N}(A::AbstractMatrix{N},
+            b::AbstractVector{N};
+            sort_constraints::Bool=true,
+            check_boundedness::Bool=false,
+            prune::Bool=true) where {N<:Real} =
+    HPolygon(A, b; sort_constraints=sort_constraints,
+             check_boundedness=check_boundedness, prune=prune)
+
 
 # --- LazySet interface functions ---
 
