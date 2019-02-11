@@ -117,7 +117,7 @@ plot(pbox, poct, layout=(1, 2))
 
 Using support function evaluations over a set of fixed directions is in general
 more efficient than iterative refinement, but the drawback is that one does not have control on the
-overapproximation error. Moreover, iterative refinement is only available in two dimensions,
+overapproximation error. Moreover, iterative refinement is currently only available in two dimensions,
 but overapproximation with template directions can be used in any dimension.
 
 Let's time it!
