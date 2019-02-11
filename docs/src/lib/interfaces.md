@@ -113,7 +113,7 @@ This interface defines the following functions:
 
 ```@docs
 ∈(::AbstractVector{N}, ::AbstractPolyhedron{N}) where {N<:Real}
-constrained_dimensions(::AbstractPolyhedron{N}) where {N<:Real}
+constrained_dimensions(::AbstractPolyhedron)
 ```
 
 ### Polytope

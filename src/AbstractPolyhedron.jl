@@ -14,12 +14,13 @@ Every concrete `AbstractPolyhedron` must define the following functions:
 
 ```jldoctest
 julia> subtypes(AbstractPolyhedron)
-5-element Array{Any,1}:
+6-element Array{Any,1}:
  AbstractPolytope
  HPolyhedron
  HalfSpace
  Hyperplane
  Line
+ Universe
 ```
 """
 abstract type AbstractPolyhedron{N<:Real} <: LazySet{N} end

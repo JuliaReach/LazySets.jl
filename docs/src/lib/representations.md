@@ -462,7 +462,7 @@ Inherited from [`LazySet`](@ref):
 
 Inherited from [`AbstractPolyhedron`](@ref):
 * [`∈`](@ref ∈(::AbstractVector{N}, ::AbstractPolyhedron{N}) where {N<:Real})
-* [`constrained_dimensions`](@ref constrained_dimensions(::AbstractPolyhedron{N}) where {N<:Real})
+* [`constrained_dimensions`](@ref constrained_dimensions(::AbstractPolyhedron)
 
 #### Polytopes in constraint representation
 
@@ -549,6 +549,25 @@ Inherited from [`AbstractSingleton`](@ref):
 * [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton{N}) where {N<:Real})
 * [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton{N}, ::Int) where {N<:Real})
 * [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractSingleton{N}) where {N<:Real})
+
+## Universe
+
+```@docs
+Universe
+dim(::Universe)
+ρ(::AbstractVector{N}, ::Universe{N}) where {N<:Real}
+σ(::AbstractVector{N}, ::Universe{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::Universe{N}) where {N<:Real}
+rand(::Type{Universe})
+an_element(::Universe{N}) where {N<:Real}
+isempty(::Universe)
+isbounded(::Universe)
+norm(::Universe, ::Real=Inf)
+radius(::Universe, ::Real=Inf)
+diameter(::Universe, ::Real=Inf)
+constraints_list(::Universe{N}) where {N<:Real}
+constrained_dimensions(::Universe)
+```
 
 ## Zero set
 

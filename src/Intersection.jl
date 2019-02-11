@@ -110,6 +110,9 @@ end
 Intersection(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} =
     Intersection{N, S1, S2}(X, Y)
 
+# Universe is the neutral element for Intersection
+@neutral(Intersection, Universe)
+
 # EmptySet is the absorbing element for Intersection
 @absorbing(Intersection, EmptySet)
 
@@ -623,6 +626,9 @@ function IntersectionArray(n::Int=0, N::Type=Float64)::IntersectionArray
     sizehint!(arr, n)
     return IntersectionArray(arr)
 end
+
+# Universe is the neutral element for IntersectionArray
+@neutral(IntersectionArray, Universe)
 
 # EmptySet is the absorbing element for IntersectionArray
 @absorbing(IntersectionArray, EmptySet)
