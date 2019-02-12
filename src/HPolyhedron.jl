@@ -394,6 +394,7 @@ end
 
 """
     linear_map(M::AbstractMatrix{N}, P::PT;
+              [check_invertibility::Bool]=true,
               [cond_tol=DEFAULT_COND_TOL]::Number,
               [use_inv]::Bool=!issparse(M)) where {N<:Real, PT<:HPoly{N}}
 
@@ -401,8 +402,11 @@ Concrete linear map of a polyhedron in constraint representation.
 
 ### Input
 
-- `M`        -- matrix
-- `P`        -- polyhedron in constraint representation
+- `M` -- matrix
+- `P` -- polyhedron in constraint representation
+- `check_invertibility` -- (optional, deault: `true`) check if the linear map is
+                           invertible, in which case it is applied using the
+                           matrix inverse (see below)
 - `cond_tol` -- (optional) tolerance of matrix condition (used to check whether
                 the matrix is invertible)
 - `use_inv`  -- (optional, default: `false` if `M` is sparse and `true`
@@ -426,20 +430,17 @@ sparse matrices. In that case, either assure that `use_inv=false`, or use
 """
 function linear_map(M::AbstractMatrix{N},
                     P::PT;
+                    check_invertibility::Bool=true,
                     cond_tol::Number=DEFAULT_COND_TOL,
                     use_inv::Bool=!issparse(M)
                    ) where {N<:Real, PT<:HPoly{N}}
-    if !isinvertible(M; cond_tol=cond_tol)
-        if P isa HPolyhedron
-            error("linear maps for polyhedra need to be invertible")
-        end
-        # use the implementation for general polytopes
+    if !check_invertibility || !isinvertible(M; cond_tol=cond_tol)
+        # use the implementation that transforms to dual (vertex) representation
         return invoke(linear_map, Tuple{typeof(M), AbstractPolytope{N}}, M, P)
     end
 
-    constraints = similar(constraints_list(P))
-
     # matrix M is invertible => the normal vectors are vec(c.a' * inv(M))
+    constraints = similar(constraints_list(P))
     if use_inv
         invM = inv(M)
         @inbounds for (i, c) in enumerate(constraints_list(P))
