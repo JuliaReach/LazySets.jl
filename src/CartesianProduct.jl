@@ -573,24 +573,31 @@ function block_indices(ca::CartesianProductArray{N}, vars::Vector{Int}) where {N
     #key is the index of block, value is the index of the starting variable
     result = Dict{Int,Int}()
     start_index = 1
-    if isempty(vars)
+    for var in vars
+        start_index = 1
         for i in 1:length(ca.array)
-            result[i] = start_index
-            start_index += dim(ca.array[i])
-        end
-    else
-        for var in vars
-            for i in 1:length(ca.array)
-                if (start_index <= var < (start_index + dim(ca.array[i])))
-                    result[i] = start_index
-                    break
-                end
-                start_index += dim(ca.array[i])
+            if (start_index <= var < (start_index + dim(ca.array[i])))
+                result[i] = start_index
+                break
             end
+            start_index += dim(ca.array[i])
         end
     end
     return result
 end
+
+function block_indices(ca::CartesianProductArray{N}) where {N}
+    #key is the index of block, value is the index of the starting variable
+    result = Dict{Int,Int}()
+    start_index = 1
+    for i in 1:length(ca.array)
+        result[i] = start_index
+        start_index += dim(ca.array[i])
+    end
+
+    return result
+end
+
 
 """
     variable_indices(ca::CartesianProductArray{N}, block_index::Int, start_dim::Int) where {N}

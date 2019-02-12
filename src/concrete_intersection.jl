@@ -684,16 +684,17 @@ function intersection(X::CartesianProductArray{N},
 
     if isbounded(Y)
         # no free variables
-        constrained_vars = Vector{Int}(1:dim(Y))
+        blocks = block_indices(X)
     else
         constrained_vars = constrained_dimensions(Y)
+        blocks = block_indices(X, constrained_vars)
     end
-    blocks = block_indices(X, constrained_vars)
 
     for bi in 1:length(X.array)
         if haskey(blocks,bi)
             # otherwise, make the intersection with the projection of the halfspace
-            push!(result.array, intersection(X.array[bi], Approximations.project(Y,variable_indices(X, bi, blocks[bi]), Hyperrectangle)))
+            vars = variable_indices(X, bi, blocks[bi])
+            push!(result.array, intersection(X.array[bi], Approximations.project(Y,vars, LinearMap)))
         else
             # if this block is not constrained, just push the set
             push!(result.array, X.array[bi])
