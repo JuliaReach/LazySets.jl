@@ -400,7 +400,7 @@ end
 """
     linear_map(M::AbstractMatrix{N}, P::PT;
               [cond_tol=DEFAULT_COND_TOL]::Number,
-              [use_inv]::Bool) where {N<:Real, PT<:HPoly{N}}
+              [use_inv]::Bool=!issparse(M)) where {N<:Real, PT<:HPoly{N}}
 
 Concrete linear map of a polyhedron in constraint representation.
 
@@ -443,6 +443,7 @@ function linear_map(M::AbstractMatrix{N},
     end
 
     constraints = similar(constraints_list(P))
+
     # matrix M is invertible => the normal vectors are vec(c.a' * inv(M))
     if use_inv
         invM = inv(M)
