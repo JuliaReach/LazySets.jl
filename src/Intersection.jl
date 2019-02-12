@@ -390,7 +390,7 @@ end
 """
     ρ(d::AbstractVector{N},
       cap::Intersection{N, S1, S2};
-      kwargs...) where {N<:Real, S1<:LazySet{N}, S2<:AbstractPolytope{N}}
+      kwargs...) where {N<:Real, S1<:HPolyhedron{N}, S2<:AbstractPolytope{N}}
 
 Return an upper bound of the intersection between a compact set and a
 polytope along a given direction.
