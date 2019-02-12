@@ -425,14 +425,19 @@ intersection is empty.
 """
 function ρ(d::AbstractVector{N},
            cap::Intersection{N, S1, S2};
+           kwargs...) where {N<:Real, S1<:HPolyhedron{N}, S2<:AbstractPolytope{N}}
+   # since the first argument of cap is possibly unbounded, we swap them
+   X = cap.Y  # compact set
+   P = cap.X  # polyhedron
+   return minimum([ρ(d, X ∩ Hi; kwargs...) for Hi in constraints_list(P)])
+end
+
+function ρ(d::AbstractVector{N},
+           cap::Intersection{N, S1, S2};
            kwargs...) where {N<:Real, S1<:LazySet{N}, S2<:AbstractPolytope{N}}
-    if S1 <: HPolyhedron # possibly unbounded
-        X = cap.Y  # compact set
-        P = cap.X  # polyhedron
-    else
-        X = cap.X    # compact set
-        P = cap.Y    # polytope
-    end
+    @assert isbounded(X)
+    X = cap.X    # compact set
+    P = cap.Y    # polytope
     return minimum([ρ(d, X ∩ Hi; kwargs...) for Hi in constraints_list(P)])
 end
 
@@ -470,6 +475,14 @@ function ρ(d::AbstractVector{N},
                              S1<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
                              S2<:AbstractPolytope{N}}
     return ρ_helper(d, swap(cap), algorithm; kwargs...)
+end
+
+# disambiguation
+function ρ(d::AbstractVector{N},
+           cap::Intersection{N, S1, S2}) where {N<:Real,
+           S1<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
+           S2<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}}
+    return ρ(d, HPolyhedron([cap.X, cap.Y]))
 end
 
 """
