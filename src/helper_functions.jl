@@ -2,6 +2,30 @@
 const DEFAULT_COND_TOL = 1e6
 
 """
+    dot_zero(x::AbstractVector{N}, y::AbstractVector{N}) where{N<:Real}
+
+Dot product with preference for zero value in the presence of infinity values.
+
+### Input
+
+- `x` -- first vector
+- `y` -- second vector
+
+### Output
+
+The dot product of `x` and `y`, but with the rule that `0 * Inf == 0`.
+"""
+function dot_zero(x::AbstractVector{N}, y::AbstractVector{N}) where{N<:Real}
+    res = zero(N)
+    for i in 1:length(x)
+        if !iszero(x[i]) && !iszero(y[i])
+            res += x[i] * y[i]
+        end
+    end
+    return res
+end
+
+"""
     sign_cadlag(x::N)::N where {N<:Real}
 
 This function works like the sign function but is ``1`` for input ``0``.
@@ -228,6 +252,56 @@ end
 
 function nonzero_indices(v::SparseVector{N})::Vector{Int} where {N<:Real}
     return x.nzind
+end
+
+"""
+    substitute(substitution::Dict{Int, T}, x::AbstractVector{T}) where {T}
+
+Apply a substitution to a given vector.
+
+### Input
+
+- `substitution` -- substitution (a mapping from an index to a new value)
+- `x`            -- vector
+
+### Output
+
+A fresh vector corresponding to `x` after `substitution` was applied.
+"""
+function substitute(substitution::Dict{Int, T}, x::AbstractVector{T}) where {T}
+    return substitute!(substitution, copy(x))
+end
+
+"""
+    substitute!(substitution::Dict{Int, T}, x::AbstractVector{T}) where {T}
+
+Apply a substitution to a given vector.
+
+### Input
+
+- `substitution` -- substitution (a mapping from an index to a new value)
+- `x`            -- vector (modified in this function)
+
+### Output
+
+The same (but see the Notes below) vector `x` but after `substitution` was
+applied.
+
+### Notes
+
+The vector `x` is modified in-place if it has type `Vector` or `SparseVector`.
+Otherwise, we first create a new `Vector` from it.
+"""
+function substitute!(substitution::Dict{Int, T}, x::AbstractVector{T}) where {T}
+    return substitute!(Vector(x), substitution)
+end
+
+function substitute!(substitution::Dict{Int, T},
+                     x::Union{Vector{T}, SparseVector{T}}) where {T}
+    for (index, value) in substitution
+        x[index] = value
+    end
+    return x
 end
 
 """
