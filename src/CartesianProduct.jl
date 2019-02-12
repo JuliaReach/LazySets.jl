@@ -582,10 +582,10 @@ function block_indices(ca::CartesianProductArray{N}, vars::Vector{Int}) where {N
         for var in vars
             for i in 1:length(ca.array)
                 if (start_index <= var < (start_index + dim(ca.array[i])))
-                    result[var] = start_index
-                    start_index += dim(ca.array[i])
+                    result[i] = start_index
                     break
                 end
+                start_index += dim(ca.array[i])
             end
         end
     end

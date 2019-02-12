@@ -407,7 +407,7 @@ Concrete linear map of a polyhedron in constraint representation.
                 the matrix is invertible)
 - `use_inv`  -- (optional, default: `false` if `M` is sparse and `true`
                 otherwise) whether to compute the full left division through
-                `inv(M)`, or to use the left division for each vector; see below 
+                `inv(M)`, or to use the left division for each vector; see below
 
 ### Output
 
@@ -448,7 +448,7 @@ function linear_map(M::AbstractMatrix{N},
     else
         # take left division for each constraint c, transpose(M) \ c.a
         @inbounds for (i, c) in enumerate(constraints_list(P))
-            constraints[i] = LinearConstraint(_At_ldiv_B(M, c.a), c.b)
+            constraints[i] = LinearConstraint(_At_ldiv_B(Matrix(M), c.a), c.b)
         end
     end
     return PT(constraints)

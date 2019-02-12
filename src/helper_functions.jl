@@ -90,7 +90,7 @@ function ispermutation(u::AbstractVector{T}, v::AbstractVector{T})::Bool where T
 end
 
 """
-    isinvertible(M::AbstractMatrix; [cond_tol]::Number=DEFAULT_COND_TOL)
+    isinvertible(M::Matrix; [cond_tol]::Number=DEFAULT_COND_TOL)
 
 A sufficient check of a matrix being invertible (or nonsingular).
 
@@ -111,8 +111,12 @@ We check whether the
 [matrix condition number](https://en.wikipedia.org/wiki/Condition_number#Matrices)
 `cond(M)` is below some prescribed tolerance.
 """
-function isinvertible(M::AbstractMatrix; cond_tol::Number=DEFAULT_COND_TOL)
+function isinvertible(M::Matrix; cond_tol::Number=DEFAULT_COND_TOL)
     return cond(M) < cond_tol
+end
+
+function isinvertible(M::SparseMatrixCSC; cond_tol::Number=DEFAULT_COND_TOL)
+    return isinvertible(Matrix(M), cond_tol=cond_tol)
 end
 
 """
