@@ -89,9 +89,10 @@ Yet another approach is to directly query the directions of the *lazy* intersect
 `E₁ ∩ E₂`. We can overapproximate using template directions, such as a box,
 an octagon, or other.
 
-This method is actually more efficient, because we don't have to calculate the
-polytopic overapproximations of the ellipsoids, but only the support function of
-the (lazy) intersection.
+The idea behind the template overapproximation method is to use the property that
+the support function of the intersection of two convex sets is upper bounded by
+the max of the support function of each set. We can see in the following experiments that
+the resulting set is quite tight.
 
 ```@example ellipsoids
 import LazySets.Approximations.overapproximate
@@ -114,10 +115,10 @@ poct = plot!(pell, Xoct, alpha=.4)
 plot(pbox, poct, layout=(1, 2))
 ```
 
-The idea behind the template overapproximation method is to use the property that
-the support function of the intersection of two convex sets is upper bounded by
-the max of the support function of each set. We can see in this experiment that
-the resulting set is quite tight.
+Using support function evaluations over a set of fixed directions is in general
+more efficient than iterative refinement, but the drawback is that one does not have control on the
+overapproximation error. Moreover, iterative refinement is currently only available in two dimensions,
+but overapproximation with template directions can be used in any dimension.
 
 Let's time it!
 
@@ -144,7 +145,7 @@ end;
 ```@example ellipsoids
 for n in [2, 5, 50, 100]
     println("\nn = $n\n")
-    E₁, E₂ = rand_ellipsoid(n), rand_ellipsoid(n)
+    global E₁, E₂ = rand_ellipsoid(n), rand_ellipsoid(n)
 
     # overapproximate the lazy intersection using an n-dimensional box
     @btime overapproximate($E₁ ∩ $E₂, BoxDirections($n))
