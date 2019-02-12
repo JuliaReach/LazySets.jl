@@ -189,7 +189,8 @@ Pages = [
     "man/reach_zonotopes.md",
     "man/reach_zonotopes_hybrid.md",
     "man/concrete_polyhedra.md",
-    "man/parallel_approximations.md"
+    "man/parallel_approximations.md",
+    "man/lazy_intersections.md"
 ]
 Depth = 2
 ```

@@ -39,23 +39,18 @@ HPolytope(constraints::Vector{LinearConstraint{N}};
           check_boundedness::Bool=false) where {N<:Real} =
     HPolytope{N}(constraints; check_boundedness=check_boundedness)
 
-# constructor for an HPolytope with no constraints
+# constructor with no constraints
 HPolytope{N}() where {N<:Real} = HPolytope{N}(Vector{LinearConstraint{N}}())
 
-# constructor for an HPolytope with no constraints of type Float64
+# constructor with no constraints of type Float64
 HPolytope() = HPolytope{Float64}()
 
-# constructor for an HPolytope from a simple H-representation
-function HPolytope(A::AbstractMatrix{N}, b::AbstractVector{N};
-                   check_boundedness::Bool=false) where {N<:Real}
-    m = size(A, 1)
-    constraints = LinearConstraint{N}[]
-    @inbounds for i in 1:m
-        push!(constraints, LinearConstraint(A[i, :], b[i]))
-    end
-    return HPolytope(constraints; check_boundedness=check_boundedness)
-end
+# constructor from a simple H-representation
+HPolytope(A::AbstractMatrix{N}, b::AbstractVector{N};
+          check_boundedness::Bool=false) where {N<:Real} =
+    HPolytope(constraints_list(A, b); check_boundedness=check_boundedness)
 
+# constructor from a simple H-representation with type parameter
 HPolytope{N}(A::AbstractMatrix{N}, b::AbstractVector{N};
              check_boundedness::Bool=false) where {N<:Real} =
     HPolytope(A, b; check_boundedness=check_boundedness)

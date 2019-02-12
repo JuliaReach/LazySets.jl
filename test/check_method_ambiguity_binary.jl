@@ -83,6 +83,7 @@ function check_method_ambiguity_binary(op;
         Line(ones(2), 1.),
         LineSegment(zeros(2), ones(2)),
         Singleton(zeros(2)),
+        Universe(2),
         VPolygon([zeros(2)]),
         VPolytope([zeros(2)]),
         ZeroSet(2),

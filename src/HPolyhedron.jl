@@ -32,22 +32,17 @@ struct HPolyhedron{N<:Real} <: AbstractPolyhedron{N}
     constraints::Vector{LinearConstraint{N}}
 end
 
-# constructor for an HPolyhedron with no constraints
+# constructor with no constraints
 HPolyhedron{N}() where {N<:Real} = HPolyhedron{N}(Vector{LinearConstraint{N}}())
 
-# constructor for an HPolyhedron with no constraints of type Float64
+# constructor with no constraints of type Float64
 HPolyhedron() = HPolyhedron{Float64}()
 
-# constructor for an HPolyhedron from a simple H-representation
-function HPolyhedron(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real}
-    m = size(A, 1)
-    constraints = LinearConstraint{N}[]
-    @inbounds for i in 1:m
-        push!(constraints, LinearConstraint(A[i, :], b[i]))
-    end
-    return HPolyhedron(constraints)
-end
+# constructor from a simple H-representation
+HPolyhedron(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real} =
+    HPolyhedron(constraints_list(A, b))
 
+# constructor from a simple H-representation with type parameter
 HPolyhedron{N}(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real} =
     HPolyhedron(A, b)
 
@@ -398,8 +393,9 @@ function remove_redundant_constraints!(P::HPoly{N};
 end
 
 """
-    linear_map(M::AbstractMatrix{N}, P::PT; [cond_tol=DEFAULT_COND_TOL]::Number)
-        where {N<:Real, PT<:HPoly{N}}
+    linear_map(M::AbstractMatrix{N}, P::PT;
+              [cond_tol=DEFAULT_COND_TOL]::Number,
+              [use_inv]::Bool=!issparse(M)) where {N<:Real, PT<:HPoly{N}}
 
 Concrete linear map of a polyhedron in constraint representation.
 
@@ -409,6 +405,9 @@ Concrete linear map of a polyhedron in constraint representation.
 - `P`        -- polyhedron in constraint representation
 - `cond_tol` -- (optional) tolerance of matrix condition (used to check whether
                 the matrix is invertible)
+- `use_inv`  -- (optional, default: `false` if `M` is sparse and `true`
+                otherwise) whether to compute the full left division through
+                `inv(M)`, or to use the left division for each vector; see below 
 
 ### Output
 
@@ -419,10 +418,16 @@ A polyhedron of the same type as the input (`PT`).
 If the matrix ``M`` is invertible (which we check with a sufficient condition),
 then ``y = M x`` implies ``x = \\text{inv}(M) y`` and we transform the
 constraint system ``A x ≤ b`` to ``A \\text{inv}(M) y ≤ b``.
+
+The option `use_inv` is a workaround to allow using the invertibility condition
+when `M` is a sparse matrix, since the `inv` function is not available for
+sparse matrices. In that case, either assure that `use_inv=false`, or use
+`linear_map(Matrix(M), P)`.
 """
 function linear_map(M::AbstractMatrix{N},
                     P::PT;
-                    cond_tol::Number=DEFAULT_COND_TOL
+                    cond_tol::Number=DEFAULT_COND_TOL,
+                    use_inv::Bool=!issparse(M)
                    ) where {N<:Real, PT<:HPoly{N}}
     if !isinvertible(M; cond_tol=cond_tol)
         if P isa HPolyhedron
@@ -431,12 +436,20 @@ function linear_map(M::AbstractMatrix{N},
         # use the implementation for general polytopes
         return invoke(linear_map, Tuple{typeof(M), AbstractPolytope{N}}, M, P)
     end
-    # matrix is invertible
-    invM = inv(M)
-    constraints = Vector{LinearConstraint{N}}(undef,
-                                              length(constraints_list(P)))
-    @inbounds for (i, c) in enumerate(constraints_list(P))
-        constraints[i] = LinearConstraint(vec(c.a' * invM), c.b)
+
+    constraints = similar(constraints_list(P))
+
+    # matrix M is invertible => the normal vectors are vec(c.a' * inv(M))
+    if use_inv
+        invM = inv(M)
+        @inbounds for (i, c) in enumerate(constraints_list(P))
+            constraints[i] = LinearConstraint(vec(c.a' * invM), c.b)
+        end
+    else
+        # take left division for each constraint c, transpose(M) \ c.a
+        @inbounds for (i, c) in enumerate(constraints_list(P))
+            constraints[i] = LinearConstraint(_At_ldiv_B(M, c.a), c.b)
+        end
     end
     return PT(constraints)
 end

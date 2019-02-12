@@ -48,6 +48,13 @@ for N in [Float64, Float32, Rational{Int}]
     addconstraint!(p2, h5)
     @test ispermutation(p2.constraints, [h3, h4, h5])
 
+    # constructor from simple H-rep
+    A = N[2 0; 1 3]
+    b = N[-1, 1]
+    @test constraints_list(HPolygon(A, b)) ==
+          constraints_list(HPolygonOpt(A, b)) ==
+          [HalfSpace(N[2, 0], N(-1)), HalfSpace(N[1, 3], N(1))]
+
     # conversion to optimized polygon
     po = convert(HPolygonOpt, p)
     # conversion back
