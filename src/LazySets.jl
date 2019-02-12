@@ -70,6 +70,7 @@ include("ExponentialMap.jl")
 include("Intersection.jl")
 include("LinearMap.jl")
 include("MinkowskiSum.jl")
+include("ResetMap.jl")
 include("SymmetricIntervalHull.jl")
 include("UnionSet.jl")
 

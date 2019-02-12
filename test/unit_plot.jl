@@ -43,6 +43,7 @@ for N in [Float64, Rational{Int}, Float32]
     # unary set operations
     sih = SymmetricIntervalHull(b1)
     lm = LinearMap(N[2 1; 1 2], bi)
+    rm = ResetMap(bi, Dict(1 => N(1)))
 
     # binary set operations
     ch = ConvexHull(b1, bi)
@@ -80,6 +81,7 @@ for N in [Float64, Rational{Int}, Float32]
     plot(cha)
     plot(sih)
     plot(lm)
+    plot(rm)
     plot(ms)
     plot(msa)
     plot(cms)
@@ -110,6 +112,7 @@ for N in [Float64, Rational{Int}, Float32]
         plot(cha, ε)
         plot(sih, ε)
         plot(lm, ε)
+        plot(rm, ε)
         plot(ms, ε)
         plot(msa, ε)
         plot(cms, ε)

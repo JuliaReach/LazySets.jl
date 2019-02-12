@@ -106,6 +106,7 @@ if test_suite_basic
     @time @testset "LazySets.LinearMap" begin include("unit_LinearMap.jl") end
     @time @testset "LazySets.MinkowskiSum" begin include("unit_MinkowskiSum.jl") end
     @time @testset "LazySets.CartesianProduct" begin include("unit_CartesianProduct.jl") end
+    @time @testset "LazySets.ResetMap" begin include("unit_ResetMap.jl") end
     @time @testset "LazySets.SymmetricIntervalHull" begin include("unit_SymmetricIntervalHull.jl") end
 
     # ======================
