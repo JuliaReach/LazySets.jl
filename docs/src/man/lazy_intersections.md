@@ -91,7 +91,7 @@ an octagon, or other.
 
 The idea behind the template overapproximation method is to use the property that
 the support function of the intersection of two convex sets is upper bounded by
-the max of the support function of each set. We can see in the following experiments that
+the min of the support function of each set. We can see in the following experiments that
 the resulting set is quite tight.
 
 ```@example ellipsoids
