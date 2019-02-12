@@ -454,6 +454,29 @@ function linear_map(M::AbstractMatrix{N},
     return PT(constraints)
 end
 
+# specific an_element function for rational inputs
+function an_element(P::HPolytope{N};
+                    backend=nothing) where {N<:Rational{Int}}
+    # use the floating point method, then convert to rational and check membership
+    p = invoke(an_element, Tuple{HPolytope}, P)
+    p_rat = convert(Vector{N}, p)
+    p_rat ∈ P && return p_rat
+
+    # if the above went wrong, use the Chebyshev center
+    @assert isdefined(@__MODULE__, :Polyhedra) "this function needs the package " *
+                                               "'Polyhedra' to be loaded"
+    if backend == nothing
+        backend = default_polyhedra_backend(P, N)
+    end
+    p = chebyshevcenter(polyhedron(P; backend=backend))
+    p_rat = convert(Vector{N}, p)
+    if p_rat ∈ P
+        return p_rat
+    else
+        error("couldn't produce an element for the given input")
+    end
+end
+
 # ========================================================
 # External methods that require Polyhedra.jl to be loaded
 # ========================================================

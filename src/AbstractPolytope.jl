@@ -140,7 +140,8 @@ return quote
                      intersect,
                      convexhull,
                      hcartesianproduct, vcartesianproduct,
-                     points
+                     points,
+                     chebyshevcenter
 
     import CDDLib # default backend
 
@@ -161,7 +162,8 @@ else
                      convexhull,
                      hcartesianproduct, vcartesianproduct,
                      points,
-                     default_library
+                     default_library,
+                     chebyshevcenter
 
     function default_polyhedra_backend(P, N::Type{<:AbstractFloat})
         return default_library(LazySets.dim(P), Float64)
