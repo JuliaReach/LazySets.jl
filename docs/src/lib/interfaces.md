@@ -64,6 +64,7 @@ RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:LazySet}
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet, ::Float64)
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}, ::Float64) where {S<:LazySet}
 tosimplehrep(::LazySet)
+isuniversal(::LazySet{N}, ::Bool=false) where {N<:Real}
 ```
 
 ### Set functions that override Base functions

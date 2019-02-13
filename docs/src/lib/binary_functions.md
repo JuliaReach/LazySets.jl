@@ -66,7 +66,7 @@ intersection(::Universe{N}, ::LazySet{N}) where {N<:Real}
 ⊆(::AbstractPolytope{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 ⊆(::AbstractPolytope{N}, ::AbstractHyperrectangle, ::Bool=false) where {N<:Real}
 ⊆(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
-⊆(::LazySet{N}, ::Union{AbstractPolytope{N}, HPolyhedron{N}, HalfSpace{N}}, ::Bool=false) where {N<:Real}
+⊆(::LazySet{N}, ::AbstractPolyhedron{N}, ::Bool=false) where {N<:Real}
 ⊆(::AbstractSingleton{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 ⊆(::AbstractSingleton{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
 ⊆(::AbstractSingleton{N}, ::AbstractSingleton{N}, ::Bool=false) where {N<:Real}
@@ -79,4 +79,6 @@ intersection(::Universe{N}, ::LazySet{N}) where {N<:Real}
 ⊆(::LazySet{N}, ::EmptySet{N}, ::Bool=false) where {N<:Real}
 ⊆(::UnionSet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 ⊆(::UnionSetArray{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
+⊆(::LazySet{N}, ::Universe{N}, ::Bool=false) where {N<:Real}
+⊆(::Universe{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 ```
