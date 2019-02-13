@@ -51,11 +51,8 @@ intersection(::Line{N}, ::Line{N}) where {N<:Real}
 intersection(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}) where {N<:Real}
 intersection(::Interval{N}, ::Interval{N}) where {N<:Real}
 intersection(::AbstractHPolygon{N}, ::AbstractHPolygon{N}, ::Bool=true) where {N<:Real}
-intersection(::HPoly{N}, ::HalfSpace{N}) where {N<:Real}
-intersection(::HPoly{N}, ::HPoly{N}) where {N<:Real}
-intersection(::HPoly{N}, ::VPolytope{N}) where {N<:Real}
-intersection(::HPoly{N}, ::AbstractPolytope{N}) where {N<:Real}
-intersection(::S1, ::S2) where {N<:Real, S1<:AbstractPolytope{N}, S2<:AbstractPolytope{N}}
+intersection(::AbstractPolyhedron{N}, ::AbstractPolyhedron{N}) where {N<:Real}
+intersection(::Union{VPolytope{N}, VPolygon{N}}, ::Union{VPolytope{N}, VPolygon{N}}) where {N<:Real}
 intersection(::UnionSet{N}, ::LazySet{N}) where {N<:Real}
 intersection(::UnionSetArray{N}, ::LazySet{N}) where {N<:Real}
 ```
