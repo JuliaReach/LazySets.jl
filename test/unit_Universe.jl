@@ -50,6 +50,10 @@ for N in [Float64, Rational{Int}, Float32]
     @test_throws ErrorException norm(U)
     @test_throws ErrorException radius(U)
     @test_throws ErrorException diameter(U)
+
+    # concrete intersection
+    @test intersection(B, U) == intersection(U, B) == B
+    @test intersection(U, U) == U
 end
 
 # default Float64 constructor

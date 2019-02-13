@@ -490,8 +490,8 @@ Return the intersection of a lazy linear map and a convex set.
 
 ### Input
 
- - `L` -- linear map
- - `S` -- convex set
+- `L` -- linear map
+- `S` -- convex set
   
 ### Output
 
@@ -509,4 +509,44 @@ end
 # disambiguation
 function intersection(L1::LinearMap{N}, L2::LinearMap{N}) where {N}
     return intersection(linear_map(L1.M, L1.X), linear_map(L2.M, L2.X))
+end
+
+"""
+    intersection(U::Universe{N}, X::LazySet{N}) where {N<:Real}
+
+Return the intersection of a universe and a convex set.
+
+### Input
+
+- `U` -- universe
+- `X` -- convex set
+
+### Output
+
+The set `X`.
+"""
+function intersection(U::Universe{N}, X::LazySet{N}) where {N<:Real}
+    return X
+end
+
+# symmetric method
+function intersection(X::LazySet{N}, U::Universe{N}) where {N<:Real}
+    return X
+end
+
+# disambiguation
+function intersection(U::Universe{N}, ::Universe{N}) where {N<:Real}
+    return U
+end
+function intersection(U::Universe{N}, P::AbstractPolyhedron{N}) where {N<:Real}
+    return P
+end
+function intersection(P::AbstractPolyhedron{N}, U::Universe{N}) where {N<:Real}
+    return P
+end
+function intersection(U::Universe{N}, S::AbstractSingleton{N}) where {N<:Real}
+    return S
+end
+function intersection(S::AbstractSingleton{N}, U::Universe{N}) where {N<:Real}
+    return S
 end

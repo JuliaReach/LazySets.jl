@@ -55,6 +55,7 @@ intersection(::AbstractPolyhedron{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 intersection(::Union{VPolytope{N}, VPolygon{N}}, ::Union{VPolytope{N}, VPolygon{N}}) where {N<:Real}
 intersection(::UnionSet{N}, ::LazySet{N}) where {N<:Real}
 intersection(::UnionSetArray{N}, ::LazySet{N}) where {N<:Real}
+intersection(::Universe{N}, ::LazySet{N}) where {N<:Real}
 ```
 
 ## Subset check
