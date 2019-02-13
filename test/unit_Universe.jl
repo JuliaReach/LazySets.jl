@@ -54,6 +54,19 @@ for N in [Float64, Rational{Int}, Float32]
     # concrete intersection
     @test intersection(B, U) == intersection(U, B) == B
     @test intersection(U, U) == U
+
+    # intersection emptiness
+    res, w = isdisjoint(B, U, true)
+    @test !isdisjoint(B, U) && !res && w ∈ B && w ∈ U
+    res, w = isdisjoint(U, B, true)
+    @test !isdisjoint(U, B) && !res && w ∈ B && w ∈ U
+    res, w = isdisjoint(U, U, true)
+    @test !isdisjoint(U, U) && !res && w ∈ U
+    E = EmptySet{N}()
+    res, w = isdisjoint(E, U, true)
+    @test isdisjoint(E, U) && res && w == N[]
+    res, w = isdisjoint(U, E, true)
+    @test isdisjoint(U, E) && res && w == N[]
 end
 
 # default Float64 constructor

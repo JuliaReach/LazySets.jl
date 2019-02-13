@@ -33,6 +33,7 @@ is_intersection_empty(::Union{HPolyhedron{N}, AbstractPolytope{N}}, ::LazySet{N}
 is_intersection_empty(::Union{HPolyhedron{N}, AbstractPolytope{N}}, ::Union{HPolyhedron{N}, AbstractPolytope{N}}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::UnionSet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::UnionSetArray{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
+is_intersection_empty(::Universe{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 ```
 
 ## Convex hull
