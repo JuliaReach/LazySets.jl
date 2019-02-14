@@ -678,7 +678,6 @@ variables, or "blocks") which are constrained; those which are not constrained d
 """
 function intersection(X::CartesianProductArray{N},
                       Y::AbstractPolyhedron{N}) where {N}
-
     # preallocate the resulting CartesianProductArray with size hint
     result = CartesianProductArray(length(X.array), N)
 
@@ -706,4 +705,22 @@ end
 # symmetric method
 function intersection(Y::AbstractPolyhedron{N}, X::CartesianProductArray{N}) where {N}
     intersection(X, Y)
+end
+
+
+function intersection(X::CartesianProductArray{N},
+                      Y::AbstractPolyhedron{N}, vars::AbstractVector) where {N}
+    # preallocate the resulting CartesianProductArray with size hint
+    result = CartesianProductArray(length(X.array), N)
+
+    blocks = block_indices(X, vars)
+
+    for bi in 1:length(X.array)
+        if haskey(blocks,bi)
+            # otherwise, make the intersection with the projection of the halfspace
+            vars = variable_indices(X, bi, blocks[bi])
+            push!(result.array, intersection(X.array[bi], Approximations.project(Y,vars, LinearMap)))
+        end
+    end
+    return result
 end
