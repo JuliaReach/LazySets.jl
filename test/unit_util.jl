@@ -18,4 +18,19 @@ for _dummy_ in 1:1 # avoid global variable warnings
     # invertible matrix
     @test LazySets.isinvertible([2 3; 1 2])
     @test !LazySets.isinvertible([2 3; 0 0])
+
+    for N in [Float64, Rational{Int}, Float32]
+        # substitution
+        x = N[1, 2, 3]
+        substitution = Dict(1 => N(4), 3 => N(0))
+        @test LazySets.substitute(substitution, x) == N[4, 2, 0]
+        LazySets.substitute!(substitution, x)
+        @test x == N[4, 2, 0]
+    end
+
+    for N in [Float64, Float32]
+        # modified dot product
+        @test isnan(dot(N[1, 0], N[Inf, -Inf]))
+        @test LazySets.dot_zero(N[1, 0], N[Inf, -Inf]) == N(Inf)
+    end
 end

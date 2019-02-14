@@ -282,6 +282,26 @@ ProjectionSparseMatrixExp
 *(::ProjectionSparseMatrixExp, ::LazySet)
 ```
 
+### Reset Map
+
+```@docs
+ResetMap
+dim(::ResetMap)
+ρ(::AbstractVector{N}, ::ResetMap{N}) where {N<:Real}
+σ(::AbstractVector{N}, ::ResetMap{N}) where {N<:Real}
+an_element(::ResetMap)
+isempty(::ResetMap)
+get_A(::ResetMap{N}) where {N<:Real}
+get_b(::ResetMap{N}) where {N<:Real}
+constraints_list(::ResetMap{N}) where {N<:Real}
+```
+
+Inherited from [`LazySet`](@ref):
+* [`isbounded`](@ref isbounded(::LinearMap))
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+
 ## Symmetric Interval Hull
 
 ```@docs
