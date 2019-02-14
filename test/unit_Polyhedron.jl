@@ -1,3 +1,5 @@
+using SparseArrays
+
 global test_suite_polyhedra
 
 for N in [Float64, Rational{Int}, Float32]
@@ -187,5 +189,46 @@ if test_suite_polyhedra
         @test isdisjoint(P, R) && res && w == N[]
         res, w = isdisjoint(R, P, true)
         @test isdisjoint(R, P) && res && w == N[]
+
+        Punbdd = HPolyhedron([HalfSpace([0.68, 1.22], -0.76),
+                              HalfSpace{Float64}([-0.75, -0.46], 0.68)])
+        @assert !isbounded(Punbdd)
+
+        Pbdd = HPolyhedron([HalfSpace([0.68, 1.22], -0.76),
+                            HalfSpace{Float64}([-0.75, -0.46], 0.68),
+                            HalfSpace{Float64}([1.72, 0.33], 0.37),
+                            HalfSpace{Float64}([-1.60, -0.41], 0.67),
+                            HalfSpace{Float64}([-0.44, 0.06], 0.78)])
+        @assert isbounded(Pbdd)
+
+        Mnotinv = [1.0 0.0; 2.0 0.0]
+        @assert !LazySets.isinvertible(Mnotinv)
+
+        Minv = [1.0 2.0; -1.0 0.4]
+        @assert LazySets.isinvertible(Minv)
+
+        # invertible matrix times a bounded polyhedron 
+        L = linear_map(Minv, Pbdd)
+        @test L isa HPolyhedron
+
+        # invertible matrix times an unbounded polyhedron 
+        L = linear_map(Minv, Punbdd)
+        @test L isa HPolyhedron
+
+        # not invertible matrix times a bounded polyhedron 
+        L = linear_map(Mnotinv, Pbdd) # Requires Polyhedra because it works on vertices
+        @test L isa VPolytope
+
+        # not invertible matrix times a unbbounded polyhedron
+        @test_throws ArgumentError linear_map(Mnotinv, Punbdd)
+
+        # check that we can use sparse matrices as well ; Requires SparseArrays
+        L = linear_map(sparse(Minv), Pbdd)
+        @test L isa HPolyhedron
+        L = linear_map(sparse(Minv), Punbdd)
+        @test L isa HPolyhedron
+        L = linear_map(sparse(Mnotinv), Pbdd) # Requires Polyhedra because it works on vertices
+        @test L isa VPolytope
+        @test_throws ArgumentError linear_map(sparse(Mnotinv), Punbdd)
     end
 end

@@ -393,10 +393,12 @@ function remove_redundant_constraints!(P::HPoly{N};
 end
 
 """
-    linear_map(M::AbstractMatrix{N}, P::PT;
-              [check_invertibility::Bool]=true,
-              [cond_tol=DEFAULT_COND_TOL]::Number,
-              [use_inv]::Bool=!issparse(M)) where {N<:Real, PT<:HPoly{N}}
+    linear_map(M::AbstractMatrix{N},
+               P::PT;
+               check_invertibility::Bool=true,
+               cond_tol::Number=DEFAULT_COND_TOL,
+               use_inv::Bool=!issparse(M)
+               ) where {N<:Real, PT<:AbstractPolyhedron{N}}
 
 Concrete linear map of a polyhedron in constraint representation.
 
@@ -405,8 +407,10 @@ Concrete linear map of a polyhedron in constraint representation.
 - `M` -- matrix
 - `P` -- polyhedron in constraint representation
 - `check_invertibility` -- (optional, deault: `true`) check if the linear map is
-                           invertible, in which case it is applied using the
-                           matrix inverse (see below)
+                           invertible, in which case this function uses the matrix
+                           inverse; if the invertibility check fails, or if
+                           this flag is set to `false`, use the vertex representation
+                           to compute the linear map (see below for details)
 - `cond_tol` -- (optional) tolerance of matrix condition (used to check whether
                 the matrix is invertible)
 - `use_inv`  -- (optional, default: `false` if `M` is sparse and `true`
@@ -415,26 +419,42 @@ Concrete linear map of a polyhedron in constraint representation.
 
 ### Output
 
-A polyhedron of the same type as the input (`PT`).
+A polyhedron of the same type as the input if `M` is invertible; otherwise,
+a polytope in vertex representation.
 
 ### Algorithm
 
+This function implements essentially two methods for the linear map.
 If the matrix ``M`` is invertible (which we check with a sufficient condition),
 then ``y = M x`` implies ``x = \\text{inv}(M) y`` and we transform the
-constraint system ``A x ≤ b`` to ``A \\text{inv}(M) y ≤ b``.
+constraint system ``A x ≤ b`` to ``A \\text{inv}(M) y ≤ b``. The other method
+consists of passing to the vertex representation of the polyhedron and applying the
+linear map to each vertex.
 
-The option `use_inv` is a workaround to allow using the invertibility condition
-when `M` is a sparse matrix, since the `inv` function is not available for
-sparse matrices. In that case, either assure that `use_inv=false`, or use
-`linear_map(Matrix(M), P)`.
+To switch off the check for invertibility, set the option
+`check_invertibility=false`. If `M` is not invertible and the polyhedron
+is unbounded, this function returns an exception.
+
+The option `use_inv` lets the user to control - in case `M` is invertible - if
+the full matrix inverse is computed, or only the left division on the normal
+vectors. Note that this helps as a workaround when `M` is a sparse matrix, since
+the `inv` function is not available for sparse matrices. In this case, either
+let that `use_inv=false`, or use `linear_map(Matrix(M), P)`.
 """
 function linear_map(M::AbstractMatrix{N},
                     P::PT;
                     check_invertibility::Bool=true,
                     cond_tol::Number=DEFAULT_COND_TOL,
                     use_inv::Bool=!issparse(M)
-                   ) where {N<:Real, PT<:HPoly{N}}
+                   ) where {N<:Real, PT<:AbstractPolyhedron{N}}
     if !check_invertibility || !isinvertible(M; cond_tol=cond_tol)
+        if !(typeof(P) <: AbstractPolytope)
+            if !isbounded(P)
+                throw(ArgumentError("the linear map of a non-invertible matrix for an unbounded set is not defined"))
+            else
+                P = convert(HPolytope, P)
+            end
+        end
         # use the implementation that transforms to dual (vertex) representation
         return invoke(linear_map, Tuple{typeof(M), AbstractPolytope{N}}, M, P)
     end
