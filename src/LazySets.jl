@@ -85,6 +85,11 @@ include("concrete_intersection.jl")
 include("is_intersection_empty.jl")
 include("is_subset.jl")
 
+# ======================================
+# Parse Julia expressions into LazySets
+# ======================================
+include("parse.jl")
+
 # =======
 # Aliases
 # =======
