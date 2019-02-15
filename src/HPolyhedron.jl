@@ -435,11 +435,12 @@ To switch off the check for invertibility, set the option
 `check_invertibility=false`. If `M` is not invertible and the polyhedron
 is unbounded, this function returns an exception.
 
-The option `use_inv` lets the user to control - in case `M` is invertible - if
+The option `use_inv` lets the user control - in case `M` is invertible - if
 the full matrix inverse is computed, or only the left division on the normal
 vectors. Note that this helps as a workaround when `M` is a sparse matrix, since
 the `inv` function is not available for sparse matrices. In this case, either
-let that `use_inv=false`, or use `linear_map(Matrix(M), P)`.
+use the option `use_inv=false`, or convert the type of `M` as in
+`linear_map(Matrix(M), P)`.
 """
 function linear_map(M::AbstractMatrix{N},
                     P::PT;
@@ -447,32 +448,52 @@ function linear_map(M::AbstractMatrix{N},
                     cond_tol::Number=DEFAULT_COND_TOL,
                     use_inv::Bool=!issparse(M)
                    ) where {N<:Real, PT<:AbstractPolyhedron{N}}
+    @assert dim(P) == size(M, 2) "a linear map of size $(size(M)) cannot be applied to a set of dimension $(dim(P))"
+
     if !check_invertibility || !isinvertible(M; cond_tol=cond_tol)
-        if !(typeof(P) <: AbstractPolytope)
-            if !isbounded(P)
-                throw(ArgumentError("the linear map of a non-invertible matrix for an unbounded set is not defined"))
-            else
-                P = convert(HPolytope, P)
-            end
-        end
-        # use the implementation that transforms to dual (vertex) representation
-        return invoke(linear_map, Tuple{typeof(M), AbstractPolytope{N}}, M, P)
+        return _linear_map_vrep(M, P)
     end
 
     # matrix M is invertible => the normal vectors are vec(c.a' * inv(M))
-    constraints = similar(constraints_list(P))
+    return _linear_map_hrep(M, P, use_inv)
+end
+
+function _linear_map_vrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N}) where N
+    if !isbounded(P)
+        throw(ArgumentError("the linear map in vertex representation for an unbounded set is not defined"))
+    else
+        P = convert(VPolytope, P)
+    end
+    return _linear_map_vrep(M, P)
+end
+
+function _linear_map_hrep(M::AbstractMatrix{N}, P::PT,
+                          use_inv::Bool) where {N, PT<:AbstractPolyhedron{N}}
+    constraints = _linear_map_hrep_helper(M, P, use_inv)
+    return HPolyhedron(constraints)
+end
+
+function _linear_map_hrep(M::AbstractMatrix{N}, P::PT,
+                          use_inv::Bool) where {N, PT<:AbstractPolytope{N}}
+    constraints = _linear_map_hrep_helper(M, P, use_inv)
+    return dim(P) == 2 ? HPolygon(constraints) : HPolytope(constraints)
+end
+
+function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::PT,
+                                 use_inv::Bool) where {N, PT<:AbstractPolyhedron{N}}
+    constraints_P = constraints_list(P)
+    constraints_MP = similar(constraints_P)
     if use_inv
         invM = inv(M)
-        @inbounds for (i, c) in enumerate(constraints_list(P))
-            constraints[i] = LinearConstraint(vec(c.a' * invM), c.b)
+        @inbounds for (i, c) in enumerate(constraints_P)
+            constraints_MP[i] = LinearConstraint(vec(c.a' * invM), c.b)
         end
     else
         # take left division for each constraint c, transpose(M) \ c.a
-        @inbounds for (i, c) in enumerate(constraints_list(P))
-            constraints[i] = LinearConstraint(_At_ldiv_B(M, c.a), c.b)
+        @inbounds for (i, c) in enumerate(constraints_P)
+            constraints_MP[i] = LinearConstraint(_At_ldiv_B(M, c.a), c.b)
         end
     end
-    return PT(constraints)
 end
 
 # ========================================================

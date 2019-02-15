@@ -1,4 +1,5 @@
 using SparseArrays
+using LazySets: isinvertible
 
 global test_suite_polyhedra
 
@@ -202,10 +203,10 @@ if test_suite_polyhedra
         @assert isbounded(Pbdd)
 
         Mnotinv = [1.0 0.0; 2.0 0.0]
-        @assert !LazySets.isinvertible(Mnotinv)
+        @assert !isinvertible(Mnotinv)
 
         Minv = [1.0 2.0; -1.0 0.4]
-        @assert LazySets.isinvertible(Minv)
+        @assert isinvertible(Minv)
 
         # invertible matrix times a bounded polyhedron 
         L = linear_map(Minv, Pbdd)

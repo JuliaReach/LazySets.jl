@@ -114,6 +114,7 @@ This interface defines the following functions:
 ```@docs
 ∈(::AbstractVector{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 constrained_dimensions(::AbstractPolyhedron)
+linear_map(::AbstractMatrix{N}, ::PT) where {N<:Real, PT<:AbstractPolyhedron{N}}
 ```
 
 ### Polytope

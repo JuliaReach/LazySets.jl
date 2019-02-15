@@ -71,37 +71,6 @@ function singleton_list(P::AbstractPolytope{N}
 end
 
 """
-    linear_map(M::AbstractMatrix{N}, P::AbstractPolytope{N};
-               output_type::Type{<:LazySet}=VPolytope{N}) where {N<:Real}
-
-Concrete linear map of an abstract polytype.
-
-### Input
-
-- `M`           -- matrix
-- `P`           -- abstract polytype
-- `output_type` -- (optional, default: `VPolytope`) type of the result
-
-### Output
-
-A set of type `output_type`.
-
-### Algorithm
-
-The linear map ``M`` is applied to each vertex of the given set ``P``, obtaining
-a polytope in V-representation. Since some set representations (e.g. axis-aligned
-hyperrectangles) are not closed under linear maps, the default output is a
-`VPolytope`. If an `output_type` is given, the corresponding `convert` method
-is invoked.
-"""
-function linear_map(M::AbstractMatrix{N}, P::AbstractPolytope{N};
-                    output_type::Type{<:LazySet}=VPolytope{N}) where {N<:Real}
-    @assert dim(P) == size(M, 2)
-    MP = broadcast(v -> M * v, vertices_list(P)) |> VPolytope{N}
-    return convert(output_type, MP)
-end
-
-"""
     isempty(P::AbstractPolytope)::Bool
 
 Determine whether a polytope is empty.
