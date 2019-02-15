@@ -461,7 +461,8 @@ function _linear_map_vrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N}) where 
     if !isbounded(P)
         throw(ArgumentError("the linear map in vertex representation for an unbounded set is not defined"))
     else
-        P = convert(VPolytope, P)
+        # since P is bounded, we pass an HPolytope and then convert it to vertex representation
+        P = tovrep(HPolytope(P.constraints, check_boundedness=false))
     end
     return _linear_map_vrep(M, P)
 end

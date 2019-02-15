@@ -84,7 +84,7 @@ for N in [Float64, Rational{Int}, Float32]
         @test isempty(P)
 
         # concrete linear map with noninvertible matrix throws an error
-        @test_throws ErrorException linear_map(N[2 3; 0 0], P)
+        @test_throws ArgumentError linear_map(N[2 3; 0 0], P)
     end
 end
 
