@@ -219,7 +219,7 @@ if test_suite_polyhedra
         L = linear_map(Mnotinv, Pbdd) # Requires Polyhedra because it works on vertices
         @test L isa VPolytope
 
-        # not invertible matrix times a unbbounded polyhedron
+        # not invertible matrix times an unbounded polyhedron
         @test_throws ArgumentError linear_map(Mnotinv, Punbdd)
 
         # check that we can use sparse matrices as well ; Requires SparseArrays
