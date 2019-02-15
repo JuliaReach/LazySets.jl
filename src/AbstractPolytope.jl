@@ -3,7 +3,6 @@ import Base.isempty
 export AbstractPolytope,
        vertices_list,
        singleton_list,
-       linear_map,
        isempty
 
 """
@@ -32,8 +31,9 @@ julia> subtypes(AbstractPolytope)
 abstract type AbstractPolytope{N<:Real} <: AbstractPolyhedron{N} end
 
 
-# --- common AbstractPolytope functions ---
-
+# =============================================
+# Common AbstractPolytope functions
+# =============================================
 
 """
     isbounded(P::AbstractPolytope)::Bool
@@ -96,6 +96,16 @@ function default_polyhedra_backend(P, N)
     @assert isdefined(@__MODULE__, :Polyhedra) "this function needs the package 'Polyhedra' to be loaded"
     error("no default backend for numeric type $N")
 end
+
+# given a polytope P, apply the linear map P to each vertex of P
+# it is assumed that the interface function `vertices_list(P)` is available 
+@inline function _linear_map_vrep(M::AbstractMatrix{N}, P::AbstractPolytope{N}) where {N<:Real}
+    return broadcast(v -> M * v, vertices_list(P)) |> VPolytope{N}
+end
+
+# =============================================
+# Functions that require Polyhedra
+# =============================================
 
 function load_polyhedra_abstractpolytope() # function to be loaded by Requires
 

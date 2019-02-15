@@ -442,11 +442,11 @@ the `inv` function is not available for sparse matrices. In this case, either
 use the option `use_inv=false` or convert the type of `M` as in `linear_map(Matrix(M), P)`.
 """
 function linear_map(M::AbstractMatrix{N},
-                    P::PT;
+                    P::AbstractPolyhedron{N};
                     check_invertibility::Bool=true,
                     cond_tol::Number=DEFAULT_COND_TOL,
                     use_inv::Bool=!issparse(M)
-                   ) where {N<:Real, PT<:AbstractPolyhedron{N}}
+                   ) where {N<:Real}
     @assert dim(P) == size(M, 2) "a linear map of size $(size(M)) cannot be applied to a set of dimension $(dim(P))"
 
     if !check_invertibility || !isinvertible(M; cond_tol=cond_tol)
@@ -457,30 +457,36 @@ function linear_map(M::AbstractMatrix{N},
     return _linear_map_hrep(M, P, use_inv)
 end
 
-function _linear_map_vrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N}) where N
+function _linear_map_vrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N}) where {N<:Real}
     if !isbounded(P)
         throw(ArgumentError("the linear map in vertex representation for an unbounded set is not defined"))
     else
         # since P is bounded, we pass an HPolytope and then convert it to vertex representation
-        P = tovrep(HPolytope(P.constraints, check_boundedness=false))
+        P = tovrep(HPolytope(constraints_list(P), check_boundedness=false))
     end
     return _linear_map_vrep(M, P)
 end
 
-function _linear_map_hrep(M::AbstractMatrix{N}, P::PT,
-                          use_inv::Bool) where {N, PT<:AbstractPolyhedron{N}}
+function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
+                          use_inv::Bool) where {N<:Real}
     constraints = _linear_map_hrep_helper(M, P, use_inv)
     return HPolyhedron(constraints)
 end
 
-function _linear_map_hrep(M::AbstractMatrix{N}, P::PT,
-                          use_inv::Bool) where {N, PT<:AbstractPolytope{N}}
+function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolytope{N},
+                          use_inv::Bool) where {N<:Real}
     constraints = _linear_map_hrep_helper(M, P, use_inv)
     return dim(P) == 2 ? HPolygon(constraints) : HPolytope(constraints)
 end
 
-function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::PT,
-                                 use_inv::Bool) where {N, PT<:AbstractPolyhedron{N}}
+function _linear_map_hrep(M::AbstractMatrix{N}, P::HalfSpace{N},
+                          use_inv::Bool) where {N<:Real}
+    constraint = _linear_map_hrep_helper(M, P, use_inv)
+    return HalfSpace(constraint[1].a, constraint[1].b)
+end
+
+function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
+                                 use_inv::Bool) where {N<:Real}
     constraints_P = constraints_list(P)
     constraints_MP = similar(constraints_P)
     if use_inv

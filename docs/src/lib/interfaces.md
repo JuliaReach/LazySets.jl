@@ -114,7 +114,7 @@ This interface defines the following functions:
 ```@docs
 ∈(::AbstractVector{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 constrained_dimensions(::AbstractPolyhedron)
-linear_map(::AbstractMatrix{N}, ::PT) where {N<:Real, PT<:AbstractPolyhedron{N}}
+linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 ```
 
 ### Polytope
@@ -133,7 +133,6 @@ This interface defines the following functions:
 ```@docs
 isbounded(::AbstractPolytope)
 singleton_list(::AbstractPolytope{N}) where {N<:Real}
-linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real}
 isempty(::AbstractPolytope)
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractPolytope)
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:AbstractPolytope}

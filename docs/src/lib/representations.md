@@ -53,7 +53,6 @@ Inherited from [`LazySet`](@ref):
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
-* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real})
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetricPolytope))
@@ -88,7 +87,6 @@ Inherited from [`LazySet`](@ref):
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
-* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real})
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetricPolytope))
@@ -175,7 +173,6 @@ constraints_list(::AbstractMatrix{N}, ::AbstractVector{N}) where {N<:Real}
 constrained_dimensions(::HalfSpace{N}) where {N<:Real}
 halfspace_left(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
 halfspace_right(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
-linear_map(::AbstractMatrix{N}, ::HalfSpace{N}) where {N}
 tosimplehrep(::AbstractVector{HalfSpace{N}}) where {N<:Real}
 remove_redundant_constraints(::AbstractVector{LinearConstraint{N}}) where {N<:Real}
 remove_redundant_constraints!(::AbstractVector{LinearConstraint{N}}) where {N<:Real}
@@ -220,7 +217,6 @@ Inherited from [`LazySet`](@ref):
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
-* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real})
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetricPolytope))
@@ -266,7 +262,6 @@ Inherited from [`LazySet`](@ref):
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
-* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real})
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
@@ -338,7 +333,7 @@ Inherited from [`LazySet`](@ref):
 Inherited from [`AbstractPolytope`](@ref):
 * [`isempty`](@ref isempty(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
-* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real})
+* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real})
 
 Inherited from [`AbstractPolygon`](@ref):
 * [`dim`](@ref dim(::AbstractPolygon))
@@ -369,7 +364,6 @@ Inherited from [`LazySet`](@ref):
 Inherited from [`AbstractPolytope`](@ref):
 * [`isempty`](@ref isempty(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
-* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real})
 
 Inherited from [`AbstractPolygon`](@ref):
 * [`dim`](@ref dim(::AbstractPolygon))
@@ -410,7 +404,7 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`isempty`](@ref isempty(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
-* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real})
+* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real})
 
 Inherited from [`AbstractPolygon`](@ref):
 * [`dim`](@ref dim(::AbstractPolygon))
@@ -463,7 +457,7 @@ Inherited from [`LazySet`](@ref):
 Inherited from [`AbstractPolyhedron`](@ref):
 * [`∈`](@ref ∈(::AbstractVector{N}, ::AbstractPolyhedron{N}) where {N<:Real})
 * [`constrained_dimensions`](@ref constrained_dimensions(::AbstractPolyhedron)
-* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::PT) where {N<:Real, PT<:AbstractPolyhedron{N}})
+* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real})
 
 #### Polytopes in constraint representation
 
@@ -515,7 +509,7 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`isempty`](@ref isempty(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
-* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real})
+* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real})
 
 ## Singleton
 

@@ -7,6 +7,7 @@ export VPolytope,
        vertices_list,
        convex_hull,
        cartesian_product,
+       linear_map,
        remove_redundant_vertices
 
 """
@@ -219,7 +220,7 @@ function rand(::Type{VPolytope};
 end
 
 """
-    linear_map(M::AbstractMatrix{N}, P::VPolytope;
+    linear_map(M::AbstractMatrix{N}, P::VPolytope{N};
                output_type::Type{<:LazySet}=VPolytope{N}) where {N<:Real}
 
 Concrete linear map of a polytope in vertex representation.
@@ -242,19 +243,13 @@ a polytope in V-representation.
 The default output is a `VPolytope`. If an `output_type` is given, the
 corresponding `convert` method is invoked.
 """
-function linear_map(M::AbstractMatrix{N}, P::VPolytope;
+function linear_map(M::AbstractMatrix{N}, P::VPolytope{N};
                     output_type::Type{<:LazySet}=VPolytope{N}) where {N<:Real}
     @assert dim(P) == size(M, 2) "a linear map of size $(size(M)) cannot be applied to a set of dimension $(dim(P))"
     return convert(output_type, _linear_map_vrep(M, P)) # TODO: remove conversion?
 end
 
 # --- AbstractPolytope interface functions ---
-
-# given a polytope P, apply the linear map P to each vertex of P
-# it is assumed that the interface function `vertices_list(P)` is available 
-@inline function _linear_map_vrep(M::AbstractMatrix{N}, P::AbstractPolytope{N}) where N
-    return broadcast(v -> M * v, vertices_list(P)) |> VPolytope{N}
-end
 
 """
     vertices_list(P::VPolytope{N})::Vector{Vector{N}} where {N<:Real}
