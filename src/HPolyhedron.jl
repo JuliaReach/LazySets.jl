@@ -439,8 +439,7 @@ The option `use_inv` lets the user control - in case `M` is invertible - if
 the full matrix inverse is computed, or only the left division on the normal
 vectors. Note that this helps as a workaround when `M` is a sparse matrix, since
 the `inv` function is not available for sparse matrices. In this case, either
-use the option `use_inv=false`, or convert the type of `M` as in
-`linear_map(Matrix(M), P)`.
+use the option `use_inv=false` or convert the type of `M` as in `linear_map(Matrix(M), P)`.
 """
 function linear_map(M::AbstractMatrix{N},
                     P::PT;
@@ -494,6 +493,7 @@ function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::PT,
             constraints_MP[i] = LinearConstraint(_At_ldiv_B(M, c.a), c.b)
         end
     end
+    return constraints_MP
 end
 
 # ========================================================
