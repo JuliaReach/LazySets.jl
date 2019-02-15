@@ -144,6 +144,10 @@ function isinvertible(M::SparseMatrixCSC; cond_tol::Number=DEFAULT_COND_TOL)
     return isinvertible(Matrix(M), cond_tol=cond_tol)
 end
 
+function isinvertible(M::Diagonal; cond_tol=nothing)
+    return !any(iszero, diag(M))
+end
+
 """
     remove_duplicates_sorted!(v::AbstractVector)
 
