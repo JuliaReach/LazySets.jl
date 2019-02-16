@@ -387,56 +387,11 @@ function ρ(d::AbstractVector{N},
     return ρ_helper(d, swap(cap), algorithm; kwargs...)
 end
 
-"""
-    ρ(d::AbstractVector{N},
-      cap::Intersection{N, S1, S2};
-      kwargs...) where {N<:Real, S1<:HPolyhedron{N}, S2<:AbstractPolytope{N}}
-
-Return an upper bound of the intersection between a compact set and a
-polytope along a given direction.
-
-### Input
-
-- `d`      -- direction
-- `cap`    -- intersection of a compact set and a polytope
-- `kwargs` -- additional arguments that are passed to the support function algorithm
-
-### Output
-
-An upper bound of the support function of the given intersection.
-
-### Algorithm
-
-The idea is to solve the univariate optimization problem `ρ(di, X ∩ Hi)` for each
-half-space in the set `P` and then take the minimum. This gives an overapproximation
-of the exact support function.
-
-This algorithm is inspired from [G. Frehse, R. Ray. Flowpipe-Guard Intersection
-for Reachability Computations with Support
-Functions](https://www.sciencedirect.com/science/article/pii/S1474667015371809).
-
-### Notes
-
-This method relies on having available the `constraints_list` of the polytope
-`P`.
-
-This method of overapproximation can return a non-empty set even if the original
-intersection is empty.
-"""
 function ρ(d::AbstractVector{N},
            cap::Intersection{N, S1, S2};
-           kwargs...) where {N<:Real, S1<:HPolyhedron{N}, S2<:AbstractPolytope{N}}
-   # since the first argument of cap is possibly unbounded, we swap them
-   X = cap.Y  # compact set
-   P = cap.X  # polyhedron
-   return minimum([ρ(d, X ∩ Hi; kwargs...) for Hi in constraints_list(P)])
-end
-
-function ρ(d::AbstractVector{N},
-           cap::Intersection{N, S1, S2};
-           kwargs...) where {N<:Real, S1<:LazySet{N}, S2<:AbstractPolytope{N}}
-    @assert isbounded(X)
+           kwargs...) where {N<:Real, S1<:AbstractPolyhedron{N}, S2<:AbstractPolytope{N}}
     X = cap.X    # compact set
+    @assert isbounded(X) "this function requires that the set $X is bounded"
     P = cap.Y    # polytope
     return minimum([ρ(d, X ∩ Hi; kwargs...) for Hi in constraints_list(P)])
 end
