@@ -472,6 +472,14 @@ function ρ(d::AbstractVector{N},
     return ρ_helper(d, swap(cap), algorithm; kwargs...)
 end
 
+# disambiguation
+function ρ(d::AbstractVector{N},
+           cap::Intersection{N, S1, S2}) where {N<:Real,
+           S1<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
+           S2<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}}
+    return ρ(d, HPolyhedron([constraints_list(cap.X); constraints_list(cap.Y)]))
+end
+
 """
     isbounded(cap::Intersection)::Bool
 
