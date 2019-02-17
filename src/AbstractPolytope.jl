@@ -103,6 +103,12 @@ end
     return broadcast(v -> M * v, vertices_list(P)) |> VPolytope{N}
 end
 
+function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolytope{N},
+                          use_inv::Bool) where {N<:Real}
+    constraints = _linear_map_hrep_helper(M, P, use_inv)
+    return dim(P) == 2 ? HPolygon(constraints) : HPolytope(constraints)
+end
+
 # =============================================
 # Functions that require Polyhedra
 # =============================================
