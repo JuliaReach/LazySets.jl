@@ -3,7 +3,8 @@ import Base.∈
 export constrained_dimensions,
        tosimplehrep,
        remove_redundant_constraints,
-       remove_redundant_constraints!
+       remove_redundant_constraints!,
+       linear_map
 
 """
     ∈(x::AbstractVector{N}, P::AbstractPolyhedron{N})::Bool where {N<:Real}
@@ -239,13 +240,13 @@ Concrete linear map of a polyhedron in constraint representation.
 
 ### Output
 
-The result type depends on the input and the approach that was used:
+The result type depends on the input and the algorithm that was used:
 
 - If the vertex-based approach was used and the dimension of `P` is `2`, the output
   is a `VPolygon`, otherwise a `VPolytope`.
 - If the input set is an `AbstractPolytope` , then the output is an `HPolytope`.
 - If the input set is an `AbstractPolygon` , then the output is an `HPolygon`.
-- If the input is a `HalfSpace`, then the output is a `HalfSpace`.
+- The types of `HalfSpace`, `Hyperplane` and `Line` are preserved.
 - Otherwise, the output is an `HPolyhedron`.
 
 ### Algorithm

@@ -98,9 +98,9 @@ for N in [Float64, Rational{Int}, Float32]
           LazySets.is_tighter_same_dir_2D(c3, c2, strict=true)
 
     # test concrete linear map of a half-space
-    H = HalfSpace(N[1.0, -1.0], N(0.0)) # x <= y
-    M = N[1. 0; 0 0] # non-invertible matrix
+    H = HalfSpace(N[1, -1], N(0)) # x <= y
+    M = N[1 0; 0 0] # non-invertible matrix
     @test_throws ArgumentError linear_map(M, H)
-    M = N[2. 2; 0 1.] # invertible matrix
+    M = N[2 2; 0 1] # invertible matrix
     @test linear_map(M, H) == HalfSpace(N[0.5, -2.0], N(0.0))
 end

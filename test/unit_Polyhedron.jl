@@ -1,4 +1,7 @@
-using SparseArrays
+@static if VERSION >= v"0.7-"
+    using SparseArrays
+end
+
 using LazySets: isinvertible
 
 global test_suite_polyhedra
