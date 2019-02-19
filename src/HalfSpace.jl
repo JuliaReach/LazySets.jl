@@ -6,8 +6,7 @@ import Base: rand,
 export HalfSpace, LinearConstraint,
        an_element,
        constrained_dimensions,
-       halfspace_left, halfspace_right,
-       linear_map
+       halfspace_left, halfspace_right
 
 """
     HalfSpace{N<:Real} <: AbstractPolyhedron{N}
@@ -43,7 +42,6 @@ end
 Alias for `HalfSpace`
 """
 const LinearConstraint = HalfSpace
-
 
 # --- LazySet interface functions ---
 
@@ -419,20 +417,7 @@ function is_tighter_same_dir_2D(c1::LinearConstraint{N},
     return lt(c1.b, c1.a[1] / c2.a[1] * c2.b)
 end
 
-"""
-    linear_map(M::AbstractMatrix{N}, hs::HalfSpace{N}) where {N}
-
-Return the concrete linear map of a half-space.
-
-### Input
-
-- `M`  -- matrix
-- `hs` -- half-space
-
-### Output
-
-The half-space obtained by applying the given linear map to the half-space.
-"""
-function linear_map(M::AbstractMatrix{N}, hs::HalfSpace{N}) where {N}
-    return linear_map(M, HPolyhedron([hs]))
+function _linear_map_hrep(M::AbstractMatrix{N}, P::HalfSpace{N}, use_inv::Bool) where {N<:Real}
+    constraint = _linear_map_hrep_helper(M, P, use_inv)[1]
+    return HalfSpace(constraint.a, constraint.b)
 end

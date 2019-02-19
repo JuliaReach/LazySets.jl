@@ -60,4 +60,11 @@ for N in [Float64, Rational{Int}, Float32]
     @test cap11 isa Line && cap11.a == l1.a && cap11.b == l1.b
     @test cap12 isa Singleton && element(cap12) == N[1, 1]
     @test cap13 isa EmptySet{N}
+
+    # concrete linear map of a line
+    L = Line(N[1, -1], N(0)) # x = y
+    M = N[1 0; 0 0] # non-invertible matrix
+    @test_throws ArgumentError linear_map(M, L)
+    M = N[2 2; 0 1] # invertible matrix
+    @test linear_map(M, L) == Line(N[0.5, -2.0], N(0.0))
 end

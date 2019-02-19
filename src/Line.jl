@@ -296,3 +296,8 @@ A line with constraint ``x1 = 0`` is constrained in dimension 1 only.
 function constrained_dimensions(L::Line{N})::Vector{Int} where {N<:Real}
     return nonzero_indices(L.a)
 end
+
+function _linear_map_hrep(M::AbstractMatrix{N}, P::Line{N}, use_inv::Bool) where {N<:Real}
+    constraint = _linear_map_hrep_helper(M, P, use_inv)[1]
+    return Line(constraint.a, constraint.b)
+end

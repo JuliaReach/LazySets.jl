@@ -392,68 +392,6 @@ function remove_redundant_constraints!(P::HPoly{N};
     remove_redundant_constraints!(P.constraints, backend=backend)
 end
 
-"""
-    linear_map(M::AbstractMatrix{N}, P::PT;
-              [cond_tol=DEFAULT_COND_TOL]::Number,
-              [use_inv]::Bool=!issparse(M)) where {N<:Real, PT<:HPoly{N}}
-
-Concrete linear map of a polyhedron in constraint representation.
-
-### Input
-
-- `M`        -- matrix
-- `P`        -- polyhedron in constraint representation
-- `cond_tol` -- (optional) tolerance of matrix condition (used to check whether
-                the matrix is invertible)
-- `use_inv`  -- (optional, default: `false` if `M` is sparse and `true`
-                otherwise) whether to compute the full left division through
-                `inv(M)`, or to use the left division for each vector; see below 
-
-### Output
-
-A polyhedron of the same type as the input (`PT`).
-
-### Algorithm
-
-If the matrix ``M`` is invertible (which we check with a sufficient condition),
-then ``y = M x`` implies ``x = \\text{inv}(M) y`` and we transform the
-constraint system ``A x ≤ b`` to ``A \\text{inv}(M) y ≤ b``.
-
-The option `use_inv` is a workaround to allow using the invertibility condition
-when `M` is a sparse matrix, since the `inv` function is not available for
-sparse matrices. In that case, either assure that `use_inv=false`, or use
-`linear_map(Matrix(M), P)`.
-"""
-function linear_map(M::AbstractMatrix{N},
-                    P::PT;
-                    cond_tol::Number=DEFAULT_COND_TOL,
-                    use_inv::Bool=!issparse(M)
-                   ) where {N<:Real, PT<:HPoly{N}}
-    if !isinvertible(M; cond_tol=cond_tol)
-        if P isa HPolyhedron
-            error("linear maps for polyhedra need to be invertible")
-        end
-        # use the implementation for general polytopes
-        return invoke(linear_map, Tuple{typeof(M), AbstractPolytope{N}}, M, P)
-    end
-
-    constraints = similar(constraints_list(P))
-
-    # matrix M is invertible => the normal vectors are vec(c.a' * inv(M))
-    if use_inv
-        invM = inv(M)
-        @inbounds for (i, c) in enumerate(constraints_list(P))
-            constraints[i] = LinearConstraint(vec(c.a' * invM), c.b)
-        end
-    else
-        # take left division for each constraint c, transpose(M) \ c.a
-        @inbounds for (i, c) in enumerate(constraints_list(P))
-            constraints[i] = LinearConstraint(_At_ldiv_B(M, c.a), c.b)
-        end
-    end
-    return PT(constraints)
-end
-
 # ========================================================
 # External methods that require Polyhedra.jl to be loaded
 # ========================================================
