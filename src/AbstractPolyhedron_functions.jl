@@ -242,12 +242,20 @@ Concrete linear map of a polyhedron in constraint representation.
 
 The result type depends on the input and the algorithm that was used:
 
-- If the vertex-based approach was used and the dimension of `P` is `2`, the output
-  is a `VPolygon`, otherwise a `VPolytope`.
-- If the input set is an `AbstractPolytope` , then the output is an `HPolytope`.
-- If the input set is an `AbstractPolygon` , then the output is an `HPolygon`.
-- The types of `HalfSpace`, `Hyperplane` and `Line` are preserved.
-- Otherwise, the output is an `HPolyhedron`.
+- If the vertex-based approach was used:
+    
+    - If `P` is a `VPolygon` then the output is a `VPolygon`.
+    - If `P` is a `VPolytope` then the output is a `VPolytope`.
+    - Otherwise, the output is a `VPolygon` if the dimension of `P` is `2`, or a
+      `VPolytope` in other cases.
+
+- If the invertibility criterion was used:
+
+    - The types of `HalfSpace`, `Hyperplane`, `Line` and `AbstractHPolygon` are
+      preserved.
+    - If `P` is an `AbstractPolytope`, then the output is an `HPolygon` if the
+      dimension of `P` is two and an `HPolytope` in other cases.
+    - Otherwise, the output is an `HPolyhedron`.
 
 ### Algorithm
 
