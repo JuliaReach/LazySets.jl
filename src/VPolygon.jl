@@ -115,6 +115,10 @@ function linear_map(M::AbstractMatrix{N}, P::VPolygon{N}) where {N<:Real}
     return _linear_map_vrep(M, P)
 end
 
+@inline function _linear_map_vrep(M::AbstractMatrix{N}, P::VPolygon{N}) where {N<:Real}
+    return broadcast(v -> M * v, vertices_list(P)) |> VPolygon{N}
+end
+
 # --- AbstractPolygon interface functions ---
 
 

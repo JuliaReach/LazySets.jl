@@ -100,10 +100,11 @@ end
 # given a polytope P, apply the linear map P to each vertex of P
 # it is assumed that the interface function `vertices_list(P)` is available 
 @inline function _linear_map_vrep(M::AbstractMatrix{N}, P::AbstractPolytope{N}) where {N<:Real}
-    return broadcast(v -> M * v, vertices_list(P)) |> VPolytope{N}
+    vertices = broadcast(v -> M * v, vertices_list(P))
+    return dim(P) == 2 ? VPolygon(vertices) : VPolytope(vertices)
 end
 
-function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolytope{N},
+@inline function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolytope{N},
                           use_inv::Bool) where {N<:Real}
     constraints = _linear_map_hrep_helper(M, P, use_inv)
     return dim(P) == 2 ? HPolygon(constraints) : HPolytope(constraints)
