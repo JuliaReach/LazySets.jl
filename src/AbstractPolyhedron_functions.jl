@@ -240,7 +240,12 @@ Concrete linear map of a polyhedron in constraint representation.
 
 ### Output
 
-The result type depends on the input and the algorithm that was used:
+The type of the result is "as close as possible" to the the type of `P`.
+To fix the type of the output to something different than the default value,
+consider post-processing the result of this function with a call to a suitable
+`convert` method.
+
+In particular, the output depends on the type of `P` and the algorithm that was used:
 
 - If the vertex-based approach was used:
     
@@ -264,7 +269,7 @@ This function implements two algorithms for the linear map:
 - If the matrix ``M`` is invertible (which we check with a sufficient condition),
   then ``y = M x`` implies ``x = \\text{inv}(M) y`` and we transform the
   constraint system ``A x ≤ b`` to ``A \\text{inv}(M) y ≤ b``.
-- Otherwise, transform the polyhedron to vertex representation and apply the map
+- Otherwise, we transform the polyhedron to vertex representation and apply the map
   to each vertex, returning a polyhedron in vertex representation. 
 
 Note that the vertex representation (second approach) is only available if the
