@@ -153,4 +153,4 @@ template directions.
 This procedure is repeated until the distance is smaller than the desired error.
 
 For more details we refer to
-[the paper](https://github.com/JuliaReach/Reachability.jl/wiki/References#polyhedral-approximations).
+[Lotov, A. V., & Pospelov, A. I. (2008). The modified method of refined bounds for polyhedral approximation of convex polytopes. Computational Mathematics and Mathematical Physics, 48(6), 933-941.](https://link.springer.com/article/10.1134/S0965542508060055).
