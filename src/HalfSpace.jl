@@ -418,6 +418,6 @@ function is_tighter_same_dir_2D(c1::LinearConstraint{N},
 end
 
 function _linear_map_hrep(M::AbstractMatrix{N}, P::HalfSpace{N}, use_inv::Bool) where {N<:Real}
-    constraint = _linear_map_hrep_helper(M, P, use_inv)
-    return HalfSpace(constraint[1].a, constraint[1].b)
+    constraint = _linear_map_hrep_helper(M, P, use_inv)[1]
+    return HalfSpace(constraint.a, constraint.b)
 end

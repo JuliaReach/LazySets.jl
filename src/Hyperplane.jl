@@ -397,6 +397,6 @@ function _constraints_list_hyperplane(a::AbstractVector{N}, b::N
 end
 
 function _linear_map_hrep(M::AbstractMatrix{N}, P::Hyperplane{N}, use_inv::Bool) where {N<:Real}
-    constraint = _linear_map_hrep_helper(M, P, use_inv)
-    return Hyperplane(constraint[1].a, constraint[1].b)
+    constraint = _linear_map_hrep_helper(M, P, use_inv)[1]
+    return Hyperplane(constraint.a, constraint.b)
 end

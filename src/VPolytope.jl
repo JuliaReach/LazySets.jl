@@ -220,8 +220,7 @@ function rand(::Type{VPolytope};
 end
 
 """
-    linear_map(M::AbstractMatrix{N}, P::VPolytope{N};
-               output_type::Type{<:LazySet}=VPolytope{N}) where {N<:Real}
+    linear_map(M::AbstractMatrix{N}, P::VPolytope{N}) where {N<:Real}
 
 Concrete linear map of a polytope in vertex representation.
 
@@ -229,7 +228,6 @@ Concrete linear map of a polytope in vertex representation.
 
 - `M`           -- matrix
 - `P`           -- polytope in vertex representation
-- `output_type` -- (optional, default: `VPolytope`) type of the result
 
 ### Output
 
@@ -238,15 +236,11 @@ A set of type `output_type`.
 ### Algorithm
 
 The linear map ``M`` is applied to each vertex of the given set ``P``, obtaining
-a polytope in V-representation.
-
-The default output is a `VPolytope`. If an `output_type` is given, the
-corresponding `convert` method is invoked.
+a polytope in V-representation. The output type is again a `VPolytope`.
 """
-function linear_map(M::AbstractMatrix{N}, P::VPolytope{N};
-                    output_type::Type{<:LazySet}=VPolytope{N}) where {N<:Real}
+function linear_map(M::AbstractMatrix{N}, P::VPolytope{N}) where {N<:Real}
     @assert dim(P) == size(M, 2) "a linear map of size $(size(M)) cannot be applied to a set of dimension $(dim(P))"
-    return convert(output_type, _linear_map_vrep(M, P)) # TODO: remove conversion?
+    return _linear_map_vrep(M, P)
 end
 
 # --- AbstractPolytope interface functions ---
