@@ -119,7 +119,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test LM isa HPolytope
     if test_suite_polyhedra
         LM = linear_map(N[2 3; 0 0], P)  # non-invertible matrix
-        @test LM isa VPolytope
+        @test LM isa VPolygon
     end
 
     M = N[2 1; 0 1]
