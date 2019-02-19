@@ -59,6 +59,7 @@ function check_method_ambiguity_binary(op;
         Interval(0., 1.),
         Singleton(zeros(1)),
         VPolytope([zeros(1)]),
+        Universe(1),
         ZeroSet(1),
         Zonotope(zeros(1), hcat([1.; 2.]))
     ]
@@ -86,6 +87,7 @@ function check_method_ambiguity_binary(op;
         Universe(2),
         VPolygon([zeros(2)]),
         VPolytope([zeros(2)]),
+        Universe(2),
         ZeroSet(2),
         Zonotope(zeros(2), [1. 0.; 0. 1.])
     ]
