@@ -306,11 +306,13 @@ function linear_map(M::AbstractMatrix{N},
     @assert dim(P) == size(M, 2) "a linear map of size $(size(M)) cannot be applied to a set of dimension $(dim(P))"
 
     if !check_invertibility || !isinvertible(M; cond_tol=cond_tol)
+        # vertex representation is enforced or the matrix is not invertible => use vertex approach
         return _linear_map_vrep(M, P)
+    else
+        # matrix M is invertible => use H-rep approach
+        # the normal vectors are vec(c.a' * inv(M))
+        return _linear_map_hrep(M, P, use_inv)
     end
-
-    # matrix M is invertible => the normal vectors are vec(c.a' * inv(M))
-    return _linear_map_hrep(M, P, use_inv)
 end
 
 function _linear_map_vrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N}) where {N<:Real}
