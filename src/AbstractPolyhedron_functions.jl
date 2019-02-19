@@ -285,6 +285,17 @@ vectors. Note that this helps as a workaround when `M` is a sparse matrix, since
 the `inv` function is not available for sparse matrices. In this case, either
 use the option `use_inv=false` or convert the type of `M` as in
 `linear_map(Matrix(M), P)`.
+
+Internally, this function operates at the level of the `AbstractPolyhedron`
+interface, but the actual algorithm uses dispatch on the concrete type of `P`,
+depending on the algorithm that is used:
+
+-  `_linear_map_vrep(M, P)` if the vertex approach is used
+-  `_linear_map_hrep(M, P, use_inv)` if the invertibility criterion is used
+
+New subtypes of the interface should write their own `_linear_map_vrep`
+(resp. `_linear_map_hrep`) for special handling of the linear map; otherwise
+the fallback implementation for `AbstractPolyhedron` is used (see below).
 """
 function linear_map(M::AbstractMatrix{N},
                     P::AbstractPolyhedron{N};
