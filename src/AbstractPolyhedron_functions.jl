@@ -226,7 +226,7 @@ Concrete linear map of a polyhedron in constraint representation.
 ### Input
 
 - `M` -- matrix
-- `P` -- polyhedron in constraint representation
+- `P` -- abstract polyhedron
 - `check_invertibility` -- (optional, deault: `true`) check if the linear map is
                            invertible, in which case this function uses the matrix
                            inverse; if the invertibility check fails, or if
