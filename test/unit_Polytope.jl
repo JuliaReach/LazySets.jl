@@ -133,7 +133,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # do not check for invertibility => use the vertices
     L4 = linear_map(M, P, check_invertibility=false)
-    @test L4 isa VPolytope
+    @test L4 isa VPolygon
 
     # -----
     # V-rep
