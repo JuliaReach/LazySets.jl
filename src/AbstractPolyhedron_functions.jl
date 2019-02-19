@@ -251,7 +251,7 @@ In particular, the output depends on the type of `P` and the algorithm that was 
     
     - If `P` is a `VPolygon` then the output is a `VPolygon`.
     - If `P` is a `VPolytope` then the output is a `VPolytope`.
-    - Otherwise, the output is a `VPolygon` if the dimension of `P` is `2`, or a
+    - Otherwise, the output is a `VPolygon` if the dimension of `P` is two and a
       `VPolytope` in other cases.
 
 - If the invertibility criterion was used:
