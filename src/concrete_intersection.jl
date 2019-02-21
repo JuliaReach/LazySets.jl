@@ -550,3 +550,43 @@ end
 function intersection(S::AbstractSingleton{N}, U::Universe{N}) where {N<:Real}
     return S
 end
+
+"""
+    intersection(P::AbstractPolyhedron{N}, rm::ResetMap{N}) where {N<:Real}
+
+Return the intersection of a polyhedron and a polyhedral reset map.
+
+### Input
+
+- `P`  -- polyhedron
+- `rm` -- polyhedral reset map
+
+### Output
+
+A polyhedron.
+
+### Notes
+
+We assume that `rm` is polyhedral, i.e., has a `constraints_list` method
+defined.
+"""
+function intersection(P::AbstractPolyhedron{N}, rm::ResetMap{N}) where {N<:Real}
+    return intersection(P, HPolyhedron(constraints_list(rm)))
+end
+
+# symmetric method
+function intersection(rm::ResetMap{N}, P::AbstractPolyhedron{N}) where {N<:Real}
+    return intersection(P, rm)
+end
+
+# more efficient version for polytopic
+function intersection(P::AbstractPolyhedron{N},
+                      rm::ResetMap{N, <:AbstractPolytope}) where {N<:Real}
+    return intersection(P, HPolytope(constraints_list(rm)))
+end
+
+# symmetric method
+function intersection(rm::ResetMap{N, <:AbstractPolytope},
+                      P::AbstractPolyhedron{N}) where {N<:Real}
+    return intersection(P, rm)
+end

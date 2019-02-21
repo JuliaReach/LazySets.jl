@@ -7,6 +7,7 @@ for N in [Float64, Rational{Int}, Float32]
     r_1 = Dict{Int, N}(1 => N(1))  # reset x1
     r_12 = Dict{Int, N}(1 => N(1), 2 => N(1))  # reset x1 and x2
     rm = ResetMap(b, r)
+    # rm is the line segment in 3D from [4, 1, 0] to [4, 3, 0]
 
     # dimension
     @test dim(rm) == 3
@@ -46,5 +47,12 @@ for N in [Float64, Rational{Int}, Float32]
     if test_suite_polyhedra
         p = HPolytope(constraints_list(rm))
         @test N[4, 1, 0] ∈ p && N[4, 3, 0] ∈ p && N[2, 2, 2] ∉ p
+    end
+
+    # intersection
+    b2 = BallInf(N[4, 2, 0], N(1))
+    for cap in [intersection(b2, rm), intersection(rm, b2)]
+        @test N[4, 1, 0] ∈ cap && N[4, 3, 0] ∈ cap && N[3, 1, 0] ∉ cap &&
+              N[3, 1, 2] ∉ cap
     end
 end
