@@ -6,8 +6,9 @@ export Ball1
 """
     Ball1{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
 
-Type that represents a ball in the 1-norm, also known as Manhattan or Taxicab
-norm.
+Type that represents a ball in the 1-norm (also known as the Manhattan norm).
+The ball is also known as a
+[cross-polytope](https://en.wikipedia.org/wiki/Cross-polytope).
 
 It is defined as the set
 
