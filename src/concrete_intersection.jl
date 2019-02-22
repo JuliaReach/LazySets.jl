@@ -1,7 +1,6 @@
 #= concrete implementations of binary intersections between sets =#
 
 export intersection
-
 """
     intersection(S::AbstractSingleton{N},
                  X::LazySet{N}
@@ -676,18 +675,11 @@ This function takes into account that if the polyhedron is unbounded, the inters
 is only needed to be taken in the elements of the cartesian product array (subsets of
 variables, or "blocks") which are constrained; those which are not constrained do not need to be intersected.
 """
-function intersection(X::CartesianProductArray{N},
-                      Y::AbstractPolyhedron{N}) where {N}
+
+function intersection_blocks(X::CartesianProductArray{N},
+                      Y::AbstractPolyhedron{N}, blocks::Dict{Int,Int}) where {N}
     # preallocate the resulting CartesianProductArray with size hint
     result = CartesianProductArray(length(X.array), N)
-
-    if isbounded(Y)
-        # no free variables
-        blocks = block_indices(X)
-    else
-        constrained_vars = constrained_dimensions(Y)
-        blocks = block_indices(X, constrained_vars)
-    end
 
     for bi in 1:length(X.array)
         if haskey(blocks,bi)
@@ -702,9 +694,71 @@ function intersection(X::CartesianProductArray{N},
     return result
 end
 
+function intersection_combine(X::CartesianProductArray{N},
+                      Y::AbstractPolyhedron{N}, blocks::Dict{Int,Int}) where {N}
+    result = CartesianProductArray(length(X.array), N)
+
+    low_set = CartesianProductArray(length(blocks), N)
+    vars = Vector{Int}()
+    block_structure = Vector{Int}()
+
+    for bi in keys(blocks)
+        push!(low_set.array, X.array[bi])
+        append!(vars, variable_indices(X, bi, blocks[bi]))
+        push!(block_structure, dim(X.array[bi]))
+    end
+
+    approx_low_set = Approximations.overapproximate(low_set)
+    low_intersection = intersection(approx_low_set, Approximations.project(Y,vars, LinearMap))
+
+    if isempty(low_intersection)
+        return EmptySet()
+    end
+    decomposed_low_set = Approximations.decompose(low_intersection, blocks=block_structure)
+
+
+    index = 1
+    for bi in 1:length(X.array)
+        if haskey(blocks,bi)
+            push!(result.array, decomposed_low_set.array[index])
+            index += 1
+        else
+            push!(result.array, X.array[bi])
+        end
+    end
+    return result
+end
+
+function intersection(X::CartesianProductArray{N},
+                      Y::AbstractPolyhedron{N},
+                      blocks::Dict{Int,Int},
+                      is_combine::Bool) where {N}
+    if is_combine
+        return intersection_combine(X, Y, blocks)
+    else
+        return intersection_blocks(X, Y, blocks)
+    end
+end
+
+function intersection(X::CartesianProductArray{N},
+                      Y::AbstractPolyhedron{N}, is_combine::Bool=true) where {N}
+
+    if isbounded(Y)
+        # no free variables
+        blocks = block_indices(X)
+    else
+        constrained_vars = constrained_dimensions(Y)
+        blocks = block_indices(X, constrained_vars)
+
+
+    end
+    return intersection(X, Y, blocks, is_combine)
+end
+
+
 # symmetric method
-function intersection(Y::AbstractPolyhedron{N}, X::CartesianProductArray{N}) where {N}
-    intersection(X, Y)
+function intersection(Y::AbstractPolyhedron{N}, X::CartesianProductArray{N}, is_combine::Bool=true) where {N}
+    intersection(X, Y, is_combine)
 end
 
 
