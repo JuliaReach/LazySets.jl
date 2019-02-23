@@ -640,7 +640,7 @@ end
 
 @inline function σ_helper(d::AbstractVector{N},
                           array::AbstractVector{<:LazySet}) where {N<:Real}
-    svec = zeros(N, length(d))
+    svec = similar(d)
     @inbounds for sj in array
         svec += σ(d, sj)
     end
