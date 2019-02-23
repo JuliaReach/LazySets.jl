@@ -108,7 +108,7 @@ The support vector in the given direction.
 If the direction has norm zero, the vertex with biggest values is returned.
 """
 function σ(d::AbstractVector{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
-    @assert length(d) == dim(H) "an $(length(d))-dimensional vector is " *
+    @assert length(d) == dim(H) "a $(length(d))-dimensional vector is " *
                                 "incompatible with a $(dim(H))-dimensional set"
     return center(H) .+ sign_cadlag.(d) .* radius_hyperrectangle(H)
 end
