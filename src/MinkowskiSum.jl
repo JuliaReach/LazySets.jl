@@ -298,7 +298,11 @@ The support function of the Minkowski sum of sets is the sum of the support
 functions of each set. 
 """
 function ρ(d::AbstractVector{N}, msa::MinkowskiSumArray{N}) where {N<:Real}
-    return sum([ρ(d, Xi) for Xi in msa.array])
+    res = zero(N)
+    @inbounds for Xi in msa.array
+        res = res + ρ(d, Xi)::N
+    end
+    return res
 end
 
 """
@@ -635,10 +639,9 @@ end
 # ================
 
 @inline function σ_helper(d::AbstractVector{N},
-                          array::AbstractVector{<:LazySet}
-                         )::Vector{N} where {N<:Real}
+                          array::AbstractVector{<:LazySet}) where {N<:Real}
     svec = zeros(N, length(d))
-    for sj in array
+    @inbounds for sj in array
         svec += σ(d, sj)
     end
     return svec
