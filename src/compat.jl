@@ -11,6 +11,7 @@ import Compat.LinearAlgebra: norm, checksquare, LAPACKException,
                              SingularException, ×, cond
 import Compat.InteractiveUtils.subtypes
 export _At_mul_B
+export ×
 
 @static if VERSION < v"0.7-"
     using Compat.Random
