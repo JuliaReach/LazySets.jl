@@ -104,7 +104,7 @@ end
 
 """
     ∈(x::AbstractVector{N}, P::VPolytope{N};
-      solver=GLPKSolverLP(method=:Simplex))::Bool where {N<:Real}
+      solver=default_LP_backend(N))::Bool where {N<:Real}
 
 Check whether a given point is contained in a polytope in vertex representation.
 
@@ -133,7 +133,7 @@ Then we solve the following ``m``-dimensional linear program.
 ```
 """
 function ∈(x::AbstractVector{N}, P::VPolytope{N};
-           solver=GLPKSolverLP(method=:Simplex))::Bool where {N<:Real}
+           solver=default_LP_backend(N))::Bool where {N<:Real}
     vertices = P.vertices
     m = length(vertices)
 

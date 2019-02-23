@@ -181,7 +181,7 @@ end
 
 """
     ∈(x::AbstractVector{N}, Z::Zonotope{N};
-      solver=GLPKSolverLP(method=:Simplex))::Bool where {N<:Real}
+      solver=default_LP_backend(N))::Bool where {N<:Real}
 
 Check whether a given point is contained in a zonotope.
 
@@ -189,7 +189,7 @@ Check whether a given point is contained in a zonotope.
 
 - `x`      -- point/vector
 - `Z`      -- zonotope
-- `solver` -- (optional, default: `GLPKSolverLP(method=:Simplex)`) the backend
+- `solver` -- (optional, default: see `default_LP_backend(N)`) the backend
               used to solve the linear program
 
 ### Output
@@ -224,7 +224,7 @@ This function is parametric in the number type `N`. For exact arithmetic use
 an appropriate backend, e.g. `solver=GLPKSolverLP(method=:Exact)`.
 """
 function ∈(x::AbstractVector{N}, Z::Zonotope{N};
-           solver=GLPKSolverLP(method=:Simplex))::Bool where {N<:Real}
+           solver=default_LP_backend(N))::Bool where {N<:Real}
     @assert length(x) == dim(Z)
 
     p, n = ngens(Z), dim(Z)

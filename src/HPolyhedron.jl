@@ -90,7 +90,7 @@ If a polyhedron is unbounded in the given direction, the result is `Inf`.
 
 ### Algorithm
 
-This implementation uses `GLPKSolverLP` as linear programming backend.
+For the linear programming backend used, see `default_LP_backend(N)`.
 """
 function ρ(d::AbstractVector{N}, P::HPoly{N})::N where {N<:Real}
     lp, unbounded = σ_helper(d, P)
@@ -121,7 +121,7 @@ The support vector in the given direction.
 
 ### Algorithm
 
-This implementation uses `GLPKSolverLP` as linear programming backend.
+For the linear programming backend used, see `default_LP_backend(N)`.
 """
 function σ(d::AbstractVector{N}, P::HPoly{N}) where {N<:Real}
     lp, unbounded = σ_helper(d, P)
@@ -174,7 +174,7 @@ function σ_helper(d::AbstractVector{N}, P::HPoly{N}) where {N<:Real}
         sense = '<'
         l = -Inf
         u = Inf
-        solver = GLPKSolverLP()
+        solver = default_LP_backend(N)
         lp = linprog(c, A, sense, b, l, u, solver)
         if lp.status == :Unbounded
             unbounded = true
@@ -326,17 +326,16 @@ function tohrep(P::HPoly{N}) where {N<:Real}
 end
 
 """
-    remove_redundant_constraints(P::PT;
-                                 backend=GLPKSolverLP()
-                                )::Union{PT, EmptySet{N}} where {N<:Real,
-                                                                 PT<:HPoly{N}}
+    remove_redundant_constraints(P::HPoly{N};
+                                 backend=default_LP_backend(N)
+                                )::Union{HPoly{N}, EmptySet{N}} where {N<:Real}
 
 Remove the redundant constraints in a polyhedron in H-representation.
 
 ### Input
 
 - `P`       -- polyhedron
-- `backend` -- (optional, default: `GLPKSolverLP`) the numeric LP solver backend
+- `backend` -- (optional, see `default_LP_backend(N)`) the numeric LP solver backend
 
 ### Output
 
@@ -350,10 +349,9 @@ See
 [`remove_redundant_constraints!(::Vector{LinearConstraint{<:Real}})`](@ref)
 for details.
 """
-function remove_redundant_constraints(P::PT;
-                                      backend=GLPKSolverLP()
-                                     )::Union{PT, EmptySet{N}} where {N<:Real,
-                                                                      PT<:HPoly{N}}
+function remove_redundant_constraints(P::HPoly{N};
+                                      backend=default_LP_backend(N)
+                                     )::Union{HPoly{N}, EmptySet{N}} where {N<:Real}
     Pred = copy(P)
     if remove_redundant_constraints!(Pred, backend=backend)
         return Pred
@@ -364,7 +362,7 @@ end
 
 """
     remove_redundant_constraints!(P::HPoly{N};
-                                  backend=GLPKSolverLP())::Bool where {N<:Real}
+                                  backend=default_LP_backend(N))::Bool where {N<:Real}
 
 Remove the redundant constraints in a polyhedron in H-representation; the
 polyhedron is updated in-place.
@@ -372,7 +370,7 @@ polyhedron is updated in-place.
 ### Input
 
 - `P`       -- polyhedron
-- `backend` -- (optional, default: `GLPKSolverLP`) the numeric LP solver backend
+- `backend` -- (optional, see `default_LP_backend(N)`) the numeric LP solver backend
 
 ### Output
 
@@ -387,7 +385,7 @@ See
 for details.
 """
 function remove_redundant_constraints!(P::HPoly{N};
-                                       backend=GLPKSolverLP()
+                                       backend=default_LP_backend(N)
                                       )::Bool where {N<:Real}
     remove_redundant_constraints!(P.constraints, backend=backend)
 end
@@ -550,7 +548,7 @@ end
 
 """
    isempty(P::HPoly{N}, witness::Bool=false;
-           [use_polyhedra_interface]::Bool=false, [solver]=GLPKSolverLP(),
+           [use_polyhedra_interface]::Bool=false, [solver]=default_LP_backend(N),
            [backend]=nothing
           )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
@@ -562,7 +560,7 @@ Determine whether a polyhedron is empty.
 - `witness` -- (optional, default: `false`) compute a witness if activated
 - `use_polyhedra_interface` -- (optional, default: `false`) if `true`, we use
                the `Polyhedra` interface for the emptiness test
-- `solver`  -- (optional, default: `GLPKSolverLP()`) LP-solver backend
+- `solver`  -- (optional, default: see `default_LP_backend(N)`) LP-solver backend
 - `backend` -- (optional, default: `default_polyhedra_backend(P, N)`) backend
                for polyhedral computations in `Polyhedra`
 
@@ -586,7 +584,7 @@ Otherwise, we set up the LP internally.
 function isempty(P::HPoly{N},
                  witness::Bool=false;
                  use_polyhedra_interface::Bool=false,
-                 solver=GLPKSolverLP(),
+                 solver=default_LP_backend(N),
                  backend=default_polyhedra_backend(P, N)
                 )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     if use_polyhedra_interface

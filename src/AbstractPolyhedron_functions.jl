@@ -101,7 +101,7 @@ end
 """
      remove_redundant_constraints!(
          constraints::AbstractVector{LinearConstraint{N}};
-         [backend]=GLPKSolverLP())::Bool where {N<:Real}
+         [backend]=default_LP_backend(N))::Bool where {N<:Real}
 
 Remove the redundant constraints of a given list of linear constraints; the list
 is updated in-place.
@@ -109,7 +109,8 @@ is updated in-place.
 ### Input
 
 - `constraints` -- list of constraints
-- `backend`     -- (optional, default: `GLPKSolverLP`) numeric LP solver backend
+- `backend`     -- (optional, default: see `default_LP_backend(N)`) numeric LP
+                   solver backend
 
 ### Output
 
@@ -140,7 +141,7 @@ For details, see [Fukuda's Polyhedra
 FAQ](https://www.cs.mcgill.ca/~fukuda/soft/polyfaq/node24.html).
 """
 function remove_redundant_constraints!(constraints::AbstractVector{LinearConstraint{N}};
-                                       backend=GLPKSolverLP()
+                                       backend=default_LP_backend(N)
                                       )::Bool where {N<:Real}
 
     A, b = tosimplehrep(constraints)
@@ -179,7 +180,7 @@ end
 """
     remove_redundant_constraints(
         constraints::AbstractVector{LinearConstraint{N}};
-        backend=GLPKSolverLP())::Union{AbstractVector{LinearConstraint{N}},
+        backend=default_LP_backend(N))::Union{AbstractVector{LinearConstraint{N}},
                                        EmptySet{N}} where {N<:Real}
 
 Remove the redundant constraints of a given list of linear constraints.
@@ -187,7 +188,8 @@ Remove the redundant constraints of a given list of linear constraints.
 ### Input
 
 - `constraints` -- list of constraints
-- `backend`     -- (optional, default: `GLPKSolverLP`) numeric LP solver backend
+- `backend`     -- (optional, default: see `default_LP_backend(N)`) numeric LP
+                   solver backend
 
 ### Output
 
@@ -201,7 +203,7 @@ See
 for details.
 """
 function remove_redundant_constraints(constraints::AbstractVector{LinearConstraint{N}};
-                                      backend=GLPKSolverLP()
+                                      backend=default_LP_backend(N)
                                      )::Union{AbstractVector{LinearConstraint{N}},
                                                              EmptySet{N}
                                                             } where {N<:Real}

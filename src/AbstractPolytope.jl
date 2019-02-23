@@ -110,6 +110,14 @@ end
     return dim(P) == 2 ? HPolygon(constraints) : HPolytope(constraints)
 end
 
+function default_LP_backend(N::Type{<:Rational})
+    GLPKSolverLP(method=:Exact)
+end
+
+function default_LP_backend(N::Type{<:AbstractFloat})
+    GLPKSolverLP(method=:Simplex)
+end
+
 # =============================================
 # Functions that require Polyhedra
 # =============================================

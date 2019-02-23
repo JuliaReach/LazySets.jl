@@ -324,8 +324,8 @@ If one of the arguments is a polytope, the result is an `HPolytope` instead.
 ### Notes
 
 The default value of the backend is set internally and depends on whether the
-Polyhedra backend is used or not. The default backends are `GLPKSolverLP()`
-and `default_polyhedra_backend(P1, N)`, respectively.
+Polyhedra backend is used or not. See `default_LP_backend(N)`
+and `default_polyhedra_backend(P1, N)`.
 
 Note that if `use_polyhedra_interface` is set to `true`, there is no guarantee
 that the removal of constraints keep the set empty (see #1038 and
@@ -358,7 +358,7 @@ function intersection(P1::AbstractPolyhedron{N},
         return convert(HPOLY, ph)
     else
         if backend == nothing
-            backend = GLPKSolverLP()
+            backend = default_LP_backend(N)
         end
         # here, detection of empty intersection may be reported as an infeasible LP
         if remove_redundant_constraints!(Q, backend=backend)
