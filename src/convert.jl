@@ -139,12 +139,11 @@ The given polytope represented as a polytope in constraint representation.
 
 ### Algorithm
 
-``P`` is first converted to a polytope in V-representation.
-Then, the conversion method to a polytope in H-representation is invoked.
-This conversion may require the `Polyhedra` library.
+First the list of constraints of `P` is computed, then the corresponding
+`HPolytope` is created.
 """
 function convert(::Type{HPolytope}, P::AbstractPolytope)
-    return convert(HPolytope, convert(VPolytope, P))
+    return HPolytope(constraints_list(P))
 end
 
 """
