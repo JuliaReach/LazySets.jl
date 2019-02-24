@@ -106,7 +106,7 @@ for N in [Float64, Rational{Int}, Float32]
     Z = Zonotope(zeros(N, 3), Matrix(N(1)*I, 3, 3))
     B = BallInf(zeros(N, 3), N(1)) # equivalent to Z
     if N == Rational{Int} && !test_suite_polyhedra
-        # the rational cases uses vrep => needs Polyhedra
+        # the rational case uses vrep => needs Polyhedra
         nothing
     else
         constraints = constraints_list(Z)
