@@ -105,10 +105,8 @@ for N in [Float64, Rational{Int}, Float32]
     # list of constraints
     Z = Zonotope(zeros(N, 3), Matrix(N(1)*I, 3, 3))
     B = BallInf(zeros(N, 3), N(1)) # equivalent to Z
-    if N == Rational{Int} && !test_suite_polyhedra
+    if N != Rational{Int} || test_suite_polyhedra
         # the rational case uses vrep => needs Polyhedra
-        nothing
-    else
         constraints = constraints_list(Z)
         H = HPolytope(constraints)
         @test H ⊆ B && B ⊆ H
