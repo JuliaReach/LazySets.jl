@@ -55,6 +55,8 @@ HPolytope{N}(A::AbstractMatrix{N}, b::AbstractVector{N};
              check_boundedness::Bool=false) where {N<:Real} =
     HPolytope(A, b; check_boundedness=check_boundedness)
 
+promote_rule(::Type{HPolytope{T}},
+             ::Type{HPolytope{S}}) where {T<:Real,S<:Real} = HPolytope{promote_type(T,S)}
 
 # --- LazySet interface functions ---
 
@@ -235,4 +237,11 @@ function vertices_list(P::HPolytope{N};
     P = polyhedron(P; backend=backend)
     prunefunc(P)
     return collect(points(P))
+end
+
+function linear_map(M::Matrix{MN}, P::HPolytope{SN}; kwargs...) where {MN<:Real, SN<:Real}
+    T = promote_type(MN, SN)
+    MT = convert(Matrix{T}, M)
+    PT = convert(HPolytope{T}, P)
+    return invoke(linear_map, Tuple{AbstractMatrix{T}, AbstractPolyhedron{T}}, MT, PT; kwargs...)
 end

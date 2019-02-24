@@ -135,6 +135,11 @@ for N in [Float64, Rational{Int}, Float32]
     L4 = linear_map(M, P, check_invertibility=false)
     @test L4 isa VPolygon
 
+    # linear map for mixed types
+    M = [2 1; 0 1] # Int's
+    LM = linear_map(M, P)
+    @test LM isa HPolytope
+
     # -----
     # V-rep
     # -----
