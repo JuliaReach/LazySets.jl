@@ -585,7 +585,7 @@ function constraints_list(Z::Zonotope{N}
         d⁻ = -d⁺ + 2 * Δd  # identical to dot(c⁻, c) + Δd
 
         constraints[i] = LinearConstraint(c⁺, d⁺)
-        constraints[i + p] = LinearConstraint(c⁻, d⁻)
+        constraints[i + m] = LinearConstraint(c⁻, d⁻)
     end
     @assert i == m "expected 2*$m constraints, but only created 2*$i"
     return constraints

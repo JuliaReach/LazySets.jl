@@ -101,6 +101,18 @@ for N in [Float64, Rational{Int}, Float32]
     Z = Zonotope(N[0, 0], N[1 1; -1 1])
     Z1, Z2 = split(Z, 1) # in this case the splitting is exact
     @test Z1 ⊆ Z && Z2 ⊆ Z
+
+    # list of constraints
+    Z = Zonotope(zeros(N, 3), Matrix(N(1)*I, 3, 3))
+    B = BallInf(zeros(N, 3), N(1)) # equivalent to Z
+    if N == Rational{Int} && !test_suite_polyhedra
+        # the rational cases uses vrep => needs Polyhedra
+        nothing
+    else
+        constraints = constraints_list(Z)
+        H = HPolytope(constraints)
+        @test H ⊆ B && B ⊆ H
+    end
 end
 
 for N in [Float64, Rational{Int}]
