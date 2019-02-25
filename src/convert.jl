@@ -343,6 +343,51 @@ function convert(::Type{Hyperrectangle}, x::Interval)
 end
 
 """
+    convert(::Type{Interval}, H::AbstractHyperrectangle)
+
+Converts a hyperrectangular set to a unidimensional interval.
+
+### Input
+
+- `H`        -- hyperrectangular set 
+- `Interval` -- interval type, used for dispatch
+
+### Output
+
+An interval.
+
+### Examples
+
+```jldoctest convert_hyperrectangle_interval
+julia> convert(Interval, Hyperrectangle{Float64}([0.5], [0.5]))
+Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
+```
+"""
+function convert(::Type{Interval}, H::AbstractHyperrectangle)
+    @assert dim(H) == 1 "can only convert a one-dimensional $(typeof(H)) to `Interval`"
+    return Interval([low(H); high(H)])
+end
+
+"""
+    convert(::Type{Interval}, S::LazySet{N}) where {N<:Real}
+
+Converts a convex set to a unidimensional interval.
+
+### Input
+
+- `S`        -- set 
+- `Interval` -- interval type, used for dispatch
+
+### Output
+
+An interval.
+"""
+function convert(::Type{Interval}, S::LazySet{N}) where {N<:Real}
+    @assert dim(S) == 1 "can only convert a one-dimensional $(typeof(S)) to `Interval`"
+    return Interval(-ρ(N[-1], S), ρ(N[1], S))
+end
+
+"""
     convert(::Type{HPolytope}, H::AbstractHyperrectangle)
 
 Converts a hyperrectangular set to a polytope in constraint representation.
