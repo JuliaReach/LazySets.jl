@@ -85,7 +85,34 @@ A hyperrectangle.
 function overapproximate(S::LazySet,
                          ::Type{<:Hyperrectangle};
                         )::Union{Hyperrectangle, EmptySet}
-    box_approximation(S)
+   return box_approximation(S)
+end
+
+"""
+    overapproximate(S::CartesianProductArray{N, <:AbstractHyperrectangle{N}},
+                    ::Type{<:Hyperrectangle}) where {N<:Real}
+
+Return a tight overapproximation of the cartesian product array of a finite
+number of convex sets with and hyperrectangle.
+
+### Input
+
+- `S`              -- cartesian product array of a finite number of convex set
+- `Hyperrectangle` -- type for dispatch
+
+### Output
+
+A hyperrectangle.
+
+### Algorithm
+
+This method falls back to corresponding `convert` method. Since the sets wrapped
+by the cartesian product array are hyperrectangles, it can be done efficiently
+without overapproximation.
+"""
+function overapproximate(S::CartesianProductArray{N, <:AbstractHyperrectangle{N}},
+                          ::Type{<:Hyperrectangle}) where {N<:Real}
+    return convert(Hyperrectangle, S)
 end
 
 """
