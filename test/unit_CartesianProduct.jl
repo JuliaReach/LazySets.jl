@@ -198,4 +198,17 @@ for N in [Float64, Float32, Rational{Int}]
     @test absorbing(CartesianProduct) == absorbing(CartesianProductArray) ==
           EmptySet
     @test b × e == e × b == cpa × e == e × cpa == e × e == e
+
+    # conversion of the cartesian product array of intervals to a hyperrectangle
+    i1 = Interval(N[0, 1])
+    i2 = Interval(N[2, 3])
+    i3 = Interval(N[4, 5])
+    H = convert(Hyperrectangle, CartesianProductArray([i1, i2, i3]))
+    @test low(H) == N[0, 2, 4] && high(H) == N[1, 3, 5]
+
+    M = hcat(N(1))
+    h1 = Hyperrectangle(N[1/2],  N[1/2])
+    h2 = Hyperrectangle(N[2.5, 4.5],  N[1/2, 1/2])
+    H = convert(Hyperrectangle, CartesianProductArray([h1, h2]))
+    @test low(H) == N[0, 2, 4] && high(H) == N[1, 3, 5]
 end
