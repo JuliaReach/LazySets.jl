@@ -320,12 +320,12 @@ import IntervalArithmetic.AbstractInterval
 """
     convert(::Type{Hyperrectangle}, x::Interval)
 
-Converts a unidimensional interval into a hyperrectangular set.
+Converts a unidimensional interval into a hyperrectangle.
 
 ### Input
 
-- `AbstractHyperrectangle`
-- `x` -- interval
+- `Hyperrectangle` -- hyperrectangle type, used for dispatch
+- `x`              -- interval
 
 ### Output
 
@@ -333,7 +333,7 @@ A hyperrectangle.
 
 ### Examples
 
-```jldoctest convert_hyperrectangle_interval
+```jldoctest
 julia> convert(Hyperrectangle, Interval(0.0, 1.0))
 Hyperrectangle{Float64}([0.5], [0.5])
 ```
@@ -349,8 +349,8 @@ Converts a hyperrectangular set to a unidimensional interval.
 
 ### Input
 
-- `H`        -- hyperrectangular set 
 - `Interval` -- interval type, used for dispatch
+- `H`        -- hyperrectangular set
 
 ### Output
 
@@ -358,7 +358,7 @@ An interval.
 
 ### Examples
 
-```jldoctest convert_hyperrectangle_interval
+```jldoctest
 julia> convert(Interval, Hyperrectangle{Float64}([0.5], [0.5]))
 Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
 ```
@@ -375,8 +375,8 @@ Converts a convex set to a unidimensional interval.
 
 ### Input
 
-- `S`        -- set 
 - `Interval` -- interval type, used for dispatch
+- `S`        -- convex set
 
 ### Output
 
