@@ -198,18 +198,21 @@ Return the overapproximation of a real unidimensional set with an interval.
 
 ### Input
 
-- `S`           -- one-dimensional set
-- `Interval`    -- type for dispatch
+- `S`        -- one-dimensional set
+- `Interval` -- type for dispatch
 
 ### Output
 
 An interval.
+
+### Algorithm
+
+The method relies on the exact conversion to `Interval`. Two support
+function evaluations are needed in general.
 """
 function overapproximate(S::LazySet{N}, ::Type{Interval}) where {N<:Real}
-    @assert dim(S) == 1
-    lo = σ([-one(N)], S)[1]
-    hi = σ([one(N)], S)[1]
-    return Interval(lo, hi)
+    @assert dim(S) == 1 "cannot overapproximate a $(dim(S))-dimensional set with an `Interval`"
+    return convert(Interval, S)
 end
 
 function overapproximate_cap_helper(X::LazySet{N},                # compact set
