@@ -91,4 +91,13 @@ for N in [Float64, Float32, Rational{Int}]
     # check empty intersection
     E = intersection(A, Interval(N(0), N(1)))
     @test isempty(E)
+
+    # conversion from a hyperrectangular set to an interval
+    H = Hyperrectangle(N[0], N[1/2])
+    A = convert(Interval, H)
+    @test A isa Interval && low(A) == [N(-1/2)] && high(A) == [N(1/2)]
+    # conversion from a lazyset to an interval
+    M = reshape([N(2)], 1, 1)
+    B = convert(Interval, M*H)
+    @test B isa Interval && low(B) == [N(-1)] && high(B) == [N(1)]
 end
