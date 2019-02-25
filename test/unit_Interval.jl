@@ -97,7 +97,7 @@ for N in [Float64, Float32, Rational{Int}]
     A = convert(Interval, H)
     @test A isa Interval && low(A) == [N(-1/2)] && high(A) == [N(1/2)]
     # conversion from a lazyset to an interval
-    M = reshape([N(2)], 1, 1)
+    M = hcat(N[2])
     B = convert(Interval, M*H)
     @test B isa Interval && low(B) == [N(-1)] && high(B) == [N(1)]
 end
