@@ -114,6 +114,24 @@ function ispermutation(u::AbstractVector{T}, v::AbstractVector{T})::Bool where T
 end
 
 """
+    issquare(M::AbstractMatrix)::Bool
+
+Check whether a matrix is square.
+
+### Input
+
+- `M` -- matrix
+
+### Output
+
+`true` iff the matrix is square.
+"""
+function issquare(M::AbstractMatrix)::Bool
+    m, n = size(M)
+    return m == n
+end
+
+"""
     isinvertible(M::Matrix; [cond_tol]::Number=DEFAULT_COND_TOL)
 
 A sufficient check of a matrix being invertible (or nonsingular).
@@ -127,21 +145,22 @@ A sufficient check of a matrix being invertible (or nonsingular).
 ### Output
 
 If the result is `true`, `M` is invertible.
-If the result is `false`, this function could not conclude.
+If the result is `false`, the matrix is non-square or this function could not
+conclude.
 
 ### Algorithm
 
-We check whether the
+We check whether the matrix is square and whether the
 [matrix condition number](https://en.wikipedia.org/wiki/Condition_number#Matrices)
 `cond(M)` is below some prescribed tolerance.
 """
 function isinvertible(M::Matrix; cond_tol::Number=DEFAULT_COND_TOL)
-    return cond(M) < cond_tol
+    return issquare(M) && cond(M) < cond_tol
 end
 
 # cond is not available for sparse matrices; see JuliaLang#6485 and related issues
 function isinvertible(M::SparseMatrixCSC; cond_tol::Number=DEFAULT_COND_TOL)
-    return isinvertible(Matrix(M), cond_tol=cond_tol)
+    return issquare(M) && isinvertible(Matrix(M), cond_tol=cond_tol)
 end
 
 function isinvertible(M::Diagonal; cond_tol=nothing)

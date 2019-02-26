@@ -15,9 +15,25 @@ for _dummy_ in 1:1 # avoid global variable warnings
     end
     @test vectors == [[1, 2, 3, 4], [1, 2, 3, 5], [1, 2, 4, 5], [1, 3, 4, 5], [2, 3, 4, 5]]
 
-    # invertible matrix
+    # square matrix
+    @test LazySets.issquare([2 3; 0 0])
+    @test LazySets.issquare(sparse([1], [1], [1], 3, 3))
+    @test !LazySets.issquare(hcat([2 3]))
+    @test !LazySets.issquare(sparse([1], [1], [1], 3, 4))
+
+    # invertible matrix: (1) invertible, (2) non-invertible, (3) non-square
+    # dense matrix
     @test LazySets.isinvertible([2 3; 1 2])
     @test !LazySets.isinvertible([2 3; 0 0])
+    @test !LazySets.isinvertible(hcat([2 3]))
+    # sparse matrix
+    @test LazySets.isinvertible(sparse([2 3; 1 2]))
+    @test !LazySets.isinvertible(sparse([2 3; 0 0]))
+    @test !LazySets.isinvertible(sparse(hcat([2 3])))
+    # diagonal matrix
+    @test LazySets.isinvertible(Diagonal([2 0; 0 2]))
+    @test !LazySets.isinvertible(Diagonal([2 0; 0 0]))
+    # diagonal matrices are always square
 
     for N in [Float64, Rational{Int}, Float32]
         # substitution

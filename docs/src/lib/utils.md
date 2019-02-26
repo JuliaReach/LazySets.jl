@@ -19,6 +19,7 @@ dot_zero
 get_radius!
 isinvertible
 ispermutation
+issquare
 is_right_turn
 is_tighter_same_dir_2D
 nonzero_indices
