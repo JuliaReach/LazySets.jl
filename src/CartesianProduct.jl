@@ -549,3 +549,31 @@ function vertices_list(cpa::CartesianProductArray{N}
 
     return vlist
 end
+
+function linear_map(M::AbstractMatrix{N},
+    cp::CartesianProductArray{N};
+    cond_tol::Number=DEFAULT_COND_TOL,
+    use_inv::Bool=!issparse(M)) where {N<:Real}
+    if !isinvertible(M; cond_tol=cond_tol)
+        error("linear maps for Cartesian product arrays need to be invertible")
+    end
+
+    constraints = similar(constraints_list(cp))
+    # matrix M is invertible => the normal vectors are vec(c.a' * inv(M))
+    if use_inv
+        invM = inv(M)
+        @inbounds for (i, c) in enumerate(constraints_list(cp))
+            constraints[i] = LinearConstraint(vec(c.a' * invM), c.b)
+        end
+    else
+        # take left division for each constraint c, transpose(M) \ c.a
+        @inbounds for (i, c) in enumerate(constraints_list(P))
+            constraints[i] = LinearConstraint(_At_ldiv_B(Matrix(M), c.a), c.b)
+        end
+    end
+
+    # convert back to CartesianProductArray
+    result = LazySets.Approximations.decompose(HPolytope(constraints), blocks= dim.(cp.array))
+
+    return result
+end
