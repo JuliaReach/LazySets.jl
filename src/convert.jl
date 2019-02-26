@@ -425,7 +425,7 @@ end
 
 """
     convert(::Type{Hyperrectangle},
-            cpa::CartesianProductArray{N, IN}) where {N<:Real, IN<:Interval{N}}
+            cpa::CartesianProductArray{N, Interval{N}}) where {N<:Real}
 
 Converts the cartesian product of a finite number of intervals to a single
 hyperrectangle.
@@ -445,7 +445,7 @@ This implementation uses the `min` and `max` methods of `Interval` to reduce
 the allocatons and improve performance (see LazySets#1143).
 """
 function convert(::Type{Hyperrectangle},
-                 cpa::CartesianProductArray{N, IN}) where {N<:Real, IN<:Interval{N}}
+                 cpa::CartesianProductArray{N, Interval{N}}) where {N<:Real}
      # since the sets are intervals, the dimension of cpa is its length
      n = length(array(cpa))
      l = Vector{N}(undef, n)
