@@ -388,6 +388,76 @@ function convert(::Type{Interval}, S::LazySet{N}) where {N<:Real}
 end
 
 """
+    convert(::Type{Hyperrectangle},
+            cpa::CartesianProductArray{N, HN}) where {N<:Real, HN<:AbstractHyperrectangle{N}}
+
+Converts the cartesian product of a finite number of hyperrectangular sets to
+a single hyperrectangle.
+
+### Input
+
+- `Hyperrectangle` -- type used for dispatch
+- `S`              -- cartesian product array of hyperrectangular set 
+
+### Output
+
+A hyperrectangle.
+
+### Algorithm
+
+This implementation uses the `center` and `radius_hyperrectangle` methods of
+`AbstractHyperrectangle`.
+"""
+function convert(::Type{Hyperrectangle},
+                 cpa::CartesianProductArray{N, HN}) where {N<:Real, HN<:AbstractHyperrectangle{N}}
+     n = dim(cpa)
+     c = Vector{N}(undef, n)
+     r = Vector{N}(undef, n)
+     i = 1
+     @inbounds for block_set in array(cpa)
+         j = i + dim(block_set) - 1
+         c[i:j] = center(block_set)
+         r[i:j] = radius_hyperrectangle(block_set)
+         i = j + 1
+     end
+     return Hyperrectangle(c, r)
+end
+
+"""
+    convert(::Type{Hyperrectangle},
+            cpa::CartesianProductArray{N, Interval{N}}) where {N<:Real}
+
+Converts the cartesian product of a finite number of intervals to a single
+hyperrectangle.
+
+### Input
+
+- `Hyperrectangle` -- type used for dispatch
+- `S`              -- cartesian product array of intervals 
+
+### Output
+
+A hyperrectangle.
+
+### Algorithm
+
+This implementation uses the `min` and `max` methods of `Interval` to reduce
+the allocatons and improve performance (see LazySets#1143).
+"""
+function convert(::Type{Hyperrectangle},
+                 cpa::CartesianProductArray{N, Interval{N}}) where {N<:Real}
+     # since the sets are intervals, the dimension of cpa is its length
+     n = length(array(cpa))
+     l = Vector{N}(undef, n)
+     h = Vector{N}(undef, n)
+     @inbounds for (i, Ii) in enumerate(array(cpa))
+         l[i] = min(Ii)
+         h[i] = max(Ii)
+     end
+     return Hyperrectangle(low=l, high=h)
+end
+
+"""
     convert(::Type{HPolytope}, H::AbstractHyperrectangle)
 
 Converts a hyperrectangular set to a polytope in constraint representation.
