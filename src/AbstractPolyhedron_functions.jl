@@ -241,25 +241,28 @@ Concrete linear map of a polyhedron in constraint representation.
 ### Output
 
 The type of the result is "as close as possible" to the the type of `P`.
+Let `(m, n)` be the size of `M`, where `m ≠ n` is allowed for rectangular maps.
+
 To fix the type of the output to something different than the default value,
 consider post-processing the result of this function with a call to a suitable
 `convert` method.
 
-In particular, the output depends on the type of `P` and the algorithm that was used:
+In particular, the output depends on the type of `P`, on `m`, and the algorithm
+that was used:
 
 - If the vertex-based approach was used:
-    
-    - If `P` is a `VPolygon` then the output is a `VPolygon`.
+
+    - If `P` is a `VPolygon` and `m = 2` then the output is a `VPolygon`.
     - If `P` is a `VPolytope` then the output is a `VPolytope`.
-    - Otherwise, the output is a `VPolygon` if the dimension of `P` is two and a
-      `VPolytope` in other cases.
+    - Otherwise, the output is an `Interval` if `m = 1`, a `VPolygon` if `m = 2`
+      and a `VPolytope` in other cases.
 
 - If the invertibility criterion was used:
 
     - The types of `HalfSpace`, `Hyperplane`, `Line` and `AbstractHPolygon` are
       preserved.
-    - If `P` is an `AbstractPolytope`, then the output is an `HPolygon` if the
-      dimension of `P` is two and an `HPolytope` in other cases.
+    - If `P` is an `AbstractPolytope`, then the output is an `Interval` if `m = 1`,
+      an `HPolygon` if `m = 2` and an `HPolytope` in other cases.
     - Otherwise, the output is an `HPolyhedron`.
 
 ### Algorithm
