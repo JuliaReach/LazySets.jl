@@ -100,7 +100,6 @@ Inherited from [`LazySet`](@ref):
 
 ```@docs
 convex_hull
-convex_hull!
 right_turn
 monotone_chain!
 ```
