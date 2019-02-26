@@ -102,7 +102,16 @@ function convex_hull!(points::Vector{VN};
 
     # two points
     if m == 2
-        if n == 1 || n == 2
+        if n == 1
+            p1, p2 = points[1], points[2]
+            if p1 == p2  # check for redundancy
+                pop!(points)
+            elseif p1[1] <= p2[1]
+                nothing
+            else
+                points[1], points[2] = p2, p1
+            end
+        elseif n == 2
             # special case, see #876
             p1, p2 = points[1], points[2]
             if p1 == p2  # check for redundancy
@@ -144,7 +153,8 @@ function _convex_hull_nd!(points::Vector{VN};
         backend = default_polyhedra_backend(V, N)
     end
     Vch = remove_redundant_vertices(V, backend=backend)
-    return vertices_list(Vch)
+    # NOTE: the order of the points in Vch is lost, in general, by using filter!
+    return filter!(pi -> pi ∈ vertices_list(Vch), points)
 end
 
 function _convex_hull_2d!(points::Vector{VN};
@@ -157,17 +167,6 @@ function _convex_hull_2d!(points::Vector{VN};
     else
         error("the convex hull algorithm $algorithm is unknown")
     end
-end
-
-function convex_hull(P1::Vector{N},
-                     P2::HPoly{N};
-                     backend=default_polyhedra_backend(P1, N)) where {N}
-    @assert isdefined(@__MODULE__, :Polyhedra) "this function "*
-        "needs the package 'Polyhedra'"
-    Pch = convexhull(polyhedron(P1; backend=backend),
-                     polyhedron(P2; backend=backend))
-    removehredundancy!(Pch)
-    return convert(typeof(P1), Pch)
 end
 
 """
