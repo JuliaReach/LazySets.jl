@@ -15,6 +15,12 @@ for _dummy_ in 1:1 # avoid global variable warnings
     end
     @test vectors == [[1, 2, 3, 4], [1, 2, 3, 5], [1, 2, 4, 5], [1, 3, 4, 5], [2, 3, 4, 5]]
 
+    # square matrix
+    @test LazySets.issquare([2 3; 0 0])
+    @test LazySets.issquare(sparse([1], [1], [1], 3, 3))
+    @test !LazySets.issquare(hcat([2 3]))
+    @test !LazySets.issquare(sparse([1], [1], [1], 3, 4))
+
     # invertible matrix
     @test LazySets.isinvertible([2 3; 1 2])
     @test !LazySets.isinvertible([2 3; 0 0])

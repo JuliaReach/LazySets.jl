@@ -114,6 +114,24 @@ function ispermutation(u::AbstractVector{T}, v::AbstractVector{T})::Bool where T
 end
 
 """
+    issquare(M::AbstractMatrix)::Bool
+
+Check whether a matrix is square.
+
+### Input
+
+- `M` -- matrix
+
+### Output
+
+`true` iff the matrix is square.
+"""
+function issquare(M::AbstractMatrix)::Bool
+    m, n = size(M)
+    return m == n
+end
+
+"""
     isinvertible(M::Matrix; [cond_tol]::Number=DEFAULT_COND_TOL)
 
 A sufficient check of a matrix being invertible (or nonsingular).
