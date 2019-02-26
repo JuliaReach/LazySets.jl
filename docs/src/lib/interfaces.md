@@ -64,6 +64,7 @@ RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:LazySet}
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet, ::Float64)
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}, ::Float64) where {S<:LazySet}
 tosimplehrep(::LazySet)
+isuniversal(::LazySet{N}, ::Bool=false) where {N<:Real}
 ```
 
 ### Set functions that override Base functions
@@ -113,7 +114,8 @@ This interface defines the following functions:
 
 ```@docs
 ∈(::AbstractVector{N}, ::AbstractPolyhedron{N}) where {N<:Real}
-constrained_dimensions(::AbstractPolyhedron{N}) where {N<:Real}
+constrained_dimensions(::AbstractPolyhedron)
+linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 ```
 
 ### Polytope
@@ -132,7 +134,6 @@ This interface defines the following functions:
 ```@docs
 isbounded(::AbstractPolytope)
 singleton_list(::AbstractPolytope{N}) where {N<:Real}
-linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real}
 isempty(::AbstractPolytope)
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractPolytope)
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:AbstractPolytope}

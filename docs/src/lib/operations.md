@@ -282,6 +282,26 @@ ProjectionSparseMatrixExp
 *(::ProjectionSparseMatrixExp, ::LazySet)
 ```
 
+### Reset Map
+
+```@docs
+ResetMap
+dim(::ResetMap)
+ρ(::AbstractVector{N}, ::ResetMap{N}) where {N<:Real}
+σ(::AbstractVector{N}, ::ResetMap{N}) where {N<:Real}
+an_element(::ResetMap)
+isempty(::ResetMap)
+get_A(::ResetMap{N}) where {N<:Real}
+get_b(::ResetMap{N}) where {N<:Real}
+constraints_list(::ResetMap{N}) where {N<:Real}
+```
+
+Inherited from [`LazySet`](@ref):
+* [`isbounded`](@ref isbounded(::LinearMap))
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+
 ## Symmetric Interval Hull
 
 ```@docs
@@ -298,7 +318,9 @@ Inherited from [`LazySet`](@ref):
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
-* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real})
+
+Inherited from [`AbstractPolyhedron`](@ref):
+* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real})
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))

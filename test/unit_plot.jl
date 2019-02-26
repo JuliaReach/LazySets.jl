@@ -39,10 +39,12 @@ for N in [Float64, Rational{Int}, Float32]
     hs = HalfSpace(v1, p1)
     hp = Hyperplane(v1, p1)
     l = Line(v1, p1)
+    uni = Universe{N}(2)
 
     # unary set operations
     sih = SymmetricIntervalHull(b1)
     lm = LinearMap(N[2 1; 1 2], bi)
+    rm = ResetMap(bi, Dict(1 => N(1)))
 
     # binary set operations
     ch = ConvexHull(b1, bi)
@@ -76,10 +78,12 @@ for N in [Float64, Rational{Int}, Float32]
     @test_throws Exception plot(hs) # TODO see #576
     @test_throws Exception plot(hp) # TODO see #576
     @test_throws ErrorException plot(l) # TODO see #576
+    @test_throws Exception plot(uni) # TODO see #576
     plot(ch)
     plot(cha)
     plot(sih)
     plot(lm)
+    plot(rm)
     plot(ms)
     plot(msa)
     plot(cms)
@@ -106,10 +110,12 @@ for N in [Float64, Rational{Int}, Float32]
         @test_throws ErrorException plot(hs, ε) # TODO see #576/#578
         @test_throws ErrorException plot(hp, ε) # TODO see #576/#578
         @test_throws ErrorException plot(l, ε) # TODO see #576/#578
+        plot(uni, ε)
         plot(ch, ε)
         plot(cha, ε)
         plot(sih, ε)
         plot(lm, ε)
+        plot(rm, ε)
         plot(ms, ε)
         plot(msa, ε)
         plot(cms, ε)

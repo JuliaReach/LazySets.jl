@@ -56,6 +56,12 @@ for N in [Float64, Rational{Int}, Float32]
     # constraints list
     @test constraints_list(hs) == [hs]
 
+    # constraints list from matrix-vector representation
+    A = N[2 0; 1 3]
+    b = N[-1, 1]
+    @test constraints_list(A, b) ==
+          [HalfSpace(N[2, 0], N(-1)), HalfSpace(N[1, 3], N(1))]
+
     # constrained dimensions
     @test constrained_dimensions(HalfSpace(N[1, 0, 1], N(1))) == [1, 3]
     @test constrained_dimensions(HalfSpace(N[0, 1, 0], N(1))) == [2]
@@ -91,10 +97,10 @@ for N in [Float64, Rational{Int}, Float32]
     @test !LazySets.is_tighter_same_dir_2D(c1, c2, strict=true) &&
           LazySets.is_tighter_same_dir_2D(c3, c2, strict=true)
 
-    # test linear map of a half-space
-    H = HalfSpace(N[1.0, -1.0], N(0.0)) # x <= y
-    M = Matrix(-N(1.0)*I, 2, 2)
-    MH = linear_map(M, H)
-    @test constraints_list(MH)[1] == HalfSpace(N[-1.0, 1.0], N(0.0)) # x >= y
-
+    # test concrete linear map of a half-space
+    H = HalfSpace(N[1, -1], N(0)) # x <= y
+    M = N[1 0; 0 0] # non-invertible matrix
+    @test_throws ArgumentError linear_map(M, H)
+    M = N[2 2; 0 1] # invertible matrix
+    @test linear_map(M, H) == HalfSpace(N[0.5, -2.0], N(0.0))
 end

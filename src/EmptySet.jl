@@ -51,6 +51,7 @@ Return the support vector of an empty set.
 
 ### Input
 
+- `d` -- direction
 - `∅` -- an empty set
 
 ### Output

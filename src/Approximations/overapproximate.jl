@@ -85,7 +85,34 @@ A hyperrectangle.
 function overapproximate(S::LazySet,
                          ::Type{<:Hyperrectangle};
                         )::Union{Hyperrectangle, EmptySet}
-    box_approximation(S)
+    return box_approximation(S)
+end
+
+"""
+    overapproximate(S::CartesianProductArray{N, <:AbstractHyperrectangle{N}},
+                    ::Type{<:Hyperrectangle}) where {N<:Real}
+
+Return a tight overapproximation of the cartesian product array of a finite
+number of convex sets with and hyperrectangle.
+
+### Input
+
+- `S`              -- cartesian product array of a finite number of convex set
+- `Hyperrectangle` -- type for dispatch
+
+### Output
+
+A hyperrectangle.
+
+### Algorithm
+
+This method falls back to the corresponding `convert` method. Since the sets wrapped
+by the cartesian product array are hyperrectangles, it can be done efficiently
+without overapproximation.
+"""
+function overapproximate(S::CartesianProductArray{N, <:AbstractHyperrectangle{N}},
+                          ::Type{<:Hyperrectangle}) where {N<:Real}
+    return convert(Hyperrectangle, S)
 end
 
 """
@@ -198,18 +225,21 @@ Return the overapproximation of a real unidimensional set with an interval.
 
 ### Input
 
-- `S`           -- one-dimensional set
-- `Interval`    -- type for dispatch
+- `S`        -- one-dimensional set
+- `Interval` -- type for dispatch
 
 ### Output
 
 An interval.
+
+### Algorithm
+
+The method relies on the exact conversion to `Interval`. Two support
+function evaluations are needed in general.
 """
 function overapproximate(S::LazySet{N}, ::Type{Interval}) where {N<:Real}
-    @assert dim(S) == 1
-    lo = σ([-one(N)], S)[1]
-    hi = σ([one(N)], S)[1]
-    return Interval(lo, hi)
+    @assert dim(S) == 1 "cannot overapproximate a $(dim(S))-dimensional set with an `Interval`"
+    return convert(Interval, S)
 end
 
 function overapproximate_cap_helper(X::LazySet{N},                # compact set

@@ -54,6 +54,9 @@ ConvexHull(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} =
 # EmptySet is the neutral element for ConvexHull
 @neutral(ConvexHull, EmptySet)
 
+# Universe is the absorbing element for ConvexHull
+@absorbing(ConvexHull, Universe)
+
 """
     CH
 
@@ -206,6 +209,9 @@ end
 
 # EmptySet is the neutral element for ConvexHullArray
 @neutral(ConvexHullArray, EmptySet)
+
+# Universe is the absorbing element for ConvexHullArray
+@absorbing(ConvexHullArray, Universe)
 
 # add functions connecting ConvexHull and ConvexHullArray
 @declare_array_version(ConvexHull, ConvexHullArray)

@@ -55,6 +55,13 @@ for N in [Float64, Rational{Int}, Float32]
     # constraints_list
     @test ispermutation(constraints_list(hp),
                         [HalfSpace(a, b), HalfSpace(-a, -b)])
+
+    # test concrete linear map of a hyerplane
+    H = Hyperplane(N[1, -1], N(0)) # x = y
+    M = N[1 0; 0 0] # non-invertible matrix
+    @test_throws ArgumentError linear_map(M, H)
+    M = N[2 2; 0 1] # invertible matrix
+    @test linear_map(M, H) == Hyperplane(N[0.5, -2.0], N(0.0))
 end
 
 # Polyhedra tests that only work with Float64

@@ -112,11 +112,28 @@ for N in [Float64, Rational{Int}, Float32]
     @test BallInf(N[0, 0], N(1)) ⊆ P
     @test !(BallInf(N[0, 0], N(1.01)) ⊆ P)
 
-    # concrete linear map
-    linear_map(N[2 3; 1 2], P)  # invertible matrix
+    # =====================
+    # Concrete linear map
+    # =====================
+    LM = linear_map(N[2 3; 1 2], P) # invertible matrix
+    @test LM isa HPolytope
     if test_suite_polyhedra
-        linear_map(N[2 3; 0 0], P)  # noninvertible matrix
+        LM = linear_map(N[2 3; 0 0], P)  # non-invertible matrix
+        @test LM isa VPolygon
     end
+
+    M = N[2 1; 0 1]
+    L1 = linear_map(M, P, use_inv=true)  # calculates inv(M) explicitly
+    L2 = linear_map(M, P, use_inv=false) # uses transpose(M) \ c.a for each constraint c of P
+    L3 = linear_map(M, P, cond_tol=1e3)  # set a custom tolerance for the condition number (invertibility check)
+    # needs M * an_element(Li) to be stable for rational, see #1105
+    p = convert(Vector{N}, an_element(P))
+    @assert p ∈ P
+    @test all([M * p ∈ Li for Li in [L1, L2, L3]])
+
+    # do not check for invertibility => use the vertices
+    L4 = linear_map(M, P, check_invertibility=false)
+    @test L4 isa VPolygon
 
     # -----
     # V-rep
@@ -295,7 +312,7 @@ if test_suite_polyhedra
         # other polytopic sets
         p3 = VPolygon(vertices_list(p2))
         cap = intersection(p1, p3)
-        @test vertices_list(cap) == [N[1, 1]]
+        @test vertices_list(cap) ≈ [N[1, 1]]
         @static if VERSION < v"1.0" # does not work in v1.0 (see #834)
             p4 = BallInf(N[2, 2], N(1))
             cap = intersection(p1, p4)

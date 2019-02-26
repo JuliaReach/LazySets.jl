@@ -32,22 +32,17 @@ struct HPolyhedron{N<:Real} <: AbstractPolyhedron{N}
     constraints::Vector{LinearConstraint{N}}
 end
 
-# constructor for an HPolyhedron with no constraints
+# constructor with no constraints
 HPolyhedron{N}() where {N<:Real} = HPolyhedron{N}(Vector{LinearConstraint{N}}())
 
-# constructor for an HPolyhedron with no constraints of type Float64
+# constructor with no constraints of type Float64
 HPolyhedron() = HPolyhedron{Float64}()
 
-# constructor for an HPolyhedron from a simple H-representation
-function HPolyhedron(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real}
-    m = size(A, 1)
-    constraints = LinearConstraint{N}[]
-    @inbounds for i in 1:m
-        push!(constraints, LinearConstraint(A[i, :], b[i]))
-    end
-    return HPolyhedron(constraints)
-end
+# constructor from a simple H-representation
+HPolyhedron(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real} =
+    HPolyhedron(constraints_list(A, b))
 
+# constructor from a simple H-representation with type parameter
 HPolyhedron{N}(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real} =
     HPolyhedron(A, b)
 
@@ -395,50 +390,6 @@ function remove_redundant_constraints!(P::HPoly{N};
                                        backend=GLPKSolverLP()
                                       )::Bool where {N<:Real}
     remove_redundant_constraints!(P.constraints, backend=backend)
-end
-
-"""
-    linear_map(M::AbstractMatrix{N}, P::PT; [cond_tol=DEFAULT_COND_TOL]::Number)
-        where {N<:Real, PT<:HPoly{N}}
-
-Concrete linear map of a polyhedron in constraint representation.
-
-### Input
-
-- `M`        -- matrix
-- `P`        -- polyhedron in constraint representation
-- `cond_tol` -- (optional) tolerance of matrix condition (used to check whether
-                the matrix is invertible)
-
-### Output
-
-A polyhedron of the same type as the input (`PT`).
-
-### Algorithm
-
-If the matrix ``M`` is invertible (which we check with a sufficient condition),
-then ``y = M x`` implies ``x = \\text{inv}(M) y`` and we transform the
-constraint system ``A x ≤ b`` to ``A \\text{inv}(M) y ≤ b``.
-"""
-function linear_map(M::AbstractMatrix{N},
-                    P::PT;
-                    cond_tol::Number=DEFAULT_COND_TOL
-                   ) where {N<:Real, PT<:HPoly{N}}
-    if !isinvertible(M; cond_tol=cond_tol)
-        if P isa HPolyhedron
-            error("linear maps for polyhedra need to be invertible")
-        end
-        # use the implementation for general polytopes
-        return invoke(linear_map, Tuple{typeof(M), AbstractPolytope{N}}, M, P)
-    end
-    # matrix is invertible
-    invM = inv(M)
-    constraints = Vector{LinearConstraint{N}}(undef,
-                                              length(constraints_list(P)))
-    @inbounds for (i, c) in enumerate(constraints_list(P))
-        constraints[i] = LinearConstraint(vec(c.a' * invM), c.b)
-    end
-    return PT(constraints)
 end
 
 # ========================================================

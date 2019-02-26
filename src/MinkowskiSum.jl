@@ -42,8 +42,9 @@ MinkowskiSum(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} =
 # ZeroSet is the neutral element for MinkowskiSum
 @neutral(MinkowskiSum, ZeroSet)
 
-# EmptySet is the absorbing element for MinkowskiSum
+# EmptySet and Universe are the absorbing elements for MinkowskiSum
 @absorbing(MinkowskiSum, EmptySet)
+# @absorbing(MinkowskiSum, Universe)  # TODO problematic
 
 """
     X + Y
@@ -215,8 +216,9 @@ end
 # ZeroSet is the neutral element for MinkowskiSumArray
 @neutral(MinkowskiSumArray, ZeroSet)
 
-# EmptySet is the absorbing element for MinkowskiSumArray
+# EmptySet and Universe are the absorbing elements for MinkowskiSumArray
 @absorbing(MinkowskiSumArray, EmptySet)
+# @absorbing(MinkowskiSumArray, Universe)  # TODO problematic
 
 # add functions connecting MinkowskiSum and MinkowskiSumArray
 @declare_array_version(MinkowskiSum, MinkowskiSumArray)
@@ -417,8 +419,9 @@ end
 # ZeroSet is the neutral element for CacheMinkowskiSum
 @neutral(CacheMinkowskiSum, ZeroSet)
 
-# EmptySet is the absorbing element for CacheMinkowskiSum
+# EmptySet and Universe are the absorbing element for CacheMinkowskiSum
 @absorbing(CacheMinkowskiSum, EmptySet)
+# @absorbing(CacheMinkowskiSum, Universe)  # TODO problematic
 
 """
     array(cms::CacheMinkowskiSum{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}

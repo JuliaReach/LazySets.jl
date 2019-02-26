@@ -90,6 +90,7 @@ if test_suite_basic
     @time @testset "LazySets.Interval" begin include("unit_Interval.jl") end
     @time @testset "LazySets.LineSegment" begin include("unit_LineSegment.jl") end
     @time @testset "LazySets.Line" begin include("unit_Line.jl") end
+    @time @testset "LazySets.Universe" begin include("unit_Universe.jl") end
 
     # =========================================================
     # Testing other set types that do not inherit from LazySet
@@ -105,6 +106,7 @@ if test_suite_basic
     @time @testset "LazySets.LinearMap" begin include("unit_LinearMap.jl") end
     @time @testset "LazySets.MinkowskiSum" begin include("unit_MinkowskiSum.jl") end
     @time @testset "LazySets.CartesianProduct" begin include("unit_CartesianProduct.jl") end
+    @time @testset "LazySets.ResetMap" begin include("unit_ResetMap.jl") end
     @time @testset "LazySets.SymmetricIntervalHull" begin include("unit_SymmetricIntervalHull.jl") end
 
     # ======================

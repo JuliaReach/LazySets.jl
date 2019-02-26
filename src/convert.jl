@@ -139,12 +139,11 @@ The given polytope represented as a polytope in constraint representation.
 
 ### Algorithm
 
-``P`` is first converted to a polytope in V-representation.
-Then, the conversion method to a polytope in H-representation is invoked.
-This conversion may require the `Polyhedra` library.
+First the list of constraints of `P` is computed, then the corresponding
+`HPolytope` is created.
 """
 function convert(::Type{HPolytope}, P::AbstractPolytope)
-    return convert(HPolytope, convert(VPolytope, P))
+    return HPolytope(constraints_list(P))
 end
 
 """
@@ -321,12 +320,12 @@ import IntervalArithmetic.AbstractInterval
 """
     convert(::Type{Hyperrectangle}, x::Interval)
 
-Converts a unidimensional interval into a hyperrectangular set.
+Converts a unidimensional interval into a hyperrectangle.
 
 ### Input
 
-- `AbstractHyperrectangle`
-- `x` -- interval
+- `Hyperrectangle` -- hyperrectangle type, used for dispatch
+- `x`              -- interval
 
 ### Output
 
@@ -334,13 +333,128 @@ A hyperrectangle.
 
 ### Examples
 
-```jldoctest convert_hyperrectangle_interval
+```jldoctest
 julia> convert(Hyperrectangle, Interval(0.0, 1.0))
 Hyperrectangle{Float64}([0.5], [0.5])
 ```
 """
 function convert(::Type{Hyperrectangle}, x::Interval)
     return Hyperrectangle(low=[min(x)], high=[max(x)])
+end
+
+"""
+    convert(::Type{Interval}, H::AbstractHyperrectangle)
+
+Converts a hyperrectangular set to a unidimensional interval.
+
+### Input
+
+- `Interval` -- interval type, used for dispatch
+- `H`        -- hyperrectangular set
+
+### Output
+
+An interval.
+
+### Examples
+
+```jldoctest
+julia> convert(Interval, Hyperrectangle{Float64}([0.5], [0.5]))
+Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
+```
+"""
+function convert(::Type{Interval}, H::AbstractHyperrectangle)
+    @assert dim(H) == 1 "can only convert a one-dimensional $(typeof(H)) to `Interval`"
+    return Interval([low(H); high(H)])
+end
+
+"""
+    convert(::Type{Interval}, S::LazySet{N}) where {N<:Real}
+
+Converts a convex set to a unidimensional interval.
+
+### Input
+
+- `Interval` -- interval type, used for dispatch
+- `S`        -- convex set
+
+### Output
+
+An interval.
+"""
+function convert(::Type{Interval}, S::LazySet{N}) where {N<:Real}
+    @assert dim(S) == 1 "can only convert a one-dimensional $(typeof(S)) to `Interval`"
+    return Interval(-ρ(N[-1], S), ρ(N[1], S))
+end
+
+"""
+    convert(::Type{Hyperrectangle},
+            cpa::CartesianProductArray{N, HN}) where {N<:Real, HN<:AbstractHyperrectangle{N}}
+
+Converts the cartesian product of a finite number of hyperrectangular sets to
+a single hyperrectangle.
+
+### Input
+
+- `Hyperrectangle` -- type used for dispatch
+- `S`              -- cartesian product array of hyperrectangular set 
+
+### Output
+
+A hyperrectangle.
+
+### Algorithm
+
+This implementation uses the `center` and `radius_hyperrectangle` methods of
+`AbstractHyperrectangle`.
+"""
+function convert(::Type{Hyperrectangle},
+                 cpa::CartesianProductArray{N, HN}) where {N<:Real, HN<:AbstractHyperrectangle{N}}
+     n = dim(cpa)
+     c = Vector{N}(undef, n)
+     r = Vector{N}(undef, n)
+     i = 1
+     @inbounds for block_set in array(cpa)
+         j = i + dim(block_set) - 1
+         c[i:j] = center(block_set)
+         r[i:j] = radius_hyperrectangle(block_set)
+         i = j + 1
+     end
+     return Hyperrectangle(c, r)
+end
+
+"""
+    convert(::Type{Hyperrectangle},
+            cpa::CartesianProductArray{N, Interval{N}}) where {N<:Real}
+
+Converts the cartesian product of a finite number of intervals to a single
+hyperrectangle.
+
+### Input
+
+- `Hyperrectangle` -- type used for dispatch
+- `S`              -- cartesian product array of intervals 
+
+### Output
+
+A hyperrectangle.
+
+### Algorithm
+
+This implementation uses the `min` and `max` methods of `Interval` to reduce
+the allocatons and improve performance (see LazySets#1143).
+"""
+function convert(::Type{Hyperrectangle},
+                 cpa::CartesianProductArray{N, Interval{N}}) where {N<:Real}
+     # since the sets are intervals, the dimension of cpa is its length
+     n = length(array(cpa))
+     l = Vector{N}(undef, n)
+     h = Vector{N}(undef, n)
+     @inbounds for (i, Ii) in enumerate(array(cpa))
+         l[i] = min(Ii)
+         h[i] = max(Ii)
+     end
+     return Hyperrectangle(low=l, high=h)
 end
 
 """
