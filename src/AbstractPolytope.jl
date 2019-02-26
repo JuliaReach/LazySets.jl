@@ -101,13 +101,28 @@ end
 # it is assumed that the interface function `vertices_list(P)` is available 
 @inline function _linear_map_vrep(M::AbstractMatrix{N}, P::AbstractPolytope{N}) where {N<:Real}
     vertices = broadcast(v -> M * v, vertices_list(P))
-    return dim(P) == 2 ? VPolygon(vertices) : VPolytope(vertices)
+    m = size(M, 1) # output dimension
+    if m == 1
+        # TODO: substitute with Interval(convex_hull(vertices)...): convex hull 1D
+        return Interval(minimum(vertices)[1], maximum(vertices)[1])
+    elseif m == 2
+        return VPolygon(vertices)
+    else
+        return VPolytope(vertices)
+    end
 end
 
 @inline function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolytope{N},
                           use_inv::Bool) where {N<:Real}
     constraints = _linear_map_hrep_helper(M, P, use_inv)
-    return dim(P) == 2 ? HPolygon(constraints) : HPolytope(constraints)
+    m = size(M, 1) # output dimension
+    if m == 1
+        return convert(Interval, HPolygon(constraints))
+    elseif m == 2
+        return HPolygon(constraints)
+    else
+        return HPolytope(constraints)
+    end
 end
 
 # =============================================
