@@ -85,7 +85,7 @@ A hyperrectangle.
 function overapproximate(S::LazySet,
                          ::Type{<:Hyperrectangle};
                         )::Union{Hyperrectangle, EmptySet}
-   return box_approximation(S)
+    return box_approximation(S)
 end
 
 """
@@ -106,7 +106,7 @@ A hyperrectangle.
 
 ### Algorithm
 
-This method falls back to corresponding `convert` method. Since the sets wrapped
+This method falls back to the corresponding `convert` method. Since the sets wrapped
 by the cartesian product array are hyperrectangles, it can be done efficiently
 without overapproximation.
 """

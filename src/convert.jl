@@ -395,8 +395,8 @@ a single hyperrectangle.
 
 ### Input
 
-- `S`              -- cartesian product array of hyperrectangular set 
 - `Hyperrectangle` -- type used for dispatch
+- `S`              -- cartesian product array of hyperrectangular set 
 
 ### Output
 
@@ -429,8 +429,8 @@ hyperrectangle.
 
 ### Input
 
-- `S`              -- cartesian product array of intervals 
 - `Hyperrectangle` -- type used for dispatch
+- `S`              -- cartesian product array of intervals 
 
 ### Output
 
