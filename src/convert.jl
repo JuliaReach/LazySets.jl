@@ -388,7 +388,8 @@ function convert(::Type{Interval}, S::LazySet{N}) where {N<:Real}
 end
 
 """
-    convert(::Type{Hyperrectangle}, cpa::CartesianProductArray{N, <:AbstractHyperrectangle{N}}) where {N<:Real}
+    convert(::Type{Hyperrectangle},
+            cpa::CartesianProductArray{N, HN}) where {N<:Real, HN<:AbstractHyperrectangle{N}}
 
 Converts the cartesian product of a finite number of hyperrectangular sets to
 a single hyperrectangle.
@@ -407,7 +408,8 @@ A hyperrectangle.
 This implementation uses the `center` and `radius_hyperrectangle` methods of
 `AbstractHyperrectangle`.
 """
-function convert(::Type{Hyperrectangle}, cpa::CartesianProductArray{N, <:AbstractHyperrectangle{N}}) where {N<:Real}
+function convert(::Type{Hyperrectangle},
+                 cpa::CartesianProductArray{N, HN}) where {N<:Real, HN<:AbstractHyperrectangle{N}}
      n = dim(cpa)
      c = Vector{N}(undef, n)
      r = Vector{N}(undef, n)
@@ -422,7 +424,8 @@ function convert(::Type{Hyperrectangle}, cpa::CartesianProductArray{N, <:Abstrac
 end
 
 """
-    convert(::Type{Hyperrectangle}, cpa::CartesianProductArray{N, <:Interval{N}}) where {N<:Real}
+    convert(::Type{Hyperrectangle},
+            cpa::CartesianProductArray{N, IN}) where {N<:Real, IN<:Interval{N}}
 
 Converts the cartesian product of a finite number of intervals to a single
 hyperrectangle.
@@ -441,7 +444,8 @@ A hyperrectangle.
 This implementation uses the `min` and `max` methods of `Interval` to reduce
 the allocatons and improve performance (see LazySets#1143).
 """
-function convert(::Type{Hyperrectangle}, cpa::CartesianProductArray{N, <:Interval{N}}) where {N<:Real}
+function convert(::Type{Hyperrectangle},
+                 cpa::CartesianProductArray{N, IN}) where {N<:Real, IN<:Interval{N}}
      # since the sets are intervals, the dimension of cpa is its length
      n = length(array(cpa))
      l = Vector{N}(undef, n)
