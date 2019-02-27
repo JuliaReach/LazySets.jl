@@ -72,6 +72,7 @@ include("LinearMap.jl")
 include("MinkowskiSum.jl")
 include("ResetMap.jl")
 include("SymmetricIntervalHull.jl")
+include("Translation.jl")
 include("UnionSet.jl")
 
 # =============================

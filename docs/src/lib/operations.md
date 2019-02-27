@@ -334,6 +334,19 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`high`](@ref high(::AbstractHyperrectangle{N}) where {N<:Real})
 * [`low`](@ref low(::AbstractHyperrectangle{N}) where {N<:Real})
 
+### Translation
+
+```@docs
+Translation
+dim(::Translation)
+ρ(::AbstractVector{N}, ::Translation{N}) where {N<:Real}
+σ(::AbstractVector{N}, ::Translation{N}) where {N<:Real}
+an_element(::Translation)
+isempty(::Translation)
+constraints_list(::Translation{N, <:AbstractVector{N}, <:AbstractPolyhedron{N}}) where {N<:Real}
+LinearMap(::AbstractMatrix{N}, ::Translation{N}) where {N<:Real}
+```
+
 ## Union
 
 Note that a union of convex sets is generally not convex.
