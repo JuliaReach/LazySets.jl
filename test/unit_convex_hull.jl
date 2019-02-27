@@ -16,8 +16,8 @@ for N in [Float64, Rational{Int}]
     # corner cases in dimension 2
     @test convex_hull([[N(0), N(0)]]) == [[N(0), N(0)]]
     @test convex_hull([[N(1), N(0)], [N(0), N(1)]]) == [[N(1), N(0)], [N(0), N(1)]]
-    @test convex_hull([[N(1), N(0)], [N(0), N(1)]]) == [[N(1), N(0)], [N(0), N(1)]]
-    
+    @test convex_hull([[N(1), N(0)], [N(1), N(0)]]) == [[N(1), N(0)]]
+
     # corner cases in higher dimension
     @test convex_hull([[N(0), N(0), N(0)]]) == [[N(0), N(0), N(0)]]
     # there is no sorting in higher dim
@@ -40,13 +40,13 @@ for N in [Float64, Rational{Int}]
         points_3D = [[N(1), N(0), N(4)], [N(1), N(1), N(5)], [N(0), N(1), N(6)],
                      [N(-1), N(-1), N(-7)], [N(1/2), N(1/2), N(-8)], [N(0), N(0), N(0)],
                      [N(1), N(2), N(3)]]
-        @test convex_hull(points_3D) == [[N(1), N(0), N(4)], [N(1), N(1), N(5)],
+        @test convex_hull(points_3D) == ispermutation([[N(1), N(0), N(4)], [N(1), N(1), N(5)],
                                          [N(0), N(1), N(6)], [N(-1), N(-1), N(-7)],
-                                         [N(1/2), N(1/2), N(-8)], [N(1), N(2), N(3)]]
+                                         [N(1/2), N(1/2), N(-8)], [N(1), N(2), N(3)]])
         convex_hull!(points_3D) # check in-place version
-        @test points_3D == [[N(1), N(0), N(4)], [N(1), N(1), N(5)],
+        @test points_3D == ispermutation([[N(1), N(0), N(4)], [N(1), N(1), N(5)],
                             [N(0), N(1), N(6)], [N(-1), N(-1), N(-7)],
-                            [N(1/2), N(1/2), N(-8)], [N(1), N(2), N(3)]]
+                            [N(1/2), N(1/2), N(-8)], [N(1), N(2), N(3)]])
     end
 
     # ============================
@@ -55,7 +55,7 @@ for N in [Float64, Rational{Int}]
     V1 = VPolygon([[N(1), N(0)], [N(1), N(1)], [N(0), N(1)]])
     V2 = VPolygon([[N(-1), N(-1)], [N(1/2), N(1/2)]])
     ch = convex_hull(V1, V2)
-    @test vertices_list(ch) == [[N(-1), N(-1)], [N(1), N(0)], [N(1), N(1)], [N(0), N(1)]]
+    @test vertices_list(ch) == ispermutation([[N(-1), N(-1)], [N(1), N(0)], [N(1), N(1)], [N(0), N(1)]])
 
     if test_suite_polyhedra && N != Float32 # TODO : check why it breaks with Float32
         V1 = VPolytope([[N(1), N(0), N(4)], [N(1), N(1), N(5)], [N(0), N(1), N(6)]])
@@ -63,8 +63,8 @@ for N in [Float64, Rational{Int}]
                        [N(1), N(2), N(3)]])
         ch = convex_hull(V1, V2)
         @test ch isa VPolytope
-        @test vertices_list(ch) == [[N(1), N(0), N(4)], [N(1), N(1), N(5)],
+        @test vertices_list(ch) == ispermutation([[N(1), N(0), N(4)], [N(1), N(1), N(5)],
                                     [N(0), N(1), N(6)], [N(-1), N(-1), N(-7)],
-                                    [N(1/2), N(1/2), N(-8)], [N(1), N(2), N(3)]]
+                                    [N(1/2), N(1/2), N(-8)], [N(1), N(2), N(3)]])
     end
 end
