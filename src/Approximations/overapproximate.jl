@@ -116,6 +116,37 @@ function overapproximate(S::CartesianProductArray{N, <:AbstractHyperrectangle{N}
 end
 
 """
+    overapproximate(lm::LinearMap{N, <:AbstractHyperrectangle{N}},
+                    ::Type{Hyperrectangle}) where {N}
+
+Return a tight overapproximation of the linear map of a hyperrectangular set
+using a hyperrectangle.
+
+### Input
+
+- `S`              -- linear map of a hyperrectangular set
+- `Hyperrectangle` -- type for dispatch
+
+### Output
+
+A hyperrectangle.
+
+### Algorithm
+
+If `c` and `r` denote the center and vector radius of a hyperrectangle `H`,
+a tight hyperrectangular overapproximation of `M * H` is obtained by transforming
+`c ↦ M*c` and `r ↦ abs.(M) * c`, where `abs.(⋅)` denotes the element-wise absolute
+value operator. 
+"""
+function overapproximate(lm::LinearMap{N, <:AbstractHyperrectangle{N}},
+                         ::Type{Hyperrectangle}) where {N<:Real}
+    M, X = lm.M, lm.X
+    center_MX = M * center(X)
+    radius_MX = abs.(M) * radius_hyperrectangle(X)
+    return Hyperrectangle(center_MX, radius_MX)
+end
+
+"""
     overapproximate(S::LazySet)::Union{Hyperrectangle, EmptySet}
 
 Alias for `overapproximate(S, Hyperrectangle)`.
@@ -413,3 +444,4 @@ function overapproximate(cap::Intersection{N,
                         ) where {N<:Real}
     return overapproximate(swap(cap), dir; kwargs...)
 end
+

@@ -43,6 +43,12 @@ for N in [Float64, Rational{Int}, Float32]
     Zoa = overapproximate(Z, Hyperrectangle) # faster o.a.
     Zba = box_approximation(Z) # default o.a. implementation that uses supp function
     @test Zoa.center ≈ Zba.center && Zoa.radius ≈ Zba.radius
+
+    # overapproximation of the lazy linear map of a hyperrectangular set
+    H = Hyperrectangle(N[0, 0], N[1/2, 1])
+    M = Diagonal(N[2, 2])
+    OA = overapproximate(M*H, Hyperrectangle)
+    @test OA isa Hyperrectangle && OA.center == N[0, 0] && OA.radius == N[1, 2]
 end
 
 # tests that do not work with Rational{Int}
