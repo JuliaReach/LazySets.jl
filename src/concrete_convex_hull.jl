@@ -45,7 +45,7 @@ following algorithms are available:
 See the reference docstring of each of those algorithms for details.
 
 The higher dimensional case is treated using the concrete polyhedra library
-`Polyhedra`, which gives access to libraries such as `CDDLib` and `ConvexHull.jl`.
+`Polyhedra`, that gives access to libraries such as `CDDLib` and `ConvexHull.jl`.
 These libraries can be chosen from the `backend` argument.
 
 ### Notes
@@ -113,7 +113,9 @@ function convex_hull!(points::Vector{VN};
             p1, p2 = points[1], points[2]
             if p1 == p2  # check for redundancy
                 pop!(points)
-            elseif p1 > p2
+            elseif p1 <= p2
+                nothing
+            else
                 points[1], points[2] = p2, p1
             end
         end

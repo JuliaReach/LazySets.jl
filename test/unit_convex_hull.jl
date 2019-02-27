@@ -36,7 +36,7 @@ for N in [Float64, Rational{Int}]
     @test points_2D == [[N(-1), N(-1)], [N(1), N(0)], [N(1), N(1)], [N(0), N(1)]]
 
     # higher dimension
-    if test_suite_polyhedra && N != Float32 # TODO : check why it breaks with Float32
+    if test_suite_polyhedra && N != Float32 # no backend supporting Float32
         points_3D = [[N(1), N(0), N(4)], [N(1), N(1), N(5)], [N(0), N(1), N(6)],
                      [N(-1), N(-1), N(-7)], [N(1/2), N(1/2), N(-8)], [N(0), N(0), N(0)],
                      [N(1), N(2), N(3)]]
@@ -57,7 +57,7 @@ for N in [Float64, Rational{Int}]
     ch = convex_hull(V1, V2)
     @test vertices_list(ch) == ispermutation([[N(-1), N(-1)], [N(1), N(0)], [N(1), N(1)], [N(0), N(1)]])
 
-    if test_suite_polyhedra && N != Float32 # TODO : check why it breaks with Float32
+    if test_suite_polyhedra && N != Float32 # no backend supporting Float32
         V1 = VPolytope([[N(1), N(0), N(4)], [N(1), N(1), N(5)], [N(0), N(1), N(6)]])
         V2 = VPolytope([[N(-1), N(-1), N(-7)], [N(1/2), N(1/2), N(-8)], [N(0), N(0), N(0)],
                        [N(1), N(2), N(3)]])
