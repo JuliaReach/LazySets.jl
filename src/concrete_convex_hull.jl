@@ -45,7 +45,7 @@ following algorithms are available:
 See the reference docstring of each of those algorithms for details.
 
 The higher dimensional case is treated using the concrete polyhedra library
-`Polyhedra`, that gives access to libraries such as `CDDLib` and `ConvexHull.jl`.
+`Polyhedra`, which gives access to libraries such as `CDDLib` and `ConvexHull.jl`.
 These libraries can be chosen from the `backend` argument.
 
 ### Notes
