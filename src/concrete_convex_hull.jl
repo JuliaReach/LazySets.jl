@@ -17,7 +17,7 @@ Compute the convex hull of the given points.
 ### Input
 
 - `points`    -- list of vectors
-- `algorithm` -- (optional, default: `"monotone_chain"`) the convex hull
+- `algorithm` -- (optional, default: depends on the dimension) the convex hull
                  algorithm, see valid options below
 - `backend`   -- (optional, default: `"nothing"`) polyhedral computation backend
                  for higher-dimensional point sets
@@ -31,8 +31,7 @@ The convex hull as a list of vectors with the coordinates of the points.
 A pre-processing step treats the cases with `0`, `1` and `2` points in any dimension.
 For more than `3` points, the algorithm used depends on the dimension.
 
-For the one-dimensional case we sort the points and return the minimum and maximum points,
-in that order.
+For the one-dimensional case we return the minimum and maximum points, in that order.
 
 The two-dimensional case is handled with a planar convex hull algorithm. The
 following algorithms are available:
@@ -47,7 +46,7 @@ See the reference docstring of each of those algorithms for details.
 
 The higher dimensional case is treated using the concrete polyhedra library
 `Polyhedra`, that gives access to libraries such as `CDDLib` and `ConvexHull.jl`.
-These libraries can be chosen by the setting the `backend` argument.
+These libraries can be chosen from the `backend` argument.
 
 ### Notes
 
@@ -106,9 +105,7 @@ function convex_hull!(points::Vector{VN};
             p1, p2 = points[1], points[2]
             if p1 == p2  # check for redundancy
                 pop!(points)
-            elseif p1[1] <= p2[1]
-                nothing
-            else
+            elseif p1[1] > p2[1]
                 points[1], points[2] = p2, p1
             end
         elseif n == 2
@@ -116,9 +113,7 @@ function convex_hull!(points::Vector{VN};
             p1, p2 = points[1], points[2]
             if p1 == p2  # check for redundancy
                 pop!(points)
-            elseif p1 <= p2
-                nothing
-            else
+            elseif p1 > p2
                 points[1], points[2] = p2, p1
             end
         end
@@ -140,9 +135,8 @@ function convex_hull!(points::Vector{VN};
 end
 
 function _convex_hull_1d!(points::Vector{VN})::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
-    n = length(points)
-    sort!(points)
-    deleteat!(points, 2:n-1)
+    points[1:2] = [minimum(points), maximum(points)]
+    return resize!(points, 2)
 end
 
 function _convex_hull_nd!(points::Vector{VN};
@@ -153,8 +147,9 @@ function _convex_hull_nd!(points::Vector{VN};
         backend = default_polyhedra_backend(V, N)
     end
     Vch = remove_redundant_vertices(V, backend=backend)
-    # NOTE: the order of the points in Vch is lost, in general, by using filter!
-    return filter!(pi -> pi ∈ vertices_list(Vch), points)
+    m = length(Vch.vertices)
+    points[1:m] = Vch.vertices
+    return resize!(points, m)
 end
 
 function _convex_hull_2d!(points::Vector{VN};
