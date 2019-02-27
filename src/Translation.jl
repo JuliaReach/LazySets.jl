@@ -154,7 +154,7 @@ end
     end
 end
 
-# constructor from a Translatio:: perform the translation immediately
+# constructor from a Translation: perform the translation immediately
 Translation(tr::Translation{N}, v::AbstractVector{N}) where {N<:Real} =
     Translation(tr.X, tr.v + v)
 
