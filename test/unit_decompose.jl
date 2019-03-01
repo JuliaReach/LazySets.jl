@@ -52,12 +52,15 @@ for N in [Float64, Rational{Int}, Float32]
     # different options per block
     # ==========================
 
-    block2oa = Dict(1 => Hyperrectangle, 2 => HPolygon, 3 => OctDirections{N},
-                    4 => Interval)
-    d = decompose(b1, [[1], 2:3, 4:6, [7]], block2oa)
-    @test d isa CartesianProductArray && array(d)[1] isa Hyperrectangle &&
-          array(d)[2] isa HPolygon && array(d)[3] isa HPolytope &&
-          array(d)[4] isa Interval
+    block2oa1 = Dict(1 => Hyperrectangle, 2 => HPolygon, 3 => OctDirections{N},
+                     4 => Interval)
+    block2oa2 = [Hyperrectangle, HPolygon, OctDirections{N}, Interval]
+    for block2oa in [block2oa1, block2oa2]  # both Dict and Vector work
+        d = decompose(b1, [[1], 2:3, 4:6, [7]], block2oa)
+        @test d isa CartesianProductArray && array(d)[1] isa Hyperrectangle &&
+              array(d)[2] isa HPolygon && array(d)[3] isa HPolytope &&
+              array(d)[4] isa Interval
+    end
 end
 
 # tests that do not work with Rational{Int}
@@ -98,5 +101,7 @@ for N in [Float64, Float32]
     d = decompose(b, partition, HPolygon => N(1e-2))
     @test d.array[1] isa HPolygon && test_directions(d.array[1])
     d = decompose(b, partition, N(1e-2))
+    @test d.array[1] isa HPolygon && test_directions(d.array[1])
+    d = decompose(b, partition, [N(1e-2), HPolygon => N(1e-2), N(1e-2)])
     @test d.array[1] isa HPolygon && test_directions(d.array[1])
 end
