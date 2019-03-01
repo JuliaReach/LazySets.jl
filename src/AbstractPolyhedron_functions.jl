@@ -321,16 +321,12 @@ end
 # handle different numeric types
 function linear_map(M::AbstractMatrix{NM},
                     P::AbstractPolyhedron{NP};
-                    check_invertibility::Bool=true,
-                    cond_tol::Number=DEFAULT_COND_TOL,
-                    use_inv::Bool=!issparse(M)
-                   ) where {NM<:Real, NP<:Real}
+                    kwargs...) where {NM<:Real, NP<:Real}
     N = promote_type(NM, NP)
     if N != NP
         error("conversion between numeric types of polyhedra not implemented yet (see #1181)")
     else
-        return linear_map(N.(M), P, check_invertibility=check_invertibility,
-                cond_tol=cond_tol, use_inv=use_inv)
+        return linear_map(N.(M), P; kwargs...)
     end
 end
 
