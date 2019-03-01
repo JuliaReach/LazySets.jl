@@ -41,15 +41,11 @@ function overapproximate(S::LazySet{N},
                         )::HPolygon where {N<:Real}
     @assert dim(S) == 2
     if ε == Inf
-        pe = σ(DIR_EAST(N), S)
-        pn = σ(DIR_NORTH(N), S)
-        pw = σ(DIR_WEST(N), S)
-        ps = σ(DIR_SOUTH(N), S)
         constraints = Vector{LinearConstraint{N}}(undef, 4)
-        constraints[1] = LinearConstraint(DIR_EAST(N), dot(pe, DIR_EAST(N)))
-        constraints[2] = LinearConstraint(DIR_NORTH(N), dot(pn, DIR_NORTH(N)))
-        constraints[3] = LinearConstraint(DIR_WEST(N), dot(pw, DIR_WEST(N)))
-        constraints[4] = LinearConstraint(DIR_SOUTH(N), dot(ps, DIR_SOUTH(N)))
+        constraints[1] = LinearConstraint(DIR_EAST(N), ρ(DIR_EAST(N), S))
+        constraints[2] = LinearConstraint(DIR_NORTH(N), ρ(DIR_NORTH(N), S))
+        constraints[3] = LinearConstraint(DIR_WEST(N), ρ(DIR_WEST(N), S))
+        constraints[4] = LinearConstraint(DIR_SOUTH(N), ρ(DIR_SOUTH(N), S))
         return HPolygon(constraints, sort_constraints=false)
     else
         return tohrep(approximate(S, ε))
