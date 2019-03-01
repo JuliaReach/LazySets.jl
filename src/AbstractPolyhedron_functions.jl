@@ -318,6 +318,18 @@ function linear_map(M::AbstractMatrix{N},
     end
 end
 
+# handle different numeric types
+function linear_map(M::AbstractMatrix{NM},
+                    P::AbstractPolyhedron{NP};
+                    kwargs...) where {NM<:Real, NP<:Real}
+    N = promote_type(NM, NP)
+    if N != NP
+        error("conversion between numeric types of polyhedra not implemented yet (see #1181)")
+    else
+        return linear_map(N.(M), P; kwargs...)
+    end
+end
+
 function _linear_map_vrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N}) where {N<:Real}
     if !isbounded(P)
         throw(ArgumentError("the linear map in vertex representation for an unbounded set is not defined"))

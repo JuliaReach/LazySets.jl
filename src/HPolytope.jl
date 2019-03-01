@@ -55,7 +55,6 @@ HPolytope{N}(A::AbstractMatrix{N}, b::AbstractVector{N};
              check_boundedness::Bool=false) where {N<:Real} =
     HPolytope(A, b; check_boundedness=check_boundedness)
 
-
 # --- LazySet interface functions ---
 
 
