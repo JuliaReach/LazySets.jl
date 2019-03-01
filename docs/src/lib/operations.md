@@ -338,12 +338,14 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 
 ```@docs
 Translation
++(X::LazySet, v::AbstractVector)
+⊕(X::LazySet, v::AbstractVector)
 dim(::Translation)
 ρ(::AbstractVector{N}, ::Translation{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::Translation{N}) where {N<:Real}
 an_element(::Translation)
 isempty(::Translation)
-constraints_list(::Translation{N, <:AbstractVector{N}, <:AbstractPolyhedron{N}}) where {N<:Real}
+constraints_list(::Translation{N}, ::Val{true}) where {N<:Real}
 LinearMap(::AbstractMatrix{N}, ::Translation{N}) where {N<:Real}
 ```
 

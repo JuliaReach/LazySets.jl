@@ -28,7 +28,7 @@ linear map ``A`` is the identity matrix and the translation vector ``b = v``.
 ```jldoctest translation
 julia> X = BallInf([2.0, 2.0, 2.0], 1.0);
 
-julia> v = [1.0, 0.0, 0.0] # translation along dimension 1
+julia> v = [1.0, 0.0, 0.0]; # translation along dimension 1
 
 julia> tr = Translation(X, v);
 
@@ -52,7 +52,7 @@ true
 ```
 And so does the Minkowski sum operator, `⊕`:
 
-```jldoctest
+```jldoctest translation
 julia> X ⊕ v == Translation(X, v)
 true
 ```
@@ -100,7 +100,7 @@ julia> e = an_element(tr)
  4.0
  2.0
  2.0
- ```
+```
 
 The lazy linear map of a translation is again a translation, since the following
 simplification rule applies: ``M * (X⊕v) = (M*X) ⊕ (M*v)``:
@@ -159,7 +159,7 @@ Translation(tr::Translation{N}, v::AbstractVector{N}) where {N<:Real} =
     Translation(tr.X, tr.v + v)
 
 """
-    X + v
+    +(X::LazySet, v::AbstractVector)
 
 Convenience constructor for a translation.
 
@@ -237,7 +237,7 @@ Return the support function of a translation.
 The support function in the given direction.
 """
 function ρ(d::AbstractVector{N}, tr::Translation{N}) where {N<:Real}
-    return ρ(d, Singleton(tr.v)) + ρ(d, tr.X)
+    return dot(d, tr.v) + ρ(d, tr.X)
 end
 
 """
@@ -303,10 +303,9 @@ function isempty(tr::Translation)::Bool
 end
 
 """
-    constraints_list(tr::Translation{N, VN<:AbstractVector{N},
-                     S<:AbstractPolyhedron{N}}) where {N<:Real}
+    constraints_list(tr::Translation{N}, ::Val{true}) where {N<:Real}
 
-Return the list of constraints of the translation of a polyhedron.
+Return the list of constraints of the translation of a set.
 
 ### Input
 
@@ -318,8 +317,8 @@ The list of constraints of the translation.
 
 ### Notes
 
-We assume that the set wrapped by the lazy translation `X` is a polyhedron, i.e.,
-it offers a method `constraints_list(⋅)`.
+We assume that the set wrapped by the lazy translation `X` offers a method
+`constraints_list(⋅)`.
 
 ### Algorithm
 
@@ -327,12 +326,23 @@ Let the translation be defined by the set of points `y` such that `y = x + v` fo
 all `x ∈ X`. Then, each defining halfspace `a⋅x ≤ b` is transformed to
 `a⋅y ≤ b + a⋅v`.
 """
-function constraints_list(tr::Translation{N, <:AbstractVector{N},
-                          <:AbstractPolyhedron{N}}) where {N<:Real}
+function constraints_list(tr::Translation{N}, ::Val{true}) where {N<:Real}
     constraints_X = constraints_list(tr.X)
     constraints_TX = similar(constraints_X)
     @inbounds for (i, ci) in enumerate(constraints_X)
         constraints_TX[i] = HalfSpace(ci.a, ci.b + dot(ci.a, tr.v))
     end
     return constraints_TX
+end
+
+function constraints_list(tr::Translation{N}) where {N<:Real}
+    if applicable(constraints_list, tr.X)
+        return constraints_list(tr, Val(true))
+    else
+        return constraints_list(tr, Val(false))
+    end
+end
+
+function constraints_list(tr::Translation{N}, ::Val{false}) where {N<:Real}
+    error("this function requires that the `constraints_list` method is appliable")
 end
