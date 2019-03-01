@@ -59,7 +59,7 @@ end
 function decompose(S::LazySet{N},
                    partition::AbstractVector{<:AbstractVector{Int}},
                    oa::Union{Type{<:LazySet},
-                             Pair{Type{<:LazySet}, <:Real},
+                             Pair{<:UnionAll, <:Real},
                              Real,
                              Type{<:AbstractDirections}
                             }
@@ -144,7 +144,7 @@ end
 """
     project(S::LazySet{N},
             block::AbstractVector{Int},
-            set_type_and_precision::Pair{Type{<:LazySet}, <:Real},
+            set_type_and_precision::Pair{<:UnionAll, <:Real},
             [n]::Int=dim(S)
            ) where {N<:Real}
 
@@ -176,7 +176,7 @@ coordinates and zero otherwise.
 """
 @inline function project(S::LazySet{N},
                          block::AbstractVector{Int},
-                         set_type_and_precision::Pair{Type{<:LazySet}, <:Real},
+                         set_type_and_precision::Pair{<:UnionAll, <:Real},
                          n::Int=dim(S)
                         ) where {N<:Real}
     set_type = set_type_and_precision[1]
