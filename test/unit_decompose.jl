@@ -61,6 +61,15 @@ for N in [Float64, Rational{Int}, Float32]
               array(d)[2] isa HPolygon && array(d)[3] isa HPolytope &&
               array(d)[4] isa Interval
     end
+
+    # ==================
+    # uniform block size
+    # ==================
+
+    d = decompose(b, Hyperrectangle; block_size=2)
+    @test length(d.array) == 3
+    d = decompose(b1, Hyperrectangle; block_size=3)
+    @test length(d.array) == 3
 end
 
 # tests that do not work with Rational{Int}

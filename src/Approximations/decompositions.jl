@@ -1,3 +1,20 @@
+# compute a uniform block partition
+@inline function uniform_partition(n::Int, block_size::Int)
+    m = div(n, block_size)
+    r = n % block_size
+    res = Vector{UnitRange{Int}}(undef, r > 0 ? m + 1 : m)
+    k = 1
+    @inbounds for i in 1:m
+        l = k + block_size - 1
+        res[i] = k:l
+        k = l + 1
+    end
+    if r > 0
+        res[m+1] = k:n
+    end
+    return res
+end
+
 """
     decompose(S::LazySet{N},
               partition::AbstractVector{<:AbstractVector{Int}},
@@ -176,6 +193,13 @@ function decompose(S::LazySet{N},
         result[i] = project(S, block, oa, n)
     end
     return CartesianProductArray(result)
+end
+
+# convenience method with uniform block size
+function decompose(S::LazySet, oa; block_size::Int=1)
+    partition = uniform_partition(dim(S), block_size)
+    println(partition)
+    return decompose(S, partition, oa)
 end
 
 """
