@@ -13,7 +13,8 @@ of the projections over the specified subspaces.
 - `partition` -- vector of blocks (i.e., of vectors of integers) (see the Notes
                  below)
 - `block2oa`  -- mapping from block indices in `partition` to a corresponding
-                 overapproximation option; we only require access via `[⋅]`
+                 overapproximation option; we only require access via `[⋅]` (but
+                 see also the Notes below)
 
 ### Output
 
@@ -37,6 +38,9 @@ blocks are missing, blocks occur more than once, or blocks are overlapping.
 This function will, however, stick to the order of blocks, so the resulting set
 must be interpreted with care in such cases.
 One use case is the need of a projection consisting of several blocks.
+
+For convenience, the argument `block2oa` can also be given as a single `oa`
+option, which is then interpreted as the option for all blocks.
 """
 function decompose(S::LazySet{N},
                    partition::AbstractVector{<:AbstractVector{Int}},
@@ -47,6 +51,24 @@ function decompose(S::LazySet{N},
 
     @inbounds for (i, block) in enumerate(partition)
         result[i] = project(S, block, block2oa[i], n)
+    end
+    return CartesianProductArray(result)
+end
+
+# convenience method
+function decompose(S::LazySet{N},
+                   partition::AbstractVector{<:AbstractVector{Int}},
+                   oa::Union{Type{<:LazySet},
+                             Pair{Type{<:LazySet}, <:Real},
+                             Real,
+                             Type{<:AbstractDirections}
+                            }
+                  )::CartesianProductArray{N} where {N<:Real}
+    n = dim(S)
+    result = Vector{LazySet{N}}(undef, length(partition))
+
+    @inbounds for (i, block) in enumerate(partition)
+        result[i] = project(S, block, oa, n)
     end
     return CartesianProductArray(result)
 end
