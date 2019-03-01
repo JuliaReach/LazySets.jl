@@ -341,5 +341,5 @@ function constraints_list(tr::Translation{N}) where {N<:Real}
 end
 
 function constraints_list(tr::Translation{N}, ::Val{false}) where {N<:Real}
-    error("this function requires that the `constraints_list` method is applicable")
+    throw(MethodError("this function requires that the `constraints_list` method is applicable"))
 end
