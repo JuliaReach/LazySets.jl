@@ -336,13 +336,10 @@ function constraints_list(tr::Translation{N}, ::Val{true}) where {N<:Real}
 end
 
 function constraints_list(tr::Translation{N}) where {N<:Real}
-    if applicable(constraints_list, tr.X)
-        return constraints_list(tr, Val(true))
-    else
-        return constraints_list(tr, Val(false))
-    end
+    has_constraints = applicable(constraints_list, tr.X)
+    return constraints_list(tr, Val(has_constraints))
 end
 
 function constraints_list(tr::Translation{N}, ::Val{false}) where {N<:Real}
-    error("this function requires that the `constraints_list` method is appliable")
+    error("this function requires that the `constraints_list` method is applicable")
 end
