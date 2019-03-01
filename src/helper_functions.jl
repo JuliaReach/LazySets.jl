@@ -1,3 +1,5 @@
+import InteractiveUtils: subtypes
+
 # default tolerance for matrix condition number (see 'isinvertible')
 const DEFAULT_COND_TOL = 1e6
 
@@ -525,3 +527,117 @@ end
 
 end # @eval
 end # if
+
+"""
+    subtypes(interface::Type, concrete::Bool=true)
+
+Return the concrete subtypes of a given interface.
+
+### Input
+
+- `interface` -- an abstract type, usually a set interface
+- `concrete` -- (optional, default: `true`) if `true`, seek further the inner
+                subtypes of the given interface
+
+### Output
+
+A list with the subtypes of the abstract type `interface`.
+
+### Examples
+
+Consider the `AbstractPolytope` interface. If we include the abstract subtypes
+of this interface,
+
+```jldoctest
+julia> subtypes(AbstractPolytope, false)
+4-element Array{Any,1}:
+ AbstractCentrallySymmetricPolytope
+ AbstractPolygon
+ HPolytope
+ VPolytope
+```
+
+We can use this function to obtain the concrete subtypes of
+`AbstractCentrallySymmetricPolytope` and `AbstractPolygon` (further until all
+concrete types are obtained), using the `concrete` flag:
+
+```jldoctest
+julia> subtypes(AbstractPolytope, true)
+14-element Array{Type,1}:
+ HPolytope
+ VPolytope
+ Ball1
+ LineSegment
+ Zonotope
+ VPolygon
+ BallInf
+ Hyperrectangle
+ Interval
+ SymmetricIntervalHull
+ HPolygon
+ HPolygonOpt
+ Singleton
+ ZeroSet
+```
+
+This function can be applied to other abstract types as well:
+
+```jldoctest
+julia> subtypes(Real, false)
+5-element Array{Any,1}:
+ AbstractFloat
+ AbstractIrrational
+ Integer
+ IntervalArithmetic.AbstractInterval
+ Rational
+
+julia> subtypes(Real, true)
+20-element Array{Type,1}:
+ Rational
+ BigFloat
+ Float16
+ Float32
+ Float64
+ Irrational
+ Bool
+ IntervalArithmetic.DecoratedInterval
+ IntervalArithmetic.Interval
+ BigInt
+ Int128
+ Int16
+ Int32
+ Int64
+ Int8
+ UInt128
+ UInt16
+ UInt32
+ UInt64
+ UInt8
+```
+"""
+function subtypes(interface, concrete::Bool=true)
+
+    subtypes_to_test = subtypes(interface)
+    @assert !isempty(subtypes_to_test) "an interface must have a subtype"
+
+    # do not seek the concrete subtypes further
+    if !concrete 
+        return subtypes_to_test
+    end
+
+    result = Vector{Type}()
+    i = 0
+    while i < length(subtypes_to_test)
+        i += 1
+        subtype = subtypes_to_test[i]
+        new_subtypes = subtypes(subtype)
+        if isempty(new_subtypes)
+            # base type found
+            push!(result, subtype)
+        else
+            # yet another interface layer
+            append!(subtypes_to_test, new_subtypes)
+        end
+    end
+    return result
+end
