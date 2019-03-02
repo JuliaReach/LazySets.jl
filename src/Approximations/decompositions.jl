@@ -18,7 +18,7 @@ end
 """
     decompose(S::LazySet{N},
               partition::AbstractVector{<:AbstractVector{Int}},
-              block2oa
+              block_options
              )::CartesianProductArray{N} where {N<:Real}
 
 Decompose a high-dimensional set into a Cartesian product of overapproximations
@@ -26,12 +26,12 @@ of the projections over the specified subspaces.
 
 ### Input
 
-- `S`         -- set
-- `partition` -- vector of blocks (i.e., of vectors of integers) (see the Notes
-                 below)
-- `block2oa`  -- mapping from block indices in `partition` to a corresponding
-                 overapproximation option; we only require access via `[⋅]` (but
-                 see also the Notes below)
+- `S`             -- set
+- `partition`     -- vector of blocks (i.e., of vectors of integers) (see the
+                     Notes below)
+- `block_options` -- mapping from block indices in `partition` to a
+                     corresponding overapproximation option; we only require
+                     access via `[⋅]` (but see also the Notes below)
 
 ### Output
 
@@ -56,8 +56,9 @@ This function will, however, stick to the order of blocks, so the resulting set
 must be interpreted with care in such cases.
 One use case is the need of a projection consisting of several blocks.
 
-For convenience, the argument `block2oa` can also be given as a single `oa`
-option, which is then interpreted as the option for all blocks.
+For convenience, the argument `block_options` can also be given as a single
+option instead of a mapping, which is then interpreted as the option for all
+blocks.
 
 ### Examples
 
@@ -68,9 +69,9 @@ These options are exemplified below, where we use the following example.
 ```jldoctest decompose_examples
 julia> using LazySets.Approximations: decompose
 
-julia> S = Ball2(zeros(4), 1.);  # set to be decomposed (4D unit ball in the 2-norm)
+julia> S = Ball2(zeros(4), 1.);  # set to be decomposed (4D 2-norm unit ball)
 
-julia> P2d = [1:2, [3, 4]];  # a partition with two blocks of size two
+julia> P2d = [1:2, 3:4];  # a partition with two blocks of size two
 
 julia> P1d = [[1], [2], [3], [4]];  # a partition with four blocks of size one
 ```
@@ -166,40 +167,40 @@ julia> typeof(res[1]), typeof(res[2])
 """
 function decompose(S::LazySet{N},
                    partition::AbstractVector{<:AbstractVector{Int}},
-                   block2oa
+                   block_options
                   )::CartesianProductArray{N} where {N<:Real}
     n = dim(S)
     result = Vector{LazySet{N}}(undef, length(partition))
 
     @inbounds for (i, block) in enumerate(partition)
-        result[i] = project(S, block, block2oa[i], n)
+        result[i] = project(S, block, block_options[i], n)
     end
     return CartesianProductArray(result)
 end
 
-# convenience method
+# convenience method with uniform block options
 function decompose(S::LazySet{N},
                    partition::AbstractVector{<:AbstractVector{Int}},
-                   oa::Union{Type{<:LazySet},
-                             Pair{<:UnionAll, <:Real},
-                             Real,
-                             Type{<:AbstractDirections}
-                            }
+                   block_options::Union{Type{<:LazySet},
+                                        Pair{<:UnionAll, <:Real},
+                                        Real,
+                                        Type{<:AbstractDirections}
+                                       }
                   )::CartesianProductArray{N} where {N<:Real}
     n = dim(S)
     result = Vector{LazySet{N}}(undef, length(partition))
 
     @inbounds for (i, block) in enumerate(partition)
-        result[i] = project(S, block, oa, n)
+        result[i] = project(S, block, block_options, n)
     end
     return CartesianProductArray(result)
 end
 
 # convenience method with uniform block size
-function decompose(S::LazySet, oa; block_size::Int=1)
+function decompose(S::LazySet, block_options; block_size::Int=1)
     partition = uniform_partition(dim(S), block_size)
     println(partition)
-    return decompose(S, partition, oa)
+    return decompose(S, partition, block_options)
 end
 
 """
