@@ -29,7 +29,7 @@ julia> LazySets.Approximations.uniform_partition(2, 2)
  1:2
 ```
 
-If the block size argument is not compatible (i.e. does not divide) `n`, the
+If the block size argument is not compatible with (i.e. does not divide) `n`, the
 output is filled with one block of the size needed to reach `n`:
 
 ```jldoctest partition
