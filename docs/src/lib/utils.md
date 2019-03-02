@@ -50,5 +50,5 @@ StrictlyIncreasingIndices
 ### Inspection of set interfaces
 
 ```@docs
-subtypes(::Any, ::Bool)
+LazySets.subtypes(::Any, ::Bool)
 ```
