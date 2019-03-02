@@ -28,7 +28,7 @@ project
 
 ### Convenience functions
 
-``@docs
+```@docs
 uniform_partition
 ```
 
