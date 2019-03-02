@@ -36,7 +36,7 @@ Every concrete `LazySet` must define the following functions:
 The subtypes of `LazySet` (including abstract interfaces):
 
 ```jldoctest
-julia> using LazySet: subtypes
+julia> using LazySets: subtypes
 
 julia> subtypes(LazySet, false)
 17-element Array{Any,1}:
