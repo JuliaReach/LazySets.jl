@@ -1,4 +1,55 @@
-# compute a uniform block partition
+"""
+     uniform_partition(n::Int, block_size::Int)
+
+Compute a uniform block partition of the given size.
+
+### Input
+
+- `n`          -- number of dimensions of the partition
+- `block_size` -- size of each block
+
+### Output
+
+A vector of ranges, `Vector{UnitRange{Int}}`, such that the size of each block
+is the same, if possible.
+
+### Examples
+
+If the number of dimensions `n` is 2, we have two options: either two blocks
+of size `1` or one block of size `2`:
+
+```jldoctest partition
+julia> LazySets.Approximations.uniform_partition(2, 1)
+2-element Array{UnitRange{Int64},1}:
+ 1:1
+ 2:2
+
+julia> LazySets.Approximations.uniform_partition(2, 2)
+1-element Array{UnitRange{Int64},1}:
+ 1:2
+```
+
+If the block size argument is not compatible with (i.e. does not divide) `n`, the
+output is filled with one block of the size needed to reach `n`:
+
+```jldoctest partition
+julia> LazySets.Approximations.uniform_partition(3, 1)
+3-element Array{UnitRange{Int64},1}:
+ 1:1
+ 2:2
+ 3:3
+
+julia> LazySets.Approximations.uniform_partition(3, 2)
+2-element Array{UnitRange{Int64},1}:
+ 1:2
+ 3:3
+
+julia> LazySets.Approximations.uniform_partition(10, 6)
+2-element Array{UnitRange{Int64},1}:
+ 1:6
+ 7:10
+```
+"""
 @inline function uniform_partition(n::Int, block_size::Int)
     m = div(n, block_size)
     r = n % block_size
