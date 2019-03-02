@@ -60,7 +60,7 @@ julia> subtypes(LazySet)
 If we only consider *concrete* subtypes, then:
 
 ```jldoctest
-julia> subtypes(LazySet, true)
+julia> LazySets.subtypes(LazySet, true)
 37-element Array{Type,1}:
  Ball1
  Ball2
