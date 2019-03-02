@@ -549,7 +549,7 @@ Consider the `AbstractPolytope` interface. If we include the abstract subtypes
 of this interface,
 
 ```jldoctest
-julia> subtypes(AbstractPolytope, false)
+julia> LazySets.subtypes(AbstractPolytope, false)
 4-element Array{Any,1}:
  AbstractCentrallySymmetricPolytope
  AbstractPolygon
