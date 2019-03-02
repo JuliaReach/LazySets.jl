@@ -26,6 +26,12 @@ decompose
 project
 ```
 
+### Convenience functions
+
+``@docs
+uniform_partition
+```
+
 ## Overapproximations
 
 ```@docs
