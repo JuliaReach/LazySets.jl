@@ -529,15 +529,16 @@ end # @eval
 end # if
 
 """
-    subtypes(interface::Type, concrete::Bool=true)
+    subtypes(interface::Type, concrete::Bool=false)
 
 Return the concrete subtypes of a given interface.
 
 ### Input
 
 - `interface` -- an abstract type, usually a set interface
-- `concrete` -- (optional, default: `true`) if `true`, seek further the inner
-                subtypes of the given interface
+- `concrete`  -- (optional, default: `false`) if `true`, seek further the inner
+                 abstract subtypes of the given interface, otherwise return abstract
+                 subtypes of `interface`
 
 ### Output
 
@@ -615,11 +616,10 @@ julia> subtypes(Real, true)
  UInt8
 ```
 """
-function subtypes(interface, concrete::Bool=true)
+function subtypes(interface::Type, concrete::Bool=false)
 
     subtypes_to_test = subtypes(interface)
-    @assert !isempty(subtypes_to_test) "an interface must have a subtype"
-
+    
     # do not seek the concrete subtypes further
     if !concrete 
         return subtypes_to_test

@@ -33,6 +33,8 @@ Every concrete `LazySet` must define the following functions:
     `Real`
 - `dim(S::LazySet)::Int` -- the ambient dimension of `S`
 
+The subytpes of `LazySet`, including abstract interfaces:
+
 ```jldoctest
 julia> subtypes(LazySet)
 17-element Array{Any,1}:
@@ -54,6 +56,50 @@ julia> subtypes(LazySet)
  ResetMap
  Translation
 ```
+
+If we only consider *concrete* subtypes, then:
+
+```jldoctest
+julia> subtypes(LazySet, true)
+37-element Array{Type,1}:
+ CacheMinkowskiSum
+ CartesianProduct
+ CartesianProductArray
+ ConvexHull
+ ConvexHullArray
+ EmptySet
+ ExponentialMap
+ ExponentialProjectionMap
+ Intersection
+ IntersectionArray
+ LinearMap
+ MinkowskiSum
+ MinkowskiSumArray
+ ResetMap
+ Translation
+ Ball2
+ Ballp
+ Ellipsoid
+ HPolyhedron
+ HalfSpace
+ Hyperplane
+ Line
+ Universe
+ HPolytope
+ VPolytope
+ Ball1
+ LineSegment
+ Zonotope
+ VPolygon
+ BallInf
+ Hyperrectangle
+ Interval
+ SymmetricIntervalHull
+ HPolygon
+ HPolygonOpt
+ Singleton
+ ZeroSet
+ ```
 """
 abstract type LazySet{N} end
 
