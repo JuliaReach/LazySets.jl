@@ -529,20 +529,19 @@ end # @eval
 end # if
 
 """
-    subtypes(interface::Type, concrete::Bool=false)
+    subtypes(interface, concrete::Bool)
 
 Return the concrete subtypes of a given interface.
 
 ### Input
 
 - `interface` -- an abstract type, usually a set interface
-- `concrete`  -- (optional, default: `false`) if `true`, seek further the inner
-                 abstract subtypes of the given interface, otherwise return abstract
-                 subtypes of `interface`
+- `concrete`  -- if `true`, seek further the inner abstract subtypes of the given
+                 interface, otherwise return abstract subtypes of `interface`
 
 ### Output
 
-A list with the subtypes of the abstract type `interface`.
+A list with the subtypes of the abstract type `interface`, sorted alphabetically.
 
 ### Examples
 
@@ -565,20 +564,20 @@ concrete types are obtained), using the `concrete` flag:
 ```jldoctest
 julia> subtypes(AbstractPolytope, true)
 14-element Array{Type,1}:
- HPolytope
- VPolytope
  Ball1
- LineSegment
- Zonotope
- VPolygon
  BallInf
- Hyperrectangle
- Interval
- SymmetricIntervalHull
  HPolygon
  HPolygonOpt
+ HPolytope
+ Hyperrectangle
+ Interval
+ LineSegment
  Singleton
+ SymmetricIntervalHull
+ VPolygon
+ VPolytope
  ZeroSet
+ Zonotope
 ```
 
 This function can be applied to other abstract types as well:
@@ -594,21 +593,21 @@ julia> subtypes(Real, false)
 
 julia> subtypes(Real, true)
 20-element Array{Type,1}:
- Rational
  BigFloat
+ BigInt
+ Bool
  Float16
  Float32
  Float64
- Irrational
- Bool
- IntervalArithmetic.DecoratedInterval
- IntervalArithmetic.Interval
- BigInt
  Int128
  Int16
  Int32
  Int64
  Int8
+ IntervalArithmetic.DecoratedInterval
+ IntervalArithmetic.Interval
+ Irrational
+ Rational
  UInt128
  UInt16
  UInt32
@@ -616,13 +615,13 @@ julia> subtypes(Real, true)
  UInt8
 ```
 """
-function subtypes(interface::Type, concrete::Bool=false)
+function subtypes(interface, concrete::Bool)
 
     subtypes_to_test = subtypes(interface)
     
     # do not seek the concrete subtypes further
     if !concrete 
-        return subtypes_to_test
+        return sort(subtypes_to_test, by=string)
     end
 
     result = Vector{Type}()
@@ -639,5 +638,5 @@ function subtypes(interface::Type, concrete::Bool=false)
             append!(subtypes_to_test, new_subtypes)
         end
     end
-    return result
+    return sort(result, by=string)
 end

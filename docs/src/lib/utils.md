@@ -50,5 +50,5 @@ StrictlyIncreasingIndices
 ### Inspection of set interfaces
 
 ```@docs
-subtypes(::Type, ::Bool=false)
+subtypes(::Any, ::Bool)
 ```

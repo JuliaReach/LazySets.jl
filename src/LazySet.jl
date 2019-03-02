@@ -62,43 +62,43 @@ If we only consider *concrete* subtypes, then:
 ```jldoctest
 julia> subtypes(LazySet, true)
 37-element Array{Type,1}:
+ Ball1
+ Ball2
+ BallInf
+ Ballp
  CacheMinkowskiSum
  CartesianProduct
  CartesianProductArray
  ConvexHull
  ConvexHullArray
+ Ellipsoid
  EmptySet
  ExponentialMap
  ExponentialProjectionMap
+ HPolygon
+ HPolygonOpt
+ HPolyhedron
+ HPolytope
+ HalfSpace
+ Hyperplane
+ Hyperrectangle
  Intersection
  IntersectionArray
+ Interval
+ Line
+ LineSegment
  LinearMap
  MinkowskiSum
  MinkowskiSumArray
  ResetMap
- Translation
- Ball2
- Ballp
- Ellipsoid
- HPolyhedron
- HalfSpace
- Hyperplane
- Line
- Universe
- HPolytope
- VPolytope
- Ball1
- LineSegment
- Zonotope
- VPolygon
- BallInf
- Hyperrectangle
- Interval
- SymmetricIntervalHull
- HPolygon
- HPolygonOpt
  Singleton
+ SymmetricIntervalHull
+ Translation
+ Universe
+ VPolygon
+ VPolytope
  ZeroSet
+ Zonotope
  ```
 """
 abstract type LazySet{N} end
