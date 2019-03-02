@@ -537,7 +537,7 @@ Return the concrete subtypes of a given interface.
 
 - `interface` -- an abstract type, usually a set interface
 - `concrete`  -- if `true`, seek further the inner abstract subtypes of the given
-                 interface, otherwise return abstract subtypes of `interface`
+                 interface, otherwise return only the direct subtypes of `interface`
 
 ### Output
 
