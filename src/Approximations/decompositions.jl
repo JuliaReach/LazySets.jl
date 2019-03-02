@@ -199,7 +199,6 @@ end
 # convenience method with uniform block size
 function decompose(S::LazySet, block_options; block_size::Int=1)
     partition = uniform_partition(dim(S), block_size)
-    println(partition)
     return decompose(S, partition, block_options)
 end
 
