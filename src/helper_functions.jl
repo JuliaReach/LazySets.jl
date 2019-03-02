@@ -49,9 +49,7 @@ It can be used with vector-valued arguments via the dot operator.
 ### Examples
 
 ```jldoctest
-julia> import LazySets.sign_cadlag
-
-julia> sign_cadlag.([-0.6, 1.3, 0.0])
+julia> LazySets.sign_cadlag.([-0.6, 1.3, 0.0])
 3-element Array{Float64,1}:
  -1.0
   1.0
@@ -211,13 +209,15 @@ and `(false, 0)` otherwise.
 ### Examples
 
 ```jldoctest
-julia> LazySets.samedir([1, 2, 3], [2, 4, 6])
+julia> using LazySets: samedir
+
+julia> samedir([1, 2, 3], [2, 4, 6])
 (true, 0.5)
 
-julia> LazySets.samedir([1, 2, 3], [3, 2, 1])
+julia> samedir([1, 2, 3], [3, 2, 1])
 (false, 0)
 
-julia> LazySets.samedir([1, 2, 3], [-1, -2, -3])
+julia> samedir([1, 2, 3], [-1, -2, -3])
 (false, 0)
 
 ```
@@ -548,8 +548,10 @@ A list with the subtypes of the abstract type `interface`, sorted alphabetically
 Consider the `AbstractPolytope` interface. If we include the abstract subtypes
 of this interface,
 
-```jldoctest
-julia> LazySets.subtypes(AbstractPolytope, false)
+```jldoctest subtypes
+julia> using LazySets: subtypes
+
+julia> subtypes(AbstractPolytope, false)
 4-element Array{Any,1}:
  AbstractCentrallySymmetricPolytope
  AbstractPolygon
@@ -561,8 +563,8 @@ We can use this function to obtain the concrete subtypes of
 `AbstractCentrallySymmetricPolytope` and `AbstractPolygon` (further until all
 concrete types are obtained), using the `concrete` flag:
 
-```jldoctest
-julia> LazySets.subtypes(AbstractPolytope, true)
+```jldoctest subtypes
+julia> subtypes(AbstractPolytope, true)
 14-element Array{Type,1}:
  Ball1
  BallInf
@@ -582,7 +584,7 @@ julia> LazySets.subtypes(AbstractPolytope, true)
 
 This function can be applied to other abstract types as well:
 
-```jldoctest
+```jldoctest subtypes
 julia> subtypes(Real, false)
 5-element Array{Any,1}:
  AbstractFloat

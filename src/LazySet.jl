@@ -33,10 +33,12 @@ Every concrete `LazySet` must define the following functions:
     `Real`
 - `dim(S::LazySet)::Int` -- the ambient dimension of `S`
 
-The subytpes of `LazySet`, including abstract interfaces:
+The subtypes of `LazySet` (including abstract interfaces):
 
 ```jldoctest
-julia> subtypes(LazySet)
+julia> using LazySet: subtypes
+
+julia> subtypes(LazySet, false)
 17-element Array{Any,1}:
  AbstractCentrallySymmetric
  AbstractPolyhedron
