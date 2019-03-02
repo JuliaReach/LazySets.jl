@@ -562,7 +562,7 @@ We can use this function to obtain the concrete subtypes of
 concrete types are obtained), using the `concrete` flag:
 
 ```jldoctest
-julia> subtypes(AbstractPolytope, true)
+julia> LazySets.subtypes(AbstractPolytope, true)
 14-element Array{Type,1}:
  Ball1
  BallInf
