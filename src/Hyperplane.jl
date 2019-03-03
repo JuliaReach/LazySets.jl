@@ -400,3 +400,32 @@ function _linear_map_hrep(M::AbstractMatrix{N}, P::Hyperplane{N}, use_inv::Bool)
     constraint = _linear_map_hrep_helper(M, P, use_inv)[1]
     return Hyperplane(constraint.a, constraint.b)
 end
+
+"""
+    translate(hp::Hyperplane{N}, v::AbstractVector{N}) where {N<:Real}
+
+Translate (i.e., shift) a hyperplane by a given vector.
+
+### Input
+
+- `hp` -- hyperplane
+- `v`  -- translation vector
+
+### Output
+
+A translated hyperplane.
+
+### Notes
+
+The `a` vector is shared with the original hyperplane.
+
+### Algorithm
+
+A hyperplane ``a⋅x = b`` is transformed to the hyperplane ``a⋅x = b + a⋅v``.
+In other words, we add the dot product ``a⋅v`` to ``b``.
+"""
+function translate(hp::Hyperplane{N}, v::AbstractVector{N}) where {N<:Real}
+    @assert length(v) == dim(hp) "cannot translate a $(dim(hp))-dimensional " *
+                                 "set by a $(length(v))-dimensional vector"
+    return Hyperplane(hp.a, hp.b + dot(hp.a, v))
+end

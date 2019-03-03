@@ -231,3 +231,32 @@ function rand(::Type{Ellipsoid};
                    Matrix{N}(dim*I, dim, dim)
     return Ellipsoid(center, shape_matrix)
 end
+
+"""
+    translate(E::Ellipsoid{N}, v::AbstractVector{N}) where {N<:AbstractFloat}
+
+Translate (i.e., shift) an ellipsoid by a given vector.
+
+### Input
+
+- `E` -- ellipsoid
+- `v` -- translation vector
+
+### Output
+
+A translated ellipsoid.
+
+### Notes
+
+The shape matrix is shared with the original ellipsoid.
+
+### Algorithm
+
+We add the vector to the center of the ellipsoid.
+"""
+function translate(E::Ellipsoid{N},
+                   v::AbstractVector{N}) where {N<:AbstractFloat}
+    @assert length(v) == dim(E) "cannot translate a $(dim(E))-dimensional " *
+                                "set by a $(length(v))-dimensional vector"
+    return Ellipsoid(center(E) + v, E.shape_matrix)
+end

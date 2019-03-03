@@ -64,6 +64,10 @@ for N in [Float64, Float32]
     @test !isempty(E)
 
     # an_element and set membership functions
-    E = Ellipsoid(N[1, 2], Matrix{N}(2I, 2, 2))
+    M = Matrix{N}(2I, 2, 2)
+    E = Ellipsoid(N[1, 2], M)
     @test an_element(E) ∈ E
+
+    # translation
+    @test translate(E, N[1, 2]) == Ellipsoid(N[2, 4], M)
 end

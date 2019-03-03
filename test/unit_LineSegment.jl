@@ -43,6 +43,9 @@ for N in [Float64, Rational{Int}, Float32]
     vl = vertices_list(l)
     @test ispermutation(vl, [l.p, l.q])
 
+    # translation
+    @test translate(l, N[1, 2]) == LineSegment(N[2, 3], N[3, 4])
+
     # intersection emptiness
     l1 = LineSegment(N[1, 1], N[2, 2])
     l2 = LineSegment(N[2, 1], N[1, 2])

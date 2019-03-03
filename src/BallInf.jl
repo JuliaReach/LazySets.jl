@@ -175,3 +175,27 @@ function rand(::Type{BallInf};
     radius = abs(randn(rng, N))
     return BallInf(center, radius)
 end
+
+"""
+    translate(B::BallInf{N}, v::AbstractVector{N}) where {N<:Real}
+
+Translate (i.e., shift) a ball in the infinity norm by a given vector.
+
+### Input
+
+- `B` -- ball in the infinity norm
+- `v` -- translation vector
+
+### Output
+
+A translated ball in the infinity norm.
+
+### Algorithm
+
+We add the vector to the center of the ball.
+"""
+function translate(B::BallInf{N}, v::AbstractVector{N}) where {N<:Real}
+    @assert length(v) == dim(B) "cannot translate a $(dim(B))-dimensional " *
+                                "set by a $(length(v))-dimensional vector"
+    return BallInf(center(B) + v, B.radius)
+end

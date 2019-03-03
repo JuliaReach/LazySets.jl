@@ -63,6 +63,9 @@ for N in [Float64, Float32, Rational{Int}]
     # isempty
     @test !isempty(x)
 
+    # translation
+    @test translate(x, N[2]) == Interval(N(2), N(3))
+
     # Minkowski sum (test that we get the same results as the concrete operation)
     m = x ⊕ y
     @test m isa MinkowskiSum

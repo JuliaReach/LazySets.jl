@@ -61,58 +61,58 @@ The table entries have the following meaning.
 - "i" indicates that the operation is inherited from a supertype.
 
 
-| type ↓ \ operation →         | dim | ρ | σ | an_element | ∈ | isempty | isbounded | linear_map | norm | radius | diameter |
-|------------------------------|-----|---|---|------------|---|---------|-----------|------------|------|--------|----------|
-| **Interfaces**               |     |   |   |            |   |         |           |            |      |        |          |
-| `LazySet`                    |     | x |   | x          |   |         | x         |            |      |        | x        |
-| `APolytope`                  |     | i |   | i          |   | x       | x         | x          |      |        | i        |
-| `ACentrallySymmetric`        | x   | i |   | x          |   | x       | x         |            |      |        | i        |
-| `ACentrallySymmetricPolytope`| i   | i |   | i          |   | x       | i         | i          |      |        | i        |
-| `APolygon`                   | x   | i |   | i          |   | i       | i         | i          |      |        | i        |
-| `AHyperrectangle`            | i   | i | x | i          | x | i       | i         | i          | x    | x      | i        |
-| `AHPolygon`                  | i   | i |   | x          | x | i       | i         | i          |      |        | i        |
-| `ASingleton`                 | i   | i | x | i          | x | i       | i         | x          | i    | i      | i        |
-|                              |     |   |   |            |   |         |           |            |      |        |          |
-| **Basic set types**          |     |   |   |            |   |         |           |            |      |        |          |
-| `Ball1`                      | i   | i | x | i          | x | i       | i         | i          |      |        | i        |
-| `Ball2`                      | i   | i | x | i          | x | i       | i         |            |      |        | i        |
-| `BallInf`                    | i   | i | i | i          | i | i       | i         | i          | i    | x      | i        |
-| `Ballp`                      | i   | i | x | i          | x | i       | i         |            |      |        | i        |
-| `Ellipsoid`                  | i   | i | x | i          | x | i       | i         |            |      |        | i        |
-| `EmptySet`                   | x   | i | x | x          | x | x       | x         |            | x    | x      | x        |
-| `HalfSpace`                  | x   | x | x | x          | x | x       | x         |            |      |        | i        |
-| `HPolygon`/`HPolygonOpt`     | i   | i | x | i          | i | i       | i         | i          |      |        | i        |
-| `HPolyhedron`                | x   | x | x | i          | x | x       | x         | x          |      |        | i        |
-| `HPolytope`                  | x   | x | x | i          | x | x       | i         | x          |      |        | i        |
-| `Hyperplane`                 | x   | x | x | x          | x | x       | x         |            |      |        | i        |
-| `Hyperrectangle`             | i   | i | i | i          | i | i       | i         | i          | i    | i      | i        |
-| `Interval`                   | x   | i | x | x          | x | i       | i         | i          | i    | i      | i        |
-| `Line`                       | x   | i | x | x          | x | x       | x         |            |      |        | i        |
-| `LineSegment`                | x   | i | x | x          | x | i       | i         | i          |      |        | i        |
-| `Singleton`                  | i   | i | i | i          | i | i       | i         | i          | i    | i      | i        |
-| `Universe`                   | x   | x | x | x          | x | x       | x         |            | x    | x      | x        |
-| `VPolygon`                   | i   | i | x | x          | x | i       | i         | x          |      |        | i        |
-| `VPolytope`                  | x   | i | x | i          | x | i       | i         | x          |      |        | i        |
-| `ZeroSet`                    | x   | i | x | i          | x | i       | i         | x          | i    | i      | i        |
-| `Zonotope`                   | i   | i | x | i          | x | i       | i         | x          |      |        | i        |
-|                              |     |   |   |            |   |         |           |            |      |        |          |
-| **Lazy set operation types** |     |   |   |            |   |         |           |            |      |        |          |
-| `CartesianProduct`           | x   | x | x | i          | x | x       | x         |            |      |        | i        |
-| `CartesianProductArray`      | x   | x | x | i          | x | x       | x         |            |      |        | i        |
-| `ConvexHull`                 | x   | x | x | i          |   | x       | x         |            |      |        | i        |
-| `ConvexHullArray`            | x   | x | x | i          |   | x       | x         |            |      |        | i        |
-| `ExponentialMap`             | x   | x | x | i          | x | x       | x         |            |      |        | i        |
-| `ExponentialProjectionMap`   | x   | i | x | i          |   | x       | x         |            |      |        | i        |
-| `Intersection`               | x   | x |   | i          | x | x       | x         |            |      |        | i        |
-| `IntersectionArray`          | x   | i |   | i          | x |         | x         |            |      |        | i        |
-| `LinearMap`                  | x   | x | x | x          | x | x       | x         |            |      |        | i        |
-| `MinkowskiSum`               | x   | x | x | i          |   | x       | x         |            |      |        | i        |
-| `MinkowskiSumArray`          | x   | x | x | i          |   | x       | x         |            |      |        | i        |
-| `CacheMinkowskiSum`          | x   | i | x | i          |   | x       | x         |            |      |        | i        |
-| `ResetMap`                   | x   | x | x | x          |   | x       |           |            |      |        | i        |
-| `SymmetricIntervalHull`      | x   | i | x | i          | i | i       | i         | i          | i    | i      | i        |
-| `UnionSet`                   | x   | x | x | x          | x | x       | x         |            |      |        |          |
-| `UnionSetArray`              | x   | x | x | x          | x | x       | x         |            |      |        |          |
+| type ↓ \ operation →         | dim | ρ | σ | an_element | ∈ | isempty | isbounded | linear_map | translate | norm | radius | diameter |
+|------------------------------|-----|---|---|------------|---|---------|-----------|------------|-----------|------|--------|----------|
+| **Interfaces**               |     |   |   |            |   |         |           |            |           |      |        |          |
+| `LazySet`                    |     | x |   | x          |   |         | x         |            |           |      |        | x        |
+| `APolytope`                  |     | i |   | i          |   | x       | x         | x          |           |      |        | i        |
+| `ACentrallySymmetric`        | x   | i |   | x          |   | x       | x         |            |           |      |        | i        |
+| `ACentrallySymmetricPolytope`| i   | i |   | i          |   | x       | i         | i          |           |      |        | i        |
+| `APolygon`                   | x   | i |   | i          |   | i       | i         | i          |           |      |        | i        |
+| `AHyperrectangle`            | i   | i | x | i          | x | i       | i         | i          |           | x    | x      | i        |
+| `AHPolygon`                  | i   | i |   | x          | x | i       | i         | i          |           |      |        | i        |
+| `ASingleton`                 | i   | i | x | i          | x | i       | i         | x          |           | i    | i      | i        |
+|                              |     |   |   |            |   |         |           |            |           |      |        |          |
+| **Basic set types**          |     |   |   |            |   |         |           |            |           |      |        |          |
+| `Ball1`                      | i   | i | x | i          | x | i       | i         | i          | x         |      |        | i        |
+| `Ball2`                      | i   | i | x | i          | x | i       | i         |            | x         |      |        | i        |
+| `BallInf`                    | i   | i | i | i          | i | i       | i         | i          | x         | i    | x      | i        |
+| `Ballp`                      | i   | i | x | i          | x | i       | i         |            | x         |      |        | i        |
+| `Ellipsoid`                  | i   | i | x | i          | x | i       | i         |            | x         |      |        | i        |
+| `EmptySet`                   | x   | i | x | x          | x | x       | x         |            | x         | x    | x      | x        |
+| `HalfSpace`                  | x   | x | x | x          | x | x       | x         |            | x         |      |        | i        |
+| `HPolygon`/`HPolygonOpt`     | i   | i | x | i          | i | i       | i         | i          | x         |      |        | i        |
+| `HPolyhedron`                | x   | x | x | i          | x | x       | x         | x          | x         |      |        | i        |
+| `HPolytope`                  | x   | x | x | i          | x | x       | i         | x          | x         |      |        | i        |
+| `Hyperplane`                 | x   | x | x | x          | x | x       | x         |            | x         |      |        | i        |
+| `Hyperrectangle`             | i   | i | i | i          | i | i       | i         | i          | x         | i    | i      | i        |
+| `Interval`                   | x   | i | x | x          | x | i       | i         | i          | x         | i    | i      | i        |
+| `Line`                       | x   | i | x | x          | x | x       | x         |            | x         |      |        | i        |
+| `LineSegment`                | x   | i | x | x          | x | i       | i         | i          | x         |      |        | i        |
+| `Singleton`                  | i   | i | i | i          | i | i       | i         | i          | x         | i    | i      | i        |
+| `Universe`                   | x   | x | x | x          | x | x       | x         |            | x         | x    | x      | x        |
+| `VPolygon`                   | i   | i | x | x          | x | i       | i         | x          | x         |      |        | i        |
+| `VPolytope`                  | x   | i | x | i          | x | i       | i         | x          | x         |      |        | i        |
+| `ZeroSet`                    | x   | i | x | i          | x | i       | i         | x          | x         | i    | i      | i        |
+| `Zonotope`                   | i   | i | x | i          | x | i       | i         | x          | x         |      |        | i        |
+|                              |     |   |   |            |   |         |           |            |           |      |        |          |
+| **Lazy set operation types** |     |   |   |            |   |         |           |            |           |      |        |          |
+| `CartesianProduct`           | x   | x | x | i          | x | x       | x         |            |           |      |        | i        |
+| `CartesianProductArray`      | x   | x | x | i          | x | x       | x         |            |           |      |        | i        |
+| `ConvexHull`                 | x   | x | x | i          |   | x       | x         |            |           |      |        | i        |
+| `ConvexHullArray`            | x   | x | x | i          |   | x       | x         |            |           |      |        | i        |
+| `ExponentialMap`             | x   | x | x | i          | x | x       | x         |            |           |      |        | i        |
+| `ExponentialProjectionMap`   | x   | i | x | i          |   | x       | x         |            |           |      |        | i        |
+| `Intersection`               | x   | x |   | i          | x | x       | x         |            |           |      |        | i        |
+| `IntersectionArray`          | x   | i |   | i          | x |         | x         |            |           |      |        | i        |
+| `LinearMap`                  | x   | x | x | x          | x | x       | x         |            |           |      |        | i        |
+| `MinkowskiSum`               | x   | x | x | i          |   | x       | x         |            |           |      |        | i        |
+| `MinkowskiSumArray`          | x   | x | x | i          |   | x       | x         |            |           |      |        | i        |
+| `CacheMinkowskiSum`          | x   | i | x | i          |   | x       | x         |            |           |      |        | i        |
+| `ResetMap`                   | x   | x | x | x          |   | x       |           |            |           |      |        | i        |
+| `SymmetricIntervalHull`      | x   | i | x | i          | i | i       | i         | i          |           | i    | i      | i        |
+| `UnionSet`                   | x   | x | x | x          | x | x       | x         |            |           |      |        |          |
+| `UnionSetArray`              | x   | x | x | x          | x | x       | x         |            |           |      |        |          |
 
 
 ### `dim`

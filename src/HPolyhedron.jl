@@ -392,6 +392,35 @@ function remove_redundant_constraints!(P::HPoly{N};
     remove_redundant_constraints!(P.constraints, backend=backend)
 end
 
+"""
+    translate(P::PT, v::AbstractVector{N}) where {N<:Real, PT<:HPoly{N}}
+
+Translate (i.e., shift) a polyhedron in constraint representation by a given
+vector.
+
+### Input
+
+- `P` -- polyhedron in constraint representation
+- `v` -- translation vector
+
+### Output
+
+A translated polyhedron in constraint representation.
+
+### Notes
+
+The `a` vectors of the constraints are shared with the original constraints.
+
+### Algorithm
+
+We translate every constraint.
+"""
+function translate(P::PT, v::AbstractVector{N}) where {N<:Real, PT<:HPoly{N}}
+    @assert length(v) == dim(P) "cannot translate a $(dim(P))-dimensional " *
+                                "set by a $(length(v))-dimensional vector"
+    return PT([translate(c, v) for c in constraints_list(P)])
+end
+
 # ========================================================
 # External methods that require Polyhedra.jl to be loaded
 # ========================================================

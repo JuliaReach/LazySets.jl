@@ -12,7 +12,8 @@ export LazySet,
        neutral,
        absorbing,
        tosimplehrep,
-       isuniversal
+       isuniversal,
+       translate
 
 """
     LazySet{N}

@@ -325,3 +325,27 @@ function constraints_list(L::LineSegment{N})::Vector{LinearConstraint{N}} where 
     clist[4] = halfspace_left(q, q + d)
     return clist
 end
+
+"""
+    translate(L::LineSegment{N}, v::AbstractVector{N}) where {N<:Real}
+
+Translate (i.e., shift) a line segment by a given vector.
+
+### Input
+
+- `L` -- line segment
+- `v` -- translation vector
+
+### Output
+
+A translated line segment.
+
+### Algorithm
+
+We add the vector to both defining points of the line segment.
+"""
+function translate(L::LineSegment{N}, v::AbstractVector{N}) where {N<:Real}
+    @assert length(v) == dim(L) "cannot translate a $(dim(L))-dimensional " *
+                                "set by a $(length(v))-dimensional vector"
+    return LineSegment(L.p + v, L.q + v)
+end

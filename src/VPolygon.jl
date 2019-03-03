@@ -529,3 +529,27 @@ function convex_hull(P::VPolygon{N}, Q::VPolygon{N};
     convex_hull!(vunion; algorithm=algorithm)
     return VPolygon(vunion, apply_convex_hull=false)
 end
+
+"""
+    translate(P::VPolygon{N}, v::AbstractVector{N}) where {N<:Real}
+
+Translate (i.e., shift) a polygon in vertex representation by a given vector.
+
+### Input
+
+- `P` -- polygon in vertex representation
+- `v` -- translation vector
+
+### Output
+
+A translated polygon in vertex representation.
+
+### Algorithm
+
+We add the vector to each vertex of the polygon.
+"""
+function translate(P::VPolygon{N}, v::AbstractVector{N}) where {N<:Real}
+    @assert length(v) == dim(P) "cannot translate a $(dim(P))-dimensional " *
+                                "set by a $(length(v))-dimensional vector"
+    return VPolygon([x + v for x in vertices_list(P)])
+end

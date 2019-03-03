@@ -146,3 +146,34 @@ function σ(d::AbstractVector{N}, P::HPolygon{N};
                                     Line(P.constraints[k-1])))
     end
 end
+
+"""
+    translate(v::AbstractVector{N}, P::HPolygon{N}) where {N<:Real}
+
+Translate (i.e., shift) a polygon in constraint representation by a
+given vector.
+
+### Input
+
+- `P` -- polygon in constraint representation
+- `v` -- translation vector
+
+### Output
+
+A translated polygon in constraint representation.
+
+### Notes
+
+The `a` vectors of the constraints are shared with the original constraints.
+
+### Algorithm
+
+We translate every constraint.
+"""
+function translate(P::HPolygon{N}, v::AbstractVector{N}) where {N<:Real}
+    @assert length(v) == dim(P) "cannot translate a $(dim(P))-dimensional " *
+                                "set by a $(length(v))-dimensional vector"
+    return HPolygon([translate(c, v) for c in constraints_list(P)];
+                    sort_constraints=false, check_boundedness=false,
+                    prune=false)
+end

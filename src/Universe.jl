@@ -284,3 +284,23 @@ An error.
 function diameter(U::Universe, p::Real=Inf)
     error("a universe does not have a diameter")
 end
+
+"""
+    translate(U::Universe{N}, v::AbstractVector{N}) where {N<:Real}
+
+Translate (i.e., shift) a universe by a given vector.
+
+### Input
+
+- `U` -- universe
+- `v` -- translation vector
+
+### Output
+
+The universe.
+"""
+function translate(U::Universe{N}, v::AbstractVector{N}) where {N<:Real}
+    @assert length(v) == dim(U) "cannot translate a $(dim(U))-dimensional " *
+                                "set by a $(length(v))-dimensional vector"
+    return U
+end

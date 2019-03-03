@@ -301,3 +301,32 @@ function _linear_map_hrep(M::AbstractMatrix{N}, P::Line{N}, use_inv::Bool) where
     constraint = _linear_map_hrep_helper(M, P, use_inv)[1]
     return Line(constraint.a, constraint.b)
 end
+
+"""
+    translate(L::Line{N}, v::AbstractVector{N}) where {N<:Real}
+
+Translate (i.e., shift) a line by a given vector.
+
+### Input
+
+- `L` -- line
+- `v` -- translation vector
+
+### Output
+
+A translated line.
+
+### Notes
+
+The `a` vector is shared with the original line.
+
+### Algorithm
+
+A line ``a⋅x = b`` is transformed to the line ``a⋅x = b + a⋅v``.
+In other words, we add the dot product ``a⋅v`` to ``b``.
+"""
+function translate(L::Line{N}, v::AbstractVector{N}) where {N<:Real}
+    @assert length(v) == dim(L) "cannot translate a $(dim(L))-dimensional " *
+                                "set by a $(length(v))-dimensional vector"
+    return Line(L.a, L.b + dot(L.a, v))
+end

@@ -60,6 +60,9 @@ for N in [Float64, Rational{Int}, Float32]
     M = N[0 1; -1 0]
     @test element(linear_map(M, S)) == an_element(M * S)
 
+    # translation
+    @test translate(s, N[1, 2]) == Singleton(N[2, 4])
+
     # subset
     s1 = Singleton(N[0, 1])
     s2 = Singleton(N[0, 3])

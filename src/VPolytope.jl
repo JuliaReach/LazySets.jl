@@ -247,6 +247,30 @@ end
     return broadcast(v -> M * v, vertices_list(P)) |> VPolytope{N}
 end
 
+"""
+    translate(P::VPolytope{N}, v::AbstractVector{N}) where {N<:Real}
+
+Translate (i.e., shift) a polytope in vertex representation by a given vector.
+
+### Input
+
+- `P` -- polytope in vertex representation
+- `v` -- translation vector
+
+### Output
+
+A translated polytope in vertex representation.
+
+### Algorithm
+
+We add the vector to each vertex of the polytope.
+"""
+function translate(P::VPolytope{N}, v::AbstractVector{N}) where {N<:Real}
+    @assert length(v) == dim(P) "cannot translate a $(dim(P))-dimensional " *
+                                "set by a $(length(v))-dimensional vector"
+    return VPolytope([x + v for x in vertices_list(P)])
+end
+
 # --- AbstractPolytope interface functions ---
 
 """

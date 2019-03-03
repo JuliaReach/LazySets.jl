@@ -590,3 +590,31 @@ function constraints_list(Z::Zonotope{N}
     @assert i == m "expected 2*$m constraints, but only created 2*$i"
     return constraints
 end
+
+"""
+    translate(Z::Zonotope{N}, v::AbstractVector{N}) where {N<:Real}
+
+Translate (i.e., shift) a zonotope by a given vector.
+
+### Input
+
+- `Z` -- zonotope
+- `v` -- translation vector
+
+### Output
+
+A translated zonotope.
+
+### Notes
+
+The generator matrix is shared with the original zonotope.
+
+### Algorithm
+
+We add the vector to the center of the zonotope.
+"""
+function translate(Z::Zonotope{N}, v::AbstractVector{N}) where {N<:Real}
+    @assert length(v) == dim(Z) "cannot translate a $(dim(Z))-dimensional " *
+                                "set by a $(length(v))-dimensional vector"
+    return Zonotope(center(Z) + v, Z.generators)
+end

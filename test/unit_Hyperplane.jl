@@ -62,6 +62,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test_throws ArgumentError linear_map(M, H)
     M = N[2 2; 0 1] # invertible matrix
     @test linear_map(M, H) == Hyperplane(N[0.5, -2.0], N(0.0))
+
+    # translation
+    @test translate(hp, N[1, 2, 3]) == Hyperplane(ones(N, 3), N(11))
 end
 
 # Polyhedra tests that only work with Float64
