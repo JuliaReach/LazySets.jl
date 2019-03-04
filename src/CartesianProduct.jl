@@ -578,7 +578,7 @@ function linear_map(M::AbstractMatrix{N},
             push!(v_block.array,LinearMap(m, cp.array[bi]))
         end
 
-        push!(result.array, overapproximate(v_block, HPolytope))
+        push!(result.array, overapproximate(v_block, HPolygon))
     end
 
     return result
