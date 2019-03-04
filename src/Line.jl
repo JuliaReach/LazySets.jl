@@ -303,14 +303,17 @@ function _linear_map_hrep(M::AbstractMatrix{N}, P::Line{N}, use_inv::Bool) where
 end
 
 """
-    translate(L::Line{N}, v::AbstractVector{N}) where {N<:Real}
+    translate(L::Line{N}, v::AbstractVector{N}; share::Bool=false
+             ) where {N<:Real}
 
 Translate (i.e., shift) a line by a given vector.
 
 ### Input
 
-- `L` -- line
-- `v` -- translation vector
+- `L`     -- line
+- `v`     -- translation vector
+- `share` -- (optional, default: `false`) flag for sharing unmodified parts of
+             the original set representation
 
 ### Output
 
@@ -325,8 +328,11 @@ The `a` vector is shared with the original line.
 A line ``a⋅x = b`` is transformed to the line ``a⋅x = b + a⋅v``.
 In other words, we add the dot product ``a⋅v`` to ``b``.
 """
-function translate(L::Line{N}, v::AbstractVector{N}) where {N<:Real}
+function translate(L::Line{N}, v::AbstractVector{N}; share::Bool=false
+                  ) where {N<:Real}
     @assert length(v) == dim(L) "cannot translate a $(dim(L))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
-    return Line(L.a, L.b + dot(L.a, v))
+    a = share ? L.a : copy(L.a)
+    b = L.b + dot(L.a, v)
+    return Line(a, b)
 end

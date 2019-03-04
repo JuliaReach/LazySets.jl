@@ -233,14 +233,17 @@ function rand(::Type{Ellipsoid};
 end
 
 """
-    translate(E::Ellipsoid{N}, v::AbstractVector{N}) where {N<:AbstractFloat}
+    translate(E::Ellipsoid{N}, v::AbstractVector{N}; share::Bool=false
+             ) where {N<:AbstractFloat}
 
 Translate (i.e., shift) an ellipsoid by a given vector.
 
 ### Input
 
-- `E` -- ellipsoid
-- `v` -- translation vector
+- `E`     -- ellipsoid
+- `v`     -- translation vector
+- `share` -- (optional, default: `false`) flag for sharing unmodified parts of
+             the original set representation
 
 ### Output
 
@@ -254,9 +257,11 @@ The shape matrix is shared with the original ellipsoid.
 
 We add the vector to the center of the ellipsoid.
 """
-function translate(E::Ellipsoid{N},
-                   v::AbstractVector{N}) where {N<:AbstractFloat}
+function translate(E::Ellipsoid{N}, v::AbstractVector{N}; share::Bool=false
+                  ) where {N<:AbstractFloat}
     @assert length(v) == dim(E) "cannot translate a $(dim(E))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
-    return Ellipsoid(center(E) + v, E.shape_matrix)
+    c = center(E) + v
+    shape_matrix = share ? E.shape_matrix : copy(E.shape_matrix)
+    return Ellipsoid(c, shape_matrix)
 end

@@ -184,15 +184,18 @@ function σ(d::AbstractVector{N}, P::HPolygonOpt{N};
 end
 
 """
-    translate(P::HPolygonOpt{N}, v::AbstractVector{N}) where {N<:Real}
+    translate(P::HPolygonOpt{N}, v::AbstractVector{N}; share::Bool=false
+             ) where {N<:Real}
 
 Translate (i.e., shift) an optimized polygon in constraint representation by a
 given vector.
 
 ### Input
 
-- `P` -- optimized polygon in constraint representation
-- `v` -- translation vector
+- `P`     -- optimized polygon in constraint representation
+- `v`     -- translation vector
+- `share` -- (optional, default: `false`) flag for sharing unmodified parts of
+             the original set representation
 
 ### Output
 
@@ -206,10 +209,12 @@ The `a` vectors of the constraints are shared with the original constraints.
 
 We translate every constraint.
 """
-function translate(P::HPolygonOpt{N}, v::AbstractVector{N}) where {N<:Real}
+function translate(P::HPolygonOpt{N}, v::AbstractVector{N}; share::Bool=false
+                  ) where {N<:Real}
     @assert length(v) == dim(P) "cannot translate a $(dim(P))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
-    return HPolygonOpt([translate(c, v) for c in constraints_list(P)], P.ind;
+    constraints = [translate(c, v; share=share) for c in constraints_list(P)]
+    return HPolygonOpt(constraints, P.ind;
                        sort_constraints=false, check_boundedness=false,
                        prune=false)
 end

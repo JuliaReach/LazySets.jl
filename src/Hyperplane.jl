@@ -402,14 +402,17 @@ function _linear_map_hrep(M::AbstractMatrix{N}, P::Hyperplane{N}, use_inv::Bool)
 end
 
 """
-    translate(hp::Hyperplane{N}, v::AbstractVector{N}) where {N<:Real}
+    translate(hp::Hyperplane{N}, v::AbstractVector{N}; share::Bool=false
+             ) where {N<:Real}
 
 Translate (i.e., shift) a hyperplane by a given vector.
 
 ### Input
 
-- `hp` -- hyperplane
-- `v`  -- translation vector
+- `hp`    -- hyperplane
+- `v`     -- translation vector
+- `share` -- (optional, default: `false`) flag for sharing unmodified parts of
+             the original set representation
 
 ### Output
 
@@ -424,8 +427,11 @@ The `a` vector is shared with the original hyperplane.
 A hyperplane ``a⋅x = b`` is transformed to the hyperplane ``a⋅x = b + a⋅v``.
 In other words, we add the dot product ``a⋅v`` to ``b``.
 """
-function translate(hp::Hyperplane{N}, v::AbstractVector{N}) where {N<:Real}
+function translate(hp::Hyperplane{N}, v::AbstractVector{N}; share::Bool=false
+                  ) where {N<:Real}
     @assert length(v) == dim(hp) "cannot translate a $(dim(hp))-dimensional " *
                                  "set by a $(length(v))-dimensional vector"
-    return Hyperplane(hp.a, hp.b + dot(hp.a, v))
+    a = share ? hp.a : copy(hp.a)
+    b = hp.b + dot(hp.a, v)
+    return Hyperplane(a, b)
 end
