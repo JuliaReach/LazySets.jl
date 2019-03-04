@@ -46,3 +46,9 @@ CachedPair
 Approximations.UnitVector
 StrictlyIncreasingIndices
 ```
+
+### Inspection of set interfaces
+
+```@docs
+LazySets.subtypes(::Any, ::Bool)
+```

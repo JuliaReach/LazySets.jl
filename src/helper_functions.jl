@@ -1,3 +1,9 @@
+@static if VERSION < v"0.7-"
+    import Base.subtypes
+else
+    import InteractiveUtils: subtypes
+end
+
 # default tolerance for matrix condition number (see 'isinvertible')
 const DEFAULT_COND_TOL = 1e6
 
@@ -47,9 +53,7 @@ It can be used with vector-valued arguments via the dot operator.
 ### Examples
 
 ```jldoctest
-julia> import LazySets.sign_cadlag
-
-julia> sign_cadlag.([-0.6, 1.3, 0.0])
+julia> LazySets.sign_cadlag.([-0.6, 1.3, 0.0])
 3-element Array{Float64,1}:
  -1.0
   1.0
@@ -209,13 +213,15 @@ and `(false, 0)` otherwise.
 ### Examples
 
 ```jldoctest
-julia> LazySets.samedir([1, 2, 3], [2, 4, 6])
+julia> using LazySets: samedir
+
+julia> samedir([1, 2, 3], [2, 4, 6])
 (true, 0.5)
 
-julia> LazySets.samedir([1, 2, 3], [3, 2, 1])
+julia> samedir([1, 2, 3], [3, 2, 1])
 (false, 0)
 
-julia> LazySets.samedir([1, 2, 3], [-1, -2, -3])
+julia> samedir([1, 2, 3], [-1, -2, -3])
 (false, 0)
 
 ```
@@ -525,3 +531,83 @@ end
 
 end # @eval
 end # if
+
+"""
+    subtypes(interface, concrete::Bool)
+
+Return the concrete subtypes of a given interface.
+
+### Input
+
+- `interface` -- an abstract type, usually a set interface
+- `concrete`  -- if `true`, seek further the inner abstract subtypes of the given
+                 interface, otherwise return only the direct subtypes of `interface`
+
+### Output
+
+A list with the subtypes of the abstract type `interface`, sorted alphabetically.
+
+### Examples
+
+Consider the `AbstractPolytope` interface. If we include the abstract subtypes
+of this interface,
+
+```jldoctest subtypes
+julia> using LazySets: subtypes
+
+julia> subtypes(AbstractPolytope, false)
+4-element Array{Any,1}:
+ AbstractCentrallySymmetricPolytope
+ AbstractPolygon
+ HPolytope
+ VPolytope
+```
+
+We can use this function to obtain the concrete subtypes of
+`AbstractCentrallySymmetricPolytope` and `AbstractPolygon` (further until all
+concrete types are obtained), using the `concrete` flag:
+
+```jldoctest subtypes
+julia> subtypes(AbstractPolytope, true)
+14-element Array{Type,1}:
+ Ball1
+ BallInf
+ HPolygon
+ HPolygonOpt
+ HPolytope
+ Hyperrectangle
+ Interval
+ LineSegment
+ Singleton
+ SymmetricIntervalHull
+ VPolygon
+ VPolytope
+ ZeroSet
+ Zonotope
+```
+"""
+function subtypes(interface, concrete::Bool)
+
+    subtypes_to_test = subtypes(interface)
+    
+    # do not seek the concrete subtypes further
+    if !concrete 
+        return sort(subtypes_to_test, by=string)
+    end
+
+    result = Vector{Type}()
+    i = 0
+    while i < length(subtypes_to_test)
+        i += 1
+        subtype = subtypes_to_test[i]
+        new_subtypes = subtypes(subtype)
+        if isempty(new_subtypes)
+            # base type found
+            push!(result, subtype)
+        else
+            # yet another interface layer
+            append!(subtypes_to_test, new_subtypes)
+        end
+    end
+    return sort(result, by=string)
+end
