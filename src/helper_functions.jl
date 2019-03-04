@@ -1,4 +1,8 @@
-import InteractiveUtils: subtypes
+@static if VERSION < v"0.7-"
+    import Base.subtypes
+else
+    import InteractiveUtils: subtypes
+end
 
 # default tolerance for matrix condition number (see 'isinvertible')
 const DEFAULT_COND_TOL = 1e6
@@ -580,41 +584,6 @@ julia> subtypes(AbstractPolytope, true)
  VPolytope
  ZeroSet
  Zonotope
-```
-
-This function can be applied to other abstract types as well:
-
-```jldoctest subtypes
-julia> subtypes(Real, false)
-5-element Array{Any,1}:
- AbstractFloat
- AbstractIrrational
- Integer
- IntervalArithmetic.AbstractInterval
- Rational
-
-julia> subtypes(Real, true)
-20-element Array{Type,1}:
- BigFloat
- BigInt
- Bool
- Float16
- Float32
- Float64
- Int128
- Int16
- Int32
- Int64
- Int8
- IntervalArithmetic.DecoratedInterval
- IntervalArithmetic.Interval
- Irrational
- Rational
- UInt128
- UInt16
- UInt32
- UInt64
- UInt8
 ```
 """
 function subtypes(interface, concrete::Bool)
