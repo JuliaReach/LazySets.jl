@@ -563,8 +563,9 @@ Determine whether a polyhedron is empty.
 - `use_polyhedra_interface` -- (optional, default: `false`) if `true`, we use
                the `Polyhedra` interface for the emptiness test
 - `solver`  -- (optional, default: `GLPKSolverLP()`) LP-solver backend
-- `backend` -- (optional, default: `default_polyhedra_backend(P, N)`) backend
-               for polyhedral computations in `Polyhedra`
+- `backend` -- (optional, default: `nothing`) backend for polyhedral
+               computations in `Polyhedra`; its value is set internally (see the
+               Notes below for details)
 
 ### Output
 
@@ -574,6 +575,10 @@ Determine whether a polyhedron is empty.
   * `(false, v)` iff ``P ≠ ∅`` and ``v ∈ P``
 
 ### Notes
+
+The default value of the `backend` is set internally and depends on whether the
+`use_polyhedra_interface` option is set or not.
+If the option is set, we use `default_polyhedra_backend(P, N)`.
 
 Witness production is not supported if `use_polyhedra_interface` is `true`.
 
@@ -587,11 +592,14 @@ function isempty(P::HPoly{N},
                  witness::Bool=false;
                  use_polyhedra_interface::Bool=false,
                  solver=GLPKSolverLP(),
-                 backend=default_polyhedra_backend(P, N)
+                 backend=nothing
                 )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     if use_polyhedra_interface
         @assert isdefined(@__MODULE__, :Polyhedra) "the function `isempty` " *
             "with the given options requires the package 'Polyhedra'"
+        if backend == nothing
+            backend = default_polyhedra_backend(P, N)
+        end
         result = Polyhedra.isempty(polyhedron(P; backend=backend), solver)
         if result
             return witness ? (true, N[]) : true
