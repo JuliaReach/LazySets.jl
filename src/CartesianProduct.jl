@@ -3,7 +3,8 @@ import Base: *, ∈, isempty
 export CartesianProduct,
        CartesianProductArray,
        CartesianProduct!,
-       array
+       array,
+       linear_map
 
 """
     CartesianProduct{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
@@ -550,6 +551,7 @@ function vertices_list(cpa::CartesianProductArray{N}
     return vlist
 end
 
+
 function linear_map(M::AbstractMatrix{N},
     cp::CartesianProductArray{N};
     cond_tol::Number=DEFAULT_COND_TOL,
@@ -558,22 +560,26 @@ function linear_map(M::AbstractMatrix{N},
         error("linear maps for Cartesian product arrays need to be invertible")
     end
 
-    constraints = similar(constraints_list(cp))
-    # matrix M is invertible => the normal vectors are vec(c.a' * inv(M))
-    if use_inv
-        invM = inv(M)
-        @inbounds for (i, c) in enumerate(constraints_list(cp))
-            constraints[i] = LinearConstraint(vec(c.a' * invM), c.b)
+    result = CartesianProductArray(length(cp.array), N)
+    col_st_index, col_end_ind = 0, 0
+    for bi in 1:length(cp.array)
+        col_st_index = col_end_ind + 1
+        col_end_ind += dim(cp.array[bi])
+        n = dim(cp.array[bi])
+        start_ind, end_ind = 1, dim(cp.array[bi])
+        matrices = Vector{Matrix{N}}()
+        while end_ind <= size(M)[1]
+            push!(matrices, M[col_st_index:col_end_ind,start_ind:end_ind])
+            start_ind = end_ind + 1
+            end_ind += dim(cp.array[bi])
         end
-    else
-        # take left division for each constraint c, transpose(M) \ c.a
-        @inbounds for (i, c) in enumerate(constraints_list(P))
-            constraints[i] = LinearConstraint(_At_ldiv_B(Matrix(M), c.a), c.b)
+        v_block = MinkowskiSumArray()
+        for m in matrices
+            push!(v_block.array,LinearMap(m, cp.array[bi]))
         end
-    end
 
-    # convert back to CartesianProductArray
-    result = LazySets.Approximations.decompose(HPolytope(constraints), blocks= dim.(cp.array))
+        push!(result.array, overapproximate(v_block, HPolytope))
+    end
 
     return result
 end
