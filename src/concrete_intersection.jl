@@ -701,20 +701,21 @@ function intersection_combine(X::CartesianProductArray{N},
     low_set = CartesianProductArray(length(blocks), N)
     vars = Vector{Int}()
     block_structure = Vector{Int}()
-
+    blocks = sort(blocks)
     for bi in keys(blocks)
         push!(low_set.array, X.array[bi])
         append!(vars, variable_indices(X, bi, blocks[bi]))
         push!(block_structure, dim(X.array[bi]))
     end
 
-    approx_low_set = Approximations.overapproximate(low_set)
+
+    approx_low_set = HPolytope(constraints_list(low_set));
     low_intersection = intersection(approx_low_set, Approximations.project(Y,vars, LinearMap))
 
     if isempty(low_intersection)
         return EmptySet()
     end
-    decomposed_low_set = Approximations.decompose(low_intersection, blocks=block_structure)
+    decomposed_low_set = Approximations.decompose(low_intersection, set_type=LinearMap, blocks=block_structure)
 
 
     index = 1
@@ -773,7 +774,7 @@ function intersection(X::CartesianProductArray{N},
         if haskey(blocks,bi)
             # otherwise, make the intersection with the projection of the halfspace
             vars = variable_indices(X, bi, blocks[bi])
-            push!(result.array, intersection(X.array[bi], Approximations.project(Y,vars, LinearMap)))
+            push!(result.array,intersection(X.array[bi], Approximations.project(Y,vars, LinearMap)))
         end
     end
     return result
