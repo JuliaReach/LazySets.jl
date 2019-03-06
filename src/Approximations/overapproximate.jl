@@ -159,31 +159,49 @@ Overapproximate the convex hull of two zonotopes.
 
 ### Input
 
-- `S`           -- convex hull of two zonotopes of the same order
-- `Zonotope`    -- type for dispatch
+- `S`        -- convex hull of two zonotopes
+- `Zonotope` -- type for dispatch
 
 ### Algorithm
 
-This function implements the method proposed in
-*Reachability of Uncertain Linear Systems Using Zonotopes, A. Girard, HSCC 2005*.
-The convex hull of two zonotopes of the same order, that we write
-``Z_j = ⟨c^{(j)}, g^{(j)}_1, …, g^{(j)}_p⟩`` for ``j = 1, 2``, can be
-overapproximated as follows:
+This function implements the method proposed in [1].
+The convex hull of two zonotopes ``Z₁`` and ``Z₂`` of the same order,
+that we write
+
+```math
+Z_j = ⟨c^{(j)}, g^{(j)}_1, …, g^{(j)}_p⟩
+```
+for ``j = 1, 2``, can be overapproximated as follows:
 
 ```math
 CH(Z_1, Z_2) ⊆ \\frac{1}{2}⟨c^{(1)}+c^{(2)}, g^{(1)}_1+g^{(2)}_1, …, g^{(1)}_p+g^{(2)}_p, c^{(1)}-c^{(2)}, g^{(1)}_1-g^{(2)}_1, …, g^{(1)}_p-g^{(2)}_p⟩.
 ```
 
-It should be noted that the output zonotope is not necessarily the minimal enclosing
-zonotope, which is in general expensive in high dimensions. This is further investigated
-in: *Zonotopes as bounding volumes, L. J. Guibas et al, Proc. of Symposium on Discrete Algorithms, pp. 803-812*.
+If the zonotope order is not the same, this algorithm calls
+`reduce_order` to reduce the order to the minimum of the arguments.
+
+It should be noted that the output zonotope is not necessarily the minimal
+enclosing zonotope, which is in general expensive in high dimensions. This is
+further investigated in [2].
+
+[1] Reachability of Uncertain Linear Systems Using Zonotopes, A. Girard.
+    HSCC 2005.
+
+[2] Zonotopes as bounding volumes, L. J. Guibas et al, Proc. of Symposium on
+    Discrete Algorithms, pp. 803-812.
 """
 function overapproximate(S::ConvexHull{N, Zonotope{N}, Zonotope{N}},
                          ::Type{<:Zonotope})::Zonotope where {N<:Real}
     Z1, Z2 = S.X, S.Y
-    @assert order(Z1) == order(Z2)
-    center = (Z1.center+Z2.center)/2
-    generators = [(Z1.generators .+ Z2.generators) (Z1.center - Z2.center) (Z1.generators .- Z2.generators)]/2
+    if order(Z1) != order(Z2)
+        min_order = min(order(Z1), order(Z2))
+        Z1 = reduce_order(Z1, min_order)
+        Z2 = reduce_order(Z2, min_order)
+    end
+    center = N(1/2) * (Z1.center + Z2.center)
+    generators = N(1/2) * hcat(Z1.generators .+ Z2.generators,
+                               Z1.center - Z2.center,
+                               Z1.generators .- Z2.generators)
     return Zonotope(center, generators)
 end
 
