@@ -93,11 +93,6 @@ if test_suite_basic
     @time @testset "LazySets.Line" begin include("unit_Line.jl") end
     @time @testset "LazySets.Universe" begin include("unit_Universe.jl") end
 
-    # =========================================================
-    # Testing other set types that do not inherit from LazySet
-    # =========================================================
-    @time @testset "LazySets.UnionSet" begin include("unit_UnionSet.jl") end
-
     # =========================================
     # Testing types representing set operations
     # =========================================
@@ -114,6 +109,12 @@ if test_suite_basic
     # Testing set interfaces
     # ======================
     @time @testset "LazySets.CompactSet" begin include("unit_CompactSet.jl") end
+
+    # =========================================================
+    # Testing other set types that do not inherit from LazySet
+    # =========================================================
+    @time @testset "LazySets.Complement" begin include("unit_Complement.jl") end
+    @time @testset "LazySets.UnionSet" begin include("unit_UnionSet.jl") end
 
     # =================================================================
     # Algorithms for approximation of convex sets using support vectors
