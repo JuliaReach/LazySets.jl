@@ -226,12 +226,12 @@ Overapproximating a set with template directions.
 
 ### Input
 
-- `X`           -- set
-- `dir`         -- direction representation
+- `X`   -- set
+- `dir` -- (concrete) direction representation
 
 ### Output
 
-A `HPolytope` overapproximating the set `X` with the directions from `dir`.
+An `HPolytope` overapproximating the set `X` with the directions from `dir`.
 """
 function overapproximate(X::LazySet{N},
                          dir::AbstractDirections{N}
@@ -243,6 +243,27 @@ function overapproximate(X::LazySet{N},
         addconstraint!(H, LinearConstraint(d, ρ(d, X)))
     end
     return H
+end
+
+"""
+    overapproximate(X::LazySet{N},
+                    dir::Type{<:AbstractDirections})::HPolytope{N} where {N}
+
+Overapproximating a set with template directions.
+
+### Input
+
+- `X`   -- set
+- `dir` -- type of direction representation
+
+### Output
+
+A `HPolytope` overapproximating the set `X` with the directions from `dir`.
+"""
+function overapproximate(X::LazySet{N},
+                         dir::Type{<:AbstractDirections}
+                        )::HPolytope{N} where {N}
+    return overapproximate(X, dir{N}(dim(X)))
 end
 
 """
