@@ -321,7 +321,8 @@ A translated line.
 
 ### Notes
 
-The `a` vector is shared with the original line.
+The normal vector of the line (vector `a` in `a⋅x = b`) is shared with the
+original line if `share == true`.
 
 ### Algorithm
 

@@ -412,7 +412,8 @@ A translated polyhedron in constraint representation.
 
 ### Notes
 
-The `a` vectors of the constraints are shared with the original constraints.
+The normal vectors of the constraints (vector `a` in `a⋅x ≤ b`) are shared with
+the original constraints if `share == true`.
 
 ### Algorithm
 

@@ -420,7 +420,8 @@ A translated hyperplane.
 
 ### Notes
 
-The `a` vector is shared with the original hyperplane.
+The normal vectors of the hyperplane (vector `a` in `a⋅x = b`) is shared with
+the original hyperplane if `share == true`.
 
 ### Algorithm
 

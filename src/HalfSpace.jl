@@ -441,7 +441,8 @@ A translated half-space.
 
 ### Notes
 
-The `a` vector is shared with the original half-space.
+The normal vectors of the halfspace (vector `a` in `a⋅x ≤ b`) is shared with the
+original halfspace if `share == true`.
 
 ### Algorithm
 

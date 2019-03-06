@@ -251,7 +251,7 @@ A translated ellipsoid.
 
 ### Notes
 
-The shape matrix is shared with the original ellipsoid.
+The shape matrix is shared with the original ellipsoid if `share == true`.
 
 ### Algorithm
 

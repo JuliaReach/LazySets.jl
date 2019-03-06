@@ -610,7 +610,7 @@ A translated zonotope.
 
 ### Notes
 
-The generator matrix is shared with the original zonotope.
+The generator matrix is shared with the original zonotope if `share == true`.
 
 ### Algorithm
 

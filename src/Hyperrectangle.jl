@@ -206,7 +206,7 @@ A translated hyperrectangle.
 
 ### Notes
 
-The radius vector is shared with the original hyperrectangle.
+The radius vector is shared with the original hyperrectangle if `share == true`.
 
 ### Algorithm
 
