@@ -743,6 +743,10 @@ function ⊆(cup::UnionSetArray{N}, X::LazySet{N}, witness::Bool=false
     return witness ? (result, w) : result
 end
 
+
+# --- Universe ---
+
+
 """
     ⊆(X::LazySet{N}, U::Universe{N}, [witness]::Bool=false
      )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
@@ -841,4 +845,42 @@ end
 function ⊆(::Universe{N}, ::EmptySet{N}, witness::Bool=false
           )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return isuniversal(P, witness)
+end
+
+
+# --- Complement ---
+
+
+"""
+    ⊆(X::LazySet{N}, C::Complement{N}, [witness]::Bool=false
+     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether a convex set is contained in the complement of another convex set,
+and otherwise optionally compute a witness.
+
+### Input
+
+- `X`       -- convex set
+- `C`       -- complement of a convex set
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``X ⊆ C``
+* If `witness` option is activated:
+  * `(true, [])` iff ``X ⊆ C``
+  * `(false, v)` iff ``X \\not\\subseteq C`` and
+    ``v ∈ X \\setminus C``
+
+### Algorithm
+
+We fall back to `isdisjoint(X, C.X)`, which can be justified as follows.
+
+```math
+    X ⊆ Y^C ⟺ X ∩ Y = ∅
+```
+"""
+function ⊆(X::LazySet{N}, C::Complement{N}, witness::Bool=false
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    return isdisjoint(X, C.X, witness)
 end
