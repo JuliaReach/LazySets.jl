@@ -164,10 +164,14 @@ Overapproximate the convex hull of two zonotopes.
 
 ### Algorithm
 
-This function implements the method proposed in [1]. The convex hull of two zonotopes
-of the same order, that we write
-``Z_j = ⟨c^{(j)}, g^{(j)}_1, …, g^{(j)}_p⟩`` for ``j = 1, 2``, can be
-overapproximated as follows:
+This function implements the method proposed in [1].
+The convex hull of two zonotopes ``Z₁`` and ``Z₂`` of the same order,
+that we write
+
+```math
+Z_j = ⟨c^{(j)}, g^{(j)}_1, …, g^{(j)}_p⟩
+```
+for ``j = 1, 2``, can be overapproximated as follows:
 
 ```math
 CH(Z_1, Z_2) ⊆ \\frac{1}{2}⟨c^{(1)}+c^{(2)}, g^{(1)}_1+g^{(2)}_1, …, g^{(1)}_p+g^{(2)}_p, c^{(1)}-c^{(2)}, g^{(1)}_1-g^{(2)}_1, …, g^{(1)}_p-g^{(2)}_p⟩.
@@ -196,8 +200,8 @@ function overapproximate(S::ConvexHull{N, Zonotope{N}, Zonotope{N}},
     end
     center = N(1/2) * (Z1.center + Z2.center)
     generators = N(1/2) * hcat(Z1.generators .+ Z2.generators,
-                            Z1.center - Z2.center,
-                            Z1.generators .- Z2.generators)
+                               Z1.center - Z2.center,
+                               Z1.generators .- Z2.generators)
     return Zonotope(center, generators)
 end
 
