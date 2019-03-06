@@ -95,3 +95,27 @@ function rand(::Type{Singleton};
     element = randn(rng, N, dim)
     return Singleton(element)
 end
+
+"""
+    translate(S::Singleton{N}, v::AbstractVector{N}) where {N<:Real}
+
+Translate (i.e., shift) a singleton by a given vector.
+
+### Input
+
+- `S` -- singleton
+- `v` -- translation vector
+
+### Output
+
+A translated singleton.
+
+### Algorithm
+
+We add the vector to the point in the singleton.
+"""
+function translate(S::Singleton{N}, v::AbstractVector{N}) where {N<:Real}
+    @assert length(v) == dim(S) "cannot translate a $(dim(S))-dimensional " *
+                                "set by a $(length(v))-dimensional vector"
+    return Singleton(element(S) + v)
+end

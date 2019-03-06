@@ -50,9 +50,13 @@ for N in [Float64, Rational{Int}, Float32]
     @test an_element(z) ∈ z
 
     # concrete operations
-    Z1 = Zonotope(N[1, 1], N[1 1; -1 1])
+    gens = N[1 1; -1 1]
+    Z1 = Zonotope(N[1, 1], gens)
     Z2 = Zonotope(N[-1, 1], Matrix{N}(I, 2, 2))
     A = N[0.5 1; 1 0.5]
+
+    # translation
+    @test translate(Z1, N[1, 2]) == Zonotope(N[2, 3], gens)
 
     # concrete Minkowski sum
     Z3 = minkowski_sum(Z1, Z2)

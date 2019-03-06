@@ -67,4 +67,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test_throws ArgumentError linear_map(M, L)
     M = N[2 2; 0 1] # invertible matrix
     @test linear_map(M, L) == Line(N[0.5, -2.0], N(0.0))
+
+    # translation
+    @test translate(l1, N[1, 2]) == Line(a1, N(3))
 end

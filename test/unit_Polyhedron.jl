@@ -70,6 +70,12 @@ for N in [Float64, Rational{Int}, Float32]
     # concrete linear map with invertible matrix
     linear_map(N[2 3; 1 2], p)
 
+    # translation
+    p2 = translate(p, N[1, 2])
+    @test p2 isa HPolyhedron && ispermutation(constraints_list(p2),
+        [HalfSpace(N[2, 2], N(18)), HalfSpace(N[-3, 3], N(9)),
+         HalfSpace(N[-1, -1], N(-3)), HalfSpace(N[2, -4], N(-6))])
+
     if test_suite_polyhedra
         # conversion to and from Polyhedra's VRep data structure
         cl = constraints_list(HPolyhedron(polyhedron(p)))

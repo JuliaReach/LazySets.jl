@@ -421,3 +421,39 @@ function _linear_map_hrep(M::AbstractMatrix{N}, P::HalfSpace{N}, use_inv::Bool) 
     constraint = _linear_map_hrep_helper(M, P, use_inv)[1]
     return HalfSpace(constraint.a, constraint.b)
 end
+
+"""
+    translate(hs::HalfSpace{N}, v::AbstractVector{N}; share::Bool=false
+             ) where {N<:Real}
+
+Translate (i.e., shift) a half-space by a given vector.
+
+### Input
+
+- `hs`    -- half-space
+- `v`     -- translation vector
+- `share` -- (optional, default: `false`) flag for sharing unmodified parts of
+             the original set representation
+
+### Output
+
+A translated half-space.
+
+### Notes
+
+The normal vectors of the halfspace (vector `a` in `a⋅x ≤ b`) is shared with the
+original halfspace if `share == true`.
+
+### Algorithm
+
+A half-space ``a⋅x ≤ b`` is transformed to the half-space ``a⋅x ≤ b + a⋅v``.
+In other words, we add the dot product ``a⋅v`` to ``b``.
+"""
+function translate(hs::HalfSpace{N}, v::AbstractVector{N}; share::Bool=false
+                  ) where {N<:Real}
+    @assert length(v) == dim(hs) "cannot translate a $(dim(hs))-dimensional " *
+                                 "set by a $(length(v))-dimensional vector"
+    a = share ? hs.a : copy(hs.a)
+    b = hs.b + dot(hs.a, v)
+    return HalfSpace(a, b)
+end

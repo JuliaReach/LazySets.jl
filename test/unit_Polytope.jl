@@ -96,7 +96,7 @@ for N in [Float64, Rational{Int}, Float32]
                    HalfSpace(N[0, 1], N(1)),
                    HalfSpace(N[-1, -0], N(1)),
                    HalfSpace(N[-0, -1], N(1)),
-                   HalfSpace(N[2, 0], N(2))]) # redundant
+                   HalfSpace(N[1, 0], N(2))]) # redundant
 
     Pred = remove_redundant_constraints(P)
     @test length(Pred.constraints) == 4
@@ -105,6 +105,12 @@ for N in [Float64, Rational{Int}, Float32]
     # test in-place removal of redundancies
     remove_redundant_constraints!(P)
     @test length(P.constraints) == 4
+
+    # translation
+    P2 = translate(P, N[1, 2])
+    @test P2 isa HPolytope && ispermutation(constraints_list(P2),
+        [HalfSpace(N[1, 0], N(2)), HalfSpace(N[0, 1], N(3)),
+         HalfSpace(N[-1, -0], N(0)), HalfSpace(N[-0, -1], N(-1))])
 
     # subset
     H = BallInf(N[0, 0], N(1))
@@ -176,6 +182,9 @@ for N in [Float64, Rational{Int}, Float32]
     # membership
     @test N[.49, .49] ∈ p
     @test N[.51, .51] ∉ p
+
+    # translation
+    @test translate(p, N[1, 2]) == VPolytope([N[1, 2], N[2, 2], N[1, 3]])
 
     # copy (see #1002)
     p, q = [N(1)], [N(2)]

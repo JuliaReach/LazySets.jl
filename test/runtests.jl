@@ -60,6 +60,7 @@ if test_suite_polyhedra || test_suite_plotting
     import LazySets.HalfSpace
     import LazySets.Interval
     import LazySets.Line
+    import LazySets.translate
 end
 
 if test_suite_basic

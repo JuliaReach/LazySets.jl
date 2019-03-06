@@ -66,6 +66,9 @@ for N in [Float64, Rational{Int}, Float32]
 
     # linear map of an empty set
     linear_map(ones(N, 2, 2), E) == E
+
+    # translation
+    @test translate(E, N[1, 2]) == E
 end
 
 # default Float64 constructors

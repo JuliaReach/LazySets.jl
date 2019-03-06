@@ -590,3 +590,37 @@ function constraints_list(Z::Zonotope{N}
     @assert i == m "expected 2*$m constraints, but only created 2*$i"
     return constraints
 end
+
+"""
+    translate(Z::Zonotope{N}, v::AbstractVector{N}; share::Bool=false
+             ) where {N<:Real}
+
+Translate (i.e., shift) a zonotope by a given vector.
+
+### Input
+
+- `Z`     -- zonotope
+- `v`     -- translation vector
+- `share` -- (optional, default: `false`) flag for sharing unmodified parts of
+             the original set representation
+
+### Output
+
+A translated zonotope.
+
+### Notes
+
+The generator matrix is shared with the original zonotope if `share == true`.
+
+### Algorithm
+
+We add the vector to the center of the zonotope.
+"""
+function translate(Z::Zonotope{N}, v::AbstractVector{N}; share::Bool=false
+                  ) where {N<:Real}
+    @assert length(v) == dim(Z) "cannot translate a $(dim(Z))-dimensional " *
+                                "set by a $(length(v))-dimensional vector"
+    c = center(Z) + v
+    generators = share ? Z.generators : copy(Z.generators)
+    return Zonotope(c, generators)
+end

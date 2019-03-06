@@ -3,8 +3,7 @@ for N in [Float64, Rational{Int}, Float32]
     rand(HalfSpace)
 
     # normal constructor
-    normal = ones(N, 3)
-    hs = HalfSpace(normal, N(5))
+    hs = HalfSpace(ones(N, 3), N(5))
 
     # numeric-type conversion preserves vector base type
     hs1 = HalfSpace(spzeros(4), 1.)
@@ -69,6 +68,9 @@ for N in [Float64, Rational{Int}, Float32]
     # halfspace_left & halfspace_right
     @test N[1, 2] ∈ halfspace_left(N[1, 1], N[2, 2])
     @test N[2, 1] ∈ halfspace_right(N[1, 1], N[2, 2])
+
+    # translation
+    @test translate(hs, N[1, 2, 3]) == HalfSpace(ones(N, 3), N(11))
 
     # intersection emptiness
     b = BallInf(N[3, 3, 3], N(1))

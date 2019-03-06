@@ -45,4 +45,7 @@ for N in [Float64, Float32]
 
     # membership & an_element
     @test an_element(b) ∈ b
+
+    # translation
+    @test translate(b, N[1, 2]) == Ballp(N(3), N[1, 2], N(2))
 end

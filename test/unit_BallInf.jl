@@ -78,4 +78,7 @@ for N in [Float64, Rational{Int}, Float32]
     b = BallInf(N[1, 2], N(1))
     @test high(b) == N[2, 3]
     @test low(b) == N[0, 1]
+
+    # translation
+    @test translate(b, N[1, 2]) == BallInf(N[2, 4], N(1))
 end
