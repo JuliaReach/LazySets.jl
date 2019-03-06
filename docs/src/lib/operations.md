@@ -358,7 +358,7 @@ Hence these set types are not part of the convex-set family `LazySet`.
 ```@docs
 UnionSet
 ∪(::LazySet, ::LazySet)
-dim(::Union)
+dim(::UnionSet)
 σ(::AbstractVector{N}, ::UnionSet{N}; algorithm="support_vector") where {N<:Real}
 ρ(::AbstractVector{N}, ::UnionSet{N}) where {N<:Real}
 an_element(::UnionSet{N}) where {N<:Real}
