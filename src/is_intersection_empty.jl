@@ -1087,6 +1087,10 @@ function is_intersection_empty(cup1::UnionSetArray{N},
     return witness ? (result, w) : result
 end
 
+
+# --- Universe ---
+
+
 """
     is_intersection_empty(U::Universe{N},
                           X::LazySet{N},
@@ -1224,6 +1228,56 @@ function is_intersection_empty(U::Universe{N},
                   Tuple{Universe{N}, LazySet{N}, Bool},
                   U, hs, witness)
 end
+
+
+# --- Complement ---
+
+
+"""
+    is_intersection_empty(C::Complement{N},
+                          X::LazySet{N},
+                          [witness]::Bool=false
+                         )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether the complement of a convex set and another set do not intersect.
+
+### Input
+
+- `C` -- complement of a convex set
+- `X` -- convex set
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``X ∩ C = ∅``
+* If `witness` option is activated:
+  * `(true, [])` iff ``X ∩ C = ∅``
+  * `(false, v)` iff ``X ∩ C ≠ ∅`` and ``v ∈ X ∩ C``
+
+### Algorithm
+
+We fall back to `X ⊆ C.X`, which can be justified as follows:
+
+```math
+    X ∩ Y^C = ∅ ⟺ X ⊆ Y
+```
+"""
+function is_intersection_empty(C::Complement{N},
+                               X::LazySet{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
+                                  {N<:Real}
+    return ⊆(X, C.X, witness)
+end
+
+# symmetric method
+function is_intersection_empty(X::LazySet{N},
+                               C::Complement{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
+                                  {N<:Real}
+    return is_intersection_empty(C, X, witness)
+end
+
 
 # --- alias ---
 
