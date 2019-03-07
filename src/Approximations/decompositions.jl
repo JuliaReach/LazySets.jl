@@ -449,11 +449,11 @@ Concrete projection of a half-space.
 
 - `H`        -- set
 - `block`    -- block structure, a vector with the dimensions of interest
-- `set_type` -- (optional, default `HalfSpace`) used for dispatch
 
 ### Output
 
-A set representing the projection of `H` on the dimensions specified by `block`.
+A set representing the projection of the half-space `H` on the dimensions
+specified by `block`.
 
 ### Notes
 
@@ -476,14 +476,15 @@ julia> project(H, [1, 2, 3])
 HalfSpace{Float64}([1.0, 1.0, 0.0], 1.0)
 ```
 
-Projecting along dimension `2` only:
+Projecting along dimensions `1` and `2` only:
 
 ```jldoctest project_halfspace
 julia> project(H, [1, 2])
 HalfSpace{Float64}([1.0, 1.0], 1.0)
 ```
+
 In general, use the call syntax `project(H, constrained_dimensions(H))` to return
-the half-space projects in the dimensions where it is constrained only:
+the half-space projected on the dimensions where it is constrained only:
 
 ```jldoctest project_halfspace
 julia> project(H, constrained_dimensions(H))
@@ -508,7 +509,6 @@ Concrete projection of a polyhedron in half-space representation.
 
 - `P`        -- set
 - `block`    -- block structure, a vector with the dimensions of interest
-- `set_type` -- (optional, default `HPolyhedron`) used for dispatch
 
 ### Output
 
@@ -547,7 +547,7 @@ true
 ```
 Each constraint of the cross polytope is constrained in all dimensions.
 
-Now let's take a ball in the infinity norm and reomove some constraints:
+Now let's take a ball in the infinity norm and remove some constraints:
 
 ```jldoctest project_hpolyhedron
 julia> B = BallInf(zeros(4), 1.0);
