@@ -439,3 +439,146 @@ The template direction approximation of the projection of `S`.
     lm = project(S, block, LinearMap, n)
     return overapproximate(lm, directions(length(block)))
 end
+
+"""
+    project(H::HalfSpace{N}, block::AbstractVector{Int})
+
+Concrete projection of a half-space.
+
+### Input
+
+- `H`        -- set
+- `block`    -- block structure, a vector with the dimensions of interest
+
+### Output
+
+A set representing the projection of the half-space `H` on the dimensions
+specified by `block`.
+
+### Notes
+
+Currently only the case where the unconstrained dimensions of `H` are a subset
+of the `block` variables is implemented.
+
+### Examples
+
+Consider the half-space ``x + y + 0⋅z ≤ 1``, whose ambient dimension is `3`.
+The (trivial) projection in the three dimensions is achieved letting the block
+of variables to be `[1, 2, 3]`:
+
+```jldoctest project_halfspace
+julia> H = HalfSpace([1.0, 1.0, 0.0], 1.0)
+HalfSpace{Float64}([1.0, 1.0, 0.0], 1.0)
+
+julia> using LazySets.Approximations: project
+
+julia> project(H, [1, 2, 3])
+HalfSpace{Float64}([1.0, 1.0, 0.0], 1.0)
+```
+
+Projecting along dimensions `1` and `2` only:
+
+```jldoctest project_halfspace
+julia> project(H, [1, 2])
+HalfSpace{Float64}([1.0, 1.0], 1.0)
+```
+
+In general, use the call syntax `project(H, constrained_dimensions(H))` to return
+the half-space projected on the dimensions where it is constrained only:
+
+```jldoctest project_halfspace
+julia> project(H, constrained_dimensions(H))
+HalfSpace{Float64}([1.0, 1.0], 1.0)
+```
+"""
+function project(H::HalfSpace{N}, block::AbstractVector{Int}) where {N}
+    if constrained_dimensions(H) ⊆ block
+        return HalfSpace(H.a[block], H.b)
+    else
+        error("the concrete projection of a half-space " *
+              "for a general block structure is not implemented yet")
+    end
+end
+
+"""
+    project(P::HPolyhedron{N}, block::AbstractVector{Int}) where {N}
+
+Concrete projection of a polyhedron in half-space representation.
+
+### Input
+
+- `P`        -- set
+- `block`    -- block structure, a vector with the dimensions of interest
+
+### Output
+
+A set representing the projection of `P` on the dimensions specified by `block`.
+
+### Notes
+
+Currently only the case where the unconstrained dimensions of `P` are a subset
+of the `block` variables is implemented.
+
+### Examples
+
+Consider the four-dimensional cross-polytope (unit ball in the 1-norm):
+
+```jldoctest project_hpolyhedron
+julia> using LazySets.Approximations: project
+
+julia> P = convert(HPolyhedron, Ball1(zeros(4), 1.0));
+```
+
+All dimensions are constrained, and computing the (trivial) projection on the whole
+space behaves as expected:
+
+```jldoctest project_hpolyhedron
+julia> constrained_dimensions(P)
+4-element Array{Int64,1}:
+ 1
+ 2
+ 3
+ 4
+
+julia> P_1234 = project(P, [1, 2, 3, 4]);
+
+julia> P_1234 == P
+true
+```
+Each constraint of the cross polytope is constrained in all dimensions.
+
+Now let's take a ball in the infinity norm and remove some constraints:
+
+```jldoctest project_hpolyhedron
+julia> B = BallInf(zeros(4), 1.0);
+
+julia> c = constraints_list(B)[1:2]
+2-element Array{HalfSpace{Float64},1}:
+ HalfSpace{Float64}([1.0, 0.0, 0.0, 0.0], 1.0)
+ HalfSpace{Float64}([0.0, 1.0, 0.0, 0.0], 1.0)
+
+julia> P = HPolyhedron(c);
+
+julia> constrained_dimensions(P)
+2-element Array{Int64,1}:
+ 1
+ 2
+```
+
+Finally we take the concrete projection onto variables `1` and `2`:
+
+```jldoctest project_hpolyhedron
+julia> project(P, [1, 2]) |> constraints_list
+2-element Array{HalfSpace{Float64},1}:
+ HalfSpace{Float64}([1.0, 0.0], 1.0)
+ HalfSpace{Float64}([0.0, 1.0], 1.0)
+```
+"""
+function project(P::HPolyhedron{N}, block::AbstractVector{Int}) where {N}
+    if constrained_dimensions(P) ⊆ block
+        return HPolyhedron([HalfSpace(c.a[block], c.b) for c in constraints_list(P)])
+    else
+        error("the concrete projection of a half-space " *
+              "for a general block structure is not implemented yet")
+    end
+end
