@@ -576,11 +576,7 @@ julia> project(P, [1, 2]) |> constraints_list
 """
 function project(P::HPolyhedron{N}, block::AbstractVector{Int}) where {N}
     if constrained_dimensions(P) ⊆ block
-        constraints = Vector{HalfSpace{N}}(undef, length(constraints_list(P)))
-        @inbounds for (i, ci) in enumerate(constraints_list(P))
-            constraints[i] = HalfSpace(ci.a[block], ci.b)
-        end
-        return HPolyhedron(constraints)
+        return HPolyhedron([HalfSpace(c.a[block], c.b) for c in constraints_list(P)])
     else
         error("the concrete projection of a half-space " *
               "for a general block structure is not implemented yet")
