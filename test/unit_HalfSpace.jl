@@ -64,6 +64,8 @@ for N in [Float64, Rational{Int}, Float32]
     # constrained dimensions
     @test constrained_dimensions(HalfSpace(N[1, 0, 1], N(1))) == [1, 3]
     @test constrained_dimensions(HalfSpace(N[0, 1, 0], N(1))) == [2]
+    # sparse vector
+    @test constrained_dimensions(HalfSpace(sparsevec([2], N[1], 3), N(1))) == [2]
 
     # halfspace_left & halfspace_right
     @test N[1, 2] ∈ halfspace_left(N[1, 1], N[2, 2])

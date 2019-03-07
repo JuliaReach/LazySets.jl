@@ -285,7 +285,7 @@ function nonzero_indices(v::AbstractVector{N})::Vector{Int} where {N<:Real}
 end
 
 function nonzero_indices(v::SparseVector{N})::Vector{Int} where {N<:Real}
-    return x.nzind
+    return v.nzind
 end
 
 """
