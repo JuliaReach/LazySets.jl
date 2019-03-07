@@ -229,6 +229,9 @@ function ⊆(S::LazySet{N},
            P::AbstractPolyhedron{N},
            witness::Bool=false
           )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+    @assert dim(S) == dim(S)
+
     @inbounds for H in constraints_list(P)
         if ρ(H.a, S) > H.b
             if witness
