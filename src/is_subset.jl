@@ -230,7 +230,7 @@ function ⊆(S::LazySet{N},
            witness::Bool=false
           )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
-    @assert dim(S) == dim(S)
+    @assert dim(S) == dim(P)
 
     @inbounds for H in constraints_list(P)
         if ρ(H.a, S) > H.b
