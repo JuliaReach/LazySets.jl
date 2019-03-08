@@ -1,3 +1,5 @@
+using IntervalArithmetic: IntervalBox
+
 for N in [Float64, Rational{Int}, Float32]
     # random hyperrectangle
     rand(Hyperrectangle)
@@ -157,4 +159,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test ispermutation(clist,
                         [HalfSpace(N[1, 0], N(3)), HalfSpace(N[0, 1], N(3)),
                          HalfSpace(N[-1, 0], N(1)), HalfSpace(N[0, -1], N(1))])
+
+    # conversion to and from IntervalArithmetic's IntervalBox type
+    B = IntervalBox(0..1, 0..1)
+    H = convert(Hyperrectangle, B)
+    @test convert(IntervalBox, H) == B
 end

@@ -1,5 +1,7 @@
 import Base.convert
 
+using IntervalArithmetic: IntervalBox, inf, sup
+
 #= conversion between set types =#
 
 """
@@ -496,4 +498,42 @@ function convert(X::Type{HPOLYGON},
     @assert dim(H) == 2 "cannot convert a $(dim(H))-dimensional " *
         "hyperrectangle into a two-dimensional polygon"
     return HPOLYGON(constraints_list(H))
+end
+
+"""
+    convert(::Type{IntervalBox}, H::AbstractHyperrectangle)
+
+Converts a hyperrectangular set to an `IntervalBox` from `IntervalArithmetic`.
+
+### Input
+
+- `IntervalBox` -- type used for dispatch
+- `H`           -- hyperrectangular set
+
+### Output
+
+An `IntervalBox`.
+"""
+function convert(::Type{IntervalBox}, H::AbstractHyperrectangle)
+    return IntervalBox(low(H), high(H))
+end
+
+"""
+    convert(::Type{Hyperrectangle}, IB::IntervalBox)
+
+Converts an `IntervalBox` from `IntervalArithmetic` to an hyperrectangular set.
+
+### Input
+
+- `Hyperrectangle` -- type used for dispatch
+- `IB`             -- interval box
+
+### Output
+
+A `Hyperrectangle`.
+"""
+function convert(::Type{Hyperrectangle}, IB::IntervalBox)
+    low_IB = Vector(inf.(IB)) # TODO: temprary conversion, see #1214
+    high_IB = Vector(sup.(IB)) # TODO: temprary conversion, see #1214
+    return Hyperrectangle(low=low_IB, high=high_IB)
 end

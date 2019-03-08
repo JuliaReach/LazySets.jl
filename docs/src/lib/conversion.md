@@ -37,4 +37,6 @@ convert(::Type{VPolygon}, ::AbstractPolytope)
 convert(::Type{VPolytope}, ::AbstractPolytope)
 convert(::Type{VPolytope}, ::HPolytope)
 convert(::Type{Zonotope}, ::AbstractHyperrectangle)
+convert(::Type{IntervalBox}, ::AbstractHyperrectangle)
+convert(::Type{Hyperrectangle}, ::IntervalBox)
 ```
