@@ -1,4 +1,5 @@
-using IntervalArithmetic
+import IntervalArithmetic
+using IntervalArithmetic: IntervalBox
 
 for N in [Float64, Rational{Int}, Float32]
     # random hyperrectangle
@@ -161,7 +162,7 @@ for N in [Float64, Rational{Int}, Float32]
                          HalfSpace(N[-1, 0], N(1)), HalfSpace(N[0, -1], N(1))])
 
     # conversion to and from IntervalArithmetic's IntervalBox type
-    B = IntervalBox(0..1, 0..1)
+    B = IntervalBox(IntervalArithmetic.Interval(0, 1), IntervalArithmetic.Interval(0, 1))
     H = convert(Hyperrectangle, B)
     @test convert(IntervalBox, H) == B
 end
