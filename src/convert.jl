@@ -521,7 +521,7 @@ end
 """
     convert(::Type{Hyperrectangle}, IB::IntervalBox)
 
-Converts an `IntervalBox` from `IntervalArithmetic` to an hyperrectangular set.
+Converts an `IntervalBox` from `IntervalArithmetic` to a hyperrectangular set.
 
 ### Input
 
