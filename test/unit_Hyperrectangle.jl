@@ -1,4 +1,4 @@
-using IntervalArithmetic: IntervalBox
+using IntervalArithmetic
 
 for N in [Float64, Rational{Int}, Float32]
     # random hyperrectangle
