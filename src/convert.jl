@@ -1,6 +1,5 @@
 import Base.convert
-
-using IntervalArithmetic: IntervalBox, inf, sup
+import IntervalArithmetic
 
 #= conversion between set types =#
 
@@ -501,7 +500,7 @@ function convert(X::Type{HPOLYGON},
 end
 
 """
-    convert(::Type{IntervalBox}, H::AbstractHyperrectangle)
+    convert(::Type{IntervalArithmetic.IntervalBox}, H::AbstractHyperrectangle)
 
 Converts a hyperrectangular set to an `IntervalBox` from `IntervalArithmetic`.
 
@@ -514,12 +513,12 @@ Converts a hyperrectangular set to an `IntervalBox` from `IntervalArithmetic`.
 
 An `IntervalBox`.
 """
-function convert(::Type{IntervalBox}, H::AbstractHyperrectangle)
-    return IntervalBox(low(H), high(H))
+function convert(::Type{IntervalArithmetic.IntervalBox}, H::AbstractHyperrectangle)
+    return IntervalBox(IntervalArithmetic.interval.(low(H), high(H)))
 end
 
 """
-    convert(::Type{Hyperrectangle}, IB::IntervalBox)
+    convert(::Type{Hyperrectangle}, IB::IntervalArithmetic.IntervalBox)
 
 Converts an `IntervalBox` from `IntervalArithmetic` to a hyperrectangular set.
 
@@ -532,8 +531,8 @@ Converts an `IntervalBox` from `IntervalArithmetic` to a hyperrectangular set.
 
 A `Hyperrectangle`.
 """
-function convert(::Type{Hyperrectangle}, IB::IntervalBox)
-    low_IB = Vector(inf.(IB)) # TODO: temprary conversion, see #1214
-    high_IB = Vector(sup.(IB)) # TODO: temprary conversion, see #1214
+function convert(::Type{Hyperrectangle}, IB::IntervalArithmetic.IntervalBox)
+    low_IB = Vector(IntervalArithmetic.inf.(IB))    # TODO: temprary conversion, see #1214
+    high_IB = Vector(IntervalArithmetic.sup.(IB))   # TODO: temprary conversion, see #1214
     return Hyperrectangle(low=low_IB, high=high_IB)
 end
