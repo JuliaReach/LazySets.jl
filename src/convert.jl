@@ -514,7 +514,7 @@ Converts a hyperrectangular set to an `IntervalBox` from `IntervalArithmetic`.
 An `IntervalBox`.
 """
 function convert(::Type{IntervalArithmetic.IntervalBox}, H::AbstractHyperrectangle)
-    return IntervalBox(IntervalArithmetic.interval.(low(H), high(H)))
+    return IntervalArithmetic.IntervalBox(IntervalArithmetic.interval.(low(H), high(H)))
 end
 
 """
