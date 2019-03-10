@@ -38,6 +38,7 @@ Return the box radius of a set with a single value in a given dimension.
 ### Input
 
 - `S` -- set with a single value
+- `i` -- dimension of interest
 
 ### Output
 

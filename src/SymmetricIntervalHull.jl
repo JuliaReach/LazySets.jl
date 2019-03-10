@@ -70,6 +70,7 @@ dimension.
 ### Input
 
 - `sih` -- symmetric interval hull of a convex set
+- `i`   -- dimension of interest
 
 ### Output
 
