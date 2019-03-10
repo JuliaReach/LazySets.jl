@@ -53,14 +53,10 @@ if test_suite_polyhedra || test_suite_plotting
         Pkg.add("CDDLib")
     end
     Pkg.add("Polyhedra")
-    using Polyhedra
+    import Polyhedra
 
     # fix namespace conflicts with Polyhedra
-    import LazySets.dim
-    import LazySets.HalfSpace
-    import LazySets.Interval
-    import LazySets.Line
-    import LazySets.translate
+    using LazySets: dim, HalfSpace, Interval, Line, translate
 end
 
 if test_suite_basic
@@ -143,10 +139,11 @@ end
 
 if test_suite_plotting
     Pkg.add("Plots")
-    using Plots
+    import Plots
+    using Plots: plot
 
     # fix namespace conflicts with Plots
-    import LazySets.center
+    using LazySets: center
 
     @time @testset "LazySets.plotting" begin include("unit_plot.jl") end
 end

@@ -1,5 +1,5 @@
 import IntervalArithmetic
-import IntervalArithmetic: AbstractInterval
+using IntervalArithmetic: AbstractInterval
 import Base: +, -, *, ∈, ⊆, rand, min, max
 
 export Interval,
@@ -45,8 +45,8 @@ Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
 ```
 
 Note that if the package `IntervalArithmetic` is loaded in the current scope,
-you have to prepend the `LazySets` to the interval type, since there is
-a name conflict otherwise.
+you have to prepend `LazySets.` to the `Interval` type since there is a name
+conflict otherwise.
 
 ```jldoctest interval_constructor
 julia> using IntervalArithmetic

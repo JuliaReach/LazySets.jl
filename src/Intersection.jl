@@ -861,7 +861,7 @@ julia> H = HalfSpace([-1.0, 0.0], -1.0); # x >= 0
 
 julia> using Optim
 
-julia> import LazySets._line_search
+julia> using LazySets: _line_search
 
 julia> _line_search([1.0, 0.0], X, H) # uses Brent's method by default
 (1.0, 999999.9849478417)
