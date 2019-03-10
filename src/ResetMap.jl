@@ -295,3 +295,46 @@ function constraints_list(rm::ResetMap{N}) where {N<:Real}
     end
     return constraints
 end
+
+"""
+    constraints_list(rm::ResetMap{N, S}) where
+        {N<:Real, S<:AbstractHyperrectangle}
+
+Return the list of constraints of a hyperrectangular reset map.
+
+### Input
+
+- `rm` -- reset map of a hyperrectangular set
+
+### Output
+
+The list of constraints of the reset map.
+
+### Algorithm
+
+We iterate through all dimensions.
+If there is a reset, we construct the corresponding (flat) constraints.
+Otherwise, we construct the corresponding constraints of the underlying set.
+"""
+function constraints_list(rm::ResetMap{N, S}
+                         ) where {N<:Real, S<:AbstractHyperrectangle}
+    H = rm.X
+    n = dim(H)
+    constraints = Vector{LinearConstraint{N}}(undef, 2*n)
+    j = 1
+    for i in 1:n
+        ei = LazySets.Approximations.UnitVector(i, n, one(N))
+        if haskey(rm.resets, i)
+            # reset dimension => add flat constraints
+            v = rm.resets[i]
+            constraints[j] = HalfSpace(ei, v)
+            constraints[j+1] = HalfSpace(-ei, -v)
+        else
+            # non-reset dimension => use the hyperrectangle's constraints
+            constraints[j] = HalfSpace(ei, high(H, i))
+            constraints[j+1] = HalfSpace(-ei, -low(H, i))
+        end
+        j += 2
+    end
+    return constraints
+end

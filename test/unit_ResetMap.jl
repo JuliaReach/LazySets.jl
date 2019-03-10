@@ -48,6 +48,14 @@ for N in [Float64, Rational{Int}, Float32]
         p = HPolytope(constraints_list(rm))
         @test N[4, 1, 0] ∈ p && N[4, 3, 0] ∈ p && N[2, 2, 2] ∉ p
     end
+    # constraints_list of a hyperrectangular set
+    @test ispermutation(constraints_list(rm),
+                        [HalfSpace(N[1, 0, 0], N(4)),
+                         HalfSpace(N[-1, 0, 0], N(-4)),
+                         HalfSpace(N[0, 1, 0], N(3)),
+                         HalfSpace(N[0, -1, 0], N(-1)),
+                         HalfSpace(N[0, 0, 1], N(0)),
+                         HalfSpace(N[0, 0, -1], N(0))])
 
     # intersection
     b2 = BallInf(N[4, 2, 0], N(1))
