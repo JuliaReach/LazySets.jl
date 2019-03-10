@@ -87,6 +87,25 @@ function high(S::AbstractSingleton{N})::Vector{N} where {N<:Real}
 end
 
 """
+    high(S::AbstractSingleton{N}, i::Int)::N where {N<:Real}
+
+Return the higher coordinate of a set with a single value in the given
+dimension.
+
+### Input
+
+- `S` -- set with a single value
+- `i` -- dimension of interest
+
+### Output
+
+The higher coordinate of the set with a single value in the given dimension.
+"""
+function high(S::AbstractSingleton{N}, i::Int)::N where {N<:Real}
+    return element(S)[i]
+end
+
+"""
     low(S::AbstractSingleton{N})::Vector{N} where {N<:Real}
 
 Return the lower coordinates of a set with a single value.
@@ -101,6 +120,25 @@ A vector with the lower coordinates of the set with a single value.
 """
 function low(S::AbstractSingleton{N})::Vector{N} where {N<:Real}
     return element(S)
+end
+
+"""
+    low(S::AbstractSingleton{N}, i::Int)::N where {N<:Real}
+
+Return the lower coordinate of a set with a single value in the given
+dimension.
+
+### Input
+
+- `S` -- set with a single value
+- `i` -- dimension of interest
+
+### Output
+
+The lower coordinate of the set with a single value in the given dimension.
+"""
+function low(S::AbstractSingleton{N}, i::Int)::N where {N<:Real}
+    return element(S)[i]
 end
 
 
