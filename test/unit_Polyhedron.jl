@@ -1,9 +1,3 @@
-@static if VERSION >= v"0.7-"
-    using SparseArrays
-end
-
-using LazySets: isinvertible
-
 global test_suite_polyhedra
 
 for N in [Float64, Rational{Int}, Float32]

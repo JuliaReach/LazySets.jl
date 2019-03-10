@@ -1,5 +1,3 @@
-using Optim
-
 for N in [Float64, Rational{Int}, Float32]
     B = BallInf(ones(N, 2), N(3))
     H = Hyperrectangle(ones(N, 2), ones(N, 2))

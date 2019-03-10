@@ -1,7 +1,3 @@
-import LazySets.Approximations:box_approximation,
-                               box_approximation_symmetric,
-                               symmetric_interval_hull
-
 for N in [Float64, Rational{Int}, Float32]
     # ==============================
     # Testing box approximation

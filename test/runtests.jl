@@ -1,5 +1,7 @@
-#!/usr/bin/env julia
-using LazySets
+using LazySets, LazySets.Approximations
+
+import IntervalArithmetic
+using IntervalArithmetic: IntervalBox
 
 # compatibility between Julia versions
 include("../src/compat.jl")
@@ -9,7 +11,8 @@ using Compat.Test
 include("to_N.jl")
 
 # non-exported helper functions
-import LazySets.ispermutation
+using LazySets: ispermutation, isinvertible
+using LazySets.Approximations: UnitVector
 
 global test_suite_basic = true
 global test_suite_doctests = VERSION >= v"0.7-" # only run doctests with new Julia version
@@ -47,6 +50,7 @@ end
 end
 
 Pkg.add("Optim")
+import Optim
 
 if test_suite_polyhedra || test_suite_plotting
     @static if VERSION < v"0.7-"

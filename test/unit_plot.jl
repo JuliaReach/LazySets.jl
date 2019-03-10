@@ -1,5 +1,3 @@
-using Plots, Optim
-
 for N in [Float64, Rational{Int}, Float32]
     p0 = zero(N)
     p1 = one(N)

@@ -1,4 +1,4 @@
-import LazySets: _leq, _geq, isapproxzero, _isapprox, ABSZTOL
+using LazySets: _leq, _geq, isapproxzero, _isapprox, ABSZTOL
 
 # approximate <= and
 @test _leq(2e-15, 1e-15) && _leq(1e-15, 2e-15)

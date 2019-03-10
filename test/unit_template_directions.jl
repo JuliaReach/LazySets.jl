@@ -1,9 +1,3 @@
-using LazySets.Approximations: UnitVector,
-                               BoxDirections,
-                               OctDirections,
-                               BoxDiagDirections,
-                               overapproximate
-
 for N in [Float64, Float32, Rational{Int}]
     # unit vector
     for n in 1:3

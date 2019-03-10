@@ -1,5 +1,3 @@
-import LazySets.Approximations.ballinf_approximation
-
 for N in [Float64, Float32, Rational{Int}]
     # BallInf approximation of a 3D unit ball in the 1-norm centered at [1,2,0]
     b = Ball1(N[1, 2, 0], N(1))

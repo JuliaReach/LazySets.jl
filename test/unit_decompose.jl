@@ -1,8 +1,3 @@
-import LazySets.Approximations: decompose,
-                                BoxDirections,
-                                OctDirections,
-                                BoxDiagDirections
-
 for N in [Float64, Rational{Int}, Float32]
     # =====================================
     # Run decompose for different set types

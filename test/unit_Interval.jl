@@ -1,5 +1,3 @@
-import IntervalArithmetic
-
 for N in [Float64, Float32, Rational{Int}]
     # random interval
     rand(Interval)

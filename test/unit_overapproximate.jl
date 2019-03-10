@@ -1,5 +1,3 @@
-using LazySets.Approximations: overapproximate, box_approximation
-
 for N in [Float64, Rational{Int}, Float32]
     # overapproximating a set of type T1 with an unsupported type T2 is the
     # identity if T1 = T2
