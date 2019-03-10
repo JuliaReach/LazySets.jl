@@ -1,5 +1,4 @@
 import Base.convert
-import IntervalArithmetic
 
 #= conversion between set types =#
 
@@ -315,8 +314,6 @@ function convert(::Type{HPOLYGON}, L::LineSegment{N}
                    prune=false)
     return H
 end
-
-import IntervalArithmetic.AbstractInterval
 
 """
     convert(::Type{Hyperrectangle}, x::Interval)

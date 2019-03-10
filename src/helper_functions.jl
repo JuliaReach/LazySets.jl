@@ -1,9 +1,3 @@
-@static if VERSION < v"0.7-"
-    import Base.subtypes
-else
-    import InteractiveUtils: subtypes
-end
-
 # default tolerance for matrix condition number (see 'isinvertible')
 const DEFAULT_COND_TOL = 1e6
 
