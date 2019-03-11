@@ -4,7 +4,8 @@ import Base: rand,
 
 export EmptySet, ∅,
        an_element,
-       linear_map
+       linear_map,
+       constrained_dimensions
 
 """
     EmptySet{N<:Real} <: LazySet{N}
@@ -260,4 +261,8 @@ The empty set.
 """
 function translate(∅::EmptySet{N}, v::AbstractVector{N}) where {N<:Real}
     return ∅
+end
+
+function constrained_dimensions(hs::EmptySet{N})::Vector{Int} where {N<:Real}
+    return Vector{Int}()
 end

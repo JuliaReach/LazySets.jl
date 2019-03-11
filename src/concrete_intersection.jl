@@ -558,14 +558,15 @@ function intersection_combine(X::CartesianProductArray{N},
     vars = Vector{Int}()
     block_structure = Vector{Int}()
     blocks = sort(blocks)
+
     for bi in keys(blocks)
         push!(low_set.array, X.array[bi])
         append!(vars, variable_indices(X, bi, blocks[bi]))
         push!(block_structure, dim(X.array[bi]))
     end
 
-
     approx_low_set = HPolytope(constraints_list(low_set));
+
     low_intersection = intersection(approx_low_set, Approximations.project(Y,vars, LinearMap))
 
     if isempty(low_intersection)
@@ -606,8 +607,6 @@ function intersection(X::CartesianProductArray{N},
     else
         constrained_vars = constrained_dimensions(Y)
         blocks = block_indices(X, constrained_vars)
-
-
     end
     return intersection(X, Y, blocks, is_combine)
 end
