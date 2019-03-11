@@ -316,14 +316,14 @@ function convert(::Type{HPOLYGON}, L::LineSegment{N}
 end
 
 """
-    convert(::Type{Hyperrectangle}, x::Interval)
+    convert(::Type{Hyperrectangle}, H::AbstractHyperrectangle)
 
-Converts a unidimensional interval into a hyperrectangle.
+Convert a hyperrectangular set to a hyperrectangle.
 
 ### Input
 
 - `Hyperrectangle` -- hyperrectangle type, used for dispatch
-- `x`              -- interval
+- `H`              -- hyperrectangular set
 
 ### Output
 
@@ -336,14 +336,14 @@ julia> convert(Hyperrectangle, Interval(0.0, 1.0))
 Hyperrectangle{Float64}([0.5], [0.5])
 ```
 """
-function convert(::Type{Hyperrectangle}, x::Interval)
-    return Hyperrectangle(low=[min(x)], high=[max(x)])
+function convert(::Type{Hyperrectangle}, H::AbstractHyperrectangle)
+    return Hyperrectangle(center(H), radius_hyperrectangle(H))
 end
 
 """
     convert(::Type{Interval}, H::AbstractHyperrectangle)
 
-Converts a hyperrectangular set to a unidimensional interval.
+Converts a hyperrectangular set to an interval.
 
 ### Input
 
@@ -369,7 +369,7 @@ end
 """
     convert(::Type{Interval}, S::LazySet{N}) where {N<:Real}
 
-Converts a convex set to a unidimensional interval.
+Converts a convex set to an interval.
 
 ### Input
 
