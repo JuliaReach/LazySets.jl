@@ -549,3 +549,32 @@ function vertices_list(cpa::CartesianProductArray{N}
 
     return vlist
 end
+
+"""
+    same_block_structure(x::AbstractVector{S1}, y::AbstractVector{S2}
+                        )::Bool where {S1<:LazySet, S2<:LazySet}
+
+Check whether two vectors of sets have the same block structure, i.e., the
+``i``-th entry in the vectors have the same dimension.
+
+### Input
+
+- `x` -- first vector
+- `y` -- second vector
+
+### Output
+
+`true` iff the vectors have the same block structure.
+"""
+function same_block_structure(x::AbstractVector{S1}, y::AbstractVector{S2}
+                             )::Bool where {S1<:LazySet, S2<:LazySet}
+    if length(x) != length(y)
+        return false
+    end
+    for i in 1:length(x)
+        if dim(x[i]) != dim(y[i])
+            return false
+        end
+    end
+    return true
+end

@@ -128,6 +128,7 @@ for N in [Float64, Float32, Rational{Int}]
         LinearConstraint(sparsevec(N[2], N[1], 2),  N(3)),
         LinearConstraint(sparsevec(N[2], N[-1], 2), N(-2))])
     @test all(H -> dim(H) == 2, hlist)
+
     # =====================
     # CartesianProductArray
     # =====================
@@ -188,17 +189,6 @@ for N in [Float64, Float32, Rational{Int}]
         ])
     @test all(H -> dim(H) == 3, hlist)
 
-    # ================
-    # common functions
-    # ================
-
-    # absorbing element
-    e = EmptySet{N}()
-    b = BallInf(N[0, 0], N(2))
-    @test absorbing(CartesianProduct) == absorbing(CartesianProductArray) ==
-          EmptySet
-    @test b × e == e × b == cpa × e == e × cpa == e × e == e
-
     # conversion of the cartesian product array of intervals to a hyperrectangle
     i1 = Interval(N[0, 1])
     i2 = Interval(N[2, 3])
@@ -211,4 +201,20 @@ for N in [Float64, Float32, Rational{Int}]
     h2 = Hyperrectangle(N[2.5, 4.5],  N[1/2, 1/2])
     H = convert(Hyperrectangle, CartesianProductArray([h1, h2]))
     @test low(H) == N[0, 2, 4] && high(H) == N[1, 3, 5]
+
+    # same block structure
+    aX = [Ball1(N[2], N(1)), Ball1(N[0, 0], N(2))]
+    aY = [Interval(N(1), N(3)), BallInf(N[0, 0], N(3))]
+    @test LazySets.same_block_structure(aX, aY)
+
+    # ================
+    # common functions
+    # ================
+
+    # absorbing element
+    e = EmptySet{N}()
+    b = BallInf(N[0, 0], N(2))
+    @test absorbing(CartesianProduct) == absorbing(CartesianProductArray) ==
+          EmptySet
+    @test b × e == e × b == cpa × e == e × cpa == e × e == e
 end
