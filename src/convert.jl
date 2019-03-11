@@ -256,12 +256,46 @@ function convert(::Type{Zonotope}, H::AbstractHyperrectangle)
     return Zonotope(center(H), Diagonal(radius_hyperrectangle(H)))
 end
 
+"""
+    convert(::Type{Zonotope}, cp::CartesianProduct{N, <:AbstractHyperrectangle{N}, <:AbstractHyperrectangle{N}}) where {N<:Real}
+
+Converts the cartesian product of two hyperrectangular sets to a zonotope.
+
+### Input
+
+- `Zonotope` -- type, used for dispatch
+- `cp`       -- cartesian product of two hyperrectangular sets
+
+### Output
+
+This method falls back to the conversion of the cartesian product to a single
+hyperrectnagle, and then from a hyperrectangle to a zonotope.
+"""
 function convert(::Type{Zonotope}, cp::CartesianProduct{N, <:AbstractHyperrectangle{N}, <:AbstractHyperrectangle{N}}) where {N<:Real}
     return convert(Zonotope, convert(Hyperrectangle, cp))
 end
 
-function convert(::Type{Zonotope}, cp::CartesianProductArray{N, <:AbstractHyperrectangle{N}}) where {N<:Real}
-    return convert(Zonotope, convert(Hyperrectangle, cp))
+"""
+    convert(::Type{Zonotope}, ca::CartesianProductArray{N, <:AbstractHyperrectangle{N}}) where {N<:Real}
+
+Converts the cartesian product array of hyperrectangular sets to a zonotope.
+
+### Input
+
+- `Zonotope` -- type, used for dispatch
+- `cpa`      -- cartesian product array of hyperrectangular sets
+
+### Output
+
+A zonotope.
+
+### Algorithm
+
+This method falls back to the conversion of the cartesian product to a single
+hyperrectnagle, and then from a hyperrectangle to a zonotope.
+"""
+function convert(::Type{Zonotope}, cpa::CartesianProductArray{N, <:AbstractHyperrectangle{N}}) where {N<:Real}
+    return convert(Zonotope, convert(Hyperrectangle, cpa))
 end
 
 """
