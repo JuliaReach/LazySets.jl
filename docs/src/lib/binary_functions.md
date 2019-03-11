@@ -84,4 +84,5 @@ intersection(::AbstractPolyhedron{N}, ::ResetMap{N}) where {N<:Real}
 ⊆(::LazySet{N}, ::Universe{N}, ::Bool=false) where {N<:Real}
 ⊆(::Universe{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 ⊆(::LazySet{N}, ::Complement{N}, ::Bool=false) where {N<:Real}
+⊆(::CartesianProductArray{N}, ::CartesianProductArray{N}, ::Bool=false) where {N<:Real}
 ```

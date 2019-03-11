@@ -207,6 +207,14 @@ for N in [Float64, Float32, Rational{Int}]
     aY = [Interval(N(1), N(3)), BallInf(N[0, 0], N(3))]
     @test LazySets.same_block_structure(aX, aY)
 
+    # inclusion
+    cpa1 = CartesianProductArray(aX)
+    cpa2 = CartesianProductArray(aY)
+    res, w = ⊆(cpa1, cpa2, true)
+    @test cpa1 ⊆ cpa2 && res && w == N[]
+    res, w = ⊆(cpa2, cpa1, true)
+    @test !⊆(cpa2, cpa1) && !res && w ∈ cpa2 && w ∉ cpa1
+
     # ================
     # common functions
     # ================
