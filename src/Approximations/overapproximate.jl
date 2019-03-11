@@ -112,6 +112,33 @@ function overapproximate(S::CartesianProductArray{N, <:AbstractHyperrectangle{N}
 end
 
 """
+    overapproximate(S::CartesianProduct{N, <:AbstractHyperrectangle{N}, <:AbstractHyperrectangle{N}},
+                    ::Type{<:Hyperrectangle}) where {N<:Real}
+
+Return a tight overapproximation of the cartesian product array of two
+hyperrectangles with one hyperrectangle.
+
+### Input
+
+- `S`              -- cartesian product of two hyperrectangular sets
+- `Hyperrectangle` -- type for dispatch
+
+### Output
+
+A hyperrectangle.
+
+### Algorithm
+
+This method falls back to the corresponding `convert` method. Since the sets wrapped
+by the cartesian product are hyperrectangles, it can be done efficiently
+without overapproximation.
+"""
+function overapproximate(S::CartesianProduct{N, <:AbstractHyperrectangle{N}, <:AbstractHyperrectangle{N}},
+                          ::Type{<:Hyperrectangle}) where {N<:Real}
+    return convert(Hyperrectangle, S)
+end
+
+"""
     overapproximate(lm::LinearMap{N, <:AbstractHyperrectangle{N}},
                     ::Type{Hyperrectangle}) where {N}
 
