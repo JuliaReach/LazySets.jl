@@ -75,7 +75,7 @@ Interval{Rational{Int64},AbstractInterval{Rational{Int64}}}([0//1, 2//1])
 ```
 """
 struct Interval{N<:Real, IN<:AbstractInterval{N}} <: AbstractHyperrectangle{N}
-   dat::IN
+    dat::IN
 end
 
 @static if VERSION < v"0.7-"
@@ -389,6 +389,30 @@ The list of vertices of the interval represented as two one-dimensional vectors.
 """
 function vertices_list(x::Interval{N})::Vector{Vector{N}} where {N<:Real}
     return [[min(x)], [max(x)]]
+end
+
+"""
+    translate(x::Interval{N}, v::AbstractVector{N}) where {N<:Real}
+
+Translate (i.e., shift) an interval by a given vector.
+
+### Input
+
+- `x` -- interval
+- `v` -- translation vector
+
+### Output
+
+A translated interval.
+
+### Algorithm
+
+We add the vector to the left and right of the interval.
+"""
+function translate(x::Interval{N}, v::AbstractVector{N}) where {N<:Real}
+    @assert length(v) == dim(x) "cannot translate a $(dim(x))-dimensional " *
+                                "set by a $(length(v))-dimensional vector"
+    return Interval(x.dat + v[1])
 end
 
 

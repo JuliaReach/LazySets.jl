@@ -3,7 +3,6 @@ import Base.isempty
 export AbstractPolytope,
        vertices_list,
        singleton_list,
-       linear_map,
        isempty
 
 """
@@ -32,8 +31,9 @@ julia> subtypes(AbstractPolytope)
 abstract type AbstractPolytope{N<:Real} <: AbstractPolyhedron{N} end
 
 
-# --- common AbstractPolytope functions ---
-
+# =============================================
+# Common AbstractPolytope functions
+# =============================================
 
 """
     isbounded(P::AbstractPolytope)::Bool
@@ -71,37 +71,6 @@ function singleton_list(P::AbstractPolytope{N}
 end
 
 """
-    linear_map(M::AbstractMatrix{N}, P::AbstractPolytope{N};
-               output_type::Type{<:LazySet}=VPolytope{N}) where {N<:Real}
-
-Concrete linear map of an abstract polytype.
-
-### Input
-
-- `M`           -- matrix
-- `P`           -- abstract polytype
-- `output_type` -- (optional, default: `VPolytope`) type of the result
-
-### Output
-
-A set of type `output_type`.
-
-### Algorithm
-
-The linear map ``M`` is applied to each vertex of the given set ``P``, obtaining
-a polytope in V-representation. Since some set representations (e.g. axis-aligned
-hyperrectangles) are not closed under linear maps, the default output is a
-`VPolytope`. If an `output_type` is given, the corresponding `convert` method
-is invoked.
-"""
-function linear_map(M::AbstractMatrix{N}, P::AbstractPolytope{N};
-                    output_type::Type{<:LazySet}=VPolytope{N}) where {N<:Real}
-    @assert dim(P) == size(M, 2)
-    MP = broadcast(v -> M * v, vertices_list(P)) |> VPolytope{N}
-    return convert(output_type, MP)
-end
-
-"""
     isempty(P::AbstractPolytope)::Bool
 
 Determine whether a polytope is empty.
@@ -127,6 +96,38 @@ function default_polyhedra_backend(P, N)
     @assert isdefined(@__MODULE__, :Polyhedra) "this function needs the package 'Polyhedra' to be loaded"
     error("no default backend for numeric type $N")
 end
+
+# given a polytope P, apply the linear map P to each vertex of P
+# it is assumed that the interface function `vertices_list(P)` is available 
+@inline function _linear_map_vrep(M::AbstractMatrix{N}, P::AbstractPolytope{N}) where {N<:Real}
+    vertices = broadcast(v -> M * v, vertices_list(P))
+    m = size(M, 1) # output dimension
+    if m == 1
+        # TODO: substitute with Interval(convex_hull(vertices)...): convex hull 1D
+        return Interval(minimum(vertices)[1], maximum(vertices)[1])
+    elseif m == 2
+        return VPolygon(vertices)
+    else
+        return VPolytope(vertices)
+    end
+end
+
+@inline function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolytope{N},
+                          use_inv::Bool) where {N<:Real}
+    constraints = _linear_map_hrep_helper(M, P, use_inv)
+    m = size(M, 1) # output dimension
+    if m == 1
+        return convert(Interval, HPolygon(constraints))
+    elseif m == 2
+        return HPolygon(constraints)
+    else
+        return HPolytope(constraints)
+    end
+end
+
+# =============================================
+# Functions that require Polyhedra
+# =============================================
 
 function load_polyhedra_abstractpolytope() # function to be loaded by Requires
 

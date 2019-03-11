@@ -6,8 +6,7 @@ import Base: rand,
 export HalfSpace, LinearConstraint,
        an_element,
        constrained_dimensions,
-       halfspace_left, halfspace_right,
-       linear_map
+       halfspace_left, halfspace_right
 
 """
     HalfSpace{N<:Real} <: AbstractPolyhedron{N}
@@ -43,7 +42,6 @@ end
 Alias for `HalfSpace`
 """
 const LinearConstraint = HalfSpace
-
 
 # --- LazySet interface functions ---
 
@@ -419,20 +417,43 @@ function is_tighter_same_dir_2D(c1::LinearConstraint{N},
     return lt(c1.b, c1.a[1] / c2.a[1] * c2.b)
 end
 
-"""
-    linear_map(M::AbstractMatrix{N}, hs::HalfSpace{N}) where {N}
+function _linear_map_hrep(M::AbstractMatrix{N}, P::HalfSpace{N}, use_inv::Bool) where {N<:Real}
+    constraint = _linear_map_hrep_helper(M, P, use_inv)[1]
+    return HalfSpace(constraint.a, constraint.b)
+end
 
-Return the concrete linear map of a half-space.
+"""
+    translate(hs::HalfSpace{N}, v::AbstractVector{N}; share::Bool=false
+             ) where {N<:Real}
+
+Translate (i.e., shift) a half-space by a given vector.
 
 ### Input
 
-- `M`  -- matrix
-- `hs` -- half-space
+- `hs`    -- half-space
+- `v`     -- translation vector
+- `share` -- (optional, default: `false`) flag for sharing unmodified parts of
+             the original set representation
 
 ### Output
 
-The half-space obtained by applying the given linear map to the half-space.
+A translated half-space.
+
+### Notes
+
+The normal vectors of the halfspace (vector `a` in `a⋅x ≤ b`) is shared with the
+original halfspace if `share == true`.
+
+### Algorithm
+
+A half-space ``a⋅x ≤ b`` is transformed to the half-space ``a⋅x ≤ b + a⋅v``.
+In other words, we add the dot product ``a⋅v`` to ``b``.
 """
-function linear_map(M::AbstractMatrix{N}, hs::HalfSpace{N}) where {N}
-    return linear_map(M, HPolyhedron([hs]))
+function translate(hs::HalfSpace{N}, v::AbstractVector{N}; share::Bool=false
+                  ) where {N<:Real}
+    @assert length(v) == dim(hs) "cannot translate a $(dim(hs))-dimensional " *
+                                 "set by a $(length(v))-dimensional vector"
+    a = share ? hs.a : copy(hs.a)
+    b = hs.b + dot(hs.a, v)
+    return HalfSpace(a, b)
 end

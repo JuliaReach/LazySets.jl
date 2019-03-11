@@ -163,6 +163,11 @@ for N in [Float64, Float32, Rational{Int}]
         # test constraints list of a VPolygon
         vp = tovrep(hp)
         @test ispermutation(constraints_list(vp), hp.constraints)
+
+        # translation
+        @test translate(hp, N[1, 2]) == typeof(hp)(
+            [HalfSpace(N[2, 2], N(18)), HalfSpace(N[-3, 3], N(9)),
+             HalfSpace(N[-1, -1], N(-3)), HalfSpace(N[2, -4], N(-6))])
     end
 
     # concrete intersection of H-rep
@@ -266,6 +271,10 @@ for N in [Float64, Float32, Rational{Int}]
     @test point ∉ VPolygon([N[0, 2]])
     @test point ∈ VPolygon([N[0, 0], N[0, 2]])
     @test point ∉ VPolygon([N[1, 0], N[1, 2]])
+
+    # translation
+    vp2 = VPolygon([N[0, 0], N[1, 0], N[0, 1]])
+    @test translate(vp2, N[1, 2]) == VPolygon([N[1, 2], N[2, 2], N[1, 3]])
 
     # subset
     p1 = VPolygon([N[0, 0], N[2, 0]])

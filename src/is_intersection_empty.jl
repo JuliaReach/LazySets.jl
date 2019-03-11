@@ -1088,6 +1088,197 @@ function is_intersection_empty(cup1::UnionSetArray{N},
 end
 
 
+# --- Universe ---
+
+
+"""
+    is_intersection_empty(U::Universe{N},
+                          X::LazySet{N},
+                          [witness]::Bool=false
+                         )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether a universe and another set do not intersect.
+
+### Input
+
+- `U` -- universe
+- `X` -- another set
+
+### Output
+
+`true` iff ``X ≠ ∅``.
+"""
+function is_intersection_empty(U::Universe{N},
+                               X::LazySet{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
+                                  {N<:Real}
+    result = isempty(X)
+    if result
+        return witness ? (result, N[]) : result
+    else
+        return witness ? (result, an_element(X)) : result
+    end
+end
+
+# symmetric method
+function is_intersection_empty(X::LazySet{N},
+                               U::Universe{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
+                                  {N<:Real}
+    return is_intersection_empty(U, X, witness)
+end
+
+# disambiguation
+function is_intersection_empty(U::Universe{N},
+                               ::Universe{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
+                                  {N<:Real}
+    return witness ? (false, an_element(U)) : false
+end
+function is_intersection_empty(P::AbstractPolyhedron{N},
+                               U::Universe{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
+                                  {N<:Real}
+    return invoke(is_intersection_empty,
+                  Tuple{Universe{N}, LazySet{N}, Bool},
+                  U, P, witness)
+end
+function is_intersection_empty(U::Universe{N},
+                               P::Union{AbstractPolytope{N}, HPolyhedron{N}},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
+                                  {N<:Real}
+    return invoke(is_intersection_empty,
+                  Tuple{Universe{N}, LazySet{N}, Bool},
+                  U, P, witness)
+end
+function is_intersection_empty(P::Union{AbstractPolytope{N}, HPolyhedron{N}},
+                               U::Universe{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
+                                  {N<:Real}
+    return invoke(is_intersection_empty,
+                  Tuple{Universe{N}, LazySet{N}, Bool},
+                  U, P, witness)
+end
+function is_intersection_empty(U::Universe{N},
+                               P::AbstractPolytope{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
+                                  {N<:Real}
+    return invoke(is_intersection_empty,
+                  Tuple{Universe{N}, LazySet{N}, Bool},
+                  U, P, witness)
+end
+function is_intersection_empty(S::AbstractSingleton{N},
+                               U::Universe{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
+                                  {N<:Real}
+    return invoke(is_intersection_empty,
+                  Tuple{Universe{N}, LazySet{N}, Bool},
+                  U, S, witness)
+end
+function is_intersection_empty(U::Universe{N},
+                               S::AbstractSingleton{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
+                                  {N<:Real}
+    return invoke(is_intersection_empty,
+                  Tuple{Universe{N}, LazySet{N}, Bool},
+                  U, S, witness)
+end
+function is_intersection_empty(hs::HalfSpace{N},
+                               U::Universe{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
+                                  {N<:Real}
+    return invoke(is_intersection_empty,
+                  Tuple{Universe{N}, LazySet{N}, Bool},
+                  U, hs, witness)
+end
+function is_intersection_empty(U::Universe{N},
+                               hp::Union{Hyperplane{N}, Line{N}},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
+                                  {N<:Real}
+    return invoke(is_intersection_empty,
+                  Tuple{Universe{N}, LazySet{N}, Bool},
+                  U, hs, witness)
+end
+function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
+                               U::Universe{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
+                                  {N<:Real}
+    return invoke(is_intersection_empty,
+                  Tuple{Universe{N}, LazySet{N}, Bool},
+                  U, hs, witness)
+end
+function is_intersection_empty(U::Universe{N},
+                               hs::HalfSpace{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
+                                  {N<:Real}
+    return invoke(is_intersection_empty,
+                  Tuple{Universe{N}, LazySet{N}, Bool},
+                  U, hs, witness)
+end
+
+
+# --- Complement ---
+
+
+"""
+    is_intersection_empty(C::Complement{N},
+                          X::LazySet{N},
+                          [witness]::Bool=false
+                         )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether the complement of a convex set and another set do not intersect.
+
+### Input
+
+- `C` -- complement of a convex set
+- `X` -- convex set
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``X ∩ C = ∅``
+* If `witness` option is activated:
+  * `(true, [])` iff ``X ∩ C = ∅``
+  * `(false, v)` iff ``X ∩ C ≠ ∅`` and ``v ∈ X ∩ C``
+
+### Algorithm
+
+We fall back to `X ⊆ C.X`, which can be justified as follows:
+
+```math
+    X ∩ Y^C = ∅ ⟺ X ⊆ Y
+```
+"""
+function is_intersection_empty(C::Complement{N},
+                               X::LazySet{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
+                                  {N<:Real}
+    return ⊆(X, C.X, witness)
+end
+
+# symmetric method
+function is_intersection_empty(X::LazySet{N},
+                               C::Complement{N},
+                               witness::Bool=false
+                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
+                                  {N<:Real}
+    return is_intersection_empty(C, X, witness)
+end
+
+
 # --- alias ---
 
 

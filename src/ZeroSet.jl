@@ -180,3 +180,23 @@ function linear_map(M::AbstractMatrix{N}, Z::ZeroSet{N}) where {N<:Real}
 
     return ZeroSet(size(M, 1))
 end
+
+"""
+    translate(Z::ZeroSet{N}, v::AbstractVector{N}) where {N<:Real}
+
+Translate (i.e., shift) a zero set by a given vector.
+
+### Input
+
+- `Z` -- zero set
+- `v` -- translation vector
+
+### Output
+
+A singleton containing the vector `v`.
+"""
+function translate(Z::ZeroSet{N}, v::AbstractVector{N}) where {N<:Real}
+    @assert length(v) == dim(Z) "cannot translate a $(dim(Z))-dimensional " *
+                                "set by a $(length(v))-dimensional vector"
+    return Singleton(v)
+end

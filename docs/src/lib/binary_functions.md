@@ -33,6 +33,8 @@ is_intersection_empty(::Union{HPolyhedron{N}, AbstractPolytope{N}}, ::LazySet{N}
 is_intersection_empty(::Union{HPolyhedron{N}, AbstractPolytope{N}}, ::Union{HPolyhedron{N}, AbstractPolytope{N}}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::UnionSet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::UnionSetArray{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
+is_intersection_empty(::Universe{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
+is_intersection_empty(::Complement{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 ```
 
 ## Convex hull
@@ -51,14 +53,13 @@ intersection(::Line{N}, ::Line{N}) where {N<:Real}
 intersection(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}) where {N<:Real}
 intersection(::Interval{N}, ::Interval{N}) where {N<:Real}
 intersection(::AbstractHPolygon{N}, ::AbstractHPolygon{N}, ::Bool=true) where {N<:Real}
-intersection(::HPoly{N}, ::HalfSpace{N}) where {N<:Real}
-intersection(::HPoly{N}, ::HPoly{N}) where {N<:Real}
-intersection(::HPoly{N}, ::VPolytope{N}) where {N<:Real}
-intersection(::HPoly{N}, ::AbstractPolytope{N}) where {N<:Real}
-intersection(::S1, ::S2) where {N<:Real, S1<:AbstractPolytope{N}, S2<:AbstractPolytope{N}}
+intersection(::AbstractPolyhedron{N}, ::AbstractPolyhedron{N}) where {N<:Real}
+intersection(::Union{VPolytope{N}, VPolygon{N}}, ::Union{VPolytope{N}, VPolygon{N}}) where {N<:Real}
 intersection(::UnionSet{N}, ::LazySet{N}) where {N<:Real}
 intersection(::UnionSetArray{N}, ::LazySet{N}) where {N<:Real}
 intersection(X::CartesianProductArray{N}, Y::AbstractPolyhedron{N}) where {N}
+intersection(::Universe{N}, ::LazySet{N}) where {N<:Real}
+intersection(::AbstractPolyhedron{N}, ::ResetMap{N}) where {N<:Real}
 ```
 
 ## Subset check
@@ -68,7 +69,7 @@ intersection(X::CartesianProductArray{N}, Y::AbstractPolyhedron{N}) where {N}
 ⊆(::AbstractPolytope{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 ⊆(::AbstractPolytope{N}, ::AbstractHyperrectangle, ::Bool=false) where {N<:Real}
 ⊆(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
-⊆(::LazySet{N}, ::Union{AbstractPolytope{N}, HPolyhedron{N}, HalfSpace{N}}, ::Bool=false) where {N<:Real}
+⊆(::LazySet{N}, ::AbstractPolyhedron{N}, ::Bool=false) where {N<:Real}
 ⊆(::AbstractSingleton{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 ⊆(::AbstractSingleton{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
 ⊆(::AbstractSingleton{N}, ::AbstractSingleton{N}, ::Bool=false) where {N<:Real}
@@ -81,4 +82,7 @@ intersection(X::CartesianProductArray{N}, Y::AbstractPolyhedron{N}) where {N}
 ⊆(::LazySet{N}, ::EmptySet{N}, ::Bool=false) where {N<:Real}
 ⊆(::UnionSet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 ⊆(::UnionSetArray{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
+⊆(::LazySet{N}, ::Universe{N}, ::Bool=false) where {N<:Real}
+⊆(::Universe{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
+⊆(::LazySet{N}, ::Complement{N}, ::Bool=false) where {N<:Real}
 ```

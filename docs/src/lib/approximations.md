@@ -23,8 +23,13 @@ Approximations
 
 ```@docs
 decompose
-default_block_structure
 project
+```
+
+### Convenience functions
+
+```@docs
+uniform_partition
 ```
 
 ## Overapproximations

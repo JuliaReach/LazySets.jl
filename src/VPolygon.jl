@@ -4,7 +4,8 @@ import Base: rand,
 export VPolygon,
        remove_redundant_vertices,
        remove_redundant_vertices!,
-       convex_hull
+       convex_hull,
+       linear_map
 
 """
     VPolygon{N<:Real} <: AbstractPolygon{N}
@@ -107,6 +108,15 @@ The vertices of the output polygon are sorted in counter-clockwise fashion.
 function remove_redundant_vertices(P::VPolygon{N};
                                    algorithm::String="monotone_chain")::VPolygon{N} where {N<:Real}
     return remove_redundant_vertices!(copy(P), algorithm=algorithm)
+end
+
+function linear_map(M::AbstractMatrix{N}, P::VPolygon{N}) where {N<:Real}
+    @assert size(M, 2) == 2 "a linear map of size $(size(M)) cannot be applied to a set of dimension 2"
+    return _linear_map_vrep(M, P)
+end
+
+@inline function _linear_map_vrep(M::AbstractMatrix{N}, P::VPolygon{N}) where {N<:Real}
+    return broadcast(v -> M * v, vertices_list(P)) |> VPolygon{N}
 end
 
 # --- AbstractPolygon interface functions ---
@@ -518,4 +528,28 @@ function convex_hull(P::VPolygon{N}, Q::VPolygon{N};
     vunion = [P.vertices; Q.vertices]
     convex_hull!(vunion; algorithm=algorithm)
     return VPolygon(vunion, apply_convex_hull=false)
+end
+
+"""
+    translate(P::VPolygon{N}, v::AbstractVector{N}) where {N<:Real}
+
+Translate (i.e., shift) a polygon in vertex representation by a given vector.
+
+### Input
+
+- `P` -- polygon in vertex representation
+- `v` -- translation vector
+
+### Output
+
+A translated polygon in vertex representation.
+
+### Algorithm
+
+We add the vector to each vertex of the polygon.
+"""
+function translate(P::VPolygon{N}, v::AbstractVector{N}) where {N<:Real}
+    @assert length(v) == dim(P) "cannot translate a $(dim(P))-dimensional " *
+                                "set by a $(length(v))-dimensional vector"
+    return VPolygon([x + v for x in vertices_list(P)])
 end

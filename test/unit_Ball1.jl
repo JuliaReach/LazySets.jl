@@ -68,6 +68,9 @@ for N in [Float64, Rational{Int}, Float32]
     # an_element & membership function
     @test an_element(b) ∈ b
 
+    # translation
+    @test translate(b, N[1, 2]) == Ball1(N[1, 2], N(2))
+
     # vertices_list
     vl = vertices_list(b)
     @test ispermutation(vl, [N[2, 0], N[0, 2], N[-2, 0], N[0, -2]])

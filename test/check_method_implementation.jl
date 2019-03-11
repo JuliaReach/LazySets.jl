@@ -46,22 +46,7 @@ function check_method_implementation(interface::Type,
                                     )::Bool
     # first collect all base types that are subtypes of this interface
     # NOTE: 'isleaftype' does not work due to type parameters
-    subtypes_to_test = subtypes(interface)
-    @assert !isempty(subtypes_to_test) "an interface must have a subtype"
-    base_types = Vector{Type}()
-    i = 0
-    while i < length(subtypes_to_test)
-        i += 1
-        subtype = subtypes_to_test[i]
-        new_subtypes = subtypes(subtype)
-        if isempty(new_subtypes)
-            # base type found
-            push!(base_types, subtype)
-        else
-            # yet another interface layer
-            append!(subtypes_to_test, new_subtypes)
-        end
-    end
+    base_types = LazySets.subtypes(interface, true)
 
     # now check all base types
     for subtype in base_types

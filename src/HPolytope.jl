@@ -55,7 +55,6 @@ HPolytope{N}(A::AbstractMatrix{N}, b::AbstractVector{N};
              check_boundedness::Bool=false) where {N<:Real} =
     HPolytope(A, b; check_boundedness=check_boundedness)
 
-
 # --- LazySet interface functions ---
 
 
@@ -129,7 +128,11 @@ function isbounded(P::HPolytope, use_type_assumption::Bool=true)::Bool
     return isbounded(HPolyhedron(P.constraints))
 end
 
-
+function _linear_map_hrep(M::AbstractMatrix{N}, P::HPolytope{N},
+                          use_inv::Bool) where {N<:Real}
+    constraints = _linear_map_hrep_helper(M, P, use_inv)
+    return HPolytope(constraints)
+end
 
 # --- functions that use Polyhedra.jl ---
 

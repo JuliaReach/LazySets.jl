@@ -60,6 +60,7 @@ if test_suite_polyhedra || test_suite_plotting
     import LazySets.HalfSpace
     import LazySets.Interval
     import LazySets.Line
+    import LazySets.translate
 end
 
 if test_suite_basic
@@ -92,11 +93,6 @@ if test_suite_basic
     @time @testset "LazySets.Line" begin include("unit_Line.jl") end
     @time @testset "LazySets.Universe" begin include("unit_Universe.jl") end
 
-    # =========================================================
-    # Testing other set types that do not inherit from LazySet
-    # =========================================================
-    @time @testset "LazySets.UnionSet" begin include("unit_UnionSet.jl") end
-
     # =========================================
     # Testing types representing set operations
     # =========================================
@@ -106,12 +102,19 @@ if test_suite_basic
     @time @testset "LazySets.LinearMap" begin include("unit_LinearMap.jl") end
     @time @testset "LazySets.MinkowskiSum" begin include("unit_MinkowskiSum.jl") end
     @time @testset "LazySets.CartesianProduct" begin include("unit_CartesianProduct.jl") end
+    @time @testset "LazySets.ResetMap" begin include("unit_ResetMap.jl") end
     @time @testset "LazySets.SymmetricIntervalHull" begin include("unit_SymmetricIntervalHull.jl") end
 
     # ======================
     # Testing set interfaces
     # ======================
     @time @testset "LazySets.CompactSet" begin include("unit_CompactSet.jl") end
+
+    # =========================================================
+    # Testing other set types that do not inherit from LazySet
+    # =========================================================
+    @time @testset "LazySets.Complement" begin include("unit_Complement.jl") end
+    @time @testset "LazySets.UnionSet" begin include("unit_UnionSet.jl") end
 
     # =================================================================
     # Algorithms for approximation of convex sets using support vectors

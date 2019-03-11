@@ -11,7 +11,9 @@ export LazySet,
        isbounded, isbounded_unit_dimensions,
        neutral,
        absorbing,
-       tosimplehrep
+       tosimplehrep,
+       isuniversal,
+       translate
 
 """
     LazySet{N}
@@ -32,9 +34,13 @@ Every concrete `LazySet` must define the following functions:
     `Real`
 - `dim(S::LazySet)::Int` -- the ambient dimension of `S`
 
+The subtypes of `LazySet` (including abstract interfaces):
+
 ```jldoctest
-julia> subtypes(LazySet)
-15-element Array{Any,1}:
+julia> using LazySets: subtypes
+
+julia> subtypes(LazySet, false)
+17-element Array{Any,1}:
  AbstractCentrallySymmetric
  AbstractPolyhedron
  CacheMinkowskiSum
@@ -50,7 +56,53 @@ julia> subtypes(LazySet)
  LinearMap
  MinkowskiSum
  MinkowskiSumArray
+ ResetMap
+ Translation
 ```
+
+If we only consider *concrete* subtypes, then:
+
+```jldoctest
+julia> LazySets.subtypes(LazySet, true)
+37-element Array{Type,1}:
+ Ball1
+ Ball2
+ BallInf
+ Ballp
+ CacheMinkowskiSum
+ CartesianProduct
+ CartesianProductArray
+ ConvexHull
+ ConvexHullArray
+ Ellipsoid
+ EmptySet
+ ExponentialMap
+ ExponentialProjectionMap
+ HPolygon
+ HPolygonOpt
+ HPolyhedron
+ HPolytope
+ HalfSpace
+ Hyperplane
+ Hyperrectangle
+ Intersection
+ IntersectionArray
+ Interval
+ Line
+ LineSegment
+ LinearMap
+ MinkowskiSum
+ MinkowskiSumArray
+ ResetMap
+ Singleton
+ SymmetricIntervalHull
+ Translation
+ Universe
+ VPolygon
+ VPolytope
+ ZeroSet
+ Zonotope
+ ```
 """
 abstract type LazySet{N} end
 
@@ -340,3 +392,50 @@ list of linear constraints.
 This fallback implementation relies on `constraints_list(S)`.
 """
 tosimplehrep(S::LazySet) = tosimplehrep(constraints_list(S))
+
+"""
+    isuniversal(X::LazySet{N}, [witness]::Bool=false
+               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether a given convex set is universal, and otherwise optionally compute
+a witness.
+
+### Input
+
+- `X`       -- convex set
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``X`` is universal
+* If `witness` option is activated:
+  * `(true, [])` iff ``X`` is universal
+  * `(false, v)` iff ``X`` is not universal and ``v ∉ X``
+
+### Notes
+
+This is a naive fallback implementation.
+"""
+function isuniversal(X::LazySet{N}, witness::Bool=false
+                    )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    if X isa Universe
+        result = true
+    elseif X isa HPolyhedron
+        # the polyhedron is universal iff there is no constraint at all
+        result = isempty(constraints_list(X))
+    elseif X isa HalfSpace || X isa Hyperplane || X isa Line
+        result = false
+    elseif isbounded(X)
+        result = false
+    else
+        error("cannot determine universality of the set")
+    end
+
+    if result
+        return witness ? (true, N[]) : true
+    elseif witness
+        error("witness production is currently not supported")
+    else
+        return false
+    end
+end

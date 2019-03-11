@@ -1,3 +1,6 @@
+import IntervalArithmetic
+using IntervalArithmetic: IntervalBox
+
 for N in [Float64, Rational{Int}, Float32]
     # random hyperrectangle
     rand(Hyperrectangle)
@@ -134,13 +137,11 @@ for N in [Float64, Rational{Int}, Float32]
 
     # linear map (concrete)
     P = linear_map(N[1 0; 0 2], H1)
-    @test P isa VPolytope # in 2D is a VPolytope, see #631
-    P = linear_map(N[1 0; 0 2], H1, output_type=VPolygon)
-    @test P isa VPolygon
+    @test P isa HPolygon # in 2D and for invertible map we get an HPolygon; see #631 and #1093
 
     P = linear_map(Diagonal(N[1, 2, 3, 4]),
                    Approximations.overapproximate(H1 * H1))
-    @test P isa VPolytope # in 4D we get a VPolytope
+    @test P isa HPolytope # in 4D and for invertible map we get an HPolytope; see #631 and #1093
 
     # check that vertices_list is computed correctly if the hyperrectangle
     # is "degenerate" in the sense that its radius is zero in all dimensions
@@ -159,4 +160,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test ispermutation(clist,
                         [HalfSpace(N[1, 0], N(3)), HalfSpace(N[0, 1], N(3)),
                          HalfSpace(N[-1, 0], N(1)), HalfSpace(N[0, -1], N(1))])
+
+    # conversion to and from IntervalArithmetic's IntervalBox type
+    B = IntervalBox(IntervalArithmetic.Interval(0, 1), IntervalArithmetic.Interval(0, 1))
+    H = convert(Hyperrectangle, B)
+    @test convert(IntervalBox, H) == B
 end

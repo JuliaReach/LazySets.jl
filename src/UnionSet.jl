@@ -1,4 +1,4 @@
-import Base: isempty, ∈, ∪, Union
+import Base: isempty, ∈, ∪
 
 export UnionSet,
        UnionSetArray,
@@ -43,7 +43,7 @@ Alias for `UnionSet`.
 ∪(X::LazySet, Y::LazySet) = UnionSet(X, Y)
 
 """
-    dim(cup::Union)::Int
+    dim(cup::UnionSet)::Int
 
 Return the dimension of the set union of two convex sets.
 
@@ -55,7 +55,7 @@ Return the dimension of the set union of two convex sets.
 
 The ambient dimension of the union of two convex sets.
 """
-function dim(cup::Union)::Int
+function dim(cup::UnionSet)::Int
     return dim(cup.X)
 end
 

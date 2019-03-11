@@ -1,5 +1,35 @@
+@static if VERSION < v"0.7-"
+    import Base.subtypes
+else
+    import InteractiveUtils: subtypes
+end
+
 # default tolerance for matrix condition number (see 'isinvertible')
 const DEFAULT_COND_TOL = 1e6
+
+"""
+    dot_zero(x::AbstractVector{N}, y::AbstractVector{N}) where{N<:Real}
+
+Dot product with preference for zero value in the presence of infinity values.
+
+### Input
+
+- `x` -- first vector
+- `y` -- second vector
+
+### Output
+
+The dot product of `x` and `y`, but with the rule that `0 * Inf == 0`.
+"""
+function dot_zero(x::AbstractVector{N}, y::AbstractVector{N}) where{N<:Real}
+    res = zero(N)
+    for i in 1:length(x)
+        if !iszero(x[i]) && !iszero(y[i])
+            res += x[i] * y[i]
+        end
+    end
+    return res
+end
 
 """
     sign_cadlag(x::N)::N where {N<:Real}
@@ -23,9 +53,7 @@ It can be used with vector-valued arguments via the dot operator.
 ### Examples
 
 ```jldoctest
-julia> import LazySets.sign_cadlag
-
-julia> sign_cadlag.([-0.6, 1.3, 0.0])
+julia> LazySets.sign_cadlag.([-0.6, 1.3, 0.0])
 3-element Array{Float64,1}:
  -1.0
   1.0
@@ -90,6 +118,24 @@ function ispermutation(u::AbstractVector{T}, v::AbstractVector{T})::Bool where T
 end
 
 """
+    issquare(M::AbstractMatrix)::Bool
+
+Check whether a matrix is square.
+
+### Input
+
+- `M` -- matrix
+
+### Output
+
+`true` iff the matrix is square.
+"""
+function issquare(M::AbstractMatrix)::Bool
+    m, n = size(M)
+    return m == n
+end
+
+"""
     isinvertible(M::Matrix; [cond_tol]::Number=DEFAULT_COND_TOL)
 
 A sufficient check of a matrix being invertible (or nonsingular).
@@ -103,20 +149,26 @@ A sufficient check of a matrix being invertible (or nonsingular).
 ### Output
 
 If the result is `true`, `M` is invertible.
-If the result is `false`, this function could not conclude.
+If the result is `false`, the matrix is non-square or this function could not
+conclude.
 
 ### Algorithm
 
-We check whether the
+We check whether the matrix is square and whether the
 [matrix condition number](https://en.wikipedia.org/wiki/Condition_number#Matrices)
 `cond(M)` is below some prescribed tolerance.
 """
 function isinvertible(M::Matrix; cond_tol::Number=DEFAULT_COND_TOL)
-    return cond(M) < cond_tol
+    return issquare(M) && cond(M) < cond_tol
 end
 
+# cond is not available for sparse matrices; see JuliaLang#6485 and related issues
 function isinvertible(M::SparseMatrixCSC; cond_tol::Number=DEFAULT_COND_TOL)
-    return isinvertible(Matrix(M), cond_tol=cond_tol)
+    return issquare(M) && isinvertible(Matrix(M), cond_tol=cond_tol)
+end
+
+function isinvertible(M::Diagonal; cond_tol=nothing)
+    return !any(iszero, diag(M))
 end
 
 """
@@ -161,13 +213,15 @@ and `(false, 0)` otherwise.
 ### Examples
 
 ```jldoctest
-julia> LazySets.samedir([1, 2, 3], [2, 4, 6])
+julia> using LazySets: samedir
+
+julia> samedir([1, 2, 3], [2, 4, 6])
 (true, 0.5)
 
-julia> LazySets.samedir([1, 2, 3], [3, 2, 1])
+julia> samedir([1, 2, 3], [3, 2, 1])
 (false, 0)
 
-julia> LazySets.samedir([1, 2, 3], [-1, -2, -3])
+julia> samedir([1, 2, 3], [-1, -2, -3])
 (false, 0)
 
 ```
@@ -231,7 +285,57 @@ function nonzero_indices(v::AbstractVector{N})::Vector{Int} where {N<:Real}
 end
 
 function nonzero_indices(v::SparseVector{N})::Vector{Int} where {N<:Real}
-    return x.nzind
+    return v.nzind
+end
+
+"""
+    substitute(substitution::Dict{Int, T}, x::AbstractVector{T}) where {T}
+
+Apply a substitution to a given vector.
+
+### Input
+
+- `substitution` -- substitution (a mapping from an index to a new value)
+- `x`            -- vector
+
+### Output
+
+A fresh vector corresponding to `x` after `substitution` was applied.
+"""
+function substitute(substitution::Dict{Int, T}, x::AbstractVector{T}) where {T}
+    return substitute!(substitution, copy(x))
+end
+
+"""
+    substitute!(substitution::Dict{Int, T}, x::AbstractVector{T}) where {T}
+
+Apply a substitution to a given vector.
+
+### Input
+
+- `substitution` -- substitution (a mapping from an index to a new value)
+- `x`            -- vector (modified in this function)
+
+### Output
+
+The same (but see the Notes below) vector `x` but after `substitution` was
+applied.
+
+### Notes
+
+The vector `x` is modified in-place if it has type `Vector` or `SparseVector`.
+Otherwise, we first create a new `Vector` from it.
+"""
+function substitute!(substitution::Dict{Int, T}, x::AbstractVector{T}) where {T}
+    return substitute!(Vector(x), substitution)
+end
+
+function substitute!(substitution::Dict{Int, T},
+                     x::Union{Vector{T}, SparseVector{T}}) where {T}
+    for (index, value) in substitution
+        x[index] = value
+    end
+    return x
 end
 
 """
@@ -427,3 +531,83 @@ end
 
 end # @eval
 end # if
+
+"""
+    subtypes(interface, concrete::Bool)
+
+Return the concrete subtypes of a given interface.
+
+### Input
+
+- `interface` -- an abstract type, usually a set interface
+- `concrete`  -- if `true`, seek further the inner abstract subtypes of the given
+                 interface, otherwise return only the direct subtypes of `interface`
+
+### Output
+
+A list with the subtypes of the abstract type `interface`, sorted alphabetically.
+
+### Examples
+
+Consider the `AbstractPolytope` interface. If we include the abstract subtypes
+of this interface,
+
+```jldoctest subtypes
+julia> using LazySets: subtypes
+
+julia> subtypes(AbstractPolytope, false)
+4-element Array{Any,1}:
+ AbstractCentrallySymmetricPolytope
+ AbstractPolygon
+ HPolytope
+ VPolytope
+```
+
+We can use this function to obtain the concrete subtypes of
+`AbstractCentrallySymmetricPolytope` and `AbstractPolygon` (further until all
+concrete types are obtained), using the `concrete` flag:
+
+```jldoctest subtypes
+julia> subtypes(AbstractPolytope, true)
+14-element Array{Type,1}:
+ Ball1
+ BallInf
+ HPolygon
+ HPolygonOpt
+ HPolytope
+ Hyperrectangle
+ Interval
+ LineSegment
+ Singleton
+ SymmetricIntervalHull
+ VPolygon
+ VPolytope
+ ZeroSet
+ Zonotope
+```
+"""
+function subtypes(interface, concrete::Bool)
+
+    subtypes_to_test = subtypes(interface)
+    
+    # do not seek the concrete subtypes further
+    if !concrete 
+        return sort(subtypes_to_test, by=string)
+    end
+
+    result = Vector{Type}()
+    i = 0
+    while i < length(subtypes_to_test)
+        i += 1
+        subtype = subtypes_to_test[i]
+        new_subtypes = subtypes(subtype)
+        if isempty(new_subtypes)
+            # base type found
+            push!(result, subtype)
+        else
+            # yet another interface layer
+            append!(subtypes_to_test, new_subtypes)
+        end
+    end
+    return sort(result, by=string)
+end

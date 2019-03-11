@@ -393,64 +393,37 @@ function remove_redundant_constraints!(P::HPoly{N};
 end
 
 """
-    linear_map(M::AbstractMatrix{N}, P::PT;
-              [cond_tol=DEFAULT_COND_TOL]::Number,
-              [use_inv]::Bool=!issparse(M)) where {N<:Real, PT<:HPoly{N}}
+    translate(P::PT, v::AbstractVector{N}; share::Bool=false
+             ) where {N<:Real, PT<:HPoly{N}}
 
-Concrete linear map of a polyhedron in constraint representation.
+Translate (i.e., shift) a polyhedron in constraint representation by a given
+vector.
 
 ### Input
 
-- `M`        -- matrix
-- `P`        -- polyhedron in constraint representation
-- `cond_tol` -- (optional) tolerance of matrix condition (used to check whether
-                the matrix is invertible)
-- `use_inv`  -- (optional, default: `false` if `M` is sparse and `true`
-                otherwise) whether to compute the full left division through
-                `inv(M)`, or to use the left division for each vector; see below
+- `P`     -- polyhedron in constraint representation
+- `v`     -- translation vector
+- `share` -- (optional, default: `false`) flag for sharing unmodified parts of
+             the original set representation
 
 ### Output
 
-A polyhedron of the same type as the input (`PT`).
+A translated polyhedron in constraint representation.
+
+### Notes
+
+The normal vectors of the constraints (vector `a` in `a⋅x ≤ b`) are shared with
+the original constraints if `share == true`.
 
 ### Algorithm
 
-If the matrix ``M`` is invertible (which we check with a sufficient condition),
-then ``y = M x`` implies ``x = \\text{inv}(M) y`` and we transform the
-constraint system ``A x ≤ b`` to ``A \\text{inv}(M) y ≤ b``.
-
-The option `use_inv` is a workaround to allow using the invertibility condition
-when `M` is a sparse matrix, since the `inv` function is not available for
-sparse matrices. In that case, either assure that `use_inv=false`, or use
-`linear_map(Matrix(M), P)`.
+We translate every constraint.
 """
-function linear_map(M::AbstractMatrix{N},
-                    P::PT;
-                    cond_tol::Number=DEFAULT_COND_TOL,
-                    use_inv::Bool=!issparse(M)
-                   ) where {N<:Real, PT<:HPoly{N}}
-    if !isinvertible(M; cond_tol=cond_tol)
-        if P isa HPolyhedron
-            error("linear maps for polyhedra need to be invertible")
-        end
-        # use the implementation for general polytopes
-        return invoke(linear_map, Tuple{typeof(M), AbstractPolytope{N}}, M, P)
-    end
-
-    constraints = similar(constraints_list(P))
-
-    # matrix M is invertible => the normal vectors are vec(c.a' * inv(M))
-    if use_inv
-        invM = inv(M)
-        @inbounds for (i, c) in enumerate(constraints_list(P))
-            constraints[i] = LinearConstraint(vec(c.a' * invM), c.b)
-        end
-    else
-        # take left division for each constraint c, transpose(M) \ c.a
-        @inbounds for (i, c) in enumerate(constraints_list(P))
-            constraints[i] = LinearConstraint(_At_ldiv_B(Matrix(M), c.a), c.b)
-        end
-    end
+function translate(P::PT, v::AbstractVector{N}; share::Bool=false
+                  ) where {N<:Real, PT<:HPoly{N}}
+    @assert length(v) == dim(P) "cannot translate a $(dim(P))-dimensional " *
+                                "set by a $(length(v))-dimensional vector"
+    constraints = [translate(c, v; share=share) for c in constraints_list(P)]
     return PT(constraints)
 end
 
@@ -625,8 +598,9 @@ Determine whether a polyhedron is empty.
 - `use_polyhedra_interface` -- (optional, default: `false`) if `true`, we use
                the `Polyhedra` interface for the emptiness test
 - `solver`  -- (optional, default: `GLPKSolverLP()`) LP-solver backend
-- `backend` -- (optional, default: `default_polyhedra_backend(P, N)`) backend
-               for polyhedral computations in `Polyhedra`
+- `backend` -- (optional, default: `nothing`) backend for polyhedral
+               computations in `Polyhedra`; its value is set internally (see the
+               Notes below for details)
 
 ### Output
 
@@ -636,6 +610,10 @@ Determine whether a polyhedron is empty.
   * `(false, v)` iff ``P ≠ ∅`` and ``v ∈ P``
 
 ### Notes
+
+The default value of the `backend` is set internally and depends on whether the
+`use_polyhedra_interface` option is set or not.
+If the option is set, we use `default_polyhedra_backend(P, N)`.
 
 Witness production is not supported if `use_polyhedra_interface` is `true`.
 
@@ -649,11 +627,14 @@ function isempty(P::HPoly{N},
                  witness::Bool=false;
                  use_polyhedra_interface::Bool=false,
                  solver=GLPKSolverLP(),
-                 backend=default_polyhedra_backend(P, N)
+                 backend=nothing
                 )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     if use_polyhedra_interface
         @assert isdefined(@__MODULE__, :Polyhedra) "the function `isempty` " *
             "with the given options requires the package 'Polyhedra'"
+        if backend == nothing
+            backend = default_polyhedra_backend(P, N)
+        end
         result = Polyhedra.isempty(polyhedron(P; backend=backend), solver)
         if result
             return witness ? (true, N[]) : true

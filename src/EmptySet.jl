@@ -243,3 +243,21 @@ Return the linear map of an empty set.
 The empty set.
 """
 linear_map(M::AbstractMatrix{N}, ∅::EmptySet{N}) where {N} = ∅
+
+"""
+    translate(∅::EmptySet{N}, v::AbstractVector{N}) where {N<:Real}
+
+Translate (i.e., shift) an empty set by a given vector.
+
+### Input
+
+- `∅` -- empty set
+- `v` -- translation vector
+
+### Output
+
+The empty set.
+"""
+function translate(∅::EmptySet{N}, v::AbstractVector{N}) where {N<:Real}
+    return ∅
+end

@@ -50,9 +50,13 @@ for N in [Float64, Rational{Int}, Float32]
     @test an_element(z) ∈ z
 
     # concrete operations
-    Z1 = Zonotope(N[1, 1], N[1 1; -1 1])
+    gens = N[1 1; -1 1]
+    Z1 = Zonotope(N[1, 1], gens)
     Z2 = Zonotope(N[-1, 1], Matrix{N}(I, 2, 2))
     A = N[0.5 1; 1 0.5]
+
+    # translation
+    @test translate(Z1, N[1, 2]) == Zonotope(N[2, 3], gens)
 
     # concrete Minkowski sum
     Z3 = minkowski_sum(Z1, Z2)
@@ -101,6 +105,16 @@ for N in [Float64, Rational{Int}, Float32]
     Z = Zonotope(N[0, 0], N[1 1; -1 1])
     Z1, Z2 = split(Z, 1) # in this case the splitting is exact
     @test Z1 ⊆ Z && Z2 ⊆ Z
+
+    # list of constraints
+    Z = Zonotope(zeros(N, 3), Matrix(N(1)*I, 3, 3))
+    B = BallInf(zeros(N, 3), N(1)) # equivalent to Z
+    if N != Rational{Int} || test_suite_polyhedra
+        # the rational case uses vrep => needs Polyhedra
+        constraints = constraints_list(Z)
+        H = HPolytope(constraints)
+        @test H ⊆ B && B ⊆ H
+    end
 end
 
 for N in [Float64, Rational{Int}]

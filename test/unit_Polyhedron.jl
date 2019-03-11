@@ -1,3 +1,9 @@
+@static if VERSION >= v"0.7-"
+    using SparseArrays
+end
+
+using LazySets: isinvertible
+
 global test_suite_polyhedra
 
 for N in [Float64, Rational{Int}, Float32]
@@ -64,6 +70,12 @@ for N in [Float64, Rational{Int}, Float32]
     # concrete linear map with invertible matrix
     linear_map(N[2 3; 1 2], p)
 
+    # translation
+    p2 = translate(p, N[1, 2])
+    @test p2 isa HPolyhedron && ispermutation(constraints_list(p2),
+        [HalfSpace(N[2, 2], N(18)), HalfSpace(N[-3, 3], N(9)),
+         HalfSpace(N[-1, -1], N(-3)), HalfSpace(N[2, -4], N(-6))])
+
     if test_suite_polyhedra
         # conversion to and from Polyhedra's VRep data structure
         cl = constraints_list(HPolyhedron(polyhedron(p)))
@@ -81,7 +93,7 @@ for N in [Float64, Rational{Int}, Float32]
         @test isempty(P)
 
         # concrete linear map with noninvertible matrix throws an error
-        @test_throws ErrorException linear_map(N[2 3; 0 0], P)
+        @test_throws ArgumentError linear_map(N[2 3; 0 0], P)
     end
 end
 
@@ -187,5 +199,46 @@ if test_suite_polyhedra
         @test isdisjoint(P, R) && res && w == N[]
         res, w = isdisjoint(R, P, true)
         @test isdisjoint(R, P) && res && w == N[]
+
+        Punbdd = HPolyhedron([HalfSpace([0.68, 1.22], -0.76),
+                              HalfSpace{Float64}([-0.75, -0.46], 0.68)])
+        @assert !isbounded(Punbdd)
+
+        Pbdd = HPolyhedron([HalfSpace([0.68, 1.22], -0.76),
+                            HalfSpace{Float64}([-0.75, -0.46], 0.68),
+                            HalfSpace{Float64}([1.72, 0.33], 0.37),
+                            HalfSpace{Float64}([-1.60, -0.41], 0.67),
+                            HalfSpace{Float64}([-0.44, 0.06], 0.78)])
+        @assert isbounded(Pbdd)
+
+        Mnotinv = [1.0 0.0; 2.0 0.0]
+        @assert !isinvertible(Mnotinv)
+
+        Minv = [1.0 2.0; -1.0 0.4]
+        @assert isinvertible(Minv)
+
+        # invertible matrix times a bounded polyhedron 
+        L = linear_map(Minv, Pbdd)
+        @test L isa HPolyhedron
+
+        # invertible matrix times an unbounded polyhedron 
+        L = linear_map(Minv, Punbdd)
+        @test L isa HPolyhedron
+
+        # not invertible matrix times a bounded polyhedron 
+        L = linear_map(Mnotinv, Pbdd) # Requires Polyhedra because it works on vertices
+        @test L isa VPolytope
+
+        # not invertible matrix times an unbounded polyhedron
+        @test_throws ArgumentError linear_map(Mnotinv, Punbdd)
+
+        # check that we can use sparse matrices as well ; Requires SparseArrays
+        L = linear_map(sparse(Minv), Pbdd)
+        @test L isa HPolyhedron
+        L = linear_map(sparse(Minv), Punbdd)
+        @test L isa HPolyhedron
+        L = linear_map(sparse(Mnotinv), Pbdd) # Requires Polyhedra because it works on vertices
+        @test L isa VPolytope
+        @test_throws ArgumentError linear_map(sparse(Mnotinv), Punbdd)
     end
 end

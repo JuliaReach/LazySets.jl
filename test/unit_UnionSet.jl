@@ -12,6 +12,9 @@ for N in [Float64, Rational{Int}, Float32]
     Uarr = UnionSetArray([B1, B2])
 
     for U in [UXY, Uarr]
+        # dimension
+        @test dim(U) == dim(B1)
+
         # support vector (default algorithm)
         d = N[1, 0]
         @test σ(d, U) == [N(2), N(1)]

@@ -41,15 +41,11 @@ function overapproximate(S::LazySet{N},
                         )::HPolygon where {N<:Real}
     @assert dim(S) == 2
     if ε == Inf
-        pe = σ(DIR_EAST(N), S)
-        pn = σ(DIR_NORTH(N), S)
-        pw = σ(DIR_WEST(N), S)
-        ps = σ(DIR_SOUTH(N), S)
         constraints = Vector{LinearConstraint{N}}(undef, 4)
-        constraints[1] = LinearConstraint(DIR_EAST(N), dot(pe, DIR_EAST(N)))
-        constraints[2] = LinearConstraint(DIR_NORTH(N), dot(pn, DIR_NORTH(N)))
-        constraints[3] = LinearConstraint(DIR_WEST(N), dot(pw, DIR_WEST(N)))
-        constraints[4] = LinearConstraint(DIR_SOUTH(N), dot(ps, DIR_SOUTH(N)))
+        constraints[1] = LinearConstraint(DIR_EAST(N), ρ(DIR_EAST(N), S))
+        constraints[2] = LinearConstraint(DIR_NORTH(N), ρ(DIR_NORTH(N), S))
+        constraints[3] = LinearConstraint(DIR_WEST(N), ρ(DIR_WEST(N), S))
+        constraints[4] = LinearConstraint(DIR_SOUTH(N), ρ(DIR_SOUTH(N), S))
         return HPolygon(constraints, sort_constraints=false)
     else
         return tohrep(approximate(S, ε))
@@ -85,7 +81,65 @@ A hyperrectangle.
 function overapproximate(S::LazySet,
                          ::Type{<:Hyperrectangle};
                         )::Union{Hyperrectangle, EmptySet}
-    box_approximation(S)
+    return box_approximation(S)
+end
+
+"""
+    overapproximate(S::CartesianProductArray{N, <:AbstractHyperrectangle{N}},
+                    ::Type{<:Hyperrectangle}) where {N<:Real}
+
+Return a tight overapproximation of the cartesian product array of a finite
+number of convex sets with and hyperrectangle.
+
+### Input
+
+- `S`              -- cartesian product array of a finite number of convex set
+- `Hyperrectangle` -- type for dispatch
+
+### Output
+
+A hyperrectangle.
+
+### Algorithm
+
+This method falls back to the corresponding `convert` method. Since the sets wrapped
+by the cartesian product array are hyperrectangles, it can be done efficiently
+without overapproximation.
+"""
+function overapproximate(S::CartesianProductArray{N, <:AbstractHyperrectangle{N}},
+                          ::Type{<:Hyperrectangle}) where {N<:Real}
+    return convert(Hyperrectangle, S)
+end
+
+"""
+    overapproximate(lm::LinearMap{N, <:AbstractHyperrectangle{N}},
+                    ::Type{Hyperrectangle}) where {N}
+
+Return a tight overapproximation of the linear map of a hyperrectangular set
+using a hyperrectangle.
+
+### Input
+
+- `S`              -- linear map of a hyperrectangular set
+- `Hyperrectangle` -- type for dispatch
+
+### Output
+
+A hyperrectangle.
+
+### Algorithm
+
+If `c` and `r` denote the center and vector radius of a hyperrectangle `H`,
+a tight hyperrectangular overapproximation of `M * H` is obtained by transforming
+`c ↦ M*c` and `r ↦ abs.(M) * c`, where `abs.(⋅)` denotes the element-wise absolute
+value operator. 
+"""
+function overapproximate(lm::LinearMap{N, <:AbstractHyperrectangle{N}},
+                         ::Type{Hyperrectangle}) where {N<:Real}
+    M, X = lm.M, lm.X
+    center_MX = M * center(X)
+    radius_MX = abs.(M) * radius_hyperrectangle(X)
+    return Hyperrectangle(center_MX, radius_MX)
 end
 
 """
@@ -105,31 +159,49 @@ Overapproximate the convex hull of two zonotopes.
 
 ### Input
 
-- `S`           -- convex hull of two zonotopes of the same order
-- `Zonotope`    -- type for dispatch
+- `S`        -- convex hull of two zonotopes
+- `Zonotope` -- type for dispatch
 
 ### Algorithm
 
-This function implements the method proposed in
-*Reachability of Uncertain Linear Systems Using Zonotopes, A. Girard, HSCC 2005*.
-The convex hull of two zonotopes of the same order, that we write
-``Z_j = ⟨c^{(j)}, g^{(j)}_1, …, g^{(j)}_p⟩`` for ``j = 1, 2``, can be
-overapproximated as follows:
+This function implements the method proposed in [1].
+The convex hull of two zonotopes ``Z₁`` and ``Z₂`` of the same order,
+that we write
+
+```math
+Z_j = ⟨c^{(j)}, g^{(j)}_1, …, g^{(j)}_p⟩
+```
+for ``j = 1, 2``, can be overapproximated as follows:
 
 ```math
 CH(Z_1, Z_2) ⊆ \\frac{1}{2}⟨c^{(1)}+c^{(2)}, g^{(1)}_1+g^{(2)}_1, …, g^{(1)}_p+g^{(2)}_p, c^{(1)}-c^{(2)}, g^{(1)}_1-g^{(2)}_1, …, g^{(1)}_p-g^{(2)}_p⟩.
 ```
 
-It should be noted that the output zonotope is not necessarily the minimal enclosing
-zonotope, which is in general expensive in high dimensions. This is further investigated
-in: *Zonotopes as bounding volumes, L. J. Guibas et al, Proc. of Symposium on Discrete Algorithms, pp. 803-812*.
+If the zonotope order is not the same, this algorithm calls
+`reduce_order` to reduce the order to the minimum of the arguments.
+
+It should be noted that the output zonotope is not necessarily the minimal
+enclosing zonotope, which is in general expensive in high dimensions. This is
+further investigated in [2].
+
+[1] Reachability of Uncertain Linear Systems Using Zonotopes, A. Girard.
+    HSCC 2005.
+
+[2] Zonotopes as bounding volumes, L. J. Guibas et al, Proc. of Symposium on
+    Discrete Algorithms, pp. 803-812.
 """
 function overapproximate(S::ConvexHull{N, Zonotope{N}, Zonotope{N}},
                          ::Type{<:Zonotope})::Zonotope where {N<:Real}
     Z1, Z2 = S.X, S.Y
-    @assert order(Z1) == order(Z2)
-    center = (Z1.center+Z2.center)/2
-    generators = [(Z1.generators .+ Z2.generators) (Z1.center - Z2.center) (Z1.generators .- Z2.generators)]/2
+    if order(Z1) != order(Z2)
+        min_order = min(order(Z1), order(Z2))
+        Z1 = reduce_order(Z1, min_order)
+        Z2 = reduce_order(Z2, min_order)
+    end
+    center = N(1/2) * (Z1.center + Z2.center)
+    generators = N(1/2) * hcat(Z1.generators .+ Z2.generators,
+                               Z1.center - Z2.center,
+                               Z1.generators .- Z2.generators)
     return Zonotope(center, generators)
 end
 
@@ -172,12 +244,12 @@ Overapproximating a set with template directions.
 
 ### Input
 
-- `X`           -- set
-- `dir`         -- direction representation
+- `X`   -- set
+- `dir` -- (concrete) direction representation
 
 ### Output
 
-A `HPolytope` overapproximating the set `X` with the directions from `dir`.
+An `HPolytope` overapproximating the set `X` with the directions from `dir`.
 """
 function overapproximate(X::LazySet{N},
                          dir::AbstractDirections{N}
@@ -192,24 +264,48 @@ function overapproximate(X::LazySet{N},
 end
 
 """
+    overapproximate(X::LazySet{N},
+                    dir::Type{<:AbstractDirections})::HPolytope{N} where {N}
+
+Overapproximating a set with template directions.
+
+### Input
+
+- `X`   -- set
+- `dir` -- type of direction representation
+
+### Output
+
+A `HPolytope` overapproximating the set `X` with the directions from `dir`.
+"""
+function overapproximate(X::LazySet{N},
+                         dir::Type{<:AbstractDirections}
+                        )::HPolytope{N} where {N}
+    return overapproximate(X, dir{N}(dim(X)))
+end
+
+"""
     overapproximate(S::LazySet{N}, ::Type{Interval}) where {N<:Real}
 
 Return the overapproximation of a real unidimensional set with an interval.
 
 ### Input
 
-- `S`           -- one-dimensional set
-- `Interval`    -- type for dispatch
+- `S`        -- one-dimensional set
+- `Interval` -- type for dispatch
 
 ### Output
 
 An interval.
+
+### Algorithm
+
+The method relies on the exact conversion to `Interval`. Two support
+function evaluations are needed in general.
 """
 function overapproximate(S::LazySet{N}, ::Type{Interval}) where {N<:Real}
-    @assert dim(S) == 1
-    lo = σ([-one(N)], S)[1]
-    hi = σ([one(N)], S)[1]
-    return Interval(lo, hi)
+    @assert dim(S) == 1 "cannot overapproximate a $(dim(S))-dimensional set with an `Interval`"
+    return convert(Interval, S)
 end
 
 function overapproximate_cap_helper(X::LazySet{N},                # compact set
@@ -383,3 +479,4 @@ function overapproximate(cap::Intersection{N,
                         ) where {N<:Real}
     return overapproximate(swap(cap), dir; kwargs...)
 end
+

@@ -6,8 +6,9 @@ export Ball1
 """
     Ball1{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
 
-Type that represents a ball in the 1-norm, also known as Manhattan or Taxicab
-norm.
+Type that represents a ball in the 1-norm (also known as the Manhattan norm).
+The ball is also known as a
+[cross-polytope](https://en.wikipedia.org/wiki/Cross-polytope).
 
 It is defined as the set
 
@@ -248,4 +249,28 @@ function constraints_list(B::Ball1{N})::Vector{LinearConstraint{N}} where {N<:Re
         clist[i] = LinearConstraint(d, dot(d, c) + r)
     end
     return clist
+end
+
+"""
+    translate(B::Ball1{N}, v::AbstractVector{N}) where {N<:Real}
+
+Translate (i.e., shift) a ball in the 1-norm by a given vector.
+
+### Input
+
+- `B` -- ball in the 1-norm
+- `v` -- translation vector
+
+### Output
+
+A translated ball in the 1-norm.
+
+### Algorithm
+
+We add the vector to the center of the ball.
+"""
+function translate(B::Ball1{N}, v::AbstractVector{N}) where {N<:Real}
+    @assert length(v) == dim(B) "cannot translate a $(dim(B))-dimensional " *
+                                "set by a $(length(v))-dimensional vector"
+    return Ball1(center(B) + v, B.radius)
 end

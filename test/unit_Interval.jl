@@ -63,6 +63,9 @@ for N in [Float64, Float32, Rational{Int}]
     # isempty
     @test !isempty(x)
 
+    # translation
+    @test translate(x, N[2]) == Interval(N(2), N(3))
+
     # Minkowski sum (test that we get the same results as the concrete operation)
     m = x ⊕ y
     @test m isa MinkowskiSum
@@ -91,4 +94,13 @@ for N in [Float64, Float32, Rational{Int}]
     # check empty intersection
     E = intersection(A, Interval(N(0), N(1)))
     @test isempty(E)
+
+    # conversion from a hyperrectangular set to an interval
+    H = Hyperrectangle(N[0], N[1/2])
+    A = convert(Interval, H)
+    @test A isa Interval && low(A) == [N(-1/2)] && high(A) == [N(1/2)]
+    # conversion from a lazyset to an interval
+    M = hcat(N[2])
+    B = convert(Interval, M*H)
+    @test B isa Interval && low(B) == [N(-1)] && high(B) == [N(1)]
 end

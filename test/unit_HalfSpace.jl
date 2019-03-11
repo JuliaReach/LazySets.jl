@@ -3,8 +3,7 @@ for N in [Float64, Rational{Int}, Float32]
     rand(HalfSpace)
 
     # normal constructor
-    normal = ones(N, 3)
-    hs = HalfSpace(normal, N(5))
+    hs = HalfSpace(ones(N, 3), N(5))
 
     # numeric-type conversion preserves vector base type
     hs1 = HalfSpace(spzeros(4), 1.)
@@ -65,10 +64,15 @@ for N in [Float64, Rational{Int}, Float32]
     # constrained dimensions
     @test constrained_dimensions(HalfSpace(N[1, 0, 1], N(1))) == [1, 3]
     @test constrained_dimensions(HalfSpace(N[0, 1, 0], N(1))) == [2]
+    # sparse vector
+    @test constrained_dimensions(HalfSpace(sparsevec([2], N[1], 3), N(1))) == [2]
 
     # halfspace_left & halfspace_right
     @test N[1, 2] ∈ halfspace_left(N[1, 1], N[2, 2])
     @test N[2, 1] ∈ halfspace_right(N[1, 1], N[2, 2])
+
+    # translation
+    @test translate(hs, N[1, 2, 3]) == HalfSpace(ones(N, 3), N(11))
 
     # intersection emptiness
     b = BallInf(N[3, 3, 3], N(1))
@@ -97,10 +101,10 @@ for N in [Float64, Rational{Int}, Float32]
     @test !LazySets.is_tighter_same_dir_2D(c1, c2, strict=true) &&
           LazySets.is_tighter_same_dir_2D(c3, c2, strict=true)
 
-    # test linear map of a half-space
-    H = HalfSpace(N[1.0, -1.0], N(0.0)) # x <= y
-    M = Matrix(-N(1.0)*I, 2, 2)
-    MH = linear_map(M, H)
-    @test constraints_list(MH)[1] == HalfSpace(N[-1.0, 1.0], N(0.0)) # x >= y
-
+    # test concrete linear map of a half-space
+    H = HalfSpace(N[1, -1], N(0)) # x <= y
+    M = N[1 0; 0 0] # non-invertible matrix
+    @test_throws ArgumentError linear_map(M, H)
+    M = N[2 2; 0 1] # invertible matrix
+    @test linear_map(M, H) == HalfSpace(N[0.5, -2.0], N(0.0))
 end

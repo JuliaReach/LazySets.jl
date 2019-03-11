@@ -15,9 +15,11 @@ end
 an_element_helper
 binary_search_constraints
 cross_product(::AbstractMatrix{N}) where {N<:Real}
+dot_zero
 get_radius!
 isinvertible
 ispermutation
+issquare
 is_right_turn
 is_tighter_same_dir_2D
 nonzero_indices
@@ -26,6 +28,8 @@ sign_cadlag
 _random_zero_sum_vector
 remove_duplicates_sorted!
 reseed
+substitute
+substitute!
 σ_helper
 @neutral
 @absorbing
@@ -41,4 +45,10 @@ reseed
 CachedPair
 Approximations.UnitVector
 StrictlyIncreasingIndices
+```
+
+### Inspection of set interfaces
+
+```@docs
+LazySets.subtypes(::Any, ::Bool)
 ```

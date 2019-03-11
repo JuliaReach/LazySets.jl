@@ -125,8 +125,8 @@ $d^p_H(\mathcal{X}, \mathcal{Y}) = \max_{\ell \in \mathcal{B}_p^n}
 In the special case ``\mathcal{X} \subseteq \mathcal{Y}``, the absolute value
 can be removed.
 
-By adding directions using Lotov's method (s. below), the outer polyhedron in
-(3) is within Hausdorff distance ``\varepsilon \Vert{X}\Vert_p`` for
+By adding directions using Kamenev's algorithm (s. below), the outer polyhedron
+in (3) is within Hausdorff distance ``\varepsilon \Vert{X}\Vert_p`` for
 ``\mathcal{O}\left(\frac{1}{\varepsilon^{n-1}}\right)`` directions, and this
 bound is optimal.
 It follows that accurate outer polyhedral approximations are possible only in
@@ -136,12 +136,12 @@ For ``n=2``, the bound can be lowered to
 particularly efficient and the reason why we chose to decompose the system into
 subsystems of dimension 2.
 
-### Lotov's method
+### Kamenev's algorithm
 
 An overapproximation of the projections of a polyhedron given in constraint form
-can be obtained using Lotov's method; this is a particularly effective method in
-two dimensions.
-Lotov's algorithm proceeds as follows.
+can be obtained using Kamenev's algorithm; this is a particularly effective
+algorithm in two dimensions.
+Kamenev's algorithm proceeds as follows.
 Starting with at least ``n`` linearly independent template directions, compute
 an outer approximation.
 From the corresponding support vectors, compute an inner approximation, as the
@@ -153,4 +153,11 @@ template directions.
 This procedure is repeated until the distance is smaller than the desired error.
 
 For more details we refer to
-[the paper](https://github.com/JuliaReach/Reachability.jl/wiki/References#polyhedral-approximations).
+
+Kamenev, G. K. (1996). An algorithm for approximating polyhedra. Computational
+Mathematics and Mathematical Physics, 36(4), 533--544,
+
+[Lotov, A. V., & Pospelov, A. I. (2008). The modified method of refined bounds
+for polyhedral approximation of convex polytopes. Computational Mathematics and
+Mathematical Physics, 48(6), 933-941
+](https://link.springer.com/article/10.1134/S0965542508060055).

@@ -66,6 +66,9 @@ for N in [Float64, Float32]
     b = Ball2(N[1, 2], N(2))
     @test an_element(b) ∈ b
 
+    # translation
+    @test translate(b, N[1, 2]) == Ball2(N[2, 4], N(2))
+
     # subset
     b1 = Ball2(N[1, 2], N(2))
     b2 = Ball2(N[1, 2], N(0))

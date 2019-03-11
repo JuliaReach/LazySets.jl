@@ -236,3 +236,27 @@ function rand(::Type{Ballp};
     radius = abs(randn(rng, N))
     return Ballp(p, center, radius)
 end
+
+"""
+    translate(B::Ballp{N}, v::AbstractVector{N}) where {N<:AbstractFloat}
+
+Translate (i.e., shift) a ball in the p-norm by a given vector.
+
+### Input
+
+- `B` -- ball in the p-norm
+- `v` -- translation vector
+
+### Output
+
+A translated ball in the p- norm.
+
+### Algorithm
+
+We add the vector to the center of the ball.
+"""
+function translate(B::Ballp{N}, v::AbstractVector{N}) where {N<:AbstractFloat}
+    @assert length(v) == dim(B) "cannot translate a $(dim(B))-dimensional " *
+                                "set by a $(length(v))-dimensional vector"
+    return Ballp(B.p, center(B) + v, B.radius)
+end

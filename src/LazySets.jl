@@ -55,6 +55,7 @@ include("VPolygon.jl")
 include("VPolytope.jl")
 include("ZeroSet.jl")
 include("Zonotope.jl")
+include("Complement.jl")
 
 # ===================================================
 # Algorithms to compute the convex hull of polygons
@@ -70,7 +71,9 @@ include("ExponentialMap.jl")
 include("Intersection.jl")
 include("LinearMap.jl")
 include("MinkowskiSum.jl")
+include("ResetMap.jl")
 include("SymmetricIntervalHull.jl")
+include("Translation.jl")
 include("UnionSet.jl")
 
 # =============================

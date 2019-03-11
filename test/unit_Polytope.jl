@@ -96,7 +96,7 @@ for N in [Float64, Rational{Int}, Float32]
                    HalfSpace(N[0, 1], N(1)),
                    HalfSpace(N[-1, -0], N(1)),
                    HalfSpace(N[-0, -1], N(1)),
-                   HalfSpace(N[2, 0], N(2))]) # redundant
+                   HalfSpace(N[1, 0], N(2))]) # redundant
 
     Pred = remove_redundant_constraints(P)
     @test length(Pred.constraints) == 4
@@ -105,6 +105,12 @@ for N in [Float64, Rational{Int}, Float32]
     # test in-place removal of redundancies
     remove_redundant_constraints!(P)
     @test length(P.constraints) == 4
+
+    # translation
+    P2 = translate(P, N[1, 2])
+    @test P2 isa HPolytope && ispermutation(constraints_list(P2),
+        [HalfSpace(N[1, 0], N(2)), HalfSpace(N[0, 1], N(3)),
+         HalfSpace(N[-1, -0], N(0)), HalfSpace(N[-0, -1], N(-1))])
 
     # subset
     H = BallInf(N[0, 0], N(1))
@@ -115,13 +121,14 @@ for N in [Float64, Rational{Int}, Float32]
     # =====================
     # Concrete linear map
     # =====================
-    linear_map(N[2 3; 1 2], P) # invertible matrix
+    LM = linear_map(N[2 3; 1 2], P) # invertible matrix
+    @test LM isa HPolytope
     if test_suite_polyhedra
-        linear_map(N[2 3; 0 0], P)  # noninvertible matrix
+        LM = linear_map(N[2 3; 0 0], P)  # non-invertible matrix
+        @test LM isa VPolygon
     end
 
     M = N[2 1; 0 1]
-    linear_map(M, P)
     L1 = linear_map(M, P, use_inv=true)  # calculates inv(M) explicitly
     L2 = linear_map(M, P, use_inv=false) # uses transpose(M) \ c.a for each constraint c of P
     L3 = linear_map(M, P, cond_tol=1e3)  # set a custom tolerance for the condition number (invertibility check)
@@ -129,6 +136,15 @@ for N in [Float64, Rational{Int}, Float32]
     p = convert(Vector{N}, an_element(P))
     @assert p ∈ P
     @test all([M * p ∈ Li for Li in [L1, L2, L3]])
+
+    # do not check for invertibility => use the vertices
+    L4 = linear_map(M, P, check_invertibility=false)
+    @test L4 isa VPolygon
+
+    # linear map for mixed types
+    M = [2 1; 0 1] # Int's
+    LM = linear_map(M, P)
+    @test LM isa HPolytope{N}
 
     # -----
     # V-rep
@@ -166,6 +182,9 @@ for N in [Float64, Rational{Int}, Float32]
     # membership
     @test N[.49, .49] ∈ p
     @test N[.51, .51] ∉ p
+
+    # translation
+    @test translate(p, N[1, 2]) == VPolytope([N[1, 2], N[2, 2], N[1, 3]])
 
     # copy (see #1002)
     p, q = [N(1)], [N(2)]
@@ -307,7 +326,7 @@ if test_suite_polyhedra
         # other polytopic sets
         p3 = VPolygon(vertices_list(p2))
         cap = intersection(p1, p3)
-        @test vertices_list(cap) == [N[1, 1]]
+        @test vertices_list(cap) ≈ [N[1, 1]]
         @static if VERSION < v"1.0" # does not work in v1.0 (see #834)
             p4 = BallInf(N[2, 2], N(1))
             cap = intersection(p1, p4)

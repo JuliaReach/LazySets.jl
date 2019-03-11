@@ -102,7 +102,6 @@ Inherited from [`LazySet`](@ref):
 
 ```@docs
 convex_hull
-convex_hull!
 right_turn
 monotone_chain!
 ```
@@ -284,6 +283,26 @@ ProjectionSparseMatrixExp
 *(::ProjectionSparseMatrixExp, ::LazySet)
 ```
 
+### Reset Map
+
+```@docs
+ResetMap
+dim(::ResetMap)
+ρ(::AbstractVector{N}, ::ResetMap{N}) where {N<:Real}
+σ(::AbstractVector{N}, ::ResetMap{N}) where {N<:Real}
+an_element(::ResetMap)
+isempty(::ResetMap)
+get_A(::ResetMap{N}) where {N<:Real}
+get_b(::ResetMap{N}) where {N<:Real}
+constraints_list(::ResetMap{N}) where {N<:Real}
+```
+
+Inherited from [`LazySet`](@ref):
+* [`isbounded`](@ref isbounded(::LinearMap))
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+
 ## Symmetric Interval Hull
 
 ```@docs
@@ -300,7 +319,9 @@ Inherited from [`LazySet`](@ref):
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
-* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolytope{N}) where {N<:Real})
+
+Inherited from [`AbstractPolyhedron`](@ref):
+* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real})
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
@@ -314,6 +335,21 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`high`](@ref high(::AbstractHyperrectangle{N}) where {N<:Real})
 * [`low`](@ref low(::AbstractHyperrectangle{N}) where {N<:Real})
 
+### Translation
+
+```@docs
+Translation
++(X::LazySet, v::AbstractVector)
+⊕(X::LazySet, v::AbstractVector)
+dim(::Translation)
+ρ(::AbstractVector{N}, ::Translation{N}) where {N<:Real}
+σ(::AbstractVector{N}, ::Translation{N}) where {N<:Real}
+an_element(::Translation)
+isempty(::Translation)
+constraints_list(::Translation{N}, ::Val{true}) where {N<:Real}
+LinearMap(::AbstractMatrix{N}, ::Translation{N}) where {N<:Real}
+```
+
 ## Union
 
 Note that a union of convex sets is generally not convex.
@@ -324,7 +360,7 @@ Hence these set types are not part of the convex-set family `LazySet`.
 ```@docs
 UnionSet
 ∪(::LazySet, ::LazySet)
-dim(::Union)
+dim(::UnionSet)
 σ(::AbstractVector{N}, ::UnionSet{N}; algorithm="support_vector") where {N<:Real}
 ρ(::AbstractVector{N}, ::UnionSet{N}) where {N<:Real}
 an_element(::UnionSet{N}) where {N<:Real}
@@ -345,4 +381,18 @@ an_element(::UnionSetArray{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::UnionSetArray{N}) where {N<:Real}
 isempty(::UnionSetArray)
 isbounded(::UnionSetArray)
+```
+
+## Complement
+
+Note that a complement of a convex set is generally not convex.
+Hence this set type is not part of the convex-set family `LazySet`.
+
+### Binary Set Union
+
+```@docs
+Complement
+dim(::Complement)
+∈(::AbstractVector{N}, ::Complement{N}) where {N<:Real}
+isempty(::Complement)
 ```
