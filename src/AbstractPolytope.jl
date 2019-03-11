@@ -134,15 +134,15 @@ function load_polyhedra_abstractpolytope() # function to be loaded by Requires
 return quote
 
 @static if VERSION < v"0.7-"
-    import Polyhedra:polyhedron,
-                     HRep, VRep,
+    import Polyhedra: polyhedron
+    export polyhedron
+    using Polyhedra: HRep, VRep,
                      removehredundancy!, removevredundancy!,
                      hreps, vreps,
                      intersect,
                      convexhull,
                      hcartesianproduct, vcartesianproduct,
                      points
-
     import CDDLib # default backend
 
     function default_polyhedra_backend(P, N::Type{<:AbstractFloat})
@@ -154,15 +154,16 @@ return quote
     end
 
 else
-    import .Polyhedra:polyhedron,
-                     HRep, VRep,
-                     removehredundancy!, removevredundancy!,
-                     hreps, vreps,
-                     intersect,
-                     convexhull,
-                     hcartesianproduct, vcartesianproduct,
-                     points,
-                     default_library
+    import .Polyhedra: polyhedron
+    export polyhedron
+    using .Polyhedra: HRep, VRep,
+                      removehredundancy!, removevredundancy!,
+                      hreps, vreps,
+                      intersect,
+                      convexhull,
+                      hcartesianproduct, vcartesianproduct,
+                      points,
+                      default_library
 
     function default_polyhedra_backend(P, N::Type{<:AbstractFloat})
         return default_library(LazySets.dim(P), Float64)

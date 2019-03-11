@@ -1,5 +1,9 @@
 import Base: ==, copy
 
+@static if VERSION >= v"0.7-"
+    import Random.rand
+end
+
 export LazySet,
        ρ, support_function,
        σ, support_vector,
@@ -343,7 +347,6 @@ end
 
 @static if VERSION >= v"0.7-"
     # hook into random API
-    import Random.rand
     function rand(rng::AbstractRNG, ::SamplerType{T}) where T<:LazySet
         rand(T, rng=rng)
     end

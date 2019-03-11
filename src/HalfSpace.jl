@@ -322,7 +322,7 @@ The left half-space of the "east" and "west" directions in two-dimensions are
 the upper and lower half-spaces:
 
 ```jldoctest halfspace_left
-julia> import LazySets.halfspace_left
+julia> using LazySets: halfspace_left
 
 julia> halfspace_left([0.0, 0.0], [1.0, 0.0])
 HalfSpace{Float64}([0.0, -1.0], 0.0)

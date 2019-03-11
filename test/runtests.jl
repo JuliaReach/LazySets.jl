@@ -1,5 +1,7 @@
-#!/usr/bin/env julia
-using LazySets
+using LazySets, LazySets.Approximations
+
+import IntervalArithmetic
+using IntervalArithmetic: IntervalBox
 
 # compatibility between Julia versions
 include("../src/compat.jl")
@@ -9,7 +11,8 @@ using Compat.Test
 include("to_N.jl")
 
 # non-exported helper functions
-import LazySets.ispermutation
+using LazySets: ispermutation, isinvertible
+using LazySets.Approximations: UnitVector
 
 global test_suite_basic = true
 global test_suite_doctests = VERSION >= v"0.7-" # only run doctests with new Julia version
@@ -47,20 +50,17 @@ end
 end
 
 Pkg.add("Optim")
+import Optim
 
 if test_suite_polyhedra || test_suite_plotting
     @static if VERSION < v"0.7-"
         Pkg.add("CDDLib")
     end
     Pkg.add("Polyhedra")
-    using Polyhedra
+    import Polyhedra
 
     # fix namespace conflicts with Polyhedra
-    import LazySets.dim
-    import LazySets.HalfSpace
-    import LazySets.Interval
-    import LazySets.Line
-    import LazySets.translate
+    using LazySets: dim, HalfSpace, Interval, Line, translate
 end
 
 if test_suite_basic
@@ -143,10 +143,11 @@ end
 
 if test_suite_plotting
     Pkg.add("Plots")
-    using Plots
+    import Plots
+    using Plots: plot
 
     # fix namespace conflicts with Plots
-    import LazySets.center
+    using LazySets: center
 
     @time @testset "LazySets.plotting" begin include("unit_plot.jl") end
 end

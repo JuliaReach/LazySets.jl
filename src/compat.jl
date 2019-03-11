@@ -4,18 +4,18 @@ different Julia versions.
 =#
 
 using Compat
-using Compat: copyto!, axes, argmax, @warn
-import Compat.String
+using Compat: copyto!, axes, argmax, @warn, String
 using Compat.LinearAlgebra
-import Compat.LinearAlgebra: norm, checksquare, LAPACKException,
-                             SingularException, ×, cond
+import Compat.LinearAlgebra: norm, ×
+using Compat.LinearAlgebra: checksquare, LAPACKException, SingularException,
+                            cond
 import Compat.InteractiveUtils.subtypes
 export _At_mul_B
 export ×
 
 @static if VERSION < v"0.7-"
     using Compat.Random
-    import Compat.Random: GLOBAL_RNG
+    using Compat.Random: GLOBAL_RNG
     @inline _At_mul_B(A, B) = At_mul_B(A, B)
     @inline _At_ldiv_B(A, B) = At_ldiv_B(A, B)
     expmat = expm

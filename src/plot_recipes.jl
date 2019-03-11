@@ -2,6 +2,7 @@
 # Plot recipes for an abstract LazySet
 # ====================================
 
+using RecipesBase
 import RecipesBase.apply_recipe
 
 """

@@ -1,5 +1,3 @@
-using LazySets.Approximations: BoxDirections
-
 for N in [Float64, Rational{Int}]
 
 

@@ -1,5 +1,3 @@
-import LazySets.Approximations.BoxDiagDirections
-
 for N in [Float64, Rational{Int}, Float32]
     # π/2 trigonometric rotation
     b = BallInf(N[1, 2], N(1))

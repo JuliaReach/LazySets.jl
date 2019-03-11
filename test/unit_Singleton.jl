@@ -1,5 +1,3 @@
-import LazySets.Approximations.UnitVector
-
 for N in [Float64, Rational{Int}, Float32]
     # random singleton
     rand(Singleton)

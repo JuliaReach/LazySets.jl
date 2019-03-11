@@ -10,13 +10,13 @@ using LazySets, Requires
 
 export approximate,
        ballinf_approximation,
-       box_approximation,
+       box_approximation, interval_hull,
        decompose,
        diameter,
        norm,
        overapproximate,
        radius,
-       symmetric_interval_hull,
+       box_approximation_symmetric, symmetric_interval_hull,
        BoxDirections,
        BoxDiagDirections,
        OctDirections

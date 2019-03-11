@@ -1,6 +1,3 @@
-import IntervalArithmetic
-using IntervalArithmetic: IntervalBox
-
 for N in [Float64, Rational{Int}, Float32]
     # random hyperrectangle
     rand(Hyperrectangle)
