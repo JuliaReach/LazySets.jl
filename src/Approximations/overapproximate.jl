@@ -115,7 +115,7 @@ end
     overapproximate(S::CartesianProduct{N, <:AbstractHyperrectangle{N}, <:AbstractHyperrectangle{N}},
                     ::Type{<:Hyperrectangle}) where {N<:Real}
 
-Return a tight overapproximation of the cartesian product array of two
+Return a tight overapproximation of the cartesian product of two
 hyperrectangles with one hyperrectangle.
 
 ### Input
