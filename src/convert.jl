@@ -458,7 +458,7 @@ end
 """
     convert(::Type{Zonotope}, cp::CartesianProduct{N, Zonotope{N}, Zonotope{N}}) where {N<:Real}
 
-Converts the cartesian product of two zonotoes to a new zonotope.
+Converts the cartesian product of two zonotopes to a new zonotope.
 
 ### Input
 
