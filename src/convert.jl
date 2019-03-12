@@ -471,17 +471,19 @@ A zonotope.
 
 ### Algorithm
 
-This implementation concatenates the centers of each input zonotope.
-The resulting generator matrix is such that the generators for each element of the
-cartesian product are added along the diagonal.
+The cartesian product is obtained by:
+
+- Concatenating the centers of each input zonotope.
+- Arranging the generators in block-diagional fashion, and filled with zeros
+  in the off-diagonal; for this reason, the generator matrix of the returned
+  zonotope is built as a sparse matrix.
 """
 function convert(::Type{Zonotope}, cp::CartesianProduct{N, Zonotope{N}, Zonotope{N}}) where {N<:Real}
     Z1, Z2 = cp.X, cp.Y
     n1, p1 = size(Z1.generators)
     n2, p2 = size(Z2.generators)
     c = vcat(Z1.center, Z2.center)
-    G = [Z1.generators zeros(n1, p2);
-         zeros(n2, p1) Z2.generators]
+    G = blockdiag(sparse(Z1.generators), sparse(Z2.generators))
     return Zonotope(c, G)
 end
 

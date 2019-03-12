@@ -110,7 +110,7 @@ for N in [Float64, Rational{Int}, Float32]
     Z1 = Zonotope(N[0], hcat(N[1]))
     Z2 = Zonotope(N[1/2], hcat(N[1/2]))
     Z = convert(Zonotope, Z1×Z2)
-    @test Z isa Zonotope && Z.center == N[0, 1/2] && Z.generators == N[1 0; 0 1/2]
+    @test Z isa Zonotope && Z.center == N[0, 1/2] && diag(Z.generators) == N[1, 1/2]
 
     # list of constraints
     Z = Zonotope(zeros(N, 3), Matrix(N(1)*I, 3, 3))
