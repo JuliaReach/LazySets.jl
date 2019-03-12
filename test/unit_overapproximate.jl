@@ -42,6 +42,12 @@ for N in [Float64, Rational{Int}, Float32]
     Zba = box_approximation(Z) # default o.a. implementation that uses supp function
     @test Zoa.center ≈ Zba.center && Zoa.radius ≈ Zba.radius
 
+    # same but using cartesian product
+    h1 = Hyperrectangle(N[1/2],  N[1/2])
+    h2 = Hyperrectangle(N[2.5, 4.5],  N[1/2, 1/2])
+    H = overapproximate(h1 × h2, Hyperrectangle) # defaults to convert method
+    @test low(H) == N[0, 2, 4] && high(H) == N[1, 3, 5]
+    
     # overapproximation of the lazy linear map of a hyperrectangular set
     H = Hyperrectangle(N[0, 0], N[1/2, 1])
     M = Diagonal(N[2, 2])

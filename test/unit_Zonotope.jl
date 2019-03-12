@@ -101,6 +101,17 @@ for N in [Float64, Rational{Int}, Float32]
     @test Z.center == N[2, 3] && diag(Z.generators) == N[4, 5]
     convert(Zonotope, BallInf(N[5, 3], N(2)))
 
+    # convert the cartesian product of two hyperrectangles to a zonotope
+    h1 = Hyperrectangle(N[1/2],  N[1/2])
+    h2 = Hyperrectangle(N[2.5, 4.5],  N[1/2, 1/2])
+    H = convert(Hyperrectangle, h1 × h2)
+    Z = convert(Zonotope, h1 × h2)
+    @test Z ⊆ H && H ⊆ Z
+
+    # same for CartesianProductArray
+    Z2 = convert(Zonotope, CartesianProductArray([h1, h2]))
+    @test Z == Z2
+
     # split a zonotope
     Z = Zonotope(N[0, 0], N[1 1; -1 1])
     Z1, Z2 = split(Z, 1) # in this case the splitting is exact

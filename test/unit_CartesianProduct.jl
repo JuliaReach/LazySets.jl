@@ -135,6 +135,12 @@ for N in [Float64, Float32, Rational{Int}]
     H = convert(Hyperrectangle, h1 × h2)
     @test low(H) == N[0, 2, 4] && high(H) == N[1, 3, 5]
 
+    # make one of the sets a BallInf, to test that the conversion does
+    # not depend on the Hyperrectangle type
+    b1 = BallInf(N[1/2],  N(1/2))
+    H = convert(Hyperrectangle, b1 × h2)
+    @test low(H) == N[0, 2, 4] && high(H) == N[1, 3, 5]
+
     # =====================
     # CartesianProductArray
     # =====================
