@@ -467,7 +467,7 @@ Converts the cartesian product of two zonotoes to a new zonotope.
 
 ### Output
 
-A zonotopes.
+A zonotope.
 
 ### Algorithm
 
