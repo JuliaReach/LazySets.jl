@@ -269,7 +269,7 @@ Converts the cartesian product of two hyperrectangular sets to a zonotope.
 ### Output
 
 This method falls back to the conversion of the cartesian product to a single
-hyperrectnagle, and then from a hyperrectangle to a zonotope.
+hyperrectangle, and then from a hyperrectangle to a zonotope.
 """
 function convert(::Type{Zonotope}, cp::CartesianProduct{N, <:AbstractHyperrectangle{N}, <:AbstractHyperrectangle{N}}) where {N<:Real}
     return convert(Zonotope, convert(Hyperrectangle, cp))
