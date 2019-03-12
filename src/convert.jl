@@ -471,7 +471,7 @@ A zonotope.
 
 ### Algorithm
 
-This implementation consists of concatenating the centers of each input zonotope.
+This implementation concatenates the centers of each input zonotope.
 The resulting generator matrix is such that the generators for each element of the
 cartesian product are added along the diagonal.
 """
