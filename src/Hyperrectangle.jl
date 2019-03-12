@@ -100,6 +100,7 @@ Return the box radius of a hyperrectangle in a given dimension.
 ### Input
 
 - `H` -- hyperrectangle
+- `i` -- dimension of interest
 
 ### Output
 

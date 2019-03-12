@@ -242,6 +242,24 @@ function high(H::AbstractHyperrectangle{N})::Vector{N} where {N<:Real}
 end
 
 """
+    high(H::AbstractHyperrectangle{N}, i::Int)::N where {N<:Real}
+
+Return the higher coordinate of a hyperrectangular set in a given dimension.
+
+### Input
+
+- `H` -- hyperrectangular set
+- `i` -- dimension of interest
+
+### Output
+
+The higher coordinate of the hyperrectangular set in the given dimension.
+"""
+function high(H::AbstractHyperrectangle{N}, i::Int)::N where {N<:Real}
+    return center(H)[i] + radius_hyperrectangle(H, i)
+end
+
+"""
     low(H::AbstractHyperrectangle{N})::Vector{N} where {N<:Real}
 
 Return the lower coordinates of a hyperrectangular set.
@@ -256,4 +274,22 @@ A vector with the lower coordinates of the hyperrectangular set.
 """
 function low(H::AbstractHyperrectangle{N})::Vector{N} where {N<:Real}
     return center(H) .- radius_hyperrectangle(H)
+end
+
+"""
+    low(H::AbstractHyperrectangle{N}, i::Int)::N where {N<:Real}
+
+Return the lower coordinate of a hyperrectangular set in a given dimension.
+
+### Input
+
+- `H` -- hyperrectangular set
+- `i` -- dimension of interest
+
+### Output
+
+The lower coordinate of the hyperrectangular set in the given dimension.
+"""
+function low(H::AbstractHyperrectangle{N}, i::Int)::N where {N<:Real}
+    return center(H)[i] - radius_hyperrectangle(H, i)
 end

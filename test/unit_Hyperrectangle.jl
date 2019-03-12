@@ -2,6 +2,20 @@ for N in [Float64, Rational{Int}, Float32]
     # random hyperrectangle
     rand(Hyperrectangle)
 
+    # center/radius/high/low
+    c = N[0, 0]
+    r = N[1, 1]
+    h = Hyperrectangle(c, r)
+    @test center(h) == c
+    @test radius_hyperrectangle(h) == r
+    @test high(h) == r
+    @test low(h) == -r
+    for i in 1:2
+        @test radius_hyperrectangle(h, i) == r[i]
+        @test high(h, i) == r[i]
+        @test low(h, i) == -r[i]
+    end
+
     # 1D Hyperrectangle
     h = Hyperrectangle(N[0], N[1])
     # Test Dimension

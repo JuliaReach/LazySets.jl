@@ -2,6 +2,20 @@ for N in [Float64, Rational{Int}, Float32]
     # random singleton
     rand(Singleton)
 
+    # center/radius/high/low
+    c = N[0, 0]
+    r = N[0, 0]
+    s = Singleton(c)
+    @test center(s) == c
+    @test radius_hyperrectangle(s) == r
+    @test high(s) == r
+    @test low(s) == -r
+    for i in 1:2
+        @test radius_hyperrectangle(s, i) == r[i]
+        @test high(s, i) == r[i]
+        @test low(s, i) == -r[i]
+    end
+
     # 1D singleton
     s = Singleton(N[1])
     d = N[1]

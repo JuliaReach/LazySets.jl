@@ -293,6 +293,7 @@ isempty(::ResetMap)
 get_A(::ResetMap{N}) where {N<:Real}
 get_b(::ResetMap{N}) where {N<:Real}
 constraints_list(::ResetMap{N}) where {N<:Real}
+constraints_list(::ResetMap{N, S}) where {N<:Real, S<:AbstractHyperrectangle}
 ```
 
 Inherited from [`LazySet`](@ref):

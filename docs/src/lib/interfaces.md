@@ -215,7 +215,9 @@ radius(::AbstractHyperrectangle, ::Real=Inf)
 vertices_list(::AbstractHyperrectangle{N}) where {N<:Real}
 constraints_list(::AbstractHyperrectangle{N}) where {N<:Real}
 high(::AbstractHyperrectangle{N}) where {N<:Real}
+high(::AbstractHyperrectangle{N}, ::Int) where {N<:Real}
 low(::AbstractHyperrectangle{N}) where {N<:Real}
+low(::AbstractHyperrectangle{N}, ::Int) where {N<:Real}
 ```
 
 ##### Singleton
@@ -237,7 +239,9 @@ vertices_list(::AbstractSingleton{N}) where {N<:Real}
 radius_hyperrectangle(::AbstractSingleton{N}) where {N<:Real}
 radius_hyperrectangle(::AbstractSingleton{N}, ::Int) where {N<:Real}
 high(::AbstractSingleton{N}) where {N<:Real}
+high(::AbstractSingleton{N}, ::Int) where {N<:Real}
 low(::AbstractSingleton{N}) where {N<:Real}
+low(::AbstractSingleton{N}, ::Int) where {N<:Real}
 linear_map(::AbstractMatrix{N}, ::AbstractSingleton{N}) where {N<:Real}
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractSingleton)
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:AbstractSingleton}

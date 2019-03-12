@@ -65,6 +65,7 @@ Return the box radius of a infinity norm ball in a given dimension.
 ### Input
 
 - `B` -- infinity norm ball
+- `i` -- dimension of interest
 
 ### Output
 
