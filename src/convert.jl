@@ -481,7 +481,7 @@ The cartesian product is obtained by:
 function convert(::Type{Zonotope}, cp::CartesianProduct{N, Zonotope{N}, Zonotope{N}}) where {N<:Real}
     Z1, Z2 = cp.X, cp.Y
     c = vcat(Z1.center, Z2.center)
-    G = Compat.SparseArrays.blockdiag(sparse(Z1.generators), sparse(Z2.generators))
+    G = blockdiag(sparse(Z1.generators), sparse(Z2.generators))
     return Zonotope(c, G)
 end
 
