@@ -116,7 +116,7 @@ end
                     ::Type{<:Hyperrectangle}) where {N<:Real}
 
 Return a tight overapproximation of the cartesian product of two
-hyperrectangles with one hyperrectangle.
+hyperrectangles by a new hyperrectangle.
 
 ### Input
 
