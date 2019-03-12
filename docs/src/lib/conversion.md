@@ -39,4 +39,5 @@ convert(::Type{VPolytope}, ::HPolytope)
 convert(::Type{Zonotope}, ::AbstractHyperrectangle)
 convert(::Type{IntervalArithmetic.IntervalBox}, ::AbstractHyperrectangle)
 convert(::Type{Hyperrectangle}, ::IntervalArithmetic.IntervalBox)
+convert(::Type{Zonotope}, ::CartesianProduct{N, Zonotope{N}, Zonotope{N}}) where {N<:Real}
 ```
