@@ -18,7 +18,7 @@ end
 ```@docs
 convert(::Type{HPOLYGON1}, ::HPOLYGON2) where {HPOLYGON1<:AbstractHPolygon, HPOLYGON2<:AbstractHPolygon}
 convert(::Type{HPOLYGON}, ::VPolygon) where {HPOLYGON<:AbstractHPolygon}
-convert(::Type{Hyperrectangle}, ::Interval)
+convert(::Type{Hyperrectangle}, ::AbstractHyperrectangle)
 convert(::Type{Interval}, ::AbstractHyperrectangle)
 convert(::Type{Interval}, ::LazySet{N}) where {N<:Real}
 convert(::Type{Hyperrectangle}, cpa::CartesianProductArray{N, HN}) where {N<:Real, HN<:AbstractHyperrectangle{N}}

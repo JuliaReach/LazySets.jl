@@ -176,4 +176,11 @@ for N in [Float64, Rational{Int}, Float32]
     B = IntervalBox(IntervalArithmetic.Interval(0, 1), IntervalArithmetic.Interval(0, 1))
     H = convert(Hyperrectangle, B)
     @test convert(IntervalBox, H) == B
+
+    # conversion from other hyperrectangular sets
+    @test convert(Hyperrectangle, BallInf(N[1], N(1))) ==
+          convert(Hyperrectangle, Interval(N(0), N(2))) ==
+          Hyperrectangle(N[1], N[1])
+    @test convert(Hyperrectangle, SymmetricIntervalHull(Singleton(N[1, 1]))) ==
+          Hyperrectangle(N[0, 0], N[1, 1])
 end
