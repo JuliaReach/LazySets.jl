@@ -887,3 +887,78 @@ function ⊆(X::LazySet{N}, C::Complement{N}, witness::Bool=false
           )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return isdisjoint(X, C.X, witness)
 end
+
+
+# --- CartesianProduct ---
+
+
+"""
+    ⊆(X::CartesianProductArray{N}, Y::CartesianProductArray{N},
+      witness::Bool=false; check_block_equality::Bool=true
+     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether a Cartesian product of finitely many convex sets is contained in
+another Cartesian product of finitely many convex sets, and otherwise optionally
+compute a witness.
+
+### Input
+
+- `X`       -- Cartesian product of finitely many convex sets
+- `Y`       -- Cartesian product of finitely many convex sets
+- `witness` -- (optional, default: `false`) compute a witness if activated
+- `check_block_equality` -- (optional, default: `true`) flag for checking that
+               the block structure of the two sets is identical
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``X ⊆ Y``
+* If `witness` option is activated:
+  * `(true, [])` iff ``X ⊆ Y``
+  * `(false, v)` iff ``X \\not\\subseteq Y`` and
+    ``v ∈ X \\setminus Y``
+
+### Notes
+
+This algorithm requires that the two Cartesian products share the same block
+structure.
+Depending on the value of `check_block_equality`, we check this property.
+
+### Algorithm
+
+We check for inclusion for each block of the Cartesian products.
+
+For witness production, we obtain a witness in one of the blocks.
+We then construct a high-dimensional witness by obtaining any point in the other
+blocks (using `an_element`) and concatenating these points.
+"""
+function ⊆(X::CartesianProductArray{N},
+           Y::CartesianProductArray{N},
+           witness::Bool=false;
+           check_block_equality::Bool=true
+          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    aX = array(X)
+    aY = array(Y)
+    if check_block_equality && !same_block_structure(aX, aY)
+        throw(ArgumentError("this inclusion check requires Cartesian products" *
+                            "with the same block structure"))
+    end
+
+    for i in 1:length(aX)
+        result = ⊆(aX[i], aY[i], witness)
+        if !witness && !result
+            return false
+        elseif witness && !result[1]
+            # construct a witness
+            w = Vector{N}(undef, dim(X))
+            k = 1
+            for j in 1:length(aX)
+                Xj = aX[j]
+                l = k + dim(Xj)
+                w[k:l-1] = j == i ? result[2] : an_element(Xj)
+                k = l
+            end
+            return (false, w)
+        end
+    end
+    return witness ? (true, N[]) : true
+end

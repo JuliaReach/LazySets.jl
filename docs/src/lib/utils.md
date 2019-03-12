@@ -28,6 +28,7 @@ sign_cadlag
 _random_zero_sum_vector
 remove_duplicates_sorted!
 reseed
+same_block_structure
 substitute
 substitute!
 σ_helper
