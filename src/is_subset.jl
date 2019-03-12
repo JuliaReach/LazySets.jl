@@ -898,8 +898,8 @@ end
      )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
 Check whether a Cartesian product of finitely many convex sets is contained in
-the another Cartesian product of finitely many convex sets, and otherwise
-optionally compute a witness.
+another Cartesian product of finitely many convex sets, and otherwise optionally
+compute a witness.
 
 ### Input
 
@@ -917,7 +917,6 @@ optionally compute a witness.
   * `(false, v)` iff ``X \\not\\subseteq Y`` and
     ``v ∈ X \\setminus Y``
 
-
 ### Notes
 
 This algorithm requires that the two Cartesian products share the same block
@@ -927,6 +926,10 @@ Depending on the value of `check_block_equality`, we check this property.
 ### Algorithm
 
 We check for inclusion for each block of the Cartesian products.
+
+For witness production, we obtain a witness in one of the blocks.
+We then construct a high-dimensional witness by obtaining any point in the other
+blocks (using `an_element`) and concatenating these points.
 """
 function ⊆(X::CartesianProductArray{N},
            Y::CartesianProductArray{N},
