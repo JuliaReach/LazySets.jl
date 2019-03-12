@@ -106,6 +106,12 @@ for N in [Float64, Rational{Int}, Float32]
     Z1, Z2 = split(Z, 1) # in this case the splitting is exact
     @test Z1 ⊆ Z && Z2 ⊆ Z
 
+    # converts the cartesian product of two zonotopes to a new zonotope
+    Z1 = Zonotope(N[0], hcat(N[1]))
+    Z2 = Zonotope(N[1/2], hcat(N[1/2]))
+    Z = convert(Zonotope, Z1×Z2)
+    @test Z isa Zonotope && Z.center == N[0, 1/2] && Matrix(Z.generators) == N[1 0; 0 1/2]
+
     # list of constraints
     Z = Zonotope(zeros(N, 3), Matrix(N(1)*I, 3, 3))
     B = BallInf(zeros(N, 3), N(1)) # equivalent to Z

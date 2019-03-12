@@ -19,6 +19,7 @@ export ×
     @inline _At_mul_B(A, B) = At_mul_B(A, B)
     @inline _At_ldiv_B(A, B) = At_ldiv_B(A, B)
     expmat = expm
+    blockdiag = Base.SparseArrays.blkdiag
 else
     using SparseArrays
     using Random

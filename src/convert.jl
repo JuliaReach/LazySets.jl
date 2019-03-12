@@ -456,6 +456,36 @@ function convert(::Type{Hyperrectangle},
 end
 
 """
+    convert(::Type{Zonotope}, cp::CartesianProduct{N, Zonotope{N}, Zonotope{N}}) where {N<:Real}
+
+Converts the cartesian product of two zonotopes to a new zonotope.
+
+### Input
+
+- `Zonotope` -- type used for dispatch
+- `S`        -- cartesian product of two zonotopes
+
+### Output
+
+A zonotope.
+
+### Algorithm
+
+The cartesian product is obtained by:
+
+- Concatenating the centers of each input zonotope.
+- Arranging the generators in block-diagional fashion, and filled with zeros
+  in the off-diagonal; for this reason, the generator matrix of the returned
+  zonotope is built as a sparse matrix.
+"""
+function convert(::Type{Zonotope}, cp::CartesianProduct{N, Zonotope{N}, Zonotope{N}}) where {N<:Real}
+    Z1, Z2 = cp.X, cp.Y
+    c = vcat(Z1.center, Z2.center)
+    G = blockdiag(sparse(Z1.generators), sparse(Z2.generators))
+    return Zonotope(c, G)
+end
+
+"""
     convert(::Type{HPolytope}, H::AbstractHyperrectangle)
 
 Converts a hyperrectangular set to a polytope in constraint representation.
