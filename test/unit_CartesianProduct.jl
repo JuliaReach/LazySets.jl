@@ -129,6 +129,18 @@ for N in [Float64, Float32, Rational{Int}]
         LinearConstraint(sparsevec(N[2], N[-1], 2), N(-2))])
     @test all(H -> dim(H) == 2, hlist)
 
+    # convert the cartesian product of two hyperrectangles to one hyperrectangle
+    h1 = Hyperrectangle(N[1/2],  N[1/2])
+    h2 = Hyperrectangle(N[2.5, 4.5],  N[1/2, 1/2])
+    H = convert(Hyperrectangle, h1 × h2)
+    @test low(H) == N[0, 2, 4] && high(H) == N[1, 3, 5]
+
+    # make one of the sets a BallInf, to test that the conversion does
+    # not depend on the Hyperrectangle type
+    b1 = BallInf(N[1/2],  N(1/2))
+    H = convert(Hyperrectangle, b1 × h2)
+    @test low(H) == N[0, 2, 4] && high(H) == N[1, 3, 5]
+
     # =====================
     # CartesianProductArray
     # =====================

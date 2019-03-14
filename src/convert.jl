@@ -257,6 +257,53 @@ function convert(::Type{Zonotope}, H::AbstractHyperrectangle)
 end
 
 """
+    convert(::Type{Zonotope}, cp::CartesianProduct{N, HN1, HN2}) where {N<:Real,
+        HN1<:AbstractHyperrectangle{N}, HN2<:AbstractHyperrectangle{N}}
+
+Converts the cartesian product of two hyperrectangular sets to a zonotope.
+
+### Input
+
+- `Zonotope` -- type, used for dispatch
+- `cp`       -- cartesian product of two hyperrectangular sets
+
+### Output
+
+This method falls back to the conversion of the cartesian product to a single
+hyperrectangle, and then from a hyperrectangle to a zonotope.
+"""
+function convert(::Type{Zonotope}, cp::CartesianProduct{N, HN1, HN2}
+                ) where {N<:Real, HN1<:AbstractHyperrectangle{N},
+                         HN2<:AbstractHyperrectangle{N}}
+    return convert(Zonotope, convert(Hyperrectangle, cp))
+end
+
+"""
+    convert(::Type{Zonotope}, cpa::CartesianProductArray{N, HN})
+        where {N<:Real, HN<:AbstractHyperrectangle{N}}
+
+Converts the cartesian product array of hyperrectangular sets to a zonotope.
+
+### Input
+
+- `Zonotope` -- type, used for dispatch
+- `cpa`      -- cartesian product array of hyperrectangular sets
+
+### Output
+
+A zonotope.
+
+### Algorithm
+
+This method falls back to the conversion of the cartesian product to a single
+hyperrectangle, and then from a hyperrectangle to a zonotope.
+"""
+function convert(::Type{Zonotope}, cpa::CartesianProductArray{N, HN}
+                ) where {N<:Real, HN<:AbstractHyperrectangle{N}}
+    return convert(Zonotope, convert(Hyperrectangle, cpa))
+end
+
+"""
     convert(::Type{HPOLYGON}, S::AbstractSingleton{N}
            ) where {N<:Real, HPOLYGON<:AbstractHPolygon}
 
@@ -418,6 +465,35 @@ function convert(::Type{Hyperrectangle},
          r[i:j] = radius_hyperrectangle(block_set)
          i = j + 1
      end
+     return Hyperrectangle(c, r)
+end
+
+"""
+    convert(::Type{Hyperrectangle},
+            cp::CartesianProduct{N, HN1, HN2}) where {N<:Real, HN1<:AbstractHyperrectangle{N}, HN2<:AbstractHyperrectangle{N}}
+
+Converts the cartesian product of two hyperrectangular sets to a single hyperrectangle.
+
+### Input
+
+- `Hyperrectangle` -- type used for dispatch
+- `S`              -- cartesian product of two hyperrectangular sets
+
+### Output
+
+A hyperrectangle.
+
+### Algorithm
+
+The result is obtained by concatenating the center and radius of each hyperrectangle.
+This implementation uses the `center` and `radius_hyperrectangle` methods of
+`AbstractHyperrectangle`.
+"""
+function convert(::Type{Hyperrectangle},
+                 cp::CartesianProduct{N, HN1, HN2}) where {N<:Real, HN1<:AbstractHyperrectangle{N}, HN2<:AbstractHyperrectangle{N}}
+     X, Y = cp.X, cp.Y
+     c = vcat(center(X), center(Y))
+     r = vcat(radius_hyperrectangle(X), radius_hyperrectangle(Y))
      return Hyperrectangle(c, r)
 end
 
