@@ -257,7 +257,8 @@ function convert(::Type{Zonotope}, H::AbstractHyperrectangle)
 end
 
 """
-    convert(::Type{Zonotope}, cp::CartesianProduct{N, <:AbstractHyperrectangle{N}, <:AbstractHyperrectangle{N}}) where {N<:Real}
+    convert(::Type{Zonotope}, cp::CartesianProduct{N, HN1, HN2}) where {N<:Real,
+        HN1<:AbstractHyperrectangle{N}, HN2<:AbstractHyperrectangle{N}}
 
 Converts the cartesian product of two hyperrectangular sets to a zonotope.
 
@@ -271,12 +272,15 @@ Converts the cartesian product of two hyperrectangular sets to a zonotope.
 This method falls back to the conversion of the cartesian product to a single
 hyperrectangle, and then from a hyperrectangle to a zonotope.
 """
-function convert(::Type{Zonotope}, cp::CartesianProduct{N, <:AbstractHyperrectangle{N}, <:AbstractHyperrectangle{N}}) where {N<:Real}
+function convert(::Type{Zonotope}, cp::CartesianProduct{N, HN1, HN2}
+                ) where {N<:Real, HN1<:AbstractHyperrectangle{N},
+                         HN2<:AbstractHyperrectangle{N}}
     return convert(Zonotope, convert(Hyperrectangle, cp))
 end
 
 """
-    convert(::Type{Zonotope}, ca::CartesianProductArray{N, <:AbstractHyperrectangle{N}}) where {N<:Real}
+    convert(::Type{Zonotope}, cpa::CartesianProductArray{N, HN})
+        where {N<:Real, HN<:AbstractHyperrectangle{N}}
 
 Converts the cartesian product array of hyperrectangular sets to a zonotope.
 
@@ -294,7 +298,8 @@ A zonotope.
 This method falls back to the conversion of the cartesian product to a single
 hyperrectangle, and then from a hyperrectangle to a zonotope.
 """
-function convert(::Type{Zonotope}, cpa::CartesianProductArray{N, <:AbstractHyperrectangle{N}}) where {N<:Real}
+function convert(::Type{Zonotope}, cpa::CartesianProductArray{N, HN}
+                ) where {N<:Real, HN<:AbstractHyperrectangle{N}}
     return convert(Zonotope, convert(Hyperrectangle, cpa))
 end
 
