@@ -123,6 +123,12 @@ for N in [Float64, Rational{Int}, Float32]
     Z = convert(Zonotope, Z1×Z2)
     @test Z isa Zonotope && Z.center == N[0, 1/2] && Matrix(Z.generators) == N[1 0; 0 1/2]
 
+    # conversion of the lazy linear map of an abstract hyperrectangle to a zonotope
+    B = BallInf(N[0], N(1))
+    M = hcat(N[1])
+    Z = convert(Zonotope, M * B)
+    @test Z isa Zonotope && Z.center == N[0] && Z.generators == hcat(N[1])
+
     # list of constraints
     Z = Zonotope(zeros(N, 3), Matrix(N(1)*I, 3, 3))
     B = BallInf(zeros(N, 3), N(1)) # equivalent to Z
