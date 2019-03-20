@@ -129,6 +129,17 @@ for N in [Float64, Rational{Int}, Float32]
     Z = convert(Zonotope, M * B)
     @test Z isa Zonotope && Z.center == N[0] && Z.generators == hcat(N[1])
 
+    # conversion of the lazy linear map of the cartesian product of hyperrectangular
+    # sets to a zonotope
+    B = BallInf(N[0], N(1))
+    M = N[1 0; 0 -1]
+    Z = convert(Zonotope, M * (B × B))
+    @test Z isa Zonotope && Z.center == N[0, 0] && Z.generators == M
+
+    # same for CPA
+    Z2 = convert(Zonotope, M * CartesianProductArray([B, B]))
+    @test Z2 == Z
+
     # list of constraints
     Z = Zonotope(zeros(N, 3), Matrix(N(1)*I, 3, 3))
     B = BallInf(zeros(N, 3), N(1)) # equivalent to Z
