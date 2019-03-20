@@ -43,9 +43,9 @@ convert(::Type{Zonotope}, ::CartesianProduct{N, Zonotope{N}, Zonotope{N}}) where
 convert(::Type{Hyperrectangle}, ::CartesianProduct{N, HN1, HN2}) where {N<:Real, HN1<:AbstractHyperrectangle{N}, HN2<:AbstractHyperrectangle{N}}
 convert(::Type{Zonotope}, ::CartesianProduct{N, HN1, HN2}) where {N<:Real, HN1<:AbstractHyperrectangle{N}, HN2<:AbstractHyperrectangle{N}}
 convert(::Type{Zonotope}, ::CartesianProductArray{N, HN}) where {N<:Real, HN<:AbstractHyperrectangle{N}}
-convert(::Type{Zonotope}, ::LinearMap{N, SN, NM, MAT}) where {N, SN<:AbstractHyperrectangle{N}, NM, MAT<:AbstractMatrix{N}}
-convert(::Type{Zonotope}, ::LinearMap{N, CartesianProduct{N, HN1, HN2}, NM, MAT}) where {N, HN1<:AbstractHyperrectangle{N}, HN2<:AbstractHyperrectangle{N}, NM, MAT<:AbstractMatrix{N}}
-convert(::Type{Zonotope}, ::LinearMap{N, CartesianProductArray{N, HN}, NM, MAT}) where {N, HN<:AbstractHyperrectangle{N}, NM, MAT<:AbstractMatrix{N}}
+convert(::Type{Zonotope}, ::LinearMap{N, SN}) where {N, SN<:AbstractHyperrectangle{N}}
+convert(::Type{Zonotope}, ::LinearMap{N, CartesianProduct{N, HN1, HN2}}) where {N, HN1<:AbstractHyperrectangle{N}, HN2<:AbstractHyperrectangle{N}}
+convert(::Type{Zonotope}, ::LinearMap{N, CartesianProductArray{N, HN}}) where {N, HN<:AbstractHyperrectangle{N}}
 ```
 
 
