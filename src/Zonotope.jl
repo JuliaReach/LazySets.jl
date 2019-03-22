@@ -517,7 +517,7 @@ function constraints_list(Z::Zonotope{N}
 end
 
 """
-    constraints_list(P::Zonotope{N}
+    constraints_list(Z::Zonotope{N}
                     )::Vector{LinearConstraint{N}} where {N<:AbstractFloat}
 
 Return the list of constraints defining a zonotope.
@@ -551,7 +551,8 @@ function constraints_list(Z::Zonotope{N}
     p = ngens(Z)
     n = dim(Z)
     if p < n
-        error("can only convert a zonotope of order >= 1")
+        error("we currently only provide the constraints of a zonotope of " *
+              "order >= 1")
     end
 
     G = Z.generators
@@ -561,7 +562,8 @@ function constraints_list(Z::Zonotope{N}
     # special handling of 1D case
     if n == 1
         if p > 1
-            error("1D-zonotope conversion only supports a single generator")
+            error("1D-zonotope constraints currently only support a single " *
+                  "generator")
         end
 
         c = Z.center[1]
