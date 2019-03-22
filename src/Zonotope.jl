@@ -537,6 +537,9 @@ The result has ``2 \\binom{p}{n-1}`` (with ``p`` being the number of generators
 and ``n`` being the ambient dimension) constraints, which is optimal under this
 assumption.
 
+If ``p < n``, we fall back to the (slower) computation based on the vertex
+representation.
+
 ### Algorithm
 
 We follow the algorithm presented in *Althoff, Stursberg, Buss: Computing
@@ -551,8 +554,7 @@ function constraints_list(Z::Zonotope{N}
     p = ngens(Z)
     n = dim(Z)
     if p < n
-        error("we currently only provide the constraints of a zonotope of " *
-              "order >= 1")
+        return invoke(constraints_list, Tuple{Zonotope{<:Real}}, Z)
     end
 
     G = Z.generators
