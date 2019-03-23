@@ -246,10 +246,10 @@ function _overapproximate_convex_hull_zonotope(Z1::Zonotope{N}, Z2::Zonotope{N})
                  Z1.center - Z2.center,
                  Z1.generators .- Z2.generators)/N(2)
     else
-        G = hcat(Z1.generators[:, 1:ngens(Z2)] .+ Z2.generators,
-                 Z1.center - Z2.center,
-                 Z1.generators[:, 1:ngens(Z2)] .- Z2.generators,
-                 Z1.generators[:, ngens(Z2)+1:end])/N(2)
+        G = hcat((Z1.generators[:, 1:ngens(Z2)] .+ Z2.generators)/N(2),
+                 (Z1.center - Z2.center)/N(2),
+                 (Z1.generators[:, 1:ngens(Z2)] .- Z2.generators)/N(2),
+                 Z1.generators[:, ngens(Z2)+1:end])
     end
     return c, G
 end

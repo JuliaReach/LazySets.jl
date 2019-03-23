@@ -159,6 +159,24 @@ for N in [Float64, Rational{Int}, Float32]
         H = HPolytope(constraints)
         @test H ⊆ B && B ⊆ H
     end
+
+    # =============================================
+    # Overapproximate the convex hull of zonotopes
+    # =============================================
+
+    # same order
+    Z1 = Zonotope(zeros(N, 2), hcat(N[1, 0]))
+    Z2 = Zonotope(zeros(N, 2), hcat(N[0, 1]))
+    Zch = overapproximate(ConvexHull(Z1, Z2), Zonotope)
+    # the result is a diamond (tight)
+    @test Zch == Zonotope(N[0.0, 0.0], N[0.5 0.5; 0.5 -0.5])
+
+    # different order
+    Z1 = Zonotope(zeros(N, 2), hcat(N[1, 0]))
+    Z2 = Zonotope(N[0, 0], N[1 0; 0 1])
+    # the result is a box (tight)
+    Zch = overapproximate(ConvexHull(Z1, Z2), Zonotope)
+    @test Zch == Zonotope(N[0.0, 0.0], N[1.0 0.0; 0.0 1.0])
 end
 
 for N in [Float64, Rational{Int}]
