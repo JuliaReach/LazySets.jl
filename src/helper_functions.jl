@@ -613,19 +613,19 @@ Remove all columns that only contain zeros from a given matrix.
 
 ### Input
 
-- `A`           -- matrix
-- `copy_always` -- (optional, default: `false`) flag to copy the matrix even if
-                   it does not contain any zero column
+- `A`    -- matrix
+- `copy` -- (optional, default: `false`) flag to copy the matrix
 
 ### Output
 
 A matrix.
 
 If the input matrix `A` does not contain any zero column, we return `A` unless
-the option `copy_always` is set.
-If the input matrix contains zero columns, we always return a copy.
+the option `copy` is set.
+If the input matrix contains zero columns, we always return a copy if the option
+`copy` is set and otherwise a `SubArray` via `@view`.
 """
-function delete_zero_columns(A::AbstractMatrix, copy_always::Bool=false)
+function delete_zero_columns(A::AbstractMatrix, copy::Bool=false)
     n = size(A, 2)
     nonzero_columns = Vector{Int}()
     sizehint!(nonzero_columns, n)
@@ -634,8 +634,17 @@ function delete_zero_columns(A::AbstractMatrix, copy_always::Bool=false)
             push!(nonzero_columns, i)
         end
     end
-    if !copy_always && length(nonzero_columns) == n
-        return A
+    if copy
+        if length(nonzero_columns) == n
+            return copy(A)
+        else
+            return A[:, nonzero_columns]
+        end
+    else
+        if length(nonzero_columns) == n
+            return A
+        else
+            return @view A[:, nonzero_columns]
+        end
     end
-    return A[:, nonzero_columns]
 end
