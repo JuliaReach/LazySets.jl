@@ -48,5 +48,13 @@ for _dummy_ in 1:1 # avoid global variable warnings
         # modified dot product
         @test isnan(dot(N[1, 0], N[Inf, -Inf]))
         @test LazySets.dot_zero(N[1, 0], N[Inf, -Inf]) == N(Inf)
+
+        # remove zero columns
+        m = 3
+        n = 10
+        A = rand(N, m, n)
+        A[:, 1] = A[:, 5] = A[:, n] = zeros(N, m)
+        B = LazySets.delete_zero_columns(A)
+        @test size(B) == (m, n-3)
     end
 end
