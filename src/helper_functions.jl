@@ -605,3 +605,46 @@ function subtypes(interface, concrete::Bool)
     end
     return sort(result, by=string)
 end
+
+"""
+    delete_zero_columns(A::AbstractMatrix)
+
+Remove all columns that only contain zeros from a given matrix.
+
+### Input
+
+- `A`    -- matrix
+- `copy` -- (optional, default: `false`) flag to copy the matrix
+
+### Output
+
+A matrix.
+
+If the input matrix `A` does not contain any zero column, we return `A` unless
+the option `copy` is set.
+If the input matrix contains zero columns, we always return a copy if the option
+`copy` is set and otherwise a `SubArray` via `@view`.
+"""
+function delete_zero_columns(A::AbstractMatrix, copy::Bool=false)
+    n = size(A, 2)
+    nonzero_columns = Vector{Int}()
+    sizehint!(nonzero_columns, n)
+    for i in 1:n
+        if !iszero(A[:, i])
+            push!(nonzero_columns, i)
+        end
+    end
+    if copy
+        if length(nonzero_columns) == n
+            return copy(A)
+        else
+            return A[:, nonzero_columns]
+        end
+    else
+        if length(nonzero_columns) == n
+            return A
+        else
+            return @view A[:, nonzero_columns]
+        end
+    end
+end

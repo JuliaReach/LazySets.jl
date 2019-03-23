@@ -42,6 +42,10 @@ ball in ``\\mathbb{R}^n`` by an affine transformation.
             generators_list::AbstractVector{VN}
            ) where {N<:Real, VN<:AbstractVector{N}}`
 
+The optional argument `remove_zero_generators` controls whether we remove zero
+columns from the `generators` matrix.
+This option is active by default.
+
 ### Examples
 
 A two-dimensional zonotope with given center and set of generators:
@@ -87,12 +91,22 @@ julia> Z.generators
 struct Zonotope{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
     center::AbstractVector{N}
     generators::AbstractMatrix{N}
+
+    function Zonotope(center::AbstractVector{N}, generators::AbstractMatrix{N};
+                      remove_zero_generators::Bool=true) where {N<:Real}
+        if remove_zero_generators
+            generators = delete_zero_columns(generators)
+        end
+        new{N}(center, generators)
+    end
 end
 
 # constructor from center and list of generators
-Zonotope(center::AbstractVector{N}, generators_list::AbstractVector{VN}
+Zonotope(center::AbstractVector{N}, generators_list::AbstractVector{VN};
+         remove_zero_generators::Bool=true
         ) where {N<:Real, VN<:AbstractVector{N}} =
-    Zonotope(center, hcat(generators_list...))
+    Zonotope(center, hcat(generators_list...);
+             remove_zero_generators=remove_zero_generators)
 
 
 # --- AbstractCentrallySymmetric interface functions ---

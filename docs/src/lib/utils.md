@@ -15,6 +15,7 @@ end
 an_element_helper
 binary_search_constraints
 cross_product(::AbstractMatrix{N}) where {N<:Real}
+delete_zero_columns
 dot_zero
 get_radius!
 isinvertible

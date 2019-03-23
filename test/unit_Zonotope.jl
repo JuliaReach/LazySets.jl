@@ -40,6 +40,13 @@ for N in [Float64, Rational{Int}, Float32]
     d = N[0, -1]
     @test σ(d, z) == N[2, 1]
 
+    # zero column in generators
+    g = zeros(N, 2, 5)
+    g[:, 3] = ones(N, 2)
+    g[1, 2] = N(2)
+    z = Zonotope(N[1, 2], g)
+    @test size(z.generators) == (2, 2)
+
     # boundedness
     @test isbounded(z)
 
@@ -100,6 +107,9 @@ for N in [Float64, Rational{Int}, Float32]
     Z = convert(Zonotope, Hyperrectangle(N[2, 3], N[4, 5]))
     @test Z.center == N[2, 3] && diag(Z.generators) == N[4, 5]
     convert(Zonotope, BallInf(N[5, 3], N(2)))
+    # flat hyperrectangle
+    Z = convert(Zonotope, Hyperrectangle(N[2, 3], N[0, 0]))
+    @test Z.center == N[2, 3] && isempty(Z.generators)
 
     # convert the cartesian product of two hyperrectangles to a zonotope
     h1 = Hyperrectangle(N[1/2],  N[1/2])
