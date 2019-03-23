@@ -423,12 +423,14 @@ A new zonotope with less generators, if possible.
 
 This function implements the algorithm described in A. Girard's
 *Reachability of Uncertain Linear Systems Using Zonotopes*, HSCC. Vol. 5. 2005.
+
+If the desired order is smaller than one, the zonotope is *not* reduced.
 """
 function reduce_order(Z::Zonotope{N}, r)::Zonotope{N} where {N<:Real}
     c, G = Z.center, Z.generators
     d, p = dim(Z), ngens(Z)
 
-    if r * d >= p
+    if r * d >= p || r < 1
         # do not reduce
         return Z
     end
