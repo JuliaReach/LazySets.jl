@@ -220,16 +220,38 @@ further investigated in [2].
 function overapproximate(S::ConvexHull{N, Zonotope{N}, Zonotope{N}},
                          ::Type{<:Zonotope})::Zonotope where {N<:Real}
     Z1, Z2 = S.X, S.Y
+    
+    # reduce to the same order if possible
     if order(Z1) != order(Z2)
         min_order = min(order(Z1), order(Z2))
         Z1 = reduce_order(Z1, min_order)
         Z2 = reduce_order(Z2, min_order)
     end
-    center = N(1/2) * (Z1.center + Z2.center)
-    generators = N(1/2) * hcat(Z1.generators .+ Z2.generators,
-                               Z1.center - Z2.center,
-                               Z1.generators .- Z2.generators)
-    return Zonotope(center, generators)
+
+    if order(Z1) >= order(Z2)
+        c, G = _overapproximate_convex_hull_zonotope(Z1, Z2)
+    else
+        c, G = _overapproximate_convex_hull_zonotope(Z2, Z1)
+    end
+    return Zonotope(c, G)
+end
+
+# assumes that dim(Z1) == dim(Z2) and order(Z1) >= order(Z2)
+function _overapproximate_convex_hull_zonotope(Z1::Zonotope{N}, Z2::Zonotope{N}) where {N}
+    c = (Z1.center + Z2.center)/N(2)
+
+    # the case of equal order is treated separately to avoid a slicing (this creates a copy)
+    if order(Z1) == order(Z2)        
+        G = hcat(Z1.generators .+ Z2.generators,
+                 Z1.center - Z2.center,
+                 Z1.generators .- Z2.generators)/N(2)
+    else
+        G = hcat(Z1.generators[:, 1:ngens(Z2)] .+ Z2.generators,
+                 Z1.center - Z2.center,
+                 Z1.generators[:, 1:ngens(Z2)] .- Z2.generators,
+                 Z1.generators[:, ngens(Z2)+1:end])/N(2)
+    end
+    return c, G
 end
 
 """
