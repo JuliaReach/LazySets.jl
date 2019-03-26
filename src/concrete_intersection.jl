@@ -297,11 +297,12 @@ function intersection(P1::AbstractHPolygon{N},
     return P
 end
 
+using MathProgBase.SolverInterface: AbstractMathProgSolver
+
 """
     intersection(P1::AbstractPolyhedron{N},
                  P2::AbstractPolyhedron{N};
-                 backend=nothing,
-                 use_polyhedra_interface=false) where {N<:Real}
+                 backend=GLPKSolverLP()) where {N<:Real}
 
 Compute the intersection of two polyhedra.
 
@@ -309,11 +310,8 @@ Compute the intersection of two polyhedra.
 
 - `P1`        -- polyhedron
 - `P2`        -- polyhedron
-- `backend`   -- (optional, default: `nothing`) the LP solver or the backend for
-                 polyhedral computations; its value is set internally, see the
-                 Notes below for details
-- `use_polyhedra_interface` -- (optional, default: `false`) if `true`, use the
-                 `Polyhedra` interface for the removal of constraints
+- `backend`   -- (optional, default: `nothing`) the solver backend used for the
+                 removal of redundant constraints, see the notes below for details
 
 ### Output
 
@@ -323,14 +321,16 @@ If one of the arguments is a polytope, the result is an `HPolytope` instead.
 
 ### Notes
 
-The default value of the backend is set internally and depends on whether the
-Polyhedra backend is used or not. The default backends are `GLPKSolverLP()`
-and `default_polyhedra_backend(P1, N)`, respectively.
+The default value of the solver backend is `GLPKSolverLP()` and it is used to
+run a feasiblity LP to remove the redundant constraints of the intersection.
 
-Note that if `use_polyhedra_interface` is set to `true`, there is no guarantee
-that the removal of constraints keep the set empty (see #1038 and
-Polyhedra#146), so it is better to check for emptiness of intersection before
-using this function in that case.
+If you want to use the `Polyhedra` library, pass an appropriate backend. For
+example, to use the default Polyhedra library use `default_polyhedra_backend(P, N)`
+or use `CDDLib.Library()` for the CDD library.
+
+There are some shortcomings of the removal of constraints using the default
+Polyhedra library; see e.g. #1038 and Polyhedra#146. It is safer to check for
+emptiness of intersection before calling this function in those cases.
 
 ### Algorithm
 
@@ -339,8 +339,7 @@ This implementation unifies the constraints of the two sets obtained from the
 """
 function intersection(P1::AbstractPolyhedron{N},
                       P2::AbstractPolyhedron{N};
-                      backend=nothing,
-                      use_polyhedra_interface=false) where {N<:Real}
+                      backend=GLPKSolverLP()) where {N<:Real}
     HPOLY = (P1 isa AbstractPolytope || P2 isa AbstractPolytope) ?
         HPolytope{N} : HPolyhedron{N}
 
@@ -348,25 +347,33 @@ function intersection(P1::AbstractPolyhedron{N},
     Q = HPOLY([constraints_list(P1); constraints_list(P2)])
 
     # remove redundant constraints
-    if use_polyhedra_interface
-        if backend == nothing
-            backend = default_polyhedra_backend(P1, N)
-        end
-        # convert to an hrep, remove the redundancies and convert back to HPOLY
-        ph = polyhedron(Q; backend=backend)
-        removehredundancy!(ph)
-        return convert(HPOLY, ph)
-    else
-        if backend == nothing
-            backend = GLPKSolverLP()
-        end
-        # here, detection of empty intersection may be reported as an infeasible LP
+    use_polyhedra_interface = !(backend isa AbstractMathProgSolver)
+    return _intersection_remove_redundant_constraints(Q, Val(use_polyhedra_interface), backend)
+end
+
+function _intersection_remove_redundant_constraints(Q::AbstractPolyhedron{N},
+            use_polyhedra_interface::Val{false},
+            backend::AbstractMathProgSolver=GLPKSolverLP()) where {N}
+        # if Q is empty => the feasiblity LP for the list of constraints of Q
+        # is infeasible and remove_redundant_constraints! returns false
         if remove_redundant_constraints!(Q, backend=backend)
             return Q
         else
             return EmptySet{N}()
         end
-    end
+end
+
+function _intersection_remove_redundant_constraints(Q::T,
+            use_polyhedra_interface::Val{true},
+            backend=default_polyhedra_backend(Q, N)) where {N, T<:AbstractPolyhedron{N}}
+        # convert to a Polyhedra's hrep
+        ph = polyhedron(Q; backend=backend)
+
+        # remove the redundancies
+        removehredundancy!(ph)
+
+        # convert back to HPOLY
+        return convert(T, ph)
 end
 
 # disambiguation
