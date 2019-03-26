@@ -340,20 +340,15 @@ This implementation unifies the constraints of the two sets obtained from the
 function intersection(P1::AbstractPolyhedron{N},
                       P2::AbstractPolyhedron{N};
                       backend=GLPKSolverLP()) where {N<:Real}
-    HPOLY = (P1 isa AbstractPolytope || P2 isa AbstractPolytope) ?
-        HPolytope{N} : HPolyhedron{N}
+
+    # if one of P1 or P2 is bounded => the result is bounded
+    HPOLY = (P1 isa AbstractPolytope || P2 isa AbstractPolytope) ? HPolytope{N} : HPolyhedron{N}
 
     # concatenate the linear constraints
     Q = HPOLY([constraints_list(P1); constraints_list(P2)])
 
     # remove redundant constraints
-    use_polyhedra_interface = !(backend isa AbstractMathProgSolver)
-    return _intersection_remove_redundant_constraints(Q, Val(use_polyhedra_interface), backend)
-end
-
-function _intersection_remove_redundant_constraints(Q::AbstractPolyhedron{N},
-            use_polyhedra_interface::Val{false},
-            backend::AbstractMathProgSolver=GLPKSolverLP()) where {N}
+    if backend isa AbstractMathProgSolver
         # if Q is empty => the feasiblity LP for the list of constraints of Q
         # is infeasible and remove_redundant_constraints! returns false
         if remove_redundant_constraints!(Q, backend=backend)
@@ -361,19 +356,16 @@ function _intersection_remove_redundant_constraints(Q::AbstractPolyhedron{N},
         else
             return EmptySet{N}()
         end
-end
-
-function _intersection_remove_redundant_constraints(Q::T,
-            use_polyhedra_interface::Val{true},
-            backend=default_polyhedra_backend(Q, N)) where {N, T<:AbstractPolyhedron{N}}
+    else
         # convert to a Polyhedra's hrep
-        ph = polyhedron(Q; backend=backend)
+        Qph = polyhedron(Q; backend=backend)
 
         # remove the redundancies
-        removehredundancy!(ph)
+        removehredundancy!(Qph)
 
         # convert back to HPOLY
-        return convert(T, ph)
+        return convert(HPOLY, Qph)
+    end
 end
 
 # disambiguation
