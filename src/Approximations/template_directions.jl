@@ -330,3 +330,47 @@ end
 
 end # @eval
 end # if
+
+
+function _isapprox_included(d, S)
+    return any(isapproxzero.([norm(d - si) for si in S])) 
+end
+
+struct SphericalDirections <: AbstractDirections{Float64}
+    Nθ::Int
+    Nφ::Int
+    stack::Vector{Vector{Float64}} # stores the spherical directions
+
+    function SphericalDirections(Nθ::Int, Nφ::Int, stack::Vector{Vector{Float64}}; remove_duplicates=true)
+        if Nθ <= 1 || Nφ <= 1
+            throw(ArgumentError("(Nθ, Nφ) = ($Nθ, $Nφ) is invalid; both shoud be at least 2"))
+        end
+        θ = range(-pi, pi, length=Nθ)      # discretization of the acimutal angle
+        φ = range(0.0, 2*pi, length=Nφ)    # discretization of the polar angle
+        for φᵢ in φ
+            for θᵢ in θ
+                d = [sin(θᵢ)*cos(φᵢ), sin(θᵢ)*sin(φᵢ), cos(θᵢ)]
+                exists = false
+                if remove_duplicates && _isapprox_included(d, stack)
+                    continue
+                end
+                push!(stack, d)
+            end
+        end
+        
+        return new(Nθ, Nφ, stack)
+    end
+end
+
+# convenience constructors
+SphericalDirections(Nθ::Int, Nφ::Int; kwargs...) = SphericalDirections(Nθ, Nφ, Vector{Vector{Float64}}(); kwargs...)
+SphericalDirections(Nθ::Int; kwargs...) = SphericalDirections(Nθ, Nθ, Vector{Vector{Float64}}(); kwargs...)
+
+# common functions
+Base.eltype(::Type{SphericalDirections}) = Vector{Float64}
+Base.length(sd::SphericalDirections) = length(sd.stack)
+
+function Base.iterate(sd::SphericalDirections, state::Int=1)
+    state == length(sd.stack)+1 && return nothing
+    return (sd.stack[state], state + 1)
+end

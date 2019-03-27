@@ -19,7 +19,8 @@ export approximate,
        box_approximation_symmetric, symmetric_interval_hull,
        BoxDirections,
        BoxDiagDirections,
-       OctDirections
+       OctDirections,
+       SphericalDirections
 
 include("../compat.jl")
 
