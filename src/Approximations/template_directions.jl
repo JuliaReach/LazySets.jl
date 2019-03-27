@@ -445,6 +445,7 @@ SphericalDirections(Nθ::Int; kwargs...) = SphericalDirections(Nθ, Nθ, Vector{
 # common functions
 Base.eltype(::Type{SphericalDirections}) = Vector{Float64}
 Base.length(sd::SphericalDirections) = length(sd.stack)
+dim(::SphericalDirections) = 3
 
 @static if VERSION < v"0.7-"
     @eval begin
