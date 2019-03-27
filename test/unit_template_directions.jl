@@ -40,10 +40,18 @@ for N in [Float64, Float32, Rational{Int}]
         boxdiag = overapproximate(X, BoxDiagDirections)
         @test length(dir) == length(boxdiag.constraints) ==
               (n == 1 ? 2 : 2^n + 2*n)
+
+        # spherical directions approximation
+        if n == 3
+            dir = SphericalDirections(5)
+            @test dim(dir) == n
+        end
     end
+
 end
 
 # default Float64 constructors
 BoxDirections(3)
 OctDirections(3)
 BoxDiagDirections(3)
+SphericalDirections(3)

@@ -1,4 +1,5 @@
 import LazySets.dim
+using LazySets: isapproxzero
 
 """
     AbstractDirections{N}
@@ -29,7 +30,9 @@ function dim(ad::AbstractDirections)::Int
     return ad.n
 end
 
-# box directions
+# ==================================================
+# Box directions
+# ==================================================
 
 """
     UnitVector{T} <: AbstractVector{T}
@@ -99,7 +102,9 @@ end
 end # @eval
 end # if
 
-# octagon directions
+# ==================================================
+# Octagonal directions
+# ==================================================
 
 """
     OctDirections{N} <: AbstractDirections{N}
@@ -239,7 +244,9 @@ end
 end # @eval
 end # if
 
-# box-diagonal directions
+# ==================================================
+# Box-diagonal directions
+# ==================================================
 
 """
     BoxDiagDirections{N} <: AbstractDirections{N}
@@ -331,11 +338,82 @@ end
 end # @eval
 end # if
 
+# ==================================================
+# Spherical directions
+# ==================================================
 
-function _isapprox_included(d, S)
-    return any(isapproxzero.([norm(d - si) for si in S])) 
-end
+@inline _isapprox_included(d, S) = any(isapproxzero.([norm(d - si, Inf) for si in S])) 
 
+"""
+    SphericalDirections <: AbstractDirections{Float64}
+
+Spherical directions representation.
+
+### Fields
+
+- `Nθ`    -- length of the partition of the acimutal angle
+- `Nφ`    -- length of the partition of the polar angle
+- `stack` -- list of computed directions
+
+### Notes
+
+The `SphericalDirections` constructor provides a sample of the unit sphere
+in ``\\mathbb{R}^3``, which is parameterized by the acimutal and polar angles
+``θ ∈ Dθ := [-π, π]`` and ``φ ∈ Dφ := [0, 2π]`` respectively. The domains ``Dθ``
+and ``Dφ`` are discretized in ``Nθ`` and ``Nφ`` respectively. Then the Cartesian
+componentes of each direction are obtained with
+
+```math
+[sin(θᵢ)*cos(φᵢ), sin(θᵢ)*sin(φᵢ), cos(θᵢ)]
+```
+Note that by discretization, the polar point may be computed more than once, in
+general. Removing duplicates takes time; you can choose to remove duplicates or
+not by setting the keyword argument `remove_duplicates` in the constructor
+(default, `true`).
+
+### Examples
+
+A `SphericalDirections` can be built in different ways. If you pass only one integer,
+it is used to discretize both ``θ`` and ``φ``:
+
+```jldoctest spherical_directions
+julia> using LazySets.Approximations: SphericalDirections
+
+julia> sd = SphericalDirections(3)
+SphericalDirections(3, 3, Array{Float64,1}[[-1.22465e-16, -0.0, -1.0], [0.0, 0.0, 1.0]])
+
+julia> sd.Nθ, sd.Nφ 
+(3, 3)
+```
+
+Repeated directions are removed by default. Use the keyword argument `remove_duplicates`
+to control this behavior:
+
+```jldoctest spherical_directions
+julia> sd_with_duplicates = SphericalDirections(3, remove_duplicates=true);
+
+julia> length(sd_with_duplicates)
+2
+
+julia> sd_without_duplicates = SphericalDirections(3, remove_duplicates=false);
+
+julia> length(sd_without_duplicates)
+9
+```
+
+Pass two integers to control the discretization in ``θ`` and in ``φ`` separately:
+```jldoctest spherical_directions
+julia> sd_4_5 = SphericalDirections(4, 5);
+
+julia> length(sd_4_5)
+5
+
+julia> sd_4_8 = SphericalDirections(4, 8);
+
+julia> length(sd_4_8)
+15
+```
+"""
 struct SphericalDirections <: AbstractDirections{Float64}
     Nθ::Int
     Nφ::Int
@@ -345,19 +423,17 @@ struct SphericalDirections <: AbstractDirections{Float64}
         if Nθ <= 1 || Nφ <= 1
             throw(ArgumentError("(Nθ, Nφ) = ($Nθ, $Nφ) is invalid; both shoud be at least 2"))
         end
-        θ = range(-pi, pi, length=Nθ)      # discretization of the acimutal angle
-        φ = range(0.0, 2*pi, length=Nφ)    # discretization of the polar angle
+        θ = Compat.range(-pi, pi, length=Nθ)      # discretization of the acimutal angle
+        φ = Compat.range(0.0, 2*pi, length=Nφ)    # discretization of the polar angle
         for φᵢ in φ
-            for θᵢ in θ
-                d = [sin(θᵢ)*cos(φᵢ), sin(θᵢ)*sin(φᵢ), cos(θᵢ)]
-                exists = false
+            for θⱼ in θ
+                d = [sin(θⱼ)*cos(φᵢ), sin(θⱼ)*sin(φᵢ), cos(θⱼ)]
                 if remove_duplicates && _isapprox_included(d, stack)
                     continue
                 end
                 push!(stack, d)
             end
         end
-        
         return new(Nθ, Nφ, stack)
     end
 end
@@ -370,7 +446,17 @@ SphericalDirections(Nθ::Int; kwargs...) = SphericalDirections(Nθ, Nθ, Vector{
 Base.eltype(::Type{SphericalDirections}) = Vector{Float64}
 Base.length(sd::SphericalDirections) = length(sd.stack)
 
-function Base.iterate(sd::SphericalDirections, state::Int=1)
-    state == length(sd.stack)+1 && return nothing
-    return (sd.stack[state], state + 1)
+@static if VERSION < v"0.7-"
+    @eval begin
+        Base.start(sd::SphericalDirections) = sd[1]
+        Base.next(sd::SphericalDirections, state::Int) = (sd.stack[state], state+1)
+        Base.done(sd::SphericalDirections, state) = state == length(sd.stack)+1
+    end
+else
+    @eval begin
+        function Base.iterate(sd::SphericalDirections, state::Int=1)
+            state == length(sd.stack)+1 && return nothing
+            return (sd.stack[state], state + 1)
+        end
+    end
 end
