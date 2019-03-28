@@ -366,7 +366,7 @@ Then the Cartesian componentes of each direction are obtained with
 [sin(θᵢ)*cos(φᵢ), sin(θᵢ)*sin(φᵢ), cos(θᵢ)].
 ```
 
-The north and south poles are treated separately, so that no those points
+The north and south poles are treated separately so that those points
 are not considered more than once.
 
 ### Examples
