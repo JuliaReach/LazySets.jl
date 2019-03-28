@@ -42,7 +42,7 @@ for N in [Float64, Float32, Rational{Int}]
               (n == 1 ? 2 : 2^n + 2*n)
 
         # spherical directions approximation
-        if n == 3 && N == Float64
+        if n == 3 && N <: Float64
             dir = SphericalDirections(5)
             @test dim(dir) == 3
             spherical = overapproximate(X, dir)

@@ -342,26 +342,38 @@ end # if
 # Spherical directions
 # ==================================================
 
-@inline _isapprox_included(d, S) = any(isapproxzero.([norm(d - si, Inf) for si in S])) 
+# returns `true` if and only if there is a vector in the list of vectors S
+# such that it is approximately d
+function _isapprox_included(d::Vector{N}, S::Vector{Vector{N}}) where {N}
+    result = false
+    for si in S
+        if isapproxzero(norm(d-si))
+            result = true
+            break
+        end
+    end
+    return result
+end
 
 """
-    SphericalDirections <: AbstractDirections{Float64}
+    SphericalDirections{N} <: AbstractDirections{N}
 
 Spherical directions representation.
 
 ### Fields
 
-- `Nθ`    -- length of the partition of the acimutal angle
+- `Nθ`    -- length of the partition of the azimuthal angle
 - `Nφ`    -- length of the partition of the polar angle
 - `stack` -- list of computed directions
 
 ### Notes
 
 The `SphericalDirections` constructor provides a sample of the unit sphere
-in ``\\mathbb{R}^3``, which is parameterized by the acimutal and polar angles
-``θ ∈ Dθ := [-π, π]`` and ``φ ∈ Dφ := [0, 2π]`` respectively. The domains ``Dθ``
-and ``Dφ`` are discretized in ``Nθ`` and ``Nφ`` respectively. Then the Cartesian
-componentes of each direction are obtained with
+in ``\\mathbb{R}^3``, which is parameterized by the azimuthal and polar angles
+``θ ∈ Dθ := [-π, π]`` and ``φ ∈ Dφ := [0, 2π]`` respectively, see the wikipedia
+entry [Spherical coordinate system](https://en.wikipedia.org/wiki/Spherical_coordinate_system).
+The domains ``Dθ`` and ``Dφ`` are discretized in ``Nθ`` and ``Nφ`` respectively.
+Then the Cartesian componentes of each direction are obtained with
 
 ```math
 [sin(θᵢ)*cos(φᵢ), sin(θᵢ)*sin(φᵢ), cos(θᵢ)]
@@ -390,14 +402,14 @@ Repeated directions are removed by default. Use the keyword argument `remove_dup
 to control this behavior:
 
 ```jldoctest spherical_directions
-julia> sd_with_duplicates = SphericalDirections(3, remove_duplicates=true);
-
-julia> length(sd_with_duplicates)
-2
-
-julia> sd_without_duplicates = SphericalDirections(3, remove_duplicates=false);
+julia> sd_without_duplicates = SphericalDirections(3, remove_duplicates=true);
 
 julia> length(sd_without_duplicates)
+2
+
+julia> sd_with_duplicates = SphericalDirections(3, remove_duplicates=false);
+
+julia> length(sd_with_duplicates)
 9
 ```
 
@@ -414,17 +426,18 @@ julia> length(sd_4_8)
 15
 ```
 """
-struct SphericalDirections <: AbstractDirections{Float64}
+struct SphericalDirections{N} <: AbstractDirections{N}
     Nθ::Int
     Nφ::Int
-    stack::Vector{Vector{Float64}} # stores the spherical directions
+    stack::Vector{Vector{N}} # stores the spherical directions
 
-    function SphericalDirections(Nθ::Int, Nφ::Int, stack::Vector{Vector{Float64}}; remove_duplicates=true)
+    function SphericalDirections(Nθ::Int, Nφ::Int; N::Type{<:AbstractFloat}=Float64, remove_duplicates=true)
         if Nθ <= 1 || Nφ <= 1
             throw(ArgumentError("(Nθ, Nφ) = ($Nθ, $Nφ) is invalid; both shoud be at least 2"))
         end
-        θ = Compat.range(-pi, pi, length=Nθ)      # discretization of the acimutal angle
-        φ = Compat.range(0.0, 2*pi, length=Nφ)    # discretization of the polar angle
+        stack = Vector{Vector{N}}()
+        θ = Compat.range(N(-pi), N(pi), length=Nθ)      # discretization of the azimuthal angle
+        φ = Compat.range(N(0.0), N(2*pi), length=Nφ)    # discretization of the polar angle
         for φᵢ in φ
             for θⱼ in θ
                 d = [sin(θⱼ)*cos(φᵢ), sin(θⱼ)*sin(φᵢ), cos(θⱼ)]
@@ -434,16 +447,15 @@ struct SphericalDirections <: AbstractDirections{Float64}
                 push!(stack, d)
             end
         end
-        return new(Nθ, Nφ, stack)
+        return new{N}(Nθ, Nφ, stack)
     end
 end
 
 # convenience constructors
-SphericalDirections(Nθ::Int, Nφ::Int; kwargs...) = SphericalDirections(Nθ, Nφ, Vector{Vector{Float64}}(); kwargs...)
-SphericalDirections(Nθ::Int; kwargs...) = SphericalDirections(Nθ, Nθ, Vector{Vector{Float64}}(); kwargs...)
+SphericalDirections(Nθ::Int; kwargs...) = SphericalDirections(Nθ, Nθ; kwargs...)
 
 # common functions
-Base.eltype(::Type{SphericalDirections}) = Vector{Float64}
+Base.eltype(::Type{SphericalDirections{N}}) where {N<:AbstractFloat} = Vector{N}
 Base.length(sd::SphericalDirections) = length(sd.stack)
 dim(::SphericalDirections) = 3
 
