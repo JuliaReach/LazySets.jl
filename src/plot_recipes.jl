@@ -42,7 +42,7 @@ plotting singletons.
 @recipe function plot_lazyset(S::LazySet;
                               color="blue", label="", grid=true, alpha=0.5)
 
-    @assert dim(S) == 2  "cannot plot a $(dim(S))-dimensional set"
+    @assert dim(S) == 2 "cannot plot a $(dim(S))-dimensional set"
 
     P = Approximations.overapproximate(S)
     vlist = transpose(hcat(convex_hull(vertices_list(P))...))
@@ -94,7 +94,10 @@ correctly.
     seriestype := :shape
 
     for X in Xk
-        @assert dim(X) == 2  "cannot plot a $(dim(X))-dimensional set"
+        if X isa EmptySet
+            continue
+        end
+        @assert dim(X) == 2 "cannot plot a $(dim(X))-dimensional set"
         Pi = Approximations.overapproximate(X)
         vlist = transpose(hcat(convex_hull(vertices_list(Pi))...))
         x, y = vlist[:, 1], vlist[:, 2]
@@ -131,7 +134,7 @@ julia> plot(randn(2, 2) * B, 1e-3);
 @recipe function plot_lazyset(S::LazySet, ε::Float64;
                               color="blue", label="", grid=true, alpha=0.5)
 
-    @assert dim(S) == 2  "cannot plot a $(dim(S))-dimensional set"
+    @assert dim(S) == 2 "cannot plot a $(dim(S))-dimensional set"
     seriestype := :shape
 
     P = Approximations.overapproximate(S, ε)
@@ -175,7 +178,10 @@ julia> plot([B1, B2], 1e-4);
     seriestype := :shape
 
     for X in Xk
-        @assert dim(X) == 2  "cannot plot a $(dim(X))-dimensional set"
+        if X isa EmptySet
+            continue
+        end
+        @assert dim(X) == 2 "cannot plot a $(dim(X))-dimensional set"
         Pi = Approximations.overapproximate(X, ε)
         vlist = transpose(hcat(vertices_list(Pi)...))
         x, y = vlist[:, 1], vlist[:, 2]
@@ -228,7 +234,7 @@ julia> plot(P);
                                color="blue", label="", grid=true, alpha=0.5)
 
     # for polytopes
-    @assert dim(P) == 2  "cannot plot a $(dim(P))-dimensional polytope"
+    @assert dim(P) == 2 "cannot plot a $(dim(P))-dimensional polytope"
     seriestype := :shape
 
     points = convex_hull(vertices_list(P))
@@ -291,7 +297,7 @@ It is assumed that the given vector of polytopes is two-dimensional.
     seriestype := :shape
 
     for Pi in Xk
-        @assert dim(Pi) == 2  "cannot plot a $(dim(Pi))-dimensional polytope"
+        @assert dim(Pi) == 2 "cannot plot a $(dim(Pi))-dimensional polytope"
         points = convex_hull(vertices_list(Pi))
         vlist = transpose(hcat(points...))
         x, y = vlist[:, 1], vlist[:, 2]
@@ -522,4 +528,34 @@ julia> plot([I1, I2]);
     for Ii in Xk
         @series [Tuple([min(Ii), 0.0]); Tuple([max(Ii), 0.0])]
     end
+end
+
+# ==============================
+# Plot recipe for the empty set
+# ==============================
+
+"""
+    plot_emptyset(∅::EmptySet, [ε::Float64=0.0]; ...)
+
+Plot an empty set.
+
+### Input
+
+- `∅` -- empty set
+- `ε` -- (optional, default: `0.0`) approximation error bound
+
+### Examples
+
+```jldoctest
+julia> using Plots, LazySets;
+
+julia> plot(∅);
+
+julia> plot(∅, 1e-2);
+
+```
+"""
+@recipe function plot_emptyset(∅::EmptySet, ε::Float64=0.0; label="", grid=true,
+                               legend=false)
+    return []
 end
