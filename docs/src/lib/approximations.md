@@ -69,6 +69,7 @@ AbstractDirections
 BoxDirections
 OctDirections
 BoxDiagDirections
+PolarDirections
 ```
 
 See also `overapproximate(X::LazySet, dir::AbstractDirections)::HPolytope`.
