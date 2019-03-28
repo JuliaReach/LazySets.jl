@@ -70,6 +70,7 @@ BoxDirections
 OctDirections
 BoxDiagDirections
 PolarDirections
+SphericalDirections
 ```
 
 See also `overapproximate(X::LazySet, dir::AbstractDirections)::HPolytope`.
