@@ -357,9 +357,8 @@ function overapproximate(S::LazySet{N}, ::Type{Interval}) where {N<:Real}
     return convert(Interval, S)
 end
 
-function overapproximate_cap_helper(X::LazySet{N},                # compact set
-                                    P::Union{AbstractPolytope{N}, # polyhedron
-                                             HPolyhedron{N}},
+function overapproximate_cap_helper(X::LazySet{N},             # compact set
+                                    P::AbstractPolyhedron{N},  # polyhedron
                                     dir::AbstractDirections{N};
                                     kwargs...
                                    ) where {N<:Real}
@@ -381,9 +380,7 @@ function overapproximate_cap_helper(X::LazySet{N},                # compact set
 end
 
 """
-    overapproximate(cap::Intersection{N,
-                                      <:LazySet,
-                                      <:Union{AbstractPolytope{N}, HPolyhedron{N}}},
+    overapproximate(cap::Intersection{N, <:LazySet, <:AbstractPolyhedron{N}},
                     dir::AbstractDirections{N};
                     kwargs...
                    ) where {N<:Real}
@@ -428,7 +425,7 @@ intersection is empty.
 """
 function overapproximate(cap::Intersection{N,
                                            <:LazySet,
-                                           <:Union{AbstractPolytope{N}, HPolyhedron{N}}},
+                                           <:AbstractPolyhedron{N}},
                          dir::AbstractDirections{N};
                          kwargs...
                         ) where {N<:Real}
@@ -437,7 +434,7 @@ end
 
 # symmetric method
 function overapproximate(cap::Intersection{N,
-                                           <:Union{AbstractPolytope{N}, HPolyhedron{N}},
+                                           <:AbstractPolyhedron{N},
                                            <:LazySet},
                          dir::AbstractDirections{N};
                          kwargs...
@@ -448,7 +445,7 @@ end
 # disambiguation
 function overapproximate(cap::Intersection{N,
                                            <:AbstractPolytope{N},
-                                           <:Union{AbstractPolytope{N}, HPolyhedron{N}}},
+                                           <:AbstractPolyhedron{N}},
                          dir::AbstractDirections{N};
                          kwargs...
                         ) where {N<:Real}
@@ -457,7 +454,7 @@ end
 
 # symmetric method
 function overapproximate(cap::Intersection{N,
-                                           <:Union{AbstractPolytope{N}, HPolyhedron{N}},
+                                           <:AbstractPolyhedron{N},
                                            <:AbstractPolytope{N}},
                          dir::AbstractDirections{N};
                          kwargs...
@@ -468,21 +465,11 @@ end
 # disambiguation
 function overapproximate(cap::Intersection{N,
                                            <:AbstractPolytope{N},
-                                           <:HPolyhedron{N}},
-                         dir::AbstractDirections{N};
-                         kwargs...
-                        ) where {N<:Real}
-    return overapproximate_cap_helper(cap.X, cap.Y, dir; kwargs...)
-end
-
-# symmetric method
-function overapproximate(cap::Intersection{N,
-                                           <:HPolyhedron{N},
                                            <:AbstractPolytope{N}},
                          dir::AbstractDirections{N};
                          kwargs...
                         ) where {N<:Real}
-    return overapproximate_cap_helper(cap.Y, cap.X, dir; kwargs...)
+    return overapproximate_cap_helper(cap.X, cap.Y, dir; kwargs...)
 end
 
 """
