@@ -342,17 +342,6 @@ end # if
 # Spherical directions
 # ==================================================
 
-# returns `true` if and only if there is a vector in the list of vectors S
-# such that it is approximately d
-function _isapprox_included(d::Vector{N}, S::Vector{Vector{N}}) where {N}
-    for si in S
-        if isapproxzero(norm(d-si))
-            return true
-        end
-    end
-    return false
-end
-
 """
     SphericalDirections{N<:AbstractFloat} <: AbstractDirections{N}
 
@@ -374,12 +363,11 @@ The domains ``Dθ`` and ``Dφ`` are discretized in ``Nθ`` and ``Nφ`` respectiv
 Then the Cartesian componentes of each direction are obtained with
 
 ```math
-[sin(θᵢ)*cos(φᵢ), sin(θᵢ)*sin(φᵢ), cos(θᵢ)]
+[sin(θᵢ)*cos(φᵢ), sin(θᵢ)*sin(φᵢ), cos(θᵢ)].
 ```
-Note that by discretization, the polar point may be computed more than once, in
-general. Removing duplicates takes time; you can choose to remove duplicates or
-not by setting the keyword argument `remove_duplicates` in the constructor
-(default `true`).
+
+The north and south poles are treated separately, so that no those points
+are not considered more than once.
 
 ### Examples
 
@@ -390,33 +378,19 @@ it is used to discretize both ``θ`` and ``φ``:
 julia> using LazySets.Approximations: SphericalDirections
 
 julia> sd = SphericalDirections(3)
-SphericalDirections{Float64}(3, 3, Array{Float64,1}[[0.0, 0.0, 1.0], [1.0, 0.0, 6.12323e-17], [1.22465e-16, 0.0, -1.0], [-1.0, 1.22465e-16, 6.12323e-17]])
+SphericalDirections{Float64}(3, 3, Array{Float64,1}[[0.0, 0.0, 1.0], [0.0, 0.0, -1.0], [1.0, 0.0, 6.12323e-17], [-1.0, 1.22465e-16, 6.12323e-17]])
 
 julia> sd.Nθ, sd.Nφ 
 (3, 3)
 ```
 
-Repeated directions are removed by default. Use the keyword argument `remove_duplicates`
-to control this behavior:
-
-```jldoctest spherical_directions
-julia> sd_without_duplicates = SphericalDirections(3, remove_duplicates=true);
-
-julia> length(sd_without_duplicates)
-4
-
-julia> sd_with_duplicates = SphericalDirections(3, remove_duplicates=false);
-
-julia> length(sd_with_duplicates)
-9
-```
-
 Pass two integers to control the discretization in ``θ`` and in ``φ`` separately:
+
 ```jldoctest spherical_directions
 julia> sd_4_5 = SphericalDirections(4, 5);
 
 julia> length(sd_4_5)
-5
+10
 
 julia> sd_4_8 = SphericalDirections(4, 8);
 
@@ -429,19 +403,23 @@ struct SphericalDirections{N<:AbstractFloat} <: AbstractDirections{N}
     Nφ::Int
     stack::Vector{Vector{N}} # stores the spherical directions
 
-    function SphericalDirections{N}(Nθ::Int, Nφ::Int; remove_duplicates=true) where {N<:AbstractFloat}
+    function SphericalDirections{N}(Nθ::Int, Nφ::Int) where {N<:AbstractFloat}
         if Nθ <= 1 || Nφ <= 1
             throw(ArgumentError("(Nθ, Nφ) = ($Nθ, $Nφ) is invalid; both shoud be at least 2"))
         end
         stack = Vector{Vector{N}}()
         θ = Compat.range(N(0), N(pi), length=Nθ)      # discretization of the azimuthal angle
         φ = Compat.range(N(0.0), N(2*pi), length=Nφ)  # discretization of the polar angle
-        for φᵢ in φ
-            for θⱼ in θ
+
+        # add north pole (θ = 0)
+        push!(stack, N[0, 0, 1])
+
+        # add south pole (θ = pi)
+        push!(stack, N[0, 0, -1])
+
+        for φᵢ in φ[1:Nφ-1]  # delete repeated angle
+            for θⱼ in θ[2:Nθ-1] # delete north and south poles
                 d = N[sin(θⱼ)*cos(φᵢ), sin(θⱼ)*sin(φᵢ), cos(θⱼ)]
-                if remove_duplicates && _isapprox_included(d, stack)
-                    continue
-                end
                 push!(stack, d)
             end
         end
@@ -450,8 +428,8 @@ struct SphericalDirections{N<:AbstractFloat} <: AbstractDirections{N}
 end
 
 # convenience constructors
-SphericalDirections(Nθ::Int; kwargs...) = SphericalDirections{Float64}(Nθ, Nθ; kwargs...)
-SphericalDirections(Nθ::Int, Nφ::Int; kwargs...) = SphericalDirections{Float64}(Nθ, Nφ; kwargs...)
+SphericalDirections(Nθ::Int) = SphericalDirections{Float64}(Nθ, Nθ)
+SphericalDirections(Nθ::Int, Nφ::Int) = SphericalDirections{Float64}(Nθ, Nφ)
 
 # common functions
 Base.eltype(::Type{SphericalDirections{N}}) where {N} = Vector{N}
