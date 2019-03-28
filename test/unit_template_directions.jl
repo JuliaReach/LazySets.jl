@@ -43,7 +43,7 @@ for N in [Float64, Float32, Rational{Int}]
 
         # spherical directions approximation
         if n == 3 && N in [Float32, Float64]
-            dir = SphericalDirections(5)
+            dir = SphericalDirections{N}(5, 5)
             @test dim(dir) == 3
             spherical = overapproximate(X, dir)
         end
