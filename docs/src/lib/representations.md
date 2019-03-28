@@ -155,6 +155,7 @@ radius(::EmptySet, ::Real=Inf)
 diameter(::EmptySet, ::Real=Inf)
 linear_map(::AbstractMatrix{N}, ::EmptySet{N}) where {N}
 translate(::EmptySet{N}, ::AbstractVector{N}) where {N<:Real}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::EmptySet, ::Float64=0.0)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

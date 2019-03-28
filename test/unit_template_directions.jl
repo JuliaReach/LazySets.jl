@@ -40,12 +40,21 @@ for N in [Float64, Float32, Rational{Int}]
         boxdiag = overapproximate(X, BoxDiagDirections)
         @test length(dir) == length(boxdiag.constraints) ==
               (n == 1 ? 2 : 2^n + 2*n)
-
         # spherical directions approximation
         if n == 3 && N in [Float32, Float64]
             dir = PolarDirections{N}(5)
             @test dim(dir) == 2
             polar = overapproximate(X, dir)
+        end
+    
+        # overapproximate lazy polyhedral intersections
+        if N in [Float64]
+            Y = B ∩ Ball1(zeros(N, n), N(1))
+            Z = B ∩ HalfSpace(ones(N, n), N(1))
+            for dir in [BoxDirections, OctDirections, BoxDiagDirections]
+                overapproximate(Y, dir)
+                overapproximate(Z, dir)
+            end
         end
     end
 end
