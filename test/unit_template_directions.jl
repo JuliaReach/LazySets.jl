@@ -41,6 +41,13 @@ for N in [Float64, Float32, Rational{Int}]
         @test length(dir) == length(boxdiag.constraints) ==
               (n == 1 ? 2 : 2^n + 2*n)
 
+        # spherical directions approximation
+        if n == 3 && N in [Float32, Float64]
+            dir = SphericalDirections{N}(5, 5)
+            @test dim(dir) == 3
+            spherical = overapproximate(X, dir)
+        end
+    
         # overapproximate lazy polyhedral intersections
         if N in [Float64]
             Y = B ∩ Ball1(zeros(N, n), N(1))
@@ -51,9 +58,11 @@ for N in [Float64, Float32, Rational{Int}]
             end
         end
     end
+
 end
 
 # default Float64 constructors
 BoxDirections(3)
 OctDirections(3)
 BoxDiagDirections(3)
+SphericalDirections(3)

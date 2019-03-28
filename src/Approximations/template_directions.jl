@@ -1,4 +1,5 @@
 import LazySets.dim
+using LazySets: isapproxzero
 
 """
     AbstractDirections{N}
@@ -29,7 +30,9 @@ function dim(ad::AbstractDirections)::Int
     return ad.n
 end
 
-# box directions
+# ==================================================
+# Box directions
+# ==================================================
 
 """
     UnitVector{T} <: AbstractVector{T}
@@ -99,7 +102,9 @@ end
 end # @eval
 end # if
 
-# octagon directions
+# ==================================================
+# Octagonal directions
+# ==================================================
 
 """
     OctDirections{N} <: AbstractDirections{N}
@@ -239,7 +244,9 @@ end
 end # @eval
 end # if
 
-# box-diagonal directions
+# ==================================================
+# Box-diagonal directions
+# ==================================================
 
 """
     BoxDiagDirections{N} <: AbstractDirections{N}
@@ -330,3 +337,116 @@ end
 
 end # @eval
 end # if
+
+# ==================================================
+# Spherical directions
+# ==================================================
+
+"""
+    SphericalDirections{N<:AbstractFloat} <: AbstractDirections{N}
+
+Spherical directions representation.
+
+### Fields
+
+- `Nθ`    -- length of the partition of the azimuthal angle
+- `Nφ`    -- length of the partition of the polar angle
+- `stack` -- list of computed directions
+
+### Notes
+
+The `SphericalDirections` constructor provides a sample of the unit sphere
+in ``\\mathbb{R}^3``, which is parameterized by the azimuthal and polar angles
+``θ ∈ Dθ := [0, π]`` and ``φ ∈ Dφ := [0, 2π]`` respectively, see the wikipedia
+entry [Spherical coordinate system](https://en.wikipedia.org/wiki/Spherical_coordinate_system).
+The domains ``Dθ`` and ``Dφ`` are discretized in ``Nθ`` and ``Nφ`` respectively.
+Then the Cartesian componentes of each direction are obtained with
+
+```math
+[sin(θᵢ)*cos(φᵢ), sin(θᵢ)*sin(φᵢ), cos(θᵢ)].
+```
+
+The north and south poles are treated separately so that those points
+are not considered more than once.
+
+### Examples
+
+A `SphericalDirections` can be built in different ways. If you pass only one integer,
+it is used to discretize both ``θ`` and ``φ``:
+
+```jldoctest spherical_directions
+julia> using LazySets.Approximations: SphericalDirections
+
+julia> sd = SphericalDirections(3)
+SphericalDirections{Float64}(3, 3, Array{Float64,1}[[0.0, 0.0, 1.0], [0.0, 0.0, -1.0], [1.0, 0.0, 6.12323e-17], [-1.0, 1.22465e-16, 6.12323e-17]])
+
+julia> sd.Nθ, sd.Nφ 
+(3, 3)
+```
+
+Pass two integers to control the discretization in ``θ`` and in ``φ`` separately:
+
+```jldoctest spherical_directions
+julia> sd_4_5 = SphericalDirections(4, 5);
+
+julia> length(sd_4_5)
+10
+
+julia> sd_4_8 = SphericalDirections(4, 8);
+
+julia> length(sd_4_8)
+16
+```
+"""
+struct SphericalDirections{N<:AbstractFloat} <: AbstractDirections{N}
+    Nθ::Int
+    Nφ::Int
+    stack::Vector{Vector{N}} # stores the spherical directions
+
+    function SphericalDirections{N}(Nθ::Int, Nφ::Int) where {N<:AbstractFloat}
+        if Nθ <= 1 || Nφ <= 1
+            throw(ArgumentError("(Nθ, Nφ) = ($Nθ, $Nφ) is invalid; both shoud be at least 2"))
+        end
+        stack = Vector{Vector{N}}()
+        θ = Compat.range(N(0), N(pi), length=Nθ)      # discretization of the azimuthal angle
+        φ = Compat.range(N(0.0), N(2*pi), length=Nφ)  # discretization of the polar angle
+
+        # add north pole (θ = 0)
+        push!(stack, N[0, 0, 1])
+
+        # add south pole (θ = pi)
+        push!(stack, N[0, 0, -1])
+
+        for φᵢ in φ[1:Nφ-1]  # delete repeated angle
+            for θⱼ in θ[2:Nθ-1] # delete north and south poles
+                d = N[sin(θⱼ)*cos(φᵢ), sin(θⱼ)*sin(φᵢ), cos(θⱼ)]
+                push!(stack, d)
+            end
+        end
+        return new{N}(Nθ, Nφ, stack)
+    end
+end
+
+# convenience constructors
+SphericalDirections(Nθ::Int) = SphericalDirections{Float64}(Nθ, Nθ)
+SphericalDirections(Nθ::Int, Nφ::Int) = SphericalDirections{Float64}(Nθ, Nφ)
+
+# common functions
+Base.eltype(::Type{SphericalDirections{N}}) where {N} = Vector{N}
+Base.length(sd::SphericalDirections) = length(sd.stack)
+dim(::SphericalDirections) = 3
+
+@static if VERSION < v"0.7-"
+    @eval begin
+        Base.start(sd::SphericalDirections) = sd[1]
+        Base.next(sd::SphericalDirections, state::Int) = (sd.stack[state], state+1)
+        Base.done(sd::SphericalDirections, state) = state == length(sd.stack)+1
+    end
+else
+    @eval begin
+        function Base.iterate(sd::SphericalDirections, state::Int=1)
+            state == length(sd.stack)+1 && return nothing
+            return (sd.stack[state], state + 1)
+        end
+    end
+end
