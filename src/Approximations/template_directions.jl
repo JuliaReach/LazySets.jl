@@ -345,14 +345,12 @@ end # if
 # returns `true` if and only if there is a vector in the list of vectors S
 # such that it is approximately d
 function _isapprox_included(d::Vector{N}, S::Vector{Vector{N}}) where {N}
-    result = false
     for si in S
         if isapproxzero(norm(d-si))
-            result = true
-            break
+            return true
         end
     end
-    return result
+    return false
 end
 
 """
@@ -440,7 +438,7 @@ struct SphericalDirections{N} <: AbstractDirections{N}
         φ = Compat.range(N(0.0), N(2*pi), length=Nφ)    # discretization of the polar angle
         for φᵢ in φ
             for θⱼ in θ
-                d = [sin(θⱼ)*cos(φᵢ), sin(θⱼ)*sin(φᵢ), cos(θⱼ)]
+                d = N[sin(θⱼ)*cos(φᵢ), sin(θⱼ)*sin(φᵢ), cos(θⱼ)]
                 if remove_duplicates && _isapprox_included(d, stack)
                     continue
                 end
