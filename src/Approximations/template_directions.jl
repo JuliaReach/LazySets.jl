@@ -369,7 +369,7 @@ componentes of each direction are obtained with
 Note that by discretization, the polar point may be computed more than once, in
 general. Removing duplicates takes time; you can choose to remove duplicates or
 not by setting the keyword argument `remove_duplicates` in the constructor
-(default, `true`).
+(default `true`).
 
 ### Examples
 
