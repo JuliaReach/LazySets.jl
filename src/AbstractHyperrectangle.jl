@@ -312,7 +312,7 @@ A list of `Hyperrectangle`s.
 """
 function split(H::AbstractHyperrectangle{N}, num_blocks::AbstractVector{Int}
               )::Vector{Hyperrectangle{N}} where {N<:Real}
-    @assert length(i_blocks) == dim(H) "need number of blocks in each dimension"
+    @assert length(num_blocks) == dim(H) "need number of blocks in each dimension"
     radius = copy(radius_hyperrectangle(H))
     total_number = 1
     lo = low(H)
