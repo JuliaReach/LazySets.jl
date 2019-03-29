@@ -218,7 +218,7 @@ high(::AbstractHyperrectangle{N}) where {N<:Real}
 high(::AbstractHyperrectangle{N}, ::Int) where {N<:Real}
 low(::AbstractHyperrectangle{N}) where {N<:Real}
 low(::AbstractHyperrectangle{N}, ::Int) where {N<:Real}
-partition(::AbstractHyperrectangle{N}, ::AbstractVector{Int}) where {N<:Real}
+split(::AbstractHyperrectangle{N}, ::AbstractVector{Int}) where {N<:Real}
 ```
 
 ##### Singleton

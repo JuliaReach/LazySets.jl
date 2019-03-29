@@ -1,11 +1,10 @@
-import Base.∈
+import Base: ∈, split
 using Base: product
 
 export AbstractHyperrectangle,
        radius_hyperrectangle,
        constraints_list,
-       low, high,
-       partition
+       low, high
 
 """
     AbstractHyperrectangle{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
@@ -297,22 +296,23 @@ function low(H::AbstractHyperrectangle{N}, i::Int)::N where {N<:Real}
 end
 
 """
-    partition(H::AbstractHyperrectangle{N}, i_blocks::AbstractVector{Int}
-             ) where {N<:Real}
+    split(H::AbstractHyperrectangle{N}, num_blocks::AbstractVector{Int}
+         ) where {N<:Real}
 
 Partition a hyperrectangular set into uniform sub-hyperrectangles.
 
 ### Input
 
-- `H`        -- hyperrectangular set
-- `i_blocks` -- number of blocks in the partition for each dimension
+- `H`          -- hyperrectangular set
+- `num_blocks` -- number of blocks in the partition for each dimension
 
 ### Output
 
 A list of `Hyperrectangle`s.
 """
-function partition(H::AbstractHyperrectangle{N}, i_blocks::AbstractVector{Int}
-                  )::Vector{Hyperrectangle{N}} where {N<:Real}
+function split(H::AbstractHyperrectangle{N}, num_blocks::AbstractVector{Int}
+              )::Vector{Hyperrectangle{N}} where {N<:Real}
+    @assert length(i_blocks) == dim(H) "need number of blocks in each dimension"
     radius = copy(radius_hyperrectangle(H))
     total_number = 1
     lo = low(H)
@@ -320,7 +320,7 @@ function partition(H::AbstractHyperrectangle{N}, i_blocks::AbstractVector{Int}
 
     # precompute center points in each dimension
     centers = Vector{StepRangeLen{N}}(undef, dim(H))
-    for (i, m) in enumerate(i_blocks)
+    for (i, m) in enumerate(num_blocks)
         if m <= 0
             throw(ArgumentError(m, "each dimension needs at least one block"))
         elseif m == one(N)

@@ -4,7 +4,7 @@ different Julia versions.
 =#
 
 using Compat
-using Compat: copyto!, axes, argmax, @warn, String
+using Compat: copyto!, axes, argmax, @warn, String, range
 using Compat.LinearAlgebra
 import Compat.LinearAlgebra: norm, ×
 using Compat.LinearAlgebra: checksquare, LAPACKException, SingularException,

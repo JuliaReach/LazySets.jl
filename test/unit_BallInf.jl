@@ -79,10 +79,10 @@ for N in [Float64, Rational{Int}, Float32]
     @test high(b) == N[2, 3]
     @test low(b) == N[0, 1]
 
-    # partition
+    # split
     b = BallInf(N[3, 3], N(1))
-    @test partition(b, [1, 1]) == [Hyperrectangle(N[3, 3], N[1, 1])]
-    @test ispermutation(partition(b, [2, 1]),
+    @test split(b, [1, 1]) == [Hyperrectangle(N[3, 3], N[1, 1])]
+    @test ispermutation(split(b, [2, 1]),
         [Hyperrectangle(N[2.5, 3], N[0.5, 1]),
          Hyperrectangle(N[3.5, 3], N[0.5, 1])])
 
