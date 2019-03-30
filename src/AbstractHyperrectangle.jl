@@ -1,4 +1,5 @@
-import Base.∈
+import Base: ∈, split
+using Base: product
 
 export AbstractHyperrectangle,
        radius_hyperrectangle,
@@ -292,4 +293,50 @@ The lower coordinate of the hyperrectangular set in the given dimension.
 """
 function low(H::AbstractHyperrectangle{N}, i::Int)::N where {N<:Real}
     return center(H)[i] - radius_hyperrectangle(H, i)
+end
+
+"""
+    split(H::AbstractHyperrectangle{N}, num_blocks::AbstractVector{Int}
+         ) where {N<:Real}
+
+Partition a hyperrectangular set into uniform sub-hyperrectangles.
+
+### Input
+
+- `H`          -- hyperrectangular set
+- `num_blocks` -- number of blocks in the partition for each dimension
+
+### Output
+
+A list of `Hyperrectangle`s.
+"""
+function split(H::AbstractHyperrectangle{N}, num_blocks::AbstractVector{Int}
+              )::Vector{Hyperrectangle{N}} where {N<:Real}
+    @assert length(num_blocks) == dim(H) "need number of blocks in each dimension"
+    radius = copy(radius_hyperrectangle(H))
+    total_number = 1
+    lo = low(H)
+    hi = high(H)
+
+    # precompute center points in each dimension
+    centers = Vector{StepRangeLen{N}}(undef, dim(H))
+    for (i, m) in enumerate(num_blocks)
+        if m <= 0
+            throw(ArgumentError(m, "each dimension needs at least one block"))
+        elseif m == one(N)
+            centers[i] = range(lo[i] + radius[i], length=1)
+        else
+            radius[i] /= m
+            centers[i] = range(lo[i] + radius[i], step=(2 * radius[i]),
+                               length=m)
+            total_number *= m
+        end
+    end
+
+    # create hyperrectangles for every combination of the center points
+    result = Vector{Hyperrectangle{N}}(undef, total_number)
+    for (i, center) in enumerate(product(centers...))
+        result[i] = Hyperrectangle(collect(center), copy(radius))
+    end
+    return result
 end
