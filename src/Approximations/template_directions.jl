@@ -438,7 +438,7 @@ dim(::SphericalDirections) = 3
 
 @static if VERSION < v"0.7-"
     @eval begin
-        Base.start(sd::SphericalDirections) = sd[1]
+        Base.start(sd::SphericalDirections) = 1
         Base.next(sd::SphericalDirections, state::Int) = (sd.stack[state], state+1)
         Base.done(sd::SphericalDirections, state) = state == length(sd.stack)+1
     end
