@@ -189,7 +189,9 @@ The support function of the zonotope in the given direction.
 
 ### Algorithm
 
-The support function is ``‖Gᵀ d‖₁`` where ``G`` is the generator matrix of `Z`.
+The support value is ``cᵀ d + ‖Gᵀ d‖₁`` where ``c`` is the center and ``G`` is
+the generator matrix of `Z`.
+
 """
 function ρ(d::AbstractVector{N}, Z::Zonotope{N}) where {N<:Real}
     return dot(center(Z), d) + sum(abs.(transpose(Z.generators) * d))
