@@ -181,7 +181,7 @@ Return the support function of a zonotope in a given direction.
 ### Input
 
 - `d` -- direction
-- `E` -- zonotope
+- `Z` -- zonotope
 
 ### Output
 
