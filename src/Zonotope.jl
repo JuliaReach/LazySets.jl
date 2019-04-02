@@ -174,6 +174,29 @@ end
 
 
 """
+    ρ(d::AbstractVector{N}, Z::Zonotope{N}) where {N<:Real}
+
+Return the support function of a zonotope in a given direction.
+
+### Input
+
+- `d` -- direction
+- `E` -- zonotope
+
+### Output
+
+The support function of the zonotope in the given direction.
+"""
+function ρ(d::AbstractVector{N}, Z::Zonotope{N}) where {N<:Real}
+    G = Z.generators
+    sum = zero(N)
+    for j in 1:ngens(Z)
+        sum += abs(dot(G[:, j], d))
+    end
+    return sum
+end
+
+"""
     σ(d::AbstractVector{N}, Z::Zonotope{N}) where {N<:Real}
 
 Return the support vector of a zonotope in a given direction.

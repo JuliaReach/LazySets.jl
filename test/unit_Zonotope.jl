@@ -6,6 +6,8 @@ for N in [Float64, Rational{Int}, Float32]
     z = Zonotope(N[0], Matrix{N}(I, 1, 1))
     # Test Dimension
     @test dim(z) == 1
+    # support function
+    @test ρ(N[1], z) == ρ(N[-1], z) == N(1)
     # Test Support Vector
     d = N[1]
     @test σ(d, z) == N[1]
@@ -16,6 +18,8 @@ for N in [Float64, Rational{Int}, Float32]
     z = Zonotope(N[0, 0], Matrix{N}(I, 2, 2))
     # Test Dimension
     @test dim(z) == 2
+    # support function
+    @test ρ(N[1, 0], z) == ρ(N[-1, 0], z) == N(1)
     # Test Support Vector
     d = N[1, 0]
     @test σ(d, z) == N[1, 1] || N[1, -1]
