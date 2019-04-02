@@ -46,6 +46,9 @@ plotting singletons.
 
     P = Approximations.overapproximate(S)
     vlist = transpose(hcat(convex_hull(vertices_list(P))...))
+    if isempty(vlist)
+        return []
+    end
     (x, y) = vlist[:, 1], vlist[:, 2]
 
     # add first vertex to "close" the polygon
@@ -100,6 +103,11 @@ correctly.
         @assert dim(X) == 2 "cannot plot a $(dim(X))-dimensional set"
         Pi = Approximations.overapproximate(X)
         vlist = transpose(hcat(convex_hull(vertices_list(Pi))...))
+
+        # catch empty set
+        if isempty(vlist)
+            continue
+        end
         x, y = vlist[:, 1], vlist[:, 2]
 
         # add first vertex to "close" the polygon
@@ -139,6 +147,10 @@ julia> plot(randn(2, 2) * B, 1e-3);
 
     P = Approximations.overapproximate(S, ε)
     vlist = transpose(hcat(vertices_list(P)...))
+    if isempty(vlist)
+        return []
+    end
+
     (x, y) = vlist[:, 1], vlist[:, 2]
 
     # add first vertex to "close" the polygon
@@ -184,6 +196,10 @@ julia> plot([B1, B2], 1e-4);
         @assert dim(X) == 2 "cannot plot a $(dim(X))-dimensional set"
         Pi = Approximations.overapproximate(X, ε)
         vlist = transpose(hcat(vertices_list(Pi)...))
+
+        # catch empty set
+        isempty(vlist) && continue
+
         x, y = vlist[:, 1], vlist[:, 2]
 
         # add first vertex to "close" the polygon
@@ -239,6 +255,9 @@ julia> plot(P);
 
     points = convex_hull(vertices_list(P))
     vlist = transpose(hcat(points...))
+    if isempty(vlist)
+        return []
+    end
     (x, y) = vlist[:, 1], vlist[:, 2]
 
     # add first vertex to "close" the polygon
@@ -301,6 +320,9 @@ It is assumed that the given vector of polytopes is two-dimensional.
         points = convex_hull(vertices_list(Pi))
         vlist = transpose(hcat(points...))
         x, y = vlist[:, 1], vlist[:, 2]
+
+        # catch empty set
+        isempty(vlist) && continue
 
         # add first vertex to "close" the polygon
         push!(x, vlist[1, 1])
