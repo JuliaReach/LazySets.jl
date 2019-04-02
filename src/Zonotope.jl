@@ -188,12 +188,7 @@ Return the support function of a zonotope in a given direction.
 The support function of the zonotope in the given direction.
 """
 function ρ(d::AbstractVector{N}, Z::Zonotope{N}) where {N<:Real}
-    G = Z.generators
-    sum = dot(center(Z), d)
-    for j in 1:ngens(Z)
-        sum += abs(dot(G[:, j], d))
-    end
-    return sum
+    return dot(center(Z), d) + sum(abs.(transpose(Z.generators) * d))
 end
 
 """
