@@ -156,6 +156,10 @@ Return the support function of an ellipsoid in a given direction.
 ### Output
 
 The support function of the ellipsoid in the given direction.
+
+### Algorithm
+
+The support function is ``‖Qᵀ d‖₂`` where ``Q`` is the shape matrix of `E`.
 """
 function ρ(d::AbstractVector{N}, E::Ellipsoid{N}) where {N<:AbstractFloat}
     return sqrt(transpose(d) * E.shape_matrix * d)

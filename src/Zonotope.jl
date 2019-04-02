@@ -186,6 +186,10 @@ Return the support function of a zonotope in a given direction.
 ### Output
 
 The support function of the zonotope in the given direction.
+
+### Algorithm
+
+The support function is ``‖Gᵀ d‖₁`` where ``G`` is the generator matrix of `Z`.
 """
 function ρ(d::AbstractVector{N}, Z::Zonotope{N}) where {N<:Real}
     return dot(center(Z), d) + sum(abs.(transpose(Z.generators) * d))
