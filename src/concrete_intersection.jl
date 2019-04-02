@@ -357,6 +357,10 @@ function intersection(P1::AbstractPolyhedron{N},
             return EmptySet{N}()
         end
     else
+        # the correct way for this condition would be to check if `backend`
+        # isa Polyhedra.Library; since that would require using Polyhedra: Library
+        # and it is an optional dependency we opt to fallback without checking
+
         # convert to a Polyhedra's hrep
         Qph = polyhedron(Q; backend=backend)
 
