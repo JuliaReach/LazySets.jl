@@ -6,6 +6,8 @@ for N in [Float64, Float32]
     E = Ellipsoid(N[0], Diagonal(N[1]))
     # Test Dimension
     @test dim(E) == 1
+    # support function
+    @test ρ(N[1], E) == ρ(N[-1], E) == N(1)
     # Test Support Vector
     d = N[1]
     @test σ(d, E) == N[1]
@@ -19,6 +21,8 @@ for N in [Float64, Float32]
     E = Ellipsoid(N[0, 0], Diagonal(N[1, 1]))
     # Test Dimension
     @test dim(E) == 2
+    # support function
+    @test ρ(N[1, 0], E) == ρ(N[-1, 0], E) == N(1)
     # Test Support Vector
     d = N[1, 0]
     @test σ(d, E) == N[1, 0]

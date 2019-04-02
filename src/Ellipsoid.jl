@@ -144,6 +144,24 @@ function σ(d::AbstractVector{N}, E::Ellipsoid{N}) where {N<:AbstractFloat}
 end
 
 """
+    ρ(d::AbstractVector{N}, E::Ellipsoid{N}) where {N<:AbstractFloat}
+
+Return the support function of an ellipsoid in a given direction.
+
+### Input
+
+- `d` -- direction
+- `E` -- ellipsoid
+
+### Output
+
+The support function of the ellipsoid in the given direction.
+"""
+function ρ(d::AbstractVector{N}, E::Ellipsoid{N}) where {N<:AbstractFloat}
+    return sqrt(transpose(d) * E.shape_matrix * d)
+end
+
+"""
     ∈(x::AbstractVector{N}, E::Ellipsoid{N})::Bool where {N<:AbstractFloat}
 
 Check whether a given point is contained in an ellipsoid.
@@ -173,7 +191,7 @@ function ∈(x::AbstractVector{N}, E::Ellipsoid{N})::Bool where {N<:AbstractFloa
 end
 
 """
-    rand(::Type{Ellipsoid}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
+    rand(::Type{Ellipsoid}; [N]::Type{<:AbstractFloat}=Float64, [dim]::Int=2,
          [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
         )::Ellipsoid{N}
 
@@ -207,7 +225,7 @@ where ``n`` = `dim` (defaults to 2), and ``S`` is a ``n \\times n`` random
 matrix whose coefficients are uniformly distributed in the interval ``[-1, 1]``.
 """
 function rand(::Type{Ellipsoid};
-              N::Type{<:Real}=Float64,
+              N::Type{<:AbstractFloat}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int, Nothing}=nothing
