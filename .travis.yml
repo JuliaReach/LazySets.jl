@@ -42,15 +42,16 @@ after_success:
               Pkg.add("Optim");
               Pkg.add("StaticArrays");
               Pkg.add("BenchmarkTools");
-              v"0.7-" <= VERSION < v"1.0-" && Pkg.pin([PackageSpec(name="Documenter", version="0.19.7"), PackageSpec(name="GR", version="0.33.1")]);'
+              v"0.7" <= VERSION < v"1.0-" && Pkg.pin([PackageSpec(name="Documenter", version="0.19.7"), PackageSpec(name="GR", version="0.33.1")]);'
               # pinning must be the last command because otherwise it is ignored
-  - julia -e 'VERSION < v"0.7-" && return;
-              v"1.0" <= VERSION < v"1.1-" && return;
-              using Pkg;
-              cd(Pkg.dir("LazySets"));
-              include(joinpath("docs", "make.jl"))'
-              # exclude documentation building in v0.6 because it breaks
-              # exclude documentation building in v1.0 because it stalls the Travis build since March 2, 2019
+  - julia -e 'if v"0.7" <= VERSION <= v"0.7"
+                  using Pkg;
+                  cd(Pkg.dir("LazySets"));
+                  include(joinpath("docs", "make.jl"))
+              end'
+              # only build documentation in v0.7
+              # - building in v0.6 breaks
+              # - building in v1.0 and v1.1 stalls the Travis build since March 2, 2019
   # code coverage (for both Coveralls and Codecov)
   - julia -e 'VERSION >= v"0.7-" && using Pkg; Pkg.add("Coverage")'
   # push coverage results to Coveralls
