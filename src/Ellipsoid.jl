@@ -163,7 +163,7 @@ The support value is ``cᵀ d + ‖Qᵀ d‖₂`` where ``c`` is the center and 
 the shape matrix of `E`.
 """
 function ρ(d::AbstractVector{N}, E::Ellipsoid{N}) where {N<:AbstractFloat}
-    return dot(center(E), d) + sqrt(transpose(d) * E.shape_matrix * d)
+    return dot(center(E), d) + sqrt(inner(d, E.shape_matrix, d))
 end
 
 """
