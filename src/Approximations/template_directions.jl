@@ -62,6 +62,13 @@ function Base.:(*)(A::AbstractMatrix{N}, e::UnitVector{N}) where {N}
     return A[:, e.i] * e.v
 end
 
+@static if VERSION >= v"0.7-"
+    function Base.:(*)(A::Transpose{N, <:AbstractMatrix{N}}, e::UnitVector{N}
+                      ) where {N}
+        return A[:, e.i] * e.v
+    end
+end
+
 function inner(e1::UnitVector{N}, A::AbstractMatrix{N}, e2::UnitVector{N}
               ) where {N}
     return A[e1.i, e2.i] * e1.v * e2.v
