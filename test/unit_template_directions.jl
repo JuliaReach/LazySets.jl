@@ -42,7 +42,7 @@ for N in [Float64, Float32, Rational{Int}]
               (n == 1 ? 2 : 2^n + 2*n)
 
         # spherical directions approximation
-        if n == 3 && N in [Float32, Float64]
+        if n == 2 && N in [Float32, Float64]
             dir = PolarDirections{N}(5)
             @test dim(dir) == 2
             polar = overapproximate(X, dir)
