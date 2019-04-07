@@ -489,8 +489,8 @@ struct SphericalDirections{N<:AbstractFloat} <: AbstractDirections{N}
             throw(ArgumentError("(Nθ, Nφ) = ($Nθ, $Nφ) is invalid; both shoud be at least 2"))
         end
         stack = Vector{Vector{N}}()
-        θ = Compat.range(N(0), N(pi), length=Nθ)      # discretization of the azimuthal angle
-        φ = Compat.range(N(0.0), N(2*pi), length=Nφ)  # discretization of the polar angle
+        θ = range(N(0), N(pi), length=Nθ)      # discretization of the azimuthal angle
+        φ = range(N(0.0), N(2*pi), length=Nφ)  # discretization of the polar angle
 
         # add north pole (θ = 0)
         push!(stack, N[0, 0, 1])
@@ -519,7 +519,7 @@ dim(::SphericalDirections) = 3
 
 @static if VERSION < v"0.7-"
     @eval begin
-        Base.start(sd::SphericalDirections) = sd[1]
+        Base.start(sd::SphericalDirections) = 1
         Base.next(sd::SphericalDirections, state::Int) = (sd.stack[state], state+1)
         Base.done(sd::SphericalDirections, state) = state == length(sd.stack)+1
     end

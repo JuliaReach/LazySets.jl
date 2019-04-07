@@ -174,6 +174,30 @@ end
 
 
 """
+    ρ(d::AbstractVector{N}, Z::Zonotope{N}) where {N<:Real}
+
+Return the support function of a zonotope in a given direction.
+
+### Input
+
+- `d` -- direction
+- `Z` -- zonotope
+
+### Output
+
+The support function of the zonotope in the given direction.
+
+### Algorithm
+
+The support value is ``cᵀ d + ‖Gᵀ d‖₁`` where ``c`` is the center and ``G`` is
+the generator matrix of `Z`.
+
+"""
+function ρ(d::AbstractVector{N}, Z::Zonotope{N}) where {N<:Real}
+    return dot(center(Z), d) + sum(abs.(transpose(Z.generators) * d))
+end
+
+"""
     σ(d::AbstractVector{N}, Z::Zonotope{N}) where {N<:Real}
 
 Return the support vector of a zonotope in a given direction.

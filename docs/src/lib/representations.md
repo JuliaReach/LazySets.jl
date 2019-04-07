@@ -121,6 +121,7 @@ Inherited from [`AbstractCentrallySymmetric`](@ref):
 
 ```@docs
 Ellipsoid
+ρ(::AbstractVector{N}, ::Ellipsoid{N}) where {N<:AbstractFloat}
 σ(::AbstractVector{N}, ::Ellipsoid{N}) where {N<:AbstractFloat}
 ∈(::AbstractVector{N}, ::Ellipsoid{N}) where {N<:AbstractFloat}
 rand(::Type{Ellipsoid})
@@ -625,6 +626,7 @@ Inherited from [`AbstractSingleton`](@ref):
 
 ```@docs
 Zonotope
+ρ(::AbstractVector{N}, ::Zonotope{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::Zonotope{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::Zonotope{N}) where {N<:Real}
 rand(::Type{Zonotope})
