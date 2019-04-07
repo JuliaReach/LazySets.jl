@@ -1,9 +1,13 @@
+using RecipesBase
+import RecipesBase.apply_recipe
+
+function warn_empty_polytope()
+    @warn "received a polytope with no vertices during plotting"
+end
+
 # ====================================
 # Plot recipes for an abstract LazySet
 # ====================================
-
-using RecipesBase
-import RecipesBase.apply_recipe
 
 """
     plot_lazyset(S::LazySet; ...)
@@ -46,9 +50,12 @@ plotting singletons.
 
     P = Approximations.overapproximate(S)
     vlist = transpose(hcat(convex_hull(vertices_list(P))...))
+
     if isempty(vlist)
+        warn_empty_polytope()
         return []
     end
+
     (x, y) = vlist[:, 1], vlist[:, 2]
 
     # add first vertex to "close" the polygon
@@ -104,10 +111,11 @@ correctly.
         Pi = Approximations.overapproximate(X)
         vlist = transpose(hcat(convex_hull(vertices_list(Pi))...))
 
-        # catch empty set
         if isempty(vlist)
+            warn_empty_polytope()
             continue
         end
+
         x, y = vlist[:, 1], vlist[:, 2]
 
         # add first vertex to "close" the polygon
@@ -147,7 +155,9 @@ julia> plot(randn(2, 2) * B, 1e-3);
 
     P = Approximations.overapproximate(S, ε)
     vlist = transpose(hcat(vertices_list(P)...))
+
     if isempty(vlist)
+        warn_empty_polytope()
         return []
     end
 
@@ -197,8 +207,10 @@ julia> plot([B1, B2], 1e-4);
         Pi = Approximations.overapproximate(X, ε)
         vlist = transpose(hcat(vertices_list(Pi)...))
 
-        # catch empty set
-        isempty(vlist) && continue
+        if isempty(vlist)
+            warn_empty_polytope()
+            continue
+        end
 
         x, y = vlist[:, 1], vlist[:, 2]
 
@@ -255,9 +267,12 @@ julia> plot(P);
 
     points = convex_hull(vertices_list(P))
     vlist = transpose(hcat(points...))
+
     if isempty(vlist)
+        warn_empty_polytope()
         return []
     end
+
     (x, y) = vlist[:, 1], vlist[:, 2]
 
     # add first vertex to "close" the polygon
@@ -319,10 +334,13 @@ It is assumed that the given vector of polytopes is two-dimensional.
         @assert dim(Pi) == 2 "cannot plot a $(dim(Pi))-dimensional polytope"
         points = convex_hull(vertices_list(Pi))
         vlist = transpose(hcat(points...))
-        x, y = vlist[:, 1], vlist[:, 2]
 
-        # catch empty set
-        isempty(vlist) && continue
+        if isempty(vlist)
+            warn_empty_polytope()
+            continue
+        end
+
+        x, y = vlist[:, 1], vlist[:, 2]
 
         # add first vertex to "close" the polygon
         push!(x, vlist[1, 1])
