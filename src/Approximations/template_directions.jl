@@ -407,7 +407,7 @@ dim(::PolarDirections) = 2
 
 @static if VERSION < v"0.7-"
     @eval begin
-        Base.start(pd::PolarDirections) = pd[1]
+        Base.start(pd::PolarDirections) = 1
         Base.next(pd::PolarDirections, state::Int) = (pd.stack[state], state+1)
         Base.done(pd::PolarDirections, state) = state == length(pd.stack)+1
     end
