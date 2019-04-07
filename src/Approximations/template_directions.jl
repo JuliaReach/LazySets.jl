@@ -355,10 +355,10 @@ Polar directions representation.
 
 The `PolarDirections` constructor provides a sample of the unit sphere
 in ``\\mathbb{R}^2``, which is parameterized by the polar angles
-``φ ∈ Dφ := [0, 2π]`` respectively, see the wikipedia
-entry [Polar coordinate system](https://en.wikipedia.org/wiki/Polar_coordinate_system).
-The domain ``Dφ`` is discretized in ``Nφ`` points.
-Then the Cartesian componentes of each direction are obtained with
+``φ ∈ Dφ := [0, 2π]`` respectively; see the wikipedia entry
+[Polar coordinate system](https://en.wikipedia.org/wiki/Polar_coordinate_system).
+The domain ``Dφ`` is discretized in ``Nφ`` pieces.
+Then the Cartesian components of each direction are obtained with
 
 ```math
 [cos(φᵢ), sin(φᵢ)].
@@ -371,11 +371,11 @@ The integer passed as an argument is used to discretize ``φ``:
 ```jldoctest spherical_directions
 julia> using LazySets.Approximations: PolarDirections
 
-julia> pd = PolarDirections(3)
-PolarDirections{Float64}(3, Array{Float64,1}[[1.0, 0.0], [-1.0, 1.22465e-16]])
+julia> pd = PolarDirections(2)
+PolarDirections{Float64}(2, Array{Float64,1}[[1.0, 0.0], [-1.0, 1.22465e-16]])
 
 julia> pd.Nφ
-3
+2
 ```
 """
 struct PolarDirections{N<:AbstractFloat} <: AbstractDirections{N}
@@ -383,18 +383,19 @@ struct PolarDirections{N<:AbstractFloat} <: AbstractDirections{N}
     stack::Vector{Vector{N}} # stores the polar directions
 
     function PolarDirections{N}(Nφ::Int) where {N<:AbstractFloat}
-        if Nφ <= 1
-            throw(ArgumentError("Nφ = $Nφ is invalid; it shoud be at least 2"))
+        if Nφ <= 0
+            throw(ArgumentError("Nφ = $Nφ is invalid; it shoud be at least 1"))
         end
         stack = Vector{Vector{N}}()
-        φ = Compat.range(N(0.0), N(2*pi), length=Nφ)  # discretization of the polar angle
+        # discretization of the polar angle
+        φ = Compat.range(N(0.0), N(2*pi), length=Nφ+1)
 
-        for φᵢ in φ[1:Nφ-1]  # delete repeated angle
+        for φᵢ in φ[1:Nφ]  # skip last (repeated) angle
             d = N[cos(φᵢ), sin(φᵢ)]
             push!(stack, d)
-         end
+        end
         return new{N}(Nφ, stack)
-  end
+    end
 end
 
 PolarDirections(Nφ::Int) = PolarDirections{Float64}(Nφ)
@@ -507,7 +508,7 @@ struct SphericalDirections{N<:AbstractFloat} <: AbstractDirections{N}
     end
 end
 
-# convenience constructors      
+# convenience constructors
 SphericalDirections(Nθ::Int) = SphericalDirections{Float64}(Nθ, Nθ)
 SphericalDirections(Nθ::Int, Nφ::Int) = SphericalDirections{Float64}(Nθ, Nφ)
 
