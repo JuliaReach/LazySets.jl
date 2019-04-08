@@ -92,6 +92,13 @@ for N in [Float64, Rational{Int}, Float32]
     @test !is_intersection_empty(H1, Z1)
     @test is_intersection_empty(H2, Z1) && is_intersection_empty(H2, Z1, true)[1]
 
+    # isdisjoint
+    result, w = isdisjoint(Z1, Z2, true)
+    @test isdisjoint(Z1, Z2) && result && w == N[]
+    Z3 = Zonotope(N[2, 1], Matrix{N}(I, 2, 2))
+    @test_throws ErrorException isdisjoint(Z2, Z3, true)
+    @test !isdisjoint(Z2, Z3)
+
     # test number of generators
     Z = Zonotope(N[2, 1], N[-0.5 1.5 0.5 1; 0.5 1.5 1 0.5])
     @test ngens(Z) == 4

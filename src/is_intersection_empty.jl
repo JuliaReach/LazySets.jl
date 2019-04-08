@@ -382,6 +382,47 @@ function is_intersection_empty(H::Hyperplane{N},
 end
 
 """
+    is_intersection_empty(Z1::Zonotope{N}, Z2::Zonotope{N}, witness::Bool=false
+                         ) where {N<:Real}
+
+Check whether two zonotopes do not intersect, and otherwise optionally compute a
+witness.
+
+### Input
+
+- `Z1`      -- zonotope
+- `Z2`      -- zonotope
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``Z1 ∩ Z2 = ∅``
+* If `witness` option is activated:
+  * `(true, [])` iff ``Z1 ∩ Z2 = ∅``
+  * `(false, v)` iff ``Z1 ∩ Z2 ≠ ∅`` and ``v ∈ Z1 ∩ Z2``
+
+### Algorithm
+
+``Z1 ∩ Z2 ≠ ∅`` iff ``c_1 - c_2 ∈ Z(0, (g_1, g_2))`` where ``c_i`` and ``g_i``
+are the center and generators of zonotope `Zi` and ``Z(c, g)`` represents the
+zonotope with center ``c`` and generators ``g``.
+"""
+function is_intersection_empty(Z1::Zonotope{N}, Z2::Zonotope{N},
+                               witness::Bool=false) where {N<:Real}
+    n = dim(Z1)
+    @assert n == dim(Z2) "zonotopes need to have the same dimensions"
+    Z = Zonotope(zeros(N, n), hcat(Z1.generators, Z2.generators))
+    result = (center(Z1) - center(Z2)) ∈ Z
+    if result
+        return witness ? (true, N[]) : true
+    elseif witness
+        error("witness production is not supported yet")
+    else
+        return false
+    end
+end
+
+"""
     is_intersection_empty(ls1::LineSegment{N},
                           ls2::LineSegment{N},
                           witness::Bool=false
