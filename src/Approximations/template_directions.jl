@@ -388,7 +388,7 @@ struct PolarDirections{N<:AbstractFloat} <: AbstractDirections{N}
         end
         stack = Vector{Vector{N}}()
         # discretization of the polar angle
-        φ = Compat.range(N(0.0), N(2*pi), length=Nφ+1)
+        φ = range(N(0.0), N(2*pi), length=Nφ+1)
 
         for φᵢ in φ[1:Nφ]  # skip last (repeated) angle
             d = N[cos(φᵢ), sin(φᵢ)]
