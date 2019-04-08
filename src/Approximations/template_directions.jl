@@ -431,6 +431,7 @@ Spherical directions representation.
 
 ### Fields
 
+- `Nθ`    -- length of the partition of the azimuthal angle
 - `Nφ`    -- length of the partition of the polar angle
 - `stack` -- list of computed directions
 
