@@ -69,6 +69,7 @@ AbstractDirections
 BoxDirections
 OctDirections
 BoxDiagDirections
+PolarDirections
 SphericalDirections
 ```
 

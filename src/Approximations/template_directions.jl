@@ -339,6 +339,88 @@ end # @eval
 end # if
 
 # ==================================================
+# Polar directions
+# ==================================================
+
+"""
+    PolarDirections{N<:AbstractFloat} <: AbstractDirections{N}
+
+Polar directions representation.
+
+### Fields
+
+- `Nφ`    -- length of the partition of the polar angle
+
+### Notes
+
+The `PolarDirections` constructor provides a sample of the unit sphere
+in ``\\mathbb{R}^2``, which is parameterized by the polar angles
+``φ ∈ Dφ := [0, 2π]`` respectively; see the wikipedia entry
+[Polar coordinate system](https://en.wikipedia.org/wiki/Polar_coordinate_system).
+The domain ``Dφ`` is discretized in ``Nφ`` pieces.
+Then the Cartesian components of each direction are obtained with
+
+```math
+[cos(φᵢ), sin(φᵢ)].
+```
+
+### Examples
+
+The integer passed as an argument is used to discretize ``φ``:
+
+```jldoctest spherical_directions
+julia> using LazySets.Approximations: PolarDirections
+
+julia> pd = PolarDirections(2)
+PolarDirections{Float64}(2, Array{Float64,1}[[1.0, 0.0], [-1.0, 1.22465e-16]])
+
+julia> pd.Nφ
+2
+```
+"""
+struct PolarDirections{N<:AbstractFloat} <: AbstractDirections{N}
+    Nφ::Int
+    stack::Vector{Vector{N}} # stores the polar directions
+
+    function PolarDirections{N}(Nφ::Int) where {N<:AbstractFloat}
+        if Nφ <= 0
+            throw(ArgumentError("Nφ = $Nφ is invalid; it shoud be at least 1"))
+        end
+        stack = Vector{Vector{N}}()
+        # discretization of the polar angle
+        φ = range(N(0.0), N(2*pi), length=Nφ+1)
+
+        for φᵢ in φ[1:Nφ]  # skip last (repeated) angle
+            d = N[cos(φᵢ), sin(φᵢ)]
+            push!(stack, d)
+        end
+        return new{N}(Nφ, stack)
+    end
+end
+
+PolarDirections(Nφ::Int) = PolarDirections{Float64}(Nφ)
+
+# common functions
+Base.eltype(::Type{PolarDirections{N}}) where {N} = Vector{N}
+Base.length(pd::PolarDirections) = length(pd.stack)
+dim(::PolarDirections) = 2
+
+@static if VERSION < v"0.7-"
+    @eval begin
+        Base.start(pd::PolarDirections) = 1
+        Base.next(pd::PolarDirections, state::Int) = (pd.stack[state], state+1)
+        Base.done(pd::PolarDirections, state) = state == length(pd.stack)+1
+    end
+else
+    @eval begin
+        function Base.iterate(pd::PolarDirections, state::Int=1)
+            state == length(pd.stack)+1 && return nothing
+            return (pd.stack[state], state + 1)
+        end
+    end
+end
+
+# ==================================================
 # Spherical directions
 # ==================================================
 

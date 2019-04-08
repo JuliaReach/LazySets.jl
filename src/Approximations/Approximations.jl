@@ -20,6 +20,7 @@ export approximate,
        BoxDirections,
        BoxDiagDirections,
        OctDirections,
+       PolarDirections,
        SphericalDirections
 
 include("../compat.jl")
