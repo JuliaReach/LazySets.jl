@@ -11,7 +11,7 @@ using Compat.Test
 include("to_N.jl")
 
 # non-exported helper functions
-using LazySets: ispermutation, isinvertible
+using LazySets: ispermutation, isinvertible, inner
 using LazySets.Approximations: UnitVector
 
 global test_suite_basic = true

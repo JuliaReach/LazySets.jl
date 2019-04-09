@@ -353,7 +353,7 @@ function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
     if use_inv
         invM = inv(M)
         @inbounds for (i, c) in enumerate(constraints_P)
-            constraints_MP[i] = LinearConstraint(vec(c.a' * invM), c.b)
+            constraints_MP[i] = LinearConstraint(vec(_At_mul_B(c.a, invM)), c.b)
         end
     else
         # take left division for each constraint c, transpose(M) \ c.a
