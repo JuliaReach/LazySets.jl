@@ -254,3 +254,10 @@ floating point computations.
 function ∈(x::AbstractVector{N}, S::AbstractSingleton{N})::Bool where {N<:Real}
     return x == element(S)
 end
+
+# this operation is forbidden, but it is a common error
+function ∈(S::AbstractSingleton{N}, X::LazySet{N})::Bool where {N<:Real}
+    error("cannot make a point-in-set check if the left-hand side is a set; either " *
+          "check for set inclusion, as in `S ⊆ X`, or check for membership, " *
+          "as in `element(S) ∈ X` (they are equivalent)")
+end

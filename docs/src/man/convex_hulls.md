@@ -88,6 +88,36 @@ p = plot([Singleton(vi) for vi in v])
 plot!(p, VPolygon(hull), alpha=0.2)
 ```
 
+!!! note
+    To check if a point `p::AbstractVector` is in another set, e.g. a polygon in
+    vertex representation `V`, use `p ∈ V`. However, if you are working with a
+    `Singleton`, which is a *set* with one element, use *set inclusion* `⊆`.
+    The following example illustrates this difference.
+
+```jldoctest
+julia> points = N -> [randn(2) for i in 1:N];
+julia> v = points(30);
+julia> hull = convex_hull(v);
+julia> Singleton(v[1]) ∈ VPolygon(hull)
+ERROR: cannot make a point-in-set check if the left-hand side is a set;
+either check for set inclusion, as in `S ⊆ X`, or check for membership,
+as in `element(S) ∈ X` (they are equivalent)
+[...]
+```
+
+As the error suggests, either use `element` to access the element of the singleton
+and check if it belongs to the right-hand side set:
+
+```@example example_ch
+element(Singleton(v[1])) ∈ VPolygon(hull)
+```
+
+Or use set inclusion between the singleton and the right-hand side set:
+
+```@example example_ch
+Singleton(v[1]) ⊆ VPolygon(hull)
+```
+
 ## Using static vectors
 
 Usual vectors are such that you can `push!` and `pop!` without changing its
