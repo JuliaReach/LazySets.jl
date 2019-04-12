@@ -88,6 +88,28 @@ p = plot([Singleton(vi) for vi in v])
 plot!(p, VPolygon(hull), alpha=0.2)
 ```
 
+!!! note
+    To check if a point `p::AbstractVector` is in a polygon in vertex representation `V`,
+    use `p ∈ V`. However, if you are working with a `Singleton` (it's a *set* with one
+    element), use *set inclusion* `⊆`. The following example illustrates this.
+
+```@example example_ch
+Singleton(v[1]) ∈ VPolygon(hull)
+```
+
+As the error suggests, either use `element` to access the element of the singleton
+and check if it belongs to the right-hand side set:
+
+```@example example_ch
+element(Singleton(v[1])) ∈ VPolygon(hull)
+```
+
+Or use set inclusion between the singleton and the right-hand side set:
+
+```@example example_ch
+Singleton(v[1]) ⊆ VPolygon(hull)
+```
+
 ## Using static vectors
 
 Usual vectors are such that you can `push!` and `pop!` without changing its
