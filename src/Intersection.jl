@@ -967,7 +967,7 @@ a zonotope.
 ### Notes
 
 This function depends itself on the calculation of the support function of another
-set in two dimensions. Obviously one doesn't want to use again `algorithm="projection"`
+set in two dimensions. Obviously one doesn't want to use again `algorithm="projection"`
 for this second calculation. The option `algorithm_2d_intersection` is such that,
 if it is not given, the default support function algorithm is used (e.g. `"line_search"`).
 You can still pass additional arguments to the `"line_search"` backend through the
