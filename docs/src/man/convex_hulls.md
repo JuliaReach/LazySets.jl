@@ -3,7 +3,7 @@
 In this section we illustrate the
 [convex hull operation](https://en.wikipedia.org/wiki/Convex_hull).
 We give examples of the symbolic implementation, and the concrete convex hull in
-low dimensions. We show how to test if a point lines in the convex
+low dimensions. We show how to test if a point lies in the convex
 hull of a set of points in the plane using `LazySets`. Moreover, we give examples
 of creating convex hull of sets whose vertices are represented as *static* vectors,
 which can dramatically improve performance in many use cases. Finally, we give
