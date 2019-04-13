@@ -168,9 +168,7 @@ v_static = [SVector{2, Float64}(vi) for vi in v]
 
 One can compute the convex hull of points in higher dimensions using `convex_hull`.
 The appropriate algorithm is decided based on the dimensionality of the given
-points. The code looks the same as for dimension 2, and is not restricted to
-dimension 3; one can also use 4 or higher, in principle, although the computational
-complexity of `convex_hull` also increases.
+points.
 
 ```@example example_ch
 using Polyhedra
