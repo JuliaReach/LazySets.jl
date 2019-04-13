@@ -202,6 +202,6 @@ Singleton(x) ⊆ P
 
 If no additional arguments are passed, `convex_hull` uses the default polyhedra
 library from `default_polyhedra_backend` for the given input; different options
-can be passed through the `backend` keyword algorithm; see the
+can be passed through the `backend` keyword; see the
 [Julia polyhedra website](https://juliapolyhedra.github.io/) for all the available
 backends.
