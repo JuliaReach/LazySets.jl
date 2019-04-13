@@ -7,7 +7,7 @@ low dimensions. We show how to test if a point lies in the convex
 hull of a set of points in the plane using `LazySets`. Moreover, we give examples
 of creating the convex hull of sets whose vertices are represented as *static* vectors,
 which can dramatically improve performance in many use cases. Finally, we give
-an example of creating the convex hull of points in higher dimensions 
+an example of creating the convex hull of points in higher dimensions.
 
 ```@contents
 Pages = ["convex_hulls.md"]
