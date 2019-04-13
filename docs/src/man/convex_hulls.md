@@ -193,7 +193,7 @@ x = sum(hull)/length(hull)
 x ∈ P
 ```
 
-Here `x ∈ P` solves a feasibility problem, see the docs of `?∈` for details.
+Here `x ∈ P` solves a feasibility problem; see the docs of `?∈` for details.
 Equivalently, using set inclusion:
 
 ```@example example_ch
