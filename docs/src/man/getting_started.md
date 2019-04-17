@@ -21,13 +21,30 @@ that it builds correctly.
 To install `LazySets`, use the following command inside Julia's REPL:
 
 ```julia
-Pkg.clone("https://github.com/JuliaReach/LazySets.jl")
+Pkg.add("LazySets")
 ```
-The dependencies of `LazySets`, such as
-[Expokit.jl](https://github.com/acroy/Expokit.jl)
--- which provides lazy matrix exponentiation routines -- are automatically
-installed through Julia's package manager.
-The full list of dependencies is specified in the `REQUIRE` file.
+or replace `add` by `clone` if you want to develop the code.
+The full list of dependencies (which are automatically installed) is specified
+in the `REQUIRE` file.
+
+
+### Building the package
+
+Use the following command from Julia's REPL:
+```
+julia> using LazySets
+```
+This should precompile the package and make it available afterward.
+
+
+## Optional dependencies
+
+Some optional dependencies, such as
+[`Expokit.jl`](https://github.com/acroy/Expokit.jl) (a package that provides
+lazy matrix exponentiation routines), are not installed by default.
+When loading the corresponding packages in addition, new functionality in
+`LazySets` is added automatically (a feature that is possible through the
+[`Requires`](https://github.com/MikeInnes/Requires.jl) package).
 
 
 ## Workflow tips
