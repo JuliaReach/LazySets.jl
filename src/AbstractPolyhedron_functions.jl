@@ -333,12 +333,11 @@ end
 function _linear_map_vrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N}) where {N<:Real}
     if !isbounded(P)
         throw(ArgumentError("the linear map in vertex representation for an unbounded set is not defined"))
-    else
-        @assert isdefined(@__MODULE__, :Polyhedra) "the linear map of a $(typeof(P)) " *
-            "by a non-invertible matrix needs the package 'Polyhedra' to be loaded"
-        # since P is bounded, we pass an HPolytope and then convert it to vertex representation
-        P = tovrep(HPolytope(constraints_list(P), check_boundedness=false))
     end
+    @assert isdefined(@__MODULE__, :Polyhedra) "the linear map of a $(typeof(P)) " *
+            "by a non-invertible matrix needs the package 'Polyhedra' to be loaded"
+    # since P is bounded, we pass an HPolytope and then convert it to vertex representation
+    P = tovrep(HPolytope(constraints_list(P), check_boundedness=false))
     return _linear_map_vrep(M, P)
 end
 
