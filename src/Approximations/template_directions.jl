@@ -413,3 +413,90 @@ function Base.iterate(sd::SphericalDirections, state::Int=1)
     state == length(sd.stack)+1 && return nothing
     return (sd.stack[state], state + 1)
 end
+
+# ==================================================
+# Custom template directions
+# ==================================================
+
+"""
+    CustomDirections{N} <: AbstractDirections{N}
+
+User-defined template directions.
+
+### Fields
+
+- `directions` -- list of template directions
+- `n`          -- dimension
+- `isbounded`  -- boundedness status
+
+### Notes
+
+Since custom directions may not be bounded, boundedness can either be asserted
+in the constructor or it will be determined automatically by performing an
+experiment (more precisely, we overapproximate the unit ball in the infinity
+norm using the given directions).
+
+The dimension will also be determined automatically, unless the empty vector is
+passed (in which case the optional argument `n` needs to be specified).
+"""
+struct CustomDirections{N} <: AbstractDirections{N}
+    directions::AbstractVector{<:AbstractVector{N}}
+    n::Int
+    isbounded::Bool
+
+    CustomDirections{N}(directions::AbstractVector{<:AbstractVector{N}};
+                        n::Int=determine_dimension(directions),
+                        isbounded::Bool=determine_boundedness(directions)
+                       ) where {N} = new{N}(directions, n, isbounded)
+end
+
+# convenience constructor
+CustomDirections(directions::AbstractVector{<:AbstractVector{N}};
+                 n::Int=determine_dimension(directions),
+                 isbounded::Bool=determine_boundedness(directions)) where {N} =
+    CustomDirections{N}(directions; n=n, isbounded=isbounded)
+
+function determine_dimension(directions)
+    isempty(directions) && throw(ArgumentError("empty template directions " *
+                                               "need a specified dimension"))
+    return length(directions[1])
+end
+
+function determine_boundedness(directions::AbstractVector{<:AbstractVector{N}}
+                              ) where {N}
+    isempty(directions) && return false
+
+    # determine boundedness from a trial with a BallInf
+    set = BallInf(zeros(N, length(directions[1])), N(1))
+    dirs = CustomDirections(directions; isbounded=false)
+    return isbounded(overapproximate(set, dirs))
+end
+
+Base.eltype(::Type{CustomDirections{N}}) where {N} = AbstractVector{N}
+Base.length(cd::CustomDirections) = length(cd.directions)
+isbounded(cd::CustomDirections) = cd.isbounded
+
+@static if VERSION < v"0.7-"
+@eval begin
+
+Base.start(cd::CustomDirections) = 1
+Base.next(cd::CustomDirections{N}, state) where {N} = (
+    cd.directions[state], # value
+    state + 1) # next state
+Base.done(cd::CustomDirections, state) = state > length(cd.directions)
+
+end # @eval
+else
+@eval begin
+
+function Base.iterate(cd::CustomDirections{N}, state::Int=1) where {N}
+    if state > length(cd.directions)
+        return nothing
+    end
+    vec = cd.directions[state]
+    state = state + 1
+    return (vec, state)
+end
+
+end # @eval
+end # if

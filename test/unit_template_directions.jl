@@ -79,6 +79,24 @@ for N in [Float64, Float32, Rational{Int}]
                 overapproximate(Z, dir)
             end
         end
+
+        # custom directions
+        # empty list of directions
+        dir = CustomDirections{N}(Vector{N}[]; n=n)
+        @test dim(dir) == n
+        P = overapproximate(X, dir)
+        @test isempty(constraints_list(P))
+        # minimal number of bounded directions
+        if n == 1
+            dirs = [N[-1], N[1]]
+        elseif n == 2
+            dirs = [N[-1, 0], N[0, -1], N[1, 1]]
+        elseif n == 3
+            dirs = [N[-1, 0, 0], N[0, -1, 0], N[0, 0, -1], N[1, 1, 1]]
+        end
+        dir = CustomDirections{N}(dirs)
+        P = overapproximate(X, dir)
+        @test P isa HPolytope && length(constraints_list(P)) == length(dirs)
     end
 end
 

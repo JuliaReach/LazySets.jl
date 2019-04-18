@@ -21,7 +21,8 @@ export approximate,
        BoxDiagDirections,
        OctDirections,
        PolarDirections,
-       SphericalDirections
+       SphericalDirections,
+       CustomDirections
 
 const DIR_EAST(N) = [one(N), zero(N)]
 const DIR_NORTH(N) = [zero(N), one(N)]
