@@ -23,6 +23,7 @@ for N in [Float64, Float32, Rational{Int}]
 
         # box directions
         dir = BoxDirections{N}(n)
+        @test isbounded(dir)
         @test dim(dir) == n
         box = overapproximate(X, dir)
         @test length(dir) == length(box.constraints) == 2*n
@@ -31,6 +32,7 @@ for N in [Float64, Float32, Rational{Int}]
 
         # octagon directions
         dir = OctDirections{N}(n)
+        @test isbounded(dir)
         @test dim(dir) == n
         oct = overapproximate(X, dir)
         @test length(dir) == length(oct.constraints) == 2 * n^2
@@ -39,6 +41,7 @@ for N in [Float64, Float32, Rational{Int}]
 
         # box-diagonal directions
         dir = BoxDiagDirections{N}(n)
+        @test isbounded(dir)
         @test dim(dir) == n
         boxdiag = overapproximate(X, dir)
         @test length(dir) == length(boxdiag.constraints) ==
@@ -49,14 +52,20 @@ for N in [Float64, Float32, Rational{Int}]
 
         # spherical directions approximation
         if n == 2 && N in [Float32, Float64]
+            dir = PolarDirections{N}(2)
+            @test !isbounded(dir)
             dir = PolarDirections{N}(5)
+            @test isbounded(dir)
             @test dim(dir) == 2
             polar = overapproximate(X, dir)
         end
 
         # spherical directions approximation
         if n == 3 && N in [Float32, Float64]
+            dir = SphericalDirections{N}(2, 2)
+            @test !isbounded(dir)
             dir = SphericalDirections{N}(5, 5)
+            @test isbounded(dir)
             @test dim(dir) == 3
             spherical = overapproximate(X, dir)
         end
@@ -71,7 +80,6 @@ for N in [Float64, Float32, Rational{Int}]
             end
         end
     end
-
 end
 
 # default Float64 constructors

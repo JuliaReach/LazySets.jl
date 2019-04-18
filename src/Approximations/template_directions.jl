@@ -20,7 +20,7 @@ Returns the dimension of the generated directions.
 
 ### Input
 
-- `ad` -- box direction representation
+- `ad` -- template directions
 
 ### Output
 
@@ -28,6 +28,35 @@ The dimension of the generated directions.
 """
 function dim(ad::AbstractDirections)::Int
     return ad.n
+end
+
+"""
+    isbounded(::AbstractDirections)::Bool
+
+Checks if a list of template directions represents a bounded set, given a
+bounded input set.
+
+### Input
+
+- `ad` -- template directions
+
+### Output
+
+Given a bounded set ``X``, we can construct an outer approximation of ``X`` by
+using the template directions `ad` as normal vectors of the facets.
+If this function returns `true`, then the result is again a bounded set (i.e., a
+polytope).
+Note that the result does not depend on the specific shape of ``X``, as long as
+it is bounded.
+
+### Notes
+
+By default, this function returns `false` in order to be conservative.
+Custom subtypes of `AbstractDirections` should hence add a method for this
+function.
+"""
+function isbounded(ad::AbstractDirections)::Bool
+    return false
 end
 
 # ==================================================
@@ -52,6 +81,7 @@ BoxDirections(n::Int) = BoxDirections{Float64}(n)
 
 Base.eltype(::Type{BoxDirections{N}}) where {N} = AbstractVector{N}
 Base.length(bd::BoxDirections) = 2 * bd.n
+isbounded(::BoxDirections) = true
 
 function Base.iterate(bd::BoxDirections{N}, state::Int=1) where {N}
     if state == 0
@@ -89,6 +119,7 @@ OctDirections(n::Int) = OctDirections{Float64}(n)
 
 Base.eltype(::Type{OctDirections{N}}) where {N} = AbstractVector{N}
 Base.length(od::OctDirections) = 2 * od.n^2
+isbounded(::OctDirections) = true
 
 function Base.iterate(od::OctDirections{N}) where {N}
     if od.n == 1
@@ -174,6 +205,7 @@ BoxDiagDirections(n::Int) = BoxDiagDirections{Float64}(n)
 
 Base.eltype(::Type{BoxDiagDirections{N}}) where {N} = AbstractVector{N}
 Base.length(bdd::BoxDiagDirections) = bdd.n == 1 ? 2 : 2^bdd.n + 2 * bdd.n
+isbounded(::BoxDiagDirections) = true
 
 Base.iterate(bdd::BoxDiagDirections{N}) where {N} =
     (ones(N, bdd.n), ones(N, bdd.n))
@@ -271,6 +303,7 @@ PolarDirections(Nφ::Int) = PolarDirections{Float64}(Nφ)
 Base.eltype(::Type{PolarDirections{N}}) where {N} = Vector{N}
 Base.length(pd::PolarDirections) = length(pd.stack)
 dim(::PolarDirections) = 2
+isbounded(pd::PolarDirections) = pd.Nφ > 2
 
 function Base.iterate(pd::PolarDirections, state::Int=1)
     state == length(pd.stack)+1 && return nothing
@@ -299,7 +332,7 @@ in ``\\mathbb{R}^3``, which is parameterized by the azimuthal and polar angles
 ``θ ∈ Dθ := [0, π]`` and ``φ ∈ Dφ := [0, 2π]`` respectively, see the wikipedia
 entry [Spherical coordinate system](https://en.wikipedia.org/wiki/Spherical_coordinate_system).
 The domains ``Dθ`` and ``Dφ`` are discretized in ``Nθ`` and ``Nφ`` respectively.
-Then the Cartesian componentes of each direction are obtained with
+Then the Cartesian components of each direction are obtained with
 
 ```math
 [sin(θᵢ)*cos(φᵢ), sin(θᵢ)*sin(φᵢ), cos(θᵢ)].
@@ -374,6 +407,7 @@ SphericalDirections(Nθ::Int, Nφ::Int) = SphericalDirections{Float64}(Nθ, Nφ)
 Base.eltype(::Type{SphericalDirections{N}}) where {N} = Vector{N}
 Base.length(sd::SphericalDirections) = length(sd.stack)
 dim(::SphericalDirections) = 3
+isbounded(sd::SphericalDirections) = sd.Nθ > 2 && sd.Nφ > 2
 
 function Base.iterate(sd::SphericalDirections, state::Int=1)
     state == length(sd.stack)+1 && return nothing

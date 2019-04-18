@@ -290,8 +290,7 @@ function overapproximate(Z::Zonotope, ::Type{<:Hyperrectangle})::Hyperrectangle
 end
 
 """
-    overapproximate(X::LazySet{N}, dir::AbstractDirections{N})::HPolytope{N}
-        where {N}
+    overapproximate(X::LazySet{N}, dir::AbstractDirections{N}) where {N}
 
 Overapproximating a set with template directions.
 
@@ -302,14 +301,15 @@ Overapproximating a set with template directions.
 
 ### Output
 
-An `HPolytope` overapproximating the set `X` with the directions from `dir`.
+A polyhedron overapproximating the set `X` with the directions from `dir`.
+If the directions are known to be bounded, the result is an `HPolytope`,
+otherwise the result is an `HPolyhedron`.
 """
-function overapproximate(X::LazySet{N},
-                         dir::AbstractDirections{N}
-                        )::HPolytope{N} where {N}
+function overapproximate(X::LazySet{N}, dir::AbstractDirections{N}) where {N}
     halfspaces = Vector{LinearConstraint{N}}()
     sizehint!(halfspaces, length(dir))
-    H = HPolytope(halfspaces)
+    T = isbounded(dir) ? HPolytope : HPolyhedron
+    H = T(halfspaces)
     for d in dir
         addconstraint!(H, LinearConstraint(d, ρ(d, X)))
     end
@@ -317,8 +317,7 @@ function overapproximate(X::LazySet{N},
 end
 
 """
-    overapproximate(X::LazySet{N},
-                    dir::Type{<:AbstractDirections})::HPolytope{N} where {N}
+    overapproximate(X::LazySet{N}, dir::Type{<:AbstractDirections}) where {N}
 
 Overapproximating a set with template directions.
 
@@ -329,11 +328,12 @@ Overapproximating a set with template directions.
 
 ### Output
 
-A `HPolytope` overapproximating the set `X` with the directions from `dir`.
+A polyhedron overapproximating the set `X` with the directions from `dir`.
+If the directions are known to be bounded, the result is an `HPolytope`,
+otherwise the result is an `HPolyhedron`.
 """
 function overapproximate(X::LazySet{N},
-                         dir::Type{<:AbstractDirections}
-                        )::HPolytope{N} where {N}
+                         dir::Type{<:AbstractDirections}) where {N}
     return overapproximate(X, dir{N}(dim(X)))
 end
 
