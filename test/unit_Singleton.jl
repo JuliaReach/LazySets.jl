@@ -55,6 +55,9 @@ for N in [Float64, Rational{Int}, Float32]
     !∈(N[0.9, 1.1], S)
     ∈(N[1, 1], S)
 
+    # check membership error message
+    @test_throws ErrorException S.element ⊆ S
+
     # an_element function
     @test an_element(S) ∈ S
 
