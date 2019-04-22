@@ -110,6 +110,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test subset && ⊆(p, b2) && point == N[]
     subset, point = ⊆(p, l2, true)
     @test subset && ⊆(p, l2) && point == N[]
+    @test p ⊆ p
 
     # HPolygon/HPolygonOpt tests
     for hp in [p, po]

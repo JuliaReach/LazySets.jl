@@ -233,7 +233,7 @@ function ⊆(S::LazySet{N},
     @assert dim(S) == dim(P)
 
     @inbounds for H in constraints_list(P)
-        if ρ(H.a, S) > H.b
+        if !_leq(ρ(H.a, S), H.b)
             if witness
                 return (false, σ(H.a, S))
             else
