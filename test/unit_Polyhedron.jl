@@ -89,6 +89,14 @@ for N in [Float64, Rational{Int}, Float32]
         # concrete linear map with noninvertible matrix throws an error
         @test_throws ArgumentError linear_map(N[2 3; 0 0], P)
     end
+
+    if !test_suite_polyhedra
+        # concrete linear map of a bounded polyhedron by a non-invertible matrix
+        # throws an assertion error, since tovrep(HPolytope(...)) is required
+        H = Hyperrectangle(N[1, 1], N[2, 2])
+        P = convert(HPolyhedron, H)
+        @test_throws AssertionError linear_map(N[2 3; 0 0], P)
+    end
 end
 
 # default Float64 constructors
