@@ -1,6 +1,8 @@
 using RecipesBase
 import RecipesBase.apply_recipe
 
+using LazySets.Approximations: overapproximate
+
 function warn_empty_polytope()
     @warn "received a polytope with no vertices during plotting"
 end
@@ -10,45 +12,66 @@ end
 # ====================================
 
 """
-    plot_lazyset(S::LazySet; ...)
+    plot_lazyset(X::LazySet, [ε]::Float64; ...)
 
-Plot a convex set in two dimensions using an axis-aligned approximation.
+Plot a convex set in two dimensions.
 
 ### Input
 
-- `S` -- convex set
+- `X` -- convex set
+- `ε` -- (optional, default: `1e-3`) approximation error bound
 
 ### Examples
 
-```jldoctest
+```jldoctest test_plot_lazyset
 julia> using Plots, LazySets
 
 julia> B = BallInf(ones(2), 0.1);
 
 julia> plot(2.0 * B);
+```
 
+An iterative refinement method is applied to obtain an overapproximation of `X`
+in constraint representation, which is then plotted. To change the default tolerance
+for the iterative refinement, use the second argument:
+
+```jldoctest test_plot_lazyset
+julia> B = Ball2(ones(2), 0.1);
+
+julia> plot(B, 1e-3);
+
+julia> plot(B, 1e-2); # faster than the previous algorithm, but less accurate
 ```
 
 ### Algorithm
 
-For any 2D lazy set we compute its box overapproximation, followed by the list of
-vertices. A post-processing `convex_hull` is applied to the vertices list;
-this ensures that the shaded area inside the convex hull of the vertices is covered
+In first stage, an overapproximation of the given set to a polygon in constraint
+representation is computed. The second argument, `ε`, corresponds to the error
+in Hausdorff distance between the overapproximating set and `X`. The default
+value `1e-3` is chosen such that the unit ball in the 2-norm is plotted with
+reasonable accuracy. On the other hand, if you only want to produce a fast
+box-overapproximation of `X`, pass `ε=Inf`.
+
+In a second stage, the list of vertices of the overapproximation is computed
+with the `vertices_list` function of the polygon.
+
+A post-processing `convex_hull` is applied to the vertices list to ensure
+that the shaded area inside the convex hull of the vertices is covered
 correctly.
 
 ### Notes
 
-This recipe detects if the axis-aligned approximation is such that the first two
-vertices returned by `vertices_list` are the same. In that case, a scatter plot
-is used (instead of a shape plot). This use case arises, for example, when
-plotting singletons.
+This recipe detects if overapproximation is such that the first two vertices
+returned by `vertices_list` are the same. In that case, a scatter plot is used
+(instead of a shape plot). This corner case arises, for example, when lazy linear
+maps of singletons.
 """
-@recipe function plot_lazyset(S::LazySet;
+@recipe function plot_lazyset(X::LazySet, ε::Float64=1e-3;
                               color="blue", label="", grid=true, alpha=0.5)
 
-    @assert dim(S) == 2 "cannot plot a $(dim(S))-dimensional set"
+    @assert dim(X) == 2 "cannot plot a $(dim(S))-dimensional set"
 
-    P = Approximations.overapproximate(S)
+    P = overapproximate(X, ε)
     vlist = transpose(hcat(convex_hull(vertices_list(P))...))
 
     if isempty(vlist)
@@ -68,14 +91,14 @@ plotting singletons.
 end
 
 """
-    plot_lazyset(Xk::Vector{S}) where {S<:LazySet}
+    plot_lazyset(Xk::Vector{LazySet}, [ε]::Float64; ...)
 
-Plot an array of convex sets in two dimensions using an axis-aligned
-approximation.
+Plot an array of convex sets in two dimensions.
 
 ### Input
 
 - `Xk` -- array of convex sets
+- `ε` -- (optional, default: `1e-3`) approximation error bound
 
 ### Examples
 
@@ -87,101 +110,13 @@ julia> B1 = BallInf(zeros(2), 0.4);
 julia> B2 = BallInf(ones(2), 0.4);
 
 julia> plot([B1, B2]);
-
 ```
 
-### Algorithm
+An iterative refinement method is applied to obtain an overapproximation of each
+set in `Xk` in constraint representation, which is then plotted. To change the
+default tolerance for the iterative refinement, use the second argument:
 
-For each 2D lazy set in the array we compute its box overapproximation, followed
-by the list of vertices. A post-processing `convex_hull` is applied to the vertices list;
-this ensures that the shaded area inside the convex hull of the vertices is covered
-correctly.
-"""
-@recipe function plot_lazyset(Xk::Vector{S};
-                              seriescolor="blue", label="", grid=true,
-                              alpha=0.5) where {S<:LazySet}
-
-    seriestype := :shape
-
-    for X in Xk
-        if X isa EmptySet
-            continue
-        end
-        @assert dim(X) == 2 "cannot plot a $(dim(X))-dimensional set"
-        Pi = Approximations.overapproximate(X)
-        vlist = transpose(hcat(convex_hull(vertices_list(Pi))...))
-
-        if isempty(vlist)
-            warn_empty_polytope()
-            continue
-        end
-
-        x, y = vlist[:, 1], vlist[:, 2]
-
-        # add first vertex to "close" the polygon
-        push!(x, vlist[1, 1])
-        push!(y, vlist[1, 2])
-
-        @series (x, y)
-    end
-end
-
-"""
-    plot_lazyset(S::LazySet, ε::Float64; ...)
-
-Plot a lazy set in two dimensions using iterative refinement.
-
-### Input
-
-- `S` -- convex set
-- `ε` -- approximation error bound
-
-### Examples
-
-```jldoctest
-julia> using Plots, LazySets;
-
-julia> B = BallInf(ones(2), 0.1);
-
-julia> plot(randn(2, 2) * B, 1e-3);
-
-```
-"""
-@recipe function plot_lazyset(S::LazySet, ε::Float64;
-                              color="blue", label="", grid=true, alpha=0.5)
-
-    @assert dim(S) == 2 "cannot plot a $(dim(S))-dimensional set"
-    seriestype := :shape
-
-    P = Approximations.overapproximate(S, ε)
-    vlist = transpose(hcat(vertices_list(P)...))
-
-    if isempty(vlist)
-        warn_empty_polytope()
-        return []
-    end
-
-    (x, y) = vlist[:, 1], vlist[:, 2]
-
-    # add first vertex to "close" the polygon
-    push!(x, vlist[1, 1])
-    push!(y, vlist[1, 2])
-
-    x, y
-end
-
-"""
-    plot_lazyset(Xk::Vector{S}, ε::Float64; ...) where {S<:LazySet}
-
-Plot an array of lazy sets in two dimensions using iterative refinement.
-
-### Input
-
-- `Xk` -- array of convex sets
-- `ε`  -- approximation error bound
-
-### Examples
-
+```julia
 ```jldoctest
 julia> using Plots, LazySets;
 
@@ -189,11 +124,16 @@ julia> B1 = BallInf(zeros(2), 0.4);
 
 julia> B2 = Ball2(ones(2), 0.4);
 
-julia> plot([B1, B2], 1e-4);
+julia> plot([B1, B2], 1e-1); # faster but less accurate 
 
+julia> plot([B1, B2], 1e-4); # slower but more accurate 
 ```
+
+### Algorithm
+
+See the documentation of `plot_lazyset(S::LazySet, [ε]::Float64; ...)` for details.
 """
-@recipe function plot_lazyset(Xk::Vector{S}, ε::Float64;
+@recipe function plot_lazyset(Xk::Vector{S}, ε::Float64=1e-3;
                               seriescolor="blue", label="", grid=true,
                               alpha=0.5) where {S<:LazySet}
 
@@ -204,8 +144,8 @@ julia> plot([B1, B2], 1e-4);
             continue
         end
         @assert dim(X) == 2 "cannot plot a $(dim(X))-dimensional set"
-        Pi = Approximations.overapproximate(X, ε)
-        vlist = transpose(hcat(vertices_list(Pi)...))
+        Pi = overapproximate(X, ε)
+        vlist = transpose(hcat(convex_hull(vertices_list(Pi))...))
 
         if isempty(vlist)
             warn_empty_polytope()
