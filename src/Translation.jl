@@ -174,12 +174,18 @@ The symbolic translation of ``X`` along vector ``v``.
 """
 +(X::LazySet, v::AbstractVector) = Translation(X, v)
 
+# translation from the left
++(v::AbstractVector, X::LazySet) = Translation(X, v)
+
 """
     ⊕(X::LazySet, v::AbstractVector)
 
 Unicode alias constructor ⊕ (`oplus`) for the lazy translation operator.
 """
 ⊕(X::LazySet, v::AbstractVector) = Translation(X, v)
+
+# translation from the left
+⊕(v::AbstractVector, X::LazySet) = Translation(X, v)
 
 # ============================ 
 # LazySet interface functions

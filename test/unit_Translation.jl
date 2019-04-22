@@ -10,6 +10,8 @@ for N in [Float64, Rational{Int}, Float32]
 
     # test alternative constructors
     @test tr == B + v == B ⊕ v
+    # check that translation from the left works as well
+    @test tr == v + B == v ⊕ B 
 
     # dimension check
     @test_throws AssertionError Translation(B, N[0, 0])
