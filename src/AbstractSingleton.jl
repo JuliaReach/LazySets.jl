@@ -259,5 +259,5 @@ end
 function ∈(S::AbstractSingleton{N}, X::LazySet{N})::Bool where {N<:Real}
     error("cannot make a point-in-set check if the left-hand side is a set; either " *
           "check for set inclusion, as in `S ⊆ X`, or check for membership, " *
-          "as in `element(S) ∈ X` (they are equivalent)")
+          "as in `element(S) ∈ X` (they behave equivalently although the implementations may differ)")
 end
