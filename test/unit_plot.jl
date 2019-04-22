@@ -1,4 +1,4 @@
-for N in [Float64, Float32]
+for N in [Float64]
     p0 = zero(N)
     p1 = one(N)
     v0 = zeros(N, 2)
@@ -125,7 +125,7 @@ for N in [Float64, Float32]
 end
 
 # set types that do not work with Rational{Int}
-for N in [Float64, Float32]
+for N in [Float64]
     v0 = zeros(N, 2)
     p1 = one(N)
 
@@ -190,6 +190,5 @@ for N in [Float64]
 
     # ε-close
     ε = N(1e-2)
-    plot(its)
     @test_throws ErrorException plot(itsa, ε) # TODO not implemented yet
 end

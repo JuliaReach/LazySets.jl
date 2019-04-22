@@ -1,7 +1,7 @@
 using RecipesBase
 import RecipesBase.apply_recipe
 
-using LazySets.Approximations: overapproximate
+using LazySets.Approximations: overapproximate, PolarDirections
 
 function warn_empty_polytope()
     @warn "received a polytope with no vertices during plotting"
@@ -555,3 +555,32 @@ end
 @recipe function plot_hyperplane(::Hyperplane, ε::Float64=0.0)
     error("cannot plot a hyperplane")
 end
+
+@recipe function plot_intersection(X::Intersection; Nφ=10,
+                                   color="blue", label="", grid=true, alpha=0.5)
+
+    @assert dim(X) == 2 "this recipe only plots two-dimensional sets"
+
+    P = convert(HPolygon, overapproximate(X, PolarDirections(Nφ)))
+    vlist = transpose(hcat(convex_hull(vertices_list(P))...))
+
+    if isempty(vlist)
+        warn_empty_polytope()
+        return []
+    end
+
+    (x, y) = vlist[:, 1], vlist[:, 2]
+
+    # add first vertex to "close" the polygon
+    push!(x, vlist[1, 1])
+    push!(y, vlist[1, 2])
+
+    seriestype := norm(vlist[1, :] - vlist[2, :]) ≈ 0 ? :scatter : :shape
+
+    x, y
+end
+
+#@recipe function plot_intersection(::Intersection, ε::Float64=0.0)
+#    error("cannot plot a lazy intersection using iterative refinement " *
+#         "(the exact support vector of an intersection is not implemented)")
+#end
