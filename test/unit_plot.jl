@@ -1,4 +1,4 @@
-for N in [Float64, Rational{Int}, Float32]
+for N in [Float64, Float32]
     p0 = zero(N)
     p1 = one(N)
     v0 = zeros(N, 2)
@@ -73,10 +73,10 @@ for N in [Float64, Rational{Int}, Float32]
     plot(vpg)
     plot(vpt)
     plot(es)
-    @test_throws Exception plot(hs) # TODO see #576
-    @test_throws Exception plot(hp) # TODO see #576
+    @test_throws ErrorException plot(hs) # TODO see #576
+    @test_throws ErrorException plot(hp) # TODO see #576
     @test_throws ErrorException plot(l) # TODO see #576
-    @test_throws Exception plot(uni) # TODO see #576
+    @test_throws ErrorException plot(uni) # TODO see #576
     plot(ch)
     plot(cha)
     plot(sih)
@@ -108,7 +108,7 @@ for N in [Float64, Rational{Int}, Float32]
         @test_throws ErrorException plot(hs, ε) # TODO see #576/#578
         @test_throws ErrorException plot(hp, ε) # TODO see #576/#578
         @test_throws ErrorException plot(l, ε) # TODO see #576/#578
-        plot(uni, ε)
+        @test_throws ErrorException plot(uni, ε) # TODO see #576/#578
         plot(ch, ε)
         plot(cha, ε)
         plot(sih, ε)

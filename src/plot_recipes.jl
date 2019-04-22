@@ -69,7 +69,7 @@ maps of singletons.
 @recipe function plot_lazyset(X::LazySet, ε::Float64=1e-3;
                               color="blue", label="", grid=true, alpha=0.5)
 
-    @assert dim(X) == 2 "cannot plot a $(dim(S))-dimensional set"
+    @assert dim(X) == 2 "cannot plot a $(dim(X))-dimensional set using iterative refinement"
 
     P = overapproximate(X, ε)
     vlist = transpose(hcat(convex_hull(vertices_list(P))...))
@@ -143,7 +143,7 @@ See the documentation of `plot_lazyset(S::LazySet, [ε]::Float64; ...)` for deta
         if X isa EmptySet
             continue
         end
-        @assert dim(X) == 2 "cannot plot a $(dim(X))-dimensional set"
+        @assert dim(X) == 2 "cannot plot a $(dim(X))-dimensional set using iterative refinement"
         Pi = overapproximate(X, ε)
         vlist = transpose(hcat(convex_hull(vertices_list(Pi))...))
 
@@ -538,4 +538,20 @@ julia> plot(∅, 1e-2);
 @recipe function plot_emptyset(∅::EmptySet, ε::Float64=0.0; label="", grid=true,
                                legend=false)
     return []
+end
+
+@recipe function plot_universe(::Universe, ε::Float64=0.0)
+    error("cannot plot the universal set")
+end
+
+@recipe function plot_line(::Line, ε::Float64=0.0)
+    error("cannot plot an infinite line")
+end
+
+@recipe function plot_halfspace(::HalfSpace, ε::Float64=0.0)
+    error("cannot plot a half-space")
+end
+
+@recipe function plot_hyperplane(::Hyperplane, ε::Float64=0.0)
+    error("cannot plot a hyperplane")
 end
