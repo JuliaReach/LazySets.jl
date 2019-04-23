@@ -12,7 +12,7 @@ end
 # ====================================
 
 """
-    plot_lazyset(X::LazySet, [ε]::Float64; ...)
+    plot_lazyset(X::LazySet{N}, [ε]::N=N(1e-3); ...) where {N<:Real}
 
 Plot a convex set in two dimensions.
 
@@ -66,8 +66,8 @@ returned by `vertices_list` are the same. In that case, a scatter plot is used
 (instead of a shape plot). This corner case arises, for example, when lazy linear
 maps of singletons.
 """
-@recipe function plot_lazyset(X::LazySet, ε::Float64=1e-3;
-                              color="blue", label="", grid=true, alpha=0.5)
+@recipe function plot_lazyset(X::LazySet{N}, ε::N=N(1e-3);
+                              color="blue", label="", grid=true, alpha=0.5) where {N}
 
     @assert dim(X) == 2 "cannot plot a $(dim(X))-dimensional set using iterative refinement"
 
@@ -91,7 +91,7 @@ maps of singletons.
 end
 
 """
-    plot_lazyset(Xk::Vector{LazySet}, [ε]::Float64; ...)
+    plot_lazyset(Xk::Vector{LazySet{N}}, ε::N=N(1e-3); ...) where {N<:Real}
 
 Plot an array of convex sets in two dimensions.
 
@@ -133,9 +133,9 @@ julia> plot([B1, B2], 1e-4); # slower but more accurate
 
 See the documentation of `plot_lazyset(S::LazySet, [ε]::Float64; ...)` for details.
 """
-@recipe function plot_lazyset(Xk::Vector{S}, ε::Float64=1e-3;
+@recipe function plot_lazyset(Xk::Vector{LazySet{N}}, ε::N=N(1e-3);
                               seriescolor="blue", label="", grid=true,
-                              alpha=0.5) where {S<:LazySet}
+                              alpha=0.5) where {N<:Real}
 
     seriestype := :shape
 
@@ -535,24 +535,24 @@ julia> plot(∅, 1e-2);
 
 ```
 """
-@recipe function plot_emptyset(∅::EmptySet, ε::Float64=0.0; label="", grid=true,
-                               legend=false)
+@recipe function plot_emptyset(∅::EmptySet{N}, ε::N=N(0.0); label="", grid=true,
+                               legend=false) where {N<:Real}
     return []
 end
 
-@recipe function plot_universe(::Universe, ε::Float64=0.0)
+@recipe function plot_universe(::Universe{N}, ε::N=N(0.0)) where {N<:Real}
     error("cannot plot the universal set")
 end
 
-@recipe function plot_line(::Line, ε::Float64=0.0)
+@recipe function plot_line(::Line{N}, ε::N=N(0.0)) where {N<:Real}
     error("cannot plot an infinite line")
 end
 
-@recipe function plot_halfspace(::HalfSpace, ε::Float64=0.0)
+@recipe function plot_halfspace(::HalfSpace{N}, ε::N=N(0.0)) where {N<:Real}
     error("cannot plot a half-space")
 end
 
-@recipe function plot_hyperplane(::Hyperplane, ε::Float64=0.0)
+@recipe function plot_hyperplane(::Hyperplane{N}, ε::N=N(0.0)) where {N<:Real}
     error("cannot plot a hyperplane")
 end
 
@@ -580,7 +580,7 @@ end
     x, y
 end
 
-#@recipe function plot_intersection(::Intersection, ε::Float64=0.0)
+#@recipe function plot_intersection(::Intersection{N}, ε::N=N(0.0)) where {N<:Real}
 #    error("cannot plot a lazy intersection using iterative refinement " *
 #         "(the exact support vector of an intersection is not implemented)")
 #end

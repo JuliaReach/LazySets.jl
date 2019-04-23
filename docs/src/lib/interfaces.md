@@ -59,10 +59,9 @@ diameter(::LazySet, ::Real=Inf)
 isbounded(::LazySet)
 isbounded_unit_dimensions(::LazySet{N}) where {N<:Real}
 an_element(::LazySet{N}) where {N<:Real}
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet)
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:LazySet}
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet, ::Float64)
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}, ::Float64) where {S<:LazySet}
+RecipesBase.apply_recipe(∅::EmptySet{Float64}, ε::Float64=0.0)
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet{Float64}, ε::Float64=1e-3)
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{LazySet{Float64}}, ε::Float64=1e-3)
 tosimplehrep(::LazySet)
 isuniversal(::LazySet{N}, ::Bool=false) where {N<:Real}
 ```
