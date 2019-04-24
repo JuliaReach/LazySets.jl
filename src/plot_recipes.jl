@@ -515,14 +515,14 @@ end
 # ==============================
 
 """
-    plot_emptyset(∅::EmptySet, [ε::Float64=0.0]; ...)
+    plot_emptyset(∅::EmptySet, [ε]; ...)
 
 Plot an empty set.
 
 ### Input
 
 - `∅` -- empty set
-- `ε` -- (optional, default: `0.0`) approximation error bound
+- `ε` -- (optional, default: `0`) approximation error bound
 
 ### Examples
 
@@ -535,31 +535,69 @@ julia> plot(∅, 1e-2);
 
 ```
 """
-@recipe function plot_emptyset(∅::EmptySet{N}, ε::N=N(0.0); label="", grid=true,
+@recipe function plot_emptyset(∅::EmptySet{N}, ε::N=zero(N); label="", grid=true,
                                legend=false) where {N<:Real}
     return []
 end
 
-@recipe function plot_universe(::Universe{N}, ε::N=N(0.0)) where {N<:Real}
+@recipe function plot_universe(::Universe{N}, ε::N=zero(N)) where {N<:Real}
     error("cannot plot the universal set")
 end
 
-@recipe function plot_line(::Line{N}, ε::N=N(0.0)) where {N<:Real}
+@recipe function plot_line(::Line{N}, ε::N=zero(N)) where {N<:Real}
     error("cannot plot an infinite line")
 end
 
-@recipe function plot_halfspace(::HalfSpace{N}, ε::N=N(0.0)) where {N<:Real}
+@recipe function plot_halfspace(::HalfSpace{N}, ε::N=zero(N)) where {N<:Real}
     error("cannot plot a half-space")
 end
 
-@recipe function plot_hyperplane(::Hyperplane{N}, ε::N=N(0.0)) where {N<:Real}
+@recipe function plot_hyperplane(::Hyperplane{N}, ε::N=zero(N)) where {N<:Real}
     error("cannot plot a hyperplane")
 end
 
-@recipe function plot_intersection(X::Intersection; Nφ=10,
-                                   color="blue", label="", grid=true, alpha=0.5)
+"""
+    plot_intersection(X::Intersection{N}, ε::N=-one(N); Nφ=40,
+                      color="blue", label="", grid=true, alpha=0.5) where {N}
+
+Plot a lazy intersection.
+
+### Input
+
+- `X` -- lazy intersection
+- `ε` -- (optional, default -1) ignored, used only for dispatch
+- `Nφ` -- (optional, default: `40`) number of template directions used in the
+          template overapproximation
+
+### Notes
+
+The vertices list of an `HPolygon` has known issues (see LazySets#1306). Consider
+using the `Polyhedra` backend to compute the dual representation, as in:
+
+```julia
+julia> using Polyhedra, LazySets.Approximations
+
+julia> X = rand(Ball2) ∩ rand(Ball2); # lazy intersection
+
+julia> Nφ = 40; # or a bigger number
+
+julia> P = convert(HPolytope, overapproximate(X, PolarDirections(Nφ));
+
+julia> plot(P)
+```
+"""
+@recipe function plot_intersection(X::Intersection{N}, ε::N=-one(N); Nφ=40,
+                                   color="blue", label="", grid=true, alpha=0.5) where {N}
 
     @assert dim(X) == 2 "this recipe only plots two-dimensional sets"
+
+    if ε != -one(N)
+        error("cannot plot a lazy intersection using iterative refinement with " *
+              "error threshold `ε = $ε`, because the exact support vector of an " *
+              "intersection is not available; using instead a set of `Nφ` " *
+              "template directions. To control the number of directions, pass the " *
+              "variable Nφ as in `plot(X, Nφ=...)`")
+    end
 
     P = convert(HPolygon, overapproximate(X, PolarDirections(Nφ)))
     vlist = transpose(hcat(convex_hull(vertices_list(P))...))
@@ -579,8 +617,3 @@ end
 
     x, y
 end
-
-#@recipe function plot_intersection(::Intersection{N}, ε::N=N(0.0)) where {N<:Real}
-#    error("cannot plot a lazy intersection using iterative refinement " *
-#         "(the exact support vector of an intersection is not implemented)")
-#end
