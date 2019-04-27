@@ -91,6 +91,8 @@ The `@time` macro shows that building $\mathcal{Y}$ with
 `LazySets` is instantaneous.
 
 ```jldoctest index_label
+julia> using Expokit
+
 julia> Y = CH(SparseMatrixExp(A * δ) * X0 + δ * B * U, X0);
 ```
 

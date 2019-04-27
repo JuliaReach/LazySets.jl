@@ -25,6 +25,7 @@ on how to install and run Julia in your system.
 To install the latest release of this package, use the following command inside Julia's REPL:
 
 ```julia
+using Pkg
 Pkg.add("LazySets")
 ```
 
@@ -33,9 +34,3 @@ If you want to install the latest development version, do:
 ```julia
 Pkg.clone("https://github.com/JuliaReach/LazySets.jl.git")
 ```
-
-To update your local copy to the current development version, do:
-
-```julia
-Pkg.checkout("LazySets")
-````

@@ -50,7 +50,7 @@ It arises in the discretization of set-based ODEs, and is defined below for an 
 example of a tridiagonal matrix of order `n`, where `n` is a positive integer.
 
 ```julia
-using LazySets
+using LazySets, Expokit
 using SparseArrays, LinearAlgebra
 
 # define an nxn tridiagonal matrix
