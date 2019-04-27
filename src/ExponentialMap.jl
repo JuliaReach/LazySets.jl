@@ -1,5 +1,3 @@
-using Expokit
-
 import Base: *, size, ∈, isempty
 
 export SparseMatrixExp,
@@ -74,6 +72,11 @@ function size(spmexp::SparseMatrixExp, ax::Int)::Int
     return size(spmexp.M, ax)
 end
 
+function load_expokit_sparsematrixexp()
+return quote
+
+using Expokit: expmv
+
 function get_column(spmexp::SparseMatrixExp{N}, j::Int)::Vector{N} where {N}
     n = size(spmexp, 1)
     aux = zeros(N, n)
@@ -143,6 +146,8 @@ function get_rows(spmexp::SparseMatrixExp{N},
     end
     return ans
 end
+
+end end  # quote / load_expokit_sparsematrixexp
 
 """
     ExponentialMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
@@ -219,6 +224,11 @@ function dim(em::ExponentialMap)::Int
     return size(em.spmexp.M, 1)
 end
 
+function load_expokit_exponentialmap()
+return quote
+
+using Expokit: expmv
+
 """
     σ(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
 
@@ -277,23 +287,6 @@ function ρ(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
 end
 
 """
-    isbounded(em::ExponentialMap)::Bool
-
-Determine whether an exponential map is bounded.
-
-### Input
-
-- `em` -- exponential map
-
-### Output
-
-`true` iff the exponential map is bounded.
-"""
-function isbounded(em::ExponentialMap)::Bool
-    return isbounded(em.X)
-end
-
-"""
     ∈(x::AbstractVector{N}, em::ExponentialMap{N})::Bool where {N<:Real}
 
 Check whether a given point is contained in an exponential map of a convex set.
@@ -332,23 +325,6 @@ function ∈(x::AbstractVector{N}, em::ExponentialMap{N})::Bool where {N<:Real}
 end
 
 """
-    isempty(em::ExponentialMap)::Bool
-
-Return if an exponential map is empty or not.
-
-### Input
-
-- `em` -- exponential map
-
-### Output
-
-`true` iff the wrapped set is empty.
-"""
-function isempty(em::ExponentialMap)::Bool
-    return isempty(em.X)
-end
-
-"""
     vertices_list(em::ExponentialMap{N})::Vector{Vector{N}} where {N<:Real}
 
 Return the list of vertices of a (polytopic) exponential map.
@@ -378,6 +354,42 @@ function vertices_list(em::ExponentialMap{N})::Vector{Vector{N}} where {N<:Real}
     end
 
     return vlist
+end
+
+end end  # quote / load_expokit_exponentialmap
+
+"""
+    isbounded(em::ExponentialMap)::Bool
+
+Determine whether an exponential map is bounded.
+
+### Input
+
+- `em` -- exponential map
+
+### Output
+
+`true` iff the exponential map is bounded.
+"""
+function isbounded(em::ExponentialMap)::Bool
+    return isbounded(em.X)
+end
+
+"""
+    isempty(em::ExponentialMap)::Bool
+
+Return if an exponential map is empty or not.
+
+### Input
+
+- `em` -- exponential map
+
+### Output
+
+`true` iff the wrapped set is empty.
+"""
+function isempty(em::ExponentialMap)::Bool
+    return isempty(em.X)
 end
 
 # --- ProjectionSparseMatrixExp & ExponentialProjectionMap ---
@@ -464,6 +476,11 @@ function dim(eprojmap::ExponentialProjectionMap)::Int
     return size(eprojmap.projspmexp.L, 1)
 end
 
+function load_expokit_exponentialprojectionmap()
+return quote
+
+using Expokit: expmv
+
 """
     σ(d::AbstractVector{N},
       eprojmap::ExponentialProjectionMap{N}) where {N<:Real}
@@ -501,6 +518,8 @@ function σ(d::AbstractVector{N},
     daux = expmv(one(N), eprojmap.projspmexp.spmexp.M, aux2)
     return eprojmap.projspmexp.L * daux
 end
+
+end end  # quote / load_expokit_exponentialprojectionmap
 
 """
     isbounded(eprojmap::ExponentialProjectionMap)::Bool

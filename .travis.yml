@@ -39,6 +39,7 @@ after_success:
               Pkg.add("GR");
               Pkg.add("Polyhedra");
               Pkg.add("CDDLib");
+              Pkg.add("Expokit");
               Pkg.add("Optim");
               Pkg.add("StaticArrays");
               Pkg.add("BenchmarkTools");

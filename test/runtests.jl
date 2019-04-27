@@ -1,6 +1,6 @@
 using LazySets, LazySets.Approximations
 
-import IntervalArithmetic
+import IntervalArithmetic, Expokit
 using IntervalArithmetic: IntervalBox
 
 # compatibility between Julia versions
