@@ -128,6 +128,24 @@ The center of the zonotope.
 function center(Z::Zonotope{N})::Vector{N} where {N<:Real}
     return Z.center
 end
+"""
+   generators(Z::Zonotope)
+
+Return the generators of a zonotope.
+
+### Input
+
+- `Z` -- zonotope
+
+### Output
+
+The generators of the zonotope.
+"""
+
+
+function generators(Z::Zonotope)
+    return Z.generators
+end
 
 
 # --- AbstractPolytope interface functions ---
