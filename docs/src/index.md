@@ -181,6 +181,7 @@ be used to:
 ```@contents
 Pages = [
     "man/getting_started.md",
+    "man/zonotopes.md",
     "man/polyhedral_approximations.md",
     "man/decompose_example.md",
     "man/fast_2d_LPs.md",

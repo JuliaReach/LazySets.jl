@@ -12,6 +12,7 @@ makedocs(
         "Home" => "index.md",
         "Manual" => Any[
         "Getting Started" => "man/getting_started.md",
+        "General Zonotope" =>"man/zonotopes.md",
         "Polyhedral Approximations" => "man/polyhedral_approximations.md",
         "Decomposing an Affine Map" => "man/decompose_example.md",
         "Fast 2D LPs" => "man/fast_2d_LPs.md",
