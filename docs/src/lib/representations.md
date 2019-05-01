@@ -156,7 +156,7 @@ radius(::EmptySet, ::Real=Inf)
 diameter(::EmptySet, ::Real=Inf)
 linear_map(::AbstractMatrix{N}, ::EmptySet{N}) where {N}
 translate(::EmptySet{N}, ::AbstractVector{N}) where {N<:Real}
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::EmptySet, ::Float64=0.0)
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::EmptySet{N}, ::N=zero(N)) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -185,6 +185,7 @@ halfspace_right(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
 tosimplehrep(::AbstractVector{HalfSpace{N}}) where {N<:Real}
 remove_redundant_constraints(::AbstractVector{LinearConstraint{N}}) where {N<:Real}
 remove_redundant_constraints!(::AbstractVector{LinearConstraint{N}}) where {N<:Real}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::HalfSpace{N}, ::N=zero(N)) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -206,6 +207,7 @@ isempty(::Hyperplane)
 constrained_dimensions(::Hyperplane{N}) where {N<:Real}
 constraints_list(::Hyperplane{N}) where {N<:Real}
 translate(::Hyperplane{N}, ::AbstractVector{N}) where {N<:Real}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Hyperplane{N}, ::N=zero(N)) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -265,8 +267,8 @@ radius_hyperrectangle(::Interval{N}, ::Int) where {N<:Real}
 -(::Interval{N}, ::Interval{N}) where {N<:Real}
 *(::Interval{N}, ::Interval{N}) where {N<:Real}
 rand(::Type{Interval})
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Interval)
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:Interval}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Interval{N}, ::N=zero(N)) where {N<:Real}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{Interval{N}}, ::N=zero(N)) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
@@ -296,6 +298,7 @@ isempty(::Line)
 constrained_dimensions(::Line{N}) where {N<:Real}
 constraints_list(::Line{N}) where {N<:Real}
 translate(::Line{N}, ::AbstractVector{N}) where {N<:Real}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Line{N}, ::N=zero(N)) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -317,8 +320,8 @@ halfspace_right(::LineSegment)
 vertices_list(::LineSegment{N}) where {N<:Real}
 constraints_list(::LineSegment{N}) where {N<:Real}
 translate(::LineSegment{N}, ::AbstractVector{N}) where {N<:Real}
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LineSegment)
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:LineSegment}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LineSegment{N}, ::N=zero(N)) where {N<:Real}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{LineSegment{N}}, ::N=zero(N)) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -584,6 +587,7 @@ diameter(::Universe, ::Real=Inf)
 constraints_list(::Universe{N}) where {N<:Real}
 constrained_dimensions(::Universe)
 translate(::Universe{N}, ::AbstractVector{N}) where {N<:Real}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Universe{N}, ::N=zero(N)) where {N<:Real}
 ```
 
 ## Zero set

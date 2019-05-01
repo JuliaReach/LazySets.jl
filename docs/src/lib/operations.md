@@ -127,6 +127,7 @@ use_precise_ρ
 _line_search
 _projection
 linear_map(::AbstractMatrix{N}, ::Intersection{N}) where {N}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Intersection{N}, ::N=-one(N)) where {N<:Real}
 ```
 
 Inherited from [`LazySet`](@ref):
