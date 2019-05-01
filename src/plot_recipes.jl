@@ -529,7 +529,7 @@ Plot the universal set.
 
 ### Output
 
-An error; plotting the universal set is not implemented.
+An error, since plotting the universal set is not implemented yet (see #576).
 """
 @recipe function plot_universe(::Universe{N}, ε::N=zero(N)) where {N<:Real}
     error("cannot plot the universal set")
