@@ -612,7 +612,7 @@ A plot with the overapproximation of the given lazy intersection.
 
 ### Notes
 
-This function is separated from the main one `LazySet` plot recipe because
+This function is separated from the main `LazySet` plot recipe because
 the iterative refinement is not available for lazy intersections, since it uses
 the support vector (but see #1187).
 
