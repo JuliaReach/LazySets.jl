@@ -27,7 +27,8 @@ after_success:
               Pkg.add("BenchmarkTools");'
   - julia -e 'if VERSION < v"1.1"
                   using Pkg;
-                  cd(Pkg.dir("LazySets"));
+                  import LazySets;
+                  joinpath(dirname(pathof(LazySets))),
                   include(joinpath("docs", "make.jl"))
               end'
               # only build documentation in v1.0
@@ -35,6 +36,6 @@ after_success:
   # code coverage (for both Coveralls and Codecov)
   - julia -e 'VERSION >= v"0.7-" && using Pkg; Pkg.add("Coverage")'
   # push coverage results to Coveralls
-  #- julia -e 'cd(Pkg.dir("LazySets")); using Coverage; Coveralls.submit(Coveralls.process_folder())'
+  #- julia -e 'import LazySets; joinpath(dirname(pathof(LazySets))), using Coverage; Coveralls.submit(Coveralls.process_folder())'
   # push coverage results to Codecov
-  - julia -e 'VERSION >= v"0.7-" && using Pkg; cd(Pkg.dir("LazySets")); using Coverage; Codecov.submit(Codecov.process_folder())'
+  - julia -e 'VERSION >= v"0.7-" && using Pkg; import LazySets; joinpath(dirname(pathof(LazySets))), using Coverage; Codecov.submit(Codecov.process_folder())'
