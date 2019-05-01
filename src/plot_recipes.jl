@@ -616,7 +616,7 @@ This function is separated from the main `LazySet` plot recipe because
 the iterative refinement is not available for lazy intersections, since it uses
 the support vector (but see #1187).
 
-Also note that if the set is a *nested* intersection eg. the lazy linear map
+Also note that if the set is a *nested* intersection, e.g., the lazy linear map,
 a nested intersection you may have to manually overapproximate this set before
 plotting, see `LazySets.Approximations.overapproximate` for details.
 
