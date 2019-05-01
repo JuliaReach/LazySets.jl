@@ -2,10 +2,7 @@
     using SparseArrays
 end
 
-# -------------------------
-# tests for floating points
-# -------------------------
-for N in [Float64, Float32]
+for N in [Float64, Float32, Rational{Int}]
     p0 = zero(N)
     p1 = one(N)
     v0 = zeros(N, 2)
@@ -24,6 +21,23 @@ for N in [Float64, Float32]
     st = Singleton(v1)
     zt = Zonotope(v0, Diagonal(N[1, 1]))
     zs = ZeroSet{N}(2)
+
+    # -------------------------------------------
+    # plot polytopes
+    # -------------------------------------------
+    plot(b1)
+    plot(bi)
+    plot(hr)
+    plot(itv)
+    plot(ls)
+    plot(st)
+    plot(zt)
+    plot(zs)
+    
+    if N == Rational{Int}
+        # rationals do not support epsilon-close approximation
+        continue
+    end
 
     # bounded basic set types which are not polytopes
     b2 = Ball2(v0, p1)
@@ -77,20 +91,12 @@ for N in [Float64, Float32]
     cp = CartesianProduct(itv, itv)
     cpa = CartesianProductArray([itv, itv])
 
-    # -------------------------------------------
-    # plots using the default epsilon-close value
-    # -------------------------------------------
-    plot(b1)
-    plot(bi)
-    plot(hr)
-    plot(itv)
+    # ------------------------------------------------------------------
+    # plot using epsilon-close approximation (default threshold ε value)
+    # ------------------------------------------------------------------
     if N == Float64 # Float32 requires promotion see #1304 
         plot(its)
     end
-    plot(ls)
-    plot(st)
-    plot(zt)
-    plot(zs)
     plot(hpg)
     plot(hpgo)
     if test_suite_polyhedra
@@ -118,37 +124,4 @@ for N in [Float64, Float32]
     # cases that are not implemented
     # -----
     @test_throws ErrorException plot(itsa) # TODO not implemented yet
-end
-
-# -----------------------------------------------------------------
-# tests for rationals; iterative refinement is not available
-# -----------------------------------------------------------------
-for N in [Rational{Int}]
-    p0 = zero(N)
-    p1 = one(N)
-    v0 = zeros(N, 2)
-    v1 = ones(N, 2)
-
-    # ---------------
-    # set definitions
-    # ---------------
-
-    # bounded basic set types
-    b1 = Ball1(v0, p1)
-    bi = BallInf(v0, p1)
-    hr = Hyperrectangle(v0, v1)
-    itv = Interval(p0, p1)
-    ls = LineSegment(v0, v1)
-    st = Singleton(v1)
-    zt = Zonotope(v0, Diagonal(N[1, 1]))
-    zs = ZeroSet{N}(2)
-
-    plot(b1)
-    plot(bi)
-    plot(hr)
-    plot(itv)
-    plot(ls)
-    plot(st)
-    plot(zt)
-    plot(zs)
 end
