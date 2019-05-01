@@ -170,7 +170,7 @@ Plot a 2D polytope as the convex hull of its vertices.
 ### Input
 
 - `P` -- polygon or polytope
-- `ε` -- (optional, default: `0.0`) ignored, used for dispatch
+- `ε` -- (optional, default: `0`) ignored, used for dispatch
 
 ### Examples
 
