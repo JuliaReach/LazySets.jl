@@ -1,5 +1,5 @@
 using Documenter, LazySets
-import Polyhedra, Optim
+import Polyhedra, Optim, Expokit
 
 makedocs(
     doctest = true,

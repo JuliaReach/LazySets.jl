@@ -12,10 +12,10 @@ git:
 
 after_success:
   # documentation (restrict Documenter to release version 0.19.7 (breaking release) for now)
-  - julia -e 'VERSION >= v"0.7-" && using Pkg;
-              VERSION >= v"0.7-" && Pkg.add("Compat");
-              VERSION >= v"0.7-" && Pkg.add("IntervalArithmetic");
-              VERSION >= v"0.7-" && Pkg.add("RecipesBase");
+  - julia -e 'using Pkg;
+              Pkg.add("Compat");
+              Pkg.add("IntervalArithmetic");
+              Pkg.add("RecipesBase");
               Pkg.add("Documenter");
               Pkg.add("Plots");
               Pkg.add("GR");
@@ -24,20 +24,18 @@ after_success:
               Pkg.add("Expokit");
               Pkg.add("Optim");
               Pkg.add("StaticArrays");
-              Pkg.add("BenchmarkTools");
-              v"0.7" <= VERSION < v"1.0-" && Pkg.pin([PackageSpec(name="Documenter", version="0.19.7"), PackageSpec(name="GR", version="0.33.1")]);'
-              # pinning must be the last command because otherwise it is ignored
-  - julia -e 'if v"0.7" <= VERSION <= v"0.7"
+              Pkg.add("BenchmarkTools");'
+  - julia -e 'if VERSION < v"1.1"
                   using Pkg;
-                  cd(Pkg.dir("LazySets"));
+                  import LazySets;
+                  joinpath(dirname(pathof(LazySets))),
                   include(joinpath("docs", "make.jl"))
               end'
-              # only build documentation in v0.7
-              # - building in v0.6 breaks
-              # - building in v1.0 and v1.1 stalls the Travis build since March 2, 2019
+              # only build documentation in v1.0
+              # building in v1.1 stalls the Travis build since March 2, 2019
   # code coverage (for both Coveralls and Codecov)
   - julia -e 'VERSION >= v"0.7-" && using Pkg; Pkg.add("Coverage")'
   # push coverage results to Coveralls
-  #- julia -e 'cd(Pkg.dir("LazySets")); using Coverage; Coveralls.submit(Coveralls.process_folder())'
+  #- julia -e 'import LazySets; joinpath(dirname(pathof(LazySets))), using Coverage; Coveralls.submit(Coveralls.process_folder())'
   # push coverage results to Codecov
-  - julia -e 'VERSION >= v"0.7-" && using Pkg; cd(Pkg.dir("LazySets")); using Coverage; Codecov.submit(Codecov.process_folder())'
+  - julia -e 'VERSION >= v"0.7-" && using Pkg; import LazySets; joinpath(dirname(pathof(LazySets))), using Coverage; Codecov.submit(Codecov.process_folder())'
