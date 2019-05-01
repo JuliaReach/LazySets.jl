@@ -111,7 +111,7 @@ julia> plot([B1, B2])
 An iterative refinement method is applied to obtain an overapproximation of each
 set in `X` in constraint representation, which is then plotted. To change the
 default tolerance for the iterative refinement, use the second argument; it applies
-all sets in the array.
+to all sets in the array.
 
 ```julia
 julia> B1 = BallInf(zeros(2), 0.4);
