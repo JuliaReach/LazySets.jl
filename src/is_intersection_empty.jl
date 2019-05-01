@@ -162,7 +162,7 @@ function is_intersection_empty(I1::Interval{N}, I2::Interval{N},
     if !witness
         return check
     else
-        return (check, N[max(min(I1), min(I2))])
+        return (check, [max(min(I1), min(I2))])
     end
 end
 
