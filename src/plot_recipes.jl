@@ -651,7 +651,7 @@ julia> plot(P)
     if ε != -one(N)
         error("cannot plot a lazy intersection using iterative refinement with " *
               "error threshold `ε = $ε`, because the exact support vector of an " *
-              "intersection is not available; using instead a set of `Nφ` " *
+              "intersection is currently not available; using instead a set of `Nφ` " *
               "template directions. To control the number of directions, pass the " *
               "variable Nφ as in `plot(X, Nφ=...)`")
     end
