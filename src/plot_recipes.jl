@@ -618,7 +618,7 @@ the support vector (but see #1187).
 
 Also note that if the set is a *nested* intersection, e.g., the lazy linear map,
 you may have to manually overapproximate this set before
-plotting, see `LazySets.Approximations.overapproximate` for details.
+plotting (see `LazySets.Approximations.overapproximate` for details).
 
 ```julia
 julia> using Polyhedra, LazySets.Approximations
