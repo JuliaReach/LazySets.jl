@@ -630,7 +630,7 @@ julia> plot(X)
 
 The vertices list of an `HPolygon` has known issues (until #1306 is fixed).
 Consider using the `Polyhedra` backend to compute the dual representation.
-One can specify the accuaracy of the overapproximation of the lazy intersection
+One can specify the accuracy of the overapproximation of the lazy intersection
 passing a higher value in `Nφ`, which stands for the number of polar directions chosen.
 
 ```julia
