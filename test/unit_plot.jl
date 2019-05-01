@@ -1,4 +1,6 @@
-using Optim, SparseArrays
+@static if VERSION >= v"0.7-"
+    using SparseArrays
+end
 
 # -------------------------
 # tests for floating points
