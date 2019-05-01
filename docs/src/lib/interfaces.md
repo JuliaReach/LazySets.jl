@@ -63,7 +63,7 @@ tosimplehrep(::LazySet)
 isuniversal(::LazySet{N}, ::Bool=false) where {N<:Real}
 ```
 
-The following functions dispatch in a general `LazySet` and work provided that the overapproximation using iterative refinement in two dimensions is available:
+The following functions work with general two-dimensional `LazySet`s, provided that the overapproximation using iterative refinement is available:
 
 ```@docs
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet{N}, ::N=N(1e-3)) where {N<:Real}
