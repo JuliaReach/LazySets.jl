@@ -97,7 +97,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test !isdisjoint(A, B)
     @test isdisjoint(A, Interval(N(-1), N(1)), false)
     s, w = isdisjoint(A, B, true)
-    @test s == false && w ∈ A && w ∈ C
+    @test s == false && w ∈ A && w ∈ B
 
     # conversion from a hyperrectangular set to an interval
     H = Hyperrectangle(N[0], N[1/2])
