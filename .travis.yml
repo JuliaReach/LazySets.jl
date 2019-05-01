@@ -24,9 +24,7 @@ after_success:
               Pkg.add("Expokit");
               Pkg.add("Optim");
               Pkg.add("StaticArrays");
-              Pkg.add("BenchmarkTools");
-              Pkg.pin([PackageSpec(name="Documenter", version="0.19.7"), PackageSpec(name="GR", version="0.33.1")]);'
-              # pinning must be the last command because otherwise it is ignored
+              Pkg.add("BenchmarkTools");'
   - julia -e 'if VERSION < v"1.1"
                   using Pkg;
                   cd(Pkg.dir("LazySets"));
