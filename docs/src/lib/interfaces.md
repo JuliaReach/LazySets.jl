@@ -59,12 +59,15 @@ diameter(::LazySet, ::Real=Inf)
 isbounded(::LazySet)
 isbounded_unit_dimensions(::LazySet{N}) where {N<:Real}
 an_element(::LazySet{N}) where {N<:Real}
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet)
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:LazySet}
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet, ::Float64)
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}, ::Float64) where {S<:LazySet}
 tosimplehrep(::LazySet)
 isuniversal(::LazySet{N}, ::Bool=false) where {N<:Real}
+```
+
+The following functions work with general two-dimensional `LazySet`s, provided that the overapproximation using iterative refinement is available:
+
+```@docs
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet{N}, ::N=N(1e-3)) where {N<:Real}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{XN}, ::N=N(1e-3)) where {N<:Real, XN<:LazySet{N}}
 ```
 
 ### Set functions that override Base functions
@@ -135,8 +138,13 @@ This interface defines the following functions:
 isbounded(::AbstractPolytope)
 singleton_list(::AbstractPolytope{N}) where {N<:Real}
 isempty(::AbstractPolytope)
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractPolytope)
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:AbstractPolytope}
+```
+
+Plotting abstract polytopes is available too:
+
+```@docs
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractPolytope{N}, ::N=zero(N)) where {N<:Real}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{PN}, ::N=zero(N)) where {N<:Real, PN<:AbstractPolytope{N}}
 ```
 
 #### Polygon
@@ -244,6 +252,6 @@ high(::AbstractSingleton{N}, ::Int) where {N<:Real}
 low(::AbstractSingleton{N}) where {N<:Real}
 low(::AbstractSingleton{N}, ::Int) where {N<:Real}
 linear_map(::AbstractMatrix{N}, ::AbstractSingleton{N}) where {N<:Real}
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractSingleton)
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:AbstractSingleton}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractSingleton{N}, ::N=zero(N)) where {N<:Real}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{SN}, ::N=zero(N)) where {N<:Real, SN<:AbstractSingleton{N}}
 ```
