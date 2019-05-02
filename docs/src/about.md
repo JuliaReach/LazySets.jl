@@ -101,7 +101,7 @@ approximations computed with [SpaceEx](http://spaceex.imag.fr/).
 
 ## Credits
 
-Here we list the names of the maintainers `LazySets.jl` library, as well as past and present contributors (in alphabetic order).
+Here we list the names of the maintainers of the `LazySets.jl` library, as well as past and present contributors (in alphabetic order).
 
 ### Core developers
 
