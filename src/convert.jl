@@ -613,6 +613,52 @@ function convert(::Type{Hyperrectangle},
 end
 
 """
+    convert(::Type{CartesianProduct{N, Interval{N}, Interval{N}}},
+            H::AbstractHyperrectangle{N}) where {N<:Real}
+
+Converts a two-dimensional hyperrectangle to the cartesian product of two
+intervals.
+
+### Input
+
+- `CartesianProduct` -- type used for dispatch
+- `H`                -- hyperrectangle
+
+### Output
+
+The cartesian product of two intervals.
+"""
+function convert(::Type{CartesianProduct{N, Interval{N}, Interval{N}}},
+                 H::AbstractHyperrectangle{N}) where {N<:Real}
+    @assert dim(H) == 2 "the hyperrectangle must be two-dimensional to convert it to "
+            "the cartesian product of intervals, but it is $(dim(H))-dimensional"
+    Ix = Interval(low(H, 1), high(H, 1))
+    Iy =  Interval(low(H, 2), high(H, 2))
+    return CartesianProduct(Ix, Iy)
+end
+
+"""
+    convert(::Type{CartesianProductArray{N, Interval{N}}},
+            H::AbstractHyperrectangle{N}) where {N<:Real}
+
+Converts a hyperrectangle to the cartesian product array of intervals.
+
+### Input
+
+- `CartesianProductArray` -- type used for dispatch
+- `H`                     -- hyperrectangle
+
+### Output
+
+The cartesian product of a finite number of intervals.
+"""
+function convert(::Type{CartesianProductArray{N, Interval{N}}},
+                 H::AbstractHyperrectangle{N}) where {N<:Real}
+    Iarray = [Interval(low(H, i), high(H, i)) for i in 1:dim(H)]
+    return CartesianProductArray(Iarray)
+end
+
+"""
     convert(::Type{Zonotope}, cp::CartesianProduct{N, Zonotope{N}, Zonotope{N}}) where {N<:Real}
 
 Converts the cartesian product of two zonotopes to a new zonotope.

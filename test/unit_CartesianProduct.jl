@@ -129,6 +129,10 @@ for N in [Float64, Float32, Rational{Int}]
         LinearConstraint(sparsevec(N[2], N[-1], 2), N(-2))])
     @test all(H -> dim(H) == 2, hlist)
 
+    # ==================================
+    # Conversions of Cartesian Products
+    # ==================================
+
     # convert the cartesian product of two hyperrectangles to one hyperrectangle
     h1 = Hyperrectangle(N[1/2],  N[1/2])
     h2 = Hyperrectangle(N[2.5, 4.5],  N[1/2, 1/2])
@@ -140,6 +144,13 @@ for N in [Float64, Float32, Rational{Int}]
     b1 = BallInf(N[1/2],  N(1/2))
     H = convert(Hyperrectangle, b1 × h2)
     @test low(H) == N[0, 2, 4] && high(H) == N[1, 3, 5]
+
+    # convert a hyperrectangle to a cartesian product of intervals
+    H = Hyperrectangle(N[0, 0], N[1, 1])
+    Hcp = convert(CartesianProduct{N, Interval{N}, Interval{N}}, H)
+    @test Hcp isa CartesianProduct &&
+          Hcp.X == Interval(N(-1), N(1)) &&
+          Hcp.Y == Interval(N(-1), N(1))
 
     # =====================
     # CartesianProductArray
@@ -201,6 +212,10 @@ for N in [Float64, Float32, Rational{Int}]
         ])
     @test all(H -> dim(H) == 3, hlist)
 
+    # ========================================
+    # Conversions of Cartesian Product Arrays
+    # ========================================
+
     # conversion of the cartesian product array of intervals to a hyperrectangle
     i1 = Interval(N[0, 1])
     i2 = Interval(N[2, 3])
@@ -226,6 +241,13 @@ for N in [Float64, Float32, Rational{Int}]
     @test cpa1 ⊆ cpa2 && res && w == N[]
     res, w = ⊆(cpa2, cpa1, true)
     @test !⊆(cpa2, cpa1) && !res && w ∈ cpa2 && w ∉ cpa1
+
+    # convert a hyperrectangle to the cartesian product array of intervals
+    # convert a hyperrectangle to a cartesian product of intervals
+    H = Hyperrectangle(N[0, 0, 0], N[1, 1, 1])
+    Hcp = convert(CartesianProductArray{N, Interval{N}}, H)
+    @test Hcp isa CartesianProductArray &&
+          all([Hcpi == Interval(N(-1), N(1)) for Hcpi in array(Hcp)])
 
     # ================
     # common functions
