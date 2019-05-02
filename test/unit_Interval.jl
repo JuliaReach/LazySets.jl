@@ -37,7 +37,7 @@ for N in [Float64, Float32, Rational{Int}]
     v = vertices_list(m)
     @test N[1.5] in v && N[-2] in v
 
-    # substraction
+    # subtraction
     d = x - y
     @test dim(d) == 1
     @test σ(N[1], d) == N[3]
