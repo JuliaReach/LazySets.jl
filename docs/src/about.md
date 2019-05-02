@@ -101,11 +101,22 @@ approximations computed with [SpaceEx](http://spaceex.imag.fr/).
 
 ## Credits
 
-These persons have contributed to `LazySets.jl` (in alphabetic order):
+Here we list the names of the maintainers of the `LazySets.jl` library, as well as past and present contributors (in alphabetic order).
 
-- Tomer Arnon
+### Core developers
+
 - [Marcelo Forets](http://main.marcelo-forets.fr/)
 - [Christian Schilling](https://schillic.github.io/)
+
+### Contributors
+
+- Tomer Arnon
+- Kostiantyn Potomkin
 - Frédéric Viry
 
-We are also grateful to [Goran Frehse](https://sites.google.com/site/frehseg/) for enlightening discussions.
+### Colaborators
+
+We are also grateful to the following persons for enlightening discussions: 
+
+- [Sergiy Bogomolov](https://www.sergiybogomolov.com/)
+- [Goran Frehse](https://sites.google.com/site/frehseg/) 
