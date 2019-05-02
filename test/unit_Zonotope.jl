@@ -102,6 +102,7 @@ for N in [Float64, Rational{Int}, Float32]
     # test number of generators
     Z = Zonotope(N[2, 1], N[-0.5 1.5 0.5 1; 0.5 1.5 1 0.5])
     @test ngens(Z) == 4
+    @test generators(Z) == Z.generators
     # test order reduction
     Zred1 = reduce_order(Z, 1)
     @test ngens(Zred1) == 2

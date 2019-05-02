@@ -635,6 +635,7 @@ constraints_list(::Zonotope{N}) where {N<:Real}
 constraints_list(::Zonotope{N}) where {N<:AbstractFloat}
 center(::Zonotope{N}) where {N<:Real}
 order(::Zonotope)
+generators(Z::Zonotope)
 minkowski_sum(::Zonotope{N}, ::Zonotope{N}) where {N<:Real}
 linear_map(::AbstractMatrix{N}, ::Zonotope{N}) where {N<:Real}
 translate(::Zonotope{N}, ::AbstractVector{N}) where {N<:Real}
