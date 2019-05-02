@@ -31,7 +31,7 @@ Return the set difference between the given intervals.
 The set difference is defined as:
 
 ```math
-    I1 \\setminus I2 = \\{x: x ∈ I₁ \\text{ and } x ∉ I₂ \\}
+    I₁ \\setminus I₂ = \\{x: x ∈ I₁ \\text{ and } x ∉ I₂ \\}
 ```
 
 ### Input
