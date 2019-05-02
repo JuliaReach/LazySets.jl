@@ -93,5 +93,5 @@ intersection(::AbstractPolyhedron{N}, ::ResetMap{N}) where {N<:Real}
 
 ```@docs
 \(::LazySet, ::LazySet)
-difference(::Interval{N}, ::Interval{N}) where {N}
+difference(::IN, ::IN) where {N, IN<:Interval{N}}
 ```
