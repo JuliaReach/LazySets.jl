@@ -24,8 +24,7 @@ The set difference between `X` and `Y`.
 # =================================
 
 """
-    difference(I1::Interval{N}, I2::Interval{N})::Union{EmptySet{N},
-               Interval{N}, UnionSet{N, Interval{N}, Interval{N}}} where {N}
+    difference(I1::IN, I2::IN)::Union{EmptySet{N}, IN, UnionSet{N, IN, IN}} where {N, IN<:Interval{N}}
 
 Return the set difference between the given intervals.
 
@@ -48,8 +47,7 @@ Depending on the position of the intervals, the output is one of the following:
 - An `Interval`.
 - A `UnionSet` of two `Interval` sets.
 """
-function difference(I1::Interval{N}, I2::Interval{N})::Union{EmptySet{N},
-                    Interval{N}, UnionSet{N, Interval{N}, Interval{N}}} where {N}
+function difference(I1::IN, I2::IN)::Union{EmptySet{N}, IN, UnionSet{N, IN, IN}} where {N, IN<:Interval{N}}
     I12 = intersection(I1, I2)
     if isempty(I12)
         return I1

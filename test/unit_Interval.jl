@@ -117,10 +117,7 @@ for N in [Float64, Float32, Rational{Int}]
     dAB = difference(A, B)
     dAC = difference(A, C)
     dAD = difference(A, D)
-    @test (A\B).array == dAB.array # convenience alias: \
-    @test dAB isa UnionSetArray
-    @test length(array(dAB)) == 1 && first(dAB.array) == Interval(N(5), N(6))
-    @test length(array(dAC)) == 1 && first(dAC.array) == Interval(N(5), N(8))
-    @test length(array(dAD)) == 2 && dAD.array[1] == Interval(N(5), N(6)) &&
-                                     dAD.array[2] == Interval(N(7), N(8))
+    @test dAB == Interval(N(5), N(6))
+    @test dAC == Interval(N(5), N(8))
+    @test dAD == UnionSet(Interval(N(5), N(6)), Interval(N(7), N(8)))
 end
