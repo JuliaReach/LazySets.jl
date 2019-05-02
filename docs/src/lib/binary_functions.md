@@ -36,6 +36,7 @@ is_intersection_empty(::UnionSetArray{N}, ::LazySet{N}, ::Bool=false) where {N<:
 is_intersection_empty(::Universe{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::Complement{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::Zonotope{N}, ::Zonotope{N}, ::Bool=false) where {N<:Real}
+is_intersection_empty(::Interval{N}, ::Interval{N}, ::Bool=false) where {N<:Real}
 ```
 
 ## Convex hull
