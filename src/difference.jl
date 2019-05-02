@@ -24,7 +24,8 @@ The set difference between `X` and `Y`.
 # =================================
 
 """
-    difference(I1::Interval{N}, I2::Interval{N}) where {N}
+    difference(I1::Interval{N}, I2::Interval{N})::Union{EmptySet{N},
+               Interval{N}, UnionSet{N, Interval{N}, Interval{N}}} where {N}
 
 Return the set difference between the given intervals.
 
@@ -41,13 +42,17 @@ The set difference is defined as:
 
 ### Output
 
-- An `EmptySet` if the set difference is empty.
-- A `UnionSetArray` of `Interval` sets otherwise.
+Depending on the position of the intervals, the output is one of the following:
+
+- An `EmptySet`.
+- An `Interval`.
+- A `UnionSet` of two `Interval` sets.
 """
-function difference(I1::Interval{N}, I2::Interval{N}) where {N}
+function difference(I1::Interval{N}, I2::Interval{N})::Union{EmptySet{N},
+                    Interval{N}, UnionSet{N, Interval{N}, Interval{N}}} where {N}
     I12 = intersection(I1, I2)
     if isempty(I12)
-        Idiff = [I1]
+        return I1
     else
         Ileft = Interval(min(I1), min(I12))
         Iright = Interval(max(I12), max(I1))
@@ -58,12 +63,11 @@ function difference(I1::Interval{N}, I2::Interval{N}) where {N}
         if Ileft_iszero && Iright_iszero
             return EmptySet{N}()
         elseif Ileft_iszero && !Iright_iszero
-            Idiff = [Iright]
+            return Iright
         elseif !Ileft_iszero && Iright_iszero
-            Idiff = [Ileft]
+            return Ileft
         else
-            Idiff = [Ileft, Iright]
+            return UnionSet(Ileft, Iright)
         end
     end
-    return UnionSetArray(Idiff)
 end
