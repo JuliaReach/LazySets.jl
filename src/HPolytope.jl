@@ -237,7 +237,7 @@ function vertices_list(P::HPolytope{N}; backend=nothing)::Vector{Vector{N}} wher
         @assert isdefined(@__MODULE__, :Polyhedra) "the function `vertices_list` "
         "needs the package 'Polyhedra' to be loaded"
         if backend == nothing
-            backend == default_polyhedra_backend(N)
+            backend = default_polyhedra_backend(P, N)
         end
         P = polyhedron(P; backend=backend)
         removevredundancy!(P)
