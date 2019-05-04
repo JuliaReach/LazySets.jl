@@ -150,9 +150,8 @@ function intersection(H::AbstractHyperrectangle{N},
 end
 
 """
-    intersection(x::Interval{N},
-                 y::Interval{N}
-                 )::Union{Interval{N}, EmptySet{N}} where {N<:Real}
+    intersection(x::Interval{N}, y::Interval{N}
+                )::Union{Interval{N}, EmptySet{N}} where {N<:Real}
 
 Return the intersection of two intervals.
 
@@ -166,14 +165,186 @@ Return the intersection of two intervals.
 If the intervals do not intersect, the result is the empty set.
 Otherwise the result is the interval that describes the intersection.
 """
-function intersection(x::Interval{N},
-                      y::Interval{N}
+function intersection(x::Interval{N}, y::Interval{N}
                      )::Union{Interval{N}, EmptySet{N}} where {N<:Real}
     if min(y) > max(x) || min(x) > max(y)
         return EmptySet{N}()
     else
         return Interval(max(min(x), min(y)), min(max(x), max(y)))
     end
+end
+
+"""
+    intersection(X::Interval{N}, hs::HalfSpace{N}
+                )::Union{Interval{N}, EmptySet{N}} where {N<:Real}
+
+Compute the intersection of an interval and a half-space.
+
+### Input
+
+- `X`  -- interval
+- `hs` -- half-space
+
+### Output
+
+If the sets do not intersect, the result is the empty set.
+If the interval is fully contained in the half-space, the result is the original
+interval.
+Otherwise the result is the interval that describes the intersection.
+
+### Algorithm
+
+We first handle the special case that the normal vector `a` of `hs` is close to
+zero.
+Then we distinguish the cases that `hs` is a lower or an upper bound.
+"""
+function intersection(X::Interval{N}, hs::HalfSpace{N}
+                     )::Union{Interval{N}, EmptySet{N}} where {N<:Real}
+    @assert dim(hs) == 1 "cannot take the intersection between an interval " *
+                         "and a $(dim(hs))-dimensional half-space"
+
+    a = hs.a[1]
+    b = hs.b
+    if _isapprox(a, zero(N))
+        if _geq(b, zero(N))
+            # half-space is universal
+            return X
+        else
+            # half-space is empty
+            return EmptySet{N}()
+        end
+    end
+
+    # idea:
+    # ax ≤ b  <=>  x ≤ b/a  (if a > 0)
+    # ax ≤ b  <=>  x ≥ b/a  (if a < 0)
+    b_over_a = b / a
+    lo = min(X)
+    hi = max(X)
+
+    if a > zero(N)
+        # half-space is an upper bound
+        # check whether ax ≤ b for x = lo
+        if _leq(lo, b_over_a)
+            # new upper bound: min(hi, b_over_a)
+            if _leq(hi, b_over_a)
+                return X
+            else
+                return Interval(lo, b_over_a)
+            end
+        else
+            return EmptySet{N}()
+        end
+    else
+        # half-space is a lower bound
+        # check whether ax ≤ b for x = hi
+        if _geq(hi, b_over_a)
+            # new lower bound: max(lo, b_over_a)
+            if _leq(b_over_a, lo)
+                return X
+            else
+                return Interval(b_over_a, hi)
+            end
+        else
+            return EmptySet{N}()
+        end
+    end
+end
+
+# symmetric method
+function intersection(hs::HalfSpace{N}, X::Interval{N}
+                     )::Union{Interval{N}, EmptySet{N}} where {N<:Real}
+    return intersection(X, hs)
+end
+
+"""
+    intersection(X::Interval{N}, hp::Hyperplane{N}
+                )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+
+Compute the intersection of an interval and a hyperplane.
+
+### Input
+
+- `X`  -- interval
+- `hp` -- hyperplane
+
+### Output
+
+If the sets do not intersect, the result is the empty set.
+Otherwise the result is the singleton that describes the intersection.
+"""
+function intersection(X::Interval{N}, hp::Hyperplane{N}
+                     )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+    @assert dim(hp) == 1 "cannot take the intersection between an interval " *
+                         "and a $(dim(hp))-dimensional hyperplane"
+
+    # a one-dimensional hyperplane is just a point
+    p = hp.b / hp.a[1]
+    if _leq(min(X), p) && _leq(p, max(X))
+        return Singleton([p])
+    else
+        return EmptySet{N}()
+    end
+end
+
+# symmetric method
+function intersection(hp::Hyperplane{N}, X::Interval{N}
+                     )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+    return intersection(X, hp)
+end
+
+"""
+    intersection(X::Interval{N}, Y::LazySet{N}
+                )::Union{Interval{N}, Singleton{N}, EmptySet{N}} where {N<:Real}
+
+Compute the intersection of an interval and a convex set.
+
+### Input
+
+- `X` -- interval
+- `Y` -- convex set
+
+### Output
+
+If the sets do not intersect, the result is the empty set.
+Otherwise the result is the interval that describes the intersection, which may
+be of type `Singleton` if the intersection is very small.
+"""
+function intersection(X::Interval{N}, Y::LazySet{N}
+                     )::Union{Interval{N}, Singleton{N}, EmptySet{N}} where {N<:Real}
+    lower = max(min(X), -ρ(N[-1], Y))
+    upper = min(max(X), ρ(N[1], Y))
+    if _isapprox(lower, upper)
+        return Singleton([lower])
+    elseif lower < upper
+        return Interval(lower, upper)
+    else
+        return EmptySet{N}()
+    end
+end
+
+# symmetric method
+function intersection(Y::LazySet{N}, X::Interval{N}
+                     )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+    return intersection(X, Y)
+end
+
+# disambiguation
+function intersection(X::Interval{N}, H::AbstractHyperrectangle{N}
+                     )::Union{Interval{N}, Singleton{N}, EmptySet{N}} where {N<:Real}
+    return invoke(intersection, Tuple{Interval{N}, LazySet{N}}, X, H)
+end
+function intersection(H::AbstractHyperrectangle{N}, X::Interval{N}
+                     )::Union{Interval{N}, Singleton{N}, EmptySet{N}} where {N<:Real}
+    return invoke(intersection, Tuple{Interval{N}, LazySet{N}}, X, H)
+end
+function intersection(X::Interval{N}, S::AbstractSingleton{N}
+                     )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+    return invoke(intersection, Tuple{typeof(S), LazySet{N}}, S, X)
+end
+function intersection(S::AbstractSingleton{N}, X::Interval{N}
+                     )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+    return invoke(intersection, Tuple{typeof(S), LazySet{N}}, S, X)
 end
 
 """
@@ -383,6 +554,14 @@ function intersection(P::AbstractPolyhedron{N},
                      )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
     return invoke(intersection, Tuple{typeof(S), LazySet{N}}, S, P)
 end
+function intersection(X::Interval{N}, P::AbstractPolyhedron{N}
+                     )::Union{Interval{N}, Singleton{N}, EmptySet{N}} where {N<:Real}
+    return invoke(intersection, Tuple{Interval{N}, LazySet{N}}, X, P)
+end
+function intersection(P::AbstractPolyhedron{N}, X::Interval{N}
+                     )::Union{Interval{N}, Singleton{N}, EmptySet{N}} where {N<:Real}
+    return invoke(intersection, Tuple{Interval{N}, LazySet{N}}, X, P)
+end
 
 """
     intersection(P1::Union{VPolytope{N}, VPolygon{N}},
@@ -552,6 +731,12 @@ function intersection(U::Universe{N}, S::AbstractSingleton{N}) where {N<:Real}
 end
 function intersection(S::AbstractSingleton{N}, U::Universe{N}) where {N<:Real}
     return S
+end
+function intersection(X::Interval{N}, U::Universe{N}) where {N<:Real}
+    return X
+end
+function intersection(U::Universe{N}, X::Interval{N}) where {N<:Real}
+    return X
 end
 
 """
