@@ -162,15 +162,19 @@ else
                       intersect,
                       convexhull,
                       hcartesianproduct, vcartesianproduct,
-                      points,
-                      default_library
+                      points
+    import CDDLib # default backend
 
+    # to use Polyhedra's default library, set
+    # default_library(LazySets.dim(P), Float64)
     function default_polyhedra_backend(P, N::Type{<:AbstractFloat})
-        return default_library(LazySets.dim(P), Float64)
+        return CDDLib.Library()
     end
 
+    # to use Polyhedra's default library, set
+    # default_library(LazySets.dim(P), Rational{Int})
     function default_polyhedra_backend(P, N::Type{<:Rational})
-        return default_library(LazySets.dim(P), Rational{Int})
+        return CDDLib.Library(:exact)
     end
 end
 end # quote
