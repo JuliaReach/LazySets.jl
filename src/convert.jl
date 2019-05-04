@@ -233,7 +233,7 @@ function convert(::Type{HPOLYGON},
     H = HPOLYGON{N}()
     for ci in constraints_list(P)
         # guarantee that the edges are correctly sorted for storage
-        addconstraint!(H, ci; prune=false)
+        addconstraint!(H, ci; prune=true)
     end
     return H
 end
