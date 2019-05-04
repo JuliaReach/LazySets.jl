@@ -218,7 +218,7 @@ H-representation and then its `vertices_list` function is used. This ensures
 that, by default, the optimized two-dimensional methods are used.
 
 It is possible to use the `Polyhedra` backend in two-dimensions as well
-by passing a given backend, e.g. `backend=CDDLib.Library()`.
+by passing, e.g. `backend=CDDLib.Library()`.
 
 If the polytope is not two-dimensional, the concrete polyhedra manipulation
 library `Polyhedra` is used. The actual computation is performed by a given
