@@ -65,9 +65,15 @@ returned by `vertices_list` are the same. In that case, a scatter plot is used
 maps of singletons.
 """
 @recipe function plot_lazyset(X::LazySet{N}, ε::N=N(1e-3);
-                              color="blue", label="", grid=true, alpha=0.5) where {N<:Real}
+                              color=:auto, alpha=0.5) where {N<:Real}
 
     @assert dim(X) == 2 "cannot plot a $(dim(X))-dimensional set using iterative refinement"
+
+    seriescolor --> color
+    seriesalpha --> alpha
+    label --> ""
+    grid --> true
+    aspect_ratio --> 1.0
 
     P = overapproximate(X, ε)
     vlist = transpose(hcat(convex_hull(vertices_list(P))...))
@@ -129,10 +135,14 @@ Refer to the documentation of `plot_lazyset(S::LazySet, [ε]::Float64; ...)` for
 further details.
 """
 @recipe function plot_lazysets(X::Vector{XN}, ε::N=N(1e-3);
-                               seriescolor="blue", label="", grid=true,
-                               alpha=0.5) where {N<:Real, XN<:LazySet{N}}
+                               color=:auto, alpha=0.5) where {N<:Real, XN<:LazySet{N}}
 
     seriestype := :shape
+    seriescolor --> color
+    seriesalpha --> alpha
+    label --> ""
+    grid --> true
+    aspect_ratio --> 1.0
 
     for Xi in X
         if Xi isa EmptySet
@@ -199,11 +209,17 @@ convex hull. The set is plotted and shaded using the `:shape` series type from
 `Plots`. 
 """
 @recipe function plot_polytope(P::AbstractPolytope{N}, ε::N=zero(N);
-                               color="blue", label="", grid=true, alpha=0.5) where {N<:Real}
+                               color=:auto, alpha=0.5) where {N<:Real}
 
     # for polytopes
     @assert dim(P) == 2 "cannot plot a $(dim(P))-dimensional polytope"
+
     seriestype := :shape
+    seriescolor --> color
+    seriesalpha --> alpha
+    label --> ""
+    grid --> true
+    aspect_ratio --> 1.0
 
     points = convex_hull(vertices_list(P))
     vlist = transpose(hcat(points...))
@@ -259,11 +275,16 @@ convex hull. The set is plotted and shaded using the `:shape` series type from
 `Plots`. 
 """
 @recipe function plot_polytopes(P::Vector{PN}, ε::N=zero(N);
-                                seriescolor="blue", label="", grid=true,
-                                alpha=0.5) where {N<:Real, PN<:AbstractPolytope{N}}
+                                color=:auto, alpha=0.5) where {N<:Real, PN<:AbstractPolytope{N}}
 
     # it is assumed that the polytopes are two-dimensional
     seriestype := :shape
+
+    seriescolor --> color
+    seriesalpha --> alpha
+    label --> ""
+    grid --> true
+    aspect_ratio --> 1.0
 
     for Pi in P
         @assert dim(Pi) == 2 "cannot plot a $(dim(Pi))-dimensional polytope"
@@ -306,10 +327,15 @@ julia> plot(Singleton([0.5, 1.0]))
 ```
 """
 @recipe function plot_singleton(S::AbstractSingleton{N}, ε::N=zero(N);
-                                color="blue", label="", grid=true,
-                                legend=false) where {N<:Real}
+                                color=:auto, alpha=1.0) where {N<:Real}
 
     seriestype := :scatter
+    seriescolor --> color
+    seriesalpha --> alpha
+    label --> ""
+    grid --> true
+    aspect_ratio --> 1.0
+
     @assert dim(S) == 2 ||
             dim(S) == 3 "cannot plot a $(dim(S))-dimensional singleton"
     [Tuple(element(S))]
@@ -340,10 +366,14 @@ julia> plot([Singleton(a), Singleton(b), Singleton(c)])
 ```
 """
 @recipe function plot_singletons(S::Vector{SN}, ε::N=zero(N);
-                                 color="blue", label="",
-                                 grid=true, legend=false) where {N<:Real, SN<:AbstractSingleton{N}}
+                                 color=:auto, alpha=1.0) where {N<:Real, SN<:AbstractSingleton{N}}
 
     seriestype := :scatter
+    seriescolor --> color
+    seriesalpha --> alpha
+    label --> ""
+    grid --> true
+    aspect_ratio --> 1.0
 
     if dim(S[1]) == 2
         @assert all([dim(p) == 2 for p in S]) "all points in this vector " *
@@ -379,15 +409,30 @@ julia> L = LineSegment([0., 0.], [1., 1.]);
 
 julia> plot(L)
 ```
+
+To control the color of the line, use the `linecolor` keyword argument, and to
+control the color of the endpoints, use the `markercolor` keyword argument.
+To control the width, use `linewidth`.
+
+```julia
+julia> plot(L, markercolor="green", linecolor="red", linewidth=2.)
+```
+
+The option `add_marker` (optional, default: `true`) can be used to specify if
+endpoint markers should be plotted or not.
+```julia
+julia> plot(L, add_marker=false, linecolor="red", linewidth=2.)
+```
 """
-@recipe function plot_linesegment(L::LineSegment{N}, ε::N=zero(N); color="blue", label="",
-                                  grid=true, alpha=0.5, legend=false,
-                                  add_marker=true) where {N<:Real}
+@recipe function plot_linesegment(L::LineSegment{N}, ε::N=zero(N);
+                                  color=:auto, alpha=0.5, add_marker=true) where {N<:Real}
 
     seriestype := :path
     linecolor   --> color
-    markershape --> (add_marker ? :circle : :none)
     markercolor --> color
+    markershape --> (add_marker ? :circle : :none)
+    label --> ""
+    grid --> true
 
     [Tuple(L.p); Tuple(L.q)]
 end
@@ -411,15 +456,18 @@ julia> L2 = LineSegment([1., 0.], [0., 1.]);
 
 julia> plot([L1, L2])
 ```
+
+For other options, see the documentation of `plot_linesegment(L::LineSegment)`.
 """
-@recipe function plot_linesegments(L::Vector{LineSegment{N}}, ε::N=zero(N); color="blue",
-                                   label="", grid=true, alpha=0.5, legend=false,
-                                   add_marker=true) where {N<:Real}
+@recipe function plot_linesegments(L::Vector{LineSegment{N}}, ε::N=zero(N);
+                                   color=:auto, alpha=0.5, add_marker=true) where {N<:Real}
 
     seriestype := :path
     linecolor   --> color
-    markershape --> (add_marker ? :circle : :none)
     markercolor --> color
+    label --> ""
+    grid --> true
+    markershape --> (add_marker ? :circle : :none)
 
     for Li in L
         @series [Tuple(Li.p); Tuple(Li.q)]
@@ -443,15 +491,16 @@ julia> I = Interval(0.0, 1.0);
 
 julia> plot(I)
 ```
+
+For other options, see the documentation of `plot_linesegment(L::LineSegment)`.
 """
-@recipe function plot_interval(I::Interval{N}, ε::N=zero(N); color=:auto, label="",
-                               grid=true, alpha=0.5, legend=false, add_marker=true,
-                               linewidth=2.) where {N<:Real}
+@recipe function plot_interval(I::Interval{N}, ε::N=zero(N);
+                               color=:auto, alpha=0.5, add_marker=true) where {N<:Real}
 
     seriestype := :path
     linecolor   --> color
-    markershape --> (add_marker ? :circle : :none)
     markercolor --> color
+    markershape --> (add_marker ? :circle : :none)
 
     [Tuple([min(I), 0.0]); Tuple([max(I), 0.0])]
 end
@@ -475,15 +524,18 @@ julia> I2 = Interval([0.5, 2.]);
 
 julia> plot([I1, I2])
 ```
+
+For other options, see the documentation of `plot_linesegment(L::LineSegment)`.
 """
-@recipe function plot_intervals(I::Vector{Interval{N}}, ε::N=zero(N); color=:auto, label="", grid=true,
-                                alpha=0.5, legend=false, add_marker=true,
-                                linewidth=2.0) where {N<:Real}
+@recipe function plot_intervals(I::Vector{Interval{N}}, ε::N=zero(N);
+                                color=:auto, alpha=0.5, add_marker=true) where {N<:Real}
 
     seriestype := :path
     linecolor   --> color
-    markershape --> (add_marker ? :circle : :none)
     markercolor --> color
+    label --> ""
+    grid --> true
+    markershape --> (add_marker ? :circle : :none)
 
     for Ii in I
         @series [Tuple([min(Ii), 0.0]); Tuple([max(Ii), 0.0])]
@@ -508,8 +560,9 @@ Plot an empty set.
 
 An empty figure.
 """
-@recipe function plot_emptyset(∅::EmptySet{N}, ε::N=zero(N); label="", grid=true,
-                               legend=false) where {N<:Real}
+@recipe function plot_emptyset(∅::EmptySet{N}, ε::N=zero(N)) where {N<:Real}
+    label --> ""
+    grid --> true
     return []
 end
 
@@ -595,7 +648,7 @@ end
 
 """
     plot_intersection(X::Intersection{N}, [ε]::N=-one(N); Nφ=40,
-                      color="blue", label="", grid=true, alpha=0.5) where {N<:Real}
+                      color=:auto, alpha=0.5) where {N<:Real}
 
 Plot a lazy intersection.
 
@@ -644,7 +697,7 @@ julia> plot(P)
 ```
 """
 @recipe function plot_intersection(X::Intersection{N}, ε::N=-one(N); Nφ=40,
-                                   color="blue", label="", grid=true, alpha=0.5) where {N<:Real}
+                                   color=:auto, alpha=0.5) where {N<:Real}
 
     @assert dim(X) == 2 "this recipe only plots two-dimensional sets"
 
@@ -655,6 +708,12 @@ julia> plot(P)
               "template directions. To control the number of directions, pass the " *
               "variable Nφ as in `plot(X, Nφ=...)`")
     end
+
+    seriescolor --> color
+    seriesalpha --> alpha
+    label --> ""
+    grid --> true
+    aspect_ratio --> 1.0
 
     P = convert(HPolygon, overapproximate(X, PolarDirections{N}(Nφ)))
     vlist = transpose(hcat(convex_hull(vertices_list(P))...))
