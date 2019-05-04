@@ -202,7 +202,7 @@ function ∈(x::AbstractVector{N}, P::AbstractHPolygon{N})::Bool where {N<:Real}
     @assert length(x) == 2
 
     for c in P.constraints
-        if dot(c.a, x) > c.b
+        if !_leq(dot(c.a, x), c.b)
             return false
         end
     end
