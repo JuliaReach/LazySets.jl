@@ -1,6 +1,6 @@
 # This file is inspired from Polyhedra.jl
 
-const ABSZTOL(N::Type{<:AbstractFloat}) = sqrt(eps(N))
+const ABSZTOL(N::Type{<:AbstractFloat}) = N(10) * sqrt(eps(N))
 const ABSZTOL(N::Type{Rational{INNER}}) where {INNER} = zero(N)
 
 """
