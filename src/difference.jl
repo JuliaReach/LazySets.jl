@@ -59,7 +59,7 @@ position three different results may occur:
   ``I₁₂`` splits `I₁` into one interval or into two intervals. The latter case
   happens when the inclusion is strict on both ends of ``I₂``.
 
-To check for strict inclusion, we asssume that the inclusion is strict and then
+To check for strict inclusion, we assume that the inclusion is strict and then
 check if the resulting intervals that cover `I₁` (one to its left and one to its
 right, let them be `Ileft` and `Iright`), obtained by intersection with `I₂`,
 are flat or not. Three cases may arise:
