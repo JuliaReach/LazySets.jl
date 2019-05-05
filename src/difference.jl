@@ -57,7 +57,7 @@ position three different results may occur:
   set difference is just ``I₁``.
 - Otherwise, let `I₁₂ = I₁ ∩ I₂` and assume that it is not empty, then either
   ``I₁₂`` splits `I₁` into one interval or into two intervals. The latter case
-   happens when the inclusion is strict.
+  happens when the inclusion is strict on both ends of ``I₂``.
 
 To check for strict inclusion, we asssume that the inclusion is strict and then
 check if the resulting intervals that cover `I₁` (one to its left and one to its
