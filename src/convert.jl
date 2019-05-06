@@ -220,20 +220,20 @@ Convert from 2D polytope in H-representation to polygon in H-representation.
 
 ### Input
 
-- `type` -- target type
-- `P`    -- source polytope (must be 2D)
-
+- `type`  -- target type
+- `P`     -- source polytope (must be 2D)
+- `prune` -- (optional, default: `true`) flag for removing redundant
+             constraints in the end
 ### Output
 
 The 2D polytope represented as polygon.
 """
-function convert(::Type{HPOLYGON},
-                 P::HPolytope{N}) where {N<:Real, HPOLYGON<:AbstractHPolygon}
+function convert(::Type{HPOLYGON}, P::HPolytope{N};
+                 prune::Bool=true) where {N<:Real, HPOLYGON<:AbstractHPolygon}
     @assert dim(P) == 2 "polytope must be two-dimensional for conversion"
     H = HPOLYGON{N}()
     for ci in constraints_list(P)
-        # guarantee that the edges are correctly sorted for storage
-        addconstraint!(H, ci; prune=false)
+        addconstraint!(H, ci; prune=prune)
     end
     return H
 end
@@ -420,16 +420,16 @@ Convert from line segment to polygon in H-representation.
 
 ### Input
 
-- `type` -- target type
-- `L`    -- line segment
-
+- `type`  -- target type
+- `L`     -- line segment
+- `prune` -- (optional, default: `false`) flag for removing redundant
+             constraints in the end
 ### Output
 
 A flat polygon in constraint representation with the minimal number of
 constraints (four).
 """
-function convert(::Type{HPOLYGON}, L::LineSegment{N}
-                ) where {N<:Real, HPOLYGON<:AbstractHPolygon}
+function convert(::Type{HPOLYGON}, L::LineSegment{N}) where {N<:Real, HPOLYGON<:AbstractHPolygon}
     H = HPOLYGON{N}()
     c = halfspace_left(L.p, L.q)
     addconstraint!(H, c; prune=false)
@@ -438,8 +438,7 @@ function convert(::Type{HPOLYGON}, L::LineSegment{N}
     c = LinearConstraint(line_dir, dot(L.q, line_dir))
     addconstraint!(H, c; prune=false)
     line_dir = -line_dir
-    addconstraint!(H, LinearConstraint(line_dir, dot(L.p, line_dir));
-                   prune=false)
+    addconstraint!(H, LinearConstraint(line_dir, dot(L.p, line_dir)); prune=false)
     return H
 end
 

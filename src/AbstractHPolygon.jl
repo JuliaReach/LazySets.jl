@@ -382,13 +382,13 @@ constraints sorted by their normal directions.
 
 ### Input
 
-- `P`          -- polygon in constraint representation
-- `constraint` -- linear constraint to add
-- `linear_search`  -- (optional, default: `length(constraints) <
-                      BINARY_SEARCH_THRESHOLD`) flag to choose between linear
-                      and binary search
-- `prune`          -- (optional, default: `true`) flag for removing redundant
-                      constraints in the end
+- `P`             -- polygon in constraint representation
+- `constraint`    -- linear constraint to add
+- `linear_search` -- (optional, default: `length(constraints) <
+                     BINARY_SEARCH_THRESHOLD`) flag to choose between linear
+                     and binary search
+- `prune`         -- (optional, default: `true`) flag for removing redundant
+                     constraints in the end
 
 ### Output
 

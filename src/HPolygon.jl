@@ -17,6 +17,8 @@ are sorted in counter-clockwise fashion with respect to their normal directions.
 - `check_boundedness` -- (optional, default: `false`) flag for checking if the
                          constraints make the polygon bounded; (boundedness is a
                          running assumption of this type)
+- `prune`             -- (optional, default: `true`) flag for removing redundant
+                         constraints
 
 ### Notes
 
