@@ -429,18 +429,16 @@ Convert from line segment to polygon in H-representation.
 A flat polygon in constraint representation with the minimal number of
 constraints (four).
 """
-function convert(::Type{HPOLYGON}, L::LineSegment{N};
-                 prune=false) where {N<:Real, HPOLYGON<:AbstractHPolygon}
+function convert(::Type{HPOLYGON}, L::LineSegment{N}) where {N<:Real, HPOLYGON<:AbstractHPolygon}
     H = HPOLYGON{N}()
     c = halfspace_left(L.p, L.q)
-    addconstraint!(H, c; prune=prune)
-    addconstraint!(H, LinearConstraint(-c.a, -c.b); prune=prune)
+    addconstraint!(H, c; prune=false)
+    addconstraint!(H, LinearConstraint(-c.a, -c.b); prune=false)
     line_dir = L.q - L.p
     c = LinearConstraint(line_dir, dot(L.q, line_dir))
-    addconstraint!(H, c; prune=prune)
+    addconstraint!(H, c; prune=false)
     line_dir = -line_dir
-    addconstraint!(H, LinearConstraint(line_dir, dot(L.p, line_dir));
-                   prune=prune)
+    addconstraint!(H, LinearConstraint(line_dir, dot(L.p, line_dir)); prune=false)
     return H
 end
 
