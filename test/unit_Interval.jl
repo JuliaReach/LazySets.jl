@@ -120,4 +120,13 @@ for N in [Float64, Float32, Rational{Int}]
     @test dAB == Interval(N(5), N(6))
     @test dAC == Interval(N(5), N(8))
     @test dAD == UnionSet(Interval(N(5), N(6)), Interval(N(7), N(8)))
+
+    # check if an interval is flat, i.e. if its endpoints coincide (to numerical precision)
+    ztol = LazySets.ABSZTOL(N) # pick up default absolute zero tolerance value
+    @test isflat(Interval(N(0), ztol))
+    if N <: AbstractFloat
+        @test !isflat(Interval(N(0), 2*ztol))
+    elseif N == Rational{Int}
+        @test isflat(Interval(N(0), 2*ztol))
+    end
 end

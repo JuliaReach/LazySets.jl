@@ -16,6 +16,22 @@ Convenience alias for set difference.
 ### Output
 
 The set difference between `X` and `Y`.
+
+### Notes
+
+If `X` and `Y` are intervals, `X \\ Y` is used in some libraries to denote
+the left division, as the example below shows. However, it should not be
+confused with the *set difference*. For example,
+
+```julia
+julia> X = Interval(0, 2); Y = Interval(1, 4);
+
+julia> X \\ Y   # computing the set difference
+LazySets.Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
+
+julia> X.dat \\ Y.dat  # computing the left division
+[0.5, ∞]
+```
 """
 \(X::LazySet, Y::LazySet) = difference(X, Y)
 
@@ -33,6 +49,8 @@ The set difference is defined as:
 ```math
     I₁ \\setminus I₂ = \\{x: x ∈ I₁ \\text{ and } x ∉ I₂ \\}
 ```
+
+The backslash symbol, `\\`, can be used as an alias.
 
 ### Input
 
@@ -92,9 +110,4 @@ function difference(I1::IN, I2::IN)::Union{EmptySet{N}, IN, UnionSet{N, IN, IN}}
             return UnionSet(Ileft, Iright)
         end
     end
-end
-
-# return whether is flat, i.e. if the extreme values or the interval coincide.
-function isflat(I::Interval)
-    return isapproxzero(IntervalArithmetic.diam(I.dat))
 end
