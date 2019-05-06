@@ -20,6 +20,8 @@ This is a refined version of `HPolygon`.
 - `check_boundedness` -- (optional, default: `false`) flag for checking if the
                          constraints make the polygon bounded; (boundedness is a
                          running assumption of this type)
+- `prune`             -- (optional, default: `true`) flag for removing redundant
+                         constraints
 
 ### Notes
 

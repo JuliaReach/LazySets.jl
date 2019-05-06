@@ -220,20 +220,20 @@ Convert from 2D polytope in H-representation to polygon in H-representation.
 
 ### Input
 
-- `type` -- target type
-- `P`    -- source polytope (must be 2D)
-
+- `type`  -- target type
+- `P`     -- source polytope (must be 2D)
+- `prune` -- (optional, default: `true`) flag for removing redundant
+             constraints in the end
 ### Output
 
 The 2D polytope represented as polygon.
 """
-function convert(::Type{HPOLYGON},
-                 P::HPolytope{N}) where {N<:Real, HPOLYGON<:AbstractHPolygon}
+function convert(::Type{HPOLYGON}, P::HPolytope{N};
+                prune=true) where {N<:Real, HPOLYGON<:AbstractHPolygon}
     @assert dim(P) == 2 "polytope must be two-dimensional for conversion"
     H = HPOLYGON{N}()
     for ci in constraints_list(P)
-        # guarantee that the edges are correctly sorted for storage
-        addconstraint!(H, ci; prune=true)
+        addconstraint!(H, ci; prune=prune)
     end
     return H
 end
@@ -420,26 +420,27 @@ Convert from line segment to polygon in H-representation.
 
 ### Input
 
-- `type` -- target type
-- `L`    -- line segment
-
+- `type`  -- target type
+- `L`     -- line segment
+- `prune` -- (optional, default: `false`) flag for removing redundant
+             constraints in the end
 ### Output
 
 A flat polygon in constraint representation with the minimal number of
 constraints (four).
 """
-function convert(::Type{HPOLYGON}, L::LineSegment{N}
-                ) where {N<:Real, HPOLYGON<:AbstractHPolygon}
+function convert(::Type{HPOLYGON}, L::LineSegment{N};
+                 prune=false) where {N<:Real, HPOLYGON<:AbstractHPolygon}
     H = HPOLYGON{N}()
     c = halfspace_left(L.p, L.q)
-    addconstraint!(H, c; prune=false)
-    addconstraint!(H, LinearConstraint(-c.a, -c.b); prune=false)
+    addconstraint!(H, c; prune=prune)
+    addconstraint!(H, LinearConstraint(-c.a, -c.b); prune=prune)
     line_dir = L.q - L.p
     c = LinearConstraint(line_dir, dot(L.q, line_dir))
-    addconstraint!(H, c; prune=false)
+    addconstraint!(H, c; prune=prune)
     line_dir = -line_dir
     addconstraint!(H, LinearConstraint(line_dir, dot(L.p, line_dir));
-                   prune=false)
+                   prune=prune)
     return H
 end
 
