@@ -239,8 +239,8 @@ function vertices_list(P::HPolytope{N}; backend=nothing)::Vector{Vector{N}} wher
         if backend == nothing
             backend = default_polyhedra_backend(P, N)
         end
-        P = polyhedron(P; backend=backend)
-        removevredundancy!(P)
-        return collect(points(P))
+        Q = polyhedron(P; backend=backend)
+        removevredundancy!(Q)
+        return collect(points(Q))
     end
 end
