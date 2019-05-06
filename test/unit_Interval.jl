@@ -37,7 +37,7 @@ for N in [Float64, Float32, Rational{Int}]
     v = vertices_list(m)
     @test N[1.5] in v && N[-2] in v
 
-    # difference
+    # subtraction
     d = x - y
     @test dim(d) == 1
     @test σ(N[1], d) == N[3]
@@ -103,8 +103,30 @@ for N in [Float64, Float32, Rational{Int}]
     H = Hyperrectangle(N[0], N[1/2])
     A = convert(Interval, H)
     @test A isa Interval && low(A) == [N(-1/2)] && high(A) == [N(1/2)]
+
     # conversion from a lazyset to an interval
     M = hcat(N[2])
     B = convert(Interval, M*H)
     @test B isa Interval && low(B) == [N(-1)] && high(B) == [N(1)]
+
+    # set difference
+    A = Interval(N(5), N(8))
+    B = Interval(N(6), N(8))
+    C = Interval(N(9), N(10))
+    D = Interval(N(6), N(7))
+    dAB = difference(A, B)
+    dAC = difference(A, C)
+    dAD = difference(A, D)
+    @test dAB == Interval(N(5), N(6))
+    @test dAC == Interval(N(5), N(8))
+    @test dAD == UnionSet(Interval(N(5), N(6)), Interval(N(7), N(8)))
+
+    # check if an interval is flat, i.e. if its endpoints coincide (to numerical precision)
+    ztol = LazySets.ABSZTOL(N) # pick up default absolute zero tolerance value
+    @test isflat(Interval(N(0), ztol))
+    if N <: AbstractFloat
+        @test !isflat(Interval(N(0), 2*ztol))
+    elseif N == Rational{Int}
+        @test isflat(Interval(N(0), 2*ztol))
+    end
 end

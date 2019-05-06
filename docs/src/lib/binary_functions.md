@@ -88,3 +88,10 @@ intersection(::AbstractPolyhedron{N}, ::ResetMap{N}) where {N<:Real}
 ⊆(::LazySet{N}, ::Complement{N}, ::Bool=false) where {N<:Real}
 ⊆(::CartesianProductArray{N}, ::CartesianProductArray{N}, ::Bool=false) where {N<:Real}
 ```
+
+## Set difference
+
+```@docs
+\(::LazySet, ::LazySet)
+difference(::IN, ::IN) where {N, IN<:Interval{N}}
+```

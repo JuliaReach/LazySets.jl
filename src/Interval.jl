@@ -4,7 +4,8 @@ import Base: +, -, *, ∈, ⊆, rand, min, max
 
 export Interval,
        dim, σ, center,
-       vertices_list
+       vertices_list,
+       isflat
 
 """
     Interval{N<:Real, IN<:AbstractInterval{N}} <: AbstractHyperrectangle{N}
@@ -453,4 +454,27 @@ The box radius of the interval (a one-dimensional vector).
 """
 function radius_hyperrectangle(x::Interval{N})::Vector{N} where {N<:Real}
     return [radius_hyperrectangle(x, 1)]
+end
+
+"""
+    isflat(I::Interval)::Bool
+
+Return whether the interval is flat, i.e. if its extreme values coincide.
+
+### Input
+
+- `I` -- interval
+
+### Output
+
+A boolean which is `true` if the interval is flat and `false` otherwise.
+
+### Notes
+
+For robustness with respect to floating-point inputs, this function relies on the
+result of `isapproxzero` when applied to the diameter of the interval. Hence,
+this function depends on the absolute zero tolerance `ABSZTOL`.
+"""
+function isflat(I::Interval)::Bool
+    return isapproxzero(IntervalArithmetic.diam(I.dat))
 end

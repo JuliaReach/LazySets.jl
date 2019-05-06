@@ -269,6 +269,7 @@ radius_hyperrectangle(::Interval{N}, ::Int) where {N<:Real}
 rand(::Type{Interval})
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Interval{N}, ::N=zero(N)) where {N<:Real}
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{Interval{N}}, ::N=zero(N)) where {N<:Real}
+isflat(::Interval)
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))

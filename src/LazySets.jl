@@ -87,6 +87,7 @@ include("convert.jl")
 include("concrete_intersection.jl")
 include("is_intersection_empty.jl")
 include("is_subset.jl")
+include("difference.jl")
 
 # =======
 # Aliases
