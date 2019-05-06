@@ -630,8 +630,9 @@ The cartesian product of two intervals.
 """
 function convert(::Type{CartesianProduct{N, Interval{N}, Interval{N}}},
                  H::AbstractHyperrectangle{N}) where {N<:Real}
-    @assert dim(H) == 2 "the hyperrectangle must be two-dimensional to convert it to "
-            "the cartesian product of intervals, but it is $(dim(H))-dimensional"
+    @assert dim(H) == 2 "the hyperrectangle must be two-dimensional to convert it to " *
+            "the cartesian product of two intervals, but it is $(dim(H))-dimensional; " *
+            "consider converting it to a 'CartesianProductArray{$N, Interval{$N}}' instead"
     Ix = Interval(low(H, 1), high(H, 1))
     Iy =  Interval(low(H, 2), high(H, 2))
     return CartesianProduct(Ix, Iy)

@@ -152,6 +152,13 @@ for N in [Float64, Float32, Rational{Int}]
           Hcp.X == Interval(N(-1), N(1)) &&
           Hcp.Y == Interval(N(-1), N(1))
 
+    # checking that the order is correct
+    H = Hyperrectangle(N[0, 1], N[1, 3])
+    Hcp = convert(CartesianProduct{N, Interval{N}, Interval{N}}, H)
+    @test Hcp isa CartesianProduct &&
+          Hcp.X == Interval(N(-1), N(1)) &&
+          Hcp.Y == Interval(N(-2), N(4))
+
     # =====================
     # CartesianProductArray
     # =====================
@@ -249,6 +256,12 @@ for N in [Float64, Float32, Rational{Int}]
     @test Hcp isa CartesianProductArray &&
           all([Hcpi == Interval(N(-1), N(1)) for Hcpi in array(Hcp)])
 
+    # check that the order is correct
+    H = Hyperrectangle(N[0, 1, 2], N[1, 2, 3])
+    Hcp = convert(CartesianProductArray{N, Interval{N}}, H)
+    @test Hcp isa CartesianProductArray &&
+          all([array(Hcp)[i] == Interval(N(-1), N(2*i-1)) for i in 1:3])
+              
     # ================
     # common functions
     # ================
