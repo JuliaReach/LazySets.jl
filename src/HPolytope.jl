@@ -198,7 +198,9 @@ end # quote
 end # function load_polyhedra_hpolytope()
 
 """
-    vertices_list(P::HPolytope{N}; [backend]=nothing)::Vector{Vector{N}} where {N<:Real}
+    vertices_list(P::HPolytope{N};
+                  [backend]=nothing,
+                  [prune]::Bool=true)::Vector{Vector{N}} where {N<:Real}
 
 Return the list of vertices of a polytope in constraint representation.
 
