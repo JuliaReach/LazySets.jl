@@ -229,7 +229,7 @@ For further information on the supported backends see
 """
 function vertices_list(P::HPolytope{N};
                        backend=nothing,
-                       prune=true)::Vector{Vector{N}} where {N<:Real}
+                       prune::Bool=true)::Vector{Vector{N}} where {N<:Real}
     if length(P.constraints) == 0
         return Vector{N}(Vector{N}(undef, 0))
     end
