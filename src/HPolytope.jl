@@ -199,39 +199,55 @@ end # function load_polyhedra_hpolytope()
 
 """
     vertices_list(P::HPolytope{N};
-                  [backend]=default_polyhedra_backend(P, N),
-                  [prunefunc]=removevredundancy!)::Vector{Vector{N}} where
-                  {N<:Real}
+                  [backend]=nothing,
+                  [prune]::Bool=true)::Vector{Vector{N}} where {N<:Real}
 
 Return the list of vertices of a polytope in constraint representation.
 
 ### Input
 
-- `P`         -- polytope in constraint representation
-- `backend`   -- (optional, default: `default_polyhedra_backend(P, N)`)
-                  the polyhedral computations backend
-- `prunefunc` -- (optional, default: `removevredundancy!`) function to
-                 post-process the output of `vreps`
+- `P`       -- polytope in constraint representation
+- `backend` -- (optional, default: `nothing`) the polyhedral computations backend
+- `prune`   -- (optional, default: `true`) flag to remove redundant vertices
 
 ### Output
 
 List of vertices.
 
-### Notes
+### Algorithm
 
+If the polytope is two-dimensional, the polytope is converted to a polygon in
+H-representation and then its `vertices_list` function is used. This ensures
+that, by default, the optimized two-dimensional methods are used.
+
+It is possible to use the `Polyhedra` backend in two-dimensions as well
+by passing, e.g. `backend=CDDLib.Library()`.
+
+If the polytope is not two-dimensional, the concrete polyhedra manipulation
+library `Polyhedra` is used. The actual computation is performed by a given
+backend; for the default backend used in `LazySets` see `default_polyhedra_backend(N)`.
 For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/).
 """
 function vertices_list(P::HPolytope{N};
-                       backend=default_polyhedra_backend(P, N),
-                       prunefunc=removevredundancy!
-                      )::Vector{Vector{N}} where {N<:Real}
+                       backend=nothing,
+                       prune::Bool=true)::Vector{Vector{N}} where {N<:Real}
     if length(P.constraints) == 0
         return Vector{N}(Vector{N}(undef, 0))
     end
-    @assert isdefined(@__MODULE__, :Polyhedra) "the function `vertices_list` needs " *
-                                        "the package 'Polyhedra' to be loaded"
-    P = polyhedron(P; backend=backend)
-    prunefunc(P)
-    return collect(points(P))
+
+    if dim(P) == 2 && backend == nothing
+        return vertices_list(convert(HPolygon, P, prune=prune))
+    else
+        @assert isdefined(@__MODULE__, :Polyhedra) "the function `vertices_list` "
+        "needs the package 'Polyhedra' to be loaded"
+        if backend == nothing
+            backend = default_polyhedra_backend(P, N)
+        end
+        Q = polyhedron(P; backend=backend)
+        if prune
+            removevredundancy!(Q)
+        end
+        return collect(points(Q))
+    end
 end
