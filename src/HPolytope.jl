@@ -206,6 +206,7 @@ Return the list of vertices of a polytope in constraint representation.
 
 - `P`       -- polytope in constraint representation
 - `backend` -- (optional, default: `nothing`) the polyhedral computations backend
+- `prune`   -- (optional, default: `true`) flag to remove redundant vertices
 
 ### Output
 
@@ -226,13 +227,15 @@ backend; for the default backend used in `LazySets` see `default_polyhedra_backe
 For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/).
 """
-function vertices_list(P::HPolytope{N}; backend=nothing)::Vector{Vector{N}} where {N<:Real}
+function vertices_list(P::HPolytope{N};
+                       backend=nothing,
+                       prune=true)::Vector{Vector{N}} where {N<:Real}
     if length(P.constraints) == 0
         return Vector{N}(Vector{N}(undef, 0))
     end
 
     if dim(P) == 2 && backend == nothing
-        return vertices_list(convert(HPolygon, P))
+        return vertices_list(convert(HPolygon, P, prune=prune))
     else
         @assert isdefined(@__MODULE__, :Polyhedra) "the function `vertices_list` "
         "needs the package 'Polyhedra' to be loaded"
@@ -240,7 +243,9 @@ function vertices_list(P::HPolytope{N}; backend=nothing)::Vector{Vector{N}} wher
             backend = default_polyhedra_backend(P, N)
         end
         Q = polyhedron(P; backend=backend)
-        removevredundancy!(Q)
+        if prune
+            removevredundancy!(Q)
+        end
         return collect(points(Q))
     end
 end
