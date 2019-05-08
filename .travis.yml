@@ -34,8 +34,8 @@ after_success:
               # only build documentation in v1.0
               # building in v1.1 stalls the Travis build since March 2, 2019
   # code coverage (for both Coveralls and Codecov)
-  - julia -e 'VERSION >= v"0.7-" && using Pkg; Pkg.add("Coverage")'
+  - julia -e 'using Pkg; Pkg.add("Coverage")'
   # push coverage results to Coveralls
   #- julia -e 'import LazySets; joinpath(dirname(pathof(LazySets))), using Coverage; Coveralls.submit(Coveralls.process_folder())'
   # push coverage results to Codecov
-  - julia -e 'VERSION >= v"0.7-" && using Pkg; import LazySets; joinpath(dirname(pathof(LazySets))), using Coverage; Codecov.submit(Codecov.process_folder())'
+  - julia -e 'using Pkg; import LazySets; joinpath(dirname(pathof(LazySets))), using Coverage; Codecov.submit(Codecov.process_folder())'
