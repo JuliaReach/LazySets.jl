@@ -450,6 +450,17 @@ end
 
 # disambiguation
 function overapproximate(cap::Intersection{N,
+                                           <:AbstractPolyhedron{N},
+                                           <:AbstractPolyhedron},
+                         dir::AbstractDirections{N};
+                         kwargs...
+                        ) where {N<:Real}
+    # important: the result may not be a polytope! 
+    return overapproximate_cap_helper(cap.X, cap.Y, dir; kwargs...)
+end
+
+# disambiguation
+function overapproximate(cap::Intersection{N,
                                            <:AbstractPolytope{N},
                                            <:AbstractPolyhedron{N}},
                          dir::AbstractDirections{N};
