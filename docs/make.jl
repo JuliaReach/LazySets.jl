@@ -5,8 +5,7 @@ import Polyhedra, Optim
 makedocs(
     doctest = false,
     modules = [LazySets, Approximations],
-    format = :html,
-    assets = ["assets/juliareach.css"],
+    format = Documenter.HTML(assets = ["assets/juliareach.css"]),
     sitename = "LazySets.jl",
     pages = [
         "Home" => "index.md",
