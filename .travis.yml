@@ -11,31 +11,13 @@ git:
   depth: 99999999
 
 after_success:
-  # documentation (restrict Documenter to release version 0.19.7 (breaking release) for now)
-  - julia -e 'using Pkg;
-              Pkg.add("Compat");
-              Pkg.add("IntervalArithmetic");
-              Pkg.add("RecipesBase");
-              Pkg.add("Documenter");
-              Pkg.add("Plots");
-              Pkg.add("GR");
-              Pkg.add("Polyhedra");
-              Pkg.add("CDDLib");
-              Pkg.add("Expokit");
-              Pkg.add("Optim");
-              Pkg.add("StaticArrays");
-              Pkg.add("BenchmarkTools");'
-  - julia -e 'if VERSION < v"1.1"
-                  using Pkg;
-                  import LazySets;
-                  joinpath(dirname(pathof(LazySets))),
-                  include(joinpath("docs", "make.jl"))
-              end'
-              # only build documentation in v1.0
-              # building in v1.1 stalls the Travis build since March 2, 2019
-  # code coverage (for both Coveralls and Codecov)
-  - julia -e 'using Pkg; Pkg.add("Coverage")'
-  # push coverage results to Coveralls
-  #- julia -e 'import LazySets; joinpath(dirname(pathof(LazySets))), using Coverage; Coveralls.submit(Coveralls.process_folder())'
-  # push coverage results to Codecov
-  - julia -e 'using Pkg; import LazySets; joinpath(dirname(pathof(LazySets))), using Coverage; Codecov.submit(Codecov.process_folder())'
+  - julia -e 'using Pkg; Pkg.add("Coverage"); Coveralls.submit(process_folder()); Codecov.submit(process_folder())'
+jobs:
+  include:
+    - stage: "Documentation"
+      julia: 1.0
+      os: linux
+      script:
+        - julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate();'
+        - julia --project=docs/ docs/make.jl
+      after_success: skip
