@@ -304,6 +304,16 @@ Inherited from [`LazySet`](@ref):
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
+### Affine Map
+
+```@docs
+AffineMap
+dim(::AffineMap)
+σ(::AbstractVector{N}, ::AffineMap{N}) where {N<:Real}
+an_element(::AffineMap)
+isempty(::AffineMap)
+```
+
 ## Symmetric Interval Hull
 
 ```@docs
