@@ -84,12 +84,12 @@ Return the linear map of a convex set scaled by a given number.
 
 ### Output
 
-The lazy linear map of the convex set, `X ↦ M * X`, such that `M` is a diagonal
-matrix all of whose entries equal `α`.
+The lazy linear map of the convex set, `X ↦ M * X`, such that `M` is a sparse
+matrix proportional to the identity and whose non-zero entries equal `α`.
 """
-function *(a::N, X::LazySet{N}) where {N<:Real}
+function *(α::N, X::LazySet{N}) where {N<:Real}
     n = dim(X)
-    return LinearMap(sparse(a * I, n, n), X)
+    return LinearMap(sparse(α * I, n, n), X)
 end
 
 """
