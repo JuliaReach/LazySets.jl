@@ -69,6 +69,11 @@ end
     end
 end
 
+# diagonal matrix times unit vector
+function Base.:(*)(D::Diagonal{N, V}, e::UnitVector{N}) where {N, V<:AbstractVector{N}}
+    return UnitVector(e.i, e.n, D.diag[e.i] * e.v)
+end
+
 function inner(e1::UnitVector{N}, A::AbstractMatrix{N}, e2::UnitVector{N}
               ) where {N}
     return A[e1.i, e2.i] * e1.v * e2.v
