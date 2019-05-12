@@ -487,7 +487,7 @@ function intersection(S::AbstractSingleton{N},
 end
 
 """
-    intersection(L::LinearMap{N}, S::LazySet{N}) where {N}
+    intersection(L::LinearMap{N}, S::LazySet{N}) where {N<:Real}
 
 Return the intersection of a lazy linear map and a convex set.
 
@@ -500,7 +500,7 @@ Return the intersection of a lazy linear map and a convex set.
 
 The polytope obtained by the intersection of `l.M * L.X` and `S`.
 """
-function intersection(L::LinearMap{N}, S::LazySet{N}) where {N}
+function intersection(L::LinearMap{N}, S::LazySet{N}) where {N<:Real}
     return intersection(linear_map(L.M, L.X), S)
 end
 
