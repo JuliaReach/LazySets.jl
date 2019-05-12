@@ -349,3 +349,26 @@ end
 function constraints_list(tr::Translation{N}, ::Val{false}) where {N<:Real}
     throw(MethodError("this function requires that the `constraints_list` method is applicable"))
 end
+
+"""
+    ∈(x::AbstractVector{N}, tr::Translation{N})::Bool where {N<:Real}
+
+Check whether a given point is contained in the translation of a convex set.
+
+### Input
+
+- `x`  -- point/vector
+- `tr` -- translation of a convex set
+
+### Output
+
+`true` iff ``x ∈ tr``.
+
+### Algorithm
+
+This implementation relies on the set membership function for the wrapped set
+`tr.X`, since ``x ∈ X ⊕ v`` iff ``x - v ∈ X``.
+"""
+function ∈(x::AbstractVector{N}, tr::Translation{N})::Bool where {N<:Real}
+    return ∈(x - tr.v, tr.X)
+end
