@@ -17,7 +17,7 @@ Type that represents a linear transformation ``M⋅S`` of a convex set ``S``.
 ### Notes
 
 This type is parametric in the elements of the linear map, `NM`, which is
-independent of the numeric type of the target set (`N`).
+independent of the numeric type of the wrapped set (`N`).
 Typically `NM = N`, but there may be exceptions, e.g., if `NM` is an interval
 that holds numbers of type `N`, where `N` is a floating point number type such
 as `Float64`.
@@ -72,19 +72,20 @@ end
 
 """
 ```
-    *(a::N, X::LazySet{N}) where {N<:Real}
+    *(α::N, X::LazySet{N}) where {N<:Real}
 ```
 
-Return a linear map of a convex set by a scalar value.
+Return the linear map of a convex set scaled by a given number.
 
 ### Input
 
-- `a` -- scalar
+- `α` -- scalar
 - `X` -- convex set
 
 ### Output
 
-The linear map of the convex set.
+The lazy linear map of the convex set, `X ↦ M * X`, such that `M` is a diagonal
+matrix all of whose entries equal `α`.
 """
 function *(a::N, X::LazySet{N}) where {N<:Real}
     n = dim(X)
@@ -93,22 +94,22 @@ end
 
 """
 ```
-    *(a::N, lm::LM)::LM where {N<:Real, LM<:LinearMap{N}}
+    *(α::N, lm::LinearMap{N}) where {N<:Real, LM<:LinearMap{N}}
 ```
 
-Return a linear map scaled by a scalar value.
+Return the linear map scaled by a given value.
 
 ### Input
 
-- `a`  -- scalar
+- `α`  -- scalar
 - `lm` -- linear map
 
 ### Output
 
 The scaled linear map.
 """
-function *(a::N, lm::LM)::LM where {N<:Real, LM<:LinearMap{N}}
-    return LinearMap(a * lm.M, lm.X)
+function *(α::N, lm::LinearMap{N}) where {N<:Real}
+    return LinearMap(α * lm.M, lm.X)
 end
 
 """
@@ -378,7 +379,7 @@ function constraints_list(lm::LinearMap{N}) where {N<:Real}
 end
 
 """
-    linear_map(M::AbstractMatrix{N}, lm::LinearMap{N}) where {N}
+    linear_map(M::AbstractMatrix{N}, lm::LinearMap{N}) where {N<:Real}
 
 Return the linear map of a lazy linear map.
 
@@ -391,6 +392,6 @@ Return the linear map of a lazy linear map.
 
 The polytope representing the linear map of the lazy linear map of a set.  
 """
-function linear_map(M::AbstractMatrix{N}, lm::LinearMap{N}) where {N}
+function linear_map(M::AbstractMatrix{N}, lm::LinearMap{N}) where {N<:Real}
      return linear_map(M * lm.M, lm.X)
 end
