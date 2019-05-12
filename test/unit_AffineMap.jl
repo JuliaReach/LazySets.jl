@@ -6,7 +6,7 @@ for N in [Float64, Rational{Int}, Float32]
  
     B = BallInf(zeros(N, 3), N(1))
     v = N[1, 0, 0] # translation along dimension 1
-    M = Diagonal([1.0, 2.0, 3.0])
+    M = Diagonal(N[1, 2, 3])
     am = AffineMap(M, v, B)
 
     # dimension check
@@ -21,7 +21,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test Mam isa AffineMap && Mam.M == M * am.M && Mam.b == M * am.b
 
     # scaling of an affine map is an affine map
-    α = 2.0
+    α = N(2)
     αam = α * am
     @test αam isa AffineMap && αam.M == α * am.M && αam.b == α * am.b
 
@@ -51,8 +51,8 @@ for N in [Float64, Rational{Int}, Float32]
 
     # two-dimensional case: inclusion check
     B2 = BallInf(zeros(N, 2), N(1))
-    M = N[1.0 0.0; 0.0 2.0]
-    tl = N[-1.0, 0.0]
+    M = N[1 0; 0 2]
+    tl = N[-1, 0]
     am = AffineMap(M, tl, B2)
 
     # list of vertice check

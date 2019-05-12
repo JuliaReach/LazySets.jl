@@ -308,8 +308,8 @@ Inherited from [`LazySet`](@ref):
 
 ```@docs
 AffineMap
-*(::AbstractMatrix{N}, ::AffineMap{N}) where {N<:Real
-*(α::N, am::AffineMap{N}) where {N<:Real}
+*(::AbstractMatrix{N}, ::AffineMap{N}) where {N<:Real}
+*(::N, ::AffineMap{N}) where {N<:Real}
 dim(::AffineMap)
 σ(::AbstractVector{N}, ::AffineMap{N}) where {N<:Real}
 ρ(::AbstractVector{N}, ::AffineMap{N}) where {N<:Real}
