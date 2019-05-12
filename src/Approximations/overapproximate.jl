@@ -451,7 +451,7 @@ end
 # disambiguation
 function overapproximate(cap::Intersection{N,
                                            <:AbstractPolyhedron{N},
-                                           <:AbstractPolyhedron},
+                                           <:AbstractPolyhedron{N}},
                          dir::AbstractDirections{N};
                          kwargs...
                         ) where {N<:Real}
