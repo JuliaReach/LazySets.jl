@@ -186,7 +186,7 @@ Return whether an affine map is empty or not.
 `true` iff the wrapped set is empty and the affine vector is empty.
 """
 function isempty(am::AffineMap)::Bool
-    return isempty(am.X) && isempty(am.b)
+    return isempty(am.X)
 end
 
 """
@@ -302,12 +302,8 @@ or lazily, i.e. there the function `vertices_list` should be applicable.
 """
 function vertices_list(am::AffineMap{N};
                        apply_convex_hull::Bool=true)::Vector{Vector{N}} where {N<:Real}
-    # for a zero map, the result is just the singleton containing the translation
-    if iszero(am.M)
-        return Singleton(am.b)
-    end
 
-    # collect low-dimensional vertices lists
+    # collect vertices list of the wrapped set
     vlist_X = vertices_list(am.X)
 
     # create resulting vertices list

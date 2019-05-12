@@ -49,13 +49,13 @@ for N in [Float64, Rational{Int}, Float32]
     Id3 = Matrix(one(N) * I, 3, 3)
     @test constraints_list(AffineMap(Id3, zeros(N, 3), B)) == constraints_list(B)
 
-    # two-dimensional case: inclusion check
+    # two-dimensional case
     B2 = BallInf(zeros(N, 2), N(1))
     M = N[1 0; 0 2]
     tl = N[-1, 0]
     am = AffineMap(M, tl, B2)
 
-    # list of vertice check
+    # list of vertices check
     vlist = vertices_list(am)
     @test ispermutation(vlist, [N[0, 2], N[-2, 2], N[0, -2], N[-2, -2]])
 
