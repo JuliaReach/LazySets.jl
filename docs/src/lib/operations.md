@@ -221,7 +221,7 @@ Inherited from [`LazySet`](@ref):
 LinearMap
 *(::AbstractMatrix{N}, ::LazySet{N}) where {N<:Real}
 *(::N, ::LazySet{N}) where {N<:Real}
-*(::N, ::LM) where {N<:Real, LM<:LinearMap{N}}
+*(::N, ::LinearMap{N}) where {N<:Real}
 *(::AbstractMatrix{N}, ::ZeroSet{N}) where {N<:Real}
 dim(::LinearMap)
 ρ(::AbstractVector{N}, ::LinearMap{N}) where {N<:Real}
@@ -232,8 +232,8 @@ isbounded(::LinearMap)
 isempty(::LinearMap)
 vertices_list(::LinearMap{N}) where {N<:Real}
 constraints_list(::LinearMap{N}) where {N<:Real}
-linear_map(::AbstractMatrix{N}, ::LinearMap{N}) where {N}
-intersection(::LinearMap{N}, ::LazySet{N}) where {N}
+linear_map(::AbstractMatrix{N}, ::LinearMap{N}) where {N<:Real}
+intersection(::LinearMap{N}, ::LazySet{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
