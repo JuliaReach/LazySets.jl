@@ -337,12 +337,9 @@ for the `convex_hull`.
 """
 function convex_hull(P1::VPolytope{N}, P2::VPolytope{N};
                      backend=default_polyhedra_backend(P1, N)) where {N}
-    @assert isdefined(@__MODULE__, :Polyhedra) "the function `convex_hull` needs " *
-                                               "the package 'Polyhedra' to be loaded"
-    Pch = convexhull(polyhedron(P1; backend=backend),
-                     polyhedron(P2; backend=backend))
-    removevredundancy!(Pch)
-    return VPolytope(Pch)
+    vunion = [P1.vertices; P2.vertices]
+    convex_hull!(vunion; backend=backend)
+    return VPolytope(vunion)
 end
 
 """
