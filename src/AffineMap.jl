@@ -347,7 +347,7 @@ function constraints_list(am::AffineMap{N}) where {N<:Real}
 end
 
 """
-    linear_map(M::AbstractMatrix{N}, am::AffineMap{N}) where {N}
+    linear_map(M::AbstractMatrix{N}, am::AffineMap{N}) where {N<:Real}
 
 Return the linear map of a lazy affine map.
 

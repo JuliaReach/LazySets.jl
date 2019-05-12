@@ -318,6 +318,8 @@ isempty(::AffineMap)
 isbounded(::AffineMap)
 ∈(::AbstractVector{N}, ::AffineMap{N}) where {N<:Real}
 vertices_list(::AffineMap{N}) where {N<:Real}
+constraints_list(::AffineMap{N}) where {N<:Real}
+linear_map(::AbstractMatrix{N}, ::AffineMap{N}) where {N<:Real}
 ```
 
 ## Symmetric Interval Hull
