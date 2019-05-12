@@ -230,7 +230,7 @@ Check whether a given point is contained in the affine map of a convex set.
 ### Input
 
 - `x`  -- point/vector
-- `an` -- affine map of a convex set
+- `am` -- affine map of a convex set
 
 ### Output
 
