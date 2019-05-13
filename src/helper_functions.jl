@@ -669,3 +669,20 @@ function inner(x::AbstractVector{N}, A::AbstractMatrix{N}, y::AbstractVector{N}
               ) where {N}
     dot(x, A * y)
 end
+
+"""
+    rectify(x::AbstractVector{N}) where {N<:Real}
+
+Rectify a vector, i.e., take the element-wise maximum with zero.
+
+### Input
+
+- `x` -- vector
+
+### Output
+
+A copy of the vector where each negative entry is replaced by zero.
+"""
+function rectify(x::AbstractVector{N}) where {N<:Real}
+    return map(xi -> max(xi, zero(N)), x)
+end

@@ -50,6 +50,9 @@ for _dummy_ in 1:1 # avoid global variable warnings
         y2 = UnitVector(1, 2, N(3))
         @test inner(x1, A, y1) == dot(x1, A * y1) == inner(x2, A, y2) ==
               dot(x2, A * y2) == N(12)
+
+        x = N[0, 1, -1]
+        @test LazySets.rectify(x) == N[0, 1, 0]
     end
 
     for N in [Float64, Float32]
