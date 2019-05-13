@@ -507,9 +507,13 @@ Return an `VRep` polyhedron from `Polyhedra.jl` given a polytope in V-representa
 A `VRep` polyhedron.
 """
 function polyhedron(P::VPolytope{N};
-                    backend=default_polyhedra_backend(P, N)) where {N<:Real}
-    V = hcat(vertices_list(P)...)'
-    return polyhedron(Polyhedra.vrep(V), backend)
+                    backend=default_polyhedra_backend(P, N),
+                    d::Int=dim(P)) where {N<:Real}
+    if d == -1 # empty polytope
+        error("cannot infer dimension of `VPolytope` constructed from no " *
+              "element, but it is required for `Polyhedra.polyhedron`")
+    end
+    return polyhedron(Polyhedra.vrep(P.vertices, d=d), backend)
 end
 
 end # quote
