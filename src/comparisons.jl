@@ -119,7 +119,7 @@ end
     _isapprox(x::N, y::N;
               rtol::Real=Base.rtoldefault(N),
               ztol::Real=ABSZTOL(N),
-              atol::Real=zero(N)) where {N<:AbstractFloat}
+              atol::Real=zero(N)) where {N<:Real}
 
 Determine if `x` is approximately equal to `y`.
 
@@ -155,7 +155,7 @@ Note that if `x = ztol` and `y = -ztol`, then `|x-y| = 2*ztol` and still
 function _isapprox(x::N, y::N;
                    rtol::Real=Base.rtoldefault(N),
                    ztol::Real=ABSZTOL(N),
-                   atol::Real=zero(N)) where {N<:AbstractFloat}
+                   atol::Real=zero(N)) where {N<:Real}
     if isapproxzero(x, ztol=ztol) && isapproxzero(y, ztol=ztol)
         return true
     else
