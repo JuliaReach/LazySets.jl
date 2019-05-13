@@ -72,28 +72,7 @@ documentation of `_leq` for further details.
 _geq(x::Real, y::Real; kwargs...) = _leq(y, x; kwargs...)
 
 """
-    isapproxzero(x::Real; [kwargs...])
-
-Determine if `x` is approximately zero.
-
-### Input
-
-- `x`      -- number
-- `kwargs` -- ignored
- 
-### Output
-
-A boolean that is `true` iff `x ≈ 0`.
-
-### Algorithm
-
-This is a fallback implementation for any real `x` such that `x ≈ 0` is `true`
-whenever `x` is equal to zero in the same numeric type as `x`.
-"""
-isapproxzero(x::Real; kwargs...) = x == zero(x)
-
-"""
-    isapproxzero(x::N; ztol::Real=ABSZTOL(N)) where {N<:AbstractFloat}
+    isapproxzero(x::N; ztol::Real=ABSZTOL(N)) where {N<:Real}
 
 Determine if `x` is approximately zero.
 
@@ -111,7 +90,7 @@ A boolean that is `true` iff `x ≈ 0`.
 It is considered that `x ≈ 0` whenever `x` (in absolute value) is smaller than
 the tolerance for zero, `ztol`.
 """
-function isapproxzero(x::N; ztol::Real=ABSZTOL(N)) where {N<:AbstractFloat}
+function isapproxzero(x::N; ztol::Real=ABSZTOL(N)) where {N<:Real}
     return abs(x) <= ztol
 end
 
