@@ -166,8 +166,8 @@ function tohrep(P::VPolygon{N}, ::Type{HPOLYGON}=HPolygon
     vl = vertices_list(P)
     n = length(vl)
     if n == 0
-        # no vertex -> no constraint
-        constraints_list = Vector{LinearConstraint{N}}(undef, 0)
+        # no vertex -> empy set
+        return EmptySet{N}()
     elseif n == 1
         # only one vertex -> use function for singletons
         return convert(HPOLYGON, Singleton(vl[1]))
