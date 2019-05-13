@@ -389,11 +389,24 @@ isbounded(::UnionSetArray)
 Note that a complement of a convex set is generally not convex.
 Hence this set type is not part of the convex-set family `LazySet`.
 
-### Binary Set Union
-
 ```@docs
 Complement
 dim(::Complement)
 ∈(::AbstractVector{N}, ::Complement{N}) where {N<:Real}
 isempty(::Complement)
+```
+
+## Rectification
+
+Note that a rectification of a convex set is generally not convex.
+Hence this set type is not part of the convex-set family `LazySet`.
+
+```@docs
+Rectification
+```
+
+#### Rectification cache
+
+```@docs
+RectificationCache
 ```

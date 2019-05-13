@@ -111,9 +111,12 @@ The table entries have the following meaning.
 | `CacheMinkowskiSum`          | x   | i | x | i          |   | x       | x         |            |           |      |        | i        |
 | `ResetMap`                   | x   | x | x | x          |   | x       |           |            |           |      |        | i        |
 | `SymmetricIntervalHull`      | x   | i | x | i          | i | i       | i         | i          |           | i    | i      | i        |
+|                              |     |   |   |            |   |         |           |            |           |      |        |          |
+| **Non-convex operations**    |     |   |   |            |   |         |           |            |           |      |        |          |
+| `Complement`                 | x   |   |   |            | x | x       |           |            |           |      |        |          |
+| `Rectification`              |     |   |   |            |   |         |           |            |           |      |        |          |
 | `UnionSet`                   | x   | x | x | x          | x | x       | x         |            |           |      |        |          |
 | `UnionSetArray`              | x   | x | x | x          | x | x       | x         |            |           |      |        |          |
-| `Complement`                 | x   |   |   |            | x | x       |           |            |           |      |        |          |
 
 
 ### `dim`
