@@ -501,6 +501,8 @@ Return an `VRep` polyhedron from `Polyhedra.jl` given a polytope in V-representa
 - `backend` -- (optional, default: `default_polyhedra_backend(P, N)`) the polyhedral
                computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
                for further information
+- `ambient_dimension` -- (default, optional: `dim(P)`) ambient dimension of the
+                         polytope; required if the polytope is empty
 
 ### Output
 
@@ -508,12 +510,13 @@ A `VRep` polyhedron.
 """
 function polyhedron(P::VPolytope{N};
                     backend=default_polyhedra_backend(P, N),
-                    d::Int=dim(P)) where {N<:Real}
-    if d == -1 # empty polytope
-        error("cannot infer dimension of `VPolytope` constructed from no " *
-              "element, but it is required for `Polyhedra.polyhedron`")
+                    ambient_dimension::Int=dim(P)) where {N<:Real}
+    if ambient_dimension == -1 # empty polytope
+        error("the conversion to a `Polyhedra.polyhedron` requires the ambient dimension " *
+        "of the `VPolytope` to be known, but it cannot be inferred from an empty set; " *
+        "try passing the ambient dimension as the keyword argument `ambient_dimension`")
     end
-    return polyhedron(Polyhedra.vrep(P.vertices, d=d), backend)
+    return polyhedron(Polyhedra.vrep(P.vertices, d=ambient_dimension), backend)
 end
 
 end # quote
