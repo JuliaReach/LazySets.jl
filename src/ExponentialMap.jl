@@ -75,7 +75,7 @@ end
 function load_expokit_sparsematrixexp()
 return quote
 
-using Expokit: expmv
+using .Expokit: expmv
 
 function get_column(spmexp::SparseMatrixExp{N}, j::Int)::Vector{N} where {N}
     n = size(spmexp, 1)
@@ -227,7 +227,7 @@ end
 function load_expokit_exponentialmap()
 return quote
 
-using Expokit: expmv
+using .Expokit: expmv
 
 """
     σ(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
@@ -479,7 +479,7 @@ end
 function load_expokit_exponentialprojectionmap()
 return quote
 
-using Expokit: expmv
+using .Expokit: expmv
 
 """
     σ(d::AbstractVector{N},
