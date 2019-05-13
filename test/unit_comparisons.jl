@@ -23,5 +23,7 @@ ABSZTOL(eltype(0.01)) == sqrt(eps(Float64))
 @test isapproxzero(0//1)
 @test isapproxzero(1e-8) && !isapproxzero(1e-8, ztol=1e-10)
 
-# approximate numbers in FP
+# approximate equality
+@test !_isapprox(1//1, 1//1 + 1//1000000000000)
 @test _isapprox(2e-15, 1e-15)
+@test !_isapprox(2e-6, 1e-6)
