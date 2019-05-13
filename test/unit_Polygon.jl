@@ -319,7 +319,8 @@ for N in [Float64, Float32, Rational{Int}]
         h1 = tohrep(vp)
         @test convert(HPolygon, vp) == h1
         if i == 0
-            @test isempty(h1.constraints)
+            @test isempty(h1)
+            continue
         elseif i == 1
             @test v1 ∈ h1
         elseif i == 2
