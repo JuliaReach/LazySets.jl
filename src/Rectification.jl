@@ -1,3 +1,5 @@
+import Base: ∈
+
 export Rectification
 
 """
@@ -167,4 +169,54 @@ The implementation relies on the `an_element` function of the wrapped set.
 """
 function an_element(r::Rectification{N})::Vector{N} where {N<:Real}
     return rectify(an_element(r.X))
+end
+
+"""
+    ∈(x::AbstractVector{N}, r::Rectification{N})::Bool where {N<:Real}
+
+Check whether a given point is contained in a rectification.
+
+### Input
+
+- `x` -- point/vector
+- `r` -- rectification
+
+### Output
+
+`true` iff ``x ∈ r``.
+
+### Algorithm
+
+We first scan for negative entries in the vector.
+If there are any, the vector is not contained in the rectification.
+
+Next we ask a membership query in the wrapped set.
+If the answer is positive, the vector is contained in the rectification.
+
+Otherwise, we scan for zero entries in the vector.
+If there are none, membership reduces to membership in the wrapped set, and so
+the answer is negative.
+
+Finally, if there are zero entries in the vector and the vector is not contained
+in the wrapped set, we give up and throw an error.
+"""
+function ∈(x::AbstractVector{N}, r::Rectification{N})::Bool where {N<:Real}
+    # scan for negative entries
+    if any(xi -> xi < zero(N), x)
+        return false
+    end
+
+    # membership test in the wrapped set
+    if x ∈ r.X
+        return true
+    end
+
+    # scan for zero entries
+    if all(xi -> !iszero(xi), x)
+        return false
+    end
+
+    # give up
+    error("cannot determine membership of a vector with zero entries in a " *
+          "lazy rectification")
 end
