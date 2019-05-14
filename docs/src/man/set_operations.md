@@ -114,7 +114,7 @@ The table entries have the following meaning.
 |                              |     |   |   |            |   |         |           |            |           |      |        |          |
 | **Non-convex operations**    |     |   |   |            |   |         |           |            |           |      |        |          |
 | `Complement`                 | x   |   |   |            | x | x       |           |            |           |      |        |          |
-| `Rectification`              |     |   |   |            |   |         |           |            |           |      |        |          |
+| `Rectification`              | x   |   |   |            |   |         |           |            |           |      |        |          |
 | `UnionSet`                   | x   | x | x | x          | x | x       | x         |            |           |      |        |          |
 | `UnionSetArray`              | x   | x | x | x          | x | x       | x         |            |           |      |        |          |
 

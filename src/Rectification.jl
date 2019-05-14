@@ -81,3 +81,20 @@ end
 
 # convenience constructor without type parameter
 Rectification(X::S) where {N<:Real, S<:LazySet{N}} = Rectification{N, S}(X)
+
+"""
+    dim(r::Rectification)::Int
+
+Return the dimension of a rectification.
+
+### Input
+
+- `r` -- rectification
+
+### Output
+
+The ambient dimension of the rectification.
+"""
+function dim(r::Rectification)::Int
+    return dim(r.X)
+end

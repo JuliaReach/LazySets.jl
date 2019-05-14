@@ -13,4 +13,8 @@ for N in [Float64, Rational{Int}, Float32]
     RB1 = Rectification(B1)
     RB2 = Rectification(B2)
     RB3 = Rectification(B3)
+
+    # dimension
+    @test dim(RI1) == dim(RI2) == dim(RI3) == 1
+    @test dim(RB1) == dim(RB2) == dim(RB3) == 2
 end

@@ -403,6 +403,7 @@ Hence this set type is not part of the convex-set family `LazySet`.
 
 ```@docs
 Rectification
+dim(::Rectification)
 ```
 
 #### Rectification cache
