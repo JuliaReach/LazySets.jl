@@ -150,3 +150,21 @@ function σ(d::AbstractVector{N},
            r::Rectification{N, <:AbstractHyperrectangle{N}}) where {N<:Real}
     return rectify(σ(d, r.X))
 end
+
+"""
+    an_element(r::Rectification{N})::Vector{N} where {N<:Real}
+
+Return some element of a rectification.
+
+### Input
+
+- `r` -- rectification
+
+### Output
+
+An element in the rectification.
+The implementation relies on the `an_element` function of the wrapped set.
+"""
+function an_element(r::Rectification{N})::Vector{N} where {N<:Real}
+    return rectify(an_element(r.X))
+end

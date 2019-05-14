@@ -30,4 +30,11 @@ for N in [Float64, Rational{Int}, Float32]
     @test σ(N[1], Rectification(Ball1(N[0], N(1)))) == N[1]
     # other sets in higher dimensions throw an error
     @test_throws ErrorException σ(N[1, 1], Rectification(Ball1(N[0, 0], N(1))))
+
+    # an_element
+    x = an_element(RI1)
+    @test x isa Vector{N} && length(x) == 1 && N(0) <= x[1] <= N(1)
+    x = an_element(RB2)
+    @test x isa Vector{N} && length(x) == 2 && N(1) <= x[1] <= N(3) &&
+          N(0) <= x[2] <= N(3)
 end
