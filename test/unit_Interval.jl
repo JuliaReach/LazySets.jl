@@ -92,6 +92,24 @@ for N in [Float64, Float32, Rational{Int}]
     # check empty intersection
     E = intersection(A, Interval(N(0), N(1)))
     @test isempty(E)
+    # intersection with half-space
+    i = Interval(N(1), N(2))
+    hs = HalfSpace(N[1], N(1.5))
+    @test intersection(i, hs) == Interval(N(1), N(1.5))
+    hs = HalfSpace(N[-2], N(-5))
+    @test intersection(i, hs) == EmptySet{N}()
+    hs = HalfSpace(N[2], N(5))
+    @test intersection(i, hs) == i
+    # intersection with hyperplane
+    hp = Hyperplane(N[2], N(3))
+    @test intersection(i, hp) == Singleton(N[1.5])
+    hp = Hyperplane(N[-1], N(-3))
+    @test intersection(i, hp) == EmptySet{N}()
+    # other intersections
+    Y = Ball1(N[2], N(0.5))
+    @test intersection(i, Y) == Interval(N(1.5), N(2))
+    Y = ConvexHull(Singleton(N[-5]), Singleton(N[-1]))
+    @test intersection(i, Y) == EmptySet{N}()
 
     # disjointness check
     @test !isdisjoint(A, B)
