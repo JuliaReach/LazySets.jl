@@ -220,3 +220,20 @@ function ∈(x::AbstractVector{N}, r::Rectification{N})::Bool where {N<:Real}
     error("cannot determine membership of a vector with zero entries in a " *
           "lazy rectification")
 end
+
+"""
+    isempty(r::Rectification)::Bool
+
+Check whether a rectification is empty or not.
+
+### Input
+
+- `r` -- rectification
+
+### Output
+
+`true` iff the wrapped set is empty.
+"""
+function isempty(r::Rectification)::Bool
+    return isempty(r.X)
+end
