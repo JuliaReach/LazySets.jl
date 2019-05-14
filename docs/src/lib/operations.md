@@ -409,6 +409,7 @@ dim(::Rectification)
 an_element(::Rectification{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::Rectification{N}) where {N<:Real}
 isempty(::Rectification)
+isbounded(::Rectification{N}) where {N<:Real}
 ```
 
 #### Rectification cache

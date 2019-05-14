@@ -237,3 +237,48 @@ Check whether a rectification is empty or not.
 function isempty(r::Rectification)::Bool
     return isempty(r.X)
 end
+
+"""
+    isbounded(r::Rectification)::Bool
+
+Determine whether a rectification is bounded.
+
+### Input
+
+- `r` -- rectification
+
+### Output
+
+`true` iff the rectification is bounded.
+
+### Algorithm
+
+Let ``X`` be the set wrapped by rectification ``r``.
+We first check whether ``X`` is bounded (because then ``r`` is bounded).
+Otherwise, we check unboundedness of ``X`` in direction ``(1, 1, …, 1)``, which
+is sufficient for unboundedness of ``r``; this step is not necessary but rather
+a heuristics.
+Otherwise, we check boundedness of ``X`` in every positive unit direction, which
+is sufficient and necessary for boundedness of ``r``.
+"""
+function isbounded(r::Rectification{N})::Bool where {N<:Real}
+    # check boundedness of the wrapped set
+    if isbounded(r.X)
+        return true
+    end
+
+    # heuristics: check boundedness in the one-vector direction
+    n = dim(r.X)
+    if ρ(ones(N, n), r.X) == N(Inf)
+        return false
+    end
+
+    # check boundedness in positive unit directions
+    @inbounds for i in 1:n
+        d = Approximations.UnitVector(i, n, one(N))
+        if ρ(d, r.X) == N(Inf)
+            return false
+        end
+    end
+    return true
+end

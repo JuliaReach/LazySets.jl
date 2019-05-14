@@ -47,4 +47,10 @@ for N in [Float64, Rational{Int}, Float32]
     # emptiness
     @test !isempty(RI1)
     @test isempty(Rectification(EmptySet{N}()))
+
+    # boundedness
+    @test isbounded(RI1)
+    @test isbounded(Rectification(HalfSpace(N[1], N(0))))
+    @test !isbounded(Rectification(Universe{N}(2)))
+    @test !isbounded(Rectification(HalfSpace(N[-1], N(0))))
 end
