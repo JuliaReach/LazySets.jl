@@ -98,3 +98,55 @@ The ambient dimension of the rectification.
 function dim(r::Rectification)::Int
     return dim(r.X)
 end
+
+"""
+    σ(d::AbstractVector{N}, r::Rectification{N}) where {N<:Real}
+
+Return the support vector of a rectification.
+
+### Input
+
+- `d` -- direction
+- `r` -- rectification
+
+### Output
+
+If the rectified set is one-dimensional, we convert it to an `Interval` and call
+a specialized method.
+Otherise, we throw an error because we currently do not support higher
+dimensions.
+"""
+function σ(d::AbstractVector{N}, r::Rectification{N}) where {N<:Real}
+    if dim(r) == 1
+        # rectification in 1D is easy
+        r2 = Rectification(convert(Interval, r.X))
+        return σ(d, r2)
+    end
+    error("the exact support vector of a rectification is not implemented")
+end
+
+"""
+    σ(d::AbstractVector{N},
+      r::Rectification{N, <:AbstractHyperrectangle{N}}) where {N<:Real}
+
+Return the support vector of a rectification of a hyperrectangular set.
+
+### Input
+
+- `d` -- direction
+- `r` -- rectification of a hyperrectangular set
+
+### Output
+
+The support vector in the given direction.
+
+### Algorithm
+
+Let ``r(·)`` be the rectification of a vector respectively a set, and let ``H``
+be a hyperrectangle.
+Then ``σ_{r(H)}(d) = r(σ_{H}(d))``.
+"""
+function σ(d::AbstractVector{N},
+           r::Rectification{N, <:AbstractHyperrectangle{N}}) where {N<:Real}
+    return rectify(σ(d, r.X))
+end

@@ -17,4 +17,17 @@ for N in [Float64, Rational{Int}, Float32]
     # dimension
     @test dim(RI1) == dim(RI2) == dim(RI3) == 1
     @test dim(RB1) == dim(RB2) == dim(RB3) == 2
+
+    # support vector
+    # hyperrectangles
+    @test σ(N[1], RI1) == N[1] && σ(N[-1], RI1) == N[0]
+    @test σ(N[1], RI2) == N[3] && σ(N[-1], RI2) == N[2]
+    @test σ(N[1], RI3) == N[0] && σ(N[-1], RI3) == N[0]
+    @test σ(N[1, 1], RB1) == N[3, 3] && σ(N[-1, 1], RB1) == N[0, 3]
+    @test σ(N[1, 1], RB2) == N[5, 3] && σ(N[-1, 1], RB2) == N[1, 3]
+    @test σ(N[1, 1], RB3) == N[5, 5] && σ(N[-1, 1], RB3) == N[1, 5]
+    # other sets in 1D fall back to interval conversion
+    @test σ(N[1], Rectification(Ball1(N[0], N(1)))) == N[1]
+    # other sets in higher dimensions throw an error
+    @test_throws ErrorException σ(N[1, 1], Rectification(Ball1(N[0, 0], N(1))))
 end

@@ -59,6 +59,7 @@ sorted alphabetically.
 The table entries have the following meaning.
 - "x" indicates that the operation is implemented for the respective set type.
 - "i" indicates that the operation is inherited from a supertype.
+- "(·)" indicates that the operation is partly implemented/inherited.
 
 
 | type ↓ \ operation →         | dim | ρ | σ | an_element | ∈ | isempty | isbounded | linear_map | translate | norm | radius | diameter |
@@ -114,7 +115,7 @@ The table entries have the following meaning.
 |                              |     |   |   |            |   |         |           |            |           |      |        |          |
 | **Non-convex operations**    |     |   |   |            |   |         |           |            |           |      |        |          |
 | `Complement`                 | x   |   |   |            | x | x       |           |            |           |      |        |          |
-| `Rectification`              | x   |   |   |            |   |         |           |            |           |      |        |          |
+| `Rectification`              | x   | i |(x)|            |   |         |           |            |           |      |        |          |
 | `UnionSet`                   | x   | x | x | x          | x | x       | x         |            |           |      |        |          |
 | `UnionSetArray`              | x   | x | x | x          | x | x       | x         |            |           |      |        |          |
 
