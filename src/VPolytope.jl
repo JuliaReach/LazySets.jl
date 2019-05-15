@@ -322,9 +322,8 @@ Compute the convex hull of the set union of two polytopes in V-representation.
 
 - `P1`         -- polytope
 - `P2`         -- another polytope
-- `backend`    -- (optional, default: `default_polyhedra_backend(P1, N)`) the polyhedral
-                  computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
-                  for further information
+- `backend`    -- (optional, default: `nothing`) the polyhedral
+                  computations backend
 
 ### Output
 
@@ -332,17 +331,19 @@ The `VPolytope` obtained by the concrete convex hull of `P1` and `P2`.
 
 ### Notes
 
+This function takes the union of the vertices of each polytope and then relies
+on a concrete convex hull algorithm. For low dimensions, a specialized implementation
+for polygons is used. For higher dimensions, `convex_hull` relies on the polyhedral
+computations backend that can be specified using the `backend` keyword argument.
+
 For performance reasons, it is suggested to use the `CDDLib.Library()` backend
 for the `convex_hull`.
 """
 function convex_hull(P1::VPolytope{N}, P2::VPolytope{N};
-                     backend=default_polyhedra_backend(P1, N)) where {N}
-    @assert isdefined(@__MODULE__, :Polyhedra) "the function `convex_hull` needs " *
-                                               "the package 'Polyhedra' to be loaded"
-    Pch = convexhull(polyhedron(P1; backend=backend),
-                     polyhedron(P2; backend=backend))
-    removevredundancy!(Pch)
-    return VPolytope(Pch)
+                     backend=nothing) where {N}
+    vunion = [P1.vertices; P2.vertices]
+    convex_hull!(vunion; backend=backend)
+    return VPolytope(vunion)
 end
 
 """
