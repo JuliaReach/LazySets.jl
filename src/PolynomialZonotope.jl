@@ -171,11 +171,11 @@ Order of a polynomial zonotope.
 
 ## Output
 
-The order, a rational number defined as the number of generators divided by the
-ambient dimension.
+The order, a rational number defined as the total number of generators divided
+by the ambient dimension.
 """
 function order(pz::PolynomialZonotope)::Rational{Int}
-    η = polynomial_order(pz)  # number of generators
+    η = polynomial_order(pz)  # polynomial order
     p = size(pz.E[1], 2)  # number of dependent factors
     q = size(pz.G, 2)  # number of independent factors
     ξ = sum(i -> binomial(p+i-1, i), 1:η) + q
