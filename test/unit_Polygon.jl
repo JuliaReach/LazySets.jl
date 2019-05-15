@@ -319,7 +319,8 @@ for N in [Float64, Float32, Rational{Int}]
         h1 = tohrep(vp)
         @test convert(HPolygon, vp) == h1
         if i == 0
-            @test isempty(h1.constraints)
+            @test isempty(h1)
+            continue
         elseif i == 1
             @test v1 ∈ h1
         elseif i == 2
@@ -346,6 +347,9 @@ for N in [Float64, Float32, Rational{Int}]
         end
         @test h1.constraints == h2.constraints
     end
+
+    # empty VPolygon: conversion to hrep
+    @test tohrep(VPolygon{N}()) isa EmptySet{N}
 end
 
 function same_constraints(v::Vector{LinearConstraint{N}})::Bool where N<:Real

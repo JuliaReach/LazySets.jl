@@ -89,6 +89,9 @@ for N in [Float64, Rational{Int}, Float32]
         # isempty
         @test !isempty(p)
         @test !isempty(HPolytope{N}())
+
+        # H-representaion of an empty v-polytope
+        @test tohrep(VPolytope{N}()) == EmptySet{N}()
     end
 
     # remove redundant constraints

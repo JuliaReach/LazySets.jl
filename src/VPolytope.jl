@@ -426,6 +426,10 @@ For further information on the supported backends see
 """
 function tohrep(P::VPolytope{N};
                 backend=default_polyhedra_backend(P, N)) where {N<:Real}
+    vl = P.vertices
+    if isempty(vl)
+        return EmptySet{N}()
+    end
     @assert isdefined(@__MODULE__, :Polyhedra) "the function `tohrep` needs the " *
                                                "package 'Polyhedra' to be loaded"
     return HPolytope(polyhedron(P; backend=backend))
