@@ -427,8 +427,7 @@ For further information on the supported backends see
 function tohrep(P::VPolytope{N};
                 backend=default_polyhedra_backend(P, N)) where {N<:Real}
     vl = P.vertices
-    n = length(vl)
-    if n == 0
+    if isempty(vl)
         return EmptySet{N}()
     end
     @assert isdefined(@__MODULE__, :Polyhedra) "the function `tohrep` needs the " *
