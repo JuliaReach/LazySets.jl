@@ -415,6 +415,7 @@ constraints_list(::VPolygon{N}) where {N<:Real}
 translate(::VPolygon{N}, ::AbstractVector{N}) where {N<:Real}
 remove_redundant_vertices(::VPolygon{N}; ::String="monotone_chain") where {N<:Real}
 remove_redundant_vertices!(::VPolygon{N}; ::String="monotone_chain") where {N<:Real}
+minkowski_sum(::VPolygon{N}, ::VPolygon{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

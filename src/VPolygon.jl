@@ -5,7 +5,8 @@ export VPolygon,
        remove_redundant_vertices,
        remove_redundant_vertices!,
        convex_hull,
-       linear_map
+       linear_map,
+       minkowski_sum
 
 """
     VPolygon{N<:Real} <: AbstractPolygon{N}
@@ -552,4 +553,59 @@ function translate(P::VPolygon{N}, v::AbstractVector{N}) where {N<:Real}
     @assert length(v) == dim(P) "cannot translate a $(dim(P))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     return VPolygon([x + v for x in vertices_list(P)])
+end
+
+"""
+    minkowski_sum(P::VPolygon{N}, Q::VPolygon{N}) where {N<:Real}
+
+The Minkowski Sum of two polygon in vertex representation.
+
+### Input
+
+- `P` -- polygon in vertex representation
+- `Q` -- another polygon in vertex representation
+
+### Output
+
+A polygon in vertex representation.
+
+### Algorithm
+
+We treat each edge of the polygons as a vector, attaching them in polar order
+(attaching the tail of the next vector to the head of the previous vector). The
+resulting polygonal chain will be a polygon, which is the Minkowski sum of the 
+given polygons. This algorithm assumes that the vertices of P and Q are sorted 
+in counter-clockwise fashion and has linear complexity O(m+n) where m and n are 
+the number of vertices of P and Q respectively.
+
+"""
+function minkowski_sum(P::VPolygon{N}, Q::VPolygon{N}) where {N<:Real}
+    vlistP = vertices_list(P)
+    vlistQ = vertices_list(Q)
+    mP = length(vlistP)
+    mQ = length(vlistQ)
+    i = 1
+    k = 1
+    j = 1
+    R = Vector{Vector{N}}(undef, mP+mQ)
+    fill!(R, N[0, 0])
+    while i <= size(R, 1)
+        P₁, P₂ = vlistP[(k-1)%mP+1], vlistP[(k%mP+1)]
+        P₁P₂ = P₂ - P₁
+        Q₁, Q₂ = vlistQ[(j-1)%mQ+1], vlistQ[(j%mQ+1)]
+        Q₁Q₂ = Q₂ - Q₁
+        R[i] = P₁ + Q₁
+        turn = right_turn(P₁P₂, Q₁Q₂, N[0, 0])
+        if turn > 0
+            k += 1
+        elseif turn < 0
+            j += 1
+        else
+            pop!(R)
+            k += 1
+            j += 1
+        end
+        i += 1
+    end
+    return VPolygon(R)
 end

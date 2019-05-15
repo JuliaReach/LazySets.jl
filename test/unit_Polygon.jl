@@ -169,6 +169,26 @@ for N in [Float64, Float32, Rational{Int}]
         @test translate(hp, N[1, 2]) == typeof(hp)(
             [HalfSpace(N[2, 2], N(18)), HalfSpace(N[-3, 3], N(9)),
              HalfSpace(N[-1, -1], N(-3)), HalfSpace(N[2, -4], N(-6))])
+        
+        # test for concrete minkowski sum
+        A = [N[4, 0], N[6, 2], N[4, 4]]
+        B = [N[-2, -2], N[2, 0], N[2, 2], N[-2, 4]]
+
+        P = VPolygon(A)
+        Q = VPolygon(B)
+        PQ = minkowski_sum(P, Q)
+        @test LazySets.ispermutation(PQ.vertices, [N[2, -2], N[6, 0], N[8, 2],
+                                                N[8, 4], N[6, 6], N[2, 8]])
+
+        #test for corner case of parallel edges in minkowski sum
+        C = [N[10, 5], N[10, 10], N[8, 10], N[5, 8], N[5, 5]]
+        D = [N[-1, -2], N[1, -2], N[-1, 2]]
+
+        R = VPolygon(C)
+        S = VPolygon(D)
+        RS = minkowski_sum(R, S)
+        @test LazySets.ispermutation(RS.vertices, [N[4, 3], N[11, 3], N[11, 8],
+                                                N[9,12], N[7, 12], N[4, 10]])
     end
 
     # concrete intersection of H-rep
