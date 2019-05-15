@@ -57,6 +57,11 @@ include("ZeroSet.jl")
 include("Zonotope.jl")
 include("Complement.jl")
 
+# ==================================
+# Types representing non-convex sets
+# ==================================
+include("PolynomialZonotope.jl")
+
 # ===================================================
 # Algorithms to compute the convex hull of polygons
 # ===================================================

@@ -534,6 +534,20 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 * [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real})
 
+## Polynomial Zonotopes
+
+```@docs
+PolynomialZonotope
+dim(::PolynomialZonotope)
+σ(::AbstractVector{N}, ::PolynomialZonotope{N}) where {N}
+ρ(::AbstractVector{N}, ::PolynomialZonotope{N}) where {N}
+polynomial_order(pz::PolynomialZonotope)
+order(::PolynomialZonotope)
+linear_map(::Matrix, ::PolynomialZonotope)
+scale(::Number, ::PolynomialZonotope)
+minkowski_sum(::PolynomialZonotope, ::Zonotope)
+```
+
 ## Singleton
 
 ```@docs
