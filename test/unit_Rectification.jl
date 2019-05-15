@@ -59,4 +59,8 @@ for N in [Float64, Rational{Int}, Float32]
     @test isbounded(Rectification(HalfSpace(N[1], N(0))))
     @test !isbounded(Rectification(Universe{N}(2)))
     @test !isbounded(Rectification(HalfSpace(N[-1], N(0))))
+
+    # conversion
+    @test convert(Interval, RI1) == Interval(N(0), N(1))
+    @test convert(Hyperrectangle, RB1) == Hyperrectangle(low=N[0, 0], high=N[3, 3])
 end

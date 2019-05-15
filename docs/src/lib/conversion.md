@@ -48,4 +48,6 @@ convert(::Type{Zonotope}, ::LinearMap{N, CartesianProduct{N, HN1, HN2}}) where {
 convert(::Type{Zonotope}, ::LinearMap{N, CartesianProductArray{N, HN}}) where {N, HN<:AbstractHyperrectangle{N}}
 convert(::Type{CartesianProduct{N, Interval{N}, Interval{N}}}, ::AbstractHyperrectangle{N}) where {N<:Real}
 convert(::Type{CartesianProductArray{N, Interval{N}}}, ::AbstractHyperrectangle{N}) where {N<:Real}
+convert(::Type{Hyperrectangle}, ::Rectification{N, AH}) where {N<:Real, AH<:AbstractHyperrectangle{N}}
+convert(::Type{Interval}, ::Rectification{N, IN}) where {N<:Real, IN<:Interval{N}}
 ```
