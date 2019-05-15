@@ -406,6 +406,8 @@ Rectification
 dim(::Rectification)
 σ(::AbstractVector{N}, ::Rectification{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::Rectification{N, <:AbstractHyperrectangle{N}}) where {N<:Real}
+σ(::AbstractVector{N}, ::Rectification{N, <:CartesianProduct{N}}) where {N<:Real}
+σ(::AbstractVector{N}, ::Rectification{N, <:CartesianProductArray{N}}) where {N<:Real}
 an_element(::Rectification{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::Rectification{N}) where {N<:Real}
 isempty(::Rectification)

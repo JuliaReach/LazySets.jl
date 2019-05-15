@@ -26,6 +26,12 @@ for N in [Float64, Rational{Int}, Float32]
     @test σ(N[1, 1], RB1) == N[3, 3] && σ(N[-1, 1], RB1) == N[0, 3]
     @test σ(N[1, 1], RB2) == N[5, 3] && σ(N[-1, 1], RB2) == N[1, 3]
     @test σ(N[1, 1], RB3) == N[5, 5] && σ(N[-1, 1], RB3) == N[1, 5]
+    # Cartesian products
+    RC1 = Rectification(I1 × I2)
+    @test σ(N[1, 1], RC1) == N[1, 3] && σ(N[-1, -1], RC1) == N[0, 2]
+    RC2 = Rectification(CartesianProductArray([I1, I2, I3]))
+    @test σ(N[1, 1, 1], RC2) == N[1, 3, 0] &&
+          σ(N[-1, -1, -1], RC2) == N[0, 2, 0]
     # other sets in 1D fall back to interval conversion
     @test σ(N[1], Rectification(Ball1(N[0], N(1)))) == N[1]
     # other sets in higher dimensions throw an error

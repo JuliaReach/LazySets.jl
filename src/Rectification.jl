@@ -154,6 +154,74 @@ function σ(d::AbstractVector{N},
 end
 
 """
+    σ(d::AbstractVector{N},
+      r::Rectification{N, <:CartesianProduct{N}}) where {N<:Real}
+
+Return the support vector of a rectification of a Cartesian product of two
+convex sets.
+
+### Input
+
+- `d` -- direction
+- `r` -- rectification of a Cartesian product of two convex sets
+
+### Output
+
+The support vector in the given direction.
+
+### Algorithm
+
+Rectification distributes with the Cartesian product.
+Let ``r(·)`` be the rectification of a set.
+We can just query the support vector for ``r(X)`` and ``r(Y)`` recursively:
+``σ_{r(X × Y)}(d) = σ_{r(X)}(d_X) × σ_{r(Y)}(d_Y)``, where ``x × y``
+concatenates vectors ``x`` and ``y``.
+"""
+function σ(d::AbstractVector{N},
+           r::Rectification{N, <:CartesianProduct{N}}) where {N<:Real}
+    X, Y = r.X.X, r.X.Y
+    n1 = dim(X)
+    return vcat(σ(d[1:n1], Rectification(X)), σ(d[n1+1:end], Rectification(Y)))
+end
+
+"""
+    σ(d::AbstractVector{N},
+      r::Rectification{N, <:CartesianProductArray{N}}) where {N<:Real}
+
+Return the support vector of a rectification of a Cartesian product of a finite
+number of convex sets.
+
+### Input
+
+- `d` -- direction
+- `r` -- rectification of a Cartesian product of a finite number of convex sets
+
+### Output
+
+The support vector in the given direction.
+
+### Algorithm
+
+Rectification distributes with the Cartesian product.
+Let ``r(·)`` be the rectification of a set.
+We can just query the support vector for each subspace recursively:
+``σ_{r(X_1 × ⋯ × X_m)}(d) = σ_{r(X_1)}(d_{X_1}) × ⋯ × σ_{r(X_m)}(d_{X_m})``,
+where ``x × y`` concatenates vectors ``x`` and ``y``.
+"""
+function σ(d::AbstractVector{N},
+           r::Rectification{N, <:CartesianProductArray{N}}) where {N<:Real}
+    svec = similar(d)
+    i = 1
+    for X in array(r.X)
+        nX = dim(X)
+        j = i + nX - 1
+        svec[i:j] = σ(d[i:j], Rectification(X))
+        i = j + 1
+    end
+    return svec
+end
+
+"""
     an_element(r::Rectification{N})::Vector{N} where {N<:Real}
 
 Return some element of a rectification.
