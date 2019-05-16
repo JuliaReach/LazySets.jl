@@ -184,7 +184,7 @@ for N in [Float64, Rational{Int}, Float32]
         # convert empty VPolytope to a polyhedron
         Ve = VPolytope()
         @test_throws ErrorException polyhedron(VPolytope()) # needs the ambient dim
-        p = polyhedron(VPolytope(), ambient_dimension=2)
+        Pe = polyhedron(VPolytope(), relative_dimension=2)
     end
 
     # membership
