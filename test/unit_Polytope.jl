@@ -182,9 +182,9 @@ for N in [Float64, Rational{Int}, Float32]
         @test ispermutation(constraints_list(V), constraints_list(tohrep(V)))
 
         # convert empty VPolytope to a polyhedron
-        Ve = VPolytope()
-        @test_throws ErrorException polyhedron(VPolytope()) # needs the ambient dim
-        Pe = polyhedron(VPolytope(), relative_dimension=2)
+        Vempty = VPolytope()
+        @test_throws ErrorException polyhedron(Vempty) # needs the ambient dim
+        Pe = polyhedron(Vempty, relative_dimension=2)
     end
 
     # membership
