@@ -183,7 +183,7 @@ for N in [Float64, Rational{Int}, Float32]
 
         # convert empty VPolytope to a polyhedron
         Vempty = VPolytope()
-        @test_throws ErrorException polyhedron(Vempty) # needs the ambient dim
+        @test_throws ErrorException polyhedron(Vempty) # needs to pass the (relative) dim
         Pe = polyhedron(Vempty, relative_dimension=2)
     end
 
