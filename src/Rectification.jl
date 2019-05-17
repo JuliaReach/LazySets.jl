@@ -6,9 +6,23 @@ export Rectification
     RectificationCache{N<:Real}
 
 Struct that is used as a cache for [`Rectification`](@ref)s.
+
+### Fields
+
+- `set`                -- set represented by the rectification (can be `nothing`
+                          if not computed yet)
+- `use_support_vector` -- flag indicating whether to use support-vector
+                          computations for the cached set
 """
-struct RectificationCache{N<:Real}
-    # empty for now
+mutable struct RectificationCache{N<:Real}
+    set::Union{LazySet{N}, UnionSetArray{N}, Nothing}
+    use_support_vector::Bool
+
+    # constructor without a set
+    RectificationCache{N}(::Nothing) where {N<:Real} = new{N}(nothing, false)
+
+    # constructor with a set
+    RectificationCache{N}(set::LazySet{N}) where {N<:Real} = new{N}(set, true)
 end
 
 """
@@ -80,7 +94,18 @@ struct Rectification{N<:Real, S<:LazySet{N}}
 
     # default constructor that initializes cache
     function Rectification{N, S}(X::S) where {N<:Real, S<:LazySet{N}}
-        cache = RectificationCache{N}()
+        if X isa AbstractHyperrectangle || X isa CartesianProduct ||
+                X isa CartesianProductArray
+            # set types with efficient support-vector computations
+            set = X
+        elseif dim(X) == 1 && isbounded(X)
+            # one-dimensional bounded sets are converted to Interval type
+            set = convert(Interval, X)
+        else
+            # do not pre-compute a set; computation is triggered later
+            set = nothing
+        end
+        cache = RectificationCache{N}(set)
         return new{N, S}(X, cache)
     end
 end
@@ -117,17 +142,14 @@ Return the support vector of a rectification.
 
 ### Output
 
-If the rectified set is one-dimensional, we convert it to an `Interval` and call
-a specialized method.
-Otherise, we throw an error because we currently do not support higher
-dimensions.
+An error because we currently do not support the support vector for arbitrary
+sets.
 """
 function σ(d::AbstractVector{N}, r::Rectification{N}) where {N<:Real}
-    if dim(r) == 1
-        # rectification in 1D is easy
-        return σ(d, Rectification(convert(Interval, r.X)))
+    if r.cache.set == nothing
+        compute_union_of_projections!(r)
     end
-    error("the exact support vector of a rectification is not implemented")
+    return σ(d, r.cache.set)
 end
 
 """
@@ -222,6 +244,42 @@ function σ(d::AbstractVector{N},
         i = j + 1
     end
     return svec
+end
+
+"""
+    ρ(d::AbstractVector{N}, r::Rectification{N}) where {N<:Real}
+
+Evaluate the support function of a rectification of a convex set in a given
+direction.
+
+### Input
+
+- `d` -- direction
+- `r` -- rectification of a convex set
+
+### Output
+
+The support value of the rectification of a convex set in the given direction.
+
+### Algorithm
+
+We use different procedures for different types of input sets.
+If the wrapped set has a suitable structure for which we can efficiently compute
+the support vector, we fall back to the evaluation of the support function by
+means of the support vector.
+Otherwise we compute the union of projections to obtain a precise result (see
+[`compute_union_of_projections!`](@ref)), and then compute the support function
+for this union.
+(The union is cached, so a subsequent query is more efficient.)
+"""
+function ρ(d::AbstractVector{N}, r::Rectification{N}) where {N<:Real}
+    if r.cache.use_support_vector
+        return dot(d, σ(d, r))
+    end
+    if r.cache.set == nothing
+        compute_union_of_projections!(r)
+    end
+    return ρ(d, r.cache.set)
 end
 
 """
@@ -352,4 +410,132 @@ function isbounded(r::Rectification{N})::Bool where {N<:Real}
         end
     end
     return true
+end
+
+"""
+    compute_union_of_projections!(r::Rectification{N}) where {N<:Real}
+
+Compute an equivalent union of projections from a rectification of a convex set.
+
+### Input
+
+- `r` -- rectification of a convex set
+
+### Algorithm
+
+Let ``X`` be the set wrapped by the rectification `r`.
+We compute a union of sets that represent the rectification of ``X`` precisely.
+
+We first identify those dimensions where ``X`` is negative, using one
+support-function query per dimension, and collect the dimensions in the index
+set ``I_\\text{neg}``.
+For each element in ``I_\\text{neg}`` we will later apply a projection to zero.
+
+Next we identify those dimensions from ``I_\\text{neg}`` where ``X`` is also
+positive, using another support-function query in each dimension, and collect
+the dimensions in the index set ``I_\\text{mix}``.
+Let us call the remaining dimensions
+(``I_\\text{neg} \\setminus I_\\text{mix}``) ``I_\\text{nonpos}``.
+For each dimension in ``j ∈ I_\\text{mix}`` we will apply an intersection with
+axis-aligned polyhedra.
+In particular, we distinguish two cases using half-spaces ``x_j ≤ 0`` and
+``x_j ≥ 0``, and then compute all possible combinations to intersect, using one
+half-space per dimension ``j ∈ I_\\text{mix}``.
+
+Next we project the intersections in all dimensions from ``i ∈ I_\\text{mix}``
+such that we used the half-space ``x_i ≤ 0`` in their computation, and in all
+dimensions ``j ∈ I_\\text{nonpos}`` irrespective of the half-space used.
+
+Finally, we take the union of the resulting sets.
+"""
+function compute_union_of_projections!(r::Rectification{N}) where {N<:Real}
+    X = r.X
+    n = dim(X)
+
+    # construct a polyhedron corresponding to an index vector and a bit vector
+    function construct_constraints(indices, bits)
+        P = HPolyhedron{N}()
+        for (i, b) in enumerate(bits)
+            direction = Approximations.SingleEntryVector(indices[i], n,
+                                                         (b ? -one(N) : one(N)))
+            hs = HalfSpace(direction, zero(N))
+            addconstraint!(P, hs)
+        end
+        return P
+    end
+
+    # project negative dimensions to zero
+    function construct_projection(set, negative_dimensions, mixed_dimensions,
+                                  mixed_dimensions_enumeration)
+            v = ones(N, n)
+            # set negative indices to zero
+            v[negative_dimensions] .= zero(N)
+        for (i, d) in enumerate(mixed_dimensions)
+            if mixed_dimensions_enumeration[i]
+                # reset mixed index to one again because the set is nonnegative
+                v[d] = one(N)
+            end
+        end
+        return Diagonal(v) * set
+    end
+
+    # identify dimensions where set is negative and mixed (positive/negative)
+    negative_dimensions = Vector{Int}()
+    mixed_dimensions = Vector{Int}()
+    mixed_dimensions_enumeration = BitArray(undef, 0)
+    for i in 1:n
+        d = Approximations.SingleEntryVector(i, n, -one(N))
+        if ρ(d, X) > zero(N)
+            push!(negative_dimensions, i)
+            d = Approximations.SingleEntryVector(i, n, one(N))
+            if ρ(d, X) > zero(N)
+                push!(mixed_dimensions_enumeration, false)
+                push!(mixed_dimensions, i)
+            end
+        end
+    end
+
+    if isempty(mixed_dimensions)
+        # no mixed dimensions: no intersections needed
+        if isempty(negative_dimensions)
+            # no negative dimensions: set is unaffected by rectification
+            r.cache.set = X
+        else
+            # project negative dimensions to zero
+            v = ones(N, n)
+            v[negative_dimensions] .= zero(N)
+            r.cache.set = Diagonal(v) * X
+        end
+    else
+        # apply intersections with half-spaces in every mixed dimension
+        m = length(mixed_dimensions)
+        i = m
+        projections = Vector{LazySet{N}}()
+        sizehint!(projections, 2^m)
+        while true
+            # compute next projection
+            polyhedron = construct_constraints(mixed_dimensions,
+                                               mixed_dimensions_enumeration)
+            projection = construct_projection(X ∩ polyhedron,
+                                              negative_dimensions,
+                                              mixed_dimensions,
+                                              mixed_dimensions_enumeration)
+            push!(projections, projection)
+
+            if mixed_dimensions_enumeration[i]
+                @inbounds while i > 0 && mixed_dimensions_enumeration[i]
+                    i -= 1
+                end
+                if i == 0
+                    break
+                end
+                mixed_dimensions_enumeration[i] = true
+                mixed_dimensions_enumeration[i+1:m] .= false
+                i = m
+            else
+                mixed_dimensions_enumeration[i] = true
+            end
+        end
+        r.cache.set = UnionSetArray(projections)
+    end
 end
