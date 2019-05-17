@@ -501,15 +501,37 @@ Return an `VRep` polyhedron from `Polyhedra.jl` given a polytope in V-representa
 - `backend` -- (optional, default: `default_polyhedra_backend(P, N)`) the polyhedral
                computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
                for further information
+- `relative_dimension` -- (default, optional: `nothing`) an integer representing
+                          the (relative) dimension of the polytope; this argument
+                          is mandatory if the polytope is empty
 
 ### Output
 
 A `VRep` polyhedron.
+
+### Notes
+
+The *relative dimension* (or just *dimension*) refers to the dimension of the set
+relative to itself, independently of the ambient dimension. For example, a point
+has (relative) dimension zero, and a line segment has (relative) dimension one.
+
+In this library, `LazySets.dim` always returns the ambient dimension of the set,
+such that a line segment in two dimensions has dimension two. However,
+`Polyhedra.dim` will assign a dimension equal to one to a line segment
+because it uses a different convention.
 """
 function polyhedron(P::VPolytope{N};
-                    backend=default_polyhedra_backend(P, N)) where {N<:Real}
-    V = hcat(vertices_list(P)...)'
-    return polyhedron(Polyhedra.vrep(V), backend)
+                    backend=default_polyhedra_backend(P, N),
+                    relative_dimension=nothing) where {N<:Real}
+    if isempty(P)
+        if relative_dimension == nothing
+            error("the conversion to a `Polyhedra.polyhedron` requires the (relative) dimension " *
+                  "of the `VPolytope` to be known, but it cannot be inferred from an empty set; " *
+                  "try passing it in the keyword argument `relative_dimension`")
+        end
+        return polyhedron(Polyhedra.vrep(P.vertices, d=relative_dimension), backend)
+    end
+    return polyhedron(Polyhedra.vrep(P.vertices), backend)
 end
 
 end # quote

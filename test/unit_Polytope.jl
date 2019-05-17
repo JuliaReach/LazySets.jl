@@ -180,6 +180,11 @@ for N in [Float64, Rational{Int}, Float32]
 
         # list of constraints of a VPolytope; calculates tohrep
         @test ispermutation(constraints_list(V), constraints_list(tohrep(V)))
+
+        # convert empty VPolytope to a polyhedron
+        Vempty = VPolytope()
+        @test_throws ErrorException polyhedron(Vempty) # needs to pass the (relative) dim
+        Pe = polyhedron(Vempty, relative_dimension=2)
     end
 
     # membership
