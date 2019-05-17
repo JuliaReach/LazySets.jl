@@ -508,6 +508,17 @@ Return an `VRep` polyhedron from `Polyhedra.jl` given a polytope in V-representa
 ### Output
 
 A `VRep` polyhedron.
+
+### Notes
+
+The *relative dimension* (or just *dimension*) refers to the dimension of the set
+independently of the ambient dimension. For example, a point has (relative) dimension
+one, and a line segment has (relative) dimension two, independently of the ambient
+space. In this library, `LazySets.dim` always returns the ambient dimension
+of the set, such that a point in two-dimensions has dimension 2, and a point in
+three dimensions has dimension three, etc. However, `Polyhedra.dim` will assign
+a flat line segment in two-dimensions a dimension one because it uses a different
+convention.
 """
 function polyhedron(P::VPolytope{N};
                     backend=default_polyhedra_backend(P, N),
