@@ -512,13 +512,13 @@ A `VRep` polyhedron.
 ### Notes
 
 The *relative dimension* (or just *dimension*) refers to the dimension of the set
-independently of the ambient dimension. For example, a point has (relative) dimension
-one, and a line segment has (relative) dimension two, independently of the ambient
-space. In this library, `LazySets.dim` always returns the ambient dimension
-of the set, such that a point in two-dimensions has dimension 2, and a point in
-three dimensions has dimension three, etc. However, `Polyhedra.dim` will assign
-a flat line segment in two-dimensions a dimension one because it uses a different
-convention.
+relative to itself, independently of the ambient dimension. For example, a point
+has (relative) dimension zero, and a line segment has (relative) dimension one.
+
+In this library, `LazySets.dim` always returns the ambient dimension of the set,
+such that a line segment in two dimensions has dimension two. However,
+`Polyhedra.dim` will assign a flat the same line segment a dimension equal to one,
+because it uses a different convention.
 """
 function polyhedron(P::VPolytope{N};
                     backend=default_polyhedra_backend(P, N),
