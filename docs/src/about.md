@@ -111,6 +111,7 @@ Here we list the names of the maintainers of the `LazySets.jl` library, as well 
 ### Contributors
 
 - Tomer Arnon
+- Sebastián Guadalupe
 - Kostiantyn Potomkin
 - Frédéric Viry
 
