@@ -9,7 +9,7 @@ export VPolygon,
        minkowski_sum
 
 """
-    VPolygon{N<:Real} <: AbstractPolygon{N}
+    VPolygon{N<:Real, VN<:AbstractVector{N}} <: AbstractPolygon{N}
 
 Type that represents a polygon by its vertices.
 
@@ -28,31 +28,31 @@ computation of the convex hull.
             apply_convex_hull::Bool=true,
             algorithm::String="monotone_chain")`
 """
-struct VPolygon{N<:Real} <: AbstractPolygon{N}
-    vertices::Vector{Vector{N}}
+struct VPolygon{N<:Real, VN<:AbstractVector{N}} <: AbstractPolygon{N}
+    vertices::Vector{VN}
 
     # default constructor that applies a convex hull algorithm
-    function VPolygon{N}(vertices::Vector{Vector{N}};
+    function VPolygon{N, VN}(vertices::Vector{VN};
                          apply_convex_hull::Bool=true,
-                         algorithm::String="monotone_chain") where {N<:Real}
+                         algorithm::String="monotone_chain") where {N<:Real, VN<:AbstractVector{N}}
         if apply_convex_hull
-            return new{N}(convex_hull(vertices, algorithm=algorithm))
+            return new{N, VN}(convex_hull(vertices, algorithm=algorithm))
         else
-            return new{N}(vertices)
+            return new{N, VN}(vertices)
         end
     end
 end
 
 # convenience constructor without type parameter
-VPolygon(vertices::Vector{Vector{N}};
+VPolygon(vertices::Vector{VN};
          apply_convex_hull::Bool=true,
-         algorithm::String="monotone_chain") where {N<:Real} =
-    VPolygon{N}(vertices; apply_convex_hull=apply_convex_hull,
+         algorithm::String="monotone_chain") where {N<:Real, VN<:AbstractVector{N}} =
+    VPolygon{N, VN}(vertices; apply_convex_hull=apply_convex_hull,
                 algorithm=algorithm)
 
 # constructor with empty vertices list
 VPolygon{N}() where {N<:Real} =
-    VPolygon{N}(Vector{Vector{N}}(), apply_convex_hull=false)
+    VPolygon{N, Vector{N}}(Vector{Vector{N}}(), apply_convex_hull=false)
 
 # constructor with no vertices of type Float64
 VPolygon() = VPolygon{Float64}()
@@ -117,7 +117,7 @@ function linear_map(M::AbstractMatrix{N}, P::VPolygon{N}) where {N<:Real}
 end
 
 @inline function _linear_map_vrep(M::AbstractMatrix{N}, P::VPolygon{N}) where {N<:Real}
-    return broadcast(v -> M * v, vertices_list(P)) |> VPolygon{N}
+    return broadcast(v -> M * v, vertices_list(P)) |> VPolygon
 end
 
 # --- AbstractPolygon interface functions ---
