@@ -23,11 +23,20 @@ Type that represents the rectification of a convex set.
 
 ### Notes
 
+Given a vector ``v = (v_1, …, v_n)``, its rectification is defined as
+``\\text{rectify}(v) = (v_1', …, v_n')`` such that ``v_i' = \\max(v_i, 0)`` for
+each ``i = 1, …, n``.
+
+The extension to a set ``X`` is defined elementwise:
+
+```math
+    \\text{rectify}(X) = \\{\\text{rectify}(x) \\mid x ∈ X\\}
+```
+
 The rectification of a convex set ``X`` is not necessarily convex.
 It can be expressed exactly as the union of the intersection of ``X`` with the
 nonnegative orthant and the projection of the intersection of ``X`` with each
-orthant where exactly one dimension is nonpositive on the corresponding
-hyperplane of the nonnegative orthant.
+other orthant.
 This can be seen as follows.
 
 First we observe that rectification distributes with union.
@@ -51,24 +60,19 @@ Thus we have
 
 Clearly, ``\\text{rectify}(X ∩ O_j) = X`` if ``O_j`` is the nonnegative orthant.
 
-Furthermore, we need not consider orthants with two or more negative dimensions
-because their contributions to the final set are subsumed.
-
 For example, consider a two-dimensional case and call the orthants
 ``O_1, …, O_4`` in clockwise fashion, starting with the nonnegative orthant.
-The rectification of the intersection in the nonpositive orthant,
-``\\text{rectify}(X ∩ O_3)``, is either the empty set or the singleton
-containing the origin; in the latter case, at least one of
-``\\text{rectify}(X ∩ O_2)`` and ``\\text{rectify}(X ∩ O_4)`` also contain the
-origin.
 We conclude that
 
 ```math
-    \\text{rectify}(X) = (X ∩ O_1) ∪ \\text{rectify}(X ∩ O_2) ∩ \\text{rectify}(X ∩ O_4)
+    \\text{rectify}(X) = (X ∩ O_1) ∪ \\text{rectify}(X ∩ O_2) ∪ \\text{rectify}(X ∩ O_3) ∪ \\text{rectify}(X ∩ O_4).
 ```
 
-and that all applications of ``\\text{rectify}`` on the right-hand side result
-in flat ``n-1``-dimensional shapes on the corresponding hyperplane of ``O_1``.
+The rectification of the intersection in the nonpositive orthant,
+``\\text{rectify}(X ∩ O_3)``, is either the empty set or the singleton
+containing the origin.
+The rectification of ``X ∩ O_2`` and ``X ∩ O_4`` both result in flat
+``1``-dimensional line segments on the corresponding hyperplane of ``O_1``.
 """
 struct Rectification{N<:Real, S<:LazySet{N}}
     X::S
@@ -121,8 +125,7 @@ dimensions.
 function σ(d::AbstractVector{N}, r::Rectification{N}) where {N<:Real}
     if dim(r) == 1
         # rectification in 1D is easy
-        r2 = Rectification(convert(Interval, r.X))
-        return σ(d, r2)
+        return σ(d, Rectification(convert(Interval, r.X)))
     end
     error("the exact support vector of a rectification is not implemented")
 end
@@ -131,7 +134,7 @@ end
     σ(d::AbstractVector{N},
       r::Rectification{N, <:AbstractHyperrectangle{N}}) where {N<:Real}
 
-Return the support vector of a rectification of a hyperrectangular set.
+Return the support vector of the rectification of a hyperrectangular set.
 
 ### Input
 
@@ -157,7 +160,7 @@ end
     σ(d::AbstractVector{N},
       r::Rectification{N, <:CartesianProduct{N}}) where {N<:Real}
 
-Return the support vector of a rectification of a Cartesian product of two
+Return the support vector of the rectification of a Cartesian product of two
 convex sets.
 
 ### Input
@@ -188,8 +191,8 @@ end
     σ(d::AbstractVector{N},
       r::Rectification{N, <:CartesianProductArray{N}}) where {N<:Real}
 
-Return the support vector of a rectification of a Cartesian product of a finite
-number of convex sets.
+Return the support vector of the rectification of a Cartesian product of a
+finite number of convex sets.
 
 ### Input
 

@@ -353,7 +353,7 @@ LinearMap(::AbstractMatrix{N}, ::Translation{N}) where {N<:Real}
 
 ## Union
 
-Note that a union of convex sets is generally not convex.
+Note that the union of convex sets is generally not convex.
 Hence these set types are not part of the convex-set family `LazySet`.
 
 ### Binary Set Union
@@ -386,7 +386,7 @@ isbounded(::UnionSetArray)
 
 ## Complement
 
-Note that a complement of a convex set is generally not convex.
+Note that the complement of a convex set is generally not convex.
 Hence this set type is not part of the convex-set family `LazySet`.
 
 ```@docs
@@ -398,7 +398,7 @@ isempty(::Complement)
 
 ## Rectification
 
-Note that a rectification of a convex set is generally not convex.
+Note that the rectification of a convex set is generally not convex.
 Hence this set type is not part of the convex-set family `LazySet`.
 
 ```@docs
