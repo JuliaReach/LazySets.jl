@@ -766,3 +766,44 @@ function convert(::Type{Hyperrectangle}, IB::IntervalArithmetic.IntervalBox)
     high_IB = Vector(IntervalArithmetic.sup.(IB))   # TODO: temprary conversion, see #1214
     return Hyperrectangle(low=low_IB, high=high_IB)
 end
+
+"""
+    convert(::Type{Hyperrectangle}, r::Rectification{N, AH})
+        where {N<:Real, AH<:AbstractHyperrectangle{N}}
+
+Converts a rectification of a hyperrectangle to a hyperrectangle.
+
+### Input
+
+- `Hyperrectangle` -- type used for dispatch
+- `r`              -- rectification of a hyperrectangle
+
+### Output
+
+A `Hyperrectangle`.
+"""
+function convert(::Type{Hyperrectangle},
+                 r::Rectification{N, AH}) where {N<:Real,
+                                                 AH<:AbstractHyperrectangle{N}}
+    return Hyperrectangle(low=rectify(low(r.X)), high=rectify(high(r.X)))
+end
+
+"""
+    convert(::Type{Interval},
+            r::Rectification{N, IN}) where {N<:Real, IN<:Interval{N}}
+
+Converts a rectification of an interval to an interval.
+
+### Input
+
+- `Interval` -- type used for dispatch
+- `r`        -- rectification of an interval
+
+### Output
+
+An `Interval`.
+"""
+function convert(::Type{Interval},
+                 r::Rectification{N, IN}) where {N<:Real, IN<:Interval{N}}
+    return Interval(rectify([min(r.X), max(r.X)]))
+end
