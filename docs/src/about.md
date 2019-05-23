@@ -74,7 +74,7 @@ relies on the package [Documenter.jl](https://juliadocs.github.io/Documenter.jl/
 produce the HTML layout.
 The sources for creating this documentation are found in `docs/src`.
 You can easily include the documentation that you wrote for your functions or
-types there (see the source code or [Documenter's guide](https://juliadocs.github.io/Documenter.jl/stable/man/guide/)for examples).
+types there (see the source code or [`Documenter`'s guide](https://juliadocs.github.io/Documenter.jl/stable/man/guide/)for examples).
 
 To generate the documentation locally, run `make.jl`, e.g., by executing the
 following command in the terminal:
