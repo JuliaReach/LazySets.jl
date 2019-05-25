@@ -103,10 +103,10 @@ for N in [Float64, Float32, Rational{Int}]
     plot(vpg)
     plot(vpt)
     plot(es)
-    @test_throws ErrorException plot(hs) # TODO see #576
-    @test_throws ErrorException plot(hp) # TODO see #576
-    @test_throws ErrorException plot(l) # TODO see #576
-    @test_throws ErrorException plot(uni) # TODO see #576
+    @test_throws AssertionError plot(hs) # TODO see #576
+    @test_throws AssertionError plot(hp) # TODO see #576
+    @test_throws AssertionError plot(l) # TODO see #576
+    @test_throws AssertionError plot(uni) # TODO see #576
     plot(ch)
     plot(cha)
     plot(sih)

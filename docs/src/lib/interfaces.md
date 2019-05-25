@@ -67,7 +67,7 @@ The following functions work with general two-dimensional `LazySet`s, provided t
 
 ```@docs
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet{N}, ::N=N(1e-3)) where {N<:Real}
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{XN}, ::N=N(1e-3)) where {N<:Real, XN<:LazySet{N}}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractVector{VN}, ::N=N(1e-3), ::Int=40) where {N<:Real, VN<:LazySet{N}}
 ```
 
 ### Set functions that override Base functions
@@ -121,6 +121,12 @@ constrained_dimensions(::AbstractPolyhedron)
 linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 ```
 
+Plotting polyhedra is available, too:
+
+```@docs
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractPolyhedron{N}, ::N=zero(N)) where {N<:Real}
+```
+
 ### Polytope
 
 A polytope is a bounded set with finitely many vertices (*V-representation*)
@@ -138,13 +144,6 @@ This interface defines the following functions:
 isbounded(::AbstractPolytope)
 singleton_list(::AbstractPolytope{N}) where {N<:Real}
 isempty(::AbstractPolytope)
-```
-
-Plotting abstract polytopes is available too:
-
-```@docs
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractPolytope{N}, ::N=zero(N)) where {N<:Real}
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{PN}, ::N=zero(N)) where {N<:Real, PN<:AbstractPolytope{N}}
 ```
 
 #### Polygon
@@ -253,5 +252,4 @@ low(::AbstractSingleton{N}) where {N<:Real}
 low(::AbstractSingleton{N}, ::Int) where {N<:Real}
 linear_map(::AbstractMatrix{N}, ::AbstractSingleton{N}) where {N<:Real}
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractSingleton{N}, ::N=zero(N)) where {N<:Real}
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{SN}, ::N=zero(N)) where {N<:Real, SN<:AbstractSingleton{N}}
 ```
