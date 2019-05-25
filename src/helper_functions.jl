@@ -157,7 +157,8 @@ function isinvertible(M::Matrix; cond_tol::Number=DEFAULT_COND_TOL)
 end
 
 # cond is not available for sparse matrices; see JuliaLang#6485 and related issues
-function isinvertible(M::SparseMatrixCSC; cond_tol::Number=DEFAULT_COND_TOL)
+function isinvertible(M::AbstractSparseMatrix;
+                      cond_tol::Number=DEFAULT_COND_TOL)
     return issquare(M) && isinvertible(Matrix(M), cond_tol=cond_tol)
 end
 
