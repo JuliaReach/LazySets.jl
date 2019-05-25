@@ -163,7 +163,7 @@ else
                       convexhull,
                       hcartesianproduct, vcartesianproduct,
                       points
-    import CDDLib # default backend
+    import .CDDLib # default backend
 
     # to use Polyhedra's default library, set
     # default_library(LazySets.dim(P), Float64)
