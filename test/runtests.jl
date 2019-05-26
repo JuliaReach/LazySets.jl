@@ -1,6 +1,6 @@
 using LazySets, LazySets.Approximations
 
-import IntervalArithmetic, Expokit
+import IntervalArithmetic, Expokit, Optim
 using IntervalArithmetic: IntervalBox
 
 # compatibility between Julia versions
@@ -45,18 +45,7 @@ else
     error("unknown parameter 1: $(ARGS[1])")
 end
 
-@static if VERSION >= v"0.7-"
-    using Pkg
-end
-
-Pkg.add("Optim")
-import Optim
-
 if test_suite_polyhedra || test_suite_plotting
-    @static if VERSION < v"0.7-"
-        Pkg.add("CDDLib")
-    end
-    Pkg.add("Polyhedra")
     import Polyhedra
 
     # fix namespace conflicts with Polyhedra
@@ -144,7 +133,6 @@ if test_suite_basic
 end
 
 if test_suite_plotting
-    Pkg.add("Plots")
     import Plots
     using Plots: plot
 
@@ -155,14 +143,6 @@ if test_suite_plotting
 end
 
 if test_suite_doctests
-    @static if VERSION < v"0.7-"
-        Pkg.add("Documenter")
-    else
-        # NOTE: can be removed when using a Project.toml file
-        Pkg.add("Documenter")
-        Pkg.add("Plots")
-        Pkg.add("GR")
-    end
     using Documenter
     @time @testset "LazySets.doctests" begin include("../docs/make_doctests_only.jl") end
 end
