@@ -32,7 +32,7 @@ Depth = 3
 
 ```@meta
 DocTestSetup = quote
-    using Plots, LazySets, LazySets.Approximations, Polyhedra, Compat.LinearAlgebra
+    using Plots, LazySets, LazySets.Approximations, Polyhedra, LinearAlgebra
 end
 ```
 
@@ -42,7 +42,7 @@ To use the `Polyhedra.jl` interface, you need to load the package with `using Po
 Let's create an H-representation object:
 
 ```@example concrete_polyhedra
-using Plots, LazySets, Polyhedra, Compat.LinearAlgebra
+using Plots, LazySets, Polyhedra, LinearAlgebra
 
 A = [1. 1;1 -1;-1 0]
 b = [1.,0,0]

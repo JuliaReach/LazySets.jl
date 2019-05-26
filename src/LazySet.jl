@@ -329,7 +329,7 @@ false
 """
 function ==(X::LazySet, Y::LazySet)
     # if the common supertype of X and Y is abstract, they cannot be compared
-    if Compat.isabstracttype(promote_type(typeof(X), typeof(Y)))
+    if isabstracttype(promote_type(typeof(X), typeof(Y)))
         return false
     end
 

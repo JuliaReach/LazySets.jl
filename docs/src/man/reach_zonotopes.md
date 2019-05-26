@@ -32,18 +32,17 @@ overapproximates the states reachable by any trajectory of this IVP.
 ## Algorithm
 
 ```@example example_reach_zonotopes
-using Plots, LazySets, Compat.LinearAlgebra, Compat.SparseArrays
-import LazySets.expmat
+using Plots, LazySets, LinearAlgebra, SparseArrays
 
 function Algorithm1(A, X0, δ, μ, T)
     # bloating factors
     Anorm = norm(A, Inf)
-    α = (expmat(δ * Anorm) - 1 - δ * Anorm) / norm(X0, Inf)
-    β = (expmat(δ * Anorm) - 1) * μ / Anorm
+    α = (exp(δ * Anorm) - 1 - δ * Anorm) / norm(X0, Inf)
+    β = (exp(δ * Anorm) - 1) * μ / Anorm
 
     # discretized system
     n = size(A, 1)
-    ϕ = expmat(δ * A)
+    ϕ = exp(δ * A)
     N = floor(Int, T / δ)
 
     # preallocate arrays

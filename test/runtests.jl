@@ -1,11 +1,6 @@
-using LazySets, LazySets.Approximations
-
+using LazySets, LazySets.Approximations, Test, LinearAlgebra, SparseArrays
 import IntervalArithmetic, Expokit, Optim
 using IntervalArithmetic: IntervalBox
-
-# compatibility between Julia versions
-include("../src/compat.jl")
-using Compat.Test
 
 # conversion between numeric types
 include("to_N.jl")

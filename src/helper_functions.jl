@@ -1,5 +1,11 @@
+export _At_mul_B
+
 # default tolerance for matrix condition number (see 'isinvertible')
 const DEFAULT_COND_TOL = 1e6
+
+# matrix-matrix multiplication and division
+@inline _At_mul_B(A, B) = transpose(A) * B
+@inline _At_ldiv_B(A, B) = transpose(A) \ B
 
 """
     dot_zero(x::AbstractVector{N}, y::AbstractVector{N}) where{N<:Real}

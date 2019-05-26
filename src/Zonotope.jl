@@ -486,7 +486,7 @@ function reduce_order(Z::Zonotope{N}, r)::Zonotope{N} where {N<:Real}
     rg = G[:, ind[1:m]] # reduced generators
 
     # interval hull computation of reduced generators
-    Gbox = Diagonal(Compat.sum(abs.(rg), dims=2)[:])
+    Gbox = Diagonal(sum(abs.(rg), dims=2)[:])
     if m < p
         Gnotred = G[:, ind[m+1:end]]
         Gred = [Gnotred Gbox]

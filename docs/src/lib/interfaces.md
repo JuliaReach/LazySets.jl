@@ -27,7 +27,7 @@ Depth = 4
 CurrentModule = LazySets
 DocTestSetup = quote
     using LazySets
-    using Compat.InteractiveUtils: subtypes
+    using InteractiveUtils: subtypes
 end
 ```
 

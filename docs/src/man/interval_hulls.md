@@ -10,7 +10,7 @@ Depth = 3
 
 ```@meta
 DocTestSetup = quote
-    using Plots, LazySets, LazySets.Approximations, Compat.SparseArrays
+    using Plots, LazySets, LazySets.Approximations, SparseArrays
 end
 ```
 
@@ -126,7 +126,7 @@ It is defined in the `Approximations` module as well.
 
 ```@example example_ih
 import LazySets.Approximations.symmetric_interval_hull
-using Compat.SparseArrays
+using SparseArrays
 
 plot(X, 1e-3, aspectratio=1)
 plot!(Y, 1e-3)
