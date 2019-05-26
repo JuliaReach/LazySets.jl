@@ -162,8 +162,6 @@ if test_suite_doctests
         Pkg.add("Documenter")
         Pkg.add("Plots")
         Pkg.add("GR")
-        # NOTE: restrict Documenter to 0.19.7 (breaking release) for now
-        Pkg.pin(PackageSpec(name="Documenter", version="0.19.7"));
     end
     using Documenter
     @time @testset "LazySets.doctests" begin include("../docs/make_doctests_only.jl") end
