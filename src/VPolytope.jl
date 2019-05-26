@@ -466,27 +466,13 @@ export vertices_list,
        tohrep,
        tovrep
 
-@static if VERSION < v"0.7-"
-
-    # VPolytope from a VRep
-    function VPolytope(P::VRep{T, N}) where {T, N}
-        vertices = Vector{Vector{N}}()
-        for vi in Polyhedra.points(P)
-            push!(vertices, vi)
-        end
-        return VPolytope(vertices)
+# VPolytope from a VRep
+function VPolytope(P::VRep{N}) where {N}
+    vertices = Vector{Vector{N}}()
+    for vi in Polyhedra.points(P)
+        push!(vertices, vi)
     end
-
-else
-
-    # VPolytope from a VRep
-    function VPolytope(P::VRep{N}) where {N}
-        vertices = Vector{Vector{N}}()
-        for vi in Polyhedra.points(P)
-            push!(vertices, vi)
-        end
-        return VPolytope(vertices)
-    end
+    return VPolytope(vertices)
 end
 
 """

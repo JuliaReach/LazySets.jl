@@ -3,9 +3,12 @@ __precompile__(true)
 # main module for `LazySets.jl`
 module LazySets
 
-include("compat.jl")
-
-using Requires
+using Requires, SparseArrays, LinearAlgebra
+using LinearAlgebra: checksquare
+import LinearAlgebra: norm, ×
+import Random
+using Random: AbstractRNG, GLOBAL_RNG, SamplerType, shuffle
+import InteractiveUtils: subtypes
 
 export Approximations
 

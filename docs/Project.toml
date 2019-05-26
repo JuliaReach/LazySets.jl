@@ -1,7 +1,6 @@
 [deps]
 BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
 CDDLib = "3391f64e-dcde-5f30-b752-e11513730f60"
-Compat = "34da2185-b29b-5c13-b0c7-acf172513d20"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 Expokit = "a1e7a1ef-7a5d-5822-a38c-be74e1bb89f4"
 GR = "28b8d3ca-fb5f-59d9-8090-bfdbd6d07a71"
@@ -15,7 +14,6 @@ StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 [compat]
 BenchmarkTools = "≥ 0.4.2"
 CDDLib = "≥ 0.5.2"
-Compat = "≥ 1.0.0"
 Documenter = "≥ 0.22.3"
 Expokit = "≥ 0.1.0"
 GR = "≥ 0.39.1"

@@ -194,12 +194,6 @@ struct ConvexHullArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
 end
 
-@static if VERSION < v"0.7-"
-    # convenience constructor without type parameter
-    ConvexHullArray(a::Vector{S}) where {N<:Real, S<:LazySet{N}} =
-        ConvexHullArray{N, S}(a)
-end
-
 # constructor for an empty hull with optional size hint and numeric type
 function ConvexHullArray(n::Int=0, N::Type=Float64)::ConvexHullArray
     a = Vector{LazySet{N}}()

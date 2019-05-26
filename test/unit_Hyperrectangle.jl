@@ -90,9 +90,6 @@ for N in [Float64, Rational{Int}, Float32]
     H2 = Hyperrectangle(low=l, high=h)
     @test H1.center ≈ H2.center
     @test H1.radius ≈ H2.radius
-    @static if VERSION < v"0.7-"
-        @test_throws ArgumentError Hyperrectangle(xyz="zyx")
-    end
 
     # Test low and high methods for a hyperrectangle
     H = Hyperrectangle(to_N(N, [-2.1, 5.6, 0.9]), fill(to_N(N, 0.5), 3))

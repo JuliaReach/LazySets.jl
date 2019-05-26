@@ -134,6 +134,7 @@ function _linear_map_hrep(M::AbstractMatrix{N}, P::HPolytope{N},
     return HPolytope(constraints)
 end
 
+
 # --- functions that use Polyhedra.jl ---
 
 
@@ -141,58 +142,35 @@ function load_polyhedra_hpolytope() # function to be loaded by Requires
 return quote
 # see the interface file AbstractPolytope.jl for the imports
 
-@static if VERSION < v"0.7-"
-
-    function convert(::Type{HPolytope{N}}, P::HRep{T, N}) where {T, N}
-        constraints = LinearConstraint{N}[]
-        for hi in Polyhedra.allhalfspaces(P)
-            push!(constraints, HalfSpace(hi.a, hi.β))
-        end
-        return HPolytope(constraints)
+function convert(::Type{HPolytope{N}}, P::HRep{N}) where {N}
+    constraints = LinearConstraint{N}[]
+    for hi in Polyhedra.allhalfspaces(P)
+        push!(constraints, HalfSpace(hi.a, hi.β))
     end
-
-    function convert(::Type{HPolytope}, P::HRep{T, N}) where {T, N}
-        return convert(HPolytope{N}, P)
-    end
-
-    """
-        HPolytope(P::HRep{T, N}) where {T, N}
-
-    Return a polytope in H-representation given a `HRep` polyhedron
-    from `Polyhedra.jl`.
-
-    ### Input
-
-    - `P` -- `HRep` polyhedron
-
-    ### Output
-
-    An `HPolytope`.
-    """
-    function HPolytope(P::HRep{T, N}) where {T, N}
-        convert(HPolytope{N}, P)
-    end
-
-else
-
-    function convert(::Type{HPolytope{N}}, P::HRep{N}) where {N}
-        constraints = LinearConstraint{N}[]
-        for hi in Polyhedra.allhalfspaces(P)
-            push!(constraints, HalfSpace(hi.a, hi.β))
-        end
-        return HPolytope(constraints)
-    end
-
-    function convert(::Type{HPolytope}, P::HRep{N}) where {N}
-        return convert(HPolytope{N}, P)
-    end
-
-    function HPolytope(P::HRep{N}) where {N}
-        convert(HPolytope{N}, P)
-    end
-
+    return HPolytope(constraints)
 end
 
+function convert(::Type{HPolytope}, P::HRep{N}) where {N}
+    return convert(HPolytope{N}, P)
+end
+
+"""
+    HPolytope(P::HRep{T, N}) where {T, N}
+
+Return a polytope in H-representation given a `HRep` polyhedron
+from `Polyhedra.jl`.
+
+### Input
+
+- `P` -- `HRep` polyhedron
+
+### Output
+
+An `HPolytope`.
+"""
+function HPolytope(P::HRep{N}) where {N}
+    convert(HPolytope{N}, P)
+end
 
 end # quote
 end # function load_polyhedra_hpolytope()

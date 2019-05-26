@@ -4,8 +4,7 @@
 DocTestFilters = [r"[0-9\.]+ seconds \(.*\)"]
 CurrentModule = LazySets
 DocTestSetup = quote
-    using LazySets
-    using Compat.SparseArrays, Compat.LinearAlgebra
+    using LazySets, SparseArrays, LinearAlgebra
 end
 ```
 

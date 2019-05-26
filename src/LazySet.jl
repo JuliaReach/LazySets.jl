@@ -1,8 +1,5 @@
 import Base: ==, copy
-
-@static if VERSION >= v"0.7-"
-    import Random.rand
-end
+import Random.rand
 
 export LazySet,
        ρ, support_function,
@@ -332,7 +329,7 @@ false
 """
 function ==(X::LazySet, Y::LazySet)
     # if the common supertype of X and Y is abstract, they cannot be compared
-    if Compat.isabstracttype(promote_type(typeof(X), typeof(Y)))
+    if isabstracttype(promote_type(typeof(X), typeof(Y)))
         return false
     end
 
@@ -345,11 +342,9 @@ function ==(X::LazySet, Y::LazySet)
     return true
 end
 
-@static if VERSION >= v"0.7-"
-    # hook into random API
-    function rand(rng::AbstractRNG, ::SamplerType{T}) where T<:LazySet
-        rand(T, rng=rng)
-    end
+# hook into random API
+function rand(rng::AbstractRNG, ::SamplerType{T}) where T<:LazySet
+    rand(T, rng=rng)
 end
 
 """
