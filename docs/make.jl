@@ -3,10 +3,11 @@ using Documenter, LazySets
 import Polyhedra, Optim
 
 makedocs(
-    doctest = false,
-    modules = [LazySets, Approximations],
-    format = Documenter.HTML(assets = ["assets/juliareach.css"]),
     sitename = "LazySets.jl",
+    modules = Module[LazySets, Approximations],
+    format = Documenter.HTML(
+        prettyurls = get(ENV, "CI", nothing) == "true",
+        assets = ["assets/juliareach.css"]),
     pages = [
         "Home" => "index.md",
         "Manual" => Any[
@@ -36,7 +37,8 @@ makedocs(
         "Parallel" => "lib/parallel.md"
         ],
         "About" => "about.md"
-    ]
+    ],
+    doctest = false
 )
 
 deploydocs(
