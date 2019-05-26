@@ -1,8 +1,5 @@
 import Base: ==, copy
-
-@static if VERSION >= v"0.7-"
-    import Random.rand
-end
+import Random.rand
 
 export LazySet,
        ρ, support_function,
@@ -345,11 +342,9 @@ function ==(X::LazySet, Y::LazySet)
     return true
 end
 
-@static if VERSION >= v"0.7-"
-    # hook into random API
-    function rand(rng::AbstractRNG, ::SamplerType{T}) where T<:LazySet
-        rand(T, rng=rng)
-    end
+# hook into random API
+function rand(rng::AbstractRNG, ::SamplerType{T}) where T<:LazySet
+    rand(T, rng=rng)
 end
 
 """

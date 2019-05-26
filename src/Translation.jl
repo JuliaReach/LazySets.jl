@@ -146,14 +146,6 @@ struct Translation{N<:Real, VN<:AbstractVector{N}, S<:LazySet{N}} <: LazySet{N}
     end
 end
 
-@static if VERSION < v"0.7-"
-    @eval begin
-        # convenience constructor without type parameter
-        Translation(X::S, v::VN) where {N<:Real, VN<:AbstractVector{N}, S<:LazySet{N}} =
-            Translation{N, VN, S}(X, v)
-    end
-end
-
 # constructor from a Translation: perform the translation immediately
 Translation(tr::Translation{N}, v::AbstractVector{N}) where {N<:Real} =
     Translation(tr.X, tr.v + v)

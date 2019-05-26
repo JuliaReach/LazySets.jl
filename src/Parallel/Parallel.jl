@@ -6,12 +6,8 @@ Module `Parallel.jl` -- LazySets algorithms that are parallelized.
 module Parallel
 
 using LazySets
-
-# compatibility of different julia versions
-@static if VERSION >= v"0.7-"
-    using SharedArrays: SharedMatrix, SharedVector, indexpids
-    using Distributed: remotecall_wait, procs
-end
+using SharedArrays: SharedMatrix, SharedVector, indexpids
+using Distributed: remotecall_wait, procs
 
 #=======================================================
 Utility functions for distribution of tasks in parallel

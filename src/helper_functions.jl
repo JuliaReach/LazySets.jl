@@ -349,11 +349,7 @@ The input RNG if the seed is `nothing`, and a reseeded RNG otherwise.
 """
 function reseed(rng::AbstractRNG, seed::Union{Int, Nothing})::AbstractRNG
     if seed != nothing
-        @static if VERSION < v"0.7-"
-            return Random.srand(rng, seed)
-        else
-            return Random.seed!(rng, seed)
-        end
+        return Random.seed!(rng, seed)
     end
     return rng
 end
@@ -448,47 +444,6 @@ end
 Base.eltype(::Type{StrictlyIncreasingIndices}) = Vector{Int}
 Base.length(sii::StrictlyIncreasingIndices) = binomial(sii.n, sii.m)
 
-@static if VERSION < v"0.7-"
-@eval begin
-
-# returns [1, 2, ..., m-2, m-1, m-1]
-function Base.start(sii::StrictlyIncreasingIndices)
-    v = [1:sii.m;]
-    if sii.n > sii.m
-        v[end] -= 1
-    end
-    return v
-end
-
-function Base.next(sii::StrictlyIncreasingIndices, state)
-    v = state
-    i = sii.m
-    diff = sii.n
-    if i == diff
-        return (v, nothing)
-    end
-    while v[i] == diff
-        i -= 1
-        diff -= 1
-    end
-    # update vector
-    v[i] += 1
-    for j in i+1:sii.m
-        v[j] = v[j-1] + 1
-    end
-    # detect termination: first index has maximum value
-    if i == 1 && v[1] == (sii.n - sii.m + 1)
-        return (v, nothing)
-    end
-    return (v, v)
-end
-
-Base.done(sii::StrictlyIncreasingIndices, state) = state == nothing
-
-end # @eval
-else
-@eval begin
-
 # initialization
 function Base.iterate(sii::StrictlyIncreasingIndices)
     v = [1:sii.m;]
@@ -523,9 +478,6 @@ end
 function Base.iterate(sii::StrictlyIncreasingIndices, state::Nothing)
     return nothing
 end
-
-end # @eval
-end # if
 
 """
     subtypes(interface, concrete::Bool)

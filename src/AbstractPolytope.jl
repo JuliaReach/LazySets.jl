@@ -130,48 +130,24 @@ end
 # =============================================
 
 function load_polyhedra_abstractpolytope() # function to be loaded by Requires
-
 return quote
+import .Polyhedra: polyhedron
+export polyhedron
+using .Polyhedra: HRep, VRep,
+                  removehredundancy!, removevredundancy!,
+                  hreps, vreps,
+                  intersect,
+                  convexhull,
+                  hcartesianproduct, vcartesianproduct,
+                  points,
+                  default_library
 
-@static if VERSION < v"0.7-"
-    import Polyhedra: polyhedron
-    export polyhedron
-    using Polyhedra: HRep, VRep,
-                     removehredundancy!, removevredundancy!,
-                     hreps, vreps,
-                     intersect,
-                     convexhull,
-                     hcartesianproduct, vcartesianproduct,
-                     points
-    import CDDLib # default backend
+function default_polyhedra_backend(P, N::Type{<:AbstractFloat})
+    return default_library(LazySets.dim(P), Float64)
+end
 
-    function default_polyhedra_backend(P, N::Type{<:AbstractFloat})
-        return CDDLib.CDDLibrary()
-    end
-
-    function default_polyhedra_backend(P, N::Type{<:Rational})
-        return CDDLib.CDDLibrary(:exact)
-    end
-
-else
-    import .Polyhedra: polyhedron
-    export polyhedron
-    using .Polyhedra: HRep, VRep,
-                      removehredundancy!, removevredundancy!,
-                      hreps, vreps,
-                      intersect,
-                      convexhull,
-                      hcartesianproduct, vcartesianproduct,
-                      points,
-                      default_library
-
-    function default_polyhedra_backend(P, N::Type{<:AbstractFloat})
-        return default_library(LazySets.dim(P), Float64)
-    end
-
-    function default_polyhedra_backend(P, N::Type{<:Rational})
-        return default_library(LazySets.dim(P), Rational{Int})
-    end
+function default_polyhedra_backend(P, N::Type{<:Rational})
+    return default_library(LazySets.dim(P), Rational{Int})
 end
 end # quote
 end # function load_polyhedra_hpolytope()

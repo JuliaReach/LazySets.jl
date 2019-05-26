@@ -79,12 +79,6 @@ struct Interval{N<:Real, IN<:AbstractInterval{N}} <: AbstractHyperrectangle{N}
     dat::IN
 end
 
-@static if VERSION < v"0.7-"
-    # convenience constructor without type parameter
-    Interval(interval::IN) where {N<:Real, IN<:AbstractInterval{N}} =
-        Interval{N, IN}(interval)
-end
-
 # convenience constructor without type parameter for Rational
 Interval(interval::IN) where {N<:Rational, IN<:AbstractInterval{N}} =
     Interval{N, IntervalArithmetic.AbstractInterval{N}}(interval)
