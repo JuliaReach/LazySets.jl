@@ -15,7 +15,7 @@ using LazySets: ispermutation, isinvertible, inner
 using LazySets.Approximations: UnitVector
 
 global test_suite_basic = true
-global test_suite_doctests = VERSION >= v"0.7-" # only run doctests with new Julia version
+global test_suite_doctests = true
 global test_suite_polyhedra = true
 global test_suite_plotting = true
 

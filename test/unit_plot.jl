@@ -1,6 +1,4 @@
-@static if VERSION >= v"0.7-"
-    using SparseArrays
-end
+using SparseArrays
 
 for N in [Float64, Float32, Rational{Int}]
     p0 = zero(N)

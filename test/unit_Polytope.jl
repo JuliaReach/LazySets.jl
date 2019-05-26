@@ -207,31 +207,6 @@ end
 @test HPolytope() isa HPolytope{Float64}
 @test VPolytope() isa VPolytope{Float64}
 
-# Polyhedra tests that do not work with Float32
-if test_suite_polyhedra
-    for N in [Float64, Rational{Int}]
-        # CDDLib does not preserve the Rational{Int} type
-        if VERSION >= v"0.7" || N == Float64
-            # tovrep from HPolytope
-            A = N[0 1; 1 0; -1 -1]
-            b = N[0.25, 0.25, -0]
-            P = HPolytope(A, b)
-            @test tovrep(P) isa VPolytope{N}
-            @test tohrep(P) isa HPolytope{N}  # no-op
-
-            # tohrep from VPolytope
-            v1 = N[1, 0]
-            v2 = N[0, 1]
-            v3 = N[-1, 0]
-            v4 = N[0, -1]
-            v5 = N[0, 0]
-            P = VPolytope([v1, v2, v3, v4, v5])
-            @test tohrep(P) isa HPolytope{N}
-            @test tovrep(P) isa VPolytope{N}  # no-op
-        end
-    end
-end
-
 # Polyhedra tests that only work with Float64
 if test_suite_polyhedra
     for N in [Float64]
@@ -315,6 +290,13 @@ if test_suite_polyhedra
                        HalfSpace(N[-1, -1], N(-1))])
         @test an_element(P) ∈ P
 
+        # tovrep from HPolytope
+        A = N[0 1; 1 0; -1 -1]
+        b = N[0.25, 0.25, -0]
+        P = HPolytope(A, b)
+        @test tovrep(P) isa VPolytope{N}
+        @test tohrep(P) isa HPolytope{N}  # no-op
+
         # -----
         # V-rep
         # -----
@@ -335,11 +317,10 @@ if test_suite_polyhedra
         p3 = VPolygon(vertices_list(p2))
         cap = intersection(p1, p3)
         @test vertices_list(cap) ≈ [N[1, 1]]
-        @static if VERSION < v"1.0" # does not work in v1.0 (see #834)
-            p4 = BallInf(N[2, 2], N(1))
-            cap = intersection(p1, p4)
-            @test vertices_list(cap) == [N[1, 1]]
-        end
+        p4 = BallInf(N[2, 2], N(1))
+        cap = intersection(p1, p4)
+        vlist = vertices_list(cap)  # contains duplicates (see #1405)
+        @test all(v -> v == N[1, 1], vlist)
 
         # convex hull
         v1 = N[1, 0]
@@ -362,8 +343,8 @@ if test_suite_polyhedra
 
         # tohrep from VPolytope
         P = VPolytope([v1, v2, v3, v4, v5])
-        @test tohrep(P) isa HPolytope
-        @test tovrep(P) isa VPolytope # no-op
+        @test tohrep(P) isa HPolytope{N}
+        @test tovrep(P) isa VPolytope{N}  # no-op
 
         # subset (see #974)
         H = BallInf(N[0, 0], N(1))
