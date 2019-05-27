@@ -1,6 +1,6 @@
 ENV["GKSwstype"] = "100"  # set 'GR environment' to 'no output' (for Travis CI)
 using Documenter, LazySets
-import Polyhedra, Optim
+import Polyhedra, Optim, Expokit
 
 makedocs(
     sitename = "LazySets.jl",
