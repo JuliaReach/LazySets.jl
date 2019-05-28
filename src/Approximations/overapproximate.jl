@@ -159,7 +159,7 @@ A hyperrectangle.
 If `c` and `r` denote the center and vector radius of a hyperrectangle `H`,
 a tight hyperrectangular overapproximation of `M * H` is obtained by transforming
 `c ↦ M*c` and `r ↦ abs.(M) * c`, where `abs.(⋅)` denotes the element-wise absolute
-value operator. 
+value operator.
 """
 function overapproximate(lm::LinearMap{N, <:AbstractHyperrectangle{N}},
                          ::Type{Hyperrectangle}) where {N<:Real}
@@ -220,7 +220,7 @@ further investigated in [2].
 function overapproximate(S::ConvexHull{N, Zonotope{N}, Zonotope{N}},
                          ::Type{<:Zonotope})::Zonotope where {N<:Real}
     Z1, Z2 = S.X, S.Y
-    
+
     # reduce to the same order if possible
     if order(Z1) != order(Z2)
         min_order = min(order(Z1), order(Z2))
@@ -241,7 +241,7 @@ function _overapproximate_convex_hull_zonotope(Z1::Zonotope{N}, Z2::Zonotope{N})
     c = (Z1.center + Z2.center)/N(2)
 
     # the case of equal order is treated separately to avoid a slicing (this creates a copy)
-    if order(Z1) == order(Z2)        
+    if order(Z1) == order(Z2)
         G = hcat(Z1.generators .+ Z2.generators,
                  Z1.center - Z2.center,
                  Z1.generators .- Z2.generators)/N(2)
@@ -516,6 +516,9 @@ function overapproximate(cap::Intersection{N,
     return overapproximate(swap(cap), dir; kwargs...)
 end
 
+
+function load_taylormodels_overapproximation()  # function to be loaded by Requires
+return quote
 """
          overapproximate(vTM::Vector{TaylorModel1{T, S}},
                             ::Type{Zonotope})where{T, S}
@@ -688,5 +691,5 @@ Zonotope{Float64}([5.5, 124.0],
     H = convert(Hyperrectangle, I_Rem)
     return minkowski_sum(Z, convert(Zonotope, H))
  end
-
-
+end
+end 
