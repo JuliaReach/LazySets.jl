@@ -24,6 +24,9 @@ Abstract type for polygons in H-representation (i.e., constraints).
 
 ### Notes
 
+All subtypes must satisfy the invariant that constraints are sorted
+counter-clockwise.
+
 Every concrete `AbstractHPolygon` must have the following fields:
 - `constraints::Vector{LinearConstraint{N}}` -- the constraints
 
@@ -139,7 +142,8 @@ function vertices_list(P::AbstractHPolygon{N},
 end
 
 """
-    constraints_list(P::AbstractHPolygon{N})::Vector{LinearConstraint{N}} where {N<:Real}
+    constraints_list(P::AbstractHPolygon{N})::Vector{LinearConstraint{N}}
+        where {N<:Real}
 
 Return the list of constraints defining a polygon in H-representation.
 
@@ -150,8 +154,10 @@ Return the list of constraints defining a polygon in H-representation.
 ### Output
 
 The list of constraints of the polygon.
+The implementation guarantees that the constraints are sorted counter-clockwise.
 """
-function constraints_list(P::AbstractHPolygon{N})::Vector{LinearConstraint{N}} where {N<:Real}
+function constraints_list(P::AbstractHPolygon{N}
+                         )::Vector{LinearConstraint{N}} where {N<:Real}
     return P.constraints
 end
 
