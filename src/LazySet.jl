@@ -1,4 +1,4 @@
-import Base: ==, copy
+import Base: ==, ≈, copy
 import Random.rand
 
 export LazySet,
@@ -293,12 +293,10 @@ function an_element(S::LazySet{N}) where {N<:Real}
     return σ(sparsevec([1], [one(N)], dim(S)), S)
 end
 
-
 """
     ==(X::LazySet, Y::LazySet)
 
-Return whether two LazySets of the same type are exactly equal by recursively
-comparing their fields until a mismatch is found.
+Return whether two LazySets of the same type are exactly equal.
 
 ### Input
 
@@ -312,10 +310,16 @@ comparing their fields until a mismatch is found.
 ### Notes
 
 The check is purely syntactic and the sets need to have the same base type.
-I.e. `X::VPolytope == Y::HPolytope` returns `false` even if `X` and `Y` represent the
-same polytope. However `X::HPolytope{Int64} == Y::HPolytope{Float64}` is a valid comparison.
+For instance, `X::VPolytope == Y::HPolytope` returns `false` even if `X` and `Y`
+represent the same polytope.
+However `X::HPolytope{Int64} == Y::HPolytope{Float64}` is a valid comparison.
+
+### Algorithm
+
+We recursively compare the fields of `X` and `Y` until a mismatch is found.
 
 ### Examples
+
 ```jldoctest
 julia> HalfSpace([1], 1) == HalfSpace([1], 1)
 true
@@ -335,6 +339,61 @@ function ==(X::LazySet, Y::LazySet)
 
     for f in fieldnames(typeof(X))
         if getfield(X, f) != getfield(Y, f)
+            return false
+        end
+    end
+
+    return true
+end
+"""
+    ≈(X::LazySet, Y::LazySet)
+
+Return whether two LazySets of the same type are approximately equal.
+
+### Input
+
+- `X` -- any `LazySet`
+- `Y` -- another `LazySet` of the same type as `X`
+
+### Output
+
+- `true` iff `X` is equal to `Y`.
+
+### Notes
+
+The check is purely syntactic and the sets need to have the same base type.
+For instance, `X::VPolytope ≈ Y::HPolytope` returns `false` even if `X` and `Y`
+represent the same polytope.
+However `X::HPolytope{Int64} ≈ Y::HPolytope{Float64}` is a valid comparison.
+
+### Algorithm
+
+We recursively compare the fields of `X` and `Y` until a mismatch is found.
+
+### Examples
+
+```jldoctest
+julia> HalfSpace([1], 1) ≈ HalfSpace([1], 1)
+true
+
+julia> HalfSpace([1], 1) ≈ HalfSpace([1.00000001], 0.99999999)
+true
+
+julia> HalfSpace([1], 1) ≈ HalfSpace([1.0], 1.0)
+true
+
+julia> Ball1([0.], 1.) ≈ Ball2([0.], 1.)
+false
+```
+"""
+function ≈(X::LazySet, Y::LazySet)
+    # if the common supertype of X and Y is abstract, they cannot be compared
+    if isabstracttype(promote_type(typeof(X), typeof(Y)))
+        return false
+    end
+
+    for f in fieldnames(typeof(X))
+        if !(getfield(X, f) ≈ getfield(Y, f))
             return false
         end
     end

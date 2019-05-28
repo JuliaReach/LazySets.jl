@@ -74,6 +74,7 @@ RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{XN}, ::N=N(1e-3)) where {N
 
 ```@docs
 ==(::LazySet, ::LazySet)
+≈(::LazySet, ::LazySet)
 copy(::LazySet)
 ```
 
