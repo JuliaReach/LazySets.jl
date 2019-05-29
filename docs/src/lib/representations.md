@@ -156,6 +156,7 @@ radius(::EmptySet, ::Real=Inf)
 diameter(::EmptySet, ::Real=Inf)
 linear_map(::AbstractMatrix{N}, ::EmptySet{N}) where {N}
 translate(::EmptySet{N}, ::AbstractVector{N}) where {N<:Real}
+plot_recipe(::EmptySet{N}, ::N=zero(N)) where {N<:Real}
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::EmptySet{N}, ::N=zero(N)) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
@@ -265,8 +266,8 @@ radius_hyperrectangle(::Interval{N}, ::Int) where {N<:Real}
 -(::Interval{N}, ::Interval{N}) where {N<:Real}
 *(::Interval{N}, ::Interval{N}) where {N<:Real}
 rand(::Type{Interval})
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Interval{N}, ::N=zero(N)) where {N<:Real}
 isflat(::Interval)
+plot_recipe(::Interval{N}, ::N=zero(N)) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
@@ -317,7 +318,8 @@ halfspace_right(::LineSegment)
 vertices_list(::LineSegment{N}) where {N<:Real}
 constraints_list(::LineSegment{N}) where {N<:Real}
 translate(::LineSegment{N}, ::AbstractVector{N}) where {N<:Real}
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LineSegment{N}, ::N=zero(N)) where {N<:Real}
+plot_recipe(::LineSegment{N}, ::N=zero(N)) where {N<:Real}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Union{LineSegment{N}, Interval{N}}, ::N=zero(N)) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

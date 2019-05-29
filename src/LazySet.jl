@@ -437,3 +437,50 @@ function isuniversal(X::LazySet{N}, witness::Bool=false
         return false
     end
 end
+
+"""
+    plot_recipe(X::LazySet{N}, [ε]::N=N(PLOT_PRECISION)) where {N<:Real}
+
+Convert a convex set to a pair `(x, y)` of points for plotting.
+
+### Input
+
+- `X` -- convex set
+- `ε` -- (optional, default: `PLOT_PRECISION`) approximation error bound
+
+### Output
+
+A pair `(x, y)` of points that can be plotted.
+
+### Notes
+
+Plotting of unbounded sets is not implemented yet (see
+[#576](https://github.com/JuliaReach/LazySets.jl/issues/576)).
+
+### Algorithm
+
+We first assert that `X` is bounded.
+
+One-dimensional sets are converted to an `Interval`.
+We do not support three-dimensional or higher-dimensional sets at the moment.
+
+For two-dimensional sets, we first compute a polygonal overapproximation.
+The second argument, `ε`, corresponds to the error in Hausdorff distance between
+the overapproximating set and `X`.
+The default value `PLOT_PRECISION` is chosen such that the unit ball in the
+2-norm is approximated with reasonable accuracy.
+On the other hand, if you only want to produce a fast box-overapproximation of
+`X`, pass `ε=Inf`.
+Finally, we use the plot recipe for polygons.
+"""
+function plot_recipe(X::LazySet{N}, ε::N=N(PLOT_PRECISION)) where {N<:Real}
+    @assert dim(X) <= 2 "cannot plot a $(dim(X))-dimensional $(typeof(X))"
+    @assert isbounded(X) "cannot plot an unbounded $(typeof(X))"
+
+    if dim(X) == 1
+        Y = convert(Interval, X)
+    else
+        Y = overapproximate(X, ε)
+    end
+    return plot_recipe(Y, ε)
+end

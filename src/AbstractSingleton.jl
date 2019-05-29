@@ -259,6 +259,30 @@ end
 function ∈(S::AbstractSingleton{N}, X::LazySet{N})::Bool where {N<:Real}
     error("cannot make a point-in-set check if the left-hand side is " *
           "a set; either check for set inclusion, as in `S ⊆ X`, or check for " *
-          "membership, as in `element(S) ∈ X` (they behave equivalently although " *
+          "membership, as in `element(S) ∈ X` (the results are equivalent but " *
           "the implementations may differ)")
+end
+
+"""
+    plot_recipe(S::AbstractSingleton{N}, [ε]::N=zero(N)) where {N<:Real}
+
+Convert a singleton to a pair `(x, y)` of points for plotting.
+
+### Input
+
+- `S` -- singleton
+- `ε` -- (optional, default: `0`) ignored, used for dispatch
+
+### Output
+
+A pair `(x, y)` of one point that can be plotted.
+"""
+function plot_recipe(S::AbstractSingleton{N}, ε::N=zero(N)) where {N<:Real}
+    @assert dim(S) <= 3 "cannot plot a $(dim(S))-dimensional $(typeof(S))"
+
+    if dim(S) == 1
+        return [element(S)[1]], [zero(N)]
+    else
+        return [element(S)[1]], [element(S)[2]]
+    end
 end

@@ -472,3 +472,25 @@ this function depends on the absolute zero tolerance `ABSZTOL`.
 function isflat(I::Interval)::Bool
     return isapproxzero(IntervalArithmetic.diam(I.dat))
 end
+
+"""
+    plot_recipe(I::Interval{N}, [ε]::N=zero(N)) where {N<:Real}
+
+Convert an interval to a pair `(x, y)` of points for plotting.
+
+### Input
+
+- `I` -- interval
+- `ε` -- (optional, default: `0`) ignored, used for dispatch
+
+### Output
+
+A pair `(x, y)` of two points that can be plotted.
+
+### Notes
+
+We consider the interval as a line segment with y coordinate equal to zero.
+"""
+function plot_recipe(I::Interval{N}, ε::N=zero(N)) where {N<:Real}
+    return [min(I), max(I)], zeros(N, 2)
+end

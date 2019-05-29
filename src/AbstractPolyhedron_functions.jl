@@ -364,3 +364,51 @@ function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
     end
     return constraints_MP
 end
+
+"""
+    plot_recipe(P::AbstractPolyhedron{N}, [ε]::N=zero(N)) where {N<:Real}
+
+Convert a (bounded) polyhedron to a pair `(x, y)` of points for plotting.
+
+### Input
+
+- `P` -- bounded polyhedron
+- `ε` -- (optional, default: `0`) ignored, used for dispatch
+
+### Output
+
+A pair `(x, y)` of points that can be plotted.
+
+### Algorithm
+
+We first assert that `P` is bounded (i.e., that `P` is a polytope).
+
+One-dimensional polytopes are converted to an `Interval`.
+Three-dimensional or higher-dimensional polytopes are not supported.
+
+For two-dimensional polytopes (i.e., polygons) we compute their set of vertices
+using `vertices_list` and then plot the convex hull of these vertices.
+"""
+function plot_recipe(P::AbstractPolyhedron{N}, ε::N=zero(N)) where {N<:Real}
+    @assert dim(P) <= 2 "cannot plot a $(dim(P))-dimensional $(typeof(P))"
+    @assert isbounded(P) "cannot plot an unbounded $(typeof(P))"
+
+    if dim(P) == 1
+        return plot_recipe(convert(Interval, P), ε)
+    else
+        vlist = transpose(hcat(convex_hull(vertices_list(P))...))
+        if isempty(vlist)
+            @warn "received a polyhedron with no vertices during plotting"
+            return plot_recipe(EmptySet{N}(), ε)
+        end
+        x, y = vlist[:, 1], vlist[:, 2]
+
+        if length(x) > 1
+            # add first vertex to "close" the polygon
+            push!(x, x[1])
+            push!(y, y[1])
+        end
+
+        return x, y
+    end
+end
