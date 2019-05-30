@@ -32,11 +32,6 @@ struct HalfSpace{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
     b::N
 end
 
-function convert(::Type{HalfSpace{N, VN}}, hs::HalfSpace{T, VT}
-                ) where {N<:Real, VN<:AbstractVector{N}, T, VT<:AbstractVector{T}}
-    return HalfSpace{N, VN}(convert(VN, hs.a), convert(N, hs.b))
-end
-
 """
     LinearConstraint
 
