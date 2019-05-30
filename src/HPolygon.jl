@@ -10,8 +10,8 @@ are sorted in counter-clockwise fashion with respect to their normal directions.
 
 ### Fields
 
-- `constraints`       -- list of linear constraints, sorted by the angle in
-                         counter-clockwise fashion
+- `constraints`       -- list of linear constraints, sorted by the normal
+                         direction in counter-clockwise fashion
 - `sort_constraints`  -- (optional, default: `true`) flag for sorting the
                          constraints (sortedness is a running assumption of this
                          type)
