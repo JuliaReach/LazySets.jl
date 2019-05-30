@@ -65,7 +65,7 @@ function sign_cadlag(x::N)::N where {N<:Real}
 end
 
 """
-    ispermutation(u::AbstractVector{T}, v::AbstractVector{T})::Bool where T
+    ispermutation(u::AbstractVector{T}, v::AbstractVector)::Bool where {T}
 
 Check that two vectors contain the same elements up to reordering.
 
@@ -89,7 +89,7 @@ false
 
 ```
 """
-function ispermutation(u::AbstractVector{T}, v::AbstractVector{T})::Bool where T
+function ispermutation(u::AbstractVector{T}, v::AbstractVector)::Bool where {T}
     if length(u) != length(v)
         return false
     end
