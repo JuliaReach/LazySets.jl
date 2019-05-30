@@ -349,3 +349,21 @@ function translate(L::LineSegment{N}, v::AbstractVector{N}) where {N<:Real}
                                 "set by a $(length(v))-dimensional vector"
     return LineSegment(L.p + v, L.q + v)
 end
+
+"""
+    plot_recipe(L::LineSegment{N}, [ε]::N=zero(N)) where {N<:Real}
+
+Convert a line segment to a pair `(x, y)` of points for plotting.
+
+### Input
+
+- `L` -- line segment
+- `ε` -- (optional, default: `0`) ignored, used for dispatch
+
+### Output
+
+A pair `(x, y)` of two points that can be plotted.
+"""
+function plot_recipe(L::LineSegment{N}, ε::N=zero(N)) where {N<:Real}
+    return [L.p[1], L.q[1]], [L.p[2], L.q[2]]
+end

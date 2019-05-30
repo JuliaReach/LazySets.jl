@@ -63,11 +63,13 @@ tosimplehrep(::LazySet)
 isuniversal(::LazySet{N}, ::Bool=false) where {N<:Real}
 ```
 
-The following functions work with general two-dimensional `LazySet`s, provided that the overapproximation using iterative refinement is available:
+Plotting is available for general one- or two-dimensional `LazySet`s, provided
+that the overapproximation using iterative refinement is available:
 
 ```@docs
+plot_recipe(::LazySet{N}, ::N=N(1e-3)) where {N<:Real}
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet{N}, ::N=N(1e-3)) where {N<:Real}
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{XN}, ::N=N(1e-3)) where {N<:Real, XN<:LazySet{N}}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractVector{VN}, ::N=N(1e-3), ::Int=40, ::Bool=false) where {N<:Real, VN<:LazySet{N}}
 ```
 
 ### Set functions that override Base functions
@@ -121,6 +123,12 @@ constrained_dimensions(::AbstractPolyhedron)
 linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 ```
 
+Plotting (bounded) polyhedra is available, too:
+
+```@docs
+plot_recipe(::AbstractPolyhedron{N}, ::N=zero(N)) where {N<:Real}
+```
+
 ### Polytope
 
 A polytope is a bounded set with finitely many vertices (*V-representation*)
@@ -138,13 +146,6 @@ This interface defines the following functions:
 isbounded(::AbstractPolytope)
 singleton_list(::AbstractPolytope{N}) where {N<:Real}
 isempty(::AbstractPolytope)
-```
-
-Plotting abstract polytopes is available too:
-
-```@docs
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractPolytope{N}, ::N=zero(N)) where {N<:Real}
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{PN}, ::N=zero(N)) where {N<:Real, PN<:AbstractPolytope{N}}
 ```
 
 #### Polygon
@@ -252,6 +253,6 @@ high(::AbstractSingleton{N}, ::Int) where {N<:Real}
 low(::AbstractSingleton{N}) where {N<:Real}
 low(::AbstractSingleton{N}, ::Int) where {N<:Real}
 linear_map(::AbstractMatrix{N}, ::AbstractSingleton{N}) where {N<:Real}
+plot_recipe(::AbstractSingleton{N}, ::N=zero(N)) where {N<:Real}
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractSingleton{N}, ::N=zero(N)) where {N<:Real}
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{SN}, ::N=zero(N)) where {N<:Real, SN<:AbstractSingleton{N}}
 ```
