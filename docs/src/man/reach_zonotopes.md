@@ -92,7 +92,7 @@ R = Algorithm1(A, X0, δ, μ, 2 * δ); # warm-up
 
 R = Algorithm1(A, X0, δ, μ, T)
 
-plot(R, fillalpha=0.1)
+plot(R, 1e-2, 0, true; fillalpha=0.1)
 ```
 
 
@@ -114,5 +114,5 @@ R = Algorithm1(A, X0, δ, μ, 2 * δ); # warm-up
 R = Algorithm1(A, X0, δ, μ, T)
 Rproj = project(R, [1, 3], 5)
 
-plot(Rproj, fillalpha=0.1, xlabel="x1", ylabel="x3")
+plot(Rproj, 1e-2, 0, true; fillalpha=0.1, xlabel="x1", ylabel="x3")
 ```

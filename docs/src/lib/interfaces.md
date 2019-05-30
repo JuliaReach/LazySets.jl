@@ -69,7 +69,7 @@ that the overapproximation using iterative refinement is available:
 ```@docs
 plot_recipe(::LazySet{N}, ::N=N(1e-3)) where {N<:Real}
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet{N}, ::N=N(1e-3)) where {N<:Real}
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractVector{VN}, ::N=N(1e-3), ::Int=40) where {N<:Real, VN<:LazySet{N}}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractVector{VN}, ::N=N(1e-3), ::Int=40, ::Bool=false) where {N<:Real, VN<:LazySet{N}}
 ```
 
 ### Set functions that override Base functions
