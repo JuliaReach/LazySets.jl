@@ -183,9 +183,9 @@ constrained_dimensions(::HalfSpace{N}) where {N<:Real}
 translate(::HalfSpace{N}, ::AbstractVector{N}) where {N<:Real}
 halfspace_left(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
 halfspace_right(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
-tosimplehrep(::AbstractVector{HalfSpace{N}}) where {N<:Real}
-remove_redundant_constraints(::AbstractVector{LinearConstraint{N}}) where {N<:Real}
-remove_redundant_constraints!(::AbstractVector{LinearConstraint{N}}) where {N<:Real}
+tosimplehrep(::AbstractVector{LC}) where {N<:Real, LC<:LinearConstraint{N}}
+remove_redundant_constraints(::AbstractVector{LC}) where {N<:Real, LC<:LinearConstraint{N}}
+remove_redundant_constraints!(::AbstractVector{LC}) where {N<:Real, LC<:LinearConstraint{N}}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

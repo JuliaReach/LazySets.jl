@@ -479,7 +479,7 @@ function rand(::Type{VPolygon};
 end
 
 """
-    constraints_list(P::VPolygon{N})::Vector{LinearConstraint{N}} where {N<:Real}
+    constraints_list(P::VPolygon{N}) where {N<:Real}
 
 Return the list of constraints defining a polygon in V-representation.
 
@@ -496,7 +496,7 @@ The list of constraints of the polygon.
 First the H-representation of ``P`` is computed, then its list of constraints
 is returned. 
 """
-function constraints_list(P::VPolygon{N})::Vector{LinearConstraint{N}} where {N<:Real}
+function constraints_list(P::VPolygon{N}) where {N<:Real}
     return constraints_list(tohrep(P))
 end
 

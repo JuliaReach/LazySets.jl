@@ -291,7 +291,7 @@ function vertices_list(P::VPolytope{N})::Vector{Vector{N}} where {N<:Real}
 end
 
 """
-    constraints_list(P::VPolytope{N})::Vector{LinearConstraint{N}} where {N<:Real}
+    constraints_list(P::VPolytope{N}) where {N<:Real}
 
 Return the list of constraints defining a polytope in V-representation.
 
@@ -308,7 +308,7 @@ The list of constraints of the polytope.
 First the H-representation of ``P`` is computed, then its list of constraints
 is returned. 
 """
-function constraints_list(P::VPolytope{N})::Vector{LinearConstraint{N}} where {N<:Real}
+function constraints_list(P::VPolytope{N}) where {N<:Real}
     return constraints_list(tohrep(P))
 end
 

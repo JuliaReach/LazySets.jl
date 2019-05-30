@@ -9,7 +9,7 @@ export HalfSpace, LinearConstraint,
        halfspace_left, halfspace_right
 
 """
-    HalfSpace{N<:Real} <: AbstractPolyhedron{N}
+    HalfSpace{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
 
 Type that represents a (closed) half-space of the form ``a⋅x ≤ b``.
 
@@ -24,16 +24,17 @@ The set ``y ≥ 0`` in the plane:
 
 ```jldoctest
 julia> HalfSpace([0, -1.], 0.)
-HalfSpace{Float64}([0.0, -1.0], 0.0)
+HalfSpace{Float64,Array{Float64,1}}([0.0, -1.0], 0.0)
 ```
 """
-struct HalfSpace{N<:Real} <: AbstractPolyhedron{N}
-    a::AbstractVector{N}
+struct HalfSpace{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
+    a::VN
     b::N
 end
 
-function convert(::Type{HalfSpace{N}}, hs::HalfSpace) where {N<:Real}
-    return HalfSpace{N}(hs.a, hs.b)
+function convert(::Type{HalfSpace{N, VN}}, hs::HalfSpace{T, VT}
+                ) where {N<:Real, VN<:AbstractVector{N}, T, VT<:AbstractVector{T}}
+    return HalfSpace{N, VN}(convert(VN, hs.a), convert(N, hs.b))
 end
 
 """
@@ -225,8 +226,7 @@ function isempty(hs::HalfSpace)::Bool
 end
 
 """
-    constraints_list(hs::HalfSpace{N})::Vector{LinearConstraint{N}}
-        where {N<:Real}
+    constraints_list(hs::HalfSpace{N}) where {N<:Real}
 
 Return the list of constraints of a half-space.
 
@@ -238,14 +238,12 @@ Return the list of constraints of a half-space.
 
 A singleton list containing the half-space.
 """
-function constraints_list(hs::HalfSpace{N}
-                         )::Vector{LinearConstraint{N}} where {N<:Real}
+function constraints_list(hs::HalfSpace{N}) where {N<:Real}
     return [hs]
 end
 
 """
-    constraints_list(A::AbstractMatrix{N}, b::AbstractVector{N}
-                    )::Vector{LinearConstraint{N}} where {N<:Real}
+    constraints_list(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real}
 
 Convert a matrix-vector representation to a linear-constraint representation.
 
@@ -259,16 +257,12 @@ Convert a matrix-vector representation to a linear-constraint representation.
 A list of linear constraints.
 """
 function constraints_list(A::AbstractMatrix{N}, b::AbstractVector{N}
-                         )::Vector{LinearConstraint{N}} where {N<:Real}
+                         ) where {N<:Real}
     m = size(A, 1)
     @assert m == length(b) "a matrix with $m rows is incompatible with a " *
                            "vector of length $(length(b))"
 
-    constraints = Vector{LinearConstraint{N}}(undef, m)
-    @inbounds for i in 1:m
-        constraints[i] = LinearConstraint{N}(A[i, :], b[i])
-    end
-    return constraints
+    return [LinearConstraint(A[i, :], b[i]) for i in 1:m]
 end
 
 """
@@ -325,10 +319,10 @@ the upper and lower half-spaces:
 julia> using LazySets: halfspace_left
 
 julia> halfspace_left([0.0, 0.0], [1.0, 0.0])
-HalfSpace{Float64}([0.0, -1.0], 0.0)
+HalfSpace{Float64,Array{Float64,1}}([0.0, -1.0], 0.0)
 
 julia> halfspace_left([0.0, 0.0], [-1.0, 0.0])
-HalfSpace{Float64}([0.0, 1.0], 0.0)
+HalfSpace{Float64,Array{Float64,1}}([0.0, 1.0], 0.0)
 ```
 
 We create a box from the sequence of line segments that describe its edges:

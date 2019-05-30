@@ -180,8 +180,7 @@ function isempty(cp::CartesianProduct)::Bool
 end
 
 """
-    constraints_list(cp::CartesianProduct{N}
-                    )::Vector{LinearConstraint{N}} where {N<:Real}
+    constraints_list(cp::CartesianProduct{N}) where {N<:Real}
 
 Return the list of constraints of a (polytopic) Cartesian product.
 
@@ -193,8 +192,7 @@ Return the list of constraints of a (polytopic) Cartesian product.
 
 A list of constraints.
 """
-function constraints_list(cp::CartesianProduct{N}
-                         )::Vector{LinearConstraint{N}} where {N<:Real}
+function constraints_list(cp::CartesianProduct{N}) where {N<:Real}
     return constraints_list(CartesianProductArray([cp.X, cp.Y]))
 end
 
@@ -431,8 +429,7 @@ function isempty(cpa::CartesianProductArray)::Bool
 end
 
 """
-    constraints_list(cpa::CartesianProductArray{N}
-                    )::Vector{LinearConstraint{N}} where {N<:Real}
+    constraints_list(cpa::CartesianProductArray{N}) where {N<:Real}
 
 Return the list of constraints of a (polytopic) Cartesian product of a finite
 number of sets.
@@ -445,8 +442,7 @@ number of sets.
 
 A list of constraints.
 """
-function constraints_list(cpa::CartesianProductArray{N}
-                         )::Vector{LinearConstraint{N}} where {N<:Real}
+function constraints_list(cpa::CartesianProductArray{N}) where {N<:Real}
     clist = Vector{LinearConstraint{N}}()
     n = dim(cpa)
     sizehint!(clist, n)

@@ -24,7 +24,7 @@ assumption in this type.
 struct HPolytope{N<:Real} <: AbstractPolytope{N}
     constraints::Vector{LinearConstraint{N}}
 
-    function HPolytope{N}(constraints::Vector{LinearConstraint{N}};
+    function HPolytope{N}(constraints::Vector{<:LinearConstraint{N}};
                           check_boundedness::Bool=false
                          ) where {N<:Real}
         P = new{N}(constraints)
@@ -35,12 +35,13 @@ struct HPolytope{N<:Real} <: AbstractPolytope{N}
 end
 
 # convenience constructor without type parameter
-HPolytope(constraints::Vector{LinearConstraint{N}};
+HPolytope(constraints::Vector{<:LinearConstraint{N}};
           check_boundedness::Bool=false) where {N<:Real} =
     HPolytope{N}(constraints; check_boundedness=check_boundedness)
 
 # constructor with no constraints
-HPolytope{N}() where {N<:Real} = HPolytope{N}(Vector{LinearConstraint{N}}())
+HPolytope{N}() where {N<:Real} =
+    HPolytope{N}(Vector{LinearConstraint{N, <:AbstractVector{N}}}())
 
 # constructor with no constraints of type Float64
 HPolytope() = HPolytope{Float64}()
