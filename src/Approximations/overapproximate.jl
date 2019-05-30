@@ -519,30 +519,32 @@ end
 
 function load_taylormodels_overapproximation()  # function to be loaded by Requires
 return quote
+        
+        
+        
+        
 """
          overapproximate(vTM::Vector{TaylorModel1{T, S}},
-                            ::Type{Zonotope})where{T, S}
+                            ::Type{Zonotope}) where {T, S}
 
-Convert between TaylorModel1 and in Zonotope.
+Overapproximate a taylor model in one variable with a zonotope.
 
 ### Input
 
 
-- `vTM` -- Vector of TaylorModel1
-- `[P]` -- target type
+- `vTM` -- `TaylorModel1`
+- `Zonotope` -- type for dispatch
 
 ### Output
 
-The Zonotope converted from vector of TaylorModel1 as the target set.
+A zonotope that overapproximates the range of the given taylor model.
 
-### example
+### Examples
 
-julia> using TaylorModels,IntervalArithmetic,Revise
 
-julia> using LazySets:Hyperrectangle,Zonotope,convert
+```julia
+julia> using TaylorModels, IntervalArithmetic
 
-julia> m = 2
-2
 
 julia> δ = 0.5; I = Interval(-δ, δ)
 [-0.5, 0.5]
@@ -573,52 +575,60 @@ Zonotope{Float64}([1.0, -2.1],
 
 """
 function overapproximate(vTM::Vector{TaylorModel1{T, S}},
-                            ::Type{Zonotope})where{T, S}
-#(that the vector of TMs is linear, or explain in the docs until this assumption is lifted)
-   # @assert TM.pol.order <=1
-   l_vTM = length(vTM)
-   Poly_L = [ linear_polynomial(vTM[i].pol) + constant_term(vTM[i].pol) for i=1:l_vTM ]
-   Poly_NL = [ (vTM[i].pol - Poly_L[i]) for i = 1:l_vTM ]
-   Int_Poly_NL = [ evaluate(Poly_NL[i], vTM[i].dom) for i=1:l_vTM ]
-   Rem = [ (Int_Poly_NL[i] + vTM[i].rem) for i = 1:l_vTM ]
-   TM = [ TaylorModel1(Poly_L[i], Rem[i], vTM[i].x0, vTM[i].dom) for i=1:l_vTM ]
-   TM_length = length(TM)
-   Q = [ normalize_taylor(TM[i].pol, TM[i].dom, true) for i = 1:TM_length ]
-   Z = Zonotope([ (Q[i].coeffs[1]) for i = 1:TM_length ],
-                [ vcat([Q[i].coeffs[2] for i = 1:TM_length]) ])
-   if TM_length == 1
-        I_Rem = TM[1].rem
-   else
-       for i = 1:TM_length
-          if i == 1
-               I_Rem = TM[1].rem
-          else
-               I_Rem = I_Rem×TM[i].rem
-          end
-       end
+                            ::Type{Zonotope}) where {T, S}
+    m = length(vTM)
+    c = Vector{T}(undef, m) # center of the zonotope
+    gen = Vector{T}(undef, m) # generator of the linear part
+    rem_gen = Vector{T}(undef, m) # generators for the remainder
+    
+    @inbounds for (i, x) in enumerate(vTM)
+        # linearize the TM
+        pol_lin = constant_term(x.pol) + linear_polynomial(x.pol)
+        rem_nonlin = x.rem
+        
+        # if there are nonlinear terms, build an overapproximation
+        if length(x.pol.coeffs) > 2
+            pol_nonlin = x.pol - pol_lin
+            rem_nonlin += evaluate(pol_nonlin, x.dom)
+        end
+
+        # normalize the linear polynomial to the symmetric interval [-1, 1]
+        Q = normalize_taylor(pol_lin, x.dom, true)
+
+        # build the generators
+        α = mid(rem_nonlin)
+        c[i] = Q.coeffs[1] + α
+        gen[i] = Q.coeffs[2]
+        rem_gen[i] = abs(rem_nonlin.hi - α)
+        println(c[i],gen[i],rem_gen[i])
     end
-    H = convert(Hyperrectangle, I_Rem)
-    return minkowski_sum(Z, convert(Zonotope, H))
- end
+    return Zonotope(c, hcat(gen, Diagonal(rem_gen)))
+end
 
- """
+        
+        
+
+"""
           overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
-                             ::Type{Zonotope})where{N,T, S}
+                             ::Type{Zonotope}) where {N,T, S}
 
 
- Convert between TaylorModelN and in Zonotope.
+Overapproximate a multivariable taylor model with a zonotope.
 
- ### Input
+### Input
 
- - `vTM` -- Vector of TaylorModelN
- - `[P]` -- target type
 
- ### Output
+- `vTM` -- `TaylorModelN`
+- `Zonotope` -- type for dispatch
 
- The Zonotope converted from vector of TaylorModelN as the target set.
+### Output
 
- ### example
+A zonotope that overapproximates the range of the given taylor model.
 
+### Examples
+
+       
+```julia        
 julia> m = 4
 4
 
@@ -661,35 +671,34 @@ Zonotope{Float64}([5.5, 124.0],
    [2, 4]  =  123.0)
 
 """
- function overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
-                             ::Type{Zonotope})where{N,T, S}
-
- #(that the vector of TMs is linear, or explain in the docs until this assumption is lifted)
-    #@assert TM.pol.order <=1
-    l_vTM = length(vTM)
-    Poly_L = [ linear_polynomial(vTM[i].pol) + constant_term(vTM[i].pol) for i = 1:l_vTM ]
-    Poly_NL = [ (vTM[i].pol - Poly_L[i]) for i = 1:l_vTM ]
-    Int_Poly_NL = [ evaluate(Poly_NL[i], vTM[i].dom) for i = 1:l_vTM ]
-    Rem = [ (Int_Poly_NL[i] + vTM[i].rem) for i = 1:l_vTM ]
-    TM = [ TaylorModelN(Poly_L[i], Rem[i], vTM[i].x0, vTM[i].dom) for i = 1:l_vTM ]
-    TM_length = length(TM)
-    Q = [ normalize_taylor(TM[i].pol, TM[i].dom, true) for i = 1:TM_length ]
-    l_Vab = length(Q[1].coeffs[2].coeffs)
-    Z = Zonotope([ (Q[i].coeffs[1].coeffs[1]) for i = 1:TM_length ],
-                [ [ (Q[i].coeffs[2].coeffs[j]) for i = 1:TM_length ] for j = 1:l_Vab ])
-    if TM_length == 1
-       I_Rem = TM[1].rem
-    else
-       for i = 1:TM_length
-          if i == 1
-              I_Rem = TM[1].rem
-          else
-              I_Rem = I_Rem×TM[i].rem
-          end
+function overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
+                            ::Type{Zonotope}) where {N,T, S}
+    m = length(vTM)
+    c = Vector{T}(undef, m) # center of the zonotope
+    gen = Vector{T}(undef, m) # generator of the linear part
+    rem_gen = Vector{T}(undef, m) # generators for the remainder
+    
+    @inbounds for (i, x) in enumerate(vTM)
+        # linearize the TM
+        pol_lin = constant_term(x.pol) + linear_polynomial(x.pol)
+        rem_nonlin = x.rem
+        
+        # if there are nonlinear terms, build an overapproximation
+        if length(x.pol.coeffs) > 2
+            pol_nonlin = x.pol - pol_lin
+            rem_nonlin += evaluate(pol_nonlin, x.dom)
         end
+
+        # normalize the linear polynomial to the symmetric interval [-1, 1]
+        Q = normalize_taylor(pol_lin, x.dom, true)
+        
+        n = length(Q.coeffs[2].coeffs) 
+        # build the generators
+        α = mid(rem_nonlin)
+        c[i] = Q.coeffs[1].coeffs[1] + α
+        gen[i] =sum([Q.coeffs[2].coeffs[j] for j = 1:n ])
+        rem_gen[i] = abs(rem_nonlin.hi - α)
+        println(c[i],gen[i],rem_gen[i])
     end
-    H = convert(Hyperrectangle, I_Rem)
-    return minkowski_sum(Z, convert(Zonotope, H))
- end
+    return Zonotope(c, hcat(gen, Diagonal(rem_gen)))
 end
-end 
