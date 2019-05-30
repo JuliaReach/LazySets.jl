@@ -600,7 +600,6 @@ function overapproximate(vTM::Vector{TaylorModel1{T, S}},
         c[i] = Q.coeffs[1] + α
         gen[i] = Q.coeffs[2]
         rem_gen[i] = abs(rem_nonlin.hi - α)
-        println(c[i],gen[i],rem_gen[i])
     end
     return Zonotope(c, hcat(gen, Diagonal(rem_gen)))
 end
@@ -698,7 +697,6 @@ function overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
         c[i] = Q.coeffs[1].coeffs[1] + α
         gen[i] =sum([Q.coeffs[2].coeffs[j] for j = 1:n ])
         rem_gen[i] = abs(rem_nonlin.hi - α)
-        println(c[i],gen[i],rem_gen[i])
     end
     return Zonotope(c, hcat(gen, Diagonal(rem_gen)))
 end
