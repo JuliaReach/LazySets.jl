@@ -67,7 +67,7 @@ end
 
 """
     new_approx(S::LazySet, p1::Vector{N}, d1::Vector{N}, p2::Vector{N},
-               d2::Vector{N}) where {N<:Real}
+               d2::Vector{N}) where {N<:AbstractFloat}
 
 Create a `LocalApproximation` instance for the given excerpt of a polygonal
 approximation.
@@ -85,7 +85,7 @@ approximation.
 A local approximation of `S` in the given directions.
 """
 function new_approx(S::LazySet, p1::Vector{N}, d1::Vector{N}, p2::Vector{N},
-                    d2::Vector{N}) where {N<:Real}
+                    d2::Vector{N}) where {N<:AbstractFloat}
     if norm(p1-p2, 2) <= TOL(N)
         # this approximation cannot be refined and we set q = p1 by convention
         ap = LocalApproximation{N}(p1, d1, p2, d2, p1, false, zero(N))
@@ -189,7 +189,7 @@ end
 
 """
     approximate(S::LazySet{N},
-                ε::N)::PolygonalOverapproximation{N} where {N<:Real}
+                ε::N)::PolygonalOverapproximation{N} where {N<:AbstractFloat}
 
 Return an ε-close approximation of the given 2D convex set (in terms of
 Hausdorff distance) as an inner and an outer approximation composed by sorted
@@ -204,9 +204,8 @@ local `Approximation2D`.
 
 An ε-close approximation of the given 2D convex set.
 """
-function approximate(S::LazySet{N},
-                     ε::N)::PolygonalOverapproximation{N} where {N<:Real}
-
+function approximate(S::LazySet{N}, ε::N
+                    )::PolygonalOverapproximation{N} where {N<:AbstractFloat}
     # initialize box directions
     pe = σ(DIR_EAST(N), S)
     pn = σ(DIR_NORTH(N), S)
