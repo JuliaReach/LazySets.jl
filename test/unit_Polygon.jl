@@ -372,7 +372,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test tohrep(VPolygon{N}()) isa EmptySet{N}
 end
 
-function same_constraints(v::Vector{LinearConstraint{N}})::Bool where N<:Real
+function same_constraints(v::Vector{<:LinearConstraint{N}})::Bool where N<:Real
     c1 = v[1]
     for k = 2:length(v)
         c2 = v[2]

@@ -549,8 +549,7 @@ function split(Z::Zonotope, j::Int)
 end
 
 """
-    constraints_list(P::Zonotope{N}
-                    )::Vector{LinearConstraint{N}} where {N<:Real}
+    constraints_list(P::Zonotope{N}) where {N<:Real}
 
 Return the list of constraints defining a zonotope.
 
@@ -568,14 +567,12 @@ This is the (inefficient) fallback implementation for rational numbers.
 It first computes the vertices and then converts the corresponding polytope
 to constraint representation.
 """
-function constraints_list(Z::Zonotope{N}
-                         )::Vector{LinearConstraint{N}} where {N<:Real}
+function constraints_list(Z::Zonotope{N}) where {N<:Real}
     return constraints_list(VPolytope(vertices_list(Z)))
 end
 
 """
-    constraints_list(Z::Zonotope{N}
-                    )::Vector{LinearConstraint{N}} where {N<:AbstractFloat}
+    constraints_list(Z::Zonotope{N}) where {N<:AbstractFloat}
 
 Return the list of constraints defining a zonotope.
 
@@ -606,8 +603,7 @@ Reachable Sets of Hybrid Systems Using a Combination of Zonotopes and Polytopes.
 The one-dimensional case is not covered by that algorithm; we manually handle
 this case, assuming that there is only one generator.
 """
-function constraints_list(Z::Zonotope{N}
-                         )::Vector{LinearConstraint{N}} where {N<:AbstractFloat}
+function constraints_list(Z::Zonotope{N}) where {N<:AbstractFloat}
     p = ngens(Z)
     n = dim(Z)
     if p < n
@@ -615,8 +611,6 @@ function constraints_list(Z::Zonotope{N}
     end
 
     G = Z.generators
-    m = binomial(p, n - 1)
-    constraints = Vector{LinearConstraint{N}}(undef, 2 * m)
 
     # special handling of 1D case
     if n == 1
@@ -627,13 +621,15 @@ function constraints_list(Z::Zonotope{N}
 
         c = Z.center[1]
         g = G[:, 1][1]
-        constraints[1] = LinearConstraint([N(1)], c + g)
-        constraints[2] = LinearConstraint([N(-1)], g - c)
+        constraints = [LinearConstraint([N(1)], c + g),
+                       LinearConstraint([N(-1)], g - c)]
         return constraints
     end
 
     i = 0
     c = Z.center
+    m = binomial(p, n - 1)
+    constraints = Vector{LinearConstraint{N, Vector{N}}}(undef, 2 * m)
     for columns in StrictlyIncreasingIndices(p, n-1)
         i += 1
         c⁺ = cross_product(view(G, :, columns))

@@ -9,8 +9,8 @@ equivalently, sets defined as an intersection of a finite number of half-spaces.
 ### Notes
 
 Every concrete `AbstractPolyhedron` must define the following functions:
-- `constraints_list(::AbstractPolyhedron{N})::Vector{LinearConstraint{N}}` --
-    return a list of all facet constraints
+- `constraints_list(::AbstractPolyhedron{N})` -- return a list of all facet
+    constraints
 
 ```jldoctest
 julia> subtypes(AbstractPolyhedron)

@@ -53,13 +53,13 @@ mutable struct HPolygonOpt{N<:Real} <: AbstractHPolygon{N}
     ind::Int
 
     # default constructor that applies sorting of the given constraints
-    function HPolygonOpt{N}(constraints::Vector{LinearConstraint{N}},
+    function HPolygonOpt{N}(constraints::Vector{<:LinearConstraint{N}},
                             ind::Int=1;
                             sort_constraints::Bool=true,
                             check_boundedness::Bool=false,
                             prune::Bool=true) where {N<:Real}
         if sort_constraints
-            sorted_constraints = Vector{LinearConstraint{N}}()
+            sorted_constraints = Vector{eltype(constraints)}()
             sizehint!(sorted_constraints, length(constraints))
             for ci in constraints
                 addconstraint!(sorted_constraints, ci; prune=prune)
@@ -75,7 +75,7 @@ mutable struct HPolygonOpt{N<:Real} <: AbstractHPolygon{N}
 end
 
 # convenience constructor without type parameter
-HPolygonOpt(constraints::Vector{LinearConstraint{N}},
+HPolygonOpt(constraints::Vector{<:LinearConstraint{N}},
             ind::Int=1;
             sort_constraints::Bool=true,
             check_boundedness::Bool=false,
@@ -87,7 +87,8 @@ HPolygonOpt(constraints::Vector{LinearConstraint{N}},
                    prune=prune)
 
 # constructor with no constraints
-HPolygonOpt{N}() where {N<:Real} = HPolygonOpt{N}(Vector{LinearConstraint{N}}())
+HPolygonOpt{N}() where {N<:Real} =
+    HPolygonOpt{N}(Vector{LinearConstraint{N, <:AbstractVector{N}}}())
 
 # constructor with no constraints of type Float64
 HPolygonOpt() = HPolygonOpt{Float64}()

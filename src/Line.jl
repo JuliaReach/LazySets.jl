@@ -89,8 +89,7 @@ end
 
 
 """
-    constraints_list(L::Line{N})::Vector{LinearConstraint{N}}
-        where {N<:Real}
+    constraints_list(L::Line{N}) where {N<:Real}
 
 Return the list of constraints of a line.
 
@@ -102,8 +101,7 @@ Return the list of constraints of a line.
 
 A list containing two half-spaces.
 """
-function constraints_list(L::Line{N}
-                         )::Vector{LinearConstraint{N}} where {N<:Real}
+function constraints_list(L::Line{N}) where {N<:Real}
     return _constraints_list_hyperplane(L.a, L.b)
 end
 

@@ -180,7 +180,7 @@ rand(::Type{HPOLYGON}) where {HPOLYGON<:AbstractHPolygon}
 tohrep(::HPOLYGON) where {HPOLYGON<:AbstractHPolygon}
 tovrep(::AbstractHPolygon{N}) where {N<:Real}
 addconstraint!(::AbstractHPolygon{N}, ::LinearConstraint{N}) where {N<:Real}
-addconstraint!(::Vector{LinearConstraint{N}}, ::LinearConstraint{N}) where {N<:Real}
+addconstraint!(::Vector{LC}, ::LinearConstraint{N}) where {N<:Real, LC<:LinearConstraint{N}}
 isredundant(::LinearConstraint{N}, ::LinearConstraint{N}, ::LinearConstraint{N}) where {N<:Real}
 remove_redundant_constraints!(::AbstractHPolygon)
 constraints_list(::AbstractHPolygon{N}) where {N<:Real}
