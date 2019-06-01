@@ -516,3 +516,58 @@ function overapproximate(cap::Intersection{N,
     return overapproximate(swap(cap), dir; kwargs...)
 end
 
+"""
+    overapproximate(lm::LinearMap{N, <:CartesianProductArray{N, <:LazySet{N}}},
+                         dir::Type{<:AbstractDirections})::CartesianProductArray{N, HPolytope{N}} where {N}
+
+Overapproximating a lazy linear map of cartesian product array with template directions for each block.
+
+### Input
+
+- `lm`   -- lazy linear map of cartesian product array
+- `dir` -- (concrete) direction representation
+
+### Output
+
+An `CartesianProductArray` with overapproximation of the each block with the directions from `dir`.
+"""
+function overapproximate(lm::LinearMap{N, <:CartesianProductArray{N, <:LazySet{N}}},
+                         dir::Type{<:AbstractDirections})::CartesianProductArray{N, HPolytope{N}} where {N}
+
+    if !(size(lm.M, 2) == dim(lm.X))
+        error("Matrix needs to be commensurate with the cartesian product")
+    end
+
+    cp = lm.X
+    M = lm.M
+
+    array = Vector{HPolytope{N}}
+    sizehint!(array,length(cp.array))
+    col_st_index, col_end_ind = 0, 0
+
+    for bi in 1:length(cp.array)
+        col_st_index = col_end_ind + 1
+        n = dim(cp.array[bi])
+        col_end_ind += n
+
+        start_ind, end_ind = 1, n
+        matrices = Vector{Matrix{N}}()
+
+        while end_ind <= size(M, 2)
+            push!(matrices, M[col_st_index : col_end_ind, start_ind : end_ind])
+            start_ind = end_ind + 1
+            end_ind += n
+        end
+
+        v_block = MinkowskiSumArray()
+
+        for m in matrices
+            push!(v_block.array,LinearMap(m, cp.array[bi]))
+        end
+
+        push!(array, Approximations.overapproximate(v_block, dir{N}(dim(v_block))))
+    end
+
+    result = CartesianProductArray{N, HPolytope{N}}(array)
+    return result
+end
