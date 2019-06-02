@@ -47,7 +47,7 @@ for N in [Float64, Rational{Int}, Float32]
     h2 = Hyperrectangle(N[2.5, 4.5],  N[1/2, 1/2])
     H = overapproximate(h1 × h2, Hyperrectangle) # defaults to convert method
     @test low(H) == N[0, 2, 4] && high(H) == N[1, 3, 5]
-    
+
     # overapproximation of the lazy linear map of a hyperrectangular set
     H = Hyperrectangle(N[0, 0], N[1/2, 1])
     M = Diagonal(N[2, 2])
@@ -129,4 +129,29 @@ for N in [Float64, Float32]
     Y_zonotope = overapproximate(Y, Zonotope) # overapproximate with a zonotope
     @test Y_polygon ⊆ Y_zonotope
     @test !(Y_zonotope ⊆ Y_polygon)
+
+    #Zonotope approximation of TaylorModel1
+    x₀ = Interval(0.0)
+    D = Interval(-3.0, 1.0)
+    δ = 0.5;I = Interval(-δ, δ)
+    p = Taylor1(N[2.0, 1.0], 2)
+    p1 = Taylor1(N[0.9, 3.0], 2)
+    TM = [TaylorModel1(p, I, x₀, D),TaylorModel1(p1, I, x₀, D)]
+    Z1 = overapproximate(TM,Zonotope)
+    Z2 = Zonotope(N[1.0,-2.1],[N[2.0,6.0],N[0.5,0.0],N[0.0,0.5]])
+    @test Z1 == Z2 
+
+    #Zonotope approximation of TaylorModelN
+    x₁, x₂ = set_variables(N, ["x₁", "x₂"], order=5)
+    x₀ = Interval(0.0, 0.0)×Interval(0.0, 0.0)
+    Dx₁ = Interval(0.0, 3.0)
+    Dx₁ = Interval(-1.0, 1.0)
+    D = Dx1×Dx2
+    δ = 0.5;I = Interval(-δ, δ)
+    p1 = 1 + x₁^2 - x₂
+    p2 = x₂^3 + 3x₁^4 + x₁ + 1
+    TM = [TaylorModelN(p,I,x0,D), TaylorModelN(p1,I,x0,D)]
+    Z1 = overapproximate(TM,Zonotope)
+    Z2 = Zonotope(N[5.5,124.0],[N[0.0,1.5],N[-1.0,0.0],N[5.0,0.0],N[0.0,123.0]])
+    @test Z1 == Z2
 end

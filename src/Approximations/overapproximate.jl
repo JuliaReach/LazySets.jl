@@ -519,10 +519,7 @@ end
 
 function load_taylormodels_overapproximation()  # function to be loaded by Requires
 return quote
-        
-        
-        
-        
+
 """
          overapproximate(vTM::Vector{TaylorModel1{T, S}},
                             ::Type{Zonotope}) where {T, S}
@@ -566,12 +563,21 @@ julia> TM = [TaylorModel1(p, I, x₀, D),TaylorModel1(p1, I, x₀, D)]
  2.0 + 1.0 t + [-0.5, 0.5]
  0.9 + 3.0 t + [-0.5, 0.5]
 
-julia> overapproximate(Zonotope,TM)
+julia> overapproximate(TM,Zonotope)
 Zonotope{Float64}([1.0, -2.1],
    [1, 1]  =  2.0
    [2, 1]  =  6.0
    [1, 2]  =  0.5
    [2, 3]  =  0.5)
+```
+### Algorithm
+
+The TaylorModel ``TM`` can be enclosed by a zonotope ``Z = ⟨c, G⟩``.
+A simple but effective way to do so is to perform a conservative linearization
+on the ``TM``,
+``TM = (p′, I′) = (p − pN , I + Int(pN ))``
+Now idea is to normalize the linear part and take Box overapproximate of nonlinear
+part then collect center and generators of zonotope overapproximating TaylorModel.
 
 """
 function overapproximate(vTM::Vector{TaylorModel1{T, S}},
@@ -580,21 +586,18 @@ function overapproximate(vTM::Vector{TaylorModel1{T, S}},
     c = Vector{T}(undef, m) # center of the zonotope
     gen = Vector{T}(undef, m) # generator of the linear part
     rem_gen = Vector{T}(undef, m) # generators for the remainder
-    
+
     @inbounds for (i, x) in enumerate(vTM)
         # linearize the TM
         pol_lin = constant_term(x.pol) + linear_polynomial(x.pol)
         rem_nonlin = x.rem
-        
         # if there are nonlinear terms, build an overapproximation
         if length(x.pol.coeffs) > 2
             pol_nonlin = x.pol - pol_lin
             rem_nonlin += evaluate(pol_nonlin, x.dom)
         end
-
         # normalize the linear polynomial to the symmetric interval [-1, 1]
         Q = normalize_taylor(pol_lin, x.dom, true)
-
         # build the generators
         α = mid(rem_nonlin)
         c[i] = Q.coeffs[1] + α
@@ -603,9 +606,6 @@ function overapproximate(vTM::Vector{TaylorModel1{T, S}},
     end
     return Zonotope(c, hcat(gen, Diagonal(rem_gen)))
 end
-
-        
-        
 
 """
           overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
@@ -626,8 +626,8 @@ A zonotope that overapproximates the range of the given taylor model.
 
 ### Examples
 
-       
-```julia        
+
+```julia
 julia> m = 4
 4
 
@@ -668,37 +668,41 @@ Zonotope{Float64}([5.5, 124.0],
    [1, 2]  =  -1.0
    [1, 3]  =  5.0
    [2, 4]  =  123.0)
+ ```
+### Algorithm
+
+The TaylorModel ``TM`` can be enclosed by a zonotope ``Z = ⟨c, G⟩``.
+A simple but effective way to do so is to perform a conservative linearization
+on the ``TM``,
+``TM = (p′, I′) = (p − pN , I + Int(pN ))``
+Now idea is to normalize the linear part and take Box overapproximate of nonlinear
+part then collect center and generators of zonotope overapproximating TaylorModel.
 
 """
 function overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
                             ::Type{Zonotope}) where {N,T, S}
     m = length(vTM)
+    n = length(vTM[1].pol.coeffs[2].coeffs)
     c = Vector{T}(undef, m) # center of the zonotope
-    gen = Vector{T}(undef, m) # generator of the linear part
+    gen = Matrix{T}(undef, m, n) # generator of the linear part
     rem_gen = Vector{T}(undef, m) # generators for the remainder
-    
+
     @inbounds for (i, x) in enumerate(vTM)
         # linearize the TM
         pol_lin = constant_term(x.pol) + linear_polynomial(x.pol)
         rem_nonlin = x.rem
-        
-        # if there are nonlinear terms, build an overapproximation
-        if length(x.pol.coeffs) > 2
-            pol_nonlin = x.pol - pol_lin
-            rem_nonlin += evaluate(pol_nonlin, x.dom)
-        end
 
+        pol_nonlin = x.pol - pol_lin
+        rem_nonlin += evaluate(pol_nonlin, x.dom)
         # normalize the linear polynomial to the symmetric interval [-1, 1]
         Q = normalize_taylor(pol_lin, x.dom, true)
-        
-        n = length(Q.coeffs[2].coeffs) 
         # build the generators
         α = mid(rem_nonlin)
         c[i] = Q.coeffs[1].coeffs[1] + α
-        gen[i] =sum([Q.coeffs[2].coeffs[j] for j = 1:n ])
+        gen[i,1:n] = Q.coeffs[2].coeffs
         rem_gen[i] = abs(rem_nonlin.hi - α)
     end
     return Zonotope(c, hcat(gen, Diagonal(rem_gen)))
 end
 end
-end    
+end
