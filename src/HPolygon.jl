@@ -10,36 +10,47 @@ are sorted in counter-clockwise fashion with respect to their normal directions.
 
 ### Fields
 
-- `constraints`       -- list of linear constraints, sorted by the angle
+- `constraints`       -- list of linear constraints, sorted by the normal
+                         direction in counter-clockwise fashion
 - `sort_constraints`  -- (optional, default: `true`) flag for sorting the
                          constraints (sortedness is a running assumption of this
                          type)
 - `check_boundedness` -- (optional, default: `false`) flag for checking if the
                          constraints make the polygon bounded; (boundedness is a
                          running assumption of this type)
+- `prune`             -- (optional, default: `true`) flag for removing redundant
+                         constraints
 
 ### Notes
 
-The default constructor assumes that the given list of edges is sorted.
-It *does not perform* any sorting.
-Use `addconstraint!` to iteratively add the edges in a sorted way.
+The option `sort_constraints` can be used to deactivate automatic sorting of
+constraints in counter-clockwise fashion, which is an invariant of this type.
+Alternatively, one can construct an `HPolygon` with empty constraints list,
+which can then be filled iteratively using `addconstraint!`.
 
-- `HPolygon(constraints::Vector{LinearConstraint{<:Real}})`
-  -- default constructor
-- `HPolygon()`
-  -- constructor with no constraints
+Similarly, the option `prune` can be used to deactivate automatic pruning of
+redundant constraints.
+
+Another type assumption is that the polygon is bounded.
+The option `check_boundedness` can be used to assert this.
+This option is deactivated by default because we explicitly want to allow the
+iterative addition of the constraints, and hence one has to initially construct
+an empty list of constraints (which represents an unbounded set).
+The user has to make sure that the `HPolygon` is not used before the constraints
+actually describe a bounded set.
+The function `isbounded` can be used to manually assert boundedness.
 """
 struct HPolygon{N<:Real} <: AbstractHPolygon{N}
     constraints::Vector{LinearConstraint{N}}
 
     # default constructor that applies sorting of the given constraints and
     # (checks for and) removes redundant constraints
-    function HPolygon{N}(constraints::Vector{LinearConstraint{N}};
+    function HPolygon{N}(constraints::Vector{<:LinearConstraint{N}};
                          sort_constraints::Bool=true,
                          check_boundedness::Bool=false,
                          prune::Bool=true) where {N<:Real}
         if sort_constraints
-            sorted_constraints = Vector{LinearConstraint{N}}()
+            sorted_constraints = Vector{eltype(constraints)}()
             sizehint!(sorted_constraints, length(constraints))
             for ci in constraints
                 addconstraint!(sorted_constraints, ci; prune=prune)
@@ -55,7 +66,7 @@ struct HPolygon{N<:Real} <: AbstractHPolygon{N}
 end
 
 # convenience constructor without type parameter
-HPolygon(constraints::Vector{LinearConstraint{N}};
+HPolygon(constraints::Vector{<:LinearConstraint{N}};
          sort_constraints::Bool=true,
          check_boundedness::Bool=false,
          prune::Bool=true) where {N<:Real} =
@@ -65,7 +76,8 @@ HPolygon(constraints::Vector{LinearConstraint{N}};
                 prune=prune)
 
 # constructor for an HPolygon with no constraints
-HPolygon{N}() where {N<:Real} = HPolygon{N}(Vector{LinearConstraint{N}}())
+HPolygon{N}() where {N<:Real} =
+    HPolygon{N}(Vector{LinearConstraint{N, <:AbstractVector{N}}}())
 
 # constructor for an HPolygon with no constraints of type Float64
 HPolygon() = HPolygon{Float64}()

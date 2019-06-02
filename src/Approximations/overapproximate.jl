@@ -281,7 +281,7 @@ hybrid systems using a combination of zonotopes and polytopes. Nonlinear analysi
 hybrid systems, 4(2), 233-249.*
 """
 function overapproximate(Z::Zonotope, ::Type{<:Hyperrectangle})::Hyperrectangle
-    r = Compat.sum(abs.(Z.generators), dims=2)[:]
+    r = sum(abs.(Z.generators), dims=2)[:]
     return Hyperrectangle(Z.center, r)
 end
 

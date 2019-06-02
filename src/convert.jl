@@ -220,20 +220,20 @@ Convert from 2D polytope in H-representation to polygon in H-representation.
 
 ### Input
 
-- `type` -- target type
-- `P`    -- source polytope (must be 2D)
-
+- `type`  -- target type
+- `P`     -- source polytope (must be 2D)
+- `prune` -- (optional, default: `true`) flag for removing redundant
+             constraints in the end
 ### Output
 
 The 2D polytope represented as polygon.
 """
-function convert(::Type{HPOLYGON},
-                 P::HPolytope{N}) where {N<:Real, HPOLYGON<:AbstractHPolygon}
+function convert(::Type{HPOLYGON}, P::HPolytope{N};
+                 prune::Bool=true) where {N<:Real, HPOLYGON<:AbstractHPolygon}
     @assert dim(P) == 2 "polytope must be two-dimensional for conversion"
     H = HPOLYGON{N}()
     for ci in constraints_list(P)
-        # guarantee that the edges are correctly sorted for storage
-        addconstraint!(H, ci; prune=false)
+        addconstraint!(H, ci; prune=prune)
     end
     return H
 end
@@ -420,16 +420,16 @@ Convert from line segment to polygon in H-representation.
 
 ### Input
 
-- `type` -- target type
-- `L`    -- line segment
-
+- `type`  -- target type
+- `L`     -- line segment
+- `prune` -- (optional, default: `false`) flag for removing redundant
+             constraints in the end
 ### Output
 
 A flat polygon in constraint representation with the minimal number of
 constraints (four).
 """
-function convert(::Type{HPOLYGON}, L::LineSegment{N}
-                ) where {N<:Real, HPOLYGON<:AbstractHPolygon}
+function convert(::Type{HPOLYGON}, L::LineSegment{N}) where {N<:Real, HPOLYGON<:AbstractHPolygon}
     H = HPOLYGON{N}()
     c = halfspace_left(L.p, L.q)
     addconstraint!(H, c; prune=false)
@@ -438,8 +438,7 @@ function convert(::Type{HPOLYGON}, L::LineSegment{N}
     c = LinearConstraint(line_dir, dot(L.q, line_dir))
     addconstraint!(H, c; prune=false)
     line_dir = -line_dir
-    addconstraint!(H, LinearConstraint(line_dir, dot(L.p, line_dir));
-                   prune=false)
+    addconstraint!(H, LinearConstraint(line_dir, dot(L.p, line_dir)); prune=false)
     return H
 end
 
@@ -613,6 +612,53 @@ function convert(::Type{Hyperrectangle},
 end
 
 """
+    convert(::Type{CartesianProduct{N, Interval{N}, Interval{N}}},
+            H::AbstractHyperrectangle{N}) where {N<:Real}
+
+Converts a two-dimensional hyperrectangle to the cartesian product of two
+intervals.
+
+### Input
+
+- `CartesianProduct` -- type used for dispatch
+- `H`                -- hyperrectangle
+
+### Output
+
+The cartesian product of two intervals.
+"""
+function convert(::Type{CartesianProduct{N, Interval{N}, Interval{N}}},
+                 H::AbstractHyperrectangle{N}) where {N<:Real}
+    @assert dim(H) == 2 "the hyperrectangle must be two-dimensional to convert it to " *
+            "the cartesian product of two intervals, but it is $(dim(H))-dimensional; " *
+            "consider converting it to a 'CartesianProductArray{$N, Interval{$N}}' instead"
+    Ix = Interval(low(H, 1), high(H, 1))
+    Iy =  Interval(low(H, 2), high(H, 2))
+    return CartesianProduct(Ix, Iy)
+end
+
+"""
+    convert(::Type{CartesianProductArray{N, Interval{N}}},
+            H::AbstractHyperrectangle{N}) where {N<:Real}
+
+Converts a hyperrectangle to the cartesian product array of intervals.
+
+### Input
+
+- `CartesianProductArray` -- type used for dispatch
+- `H`                     -- hyperrectangle
+
+### Output
+
+The cartesian product of a finite number of intervals.
+"""
+function convert(::Type{CartesianProductArray{N, Interval{N}}},
+                 H::AbstractHyperrectangle{N}) where {N<:Real}
+    Iarray = [Interval(low(H, i), high(H, i)) for i in 1:dim(H)]
+    return CartesianProductArray(Iarray)
+end
+
+"""
     convert(::Type{Zonotope}, cp::CartesianProduct{N, Zonotope{N}, Zonotope{N}}) where {N<:Real}
 
 Converts the cartesian product of two zonotopes to a new zonotope.
@@ -719,4 +765,45 @@ function convert(::Type{Hyperrectangle}, IB::IntervalArithmetic.IntervalBox)
     low_IB = Vector(IntervalArithmetic.inf.(IB))    # TODO: temprary conversion, see #1214
     high_IB = Vector(IntervalArithmetic.sup.(IB))   # TODO: temprary conversion, see #1214
     return Hyperrectangle(low=low_IB, high=high_IB)
+end
+
+"""
+    convert(::Type{Hyperrectangle}, r::Rectification{N, AH})
+        where {N<:Real, AH<:AbstractHyperrectangle{N}}
+
+Converts a rectification of a hyperrectangle to a hyperrectangle.
+
+### Input
+
+- `Hyperrectangle` -- type used for dispatch
+- `r`              -- rectification of a hyperrectangle
+
+### Output
+
+A `Hyperrectangle`.
+"""
+function convert(::Type{Hyperrectangle},
+                 r::Rectification{N, AH}) where {N<:Real,
+                                                 AH<:AbstractHyperrectangle{N}}
+    return Hyperrectangle(low=rectify(low(r.X)), high=rectify(high(r.X)))
+end
+
+"""
+    convert(::Type{Interval},
+            r::Rectification{N, IN}) where {N<:Real, IN<:Interval{N}}
+
+Converts a rectification of an interval to an interval.
+
+### Input
+
+- `Interval` -- type used for dispatch
+- `r`        -- rectification of an interval
+
+### Output
+
+An `Interval`.
+"""
+function convert(::Type{Interval},
+                 r::Rectification{N, IN}) where {N<:Real, IN<:Interval{N}}
+    return Interval(rectify([min(r.X), max(r.X)]))
 end

@@ -42,6 +42,36 @@ box_approximation(S::AbstractHyperrectangle) =
 box_approximation(∅::EmptySet) = ∅
 
 """
+    box_approximation(r::Rectification{N}
+                     )::Union{Hyperrectangle{N}, EmptySet{N}} where {N<:Real}
+
+Overapproximate the rectification of a convex set by a tight hyperrectangle.
+
+### Input
+
+- `S` -- rectification of a convex set
+
+### Output
+
+A hyperrectangle.
+
+### Algorithm
+
+Box approximation and rectification distribute.
+Hence we first check whether the wrapped set is empty.
+If so, we return the empty set.
+Otherwise, we compute the box approximation of the wrapped set, rectify the
+resulting box (which is simple), and finally convert the resulting set to a box.
+"""
+function box_approximation(r::Rectification{N}
+                          )::Union{Hyperrectangle{N}, EmptySet{N}} where {N<:Real}
+    if isempty(r.X)
+        return EmptySet{N}()
+    end
+    return convert(Hyperrectangle, Rectification(box_approximation(r.X)))
+end
+
+"""
     interval_hull
 
 Alias for `box_approximation`.

@@ -590,6 +590,38 @@ function isempty(cap::Intersection)::Bool
     return empty_intersection
 end
 
+"""
+    plot_recipe(cap::Intersection{N}, [ε]::N=-one(N),
+                [Nφ]::Int=PLOT_POLAR_DIRECTIONS) where {N<:Real}
+
+Convert a lazy intersection to a pair `(x, y)` of points for plotting.
+
+### Input
+
+- `cap`  -- lazy intersection
+- `ε`    -- (optional, default `0`) ignored, used for dispatch
+- `Nφ`   -- (optional, default: `PLOT_POLAR_DIRECTIONS`) number of polar
+            directions used in the template overapproximation
+
+### Output
+
+A pair `(x, y)` of points that can be plotted.
+"""
+function plot_recipe(cap::Intersection{N}, ε::N=zero(N),
+                     Nφ::Int=PLOT_POLAR_DIRECTIONS) where {N<:Real}
+    @assert dim(cap) <= 2 "cannot plot a $(dim(cap))-dimensional intersection"
+
+    if isempty(cap)
+        return plot_recipe(EmptySet{N}(), ε)
+    elseif dim(cap) == 1
+        return plot_recipe(convert(Interval, cap), ε)
+    else
+        # construct polygon approximation using polar directions
+        P = overapproximate(cap, PolarDirections{N}(Nφ))
+        return plot_recipe(P, ε)
+    end
+end
+
 
 # ================================
 # intersection of an array of sets
@@ -620,12 +652,6 @@ Constructors:
 """
 struct IntersectionArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
-end
-
-@static if VERSION < v"0.7-"
-    # convenience constructor without type parameter
-    IntersectionArray(arr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
-        IntersectionArray{N, S}(arr)
 end
 
 # constructor for an empty sum with optional size hint and numeric type

@@ -1,6 +1,8 @@
 export is_intersection_empty,
        isdisjoint
 
+# --- disjointness check for lazy sets ---
+
 """
     is_intersection_empty(X::LazySet{N},
                           Y::LazySet{N},
@@ -46,9 +48,16 @@ function is_intersection_empty(X::LazySet{N},
     return empty_intersection
 end
 
+# --- alias ---
+
+"""
+    isdisjoint(X, Y)
+
+An alternative name for `is_intersection_empty(X, Y)`.
+"""
+const isdisjoint = is_intersection_empty
 
 # --- AbstractHyperrectangle ---
-
 
 """
     is_intersection_empty(H1::AbstractHyperrectangle{N},
@@ -117,9 +126,47 @@ function is_intersection_empty(H1::AbstractHyperrectangle{N},
     return (false, v)
 end
 
+# --- disjointness check for 1D intervals ---
+
+"""
+    is_intersection_empty(I1::Interval{N}, I2::Interval{N},
+                          witness::Bool=false) where {N<:Real}
+
+Check whether two intervals do not intersect, and otherwise optionally
+compute a witness.
+
+### Input
+
+- `I1`      -- first interval
+- `I2`      -- second interval
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``I1 ∩ I2 = ∅``
+* If `witness` option is activated:
+  * `(true, [])` iff ``I1 ∩ I2 = ∅``
+  * `(false, v)` iff ``I1 ∩ I2 ≠ ∅`` and ``v ∈ I1 ∩ I2``
+
+### Algorithm
+
+``I1 ∩ I2 ≠ ∅`` iff there is a gap between the left-most point of the second
+interval and the left-most point of the first interval, or vice-versa.
+
+A witness is computed by taking the maximum over the left-most points of each
+interval, which is guaranteed to belong to the intersection.
+"""
+function is_intersection_empty(I1::Interval{N}, I2::Interval{N},
+                               witness::Bool=false) where {N<:Real}
+    check = min(I2) > max(I1) || min(I1) > max(I2)
+    if !witness
+        return check
+    else
+        return (check, [max(min(I1), min(I2))])
+    end
+end
 
 # --- AbstractSingleton ---
-
 
 # common code for singletons
 @inline function is_intersection_empty_helper_singleton(
@@ -1318,14 +1365,3 @@ function is_intersection_empty(X::LazySet{N},
                                   {N<:Real}
     return is_intersection_empty(C, X, witness)
 end
-
-
-# --- alias ---
-
-
-"""
-    isdisjoint(X, Y)
-
-An alternative name for `is_intersection_empty(X, Y)`.
-"""
-const isdisjoint = is_intersection_empty

@@ -24,7 +24,7 @@ assumption in this type.
 struct HPolytope{N<:Real} <: AbstractPolytope{N}
     constraints::Vector{LinearConstraint{N}}
 
-    function HPolytope{N}(constraints::Vector{LinearConstraint{N}};
+    function HPolytope{N}(constraints::Vector{<:LinearConstraint{N}};
                           check_boundedness::Bool=false
                          ) where {N<:Real}
         P = new{N}(constraints)
@@ -35,12 +35,13 @@ struct HPolytope{N<:Real} <: AbstractPolytope{N}
 end
 
 # convenience constructor without type parameter
-HPolytope(constraints::Vector{LinearConstraint{N}};
+HPolytope(constraints::Vector{<:LinearConstraint{N}};
           check_boundedness::Bool=false) where {N<:Real} =
     HPolytope{N}(constraints; check_boundedness=check_boundedness)
 
 # constructor with no constraints
-HPolytope{N}() where {N<:Real} = HPolytope{N}(Vector{LinearConstraint{N}}())
+HPolytope{N}() where {N<:Real} =
+    HPolytope{N}(Vector{LinearConstraint{N, <:AbstractVector{N}}}())
 
 # constructor with no constraints of type Float64
 HPolytope() = HPolytope{Float64}()
@@ -134,6 +135,7 @@ function _linear_map_hrep(M::AbstractMatrix{N}, P::HPolytope{N},
     return HPolytope(constraints)
 end
 
+
 # --- functions that use Polyhedra.jl ---
 
 
@@ -141,97 +143,90 @@ function load_polyhedra_hpolytope() # function to be loaded by Requires
 return quote
 # see the interface file AbstractPolytope.jl for the imports
 
-@static if VERSION < v"0.7-"
-
-    function convert(::Type{HPolytope{N}}, P::HRep{T, N}) where {T, N}
-        constraints = LinearConstraint{N}[]
-        for hi in Polyhedra.allhalfspaces(P)
-            push!(constraints, HalfSpace(hi.a, hi.β))
-        end
-        return HPolytope(constraints)
+function convert(::Type{HPolytope{N}}, P::HRep{N}) where {N}
+    constraints = LinearConstraint{N}[]
+    for hi in Polyhedra.allhalfspaces(P)
+        push!(constraints, HalfSpace(hi.a, hi.β))
     end
-
-    function convert(::Type{HPolytope}, P::HRep{T, N}) where {T, N}
-        return convert(HPolytope{N}, P)
-    end
-
-    """
-        HPolytope(P::HRep{T, N}) where {T, N}
-
-    Return a polytope in H-representation given a `HRep` polyhedron
-    from `Polyhedra.jl`.
-
-    ### Input
-
-    - `P` -- `HRep` polyhedron
-
-    ### Output
-
-    An `HPolytope`.
-    """
-    function HPolytope(P::HRep{T, N}) where {T, N}
-        convert(HPolytope{N}, P)
-    end
-
-else
-
-    function convert(::Type{HPolytope{N}}, P::HRep{N}) where {N}
-        constraints = LinearConstraint{N}[]
-        for hi in Polyhedra.allhalfspaces(P)
-            push!(constraints, HalfSpace(hi.a, hi.β))
-        end
-        return HPolytope(constraints)
-    end
-
-    function convert(::Type{HPolytope}, P::HRep{N}) where {N}
-        return convert(HPolytope{N}, P)
-    end
-
-    function HPolytope(P::HRep{N}) where {N}
-        convert(HPolytope{N}, P)
-    end
-
+    return HPolytope(constraints)
 end
 
+function convert(::Type{HPolytope}, P::HRep{N}) where {N}
+    return convert(HPolytope{N}, P)
+end
+
+"""
+    HPolytope(P::HRep{T, N}) where {T, N}
+
+Return a polytope in H-representation given a `HRep` polyhedron
+from `Polyhedra.jl`.
+
+### Input
+
+- `P` -- `HRep` polyhedron
+
+### Output
+
+An `HPolytope`.
+"""
+function HPolytope(P::HRep{N}) where {N}
+    convert(HPolytope{N}, P)
+end
 
 end # quote
 end # function load_polyhedra_hpolytope()
 
 """
     vertices_list(P::HPolytope{N};
-                  [backend]=default_polyhedra_backend(P, N),
-                  [prunefunc]=removevredundancy!)::Vector{Vector{N}} where
-                  {N<:Real}
+                  [backend]=nothing,
+                  [prune]::Bool=true)::Vector{Vector{N}} where {N<:Real}
 
 Return the list of vertices of a polytope in constraint representation.
 
 ### Input
 
-- `P`         -- polytope in constraint representation
-- `backend`   -- (optional, default: `default_polyhedra_backend(P, N)`)
-                  the polyhedral computations backend
-- `prunefunc` -- (optional, default: `removevredundancy!`) function to
-                 post-process the output of `vreps`
+- `P`       -- polytope in constraint representation
+- `backend` -- (optional, default: `nothing`) the polyhedral computations backend
+- `prune`   -- (optional, default: `true`) flag to remove redundant vertices
 
 ### Output
 
 List of vertices.
 
-### Notes
+### Algorithm
 
+If the polytope is two-dimensional, the polytope is converted to a polygon in
+H-representation and then its `vertices_list` function is used. This ensures
+that, by default, the optimized two-dimensional methods are used.
+
+It is possible to use the `Polyhedra` backend in two-dimensions as well
+by passing, e.g. `backend=CDDLib.Library()`.
+
+If the polytope is not two-dimensional, the concrete polyhedra manipulation
+library `Polyhedra` is used. The actual computation is performed by a given
+backend; for the default backend used in `LazySets` see `default_polyhedra_backend(N)`.
 For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/).
 """
 function vertices_list(P::HPolytope{N};
-                       backend=default_polyhedra_backend(P, N),
-                       prunefunc=removevredundancy!
-                      )::Vector{Vector{N}} where {N<:Real}
+                       backend=nothing,
+                       prune::Bool=true)::Vector{Vector{N}} where {N<:Real}
     if length(P.constraints) == 0
         return Vector{N}(Vector{N}(undef, 0))
     end
-    @assert isdefined(@__MODULE__, :Polyhedra) "the function `vertices_list` needs " *
-                                        "the package 'Polyhedra' to be loaded"
-    P = polyhedron(P; backend=backend)
-    prunefunc(P)
-    return collect(points(P))
+
+    if dim(P) == 2 && backend == nothing
+        return vertices_list(convert(HPolygon, P, prune=prune))
+    else
+        @assert isdefined(@__MODULE__, :Polyhedra) "the function `vertices_list` "
+        "needs the package 'Polyhedra' to be loaded"
+        if backend == nothing
+            backend = default_polyhedra_backend(P, N)
+        end
+        Q = polyhedron(P; backend=backend)
+        if prune
+            removevredundancy!(Q)
+        end
+        return collect(points(Q))
+    end
 end

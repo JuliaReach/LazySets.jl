@@ -468,19 +468,19 @@ of variables to be `[1, 2, 3]`:
 
 ```jldoctest project_halfspace
 julia> H = HalfSpace([1.0, 1.0, 0.0], 1.0)
-HalfSpace{Float64}([1.0, 1.0, 0.0], 1.0)
+HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0, 0.0], 1.0)
 
 julia> using LazySets.Approximations: project
 
 julia> project(H, [1, 2, 3])
-HalfSpace{Float64}([1.0, 1.0, 0.0], 1.0)
+HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0, 0.0], 1.0)
 ```
 
 Projecting along dimensions `1` and `2` only:
 
 ```jldoctest project_halfspace
 julia> project(H, [1, 2])
-HalfSpace{Float64}([1.0, 1.0], 1.0)
+HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
 ```
 
 In general, use the call syntax `project(H, constrained_dimensions(H))` to return
@@ -488,7 +488,7 @@ the half-space projected on the dimensions where it is constrained only:
 
 ```jldoctest project_halfspace
 julia> project(H, constrained_dimensions(H))
-HalfSpace{Float64}([1.0, 1.0], 1.0)
+HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
 ```
 """
 function project(H::HalfSpace{N}, block::AbstractVector{Int}) where {N}
@@ -553,9 +553,9 @@ Now let's take a ball in the infinity norm and remove some constraints:
 julia> B = BallInf(zeros(4), 1.0);
 
 julia> c = constraints_list(B)[1:2]
-2-element Array{HalfSpace{Float64},1}:
- HalfSpace{Float64}([1.0, 0.0, 0.0, 0.0], 1.0)
- HalfSpace{Float64}([0.0, 1.0, 0.0, 0.0], 1.0)
+2-element Array{HalfSpace{Float64,VN} where VN<:AbstractArray{Float64,1},1}:
+ HalfSpace{Float64,LazySets.Approximations.UnitVector{Float64}}([1.0, 0.0, 0.0, 0.0], 1.0)
+ HalfSpace{Float64,LazySets.Approximations.UnitVector{Float64}}([0.0, 1.0, 0.0, 0.0], 1.0)
 
 julia> P = HPolyhedron(c);
 
@@ -569,9 +569,9 @@ Finally we take the concrete projection onto variables `1` and `2`:
 
 ```jldoctest project_hpolyhedron
 julia> project(P, [1, 2]) |> constraints_list
-2-element Array{HalfSpace{Float64},1}:
- HalfSpace{Float64}([1.0, 0.0], 1.0)
- HalfSpace{Float64}([0.0, 1.0], 1.0)
+2-element Array{HalfSpace{Float64,VN} where VN<:AbstractArray{Float64,1},1}:
+ HalfSpace{Float64,Array{Float64,1}}([1.0, 0.0], 1.0)
+ HalfSpace{Float64,Array{Float64,1}}([0.0, 1.0], 1.0)
 ```
 """
 function project(P::HPolyhedron{N}, block::AbstractVector{Int}) where {N}

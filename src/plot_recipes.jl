@@ -1,601 +1,334 @@
 using RecipesBase
 import RecipesBase.apply_recipe
 
-function warn_empty_polytope()
-    @warn "received a polytope with no vertices during plotting"
-end
+using LazySets.Approximations: overapproximate, PolarDirections
 
-# ====================================
-# Plot recipes for an abstract LazySet
-# ====================================
+# global values
+DEFAULT_COLOR = :auto
+DEFAULT_ALPHA = 0.5
+DEFAULT_LABEL = ""
+DEFAULT_GRID = true
+DEFAULT_ASPECT_RATIO = 1.0
+PLOT_PRECISION = 1e-3
+PLOT_POLAR_DIRECTIONS = 40
 
 """
-    plot_lazyset(S::LazySet; ...)
+    plot_list(list::AbstractVector{VN}, [ε]::N=N(PLOT_PRECISION),
+              [Nφ]::Int=PLOT_POLAR_DIRECTIONS, [fast]::Bool=false; ...)
+        where {N<:Real, VN<:LazySet{N}}
 
-Plot a convex set in two dimensions using an axis-aligned approximation.
+Plot a list of convex sets.
 
 ### Input
 
-- `S` -- convex set
-
-### Examples
-
-```jldoctest
-julia> using Plots, LazySets
-
-julia> B = BallInf(ones(2), 0.1);
-
-julia> plot(2.0 * B);
-
-```
-
-### Algorithm
-
-For any 2D lazy set we compute its box overapproximation, followed by the list of
-vertices. A post-processing `convex_hull` is applied to the vertices list;
-this ensures that the shaded area inside the convex hull of the vertices is covered
-correctly.
+- `list` -- list of convex sets (1D or 2D)
+- `ε`    -- (optional, default: `PLOT_PRECISION`) approximation error bound
+- `Nφ`   -- (optional, default: `PLOT_POLAR_DIRECTIONS`) number of polar
+            directions (used to plot lazy intersections)
+- `fast` -- (optional, default: `false`) switch for faster plotting but without
+            individual plot recipes (see notes below)
 
 ### Notes
 
-This recipe detects if the axis-aligned approximation is such that the first two
-vertices returned by `vertices_list` are the same. In that case, a scatter plot
-is used (instead of a shape plot). This use case arises, for example, when
-plotting singletons.
-"""
-@recipe function plot_lazyset(S::LazySet;
-                              color="blue", label="", grid=true, alpha=0.5)
+For each set in the list we apply an individual plot recipe.
 
-    @assert dim(S) == 2 "cannot plot a $(dim(S))-dimensional set"
-
-    P = Approximations.overapproximate(S)
-    vlist = transpose(hcat(convex_hull(vertices_list(P))...))
-
-    if isempty(vlist)
-        warn_empty_polytope()
-        return []
-    end
-
-    (x, y) = vlist[:, 1], vlist[:, 2]
-
-    # add first vertex to "close" the polygon
-    push!(x, vlist[1, 1])
-    push!(y, vlist[1, 2])
-
-    seriestype := norm(vlist[1, :] - vlist[2, :]) ≈ 0 ? :scatter : :shape
-
-    x, y
-end
-
-"""
-    plot_lazyset(Xk::Vector{S}) where {S<:LazySet}
-
-Plot an array of convex sets in two dimensions using an axis-aligned
-approximation.
-
-### Input
-
-- `Xk` -- array of convex sets
+The option `fast` provides access to a faster plotting scheme where all sets in
+the list are first converted to polytopes and then plotted in one single run.
+This, however, is not suitable when plotting flat sets (line segments,
+singletons) because then the polytope plot recipe does not deliver good results.
+Hence by default we do not use this option.
+For plotting a large number of (non-flat) polytopes, we highly advise activating
+this option.
 
 ### Examples
 
-```jldoctest
-julia> using Plots, LazySets;
-
+```julia
 julia> B1 = BallInf(zeros(2), 0.4);
 
 julia> B2 = BallInf(ones(2), 0.4);
 
-julia> plot([B1, B2]);
-
+julia> plot([B1, B2])
 ```
 
-### Algorithm
+Some of the sets in the list may not be plotted precisely but rather
+overapproximated first.
+The second argument `ε` controls the accuracy of this overapproximation.
 
-For each 2D lazy set in the array we compute its box overapproximation, followed
-by the list of vertices. A post-processing `convex_hull` is applied to the vertices list;
-this ensures that the shaded area inside the convex hull of the vertices is covered
-correctly.
+```julia
+julia> Bs = [BallInf(zeros(2), 0.4), Ball2(ones(2), 0.4)];
+
+julia> plot(Bs, 1e-3)  # default accuracy value (explicitly given for clarity)
+
+julia> plot(Bs, 1e-2)  # faster but less accurate than the previous call
+```
 """
-@recipe function plot_lazyset(Xk::Vector{S};
-                              seriescolor="blue", label="", grid=true,
-                              alpha=0.5) where {S<:LazySet}
+@recipe function plot_list(list::AbstractVector{VN}, ε::N=N(PLOT_PRECISION),
+                           Nφ::Int=PLOT_POLAR_DIRECTIONS, fast::Bool=false
+                          ) where {N<:Real, VN<:LazySet{N}}
+    if fast
+        label --> DEFAULT_LABEL
+        grid --> DEFAULT_GRID
+        aspect_ratio --> DEFAULT_ASPECT_RATIO
+        seriesalpha --> DEFAULT_ALPHA
+        seriescolor --> DEFAULT_COLOR
+        seriestype --> :shape
 
-    seriestype := :shape
-
-    for X in Xk
-        if X isa EmptySet
-            continue
+        first = true
+        x = Vector{N}()
+        y = Vector{N}()
+        for Xi in list
+            if Xi isa Intersection
+                res = plot_recipe(Xi, ε, Nφ)
+            else
+                # hard-code overapproximation here to avoid individual
+                # compilations for mixed sets
+                Pi = overapproximate(Xi, ε)
+                vlist = transpose(hcat(convex_hull(vertices_list(Pi))...))
+                if isempty(vlist)
+                    @warn "overapproximation during plotting was empty"
+                    continue
+                end
+                res = vlist[:, 1], vlist[:, 2]
+                # add first vertex to "close" the polygon
+                push!(res[1], vlist[1, 1])
+                push!(res[2], vlist[1, 2])
+            end
+            if isempty(res)
+                continue
+            else
+                x_new, y_new = res
+            end
+            if first
+                first = false
+            else
+                push!(x, N(NaN))
+                push!(y, N(NaN))
+            end
+            append!(x, x_new)
+            append!(y, y_new)
         end
-        @assert dim(X) == 2 "cannot plot a $(dim(X))-dimensional set"
-        Pi = Approximations.overapproximate(X)
-        vlist = transpose(hcat(convex_hull(vertices_list(Pi))...))
-
-        if isempty(vlist)
-            warn_empty_polytope()
-            continue
+        x, y
+    else
+        for Xi in list
+            if Xi isa Intersection
+                @series Xi, ε, Nφ
+            else
+                @series Xi, ε
+            end
         end
-
-        x, y = vlist[:, 1], vlist[:, 2]
-
-        # add first vertex to "close" the polygon
-        push!(x, vlist[1, 1])
-        push!(y, vlist[1, 2])
-
-        @series (x, y)
     end
 end
 
 """
-    plot_lazyset(S::LazySet, ε::Float64; ...)
+    plot_lazyset(X::LazySet{N}, [ε]::N=N(PLOT_PRECISION); ...) where {N<:Real}
 
-Plot a lazy set in two dimensions using iterative refinement.
-
-### Input
-
-- `S` -- convex set
-- `ε` -- approximation error bound
-
-### Examples
-
-```jldoctest
-julia> using Plots, LazySets;
-
-julia> B = BallInf(ones(2), 0.1);
-
-julia> plot(randn(2, 2) * B, 1e-3);
-
-```
-"""
-@recipe function plot_lazyset(S::LazySet, ε::Float64;
-                              color="blue", label="", grid=true, alpha=0.5)
-
-    @assert dim(S) == 2 "cannot plot a $(dim(S))-dimensional set"
-    seriestype := :shape
-
-    P = Approximations.overapproximate(S, ε)
-    vlist = transpose(hcat(vertices_list(P)...))
-
-    if isempty(vlist)
-        warn_empty_polytope()
-        return []
-    end
-
-    (x, y) = vlist[:, 1], vlist[:, 2]
-
-    # add first vertex to "close" the polygon
-    push!(x, vlist[1, 1])
-    push!(y, vlist[1, 2])
-
-    x, y
-end
-
-"""
-    plot_lazyset(Xk::Vector{S}, ε::Float64; ...) where {S<:LazySet}
-
-Plot an array of lazy sets in two dimensions using iterative refinement.
+Plot a convex set.
 
 ### Input
 
-- `Xk` -- array of convex sets
-- `ε`  -- approximation error bound
-
-### Examples
-
-```jldoctest
-julia> using Plots, LazySets;
-
-julia> B1 = BallInf(zeros(2), 0.4);
-
-julia> B2 = Ball2(ones(2), 0.4);
-
-julia> plot([B1, B2], 1e-4);
-
-```
-"""
-@recipe function plot_lazyset(Xk::Vector{S}, ε::Float64;
-                              seriescolor="blue", label="", grid=true,
-                              alpha=0.5) where {S<:LazySet}
-
-    seriestype := :shape
-
-    for X in Xk
-        if X isa EmptySet
-            continue
-        end
-        @assert dim(X) == 2 "cannot plot a $(dim(X))-dimensional set"
-        Pi = Approximations.overapproximate(X, ε)
-        vlist = transpose(hcat(vertices_list(Pi)...))
-
-        if isempty(vlist)
-            warn_empty_polytope()
-            continue
-        end
-
-        x, y = vlist[:, 1], vlist[:, 2]
-
-        # add first vertex to "close" the polygon
-        push!(x, vlist[1, 1])
-        push!(y, vlist[1, 2])
-
-        @series (x, y)
-    end
-end
-
-# ==============================
-# Plot recipes for 2D polytopes
-# ==============================
-
-"""
-    plot_polygon(P::AbstractPolytope; ...)
-
-Plot a 2D polytope as the convex hull of its vertices.
-
-### Input
-
-- `P` -- polygon or polytope
-
-### Examples
-
-```jldoctest plotting_polytope
-julia> using Plots, LazySets;
-
-julia> P = HPolygon([LinearConstraint([1.0, 0.0], 0.6),
-                     LinearConstraint([0.0, 1.0], 0.6),
-                     LinearConstraint([-1.0, 0.0], -0.4),
-                     LinearConstraint([0.0, -1.0], -0.4)]);
-
-julia> plot(P);
-
-```
-
-This recipe also applies if the polygon is given in vertex representation:
-    
-```jldoctest plotting_polytope
-julia> P = VPolygon([[0.6, 0.6], [0.4, 0.6], [0.4, 0.4], [0.6, 0.4]]);
-
-julia> plot(P);
-
-```
-"""
-@recipe function plot_polytope(P::AbstractPolytope;
-                               color="blue", label="", grid=true, alpha=0.5)
-
-    # for polytopes
-    @assert dim(P) == 2 "cannot plot a $(dim(P))-dimensional polytope"
-    seriestype := :shape
-
-    points = convex_hull(vertices_list(P))
-    vlist = transpose(hcat(points...))
-
-    if isempty(vlist)
-        warn_empty_polytope()
-        return []
-    end
-
-    (x, y) = vlist[:, 1], vlist[:, 2]
-
-    # add first vertex to "close" the polygon
-    push!(x, vlist[1, 1])
-    push!(y, vlist[1, 2])
-
-    x, y
-end
-
-"""
-    plot_polytopes(Xk::Vector{S}; ...)
-
-Plot an array of 2D polytopes.
-
-### Input
-
-- `Xk` -- array of polytopes
-
-### Examples
-
-```jldoctest plotting_polytopes
-julia> using Plots, LazySets;
-
-julia> P1 = HPolygon([LinearConstraint([1.0, 0.0], 0.6),
-                      LinearConstraint([0.0, 1.0], 0.6),
-                      LinearConstraint([-1.0, 0.0], -0.4),
-                      LinearConstraint([0.0, -1.0], -0.4)]);
-
-julia> P2 = HPolygon([LinearConstraint([2.0, 0.0], 0.6),
-                      LinearConstraint([0.0, 2.0], 0.6),
-                      LinearConstraint([-2.0, 0.0], -0.4),
-                      LinearConstraint([0.0, -2.0], -0.4)]);
-
-julia> plot([P1, P2]);
-
-```
-
-```jldoctest plotting_polytopes
-julia> P1 = VPolygon([[0.6, 0.6], [0.4, 0.6], [0.4, 0.4], [0.6, 0.4]]);
-
-julia> P2 = VPolygon([[0.3, 0.3], [0.2, 0.3], [0.2, 0.2], [0.3, 0.2]]);
-
-julia> plot([P1, P2]);
-
-```
+- `X` -- convex set
+- `ε` -- (optional, default: `PLOT_PRECISION`) approximation error bound
 
 ### Notes
 
-It is assumed that the given vector of polytopes is two-dimensional.
+See [`plot_recipe(::LazySet{<:Real})`](@ref).
+
+For polyhedral set types (subtypes of `AbstractPolyhedron`), the argument `ε` is
+ignored.
+
+### Examples
+
+```julia
+julia> B = Ball2(ones(2), 0.1);
+
+julia> plot(B, 1e-3)  # default accuracy value (explicitly given for clarity)
+
+julia> plot(B, 1e-2)  # faster but less accurate than the previous call
+```
 """
-@recipe function plot_polytopes(Xk::Vector{S};
-                               seriescolor="blue", label="", grid=true,
-                               alpha=0.5) where {S<:AbstractPolytope}
+@recipe function plot_lazyset(X::LazySet{N}, ε::N=N(PLOT_PRECISION)
+                             ) where {N<:Real}
+    if dim(X) == 1
+        plot_recipe(X, ε)
+    else
+        label --> DEFAULT_LABEL
+        grid --> DEFAULT_GRID
+        aspect_ratio --> DEFAULT_ASPECT_RATIO
+        seriesalpha --> DEFAULT_ALPHA
+        seriescolor --> DEFAULT_COLOR
 
-    # it is assumed that the polytopes are two-dimensional
-    seriestype := :shape
-
-    for Pi in Xk
-        @assert dim(Pi) == 2 "cannot plot a $(dim(Pi))-dimensional polytope"
-        points = convex_hull(vertices_list(Pi))
-        vlist = transpose(hcat(points...))
-
-        if isempty(vlist)
-            warn_empty_polytope()
-            continue
+        res = plot_recipe(X, ε)
+        if isempty(res)
+            res
+        else
+            x, y = res
+            if length(x) == 1 || norm([x[1], y[1]] - [x[2], y[2]]) ≈ 0
+                seriestype := :scatter
+            else
+                seriestype := :shape
+            end
+            x, y
         end
-
-        x, y = vlist[:, 1], vlist[:, 2]
-
-        # add first vertex to "close" the polygon
-        push!(x, vlist[1, 1])
-        push!(y, vlist[1, 2])
-
-        @series (x, y)
     end
 end
 
-# ============================
-# Plot recipes for singletons
-# ============================
-
 """
-    plot_singleton(X::AbstractSingleton; ...)
+    plot_singleton(S::AbstractSingleton{N}, [ε]::N=zero(N); ...) where {N<:Real}
 
 Plot a singleton.
 
 ### Input
 
-- `X` -- singleton, i.e., a one-element set
+- `S` -- singleton
+- `ε` -- (optional, default: `0`) ignored, used for dispatch
 
 ### Examples
 
-```jldoctest
-julia> using Plots, LazySets;
-
-julia> plot(Singleton([0.5, 1.0]));
-
+```julia
+julia> plot(Singleton([0.5, 1.0]))
 ```
 """
-@recipe function plot_singleton(point::AbstractSingleton;
-                                color="blue", label="", grid=true,
-                                legend=false)
-
+@recipe function plot_singleton(S::AbstractSingleton{N}, ε::N=zero(N)
+                               ) where {N<:Real}
+    label --> DEFAULT_LABEL
+    grid --> DEFAULT_GRID
+    aspect_ratio --> DEFAULT_ASPECT_RATIO
+    seriesalpha --> DEFAULT_ALPHA
+    seriescolor --> DEFAULT_COLOR
     seriestype := :scatter
-    @assert dim(point) == 2 ||
-            dim(point) == 3 "cannot plot a $(dim(point))-dimensional singleton"
-    [Tuple(element(point))]
+
+    plot_recipe(S, ε)
 end
 
 """
-    plot_singleton(Xk::Vector{S}; ...) where {S<:AbstractSingleton}
+    plot_linesegment(X::Union{Interval{N}, LineSegment{N}}, [ε]::N=zero(N); ...)
+        where {N<:Real}
 
-Plot a list of singletons.
-
-### Input
-
-- `Xk` -- list of singletons, i.e., a vector of one-element sets
-
-### Examples
-
-```jldoctest
-julia> using Plots, LazySets;
-
-julia> plot([Singleton([0.0, 0.0]), Singleton([1., 0]), Singleton([0.5, .5])]);
-
-```
-
-Three-dimensional singletons can be plotted as well:
-
-```jldoctest
-julia> using Plots, LazySets;
-
-julia> a, b, c = zeros(3), [1.0, 0, 0], [0.0, 1., 0];
-
-julia> plot([Singleton(a), Singleton(b), Singleton(c)]);
-
-```
-"""
-@recipe function plot_singleton(Xk::Vector{S};
-                                color="blue", label="", grid=true, legend=false
-                               ) where {S<:AbstractSingleton}
-
-    seriestype := :scatter
-
-    if dim(Xk[1]) == 2
-        @assert all([dim(pi) == 2 for pi in Xk]) "all points in this vector " *
-            "should have the same dimension"
-    elseif dim(Xk[1]) == 3
-        @assert all([dim(pi) == 3 for pi in Xk]) "all points in this vector " *
-            "should have the same dimension"
-    else
-        error("can only plot 2D or 3D vectors of singletons")
-    end
-
-    [Tuple(element(point)) for point in Xk]
-end
-
-# =====================================
-# Plot recipes for lines and intervals
-# =====================================
-
-"""
-    plot_linesegment(L::LineSegment; ...)
-
-Plot a line segment.
+Plot a line segment or an interval.
 
 ### Input
 
-- `L` -- line segment
+- `X` -- line segment or interval
+- `ε` -- (optional, default: `0`) ignored, used for dispatch
 
 ### Examples
 
-```jldoctest
-julia> using Plots, LazySets;
-
+```julia
 julia> L = LineSegment([0., 0.], [1., 1.]);
 
-julia> plot(L);
+julia> plot(L)
+```
 
+To control the color of the line, use the `linecolor` keyword argument, and to
+control the color of the end points, use the `markercolor` keyword argument.
+To control the width, use `linewidth`.
+
+```julia
+julia> plot(L, markercolor="green", linecolor="red", linewidth=2.)
+```
+
+To omit the markers, use `markershape=:none`.
+You also need to pass a value for `seriestype=:path` explicitly (this seems to
+be an external bug).
+
+```julia
+julia> plot(L, seriestype=:path, markershape=:none)
+```
+
+A shorter alternative is to pass `marker=0`, but this may result in small dots
+as markers based on the plotting backend.
+
+```julia
+julia> plot(L, marker=0)
 ```
 """
-@recipe function plot_linesegment(L::LineSegment; color="blue", label="",
-                                  grid=true, alpha=0.5, legend=false,
-                                  add_marker=true)
-
+@recipe function plot_linesegment(X::Union{Interval{N}, LineSegment{N}},
+                                  ε::N=zero(N)) where {N<:Real}
+    label --> DEFAULT_LABEL
+    grid --> DEFAULT_GRID
+    aspect_ratio --> DEFAULT_ASPECT_RATIO
+    seriesalpha --> DEFAULT_ALPHA
+    linecolor   --> DEFAULT_COLOR
+    markercolor --> DEFAULT_COLOR
+    markershape --> :circle
     seriestype := :path
-    linecolor   --> color
-    markershape --> (add_marker ? :circle : :none)
-    markercolor --> color
 
-    [Tuple(L.p); Tuple(L.q)]
+    plot_recipe(X, ε)
 end
 
 """
-    plot_linesegments(Xk::Vector{S}; ...) where {S<:LineSegment}
-
-Plot an array of line segments.
-
-### Input
-
-- `Xk` -- linear array of line segments
-
-### Examples
-
-```jldoctest
-julia> using Plots, LazySets;
-
-julia> L1 = LineSegment([0., 0.], [1., 1.]);
-
-julia> L2 = LineSegment([1., 0.], [0., 1.]);
-
-julia> plot([L1, L2]);
-
-```
-"""
-@recipe function plot_linesegments(Xk::Vector{S}; color="blue",
-                                   label="", grid=true, alpha=0.5, legend=false,
-                                   add_marker=true) where {S<:LineSegment}
-
-    seriestype := :path
-    linecolor   --> color
-    markershape --> (add_marker ? :circle : :none)
-    markercolor --> color
-
-    for Li in Xk
-        @series [Tuple(Li.p); Tuple(Li.q)]
-    end
-end
-
-"""
-    plot_interval(I::Interval; ...)
-
-Plot an interval.
-
-### Input
-
-- `I` -- interval
-
-### Examples
-
-```jldoctest
-julia> using Plots, LazySets;
-
-julia> I = Interval(0.0, 1.0);
-
-julia> plot(I);
-
-```
-"""
-@recipe function plot_interval(I::Interval; color=:auto, label="", grid=true,
-                               alpha=0.5, legend=false, add_marker=true,
-                               linewidth=2.)
-
-    seriestype := :path
-    linecolor   --> color
-    markershape --> (add_marker ? :circle : :none)
-    markercolor --> color
-
-    [Tuple([min(I), 0.0]); Tuple([max(I), 0.0])]
-end
-
-"""
-    plot_intervals(Xk::Vector{S}; ...) where {S<:Interval}
-
-Plot an array of intervals.
-
-### Input
-
-- `Xk` -- linear array of intervals
-
-### Examples
-
-```jldoctest
-julia> using Plots, LazySets;
-
-julia> I1 = Interval([0., 1.]);
-
-julia> I2 = Interval([0.5, 2.]);
-
-julia> plot([I1, I2]);
-
-```
-"""
-@recipe function plot_intervals(Xk::Vector{S}; color=:auto, label="", grid=true,
-                                alpha=0.5, legend=false, add_marker=true,
-                                linewidth=2.0) where {S<:Interval}
-
-    seriestype := :path
-    linecolor   --> color
-    markershape --> (add_marker ? :circle : :none)
-    markercolor --> color
-
-    for Ii in Xk
-        @series [Tuple([min(Ii), 0.0]); Tuple([max(Ii), 0.0])]
-    end
-end
-
-# ==============================
-# Plot recipe for the empty set
-# ==============================
-
-"""
-    plot_emptyset(∅::EmptySet, [ε::Float64=0.0]; ...)
+    plot_emptyset(∅::EmptySet, [ε]::N=zero(N); ...)
 
 Plot an empty set.
 
 ### Input
 
 - `∅` -- empty set
-- `ε` -- (optional, default: `0.0`) approximation error bound
+- `ε` -- (optional, default: `0`) ignored, used for dispatch
+"""
+@recipe function plot_emptyset(∅::EmptySet{N}, ε::N=zero(N)) where {N<:Real}
+    label --> DEFAULT_LABEL
+    grid --> DEFAULT_GRID
+    aspect_ratio --> DEFAULT_ASPECT_RATIO
+
+    plot_recipe(∅)
+end
+
+"""
+    plot_intersection(cap::Intersection{N}, [ε]::N=zero(N),
+                      [Nφ]::Int=PLOT_POLAR_DIRECTIONS) where {N<:Real}
+
+Plot a lazy intersection.
+
+### Input
+
+- `cap`  -- lazy intersection
+- `ε`    -- (optional, default `0`) ignored, used for dispatch
+- `Nφ`   -- (optional, default: `PLOT_POLAR_DIRECTIONS`) number of polar
+            directions used in the template overapproximation
+
+### Notes
+
+This function is separated from the main `LazySet` plot recipe because iterative
+refinement is not available for lazy intersections (since it uses the support
+vector (but see
+[#1187](https://github.com/JuliaReach/LazySets.jl/issues/1187))).
+
+Also note that if the set is a *nested* intersection, you may have to manually
+overapproximate this set before plotting (see
+`LazySets.Approximations.overapproximate` for details).
 
 ### Examples
 
-```jldoctest
-julia> using Plots, LazySets;
+```julia
+julia> using LazySets.Approximations
 
-julia> plot(∅);
+julia> X = Ball2(zeros(2), 1.) ∩ Ball2(ones(2), 1.5);  # lazy intersection
 
-julia> plot(∅, 1e-2);
+julia> plot(X)
+```
 
+You can specify the accuracy of the overapproximation of the lazy intersection
+by passing a higher value for `Nφ`, which stands for the number of polar
+directions used in the overapproximation.
+This number can also be passed to the `plot` function directly.
+
+```julia
+julia> plot(overapproximate(X, PolarDirections(100)))
+
+julia> plot(X, -1., 100)  # equivalent to the above line
 ```
 """
-@recipe function plot_emptyset(∅::EmptySet, ε::Float64=0.0; label="", grid=true,
-                               legend=false)
-    return []
+@recipe function plot_intersection(cap::Intersection{N},
+                                   ε::N=zero(N),
+                                   Nφ::Int=PLOT_POLAR_DIRECTIONS
+                                  ) where {N<:Real}
+    label --> DEFAULT_LABEL
+    grid --> DEFAULT_GRID
+    aspect_ratio --> DEFAULT_ASPECT_RATIO
+    seriesalpha --> DEFAULT_ALPHA
+    seriescolor --> DEFAULT_COLOR
+    seriestype := :shape
+
+    plot_recipe(cap, ε)
 end

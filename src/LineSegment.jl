@@ -291,7 +291,7 @@ describes the right-hand side of the directed line segment `pq`.
 halfspace_right(L::LineSegment) = halfspace_right(L.p, L.q)
 
 """
-    constraints_list(L::LineSegment{N})::Vector{LinearConstraint{N}} where {N<:Real}
+    constraints_list(L::LineSegment{N}) where {N<:Real}
 
 Return the list of constraints defining a line segment in 2D.
 
@@ -315,15 +315,11 @@ through each opposite vertex.
 This function returns a vector of halfspaces. It does not return equality
 constraints.
 """
-function constraints_list(L::LineSegment{N})::Vector{LinearConstraint{N}} where {N<:Real}
-    clist = Vector{LinearConstraint{N}}(undef, 4)
-    clist[1] = halfspace_left(L)
-    clist[2] = halfspace_right(L)
+function constraints_list(L::LineSegment{N}) where {N<:Real}
     p, q = L.p, L.q
     d = [(p[2]-q[2]), (q[1]-p[1])]
-    clist[3] = halfspace_right(p, p + d)
-    clist[4] = halfspace_left(q, q + d)
-    return clist
+    return [halfspace_left(L), halfspace_right(L),
+            halfspace_right(p, p + d), halfspace_left(q, q + d)]
 end
 
 """
@@ -348,4 +344,22 @@ function translate(L::LineSegment{N}, v::AbstractVector{N}) where {N<:Real}
     @assert length(v) == dim(L) "cannot translate a $(dim(L))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     return LineSegment(L.p + v, L.q + v)
+end
+
+"""
+    plot_recipe(L::LineSegment{N}, [ε]::N=zero(N)) where {N<:Real}
+
+Convert a line segment to a pair `(x, y)` of points for plotting.
+
+### Input
+
+- `L` -- line segment
+- `ε` -- (optional, default: `0`) ignored, used for dispatch
+
+### Output
+
+A pair `(x, y)` of two points that can be plotted.
+"""
+function plot_recipe(L::LineSegment{N}, ε::N=zero(N)) where {N<:Real}
+    return [L.p[1], L.q[1]], [L.p[2], L.q[2]]
 end

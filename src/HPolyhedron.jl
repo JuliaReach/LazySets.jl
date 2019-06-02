@@ -30,10 +30,20 @@ Type that represents a convex polyhedron in H-representation.
 """
 struct HPolyhedron{N<:Real} <: AbstractPolyhedron{N}
     constraints::Vector{LinearConstraint{N}}
+
+    function HPolyhedron{N}(constraints::Vector{<:LinearConstraint{N}}
+                           ) where {N<:Real}
+        return new{N}(constraints)
+    end
 end
 
+# convenience constructor without type parameter
+HPolyhedron(constraints::Vector{<:LinearConstraint{N}}) where {N<:Real} =
+    HPolyhedron{N}(constraints)
+
 # constructor with no constraints
-HPolyhedron{N}() where {N<:Real} = HPolyhedron{N}(Vector{LinearConstraint{N}}())
+HPolyhedron{N}() where {N<:Real} =
+    HPolyhedron{N}(Vector{LinearConstraint{N, <:AbstractVector{N}}}())
 
 # constructor with no constraints of type Float64
 HPolyhedron() = HPolyhedron{Float64}()
@@ -247,7 +257,7 @@ function rand(::Type{HPolyhedron};
     rng = reseed(rng, seed)
     P = rand(HPolytope; N=N, dim=dim, rng=rng)
     constraints_P = constraints_list(P)
-    constraints_Q = Vector{LinearConstraint{N}}()
+    constraints_Q = Vector{eltype(constraints_P)}()
     for i in 1:length(constraints_P)
         if rand(Bool)
             push!(constraints_Q, constraints_P[i])
@@ -290,7 +300,7 @@ function addconstraint!(P::HPoly{N},
 end
 
 """
-    constraints_list(P::HPoly{N})::Vector{LinearConstraint{N}} where {N<:Real}
+    constraints_list(P::HPoly{N}) where {N<:Real}
 
 Return the list of constraints defining a polyhedron in H-representation.
 
@@ -302,8 +312,7 @@ Return the list of constraints defining a polyhedron in H-representation.
 
 The list of constraints of the polyhedron.
 """
-function constraints_list(P::HPoly{N}
-                         )::Vector{LinearConstraint{N}} where {N<:Real}
+function constraints_list(P::HPoly{N}) where {N<:Real}
     return P.constraints
 end
 
@@ -671,54 +680,35 @@ function load_polyhedra_hpolyhedron() # function to be loaded by Requires
 return quote
 # see the interface file AbstractPolytope.jl for the imports
 
-@static if VERSION < v"0.7-"
-    function convert(::Type{HPolyhedron{N}}, P::HRep{T, N}) where {T, N}
-        constraints = LinearConstraint{N}[]
-        for hi in Polyhedra.allhalfspaces(P)
-            push!(constraints, HalfSpace(hi.a, hi.β))
-        end
-        return HPolyhedron(constraints)
+function convert(::Type{HPolyhedron{N}}, P::HRep{N}) where {N}
+    constraints = LinearConstraint{N}[]
+    for hi in Polyhedra.allhalfspaces(P)
+        push!(constraints, HalfSpace(hi.a, hi.β))
     end
+    return HPolyhedron(constraints)
+end
 
-    function convert(::Type{HPolyhedron}, P::HRep{T, N}) where {T, N}
-        return convert(HPolyhedron{N}, P)
-    end
+function convert(::Type{HPolyhedron}, P::HRep{N}) where {N}
+    return convert(HPolyhedron{N}, P)
+end
 
-    """
-        HPolyhedron(P::HRep{T, N}, backend=nothing) where {T, N}
+"""
+    HPolyhedron(P::HRep{T, N}, backend=nothing) where {T, N}
 
-    Return a polyhedron in H-representation given a `HRep` polyhedron
-    from `Polyhedra.jl`.
+Return a polyhedron in H-representation given a `HRep` polyhedron
+from `Polyhedra.jl`.
 
-    ### Input
+### Input
 
-    - `P` -- `HRep` polyhedron
+- `P` -- `HRep` polyhedron
 
-    ### Output
+### Output
 
-    An `HPolyhedron`.
-    """
-    function HPolyhedron(P::HRep{T, N}) where {T, N}
-        convert(HPolyhedron{N}, P)
-    end
-
-else
-    function convert(::Type{HPolyhedron{N}}, P::HRep{N}) where {N}
-        constraints = LinearConstraint{N}[]
-        for hi in Polyhedra.allhalfspaces(P)
-            push!(constraints, HalfSpace(hi.a, hi.β))
-        end
-        return HPolyhedron(constraints)
-    end
-
-    function convert(::Type{HPolyhedron}, P::HRep{N}) where {N}
-        return convert(HPolyhedron{N}, P)
-    end
-
-    function HPolyhedron(P::HRep{N}) where {N}
-        convert(HPolyhedron{N}, P)
-    end
-end # if VERSION < v"0.7-"
+An `HPolyhedron`.
+"""
+function HPolyhedron(P::HRep{N}) where {N}
+    convert(HPolyhedron{N}, P)
+end
 
 """
     polyhedron(P::HPoly{N};

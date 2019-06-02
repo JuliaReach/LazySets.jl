@@ -226,12 +226,6 @@ end
 # add functions connecting UnionSet and UnionSetArray
 @declare_array_version(UnionSet, UnionSetArray)
 
-@static if VERSION < v"0.7-"
-    # convenience constructor without type parameter
-    UnionSetArray(arr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
-        UnionSetArray{N, S}(arr)
-end
-
 """
     dim(cup::UnionSetArray)::Int
 

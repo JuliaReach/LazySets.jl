@@ -3,9 +3,12 @@ __precompile__(true)
 # main module for `LazySets.jl`
 module LazySets
 
-include("compat.jl")
-
-using Requires
+using Requires, SparseArrays, LinearAlgebra
+using LinearAlgebra: checksquare
+import LinearAlgebra: norm, ×
+import Random
+using Random: AbstractRNG, GLOBAL_RNG, SamplerType, shuffle
+import InteractiveUtils: subtypes
 
 export Approximations
 
@@ -57,6 +60,11 @@ include("ZeroSet.jl")
 include("Zonotope.jl")
 include("Complement.jl")
 
+# ==================================
+# Types representing non-convex sets
+# ==================================
+include("PolynomialZonotope.jl")
+
 # ===================================================
 # Algorithms to compute the convex hull of polygons
 # ===================================================
@@ -75,6 +83,7 @@ include("ResetMap.jl")
 include("SymmetricIntervalHull.jl")
 include("Translation.jl")
 include("UnionSet.jl")
+include("Rectification.jl")
 
 # =============================
 # Conversions between set types
@@ -87,6 +96,7 @@ include("convert.jl")
 include("concrete_intersection.jl")
 include("is_intersection_empty.jl")
 include("is_subset.jl")
+include("difference.jl")
 
 # =======
 # Aliases

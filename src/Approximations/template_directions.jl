@@ -62,11 +62,14 @@ function Base.:(*)(A::AbstractMatrix{N}, e::UnitVector{N}) where {N}
     return A[:, e.i] * e.v
 end
 
-@static if VERSION >= v"0.7-"
-    function Base.:(*)(A::Transpose{N, <:AbstractMatrix{N}}, e::UnitVector{N}
-                      ) where {N}
-        return A[:, e.i] * e.v
-    end
+function Base.:(*)(A::Transpose{N, <:AbstractMatrix{N}}, e::UnitVector{N}
+                  ) where {N}
+    return A[:, e.i] * e.v
+end
+
+# diagonal matrix times unit vector
+function Base.:(*)(D::Diagonal{N, V}, e::UnitVector{N}) where {N, V<:AbstractVector{N}}
+    return UnitVector(e.i, e.n, D.diag[e.i] * e.v)
 end
 
 function inner(e1::UnitVector{N}, A::AbstractMatrix{N}, e2::UnitVector{N}
@@ -93,19 +96,6 @@ BoxDirections(n::Int) = BoxDirections{Float64}(n)
 Base.eltype(::Type{BoxDirections{N}}) where {N} = AbstractVector{N}
 Base.length(bd::BoxDirections) = 2 * bd.n
 
-@static if VERSION < v"0.7-"
-@eval begin
-
-Base.start(bd::BoxDirections) = 1
-Base.next(bd::BoxDirections{N}, state) where {N} = (
-    UnitVector{N}(abs(state), bd.n, convert(N, sign(state))), # value
-    state == bd.n ? -bd.n : state + 1) # next state
-Base.done(bd::BoxDirections, state) = state == 0
-
-end # @eval
-else
-@eval begin
-
 function Base.iterate(bd::BoxDirections{N}, state::Int=1) where {N}
     if state == 0
         return nothing
@@ -114,9 +104,6 @@ function Base.iterate(bd::BoxDirections{N}, state::Int=1) where {N}
     state = (state == bd.n) ? -bd.n : state + 1
     return (vec, state)
 end
-
-end # @eval
-end # if
 
 # ==================================================
 # Octagonal directions
@@ -145,62 +132,6 @@ OctDirections(n::Int) = OctDirections{Float64}(n)
 
 Base.eltype(::Type{OctDirections{N}}) where {N} = AbstractVector{N}
 Base.length(od::OctDirections) = 2 * od.n^2
-
-@static if VERSION < v"0.7-"
-@eval begin
-
-function Base.start(od::OctDirections{N}) where {N}
-    if od.n == 1
-        return 1 # fall back to box directions in 1D case
-    end
-    vec = zeros(N, od.n)
-    vec[1] = one(N)
-    vec[2] = vec[1]
-    return (vec, 1, 2)
-end
-
-function Base.next(od::OctDirections{N}, state::Tuple) where {N}
-    vec = state[1]
-    i = state[2]
-    j = state[3]
-    if vec[j] > 0
-        # change sign at j
-        vec[j] = -one(N)
-    elseif vec[i] > 0
-        # change sign at i and j
-        vec[i] = -one(N)
-        vec[j] = one(N)
-    elseif j < od.n
-        # advance j, reset i
-        vec[i] = one(N)
-        vec[j] = zero(N)
-        j = j + 1
-        vec[j] = one(N)
-    elseif i < od.n - 1
-        # advance i
-        vec[i] = zero(N)
-        vec[j] = vec[i]
-        i = i + 1
-        j = i + 1
-        vec[i] = one(N)
-        vec[j] = vec[i]
-    else
-        vec = zeros(N, od.n)
-        vec[1] = one(N)
-        vec[2] = vec[1]
-        return (vec, 1) # continue with box directions
-    end
-    return (copy(vec), (vec, i, j))
-end
-
-Base.next(od::OctDirections{N}, state::Int) where {N} =
-    next(BoxDirections{N}(od.n), state)
-
-Base.done(od::OctDirections, state) = state == 0
-
-end # @eval
-else
-@eval begin
 
 function Base.iterate(od::OctDirections{N}) where {N}
     if od.n == 1
@@ -257,9 +188,6 @@ function Base.iterate(od::OctDirections{N}, state::Int) where {N}
     return iterate(BoxDirections{N}(od.n), state)
 end
 
-end # @eval
-end # if
-
 # ==================================================
 # Box-diagonal directions
 # ==================================================
@@ -290,37 +218,6 @@ BoxDiagDirections(n::Int) = BoxDiagDirections{Float64}(n)
 Base.eltype(::Type{BoxDiagDirections{N}}) where {N} = AbstractVector{N}
 Base.length(bdd::BoxDiagDirections) = bdd.n == 1 ? 2 : 2^bdd.n + 2 * bdd.n
 
-@static if VERSION < v"0.7-"
-@eval begin
-
-Base.start(bdd::BoxDiagDirections{N}) where {N} = ones(N, bdd.n)
-
-function Base.next(bdd::BoxDiagDirections{N}, state::AbstractVector) where {N}
-    i = 1
-    while i <= bdd.n && state[i] < 0
-        state[i] = -state[i]
-        i = i+1
-    end
-    if i > bdd.n
-        if bdd.n == 1
-            return (copy(state), 0) # finish here to avoid duplicates
-        else
-            return (copy(state), 1) # continue with box directions
-        end
-    else
-        state[i] = -state[i]
-        return (copy(state), state)
-    end
-end
-
-Base.next(bdd::BoxDiagDirections{N}, state::Int) where {N} =
-    next(BoxDirections{N}(bdd.n), state)
-Base.done(bdd::BoxDiagDirections, state) = state == 0
-
-end # @eval
-else
-@eval begin
-
 Base.iterate(bdd::BoxDiagDirections{N}) where {N} =
     (ones(N, bdd.n), ones(N, bdd.n))
 
@@ -350,9 +247,6 @@ function Base.iterate(bdd::BoxDiagDirections{N}, state::Int) where {N}
     # continue with box directions
     return iterate(BoxDirections{N}(bdd.n), state)
 end
-
-end # @eval
-end # if
 
 # ==================================================
 # Polar directions
@@ -421,19 +315,9 @@ Base.eltype(::Type{PolarDirections{N}}) where {N} = Vector{N}
 Base.length(pd::PolarDirections) = length(pd.stack)
 dim(::PolarDirections) = 2
 
-@static if VERSION < v"0.7-"
-    @eval begin
-        Base.start(pd::PolarDirections) = 1
-        Base.next(pd::PolarDirections, state::Int) = (pd.stack[state], state+1)
-        Base.done(pd::PolarDirections, state) = state == length(pd.stack)+1
-    end
-else
-    @eval begin
-        function Base.iterate(pd::PolarDirections, state::Int=1)
-            state == length(pd.stack)+1 && return nothing
-            return (pd.stack[state], state + 1)
-        end
-    end
+function Base.iterate(pd::PolarDirections, state::Int=1)
+    state == length(pd.stack)+1 && return nothing
+    return (pd.stack[state], state + 1)
 end
 
 # ==================================================
@@ -534,17 +418,7 @@ Base.eltype(::Type{SphericalDirections{N}}) where {N} = Vector{N}
 Base.length(sd::SphericalDirections) = length(sd.stack)
 dim(::SphericalDirections) = 3
 
-@static if VERSION < v"0.7-"
-    @eval begin
-        Base.start(sd::SphericalDirections) = 1
-        Base.next(sd::SphericalDirections, state::Int) = (sd.stack[state], state+1)
-        Base.done(sd::SphericalDirections, state) = state == length(sd.stack)+1
-    end
-else
-    @eval begin
-        function Base.iterate(sd::SphericalDirections, state::Int=1)
-            state == length(sd.stack)+1 && return nothing
-            return (sd.stack[state], state + 1)
-        end
-    end
+function Base.iterate(sd::SphericalDirections, state::Int=1)
+    state == length(sd.stack)+1 && return nothing
+    return (sd.stack[state], state + 1)
 end

@@ -1,9 +1,10 @@
 using Documenter, LazySets
-import Polyhedra, Optim
+import Polyhedra, Optim, Expokit
 
 makedocs(
-    doctest = true,
+    sitename = "LazySets.jl",
     modules = Module[LazySets, Approximations],
     source = "src/lib",
+    doctest = true,
     strict = true
 )

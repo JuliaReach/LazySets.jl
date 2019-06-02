@@ -6,7 +6,7 @@ support vectors.
 """
 module Approximations
 
-using LazySets, Requires
+using LazySets, Requires, LinearAlgebra, SparseArrays
 
 export approximate,
        ballinf_approximation,
@@ -22,8 +22,6 @@ export approximate,
        OctDirections,
        PolarDirections,
        SphericalDirections
-
-include("../compat.jl")
 
 const TOL(N::Type{Float64}) = eps(N)
 const TOL(N::Type{Float32}) = eps(N)

@@ -11,7 +11,7 @@ Depth = 3
 CurrentModule = LazySets
 DocTestSetup = quote
     using LazySets
-    using Compat.SparseArrays, Compat.LinearAlgebra
+    using SparseArrays, LinearAlgebra
 end
 ```
 
@@ -156,7 +156,8 @@ radius(::EmptySet, ::Real=Inf)
 diameter(::EmptySet, ::Real=Inf)
 linear_map(::AbstractMatrix{N}, ::EmptySet{N}) where {N}
 translate(::EmptySet{N}, ::AbstractVector{N}) where {N<:Real}
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::EmptySet, ::Float64=0.0)
+plot_recipe(::EmptySet{N}, ::N=zero(N)) where {N<:Real}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::EmptySet{N}, ::N=zero(N)) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -182,9 +183,9 @@ constrained_dimensions(::HalfSpace{N}) where {N<:Real}
 translate(::HalfSpace{N}, ::AbstractVector{N}) where {N<:Real}
 halfspace_left(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
 halfspace_right(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
-tosimplehrep(::AbstractVector{HalfSpace{N}}) where {N<:Real}
-remove_redundant_constraints(::AbstractVector{LinearConstraint{N}}) where {N<:Real}
-remove_redundant_constraints!(::AbstractVector{LinearConstraint{N}}) where {N<:Real}
+tosimplehrep(::AbstractVector{LC}) where {N<:Real, LC<:LinearConstraint{N}}
+remove_redundant_constraints(::AbstractVector{LC}) where {N<:Real, LC<:LinearConstraint{N}}
+remove_redundant_constraints!(::AbstractVector{LC}) where {N<:Real, LC<:LinearConstraint{N}}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -265,8 +266,8 @@ radius_hyperrectangle(::Interval{N}, ::Int) where {N<:Real}
 -(::Interval{N}, ::Interval{N}) where {N<:Real}
 *(::Interval{N}, ::Interval{N}) where {N<:Real}
 rand(::Type{Interval})
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Interval)
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:Interval}
+isflat(::Interval)
+plot_recipe(::Interval{N}, ::N=zero(N)) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
@@ -317,8 +318,8 @@ halfspace_right(::LineSegment)
 vertices_list(::LineSegment{N}) where {N<:Real}
 constraints_list(::LineSegment{N}) where {N<:Real}
 translate(::LineSegment{N}, ::AbstractVector{N}) where {N<:Real}
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LineSegment)
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:LineSegment}
+plot_recipe(::LineSegment{N}, ::N=zero(N)) where {N<:Real}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Union{LineSegment{N}, Interval{N}}, ::N=zero(N)) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -411,6 +412,7 @@ constraints_list(::VPolygon{N}) where {N<:Real}
 translate(::VPolygon{N}, ::AbstractVector{N}) where {N<:Real}
 remove_redundant_vertices(::VPolygon{N}; ::String="monotone_chain") where {N<:Real}
 remove_redundant_vertices!(::VPolygon{N}; ::String="monotone_chain") where {N<:Real}
+minkowski_sum(::VPolygon{N}, ::VPolygon{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -530,6 +532,20 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 * [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real})
 
+## Polynomial Zonotopes
+
+```@docs
+PolynomialZonotope
+dim(::PolynomialZonotope)
+σ(::AbstractVector{N}, ::PolynomialZonotope{N}) where {N}
+ρ(::AbstractVector{N}, ::PolynomialZonotope{N}) where {N}
+polynomial_order(pz::PolynomialZonotope)
+order(::PolynomialZonotope)
+linear_map(::Matrix, ::PolynomialZonotope)
+scale(::Number, ::PolynomialZonotope)
+minkowski_sum(::PolynomialZonotope, ::Zonotope)
+```
+
 ## Singleton
 
 ```@docs
@@ -634,6 +650,7 @@ vertices_list(::Zonotope{N}) where {N<:Real}
 constraints_list(::Zonotope{N}) where {N<:Real}
 constraints_list(::Zonotope{N}) where {N<:AbstractFloat}
 center(::Zonotope{N}) where {N<:Real}
+generators(Z::Zonotope)
 order(::Zonotope)
 generators(Z::Zonotope)
 minkowski_sum(::Zonotope{N}, ::Zonotope{N}) where {N<:Real}

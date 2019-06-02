@@ -36,12 +36,6 @@ struct CartesianProduct{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     Y::S2
 end
 
-@static if VERSION < v"0.7-"
-    # convenience constructor without type parameter
-    CartesianProduct(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} =
-        CartesianProduct{N, S1, S2}(X, Y)
-end
-
 # constructor from an array
 CartesianProduct(Xarr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
     (length(Xarr) == 0
@@ -186,8 +180,7 @@ function isempty(cp::CartesianProduct)::Bool
 end
 
 """
-    constraints_list(cp::CartesianProduct{N}
-                    )::Vector{LinearConstraint{N}} where {N<:Real}
+    constraints_list(cp::CartesianProduct{N}) where {N<:Real}
 
 Return the list of constraints of a (polytopic) Cartesian product.
 
@@ -199,8 +192,7 @@ Return the list of constraints of a (polytopic) Cartesian product.
 
 A list of constraints.
 """
-function constraints_list(cp::CartesianProduct{N}
-                         )::Vector{LinearConstraint{N}} where {N<:Real}
+function constraints_list(cp::CartesianProduct{N}) where {N<:Real}
     return constraints_list(CartesianProductArray([cp.X, cp.Y]))
 end
 
@@ -266,12 +258,6 @@ Constructors:
 """
 struct CartesianProductArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
-end
-
-@static if VERSION < v"0.7-"
-    # convenience constructor without type parameter
-    CartesianProductArray(arr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
-        CartesianProductArray{N, S}(arr)
 end
 
 # constructor for an empty product with optional size hint and numeric type
@@ -443,8 +429,7 @@ function isempty(cpa::CartesianProductArray)::Bool
 end
 
 """
-    constraints_list(cpa::CartesianProductArray{N}
-                    )::Vector{LinearConstraint{N}} where {N<:Real}
+    constraints_list(cpa::CartesianProductArray{N}) where {N<:Real}
 
 Return the list of constraints of a (polytopic) Cartesian product of a finite
 number of sets.
@@ -457,8 +442,7 @@ number of sets.
 
 A list of constraints.
 """
-function constraints_list(cpa::CartesianProductArray{N}
-                         )::Vector{LinearConstraint{N}} where {N<:Real}
+function constraints_list(cpa::CartesianProductArray{N}) where {N<:Real}
     clist = Vector{LinearConstraint{N}}()
     n = dim(cpa)
     sizehint!(clist, n)

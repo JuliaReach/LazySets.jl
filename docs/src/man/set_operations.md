@@ -59,6 +59,7 @@ sorted alphabetically.
 The table entries have the following meaning.
 - "x" indicates that the operation is implemented for the respective set type.
 - "i" indicates that the operation is inherited from a supertype.
+- "(·)" indicates that the operation is partly implemented/inherited.
 
 
 | type ↓ \ operation →         | dim | ρ | σ | an_element | ∈ | isempty | isbounded | linear_map | translate | norm | radius | diameter |
@@ -111,9 +112,12 @@ The table entries have the following meaning.
 | `CacheMinkowskiSum`          | x   | i | x | i          |   | x       | x         |            |           |      |        | i        |
 | `ResetMap`                   | x   | x | x | x          |   | x       |           |            |           |      |        | i        |
 | `SymmetricIntervalHull`      | x   | i | x | i          | i | i       | i         | i          |           | i    | i      | i        |
+|                              |     |   |   |            |   |         |           |            |           |      |        |          |
+| **Non-convex operations**    |     |   |   |            |   |         |           |            |           |      |        |          |
+| `Complement`                 | x   |   |   |            | x | x       |           |            |           |      |        |          |
+| `Rectification`              | x   | i |(x)| x          | x | x       | x         |            |           |      |        |          |
 | `UnionSet`                   | x   | x | x | x          | x | x       | x         |            |           |      |        |          |
 | `UnionSetArray`              | x   | x | x | x          | x | x       | x         |            |           |      |        |          |
-| `Complement`                 | x   |   |   |            | x | x       |           |            |           |      |        |          |
 
 
 ### `dim`
