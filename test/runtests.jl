@@ -2,6 +2,7 @@ using LazySets, LazySets.Approximations
 
 import IntervalArithmetic, Expokit
 using IntervalArithmetic: IntervalBox
+using TaylorModels
 
 # compatibility between Julia versions
 include("../src/compat.jl")

@@ -131,23 +131,23 @@ for N in [Float64, Float32]
     @test !(Y_zonotope ⊆ Y_polygon)
 
     #Zonotope approximation of TaylorModel1
-    x₀ = Interval(0.0)
-    D = Interval(-3.0, 1.0)
-    δ = 0.5;I = Interval(-δ, δ)
-    p = Taylor1(N[2.0, 1.0], 2)
-    p1 = Taylor1(N[0.9, 3.0], 2)
+    x₀ = IntervalArithmetic.Interval(0.0,0.0)
+    D = IntervalArithmetic.Interval(-3.0, 1.0)
+    δ = 0.5;I = IntervalArithmetic.Interval(-δ, δ)
+    p = Taylor1([2.0, 1.0], 2)
+    p1 = Taylor1([0.9, 3.0], 2)
     TM = [TaylorModel1(p, I, x₀, D),TaylorModel1(p1, I, x₀, D)]
     Z1 = overapproximate(TM,Zonotope)
     Z2 = Zonotope(N[1.0,-2.1],[N[2.0,6.0],N[0.5,0.0],N[0.0,0.5]])
-    @test Z1 == Z2 
+    @test Z1 == Z2
 
     #Zonotope approximation of TaylorModelN
     x₁, x₂ = set_variables(N, ["x₁", "x₂"], order=5)
-    x₀ = Interval(0.0, 0.0)×Interval(0.0, 0.0)
-    Dx₁ = Interval(0.0, 3.0)
-    Dx₁ = Interval(-1.0, 1.0)
+    x₀ = IntervalArithmetic.Interval(0.0, 0.0)×IntervalArithmetic.Interval(0.0, 0.0)
+    Dx₁ = IntervalArithmetic.Interval(0.0, 3.0)
+    Dx₁ = IntervalArithmetic.Interval(-1.0, 1.0)
     D = Dx1×Dx2
-    δ = 0.5;I = Interval(-δ, δ)
+    δ = 0.5;I = IntervalArithmetic.Interval(-δ, δ)
     p1 = 1 + x₁^2 - x₂
     p2 = x₂^3 + 3x₁^4 + x₁ + 1
     TM = [TaylorModelN(p,I,x0,D), TaylorModelN(p1,I,x0,D)]
