@@ -1,7 +1,9 @@
 using LazySets, LazySets.Approximations, Test, LinearAlgebra, SparseArrays
 import IntervalArithmetic, Expokit, Optim
 using IntervalArithmetic: IntervalBox
-using TaylorModels
+import TaylorModels:Taylor1,TaylorN,TaylorModelN,TaylorModel1,normalize_taylor,
+       linear_polynomial,constant_term,evaluate,mid
+       
 
 # conversion between numeric types
 include("to_N.jl")
