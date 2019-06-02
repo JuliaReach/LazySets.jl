@@ -268,21 +268,21 @@ if test_suite_polyhedra
         P = convert(HPolytope, BallInf(zeros(N, 2), N(1)))
         Q = convert(HPolytope, BallInf(ones(N, 2), N(1)))
         R = convert(HPolytope, BallInf(3*ones(N, 2), N(1)))
-        res, w = isdisjoint(P, Q, true)
-        @test !isdisjoint(P, Q) && !res && w ∈ P && w ∈ Q
-        @test !isdisjoint(P, Q; algorithm="sufficient")
-        res, w = isdisjoint(Q, P, true)
-        @test !isdisjoint(Q, P) && !res && w ∈ P && w ∈ Q
-        res, w = isdisjoint(Q, R, true)
-        @test !isdisjoint(Q, R) && !res && w ∈ Q && w ∈ R
-        res, w = isdisjoint(R, Q, true)
-        @test !isdisjoint(R, Q) && !res && w ∈ Q && w ∈ R
-        res, w = isdisjoint(P, R, true)
-        @test isdisjoint(P, R) && res && w == N[]
-        res, w = isdisjoint(R, P, true)
-        @test isdisjoint(R, P) && res && w == N[]
-        res, w = isdisjoint(P, R, true; algorithm="sufficient")
-        @test isdisjoint(P, R; algorithm="sufficient") && res && w == N[]
+        res, w = LazySet.isdisjoint(P, Q, true)
+        @test !LazySet.isdisjoint(P, Q) && !res && w ∈ P && w ∈ Q
+        @test !LazySet.isdisjoint(P, Q; algorithm="sufficient")
+        res, w = LazySet.isdisjoint(Q, P, true)
+        @test !LazySet.isdisjoint(Q, P) && !res && w ∈ P && w ∈ Q
+        res, w = LazySet.isdisjoint(Q, R, true)
+        @test !LazySet.isdisjoint(Q, R) && !res && w ∈ Q && w ∈ R
+        res, w = LazySet.isdisjoint(R, Q, true)
+        @test !LazySet.isdisjoint(R, Q) && !res && w ∈ Q && w ∈ R
+        res, w = LazySet.isdisjoint(P, R, true)
+        @test LazySet.isdisjoint(P, R) && res && w == N[]
+        res, w = LazySet.isdisjoint(R, P, true)
+        @test LazySet.isdisjoint(R, P) && res && w == N[]
+        res, w = LazySet.isdisjoint(P, R, true; algorithm="sufficient")
+        @test LazySet.isdisjoint(P, R; algorithm="sufficient") && res && w == N[]
 
         # test that one can pass a sparse vector as the direction (see #1011)
         P = HPolytope([HalfSpace(N[1, 0], N(1)),
