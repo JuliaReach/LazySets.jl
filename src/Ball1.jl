@@ -222,7 +222,7 @@ function rand(::Type{Ball1};
 end
 
 """
-    constraints_list(P::Ball1{N})::Vector{LinearConstraint{N}} where {N<:Real}
+    constraints_list(P::Ball1{N}) where {N<:Real}
 
 Return the list of constraints defining a ball in the 1-norm.
 
@@ -240,7 +240,7 @@ The constraints can be defined as ``d_i^T (x-c) ≤ r`` for all ``d_i``, where
 ``d_i`` is a vector with elements ``1`` or ``-1`` in ``n`` dimensions. To span
 all possible ``d_i``, the function `Iterators.product` is used.
 """
-function constraints_list(B::Ball1{N})::Vector{LinearConstraint{N}} where {N<:Real}
+function constraints_list(B::Ball1{N}) where {N<:Real}
     n = LazySets.dim(B)
     c, r = B.center, B.radius
     clist = Vector{LinearConstraint{N}}(undef, 2^n)

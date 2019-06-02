@@ -54,8 +54,8 @@ This type is provided for use with very large and very sparse matrices.
 The evaluation of the exponential matrix action over vectors relies on the
 [Expokit](https://github.com/acroy/Expokit.jl) package.
 """
-struct SparseMatrixExp{N} <: AbstractMatrix{N}
-    M::SparseMatrixCSC{N, Int}
+struct SparseMatrixExp{N, MN<:AbstractSparseMatrix{N}} <: AbstractMatrix{N}
+    M::MN
 end
 
 SparseMatrixExp(M::Matrix) =
@@ -75,7 +75,7 @@ end
 function load_expokit_sparsematrixexp()
 return quote
 
-using Expokit: expmv
+using .Expokit: expmv
 
 function get_column(spmexp::SparseMatrixExp{N}, j::Int)::Vector{N} where {N}
     n = size(spmexp, 1)
@@ -227,7 +227,7 @@ end
 function load_expokit_exponentialmap()
 return quote
 
-using Expokit: expmv
+using .Expokit: expmv
 
 """
     σ(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
@@ -308,10 +308,11 @@ This follows from ``\\exp(-M)⋅\\exp(M) = I`` for any ``M``.
 ### Examples
 
 ```jldoctest
-julia> using Compat.SparseArrays: SparseMatrixCSC;
+julia> using SparseArrays
 
-julia> em = ExponentialMap(SparseMatrixExp(SparseMatrixCSC([2.0 0.0; 0.0 1.0])),
-                           BallInf([1., 1.], 1.));
+julia> em = ExponentialMap(
+        SparseMatrixExp(sparse([1, 2], [1, 2], [2.0, 1.0], 2, 2)),
+        BallInf([1., 1.], 1.));
 
 julia> ∈([-1.0, 1.0], em)
 false
@@ -406,10 +407,12 @@ Type that represents the projection of a sparse matrix exponential, i.e.,
 - `E` -- sparse matrix exponential
 - `R` -- right multiplication matrix
 """
-struct ProjectionSparseMatrixExp{N<:Real}
-    L::SparseMatrixCSC{N, Int}
-    spmexp::SparseMatrixExp{N}
-    R::SparseMatrixCSC{N, Int}
+struct ProjectionSparseMatrixExp{N<:Real, MN1<:AbstractSparseMatrix{N},
+                                 MN2<:AbstractSparseMatrix{N},
+                                 MN3<:AbstractSparseMatrix{N}}
+    L::MN1
+    spmexp::SparseMatrixExp{N, MN2}
+    R::MN3
 end
 
 """
@@ -426,13 +429,6 @@ exponential to a convex set.
 struct ExponentialProjectionMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
     projspmexp::ProjectionSparseMatrixExp
     X::S
-end
-
-@static if VERSION < v"0.7-"
-    # convenience constructor without type parameter
-    ExponentialProjectionMap(projspmexp::ProjectionSparseMatrixExp, X::S
-                            ) where {N<:Real, S<:LazySet{N}} =
-        ExponentialProjectionMap{N, S}(projspmexp, X)
 end
 
 """
@@ -479,7 +475,7 @@ end
 function load_expokit_exponentialprojectionmap()
 return quote
 
-using Expokit: expmv
+using .Expokit: expmv
 
 """
     σ(d::AbstractVector{N},

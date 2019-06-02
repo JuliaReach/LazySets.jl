@@ -56,26 +56,6 @@ Hyperrectangle(center::Vector{N}, radius::Vector{N}) where {N<:Real} =
     Hyperrectangle{N}(center, radius)
 
 # constructor from keyword arguments (lower and upper bounds)
-@static if VERSION < v"0.7-"
-@eval begin
-
-function Hyperrectangle(;kwargs...)
-    dict = Dict{Symbol, Any}(kwargs)
-    if haskey(dict, :high) && haskey(dict, :low)
-        # compute center and radius from high and low vectors
-        high = dict[:high]
-        center = (high .+ dict[:low]) ./ 2
-        radius = abs.(high .- center)
-        return Hyperrectangle(center, radius)
-    end
-    throw(ArgumentError("invalid arguments for Hyperrectangle: " *
-        "use 'high' and 'low'"))
-end
-
-end # @eval
-else
-@eval begin
-
 function Hyperrectangle(;
                         high::AbstractVector{N},
                         low::AbstractVector{N}) where {N<:Real}
@@ -84,9 +64,6 @@ function Hyperrectangle(;
     radius = abs.(high .- center)
     return Hyperrectangle(center, radius)
 end
-
-end # @eval
-end # if
 
 
 # --- AbstractHyperrectangle interface functions ---

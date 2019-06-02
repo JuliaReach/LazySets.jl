@@ -7,11 +7,12 @@ export HPolygonOpt
 
 Type that represents a convex polygon in constraint representation whose edges
 are sorted in counter-clockwise fashion with respect to their normal directions.
-This is a refined version of `HPolygon`.
+This is a refined version of [`HPolygon`](@ref).
 
 ### Fields
 
-- `constraints`       -- list of linear constraints
+- `constraints`       -- list of linear constraints, sorted by the normal
+                         direction in counter-clockwise fashion
 - `ind`               -- index in the list of constraints to begin the search
                          to evaluate the support function
 - `sort_constraints`  -- (optional, default: `true`) flag for sorting the
@@ -20,6 +21,8 @@ This is a refined version of `HPolygon`.
 - `check_boundedness` -- (optional, default: `false`) flag for checking if the
                          constraints make the polygon bounded; (boundedness is a
                          running assumption of this type)
+- `prune`             -- (optional, default: `true`) flag for removing redundant
+                         constraints
 
 ### Notes
 
@@ -28,25 +31,35 @@ sequence of directions that are close to each other. The strategy is to have an
 index that can be used to warm-start the search for optimal values in the
 support vector computation.
 
-The default constructor assumes that the given list of edges is sorted.
-It *does not perform* any sorting.
-Use `addconstraint!` to iteratively add the edges in a sorted way.
+The option `sort_constraints` can be used to deactivate automatic sorting of
+constraints in counter-clockwise fashion, which is an invariant of this type.
+Alternatively, one can construct an `HPolygonOpt` with empty constraints list,
+which can then be filled iteratively using `addconstraint!`.
 
-- `HPolygonOpt(constraints::Vector{LinearConstraint{<:Real}}, [ind]::Int=1)`
-  -- default constructor with optional index
+Similarly, the option `prune` can be used to deactivate automatic pruning of
+redundant constraints.
+
+Another type assumption is that the polygon is bounded.
+The option `check_boundedness` can be used to assert this.
+This option is deactivated by default because we explicitly want to allow the
+iterative addition of the constraints, and hence one has to initially construct
+an empty list of constraints (which represents an unbounded set).
+The user has to make sure that the `HPolygonOpt` is not used before the
+constraints actually describe a bounded set.
+The function `isbounded` can be used to manually assert boundedness.
 """
 mutable struct HPolygonOpt{N<:Real} <: AbstractHPolygon{N}
     constraints::Vector{LinearConstraint{N}}
     ind::Int
 
     # default constructor that applies sorting of the given constraints
-    function HPolygonOpt{N}(constraints::Vector{LinearConstraint{N}},
+    function HPolygonOpt{N}(constraints::Vector{<:LinearConstraint{N}},
                             ind::Int=1;
                             sort_constraints::Bool=true,
                             check_boundedness::Bool=false,
                             prune::Bool=true) where {N<:Real}
         if sort_constraints
-            sorted_constraints = Vector{LinearConstraint{N}}()
+            sorted_constraints = Vector{eltype(constraints)}()
             sizehint!(sorted_constraints, length(constraints))
             for ci in constraints
                 addconstraint!(sorted_constraints, ci; prune=prune)
@@ -62,7 +75,7 @@ mutable struct HPolygonOpt{N<:Real} <: AbstractHPolygon{N}
 end
 
 # convenience constructor without type parameter
-HPolygonOpt(constraints::Vector{LinearConstraint{N}},
+HPolygonOpt(constraints::Vector{<:LinearConstraint{N}},
             ind::Int=1;
             sort_constraints::Bool=true,
             check_boundedness::Bool=false,
@@ -74,7 +87,8 @@ HPolygonOpt(constraints::Vector{LinearConstraint{N}},
                    prune=prune)
 
 # constructor with no constraints
-HPolygonOpt{N}() where {N<:Real} = HPolygonOpt{N}(Vector{LinearConstraint{N}}())
+HPolygonOpt{N}() where {N<:Real} =
+    HPolygonOpt{N}(Vector{LinearConstraint{N, <:AbstractVector{N}}}())
 
 # constructor with no constraints of type Float64
 HPolygonOpt() = HPolygonOpt{Float64}()

@@ -3,20 +3,27 @@
 The focus of `LazySets.jl` is to wrap set representations and operations into
 specialized types, delaying the evaluation of the result of an expression until
 it is necessary.
-However, sometimes it is necessary to do an explicit computation.
+However, sometimes it is desirable to perform an explicit computation.
 For concrete operations with polyhedra we rely on the polyhedra manipulation
-library [Polyhedra.jl](https://github.com/JuliaPolyhedra/Polyhedra.jl).
+library [`Polyhedra.jl`](https://github.com/JuliaPolyhedra/Polyhedra.jl).
 
-Actually, `Polyhedra.jl` provides a unified interface to well-known
-implementations of polyhedral computations, such as CDD or LRS (see the complete
-list in
-[the documentation of `Polyhedra.jl`](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)).
+`Polyhedra.jl` provides a unified interface to well-known implementations of
+polyhedral computations (which we also call *backends*) such as *CDD* or *LRS*.
+See the complete list in [the documentation of
+`Polyhedra.jl`](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation/#Getting-Libraries-1).
 This is a great advantage because we can easily use a library that supports
 floating point arithmetic, rational arithmetic, multiple precision, etc.
 The libraries also include projection and elimination of variables through
 Fourier-Motzkin.
+If you are interested in specific numeric types different from the default
+`Float64`, such as `Float32`, these may not be supported by the backend, in
+which case Julia may automatically promote to, e.g., `Float64`.
+As an example, *CDD* (which is used via the wrapper package
+[`CDDLib.jl`](https://github.com/JuliaPolyhedra/CDDLib.jl)) can only be used
+with numeric type `Float64` for floating-point arithmetic and with numeric type
+`Rational{BigInt}` for exact arithmetic.
 
-Below we give examples of operations that are actually done via `Polyhedra.jl`.
+Below we give examples of operations that are performed using `Polyhedra.jl`.
 
 ```@contents
 Pages = ["concrete_polyhedra.md"]
@@ -25,7 +32,7 @@ Depth = 3
 
 ```@meta
 DocTestSetup = quote
-    using Plots, LazySets, LazySets.Approximations, Polyhedra, Compat.LinearAlgebra
+    using Plots, LazySets, LazySets.Approximations, Polyhedra, LinearAlgebra
 end
 ```
 
@@ -35,7 +42,7 @@ To use the `Polyhedra.jl` interface, you need to load the package with `using Po
 Let's create an H-representation object:
 
 ```@example concrete_polyhedra
-using Plots, LazySets, Polyhedra, Compat.LinearAlgebra
+using Plots, LazySets, Polyhedra, LinearAlgebra
 
 A = [1. 1;1 -1;-1 0]
 b = [1.,0,0]

@@ -5,10 +5,11 @@ export VPolygon,
        remove_redundant_vertices,
        remove_redundant_vertices!,
        convex_hull,
-       linear_map
+       linear_map,
+       minkowski_sum
 
 """
-    VPolygon{N<:Real} <: AbstractPolygon{N}
+    VPolygon{N<:Real, VN<:AbstractVector{N}} <: AbstractPolygon{N}
 
 Type that represents a polygon by its vertices.
 
@@ -27,31 +28,31 @@ computation of the convex hull.
             apply_convex_hull::Bool=true,
             algorithm::String="monotone_chain")`
 """
-struct VPolygon{N<:Real} <: AbstractPolygon{N}
-    vertices::Vector{Vector{N}}
+struct VPolygon{N<:Real, VN<:AbstractVector{N}} <: AbstractPolygon{N}
+    vertices::Vector{VN}
 
     # default constructor that applies a convex hull algorithm
-    function VPolygon{N}(vertices::Vector{Vector{N}};
+    function VPolygon{N, VN}(vertices::Vector{VN};
                          apply_convex_hull::Bool=true,
-                         algorithm::String="monotone_chain") where {N<:Real}
+                         algorithm::String="monotone_chain") where {N<:Real, VN<:AbstractVector{N}}
         if apply_convex_hull
-            return new{N}(convex_hull(vertices, algorithm=algorithm))
+            return new{N, VN}(convex_hull(vertices, algorithm=algorithm))
         else
-            return new{N}(vertices)
+            return new{N, VN}(vertices)
         end
     end
 end
 
 # convenience constructor without type parameter
-VPolygon(vertices::Vector{Vector{N}};
+VPolygon(vertices::Vector{VN};
          apply_convex_hull::Bool=true,
-         algorithm::String="monotone_chain") where {N<:Real} =
-    VPolygon{N}(vertices; apply_convex_hull=apply_convex_hull,
+         algorithm::String="monotone_chain") where {N<:Real, VN<:AbstractVector{N}} =
+    VPolygon{N, VN}(vertices; apply_convex_hull=apply_convex_hull,
                 algorithm=algorithm)
 
 # constructor with empty vertices list
 VPolygon{N}() where {N<:Real} =
-    VPolygon{N}(Vector{Vector{N}}(), apply_convex_hull=false)
+    VPolygon{N, Vector{N}}(Vector{Vector{N}}(), apply_convex_hull=false)
 
 # constructor with no vertices of type Float64
 VPolygon() = VPolygon{Float64}()
@@ -116,7 +117,7 @@ function linear_map(M::AbstractMatrix{N}, P::VPolygon{N}) where {N<:Real}
 end
 
 @inline function _linear_map_vrep(M::AbstractMatrix{N}, P::VPolygon{N}) where {N<:Real}
-    return broadcast(v -> M * v, vertices_list(P)) |> VPolygon{N}
+    return broadcast(v -> M * v, vertices_list(P)) |> VPolygon
 end
 
 # --- AbstractPolygon interface functions ---
@@ -166,8 +167,8 @@ function tohrep(P::VPolygon{N}, ::Type{HPOLYGON}=HPolygon
     vl = vertices_list(P)
     n = length(vl)
     if n == 0
-        # no vertex -> no constraint
-        constraints_list = Vector{LinearConstraint{N}}(undef, 0)
+        # no vertex -> empy set
+        return EmptySet{N}()
     elseif n == 1
         # only one vertex -> use function for singletons
         return convert(HPOLYGON, Singleton(vl[1]))
@@ -478,7 +479,7 @@ function rand(::Type{VPolygon};
 end
 
 """
-    constraints_list(P::VPolygon{N})::Vector{LinearConstraint{N}} where {N<:Real}
+    constraints_list(P::VPolygon{N}) where {N<:Real}
 
 Return the list of constraints defining a polygon in V-representation.
 
@@ -495,7 +496,7 @@ The list of constraints of the polygon.
 First the H-representation of ``P`` is computed, then its list of constraints
 is returned. 
 """
-function constraints_list(P::VPolygon{N})::Vector{LinearConstraint{N}} where {N<:Real}
+function constraints_list(P::VPolygon{N}) where {N<:Real}
     return constraints_list(tohrep(P))
 end
 
@@ -552,4 +553,59 @@ function translate(P::VPolygon{N}, v::AbstractVector{N}) where {N<:Real}
     @assert length(v) == dim(P) "cannot translate a $(dim(P))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     return VPolygon([x + v for x in vertices_list(P)])
+end
+
+"""
+    minkowski_sum(P::VPolygon{N}, Q::VPolygon{N}) where {N<:Real}
+
+The Minkowski Sum of two polygon in vertex representation.
+
+### Input
+
+- `P` -- polygon in vertex representation
+- `Q` -- another polygon in vertex representation
+
+### Output
+
+A polygon in vertex representation.
+
+### Algorithm
+
+We treat each edge of the polygons as a vector, attaching them in polar order
+(attaching the tail of the next vector to the head of the previous vector). The
+resulting polygonal chain will be a polygon, which is the Minkowski sum of the 
+given polygons. This algorithm assumes that the vertices of P and Q are sorted 
+in counter-clockwise fashion and has linear complexity O(m+n) where m and n are 
+the number of vertices of P and Q respectively.
+
+"""
+function minkowski_sum(P::VPolygon{N}, Q::VPolygon{N}) where {N<:Real}
+    vlistP = vertices_list(P)
+    vlistQ = vertices_list(Q)
+    mP = length(vlistP)
+    mQ = length(vlistQ)
+    i = 1
+    k = 1
+    j = 1
+    R = Vector{Vector{N}}(undef, mP+mQ)
+    fill!(R, N[0, 0])
+    while i <= size(R, 1)
+        P₁, P₂ = vlistP[(k-1)%mP+1], vlistP[(k%mP+1)]
+        P₁P₂ = P₂ - P₁
+        Q₁, Q₂ = vlistQ[(j-1)%mQ+1], vlistQ[(j%mQ+1)]
+        Q₁Q₂ = Q₂ - Q₁
+        R[i] = P₁ + Q₁
+        turn = right_turn(P₁P₂, Q₁Q₂, N[0, 0])
+        if turn > 0
+            k += 1
+        elseif turn < 0
+            j += 1
+        else
+            pop!(R)
+            k += 1
+            j += 1
+        end
+        i += 1
+    end
+    return VPolygon(R)
 end

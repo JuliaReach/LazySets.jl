@@ -36,6 +36,7 @@ is_intersection_empty(::UnionSetArray{N}, ::LazySet{N}, ::Bool=false) where {N<:
 is_intersection_empty(::Universe{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::Complement{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::Zonotope{N}, ::Zonotope{N}, ::Bool=false) where {N<:Real}
+is_intersection_empty(::Interval{N}, ::Interval{N}, ::Bool=false) where {N<:Real}
 ```
 
 ## Convex hull
@@ -53,6 +54,9 @@ intersection(::AbstractSingleton{N}, ::LazySet{N}) where {N<:Real}
 intersection(::Line{N}, ::Line{N}) where {N<:Real}
 intersection(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}) where {N<:Real}
 intersection(::Interval{N}, ::Interval{N}) where {N<:Real}
+intersection(::Interval{N}, ::HalfSpace{N}) where {N<:Real}
+intersection(::Interval{N}, ::Hyperplane{N}) where {N<:Real}
+intersection(::Interval{N}, ::LazySet{N}) where {N<:Real}
 intersection(::AbstractHPolygon{N}, ::AbstractHPolygon{N}, ::Bool=true) where {N<:Real}
 intersection(::AbstractPolyhedron{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 intersection(::Union{VPolytope{N}, VPolygon{N}}, ::Union{VPolytope{N}, VPolygon{N}}) where {N<:Real}
@@ -86,4 +90,11 @@ intersection(::AbstractPolyhedron{N}, ::ResetMap{N}) where {N<:Real}
 ⊆(::Universe{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 ⊆(::LazySet{N}, ::Complement{N}, ::Bool=false) where {N<:Real}
 ⊆(::CartesianProductArray{N}, ::CartesianProductArray{N}, ::Bool=false) where {N<:Real}
+```
+
+## Set difference
+
+```@docs
+\(::LazySet, ::LazySet)
+difference(::IN, ::IN) where {N, IN<:Interval{N}}
 ```

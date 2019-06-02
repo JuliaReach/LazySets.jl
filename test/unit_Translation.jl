@@ -38,6 +38,10 @@ for N in [Float64, Rational{Int}, Float32]
     # emptiness check
     @test !isempty(tr)
 
+    # set membership
+    B = Ball2(zeros(N, 2), N(1))
+    @test center(B) ∈ B ⊕ zeros(N, 2)
+
     # ==================================
     # Type-specific methods
     # ==================================

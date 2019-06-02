@@ -24,6 +24,9 @@ Abstract type for polygons in H-representation (i.e., constraints).
 
 ### Notes
 
+All subtypes must satisfy the invariant that constraints are sorted
+counter-clockwise.
+
 Every concrete `AbstractHPolygon` must have the following fields:
 - `constraints::Vector{LinearConstraint{N}}` -- the constraints
 
@@ -139,7 +142,7 @@ function vertices_list(P::AbstractHPolygon{N},
 end
 
 """
-    constraints_list(P::AbstractHPolygon{N})::Vector{LinearConstraint{N}} where {N<:Real}
+    constraints_list(P::AbstractHPolygon{N}) where {N<:Real}
 
 Return the list of constraints defining a polygon in H-representation.
 
@@ -150,8 +153,9 @@ Return the list of constraints defining a polygon in H-representation.
 ### Output
 
 The list of constraints of the polygon.
+The implementation guarantees that the constraints are sorted counter-clockwise.
 """
-function constraints_list(P::AbstractHPolygon{N})::Vector{LinearConstraint{N}} where {N<:Real}
+function constraints_list(P::AbstractHPolygon{N}) where {N<:Real}
     return P.constraints
 end
 
@@ -202,7 +206,7 @@ function ∈(x::AbstractVector{N}, P::AbstractHPolygon{N})::Bool where {N<:Real}
     @assert length(x) == 2
 
     for c in P.constraints
-        if dot(c.a, x) > c.b
+        if !_leq(dot(c.a, x), c.b)
             return false
         end
     end
@@ -382,13 +386,13 @@ constraints sorted by their normal directions.
 
 ### Input
 
-- `P`          -- polygon in constraint representation
-- `constraint` -- linear constraint to add
-- `linear_search`  -- (optional, default: `length(constraints) <
-                      BINARY_SEARCH_THRESHOLD`) flag to choose between linear
-                      and binary search
-- `prune`          -- (optional, default: `true`) flag for removing redundant
-                      constraints in the end
+- `P`             -- polygon in constraint representation
+- `constraint`    -- linear constraint to add
+- `linear_search` -- (optional, default: `length(constraints) <
+                     BINARY_SEARCH_THRESHOLD`) flag to choose between linear
+                     and binary search
+- `prune`         -- (optional, default: `true`) flag for removing redundant
+                     constraints in the end
 
 ### Output
 
@@ -405,12 +409,12 @@ function addconstraint!(P::AbstractHPolygon{N},
 end
 
 """
-    addconstraint!(constraints::Vector{LinearConstraint{N}},
+    addconstraint!(constraints::Vector{LC},
                    new_constraint::LinearConstraint{N};
                    [linear_search]::Bool=(length(P.constraints) <
                                           BINARY_SEARCH_THRESHOLD),
                    [prune]::Bool=true
-                  )::Nothing where {N<:Real}
+                  )::Nothing where {N<:Real, LC<:LinearConstraint{N}}
 
 Add a linear constraint to a sorted vector of constrains, keeping the
 constraints sorted by their normal directions.
@@ -436,12 +440,12 @@ If `prune` is active, we check if the new constraint is redundant.
 If the constraint is not redundant, we perform the same check to the left and to
 the right until we find the first constraint that is not redundant.
 """
-function addconstraint!(constraints::Vector{LinearConstraint{N}},
+function addconstraint!(constraints::Vector{LC},
                         new_constraint::LinearConstraint{N};
                         linear_search::Bool=(length(constraints) <
                                              BINARY_SEARCH_THRESHOLD),
                         prune::Bool=true
-                       )::Nothing where {N<:Real}
+                       )::Nothing where {N<:Real, LC<:LinearConstraint{N}}
     m = length(constraints)
     k = m
     if k > 0
@@ -510,7 +514,7 @@ end
 
 """
     binary_search_constraints(d::AbstractVector{N},
-                              constraints::Vector{LinearConstraint{N}},
+                              constraints::Vector{<:LinearConstraint{N}},
                               n::Int,
                               k::Int;
                               [choose_lower]::Bool=false
@@ -536,7 +540,7 @@ that `constraints[k] < d`, which is equivalent to being `k-1` in the normal
 setting.
 """
 function binary_search_constraints(d::AbstractVector{N},
-                                   constraints::Vector{LinearConstraint{N}},
+                                   constraints::Vector{<:LinearConstraint{N}},
                                    n::Int,
                                    k::Int;
                                    choose_lower::Bool=false

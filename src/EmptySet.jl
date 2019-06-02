@@ -261,3 +261,22 @@ The empty set.
 function translate(∅::EmptySet{N}, v::AbstractVector{N}) where {N<:Real}
     return ∅
 end
+
+"""
+    plot_recipe(∅::EmptySet{N}, [ε]::N=zero(N)) where {N<:Real}
+
+Convert an empty set to a sequence of points for plotting.
+In the special case of an empty set, we define the sequence as `nothing`.
+
+### Input
+
+- `∅` -- empty set
+- `ε` -- (optional, default: `0`) ignored, used for dispatch
+
+### Output
+
+`nothing`.
+"""
+function plot_recipe(∅::EmptySet{N}, ε::N=zero(N)) where {N<:Real}
+    return nothing
+end

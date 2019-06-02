@@ -35,11 +35,6 @@ struct Complement{N<:Real, S<:LazySet{N}}
     X::S
 end
 
-@static if VERSION < v"0.7"
-    # convenience constructor without type parameter
-    Complement(X::S) where {N<:Real, S<:LazySet{N}} = Complement{N, S}(X)
-end
-
 # the complement of the complement is the original set again
 Complement(C::Complement) = C.X
 

@@ -203,14 +203,14 @@ if test_suite_polyhedra
         @test isdisjoint(R, P) && res && w == N[]
 
         Punbdd = HPolyhedron([HalfSpace([0.68, 1.22], -0.76),
-                              HalfSpace{Float64}([-0.75, -0.46], 0.68)])
+                              HalfSpace([-0.75, -0.46], 0.68)])
         @assert !isbounded(Punbdd)
 
         Pbdd = HPolyhedron([HalfSpace([0.68, 1.22], -0.76),
-                            HalfSpace{Float64}([-0.75, -0.46], 0.68),
-                            HalfSpace{Float64}([1.72, 0.33], 0.37),
-                            HalfSpace{Float64}([-1.60, -0.41], 0.67),
-                            HalfSpace{Float64}([-0.44, 0.06], 0.78)])
+                            HalfSpace([-0.75, -0.46], 0.68),
+                            HalfSpace([1.72, 0.33], 0.37),
+                            HalfSpace([-1.60, -0.41], 0.67),
+                            HalfSpace([-0.44, 0.06], 0.78)])
         @assert isbounded(Pbdd)
 
         Mnotinv = [1.0 0.0; 2.0 0.0]

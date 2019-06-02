@@ -5,11 +5,6 @@ for N in [Float64, Rational{Int}, Float32]
     # normal constructor
     hs = HalfSpace(ones(N, 3), N(5))
 
-    # numeric-type conversion preserves vector base type
-    hs1 = HalfSpace(spzeros(4), 1.)
-    hs2 = convert(HalfSpace{N}, hs1)
-    @test hs2.a isa SparseVector{N}
-
     # dimension
     @test dim(hs) == 3
 

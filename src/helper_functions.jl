@@ -1,5 +1,11 @@
+export _At_mul_B
+
 # default tolerance for matrix condition number (see 'isinvertible')
 const DEFAULT_COND_TOL = 1e6
+
+# matrix-matrix multiplication and division
+@inline _At_mul_B(A, B) = transpose(A) * B
+@inline _At_ldiv_B(A, B) = transpose(A) \ B
 
 """
     dot_zero(x::AbstractVector{N}, y::AbstractVector{N}) where{N<:Real}
@@ -59,7 +65,7 @@ function sign_cadlag(x::N)::N where {N<:Real}
 end
 
 """
-    ispermutation(u::AbstractVector{T}, v::AbstractVector{T})::Bool where T
+    ispermutation(u::AbstractVector{T}, v::AbstractVector)::Bool where {T}
 
 Check that two vectors contain the same elements up to reordering.
 
@@ -83,7 +89,7 @@ false
 
 ```
 """
-function ispermutation(u::AbstractVector{T}, v::AbstractVector{T})::Bool where T
+function ispermutation(u::AbstractVector{T}, v::AbstractVector)::Bool where {T}
     if length(u) != length(v)
         return false
     end
@@ -157,7 +163,8 @@ function isinvertible(M::Matrix; cond_tol::Number=DEFAULT_COND_TOL)
 end
 
 # cond is not available for sparse matrices; see JuliaLang#6485 and related issues
-function isinvertible(M::SparseMatrixCSC; cond_tol::Number=DEFAULT_COND_TOL)
+function isinvertible(M::AbstractSparseMatrix;
+                      cond_tol::Number=DEFAULT_COND_TOL)
     return issquare(M) && isinvertible(Matrix(M), cond_tol=cond_tol)
 end
 
@@ -348,11 +355,7 @@ The input RNG if the seed is `nothing`, and a reseeded RNG otherwise.
 """
 function reseed(rng::AbstractRNG, seed::Union{Int, Nothing})::AbstractRNG
     if seed != nothing
-        @static if VERSION < v"0.7-"
-            return Random.srand(rng, seed)
-        else
-            return Random.seed!(rng, seed)
-        end
+        return Random.seed!(rng, seed)
     end
     return rng
 end
@@ -447,47 +450,6 @@ end
 Base.eltype(::Type{StrictlyIncreasingIndices}) = Vector{Int}
 Base.length(sii::StrictlyIncreasingIndices) = binomial(sii.n, sii.m)
 
-@static if VERSION < v"0.7-"
-@eval begin
-
-# returns [1, 2, ..., m-2, m-1, m-1]
-function Base.start(sii::StrictlyIncreasingIndices)
-    v = [1:sii.m;]
-    if sii.n > sii.m
-        v[end] -= 1
-    end
-    return v
-end
-
-function Base.next(sii::StrictlyIncreasingIndices, state)
-    v = state
-    i = sii.m
-    diff = sii.n
-    if i == diff
-        return (v, nothing)
-    end
-    while v[i] == diff
-        i -= 1
-        diff -= 1
-    end
-    # update vector
-    v[i] += 1
-    for j in i+1:sii.m
-        v[j] = v[j-1] + 1
-    end
-    # detect termination: first index has maximum value
-    if i == 1 && v[1] == (sii.n - sii.m + 1)
-        return (v, nothing)
-    end
-    return (v, v)
-end
-
-Base.done(sii::StrictlyIncreasingIndices, state) = state == nothing
-
-end # @eval
-else
-@eval begin
-
 # initialization
 function Base.iterate(sii::StrictlyIncreasingIndices)
     v = [1:sii.m;]
@@ -522,9 +484,6 @@ end
 function Base.iterate(sii::StrictlyIncreasingIndices, state::Nothing)
     return nothing
 end
-
-end # @eval
-end # if
 
 """
     subtypes(interface, concrete::Bool)
@@ -668,4 +627,21 @@ The (scalar) result of the multiplication.
 function inner(x::AbstractVector{N}, A::AbstractMatrix{N}, y::AbstractVector{N}
               ) where {N}
     dot(x, A * y)
+end
+
+"""
+    rectify(x::AbstractVector{N}) where {N<:Real}
+
+Rectify a vector, i.e., take the element-wise maximum with zero.
+
+### Input
+
+- `x` -- vector
+
+### Output
+
+A copy of the vector where each negative entry is replaced by zero.
+"""
+function rectify(x::AbstractVector{N}) where {N<:Real}
+    return map(xi -> max(xi, zero(N)), x)
 end

@@ -1,11 +1,6 @@
-using LazySets, LazySets.Approximations
-
-import IntervalArithmetic, Expokit
+using LazySets, LazySets.Approximations, Test, LinearAlgebra, SparseArrays
+import IntervalArithmetic, Expokit, Optim
 using IntervalArithmetic: IntervalBox
-
-# compatibility between Julia versions
-include("../src/compat.jl")
-using Compat.Test
 
 # conversion between numeric types
 include("to_N.jl")
@@ -15,7 +10,7 @@ using LazySets: ispermutation, isinvertible, inner
 using LazySets.Approximations: UnitVector
 
 global test_suite_basic = true
-global test_suite_doctests = VERSION >= v"0.7-" # only run doctests with new Julia version
+global test_suite_doctests = true
 global test_suite_polyhedra = true
 global test_suite_plotting = true
 
@@ -45,18 +40,7 @@ else
     error("unknown parameter 1: $(ARGS[1])")
 end
 
-@static if VERSION >= v"0.7-"
-    using Pkg
-end
-
-Pkg.add("Optim")
-import Optim
-
 if test_suite_polyhedra || test_suite_plotting
-    @static if VERSION < v"0.7-"
-        Pkg.add("CDDLib")
-    end
-    Pkg.add("Polyhedra")
     import Polyhedra
 
     # fix namespace conflicts with Polyhedra
@@ -114,6 +98,8 @@ if test_suite_basic
     # Testing other set types that do not inherit from LazySet
     # =========================================================
     @time @testset "LazySets.Complement" begin include("unit_Complement.jl") end
+    @time @testset "LazySets.PolynomialZonotope" begin include("unit_PolynomialZonotope.jl") end
+    @time @testset "LazySets.Rectification" begin include("unit_Rectification.jl") end
     @time @testset "LazySets.UnionSet" begin include("unit_UnionSet.jl") end
 
     # =================================================================
@@ -142,7 +128,6 @@ if test_suite_basic
 end
 
 if test_suite_plotting
-    Pkg.add("Plots")
     import Plots
     using Plots: plot
 
@@ -153,16 +138,6 @@ if test_suite_plotting
 end
 
 if test_suite_doctests
-    @static if VERSION < v"0.7-"
-        Pkg.add("Documenter")
-    else
-        # NOTE: can be removed when using a Project.toml file
-        Pkg.add("Documenter")
-        Pkg.add("Plots")
-        Pkg.add("GR")
-        # NOTE: restrict Documenter to 0.19.7 (breaking release) for now
-        Pkg.pin(PackageSpec(name="Documenter", version="0.19.7"));
-    end
     using Documenter
     @time @testset "LazySets.doctests" begin include("../docs/make_doctests_only.jl") end
 end

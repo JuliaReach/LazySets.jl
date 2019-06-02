@@ -27,7 +27,7 @@ Depth = 4
 CurrentModule = LazySets
 DocTestSetup = quote
     using LazySets
-    using Compat.InteractiveUtils: subtypes
+    using InteractiveUtils: subtypes
 end
 ```
 
@@ -59,12 +59,17 @@ diameter(::LazySet, ::Real=Inf)
 isbounded(::LazySet)
 isbounded_unit_dimensions(::LazySet{N}) where {N<:Real}
 an_element(::LazySet{N}) where {N<:Real}
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet)
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:LazySet}
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet, ::Float64)
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}, ::Float64) where {S<:LazySet}
 tosimplehrep(::LazySet)
 isuniversal(::LazySet{N}, ::Bool=false) where {N<:Real}
+```
+
+Plotting is available for general one- or two-dimensional `LazySet`s, provided
+that the overapproximation using iterative refinement is available:
+
+```@docs
+plot_recipe(::LazySet{N}, ::N=N(1e-3)) where {N<:Real}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet{N}, ::N=N(1e-3)) where {N<:Real}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractVector{VN}, ::N=N(1e-3), ::Int=40, ::Bool=false) where {N<:Real, VN<:LazySet{N}}
 ```
 
 ### Set functions that override Base functions
@@ -118,6 +123,12 @@ constrained_dimensions(::AbstractPolyhedron)
 linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 ```
 
+Plotting (bounded) polyhedra is available, too:
+
+```@docs
+plot_recipe(::AbstractPolyhedron{N}, ::N=zero(N)) where {N<:Real}
+```
+
 ### Polytope
 
 A polytope is a bounded set with finitely many vertices (*V-representation*)
@@ -135,8 +146,6 @@ This interface defines the following functions:
 isbounded(::AbstractPolytope)
 singleton_list(::AbstractPolytope{N}) where {N<:Real}
 isempty(::AbstractPolytope)
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractPolytope)
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:AbstractPolytope}
 ```
 
 #### Polygon
@@ -171,7 +180,7 @@ rand(::Type{HPOLYGON}) where {HPOLYGON<:AbstractHPolygon}
 tohrep(::HPOLYGON) where {HPOLYGON<:AbstractHPolygon}
 tovrep(::AbstractHPolygon{N}) where {N<:Real}
 addconstraint!(::AbstractHPolygon{N}, ::LinearConstraint{N}) where {N<:Real}
-addconstraint!(::Vector{LinearConstraint{N}}, ::LinearConstraint{N}) where {N<:Real}
+addconstraint!(::Vector{LC}, ::LinearConstraint{N}) where {N<:Real, LC<:LinearConstraint{N}}
 isredundant(::LinearConstraint{N}, ::LinearConstraint{N}, ::LinearConstraint{N}) where {N<:Real}
 remove_redundant_constraints!(::AbstractHPolygon)
 constraints_list(::AbstractHPolygon{N}) where {N<:Real}
@@ -244,6 +253,6 @@ high(::AbstractSingleton{N}, ::Int) where {N<:Real}
 low(::AbstractSingleton{N}) where {N<:Real}
 low(::AbstractSingleton{N}, ::Int) where {N<:Real}
 linear_map(::AbstractMatrix{N}, ::AbstractSingleton{N}) where {N<:Real}
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractSingleton)
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Vector{S}) where {S<:AbstractSingleton}
+plot_recipe(::AbstractSingleton{N}, ::N=zero(N)) where {N<:Real}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractSingleton{N}, ::N=zero(N)) where {N<:Real}
 ```

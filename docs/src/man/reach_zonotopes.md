@@ -32,23 +32,22 @@ overapproximates the states reachable by any trajectory of this IVP.
 ## Algorithm
 
 ```@example example_reach_zonotopes
-using Plots, LazySets, Compat.LinearAlgebra, Compat.SparseArrays
-import LazySets.expmat
+using Plots, LazySets, LinearAlgebra, SparseArrays
 
 function Algorithm1(A, X0, δ, μ, T)
     # bloating factors
     Anorm = norm(A, Inf)
-    α = (expmat(δ * Anorm) - 1 - δ * Anorm) / norm(X0, Inf)
-    β = (expmat(δ * Anorm) - 1) * μ / Anorm
+    α = (exp(δ * Anorm) - 1 - δ * Anorm) / norm(X0, Inf)
+    β = (exp(δ * Anorm) - 1) * μ / Anorm
 
     # discretized system
     n = size(A, 1)
-    ϕ = expmat(δ * A)
+    ϕ = exp(δ * A)
     N = floor(Int, T / δ)
 
     # preallocate arrays
-    Q = Vector{LazySet}(undef, N)
-    R = Vector{LazySet}(undef, N)
+    Q = Vector{LazySet{Float64}}(undef, N)
+    R = Vector{LazySet{Float64}}(undef, N)
 
     # initial reach set in the time interval [0, δ]
     ϕp = (I+ϕ) / 2
@@ -93,7 +92,7 @@ R = Algorithm1(A, X0, δ, μ, 2 * δ); # warm-up
 
 R = Algorithm1(A, X0, δ, μ, T)
 
-plot(R, 1e-2, fillalpha=0.1)
+plot(R, 1e-2, 0, true; fillalpha=0.1)
 ```
 
 
@@ -115,5 +114,5 @@ R = Algorithm1(A, X0, δ, μ, 2 * δ); # warm-up
 R = Algorithm1(A, X0, δ, μ, T)
 Rproj = project(R, [1, 3], 5)
 
-plot(Rproj, 1e-2, fillalpha=0.1, xlabel="x1", ylabel="x3")
+plot(Rproj, 1e-2, 0, true; fillalpha=0.1, xlabel="x1", ylabel="x3")
 ```

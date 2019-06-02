@@ -1,13 +1,13 @@
 ENV["GKSwstype"] = "100"  # set 'GR environment' to 'no output' (for Travis CI)
 using Documenter, LazySets
-import Polyhedra, Optim
+import Polyhedra, Optim, Expokit
 
 makedocs(
-    doctest = false,
-    modules = [LazySets, Approximations],
-    format = :html,
-    assets = ["assets/juliareach.css"],
     sitename = "LazySets.jl",
+    modules = Module[LazySets, Approximations],
+    format = Documenter.HTML(
+        prettyurls = get(ENV, "CI", nothing) == "true",
+        assets = ["assets/juliareach.css"]),
     pages = [
         "Home" => "index.md",
         "Manual" => Any[
@@ -37,14 +37,10 @@ makedocs(
         "Parallel" => "lib/parallel.md"
         ],
         "About" => "about.md"
-    ]
+    ],
+    doctest = false
 )
 
 deploydocs(
-    repo = "github.com/JuliaReach/LazySets.jl.git",
-    target = "build",
-    osname = "linux",
-    julia  = "0.7",
-    deps = nothing,
-    make = nothing
+    repo = "github.com/JuliaReach/LazySets.jl.git"
 )

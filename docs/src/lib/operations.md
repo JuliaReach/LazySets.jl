@@ -12,7 +12,7 @@ Depth = 3
 CurrentModule = LazySets
 DocTestSetup = quote
     using LazySets
-    using Compat.SparseArrays, Compat.LinearAlgebra
+    using SparseArrays, LinearAlgebra
 end
 ```
 
@@ -127,6 +127,8 @@ use_precise_ρ
 _line_search
 _projection
 linear_map(::AbstractMatrix{N}, ::Intersection{N}) where {N}
+plot_recipe(::Intersection{N}, ::N=zero(N), ::Int=40) where {N<:Real}
+RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Intersection{N}, ::N=zero(N), ::Int=40) where {N<:Real}
 ```
 
 Inherited from [`LazySet`](@ref):
@@ -220,7 +222,7 @@ Inherited from [`LazySet`](@ref):
 LinearMap
 *(::AbstractMatrix{N}, ::LazySet{N}) where {N<:Real}
 *(::N, ::LazySet{N}) where {N<:Real}
-*(::N, ::LM) where {N<:Real, LM<:LinearMap{N}}
+*(::N, ::LinearMap{N}) where {N<:Real}
 *(::AbstractMatrix{N}, ::ZeroSet{N}) where {N<:Real}
 dim(::LinearMap)
 ρ(::AbstractVector{N}, ::LinearMap{N}) where {N<:Real}
@@ -231,8 +233,8 @@ isbounded(::LinearMap)
 isempty(::LinearMap)
 vertices_list(::LinearMap{N}) where {N<:Real}
 constraints_list(::LinearMap{N}) where {N<:Real}
-linear_map(::AbstractMatrix{N}, ::LinearMap{N}) where {N}
-intersection(::LinearMap{N}, ::LazySet{N}) where {N}
+linear_map(::AbstractMatrix{N}, ::LinearMap{N}) where {N<:Real}
+intersection(::LinearMap{N}, ::LazySet{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -347,11 +349,12 @@ an_element(::Translation)
 isempty(::Translation)
 constraints_list(::Translation{N}, ::Val{true}) where {N<:Real}
 LinearMap(::AbstractMatrix{N}, ::Translation{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::Translation{N}) where {N<:Real}
 ```
 
 ## Union
 
-Note that a union of convex sets is generally not convex.
+Note that the union of convex sets is generally not convex.
 Hence these set types are not part of the convex-set family `LazySet`.
 
 ### Binary Set Union
@@ -384,14 +387,36 @@ isbounded(::UnionSetArray)
 
 ## Complement
 
-Note that a complement of a convex set is generally not convex.
+Note that the complement of a convex set is generally not convex.
 Hence this set type is not part of the convex-set family `LazySet`.
-
-### Binary Set Union
 
 ```@docs
 Complement
 dim(::Complement)
 ∈(::AbstractVector{N}, ::Complement{N}) where {N<:Real}
 isempty(::Complement)
+```
+
+## Rectification
+
+Note that the rectification of a convex set is generally not convex.
+Hence this set type is not part of the convex-set family `LazySet`.
+
+```@docs
+Rectification
+dim(::Rectification)
+σ(::AbstractVector{N}, ::Rectification{N}) where {N<:Real}
+σ(::AbstractVector{N}, ::Rectification{N, <:AbstractHyperrectangle{N}}) where {N<:Real}
+σ(::AbstractVector{N}, ::Rectification{N, <:CartesianProduct{N}}) where {N<:Real}
+σ(::AbstractVector{N}, ::Rectification{N, <:CartesianProductArray{N}}) where {N<:Real}
+an_element(::Rectification{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::Rectification{N}) where {N<:Real}
+isempty(::Rectification)
+isbounded(::Rectification{N}) where {N<:Real}
+```
+
+#### Rectification cache
+
+```@docs
+RectificationCache
 ```

@@ -28,6 +28,7 @@ nonzero_indices
 samedir
 sign_cadlag
 _random_zero_sum_vector
+rectify
 remove_duplicates_sorted!
 reseed
 same_block_structure

@@ -291,7 +291,7 @@ function vertices_list(P::VPolytope{N})::Vector{Vector{N}} where {N<:Real}
 end
 
 """
-    constraints_list(P::VPolytope{N})::Vector{LinearConstraint{N}} where {N<:Real}
+    constraints_list(P::VPolytope{N}) where {N<:Real}
 
 Return the list of constraints defining a polytope in V-representation.
 
@@ -308,7 +308,7 @@ The list of constraints of the polytope.
 First the H-representation of ``P`` is computed, then its list of constraints
 is returned. 
 """
-function constraints_list(P::VPolytope{N})::Vector{LinearConstraint{N}} where {N<:Real}
+function constraints_list(P::VPolytope{N}) where {N<:Real}
     return constraints_list(tohrep(P))
 end
 
@@ -322,9 +322,8 @@ Compute the convex hull of the set union of two polytopes in V-representation.
 
 - `P1`         -- polytope
 - `P2`         -- another polytope
-- `backend`    -- (optional, default: `default_polyhedra_backend(P1, N)`) the polyhedral
-                  computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
-                  for further information
+- `backend`    -- (optional, default: `nothing`) the polyhedral
+                  computations backend
 
 ### Output
 
@@ -332,17 +331,19 @@ The `VPolytope` obtained by the concrete convex hull of `P1` and `P2`.
 
 ### Notes
 
+This function takes the union of the vertices of each polytope and then relies
+on a concrete convex hull algorithm. For low dimensions, a specialized implementation
+for polygons is used. For higher dimensions, `convex_hull` relies on the polyhedral
+computations backend that can be specified using the `backend` keyword argument.
+
 For performance reasons, it is suggested to use the `CDDLib.Library()` backend
 for the `convex_hull`.
 """
 function convex_hull(P1::VPolytope{N}, P2::VPolytope{N};
-                     backend=default_polyhedra_backend(P1, N)) where {N}
-    @assert isdefined(@__MODULE__, :Polyhedra) "the function `convex_hull` needs " *
-                                               "the package 'Polyhedra' to be loaded"
-    Pch = convexhull(polyhedron(P1; backend=backend),
-                     polyhedron(P2; backend=backend))
-    removevredundancy!(Pch)
-    return VPolytope(Pch)
+                     backend=nothing) where {N}
+    vunion = [P1.vertices; P2.vertices]
+    convex_hull!(vunion; backend=backend)
+    return VPolytope(vunion)
 end
 
 """
@@ -426,6 +427,10 @@ For further information on the supported backends see
 """
 function tohrep(P::VPolytope{N};
                 backend=default_polyhedra_backend(P, N)) where {N<:Real}
+    vl = P.vertices
+    if isempty(vl)
+        return EmptySet{N}()
+    end
     @assert isdefined(@__MODULE__, :Polyhedra) "the function `tohrep` needs the " *
                                                "package 'Polyhedra' to be loaded"
     return HPolytope(polyhedron(P; backend=backend))
@@ -461,27 +466,13 @@ export vertices_list,
        tohrep,
        tovrep
 
-@static if VERSION < v"0.7-"
-
-    # VPolytope from a VRep
-    function VPolytope(P::VRep{T, N}) where {T, N}
-        vertices = Vector{Vector{N}}()
-        for vi in Polyhedra.points(P)
-            push!(vertices, vi)
-        end
-        return VPolytope(vertices)
+# VPolytope from a VRep
+function VPolytope(P::VRep{N}) where {N}
+    vertices = Vector{Vector{N}}()
+    for vi in Polyhedra.points(P)
+        push!(vertices, vi)
     end
-
-else
-
-    # VPolytope from a VRep
-    function VPolytope(P::VRep{N}) where {N}
-        vertices = Vector{Vector{N}}()
-        for vi in Polyhedra.points(P)
-            push!(vertices, vi)
-        end
-        return VPolytope(vertices)
-    end
+    return VPolytope(vertices)
 end
 
 """
@@ -496,15 +487,37 @@ Return an `VRep` polyhedron from `Polyhedra.jl` given a polytope in V-representa
 - `backend` -- (optional, default: `default_polyhedra_backend(P, N)`) the polyhedral
                computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
                for further information
+- `relative_dimension` -- (default, optional: `nothing`) an integer representing
+                          the (relative) dimension of the polytope; this argument
+                          is mandatory if the polytope is empty
 
 ### Output
 
 A `VRep` polyhedron.
+
+### Notes
+
+The *relative dimension* (or just *dimension*) refers to the dimension of the set
+relative to itself, independently of the ambient dimension. For example, a point
+has (relative) dimension zero, and a line segment has (relative) dimension one.
+
+In this library, `LazySets.dim` always returns the ambient dimension of the set,
+such that a line segment in two dimensions has dimension two. However,
+`Polyhedra.dim` will assign a dimension equal to one to a line segment
+because it uses a different convention.
 """
 function polyhedron(P::VPolytope{N};
-                    backend=default_polyhedra_backend(P, N)) where {N<:Real}
-    V = hcat(vertices_list(P)...)'
-    return polyhedron(Polyhedra.vrep(V), backend)
+                    backend=default_polyhedra_backend(P, N),
+                    relative_dimension=nothing) where {N<:Real}
+    if isempty(P)
+        if relative_dimension == nothing
+            error("the conversion to a `Polyhedra.polyhedron` requires the (relative) dimension " *
+                  "of the `VPolytope` to be known, but it cannot be inferred from an empty set; " *
+                  "try passing it in the keyword argument `relative_dimension`")
+        end
+        return polyhedron(Polyhedra.vrep(P.vertices, d=relative_dimension), backend)
+    end
+    return polyhedron(Polyhedra.vrep(P.vertices), backend)
 end
 
 end # quote

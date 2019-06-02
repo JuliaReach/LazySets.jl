@@ -125,13 +125,13 @@ whose `constraints_list` is available) can be computed from a lazy translation:
 
 ```jldoctest translation
 julia> constraints_list(tr)
-6-element Array{HalfSpace{Float64},1}:
- HalfSpace{Float64}([1.0, 0.0, 0.0], 5.0)
- HalfSpace{Float64}([0.0, 1.0, 0.0], 3.0)
- HalfSpace{Float64}([0.0, 0.0, 1.0], 3.0)
- HalfSpace{Float64}([-1.0, -0.0, -0.0], -3.0)
- HalfSpace{Float64}([-0.0, -1.0, -0.0], -1.0)
- HalfSpace{Float64}([-0.0, -0.0, -1.0], -1.0)
+6-element Array{HalfSpace{Float64,VN} where VN<:AbstractArray{Float64,1},1}:
+ HalfSpace{Float64,LazySets.Approximations.UnitVector{Float64}}([1.0, 0.0, 0.0], 5.0)
+ HalfSpace{Float64,LazySets.Approximations.UnitVector{Float64}}([0.0, 1.0, 0.0], 3.0)
+ HalfSpace{Float64,LazySets.Approximations.UnitVector{Float64}}([0.0, 0.0, 1.0], 3.0)
+ HalfSpace{Float64,Array{Float64,1}}([-1.0, -0.0, -0.0], -3.0)
+ HalfSpace{Float64,Array{Float64,1}}([-0.0, -1.0, -0.0], -1.0)
+ HalfSpace{Float64,Array{Float64,1}}([-0.0, -0.0, -1.0], -1.0)
 ```
 """
 struct Translation{N<:Real, VN<:AbstractVector{N}, S<:LazySet{N}} <: LazySet{N}
@@ -143,14 +143,6 @@ struct Translation{N<:Real, VN<:AbstractVector{N}, S<:LazySet{N}} <: LazySet{N}
         @assert dim(X) == length(v) "cannot create a translation of a set of dimension $(dim(X)) " *
                                     "along a vector of length $(length(v))" 
         return new{N, VN, S}(X, v)
-    end
-end
-
-@static if VERSION < v"0.7-"
-    @eval begin
-        # convenience constructor without type parameter
-        Translation(X::S, v::VN) where {N<:Real, VN<:AbstractVector{N}, S<:LazySet{N}} =
-            Translation{N, VN, S}(X, v)
     end
 end
 
@@ -348,4 +340,27 @@ end
 
 function constraints_list(tr::Translation{N}, ::Val{false}) where {N<:Real}
     throw(MethodError("this function requires that the `constraints_list` method is applicable"))
+end
+
+"""
+    ∈(x::AbstractVector{N}, tr::Translation{N})::Bool where {N<:Real}
+
+Check whether a given point is contained in the translation of a convex set.
+
+### Input
+
+- `x`  -- point/vector
+- `tr` -- translation of a convex set
+
+### Output
+
+`true` iff ``x ∈ tr``.
+
+### Algorithm
+
+This implementation relies on the set membership function for the wrapped set
+`tr.X`, since ``x ∈ X ⊕ v`` iff ``x - v ∈ X``.
+"""
+function ∈(x::AbstractVector{N}, tr::Translation{N})::Bool where {N<:Real}
+    return ∈(x - tr.v, tr.X)
 end
