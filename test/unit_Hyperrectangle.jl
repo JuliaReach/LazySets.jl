@@ -77,7 +77,7 @@ for N in [Float64, Rational{Int}, Float32]
     # norm
     @test norm(h) == norm(N[5, 3], Inf)
     # radius
-    @test radius(h) == norm(N[2, 1], Inf)
+    @test Approximations.radius(h) == norm(N[2, 1], Inf)
     # diameter
     @test diameter(h) == norm(N[5, 3] - N[1, 1], Inf)
 
