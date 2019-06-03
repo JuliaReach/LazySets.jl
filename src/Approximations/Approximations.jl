@@ -8,6 +8,9 @@ module Approximations
 
 using LazySets, Requires, LinearAlgebra, SparseArrays
 
+import TaylorModels
+using TaylorModels:TaylorModel1
+
 export approximate,
        ballinf_approximation,
        box_approximation, interval_hull,
