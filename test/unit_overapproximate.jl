@@ -144,8 +144,8 @@ for N in [Float64, Float32]
     #Zonotope approximation of TaylorModelN
     x₁, x₂ = set_variables(N, ["x₁", "x₂"], order=5)
     x₀ = IntervalArithmetic.Interval(0.0, 0.0)×IntervalArithmetic.Interval(0.0, 0.0)
-    Dx₁ = IntervalArithmetic.Interval(0.0, 3.0)
-    Dx₁ = IntervalArithmetic.Interval(-1.0, 1.0)
+    Dx1 = IntervalArithmetic.Interval(0.0, 3.0)
+    Dx2 = IntervalArithmetic.Interval(-1.0, 1.0)
     D = Dx1×Dx2
     δ = 0.5;I = IntervalArithmetic.Interval(-δ, δ)
     p1 = 1 + x₁^2 - x₂
