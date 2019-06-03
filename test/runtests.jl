@@ -2,7 +2,7 @@ using LazySets, LazySets.Approximations, Test, LinearAlgebra, SparseArrays
 import IntervalArithmetic, Expokit, Optim
 using IntervalArithmetic: IntervalBox
 import TaylorModels
-using TaylorModels:Taylor1,TaylorN,TaylorModelN,TaylorModel1,normalize_taylor,
+using TaylorModels:Taylor1,TaylorN,TaylorModelN,TaylorModel1,normalize_taylor
 using TaylorModels:linear_polynomial,constant_term,evaluate,mid
 
 
