@@ -15,7 +15,6 @@ RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 Requires = "ae029012-a4dd-5104-9daa-d747884805df"
 SharedArrays = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
 SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
-TaylorModels = "314ce334-5f6e-57ae-acf6-00b6e903104a"
 
 [compat]
 julia = "≥ 1.0.0"
