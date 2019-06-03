@@ -1,4 +1,4 @@
-"""
+s"""
     overapproximate(X::S, ::Type{S}) where {S<:LazySet}
 
 Overapproximating a set of type `S` with type `S` is a no-op.
@@ -519,6 +519,8 @@ end
 
 function load_taylormodels_overapproximation()  # function to be loaded by Requires
 return quote
+using TaylorModels:Taylor1,TaylorN,TaylorModelN,TaylorModel1,normalize_taylor,
+           linear_polynomial,constant_term,evaluate,mid    
 
 """
          overapproximate(vTM::Vector{TaylorModel1{T, S}},
