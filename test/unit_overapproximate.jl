@@ -131,11 +131,11 @@ for N in [Float64, Float32]
     @test !(Y_zonotope ⊆ Y_polygon)
 
     #Zonotope approximation of TaylorModel1
-    x₀ = IntervalArithmetic.Interval(0.0,0.0)
-    D = IntervalArithmetic.Interval(-3.0, 1.0)
-    δ = 0.5;I = IntervalArithmetic.Interval(-δ, δ)
-    p = Taylor1([2.0, 1.0], 2)
-    p1 = Taylor1([0.9, 3.0], 2)
+    x₀ = IntervalArithmetic.Interval(N(0.0),N(0.0))
+    D = IntervalArithmetic.Interval(N(-3.0), N(1.0))
+    δ = N(0.5);I = IntervalArithmetic.Interval(-δ, δ)
+    p = Taylor1(N[2.0, 1.0], 2)
+    p1 = Taylor1(N[0.9, 3.0], 2)
     TM = [TaylorModel1(p, I, x₀, D),TaylorModel1(p1, I, x₀, D)]
     Z1 = overapproximate(TM,Zonotope)
     Z2 = Zonotope(N[1.0,-2.1],[N[2.0,6.0],N[0.5,0.0],N[0.0,0.5]])
@@ -143,11 +143,11 @@ for N in [Float64, Float32]
 
     #Zonotope approximation of TaylorModelN
     x1, x2 = set_variables(N, ["x1", "x2"], order=5)
-    x0 = IntervalArithmetic.Interval(0.0, 0.0)×IntervalArithmetic.Interval(0.0, 0.0)
-    Dx1 = IntervalArithmetic.Interval(0.0, 3.0)
-    Dx2 = IntervalArithmetic.Interval(-1.0, 1.0)
+    x0 = IntervalArithmetic.Interval(N(0.0), N(0.0))×IntervalArithmetic.Interval(N(0.0), N(0.0))
+    Dx1 = IntervalArithmetic.Interval(N(0.0), N(3.0))
+    Dx2 = IntervalArithmetic.Interval(N(-1.0), N(1.0))
     D = Dx1×Dx2
-    δ = 0.5;I = IntervalArithmetic.Interval(-δ, δ)
+    δ = N(0.5);I = IntervalArithmetic.Interval(-δ, δ)
     p1 = 1 + x1^2 - x2
     p2 = x2^3 + 3x1^4 + x1 + 1
     TM = [TaylorModelN(p1,I,x0,D), TaylorModelN(p2,I,x0,D)]
