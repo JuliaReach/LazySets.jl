@@ -142,15 +142,15 @@ for N in [Float64, Float32]
     @test Z1 == Z2
 
     #Zonotope approximation of TaylorModelN
-    x₁, x₂ = set_variables(N, ["x₁", "x₂"], order=5)
-    x₀ = IntervalArithmetic.Interval(0.0, 0.0)×IntervalArithmetic.Interval(0.0, 0.0)
+    x1, x2 = set_variables(N, ["x1", "x2"], order=5)
+    x0 = IntervalArithmetic.Interval(0.0, 0.0)×IntervalArithmetic.Interval(0.0, 0.0)
     Dx1 = IntervalArithmetic.Interval(0.0, 3.0)
     Dx2 = IntervalArithmetic.Interval(-1.0, 1.0)
     D = Dx1×Dx2
     δ = 0.5;I = IntervalArithmetic.Interval(-δ, δ)
-    p1 = 1 + x₁^2 - x₂
-    p2 = x₂^3 + 3x₁^4 + x₁ + 1
-    TM = [TaylorModelN(p,I,x0,D), TaylorModelN(p1,I,x0,D)]
+    p1 = 1 + x1^2 - x2
+    p2 = x2^3 + 3x1^4 + x1 + 1
+    TM = [TaylorModelN(p1,I,x0,D), TaylorModelN(p2,I,x0,D)]
     Z1 = overapproximate(TM,Zonotope)
     Z2 = Zonotope(N[5.5,124.0],[N[0.0,1.5],N[-1.0,0.0],N[5.0,0.0],N[0.0,123.0]])
     @test Z1 == Z2
