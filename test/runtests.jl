@@ -3,7 +3,7 @@ import IntervalArithmetic, Expokit, Optim
 using IntervalArithmetic: IntervalBox
 import TaylorModels
 using TaylorModels:Taylor1,TaylorN,TaylorModelN,TaylorModel1,normalize_taylor
-using TaylorModels:linear_polynomial,constant_term,evaluate,mid
+using TaylorModels:linear_polynomial,constant_term,evaluate,mid,set_variables
 
 
 # conversion between numeric types
