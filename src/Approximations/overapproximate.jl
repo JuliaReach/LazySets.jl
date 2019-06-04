@@ -546,26 +546,33 @@ function overapproximate(lm::LinearMap{N, <:CartesianProductArray{N,
 end
 
 #template directions
-function decomposed_overapproximation(cp::CartesianProductArray{N,<:LazySet{N}}, M::AbstractMatrix{N},
-             col_end_ind::Int, oa) where {N}
+function decomposed_overapproximation(cpa::CartesianProductArray{N,<:LazySet{N}},
+                                      M::AbstractMatrix{N},
+                                      col_end_ind::Int, oa) where {N}
     array = allocate_result(oa, N)
-    sizehint!(array,length(cp.array))
+    sizehint!(array,length(cpa.array))
 
-    min_array = Dict{Int,MinkowskiSumArray{N}}()
     for i in 1:size(M, 2)
-        min_array[i] = MinkowskiSumArray()
+        ms = overapproximate_row_blocks(cpa, M, i)
+        push!(array, overapproximate(ms, oa))
     end
 
-    for bi in cp.array
-        lms, col_end_ind = overapproximate_lm_block(bi, col_end_ind, M)
-        for i in 1:length(lms)
-            push!(min_array[i].array, lms[i])
-        end
-    end
-
-    result = CartesianProductArray([Approximations.overapproximate(min_array[key], oa)
-                    for key in sort(collect(keys(min_array)))])
+    result = CartesianProductArray(array)
     return result
+end
+
+#overapproximation of linear map to each block
+function overapproximate_row_blocks(cpa::CartesianProductArray{N,<:LazySet{N}},
+                                    M::AbstractMatrix{N}, i::Int) where {N}
+    col_start_ind, col_end_ind = 1, 0
+    h_min_sum = MinkowskiSumArray()
+    for bi in cpa.array
+        col_end_ind += dim(bi)
+        push!(h_min_sum.array, LinearMap(M[i : i, col_start_ind : col_end_ind], bi))
+        col_start_ind = col_end_ind + 1
+    end
+
+    return h_min_sum
 end
 
 function allocate_result(oa, N)
@@ -578,20 +585,4 @@ end
 
 function allocate_result(oa::Type{<:AbstractDirections}, N)
     return Vector{HPolytope{N}}()
-end
-
-#overapproximation of linear map to each block
-function overapproximate_lm_block(bi::LazySet{N}, col_end_ind::Int, M::AbstractMatrix{N}) where {N}
-    col_st_index = col_end_ind + 1
-    n = dim(bi)
-    col_end_ind += n
-    row_start_ind, row_end_ind = 1, n
-    lms = Vector{LazySet}()
-    while row_end_ind <= size(M, 2)
-        push!(lms, LinearMap(M[row_start_ind : row_end_ind, col_st_index : col_end_ind], bi))
-        row_start_ind = row_end_ind + 1
-        row_end_ind += n
-    end
-
-    return lms, col_end_ind
 end
