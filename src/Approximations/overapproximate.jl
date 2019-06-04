@@ -535,14 +535,14 @@ An `CartesianProductArray` with overapproximation of the each block with the dir
 function overapproximate(lm::LinearMap{N, <:CartesianProductArray{N,
                             <:LazySet{N}}}, ::Type{<:CartesianProductArray}, oa=Hyperrectangle) where {N}
 
-    @assert !(size(lm.M, 2) == dim(lm.X)) "matrix needs to be commensurate with the cartesian product"
+    @assert size(lm.M, 2) == dim(lm.X) "matrix needs to be commensurate with the cartesian product"
 
     cp = lm.X
     M = lm.M
 
     col_end_ind = 0
 
-    return decomposed_overapproximation(cp, M, col_st_index, col_end_ind, oa)
+    return decomposed_overapproximation(cp, M, col_end_ind, oa)
 end
 
 #template directions
@@ -553,11 +553,11 @@ function decomposed_overapproximation(cp::CartesianProductArray{N,<:LazySet{N}},
     sizehint!(array,length(cp.array))
 
     for bi in cp.array
-        v_block, col_end_ind = overapproximate_block(bi, col_end_ind, M)
+        v_block, col_end_ind = overapproximate_lm_block(bi, col_end_ind, M)
         push!(array, Approximations.overapproximate(v_block, oa))
     end
 
-    result = CartesianProductArray{N}(array)
+    result = CartesianProductArray(array)
     return result
 end
 
