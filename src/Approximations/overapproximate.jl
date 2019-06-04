@@ -593,7 +593,7 @@ function overapproximate_lm_block(bi:: LazySet{N}, col_st_index::Int, col_end_in
     matrices = Vector{Matrix{N}}()
 
     while end_ind <= size(M, 2)
-        push!(matrices, M[col_st_index : col_end_ind, start_ind : end_ind])
+        push!(matrices, @view M[col_st_index : col_end_ind, start_ind : end_ind])
         start_ind = end_ind + 1
         end_ind += n
     end
