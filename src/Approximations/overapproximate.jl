@@ -525,14 +525,15 @@ Overapproximating a lazy linear map of cartesian product array with template dir
 ### Input
 
 - `lm`   -- lazy linear map of cartesian product array
-- `dir` -- (concrete) direction representation
+- Type{<:CartesianProductArray} -- type to specify decomposed overapproximation
+- `oa` -- (concrete) direction representation
 
 ### Output
 
 An `CartesianProductArray` with overapproximation of the each block with the directions from `dir`.
 """
-function overapproximate(lm::LinearMap{N, <:CartesianProductArray{N, <:LazySet{N}}},
-                         dir::Type{<:AbstractDirections})::CartesianProductArray{N, HPolytope{N}} where {N}
+function overapproximate(lm::LinearMap{N, <:CartesianProductArray{N,
+                            <:LazySet{N}}}, ::Type{<:CartesianProductArray}, oa::Union{Type{<:AbstractDirections},Type{<:Hyperrectangle}, Type{<:Interval}}=Hyperrectangle) where {N}
 
     if !(size(lm.M, 2) == dim(lm.X))
         error("Matrix needs to be commensurate with the cartesian product")
@@ -541,33 +542,67 @@ function overapproximate(lm::LinearMap{N, <:CartesianProductArray{N, <:LazySet{N
     cp = lm.X
     M = lm.M
 
-    array = Vector{HPolytope{N}}
-    sizehint!(array,length(cp.array))
     col_st_index, col_end_ind = 0, 0
 
-    for bi in 1:length(cp.array)
-        col_st_index = col_end_ind + 1
-        n = dim(cp.array[bi])
-        col_end_ind += n
+    return decomposed_overapproximation(cp, M, col_st_index, col_end_ind, oa)
+end
 
-        start_ind, end_ind = 1, n
-        matrices = Vector{Matrix{N}}()
+#template directions
+function decomposed_overapproximation(cp::CartesianProductArray{N,<:LazySet{N}}, M::AbstractArray{N},
+            col_st_index::Int, col_end_ind::Int, oa::Type{<:AbstractDirections}) where {N}
 
-        while end_ind <= size(M, 2)
-            push!(matrices, M[col_st_index : col_end_ind, start_ind : end_ind])
-            start_ind = end_ind + 1
-            end_ind += n
-        end
+    array =  Vector{HPolytope{N}}()
 
-        v_block = MinkowskiSumArray()
+    sizehint!(array,length(cp.array))
 
-        for m in matrices
-            push!(v_block.array,LinearMap(m, cp.array[bi]))
-        end
+    for bi in cp.array
+        v_block, col_st_index, col_end_ind = overapproximate_block(bi, col_st_index, col_end_ind, M)
 
-        push!(array, Approximations.overapproximate(v_block, dir{N}(dim(v_block))))
+        push!(array, Approximations.overapproximate(v_block, oa{N}(dim(v_block))))
     end
 
     result = CartesianProductArray{N, HPolytope{N}}(array)
     return result
+end
+
+#Interval Hull
+function decomposed_overapproximation(cp::CartesianProductArray{N,<:LazySet{N}}, M::AbstractArray{N},
+            col_st_index::Int, col_end_ind::Int, oa::Union{Type{<:Hyperrectangle}, Type{<:Interval}}) where {N}
+
+    array =  Vector{oa{N}}()
+
+    sizehint!(array,length(cp.array))
+
+    for bi in cp.array
+        v_block, col_st_index, col_end_ind = overapproximate_block(bi, col_st_index, col_end_ind, M)
+
+        push!(array, Approximations.overapproximate(v_block, oa))
+    end
+
+    result = CartesianProductArray{N, oa{N}}(array)
+    return result
+end
+
+#overapproximation of linear map to each block
+function overapproximate_lm_block(bi:: LazySet{N}, col_st_index::Int, col_end_ind::Int, M::AbstractArray{N}) where {N}
+    col_st_index = col_end_ind + 1
+    n = dim(bi)
+    col_end_ind += n
+
+    start_ind, end_ind = 1, n
+    matrices = Vector{Matrix{N}}()
+
+    while end_ind <= size(M, 2)
+        push!(matrices, M[col_st_index : col_end_ind, start_ind : end_ind])
+        start_ind = end_ind + 1
+        end_ind += n
+    end
+
+    v_block = MinkowskiSumArray()
+
+    for m in matrices
+        push!(v_block.array,LinearMap(m, bi))
+    end
+
+    return v_block, col_st_index, col_end_ind
 end
