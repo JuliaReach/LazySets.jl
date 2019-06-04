@@ -517,8 +517,8 @@ function overapproximate(cap::Intersection{N,
 end
 
 """
-    overapproximate(lm::LinearMap{N, <:CartesianProductArray{N, <:LazySet{N}}},
-                         dir::Type{<:AbstractDirections})::CartesianProductArray{N, HPolytope{N}} where {N}
+    overapproximate(lm::LinearMap{N, <:CartesianProductArray{N,
+                            <:LazySet{N}}}, ::Type{<:CartesianProductArray}, oa=Hyperrectangle)  where {N}
 
 Overapproximating a lazy linear map of cartesian product array with template directions for each block.
 
@@ -533,76 +533,61 @@ Overapproximating a lazy linear map of cartesian product array with template dir
 An `CartesianProductArray` with overapproximation of the each block with the directions from `dir`.
 """
 function overapproximate(lm::LinearMap{N, <:CartesianProductArray{N,
-                            <:LazySet{N}}}, ::Type{<:CartesianProductArray}, oa::Union{Type{<:AbstractDirections},Type{<:Hyperrectangle}, Type{<:Interval}}=Hyperrectangle) where {N}
+                            <:LazySet{N}}}, ::Type{<:CartesianProductArray}, oa=Hyperrectangle) where {N}
 
-    if !(size(lm.M, 2) == dim(lm.X))
-        error("Matrix needs to be commensurate with the cartesian product")
-    end
+    @assert !(size(lm.M, 2) == dim(lm.X)) "matrix needs to be commensurate with the cartesian product"
 
     cp = lm.X
     M = lm.M
 
-    col_st_index, col_end_ind = 0, 0
+    col_end_ind = 0
 
     return decomposed_overapproximation(cp, M, col_st_index, col_end_ind, oa)
 end
 
 #template directions
-function decomposed_overapproximation(cp::CartesianProductArray{N,<:LazySet{N}}, M::AbstractArray{N},
-            col_st_index::Int, col_end_ind::Int, oa::Type{<:AbstractDirections}) where {N}
-
-    array =  Vector{HPolytope{N}}()
-
-    sizehint!(array,length(cp.array))
-
-    for bi in cp.array
-        v_block, col_st_index, col_end_ind = overapproximate_block(bi, col_st_index, col_end_ind, M)
-
-        push!(array, Approximations.overapproximate(v_block, oa{N}(dim(v_block))))
-    end
-
-    result = CartesianProductArray{N, HPolytope{N}}(array)
-    return result
-end
-
-#Interval Hull
-function decomposed_overapproximation(cp::CartesianProductArray{N,<:LazySet{N}}, M::AbstractArray{N},
-            col_st_index::Int, col_end_ind::Int, oa::Union{Type{<:Hyperrectangle}, Type{<:Interval}}) where {N}
-
-    array =  Vector{oa{N}}()
+function decomposed_overapproximation(cp::CartesianProductArray{N,<:LazySet{N}}, M::AbstractMatrix{N},
+             col_end_ind::Int, oa) where {N}
+    array = allocate_result(oa, N)
 
     sizehint!(array,length(cp.array))
 
     for bi in cp.array
-        v_block, col_st_index, col_end_ind = overapproximate_block(bi, col_st_index, col_end_ind, M)
-
+        v_block, col_end_ind = overapproximate_block(bi, col_end_ind, M)
         push!(array, Approximations.overapproximate(v_block, oa))
     end
 
-    result = CartesianProductArray{N, oa{N}}(array)
+    result = CartesianProductArray{N}(array)
     return result
 end
 
+function allocate_result(oa, N)
+    return Vector{LazySet{N}}()
+end
+
+function allocate_result(oa::Type{<:LazySet}, N)
+    return Vector{oa{N}}()
+end
+
+function allocate_result(oa::Type{<:AbstractDirections}, N)
+    return Vector{HPolytope{N}}()
+end
+
 #overapproximation of linear map to each block
-function overapproximate_lm_block(bi:: LazySet{N}, col_st_index::Int, col_end_ind::Int, M::AbstractArray{N}) where {N}
+function overapproximate_lm_block(bi::LazySet{N}, col_end_ind::Int, M::AbstractMatrix{N}) where {N}
     col_st_index = col_end_ind + 1
     n = dim(bi)
     col_end_ind += n
 
-    start_ind, end_ind = 1, n
+    row_start_ind, row_end_ind = 1, n
     matrices = Vector{Matrix{N}}()
 
-    while end_ind <= size(M, 2)
-        push!(matrices, @view M[col_st_index : col_end_ind, start_ind : end_ind])
-        start_ind = end_ind + 1
-        end_ind += n
-    end
-
     v_block = MinkowskiSumArray()
-
-    for m in matrices
-        push!(v_block.array,LinearMap(m, bi))
+    while row_end_ind <= size(M, 2)
+        push!(v_block.array, LinearMap(M[col_st_index : col_end_ind, row_start_ind : row_end_ind], bi))
+        row_start_ind = row_end_ind + 1
+        row_end_ind += n
     end
 
-    return v_block, col_st_index, col_end_ind
+    return v_block, col_end_ind
 end
