@@ -520,55 +520,51 @@ end
     overapproximate(lm::LinearMap{N, <:CartesianProductArray{N,
                             <:LazySet{N}}}, ::Type{<:CartesianProductArray}, oa=Hyperrectangle)  where {N}
 
-Overapproximating a lazy linear map of cartesian product array with template directions for each block.
+Decompose a lazy linear map of a cartesian product array.
 
 ### Input
 
 - `lm`   -- lazy linear map of cartesian product array
-- Type{<:CartesianProductArray} -- type to specify decomposed overapproximation
-- `oa` -- (concrete) direction representation
+- `CartesianProductArray` -- type for dispatch
+- `oa` -- approximation option for decomposition
 
 ### Output
 
-An `CartesianProductArray` with overapproximation of the each block with the directions from `dir`.
+A `CartesianProductArray` representing the decomposed linear map.
 """
 function overapproximate(lm::LinearMap{N, <:CartesianProductArray{N,
                             <:LazySet{N}}}, ::Type{<:CartesianProductArray}, oa=Hyperrectangle) where {N}
 
     @assert size(lm.M, 2) == dim(lm.X) "matrix needs to be commensurate with the cartesian product"
 
-    cp = lm.X
+    cpa = lm.X
     M = lm.M
 
     col_end_ind = 0
 
-    return decomposed_overapproximation(cp, M, col_end_ind, oa)
-end
-
-#template directions
-function decomposed_overapproximation(cpa::CartesianProductArray{N,<:LazySet{N}},
-                                      M::AbstractMatrix{N},
-                                      col_end_ind::Int, oa) where {N}
     array = allocate_result(oa, N)
     sizehint!(array,length(cpa.array))
 
-    for i in 1:size(M, 2)
-        ms = overapproximate_row_blocks(cpa, M, i)
+    i, n = 1, 0
+    for bi in cpa.array
+        n += dim(bi)
+        ms = blocks_linear_map(cpa, M, i, n)
         push!(array, overapproximate(ms, oa))
+        i += n
     end
 
     result = CartesianProductArray(array)
     return result
 end
 
-#overapproximation of linear map to each block
-function overapproximate_row_blocks(cpa::CartesianProductArray{N,<:LazySet{N}},
-                                    M::AbstractMatrix{N}, i::Int) where {N}
+
+function blocks_linear_map(cpa::CartesianProductArray{N,<:LazySet{N}},
+                                    M::AbstractMatrix{N}, row_start_ind::Int, row_end_ind::Int) where {N}
     col_start_ind, col_end_ind = 1, 0
     h_min_sum = MinkowskiSumArray()
     for bi in cpa.array
         col_end_ind += dim(bi)
-        push!(h_min_sum.array, LinearMap(M[i : i, col_start_ind : col_end_ind], bi))
+        push!(h_min_sum.array, LinearMap(M[row_start_ind : row_end_ind, col_start_ind : col_end_ind], bi))
         col_start_ind = col_end_ind + 1
     end
 

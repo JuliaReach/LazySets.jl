@@ -53,6 +53,30 @@ for N in [Float64, Rational{Int}, Float32]
     M = Diagonal(N[2, 2])
     OA = overapproximate(M*H, Hyperrectangle)
     @test OA isa Hyperrectangle && OA.center == N[0, 0] && OA.radius == N[1, 2]
+
+    #overapproximation of Minkowski sum of linear maps for each block in the row block
+    i1 = Interval(N[0, 1])
+    h = Hyperrectangle(low=N[3, 4], high=N[5, 7])
+    M = N[1 2 3; 4 5 6; 7 8 9]
+    cpa = CartesianProductArray([i1, h])
+    lm = M * cpa
+
+    oa = Approximations.overapproximate(lm, Hyperrectangle)
+    oa_box = Approximations.overapproximate(lm, Approximations.BoxDirections)
+    d_oa_d_hp = Approximations.overapproximate(lm, CartesianProductArray)
+    d_oa_d_box = Approximations.overapproximate(lm, CartesianProductArray, Approximations.BoxDirections)
+    oa_d_hp = Approximations.overapproximate(d_oa_d_hp)
+    oa_d_box = Approximations.overapproximate(d_oa_d_box, Approximations.BoxDirections)
+
+    @test oa == oa_d_hp
+    @test oa_box == oa_d_box
+
+    for (oax, set_type) in [(d_oa_d_hp, Hyperrectangle), (d_oa_d_box, HPolytope)]
+        @test oax isa CartesianProductArray
+        arr = oax.array
+        @test length(arr) == 2 && dim(arr[1]) == 1 && dim(arr[2]) == 2
+        @test all(X -> X isa set_type, arr)
+    end
 end
 
 # tests that do not work with Rational{Int}
@@ -129,22 +153,5 @@ for N in [Float64, Float32]
     Y_zonotope = overapproximate(Y, Zonotope) # overapproximate with a zonotope
     @test Y_polygon ⊆ Y_zonotope
     @test !(Y_zonotope ⊆ Y_polygon)
-
-    #Decomposed approximation of lazy linear map of CartesianProductArray
-    i1 = Interval([0, 1])
-    h = Hyperrectangle(low=[3., 3.], high=[5., 5.])
-    M = [1. 2. 3.; 4. 5. 6.; 7. 8. 9.]
-    cpa = CartesianProductArray([i1, h])
-    lm = M * cpa
-
-    oa = overapproximate(lm, Hyperrectangle)
-    oa_box = overapproximate(lm, Approximations.BoxDirections)
-    d_oa_d_hp = overapproximate(lm, CartesianProductArray)
-    d_oa_d_box = overapproximate(lm, CartesianProductArray, Approximations.BoxDirections)
-    oa_d_hp = overapproximate(d_oa_d_hp)
-    oa_d_box = overapproximate(d_oa_d_box, Approximations.BoxDirections)
-
-    @test oa == oa_d_hp
-    @test oa_box == oa_d_box
 
 end
