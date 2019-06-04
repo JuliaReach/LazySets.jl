@@ -47,7 +47,7 @@ for N in [Float64, Rational{Int}, Float32]
     h2 = Hyperrectangle(N[2.5, 4.5],  N[1/2, 1/2])
     H = overapproximate(h1 × h2, Hyperrectangle) # defaults to convert method
     @test low(H) == N[0, 2, 4] && high(H) == N[1, 3, 5]
-    
+
     # overapproximation of the lazy linear map of a hyperrectangular set
     H = Hyperrectangle(N[0, 0], N[1/2, 1])
     M = Diagonal(N[2, 2])
@@ -129,4 +129,22 @@ for N in [Float64, Float32]
     Y_zonotope = overapproximate(Y, Zonotope) # overapproximate with a zonotope
     @test Y_polygon ⊆ Y_zonotope
     @test !(Y_zonotope ⊆ Y_polygon)
+
+    #Decomposed approximation of lazy linear map of CartesianProductArray
+    i1 = Interval([0, 1])
+    h = Hyperrectangle(low=[3., 3.], high=[5., 5.])
+    M = [1. 2. 3.; 4. 5. 6.; 7. 8. 9.]
+    cpa = CartesianProductArray([i1, h])
+    lm = M * cpa
+
+    oa = overapproximate(lm, Hyperrectangle)
+    oa_box = overapproximate(lm, Approximations.BoxDirections)
+    d_oa_d_hp = overapproximate(lm, CartesianProductArray)
+    d_oa_d_box = overapproximate(lm, CartesianProductArray, Approximations.BoxDirections)
+    oa_d_hp = overapproximate(d_oa_d_hp)
+    oa_d_box = overapproximate(d_oa_d_box, Approximations.BoxDirections)
+
+    @test oa == oa_d_hp
+    @test oa_box == oa_d_box
+
 end
