@@ -561,7 +561,7 @@ end
 function blocks_linear_map(cpa::CartesianProductArray{N,<:LazySet{N}},
                                     M::AbstractMatrix{N}, row_start_ind::Int, row_end_ind::Int) where {N}
     col_start_ind, col_end_ind = 1, 0
-    h_min_sum = MinkowskiSumArray()
+    h_min_sum = MinkowskiSumArray(length(cpa.array), N)
     for bi in cpa.array
         col_end_ind += dim(bi)
         push!(h_min_sum.array, LinearMap(M[row_start_ind : row_end_ind, col_start_ind : col_end_ind], bi))
