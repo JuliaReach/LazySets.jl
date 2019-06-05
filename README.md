@@ -44,3 +44,7 @@ pkg> add LazySets#master
 ```julia
 pkg> dev LazySets
 ```
+
+## Contributors
+
+See the list of developers following [this link](https://juliareach.github.io/LazySets.jl/latest/about/#Credits-1).
