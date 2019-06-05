@@ -556,7 +556,7 @@ end
 
 function blocks_linear_map(cpa::CartesianProductArray,
                            M::AbstractMatrix{N},
-                           row_range::UnitRange{Int64}) where {N}
+                           row_range::UnitRange{Int}) where {N}
     col_start_ind, col_end_ind = 1, 0
     array = Vector{LazySet{N}}()
     sizehint!(array, length(cpa.array))
