@@ -12,7 +12,7 @@
 ## Resources
 
 - [Manual](http://juliareach.github.io/LazySets.jl/latest/)
-- [Contributing](https://juliareach.github.io/LazySets.jl/latest/about.html#Contributing-1)
+- [Contributing](https://juliareach.github.io/LazySets.jl/latest/about/#Contributing-1)
 - [Release notes of tagged versions](https://github.com/JuliaReach/LazySets.jl/releases)
 - [Release notes of the development version](https://github.com/JuliaReach/LazySets.jl/wiki/Release-log-tracker)
 - [Publications](https://juliareach.github.io/Reachability.jl/latest/publications.html)
