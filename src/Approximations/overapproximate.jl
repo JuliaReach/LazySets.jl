@@ -517,8 +517,8 @@ function overapproximate(cap::Intersection{N,
 end
 
 """
-    overapproximate(lm::LinearMap{N, <:CartesianProductArray{N,
-                            <:LazySet{N}}}, ::Type{<:CartesianProductArray}, oa=Hyperrectangle)  where {N}
+    overapproximate(lm::LinearMap{N, <:CartesianProductArray},
+                      ::Type{<:CartesianProductArray}, oa=Hyperrectangle)  where {N}
 
 Decompose a lazy linear map of a cartesian product array.
 
@@ -532,25 +532,21 @@ Decompose a lazy linear map of a cartesian product array.
 
 A `CartesianProductArray` representing the decomposed linear map.
 """
-function overapproximate(lm::LinearMap{N, <:CartesianProductArray{N,
-                            <:LazySet{N}}}, ::Type{<:CartesianProductArray}, oa=Hyperrectangle) where {N}
-
-    @assert size(lm.M, 2) == dim(lm.X) "matrix needs to be commensurate with the cartesian product"
+function overapproximate(lm::LinearMap{N, <:CartesianProductArray},
+                           ::Type{<:CartesianProductArray}, oa=Hyperrectangle) where {N}
 
     cpa = lm.X
     M = lm.M
 
-    col_end_ind = 0
-
     array = allocate_result(oa, N)
-    sizehint!(array,length(cpa.array))
+    sizehint!(array, length(cpa.array))
 
-    i, n = 1, 0
+    row_start_ind, row_end_ind = 1, 0
     for bi in cpa.array
-        n += dim(bi)
-        ms = blocks_linear_map(cpa, M, i, n)
+        row_end_ind += dim(bi)
+        ms = blocks_linear_map(cpa, M, row_start_ind : row_end_ind)
         push!(array, overapproximate(ms, oa))
-        i += n
+        row_start_ind += row_end_ind
     end
 
     result = CartesianProductArray(array)
@@ -558,17 +554,19 @@ function overapproximate(lm::LinearMap{N, <:CartesianProductArray{N,
 end
 
 
-function blocks_linear_map(cpa::CartesianProductArray{N,<:LazySet{N}},
-                                    M::AbstractMatrix{N}, row_start_ind::Int, row_end_ind::Int) where {N}
+function blocks_linear_map(cpa::CartesianProductArray,
+                           M::AbstractMatrix{N},
+                           row_range::UnitRange{Int64}) where {N}
     col_start_ind, col_end_ind = 1, 0
-    h_min_sum = MinkowskiSumArray(length(cpa.array), N)
+    array = Vector{LazySet{N}}()
+    sizehint!(array, length(cpa.array))
     for bi in cpa.array
         col_end_ind += dim(bi)
-        push!(h_min_sum.array, LinearMap(M[row_start_ind : row_end_ind, col_start_ind : col_end_ind], bi))
-        col_start_ind = col_end_ind + 1
+        push!(array, LinearMap(M[row_range, col_start_ind : col_end_ind], bi))
+        col_start_ind += col_end_ind
     end
 
-    return h_min_sum
+    return MinkowskiSumArray(array)
 end
 
 function allocate_result(oa, N)
