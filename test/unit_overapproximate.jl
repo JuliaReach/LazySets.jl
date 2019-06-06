@@ -63,7 +63,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     oa = overapproximate(lm, Hyperrectangle)
     oa_box = overapproximate(lm, Approximations.BoxDirections)
-    d_oa_d_hp = overapproximate(lm, CartesianProductArray)
+    d_oa_d_hp = overapproximate(lm, CartesianProductArray{N, Hyperrectangle{N}})
     d_oa_d_box = overapproximate(lm, CartesianProductArray, Approximations.BoxDirections)
     oa_d_hp = overapproximate(d_oa_d_hp)
     oa_d_box = overapproximate(d_oa_d_box, Approximations.BoxDirections)
@@ -77,6 +77,26 @@ for N in [Float64, Rational{Int}, Float32]
         @test length(arr) == 2 && dim(arr[1]) == 1 && dim(arr[2]) == 2
         @test all(X -> X isa set_type, arr)
     end
+
+    i1 = Interval(N[0, 1])
+    i2 = Interval(N[2, 3])
+    i3 = Interval(N[1, 4])
+    M = N[1 2; 0 1]
+    cpa = CartesianProductArray([i1, i2])
+    lm = M * cpa
+    d_oa = overapproximate(lm, CartesianProductArray{N, Interval{N}})
+    oa = overapproximate(lm, 1e-8)
+    @test oa ⊆ d_oa
+
+    cpa = CartesianProductArray([i1, i2, i3])
+    M = N[1 2 0; 0 1 0; 0 1 1]
+    lm = M * cpa
+    d_oa = overapproximate(lm, CartesianProductArray{N, Interval{N}})
+    oa = overapproximate(lm)
+    @test overapproximate(d_oa) == oa
+    @test typeof(d_oa) == CartesianProductArray{N, Interval{N}}
+
+
 end
 
 # tests that do not work with Rational{Int}
