@@ -222,25 +222,23 @@ if test_suite_polyhedra
                                   LinearConstraint(N[-1], N(-1))])
         @test_throws ErrorException σ(N[1], p_infeasible)
 
-        # intersection
-        A = [N(0) N(1); N(1) N(0); N(2) N(2)]
+        # empty intersection
+        A = [N(0) N(-1); N(-1) N(0); N(1) N(1)]
         b = N[0, 0, 1]
         p1 = HPolytope(A, b)
-        A = [N(0) N(-1); N(-1) N(0); N(1) N(1)]
-        b = N[-0.25, -0.25, -0]
+        A = [N(0) N(1); N(1) N(0); N(-1) N(-1)]
+        b = N[2, 2, -2]
         p2 = HPolytope(A, b)
-        cap = intersection(p1, p2)
-        # currently broken, see #565
+        @test intersection(p1, p2) isa EmptySet{N}
+        @test intersection(p1, p2; backend=Polyhedra.default_library(2, N)) isa EmptySet{N}
+        # @test intersection(p1, p2; backend=CDDLib.Library()) isa EmptySet{N}
+        # commented because we do not load CDDLib at the moment
 
         # intersection with half-space
-        hs = HalfSpace(N[2, 2], N(-1))
+        hs = HalfSpace(N[2, -2], N(-1))
         c1 = constraints_list(intersection(p1, hs))
         c2 = constraints_list(intersection(hs, p1))
         @test length(c1) == 3 && ispermutation(c1, c2)
-
-        # convex hull
-        ch = convex_hull(p1, p2)
-        # currently broken, see #566
 
         # Cartesian product
         A = [N(1) N(-1)]'
