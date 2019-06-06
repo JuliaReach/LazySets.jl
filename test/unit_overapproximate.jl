@@ -81,13 +81,6 @@ for N in [Float64, Rational{Int}, Float32]
     i1 = Interval(N[0, 1])
     i2 = Interval(N[2, 3])
     i3 = Interval(N[1, 4])
-    M = N[1 2; 0 1]
-    cpa = CartesianProductArray([i1, i2])
-    lm = M * cpa
-    d_oa = overapproximate(lm, CartesianProductArray{N, Interval{N}})
-    oa = overapproximate(lm, 1e-8)
-    @test oa ⊆ d_oa
-
     cpa = CartesianProductArray([i1, i2, i3])
     M = N[1 2 0; 0 1 0; 0 1 1]
     lm = M * cpa
@@ -95,8 +88,7 @@ for N in [Float64, Rational{Int}, Float32]
     oa = overapproximate(lm)
     @test overapproximate(d_oa) == oa
     @test typeof(d_oa) == CartesianProductArray{N, Interval{N}}
-
-
+    
 end
 
 # tests that do not work with Rational{Int}
@@ -173,5 +165,15 @@ for N in [Float64, Float32]
     Y_zonotope = overapproximate(Y, Zonotope) # overapproximate with a zonotope
     @test Y_polygon ⊆ Y_zonotope
     @test !(Y_zonotope ⊆ Y_polygon)
+
+    #decomposed linear map approximation
+    i1 = Interval(N[0, 1])
+    i2 = Interval(N[2, 3])
+    M = N[1 2; 0 1]
+    cpa = CartesianProductArray([i1, i2])
+    lm = M * cpa
+    d_oa = overapproximate(lm, CartesianProductArray{N, Interval{N}})
+    oa = overapproximate(lm, OctDirections)
+    @test oa ⊆ d_oa
 
 end

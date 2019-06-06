@@ -334,7 +334,7 @@ function overapproximate(X::LazySet{N},
 end
 
 """
-    overapproximate(S::LazySet{N}, ::Union{Type{Interval}, Type{Interval{N}}}) where {N<:Real}
+    overapproximate(S::LazySet{N}, ::Type{<:Interval}) where {N<:Real}
 
 Return the overapproximation of a real unidimensional set with an interval.
 
@@ -352,7 +352,7 @@ An interval.
 The method relies on the exact conversion to `Interval`. Two support
 function evaluations are needed in general.
 """
-function overapproximate(S::LazySet{N}, ::Union{Type{Interval}, Type{Interval{N}}}) where {N<:Real}
+function overapproximate(S::LazySet{N}, ::Type{<:Interval}) where {N<:Real}
     @assert dim(S) == 1 "cannot overapproximate a $(dim(S))-dimensional set with an `Interval`"
     return convert(Interval, S)
 end
