@@ -334,7 +334,7 @@ function overapproximate(X::LazySet{N},
 end
 
 """
-    overapproximate(S::LazySet{N}, ::Type{Interval}) where {N<:Real}
+    overapproximate(S::LazySet{N}, ::Type{<:Interval}) where {N<:Real}
 
 Return the overapproximation of a real unidimensional set with an interval.
 
@@ -352,11 +352,10 @@ An interval.
 The method relies on the exact conversion to `Interval`. Two support
 function evaluations are needed in general.
 """
-function overapproximate(S::LazySet{N}, ::Type{Interval}) where {N<:Real}
+function overapproximate(S::LazySet{N}, ::Type{<:Interval}) where {N<:Real}
     @assert dim(S) == 1 "cannot overapproximate a $(dim(S))-dimensional set with an `Interval`"
     return convert(Interval, S)
 end
-
 function overapproximate_cap_helper(X::LazySet{N},             # compact set
                                     P::AbstractPolyhedron{N},  # polyhedron
                                     dir::AbstractDirections{N};
@@ -516,3 +515,85 @@ function overapproximate(cap::Intersection{N,
     return overapproximate(swap(cap), dir; kwargs...)
 end
 
+"""
+    overapproximate(lm::LinearMap{N, CartesianProductArray{N, T}},
+                      ::Type{CartesianProductArray{N, O}}) where {N, T<:LazySet{N}, O<:LazySet{N}}
+
+Decompose a lazy linear map of a cartesian product array keeping original block structure.
+
+### Input
+
+- `lm`   -- lazy linear map of cartesian product array
+- `CartesianProductArray` -- type for dispatch
+
+### Output
+
+A `CartesianProductArray` representing the decomposed linear map.
+"""
+function overapproximate(lm::LinearMap{N, CartesianProductArray{N, T}},
+                           ::Type{CartesianProductArray{N, O}}) where {N, T<:LazySet{N}, O<:LazySet{N}}
+
+    M, cpa = lm.M, lm.X
+    array = Vector{O}(undef, length(cpa.array))
+    return _overapproximate_lm_cpa!(M, cpa, array, O)
+end
+
+"""
+    overapproximate(lm::LinearMap{N, CartesianProductArray{N, T}},
+                      ::Type{CartesianProductArray{N, HPolytope{N}}},
+                   dir::AbstractDirections{N}) where {N, T<:LazySet{N}}
+
+Decompose a lazy linear map of a cartesian product array.
+
+### Input
+
+- `lm`   -- lazy linear map of cartesian product array
+- `CartesianProductArray` -- type for dispatch
+- `dir` -- approximation option for decomposition
+
+### Output
+
+A `CartesianProductArray` representing the decomposed linear map.
+"""
+function overapproximate(lm::LinearMap{N, CartesianProductArray{N, T}},
+                           ::Type{<:CartesianProductArray},
+                         dir::Type{<:AbstractDirections}) where {N, T<:LazySet{N}}
+    M, cpa = lm.M, lm.X
+    array = Vector{HPolytope{N}}(undef, length(cpa.array))
+    return _overapproximate_lm_cpa!(M, cpa, array, dir)
+end
+
+#same for <:AbstractHyperrectangle
+function overapproximate(lm::LinearMap{N, CartesianProductArray{N, T}},
+                           ::Type{<:CartesianProductArray},
+                         oa::Type{<:AbstractHyperrectangle}) where {N, T<:LazySet{N}}
+    M, cpa = lm.M, lm.X
+    array = Vector{oa{N}}(undef, length(cpa.array))
+    return _overapproximate_lm_cpa!(M, cpa, array, oa)
+end
+
+function _overapproximate_lm_cpa!(M, cpa, array, O)
+    row_start_ind, row_end_ind = 1, 0
+    @inbounds for (i, bi) in enumerate(cpa.array)
+        row_end_ind += dim(bi)
+        ms = blocks_linear_map(cpa, M, row_start_ind : row_end_ind)
+        array[i] = overapproximate(ms, O)
+        row_start_ind = row_end_ind + 1
+    end
+    return CartesianProductArray(array)
+end
+
+function blocks_linear_map(cpa::CartesianProductArray{N, T},
+                           M::AbstractMatrix{N},
+                           row_range::UnitRange{Int}) where {N, T<:LazySet{N}}
+    array = Vector{LinearMap{N, <:T}}(undef, length(cpa.array))
+
+    col_start_ind, col_end_ind = 1, 0
+    @inbounds for (i, bi) in enumerate(cpa.array)
+        col_end_ind += dim(bi)
+        array[i] = LinearMap(M[row_range, col_start_ind : col_end_ind], bi)
+        col_start_ind = col_end_ind + 1
+    end
+
+    return MinkowskiSumArray(array)
+end
