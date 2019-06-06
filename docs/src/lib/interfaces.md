@@ -76,6 +76,7 @@ RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractVector{VN}, ::N=N(1e-3), 
 
 ```@docs
 ==(::LazySet, ::LazySet)
+≈(::LazySet, ::LazySet)
 copy(::LazySet)
 ```
 
