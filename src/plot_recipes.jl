@@ -8,7 +8,7 @@ DEFAULT_COLOR = :auto
 DEFAULT_ALPHA = 0.5
 DEFAULT_LABEL = ""
 DEFAULT_GRID = true
-DEFAULT_ASPECT_RATIO = 1.0
+DEFAULT_ASPECT_RATIO = :none
 PLOT_PRECISION = 1e-3
 PLOT_POLAR_DIRECTIONS = 40
 
@@ -68,7 +68,9 @@ julia> plot(Bs, 1e-2)  # faster but less accurate than the previous call
     if fast
         label --> DEFAULT_LABEL
         grid --> DEFAULT_GRID
-        aspect_ratio --> DEFAULT_ASPECT_RATIO
+        if DEFAULT_ASPECT_RATIO != :none
+            aspect_ratio --> DEFAULT_ASPECT_RATIO
+        end
         seriesalpha --> DEFAULT_ALPHA
         seriescolor --> DEFAULT_COLOR
         seriestype --> :shape
@@ -153,7 +155,9 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
     else
         label --> DEFAULT_LABEL
         grid --> DEFAULT_GRID
-        aspect_ratio --> DEFAULT_ASPECT_RATIO
+        if DEFAULT_ASPECT_RATIO != :none
+            aspect_ratio --> DEFAULT_ASPECT_RATIO
+        end
         seriesalpha --> DEFAULT_ALPHA
         seriescolor --> DEFAULT_COLOR
 
@@ -192,7 +196,9 @@ julia> plot(Singleton([0.5, 1.0]))
                                ) where {N<:Real}
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
-    aspect_ratio --> DEFAULT_ASPECT_RATIO
+    if DEFAULT_ASPECT_RATIO != :none
+        aspect_ratio --> DEFAULT_ASPECT_RATIO
+    end
     seriesalpha --> DEFAULT_ALPHA
     seriescolor --> DEFAULT_COLOR
     seriestype := :scatter
@@ -246,7 +252,9 @@ julia> plot(L, marker=0)
                                   ε::N=zero(N)) where {N<:Real}
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
-    aspect_ratio --> DEFAULT_ASPECT_RATIO
+    if DEFAULT_ASPECT_RATIO != :none
+        aspect_ratio --> DEFAULT_ASPECT_RATIO
+    end
     seriesalpha --> DEFAULT_ALPHA
     linecolor   --> DEFAULT_COLOR
     markercolor --> DEFAULT_COLOR
@@ -269,7 +277,9 @@ Plot an empty set.
 @recipe function plot_emptyset(∅::EmptySet{N}, ε::N=zero(N)) where {N<:Real}
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
-    aspect_ratio --> DEFAULT_ASPECT_RATIO
+    if DEFAULT_ASPECT_RATIO != :none
+        aspect_ratio --> DEFAULT_ASPECT_RATIO
+    end
 
     plot_recipe(∅)
 end
@@ -325,7 +335,9 @@ julia> plot(X, -1., 100)  # equivalent to the above line
                                   ) where {N<:Real}
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
-    aspect_ratio --> DEFAULT_ASPECT_RATIO
+    if DEFAULT_ASPECT_RATIO != :none
+        aspect_ratio --> DEFAULT_ASPECT_RATIO
+    end
     seriesalpha --> DEFAULT_ALPHA
     seriescolor --> DEFAULT_COLOR
     seriestype := :shape
