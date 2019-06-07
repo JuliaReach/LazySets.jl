@@ -28,8 +28,8 @@ The convex hull as a list of vectors with the coordinates of the points.
 
 ### Algorithm
 
-A pre-processing step treats the cases with `0`, `1` and `2` points in any dimension.
-For more than `3` points, the algorithm used depends on the dimension.
+A pre-processing step treats the cases with `0`, `1`, `2` and `3` points in any dimension.
+For `4` or more points, the algorithm used depends on the dimension.
 
 For the one-dimensional case we return the minimum and maximum points, in that order.
 
@@ -99,41 +99,91 @@ function convex_hull!(points::Vector{VN};
 
     n = length(first(points))
 
-    # two points
-    if m == 2
-        if n == 1
-            p1, p2 = points[1], points[2]
-            if p1 == p2  # check for redundancy
-                pop!(points)
-            elseif p1[1] > p2[1]
-                points[1], points[2] = p2, p1
-            end
-        elseif n == 2
-            # special case, see #876
-            p1, p2 = points[1], points[2]
-            if p1 == p2  # check for redundancy
-                pop!(points)
-            elseif p1 <= p2
-                nothing
-            else
-                points[1], points[2] = p2, p1
-            end
+    if n == 1 # dimensional check
+        if m == 2
+            # two points case in 1d
+            return _two_points_1d!(points)
+        else
+             # general case in 1d
+            return _convex_hull_1d!(points)
         end
-        return points
-    end
-
-    # ===========================
-    # Dispatch for general cases
-    # ===========================
-
-    # _convex_hull_x can assume that there are at least three points
-    if n == 1
-        return _convex_hull_1d!(points)
-    elseif n == 2 
-        return _convex_hull_2d!(points, algorithm=algorithm)
+    elseif n == 2
+        if m == 2
+            # two points case in 2d
+            return _two_points_2d!(points)
+        elseif m == 3
+            # three points case in 2d
+            return _three_points_2d!(points)
+        else
+            # general case in 2d
+            return _convex_hull_2d!(points, algorithm=algorithm)
+        end
     else
+        # general case in nd
         return _convex_hull_nd!(points, backend=backend)
     end
+end
+
+function _two_points_1d!(points)
+    p1, p2 = points[1], points[2]
+    if p1 == p2
+        # check for redundancy
+        pop!(points)
+    elseif p1[1] > p2[1]
+        points[1], points[2] = p2, p1
+    end
+    return points
+end
+
+function _two_points_2d!(points)
+
+    # special case, see #876
+    p1, p2 = points[1], points[2]
+    if p1 == p2
+        # check for redundancy
+        pop!(points)
+    elseif p1 <= p2
+        nothing
+    else
+        points[1], points[2] = p2, p1
+    end
+    return points
+end
+
+function _three_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N<:Real}
+    # Algorithm: the function takes three points and uses the formula
+    #            from here: https://stackoverflow.com/questions/2122305/convex-hull-of-4-points/2122620#2122620
+    #            to decide if the points are ordered in a counter-clockwise fashion or not, the result is saved 
+    #            in the 'turn' boolean, then returns the points in ordered ccw acting according to 'turn'. For the
+    #            cases where the points are collinear we pass the points with the minimum and maximum first
+    #            component to the function for two points in 2d(_two_points_2d), if those are equal, we do the same
+    #            but with the second component.
+    A, B, C = points[1], points[2], points[3]
+    turn = (A[2] - B[2]) * C[1] + (B[1] - A[1]) * C[2] + (A[1] * B[2] - B[1] * A[2])
+
+    if isapproxzero(turn)
+        # ABC are collinear
+        if isapprox(A[1], B[1]) && isapprox(B[1], C[1]) && isapprox(C[1], A[1])
+            # points are approximately equal in their first component
+            if isapprox(A[2], B[2]) && isapprox(B[2], C[2]) && isapprox(C[2], A[2])
+                # all points are approximately equal
+                pop!(points)
+                pop!(points)
+                return points
+            else
+                points[1], points[2] = points[argmin([A[2], B[2], C[2]])], points[argmax([A[2], B[2], C[2]])]
+            end
+        else
+            points[1], points[2] = points[argmin([A[1], B[1], C[1]])], points[argmax([A[1], B[1], C[1]])]
+        end
+        pop!(points)
+        _two_points_2d!(points)
+    elseif turn < zero(N)
+        # ABC is CW
+        points[1], points[2], points[3] = C, B, A
+    end
+    # else ABC is CCW => nothing to do
+    return points
 end
 
 function _convex_hull_1d!(points::Vector{VN})::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}

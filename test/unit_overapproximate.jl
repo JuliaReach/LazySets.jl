@@ -53,6 +53,42 @@ for N in [Float64, Rational{Int}, Float32]
     M = Diagonal(N[2, 2])
     OA = overapproximate(M*H, Hyperrectangle)
     @test OA isa Hyperrectangle && OA.center == N[0, 0] && OA.radius == N[1, 2]
+
+    #overapproximation of Minkowski sum of linear maps for each block in the row block
+    i1 = Interval(N[0, 1])
+    h = Hyperrectangle(low=N[3, 4], high=N[5, 7])
+    M = N[1 2 3; 4 5 6; 7 8 9]
+    cpa = CartesianProductArray([i1, h])
+    lm = M * cpa
+
+    oa = overapproximate(lm, Hyperrectangle)
+    oa_box = overapproximate(lm, Approximations.BoxDirections)
+    d_oa_d_hp = overapproximate(lm, CartesianProductArray{N, Hyperrectangle{N}})
+    d_oa_d_box = overapproximate(lm, CartesianProductArray, Approximations.BoxDirections)
+    oa_d_hp = overapproximate(d_oa_d_hp)
+    oa_d_box = overapproximate(d_oa_d_box, Approximations.BoxDirections)
+
+    @test oa == oa_d_hp
+    @test oa_box == oa_d_box
+
+    for (oax, set_type) in [(d_oa_d_hp, Hyperrectangle), (d_oa_d_box, HPolytope)]
+        @test oax isa CartesianProductArray
+        arr = oax.array
+        @test length(arr) == 2 && dim(arr[1]) == 1 && dim(arr[2]) == 2
+        @test all(X -> X isa set_type, arr)
+    end
+
+    i1 = Interval(N[0, 1])
+    i2 = Interval(N[2, 3])
+    i3 = Interval(N[1, 4])
+    cpa = CartesianProductArray([i1, i2, i3])
+    M = N[1 2 0; 0 1 0; 0 1 1]
+    lm = M * cpa
+    d_oa = overapproximate(lm, CartesianProductArray{N, Interval{N}})
+    oa = overapproximate(lm)
+    @test overapproximate(d_oa) == oa
+    @test typeof(d_oa) == CartesianProductArray{N, Interval{N}}
+
 end
 
 # tests that do not work with Rational{Int}
@@ -154,4 +190,16 @@ for N in [Float64, Float32]
     Z1 = overapproximate(TM,Zonotope)
     Z2 = Zonotope(N[5.5,124.0],[N[0.0,1.5],N[-1.0,0.0],N[5.0,0.0],N[0.0,123.0]])
     @test Z1 == Z2
+end
+
+for N in [Float64] # due to sparse vectors: a = sparse(Float32[1 -1; 1 1];); a \ Float32[4, 10]
+    #decomposed linear map approximation
+    i1 = Interval(N[0, 1])
+    i2 = Interval(N[2, 3])
+    M = N[1 2; 0 1]
+    cpa = CartesianProductArray([i1, i2])
+    lm = M * cpa
+    d_oa = overapproximate(lm, CartesianProductArray{N, Interval{N}})
+    oa = overapproximate(lm, OctDirections)
+    @test oa ⊆ d_oa
 end

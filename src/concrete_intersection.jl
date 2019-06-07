@@ -538,8 +538,12 @@ function intersection(P1::AbstractPolyhedron{N},
         # remove the redundancies
         removehredundancy!(Qph)
 
-        # convert back to HPOLY
-        return convert(HPOLY, Qph)
+        if isempty(Qph)
+            return EmptySet{N}()
+        else
+            # convert back to HPOLY
+            return convert(HPOLY, Qph)
+        end
     end
 end
 
