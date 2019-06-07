@@ -707,8 +707,8 @@ function overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
     return Zonotope(c, hcat(gen, Diagonal(rem_gen)))
 end
 end
-end  
-=======
+end
+
 """
     overapproximate(lm::LinearMap{N, CartesianProductArray{N, T}},
                       ::Type{CartesianProductArray{N, O}}) where {N, T<:LazySet{N}, O<:LazySet{N}}
