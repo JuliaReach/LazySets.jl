@@ -316,13 +316,14 @@ function isempty(lm::LinearMap)::Bool
 end
 
 """
-    vertices_list(lm::LinearMap{N})::Vector{Vector{N}} where {N<:Real}
+    vertices_list(lm::LinearMap{N}; prune::Bool=true)::Vector{Vector{N}} where {N<:Real}
 
 Return the list of vertices of a (polyhedral) linear map.
 
 ### Input
 
 - `lm` -- linear map
+- `prune` -- (optional, default: `true`) if true removes redundant vertices
 
 ### Output
 
@@ -333,7 +334,7 @@ A list of vertices.
 We assume that the underlying set `X` is polyhedral.
 Then the result is just the linear map applied to the vertices of `X`.
 """
-function vertices_list(lm::LinearMap{N})::Vector{Vector{N}} where {N<:Real}
+function vertices_list(lm::LinearMap{N}; prune::Bool=true)::Vector{Vector{N}} where {N<:Real}
     # for a zero map, the result is just the list containing the origin
     if iszero(lm.M)
         return [zeros(N, dim(lm))]
@@ -349,7 +350,7 @@ function vertices_list(lm::LinearMap{N})::Vector{Vector{N}} where {N<:Real}
         push!(vlist, lm.M * v)
     end
 
-    return vlist
+    return prune ? convex_hull(vlist) : vlist
 end
 
 """
