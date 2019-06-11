@@ -16,6 +16,7 @@
 - [Release notes of tagged versions](https://github.com/JuliaReach/LazySets.jl/releases)
 - [Release notes of the development version](https://github.com/JuliaReach/LazySets.jl/wiki/Release-log-tracker)
 - [Publications](https://juliareach.github.io/Reachability.jl/latest/publications.html)
+- [Developers](https://juliareach.github.io/LazySets.jl/latest/about/#Credits-1)
 
 ## Installing
 
@@ -44,7 +45,3 @@ pkg> add LazySets#master
 ```julia
 pkg> dev LazySets
 ```
-
-## Contributors
-
-See the list of developers following [this link](https://juliareach.github.io/LazySets.jl/latest/about/#Credits-1).

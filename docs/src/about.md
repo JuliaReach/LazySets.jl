@@ -111,9 +111,9 @@ Here we list the names of the maintainers of the `LazySets.jl` library, as well 
 - Kostiantyn Potomkin
 - Frédéric Viry
 
-### Colaborators
+### Acknowledgements
 
-We are also grateful to the following persons for enlightening discussions: 
+We are grateful to the following persons for enlightening discussions: 
 
 - [Sergiy Bogomolov](https://www.sergiybogomolov.com/)
 - [Goran Frehse](https://sites.google.com/site/frehseg/) 
