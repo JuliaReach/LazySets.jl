@@ -540,7 +540,6 @@ A zonotope that overapproximates the range of the given taylor model.
 
 ### Examples
 
-
 ```julia
 julia> using TaylorModels, IntervalArithmetic
 
@@ -572,6 +571,7 @@ Zonotope{Float64}([1.0, -2.1],
    [1, 2]  =  0.5
    [2, 3]  =  0.5)
 ```
+
 ### Algorithm
 
 The TaylorModel ``TM`` can be enclosed by a zonotope ``Z = ⟨c, G⟩``.
@@ -710,85 +710,104 @@ end
 end
 
 """
-    overapproximate(lm::LinearMap{N, CartesianProductArray{N, T}},
-                      ::Type{CartesianProductArray{N, O}}) where {N, T<:LazySet{N}, O<:LazySet{N}}
+    overapproximate(lm::LinearMap{N, <:CartesianProductArray{N}},
+                    ::Type{CartesianProductArray{N, S}}
+                   ) where {N, S<:LazySet{N}}
 
-Decompose a lazy linear map of a cartesian product array keeping original block structure.
+Decompose a lazy linear map of a cartesian product array while keeping the
+original block structure.
 
 ### Input
 
-- `lm`   -- lazy linear map of cartesian product array
+- `lm` -- lazy linear map of cartesian product array
 - `CartesianProductArray` -- type for dispatch
 
 ### Output
 
 A `CartesianProductArray` representing the decomposed linear map.
 """
-function overapproximate(lm::LinearMap{N, CartesianProductArray{N, T}},
-                           ::Type{CartesianProductArray{N, O}}) where {N, T<:LazySet{N}, O<:LazySet{N}}
-
-    M, cpa = lm.M, lm.X
-    array = Vector{O}(undef, length(cpa.array))
-    return _overapproximate_lm_cpa!(M, cpa, array, O)
+function overapproximate(lm::LinearMap{N, <:CartesianProductArray{N}},
+                         ::Type{CartesianProductArray{N, S}}
+                        ) where {N, S<:LazySet{N}}
+    cpa = array(lm.X)
+    arr = Vector{S}(undef, length(cpa))
+    return _overapproximate_lm_cpa!(arr, lm.M, cpa, S)
 end
 
 """
-    overapproximate(lm::LinearMap{N, CartesianProductArray{N, T}},
-                      ::Type{CartesianProductArray{N, HPolytope{N}}},
-                   dir::AbstractDirections{N}) where {N, T<:LazySet{N}}
+    overapproximate(lm::LinearMap{N, <:CartesianProductArray{N}},
+                    ::Type{<:CartesianProductArray},
+                    dir::Type{<:AbstractDirections}) where {N}
 
-Decompose a lazy linear map of a cartesian product array.
+Decompose a lazy linear map of a cartesian product array with template
+directions while keeping the original block structure.
 
 ### Input
 
-- `lm`   -- lazy linear map of cartesian product array
+- `lm`  -- lazy linear map of a cartesian product array
 - `CartesianProductArray` -- type for dispatch
-- `dir` -- approximation option for decomposition
+- `dir` -- template directions for overapproximation
 
 ### Output
 
 A `CartesianProductArray` representing the decomposed linear map.
 """
-function overapproximate(lm::LinearMap{N, CartesianProductArray{N, T}},
-                           ::Type{<:CartesianProductArray},
-                         dir::Type{<:AbstractDirections}) where {N, T<:LazySet{N}}
-    M, cpa = lm.M, lm.X
-    array = Vector{HPolytope{N}}(undef, length(cpa.array))
-    return _overapproximate_lm_cpa!(M, cpa, array, dir)
+function overapproximate(lm::LinearMap{N, <:CartesianProductArray{N}},
+                         ::Type{<:CartesianProductArray},
+                         dir::Type{<:AbstractDirections}) where {N}
+    cpa = array(lm.X)
+    arr = Vector{HPolytope{N}}(undef, length(cpa))
+    return _overapproximate_lm_cpa!(arr, lm.M, cpa, dir)
 end
 
-#same for <:AbstractHyperrectangle
-function overapproximate(lm::LinearMap{N, CartesianProductArray{N, T}},
-                           ::Type{<:CartesianProductArray},
-                         oa::Type{<:AbstractHyperrectangle}) where {N, T<:LazySet{N}}
-    M, cpa = lm.M, lm.X
-    array = Vector{oa{N}}(undef, length(cpa.array))
-    return _overapproximate_lm_cpa!(M, cpa, array, oa)
+"""
+    overapproximate(lm::LinearMap{N, <:CartesianProductArray{N}},
+                    ::Type{<:CartesianProductArray},
+                    set_type::Type{<:LazySet}) where {N}
+
+Decompose a lazy linear map of a cartesian product array with a given set type
+while keeping the original block structure.
+
+### Input
+
+- `lm`  -- lazy linear map of a cartesian product array
+- `CartesianProductArray` -- type for dispatch
+- `set_type` -- set type for overapproximation
+
+### Output
+
+A `CartesianProductArray` representing the decomposed linear map.
+"""
+function overapproximate(lm::LinearMap{N, <:CartesianProductArray{N}},
+                         ::Type{<:CartesianProductArray},
+                         set_type::Type{<:LazySet}) where {N}
+    cpa = array(lm.X)
+    arr = Vector{set_type{N}}(undef, length(cpa))
+    return _overapproximate_lm_cpa!(arr, lm.M, cpa, set_type)
 end
 
-function _overapproximate_lm_cpa!(M, cpa, array, O)
+function _overapproximate_lm_cpa!(arr, M, cpa, overapprox_option)
+    # construct Minkowski sum for block row
+    function _block_row(cpa::Vector{S}, M::AbstractMatrix{N},
+                        row_range::UnitRange{Int}) where {N, S<:LazySet{N}}
+        arr_inner = Vector{LinearMap{N, <:S}}(undef, length(cpa))
+        col_start_ind, col_end_ind = 1, 0
+        @inbounds for (j, bj) in enumerate(cpa)
+            col_end_ind += dim(bj)
+            arr_inner[j] =
+                LinearMap(M[row_range, col_start_ind:col_end_ind], bj)
+            col_start_ind = col_end_ind + 1
+        end
+        return MinkowskiSumArray(arr_inner)
+    end
+
     row_start_ind, row_end_ind = 1, 0
-    @inbounds for (i, bi) in enumerate(cpa.array)
+    @inbounds for (i, bi) in enumerate(cpa)
         row_end_ind += dim(bi)
-        ms = blocks_linear_map(cpa, M, row_start_ind : row_end_ind)
-        array[i] = overapproximate(ms, O)
+        ms = _block_row(cpa, M, row_start_ind:row_end_ind)
+        arr[i] = overapproximate(ms, overapprox_option)
         row_start_ind = row_end_ind + 1
     end
-    return CartesianProductArray(array)
-end
 
-function blocks_linear_map(cpa::CartesianProductArray{N, T},
-                           M::AbstractMatrix{N},
-                           row_range::UnitRange{Int}) where {N, T<:LazySet{N}}
-    array = Vector{LinearMap{N, <:T}}(undef, length(cpa.array))
-
-    col_start_ind, col_end_ind = 1, 0
-    @inbounds for (i, bi) in enumerate(cpa.array)
-        col_end_ind += dim(bi)
-        array[i] = LinearMap(M[row_range, col_start_ind : col_end_ind], bi)
-        col_start_ind = col_end_ind + 1
-    end
-
-    return MinkowskiSumArray(array)
-
+    return CartesianProductArray(arr)
 end
