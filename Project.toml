@@ -44,4 +44,6 @@ Requires = "ae029012-a4dd-5104-9daa-d747884805df"
 TaylorModels = "314ce334-5f6e-57ae-acf6-00b6e903104a"
 
 [targets]
-test = ["Expokit", "Pkg", "IntervalArithmetic", "GLPKMathProgInterface", "RecipesBase", "MathProgBase", "Requires", "Optim", "Polyhedra", "Documenter", "Plots", "GR","TaylorModels"]
+test = ["Documenter", "Expokit", "GLPKMathProgInterface", "GR",
+        "IntervalArithmetic", "MathProgBase", "Optim", "Pkg", "Plots",
+        "Polyhedra", "RecipesBase", "Requires", "TaylorModels"]

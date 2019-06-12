@@ -12,7 +12,6 @@ RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 TaylorModels = "314ce334-5f6e-57ae-acf6-00b6e903104a"
 
-
 [compat]
 BenchmarkTools = "≥ 0.4.2"
 CDDLib = "≥ 0.5.2"
@@ -25,4 +24,4 @@ Plots = "≥ 0.25.1"
 Polyhedra = "≥ 0.3.4"
 RecipesBase = "≥ 0.3.0"
 StaticArrays = "≥ 0.10.3"
-TaylorModels = "≥ 0.1.0"
+TaylorModels = "≥ 0.1.1"

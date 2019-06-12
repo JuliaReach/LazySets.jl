@@ -8,7 +8,6 @@ module Approximations
 
 using LazySets, Requires, LinearAlgebra, SparseArrays
 
-
 export approximate,
        ballinf_approximation,
        box_approximation, interval_hull,
