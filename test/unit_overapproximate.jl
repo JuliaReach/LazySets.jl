@@ -177,4 +177,21 @@ for N in [Float64] # due to sparse vectors: a = sparse(Float32[1 -1; 1 1];); a \
     d_oa = overapproximate(lm, CartesianProductArray{N, Interval{N}})
     oa = overapproximate(lm, OctDirections)
     @test oa ⊆ d_oa
+
+    # =======================================
+    # Zonotope overapprox. of a Taylor model
+    # =======================================
+    x₁, x₂, x₃ = set_variables(N, ["x₁", "x₂", "x₃"], order=5)
+    Dx₁ = IA.Interval(N(1.0), N(3.0))
+    Dx₂ = IA.Interval(N(-1.0), N(1.0))
+    Dx₃ = IA.Interval(N(-1.0), N(0.0))
+    D = Dx₁ × Dx₂ × Dx₃   # domain
+    x0 = IntervalBox(IA.mid.(D)...)
+    I = IA.Interval(N(0.0), N(0.0)) # interval remainder
+    p₁ = 1 + x₁ - x₂
+    p₂ = x₃ - x₁
+    vTM = [TaylorModels.TaylorModelN(pi, I, x0, D) for pi in [p₁, p₂]]
+    Z1 = overapproximate(vTM, Zonotope)
+    @test center(Z1) == N[3, -2.5]
+    @test Matrix(generators(Z1)) == N[1 -1 0; -1 0 0.5]
 end

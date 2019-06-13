@@ -26,6 +26,7 @@ Optim = "≥ 0.14.1"
 Polyhedra = "≥ 0.3.4"
 RecipesBase = "≥ 0.3.0"
 Requires = "≥ 0.4.0"
+TaylorModels = "≥ 0.1.1"
 
 [extras]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
@@ -40,6 +41,9 @@ Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 Polyhedra = "67491407-f73d-577b-9b50-8179a7c68029"
 RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 Requires = "ae029012-a4dd-5104-9daa-d747884805df"
+TaylorModels = "314ce334-5f6e-57ae-acf6-00b6e903104a"
 
 [targets]
-test = ["Expokit", "Pkg", "IntervalArithmetic", "GLPKMathProgInterface", "RecipesBase", "MathProgBase", "Requires", "Optim", "Polyhedra", "Documenter", "Plots", "GR"]
+test = ["Documenter", "Expokit", "GLPKMathProgInterface", "GR",
+        "IntervalArithmetic", "MathProgBase", "Optim", "Pkg", "Plots",
+        "Polyhedra", "RecipesBase", "Requires", "TaylorModels"]
