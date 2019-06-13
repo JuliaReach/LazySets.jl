@@ -165,6 +165,18 @@ for N in [Float64, Float32]
     Y_zonotope = overapproximate(Y, Zonotope) # overapproximate with a zonotope
     @test Y_polygon ⊆ Y_zonotope
     @test !(Y_zonotope ⊆ Y_polygon)
+end
+
+for N in [Float64] # due to sparse vectors: a = sparse(Float32[1 -1; 1 1];); a \ Float32[4, 10]
+    #decomposed linear map approximation
+    i1 = Interval(N[0, 1])
+    i2 = Interval(N[2, 3])
+    M = N[1 2; 0 1]
+    cpa = CartesianProductArray([i1, i2])
+    lm = M * cpa
+    d_oa = overapproximate(lm, CartesianProductArray{N, Interval{N}})
+    oa = overapproximate(lm, OctDirections)
+    @test oa ⊆ d_oa
 
     # =======================================
     # Zonotope overapprox. of a Taylor model
@@ -182,16 +194,4 @@ for N in [Float64, Float32]
     Z1 = overapproximate(vTM, Zonotope)
     @test center(Z1) == N[3, -2.5]
     @test Matrix(generators(Z1)) == N[1 -1 0; -1 0 0.5]
-end
-
-for N in [Float64] # due to sparse vectors: a = sparse(Float32[1 -1; 1 1];); a \ Float32[4, 10]
-    #decomposed linear map approximation
-    i1 = Interval(N[0, 1])
-    i2 = Interval(N[2, 3])
-    M = N[1 2; 0 1]
-    cpa = CartesianProductArray([i1, i2])
-    lm = M * cpa
-    d_oa = overapproximate(lm, CartesianProductArray{N, Interval{N}})
-    oa = overapproximate(lm, OctDirections)
-    @test oa ⊆ d_oa
 end
