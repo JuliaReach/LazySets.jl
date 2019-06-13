@@ -28,8 +28,10 @@ The convex hull as a list of vectors with the coordinates of the points.
 
 ### Algorithm
 
-A pre-processing step treats the cases with `0`, `1`, `2` and `3` points in any dimension.
-For `4` or more points, the algorithm used depends on the dimension.
+A pre-processing step treats the cases with `0`, `1` and `2` points for one
+dimension, `0`, `1`, `2`, `3` and `4` for two dimensions, if there is more
+points, its used a general algorithm for one and two dimensions.
+For higher dimension there is a general algorithm.
 
 For the one-dimensional case we return the minimum and maximum points, in that order.
 
@@ -114,6 +116,9 @@ function convex_hull!(points::Vector{VN};
         elseif m == 3
             # three points case in 2d
             return _three_points_2d!(points)
+        elseif m == 4
+            # four points case in 2d
+            return _four_points_2d!(points)
         else
             # general case in 2d
             return _convex_hull_2d!(points, algorithm=algorithm)
@@ -183,6 +188,126 @@ function _three_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N
         points[1], points[2], points[3] = C, B, A
     end
     # else ABC is CCW => nothing to do
+    return points
+end
+
+function _four_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N<:Real}
+    A, B, C, D = points[1], points[2], points[3], points[4]
+    tri_ABC = (A[2] - B[2]) * C[1] + (B[1] - A[1]) * C[2] + (A[1] * B[2] - B[1] * A[2])
+    tri_ABD = (A[2] - B[2]) * D[1] + (B[1] - A[1]) * D[2] + (A[1] * B[2] - B[1] * A[2])
+    tri_BCD = (B[2] - C[2]) * D[1] + (C[1] - B[1]) * D[2] + (B[1] * C[2] - C[1] * B[2])
+    tri_CAD = (C[2] - A[2]) * D[1] + (A[1] - C[1]) * D[2] + (C[1] * A[2] - A[1] * C[2])
+    key = 0
+    if tri_ABC > zero(N)
+        key = key + 1000
+    end
+    if tri_ABD > zero(N)
+        key = key + 100
+    end
+    if tri_BCD > zero(N)
+        key = key + 10
+    end
+    if tri_CAD > zero(N)
+        key = key + 1
+    end
+    
+    function collinear_case(A, B, C, D)
+        # A, B and C collinear, D is the extra point
+        if isapprox(A[1], B[1]) && isapprox(B[1], C[1]) && isapprox(C[1], A[1])
+            # points are approximately equal in their first component
+            if isapprox(A[2], B[2]) && isapprox(B[2], C[2]) && isapprox(C[2], A[2])
+                # the three points are approximately equal
+                points[1], points[2] = A, D
+                pop!(points)
+                pop!(points)
+                return _two_points_2d!(points)
+            else
+                # assign the points with max and min value in their second component to the
+                # firsts points and the extra point to the third place, then pop the point that was in the middle
+                points[1], points[2], points[3] = points[argmin([A[2], B[2], C[2]])], points[argmax([A[2], B[2], C[2]])], D
+                pop!(points)
+            end
+        else
+            # assign the points with max and min value in their first component to the
+            # firsts points and the extra point to the third place, then pop the point that was in the middle
+            points[1], points[2], points[3] = points[argmin([A[1], B[1], C[1]])], points[argmax([A[1], B[1], C[1]])], D
+            pop!(points)
+        end
+        return _three_points_2d!(points)
+    end
+    
+    if isapproxzero(tri_ABC)
+        return collinear_case(A, B, C, D)
+    end
+    if isapproxzero(tri_ABD)
+        return collinear_case(A, B, D, C)
+    end
+    if isapproxzero(tri_BCD)
+        return collinear_case(B, C, D, A)
+    end
+    if isapproxzero(tri_CAD)
+        return collinear_case(C, A, D, B)
+    end
+    
+    # ABC  ABD  BCD  CAD  hull
+    # ------------------------
+    #  +    +    +    +   ABC
+    #  +    +    +    -   ABCD
+    #  +    +    -    +   ABDC
+    #  +    +    -    -   ABD
+    #  +    -    +    +   ADBC
+    #  +    -    +    -   BCD
+    #  +    -    -    +   CAD
+    #  +    -    -    -   [should not happen]
+    #  -    +    +    +   [should not happen]
+    #  -    +    +    -   ACD
+    #  -    +    -    +   DCB
+    #  -    +    -    -   DBCA
+    #  -    -    +    +   ADB
+    #  -    -    +    -   ACDB
+    #  -    -    -    +   ADCB
+    #  -    -    -    -   ACB
+    if key == 1111
+        points[1], points[2], points[3] = A, B, C # +    +    +    +   ABC
+        pop!(points)
+    elseif key == 1110
+        points[1], points[2], points[3], points[4] = A, B, C, D # +    +    +    -   ABCD
+    elseif key == 1101
+        points[1], points[2], points[3], points[4] = A, B, D, C #  +    +    -    +   ABDC
+    elseif key == 1100
+        points[1], points[2], points[3] = A, B, D #  +    +    -    -   ABD
+        pop!(points)
+    elseif key == 1011
+        points[1], points[2], points[3], points[4] = A, D, B, C #  +    -    +    +   ADBC
+    elseif key == 1010
+        points[1], points[2], points[3] = B, C, D #  +    -    +    -   BCD
+        pop!(points)
+    elseif key == 1001
+        points[1], points[2], points[3] = C, A, D #  +    -    -    +    CAD
+        pop!(points)
+    elseif key == 1000
+        #  +    -    -    -   [should not happen]
+    elseif key == 0111
+        #  -    +    +    +   [should not happen]
+    elseif key == 0110
+        points[1], points[2], points[3] = A, C, D #  -    +    +    -   ACD
+        pop!(points)
+    elseif key == 0101
+        points[1], points[2], points[3] = D, C, B #  -    +    -    +   DCB
+        pop!(points)
+    elseif key == 0100
+        points[1], points[2], points[3], points[4] = D, B, C, A #  -    +    -    -   DBCA
+    elseif key == 0011
+        points[1], points[2], points[3] = A, D, B #  -    -    +    +   ADB
+        pop!(points)
+    elseif key == 0010
+        points[1], points[2], points[3], points[4] = A, C, D, B #  -    -    +    -   ACDB
+    elseif key == 0001
+        points[1], points[2], points[3], points[4] = A, D, C, B #  -    -    -    +   ADCB
+    elseif key == 0000
+        points[1], points[2], points[3] = A, C, B #  -    -    -    -   ACB
+        pop!(points)
+    end
     return points
 end
 

@@ -33,22 +33,69 @@ for N in [Float64, Rational{Int}]
     convex_hull!(points_2D) # check in-place version
     @test points_2D == [[N(-1), N(-1)], [N(1), N(0)], [N(1), N(1)], [N(0), N(1)]]
 
-    # three vertex case in 2 dimensions
-    function iscounterclockwise(result, correct_expr)
+    function iscounterclockwise_four_points(result, correct_expr)
+        # this function checks if the result equals any of the correct answer cyclic permutation
+        result == correct_expr || result == circshift(correct_expr, 1) || result == circshift(correct_expr, 2) || result == circshift(correct_expr, 3)
+    end
+
+    function iscounterclockwise_three_points(result, correct_expr)
         # this function checks if the result equals any of the correct answer cyclic permutation
         result == correct_expr || result == circshift(correct_expr, 1) || result == circshift(correct_expr, 2)
     end
+
+    # three vertex case in 2 dimensions
     ccw_points = [N[1, 1], N[-1, 1], N[-1, 0]]
     ccw_p = convex_hull!(ccw_points)
     ccw_expr = [N[1, 1], N[-1, 1], N[-1, 0]]
-    @test  iscounterclockwise(ccw_p, ccw_expr) # points sorted in a counter-clockwise fashion
+    @test  iscounterclockwise_three_points(ccw_p, ccw_expr) # points sorted in a counter-clockwise fashion
     cw_points = [N[-1, 1], N[1, 1], N[-1, 0]]
     cw_p = convex_hull!(cw_points)
     cw_expr = [N[1, 1], N[-1, 1], N[-1, 0]]
-    @test  iscounterclockwise(cw_p, cw_expr) # points sorted in clockwise fashion
+    @test  iscounterclockwise_three_points(cw_p, cw_expr) # points sorted in clockwise fashion
     @test ispermutation(convex_hull!([N[1, 1], N[2, 2], N[3, 3]]), [N[1, 1], N[3, 3]]) # points aligned
     @test ispermutation(convex_hull!([N[0, 1], N[0, 2], N[0, 3]]), [N[0, 1], N[0, 3]]) # three points on a vertical line
     @test convex_hull!([N[0, 1], N[0, 1], N[0, 1]]) == [N[0, 1]] # three equal points
+
+    # four vertex case in 2 dimentions
+    A = N[1, 0]
+    B = N[1, 1]
+    C = N[-1, 1]
+    D = N[-1, 0]
+    expr = [A, B, C, D]
+    points = [A, B, C, D]
+    @test  iscounterclockwise_four_points(convex_hull!(points), expr) # ABCD
+    points = [A, D, C, B]
+    @test  iscounterclockwise_four_points(convex_hull!(points), expr) # ADCB
+    points = [A, B, D, C]
+    @test  iscounterclockwise_four_points(convex_hull!(points), expr) # ABDC
+    points = [A, D, B, C]
+    @test  iscounterclockwise_four_points(convex_hull!(points), expr) # ADBC
+    points = [D, B, C, A]
+    @test  iscounterclockwise_four_points(convex_hull!(points), expr) # DBCA
+    points = [A, C, D, B]
+    @test  iscounterclockwise_four_points(convex_hull!(points), expr) # ACDB
+    A = N[0, 1]
+    B = N[-1, -1]
+    C = N[1, -1]
+    D = N[0, 0]
+    expr = [A, B, C]
+    points = [A, B, C, D]
+    @test iscounterclockwise_three_points(convex_hull!(points), expr) # ABC
+    points = [A, C, B, D]
+    @test iscounterclockwise_three_points(convex_hull!(points), expr) # CBA
+    points = [D, B, C, A]
+    @test iscounterclockwise_three_points(convex_hull!(points), expr) # BCD
+    points = [D, C, B, A]
+    @test iscounterclockwise_three_points(convex_hull!(points), expr) # DCB
+    points = [B, D, C, A]
+    @test iscounterclockwise_three_points(convex_hull!(points), expr) # ACD
+    points = [C, D, B, A]
+    @test iscounterclockwise_three_points(convex_hull!(points), expr) # CAD
+    points = [B, C, D, A]
+    @test iscounterclockwise_three_points(convex_hull!(points), expr) # ABD
+    points = [C, B, D, A]
+    @test iscounterclockwise_three_points(convex_hull!(points), expr) # ADB
+    @test ispermutation(convex_hull!([N[1, 1], N[2, 2], N[3, 3], N[4, 4]]), [N[1, 1], N[4, 4]]) # points aligned
 
     # higher dimension
     if test_suite_polyhedra && N != Float32 # no backend supporting Float32
