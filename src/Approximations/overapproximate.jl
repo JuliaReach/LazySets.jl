@@ -525,8 +525,13 @@ function load_taylormodels_overapproximation()
 return quote
 
 using .TaylorModels: Taylor1, TaylorN, TaylorModelN, TaylorModel1,
+                     polynomial, remainder, domain,
                      normalize_taylor, linear_polynomial,
                      constant_term, evaluate, mid
+
+# helper functions
+@inline get_linear_coeffs(p::Taylor1) = linear_polynomial(p).coeffs[2:end]
+@inline get_linear_coeffs(p::TaylorN) = linear_polynomial(p).coeffs[2].coeffs
 
 """
     overapproximate(vTM::Vector{TaylorModel1{T, S}},
@@ -620,8 +625,35 @@ julia> ρ(d, Z) < ρ(d, X)
 true
 ```
 
-This function also works if the polynomials are non-linear:
+This function also works if the polynomials are non-linear; for example suppose
+that we add a third polynomial with a quadratic term:
 
+```julia
+julia> p3 = Taylor1([0.9, 3.0, 1.0], 3);
+
+julia> vTM = [TaylorModel1(pi, I, x₀, D) for pi in [p1, p2, p3]]
+3-element Array{TaylorModel1{Float64,Float64},1}:
+           2.0 + 1.0 t + [-0.5, 0.5]
+           0.9 + 3.0 t + [-0.5, 0.5]
+  0.9 + 3.0 t + 1.0 t² + [-0.5, 0.5]
+
+julia> Z = overapproximate(vTM, Zonotope);
+
+julia> center(Z)
+3-element Array{Float64,1}:
+  1.0
+ -2.1
+  0.8999999999999999
+
+julia> Matrix(generators(Z))
+3×4 Array{Float64,2}:
+ 2.0  0.5  0.0  0.0
+ 6.0  0.0  0.5  0.0
+ 6.0  0.0  0.0  6.5
+```
+The fourth and last generator corresponds to the addition between the interval
+remainder and the box overapproximation of the nonlinear part of `p3` over the
+domain.
 
 ### Algorithm
 
@@ -648,28 +680,14 @@ This algorithm proceeds in two steps:
 function overapproximate(vTM::Vector{TaylorModel1{T, S}},
                             ::Type{Zonotope}) where {T, S}
     m = length(vTM)
-    c = Vector{T}(undef, m) # center of the zonotope
-    gen = Vector{T}(undef, m) # generator of the linear part
-    rem_gen = Vector{T}(undef, m) # generators for the remainder
 
-    @inbounds for (i, x) in enumerate(vTM)
-        # linearize the TM
-        pol_lin = constant_term(x.pol) + linear_polynomial(x.pol)
-        rem_nonlin = x.rem
-        # if there are nonlinear terms, build an overapproximation
-        if length(x.pol.coeffs) > 2
-            pol_nonlin = x.pol - pol_lin
-            rem_nonlin += evaluate(pol_nonlin, x.dom)
-        end
-        # normalize the linear polynomial to the symmetric interval [-1, 1]
-        Q = normalize_taylor(pol_lin, x.dom, true)
-        # build the generators
-        α = mid(rem_nonlin)
-        c[i] = Q.coeffs[1] + α  # constant terms
-        gen[i] = Q.coeffs[2]    # linear terms
-        rem_gen[i] = abs(rem_nonlin.hi - α)
-    end
-    return Zonotope(c, hcat(gen, Diagonal(rem_gen)))
+    # preallocations
+    c = Vector{T}(undef, m) # center of the zonotope
+    gen_lin = Matrix{T}(undef, m, 1) # generator of the linear part
+    gen_rem = Vector{T}(undef, m) # generators of the remainder
+
+    # compute overapproximation
+    return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
 end
 
 """
@@ -681,7 +699,6 @@ Overapproximate a multivariate taylor model with a zonotope.
 
 ### Input
 
-
 - `vTM`      -- `TaylorModelN`
 - `Zonotope` -- type for dispatch
 
@@ -691,81 +708,102 @@ A zonotope that overapproximates the range of the given taylor model.
 
 ### Examples
 
+Consider a vector of two 2-dimensional taylor models of order 2 and 4
+respectively.
 
 ```julia
-julia> m = 4
-4
+julia> using LazySets, LazySets.Approximations, TaylorModels
 
-julia> x₁, x₂ = set_variables(Float64, ["x₁", "x₂"], order=2*m)
+julia> const IA = IntervalArithmetic;
+
+julia> x₁, x₂ = set_variables(Float64, ["x₁", "x₂"], order=8)
 2-element Array{TaylorN{Float64},1}:
   1.0 x₁ + 𝒪(‖x‖⁹)
   1.0 x₂ + 𝒪(‖x‖⁹)
 
-julia> x₀ = Interval(0.0, 0.0) × Interval(0.0, 0.0)
+julia> x₀ = IntervalBox(0..0, 2) # expansion point
 [0, 0] × [0, 0]
 
-julia> Dx₁ = Interval(0.0, 3.0)
+julia> Dx₁ = IA.Interval(0.0, 3.0) # domain for x₁
 [0, 3]
 
-julia> Dx₂ = Interval(-1.0, 1.0)
+julia> Dx₂ = IA.Interval(-1.0, 1.0) # domain for x₂
 [-1, 1]
 
-julia> D = Dx₁ × Dx₂
+julia> D = Dx₁ × Dx₂ # take the cartesian product of the domain on each variable 
 [0, 3] × [-1, 1]
 
-julia> δ = 0.5; I = Interval(-δ, δ)
+julia> r = IA.Interval(-0.5, 0.5) # interval remainder
 [-0.5, 0.5]
 
-julia> p = 1 + x₁^2 - x₂
+julia> p1 = 1 + x₁^2 - x₂
  1.0 - 1.0 x₂ + 1.0 x₁² + 𝒪(‖x‖⁹)
 
-julia> p1 = x₂^3 + 3x₁^4 + x₁ + 1
+julia> p2 = x₂^3 + 3x₁^4 + x₁ + 1
  1.0 + 1.0 x₁ + 1.0 x₂³ + 3.0 x₁⁴ + 𝒪(‖x‖⁹)
 
-julia> TM = [ TaylorModelN(p, I, x₀, D), TaylorModelN(p1, I, x₀, D) ]
+julia> vTM = [TaylorModelN(pi, r, x₀, D) for pi in [p1, p2]]
 2-element Array{TaylorModelN{2,Float64,Float64},1}:
              1.0 - 1.0 x₂ + 1.0 x₁² + [-0.5, 0.5]
    1.0 + 1.0 x₁ + 1.0 x₂³ + 3.0 x₁⁴ + [-0.5, 0.5]
 
-julia> overapproximate(TM, Zonotope)
-Zonotope{Float64}([5.5, 124.0],
-   [2, 1]  =  1.5
-   [1, 2]  =  -1.0
-   [1, 3]  =  5.0
-   [2, 4]  =  123.0)
- ```
- 
+julia> Z = overapproximate(vTM, Zonotope);
+
+julia> center(Z)
+2-element Array{Float64,1}:
+   5.5
+ 124.0
+
+julia> Matrix(generators(Z))
+2×4 Array{Float64,2}:
+ 0.0  -1.0  5.0    0.0
+ 1.5   0.0  0.0  123.0
+```
+
 ### Algorithm
 
-This algorithm is analogue to the univariate case.
+We refer to the algorithm description for the univariate case.
 """
 function overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
-                            ::Type{Zonotope}) where {N,T, S}
+                         ::Type{Zonotope}) where {N,T, S}
     m = length(vTM)
-    n = length(vTM[1].pol.coeffs[2].coeffs)
+    n = N # number of variables is get_numvars() in TaylorSeries
+
+    # preallocations
     c = Vector{T}(undef, m) # center of the zonotope
-    gen = Matrix{T}(undef, m, n) # generator of the linear part
-    rem_gen = Vector{T}(undef, m) # generators for the remainder
+    gen_lin = Matrix{T}(undef, m, n) # generator of the linear part
+    gen_rem = Vector{T}(undef, m) # generators for the remainder
 
+    # compute overapproximation
+    return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
+end
+
+function _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
     @inbounds for (i, x) in enumerate(vTM)
-        # linearize the TM
-        pol_lin = constant_term(x.pol) + linear_polynomial(x.pol)
-        rem_nonlin = x.rem
+        xpol, xdom = polynomial(x), domain(x)
 
-        pol_nonlin = x.pol - pol_lin
-        rem_nonlin += evaluate(pol_nonlin, x.dom)
+        # linearize the TM
+        pol_lin = constant_term(xpol) + linear_polynomial(xpol)
+        rem_nonlin = remainder(x)
+
+        # build an overapproximation of the nonlinear terms
+        pol_nonlin = xpol - pol_lin
+        rem_nonlin += evaluate(pol_nonlin, xdom)
+
         # normalize the linear polynomial to the symmetric interval [-1, 1]
-        Q = normalize_taylor(pol_lin, x.dom, true)
+        Q = normalize_taylor(pol_lin, xdom, true)
+
         # build the generators
         α = mid(rem_nonlin)
-        c[i] = Q.coeffs[1].coeffs[1] + α
-        gen[i,1:n] = Q.coeffs[2].coeffs
-        rem_gen[i] = abs(rem_nonlin.hi - α)
+        c[i] = constant_term(Q) + α  # constant terms
+        gen_lin[i, :] = get_linear_coeffs(Q) # linear terms
+        gen_rem[i] = abs(rem_nonlin.hi - α)
     end
-    return Zonotope(c, hcat(gen, Diagonal(rem_gen)))
+    return Zonotope(c, hcat(gen_lin, Diagonal(gen_rem)))
 end
-end
-end
+
+end # quote
+end # load_taylormodels_overapproximation
 
 # ==========================================
 # Lazy linear maps of cartesian products

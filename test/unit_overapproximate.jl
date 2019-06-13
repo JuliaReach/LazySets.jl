@@ -166,30 +166,22 @@ for N in [Float64, Float32]
     @test Y_polygon ⊆ Y_zonotope
     @test !(Y_zonotope ⊆ Y_polygon)
 
-    #Zonotope approximation of TaylorModel1
-    x₀ = IntervalArithmetic.Interval(N(0.0),N(0.0))
-    D = IntervalArithmetic.Interval(N(-3.0), N(1.0))
-    δ = N(0.5);I = IntervalArithmetic.Interval(-δ, δ)
-    p = Taylor1(N[2.0, 1.0], 2)
-    p1 = Taylor1(N[0.9, 3.0], 2)
-    TM = [TaylorModel1(p, I, x₀, D),TaylorModel1(p1, I, x₀, D)]
-    Z1 = overapproximate(TM,Zonotope)
-    Z2 = Zonotope(N[1.0,-2.1],[N[2.0,6.0],N[0.5,0.0],N[0.0,0.5]])
-    @test Z1 == Z2
-
-    #Zonotope approximation of TaylorModelN
-    x1, x2 = set_variables(N, ["x1", "x2"], order=5)
-    x0 = IntervalArithmetic.Interval(N(0.0), N(0.0))×IntervalArithmetic.Interval(N(0.0), N(0.0))
-    Dx1 = IntervalArithmetic.Interval(N(0.0), N(3.0))
-    Dx2 = IntervalArithmetic.Interval(N(-1.0), N(1.0))
-    D = Dx1×Dx2
-    δ = N(0.5);I = IntervalArithmetic.Interval(-δ, δ)
-    p1 = 1 + x1^2 - x2
-    p2 = x2^3 + 3x1^4 + x1 + 1
-    TM = [TaylorModelN(p1,I,x0,D), TaylorModelN(p2,I,x0,D)]
-    Z1 = overapproximate(TM,Zonotope)
-    Z2 = Zonotope(N[5.5,124.0],[N[0.0,1.5],N[-1.0,0.0],N[5.0,0.0],N[0.0,123.0]])
-    @test Z1 == Z2
+    # =======================================
+    # Zonotope overapprox. of a Taylor model
+    # =======================================
+    x₁, x₂, x₃ = set_variables(N, ["x₁", "x₂", "x₃"], order=5)
+    Dx₁ = IA.Interval(N(1.0), N(3.0))
+    Dx₂ = IA.Interval(N(-1.0), N(1.0))
+    Dx₃ = IA.Interval(N(-1.0), N(0.0))
+    D = Dx₁ × Dx₂ × Dx₃   # domain
+    x0 = IntervalBox(mid.(D)...)
+    I = IA.Interval(N(0.0), N(0.0)) # interval remainder
+    p₁ = 1 + x₁ - x₂
+    p₂ = x₃ - x₁
+    vTM = [TaylorModels.TaylorModelN(pi, I, x0, D) for pi in [p₁, p₂]]
+    Z1 = overapproximate(vTM, Zonotope)
+    @test center(Z1) == N[3, -2.5]
+    @test Matrix(generators(Z1)) == N[1 -1 0; -1 0 0.5]
 end
 
 for N in [Float64] # due to sparse vectors: a = sparse(Float32[1 -1; 1 1];); a \ Float32[4, 10]

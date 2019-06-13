@@ -271,7 +271,7 @@ if test_suite_polyhedra
         @test !isdisjoint(P, Q; algorithm="sufficient")
         res, w = isdisjoint(Q, P, true)
         @test !isdisjoint(Q, P) && !res && w ∈ P && w ∈ Q
-        res, w =isdisjoint(Q, R, true)
+        res, w = isdisjoint(Q, R, true)
         @test !isdisjoint(Q, R) && !res && w ∈ Q && w ∈ R
         res, w = isdisjoint(R, Q, true)
         @test !isdisjoint(R, Q) && !res && w ∈ Q && w ∈ R
