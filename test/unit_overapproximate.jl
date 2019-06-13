@@ -174,7 +174,7 @@ for N in [Float64, Float32]
     Dx₂ = IA.Interval(N(-1.0), N(1.0))
     Dx₃ = IA.Interval(N(-1.0), N(0.0))
     D = Dx₁ × Dx₂ × Dx₃   # domain
-    x0 = IntervalBox(mid.(D)...)
+    x0 = IntervalBox(IA.mid.(D)...)
     I = IA.Interval(N(0.0), N(0.0)) # interval remainder
     p₁ = 1 + x₁ - x₂
     p₂ = x₃ - x₁
