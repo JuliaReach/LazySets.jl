@@ -218,8 +218,8 @@ function vertices_list(P::HPolytope{N};
     if dim(P) == 2 && backend == nothing
         return vertices_list(convert(HPolygon, P, prune=prune))
     else
-        @assert isdefined(@__MODULE__, :Polyhedra) "the function `vertices_list` "
-        "needs the package 'Polyhedra' to be loaded"
+        @assert isdefined(@__MODULE__, :Polyhedra) "the function " *
+            "`vertices_list` requires to load the package 'Polyhedra'"
         if backend == nothing
             backend = default_polyhedra_backend(P, N)
         end
