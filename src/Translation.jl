@@ -2,7 +2,8 @@ import Base: isempty
 
 export Translation,
        an_element,
-       constraints_list
+       constraints_list,
+       linear_map
 
 """
     Translation{N<:Real, VN<:AbstractVector{N}, S<:LazySet{N}} <: LazySet{N}
@@ -363,4 +364,30 @@ This implementation relies on the set membership function for the wrapped set
 """
 function ∈(x::AbstractVector{N}, tr::Translation{N})::Bool where {N<:Real}
     return ∈(x - tr.v, tr.X)
+end
+
+"""
+    linear_map(M::AbstractMatrix{N}, tr::Translation{N}) where {N<:Real}
+
+Concrete linear map of a polyhedron in constraint representation.
+
+### Input
+
+- `M`  -- matrix
+- `tr` -- translation of a convex set
+
+### Output
+
+A concrete set corresponding to the linear map.
+The type of the result depends on the type of the set wrapped by `tr`.
+
+### Algorithm
+
+We compute `translate(linear_map(M, tr.X), M * tr.v)`.
+"""
+function linear_map(M::AbstractMatrix{N}, tr::Translation{N}) where {N<:Real}
+    @assert dim(tr) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
+        "applied to a set of dimension $(dim(tr))"
+
+    return translate(linear_map(M, tr.X), M * tr.v)
 end
