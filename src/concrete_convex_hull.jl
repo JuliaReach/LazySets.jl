@@ -28,10 +28,9 @@ The convex hull as a list of vectors with the coordinates of the points.
 
 ### Algorithm
 
-A pre-processing step treats the cases with `0`, `1` and `2` points for one
-dimension, `0`, `1`, `2`, `3` and `4` for two dimensions, if there is more
-points, its used a general algorithm for one and two dimensions.
-For higher dimension there is a general algorithm.
+A pre-processing step treats the cases with up to two points for one dimension
+and up to four points for two dimensions.
+For more points in one resp. two dimensions, we use more general algorithms.
 
 For the one-dimensional case we return the minimum and maximum points, in that order.
 
@@ -193,10 +192,10 @@ end
 
 function _four_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N<:Real}
     A, B, C, D = points[1], points[2], points[3], points[4]
-    tri_ABC = (A[2] - B[2]) * C[1] + (B[1] - A[1]) * C[2] + (A[1] * B[2] - B[1] * A[2])
-    tri_ABD = (A[2] - B[2]) * D[1] + (B[1] - A[1]) * D[2] + (A[1] * B[2] - B[1] * A[2])
-    tri_BCD = (B[2] - C[2]) * D[1] + (C[1] - B[1]) * D[2] + (B[1] * C[2] - C[1] * B[2])
-    tri_CAD = (C[2] - A[2]) * D[1] + (A[1] - C[1]) * D[2] + (C[1] * A[2] - A[1] * C[2])
+    tri_ABC = right_turn(A, B, C)
+    tri_ABD = right_turn(A, B, D)
+    tri_BCD = right_turn(B, C, D)
+    tri_CAD = right_turn(C, A, D)
     key = 0
     if tri_ABC > zero(N)
         key = key + 1000
@@ -285,10 +284,6 @@ function _four_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N<
     elseif key == 1001
         points[1], points[2], points[3] = C, A, D #  +    -    -    +    CAD
         pop!(points)
-    elseif key == 1000
-        @assert false "unexpected case in convex_hull" #  +    -    -    -   [should not happen]
-    elseif key == 0111
-        @assert false "unexpected case in convex_hull" #  -    +    +    +   [should not happen]
     elseif key == 0110
         points[1], points[2], points[3] = A, C, D #  -    +    +    -   ACD
         pop!(points)
@@ -307,6 +302,8 @@ function _four_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N<
     elseif key == 0000
         points[1], points[2], points[3] = A, C, B #  -    -    -    -   ACB
         pop!(points)
+    else
+        @assert false "unexpected case in convex_hull"
     end
     return points
 end
