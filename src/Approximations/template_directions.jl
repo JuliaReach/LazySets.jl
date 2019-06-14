@@ -31,10 +31,10 @@ function dim(ad::AbstractDirections)::Int
 end
 
 """
-    isbounded(::AbstractDirections)::Bool
+    isbounding(::AbstractDirections)::Bool
 
-Checks if a list of template directions represents a bounded set, given a
-bounded input set.
+Checks if an overapproximation with a list of template directions results in a
+bounded set, given a bounded input set.
 
 ### Input
 
@@ -47,7 +47,7 @@ using the template directions `ad` as normal vectors of the facets.
 If this function returns `true`, then the result is again a bounded set (i.e., a
 polytope).
 Note that the result does not depend on the specific shape of ``X``, as long as
-it is bounded.
+``X`` is bounded.
 
 ### Notes
 
@@ -55,7 +55,7 @@ By default, this function returns `false` in order to be conservative.
 Custom subtypes of `AbstractDirections` should hence add a method for this
 function.
 """
-function isbounded(ad::AbstractDirections)::Bool
+function isbounding(ad::AbstractDirections)::Bool
     return false
 end
 
@@ -81,7 +81,7 @@ BoxDirections(n::Int) = BoxDirections{Float64}(n)
 
 Base.eltype(::Type{BoxDirections{N}}) where {N} = AbstractVector{N}
 Base.length(bd::BoxDirections) = 2 * bd.n
-isbounded(::BoxDirections) = true
+isbounding(::BoxDirections) = true
 
 function Base.iterate(bd::BoxDirections{N}, state::Int=1) where {N}
     if state == 0
@@ -119,7 +119,7 @@ OctDirections(n::Int) = OctDirections{Float64}(n)
 
 Base.eltype(::Type{OctDirections{N}}) where {N} = AbstractVector{N}
 Base.length(od::OctDirections) = 2 * od.n^2
-isbounded(::OctDirections) = true
+isbounding(::OctDirections) = true
 
 function Base.iterate(od::OctDirections{N}) where {N}
     if od.n == 1
@@ -205,7 +205,7 @@ BoxDiagDirections(n::Int) = BoxDiagDirections{Float64}(n)
 
 Base.eltype(::Type{BoxDiagDirections{N}}) where {N} = AbstractVector{N}
 Base.length(bdd::BoxDiagDirections) = bdd.n == 1 ? 2 : 2^bdd.n + 2 * bdd.n
-isbounded(::BoxDiagDirections) = true
+isbounding(::BoxDiagDirections) = true
 
 Base.iterate(bdd::BoxDiagDirections{N}) where {N} =
     (ones(N, bdd.n), ones(N, bdd.n))
@@ -303,7 +303,7 @@ PolarDirections(Nφ::Int) = PolarDirections{Float64}(Nφ)
 Base.eltype(::Type{PolarDirections{N}}) where {N} = Vector{N}
 Base.length(pd::PolarDirections) = length(pd.stack)
 dim(::PolarDirections) = 2
-isbounded(pd::PolarDirections) = pd.Nφ > 2
+isbounding(pd::PolarDirections) = pd.Nφ > 2
 
 function Base.iterate(pd::PolarDirections, state::Int=1)
     state == length(pd.stack)+1 && return nothing
@@ -407,7 +407,7 @@ SphericalDirections(Nθ::Int, Nφ::Int) = SphericalDirections{Float64}(Nθ, Nφ)
 Base.eltype(::Type{SphericalDirections{N}}) where {N} = Vector{N}
 Base.length(sd::SphericalDirections) = length(sd.stack)
 dim(::SphericalDirections) = 3
-isbounded(sd::SphericalDirections) = sd.Nθ > 2 && sd.Nφ > 2
+isbounding(sd::SphericalDirections) = sd.Nθ > 2 && sd.Nφ > 2
 
 function Base.iterate(sd::SphericalDirections, state::Int=1)
     state == length(sd.stack)+1 && return nothing
@@ -427,7 +427,7 @@ User-defined template directions.
 
 - `directions` -- list of template directions
 - `n`          -- dimension
-- `isbounded`  -- boundedness status
+- `isbounding` -- boundedness status
 
 ### Notes
 
@@ -442,19 +442,19 @@ passed (in which case the optional argument `n` needs to be specified).
 struct CustomDirections{N} <: AbstractDirections{N}
     directions::AbstractVector{<:AbstractVector{N}}
     n::Int
-    isbounded::Bool
+    isbounding::Bool
 
     CustomDirections{N}(directions::AbstractVector{<:AbstractVector{N}};
                         n::Int=determine_dimension(directions),
-                        isbounded::Bool=determine_boundedness(directions)
-                       ) where {N} = new{N}(directions, n, isbounded)
+                        isbounding::Bool=determine_boundedness(directions)
+                       ) where {N} = new{N}(directions, n, isbounding)
 end
 
 # convenience constructor
 CustomDirections(directions::AbstractVector{<:AbstractVector{N}};
                  n::Int=determine_dimension(directions),
-                 isbounded::Bool=determine_boundedness(directions)) where {N} =
-    CustomDirections{N}(directions; n=n, isbounded=isbounded)
+                 isbounding::Bool=determine_boundedness(directions)) where {N} =
+    CustomDirections{N}(directions; n=n, isbounding=isbounding)
 
 function determine_dimension(directions)
     isempty(directions) && throw(ArgumentError("empty template directions " *
@@ -468,13 +468,13 @@ function determine_boundedness(directions::AbstractVector{<:AbstractVector{N}}
 
     # determine boundedness from a trial with a BallInf
     set = BallInf(zeros(N, length(directions[1])), N(1))
-    dirs = CustomDirections(directions; isbounded=false)
+    dirs = CustomDirections(directions; isbounding=false)
     return isbounded(overapproximate(set, dirs))
 end
 
 Base.eltype(::Type{CustomDirections{N}}) where {N} = AbstractVector{N}
 Base.length(cd::CustomDirections) = length(cd.directions)
-isbounded(cd::CustomDirections) = cd.isbounded
+isbounding(cd::CustomDirections) = cd.isbounding
 
 @static if VERSION < v"0.7-"
 @eval begin

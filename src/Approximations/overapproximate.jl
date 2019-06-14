@@ -308,7 +308,7 @@ otherwise the result is an `HPolyhedron`.
 function overapproximate(X::LazySet{N}, dir::AbstractDirections{N}) where {N}
     halfspaces = Vector{LinearConstraint{N}}()
     sizehint!(halfspaces, length(dir))
-    T = isbounded(dir) ? HPolytope : HPolyhedron
+    T = isbounding(dir) ? HPolytope : HPolyhedron
     H = T(halfspaces)
     for d in dir
         addconstraint!(H, LinearConstraint(d, ρ(d, X)))

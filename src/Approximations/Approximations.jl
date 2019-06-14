@@ -9,8 +9,6 @@ module Approximations
 using LazySets, LazySets.Arrays, Requires, LinearAlgebra, SparseArrays
 using LazySets: _rtol
 
-import LazySets: isbounded
-
 export approximate,
        ballinf_approximation,
        box_approximation, interval_hull,
@@ -22,7 +20,8 @@ export approximate,
        OctDirections,
        PolarDirections,
        SphericalDirections,
-       CustomDirections
+       CustomDirections,
+       isbounding
 
 const DIR_EAST(N) = [one(N), zero(N)]
 const DIR_NORTH(N) = [zero(N), one(N)]
