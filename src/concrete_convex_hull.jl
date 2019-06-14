@@ -262,7 +262,7 @@ function _four_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N<
     #  -    +    +    +   [should not happen]
     #  -    +    +    -   ACD
     #  -    +    -    +   DCB
-    #  -    +    -    -   DBCA
+    #  -    +    -    -   DACB
     #  -    -    +    +   ADB
     #  -    -    +    -   ACDB
     #  -    -    -    +   ADCB
@@ -286,9 +286,9 @@ function _four_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N<
         points[1], points[2], points[3] = C, A, D #  +    -    -    +    CAD
         pop!(points)
     elseif key == 1000
-        #  +    -    -    -   [should not happen]
+        @assert false "unexpected case in convex_hull" #  +    -    -    -   [should not happen]
     elseif key == 0111
-        #  -    +    +    +   [should not happen]
+        @assert false "unexpected case in convex_hull" #  -    +    +    +   [should not happen]
     elseif key == 0110
         points[1], points[2], points[3] = A, C, D #  -    +    +    -   ACD
         pop!(points)
@@ -296,7 +296,7 @@ function _four_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N<
         points[1], points[2], points[3] = D, C, B #  -    +    -    +   DCB
         pop!(points)
     elseif key == 0100
-        points[1], points[2], points[3], points[4] = D, B, C, A #  -    +    -    -   DBCA
+        points[1], points[2], points[3], points[4] = D, A, C, B #  -    +    -    -   DACB
     elseif key == 0011
         points[1], points[2], points[3] = A, D, B #  -    -    +    +   ADB
         pop!(points)
