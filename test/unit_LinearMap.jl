@@ -84,6 +84,11 @@ for N in [Float64, Rational{Int}, Float32]
     vlist = vertices_list(LinearMap(M, b))
     @test vlist == [zeros(N, 2)]
 
+    # test that redundant vertices are removed by default (see #1355)
+    X = Interval(N(0), N(1)) × ZeroSet{N}(1)
+    M = N[0 1; 0 2]
+    @test vertices_list(M * X) == [N[0, 0]]
+
     if test_suite_polyhedra
         # constraints_list
         b = BallInf(N[0, 0], N(1))

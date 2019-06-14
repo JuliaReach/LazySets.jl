@@ -1,6 +1,11 @@
 using LazySets, LazySets.Approximations, Test, LinearAlgebra, SparseArrays
+
 import IntervalArithmetic, Expokit, Optim
+const IA = IntervalArithmetic
 using IntervalArithmetic: IntervalBox
+
+import TaylorModels
+using TaylorModels: set_variables, TaylorModelN
 
 # conversion between numeric types
 include("to_N.jl")
