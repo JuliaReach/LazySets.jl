@@ -1,6 +1,4 @@
 for N in [Float64, Rational{Int}]
-
-
     # ====================================
     # Concrete convex hull for point sets
     # ====================================
@@ -15,6 +13,13 @@ for N in [Float64, Rational{Int}]
     @test convex_hull([[N(0), N(0)]]) == [[N(0), N(0)]]
     @test convex_hull([[N(1), N(0)], [N(0), N(1)]]) == [[N(1), N(0)], [N(0), N(1)]]
     @test convex_hull([[N(1), N(0)], [N(1), N(0)]]) == [[N(1), N(0)]]
+
+    # test corner cases with one and two vectors (see #876)
+    p1 = [1., 2.]
+    p2 = [1., 3.]
+    @test convex_hull([p1]) == [p1]
+    @test convex_hull([p1, p2]) == [p1, p2]
+    @test convex_hull([p2, p1]) == [p1, p2]
 
     # corner cases in higher dimension
     @test convex_hull([[N(0), N(0), N(0)]]) == [[N(0), N(0), N(0)]]
@@ -50,6 +55,14 @@ for N in [Float64, Rational{Int}]
     @test ispermutation(convex_hull!([N[0, 1], N[0, 2], N[0, 3]]), [N[0, 1], N[0, 3]]) # three points on a vertical line
     @test convex_hull!([N[0, 1], N[0, 1], N[0, 1]]) == [N[0, 1]] # three equal points
 
+    # five-vertices case in 2D
+    points = to_N(N, [[0.9, 0.2], [0.4, 0.6], [0.2, 0.1], [0.1, 0.3], [0.3, 0.28]])
+    points_copy = copy(points)
+    sorted = to_N(N, [[0.1, 0.3], [0.2, 0.1], [0.9, 0.2], [0.4, 0.6]])
+    @test ispermutation(convex_hull!(points, algorithm="monotone_chain"), sorted)
+    @test ispermutation(convex_hull!(points, algorithm="monotone_chain_sorted"), sorted)
+    @test_throws ErrorException convex_hull!(points_copy, algorithm="")
+
     # higher dimension
     if test_suite_polyhedra && N != Float32 # no backend supporting Float32
         points_3D = [[N(1), N(0), N(4)], [N(1), N(1), N(5)], [N(0), N(1), N(6)],
@@ -65,8 +78,9 @@ for N in [Float64, Rational{Int}]
     end
 
     # ============================
-    # Binary concrete convex hull 
+    # Binary concrete convex hull
     # ============================
+
     V1 = VPolygon([[N(1), N(0)], [N(1), N(1)], [N(0), N(1)]])
     V2 = VPolygon([[N(-1), N(-1)], [N(1/2), N(1/2)]])
     ch = convex_hull(V1, V2)
