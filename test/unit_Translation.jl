@@ -1,9 +1,8 @@
 for N in [Float64, Rational{Int}, Float32]
-
     # ==================================
     # Constructor and interface methods
     # ==================================
- 
+
     B = BallInf(zeros(N, 3), N(1))
     v = N[1, 0, 0] # translation along dimension 1
     tr = Translation(B, v)
@@ -15,7 +14,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # dimension check
     @test_throws AssertionError Translation(B, N[0, 0])
-    
+
     @test dim(tr) == 3
 
     # support vector
@@ -41,6 +40,12 @@ for N in [Float64, Rational{Int}, Float32]
     # set membership
     B = Ball2(zeros(N, 2), N(1))
     @test center(B) ∈ B ⊕ zeros(N, 2)
+
+    # concrete linear map
+    B = BallInf(ones(N, 2), N(1))
+    tr = B ⊕ N[1, 0]
+    clm = linear_map(N[1 2; 0 1], tr)
+    @test ispermutation(vertices_list(clm), [N[5, 2], [1, 0], [3, 0], [7, 2]])
 
     # ==================================
     # Type-specific methods
