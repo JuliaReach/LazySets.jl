@@ -658,7 +658,8 @@ Returns a boolean, i.e., take the element-wise maximum with zero.
 
 ### Output
 
-A boolean indicating if the elements of the result are in the same order as correct_expr or any of it's cyclic permutations
+A boolean indicating if the elements of `result` are in the same order as
+`correct_expr` or any of its cyclic permutations.
 """
 function iscounterclockwise(result, correct_expr)
     return any([result == circshift(correct_expr, i) for i in 0:length(result)-1])
