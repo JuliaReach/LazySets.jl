@@ -654,7 +654,7 @@ Returns a boolean, i.e., take the element-wise maximum with zero.
 ### Input
 
 - `result` -- vector
-- `correct_expr` -- vector with it's elements in ccw order
+- `correct_expr` -- paragon vector with elements in ccw order
 
 ### Output
 
