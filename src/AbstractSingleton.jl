@@ -142,6 +142,55 @@ function low(S::AbstractSingleton{N}, i::Int)::N where {N<:Real}
 end
 
 
+# --- AbstractZonotope interface functions ---
+
+
+"""
+   genmat(S::AbstractSingleton)
+
+Return the (empty) generator matrix of a set with a single value.
+
+### Input
+
+- `S` -- set with a single value
+
+### Output
+
+A matrix with no columns representing the generators of `S`.
+"""
+function genmat(S::AbstractSingleton{N}) where {N<:Real}
+    return Matrix{N}(undef, dim(S), 0)
+end
+
+# iterator that wraps the generator matrix
+struct EmptyGeneratorIterator{N<:Real}
+end
+
+Base.length(::EmptyGeneratorIterator) = 0
+
+Base.eltype(::Type{EmptyGeneratorIterator{N}}) where {N} = Vector{N}
+
+function Base.iterate(::EmptyGeneratorIterator, state=nothing)
+    return nothing
+end
+
+"""
+    generators(S::AbstractSingleton)
+
+Return an (empty) iterator over the generators of a set with a single value.
+
+### Input
+
+- `S` -- set with a single value
+
+### Output
+
+An empty iterator.
+"""
+function generators(S::AbstractSingleton{N}) where {N<:Real}
+    return EmptyGeneratorIterator{N}()
+end
+
 
 # --- AbstractCentrallySymmetric interface functions ---
 
