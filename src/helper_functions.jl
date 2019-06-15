@@ -660,4 +660,4 @@ Returns a boolean, i.e., take the element-wise maximum with zero.
 
 A boolean indicating if the elements of the result are in the same order as correct_expr or any of it's cyclic permutations
 """
-iscounterclockwise(result::AbstractVector{N}, correct_expr::AbstractVector{N}) = any([result == circshift(correct_expr, i) for i in 0:length(result)-1])
+iscounterclockwise(result, correct_expr) = any([result == circshift(correct_expr, i) for i in 0:length(result)-1])
