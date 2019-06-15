@@ -21,6 +21,7 @@ get_radius!
 inner
 isinvertible
 ispermutation
+iscounterclockwise
 issquare
 is_right_turn
 is_tighter_same_dir_2D
