@@ -103,6 +103,7 @@ for N in [Float64, Rational{Int}, Float32]
     Z = Zonotope(N[2, 1], N[-0.5 1.5 0.5 1; 0.5 1.5 1 0.5])
     @test ngens(Z) == 4
     @test genmat(Z) == Z.generators
+    @test ispermutation(collect(generators(Z)), [genmat(Z)[:, j] for j in 1:ngens(Z)])
     # test order reduction
     Zred1 = reduce_order(Z, 1)
     @test ngens(Zred1) == 2
@@ -114,6 +115,10 @@ for N in [Float64, Rational{Int}, Float32]
     Zred3 = reduce_order(Z, 2)
     @test ngens(Zred3) == 4
     @test order(Zred3) == 2
+    Znogen = Zonotope(N[1, 2], Matrix{N}(undef, 2, 0))
+    @test ngens(Znogen) == 0
+    @test genmat(Znogen) == Matrix{N}(undef, 2, 0)
+    @test collect(generators(Znogen)) == Vector{N}()
 
     # test conversion from hyperrectangular sets
     Z = convert(Zonotope, Hyperrectangle(N[2, 3], N[4, 5]))
