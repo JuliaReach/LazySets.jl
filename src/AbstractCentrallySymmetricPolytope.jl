@@ -27,11 +27,9 @@ functions:
 
 ```jldoctest
 julia> subtypes(AbstractCentrallySymmetricPolytope)
-4-element Array{Any,1}:
- AbstractHyperrectangle
+2-element Array{Any,1}:
+ AbstractZonotope
  Ball1
- LineSegment
- Zonotope
 ```
 """
 abstract type AbstractCentrallySymmetricPolytope{N<:Real} <: AbstractPolytope{N}
