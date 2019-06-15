@@ -10,6 +10,18 @@ Abstract type for zonotopic sets.
 
 ### Notes
 
+Mathematically, a zonotope is defined as the set
+
+```math
+Z = \\left\\{ c + ∑_{i=1}^p ξ_i g_i,~~ ξ_i \\in [-1, 1]~~ ∀ i = 1,…, p \\right\\},
+```
+where ``c \\in \\mathbb{R}^n`` is its center and ``\\{g_i\\}_{i=1}^p``,
+``g_i \\in \\mathbb{R}^n``, is the set of generators.
+This characterization defines a zonotope as the finite Minkowski sum of line
+segments.
+Zonotopes can be equivalently described as the image of a unit infinity-norm
+ball in ``\\mathbb{R}^n`` by an affine transformation.
+
 See [`Zonotope`](@ref) for a standard implementation of this interface.
 
 Every concrete `AbstractZonotope` must define the following functions:
