@@ -645,3 +645,19 @@ A copy of the vector where each negative entry is replaced by zero.
 function rectify(x::AbstractVector{N}) where {N<:Real}
     return map(xi -> max(xi, zero(N)), x)
 end
+
+"""
+    iscounterclockwise(result, correct_expr) where {N<:Real}
+
+Returns a boolean, i.e., take the element-wise maximum with zero.
+
+### Input
+
+- `result` -- vector
+- `correct_expr` -- vector with it's elements in ccw order
+
+### Output
+
+A boolean indicating if the elements of the result are in the same order as correct_expr or any of it's cyclic permutations
+"""
+iscounterclockwise(result::AbstractVector{N}, correct_expr::AbstractVector{N}) = any([result == circshift(correct_expr, i) for i in 0:length(result)-1])

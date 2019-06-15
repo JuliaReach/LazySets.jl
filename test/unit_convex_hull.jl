@@ -38,8 +38,6 @@ for N in [Float64, Rational{Int}]
     convex_hull!(points_2D) # check in-place version
     @test points_2D == [[N(-1), N(-1)], [N(1), N(0)], [N(1), N(1)], [N(0), N(1)]]
 
-    iscounterclockwise(result, correct_expr) = any([result == circshift(correct_expr, i) for i in 0:length(result)-1])
-
     # three vertex case in 2 dimensions
     ccw_points = [N[1, 1], N[-1, 1], N[-1, 0]]
     ccw_p = convex_hull!(ccw_points)
