@@ -649,7 +649,8 @@ end
 """
     iscounterclockwise(result, correct_expr) where {N<:Real}
 
-Returns a boolean, i.e., take the element-wise maximum with zero.
+Returns a boolean, true if the elements in `result` are ordered in
+a couter-clockwise fashion and in the same order as `correct_expr`.
 
 ### Input
 
