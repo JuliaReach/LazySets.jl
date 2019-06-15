@@ -13,7 +13,7 @@ export Zonotope,
        generators
 
 """
-    Zonotope{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
+    Zonotope{N<:Real} <: AbstractZonotope{N}
 
 Type that represents a zonotope.
 
@@ -89,7 +89,7 @@ julia> Z.generators
  0.0  1.0  1.0
 ```
 """
-struct Zonotope{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
+struct Zonotope{N<:Real} <: AbstractZonotope{N}
     center::AbstractVector{N}
     generators::AbstractMatrix{N}
 
@@ -130,10 +130,14 @@ function center(Z::Zonotope{N})::Vector{N} where {N<:Real}
     return Z.center
 end
 
-"""
-   generators(Z::Zonotope)
 
-Return the generators of a zonotope.
+# --- AbstractZonotope interface functions ---
+
+
+"""
+   genmat(Z::Zonotope)
+
+Return the generator matrix of a zonotope.
 
 ### Input
 
@@ -141,11 +145,29 @@ Return the generators of a zonotope.
 
 ### Output
 
-The generators of the zonotope.
+A matrix where each column represents one generator of the zonotope `Z`.
 """
-function generators(Z::Zonotope)
+function genmat(Z::Zonotope)
     return Z.generators
 end
+
+"""
+    generators(Z::Zonotope)
+
+Return an iterator over the generators of a zonotope.
+
+### Input
+
+- `Z` -- zonotope
+
+### Output
+
+An iterator over the generators of `Z`.
+"""
+function generators(Z::Zonotope)
+    return generators_fallback(Z)
+end
+
 
 # --- AbstractPolytope interface functions ---
 

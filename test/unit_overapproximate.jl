@@ -193,5 +193,5 @@ for N in [Float64] # due to sparse vectors: a = sparse(Float32[1 -1; 1 1];); a \
     vTM = [TaylorModels.TaylorModelN(pi, I, x0, D) for pi in [p₁, p₂]]
     Z1 = overapproximate(vTM, Zonotope)
     @test center(Z1) == N[3, -2.5]
-    @test Matrix(generators(Z1)) == N[1 -1 0; -1 0 0.5]
+    @test Matrix(genmat(Z1)) == N[1 -1 0; -1 0 0.5]
 end

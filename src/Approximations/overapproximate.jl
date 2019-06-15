@@ -594,7 +594,7 @@ julia> center(Z)
   1.0
  -2.1
 
-julia> Matrix(generators(Z))
+julia> Matrix(genmat(Z))
 2×3 Array{Float64,2}:
  2.0  0.5  0.0
  6.0  0.0  0.5
@@ -645,7 +645,7 @@ julia> center(Z)
  -2.1
   0.8999999999999999
 
-julia> Matrix(generators(Z))
+julia> Matrix(genmat(Z))
 3×4 Array{Float64,2}:
  2.0  0.5  0.0  0.0
  6.0  0.0  0.5  0.0
@@ -754,7 +754,7 @@ julia> center(Z)
    5.5
  124.0
 
-julia> Matrix(generators(Z))
+julia> Matrix(genmat(Z))
 2×4 Array{Float64,2}:
  0.0  -1.0  5.0    0.0
  1.5   0.0  0.0  123.0
