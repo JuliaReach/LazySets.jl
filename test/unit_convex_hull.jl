@@ -65,8 +65,8 @@ for N in [Float64, Rational{Int}]
     @test  iscounterclockwise(convex_hull!(points), expr) # ABDC
     points = [A, D, B, C]
     @test  iscounterclockwise(convex_hull!(points), expr) # ADBC
-    points = [D, B, C, A]
-    @test  iscounterclockwise(convex_hull!(points), expr) # DBCA
+    points = [D, A, C, B]
+    @test  iscounterclockwise(convex_hull!(points), expr) # DACB
     points = [A, C, D, B]
     @test  iscounterclockwise(convex_hull!(points), expr) # ACDB
     A = N[0, 1]
