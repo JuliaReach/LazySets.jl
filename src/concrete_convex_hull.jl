@@ -190,7 +190,7 @@ function _three_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N
     return points
 end
 
-function _collinear_case!(points::Vector{VN}, A::VN, B::VN, C::VN, D::VN)::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
+function _collinear_case!(points::Vector{VN}, A::VN, B::VN, C::VN, D::VN) where {N<:Real, VN<:AbstractVector{N}}
     # A, B and C collinear, D is the extra point
     if isapprox(A[1], B[1]) && isapprox(B[1], C[1]) && isapprox(C[1], A[1])
         # points are approximately equal in their first component
