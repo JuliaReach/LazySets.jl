@@ -190,6 +190,31 @@ function _three_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N
     return points
 end
 
+function _collinear_case!(points::Vector{VN}, A::VN, B::VN, C::VN, D::VN)::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
+    # A, B and C collinear, D is the extra point
+    if isapprox(A[1], B[1]) && isapprox(B[1], C[1]) && isapprox(C[1], A[1])
+        # points are approximately equal in their first component
+        if isapprox(A[2], B[2]) && isapprox(B[2], C[2]) && isapprox(C[2], A[2])
+            # the three points are approximately equal
+            points[1], points[2] = A, D
+            pop!(points)
+            pop!(points)
+            return _two_points_2d!(points)
+        else
+            # assign the points with max and min value in their second component to the
+            # firsts points and the extra point to the third place, then pop the point that was in the middle
+            points[1], points[2], points[3] = points[argmin([A[2], B[2], C[2]])], points[argmax([A[2], B[2], C[2]])], D
+            pop!(points)
+        end
+    else
+        # assign the points with max and min value in their first component to the
+        # firsts points and the extra point to the third place, then pop the point that was in the middle
+        points[1], points[2], points[3] = points[argmin([A[1], B[1], C[1]])], points[argmax([A[1], B[1], C[1]])], D
+        pop!(points)
+    end
+    return _three_points_2d!(points)
+end
+
 function _four_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N<:Real}
     A, B, C, D = points[1], points[2], points[3], points[4]
     tri_ABC = right_turn(A, B, C)
@@ -210,42 +235,17 @@ function _four_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N<
         key = key + 1
     end
     
-    function collinear_case(A, B, C, D)
-        # A, B and C collinear, D is the extra point
-        if isapprox(A[1], B[1]) && isapprox(B[1], C[1]) && isapprox(C[1], A[1])
-            # points are approximately equal in their first component
-            if isapprox(A[2], B[2]) && isapprox(B[2], C[2]) && isapprox(C[2], A[2])
-                # the three points are approximately equal
-                points[1], points[2] = A, D
-                pop!(points)
-                pop!(points)
-                return _two_points_2d!(points)
-            else
-                # assign the points with max and min value in their second component to the
-                # firsts points and the extra point to the third place, then pop the point that was in the middle
-                points[1], points[2], points[3] = points[argmin([A[2], B[2], C[2]])], points[argmax([A[2], B[2], C[2]])], D
-                pop!(points)
-            end
-        else
-            # assign the points with max and min value in their first component to the
-            # firsts points and the extra point to the third place, then pop the point that was in the middle
-            points[1], points[2], points[3] = points[argmin([A[1], B[1], C[1]])], points[argmax([A[1], B[1], C[1]])], D
-            pop!(points)
-        end
-        return _three_points_2d!(points)
-    end
-    
     if isapproxzero(tri_ABC)
-        return collinear_case(A, B, C, D)
+        return _collinear_case!(points, A, B, C, D)
     end
     if isapproxzero(tri_ABD)
-        return collinear_case(A, B, D, C)
+        return _collinear_case!(points, A, B, D, C)
     end
     if isapproxzero(tri_BCD)
-        return collinear_case(B, C, D, A)
+        return _collinear_case!(points, B, C, D, A)
     end
     if isapproxzero(tri_CAD)
-        return collinear_case(C, A, D, B)
+        return _collinear_case!(points, C, A, D, B)
     end
     
     # ABC  ABD  BCD  CAD  hull
