@@ -93,8 +93,7 @@ function rand(::Type{HPolytope};
               seed::Union{Int, Nothing}=nothing,
               num_vertices::Int=-1
              )::HPolytope{N}
-    @assert isdefined(@__MODULE__, :Polyhedra) "the function `rand` needs the " *
-                                        "package 'Polyhedra' loaded"
+    require(:Polyhedra; fun_name="rand")
     rng = reseed(rng, seed)
     vpolytope = rand(VPolytope; N=N, dim=dim, rng=rng, seed=seed,
                     num_vertices=num_vertices)
@@ -218,8 +217,7 @@ function vertices_list(P::HPolytope{N};
     if dim(P) == 2 && backend == nothing
         return vertices_list(convert(HPolygon, P, prune=prune))
     else
-        @assert isdefined(@__MODULE__, :Polyhedra) "the function " *
-            "`vertices_list` requires to load the package 'Polyhedra'"
+        require(:Polyhedra; fun_name="vertices_list")
         if backend == nothing
             backend = default_polyhedra_backend(P, N)
         end

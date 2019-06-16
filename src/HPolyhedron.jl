@@ -469,8 +469,7 @@ For further information on the supported backends see
 function convex_hull(P1::HPoly{N},
                      P2::HPoly{N};
                      backend=default_polyhedra_backend(P1, N)) where {N}
-    @assert isdefined(@__MODULE__, :Polyhedra) "the function `convex_hull` "*
-        "needs the package 'Polyhedra'"
+    require(:Polyhedra; fun_name="convex_hull")
     Pch = convexhull(polyhedron(P1; backend=backend),
                      polyhedron(P2; backend=backend))
     removehredundancy!(Pch)
@@ -504,8 +503,7 @@ function cartesian_product(P1::HPoly{N},
                            P2::HPoly{N};
                            backend=default_polyhedra_backend(P1, N)
                           ) where {N<:Real}
-    @assert isdefined(@__MODULE__, :Polyhedra) "the function " *
-        "`cartesian_product` needs the package 'Polyhedra'"
+    require(:Polyhedra; fun_name="`cartesian_product")
     Pcp = hcartesianproduct(polyhedron(P1; backend=backend),
                             polyhedron(P2; backend=backend))
     return convert(typeof(P1), Pcp)
@@ -537,8 +535,7 @@ For further information on the supported backends see
 """
 function tovrep(P::HPoly{N};
                 backend=default_polyhedra_backend(P, N)) where {N<:Real}
-    @assert isdefined(@__MODULE__, :Polyhedra) "the function `tovrep` needs " *
-        "the package 'Polyhedra'"
+    require(:Polyhedra; fun_name="tovrep")
     P = polyhedron(P; backend=backend)
     return VPolytope(P)
 end
@@ -639,8 +636,8 @@ function isempty(P::HPoly{N},
                  backend=nothing
                 )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     if use_polyhedra_interface
-        @assert isdefined(@__MODULE__, :Polyhedra) "the function `isempty` " *
-            "with the given options requires the package 'Polyhedra'"
+        require(:Polyhedra; fun_name="isempty", explanation="with the active " *
+            "option `use_polyhedra_interface`")
         if backend == nothing
             backend = default_polyhedra_backend(P, N)
         end

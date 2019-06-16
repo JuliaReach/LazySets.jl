@@ -94,8 +94,7 @@ function σ(d::AbstractVector{N},
            P::VPolytope{N};
            algorithm="hrep") where {N<:Real}
     if algorithm == "hrep"
-        @assert isdefined(@__MODULE__, :Polyhedra) "this algorithm needs the " *
-            "package 'Polyhedra' loaded"
+        require(:Polyhedra; fun_name="σ", explanation="(algorithm $algorithm)")
         return σ(d, tohrep(P))
     else
         error("the algorithm $algorithm is not known")
@@ -367,8 +366,7 @@ The `VPolytope` obtained by the concrete Cartesian product of `P1` and `P2`.
 """
 function cartesian_product(P1::VPolytope{N}, P2::VPolytope{N};
                            backend=default_polyhedra_backend(P1, N)) where {N}
-    @assert isdefined(@__MODULE__, :Polyhedra) "the function `cartesian_product` needs " *
-                                               "the package 'Polyhedra' to be loaded"
+    require(:Polyhedra; fun_name="cartesian_product")
     Pcp = vcartesianproduct(polyhedron(P1; backend=backend),
                             polyhedron(P2; backend=backend))
     return VPolytope(Pcp)
@@ -394,8 +392,7 @@ A new polytope such that its vertices are the convex hull of the given polytope.
 """
 function remove_redundant_vertices(P::VPolytope{N};
                                    backend=default_polyhedra_backend(P, N))::VPolytope{N} where {N<:Real}
-    @assert isdefined(@__MODULE__, :Polyhedra) "the function `remove_redundant_vertices` needs " *
-                                               "the package 'Polyhedra' to be loaded"
+    require(:Polyhedra; fun_name="remove_redundant_vertices")
     Q = polyhedron(P; backend=backend)
     removevredundancy!(Q)
     return VPolytope(Q)
@@ -431,8 +428,7 @@ function tohrep(P::VPolytope{N};
     if isempty(vl)
         return EmptySet{N}()
     end
-    @assert isdefined(@__MODULE__, :Polyhedra) "the function `tohrep` needs the " *
-                                               "package 'Polyhedra' to be loaded"
+    require(:Polyhedra; fun_name="tohrep")
     return HPolytope(polyhedron(P; backend=backend))
 end
 
