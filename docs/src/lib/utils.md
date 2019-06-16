@@ -30,6 +30,7 @@ sign_cadlag
 _random_zero_sum_vector
 rectify
 remove_duplicates_sorted!
+require(::Symbol)
 reseed
 same_block_structure
 substitute
