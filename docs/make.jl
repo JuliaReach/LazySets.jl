@@ -38,7 +38,8 @@ makedocs(
         ],
         "About" => "about.md"
     ],
-    doctest = false
+    doctest = false,
+    strict = true
 )
 
 deploydocs(
