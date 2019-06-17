@@ -11,7 +11,7 @@ using TaylorModels: set_variables, TaylorModelN
 include("to_N.jl")
 
 # non-exported helper functions
-using LazySets: ispermutation, isinvertible, inner
+using LazySets: ispermutation, isinvertible, inner, iscounterclockwise
 using LazySets.Approximations: UnitVector
 
 global test_suite_basic = true
