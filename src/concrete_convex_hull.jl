@@ -140,7 +140,6 @@ function _two_points_1d!(points)
 end
 
 function _two_points_2d!(points)
-
     # special case, see #876
     p1, p2 = points[1], points[2]
     if p1 == p2
@@ -158,12 +157,12 @@ function _three_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N
     # Algorithm: the function takes three points and uses the formula
     #            from here: https://stackoverflow.com/questions/2122305/convex-hull-of-4-points/2122620#2122620
     #            to decide if the points are ordered in a counter-clockwise fashion or not, the result is saved 
-    #            in the 'turn' boolean, then returns the points in ordered ccw acting according to 'turn'. For the
+    #            in the 'turn' boolean, then returns the points in ccw fashion acting according to 'turn'. For the
     #            cases where the points are collinear we pass the points with the minimum and maximum first
     #            component to the function for two points in 2d(_two_points_2d), if those are equal, we do the same
     #            but with the second component.
     A, B, C = points[1], points[2], points[3]
-    turn = (A[2] - B[2]) * C[1] + (B[1] - A[1]) * C[2] + (A[1] * B[2] - B[1] * A[2])
+    turn = right_turn(A, B, C)
 
     if isapproxzero(turn)
         # ABC are collinear
@@ -190,7 +189,7 @@ function _three_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N
     return points
 end
 
-function _collinear_case!(points::Vector{VN}, A::VN, B::VN, C::VN, D::VN) where {N<:Real, VN<:AbstractVector{N}}
+function _collinear_case!(points, A, B, C, D)
     # A, B and C collinear, D is the extra point
     if isapprox(A[1], B[1]) && isapprox(B[1], C[1]) && isapprox(C[1], A[1])
         # points are approximately equal in their first component
@@ -417,9 +416,8 @@ function monotone_chain!(points::Vector{VN}; sort::Bool=true
     end
 
     if sort
-        # sort the rows lexicographically (requires a two-dimensional array)
-        # points = sortrows(hcat(points...)', alg=QuickSort) # out-of-place version
-        sort!(points, by=x->(x[1], x[2]))                    # in-place version
+        # sort the points lexicographically
+        sort!(points, by=x->(x[1], x[2]))
     end
 
     zero_N = zero(N)
