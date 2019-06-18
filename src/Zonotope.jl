@@ -4,7 +4,6 @@ import Base: rand,
 
 export Zonotope,
        order,
-       minkowski_sum,
        linear_map,
        scale,
        ngens,
@@ -386,25 +385,6 @@ and its dimension.
 """
 function order(Z::Zonotope)::Rational
     return ngens(Z) // dim(Z)
-end
-
-"""
-    minkowski_sum(Z1::Zonotope{N}, Z2::Zonotope{N}) where {N<:Real}
-
-Concrete Minkowski sum of a pair of zonotopes.
-
-### Input
-
-- `Z1` -- one zonotope
-- `Z2` -- another zonotope
-
-### Output
-
-The zonotope obtained by summing the centers and concatenating the generators
-of ``Z_1`` and ``Z_2``.
-"""
-function minkowski_sum(Z1::Zonotope{N}, Z2::Zonotope{N}) where {N<:Real}
-    return Zonotope(Z1.center + Z2.center, [Z1.generators Z2.generators])
 end
 
 """
