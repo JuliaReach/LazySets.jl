@@ -52,6 +52,10 @@ isempty(::CartesianProductArray)
 constraints_list(::CartesianProductArray{N}) where {N<:Real}
 vertices_list(::CartesianProductArray{N}) where {N<:Real}
 array(::CartesianProductArray{N, S}) where {N<:Real, S<:LazySet{N}}
+block_structure(cpa::CartesianProductArray{N}) where {N}
+block_to_dimension_indices(cpa::CartesianProductArray{N}, vars::Vector{Int}) where {N}
+substitute_blocks(low_dim_cpa::CartesianProductArray{N}, orig_cpa::CartesianProductArray{N},
+blocks::Vector{Tuple{Int,Int}}) where {N}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

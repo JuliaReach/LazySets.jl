@@ -1,3 +1,5 @@
+using LazySets.Approximations: overapproximate
+
 for N in [Float64, Float32, Rational{Int}]
     # Cartesian Product of a centered 1D BallInf and a centered 2D BallInf
     # Here a 3D BallInf
@@ -261,7 +263,7 @@ for N in [Float64, Float32, Rational{Int}]
     Hcp = convert(CartesianProductArray{N, Interval{N}}, H)
     @test Hcp isa CartesianProductArray &&
           all([array(Hcp)[i] == Interval(N(-1), N(2*i-1)) for i in 1:3])
-              
+
     # ================
     # common functions
     # ================
@@ -272,4 +274,22 @@ for N in [Float64, Float32, Rational{Int}]
     @test absorbing(CartesianProduct) == absorbing(CartesianProductArray) ==
           EmptySet
     @test b × e == e × b == cpa × e == e × cpa == e × e == e
+end
+
+for N in [Float64, Float32]
+    # is_intersection_empty
+    i1 = Interval(N[0, 1])
+    i2 = Interval(N[2, 3])
+    h1 = Hyperrectangle(low=N[3, 4], high=N[5, 7])
+    h2 = Hyperrectangle(low=N[5, 5], high=N[6, 8])
+    cpa1 = CartesianProductArray([i1, i2, h1])
+    cpa2 = CartesianProductArray([i1, i2, h2])
+    G = HPolyhedron([HalfSpace(N[1, 0, 0, 0], N(1))])
+    G_empty = HPolyhedron([HalfSpace(N[1, 0, 0, 0], N(-1))])
+	cpa1_box = overapproximate(cpa1)
+	cpa2_box = overapproximate(cpa2)
+
+    @test is_intersection_empty(cpa1, cpa2) == is_intersection_empty(cpa1_box, cpa2_box) == false
+    @test is_intersection_empty(cpa1, G_empty) == is_intersection_empty(cpa1_box, G_empty) == true
+    @test is_intersection_empty(cpa1, G) == is_intersection_empty(Approximations.overapproximate(cpa1), G) == false
 end

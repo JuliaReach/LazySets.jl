@@ -1,3 +1,4 @@
+using LazySets.Approximations: project
 export is_intersection_empty,
        isdisjoint
 
@@ -1364,4 +1365,58 @@ function is_intersection_empty(X::LazySet{N},
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where
                                   {N<:Real}
     return is_intersection_empty(C, X, witness)
+end
+
+"""
+    is_intersection_empty(X::CartesianProductArray{N, S},
+                          P::HPolyhedron{N}) where {N<:Real, S<:LazySet{N}}
+
+Check whether a Cartesian product array intersects with a H-polyhedron.
+
+### Input
+
+- `X` -- Cartesian product array of convex sets
+- `P` -- H-polyhedron
+
+### Output
+
+`true` iff ``X ∩ Y = ∅ ``.
+"""
+function is_intersection_empty(X::CartesianProductArray{N},
+                               P::HPolyhedron{N}) where {N<:Real}
+    cpa_low_dim, vars, block_structure = get_constrained_lowdimset(X, P)
+
+    return isdisjoint(cpa_low_dim, project(P, vars))
+end
+
+# symmetric method
+function is_intersection_empty(P::HPolyhedron{N},
+                               X::CartesianProductArray{N, S}) where {N<:Real, S<:LazySet{N}}
+        is_intersection_empty(X, P)
+end
+
+"""
+    is_intersection_empty(X::CartesianProductArray{N}, Y::CartesianProductArray{N}) where {N}
+
+Check whether two Cartesian products of a finite number of convex sets do not intersect.
+
+### Input
+
+- `X` -- Cartesian product array of convex sets
+- `Y` -- Cartesian product array of convex sets
+
+### Output
+
+`true` iff ``X ∩ Y = ∅ ``.
+"""
+function is_intersection_empty(X::CartesianProductArray{N}, Y::CartesianProductArray{N}) where {N}
+    @assert same_block_structure(array(X), array(Y)) "block structure has to be the same"
+
+    for i in 1:length(X.array)
+        if isdisjoint(X.array[i], Y.array[i])
+            return true
+        end
+    end
+
+    return false
 end

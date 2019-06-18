@@ -542,9 +542,9 @@ julia> subtypes(AbstractPolytope, true)
 function subtypes(interface, concrete::Bool)
 
     subtypes_to_test = subtypes(interface)
-    
+
     # do not seek the concrete subtypes further
-    if !concrete 
+    if !concrete
         return sort(subtypes_to_test, by=string)
     end
 

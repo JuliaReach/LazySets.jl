@@ -678,7 +678,7 @@ Return the intersection of a lazy linear map and a convex set.
 
 - `L` -- linear map
 - `S` -- convex set
-  
+
 ### Output
 
 The polytope obtained by the intersection of `l.M * L.X` and `S`.
@@ -781,4 +781,37 @@ end
 function intersection(rm::ResetMap{N, <:AbstractPolytope},
                       P::AbstractPolyhedron{N}) where {N<:Real}
     return intersection(P, rm)
+end
+
+function intersection(U::Universe{N}, X::CartesianProductArray{N}) where {N<:Real}
+    return X
+end
+
+# symmetric method
+function intersection(X::CartesianProductArray{N}, U::Universe{N}) where {N<:Real}
+    return intersection(U, X)
+end
+
+"""
+        intersection(X::CartesianProductArray{N}, Y::CartesianProductArray{N})
+
+Return the intersection between cartesian products of a finite number of convex sets.
+
+### Input
+
+ - `X` -- cartesian product of a finite number of convex sets
+ - `Y` -- cartesian product of a finite number of convex sets
+
+### Output
+
+The decomposed set which represents concrete intersection between `X` and `Y`
+
+### Algorithm
+
+This algorithm intersect corresponding blocks between sets.
+"""
+function intersection(X::CartesianProductArray{N}, Y::CartesianProductArray{N}) where {N<:Real}
+    @assert same_block_structure(array(X), array(Y)) "block structure has to be the same"
+
+    return CartesianProductArray([intersection(array(X)[i], array(Y)[i]) for i in eachindex(array(X))])
 end

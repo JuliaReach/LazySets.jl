@@ -3,7 +3,8 @@ import Base: *, ∈, isempty
 export CartesianProduct,
        CartesianProductArray,
        CartesianProduct!,
-       array
+       array,
+       same_block_structure
 
 """
     CartesianProduct{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
@@ -561,4 +562,146 @@ function same_block_structure(x::AbstractVector{S1}, y::AbstractVector{S2}
         end
     end
     return true
+end
+
+"""
+    block_structure(cpa::CartesianProductArray{N}) where {N}
+
+Returns an array containing the dimension ranges of each block in a `CartesianProductArray`.
+
+### Input
+
+- `cpa` -- Cartesian product array
+
+### Output
+
+A vector of ranges
+
+### Example
+
+```jldoctest
+julia> using LazySets: block_structure
+
+julia> cpa = CartesianProductArray([BallInf(zeros(n), 1.0) for n in [3, 1, 2]]);
+
+julia> block_structure(cpa)
+3-element Array{UnitRange{Int64},1}:
+ 1:3
+ 4:4
+ 5:6
+```
+"""
+function block_structure(cpa::CartesianProductArray{N}) where {N}
+    result = Vector{UnitRange{Int}}(undef, length(array(cpa)))
+    start_index = 1
+    @inbounds for (i, bi) in enumerate(array(cpa))
+        end_index = start_index + dim(bi) - 1
+        result[i] = start_index:end_index
+        start_index = end_index + 1
+    end
+    return result
+end
+
+
+"""
+    block_to_dimension_indices(cpa::CartesianProductArray{N}, vars::Vector{Int}) where {N}
+
+Returns a vector mapping block index `i`
+to tuple `(f, l)` such that either `f = l = -1` or `f` is the first dimension index and `l` is the last dimension
+index of the `i`-th block, depending on whether one of the block's dimension indices is specified in `vars`.
+
+### Input
+
+- `cpa` -- Cartesian product array
+- `vars` -- list containing the variables of interest, sorted in ascending order
+
+### Output
+
+(i) A vector of tuples, where values in tuple relate to range of dimensions in the i-th block.
+(ii) Number of constrained blocks
+
+### Example
+
+```jldoctest
+julia> using LazySets: block_to_dimension_indices
+
+julia> cpa = CartesianProductArray([BallInf(zeros(n), 1.0) for n in [1, 3, 2, 3]]);
+
+julia> block_to_dimension_indices(cpa, [2, 4, 8])
+(Tuple{Int64,Int64}[(-1, -1), (2, 4), (-1, -1), (7, 9)], 2)
+```
+This vector represents the mapping "second block from dimension 2 to dimension 4,
+fourth block from dimension 7 to dimension 9."
+These blocks contain the dimensions specified in `[2, 4, 8]`.
+Number of constrained variables here is 2 (2nd and 4th blocks)
+"""
+function block_to_dimension_indices(cpa::CartesianProductArray{N}, vars::Vector{Int}) where {N}
+    result = fill((-1, -1), length(array(cpa)))
+    non_empty_length = 0
+    start_index, end_index = 1, 0
+    v_i = 1
+    @inbounds for i in 1:length(cpa.array)
+        end_index += dim(cpa.array[i])
+        if v_i <= length(vars) && vars[v_i] <= end_index
+            result[i] = (start_index, end_index)
+            non_empty_length += 1
+            while v_i <= length(vars) && vars[v_i] <= end_index
+                v_i += 1
+            end
+        end
+        if v_i > length(vars)
+            break
+        end
+        start_index = end_index + 1
+    end
+    return result, non_empty_length
+end
+
+#same but for all variables
+function block_to_dimension_indices(cpa::CartesianProductArray{N}) where {N}
+    result = Vector{Tuple{Int, Int}}(undef, length(cpa.array))
+
+    start_index, end_index = 1, 0
+    @inbounds for i in 1:length(cpa.array)
+        end_index += dim(cpa.array[i])
+        result[i] = (start_index, end_index)
+        start_index = end_index + 1
+    end
+    return result, length(cpa.array)
+end
+
+"""
+    substitute_blocks(low_dim_cpa::CartesianProductArray{N},
+                         orig_cpa::CartesianProductArray{N},
+                           blocks::Vector{Tuple{Int,Int}}) where {N}
+
+Return merged Cartesian Product Array between original CPA and some low-dimensional CPA,
+which represents updated subset of variables in specified blocks.
+
+### Input
+
+- `low_dim_cpa` -- low-dimensional cartesian product array
+- `orig_cpa` -- original high-dimensional Cartesian product array
+- `blocks` -- index of the first variable in each block of `orig_cpa`
+
+### Output
+
+Merged cartesian product array
+"""
+function substitute_blocks(low_dim_cpa::CartesianProductArray{N},
+                           orig_cpa::CartesianProductArray{N},
+                           blocks::Vector{Tuple{Int,Int}}) where {N}
+
+    array = Vector{LazySet{N}}(undef, length(orig_cpa.array))
+    index = 1
+    for bi in 1:length(orig_cpa.array)
+        start_ind, end_index = blocks[bi]
+        if start_ind == -1
+            array[bi] = orig_cpa.array[bi]
+        else
+            array[bi] = low_dim_cpa.array[index]
+            index += 1
+        end
+    end
+    return CartesianProductArray(array)
 end
