@@ -6,7 +6,7 @@ export LineSegment,
        constraints_list
 
 """
-    LineSegment{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
+    LineSegment{N<:Real} <: AbstractZonotope{N}
 
 Type that represents a line segment in 2D between two points ``p`` and ``q``.
 
@@ -46,7 +46,7 @@ julia> is_intersection_empty(s, sn, true)
 (false, [0.5, 0.5])
 ```
 """
-struct LineSegment{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
+struct LineSegment{N<:Real} <: AbstractZonotope{N}
     p::AbstractVector{N}
     q::AbstractVector{N}
 
@@ -187,6 +187,48 @@ The center of the line segment.
 """
 function center(L::LineSegment{N})::Vector{N} where {N<:Real}
     return L.p + (L.q - L.p) / 2
+end
+
+
+# --- AbstractZonotope interface functions ---
+
+
+"""
+   genmat(L::LineSegment)
+
+Return the generator matrix of a line segment.
+
+### Input
+
+- `L` -- line segment
+
+### Output
+
+A matrix with a single column representing the generator of `L`.
+"""
+function genmat(L::LineSegment)
+    return genmat_fallback(L)
+end
+
+"""
+    generators(L::LineSegment{N}) where {N<:Real}
+
+Return an iterator over the (single) generator of a line segment.
+
+### Input
+
+- `L` -- line segment
+
+### Output
+
+A one-element iterator over the generator of `L`.
+"""
+function generators(L::LineSegment{N}) where {N<:Real}
+    if L.p == L.q
+        # degenerate line segment has no generators
+        return EmptyGeneratorIterator{N}()
+    end
+    return [L.p - center(L)]
 end
 
 

@@ -30,8 +30,15 @@ for N in [Float64, Rational{Int}, Float32]
     @test !∈(N[7, 4], l)
     @test !∈(N[1.5, 1.6], l)
 
-    # center function
+    # center/generators
     @test center(l) == N[1.5, 1.5]
+    @test collect(generators(l)) ∈ [[N[1/2, 1/2]], [N[-1/2, -1/2]]]
+    @test genmat(l) ∈ [hcat(N[1/2 1/2]), hcat(N[-1/2, -1/2])]
+    @test ngens(l) == 1
+    l_degenerate = LineSegment(p, p)
+    @test collect(generators(l_degenerate)) == Vector{N}()
+    @test genmat(l_degenerate) == Matrix{N}(undef, 2, 0)
+    @test ngens(l_degenerate) == 0
 
     # isempty
     @test !isempty(l)

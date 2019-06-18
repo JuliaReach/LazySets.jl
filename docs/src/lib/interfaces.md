@@ -206,6 +206,23 @@ an_element(::AbstractCentrallySymmetricPolytope{N}) where {N<:Real}
 isempty(::AbstractCentrallySymmetricPolytope)
 ```
 
+##### AbstractZonotope
+
+A zonotope is a specific centrally symmetric polytope characterized by a
+center and a collection of generators.
+
+```@docs
+AbstractZonotope
+```
+
+This interface defines the following functions:
+
+```@docs
+ngens(Z::AbstractZonotope)
+genmat_fallback(Z::AbstractZonotope{N}) where {N<:Real}
+generators_fallback(Z::AbstractZonotope{N}) where {N<:Real}
+```
+
 ##### Hyperrectangle
 
 A hyperrectangle is a special centrally symmetric polytope with axis-aligned
@@ -229,6 +246,8 @@ high(::AbstractHyperrectangle{N}, ::Int) where {N<:Real}
 low(::AbstractHyperrectangle{N}) where {N<:Real}
 low(::AbstractHyperrectangle{N}, ::Int) where {N<:Real}
 split(::AbstractHyperrectangle{N}, ::AbstractVector{Int}) where {N<:Real}
+generators(::AbstractHyperrectangle)
+genmat(::AbstractHyperrectangle)
 ```
 
 ##### Singleton
@@ -254,6 +273,8 @@ high(::AbstractSingleton{N}, ::Int) where {N<:Real}
 low(::AbstractSingleton{N}) where {N<:Real}
 low(::AbstractSingleton{N}, ::Int) where {N<:Real}
 linear_map(::AbstractMatrix{N}, ::AbstractSingleton{N}) where {N<:Real}
+generators(::AbstractSingleton{N}) where {N<:Real}
+genmat(::AbstractSingleton{N}) where {N<:Real}
 plot_recipe(::AbstractSingleton{N}, ::N=zero(N)) where {N<:Real}
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractSingleton{N}, ::N=zero(N)) where {N<:Real}
 ```

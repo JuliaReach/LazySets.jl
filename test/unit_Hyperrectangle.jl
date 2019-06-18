@@ -2,7 +2,7 @@ for N in [Float64, Rational{Int}, Float32]
     # random hyperrectangle
     rand(Hyperrectangle)
 
-    # center/radius/high/low
+    # center/radius/high/low/generators
     c = N[0, 0]
     r = N[1, 1]
     h = Hyperrectangle(c, r)
@@ -15,6 +15,15 @@ for N in [Float64, Rational{Int}, Float32]
         @test high(h, i) == r[i]
         @test low(h, i) == -r[i]
     end
+    gens = [Vector(g) for g in generators(h)]
+    @test ispermutation(gens, [N[1, 0], N[0, 1]])
+    @test genmat(h) ∈ [N[1 0; 0 1], N[0 1; 1 0]]
+    @test ngens(h) == 2
+    h_flat = Hyperrectangle(N[1, 2, 3, 4, 5], N[1, 0, 2, 0, 3])
+    @test collect(generators(h_flat)) ==
+        [UnitVector(1, 5, N(1)), UnitVector(3, 5, N(2)), UnitVector(5, 5, N(3))]
+    @test genmat(h_flat) == N[1 0 0; 0 0 0; 0 2 0; 0 0 0; 0 0 3]
+    @test ngens(h_flat) == 3
 
     # 1D Hyperrectangle
     h = Hyperrectangle(N[0], N[1])

@@ -7,11 +7,13 @@ export AbstractHyperrectangle,
        low, high
 
 """
-    AbstractHyperrectangle{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
+    AbstractHyperrectangle{N<:Real} <: AbstractZonotope{N}
 
 Abstract type for hyperrectangular sets.
 
 ### Notes
+
+See [`Hyperrectangle`](@ref) for a standard implementation of this interface.
 
 Every concrete `AbstractHyperrectangle` must define the following functions:
 - `radius_hyperrectangle(::AbstractHyperrectangle{N})::Vector{N}` -- return the
@@ -29,7 +31,82 @@ julia> subtypes(AbstractHyperrectangle)
  SymmetricIntervalHull
 ```
 """
-abstract type AbstractHyperrectangle{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
+abstract type AbstractHyperrectangle{N<:Real} <: AbstractZonotope{N}
+end
+
+
+# --- AbstractZonotope interface functions ---
+
+
+"""
+   genmat(H::AbstractHyperrectangle)
+
+Return the generator matrix of a hyperrectangular set.
+
+### Input
+
+- `H` -- hyperrectangular set
+
+### Output
+
+A matrix where each column represents one generator of `H`.
+"""
+function genmat(H::AbstractHyperrectangle)
+    return genmat_fallback(H)
+end
+
+# iterator that wraps the generator matrix
+struct HyperrectangleGeneratorIterator{AH<:AbstractHyperrectangle}
+    H::AH
+    nonflats::Vector{Int}  # dimensions along which `H` is not flat
+    dim::Int  # total number of dimensions of `H` (stored for efficiency)
+
+    function HyperrectangleGeneratorIterator(H::AH) where {N<:Real,
+            AH<:AbstractHyperrectangle{N}}
+        n = dim(H)
+        nonflats = Vector{Int}()
+        sizehint!(nonflats, n)
+        @inbounds for i in 1:n
+            if radius_hyperrectangle(H, i) != zero(N)
+                push!(nonflats, i)
+            end
+        end
+        return new{AH}(H, nonflats, n)
+    end
+end
+
+Base.length(it::HyperrectangleGeneratorIterator) = length(it.nonflats)
+
+Base.eltype(::Type{<:HyperrectangleGeneratorIterator{<:AbstractHyperrectangle{N}}}) where {N} =
+    Approximations.UnitVector{N}
+
+function Base.iterate(it::HyperrectangleGeneratorIterator{<:AH},
+                      state::Int=1) where {N, AH<:AbstractHyperrectangle{N}}
+    if state > length(it.nonflats)
+        return nothing
+    end
+    i = it.nonflats[state]
+    r = radius_hyperrectangle(it.H, i)
+    g = Approximations.UnitVector(i, it.dim, r)
+    state += 1
+    return (g, state)
+end
+
+"""
+    generators(H::AbstractHyperrectangle)
+
+Return an iterator over the generators of a hyperrectangular set.
+
+### Input
+
+- `H` -- hyperrectangular set
+
+### Output
+
+An iterator over the generators of `H`.
+"""
+function generators(H::AbstractHyperrectangle)
+    return HyperrectangleGeneratorIterator(H)
 end
 
 

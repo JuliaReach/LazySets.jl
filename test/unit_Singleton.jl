@@ -2,7 +2,7 @@ for N in [Float64, Rational{Int}, Float32]
     # random singleton
     rand(Singleton)
 
-    # center/radius/high/low
+    # center/radius/high/low/generators
     c = N[0, 0]
     r = N[0, 0]
     s = Singleton(c)
@@ -15,6 +15,9 @@ for N in [Float64, Rational{Int}, Float32]
         @test high(s, i) == r[i]
         @test low(s, i) == -r[i]
     end
+    @test collect(generators(s)) == Vector{Vector{N}}()
+    @test genmat(s) == Matrix{N}(undef, 2, 0)
+    @test ngens(s) == 0
 
     # 1D singleton
     s = Singleton(N[1])
