@@ -600,7 +600,9 @@ Return the list of constraints defining a zonotope.
 
 ### Input
 
-- `Z` -- zonotope
+- `Z`               -- zonotope
+- `check_full_rank` -- (optional; default: `true`) flag for checking whether the
+                       generator matrix has full rank
 
 ### Output
 
@@ -613,8 +615,8 @@ The result has ``2 \\binom{p}{n-1}`` (with ``p`` being the number of generators
 and ``n`` being the ambient dimension) constraints, which is optimal under this
 assumption.
 
-If ``p < n``, we fall back to the (slower) computation based on the vertex
-representation.
+If ``p < n`` or the generator matrix is not full rank, we fall back to the
+(slower) computation based on the vertex representation.
 
 ### Algorithm
 
@@ -625,14 +627,16 @@ Reachable Sets of Hybrid Systems Using a Combination of Zonotopes and Polytopes.
 The one-dimensional case is not covered by that algorithm; we manually handle
 this case, assuming that there is only one generator.
 """
-function constraints_list(Z::Zonotope{N}) where {N<:AbstractFloat}
+function constraints_list(Z::Zonotope{N}; check_full_rank::Bool=true
+                         ) where {N<:AbstractFloat}
+    G = genmat(Z)
     p = ngens(Z)
     n = dim(Z)
-    if p < n
+
+    # use fallback implementation if order < 1 or matrix is not full rank
+    if p < n || (check_full_rank && rank(G) < n)
         return invoke(constraints_list, Tuple{Zonotope{<:Real}}, Z)
     end
-
-    G = Z.generators
 
     # special handling of 1D case
     if n == 1
