@@ -96,13 +96,8 @@ for N in [Float64, Rational{Int}, Float32]
         lm1 = LinearMap(M, b)
         clist = constraints_list(lm1)
         p1 = HPolygon(clist)
-        M = N[2 3; 0 0]  # not invertible
-        lm2 = LinearMap(M, b)
-        clist = constraints_list(lm2)
-        p2 = HPolygon(clist)
         for d in BoxDiagDirections{N}(2)
             @test ρ(d, lm1) ≈ ρ(d, p1)
-            @test ρ(d, lm2) ≈ ρ(d, p2)
         end
     end
 
@@ -124,5 +119,14 @@ for N in [Float64]
         L = M * b
         Lb = intersection(L, b)
         @test M * an_element(b) ∈ Lb
+
+        # constraints_list with singular matrix
+        M = N[2 3; 0 0]
+        lm2 = LinearMap(M, b)
+        clist = constraints_list(lm2)
+        p2 = HPolygon(clist)
+        for d in BoxDiagDirections{N}(2)
+            @test ρ(d, lm2) ≈ ρ(d, p2)
+        end
     end
 end

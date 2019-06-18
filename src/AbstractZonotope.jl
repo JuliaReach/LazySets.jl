@@ -161,3 +161,30 @@ function minkowski_sum(Z1::AbstractZonotope{N},
                        Z2::AbstractZonotope{N}) where {N<:Real}
     return Zonotope(center(Z1) + center(Z2), [genmat(Z1) genmat(Z2)])
 end
+
+"""
+    linear_map(M::AbstractMatrix{N}, Z::AbstractZonotope{N}) where {N<:Real}
+
+Concrete linear map of a zonotopic set.
+
+### Input
+
+- `M` -- matrix
+- `Z` -- zonotopic set
+
+### Output
+
+A zonotope corresponding to the concrete linear map `M` applied to `Z`.
+
+### Algorithm
+
+The resulting zonotope is obtained by applying the linear map `M` to the center
+and the generators of `Z`.
+"""
+function linear_map(M::AbstractMatrix{N},
+                    Z::AbstractZonotope{N}) where {N<:Real}
+    @assert dim(Z) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
+        "applied to a $(typeof(Z)) of dimension $(dim(Z))"
+
+    return Zonotope(M * center(Z), M * genmat(Z))
+end

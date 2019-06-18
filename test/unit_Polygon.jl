@@ -204,6 +204,11 @@ for N in [Float64, Float32, Rational{Int}]
     p3 = intersection(p, p2)
     @test length(constraints_list(p3)) == 4
 
+    # concrete linear map
+    # in 2D and for invertible map we get an HPolygon; see #631 and #1093
+    HP = convert(HPolygon, BallInf(N[0, 0], N(1)))
+    @test linear_map(N[1 0; 0 2], HP) isa HPolygon
+
     # check that tighter constraints are used in intersection (#883)
     h1 = HalfSpace([N(1), N(0)], N(3))
     h2 = HalfSpace([N(-1), N(0)], N(-3))

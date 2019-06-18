@@ -222,6 +222,7 @@ ngens(Z::AbstractZonotope)
 genmat_fallback(Z::AbstractZonotope{N}) where {N<:Real}
 generators_fallback(Z::AbstractZonotope{N}) where {N<:Real}
 minkowski_sum(::AbstractZonotope{N}, ::AbstractZonotope{N}) where {N<:Real}
+linear_map(::AbstractMatrix{N}, ::AbstractZonotope{N}) where {N<:Real}
 ```
 
 ##### Hyperrectangle

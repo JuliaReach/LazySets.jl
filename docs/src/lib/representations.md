@@ -688,7 +688,6 @@ center(::Zonotope{N}) where {N<:Real}
 order(::Zonotope)
 generators(Z::Zonotope)
 genmat(Z::Zonotope)
-linear_map(::AbstractMatrix{N}, ::Zonotope{N}) where {N<:Real}
 translate(::Zonotope{N}, ::AbstractVector{N}) where {N<:Real}
 scale(::Real, ::Zonotope)
 ngens(::Zonotope)
