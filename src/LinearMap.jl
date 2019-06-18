@@ -391,7 +391,7 @@ Return the linear map of a lazy linear map.
 
 ### Output
 
-The polytope representing the linear map of the lazy linear map of a set.  
+The polytope representing the linear map of the lazy linear map of a set.
 """
 function linear_map(M::AbstractMatrix{N}, lm::LinearMap{N}) where {N<:Real}
      return linear_map(M * lm.M, lm.X)

@@ -10,7 +10,7 @@ export Translation,
 
 Type that represents a lazy translation.
 
-The translation of set `X` along vector `v` is the map: 
+The translation of set `X` along vector `v` is the map:
 
 ```math
 x ↦ x + v,\\qquad x ∈ X
@@ -142,7 +142,7 @@ struct Translation{N<:Real, VN<:AbstractVector{N}, S<:LazySet{N}} <: LazySet{N}
     # default constructor with dimension check
     function Translation(X::S, v::VN) where {N, VN<:AbstractVector{N}, S<:LazySet{N}}
         @assert dim(X) == length(v) "cannot create a translation of a set of dimension $(dim(X)) " *
-                                    "along a vector of length $(length(v))" 
+                                    "along a vector of length $(length(v))"
         return new{N, VN, S}(X, v)
     end
 end
@@ -180,7 +180,7 @@ Unicode alias constructor ⊕ (`oplus`) for the lazy translation operator.
 # translation from the left
 ⊕(v::AbstractVector, X::LazySet) = Translation(X, v)
 
-# ============================ 
+# ============================
 # LazySet interface functions
 # ============================
 
@@ -278,7 +278,7 @@ An element in the translation.
 ### Notes
 
 This function first asks for `an_element` function of the wrapped set, then
-translates this element according to the given translation vector. 
+translates this element according to the given translation vector.
 """
 function an_element(tr::Translation)
     return an_element(tr.X) + tr.v

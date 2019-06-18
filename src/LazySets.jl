@@ -89,7 +89,13 @@ include("Rectification.jl")
 # =============================
 # Conversions between set types
 # =============================
+include("intersection_helper.jl")
 include("convert.jl")
+
+# =====================
+# Approximations module
+# =====================
+include("Approximations/Approximations.jl")
 
 # ===========================
 # Concrete operations on sets
@@ -103,11 +109,6 @@ include("difference.jl")
 # Aliases
 # =======
 include("aliases.jl")
-
-# =====================
-# Approximations module
-# =====================
-include("Approximations/Approximations.jl")
 
 # ==========================
 # Parallel algorithms module

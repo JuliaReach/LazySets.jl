@@ -37,6 +37,7 @@ same_block_structure
 substitute
 substitute!
 σ_helper
+get_constrained_lowdimset
 @neutral
 @absorbing
 @neutral_absorbing

@@ -1,3 +1,5 @@
+using LazySets.Approximations: project
+
 for N in [Float64, Rational{Int}, Float32]
     # overapproximating a set of type T1 with an unsupported type T2 is the
     # identity if T1 = T2
@@ -165,6 +167,61 @@ for N in [Float64, Float32]
     Y_zonotope = overapproximate(Y, Zonotope) # overapproximate with a zonotope
     @test Y_polygon ⊆ Y_zonotope
     @test !(Y_zonotope ⊆ Y_polygon)
+
+    # decomposed intersection between cartesian product array and abstract polyhedron
+    i1 = Interval(N[0, 1])
+    i2 = Interval(N[2, 3])
+    h1 = Hyperrectangle(low=N[3, 4], high=N[5, 7])
+    h2 = Hyperrectangle(low=N[5, 5], high=N[6, 8])
+    cpa1 = CartesianProductArray([i1, i2, h1])
+    o_cpa1 = overapproximate(cpa1)
+    cpa2 = CartesianProductArray([i1, i2, h2])
+    o_cpa2 = overapproximate(cpa2)
+    G = HPolyhedron([HalfSpace(N[1, 0, 0, 0], N(1))])
+    G_3 = HPolyhedron([HalfSpace(N[0, 0, 1, 0], N(1))])
+    G_3_neg = HPolyhedron([HalfSpace(N[0, 0, -1, 0], N(0))])
+
+    d_int_g = Intersection(cpa1, G)
+    d_int_g_3 = Intersection(cpa1, G_3)
+    d_int_g_3_neg = Intersection(cpa1, G_3_neg)
+    d_int_cpa = intersection(cpa1, cpa2)
+    l_int_cpa = intersection(o_cpa1, o_cpa2)
+    o_d_int_g = overapproximate(d_int_g, CartesianProductArray, Hyperrectangle)
+    o_d_int_g_3 = overapproximate(d_int_g_3, CartesianProductArray, Hyperrectangle)
+    o_d_int_g_3_neg = overapproximate(d_int_g_3_neg, CartesianProductArray, Hyperrectangle)
+
+    @test overapproximate(o_d_int_g) == overapproximate(d_int_g)
+    @test overapproximate(o_d_int_g_3) == overapproximate(d_int_g_3) == EmptySet{N}()
+    @test overapproximate(o_d_int_g_3_neg) == overapproximate(d_int_g_3_neg)
+    @test overapproximate(d_int_cpa, Hyperrectangle) == l_int_cpa
+    @test all([X isa CartesianProductArray for X in [d_int_cpa, o_d_int_g, o_d_int_g_3_neg]])
+end
+
+for N in [Float64] # due to sparse vectors: a = sparse(Float32[1 -1; 1 1];); a \ Float32[4, 10]
+    # decomposed linear map approximation
+    i1 = Interval(N[0, 1])
+    i2 = Interval(N[2, 3])
+    M = N[1 2; 0 1]
+    cpa = CartesianProductArray([i1, i2])
+    lm = M * cpa
+    d_oa = overapproximate(lm, CartesianProductArray{N, Interval{N}})
+    oa = overapproximate(lm, OctDirections)
+    @test oa ⊆ d_oa
+
+    # decomposed intersection between cartesian product array and abstract polyhedron
+    i1 = Interval(N[0, 1])
+    i2 = Interval(N[2, 3])
+    h1 = Hyperrectangle(low=N[3, 4], high=N[5, 7])
+    cpa = CartesianProductArray([i1, i2, h1])
+    G_comb = HPolyhedron([HalfSpace(N[1, 1, 0, 0], N(2.5))])
+    int_g_comb = Intersection(cpa, G_comb)
+    o_d_int_g_comb = overapproximate(int_g_comb, CartesianProductArray, Hyperrectangle)
+    o_bd_int_g_comb = overapproximate(int_g_comb, BoxDirections)
+    @test overapproximate(o_d_int_g_comb) ≈ overapproximate(o_bd_int_g_comb)
+    projection = project(o_bd_int_g_comb, [1, 2], BoxDirections)
+    @test vertices_list(projection) ≈ [[0.5, 2.5], [0., 2.5], [0., 2], [0.5, 2.]]
+    projection = project(overapproximate(int_g_comb, OctDirections), [1, 2], OctDirections)
+    @test vertices_list(projection) ≈ [[0., 2.5], [0., 2.], [0.5, 2.]]
 end
 
 for N in [Float64] # due to sparse vectors: a = sparse(Float32[1 -1; 1 1];); a \ Float32[4, 10]
