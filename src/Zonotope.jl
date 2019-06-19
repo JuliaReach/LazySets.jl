@@ -96,7 +96,7 @@ struct Zonotope{N<:Real} <: AbstractZonotope{N}
     function Zonotope(center::AbstractVector{N}, generators::AbstractMatrix{N};
                       remove_zero_generators::Bool=true) where {N<:Real}
         if remove_zero_generators
-            generators = delete_zero_columns(generators)
+            generators = delete_zero_columns!(generators)
         end
         new{N}(center, generators)
     end

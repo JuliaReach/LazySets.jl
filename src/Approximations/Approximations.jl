@@ -6,7 +6,7 @@ support vectors.
 """
 module Approximations
 
-using LazySets, Requires, LinearAlgebra, SparseArrays
+using LazySets, LazySets.Arrays, Requires, LinearAlgebra, SparseArrays
 
 export approximate,
        ballinf_approximation,

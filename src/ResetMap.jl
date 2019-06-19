@@ -323,7 +323,7 @@ function constraints_list(rm::ResetMap{N, S}
     constraints = Vector{LinearConstraint{N}}(undef, 2*n)
     j = 1
     for i in 1:n
-        ei = LazySets.Approximations.UnitVector(i, n, one(N))
+        ei = SingleEntryVector(i, n, one(N))
         if haskey(rm.resets, i)
             # reset dimension => add flat constraints
             v = rm.resets[i]

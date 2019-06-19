@@ -78,7 +78,7 @@ end
 Base.length(it::HyperrectangleGeneratorIterator) = length(it.nonflats)
 
 Base.eltype(::Type{<:HyperrectangleGeneratorIterator{<:AbstractHyperrectangle{N}}}) where {N} =
-    Approximations.UnitVector{N}
+    SingleEntryVector{N}
 
 function Base.iterate(it::HyperrectangleGeneratorIterator{<:AH},
                       state::Int=1) where {N, AH<:AbstractHyperrectangle{N}}
@@ -87,7 +87,7 @@ function Base.iterate(it::HyperrectangleGeneratorIterator{<:AH},
     end
     i = it.nonflats[state]
     r = radius_hyperrectangle(it.H, i)
-    g = Approximations.UnitVector(i, it.dim, r)
+    g = SingleEntryVector(i, it.dim, r)
     state += 1
     return (g, state)
 end
@@ -159,7 +159,7 @@ function constraints_list(H::AbstractHyperrectangle{N}) where {N<:Real}
     b, c = high(H), -low(H)
     one_N = one(N)
     for i in 1:n
-        ei = LazySets.Approximations.UnitVector(i, n, one_N)
+        ei = SingleEntryVector(i, n, one_N)
         constraints[i] = HalfSpace(ei, b[i])
         constraints[i+n] = HalfSpace(-ei, c[i])
     end

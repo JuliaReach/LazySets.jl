@@ -38,8 +38,8 @@ for N in [Float64, Rational{Int}, Float32]
     @test σ(d, s) == N[1, 2]
 
     # test that abstract vectors can be used as well
-    S = Singleton(UnitVector(1, 1000, 0.5))
-    @test element(S) == UnitVector(1, 1000, 0.5)
+    S = Singleton(SingleEntryVector(1, 1000, 0.5))
+    @test element(S) == SingleEntryVector(1, 1000, 0.5)
 
     # boundedness
     @test isbounded(s)

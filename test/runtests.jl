@@ -7,12 +7,12 @@ using IntervalArithmetic: IntervalBox
 import TaylorModels
 using TaylorModels: set_variables, TaylorModelN
 
+# non-exported helper functions
+using LazySets.Arrays: ispermutation, isinvertible, inner, iscounterclockwise,
+                       SingleEntryVector
+
 # conversion between numeric types
 include("to_N.jl")
-
-# non-exported helper functions
-using LazySets: ispermutation, isinvertible, inner, iscounterclockwise
-using LazySets.Approximations: UnitVector
 
 global test_suite_basic = true
 global test_suite_doctests = true

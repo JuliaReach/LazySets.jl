@@ -346,7 +346,7 @@ function isbounded(r::Rectification{N})::Bool where {N<:Real}
 
     # check boundedness in positive unit directions
     @inbounds for i in 1:n
-        d = Approximations.UnitVector(i, n, one(N))
+        d = SingleEntryVector(i, n, one(N))
         if ρ(d, r.X) == N(Inf)
             return false
         end

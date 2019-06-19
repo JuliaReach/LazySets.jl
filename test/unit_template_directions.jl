@@ -2,7 +2,7 @@ for N in [Float64, Float32, Rational{Int}]
     # unit vector
     for n in 1:3
         for i in 1:n
-            e = UnitVector(i, n, one(N))
+            e = SingleEntryVector(i, n, one(N))
             for j in 1:n
                 @test e[j] == (i == j ? one(N) : zero(N))
             end
@@ -10,10 +10,10 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # check that #1359 is fixed
-    e = UnitVector(2, 3, N(1)) # vector [0, 1, 0]
+    e = SingleEntryVector(2, 3, N(1)) # vector [0, 1, 0]
     D = Diagonal(N[1, 2, 3])
     De = D * e
-    @test De isa UnitVector && Vector(De) == N[0, 2, 0]
+    @test De isa SingleEntryVector && Vector(De) == N[0, 2, 0]
 
     # template direction approximation
     for n in 1:3
