@@ -349,5 +349,19 @@ if test_suite_polyhedra
         P = convert(VPolytope, H)
         @test BallInf(N[0, 0], N(1)) ⊆ P
         @test !(BallInf(N[0, 0], N(1.01)) ⊆ P)
+
+        # -----------------
+        # mixed H-rep/V-rep
+        # -----------------
+
+        # intersection
+        p1 = convert(HPolytope, BallInf(N[0, 0], N(1)))
+        p2 = convert(VPolytope, BallInf(N[1, 1], N(1)))
+        cap1 = intersection(p1, p2)
+        cap2 = intersection(p2, p1)
+        @test ispermutation([round.(v) for v in vertices_list(cap1)],
+                            [N[1, 1], N[0, 1], N[1, 0], N[0, 0]])
+        @test ispermutation([round.(v) for v in vertices_list(cap1)],
+                            [round.(v) for v in vertices_list(cap2)])
     end
 end
