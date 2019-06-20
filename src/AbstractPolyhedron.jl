@@ -3,8 +3,7 @@ export AbstractPolyhedron
 """
     AbstractPolyhedron{N<:Real} <: LazySet{N}
 
-Abstract type for polyhedral sets, i.e., sets with finitely many flat facets, or
-equivalently, sets defined as an intersection of a finite number of half-spaces.
+Abstract type for compact convex polyhedral sets.
 
 ### Notes
 
@@ -22,6 +21,11 @@ julia> subtypes(AbstractPolyhedron)
  Line
  Universe
 ```
+
+Polyhedra are defined as the intersection of a finite number of closed
+half-spaces.
+As such, polyhedra are closed and convex but not necessarily bounded.
+Bounded polyhedra are called *polytopes* (see [`AbstractPolytope`](@ref)).
 """
 abstract type AbstractPolyhedron{N<:Real} <: LazySet{N} end
 
