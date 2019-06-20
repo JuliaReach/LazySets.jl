@@ -280,6 +280,23 @@ function σ(d::AbstractVector{N}, S::AbstractSingleton{N}) where {N<:Real}
     return element(S)
 end
 
+"""
+    ρ(d::AbstractVector{N}, S::AbstractSingleton{N}) where {N<:Real}
+
+Evaluate the support function of a set with a single value in a given direction.
+
+### Input
+
+- `d` -- direction
+- `S` -- set with a single value
+
+### Output
+
+Evaluation of the support function in the given direction.
+"""
+function ρ(d::AbstractVector{N}, S::AbstractSingleton{N}) where {N<:Real}
+    return dot(d, element(S))
+end
 
 """
     ∈(x::AbstractVector{N}, S::AbstractSingleton{N})::Bool where {N<:Real}

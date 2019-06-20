@@ -263,6 +263,7 @@ This interface defines the following functions:
 
 ```@docs
 σ(::AbstractVector{N}, ::AbstractSingleton{N}) where {N<:Real}
+ρ(::AbstractVector{N}, ::AbstractSingleton{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::AbstractSingleton{N}) where {N<:Real}
 an_element(::AbstractSingleton{N}) where {N<:Real}
 center(::AbstractSingleton{N}) where {N<:Real}
