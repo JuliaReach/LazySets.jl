@@ -260,6 +260,7 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 Interval
 dim(::Interval)
 σ(::AbstractVector{N}, ::Interval{N}) where {N<:Real}
+ρ(::AbstractVector{N}, ::Interval{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::Interval{N}) where {N<:Real}
 ∈(::N, ::Interval{N}) where {N<:Real}
 an_element(::Interval{N}) where {N<:Real}
