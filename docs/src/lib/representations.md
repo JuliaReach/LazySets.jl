@@ -633,6 +633,7 @@ translate(::Universe{N}, ::AbstractVector{N}) where {N<:Real}
 ZeroSet
 dim(::ZeroSet)
 σ(::AbstractVector{N}, ::ZeroSet{N}) where {N<:Real}
+ρ(::AbstractVector{N}, ::ZeroSet{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::ZeroSet{N}) where {N<:Real}
 rand(::Type{ZeroSet})
 element(::ZeroSet{N}) where {N<:Real}
