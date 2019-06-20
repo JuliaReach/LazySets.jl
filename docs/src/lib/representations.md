@@ -151,6 +151,7 @@ EmptySet
 ∅
 dim(::EmptySet)
 σ(::AbstractVector{N}, ::EmptySet{N}) where {N<:Real}
+ρ(::AbstractVector{N}, ::EmptySet{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::EmptySet{N}) where {N<:Real}
 an_element(::EmptySet)
 rand(::Type{EmptySet})

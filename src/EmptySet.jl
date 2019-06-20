@@ -52,7 +52,7 @@ Return the support vector of an empty set.
 ### Input
 
 - `d` -- direction
-- `∅` -- an empty set
+- `∅` -- empty set
 
 ### Output
 
@@ -60,6 +60,24 @@ An error.
 """
 function σ(d::AbstractVector{N}, ∅::EmptySet{N}) where {N<:Real}
     error("the support vector of an empty set does not exist")
+end
+
+"""
+    ρ(d::AbstractVector{N}, ∅::EmptySet{N}) where {N<:Real}
+
+Evaluate the support function of an empty set in a given direction.
+
+### Input
+
+- `d` -- direction
+- `∅` -- empty set
+
+### Output
+
+An error.
+"""
+function ρ(d::AbstractVector{N}, ∅::EmptySet{N}) where {N<:Real}
+    error("the support function of an empty set does not exist")
 end
 
 """
