@@ -191,6 +191,35 @@ function σ(d::AbstractVector{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
 end
 
 """
+    ρ(d::AbstractVector{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
+
+Evaluate the support function of a hyperrectangular set in a given direction.
+
+### Input
+
+- `d` -- direction
+- `H` -- hyperrectangular set
+
+### Output
+
+Evaluation of the support function in the given direction.
+"""
+function ρ(d::AbstractVector{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
+    @assert length(d) == dim(H) "a $(length(d))-dimensional vector is " *
+                                "incompatible with a $(dim(H))-dimensional set"
+    c = center(H)
+    res = zero(N)
+    @inbounds for (i, di) in enumerate(d)
+        if di < zero(N)
+            res += di * (c[i] - radius_hyperrectangle(H, i))
+        elseif di > zero(N)
+            res += di * (c[i] + radius_hyperrectangle(H, i))
+        end
+    end
+    return res
+end
+
+"""
     norm(H::AbstractHyperrectangle, [p]::Real=Inf)::Real
 
 Return the norm of a hyperrectangular set.

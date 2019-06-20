@@ -238,6 +238,7 @@ This interface defines the following functions:
 norm(::AbstractHyperrectangle, ::Real=Inf)
 radius(::AbstractHyperrectangle, ::Real=Inf)
 σ(::AbstractVector{N}, ::AbstractHyperrectangle{N}) where {N<:Real}
+ρ(::AbstractVector{N}, ::AbstractHyperrectangle{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::AbstractHyperrectangle{N}) where {N<:Real}
 vertices_list(::AbstractHyperrectangle{N}) where {N<:Real}
 constraints_list(::AbstractHyperrectangle{N}) where {N<:Real}
