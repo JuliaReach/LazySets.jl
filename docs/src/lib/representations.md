@@ -66,6 +66,7 @@ Inherited from [`AbstractZonotope`](@ref):
 
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`σ`](@ref σ(::AbstractVector{N}, ::AbstractHyperrectangle{N}) where {N<:Real})
+* [`ρ`](@ref σ(::AbstractVector{N}, ::AbstractHyperrectangle{N}) where {N<:Real})
 * [`∈`](@ref ∈(::AbstractVector{N}, ::AbstractHyperrectangle{N}) where {N<:Real})
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`vertices_list`](@ref vertices_list(::AbstractHyperrectangle{N}) where {N<:Real})
@@ -151,6 +152,7 @@ EmptySet
 ∅
 dim(::EmptySet)
 σ(::AbstractVector{N}, ::EmptySet{N}) where {N<:Real}
+ρ(::AbstractVector{N}, ::EmptySet{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::EmptySet{N}) where {N<:Real}
 an_element(::EmptySet)
 rand(::Type{EmptySet})
@@ -245,6 +247,7 @@ Inherited from [`AbstractZonotope`](@ref):
 
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`σ`](@ref σ(::AbstractVector{N}, ::AbstractHyperrectangle{N}) where {N<:Real})
+* [`ρ`](@ref σ(::AbstractVector{N}, ::AbstractHyperrectangle{N}) where {N<:Real})
 * [`∈`](@ref ∈(::AbstractVector{N}, ::AbstractHyperrectangle{N}) where {N<:Real})
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
@@ -260,6 +263,7 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 Interval
 dim(::Interval)
 σ(::AbstractVector{N}, ::Interval{N}) where {N<:Real}
+ρ(::AbstractVector{N}, ::Interval{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::Interval{N}) where {N<:Real}
 ∈(::N, ::Interval{N}) where {N<:Real}
 an_element(::Interval{N}) where {N<:Real}
@@ -633,6 +637,7 @@ translate(::Universe{N}, ::AbstractVector{N}) where {N<:Real}
 ZeroSet
 dim(::ZeroSet)
 σ(::AbstractVector{N}, ::ZeroSet{N}) where {N<:Real}
+ρ(::AbstractVector{N}, ::ZeroSet{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::ZeroSet{N}) where {N<:Real}
 rand(::Type{ZeroSet})
 element(::ZeroSet{N}) where {N<:Real}

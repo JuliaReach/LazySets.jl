@@ -87,6 +87,7 @@ Return the support vector of a zero set.
 
 ### Input
 
+- `d` -- direction
 - `Z` -- a zero set, i.e., a set that only contains the origin
 
 ### Output
@@ -97,6 +98,25 @@ set.
 function σ(d::AbstractVector{N}, Z::ZeroSet{N}) where {N<:Real}
     @assert length(d) == dim(Z) "the direction has the wrong dimension"
     return element(Z)
+end
+
+"""
+    ρ(d::AbstractVector{N}, Z::ZeroSet{N}) where {N<:Real}
+
+Evaluate the support function of a zero set in a given direction.
+
+### Input
+
+- `d` -- direction
+- `Z` -- a zero set, i.e., a set that only contains the origin
+
+### Output
+
+`0`.
+"""
+function ρ(d::AbstractVector{N}, Z::ZeroSet{N}) where {N<:Real}
+    @assert length(d) == dim(Z) "the direction has the wrong dimension"
+    return zero(N)
 end
 
 """

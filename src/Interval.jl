@@ -123,7 +123,7 @@ dim(x::Interval)::Int = 1
 """
     σ(d::AbstractVector{N}, x::Interval{N}) where {N<:Real}
 
-Return the support vector of an ellipsoid in a given direction.
+Return the support vector of an interval in a given direction.
 
 ### Input
 
@@ -136,7 +136,26 @@ Support vector in the given direction.
 """
 function σ(d::AbstractVector{N}, x::Interval{N}) where {N<:Real}
     @assert length(d) == dim(x)
-    return d[1] > 0 ? [x.dat.hi] : [x.dat.lo]
+    return d[1] > zero(N) ? high(x) : low(x)
+end
+
+"""
+    ρ(d::AbstractVector{N}, x::Interval{N}) where {N<:Real}
+
+Evaluate the support function of an interval in a given direction.
+
+### Input
+
+- `d` -- direction
+- `x` -- interval
+
+### Output
+
+Evaluation of the support function in the given direction.
+"""
+function ρ(d::AbstractVector{N}, x::Interval{N}) where {N<:Real}
+    @assert length(d) == dim(x)
+    return d[1] * (d[1] > zero(N) ? max(x) : min(x))
 end
 
 """
