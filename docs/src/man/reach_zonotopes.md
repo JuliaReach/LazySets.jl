@@ -29,12 +29,20 @@ in the time interval ``t ∈ [0, T]``, where:
 Given a step size ``δ``, `Algorithm1` returns a sequence of sets that
 overapproximates the states reachable by any trajectory of this IVP.
 
+We present the algorithm parametric in the option to compute the sets in a lazy
+or in a concrete way.
+If the parameter `lazy` is `true`, the implementation constructs a `LinearMap`
+wrapper (represented as a multiplication `*` of a matrix and a set) and a
+`MinkowskiSum` wrapper (represented as a sum `⊕` of two sets).
+If the parameter `lazy` is `false`, the implementation calls the concrete
+counterparts `linear_map` and `minkowski_sum`.
+
 ## Algorithm
 
 ```@example example_reach_zonotopes
 using Plots, LazySets, LinearAlgebra, SparseArrays
 
-function Algorithm1(A, X0, δ, μ, T)
+function Algorithm1(A, X0, δ, μ, T; lazy::Bool=false)
     # bloating factors
     Anorm = norm(A, Inf)
     α = (exp(δ * Anorm) - 1 - δ * Anorm) / norm(X0, Inf)
@@ -54,13 +62,17 @@ function Algorithm1(A, X0, δ, μ, T)
     ϕm = (I-ϕ) / 2
     c = X0.center
     Q1_generators = hcat(ϕp * X0.generators, ϕm * c, ϕm * X0.generators)
-    Q[1] = Zonotope(ϕp * c, Q1_generators) ⊕ BallInf(zeros(n), α + β)
+    Q[1] = lazy ?
+        Zonotope(ϕp * c, Q1_generators) ⊕ BallInf(zeros(n), α + β) :
+        minkowski_sum(Zonotope(ϕp * c, Q1_generators), BallInf(zeros(n), α + β))
     R[1] = Q[1]
 
     # set recurrence for [δ, 2δ], ..., [(N-1)δ, Nδ]
     ballβ = BallInf(zeros(n), β)
     for i in 2:N
-        Q[i] = ϕ * Q[i-1] ⊕ ballβ
+        Q[i] = lazy ?
+            ϕ * Q[i-1] ⊕ ballβ :
+            minkowski_sum(linear_map(ϕ, Q[i-1]), ballβ)
         R[i] = Q[i]
     end
     return R
