@@ -186,14 +186,14 @@ for N in [Float64, Rational{Int}, Float32]
     Z2 = Zonotope(zeros(N, 2), hcat(N[0, 1]))
     Zch = overapproximate(ConvexHull(Z1, Z2), Zonotope)
     # the result is a diamond (tight)
-    @test Zch == Zonotope(N[0.0, 0.0], N[0.5 0.5; 0.5 -0.5])
+    @test Zch == Zonotope(N[0, 0], N[0.5 0.5; 0.5 -0.5])
 
     # different order
     Z1 = Zonotope(zeros(N, 2), hcat(N[1, 0]))
     Z2 = Zonotope(N[0, 0], N[1 0; 0 1])
     # the result is a box (tight)
     Zch = overapproximate(ConvexHull(Z1, Z2), Zonotope)
-    @test Zch == Zonotope(N[0.0, 0.0], N[1.0 0.0; 0.0 1.0])
+    @test Zch == Zonotope(N[0, 0], N[1 0; 0 1])
 end
 
 for N in [Float64, Rational{Int}]
@@ -209,5 +209,14 @@ for N in [Float64, Rational{Int}]
     P = HPolytope(constraints_list(Z))
     for d in LazySets.Approximations.BoxDiagDirections{N}(2)
         @test ρ(d, P) == ρ(d, Z)
+    end
+end
+
+for N in [Float64]
+    if test_suite_polyhedra
+        # constraints_list for generator matrix with a zero row
+        Z = Zonotope(N[0, 0], N[2 3; 0 0])
+        P = tovrep(HPolygon(constraints_list(Z)))
+        @test vertices_list(P) ≈ [N[5, 0], [-5, 0]]
     end
 end

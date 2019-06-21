@@ -159,15 +159,6 @@ for N in [Float64, Float32]
     @test lcl[8].a ≈ N[sqrt(2)/2, -sqrt(2)/2]
     @test lcl[8].b ≈ N(1)
 
-    # Zonotope approximation
-    Z1 = Zonotope(ones(N, 2), [N[1, 0], N[0, 1], N[1, 1]])
-    Z2 = Zonotope(-ones(N, 2), [N[0.5, 1], N[-0.1, 0.9], N[1, 4]])
-    Y = ConvexHull(Z1, Z2)
-    Y_polygon = overapproximate(Y, N(1e-3)) # overapproximate with a polygon
-    Y_zonotope = overapproximate(Y, Zonotope) # overapproximate with a zonotope
-    @test Y_polygon ⊆ Y_zonotope
-    @test !(Y_zonotope ⊆ Y_polygon)
-
     # decomposed intersection between cartesian product array and abstract polyhedron
     i1 = Interval(N[0, 1])
     i2 = Interval(N[2, 3])
@@ -197,7 +188,7 @@ for N in [Float64, Float32]
     @test all([X isa CartesianProductArray for X in [d_int_cpa, o_d_int_g, o_d_int_g_3_neg]])
 end
 
-for N in [Float64] # due to sparse vectors: a = sparse(Float32[1 -1; 1 1];); a \ Float32[4, 10]
+for N in [Float64]
     # decomposed linear map approximation
     i1 = Interval(N[0, 1])
     i2 = Interval(N[2, 3])
@@ -222,9 +213,15 @@ for N in [Float64] # due to sparse vectors: a = sparse(Float32[1 -1; 1 1];); a \
     @test vertices_list(projection) ≈ [[0.5, 2.5], [0., 2.5], [0., 2], [0.5, 2.]]
     projection = project(overapproximate(int_g_comb, OctDirections), [1, 2], OctDirections)
     @test vertices_list(projection) ≈ [[0., 2.5], [0., 2.], [0.5, 2.]]
-end
 
-for N in [Float64] # due to sparse vectors: a = sparse(Float32[1 -1; 1 1];); a \ Float32[4, 10]
+    # Zonotope approximation
+    Z1 = Zonotope(ones(N, 2), [N[1, 0], N[0, 1], N[1, 1]])
+    Z2 = Zonotope(-ones(N, 2), [N[0.5, 1], N[-0.1, 0.9], N[1, 4]])
+    Y = ConvexHull(Z1, Z2)
+    Y_polygon = overapproximate(Y, N(1e-3)) # overapproximate with a polygon
+    Y_zonotope = overapproximate(Y, Zonotope) # overapproximate with a zonotope
+    @test Y_polygon ⊆ Y_zonotope
+
     #decomposed linear map approximation
     i1 = Interval(N[0, 1])
     i2 = Interval(N[2, 3])
