@@ -5,7 +5,7 @@ export dot_zero,
        samedir,
        nonzero_indices,
        rectify,
-       iscounterclockwise
+       is_cyclic_permutation
 
 """
     dot_zero(x::AbstractVector{N}, y::AbstractVector{N}) where{N<:Real}
@@ -219,23 +219,26 @@ function rectify(x::AbstractVector{N}) where {N<:Real}
 end
 
 """
-    iscounterclockwise(result::AbstractVector,
-                       correct_expr::AbstractVector) where {N<:Real}
+    is_cyclic_permutation(candidate::AbstractVector, paragon::AbstractVector)
 
-Returns a boolean, true if the elements in `result` are ordered in
-a couter-clockwise fashion and in the same order as `correct_expr`.
+Checks if the elements in `candidate` are a cyclic permutation of the elements
+in `paragon`.
 
 ### Input
 
-- `result` -- vector
-- `correct_expr` -- paragon vector with elements in ccw order
+- `candidate` -- candidate vector
+- `paragon`   -- paragon vector
 
 ### Output
 
-A boolean indicating if the elements of `result` are in the same order as
-`correct_expr` or any of its cyclic permutations.
+A boolean indicating if the elements of `candidate` are in the same order as in
+`paragon` or any of its cyclic permutations.
 """
-function iscounterclockwise(result::AbstractVector,
-                            correct_expr::AbstractVector)
-    return any([result == circshift(correct_expr, i) for i in 0:length(result)-1])
+function is_cyclic_permutation(candidate::AbstractVector,
+                               paragon::AbstractVector)
+    m = length(candidate)
+    if length(paragon) != m
+        return false
+    end
+    return any(candidate == circshift(paragon, i) for i in 0:m-1)
 end
