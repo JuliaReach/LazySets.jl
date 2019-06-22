@@ -128,6 +128,8 @@ Return the list of vertices of a hyperrectangular set.
 ### Output
 
 A list of vertices.
+Zeros in the radius are correctly handled, i.e., the result does not contain any
+duplicate vertices.
 
 ### Notes
 
@@ -135,12 +137,43 @@ For high dimensions, it is preferable to develop a `vertex_iterator` approach.
 """
 function vertices_list(H::AbstractHyperrectangle{N}
                       )::Vector{Vector{N}} where {N<:Real}
-    # fast evaluation if H has radius 0
-    if radius_hyperrectangle(H) == zeros(N, dim(H))
-        return [center(H)]
+    n = dim(H)
+
+    # three-valued vector; initially 0 if radius is zero and 1 otherwise
+    trivector = Vector{Int8}(undef, n)
+    m = 1
+    c = center(H)
+    v = copy(c)
+    @inbounds for i in 1:n
+        ri = radius_hyperrectangle(H, i)
+        if iszero(ri)
+            trivector[i] = Int8(0)
+        else
+            v[i] += ri
+            trivector[i] = Int8(1)
+            m *= 2
+        end
     end
-    return [center(H) .+ si .* radius_hyperrectangle(H)
-        for si in Iterators.product([[1, -1] for i = 1:dim(H)]...)][:]
+
+    # create vertices by modifying the three-valued vector and constructing the
+    # corresponding point; for efficiency, we create a copy of the old point and
+    # modify every entry that has changed in the three-valued vector
+    vlist = Vector{Vector{N}}(undef, m)
+    vlist[1] = copy(v)
+    @inbounds for i in 2:m
+        for j in 1:length(v)
+            if trivector[j] == Int8(-1)
+                trivector[j] = Int8(1)
+                v[j] = c[j] + radius_hyperrectangle(H, j)
+            elseif trivector[j] == Int8(1)
+                trivector[j] = Int8(-1)
+                v[j] = c[j] - radius_hyperrectangle(H, j)
+                break
+            end
+        end
+        vlist[i] = copy(v)
+    end
+    return vlist
 end
 
 """
