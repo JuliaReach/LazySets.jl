@@ -21,7 +21,8 @@ for N in [Float64, Rational{Int}, Float32]
     @test ngens(h) == 2
     h_flat = Hyperrectangle(N[1, 2, 3, 4, 5], N[1, 0, 2, 0, 3])
     @test collect(generators(h_flat)) ==
-        [UnitVector(1, 5, N(1)), UnitVector(3, 5, N(2)), UnitVector(5, 5, N(3))]
+        [SingleEntryVector(1, 5, N(1)), SingleEntryVector(3, 5, N(2)),
+         SingleEntryVector(5, 5, N(3))]
     @test genmat(h_flat) == N[1 0 0; 0 0 0; 0 2 0; 0 0 0; 0 0 3]
     @test ngens(h_flat) == 3
 

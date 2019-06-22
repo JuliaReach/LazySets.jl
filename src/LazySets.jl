@@ -10,8 +10,14 @@ import Random
 using Random: AbstractRNG, GLOBAL_RNG, SamplerType, shuffle
 import InteractiveUtils: subtypes
 
-export Approximations
+export Arrays, Approximations
 export ×
+
+# =======================
+# Arrays auxiliary module
+# =======================
+include("Arrays/Arrays.jl")
+using .Arrays
 
 # ===================
 # Auxiliary functions

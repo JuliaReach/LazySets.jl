@@ -46,8 +46,8 @@ for _dummy_ in 1:1 # avoid global variable warnings
         A = N[1 4; 2 5; 3 6]
         x1 = N[0, 2, 0]
         y1 = N[3, 0]
-        x2 = UnitVector(2, 3, N(2))
-        y2 = UnitVector(1, 2, N(3))
+        x2 = SingleEntryVector(2, 3, N(2))
+        y2 = SingleEntryVector(1, 2, N(3))
         @test inner(x1, A, y1) == dot(x1, A * y1) == inner(x2, A, y2) ==
               dot(x2, A * y2) == N(12)
 
@@ -65,7 +65,7 @@ for _dummy_ in 1:1 # avoid global variable warnings
         n = 10
         A = rand(N, m, n)
         A[:, 1] = A[:, 5] = A[:, n] = zeros(N, m)
-        B = LazySets.delete_zero_columns(A)
+        B = LazySets.delete_zero_columns!(A)
         @test size(B) == (m, n-3)
     end
 end

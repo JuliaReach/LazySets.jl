@@ -197,7 +197,7 @@ function isbounded_unit_dimensions(S::LazySet{N})::Bool where {N<:Real}
     n = dim(S)
     @inbounds for i in 1:n
         for o in [one(N), -one(N)]
-            d = LazySets.Approximations.UnitVector(i, n, o)
+            d = SingleEntryVector(i, n, o)
             if ρ(d, S) == N(Inf)
                 return false
             end

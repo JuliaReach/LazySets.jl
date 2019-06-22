@@ -9,28 +9,35 @@ end
 
 ## Helpers for internal use only
 
+### Arrays module
+
+```@docs
+Arrays
+cross_product(::AbstractMatrix{N}) where {N<:Real}
+delete_zero_columns!
+dot_zero
+inner
+iscounterclockwise
+isinvertible
+ispermutation
+issquare
+nonzero_indices
+remove_duplicates_sorted!
+samedir
+SingleEntryVector
+```
+
 ### Functions and Macros
 
 ```@docs
 an_element_helper
 binary_search_constraints
-cross_product(::AbstractMatrix{N}) where {N<:Real}
-delete_zero_columns
-dot_zero
 get_radius!
-inner
-isinvertible
-ispermutation
-iscounterclockwise
-issquare
 is_right_turn
 is_tighter_same_dir_2D
-nonzero_indices
-samedir
 sign_cadlag
 _random_zero_sum_vector
 rectify
-remove_duplicates_sorted!
 require(::Symbol)
 reseed
 same_block_structure
@@ -50,7 +57,6 @@ get_constrained_lowdimset
 
 ```@docs
 CachedPair
-Approximations.UnitVector
 StrictlyIncreasingIndices
 ```
 
