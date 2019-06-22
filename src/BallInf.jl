@@ -143,6 +143,27 @@ end
 
 
 """
+    σ(d::AbstractVector{N}, B::BallInf{N}) where {N<:Real}
+
+Return the support vector of a ball in the infinity norm in a given direction.
+
+### Input
+
+- `d` -- direction
+- `B` -- ball in the infinity norm
+
+### Output
+
+The support vector in the given direction.
+If the direction has norm zero, the vertex with biggest values is returned.
+"""
+function σ(d::AbstractVector{N}, B::BallInf{N}) where {N<:Real}
+    @assert length(d) == dim(B) "a $(length(d))-dimensional vector is " *
+                                "incompatible with a $(dim(B))-dimensional set"
+    return center(B) .+ sign_cadlag.(d) .* B.radius
+end
+
+"""
     radius(B::BallInf, [p]::Real=Inf)::Real
 
 Return the radius of a ball in the infinity norm.
