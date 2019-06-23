@@ -17,7 +17,7 @@ cross_product(::AbstractMatrix{N}) where {N<:Real}
 delete_zero_columns!
 dot_zero
 inner
-iscounterclockwise
+is_cyclic_permutation
 isinvertible
 ispermutation
 issquare

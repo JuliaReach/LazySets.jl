@@ -8,8 +8,8 @@ import TaylorModels
 using TaylorModels: set_variables, TaylorModelN
 
 # non-exported helper functions
-using LazySets.Arrays: ispermutation, isinvertible, inner, iscounterclockwise,
-                       SingleEntryVector
+using LazySets.Arrays: ispermutation, isinvertible, inner,
+                       is_cyclic_permutation, SingleEntryVector
 
 # conversion between numeric types
 include("to_N.jl")
