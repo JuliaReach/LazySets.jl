@@ -15,6 +15,9 @@ const DEFAULT_COND_TOL = 1e6
 # matrix-matrix division
 @inline _At_ldiv_B(A, B) = transpose(A) \ B
 
+# rank of sparse matrix (see JuliaLang #30415)
+LinearAlgebra.rank(M::SparseMatrixCSC) = rank(qr(M))
+
 """
     issquare(M::AbstractMatrix)::Bool
 

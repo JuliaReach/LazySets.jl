@@ -210,6 +210,8 @@ for N in [Float64, Rational{Int}]
     for d in LazySets.Approximations.BoxDiagDirections{N}(2)
         @test ρ(d, P) == ρ(d, Z)
     end
+    # sparse matrix (#1468)
+    constraints_list(Zonotope(N[0, 0], sparse(N[1 0 ; 0 1])))
 end
 
 for N in [Float64]
