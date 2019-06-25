@@ -34,5 +34,6 @@ include("box_approximations.jl")
 include("template_directions.jl")
 include("overapproximate.jl")
 include("decompositions.jl")
+include("init.jl")
 
 end # module

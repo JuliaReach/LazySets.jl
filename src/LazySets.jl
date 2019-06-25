@@ -11,6 +11,7 @@ using Random: AbstractRNG, GLOBAL_RNG, SamplerType, shuffle
 import InteractiveUtils: subtypes
 
 export Approximations
+export ×
 
 # ===================
 # Auxiliary functions

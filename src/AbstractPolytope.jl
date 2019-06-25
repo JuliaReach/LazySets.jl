@@ -93,7 +93,7 @@ function isempty(P::AbstractPolytope)::Bool
 end
 
 function default_polyhedra_backend(P, N)
-    @assert isdefined(@__MODULE__, :Polyhedra) "this function needs the package 'Polyhedra' to be loaded"
+    require(:Polyhedra; fun_name="default_polyhedra_backend")
     error("no default backend for numeric type $N")
 end
 

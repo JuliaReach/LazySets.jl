@@ -303,7 +303,8 @@ function linear_map(M::AbstractMatrix{N},
                     cond_tol::Number=DEFAULT_COND_TOL,
                     use_inv::Bool=!issparse(M)
                    ) where {N<:Real}
-    @assert dim(P) == size(M, 2) "a linear map of size $(size(M)) cannot be applied to a set of dimension $(dim(P))"
+    @assert dim(P) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
+        "applied to a set of dimension $(dim(P))"
 
     if !check_invertibility || !isinvertible(M; cond_tol=cond_tol)
         # vertex representation is enforced or the matrix is not invertible => use vertex approach
@@ -321,7 +322,8 @@ function linear_map(M::AbstractMatrix{NM},
                     kwargs...) where {NM<:Real, NP<:Real}
     N = promote_type(NM, NP)
     if N != NP
-        error("conversion between numeric types of polyhedra not implemented yet (see #1181)")
+        error("conversion between numeric types of polyhedra not implemented " *
+            "yet (see #1181)")
     else
         return linear_map(N.(M), P; kwargs...)
     end
@@ -329,10 +331,11 @@ end
 
 function _linear_map_vrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N}) where {N<:Real}
     if !isbounded(P)
-        throw(ArgumentError("the linear map in vertex representation for an unbounded set is not defined"))
+        throw(ArgumentError("the linear map in vertex representation for an " *
+            "unbounded set is not defined"))
     end
-    @assert isdefined(@__MODULE__, :Polyhedra) "the linear map of a $(typeof(P)) " *
-            "by a non-invertible matrix needs the package 'Polyhedra' to be loaded"
+    require(:Polyhedra; fun_name="linear_map",
+            explanation="of a $(typeof(P)) by a non-invertible matrix")
     # since P is bounded, we pass an HPolytope and then convert it to vertex representation
     P = tovrep(HPolytope(constraints_list(P), check_boundedness=false))
     return _linear_map_vrep(M, P)

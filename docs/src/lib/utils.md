@@ -21,6 +21,7 @@ get_radius!
 inner
 isinvertible
 ispermutation
+iscounterclockwise
 issquare
 is_right_turn
 is_tighter_same_dir_2D
@@ -30,6 +31,7 @@ sign_cadlag
 _random_zero_sum_vector
 rectify
 remove_duplicates_sorted!
+require(::Symbol)
 reseed
 same_block_structure
 substitute
