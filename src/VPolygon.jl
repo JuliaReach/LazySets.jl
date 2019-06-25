@@ -264,7 +264,7 @@ function σ(d::AbstractVector{N}, P::VPolygon{N}) where {N <: Real}
     end
 end
 
-function _brute_force_support_vector(d, P)
+function _brute_force_support_vector(d::AbstractVector{N}, P::VPolygon{N}) where {N <: Real}
     i_max = 1
     @inbounds for i in 2:length(P.vertices)
         if dot(d, P.vertices[i] - P.vertices[i_max]) > zero(N)
@@ -274,7 +274,7 @@ function _brute_force_support_vector(d, P)
     return P.vertices[i_max]
 end
 
-function _binary_support_vector(d, P)
+function _binary_support_vector(d::AbstractVector{N}, P::VPolygon{N}) where {N <: Real}
     push!(P.vertices, P.vertices[1]) #add extra vertice on the end equal to the first
     n = length(P.vertices)
     a = 1; b = n # start chain = [1,n] with P.vertices[n]=P.vertices[0]
