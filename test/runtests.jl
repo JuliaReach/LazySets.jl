@@ -47,6 +47,7 @@ end
 
 if test_suite_polyhedra || test_suite_plotting
     import Polyhedra
+    using CDDLib # for tests that require CDDLib specific backend=...
 
     # fix namespace conflicts with Polyhedra
     using LazySets: dim, HalfSpace, Interval, Line, translate

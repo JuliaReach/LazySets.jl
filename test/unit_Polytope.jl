@@ -231,8 +231,7 @@ if test_suite_polyhedra
         p2 = HPolytope(A, b)
         @test intersection(p1, p2) isa EmptySet{N}
         @test intersection(p1, p2; backend=Polyhedra.default_library(2, N)) isa EmptySet{N}
-        # @test intersection(p1, p2; backend=CDDLib.Library()) isa EmptySet{N}
-        # commented because we do not load CDDLib at the moment
+        @test intersection(p1, p2; backend=CDDLib.Library()) isa EmptySet{N}
 
         # intersection with half-space
         hs = HalfSpace(N[2, -2], N(-1))

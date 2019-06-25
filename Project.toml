@@ -18,6 +18,7 @@ SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [compat]
 julia = "≥ 1.0.0"
+CDDLib = "≥ 0.5.2"
 Expokit = "≥ 0.1.0"
 GLPKMathProgInterface = "≥ 0.4.0"
 IntervalArithmetic = "≥ 0.14.0"
@@ -29,6 +30,7 @@ Requires = "≥ 0.4.0"
 TaylorModels = "≥ 0.1.1"
 
 [extras]
+CDDLib = "3391f64e-dcde-5f30-b752-e11513730f60"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 Expokit = "a1e7a1ef-7a5d-5822-a38c-be74e1bb89f4"
 GLPKMathProgInterface = "3c7084bd-78ad-589a-b5bb-dbd673274bea"
@@ -44,6 +46,6 @@ Requires = "ae029012-a4dd-5104-9daa-d747884805df"
 TaylorModels = "314ce334-5f6e-57ae-acf6-00b6e903104a"
 
 [targets]
-test = ["Documenter", "Expokit", "GLPKMathProgInterface", "GR",
+test = ["CDDLib", "Documenter", "Expokit", "GLPKMathProgInterface", "GR",
         "IntervalArithmetic", "MathProgBase", "Optim", "Pkg", "Plots",
         "Polyhedra", "RecipesBase", "Requires", "TaylorModels"]
