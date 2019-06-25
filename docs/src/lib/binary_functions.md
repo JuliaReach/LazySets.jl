@@ -49,6 +49,12 @@ convex_hull(::VPolytope{N}, ::VPolytope{N}) where {N<:Real}
 convex_hull(::VPolygon{N}, ::VPolygon{N}) where {N<:Real}
 ```
 
+## Minkowski sum
+
+```@docs
+minkowski_sum(::AbstractPolytope{N}, ::AbstractPolytope{N}) where {N<:Real}
+```
+
 ## Intersection of two sets
 
 ```@docs
