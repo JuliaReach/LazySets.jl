@@ -181,9 +181,9 @@ for N in [Float64, Float32, Rational{Int}]
                                                 N[8, 4], N[6, 6], N[2, 8]])
         
         # test for different starting points in vertices_list of minkowski sum
-        P = VPolygon([N[4, 0], N[6, 2], N[4, 4]];)
-        P2 = VPolygon([N[4, 4], N[4, 0], N[6, 2]]);
-        Q = VPolygon([N[-2, -2], N[2, 0], N[2, 2], N[-2, 4]]);
+        P = VPolygon([N[4, 0], N[6, 2], N[4, 4]])
+        P2 = VPolygon([N[4, 4], N[4, 0], N[6, 2]])
+        Q = VPolygon([N[-2, -2], N[2, 0], N[2, 2], N[-2, 4]])
         @test is_cyclic_permutation(vertices_list(minkowski_sum(P, Q)), vertices_list(minkowski_sum(P2, Q)))
 
         # test for corner case of parallel edges in minkowski sum
@@ -193,7 +193,7 @@ for N in [Float64, Float32, Rational{Int}]
         R = VPolygon(C)
         S = VPolygon(D)
         RS = minkowski_sum(R, S)
-        @test LazySets.is_cyclic_permutation(RS.vertices, [N[4, 3], N[11, 3], N[11, 8],
+        @test is_cyclic_permutation(RS.vertices, [N[4, 3], N[11, 3], N[11, 8],
                                                 N[9,12], N[7, 12], N[4, 10]])
     end
 
