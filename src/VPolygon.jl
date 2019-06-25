@@ -248,7 +248,7 @@ each vector along the given direction and runs in ``O(n)`` where
 ``n`` is the number of vertices.
 For the binary search the algorithm runs in ``O(log n)``.
 """
-function σ(d::AbstractVector{N}, P::VPolygon{N}) where {N <: Real}
+function σ(d::AbstractVector{N}, P::VPolygon{N}) where {N<:Real}
     @assert !isempty(P.vertices) "the polygon has no vertices"
     if length(P.vertices) > 10
         _binary_support_vector(d, P)
