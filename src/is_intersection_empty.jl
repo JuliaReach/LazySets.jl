@@ -98,7 +98,7 @@ function is_intersection_empty(H1::AbstractHyperrectangle{N},
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     empty_intersection = false
     center_diff = center(H2) - center(H1)
-    for i in eachindex(center_diff)
+    @inbounds for i in eachindex(center_diff)
         if abs(center_diff[i]) >
                 radius_hyperrectangle(H1, i) + radius_hyperrectangle(H2, i)
             empty_intersection = true
@@ -115,13 +115,13 @@ function is_intersection_empty(H1::AbstractHyperrectangle{N},
     # compute a witness 'v' in the intersection
     v = copy(center(H1))
     c2 = center(H2)
-    for i in eachindex(center_diff)
+    @inbounds for i in eachindex(center_diff)
         if v[i] <= c2[i]
             # second center is right of first center
             v[i] += min(radius_hyperrectangle(H1, i), center_diff[i])
         else
             # second center is left of first center
-            v[i] -= max(radius_hyperrectangle(H1, i), -center_diff[i])
+            v[i] -= min(radius_hyperrectangle(H1, i), -center_diff[i])
         end
     end
     return (false, v)

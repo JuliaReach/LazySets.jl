@@ -148,6 +148,7 @@ for N in [Float64, Rational{Int}, Float32]
     H1 = Hyperrectangle(N[1, 1], N[2, 2])
     H2 = Hyperrectangle(N[3, 3], N[2, 2])
     B1 = BallInf(N[2, 4], N(0.5))
+    B2 = BallInf(N[3, 3], N(0.5))
     for (X1, X2) in [(H1, H2), (H2, H1)]
         intersection_empty, point = is_intersection_empty(X1, X2, true)
         cap = intersection(X1, X2)
@@ -159,6 +160,11 @@ for N in [Float64, Rational{Int}, Float32]
     cap = intersection(H1, B1)
     @test cap isa EmptySet{N}
     @test is_intersection_empty(H1, B1) && is_intersection_empty(H1, B1, true)[1]
+    cap = intersection(H1, B2)
+    @test cap == Hyperrectangle(N[2.75, 2.75], N[0.25, 0.25])
+    intersection_empty, point = is_intersection_empty(H1, B2, true)
+    @test !is_intersection_empty(H1, B2) && !intersection_empty && point ∈ H1 &&
+          point ∈ B2
 
     # linear map (concrete)
     P = linear_map(N[1 0; 0 2], H1)
