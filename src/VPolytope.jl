@@ -8,7 +8,8 @@ export VPolytope,
        convex_hull,
        cartesian_product,
        linear_map,
-       remove_redundant_vertices
+       remove_redundant_vertices,
+       minkowski_sum
 
 """
     VPolytope{N<:Real} <: AbstractPolytope{N}
@@ -448,6 +449,39 @@ The same polytope instance.
 """
 function tovrep(P::VPolytope)
     return P
+end
+
+"""
+    minkowski_sum(V1::VPolytope{N}, V2::VPolytope{N};
+                  [backend]=default_polyhedra_backend(V1, N)) where {N<:Real}
+
+Compute the Minkowski sum between two polytopes in V-representation.
+
+### Input
+
+- `V1`      -- polytope in vertex representation
+- `V2`      -- another polytope in vertex representation
+- `backend` -- (optional, default: `default_polyhedra_backend(V1, N)`) the
+               backend for polyhedral computations used to post-process with a
+               convex hull
+
+### Output
+
+A new polytope whose vertices are the convex hull of the sum of all possible
+sums of vertices of `V1` and `V2`.
+"""
+function minkowski_sum(V1::VPolytope{N}, V2::VPolytope{N};
+                       backend=default_polyhedra_backend(V1, N)) where {N<:Real}
+    vlist1, vlist2 = V1.vertices, V2.vertices
+    n, m = length(vlist1), length(vlist2)
+    Vout = Vector{Vector{N}}()
+    sizehint!(Vout, n + m)
+    @inbounds for vi in vlist1
+        for vj in vlist2
+            push!(Vout, vi + vj)
+        end
+    end
+    return VPolytope(convex_hull!(Vout, backend=backend))
 end
 
 # ==========================================

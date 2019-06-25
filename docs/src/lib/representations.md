@@ -544,6 +544,7 @@ tovrep(::VPolytope)
 cartesian_product(::VPolytope{N}, ::VPolytope{N}) where N
 polyhedron(::VPolytope{N}) where {N<:Real}
 linear_map(::AbstractMatrix{N}, ::VPolytope{N}) where {N<:Real}
+minkowski_sum(::VPolytope{N}, ::VPolytope{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
