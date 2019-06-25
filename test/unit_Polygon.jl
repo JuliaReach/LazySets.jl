@@ -177,10 +177,16 @@ for N in [Float64, Float32, Rational{Int}]
         P = VPolygon(A)
         Q = VPolygon(B)
         PQ = minkowski_sum(P, Q)
-        @test LazySets.ispermutation(PQ.vertices, [N[2, -2], N[6, 0], N[8, 2],
+        @test ispermutation(PQ.vertices, [N[2, -2], N[6, 0], N[8, 2],
                                                 N[8, 4], N[6, 6], N[2, 8]])
+        
+        # test for different starting points in vertices_list of minkowski sum
+        P = VPolygon([N[4, 0], N[6, 2], N[4, 4]];)
+        P2 = VPolygon([N[4, 4], N[4, 0], N[6, 2]]);
+        Q = VPolygon([N[-2, -2], N[2, 0], N[2, 2], N[-2, 4]]);
+        @test ispermutation(minkowski_sum(P, Q), minkowski_sum(P2, Q))
 
-        #test for corner case of parallel edges in minkowski sum
+        # test for corner case of parallel edges in minkowski sum
         C = [N[10, 5], N[10, 10], N[8, 10], N[5, 8], N[5, 5]]
         D = [N[-1, -2], N[1, -2], N[-1, 2]]
 
