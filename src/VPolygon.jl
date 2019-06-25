@@ -244,7 +244,7 @@ If the direction has norm zero, the first vertex is returned.
 This implementation uses a binary search algorithm when the polygon has more
 than ten vertices and a brute-force search when it has ten or less.
 For the brute-force search, it compares the projection of
-each vector along the given direction, it runs in ``O(n)`` where 
+each vector along the given direction and runs in ``O(n)`` where 
 ``n`` is the number of vertices.
 For the binary search the algorithm runs in ``O(log n)``.
 """
