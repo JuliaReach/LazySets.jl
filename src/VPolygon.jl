@@ -249,12 +249,6 @@ each vector along the given direction, it runs in ``O(n)`` where
 For the binary search the algorithm runs in ``O(log n)``.
 """
 
-@inline _up(u, v) = dot(u, v) > 0
-@inline _down(u, v) = dot(u, v) < 0
-@inline _dr(u, Vi, Vj) = (dot(u, (Vi) - (Vj))) # direction sign of (Vi-Vj)
-@inline _above(u, Vi, Vj) = (_dr(u, Vi, Vj) > 0) # true if Vi is above Vj
-@inline _below(u, Vi, Vj) = (_dr(u, Vi, Vj) < 0) # true if Vi is below Vj
-
 function σ(d::AbstractVector{N}, P::VPolygon{N}) where {N <: Real}
     @assert !isempty(P.vertices) "the polygon has no vertices"
     if length(P.vertices) > 10
@@ -273,6 +267,12 @@ function _brute_force_support_vector(d::AbstractVector{N}, P::VPolygon{N}) where
     end
     return P.vertices[i_max]
 end
+
+@inline _up(u, v) = dot(u, v) > 0
+@inline _down(u, v) = dot(u, v) < 0
+@inline _dr(u, Vi, Vj) = (dot(u, (Vi) - (Vj))) # direction sign of (Vi-Vj)
+@inline _above(u, Vi, Vj) = (_dr(u, Vi, Vj) > 0) # true if Vi is above Vj
+@inline _below(u, Vi, Vj) = (_dr(u, Vi, Vj) < 0) # true if Vi is below Vj
 
 function _binary_support_vector(d::AbstractVector{N}, P::VPolygon{N}) where {N <: Real}
     push!(P.vertices, P.vertices[1]) #add extra vertice on the end equal to the first
