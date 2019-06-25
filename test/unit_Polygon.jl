@@ -193,7 +193,7 @@ for N in [Float64, Float32, Rational{Int}]
         R = VPolygon(C)
         S = VPolygon(D)
         RS = minkowski_sum(R, S)
-        @test LazySets.is_cyclic_permutation(RS.vertices, [N[4, 3], N[11, 3], N[11, 8],
+        @test is_cyclic_permutation(RS.vertices, [N[4, 3], N[11, 3], N[11, 8],
                                                 N[9,12], N[7, 12], N[4, 10]])
     end
 
