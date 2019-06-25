@@ -133,23 +133,16 @@ function _two_points_1d!(points)
     if p1 == p2
         # check for redundancy
         pop!(points)
-    elseif p1[1] > p2[1]
-        points[1], points[2] = p2, p1
     end
     return points
 end
 
 function _two_points_2d!(points)
-
     # special case, see #876
     p1, p2 = points[1], points[2]
     if p1 == p2
         # check for redundancy
         pop!(points)
-    elseif p1 <= p2
-        nothing
-    else
-        points[1], points[2] = p2, p1
     end
     return points
 end
