@@ -248,75 +248,83 @@ each vector along the given direction, it runs in ``O(n)`` where
 ``n`` is the number of vertices.
 For the binary search the algorithm runs in ``O(log n)``.
 """
+
+@inline _up(u, v) = dot(u, v) > 0
+@inline _down(u, v) = dot(u, v) < 0
+@inline _dr(u, Vi, Vj) = (dot(u, (Vi) - (Vj))) # direction sign of (Vi-Vj)
+@inline _above(u, Vi, Vj) = (_dr(u, Vi, Vj) > 0) # true if Vi is above Vj
+@inline _below(u, Vi, Vj) = (_dr(u, Vi, Vj) < 0) # true if Vi is below Vj
+
 function σ(d::AbstractVector{N}, P::VPolygon{N}) where {N <: Real}
     @assert !isempty(P.vertices) "the polygon has no vertices"
     if length(P.vertices) > 10
-        @inline _up(u, v) = dot(u, v) > 0
-        @inline _down(u, v) = dot(u, v) < 0
-        @inline _dr(u, Vi, Vj) = (dot(u, (Vi) - (Vj))) # direction sign of (Vi-Vj)
-        @inline _above(u, Vi, Vj) = (_dr(u, Vi, Vj) > 0) # true if Vi is above Vj
-        @inline _below(u, Vi, Vj) = (_dr(u, Vi, Vj) < 0) # true if Vi is below Vj
-        
-        push!(P.vertices, P.vertices[1]) #add extra vertice on the end equal to the first
-        
-        n = length(P.vertices)
-        a = 1; b = n # start chain = [1,n] with P.vertices[n]=P.vertices[0]
-        A = P.vertices[2] - P.vertices[1]
-        upA = _up(d, A)
-        # test if P.vertices[0] is a local maximum
-        if (!upA && !_above(d, P.vertices[n - 1], P.vertices[1])) # P.vertices[0] is the maximum
-            return P.vertices[1]
-        end
-        while true
-            c = round(Int, (a + b) / 2) # midpoint of [a,b], and 0<c<n
-            C = P.vertices[c + 1] - P.vertices[c]
-            upC = _up(d, C)
-            if (!upC && !_above(d, P.vertices[c - 1], P.vertices[c])) # P.vertices[c] is a local maximum
-                pop!(P.vertices) # remove the extra point added
-                return P.vertices[c] # thus it is the maximum
-            end
-            # no max yet, so continue with the  binary search
-            # pick one of the two subchains [a,c]  or [c,b]
-            if upA # A points up
-                if !upC # C points down
-                    b = c
-                else # C points up
-                    if _above(d, P.vertices[a], P.vertices[c]) # P.vertices[a] above P.vertices[c]
-                        b = c
-                    else # P.vertices[a] below P.vertices[c]
-                        a = c
-                        A = C
-                        upA = upC
-                    end
-                end
-                else # A points down
-                if upC # C points up
-                    a = c
-                    A = C
-                    upA = upC
-                else # C points down
-                    if _below(d, P.vertices[a], P.vertices[c]) # P.vertices[a] below P.vertices[c]
-                        b = c
-                    else # P.vertices[a] above P.vertices[c]
-                        a = c
-                        A = C
-                        upA = upC
-                    end
-                end
-            end
-            if (b <= a + 1) # the chain is impossibly small
-                pop!(P.vertices) # remove the extra point added
-                throw(ErrorException("something went wrong")) # return an error
-            end
-        end
+        _binary_support_vector(d, P)
     else
-        i_max = 1
+        _brute_force_support_vector(d, P)
+    end
+end
+
+function _brute_force_support_vector(d, P)
+    i_max = 1
     @inbounds for i in 2:length(P.vertices)
         if dot(d, P.vertices[i] - P.vertices[i_max]) > zero(N)
             i_max = i
         end
     end
     return P.vertices[i_max]
+end
+
+function _binary_support_vector(d, P)
+    push!(P.vertices, P.vertices[1]) #add extra vertice on the end equal to the first
+    n = length(P.vertices)
+    a = 1; b = n # start chain = [1,n] with P.vertices[n]=P.vertices[0]
+    A = P.vertices[2] - P.vertices[1]
+    upA = _up(d, A)
+    # test if P.vertices[0] is a local maximum
+    if (!upA && !_above(d, P.vertices[n - 1], P.vertices[1])) # P.vertices[0] is the maximum
+        return P.vertices[1]
+    end
+    while true
+        c = round(Int, (a + b) / 2) # midpoint of [a,b], and 0<c<n
+        C = P.vertices[c + 1] - P.vertices[c]
+        upC = _up(d, C)
+        if (!upC && !_above(d, P.vertices[c - 1], P.vertices[c])) # P.vertices[c] is a local maximum
+            pop!(P.vertices) # remove the extra point added
+            return P.vertices[c] # thus it is the maximum
+        end
+        # no max yet, so continue with the  binary search
+        # pick one of the two subchains [a,c]  or [c,b]
+        if upA # A points up
+            if !upC # C points down
+                b = c
+            else # C points up
+                if _above(d, P.vertices[a], P.vertices[c]) # P.vertices[a] above P.vertices[c]
+                    b = c
+                else # P.vertices[a] below P.vertices[c]
+                    a = c
+                    A = C
+                    upA = upC
+                end
+            end
+            else # A points down
+            if upC # C points up
+                a = c
+                A = C
+                upA = upC
+            else # C points down
+                if _below(d, P.vertices[a], P.vertices[c]) # P.vertices[a] below P.vertices[c]
+                    b = c
+                else # P.vertices[a] above P.vertices[c]
+                    a = c
+                    A = C
+                    upA = upC
+                end
+            end
+        end
+        if (b <= a + 1) # the chain is impossibly small
+            pop!(P.vertices) # remove the extra point added
+            throw(ErrorException("something went wrong")) # return an error
+        end
     end
 end
 
