@@ -103,7 +103,7 @@ function convex_hull!(points::Vector{VN};
     if n == 1 # dimensional check
         if m == 2
             # two points case in 1d
-            return _two_points_1d!(points)
+            return _two_points_1d!(points, false)
         else
              # general case in 1d
             return _convex_hull_1d!(points)
@@ -111,7 +111,7 @@ function convex_hull!(points::Vector{VN};
     elseif n == 2
         if m == 2
             # two points case in 2d
-            return _two_points_2d!(points)
+            return _two_points_2d!(points, false)
         elseif m == 3
             # three points case in 2d
             return _three_points_2d!(points)
@@ -128,10 +128,9 @@ function convex_hull!(points::Vector{VN};
     end
 end
 
-function _two_points_1d!(points)
+function _two_points_1d!(points, sort=Val(true))
     p1, p2 = points[1], points[2]
-    if p1 == p2
-        # check for redundancy
+    if _isapprox(p1, p2) # check for redundancy
         pop!(points)
     elseif p1[1] > p2[1]
         points[1], points[2] = p2, p1
@@ -139,16 +138,30 @@ function _two_points_1d!(points)
     return points
 end
 
-function _two_points_2d!(points)
-    # special case, see #876
+function _two_points_1d!(points, sort=Val(false))
     p1, p2 = points[1], points[2]
-    if p1 == p2
-        # check for redundancy
+    if  _isapprox(p1, p2) # check for redundancy
+        pop!(points)
+    end
+    return points
+end
+
+function _two_points_2d!(points, sort=Val(true))
+    p1, p2 = points[1], points[2]
+    if isapprox(p1[1], p2[1]) && _isapprox(p1[2], p2[2]) # check for redundancy
         pop!(points)
     elseif p1 <= p2
         nothing
     else
         points[1], points[2] = p2, p1
+    end
+    return points
+end
+
+function _two_points_2d!(points, sort=Val(false))
+    p1, p2 = points[1], points[2]
+    if _isapprox(p1[1], p2[1]) && _isapprox(p1[2], p2[2]) # check for redundancy
+        pop!(points)
     end
     return points
 end
