@@ -53,7 +53,6 @@ true
 
 julia> LazySets.ispermutation([1, 2, 2], [1, 1, 2])
 false
-
 ```
 """
 function ispermutation(u::AbstractVector{T}, v::AbstractVector)::Bool where {T}
@@ -63,7 +62,7 @@ function ispermutation(u::AbstractVector{T}, v::AbstractVector)::Bool where {T}
     occurrence_map = Dict{T, Int}()
     has_duplicates = false
     for e in u
-        if e ∉ v
+        if !_in(e, v)
             return false
         end
         if haskey(occurrence_map, e)
@@ -82,6 +81,19 @@ function ispermutation(u::AbstractVector{T}, v::AbstractVector)::Bool where {T}
         end
     end
     return true
+end
+
+function _in(x::AbstractVector{T}, itr) where {T}
+    return in(x, itr)
+end
+
+function _in(x::AbstractVector{T}, itr) where {T<:AbstractFloat}
+    for y in itr
+        if LazySets._isapprox(x, y)
+            return true
+        end
+    end
+    return false
 end
 
 """

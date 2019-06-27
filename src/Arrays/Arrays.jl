@@ -5,7 +5,7 @@ Module `Arrays.jl` -- Auxiliary machinery for vectors and matrices.
 """
 module Arrays
 
-using LinearAlgebra, SparseArrays
+using LazySets, LinearAlgebra, SparseArrays
 
 include("matrix_operations.jl")
 include("vector_operations.jl")

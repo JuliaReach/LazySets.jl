@@ -142,6 +142,30 @@ function _isapprox(x::N, y::N;
     end
 end
 
+# generic "dense"
+function _isapprox(x::AbstractVector{N}, y::AbstractVector{N};
+                   rtol::Real=Base.rtoldefault(N),
+                   ztol::Real=ABSZTOL(N),
+                   atol::Real=zero(N)) where {N<:Real}
+    n = length(x)
+    @assert n == length(y)
+    @inbounds for i in 1:n
+        if !_isapprox(x[i], y[i], rtol=rtol, ztol=ztol, atol=atol)
+            return false
+        end
+    end
+    return true
+end
+
+# sparse
+function _isapprox(x::SparseVector{N}, y::SparseVector{N};
+                   rtol::Real=Base.rtoldefault(N),
+                   ztol::Real=ABSZTOL(N),
+                   atol::Real=zero(N)) where {N<:Real}
+    @assert length(x) == length(y)
+    return x.nzind == y.nzind && _isapprox(x.nzval, y.nzval, rtol=rtol, ztol=ztol, atol=atol)
+end
+
 """
     _leq(x::N, y::N;
          rtol::Real=Base.rtoldefault(N),
@@ -175,3 +199,4 @@ function _leq(x::N, y::N;
               atol::Real=zero(N)) where {N<:AbstractFloat}
     return x <= y || _isapprox(x, y, rtol=rtol, ztol=ztol, atol=atol)
 end
+
