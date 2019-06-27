@@ -148,7 +148,9 @@ function _isapprox(x::AbstractVector{N}, y::AbstractVector{N};
                    ztol::Real=ABSZTOL(N),
                    atol::Real=zero(N)) where {N<:Real}
     n = length(x)
-    @assert n == length(y)
+    if length(x) != length(y)
+        return false
+    end
     @inbounds for i in 1:n
         if !_isapprox(x[i], y[i], rtol=rtol, ztol=ztol, atol=atol)
             return false
@@ -164,6 +166,66 @@ function _isapprox(x::SparseVector{N}, y::SparseVector{N};
                    atol::Real=zero(N)) where {N<:Real}
     @assert length(x) == length(y)
     return x.nzind == y.nzind && _isapprox(x.nzval, y.nzval, rtol=rtol, ztol=ztol, atol=atol)
+end
+
+"""
+    ispermutation(u::AbstractVector{T}, v::AbstractVector)::Bool where {T}
+
+Check that two vectors contain the same elements up to reordering.
+
+### Input
+
+- `u` -- first vector
+- `v` -- second vector
+
+### Output
+
+`true` iff the vectors are identical up to reordering.
+
+### Examples
+
+```jldoctest
+julia> LazySets.ispermutation([1, 2, 2], [2, 2, 1])
+true
+
+julia> LazySets.ispermutation([1, 2, 2], [1, 1, 2])
+false
+```
+"""
+function ispermutation(u::AbstractVector{T}, v::AbstractVector)::Bool where {T}
+    if length(u) != length(v)
+        return false
+    end
+    occurrence_map = Dict{T, Int}()
+    has_duplicates = false
+    for e in u
+        if !_in(e, v)
+            return false
+        end
+        if haskey(occurrence_map, e)
+            occurrence_map[e] += 1
+            has_duplicates = true
+        else
+            occurrence_map[e] = 1
+        end
+    end
+    if has_duplicates
+        for e in v
+            if !haskey(occurrence_map, e) || occurrence_map[e] == 0
+                return false
+            end
+            occurrence_map[e] -= 1
+        end
+    end
+    return true
+end
+
+function _in(x::AbstractVector{T}, itr) where {T}
+    return x ∈ itr
+end
+
+function _in(x::AbstractVector{T}, itr) where {T<:AbstractFloat}
+    return any(y -> _isapprox(x, y), itr)
 end
 
 """
