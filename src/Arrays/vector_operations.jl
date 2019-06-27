@@ -1,6 +1,5 @@
 export dot_zero,
        sign_cadlag,
-       ispermutation,
        remove_duplicates_sorted!,
        samedir,
        nonzero_indices,

@@ -220,7 +220,7 @@ function ispermutation(u::AbstractVector{T}, v::AbstractVector)::Bool where {T}
     return true
 end
 
-function _in(x::AbstractVector{T}, itr) where {T}
+function _in(x, itr) where {T}
     return x ∈ itr
 end
 
