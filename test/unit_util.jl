@@ -53,6 +53,13 @@ for _dummy_ in 1:1 # avoid global variable warnings
 
         x = N[0, 1, -1]
         @test LazySets.rectify(x) == N[0, 1, 0]
+
+        # approximate permutation check
+        v1 = [N[1, 2], N[2, 3], N[3, 4]]
+        tol = Base.rtoldefault(N)/2
+        v2 = [N[3 + tol, 4 - tol], N[2 - tol, 3 + tol], N[1 + tol, 2 + tol]]
+        v3 = [N[2, 3], N[1, 2], N[4, 4]]
+        @test ispermutation(v1, v2) && !ispermutation(v2, v3)
     end
 
     for N in [Float64, Float32]

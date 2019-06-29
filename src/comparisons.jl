@@ -142,6 +142,100 @@ function _isapprox(x::N, y::N;
     end
 end
 
+# generic "dense"
+function _isapprox(x::AbstractVector{N}, y::AbstractVector{N};
+                   rtol::Real=Base.rtoldefault(N),
+                   ztol::Real=ABSZTOL(N),
+                   atol::Real=zero(N)) where {N<:Real}
+    n = length(x)
+    if length(x) != length(y)
+        return false
+    end
+    @inbounds for i in 1:n
+        if !_isapprox(x[i], y[i], rtol=rtol, ztol=ztol, atol=atol)
+            return false
+        end
+    end
+    return true
+end
+
+# sparse
+function _isapprox(x::SparseVector{N}, y::SparseVector{N};
+                   rtol::Real=Base.rtoldefault(N),
+                   ztol::Real=ABSZTOL(N),
+                   atol::Real=zero(N)) where {N<:Real}
+    @assert length(x) == length(y)
+    return x.nzind == y.nzind && _isapprox(x.nzval, y.nzval, rtol=rtol, ztol=ztol, atol=atol)
+end
+
+"""
+    ispermutation(u::AbstractVector{T}, v::AbstractVector)::Bool where {T}
+
+Check that two vectors contain the same elements up to reordering.
+
+### Input
+
+- `u` -- first vector
+- `v` -- second vector
+
+### Output
+
+`true` iff the vectors are identical up to reordering.
+
+### Examples
+
+```jldoctest
+julia> LazySets.ispermutation([1, 2, 2], [2, 2, 1])
+true
+
+julia> LazySets.ispermutation([1, 2, 2], [1, 1, 2])
+false
+```
+
+### Notes
+
+Containment check is performed using `LazySets._in(e, v)`, so in the case of
+floating point numbers, the precision to which the check is made is determined
+by the type of elements in `v`. See `_in` and `_isapprox` for more information.
+"""
+function ispermutation(u::AbstractVector{T}, v::AbstractVector)::Bool where {T}
+    if length(u) != length(v)
+        return false
+    end
+    occurrence_map = Dict{T, Int}()
+    has_duplicates = false
+    for e in u
+        if !_in(e, v)
+            return false
+        end
+        if haskey(occurrence_map, e)
+            occurrence_map[e] += 1
+            has_duplicates = true
+        else
+            occurrence_map[e] = 1
+        end
+    end
+    if has_duplicates
+        for e in v
+            if !haskey(occurrence_map, e) || occurrence_map[e] == 0
+                return false
+            end
+            occurrence_map[e] -= 1
+        end
+    end
+    return true
+end
+
+# alias for Julia's containment check 
+function _in(x, itr) where {T}
+    return x ∈ itr
+end
+
+# approximate containment check for numbers in floating point 
+function _in(x::AbstractVector{T}, itr) where {T<:AbstractFloat}
+    return any(y -> _isapprox(x, y), itr)
+end
+
 """
     _leq(x::N, y::N;
          rtol::Real=Base.rtoldefault(N),
@@ -175,3 +269,4 @@ function _leq(x::N, y::N;
               atol::Real=zero(N)) where {N<:AbstractFloat}
     return x <= y || _isapprox(x, y, rtol=rtol, ztol=ztol, atol=atol)
 end
+
