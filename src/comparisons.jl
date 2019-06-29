@@ -191,6 +191,12 @@ true
 julia> LazySets.ispermutation([1, 2, 2], [1, 1, 2])
 false
 ```
+
+### Notes
+
+Containment check is performed using `LazySets._in(e, v)`, so in the case of
+floating point numbers, the precision to which the check is made is determined
+by the type of elements in `v`. See `_in` and `_isapprox` for more information.
 """
 function ispermutation(u::AbstractVector{T}, v::AbstractVector)::Bool where {T}
     if length(u) != length(v)
@@ -220,10 +226,12 @@ function ispermutation(u::AbstractVector{T}, v::AbstractVector)::Bool where {T}
     return true
 end
 
+# alias for Julia's containment check 
 function _in(x, itr) where {T}
     return x ∈ itr
 end
 
+# approximate containment check for numbers in floating point 
 function _in(x::AbstractVector{T}, itr) where {T<:AbstractFloat}
     return any(y -> _isapprox(x, y), itr)
 end
