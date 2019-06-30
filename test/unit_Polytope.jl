@@ -355,6 +355,11 @@ if test_suite_polyhedra
         twoB = 2.0*B
         @test X ⊆ twoB && twoB ⊆ X
 
+        P1 = VPolytope([N[0, 0, 0], N[0, 1, 0]])
+        P2 = VPolytope([N[0, 0, 0], N[1, 0, 0]])
+        Q = minkowski_sum(P1, P2)
+        @test ispermutation(vertices_list(Q), [N[0, 0, 0], N[0, 1, 0], N[1, 0, 0], N[1, 1, 0]])
+
         # -----------------
         # mixed H-rep/V-rep
         # -----------------

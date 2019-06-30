@@ -130,27 +130,31 @@ end
 end
 
 """
-    minkowski_sum(V1::AbstractPolytope{N}, V2::AbstractPolytope{N};
-                  [backend]=default_polyhedra_backend(V1, N)) where {N<:Real}
+    minkowski_sum(P1::AbstractPolytope{N}, P2::AbstractPolytope{N};
+                  [apply_convex_hull]=true,
+                  [backend]=default_polyhedra_backend(P1, N)) where {N<:Real}
 
 Compute the Minkowski sum between two polytopes using their vertex representation.
 
 ### Input
 
-- `V1`      -- polytope
-- `V2`      -- another polytope
-- `backend` -- (optional, default: `default_polyhedra_backend(V1, N)`) the
-               backend for polyhedral computations used to post-process with a
-               convex hull
+- `P1`                -- polytope
+- `P2`                -- another polytope
+- `apply_convex_hull` -- (optional, default: `true`) if `true`, post-process the
+                         pairwise sums using a convex hull algorithm 
+- `backend`           -- (optional, default: `default_polyhedra_backend(P1, N)`)
+                         the backend for polyhedral computations used to
+                         post-process with a convex hull
 
 ### Output
 
 A new polytope in vertex representation whose vertices are the convex hull of
-the sum of all possible sums of vertices of `V1` and `V2`.
+the sum of all possible sums of vertices of `P1` and `P2`.
 """
-function minkowski_sum(V1::AbstractPolytope{N}, V2::AbstractPolytope{N};
-                       backend=default_polyhedra_backend(V1, N)) where {N<:Real}
-    vlist1, vlist2 = vertices_list(V1), vertices_list(V2)
+function minkowski_sum(P1::AbstractPolytope{N}, P2::AbstractPolytope{N};
+                       apply_convex_hull::Bool=true,
+                       backend=default_polyhedra_backend(P1, N)) where {N<:Real}
+    vlist1, vlist2 = vertices_list(P1), vertices_list(P2)
     n, m = length(vlist1), length(vlist2)
     Vout = Vector{Vector{N}}()
     sizehint!(Vout, n + m)
@@ -159,7 +163,10 @@ function minkowski_sum(V1::AbstractPolytope{N}, V2::AbstractPolytope{N};
             push!(Vout, vi + vj)
         end
     end
-    return VPolytope(convex_hull!(Vout, backend=backend))
+    if apply_convex_hull
+        convex_hull!(Vout, backend=backend)
+    end
+    return VPolytope(Vout)
 end
 
 # =============================================
