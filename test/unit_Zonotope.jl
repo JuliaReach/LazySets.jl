@@ -219,6 +219,6 @@ for N in [Float64]
         # constraints_list for generator matrix with a zero row
         Z = Zonotope(N[0, 0], N[2 3; 0 0])
         P = tovrep(HPolygon(constraints_list(Z)))
-        @test vertices_list(P) ≈ [N[5, 0], [-5, 0]]
+        @test ispermutation(vertices_list(P), [N[5, 0], [-5, 0]])
     end
 end
