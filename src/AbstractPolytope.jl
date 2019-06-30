@@ -153,7 +153,9 @@ the sum of all possible sums of vertices of `P1` and `P2`.
 """
 function minkowski_sum(P1::AbstractPolytope{N}, P2::AbstractPolytope{N};
                        apply_convex_hull::Bool=true,
-                       backend=default_polyhedra_backend(P1, N)) where {N<:Real}
+                       backend=nothing) where {N<:Real}
+    @assert dim(P1) == dim(P2) "cannot compute the Minkowski sum between a polyotope " *
+        "of dimension $(dim(P1)) and a polytope of dimension $((dim(P2)))"
     vlist1, vlist2 = vertices_list(P1), vertices_list(P2)
     n, m = length(vlist1), length(vlist2)
     Vout = Vector{Vector{N}}()
@@ -164,6 +166,9 @@ function minkowski_sum(P1::AbstractPolytope{N}, P2::AbstractPolytope{N};
         end
     end
     if apply_convex_hull
+        if backend == nothing
+            backend = default_polyhedra_backend(P1, N)
+        end
         convex_hull!(Vout, backend=backend)
     end
     return VPolytope(Vout)
