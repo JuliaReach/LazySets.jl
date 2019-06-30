@@ -3,7 +3,8 @@ import Base.isempty
 export AbstractPolytope,
        vertices_list,
        singleton_list,
-       isempty
+       isempty,
+       minkowski_sum
 
 """
     AbstractPolytope{N<:Real} <: AbstractPolyhedron{N}
@@ -126,6 +127,51 @@ end
     else
         return HPolytope(constraints)
     end
+end
+
+"""
+    minkowski_sum(P1::AbstractPolytope{N}, P2::AbstractPolytope{N};
+                  [apply_convex_hull]=true,
+                  [backend]=default_polyhedra_backend(P1, N)) where {N<:Real}
+
+Compute the Minkowski sum between two polytopes using their vertex representation.
+
+### Input
+
+- `P1`                -- polytope
+- `P2`                -- another polytope
+- `apply_convex_hull` -- (optional, default: `true`) if `true`, post-process the
+                         pairwise sums using a convex hull algorithm 
+- `backend`           -- (optional, default: `default_polyhedra_backend(P1, N)`)
+                         the backend for polyhedral computations used to
+                         post-process with a convex hull
+
+### Output
+
+A new polytope in vertex representation whose vertices are the convex hull of
+the sum of all possible sums of vertices of `P1` and `P2`.
+"""
+function minkowski_sum(P1::AbstractPolytope{N}, P2::AbstractPolytope{N};
+                       apply_convex_hull::Bool=true,
+                       backend=nothing) where {N<:Real}
+    @assert dim(P1) == dim(P2) "cannot compute the Minkowski sum between a polyotope " *
+        "of dimension $(dim(P1)) and a polytope of dimension $((dim(P2)))"
+    vlist1, vlist2 = vertices_list(P1), vertices_list(P2)
+    n, m = length(vlist1), length(vlist2)
+    Vout = Vector{Vector{N}}()
+    sizehint!(Vout, n + m)
+    for vi in vlist1
+        for vj in vlist2
+            push!(Vout, vi + vj)
+        end
+    end
+    if apply_convex_hull
+        if backend == nothing
+            backend = default_polyhedra_backend(P1, N)
+        end
+        convex_hull!(Vout, backend=backend)
+    end
+    return VPolytope(Vout)
 end
 
 # =============================================
