@@ -1,19 +1,20 @@
 using LazySets: block_to_dimension_indices, substitute_blocks, get_constrained_lowdimset
 """
-    overapproximate(X::S, ::Type{S}) where {S<:LazySet}
+    overapproximate(X::S, ::Type{S}, args...) where {S<:LazySet}
 
 Overapproximating a set of type `S` with type `S` is a no-op.
 
 ### Input
 
-- `X` -- set
-- `Type{S}` -- set type
+- `X`       -- set
+- `Type{S}` -- target set type
+- `args`    -- further arguments (ignored)
 
 ### Output
 
 The input set.
 """
-function overapproximate(X::S, ::Type{S}) where {S<:LazySet}
+function overapproximate(X::S, ::Type{S}, args...) where {S<:LazySet}
     return X
 end
 
