@@ -351,6 +351,11 @@ if test_suite_polyhedra
 
         # concrete minkowski sum
         B = convert(VPolytope, BallInf(N[0, 0, 0], N(1)))
+        X = minkowski_sum(B, B)
+        twoB = 2.0*B
+        @test X ⊆ twoB && twoB ⊆ X
+
+        # same but specifying a custom polyhedral computations backend (CDDLib)
         X = minkowski_sum(B, B, backend=CDDLib.Library())
         twoB = 2.0*B
         @test X ⊆ twoB && twoB ⊆ X

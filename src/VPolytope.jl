@@ -374,7 +374,8 @@ end
 
 """
     remove_redundant_vertices(P::VPolytope{N};
-                              [backend]=default_polyhedra_backend(P, N))::VPolytope{N} where {N<:Real}
+                              [backend]=default_polyhedra_backend(P, N),
+                              [solver]=default_lp_solver(N))::VPolytope{N} where {N<:Real}
 
 Return the polytope obtained by removing the redundant vertices of the given polytope.
 
@@ -385,6 +386,8 @@ Return the polytope obtained by removing the redundant vertices of the given pol
                computations backend, see
                [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
                for further information
+- `solver`  -- (optional, default: `default_lp_solver(N)`) the linear programming
+               solver used in the backend
 
 ### Output
 
@@ -394,15 +397,15 @@ function remove_redundant_vertices(P::VPolytope{N};
                                    backend=default_polyhedra_backend(P, N),
                                    solver=default_lp_solver(N))::VPolytope{N} where {N<:Real}
     require(:Polyhedra; fun_name="remove_redundant_vertices")
-    Q = Polyhedra.vrep(polyhedron(P; backend=backend)) # TODO: agregar vrep en LazySets.polyhedron  ?
-    return VPolytope(Polyhedra.removevredundancy(Q, solver))
-end
 
-using GLPK
-import JuMP: with_optimizer
-
-function default_lp_solver(N::Type{<:AbstractFloat})
-    return with_optimizer(GLPK.Optimizer)
+    Q = polyhedron(P; backend=backend)
+    if Polyhedra.supportssolver(typeof(Q))
+        vQ = Polyhedra.vrep(Q)
+        Polyhedra.setvrep!(Q, Polyhedra.removevredundancy(vQ, solver))
+    else
+        Polyhedra.removevredundancy!(Q)
+    end
+    return VPolytope(Q)
 end
 
 """
