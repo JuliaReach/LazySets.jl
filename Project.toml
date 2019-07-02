@@ -40,6 +40,5 @@ Polyhedra = "67491407-f73d-577b-9b50-8179a7c68029"
 TaylorModels = "314ce334-5f6e-57ae-acf6-00b6e903104a"
 
 [targets]
-test = ["CDDLib", "Documenter", "Expokit", "GLPKMathProgInterface", "GR",
-        "IntervalArithmetic", "MathProgBase", "Optim", "Pkg", "Plots",
-        "Polyhedra", "RecipesBase", "Requires", "TaylorModels"]
+test = ["CDDLib", "Documenter", "Expokit", "GR", "Optim", "Plots", "Polyhedra",
+        "TaylorModels"]
