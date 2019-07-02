@@ -197,6 +197,7 @@ using .Polyhedra: HRep, VRep,
                   hcartesianproduct, vcartesianproduct,
                   points,
                   default_library
+import JuMP, GLPK
 
 function default_polyhedra_backend(P, N::Type{<:AbstractFloat})
     return default_library(LazySets.dim(P), Float64)
@@ -205,8 +206,6 @@ end
 function default_polyhedra_backend(P, N::Type{<:Rational})
     return default_library(LazySets.dim(P), Rational{Int})
 end
-
-import JuMP, GLPK
 
 function default_lp_solver(N::Type{<:AbstractFloat})
     return JuMP.with_optimizer(GLPK.Optimizer)
