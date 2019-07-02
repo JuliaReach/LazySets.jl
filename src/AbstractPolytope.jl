@@ -206,11 +206,10 @@ function default_polyhedra_backend(P, N::Type{<:Rational})
     return default_library(LazySets.dim(P), Rational{Int})
 end
 
-using JuMP: with_optimizer
-import GLPK
+import JuMP, GLPK
 
 function default_lp_solver(N::Type{<:AbstractFloat})
-    return with_optimizer(GLPK.Optimizer)
+    return JuMP.with_optimizer(GLPK.Optimizer)
 end
 
 end # quote
