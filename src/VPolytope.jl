@@ -391,11 +391,18 @@ Return the polytope obtained by removing the redundant vertices of the given pol
 A new polytope such that its vertices are the convex hull of the given polytope.
 """
 function remove_redundant_vertices(P::VPolytope{N};
-                                   backend=default_polyhedra_backend(P, N))::VPolytope{N} where {N<:Real}
+                                   backend=default_polyhedra_backend(P, N),
+                                   solver=default_lp_solver(N))::VPolytope{N} where {N<:Real}
     require(:Polyhedra; fun_name="remove_redundant_vertices")
-    Q = polyhedron(P; backend=backend)
-    removevredundancy!(Q)
-    return VPolytope(Q)
+    Q = Polyhedra.vrep(polyhedron(P; backend=backend)) # TODO: agregar vrep en LazySets.polyhedron  ?
+    return VPolytope(Polyhedra.removevredundancy(Q, solver))
+end
+
+using GLPK
+import JuMP: with_optimizer
+
+function default_lp_solver(N::Type{<:AbstractFloat})
+    return with_optimizer(GLPK.Optimizer)
 end
 
 """
