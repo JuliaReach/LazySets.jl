@@ -162,7 +162,7 @@ function minkowski_sum(P1::AbstractPolytope{N}, P2::AbstractPolytope{N};
     @assert dim(P1) == dim(P2) "cannot compute the Minkowski sum between a polyotope " *
         "of dimension $(dim(P1)) and a polytope of dimension $((dim(P2)))"
 
-    vlist1, vlist2 = vertices_list(P1), vertices_list(P2)
+    vlist1, vlist2 = _minkowski_sum_input_vertices(P1, P2, backend)
     n, m = length(vlist1), length(vlist2)
     Vout = Vector{Vector{N}}()
     sizehint!(Vout, n * m)
@@ -179,6 +179,18 @@ function minkowski_sum(P1::AbstractPolytope{N}, P2::AbstractPolytope{N};
         convex_hull!(Vout, backend=backend, solver=solver)
     end
     return VPolytope(Vout)
+end
+
+function _minkowski_sum_input_vertices(P1::AbstractPolytope{N}, P2::AbstractPolytope{N}, backend)
+    vlist1 = vertices_list(P1)
+    vlist2 = vertices_list(P2)
+    return vlist1, vlist2
+end
+
+function _minkowski_sum_input_vertices(P1::HPolytope{N}, P2::HPolytope{N}, backend)
+    vlist1 = vertices_list(P1, backend=backend)
+    vlist2 = vertices_list(P2, backend=backend)
+    return vlist1, vlist2
 end
 
 # =============================================
