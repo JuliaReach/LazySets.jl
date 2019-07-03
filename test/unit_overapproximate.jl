@@ -1,15 +1,19 @@
 using LazySets.Approximations: project
 
 for N in [Float64, Rational{Int}, Float32]
+    c = N[0, 0]
+    b = Ball1(c, N(1))
+
     # overapproximating a set of type T1 with an unsupported type T2 is the
     # identity if T1 = T2
     @test_throws MethodError overapproximate(ZeroSet{N}(2), EmptySet)
     e = EmptySet{N}()
     @test overapproximate(e, EmptySet) == e
+    # the third argument is ignored
+    oa = overapproximate(b, Ball1, Hyperrectangle)
+    @test oa isa Ball1
 
     # HPolygon approximation with box directions
-    c = N[0, 0]
-    b = Ball1(c, N(1))
     p = overapproximate(b, HPolygon)
     for d in [N[1, 0], N[-1, 0]]
         @test σ(d, p)[1] ≈ σ(d, b)[1]
@@ -19,8 +23,6 @@ for N in [Float64, Rational{Int}, Float32]
     end
 
     # Hyperrectangle approximation
-    c = N[0, 0]
-    b = Ball1(c, N(1))
     p = overapproximate(b, Hyperrectangle)
     for d in [N[1, 0], N[-1, 0]]
         @test σ(d, p)[1] ≈ σ(d, b)[1]
