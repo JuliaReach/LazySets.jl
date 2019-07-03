@@ -229,8 +229,7 @@ function vertices_list(P::HPolytope{N};
     end
 end
 
-function _minkowski_sum_input_vertices(P1::HPolytope, P2::HPolytope, backend)
-    vlist1 = vertices_list(P1, backend=backend)
-    vlist2 = vertices_list(P2, backend=backend)
-    return vlist1, vlist2
+# used for dispatch, see minkowski_sum(::AbstractPolytope{N}, ::AbstractPolytope{N}; ...)
+function _vertices_list(P::HPolytope, backend)
+    return vertices_list(P, backend=backend)
 end
