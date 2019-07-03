@@ -313,12 +313,6 @@ function _convex_hull_nd!(points::Vector{VN};
                           solver=nothing
                           )::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
     V = VPolytope(points)
-    if backend == nothing
-        backend = default_polyhedra_backend(V, N)
-        if solver == nothing
-            solver = default_lp_solver(N)
-        end
-    end
     Vch = remove_redundant_vertices(V, backend=backend, solver=solver)
     m = length(Vch.vertices)
     points[1:m] = Vch.vertices

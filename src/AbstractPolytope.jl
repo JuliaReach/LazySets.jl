@@ -211,5 +211,9 @@ function default_lp_solver(N::Type{<:AbstractFloat})
     return JuMP.with_optimizer(GLPK.Optimizer)
 end
 
+function default_lp_solver(N::Type{<:Rational})
+    return JuMP.with_optimizer(GLPK.Optimizer, method=:Exact)
+end
+
 end # quote
 end # function load_polyhedra_hpolytope()
