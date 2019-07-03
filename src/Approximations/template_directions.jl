@@ -476,19 +476,6 @@ Base.eltype(::Type{CustomDirections{N}}) where {N} = AbstractVector{N}
 Base.length(cd::CustomDirections) = length(cd.directions)
 isbounding(cd::CustomDirections) = cd.isbounding
 
-@static if VERSION < v"0.7-"
-@eval begin
-
-Base.start(cd::CustomDirections) = 1
-Base.next(cd::CustomDirections{N}, state) where {N} = (
-    cd.directions[state], # value
-    state + 1) # next state
-Base.done(cd::CustomDirections, state) = state > length(cd.directions)
-
-end # @eval
-else
-@eval begin
-
 function Base.iterate(cd::CustomDirections{N}, state::Int=1) where {N}
     if state > length(cd.directions)
         return nothing
@@ -497,6 +484,3 @@ function Base.iterate(cd::CustomDirections{N}, state::Int=1) where {N}
     state = state + 1
     return (vec, state)
 end
-
-end # @eval
-end # if
