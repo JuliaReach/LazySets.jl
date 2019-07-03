@@ -374,7 +374,7 @@ end
 
 """
     remove_redundant_vertices(P::VPolytope{N};
-                              [backend]=default_polyhedra_backend(P, N),
+                              [backend]=nothing,
                               [solver]=nothing)::VPolytope{N} where {N<:Real}
 
 Return the polytope obtained by removing the redundant vertices of the given polytope.
@@ -382,10 +382,10 @@ Return the polytope obtained by removing the redundant vertices of the given pol
 ### Input
 
 - `P`       -- polytope in vertex representation
-- `backend` -- (optional, default: `default_polyhedra_backend(P1, N)`) the polyhedral
-               computations backend, see
+- `backend` -- (optional, default: `nothing`) the polyhedral
+               computations backend, see `default_polyhedra_backend(P1, N)` or
                [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
-               for further information
+               for further information on the available backends
 - `solver`  -- (optional, default: `nothing`) the linear programming
                solver used in the backend, if needed; see `default_lp_solver(N)`
 
@@ -401,10 +401,12 @@ it has not been set, we use `default_lp_solver(N)` to define such solver.
 Otherwise, the redundancy removal function of the polyhedral backend is used.
 """
 function remove_redundant_vertices(P::VPolytope{N};
-                                   backend=default_polyhedra_backend(P, N),
+                                   backend=nothing,
                                    solver=nothing)::VPolytope{N} where {N<:Real}
     require(:Polyhedra; fun_name="remove_redundant_vertices")
-
+    if backend == nothing
+        backend = default_polyhedra_backend(P, N)
+    end
     Q = polyhedron(P; backend=backend)
     if Polyhedra.supportssolver(typeof(Q))
         if solver == nothing
