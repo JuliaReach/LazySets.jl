@@ -9,7 +9,8 @@ end
 """
     convex_hull(points::Vector{VN};
                 [algorithm]=default_convex_hull_algorithm(points),
-                [backend]=nothing
+                [backend]=nothing,
+                [solver]=nothing
                 )::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
 
 Compute the convex hull of the given points.
@@ -21,6 +22,8 @@ Compute the convex hull of the given points.
                  algorithm, see valid options below
 - `backend`   -- (optional, default: `"nothing"`) polyhedral computation backend
                  for higher-dimensional point sets
+- `solver`    -- (optional, default: `"nothing"`) the linear programming solver
+                 used in the backend
 
 ### Output
 
@@ -78,14 +81,16 @@ julia> plot!(VPolygon(hull), alpha=0.2);
 """
 function convex_hull(points::Vector{VN};
                      algorithm=default_convex_hull_algorithm(points),
-                     backend=nothing
+                     backend=nothing,
+                     solver=nothing
                      )::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
-    return convex_hull!(copy(points), algorithm=algorithm, backend=backend)
+    return convex_hull!(copy(points), algorithm=algorithm, backend=backend, solver=solver)
 end
 
 function convex_hull!(points::Vector{VN};
                       algorithm=default_convex_hull_algorithm(points),
-                      backend=nothing)::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
+                      backend=nothing,
+                      solver=nothing)::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
 
     m = length(points)
 
@@ -124,7 +129,7 @@ function convex_hull!(points::Vector{VN};
         end
     else
         # general case in nd
-        return _convex_hull_nd!(points, backend=backend)
+        return _convex_hull_nd!(points, backend=backend, solver=solver)
     end
 end
 
@@ -304,13 +309,11 @@ function _convex_hull_1d!(points::Vector{VN})::Vector{VN} where {N<:Real, VN<:Ab
 end
 
 function _convex_hull_nd!(points::Vector{VN};
-                          backend=nothing
+                          backend=nothing,
+                          solver=nothing
                           )::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
     V = VPolytope(points)
-    if backend == nothing
-        backend = default_polyhedra_backend(V, N)
-    end
-    Vch = remove_redundant_vertices(V, backend=backend)
+    Vch = remove_redundant_vertices(V, backend=backend, solver=solver)
     m = length(Vch.vertices)
     points[1:m] = Vch.vertices
     return resize!(points, m)
