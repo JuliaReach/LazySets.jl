@@ -165,7 +165,7 @@ function minkowski_sum(P1::AbstractPolytope{N}, P2::AbstractPolytope{N};
     vlist1, vlist2 = vertices_list(P1), vertices_list(P2)
     n, m = length(vlist1), length(vlist2)
     Vout = Vector{Vector{N}}()
-    sizehint!(Vout, n + m)
+    sizehint!(Vout, n * m)
     for vi in vlist1
         for vj in vlist2
             push!(Vout, vi + vj)
