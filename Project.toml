@@ -1,6 +1,6 @@
 name = "LazySets"
 uuid = "b4f0291d-fe17-52bc-9479-3d1a343d9043"
-version = "1.13.0"
+version = "1.14.0"
 
 [deps]
 Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
@@ -27,7 +27,7 @@ IntervalArithmetic = "≥ 0.14.0"
 JuMP = "≥ 0.19.2"
 MathProgBase = "≥ 0.7.0"
 Optim = "≥ 0.14.1"
-Polyhedra = "≥ 0.3.4"
+Polyhedra = "≥ 0.5.2"
 RecipesBase = "≥ 0.3.0"
 Requires = "≥ 0.4.0"
 TaylorModels = "≥ 0.1.1"
