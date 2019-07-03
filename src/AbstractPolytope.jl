@@ -181,15 +181,9 @@ function minkowski_sum(P1::AbstractPolytope{N}, P2::AbstractPolytope{N};
     return VPolytope(Vout)
 end
 
-function _minkowski_sum_input_vertices(P1::AbstractPolytope{N}, P2::AbstractPolytope{N}, backend)
+function _minkowski_sum_input_vertices(P1::AbstractPolytope, P2::AbstractPolytope, backend)
     vlist1 = vertices_list(P1)
     vlist2 = vertices_list(P2)
-    return vlist1, vlist2
-end
-
-function _minkowski_sum_input_vertices(P1::HPolytope{N}, P2::HPolytope{N}, backend)
-    vlist1 = vertices_list(P1, backend=backend)
-    vlist2 = vertices_list(P2, backend=backend)
     return vlist1, vlist2
 end
 
