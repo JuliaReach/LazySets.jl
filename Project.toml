@@ -9,7 +9,6 @@ InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 IntervalArithmetic = "d1acc4aa-44c8-5952-acd4-ba5d80a2a253"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 MathProgBase = "fdba3010-5040-5b88-9595-932c9decdf73"
-Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 Requires = "ae029012-a4dd-5104-9daa-d747884805df"
@@ -33,19 +32,13 @@ TaylorModels = "≥ 0.1.1"
 CDDLib = "3391f64e-dcde-5f30-b752-e11513730f60"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 Expokit = "a1e7a1ef-7a5d-5822-a38c-be74e1bb89f4"
-GLPKMathProgInterface = "3c7084bd-78ad-589a-b5bb-dbd673274bea"
 GR = "28b8d3ca-fb5f-59d9-8090-bfdbd6d07a71"
-IntervalArithmetic = "d1acc4aa-44c8-5952-acd4-ba5d80a2a253"
-MathProgBase = "fdba3010-5040-5b88-9595-932c9decdf73"
 Optim = "429524aa-4258-5aef-a3af-852621145aeb"
-Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 Polyhedra = "67491407-f73d-577b-9b50-8179a7c68029"
-RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
-Requires = "ae029012-a4dd-5104-9daa-d747884805df"
 TaylorModels = "314ce334-5f6e-57ae-acf6-00b6e903104a"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["CDDLib", "Documenter", "Expokit", "GLPKMathProgInterface", "GR",
-        "IntervalArithmetic", "MathProgBase", "Optim", "Pkg", "Plots",
-        "Polyhedra", "RecipesBase", "Requires", "TaylorModels"]
+test = ["CDDLib", "Documenter", "Expokit", "GR", "Optim", "Plots", "Polyhedra",
+        "TaylorModels", "Test"]
