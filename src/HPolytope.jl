@@ -225,7 +225,7 @@ function vertices_list(P::HPolytope{N};
         if prune
             removevredundancy!(Q)
         end
-        return collect(points(Q))
+        return collect(Polyhedra.points(Q))
     end
 end
 

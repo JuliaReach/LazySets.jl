@@ -490,8 +490,8 @@ function convex_hull(P1::HPoly{N},
                      P2::HPoly{N};
                      backend=default_polyhedra_backend(P1, N)) where {N<:Real}
     require(:Polyhedra; fun_name="convex_hull")
-    Pch = convexhull(polyhedron(P1; backend=backend),
-                     polyhedron(P2; backend=backend))
+    Pch = Polyhedra.convexhull(polyhedron(P1; backend=backend),
+                               polyhedron(P2; backend=backend))
     removehredundancy!(Pch)
     return convert(typeof(P1), Pch)
 end
@@ -524,8 +524,8 @@ function cartesian_product(P1::HPoly{N},
                            backend=default_polyhedra_backend(P1, N)
                           ) where {N<:Real}
     require(:Polyhedra; fun_name="`cartesian_product")
-    Pcp = hcartesianproduct(polyhedron(P1; backend=backend),
-                            polyhedron(P2; backend=backend))
+    Pcp = Polyhedra.hcartesianproduct(polyhedron(P1; backend=backend),
+                                      polyhedron(P2; backend=backend))
     return convert(typeof(P1), Pcp)
 end
 

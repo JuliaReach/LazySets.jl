@@ -21,21 +21,15 @@ function load_polyhedra()
     import .Polyhedra: polyhedron
     export polyhedron
     using .Polyhedra: HRep, VRep,
-                      removehredundancy!, removevredundancy!,
-                      hreps, vreps,
-                      intersect,
-                      convexhull,
-                      hcartesianproduct, vcartesianproduct,
-                      points,
-                      default_library
+                      removehredundancy!, removevredundancy!
     import JuMP, GLPK
 
     function default_polyhedra_backend(P, N::Type{<:AbstractFloat})
-        return default_library(LazySets.dim(P), Float64)
+        return Polyhedra.default_library(LazySets.dim(P), Float64)
     end
 
     function default_polyhedra_backend(P, N::Type{<:Rational})
-        return default_library(LazySets.dim(P), Rational{Int})
+        return Polyhedra.default_library(LazySets.dim(P), Rational{Int})
     end
 
     function default_lp_solver(N::Type{<:AbstractFloat})
