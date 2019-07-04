@@ -17,7 +17,36 @@ function load_optim()
 end
 
 function load_polyhedra()
-    eval(load_polyhedra_abstractpolytope())
+    eval(quote
+    import .Polyhedra: polyhedron
+    export polyhedron
+    using .Polyhedra: HRep, VRep,
+                      removehredundancy!, removevredundancy!,
+                      hreps, vreps,
+                      intersect,
+                      convexhull,
+                      hcartesianproduct, vcartesianproduct,
+                      points,
+                      default_library
+    import JuMP, GLPK
+
+    function default_polyhedra_backend(P, N::Type{<:AbstractFloat})
+        return default_library(LazySets.dim(P), Float64)
+    end
+
+    function default_polyhedra_backend(P, N::Type{<:Rational})
+        return default_library(LazySets.dim(P), Rational{Int})
+    end
+
+    function default_lp_solver(N::Type{<:AbstractFloat})
+        return JuMP.with_optimizer(GLPK.Optimizer)
+    end
+
+    function default_lp_solver(N::Type{<:Rational})
+        return JuMP.with_optimizer(GLPK.Optimizer, method=:Exact)
+    end
+    end)
+
     eval(load_polyhedra_hpolytope())
     eval(load_polyhedra_hpolyhedron())
     eval(load_polyhedra_vpolytope())
