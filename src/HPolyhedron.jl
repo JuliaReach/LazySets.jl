@@ -14,7 +14,6 @@ export HPolyhedron,
        vertices_list,
        singleton_list,
        isempty,
-       linear_map,
        remove_redundant_constraints,
        remove_redundant_constraints!,
        constrained_dimensions
