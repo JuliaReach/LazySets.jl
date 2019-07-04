@@ -37,7 +37,7 @@ is_intersection_empty(::Universe{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::Complement{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::Zonotope{N}, ::Zonotope{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::Interval{N}, ::Interval{N}, ::Bool=false) where {N<:Real}
-is_intersection_empty(X::CartesianProductArray{N}, Y::HPolyhedron{N}) where {N<:Real}
+is_intersection_empty(X::CartesianProductArray{N}, Y::AbstractPolyhedron{N}) where {N<:Real}
 is_intersection_empty(X::CartesianProductArray{N}, Y::CartesianProductArray{N}) where {N}
 ```
 
