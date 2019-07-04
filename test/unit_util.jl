@@ -33,7 +33,10 @@ for _dummy_ in 1:1 # avoid global variable warnings
     # diagonal matrix
     @test LazySets.isinvertible(Diagonal([2 0; 0 2]))
     @test !LazySets.isinvertible(Diagonal([2 0; 0 0]))
-    # diagonal matrices are always square
+
+    # matrix rank
+    A = sprandn(2, 10, 0.4)
+    @test rank(Matrix(A)) == rank(A) == rank(view(A, :, :))
 
     for N in [Float64, Rational{Int}, Float32]
         # substitution
