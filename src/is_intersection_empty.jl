@@ -1371,21 +1371,29 @@ end
     is_intersection_empty(cpa::CartesianProductArray{N},
                           P::AbstractPolyhedron{N}) where {N<:Real}
 
-Check whether a Cartesian product array intersects with a polyhedron.
+Check whether a polytopic Cartesian product array intersects with a polyhedron.
 
 ### Input
 
-- `cpa` -- Cartesian product array of convex sets
+- `cpa` -- Cartesian product array of polytopes
 - `P`   -- polyhedron
 
 ### Output
 
 `true` iff ``\\text{cpa} ∩ Y = ∅ ``.
+
+### Algorithm
+
+We first identify the blocks of `cpa` in which `P` is constrained.
+Then we project `cpa` to those blocks and convert the result to an `HPolytope`
+`Q`.
+Finally we determine whether `Q` and the projected `P` intersect.
 """
 function is_intersection_empty(cpa::CartesianProductArray{N},
                                P::AbstractPolyhedron{N}) where {N<:Real}
     cpa_low_dim, vars, _block_structure = get_constrained_lowdimset(cpa, P)
-    return isdisjoint(cpa_low_dim, project(P, vars))
+    hpoly_low_dim = HPolytope(constraints_list(cpa_low_dim))
+    return isdisjoint(hpoly_low_dim, project(P, vars))
 end
 
 # symmetric method
