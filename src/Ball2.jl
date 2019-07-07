@@ -257,7 +257,7 @@ A linear array of `nsamples` elements drawn from a uniform distribution in `B`.
 ### Algorithm
 
 Random sampling with uniform distribution in `B` is computed using Muller's method
-of normalised Gaussians. This function requires the package `Distributions`.
+of normalized Gaussians. This function requires the package `Distributions`.
 See `_sample_unit_nball_muller!` for implementation details.
 """
 function sample(B::Ball2{N}, nsamples::Int=1;
