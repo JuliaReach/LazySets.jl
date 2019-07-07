@@ -98,4 +98,9 @@ for N in [Float64, Float32]
     @test !is_intersection_empty(b2, b1) && !intersection_empty && point ∈ b2 && point ∈ b1
     intersection_empty, point = is_intersection_empty(b1, b4, true)
     @test !is_intersection_empty(b1, b4) && !intersection_empty && point ∈ b1 && point ∈ b4
+
+    # uniform sampling
+    B = Ball2(N[1, 2, 3], N(0.5))
+    s = sample(B, 100) # get 100 random elements in B
+    @test all([si ∈ B for si in s])
 end
