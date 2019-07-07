@@ -12,8 +12,7 @@ using Expokit, Optim
 import TaylorModels
 using TaylorModels: set_variables, TaylorModelN
 
-using Distributions
-using LazySets: sample, isbounded # fix namespace conflicts with Distributions
+import Distributions
 
 # ==============================
 # Non-exported helper functions

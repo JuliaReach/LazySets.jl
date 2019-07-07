@@ -25,7 +25,7 @@ Ball2
 ∈(::AbstractVector{N}, ::Ball2{N}) where {N<:AbstractFloat}
 center(::Ball2{N}) where {N<:AbstractFloat}
 rand(::Type{Ball2})
-sample(::Ball2{N}, ::Int)
+sample(::Ball2{N}, ::Int) where {N<:AbstractFloat}
 translate(::Ball2{N}, ::AbstractVector{N}) where {N<:AbstractFloat}
 ```
 Inherited from [`LazySet`](@ref):

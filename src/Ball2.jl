@@ -239,7 +239,7 @@ end
 """
     sample(B::Ball2{N}, nsamples::Int=1;
            [rng]::AbstractRNG=GLOBAL_RNG,
-           [seed]::Union{Int, Nothing}=nothing) where {N}
+           [seed]::Union{Int, Nothing}=nothing) where {N<:AbstractFloat}
 
 Return samples from a uniform distribution on the given ball in the 2-norm.
 
@@ -262,7 +262,7 @@ See `_sample_unit_nball_muller!` for implementation details.
 """
 function sample(B::Ball2{N}, nsamples::Int=1;
                 rng::AbstractRNG=GLOBAL_RNG,
-                seed::Union{Int, Nothing}=nothing) where {N}
+                seed::Union{Int, Nothing}=nothing) where {N<:AbstractFloat}
     require(:Distributions; fun_name="sample")
     n = dim(B)
     D = Vector{Vector{N}}(undef, nsamples) # preallocate output
