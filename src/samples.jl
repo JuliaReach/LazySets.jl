@@ -40,7 +40,7 @@ where ``α := \\sqrt\\{z₁² + z₂² + … + z_n²\\}``, is uniform over ``S^n
 [1] Muller, Mervin E. *A note on a method for generating points uniformly on
     n-dimensional spheres.* Communications of the ACM 2.4 (1959): 19-20.
 """
-function _sample_unit_nsphere_muller!(D::Vector{Vector{N}}, n, p;
+function _sample_unit_nsphere_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
                                       rng::AbstractRNG=GLOBAL_RNG,
                                       seed::Union{Int, Nothing}=nothing) where {N}
     rng = reseed(rng, seed)
