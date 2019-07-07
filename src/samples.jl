@@ -82,7 +82,7 @@ A vector of `nsamples` vectors.
 This function implements Muller's method of normalised Gaussians [1] to
 sample from the interior of the ball.
 
-Given ``n`` Gaussian random variables ``Z₁, Z₂, …, Z_n``, and a uniformly
+Given ``n`` Gaussian random variables ``Z₁, Z₂, …, Z_n`` and a uniformly
 distributed random variable ``r`` with support in ``[0, 1]``, the distribution
 of the vectors
 
