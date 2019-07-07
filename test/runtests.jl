@@ -7,7 +7,7 @@ using IntervalArithmetic: IntervalBox
 # ========================
 # Optional dependencies
 # ========================
-using Expokit, Optim
+import Expokit, Optim
 
 import TaylorModels
 using TaylorModels: set_variables, TaylorModelN

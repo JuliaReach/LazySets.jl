@@ -102,5 +102,5 @@ for N in [Float64, Float32]
     # uniform sampling
     B = Ball2(N[1, 2, 3], N(0.5))
     s = sample(B, 100) # get 100 random elements in B
-    @test all([si ∈ B for si in s])
+    @test all(si -> si ∈ B, s)
 end

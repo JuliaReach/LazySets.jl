@@ -8,12 +8,12 @@ using .Distributions: Uniform, Normal
                                  rng::AbstractRNG=GLOBAL_RNG,
                                  seed::Union{Int, Nothing}=nothing) where {N}
 
-Return samples from a uniform distribution on an ``n``-dimensional unit
+Draw samples from a uniform distribution on an ``n``-dimensional unit
 sphere using Muller's method.
 
 ### Input
 
-- `D`    -- output, vector of vectors
+- `D`    -- output, vector of points
 - `n`    -- dimension of the sphere
 - `p`    -- number of random samples
 - `rng`  -- (optional, default: `GLOBAL_RNG`) random number generator
@@ -40,7 +40,7 @@ where ``α := \\sqrt\\{z₁² + z₂² + … + z_n²\\}``, is uniform over ``S^n
 [1] Muller, Mervin E. *A note on a method for generating points uniformly on
     n-dimensional spheres.* Communications of the ACM 2.4 (1959): 19-20.
 """
-function _sample_unit_nsphere_muller!(D::Vector{Vector{N}}, n, p;
+function _sample_unit_nsphere_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
                                       rng::AbstractRNG=GLOBAL_RNG,
                                       seed::Union{Int, Nothing}=nothing) where {N}
     rng = reseed(rng, seed)
@@ -79,10 +79,10 @@ A vector of `nsamples` vectors.
 
 ### Algorithm
 
-This function implements Muller's method of normalised Gaussians [1] adapted
+This function implements Muller's method of normalised Gaussians [1] to
 sample from the interior of the ball.
 
-Given ``n`` Gaussian random variables ``Z₁, Z₂, …, Z_n``, and a uniformly
+Given ``n`` Gaussian random variables ``Z₁, Z₂, …, Z_n`` and a uniformly
 distributed random variable ``r`` with support in ``[0, 1]``, the distribution
 of the vectors
 
