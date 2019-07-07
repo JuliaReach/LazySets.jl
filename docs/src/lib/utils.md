@@ -1,15 +1,13 @@
 ```@meta
 CurrentModule = LazySets
 DocTestSetup = quote
-    using LazySets
+    using LazySets, Distributions
 end
 ```
 
 # Utility functions
 
-## Helpers for internal use only
-
-### Arrays module
+## Arrays module
 
 ```@docs
 Arrays
@@ -27,7 +25,7 @@ samedir
 SingleEntryVector
 ```
 
-### Functions and Macros
+## Functions and Macros
 
 ```@docs
 an_element_helper
@@ -53,15 +51,22 @@ get_constrained_lowdimset
 @array_absorbing
 ```
 
-### Types
+## Types
 
 ```@docs
 CachedPair
 StrictlyIncreasingIndices
 ```
 
-### Inspection of set interfaces
+## Inspection of set interfaces
 
 ```@docs
 LazySets.subtypes(::Any, ::Bool)
+```
+
+## Sampling
+
+```@docs
+LazySets._sample_unit_nsphere_muller!
+LazySets._sample_unit_nball_muller!
 ```

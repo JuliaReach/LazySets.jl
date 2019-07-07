@@ -275,3 +275,19 @@ function sample(B::Ball2{N}, nsamples::Int=1;
     end
     return D
 end
+
+function sample2(B::Ball2{N}, nsamples::Int=1;
+                rng::AbstractRNG=GLOBAL_RNG,
+                seed::Union{Int, Nothing}=nothing) where {N<:AbstractFloat}
+    require(:Distributions; fun_name="sample")
+    n = dim(B)
+    D = Vector{Vector{N}}(undef, nsamples) # preallocate output
+    _sample_unit_nball_muller!(D, n, nsamples, rng=rng, seed=seed)
+
+    # customize for the given ball
+    r, c = B.radius, B.center
+    @inbounds for i in 1:nsamples
+        D[i] = c + r * D[i]
+    end
+    return D
+end
