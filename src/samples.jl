@@ -33,9 +33,9 @@ Given ``n`` canonical Gaussian random variables ``Z₁, Z₂, …, Z_n``, the
 distribution of the vectors
 
 ```math
-\\begin \\dfrac{1}{α} \\left( z₁, z₂, …, z_n \\right)^\\transpose,
+\\dfrac{1}{α}\\left(z₁, z₂, …, z_n\\right)^T,
 ```
-where ``α := \\sqrt\\{z₁² + z₂² + … + z_n²\\}``, is uniform over ``S^n``.
+where ``α := \\sqrt{z₁² + z₂² + … + z_n²}``, is uniform over ``S^n``.
 
 [1] Muller, Mervin E. *A note on a method for generating points uniformly on
     n-dimensional spheres.* Communications of the ACM 2.4 (1959): 19-20.
@@ -87,9 +87,9 @@ distributed random variable ``r`` with support in ``[0, 1]``, the distribution
 of the vectors
 
 ```math
-\\begin \\dfrac{r^{1\n}}{α} \\left( z₁, z₂, …, z_n \\right)^\\transpose,
+\\dfrac{r^{1/n}}{α} \\left(z₁, z₂, …, z_n\\right)^T,
 ```
-where ``α := \\sqrt\\{z₁² + z₂² + … + z_n²\\}``, is uniform over the
+where ``α := \\sqrt{z₁² + z₂² + … + z_n²}``, is uniform over the
 ``n``-dimensional unit ball.
 
 [1] Muller, Mervin E. *A note on a method for generating points uniformly on
