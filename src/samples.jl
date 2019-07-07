@@ -8,7 +8,7 @@ using .Distributions: Uniform, Normal
                                  rng::AbstractRNG=GLOBAL_RNG,
                                  seed::Union{Int, Nothing}=nothing) where {N}
 
-Return samples from a uniform distribution on an ``n``-dimensional unit
+Draw samples from a uniform distribution on an ``n``-dimensional unit
 sphere using Muller's method.
 
 ### Input
