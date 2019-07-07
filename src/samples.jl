@@ -13,7 +13,7 @@ sphere using Muller's method.
 
 ### Input
 
-- `D`    -- output, vector of vectors
+- `D`    -- output, vector of points
 - `n`    -- dimension of the sphere
 - `p`    -- number of random samples
 - `rng`  -- (optional, default: `GLOBAL_RNG`) random number generator
