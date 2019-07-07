@@ -1,22 +1,32 @@
-using Random, Distributions
-using LazySets: dim, GLOBAL_RNG, reseed
+function load_distributions_samples()
+return quote
 
-function sample(B::Ball2{N}, p::Int=1;
-                rng::AbstractRNG=GLOBAL_RNG,
-                seed::Union{Int, Nothing}=nothing) where {N}
-    
-    n = dim(B)
-    D = Vector{Vector{N}}(undef, p) # preallocate output
-    _sample_unit_nball_muller!(D, n, p, rng=rng, seed=seed)
+using .Distributions: Uniform, Normal
 
-    # customize for the given ball
-    r, c = B.radius, B.center
-    @inbounds for i in 1:p
-        axpby!(one(N), c, r, D[i])
-    end
-    return D
-end
+"""
+    sample(B::Ball2{N}, nsamples::Int=1;
+           [rng]::AbstractRNG=GLOBAL_RNG,
+           [seed]::Union{Int, Nothing}=nothing) where {N}
 
+Return samples from a uniform distribution on the given ball in the 2-norm.
+
+### Input
+
+- `B`        -- ball in the 2-norm
+- `nsamples` -- (optional, default: `1`) number of samples
+- `rng`      -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed`     -- (optional, default: `nothing`) seed for reseeding
+
+### Output
+
+A linear array of `nsamples` elements drawn from a uniform distribution in `B`. 
+
+### Algorithm
+
+Random sampling with uniform distribution in `B` is computed using Muller's method
+of normalised Gaussians. This function requires the package `Distributions`.
+See `_sample_unit_nball_muller!` for implementation details.
+"""
 function _sample_unit_nsphere_muller!(D::Vector{Vector{N}}, n, p;
                                       rng::AbstractRNG=GLOBAL_RNG,
                                       seed::Union{Int, Nothing}=nothing) where {N}
@@ -34,6 +44,30 @@ function _sample_unit_nsphere_muller!(D::Vector{Vector{N}}, n, p;
     return D
 end
 
+"""
+    sample(B::Ball2{N}, nsamples::Int=1;
+           [rng]::AbstractRNG=GLOBAL_RNG,
+           [seed]::Union{Int, Nothing}=nothing) where {N}
+
+Return samples from a uniform distribution on the given ball in the 2-norm.
+
+### Input
+
+- `B`        -- ball in the 2-norm
+- `nsamples` -- (optional, default: `1`) number of samples
+- `rng`      -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed`     -- (optional, default: `nothing`) seed for reseeding
+
+### Output
+
+A linear array of `nsamples` elements drawn from a uniform distribution in `B`. 
+
+### Algorithm
+
+Random sampling with uniform distribution in `B` is computed using Muller's method
+of normalised Gaussians. This function requires the package `Distributions`.
+See `_sample_unit_nball_muller!` for implementation details.
+"""
 function _sample_unit_nball_muller!(D::Vector{Vector{N}}, n, p;
                                     rng::AbstractRNG=GLOBAL_RNG,
                                     seed::Union{Int, Nothing}=nothing) where {N}
@@ -55,3 +89,6 @@ function _sample_unit_nball_muller!(D::Vector{Vector{N}}, n, p;
     end
     return D
 end
+
+end # quote
+end # function load_distributions_samples()

@@ -25,6 +25,7 @@ using .Arrays
 include("helper_functions.jl")
 include("comparisons.jl")
 include("macros.jl")
+include("samples.jl")
 
 # ==================
 # Abstract set types
