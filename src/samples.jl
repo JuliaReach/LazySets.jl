@@ -79,7 +79,7 @@ A vector of `nsamples` vectors.
 
 ### Algorithm
 
-This function implements Muller's method of normalised Gaussians [1] adapted
+This function implements Muller's method of normalised Gaussians [1] to
 sample from the interior of the ball.
 
 Given ``n`` Gaussian random variables ``Z₁, Z₂, …, Z_n``, and a uniformly
