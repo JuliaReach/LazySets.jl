@@ -1,13 +1,22 @@
 using LazySets, LazySets.Approximations, Test, LinearAlgebra, SparseArrays
 
-import IntervalArithmetic, Expokit, Optim
+import IntervalArithmetic
 const IA = IntervalArithmetic
 using IntervalArithmetic: IntervalBox
+
+# ========================
+# Optional dependencies
+# ========================
+import Expokit, Optim
 
 import TaylorModels
 using TaylorModels: set_variables, TaylorModelN
 
-# non-exported helper functions
+import Distributions
+
+# ==============================
+# Non-exported helper functions
+# ==============================
 using LazySets: ispermutation
 using LazySets.Arrays: isinvertible, inner,
                        is_cyclic_permutation, SingleEntryVector

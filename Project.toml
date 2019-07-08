@@ -20,6 +20,7 @@ SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 [compat]
 julia = "≥ 1.0.0"
 CDDLib = "≥ 0.5.2"
+Distributions = "≥ 0.20.0"
 Documenter = "≥ 0.22.3"
 Expokit = "≥ 0.1.0"
 GLPK = "≥ 0.10.0"
@@ -37,6 +38,7 @@ TaylorModels = "≥ 0.1.1"
 
 [extras]
 CDDLib = "3391f64e-dcde-5f30-b752-e11513730f60"
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 Expokit = "a1e7a1ef-7a5d-5822-a38c-be74e1bb89f4"
 GLPK = "60bf3e95-4087-53dc-ae20-288a0d20c6a6"
@@ -49,5 +51,5 @@ TaylorModels = "314ce334-5f6e-57ae-acf6-00b6e903104a"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["CDDLib", "Documenter", "Expokit", "GLPK", "GR", "JuMP", "Optim", "Plots", "Polyhedra",
+test = ["CDDLib", "Distributions", "Documenter", "Expokit", "GLPK", "GR", "JuMP", "Optim", "Plots", "Polyhedra",
         "TaylorModels", "Test"]
