@@ -4,7 +4,7 @@ return quote
 using .Distributions: Uniform, Normal
 
 """
-    _sample_unit_nsphere_muller!(D::Vector{Vector{N}}, n, p;
+    _sample_unit_nsphere_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
                                  rng::AbstractRNG=GLOBAL_RNG,
                                  seed::Union{Int, Nothing}=nothing) where {N}
 
@@ -58,16 +58,16 @@ function _sample_unit_nsphere_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
 end
 
 """
-    _sample_unit_nball_muller!(D::Vector{Vector{N}}, n, p;
+    _sample_unit_nball_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
                                rng::AbstractRNG=GLOBAL_RNG,
                                seed::Union{Int, Nothing}=nothing) where {N}
 
-Return samples from a uniform distribution on an ``n``-dimensional unit ball
+Draw samples from a uniform distribution on an ``n``-dimensional unit ball
 using Muller's method.
 
 ### Input
 
-- `D`    -- output, vector of vectors
+- `D`    -- output, vector of points
 - `n`    -- dimension of the ball
 - `p`    -- number of random samples
 - `rng`  -- (optional, default: `GLOBAL_RNG`) random number generator
@@ -95,7 +95,7 @@ where ``α := \\sqrt{z₁² + z₂² + … + z_n²}``, is uniform over the
 [1] Muller, Mervin E. *A note on a method for generating points uniformly on
     n-dimensional spheres.* Communications of the ACM 2.4 (1959): 19-20.
 """
-function _sample_unit_nball_muller!(D::Vector{Vector{N}}, n, p;
+function _sample_unit_nball_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
                                     rng::AbstractRNG=GLOBAL_RNG,
                                     seed::Union{Int, Nothing}=nothing) where {N}
 
