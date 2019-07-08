@@ -4,7 +4,8 @@ export dot_zero,
        samedir,
        nonzero_indices,
        rectify,
-       is_cyclic_permutation
+       is_cyclic_permutation,
+       to_negative_vector
 
 """
     dot_zero(x::AbstractVector{N}, y::AbstractVector{N}) where{N<:Real}
@@ -187,4 +188,37 @@ function is_cyclic_permutation(candidate::AbstractVector,
         return false
     end
     return any(candidate == circshift(paragon, i) for i in 0:m-1)
+end
+
+"""
+    to_negative_vector(v::AbstractVector{N}) where {N}
+
+Negate a vector and convert to type `Vector`.
+
+### Input
+
+- `v` -- vector
+
+### Output
+
+A `Vector` equivalent to ``-v``.
+"""
+@inline function to_negative_vector(v::AbstractVector{N}) where {N}
+    u = zeros(N, length(v))
+    @inbounds for (i, vi) in enumerate(v)
+        u[i] = -vi
+    end
+    return u
+end
+
+@inline function to_negative_vector(v::Vector)
+    return -v
+end
+
+@inline function to_negative_vector(v::SparseVector{N}) where {N}
+    u = zeros(N, length(v))
+    @inbounds for (ni, i) in enumerate(v.nzind)
+        u[i] = -v.nzval[ni]
+    end
+    return u
 end

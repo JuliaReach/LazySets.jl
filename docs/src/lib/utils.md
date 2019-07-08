@@ -25,6 +25,7 @@ nonzero_indices
 remove_duplicates_sorted!
 samedir
 SingleEntryVector
+to_negative_vector
 ```
 
 ### Functions and Macros
