@@ -16,7 +16,6 @@ TaylorModels = "314ce334-5f6e-57ae-acf6-00b6e903104a"
 [compat]
 BenchmarkTools = "≥ 0.4.2"
 CDDLib = "≥ 0.5.2"
-Distributions = "≥ 0.20.0"
 Documenter = "≥ 0.22.3"
 Expokit = "≥ 0.1.0"
 GR = "≥ 0.39.1"
