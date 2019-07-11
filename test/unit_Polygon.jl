@@ -286,7 +286,7 @@ for N in [Float64, Float32, Rational{Int}]
     B = Ball2(zeros(2), 1.0)
     P = HPolygon([HalfSpace(di, ρ(di, B)) for di in dirs])
     for (i, d) in enumerate(vertices_list(P))
-        @test σ(d, P) == P.vertices[i]
+        @test σ(d, P) == vertices_list(P)[i]
     end
 
     # test that #83 is fixed
