@@ -246,10 +246,11 @@ towards the given direction.
 """
 @inline function _above(u::AbstractVector, Vi::AbstractVector, Vj::AbstractVector)
     (_dr(u, Vi, Vj) > 0)
-    to_negative_vector(v::AbstractVector{N}) where {N}
 end
 
 """
+    to_negative_vector(v::AbstractVector{N}) where {N}
+    
 Negate a vector and convert to type `Vector`.
 
 ### Input
