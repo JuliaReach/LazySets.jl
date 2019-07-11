@@ -224,7 +224,7 @@ Returns the direction of the difference of the given vectors.
 A float indicating the direction of the difference of the given vectors.
 """
 @inline function _dr(u::AbstractVector, Vi::AbstractVector, Vj::AbstractVector)
-    (dot(u, (Vi) - (Vj)))
+    dot(u, (Vi) - (Vj))
 end
 
 """
