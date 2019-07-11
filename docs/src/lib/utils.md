@@ -24,6 +24,9 @@ remove_duplicates_sorted!
 samedir
 SingleEntryVector
 to_negative_vector
+_up
+_dr
+_above
 ```
 
 ## Functions and Macros
