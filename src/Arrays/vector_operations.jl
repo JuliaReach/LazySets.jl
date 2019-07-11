@@ -257,7 +257,7 @@ Checks if the given vector is pointing towards the given direction.
 
 A boolean indicating if the vector is pointing towards the direction.
 """
-function _up(u::AbstractVector, v::AbstractVector)
+@inline function _up(u::AbstractVector, v::AbstractVector)
     dot(u, v) > 0
 end
 
@@ -276,7 +276,7 @@ Returns the direction of the difference of the given vectors.
 
 A float indicating the direction of the difference of the given vectors.
 """
-function _dr(u::AbstractVector, Vi::AbstractVector, Vj::AbstractVector)
+@inline function _dr(u::AbstractVector, Vi::AbstractVector, Vj::AbstractVector)
     (dot(u, (Vi) - (Vj)))
 end
 
@@ -297,6 +297,6 @@ direction.
 A boolean indicating if the difference of the given vectors are pointing
 towards the given direction.
 """
-function _above(u::AbstractVector, Vi::AbstractVector, Vj::AbstractVector)
+@inline function _above(u::AbstractVector, Vi::AbstractVector, Vj::AbstractVector)
     (_dr(u, Vi, Vj) > 0)
 end
