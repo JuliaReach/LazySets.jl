@@ -245,7 +245,7 @@ A boolean indicating if the difference of the given vectors are pointing
 towards the given direction.
 """
 @inline function _above(u::AbstractVector, Vi::AbstractVector, Vj::AbstractVector)
-    (_dr(u, Vi, Vj) > 0)
+    _dr(u, Vi, Vj) > 0
 end
 
 """
