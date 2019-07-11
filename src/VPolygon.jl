@@ -251,7 +251,6 @@ We follow [this implementation](http://geomalgorithms.com/a14-_extreme_pts.html#
 based on an algorithm described in [1].
 
 [1] Joseph O'Rourke, Computational Geometry in C (2nd Edition)
-Geometry in C (2nd Edition)
 """
 function σ(d::AbstractVector{N}, P::VPolygon{N}) where {N<:Real}
     @assert !isempty(P.vertices) "the polygon has no vertices"
