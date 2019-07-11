@@ -247,7 +247,7 @@ For the brute-force search, it compares the projection of
 each vector along the given direction and runs in ``O(n)`` where 
 ``n`` is the number of vertices.
 For the binary search the algorithm runs in ``O(log n)``.
-The binary search is get from [here](http://geomalgorithms.com/a14-_extreme_pts.html#polyMax_2D()).
+We follow [this implementation](http://geomalgorithms.com/a14-_extreme_pts.html#polyMax_2D())
 And is based on an algorithm described in Joseph O'Rourke, Computational
 Geometry in C (2nd Edition)
 """
