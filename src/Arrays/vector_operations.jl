@@ -5,7 +5,10 @@ export dot_zero,
        nonzero_indices,
        rectify,
        is_cyclic_permutation,
-       to_negative_vector
+       to_negative_vector,
+       _above,
+       _dr,
+       _up
 
 """
     dot_zero(x::AbstractVector{N}, y::AbstractVector{N}) where{N<:Real}
@@ -250,7 +253,7 @@ end
 
 """
     to_negative_vector(v::AbstractVector{N}) where {N}
-    
+
 Negate a vector and convert to type `Vector`.
 
 ### Input
