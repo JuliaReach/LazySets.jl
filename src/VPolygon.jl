@@ -248,7 +248,9 @@ each vector along the given direction and runs in ``O(n)`` where
 ``n`` is the number of vertices.
 For the binary search the algorithm runs in ``O(log n)``.
 We follow [this implementation](http://geomalgorithms.com/a14-_extreme_pts.html#polyMax_2D())
-And is based on an algorithm described in Joseph O'Rourke, Computational
+based on an algorithm described in [1].
+
+[1] Joseph O'Rourke, Computational Geometry in C (2nd Edition)
 Geometry in C (2nd Edition)
 """
 function σ(d::AbstractVector{N}, P::VPolygon{N}) where {N<:Real}
