@@ -629,8 +629,10 @@ function minkowski_sum(P::VPolygon{N}, Q::VPolygon{N}) where {N<:Real}
     mP = length(vlistP)
     mQ = length(vlistQ)
     i = 1
-    k = 1
-    j = 1
+    σP = σ(N[1, 0], P)
+    σQ = σ(N[1, 0], Q)
+    k = findfirst(==(σP), vlistP)
+    j = findfirst(==(σQ), vlistQ)
     R = Vector{Vector{N}}(undef, mP+mQ)
     fill!(R, N[0, 0])
     while i <= size(R, 1)

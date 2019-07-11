@@ -231,8 +231,7 @@ if test_suite_polyhedra
         p2 = HPolytope(A, b)
         @test intersection(p1, p2) isa EmptySet{N}
         @test intersection(p1, p2; backend=Polyhedra.default_library(2, N)) isa EmptySet{N}
-        # @test intersection(p1, p2; backend=CDDLib.Library()) isa EmptySet{N}
-        # commented because we do not load CDDLib at the moment
+        @test intersection(p1, p2; backend=CDDLib.Library()) isa EmptySet{N}
 
         # intersection with half-space
         hs = HalfSpace(N[2, -2], N(-1))
@@ -349,6 +348,22 @@ if test_suite_polyhedra
         P = convert(VPolytope, H)
         @test BallInf(N[0, 0], N(1)) ⊆ P
         @test !(BallInf(N[0, 0], N(1.01)) ⊆ P)
+
+        # concrete minkowski sum
+        B = convert(VPolytope, BallInf(N[0, 0, 0], N(1)))
+        X = minkowski_sum(B, B)
+        twoB = 2.0*B
+        @test X ⊆ twoB && twoB ⊆ X
+
+        # same but specifying a custom polyhedral computations backend (CDDLib)
+        X = minkowski_sum(B, B, backend=CDDLib.Library())
+        twoB = 2.0*B
+        @test X ⊆ twoB && twoB ⊆ X
+
+        P1 = VPolytope([N[0, 0, 0], N[0, 1, 0]])
+        P2 = VPolytope([N[0, 0, 0], N[1, 0, 0]])
+        Q = minkowski_sum(P1, P2)
+        @test ispermutation(vertices_list(Q), [N[0, 0, 0], N[0, 1, 0], N[1, 0, 0], N[1, 1, 0]])
 
         # -----------------
         # mixed H-rep/V-rep

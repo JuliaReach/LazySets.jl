@@ -6,7 +6,7 @@ for N in [Float64, Rational{Int}]
     # corner cases in dimension 1
     @test convex_hull([Vector{N}(undef, 0)]) == [Vector{N}(undef, 0)]
     @test convex_hull([[N(0)]]) == [[N(0)]]
-    @test convex_hull([[N(2)], [N(1)]]) == [[N(1)], [N(2)]]
+    @test ispermutation(convex_hull([N[2], N[1]]), [N[2], N[1]])
     @test convex_hull([[N(2)], [N(2)]]) == [[N(2)]]
 
     # corner cases in dimension 2
@@ -18,8 +18,7 @@ for N in [Float64, Rational{Int}]
     p1 = [1., 2.]
     p2 = [1., 3.]
     @test convex_hull([p1]) == [p1]
-    @test convex_hull([p1, p2]) == [p1, p2]
-    @test convex_hull([p2, p1]) == [p1, p2]
+    @test ispermutation(convex_hull([p1, p2]), [p1, p2])
 
     # corner cases in higher dimension
     @test convex_hull([[N(0), N(0), N(0)]]) == [[N(0), N(0), N(0)]]

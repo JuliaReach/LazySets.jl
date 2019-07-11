@@ -147,6 +147,7 @@ This interface defines the following functions:
 isbounded(::AbstractPolytope)
 singleton_list(::AbstractPolytope{N}) where {N<:Real}
 isempty(::AbstractPolytope)
+minkowski_sum(::AbstractPolytope{N}, ::AbstractPolytope{N}) where {N<:Real}
 ```
 
 #### Polygon

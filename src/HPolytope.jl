@@ -228,3 +228,8 @@ function vertices_list(P::HPolytope{N};
         return collect(points(Q))
     end
 end
+
+# used for dispatch, see minkowski_sum(::AbstractPolytope{N}, ::AbstractPolytope{N}; ...)
+function _vertices_list(P::HPolytope, backend)
+    return vertices_list(P, backend=backend)
+end

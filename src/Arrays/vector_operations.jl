@@ -1,11 +1,11 @@
 export dot_zero,
        sign_cadlag,
-       ispermutation,
        remove_duplicates_sorted!,
        samedir,
        nonzero_indices,
        rectify,
-       is_cyclic_permutation
+       is_cyclic_permutation,
+       to_negative_vector
 
 """
     dot_zero(x::AbstractVector{N}, y::AbstractVector{N}) where{N<:Real}
@@ -29,59 +29,6 @@ function dot_zero(x::AbstractVector{N}, y::AbstractVector{N}) where{N<:Real}
         end
     end
     return res
-end
-
-"""
-    ispermutation(u::AbstractVector{T}, v::AbstractVector)::Bool where {T}
-
-Check that two vectors contain the same elements up to reordering.
-
-### Input
-
-- `u` -- first vector
-- `v` -- second vector
-
-### Output
-
-`true` iff the vectors are identical up to reordering.
-
-### Examples
-
-```jldoctest
-julia> LazySets.ispermutation([1, 2, 2], [2, 2, 1])
-true
-
-julia> LazySets.ispermutation([1, 2, 2], [1, 1, 2])
-false
-
-```
-"""
-function ispermutation(u::AbstractVector{T}, v::AbstractVector)::Bool where {T}
-    if length(u) != length(v)
-        return false
-    end
-    occurrence_map = Dict{T, Int}()
-    has_duplicates = false
-    for e in u
-        if e ∉ v
-            return false
-        end
-        if haskey(occurrence_map, e)
-            occurrence_map[e] += 1
-            has_duplicates = true
-        else
-            occurrence_map[e] = 1
-        end
-    end
-    if has_duplicates
-        for e in v
-            if !haskey(occurrence_map, e) || occurrence_map[e] == 0
-                return false
-            end
-            occurrence_map[e] -= 1
-        end
-    end
-    return true
 end
 
 """
@@ -299,4 +246,36 @@ towards the given direction.
 """
 @inline function _above(u::AbstractVector, Vi::AbstractVector, Vj::AbstractVector)
     (_dr(u, Vi, Vj) > 0)
+    to_negative_vector(v::AbstractVector{N}) where {N}
+end
+
+"""
+Negate a vector and convert to type `Vector`.
+
+### Input
+
+- `v` -- vector
+
+### Output
+
+A `Vector` equivalent to ``-v``.
+"""
+@inline function to_negative_vector(v::AbstractVector{N}) where {N}
+    u = zeros(N, length(v))
+    @inbounds for (i, vi) in enumerate(v)
+        u[i] = -vi
+    end
+    return u
+end
+
+@inline function to_negative_vector(v::Vector)
+    return -v
+end
+
+@inline function to_negative_vector(v::SparseVector{N}) where {N}
+    u = zeros(N, length(v))
+    @inbounds for (ni, i) in enumerate(v.nzind)
+        u[i] = -v.nzval[ni]
+    end
+    return u
 end

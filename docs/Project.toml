@@ -1,6 +1,7 @@
 [deps]
 BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
 CDDLib = "3391f64e-dcde-5f30-b752-e11513730f60"
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 Expokit = "a1e7a1ef-7a5d-5822-a38c-be74e1bb89f4"
 GR = "28b8d3ca-fb5f-59d9-8090-bfdbd6d07a71"
@@ -14,14 +15,4 @@ TaylorModels = "314ce334-5f6e-57ae-acf6-00b6e903104a"
 
 [compat]
 BenchmarkTools = "≥ 0.4.2"
-CDDLib = "≥ 0.5.2"
-Documenter = "≥ 0.22.3"
-Expokit = "≥ 0.1.0"
-GR = "≥ 0.39.1"
-IntervalArithmetic = "≥ 0.14.0"
-Optim = "≥ 0.14.1"
-Plots = "≥ 0.25.1"
-Polyhedra = "≥ 0.3.4"
-RecipesBase = "≥ 0.3.0"
 StaticArrays = "≥ 0.10.3"
-TaylorModels = "≥ 0.1.1"
