@@ -242,3 +242,61 @@ function is_cyclic_permutation(candidate::AbstractVector,
     end
     return any(candidate == circshift(paragon, i) for i in 0:m-1)
 end
+
+"""
+    _up(u::AbstractVector, v::AbstractVector)
+
+Checks if the given vector is pointing towards the given direction.
+
+### Input
+
+- `u` -- direction
+- `v`   -- vector
+
+### Output
+
+A boolean indicating if the vector is pointing towards the direction.
+"""
+function _up(u::AbstractVector, v::AbstractVector)
+    dot(u, v) > 0
+end
+
+"""
+    _dr(u::AbstractVector, Vi::AbstractVector, Vj::AbstractVector)
+
+Returns the direction of the difference of the given vectors.
+
+### Input
+
+- `u` -- direction
+- `Vi`   -- first vector
+- `Vj` -- second vector
+
+### Output
+
+A float indicating the direction of the difference of the given vectors.
+"""
+function _dr(u::AbstractVector, Vi::AbstractVector, Vj::AbstractVector)
+    (dot(u, (Vi) - (Vj)))
+end
+
+"""
+    _above(u::AbstractVector, Vi::AbstractVector, Vj::AbstractVector)
+
+Checks if the difference of the given vectors are pointing towards the given
+direction.
+
+### Input
+
+- `u` -- direction
+- `Vi`   -- first vector
+- `Vj` -- second vector
+
+### Output
+
+A boolean indicating if the difference of the given vectors are pointing
+towards the given direction.
+"""
+function _above(u::AbstractVector, Vi::AbstractVector, Vj::AbstractVector)
+    (_dr(u, Vi, Vj) > 0)
+end

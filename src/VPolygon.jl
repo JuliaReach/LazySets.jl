@@ -247,13 +247,17 @@ For the brute-force search, it compares the projection of
 each vector along the given direction and runs in ``O(n)`` where 
 ``n`` is the number of vertices.
 For the binary search the algorithm runs in ``O(log n)``.
+The binary search is get from [here](http://geomalgorithms.com/a14-_extreme_pts.html#polyMax_2D()).
+And is based on an algorithm described in Joseph O'Rourke, Computational
+Geometry in C (2nd Edition)
 """
 function σ(d::AbstractVector{N}, P::VPolygon{N}) where {N<:Real}
     @assert !isempty(P.vertices) "the polygon has no vertices"
-    if length(P.vertices) > 10
-        _binary_support_vector(d, P)
+    binary_or_brute_force = 10;
+    if length(P.vertices) > binary_or_brute_force
+        P.vertices[_binary_support_vector(d, P)]
     else
-        _brute_force_support_vector(d, P)
+        P.vertices[_brute_force_support_vector(d, P)]
     end
 end
 
@@ -264,24 +268,20 @@ function _brute_force_support_vector(d::AbstractVector{N}, P::VPolygon{N}) where
             i_max = i
         end
     end
-    return P.vertices[i_max]
+    return i_max
 end
 
-@inline _up(u, v) = dot(u, v) > 0
-@inline _down(u, v) = dot(u, v) < 0
-@inline _dr(u, Vi, Vj) = (dot(u, (Vi) - (Vj))) # direction sign of (Vi-Vj)
-@inline _above(u, Vi, Vj) = (_dr(u, Vi, Vj) > 0) # true if Vi is above Vj
-@inline _below(u, Vi, Vj) = (_dr(u, Vi, Vj) < 0) # true if Vi is below Vj
-
 function _binary_support_vector(d::AbstractVector{N}, P::VPolygon{N}) where {N <: Real}
-    push!(P.vertices, P.vertices[1]) #add extra vertice on the end equal to the first
     n = length(P.vertices)
+    @assert n > 2
+    push!(P.vertices, P.vertices[1]) #add extra vertice on the end equal to the first
     a = 1; b = n # start chain = [1,n] with P.vertices[n]=P.vertices[0]
     A = P.vertices[2] - P.vertices[1]
     upA = _up(d, A)
     # test if P.vertices[0] is a local maximum
     if (!upA && !_above(d, P.vertices[n - 1], P.vertices[1])) # P.vertices[0] is the maximum
-        return P.vertices[1]
+        pop!(P.vertices) # remove the extra point added
+        return 1
     end
     while true
         c = round(Int, (a + b) / 2) # midpoint of [a,b], and 0<c<n
@@ -289,36 +289,17 @@ function _binary_support_vector(d::AbstractVector{N}, P::VPolygon{N}) where {N <
         upC = _up(d, C)
         if (!upC && !_above(d, P.vertices[c - 1], P.vertices[c])) # P.vertices[c] is a local maximum
             pop!(P.vertices) # remove the extra point added
-            return P.vertices[c] # thus it is the maximum
+            return c # thus it is the maximum
         end
         # no max yet, so continue with the  binary search
         # pick one of the two subchains [a,c]  or [c,b]
-        if upA # A points up
-            if !upC # C points down
-                b = c
-            else # C points up
-                if _above(d, P.vertices[a], P.vertices[c]) # P.vertices[a] above P.vertices[c]
-                    b = c
-                else # P.vertices[a] below P.vertices[c]
-                    a = c
-                    A = C
-                    upA = upC
-                end
-            end
-            else # A points down
-            if upC # C points up
-                a = c
-                A = C
-                upA = upC
-            else # C points down
-                if _below(d, P.vertices[a], P.vertices[c]) # P.vertices[a] below P.vertices[c]
-                    b = c
-                else # P.vertices[a] above P.vertices[c]
-                    a = c
-                    A = C
-                    upA = upC
-                end
-            end
+        if (upA && upC && !_above(d, P.vertices[a], P.vertices[c])) ||
+        (!upA && (upC || (!upC && _above(d, P.vertices[a], P.vertices[c]))))
+            a = c
+            A = C
+            upA = upC
+        else
+            b = c
         end
         if (b <= a + 1) # the chain is impossibly small
             pop!(P.vertices) # remove the extra point added
