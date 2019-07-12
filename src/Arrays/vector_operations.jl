@@ -233,7 +233,7 @@ end
 """
     _above(u::AbstractVector, Vi::AbstractVector, Vj::AbstractVector)
 
-Checks if the difference of the given vectors are pointing towards the given
+Checks if the difference of the given vectors is pointing towards the given
 direction.
 
 ### Input
