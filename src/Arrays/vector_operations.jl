@@ -219,7 +219,7 @@ Returns the direction of the difference of the given vectors.
 ### Input
 
 - `u` -- direction
-- `Vi`   -- first vector
+- `Vi` -- first vector
 - `Vj` -- second vector
 
 ### Output
