@@ -201,7 +201,7 @@ Checks if the given vector is pointing towards the given direction.
 ### Input
 
 - `u` -- direction
-- `v`   -- vector
+- `v` -- vector
 
 ### Output
 
