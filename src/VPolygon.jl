@@ -275,17 +275,17 @@ end
 function _binary_support_vector(d::AbstractVector{N}, P::VPolygon{N}) where {N <: Real}
     n = length(P.vertices)
     @assert n > 2
-    push!(P.vertices, P.vertices[1]) #add extra vertice on the end equal to the first
-    a = 1; b = n + 1 # start chain = [1,n+1] with P.vertices[n+1]=P.vertices[0]
+    push!(P.vertices, P.vertices[1]) # add extra vertice on the end equal to the first
+    a = 1; b = n + 1 # start chain = [1,n+1] with P.vertices[n+1]=P.vertices[1]
     A = P.vertices[2] - P.vertices[1]
     upA = _up(d, A)
     # test if P.vertices[0] is a local maximum
-    if (!upA && !_above(d, P.vertices[n], P.vertices[1])) # P.vertices[0] is the maximum
+    if (!upA && !_above(d, P.vertices[n], P.vertices[1])) # P.vertices[1] is the maximum
         pop!(P.vertices) # remove the extra point added
         return 1
     end
     while true
-        c = round(Int, (a + b) / 2) # midpoint of [a,b], and 0<c<n+1
+        c = round(Int, (a + b) / 2) # midpoint of [a,b], and 1<c<n+1
         C = P.vertices[c + 1] - P.vertices[c]
         upC = _up(d, C)
         if (!upC && !_above(d, P.vertices[c - 1], P.vertices[c])) # P.vertices[c] is a local maximum
@@ -630,8 +630,8 @@ function minkowski_sum(P::VPolygon{N}, Q::VPolygon{N}) where {N<:Real}
     mP = length(vlistP)
     mQ = length(vlistQ)
     i = 1
-    k = findfirst(==(vlistP[_binary_support_vector(N[1, 0], P)]), vlistP)
-    j = findfirst(==(vlistQ[_binary_support_vector(N[1, 0], Q)]), vlistQ)
+    k = _binary_support_vector(N[1, 0], P)
+    j = _binary_support_vector(N[1, 0], Q)
     R = Vector{Vector{N}}(undef, mP+mQ)
     fill!(R, N[0, 0])
     while i <= size(R, 1)
