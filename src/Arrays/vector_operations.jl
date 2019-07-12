@@ -239,7 +239,7 @@ direction.
 ### Input
 
 - `u` -- direction
-- `Vi`   -- first vector
+- `Vi` -- first vector
 - `Vj` -- second vector
 
 ### Output
