@@ -293,7 +293,7 @@ function _binary_support_vector(d::AbstractVector{N}, P::VPolygon{N}) where {N <
             return c # thus it is the maximum
         end
         # no max yet, so continue with the binary search
-        # pick one of the two subchains [a,c]  or [c,b]
+        # pick one of the two subchains [a,c] or [c,b]
         if (upA && upC && !_above(d, P.vertices[a], P.vertices[c])) ||
         (!upA && (upC || (!upC && _above(d, P.vertices[a], P.vertices[c]))))
             a = c
