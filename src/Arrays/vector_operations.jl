@@ -244,7 +244,7 @@ direction.
 
 ### Output
 
-A boolean indicating if the difference of the given vectors are pointing
+A boolean indicating if the difference of the given vectors is pointing
 towards the given direction.
 """
 @inline function _above(u::AbstractVector, Vi::AbstractVector, Vj::AbstractVector)
