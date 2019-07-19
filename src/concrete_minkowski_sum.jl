@@ -21,6 +21,12 @@ function minkowski_sum(P::LazySet{N}, Q::LazySet{N};
     require(:Polyhedra; fun_name="minkowski_sum")
     require(:CDDLib; fun_name="minkowski_sum")
 
+    _minkowski_sum()
+end
+
+
+
+function minkowski_sum
     if backend == nothing
         if N <: Rational
             backend = CDDLib.Library(:Exact)
