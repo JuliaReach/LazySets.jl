@@ -1,5 +1,6 @@
-# Some functions in this file is inspired from Polyhedra.jl
+# Some functions in this file are inspired from Polyhedra.jl
 
+# struct to contain the tolerances for a given numberic type
 mutable struct TOL{N<:Number}
     rtol::N
     ztol::N
@@ -8,29 +9,29 @@ end
 
 # global Float64 tolerances
 const F64 = Float64
-const F64t = Type{Float64}
+const tF64 = Type{Float64}
 const _TOL_F64 = TOL(Base.rtoldefault(F64), F64(10)*sqrt(eps(F64)), zero(F64))
 
-get_rtol(N::F64t) = _TOL_F64.rtol
-get_ztol(N::F64t) = _TOL_F64.ztol
-get_atol(N::F64t) = _TOL_F64.atol
+get_rtol(N::tF64) = _TOL_F64.rtol
+get_ztol(N::tF64) = _TOL_F64.ztol
+get_atol(N::tF64) = _TOL_F64.atol
 
-set_rtol(N::F64t, ε::F64) = _TOL_F64.rtol = ε
-set_ztol(N::F64t, ε::F64) = _TOL_F64.ztol = ε
-set_atol(N::F64t, ε::F64) = _TOL_F64.atol = ε
+set_rtol(N::tF64, ε::F64) = _TOL_F64.rtol = ε
+set_ztol(N::tF64, ε::F64) = _TOL_F64.ztol = ε
+set_atol(N::tF64, ε::F64) = _TOL_F64.atol = ε
 
 # global rational tolerances
 const RAT = Rational{Int}
-const RATt = Type{Rational{Int}}
+const tRAT = Type{Rational{Int}}
 const _TOL_RAT = TOL(zero(RAT), zero(RAT), zero(RAT))
 
-get_rtol(N::RATt) = _TOL_RAT.rtol
-get_ztol(N::RATt) = _TOL_RAT.ztol
-get_atol(N::RATt) = _TOL_RAT.atol
+get_rtol(N::tRAT) = _TOL_RAT.rtol
+get_ztol(N::tRAT) = _TOL_RAT.ztol
+get_atol(N::tRAT) = _TOL_RAT.atol
 
-set_rtol(N::RATt, ε::RAT) = _TOL_RAT.rtol = ε
-set_ztol(N::RATt, ε::RAT) = _TOL_RAT.ztol = ε
-set_atol(N::RATt, ε::RAT) = _TOL_RAT.atol = ε
+set_rtol(N::tRAT, ε::RAT) = _TOL_RAT.rtol = ε
+set_ztol(N::tRAT, ε::RAT) = _TOL_RAT.ztol = ε
+set_atol(N::tRAT, ε::RAT) = _TOL_RAT.atol = ε
 
 # global default tolerances (cannot be set)
 get_rtol(N::Type{<:AbstractFloat}) = Base.rtoldefault(N)
@@ -167,7 +168,7 @@ Note that if `x = ztol` and `y = -ztol`, then `|x-y| = 2*ztol` and still
 """
 function _isapprox(x::N, y::N;
                    rtol::Real=get_rtol(N),
-                   ztol::Real=get_atol(N),
+                   ztol::Real=get_ztol(N),
                    atol::Real=get_atol(N)) where {N<:Real}
     if isapproxzero(x, ztol=ztol) && isapproxzero(y, ztol=ztol)
         return true
