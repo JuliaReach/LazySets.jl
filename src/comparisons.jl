@@ -1,7 +1,41 @@
-# This file is inspired from Polyhedra.jl
+# Some functions in this file is inspired from Polyhedra.jl
 
-const ABSZTOL(N::Type{<:AbstractFloat}) = N(10) * sqrt(eps(N))
-const ABSZTOL(N::Type{Rational{INNER}}) where {INNER} = zero(N)
+mutable struct TOL{N<:Number}
+    rtol::N
+    ztol::N
+    atol::N
+end
+
+# global Float64 tolerances
+const F64 = Float64
+const F64t = Type{Float64}
+const _TOL_F64 = TOL(Base.rtoldefault(F64), F64(10)*sqrt(eps(F64)), zero(F64))
+
+get_rtol(N::F64t) = _TOL_F64.rtol
+get_ztol(N::F64t) = _TOL_F64.ztol
+get_atol(N::F64t) = _TOL_F64.atol
+
+set_rtol(N::F64t, ε::F64) = _TOL_F64.rtol = ε
+set_ztol(N::F64t, ε::F64) = _TOL_F64.ztol = ε
+set_atol(N::F64t, ε::F64) = _TOL_F64.atol = ε
+
+# global rational tolerances
+const RAT = Rational{Int}
+const RATt = Type{Rational{Int}}
+const _TOL_RAT = TOL(zero(RAT), zero(RAT), zero(RAT))
+
+get_rtol(N::RATt) = _TOL_RAT.rtol
+get_ztol(N::RATt) = _TOL_RAT.ztol
+get_atol(N::RATt) = _TOL_RAT.atol
+
+set_rtol(N::RATt, ε::RAT) = _TOL_RAT.rtol = ε
+set_ztol(N::RATt, ε::RAT) = _TOL_RAT.ztol = ε
+set_atol(N::RATt, ε::RAT) = _TOL_RAT.atol = ε
+
+# global default tolerances (cannot be set)
+get_rtol(N::Type{<:AbstractFloat}) = Base.rtoldefault(N)
+get_ztol(N::Type{<:AbstractFloat}) = sqrt(eps(N))
+get_atol(N::Type{<:AbstractFloat}) = zero(N)
 
 """
     _leq(x::N, y::N; [kwargs...]) where {N<:Real}
@@ -90,7 +124,7 @@ A boolean that is `true` iff `x ≈ 0`.
 It is considered that `x ≈ 0` whenever `x` (in absolute value) is smaller than
 the tolerance for zero, `ztol`.
 """
-function isapproxzero(x::N; ztol::Real=ABSZTOL(N)) where {N<:Real}
+function isapproxzero(x::N; ztol::Real=get_ztol(N)) where {N<:Real}
     return abs(x) <= ztol
 end
 
@@ -132,9 +166,9 @@ Note that if `x = ztol` and `y = -ztol`, then `|x-y| = 2*ztol` and still
 `_isapprox` returns `true`.
 """
 function _isapprox(x::N, y::N;
-                   rtol::Real=Base.rtoldefault(N),
-                   ztol::Real=ABSZTOL(N),
-                   atol::Real=zero(N)) where {N<:Real}
+                   rtol::Real=get_rtol(N),
+                   ztol::Real=get_atol(N),
+                   atol::Real=get_atol(N)) where {N<:Real}
     if isapproxzero(x, ztol=ztol) && isapproxzero(y, ztol=ztol)
         return true
     else
@@ -144,9 +178,9 @@ end
 
 # generic "dense"
 function _isapprox(x::AbstractVector{N}, y::AbstractVector{N};
-                   rtol::Real=Base.rtoldefault(N),
-                   ztol::Real=ABSZTOL(N),
-                   atol::Real=zero(N)) where {N<:Real}
+                   rtol::Real=get_rtol(N),
+                   ztol::Real=get_ztol(N),
+                   atol::Real=get_atol(N)) where {N<:Real}
     n = length(x)
     if length(x) != length(y)
         return false
@@ -161,9 +195,9 @@ end
 
 # sparse
 function _isapprox(x::SparseVector{N}, y::SparseVector{N};
-                   rtol::Real=Base.rtoldefault(N),
-                   ztol::Real=ABSZTOL(N),
-                   atol::Real=zero(N)) where {N<:Real}
+                   rtol::Real=get_rtol(N),
+                   ztol::Real=get_ztol(N),
+                   atol::Real=get_atol(N)) where {N<:Real}
     @assert length(x) == length(y)
     return x.nzind == y.nzind && _isapprox(x.nzval, y.nzval, rtol=rtol, ztol=ztol, atol=atol)
 end
@@ -264,9 +298,9 @@ implemented by extending Juila's built-in `isapprox(x, y)` with an absolute
 tolerance that is used to compare against zero.
 """
 function _leq(x::N, y::N;
-              rtol::Real=Base.rtoldefault(N),
-              ztol::Real=ABSZTOL(N),
-              atol::Real=zero(N)) where {N<:AbstractFloat}
+              rtol::Real=get_rtol(N),
+              ztol::Real=get_ztol(N),
+              atol::Real=get_atol(N)) where {N<:AbstractFloat}
     return x <= y || _isapprox(x, y, rtol=rtol, ztol=ztol, atol=atol)
 end
 
