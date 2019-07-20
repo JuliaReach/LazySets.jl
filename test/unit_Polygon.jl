@@ -280,6 +280,14 @@ for N in [Float64, Float32, Rational{Int}]
     @test σ(d, vp) == points[1]
     d = N[0, -1]
     @test σ(d, vp) == points[2]
+    dirs = [[1, 0], [1, 0.5], [0.5, 0.5], [0.5, 1], [0, 1], [-0.5, 1],
+    [-0.5, 0.5], [-1, 0.5], [-1, 0], [1, -0.5], [0.5, -0.5],
+    [0.5, -1], [0, -1], [-0.5, -1], [-0.5, -0.5], [-1, -0.5]]
+    B = Ball2(zeros(2), 1.0)
+    P = HPolygon([HalfSpace(di, ρ(di, B)) for di in dirs])
+    vlistP = vertices_list(P)
+    V = VPolygon(vlistP)
+    all(x -> _isapprox(σ(x, V), x), vlistP)
 
     # test that #83 is fixed
     v = VPolygon([N[2, 3]])

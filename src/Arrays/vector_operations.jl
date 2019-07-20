@@ -5,7 +5,10 @@ export dot_zero,
        nonzero_indices,
        rectify,
        is_cyclic_permutation,
-       to_negative_vector
+       to_negative_vector,
+       _above,
+       _dr,
+       _up
 
 """
     dot_zero(x::AbstractVector{N}, y::AbstractVector{N}) where{N<:Real}
@@ -188,6 +191,64 @@ function is_cyclic_permutation(candidate::AbstractVector,
         return false
     end
     return any(candidate == circshift(paragon, i) for i in 0:m-1)
+end
+
+"""
+    _up(u::AbstractVector, v::AbstractVector)
+
+Checks if the given vector is pointing towards the given direction.
+
+### Input
+
+- `u` -- direction
+- `v` -- vector
+
+### Output
+
+A boolean indicating if the vector is pointing towards the direction.
+"""
+@inline function _up(u::AbstractVector, v::AbstractVector)
+    dot(u, v) > 0
+end
+
+"""
+    _dr(u::AbstractVector, Vi::AbstractVector, Vj::AbstractVector)
+
+Returns the direction of the difference of the given vectors.
+
+### Input
+
+- `u` -- direction
+- `Vi` -- first vector
+- `Vj` -- second vector
+
+### Output
+
+A number indicating the direction of the difference of the given vectors.
+"""
+@inline function _dr(u::AbstractVector, Vi::AbstractVector, Vj::AbstractVector)
+    dot(u, (Vi) - (Vj))
+end
+
+"""
+    _above(u::AbstractVector, Vi::AbstractVector, Vj::AbstractVector)
+
+Checks if the difference of the given vectors is pointing towards the given
+direction.
+
+### Input
+
+- `u` -- direction
+- `Vi` -- first vector
+- `Vj` -- second vector
+
+### Output
+
+A boolean indicating if the difference of the given vectors is pointing
+towards the given direction.
+"""
+@inline function _above(u::AbstractVector, Vi::AbstractVector, Vj::AbstractVector)
+    _dr(u, Vi, Vj) > 0
 end
 
 """
