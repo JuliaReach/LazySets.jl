@@ -103,7 +103,7 @@ Inherited from [`LazySet`](@ref):
 ### Convex Hull Algorithms
 
 ```@docs
-convex_hull
+convex_hull(::Vector{VN}) where {N<:Real, VN<:AbstractVector{N}}
 right_turn
 monotone_chain!
 ```
@@ -238,7 +238,6 @@ isempty(::LinearMap)
 vertices_list(::LinearMap{N}) where {N<:Real}
 constraints_list(::LinearMap{N}) where {N<:Real}
 linear_map(::AbstractMatrix{N}, ::LinearMap{N}) where {N<:Real}
-intersection(::LinearMap{N}, ::LazySet{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

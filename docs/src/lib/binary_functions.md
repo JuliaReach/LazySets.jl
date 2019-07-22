@@ -14,6 +14,13 @@ DocTestSetup = quote
 end
 ```
 
+## Cartesian product
+
+```@docs
+cartesian_product(::HPoly{N}, ::HPoly{N}) where {N<:Real}
+cartesian_product(::VPolytope{N}, ::VPolytope{N}) where N
+```
+
 ## Check for emptiness of intersection
 
 ```@docs
@@ -66,7 +73,17 @@ intersection(::UnionSet{N}, ::LazySet{N}) where {N<:Real}
 intersection(::UnionSetArray{N}, ::LazySet{N}) where {N<:Real}
 intersection(::Universe{N}, ::LazySet{N}) where {N<:Real}
 intersection(::AbstractPolyhedron{N}, ::ResetMap{N}) where {N<:Real}
-intersection(X::CartesianProductArray{N}, Y::CartesianProductArray{N}) where {N<:Real}
+intersection(::CartesianProductArray{N}, ::CartesianProductArray{N}) where {N<:Real}
+intersection(::LinearMap{N}, ::LazySet{N}) where {N<:Real}
+```
+
+## Minkowski sum
+
+```@docs
+minkowski_sum(::AbstractPolytope{N}, ::AbstractPolytope{N}) where {N<:Real}
+minkowski_sum(::AbstractZonotope{N}, ::AbstractZonotope{N}) where {N<:Real}
+minkowski_sum(::VPolygon{N}, ::VPolygon{N}) where {N<:Real}
+minkowski_sum(::PolynomialZonotope, ::Zonotope)
 ```
 
 ## Subset check

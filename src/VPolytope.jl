@@ -313,7 +313,7 @@ end
 
 """
     convex_hull(P1::VPolytope{N}, P2::VPolytope{N};
-                [backend]=default_polyhedra_backend(P1, N)) where {N}
+                [backend]=default_polyhedra_backend(P1, N)) where {N<:Real}
 
 Compute the convex hull of the set union of two polytopes in V-representation.
 
@@ -339,7 +339,7 @@ For performance reasons, it is suggested to use the `CDDLib.Library()` backend
 for the `convex_hull`.
 """
 function convex_hull(P1::VPolytope{N}, P2::VPolytope{N};
-                     backend=nothing) where {N}
+                     backend=nothing) where {N<:Real}
     vunion = [P1.vertices; P2.vertices]
     convex_hull!(vunion; backend=backend)
     return VPolytope(vunion)

@@ -437,7 +437,6 @@ constraints_list(::VPolygon{N}) where {N<:Real}
 translate(::VPolygon{N}, ::AbstractVector{N}) where {N<:Real}
 remove_redundant_vertices(::VPolygon{N}; ::String="monotone_chain") where {N<:Real}
 remove_redundant_vertices!(::VPolygon{N}; ::String="monotone_chain") where {N<:Real}
-minkowski_sum(::VPolygon{N}, ::VPolygon{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -488,7 +487,6 @@ tohrep(::HPoly{N}) where {N<:Real}
 tovrep(::HPoly{N}) where {N<:Real}
 isempty(::HPoly{N}, ::Bool=false) where {N<:Real}
 translate(::PT, ::AbstractVector{N}) where {N<:Real, PT<:HPoly{N}}
-cartesian_product(::HPoly{N}, ::HPoly{N}) where {N<:Real}
 polyhedron(::HPoly{N}) where {N<:Real}
 remove_redundant_constraints(::PT) where {N<:Real, PT<:HPoly{N}}
 remove_redundant_constraints!(::HPoly{N}) where {N<:Real}
@@ -542,7 +540,6 @@ remove_redundant_vertices(::VPolytope{N}) where {N<:Real}
 constraints_list(::VPolytope{N}) where {N<:Real}
 tohrep(::VPolytope{N}) where {N<:Real}
 tovrep(::VPolytope)
-cartesian_product(::VPolytope{N}, ::VPolytope{N}) where N
 polyhedron(::VPolytope{N}) where {N<:Real}
 linear_map(::AbstractMatrix{N}, ::VPolytope{N}) where {N<:Real}
 ```
@@ -568,7 +565,6 @@ polynomial_order(pz::PolynomialZonotope)
 order(::PolynomialZonotope)
 linear_map(::Matrix, ::PolynomialZonotope)
 scale(::Number, ::PolynomialZonotope)
-minkowski_sum(::PolynomialZonotope, ::Zonotope)
 ```
 
 ## Singleton

@@ -147,7 +147,6 @@ This interface defines the following functions:
 isbounded(::AbstractPolytope)
 singleton_list(::AbstractPolytope{N}) where {N<:Real}
 isempty(::AbstractPolytope)
-minkowski_sum(::AbstractPolytope{N}, ::AbstractPolytope{N}) where {N<:Real}
 ```
 
 #### Polygon
@@ -222,7 +221,6 @@ This interface defines the following functions:
 ngens(Z::AbstractZonotope)
 genmat_fallback(Z::AbstractZonotope{N}) where {N<:Real}
 generators_fallback(Z::AbstractZonotope{N}) where {N<:Real}
-minkowski_sum(::AbstractZonotope{N}, ::AbstractZonotope{N}) where {N<:Real}
 ```
 
 ##### Hyperrectangle
