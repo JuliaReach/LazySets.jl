@@ -332,36 +332,6 @@ function _convex_hull_2d!(points::Vector{VN};
 end
 
 """
-    right_turn(O::AbstractVector{N}, A::AbstractVector{N}, B::AbstractVector{N}
-              )::N where {N<:Real}
-
-Determine if the acute angle defined by the three points `O`, `A`, `B` in the
-plane is a right turn (counter-clockwise) with respect to the center `O`.
-
-### Input
-
-- `O` -- 2D center point
-- `A` -- 2D one point
-- `B` -- 2D another point
-
-### Output
-
-Scalar representing the rotation.
-
-### Algorithm
-
-The [cross product](https://en.wikipedia.org/wiki/Cross_product) is used to
-determine the sense of rotation. If the result is 0, the points are collinear;
-if it is positive, the three points constitute a positive angle of rotation
-around `O` from `A` to `B`; otherwise they constitute a negative angle.
-"""
-@inline function right_turn(O::AbstractVector{N},
-                            A::AbstractVector{N},
-                            B::AbstractVector{N})::N where {N<:Real}
-    return (A[1] - O[1]) * (B[2] - O[2]) - (A[2] - O[2]) * (B[1] - O[1])
-end
-
-"""
     monotone_chain!(points::Vector{VN}; sort::Bool=true
                    )::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
 

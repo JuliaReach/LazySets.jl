@@ -377,12 +377,11 @@ function ∈(x::AbstractVector{N}, P::VPolygon{N})::Bool where {N<:Real}
         return x == P.vertices[1]
     end
 
-    zero_N = zero(N)
-    if right_turn(P.vertices[1], x, P.vertices[end]) < zero_N
+    if !is_right_turn(P.vertices[1], x, P.vertices[end])
         return false
     end
     for i in 2:length(P.vertices)
-        if right_turn(P.vertices[i], x, P.vertices[i-1]) < zero_N
+        if !is_right_turn(P.vertices[i], x, P.vertices[i-1])
             return false
         end
     end
