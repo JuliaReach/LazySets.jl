@@ -429,7 +429,7 @@ end
 
 """
     convex_hull(P1::HPoly{N}, P2::HPoly{N};
-               [backend]=default_polyhedra_backend(P1, N)) where {N}
+               [backend]=default_polyhedra_backend(P1, N)) where {N<:Real}
 
 Compute the convex hull of the set union of two polyhedra in H-representation.
 
@@ -455,7 +455,7 @@ For further information on the supported backends see
 """
 function convex_hull(P1::HPoly{N},
                      P2::HPoly{N};
-                     backend=default_polyhedra_backend(P1, N)) where {N}
+                     backend=default_polyhedra_backend(P1, N)) where {N<:Real}
     require(:Polyhedra; fun_name="convex_hull")
     Pch = convexhull(polyhedron(P1; backend=backend),
                      polyhedron(P2; backend=backend))
