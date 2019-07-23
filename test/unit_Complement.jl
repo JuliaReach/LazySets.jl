@@ -21,7 +21,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test B2 ⊆ C && subset && point == N[]
     for X in [B1, B3]
         subset, point = ⊆(X, C, true)
-        @test !(X ⊆ C) && !subset && point ∈ X && point ∉ C
+        @test X ⊈ C && !subset && point ∈ X && point ∉ C
     end
 
     # isdisjoint

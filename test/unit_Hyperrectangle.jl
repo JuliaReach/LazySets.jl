@@ -134,15 +134,15 @@ for N in [Float64, Rational{Int}, Float32]
     H3 = Hyperrectangle(N[2, 2], N[2, 3])
     B1 = BallInf(N[2, 2.5], N(0.5))
     B2 = BallInf(N[2, 2], N(1))
-    @test !⊆(H1, H2) && ⊆(H1, H3) && ⊆(H2, H3)
+    @test H1 ⊈ H2 && H1 ⊆ H3 && H2 ⊆ H3
     subset, point = ⊆(H1, H2, true)
     @test !subset && point ∈ H1 && point ∉ H2
     subset, point = ⊆(H2, H1, true)
     @test !subset && point ∈ H2 && point ∉ H1
     subset, point = ⊆(H1, H3, true)
     @test subset
-    @test ⊆(H2, B1) && ⊆(B1, H2)
-    @test ⊆(B1, B2) && !⊆(B2, B1)
+    @test H2 ⊆ B1 && B1 ⊆ H2
+    @test B1 ⊆ B2 && B2 ⊈ B1
 
     # intersection & intersection emptiness
     H1 = Hyperrectangle(N[1, 1], N[2, 2])

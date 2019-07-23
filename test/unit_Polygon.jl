@@ -107,9 +107,9 @@ for N in [Float64, Float32, Rational{Int}]
     subset, point = ⊆(p, l1, true)
     @test !subset && point ∈ p && point ∉ l1
     subset, point = ⊆(p, b2, true)
-    @test subset && ⊆(p, b2) && point == N[]
+    @test subset && p ⊆ b2 && point == N[]
     subset, point = ⊆(p, l2, true)
-    @test subset && ⊆(p, l2) && point == N[]
+    @test subset && p ⊆ l2 && point == N[]
     @test p ⊆ p
 
     # HPolygon/HPolygonOpt tests
@@ -315,11 +315,11 @@ for N in [Float64, Float32, Rational{Int}]
     p1 = VPolygon([N[0, 0], N[2, 0]])
     p2 = VPolygon([N[1, 0]])
     b = BallInf(N[2, 0], N(1))
-    @test ⊆(p2, p1) && ⊆(p2, p1, true)[1]
+    @test p2 ⊆ p1 && ⊆(p2, p1, true)[1]
     subset, witness = ⊆(p1, b, true)
-    @test !⊆(p1, b) && !subset && witness ∈ p1 && witness ∉ b
+    @test p1 ⊈ b && !subset && witness ∈ p1 && witness ∉ b
     subset, witness = ⊆(p2, b, true)
-    @test ⊆(p2, b) && subset
+    @test p2 ⊆ b && subset
 
     v1 = N[1, 0]
     v2 = N[1, 1]

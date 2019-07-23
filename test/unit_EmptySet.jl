@@ -50,10 +50,10 @@ for N in [Float64, Rational{Int}, Float32]
     @test N[0, 0] ∉ E
 
     # subset
-    @test ⊆(E, B) && ⊆(E, B, true)[1]
+    @test E ⊆ B && ⊆(E, B, true)[1]
     subset, point = ⊆(B, E, true)
-    @test !⊆(B, E) && !subset && point ∈ B
-    @test ⊆(E, E) && ⊆(E, E, true)[1]
+    @test B ⊈ E && !subset && point ∈ B
+    @test E ⊆ E && ⊆(E, E, true)[1]
 
     # emptiness check
     @test isempty(E)

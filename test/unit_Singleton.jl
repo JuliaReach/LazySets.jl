@@ -87,16 +87,16 @@ for N in [Float64, Rational{Int}, Float32]
     p1 = VPolygon([N[0,0], N[0, 2]])
     p2 = VPolygon([N[0,0], N[0, 2], N[2, 0]])
     b = BallInf(N[0, 1], N(1))
-    @test ⊆(s1, p1) && ⊆(s1, p1, true)[1]
+    @test s1 ⊆ p1 && ⊆(s1, p1, true)[1]
     subset, point = ⊆(s2, p2, true)
-    @test !⊆(s2, p2) && !subset && point ∈ s2 && point ∉ p2
-    @test ⊆(s1, s1) && ⊆(s1, s1, true)[1]
+    @test s2 ⊈ p2 && !subset && point ∈ s2 && point ∉ p2
+    @test s1 ⊆ s1 && ⊆(s1, s1, true)[1]
     subset, point = ⊆(s1, s2, true)
-    @test !⊆(s1, s2) && !subset && point ∈ s1 && point ∉ s2
+    @test s1 ⊈ s2 && !subset && point ∈ s1 && point ∉ s2
     subset, point = ⊆(s1, b, true)
-    @test subset && ⊆(s1, b)
+    @test subset && s1 ⊆ b
     subset, point = ⊆(s2, b, true)
-    @test !⊆(s2, b) && !subset && point ∈ s2 && point ∉ b
+    @test s2 ⊈ b && !subset && point ∈ s2 && point ∉ b
 
     # intersection
     S1 = Singleton(N[1, 1])

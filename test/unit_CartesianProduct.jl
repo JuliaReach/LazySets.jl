@@ -249,7 +249,7 @@ for N in [Float64, Float32, Rational{Int}]
     res, w = ⊆(cpa1, cpa2, true)
     @test cpa1 ⊆ cpa2 && res && w == N[]
     res, w = ⊆(cpa2, cpa1, true)
-    @test !⊆(cpa2, cpa1) && !res && w ∈ cpa2 && w ∉ cpa1
+    @test cpa2 ⊈ cpa1 && !res && w ∈ cpa2 && w ∉ cpa1
 
     # convert a hyperrectangle to the cartesian product array of intervals
     # convert a hyperrectangle to a cartesian product of intervals
