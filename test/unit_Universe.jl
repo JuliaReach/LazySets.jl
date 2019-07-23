@@ -13,9 +13,10 @@ for N in [Float64, Rational{Int}, Float32]
     # - union
     @test B ∪ U == U ∪ B == U ∪ U == U
     # - Minkowski sum
-#     @test B ⊕ U == U ⊕ B == U ⊕ U == U  # TODO problematic
-#     msa = MinkowskiSumArray([B, N(2) * B, N(3) * B])
-#     @test msa ⊕ U == U ⊕ msa == U
+    # TODO requires #1099
+    # @test B ⊕ U == U ⊕ B == U ⊕ U == U
+    # msa = MinkowskiSumArray([B, N(2) * B, N(3) * B])
+    # @test msa ⊕ U == U ⊕ msa == U
 
     # universe is a neutral element for
     # - intersection

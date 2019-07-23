@@ -114,8 +114,8 @@ for N in [Float64, Rational{Int}, Float32]
 
     # membership
     H = Hyperrectangle(N[1, 1], N[2, 3])
-    @test !∈(N[-1.1, 4.1], H)
-    @test ∈(N[-1, 4], H)
+    @test N[-1.1, 4.1] ∉ H
+    @test N[-1, 4] ∈ H
 
     # an_element function
     H = Hyperrectangle(N[1, 2], N[3, 4])

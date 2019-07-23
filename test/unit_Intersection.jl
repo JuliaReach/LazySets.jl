@@ -13,7 +13,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test_throws ErrorException σ(ones(N, 2), I)
 
     # membership
-    @test ∈(ones(N, 2), I) && !∈(N[5, 5], I)
+    @test ones(N, 2) ∈ I && N[5, 5] ∉ I
 
     # boundedness (more tests in Float64-only section)
     @test isbounded(I)
@@ -60,7 +60,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test_throws MethodError isempty(IA)
 
     # membership
-    @test ∈(ones(N, 2), IA) && !∈(N[5, 5], IA)
+    @test ones(N, 2) ∈ IA && N[5, 5] ∉ IA
 
     # array getter
     v = Vector{LazySet{N}}()
@@ -89,7 +89,7 @@ for N in [Float64, Rational{Int}, Float32]
     # =====================
     cap =  HPolytope([HalfSpace(N[1], N(1))]) ∩ HPolytope([HalfSpace(N[-1], N(1))])  # x <= 1 && x >= -1
     p = linear_map(reshape([N(1/2)], 1, 1), cap)
-    @test (N[-0.5] ∈ p && N[0.5] ∈ p) && !(N[1.0] ∈ p && N[1.0] ∈ p)
+    @test N[-0.5] ∈ p && N[0.5] ∈ p && (N[1.0] ∉ p || N[1.0] ∉ p)
 end
 
 # ======================

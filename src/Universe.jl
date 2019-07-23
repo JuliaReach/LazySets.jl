@@ -133,7 +133,7 @@ The output is always `true`.
 ### Examples
 
 ```jldoctest
-julia> ∈([1.0, 0.0], Universe(2))
+julia> [1.0, 0.0] ∈ Universe(2)
 true
 ```
 """

@@ -354,16 +354,16 @@ edge, using the dot product.
 julia> P = VPolygon([[2.0, 3.0], [3.0, 1.0], [5.0, 1.0], [4.0, 5.0]];
                     apply_convex_hull=false);
 
-julia> ∈([4.5, 3.1], P)
+julia> [4.5, 3.1] ∈ P
 false
-julia> ∈([4.5, 3.0], P)
+julia> [4.5, 3.0] ∈ P
 true
-julia> ∈([4.4, 3.4], P)  #  point lies on the edge -> floating point error
+julia> [4.4, 3.4] ∈ P  #  point lies on the edge -> floating-point error
 false
 julia> P = VPolygon([[2//1, 3//1], [3//1, 1//1], [5//1, 1//1], [4//1, 5//1]];
                      apply_convex_hull=false);
 
-julia> ∈([44//10, 34//10], P)  #  with rational numbers the answer is correct
+julia> [44//10, 34//10] ∈ P  #  with rational numbers the answer is correct
 true
 ```
 """

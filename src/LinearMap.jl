@@ -260,9 +260,9 @@ works for non-square matrices.
 ```jldoctest
 julia> lm = LinearMap([2.0 0.0; 0.0 1.0], BallInf([1., 1.], 1.));
 
-julia> ∈([5.0, 1.0], lm)
+julia> [5.0, 1.0] ∈ lm
 false
-julia> ∈([3.0, 1.0], lm)
+julia> [3.0, 1.0] ∈ lm
 true
 ```
 
@@ -272,12 +272,12 @@ julia> B = BallInf(zeros(4), 1.);
 
 julia> M = [1. 0 0 0; 0 1 0 0]/2;
 
-julia> ∈([0.5, 0.5], M*B)
+julia> [0.5, 0.5] ∈ M*B
 true
 ```
 """
 function ∈(x::AbstractVector{N}, lm::LinearMap{N})::Bool where {N<:Real}
-    return ∈(lm.M \ x, lm.X)
+    return lm.M \ x ∈ lm.X
 end
 
 """

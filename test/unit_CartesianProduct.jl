@@ -99,22 +99,22 @@ for N in [Float64, Float32, Rational{Int}]
     addconstraint!(p2, LinearConstraint(N[0, -1], N(1)))
     cp = CartesianProduct(p1, p2)
 
-    @test ∈(N[0, 0, 0, 0], cp)
-    @test ∈(N[4, 2, 1, 0], cp)
-    @test ∈(N[2, 4, -1, 0], cp)
-    @test ∈(N[-1, 1, 0.5, 0.7], cp)
-    @test ∈(N[2, 3, -0.8, 0.9], cp)
-    @test ∈(N[1, 1, -1, 0], cp)
-    @test ∈(N[3, 2, 0, 1], cp)
-    @test ∈(N[5 / 4, 7 / 4, 1, 1], cp)
-    @test !∈(N[4, 1, 0, 0], cp)
-    @test !∈(N[5, 2, 0, 0], cp)
-    @test !∈(N[3, 4, 0, 0], cp)
-    @test !∈(N[-1, 5, 0, 0], cp)
-    @test !∈(N[4, 2, 3, 1], cp)
-    @test !∈(N[2, 3, 3, 1], cp)
-    @test !∈(N[0, 0, 3, 1], cp)
-    @test !∈(N[1, 1, 3, 1], cp)
+    @test N[0, 0, 0, 0] ∈ cp
+    @test N[4, 2, 1, 0] ∈ cp
+    @test N[2, 4, -1, 0] ∈ cp
+    @test N[-1, 1, 0.5, 0.7] ∈ cp
+    @test N[2, 3, -0.8, 0.9] ∈ cp
+    @test N[1, 1, -1, 0] ∈ cp
+    @test N[3, 2, 0, 1] ∈ cp
+    @test N[5 / 4, 7 / 4, 1, 1] ∈ cp
+    @test N[4, 1, 0, 0] ∉ cp
+    @test N[5, 2, 0, 0] ∉ cp
+    @test N[3, 4, 0, 0] ∉ cp
+    @test N[-1, 5, 0, 0] ∉ cp
+    @test N[4, 2, 3, 1] ∉ cp
+    @test N[2, 3, 3, 1] ∉ cp
+    @test N[0, 0, 3, 1] ∉ cp
+    @test N[1, 1, 3, 1] ∉ cp
 
     # vertices_list
     i1 = Interval(N[0, 1])
@@ -186,8 +186,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test !isbounded(CartesianProductArray([Singleton(N[1]), HalfSpace(N[1], N(1))]))
 
     # membership
-    @test ∈(N[1, 2, 3, 4], cpa)
-    @test !∈(N[3, 4, 1, 2], cpa)
+    @test N[1, 2, 3, 4] ∈ cpa
+    @test N[3, 4, 1, 2] ∉ cpa
 
     # in-place modification
     b = BallInf(N[0, 0], N(2))

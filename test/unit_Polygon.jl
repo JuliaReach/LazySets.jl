@@ -103,9 +103,9 @@ for N in [Float64, Float32, Rational{Int}]
     l1 = LinearMap(N[1 0; 0 1], b1)
     l2 = LinearMap(N[1 0; 0 1], b2)
     subset, point = ⊆(p, b1, true)
-    @test !subset && point ∈ p && !(point ∈ b1)
+    @test !subset && point ∈ p && point ∉ b1
     subset, point = ⊆(p, l1, true)
-    @test !subset && point ∈ p && !(point ∈ l1)
+    @test !subset && point ∈ p && point ∉ l1
     subset, point = ⊆(p, b2, true)
     @test subset && ⊆(p, b2) && point == N[]
     subset, point = ⊆(p, l2, true)
@@ -135,18 +135,18 @@ for N in [Float64, Float32, Rational{Int}]
         @test σ(d, hp, linear_search=true) == σ(d, hp, linear_search=false)
 
         # membership
-        @test ∈(N[0, 0], hp)
-        @test ∈(N[4, 2], hp)
-        @test ∈(N[2, 4], hp)
-        @test ∈(N[-1, 1], hp)
-        @test ∈(N[2, 3], hp)
-        @test ∈(N[1, 1], hp)
-        @test ∈(N[3, 2], hp)
-        @test ∈(N[5 / 4, 7 / 4], hp)
-        @test !∈(N[4, 1], hp)
-        @test !∈(N[5, 2], hp)
-        @test !∈(N[3, 4], hp)
-        @test !∈(N[-1, 5], hp)
+        @test N[0, 0] ∈ hp
+        @test N[4, 2] ∈ hp
+        @test N[2, 4] ∈ hp
+        @test N[-1, 1] ∈ hp
+        @test N[2, 3] ∈ hp
+        @test N[1, 1] ∈ hp
+        @test N[3, 2] ∈ hp
+        @test N[5 / 4, 7 / 4] ∈ hp
+        @test N[4, 1] ∉ hp
+        @test N[5, 2] ∉ hp
+        @test N[3, 4] ∉ hp
+        @test N[-1, 5] ∉ hp
 
         # an_element function
         @test an_element(hp) ∈ hp
@@ -292,7 +292,7 @@ for N in [Float64, Float32, Rational{Int}]
     # test that #83 is fixed
     v = VPolygon([N[2, 3]])
     @test N[2, 3] ∈ v
-    @test !(N[3, 2] ∈ v)
+    @test N[3, 2] ∉ v
     v = VPolygon([N[2, 3], to_N(N, [-1, -3.4])])
     @test to_N(N, [-1, -3.4]) ∈ v
 

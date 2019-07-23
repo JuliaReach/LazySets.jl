@@ -46,8 +46,8 @@ for N in [Float64, Rational{Int}, Float32]
     @test isbounded(E)
 
     # membership
-    @test !∈(N[0], E)
-    @test !∈(N[0, 0], E)
+    @test N[0] ∉ E
+    @test N[0, 0] ∉ E
 
     # subset
     @test ⊆(E, B) && ⊆(E, B, true)[1]

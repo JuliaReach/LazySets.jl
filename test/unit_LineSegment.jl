@@ -23,12 +23,12 @@ for N in [Float64, Rational{Int}, Float32]
     @test isbounded(l)
 
     # membership
-    @test !∈(N[0, 0], l)
-    @test ∈(N[1, 1], l)
-    @test ∈(N[1.5, 1.5], l)
-    @test !∈(N[3, 4], l)
-    @test !∈(N[7, 4], l)
-    @test !∈(N[1.5, 1.6], l)
+    @test N[0, 0] ∉ l
+    @test N[1, 1] ∈ l
+    @test N[1.5, 1.5] ∈ l
+    @test N[3, 4] ∉ l
+    @test N[7, 4] ∉ l
+    @test N[1.5, 1.6] ∉ l
 
     # center/generators
     @test center(l) == N[1.5, 1.5]

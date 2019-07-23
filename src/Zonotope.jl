@@ -277,9 +277,9 @@ Check whether a given point is contained in a zonotope.
 ```jldoctest
 julia> Z = Zonotope([1.0, 0.0], [0.1 0.0; 0.0 0.1]);
 
-julia> ∈([1.0, 0.2], Z)
+julia> [1.0, 0.2] ∈ Z
 false
-julia> ∈([1.0, 0.1], Z)
+julia> [1.0, 0.1] ∈ Z
 true
 ```
 
