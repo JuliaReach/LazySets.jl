@@ -227,7 +227,6 @@ LinearMap
 *(::AbstractMatrix{N}, ::LazySet{N}) where {N<:Real}
 *(::N, ::LazySet{N}) where {N<:Real}
 *(::N, ::LinearMap{N}) where {N<:Real}
-*(::AbstractMatrix{N}, ::ZeroSet{N}) where {N<:Real}
 dim(::LinearMap)
 ρ(::AbstractVector{N}, ::LinearMap{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::LinearMap{N}) where {N<:Real}
