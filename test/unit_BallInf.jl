@@ -79,6 +79,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test high(b) == N[2, 3]
     @test low(b) == N[0, 1]
 
+    # isflat
+    @test !isflat(BallInf(N[1, 1], N(1))) && isflat(BallInf(N[1, 1], N(0)))
+
     # split
     b = BallInf(N[3, 3], N(1))
     @test split(b, [1, 1]) == [Hyperrectangle(N[3, 3], N[1, 1])]

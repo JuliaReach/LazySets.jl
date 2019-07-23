@@ -4,7 +4,8 @@ using Base: product
 export AbstractHyperrectangle,
        radius_hyperrectangle,
        constraints_list,
-       low, high
+       low, high,
+       isflat
 
 """
     AbstractHyperrectangle{N<:Real} <: AbstractZonotope{N}
@@ -398,6 +399,30 @@ The lower coordinate of the hyperrectangular set in the given dimension.
 """
 function low(H::AbstractHyperrectangle{N}, i::Int)::N where {N<:Real}
     return center(H)[i] - radius_hyperrectangle(H, i)
+end
+
+"""
+    isflat(H::AbstractHyperrectangle)::Bool
+
+Determine whether a hyperrectangular set is flat, i.e. whether its radius
+is zero in some dimension.
+
+### Input
+
+- `H` -- hyperrectangular set
+
+### Output
+
+`true` iff the hyperrectangular set is flat.
+
+### Notes
+
+For robustness with respect to floating-point inputs, this function relies on
+the result of `isapproxzero` when applied to the radius in some dimension.
+Hence, this function depends on the absolute zero tolerance `ABSZTOL`.
+"""
+function isflat(H::AbstractHyperrectangle)::Bool
+    return any(i -> isapproxzero(radius_hyperrectangle(H, i)), 1:dim(H))
 end
 
 """
