@@ -15,6 +15,14 @@ for N in [Float64, Rational{Int}, Float32]
     U2 = swap(UXY)
     @test UXY.X == U2.Y && UXY.Y == U2.X
 
+    # neutral and absorbing elements
+    E = EmptySet{N}()
+    @test neutral(UnionSet) == neutral(UnionSetArray) == EmptySet
+    @test UnionSet(B1, E) == UnionSet(E, B1) == B1
+    U = Universe{N}(2)
+    @test absorbing(UnionSet) == absorbing(UnionSetArray) == Universe
+    @test UnionSet(B1, U) == UnionSet(U, B1) == U
+
     for U in [UXY, Uarr]
         # dimension
         @test dim(U) == dim(B1)
