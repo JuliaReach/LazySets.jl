@@ -130,9 +130,9 @@ julia> constraints_list(tr)
  HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}}([1.0, 0.0, 0.0], 5.0)
  HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}}([0.0, 1.0, 0.0], 3.0)
  HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}}([0.0, 0.0, 1.0], 3.0)
- HalfSpace{Float64,Array{Float64,1}}([-1.0, -0.0, -0.0], -3.0)
- HalfSpace{Float64,Array{Float64,1}}([-0.0, -1.0, -0.0], -1.0)
- HalfSpace{Float64,Array{Float64,1}}([-0.0, -0.0, -1.0], -1.0)
+ HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}}([-1.0, 0.0, 0.0], -3.0)
+ HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}}([0.0, -1.0, 0.0], -1.0)
+ HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}}([0.0, 0.0, -1.0], -1.0)
 ```
 """
 struct Translation{N<:Real, VN<:AbstractVector{N}, S<:LazySet{N}} <: LazySet{N}
