@@ -75,7 +75,7 @@ function dim(P::VPolytope)::Int
 end
 
 """
-    σ(d::AbstractVector{N}, P::VPolytope{N}; algorithm="hrep") where {N<:Real}
+    σ(d::AbstractVector{N}, P::VPolytope{N}; algorithm="sfun") where {N<:Real}
 
 Return the support vector of a polyhedron (in V-representation) in a given
 direction.
@@ -84,16 +84,47 @@ direction.
 
 - `d`         -- direction
 - `P`         -- polyhedron in V-representation
-- `algorithm` -- (optional, default: `'hrep'`) method to compute the support vector
+- `algorithm` -- (optional, default: `"sfun"`) method to compute the support
+                 vector; available options:
+    * `"sfun"` - query the support function for every vertex and return the
+                 maximizing vertex
+    * `"hrep"` - convert to constraint representation
 
 ### Output
 
 The support vector in the given direction.
+
+### Notes
+
+A support vector maximizes the support function.
+For a polytope, the support function is always maximized in some vertex.
+Hence it is sufficient to check all vertices.
 """
 function σ(d::AbstractVector{N},
            P::VPolytope{N};
-           algorithm="hrep") where {N<:Real}
-    if algorithm == "hrep"
+           algorithm="sfun") where {N<:Real}
+    # base cases
+    m = length(P.vertices)
+    if m == 0
+        error("the support function for an empty polytope is undefined")
+    elseif m == 1
+        return P.vertices[1]
+    end
+
+    if algorithm == "sfun"
+        # evaluate support function in every vertex
+        max_ρ = N(-Inf)
+        max_idx = 0
+        for (i, vi) in enumerate(P.vertices)
+            ρ_i = dot(d, vi)
+            if ρ_i > max_ρ
+                max_ρ = ρ_i
+                max_idx = i
+            end
+        end
+        return P.vertices[max_idx]
+    elseif algorithm == "hrep"
+        # convert to H-representation
         require(:Polyhedra; fun_name="σ", explanation="(algorithm $algorithm)")
         return σ(d, tohrep(P))
     else
