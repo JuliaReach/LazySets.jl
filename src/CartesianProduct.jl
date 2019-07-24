@@ -4,6 +4,7 @@ export CartesianProduct,
        CartesianProductArray,
        CartesianProduct!,
        array,
+       swap,
        same_block_structure
 
 """
@@ -66,6 +67,23 @@ Alias for the binary Cartesian product.
 Alias for the binary Cartesian product.
 """
 ×(X::LazySet, Y::LazySet) = CartesianProduct(X, Y)
+
+"""
+    swap(cp::CartesianProduct)
+
+Return a new `CartesianProduct` object with the arguments swapped.
+
+### Input
+
+- `cp` -- Cartesian product of two convex sets
+
+### Output
+
+A new `CartesianProduct` object with the arguments swapped.
+"""
+function swap(cp::CartesianProduct)
+    return CartesianProduct(cp.Y, cp.X)
+end
 
 """
     dim(cp::CartesianProduct)::Int

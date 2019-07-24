@@ -6,6 +6,10 @@ for N in [Float64, Rational{Int}, Float32]
     # intersection of two sets
     I = Intersection(B, H)
 
+    # swap
+    I2 = swap(I)
+    @test I.X == I2.Y && I.Y == I2.X
+
     # dim
     @test dim(I) == 2
 

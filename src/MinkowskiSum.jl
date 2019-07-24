@@ -4,6 +4,7 @@ export MinkowskiSum, ⊕,
        MinkowskiSumArray,
        MinkowskiSum!,
        array,
+       swap,
        CacheMinkowskiSum,
        forget_sets!
 
@@ -68,6 +69,23 @@ The symbolic Minkowski sum of ``X`` and ``Y``.
 Unicode alias constructor ⊕ (`oplus`) for the lazy Minkowski sum operator.
 """
 ⊕(X::LazySet, Y::LazySet) = MinkowskiSum(X, Y)
+
+"""
+    swap(ms::MinkowskiSum)
+
+Return a new `MinkowskiSum` object with the arguments swapped.
+
+### Input
+
+- `ms` -- Minkowski sum of two convex sets
+
+### Output
+
+A new `MinkowskiSum` object with the arguments swapped.
+"""
+function swap(ms::MinkowskiSum)
+    return MinkowskiSum(ms.Y, ms.X)
+end
 
 """
     dim(ms::MinkowskiSum)::Int

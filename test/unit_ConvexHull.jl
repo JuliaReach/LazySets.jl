@@ -5,6 +5,11 @@ for N in [Float64, Rational{Int}, Float32]
     # Test Construction
     ch = ConvexHull(b1, b2)
     @test ch == CH(b1, b2)
+
+    # swap
+    ch2 = swap(ch)
+    @test ch.X == ch2.Y && ch.Y == ch2.X
+
     # Test Dimension
     @test dim(ch) == 2
     # Test Support Vector
