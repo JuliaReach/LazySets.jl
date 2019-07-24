@@ -184,6 +184,7 @@ dim(::HalfSpace)
 an_element(::HalfSpace{N}) where {N<:Real}
 rand(::Type{HalfSpace})
 isbounded(::HalfSpace)
+isuniversal(::HalfSpace{N}, ::Bool=false) where {N<:Real}
 isempty(::HalfSpace)
 constraints_list(::HalfSpace{N}) where {N<:Real}
 constraints_list(::AbstractMatrix{N}, ::AbstractVector{N}) where {N<:Real}
@@ -211,6 +212,7 @@ dim(::Hyperplane)
 an_element(::Hyperplane{N}) where {N<:Real}
 rand(::Type{Hyperplane})
 isbounded(::Hyperplane)
+isuniversal(::Hyperplane{N}, ::Bool=false) where {N<:Real}
 isempty(::Hyperplane)
 constrained_dimensions(::Hyperplane{N}) where {N<:Real}
 constraints_list(::Hyperplane{N}) where {N<:Real}
@@ -313,6 +315,7 @@ dim(::Line)
 an_element(::Line{N}) where {N<:Real}
 rand(::Type{Line})
 isbounded(::Line)
+isuniversal(::Line{N}, ::Bool=false) where {N<:Real}
 isempty(::Line)
 constrained_dimensions(::Line{N}) where {N<:Real}
 constraints_list(::Line{N}) where {N<:Real}
@@ -522,6 +525,7 @@ The following methods are specific for `HPolyhedron`.
 ```@docs
 rand(::Type{HPolyhedron})
 isbounded(::HPolyhedron)
+isuniversal(::HPolyhedron{N}, ::Bool=false) where {N<:Real}
 vertices_list(::HPolyhedron{N}) where {N<:Real}
 singleton_list(::HPolyhedron{N}) where {N<:Real}
 ```
@@ -620,6 +624,7 @@ rand(::Type{Universe})
 an_element(::Universe{N}) where {N<:Real}
 isempty(::Universe)
 isbounded(::Universe)
+isuniversal(::Universe{N}, ::Bool=false) where {N<:Real}
 norm(::Universe, ::Real=Inf)
 radius(::Universe, ::Real=Inf)
 diameter(::Universe, ::Real=Inf)

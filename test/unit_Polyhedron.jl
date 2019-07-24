@@ -4,6 +4,8 @@ for N in [Float64, Rational{Int}, Float32]
     # random polyhedron
     rand(HPolyhedron)
 
+    p_univ = HPolyhedron{N}()
+
     # constructor from matrix and vector
     A = [N(1) N(2); N(-1) N(1)]
     b = [N(1), N(2)]
@@ -46,11 +48,17 @@ for N in [Float64, Rational{Int}, Float32]
     @test σ(d, p) == N[0, 0]
 
     # support vector of polyhedron with no constraints
-    @test σ(N[1], HPolyhedron{N}()) == N[Inf]
+    @test σ(N[1], p_univ) == N[Inf]
 
     # boundedness
     @test isbounded(p)
-    @test !isbounded(HPolyhedron{N}())
+    @test !isbounded(p_univ)
+
+    # universality
+    @test !isuniversal(p)
+    res, w = isuniversal(p, true)
+    @test !res && w ∉ p
+    @test isuniversal(p_univ) && isuniversal(p_univ, true) == (true, N[])
 
     # membership
     @test ∈(N[5 / 4, 7 / 4], p)

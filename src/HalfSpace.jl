@@ -126,6 +126,35 @@ function isbounded(::HalfSpace)::Bool
 end
 
 """
+    isuniversal(hs::HalfSpace{N}, [witness]::Bool=false
+               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether a half-space is universal.
+
+### Input
+
+- `P`       -- half-space
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `false`
+* If `witness` option is activated: `(false, v)` where ``v ∉ P``
+
+### Algorithm
+
+Witness production falls back to `isuniversal(::Hyperplane)`.
+"""
+function isuniversal(hs::HalfSpace{N}, witness::Bool=false
+                    )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    if witness
+        return isuniversal(Hyperplane(hs.a, hs.b), true)
+    else
+        return false
+    end
+end
+
+"""
     an_element(hs::HalfSpace{N})::Vector{N} where {N<:Real}
 
 Return some element of a half-space.

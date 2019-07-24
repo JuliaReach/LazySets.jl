@@ -212,6 +212,40 @@ function isbounded(P::HPolyhedron)::Bool
 end
 
 """
+    isuniversal(P::HPolyhedron{N}, [witness]::Bool=false
+               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether a polyhedron is universal.
+
+### Input
+
+- `P`       -- polyhedron
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``P`` is universal
+* If `witness` option is activated:
+  * `(true, [])` iff ``P`` is universal
+  * `(false, v)` iff ``P`` is not universal and ``v ∉ P``
+
+### Algorithm
+
+`P` is universal iff it has no constraints.
+
+A witness is produced using `isuniversal(H)` where `H` is the first linear
+constraint of `P`.
+"""
+function isuniversal(P::HPolyhedron{N}, witness::Bool=false
+                    )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    if isempty(P.constraints)
+        return witness ? (true, N[]) : true
+    else
+        return witness ? isuniversal(P.constraints[1], true) : false
+    end
+end
+
+"""
     rand(::Type{HPolyhedron}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
          [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
         )::HPolyhedron{N}

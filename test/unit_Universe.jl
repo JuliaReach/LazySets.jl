@@ -44,7 +44,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test !isempty(U)
 
     # universality
-    @test isuniversal(U)
+    @test isuniversal(U) && isuniversal(U, true) == (true, N[])
 
     # an_element
     @test an_element(U) ∈ U

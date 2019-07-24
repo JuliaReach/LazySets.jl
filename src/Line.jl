@@ -163,6 +163,35 @@ function isbounded(::Line)::Bool
 end
 
 """
+    isuniversal(L::Line{N}, [witness]::Bool=false
+               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether a line is universal.
+
+### Input
+
+- `P`       -- line
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `false`
+* If `witness` option is activated: `(false, v)` where ``v ∉ P``
+
+### Algorithm
+
+Witness production falls back to `isuniversal(::Hyperplane)`.
+"""
+function isuniversal(L::Line{N}, witness::Bool=false
+                    )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    if witness
+        return isuniversal(Hyperplane(L.a, L.b), true)
+    else
+        return false
+    end
+end
+
+"""
     an_element(L::Line{N})::Vector{N} where {N<:Real}
 
 Return some element of a line.
