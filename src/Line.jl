@@ -13,7 +13,7 @@ of a `Hyperplane`).
 
 ### Fields
 
-- `a` -- normal direction
+- `a` -- normal direction (non-zero)
 - `b` -- constraint
 
 ### Examples
@@ -32,7 +32,7 @@ struct Line{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
     # default constructor with length constraint
     function Line{N, VN}(a::VN, b::N) where {N<:Real, VN<:AbstractVector{N}}
         @assert length(a) == 2 "lines must be two-dimensional"
-        @assert a != zeros(N, 2) "the normal vector of a line must not be zero"
+        @assert !iszero(a) "a line needs a non-zero normal vector"
         return new{N, VN}(a, b)
     end
 end

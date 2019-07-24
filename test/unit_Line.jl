@@ -25,6 +25,9 @@ for N in [Float64, Rational{Int}, Float32]
           [1.0, 10.0] ∈ L
           [10.0, 10.0] ∉ L
 
+    # corner case: zero normal vector
+    @test_throws AssertionError Line(N[0, 0], N(1))
+
     # dimension
     @test dim(l1) == 2
 

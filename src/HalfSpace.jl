@@ -15,7 +15,7 @@ Type that represents a (closed) half-space of the form ``a⋅x ≤ b``.
 
 ### Fields
 
-- `a` -- normal direction
+- `a` -- normal direction (non-zero)
 - `b` -- constraint
 
 ### Examples
@@ -30,7 +30,17 @@ HalfSpace{Float64,Array{Float64,1}}([0.0, -1.0], 0.0)
 struct HalfSpace{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
     a::VN
     b::N
+
+    function HalfSpace{N, VN}(a::VN, b::N
+                             ) where {N<:Real, VN<:AbstractVector{N}}
+        @assert !iszero(a) "a half-space needs a non-zero normal vector"
+        return new{N, VN}(a, b)
+    end
 end
+
+# convenience constructor without type parameter
+HalfSpace(a::VN, b::N) where {N<:Real, VN<:AbstractVector{N}} =
+    HalfSpace{N, VN}(a, b)
 
 """
     LinearConstraint
