@@ -206,8 +206,8 @@ end
 
 """
     rand(::Type{VPolytope}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
-         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
-        )::VPolytope{N}
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing,
+         [num_vertices]::Int=-1)::VPolytope{N}
 
 Create a random polytope in vertex representation.
 
