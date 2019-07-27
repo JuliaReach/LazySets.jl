@@ -475,14 +475,7 @@ This is a naive fallback implementation.
 """
 function isuniversal(X::LazySet{N}, witness::Bool=false
                     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
-    if X isa Universe
-        result = true
-    elseif X isa HPolyhedron
-        # the polyhedron is universal iff there is no constraint at all
-        result = isempty(constraints_list(X))
-    elseif X isa HalfSpace || X isa Hyperplane || X isa Line
-        result = false
-    elseif isbounded(X)
+    if isbounded(X)
         result = false
     else
         error("cannot determine universality of the set")

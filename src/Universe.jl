@@ -212,7 +212,7 @@ Determine whether a universe is bounded.
 
 ### Input
 
-- `S` -- universe
+- `U` -- universe
 
 ### Output
 
@@ -220,6 +220,27 @@ Determine whether a universe is bounded.
 """
 function isbounded(U::Universe)::Bool
     return false
+end
+
+"""
+    isuniversal(U::Universe{N}, [witness]::Bool=false
+               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether a universe is universal.
+
+### Input
+
+- `U`       -- universe
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true`
+* If `witness` option is activated: `(true, [])`
+"""
+function isuniversal(U::Universe{N}, witness::Bool=false
+                    )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    return witness ? (true, N[]) : true
 end
 
 """

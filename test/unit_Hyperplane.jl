@@ -45,6 +45,11 @@ for N in [Float64, Rational{Int}, Float32]
     # boundedness
     @test !isbounded(hp)
 
+    # universality
+    @test !isuniversal(hp)
+    res, w = isuniversal(hp, true)
+    @test !res && w ∉ hp
+
     # isempty
     @test !isempty(hp)
 
