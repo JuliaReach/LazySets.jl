@@ -75,34 +75,27 @@ function dim(P::VPolytope)::Int
 end
 
 """
-    σ(d::AbstractVector{N}, P::VPolytope{N}; algorithm="sfun") where {N<:Real}
+    σ(d::AbstractVector{N}, P::VPolytope{N}) where {N<:Real}
 
-Return the support vector of a polyhedron (in V-representation) in a given
+Return the support vector of a polytope in V-representation in a given
 direction.
 
 ### Input
 
-- `d`         -- direction
-- `P`         -- polyhedron in V-representation
-- `algorithm` -- (optional, default: `"sfun"`) method to compute the support
-                 vector; available options:
-    * `"sfun"` - query the support function for every vertex and return the
-                 maximizing vertex
-    * `"hrep"` - convert to constraint representation
+- `d` -- direction
+- `P` -- polytope in V-representation
 
 ### Output
 
 The support vector in the given direction.
 
-### Notes
+### Algorithm
 
 A support vector maximizes the support function.
 For a polytope, the support function is always maximized in some vertex.
 Hence it is sufficient to check all vertices.
 """
-function σ(d::AbstractVector{N},
-           P::VPolytope{N};
-           algorithm="sfun") where {N<:Real}
+function σ(d::AbstractVector{N}, P::VPolytope{N}) where {N<:Real}
     # base cases
     m = length(P.vertices)
     if m == 0
@@ -111,25 +104,17 @@ function σ(d::AbstractVector{N},
         return P.vertices[1]
     end
 
-    if algorithm == "sfun"
-        # evaluate support function in every vertex
-        max_ρ = N(-Inf)
-        max_idx = 0
-        for (i, vi) in enumerate(P.vertices)
-            ρ_i = dot(d, vi)
-            if ρ_i > max_ρ
-                max_ρ = ρ_i
-                max_idx = i
-            end
+    # evaluate support function in every vertex
+    max_ρ = N(-Inf)
+    max_idx = 0
+    for (i, vi) in enumerate(P.vertices)
+        ρ_i = dot(d, vi)
+        if ρ_i > max_ρ
+            max_ρ = ρ_i
+            max_idx = i
         end
-        return P.vertices[max_idx]
-    elseif algorithm == "hrep"
-        # convert to H-representation
-        require(:Polyhedra; fun_name="σ", explanation="(algorithm $algorithm)")
-        return σ(d, tohrep(P))
-    else
-        error("the algorithm $algorithm is not known")
     end
+    return P.vertices[max_idx]
 end
 
 """

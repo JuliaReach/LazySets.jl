@@ -163,8 +163,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # support vector
     d = N[1, 0]
-    @test σ(d, p) == σ(d, p, algorithm="sfun") == N[1, 0]
-    @test_throws ErrorException σ(d, p, algorithm="xyz")
+    @test σ(d, p) == N[1, 0]
 
     # boundedness
     @test isbounded(p)
@@ -302,12 +301,6 @@ if test_suite_polyhedra
         # -----
         # V-rep
         # -----
-
-        # support vector (only available with Polyhedra library)
-        polygon = VPolygon([N[0, 0], N[1, 0], N[0, 1]])
-        p = VPolytope(polygon)
-        d = N[1, 0]
-        @test σ(d, p, algorithm="hrep") == N[1, 0]
 
         # intersection
         p1 = VPolytope(vertices_list(BallInf(N[0, 0], N(1))))
