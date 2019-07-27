@@ -21,6 +21,8 @@ Every concrete `AbstractHyperrectangle` must define the following functions:
     hyperrectangle's radius, which is a full-dimensional vector
 - `radius_hyperrectangle(::AbstractHyperrectangle{N}, i::Int)::N` -- return the
     hyperrectangle's radius in the `i`-th dimension
+- `isflat(::AbstractHyperrectangle{N})::Bool` -- determine whether the
+    hyperrectangle's radius is zero in some dimension
 
 ```jldoctest
 julia> subtypes(AbstractHyperrectangle)
