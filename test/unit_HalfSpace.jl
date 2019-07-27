@@ -5,6 +5,9 @@ for N in [Float64, Rational{Int}, Float32]
     # normal constructor
     hs = HalfSpace(ones(N, 3), N(5))
 
+    # corner case: zero normal vector
+    @test_throws AssertionError HalfSpace(N[0, 0], N(1))
+
     # dimension
     @test dim(hs) == 3
 

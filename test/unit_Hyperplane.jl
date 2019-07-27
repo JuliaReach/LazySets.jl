@@ -7,6 +7,9 @@ for N in [Float64, Rational{Int}, Float32]
     b = N(5)
     hp = Hyperplane(a, b)
 
+    # corner case: zero normal vector
+    @test_throws AssertionError Hyperplane(N[0, 0], N(1))
+
     # dimension
     @test dim(hp) == 3
 

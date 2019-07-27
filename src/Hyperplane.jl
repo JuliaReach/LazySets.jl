@@ -12,7 +12,7 @@ Type that represents a hyperplane of the form ``a⋅x = b``.
 
 ### Fields
 
-- `a` -- normal direction
+- `a` -- normal direction (non-zero)
 - `b` -- constraint
 
 ### Examples
@@ -27,7 +27,15 @@ Hyperplane{Float64}([0.0, 1.0], 0.0)
 struct Hyperplane{N<:Real} <: AbstractPolyhedron{N}
     a::AbstractVector{N}
     b::N
+
+    function Hyperplane{N}(a::AbstractVector{N}, b::N) where {N<:Real}
+        @assert !iszero(a) "a hyperplane needs a non-zero normal vector"
+        return new{N}(a, b)
+    end
 end
+
+# convenience constructor without type parameter
+Hyperplane(a::AbstractVector{N}, b::N) where {N<:Real} = Hyperplane{N}(a, b)
 
 
 # --- polyhedron interface functions ---
