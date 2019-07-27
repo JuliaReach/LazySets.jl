@@ -221,6 +221,7 @@ if test_suite_polyhedra
         p_infeasible = HPolytope([LinearConstraint(N[1], N(0)),
                                   LinearConstraint(N[-1], N(-1))])
         @test_throws ErrorException σ(N[1], p_infeasible)
+        @test_throws ErrorException ρ(N[1], p_infeasible)
 
         # empty intersection
         A = [N(0) N(-1); N(-1) N(0); N(1) N(1)]
@@ -243,20 +244,17 @@ if test_suite_polyhedra
         A = [N(1) N(-1)]'
         b = N[1, 0]
         p1 = HPolytope(A, b)
-        p2 = HPolytope(A, b)
+        p2 = copy(p1)
         cp = cartesian_product(p1, p2)
         cl = constraints_list(cp)
         @test length(cl) == 4
 
         # vertices_list
-        A = [N(1) N(-1)]'
-        b = N[1, 0]
-        p = HPolytope(A, b)
-        vl = vertices_list(p)
+        vl = vertices_list(p1)
         @test ispermutation(vl, [N[0], N[1]])
 
         # checking for emptiness
-        P = HPolytope([LinearConstraint(N[1, 0], N(0))])    # x <= 0
+        P = HPolytope([LinearConstraint(N[1, 0], N(0))])      # x <= 0
         @test !isempty(P)
         addconstraint!(P, LinearConstraint(N[-1, 0], N(-1)))  # x >= 1
         @test isempty(P)

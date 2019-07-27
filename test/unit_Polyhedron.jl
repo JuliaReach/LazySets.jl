@@ -67,14 +67,14 @@ for N in [Float64, Rational{Int}, Float32]
     # constrained dimensions
     @test constrained_dimensions(p) == [1, 2]
     @test constrained_dimensions(
-        HPolyhedron{N}([LinearConstraint(N[1, 0], N(1))])) == [1]
+        HPolyhedron([LinearConstraint(N[1, 0], N(1))])) == [1]
 
     # concrete linear map with invertible matrix
     linear_map(N[2 3; 1 2], p)
 
     # translation
     p2 = translate(p, N[1, 2])
-    @test p2 isa HPolyhedron && ispermutation(constraints_list(p2),
+    @test p2 isa HPolyhedron{N} && ispermutation(constraints_list(p2),
         [HalfSpace(N[2, 2], N(18)), HalfSpace(N[-3, 3], N(9)),
          HalfSpace(N[-1, -1], N(-3)), HalfSpace(N[2, -4], N(-6))])
 
@@ -120,27 +120,26 @@ if test_suite_polyhedra
         @test σ(d, p_unbounded) == N[Inf, 0]
         @test ρ(d, p_unbounded) == N(Inf)
         p_infeasible = HPolyhedron([LinearConstraint(N[1], N(0)),
-                                  LinearConstraint(N[-1], N(-1))])
+                                    LinearConstraint(N[-1], N(-1))])
+        @test isempty(p_infeasible)
         @test_throws ErrorException σ(N[1], p_infeasible)
 
         # intersection
-        # TODO these polyhedra are empty. do the tests make any sense?
-        A = [N(0) N(1); N(1) N(0); N(2) N(2)]
-        b = N[0, 0, 1]
+        A = [N(0) N(1); N(1) N(0)]
+        b = N[1, 1]
         p1 = HPolyhedron(A, b)
-        A = [N(0) N(-1); N(-1) N(0); N(1) N(1)]
-        b = N[-0.25, -0.25, 0]
+        A = [N(0) N(-1); N(-1) N(0)]
+        b = N[0, 0]
         p2 = HPolyhedron(A, b)
-        cap = intersection(p1, p2)
-        # currently broken, see #565
+        intersection(p1, p2)
 
         # intersection with polytope
         A = [N(1) N(0); N(0) N(1); N(-1) N(-1)]
         b = N[1, 1, -1]
         p = HPolyhedron(A, b)
         b = BallInf(N[1, 1], N(0.5))
-        cap = intersection(p, b)
-        cap = intersection(b, p)
+        intersection(p, b)
+        intersection(b, p)
 
         # intersection with half-space
         hs = HalfSpace(N[2, 2], N(-1))
@@ -150,35 +149,29 @@ if test_suite_polyhedra
 
         # convex hull
         ch = convex_hull(p1, p2)
-        # currently broken, see #566
+        @test ch isa HPolyhedron{N} && isempty(constraints_list(ch))
 
         # Cartesian product
         A = [N(1) N(-1)]'
         b = N[1, 0]
         p1 = HPolyhedron(A, b)
-        p2 = HPolyhedron(A, b)
+        p2 = copy(p1)
         cp = cartesian_product(p1, p2)
         cl = constraints_list(cp)
         @test length(cl) == 4
 
         # vertices_list
-        A = [N(1) N(-1)]'
-        b = N[1, 0]
-        p = HPolyhedron(A, b)
-        @test_throws ArgumentError vertices_list(p)
+        @test_throws ArgumentError vertices_list(p1)
 
         # tovrep from HPolyhedron
-        A = [N(0) N(-1); N(-1) N(0); N(1) N(1)]
-        b = N[-0.25, -0.25, -0]
-        P = HPolyhedron(A, b)
-        @test tohrep(P) isa HPolyhedron # test no-op
+        @test tohrep(p1) isa HPolyhedron{N} # test no-op
 
         # removing a redundant constraint in a 2D polyhedron (see #565)
-        A = [0. 1.;    # y <= 0
-             1. 0.;    # x <= 0
-             2. 2.]    # 2x + 2y <= 1   (this constraint is implied by the other two)
-        b = [0., 0., 1.];
-        p1 = HPolyhedron(A, b);
+        A = N[0 1;  # y <= 0
+              1 0;  # x <= 0
+              2 2]  # 2x + 2y <= 1 (the constraint is implied by the other two)
+        b = N[0, 0, 1]
+        p1 = HPolyhedron(A, b)
         remove_redundant_constraints!(p1)
         Ar, br = tosimplehrep(p1)
         @test Ar == A[1:2, :] && br == b[1:2]
@@ -210,30 +203,30 @@ if test_suite_polyhedra
         res, w = isdisjoint(R, P, true)
         @test isdisjoint(R, P) && res && w == N[]
 
-        Punbdd = HPolyhedron([HalfSpace([0.68, 1.22], -0.76),
-                              HalfSpace([-0.75, -0.46], 0.68)])
+        Punbdd = HPolyhedron([HalfSpace(N[0.68, 1.22], N(-0.76)),
+                              HalfSpace(N[-0.75, -0.46], N(0.68))])
         @assert !isbounded(Punbdd)
 
-        Pbdd = HPolyhedron([HalfSpace([0.68, 1.22], -0.76),
-                            HalfSpace([-0.75, -0.46], 0.68),
-                            HalfSpace([1.72, 0.33], 0.37),
-                            HalfSpace([-1.60, -0.41], 0.67),
-                            HalfSpace([-0.44, 0.06], 0.78)])
+        Pbdd = HPolyhedron([HalfSpace(N[0.68, 1.22], N(-0.76)),
+                            HalfSpace(N[-0.75, -0.46], N(0.68)),
+                            HalfSpace(N[1.72, 0.33], N(0.37)),
+                            HalfSpace(N[-1.60, -0.41], N(0.67)),
+                            HalfSpace(N[-0.44, 0.06], N(0.78))])
         @assert isbounded(Pbdd)
 
-        Mnotinv = [1.0 0.0; 2.0 0.0]
+        Mnotinv = N[1 0; 2 0]
         @assert !isinvertible(Mnotinv)
 
-        Minv = [1.0 2.0; -1.0 0.4]
+        Minv = N[1 2; -1 0.4]
         @assert isinvertible(Minv)
 
         # invertible matrix times a bounded polyhedron 
         L = linear_map(Minv, Pbdd)
-        @test L isa HPolyhedron
+        @test L isa HPolyhedron{N}
 
         # invertible matrix times an unbounded polyhedron 
         L = linear_map(Minv, Punbdd)
-        @test L isa HPolyhedron
+        @test L isa HPolyhedron{N}
 
         # not invertible matrix times a bounded polyhedron 
         L = linear_map(Mnotinv, Pbdd) # Requires Polyhedra because it works on vertices
@@ -244,9 +237,9 @@ if test_suite_polyhedra
 
         # check that we can use sparse matrices as well ; Requires SparseArrays
         L = linear_map(sparse(Minv), Pbdd)
-        @test L isa HPolyhedron
+        @test L isa HPolyhedron{N}
         L = linear_map(sparse(Minv), Punbdd)
-        @test L isa HPolyhedron
+        @test L isa HPolyhedron{N}
         L = linear_map(sparse(Mnotinv), Pbdd) # Requires Polyhedra because it works on vertices
         @test L isa VPolytope
         @test_throws ArgumentError linear_map(sparse(Mnotinv), Punbdd)
