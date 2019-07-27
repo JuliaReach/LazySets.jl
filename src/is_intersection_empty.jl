@@ -1279,7 +1279,7 @@ function is_intersection_empty(U::Universe{N},
                                   {N<:Real}
     return invoke(is_intersection_empty,
                   Tuple{Universe{N}, LazySet{N}, Bool},
-                  U, hs, witness)
+                  U, hp, witness)
 end
 function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
                                U::Universe{N},
@@ -1288,7 +1288,7 @@ function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
                                   {N<:Real}
     return invoke(is_intersection_empty,
                   Tuple{Universe{N}, LazySet{N}, Bool},
-                  U, hs, witness)
+                  U, hp, witness)
 end
 function is_intersection_empty(U::Universe{N},
                                hs::HalfSpace{N},
