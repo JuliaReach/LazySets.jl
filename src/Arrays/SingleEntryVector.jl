@@ -37,10 +37,15 @@ function Base.:(*)(A::Transpose{N, <:AbstractMatrix{N}},
     return A[:, e.i] * e.v
 end
 
-# diagonal matrix times unit vector
+# multiplication with diagonal matrix
 function Base.:(*)(D::Diagonal{N, V},
                    e::SingleEntryVector{N}) where {N, V<:AbstractVector{N}}
     return SingleEntryVector(e.i, e.n, D.diag[e.i] * e.v)
+end
+
+# negation
+function Base.:(-)(e::SingleEntryVector{N}) where {N}
+    return SingleEntryVector(e.i, e.n, -e.v)
 end
 
 function inner(e1::SingleEntryVector{N}, A::AbstractMatrix{N},
