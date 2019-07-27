@@ -60,11 +60,11 @@ BallInf(center::Vector{N}, radius::N) where {N<:Real} =
 """
     radius_hyperrectangle(B::BallInf{N}, i::Int)::N where {N<:Real}
 
-Return the box radius of a infinity norm ball in a given dimension.
+Return the box radius of a ball in the infinity norm in a given dimension.
 
 ### Input
 
-- `B` -- infinity norm ball
+- `B` -- ball in the infinity norm
 - `i` -- dimension of interest
 
 ### Output
@@ -78,12 +78,12 @@ end
 """
     radius_hyperrectangle(B::BallInf{N})::Vector{N} where {N<:Real}
 
-Return the box radius of a infinity norm ball, which is the same in every
+Return the box radius of a ball in the infinity norm, which is the same in every
 dimension.
 
 ### Input
 
-- `B` -- infinity norm ball
+- `B` -- ball in the infinity norm
 
 ### Output
 
@@ -91,6 +91,30 @@ The box radius of the ball in the infinity norm.
 """
 function radius_hyperrectangle(B::BallInf{N})::Vector{N} where {N<:Real}
     return fill(B.radius, dim(B))
+end
+
+"""
+    isflat(B::BallInf)::Bool
+
+Determine whether a ball in the infinity norm is flat, i.e. whether its radius
+is zero.
+
+### Input
+
+- `B` -- ball in the infinity norm
+
+### Output
+
+`true` iff the ball is flat.
+
+### Notes
+
+For robustness with respect to floating-point inputs, this function relies on
+the result of `isapproxzero` when applied to the radius of the ball.
+Hence, this function depends on the absolute zero tolerance `ABSZTOL`.
+"""
+function isflat(B::BallInf)::Bool
+    return isapproxzero(B.radius)
 end
 
 

@@ -121,6 +121,10 @@ for N in [Float64, Rational{Int}, Float32]
     H = Hyperrectangle(N[1, 2], N[3, 4])
     @test an_element(H) ∈ H
 
+    # isflat
+    @test isflat(Hyperrectangle(N[1, 2], N[3, 0])) &&
+          !isflat(Hyperrectangle(N[1, 2], N[3, 4]))
+
     # split
     @test ispermutation(split(H, [2, 2]),
         [Hyperrectangle(N[-0.5, 0], N[1.5, 2]),

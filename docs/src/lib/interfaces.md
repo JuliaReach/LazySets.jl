@@ -246,6 +246,7 @@ high(::AbstractHyperrectangle{N}) where {N<:Real}
 high(::AbstractHyperrectangle{N}, ::Int) where {N<:Real}
 low(::AbstractHyperrectangle{N}) where {N<:Real}
 low(::AbstractHyperrectangle{N}, ::Int) where {N<:Real}
+isflat(::AbstractHyperrectangle)
 split(::AbstractHyperrectangle{N}, ::AbstractVector{Int}) where {N<:Real}
 generators(::AbstractHyperrectangle)
 genmat(::AbstractHyperrectangle)

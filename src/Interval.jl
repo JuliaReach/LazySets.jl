@@ -472,7 +472,7 @@ end
 """
     isflat(I::Interval)::Bool
 
-Return whether the interval is flat, i.e. if its extreme values coincide.
+Determine whether an interval is flat, i.e. whether its extreme values coincide.
 
 ### Input
 
@@ -484,9 +484,9 @@ A boolean which is `true` if the interval is flat and `false` otherwise.
 
 ### Notes
 
-For robustness with respect to floating-point inputs, this function relies on the
-result of `isapproxzero` when applied to the diameter of the interval. Hence,
-this function depends on the absolute zero tolerance `ABSZTOL`.
+For robustness with respect to floating-point inputs, this function relies on
+the result of `isapproxzero` when applied to the diameter of the interval.
+Hence, this function depends on the absolute zero tolerance `ABSZTOL`.
 """
 function isflat(I::Interval)::Bool
     return isapproxzero(IntervalArithmetic.diam(I.dat))

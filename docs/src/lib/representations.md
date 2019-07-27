@@ -47,6 +47,7 @@ center(::BallInf{N}) where {N<:Real}
 radius(::BallInf, ::Real=Inf)
 radius_hyperrectangle(::BallInf{N}) where {N<:Real}
 radius_hyperrectangle(::BallInf{N}, ::Int) where {N<:Real}
+isflat(::BallInf)
 rand(::Type{BallInf})
 translate(::BallInf{N}, ::AbstractVector{N}) where {N<:Real}
 ```
@@ -257,6 +258,7 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`vertices_list`](@ref vertices_list(::AbstractHyperrectangle{N}) where {N<:Real})
 * [`high`](@ref high(::AbstractHyperrectangle{N}) where {N<:Real})
 * [`low`](@ref low(::AbstractHyperrectangle{N}) where {N<:Real})
+* [`isflat`](@ref isflat(::Hyperrectangle))
 * [`generators`](@ref generators(::AbstractZonotope))
 * [`genmat`](@ref genmat(::AbstractZonotope))
 
