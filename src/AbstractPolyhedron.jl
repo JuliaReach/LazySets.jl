@@ -11,7 +11,7 @@ Every concrete `AbstractPolyhedron` must define the following functions:
 - `constraints_list(::AbstractPolyhedron{N})` -- return a list of all facet
     constraints
 
-```jldoctest
+```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractPolyhedron)
 6-element Array{Any,1}:
  AbstractPolytope

@@ -183,6 +183,8 @@ function of the given input set over the template directions.
 For example, octagonal 2D approximations of the set `S` are obtained with:
 
 ```jldoctest decompose_examples
+julia> using LazySets.Approximations: OctDirections
+
 julia> B = decompose(S, P2d, OctDirections);
 
 julia> length(B.array) == 2 && all(dim(bi) == 2 for bi in B.array)

@@ -25,10 +25,6 @@ Depth = 4
 
 ```@meta
 CurrentModule = LazySets
-DocTestSetup = quote
-    using LazySets
-    using InteractiveUtils: subtypes
-end
 ```
 
 ## LazySet

@@ -11,13 +11,6 @@ Pages = ["iterative_refinement.md"]
 Depth = 3
 ```
 
-```@meta
-CurrentModule = LazySets.Approximations
-DocTestSetup = quote
-    using Plots, LazySets, LazySets.Approximations
-end
-```
-
 ## Local approximations
 
 The polygonal approximation of an arbitrary lazy convex set `S` is represented

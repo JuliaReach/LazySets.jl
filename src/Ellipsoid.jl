@@ -31,6 +31,8 @@ For instance, a 3D ellipsoid with center at the origin and the shape matrix bein
 the identity can be created with:
 
 ```jldoctest ellipsoid_constructor
+julia> using LinearAlgebra
+
 julia> E = Ellipsoid(Matrix{Float64}(I, 3, 3))
 Ellipsoid{Float64}([0.0, 0.0, 0.0], [1.0 0.0 0.0; 0.0 1.0 0.0; 0.0 0.0 1.0])
 

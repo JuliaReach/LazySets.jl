@@ -34,7 +34,7 @@ other, it is sufficient to only genuinely implement one of them and let the
 implementation of the other function call the fallback implementation
 `genmat_fallback` resp. `generators_fallback`.
 
-```jldoctest
+```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractZonotope)
 3-element Array{Any,1}:
  AbstractHyperrectangle

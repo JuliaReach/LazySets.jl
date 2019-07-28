@@ -25,7 +25,7 @@ functions:
   - `vertices_list(::AbstractCentrallySymmetricPolytope{N})::Vector{Vector{N}}`
      -- return a list of all vertices
 
-```jldoctest
+```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractCentrallySymmetricPolytope)
 2-element Array{Any,1}:
  AbstractZonotope

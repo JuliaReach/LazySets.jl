@@ -3,21 +3,17 @@
 In this section we illustrate the
 [convex hull operation](https://en.wikipedia.org/wiki/Convex_hull).
 We give examples of the symbolic implementation, and the concrete convex hull in
-low dimensions. We show how to test if a point lies in the convex
-hull of a set of points in the plane using `LazySets`. Moreover, we give examples
-of creating the convex hull of sets whose vertices are represented as *static* vectors,
-which can dramatically improve performance in many use cases. Finally, we give
-an example of creating the convex hull of points in higher dimensions.
+low dimensions. We show how to test if a point lies in the convex hull of a set
+of points in the plane using `LazySets`.
+Moreover, we give examples of creating the convex hull of sets whose vertices
+are represented as *static* vectors, which can dramatically improve performance
+in many use cases.
+Finally, we give an example of creating the convex hull of points in higher
+dimensions.
 
 ```@contents
 Pages = ["convex_hulls.md"]
 Depth = 3
-```
-
-```@meta
-DocTestSetup = quote
-    using Plots, LazySets, LazySets.Approximations
-end
 ```
 
 ## Symbolic convex hull
@@ -94,9 +90,9 @@ plot!(p, VPolygon(hull), alpha=0.2)
 
 ## Test point in convex hull
 
-One can check whether a point lies inside or outside of a convex hull efficiently
-in two dimensions, using the fact that the output of `convex_hull` returns
-the points ordered in counter-clockwise fashion.
+One can check whether a point lies inside or outside of a convex hull
+efficiently in two dimensions, using the fact that the output of `convex_hull`
+returns the points ordered in counter-clockwise fashion.
 
 !!! note
     To check if a point `p::AbstractVector` is in another set, e.g. a polygon in
@@ -104,19 +100,15 @@ the points ordered in counter-clockwise fashion.
     `Singleton`, which is a *set* with one element, use *set inclusion* `⊆`.
     The following example illustrates this difference.
 
-```jldoctest
-julia> points = N -> [randn(2) for i in 1:N];
-julia> v = points(30);
-julia> hull = convex_hull(v);
+```julia
 julia> Singleton(v[1]) ∈ VPolygon(hull)
-ERROR: cannot make a point-in-set check if the left-hand side is a set;
-either check for set inclusion, as in `S ⊆ X`, or check for membership,
-as in `element(S) ∈ X` (they are equivalent)
-[...]
+ERROR: cannot make a point-in-set check if the left-hand side is a set; either
+check for set inclusion, as in `S ⊆ X`, or check for membership, as in
+`element(S) ∈ X` (the results are equivalent but the implementations may differ)
 ```
 
-As the error suggests, either use `element` to access the element of the singleton
-and check if it belongs to the right-hand side set:
+As the error suggests, either use `element` to access the element of the
+singleton and check if it belongs to the right-hand side set:
 
 ```@example example_ch
 element(Singleton(v[1])) ∈ VPolygon(hull)

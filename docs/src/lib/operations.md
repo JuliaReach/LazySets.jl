@@ -10,10 +10,6 @@ Depth = 3
 
 ```@meta
 CurrentModule = LazySets
-DocTestSetup = quote
-    using LazySets
-    using SparseArrays, LinearAlgebra
-end
 ```
 
 ## Cartesian Product
