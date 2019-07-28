@@ -6,6 +6,11 @@ for N in [Float64, Rational{Int}, Float32]
     X = MinkowskiSum(b1, b2)
     @test X.X == b1
     @test X.Y == b2
+
+    # swap
+    ms2 = swap(X)
+    @test X.X == ms2.Y && X.Y == ms2.X
+
     # Test Dimension
     @test dim(X) == 2
     # Test Support Vector

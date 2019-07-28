@@ -160,7 +160,7 @@ function set_isempty!(cap::Intersection, isempty::Bool)
 end
 
 """
-    swap(cap::Intersection{N, S1, S2})::Intersection{N} where {N<:Real, S1, S2}
+    swap(cap::Intersection{N, S1, S2}) where {N<:Real, S1, S2}
 
 Return a new `Intersection` object with the arguments swapped.
 
@@ -178,8 +178,7 @@ The old cache is shared between the old and new objects.
 The advantage of using this function instead of manually swapping the arguments
 is that the cache is shared.
 """
-function swap(cap::Intersection{N, S1, S2}
-             )::Intersection{N} where {N<:Real, S1, S2}
+function swap(cap::Intersection{N, S1, S2}) where {N<:Real, S1, S2}
     return Intersection{N, S2, S1}(cap.Y, cap.X, cache=cap.cache)
 end
 

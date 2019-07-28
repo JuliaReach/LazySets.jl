@@ -20,6 +20,7 @@ CurrentModule = LazySets
 CartesianProduct
 ×(::LazySet, ::LazySet)
 *(::LazySet, ::LazySet)
+swap(::CartesianProduct)
 dim(::CartesianProduct)
 ρ(::AbstractVector{N}, ::CartesianProduct{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::CartesianProduct{N}) where {N<:Real}
@@ -66,6 +67,7 @@ Inherited from [`LazySet`](@ref):
 ```@docs
 ConvexHull
 CH
+swap(::ConvexHull)
 dim(::ConvexHull)
 ρ(::AbstractVector{N}, ::ConvexHull{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::ConvexHull{N}) where {N<:Real}
@@ -122,7 +124,7 @@ isempty(::Intersection)
 constraints_list(::Intersection{N}) where {N<:Real}
 isempty_known(::Intersection)
 set_isempty!(::Intersection, ::Bool)
-swap(::Intersection)
+swap(::Intersection{N, S1, S2}) where {N<:Real, S1, S2}
 use_precise_ρ
 _line_search
 _projection
@@ -168,6 +170,7 @@ Inherited from [`LazySet`](@ref):
 MinkowskiSum
 ⊕(::LazySet, ::LazySet)
 +(::LazySet, ::LazySet)
+swap(::MinkowskiSum)
 dim(::MinkowskiSum)
 ρ(::AbstractVector{N}, ::MinkowskiSum{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::MinkowskiSum{N}) where {N<:Real}
@@ -367,6 +370,7 @@ Hence these set types are not part of the convex-set family `LazySet`.
 ```@docs
 UnionSet
 ∪(::LazySet, ::LazySet)
+swap(::UnionSet)
 dim(::UnionSet)
 σ(::AbstractVector{N}, ::UnionSet{N}; algorithm="support_vector") where {N<:Real}
 ρ(::AbstractVector{N}, ::UnionSet{N}) where {N<:Real}

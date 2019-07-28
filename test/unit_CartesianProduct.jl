@@ -9,6 +9,11 @@ for N in [Float64, Float32, Rational{Int}]
     cp = CartesianProduct(b1, b2)
     @test cp.X == b1
     @test cp.Y == b2
+
+    # swap
+    cp2 = swap(cp)
+    @test cp.X == cp2.Y && cp.Y == cp2.X
+
     # Test Dimension
     @test dim(cp) == 3
     # Test Support Vector
