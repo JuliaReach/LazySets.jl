@@ -26,6 +26,7 @@ include("helper_functions.jl")
 include("comparisons.jl")
 include("macros.jl")
 include("samples.jl")
+include("mesh.jl")
 
 # ==================
 # Abstract set types
