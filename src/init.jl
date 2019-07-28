@@ -21,6 +21,7 @@ function load_polyhedra()
     eval(load_polyhedra_hpolytope())
     eval(load_polyhedra_hpolyhedron())
     eval(load_polyhedra_vpolytope())
+    initialize_mesh()
 end
 
 function load_distributions()
@@ -28,7 +29,15 @@ function load_distributions()
 end
 
 function load_makie()
-    eval(load_mesh())
+    initialize_mesh()
+end
+
+function initialize_mesh()
+    if isdefined(@__MODULE__, :Polyhedra) &&
+       isdefined(@__MODULE__, :Makie)
+
+       eval(load_mesh())
+    end
 end
 
 """
