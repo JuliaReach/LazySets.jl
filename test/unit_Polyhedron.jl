@@ -125,21 +125,28 @@ if test_suite_polyhedra
         @test_throws ErrorException σ(N[1], p_infeasible)
 
         # intersection
-        A = [N(0) N(1); N(1) N(0)]
+        A = N[0 1; 1 0]
         b = N[1, 1]
         p1 = HPolyhedron(A, b)
-        A = [N(0) N(-1); N(-1) N(0)]
+        A = N[0 -1; -1 0]
         b = N[0, 0]
         p2 = HPolyhedron(A, b)
-        intersection(p1, p2)
+        cap = intersection(p1, p2)
+        @test ispermutation(constraints_list(cap),
+                            constraints_list(BallInf(N[0.5, 0.5], N(0.5))))
 
         # intersection with polytope
-        A = [N(1) N(0); N(0) N(1); N(-1) N(-1)]
+        A = N[1 0;    # x <= 1
+              0 1;    # y <= 1
+              -1 -1]  # x + y >= 1
         b = N[1, 1, -1]
         p = HPolyhedron(A, b)
         b = BallInf(N[1, 1], N(0.5))
-        intersection(p, b)
-        intersection(b, p)
+        cap1 = intersection(p, b)
+        cap2 = intersection(b, p)
+        @test ispermutation(constraints_list(cap1), constraints_list(cap2)) &&
+              ispermutation(constraints_list(cap1),
+                            constraints_list(BallInf(N[0.75, 0.75], N(0.25))))
 
         # intersection with half-space
         hs = HalfSpace(N[2, 2], N(-1))
@@ -152,7 +159,7 @@ if test_suite_polyhedra
         @test ch isa HPolyhedron{N} && isempty(constraints_list(ch))
 
         # Cartesian product
-        A = [N(1) N(-1)]'
+        A = N[1 -1]'
         b = N[1, 0]
         p1 = HPolyhedron(A, b)
         p2 = copy(p1)
