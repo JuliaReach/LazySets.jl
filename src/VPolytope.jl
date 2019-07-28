@@ -75,30 +75,46 @@ function dim(P::VPolytope)::Int
 end
 
 """
-    σ(d::AbstractVector{N}, P::VPolytope{N}; algorithm="hrep") where {N<:Real}
+    σ(d::AbstractVector{N}, P::VPolytope{N}) where {N<:Real}
 
-Return the support vector of a polyhedron (in V-representation) in a given
+Return the support vector of a polytope in V-representation in a given
 direction.
 
 ### Input
 
-- `d`         -- direction
-- `P`         -- polyhedron in V-representation
-- `algorithm` -- (optional, default: `'hrep'`) method to compute the support vector
+- `d` -- direction
+- `P` -- polytope in V-representation
 
 ### Output
 
 The support vector in the given direction.
+
+### Algorithm
+
+A support vector maximizes the support function.
+For a polytope, the support function is always maximized in some vertex.
+Hence it is sufficient to check all vertices.
 """
-function σ(d::AbstractVector{N},
-           P::VPolytope{N};
-           algorithm="hrep") where {N<:Real}
-    if algorithm == "hrep"
-        require(:Polyhedra; fun_name="σ", explanation="(algorithm $algorithm)")
-        return σ(d, tohrep(P))
-    else
-        error("the algorithm $algorithm is not known")
+function σ(d::AbstractVector{N}, P::VPolytope{N}) where {N<:Real}
+    # base cases
+    m = length(P.vertices)
+    if m == 0
+        error("the support function for an empty polytope is undefined")
+    elseif m == 1
+        return P.vertices[1]
     end
+
+    # evaluate support function in every vertex
+    max_ρ = N(-Inf)
+    max_idx = 0
+    for (i, vi) in enumerate(P.vertices)
+        ρ_i = dot(d, vi)
+        if ρ_i > max_ρ
+            max_ρ = ρ_i
+            max_idx = i
+        end
+    end
+    return P.vertices[max_idx]
 end
 
 """
@@ -175,8 +191,8 @@ end
 
 """
     rand(::Type{VPolytope}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
-         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
-        )::VPolytope{N}
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing,
+         [num_vertices]::Int=-1)::VPolytope{N}
 
 Create a random polytope in vertex representation.
 
