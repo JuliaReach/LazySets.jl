@@ -24,8 +24,9 @@ end
 
 """
     plot3d(S::LazySet{N}; backend=default_polyhedra_backend(S, N),
-           alpha=1.0, color=:blue, colormap=:viridis, colorrange=Automatic(), interpolate=false,
-           linewidth=1, overdraw=false, shading=true, transparency=true, visible=true) where {N}
+           alpha=1.0, color=:blue, colormap=:viridis, colorrange=Automatic(),
+           interpolate=false, linewidth=1, overdraw=false, shading=true,
+           transparency=true, visible=true) where {N}
 
 Plot a three-dimensional convex set using Makie.
 
@@ -44,17 +45,17 @@ Plot a three-dimensional convex set using Makie.
                     and it can also be used as `[:red, :black]`
 - `colorrange`   -- (optional, default: `Automatic()`) a tuple `(min, max)` where
                     `min` and `max` specify the data range to be used for indexing
-                    the colormap, e.g. `color = [-2, 4]` with `colorrange = (-2, 4)`
-                    will map to the lowest and highest color value of the colormap
+                    the colormap
 - `interpolate`  -- (optional, default: `false`) a bool for heatmap and images,
                     it toggles color interpolation between nearby pixels
 - `linewidth`    -- (optional, default: `1`) a number that specifies the width of
                     the line in `line` and `linesegments` plots
 - `overdraw`     -- (optional, default: `false`)
-- `shading`      -- (optional, default: `false`) a boolean that specifies if shading
+- `shading`      -- (optional, default: `true`) a boolean that specifies if shading
                     should be on or not (for meshes)
-- `transparency` -- (optional, default: `false`)
-- `visible`      -- (optional, default: `false`) a bool that toggles visibility
+- `transparency` -- (optional, default: `true`) if `true`, the set is transparent
+                    otherwise it is displayed as a solid object
+- `visible`      -- (optional, default: `true`) a bool that toggles visibility
                     of the plot
 
 For a complete list of attributes and usage see
@@ -89,7 +90,7 @@ julia> plot3d(Sapprox, backend=CDDLib.Library())
 
 ### Examples
 
-The functionality in this files requires *both* `Polyhedra` and `Makie`; so after
+The functionality requires *both* `Polyhedra` and `Makie`; so after
 loading `LazySets`, do `using Makie, Polyhedra` (or `using Polyhedra, Makie`, the
 order doesn't matter).
 
@@ -119,34 +120,8 @@ Plot a three-dimensional convex set using Makie.
 
 ### Input
 
-- `S`            -- convex set
-- `backend`      -- (optional, default: `default_polyhedra_backend(S, N)`) polyhedral
-                    computations backend 
-- `alpha`        -- (optional, default: `1.0`) float in `[0,1]`; the alpha or
-                    transparency value
-- `color`        -- (optional, default: `:blue`) `Symbol` or `Colorant`; the color
-                    of the main plot element (markers, lines, etc.) and it can be
-                    a color symbol/string like `:red`
-- `colormap`     -- (optional, default: `:viridis`) the color map of the main plot;
-                    call `available_gradients()` to see what gradients are available,
-                    and it can also be used as `[:red, :black]`
-- `colorrange`   -- (optional, default: `Automatic()`) a tuple `(min, max)` where
-                    `min` and `max` specify the data range to be used for indexing
-                    the colormap, e.g. `color = [-2, 4]` with `colorrange = (-2, 4)`
-                    will map to the lowest and highest color value of the colormap
-- `interpolate`  -- (optional, default: `false`) a bool for heatmap and images,
-                    it toggles color interpolation between nearby pixels
-- `linewidth`    -- (optional, default: `1`) a number that specifies the width of
-                    the line in `line` and `linesegments` plots
-- `overdraw`     -- (optional, default: `false`)
-- `shading`      -- (optional, default: `false`) a boolean that specifies if shading
-                    should be on or not (for meshes)
-- `transparency` -- (optional, default: `false`)
-- `visible`      -- (optional, default: `false`) a bool that toggles visibility
-                    of the plot
-
-For a complete list of attributes and usage see
-[Makie's documentation](http://makie.juliaplots.org/stable/plot-attributes.html).
+See `plot3d` for the description of the inputs. For a complete list of attributes
+and usage see [Makie's documentation](http://makie.juliaplots.org/stable/plot-attributes.html).
 
 ### Notes
 
