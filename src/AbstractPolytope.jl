@@ -17,7 +17,7 @@ Every concrete `AbstractPolytope` must define the following functions:
 - `vertices_list(::AbstractPolytope{N})::Vector{Vector{N}}` -- return a list of
     all vertices
 
-```jldoctest
+```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractPolytope)
 4-element Array{Any,1}:
  AbstractCentrallySymmetricPolytope

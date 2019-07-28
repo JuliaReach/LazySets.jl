@@ -16,7 +16,7 @@ Every concrete `AbstractCentrallySymmetric` must define the following functions:
 - `center(::AbstractCentrallySymmetric{N})::Vector{N}` -- return the center
     point
 
-```jldoctest
+```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractCentrallySymmetric)
 3-element Array{Any,1}:
  Ball2

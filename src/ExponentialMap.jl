@@ -26,6 +26,8 @@ Type that represents the matrix exponential, ``\\exp(M)``, of a sparse matrix.
 Take for exammple a random sparse matrix:
 
 ```jldoctest SparseMatrixExp_constructor
+julia> using SparseArrays
+
 julia> A = sprandn(100, 100, 0.1);
 
 julia> E = SparseMatrixExp(A);
@@ -165,6 +167,8 @@ The `ExponentialMap` type is overloaded to the usual times `*` operator when the
 linear map is a lazy matrix exponential. For instance,
 
 ```jldoctest
+julia> using SparseArrays
+
 julia> A = sprandn(100, 100, 0.1);
 
 julia> E = SparseMatrixExp(A);

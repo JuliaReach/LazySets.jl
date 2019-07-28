@@ -1,14 +1,8 @@
 # LazySets.jl
 
 ```@meta
-DocTestFilters = [r"[0-9\.]+ seconds \(.*\)"]
 CurrentModule = LazySets
-DocTestSetup = quote
-    using LazySets, SparseArrays, LinearAlgebra
-end
 ```
-
-
 
 `LazySets` is a [Julia](http://julialang.org) package for calculus with convex
 sets.
@@ -74,6 +68,8 @@ Finally, let δ = 0.1.
 Using `LazySets`, we can define this problem as follows:
 
 ```jldoctest index_label
+julia> using LazySets, SparseArrays, LinearAlgebra
+
 julia> A = sprandn(1000, 1000, 0.01);
 
 julia> δ = 0.1;
@@ -86,8 +82,8 @@ julia> U = BallInf(zeros(2), 1.2);
 
 ```
 
-The `@time` macro shows that building $\mathcal{Y}$ with
-`LazySets` is instantaneous.
+The `@time` macro shows that building $\mathcal{Y}$ with `LazySets` is
+instantaneous.
 
 ```jldoctest index_label
 julia> using Expokit

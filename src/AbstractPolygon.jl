@@ -17,7 +17,7 @@ Every concrete `AbstractPolygon` must define the following functions:
 - `tohrep(::AbstractPolygon{N})::S where {S<:AbstractHPolygon{N}}` -- transform
     into H-representation
 
-```jldoctest
+```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractPolygon)
 2-element Array{Any,1}:
  AbstractHPolygon

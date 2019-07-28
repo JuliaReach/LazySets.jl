@@ -36,12 +36,6 @@ Pages = ["parallel_approximations.md"]
 Depth = 3
 ```
 
-```@meta
-DocTestSetup = quote
-    using LazySets, LazySets.Parallel
-end
-```
-
 ## Parallel interval hulls 
 
 As an illustration of the symmetric interval hull approximation of a nested

@@ -30,12 +30,6 @@ Pages = ["concrete_polyhedra.md"]
 Depth = 3
 ```
 
-```@meta
-DocTestSetup = quote
-    using Plots, LazySets, LazySets.Approximations, Polyhedra, LinearAlgebra
-end
-```
-
 ## Creating polyhedra
 
 To use the `Polyhedra.jl` interface, you need to load the package with `using Polyhedra`.

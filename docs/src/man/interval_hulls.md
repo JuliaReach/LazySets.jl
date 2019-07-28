@@ -8,12 +8,6 @@ Pages = ["interval_hulls.md"]
 Depth = 3
 ```
 
-```@meta
-DocTestSetup = quote
-    using Plots, LazySets, LazySets.Approximations, SparseArrays
-end
-```
-
 ## Balls and Singletons
 
 Consider a ball in the 2-norm. By default, the coefficients of this set are

@@ -17,7 +17,7 @@ Every concrete `AbstractSingleton` must define the following functions:
 - `element(::AbstractSingleton{N}, i::Int)::N` -- return the single element's
     entry in the `i`-th dimension
 
-```jldoctest
+```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractSingleton)
 2-element Array{Any,1}:
  Singleton

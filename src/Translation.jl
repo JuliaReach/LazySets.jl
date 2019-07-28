@@ -107,6 +107,8 @@ The lazy linear map of a translation is again a translation, since the following
 simplification rule applies: ``M * (X⊕v) = (M*X) ⊕ (M*v)``:
 
 ```jldoctest translation
+julia> using LinearAlgebra: I
+
 julia> Q = Matrix(2.0I, 3, 3) * tr;
 
 julia> Q isa Translation && Q.v == 2 * tr.v

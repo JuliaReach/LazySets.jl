@@ -10,9 +10,6 @@ Depth = 3
 
 ```@meta
 CurrentModule = LazySets.Approximations
-DocTestSetup = quote
-    using LazySets, LazySets.Approximations
-end
 ```
 
 ```@docs

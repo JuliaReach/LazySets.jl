@@ -37,9 +37,7 @@ Every concrete `LazySet` must define the following functions:
 
 The subtypes of `LazySet` (including abstract interfaces):
 
-```jldoctest
-julia> using LazySets: subtypes
-
+```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(LazySet, false)
 17-element Array{Any,1}:
  AbstractCentrallySymmetric
@@ -63,8 +61,8 @@ julia> subtypes(LazySet, false)
 
 If we only consider *concrete* subtypes, then:
 
-```jldoctest
-julia> LazySets.subtypes(LazySet, true)
+```jldoctest; setup = :(using LazySets: subtypes)
+julia> subtypes(LazySet, true)
 37-element Array{Type,1}:
  Ball1
  Ball2

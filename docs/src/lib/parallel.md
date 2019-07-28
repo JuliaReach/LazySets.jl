@@ -11,9 +11,6 @@ Depth = 3
 
 ```@meta
 CurrentModule = LazySets.Parallel
-DocTestSetup = quote
-    using LazySets, LazySets.Parallel
-end
 ```
 
 ```@docs

@@ -156,5 +156,6 @@ end
 
 if test_suite_doctests
     using Documenter
-    @time @testset "LazySets.doctests" begin include("../docs/make_doctests_only.jl") end
+    include("../docs/init.jl")
+    @time @testset "LazySets.doctests" begin doctest(LazySets) end
 end

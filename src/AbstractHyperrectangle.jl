@@ -24,7 +24,7 @@ Every concrete `AbstractHyperrectangle` must define the following functions:
 - `isflat(::AbstractHyperrectangle{N})::Bool` -- determine whether the
     hyperrectangle's radius is zero in some dimension
 
-```jldoctest
+```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractHyperrectangle)
 5-element Array{Any,1}:
  AbstractSingleton

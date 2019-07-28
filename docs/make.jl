@@ -2,9 +2,11 @@ ENV["GKSwstype"] = "100"  # set 'GR environment' to 'no output' (for Travis CI)
 using Documenter, LazySets
 import Polyhedra, Optim, Expokit, TaylorModels, Distributions
 
+include("init.jl")
+
 makedocs(
     sitename = "LazySets.jl",
-    modules = Module[LazySets, Approximations],
+    modules = [LazySets, Approximations, Arrays, LazySets.Parallel],
     format = Documenter.HTML(
         prettyurls = get(ENV, "CI", nothing) == "true",
         assets = ["assets/juliareach.css"]),

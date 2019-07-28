@@ -235,7 +235,7 @@ Then the Cartesian components of each direction are obtained with
 
 The integer passed as an argument is used to discretize ``φ``:
 
-```jldoctest spherical_directions
+```jldoctest
 julia> using LazySets.Approximations: PolarDirections
 
 julia> pd = PolarDirections(2)

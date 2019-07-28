@@ -1,8 +1,5 @@
 ```@meta
 CurrentModule = LazySets
-DocTestSetup = quote
-    using LazySets, Distributions
-end
 ```
 
 # Utility functions
