@@ -55,8 +55,8 @@ for N in [Float64, Rational{Int}, Float32]
 
     # membership
     S = Singleton(N[1, 1])
-    N[0.9, 1.1] ∉ S
-    N[1, 1] ∈ S
+    @test N[0.9, 1.1] ∉ S
+    @test N[1, 1] ∈ S
 
     # check membership error message
     @test_throws ErrorException S.element ⊆ S
