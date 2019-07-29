@@ -71,8 +71,8 @@ reset map.
 
 ### Output
 
-The (sparse) square matrix for the affine map ``A x + b, x ∈ X`` represented by
-the reset map.
+The (diagonal) matrix for the affine map ``A x + b, x ∈ X`` represented by the
+reset map.
 
 ### Algorithm
 
@@ -81,11 +81,11 @@ zero.
 """
 function get_A(rm::ResetMap{N}) where {N<:Real}
     n = dim(rm)
-    A = sparse(N(1)*I, n, n)
+    v = ones(N, n)
     for i in keys(rm.resets)
-        A[i, i] = zero(N)
+        v[i] = zero(N)
     end
-    return A
+    return Diagonal(v)
 end
 
 """
