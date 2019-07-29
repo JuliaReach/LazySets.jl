@@ -895,7 +895,7 @@ end
 
 
 """
-    is_intersection_empty(P::Union{HPolyhedron{N}, AbstractPolytope{N}},
+    is_intersection_empty(P::AbstractPolyhedron{N},
                           X::LazySet{N},
                           witness::Bool=false;
                           solver=GLPKSolverLP(method=:Simplex)
@@ -934,7 +934,7 @@ For `algorithm == "sufficient"`, we rely on the intersection check between the
 set `X` and each constraint in `P`.
 This means one support function evaluation of `X` for each constraint of `P`.
 """
-function is_intersection_empty(P::Union{HPolyhedron{N}, AbstractPolytope{N}},
+function is_intersection_empty(P::AbstractPolyhedron{N},
                                X::LazySet{N},
                                witness::Bool=false;
                                solver=GLPKSolverLP(method=:Simplex),
@@ -965,7 +965,7 @@ end
 
 # symmetric method
 function is_intersection_empty(X::LazySet{N},
-                               P::Union{HPolyhedron{N}, AbstractPolytope{N}},
+                               P::AbstractPolyhedron{N},
                                witness::Bool=false;
                                solver=GLPKSolverLP(method=:Simplex),
                                algorithm="exact"
@@ -975,8 +975,8 @@ function is_intersection_empty(X::LazySet{N},
 end
 
 # disambiguation
-function is_intersection_empty(P::Union{HPolyhedron{N}, AbstractPolytope{N}},
-                               Q::Union{HPolyhedron{N}, AbstractPolytope{N}},
+function is_intersection_empty(P::AbstractPolyhedron{N},
+                               Q::AbstractPolyhedron{N},
                                witness::Bool=false;
                                solver=GLPKSolverLP(method=:Simplex),
                                algorithm="exact"
@@ -987,7 +987,7 @@ function is_intersection_empty(P::Union{HPolyhedron{N}, AbstractPolytope{N}},
 end
 
 # disambiguation
-function is_intersection_empty(P::Union{HPolyhedron{N}, AbstractPolytope{N}},
+function is_intersection_empty(P::AbstractPolyhedron{N},
                                hs::HalfSpace{N},
                                witness::Bool=false
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
@@ -996,14 +996,14 @@ end
 
 # symmetric method
 function is_intersection_empty(hs::HalfSpace{N},
-                               P::Union{HPolyhedron{N}, AbstractPolytope{N}},
+                               P::AbstractPolyhedron{N},
                                witness::Bool=false
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return is_intersection_empty_helper_halfspace(hs, P, witness)
 end
 
 # disambiguation
-function is_intersection_empty(P::Union{HPolyhedron{N}, AbstractPolytope{N}},
+function is_intersection_empty(P::AbstractPolyhedron{N},
                                S::AbstractSingleton{N},
                                witness::Bool=false
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
@@ -1012,14 +1012,14 @@ end
 
 # symmetric method
 function is_intersection_empty(S::AbstractSingleton{N},
-                               P::Union{HPolyhedron{N}, AbstractPolytope{N}},
+                               P::AbstractPolyhedron{N},
                                witness::Bool=false
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return is_intersection_empty_helper_singleton(S, P, witness)
 end
 
 # disambiguation
-function is_intersection_empty(P::Union{HPolyhedron{N}, AbstractPolytope{N}},
+function is_intersection_empty(P::AbstractPolyhedron{N},
                                hp::Union{Hyperplane{N}, Line{N}},
                                witness::Bool=false;
                                solver=GLPKSolverLP(method=:Simplex),
@@ -1032,7 +1032,7 @@ end
 
 # symmetric method
 function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
-                               P::Union{HPolyhedron{N}, AbstractPolytope{N}},
+                               P::AbstractPolyhedron{N},
                                witness::Bool=false;
                                solver=GLPKSolverLP(method=:Simplex),
                                algorithm="exact"
@@ -1237,25 +1237,7 @@ function is_intersection_empty(P::AbstractPolyhedron{N},
                   U, P, witness)
 end
 function is_intersection_empty(U::Universe{N},
-                               P::Union{AbstractPolytope{N}, HPolyhedron{N}},
-                               witness::Bool=false
-                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
-                                  {N<:Real}
-    return invoke(is_intersection_empty,
-                  Tuple{Universe{N}, LazySet{N}, Bool},
-                  U, P, witness)
-end
-function is_intersection_empty(P::Union{AbstractPolytope{N}, HPolyhedron{N}},
-                               U::Universe{N},
-                               witness::Bool=false
-                              )::Union{Bool, Tuple{Bool, Vector{N}}} where
-                                  {N<:Real}
-    return invoke(is_intersection_empty,
-                  Tuple{Universe{N}, LazySet{N}, Bool},
-                  U, P, witness)
-end
-function is_intersection_empty(U::Universe{N},
-                               P::AbstractPolytope{N},
+                               P::AbstractPolyhedron{N},
                                witness::Bool=false
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where
                                   {N<:Real}
@@ -1297,7 +1279,7 @@ function is_intersection_empty(U::Universe{N},
                                   {N<:Real}
     return invoke(is_intersection_empty,
                   Tuple{Universe{N}, LazySet{N}, Bool},
-                  U, hs, witness)
+                  U, hp, witness)
 end
 function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
                                U::Universe{N},
@@ -1306,7 +1288,7 @@ function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
                                   {N<:Real}
     return invoke(is_intersection_empty,
                   Tuple{Universe{N}, LazySet{N}, Bool},
-                  U, hs, witness)
+                  U, hp, witness)
 end
 function is_intersection_empty(U::Universe{N},
                                hs::HalfSpace{N},

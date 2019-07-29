@@ -383,8 +383,8 @@ The `VPolytope` obtained by the concrete Cartesian product of `P1` and `P2`.
 function cartesian_product(P1::VPolytope{N}, P2::VPolytope{N};
                            backend=default_polyhedra_backend(P1, N)) where {N}
     require(:Polyhedra; fun_name="cartesian_product")
-    Pcp = vcartesianproduct(polyhedron(P1; backend=backend),
-                            polyhedron(P2; backend=backend))
+    Pcp = Polyhedra.vcartesianproduct(polyhedron(P1; backend=backend),
+                                      polyhedron(P2; backend=backend))
     return VPolytope(Pcp)
 end
 
