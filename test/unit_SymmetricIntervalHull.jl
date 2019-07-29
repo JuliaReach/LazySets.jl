@@ -6,6 +6,9 @@ for N in [Float64, Rational{Int}, Float32]
     # normal constructor
     h = SymmetricIntervalHull(Ball1(N[2, 3], N(4)))
 
+    # constructor attempt from an unbounded set
+    @test_throws AssertionError SymmetricIntervalHull(HalfSpace(N[1], N(0)))
+
     # dimension
     @test dim(h) == 2
 

@@ -4,11 +4,11 @@ export SymmetricIntervalHull,
 """
     SymmetricIntervalHull{N<:Real, S<:LazySet{N}} <: AbstractHyperrectangle{N}
 
-Type that represents the symmetric interval hull of a convex set.
+Type that represents the symmetric interval hull of a compact convex set.
 
 ### Fields
 
-- `X`     -- convex set
+- `X`     -- compact convex set
 - `cache` -- partial storage of already computed bounds, organized as mapping
     from dimension to tuples `(bound, valid)`, where `valid` is a flag
     indicating if the `bound` entry has been computed
@@ -25,6 +25,8 @@ However, if one asks for many support vectors in a loop, the number of
 computations may exceed ``2n``.
 To be most efficient in such cases, this type stores the intermediately computed
 bounds in the `cache` field.
+
+The set `X` must be compact.
 """
 struct SymmetricIntervalHull{N<:Real, S<:LazySet{N}} <: AbstractHyperrectangle{N}
     X::S
@@ -32,6 +34,8 @@ struct SymmetricIntervalHull{N<:Real, S<:LazySet{N}} <: AbstractHyperrectangle{N
 
     # default constructor that initializes cache
     function SymmetricIntervalHull{N, S}(X::S) where {N<:Real, S<:LazySet{N}}
+        @assert isbounded(X) "the symmetric interval hull is only defined " *
+                             "for bounded sets"
         cache = fill(-one(N), dim(X))
         return new{N, S}(X, cache)
     end
