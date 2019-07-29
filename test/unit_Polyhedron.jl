@@ -61,8 +61,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test isuniversal(p_univ) && isuniversal(p_univ, true) == (true, N[])
 
     # membership
-    @test ∈(N[5 / 4, 7 / 4], p)
-    @test !∈(N[4, 1], p)
+    @test N[5 / 4, 7 / 4] ∈ p && N[4, 1] ∉ p
 
     # constrained dimensions
     @test constrained_dimensions(p) == [1, 2]

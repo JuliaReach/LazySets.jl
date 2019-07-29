@@ -177,8 +177,8 @@ function ∈(x::AbstractVector{N}, cp::CartesianProduct{N})::Bool where {N<:Real
     @assert length(x) == dim(cp)
 
     n1 = dim(cp.X)
-    return ∈(view(x, 1:n1), cp.X) &&
-           ∈(view(x, n1+1:length(x)), cp.Y)
+    return view(x, 1:n1) ∈ cp.X &&
+           view(x, n1+1:length(x)) ∈ cp.Y
 end
 
 """
@@ -422,7 +422,7 @@ function ∈(x::AbstractVector{N}, cpa::CartesianProductArray{N}
     i0 = 1
     for Xi in cpa.array
         i1 = i0 + dim(Xi) - 1
-        if !∈(x[i0:i1], Xi)
+        if x[i0:i1] ∉ Xi
             return false
         end
         i0 = i1 + 1

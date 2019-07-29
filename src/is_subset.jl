@@ -78,7 +78,7 @@ function ⊆(P::AbstractPolytope{N},
     @assert dim(P) == dim(H)
 
     for v in vertices_list(P)
-        if !∈(v, H)
+        if v ∉ H
             if witness
                 return (false, v)
             else
@@ -187,7 +187,7 @@ function ⊆(P::AbstractPolytope{N}, S::LazySet{N}, witness::Bool=false
     @assert dim(P) == dim(S)
 
     for v in vertices_list(P)
-        if !∈(v, S)
+        if v ∉ S
             if witness
                 return (false, v)
             else
@@ -312,7 +312,7 @@ if not, optionally compute a witness.
 """
 function ⊆(S::AbstractSingleton{N}, set::LazySet{N}, witness::Bool=false
           )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
-    result = ∈(element(S), set)
+    result = element(S) ∈ set
     if witness
         return (result, result ? N[] : element(S))
     else
@@ -351,7 +351,7 @@ function ⊆(S::AbstractSingleton{N},
            H::AbstractHyperrectangle{N},
            witness::Bool=false
           )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
-    result = ∈(element(S), H)
+    result = element(S) ∈ H
     if witness
         return (result, result ? N[] : element(S))
     else
@@ -518,8 +518,8 @@ the end points of ``L``.
 """
 function ⊆(L::LineSegment{N}, S::LazySet{N}, witness::Bool=false
           )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
-    p_in_S = ∈(L.p, S)
-    result = p_in_S && ∈(L.q, S)
+    p_in_S = L.p ∈ S
+    result = p_in_S && L.q ∈ S
     if !witness
         return result
     elseif result
@@ -561,8 +561,8 @@ the end points of ``L``.
 """
 function ⊆(L::LineSegment{N}, H::AbstractHyperrectangle{N}, witness::Bool=false
           )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
-    p_in_H = ∈(L.p, H)
-    result = p_in_H && ∈(L.q, H)
+    p_in_H = L.p ∈ H
+    result = p_in_H && L.q ∈ H
     if !witness
         return result
     elseif result

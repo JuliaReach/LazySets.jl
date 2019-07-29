@@ -43,7 +43,7 @@ for N in [Float64, Rational{Int}, Float32]
         subset, point = ⊆(U, B3, true)
         @test U ⊆ B3 && subset && point == N[]
         subset, point = ⊆(U, B2, true)
-        @test !(U ⊆ B2) && !subset && point ∈ U && point ∉ B2
+        @test U ⊈ B2 && !subset && point ∈ U && point ∉ B2
 
         # isdisjoint
         disjoint1, point1 = isdisjoint(U, B1, true)

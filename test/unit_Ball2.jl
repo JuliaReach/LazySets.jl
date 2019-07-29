@@ -76,15 +76,15 @@ for N in [Float64, Float32]
     s1 = Singleton(N[1, 2])
     s2 = Singleton(N[2, 2])
     subset, point = ⊆(b1, s1, true)
-    @test !⊆(b1, s1) && !subset && point ∈ b1 && point ∉ s1
-    @test ⊆(b2, s1) && ⊆(b2, s1, true)[1]
+    @test b1 ⊈ s1 && !subset && point ∈ b1 && point ∉ s1
+    @test b2 ⊆ s1 && ⊆(b2, s1, true)[1]
     subset, point = ⊆(b1, s2, true)
-    @test !⊆(b1, s2) && !subset && point ∈ b1 && point ∉ s2
-    @test !⊆(b1, BallInf(N[1, 2], N(1)))
-    @test ⊆(b2, BallInf(N[1, 2], N(2)))
+    @test b1 ⊈ s2 && !subset && point ∈ b1 && point ∉ s2
+    @test b1 ⊈ BallInf(N[1, 2], N(1))
+    @test b2 ⊆ BallInf(N[1, 2], N(2))
     subset, point = ⊆(b1, b3, true)
-    @test !⊆(b1, b3) && !subset && point ∈ b1 && point ∉ b3
-    @test ⊆(b3, b1) && ⊆(b3, b1, true)[1]
+    @test b1 ⊈ b3 && !subset && point ∈ b1 && point ∉ b3
+    @test b3 ⊆ b1 && ⊆(b3, b1, true)[1]
 
     # intersection
     b1 = Ball2(N[0, 0], N(2))
