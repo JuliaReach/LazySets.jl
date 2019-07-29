@@ -1,6 +1,6 @@
 # Some functions in this file are inspired from Polyhedra.jl
 #
-export set_rtol
+export set_rtol, set_ztol, set_atol
 
 # struct to contain the tolerances for a given numberic type
 mutable struct Tolerance{N<:Number}
