@@ -102,7 +102,6 @@ Inherited from [`LazySet`](@ref):
 
 ```@docs
 convex_hull(::Vector{VN}) where {N<:Real, VN<:AbstractVector{N}}
-right_turn
 monotone_chain!
 ```
 

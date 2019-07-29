@@ -229,20 +229,17 @@ function _four_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N<
     if tri_CAD > zero(N)
         key = key + 1
     end
-    
+
     if isapproxzero(tri_ABC)
         return _collinear_case!(points, A, B, C, D)
-    end
-    if isapproxzero(tri_ABD)
+    elseif isapproxzero(tri_ABD)
         return _collinear_case!(points, A, B, D, C)
-    end
-    if isapproxzero(tri_BCD)
+    elseif isapproxzero(tri_BCD)
         return _collinear_case!(points, B, C, D, A)
-    end
-    if isapproxzero(tri_CAD)
+    elseif isapproxzero(tri_CAD)
         return _collinear_case!(points, C, A, D, B)
     end
-    
+
     # ABC  ABD  BCD  CAD  hull
     # ------------------------
     #  +    +    +    +   ABC
@@ -332,36 +329,6 @@ function _convex_hull_2d!(points::Vector{VN};
 end
 
 """
-    right_turn(O::AbstractVector{N}, A::AbstractVector{N}, B::AbstractVector{N}
-              )::N where {N<:Real}
-
-Determine if the acute angle defined by the three points `O`, `A`, `B` in the
-plane is a right turn (counter-clockwise) with respect to the center `O`.
-
-### Input
-
-- `O` -- 2D center point
-- `A` -- 2D one point
-- `B` -- 2D another point
-
-### Output
-
-Scalar representing the rotation.
-
-### Algorithm
-
-The [cross product](https://en.wikipedia.org/wiki/Cross_product) is used to
-determine the sense of rotation. If the result is 0, the points are collinear;
-if it is positive, the three points constitute a positive angle of rotation
-around `O` from `A` to `B`; otherwise they constitute a negative angle.
-"""
-@inline function right_turn(O::AbstractVector{N},
-                            A::AbstractVector{N},
-                            B::AbstractVector{N})::N where {N<:Real}
-    return (A[1] - O[1]) * (B[2] - O[2]) - (A[2] - O[2]) * (B[1] - O[1])
-end
-
-"""
     monotone_chain!(points::Vector{VN}; sort::Bool=true
                    )::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
 
@@ -398,11 +365,11 @@ For further details see
 function monotone_chain!(points::Vector{VN}; sort::Bool=true
                         )::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
 
-    @inline function build_hull!(semihull, iterator, points, zero_N)
+    @inline function build_hull!(semihull, iterator, points)
         @inbounds for i in iterator
             while length(semihull) >= 2 &&
                     (right_turn(semihull[end-1], semihull[end], points[i])
-                         <= zero_N)
+                         <= zero(N))
                 pop!(semihull)
             end
             push!(semihull, points[i])
@@ -414,15 +381,13 @@ function monotone_chain!(points::Vector{VN}; sort::Bool=true
         sort!(points, by=x->(x[1], x[2]))
     end
 
-    zero_N = zero(N)
-
     # build lower hull
     lower = Vector{VN}()
-    build_hull!(lower, axes(points)[1], points, zero_N)
+    build_hull!(lower, axes(points)[1], points)
 
     # build upper hull
     upper = Vector{VN}()
-    build_hull!(upper, reverse(axes(points)[1]), points, zero_N)
+    build_hull!(upper, reverse(axes(points)[1]), points)
 
     # remove the last point of each segment because they are repeated
     copyto!(points, @view(lower[1:end-1]))
