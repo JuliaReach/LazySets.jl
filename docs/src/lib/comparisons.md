@@ -11,12 +11,25 @@ Depth = 3
 CurrentModule = LazySets
 ```
 
+## Tolerance type
+
+```@docs
+Tolerance
+```
+
+## Approximate inequality
+
 ```@docs
 _leq(x::N, y::N; kwargs...) where {N<:Real}
 _leq(x::N, y::M; kwargs...) where {N<:Real, M<:Real}
 _geq(x::Real, y::Real; kwargs...)
+_leq(x::N, y::N; rtol::Real=Base.rtoldefault(N), ztol::Real=ABSZTOL(N), atol::Real=zero(N)) where {N<:AbstractFloat}
+```
+
+## Approximate equality
+
+```@docs
+_isapprox(x::N, y::N; rtol::Real=Base.rtoldefault(N), ztol::Real=ABSZTOL(N), atol::Real=zero(N)) where {N<:AbstractFloat}
 isapproxzero(x::Real; kwargs...)
 isapproxzero(x::N; ztol::Real=ABSZTOL(N)) where {N<:AbstractFloat}
-_isapprox(x::N, y::N; rtol::Real=Base.rtoldefault(N), ztol::Real=ABSZTOL(N), atol::Real=zero(N)) where {N<:AbstractFloat}
-_leq(x::N, y::N; rtol::Real=Base.rtoldefault(N), ztol::Real=ABSZTOL(N), atol::Real=zero(N)) where {N<:AbstractFloat}
 ```

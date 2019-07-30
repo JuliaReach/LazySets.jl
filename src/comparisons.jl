@@ -2,7 +2,49 @@
 #
 export set_rtol, set_ztol, set_atol
 
-# struct to contain the tolerances for a given numberic type
+"""
+    Tolerance{N<:Number}
+
+Type that represents the tolerances for a given numeric type.
+
+### Fields
+
+- `rtol` -- relative tolerance
+- `ztol` -- zero tolerance or absolute tolerance for comparison against zero
+- `atol` -- absolute tolerance
+
+### Notes
+
+The type `Tolerance`, parametric in the numeric type `N`, is used to store default
+values for numeric comparisons. It is mutable and setting the value of a field
+affects the getter functions hence it can be used to fix the tolerance globally
+in `LazySets`.
+
+Default values are defined for the most commonly used numeric types, and for those
+cases when other numeric types are needed one can extend the default values
+as explained next.
+
+The cases `Float64` and `Rational` are special in the sense that they are the most
+commonly used types in applications. Getting and setting default tolerances
+is achieved with the functions `_rtol` and `set_rtol` (and similarly for the other
+tolerances); the implementation creates an instance of `Tolerance{Float64}`
+(resp. `Tolerance{Rational}`) and sets some default values. Again since `Tolerance`
+is mutable, setting a value is possible e.g. `set_rtol(Type{Float64}, ε)` for some
+floating-point `ε`.
+
+For all other cases, a dictionary mapping numeric types to instances of `Tolerance`
+for that numeric type is used. For floating-point types, a default value has been
+defined through `default_tolerance` as follows:
+
+```julia
+default_tolerance(N::Type{<:AbstractFloat}) = Tolerance(Base.rtoldefault(N), sqrt(eps(N)), zero(N))
+```
+Hence to set a single tolerance (either `rtol`, `ztol` or `atol`) for a given
+floating-point type, use the corresponding `set_rtol` function, while the values
+which have not been set will be pulled from `default_tolerance`. If you would like
+to define the three default values at once, or are computing with a non floating-point
+numeric type, you can just extend `default_tolerance(N::Type{<:Number})`.
+"""
 mutable struct Tolerance{N<:Number}
     rtol::N
     ztol::N
