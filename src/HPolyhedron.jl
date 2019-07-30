@@ -701,7 +701,11 @@ function convert(::Type{HPolyhedron{N}}, P::HRep{N}) where {N}
     constraints = LinearConstraint{N}[]
     for hi in Polyhedra.allhalfspaces(P)
         a, b = hi.a, hi.β
-        isapproxzero(norm(a)) && continue
+        if isapproxzero(norm(a))
+            @assert b >= zero(N) "the half-space is inconsistent since it has a " *
+                "zero normal direction but the constraint is negative"
+            continue
+        end
         push!(constraints, HalfSpace(a, b))
     end
     return HPolyhedron(constraints)
