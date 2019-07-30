@@ -26,7 +26,7 @@ Type that represents a zonotope.
 Mathematically, a zonotope is defined as the set
 
 ```math
-Z = \\left\\{ c + ∑_{i=1}^p ξ_i g_i,~~ ξ_i \\in [-1, 1]~~ ∀ i = 1,…, p \\right\\},
+Z = \\left\\{ x ∈ \\mathbb{R}^n : x = c + ∑_{i=1}^p ξ_i g_i,~~ ξ_i \\in [-1, 1]~~ ∀ i = 1,…, p \\right\\},
 ```
 where ``c \\in \\mathbb{R}^n`` is its *center* and ``\\{g_i\\}_{i=1}^p``,
 ``g_i \\in \\mathbb{R}^n``, is the set of *generators*.
