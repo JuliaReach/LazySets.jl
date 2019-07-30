@@ -113,6 +113,7 @@ include("concrete_intersection.jl")
 include("is_intersection_empty.jl")
 include("is_subset.jl")
 include("difference.jl")
+include("concrete_minkowski_sum.jl")
 
 # =======
 # Aliases

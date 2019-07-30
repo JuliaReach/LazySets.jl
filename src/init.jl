@@ -4,15 +4,17 @@ function __init__()
     @require Optim = "429524aa-4258-5aef-a3af-852621145aeb" include("init_Optim.jl")
     @require Polyhedra = "67491407-f73d-577b-9b50-8179a7c68029" include("init_Polyhedra.jl")
     @require Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f" include("init_Distributions.jl")
+    @require CDDLib = "3391f64e-dcde-5f30-b752-e11513730f60" eval(init_minkowski_sum_hrep())
 end
 
 function initialize_mesh()
-    if isdefined(@__MODULE__, :Polyhedra) &&
-       isdefined(@__MODULE__, :Makie)
-
+    if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :Makie)
        eval(load_mesh())
     end
 end
+
+# dummy
+function init_minkowski_sum_hrep() end
 
 """
     require(package::Symbol; fun_name::String="", explanation::String="")
