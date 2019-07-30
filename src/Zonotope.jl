@@ -75,7 +75,7 @@ julia> σ([1., 1.], Z)
  0.1
 ```
 
-Zonotopes admit the alternative constructor that receives a list of
+Zonotopes admit an alternative constructor that receives a list of
 vectors, each vector representing a generator:
 
 ```jldoctest
