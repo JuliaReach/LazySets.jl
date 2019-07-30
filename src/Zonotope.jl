@@ -35,16 +35,12 @@ segments.
 Zonotopes can be equivalently described as the image of a unit infinity-norm
 ball in ``\\mathbb{R}^n`` by an affine transformation.
 
-- `Zonotope(center::AbstractVector{N},
-            generators::AbstractMatrix{N}) where {N<:Real}`
-
-- `Zonotope(center::AbstractVector{N},
-            generators_list::AbstractVector{VN}
-           ) where {N<:Real, VN<:AbstractVector{N}}`
+Zonotopes can be constructed in two different ways: either passing the generators as a matrix, where
+each column represents a generator, or passing a list of vectors where each vector represents a generator.
+Below we illustrate both ways.
 
 The optional argument `remove_zero_generators` controls whether we remove zero
-columns from the `generators` matrix.
-This option is active by default.
+columns from the `generators` matrix. This option is active by default.
 
 ### Examples
 
@@ -56,8 +52,9 @@ Zonotope{Float64}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
 julia> dim(Z)
 2
 ```
+Here, each column of the second input corresponds to a generator.
 
-Compute its vertices:
+We can collect its vertices using `vertices_list`:
 
 ```jldoctest zonotope_label
 julia> vertices_list(Z)
@@ -68,7 +65,8 @@ julia> vertices_list(Z)
  [0.9, -0.1]
 ```
 
-Evaluate the support vector in a given direction:
+The support vector along a given direction can be computed using `σ`
+(resp. the support function can be computed using `ρ`):
 
 ```jldoctest zonotope_label
 julia> σ([1., 1.], Z)
@@ -77,11 +75,13 @@ julia> σ([1., 1.], Z)
  0.1
 ```
 
-Alternative constructor: A zonotope in two dimensions with three generators:
+Zonotopes admit the alternative constructor that receives a list of
+vectors, each vector representing a generator:
 
 ```jldoctest
 julia> Z = Zonotope(ones(2), [[1., 0.], [0., 1.], [1., 1.]])
 Zonotope{Float64}([1.0, 1.0], [1.0 0.0 1.0; 0.0 1.0 1.0])
+
 julia> Z.generators
 2×3 Array{Float64,2}:
  1.0  0.0  1.0
