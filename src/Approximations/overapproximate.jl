@@ -363,14 +363,17 @@ function overapproximate(S::LazySet{N}, ::Type{<:Interval}) where {N<:Real}
     @assert dim(S) == 1 "cannot overapproximate a $(dim(S))-dimensional set with an `Interval`"
     return convert(Interval, S)
 end
-function overapproximate_cap_helper(X::LazySet{N},             # compact set
+
+function overapproximate_cap_helper(X::LazySet{N},             # convex set
                                     P::AbstractPolyhedron{N},  # polyhedron
                                     dir::AbstractDirections{N};
                                     kwargs...
                                    ) where {N<:Real}
     Hi = constraints_list(P)
     m = length(Hi)
-    Q = HPolytope{N}()
+    constraints = Vector{HalfSpace{N}}()
+    sizehint!(constraints, length(dir))
+    return_type = HPolytope
 
     for di in dir
         ρ_X_Hi_min = ρ(di, X ∩ Hi[1], kwargs...)
@@ -380,9 +383,14 @@ function overapproximate_cap_helper(X::LazySet{N},             # compact set
                 ρ_X_Hi_min = ρ_X_Hi
             end
         end
-        addconstraint!(Q, HalfSpace(di, ρ_X_Hi_min))
+        if ρ_X_Hi_min == N(Inf)
+            # unbounded in this direction => return a polyhedron later
+            return_type = HPolyhedron
+        else
+            push!(constraints, HalfSpace(di, ρ_X_Hi_min))
+        end
     end
-    return Q
+    return return_type(constraints)
 end
 
 """
@@ -455,7 +463,7 @@ function overapproximate(cap::Intersection{N,
                          dir::AbstractDirections{N};
                          kwargs...
                         ) where {N<:Real}
-    # important: the result may not be a polytope! 
+    # important: the result may not be a polytope!
     return overapproximate_cap_helper(cap.X, cap.Y, dir; kwargs...)
 end
 
