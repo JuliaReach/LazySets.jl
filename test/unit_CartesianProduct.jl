@@ -289,12 +289,15 @@ for N in [Float64, Float32]
     h2 = Hyperrectangle(low=N[5, 5], high=N[6, 8])
     cpa1 = CartesianProductArray([i1, i2, h1])
     cpa2 = CartesianProductArray([i1, i2, h2])
-    G = HPolyhedron([HalfSpace(N[1, 0, 0, 0], N(1))])
-    G_empty = HPolyhedron([HalfSpace(N[1, 0, 0, 0], N(-1))])
-	cpa1_box = overapproximate(cpa1)
-	cpa2_box = overapproximate(cpa2)
+    G = HalfSpace(N[1, 0, 0, 0], N(1))
+    G_empty = HalfSpace(N[1, 0, 0, 0], N(-1))
+    cpa1_box = overapproximate(cpa1)
+    cpa2_box = overapproximate(cpa2)
 
-    @test is_intersection_empty(cpa1, cpa2) == is_intersection_empty(cpa1_box, cpa2_box) == false
-    @test is_intersection_empty(cpa1, G_empty) == is_intersection_empty(cpa1_box, G_empty) == true
-    @test is_intersection_empty(cpa1, G) == is_intersection_empty(Approximations.overapproximate(cpa1), G) == false
+    @test !is_intersection_empty(cpa1, cpa2) &&
+          !is_intersection_empty(cpa1_box, cpa2_box)
+    @test is_intersection_empty(cpa1, G_empty) &&
+          is_intersection_empty(cpa1_box, G_empty)
+    @test !is_intersection_empty(cpa1, G) &&
+          !is_intersection_empty(Approximations.overapproximate(cpa1), G)
 end
