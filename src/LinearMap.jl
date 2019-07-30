@@ -112,27 +112,16 @@ function *(α::N, lm::LinearMap{N}) where {N<:Real}
     return LinearMap(α * lm.M, lm.X)
 end
 
-"""
-```
-    *(M::AbstractMatrix{N}, Z::ZeroSet{N})::ZeroSet{N} where {N<:Real}
-```
-
-A linear map of a zero set, which is simplified to a zero set (the absorbing
-element).
-
-### Input
-
-- `M` -- abstract matrix
-- `Z` -- zero set
-
-### Output
-
-The zero set with the output dimension of the linear map.
-"""
+# ZeroSet is absorbing for LinearMap
 function *(M::AbstractMatrix{N}, Z::ZeroSet{N})::ZeroSet{N} where {N<:Real}
     @assert dim(Z) == size(M, 2) "a linear map of size $(size(M)) cannot " *
             "be applied to a set of dimension $(dim(Z))"
     return ZeroSet{N}(size(M, 1))
+end
+
+# EmptySet is absorbing for LinearMap
+function *(M::AbstractMatrix{N}, ∅::EmptySet{N})::EmptySet{N} where {N<:Real}
+    return ∅
 end
 
 """

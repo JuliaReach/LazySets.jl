@@ -209,6 +209,20 @@ function *(spmexp::SparseMatrixExp{N},
     return ExponentialMap(spmexp, X)
 end
 
+# ZeroSet is absorbing for ExponentialMap
+function *(spmexp::SparseMatrixExp{N}, Z::ZeroSet{N}
+          )::ZeroSet{N} where {N<:Real}
+    @assert dim(Z) == size(spmexp, 2) "an exponential map of size " *
+            "$(size(spmexp)) cannot be applied to a set of dimension $(dim(Z))"
+    return ZeroSet{N}(size(spmexp, 1))
+end
+
+# EmptySet is absorbing for ExponentialMap
+function *(spmexp::SparseMatrixExp{N}, ∅::EmptySet{N}
+          )::EmptySet{N} where {N<:Real}
+    return ∅
+end
+
 """
     dim(em::ExponentialMap)::Int
 
