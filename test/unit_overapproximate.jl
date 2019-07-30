@@ -99,6 +99,13 @@ for N in [Float64, Rational{Int}, Float32]
     lm = LinearMap(M, Z)
     Zo = overapproximate(lm, Zonotope)
     @test box_approximation(Zo) == Hyperrectangle(N[0, 0], N[3, 3])
+
+    # intersection of two polyhedra
+    P = HPolyhedron([HalfSpace(N[1, 0], N(1)), HalfSpace(N[0, 1], N(1))])
+    Q = HPolyhedron([HalfSpace(N[-1, 0], N(1)), HalfSpace(N[0, -1], N(1))])
+    oa = overapproximate(P ∩ Q, BoxDirections)
+    B = BallInf(N[0, 0], N(1))
+    @test B ⊆ oa && oa ⊆ B
 end
 
 # tests that do not work with Rational{Int}
