@@ -31,10 +31,35 @@ set_rtol(N::Type{<:Rational}, ε::Rational) = _TOL_RAT.rtol = ε
 set_ztol(N::Type{<:Rational}, ε::Rational) = _TOL_RAT.ztol = ε
 set_atol(N::Type{<:Rational}, ε::Rational) = _TOL_RAT.atol = ε
 
-# global default tolerances (cannot be set)
-_rtol(N::Type{<:AbstractFloat}) = Base.rtoldefault(N)
-_ztol(N::Type{<:AbstractFloat}) = sqrt(eps(N))
-_atol(N::Type{<:AbstractFloat}) = zero(N)
+# global default tolerances for other numeric types
+TOL_N = Dict{Type{<:Number}, Tolerance}()
+_rtol(N::Type{<:Number}) = get!(TOL_N, N, default_tolerance(N)).rtol
+_ztol(N::Type{<:Number}) = get!(TOL_N, N, default_tolerance(N)).ztol
+_atol(N::Type{<:Number}) = get!(TOL_N, N, default_tolerance(N)).atol
+
+set_rtol(N::Type{NT}, ε::NT) where {NT<:Number} = begin
+    if N ∉ keys(TOL_N)
+        TOL_N[N] = default_tolerance(N)
+    end
+    TOL_N[N].rtol = ε
+end
+
+set_ztol(N::Type{NT}, ε::NT) where {NT<:Number} = begin
+    if N ∉ keys(TOL_N)
+        TOL_N[N] = default_tolerance(N)
+    end
+    TOL_N[N].ztol = ε
+end
+
+set_atol(N::Type{NT}, ε::NT) where {NT<:Number} = begin
+    if N ∉ keys(TOL_N)
+        TOL_N[N] = default_tolerance(N)
+    end
+    TOL_N[N].atol = ε
+end
+
+default_tolerance(N::Type{<:Number}) = error("default tolerance for numeric type $N is not defined")
+default_tolerance(N::Type{<:AbstractFloat}) = Tolerance(Base.rtoldefault(N), sqrt(eps(N)), zero(N))
 
 """
     _leq(x::N, y::N; [kwargs...]) where {N<:Real}
