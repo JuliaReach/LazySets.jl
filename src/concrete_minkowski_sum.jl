@@ -21,7 +21,8 @@ Concrete Minkowski sum for a pair of lazy sets using their constraint representa
 
 ### Output
 
-A polyhedron in H-representation that corresponds to the Minkowski sum of `P` and `Q`.
+An `HPolytope` that corresponds to the Minkowski sum of `P` and `Q` if both `P`
+and `Q` are bounded; otherwise an `HPolyhedron`.
 
 ### Notes
 
@@ -48,13 +49,23 @@ function minkowski_sum(P::LazySet{N}, Q::LazySet{N};
     require(:Polyhedra; fun_name="minkowski_sum")
     require(:CDDLib; fun_name="minkowski_sum")
 
+    @assert applicable(constraints_list, P) && applicable(constraints_list, Q) "this function " *
+    "requires that the list of constraints of its is applicable, but it is not; " *
+    "try overapproximating with an `HPolytope` first"
+
+    if isbounded(P) && isbounded(Q)
+        T = HPolytope
+    else
+        T = HPolyhedron
+    end
     A, b = tosimplehrep(P)
     C, d = tosimplehrep(Q)
-    return minkowski_sum(A, b, C, d, backend=backend, algorithm=algorithm, prune=prune)
+    res = _minkowski_sum(A, b, C, d, backend=backend, algorithm=algorithm, prune=prune)
+    return convert(T, res)
 end
 
 """
-    minkowski_sum(P::HPolyhedron{N}, Q::HPolyhedron{N};
+    minkowski_sum(P::AbstractPolyhedron{N}, Q::AbstractPolyhedron{N};
                   [backend]=nothing,
                   [algorithm]=nothing,
                   [prune]=true) where {N<:Real}
@@ -122,7 +133,7 @@ which itself uses `CDDLib` for variable elimination. The available algorithms ar
 
 [1] Kvasnica, Michal. "Minkowski addition of convex polytopes." (2005): 1-10.
 """
-function minkowski_sum(P::HPolyhedron{N}, Q::HPolyhedron{N};
+function minkowski_sum(P::AbstractPolyhedron{N}, Q::AbstractPolyhedron{N};
                        backend=nothing,
                        algorithm=nothing,
                        prune=true) where {N<:Real}
