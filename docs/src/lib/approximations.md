@@ -79,3 +79,9 @@ CustomDirections
 ```
 
 See also `overapproximate(X::LazySet, dir::AbstractDirections)::HPolytope`.
+
+## Hausdorff distance
+
+```@docs
+hausdorff_distance
+```

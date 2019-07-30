@@ -135,6 +135,7 @@ if test_suite_basic
     @time @testset "LazySets.Approximations.ballinf_approximation" begin include("unit_ballinf_approximation.jl") end
     @time @testset "LazySets.Approximations.radiusdiameter" begin include("unit_radiusdiameter.jl") end
     @time @testset "LazySets.Approximations.decompose" begin include("unit_decompose.jl") end
+    @time @testset "LazySets.Approximations.hausdorff_distance" begin include("unit_hausdorff_distance.jl") end
 
     # ========================
     # Testing method ambiguity
