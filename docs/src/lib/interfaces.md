@@ -119,7 +119,7 @@ This interface defines the following functions:
 ∈(::AbstractVector{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 constrained_dimensions(::AbstractPolyhedron)
 linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real}
-minkowski_sum(::AbstractPolyhedron{N}, ::AbstractPolyhedron{N} where {N<:Real}
+minkowski_sum(::AbstractPolyhedron{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 ```
 
 Plotting (bounded) polyhedra is available, too:
