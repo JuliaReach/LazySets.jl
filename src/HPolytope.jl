@@ -145,6 +145,8 @@ return quote
 function convert(::Type{HPolytope{N}}, P::HRep{N}) where {N}
     constraints = LinearConstraint{N}[]
     for hi in Polyhedra.allhalfspaces(P)
+        a, b = hi.a, hi.β
+        isapproxzero(norm(a)) && continue
         push!(constraints, HalfSpace(hi.a, hi.β))
     end
     return HPolytope(constraints)
