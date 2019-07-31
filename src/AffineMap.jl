@@ -19,7 +19,7 @@ Type that represents an affine transformation ``M⋅X ⊕ v`` of a convex set ``
 
 - `M` -- matrix/linear map
 - `X` -- convex set
-- `v` -- transation vector
+- `v` -- translation vector
 
 ### Notes
 
@@ -294,7 +294,7 @@ A list of vertices.
 ### Algorithm
 
 This implementation computes all vertices of `X`, then transforms them through
-the affine map, i.e.  `x ↦ M*x + v` for each vertex `x` of `X`. By default, the
+the affine map, i.e. `x ↦ M*x + v` for each vertex `x` of `X`. By default, the
 convex hull operation is taken before returning this list. For dimensions three
 or higher, this operation relies on the functionality through the concrete
 polyhedra library `Polyhedra.jl`.
