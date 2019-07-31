@@ -54,6 +54,15 @@ for N in [Float64, Rational{Int}, Float32]
     d = N[1, -1]
     @test σ(d, b) == N[2, -2]
 
+    # support function
+    B = BallInf(N[1, 2], N(1))
+    @test ρ(N[1, 1], B) == N(5)
+    @test ρ(N[1, 0], B) == N(2)
+    @test ρ(N[0, 1], B) == N(3)
+    @test ρ(N[-1, -1], B) == N(-1)
+    @test ρ(N[-1, 0], B) == N(0)
+    @test ρ(N[-1, 1], B) == N(3)
+
     # boundedness
     @test isbounded(b)
 
