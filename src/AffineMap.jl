@@ -19,7 +19,7 @@ Type that represents an affine transformation ``M⋅X ⊕ v`` of a convex set ``
 
 - `M` -- matrix/linear map
 - `X` -- convex set
-- `v` -- transation vector
+- `v` -- translation vector
 
 ### Notes
 
