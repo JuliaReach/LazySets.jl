@@ -35,6 +35,12 @@ uniform_partition
 overapproximate
 ```
 
+## Underapproximations
+
+```@docs
+underapproximate
+```
+
 ## Box Approximations
 
 ```@docs
