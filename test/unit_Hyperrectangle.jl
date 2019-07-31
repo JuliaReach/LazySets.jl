@@ -208,4 +208,9 @@ for N in [Float64, Rational{Int}, Float32]
           Hyperrectangle(N[1], N[1])
     @test convert(Hyperrectangle, SymmetricIntervalHull(Singleton(N[1, 1]))) ==
           Hyperrectangle(N[0, 0], N[1, 1])
+
+     # rectification
+     H = Hyperrectangle(N[-1, 2], N[4, 5])
+     Hrect = rectify(H)
+     @test Hrect.center == N[1.5, 3.5] &&  Hrect.radius == [1.5, 3.5]
 end

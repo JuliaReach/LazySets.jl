@@ -5,7 +5,8 @@ export AbstractHyperrectangle,
        radius_hyperrectangle,
        constraints_list,
        low, high,
-       isflat
+       isflat,
+       rectify
 
 """
     AbstractHyperrectangle{N<:Real} <: AbstractZonotope{N}
@@ -471,4 +472,23 @@ function split(H::AbstractHyperrectangle{N}, num_blocks::AbstractVector{Int}
         result[i] = Hyperrectangle(collect(center), copy(radius))
     end
     return result
+end
+
+import LazySets.Arrays: rectify
+
+"""
+    rectify(H::AbstractHyperrectangle)
+
+Concrete rectification of a hyperrectangular set.
+
+### Input
+
+- `H` -- hyperrectangular set
+
+### Output
+
+The `Hyperrectangle` that corresponds to the rectification of `H`.
+"""
+function rectify(H::AbstractHyperrectangle)
+    Hyperrectangle(low=rectify(low(H)), high=rectify(high(H)))
 end

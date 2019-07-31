@@ -248,6 +248,7 @@ isflat(::AbstractHyperrectangle)
 split(::AbstractHyperrectangle{N}, ::AbstractVector{Int}) where {N<:Real}
 generators(::AbstractHyperrectangle)
 genmat(::AbstractHyperrectangle)
+rectify(::AbstractHyperrectangle)
 ```
 
 ##### Singleton
