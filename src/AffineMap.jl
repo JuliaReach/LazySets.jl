@@ -73,8 +73,8 @@ Transform an affine map under matrix multiplication.
 A lazy affine map, i.e. an `AffineMap`, such that the new map is related to the
 old one through `am.M ↦ M * am.M` and `am.v ↦ M * am.v`.
 """
-function *(M::AbstractMatrix{N}, am::AffineMap{N}) where {N<:Real}
-    return AffineMap(M * am.M, M * am.v, am.X)
+function LinearMap(M::AbstractMatrix{N}, am::AffineMap{N}) where {N<:Real}
+    return AffineMap(M * am.M, am.X, M * am.v)
 end
 
 """
@@ -94,7 +94,7 @@ Return the affine map scaled by a given number.
 The scaled affine map.
 """
 function *(α::N, am::AffineMap{N}) where {N<:Real}
-    return AffineMap(α * am.M, α * am.v, am.X)
+    return AffineMap(α * am.M, am.X, α * am.v)
 end
 
 # ============================ 
@@ -358,4 +358,9 @@ A set corresponding to the linear map of the lazy affine map of a set.
 """
 function linear_map(M::AbstractMatrix{N}, am::AffineMap{N}) where {N<:Real}
      return translate(linear_map(M * am.M, am.X), M * am.v)
+end
+
+# constructor from a linear map: perform the matrix multiplication immediately
+function LinearMap(M::AbstractMatrix, am::AffineMap)
+    return AffineMap(M * am.M, am.X, M * am.v)
 end
