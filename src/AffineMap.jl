@@ -11,15 +11,15 @@ export AffineMap,
 
 """
     AffineMap{N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM},
-             VN<:AbstractVector{NM}} <: LazySet{N}
+              VN<:AbstractVector{NM}} <: LazySet{N}
 
-Type that represents an affine transformation ``M⋅X ⊕ b`` of a convex set ``X``.
+Type that represents an affine transformation ``M⋅X ⊕ v`` of a convex set ``X``.
 
 ### Fields
 
 - `M` -- matrix/linear map
-- `b` -- vector
 - `X` -- convex set
+- `v` -- transation vector
 
 ### Notes
 
@@ -29,28 +29,28 @@ the numeric type of the wrapped set (`N`). However, the numeric type of the
 translation vector should be `NM`.
 """
 struct AffineMap{N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM},
-                VN<:AbstractVector{NM}} <: LazySet{N}
+                 VN<:AbstractVector{NM}} <: LazySet{N}
     M::MAT
-    b::VN
     X::S
+    v::VN
 
     # default constructor with dimension match check
-    function AffineMap{N, S, NM, MAT, VN}(M::MAT, b::VN, X::S) where {N<:Real,
-                        S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}, VN}
+    function AffineMap{N, S, NM, MAT, VN}(M::MAT, X::S, v::VN) where {N<:Real,
+                       S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}, VN<:AbstractVector{NM}}
 
         @assert dim(X) == size(M, 2) "a matrix of size $(size(M)) cannot be " *
             "applied to a set of dimension $(dim(X))"
 
-        @assert size(M, 1) == length(b) "a map with output dimension $(size(M, 1)) " *
-            "is incompatible with the dimension of the translation vector, $(length(b))"
+        @assert size(M, 1) == length(v) "a map with output dimension $(size(M, 1)) " *
+            "is incompatible with the dimension of the translation vector, $(length(v))"
 
-        return new{N, S, NM, MAT, VN}(M, b, X)
+        return new{N, S, NM, MAT, VN}(M, X, v)
     end
 end
 
 # convenience constructor without type parameter
-AffineMap(M::MAT, b::VN, X::S) where {N<:Real, S<:LazySet{N}, NM,
-    MAT<:AbstractMatrix{NM}, VN<:AbstractVector{NM}} = AffineMap{N, S, NM, MAT, VN}(M, b, X)
+AffineMap(M::MAT, X::S, v::VN) where {N<:Real, S<:LazySet{N}, NM,
+    MAT<:AbstractMatrix{NM}, VN<:AbstractVector{NM}} = AffineMap{N, S, NM, MAT, VN}(M, X, v)
 
 # ============================ 
 # Arithmetic functions
@@ -71,10 +71,10 @@ Transform an affine map under matrix multiplication.
 ### Output
 
 A lazy affine map, i.e. an `AffineMap`, such that the new map is related to the
-old one through `am.M ↦ M * am.M` and `am.b ↦ M * am.b`.
+old one through `am.M ↦ M * am.M` and `am.v ↦ M * am.v`.
 """
 function *(M::AbstractMatrix{N}, am::AffineMap{N}) where {N<:Real}
-    return AffineMap(M * am.M, M * am.b, am.X)
+    return AffineMap(M * am.M, M * am.v, am.X)
 end
 
 """
@@ -94,7 +94,7 @@ Return the affine map scaled by a given number.
 The scaled affine map.
 """
 function *(α::N, am::AffineMap{N}) where {N<:Real}
-    return AffineMap(α * am.M, α * am.b, am.X)
+    return AffineMap(α * am.M, α * am.v, am.X)
 end
 
 # ============================ 
@@ -115,7 +115,7 @@ Return the dimension of an affine map.
 The dimension of an affine map.
 """
 function dim(am::AffineMap)::Int
-    return length(am.b)
+    return length(am.v)
 end
 
 """
@@ -133,7 +133,7 @@ Return the support vector of an affine map.
 The support vector in the given direction.
 """
 function σ(d::AbstractVector{N}, am::AffineMap{N}) where {N<:Real}
-    return am.M * σ(_At_mul_B(am.M, d), am.X) + am.b
+    return am.M * σ(_At_mul_B(am.M, d), am.X) + am.v
 end
 
 """
@@ -151,7 +151,7 @@ Return the support function of an affine map.
 The support function in the given direction.
 """
 function ρ(d::AbstractVector{N}, am::AffineMap{N}) where {N<:Real}
-    return ρ(_At_mul_B(am.M, d), am.X) + dot(d, am.b)
+    return ρ(_At_mul_B(am.M, d), am.X) + dot(d, am.v)
 end
 
 """
@@ -169,7 +169,7 @@ An element of the affine map. It relies on the `an_element` function of the
 wrapped set.
 """
 function an_element(am::AffineMap)
-    return am.M * an_element(am.X) + am.b
+    return am.M * an_element(am.X) + am.v
 end
 
 """
@@ -238,19 +238,19 @@ Check whether a given point is contained in the affine map of a convex set.
 
 ### Algorithm
 
-Note that ``x ∈ M⋅S ⊕ b`` iff ``M^{-1}⋅(x - b) ∈ S``.
+Note that ``x ∈ M⋅S ⊕ v`` iff ``M^{-1}⋅(x - v) ∈ S``.
 This implementation does not explicitly invert the matrix, which is why it also
 works for non-square matrices.
 
 ### Examples
 
 ```jldoctest
-julia> am = AffineMap([2.0 0.0; 0.0 1.0], [-1.0, -1.0], BallInf([1., 1.], 1.));
+julia> am = AffineMap([2.0 0.0; 0.0 1.0], BallInf([1., 1.], 1.), [-1.0, -1.0]);
 
-julia> ∈([5.0, 1.0], am)
+julia> [5.0, 1.0] ∈ am
 false
 
-julia> ∈([3.0, 1.0], am)
+julia> [3.0, 1.0] ∈ am
 true
 ```
 
@@ -261,12 +261,12 @@ julia> B = BallInf(zeros(4), 1.);
 
 julia> M = [1. 0 0 0; 0 1 0 0]/2;
 
-julia> ∈([0.5, 0.5], M*B)
+julia> [0.5, 0.5] ∈ M*B
 true
 ```
 """
 function ∈(x::AbstractVector{N}, am::AffineMap{N})::Bool where {N<:Real}
-    return ∈(am.M \ (x - am.b), am.X)
+    return ∈(am.M \ (x - am.v), am.X)
 end
 
 """
@@ -289,7 +289,7 @@ A list of vertices.
 ### Algorithm
 
 This implementation computes all vertices of `X`, then transforms them through
-the affine map, i.e.  `v ↦ M*v + b` for each vertex `v` of `X`. By default, the
+the affine map, i.e.  `x ↦ M*x + v` for each vertex `x` of `X`. By default, the
 convex hull operation is taken before returning this list. For dimensions three
 or higher, this operation relies on the functionality through the concrete
 polyhedra library `Polyhedra.jl`.
@@ -309,11 +309,11 @@ function vertices_list(am::AffineMap{N};
     # create resulting vertices list
     vlist = Vector{Vector{N}}()
     sizehint!(vlist, length(vlist_X))
-    for v in vlist_X
-        push!(vlist, am.M * v + am.b)
+    for x in vlist_X
+        push!(vlist, am.M * x + am.v)
     end
 
-    return apply_convex_hull ? convex_hull(vlist) : vlist
+    return apply_convex_hull ? convex_hull!(vlist) : vlist
 end
 
 """
@@ -339,7 +339,7 @@ We assume that the underlying set `X` is polyhedral, i.e., offers a method
 Falls back to the list of constraints of the translation of a lazy linear map.
 """
 function constraints_list(am::AffineMap{N}) where {N<:Real}
-    return constraints_list(LinearMap(am.M, am.X) ⊕ am.b)
+    return constraints_list(LinearMap(am.M, am.X) ⊕ am.v)
 end
 
 """
@@ -354,8 +354,8 @@ Return the linear map of a lazy affine map.
 
 ### Output
 
-The polytope representing the linear map of the lazy affine map of a set.  
+A set corresponding to the linear map of the lazy affine map of a set.  
 """
 function linear_map(M::AbstractMatrix{N}, am::AffineMap{N}) where {N<:Real}
-     return linear_map(M * am.M, am.X) + M * am.b
+     return translate(linear_map(M * am.M, am.X), M * am.v)
 end
