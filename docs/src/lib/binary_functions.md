@@ -76,7 +76,7 @@ intersection(::LinearMap{N}, ::LazySet{N}) where {N<:Real}
 ## Minkowski sum
 
 ```@docs
-minkowski_sum(::AbstractPolytope{N}, ::AbstractPolytope{N}) where {N<:Real}
+minkowski_sum(::VPolytope{N}, ::VPolytope{N}) where {N<:Real}
 minkowski_sum(::AbstractZonotope{N}, ::AbstractZonotope{N}) where {N<:Real}
 minkowski_sum(::VPolygon{N}, ::VPolygon{N}) where {N<:Real}
 minkowski_sum(::PolynomialZonotope, ::Zonotope)

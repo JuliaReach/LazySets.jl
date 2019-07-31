@@ -57,6 +57,7 @@ isbounded_unit_dimensions(::LazySet{N}) where {N<:Real}
 an_element(::LazySet{N}) where {N<:Real}
 tosimplehrep(::LazySet)
 isuniversal(::LazySet{N}, ::Bool=false) where {N<:Real}
+minkowski_sum(::LazySet{N}, ::LazySet{N}) where {N<:Real}
 ```
 
 Plotting is available for general one- or two-dimensional `LazySet`s, provided
@@ -118,6 +119,7 @@ This interface defines the following functions:
 ∈(::AbstractVector{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 constrained_dimensions(::AbstractPolyhedron)
 linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real}
+minkowski_sum(::AbstractPolyhedron{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 ```
 
 Plotting (bounded) polyhedra is available, too:
