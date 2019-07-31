@@ -49,6 +49,7 @@ A two-dimensional zonotope with given center and set of generators:
 ```jldoctest zonotope_label
 julia> Z = Zonotope([1.0, 0.0], [0.1 0.0; 0.0 0.1])
 Zonotope{Float64}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
+
 julia> dim(Z)
 2
 ```
@@ -61,8 +62,8 @@ julia> vertices_list(Z)
 4-element Array{Array{Float64,1},1}:
  [1.1, 0.1]
  [0.9, 0.1]
- [1.1, -0.1]
  [0.9, -0.1]
+ [1.1, -0.1] 
 ```
 
 The support vector along a given direction can be computed using `σ`
