@@ -312,11 +312,7 @@ function vertices_list(am::AffineMap{N};
     vlist_X = vertices_list(am.X)
 
     # create resulting vertices list
-    vlist = Vector{Vector{N}}()
-    sizehint!(vlist, length(vlist_X))
-    for x in vlist_X
-        push!(vlist, am.M * x + am.v)
-    end
+    vlist = [am.M * x + am.v for x in vlist_X]
 
     return apply_convex_hull ? convex_hull!(vlist) : vlist
 end
