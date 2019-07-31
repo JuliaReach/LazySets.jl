@@ -16,7 +16,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test_throws AssertionError AffineMap(M, B, N[0, 0])
     @test_throws AssertionError AffineMap(M, B × B, v)
 
-    # linear map of an affine map is automatically simplified to a linear map
+    # linear map of an affine map is automatically simplified to an affine map
     Mam = M * am
     @test Mam isa AffineMap && Mam.M == M * am.M && Mam.v == M * am.v
 
@@ -41,7 +41,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # emptiness check
     @test !isempty(am)
-
+    @test isempty(AffineMap(M, EmptySet{N}(), v))
     # ==================================
     # Type-specific methods
     # ==================================
