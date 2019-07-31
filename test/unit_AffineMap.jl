@@ -41,7 +41,8 @@ for N in [Float64, Rational{Int}, Float32]
 
     # emptiness check
     @test !isempty(am)
-    @test isempty(AffineMap(M, EmptySet{N}(), v))
+    # @test isempty(AffineMap(M, EmptySet{N}(), v)) # requires #1201
+
     # ==================================
     # Type-specific methods
     # ==================================
@@ -49,6 +50,11 @@ for N in [Float64, Rational{Int}, Float32]
     # the translation is the origin and the linear map is the identity => constraints remain unchanged
     Id3 = Matrix(one(N) * I, 3, 3)
     @test constraints_list(AffineMap(Id3, B, zeros(N, 3))) == constraints_list(B)
+
+    # an affine map of the form I*X + b where I is the identity matrix is a pure translation
+    v = N[1, 0, 2]
+    am_tr = AffineMap(I, B, v)
+    @test am_tr isa Translation && am_tr.v == v
 
     # two-dimensional case
     B2 = BallInf(zeros(N, 2), N(1))

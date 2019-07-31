@@ -52,6 +52,11 @@ end
 AffineMap(M::MAT, X::S, v::VN) where {N<:Real, S<:LazySet{N}, NM,
     MAT<:AbstractMatrix{NM}, VN<:AbstractVector{NM}} = AffineMap{N, S, NM, MAT, VN}(M, X, v)
 
+# convenience constructor from the identity: a pure translation
+function AffineMap(M::UniformScaling, X::S, v::VN) where {N, NM, S<:LazySet{N}, VN<:AbstractVector{NM}}
+    return Translation(X, v)
+end
+
 # ============================ 
 # Arithmetic functions
 # ============================
