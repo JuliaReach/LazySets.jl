@@ -36,7 +36,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test !isbounded(AffineMap(M, Universe{N}(3), v))
 
     # function to get an element
-    @test (an_element(am) - am.v) ∈ (am.M * am.X) # an_element(am) ∈ am.M * am.X ⊕ am.b : requires #1358
+    @test (an_element(am) - am.v) ∈ (am.M * am.X) # an_element(am) ∈ am.M * am.X + am.v : requires #1358
 
     # emptiness check
     @test !isempty(am)
