@@ -40,7 +40,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # emptiness check
     @test !isempty(am)
-
+    @test isempty(AffineMap(M, EmptySet{N}(), v))
     # ==================================
     # Type-specific methods
     # ==================================
