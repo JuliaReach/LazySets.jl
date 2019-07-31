@@ -304,6 +304,41 @@ Inherited from [`LazySet`](@ref):
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
+### Translation
+
+```@docs
+Translation
++(X::LazySet, v::AbstractVector)
+⊕(X::LazySet, v::AbstractVector)
+dim(::Translation)
+ρ(::AbstractVector{N}, ::Translation{N}) where {N<:Real}
+σ(::AbstractVector{N}, ::Translation{N}) where {N<:Real}
+an_element(::Translation)
+isempty(::Translation)
+constraints_list(::Translation{N}, ::Val{true}) where {N<:Real}
+LinearMap(::AbstractMatrix{N}, ::Translation{N}) where {N<:Real}
+linear_map(::AbstractMatrix{N}, ::Translation{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::Translation{N}) where {N<:Real}
+```
+
+### Affine Map
+
+```@docs
+AffineMap
+*(::AbstractMatrix{N}, ::AffineMap{N}) where {N<:Real}
+*(::N, ::AffineMap{N}) where {N<:Real}
+dim(::AffineMap)
+σ(::AbstractVector{N}, ::AffineMap{N}) where {N<:Real}
+ρ(::AbstractVector{N}, ::AffineMap{N}) where {N<:Real}
+an_element(::AffineMap)
+isempty(::AffineMap)
+isbounded(::AffineMap)
+∈(::AbstractVector{N}, ::AffineMap{N}) where {N<:Real}
+vertices_list(::AffineMap{N}) where {N<:Real}
+constraints_list(::AffineMap{N}) where {N<:Real}
+linear_map(::AbstractMatrix{N}, ::AffineMap{N}) where {N<:Real}
+```
+
 ## Symmetric Interval Hull
 
 ```@docs
@@ -340,23 +375,6 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`low`](@ref low(::AbstractHyperrectangle{N}) where {N<:Real})
 * [`generators`](@ref generators(::AbstractZonotope))
 * [`genmat`](@ref genmat(::AbstractZonotope))
-
-### Translation
-
-```@docs
-Translation
-+(X::LazySet, v::AbstractVector)
-⊕(X::LazySet, v::AbstractVector)
-dim(::Translation)
-ρ(::AbstractVector{N}, ::Translation{N}) where {N<:Real}
-σ(::AbstractVector{N}, ::Translation{N}) where {N<:Real}
-an_element(::Translation)
-isempty(::Translation)
-constraints_list(::Translation{N}, ::Val{true}) where {N<:Real}
-LinearMap(::AbstractMatrix{N}, ::Translation{N}) where {N<:Real}
-linear_map(M::AbstractMatrix{N}, tr::Translation{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::Translation{N}) where {N<:Real}
-```
 
 ## Union
 

@@ -88,12 +88,14 @@ include("ConvexHull.jl")
 include("ExponentialMap.jl")
 include("Intersection.jl")
 include("LinearMap.jl")
+include("AffineMap.jl")
 include("MinkowskiSum.jl")
 include("ResetMap.jl")
 include("SymmetricIntervalHull.jl")
 include("Translation.jl")
 include("UnionSet.jl")
 include("Rectification.jl")
+
 
 # =============================
 # Conversions between set types
