@@ -359,8 +359,3 @@ A set corresponding to the linear map of the lazy affine map of a set.
 function linear_map(M::AbstractMatrix{N}, am::AffineMap{N}) where {N<:Real}
      return translate(linear_map(M * am.M, am.X), M * am.v)
 end
-
-# constructor from a linear map: perform the matrix multiplication immediately
-function LinearMap(M::AbstractMatrix, am::AffineMap)
-    return AffineMap(M * am.M, am.X, M * am.v)
-end

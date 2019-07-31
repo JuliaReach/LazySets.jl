@@ -36,7 +36,8 @@ for N in [Float64, Rational{Int}, Float32]
     @test !isbounded(AffineMap(M, Universe{N}(3), v))
 
     # function to get an element
-    @test (an_element(am) - am.v) ∈ (am.M * am.X) # an_element(am) ∈ am.M * am.X ⊕ am.b : requires #1358
+    @test (an_element(am) - am.v) ∈ (am.M * am.X)
+    @test an_element(am) ∈ am.M * am.X ⊕ am.v
 
     # emptiness check
     @test !isempty(am)
@@ -52,8 +53,8 @@ for N in [Float64, Rational{Int}, Float32]
     # two-dimensional case
     B2 = BallInf(zeros(N, 2), N(1))
     M = N[1 0; 0 2]
-    tl = N[-1, 0]
-    am = AffineMap(M, B2, tl)
+    v = N[-1, 0]
+    am = AffineMap(M, B2, v)
 
     # list of vertices check
     vlist = vertices_list(am)
