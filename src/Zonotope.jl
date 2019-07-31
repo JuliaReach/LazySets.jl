@@ -172,13 +172,16 @@ end
 
 
 """
-    vertices_list(Z::Zonotope{N})::Vector{Vector{N}} where {N<:Real}
+    vertices_list(Z::Zonotope{N};
+                  [apply_convex_hull]::Bool=true)::Vector{Vector{N}} where {N<:Real}
 
 Return the vertices of a zonotope.
 
 ### Input
 
-- `Z` -- zonotope
+- `Z`                 -- zonotope
+- `apply_convex_hull` -- (optional, default: `true`) if `true`, post-process the
+                         computation with the convex hull of the points
 
 ### Output
 
@@ -186,16 +189,16 @@ List of vertices as a vector of vectors.
 
 ### Algorithm
 
-If the zonotope has ``p`` generators, each of the ``2^p`` vertices is computed
-by taking the sum of the center and a linear combination of generators, where
-the combination factors are ``ξ_i ∈ \\{-1, 1\\}``.
+If the zonotope has ``p`` generators, each vertex is the result of summing the
+center with some linear combination of generators, where the combination
+factors are ``ξ_i ∈ \\{-1, 1\\}``.
 
-### Notes
-
-For high dimensions, it would be preferable to develop a `vertex_iterator`
-approach.
+There at most ``2^p`` distinct vertices. Use the flag `apply_convex_hull` to
+control if a convex hull algorithm is applied to the vertices computed by this
+method; otherwise, redundant vertices may be present.
 """
-function vertices_list(Z::Zonotope{N})::Vector{Vector{N}} where {N<:Real}
+function vertices_list(Z::Zonotope{N};
+                       apply_convex_hull::Bool=true)::Vector{Vector{N}} where {N<:Real}
     p = ngens(Z)
     vlist = Vector{Vector{N}}()
     sizehint!(vlist, 2^p)
@@ -204,12 +207,10 @@ function vertices_list(Z::Zonotope{N})::Vector{Vector{N}} where {N<:Real}
         push!(vlist, Z.center .+ Z.generators * collect(ξi))
     end
 
-    return vlist
+    return apply_convex_hull ? convex_hull!(vlist) : vlist
 end
 
-
 # --- LazySet interface functions ---
-
 
 """
     ρ(d::AbstractVector{N}, Z::Zonotope{N}) where {N<:Real}

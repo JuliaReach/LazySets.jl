@@ -221,4 +221,9 @@ for N in [Float64]
         P = tovrep(HPolygon(constraints_list(Z)))
         @test ispermutation(vertices_list(P), [N[5, 0], [-5, 0]])
     end
+
+    # test that redundant vertices are removed by default (#1021)
+    Z = Zonotope([0., 0.], [1. 0. 1.; 0. 1. 1.])
+    vlistZ = vertices_list(Z)
+    @test ispermutation(vlistZ, [N[-2, -2], N[0, -2], N[2, 0], N[2, 2], N[0, 2], N[-2, 0]])
 end
