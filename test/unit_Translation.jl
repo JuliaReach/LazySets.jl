@@ -66,4 +66,9 @@ for N in [Float64, Rational{Int}, Float32]
     tr = Ball2(zeros(N, 2), N(1)) ⊕ N[1, 0]
     @test ρ(N[1, 0], tr) == N(2)
     @test_throws MethodError constraints_list(tr)
+
+    # the translation of a lazy linear map returns an affine map
+    M = N[1 0; 0 2]; B = BallInf(zeros(N, 2), N(1)); v = N[1, 0]
+    tr = M * B ⊕ v
+    @test tr isa AffineMap && tr.M == M tr.X == B && tr.v == v 
 end

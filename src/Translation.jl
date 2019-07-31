@@ -182,6 +182,9 @@ Unicode alias constructor ⊕ (`oplus`) for the lazy translation operator.
 # translation from the left
 ⊕(v::AbstractVector, X::LazySet) = Translation(X, v)
 
+# the translation of a lazy linear map is a (lazy) afine map
+Translation(lm::LinearMap, v::AbstractVector) = AffineMap(lm.M, lm.X, v)
+
 # ============================
 # LazySet interface functions
 # ============================
