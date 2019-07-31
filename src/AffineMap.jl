@@ -23,7 +23,7 @@ Type that represents an affine transformation ``M⋅X ⊕ v`` of a convex set ``
 
 ### Notes
 
-The affine map is the composition of a linear map and a translation. This type is
+An affine map is the composition of a linear map and a translation. This type is
 parametric in the coefficients of the linear map, `NM`, which may be different from
 the numeric type of the wrapped set (`N`). However, the numeric type of the
 translation vector should be `NM`.
