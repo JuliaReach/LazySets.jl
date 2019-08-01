@@ -195,7 +195,7 @@ center with some linear combination of generators, where the combination
 factors are ``ξ_i ∈ \\{-1, 1\\}``.
 
 There are at most ``2^p`` distinct vertices. Use the flag `apply_convex_hull` to
-control if a convex hull algorithm is applied to the vertices computed by this
+control whether a convex hull algorithm is applied to the vertices computed by this
 method; otherwise, redundant vertices may be present.
 """
 function vertices_list(Z::Zonotope{N};
