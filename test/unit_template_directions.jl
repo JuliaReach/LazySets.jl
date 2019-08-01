@@ -23,6 +23,7 @@ for N in [Float64, Float32, Rational{Int}]
 
         # box directions
         dir = BoxDirections{N}(n)
+        @test isbounding(dir)
         @test dim(dir) == n
         box = overapproximate(X, dir)
         @test length(dir) == length(box.constraints) == 2*n
@@ -31,6 +32,7 @@ for N in [Float64, Float32, Rational{Int}]
 
         # octagon directions
         dir = OctDirections{N}(n)
+        @test isbounding(dir)
         @test dim(dir) == n
         oct = overapproximate(X, dir)
         @test length(dir) == length(oct.constraints) == 2 * n^2
@@ -39,6 +41,7 @@ for N in [Float64, Float32, Rational{Int}]
 
         # box-diagonal directions
         dir = BoxDiagDirections{N}(n)
+        @test isbounding(dir)
         @test dim(dir) == n
         boxdiag = overapproximate(X, dir)
         @test length(dir) == length(boxdiag.constraints) ==
@@ -49,18 +52,24 @@ for N in [Float64, Float32, Rational{Int}]
 
         # spherical directions approximation
         if n == 2 && N in [Float32, Float64]
+            dir = PolarDirections{N}(2)
+            @test !isbounding(dir)
             dir = PolarDirections{N}(5)
+            @test isbounding(dir)
             @test dim(dir) == 2
             polar = overapproximate(X, dir)
         end
 
         # spherical directions approximation
         if n == 3 && N in [Float32, Float64]
+            dir = SphericalDirections{N}(2, 2)
+            @test !isbounding(dir)
             dir = SphericalDirections{N}(5, 5)
+            @test isbounding(dir)
             @test dim(dir) == 3
             spherical = overapproximate(X, dir)
         end
-    
+
         # overapproximate lazy polyhedral intersections
         if N in [Float64]
             Y = B ∩ Ball1(zeros(N, n), N(1))
@@ -70,8 +79,27 @@ for N in [Float64, Float32, Rational{Int}]
                 overapproximate(Z, dir)
             end
         end
-    end
 
+        # custom directions
+        # empty list of directions
+        dir = CustomDirections(Vector{N}[]; n=n)
+        @test dim(dir) == n
+        P = overapproximate(X, dir)
+        @test isempty(constraints_list(P))
+        # minimal number of bounded directions
+        if n == 1
+            dirs = [N[-1], N[1]]
+        elseif n == 2
+            dirs = [N[-1, 0], N[0, -1], N[1, 1]]
+        elseif n == 3
+            dirs = [N[-1, 0, 0], N[0, -1, 0], N[0, 0, -1], N[1, 1, 1]]
+        end
+        dir = CustomDirections(dirs)
+        @test isbounding(dir)
+        @test !isbounding(CustomDirections(dirs[1:end-1]))
+        P = overapproximate(X, dir)
+        @test P isa HPolytope && length(constraints_list(P)) == length(dirs)
+    end
 end
 
 # default Float64 constructors
