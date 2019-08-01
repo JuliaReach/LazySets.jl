@@ -785,7 +785,7 @@ A `Hyperrectangle`.
 function convert(::Type{Hyperrectangle},
                  r::Rectification{N, AH}) where {N<:Real,
                                                  AH<:AbstractHyperrectangle{N}}
-    return Hyperrectangle(low=rectify(low(r.X)), high=rectify(high(r.X)))
+    return rectify(r.X)
 end
 
 """
