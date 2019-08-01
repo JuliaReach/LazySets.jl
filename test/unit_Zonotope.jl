@@ -225,5 +225,10 @@ for N in [Float64]
     # test that redundant vertices are removed by default (#1021)
     Z = Zonotope([0., 0.], [1. 0. 1.; 0. 1. 1.])
     vlistZ = vertices_list(Z)
+    @test length(vlistZ) == 6
     @test ispermutation(vlistZ, [N[-2, -2], N[0, -2], N[2, 0], N[2, 2], N[0, 2], N[-2, 0]])
+    # option to not apply the convex hull operation
+    vlistZ = vertices_list(Z, apply_convex_hull=false)
+    @test length(vlistZ) == 8
+    @test ispermutation(convex_hull(vlistZ), [N[-2, -2], N[0, -2], N[2, 0], N[2, 2], N[0, 2], N[-2, 0]])
 end
