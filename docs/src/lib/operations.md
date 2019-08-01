@@ -439,7 +439,7 @@ an_element(::Rectification{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::Rectification{N}) where {N<:Real}
 isempty(::Rectification)
 isbounded(::Rectification{N}) where {N<:Real}
-compute_union_of_projections!(::Rectification{N}) where {N<:Real}
+to_union_of_projections(::Rectification{N}, ::Bool=false) where {N<:Real}
 ```
 
 #### Rectification cache

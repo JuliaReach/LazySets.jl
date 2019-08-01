@@ -142,12 +142,12 @@ Return the support vector of a rectification.
 
 ### Output
 
-An error because we currently do not support the support vector for arbitrary
-sets.
+The support vector in the given direction.
+If the direction has norm zero, the result depends on the wrapped set.
 """
 function σ(d::AbstractVector{N}, r::Rectification{N}) where {N<:Real}
     if r.cache.set == nothing
-        compute_union_of_projections!(r)
+        r.cache.set = to_union_of_projections(r)
     end
     return σ(d, r.cache.set)
 end
@@ -268,16 +268,16 @@ If the wrapped set has a suitable structure for which we can efficiently compute
 the support vector, we fall back to the evaluation of the support function by
 means of the support vector.
 Otherwise we compute the union of projections to obtain a precise result (see
-[`compute_union_of_projections!`](@ref)), and then compute the support function
-for this union.
-(The union is cached, so a subsequent query is more efficient.)
+[`to_union_of_projections`](@ref)), and then compute the support function for
+this union.
+(The union is cached internally, so subsequent queries are more efficient.)
 """
 function ρ(d::AbstractVector{N}, r::Rectification{N}) where {N<:Real}
     if r.cache.use_support_vector
         return dot(d, σ(d, r))
     end
     if r.cache.set == nothing
-        compute_union_of_projections!(r)
+        r.cache.set = to_union_of_projections(r)
     end
     return ρ(d, r.cache.set)
 end
@@ -413,18 +413,23 @@ function isbounded(r::Rectification{N})::Bool where {N<:Real}
 end
 
 """
-    compute_union_of_projections!(r::Rectification{N}) where {N<:Real}
+    to_union_of_projections(r::Rectification{N},
+                            concrete_intersection::Bool=false
+                           ) where {N<:Real}
 
 Compute an equivalent union of projections from a rectification of a convex set.
 
 ### Input
 
-- `r` -- rectification of a convex set
+- `r`                     -- rectification of a convex set
+- `concrete_intersection` -- (optional, default: `false`) option to compute
+                             all intersections concretely or lazily
 
 ### Algorithm
 
-Let ``X`` be the set wrapped by the rectification `r`.
-We compute a union of sets that represent the rectification of ``X`` precisely.
+Let ``X`` be the set wrapped by the rectification ``r``.
+We compute a union of sets that represents the rectification of ``X`` precisely.
+The sets are lazy projections, potentially of intersections.
 
 We first identify those dimensions where ``X`` is negative, using one
 support-function query per dimension, and collect the dimensions in the index
@@ -447,79 +452,51 @@ such that we used the half-space ``x_i ≤ 0`` in their computation, and in all
 dimensions ``j ∈ I_\\text{nonpos}`` irrespective of the half-space used.
 
 Finally, we take the union of the resulting sets.
+
+### Output
+
+The result can be one of three cases depending on the wrapped set ``X``, namely
+* the set ``X`` if ``X`` is contained in the positive quadrant,
+* a `LinearMap` (projection) of ``X`` if for each dimension, ``X`` is only
+  either positive or negative, or
+* a `UnionSetArray` of `LinearMaps` (projections) otherwise.
 """
-function compute_union_of_projections!(r::Rectification{N}) where {N<:Real}
-    X = r.X
-    n = dim(X)
+function to_union_of_projections(r::Rectification{N},
+                                 concrete_intersection::Bool=false
+                                ) where {N<:Real}
+    n = dim(r.X)
 
-    # construct a polyhedron corresponding to an index vector and a bit vector
-    function construct_constraints(indices, bits)
-        P = HPolyhedron{N}()
-        for (i, b) in enumerate(bits)
-            direction = Approximations.SingleEntryVector(indices[i], n,
-                                                         (b ? -one(N) : one(N)))
-            hs = HalfSpace(direction, zero(N))
-            addconstraint!(P, hs)
-        end
-        return P
-    end
-
-    # project negative dimensions to zero
-    function construct_projection(set, negative_dimensions, mixed_dimensions,
-                                  mixed_dimensions_enumeration)
-            v = ones(N, n)
-            # set negative indices to zero
-            v[negative_dimensions] .= zero(N)
-        for (i, d) in enumerate(mixed_dimensions)
-            if mixed_dimensions_enumeration[i]
-                # reset mixed index to one again because the set is nonnegative
-                v[d] = one(N)
-            end
-        end
-        return Diagonal(v) * set
-    end
-
-    # identify dimensions where set is negative and mixed (positive/negative)
-    negative_dimensions = Vector{Int}()
-    mixed_dimensions = Vector{Int}()
-    mixed_dimensions_enumeration = BitArray(undef, 0)
-    for i in 1:n
-        d = Approximations.SingleEntryVector(i, n, -one(N))
-        if ρ(d, X) > zero(N)
-            push!(negative_dimensions, i)
-            d = Approximations.SingleEntryVector(i, n, one(N))
-            if ρ(d, X) > zero(N)
-                push!(mixed_dimensions_enumeration, false)
-                push!(mixed_dimensions, i)
-            end
-        end
-    end
+    negative_dimensions, mixed_dimensions, mixed_dimensions_enumeration =
+        compute_negative_and_mixed_dimensions(r.X, n)
 
     if isempty(mixed_dimensions)
         # no mixed dimensions: no intersections needed
         if isempty(negative_dimensions)
             # no negative dimensions: set is unaffected by rectification
-            r.cache.set = X
+            result = r.X
         else
             # project negative dimensions to zero
             v = ones(N, n)
             v[negative_dimensions] .= zero(N)
-            r.cache.set = Diagonal(v) * X
+            result = Diagonal(v) * r.X
         end
     else
         # apply intersections with half-spaces in every mixed dimension
         m = length(mixed_dimensions)
         i = m
-        projections = Vector{LazySet{N}}()
+        projections = Vector{LinearMap{N}}()
         sizehint!(projections, 2^m)
         while true
             # compute next projection
             polyhedron = construct_constraints(mixed_dimensions,
-                                               mixed_dimensions_enumeration)
-            projection = construct_projection(X ∩ polyhedron,
+                                               mixed_dimensions_enumeration, n,
+                                               N)
+            cap = concrete_intersection ?
+                intersection(r.X, polyhedron) : r.X ∩ polyhedron
+            projection = construct_projection(cap,
                                               negative_dimensions,
                                               mixed_dimensions,
-                                              mixed_dimensions_enumeration)
+                                              mixed_dimensions_enumeration, n)
             push!(projections, projection)
 
             if mixed_dimensions_enumeration[i]
@@ -536,6 +513,60 @@ function compute_union_of_projections!(r::Rectification{N}) where {N<:Real}
                 mixed_dimensions_enumeration[i] = true
             end
         end
-        r.cache.set = UnionSetArray(projections)
+        result = UnionSetArray(projections)
     end
+    return result
+end
+
+# =========================
+# internal helper functions
+# =========================
+
+# identify dimensions where set is negative and mixed (positive/negative) and
+# also fill a bit vector for mixed dimensions
+function compute_negative_and_mixed_dimensions(X::LazySet{N}, n) where {N<:Real}
+    negative_dimensions = Vector{Int}()
+    mixed_dimensions = Vector{Int}()
+    mixed_dimensions_enumeration = BitArray(undef, 0)
+    for i in 1:n
+        d = SingleEntryVector(i, n, -one(N))
+        if ρ(d, X) > zero(N)
+            push!(negative_dimensions, i)
+            if ρ(-d, X) > zero(N)
+                push!(mixed_dimensions_enumeration, false)
+                push!(mixed_dimensions, i)
+            end
+        end
+    end
+    return (negative_dimensions, mixed_dimensions, mixed_dimensions_enumeration)
+end
+
+# construct a polyhedron corresponding to an index vector and a bit vector
+# (see `to_union_of_projections`)
+function construct_constraints(indices, bits, n, ::Type{N}) where {N<:Real}
+    P = HPolyhedron{N}()
+    for (i, b) in enumerate(bits)
+        direction = SingleEntryVector(indices[i], n,
+                                                     (b ? -one(N) : one(N)))
+        hs = HalfSpace(direction, zero(N))
+        addconstraint!(P, hs)
+    end
+    return P
+end
+
+# project negative dimensions to zero (see `to_union_of_projections`)
+function construct_projection(set::LazySet{N}, negative_dimensions,
+                              mixed_dimensions, mixed_dimensions_enumeration, n
+                             ) where {N<:Real}
+    # initialize negative indices to zero and all other dimensions to one
+    v = ones(N, n)
+    v[negative_dimensions] .= zero(N)
+
+    for (i, d) in enumerate(mixed_dimensions)
+        if mixed_dimensions_enumeration[i]
+            # reset mixed index to one again because the set is nonnegative
+            v[d] = one(N)
+        end
+    end
+    return Diagonal(v) * set
 end
