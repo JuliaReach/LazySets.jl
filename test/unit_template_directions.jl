@@ -82,7 +82,7 @@ for N in [Float64, Float32, Rational{Int}]
 
         # custom directions
         # empty list of directions
-        dir = CustomDirections{N}(Vector{N}[]; n=n)
+        dir = CustomDirections(Vector{N}[]; n=n)
         @test dim(dir) == n
         P = overapproximate(X, dir)
         @test isempty(constraints_list(P))
@@ -94,9 +94,9 @@ for N in [Float64, Float32, Rational{Int}]
         elseif n == 3
             dirs = [N[-1, 0, 0], N[0, -1, 0], N[0, 0, -1], N[1, 1, 1]]
         end
-        dir = CustomDirections{N}(dirs)
+        dir = CustomDirections(dirs)
         @test isbounding(dir)
-        @test !isbounding(CustomDirections{N}(dirs[1:end-1]))
+        @test !isbounding(CustomDirections(dirs[1:end-1]))
         P = overapproximate(X, dir)
         @test P isa HPolytope && length(constraints_list(P)) == length(dirs)
     end

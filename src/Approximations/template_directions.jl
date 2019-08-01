@@ -31,7 +31,7 @@ function dim(ad::AbstractDirections)::Int
 end
 
 """
-    isbounding(::AbstractDirections)::Bool
+    isbounding(ad::AbstractDirections)::Bool
 
 Checks if an overapproximation with a list of template directions results in a
 bounded set, given a bounded input set.
@@ -419,7 +419,7 @@ end
 # ==================================================
 
 """
-    CustomDirections{N} <: AbstractDirections{N}
+    CustomDirections{N, VN<:AbstractVector{N}} <: AbstractDirections{N}
 
 User-defined template directions.
 
@@ -439,22 +439,24 @@ norm using the given directions).
 The dimension will also be determined automatically, unless the empty vector is
 passed (in which case the optional argument `n` needs to be specified).
 """
-struct CustomDirections{N} <: AbstractDirections{N}
-    directions::AbstractVector{<:AbstractVector{N}}
+struct CustomDirections{N, VN<:AbstractVector{N}} <: AbstractDirections{N}
+    directions::Vector{VN}
     n::Int
     isbounding::Bool
 
-    CustomDirections{N}(directions::AbstractVector{<:AbstractVector{N}};
-                        n::Int=determine_dimension(directions),
-                        isbounding::Bool=determine_boundedness(directions)
-                       ) where {N} = new{N}(directions, n, isbounding)
+    CustomDirections{N, VN}(directions::Vector{VN};
+                            n::Int=determine_dimension(directions),
+                            isbounding::Bool=_isbounding(directions)
+                           ) where {N, VN<:AbstractVector{N}} =
+        new{N, VN}(directions, n, isbounding)
 end
 
 # convenience constructor
-CustomDirections(directions::AbstractVector{<:AbstractVector{N}};
+CustomDirections(directions::Vector{VN};
                  n::Int=determine_dimension(directions),
-                 isbounding::Bool=determine_boundedness(directions)) where {N} =
-    CustomDirections{N}(directions; n=n, isbounding=isbounding)
+                 isbounding::Bool=_isbounding(directions)
+                ) where {N, VN<:AbstractVector{N}} =
+    CustomDirections{N, VN}(directions; n=n, isbounding=isbounding)
 
 function determine_dimension(directions)
     isempty(directions) && throw(ArgumentError("empty template directions " *
@@ -462,17 +464,15 @@ function determine_dimension(directions)
     return length(directions[1])
 end
 
-function determine_boundedness(directions::AbstractVector{<:AbstractVector{N}}
-                              ) where {N}
+function _isbounding(directions::Vector{VN}) where {N, VN<:AbstractVector{N}}
     isempty(directions) && return false
 
-    # determine boundedness from a trial with a BallInf
-    set = BallInf(zeros(N, length(directions[1])), N(1))
-    dirs = CustomDirections(directions; isbounding=false)
-    return isbounded(overapproximate(set, dirs))
+    # check boundedness of the polyhedron `⋂_a ax <= 1` where `a` is a direction
+    P = HPolyhedron([HalfSpace(dir, one(N)) for dir in directions])
+    return isbounded(P)
 end
 
-Base.eltype(::Type{CustomDirections{N}}) where {N} = AbstractVector{N}
+Base.eltype(::Type{CustomDirections{N, VN}}) where {N, VN} = VN
 Base.length(cd::CustomDirections) = length(cd.directions)
 isbounding(cd::CustomDirections) = cd.isbounding
 
