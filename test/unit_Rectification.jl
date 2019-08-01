@@ -34,7 +34,9 @@ for N in [Float64, Rational{Int}, Float32]
           σ(N[-1, -1, -1], RC2) == N[0, 2, 0]
     # other sets in 1D fall back to interval conversion
     @test σ(N[1], Rectification(Ball1(N[0], N(1)))) == N[1]
-    # other sets in higher dimensions throw an error
+    # other sets in higher dimensions compute lazy linear maps and intersections
+    @test σ(N[-1, -1], Rectification(Ball1(N[-2, -2], N(1)))) == N[0, 0]
+    # this may throw an error due to a lazy intersection
     @test_throws ErrorException σ(N[1, 1], Rectification(Ball1(N[0, 0], N(1))))
 
     # an_element
@@ -62,5 +64,62 @@ for N in [Float64, Rational{Int}, Float32]
 
     # conversion
     @test convert(Interval, RI1) == Interval(N(0), N(1))
-    @test convert(Hyperrectangle, RB1) == Hyperrectangle(low=N[0, 0], high=N[3, 3])
+    @test convert(Hyperrectangle, RB1) ==
+                  Hyperrectangle(low=N[0, 0], high=N[3, 3])
+
+    # support function
+    # upper right quadrant
+    B = Ball1(N[2, 2], N(1))
+    RB = Rectification(B)
+    for d in [N[1, 0], N[-1, 0], N[0, 1], N[0, -1]]
+        @test ρ(d, RB) == ρ(d, B)
+    end
+    # lower right quadrant
+    B = Ball1(N[2, -2], N(1))
+    RB = Rectification(B)
+    for d in [N[1, 0], N[-1, 0]]
+        @test ρ(d, RB) == ρ(d, B)
+    end
+    @test ρ(N[0, 1], RB) == ρ(N[0, -1], RB) == N(0)
+    # upper left quadrant
+    B = Ball1(N[-2, 2], N(1))
+    RB = Rectification(B)
+    for d in [N[0, 1], N[0, -1]]
+        @test ρ(d, RB) == ρ(d, B)
+    end
+    @test ρ(N[1, 0], RB) == ρ(N[-1, 0], RB) == N(0)
+    # lower left quadrant
+    B = Ball1(N[-2, -2], N(1))
+    RB = Rectification(B)
+    @test ρ(N[1, 0], RB) == ρ(N[-1, 0], RB) == ρ(N[0, 1], RB) ==
+          ρ(N[0, -1], RB) == N(0)
+end
+
+# tests that only work with Float64
+for N in [Float64]
+    # support function
+    # some of the tests do not work because of insufficient precision in the
+    # intersection; if the precision changes, these tests can be replaced by
+    # their true (commented out) expected results
+
+    # two right quadrants
+    B = Ball1(N[2, 0], N(1))
+    RB = Rectification(B)
+    for d in [N[1, 0], N[-1, 0], N[0, 1]]
+        @test ρ(d, RB) ≈ ρ(d, B)
+    end
+#     @test ρ(N[0, -1], RB) ≈ N(0)
+    @test N(0) ≤ ρ(N[0, -1], RB) ≤ N(1e-9)
+    # all four quadrants
+    P = VPolygon([N[-1, 1], N[-1.5, 0.5], N[1.5, 0.5], N[1, -0.5]])
+    RP = Rectification(P)
+    @test ρ(N[1, 0], RP) ≈ N(1.5)
+    @test ρ(N[0, 1], RP) ≈ N(1)
+    @test ρ(N[1, 1], RP) == ρ(N[1, 1], P)
+#     @test ρ(N[-1, 0], RP) ≈ N(0)
+    @test N(0) ≤ ρ(N[-1, 0], RP) ≤ N(1e-8)
+#     @test ρ(N[0, -1], RP) ≈ N(0)
+    @test N(0) ≤ ρ(N[0, -1], RP) ≤ N(1e-8)
+#     @test ρ(N[-1, -1], RP) ≈ N(0)
+    @test N(0) ≤ ρ(N[-1, -1], RP) ≤ N(1.1e-1)
 end
