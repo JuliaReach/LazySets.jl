@@ -70,5 +70,5 @@ for N in [Float64, Rational{Int}, Float32]
     # the translation of a lazy linear map returns an affine map
     M = N[1 0; 0 2]; B = BallInf(zeros(N, 2), N(1)); v = N[1, 0]
     tr = M * B ⊕ v
-    @test tr isa AffineMap && tr.M == M tr.X == B && tr.v == v 
+    @test tr isa AffineMap && tr.M == M && tr.X == B && tr.v == v 
 end
