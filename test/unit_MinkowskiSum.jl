@@ -68,6 +68,13 @@ for N in [Float64, Rational{Int}, Float32]
     v = an_element(X)
     @test v ∈ Ball1(N[1, 1], N(1))
 
+    # constraints list
+    ms = MinkowskiSum(BallInf(N[0, 0], N(1)), BallInf(N[0, 0], N(1)))
+    clist = constraints_list(ms)
+    P = HPolytope(clist)
+    H = Hyperrectangle(N[0, 0], N[2, 2])
+    @test length(clist) == 4 && P ⊆ H && H ⊆ P
+
     # =================
     # MinkowskiSumArray
     # =================
@@ -95,7 +102,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     ms = MinkowskiSum(b1, b2)
     msa = MinkowskiSumArray([b1, b2])
-    
+
     # dimension
     @test dim(msa) == 2
 
