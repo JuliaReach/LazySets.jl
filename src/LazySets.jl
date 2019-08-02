@@ -3,14 +3,14 @@ __precompile__(true)
 # main module for `LazySets.jl`
 module LazySets
 
-using Requires, SparseArrays, LinearAlgebra
+using Requires, SparseArrays, LinearAlgebra, Reexport
 using LinearAlgebra: checksquare
 import LinearAlgebra: norm, ×
 import Random
 using Random: AbstractRNG, GLOBAL_RNG, SamplerType, shuffle
 import InteractiveUtils: subtypes
 
-export Arrays, Approximations
+export Arrays
 export ×
 
 # =======================
@@ -107,6 +107,10 @@ include("convert.jl")
 # Approximations module
 # =====================
 include("Approximations/Approximations.jl")
+# We export all symbols from Approximations.
+# Note that the LazySets module is not supposed to depend on Approximations.
+# It can, however, happen that we forget to add the `using` statements.
+@reexport using .Approximations
 
 # ===========================
 # Concrete operations on sets
