@@ -196,3 +196,29 @@ function _minkowski_sum_hrep(A::AbstractMatrix{N}, b::AbstractVector{N},
     end
     return W
 end
+
+"""
+    minkowski_sum(H1::AbstractHyperrectangle{N}, H2::AbstractHyperrectangle{N})
+        where {N<:Real}
+
+Concrete Minkowski sum of a pair of hyperrectangular sets.
+
+### Input
+
+- `H1` -- hyperrectangular set
+- `H2` -- hyperrectangular set
+
+### Output
+
+A `Hyperrectangle` corresponding to the concrete Minkowski sum of `H1` and `H2`.
+
+### Algorithm
+
+The resulting hyperrectangle is obtained by summing up the centers and
+radiuses of `H1` and `H2`.
+"""
+function minkowski_sum(H1::AbstractHyperrectangle{N},
+                       H2::AbstractHyperrectangle{N}) where {N<:Real}
+    return Hyperrectangle(center(H1) + center(H2),
+                          radius_hyperrectangle(H1) + radius_hyperrectangle(H2))
+end
