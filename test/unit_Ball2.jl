@@ -69,7 +69,7 @@ for N in [Float64, Float32]
     # translation
     @test translate(b, N[1, 2]) == Ball2(N[2, 4], N(2))
 
-    # subset
+    # inclusion of a Ball2 in a Ball2
     b1 = Ball2(N[1, 2], N(2))
     b2 = Ball2(N[1, 2], N(0))
     b3 = Ball2(N[1.7, 2.7], N(1))
@@ -85,6 +85,14 @@ for N in [Float64, Float32]
     subset, point = ⊆(b1, b3, true)
     @test b1 ⊈ b3 && !subset && point ∈ b1 && point ∉ b3
     @test b3 ⊆ b1 && ⊆(b3, b1, true)[1]
+    # inclusion of a Ball2 in a polyhedral LazySet
+    b = Ball2(zeros(N, 4), N(1))
+    p = BallInf(zeros(N, 2), N(1)) × BallInf(zeros(N, 2), N(1))
+    subset, point = ⊆(b, p, true)
+    @test subset && b ⊆ p && point == N[]
+    p = BallInf(ones(N, 2), N(1)) × BallInf(zeros(N, 2), N(1))
+    subset, point = ⊆(b, p, true)
+    @test !subset && b ⊈ p && point ∈ b && point ∉ p
 
     # intersection
     b1 = Ball2(N[0, 0], N(2))
