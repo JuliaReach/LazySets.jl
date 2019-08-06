@@ -216,9 +216,9 @@ AbstractZonotope
 This interface defines the following functions:
 
 ```@docs
-ngens(Z::AbstractZonotope)
-genmat_fallback(Z::AbstractZonotope{N}) where {N<:Real}
-generators_fallback(Z::AbstractZonotope{N}) where {N<:Real}
+ngens(::AbstractZonotope)
+genmat_fallback(::AbstractZonotope{N}) where {N<:Real}
+generators_fallback(::AbstractZonotope{N}) where {N<:Real}
 ```
 
 ##### Hyperrectangle
@@ -248,6 +248,7 @@ isflat(::AbstractHyperrectangle)
 split(::AbstractHyperrectangle{N}, ::AbstractVector{Int}) where {N<:Real}
 generators(::AbstractHyperrectangle)
 genmat(::AbstractHyperrectangle)
+ngens(::AbstractHyperrectangle{N}) where {N<:Real}
 rectify(::AbstractHyperrectangle)
 ```
 
