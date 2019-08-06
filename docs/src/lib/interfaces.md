@@ -278,6 +278,7 @@ low(::AbstractSingleton{N}, ::Int) where {N<:Real}
 linear_map(::AbstractMatrix{N}, ::AbstractSingleton{N}) where {N<:Real}
 generators(::AbstractSingleton{N}) where {N<:Real}
 genmat(::AbstractSingleton{N}) where {N<:Real}
+ngens(::AbstractSingleton)
 plot_recipe(::AbstractSingleton{N}, ::N=zero(N)) where {N<:Real}
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractSingleton{N}, ::N=zero(N)) where {N<:Real}
 ```
