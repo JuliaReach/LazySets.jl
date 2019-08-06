@@ -10,6 +10,7 @@ using LazySets, LazySets.Arrays, Requires, LinearAlgebra, SparseArrays
 using LazySets: _rtol
 
 export approximate,
+       project,
        ballinf_approximation,
        box_approximation, interval_hull,
        decompose,
