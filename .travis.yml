@@ -10,6 +10,9 @@ notifications:
 git:
   depth: 99999999
 
+before_install:
+  - sudo apt-get install xorg-dev
+
 after_success:
   - julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder()); Codecov.submit(process_folder())'
 jobs:
