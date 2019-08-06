@@ -1,4 +1,3 @@
-using LazySets.Approximations: project
 export is_intersection_empty,
        isdisjoint
 
