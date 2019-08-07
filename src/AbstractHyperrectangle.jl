@@ -400,17 +400,17 @@ Then ``x ∈ H`` iff ``|c_i - x_i| ≤ r_i`` for all ``i=1,…,n``.
 function ∈(x::AbstractVector{N},
            H::AbstractHyperrectangle{N})::Bool where {N<:Real}
     @assert length(x) == dim(H)
-    for i in eachindex(x)
-        if abs(center(H)[i] - x[i]) > radius_hyperrectangle(H, i)
+    c = center(H)
+    @inbounds for i in eachindex(x)
+        ri = radius_hyperrectangle(H, i)
+        if !_leq(abs(c[i] - x[i]), ri)
             return false
         end
     end
     return true
 end
 
-
 # --- common AbstractHyperrectangle functions ---
-
 
 """
     high(H::AbstractHyperrectangle{N})::Vector{N} where {N<:Real}
