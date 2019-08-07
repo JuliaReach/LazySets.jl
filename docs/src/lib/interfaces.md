@@ -216,9 +216,9 @@ AbstractZonotope
 This interface defines the following functions:
 
 ```@docs
-ngens(Z::AbstractZonotope)
-genmat_fallback(Z::AbstractZonotope{N}) where {N<:Real}
-generators_fallback(Z::AbstractZonotope{N}) where {N<:Real}
+ngens(::AbstractZonotope)
+genmat_fallback(::AbstractZonotope{N}) where {N<:Real}
+generators_fallback(::AbstractZonotope{N}) where {N<:Real}
 ```
 
 ##### Hyperrectangle
@@ -248,6 +248,7 @@ isflat(::AbstractHyperrectangle)
 split(::AbstractHyperrectangle{N}, ::AbstractVector{Int}) where {N<:Real}
 generators(::AbstractHyperrectangle)
 genmat(::AbstractHyperrectangle)
+ngens(::AbstractHyperrectangle{N}) where {N<:Real}
 rectify(::AbstractHyperrectangle)
 ```
 
@@ -277,6 +278,7 @@ low(::AbstractSingleton{N}, ::Int) where {N<:Real}
 linear_map(::AbstractMatrix{N}, ::AbstractSingleton{N}) where {N<:Real}
 generators(::AbstractSingleton{N}) where {N<:Real}
 genmat(::AbstractSingleton{N}) where {N<:Real}
+ngens(::AbstractSingleton)
 plot_recipe(::AbstractSingleton{N}, ::N=zero(N)) where {N<:Real}
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractSingleton{N}, ::N=zero(N)) where {N<:Real}
 ```

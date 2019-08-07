@@ -113,6 +113,27 @@ function generators(H::AbstractHyperrectangle)
     return HyperrectangleGeneratorIterator(H)
 end
 
+"""
+    ngens(H::AbstractHyperrectangle{N}) where {N<:Real}
+
+Return the number of generators of a hyperrectangular set.
+
+### Input
+
+- `H` -- hyperrectangular set
+
+### Output
+
+The number of generators.
+
+### Algorithm
+
+A hyperrectangular set has one generator for each non-flat dimension.
+"""
+function ngens(H::AbstractHyperrectangle{N}) where {N<:Real}
+    return sum(i -> radius_hyperrectangle(H, i) > zero(N), 1:dim(H))
+end
+
 
 # --- AbstractPolytope interface functions ---
 
