@@ -118,6 +118,12 @@ for N in [Float64, Rational{Int}, Float32]
     @test N[-1.1, 4.1] ∉ H
     @test N[-1, 4] ∈ H
 
+    # "robust" membership of the support vector
+    c = N[1.68, 0.73, 0.64]
+    r = N[0.46, 0.24, 1.38]
+    H = Hyperrectangle(c, r)
+    @test σ(ones(N, 3), H) ∈ H
+
     # an_element function
     H = Hyperrectangle(N[1, 2], N[3, 4])
     @test an_element(H) ∈ H
