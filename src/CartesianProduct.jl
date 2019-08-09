@@ -38,17 +38,6 @@ struct CartesianProduct{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     Y::S2
 end
 
-# constructor from an array
-CartesianProduct(Xarr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
-    (length(Xarr) == 0
-        ? EmptySet{N}()
-        : length(Xarr) == 1
-            ? Xarr[1]
-            : length(Xarr) == 2
-                ? CartesianProduct(Xarr[1], Xarr[2])
-                : CartesianProduct(Xarr[1],
-                                   CartesianProduct(Xarr[2:length(Xarr)])))
-
 # EmptySet is the absorbing element for CartesianProduct
 @absorbing(CartesianProduct, EmptySet)
 

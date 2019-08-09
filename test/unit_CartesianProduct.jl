@@ -75,22 +75,6 @@ for N in [Float64, Float32, Rational{Int}]
     @test cs1 isa EmptySet
     @test cs2 isa EmptySet
 
-    # Test Cartesian Product of an array
-    # 0-elements
-    as = LazySet{N}[]
-    cs = CartesianProduct(as)
-    @test cs isa EmptySet
-    # 1-element
-    as = [Singleton(N[1])]
-    cs = CartesianProduct(as)
-    @test cs.element == N[1]
-    # 3-elements
-    as = [Singleton(N[1]), Singleton(N[2]), Singleton(N[3])]
-    cs = CartesianProduct(as)
-    @test cs.X.element == N[1]
-    @test cs.Y.X.element == N[2]
-    @test cs.Y.Y.element == N[3]
-
     # Test containment with respect to CartesianProduct
     p1 = HPolygon{N}()
     addconstraint!(p1, LinearConstraint(N[2, 2], N(12)))
