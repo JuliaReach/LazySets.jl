@@ -1,23 +1,28 @@
 ## Documentation: http://docs.travis-ci.com/user/languages/julia/
+codecov: true
+
 language: julia
+
 os:
   - linux
+
 julia:
   - 1.0
   - 1.1
+
 notifications:
   email: false
+
 git:
   depth: 99999999
 
-after_success:
-  - julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
 jobs:
   include:
     - stage: "Documentation"
       julia: 1.0
       os: linux
       script:
-        - julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate();'
+        - julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd()));
+                                               Pkg.instantiate();'
         - travis_wait 20 julia --project=docs/ docs/make.jl
       after_success: skip
