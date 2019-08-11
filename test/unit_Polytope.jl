@@ -350,6 +350,12 @@ if test_suite_polyhedra
         twoB = 2.0*B
         @test X ⊆ twoB && twoB ⊆ X
 
+        # concrete minkowski difference (special case, where A == A ⊖ B ⊕ B)
+        A2 = BallInf(N[0, 0], N(5))
+        B2 = BallInf(N[0, 0], N(2))
+        C2 = minkowski_difference(A2,B2)
+        @test C2 ⊆ BallInf(N[0, 0], N(3)) && BallInf(N[0, 0], N(3)) ⊆ C2
+        
         # same but specifying a custom polyhedral computations backend (CDDLib)
         X = minkowski_sum(B, B, backend=CDDLib.Library())
         twoB = 2.0*B
