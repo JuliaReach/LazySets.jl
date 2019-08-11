@@ -20,6 +20,7 @@ CurrentModule = LazySets
 CartesianProduct
 ×(::LazySet, ::LazySet)
 *(::LazySet, ::LazySet)
+swap(::CartesianProduct)
 dim(::CartesianProduct)
 ρ(::AbstractVector{N}, ::CartesianProduct{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::CartesianProduct{N}) where {N<:Real}
@@ -66,6 +67,7 @@ Inherited from [`LazySet`](@ref):
 ```@docs
 ConvexHull
 CH
+swap(::ConvexHull)
 dim(::ConvexHull)
 ρ(::AbstractVector{N}, ::ConvexHull{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::ConvexHull{N}) where {N<:Real}
@@ -100,7 +102,6 @@ Inherited from [`LazySet`](@ref):
 
 ```@docs
 convex_hull(::Vector{VN}) where {N<:Real, VN<:AbstractVector{N}}
-right_turn
 monotone_chain!
 ```
 
@@ -114,7 +115,7 @@ Intersection
 dim(::Intersection)
 ρ(::AbstractVector{N}, ::Intersection{N}) where {N<:Real}
 ρ(::AbstractVector{N}, ::Intersection{N, S1, S2}) where {N<:Real, S1<:LazySet{N}, S2<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}}
-ρ(::AbstractVector{N}, ::Intersection{N, S1, S2}) where {N<:Real, S1<:LazySet{N}, S2<:AbstractPolytope{N}}
+ρ(::AbstractVector{N}, ::Intersection{N, S1, S2}) where {N<:Real, S1<:LazySet{N}, S2<:AbstractPolyhedron{N}}
 σ(::AbstractVector{N}, ::Intersection{N}) where {N<:Real}
 isbounded(::Intersection)
 isempty(::Intersection)
@@ -122,7 +123,7 @@ isempty(::Intersection)
 constraints_list(::Intersection{N}) where {N<:Real}
 isempty_known(::Intersection)
 set_isempty!(::Intersection, ::Bool)
-swap(::Intersection)
+swap(::Intersection{N, S1, S2}) where {N<:Real, S1, S2}
 use_precise_ρ
 _line_search
 _projection
@@ -168,11 +169,13 @@ Inherited from [`LazySet`](@ref):
 MinkowskiSum
 ⊕(::LazySet, ::LazySet)
 +(::LazySet, ::LazySet)
+swap(::MinkowskiSum)
 dim(::MinkowskiSum)
 ρ(::AbstractVector{N}, ::MinkowskiSum{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::MinkowskiSum{N}) where {N<:Real}
 isbounded(::MinkowskiSum)
 isempty(::MinkowskiSum)
+constraints_list(::MinkowskiSum)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -223,7 +226,6 @@ LinearMap
 *(::AbstractMatrix{N}, ::LazySet{N}) where {N<:Real}
 *(::N, ::LazySet{N}) where {N<:Real}
 *(::N, ::LinearMap{N}) where {N<:Real}
-*(::AbstractMatrix{N}, ::ZeroSet{N}) where {N<:Real}
 dim(::LinearMap)
 ρ(::AbstractVector{N}, ::LinearMap{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::LinearMap{N}) where {N<:Real}
@@ -303,6 +305,41 @@ Inherited from [`LazySet`](@ref):
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 
+### Translation
+
+```@docs
+Translation
++(X::LazySet, v::AbstractVector)
+⊕(X::LazySet, v::AbstractVector)
+dim(::Translation)
+ρ(::AbstractVector{N}, ::Translation{N}) where {N<:Real}
+σ(::AbstractVector{N}, ::Translation{N}) where {N<:Real}
+an_element(::Translation)
+isempty(::Translation)
+constraints_list(::Translation{N}, ::Val{true}) where {N<:Real}
+LinearMap(::AbstractMatrix{N}, ::Translation{N}) where {N<:Real}
+linear_map(::AbstractMatrix{N}, ::Translation{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::Translation{N}) where {N<:Real}
+```
+
+### Affine Map
+
+```@docs
+AffineMap
+*(::AbstractMatrix{N}, ::AffineMap{N}) where {N<:Real}
+*(::N, ::AffineMap{N}) where {N<:Real}
+dim(::AffineMap)
+σ(::AbstractVector{N}, ::AffineMap{N}) where {N<:Real}
+ρ(::AbstractVector{N}, ::AffineMap{N}) where {N<:Real}
+an_element(::AffineMap)
+isempty(::AffineMap)
+isbounded(::AffineMap)
+∈(::AbstractVector{N}, ::AffineMap{N}) where {N<:Real}
+vertices_list(::AffineMap{N}) where {N<:Real}
+constraints_list(::AffineMap{N}) where {N<:Real}
+linear_map(::AbstractMatrix{N}, ::AffineMap{N}) where {N<:Real}
+```
+
 ## Symmetric Interval Hull
 
 ```@docs
@@ -340,23 +377,6 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`generators`](@ref generators(::AbstractZonotope))
 * [`genmat`](@ref genmat(::AbstractZonotope))
 
-### Translation
-
-```@docs
-Translation
-+(X::LazySet, v::AbstractVector)
-⊕(X::LazySet, v::AbstractVector)
-dim(::Translation)
-ρ(::AbstractVector{N}, ::Translation{N}) where {N<:Real}
-σ(::AbstractVector{N}, ::Translation{N}) where {N<:Real}
-an_element(::Translation)
-isempty(::Translation)
-constraints_list(::Translation{N}, ::Val{true}) where {N<:Real}
-LinearMap(::AbstractMatrix{N}, ::Translation{N}) where {N<:Real}
-linear_map(M::AbstractMatrix{N}, tr::Translation{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::Translation{N}) where {N<:Real}
-```
-
 ## Union
 
 Note that the union of convex sets is generally not convex.
@@ -367,6 +387,7 @@ Hence these set types are not part of the convex-set family `LazySet`.
 ```@docs
 UnionSet
 ∪(::LazySet, ::LazySet)
+swap(::UnionSet)
 dim(::UnionSet)
 σ(::AbstractVector{N}, ::UnionSet{N}; algorithm="support_vector") where {N<:Real}
 ρ(::AbstractVector{N}, ::UnionSet{N}) where {N<:Real}
@@ -414,10 +435,12 @@ dim(::Rectification)
 σ(::AbstractVector{N}, ::Rectification{N, <:AbstractHyperrectangle{N}}) where {N<:Real}
 σ(::AbstractVector{N}, ::Rectification{N, <:CartesianProduct{N}}) where {N<:Real}
 σ(::AbstractVector{N}, ::Rectification{N, <:CartesianProductArray{N}}) where {N<:Real}
+ρ(::AbstractVector{N}, ::Rectification{N}) where {N<:Real}
 an_element(::Rectification{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::Rectification{N}) where {N<:Real}
 isempty(::Rectification)
 isbounded(::Rectification{N}) where {N<:Real}
+to_union_of_projections(::Rectification{N}, ::Bool=false) where {N<:Real}
 ```
 
 #### Rectification cache

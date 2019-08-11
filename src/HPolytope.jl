@@ -145,6 +145,12 @@ return quote
 function convert(::Type{HPolytope{N}}, P::HRep{N}) where {N}
     constraints = LinearConstraint{N}[]
     for hi in Polyhedra.allhalfspaces(P)
+        a, b = hi.a, hi.β
+        if isapproxzero(norm(a))
+            @assert b >= zero(N) "the half-space is inconsistent since it has a " *
+                "zero normal direction but the constraint is negative"
+            continue
+        end
         push!(constraints, HalfSpace(hi.a, hi.β))
     end
     return HPolytope(constraints)
@@ -225,7 +231,7 @@ function vertices_list(P::HPolytope{N};
         if prune
             removevredundancy!(Q)
         end
-        return collect(points(Q))
+        return collect(Polyhedra.points(Q))
     end
 end
 

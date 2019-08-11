@@ -86,15 +86,15 @@ A local approximation of `S` in the given directions.
 """
 function new_approx(S::LazySet, p1::Vector{N}, d1::Vector{N}, p2::Vector{N},
                     d2::Vector{N}) where {N<:AbstractFloat}
-    if norm(p1-p2, 2) <= TOL(N)
+    if norm(p1-p2, 2) <= _rtol(N)
         # this approximation cannot be refined and we set q = p1 by convention
         ap = LocalApproximation{N}(p1, d1, p2, d2, p1, false, zero(N))
     else
         ndir = normalize([p2[2]-p1[2], p1[1]-p2[1]])
         q = element(intersection(Line(d1, dot(d1, p1)), Line(d2, dot(d2, p2))))
         approx_error = min(norm(q - σ(ndir, S)), dot(ndir, q - p1))
-        refinable = (approx_error > TOL(N)) && (norm(p1-q, 2) > TOL(N)) &&
-                    (norm(q-p2, 2) > TOL(N))
+        refinable = (approx_error > _rtol(N)) && (norm(p1-q, 2) > _rtol(N)) &&
+                    (norm(q-p2, 2) > _rtol(N))
         ap = LocalApproximation{N}(p1, d1, p2, d2, q, refinable, approx_error)
     end
     return ap
@@ -238,8 +238,8 @@ function approximate(S::LazySet{N}, ε::N
         else
             # check if the next local approximation became redundant
             next = approx_stack[end]
-            redundant = (norm(la2.p1-next.p1) <= TOL(N)) &&
-                (norm(la2.q-next.q) <= TOL(N))
+            redundant = (norm(la2.p1-next.p1) <= _rtol(N)) &&
+                (norm(la2.q-next.q) <= _rtol(N))
         end
         if redundant
             # replace redundant old constraint

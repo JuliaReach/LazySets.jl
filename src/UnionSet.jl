@@ -2,7 +2,8 @@ import Base: isempty, ∈, ∪
 
 export UnionSet,
        UnionSetArray,
-       array
+       array,
+       swap
 
 # ========================================
 # Binary set union
@@ -32,6 +33,9 @@ end
 # convenience constructor without type parameter
 UnionSet(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} = UnionSet{N, S1, S2}(X, Y)
 
+# EmptySet is the neutral element for UnionSet
+@neutral(UnionSet, EmptySet)
+
 # Universe is the absorbing element for UnionSet
 @absorbing(UnionSet, Universe)
 
@@ -41,6 +45,23 @@ UnionSet(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} = UnionSe
 Alias for `UnionSet`.
 """
 ∪(X::LazySet, Y::LazySet) = UnionSet(X, Y)
+
+"""
+    swap(cup::UnionSet)
+
+Return a new `UnionSet` object with the arguments swapped.
+
+### Input
+
+- `cup` -- union of two convex sets
+
+### Output
+
+A new `UnionSet` object with the arguments swapped.
+"""
+function swap(cup::UnionSet)
+    return UnionSet(cup.Y, cup.X)
+end
 
 """
     dim(cup::UnionSet)::Int
@@ -219,6 +240,9 @@ Type that represents the set union of a finite number of convex sets.
 struct UnionSetArray{N<:Real, S<:LazySet{N}}
     array::Vector{S}
 end
+
+# EmptySet is the neutral element for UnionSetArray
+@neutral(UnionSetArray, EmptySet)
 
 # Universe is the absorbing element for UnionSetArray
 @absorbing(UnionSetArray, Universe)

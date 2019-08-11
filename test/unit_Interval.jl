@@ -19,9 +19,9 @@ for N in [Float64, Float32, Rational{Int}]
     # test interface method an_element and membership
     @test an_element(x) ∈ x
     # test containment
-    @test (x ⊆ x) && !(x ⊆ N(0.2) * x) && (x ⊆ N(2) * x)
-    @test ⊆(x, Interval(N(0), N(2)))
-    @test !⊆(x, Interval(N(-1), N(0.5)))
+    @test x ⊆ x && x ⊈ N(0.2) * x && x ⊆ N(2) * x
+    @test x ⊆ Interval(N(0), N(2))
+    @test x ⊈ Interval(N(-1), N(0.5))
 
     # radius_hyperrectangle
     @test radius_hyperrectangle(x) == [N(0.5)]
@@ -140,7 +140,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test dAD == UnionSet(Interval(N(5), N(6)), Interval(N(7), N(8)))
 
     # check if an interval is flat, i.e. if its endpoints coincide (to numerical precision)
-    ztol = LazySets.ABSZTOL(N) # pick up default absolute zero tolerance value
+    ztol = LazySets._ztol(N) # pick up default absolute zero tolerance value
     @test isflat(Interval(N(0), ztol))
     if N <: AbstractFloat
         @test !isflat(Interval(N(0), 2*ztol))

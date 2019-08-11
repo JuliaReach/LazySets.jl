@@ -8,6 +8,46 @@ function ⊆(::AbstractVector{N}, ::LazySet{N})::Bool where {N<:Real}
           "(they behave equivalently although the implementations may differ)")
 end
 
+
+# --- fall-back with constraints_list of rhs ---
+
+"""
+    ⊆(X::LazySet{N}, P::LazySet{N}, [witness]::Bool=false) where {N<:Real}
+
+Check whether a convex set is contained in a polyhedral set, and if not,
+optionally compute a witness.
+
+### Input
+
+- `X`       -- inner convex set
+- `Y`       -- outer polyhedral set
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``X ⊆ P``
+* If `witness` option is activated:
+  * `(true, [])` iff ``X ⊆ P``
+  * `(false, v)` iff ``X ⊈ P`` and ``v ∈ X \\setminus P``
+
+### Notes
+
+We require that `constraints_list(P)` is available.
+
+### Algorithm
+
+We check inclusion of `X` in every constraint of `P`.
+"""
+function ⊆(X::LazySet{N}, P::LazySet{N}, witness::Bool=false) where {N<:Real}
+    if applicable(constraints_list, P)
+        return _issubset_constraints_list(X, P, witness)
+    else
+        error("an inclusion check for the given combination of set types is " *
+              "not available")
+    end
+end
+
+
 # --- AbstractHyperrectangle ---
 
 
@@ -40,7 +80,6 @@ function ⊆(S::LazySet{N}, H::AbstractHyperrectangle{N}, witness::Bool=false
           )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return ⊆(Approximations.interval_hull(S), H, witness)
 end
-
 
 """
     ⊆(P::AbstractPolytope{N}, H::AbstractHyperrectangle, [witness]::Bool=false
@@ -78,7 +117,7 @@ function ⊆(P::AbstractPolytope{N},
     @assert dim(P) == dim(H)
 
     for v in vertices_list(P)
-        if !∈(v, H)
+        if v ∉ H
             if witness
                 return (false, v)
             else
@@ -187,7 +226,7 @@ function ⊆(P::AbstractPolytope{N}, S::LazySet{N}, witness::Bool=false
     @assert dim(P) == dim(S)
 
     for v in vertices_list(P)
-        if !∈(v, S)
+        if v ∉ S
             if witness
                 return (false, v)
             else
@@ -203,40 +242,44 @@ function ⊆(P::AbstractPolytope{N}, S::LazySet{N}, witness::Bool=false
 end
 
 """
-    ⊆(S::LazySet{N},
+    ⊆(X::LazySet{N},
       P::AbstractPolyhedron{N},
       witness::Bool=false
-     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+     ) where {N<:Real}
 
 Check whether a convex set is contained in a polyhedron, and if not, optionally
 compute a witness.
 
 ### Input
 
-- `S` -- inner convex set
+- `X` -- inner convex set
 - `P` -- outer polyhedron (including a half-space)
 - `witness` -- (optional, default: `false`) compute a witness if activated
 
 ### Output
 
-* If `witness` option is deactivated: `true` iff ``S ⊆ P``
+* If `witness` option is deactivated: `true` iff ``X ⊆ P``
 * If `witness` option is activated:
-  * `(true, [])` iff ``S ⊆ P``
-  * `(false, v)` iff ``S ⊈ P`` and ``v ∈ P \\setminus S``
+  * `(true, [])` iff ``X ⊆ P``
+  * `(false, v)` iff ``X ⊈ P`` and ``v ∈ P \\setminus X``
 
 ### Algorithm
 
-Since ``S`` is convex, we can compare the support function of ``S`` and ``P`` in
+Since ``X`` is convex, we can compare the support function of ``X`` and ``P`` in
 each direction of the constraints of ``P``.
 
 For witness generation, we use the support vector in the first direction where
 the above check fails.
 """
-function ⊆(S::LazySet{N},
-           P::AbstractPolyhedron{N},
-           witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+function ⊆(X::LazySet{N}, P::AbstractPolyhedron{N}, witness::Bool=false
+          ) where {N<:Real}
+    return _issubset_constraints_list(X, P, witness)
+end
 
+# for documentation see
+# ⊆(X::LazySet{N}, P::AbstractPolyhedron{N}, witness::Bool=false) where {N<:Real}
+function _issubset_constraints_list(S::LazySet{N}, P::LazySet{N},
+                                    witness::Bool=false) where {N<:Real}
     @assert dim(S) == dim(P)
 
     @inbounds for H in constraints_list(P)
@@ -312,7 +355,7 @@ if not, optionally compute a witness.
 """
 function ⊆(S::AbstractSingleton{N}, set::LazySet{N}, witness::Bool=false
           )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
-    result = ∈(element(S), set)
+    result = element(S) ∈ set
     if witness
         return (result, result ? N[] : element(S))
     else
@@ -351,7 +394,7 @@ function ⊆(S::AbstractSingleton{N},
            H::AbstractHyperrectangle{N},
            witness::Bool=false
           )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
-    result = ∈(element(S), H)
+    result = element(S) ∈ H
     if witness
         return (result, result ? N[] : element(S))
     else
@@ -518,8 +561,8 @@ the end points of ``L``.
 """
 function ⊆(L::LineSegment{N}, S::LazySet{N}, witness::Bool=false
           )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
-    p_in_S = ∈(L.p, S)
-    result = p_in_S && ∈(L.q, S)
+    p_in_S = L.p ∈ S
+    result = p_in_S && L.q ∈ S
     if !witness
         return result
     elseif result
@@ -561,8 +604,8 @@ the end points of ``L``.
 """
 function ⊆(L::LineSegment{N}, H::AbstractHyperrectangle{N}, witness::Bool=false
           )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
-    p_in_H = ∈(L.p, H)
-    result = p_in_H && ∈(L.q, H)
+    p_in_H = L.p ∈ H
+    result = p_in_H && L.q ∈ H
     if !witness
         return result
     elseif result

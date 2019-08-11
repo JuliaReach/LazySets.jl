@@ -170,9 +170,9 @@ Then ``x ∈ B`` iff ``∑_{i=1}^n |c_i - x_i| ≤ r``.
 ```jldoctest
 julia> B = Ball1([1., 1.], 1.);
 
-julia> ∈([.5, -.5], B)
+julia> [.5, -.5] ∈ B
 false
-julia> ∈([.5, 1.5], B)
+julia> [.5, 1.5] ∈ B
 true
 ```
 """

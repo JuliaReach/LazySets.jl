@@ -9,6 +9,11 @@ for N in [Float64, Float32, Rational{Int}]
     cp = CartesianProduct(b1, b2)
     @test cp.X == b1
     @test cp.Y == b2
+
+    # swap
+    cp2 = swap(cp)
+    @test cp.X == cp2.Y && cp.Y == cp2.X
+
     # Test Dimension
     @test dim(cp) == 3
     # Test Support Vector
@@ -99,22 +104,22 @@ for N in [Float64, Float32, Rational{Int}]
     addconstraint!(p2, LinearConstraint(N[0, -1], N(1)))
     cp = CartesianProduct(p1, p2)
 
-    @test ∈(N[0, 0, 0, 0], cp)
-    @test ∈(N[4, 2, 1, 0], cp)
-    @test ∈(N[2, 4, -1, 0], cp)
-    @test ∈(N[-1, 1, 0.5, 0.7], cp)
-    @test ∈(N[2, 3, -0.8, 0.9], cp)
-    @test ∈(N[1, 1, -1, 0], cp)
-    @test ∈(N[3, 2, 0, 1], cp)
-    @test ∈(N[5 / 4, 7 / 4, 1, 1], cp)
-    @test !∈(N[4, 1, 0, 0], cp)
-    @test !∈(N[5, 2, 0, 0], cp)
-    @test !∈(N[3, 4, 0, 0], cp)
-    @test !∈(N[-1, 5, 0, 0], cp)
-    @test !∈(N[4, 2, 3, 1], cp)
-    @test !∈(N[2, 3, 3, 1], cp)
-    @test !∈(N[0, 0, 3, 1], cp)
-    @test !∈(N[1, 1, 3, 1], cp)
+    @test N[0, 0, 0, 0] ∈ cp
+    @test N[4, 2, 1, 0] ∈ cp
+    @test N[2, 4, -1, 0] ∈ cp
+    @test N[-1, 1, 0.5, 0.7] ∈ cp
+    @test N[2, 3, -0.8, 0.9] ∈ cp
+    @test N[1, 1, -1, 0] ∈ cp
+    @test N[3, 2, 0, 1] ∈ cp
+    @test N[5 / 4, 7 / 4, 1, 1] ∈ cp
+    @test N[4, 1, 0, 0] ∉ cp
+    @test N[5, 2, 0, 0] ∉ cp
+    @test N[3, 4, 0, 0] ∉ cp
+    @test N[-1, 5, 0, 0] ∉ cp
+    @test N[4, 2, 3, 1] ∉ cp
+    @test N[2, 3, 3, 1] ∉ cp
+    @test N[0, 0, 3, 1] ∉ cp
+    @test N[1, 1, 3, 1] ∉ cp
 
     # vertices_list
     i1 = Interval(N[0, 1])
@@ -186,8 +191,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test !isbounded(CartesianProductArray([Singleton(N[1]), HalfSpace(N[1], N(1))]))
 
     # membership
-    @test ∈(N[1, 2, 3, 4], cpa)
-    @test !∈(N[3, 4, 1, 2], cpa)
+    @test N[1, 2, 3, 4] ∈ cpa
+    @test N[3, 4, 1, 2] ∉ cpa
 
     # in-place modification
     b = BallInf(N[0, 0], N(2))
@@ -209,7 +214,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test ispermutation(vlist, [N[0, 2, 4], N[0, 3, 4], N[1, 2, 4],
         N[1, 3, 4], N[0, 2, 5], N[0, 3, 5], N[1, 2, 5], N[1, 3, 5]])
 
-    #constraints_list
+    # constraints_list
     hlist = constraints_list(CartesianProductArray([i1, i2, i3]))
     @test ispermutation(hlist,
         [LinearConstraint(sparsevec(N[1], N[1], 3), N(1)),
@@ -220,6 +225,19 @@ for N in [Float64, Float32, Rational{Int}]
         LinearConstraint(sparsevec(N[3], N[-1], 3), N(-4)),
         ])
     @test all(H -> dim(H) == 3, hlist)
+    # is_intersection_empty
+    cpa = CartesianProductArray([BallInf(ones(N, 5), N(1)),
+                                 BallInf(2 * ones(N, 5), N(0.5))])
+    b = BallInf(zeros(N, 10), N(1))
+    for (x, y) in [(cpa, b), (b, cpa)]
+        res, w = isdisjoint(x, y, true)
+        @test isdisjoint(x, y) && res && w == N[]
+    end
+    b = BallInf(ones(N, 10), N(1))
+    for (x, y) in [(cpa, b), (b, cpa)]
+        res, w = isdisjoint(x, y, true)
+        @test !isdisjoint(x, y) && !res && w ∈ x && w ∈ y
+    end
 
     # ========================================
     # Conversions of Cartesian Product Arrays
@@ -249,7 +267,7 @@ for N in [Float64, Float32, Rational{Int}]
     res, w = ⊆(cpa1, cpa2, true)
     @test cpa1 ⊆ cpa2 && res && w == N[]
     res, w = ⊆(cpa2, cpa1, true)
-    @test !⊆(cpa2, cpa1) && !res && w ∈ cpa2 && w ∉ cpa1
+    @test cpa2 ⊈ cpa1 && !res && w ∈ cpa2 && w ∉ cpa1
 
     # convert a hyperrectangle to the cartesian product array of intervals
     # convert a hyperrectangle to a cartesian product of intervals
@@ -284,12 +302,15 @@ for N in [Float64, Float32]
     h2 = Hyperrectangle(low=N[5, 5], high=N[6, 8])
     cpa1 = CartesianProductArray([i1, i2, h1])
     cpa2 = CartesianProductArray([i1, i2, h2])
-    G = HPolyhedron([HalfSpace(N[1, 0, 0, 0], N(1))])
-    G_empty = HPolyhedron([HalfSpace(N[1, 0, 0, 0], N(-1))])
-	cpa1_box = overapproximate(cpa1)
-	cpa2_box = overapproximate(cpa2)
+    G = HalfSpace(N[1, 0, 0, 0], N(1))
+    G_empty = HalfSpace(N[1, 0, 0, 0], N(-1))
+    cpa1_box = overapproximate(cpa1)
+    cpa2_box = overapproximate(cpa2)
 
-    @test is_intersection_empty(cpa1, cpa2) == is_intersection_empty(cpa1_box, cpa2_box) == false
-    @test is_intersection_empty(cpa1, G_empty) == is_intersection_empty(cpa1_box, G_empty) == true
-    @test is_intersection_empty(cpa1, G) == is_intersection_empty(Approximations.overapproximate(cpa1), G) == false
+    @test !is_intersection_empty(cpa1, cpa2) &&
+          !is_intersection_empty(cpa1_box, cpa2_box)
+    @test is_intersection_empty(cpa1, G_empty) &&
+          is_intersection_empty(cpa1_box, G_empty)
+    @test !is_intersection_empty(cpa1, G) &&
+          !is_intersection_empty(Approximations.overapproximate(cpa1), G)
 end

@@ -10,7 +10,7 @@ Type that represents an ellipsoid.
 It is defined as the set
 
 ```math
-E = \\left\\{ x ∈ \\mathbb{R}^n : (x-c)Q^{-1}(x-c) ≤ 1 \\right\\},
+E = \\left\\{ x ∈ \\mathbb{R}^n : (x-c)^T Q^{-1} (x-c) ≤ 1 \\right\\},
 ```
 where ``c \\in \\mathbb{R}^n`` is its *center* and ``Q \\in \\mathbb{R}^{n×n}``
 its *shape matrix*, which should be a positive definite matrix.
@@ -21,7 +21,7 @@ of an ellipse.
 ### Fields
 
 - `center`       -- center of the ellipsoid
-- `shape matrix` -- real positive definite matrix, i.e. it is equal to its transpose
+- `shape_matrix` -- real positive definite matrix, i.e. it is equal to its transpose
                     and ``x^\\mathrm{T}Qx > 0`` for all nonzero ``x``
 
 ### Examples

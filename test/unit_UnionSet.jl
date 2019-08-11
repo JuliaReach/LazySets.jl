@@ -11,6 +11,18 @@ for N in [Float64, Rational{Int}, Float32]
     # array type (union of a finite number of convex sets)
     Uarr = UnionSetArray([B1, B2])
 
+    # swap
+    U2 = swap(UXY)
+    @test UXY.X == U2.Y && UXY.Y == U2.X
+
+    # neutral and absorbing elements
+    E = EmptySet{N}()
+    @test neutral(UnionSet) == neutral(UnionSetArray) == EmptySet
+    @test UnionSet(B1, E) == UnionSet(E, B1) == B1
+    U = Universe{N}(2)
+    @test absorbing(UnionSet) == absorbing(UnionSetArray) == Universe
+    @test UnionSet(B1, U) == UnionSet(U, B1) == U
+
     for U in [UXY, Uarr]
         # dimension
         @test dim(U) == dim(B1)
@@ -39,7 +51,7 @@ for N in [Float64, Rational{Int}, Float32]
         subset, point = ⊆(U, B3, true)
         @test U ⊆ B3 && subset && point == N[]
         subset, point = ⊆(U, B2, true)
-        @test !(U ⊆ B2) && !subset && point ∈ U && point ∉ B2
+        @test U ⊈ B2 && !subset && point ∈ U && point ∉ B2
 
         # isdisjoint
         disjoint1, point1 = isdisjoint(U, B1, true)

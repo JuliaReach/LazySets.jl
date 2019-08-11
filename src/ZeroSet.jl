@@ -138,9 +138,9 @@ Check whether a given point is contained in a zero set.
 ```jldoctest
 julia> Z = ZeroSet(2);
 
-julia> ∈([1.0, 0.0], Z)
+julia> [1.0, 0.0] ∈ Z
 false
-julia> ∈([0.0, 0.0], Z)
+julia> [0.0, 0.0] ∈ Z
 true
 ```
 """

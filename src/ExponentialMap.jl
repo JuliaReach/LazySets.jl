@@ -77,8 +77,6 @@ end
 function load_expokit_sparsematrixexp()
 return quote
 
-using .Expokit: expmv
-
 function get_column(spmexp::SparseMatrixExp{N}, j::Int)::Vector{N} where {N}
     n = size(spmexp, 1)
     aux = zeros(N, n)
@@ -211,6 +209,20 @@ function *(spmexp::SparseMatrixExp{N},
     return ExponentialMap(spmexp, X)
 end
 
+# ZeroSet is absorbing for ExponentialMap
+function *(spmexp::SparseMatrixExp{N}, Z::ZeroSet{N}
+          )::ZeroSet{N} where {N<:Real}
+    @assert dim(Z) == size(spmexp, 2) "an exponential map of size " *
+            "$(size(spmexp)) cannot be applied to a set of dimension $(dim(Z))"
+    return ZeroSet{N}(size(spmexp, 1))
+end
+
+# EmptySet is absorbing for ExponentialMap
+function *(spmexp::SparseMatrixExp{N}, ∅::EmptySet{N}
+          )::EmptySet{N} where {N<:Real}
+    return ∅
+end
+
 """
     dim(em::ExponentialMap)::Int
 
@@ -230,8 +242,6 @@ end
 
 function load_expokit_exponentialmap()
 return quote
-
-using .Expokit: expmv
 
 """
     σ(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
@@ -318,15 +328,15 @@ julia> em = ExponentialMap(
         SparseMatrixExp(sparse([1, 2], [1, 2], [2.0, 1.0], 2, 2)),
         BallInf([1., 1.], 1.));
 
-julia> ∈([-1.0, 1.0], em)
+julia> [-1.0, 1.0] ∈ em
 false
-julia> ∈([1.0, 1.0], em)
+julia> [1.0, 1.0] ∈ em
 true
 ```
 """
 function ∈(x::AbstractVector{N}, em::ExponentialMap{N})::Bool where {N<:Real}
     @assert length(x) == dim(em)
-    return ∈(expmv(-one(N), em.spmexp.M, x), em.X)
+    return expmv(-one(N), em.spmexp.M, x) ∈ em.X
 end
 
 """
@@ -478,8 +488,6 @@ end
 
 function load_expokit_exponentialprojectionmap()
 return quote
-
-using .Expokit: expmv
 
 """
     σ(d::AbstractVector{N},

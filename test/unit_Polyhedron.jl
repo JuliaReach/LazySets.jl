@@ -61,8 +61,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test isuniversal(p_univ) && isuniversal(p_univ, true) == (true, N[])
 
     # membership
-    @test ∈(N[5 / 4, 7 / 4], p)
-    @test !∈(N[4, 1], p)
+    @test N[5 / 4, 7 / 4] ∈ p && N[4, 1] ∉ p
 
     # constrained dimensions
     @test constrained_dimensions(p) == [1, 2]
@@ -250,5 +249,12 @@ if test_suite_polyhedra
         L = linear_map(sparse(Mnotinv), Pbdd) # Requires Polyhedra because it works on vertices
         @test L isa VPolytope
         @test_throws ArgumentError linear_map(sparse(Mnotinv), Punbdd)
+
+        # remove a repeated constraint (#909)
+        Q = HPolyhedron([HalfSpace([-1.29817, 1.04012], 6.07731),
+                         HalfSpace([-1.29348, -0.0920708], 1.89515)])
+        addconstraint!(Q, Q.constraints[2])
+        remove_redundant_constraints!(Q)
+        @test length(constraints_list(Q)) == 2
     end
 end

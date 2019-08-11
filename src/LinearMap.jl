@@ -112,27 +112,16 @@ function *(α::N, lm::LinearMap{N}) where {N<:Real}
     return LinearMap(α * lm.M, lm.X)
 end
 
-"""
-```
-    *(M::AbstractMatrix{N}, Z::ZeroSet{N})::ZeroSet{N} where {N<:Real}
-```
-
-A linear map of a zero set, which is simplified to a zero set (the absorbing
-element).
-
-### Input
-
-- `M` -- abstract matrix
-- `Z` -- zero set
-
-### Output
-
-The zero set with the output dimension of the linear map.
-"""
+# ZeroSet is absorbing for LinearMap
 function *(M::AbstractMatrix{N}, Z::ZeroSet{N})::ZeroSet{N} where {N<:Real}
     @assert dim(Z) == size(M, 2) "a linear map of size $(size(M)) cannot " *
             "be applied to a set of dimension $(dim(Z))"
     return ZeroSet{N}(size(M, 1))
+end
+
+# EmptySet is absorbing for LinearMap
+function *(M::AbstractMatrix{N}, ∅::EmptySet{N})::EmptySet{N} where {N<:Real}
+    return ∅
 end
 
 """
@@ -260,9 +249,9 @@ works for non-square matrices.
 ```jldoctest
 julia> lm = LinearMap([2.0 0.0; 0.0 1.0], BallInf([1., 1.], 1.));
 
-julia> ∈([5.0, 1.0], lm)
+julia> [5.0, 1.0] ∈ lm
 false
-julia> ∈([3.0, 1.0], lm)
+julia> [3.0, 1.0] ∈ lm
 true
 ```
 
@@ -272,12 +261,12 @@ julia> B = BallInf(zeros(4), 1.);
 
 julia> M = [1. 0 0 0; 0 1 0 0]/2;
 
-julia> ∈([0.5, 0.5], M*B)
+julia> [0.5, 0.5] ∈ M*B
 true
 ```
 """
 function ∈(x::AbstractVector{N}, lm::LinearMap{N})::Bool where {N<:Real}
-    return ∈(lm.M \ x, lm.X)
+    return lm.M \ x ∈ lm.X
 end
 
 """

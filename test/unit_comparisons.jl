@@ -1,4 +1,4 @@
-using LazySets: _leq, _geq, isapproxzero, _isapprox, ABSZTOL
+using LazySets: _leq, _geq, isapproxzero, _isapprox, _ztol
 
 # approximate <= and
 @test _leq(2e-15, 1e-15) && _leq(1e-15, 2e-15)
@@ -14,10 +14,10 @@ using LazySets: _leq, _geq, isapproxzero, _isapprox, ABSZTOL
 @test _geq(2e-15, 1e-15, ztol=1e-15) && !_geq(1e-15, 2e-15, ztol=1e-15)
 
 # default absolute zero tolerance for rational
-ABSZTOL(eltype(1/100)) == zero(Rational{Int})
+_ztol(eltype(1/100)) == zero(Rational{Int})
 
 # default absolute zero tolerance for FP
-ABSZTOL(eltype(0.01)) == sqrt(eps(Float64))
+_ztol(eltype(0.01)) == sqrt(eps(Float64))
 
 # approximately zero tests
 @test isapproxzero(0//1)

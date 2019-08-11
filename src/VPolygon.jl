@@ -354,16 +354,16 @@ edge, using the dot product.
 julia> P = VPolygon([[2.0, 3.0], [3.0, 1.0], [5.0, 1.0], [4.0, 5.0]];
                     apply_convex_hull=false);
 
-julia> ∈([4.5, 3.1], P)
+julia> [4.5, 3.1] ∈ P
 false
-julia> ∈([4.5, 3.0], P)
+julia> [4.5, 3.0] ∈ P
 true
-julia> ∈([4.4, 3.4], P)  #  point lies on the edge -> floating point error
+julia> [4.4, 3.4] ∈ P  #  point lies on the edge -> floating-point error
 false
 julia> P = VPolygon([[2//1, 3//1], [3//1, 1//1], [5//1, 1//1], [4//1, 5//1]];
                      apply_convex_hull=false);
 
-julia> ∈([44//10, 34//10], P)  #  with rational numbers the answer is correct
+julia> [44//10, 34//10] ∈ P  #  with rational numbers the answer is correct
 true
 ```
 """
@@ -377,12 +377,11 @@ function ∈(x::AbstractVector{N}, P::VPolygon{N})::Bool where {N<:Real}
         return x == P.vertices[1]
     end
 
-    zero_N = zero(N)
-    if right_turn(P.vertices[1], x, P.vertices[end]) < zero_N
+    if !is_right_turn(P.vertices[1], x, P.vertices[end])
         return false
     end
     for i in 2:length(P.vertices)
-        if right_turn(P.vertices[i], x, P.vertices[i-1]) < zero_N
+        if !is_right_turn(P.vertices[i], x, P.vertices[i-1])
             return false
         end
     end

@@ -52,6 +52,12 @@ for N in [Float64, Float32]
     emap = me * b
     @test emap isa ExponentialMap{N}
 
+    # absorbing elements
+    X = me * ZeroSet{N}(6)
+    @test X isa ZeroSet{N} && dim(X) == 6
+    X = me * EmptySet{N}()
+    @test X isa EmptySet{N}
+
     # dimension
     @test dim(emap) == n
 

@@ -161,7 +161,7 @@ function remove_redundant_constraints!(constraints::AbstractVector{LC};
             return false
         elseif lp.status == :Optimal
             objval = -lp.objval
-            if objval <= b[j]
+            if _leq(objval, b[j])
                 # the constraint is redundant
                 non_redundant_indices = setdiff(non_redundant_indices, j)
             else

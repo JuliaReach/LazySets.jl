@@ -1,4 +1,6 @@
-using LazySets: block_to_dimension_indices, substitute_blocks, get_constrained_lowdimset
+using LazySets: block_to_dimension_indices,
+                substitute_blocks,
+                get_constrained_lowdimset
 """
     overapproximate(X::S, ::Type{S}, args...) where {S<:LazySet}
 
@@ -90,12 +92,12 @@ end
     overapproximate(S::CartesianProductArray{N, <:AbstractHyperrectangle{N}},
                     ::Type{<:Hyperrectangle}) where {N<:Real}
 
-Return a tight overapproximation of the cartesian product array of a finite
+Return a tight overapproximation of the Cartesian product array of a finite
 number of convex sets with and hyperrectangle.
 
 ### Input
 
-- `S`              -- cartesian product array of a finite number of convex set
+- `S`              -- Cartesian product array of a finite number of convex set
 - `Hyperrectangle` -- type for dispatch
 
 ### Output
@@ -105,7 +107,7 @@ A hyperrectangle.
 ### Algorithm
 
 This method falls back to the corresponding `convert` method. Since the sets wrapped
-by the cartesian product array are hyperrectangles, it can be done efficiently
+by the Cartesian product array are hyperrectangles, it can be done efficiently
 without overapproximation.
 """
 function overapproximate(S::CartesianProductArray{N, <:AbstractHyperrectangle{N}},
@@ -117,12 +119,12 @@ end
     overapproximate(S::CartesianProduct{N, <:AbstractHyperrectangle{N}, <:AbstractHyperrectangle{N}},
                     ::Type{<:Hyperrectangle}) where {N<:Real}
 
-Return a tight overapproximation of the cartesian product of two
+Return a tight overapproximation of the Cartesian product of two
 hyperrectangles by a new hyperrectangle.
 
 ### Input
 
-- `S`              -- cartesian product of two hyperrectangular sets
+- `S`              -- Cartesian product of two hyperrectangular sets
 - `Hyperrectangle` -- type for dispatch
 
 ### Output
@@ -132,7 +134,7 @@ A hyperrectangle.
 ### Algorithm
 
 This method falls back to the corresponding `convert` method. Since the sets wrapped
-by the cartesian product are hyperrectangles, it can be done efficiently
+by the Cartesian product are hyperrectangles, it can be done efficiently
 without overapproximation.
 """
 function overapproximate(S::CartesianProduct{N, <:AbstractHyperrectangle{N}, <:AbstractHyperrectangle{N}},
@@ -288,8 +290,7 @@ function overapproximate(Z::Zonotope, ::Type{<:Hyperrectangle})::Hyperrectangle
 end
 
 """
-    overapproximate(X::LazySet{N}, dir::AbstractDirections{N})::HPolytope{N}
-        where {N}
+    overapproximate(X::LazySet{N}, dir::AbstractDirections{N}) where {N}
 
 Overapproximating a set with template directions.
 
@@ -300,14 +301,15 @@ Overapproximating a set with template directions.
 
 ### Output
 
-An `HPolytope` overapproximating the set `X` with the directions from `dir`.
+A polyhedron overapproximating the set `X` with the directions from `dir`.
+If the directions are known to be bounded, the result is an `HPolytope`,
+otherwise the result is an `HPolyhedron`.
 """
-function overapproximate(X::LazySet{N},
-                         dir::AbstractDirections{N}
-                        )::HPolytope{N} where {N}
+function overapproximate(X::LazySet{N}, dir::AbstractDirections{N}) where {N}
     halfspaces = Vector{LinearConstraint{N}}()
     sizehint!(halfspaces, length(dir))
-    H = HPolytope(halfspaces)
+    T = isbounding(dir) ? HPolytope : HPolyhedron
+    H = T(halfspaces)
     for d in dir
         addconstraint!(H, LinearConstraint(d, ρ(d, X)))
     end
@@ -315,8 +317,7 @@ function overapproximate(X::LazySet{N},
 end
 
 """
-    overapproximate(X::LazySet{N},
-                    dir::Type{<:AbstractDirections})::HPolytope{N} where {N}
+    overapproximate(X::LazySet{N}, dir::Type{<:AbstractDirections}) where {N}
 
 Overapproximating a set with template directions.
 
@@ -327,11 +328,12 @@ Overapproximating a set with template directions.
 
 ### Output
 
-A `HPolytope` overapproximating the set `X` with the directions from `dir`.
+A polyhedron overapproximating the set `X` with the directions from `dir`.
+If the directions are known to be bounded, the result is an `HPolytope`,
+otherwise the result is an `HPolyhedron`.
 """
 function overapproximate(X::LazySet{N},
-                         dir::Type{<:AbstractDirections}
-                        )::HPolytope{N} where {N}
+                         dir::Type{<:AbstractDirections}) where {N}
     return overapproximate(X, dir{N}(dim(X)))
 end
 
@@ -732,7 +734,7 @@ julia> Dx₁ = IA.Interval(0.0, 3.0) # domain for x₁
 julia> Dx₂ = IA.Interval(-1.0, 1.0) # domain for x₂
 [-1, 1]
 
-julia> D = Dx₁ × Dx₂ # take the cartesian product of the domain on each variable 
+julia> D = Dx₁ × Dx₂ # take the Cartesian product of the domain on each variable
 [0, 3] × [-1, 1]
 
 julia> r = IA.Interval(-0.5, 0.5) # interval remainder
@@ -808,7 +810,7 @@ end # quote
 end # load_taylormodels_overapproximation
 
 # ==========================================
-# Lazy linear maps of cartesian products
+# Lazy linear maps of Cartesian products
 # ==========================================
 
 """
@@ -816,12 +818,12 @@ end # load_taylormodels_overapproximation
                     ::Type{CartesianProductArray{N, S}}
                    ) where {N, S<:LazySet{N}}
 
-Decompose a lazy linear map of a cartesian product array while keeping the
+Decompose a lazy linear map of a Cartesian product array while keeping the
 original block structure.
 
 ### Input
 
-- `lm`                    -- lazy linear map of cartesian product array
+- `lm`                    -- lazy linear map of Cartesian product array
 - `CartesianProductArray` -- type for dispatch
 
 ### Output
@@ -841,12 +843,12 @@ end
                     ::Type{<:CartesianProductArray},
                     dir::Type{<:AbstractDirections}) where {N}
 
-Decompose a lazy linear map of a cartesian product array with template
+Decompose a lazy linear map of a Cartesian product array with template
 directions while keeping the original block structure.
 
 ### Input
 
-- `lm`                    -- lazy linear map of a cartesian product array
+- `lm`                    -- lazy linear map of a Cartesian product array
 - `CartesianProductArray` -- type for dispatch
 - `dir`                   -- template directions for overapproximation
 
@@ -867,12 +869,12 @@ end
                     ::Type{<:CartesianProductArray},
                     set_type::Type{<:LazySet}) where {N}
 
-Decompose a lazy linear map of a cartesian product array with a given set type
+Decompose a lazy linear map of a Cartesian product array with a given set type
 while keeping the original block structure.
 
 ### Input
 
-- `lm`                    -- lazy linear map of a cartesian product array
+- `lm`                    -- lazy linear map of a Cartesian product array
 - `CartesianProductArray` -- type for dispatch
 - `set_type`              -- set type for overapproximation
 
@@ -916,43 +918,49 @@ end
 
 """
     overapproximate(cap::Intersection{N,
-                            <:CartesianProductArray{N},
-                            <:AbstractPolyhedron{N}},
-                       ::Type{CartesianProductArray}, oa) where {N}
+                                      <:CartesianProductArray{N},
+                                      <:AbstractPolyhedron{N}},
+                    ::Type{CartesianProductArray}, oa) where {N}
 
-Return the intersection of the cartesian product of a finite number of convex sets and a polyhedron.
+Return the intersection of the Cartesian product of a finite number of convex
+sets and a polyhedron.
 
 ### Input
 
- - `cap` -- Lazy intersection of cartesian product array and polyhedron
+ - `cap` -- Lazy intersection of Cartesian product array and polyhedron
  - `CartesianProductArray` -- type for dispatch
- - `oa`  -- template directions
+ - `oa`  -- overapproximation option
 
 ### Output
 
-The intersection between `cpa` and `P` with overapproximation in each constrained block.
+A `CartesianProductArray` that overapproximates the intersection of `cpa` and
+`P`.
 
 ### Algorithm
 
-The intersection is only needed to be taken in the elements of the cartesian product array (subsets of
-variables, or "blocks") which are constrained in `P`.
-Hence we first search for constrained blocks and then take the intersection of
-a lower-dimensional Cartesian product of these blocks with the projection of `Y`
-onto the variables of these blocks. (This projection is syntactic and exact.)
+The intersection only needs to be computed in the blocks of `cpa` that are
+constrained in `P`.
+Hence we first collect those constrained blocks in a lower-dimensional Cartesian
+product array and then convert to an `HPolytope` `X`.
+Then we take the intersection of `X` and the projection of `Y` onto the
+corresponding dimensions.
+(This projection is purely syntactic and exact.)
+Finally we decompose the result again and plug together the unaffected old
+blocks and the newly computed blocks.
 The result is a `CartesianProductArray` with the same block structure as in `X`.
-However, when we decompose back our set we overapproximate during projection operation,
-therefore we need to specify overapproximation strategy (it is Hyperrectangle by default)
 """
 function overapproximate(cap::Intersection{N,
-                                            <:CartesianProductArray{N},
-                                            <:AbstractPolyhedron{N}},
+                                           <:CartesianProductArray{N},
+                                           <:AbstractPolyhedron{N}},
                             ::Type{CartesianProductArray}, oa) where {N}
 
     cpa, P = cap.X, cap.Y
 
-    cpa_low_dim, vars, block_structure, blocks = get_constrained_lowdimset(cpa, P)
+    cpa_low_dim, vars, block_structure, blocks =
+        get_constrained_lowdimset(cpa, P)
 
-    low_intersection = intersection(cpa_low_dim, project(P, vars))
+    hpoly_low_dim = HPolytope(constraints_list(cpa_low_dim))
+    low_intersection = intersection(hpoly_low_dim, project(P, vars))
 
     if isempty(low_intersection)
         return EmptySet{N}()

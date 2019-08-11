@@ -13,9 +13,10 @@ for N in [Float64, Rational{Int}, Float32]
     # - union
     @test B ∪ U == U ∪ B == U ∪ U == U
     # - Minkowski sum
-#     @test B ⊕ U == U ⊕ B == U ⊕ U == U  # TODO problematic
-#     msa = MinkowskiSumArray([B, N(2) * B, N(3) * B])
-#     @test msa ⊕ U == U ⊕ msa == U
+    # TODO requires #1099
+    # @test B ⊕ U == U ⊕ B == U ⊕ U == U
+    # msa = MinkowskiSumArray([B, N(2) * B, N(3) * B])
+    # @test msa ⊕ U == U ⊕ msa == U
 
     # universe is a neutral element for
     # - intersection
@@ -77,9 +78,11 @@ for N in [Float64, Rational{Int}, Float32]
     # subset
     res, w = ⊆(B, U, true)
     @test B ⊆ U && res && w == N[]
-    # res, w = ⊆(U, B, true)  # currently not supported
-    # @test !(U ⊆ B) && !res && w ∉ B
-    @test !(U ⊆ B)
+    # TODO witness production currently not supported
+    @test_throws ErrorException (⊆(U, B, true))
+    # res, w = ⊆(U, B, true)
+    # @test U ⊈ B && !res && w ∉ B
+    @test U ⊈ B
     res, w = ⊆(U, U, true)
     @test U ⊆ U && res && w == N[]
 end

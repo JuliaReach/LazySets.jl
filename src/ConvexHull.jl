@@ -5,7 +5,8 @@ export ConvexHull, CH,
        convex_hull!,
        ConvexHullArray, CHArray,
        ConvexHull!,
-       array
+       array,
+       swap
 
 """
     ConvexHull{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
@@ -63,6 +64,23 @@ ConvexHull(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} =
 Alias for `ConvexHull`.
 """
 const CH = ConvexHull
+
+"""
+    swap(ch::ConvexHull)
+
+Return a new `ConvexHull` object with the arguments swapped.
+
+### Input
+
+- `ch` -- convex hull of two convex sets
+
+### Output
+
+A new `ConvexHull` object with the arguments swapped.
+"""
+function swap(ch::ConvexHull)
+    return ConvexHull(ch.Y, ch.X)
+end
 
 """
     dim(ch::ConvexHull)::Int

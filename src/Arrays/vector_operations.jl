@@ -4,7 +4,9 @@ export dot_zero,
        samedir,
        nonzero_indices,
        rectify,
+       right_turn,
        is_cyclic_permutation,
+       is_right_turn,
        to_negative_vector,
        _above,
        _dr,
@@ -282,4 +284,74 @@ end
         u[i] = -v.nzval[ni]
     end
     return u
+end
+
+"""
+    right_turn([O::AbstractVector{N}=[0, 0]], u::AbstractVector{N},
+               v::AbstractVector{N})::N where {N<:Real}
+
+Compute a scalar that determines whether the acute angle defined by three 2D
+points `O`, `u`, `v` in the plane is a right turn (< 180° counter-clockwise)
+with respect to the center `O`.
+
+### Input
+
+- `O` -- (optional; default: `[0, 0]`) 2D center point
+- `u` -- first 2D point
+- `v` -- second 2D point
+
+### Output
+
+A scalar representing the rotation.
+If the result is 0, the points are collinear; if it is positive, the points
+constitute a positive angle of rotation around `O` from `u` to `v`; otherwise
+they constitute a negative angle.
+
+### Algorithm
+
+The [cross product](https://en.wikipedia.org/wiki/Cross_product) is used to
+determine the sense of rotation.
+"""
+@inline function right_turn(O::AbstractVector{N},
+                            u::AbstractVector{N},
+                            v::AbstractVector{N})::N where {N<:Real}
+    return (u[1] - O[1]) * (v[2] - O[2]) - (u[2] - O[2]) * (v[1] - O[1])
+end
+
+# version for O = origin
+@inline function right_turn(u::AbstractVector{N},
+                            v::AbstractVector{N})::N where {N<:Real}
+    return u[1] * v[2] - u[2] * v[1]
+end
+
+"""
+    is_right_turn([O::AbstractVector{N}=[0, 0]], u::AbstractVector{N},
+                  v::AbstractVector{N})::Bool where {N<:Real}
+
+Determine whether the acute angle defined by three 2D points `O`, `u`, `v`
+in the plane is a right turn (< 180° counter-clockwise) with
+respect to the center `O`.
+Determine if the acute angle defined by two 2D vectors is a right turn (< 180°
+counter-clockwise) with respect to the center `O`.
+
+### Input
+
+- `O` -- (optional; default: `[0, 0]`) 2D center point
+- `u` -- first 2D direction
+- `v` -- second 2D direction
+
+### Output
+
+`true` iff the vectors constitute a right turn.
+"""
+@inline function is_right_turn(O::AbstractVector{N},
+                               u::AbstractVector{N},
+                               v::AbstractVector{N})::Bool where {N<:Real}
+    return right_turn(O, u, v) >= zero(N)
+end
+
+# version for O = origin
+@inline function is_right_turn(u::AbstractVector{N},
+                               v::AbstractVector{N})::Bool where {N<:Real}
+    return right_turn(u, v) >= zero(N)
 end

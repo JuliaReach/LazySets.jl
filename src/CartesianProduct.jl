@@ -4,6 +4,7 @@ export CartesianProduct,
        CartesianProductArray,
        CartesianProduct!,
        array,
+       swap,
        same_block_structure
 
 """
@@ -66,6 +67,23 @@ Alias for the binary Cartesian product.
 Alias for the binary Cartesian product.
 """
 ×(X::LazySet, Y::LazySet) = CartesianProduct(X, Y)
+
+"""
+    swap(cp::CartesianProduct)
+
+Return a new `CartesianProduct` object with the arguments swapped.
+
+### Input
+
+- `cp` -- Cartesian product of two convex sets
+
+### Output
+
+A new `CartesianProduct` object with the arguments swapped.
+"""
+function swap(cp::CartesianProduct)
+    return CartesianProduct(cp.Y, cp.X)
+end
 
 """
     dim(cp::CartesianProduct)::Int
@@ -159,8 +177,8 @@ function ∈(x::AbstractVector{N}, cp::CartesianProduct{N})::Bool where {N<:Real
     @assert length(x) == dim(cp)
 
     n1 = dim(cp.X)
-    return ∈(view(x, 1:n1), cp.X) &&
-           ∈(view(x, n1+1:length(x)), cp.Y)
+    return view(x, 1:n1) ∈ cp.X &&
+           view(x, n1+1:length(x)) ∈ cp.Y
 end
 
 """
@@ -404,7 +422,7 @@ function ∈(x::AbstractVector{N}, cpa::CartesianProductArray{N}
     i0 = 1
     for Xi in cpa.array
         i1 = i0 + dim(Xi) - 1
-        if !∈(x[i0:i1], Xi)
+        if x[i0:i1] ∉ Xi
             return false
         end
         i0 = i1 + 1

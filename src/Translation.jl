@@ -365,7 +365,7 @@ This implementation relies on the set membership function for the wrapped set
 `tr.X`, since ``x ∈ X ⊕ v`` iff ``x - v ∈ X``.
 """
 function ∈(x::AbstractVector{N}, tr::Translation{N})::Bool where {N<:Real}
-    return ∈(x - tr.v, tr.X)
+    return x - tr.v ∈ tr.X
 end
 
 """

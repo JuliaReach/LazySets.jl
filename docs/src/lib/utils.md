@@ -15,9 +15,11 @@ inner
 is_cyclic_permutation
 isinvertible
 ispermutation
+is_right_turn
 issquare
 nonzero_indices
 remove_duplicates_sorted!
+right_turn
 samedir
 SingleEntryVector
 to_negative_vector
@@ -32,7 +34,6 @@ _above
 an_element_helper
 binary_search_constraints
 get_radius!
-is_right_turn
 is_tighter_same_dir_2D
 sign_cadlag
 _random_zero_sum_vector

@@ -57,6 +57,7 @@ isbounded_unit_dimensions(::LazySet{N}) where {N<:Real}
 an_element(::LazySet{N}) where {N<:Real}
 tosimplehrep(::LazySet)
 isuniversal(::LazySet{N}, ::Bool=false) where {N<:Real}
+minkowski_sum(::LazySet{N}, ::LazySet{N}) where {N<:Real}
 ```
 
 Plotting is available for general one- or two-dimensional `LazySet`s, provided
@@ -118,6 +119,7 @@ This interface defines the following functions:
 ∈(::AbstractVector{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 constrained_dimensions(::AbstractPolyhedron)
 linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real}
+minkowski_sum(::AbstractPolyhedron{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 ```
 
 Plotting (bounded) polyhedra is available, too:
@@ -214,9 +216,9 @@ AbstractZonotope
 This interface defines the following functions:
 
 ```@docs
-ngens(Z::AbstractZonotope)
-genmat_fallback(Z::AbstractZonotope{N}) where {N<:Real}
-generators_fallback(Z::AbstractZonotope{N}) where {N<:Real}
+ngens(::AbstractZonotope)
+genmat_fallback(::AbstractZonotope{N}) where {N<:Real}
+generators_fallback(::AbstractZonotope{N}) where {N<:Real}
 ```
 
 ##### Hyperrectangle
@@ -246,6 +248,8 @@ isflat(::AbstractHyperrectangle)
 split(::AbstractHyperrectangle{N}, ::AbstractVector{Int}) where {N<:Real}
 generators(::AbstractHyperrectangle)
 genmat(::AbstractHyperrectangle)
+ngens(::AbstractHyperrectangle{N}) where {N<:Real}
+rectify(::AbstractHyperrectangle)
 ```
 
 ##### Singleton
@@ -274,6 +278,7 @@ low(::AbstractSingleton{N}, ::Int) where {N<:Real}
 linear_map(::AbstractMatrix{N}, ::AbstractSingleton{N}) where {N<:Real}
 generators(::AbstractSingleton{N}) where {N<:Real}
 genmat(::AbstractSingleton{N}) where {N<:Real}
+ngens(::AbstractSingleton)
 plot_recipe(::AbstractSingleton{N}, ::N=zero(N)) where {N<:Real}
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractSingleton{N}, ::N=zero(N)) where {N<:Real}
 ```

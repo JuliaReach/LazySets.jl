@@ -59,6 +59,7 @@ Hyperrectangle(center::Vector{N}, radius::Vector{N}) where {N<:Real} =
 function Hyperrectangle(;
                         high::AbstractVector{N},
                         low::AbstractVector{N}) where {N<:Real}
+    @assert all(i -> low[i] <= high[i], eachindex(low)) "lower bound must be lower than upper bound"
     # compute center and radius from high and low vectors
     center = (high .+ low) ./ 2
     radius = abs.(high .- center)

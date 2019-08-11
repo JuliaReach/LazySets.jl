@@ -7,8 +7,10 @@ support vectors.
 module Approximations
 
 using LazySets, LazySets.Arrays, Requires, LinearAlgebra, SparseArrays
+using LazySets: _rtol
 
 export approximate,
+       project,
        ballinf_approximation,
        box_approximation, interval_hull,
        decompose,
@@ -18,11 +20,9 @@ export approximate,
        BoxDiagDirections,
        OctDirections,
        PolarDirections,
-       SphericalDirections
-
-const TOL(N::Type{Float64}) = eps(N)
-const TOL(N::Type{Float32}) = eps(N)
-const TOL(N::Type{Rational{INNER}}) where {INNER} = zero(N)
+       SphericalDirections,
+       CustomDirections,
+       isbounding
 
 const DIR_EAST(N) = [one(N), zero(N)]
 const DIR_NORTH(N) = [zero(N), one(N)]

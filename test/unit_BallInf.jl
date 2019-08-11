@@ -54,6 +54,15 @@ for N in [Float64, Rational{Int}, Float32]
     d = N[1, -1]
     @test σ(d, b) == N[2, -2]
 
+    # support function
+    B = BallInf(N[1, 2], N(1))
+    @test ρ(N[1, 1], B) == N(5)
+    @test ρ(N[1, 0], B) == N(2)
+    @test ρ(N[0, 1], B) == N(3)
+    @test ρ(N[-1, -1], B) == N(-1)
+    @test ρ(N[-1, 0], B) == N(0)
+    @test ρ(N[-1, 1], B) == N(3)
+
     # boundedness
     @test isbounded(b)
 
@@ -62,8 +71,8 @@ for N in [Float64, Rational{Int}, Float32]
 
     # membership
     b = BallInf(N[1, 1], N(1))
-    @test !∈(N[0.5, -0.5], b)
-    @test ∈(N[0.5, 1.5], b)
+    @test N[0.5, -0.5] ∉ b
+    @test N[0.5, 1.5] ∈ b
 
     # an_element function
     b = BallInf(N[1, 2], N(3))
