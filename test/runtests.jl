@@ -124,6 +124,7 @@ if test_suite_basic
     # Algorithms for approximation of convex sets using support vectors
     # =================================================================
     @time @testset "LazySets.Approximations.overapproximation" begin include("unit_overapproximate.jl") end
+    @time @testset "LazySets.Approximations.underapproximation" begin include("unit_underapproximate.jl") end
     @time @testset "LazySets.Approximations.template_directions" begin include("unit_template_directions.jl") end
     @time @testset "LazySets.Approximations.box_approximation" begin include("unit_box_approximation.jl") end
     @time @testset "LazySets.Approximations.ballinf_approximation" begin include("unit_ballinf_approximation.jl") end
