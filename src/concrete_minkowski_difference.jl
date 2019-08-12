@@ -14,7 +14,7 @@ lazy sets.
 ### Output
 
 An `HPolytope` that corresponds to the Minkowski difference of `Q` minus `P` if
-`Q` is bouneded, an `HPolyhedron` if `Q` is unbouneded.
+`Q` is bounded, and an `HPolyhedron` if `Q` is unbounded.
 
 ### Notes
 
