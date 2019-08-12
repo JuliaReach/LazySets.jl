@@ -25,13 +25,28 @@ many sets without recursion, instead using an array.
 
 The `EmptySet` is the absorbing element for `CartesianProduct`.
 
-Constructors:
+### Examples
 
-- `CartesianProduct{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}}(X1::S1, X2::S2)`
-  -- default constructor
+The Cartesian product between two sets `X` and `Y` can be constructed either
+using `CartesianProduct(X, Y)` or the short-cut notation `X × Y`:
 
-- `CartesianProduct(Xarr::Vector{S}) where {S<:LazySet}`
-  -- constructor from an array of convex sets
+```jldoctest cartesianproduct_constructor
+julia> I1 = Interval(0, 1);
+
+julia> I2 = Interval(2, 4);
+
+julia> I12 = I1 × I2;
+
+julia> typeof(I12)
+CartesianProduct{Float64,Interval{Float64,IntervalArithmetic.Interval{Float64}},Interval{Float64,IntervalArithmetic.Interval{Float64}}}
+```
+A hyperrectangle is the cartesian product of intervals, so we can convert `I12`
+exactly to a `Hyperrectangle` type:
+
+```jldoctest cartesianproduct_constructor
+julia> convert(Hyperrectangle, I12)
+Hyperrectangle{Float64}([0.5, 3.0], [0.5, 1.0])
+```
 """
 struct CartesianProduct{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     X::S1
