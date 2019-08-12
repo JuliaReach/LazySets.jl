@@ -93,19 +93,19 @@ for N in [Float64, Rational{Int}, Float32]
 
     # alternative constructor
     c = ones(N, 2)
-    r = to_N(N, [0.1, 0.2])
-    l = to_N(N, [0.9, 0.8])
-    h = to_N(N, [1.1, 1.2])
+    r = N[2, 3]
+    l = N[-1, -2]
+    h = N[3, 4]
     H1 = Hyperrectangle(c, r)
     H2 = Hyperrectangle(low=l, high=h)
-    @test H1.center ≈ H2.center
-    @test H1.radius ≈ H2.radius
+    @test H1.center == H2.center
+    @test H1.radius == H2.radius
     @test_throws AssertionError Hyperrectangle(low=h, high=l)
 
     # Test low and high methods for a hyperrectangle
-    H = Hyperrectangle(to_N(N, [-2.1, 5.6, 0.9]), fill(to_N(N, 0.5), 3))
-    @test low(H) ≈ to_N(N, [-2.6, 5.1, 0.4])
-    @test high(H) ≈ to_N(N, [-1.6, 6.1, 1.4])
+    H = Hyperrectangle(low=l, high=h)
+    @test low(H) == l
+    @test high(H) == h
 
     # boundedness
     @test isbounded(H)

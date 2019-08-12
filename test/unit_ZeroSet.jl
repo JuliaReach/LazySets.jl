@@ -43,11 +43,11 @@ for N in [Float64, Rational{Int}, Float32]
     @test z ⊆ z && z ⊈ ZeroSet{N}(2)
 
     # linear map (concrete)
-    M = reshape(to_N(N, [0.217692]), 1, 1)
+    M = hcat(N[1])
     Mz = linear_map(M, z)
     @test Mz isa ZeroSet && dim(Mz) == 1
 
-    M = to_N(N, [-1.82273 -1.17261;])
+    M = N[-1 -2;]
     MZ = linear_map(M, Z)
     @test MZ isa ZeroSet && dim(MZ) == 1
 

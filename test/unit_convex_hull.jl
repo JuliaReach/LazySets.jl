@@ -92,25 +92,26 @@ for N in [Float64, Rational{Int}]
     @test ispermutation(convex_hull!([N[1, 1], N[2, 2], N[3, 3], N[4, 4]]), [N[1, 1], N[4, 4]]) # points aligned
 
     # five-vertices case in 2D
-    points = to_N(N, [[0.9, 0.2], [0.4, 0.6], [0.2, 0.1], [0.1, 0.3], [0.3, 0.28]])
-    points_copy = copy(points)
-    sorted = to_N(N, [[0.1, 0.3], [0.2, 0.1], [0.9, 0.2], [0.4, 0.6]])
-    @test ispermutation(convex_hull!(points, algorithm="monotone_chain"), sorted)
-    @test ispermutation(convex_hull!(points, algorithm="monotone_chain_sorted"), sorted)
-    @test_throws ErrorException convex_hull!(points_copy, algorithm="")
+    points = [N[1//10, 3//10], N[1//5, 1//10], N[3//10, 7//25], N[2//5, 3//5],
+              N[9//10, 1//5]]
+    sorted = [N[1//10, 3//10], N[1//5, 1//10], N[9//10, 1//5], N[2//5, 3//5]]
+    for algorithm in ["monotone_chain", "monotone_chain_sorted"]
+        points_copy = copy(points)
+        @test is_cyclic_permutation(
+            convex_hull!(points_copy, algorithm=algorithm), sorted)
+    end
+    @test_throws ErrorException convex_hull!(points, algorithm="")
 
     # higher dimension
     if test_suite_polyhedra && N != Float32 # no backend supporting Float32
         points_3D = [[N(1), N(0), N(4)], [N(1), N(1), N(5)], [N(0), N(1), N(6)],
-                     [N(-1), N(-1), N(-7)], [N(1/2), N(1/2), N(-8)], [N(0), N(0), N(0)],
-                     [N(1), N(2), N(3)]]
-        @test ispermutation(convex_hull(points_3D), [[N(1), N(0), N(4)], [N(1), N(1), N(5)],
-                                         [N(0), N(1), N(6)], [N(-1), N(-1), N(-7)],
-                                         [N(1/2), N(1/2), N(-8)], [N(1), N(2), N(3)]])
+                     [N(-1), N(-1), N(-7)], [N(1/2), N(1/2), N(-8)],
+                     [N(0), N(0), N(0)], [N(1), N(2), N(3)]]
+        sorted = [[N(1), N(0), N(4)], [N(1), N(1), N(5)], [N(0), N(1), N(6)],
+            [N(-1), N(-1), N(-7)], [N(1/2), N(1/2), N(-8)], [N(1), N(2), N(3)]]
+        @test ispermutation(convex_hull(points_3D), sorted)
         convex_hull!(points_3D) # check in-place version
-        @test ispermutation(points_3D, [[N(1), N(0), N(4)], [N(1), N(1), N(5)],
-                            [N(0), N(1), N(6)], [N(-1), N(-1), N(-7)],
-                            [N(1/2), N(1/2), N(-8)], [N(1), N(2), N(3)]])
+        @test ispermutation(points_3D, sorted)
     end
 
     # ============================
