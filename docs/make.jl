@@ -2,7 +2,7 @@ ENV["GKSwstype"] = "100"  # set 'GR environment' to 'no output' (for Travis CI)
 using Documenter, LazySets
 import Polyhedra, Optim, Expokit, TaylorModels, Distributions
 
-include("init.jl")
+DocMeta.setdocmeta!(LazySets, :DocTestSetup, :(using LazySets); recursive=true)
 
 makedocs(
     sitename = "LazySets.jl",
