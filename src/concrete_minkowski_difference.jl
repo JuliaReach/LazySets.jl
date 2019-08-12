@@ -9,7 +9,7 @@ lazy sets.
 ### Input
 
 - `Q` -- polytopic set
-- `P`         -- another lazy set that is subtracted from `Q`
+- `P` -- compact convex set that is subtracted from `Q`
 
 ### Output
 
