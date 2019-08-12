@@ -157,6 +157,6 @@ end
 
 if test_suite_doctests
     using Documenter
-    include("../docs/init.jl")
+    DocMeta.setdocmeta!(LazySets, :DocTestSetup, :(using LazySets); recursive=true)
     @time @testset "LazySets.doctests" begin doctest(LazySets) end
 end
