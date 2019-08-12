@@ -8,7 +8,7 @@ lazy sets.
 
 ### Input
 
-- `Q`         -- lazy set
+- `Q` -- polytopic set
 - `P`         -- another lazy set that is subtracted from `Q`
 
 ### Output
