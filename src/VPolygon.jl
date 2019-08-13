@@ -258,7 +258,7 @@ function σ(d::AbstractVector{N}, P::VPolygon{N}) where {N<:Real}
 end
 
 # heuristic to define the method used to compute the support vector of a polygon
-# in vertex representation; if the number of vertices of the polygon is smallar
+# in vertex representation; if the number of vertices of the polygon is smaller
 # than this value, the brute force method is used; otherwise binary search is used
 const binary_or_brute_force = 10
 
