@@ -53,6 +53,7 @@ we use a lazy `MinkowskiSum` with a `Ballp` centered in the origin.
 """
 function hausdorff_distance(X::LazySet{N}, Y::LazySet{N}; p::N=N(Inf),
                             ε::N=N(1e-3)) where {N<:Real}
+    @assert ε > zero(N) "the value ε must be positive"
     @assert isbounded(X) && isbounded(Y) "the Hausdorff distance is only " *
         "defined for compact sets"
 
