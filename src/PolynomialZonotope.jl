@@ -3,7 +3,7 @@ export PolynomialZonotope, dim, σ,
        order,
        linear_map,
        scale,
-       minkowsi_sum
+       minkowski_sum
 
 """
     PolynomialZonotope{N}
