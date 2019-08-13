@@ -64,7 +64,7 @@ function hausdorff_distance(X::LazySet{N}, Y::LazySet{N}; p::N=N(Inf),
     # phase 1: find a finite upper bound
     δ_upper = maximum(d -> abs(ρ(d, X) - ρ(d, Y)), BoxDirections{N}(n))
     # verify that this is an upper bound
-    while !hausdorff_distance_two_sided(X, Y, δ_upper, n, p)
+    while !_mutual_issubset_in_δ_bloating(X, Y, δ_upper, n, p)
         δ_upper *= N(2)
     end
 
@@ -73,7 +73,7 @@ function hausdorff_distance(X::LazySet{N}, Y::LazySet{N}; p::N=N(Inf),
     δ_lower = N(0)
     while δ_upper - δ_lower > ε
         δ = (δ_upper + δ_lower) / N(2)
-        if hausdorff_distance_two_sided(X, Y, δ, n, p)
+        if _mutual_issubset_in_δ_bloating(X, Y, δ, n, p)
             δ_upper = δ
         else
             δ_lower = δ
@@ -82,20 +82,20 @@ function hausdorff_distance(X::LazySet{N}, Y::LazySet{N}; p::N=N(Inf),
     return δ_upper
 end
 
-function hausdorff_distance_two_sided(X, Y, δ, n, p)
-    return hausdorff_distance_one_sided(X, Y, δ, n, p) &&
-        hausdorff_distance_one_sided(Y, X, δ, n, p)
+function _mutual_issubset_in_δ_bloating(X, Y, δ, n, p)
+    return _issubset_in_δ_bloating(X, Y, δ, n, p) &&
+           _issubset_in_δ_bloating(Y, X, δ, n, p)
 end
 
-function hausdorff_distance_one_sided(X::LazySet{N}, Y, δ, n, p) where {N}
+function _issubset_in_δ_bloating(X::LazySet{N}, Y, δ, n, p) where {N}
     return X ⊆ Y + Ballp(p, zeros(N, n), δ)
 end
 
 # for polytopes the default implementation of `⊆` requires membership in the rhs
 # set, which will be a MinkowskiSum and hence not available; we use the
 # alternative based on constraints_list on the right instead
-function hausdorff_distance_one_sided(X::AbstractPolytope{N}, Y, δ, n, p
-                                     ) where {N<:Real}
+function _issubset_in_δ_bloating(X::AbstractPolytope{N}, Y, δ, n, p
+                                ) where {N<:Real}
     return LazySets._issubset_constraints_list(X, Y + Ballp(p, zeros(N, n), δ))
 end
 
