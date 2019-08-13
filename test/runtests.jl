@@ -71,6 +71,11 @@ if test_suite_basic
     @time @testset "LazySets.Comparisons" begin include("unit_comparisons.jl") end
 
     # =======================================
+    # Testing interfaces to external packages
+    # =======================================
+    @time @testset "LazySets.CDDLib" begin include("unit_CDDLib.jl") end
+
+    # =======================================
     # Testing types that inherit from LazySet
     # =======================================
     @time @testset "LazySets.Singleton" begin include("unit_Singleton.jl") end
