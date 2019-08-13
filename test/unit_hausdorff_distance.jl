@@ -8,6 +8,9 @@ for N in [Float64, Float32, Rational{Int}]
 
     hd = hausdorff_distance(b1, b2; p=N(Inf), ε=ε)
     @test _in_interval(hd, N(1), ε)
+
+    hd = hausdorff_distance(b1, b1; p=N(Inf), ε=ε)
+    @test _in_interval(hd, N(0), ε)
 end
 
 if test_suite_polyhedra

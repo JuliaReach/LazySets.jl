@@ -62,7 +62,8 @@ function hausdorff_distance(X::LazySet{N}, Y::LazySet{N}; p::N=N(Inf),
                         "resp. $(dim(Y))"
 
     # phase 1: find a finite upper bound
-    δ_upper = maximum(d -> abs(ρ(d, X) - ρ(d, Y)), BoxDirections{N}(n))
+    δ_upper = max(maximum(d -> abs(ρ(d, X) - ρ(d, Y)), BoxDirections{N}(n)),
+                  N(1e-3))  # this initial bound should be strictly positive
     # verify that this is an upper bound
     while !_mutual_issubset_in_δ_bloating(X, Y, δ_upper, n, p)
         δ_upper *= N(2)
