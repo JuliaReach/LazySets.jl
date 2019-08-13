@@ -45,20 +45,17 @@ function minkowski_sum(P::LazySet{N}, Q::LazySet{N};
                        backend=nothing,
                        algorithm=nothing,
                        prune=true) where {N<:Real}
+    @assert applicable(constraints_list, P) &&
+        applicable(constraints_list, Q) "this function requires that the " *
+        "list of constraints is available for both arguments; try " *
+        "overapproximating with an `HPolytope` first"
 
-    @assert applicable(constraints_list, P) && applicable(constraints_list, Q) "this function " *
-    "requires that the list of constraints of its is applicable, but it is not; " *
-    "try overapproximating with an `HPolytope` first"
-
+    res = _minkowski_sum_hrep_preprocess(P, Q, backend, algorithm, prune)
     if isbounded(P) && isbounded(Q)
-        T = HPolytope
+        return convert(HPolytope, res)
     else
-        T = HPolyhedron
+        return res
     end
-    A, b = tosimplehrep(P)
-    C, d = tosimplehrep(Q)
-    res = _minkowski_sum(A, b, C, d, backend=backend, algorithm=algorithm, prune=prune)
-    return convert(T, res)
 end
 
 """
@@ -134,29 +131,26 @@ function minkowski_sum(P::AbstractPolyhedron{N}, Q::AbstractPolyhedron{N};
                        backend=nothing,
                        algorithm=nothing,
                        prune=true) where {N<:Real}
-
-    require(:Polyhedra; fun_name="minkowski_sum")
-    require(:CDDLib; fun_name="minkowski_sum")
-
-    A, b = tosimplehrep(P)
-    C, d = tosimplehrep(Q)
-    res = _minkowski_sum_hrep(A, b, C, d, backend=backend, algorithm=algorithm, prune=prune)
-    return res
+    return _minkowski_sum_hrep_preprocess(P, Q, backend, algorithm, prune)
 end
 
 function minkowski_sum(P::HPolytope{N}, Q::HPolytope{N};
                        backend=nothing,
                        algorithm=nothing,
                        prune=true) where {N<:Real}
+    res = _minkowski_sum_hrep_preprocess(P, Q, backend, algorithm, prune)
+    return convert(HPolytope, res)
+end
 
+# common code before calling _minkowski_sum_hrep
+function _minkowski_sum_hrep_preprocess(P, Q, backend, algorithm, prune)
     require(:Polyhedra; fun_name="minkowski_sum")
     require(:CDDLib; fun_name="minkowski_sum")
 
     A, b = tosimplehrep(P)
     C, d = tosimplehrep(Q)
-    res = _minkowski_sum_hrep(A, b, C, d, backend=backend,
-                              algorithm=algorithm, prune=prune)
-    return convert(HPolytope, res)
+    return _minkowski_sum_hrep(A, b, C, d, backend=backend, algorithm=algorithm,
+                               prune=prune)
 end
 
 # This function computes the concrete Minkowski sum between two polyhedra in
