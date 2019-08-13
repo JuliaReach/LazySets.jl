@@ -59,7 +59,7 @@ for N in [Float64, Rational{Int}, Float32]
     l3 = LineSegment(N[0, 1], N[0, 2])
     l4 = LineSegment(N[1, 1], N[1, 1])
     l5 = LineSegment(N[0, 0], N[0, 0])
-    l6 = LineSegment(to_N(N, [1.3, 1.3]), to_N(N, [2.3, 2.3]))
+    l6 = LineSegment(N[13//10, 13//10], N[23//10, 23//10])
     l7 = LineSegment(N[3, 3], N[4, 4])
     l8 = LineSegment(N[1, 2], N[2, 3])
     l1_copy = LineSegment(copy(l1.p), copy(l1.q))
