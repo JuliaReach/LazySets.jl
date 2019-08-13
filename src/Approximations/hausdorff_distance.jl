@@ -87,7 +87,7 @@ function hausdorff_distance_two_sided(X, Y, δ, n, p)
         hausdorff_distance_one_sided(Y, X, δ, n, p)
 end
 
-function hausdorff_distance_one_sided(X, Y, δ, n, p)
+function hausdorff_distance_one_sided(X::LazySet{N}, Y, δ, n, p) where {N}
     return X ⊆ Y + Ballp(p, zeros(N, n), δ)
 end
 
