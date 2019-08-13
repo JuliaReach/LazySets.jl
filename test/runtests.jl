@@ -21,9 +21,6 @@ using LazySets: ispermutation
 using LazySets.Arrays: isinvertible, inner,
                        is_cyclic_permutation, SingleEntryVector
 
-# conversion between numeric types
-include("to_N.jl")
-
 global test_suite_basic = true
 global test_suite_doctests = true
 global test_suite_polyhedra = true
