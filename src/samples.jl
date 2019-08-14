@@ -1,7 +1,7 @@
 function load_distributions_samples()
 return quote
 
-using .Distributions: Uniform, Normal
+using .Distributions: Uniform
 
 """
     _sample_unit_nsphere_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
