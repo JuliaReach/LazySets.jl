@@ -223,6 +223,31 @@ for N in [Float64, Float32, Rational{Int}]
         @test !isdisjoint(x, y) && !res && w ∈ x && w ∈ y
     end
 
+    # concrete intersection
+    # constrained dimensions cover all dimensions
+    cpa = CartesianProductArray([Interval(N[0, 1]), Interval(N[1, 2]),
+                                 Interval(N[2, 3])])
+    P = HalfSpace(N[1, 0, 1], N(2))
+    cap = intersection(cpa, P)
+    @test cap isa CartesianProductArray && length(array(cap)) == 1
+    Q = array(cap)[1]
+    @test ispermutation(constraints_list(Q), [HalfSpace(N[-1, 0, 0], N(0)),
+        HalfSpace(N[0, 1, 0], N(2)), HalfSpace(N[0, -1, 0], N(-1)),
+        HalfSpace(N[0, 0, -1], N(-2)), HalfSpace(N[1, 0, 1], N(2))])
+    # some dimensions are unconstrained
+    cpa = CartesianProductArray([Interval(N[0, 1]),
+                                 Hyperrectangle(N[2, 3], N[1, 1]),
+                                 Interval(N[3, 4])])
+    P = HalfSpace(N[0, 1, 1, 0], N(3))
+    cap = intersection(cpa, P)
+    @test cap isa CartesianProductArray && length(array(cap)) == 3
+    for i in [1, 3]
+        @test array(cap)[1] === array(cpa)[1]
+    end
+    Q = array(cap)[2]
+    @test ispermutation(constraints_list(Q), [HalfSpace(N[-1, 0], N(-1)),
+        HalfSpace(N[0, -1], N(-2)), HalfSpace(N[1, 1], N(3))])
+
     # ========================================
     # Conversions of Cartesian Product Arrays
     # ========================================
