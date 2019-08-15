@@ -1,3 +1,5 @@
+import Base: convert
+
 using LazySets: block_to_dimension_indices,
                 substitute_blocks,
                 get_constrained_lowdimset
@@ -818,6 +820,12 @@ function load_intervalmatrices_overapproximation()
 return quote
 
 using .IntervalMatrices: AbstractIntervalMatrix, split
+
+# temporary patch for IntervalArithmetic#317
+function convert(::Type{IntervalMatrices.Interval{T}},
+                 x::IntervalMatrices.Interval{T}) where {T<:Real}
+    return x
+end
 
 """
     overapproximate(lm::LinearMap{N, <:AbstractZonotope{N}, NM,
