@@ -60,7 +60,7 @@ end
 """
     pontryagin_difference(P::LazySet{N}, Q::LazySet{N}) where {N<:Real}
 
-An alias for the function minkowski_difference.
+An alias for the function `minkowski_difference`.
 
 ### Notes
 
