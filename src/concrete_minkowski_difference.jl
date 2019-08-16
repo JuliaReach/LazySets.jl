@@ -23,7 +23,7 @@ available and that the set `Q` is bounded.
 
 ### Algorithm
 
-This function implements [Theorem 2.2], that we state next.
+This function implements theorems 2.2 and 2.3 in [1], which we state next.
 Suppose ``U`` is compact and convex and ``U ~ V ≠ Ø``.
 Then
 i) ``hᵥ(η)`` and ``hᵤ(η)`` are defined for all ``η ∈ ℝⁿ``;
