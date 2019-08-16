@@ -1,12 +1,12 @@
 function load_distributions_sample_from_set()
 return quote
 
-using .Distributions: Uniform
+using .Distributions: Uniform, Distribution
 
 """
-    box_overapproximation(P::LazySet)
+    canonical_length(P::LazySet)
 
-Get the values of the box-overapproximation of the set `P`.
+Get the canonical length of the box-approximation of the convex set `P`.
 
 ### Inputs
 
@@ -18,7 +18,7 @@ Matrix with two columns and `n=dims(P)` rows. Each column stands for
 one dimension of `P` whereas the first column is the minimum and the second
 column the maximum value of the corresponding dimension.
 """
-function box_overapproximation(P::LazySet{N}) where {N<:Real}
+function canonical_length(P::LazySet{N}) where {N<:Real}
     dims = dim(P)
     x = Array{N}(undef, dims, 2)
     for j=1:dims
@@ -28,9 +28,8 @@ function box_overapproximation(P::LazySet{N}) where {N<:Real}
     return x
 end
 
-
 """
-    sample(P::LazySet{N}, nsamples::Int;
+    rand(P::LazySet{N}, n_samples::Int;
            rng::AbstractRNG=GLOBAL_RNG,
            seed::Union{Int, Nothing}=nothing) where {N}
 
@@ -45,46 +44,56 @@ i.e., `p ∉ P`.
 ### Input
 
 - `P`           -- lazyset
-- `nsamples`    -- number of random samples
+- `n_samples`    -- number of random samples
 - `rng`         -- (optional, default: `GLOBAL_RNG`) random number generator
 - `seed`        -- (optional, default: `nothing`) seed for reseeding
 
 ### Output
 
-A vector of `nsamples` vectors.
+A vector of `n_samples` vectors.
 """
-function sample(P::LazySet{N}, nsamples::Int=1;
+function Base.rand(P::LazySet{N}, n_samples::Int;
                 rng::AbstractRNG=GLOBAL_RNG,
                 seed::Union{Int, Nothing}=nothing) where {N<:Real}
     rng = reseed(rng, seed)
-    n = dim(P)
-    D = Vector{Vector{N}}(undef, nsamples) # preallocate output
-    box_ovapp = box_overapproximation(P)
-    sampler = [Uniform(box_dim...) for box_dim in eachrow(box_ovapp)]
-    @inbounds for i in 1:nsamples
+    @assert isbounded(P) "this function requires that the set `P` is bounded, but it is not"
+
+    D = Vector{Vector{N}}(undef, n_samples) # preallocate output
+    sample!(D, Sampler(P); rng=rng)
+    return D
+end
+
+function Base.rand(P::LazySet{N};
+                rng::AbstractRNG=GLOBAL_RNG,
+                seed::Union{Int, Nothing}=nothing) where {N<:Real}
+    return rand(P,1)[1]
+end
+
+mutable struct Sampler
+    P
+    sampler
+    distribution
+end
+
+function Sampler(P, distribution=Uniform)
+    box_lengths = canonical_length(P)
+    sampler = [distribution(length...) for length in eachrow(box_lengths)]
+    return Sampler(P, sampler, distribution)
+end
+
+function sample!(D::Vector{Vector{N}},
+               sampler::Sampler;
+               rng::AbstractRNG=GLOBAL_RNG) where {N}
+    @inbounds for i in 1:length(D)
         while true
-            w = rand.(Ref(rng), sampler)
-            if w ∈ P
+            w = rand.(Ref(rng), sampler.sampler)
+            if w ∈ sampler.P
                 D[i] = w
                 break
             end
         end
     end
-    return D
-end
-
-
-"""
-    Base.rand(P::LazySet;
-                   rng::AbstractRNG=GLOBAL_RNG,
-                   seed::Union{Int, Nothing}=nothing)
-
-Alias for sample(P::LazySets, 1)
-"""
-function Base.rand(P::LazySet;
-                   rng::AbstractRNG=GLOBAL_RNG,
-                   seed::Union{Int, Nothing}=nothing)
-    return sample(P, 1)[1]
+    nothing
 end
 
 end # quote
