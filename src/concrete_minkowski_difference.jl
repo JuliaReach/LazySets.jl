@@ -26,10 +26,10 @@ available and that the set `Q` is bounded.
 This function implements theorems 2.2 and 2.3 in [1], which we state next.
 Suppose ``U`` is compact and convex and ``U ~ V ≠ Ø``.
 Then
-i) ``hᵥ(η)`` and ``hᵤ(η)`` are defined for all ``η ∈ ℝⁿ``;
+i) ``ρ(d,V)`` and ``ρ(d,U)`` are defined for all ``d ∈ ℝⁿ``;
 ii)
 ```math
-U ~ V = {z ∈ ℝⁿ: ηᵀz ≤ hᵤ(η) - hᵥ(η) ∀η ∈ ℝⁿ }.
+U ~ V = {z ∈ ℝⁿ: dᵀz ≤ ρ(d,U) - ρ(d,V) ∀d ∈ ℝⁿ }.
 ```
 where ``~`` is defined as ``U ~ V = {z ∈ ℝⁿ: z + v ∈ U  ∀ v ∈ V}`` and is called
 the *Minkowski difference* (also referenced as *Pontryagin difference*)
