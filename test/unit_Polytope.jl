@@ -357,13 +357,13 @@ if test_suite_polyhedra
         @test C2 ⊆ BallInf(N[0, 0], N(3)) && BallInf(N[0, 0], N(3)) ⊆ C2
 
         # concrete Minkowski difference for unbounded P (HPolyhedron)
-        mx1 = 2.0
-        mx2 = 5.0
-        P3 = HPolyhedron([mx1 0.0; 0.0 mx2], [3.0, 3.0])
+        mx1 = N(2)
+        mx2 = N(5)
+        P3 = HPolyhedron(N[mx1 0; 0 mx2], N[3, 3])
         radius = 2
-        Q3 = Ball2(N[0, 0], N(radius))
-        C3 = minkowski_difference(P3,Q3)
-        C3_res = HPolyhedron([mx1 0.0; 0.0 mx2], [3.0 - mx1*radius, 3.0 - mx2*radius])
+        Q3 = Ball1(N[0, 0], N(radius))
+        C3 = minkowski_difference(P3, Q3)
+        C3_res = HPolyhedron(N[mx1 0; 0 mx2], N[3 - mx1*radius, 3 - mx2*radius])
         @test C3 ⊆ C3_res && C3_res ⊆ C3
 
         # same but specifying a custom polyhedral computations backend (CDDLib)
