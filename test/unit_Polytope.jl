@@ -356,7 +356,7 @@ if test_suite_polyhedra
         C2 = minkowski_difference(A2,B2)
         @test C2 ⊆ BallInf(N[0, 0], N(3)) && BallInf(N[0, 0], N(3)) ⊆ C2
 
-        # concrete minkowski difference for unbounded P (HPolyhedra)
+        # concrete Minkowski difference for unbounded P (HPolyhedron)
         mx1 = 2.0
         mx2 = 5.0
         P3 = HPolyhedron([mx1 0.0; 0.0 mx2], [3.0, 3.0])
