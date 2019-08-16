@@ -31,7 +31,7 @@ ii)
 ```math
 P ~ Q = {z ∈ ℝⁿ: dᵀz ≤ ρ(d,P) - ρ(d,Q) ∀d ∈ ℝⁿ }.
 ```
-where ``~`` is defined as ``P ~ Q = {z ∈ ℝⁿ: z + v ∈ P  ∀ v ∈ Q}`` and is called
+where ``~`` is defined as ``P ~ Q = \\{z ∈ ℝⁿ: z + v ∈ P  ∀ v ∈ Q\\}`` and is called
 the *Minkowski difference* (also referenced as *Pontryagin difference*)
 and often denoted by the operator ⊖.
 
