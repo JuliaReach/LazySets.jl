@@ -7,12 +7,9 @@ using IntervalArithmetic: IntervalBox
 # ========================
 # Optional dependencies
 # ========================
-import Expokit, Optim
-
-import TaylorModels
+import Distributions, Expokit, IntervalMatrices, Optim, TaylorModels
+using IntervalMatrices: ±, IntervalMatrix
 using TaylorModels: set_variables, TaylorModelN
-
-import Distributions
 
 # ==============================
 # Non-exported helper functions

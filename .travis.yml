@@ -16,6 +16,9 @@ notifications:
 git:
   depth: 99999999
 
+script:
+  - julia -e 'using Pkg; Pkg.add(PackageSpec(path="https://github.com/JuliaReach/IntervalMatrices.jl", rev="master")); Pkg.build("LazySets"); Pkg.test("LazySets"; coverage=true)'
+
 jobs:
   include:
     - stage: "Documentation"

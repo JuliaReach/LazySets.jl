@@ -93,6 +93,12 @@ for N in [Float64, Rational{Int}, Float32]
     @test overapproximate(d_oa) == oa
     @test typeof(d_oa) == CartesianProductArray{N, Interval{N}}
 
+    # interval linear map of zonotope
+    M = IntervalMatrix([(N(0) ± N(1)) (N(0) ± N(0)); (N(0) ± N(0)) (N(0) ± N(1))])
+    Z = Zonotope(N[1, 1], N[1 1; 1 -1])
+    lm = LinearMap(M, Z)
+    Zo = overapproximate(lm, Zonotope)
+    @test box_approximation(Zo) == Hyperrectangle(N[0, 0], N[3, 3])
 end
 
 # tests that do not work with Rational{Int}

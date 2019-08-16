@@ -1,6 +1,9 @@
+import Base: convert
+
 using LazySets: block_to_dimension_indices,
                 substitute_blocks,
                 get_constrained_lowdimset
+
 """
     overapproximate(X::S, ::Type{S}, args...) where {S<:LazySet}
 
@@ -808,6 +811,79 @@ end
 
 end # quote
 end # load_taylormodels_overapproximation
+
+# =============================================
+# Functionality that requires IntervalMatrices
+# =============================================
+
+function load_intervalmatrices_overapproximation()
+return quote
+
+using .IntervalMatrices: AbstractIntervalMatrix, split
+
+# temporary patch for IntervalArithmetic#317
+function convert(::Type{IntervalMatrices.Interval{T}},
+                 x::IntervalMatrices.Interval{T}) where {T<:Real}
+    return x
+end
+
+"""
+    overapproximate(lm::LinearMap{N, <:AbstractZonotope{N}, NM,
+                                  <:AbstractIntervalMatrix{<:NM}},
+                    ::Type{<:Zonotope})::Zonotope{N} where {N<:Real, NM}
+
+Overapproximate an interval-matrix linear map of a zonotopic set by a new
+zonotope.
+
+### Input
+
+- `lm`       -- interval-matrix linear map of a zonotopic set
+- `Zonotope` -- type for dispatch
+
+### Output
+
+A zonotope overapproximating the linear map.
+
+### Algorithm
+
+This function implements the method proposed in [1].
+
+Given an interval matrix ``M = \\tilde{M} + ⟨-\\hat{M},\\hat{M}⟩`` (split into a
+conventional matrix and a symmetric interval matrix) and a zonotope
+``⟨c, g_1, …, g_m⟩``, we compute the resulting zonotope
+``⟨\\tilde{M}c, \\tilde{M}g_1, …, \\tilde{M}g_m, v_1, …, v_n⟩`` where the
+``v_j``, ``j = 1, …, n``, are defined as
+
+```math
+    v_j = \\begin{cases} 0 & i ≠ j \\\\
+          \\hat{M}_j (|c| + \\sum_{k=1}^m |g_k|) & i = j. \\end{cases}
+```
+
+[1] Althoff, Stursberg, Buss. Reachability analysis of linear systems with
+uncertain parameters and inputs. CDC 2007.
+"""
+function overapproximate(lm::LinearMap{N, <:AbstractZonotope{N}, NM,
+                                       <:AbstractIntervalMatrix{<:NM}},
+                         ::Type{<:Zonotope})::Zonotope{N} where {N<:Real, NM}
+    Mc, Ms = split(lm.M)
+    Z = lm.X
+    c = Mc * center(Z)
+    n = dim(lm)
+    nG = ngens(Z)
+    G = zeros(N, n, nG + n)
+    vector_sum = abs.(center(Z))
+    @inbounds for (j, g) in enumerate(generators(Z))
+        G[:, j] = Mc * g
+        vector_sum += abs.(g)
+    end
+    @inbounds for i in 1:n
+        row = @view Ms[i, :]
+        G[i, i + nG] = dot(row, vector_sum)
+    end
+    return Zonotope(c, G)
+end
+
+end end  # quote / load_intervalmatrices_overapproximation()
 
 # ==========================================
 # Lazy linear maps of Cartesian products
