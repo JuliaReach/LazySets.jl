@@ -87,7 +87,7 @@ minkowski_sum(::PolynomialZonotope, ::Zonotope)
 ## Minkowski Difference
 ```@docs
 minkowski_difference(::LazySet{N}, ::LazySet{N}) where {N<:Real}
-pontryagin_difference(::LazySet{N}, ::LazySet{N}) where {N<:Real}
+pontryagin_difference
 ```
 
 ## Subset check
