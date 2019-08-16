@@ -84,7 +84,7 @@ minkowski_sum(::VPolygon{N}, ::VPolygon{N}) where {N<:Real}
 minkowski_sum(::PolynomialZonotope, ::Zonotope)
 ```
 
-## Minkowski Difference
+## Minkowski difference
 ```@docs
 minkowski_difference(::LazySet{N}, ::LazySet{N}) where {N<:Real}
 pontryagin_difference
