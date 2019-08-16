@@ -4,7 +4,7 @@ export minkowski_difference, pontryagin_difference
     minkowski_difference(P::LazySet{N}, Q::LazySet{N}) where {N<:Real}
 
 Concrete Minkowski difference (geometric difference) for a pair of
-lazy sets.
+convex sets.
 
 ### Input
 
