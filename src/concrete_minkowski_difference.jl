@@ -23,7 +23,7 @@ available and that the set `Q` is bounded.
 
 ### Algorithm
 
-This function implements theorems 2.3 in [1], which we state next.
+This function implements Theorem 2.3 in [1], which we state next.
 
 Suppose ``P`` is a polyhedron
 ```math
