@@ -1,7 +1,7 @@
 function load_distributions_sample_from_set()
 return quote
 
-using .Distributions: Uniform, Normal
+using .Distributions: Uniform
 
 """
     box_overapproximation(P::LazySet)
