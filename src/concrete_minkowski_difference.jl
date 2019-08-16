@@ -65,7 +65,7 @@ An alias for the function `minkowski_difference`.
 ### Notes
 
 Due to inconsistent naming conventions, both the name *Minkowski difference* and
-Pontryagin Difference are used to refer to the geometric difference of two sets.
+*Pontryagin difference* are used to refer to the geometric difference of two sets.
 
 """
 const pontryagin_difference = minkowski_difference
