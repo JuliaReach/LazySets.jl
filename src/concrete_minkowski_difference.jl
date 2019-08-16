@@ -29,7 +29,7 @@ Then
 i) ``ρ(d,Q)`` and ``ρ(d,P)`` are defined for all ``d ∈ ℝⁿ``;
 ii)
 ```math
-P ~ Q = {z ∈ ℝⁿ: dᵀz ≤ ρ(d,P) - ρ(d,Q) ∀d ∈ ℝⁿ }.
+P ~ Q = \\{z ∈ ℝⁿ: dᵀz ≤ ρ(d,P) - ρ(d,Q) ∀d ∈ ℝⁿ \\}.
 ```
 where ``~`` is defined as ``P ~ Q = \\{z ∈ ℝⁿ: z + v ∈ P  ∀ v ∈ Q\\}`` and is called
 the *Minkowski difference* (also referenced as *Pontryagin difference*)
