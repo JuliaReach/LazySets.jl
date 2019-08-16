@@ -32,7 +32,7 @@ ii)
 U ~ V = {z ∈ ℝⁿ: ηᵀz ≤ hᵤ(η) - hᵥ(η) ∀η ∈ ℝⁿ }.
 ```
 where ``~`` is defined as ``U ~ V = {z ∈ ℝⁿ: z + v ∈ U  ∀ v ∈ V}`` and is called
-the Minkowski difference (also Referenced as Pontryagin Difference)
+the *Minkowski difference* (also referenced as *Pontryagin difference*)
 and often denoted by the operator ⊖.
 
 [1] *Ilya Kolmanovsky and Elmer G. Gilbert (1997). Theory and computation
