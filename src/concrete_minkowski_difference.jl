@@ -23,14 +23,19 @@ available and that the set `Q` is bounded.
 
 ### Algorithm
 
-This function implements theorems 2.2 and 2.3 in [1], which we state next.
-Suppose ``P`` is compact and convex and ``P ~ Q ≠ Ø``.
-Then
-i) ``ρ(d,Q)`` and ``ρ(d,P)`` are defined for all ``d ∈ ℝⁿ``;
-ii)
+This function implements theorems 2.3 in [1], which we state next.
+
+Suppose ``P`` is a polyhedron
 ```math
-P ~ Q = \\{z ∈ ℝⁿ: dᵀz ≤ ρ(d,P) - ρ(d,Q) ∀d ∈ ℝⁿ \\}.
+P = \\{z ∈ ℝⁿ: sᵢᵀz ≤ rᵢ, i=1,...,N\\}.
 ```
+where ``sᵢ ∈ ℝⁿ, sᵢ ≠ 0``, and ``rᵢ ∈ ℝ``.
+Assume ``ρ(sᵢ,Q)`` is defined for ``i=1,...,N``. Then,
+
+```math
+P ~ Q = \\{z ∈ ℝⁿ: sᵢᵀz ≤ rᵢ - ρ(sᵢ,Q), i=1,...,N\\}.
+```
+
 where ``~`` is defined as ``P ~ Q = \\{z ∈ ℝⁿ: z + v ∈ P  ∀ v ∈ Q\\}`` and is called
 the *Minkowski difference* (also referenced as *Pontryagin difference*)
 and often denoted by the operator ⊖.
