@@ -44,7 +44,7 @@ function minkowski_difference(P::LazySet{N}, Q::LazySet{N}) where {N<:Real}
 
     @assert applicable(constraints_list, P)  "this function " *
         "requires that the list of constraints of its first argument is applicable, but it is not; " *
-        "try overapproximating with an `HPolytope` first"
+        "if it is bounded, try overapproximating with an `HPolytope` first"
     @assert isbounded(Q) "this function requires that its second argument is bounded, but it is not"
 
     A, b = tosimplehrep(P)
