@@ -13,7 +13,7 @@ lazy sets.
 
 ### Output
 
-An `HQolytope` that corresponds to the Minkowski difference of `P` minus `Q` if
+An `HPolytope` that corresponds to the Minkowski difference of `P` minus `Q` if
 `P` is bounded, and an `HPolyhedron` if `P` is unbounded.
 
 ### Notes
