@@ -24,14 +24,14 @@ available and that the set `Q` is bounded.
 ### Algorithm
 
 This function implements theorems 2.2 and 2.3 in [1], which we state next.
-Suppose ``U`` is compact and convex and ``U ~ V ≠ Ø``.
+Suppose ``P`` is compact and convex and ``P ~ Q ≠ Ø``.
 Then
-i) ``ρ(d,V)`` and ``ρ(d,U)`` are defined for all ``d ∈ ℝⁿ``;
+i) ``ρ(d,Q)`` and ``ρ(d,P)`` are defined for all ``d ∈ ℝⁿ``;
 ii)
 ```math
-U ~ V = {z ∈ ℝⁿ: dᵀz ≤ ρ(d,U) - ρ(d,V) ∀d ∈ ℝⁿ }.
+P ~ Q = {z ∈ ℝⁿ: dᵀz ≤ ρ(d,P) - ρ(d,Q) ∀d ∈ ℝⁿ }.
 ```
-where ``~`` is defined as ``U ~ V = {z ∈ ℝⁿ: z + v ∈ U  ∀ v ∈ V}`` and is called
+where ``~`` is defined as ``P ~ Q = {z ∈ ℝⁿ: z + v ∈ P  ∀ v ∈ Q}`` and is called
 the *Minkowski difference* (also referenced as *Pontryagin difference*)
 and often denoted by the operator ⊖.
 
