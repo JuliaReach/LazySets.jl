@@ -18,7 +18,7 @@ An `HPolytope` that corresponds to the Minkowski difference of `P` minus `Q` if
 
 ### Notes
 
-This function requires that the list of constraints of the lazy sets `P` is
+This function requires that the list of constraints of the set `P` is
 available and that the set `Q` is bounded.
 
 ### Algorithm
