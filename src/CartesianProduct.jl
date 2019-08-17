@@ -4,6 +4,7 @@ export CartesianProduct,
        CartesianProductArray,
        CartesianProduct!,
        array,
+       swap,
        same_block_structure
 
 """
@@ -24,29 +25,33 @@ many sets without recursion, instead using an array.
 
 The `EmptySet` is the absorbing element for `CartesianProduct`.
 
-Constructors:
+### Examples
 
-- `CartesianProduct{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}}(X1::S1, X2::S2)`
-  -- default constructor
+The Cartesian product between two sets `X` and `Y` can be constructed either
+using `CartesianProduct(X, Y)` or the short-cut notation `X × Y`:
 
-- `CartesianProduct(Xarr::Vector{S}) where {S<:LazySet}`
-  -- constructor from an array of convex sets
+```jldoctest cartesianproduct_constructor
+julia> I1 = Interval(0, 1);
+
+julia> I2 = Interval(2, 4);
+
+julia> I12 = I1 × I2;
+
+julia> typeof(I12)
+CartesianProduct{Float64,Interval{Float64,IntervalArithmetic.Interval{Float64}},Interval{Float64,IntervalArithmetic.Interval{Float64}}}
+```
+A hyperrectangle is the cartesian product of intervals, so we can convert `I12`
+exactly to a `Hyperrectangle` type:
+
+```jldoctest cartesianproduct_constructor
+julia> convert(Hyperrectangle, I12)
+Hyperrectangle{Float64}([0.5, 3.0], [0.5, 1.0])
+```
 """
 struct CartesianProduct{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     X::S1
     Y::S2
 end
-
-# constructor from an array
-CartesianProduct(Xarr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
-    (length(Xarr) == 0
-        ? EmptySet{N}()
-        : length(Xarr) == 1
-            ? Xarr[1]
-            : length(Xarr) == 2
-                ? CartesianProduct(Xarr[1], Xarr[2])
-                : CartesianProduct(Xarr[1],
-                                   CartesianProduct(Xarr[2:length(Xarr)])))
 
 # EmptySet is the absorbing element for CartesianProduct
 @absorbing(CartesianProduct, EmptySet)
@@ -66,6 +71,23 @@ Alias for the binary Cartesian product.
 Alias for the binary Cartesian product.
 """
 ×(X::LazySet, Y::LazySet) = CartesianProduct(X, Y)
+
+"""
+    swap(cp::CartesianProduct)
+
+Return a new `CartesianProduct` object with the arguments swapped.
+
+### Input
+
+- `cp` -- Cartesian product of two convex sets
+
+### Output
+
+A new `CartesianProduct` object with the arguments swapped.
+"""
+function swap(cp::CartesianProduct)
+    return CartesianProduct(cp.Y, cp.X)
+end
 
 """
     dim(cp::CartesianProduct)::Int
@@ -159,8 +181,8 @@ function ∈(x::AbstractVector{N}, cp::CartesianProduct{N})::Bool where {N<:Real
     @assert length(x) == dim(cp)
 
     n1 = dim(cp.X)
-    return ∈(view(x, 1:n1), cp.X) &&
-           ∈(view(x, n1+1:length(x)), cp.Y)
+    return view(x, 1:n1) ∈ cp.X &&
+           view(x, n1+1:length(x)) ∈ cp.Y
 end
 
 """
@@ -404,7 +426,7 @@ function ∈(x::AbstractVector{N}, cpa::CartesianProductArray{N}
     i0 = 1
     for Xi in cpa.array
         i1 = i0 + dim(Xi) - 1
-        if !∈(x[i0:i1], Xi)
+        if x[i0:i1] ∉ Xi
             return false
         end
         i0 = i1 + 1

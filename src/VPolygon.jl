@@ -56,7 +56,7 @@ VPolygon{N}() where {N<:Real} =
 
 # constructor with no vertices of type Float64
 VPolygon() = VPolygon{Float64}()
- 
+
 """
     remove_redundant_vertices!(P::VPolygon{N};
                                [algorithm]::String="monotone_chain")::VPolygon{N} where {N<:Real}
@@ -244,7 +244,7 @@ If the direction has norm zero, the first vertex is returned.
 This implementation uses a binary search algorithm when the polygon has more
 than ten vertices and a brute-force search when it has ten or less.
 For the brute-force search, it compares the projection of
-each vector along the given direction and runs in ``O(n)`` where 
+each vector along the given direction and runs in ``O(n)`` where
 ``n`` is the number of vertices.
 For the binary search the algorithm runs in ``O(log n)``.
 We follow [this implementation](http://geomalgorithms.com/a14-_extreme_pts.html#polyMax_2D())
@@ -254,11 +254,20 @@ based on an algorithm described in [1].
 """
 function σ(d::AbstractVector{N}, P::VPolygon{N}) where {N<:Real}
     @assert !isempty(P.vertices) "the polygon has no vertices"
-    binary_or_brute_force = 10;
+    return P.vertices[_σ_helper(d, P)]
+end
+
+# heuristic to define the method used to compute the support vector of a polygon
+# in vertex representation; if the number of vertices of the polygon is smaller
+# than this value, the brute force method is used; otherwise binary search is used
+const binary_or_brute_force = 10
+
+# return the index of a support vector of P along d from the list of vertices of P
+function _σ_helper(d::AbstractVector{N}, P::VPolygon{N}) where {N <: Real}
     if length(P.vertices) > binary_or_brute_force
-        P.vertices[_binary_support_vector(d, P)]
+        return _binary_support_vector(d, P)
     else
-        P.vertices[_brute_force_support_vector(d, P)]
+        return _brute_force_support_vector(d, P)
     end
 end
 
@@ -273,14 +282,15 @@ function _brute_force_support_vector(d::AbstractVector{N}, P::VPolygon{N}) where
 end
 
 function _binary_support_vector(d::AbstractVector{N}, P::VPolygon{N}) where {N <: Real}
-    n = length(P.vertices)
-    @assert n > 2
+    m = length(P.vertices)
+    @assert m > 2 "the number of vertices in the binary support vector approach should " *
+                  "be at least three, but it is $m"
     push!(P.vertices, P.vertices[1]) # add extra vertice on the end equal to the first
-    a = 1; b = n + 1 # start chain = [1,n+1] with P.vertices[n+1]=P.vertices[1]
+    a = 1; b = m + 1 # start chain = [1,n+1] with P.vertices[n+1]=P.vertices[1]
     A = P.vertices[2] - P.vertices[1]
     upA = _up(d, A)
     # test if P.vertices[0] is a local maximum
-    if (!upA && !_above(d, P.vertices[n], P.vertices[1])) # P.vertices[1] is the maximum
+    if (!upA && !_above(d, P.vertices[m], P.vertices[1])) # P.vertices[1] is the maximum
         pop!(P.vertices) # remove the extra point added
         return 1
     end
@@ -354,16 +364,16 @@ edge, using the dot product.
 julia> P = VPolygon([[2.0, 3.0], [3.0, 1.0], [5.0, 1.0], [4.0, 5.0]];
                     apply_convex_hull=false);
 
-julia> ∈([4.5, 3.1], P)
+julia> [4.5, 3.1] ∈ P
 false
-julia> ∈([4.5, 3.0], P)
+julia> [4.5, 3.0] ∈ P
 true
-julia> ∈([4.4, 3.4], P)  #  point lies on the edge -> floating point error
+julia> [4.4, 3.4] ∈ P  #  point lies on the edge -> floating-point error
 false
 julia> P = VPolygon([[2//1, 3//1], [3//1, 1//1], [5//1, 1//1], [4//1, 5//1]];
                      apply_convex_hull=false);
 
-julia> ∈([44//10, 34//10], P)  #  with rational numbers the answer is correct
+julia> [44//10, 34//10] ∈ P  #  with rational numbers the answer is correct
 true
 ```
 """
@@ -377,12 +387,11 @@ function ∈(x::AbstractVector{N}, P::VPolygon{N})::Bool where {N<:Real}
         return x == P.vertices[1]
     end
 
-    zero_N = zero(N)
-    if right_turn(P.vertices[1], x, P.vertices[end]) < zero_N
+    if !is_right_turn(P.vertices[1], x, P.vertices[end])
         return false
     end
     for i in 2:length(P.vertices)
-        if right_turn(P.vertices[i], x, P.vertices[i-1]) < zero_N
+        if !is_right_turn(P.vertices[i], x, P.vertices[i-1])
             return false
         end
     end
@@ -539,7 +548,7 @@ The list of constraints of the polygon.
 ### Algorithm
 
 First the H-representation of ``P`` is computed, then its list of constraints
-is returned. 
+is returned.
 """
 function constraints_list(P::VPolygon{N}) where {N<:Real}
     return constraints_list(tohrep(P))
@@ -618,9 +627,9 @@ A polygon in vertex representation.
 
 We treat each edge of the polygons as a vector, attaching them in polar order
 (attaching the tail of the next vector to the head of the previous vector). The
-resulting polygonal chain will be a polygon, which is the Minkowski sum of the 
-given polygons. This algorithm assumes that the vertices of P and Q are sorted 
-in counter-clockwise fashion and has linear complexity O(m+n) where m and n are 
+resulting polygonal chain will be a polygon, which is the Minkowski sum of the
+given polygons. This algorithm assumes that the vertices of P and Q are sorted
+in counter-clockwise fashion and has linear complexity O(m+n) where m and n are
 the number of vertices of P and Q respectively.
 
 """
@@ -629,18 +638,22 @@ function minkowski_sum(P::VPolygon{N}, Q::VPolygon{N}) where {N<:Real}
     vlistQ = vertices_list(Q)
     mP = length(vlistP)
     mQ = length(vlistQ)
-    i = 1
-    k = _binary_support_vector(N[1, 0], P)
-    j = _binary_support_vector(N[1, 0], Q)
+
+    EAST = N[1, 0]
+    ORIGIN = N[0, 0]
+    k = _σ_helper(EAST, P)
+    j = _σ_helper(EAST, Q)
     R = Vector{Vector{N}}(undef, mP+mQ)
-    fill!(R, N[0, 0])
+    fill!(R, ORIGIN)
+
+    i = 1
     while i <= size(R, 1)
-        P₁, P₂ = vlistP[(k-1)%mP+1], vlistP[(k%mP+1)]
+        P₁, P₂ = vlistP[(k-1)%mP + 1], vlistP[(k%mP + 1)]
         P₁P₂ = P₂ - P₁
-        Q₁, Q₂ = vlistQ[(j-1)%mQ+1], vlistQ[(j%mQ+1)]
+        Q₁, Q₂ = vlistQ[(j-1)%mQ + 1], vlistQ[(j%mQ + 1)]
         Q₁Q₂ = Q₂ - Q₁
         R[i] = P₁ + Q₁
-        turn = right_turn(P₁P₂, Q₁Q₂, N[0, 0])
+        turn = right_turn(P₁P₂, Q₁Q₂, ORIGIN)
         if turn > 0
             k += 1
         elseif turn < 0

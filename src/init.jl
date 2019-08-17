@@ -1,29 +1,16 @@
 function __init__()
-    @require Expokit = "a1e7a1ef-7a5d-5822-a38c-be74e1bb89f4" load_expokit()
-    @require Optim = "429524aa-4258-5aef-a3af-852621145aeb" load_optim()
-    @require Polyhedra = "67491407-f73d-577b-9b50-8179a7c68029" load_polyhedra()
-    @require Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f" load_distributions()
+    @require Expokit = "a1e7a1ef-7a5d-5822-a38c-be74e1bb89f4" include("init_Expokit.jl")
+    @require Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a" include("init_Makie.jl")
+    @require Optim = "429524aa-4258-5aef-a3af-852621145aeb" include("init_Optim.jl")
+    @require Polyhedra = "67491407-f73d-577b-9b50-8179a7c68029" include("init_Polyhedra.jl")
+    @require Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f" include("init_Distributions.jl")
+    @require CDDLib = "3391f64e-dcde-5f30-b752-e11513730f60" include("init_CDDLib.jl")
 end
 
-function load_expokit()
-    eval(load_expokit_sparsematrixexp())
-    eval(load_expokit_exponentialmap())
-    eval(load_expokit_exponentialprojectionmap())
-end
-
-function load_optim()
-    eval(load_optim_intersection())
-end
-
-function load_polyhedra()
-    eval(load_polyhedra_abstractpolytope())
-    eval(load_polyhedra_hpolytope())
-    eval(load_polyhedra_hpolyhedron())
-    eval(load_polyhedra_vpolytope())
-end
-
-function load_distributions()
-    eval(load_distributions_samples())
+function initialize_mesh()
+    if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :Makie)
+       eval(load_mesh())
+    end
 end
 
 """

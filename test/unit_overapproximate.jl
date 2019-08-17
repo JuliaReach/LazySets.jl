@@ -93,6 +93,12 @@ for N in [Float64, Rational{Int}, Float32]
     @test overapproximate(d_oa) == oa
     @test typeof(d_oa) == CartesianProductArray{N, Interval{N}}
 
+    # interval linear map of zonotope
+    M = IntervalMatrix([(N(0) ± N(1)) (N(0) ± N(0)); (N(0) ± N(0)) (N(0) ± N(1))])
+    Z = Zonotope(N[1, 1], N[1 1; 1 -1])
+    lm = LinearMap(M, Z)
+    Zo = overapproximate(lm, Zonotope)
+    @test box_approximation(Zo) == Hyperrectangle(N[0, 0], N[3, 3])
 end
 
 # tests that do not work with Rational{Int}
@@ -160,34 +166,6 @@ for N in [Float64, Float32]
     @test lcl[7].b ≈ N(1)
     @test lcl[8].a ≈ N[sqrt(2)/2, -sqrt(2)/2]
     @test lcl[8].b ≈ N(1)
-
-    # decomposed intersection between cartesian product array and abstract polyhedron
-    i1 = Interval(N[0, 1])
-    i2 = Interval(N[2, 3])
-    h1 = Hyperrectangle(low=N[3, 4], high=N[5, 7])
-    h2 = Hyperrectangle(low=N[5, 5], high=N[6, 8])
-    cpa1 = CartesianProductArray([i1, i2, h1])
-    o_cpa1 = overapproximate(cpa1)
-    cpa2 = CartesianProductArray([i1, i2, h2])
-    o_cpa2 = overapproximate(cpa2)
-    G = HPolyhedron([HalfSpace(N[1, 0, 0, 0], N(1))])
-    G_3 = HPolyhedron([HalfSpace(N[0, 0, 1, 0], N(1))])
-    G_3_neg = HPolyhedron([HalfSpace(N[0, 0, -1, 0], N(0))])
-
-    d_int_g = Intersection(cpa1, G)
-    d_int_g_3 = Intersection(cpa1, G_3)
-    d_int_g_3_neg = Intersection(cpa1, G_3_neg)
-    d_int_cpa = intersection(cpa1, cpa2)
-    l_int_cpa = intersection(o_cpa1, o_cpa2)
-    o_d_int_g = overapproximate(d_int_g, CartesianProductArray, Hyperrectangle)
-    o_d_int_g_3 = overapproximate(d_int_g_3, CartesianProductArray, Hyperrectangle)
-    o_d_int_g_3_neg = overapproximate(d_int_g_3_neg, CartesianProductArray, Hyperrectangle)
-
-    @test overapproximate(o_d_int_g) == overapproximate(d_int_g)
-    @test overapproximate(o_d_int_g_3) == overapproximate(d_int_g_3) == EmptySet{N}()
-    @test overapproximate(o_d_int_g_3_neg) == overapproximate(d_int_g_3_neg)
-    @test overapproximate(d_int_cpa, Hyperrectangle) == l_int_cpa
-    @test all([X isa CartesianProductArray for X in [d_int_cpa, o_d_int_g, o_d_int_g_3_neg]])
 end
 
 for N in [Float64]
@@ -201,13 +179,34 @@ for N in [Float64]
     oa = overapproximate(lm, OctDirections)
     @test oa ⊆ d_oa
 
-    # decomposed intersection between cartesian product array and abstract polyhedron
-    i1 = Interval(N[0, 1])
-    i2 = Interval(N[2, 3])
+    # decomposed intersection between Cartesian product array and polyhedron
     h1 = Hyperrectangle(low=N[3, 4], high=N[5, 7])
-    cpa = CartesianProductArray([i1, i2, h1])
-    G_comb = HPolyhedron([HalfSpace(N[1, 1, 0, 0], N(2.5))])
-    int_g_comb = Intersection(cpa, G_comb)
+    h2 = Hyperrectangle(low=N[5, 5], high=N[6, 8])
+    cpa1 = CartesianProductArray([i1, i2, h1])
+    o_cpa1 = overapproximate(cpa1)
+    cpa2 = CartesianProductArray([i1, i2, h2])
+    o_cpa2 = overapproximate(cpa2)
+    G = HalfSpace(N[1, 0, 0, 0], N(1))
+    G_3 = HalfSpace(N[0, 0, 1, 0], N(1))
+    G_3_neg = HalfSpace(N[0, 0, -1, 0], N(0))
+    G_comb = HalfSpace(N[1, 1, 0, 0], N(2.5))
+
+    d_int_g = Intersection(cpa1, G)
+    d_int_g_3 = Intersection(cpa1, G_3)
+    d_int_g_3_neg = Intersection(cpa1, G_3_neg)
+    d_int_cpa = intersection(cpa1, cpa2)
+    l_int_cpa = intersection(o_cpa1, o_cpa2)
+    o_d_int_g = overapproximate(d_int_g, CartesianProductArray, Hyperrectangle)
+    o_d_int_g_3 = overapproximate(d_int_g_3, CartesianProductArray, Hyperrectangle)
+    o_d_int_g_3_neg = overapproximate(d_int_g_3_neg, CartesianProductArray, Hyperrectangle)
+
+    @test overapproximate(o_d_int_g) ≈ overapproximate(d_int_g)
+    @test isempty(d_int_g_3) && o_d_int_g_3 == EmptySet{N}()
+    @test overapproximate(o_d_int_g_3_neg) ≈ overapproximate(d_int_g_3_neg)
+    @test overapproximate(d_int_cpa, Hyperrectangle) == l_int_cpa
+    @test all([X isa CartesianProductArray for X in [d_int_cpa, o_d_int_g, o_d_int_g_3_neg]])
+
+    int_g_comb = Intersection(cpa1, G_comb)
     o_d_int_g_comb = overapproximate(int_g_comb, CartesianProductArray, Hyperrectangle)
     o_bd_int_g_comb = overapproximate(int_g_comb, BoxDirections)
     @test overapproximate(o_d_int_g_comb) ≈ overapproximate(o_bd_int_g_comb)

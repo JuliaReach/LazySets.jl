@@ -160,7 +160,7 @@ function set_isempty!(cap::Intersection, isempty::Bool)
 end
 
 """
-    swap(cap::Intersection{N, S1, S2})::Intersection{N} where {N<:Real, S1, S2}
+    swap(cap::Intersection{N, S1, S2}) where {N<:Real, S1, S2}
 
 Return a new `Intersection` object with the arguments swapped.
 
@@ -178,8 +178,7 @@ The old cache is shared between the old and new objects.
 The advantage of using this function instead of manually swapping the arguments
 is that the cache is shared.
 """
-function swap(cap::Intersection{N, S1, S2}
-             )::Intersection{N} where {N<:Real, S1, S2}
+function swap(cap::Intersection{N, S1, S2}) where {N<:Real, S1, S2}
     return Intersection{N, S2, S1}(cap.Y, cap.X, cache=cap.cache)
 end
 
@@ -253,6 +252,7 @@ function ρ_helper(d::AbstractVector{N},
                                     <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}},
                   algorithm::String;
                   kwargs...) where {N<:Real}
+    @assert isbounded(cap.X) "the first set in the intersection must be bounded"
     X = cap.X # compact set
     H = cap.Y # halfspace or hyperplane or line
 
@@ -387,18 +387,18 @@ function ρ(d::AbstractVector{N},
 end
 
 """
-    ρ(d::AbstractVector{N},
-      cap::Intersection{N, S1, S2};
-      kwargs...) where {N<:Real, S1<:LazySet{N}, S2<:AbstractPolytope{N}}
+    ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2}; kwargs...)
+        where {N<:Real, S1<:LazySet{N}, S2<:AbstractPolyhedron{N}}
 
-Return an upper bound of the intersection between a compact set and a
-polytope along a given direction.
+Return an upper bound of the intersection between a compact set and a polyhedron
+along a given direction.
 
 ### Input
 
 - `d`      -- direction
-- `cap`    -- intersection of a compact set and a polytope
-- `kwargs` -- additional arguments that are passed to the support function algorithm
+- `cap`    -- intersection of a compact set and a polyhedron
+- `kwargs` -- additional arguments that are passed to the support-function
+              algorithm
 
 ### Output
 
@@ -416,66 +416,49 @@ Functions](https://www.sciencedirect.com/science/article/pii/S1474667015371809).
 
 ### Notes
 
-This method relies on having available the `constraints_list` of the polytope
-`P`.
-
-This method of overapproximation can return a non-empty set even if the original
-intersection is empty.
+This method relies on the `constraints_list` of the polyhedron.
 """
-function ρ(d::AbstractVector{N},
-           cap::Intersection{N, S1, S2};
-           kwargs...) where {N<:Real, S1<:LazySet{N}, S2<:AbstractPolytope{N}}
-    if S1 <: HPolyhedron # possibly unbounded
-        X = cap.Y  # compact set
-        P = cap.X  # polyhedron
-    else
-        X = cap.X    # compact set
-        P = cap.Y    # polytope
-    end
-    return minimum([ρ(d, X ∩ Hi; kwargs...) for Hi in constraints_list(P)])
+function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2}; kwargs...
+          ) where {N<:Real, S1<:LazySet{N}, S2<:AbstractPolyhedron{N}}
+    @assert isbounded(cap.X) "the first set in the intersection must be bounded"
+    return minimum([ρ(d, cap.X ∩ Hi; kwargs...)
+                   for Hi in constraints_list(cap.Y)])
 end
 
 # symmetric method
 function ρ(d::AbstractVector{N},
            cap::Intersection{N, S1, S2};
-           kwargs...) where {N<:Real, S1<:AbstractPolytope{N}, S2<:LazySet{N}}
+           kwargs...) where {N<:Real, S1<:AbstractPolyhedron{N}, S2<:LazySet{N}}
     return ρ(d, swap(cap); kwargs...)
 end
 
 # disambiguation
-function ρ(d::AbstractVector{N},
-           cap::Intersection{N, S1, S2};
-           kwargs...) where {N<:Real, S1<:AbstractPolytope{N},
-                             S2<:AbstractPolytope{N}}
-    X = cap.X    # compact set
-    P = cap.Y    # polytope
-    return minimum([ρ(d, X ∩ Hi; kwargs...) for Hi in constraints_list(P)])
+function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2}; kwargs...
+          ) where {N<:Real, S1<:AbstractPolytope{N}, S2<:AbstractPolyhedron{N}}
+    return minimum([ρ(d, cap.X ∩ Hi; kwargs...)
+                   for Hi in constraints_list(cap.Y)])
 end
 
 # disambiguation
-function ρ(d::AbstractVector{N},
-           cap::Intersection{N, S1, S2};
-           algorithm::String="line_search",
-           kwargs...) where {N<:Real, S1<:AbstractPolytope{N},
-                             S2<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}}
+function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2};
+           algorithm::String="line_search", kwargs...
+          ) where {N<:Real, S1<:AbstractPolytope{N},
+                   S2<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}}
     return ρ_helper(d, cap, algorithm; kwargs...)
 end
 
 # symmetric method
-function ρ(d::AbstractVector{N},
-           cap::Intersection{N, S1, S2};
-           algorithm::String="line_search",
-           kwargs...) where {N<:Real,
-                             S1<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
-                             S2<:AbstractPolytope{N}}
+function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2};
+           algorithm::String="line_search", kwargs...
+          ) where {N<:Real, S1<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
+                   S2<:AbstractPolytope{N}}
     return ρ_helper(d, swap(cap), algorithm; kwargs...)
 end
 
 # disambiguation
-function ρ(d::AbstractVector{N},
-           cap::Intersection{N, S1, S2}) where {N<:Real,
-           S1<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
-           S2<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}}
+function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2}
+          ) where {N<:Real, S1<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
+                   S2<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}}
     return ρ(d, HPolyhedron([constraints_list(cap.X); constraints_list(cap.Y)]))
 end
 

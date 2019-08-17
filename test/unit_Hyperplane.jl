@@ -73,6 +73,13 @@ for N in [Float64, Rational{Int}, Float32]
 
     # translation
     @test translate(hp, N[1, 2, 3]) == Hyperplane(ones(N, 3), N(11))
+
+    # intersection emptiness
+    u = Universe{N}(3)
+    res, v = is_intersection_empty(u, hp, true)
+    @test !is_intersection_empty(u, hp) && !res && v ∈ hp && v ∈ u
+    res, v = is_intersection_empty(hp, u, true)
+    @test !is_intersection_empty(hp, u) && !res && v ∈ hp && v ∈ u
 end
 
 # Polyhedra tests that only work with Float64

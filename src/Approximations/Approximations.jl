@@ -7,22 +7,23 @@ support vectors.
 module Approximations
 
 using LazySets, LazySets.Arrays, Requires, LinearAlgebra, SparseArrays
+using LazySets: _rtol
 
 export approximate,
+       project,
        ballinf_approximation,
        box_approximation, interval_hull,
        decompose,
        overapproximate,
+       underapproximate,
        box_approximation_symmetric, symmetric_interval_hull,
        BoxDirections,
        BoxDiagDirections,
        OctDirections,
        PolarDirections,
-       SphericalDirections
-
-const TOL(N::Type{Float64}) = eps(N)
-const TOL(N::Type{Float32}) = eps(N)
-const TOL(N::Type{Rational{INNER}}) where {INNER} = zero(N)
+       SphericalDirections,
+       CustomDirections,
+       isbounding
 
 const DIR_EAST(N) = [one(N), zero(N)]
 const DIR_NORTH(N) = [zero(N), one(N)]
@@ -33,6 +34,7 @@ include("iterative_refinement.jl")
 include("box_approximations.jl")
 include("template_directions.jl")
 include("overapproximate.jl")
+include("underapproximate.jl")
 include("decompositions.jl")
 include("init.jl")
 

@@ -182,9 +182,9 @@ Then ``x ∈ B`` iff ``\\left( ∑_{i=1}^n |c_i - x_i|^p \\right)^{1/p} ≤ r``.
 ```jldoctest
 julia> B = Ballp(1.5, [1., 1.], 1.)
 Ballp{Float64}(1.5, [1.0, 1.0], 1.0)
-julia> ∈([.5, -.5], B)
+julia> [.5, -.5] ∈ B
 false
-julia> ∈([.5, 1.5], B)
+julia> [.5, 1.5] ∈ B
 true
 ```
 """

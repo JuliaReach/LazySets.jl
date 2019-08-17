@@ -191,6 +191,27 @@ function generators(S::AbstractSingleton{N}) where {N<:Real}
     return EmptyGeneratorIterator{N}()
 end
 
+"""
+    ngens(S::AbstractSingleton)
+
+Return the number of generators of a set with a single value.
+
+### Input
+
+- `H` -- set with a single value
+
+### Output
+
+The number of generators.
+
+### Algorithm
+
+A set with a single value has no generators, so the result is ``0``.
+"""
+function ngens(S::AbstractSingleton)
+    return 0
+end
+
 
 # --- AbstractCentrallySymmetric interface functions ---
 

@@ -23,12 +23,12 @@ for N in [Float64, Rational{Int}, Float32]
     @test isbounded(l)
 
     # membership
-    @test !∈(N[0, 0], l)
-    @test ∈(N[1, 1], l)
-    @test ∈(N[1.5, 1.5], l)
-    @test !∈(N[3, 4], l)
-    @test !∈(N[7, 4], l)
-    @test !∈(N[1.5, 1.6], l)
+    @test N[0, 0] ∉ l
+    @test N[1, 1] ∈ l
+    @test N[1.5, 1.5] ∈ l
+    @test N[3, 4] ∉ l
+    @test N[7, 4] ∉ l
+    @test N[1.5, 1.6] ∉ l
 
     # center/generators
     @test center(l) == N[1.5, 1.5]
@@ -59,7 +59,7 @@ for N in [Float64, Rational{Int}, Float32]
     l3 = LineSegment(N[0, 1], N[0, 2])
     l4 = LineSegment(N[1, 1], N[1, 1])
     l5 = LineSegment(N[0, 0], N[0, 0])
-    l6 = LineSegment(to_N(N, [1.3, 1.3]), to_N(N, [2.3, 2.3]))
+    l6 = LineSegment(N[13//10, 13//10], N[23//10, 23//10])
     l7 = LineSegment(N[3, 3], N[4, 4])
     l8 = LineSegment(N[1, 2], N[2, 3])
     l1_copy = LineSegment(copy(l1.p), copy(l1.q))
@@ -104,15 +104,15 @@ for N in [Float64, Rational{Int}, Float32]
     b1 = Ball1(N[1.5, 1.5], N(1.1))
     b2 = Ball1(N[1.5, 1.5], N(0.4))
     subset, point = ⊆(l, b1, true)
-    @test ⊆(l, b1) && subset && point == N[]
+    @test l ⊆ b1 && subset && point == N[]
     subset, point = ⊆(l, b2, true)
-    @test !⊆(l, b2) && !subset && point ∈ l && point ∉ b2
+    @test l ⊈ b2 && !subset && point ∈ l && point ∉ b2
     h1 = Hyperrectangle(N[1.5, 1.5], N[0.6, 0.8])
     h2 = Hyperrectangle(N[1.5, 1.5], N[0.4, 0.8])
     subset, point = ⊆(l, h1, true)
-    @test ⊆(l, h1) && subset && point == N[]
+    @test l ⊆ h1 && subset && point == N[]
     subset, point = ⊆(l, h2, true)
-    @test !⊆(l, h2) && !subset && point ∈ l && point ∉ h2
+    @test l ⊈ h2 && !subset && point ∈ l && point ∉ h2
 
     # halfspace_left & halfspace_right
     @test N[1, 2] ∈ halfspace_left(l)

@@ -8,7 +8,8 @@ export VPolytope,
        convex_hull,
        cartesian_product,
        linear_map,
-       remove_redundant_vertices
+       remove_redundant_vertices,
+       minkowski_sum
 
 """
     VPolytope{N<:Real} <: AbstractPolytope{N}
@@ -383,8 +384,8 @@ The `VPolytope` obtained by the concrete Cartesian product of `P1` and `P2`.
 function cartesian_product(P1::VPolytope{N}, P2::VPolytope{N};
                            backend=default_polyhedra_backend(P1, N)) where {N}
     require(:Polyhedra; fun_name="cartesian_product")
-    Pcp = vcartesianproduct(polyhedron(P1; backend=backend),
-                            polyhedron(P2; backend=backend))
+    Pcp = Polyhedra.vcartesianproduct(polyhedron(P1; backend=backend),
+                                      polyhedron(P2; backend=backend))
     return VPolytope(Pcp)
 end
 
@@ -486,6 +487,59 @@ The same polytope instance.
 """
 function tovrep(P::VPolytope)
     return P
+end
+
+"""
+    minkowski_sum(P1::VPolytope{N}, P2::VPolytope{N};
+                  [apply_convex_hull]=true,
+                  [backend]=default_polyhedra_backend(P1, N),
+                  [solver]=default_lp_solver(N)) where {N<:Real}
+
+Compute the Minkowski sum between two polytopes in vertex representation.
+
+### Input
+
+- `P1`                -- polytope
+- `P2`                -- another polytope
+- `apply_convex_hull` -- (optional, default: `true`) if `true`, post-process the
+                         pairwise sums using a convex hull algorithm 
+- `backend`           -- (optional, default: `default_polyhedra_backend(P1, N)`)
+                         the backend for polyhedral computations used to
+                         post-process with a convex hull
+- `solver`            -- (optional, default: `default_lp_solver(N)`) the linear
+                         programming solver used in the backend
+
+### Output
+
+A new polytope in vertex representation whose vertices are the convex hull of
+the sum of all possible sums of vertices of `P1` and `P2`.
+"""
+function minkowski_sum(P1::VPolytope{N}, P2::VPolytope{N};
+                       apply_convex_hull::Bool=true,
+                       backend=nothing,
+                       solver=nothing) where {N<:Real}
+
+    @assert dim(P1) == dim(P2) "cannot compute the Minkowski sum between a polyotope " *
+        "of dimension $(dim(P1)) and a polytope of dimension $((dim(P2)))"
+
+    vlist1 = _vertices_list(P1, backend)
+    vlist2 = _vertices_list(P2, backend)
+    n, m = length(vlist1), length(vlist2)
+    Vout = Vector{Vector{N}}()
+    sizehint!(Vout, n * m)
+    for vi in vlist1
+        for vj in vlist2
+            push!(Vout, vi + vj)
+        end
+    end
+    if apply_convex_hull
+        if backend == nothing
+            backend = default_polyhedra_backend(P1, N)
+            solver = default_lp_solver(N)
+        end
+        convex_hull!(Vout, backend=backend, solver=solver)
+    end
+    return VPolytope(Vout)
 end
 
 # ==========================================

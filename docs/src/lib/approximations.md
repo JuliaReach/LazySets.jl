@@ -35,6 +35,12 @@ uniform_partition
 overapproximate
 ```
 
+## Underapproximations
+
+```@docs
+underapproximate
+```
+
 ## Box Approximations
 
 ```@docs
@@ -63,11 +69,13 @@ constraint(::LocalApproximation)
 
 ```@docs
 AbstractDirections
+isbounding
 BoxDirections
 OctDirections
 BoxDiagDirections
 PolarDirections
 SphericalDirections
+CustomDirections
 ```
 
 See also `overapproximate(X::LazySet, dir::AbstractDirections)::HPolytope`.

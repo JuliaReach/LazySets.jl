@@ -14,7 +14,6 @@ export HPolyhedron,
        vertices_list,
        singleton_list,
        isempty,
-       linear_map,
        remove_redundant_constraints,
        remove_redundant_constraints!,
        constrained_dimensions
@@ -491,8 +490,8 @@ function convex_hull(P1::HPoly{N},
                      P2::HPoly{N};
                      backend=default_polyhedra_backend(P1, N)) where {N<:Real}
     require(:Polyhedra; fun_name="convex_hull")
-    Pch = convexhull(polyhedron(P1; backend=backend),
-                     polyhedron(P2; backend=backend))
+    Pch = Polyhedra.convexhull(polyhedron(P1; backend=backend),
+                               polyhedron(P2; backend=backend))
     removehredundancy!(Pch)
     return convert(typeof(P1), Pch)
 end
@@ -525,8 +524,8 @@ function cartesian_product(P1::HPoly{N},
                            backend=default_polyhedra_backend(P1, N)
                           ) where {N<:Real}
     require(:Polyhedra; fun_name="`cartesian_product")
-    Pcp = hcartesianproduct(polyhedron(P1; backend=backend),
-                            polyhedron(P2; backend=backend))
+    Pcp = Polyhedra.hcartesianproduct(polyhedron(P1; backend=backend),
+                                      polyhedron(P2; backend=backend))
     return convert(typeof(P1), Pcp)
 end
 
@@ -701,7 +700,13 @@ return quote
 function convert(::Type{HPolyhedron{N}}, P::HRep{N}) where {N}
     constraints = LinearConstraint{N}[]
     for hi in Polyhedra.allhalfspaces(P)
-        push!(constraints, HalfSpace(hi.a, hi.β))
+        a, b = hi.a, hi.β
+        if isapproxzero(norm(a))
+            @assert b >= zero(N) "the half-space is inconsistent since it has a " *
+                "zero normal direction but the constraint is negative"
+            continue
+        end
+        push!(constraints, HalfSpace(a, b))
     end
     return HPolyhedron(constraints)
 end

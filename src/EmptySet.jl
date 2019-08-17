@@ -114,7 +114,7 @@ The output is always `false`.
 ### Examples
 
 ```jldoctest
-julia> ∈([1.0, 0.0], ∅)
+julia> [1.0, 0.0] ∈ ∅
 false
 ```
 """

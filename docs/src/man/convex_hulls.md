@@ -36,8 +36,8 @@ This type is parametric in the operands's types.
 
 ```@example example_ch
 p = plot(X, 1e-2, color="blue")
-plot!(p, exp(A) * X, 1e-2, color="green")
-plot!(p, Y, 1e-2, color="red", alpha=0.2)
+plot!(p, exp(A) * X, color="green")
+plot!(p, Y, color="red", alpha=0.2)
 ```
 
 We can as well work with a 100-dimensional set:
@@ -60,8 +60,8 @@ list comprehension, and pass them to create a new `ConvexHullArray` instance.
 b = [Ball2([2*pi*i/100, sin(2*pi*i/100)], 0.05) for i in 1:100];
 c = ConvexHullArray(b);
 
-plot(c, 1e-3, alpha=0.1, color="blue")
-plot!(b, 1e-3, alpha=0.5, color="red")
+plot(c, alpha=0.1, color="blue")
+plot!(b, alpha=0.5, color="red")
 ```
 
 ## 2D convex hull
