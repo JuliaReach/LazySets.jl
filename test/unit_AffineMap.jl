@@ -1,9 +1,8 @@
 for N in [Float64, Rational{Int}, Float32]
-
     # ==================================
     # Constructor and interface methods
     # ==================================
- 
+
     B = BallInf(zeros(N, 3), N(1))
     v = N[1, 0, 0] # translation along dimension 1
     M = Diagonal(N[1, 2, 3])
@@ -47,10 +46,6 @@ for N in [Float64, Rational{Int}, Float32]
     # Type-specific methods
     # ==================================
 
-    # the translation is the origin and the linear map is the identity => constraints remain unchanged
-    Id3 = Matrix(one(N) * I, 3, 3)
-    @test constraints_list(AffineMap(Id3, B, zeros(N, 3))) == constraints_list(B)
-
     # an affine map of the form I*X + b where I is the identity matrix is a pure translation
     #v = N[1, 0, 2]
     #am_tr = AffineMap(I, B, v) # crashes, see #1544 
@@ -69,4 +64,14 @@ for N in [Float64, Rational{Int}, Float32]
     # inclusion check
     h = Hyperrectangle(N[-1, 0], N[1, 2])
     @test h ⊆ am && am ⊆ h
+end
+
+# tests that do not work for Rational{Int}
+for N in [Float64, Float32]
+    B = BallInf(zeros(N, 3), N(1))
+
+    # the translation is the origin and the linear map is the identity => constraints remain unchanged
+    Id3 = Matrix(one(N) * I, 3, 3)
+    @test ispermutation(constraints_list(AffineMap(Id3, B, zeros(N, 3))),
+                        constraints_list(B))
 end

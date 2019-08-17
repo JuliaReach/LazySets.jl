@@ -4,7 +4,6 @@ import Base: rand,
 
 export Zonotope,
        order,
-       linear_map,
        scale,
        ngens,
        reduce_order,
@@ -387,30 +386,6 @@ and its dimension.
 """
 function order(Z::Zonotope)::Rational
     return ngens(Z) // dim(Z)
-end
-
-"""
-    linear_map(M::AbstractMatrix{N}, Z::Zonotope{N}) where {N<:Real}
-
-Concrete linear map of a zonotope.
-
-### Input
-
-- `M` -- matrix
-- `Z` -- zonotope
-
-### Output
-
-The zonotope obtained by applying the linear map to the center and generators
-of ``Z``.
-"""
-function linear_map(M::AbstractMatrix{N}, Z::Zonotope{N}) where {N<:Real}
-    @assert dim(Z) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
-                                 "applied to a set of dimension $(dim(Z))"
-
-    c = M * Z.center
-    gi = M * Z.generators
-    return Zonotope(c, gi)
 end
 
 """

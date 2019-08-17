@@ -131,6 +131,10 @@ for N in [Float64, Rational{Int}, Float32]
         @test LM isa VPolygon
     end
 
+    # in 4D and for an invertible map we get an HPolytope; see #631 and #1093
+    HP = convert(HPolytope, Approximations.overapproximate(H * H))
+    @test linear_map(Diagonal(N[1, 2, 3, 4]), HP) isa HPolytope
+
     M = N[2 1; 0 1]
     L1 = linear_map(M, P, use_inv=true)  # calculates inv(M) explicitly
     L2 = linear_map(M, P, use_inv=false) # uses transpose(M) \ c.a for each constraint c of P

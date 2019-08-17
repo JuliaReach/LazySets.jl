@@ -179,11 +179,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # linear map (concrete)
     P = linear_map(N[1 0; 0 2], H1)
-    @test P isa HPolygon # in 2D and for invertible map we get an HPolygon; see #631 and #1093
-
-    P = linear_map(Diagonal(N[1, 2, 3, 4]),
-                   Approximations.overapproximate(H1 * H1))
-    @test P isa HPolytope # in 4D and for invertible map we get an HPolytope; see #631 and #1093
+    @test P isa Zonotope
 
     # check that vertices_list is computed correctly if the hyperrectangle
     # is "degenerate"/flat, i.e., its radius contains zeros
