@@ -101,7 +101,7 @@ Here we list the names of the maintainers of the `LazySets.jl` library, as well 
 
 ### Core developers
 
-- [Marcelo Forets](http://main.marcelo-forets.fr/)
+- [Marcelo Forets](http://github.com/mforets)
 - [Christian Schilling](https://schillic.github.io/)
 
 ### Contributors
