@@ -3,14 +3,14 @@ __precompile__(true)
 # main module for `LazySets.jl`
 module LazySets
 
-using Requires, SparseArrays, LinearAlgebra
+using Requires, SparseArrays, LinearAlgebra, Reexport
 using LinearAlgebra: checksquare
 import LinearAlgebra: norm, ×
 import Random
 using Random: AbstractRNG, GLOBAL_RNG, SamplerType, shuffle
 import InteractiveUtils: subtypes
 
-export Arrays, Approximations
+export Arrays
 export ×
 
 # =======================
@@ -26,6 +26,7 @@ include("helper_functions.jl")
 include("comparisons.jl")
 include("macros.jl")
 include("samples.jl")
+include("mesh.jl")
 
 # ==================
 # Abstract set types
@@ -87,12 +88,14 @@ include("ConvexHull.jl")
 include("ExponentialMap.jl")
 include("Intersection.jl")
 include("LinearMap.jl")
+include("AffineMap.jl")
 include("MinkowskiSum.jl")
 include("ResetMap.jl")
 include("SymmetricIntervalHull.jl")
 include("Translation.jl")
 include("UnionSet.jl")
 include("Rectification.jl")
+
 
 # =============================
 # Conversions between set types
@@ -104,6 +107,10 @@ include("convert.jl")
 # Approximations module
 # =====================
 include("Approximations/Approximations.jl")
+# We export all symbols from Approximations.
+# Note that the LazySets module is not supposed to depend on Approximations.
+# It can, however, happen that we forget to add the `using` statements.
+@reexport using .Approximations
 
 # ===========================
 # Concrete operations on sets
@@ -112,6 +119,8 @@ include("concrete_intersection.jl")
 include("is_intersection_empty.jl")
 include("is_subset.jl")
 include("difference.jl")
+include("concrete_minkowski_sum.jl")
+include("concrete_minkowski_difference.jl")
 
 # =======
 # Aliases

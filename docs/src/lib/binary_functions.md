@@ -33,16 +33,16 @@ is_intersection_empty(::LineSegment{N}, ::LineSegment{N}, ::Bool=false) where {N
 is_intersection_empty(::LazySet{N}, ::Union{Hyperplane{N}, Line{N}}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::LazySet{N}, ::HalfSpace{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::HalfSpace{N}, ::HalfSpace{N}, ::Bool=false) where {N<:Real}
-is_intersection_empty(::Union{HPolyhedron{N}, AbstractPolytope{N}}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-is_intersection_empty(::Union{HPolyhedron{N}, AbstractPolytope{N}}, ::Union{HPolyhedron{N}, AbstractPolytope{N}}, ::Bool=false) where {N<:Real}
+is_intersection_empty(::AbstractPolyhedron{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::UnionSet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::UnionSetArray{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::Universe{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::Complement{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::Zonotope{N}, ::Zonotope{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::Interval{N}, ::Interval{N}, ::Bool=false) where {N<:Real}
-is_intersection_empty(X::CartesianProductArray{N}, Y::HPolyhedron{N}) where {N<:Real}
-is_intersection_empty(X::CartesianProductArray{N}, Y::CartesianProductArray{N}) where {N}
+is_intersection_empty(::CartesianProductArray{N}, ::AbstractPolyhedron{N}) where {N<:Real}
+is_intersection_empty(::CartesianProductArray{N}, ::CartesianProductArray{N}) where {N<:Real}
+is_intersection_empty(::CartesianProductArray{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
 ```
 
 ## Convex hull
@@ -77,15 +77,23 @@ intersection(::LinearMap{N}, ::LazySet{N}) where {N<:Real}
 ## Minkowski sum
 
 ```@docs
-minkowski_sum(::AbstractPolytope{N}, ::AbstractPolytope{N}) where {N<:Real}
+minkowski_sum(::VPolytope{N}, ::VPolytope{N}) where {N<:Real}
+minkowski_sum(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}) where {N<:Real}
 minkowski_sum(::AbstractZonotope{N}, ::AbstractZonotope{N}) where {N<:Real}
 minkowski_sum(::VPolygon{N}, ::VPolygon{N}) where {N<:Real}
 minkowski_sum(::PolynomialZonotope, ::Zonotope)
 ```
 
+## Minkowski difference
+```@docs
+minkowski_difference(::LazySet{N}, ::LazySet{N}) where {N<:Real}
+pontryagin_difference
+```
+
 ## Subset check
 
 ```@docs
+⊆(::LazySet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 ⊆(::LazySet{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
 ⊆(::AbstractPolytope{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 ⊆(::AbstractPolytope{N}, ::AbstractHyperrectangle, ::Bool=false) where {N<:Real}
