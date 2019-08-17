@@ -20,7 +20,7 @@ column the maximum value of the corresponding dimension.
 """
 function canonical_length(P::LazySet{N}) where {N<:Real}
     dims = dim(P)
-    x = Array{N}(undef, dims, 2)
+    x = Matrix{N}(undef, dims, 2)
     for j=1:dims
         ej = Arrays.SingleEntryVector(j, dims, 1.0)
         x[j,:] = [-ρ(-ej, P), ρ(ej, P)]
