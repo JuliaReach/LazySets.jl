@@ -29,6 +29,7 @@ isbounded(::CartesianProduct)
 isempty(::CartesianProduct)
 constraints_list(::CartesianProduct{N}) where {N<:Real}
 vertices_list(::CartesianProduct{N}) where {N<:Real}
+linear_map(M::AbstractMatrix{N}, cp::CartesianProduct{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -48,6 +49,7 @@ isbounded(::CartesianProductArray)
 isempty(::CartesianProductArray)
 constraints_list(::CartesianProductArray{N}) where {N<:Real}
 vertices_list(::CartesianProductArray{N}) where {N<:Real}
+linear_map(M::AbstractMatrix{N}, cpa::CartesianProductArray{N}) where {N<:Real}
 array(::CartesianProductArray{N, S}) where {N<:Real, S<:LazySet{N}}
 block_structure(cpa::CartesianProductArray{N}) where {N}
 block_to_dimension_indices(cpa::CartesianProductArray{N}, vars::Vector{Int}) where {N}

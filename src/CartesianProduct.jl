@@ -205,7 +205,7 @@ end
 """
     constraints_list(cp::CartesianProduct{N}) where {N<:Real}
 
-Return the list of constraints of a (polytopic) Cartesian product.
+Return the list of constraints of a (polyhedral) Cartesian product.
 
 ### Input
 
@@ -255,6 +255,44 @@ function vertices_list(cp::CartesianProduct{N}
 
     return vlist
 end
+
+"""
+    linear_map(M::AbstractMatrix{N}, cp::CartesianProduct{N}) where {N<:Real}
+
+Concrete linear map of a (polyhedral) Cartesian product.
+
+### Input
+
+- `M`  -- matrix
+- `cp` -- Cartesian product of two convex sets
+
+### Output
+
+A polytope.
+
+### Algorithm
+
+We check if the matrix is invertible.
+If so, we convert the Cartesian product to constraint representation.
+Otherwise, we convert the Cartesian product to vertex representation.
+In both cases, we then call `linear_map` on the resulting polytope.
+"""
+function linear_map(M::AbstractMatrix{N}, cp::CartesianProduct{N}
+                   ) where {N<:Real}
+    @assert dim(cp) == size(M, 2) "a linear map of size $(size(M)) cannot " *
+                                  "be applied to a set of dimension $(dim(cp))"
+
+    if !isinvertible(M)
+        # use vertex representation
+        P = VPolytope(vertices_list(cp))
+    else
+        # use constraint representation
+        T = isbounded(cp) ? HPolytope : HPolyhedron
+        P = T(constraints_list(cp))
+    end
+    return linear_map(M, P)
+end
+
 
 # ======================================
 #  Cartesian product of an array of sets
@@ -454,7 +492,7 @@ end
 """
     constraints_list(cpa::CartesianProductArray{N}) where {N<:Real}
 
-Return the list of constraints of a (polytopic) Cartesian product of a finite
+Return the list of constraints of a (polyhedral) Cartesian product of a finite
 number of sets.
 
 ### Input
@@ -726,4 +764,43 @@ function substitute_blocks(low_dim_cpa::CartesianProductArray{N},
         end
     end
     return CartesianProductArray(array)
+end
+
+"""
+    linear_map(M::AbstractMatrix{N}, cpa::CartesianProductArray{N}
+              ) where {N<:Real}
+
+Concrete linear map of a Cartesian product of a finite number of convex sets.
+
+### Input
+
+- `M`   -- matrix
+- `cpa` -- Cartesian product of a finite number of convex sets
+
+### Output
+
+A polytope.
+
+### Algorithm
+
+We check if the matrix is invertible.
+If so, we convert the Cartesian product to constraint representation.
+Otherwise, we convert the Cartesian product to vertex representation.
+In both cases, we then call `linear_map` on the resulting polytope.
+"""
+function linear_map(M::AbstractMatrix{N}, cpa::CartesianProductArray{N}
+                   ) where {N<:Real}
+    @assert dim(cpa) == size(M, 2) "a linear map of size $(size(M)) cannot " *
+                                   "be applied to a set of dimension " *
+                                   "$(dim(cpa))"
+
+    if !isinvertible(M)
+        # use vertex representation
+        P = VPolytope(vertices_list(cpa))
+    else
+        # use constraint representation
+        T = isbounded(cpa) ? HPolytope : HPolyhedron
+        P = T(constraints_list(cpa))
+    end
+    return linear_map(M, P)
 end
