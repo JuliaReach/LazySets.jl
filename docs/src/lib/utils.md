@@ -64,11 +64,12 @@ StrictlyIncreasingIndices
 
 ```@docs
 LazySets.subtypes(::Any, ::Bool)
+implementing_sets
 ```
 
 ## Sampling
 
 ```@docs
-LazySets._sample_unit_nsphere_muller!
-LazySets._sample_unit_nball_muller!
+_sample_unit_nsphere_muller!
+_sample_unit_nball_muller!
 ```
