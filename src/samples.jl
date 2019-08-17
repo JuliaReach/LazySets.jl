@@ -1,7 +1,7 @@
 function load_distributions_samples()
 return quote
 
-using .Distributions: Uniform, Normal
+using .Distributions: Distribution, Uniform, Normal
 
 """
     _sample_unit_nsphere_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
@@ -115,6 +115,101 @@ function _sample_unit_nball_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
         D[j] = v .* β
     end
     return D
+end
+
+## Rejection Sampling
+
+"""
+    _canonical_length(X::LazySet)
+
+Get the canonical length of the box-approximation of the convex set `X`.
+
+### Inputs
+
+- `X`   - lazyset
+
+### Outputs
+
+Matrix with two columns and `n=dims(X)` rows. Each column stands for
+one dimension of `X` whereas the first column is the minimum and the second
+column the maximum value of the corresponding dimension.
+"""
+function _canonical_length(X::LazySet{N}) where {N<:Real}
+    dims = dim(X)
+    x = Matrix{N}(undef, dims, 2)
+    for j=1:dims
+        ej = SingleEntryVector(j, dims, one(N))
+        x[j,:] = [-ρ(-ej, X), ρ(ej, X)]
+    end
+    return x
+end
+
+"""
+    rand(X::LazySet{N}, n_samples::Int;
+           rng::AbstractRNG=GLOBAL_RNG,
+           seed::Union{Int, Nothing}=nothing) where {N}
+
+Rejection sampling of an arbitrary LazySet `X` for which the support value
+function is defined.
+
+Draw a sample `x` from a uniform distribution of a box-overapproximation of the
+original set `X` in all `n` dimensions. The function rejects a drawn sample `x`
+and redraws as long as the sample is not contained in the original set `X`,
+i.e., `x ∉ X`.
+
+### Input
+
+- `X`           -- lazyset
+- `n_samples`    -- number of random samples
+- `rng`         -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed`        -- (optional, default: `nothing`) seed for reseeding
+
+### Output
+
+A vector of `n_samples` vectors.
+"""
+function Base.rand(X::LazySet{N}, n_samples::Int;
+                rng::AbstractRNG=GLOBAL_RNG,
+                seed::Union{Int, Nothing}=nothing) where {N<:Real}
+    rng = reseed(rng, seed)
+    @assert isbounded(X) "this function requires that the set `X` is bounded, but it is not"
+
+    D = Vector{Vector{N}}(undef, n_samples) # preallocate output
+    sample!(D, Sampler(X); rng=rng)
+    return D
+end
+
+function Base.rand(X::LazySet{N};
+                rng::AbstractRNG=GLOBAL_RNG,
+                seed::Union{Int, Nothing}=nothing) where {N<:Real}
+    return rand(X,1)[1]
+end
+
+mutable struct Sampler
+    X
+    sampler
+    distribution
+end
+
+function Sampler(X, distribution=Uniform)
+    box_lengths = _canonical_length(X)
+    sampler = [distribution(length...) for length in eachrow(box_lengths)]
+    return Sampler(X, sampler, distribution)
+end
+
+function sample!(D::Vector{Vector{N}},
+               sampler::Sampler;
+               rng::AbstractRNG=GLOBAL_RNG) where {N}
+    @inbounds for i in 1:length(D)
+        while true
+            w = rand.(Ref(rng), sampler.sampler)
+            if w ∈ sampler.X
+                D[i] = w
+                break
+            end
+        end
+    end
+    nothing
 end
 
 end # quote

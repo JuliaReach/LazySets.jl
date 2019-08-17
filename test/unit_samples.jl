@@ -23,8 +23,9 @@ p1 = rand(P1)
 p1_samples = rand(P1, 100)
 @test sum(p1_samples .∈ Ref(P1)) == length(p1_samples)
 
-# test canonical_length
-@test LazySets.canonical_length(P1+-P1.center) ≈ radius(P1)*[-ones(n) ones(n)]
-LazySets.canonical_length(P2) == [-b[3:4] b[1:2]]
-@test LazySets.canonical_length(P3) == [-Inf Inf; -Inf 30.0]
-@test LazySets.canonical_length(P4+-P4.center) ≈ radius(P4)*[-ones(n) ones(n)]
+# test _canonical_length
+@test LazySets._canonical_length(P1+-P1.center) ≈ radius(P1)*[-ones(n) ones(n)]
+@test LazySets._canonical_length(P2) == [-b[3:4] b[1:2]]
+#does not work with box_approximation in _canonical_length at the moment
+@test LazySets._canonical_length(P3) == [-Inf Inf; -Inf 30.0]
+@test LazySets._canonical_length(P4+-P4.center) ≈ radius(P4)*[-ones(n) ones(n)]

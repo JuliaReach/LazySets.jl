@@ -121,12 +121,6 @@ include("is_subset.jl")
 include("difference.jl")
 include("concrete_minkowski_sum.jl")
 
-
-# ===========================
-# Sample from Set
-# ===========================
-include("sample_from_set.jl")
-
 # =======
 # Aliases
 # =======
