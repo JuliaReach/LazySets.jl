@@ -61,12 +61,8 @@ for N in [Float64, Rational{Int}, Float32]
     @test N[5 / 4, 7 / 4] ∈ p
     @test N[4, 1] ∉ p
 
-    # singleton list (only available with Polyhedra library)
-    if test_suite_polyhedra
-        @test length(singleton_list(p)) == 4
-    else
-        @test_throws AssertionError singleton_list(p)
-    end
+    # singleton list
+    @test length(singleton_list(p)) == 4
 
     if test_suite_polyhedra
         # conversion to and from Polyhedra's VRep data structure
