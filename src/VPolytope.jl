@@ -1,5 +1,3 @@
-using MathProgBase, GLPKMathProgInterface
-
 import Base: rand,
              ∈
 

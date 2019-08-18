@@ -3,7 +3,8 @@ __precompile__(true)
 # main module for `LazySets.jl`
 module LazySets
 
-using Requires, SparseArrays, LinearAlgebra, Reexport
+using Requires, SparseArrays, LinearAlgebra, Reexport, MathProgBase,
+      GLPKMathProgInterface
 using LinearAlgebra: checksquare
 import LinearAlgebra: norm, ×
 import Random
