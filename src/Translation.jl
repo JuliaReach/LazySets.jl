@@ -144,9 +144,10 @@ struct Translation{N<:Real, VN<:AbstractVector{N}, S<:LazySet{N}} <: LazySet{N}
     v::VN
 
     # default constructor with dimension check
-    function Translation(X::S, v::VN) where {N, VN<:AbstractVector{N}, S<:LazySet{N}}
-        @assert dim(X) == length(v) "cannot create a translation of a set of dimension $(dim(X)) " *
-                                    "along a vector of length $(length(v))"
+    function Translation(X::S, v::VN) where {N<:Real, VN<:AbstractVector{N},
+                                             S<:LazySet{N}}
+        @assert dim(X) == length(v) "cannot create a translation of a set of " *
+            "dimension $(dim(X)) along a vector of length $(length(v))"
         return new{N, VN, S}(X, v)
     end
 end
