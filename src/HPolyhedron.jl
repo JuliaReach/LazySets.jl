@@ -654,6 +654,10 @@ function isempty(P::HPoly{N},
                  solver=default_lp_solver(N),
                  backend=nothing
                 )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    if length(constraints_list(P)) < 2
+        # catch corner case because of problems in LP solver for Rationals
+        return witness ? (false, an_element(P)) : false
+    end
     if use_polyhedra_interface
         require(:Polyhedra; fun_name="isempty", explanation="with the active " *
             "option `use_polyhedra_interface`")
