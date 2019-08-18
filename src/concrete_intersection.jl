@@ -473,16 +473,17 @@ using MathProgBase.SolverInterface: AbstractMathProgSolver
 """
     intersection(P1::AbstractPolyhedron{N},
                  P2::AbstractPolyhedron{N};
-                 backend=GLPKSolverLP()) where {N<:Real}
+                 backend=default_lp_solver(N)) where {N<:Real}
 
 Compute the intersection of two polyhedra.
 
 ### Input
 
-- `P1`        -- polyhedron
-- `P2`        -- polyhedron
-- `backend`   -- (optional, default: `nothing`) the solver backend used for the
-                 removal of redundant constraints, see the notes below for details
+- `P1`      -- polyhedron
+- `P2`      -- polyhedron
+- `backend` -- (optional, default: `default_lp_solver(N)`) the LP solver used
+               for the removal of redundant constraints; see the `Notes` section
+               below for details
 
 ### Output
 
@@ -492,12 +493,12 @@ If one of the arguments is a polytope, the result is an `HPolytope` instead.
 
 ### Notes
 
-The default value of the solver backend is `GLPKSolverLP()` and it is used to
-run a feasiblity LP to remove the redundant constraints of the intersection.
+The default value of the solver backend is `default_lp_solver(N)` and it is used
+to run a feasiblity LP to remove the redundant constraints of the intersection.
 
 If you want to use the `Polyhedra` library, pass an appropriate backend. For
-example, to use the default Polyhedra library use `default_polyhedra_backend(P, N)`
-or use `CDDLib.Library()` for the CDD library.
+example, to use the default Polyhedra library use
+`default_polyhedra_backend(P, N)` or use `CDDLib.Library()` for the CDD library.
 
 There are some shortcomings of the removal of constraints using the default
 Polyhedra library; see e.g. #1038 and Polyhedra#146. It is safer to check for
@@ -510,10 +511,12 @@ This implementation unifies the constraints of the two sets obtained from the
 """
 function intersection(P1::AbstractPolyhedron{N},
                       P2::AbstractPolyhedron{N};
-                      backend=GLPKSolverLP()) where {N<:Real}
+                      backend=default_lp_solver(N)) where {N<:Real}
 
     # if one of P1 or P2 is bounded => the result is bounded
-    HPOLY = (P1 isa AbstractPolytope || P2 isa AbstractPolytope) ? HPolytope{N} : HPolyhedron{N}
+    HPOLY = (P1 isa AbstractPolytope || P2 isa AbstractPolytope) ?
+        HPolytope{N} :
+        HPolyhedron{N}
 
     # concatenate the linear constraints
     Q = HPOLY([constraints_list(P1); constraints_list(P2)])
@@ -521,7 +524,7 @@ function intersection(P1::AbstractPolyhedron{N},
     # remove redundant constraints
     if backend isa AbstractMathProgSolver
         # if Q is empty => the feasiblity LP for the list of constraints of Q
-        # is infeasible and remove_redundant_constraints! returns false
+        # is infeasible and remove_redundant_constraints! returns `false`
         if remove_redundant_constraints!(Q, backend=backend)
             return Q
         else

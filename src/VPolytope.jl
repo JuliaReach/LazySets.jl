@@ -120,14 +120,16 @@ end
 
 """
     ∈(x::AbstractVector{N}, P::VPolytope{N};
-      solver=GLPKSolverLP(method=:Simplex))::Bool where {N<:Real}
+      solver=default_lp_solver(N))::Bool where {N<:Real}
 
 Check whether a given point is contained in a polytope in vertex representation.
 
 ### Input
 
-- `x` -- point/vector
-- `P` -- polytope in vertex representation
+- `x`      -- point/vector
+- `P`      -- polytope in vertex representation
+- `solver` -- (optional, default: `default_lp_solver(N)`) the backend used to
+              solve the linear program
 
 ### Output
 
@@ -149,7 +151,7 @@ Then we solve the following ``m``-dimensional linear program.
 ```
 """
 function ∈(x::AbstractVector{N}, P::VPolytope{N};
-           solver=GLPKSolverLP(method=:Simplex))::Bool where {N<:Real}
+           solver=default_lp_solver(N))::Bool where {N<:Real}
     vertices = P.vertices
     m = length(vertices)
 
@@ -399,8 +401,8 @@ Return the polytope obtained by removing the redundant vertices of the given pol
 ### Input
 
 - `P`       -- polytope in vertex representation
-- `backend` -- (optional, default: `nothing`) the polyhedral
-               computations backend, see `default_polyhedra_backend(P1, N)` or
+- `backend` -- (optional, default: `nothing`) the backend for polyhedral
+               computations; see `default_polyhedra_backend(P, N)` or
                [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
                for further information on the available backends
 - `solver`  -- (optional, default: `nothing`) the linear programming
