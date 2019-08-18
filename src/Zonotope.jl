@@ -259,7 +259,7 @@ end
 
 """
     ∈(x::AbstractVector{N}, Z::Zonotope{N};
-      solver=GLPKSolverLP(method=:Simplex))::Bool where {N<:Real}
+      solver=default_lp_solver(N))::Bool where {N<:Real}
 
 Check whether a given point is contained in a zonotope.
 
@@ -267,8 +267,8 @@ Check whether a given point is contained in a zonotope.
 
 - `x`      -- point/vector
 - `Z`      -- zonotope
-- `solver` -- (optional, default: `GLPKSolverLP(method=:Simplex)`) the backend
-              used to solve the linear program
+- `solver` -- (optional, default: `default_lp_solver(N)`) the backend used to
+              solve the linear program
 
 ### Output
 
@@ -295,14 +295,9 @@ We consider the minimization of ``x_0`` in the ``p+1``-dimensional space of
 elements ``(x_0, ξ_1, …, ξ_p)`` constrained to ``0 ≤ x_0 ≤ ∞``,
 ``ξ_i ∈ [-1, 1]`` for all ``i = 1, …, p``, and such that ``x-c = Gξ`` holds.
 If a feasible solution exists, the optimal value ``x_0 = 0`` is achieved.
-
-### Notes
-
-This function is parametric in the number type `N`. For exact arithmetic use
-an appropriate backend, e.g. `solver=GLPKSolverLP(method=:Exact)`.
 """
 function ∈(x::AbstractVector{N}, Z::Zonotope{N};
-           solver=GLPKSolverLP(method=:Simplex))::Bool where {N<:Real}
+           solver=default_lp_solver(N))::Bool where {N<:Real}
     @assert length(x) == dim(Z)
 
     p, n = ngens(Z), dim(Z)

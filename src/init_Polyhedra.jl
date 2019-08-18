@@ -13,11 +13,15 @@ eval(quote
         return Polyhedra.default_library(LazySets.dim(P), Rational{Int})
     end
 
-    function default_lp_solver(N::Type{<:AbstractFloat})
+    # NOTE: exists in parallel to `default_lp_solver` because we use different
+    # interfaces (see #1493)
+    function default_lp_solver_polyhedra(N::Type{<:AbstractFloat})
         return JuMP.with_optimizer(GLPK.Optimizer)
     end
 
-    function default_lp_solver(N::Type{<:Rational})
+    # NOTE: exists in parallel to `default_lp_solver` because we use different
+    # interfaces (see #1493)
+    function default_lp_solver_polyhedra(N::Type{<:Rational})
         return JuMP.with_optimizer(GLPK.Optimizer, method=:Exact)
     end
 end)

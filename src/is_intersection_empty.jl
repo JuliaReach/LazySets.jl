@@ -897,7 +897,7 @@ end
     is_intersection_empty(P::AbstractPolyhedron{N},
                           X::LazySet{N},
                           witness::Bool=false;
-                          solver=GLPKSolverLP(method=:Simplex)
+                          solver=default_lp_solver(N)
                          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
 Check whether two polyhedra do not intersect.
@@ -907,8 +907,8 @@ Check whether two polyhedra do not intersect.
 - `P`         -- polyhedron
 - `X`         -- another set (see the Notes section below)
 - `witness`   -- (optional, default: `false`) compute a witness if activated
-- `solver`    -- (optional, default: `GLPKSolverLP(method=:Simplex)`) LP solver
-                 backend
+- `solver`    -- (optional, default: `default_lp_solver(N)`) the backend used to
+                 solve the linear program
 - `algorithm` -- (optional, default: `"exact"`) algorithm keyword, one of:
                  * `"exact" (exact, uses a feasibility LP)
                  * `"sufficient" (sufficient, uses half-space checks)
@@ -936,7 +936,7 @@ This means one support function evaluation of `X` for each constraint of `P`.
 function is_intersection_empty(P::AbstractPolyhedron{N},
                                X::LazySet{N},
                                witness::Bool=false;
-                               solver=GLPKSolverLP(method=:Simplex),
+                               solver=default_lp_solver(N),
                                algorithm="exact"
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     if algorithm == "sufficient"
@@ -966,7 +966,7 @@ end
 function is_intersection_empty(X::LazySet{N},
                                P::AbstractPolyhedron{N},
                                witness::Bool=false;
-                               solver=GLPKSolverLP(method=:Simplex),
+                               solver=default_lp_solver(N),
                                algorithm="exact"
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return is_intersection_empty(P, X, witness;
@@ -977,7 +977,7 @@ end
 function is_intersection_empty(P::AbstractPolyhedron{N},
                                Q::AbstractPolyhedron{N},
                                witness::Bool=false;
-                               solver=GLPKSolverLP(method=:Simplex),
+                               solver=default_lp_solver(N),
                                algorithm="exact"
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return invoke(is_intersection_empty,
@@ -1021,7 +1021,7 @@ end
 function is_intersection_empty(P::AbstractPolyhedron{N},
                                hp::Union{Hyperplane{N}, Line{N}},
                                witness::Bool=false;
-                               solver=GLPKSolverLP(method=:Simplex),
+                               solver=default_lp_solver(N),
                                algorithm="exact"
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return invoke(is_intersection_empty,
@@ -1033,7 +1033,7 @@ end
 function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
                                P::AbstractPolyhedron{N},
                                witness::Bool=false;
-                               solver=GLPKSolverLP(method=:Simplex),
+                               solver=default_lp_solver(N),
                                algorithm="exact"
                               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     return invoke(is_intersection_empty,
