@@ -246,7 +246,7 @@ for N in [Float64, Float32, Rational{Int}]
 
     # is intersection empty
     p3 = convert(HPolygon, Hyperrectangle(low=N[-1, -1], high=N[1, 1]))
-    I1 = Interval(N(9//10), N(11/10))
+    I1 = Interval(N(9//10), N(11//10))
     I2 = Interval(N(1//5), N(3//10))
     I3 = Interval(N(4), N(5))
     @test !is_intersection_empty(I1 × I2 , p3)
