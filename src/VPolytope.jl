@@ -404,7 +404,8 @@ Return the polytope obtained by removing the redundant vertices of the given pol
                [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
                for further information on the available backends
 - `solver`  -- (optional, default: `nothing`) the linear programming
-               solver used in the backend, if needed; see `default_lp_solver(N)`
+               solver used in the backend, if needed; see
+               `default_lp_solver_polyhedra(N)`
 
 ### Output
 
@@ -413,8 +414,9 @@ A new polytope such that its vertices are the convex hull of the given polytope.
 ### Notes
 
 The optimization problem associated to removing redundant vertices is handled
-by `Polyhedra`. If the polyhedral computations backend requires an LP solver but
-it has not been set, we use `default_lp_solver(N)` to define such solver.
+by `Polyhedra`.
+If the polyhedral computations backend requires an LP solver but it has not been
+set, we use `default_lp_solver_polyhedra(N)` to define such solver.
 Otherwise, the redundancy removal function of the polyhedral backend is used.
 """
 function remove_redundant_vertices(P::VPolytope{N};
@@ -427,7 +429,7 @@ function remove_redundant_vertices(P::VPolytope{N};
     Q = polyhedron(P; backend=backend)
     if Polyhedra.supportssolver(typeof(Q))
         if solver == nothing
-            solver = default_lp_solver(N)
+            solver = default_lp_solver_polyhedra(N)
         end
         vQ = Polyhedra.vrep(Q)
         Polyhedra.setvrep!(Q, Polyhedra.removevredundancy(vQ, solver))
@@ -492,8 +494,8 @@ end
 """
     minkowski_sum(P1::VPolytope{N}, P2::VPolytope{N};
                   [apply_convex_hull]=true,
-                  [backend]=default_polyhedra_backend(P1, N),
-                  [solver]=default_lp_solver(N)) where {N<:Real}
+                  [backend]=nothing,
+                  [solver]=nothing) where {N<:Real}
 
 Compute the Minkowski sum between two polytopes in vertex representation.
 
@@ -503,11 +505,12 @@ Compute the Minkowski sum between two polytopes in vertex representation.
 - `P2`                -- another polytope
 - `apply_convex_hull` -- (optional, default: `true`) if `true`, post-process the
                          pairwise sums using a convex hull algorithm 
-- `backend`           -- (optional, default: `default_polyhedra_backend(P1, N)`)
-                         the backend for polyhedral computations used to
-                         post-process with a convex hull
-- `solver`            -- (optional, default: `default_lp_solver(N)`) the linear
-                         programming solver used in the backend
+- `backend`           -- (optional, default: `nothing`) the backend for
+                         polyhedral computations used to post-process with a
+                         convex hull; see `default_polyhedra_backend(P1, N)`
+- `solver`            -- (optional, default: `nothing`) the backend used to
+                         solve the linear program; see
+                         `default_lp_solver_polyhedra(N)`
 
 ### Output
 
@@ -535,7 +538,7 @@ function minkowski_sum(P1::VPolytope{N}, P2::VPolytope{N};
     if apply_convex_hull
         if backend == nothing
             backend = default_polyhedra_backend(P1, N)
-            solver = default_lp_solver(N)
+            solver = default_lp_solver_polyhedra(N)
         end
         convex_hull!(Vout, backend=backend, solver=solver)
     end

@@ -6,6 +6,16 @@ export constrained_dimensions,
        remove_redundant_constraints!,
        linear_map
 
+# default LP solver for floating-point numbers
+function default_lp_solver(N::Type{<:AbstractFloat})
+    GLPKSolverLP(method=:Simplex)
+end
+
+# default LP solver for rational numbers
+function default_lp_solver(N::Type{<:Rational})
+    GLPKSolverLP(method=:Exact)
+end
+
 """
     ∈(x::AbstractVector{N}, P::AbstractPolyhedron{N})::Bool where {N<:Real}
 
