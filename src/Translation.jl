@@ -186,7 +186,8 @@ Unicode alias constructor ⊕ (`oplus`) for the lazy translation operator.
 ⊕(v::AbstractVector, X::LazySet) = Translation(X, v)
 
 # the translation of a lazy linear map is a (lazy) affine map
-Translation(lm::LinearMap, v::AbstractVector) = AffineMap(lm.M, lm.X, v)
+Translation(lm::LinearMap{N}, v::AbstractVector{N}) where {N<:Real} =
+    AffineMap(lm.M, lm.X, v)
 
 # the linear map of a translation is a (lazy) affine map:
 # M * (X ⊕ v) = (M * X) ⊕ (M * v)
