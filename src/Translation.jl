@@ -331,13 +331,17 @@ all `x ∈ X`. Then, each defining halfspace `a⋅x ≤ b` is transformed to
 `a⋅y ≤ b + a⋅v`.
 """
 function constraints_list(tr::Translation{N}) where {N<:Real}
-    @assert applicable(constraints_list, tr.X) "this function requires that " *
+    return _constraints_list_translation(tr.X, tr.v)
+end
+
+function _constraints_list_translation(X::LazySet, v::AbstractVector)
+    @assert applicable(constraints_list, X) "this function requires that " *
         "the `constraints_list` method is applicable"
 
-    constraints_X = constraints_list(tr.X)
+    constraints_X = constraints_list(X)
     constraints_TX = similar(constraints_X)
     @inbounds for (i, ci) in enumerate(constraints_X)
-        constraints_TX[i] = HalfSpace(ci.a, ci.b + dot(ci.a, tr.v))
+        constraints_TX[i] = HalfSpace(ci.a, ci.b + dot(ci.a, v))
     end
     return constraints_TX
 end

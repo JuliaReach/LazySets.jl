@@ -340,7 +340,7 @@ We assume that the underlying set `X` is polyhedral, i.e., offers a method
 Falls back to the list of constraints of the translation of a lazy linear map.
 """
 function constraints_list(am::AffineMap{N}) where {N<:Real}
-    return constraints_list(LinearMap(am.M, am.X) ⊕ am.v)
+    return _constraints_list_translation(LinearMap(am.M, am.X), am.v)
 end
 
 """
