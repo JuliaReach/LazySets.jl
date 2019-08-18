@@ -307,7 +307,7 @@ function isempty(tr::Translation)::Bool
 end
 
 """
-    constraints_list(tr::Translation{N}, ::Val{true}) where {N<:Real}
+    constraints_list(tr::Translation{N}) where {N<:Real}
 
 Return the list of constraints of the translation of a set.
 
@@ -330,22 +330,16 @@ Let the translation be defined by the set of points `y` such that `y = x + v` fo
 all `x ∈ X`. Then, each defining halfspace `a⋅x ≤ b` is transformed to
 `a⋅y ≤ b + a⋅v`.
 """
-function constraints_list(tr::Translation{N}, ::Val{true}) where {N<:Real}
+function constraints_list(tr::Translation{N}) where {N<:Real}
+    @assert applicable(constraints_list, tr.X) "this function requires that " *
+        "the `constraints_list` method is applicable"
+
     constraints_X = constraints_list(tr.X)
     constraints_TX = similar(constraints_X)
     @inbounds for (i, ci) in enumerate(constraints_X)
         constraints_TX[i] = HalfSpace(ci.a, ci.b + dot(ci.a, tr.v))
     end
     return constraints_TX
-end
-
-function constraints_list(tr::Translation{N}) where {N<:Real}
-    has_constraints = applicable(constraints_list, tr.X)
-    return constraints_list(tr, Val(has_constraints))
-end
-
-function constraints_list(tr::Translation{N}, ::Val{false}) where {N<:Real}
-    throw(MethodError("this function requires that the `constraints_list` method is applicable"))
 end
 
 """
