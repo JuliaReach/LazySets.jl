@@ -103,15 +103,17 @@ julia> e = an_element(tr)
  2.0
 ```
 
-The lazy linear map of a translation is again a translation, since the following
-simplification rule applies: ``M * (X⊕v) = (M*X) ⊕ (M*v)``:
+The lazy linear map of a translation is an affine map, since the following
+simplification rule applies: ``M * (X ⊕ v) = (M * X) ⊕ (M * v)``:
 
 ```jldoctest translation
 julia> using LinearAlgebra: I
 
-julia> Q = Matrix(2.0I, 3, 3) * tr;
+julia> M = Matrix(2.0I, 3, 3);
 
-julia> Q isa Translation && Q.v == 2 * tr.v
+julia> Q = M * tr;
+
+julia> Q isa AffineMap && Q.M == M && Q.X == tr.X && Q.v == 2 * tr.v
 true
 ```
 
@@ -185,6 +187,10 @@ Unicode alias constructor ⊕ (`oplus`) for the lazy translation operator.
 # the translation of a lazy linear map is a (lazy) affine map
 Translation(lm::LinearMap, v::AbstractVector) = AffineMap(lm.M, lm.X, v)
 
+# the linear map of a translation is a (lazy) affine map:
+# M * (X ⊕ v) = (M * X) ⊕ (M * v)
+LinearMap(M::AbstractMatrix, tr::Translation) = AffineMap(M, tr.X, M * tr.v)
+
 # ============================
 # LazySet interface functions
 # ============================
@@ -205,7 +211,6 @@ The dimension of a translation.
 function dim(tr::Translation)::Int
     return length(tr.v)
 end
-
 
 """
     σ(d::AbstractVector{N}, tr::Translation{N}) where {N<:Real}
@@ -242,29 +247,6 @@ The support function in the given direction.
 """
 function ρ(d::AbstractVector{N}, tr::Translation{N}) where {N<:Real}
     return dot(d, tr.v) + ρ(d, tr.X)
-end
-
-"""
-    LinearMap(M::AbstractMatrix{N}, tr::Translation{N}) where {N<:Real}
-
-Return the lazy linear map of a translation.
-
-### Input
-
-- `M`  -- matrix
-- `tr` -- translation
-
-### Output
-
-The translation defined by the linear map.
-
-### Notes
-
-This method defines the simplification rule: ``M * (X⊕v) = (M*X) ⊕ (M*v)``,
-returning a new translation.
-"""
-function LinearMap(M::AbstractMatrix{N}, tr::Translation{N}) where {N<:Real}
-    return Translation(M * tr.X, M * tr.v)
 end
 
 """

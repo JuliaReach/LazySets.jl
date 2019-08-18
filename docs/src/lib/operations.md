@@ -316,7 +316,6 @@ dim(::Translation)
 an_element(::Translation)
 isempty(::Translation)
 constraints_list(::Translation{N}) where {N<:Real}
-LinearMap(::AbstractMatrix{N}, ::Translation{N}) where {N<:Real}
 linear_map(::AbstractMatrix{N}, ::Translation{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::Translation{N}) where {N<:Real}
 ```
