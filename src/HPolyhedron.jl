@@ -138,7 +138,13 @@ function σ(d::AbstractVector{N}, P::HPoly{N}; solver=default_lp_solver(N)
                   "the polytope is unbounded")
         end
         # construct the solution from the solver's ray result
-        ray = (lp == nothing) ? d : lp.attrs[:unboundedray]
+        if lp == nothing
+            ray = d
+        elseif haskey(lp.attrs, :unboundedray)
+            ray = lp.attrs[:unboundedray]
+        else
+            error("LP solver did not return an infeasibility ray")
+        end
         res = Vector{N}(undef, length(ray))
         @inbounds for i in 1:length(ray)
             if ray[i] == zero(N)
