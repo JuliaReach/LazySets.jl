@@ -7,7 +7,7 @@ using Distributions
 using Polyhedra
 
 n = 5
-P1 = rand(BallInf, dim=n)
+P1 = BallInf{Float64}([0.6, 0.1, -1.3, -0.4, 0.2], 0.6)
 A = [1.0  0.0;
      0.0  1.0;
     -1.0  0.0;
