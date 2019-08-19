@@ -110,7 +110,7 @@ Here we list the names of the maintainers of the `LazySets.jl` library, as well 
 - Sebastián Guadalupe
 - Kostiantyn Potomkin
 - Frédéric Viry
-- Ueli Wechsler
+- [Ueli Wechsler](https://github.com/ueliwechsler), ETH Zurich
 
 ### Acknowledgements
 
