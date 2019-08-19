@@ -126,7 +126,7 @@ Get the canonical length of the box-approximation of the convex set `X`.
 
 ### Inputs
 
-- `X`   - lazyset
+- `X` - convex set
 
 ### Outputs
 
