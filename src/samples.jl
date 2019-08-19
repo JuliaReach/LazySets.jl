@@ -130,7 +130,7 @@ Get the canonical length of the box-approximation of the convex set `X`.
 
 ### Outputs
 
-Matrix with two columns and `n=dims(X)` rows. Each column stands for
+A matrix with `n = dims(X)` rows and two columns. Each row stands for
 one dimension of `X` whereas the first column is the minimum and the second
 column is the maximum value of the corresponding dimension.
 """
