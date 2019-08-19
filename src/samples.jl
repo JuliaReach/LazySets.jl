@@ -168,38 +168,36 @@ i.e., `x ∉ X`.
 
 A vector of `n_samples` vectors.
 """
-function Base.rand(X::LazySet{N}, n_samples::Int;
+function sample(X::LazySet{N}, n_samples::Int;
                 rng::AbstractRNG=GLOBAL_RNG,
                 seed::Union{Int, Nothing}=nothing) where {N<:Real}
-    rng = reseed(rng, seed)
     @assert isbounded(X) "this function requires that the set `X` is bounded, but it is not"
 
     D = Vector{Vector{N}}(undef, n_samples) # preallocate output
-    sample!(D, Sampler(X); rng=rng)
+    sample!(D, SetSampler(X); rng=rng, seed=seed)
     return D
 end
 
-function Base.rand(X::LazySet{N};
-                rng::AbstractRNG=GLOBAL_RNG,
-                seed::Union{Int, Nothing}=nothing) where {N<:Real}
-    return rand(X,1)[1]
+function sample(X::LazySet{N}; kwargs...) where {N<:Real}
+    return sample(X, 1; kwargs...)[1]
 end
 
-mutable struct Sampler
-    X
-    sampler
-    distribution
+mutable struct SetSampler
+    X::LazySet
+    sampler::Vector{<:Distribution}
 end
 
-function Sampler(X, distribution=Uniform)
-    box_lengths = _canonical_length(X)
-    sampler = [distribution(length...) for length in eachrow(box_lengths)]
-    return Sampler(X, sampler, distribution)
+function SetSampler(X, distribution=Uniform)
+    box = _canonical_length(X)
+    sampler = [distribution(box[i,:]...) for i = 1:size(box,1)]
+    return SetSampler(X, sampler)
 end
 
 function sample!(D::Vector{Vector{N}},
-               sampler::Sampler;
-               rng::AbstractRNG=GLOBAL_RNG) where {N}
+               sampler::SetSampler;
+               rng::AbstractRNG=GLOBAL_RNG,
+               seed::Union{Int, Nothing}=nothing) where {N}
+    rng = reseed(rng, seed)
     @inbounds for i in 1:length(D)
         while true
             w = rand.(Ref(rng), sampler.sampler)
