@@ -132,7 +132,7 @@ Get the canonical length of the box-approximation of the convex set `X`.
 
 Matrix with two columns and `n=dims(X)` rows. Each column stands for
 one dimension of `X` whereas the first column is the minimum and the second
-column the maximum value of the corresponding dimension.
+column is the maximum value of the corresponding dimension.
 """
 function _canonical_length(X::LazySet{N}) where {N<:Real}
     dims = dim(X)
