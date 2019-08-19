@@ -137,7 +137,7 @@ column is the maximum value of the corresponding dimension.
 function _canonical_length(X::LazySet{N}) where {N<:Real}
     dims = dim(X)
     x = Matrix{N}(undef, dims, 2)
-    for j=1:dims
+    for j = 1:dims
         ej = SingleEntryVector(j, dims, one(N))
         x[j,:] = [-ρ(-ej, X), ρ(ej, X)]
     end
