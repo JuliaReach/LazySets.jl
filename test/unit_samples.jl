@@ -15,7 +15,7 @@ A = [1.0  0.0;
 b = [1.0, 2.0, 3.0, 4.0]
 P2 = HPolyhedron(A, b)
 P3 = HPolyhedron([0.0 0.1], [3.0])
-P4 = rand(Ball2, dim=n)
+P4 = Ball2{Float64}([0.2, -0.3, -1.1, 0.6, -0.7], 0.4)
 
 ## Test rand samples are contained in the set
 p1 = rand(P1)
