@@ -116,6 +116,7 @@ dim(::Intersection)
 ρ(::AbstractVector{N}, ::Intersection{N}) where {N<:Real}
 ρ(::AbstractVector{N}, ::Intersection{N, S1, S2}) where {N<:Real, S1<:LazySet{N}, S2<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}}
 ρ(::AbstractVector{N}, ::Intersection{N, S1, S2}) where {N<:Real, S1<:LazySet{N}, S2<:AbstractPolyhedron{N}}
+ρ(::AbstractVector{N}, ::Intersection{N, S1, S2}) where {N<:Real, S1<:AbstractPolyhedron{N}, S2<:AbstractPolyhedron{N}}
 σ(::AbstractVector{N}, ::Intersection{N}) where {N<:Real}
 isbounded(::Intersection)
 isempty(::Intersection)
