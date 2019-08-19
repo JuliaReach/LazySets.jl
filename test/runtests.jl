@@ -144,7 +144,6 @@ if test_suite_basic
     include("check_method_implementation.jl")
     @time @testset "LazySets.interfaces" begin include("unit_interfaces.jl") end
 
-    # Also loads Distributions
     @time @testset "LazySets.interfaces" begin include("unit_samples.jl") end
 
 
