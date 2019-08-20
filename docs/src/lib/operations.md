@@ -224,9 +224,7 @@ Inherited from [`LazySet`](@ref):
 
 ```@docs
 LinearMap
-*(::AbstractMatrix{N}, ::LazySet{N}) where {N<:Real}
-*(::N, ::LazySet{N}) where {N<:Real}
-*(::N, ::LinearMap{N}) where {N<:Real}
+*(::Union{AbstractMatrix, UniformScaling, AbstractVector, Real}, ::LazySet)
 dim(::LinearMap)
 ρ(::AbstractVector{N}, ::LinearMap{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::LinearMap{N}) where {N<:Real}
