@@ -135,5 +135,5 @@ Projection of high-dimensional polyhedra and elimination of variables can be
 performed with the `eliminate` function, which supports three types of methods:
 `:FourierMotzkin`, `:BlockElimination` and `:ProjectGenerators`.
 
-For further details, see
-[the documentation of Polyhedra.jl](https://juliapolyhedra.github.io/Polyhedra.jl/latest/polyhedron.html#Projecting-a-polyhedron-1).
+For further details, see [the documentation of
+`Polyhedra.jl`](https://juliapolyhedra.github.io/Polyhedra.jl/latest/projection/).
