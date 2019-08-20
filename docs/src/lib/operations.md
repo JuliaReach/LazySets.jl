@@ -324,8 +324,6 @@ linear_map(::AbstractMatrix{N}, ::Translation{N}) where {N<:Real}
 
 ```@docs
 AffineMap
-*(::AbstractMatrix{N}, ::AffineMap{N}) where {N<:Real}
-*(::N, ::AffineMap{N}) where {N<:Real}
 dim(::AffineMap)
 σ(::AbstractVector{N}, ::AffineMap{N}) where {N<:Real}
 ρ(::AbstractVector{N}, ::AffineMap{N}) where {N<:Real}
