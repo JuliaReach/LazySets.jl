@@ -456,8 +456,7 @@ end
 
 """
 ```
-    *(projspmexp::ProjectionSparseMatrixExp,
-      X::LazySet)::ExponentialProjectionMap
+    *(projspmexp::ProjectionSparseMatrixExp, X::LazySet)
 ```
 
 Return the application of a projection of a sparse matrix exponential to a
@@ -473,8 +472,7 @@ convex set.
 The application of the projection of a sparse matrix exponential to the convex
 set.
 """
-function *(projspmexp::ProjectionSparseMatrixExp,
-           X::LazySet)::ExponentialProjectionMap
+function *(projspmexp::ProjectionSparseMatrixExp, X::LazySet)
     return ExponentialProjectionMap(projspmexp, X)
 end
 
