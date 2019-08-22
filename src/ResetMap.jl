@@ -17,7 +17,7 @@ dimensions, and the translation vector ``b`` is zero in all other dimensions.
 - `X`      -- convex set
 - `resets` -- resets (a mapping from an index to a new value)
 
-### Example
+### Examples
 
 ```jldoctest resetmap
 julia> X = BallInf([2.0, 2.0, 2.0], 1.0);
@@ -44,6 +44,29 @@ The corresponding affine map ``A x + b`` would be:
 Use the function `get_A` (resp. `get_b`) to create the matrix `A` (resp. vector
 `b`) corresponding to a given reset map.
 
+```jldoctest resetmap
+julia> get_A(rm)
+3×3 LinearAlgebra.Diagonal{Float64,Array{Float64,1}}:
+ 0.0   ⋅    ⋅
+  ⋅   1.0   ⋅
+  ⋅    ⋅   0.0
+
+julia> get_b(rm)
+3-element SparseArrays.SparseVector{Float64,Int64} with 1 stored entry:
+  [1]  =  4.0
+```
+
+The application of a `ResetMap` to a `ZeroSet` or an `EmptySet` is simplified
+automatically.
+
+```jldoctest resetmap
+julia> ResetMap(ZeroSet(3), r)
+Singleton{Float64,SparseArrays.SparseVector{Float64,Int64}}(  [1]  =  4.0)
+
+julia> ResetMap(EmptySet(), r)
+EmptySet{Float64}()
+```
+
 The (in this case unique) support vector of `rm` in direction `ones(3)` is:
 
 ```jldoctest resetmap
@@ -57,6 +80,17 @@ julia> σ(ones(3), rm)
 struct ResetMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
     X::S
     resets::Dict{Int, N}
+end
+
+# ZeroSet is "almost absorbing" for the linear map (only the dimension changes)
+# such that only the translation vector remains
+function ResetMap(Z::ZeroSet{N}, resets::Dict{Int, N}) where {N<:Real}
+    return Singleton(_get_b_from_dictionary(resets, dim(Z)))
+end
+
+# EmptySet is absorbing for ResetMap
+function ResetMap(∅::EmptySet{N}, resets::Dict{Int, N}) where {N<:Real}
+    return ∅
 end
 
 """
@@ -106,9 +140,12 @@ The vector contains the reset value for all reset dimensions, and is zero for
 all other dimensions.
 """
 function get_b(rm::ResetMap{N}) where {N<:Real}
-    n = dim(rm)
+    return _get_b_from_dictionary(rm.resets, dim(rm))
+end
+
+function _get_b_from_dictionary(dict::Dict{Int, N}, n::Int) where {N<:Real}
     b = sparsevec(Int[], N[], n)
-    for (i, val) in rm.resets
+    for (i, val) in dict
         b[i] = val
     end
     return b
