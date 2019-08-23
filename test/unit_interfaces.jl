@@ -8,22 +8,16 @@
 # dimension
 check_method_implementation(LazySet, dim, Function[S -> (S{Float64},)])
 
-# copy
-check_method_implementation(LazySet, copy, Function[S -> (S,)])
+# --- AbstractPolyhedron ---
+
+# constraints list
+@test check_method_implementation(AbstractPolyhedron, constraints_list,
+                                  Function[S -> (S{Float64},)])
 
 # --- AbstractPolytope ---
 
 # vertices list
-global test_suite_polyhedra
-if test_suite_polyhedra
-    exclusions = Type[]
-else
-    exclusions = Type[HPolytope, VPolytope]
-end
 @test check_method_implementation(AbstractPolytope, vertices_list,
-                                  Function[S -> (S{Float64},)],
-                                  ignore_types=exclusions)
-@test check_method_implementation(AbstractPolytope, constraints_list,
                                   Function[S -> (S{Float64},)])
 
 # --- AbstractCentrallySymmetric ---
@@ -31,7 +25,21 @@ end
 # center
 @test check_method_implementation(AbstractCentrallySymmetric, center,
                                   Function[S -> (S{Float64},)])
+
+# --- AbstractCentrallySymmetricPolytope ---
+# (copies methods from AbstractCentrallySymmetric)
+
+# center (from AbstractCentrallySymmetric)
 @test check_method_implementation(AbstractCentrallySymmetricPolytope, center,
+                                  Function[S -> (S{Float64},)])
+
+# --- AbstractZonotope ---
+
+# genmat
+@test check_method_implementation(AbstractZonotope, genmat,
+                                  Function[S -> (S{Float64},)])
+# generators
+@test check_method_implementation(AbstractZonotope, generators,
                                   Function[S -> (S{Float64},)])
 
 # --- AbstractHyperrectangle ---
@@ -41,10 +49,13 @@ end
                                   Function[S -> (S{Float64},)])
 @test check_method_implementation(AbstractHyperrectangle, radius_hyperrectangle,
                                   Function[S -> (S{Float64}, Int)])
+# isflat
+@test check_method_implementation(AbstractHyperrectangle, isflat,
+                                  Function[S -> (S{Float64},)])
 
 # --- AbstractSingleton ---
 
-# element
+# element (2x)
 @test check_method_implementation(AbstractSingleton, element,
                                   Function[S -> (S{Float64},)])
 @test check_method_implementation(AbstractSingleton, element,
