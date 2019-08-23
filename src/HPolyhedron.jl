@@ -489,7 +489,7 @@ For performance reasons, it is suggested to use the `CDDLib.Library()` backend
 for the `convex_hull`.
 
 For further information on the supported backends see
-[Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/).
+[Polyhedra's documentation](https://juliapolyhedra.github.io/).
 """
 function convex_hull(P1::HPoly{N},
                      P2::HPoly{N};
@@ -522,7 +522,7 @@ The polyhedron obtained by the concrete cartesian product of `P1` and `P2`.
 ### Notes
 
 For further information on the supported backends see
-[Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/).
+[Polyhedra's documentation](https://juliapolyhedra.github.io/).
 """
 function cartesian_product(P1::HPoly{N},
                            P2::HPoly{N};
@@ -555,8 +555,8 @@ in constraint representation.
 
 The conversion may not preserve the numeric type (e.g., with `N == Float32`)
 depending on the backend.
-For further information on the supported backends see
-[Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1).
+For further information on the supported backends see [Polyhedra's
+documentation](https://juliapolyhedra.github.io/).
 """
 function tovrep(P::HPoly{N};
                 backend=default_polyhedra_backend(P, N)) where {N<:Real}
@@ -762,7 +762,7 @@ An `HRep` polyhedron.
 ### Notes
 
 For further information on the supported backends see
-[Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/).
+[Polyhedra's documentation](https://juliapolyhedra.github.io/).
 """
 function polyhedron(P::HPoly{N};
                     backend=default_polyhedra_backend(P, N)) where {N<:Real}

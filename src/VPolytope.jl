@@ -370,12 +370,12 @@ Compute the Cartesian product of two polytopes in V-representation.
 
 ### Input
 
-- `P1`         -- polytope
-- `P2`         -- another polytope
-- `backend`    -- (optional, default: `default_polyhedra_backend(P1, N)`) the polyhedral
-                  computations backend, see
-                  [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
-                  for further information
+- `P1`      -- polytope
+- `P2`      -- another polytope
+- `backend` -- (optional, default: `default_polyhedra_backend(P1, N)`) the
+               backend for polyhedral computations; see [Polyhedra's
+               documentation](https://juliapolyhedra.github.io/) for further
+               information
 
 ### Output
 
@@ -401,8 +401,8 @@ Return the polytope obtained by removing the redundant vertices of the given pol
 - `P`       -- polytope in vertex representation
 - `backend` -- (optional, default: `nothing`) the backend for polyhedral
                computations; see `default_polyhedra_backend(P, N)` or
-               [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
-               for further information on the available backends
+               [Polyhedra's documentation](https://juliapolyhedra.github.io/)
+               for further information
 - `solver`  -- (optional, default: `nothing`) the linear programming
                solver used in the backend, if needed; see
                `default_lp_solver_polyhedra(N)`
@@ -449,7 +449,9 @@ Transform a polytope in V-representation to a polytope in H-representation.
 
 - `P`       -- polytope in vertex representation
 - `backend` -- (optional, default: `default_polyhedra_backend(P, N)`) the
-               backend for polyhedral computations
+               backend for polyhedral computations; see [Polyhedra's
+               documentation](https://juliapolyhedra.github.io/) for further
+               information
 
 ### Output
 
@@ -460,8 +462,6 @@ in vertex representation.
 
 The conversion may not preserve the numeric type (e.g., with `N == Float32`)
 depending on the backend.
-For further information on the supported backends see
-[Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1).
 """
 function tohrep(P::VPolytope{N};
                 backend=default_polyhedra_backend(P, N)) where {N<:Real}
@@ -575,12 +575,13 @@ Return an `VRep` polyhedron from `Polyhedra.jl` given a polytope in V-representa
 ### Input
 
 - `P`       -- polytope
-- `backend` -- (optional, default: `default_polyhedra_backend(P, N)`) the polyhedral
-               computations backend, see [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1)
-               for further information
+- `backend` -- (optional, default: `default_polyhedra_backend(P, N)`) the
+               backend for polyhedral computations; see [Polyhedra's
+               documentation](https://juliapolyhedra.github.io/) for further
+               information
 - `relative_dimension` -- (default, optional: `nothing`) an integer representing
-                          the (relative) dimension of the polytope; this argument
-                          is mandatory if the polytope is empty
+                          the (relative) dimension of the polytope; this
+                          argument is mandatory if the polytope is empty
 
 ### Output
 

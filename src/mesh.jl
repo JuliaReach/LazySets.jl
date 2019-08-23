@@ -59,7 +59,7 @@ Plot a three-dimensional convex set using Makie.
                     of the plot
 
 For a complete list of attributes and usage see
-[Makie's documentation](http://makie.juliaplots.org/stable/plot-attributes.html).
+[Makie's documentation](http://makie.juliaplots.org/stable/plot-attributes).
 
 ### Notes
 
@@ -120,8 +120,9 @@ Plot a three-dimensional convex set using Makie.
 
 ### Input
 
-See `plot3d` for the description of the inputs. For a complete list of attributes
-and usage see [Makie's documentation](http://makie.juliaplots.org/stable/plot-attributes.html).
+See `plot3d` for the description of the inputs. For a complete list of
+attributes and usage see [Makie's
+documentation](http://makie.juliaplots.org/stable/plot-attributes).
 
 ### Notes
 
