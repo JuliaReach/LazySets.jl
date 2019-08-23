@@ -390,8 +390,8 @@ end
     ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2}; kwargs...)
         where {N<:Real, S1<:LazySet{N}, S2<:AbstractPolyhedron{N}}
 
-Return an upper bound of the intersection between a compact set and a polyhedron
-along a given direction.
+Return an upper bound on the support function of the intersection between a
+compact set and a polyhedron along a given direction.
 
 ### Input
 
@@ -426,9 +426,8 @@ function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2}; kwargs...
 end
 
 # symmetric method
-function ρ(d::AbstractVector{N},
-           cap::Intersection{N, S1, S2};
-           kwargs...) where {N<:Real, S1<:AbstractPolyhedron{N}, S2<:LazySet{N}}
+function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2}; kwargs...
+          ) where {N<:Real, S1<:AbstractPolyhedron{N}, S2<:LazySet{N}}
     return ρ(d, swap(cap); kwargs...)
 end
 
@@ -437,6 +436,34 @@ function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2}; kwargs...
           ) where {N<:Real, S1<:AbstractPolytope{N}, S2<:AbstractPolyhedron{N}}
     return minimum([ρ(d, cap.X ∩ Hi; kwargs...)
                    for Hi in constraints_list(cap.Y)])
+end
+
+"""
+    ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2}; kwargs...
+     ) where {N<:Real, S1<:AbstractPolyhedron{N}, S2<:AbstractPolyhedron{N}}
+
+Return an upper bound on the support function of the intersection between two
+polyhedral sets.
+
+### Input
+
+- `d`      -- direction
+- `cap`    -- intersection of two polyhedral sets
+- `kwargs` -- additional arguments that are passed to the support-function
+              algorithm
+
+### Output
+
+The support function for the given direction.
+
+### Algorithm
+
+We combine the constraints of the two polyhedra to a new `HPolyhedron`, for
+which we then evaluate the support function.
+"""
+function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2}; kwargs...
+          ) where {N<:Real, S1<:AbstractPolyhedron{N}, S2<:AbstractPolyhedron{N}}
+    return ρ(d, HPolyhedron([constraints_list(cap.X); constraints_list(cap.Y)]))
 end
 
 # disambiguation
@@ -453,6 +480,22 @@ function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2};
           ) where {N<:Real, S1<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
                    S2<:AbstractPolytope{N}}
     return ρ_helper(d, swap(cap), algorithm; kwargs...)
+end
+
+# disambiguation
+function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2};
+           algorithm::String="line_search", kwargs...
+          ) where {N<:Real, S1<:AbstractPolyhedron{N},
+                   S2<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}}
+    return ρ(d, HPolyhedron([constraints_list(cap.X); constraints_list(cap.Y)]))
+end
+
+# symmetric method
+function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2};
+           algorithm::String="line_search", kwargs...
+          ) where {N<:Real, S1<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
+                   S2<:AbstractPolyhedron{N}}
+    return ρ(d, HPolyhedron([constraints_list(cap.X); constraints_list(cap.Y)]))
 end
 
 # disambiguation
