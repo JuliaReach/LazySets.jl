@@ -216,3 +216,28 @@ function minkowski_sum(H1::AbstractHyperrectangle{N},
     return Hyperrectangle(center(H1) + center(H2),
                           radius_hyperrectangle(H1) + radius_hyperrectangle(H2))
 end
+
+"""
+    minkowski_sum(Z1::AbstractZonotope{N}, Z2::AbstractZonotope{N})
+        where {N<:Real}
+
+Concrete Minkowski sum of a pair of zonotopic sets.
+
+### Input
+
+- `Z1` -- zonotopic set
+- `Z2` -- zonotopic set
+
+### Output
+
+A `Zonotope` corresponding to the concrete Minkowski sum of `Z1` and `Z2`.
+
+### Algorithm
+
+The resulting zonotope is obtained by summing up the centers and concatenating
+the generators of `Z1` and `Z2`.
+"""
+function minkowski_sum(Z1::AbstractZonotope{N},
+                       Z2::AbstractZonotope{N}) where {N<:Real}
+    return Zonotope(center(Z1) + center(Z2), [genmat(Z1) genmat(Z2)])
+end
