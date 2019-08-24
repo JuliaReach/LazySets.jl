@@ -394,7 +394,8 @@ function constraints_list(Z::AbstractZonotope{N}) where {N<:Real}
 end
 
 """
-    constraints_list(Z::AbstractZonotope{N}) where {N<:AbstractFloat}
+    constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true
+                    ) where {N<:AbstractFloat}
 
 Return the list of constraints defining a zonotopic set.
 
