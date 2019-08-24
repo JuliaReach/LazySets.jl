@@ -36,6 +36,7 @@ include("template_directions.jl")
 include("overapproximate.jl")
 include("underapproximate.jl")
 include("decompositions.jl")
+include("hausdorff_distance.jl")
 include("init.jl")
 
 end # module
