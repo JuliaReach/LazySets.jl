@@ -843,7 +843,7 @@ All other blocks are not considered by the intersection and remain identical.
 
 The underlying idea of the algorithm is to exploit the unconstrained dimensions
 of `P`.
-Assuming that `cpa` has the structure ``X × Y × Z`` such that only the
+Without loss of generality, assume that `cpa` has the structure ``X × Y × Z`` such that only the
 dimensions of ``Y`` are constrained in ``P``, and denoting a suitable projection
 of ``P`` to the dimensions of ``Y`` with ``P|_Y``, we have the following
 equivalence:
