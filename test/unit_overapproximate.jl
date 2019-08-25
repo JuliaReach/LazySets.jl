@@ -173,6 +173,56 @@ for N in [Float64, Float32]
     @test lcl[7].b ≈ N(1)
     @test lcl[8].a ≈ N[sqrt(2)/2, -sqrt(2)/2]
     @test lcl[8].b ≈ N(1)
+
+    # Zonotope approximation of convex hull of two zonotopes
+
+    # same order (mean method only)
+    Z1 = Zonotope(zeros(N, 2), hcat(N[1, 0]))
+    Z2 = Zonotope(zeros(N, 2), hcat(N[0, 1]))
+    Zch = overapproximate(ConvexHull(Z1, Z2), Zonotope; algorithm="mean")
+    # the result is a diamond (tight)
+    @test Zch == Zonotope(N[0, 0], N[0.5 0.5; 0.5 -0.5])
+
+    # different order (mean method only)
+    Z1 = Zonotope(zeros(N, 2), hcat(N[1, 0]))
+    Z2 = Zonotope(N[0, 0], N[1 0; 0 1])
+    # the result is a box (tight)
+    Zch = overapproximate(ConvexHull(Z1, Z2), Zonotope; algorithm="mean")
+    @test Zch == Zonotope(N[0, 0], N[1 0; 0 1])
+
+    # comparison of different methods
+    Z1 = Zonotope(ones(N, 2), [N[1, 0], N[0, 1], N[1, 1]])
+    Z2 = Zonotope(-ones(N, 2), [N[0.5, 1], N[-0.1, 0.9], N[1, 4]])
+    Y = ConvexHull(Z1, Z2)
+    # overapproximate with a polygon
+    Y_polygon = overapproximate(Y, N(1e-3))
+    # overapproximate with a zonotope (different methods)
+    overapproximate(Y, Zonotope) # default
+    Y_zonotope_1 = overapproximate(Y, Zonotope; algorithm="mean")
+    Y_zonotope_2 = overapproximate(Y, Zonotope; algorithm="join")
+    @test Y_polygon ⊆ Y_zonotope_1
+    @test Y_polygon ⊆ Y_zonotope_2
+    # check property of 'join' algorithm: box approximation equality
+    X1 = box_approximation(Y)
+    X2 = box_approximation(Y_zonotope_2)
+    @test center(X1) ≈ center(X2) &&
+          radius_hyperrectangle(X1) ≈ radius_hyperrectangle(X2)
+
+    # example from paper
+    Z1 = Zonotope(N[3, 0], N[1 2; 1 1])
+    Z2 = Zonotope(N[1, 0], N[-2 1; 1 1])
+    @test overapproximate(ConvexHull(Z1, Z2), Zonotope; algorithm="join") ==
+          Zonotope(N[2, 0], N[0 1 3; 1 1 0])
+
+    # different orders
+    Z1 = Zonotope(N[3, 0], N[1 2 1; 1 1 2])
+    Z2 = Zonotope(N[1, 0], N[-2 1; 1 1])
+    Y = ConvexHull(Z1, Z2)
+    Y_polygon = overapproximate(Y, N(1e-3))
+    Y_zonotope_1 = overapproximate(Y, Zonotope; algorithm="mean")
+    Y_zonotope_2 = overapproximate(Y, Zonotope; algorithm="join")
+    @test Y_polygon ⊆ Y_zonotope_1
+    @test Y_polygon ⊆ Y_zonotope_2
 end
 
 for N in [Float64]
