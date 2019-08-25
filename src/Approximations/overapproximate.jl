@@ -192,7 +192,7 @@ Overapproximate the convex hull of two zonotopes.
 
 - `X`         -- convex hull of two zonotopes
 - `Zonotope`  -- type for dispatch
-- `algorithm` -- (optional; default: `"join"`) choice of algorithm; possible
+- `algorithm` -- (optional; default: `"mean"`) choice of algorithm; possible
                  values are `"mean"` and `"join"`
 
 ### Output
@@ -273,7 +273,7 @@ constructed in the first phase.
 """
 function overapproximate(X::ConvexHull{N, Zonotope{N}, Zonotope{N}},
                          ::Type{<:Zonotope};
-                         algorithm="join")::Zonotope where {N<:Real}
+                         algorithm="mean")::Zonotope where {N<:Real}
     # execute specific algorithm
     if algorithm == "mean"
         return _overapproximate_convex_hull_zonotope_G05(X)
