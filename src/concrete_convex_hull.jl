@@ -8,7 +8,7 @@ end
 
 """
     convex_hull(points::Vector{VN};
-                [algorithm]=default_convex_hull_algorithm(points),
+                [algorithm]=nothing,
                 [backend]=nothing,
                 [solver]=nothing
                 )::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
@@ -18,11 +18,11 @@ Compute the convex hull of the given points.
 ### Input
 
 - `points`    -- list of vectors
-- `algorithm` -- (optional, default: depends on the dimension) the convex hull
-                 algorithm, see valid options below
-- `backend`   -- (optional, default: `"nothing"`) polyhedral computation backend
+- `algorithm` -- (optional, default: `nothing`) the convex-hull algorithm; see
+                 below for valid options
+- `backend`   -- (optional, default: `nothing`) polyhedral computation backend
                  for higher-dimensional point sets
-- `solver`    -- (optional, default: `"nothing"`) the linear programming solver
+- `solver`    -- (optional, default: `nothing`) the linear-programming solver
                  used in the backend
 
 ### Output
@@ -80,7 +80,7 @@ julia> plot!(VPolygon(hull), alpha=0.2);
 ```
 """
 function convex_hull(points::Vector{VN};
-                     algorithm=default_convex_hull_algorithm(points),
+                     algorithm=nothing,
                      backend=nothing,
                      solver=nothing
                      )::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
@@ -88,7 +88,7 @@ function convex_hull(points::Vector{VN};
 end
 
 function convex_hull!(points::Vector{VN};
-                      algorithm=default_convex_hull_algorithm(points),
+                      algorithm=nothing,
                       backend=nothing,
                       solver=nothing)::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
 
@@ -317,8 +317,11 @@ function _convex_hull_nd!(points::Vector{VN};
 end
 
 function _convex_hull_2d!(points::Vector{VN};
-                          algorithm::String="monotone_chain"
+                          algorithm="monotone_chain"
                           )::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
+    if algorithm == nothing
+        algorithm = default_convex_hull_algorithm(points)
+    end
     if algorithm == "monotone_chain"
         return monotone_chain!(points)
     elseif algorithm == "monotone_chain_sorted"
