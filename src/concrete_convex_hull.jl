@@ -7,6 +7,55 @@ function default_convex_hull_algorithm(points)
 end
 
 """
+    function convex_hull(X::LazySet{N}, Y::LazySet{N}; [algorithm]=nothing,
+                         [backend]=nothing, [solver]=nothing) where {N<:Real}
+
+Compute the convex hull of the given convex sets.
+
+### Input
+
+- `X`         -- convex set
+- `Y`         -- convex set
+- `algorithm` -- (optional, default: `nothing`) the convex-hull algorithm
+- `backend`   -- (optional, default: `nothing`) backend for polyhedral
+                 computations (used for higher-dimensional sets)
+- `solver`    -- (optional, default: `nothing`) the linear-programming solver
+                 used in the backend
+
+### Output
+
+If the input sets are one-dimensional, the result is an `Interval`.
+If the input sets are two-dimensional, the result is a `VPolygon`.
+Otherwise the result is a `VPolytope`.
+
+### Algorithm
+
+One-dimensional sets are resolved by using `overapproximate` with an `Interval`
+(which is exact).
+For higher-dimensional sets, we compute the vertices of both `X` and `Y` using
+`vertices_list` and then compute the convex hull of the union of those vertices.
+"""
+function convex_hull(X::LazySet{N}, Y::LazySet{N};
+                     algorithm=nothing,
+                     backend=nothing,
+                     solver=nothing
+                    ) where {N<:Real}
+    n = dim(X)
+    @assert n == dim(Y) "the convex hull requires two sets of the same " *
+                        "dimension, but the sets had dimension $n and $(dim(Y))"
+    if n == 1
+        return overapproximate(ConvexHull(X, Y), Interval)
+    end
+
+    chull = convex_hull!([vertices_list(X); vertices_list(Y)];
+                         algorithm=algorithm, backend=backend, solver=solver)
+    if n == 2
+        return VPolygon(chull)
+    end
+    return VPolytope(chull)
+end
+
+"""
     convex_hull(points::Vector{VN};
                 [algorithm]=nothing,
                 [backend]=nothing,
@@ -318,7 +367,7 @@ end
 
 function _convex_hull_2d!(points::Vector{VN};
                           algorithm="monotone_chain"
-                          )::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
+                         )::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
     if algorithm == nothing
         algorithm = default_convex_hull_algorithm(points)
     end

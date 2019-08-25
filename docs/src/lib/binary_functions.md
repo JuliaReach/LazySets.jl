@@ -48,6 +48,7 @@ is_intersection_empty(::CartesianProductArray{N}, ::AbstractHyperrectangle{N}, :
 ## Convex hull
 
 ```@docs
+convex_hull(::LazySet{N}, ::LazySet{N}) where {N<:Real}
 convex_hull(::HPoly{N}, ::HPoly{N}) where {N<:Real}
 convex_hull(::VPolytope{N}, ::VPolytope{N}) where {N<:Real}
 convex_hull(::VPolygon{N}, ::VPolygon{N}) where {N<:Real}
