@@ -144,4 +144,7 @@ for N in [Float64, Rational{Int}]
         ch = convex_hull(X, Y)
         @test ch isa T{N}
     end
+    S = Singleton(N[1])
+    ch = convex_hull(S, S)
+    @test ch isa Singleton{N} && element(ch) == element(S)
 end

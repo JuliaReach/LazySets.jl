@@ -7,8 +7,8 @@ function default_convex_hull_algorithm(points)
 end
 
 """
-    function convex_hull(X::LazySet{N}, Y::LazySet{N}; [algorithm]=nothing,
-                         [backend]=nothing, [solver]=nothing) where {N<:Real}
+    convex_hull(X::LazySet{N}, Y::LazySet{N}; [algorithm]=nothing,
+                [backend]=nothing, [solver]=nothing) where {N<:Real}
 
 Compute the convex hull of the given convex sets.
 
@@ -43,13 +43,25 @@ function convex_hull(X::LazySet{N}, Y::LazySet{N};
     n = dim(X)
     @assert n == dim(Y) "the convex hull requires two sets of the same " *
                         "dimension, but the sets had dimension $n and $(dim(Y))"
-    if n == 1
-        return overapproximate(ConvexHull(X, Y), Interval)
-    end
 
     chull = convex_hull!([vertices_list(X); vertices_list(Y)];
                          algorithm=algorithm, backend=backend, solver=solver)
-    if n == 2
+    m = length(chull)
+    if m == 0
+        return EmptySet{N}()
+    elseif m == 1
+            return Singleton(chull[1])
+    elseif n == 1
+        @assert m == 2
+        low = chull[1][1]
+        high = chull[2][1]
+        if low > high
+            tmp = low
+            low = high
+            high = tmp
+        end
+        return Interval(low, high)
+    elseif n == 2
         return VPolygon(chull)
     end
     return VPolytope(chull)
