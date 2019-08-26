@@ -133,4 +133,18 @@ for N in [Float64, Rational{Int}]
                                     [N(0), N(1), N(6)], [N(-1), N(-1), N(-7)],
                                     [N(1/2), N(1/2), N(-8)], [N(1), N(2), N(3)]])
     end
+
+    # general LazySets
+    for (n, T) in [(1, Interval), (2, VPolygon), (3, VPolytope)]
+        if n > 2 && !test_suite_polyhedra  # dimensions > 2 require Polyhedra
+            continue
+        end
+        X = BallInf(zeros(N, n), N(1))
+        Y = Ball1(ones(N, n), N(3//2))
+        ch = convex_hull(X, Y)
+        @test ch isa T{N}
+    end
+    S = Singleton(N[1])
+    ch = convex_hull(S, S)
+    @test ch isa Singleton{N} && element(ch) == element(S)
 end
