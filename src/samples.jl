@@ -122,7 +122,7 @@ end
 """
     _canonical_length(X::LazySet)
 
-Get the canonical length of the box-approximation of the convex set `X`.
+Returns the support function of the given set along the positive and negative canonical directions.
 
 ### Inputs
 
