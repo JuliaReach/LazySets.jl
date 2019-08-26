@@ -818,3 +818,117 @@ function intersection(X::CartesianProductArray{N}, Y::CartesianProductArray{N}) 
 
     return CartesianProductArray([intersection(array(X)[i], array(Y)[i]) for i in eachindex(array(X))])
 end
+
+"""
+    intersection(cpa::CartesianProductArray{N}, P::AbstractPolyhedron{N}
+                ) where {N<:Real}
+
+Compute the intersection of a Cartesian product of a finite number of polyhedral
+sets with a polyhedron.
+
+### Input
+
+- `cpa` -- Cartesian product of a finite number of polyhedral sets
+- `P`   -- polyhedron
+
+### Output
+
+A Cartesian product of a finite number of polyhedral sets.
+See the *Algorithm* section below for details about the structure.
+
+### Notes
+
+The restriction to polyhedral sets in `cpa` only applies to the blocks that are
+actually intersected with `P` (see the *Algorithm* section below for details).
+All other blocks are not considered by the intersection and remain identical.
+
+### Algorithm
+
+The underlying idea of the algorithm is to exploit the unconstrained dimensions
+of `P`.
+Without loss of generality, assume that `cpa` has the structure ``X × Y × Z`` such that only the
+dimensions of ``Y`` are constrained in ``P``, and denoting a suitable projection
+of ``P`` to the dimensions of ``Y`` with ``P|_Y``, we have the following
+equivalence:
+
+```math
+    (X × Y × Z) ∩ P = X × (Y ∩ P|_Y) × Z
+```
+
+Note that ``Y`` may still consist of many blocks.
+However, due to the structural restriction of a Cartesian product, we cannot
+break down this set further even if ``P|_Y`` is still unconstrained in some
+dimensions of blocks in ``Y``.
+This would require a restructuring of the dimensions.
+Consider this example:
+
+```math
+    Y := [0, 1] × [1, 2] × [2, 3]
+    P|_Y := x₁ + x₃ ≤ 2
+    Y ∩ P|_Y = 0 ≤ x₁ ∧ 1 ≤ x₂ ≤ 2 ∧ 2 ≤ x₃ ∧ x₁ + x₃ ≤ 2
+```
+
+Even though the constraints of dimension ``x₂`` are decoupled from the rest,
+due to the last constraint the Cartesian product cannot be broken down further.
+In particular, the result ``Y ∩ P|_Y`` is a polyhedron in this implementation.
+
+Now we explain the implementation of the above idea.
+We first identify the dimensions in which `P` is constrained.
+Then we identify the block dimensions of ``X × Y × Z`` such that ``Y`` has
+minimal dimension.
+Finally, we convert ``Y`` to a polyhedron and intersect it with a suitable
+projection of `P`.
+"""
+function intersection(cpa::CartesianProductArray{N}, P::AbstractPolyhedron{N}
+                     ) where {N<:Real}
+    # search for the indices of the block trisection into
+    # "unconstrained | constrained | unconstrained" (the first and third section
+    # may be empty)
+    constrained_dims = constrained_dimensions(P)
+    minimal = minimum(constrained_dims)
+    maximal = maximum(constrained_dims)
+    lower_bound = 1
+    blocks = array(cpa)
+    cb_start = 0
+    cb_end = length(blocks)
+    dim_start = 0
+    dim_end = dim(P)
+    for (i, block) in enumerate(blocks)
+        dim_block = dim(block)
+        upper_bound = lower_bound + dim_block - 1
+        interval = lower_bound:upper_bound
+        if cb_start == 0 && minimal ∈ interval
+            dim_start = lower_bound
+            cb_start = i
+        end
+        if maximal ∈ interval
+            dim_end = upper_bound
+            cb_end = i
+            break
+        end
+        lower_bound = upper_bound + 1
+    end
+    # compute intersection with constrained blocks
+    cap = _intersection_cpa_polyhedron(
+        CartesianProductArray(blocks[cb_start:cb_end]), P, dim_start:dim_end)
+
+    # construct result
+    result_array = vcat(blocks[1:(cb_start - 1)],  # unconstrained
+                        [cap],  # constrained, intersected
+                        blocks[(cb_end + 1):length(blocks)])  # unconstrained
+    return CartesianProductArray(result_array)
+end
+
+function _intersection_cpa_polyhedron(cpa::CartesianProductArray{N},
+                                      P::AbstractPolyhedron{N},
+                                      constrained_dims) where {N<:Real}
+    T = isbounded(cpa) ? HPolytope : HPolyhedron
+    hpoly_low_dim = T(constraints_list(cpa))
+    cap_low_dim = intersection(hpoly_low_dim, project(P, constrained_dims))
+end
+
+# symmetric method
+function intersection(P::AbstractPolyhedron{N}, cpa::CartesianProductArray{N}
+                     ) where {N<:Real}
+    return intersection(cpa, P)
+end
