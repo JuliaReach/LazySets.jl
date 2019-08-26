@@ -190,8 +190,8 @@ translate(::HalfSpace{N}, ::AbstractVector{N}) where {N<:Real}
 halfspace_left(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
 halfspace_right(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
 tosimplehrep(::AbstractVector{LC}) where {N<:Real, LC<:LinearConstraint{N}}
-remove_redundant_constraints(::AbstractVector{LC}) where {N<:Real, LC<:LinearConstraint{N}}
-remove_redundant_constraints!(::AbstractVector{LC}) where {N<:Real, LC<:LinearConstraint{N}}
+remove_redundant_constraints(::AbstractVector{<:LinearConstraint{N}}) where {N<:Real}
+remove_redundant_constraints!(::AbstractVector{<:LinearConstraint{N}}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -489,7 +489,7 @@ tovrep(::HPoly{N}) where {N<:Real}
 isempty(::HPoly{N}, ::Bool=false) where {N<:Real}
 translate(::PT, ::AbstractVector{N}) where {N<:Real, PT<:HPoly{N}}
 polyhedron(::HPoly{N}) where {N<:Real}
-remove_redundant_constraints(::PT) where {N<:Real, PT<:HPoly{N}}
+remove_redundant_constraints(::HPoly{N}) where {N<:Real}
 remove_redundant_constraints!(::HPoly{N}) where {N<:Real}
 ```
 
