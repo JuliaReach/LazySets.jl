@@ -2,6 +2,7 @@ function load_distributions_samples()
 return quote
 
 using .Distributions: Distribution, Uniform, Normal
+import .Distributions: sample
 
 """
     _sample_unit_nsphere_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
@@ -168,7 +169,7 @@ i.e., `x ∉ X`.
 
 A vector of `num_samples` vectors.
 """
-function Base.sample(X::LazySet{N}, num_samples::Int;
+function sample(X::LazySet{N}, num_samples::Int;
                 rng::AbstractRNG=GLOBAL_RNG,
                 seed::Union{Int, Nothing}=nothing) where {N<:Real}
     @assert isbounded(X) "this function requires that the set `X` is bounded, but it is not"
@@ -178,7 +179,7 @@ function Base.sample(X::LazySet{N}, num_samples::Int;
     return D
 end
 
-function Base.sample(X::LazySet{N}; kwargs...) where {N<:Real}
+function sample(X::LazySet{N}; kwargs...) where {N<:Real}
     return sample(X, 1; kwargs...)[1]
 end
 

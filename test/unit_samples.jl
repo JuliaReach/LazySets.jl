@@ -23,4 +23,4 @@ p1_samples = LazySets.sample(P1, 100)
 @test LazySets._canonical_length(P3) == [-Inf Inf; -Inf 30.0]
 @test LazySets._canonical_length(P4+-P4.center) ≈ radius(P4)*[-ones(5) ones(5)]
 
-@test LazySets.Sampler(P2).sampler == [Uniform(-3.0,1.0), Uniform(-4.0,2.0)]
+@test LazySets.Sampler(P2).box_approx == [Uniform(-3.0,1.0), Uniform(-4.0,2.0)]
