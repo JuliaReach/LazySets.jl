@@ -145,7 +145,7 @@ function _canonical_length(X::LazySet{N}) where {N<:Real}
 end
 
 """
-    rand(X::LazySet{N}, n_samples::Int;
+    sample(X::LazySet{N}, n_samples::Int;
            rng::AbstractRNG=GLOBAL_RNG,
            seed::Union{Int, Nothing}=nothing) where {N}
 
@@ -168,44 +168,42 @@ i.e., `x ∉ X`.
 
 A vector of `n_samples` vectors.
 """
-function sample(X::LazySet{N}, n_samples::Int;
+function Base.sample(X::LazySet{N}, n_samples::Int;
                 rng::AbstractRNG=GLOBAL_RNG,
                 seed::Union{Int, Nothing}=nothing) where {N<:Real}
     @assert isbounded(X) "this function requires that the set `X` is bounded, but it is not"
 
     D = Vector{Vector{N}}(undef, n_samples) # preallocate output
-    sample!(D, SetSampler(X); rng=rng, seed=seed)
+    sample_from_set!(D, Sampler(X); rng=rng, seed=seed)
     return D
 end
 
-function sample(X::LazySet{N}; kwargs...) where {N<:Real}
+function Base.sample(X::LazySet{N}; kwargs...) where {N<:Real}
     return sample(X, 1; kwargs...)[1]
 end
 
-mutable struct SetSampler
-    X::LazySet
-    sampler::Vector{<:Distribution}
+struct Sampler{S<:LazySet, D<:Distribution}
+    X::S
+    box_approx::Vector{D}
 end
 
-function SetSampler(X, distribution=Uniform)
+function Sampler(X, distribution=Uniform)
     box = _canonical_length(X)
     sampler = [distribution(box[i,:]...) for i = 1:size(box,1)]
-    return SetSampler(X, sampler)
+    return Sampler(X, sampler)
 end
 
-function sample!(D::Vector{Vector{N}},
-               sampler::SetSampler;
+function sample_from_set!(D::Vector{Vector{N}},
+               sampler::Sampler;
                rng::AbstractRNG=GLOBAL_RNG,
-               seed::Union{Int, Nothing}=nothing) where {N}
+               seed::Union{Int, Nothing}=nothing) where {N<:Real}
     rng = reseed(rng, seed)
     @inbounds for i in 1:length(D)
-        while true
-            w = rand.(Ref(rng), sampler.sampler)
-            if w ∈ sampler.X
-                D[i] = w
-                break
-            end
+        w = rand.(Ref(rng), sampler.box_approx)
+        while w ∉ sampler.X
+            w = rand.(Ref(rng), sampler.box_approx)
         end
+        D[i] = w
     end
     nothing
 end
