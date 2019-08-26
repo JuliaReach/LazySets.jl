@@ -145,7 +145,7 @@ function _canonical_length(X::LazySet{N}) where {N<:Real}
 end
 
 """
-    sample(X::LazySet{N}, n_samples::Int;
+    sample(X::LazySet{N}, num_samples::Int;
            rng::AbstractRNG=GLOBAL_RNG,
            seed::Union{Int, Nothing}=nothing) where {N}
 
@@ -160,20 +160,20 @@ i.e., `x ∉ X`.
 ### Input
 
 - `X`           -- lazyset
-- `n_samples`    -- number of random samples
+- `num_samples`    -- number of random samples
 - `rng`         -- (optional, default: `GLOBAL_RNG`) random number generator
 - `seed`        -- (optional, default: `nothing`) seed for reseeding
 
 ### Output
 
-A vector of `n_samples` vectors.
+A vector of `num_samples` vectors.
 """
-function Base.sample(X::LazySet{N}, n_samples::Int;
+function Base.sample(X::LazySet{N}, num_samples::Int;
                 rng::AbstractRNG=GLOBAL_RNG,
                 seed::Union{Int, Nothing}=nothing) where {N<:Real}
     @assert isbounded(X) "this function requires that the set `X` is bounded, but it is not"
 
-    D = Vector{Vector{N}}(undef, n_samples) # preallocate output
+    D = Vector{Vector{N}}(undef, num_samples) # preallocate output
     sample_from_set!(D, Sampler(X); rng=rng, seed=seed)
     return D
 end
