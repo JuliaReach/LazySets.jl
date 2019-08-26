@@ -378,9 +378,8 @@ infeasible.
 
 ### Algorithm
 
-See
-[`remove_redundant_constraints!(::AbstractVector{LinearConstraint{<:Real}})`](@ref)
-for details.
+See `remove_redundant_constraints!(::AbstractVector{<:LinearConstraint})` for
+details.
 """
 function remove_redundant_constraints(P::HPoly{N};
                                       backend=default_lp_solver(N)
@@ -414,9 +413,8 @@ which may happen if the constraints are infeasible.
 
 ### Algorithm
 
-See
-[`remove_redundant_constraints!(::AbstractVector{LinearConstraint{<:Real}})`](@ref)
-for details.
+See `remove_redundant_constraints!(::AbstractVector{<:LinearConstraint})` for
+details.
 """
 function remove_redundant_constraints!(P::HPoly{N};
                                        backend=default_lp_solver(N)
