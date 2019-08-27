@@ -190,6 +190,8 @@ for N in [Float64, Rational{Int}, Float32]
     # membership
     @test N[.49, .49] ∈ p
     @test N[.51, .51] ∉ p
+    q = VPolytope([N[0, 1], N[0, 2]])
+    @test N[0, 1//2] ∉ q
 
     # translation
     @test translate(p, N[1, 2]) == VPolytope([N[1, 2], N[2, 2], N[1, 3]])
