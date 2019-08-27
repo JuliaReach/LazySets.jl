@@ -178,7 +178,7 @@ function ∈(x::AbstractVector{N}, P::VPolytope{N};
 
     lbounds = zeros(N, m)
     ubounds = Inf
-    sense = [fill('=', n); '<']
+    sense = fill('=', n + 1)
     obj = zeros(N, m)
 
     lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
