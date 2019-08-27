@@ -279,6 +279,10 @@ In both cases, we then call `linear_map` on the resulting polytope.
 """
 function linear_map(M::AbstractMatrix{N}, cp::CartesianProduct{N}
                    ) where {N<:Real}
+    return linear_map_cartesian_product(M, cp)
+end
+
+function linear_map_cartesian_product(M, cp)
     @assert dim(cp) == size(M, 2) "a linear map of size $(size(M)) cannot " *
                                   "be applied to a set of dimension $(dim(cp))"
 
@@ -293,10 +297,10 @@ function linear_map(M::AbstractMatrix{N}, cp::CartesianProduct{N}
     return linear_map(M, P)
 end
 
-
 # ======================================
 #  Cartesian product of an array of sets
 # ======================================
+
 """
     CartesianProductArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
 
@@ -790,17 +794,5 @@ In both cases, we then call `linear_map` on the resulting polytope.
 """
 function linear_map(M::AbstractMatrix{N}, cpa::CartesianProductArray{N}
                    ) where {N<:Real}
-    @assert dim(cpa) == size(M, 2) "a linear map of size $(size(M)) cannot " *
-                                   "be applied to a set of dimension " *
-                                   "$(dim(cpa))"
-
-    if !isinvertible(M)
-        # use vertex representation
-        P = VPolytope(vertices_list(cpa))
-    else
-        # use constraint representation
-        T = isbounded(cpa) ? HPolytope : HPolyhedron
-        P = T(constraints_list(cpa))
-    end
-    return linear_map(M, P)
+    return linear_map_cartesian_product(M, cpa)
 end
