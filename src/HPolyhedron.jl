@@ -358,10 +358,9 @@ function tohrep(P::HPoly{N}) where {N<:Real}
 end
 
 """
-    remove_redundant_constraints(P::PT;
+    remove_redundant_constraints(P::HPoly{N};
                                  backend=default_lp_solver(N)
-                                )::Union{PT, EmptySet{N}} where {N<:Real,
-                                                                 PT<:HPoly{N}}
+                                ) where {N<:Real}
 
 Remove the redundant constraints in a polyhedron in H-representation.
 
@@ -379,14 +378,12 @@ infeasible.
 
 ### Algorithm
 
-See
-[`remove_redundant_constraints!(::Vector{LinearConstraint{<:Real}})`](@ref)
-for details.
+See `remove_redundant_constraints!(::AbstractVector{<:LinearConstraint})` for
+details.
 """
-function remove_redundant_constraints(P::PT;
+function remove_redundant_constraints(P::HPoly{N};
                                       backend=default_lp_solver(N)
-                                     )::Union{PT, EmptySet{N}} where {N<:Real,
-                                                                      PT<:HPoly{N}}
+                                     ) where {N<:Real}
     Pred = copy(P)
     if remove_redundant_constraints!(Pred, backend=backend)
         return Pred
@@ -416,9 +413,8 @@ which may happen if the constraints are infeasible.
 
 ### Algorithm
 
-See
-[`remove_redundant_constraints!(::Vector{LinearConstraint{<:Real}})`](@ref)
-for details.
+See `remove_redundant_constraints!(::AbstractVector{<:LinearConstraint})` for
+details.
 """
 function remove_redundant_constraints!(P::HPoly{N};
                                        backend=default_lp_solver(N)
