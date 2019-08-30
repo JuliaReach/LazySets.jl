@@ -219,6 +219,15 @@ This interface defines the following functions:
 ngens(::AbstractZonotope)
 genmat_fallback(::AbstractZonotope{N}) where {N<:Real}
 generators_fallback(::AbstractZonotope{N}) where {N<:Real}
+ρ(::AbstractVector{N}, ::AbstractZonotope{N}) where {N<:Real}
+σ(::AbstractVector{N}, ::AbstractZonotope{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::AbstractZonotope{N}) where {N<:Real}
+linear_map(::AbstractMatrix{N}, ::AbstractZonotope{N}) where {N<:Real}
+translate(::AbstractZonotope{N}, ::AbstractVector{N}) where {N<:Real}
+constraints_list(::AbstractZonotope{N}) where {N<:Real}
+constraints_list(::AbstractZonotope{N}; ::Bool=true) where {N<:AbstractFloat}
+vertices_list(::AbstractZonotope{N}) where {N<:Real}
+order(::AbstractZonotope)
 ```
 
 ##### Hyperrectangle
