@@ -164,7 +164,7 @@ Type that represents the action of an exponential map on a convex set.
 The `ExponentialMap` type is overloaded to the usual times `*` operator when the
 linear map is a lazy matrix exponential. For instance,
 
-```jldoctest
+```jldoctest constructors
 julia> using SparseArrays
 
 julia> A = sprandn(100, 100, 0.1);
@@ -181,16 +181,40 @@ true
 julia> dim(M)
 100
 ```
+
+The application of an `ExponentialMap` to a `ZeroSet` or an `EmptySet` is
+simplified automatically.
+
+```jldoctest constructors
+julia> E * ZeroSet(100)
+ZeroSet{Float64}(100)
+
+julia> E * EmptySet()
+EmptySet{Float64}()
+```
 """
 struct ExponentialMap{N, S<:LazySet{N}} <: LazySet{N}
     spmexp::SparseMatrixExp{N}
     X::S
 end
 
+# ZeroSet is "almost absorbing" for ExponentialMap (only the dimension changes)
+function ExponentialMap(spmexp::SparseMatrixExp{N}, Z::ZeroSet{N}
+                       ) where {N<:Real}
+    @assert dim(Z) == size(spmexp, 2) "an exponential map of size " *
+            "$(size(spmexp)) cannot be applied to a set of dimension $(dim(Z))"
+    return ZeroSet{N}(size(spmexp, 1))
+end
+
+# EmptySet is absorbing for ExponentialMap
+function ExponentialMap(spmexp::SparseMatrixExp{N}, ∅::EmptySet{N}
+                       ) where {N<:Real}
+    return ∅
+end
+
 """
 ```
-    *(spmexp::SparseMatrixExp{N},
-      X::LazySet{N})::ExponentialMap{N} where {N<:Real}
+    *(spmexp::SparseMatrixExp{N}, X::LazySet{N}) where {N<:Real}
 ```
 
 Return the exponential map of a convex set from a sparse matrix exponential.
@@ -204,23 +228,8 @@ Return the exponential map of a convex set from a sparse matrix exponential.
 
 The exponential map of the convex set.
 """
-function *(spmexp::SparseMatrixExp{N},
-           X::LazySet{N})::ExponentialMap{N} where {N<:Real}
+function *(spmexp::SparseMatrixExp{N}, X::LazySet{N}) where {N<:Real}
     return ExponentialMap(spmexp, X)
-end
-
-# ZeroSet is absorbing for ExponentialMap
-function *(spmexp::SparseMatrixExp{N}, Z::ZeroSet{N}
-          )::ZeroSet{N} where {N<:Real}
-    @assert dim(Z) == size(spmexp, 2) "an exponential map of size " *
-            "$(size(spmexp)) cannot be applied to a set of dimension $(dim(Z))"
-    return ZeroSet{N}(size(spmexp, 1))
-end
-
-# EmptySet is absorbing for ExponentialMap
-function *(spmexp::SparseMatrixExp{N}, ∅::EmptySet{N}
-          )::EmptySet{N} where {N<:Real}
-    return ∅
 end
 
 """
@@ -447,8 +456,7 @@ end
 
 """
 ```
-    *(projspmexp::ProjectionSparseMatrixExp,
-      X::LazySet)::ExponentialProjectionMap
+    *(projspmexp::ProjectionSparseMatrixExp, X::LazySet)
 ```
 
 Return the application of a projection of a sparse matrix exponential to a
@@ -464,8 +472,7 @@ convex set.
 The application of the projection of a sparse matrix exponential to the convex
 set.
 """
-function *(projspmexp::ProjectionSparseMatrixExp,
-           X::LazySet)::ExponentialProjectionMap
+function *(projspmexp::ProjectionSparseMatrixExp, X::LazySet)
     return ExponentialProjectionMap(projspmexp, X)
 end
 
