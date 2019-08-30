@@ -118,17 +118,12 @@ function AffineMap(α::N, X::LazySet, v::AbstractVector) where {N<:Real}
 end
 
 # simplification for a LinearMap
-function LinearMap(map, am::AffineMap)
-    return AffineMap(map * am.M, am.X, map * am.v)
-end
-
-# disambiguation
-function LinearMap(M::AbstractMatrix, am::AffineMap)
-    return AffineMap(M * am.M, am.X, M * am.v)
-end
-
-function LinearMap(α::Real, am::AffineMap)
-    return AffineMap(α * am.M, am.X, α * am.v)
+for MAP in (:AbstractMatrix, :Real)
+    @eval begin
+        function LinearMap(map::$MAP, am::AffineMap)
+            return AffineMap(map * am.M, am.X, map * am.v)
+        end
+    end
 end
 
 # ZeroSet is "almost absorbing" for the linear map (only the dimension changes)
@@ -145,7 +140,7 @@ function AffineMap(M::AbstractMatrix{N}, Z::ZeroSet{N}, v::AbstractVector{N}
     return Singleton(v)
 end
 
-# EmptySet is absorbing for LinearMap
+# EmptySet is absorbing for AffineMap
 function AffineMap(M::AbstractMatrix{N}, ∅::EmptySet{N}, v::AbstractVector{N}
                   ) where {N<:Real}
     return ∅
