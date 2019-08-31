@@ -33,7 +33,7 @@ include("samples.jl")
 # ==================
 include("Interfaces/LazySet.jl")
 include("Interfaces/AbstractPolyhedron.jl")
-include("HalfSpace.jl") # must be here to make LinearConstraint available
+include("Sets/HalfSpace.jl") # must be here to make LinearConstraint available
 include("Interfaces/AbstractPolyhedron_functions.jl")
 include("Interfaces/AbstractPolytope.jl")
 include("Interfaces/AbstractCentrallySymmetric.jl")
@@ -47,32 +47,32 @@ include("Interfaces/AbstractHPolygon.jl")
 # =============================
 # Types representing basic sets
 # =============================
-include("Ball1.jl")
-include("Ball2.jl")
-include("BallInf.jl")
-include("Ballp.jl")
-include("Ellipsoid.jl")
-include("EmptySet.jl")
-include("HPolygon.jl")
-include("HPolygonOpt.jl")
-include("HPolytope.jl")
-include("HPolyhedron.jl")
-include("Hyperplane.jl")
-include("Hyperrectangle.jl")
-include("Interval.jl")
-include("Line.jl")
-include("LineSegment.jl")
-include("Singleton.jl")
-include("Universe.jl")
-include("VPolygon.jl")
-include("VPolytope.jl")
-include("ZeroSet.jl")
-include("Zonotope.jl")
+include("Sets/Ball1.jl")
+include("Sets/Ball2.jl")
+include("Sets/BallInf.jl")
+include("Sets/Ballp.jl")
+include("Sets/Ellipsoid.jl")
+include("Sets/EmptySet.jl")
+include("Sets/HPolygon.jl")
+include("Sets/HPolygonOpt.jl")
+include("Sets/HPolytope.jl")
+include("Sets/HPolyhedron.jl")
+include("Sets/Hyperplane.jl")
+include("Sets/Hyperrectangle.jl")
+include("Sets/Interval.jl")
+include("Sets/Line.jl")
+include("Sets/LineSegment.jl")
+include("Sets/Singleton.jl")
+include("Sets/Universe.jl")
+include("Sets/VPolygon.jl")
+include("Sets/VPolytope.jl")
+include("Sets/ZeroSet.jl")
+include("Sets/Zonotope.jl")
 
 # ==================================
 # Types representing non-convex sets
 # ==================================
-include("PolynomialZonotope.jl")
+include("Sets/PolynomialZonotope.jl")
 
 # =================================
 # Types representing set operations
