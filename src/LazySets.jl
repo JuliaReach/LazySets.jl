@@ -23,10 +23,10 @@ using .Arrays
 # ===================
 # Auxiliary functions
 # ===================
-include("helper_functions.jl")
-include("comparisons.jl")
-include("macros.jl")
-include("samples.jl")
+include("Utils/helper_functions.jl")
+include("Utils/comparisons.jl")
+include("Utils/macros.jl")
+include("Utils/samples.jl")
 
 # ==================
 # Abstract set types
