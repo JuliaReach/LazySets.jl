@@ -74,5 +74,5 @@ LazySets._sample_unit_nball_muller!
 LazySets._canonical_length(X::LazySet{N}) where {N<:Real}
 sample
 LazySets.Sampler{S<:LazySet, D<:Distribution}
-LazySets._sample_from_set!
+LazySets._rejection_sampling!
 ```

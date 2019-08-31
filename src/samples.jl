@@ -176,7 +176,7 @@ function sample(X::LazySet{N}, num_samples::Int;
     @assert isbounded(X) "this function requires that the set `X` is bounded, but it is not"
 
     D = Vector{Vector{N}}(undef, num_samples) # preallocate output
-    _sample_from_set!(D, Sampler(X); rng=rng, seed=seed)
+    _rejection_sampling!(D, Sampler(X); rng=rng, seed=seed)
     return D
 end
 
@@ -184,6 +184,16 @@ function sample(X::LazySet{N}; kwargs...) where {N<:Real}
     return sample(X, 1; kwargs...)[1]
 end
 
+"""
+    Sampler{S<:LazySet, D<:Distribution}
+
+Type used for Rejections Sampling from an arbitrary `LazySet`.
+
+### Fields
+
+- `X`           -- lazyset
+- `box_approx`  -- Distribution from which the sample is drawn
+"""
 struct Sampler{S<:LazySet, D<:Distribution}
     X::S
     box_approx::Vector{D}
@@ -195,7 +205,28 @@ function Sampler(X, distribution=Uniform)
     return Sampler(X, box_approx)
 end
 
-function _sample_from_set!(D::Vector{Vector{N}},
+
+"""
+    _rejection_sampling!(D::Vector{Vector{N}},
+           sampler::Sampler;
+           rng::AbstractRNG=GLOBAL_RNG,
+           seed::Union{Int, Nothing}=nothing) where {N<:Real}
+
+Rejection sampling from a box approximation of a set and distribution
+defined in `sampler`.
+
+### Input
+
+- `D`           -- output, vector of points
+- `sampler`     -- Sampler from which the points are sampled
+- `rng`         -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed`        -- (optional, default: `nothing`) seed for reseeding
+
+### Output
+
+A vector of `num_samples` vectors.
+"""
+function _rejection_sampling!(D::Vector{Vector{N}},
                sampler::Sampler;
                rng::AbstractRNG=GLOBAL_RNG,
                seed::Union{Int, Nothing}=nothing) where {N<:Real}
@@ -207,7 +238,7 @@ function _sample_from_set!(D::Vector{Vector{N}},
         end
         D[i] = w
     end
-    nothing
+    return D
 end
 
 end # quote
