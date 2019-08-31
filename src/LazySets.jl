@@ -27,7 +27,6 @@ include("helper_functions.jl")
 include("comparisons.jl")
 include("macros.jl")
 include("samples.jl")
-include("mesh.jl")
 
 # ==================
 # Abstract set types
@@ -122,15 +121,16 @@ include("ConcreteOperations/issubset.jl")
 include("ConcreteOperations/minkowski_difference.jl")
 include("ConcreteOperations/minkowski_sum.jl")
 
+# ========
+# Plotting
+# ========
+include("Plotting/plot_recipes.jl")
+include("Plotting/mesh.jl")
+
 # ==========================
 # Parallel algorithms module
 # ==========================
 include("Parallel/Parallel.jl")
-
-# ============
-# Plot recipes
-# ============
-include("plot_recipes.jl")
 
 # ===================================================
 # Load external packages on-demand (using 'Requires')
