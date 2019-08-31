@@ -32,18 +32,18 @@ include("mesh.jl")
 # ==================
 # Abstract set types
 # ==================
-include("LazySet.jl")
-include("AbstractPolyhedron.jl")
+include("Interfaces/LazySet.jl")
+include("Interfaces/AbstractPolyhedron.jl")
 include("HalfSpace.jl") # must be here to make LinearConstraint available
-include("AbstractPolyhedron_functions.jl")
-include("AbstractPolytope.jl")
-include("AbstractCentrallySymmetric.jl")
-include("AbstractCentrallySymmetricPolytope.jl")
-include("AbstractZonotope.jl")
-include("AbstractHyperrectangle.jl")
-include("AbstractPolygon.jl")
-include("AbstractSingleton.jl")
-include("AbstractHPolygon.jl")
+include("Interfaces/AbstractPolyhedron_functions.jl")
+include("Interfaces/AbstractPolytope.jl")
+include("Interfaces/AbstractCentrallySymmetric.jl")
+include("Interfaces/AbstractCentrallySymmetricPolytope.jl")
+include("Interfaces/AbstractZonotope.jl")
+include("Interfaces/AbstractHyperrectangle.jl")
+include("Interfaces/AbstractPolygon.jl")
+include("Interfaces/AbstractSingleton.jl")
+include("Interfaces/AbstractHPolygon.jl")
 
 # =============================
 # Types representing basic sets
@@ -92,6 +92,10 @@ include("Translation.jl")
 include("UnionSet.jl")
 include("Rectification.jl")
 
+# =======
+# Aliases
+# =======
+include("Interfaces/aliases.jl")
 
 # =============================
 # Conversions between set types
@@ -117,11 +121,6 @@ include("ConcreteOperations/isdisjoint.jl")
 include("ConcreteOperations/issubset.jl")
 include("ConcreteOperations/minkowski_difference.jl")
 include("ConcreteOperations/minkowski_sum.jl")
-
-# =======
-# Aliases
-# =======
-include("aliases.jl")
 
 # ==========================
 # Parallel algorithms module
