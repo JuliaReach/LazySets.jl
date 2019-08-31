@@ -69,7 +69,6 @@ include("VPolygon.jl")
 include("VPolytope.jl")
 include("ZeroSet.jl")
 include("Zonotope.jl")
-include("Complement.jl")
 
 # ==================================
 # Types representing non-convex sets
@@ -79,18 +78,19 @@ include("PolynomialZonotope.jl")
 # =================================
 # Types representing set operations
 # =================================
-include("CartesianProduct.jl")
-include("ConvexHull.jl")
-include("ExponentialMap.jl")
-include("Intersection.jl")
-include("LinearMap.jl")
-include("AffineMap.jl")
-include("MinkowskiSum.jl")
-include("ResetMap.jl")
-include("SymmetricIntervalHull.jl")
-include("Translation.jl")
-include("UnionSet.jl")
-include("Rectification.jl")
+include("LazyOperations/CartesianProduct.jl")
+include("LazyOperations/Complement.jl")
+include("LazyOperations/ConvexHull.jl")
+include("LazyOperations/ExponentialMap.jl")
+include("LazyOperations/Intersection.jl")
+include("LazyOperations/LinearMap.jl")
+include("LazyOperations/AffineMap.jl")  # must come after LinearMap
+include("LazyOperations/MinkowskiSum.jl")
+include("LazyOperations/ResetMap.jl")
+include("LazyOperations/SymmetricIntervalHull.jl")
+include("LazyOperations/Translation.jl")
+include("LazyOperations/UnionSet.jl")
+include("LazyOperations/Rectification.jl")  # must come after UnionSet
 
 # =======
 # Aliases
