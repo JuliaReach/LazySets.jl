@@ -76,11 +76,6 @@ include("Complement.jl")
 # ==================================
 include("PolynomialZonotope.jl")
 
-# ===================================================
-# Algorithms to compute the convex hull of polygons
-# ===================================================
-include("concrete_convex_hull.jl")
-
 # =================================
 # Types representing set operations
 # =================================
@@ -101,7 +96,6 @@ include("Rectification.jl")
 # =============================
 # Conversions between set types
 # =============================
-include("intersection_helper.jl")
 include("convert.jl")
 
 # =====================
@@ -116,12 +110,13 @@ include("Approximations/Approximations.jl")
 # ===========================
 # Concrete operations on sets
 # ===========================
-include("concrete_intersection.jl")
-include("is_intersection_empty.jl")
-include("is_subset.jl")
-include("difference.jl")
-include("concrete_minkowski_sum.jl")
-include("concrete_minkowski_difference.jl")
+include("ConcreteOperations/convex_hull.jl")
+include("ConcreteOperations/difference.jl")
+include("ConcreteOperations/intersection.jl")
+include("ConcreteOperations/isdisjoint.jl")
+include("ConcreteOperations/issubset.jl")
+include("ConcreteOperations/minkowski_difference.jl")
+include("ConcreteOperations/minkowski_sum.jl")
 
 # =======
 # Aliases
