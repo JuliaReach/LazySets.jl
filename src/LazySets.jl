@@ -3,7 +3,8 @@ __precompile__(true)
 # main module for `LazySets.jl`
 module LazySets
 
-using Requires, SparseArrays, LinearAlgebra, Reexport
+using Requires, SparseArrays, LinearAlgebra, Reexport, MathProgBase,
+      GLPKMathProgInterface
 using LinearAlgebra: checksquare
 import LinearAlgebra: norm, ×
 import Random
@@ -120,6 +121,7 @@ include("is_intersection_empty.jl")
 include("is_subset.jl")
 include("difference.jl")
 include("concrete_minkowski_sum.jl")
+include("concrete_minkowski_difference.jl")
 
 # =======
 # Aliases

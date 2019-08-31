@@ -38,7 +38,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test !isempty(tr)
 
     # set membership
-    B = Ball2(zeros(N, 2), N(1))
+    B = Ball1(zeros(N, 2), N(1))
     @test center(B) ∈ B ⊕ zeros(N, 2)
 
     # concrete linear map
@@ -52,7 +52,7 @@ for N in [Float64, Rational{Int}, Float32]
     # ==================================
 
     # the translation is the origin => constraints remain unchanged
-    constraints_list(B ⊕ zeros(N, 3)) == constraints_list(tr.X)
+    constraints_list(B ⊕ zeros(N, 2)) == constraints_list(tr.X)
 
     # one-dimensional case: translation to the left
     Tleft = Translation(HalfSpace(N[1], N(1)), [N(-1)])
@@ -62,8 +62,15 @@ for N in [Float64, Rational{Int}, Float32]
     Tright = Translation(HalfSpace(N[1], N(1)), [N(1)])
     @test constraints_list(Tright)[1] == HalfSpace(N[1], N(2))
 
+    # the translation of a lazy linear map returns an affine map
+    M = N[1 0; 0 2]; B = BallInf(zeros(N, 2), N(1)); v = N[1, 0]
+    tr = M * B ⊕ v
+    @test tr isa AffineMap && tr.M == M && tr.X == B && tr.v == v 
+end
+
+for N in [Float64, Float32]
     # translation of a set not represented by a finite number of constraints
     tr = Ball2(zeros(N, 2), N(1)) ⊕ N[1, 0]
     @test ρ(N[1, 0], tr) == N(2)
-    @test_throws MethodError constraints_list(tr)
+    @test_throws AssertionError constraints_list(tr)
 end

@@ -29,10 +29,6 @@ for N in [Float64, Rational{Int}, Float32]
     # isempty
     @test !isempty(ch)
 
-    # test convex hull of a set of points using the default algorithm
-    points = to_N(N, [[0.9, 0.2], [0.4, 0.6], [0.2, 0.1], [0.1, 0.3], [0.3, 0.28]])
-    @test convex_hull(points) == to_N(N, [[0.1, 0.3], [0.2, 0.1], [0.9, 0.2], [0.4, 0.6]])
-
     # ===============
     # ConvexHullArray
     # ===============
@@ -68,9 +64,9 @@ for N in [Float64, Rational{Int}, Float32]
 
     # test convex hull array of singleton
     ConvexHullArray(
-        [Singleton(to_N(N, [10, 0.5])), Singleton(to_N(N, [1.1, 0.2])),
-         Singleton(to_N(N, [1.4, 0.3])), Singleton(to_N(N, [1.7, 0.5])),
-         Singleton(to_N(N, [1.4, 0.8]))])
+        [Singleton(N[10, 1//2]), Singleton(N[11//10, 1//5]),
+         Singleton(N[7//5, 3//10]), Singleton(N[17//10, 1//2]),
+         Singleton(N[7//5, 4//5])])
 
     # array getter
     v = Vector{LazySet{N}}()

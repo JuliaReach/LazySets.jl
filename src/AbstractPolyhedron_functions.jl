@@ -6,6 +6,16 @@ export constrained_dimensions,
        remove_redundant_constraints!,
        linear_map
 
+# default LP solver for floating-point numbers
+function default_lp_solver(N::Type{<:AbstractFloat})
+    GLPKSolverLP(method=:Simplex)
+end
+
+# default LP solver for rational numbers
+function default_lp_solver(N::Type{<:Rational})
+    GLPKSolverLP(method=:Exact)
+end
+
 """
     ∈(x::AbstractVector{N}, P::AbstractPolyhedron{N})::Bool where {N<:Real}
 
@@ -99,9 +109,9 @@ function tosimplehrep(constraints::AbstractVector{LC}
 end
 
 """
-     remove_redundant_constraints!(constraints::AbstractVector{LC};
-         [backend]=GLPKSolverLP())::Bool where {N<:Real,
-                                                LC<:LinearConstraint{N}}
+     remove_redundant_constraints!(
+         constraints::AbstractVector{<:LinearConstraint{N}};
+         [backend]=default_lp_solver(N))::Bool where {N<:Real}
 
 Remove the redundant constraints of a given list of linear constraints; the list
 is updated in-place.
@@ -109,8 +119,8 @@ is updated in-place.
 ### Input
 
 - `constraints` -- list of constraints
-- `backend`     -- (optional, default: `GLPKSolverLP`) numeric LP solver backend
-
+- `backend`     -- (optional, default: `default_lp_solver(N)`) the backend used
+                   to solve the linear program
 ### Output
 
 `true` if the function was successful and the list of constraints `constraints`
@@ -139,10 +149,9 @@ If the calculation finished successfully, this function returns `true`.
 For details, see [Fukuda's Polyhedra
 FAQ](https://www.cs.mcgill.ca/~fukuda/soft/polyfaq/node24.html).
 """
-function remove_redundant_constraints!(constraints::AbstractVector{LC};
-                                       backend=GLPKSolverLP()
-                                      )::Bool where {N<:Real,
-                                                     LC<:LinearConstraint{N}}
+function remove_redundant_constraints!(
+        constraints::AbstractVector{<:LinearConstraint{N}};
+        backend=default_lp_solver(N))::Bool where {N<:Real}
 
     A, b = tosimplehrep(constraints)
     m, n = size(A)
@@ -178,16 +187,17 @@ function remove_redundant_constraints!(constraints::AbstractVector{LC};
 end
 
 """
-    remove_redundant_constraints(constraints::AbstractVector{LC};
-        backend=GLPKSolverLP()) where {N<:Real, LC<:LinearConstraint{N}}
+    remove_redundant_constraints(
+        constraints::AbstractVector{<:LinearConstraint{N}};
+        backend=default_lp_solver(N)) where {N<:Real}
 
 Remove the redundant constraints of a given list of linear constraints.
 
 ### Input
 
 - `constraints` -- list of constraints
-- `backend`     -- (optional, default: `GLPKSolverLP`) numeric LP solver backend
-
+- `backend`     -- (optional, default: `default_lp_solver(N)`) the backend used
+                   to solve the linear program
 ### Output
 
 The list of constraints with the redundant ones removed, or an empty set if the
@@ -195,13 +205,12 @@ constraints are infeasible.
 
 ### Algorithm
 
-See
-[`remove_redundant_constraints!(::AbstractVector{<:LinearConstraint{<:Real}})`](@ref)
-for details.
+See `remove_redundant_constraints!(::AbstractVector{<:LinearConstraint})` for
+details.
 """
-function remove_redundant_constraints(constraints::AbstractVector{LC};
-                                      backend=GLPKSolverLP()
-                                     ) where {N<:Real, LC<:LinearConstraint{N}}
+function remove_redundant_constraints(
+        constraints::AbstractVector{<:LinearConstraint{N}};
+        backend=default_lp_solver(N)) where {N<:Real}
     constraints_copy = copy(constraints)
     if remove_redundant_constraints!(constraints_copy, backend=backend)
         return constraints_copy

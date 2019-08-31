@@ -48,6 +48,7 @@ is_intersection_empty(::CartesianProductArray{N}, ::AbstractHyperrectangle{N}, :
 ## Convex hull
 
 ```@docs
+convex_hull(::LazySet{N}, ::LazySet{N}) where {N<:Real}
 convex_hull(::HPoly{N}, ::HPoly{N}) where {N<:Real}
 convex_hull(::VPolytope{N}, ::VPolytope{N}) where {N<:Real}
 convex_hull(::VPolygon{N}, ::VPolygon{N}) where {N<:Real}
@@ -72,6 +73,7 @@ intersection(::Universe{N}, ::LazySet{N}) where {N<:Real}
 intersection(::AbstractPolyhedron{N}, ::ResetMap{N}) where {N<:Real}
 intersection(::CartesianProductArray{N}, ::CartesianProductArray{N}) where {N<:Real}
 intersection(::LinearMap{N}, ::LazySet{N}) where {N<:Real}
+intersection(::CartesianProductArray{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 ```
 
 ## Minkowski sum
@@ -82,6 +84,12 @@ minkowski_sum(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}) where {N
 minkowski_sum(::AbstractZonotope{N}, ::AbstractZonotope{N}) where {N<:Real}
 minkowski_sum(::VPolygon{N}, ::VPolygon{N}) where {N<:Real}
 minkowski_sum(::PolynomialZonotope, ::Zonotope)
+```
+
+## Minkowski difference
+```@docs
+minkowski_difference(::LazySet{N}, ::LazySet{N}) where {N<:Real}
+pontryagin_difference
 ```
 
 ## Subset check

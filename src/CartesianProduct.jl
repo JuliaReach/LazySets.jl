@@ -25,29 +25,33 @@ many sets without recursion, instead using an array.
 
 The `EmptySet` is the absorbing element for `CartesianProduct`.
 
-Constructors:
+### Examples
 
-- `CartesianProduct{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}}(X1::S1, X2::S2)`
-  -- default constructor
+The Cartesian product between two sets `X` and `Y` can be constructed either
+using `CartesianProduct(X, Y)` or the short-cut notation `X × Y`:
 
-- `CartesianProduct(Xarr::Vector{S}) where {S<:LazySet}`
-  -- constructor from an array of convex sets
+```jldoctest cartesianproduct_constructor
+julia> I1 = Interval(0, 1);
+
+julia> I2 = Interval(2, 4);
+
+julia> I12 = I1 × I2;
+
+julia> typeof(I12)
+CartesianProduct{Float64,Interval{Float64,IntervalArithmetic.Interval{Float64}},Interval{Float64,IntervalArithmetic.Interval{Float64}}}
+```
+A hyperrectangle is the cartesian product of intervals, so we can convert `I12`
+exactly to a `Hyperrectangle` type:
+
+```jldoctest cartesianproduct_constructor
+julia> convert(Hyperrectangle, I12)
+Hyperrectangle{Float64}([0.5, 3.0], [0.5, 1.0])
+```
 """
 struct CartesianProduct{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     X::S1
     Y::S2
 end
-
-# constructor from an array
-CartesianProduct(Xarr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
-    (length(Xarr) == 0
-        ? EmptySet{N}()
-        : length(Xarr) == 1
-            ? Xarr[1]
-            : length(Xarr) == 2
-                ? CartesianProduct(Xarr[1], Xarr[2])
-                : CartesianProduct(Xarr[1],
-                                   CartesianProduct(Xarr[2:length(Xarr)])))
 
 # EmptySet is the absorbing element for CartesianProduct
 @absorbing(CartesianProduct, EmptySet)
@@ -201,7 +205,7 @@ end
 """
     constraints_list(cp::CartesianProduct{N}) where {N<:Real}
 
-Return the list of constraints of a (polytopic) Cartesian product.
+Return the list of constraints of a (polyhedral) Cartesian product.
 
 ### Input
 
@@ -252,9 +256,51 @@ function vertices_list(cp::CartesianProduct{N}
     return vlist
 end
 
+"""
+    linear_map(M::AbstractMatrix{N}, cp::CartesianProduct{N}) where {N<:Real}
+
+Concrete linear map of a (polyhedral) Cartesian product.
+
+### Input
+
+- `M`  -- matrix
+- `cp` -- Cartesian product of two convex sets
+
+### Output
+
+A polytope.
+
+### Algorithm
+
+We check if the matrix is invertible.
+If so, we convert the Cartesian product to constraint representation.
+Otherwise, we convert the Cartesian product to vertex representation.
+In both cases, we then call `linear_map` on the resulting polytope.
+"""
+function linear_map(M::AbstractMatrix{N}, cp::CartesianProduct{N}
+                   ) where {N<:Real}
+    return linear_map_cartesian_product(M, cp)
+end
+
+function linear_map_cartesian_product(M, cp)
+    @assert dim(cp) == size(M, 2) "a linear map of size $(size(M)) cannot " *
+                                  "be applied to a set of dimension $(dim(cp))"
+
+    if !isinvertible(M)
+        # use vertex representation
+        P = VPolytope(vertices_list(cp))
+    else
+        # use constraint representation
+        T = isbounded(cp) ? HPolytope : HPolyhedron
+        P = T(constraints_list(cp))
+    end
+    return linear_map(M, P)
+end
+
 # ======================================
 #  Cartesian product of an array of sets
 # ======================================
+
 """
     CartesianProductArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
 
@@ -450,7 +496,7 @@ end
 """
     constraints_list(cpa::CartesianProductArray{N}) where {N<:Real}
 
-Return the list of constraints of a (polytopic) Cartesian product of a finite
+Return the list of constraints of a (polyhedral) Cartesian product of a finite
 number of sets.
 
 ### Input
@@ -722,4 +768,31 @@ function substitute_blocks(low_dim_cpa::CartesianProductArray{N},
         end
     end
     return CartesianProductArray(array)
+end
+
+"""
+    linear_map(M::AbstractMatrix{N}, cpa::CartesianProductArray{N}
+              ) where {N<:Real}
+
+Concrete linear map of a Cartesian product of a finite number of convex sets.
+
+### Input
+
+- `M`   -- matrix
+- `cpa` -- Cartesian product of a finite number of convex sets
+
+### Output
+
+A polytope.
+
+### Algorithm
+
+We check if the matrix is invertible.
+If so, we convert the Cartesian product to constraint representation.
+Otherwise, we convert the Cartesian product to vertex representation.
+In both cases, we then call `linear_map` on the resulting polytope.
+"""
+function linear_map(M::AbstractMatrix{N}, cpa::CartesianProductArray{N}
+                   ) where {N<:Real}
+    return linear_map_cartesian_product(M, cpa)
 end

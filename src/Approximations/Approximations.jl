@@ -15,6 +15,7 @@ export approximate,
        box_approximation, interval_hull,
        decompose,
        overapproximate,
+       underapproximate,
        box_approximation_symmetric, symmetric_interval_hull,
        BoxDirections,
        BoxDiagDirections,
@@ -33,7 +34,9 @@ include("iterative_refinement.jl")
 include("box_approximations.jl")
 include("template_directions.jl")
 include("overapproximate.jl")
+include("underapproximate.jl")
 include("decompositions.jl")
+include("hausdorff_distance.jl")
 include("init.jl")
 
 end # module

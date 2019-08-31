@@ -7,12 +7,9 @@ using IntervalArithmetic: IntervalBox
 # ========================
 # Optional dependencies
 # ========================
-import Expokit, Optim
-
-import TaylorModels
+import Distributions, Expokit, IntervalMatrices, Optim, TaylorModels
+using IntervalMatrices: ±, IntervalMatrix
 using TaylorModels: set_variables, TaylorModelN
-
-import Distributions
 
 # ==============================
 # Non-exported helper functions
@@ -20,9 +17,6 @@ import Distributions
 using LazySets: ispermutation
 using LazySets.Arrays: isinvertible, inner,
                        is_cyclic_permutation, SingleEntryVector
-
-# conversion between numeric types
-include("to_N.jl")
 
 global test_suite_basic = true
 global test_suite_doctests = true
@@ -71,6 +65,11 @@ if test_suite_basic
     @time @testset "LazySets.Comparisons" begin include("unit_comparisons.jl") end
 
     # =======================================
+    # Testing interfaces to external packages
+    # =======================================
+    @time @testset "LazySets.CDDLib" begin include("unit_CDDLib.jl") end
+
+    # =======================================
     # Testing types that inherit from LazySet
     # =======================================
     @time @testset "LazySets.Singleton" begin include("unit_Singleton.jl") end
@@ -105,6 +104,7 @@ if test_suite_basic
     @time @testset "LazySets.ResetMap" begin include("unit_ResetMap.jl") end
     @time @testset "LazySets.SymmetricIntervalHull" begin include("unit_SymmetricIntervalHull.jl") end
     @time @testset "LazySets.concrete_convex_hull" begin include("unit_convex_hull.jl") end
+    @time @testset "LazySets.Translation" begin include("unit_Translation.jl") end
     @time @testset "LazySets.AffineMap" begin include("unit_AffineMap.jl") end
 
     # ======================
@@ -124,11 +124,13 @@ if test_suite_basic
     # Algorithms for approximation of convex sets using support vectors
     # =================================================================
     @time @testset "LazySets.Approximations.overapproximation" begin include("unit_overapproximate.jl") end
+    @time @testset "LazySets.Approximations.underapproximation" begin include("unit_underapproximate.jl") end
     @time @testset "LazySets.Approximations.template_directions" begin include("unit_template_directions.jl") end
     @time @testset "LazySets.Approximations.box_approximation" begin include("unit_box_approximation.jl") end
     @time @testset "LazySets.Approximations.ballinf_approximation" begin include("unit_ballinf_approximation.jl") end
     @time @testset "LazySets.Approximations.radiusdiameter" begin include("unit_radiusdiameter.jl") end
     @time @testset "LazySets.Approximations.decompose" begin include("unit_decompose.jl") end
+    @time @testset "LazySets.Approximations.hausdorff_distance" begin include("unit_hausdorff_distance.jl") end
 
     # ========================
     # Testing method ambiguity

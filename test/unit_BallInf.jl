@@ -102,3 +102,13 @@ for N in [Float64, Rational{Int}, Float32]
     b = BallInf(N[1, 2], N(1))
     @test translate(b, N[1, 2]) == BallInf(N[2, 4], N(1))
 end
+
+# tests that only work with Float64 and Rational{Int}
+for N in [Float64, Rational{Int}]
+    # concrete Minkowski sum
+    b = BallInf(N[1, 2], N(1))
+    p = minkowski_sum(b, N[2 0; 0 1] * b)
+    @test p isa HPolytope && ispermutation(constraints_list(p),
+        [HalfSpace(N[0, -1], N(-2)), HalfSpace(N[0, 1], N(6)),
+         HalfSpace(N[-1, 0], N(0)), HalfSpace(N[1, 0], N(6))])
+end

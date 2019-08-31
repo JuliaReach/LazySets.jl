@@ -1,6 +1,9 @@
+import Base: convert
+
 using LazySets: block_to_dimension_indices,
                 substitute_blocks,
                 get_constrained_lowdimset
+
 """
     overapproximate(X::S, ::Type{S}, args...) where {S<:LazySet}
 
@@ -183,21 +186,33 @@ overapproximate(S::LazySet;
     overapproximate(S, Hyperrectangle)
 
 """
-    overapproximate(S::ConvexHull{N, Zonotope{N}, Zonotope{N}},
+    overapproximate(X::ConvexHull{N, Zonotope{N}, Zonotope{N}},
                     ::Type{<:Zonotope})::Zonotope where {N<:Real}
 
 Overapproximate the convex hull of two zonotopes.
 
 ### Input
 
-- `S`        -- convex hull of two zonotopes
-- `Zonotope` -- type for dispatch
+- `X`         -- convex hull of two zonotopes
+- `Zonotope`  -- type for dispatch
+- `algorithm` -- (optional; default: `"mean"`) choice of algorithm; possible
+                 values are `"mean"` and `"join"`
+
+### Output
+
+A zonotope ``Z`` such that ``X ⊆ Z``.
 
 ### Algorithm
 
-This function implements the method proposed in [1].
+The algorithm can be controlled by the parameter `algorithm`.
+Note that the results of the two implemented algorithms are generally
+incomparable.
+
+##### 'mean' method
+
+If `algorithm == "mean"`, we choose the method proposed in [1].
 The convex hull of two zonotopes ``Z₁`` and ``Z₂`` of the same order,
-that we write
+which we write
 
 ```math
 Z_j = ⟨c^{(j)}, g^{(j)}_1, …, g^{(j)}_p⟩
@@ -205,46 +220,94 @@ Z_j = ⟨c^{(j)}, g^{(j)}_1, …, g^{(j)}_p⟩
 for ``j = 1, 2``, can be overapproximated as follows:
 
 ```math
-CH(Z_1, Z_2) ⊆ \\frac{1}{2}⟨c^{(1)}+c^{(2)}, g^{(1)}_1+g^{(2)}_1, …, g^{(1)}_p+g^{(2)}_p, c^{(1)}-c^{(2)}, g^{(1)}_1-g^{(2)}_1, …, g^{(1)}_p-g^{(2)}_p⟩.
+CH(Z_1, Z_2) ⊆ \\frac{1}{2}⟨c^{(1)}+c^{(2)}, g^{(1)}_1+g^{(2)}_1, …,
+g^{(1)}_p+g^{(2)}_p, c^{(1)}-c^{(2)}, g^{(1)}_1-g^{(2)}_1, …, g^{(1)}_p-g^{(2)}_p⟩.
 ```
 
 If the zonotope order is not the same, this algorithm calls
 `reduce_order` to reduce the order to the minimum of the arguments.
 
 It should be noted that the output zonotope is not necessarily the minimal
-enclosing zonotope, which is in general expensive in high dimensions. This is
-further investigated in [2].
+enclosing zonotope, which is in general expensive in high dimensions.
+This is further investigated in [2].
+
+##### 'join' method
+
+If `algorithm == "join"`, we choose the method proposed in [3, Definition 1].
+The convex hull ``X`` of two zonotopes ``Z₁`` and ``Z₂`` is overapproximated by
+a zonotope ``Z₃`` such that the box approximation of ``X`` is identical with the
+box approximation of ``Z₃``.
+Let ``□(X)`` denote the box approximation of ``X``.
+The center of ``Z₃`` is the center of ``□(X)``.
+
+The generator construction consists of two phases.
+In the first phase, we construct generators ``g`` as a combination of one
+generator from ``Z₁``, say, ``g₁``, with another generator from ``Z₂``, say,
+``g₂``.
+The entry of ``g`` in the ``i``-th dimension is given as
+
+```math
+    g[i] = \\arg\\min_{\\min(g₁[i], g₂[i]) ≤ x ≤ \\max(g₁[i], g₂[i])} |x|.
+```
+
+If ``g`` is the zero vector, it can be omitted.
+
+In the second phase, we construct another generator for each dimension.
+These generators are scaled unit vectors.
+The following formula defines the sum of all those generators.
+
+```math
+    \\sup(□(X)) - c - ∑_g |g|
+```
+
+where ``c`` is the center of the new zonotope and the ``g``s are the generators
+constructed in the first phase.
+
+##### References
 
 [1] Reachability of Uncertain Linear Systems Using Zonotopes, A. Girard.
     HSCC 2005.
 
 [2] Zonotopes as bounding volumes, L. J. Guibas et al, Proc. of Symposium on
     Discrete Algorithms, pp. 803-812.
+
+[3] The zonotope abstract domain Taylor1+. K. Ghorbal, E. Goubault, S. Putot.
+    CAV 2009.
 """
-function overapproximate(S::ConvexHull{N, Zonotope{N}, Zonotope{N}},
-                         ::Type{<:Zonotope})::Zonotope where {N<:Real}
-    Z1, Z2 = S.X, S.Y
-
-    # reduce to the same order if possible
-    if order(Z1) != order(Z2)
-        min_order = min(order(Z1), order(Z2))
-        Z1 = reduce_order(Z1, min_order)
-        Z2 = reduce_order(Z2, min_order)
-    end
-
-    if order(Z1) >= order(Z2)
-        c, G = _overapproximate_convex_hull_zonotope(Z1, Z2)
+function overapproximate(X::ConvexHull{N, Zonotope{N}, Zonotope{N}},
+                         ::Type{<:Zonotope};
+                         algorithm="mean")::Zonotope where {N<:Real}
+    # execute specific algorithm
+    if algorithm == "mean"
+        return _overapproximate_convex_hull_zonotope_G05(X)
+    elseif algorithm == "join"
+        return _overapproximate_convex_hull_zonotope_GGP09(X)
     else
-        c, G = _overapproximate_convex_hull_zonotope(Z2, Z1)
+        error("algorithm $algorithm is not known")
     end
-    return Zonotope(c, G)
 end
 
-# assumes that dim(Z1) == dim(Z2) and order(Z1) >= order(Z2)
-function _overapproximate_convex_hull_zonotope(Z1::Zonotope{N}, Z2::Zonotope{N}) where {N}
-    c = (Z1.center + Z2.center)/N(2)
+function _overapproximate_convex_hull_zonotope_G05(
+        X::ConvexHull{N, Zonotope{N}, Zonotope{N}}) where {N<:Real}
+	# reduce to the same order if possible
+    m1, m2 = ngens(X.X), ngens(X.Y)
+    if m1 < m2
+        Y = CH(X.X, reduce_order(X.Y, m1))
+    elseif m1 > m2
+        Y = CH(reduce_order(X.X, m2), X.Y)
+    else
+        Y = X
+    end
+    Z1, Z2 = Y.X, Y.Y
 
-    # the case of equal order is treated separately to avoid a slicing (this creates a copy)
+    if order(Z2) > order(Z1)
+        Z1, Z2 = Z2, Z1
+    end
+
+    c = (Z1.center + Z2.center) / N(2)
+
+    # the case of equal order is treated separately to avoid a slicing
+    # (this creates a copy)
     if order(Z1) == order(Z2)
         G = hcat(Z1.generators .+ Z2.generators,
                  Z1.center - Z2.center,
@@ -255,7 +318,53 @@ function _overapproximate_convex_hull_zonotope(Z1::Zonotope{N}, Z2::Zonotope{N})
                  (Z1.generators[:, 1:ngens(Z2)] .- Z2.generators)/N(2),
                  Z1.generators[:, ngens(Z2)+1:end])
     end
-    return c, G
+    return Zonotope(c, G)
+end
+
+function _overapproximate_convex_hull_zonotope_GGP09(
+        X::ConvexHull{N, Zonotope{N}, Zonotope{N}}) where {N<:Real}
+    Z1, Z2 = X.X, X.Y
+    m = min(ngens(Z1), ngens(Z2))
+    G1, G2 = Z1.generators, Z2.generators
+    n = dim(Z1)
+    box = box_approximation(X)
+
+    # new center: mid point of box approximation
+    c = center(box)
+
+    # the k-th new generator is a simple combination of the old k-th generators
+    G = Vector{Vector{N}}()
+    sizehint!(G, m + n)
+    g_sum = zeros(N, n)
+    @inbounds for j in 1:m
+        g1, g2 = G1[:, j], G2[:, j]
+        g = Vector{N}(undef, n)
+        for i in 1:n
+            gi_min, gi_max = g1[i] < g2[i] ? (g1[i], g2[i]) : (g2[i], g1[i])
+            if gi_min <= zero(N) && gi_max >= zero(N)
+                g[i] = zero(N)
+            elseif abs(gi_min) <= abs(gi_max)
+                g[i] = gi_min
+            else
+                g[i] = gi_max
+            end
+        end
+        if !iszero(g)
+            push!(G, g)
+            g_sum += abs.(g)
+        end
+    end
+
+    # one more new generator (a scaled unit vector) for every dimension
+    g_total = high(box) - c - g_sum
+    for i in 1:n
+        if !iszero(g_total[i])
+            g = SingleEntryVector(i, n, g_total[i])
+            push!(G, g)
+        end
+    end
+
+    return Zonotope(c, G)
 end
 
 """
@@ -360,14 +469,17 @@ function overapproximate(S::LazySet{N}, ::Type{<:Interval}) where {N<:Real}
     @assert dim(S) == 1 "cannot overapproximate a $(dim(S))-dimensional set with an `Interval`"
     return convert(Interval, S)
 end
-function overapproximate_cap_helper(X::LazySet{N},             # compact set
+
+function overapproximate_cap_helper(X::LazySet{N},             # convex set
                                     P::AbstractPolyhedron{N},  # polyhedron
                                     dir::AbstractDirections{N};
                                     kwargs...
                                    ) where {N<:Real}
     Hi = constraints_list(P)
     m = length(Hi)
-    Q = HPolytope{N}()
+    constraints = Vector{HalfSpace{N}}()
+    sizehint!(constraints, length(dir))
+    return_type = HPolytope
 
     for di in dir
         ρ_X_Hi_min = ρ(di, X ∩ Hi[1], kwargs...)
@@ -377,9 +489,14 @@ function overapproximate_cap_helper(X::LazySet{N},             # compact set
                 ρ_X_Hi_min = ρ_X_Hi
             end
         end
-        addconstraint!(Q, HalfSpace(di, ρ_X_Hi_min))
+        if ρ_X_Hi_min == N(Inf)
+            # unbounded in this direction => return a polyhedron later
+            return_type = HPolyhedron
+        else
+            push!(constraints, HalfSpace(di, ρ_X_Hi_min))
+        end
     end
-    return Q
+    return return_type(constraints)
 end
 
 """
@@ -443,6 +560,17 @@ function overapproximate(cap::Intersection{N,
                          kwargs...
                         ) where {N<:Real}
     return overapproximate_cap_helper(cap.Y, cap.X, dir; kwargs...)
+end
+
+# disambiguation
+function overapproximate(cap::Intersection{N,
+                                           <:AbstractPolyhedron{N},
+                                           <:AbstractPolyhedron{N}},
+                         dir::AbstractDirections{N};
+                         kwargs...
+                        ) where {N<:Real}
+    # important: the result may not be a polytope!
+    return overapproximate_cap_helper(cap.X, cap.Y, dir; kwargs...)
 end
 
 # disambiguation
@@ -808,6 +936,79 @@ end
 
 end # quote
 end # load_taylormodels_overapproximation
+
+# =============================================
+# Functionality that requires IntervalMatrices
+# =============================================
+
+function load_intervalmatrices_overapproximation()
+return quote
+
+using .IntervalMatrices: AbstractIntervalMatrix, split
+
+# temporary patch for IntervalArithmetic#317
+function convert(::Type{IntervalMatrices.Interval{T}},
+                 x::IntervalMatrices.Interval{T}) where {T<:Real}
+    return x
+end
+
+"""
+    overapproximate(lm::LinearMap{N, <:AbstractZonotope{N}, NM,
+                                  <:AbstractIntervalMatrix{<:NM}},
+                    ::Type{<:Zonotope})::Zonotope{N} where {N<:Real, NM}
+
+Overapproximate an interval-matrix linear map of a zonotopic set by a new
+zonotope.
+
+### Input
+
+- `lm`       -- interval-matrix linear map of a zonotopic set
+- `Zonotope` -- type for dispatch
+
+### Output
+
+A zonotope overapproximating the linear map.
+
+### Algorithm
+
+This function implements the method proposed in [1].
+
+Given an interval matrix ``M = \\tilde{M} + ⟨-\\hat{M},\\hat{M}⟩`` (split into a
+conventional matrix and a symmetric interval matrix) and a zonotope
+``⟨c, g_1, …, g_m⟩``, we compute the resulting zonotope
+``⟨\\tilde{M}c, \\tilde{M}g_1, …, \\tilde{M}g_m, v_1, …, v_n⟩`` where the
+``v_j``, ``j = 1, …, n``, are defined as
+
+```math
+    v_j = \\begin{cases} 0 & i ≠ j \\\\
+          \\hat{M}_j (|c| + \\sum_{k=1}^m |g_k|) & i = j. \\end{cases}
+```
+
+[1] Althoff, Stursberg, Buss. Reachability analysis of linear systems with
+uncertain parameters and inputs. CDC 2007.
+"""
+function overapproximate(lm::LinearMap{N, <:AbstractZonotope{N}, NM,
+                                       <:AbstractIntervalMatrix{<:NM}},
+                         ::Type{<:Zonotope})::Zonotope{N} where {N<:Real, NM}
+    Mc, Ms = split(lm.M)
+    Z = lm.X
+    c = Mc * center(Z)
+    n = dim(lm)
+    nG = ngens(Z)
+    G = zeros(N, n, nG + n)
+    vector_sum = abs.(center(Z))
+    @inbounds for (j, g) in enumerate(generators(Z))
+        G[:, j] = Mc * g
+        vector_sum += abs.(g)
+    end
+    @inbounds for i in 1:n
+        row = @view Ms[i, :]
+        G[i, i + nG] = dot(row, vector_sum)
+    end
+    return Zonotope(c, G)
+end
+
+end end  # quote / load_intervalmatrices_overapproximation()
 
 # ==========================================
 # Lazy linear maps of Cartesian products

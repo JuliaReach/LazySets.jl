@@ -1,15 +1,9 @@
 import Base: rand,
-             ∈,
              split
 
 export Zonotope,
-       order,
-       linear_map,
        scale,
-       ngens,
-       reduce_order,
-       constraints_list,
-       generators
+       reduce_order
 
 """
     Zonotope{N<:Real} <: AbstractZonotope{N}
@@ -168,155 +162,24 @@ function generators(Z::Zonotope)
     return generators_fallback(Z)
 end
 
-
-# --- AbstractPolytope interface functions ---
-
-
 """
-    vertices_list(Z::Zonotope{N};
-                  [apply_convex_hull]::Bool=true)::Vector{Vector{N}} where {N<:Real}
+    ngens(Z::Zonotope)::Int
 
-Return the vertices of a zonotope.
+Return the number of generators of a zonotope.
 
 ### Input
 
-- `Z`                 -- zonotope
-- `apply_convex_hull` -- (optional, default: `true`) if `true`, post-process the
-                         computation with the convex hull of the points
+- `Z` -- zonotope
 
 ### Output
 
-List of vertices as a vector of vectors.
-
-### Algorithm
-
-If the zonotope has ``p`` generators, each vertex is the result of summing the
-center with some linear combination of generators, where the combination
-factors are ``ξ_i ∈ \\{-1, 1\\}``.
-
-There are at most ``2^p`` distinct vertices. Use the flag `apply_convex_hull` to
-control whether a convex hull algorithm is applied to the vertices computed by this
-method; otherwise, redundant vertices may be present.
+Integer representing the number of generators.
 """
-function vertices_list(Z::Zonotope{N};
-                       apply_convex_hull::Bool=true)::Vector{Vector{N}} where {N<:Real}
-    p = ngens(Z)
-    vlist = Vector{Vector{N}}()
-    sizehint!(vlist, 2^p)
+ngens(Z::Zonotope)::Int = size(Z.generators, 2)
 
-    for ξi in Iterators.product([[1, -1] for i = 1:p]...)
-        push!(vlist, Z.center .+ Z.generators * collect(ξi))
-    end
-
-    return apply_convex_hull ? convex_hull!(vlist) : vlist
-end
 
 # --- LazySet interface functions ---
 
-"""
-    ρ(d::AbstractVector{N}, Z::Zonotope{N}) where {N<:Real}
-
-Return the support function of a zonotope in a given direction.
-
-### Input
-
-- `d` -- direction
-- `Z` -- zonotope
-
-### Output
-
-The support function of the zonotope in the given direction.
-
-### Algorithm
-
-The support value is ``cᵀ d + ‖Gᵀ d‖₁`` where ``c`` is the center and ``G`` is
-the generator matrix of `Z`.
-
-"""
-function ρ(d::AbstractVector{N}, Z::Zonotope{N}) where {N<:Real}
-    return dot(center(Z), d) + sum(abs.(transpose(Z.generators) * d))
-end
-
-"""
-    σ(d::AbstractVector{N}, Z::Zonotope{N}) where {N<:Real}
-
-Return the support vector of a zonotope in a given direction.
-
-### Input
-
-- `d` -- direction
-- `Z` -- zonotope
-
-### Output
-
-Support vector in the given direction.
-If the direction has norm zero, the vertex with ``ξ_i = 1 \\ \\ ∀ i = 1,…, p``
-is returned.
-"""
-function σ(d::AbstractVector{N}, Z::Zonotope{N}) where {N<:Real}
-    return Z.center .+ Z.generators * sign_cadlag.(_At_mul_B(Z.generators, d))
-end
-
-"""
-    ∈(x::AbstractVector{N}, Z::Zonotope{N};
-      solver=GLPKSolverLP(method=:Simplex))::Bool where {N<:Real}
-
-Check whether a given point is contained in a zonotope.
-
-### Input
-
-- `x`      -- point/vector
-- `Z`      -- zonotope
-- `solver` -- (optional, default: `GLPKSolverLP(method=:Simplex)`) the backend
-              used to solve the linear program
-
-### Output
-
-`true` iff ``x ∈ Z``.
-
-### Examples
-
-```jldoctest
-julia> Z = Zonotope([1.0, 0.0], [0.1 0.0; 0.0 0.1]);
-
-julia> [1.0, 0.2] ∈ Z
-false
-julia> [1.0, 0.1] ∈ Z
-true
-```
-
-### Algorithm
-
-The membership problem is computed by stating and solving the following linear
-program with the simplex method.
-Let ``p`` and ``n`` be the number of generators and ambient dimension,
-respectively.
-We consider the minimization of ``x_0`` in the ``p+1``-dimensional space of
-elements ``(x_0, ξ_1, …, ξ_p)`` constrained to ``0 ≤ x_0 ≤ ∞``,
-``ξ_i ∈ [-1, 1]`` for all ``i = 1, …, p``, and such that ``x-c = Gξ`` holds.
-If a feasible solution exists, the optimal value ``x_0 = 0`` is achieved.
-
-### Notes
-
-This function is parametric in the number type `N`. For exact arithmetic use
-an appropriate backend, e.g. `solver=GLPKSolverLP(method=:Exact)`.
-"""
-function ∈(x::AbstractVector{N}, Z::Zonotope{N};
-           solver=GLPKSolverLP(method=:Simplex))::Bool where {N<:Real}
-    @assert length(x) == dim(Z)
-
-    p, n = ngens(Z), dim(Z)
-    # (n+1) x (p+1) matrix with block-diagonal blocks 1 and Z.generators
-    A = [[one(N); zeros(N, p)]'; [zeros(N, n) Z.generators]]
-    b = [zero(N); (x - Z.center)]
-    lbounds = [zero(N); fill(-one(N), p)]
-    ubounds = [N(Inf); ones(N, p)]
-    sense = ['>'; fill('=', n)]
-    obj = [one(N); zeros(N, p)]
-
-    lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
-    return (lp.status == :Optimal) # Infeasible or Unbounded => false
-end
 
 """
     rand(::Type{Zonotope}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
@@ -368,52 +231,6 @@ end
 
 
 """
-    order(Z::Zonotope)::Rational
-
-Return the order of a zonotope.
-
-### Input
-
-- `Z` -- zonotope
-
-### Output
-
-A rational number representing the order of the zonotope.
-
-### Notes
-
-The order of a zonotope is defined as the quotient of its number of generators
-and its dimension.
-"""
-function order(Z::Zonotope)::Rational
-    return ngens(Z) // dim(Z)
-end
-
-"""
-    linear_map(M::AbstractMatrix{N}, Z::Zonotope{N}) where {N<:Real}
-
-Concrete linear map of a zonotope.
-
-### Input
-
-- `M` -- matrix
-- `Z` -- zonotope
-
-### Output
-
-The zonotope obtained by applying the linear map to the center and generators
-of ``Z``.
-"""
-function linear_map(M::AbstractMatrix{N}, Z::Zonotope{N}) where {N<:Real}
-    @assert dim(Z) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
-                                 "applied to a set of dimension $(dim(Z))"
-
-    c = M * Z.center
-    gi = M * Z.generators
-    return Zonotope(c, gi)
-end
-
-"""
     scale(α::Real, Z::Zonotope)
 
 Concrete scaling of a zonotope.
@@ -433,21 +250,6 @@ function scale(α::Real, Z::Zonotope)
     gi = α .* Z.generators
     return Zonotope(c, gi)
 end
-
-"""
-    ngens(Z::Zonotope)::Int
-
-Return the number of generators of a zonotope.
-
-### Input
-
-- `Z` -- zonotope
-
-### Output
-
-Integer representing the number of generators.
-"""
-ngens(Z::Zonotope)::Int = size(Z.generators, 2)
 
 """
     reduce_order(Z::Zonotope, r)::Zonotope
@@ -550,142 +352,4 @@ function split(Z::Zonotope, j::Int)
     Z₁ = Zonotope(c₁, G₁)
     Z₂ = Zonotope(c₂, G₂)
     return Z₁, Z₂
-end
-
-"""
-    constraints_list(P::Zonotope{N}) where {N<:Real}
-
-Return the list of constraints defining a zonotope.
-
-### Input
-
-- `Z` -- zonotope
-
-### Output
-
-The list of constraints of the zonotope.
-
-### Algorithm
-
-This is the (inefficient) fallback implementation for rational numbers.
-It first computes the vertices and then converts the corresponding polytope
-to constraint representation.
-"""
-function constraints_list(Z::Zonotope{N}) where {N<:Real}
-    return constraints_list(VPolytope(vertices_list(Z)))
-end
-
-"""
-    constraints_list(Z::Zonotope{N}) where {N<:AbstractFloat}
-
-Return the list of constraints defining a zonotope.
-
-### Input
-
-- `Z`               -- zonotope
-- `check_full_rank` -- (optional; default: `true`) flag for checking whether the
-                       generator matrix has full rank
-
-### Output
-
-The list of constraints of the zonotope.
-
-### Notes
-
-The algorithm assumes that no generator is redundant.
-The result has ``2 \\binom{p}{n-1}`` (with ``p`` being the number of generators
-and ``n`` being the ambient dimension) constraints, which is optimal under this
-assumption.
-
-If ``p < n`` or the generator matrix is not full rank, we fall back to the
-(slower) computation based on the vertex representation.
-
-### Algorithm
-
-We follow the algorithm presented in *Althoff, Stursberg, Buss: Computing
-Reachable Sets of Hybrid Systems Using a Combination of Zonotopes and Polytopes.
-2009.*
-
-The one-dimensional case is not covered by that algorithm; we manually handle
-this case, assuming that there is only one generator.
-"""
-function constraints_list(Z::Zonotope{N}; check_full_rank::Bool=true
-                         ) where {N<:AbstractFloat}
-    G = genmat(Z)
-    p = ngens(Z)
-    n = dim(Z)
-
-    # use fallback implementation if order < 1 or matrix is not full rank
-    if p < n || (check_full_rank && rank(G) < n)
-        return invoke(constraints_list, Tuple{Zonotope{<:Real}}, Z)
-    end
-
-    # special handling of 1D case
-    if n == 1
-        if p > 1
-            error("1D-zonotope constraints currently only support a single " *
-                  "generator")
-        end
-
-        c = Z.center[1]
-        g = G[:, 1][1]
-        constraints = [LinearConstraint([N(1)], c + g),
-                       LinearConstraint([N(-1)], g - c)]
-        return constraints
-    end
-
-    i = 0
-    c = Z.center
-    m = binomial(p, n - 1)
-    constraints = Vector{LinearConstraint{N, Vector{N}}}(undef, 2 * m)
-    for columns in StrictlyIncreasingIndices(p, n-1)
-        i += 1
-        c⁺ = cross_product(view(G, :, columns))
-        normalize!(c⁺, 2)
-
-        Δd = sum(abs.(transpose(G) * c⁺))
-
-        d⁺ = dot(c⁺, c) + Δd
-        c⁻ = -c⁺
-        d⁻ = -d⁺ + 2 * Δd  # identical to dot(c⁻, c) + Δd
-
-        constraints[i] = LinearConstraint(c⁺, d⁺)
-        constraints[i + m] = LinearConstraint(c⁻, d⁻)
-    end
-    @assert i == m "expected 2*$m constraints, but only created 2*$i"
-    return constraints
-end
-
-"""
-    translate(Z::Zonotope{N}, v::AbstractVector{N}; share::Bool=false
-             ) where {N<:Real}
-
-Translate (i.e., shift) a zonotope by a given vector.
-
-### Input
-
-- `Z`     -- zonotope
-- `v`     -- translation vector
-- `share` -- (optional, default: `false`) flag for sharing unmodified parts of
-             the original set representation
-
-### Output
-
-A translated zonotope.
-
-### Notes
-
-The generator matrix is shared with the original zonotope if `share == true`.
-
-### Algorithm
-
-We add the vector to the center of the zonotope.
-"""
-function translate(Z::Zonotope{N}, v::AbstractVector{N}; share::Bool=false
-                  ) where {N<:Real}
-    @assert length(v) == dim(Z) "cannot translate a $(dim(Z))-dimensional " *
-                                "set by a $(length(v))-dimensional vector"
-    c = center(Z) + v
-    generators = share ? Z.generators : copy(Z.generators)
-    return Zonotope(c, generators)
 end

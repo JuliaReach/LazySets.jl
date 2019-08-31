@@ -91,23 +91,6 @@ for N in [Float64, Rational{Int}, Float32]
     M = N[0 1; 0 2]
     @test vertices_list(M * X) == [N[0, 0]]
 
-    if test_suite_polyhedra
-        # constraints_list
-        b = BallInf(N[0, 0], N(1))
-        M = N[2 3; 1 2]  # invertible
-        lm1 = LinearMap(M, b)
-        clist = constraints_list(lm1)
-        p1 = HPolygon(clist)
-        M = N[2 3; 0 0]  # not invertible
-        lm2 = LinearMap(M, b)
-        clist = constraints_list(lm2)
-        p2 = HPolygon(clist)
-        for d in BoxDiagDirections{N}(2)
-            @test ρ(d, lm1) ≈ ρ(d, p1)
-            @test ρ(d, lm2) ≈ ρ(d, p2)
-        end
-    end
-
     # concrete linear map of a LinearMap
     b = BallInf(N[0, 0], N(1))
     M = N[2 3; 1 2]
@@ -126,5 +109,20 @@ for N in [Float64]
         L = M * b
         Lb = intersection(L, b)
         @test M * an_element(b) ∈ Lb
+
+        # constraints_list
+        b = BallInf(N[0, 0], N(1))
+        M = N[2 3; 1 2]  # invertible
+        lm1 = LinearMap(M, b)
+        clist = constraints_list(lm1)
+        p1 = HPolygon(clist)
+        M = N[2 3; 0 0]  # not invertible
+        lm2 = LinearMap(M, b)
+        clist = constraints_list(lm2)
+        p2 = HPolygon(clist)
+        for d in BoxDiagDirections{N}(2)
+            @test ρ(d, lm1) ≈ ρ(d, p1)
+            @test ρ(d, lm2) ≈ ρ(d, p2)
+        end
     end
 end

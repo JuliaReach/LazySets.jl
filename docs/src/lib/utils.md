@@ -64,13 +64,14 @@ StrictlyIncreasingIndices
 
 ```@docs
 LazySets.subtypes(::Any, ::Bool)
+implementing_sets
 ```
 
 ## Sampling
 
 ```@docs
-LazySets._sample_unit_nsphere_muller!
-LazySets._sample_unit_nball_muller!
+_sample_unit_nsphere_muller!
+_sample_unit_nball_muller!
 LazySets._canonical_length(X::LazySet{N}) where {N<:Real}
 sample
 LazySets.Sampler{S<:LazySet, D<:Distribution}

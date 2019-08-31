@@ -61,12 +61,8 @@ for N in [Float64, Rational{Int}, Float32]
     @test N[5 / 4, 7 / 4] ∈ p
     @test N[4, 1] ∉ p
 
-    # singleton list (only available with Polyhedra library)
-    if test_suite_polyhedra
-        @test length(singleton_list(p)) == 4
-    else
-        @test_throws AssertionError singleton_list(p)
-    end
+    # singleton list
+    @test length(singleton_list(p)) == 4
 
     if test_suite_polyhedra
         # conversion to and from Polyhedra's VRep data structure
@@ -88,7 +84,7 @@ for N in [Float64, Rational{Int}, Float32]
 
         # isempty
         @test !isempty(p)
-        @test !isempty(HPolytope{N}())
+        @test !isempty(HPolytope{N}())  # note: this object is illegal
 
         # H-representaion of an empty v-polytope
         @test tohrep(VPolytope{N}()) == EmptySet{N}()
@@ -194,6 +190,8 @@ for N in [Float64, Rational{Int}, Float32]
     # membership
     @test N[.49, .49] ∈ p
     @test N[.51, .51] ∉ p
+    q = VPolytope([N[0, 1], N[0, 2]])
+    @test N[0, 1//2] ∉ q
 
     # translation
     @test translate(p, N[1, 2]) == VPolytope([N[1, 2], N[2, 2], N[1, 3]])
@@ -349,6 +347,22 @@ if test_suite_polyhedra
         X = minkowski_sum(B, B)
         twoB = 2.0*B
         @test X ⊆ twoB && twoB ⊆ X
+
+        # concrete minkowski difference (special case, where A == A ⊖ B ⊕ B)
+        A2 = BallInf(N[0, 0], N(5))
+        B2 = BallInf(N[0, 0], N(2))
+        C2 = minkowski_difference(A2,B2)
+        @test C2 ⊆ BallInf(N[0, 0], N(3)) && BallInf(N[0, 0], N(3)) ⊆ C2
+
+        # concrete Minkowski difference for unbounded P (HPolyhedron)
+        mx1 = N(2)
+        mx2 = N(5)
+        P3 = HPolyhedron(N[mx1 0; 0 mx2], N[3, 3])
+        radius = 2
+        Q3 = Ball1(N[0, 0], N(radius))
+        C3 = minkowski_difference(P3, Q3)
+        C3_res = HPolyhedron(N[mx1 0; 0 mx2], N[3 - mx1*radius, 3 - mx2*radius])
+        @test C3 ⊆ C3_res && C3_res ⊆ C3
 
         # same but specifying a custom polyhedral computations backend (CDDLib)
         X = minkowski_sum(B, B, backend=CDDLib.Library())

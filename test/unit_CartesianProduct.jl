@@ -75,22 +75,6 @@ for N in [Float64, Float32, Rational{Int}]
     @test cs1 isa EmptySet
     @test cs2 isa EmptySet
 
-    # Test Cartesian Product of an array
-    # 0-elements
-    as = LazySet{N}[]
-    cs = CartesianProduct(as)
-    @test cs isa EmptySet
-    # 1-element
-    as = [Singleton(N[1])]
-    cs = CartesianProduct(as)
-    @test cs.element == N[1]
-    # 3-elements
-    as = [Singleton(N[1]), Singleton(N[2]), Singleton(N[3])]
-    cs = CartesianProduct(as)
-    @test cs.X.element == N[1]
-    @test cs.Y.X.element == N[2]
-    @test cs.Y.Y.element == N[3]
-
     # Test containment with respect to CartesianProduct
     p1 = HPolygon{N}()
     addconstraint!(p1, LinearConstraint(N[2, 2], N(12)))
@@ -127,7 +111,7 @@ for N in [Float64, Float32, Rational{Int}]
     vlist = vertices_list(CartesianProduct(i1, i2))
     @test ispermutation(vlist, [N[0, 2], N[0, 3], N[1, 2], N[1, 3]])
 
-    #constraints_list
+    # constraints_list
     hlist = constraints_list(CartesianProduct(i1, i2))
     @test ispermutation(hlist,
         [LinearConstraint(sparsevec(N[1], N[1], 2), N(1)),
@@ -135,6 +119,17 @@ for N in [Float64, Float32, Rational{Int}]
         LinearConstraint(sparsevec(N[2], N[1], 2),  N(3)),
         LinearConstraint(sparsevec(N[2], N[-1], 2), N(-2))])
     @test all(H -> dim(H) == 2, hlist)
+
+    # linear_map
+    cp = CartesianProduct(Interval(N(0), N(1)), Interval(N(2), N(3)))
+    M = N[2 1; 0 2]  # invertible matrix
+    lm = linear_map(M, cp)
+    @test lm isa HPolytope{N} && length(constraints_list(lm)) ==
+        length(constraints_list(cp)) == 4
+    M = N[2 1; 0 0]  # singular matrix
+    lm = linear_map(M, cp)
+    @test lm isa VPolytope{N} &&
+        box_approximation(lm) == Hyperrectangle(N[7//2, 0], N[3//2, 0])
 
     # ==================================
     # Conversions of Cartesian Products
@@ -238,6 +233,42 @@ for N in [Float64, Float32, Rational{Int}]
         res, w = isdisjoint(x, y, true)
         @test !isdisjoint(x, y) && !res && w ∈ x && w ∈ y
     end
+
+    # concrete intersection
+    # constrained dimensions cover all dimensions
+    cpa = CartesianProductArray([Interval(N[0, 1]), Interval(N[1, 2]),
+                                 Interval(N[2, 3])])
+    P = HalfSpace(N[1, 0, 1], N(2))
+    cap = intersection(cpa, P)
+    @test cap isa CartesianProductArray && length(array(cap)) == 1
+    Q = array(cap)[1]
+    @test ispermutation(constraints_list(Q), [HalfSpace(N[-1, 0, 0], N(0)),
+        HalfSpace(N[0, 1, 0], N(2)), HalfSpace(N[0, -1, 0], N(-1)),
+        HalfSpace(N[0, 0, -1], N(-2)), HalfSpace(N[1, 0, 1], N(2))])
+    # some dimensions are unconstrained
+    cpa = CartesianProductArray([Interval(N[0, 1]),
+                                 Hyperrectangle(N[2, 3], N[1, 1]),
+                                 Interval(N[3, 4])])
+    P = HalfSpace(N[0, 1, 1, 0], N(3))
+    cap = intersection(cpa, P)
+    @test cap isa CartesianProductArray && length(array(cap)) == 3
+    for i in [1, 3]
+        @test array(cap)[1] === array(cpa)[1]
+    end
+    Q = array(cap)[2]
+    @test ispermutation(constraints_list(Q), [HalfSpace(N[-1, 0], N(-1)),
+        HalfSpace(N[0, -1], N(-2)), HalfSpace(N[1, 1], N(3))])
+
+    # linear_map
+    cpa = CartesianProductArray([Interval(N(0), N(1)), Interval(N(2), N(3))])
+    M = N[2 1; 0 2]  # invertible matrix
+    lm = linear_map(M, cpa)
+    @test lm isa HPolytope{N} && length(constraints_list(lm)) ==
+        length(constraints_list(cpa)) == 4
+    M = N[2 1; 0 0]  # singular matrix
+    lm = linear_map(M, cpa)
+    @test lm isa VPolytope{N} &&
+        box_approximation(lm) == Hyperrectangle(N[7//2, 0], N[3//2, 0])
 
     # ========================================
     # Conversions of Cartesian Product Arrays

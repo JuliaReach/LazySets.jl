@@ -29,6 +29,7 @@ isbounded(::CartesianProduct)
 isempty(::CartesianProduct)
 constraints_list(::CartesianProduct{N}) where {N<:Real}
 vertices_list(::CartesianProduct{N}) where {N<:Real}
+linear_map(M::AbstractMatrix{N}, cp::CartesianProduct{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -48,6 +49,7 @@ isbounded(::CartesianProductArray)
 isempty(::CartesianProductArray)
 constraints_list(::CartesianProductArray{N}) where {N<:Real}
 vertices_list(::CartesianProductArray{N}) where {N<:Real}
+linear_map(M::AbstractMatrix{N}, cpa::CartesianProductArray{N}) where {N<:Real}
 array(::CartesianProductArray{N, S}) where {N<:Real, S<:LazySet{N}}
 block_structure(cpa::CartesianProductArray{N}) where {N}
 block_to_dimension_indices(cpa::CartesianProductArray{N}, vars::Vector{Int}) where {N}
@@ -116,6 +118,7 @@ dim(::Intersection)
 ρ(::AbstractVector{N}, ::Intersection{N}) where {N<:Real}
 ρ(::AbstractVector{N}, ::Intersection{N, S1, S2}) where {N<:Real, S1<:LazySet{N}, S2<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}}
 ρ(::AbstractVector{N}, ::Intersection{N, S1, S2}) where {N<:Real, S1<:LazySet{N}, S2<:AbstractPolyhedron{N}}
+ρ(::AbstractVector{N}, ::Intersection{N, S1, S2}) where {N<:Real, S1<:AbstractPolyhedron{N}, S2<:AbstractPolyhedron{N}}
 σ(::AbstractVector{N}, ::Intersection{N}) where {N<:Real}
 isbounded(::Intersection)
 isempty(::Intersection)
@@ -223,9 +226,7 @@ Inherited from [`LazySet`](@ref):
 
 ```@docs
 LinearMap
-*(::AbstractMatrix{N}, ::LazySet{N}) where {N<:Real}
-*(::N, ::LazySet{N}) where {N<:Real}
-*(::N, ::LinearMap{N}) where {N<:Real}
+*(::Union{AbstractMatrix, UniformScaling, AbstractVector, Real}, ::LazySet)
 dim(::LinearMap)
 ρ(::AbstractVector{N}, ::LinearMap{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::LinearMap{N}) where {N<:Real}
@@ -316,8 +317,7 @@ dim(::Translation)
 σ(::AbstractVector{N}, ::Translation{N}) where {N<:Real}
 an_element(::Translation)
 isempty(::Translation)
-constraints_list(::Translation{N}, ::Val{true}) where {N<:Real}
-LinearMap(::AbstractMatrix{N}, ::Translation{N}) where {N<:Real}
+constraints_list(::Translation{N}) where {N<:Real}
 linear_map(::AbstractMatrix{N}, ::Translation{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::Translation{N}) where {N<:Real}
 ```
@@ -326,8 +326,6 @@ linear_map(::AbstractMatrix{N}, ::Translation{N}) where {N<:Real}
 
 ```@docs
 AffineMap
-*(::AbstractMatrix{N}, ::AffineMap{N}) where {N<:Real}
-*(::N, ::AffineMap{N}) where {N<:Real}
 dim(::AffineMap)
 σ(::AbstractVector{N}, ::AffineMap{N}) where {N<:Real}
 ρ(::AbstractVector{N}, ::AffineMap{N}) where {N<:Real}
@@ -357,25 +355,28 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 
-Inherited from [`AbstractPolyhedron`](@ref):
-* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real})
-
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
 * [`an_element`](@ref an_element(::AbstractCentrallySymmetricPolytope{N}) where {N<:Real})
 
 Inherited from [`AbstractZonotope`](@ref):
 * [`ngens`](@ref ngens(::AbstractZonotope))
+* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractZonotope{N}) where {N<:Real})
+* [`order`](@ref order(::AbstractZonotope))
+* [`translate`](@ref translate(::AbstractZonotope{N}, ::AbstractVector{N}) where {N<:Real})
 
 Inherited from [`AbstractHyperrectangle`](@ref):
+* [`ρ`](@ref ρ(::AbstractVector{N}, ::AbstractHyperrectangle{N}) where {N<:Real})
+* [`σ`](@ref σ(::AbstractVector{N}, ::AbstractHyperrectangle{N}) where {N<:Real})
 * [`∈`](@ref ∈(::AbstractVector{N}, ::AbstractHyperrectangle{N}) where {N<:Real})
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
+* [`constraints_list`](@ref constraints_list(::AbstractHyperrectangle{N}) where {N<:Real})
 * [`vertices_list`](@ref vertices_list(::AbstractHyperrectangle{N}) where {N<:Real})
 * [`high`](@ref high(::AbstractHyperrectangle{N}) where {N<:Real})
 * [`low`](@ref low(::AbstractHyperrectangle{N}) where {N<:Real})
-* [`generators`](@ref generators(::AbstractZonotope))
-* [`genmat`](@ref genmat(::AbstractZonotope))
+* [`generators`](@ref generators(::AbstractHyperrectangle))
+* [`genmat`](@ref genmat(::AbstractHyperrectangle))
 
 ## Union
 

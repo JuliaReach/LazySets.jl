@@ -23,10 +23,10 @@ for N in [Float64, Rational{Int}, Float32]
     # boundedness
     @test isbounded(rm)  # bounded set
     @test isbounded(ResetMap(Singleton(N[1, 2]), r_none))  # bounded set without resets
-    @test !isbounded(ResetMap(HPolyhedron([HalfSpace(N[1, 1], N(1))]), r_none))  # unbounded set without resets
     @test !isbounded(ResetMap(Universe{N}(2), r_1))  # unbounded set without enough resets
     @test isbounded(ResetMap(Universe{N}(2), r_12))  # unbounded set with enough resets
     if N in [Float64]
+        @test !isbounded(ResetMap(HPolyhedron([HalfSpace(N[1, 1], N(1))]), r_none))  # unbounded set without resets
         @test !isbounded(ResetMap(HPolyhedron([HalfSpace(N[1, 1], N(1))]), r_1))  # unbounded set without enough resets
         @test isbounded(ResetMap(HPolyhedron([HalfSpace(N[1, 1], N(1))]), r_12))  # unbounded set, but captured by resets
     end
