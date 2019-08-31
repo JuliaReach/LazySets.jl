@@ -252,6 +252,11 @@ for N in [Float64, Float32, Rational{Int}]
     @test !is_intersection_empty(I1 × I2 , p3)
     @test is_intersection_empty(I1 × I3 , p3)
 
+    # concrete linear map
+    # in 2D and for an invertible map we get an HPolygon; see #631 and #1093
+    HP = convert(HPolygon, BallInf(N[0, 0], N(1)))
+    @test linear_map(N[1 0; 0 2], HP) isa HPolygon{N}
+
     # Test VRepresentation
     vp = tovrep(p)
     @test N[2, 4] ∈ vertices_list(vp)
