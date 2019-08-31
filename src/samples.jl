@@ -2,7 +2,7 @@ function load_distributions_samples()
 return quote
 
 using .Distributions: Distribution, Uniform, Normal
-import .Distributions: sample
+import .Distributions
 
 """
     _sample_unit_nsphere_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
@@ -168,6 +168,7 @@ i.e., `x ∉ X`.
 ### Output
 
 A vector of `num_samples` vectors.
+If `num_samples` is not passed one sample as a single vector is returned.
 """
 function sample(X::LazySet{N}, num_samples::Int;
                 rng::AbstractRNG=GLOBAL_RNG,
@@ -175,7 +176,7 @@ function sample(X::LazySet{N}, num_samples::Int;
     @assert isbounded(X) "this function requires that the set `X` is bounded, but it is not"
 
     D = Vector{Vector{N}}(undef, num_samples) # preallocate output
-    sample_from_set!(D, Sampler(X); rng=rng, seed=seed)
+    _sample_from_set!(D, Sampler(X); rng=rng, seed=seed)
     return D
 end
 
@@ -190,11 +191,11 @@ end
 
 function Sampler(X, distribution=Uniform)
     box = _canonical_length(X)
-    sampler = [distribution(box[i,:]...) for i = 1:size(box,1)]
-    return Sampler(X, sampler)
+    box_approx = [distribution(box[i,:]...) for i = 1:size(box,1)]
+    return Sampler(X, box_approx)
 end
 
-function sample_from_set!(D::Vector{Vector{N}},
+function _sample_from_set!(D::Vector{Vector{N}},
                sampler::Sampler;
                rng::AbstractRNG=GLOBAL_RNG,
                seed::Union{Int, Nothing}=nothing) where {N<:Real}
