@@ -1,7 +1,8 @@
 function load_distributions_samples()
 return quote
 
-using .Distributions: Uniform, Normal
+using .Distributions: Distribution, Uniform, Normal
+import .Distributions
 
 """
     _sample_unit_nsphere_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
@@ -113,6 +114,129 @@ function _sample_unit_nball_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
         r = rand(rng, Zrad)
         β = r^one_over_n / sqrt(α)
         D[j] = v .* β
+    end
+    return D
+end
+
+## Rejection Sampling
+
+"""
+    _canonical_length(X::LazySet)
+
+Returns the support function of the given set along the positive and negative canonical directions.
+
+### Inputs
+
+- `X` - convex set
+
+### Outputs
+
+A matrix with `n = dims(X)` rows and two columns. Each row stands for
+one dimension of `X` whereas the first column is the minimum and the second
+column is the maximum value of the corresponding dimension.
+"""
+function _canonical_length(X::LazySet{N}) where {N<:Real}
+    dims = dim(X)
+    x = Matrix{N}(undef, dims, 2)
+    for j = 1:dims
+        ej = SingleEntryVector(j, dims, one(N))
+        x[j,:] = [-ρ(-ej, X), ρ(ej, X)]
+    end
+    return x
+end
+
+"""
+    sample(X::LazySet{N}, num_samples::Int;
+           rng::AbstractRNG=GLOBAL_RNG,
+           seed::Union{Int, Nothing}=nothing) where {N}
+
+Rejection sampling of an arbitrary LazySet `X` for which the support value
+function is defined.
+
+Draw a sample `x` from a uniform distribution of a box-overapproximation of the
+original set `X` in all `n` dimensions. The function rejects a drawn sample `x`
+and redraws as long as the sample is not contained in the original set `X`,
+i.e., `x ∉ X`.
+
+### Input
+
+- `X`           -- lazyset
+- `num_samples`    -- number of random samples
+- `rng`         -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed`        -- (optional, default: `nothing`) seed for reseeding
+
+### Output
+
+A vector of `num_samples` vectors.
+If `num_samples` is not passed one sample as a single vector is returned.
+"""
+function sample(X::LazySet{N}, num_samples::Int;
+                rng::AbstractRNG=GLOBAL_RNG,
+                seed::Union{Int, Nothing}=nothing) where {N<:Real}
+    @assert isbounded(X) "this function requires that the set `X` is bounded, but it is not"
+
+    D = Vector{Vector{N}}(undef, num_samples) # preallocate output
+    _rejection_sampling!(D, Sampler(X); rng=rng, seed=seed)
+    return D
+end
+
+function sample(X::LazySet{N}; kwargs...) where {N<:Real}
+    return sample(X, 1; kwargs...)[1]
+end
+
+"""
+    Sampler{S<:LazySet, D<:Distribution}
+
+Type used for Rejections Sampling from an arbitrary `LazySet`.
+
+### Fields
+
+- `X`           -- lazyset
+- `box_approx`  -- Distribution from which the sample is drawn
+"""
+struct Sampler{S<:LazySet, D<:Distribution}
+    X::S
+    box_approx::Vector{D}
+end
+
+function Sampler(X, distribution=Uniform)
+    box = _canonical_length(X)
+    box_approx = [distribution(box[i,:]...) for i = 1:size(box,1)]
+    return Sampler(X, box_approx)
+end
+
+
+"""
+    _rejection_sampling!(D::Vector{Vector{N}},
+           sampler::Sampler;
+           rng::AbstractRNG=GLOBAL_RNG,
+           seed::Union{Int, Nothing}=nothing) where {N<:Real}
+
+Rejection sampling from a box approximation of a set and distribution
+defined in `sampler`.
+
+### Input
+
+- `D`           -- output, vector of points
+- `sampler`     -- Sampler from which the points are sampled
+- `rng`         -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed`        -- (optional, default: `nothing`) seed for reseeding
+
+### Output
+
+A vector of `num_samples` vectors.
+"""
+function _rejection_sampling!(D::Vector{Vector{N}},
+               sampler::Sampler;
+               rng::AbstractRNG=GLOBAL_RNG,
+               seed::Union{Int, Nothing}=nothing) where {N<:Real}
+    rng = reseed(rng, seed)
+    @inbounds for i in 1:length(D)
+        w = rand.(Ref(rng), sampler.box_approx)
+        while w ∉ sampler.X
+            w = rand.(Ref(rng), sampler.box_approx)
+        end
+        D[i] = w
     end
     return D
 end
