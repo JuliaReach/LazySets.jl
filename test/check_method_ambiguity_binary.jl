@@ -61,7 +61,7 @@ function check_method_ambiguity_binary(op;
         VPolytope([zeros(1)]),
         Universe(1),
         ZeroSet(1),
-        Zonotope(zeros(1), hcat([1.; 2.]))
+        Zonotope(zeros(1), [1. 2.;])
     ]
     H2 = LinearConstraint(ones(2), 1.)
     polytope_constraints_2D = [H2,

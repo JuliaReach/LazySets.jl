@@ -1,6 +1,8 @@
 for N in [Float64, Rational{Int}, Float32]
     # random zonotope
     rand(Zonotope)
+    # Test dimension assertion
+    @test_throws AssertionError Zonotope([1., 1], [[0. 0]; [0.5 0]; [0. 0.5]; [0. 0]])
 
     # 1D Zonotope
     z = Zonotope(N[0], Matrix{N}(I, 1, 1))
