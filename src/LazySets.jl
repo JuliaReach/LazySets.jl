@@ -3,8 +3,8 @@ __precompile__(true)
 # main module for `LazySets.jl`
 module LazySets
 
-using Requires, SparseArrays, LinearAlgebra, Reexport, MathProgBase,
-      GLPKMathProgInterface
+using GLPKMathProgInterface, LinearAlgebra, MathProgBase, Reexport, Requires,
+      SparseArrays
 using LinearAlgebra: checksquare
 import LinearAlgebra: norm, ×
 import Random
@@ -23,86 +23,94 @@ using .Arrays
 # ===================
 # Auxiliary functions
 # ===================
-include("helper_functions.jl")
-include("comparisons.jl")
-include("macros.jl")
-include("samples.jl")
-include("mesh.jl")
+include("Utils/helper_functions.jl")
+include("Utils/comparisons.jl")
+include("Utils/macros.jl")
+include("Utils/samples.jl")
 
 # ==================
 # Abstract set types
 # ==================
-include("LazySet.jl")
-include("AbstractPolyhedron.jl")
-include("HalfSpace.jl") # must be here to make LinearConstraint available
-include("AbstractPolyhedron_functions.jl")
-include("AbstractPolytope.jl")
-include("AbstractCentrallySymmetric.jl")
-include("AbstractCentrallySymmetricPolytope.jl")
-include("AbstractZonotope.jl")
-include("AbstractHyperrectangle.jl")
-include("AbstractPolygon.jl")
-include("AbstractSingleton.jl")
-include("AbstractHPolygon.jl")
+include("Interfaces/LazySet.jl")
+include("Interfaces/AbstractPolyhedron.jl")
+include("Sets/HalfSpace.jl")  # must come before AbstractPolyhedron_functions
+include("Interfaces/AbstractPolyhedron_functions.jl")
+include("Interfaces/AbstractPolytope.jl")
+include("Interfaces/AbstractCentrallySymmetric.jl")
+include("Interfaces/AbstractCentrallySymmetricPolytope.jl")
+include("Interfaces/AbstractZonotope.jl")
+include("Interfaces/AbstractHyperrectangle.jl")
+include("Interfaces/AbstractPolygon.jl")
+include("Interfaces/AbstractSingleton.jl")
+include("Interfaces/AbstractHPolygon.jl")
 
 # =============================
 # Types representing basic sets
 # =============================
-include("Ball1.jl")
-include("Ball2.jl")
-include("BallInf.jl")
-include("Ballp.jl")
-include("Ellipsoid.jl")
-include("EmptySet.jl")
-include("HPolygon.jl")
-include("HPolygonOpt.jl")
-include("HPolytope.jl")
-include("HPolyhedron.jl")
-include("Hyperplane.jl")
-include("Hyperrectangle.jl")
-include("Interval.jl")
-include("Line.jl")
-include("LineSegment.jl")
-include("Singleton.jl")
-include("Universe.jl")
-include("VPolygon.jl")
-include("VPolytope.jl")
-include("ZeroSet.jl")
-include("Zonotope.jl")
-include("Complement.jl")
+include("Sets/Ball1.jl")
+include("Sets/Ball2.jl")
+include("Sets/BallInf.jl")
+include("Sets/Ballp.jl")
+include("Sets/Ellipsoid.jl")
+include("Sets/EmptySet.jl")
+include("Sets/HPolygon.jl")
+include("Sets/HPolygonOpt.jl")
+include("Sets/HPolytope.jl")
+include("Sets/HPolyhedron.jl")
+include("Sets/Hyperplane.jl")
+include("Sets/Hyperrectangle.jl")
+include("Sets/Interval.jl")
+include("Sets/Line.jl")
+include("Sets/LineSegment.jl")
+include("Sets/Singleton.jl")
+include("Sets/Universe.jl")
+include("Sets/VPolygon.jl")
+include("Sets/VPolytope.jl")
+include("Sets/ZeroSet.jl")
+include("Sets/Zonotope.jl")
 
 # ==================================
 # Types representing non-convex sets
 # ==================================
-include("PolynomialZonotope.jl")
-
-# ===================================================
-# Algorithms to compute the convex hull of polygons
-# ===================================================
-include("concrete_convex_hull.jl")
+include("Sets/PolynomialZonotope.jl")
 
 # =================================
 # Types representing set operations
 # =================================
-include("CartesianProduct.jl")
-include("ConvexHull.jl")
-include("ExponentialMap.jl")
-include("Intersection.jl")
-include("LinearMap.jl")
-include("AffineMap.jl")
-include("MinkowskiSum.jl")
-include("ResetMap.jl")
-include("SymmetricIntervalHull.jl")
-include("Translation.jl")
-include("UnionSet.jl")
-include("Rectification.jl")
+include("LazyOperations/CartesianProduct.jl")
+include("LazyOperations/Complement.jl")
+include("LazyOperations/ConvexHull.jl")
+include("LazyOperations/ExponentialMap.jl")
+include("LazyOperations/Intersection.jl")
+include("LazyOperations/LinearMap.jl")
+include("LazyOperations/AffineMap.jl")  # must come after LinearMap
+include("LazyOperations/MinkowskiSum.jl")
+include("LazyOperations/ResetMap.jl")
+include("LazyOperations/SymmetricIntervalHull.jl")
+include("LazyOperations/Translation.jl")
+include("LazyOperations/UnionSet.jl")
+include("LazyOperations/Rectification.jl")  # must come after UnionSet
 
+# =======
+# Aliases
+# =======
+include("Interfaces/aliases.jl")
 
 # =============================
 # Conversions between set types
 # =============================
-include("intersection_helper.jl")
 include("convert.jl")
+
+# ===========================
+# Concrete operations on sets
+# ===========================
+include("ConcreteOperations/convex_hull.jl")
+include("ConcreteOperations/difference.jl")
+include("ConcreteOperations/intersection.jl")
+include("ConcreteOperations/isdisjoint.jl")
+include("ConcreteOperations/issubset.jl")
+include("ConcreteOperations/minkowski_difference.jl")
+include("ConcreteOperations/minkowski_sum.jl")
 
 # =====================
 # Approximations module
@@ -113,30 +121,16 @@ include("Approximations/Approximations.jl")
 # It can, however, happen that we forget to add the `using` statements.
 @reexport using .Approximations
 
-# ===========================
-# Concrete operations on sets
-# ===========================
-include("concrete_intersection.jl")
-include("is_intersection_empty.jl")
-include("is_subset.jl")
-include("difference.jl")
-include("concrete_minkowski_sum.jl")
-include("concrete_minkowski_difference.jl")
-
-# =======
-# Aliases
-# =======
-include("aliases.jl")
+# ==================================
+# Plotting (requires Approximations)
+# ==================================
+include("Plotting/plot_recipes.jl")
+include("Plotting/mesh.jl")
 
 # ==========================
-# Parallel algorithms module
+# Parallel-algorithms module
 # ==========================
 include("Parallel/Parallel.jl")
-
-# ============
-# Plot recipes
-# ============
-include("plot_recipes.jl")
 
 # ===================================================
 # Load external packages on-demand (using 'Requires')
