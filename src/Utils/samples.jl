@@ -121,47 +121,17 @@ end
 ## Rejection Sampling
 
 """
-    _canonical_length(X::LazySet)
-
-Returns the support function of the given set along the positive and negative canonical directions.
-
-### Inputs
-
-- `X` - convex set
-
-### Outputs
-
-A matrix with `n = dims(X)` rows and two columns. Each row stands for
-one dimension of `X` whereas the first column is the minimum and the second
-column is the maximum value of the corresponding dimension.
-"""
-function _canonical_length(X::LazySet{N}) where {N<:Real}
-    dims = dim(X)
-    x = Matrix{N}(undef, dims, 2)
-    for j = 1:dims
-        ej = SingleEntryVector(j, dims, one(N))
-        x[j,:] = [-ρ(-ej, X), ρ(ej, X)]
-    end
-    return x
-end
-
-"""
     sample(X::LazySet{N}, num_samples::Int;
            rng::AbstractRNG=GLOBAL_RNG,
            seed::Union{Int, Nothing}=nothing) where {N}
 
-Rejection sampling of an arbitrary LazySet `X` for which the support value
-function is defined.
-
-Draw a sample `x` from a uniform distribution of a box-overapproximation of the
-original set `X` in all `n` dimensions. The function rejects a drawn sample `x`
-and redraws as long as the sample is not contained in the original set `X`,
-i.e., `x ∉ X`.
+Sampling of an arbitrary `LazySet` `X`.
 
 ### Input
 
 - `X`           -- lazyset
-- `num_samples`    -- number of random samples
+- `num_samples` -- number of random samples
+- `sampler`     -- Sampler used (default:`RejectionSampler`)
 - `rng`         -- (optional, default: `GLOBAL_RNG`) random number generator
 - `seed`        -- (optional, default: `nothing`) seed for reseeding
 
@@ -169,14 +139,23 @@ i.e., `x ∉ X`.
 
 A vector of `num_samples` vectors.
 If `num_samples` is not passed one sample as a single vector is returned.
+
+### Algorithm
+`RejectionSampler:
+Draw a sample `x` from a uniform distribution of a box-overapproximation of the
+original set `X` in all `n` dimensions. The function rejects a drawn sample `x`
+and redraws as long as the sample is not contained in the original set `X`,
+i.e., `x ∉ X`.
 """
 function sample(X::LazySet{N}, num_samples::Int;
+                sampler=RejectionSampler,
                 rng::AbstractRNG=GLOBAL_RNG,
                 seed::Union{Int, Nothing}=nothing) where {N<:Real}
-    @assert isbounded(X) "this function requires that the set `X` is bounded, but it is not"
+    @assert isbounded(X) "this function requires that the set `X` is bounded"*
+                            ", but it is not"
 
     D = Vector{Vector{N}}(undef, num_samples) # preallocate output
-    _rejection_sampling!(D, Sampler(X); rng=rng, seed=seed)
+    _sample_from_sampler!(D, sampler(X); rng=rng, seed=seed)
     return D
 end
 
@@ -185,35 +164,47 @@ function sample(X::LazySet{N}; kwargs...) where {N<:Real}
 end
 
 """
-    Sampler{S<:LazySet, D<:Distribution}
+    Sampler
 
-Type used for Rejections Sampling from an arbitrary `LazySet`.
+Abstract type for defining new sample methods.
+
+### Notes
+
+All subtypes should implement a `_sample_from_sampler!` method.
+"""
+abstract type Sampler end
+
+"""
+    RejectionSampler{S<:LazySet, D<:Distribution} <: Sampler
+
+Type used for rejection sampling of an arbitrary `LazySet` `X`.
 
 ### Fields
 
 - `X`           -- lazyset
 - `box_approx`  -- Distribution from which the sample is drawn
 """
-struct Sampler{S<:LazySet, D<:Distribution}
+struct RejectionSampler{S<:LazySet, D<:Distribution} <:Sampler
     X::S
     box_approx::Vector{D}
 end
 
-function Sampler(X, distribution=Uniform)
-    box = _canonical_length(X)
-    box_approx = [distribution(box[i,:]...) for i = 1:size(box,1)]
-    return Sampler(X, box_approx)
+function RejectionSampler(X, distribution=Uniform)
+    B = box_approximation(X)
+    canonical_support =  hcat(low(B), high(B))
+    dims = size(canonical_support,1)
+    box_approx = [distribution(canonical_support[i,:]...) for i = 1:dims]
+    return RejectionSampler(X, box_approx)
 end
 
 
 """
-    _rejection_sampling!(D::Vector{Vector{N}},
-           sampler::Sampler;
+    _sample_from_sampler!(D::Vector{Vector{N}},
+           sampler::RejectionSampler;
            rng::AbstractRNG=GLOBAL_RNG,
            seed::Union{Int, Nothing}=nothing) where {N<:Real}
 
-Rejection sampling from a box approximation of a set and distribution
-defined in `sampler`.
+Sampling points from a `Sampler`.
 
 ### Input
 
@@ -226,8 +217,8 @@ defined in `sampler`.
 
 A vector of `num_samples` vectors.
 """
-function _rejection_sampling!(D::Vector{Vector{N}},
-               sampler::Sampler;
+function _sample_from_sampler!(D::Vector{Vector{N}},
+               sampler::RejectionSampler;
                rng::AbstractRNG=GLOBAL_RNG,
                seed::Union{Int, Nothing}=nothing) where {N<:Real}
     rng = reseed(rng, seed)
