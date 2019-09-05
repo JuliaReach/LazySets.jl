@@ -141,7 +141,7 @@ A vector of `num_samples` vectors.
 If `num_samples` is not passed one sample as a single vector is returned.
 
 ### Algorithm
-`RejectionSampler:
+`RejectionSampler`:
 Draw a sample `x` from a uniform distribution of a box-overapproximation of the
 original set `X` in all `n` dimensions. The function rejects a drawn sample `x`
 and redraws as long as the sample is not contained in the original set `X`,
