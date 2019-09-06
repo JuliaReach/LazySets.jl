@@ -259,7 +259,7 @@ function _collinear_case!(points, A, B, C, D)
         else
             # assign the points with max and min value in their second component to the
             # firsts points and the extra point to the third place, then pop the point that was in the middle
-            min_y = argmin([A[2], B[2], C[2]])
+            min_y, max_y = arg_minmax(A[2], B[2], C[2])
             if min_y == 1
                 points[1] = A
             elseif min_y == 2
@@ -267,7 +267,6 @@ function _collinear_case!(points, A, B, C, D)
             else
                 points[1] = C
             end
-            max_y = argmax([A[2], B[2], C[2]])
             if max_y == 1
                 points[2] = A
             elseif max_y == 2
@@ -281,15 +280,14 @@ function _collinear_case!(points, A, B, C, D)
     else
         # assign the points with max and min value in their first component to the
         # firsts points and the extra point to the third place, then pop the point that was in the middle
-        min_x = argmin([A[1], B[1], C[1]])
+        min_x, max_x = arg_minmax(A[1], B[1], C[1])
         if min_x == 1
             points[1] = A
-        elseif argmin([A[1], B[1], C[1]]) == 2
+        elseif min_x == 2
             points[1] = B
         else
             points[1] = C
         end
-        max_x = argmax([A[1], B[1], C[1]])
         if max_x == 1
             points[2] = A
         elseif max_x == 2

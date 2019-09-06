@@ -369,3 +369,77 @@ function _leq(x::N, y::N;
               atol::Real=_atol(N)) where {N<:AbstractFloat}
     return x <= y || _isapprox(x, y, rtol=rtol, ztol=ztol, atol=atol)
 end
+
+"""
+    minmax(A, B, C)
+
+Compute the minimum and maximum of three numbers A, B, C.
+
+### Input
+
+- `A` -- first number
+- `B` -- second number
+- `C` -- third number
+
+### Output
+
+The minimum and maximum of the three inputed numbers.
+
+### Examples
+
+```jldoctest
+julia> LazySets.minmax(1.4, 52.4, -5.2)
+(-5.2, 52.4)
+```
+"""
+function minmax(A, B, C)
+    if A > B
+        min, max = B, A
+    else
+        min, max = A, B
+    end
+    if C > max
+        max = C
+    elseif C < min
+        min = C
+    end
+    return min, max
+end
+
+"""
+    arg_minmax(A, B, C)
+
+Compute the index (1, 2, 3) of the minimum and maximum of three numbers A, B, C.
+
+### Input
+
+- `A` -- first number
+- `B` -- second number
+- `C` -- third number
+
+### Output
+
+The index of the minimum and maximum of the three inputed numbers.
+
+### Examples
+
+```jldoctest
+julia> arg_minmax(1.4, 52.4, -5.2)
+(3, 2)
+```
+"""
+function arg_minmax(A, B, C)
+    if A > B
+        min, max = B, A
+        imin, imax = 2, 1
+    else
+        min, max = A, B
+        imin, imax = 1, 2
+    end
+    if C > max
+        imax = 3
+    elseif C < min
+        imin = 3
+    end
+    return imin, imax
+end
