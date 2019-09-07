@@ -185,7 +185,7 @@ Type used for rejection sampling of an arbitrary `LazySet` `X`.
 - `X`           -- lazyset
 - `box_approx`  -- Distribution from which the sample is drawn
 """
-struct RejectionSampler{S<:LazySet, D<:Distribution} <:Sampler
+struct RejectionSampler{S<:LazySet, D<:Distribution} <: Sampler
     X::S
     box_approx::Vector{D}
 end
