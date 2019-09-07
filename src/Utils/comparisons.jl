@@ -383,7 +383,7 @@ Compute the minimum and maximum of three numbers A, B, C.
 
 ### Output
 
-The minimum and maximum of the three inputed numbers.
+The minimum and maximum of three given numbers.
 
 ### Examples
 
