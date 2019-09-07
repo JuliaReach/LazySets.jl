@@ -419,7 +419,7 @@ Compute the index (1, 2, 3) of the minimum and maximum of three numbers A, B, C.
 
 ### Output
 
-The index of the minimum and maximum of the three inputed numbers.
+The index of the minimum and maximum of the three given numbers.
 
 ### Examples
 
