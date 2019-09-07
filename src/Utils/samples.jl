@@ -192,7 +192,7 @@ end
 
 function RejectionSampler(X, distribution=Uniform)
     B = box_approximation(X)
-    canonical_support =  hcat(low(B), high(B))
+    canonical_support = hcat(low(B), high(B))
     dims = size(canonical_support, 1)
     box_approx = [distribution(canonical_support[i,:]...) for i = 1:dims]
     return RejectionSampler(X, box_approx)
