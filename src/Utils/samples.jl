@@ -205,7 +205,7 @@ end
            rng::AbstractRNG=GLOBAL_RNG,
            seed::Union{Int, Nothing}=nothing) where {N<:Real}
 
-Sampling points from a `Sampler`.
+Sample points using rejection sampling.
 
 ### Input
 
