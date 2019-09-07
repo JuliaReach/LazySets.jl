@@ -4,6 +4,10 @@ return quote
 using .Distributions: Distribution, Uniform, Normal
 import .Distributions
 
+# ======================================================
+# Sampling from a uniform distribution on balls/spheres
+# ======================================================
+
 """
     _sample_unit_nsphere_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
                                  rng::AbstractRNG=GLOBAL_RNG,
@@ -118,7 +122,20 @@ function _sample_unit_nball_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
     return D
 end
 
-## Rejection Sampling
+# ========================
+# Sampling from a LazySet
+# ========================
+
+"""
+    Sampler
+
+Abstract type for defining new sample methods.
+
+### Notes
+
+All subtypes should implement a `_sample!` method.
+"""
+abstract type Sampler end
 
 """
     sample(X::LazySet{N}, num_samples::Int;
@@ -142,38 +159,29 @@ If `num_samples` is not passed one sample as a single vector is returned.
 
 ### Algorithm
 
-`RejectionSampler`:
-Draw a sample `x` from a uniform distribution of a box-overapproximation of the
-original set `X` in all `n` dimensions. The function rejects a drawn sample `x`
-and redraws as long as the sample is not contained in the original set `X`,
-i.e., `x ∉ X`.
+See the documentation of `RejectionSampler`.
 """
 function sample(X::LazySet{N}, num_samples::Int;
                 sampler=RejectionSampler,
                 rng::AbstractRNG=GLOBAL_RNG,
                 seed::Union{Int, Nothing}=nothing) where {N<:Real}
+    require(:Distributions; fun_name="sample")
     @assert isbounded(X) "this function requires that the set `X` is bounded"*
                             ", but it is not"
 
     D = Vector{Vector{N}}(undef, num_samples) # preallocate output
-    _sample_from_sampler!(D, sampler(X); rng=rng, seed=seed)
+    _sample!(D, sampler(X); rng=rng, seed=seed)
     return D
 end
 
+# without argument, returns a single element (instead of a singleton)
 function sample(X::LazySet{N}; kwargs...) where {N<:Real}
     return sample(X, 1; kwargs...)[1]
 end
 
-"""
-    Sampler
-
-Abstract type for defining new sample methods.
-
-### Notes
-
-All subtypes should implement a `_sample_from_sampler!` method.
-"""
-abstract type Sampler end
+# =====================
+# Rejection Sampling
+# =====================
 
 """
     RejectionSampler{S<:LazySet, D<:Distribution} <: Sampler
@@ -184,6 +192,13 @@ Type used for rejection sampling of an arbitrary `LazySet` `X`.
 
 - `X`           -- lazyset
 - `box_approx`  -- Distribution from which the sample is drawn
+
+### Algorithm
+
+Draw a sample ``x`` from a uniform distribution of a box-overapproximation of the
+original set ``X`` in all ``n`` dimensions. The function rejects a drawn sample ``x``
+and redraws as long as the sample is not contained in the original set ``X``,
+i.e., ``x ∉ X``.
 """
 struct RejectionSampler{S<:LazySet, D<:Distribution} <: Sampler
     X::S
@@ -198,12 +213,11 @@ function RejectionSampler(X, distribution=Uniform)
     return RejectionSampler(X, box_approx)
 end
 
-
 """
-    _sample_from_sampler!(D::Vector{Vector{N}},
-           sampler::RejectionSampler;
-           rng::AbstractRNG=GLOBAL_RNG,
-           seed::Union{Int, Nothing}=nothing) where {N<:Real}
+    _sample!(D::Vector{Vector{N}},
+             sampler::RejectionSampler;
+             rng::AbstractRNG=GLOBAL_RNG,
+             seed::Union{Int, Nothing}=nothing) where {N<:Real}
 
 Sample points using rejection sampling.
 
@@ -218,10 +232,10 @@ Sample points using rejection sampling.
 
 A vector of `num_samples` vectors.
 """
-function _sample_from_sampler!(D::Vector{Vector{N}},
-               sampler::RejectionSampler;
-               rng::AbstractRNG=GLOBAL_RNG,
-               seed::Union{Int, Nothing}=nothing) where {N<:Real}
+function _sample!(D::Vector{Vector{N}},
+                  sampler::RejectionSampler;
+                  rng::AbstractRNG=GLOBAL_RNG,
+                  seed::Union{Int, Nothing}=nothing) where {N<:Real}
     rng = reseed(rng, seed)
     @inbounds for i in 1:length(D)
         w = rand.(Ref(rng), sampler.box_approx)
