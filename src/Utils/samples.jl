@@ -131,7 +131,7 @@ Sampling of an arbitrary `LazySet` `X`.
 
 - `X`           -- lazyset
 - `num_samples` -- number of random samples
-- `sampler`     -- Sampler used (default:`RejectionSampler`)
+- `sampler`     -- Sampler used (default: `RejectionSampler`)
 - `rng`         -- (optional, default: `GLOBAL_RNG`) random number generator
 - `seed`        -- (optional, default: `nothing`) seed for reseeding
 
