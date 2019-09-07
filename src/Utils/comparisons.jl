@@ -424,7 +424,7 @@ The index of the minimum and maximum of the three inputed numbers.
 ### Examples
 
 ```jldoctest
-julia> arg_minmax(1.4, 52.4, -5.2)
+julia> LazySets.arg_minmax(1.4, 52.4, -5.2)
 (3, 2)
 ```
 """
