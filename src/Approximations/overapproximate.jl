@@ -1118,17 +1118,17 @@ function _overapproximate_lm_cpa!(arr, M, cpa, overapprox_option)
 end
 
 """
-    function overapproximate(rm::ResetMap{N, <:CartesianProductArray{N}},
-                             ::Type{<:CartesianProductArray}, oa) where {N}
+    overapproximate(rm::ResetMap{N, <:CartesianProductArray{N}},
+                    ::Type{<:CartesianProductArray}, oa) where {N}
 
 Overapproximate a reset map (that only resets to zero) of a Cartesian product
 by a new Cartesian product.
 
 ### Input
 
-- `rm` -- reset map
+- `rm`                    -- reset map
 - `CartesianProductArray` -- type for dispatch
-- `oa`  -- overapproximation option
+- `oa`                    -- overapproximation option
 
 ### Output
 
@@ -1164,9 +1164,9 @@ sets and a polyhedron.
 
 ### Input
 
-- `cap` -- lazy intersection of a Cartesian product array and a polyhedron
+- `cap`                   -- lazy intersection of a Cartesian product array and a polyhedron
 - `CartesianProductArray` -- type for dispatch
-- `oa`  -- overapproximation option
+- `oa`                    -- overapproximation option
 
 ### Output
 
