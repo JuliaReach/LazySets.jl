@@ -1118,6 +1118,42 @@ function _overapproximate_lm_cpa!(arr, M, cpa, overapprox_option)
 end
 
 """
+    function overapproximate(rm::ResetMap{N, <:CartesianProductArray{N}},
+                             ::Type{<:CartesianProductArray}, oa) where {N}
+
+Overapproximate a reset map (that only resets to zero) of a Cartesian product
+by a new Cartesian product.
+
+### Input
+
+- `rm` -- reset map
+- `CartesianProductArray` -- type for dispatch
+- `oa`  -- overapproximation option
+
+### Output
+
+A Cartesian product with the same block structure.
+
+### Notes
+
+This implementation currently only supports resets to zero.
+
+### Algorithm
+
+We convert the `ResetMap` into a `LinearMap` and then call the corresponding
+overapproximation method.
+"""
+function overapproximate(rm::ResetMap{N, <:CartesianProductArray{N}},
+                         ::Type{<:CartesianProductArray}, oa) where {N}
+    if any(!iszero, values(rm.resets))
+        error("we currently only support resets to zero")
+    end
+
+    lm = get_A(rm) * rm.X
+    return overapproximate(lm, CartesianProductArray, oa)
+end
+
+"""
     overapproximate(cap::Intersection{N,
                                       <:CartesianProductArray{N},
                                       <:AbstractPolyhedron{N}},
@@ -1128,9 +1164,9 @@ sets and a polyhedron.
 
 ### Input
 
- - `cap` -- Lazy intersection of Cartesian product array and polyhedron
- - `CartesianProductArray` -- type for dispatch
- - `oa`  -- overapproximation option
+- `cap` -- lazy intersection of a Cartesian product array and a polyhedron
+- `CartesianProductArray` -- type for dispatch
+- `oa`  -- overapproximation option
 
 ### Output
 
