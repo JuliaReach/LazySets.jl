@@ -213,7 +213,7 @@ end
 function _three_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N<:Real}
     # Algorithm: the function takes three points and uses the formula
     #            from here: https://stackoverflow.com/questions/2122305/convex-hull-of-4-points/2122620#2122620
-    #            to decide if the points are ordered in a counter-clockwise fashion or not, the result is saved 
+    #            to decide if the points are ordered in a counter-clockwise fashion or not, the result is saved
     #            in the 'turn' boolean, then returns the points in ccw fashion acting according to 'turn'. For the
     #            cases where the points are collinear we pass the points with the minimum and maximum first
     #            component to the function for two points in 2d(_two_points_2d), if those are equal, we do the same
@@ -246,6 +246,11 @@ function _three_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N
     return points
 end
 
+# given an index i in {1, 2, 3} return the element among (A, B, C) in the i-th position
+@inline function _get_i(i, A, B, C)
+    return i == 1 ? A : i == 2 ? B : C
+end
+
 function _collinear_case!(points, A, B, C, D)
     # A, B and C collinear, D is the extra point
     if isapprox(A[1], B[1]) && isapprox(B[1], C[1]) && isapprox(C[1], A[1])
@@ -259,13 +264,19 @@ function _collinear_case!(points, A, B, C, D)
         else
             # assign the points with max and min value in their second component to the
             # firsts points and the extra point to the third place, then pop the point that was in the middle
-            points[1], points[2], points[3] = points[argmin([A[2], B[2], C[2]])], points[argmax([A[2], B[2], C[2]])], D
+            min_y, max_y = arg_minmax(A[2], B[2], C[2])
+            points[1] = _get_i(min_y, A, B, C)
+            points[2] = _get_i(max_y, A, B, C)
+            points[3] = D
             pop!(points)
         end
     else
         # assign the points with max and min value in their first component to the
         # firsts points and the extra point to the third place, then pop the point that was in the middle
-        points[1], points[2], points[3] = points[argmin([A[1], B[1], C[1]])], points[argmax([A[1], B[1], C[1]])], D
+        min_x, max_x = arg_minmax(A[1], B[1], C[1])
+        points[1] = _get_i(min_x, A, B, C)
+        points[2] = _get_i(max_x, A, B, C)
+        points[3] = D
         pop!(points)
     end
     return _three_points_2d!(points)

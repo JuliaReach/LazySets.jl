@@ -26,6 +26,8 @@ to_negative_vector
 _up
 _dr
 _above
+minmax
+arg_minmax
 ```
 
 ## Functions and Macros

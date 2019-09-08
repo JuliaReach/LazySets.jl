@@ -90,6 +90,7 @@ for N in [Float64, Rational{Int}]
     points = [C, B, D, A]
     @test is_cyclic_permutation(convex_hull!(points), expr) # ADB
     @test ispermutation(convex_hull!([N[1, 1], N[2, 2], N[3, 3], N[4, 4]]), [N[1, 1], N[4, 4]]) # points aligned
+    @test  is_cyclic_permutation(convex_hull([[1., 1], [0., 0], [0., 1], [0., 2]]), [[1, 1.], [0., 2], [0., 0]]) # test that issue #1661 is fixed
 
     # five-vertices case in 2D
     points = [N[1//10, 3//10], N[1//5, 1//10], N[3//10, 7//25], N[2//5, 3//5],
