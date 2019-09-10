@@ -186,8 +186,8 @@ overapproximate(S::LazySet;
     overapproximate(S, Hyperrectangle)
 
 """
-    overapproximate(X::ConvexHull{N, Zonotope{N}, Zonotope{N}},
-                    ::Type{<:Zonotope})::Zonotope where {N<:Real}
+    overapproximate(X::ConvexHull{N, <:AbstractZonotope{N}, <:AbstractZonotope{N}},
+                    ::Type{<:Zonotope}) where {N<:Real}
 
 Overapproximate the convex hull of two zonotopes.
 
@@ -274,9 +274,9 @@ constructed in the first phase.
 [3] The zonotope abstract domain Taylor1+. K. Ghorbal, E. Goubault, S. Putot.
     CAV 2009.
 """
-function overapproximate(X::ConvexHull{N, Zonotope{N}, Zonotope{N}},
+function overapproximate(X::ConvexHull{N, <:AbstractZonotope{N}, <:AbstractZonotope{N}},
                          ::Type{<:Zonotope};
-                         algorithm="mean")::Zonotope where {N<:Real}
+                         algorithm="mean") where {N<:Real}
     # execute specific algorithm
     if algorithm == "mean"
         return _overapproximate_convex_hull_zonotope_G05(X)
@@ -288,8 +288,8 @@ function overapproximate(X::ConvexHull{N, Zonotope{N}, Zonotope{N}},
 end
 
 function _overapproximate_convex_hull_zonotope_G05(
-        X::ConvexHull{N, Zonotope{N}, Zonotope{N}}) where {N<:Real}
-	# reduce to the same order if possible
+        X::ConvexHull{N}) where {N<:Real}
+    # reduce to the same order if possible
     m1, m2 = ngens(X.X), ngens(X.Y)
     if m1 < m2
         Y = CH(X.X, reduce_order(X.Y, m1))
@@ -304,28 +304,32 @@ function _overapproximate_convex_hull_zonotope_G05(
         Z1, Z2 = Z2, Z1
     end
 
-    c = (Z1.center + Z2.center) / N(2)
+    c1 = center(Z1)
+    c2 = center(Z2)
+    G1 = genmat(Z1)
+    G2 = genmat(Z2)
+    c = (c1 + c2) / N(2)
 
     # the case of equal order is treated separately to avoid a slicing
     # (this creates a copy)
     if order(Z1) == order(Z2)
-        G = hcat(Z1.generators .+ Z2.generators,
-                 Z1.center - Z2.center,
-                 Z1.generators .- Z2.generators)/N(2)
+        G = hcat(G1 .+ G2,
+                 c1 - c2,
+                 G1 .- G2) / N(2)
     else
-        G = hcat((Z1.generators[:, 1:ngens(Z2)] .+ Z2.generators)/N(2),
-                 (Z1.center - Z2.center)/N(2),
-                 (Z1.generators[:, 1:ngens(Z2)] .- Z2.generators)/N(2),
-                 Z1.generators[:, ngens(Z2)+1:end])
+        G = hcat((G1[:, 1:ngens(Z2)] .+ G2) / N(2),
+                 (c1 - c2) / N(2),
+                 (G1[:, 1:ngens(Z2)] .- G2) / N(2),
+                 G1[:, ngens(Z2)+1:end])
     end
     return Zonotope(c, G)
 end
 
 function _overapproximate_convex_hull_zonotope_GGP09(
-        X::ConvexHull{N, Zonotope{N}, Zonotope{N}}) where {N<:Real}
+        X::ConvexHull{N}) where {N<:Real}
     Z1, Z2 = X.X, X.Y
     m = min(ngens(Z1), ngens(Z2))
-    G1, G2 = Z1.generators, Z2.generators
+    G1, G2 = genmat(Z1), genmat(Z2)
     n = dim(Z1)
     box = box_approximation(X)
 
@@ -368,7 +372,7 @@ function _overapproximate_convex_hull_zonotope_GGP09(
 end
 
 """
-    overapproximate(Z::Zonotope, ::Type{<:Hyperrectangle})::Hyperrectangle
+    overapproximate(Z::AbstractZonotope, ::Type{<:Hyperrectangle})
 
 Return a tight overapproximation of a zonotope with an axis-aligned box.
 
@@ -393,9 +397,9 @@ of ``G`` for ``i = 1,…, p``, where ``p`` is the number of generators of ``Z``.
 hybrid systems using a combination of zonotopes and polytopes. Nonlinear analysis:
 hybrid systems, 4(2), 233-249.*
 """
-function overapproximate(Z::Zonotope, ::Type{<:Hyperrectangle})::Hyperrectangle
-    r = sum(abs.(Z.generators), dims=2)[:]
-    return Hyperrectangle(Z.center, r)
+function overapproximate(Z::AbstractZonotope, ::Type{<:Hyperrectangle})
+    r = sum(abs.(genmat(Z)), dims=2)[:]
+    return Hyperrectangle(center(Z), r)
 end
 
 """
@@ -955,7 +959,7 @@ end
 """
     overapproximate(lm::LinearMap{N, <:AbstractZonotope{N}, NM,
                                   <:AbstractIntervalMatrix{<:NM}},
-                    ::Type{<:Zonotope})::Zonotope{N} where {N<:Real, NM}
+                    ::Type{<:Zonotope}) where {N<:Real, NM}
 
 Overapproximate an interval-matrix linear map of a zonotopic set by a new
 zonotope.
@@ -989,7 +993,7 @@ uncertain parameters and inputs. CDC 2007.
 """
 function overapproximate(lm::LinearMap{N, <:AbstractZonotope{N}, NM,
                                        <:AbstractIntervalMatrix{<:NM}},
-                         ::Type{<:Zonotope})::Zonotope{N} where {N<:Real, NM}
+                         ::Type{<:Zonotope}) where {N<:Real, NM}
     Mc, Ms = split(lm.M)
     Z = lm.X
     c = Mc * center(Z)
