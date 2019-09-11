@@ -23,18 +23,18 @@ There is also a constructor from lower and upper bounds with keyword arguments
 The following two constructions are equivalent:
 
 ```jldoctest
-julia> c = ones(2);
+julia> c = [-1.0, 1.0];
 
-julia> r = [0.1, 0.2];
+julia> r = [2.0, 1.0];
 
-julia> l = [0.9, 0.8];
+julia> l = [-3.0, 0.0];
 
-julia> h = [1.1, 1.2];
+julia> h = [1.0, 2.0];
 
 julia> Hyperrectangle(c, r)
-Hyperrectangle{Float64}([1.0, 1.0], [0.1, 0.2])
+Hyperrectangle{Float64}([-1.0, 1.0], [2.0, 1.0])
 julia> Hyperrectangle(low=l, high=h)
-Hyperrectangle{Float64}([1.0, 1.0], [0.1, 0.2])
+Hyperrectangle{Float64}([-1.0, 1.0], [2.0, 1.0])
 ```
 """
 struct Hyperrectangle{N<:Real} <: AbstractHyperrectangle{N}
