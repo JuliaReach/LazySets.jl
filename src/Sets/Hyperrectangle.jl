@@ -62,7 +62,7 @@ function Hyperrectangle(;
     @assert all(i -> low[i] <= high[i], eachindex(low)) "lower bound must be lower than upper bound"
     # compute center and radius from high and low vectors
     center = (high .+ low) ./ 2
-    radius = abs.(high .- center)
+    radius = high .- center
     return Hyperrectangle(center, radius)
 end
 
