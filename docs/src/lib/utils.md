@@ -26,6 +26,8 @@ to_negative_vector
 _up
 _dr
 _above
+minmax
+arg_minmax
 ```
 
 ## Functions and Macros
@@ -72,8 +74,8 @@ implementing_sets
 ```@docs
 _sample_unit_nsphere_muller!
 _sample_unit_nball_muller!
-LazySets._canonical_length(X::LazySet{N}) where {N<:Real}
 sample
-LazySets.Sampler{S<:LazySet, D<:Distribution}
-LazySets._rejection_sampling!
+LazySets.Sampler
+LazySets.RejectionSampler{S<:LazySet, D<:Distribution}
+LazySets._sample!
 ```

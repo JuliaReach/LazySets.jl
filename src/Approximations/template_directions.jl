@@ -267,7 +267,7 @@ Then the Cartesian components of each direction are obtained with
 
 The integer passed as an argument is used to discretize ``φ``:
 
-```jldoctest
+```jldoctest; filter = r"2246[0-9]*e-16"
 julia> using LazySets.Approximations: PolarDirections
 
 julia> pd = PolarDirections(2)
@@ -346,7 +346,7 @@ are not considered more than once.
 A `SphericalDirections` can be built in different ways. If you pass only one integer,
 it is used to discretize both ``θ`` and ``φ``:
 
-```jldoctest spherical_directions
+```jldoctest spherical_directions; filter = r"1232[0-9]*e-17.*2246[0-9]*e-16.*1232[0-9]*e-17"
 julia> using LazySets.Approximations: SphericalDirections
 
 julia> sd = SphericalDirections(3)

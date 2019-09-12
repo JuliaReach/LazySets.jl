@@ -223,6 +223,15 @@ for N in [Float64, Float32]
     Y_zonotope_2 = overapproximate(Y, Zonotope; algorithm="join")
     @test Y_polygon ⊆ Y_zonotope_1
     @test Y_polygon ⊆ Y_zonotope_2
+
+    # ResetMap and CPA
+    X = CartesianProductArray([Ball1(N[0, 0], N(1)), Ball1(N[0, 0], N(2)),
+                               Ball1(N[0, 0], N(3))])
+    resets = Dict(3 => N(0), 6 => N(0))
+    rm = ResetMap(X, resets)
+    Y = overapproximate(rm, CartesianProductArray, Hyperrectangle)
+    @test array(Y) == [Hyperrectangle(N[0, 0], N[1, 1]),
+        Hyperrectangle(N[0, 0], N[0, 2]), Hyperrectangle(N[0, 0], N[3, 0])]
 end
 
 for N in [Float64]

@@ -1,6 +1,6 @@
 name = "LazySets"
 uuid = "b4f0291d-fe17-52bc-9479-3d1a343d9043"
-version = "1.18.1"
+version = "1.19"
 
 [deps]
 Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
@@ -19,7 +19,7 @@ SharedArrays = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
 SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [compat]
-julia = "≥ 1.0.0"
+julia = "1.0, 1.1, 1.2"
 CDDLib = "0.5.3"
 Distributions = "0.19.2"
 Documenter = "≥ 0.23.0"
