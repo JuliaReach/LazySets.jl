@@ -22,7 +22,7 @@ function reflect(P::LazySet{N}) where {N<:Real}
 
     @assert applicable(constraints_list, P)  "this function " *
         "requires that the list of constraints of its first argument is applicable, but it is not; " *
-        "if it is bounded, try overapproximating with an `HPolytope` first"
+        "if the set is bounded, try overapproximating with an `HPolytope` first"
 
     F,g = tosimplehrep(P)
     if isbounded(P)
