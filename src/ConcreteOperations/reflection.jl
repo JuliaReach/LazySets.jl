@@ -8,15 +8,15 @@ Concrete reflection of a convex set `P`, resulting in the reflected set `-P`.
 ### Note
 
 This function requires that the list of constraints of the set `P` is
-available.
+available, i.e. such that it can be written as
+``P = \\{z ∈ ℝⁿ: ⋂ sᵢᵀz ≤ rᵢ, i = 1, ..., N\\}.``
 
 This function can be used to implement the alternative definition of the
 Minkowski Difference, which writes as
 ```math
-A ⊖ B = \\{a − b | a ∈ A, b ∈ B} = A ⊕ (-B)
-P = \\{z ∈ ℝⁿ: sᵢᵀz ≤ rᵢ, i=1,...,N\\}.
+A ⊖ B = \\{a − b | a ∈ A, b ∈ B\\} = A ⊕ (-B)
 ```
-by calling `minkowski_sum(A, reflect(B))`.
+by calling `minkowski_sum(A, reflect(B))`
 """
 function reflect(P::LazySet{N}) where {N<:Real}
 
