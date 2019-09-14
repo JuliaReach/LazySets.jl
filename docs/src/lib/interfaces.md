@@ -57,6 +57,7 @@ isbounded_unit_dimensions(::LazySet{N}) where {N<:Real}
 an_element(::LazySet{N}) where {N<:Real}
 tosimplehrep(::LazySet)
 isuniversal(::LazySet{N}, ::Bool=false) where {N<:Real}
+affine_map(M::AbstractMatrix, X::LazySet, v::AbstractVector)
 minkowski_sum(::LazySet{N}, ::LazySet{N}) where {N<:Real}
 ```
 
