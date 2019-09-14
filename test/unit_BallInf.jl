@@ -101,6 +101,14 @@ for N in [Float64, Rational{Int}, Float32]
     # translation
     b = BallInf(N[1, 2], N(1))
     @test translate(b, N[1, 2]) == BallInf(N[2, 4], N(1))
+
+    # affine map
+    M = N[2 1; 0 2]
+    B = BallInf(N[0, 0], N(1))
+    v = N[1, -1]
+    am = affine_map(M, B, v)
+    @test ispermutation(vertices_list(am),
+                        [N[4, 1], N[0, 1], N[-2, -3], N[2, -3]])
 end
 
 # tests that only work with Float64 and Rational{Int}
