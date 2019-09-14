@@ -79,6 +79,8 @@ intersection(::CartesianProductArray{N}, ::AbstractPolyhedron{N}) where {N<:Real
 ## Minkowski sum
 
 ```@docs
+minkowski_sum(::LazySet{N}, ::LazySet{N}) where {N<:Real}
+minkowski_sum(::AbstractPolyhedron{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 minkowski_sum(::VPolytope{N}, ::VPolytope{N}) where {N<:Real}
 minkowski_sum(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}) where {N<:Real}
 minkowski_sum(::AbstractZonotope{N}, ::AbstractZonotope{N}) where {N<:Real}
