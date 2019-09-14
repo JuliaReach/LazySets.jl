@@ -449,3 +449,9 @@ to_union_of_projections(::Rectification{N}, ::Bool=false) where {N<:Real}
 ```@docs
 RectificationCache
 ```
+
+## Interior
+
+```@docs
+interior(d::AbstractVector, P::LazySet; ε=_TOL_F64.rtol)
+```

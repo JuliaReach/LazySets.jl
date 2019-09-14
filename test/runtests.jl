@@ -63,6 +63,7 @@ if test_suite_basic
     # =========================
     @time @testset "LazySets.Util" begin include("unit_util.jl") end
     @time @testset "LazySets.Comparisons" begin include("unit_comparisons.jl") end
+    @time @testset "LazySets.Interior" begin include("unit_interior.jl") end
 
     # =======================================
     # Testing interfaces to external packages
