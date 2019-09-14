@@ -23,6 +23,6 @@ The implementation checks if a `Ballp` of norm `p` with center `d` and radius `�
 contained in the set `P`. This is a numerical check for `d ∈ interior(P)`
 with error tolerance `ε`.
 """
-function is_interior_point(d::AbstractVector, P::LazySet; p=Inf, ε=_TOL_F64.rtol)
+function is_interior_point(d::AbstractVector{N}, P::LazySet{N}; p=Inf, ε=_rtol(N)) where {N<:Real}
     return Ballp(p, d, ε) ⊆ P
 end
