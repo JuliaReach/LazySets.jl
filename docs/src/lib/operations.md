@@ -449,3 +449,10 @@ to_union_of_projections(::Rectification{N}, ::Bool=false) where {N<:Real}
 ```@docs
 RectificationCache
 ```
+
+## Reflection
+
+```@docs
+Base.:-(P::LazySet) = reflect(P)
+reflect(P::LazySet{N}) where {N<:Real}
+```
