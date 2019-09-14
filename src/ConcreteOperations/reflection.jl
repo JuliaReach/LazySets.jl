@@ -16,7 +16,7 @@ Minkowski Difference, which writes as
 ```math
 A ⊖ B = \\{a − b | a ∈ A, b ∈ B\\} = A ⊕ (-B)
 ```
-by calling `minkowski_sum(A, reflect(B))`
+by calling `minkowski_sum(A, reflect(B))`.
 """
 function reflect(P::LazySet{N}) where {N<:Real}
 
