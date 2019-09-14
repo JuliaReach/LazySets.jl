@@ -9,7 +9,7 @@ Check if the point `d` is contained in the interior of the convex set `P`.
 ### Input
 
 - `d`  -- coordinate of point
-- `P`  -- lazy set
+- `P`  -- set
 - `p`  -- norm of the Ball used to apply the error tolerance
 - `ε`  -- error tolerance of check
 
