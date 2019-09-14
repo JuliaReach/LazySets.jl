@@ -453,5 +453,5 @@ RectificationCache
 ## Interior
 
 ```@docs
-interior(d::AbstractVector, P::LazySet; ε=_TOL_F64.rtol)
+is_interior_point(d::AbstractVector, P::LazySet; ε=_TOL_F64.rtol)
 ```

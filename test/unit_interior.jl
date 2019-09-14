@@ -1,5 +1,6 @@
 P = BallInf(zeros(2), 0.15)
 d = [0.15,0.15]
-@test !interior(d, P)
+@test !is_interior_point(d, P)
+@test !is_interior_point(d, P; p=2.0)
 d = [0.15,0.15] .- LazySets._TOL_F64.rtol
-@test interior(d, P)
+@test is_interior_point(d, P)
