@@ -370,9 +370,6 @@ if test_suite_polyhedra
         P4 = HPolyhedron(F4, g4)
         F, g = tosimplehrep(reflect(reflect(P4)))
         @test F4 == F && g4 == g
-        P4_new = -(-P4)
-        @test P4_new ⊆ P4 && P4 ⊆ P4_new
-
 
         # same but specifying a custom polyhedral computations backend (CDDLib)
         X = minkowski_sum(B, B, backend=CDDLib.Library())

@@ -1,7 +1,5 @@
 export reflect
 
-Base.:-(P::LazySet) = reflect(P)
-
 """
     reflect(P::LazySet{N}) where {N<:Real}
 
