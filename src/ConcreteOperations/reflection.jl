@@ -21,7 +21,7 @@ by calling `minkowski_sum(A, reflect(B))`.
 function reflect(P::LazySet{N}) where {N<:Real}
 
     @assert applicable(constraints_list, P)  "this function " *
-        "requires that the list of constraints of its first argument is applicable, but it is not; " *
+        "requires that the list of constraints is available, but it is not; " *
         "if the set is bounded, try overapproximating with an `HPolytope` first"
 
     F,g = tosimplehrep(P)
