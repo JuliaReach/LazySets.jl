@@ -20,7 +20,7 @@ Boolean which indicates if point `d` is contained in `P`.
 ### Algorithm
 
 The implementation checks if a `Ballp` of norm `p` with center `d` and radius `ε` is
-contained in the set `P` which results in a numerical check for `d ∈ interior(P)`
+contained in the set `P`. This is a numerical check for `d ∈ interior(P)`
 with error tolerance `ε` with default value `_TOL_F64.rtol`.
 """
 function is_interior_point(d::AbstractVector, P::LazySet; p=Inf, ε=_TOL_F64.rtol)
