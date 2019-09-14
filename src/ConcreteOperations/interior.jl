@@ -10,7 +10,7 @@ Check if the point `d` is contained in the interior of the convex set `P`.
 
 - `d`  -- point
 - `P`  -- set
-- `p`  -- norm of the Ball used to apply the error tolerance
+- `p`  -- norm of the ball used to apply the error tolerance
 - `ε`  -- error tolerance of check
 
 ### Output
