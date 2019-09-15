@@ -500,6 +500,7 @@ tohrep(::HPoly{N}) where {N<:Real}
 tovrep(::HPoly{N}) where {N<:Real}
 isempty(::HPoly{N}, ::Bool=false) where {N<:Real}
 translate(::PT, ::AbstractVector{N}) where {N<:Real, PT<:HPoly{N}}
+an_element(::HPolytope{N}) where {N<:Rational{Int}}
 polyhedron(::HPoly{N}) where {N<:Real}
 remove_redundant_constraints(::HPoly{N}) where {N<:Real}
 remove_redundant_constraints!(::HPoly{N}) where {N<:Real}
