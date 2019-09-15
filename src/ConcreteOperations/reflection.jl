@@ -18,16 +18,13 @@ A ⊖ B = \\{a − b | a ∈ A, b ∈ B\\} = A ⊕ (-B)
 ```
 by calling `minkowski_sum(A, reflect(B))`.
 """
-function reflect(P::LazySet{N}) where {N<:Real}
+function reflect(P::LazySet)
 
     @assert applicable(constraints_list, P)  "this function " *
         "requires that the list of constraints is available, but it is not; " *
         "if the set is bounded, try overapproximating with an `HPolytope` first"
 
     F,g = tosimplehrep(P)
-    if isbounded(P)
-        return HPolytope(-F, g)
-    else
-        return HPolyhedron(-F, g)
-    end
+    T = isbounded(P) ? HPolytope : HPolyhedron
+    return T(-F, g)
 end

@@ -453,5 +453,5 @@ RectificationCache
 ## Reflection
 
 ```@docs
-reflect(P::LazySet{N}) where {N<:Real}
+reflect(::LazySet)
 ```
