@@ -144,6 +144,7 @@ This interface defines the following functions:
 isbounded(::AbstractPolytope)
 singleton_list(::AbstractPolytope{N}) where {N<:Real}
 isempty(::AbstractPolytope)
+chebyshev_center(::AbstractPolytope{N}) where {N<:Real}
 ```
 
 #### Polygon

@@ -4,7 +4,8 @@ export AbstractPolytope,
        vertices_list,
        singleton_list,
        isempty,
-       minkowski_sum
+       minkowski_sum,
+       chebyshev_center
 
 """
     AbstractPolytope{N<:Real} <: AbstractPolyhedron{N}
@@ -94,6 +95,60 @@ or not.
 """
 function isempty(P::AbstractPolytope)::Bool
     return isempty(vertices_list(P))
+end
+
+"""
+    chebyshev_center(P::AbstractPolytope{N};
+                     backend=default_polyhedra_backend(P, N),
+                     compute_radius::Bool=false) where {N<:Real}
+
+Compute the [Chebyshev center](https://en.wikipedia.org/wiki/Chebyshev_center)
+of a polytope.
+
+### Input
+
+- `P`              -- polytope
+- `backend`        -- (optional, default: `default_polyhedra_backend(P, N)`) the
+                      backend for polyhedral computations
+- `compute_radius` -- (optional; default: `false`) option to additionally return
+                      the radius of the largest ball enclosed by `P` around the
+                      Chebyshev center
+
+### Output
+
+If `compute_radius` is `false`, the result is the Chebyshev center of `P`.
+If `compute_radius` is `true`, the result is the pair `(c, r)` where `c` is the
+Chebyshev center of `P` and `r` is the radius of the largest ball with center
+`c` enclosed by `P`.
+
+### Notes
+
+The Chebyshev center is the center of a largest Euclidean ball enclosed by `P`.
+In general, the center of such a ball is not unique (but the radius is).
+
+Formally, letting ``∂P`` denote the boundary of ``P``, the Chebyshev center is
+
+```math
+    \\arg\\min_c \\min_{x ∈ ∂P} ‖x - c‖₂.
+```
+"""
+function chebyshev_center(P::AbstractPolytope{N};
+                          backend=default_polyhedra_backend(P, N),
+                          compute_radius::Bool=false
+                         ) where {N<:Real}
+    require(:Polyhedra; fun_name="chebyshev_center")
+    require(:JuMP; fun_name="chebyshev_center")
+    require(:GLPK; fun_name="chebyshev_center")
+    @assert applicable(polyhedron, P) "try converting the set to HPolytope " *
+        "or VPolytope first"
+
+    solver = JuMP.with_optimizer(GLPK.Optimizer)
+    c, r = Polyhedra.chebyshevcenter(polyhedron(P; backend=backend), solver)
+
+    if compute_radius
+        return c, r
+    end
+    return c
 end
 
 # given a polytope P, apply the linear map P to each vertex of P

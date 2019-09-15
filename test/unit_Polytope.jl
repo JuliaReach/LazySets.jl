@@ -394,5 +394,15 @@ if test_suite_polyhedra
                             [N[1, 1], N[0, 1], N[1, 0], N[0, 0]])
         @test ispermutation([round.(v) for v in vertices_list(cap1)],
                             [round.(v) for v in vertices_list(cap2)])
+
+        # Chebyshev center
+        H = Hyperrectangle(N[0, 0], N[1, 2])
+        @test_throws AssertionError chebyshev_center(H)
+        P1 = convert(HPolytope, H)
+        P2 = convert(VPolytope, H)
+        c1 = chebyshev_center(P1)
+        c2, r = chebyshev_center(P1; compute_radius=true)
+        @test_throws ErrorException chebyshev_center(P2)  # not implemented in Polyhedra
+        @test c1 == c2 == center(H) && c1 isa AbstractVector{N}
     end
 end
