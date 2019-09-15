@@ -111,4 +111,7 @@ for N in [Float64, Float32]
     B = Ball2(N[1, 2, 3], N(0.5))
     s = sample(B, 100) # get 100 random elements in B
     @test all(si -> si ∈ B, s)
+
+    # Chebyshev center
+    @test chebyshev_center(B) == center(B)
 end

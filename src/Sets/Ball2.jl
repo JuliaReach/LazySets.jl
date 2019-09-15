@@ -275,3 +275,40 @@ function sample(B::Ball2{N}, nsamples::Int=1;
     end
     return D
 end
+
+
+# --- Ball2 functions ---
+
+
+"""
+    chebyshev_center(B::Ball2{N}; compute_radius::Bool=false
+                    ) where {N<:AbstractFloat}
+
+Compute the [Chebyshev center](https://en.wikipedia.org/wiki/Chebyshev_center)
+of a ball in the 2-norm.
+
+### Input
+
+- `B`              -- ball in the 2-norm
+- `compute_radius` -- (optional; default: `false`) option to additionally return
+                      the radius of the largest ball enclosed by `B` around the
+                      Chebyshev center
+
+### Output
+
+If `compute_radius` is `false`, the result is the Chebyshev center of `B`.
+If `compute_radius` is `true`, the result is the pair `(c, r)` where `c` is the
+Chebyshev center of `B` and `r` is the radius of the largest ball with center
+`c` enclosed by `B`.
+
+### Notes
+
+The Chebyshev center of a ball in the 2-norm is just the center of the ball.
+"""
+function chebyshev_center(B::Ball2{N}; compute_radius::Bool=false
+                         ) where {N<:AbstractFloat}
+    if compute_radius
+        return center(B), B.radius
+    end
+    return center(B)
+end
