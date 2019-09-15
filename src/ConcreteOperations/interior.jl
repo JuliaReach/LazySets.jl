@@ -1,8 +1,5 @@
-export is_interior_point
-
-
 """
-    is_interior_point(d::AbstractVector, P::LazySet; p=Inf, ε=_rtol(N))
+    is_interior_point(d::AbstractVector{N}, P::LazySet{N}; p=Inf, ε=_rtol(N)) where {N<:Real}
 
 Check if the point `d` is contained in the interior of the convex set `P`.
 

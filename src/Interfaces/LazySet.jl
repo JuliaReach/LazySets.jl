@@ -14,7 +14,8 @@ export LazySet,
        absorbing,
        tosimplehrep,
        isuniversal,
-       translate
+       translate,
+       is_interior_point
 
 """
     LazySet{N}
