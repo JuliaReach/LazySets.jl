@@ -96,11 +96,6 @@ function isempty(P::AbstractPolytope)::Bool
     return isempty(vertices_list(P))
 end
 
-function default_polyhedra_backend(P, N)
-    require(:Polyhedra; fun_name="default_polyhedra_backend")
-    error("no default backend for numeric type $N")
-end
-
 # given a polytope P, apply the linear map P to each vertex of P
 # it is assumed that the interface function `vertices_list(P)` is available 
 @inline function _linear_map_vrep(M::AbstractMatrix{N}, P::AbstractPolytope{N}) where {N<:Real}
