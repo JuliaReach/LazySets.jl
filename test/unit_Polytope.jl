@@ -364,6 +364,13 @@ if test_suite_polyhedra
         C3_res = HPolyhedron(N[mx1 0; 0 mx2], N[3 - mx1*radius, 3 - mx2*radius])
         @test C3 ⊆ C3_res && C3_res ⊆ C3
 
+        # concrete Reflection
+        F4 = N[3 0; 0 7]
+        g4 = N[1, 2]
+        P4 = HPolyhedron(F4, g4)
+        F, g = tosimplehrep(reflect(reflect(P4)))
+        @test F4 == F && g4 == g
+
         # same but specifying a custom polyhedral computations backend (CDDLib)
         X = minkowski_sum(B, B, backend=CDDLib.Library())
         twoB = 2.0*B
