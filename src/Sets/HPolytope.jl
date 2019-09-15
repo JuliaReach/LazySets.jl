@@ -135,9 +135,10 @@ function _linear_map_hrep(M::AbstractMatrix{N}, P::HPolytope{N},
 end
 
 """
-    an_element(P::HPolytope{N}; [backend]=nothing) where {N<:Rational{Int}}
+    an_element(P::HPolytope{N}; [backend]=nothing)
+        where {N<:Union{Float32, Rational{Int}}}
 
-Return some element of a rational polytope in constraint representation.
+Return some element of a polytope in constraint representation.
 
 ### Input
 
@@ -151,24 +152,23 @@ An element of the polytope.
 
 ### Notes
 
-The default implementation of `an_element` uses an LP solver based on
-floating-point numbers.
-Hence the result is not a `Rational`.
+The default implementation of `an_element` uses an LP solver based on `Float64`
+numbers.
 
-We first convert the result to `Rational` and then check membership.
+We first convert the result to `N` and then check membership.
 If that check fails, we compute the Chebyshev center and repeat the conversion
 and membership check.
 If that check fails as well, we give up.
 """
 function an_element(P::HPolytope{N};
                     backend=nothing
-                   ) where {N<:Rational{Int}}
+                   ) where {N<:Union{Float32, Rational{Int}}}
     # try the floating-point method
     # Note: `invoke(an_element, Tuple{HPolytope}, P)` does not work
     p = invoke(an_element, Tuple{HPolytope}, P)
-    p_rat = convert(Vector{N}, p)
-    if p_rat ∈ P
-        return p_rat
+    p_converted = convert(Vector{N}, p)
+    if p_converted ∈ P
+        return p_converted
     end
 
     # try the Chebyshev center
@@ -177,9 +177,9 @@ function an_element(P::HPolytope{N};
     else
         p = chebyshev_center(P; backend=backend)
     end
-    p_rat = convert(Vector{N}, p)
-    if p_rat ∈ P
-        return p_rat
+    p_converted = convert(Vector{N}, p)
+    if p_converted ∈ P
+        return p_converted
     end
 
     # give up
