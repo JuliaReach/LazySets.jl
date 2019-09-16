@@ -58,6 +58,8 @@ an_element(::LazySet{N}) where {N<:Real}
 tosimplehrep(::LazySet)
 isuniversal(::LazySet{N}, ::Bool=false) where {N<:Real}
 affine_map(M::AbstractMatrix, X::LazySet, v::AbstractVector)
+reflect(::LazySet)
+is_interior_point(::AbstractVector{N}, ::LazySet{N}; p=Inf, ε=_rtol(N)) where {N<:Real}
 ```
 
 Plotting is available for general one- or two-dimensional `LazySet`s, provided

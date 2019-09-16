@@ -449,9 +449,3 @@ to_union_of_projections(::Rectification{N}, ::Bool=false) where {N<:Real}
 ```@docs
 RectificationCache
 ```
-
-## Reflection
-
-```@docs
-reflect(::LazySet)
-```
