@@ -111,7 +111,6 @@ include("ConcreteOperations/isdisjoint.jl")
 include("ConcreteOperations/issubset.jl")
 include("ConcreteOperations/minkowski_difference.jl")
 include("ConcreteOperations/minkowski_sum.jl")
-include("ConcreteOperations/interior.jl")
 
 # =====================
 # Approximations module

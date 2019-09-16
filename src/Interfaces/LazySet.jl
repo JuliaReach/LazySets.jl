@@ -491,6 +491,35 @@ function isuniversal(X::LazySet{N}, witness::Bool=false
 end
 
 """
+    is_interior_point(d::AbstractVector{N}, P::LazySet{N};
+                      p=N(Inf), ε=_rtol(N)) where {N<:Real}
+
+Check if the point `d` is contained in the interior of the convex set `P`.
+
+### Input
+
+- `d`  -- point
+- `P`  -- set
+- `p`  -- (optional; default: `N(Inf)`) norm of the ball used to apply the error
+          tolerance
+- `ε`  -- (optional; default: `_rtol(N)`) error tolerance of check
+
+### Output
+
+Boolean which indicates if the point `d` is contained in `P`.
+
+### Algorithm
+
+The implementation checks if a `Ballp` of norm `p` with center `d` and radius
+`ε` is contained in the set `P`.
+This is a numerical check for `d ∈ interior(P)` with error tolerance `ε`.
+"""
+function is_interior_point(d::AbstractVector{N}, P::LazySet{N};
+                           p=N(Inf), ε=_rtol(N)) where {N<:Real}
+    return Ballp(p, d, ε) ⊆ P
+end
+
+"""
     plot_recipe(X::LazySet{N}, [ε]::N=N(PLOT_PRECISION)) where {N<:Real}
 
 Convert a convex set to a pair `(x, y)` of points for plotting.
