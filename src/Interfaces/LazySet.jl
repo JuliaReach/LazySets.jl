@@ -15,6 +15,7 @@ export LazySet,
        tosimplehrep,
        isuniversal,
        translate,
+       affine_map,
        is_interior_point
 
 """
@@ -275,6 +276,28 @@ function diameter(S::LazySet, p::Real=Inf)
     return radius(S, p) * 2
 end
 
+"""
+    affine_map(M::AbstractMatrix, X::LazySet, v::AbstractVector)
+
+Compute a concrete affine map.
+
+### Input
+
+- `M` -- linear map
+- `X` -- convex set
+- `v` -- translation vector
+
+### Output
+
+A set representing the affine map of `X`.
+
+### Algorithm
+
+The implementation applies the functions `linear_map` and `translate`.
+"""
+function affine_map(M::AbstractMatrix, X::LazySet, v::AbstractVector)
+    return translate(linear_map(M, X), v)
+end
 
 """
     an_element(S::LazySet{N}) where {N<:Real}

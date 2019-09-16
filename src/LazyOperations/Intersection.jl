@@ -353,7 +353,7 @@ keyword arguments.
 The algorithms are based on solving the associated optimization problem
 
 ```math
-\\min_\\{ λ ∈ D_h \\} ρ(ℓ - λa, X) + λb.
+\\min_{λ ∈ D_h} ρ(ℓ - λa, X) + λb.
 ```
 where ``D_h = \\{ λ : λ ≥ 0 \\}`` if ``H`` is a half-space or
 ``D_h = \\{ λ : λ ∈ \\mathbb{R} \\}`` if ``H`` is a hyperplane.
@@ -878,7 +878,7 @@ Given a compact and convex set ``X`` and a halfspace ``H = \\{x: a^T x ≤ b \\}
 or a hyperplane ``H = \\{x: a^T x = b \\}``, calculate:
 
 ```math
-\\min_\\{ λ ∈ D_h \\} ρ(ℓ - λa, X) + λb.
+\\min_{λ ∈ D_h} ρ(ℓ - λa, X) + λb.
 ```
 where ``D_h = \\{ λ : λ ≥ 0 \\}`` if ``H`` is a half-space or
 ``D_h = \\{ λ : λ ∈ \\mathbb{R} \\}`` if ``H`` is a hyperplane.

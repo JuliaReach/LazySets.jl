@@ -16,6 +16,12 @@ function default_lp_solver(N::Type{<:Rational})
     GLPKSolverLP(method=:Exact)
 end
 
+# fallback method
+function default_polyhedra_backend(P, N)
+    require(:Polyhedra; fun_name="default_polyhedra_backend")
+    error("no default backend for numeric type $N")
+end
+
 """
     ∈(x::AbstractVector{N}, P::AbstractPolyhedron{N})::Bool where {N<:Real}
 
