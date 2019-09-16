@@ -252,19 +252,36 @@ If a feasible solution exists, the optimal value ``x_0 = 0`` is achieved.
 """
 function ∈(x::AbstractVector{N}, Z::AbstractZonotope{N};
            solver=default_lp_solver(N)) where {N<:Real}
-    @assert length(x) == dim(Z)
+    @assert length(x) == dim(Z) "a $(length(x))-dimensional vector is " *
+        "incompatible with a $(dim(Z))-dimensional set"
 
-    p, n = ngens(Z), dim(Z)
-    # (n+1) x (p+1) matrix with block-diagonal blocks 1 and genmat(Z)
-    A = [[one(N); zeros(N, p)]'; [zeros(N, n) genmat(Z)]]
-    b = [zero(N); (x - center(Z))]
-    lbounds = [zero(N); fill(-one(N), p)]
-    ubounds = [N(Inf); ones(N, p)]
-    sense = ['>'; fill('=', n)]
-    obj = [one(N); zeros(N, p)]
-
-    lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
-    return (lp.status == :Optimal) # Infeasible or Unbounded => false
+    m_lp = dim(Z)
+    n_lp = ngens(Z) + 1
+    model = LPModel{N}()
+    vars = MOI.add_variables(model, n_lp)
+    # objective function
+    obj = MOI.SingleVariable(vars[1])
+    MOI.set(model, MOI.ObjectiveFunction{MOI.SingleVariable}(), obj)
+    MOI.set(model, MOI.ObjectiveSense(), MOI.MIN_SENSE)
+    # add the first constraint (same vector as the objective function)
+    MOI.add_constraint(model, obj, MOI.GreaterThan(zero(N)))
+    # add other constraints
+    G = genmat(Z)
+    c = center(Z)
+    for i in 1:m_lp
+        v = MOI.ScalarAffineTerm.([zero(N); G[i, :]], vars)
+        lp_constraint = MOI.ScalarAffineFunction(v, zero(N))
+        MOI.add_constraint(model, lp_constraint, MOI.EqualTo(x[i] - c[i]))
+    end
+    # add variable bounds
+    one_interval = MOI.Interval(-one(N), one(N))
+    for i in 2:n_lp
+        MOI.add_constraint(model, MOI.SingleVariable(vars[i]), one_interval)
+    end
+    MOI.copy_to(solver, model)  # send model to solver
+    MOI.optimize!(solver)
+    status = MOI.get(solver, MOI.TerminationStatus())
+    return status == MOI.OPTIMAL
 end
 
 """

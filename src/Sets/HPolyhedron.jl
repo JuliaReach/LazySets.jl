@@ -102,7 +102,7 @@ If a polyhedron is unbounded in the given direction, the result is `Inf`.
 """
 function ρ(d::AbstractVector{N}, P::HPoly{N}; solver=default_lp_solver(N)
           )::N where {N<:Real}
-    lp, unbounded = σ_helper(d, P, solver)
+    vars, unbounded = σ_helper(d, P, solver)
     if unbounded
         if P isa HPolytope
             error("the support function in direction $(d) is undefined " *
@@ -110,7 +110,8 @@ function ρ(d::AbstractVector{N}, P::HPoly{N}; solver=default_lp_solver(N)
         end
         return N(Inf)
     end
-    return dot(d, lp.sol)
+    solution = MOI.get(solver, MOI.VariablePrimal(), vars)
+    return dot(d, solution)
 end
 
 """
@@ -133,20 +134,24 @@ The support vector in the given direction.
 """
 function σ(d::AbstractVector{N}, P::HPoly{N}; solver=default_lp_solver(N)
           ) where {N<:Real}
-    lp, unbounded = σ_helper(d, P, solver)
+    vars, unbounded = σ_helper(d, P, solver)
     if unbounded
         if P isa HPolytope
             error("the support vector in direction $(d) is undefined because " *
                   "the polytope is unbounded")
         end
-        # construct the solution from the solver's ray result
-        if lp == nothing
-            ray = d
-        elseif haskey(lp.attrs, :unboundedray)
-            ray = lp.attrs[:unboundedray]
-        else
-            error("LP solver did not return an infeasibility ray")
-        end
+        ray = d
+# NOTE: commented out because the result can contain ±Inf inconsistently
+#         if vars != nothing
+#             # construct the solution from the solver's ray result
+#             primal_status = MOI.get(solver, MOI.PrimalStatus())
+#             if primal_status == MOI.INFEASIBILITY_CERTIFICATE
+#                 ray = MOI.get(solver, MOI.VariablePrimal(), vars)
+#                 println(ray)
+#             else
+#                 error("LP solver did not return an infeasibility ray")
+#             end
+#         end
         res = Vector{N}(undef, length(ray))
         @inbounds for i in 1:length(ray)
             if ray[i] == zero(N)
@@ -159,34 +164,47 @@ function σ(d::AbstractVector{N}, P::HPoly{N}; solver=default_lp_solver(N)
         end
         return res
     else
-        return lp.sol
+        solution = MOI.get(solver, MOI.VariablePrimal(), vars)
+        return solution
     end
 end
 
 function σ_helper(d::AbstractVector{N}, P::HPoly{N}, solver) where {N<:Real}
-    # let c = -d as a Vector since GLPK does not accept sparse vectors
-    # (see #1011)
-    c = to_negative_vector(d)
-
-    (A, b) = tosimplehrep(P)
+    A, b = tosimplehrep(P)
     if length(b) == 0
         unbounded = true
-        lp = nothing
+        x = nothing
     else
-        sense = '<'
-        l = -Inf
-        u = Inf
-        lp = linprog(c, A, sense, b, l, u, solver)
-        if lp.status == :Unbounded
-            unbounded = true
-        elseif lp.status == :Infeasible
+        m_lp, n_lp = size(A)
+        model = LPModel{N}()
+        x = MOI.add_variables(model, n_lp)
+        # objective function
+        # let c = -d as a Vector since GLPK does not accept sparse vectors
+        # (see #1011)
+        c = to_negative_vector(d)
+        obj = MOI.ScalarAffineFunction(MOI.ScalarAffineTerm.(c, x), zero(N))
+        MOI.set(model,
+                MOI.ObjectiveFunction{MOI.ScalarAffineFunction{N}}(), obj)
+        MOI.set(model, MOI.ObjectiveSense(), MOI.MIN_SENSE)
+        # add constraints
+        for i in 1:m_lp
+            MOI.add_constraint(model, MOI.ScalarAffineFunction(
+                MOI.ScalarAffineTerm.(A[i, :], x), zero(N)), MOI.LessThan(b[i]))
+        end
+        # solve problem
+        MOI.copy_to(solver, model)  # send model to solver
+        MOI.optimize!(solver)
+        status = MOI.get(solver, MOI.TerminationStatus())
+        if status == MOI.INFEASIBLE
             error("the support vector is undefined because the polyhedron is " *
                   "empty")
+        elseif status ∈ [MOI.DUAL_INFEASIBLE, MOI.INFEASIBLE_OR_UNBOUNDED]
+            unbounded = true
         else
             unbounded = false
         end
     end
-    return (lp, unbounded)
+    return (x, unbounded)
 end
 
 """
@@ -678,16 +696,27 @@ function isempty(P::HPoly{N},
         end
     else
         A, b = tosimplehrep(P)
-        lbounds, ubounds = -Inf, Inf
-        sense = '<'
-        obj = zeros(N, size(A, 2))
-        lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
-        if lp.status == :Optimal
-            return witness ? (false, lp.sol) : false
-        elseif lp.status == :Infeasible
+        m_lp, n_lp = size(A)
+        model = LPModel{N}()
+        x = MOI.add_variables(model, n_lp)
+        # set objective (only a feasibility problem)
+        MOI.set(model, MOI.ObjectiveSense(), MOI.FEASIBILITY_SENSE)
+        # add constraints
+        for i in 1:m_lp
+            MOI.add_constraint(model, MOI.ScalarAffineFunction(
+                MOI.ScalarAffineTerm.(A[i, :], x), zero(N)), MOI.LessThan(b[i]))
+        end
+        # solve problem
+        MOI.copy_to(solver, model)  # send model to solver
+        MOI.optimize!(solver)
+        status = MOI.get(solver, MOI.TerminationStatus())
+        if status == MOI.OPTIMAL
+            solution = MOI.get(solver, MOI.VariablePrimal(), x)
+            return witness ? (false, solution) : false
+        elseif status == MOI.INFEASIBLE
             return witness ? (true, N[]) : true
         end
-        error("LP returned status $(lp.status) unexpectedly")
+        error("LP returned status $(status) unexpectedly")
     end
 end
 

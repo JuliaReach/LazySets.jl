@@ -77,9 +77,6 @@ for N in [Float64, Float32, Rational{Int}]
     H = Hyperrectangle(low=N[-1, -1], high=N[1, 1])
     HPolygon(constraints_list(H))
     HPolygonOpt(constraints_list(H))
-    # check boundedness after conversion
-    HPolygon(constraints_list(H); check_boundedness=true)
-    HPolygonOpt(constraints_list(H); check_boundedness=true)
 
     # support vector of polygon with no constraints
     @test_throws AssertionError σ(N[0], HPolygon{N}())
@@ -87,7 +84,6 @@ for N in [Float64, Float32, Rational{Int}]
 
     # boundedness
     @test isbounded(p) && isbounded(po)
-    @test isbounded(p, false) && isbounded(po, false)
     @test !isbounded(HPolygon{N}(), false) &&
           !isbounded(HPolygonOpt{N}(), false)
     @test_throws AssertionError HPolygon(LinearConstraint{N}[];
@@ -243,14 +239,6 @@ for N in [Float64, Float32, Rational{Int}]
     p3 = tohrep(VPolygon([N[0, 0]]))
     p4 = tohrep(VPolygon([N[1, 1]]))
     @test intersection(p3, p4) isa EmptySet{N}
-
-    # is intersection empty
-    p3 = convert(HPolygon, Hyperrectangle(low=N[-1, -1], high=N[1, 1]))
-    I1 = Interval(N(9//10), N(11//10))
-    I2 = Interval(N(1//5), N(3//10))
-    I3 = Interval(N(4), N(5))
-    @test !is_intersection_empty(I1 × I2 , p3)
-    @test is_intersection_empty(I1 × I3 , p3)
 
     # concrete linear map
     # in 2D and for an invertible map we get an HPolygon; see #631 and #1093
@@ -457,6 +445,35 @@ for N in [Float64, Float32]
         HalfSpace(N[2.17022, -0.130831], N(-2.14411))])
     addconstraint!(p2, p2.constraints[2])
     @test length(p2.constraints) == 6
+end
+
+for N in [Float64]
+    # check boundedness after conversion
+    H = Hyperrectangle(low=N[-1, -1], high=N[1, 1])
+    HPolygon(constraints_list(H); check_boundedness=true)
+    HPolygonOpt(constraints_list(H); check_boundedness=true)
+
+    p = HPolygon{N}()
+    c1 = LinearConstraint(N[2, 2], N(12))
+    c2 = LinearConstraint(N[-3, 3], N(6))
+    c3 = LinearConstraint(N[-1, -1], N(0))
+    c4 = LinearConstraint(N[2, -4], N(0))
+    addconstraint!(p, c3)
+    addconstraint!(p, c1)
+    addconstraint!(p, c4)
+    addconstraint!(p, c2)
+    po = convert(HPolygonOpt, p)
+
+    # test boundedness
+    @test isbounded(p, false) && isbounded(po, false)
+
+    # is intersection empty
+    p3 = convert(HPolygon, Hyperrectangle(low=N[-1, -1], high=N[1, 1]))
+    I1 = Interval(N(9//10), N(11//10))
+    I2 = Interval(N(1//5), N(3//10))
+    I3 = Interval(N(4), N(5))
+    @test !is_intersection_empty(I1 × I2 , p3)
+    @test is_intersection_empty(I1 × I3 , p3)
 end
 
 # default Float64 constructors

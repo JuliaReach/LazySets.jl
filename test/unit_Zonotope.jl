@@ -59,9 +59,6 @@ for N in [Float64, Rational{Int}, Float32]
     # isempty
     @test !isempty(z)
 
-    # an_element function
-    @test an_element(z) ∈ z
-
     # concrete operations
     gens = N[1 1; -1 1]
     Z1 = Zonotope(N[1, 1], gens)
@@ -87,19 +84,11 @@ for N in [Float64, Rational{Int}, Float32]
     # intersection with a hyperplane
     H1 = Hyperplane(N[1, 1], N(3))
     intersection_empty, point = is_intersection_empty(Z1, H1, true)
-    @test !is_intersection_empty(Z1, H1) && !intersection_empty &&
-          point ∈ Z1 && point ∈ H1
+    @test !is_intersection_empty(Z1, H1) && !intersection_empty
     H2 = Hyperplane(N[1, 1], N(-11))
     @test is_intersection_empty(Z1, H2) && is_intersection_empty(Z1, H2, true)[1]
     @test !is_intersection_empty(H1, Z1)
     @test is_intersection_empty(H2, Z1) && is_intersection_empty(H2, Z1, true)[1]
-
-    # isdisjoint
-    result, w = isdisjoint(Z1, Z2, true)
-    @test isdisjoint(Z1, Z2) && result && w == N[]
-    Z3 = Zonotope(N[2, 1], Matrix{N}(I, 2, 2))
-    @test_throws ErrorException isdisjoint(Z2, Z3, true)
-    @test !isdisjoint(Z2, Z3)
 
     # test number of generators
     Z = Zonotope(N[2, 1], N[-0.5 1.5 0.5 1; 0.5 1.5 1 0.5])
@@ -171,16 +160,19 @@ for N in [Float64, Rational{Int}, Float32]
 
     # list of constraints
     Z = Zonotope(zeros(N, 3), Matrix(N(1)*I, 3, 3))
-    B = BallInf(zeros(N, 3), N(1)) # equivalent to Z
-    if N != Rational{Int} || test_suite_polyhedra
-        # the rational case uses vrep => needs Polyhedra
-        constraints = constraints_list(Z)
-        H = HPolytope(constraints)
-        @test H ⊆ B && B ⊆ H
-    end
+    B = BallInf(zeros(N, 3), N(1))  # equivalent to Z
+    constraints = constraints_list(Z)
+    @test constraints isa Vector{<:HalfSpace{N}} && length(constraints) == 6
 end
 
-for N in [Float64, Rational{Int}]
+for N in [Float64]
+    # an_element function
+    g = zeros(N, 2, 5)
+    g[:, 3] = ones(N, 2)
+    g[1, 2] = N(2)
+    z = Zonotope(N[1, 2], g)
+    @test an_element(z) ∈ z
+
     # conversion to HPolytope
     # 1D
     Z = Zonotope(N[0], Matrix{N}(I, 1, 1))
@@ -196,9 +188,7 @@ for N in [Float64, Rational{Int}]
     end
     # sparse matrix (#1468)
     constraints_list(Zonotope(N[0, 0], sparse(N[1 0 ; 0 1])))
-end
 
-for N in [Float64]
     if test_suite_polyhedra
         # constraints_list for generator matrix with a zero row
         Z = Zonotope(N[0, 0], N[2 3; 0 0])
@@ -215,4 +205,28 @@ for N in [Float64]
     vlistZ = vertices_list(Z, apply_convex_hull=false)
     @test length(vlistZ) == 8
     @test ispermutation(convex_hull(vlistZ), [N[-2, -2], N[0, -2], N[2, 0], N[2, 2], N[0, 2], N[-2, 0]])
+
+    # constraints_list correctness check by subset check (requires LP solver)
+    B = BallInf(zeros(N, 3), N(1))
+    Z = convert(Zonotope, B)
+    constraints = constraints_list(Z)
+    H = HPolytope(constraints)
+    @test H ⊆ B && B ⊆ H
+
+    gens = N[1 1; -1 1]
+    Z1 = Zonotope(N[1, 1], gens)
+    Z2 = Zonotope(N[-1, 1], Matrix{N}(I, 2, 2))
+    Z3 = minkowski_sum(Z1, Z2)
+
+    # intersection with a hyperplane
+    H1 = Hyperplane(N[1, 1], N(3))
+    intersection_empty, point = is_intersection_empty(Z1, H1, true)
+    @test point ∈ Z1 && point ∈ H1
+
+    # isdisjoint
+    result, w = isdisjoint(Z1, Z2, true)
+    @test isdisjoint(Z1, Z2) && result && w == N[]
+    Z3 = Zonotope(N[2, 1], Matrix{N}(I, 2, 2))
+    @test_throws ErrorException isdisjoint(Z2, Z3, true)
+    @test !isdisjoint(Z2, Z3)
 end

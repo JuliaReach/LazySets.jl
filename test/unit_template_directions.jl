@@ -79,6 +79,14 @@ for N in [Float64, Float32, Rational{Int}]
                 overapproximate(Z, dir)
             end
         end
+    end
+end
+
+for N in [Float64]
+    for n in 1:3
+        B = BallInf(zeros(N, n), N(2))
+        A = Matrix{N}(2I, n, n) + ones(N, n, n)
+        X = A * B
 
         # custom directions
         # empty list of directions
