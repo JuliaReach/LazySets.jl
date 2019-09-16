@@ -121,6 +121,11 @@ if test_suite_basic
     @time @testset "LazySets.Rectification" begin include("unit_Rectification.jl") end
     @time @testset "LazySets.UnionSet" begin include("unit_UnionSet.jl") end
 
+    # ===================
+    # Concrete operations
+    # ===================
+    @time @testset "LazySets.samples" begin include("unit_samples.jl") end
+
     # =================================================================
     # Algorithms for approximation of convex sets using support vectors
     # =================================================================
@@ -146,10 +151,6 @@ if test_suite_basic
     # ====================================
     include("check_method_implementation.jl")
     @time @testset "LazySets.interfaces" begin include("unit_interfaces.jl") end
-
-    @time @testset "LazySets.interfaces" begin include("unit_samples.jl") end
-
-
 end
 
 if test_suite_plotting
