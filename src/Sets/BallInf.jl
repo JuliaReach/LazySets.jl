@@ -186,16 +186,16 @@ For balls with dimensions less than 30 we use the implementation for
 `AbstractHyperrectangle`, taylored to a `BallInf`, which computes
 
 ```math
-    ∑_{i=1}^n d_i * (c_i + \\sgn(d_i) * r)
+    ∑_{i=1}^n d_i * (c_i + \\textrm{sgn}(d_i) * r)
 ```
 
-where ``\\sgn(α) = 1`` if ``α ≥ 0`` and ``\\sgn(α) = 1`` if ``α < 0``.
+where ``\\textrm{sgn}(α) = 1`` if ``α ≥ 0`` and ``\\textrm{sgn}(α) = 1`` if ``α < 0``.
 
 For balls of higher dimension, we instead exploit that for a support vector
-``v = σ(d, B) = c + \\sgn(d) * (r, …, r)ᵀ`` we have
+``v = σ(d, B) = c + \\textrm{sgn}(d) * (r, …, r)ᵀ`` we have
 
 ```math
-    ρ(d, B) = ⟨d, v⟩ = ⟨d, c⟩ + ⟨d, \\sgn(d) * (r, …, r)ᵀ⟩ = ⟨d, c⟩ + r · ∑_{i=1}^n |d_i|
+    ρ(d, B) = ⟨d, v⟩ = ⟨d, c⟩ + ⟨d, \\textrm{sgn}(d) * (r, …, r)ᵀ⟩ = ⟨d, c⟩ + r · ∑_{i=1}^n |d_i|
 ```
 
 where ``⟨·, ·⟩`` denotes the dot product.
