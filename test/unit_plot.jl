@@ -31,7 +31,7 @@ for N in [Float64, Float32, Rational{Int}]
     plot(st)
     plot(zt)
     plot(zs)
-    
+
     if N == Rational{Int}
         # rationals do not support epsilon-close approximation
         continue
@@ -61,6 +61,9 @@ for N in [Float64, Float32, Rational{Int}]
     hpg = HPolygon(constraints)
     hpgo = HPolygonOpt(constraints)
     hpt = HPolytope(constraints)
+    hpt_empty = HPolytope(
+        [HalfSpace(N[1, 0], N(0)), HalfSpace(N[-1, 0], N(-1)),
+         HalfSpace(N[0, 1], N(0)), HalfSpace(N[0, -1], N(0))])
     vertices = vertices_list(bi)
     vpg = VPolygon(vertices)
     vpt = VPolytope(vertices)
@@ -97,9 +100,8 @@ for N in [Float64, Float32, Rational{Int}]
     end
     plot(hpg)
     plot(hpgo)
-    if test_suite_polyhedra
-        plot(hpt)
-    end
+    plot(hpt)
+    plot(hpt_empty)
     plot(vpg)
     plot(vpt)
     plot(es)
