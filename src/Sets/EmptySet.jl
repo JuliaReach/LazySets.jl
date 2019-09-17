@@ -296,5 +296,5 @@ In the special case of an empty set, we define the sequence as `nothing`.
 `nothing`.
 """
 function plot_recipe(∅::EmptySet{N}, ε::N=zero(N)) where {N<:Real}
-    return nothing
+    return []
 end
