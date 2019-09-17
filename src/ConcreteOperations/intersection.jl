@@ -349,7 +349,8 @@ end
 
 """
     intersection(P1::AbstractHPolygon{N},
-                 P2::AbstractHPolygon{N}
+                 P2::AbstractHPolygon{N},
+                 [prune]::Bool=true
                 )::Union{HPolygon{N}, EmptySet{N}} where {N<:Real}
 
 Return the intersection of two polygons in constraint representation.
