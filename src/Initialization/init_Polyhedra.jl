@@ -6,11 +6,11 @@ eval(quote
     import JuMP, GLPK
 
     function default_polyhedra_backend(P, N::Type{<:AbstractFloat})
-        return Polyhedra.default_library(LazySets.dim(P), Float64)
+        return Polyhedra.default_library(LazySets.dim(P), N)
     end
 
     function default_polyhedra_backend(P, N::Type{<:Rational})
-        return Polyhedra.default_library(LazySets.dim(P), Rational{Int})
+        return Polyhedra.default_library(LazySets.dim(P), N)
     end
 
     # NOTE: exists in parallel to `default_lp_solver` because we use different
