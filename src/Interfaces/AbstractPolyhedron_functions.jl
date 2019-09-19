@@ -232,9 +232,11 @@ end
 """
     linear_map(M::AbstractMatrix{N},
                P::AbstractPolyhedron{N};
-               check_invertibility::Bool=true,
-               cond_tol::Number=DEFAULT_COND_TOL,
-               use_inv::Bool=!issparse(M)
+               [check_invertibility]::Bool=true,
+               [inverse]::Union{Nothing, AbstractMatrix{N}}=nothing,
+               [is_invertible_known]::Bool=(inverse != nothing),
+               [cond_tol]::Number=DEFAULT_COND_TOL,
+               [use_inv]::Bool=(inverse != nothing || !issparse(M))
                ) where {N<:Real}
 
 Concrete linear map of a polyhedron in constraint representation.
@@ -244,15 +246,21 @@ Concrete linear map of a polyhedron in constraint representation.
 - `M` -- matrix
 - `P` -- abstract polyhedron
 - `check_invertibility` -- (optional, deault: `true`) check if the linear map is
-                           invertible, in which case this function uses the matrix
-                           inverse; if the invertibility check fails, or if
-                           this flag is set to `false`, use the vertex representation
-                           to compute the linear map (see below for details)
+                           invertible, in which case this function uses the
+                           matrix inverse; if the invertibility check fails, or
+                           if this flag is set to `false`, use the vertex
+                           representation to compute the linear map (see below
+                           for details)
+- `inverse`  -- (optional, default: `nothing`) optionally pass the matrix
+                inverse if it is known
+- `is_invertible_known` -- (optional, deault: `inverse != nothing`) option to
+                           express that the matrix is known to be invertible
 - `cond_tol` -- (optional) tolerance of matrix condition (used to check whether
                 the matrix is invertible)
 - `use_inv`  -- (optional, default: `false` if `M` is sparse and `true`
                 otherwise) whether to compute the full left division through
-                `inv(M)`, or to use the left division for each vector; see below 
+                `inv(M)`, or to use the left division for each vector (see below
+                for details)
 
 ### Output
 
@@ -295,8 +303,13 @@ Note that the vertex representation (second approach) is only available if the
 polyhedron is bounded. Hence we check boundedness first.
 
 To switch off the check for invertibility, set the option
-`check_invertibility=false`. If `M` is not invertible and the polyhedron
-is unbounded, this function returns an exception.
+`check_invertibility=false`.
+If the polyhedron is known to be invertible instead, set the option
+`is_invertible_known=true` (the option `check_invertibility` is ignored in this
+case).
+If the matrix inverse is even known, it can be passed with the option `inverse`
+(the options `check_invertibility` and `is_invertible_known` are ignored in this
+case).
 
 The option `use_inv` lets the user control - in case `M` is invertible - if
 the full matrix inverse is computed, or only the left division on the normal
@@ -304,6 +317,7 @@ vectors. Note that this helps as a workaround when `M` is a sparse matrix, since
 the `inv` function is not available for sparse matrices. In this case, either
 use the option `use_inv=false` or convert the type of `M` as in
 `linear_map(Matrix(M), P)`.
+This option is ignored if an `inverse` matrix is specified.
 
 Internally, this function operates at the level of the `AbstractPolyhedron`
 interface, but the actual algorithm uses dispatch on the concrete type of `P`,
@@ -314,24 +328,30 @@ depending on the algorithm that is used:
 
 New subtypes of the interface should write their own `_linear_map_vrep`
 (resp. `_linear_map_hrep`) for special handling of the linear map; otherwise
-the fallback implementation for `AbstractPolyhedron` is used (see below).
+the fallback implementation for `AbstractPolyhedron` is used.
 """
 function linear_map(M::AbstractMatrix{N},
                     P::AbstractPolyhedron{N};
                     check_invertibility::Bool=true,
+                    inverse::Union{Nothing, AbstractMatrix{N}}=nothing,
+                    is_invertible_known::Bool=(inverse != nothing),
                     cond_tol::Number=DEFAULT_COND_TOL,
-                    use_inv::Bool=!issparse(M)
+                    use_inv::Bool=(inverse != nothing || !issparse(M))
                    ) where {N<:Real}
     @assert dim(P) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
         "applied to a set of dimension $(dim(P))"
 
-    if !check_invertibility || !isinvertible(M; cond_tol=cond_tol)
+    is_invertible = is_invertible_known
+    if !is_invertible && check_invertibility
+        is_invertible = isinvertible(M; cond_tol=cond_tol)
+    end
+    if !is_invertible
         # vertex representation is enforced or the matrix is not invertible => use vertex approach
         return _linear_map_vrep(M, P)
     else
         # matrix M is invertible => use H-rep approach
         # the normal vectors are vec(c.a' * inv(M))
-        return _linear_map_hrep(M, P, use_inv)
+        return _linear_map_hrep(M, P, use_inv; inverse=inverse)
     end
 end
 
@@ -361,19 +381,26 @@ function _linear_map_vrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N}) where 
 end
 
 function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
-                          use_inv::Bool) where {N<:Real}
-    constraints = _linear_map_hrep_helper(M, P, use_inv)
+                          use_inv::Bool;
+                          inverse::Union{Nothing, AbstractMatrix{N}}=nothing
+                         ) where {N<:Real}
+    constraints = _linear_map_hrep_helper(M, P, use_inv, inverse=inverse)
     return HPolyhedron(constraints)
 end
 
 function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
-                                 use_inv::Bool) where {N<:Real}
+                                 use_inv::Bool;
+                                 inverse::Union{Nothing, AbstractMatrix{N}}=nothing
+                                ) where {N<:Real}
     constraints_P = constraints_list(P)
     constraints_MP = similar(constraints_P)
-    if use_inv
-        invM = inv(M)
+    if use_inv || inverse != nothing
+        if inverse == nothing
+            inverse = inv(M)
+        end
         @inbounds for (i, c) in enumerate(constraints_P)
-            constraints_MP[i] = LinearConstraint(vec(_At_mul_B(c.a, invM)), c.b)
+            constraints_MP[i] =
+                LinearConstraint(vec(_At_mul_B(c.a, inverse)), c.b)
         end
     else
         # take left division for each constraint c, transpose(M) \ c.a
