@@ -118,8 +118,8 @@ functions in the same directions.
 end
 
 """
-    ballinf_approximation(S::LazySet{N};
-                         )::BallInf{N} where {N<:Real}
+    ballinf_approximation(S::LazySet{N}
+                         )::Union{BallInf{N}, EmptySet{N}} where {N<:Real}
 
 Overapproximate a convex set by a tight ball in the infinity norm.
 
@@ -130,37 +130,10 @@ Overapproximate a convex set by a tight ball in the infinity norm.
 ### Output
 
 A tight ball in the infinity norm.
-
-### Algorithm
-
-The center and radius of the box are obtained by evaluating the support function
-of the given convex set along the canonical directions.
 """
-function ballinf_approximation(S::LazySet{N};
+function ballinf_approximation(S::LazySet{N}
                               )::Union{BallInf{N}, EmptySet{N}} where {N<:Real}
-    zero_N = zero(N)
-    one_N = one(N)
-    n = dim(S)
-    c = Vector{N}(undef, n)
-    r = zero_N
-    d = zeros(N, n)
-
-    @inbounds for i in 1:n
-        d[i] = one_N
-        htop = ρ(d, S)
-        d[i] = -one_N
-        hbottom = -ρ(d, S)
-        d[i] = zero_N
-        c[i] = (htop + hbottom) / 2
-        rcur = (htop - hbottom) / 2
-        if (rcur > r)
-            r = rcur
-        elseif rcur < 0
-            # contradicting bounds => set is empty
-            return EmptySet{N}()
-        end
-    end
-    return BallInf(c, r)
+    return overapproximate(S, BallInf)
 end
 
 # special case: empty set
