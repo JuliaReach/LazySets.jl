@@ -84,11 +84,21 @@ Return an approximation of a given set as a hyperrectangle.
 ### Output
 
 A hyperrectangle.
+
+### Algorithm
+
+The center of the hyperrectangle is obtained by averaging the support function
+of the given set in the canonical directions, and the lengths of the sides can
+be recovered from the distance among support functions in the same directions.
 """
 function overapproximate(S::LazySet,
                          ::Type{<:Hyperrectangle};
                         )::Union{Hyperrectangle, EmptySet}
-    return box_approximation(S)
+    c, r = box_approximation_helper(S)
+    if r[1] < 0
+        return EmptySet{N}()
+    end
+    return Hyperrectangle(c, r)
 end
 
 """
@@ -175,6 +185,50 @@ function overapproximate(lm::LinearMap{N, <:AbstractHyperrectangle{N}},
     radius_MX = abs.(M) * radius_hyperrectangle(X)
     return Hyperrectangle(center_MX, radius_MX)
 end
+
+"""
+    overapproximate(r::Rectification{N}, ::Type{<:Hyperrectangle}
+                   ) where {N<:Real}
+
+Overapproximate the rectification of a convex set by a tight hyperrectangle.
+
+### Input
+
+- `r`              -- rectification of a convex set
+- `Hyperrectangle` -- type for dispatch
+
+### Output
+
+A hyperrectangle.
+
+### Algorithm
+
+Box approximation and rectification distribute.
+Hence we first check whether the wrapped set is empty.
+If so, we return the empty set.
+Otherwise, we compute the box approximation of the wrapped set, rectify the
+resulting box (which is simple), and finally convert the resulting set to a box.
+"""
+function overapproximate(r::Rectification{N}, ::Type{<:Hyperrectangle}
+                        ) where {N<:Real}
+    if isempty(r.X)
+        return EmptySet{N}()
+    end
+    return convert(Hyperrectangle, Rectification(box_approximation(r.X)))
+end
+
+# special case: box approximation of a box
+function overapproximate(S::AbstractHyperrectangle, ::Type{<:Hyperrectangle})
+    return Hyperrectangle(center(S), radius_hyperrectangle(S))
+end
+
+# special case: overapproximation of empty set
+overapproximate(∅::EmptySet, options...) = ∅
+
+# disambiguation
+overapproximate(∅::EmptySet) = ∅
+overapproximate(∅::EmptySet, ::Type{<:Hyperrectangle}) = ∅
+overapproximate(∅::EmptySet, ::Type{<:EmptySet}) = ∅
 
 """
     overapproximate(S::LazySet)::Union{Hyperrectangle, EmptySet}
