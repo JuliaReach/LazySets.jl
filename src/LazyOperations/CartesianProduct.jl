@@ -45,7 +45,7 @@ exactly to a `Hyperrectangle` type:
 
 ```jldoctest cartesianproduct_constructor
 julia> convert(Hyperrectangle, I12)
-Hyperrectangle{Float64}([0.5, 3.0], [0.5, 1.0])
+Hyperrectangle{Float64,Array{Float64,1},Array{Float64,1}}([0.5, 3.0], [0.5, 1.0])
 ```
 """
 struct CartesianProduct{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}

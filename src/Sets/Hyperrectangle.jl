@@ -32,9 +32,9 @@ julia> l = [-3.0, 0.0];
 julia> h = [1.0, 2.0];
 
 julia> Hyperrectangle(c, r)
-Hyperrectangle{Float64}([-1.0, 1.0], [2.0, 1.0])
+Hyperrectangle{Float64,Array{Float64,1},Array{Float64,1}}([-1.0, 1.0], [2.0, 1.0])
 julia> Hyperrectangle(low=l, high=h)
-Hyperrectangle{Float64}([-1.0, 1.0], [2.0, 1.0])
+Hyperrectangle{Float64,Array{Float64,1},Array{Float64,1}}([-1.0, 1.0], [2.0, 1.0])
 ```
 """
 struct Hyperrectangle{N<:Real, VNC<:AbstractVector{N}, VNR<:AbstractVector{N}
