@@ -2,6 +2,10 @@ for N in [Float64, Rational{Int}, Float32]
     # random hyperrectangle
     rand(Hyperrectangle)
 
+    # constructor with mixed vectors
+    Hyperrectangle(sparsevec([1], N[1], 1), N[1])
+    Hyperrectangle(N[1], sparsevec([1], N[1], 1))
+
     # center/radius/high/low/generators
     c = N[0, 0]
     r = N[1, 1]
