@@ -85,7 +85,7 @@ end
 
 
 """
-    vertices_list(P::AbstractHPolygon{N},
+    vertices_list(P::AbstractHPolygon{N};
                   apply_convex_hull::Bool=true,
                   check_feasibility::Bool=true
                  )::Vector{Vector{N}} where {N<:Real}
@@ -114,7 +114,7 @@ polygon were actually feasible (i.e., they pointed in the *right* direction).
 For this we compute the *average* of all vertices and check membership in each
 constraint.
 """
-function vertices_list(P::AbstractHPolygon{N},
+function vertices_list(P::AbstractHPolygon{N};
                        apply_convex_hull::Bool=true,
                        check_feasibility::Bool=true
                       )::Vector{Vector{N}} where {N<:Real}
