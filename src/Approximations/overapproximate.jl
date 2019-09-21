@@ -147,7 +147,7 @@ end
 
 """
     overapproximate(lm::LinearMap{N, <:AbstractHyperrectangle{N}},
-                    ::Type{Hyperrectangle}) where {N}
+                    ::Type{<:Hyperrectangle}) where {N}
 
 Return a tight overapproximation of the linear map of a hyperrectangular set
 using a hyperrectangle.
@@ -169,7 +169,7 @@ a tight hyperrectangular overapproximation of `M * H` is obtained by transformin
 value operator.
 """
 function overapproximate(lm::LinearMap{N, <:AbstractHyperrectangle{N}},
-                         ::Type{Hyperrectangle}) where {N<:Real}
+                         ::Type{<:Hyperrectangle}) where {N<:Real}
     M, X = lm.M, lm.X
     center_MX = M * center(X)
     radius_MX = abs.(M) * radius_hyperrectangle(X)
