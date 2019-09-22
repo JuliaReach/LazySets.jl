@@ -470,7 +470,7 @@ function monotone_chain!(points::Vector{VN}; sort::Bool=true
     copyto!(points, @view(lower[1:end-1]))
     copyto!(points, length(lower), @view(upper[1:end-1]))
     m = length(lower) + length(upper) - 2
-    if m == 2 && points[1] == points[2]
+    if m == 2 && _isapprox(points[1], points[2])
         # upper and lower chain consist of a single, identical point
         m = 1
     end
