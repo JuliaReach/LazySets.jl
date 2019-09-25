@@ -14,6 +14,12 @@ import InteractiveUtils: subtypes
 export Arrays
 export ×
 
+# ==========
+# Assertions
+# ==========
+
+include("Utils/assertions.jl")
+
 # =======================
 # Arrays auxiliary module
 # =======================
