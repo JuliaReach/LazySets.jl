@@ -1,25 +1,26 @@
-export activate_benchmark_mode,
-       deactivate_benchmark_mode
+export activate_assertions,
+       deactivate_assertions,
+       are_assertions_enabled
 
 # source: https://discourse.julialang.org/t/defensive-programming-assert/8383/11
 
-# functions to (de)activate assertions
-function activate_benchmark_mode()
-    LazySets.eval(:(_debug_disabled() = true))
-    nothing
-end
-function deactivate_benchmark_mode()
-    LazySets.eval(:(_debug_disabled() = false))
-    nothing
-end
-
 # enable assertions by default
-deactivate_benchmark_mode()
+are_assertions_enabled() = true
+
+# functions to (de)activate assertions
+function activate_assertions()
+    LazySets.eval(:(are_assertions_enabled() = true))
+    nothing
+end
+function deactivate_assertions()
+    LazySets.eval(:(are_assertions_enabled() = false))
+    nothing
+end
 
 # override Base.@assert
 macro assert(exs...)
     quote
-        if !$LazySets._debug_disabled()
+        if $LazySets.are_assertions_enabled()
             Base.@assert $(map(esc, exs)...)
         end
     end
