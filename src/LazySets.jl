@@ -18,7 +18,12 @@ export ×
 # Assertions
 # ==========
 
-include("Utils/assertions.jl")
+include("Assertions/Assertions.jl")
+@reexport using .Assertions
+using .Assertions: @assert
+import .Assertions: activate_assertions, deactivate_assertions
+# activate assertions by default
+activate_assertions(LazySets)
 
 # =======================
 # Arrays auxiliary module
@@ -143,5 +148,19 @@ include("Parallel/Parallel.jl")
 # Load external packages on-demand (using 'Requires')
 # ===================================================
 include("init.jl")
+
+# ================================================
+# Convenience functions to (de)activate assertions
+# ================================================
+function activate_assertions()
+    for m in [LazySets, Arrays, Approximations, Parallel]
+        Assertions.activate_assertions(m)
+    end
+end
+function deactivate_assertions()
+    for m in [LazySets, Arrays, Approximations, Parallel]
+        Assertions.deactivate_assertions(m)
+    end
+end
 
 end # module

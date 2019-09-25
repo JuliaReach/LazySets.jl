@@ -8,6 +8,9 @@ module Approximations
 
 using LazySets, LazySets.Arrays, Requires, LinearAlgebra, SparseArrays
 using LazySets: _rtol
+using ..Assertions: @assert, activate_assertions
+# activate assertions by default
+activate_assertions(Approximations)
 
 export approximate,
        project,
