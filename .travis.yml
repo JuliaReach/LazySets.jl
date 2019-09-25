@@ -5,9 +5,11 @@ language: julia
 
 os:
   - linux
+  - windows
+  #-osx #(uncomment if testing in osx is desired)
 
 julia:
-  - 1.0
+  - 1.0 
   - 1.1
   - 1.2
   - 1.3
