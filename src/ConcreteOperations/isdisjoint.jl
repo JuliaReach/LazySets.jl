@@ -1386,9 +1386,7 @@ end
 # disambiguation
 function is_intersection_empty(cpa::CartesianProductArray{N},
                                hs::HalfSpace{N}) where {N<:Real}
-    return invoke(is_intersection_empty,
-                  Tuple{CartesianProductArray{N}, AbstractPolyhedron{N}},
-                  cpa, hs)
+    return is_intersection_empty_helper_halfspace(hs, cpa)
 end
 function is_intersection_empty(hs::HalfSpace{N},
                                cpa::CartesianProductArray{N}) where {N<:Real}
