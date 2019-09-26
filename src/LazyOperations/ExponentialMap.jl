@@ -60,8 +60,6 @@ struct SparseMatrixExp{N, MN<:AbstractSparseMatrix{N}} <: AbstractMatrix{N}
     M::MN
 end
 
-isoperation(::Type{SparseMatrixExp}) = true
-
 SparseMatrixExp(M::Matrix) =
         error("only sparse matrices can be used to create a `SparseMatrixExp`")
 
@@ -441,8 +439,6 @@ struct ProjectionSparseMatrixExp{N<:Real, MN1<:AbstractSparseMatrix{N},
     spmexp::SparseMatrixExp{N, MN2}
     R::MN3
 end
-
-isoperation(::Type{ProjectionSparseMatrixExp}) = true
 
 """
     ExponentialProjectionMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
