@@ -53,6 +53,8 @@ struct CartesianProduct{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     Y::S2
 end
 
+isoperation(::Type{CartesianProduct}) = true
+
 # EmptySet is the absorbing element for CartesianProduct
 @absorbing(CartesianProduct, EmptySet)
 
@@ -331,6 +333,8 @@ function CartesianProductArray(n::Int=0, N::Type=Float64)::CartesianProductArray
     sizehint!(arr, n)
     return CartesianProductArray(arr)
 end
+
+isoperation(::Type{CartesianProductArray}) = true
 
 # EmptySet is the absorbing element for CartesianProductArray
 @absorbing(CartesianProductArray, EmptySet)

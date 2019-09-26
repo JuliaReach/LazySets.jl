@@ -106,6 +106,8 @@ struct Intersection{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     end
 end
 
+isoperation(::Type{Intersection}) = true
+
 # convenience constructor without type parameter
 Intersection(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} =
     Intersection{N, S1, S2}(X, Y)
@@ -679,6 +681,8 @@ struct IntersectionArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
 end
 
+isoperation(::Type{IntersectionArray}) = true
+
 # constructor for an empty sum with optional size hint and numeric type
 function IntersectionArray(n::Int=0, N::Type=Float64)::IntersectionArray
     arr = Vector{LazySet{N}}()
@@ -899,7 +903,7 @@ minimizer.
 
 This function requires the `Optim` package, and relies on the univariate
 optimization interface `Optim.optimize(...)`.
-     
+
 Additional arguments to the `optimize` backend can be passed as keyword arguments.
 The default method is `Optim.Brent()`.
 
@@ -908,7 +912,7 @@ The default method is `Optim.Brent()`.
 ```jldoctest _line_search
 julia> X = Ball1(zeros(2), 1.0);
 
-julia> H = HalfSpace([-1.0, 0.0], -1.0); # x >= 0 
+julia> H = HalfSpace([-1.0, 0.0], -1.0); # x >= 0
 
 julia> using Optim
 
@@ -963,7 +967,7 @@ function _line_search(ℓ, X, H::Union{HalfSpace, Hyperplane, Line}; kwargs...)
 
     # Optimization
     sol = Optim.optimize(f, lower, upper, method=method, options...)
-    
+
     # Recover results
     fmin, λmin = sol.minimum, sol.minimizer
     return (fmin, λmin)

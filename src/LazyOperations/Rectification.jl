@@ -110,6 +110,8 @@ struct Rectification{N<:Real, S<:LazySet{N}}
     end
 end
 
+isoperation(::Type{Rectification}) = true
+
 # convenience constructor without type parameter
 Rectification(X::S) where {N<:Real, S<:LazySet{N}} = Rectification{N, S}(X)
 
