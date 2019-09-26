@@ -30,6 +30,8 @@ struct UnionSet{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}}
     end
 end
 
+isoperation(::Type{UnionSet}) = true
+
 # convenience constructor without type parameter
 UnionSet(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} = UnionSet{N, S1, S2}(X, Y)
 
@@ -240,6 +242,8 @@ Type that represents the set union of a finite number of convex sets.
 struct UnionSetArray{N<:Real, S<:LazySet{N}}
     array::Vector{S}
 end
+
+isoperation(::Type{UnionSetArray}) = true
 
 # EmptySet is the neutral element for UnionSetArray
 @neutral(UnionSetArray, EmptySet)
