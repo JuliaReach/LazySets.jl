@@ -32,28 +32,25 @@ julia> l = [-3.0, 0.0];
 julia> h = [1.0, 2.0];
 
 julia> Hyperrectangle(c, r)
-Hyperrectangle{Float64}([-1.0, 1.0], [2.0, 1.0])
+Hyperrectangle{Float64,Array{Float64,1},Array{Float64,1}}([-1.0, 1.0], [2.0, 1.0])
 julia> Hyperrectangle(low=l, high=h)
-Hyperrectangle{Float64}([-1.0, 1.0], [2.0, 1.0])
+Hyperrectangle{Float64,Array{Float64,1},Array{Float64,1}}([-1.0, 1.0], [2.0, 1.0])
 ```
 """
-struct Hyperrectangle{N<:Real} <: AbstractHyperrectangle{N}
-    center::Vector{N}
-    radius::Vector{N}
+struct Hyperrectangle{N<:Real, VNC<:AbstractVector{N}, VNR<:AbstractVector{N}
+                     } <: AbstractHyperrectangle{N}
+    center::VNC
+    radius::VNR
 
     # default constructor with length comparison & domain constraint for radius
-    function Hyperrectangle{N}(center::Vector{N},
-                               radius::Vector{N}) where {N<:Real}
+    function Hyperrectangle(center::VNC, radius::VNR) where
+            {N<:Real, VNC<:AbstractVector{N}, VNR<:AbstractVector{N}}
         @assert length(center) == length(radius) "length of center and " *
             "radius must be equal"
         @assert all(v -> v >= zero(N), radius) "radius must not be negative"
-        return new{N}(center, radius)
+        return new{N, VNC, VNR}(center, radius)
     end
 end
-
-# convenience constructor without type parameter
-Hyperrectangle(center::Vector{N}, radius::Vector{N}) where {N<:Real} =
-    Hyperrectangle{N}(center, radius)
 
 # constructor from keyword arguments (lower and upper bounds)
 function Hyperrectangle(;

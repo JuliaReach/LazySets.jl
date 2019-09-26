@@ -215,7 +215,7 @@ For example:
 julia> res = array(decompose(S, P2d, Dict(1 => Hyperrectangle, 2 => 0.1)));
 
 julia> typeof(res[1]), typeof(res[2])
-(Hyperrectangle{Float64}, HPolygon{Float64})
+(Hyperrectangle{Float64,Array{Float64,1},Array{Float64,1}}, HPolygon{Float64})
 ```
 """
 function decompose(S::LazySet{N},

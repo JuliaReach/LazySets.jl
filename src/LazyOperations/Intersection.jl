@@ -86,7 +86,7 @@ with the lowercase `intersection` function:
 
 ```jldoctest lazy_intersection
 julia> W = intersection(X, Y)
-Hyperrectangle{Float64}([0.375, 0.0], [0.125, 0.5])
+Hyperrectangle{Float64,Array{Float64,1},Array{Float64,1}}([0.375, 0.0], [0.125, 0.5])
 ```
 """
 struct Intersection{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
