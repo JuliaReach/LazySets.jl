@@ -60,6 +60,8 @@ struct SparseMatrixExp{N, MN<:AbstractSparseMatrix{N}} <: AbstractMatrix{N}
     M::MN
 end
 
+isoperation(::Type{SparseMatrixExp}) = true
+
 SparseMatrixExp(M::Matrix) =
         error("only sparse matrices can be used to create a `SparseMatrixExp`")
 
@@ -205,6 +207,8 @@ function ExponentialMap(spmexp::SparseMatrixExp{N}, Z::ZeroSet{N}
             "$(size(spmexp)) cannot be applied to a set of dimension $(dim(Z))"
     return ZeroSet{N}(size(spmexp, 1))
 end
+
+isoperation(::Type{ExponentialMap}) = true
 
 # EmptySet is absorbing for ExponentialMap
 function ExponentialMap(spmexp::SparseMatrixExp{N}, ∅::EmptySet{N}
@@ -438,6 +442,8 @@ struct ProjectionSparseMatrixExp{N<:Real, MN1<:AbstractSparseMatrix{N},
     R::MN3
 end
 
+isoperation(::Type{ProjectionSparseMatrixExp}) = true
+
 """
     ExponentialProjectionMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
 
@@ -453,6 +459,8 @@ struct ExponentialProjectionMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
     projspmexp::ProjectionSparseMatrixExp
     X::S
 end
+
+isoperation(::Type{ExponentialProjectionMap}) = true
 
 """
 ```

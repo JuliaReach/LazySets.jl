@@ -16,7 +16,8 @@ export LazySet,
        isuniversal,
        translate,
        affine_map,
-       is_interior_point
+       is_interior_point,
+       isoperation
 
 """
     LazySet{N}
@@ -587,4 +588,37 @@ function plot_recipe(X::LazySet{N}, ε::N=N(PLOT_PRECISION)) where {N<:Real}
         Y = overapproximate(X, ε)
     end
     return plot_recipe(Y, ε)
+end
+
+"""
+    isoperation(::Type{<:LazySet})
+
+Check whether the given lazy set is an operation or not.
+
+### Input
+
+- `X` -- subtype of `LazySet`
+
+### Output
+
+`true` if the given set type is a set-based operation and `false` otherwise.
+
+### Notes
+
+The generic `isoperation(::Type{<:LazySet})` function is a fallback implementation
+that returns `false`. Subtypes of `LazySet` should dispatch on this function as
+required.
+
+### Examples
+
+```jldoctest
+julia> isoperation(BallInf)
+false
+
+julia> isoperation(LinearMap)
+true
+```
+"""
+function isoperation(::Type{<:LazySet})
+    return false
 end
