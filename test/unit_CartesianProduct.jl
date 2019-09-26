@@ -181,6 +181,14 @@ for N in [Float64, Float32, Rational{Int}]
     # array getter
     @test array(cpa) ≡ v
 
+    # support function & support vector
+    svec = N[1, 2, 3, 4]
+    for dd in [N[1, 1, 0, 0], N[0, 0, 1, 1], N[0, 1, 0, 1], N[0, 0, 1, 0], N[0, 0, 0, 0]]
+        ds = sparse(dd)
+        @test σ(dd, cpa) == σ(ds, cpa) == svec
+        @test ρ(dd, cpa) == ρ(ds, cpa) == dot(svec, dd)
+    end
+
     # boundedness
     @test isbounded(cpa)
     @test !isbounded(CartesianProductArray([Singleton(N[1]), HalfSpace(N[1], N(1))]))

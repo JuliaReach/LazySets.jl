@@ -405,6 +405,46 @@ function σ(d::AbstractVector{N}, cpa::CartesianProductArray{N}) where {N<:Real}
     return svec
 end
 
+# faster version for sparse vectors
+function σ(d::AbstractSparseVector{N}, cpa::CartesianProductArray{N}
+          ) where {N<:Real}
+    # idea: We walk through the blocks of `cpa` (i.e., the sets `Xi`) and search
+    # for corresponding non-zero entries in `d` (stored in `indices`).
+    # `next_idx` is the next index of `indices` such that
+    # `next_dim = indices[next_idx]` lies in the next block to consider
+    # (potentially skipping some blocks).
+    svec = similar(d)
+    indices, _ = SparseArrays.findnz(d)
+    if isempty(indices)
+        # direction is the zero vector
+        return an_element(cpa)
+    end
+    next_idx = 1
+    next_dim = indices[next_idx]
+    m = length(indices)
+    i0 = 1
+    for Xi in cpa.array
+        i1 = i0 + dim(Xi) - 1
+        if next_dim <= i1
+            # there is a non-zero entry in this block
+            svec[i0:i1] = σ(d[i0:i1], Xi)
+
+            # find next index outside the current block
+            next_idx += 1
+            while next_idx <= m && indices[next_idx] <= i1
+                next_idx += 1
+            end
+            if next_idx <= m
+                next_dim = indices[next_idx]
+            end
+        else
+            svec[i0:i1] = an_element(Xi)
+        end
+        i0 = i1 + 1
+    end
+    return svec
+end
+
 """
     ρ(d::AbstractVector{N}, cp::CartesianProductArray{N}) where {N<:Real}
 
@@ -426,6 +466,42 @@ function ρ(d::AbstractVector{N}, cpa::CartesianProductArray{N}) where {N<:Real}
     for Xi in cpa.array
         i1 = i0 + dim(Xi) - 1
         sfun += ρ(d[i0:i1], Xi)
+        i0 = i1 + 1
+    end
+    return sfun
+end
+
+# faster version for sparse vectors
+function ρ(d::AbstractSparseVector{N}, cpa::CartesianProductArray{N}
+          ) where {N<:Real}
+    # idea: see the σ method for AbstractSparseVector
+    sfun = zero(N)
+    indices, _ = SparseArrays.findnz(d)
+    if isempty(indices)
+        # direction is the zero vector
+        return sfun
+    end
+    next_idx = 1
+    next_dim = indices[next_idx]
+    m = length(indices)
+    i0 = 1
+    for Xi in cpa.array
+        i1 = i0 + dim(Xi) - 1
+        if next_dim <= i1
+            # there is a non-zero entry in this block
+            sfun += ρ(d[i0:i1], Xi)
+
+            # find next index outside the current block
+            next_idx += 1
+            while next_idx <= m && indices[next_idx] <= i1
+                next_idx += 1
+            end
+            if next_idx > m
+                # no more non-zero entries
+                break
+            end
+            next_dim = indices[next_idx]
+        end
         i0 = i1 + 1
     end
     return sfun
