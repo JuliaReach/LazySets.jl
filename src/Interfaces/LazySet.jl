@@ -593,7 +593,7 @@ end
 """
     isoperation(::Type{<:LazySet})
 
-Check whether the given lazy set is an operation or not.
+Check whether the given `LazySet` is an operation or not.
 
 ### Input
 
