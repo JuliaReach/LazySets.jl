@@ -103,6 +103,10 @@ for N in [Float64, Rational{Int}]
     end
     @test_throws ErrorException convex_hull!(points, algorithm="")
 
+    # single-vertex case in 2D (five vertices to test the general algorithm)
+    p = N[0, 0]
+    @test convex_hull([p, p, p, p, p]) == [p]
+
     # higher dimension
     if test_suite_polyhedra && N != Float32 # no backend supporting Float32
         points_3D = [[N(1), N(0), N(4)], [N(1), N(1), N(5)], [N(0), N(1), N(6)],

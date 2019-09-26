@@ -469,5 +469,10 @@ function monotone_chain!(points::Vector{VN}; sort::Bool=true
     # remove the last point of each segment because they are repeated
     copyto!(points, @view(lower[1:end-1]))
     copyto!(points, length(lower), @view(upper[1:end-1]))
-    return resize!(points, length(lower) + length(upper) - 2)
+    m = length(lower) + length(upper) - 2
+    if m == 2 && _isapprox(points[1], points[2])
+        # upper and lower chain consist of a single, identical point
+        m = 1
+    end
+    return resize!(points, m)
 end
