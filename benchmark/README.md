@@ -9,7 +9,7 @@ To run the benchmarks, execute:
 ```julia
 julia> using PkgBenchmark
 
-julia> results = benchmarkpkg("LazySets")
+julia> results = benchmarkpkg("LazySets", retune=true)
 ```
 
 ## How to compare benchmarks
