@@ -35,7 +35,7 @@ struct Complement{N<:Real, S<:LazySet{N}}
     X::S
 end
 
-isoperation(::Type{Complement}) = true
+isoperationtype(::Type{<:Complement}) = true
 
 # the complement of the complement is the original set again
 Complement(C::Complement) = C.X

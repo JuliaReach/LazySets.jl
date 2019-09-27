@@ -82,7 +82,7 @@ struct ResetMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
     resets::Dict{Int, N}
 end
 
-isoperation(::Type{ResetMap}) = true
+isoperationtype(::Type{<:ResetMap}) = true
 
 # ZeroSet is "almost absorbing" for the linear map (only the dimension changes)
 # such that only the translation vector remains

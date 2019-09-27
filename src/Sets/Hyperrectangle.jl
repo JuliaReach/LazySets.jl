@@ -52,6 +52,8 @@ struct Hyperrectangle{N<:Real, VNC<:AbstractVector{N}, VNR<:AbstractVector{N}
     end
 end
 
+isoperationtype(::Type{Hyperrectangle}) = false
+
 # constructor from keyword arguments (lower and upper bounds)
 function Hyperrectangle(;
                         high::AbstractVector{N},

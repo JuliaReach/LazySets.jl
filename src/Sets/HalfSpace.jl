@@ -38,6 +38,8 @@ struct HalfSpace{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
     end
 end
 
+isoperationtype(::Type{HalfSpace}) = false
+
 # convenience constructor without type parameter
 HalfSpace(a::VN, b::N) where {N<:Real, VN<:AbstractVector{N}} =
     HalfSpace{N, VN}(a, b)
@@ -405,7 +407,7 @@ describes the right-hand side of the directed line segment `pq`.
 
 ### Algorithm
 
-See the documentation of `halfspace_left`. 
+See the documentation of `halfspace_left`.
 """
 function halfspace_right(p::AbstractVector{N},
                          q::AbstractVector{N})::HalfSpace{N} where {N<:Real}

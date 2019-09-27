@@ -34,6 +34,8 @@ struct HPolyhedron{N<:Real} <: AbstractPolyhedron{N}
     end
 end
 
+isoperationtype(::Type{HPolyhedron}) = false
+
 # convenience constructor without type parameter
 HPolyhedron(constraints::Vector{<:LinearConstraint{N}}) where {N<:Real} =
     HPolyhedron{N}(constraints)

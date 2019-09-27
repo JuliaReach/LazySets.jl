@@ -107,7 +107,7 @@ struct LinearMap{N<:Real, S<:LazySet{N},
     end
 end
 
-isoperation(::Type{LinearMap}) = true
+isoperationtype(::Type{<:LinearMap}) = true
 
 """
 ```

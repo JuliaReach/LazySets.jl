@@ -17,7 +17,8 @@ export LazySet,
        translate,
        affine_map,
        is_interior_point,
-       isoperation
+       isoperation,
+       isoperationtype
 
 """
     LazySet{N}
@@ -591,9 +592,48 @@ function plot_recipe(X::LazySet{N}, ε::N=N(PLOT_PRECISION)) where {N<:Real}
 end
 
 """
-    isoperation(::Type{<:LazySet})
+    isoperation(X::LazySet)
 
-Check whether the given `LazySet` is an operation or not.
+Check whether the given `LazySet` is an instance of a set operation or not.
+
+### Input
+
+- `X` -- a `LazySet`
+
+### Output
+
+`true` if `X` is an instance of a set-based operation and `false` otherwise.
+
+### Notes
+
+The fallback implementation returns whether the set type of the input is an
+operation or not using `isoperationtype`.
+
+See also [`isoperationtype(X::Type{<:LazySet})`](@ref).
+
+### Examples
+
+```jldoctest
+julia> B = BallInf([0.0, 0.0], 1.0);
+
+julia> isoperation(B)
+false
+
+julia> isoperation(B ⊕ B)
+true
+```
+"""
+function isoperation(X::LazySet)
+    return isoperationtype(typeof(X))
+end
+
+isoperation(::Type{<:LazySet}) = error("`isoperation` cannot be applied to a set " *
+                                       "type; use `isoperationtype` instead")
+
+"""
+    isoperationtype(X::Type{<:LazySet})
+
+Check whether the given `LazySet` type is an operation or not.
 
 ### Input
 
@@ -605,20 +645,24 @@ Check whether the given `LazySet` is an operation or not.
 
 ### Notes
 
-The generic `isoperation(::Type{<:LazySet})` function is a fallback implementation
-that returns `false`. Subtypes of `LazySet` should dispatch on this function as
-required.
+The fallback for this function returns an error that `isoperationtype` is not
+implemented. Subtypes of `LazySet` should dispatch on this function as required.
+
+See also [`isoperation(X<:LazySet)`](@ref).
 
 ### Examples
 
 ```jldoctest
-julia> isoperation(BallInf)
+julia> isoperationtype(BallInf)
 false
 
-julia> isoperation(LinearMap)
+julia> isoperationtype(LinearMap)
 true
 ```
 """
-function isoperation(::Type{<:LazySet})
-    return false
+function isoperationtype(X::Type{<:LazySet})
+    error("`isoperationtype` is not implemented for type $X")
 end
+
+isoperationtype(::LazySet) = error("`isoperationtype` cannot be applied to " *
+                                   "a set instance; use `isoperation` instead")

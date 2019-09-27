@@ -17,6 +17,8 @@ struct ZeroSet{N<:Real} <: AbstractSingleton{N}
     dim::Int
 end
 
+isoperationtype(::Type{ZeroSet}) = false
+
 # default constructor of type Float64
 ZeroSet(dim::Int) = ZeroSet{Float64}(dim)
 

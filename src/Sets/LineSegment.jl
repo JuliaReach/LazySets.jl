@@ -59,6 +59,8 @@ struct LineSegment{N<:Real} <: AbstractZonotope{N}
     end
 end
 
+isoperationtype(::Type{LineSegment}) = false
+
 # convenience constructor without type parameter
 LineSegment(p::AbstractVector{N}, q::AbstractVector{N}) where {N<:Real} =
     LineSegment{N}(p, q)

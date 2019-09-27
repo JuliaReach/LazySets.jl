@@ -206,7 +206,7 @@ function ExponentialMap(spmexp::SparseMatrixExp{N}, Z::ZeroSet{N}
     return ZeroSet{N}(size(spmexp, 1))
 end
 
-isoperation(::Type{ExponentialMap}) = true
+isoperationtype(::Type{<:ExponentialMap}) = true
 
 # EmptySet is absorbing for ExponentialMap
 function ExponentialMap(spmexp::SparseMatrixExp{N}, ∅::EmptySet{N}
@@ -456,7 +456,7 @@ struct ExponentialProjectionMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
     X::S
 end
 
-isoperation(::Type{ExponentialProjectionMap}) = true
+isoperationtype(::Type{<:ExponentialProjectionMap}) = true
 
 """
 ```

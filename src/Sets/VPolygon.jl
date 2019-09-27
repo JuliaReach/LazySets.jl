@@ -43,6 +43,8 @@ struct VPolygon{N<:Real, VN<:AbstractVector{N}} <: AbstractPolygon{N}
     end
 end
 
+isoperationtype(::Type{VPolygon}) = false
+
 # convenience constructor without type parameter
 VPolygon(vertices::Vector{VN};
          apply_convex_hull::Bool=true,

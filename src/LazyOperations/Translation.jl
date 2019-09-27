@@ -152,7 +152,7 @@ struct Translation{N<:Real, VN<:AbstractVector{N}, S<:LazySet{N}} <: LazySet{N}
     end
 end
 
-isoperation(::Type{Translation}) = true
+isoperationtype(::Type{<:Translation}) = true
 
 # constructor from a Translation: perform the translation immediately
 Translation(tr::Translation{N}, v::AbstractVector{N}) where {N<:Real} =

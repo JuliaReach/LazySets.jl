@@ -104,7 +104,7 @@ struct AffineMap{N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM},
     end
 end
 
-isoperation(::Type{AffineMap}) = true
+isoperationtype(::Type{<:AffineMap}) = true
 
 # convenience constructor from a UniformScaling
 function AffineMap(M::UniformScaling, X::LazySet, v::AbstractVector)

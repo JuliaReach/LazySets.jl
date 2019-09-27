@@ -106,7 +106,7 @@ struct Intersection{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     end
 end
 
-isoperation(::Type{Intersection}) = true
+isoperationtype(::Type{<:Intersection}) = true
 
 # convenience constructor without type parameter
 Intersection(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} =
@@ -681,7 +681,7 @@ struct IntersectionArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
 end
 
-isoperation(::Type{IntersectionArray}) = true
+isoperationtype(::Type{<:IntersectionArray}) = true
 
 # constructor for an empty sum with optional size hint and numeric type
 function IntersectionArray(n::Int=0, N::Type=Float64)::IntersectionArray

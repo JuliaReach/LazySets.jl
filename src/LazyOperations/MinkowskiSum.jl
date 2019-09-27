@@ -36,7 +36,7 @@ struct MinkowskiSum{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     end
 end
 
-isoperation(::Type{MinkowskiSum}) = true
+isoperationtype(::Type{<:MinkowskiSum}) = true
 
 # convenience constructor without type parameter
 MinkowskiSum(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} =
@@ -242,7 +242,7 @@ struct MinkowskiSumArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
 end
 
-isoperation(::Type{MinkowskiSumArray}) = true
+isoperationtype(::Type{<:MinkowskiSumArray}) = true
 
 # constructor for an empty sum with optional size hint and numeric type
 function MinkowskiSumArray(n::Int=0, N::Type=Float64)::MinkowskiSumArray
@@ -443,7 +443,7 @@ struct CacheMinkowskiSum{N<:Real, S<:LazySet{N}} <: LazySet{N}
         new{N, S}(arr, Dict{AbstractVector{N}, CachedPair{N}}())
 end
 
-isoperation(::Type{CacheMinkowskiSum}) = true
+isoperationtype(::Type{<:CacheMinkowskiSum}) = true
 
 # convenience constructor without type parameter
 CacheMinkowskiSum(arr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
