@@ -43,7 +43,7 @@ struct VPolygon{N<:Real, VN<:AbstractVector{N}} <: AbstractPolygon{N}
     end
 end
 
-isoperationtype(::Type{VPolygon}) = false
+isoperationtype(::Type{<:VPolygon}) = false
 
 # convenience constructor without type parameter
 VPolygon(vertices::Vector{VN};

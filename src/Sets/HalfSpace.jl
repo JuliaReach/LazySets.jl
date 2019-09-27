@@ -38,7 +38,7 @@ struct HalfSpace{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
     end
 end
 
-isoperationtype(::Type{HalfSpace}) = false
+isoperationtype(::Type{<:HalfSpace}) = false
 
 # convenience constructor without type parameter
 HalfSpace(a::VN, b::N) where {N<:Real, VN<:AbstractVector{N}} =

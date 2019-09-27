@@ -22,7 +22,7 @@ struct VPolytope{N<:Real} <: AbstractPolytope{N}
     vertices::Vector{Vector{N}}
 end
 
-isoperationtype(::Type{VPolytope}) = false
+isoperationtype(::Type{<:VPolytope}) = false
 
 # constructor for a VPolytope with empty vertices list
 VPolytope{N}() where {N<:Real} = VPolytope{N}(Vector{Vector{N}}())

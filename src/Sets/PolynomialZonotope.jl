@@ -87,7 +87,7 @@ struct PolynomialZonotope{N}
     end
 end
 
-isoperationtype(::Type{PolynomialZonotope}) = false
+isoperationtype(::Type{<:PolynomialZonotope}) = false
 
 # type-less convenience constructor
 PolynomialZonotope(c::Vector{N},

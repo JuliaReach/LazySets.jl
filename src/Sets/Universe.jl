@@ -13,7 +13,7 @@ struct Universe{N<:Real} <: AbstractPolyhedron{N}
     dim::Int
 end
 
-isoperationtype(::Type{Universe}) = false
+isoperationtype(::Type{<:Universe}) = false
 
 # default constructor of type Float64
 Universe(dim::Int) = Universe{Float64}(dim)

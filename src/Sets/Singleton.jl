@@ -15,7 +15,7 @@ struct Singleton{N<:Real, VN<:AbstractVector{N}} <: AbstractSingleton{N}
     element::VN
 end
 
-isoperationtype(::Type{Singleton}) = false
+isoperationtype(::Type{<:Singleton}) = false
 
 # --- AbstractSingleton interface functions ---
 

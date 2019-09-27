@@ -53,7 +53,7 @@ struct Ball1{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
     end
 end
 
-isoperationtype(::Type{Ball1}) = false
+isoperationtype(::Type{<:Ball1}) = false
 
 # convenience constructor without type parameter
 Ball1(center::Vector{N}, radius::N) where {N<:Real} = Ball1{N}(center, radius)

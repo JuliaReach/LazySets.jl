@@ -34,7 +34,7 @@ struct HPolytope{N<:Real} <: AbstractPolytope{N}
     end
 end
 
-isoperationtype(::Type{HPolytope}) = false
+isoperationtype(::Type{<:HPolytope}) = false
 
 # convenience constructor without type parameter
 HPolytope(constraints::Vector{<:LinearConstraint{N}};

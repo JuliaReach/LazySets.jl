@@ -61,7 +61,7 @@ struct Ball2{N<:AbstractFloat} <: AbstractCentrallySymmetric{N}
     end
 end
 
-isoperationtype(::Type{Ball2}) = false
+isoperationtype(::Type{<:Ball2}) = false
 
 # convenience constructor without type parameter
 Ball2(center::Vector{N}, radius::N) where {N<:AbstractFloat} =
