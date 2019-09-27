@@ -257,6 +257,11 @@ for N in [Float64, Float32, Rational{Int}]
     HP = convert(HPolygon, BallInf(N[0, 0], N(1)))
     @test linear_map(N[1 0; 0 2], HP) isa HPolygon{N}
 
+    # vertices_list removes duplicates by default (#1405)
+    p3 = HPolygon([HalfSpace(N[1, 0], N(0)), HalfSpace(N[0, 1], N(0)),
+                   HalfSpace(N[-1, 0], N(0)), HalfSpace(N[0, -1], N(0))])
+    @test vertices_list(p3) == [N[0, 0]]
+
     # Test VRepresentation
     vp = tovrep(p)
     @test N[2, 4] ∈ vertices_list(vp)

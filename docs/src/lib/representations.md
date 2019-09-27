@@ -394,7 +394,7 @@ Inherited from [`AbstractPolygon`](@ref):
 Inherited from [`AbstractHPolygon`](@ref):
 * [`an_element`](@ref an_element(::AbstractHPolygon{N}) where {N<:Real})
 * [`∈`](@ref ∈(::AbstractVector{N}, ::AbstractHPolygon{N}) where {N<:Real})
-* [`vertices_list`](@ref vertices_list(::AbstractHPolygon{N}, ::Bool=false, ::Bool=true) where {N<:Real})
+* [`vertices_list`](@ref vertices_list(::AbstractHPolygon{N}) where {N<:Real})
 * [`tohrep`](@ref tohrep(::HPOLYGON) where {HPOLYGON<:AbstractHPolygon})
 * [`tovrep`](@ref tovrep(::AbstractHPolygon{N}) where {N<:Real})
 * [`isbounded`](@ref isbounded(::AbstractHPolygon, ::Bool=true))
@@ -425,7 +425,7 @@ Inherited from [`AbstractPolygon`](@ref):
 Inherited from [`AbstractHPolygon`](@ref):
 * [`an_element`](@ref an_element(::AbstractHPolygon{N}) where {N<:Real})
 * [`∈`](@ref ∈(::AbstractVector{N}, ::AbstractHPolygon{N}) where {N<:Real})
-* [`vertices_list`](@ref vertices_list(::AbstractHPolygon{N}, ::Bool=false, ::Bool=true) where {N<:Real})
+* [`vertices_list`](@ref vertices_list(::AbstractHPolygon{N}) where {N<:Real})
 * [`tohrep`](@ref tohrep(::HPOLYGON) where {HPOLYGON<:AbstractHPolygon})
 * [`tovrep`](@ref tovrep(::AbstractHPolygon{N}) where {N<:Real})
 * [`isbounded`](@ref isbounded(::AbstractHPolygon, ::Bool=true))

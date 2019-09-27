@@ -186,7 +186,7 @@ addconstraint!(::Vector{LC}, ::LinearConstraint{N}) where {N<:Real, LC<:LinearCo
 isredundant(::LinearConstraint{N}, ::LinearConstraint{N}, ::LinearConstraint{N}) where {N<:Real}
 remove_redundant_constraints!(::AbstractHPolygon)
 constraints_list(::AbstractHPolygon{N}) where {N<:Real}
-vertices_list(::AbstractHPolygon{N}, ::Bool=false, ::Bool=true) where {N<:Real}
+vertices_list(::AbstractHPolygon{N}) where {N<:Real}
 isbounded(::AbstractHPolygon, ::Bool=true)
 ```
 
