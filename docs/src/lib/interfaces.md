@@ -60,6 +60,8 @@ isuniversal(::LazySet{N}, ::Bool=false) where {N<:Real}
 affine_map(M::AbstractMatrix, X::LazySet, v::AbstractVector)
 reflect(::LazySet)
 is_interior_point(::AbstractVector{N}, ::LazySet{N}; p=Inf, ε=_rtol(N)) where {N<:Real}
+isoperationtype(::Type{<:LazySet})
+isoperation(::LazySet)
 ```
 
 Plotting is available for general one- or two-dimensional `LazySet`s, provided

@@ -37,6 +37,8 @@ struct Line{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
     end
 end
 
+isoperationtype(::Type{<:Line}) = false
+
 # convenience constructor without type parameter
 Line(a::VN, b::N) where {N<:Real, VN<:AbstractVector{N}} = Line{N, VN}(a, b)
 
@@ -71,7 +73,7 @@ The particular case ``x₂ = x₁`` defines a line parallel to the ``y``-axis (v
 function Line(p::AbstractVector{N}, q::AbstractVector{N}) where {N<:Real}
     x₁, y₁ = p[1], p[2]
     x₂, y₂ = q[1], q[2]
-    
+
     if x₁ == x₂  # line is vertical
         a = [one(N), zero(N)]
         b = x₁

@@ -36,6 +36,8 @@ struct MinkowskiSum{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     end
 end
 
+isoperationtype(::Type{<:MinkowskiSum}) = true
+
 # convenience constructor without type parameter
 MinkowskiSum(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} =
     MinkowskiSum{N, S1, S2}(X, Y)
@@ -240,6 +242,8 @@ struct MinkowskiSumArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
 end
 
+isoperationtype(::Type{<:MinkowskiSumArray}) = true
+
 # constructor for an empty sum with optional size hint and numeric type
 function MinkowskiSumArray(n::Int=0, N::Type=Float64)::MinkowskiSumArray
     arr = Vector{LazySet{N}}()
@@ -329,7 +333,7 @@ The support function in the given direction.
 ### Algorithm
 
 The support function of the Minkowski sum of sets is the sum of the support
-functions of each set. 
+functions of each set.
 """
 function ρ(d::AbstractVector{N}, msa::MinkowskiSumArray{N}) where {N<:Real}
     return sum([ρ(d, Xi) for Xi in msa.array])
@@ -438,6 +442,8 @@ struct CacheMinkowskiSum{N<:Real, S<:LazySet{N}} <: LazySet{N}
     CacheMinkowskiSum{N, S}(arr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
         new{N, S}(arr, Dict{AbstractVector{N}, CachedPair{N}}())
 end
+
+isoperationtype(::Type{<:CacheMinkowskiSum}) = true
 
 # convenience constructor without type parameter
 CacheMinkowskiSum(arr::Vector{S}) where {N<:Real, S<:LazySet{N}} =

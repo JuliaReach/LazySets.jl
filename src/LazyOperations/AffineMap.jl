@@ -104,6 +104,8 @@ struct AffineMap{N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM},
     end
 end
 
+isoperationtype(::Type{<:AffineMap}) = true
+
 # convenience constructor from a UniformScaling
 function AffineMap(M::UniformScaling, X::LazySet, v::AbstractVector)
     return AffineMap(M.λ, X, v)
@@ -146,7 +148,7 @@ function AffineMap(M::AbstractMatrix{N}, ∅::EmptySet{N}, v::AbstractVector{N}
     return ∅
 end
 
-# ============================ 
+# ============================
 # LazySet interface functions
 # ============================
 
@@ -329,7 +331,7 @@ Return the list of vertices of a (polyhedral) affine map.
 - `am`                -- affine map
 - `apply_convex_hull` -- (optional, default: `true`) if `true`, apply the convex
                          hull operation to the list of vertices transformed by the
-                         affine map 
+                         affine map
 
 ### Output
 
@@ -399,7 +401,7 @@ Return the linear map of a lazy affine map.
 
 ### Output
 
-A set corresponding to the linear map of the lazy affine map of a set.  
+A set corresponding to the linear map of the lazy affine map of a set.
 """
 function linear_map(M::AbstractMatrix{N}, am::AffineMap{N}) where {N<:Real}
      return translate(linear_map(M * am.M, am.X), M * am.v)

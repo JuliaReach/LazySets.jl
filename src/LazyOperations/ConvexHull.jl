@@ -48,6 +48,8 @@ struct ConvexHull{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     end
 end
 
+isoperationtype(::Type{<:ConvexHull}) = true
+
 # convenience constructor without type parameter
 ConvexHull(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} =
     ConvexHull{N, S1, S2}(X, Y)
@@ -211,6 +213,8 @@ julia> c = ConvexHullArray(b);
 struct ConvexHullArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
 end
+
+isoperationtype(::Type{<:ConvexHullArray}) = true
 
 # constructor for an empty hull with optional size hint and numeric type
 function ConvexHullArray(n::Int=0, N::Type=Float64)::ConvexHullArray

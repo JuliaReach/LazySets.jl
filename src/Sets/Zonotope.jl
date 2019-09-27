@@ -57,7 +57,7 @@ julia> vertices_list(Z)
  [1.1, 0.1]
  [0.9, 0.1]
  [0.9, -0.1]
- [1.1, -0.1] 
+ [1.1, -0.1]
 ```
 
 The support vector along a given direction can be computed using `σ`
@@ -98,6 +98,8 @@ struct Zonotope{N<:Real} <: AbstractZonotope{N}
         new{N}(center, generators)
     end
 end
+
+isoperationtype(::Type{<:Zonotope}) = false
 
 # constructor from center and list of generators
 Zonotope(center::AbstractVector{N}, generators_list::AbstractVector{VN};

@@ -74,6 +74,8 @@ mutable struct HPolygonOpt{N<:Real} <: AbstractHPolygon{N}
     end
 end
 
+isoperationtype(::Type{<:HPolygonOpt}) = false
+
 # convenience constructor without type parameter
 HPolygonOpt(constraints::Vector{<:LinearConstraint{N}},
             ind::Int=1;

@@ -107,6 +107,8 @@ struct LinearMap{N<:Real, S<:LazySet{N},
     end
 end
 
+isoperationtype(::Type{<:LinearMap}) = true
+
 """
 ```
     *(map::Union{AbstractMatrix, UniformScaling, AbstractVector, Real}, X::LazySet)

@@ -61,6 +61,8 @@ struct Ball2{N<:AbstractFloat} <: AbstractCentrallySymmetric{N}
     end
 end
 
+isoperationtype(::Type{<:Ball2}) = false
+
 # convenience constructor without type parameter
 Ball2(center::Vector{N}, radius::N) where {N<:AbstractFloat} =
     Ball2{N}(center, radius)
@@ -252,7 +254,7 @@ Return samples from a uniform distribution on the given ball in the 2-norm.
 
 ### Output
 
-A linear array of `nsamples` elements drawn from a uniform distribution in `B`. 
+A linear array of `nsamples` elements drawn from a uniform distribution in `B`.
 
 ### Algorithm
 

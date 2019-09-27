@@ -20,7 +20,7 @@ Type that represents a polynomial zonotope.
 ### Notes
 
 Polynomial zonotopes were introduced by M. Althoff in [1] and have been applied
-as a non-convex set representation in the reachability problem of nonlinear ODEs. 
+as a non-convex set representation in the reachability problem of nonlinear ODEs.
 
 Mathematically, a polynomial zonotope is defined as the tuple ``(c, E, F, G)``,
 where:
@@ -86,6 +86,8 @@ struct PolynomialZonotope{N}
         return new(c, E, F, G)
     end
 end
+
+isoperationtype(::Type{<:PolynomialZonotope}) = false
 
 # type-less convenience constructor
 PolynomialZonotope(c::Vector{N},

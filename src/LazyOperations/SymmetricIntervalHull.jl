@@ -41,6 +41,8 @@ struct SymmetricIntervalHull{N<:Real, S<:LazySet{N}} <: AbstractHyperrectangle{N
     end
 end
 
+isoperationtype(::Type{<:SymmetricIntervalHull}) = true
+
 # convenience constructor without type parameter
 SymmetricIntervalHull(X::S) where {N<:Real, S<:LazySet{N}} =
     SymmetricIntervalHull{N, S}(X)
