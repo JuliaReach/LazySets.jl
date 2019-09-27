@@ -309,8 +309,8 @@ if test_suite_polyhedra
         @test vertices_list(cap) ≈ [N[1, 1]]
         p4 = BallInf(N[2, 2], N(1))
         cap = intersection(p1, p4)
-        vlist = vertices_list(cap)  # contains duplicates (see #1405)
-        @test all(v -> v == N[1, 1], vlist)
+        vlist = vertices_list(cap)
+        @test vlist == [N[1, 1]]
 
         # convex hull
         v1 = N[1, 0]

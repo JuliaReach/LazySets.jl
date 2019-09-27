@@ -59,7 +59,7 @@ Build a vertex representation of the given polygon.
 The same polygon but in vertex representation, a `VPolygon`.
 """
 function tovrep(P::AbstractHPolygon{N})::VPolygon{N} where {N<:Real}
-    return VPolygon(vertices_list(P))
+    return VPolygon(vertices_list(P; apply_convex_hull=false))
 end
 
 
@@ -85,8 +85,8 @@ end
 
 
 """
-    vertices_list(P::AbstractHPolygon{N},
-                  apply_convex_hull::Bool=false,
+    vertices_list(P::AbstractHPolygon{N};
+                  apply_convex_hull::Bool=true,
                   check_feasibility::Bool=true
                  )::Vector{Vector{N}} where {N<:Real}
 
@@ -95,7 +95,7 @@ Return the list of vertices of a polygon in constraint representation.
 ### Input
 
 - `P`                 -- polygon in constraint representation
-- `apply_convex_hull` -- (optional, default: `false`) flag to post-process the
+- `apply_convex_hull` -- (optional, default: `true`) flag to post-process the
                          intersection of constraints with a convex hull
 - `check_feasibility` -- (optional, default: `true`) flag to check whether the
                          polygon was empty (required for correctness in case of
@@ -114,8 +114,8 @@ polygon were actually feasible (i.e., they pointed in the *right* direction).
 For this we compute the *average* of all vertices and check membership in each
 constraint.
 """
-function vertices_list(P::AbstractHPolygon{N},
-                       apply_convex_hull::Bool=false,
+function vertices_list(P::AbstractHPolygon{N};
+                       apply_convex_hull::Bool=true,
                        check_feasibility::Bool=true
                       )::Vector{Vector{N}} where {N<:Real}
     n = length(P.constraints)
