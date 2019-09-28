@@ -68,7 +68,8 @@ If we only consider *concrete* subtypes, then:
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(LazySet, true)
-37-element Array{Type,1}:
+38-element Array{Type,1}:
+ AffineMap
  Ball1
  Ball2
  BallInf
