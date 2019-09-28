@@ -24,14 +24,15 @@ using Plots, LazySets, LazySets.Approximations
 E₁ = Ellipsoid(zeros(2), [1 0; 0 2.])
 E₂ = Ellipsoid(ones(2), [2 0; 0 1.])
 
-pell = plot(E₁, 1e-3, aspectratio=1, alpha=.5)
-pell = plot!(pell, E₂, 1e-3, alpha=.5)
+pell = plot(E₁, aspectratio=1)
+pell = plot!(pell, E₂)
 ```
 
 !!! note
-    If you are wondering about the paremeter `1e-3` passed to `plot`, this
-    parameter controls the accuracy to which the set is plotted (because the set that
-    we actually plot is a polygonal overapproximation of the ellipses!).
+    The accuracy to which this set is plotted can be controlled by passing a numerical argument as in
+    `plot(E₁, 1e-3, ratio=1)`. Here, `1e-3` stands for an upper-bound on the error, measured in terms of
+    the [Hausdorff distance](https://en.wikipedia.org/wiki/Hausdorff_distance) between the ellipsoid and
+    the polygonal overapproximation which is actually computed for display.
 
 Now let's take the *lazy* intersection of the ellipses:
 
@@ -71,12 +72,12 @@ Hint(ε) = intersection(convert.(HPolytope, [H₁(ε), H₂(ε)])...);
 ```
 
 ```@example ellipsoids
-pell = plot(E₁, 1e-3, aspectratio=1, alpha=.5)
-pell = plot!(pell, E₂, 1e-3, alpha=.5)
+pell = plot(E₁, aspectratio=1)
+pell = plot!(pell, E₂)
 pεsmaller = plot!(pell, convert(HPolygon, Hint(0.5)), alpha=.4)
 
-pell = plot(E₁, 1e-3, aspectratio=1, alpha=.5)
-pell = plot!(pell, E₂, 1e-3, alpha=.5)
+pell = plot(E₁, aspectratio=1)
+pell = plot!(pell, E₂)
 pεbigger = plot!(pell, convert(HPolygon, Hint(0.05)), alpha=.4)
 
 plot(pεsmaller, pεbigger, layout=(1, 2))
@@ -104,12 +105,12 @@ Xbox = overapproximate(E₁ ∩ E₂, BoxDirections(2))
 # overapproximate the lazy intersection using octagonal directions
 Xoct = overapproximate(E₁ ∩ E₂, OctDirections(2))
 
-pell = plot(E₁, 1e-3, aspectratio=1, alpha=.5)
-pell = plot!(pell, E₂, 1e-3, alpha=.5)
+pell = plot(E₁, aspectratio=1)
+pell = plot!(pell, E₂)
 pbox = plot!(pell, Xbox, alpha=.4)
 
-pell = plot(E₁, 1e-3, aspectratio=1, alpha=.5)
-pell = plot!(pell, E₂, 1e-3, alpha=.5)
+pell = plot(E₁, aspectratio=1)
+pell = plot!(pell, E₂)
 poct = plot!(pell, Xoct, alpha=.4)
 
 plot(pbox, poct, layout=(1, 2))
