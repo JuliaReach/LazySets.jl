@@ -106,7 +106,7 @@ julia> subtypes(LazySet, true)
  VPolytope
  ZeroSet
  Zonotope
- ```
+```
 """
 abstract type LazySet{N} end
 
