@@ -73,44 +73,44 @@ julia> length(concrete_subtypes)
 38
 
 julia> println.(concrete_subtypes);
- AffineMap
- Ball1
- Ball2
- BallInf
- Ballp
- CacheMinkowskiSum
- CartesianProduct
- CartesianProductArray
- ConvexHull
- ConvexHullArray
- Ellipsoid
- EmptySet
- ExponentialMap
- ExponentialProjectionMap
- HPolygon
- HPolygonOpt
- HPolyhedron
- HPolytope
- HalfSpace
- Hyperplane
- Hyperrectangle
- Intersection
- IntersectionArray
- Interval
- Line
- LineSegment
- LinearMap
- MinkowskiSum
- MinkowskiSumArray
- ResetMap
- Singleton
- SymmetricIntervalHull
- Translation
- Universe
- VPolygon
- VPolytope
- ZeroSet
- Zonotope
+AffineMap
+Ball1
+Ball2
+BallInf
+Ballp
+CacheMinkowskiSum
+CartesianProduct
+CartesianProductArray
+ConvexHull
+ConvexHullArray
+Ellipsoid
+EmptySet
+ExponentialMap
+ExponentialProjectionMap
+HPolygon
+HPolygonOpt
+HPolyhedron
+HPolytope
+HalfSpace
+Hyperplane
+Hyperrectangle
+Intersection
+IntersectionArray
+Interval
+Line
+LineSegment
+LinearMap
+MinkowskiSum
+MinkowskiSumArray
+ResetMap
+Singleton
+SymmetricIntervalHull
+Translation
+Universe
+VPolygon
+VPolytope
+ZeroSet
+Zonotope
 ```
 """
 abstract type LazySet{N} end
