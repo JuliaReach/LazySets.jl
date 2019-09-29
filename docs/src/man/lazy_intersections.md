@@ -30,7 +30,7 @@ pell = plot!(pell, E₂)
 
 !!! note
     The accuracy to which this set is plotted can be controlled by passing a numerical argument as in
-    `plot(E₁, 1e-3, ratio=1)`. Here, `1e-3` stands for an upper-bound on the error, measured in terms of
+    `plot(E₁, 1e-3, aspectratio=1)`. Here, `1e-3` stands for an upper-bound on the error, measured in terms of
     the [Hausdorff distance](https://en.wikipedia.org/wiki/Hausdorff_distance) between the ellipsoid and
     the polygonal overapproximation which is actually computed for display.
 
