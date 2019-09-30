@@ -19,16 +19,19 @@ Type that represents the matrix exponential, ``\\exp(M)``, of a sparse matrix.
 
 ### Fields
 
-- `M` -- sparse matrix
+- `M` -- sparse matrix; it should be square
 
 ### Examples
 
-Take for exammple a random sparse matrix:
+Take for example a random sparse matrix of dimensions ``100 × 100`` and with
+occupation probability ``0.1``:
 
 ```jldoctest SparseMatrixExp_constructor
 julia> using SparseArrays
 
 julia> A = sprandn(100, 100, 0.1);
+
+julia> using Expokit
 
 julia> E = SparseMatrixExp(A);
 
@@ -36,9 +39,9 @@ julia> size(E)
 (100, 100)
 ```
 
-Now, `E` is a lazy representation of ``\\exp(A)``. To compute with `E`, use
-`get_row` and `get_column` (or `get_rows` and `get_columns`;
-they return row and column vectors (or matrices). For example:
+Here `E` is a lazy representation of ``\\exp(A)``. To compute with `E`, use
+`get_row` and `get_column` resp. `get_rows` and `get_columns`. These functions
+return row and column vectors (or matrices). For example:
 
 ```jldoctest SparseMatrixExp_constructor
 julia> get_row(E, 10); # compute E[10, :]
@@ -54,10 +57,17 @@ julia> get_columns(E, [10]); # same as get_column(E, 10) but a 100x1 matrix is r
 
 This type is provided for use with very large and very sparse matrices.
 The evaluation of the exponential matrix action over vectors relies on the
-[Expokit](https://github.com/acroy/Expokit.jl) package.
+[Expokit](https://github.com/acroy/Expokit.jl) package. Hence, you will have to
+install and load this optional dependency to have access to the functionality
+of `SparseMatrixExp`.
 """
 struct SparseMatrixExp{N, MN<:AbstractSparseMatrix{N}} <: AbstractMatrix{N}
     M::MN
+    function SparseMatrixExp(M::MN) where {N, MN<:AbstractSparseMatrix{N}}
+        @assert size(M, 1) == size(M, 2) "the lazy matrix exponential `SparseMatrixExp` " *
+        "requires the given matrix to be square, but it has size $(size(M))"
+        return new{N, MN}(M)
+    end
 end
 
 SparseMatrixExp(M::Matrix) =

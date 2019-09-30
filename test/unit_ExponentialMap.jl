@@ -31,6 +31,9 @@ for N in [Float64, Float32]
     # constructor from a dense matrix
     @test_throws ErrorException SparseMatrixExp(Matrix{N}(I, 2, 2))
 
+    # constructor from a non-square matrix
+    @test_throws AssertionError SparseMatrixExp(sprandn(N, 2, 3, 0.1))
+
     # size
     @test size(me, 1) == n
     @test size(me) == (n, n)
