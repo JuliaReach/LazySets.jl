@@ -65,7 +65,7 @@ struct SparseMatrixExp{N, MN<:AbstractSparseMatrix{N}} <: AbstractMatrix{N}
     M::MN
     function SparseMatrixExp(M::MN) where {N, MN<:AbstractSparseMatrix{N}}
         @assert size(M, 1) == size(M, 2) "the lazy matrix exponential `SparseMatrixExp` " *
-        "requires the given matrix to be square, but it has size $(size(M))"
+            "requires the given matrix to be square, but it has size $(size(M))"
         return new{N, MN}(M)
     end
 end
