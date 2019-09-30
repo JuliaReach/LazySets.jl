@@ -15,60 +15,10 @@ Overapproximate a convex set by a tight hyperrectangle.
 ### Output
 
 A tight hyperrectangle.
-
-### Algorithm
-
-The center of the hyperrectangle is obtained by averaging the support function
-of the given set in the canonical directions, and the lengths of the sides can
-be recovered from the distance among support functions in the same directions.
 """
 function box_approximation(S::LazySet{N}
                           )::Union{Hyperrectangle{N}, EmptySet{N}} where {N<:Real}
-    (c, r) = box_approximation_helper(S)
-    if r[1] < 0
-        return EmptySet{N}()
-    end
-    return Hyperrectangle(c, r)
-end
-
-# special case: Hyperrectangle
-box_approximation(S::Hyperrectangle) = S
-
-# special case: other rectangle
-box_approximation(S::AbstractHyperrectangle) =
-    Hyperrectangle(center(S), radius_hyperrectangle(S))
-
-# special case: empty set
-box_approximation(∅::EmptySet) = ∅
-
-"""
-    box_approximation(r::Rectification{N}
-                     )::Union{Hyperrectangle{N}, EmptySet{N}} where {N<:Real}
-
-Overapproximate the rectification of a convex set by a tight hyperrectangle.
-
-### Input
-
-- `S` -- rectification of a convex set
-
-### Output
-
-A hyperrectangle.
-
-### Algorithm
-
-Box approximation and rectification distribute.
-Hence we first check whether the wrapped set is empty.
-If so, we return the empty set.
-Otherwise, we compute the box approximation of the wrapped set, rectify the
-resulting box (which is simple), and finally convert the resulting set to a box.
-"""
-function box_approximation(r::Rectification{N}
-                          )::Union{Hyperrectangle{N}, EmptySet{N}} where {N<:Real}
-    if isempty(r.X)
-        return EmptySet{N}()
-    end
-    return convert(Hyperrectangle, Rectification(box_approximation(r.X)))
+    return overapproximate(S, Hyperrectangle)
 end
 
 """
@@ -119,8 +69,7 @@ Alias for `box_approximation_symmetric`.
 symmetric_interval_hull = box_approximation_symmetric
 
 """
-    box_approximation_helper(S::LazySet{N};
-                            ) where {N<:Real}
+    box_approximation_helper(S::LazySet{N}) where {N<:Real}
 
 Common code of `box_approximation` and `box_approximation_symmetric`.
 
@@ -143,8 +92,7 @@ of the given convex set in the canonical directions.
 The lengths of the sides can be recovered from the distance among support
 functions in the same directions.
 """
-@inline function box_approximation_helper(S::LazySet{N};
-                                         ) where {N<:Real}
+@inline function box_approximation_helper(S::LazySet{N}) where {N<:Real}
     zero_N = zero(N)
     one_N = one(N)
     n = dim(S)
@@ -170,8 +118,8 @@ functions in the same directions.
 end
 
 """
-    ballinf_approximation(S::LazySet{N};
-                         )::BallInf{N} where {N<:Real}
+    ballinf_approximation(S::LazySet{N}
+                         )::Union{BallInf{N}, EmptySet{N}} where {N<:Real}
 
 Overapproximate a convex set by a tight ball in the infinity norm.
 
@@ -182,37 +130,10 @@ Overapproximate a convex set by a tight ball in the infinity norm.
 ### Output
 
 A tight ball in the infinity norm.
-
-### Algorithm
-
-The center and radius of the box are obtained by evaluating the support function
-of the given convex set along the canonical directions.
 """
-function ballinf_approximation(S::LazySet{N};
+function ballinf_approximation(S::LazySet{N}
                               )::Union{BallInf{N}, EmptySet{N}} where {N<:Real}
-    zero_N = zero(N)
-    one_N = one(N)
-    n = dim(S)
-    c = Vector{N}(undef, n)
-    r = zero_N
-    d = zeros(N, n)
-
-    @inbounds for i in 1:n
-        d[i] = one_N
-        htop = ρ(d, S)
-        d[i] = -one_N
-        hbottom = -ρ(d, S)
-        d[i] = zero_N
-        c[i] = (htop + hbottom) / 2
-        rcur = (htop - hbottom) / 2
-        if (rcur > r)
-            r = rcur
-        elseif rcur < 0
-            # contradicting bounds => set is empty
-            return EmptySet{N}()
-        end
-    end
-    return BallInf(c, r)
+    return overapproximate(S, BallInf)
 end
 
 # special case: empty set

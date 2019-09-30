@@ -106,6 +106,13 @@ for N in [Float64, Rational{Int}, Float32]
     oa = overapproximate(P ∩ Q, BoxDirections)
     B = BallInf(N[0, 0], N(1))
     @test B ⊆ oa && oa ⊆ B
+
+    # rectification
+    r = Rectification(EmptySet{N}())
+    @test overapproximate(r, Hyperrectangle) isa EmptySet{N}
+    r = Rectification(Ball1(N[0, 0], N(1)))
+    @test overapproximate(r, Hyperrectangle) ==
+        Hyperrectangle(low=N[0, 0], high=N[1, 1])
 end
 
 # tests that do not work with Rational{Int}

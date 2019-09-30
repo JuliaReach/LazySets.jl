@@ -33,11 +33,6 @@ for N in [Float64, Rational{Int}, Float32]
     E = EmptySet{N}()
     @test box_approximation(E) == E
 
-    # rectification
-    @test box_approximation(Rectification(EmptySet{N}())) isa EmptySet{N}
-    r = Rectification(Ball1(N[0, 0], N(1)))
-    @test box_approximation(r) == Hyperrectangle(low=N[0, 0], high=N[1, 1])
-
     # ===================================================================
     # Testing box_approximation_symmetric (= symmetric interval hull)
     # ===================================================================
