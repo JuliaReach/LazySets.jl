@@ -33,8 +33,8 @@ for N in [Float64, Float32]
 
     # constructor from a non-square matrix
     # we would use sprandn(N, 2, 3, 0.1) but it is available from Julia v1.1
-    m = randn(N, 2, 3)
-    @test_throws AssertionError SparseMatrixExp(sparse(m))
+    mr = randn(N, 2, 3)
+    @test_throws AssertionError SparseMatrixExp(sparse(mr))
 
     # size
     @test size(me, 1) == n
