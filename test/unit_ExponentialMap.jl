@@ -32,7 +32,9 @@ for N in [Float64, Float32]
     @test_throws ErrorException SparseMatrixExp(Matrix{N}(I, 2, 2))
 
     # constructor from a non-square matrix
-    @test_throws AssertionError SparseMatrixExp(sprandn(N, 2, 3, 0.1))
+    # we would use sprandn(N, 2, 3, 0.1) but it is available from Julia v1.1
+    m = randn(N, 2, 3)
+    @test_throws AssertionError SparseMatrixExp(sparse(m))
 
     # size
     @test size(me, 1) == n
