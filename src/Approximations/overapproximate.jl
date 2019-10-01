@@ -91,9 +91,9 @@ The center of the hyperrectangle is obtained by averaging the support function
 of the given set in the canonical directions, and the lengths of the sides can
 be recovered from the distance among support functions in the same directions.
 """
-function overapproximate(S::LazySet,
+function overapproximate(S::LazySet{N},
                          ::Type{<:Hyperrectangle};
-                        )::Union{Hyperrectangle, EmptySet}
+                        )::Union{Hyperrectangle, EmptySet} where {N<:Real}
     c, r = box_approximation_helper(S)
     if r[1] < 0
         return EmptySet{N}()
