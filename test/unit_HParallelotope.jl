@@ -1,4 +1,4 @@
-for N in [Float32, Float64]
+for N in [Float32, Float64, Rational{Int}]
     # Example 6 from [1].
     #
     # [1] Dreossi, Tommaso, Thao Dang, and Carla Piazza. *Reachability computation for polynomial dynamical systems.*
@@ -17,9 +17,9 @@ for N in [Float32, Float64]
 
     # test computation of the list of constraints
     @test constraints_list(P) == [HalfSpace(D[1, :], c[1]),
-                                HalfSpace(D[2, :], c[2]),
-                                HalfSpace(D[3, :], c[3]),
-                                HalfSpace(-D[1, :], c[4]),
-                                HalfSpace(-D[2, :], c[5]),
-                                HalfSpace(-D[3, :], c[6])]
+                                  HalfSpace(D[2, :], c[2]),
+                                  HalfSpace(D[3, :], c[3]),
+                                  HalfSpace(-D[1, :], c[4]),
+                                  HalfSpace(-D[2, :], c[5]),
+                                  HalfSpace(-D[3, :], c[6])]
 end

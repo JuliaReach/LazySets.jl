@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 using LazySets, LazySets.Approximations, Test, LinearAlgebra, SparseArrays, StaticArrays
+=======
+using LazySets, LazySets.Approximations, Test, LinearAlgebra, SparseArrays
+>>>>>>> update docs, various fixes
 
 import IntervalArithmetic
 const IA = IntervalArithmetic

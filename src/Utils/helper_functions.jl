@@ -220,9 +220,10 @@ concrete types are obtained), using the `concrete` flag:
 
 ```jldoctest subtypes
 julia> subtypes(AbstractPolytope, true)
-14-element Array{Type,1}:
+15-element Array{Type,1}:
  Ball1
  BallInf
+ HParallelotope
  HPolygon
  HPolygonOpt
  HPolytope
