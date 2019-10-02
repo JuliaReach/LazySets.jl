@@ -264,10 +264,7 @@ function ρ_helper(d::AbstractVector{N},
     end
 
     if !use_precise_ρ(cap) || algorithm == "simple"
-        # simple approach, fallback
-        # TODO replace (see #750) by
-        # return min(ρ(d, X; kwargs...), ρ(d, H; kwargs...))
-        return ρ(d, X; kwargs...)
+        return invoke(ρ, Tuple{typeof(d), Intersection{N}}, d, cap)
     elseif algorithm == "line_search"
         require(:Optim; fun_name="ρ", explanation="(algorithm $algorithm)")
         (s, _) = _line_search(d, X, H; kwargs...)
@@ -422,20 +419,38 @@ This method relies on the `constraints_list` of the polyhedron.
 """
 function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2}; kwargs...
           ) where {N<:Real, S1<:LazySet{N}, S2<:AbstractPolyhedron{N}}
-    @assert isbounded(cap.X) "the first set in the intersection must be bounded"
-    return minimum([ρ(d, cap.X ∩ Hi; kwargs...)
-                   for Hi in constraints_list(cap.Y)])
+    return ρ_helper(d, cap; kwargs...)
 end
 
 # symmetric method
 function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2}; kwargs...
           ) where {N<:Real, S1<:AbstractPolyhedron{N}, S2<:LazySet{N}}
-    return ρ(d, swap(cap); kwargs...)
+    return ρ_helper(d, swap(cap); kwargs...)
 end
 
 # disambiguation
 function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2}; kwargs...
           ) where {N<:Real, S1<:AbstractPolytope{N}, S2<:AbstractPolyhedron{N}}
+    return ρ_helper(d, cap; kwargs...)
+end
+
+function ρ_helper(d::AbstractVector{N}, cap::Intersection{N, S1, S2}; kwargs...
+                 ) where {N<:Real, S1<:LazySet{N}, S2<:AbstractPolyhedron{N}}
+    if !use_precise_ρ(cap)
+        use_simple_method = true
+    else
+        options = Dict(kwargs)
+        use_simple_method = haskey(options, :algorithm) &&
+                       options[:algorithm] == "simple"
+    end
+
+    if use_simple_method
+        # simple algorithm
+        return invoke(ρ, Tuple{typeof(d), Intersection{N}}, d, cap)
+    end
+
+    # more precise algorithm
+    @assert isbounded(cap.X) "the first set in the intersection must be bounded"
     return minimum([ρ(d, cap.X ∩ Hi; kwargs...)
                    for Hi in constraints_list(cap.Y)])
 end
