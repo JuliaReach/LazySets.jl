@@ -44,7 +44,7 @@ we refer to [3].
 
 ### References
 
-[1] Dreossi, Tommaso, Thao Dang, and Carla Piazza. *Reachability computation for polynomial dynamical systems.*
+[1] Tommaso Dreossi, Thao Dang, and Carla Piazza. *Reachability computation for polynomial dynamical systems.*
     Formal Methods in System Design 50.1 (2017): 1-38.
 
 [2] Tommaso Dreossi, Thao Dang, and Carla Piazza. *Parallelotope bundles for polynomial reachability.*
