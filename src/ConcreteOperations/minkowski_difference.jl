@@ -27,7 +27,7 @@ This function implements Theorem 2.3 in [1], which we state next.
 
 Suppose ``P`` is a polyhedron
 ```math
-P = \\{z ∈ ℝ^n: sᵢᵀz ≤ rᵢ,~i = 1 , …, N\\}.
+P = \\{z ∈ ℝ^n: sᵢᵀz ≤ rᵢ,~i = 1, …, N\\}.
 ```
 where ``sᵢ ∈ ℝ^n, sᵢ ≠ 0``, and ``rᵢ ∈ ℝ``.
 Assume ``ρ(sᵢ,Q)`` is defined for ``i = 1, …, N``. Then,
