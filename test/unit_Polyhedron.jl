@@ -67,6 +67,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test constrained_dimensions(p) == [1, 2]
     @test constrained_dimensions(
         HPolyhedron([LinearConstraint(N[1, 0], N(1))])) == [1]
+    @test constrained_dimensions(HPolyhedron()) == Int[]
 
     # concrete linear map with invertible matrix
     linear_map(N[2 3; 1 2], p)

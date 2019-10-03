@@ -71,8 +71,12 @@ dimension `i`.
 A 2D polyhedron with constraint ``x1 ≥ 0`` is constrained in dimension 1 only.
 """
 function constrained_dimensions(P::AbstractPolyhedron)::Vector{Int}
+    constraints = constraints_list(P)
+    if isempty(constraints)
+        return Int[]
+    end
     zero_indices = zeros(Int, dim(P))
-    for constraint in constraints_list(P)
+    for constraint in constraints
         for i in constrained_dimensions(constraint)
             zero_indices[i] = i
         end
