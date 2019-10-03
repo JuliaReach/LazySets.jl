@@ -27,18 +27,18 @@ This function implements Theorem 2.3 in [1], which we state next.
 
 Suppose ``P`` is a polyhedron
 ```math
-P = \\{z ∈ ℝⁿ: sᵢᵀz ≤ rᵢ, i=1,...,N\\}.
+P = \\{z ∈ \\mathbb{R}^n: sᵢᵀz ≤ rᵢ,~i = 1 , \\ldots, N\\}.
 ```
-where ``sᵢ ∈ ℝⁿ, sᵢ ≠ 0``, and ``rᵢ ∈ ℝ``.
-Assume ``ρ(sᵢ,Q)`` is defined for ``i=1,...,N``. Then,
+where ``sᵢ ∈ \\mathbb{R}^n, sᵢ ≠ 0``, and ``rᵢ ∈ \\mathbb{R}``.
+Assume ``ρ(sᵢ,Q)`` is defined for ``i = 1, \\ldots, N``. Then,
 
 ```math
-P ~ Q = \\{z ∈ ℝⁿ: sᵢᵀz ≤ rᵢ - ρ(sᵢ,Q), i=1,...,N\\}.
+P ⊖ Q = \\{z ∈ \\mathbb{R}^n: sᵢᵀz ≤ rᵢ - ρ(sᵢ,Q),~i = 1, \\ldots, N\\}.
 ```
 
-where ``~`` is defined as ``P ~ Q = \\{z ∈ ℝⁿ: z + v ∈ P  ∀ v ∈ Q\\}`` and is called
-the *Minkowski difference* (also referenced as *Pontryagin difference*)
-and often denoted by the operator ⊖.
+where ``⊖`` is defined as ``P ⊖ Q = \\{z ∈ \\mathbb{R}^n: z + v ∈ P  ~∀~v ∈ Q\\}`` and is called
+the *Minkowski difference* (also referenced as *Pontryagin difference*, or geometric difference).
+It is denoted in [1] as the operator `P ~ Q`.
 
 [1] *Ilya Kolmanovsky and Elmer G. Gilbert (1997). Theory and computation
 of disturbance invariant sets for discrete-time linear systems.
