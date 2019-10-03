@@ -50,7 +50,7 @@ we refer to [3].
 [2] Dreossi, Tommaso, Thao Dang, and Carla Piazza. *Parallelotope bundles for polynomial reachability.*
     Proceedings of the 19th International Conference on Hybrid Systems: Computation and Control. ACM, 2016.
 
-[3] Althoff, Matthias, Olaf Stursberg, and Martin Buss. *Computing reachable sets of hybrid systems using
+[3] Matthias Althoff, Olaf Stursberg, and Martin Buss. *Computing reachable sets of hybrid systems using
     a combination of zonotopes and polytopes.* Nonlinear analysis: hybrid systems 4.2 (2010): 233-249.
 """
 struct HParallelotope{N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
