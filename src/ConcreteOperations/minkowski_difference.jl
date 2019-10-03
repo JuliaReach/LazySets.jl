@@ -27,23 +27,23 @@ This function implements Theorem 2.3 in [1], which we state next.
 
 Suppose ``P`` is a polyhedron
 ```math
-P = \\{z ∈ \\mathbb{R}^n: sᵢᵀz ≤ rᵢ,~i = 1 , \\ldots, N\\}.
+P = \\{z ∈ ℝ^n: sᵢᵀz ≤ rᵢ,~i = 1 , …, N\\}.
 ```
-where ``sᵢ ∈ \\mathbb{R}^n, sᵢ ≠ 0``, and ``rᵢ ∈ \\mathbb{R}``.
-Assume ``ρ(sᵢ,Q)`` is defined for ``i = 1, \\ldots, N``. Then,
+where ``sᵢ ∈ ℝ^n, sᵢ ≠ 0``, and ``rᵢ ∈ ℝ``.
+Assume ``ρ(sᵢ,Q)`` is defined for ``i = 1, …, N``. Then,
 
 ```math
-P ⊖ Q = \\{z ∈ \\mathbb{R}^n: sᵢᵀz ≤ rᵢ - ρ(sᵢ,Q),~i = 1, \\ldots, N\\}.
+P ⊖ Q = \\{z ∈ ℝ^n: sᵢᵀz ≤ rᵢ - ρ(sᵢ,Q),~i = 1, …, N\\}.
 ```
 
-where ``⊖`` is defined as ``P ⊖ Q = \\{z ∈ \\mathbb{R}^n: z + v ∈ P  ~∀~v ∈ Q\\}`` and is called
+where ``⊖`` is defined as ``P ⊖ Q = \\{z ∈ ℝ^n: z + v ∈ P  ~∀~v ∈ Q\\}`` and is called
 the *Minkowski difference* (also referenced as *Pontryagin difference*, or geometric difference).
-It is denoted in [1] as the operator `P ~ Q`.
+It is denoted in [1] as the operation `P ~ Q`.
 
-[1] *Ilya Kolmanovsky and Elmer G. Gilbert (1997). Theory and computation
-of disturbance invariant sets for discrete-time linear systems.
-Mathematical Problems in Engineering Volume 4, Issue 4, Pages 317-367.
-http://dx.doi.org/10.1155/S1024123X98000866*
+[1] Ilya Kolmanovsky and Elmer G. Gilbert (1997). *Theory and computation
+of disturbance invariant sets for discrete-time linear systems.*
+[Mathematical Problems in Engineering Volume 4, Issue 4, Pages 317-367.](
+http://dx.doi.org/10.1155/S1024123X98000866)
 """
 function minkowski_difference(P::LazySet{N}, Q::LazySet{N}) where {N<:Real}
 
