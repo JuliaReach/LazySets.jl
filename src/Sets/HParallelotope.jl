@@ -181,7 +181,7 @@ where for each ``i = 1, \\ldots, n``,
 
 We refer to [1, Section 3.2.1] for details.
 
-[1] Dreossi, Tommaso, Thao Dang, and Carla Piazza. *Reachability computation for
+[1] Tommaso Dreossi, Thao Dang, and Carla Piazza. *Reachability computation for
     polynomial dynamical systems.* Formal Methods in System Design 50.1 (2017): 1-38.
 """
 function extremal_vertices(P::HParallelotope{N}) where {N<:Real}
