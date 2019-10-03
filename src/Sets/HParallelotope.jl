@@ -47,7 +47,7 @@ we refer to [3].
 [1] Dreossi, Tommaso, Thao Dang, and Carla Piazza. *Reachability computation for polynomial dynamical systems.*
     Formal Methods in System Design 50.1 (2017): 1-38.
 
-[2] Dreossi, Tommaso, Thao Dang, and Carla Piazza. *Parallelotope bundles for polynomial reachability.*
+[2] Tommaso Dreossi, Thao Dang, and Carla Piazza. *Parallelotope bundles for polynomial reachability.*
     Proceedings of the 19th International Conference on Hybrid Systems: Computation and Control. ACM, 2016.
 
 [3] Matthias Althoff, Olaf Stursberg, and Martin Buss. *Computing reachable sets of hybrid systems using
