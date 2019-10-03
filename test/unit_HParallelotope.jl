@@ -1,7 +1,7 @@
 for N in [Float32, Float64, Rational{Int}]
     # Example 6 from [1].
     #
-    # [1] Dreossi, Tommaso, Thao Dang, and Carla Piazza. *Reachability computation for polynomial dynamical systems.*
+    # [1] Tommaso Dreossi, Thao Dang, and Carla Piazza. *Reachability computation for polynomial dynamical systems.*
     #      Formal Methods in System Design 50.1 (2017): 1-38.
     D = N[-1 0 0; -1 -1 0; 0 0 -1]
     c = N[-0.80, -0.95, 0.0, 0.85, 1.0, 0.0]
