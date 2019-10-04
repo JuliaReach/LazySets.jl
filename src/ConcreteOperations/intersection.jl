@@ -886,6 +886,9 @@ function intersection(cpa::CartesianProductArray{N}, P::AbstractPolyhedron{N}
     # "unconstrained | constrained | unconstrained" (the first and third section
     # may be empty)
     constrained_dims = constrained_dimensions(P)
+    if isempty(constrained_dims)
+        return cpa
+    end
     minimal = minimum(constrained_dims)
     maximal = maximum(constrained_dims)
     lower_bound = 1
