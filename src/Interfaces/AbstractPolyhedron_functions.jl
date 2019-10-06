@@ -230,18 +230,19 @@ function remove_redundant_constraints(
 end
 
 """
-    linear_map(M::AbstractMatrix{N},
+    linear_map(M::Union{AbstractMatrix{N}, Nothing},
                P::AbstractPolyhedron{N};
                [algorithm]::String=(issparse(M) ? "division" : "inverse"),
                [check_invertibility]::Bool=true,
                [cond_tol]::Number=DEFAULT_COND_TOL,
+               [inverse]::Union{AbstractMatrix{N}, Nothing}=nothing
                ) where {N<:Real}
 
 Concrete linear map of a polyhedral set.
 
 ### Input
 
-- `M`         -- matrix
+- `M`         -- matrix (or `nothing` if `inverse` is specified; see below)
 - `P`         -- polyhedral set
 - `algorithm` -- (optional; default: `"division"` for sparse `M` and `"inverse"`
                  otherwise) the algorithm to be used; possible choices are:
@@ -257,8 +258,9 @@ Concrete linear map of a polyhedral set.
                            the invertibility check fails, we fall back to the
                            `"vrep"` algorithm; this option is ignored if the
                            `"vrep"` algorithm is used
-- `cond_tol`  -- (optional) tolerance of matrix condition (used to check whether
-                the matrix is invertible)
+- `cond_tol`  -- (optional; default: `DEFAULT_COND_TOL`) tolerance of matrix
+                 condition (used to check whether the matrix is invertible)
+- `inverse`   -- (optional; default: `nothing`) matrix inverse (if known)
 
 ### Output
 
@@ -302,8 +304,9 @@ polyhedron is bounded, which we check.
 
 If the matrix is known to be invertible, the the option `check_invertibility`
 can be used to skip the invertibility test.
-If the matrix inverse is even known, there is also a method that accepts the
-inverse as a keyword argument `inverse`.
+If the matrix inverse is even known, it can be specified with the option
+`inverse`, in which case we ignore the other options and also the original
+matrix `M` (which can also be `nothing` for this reason).
 
 The algorithms `"division"` and `"inverse"` give control - in case `M` is
 invertible - on whether the full matrix inverse is computed or only the left
@@ -325,10 +328,20 @@ New subtypes of the interface should define their own `_linear_map_vrep`
 (resp. `_linear_map_hrep`) for special handling of the linear map; otherwise
 the fallback implementation for `AbstractPolyhedron` is used.
 """
-function linear_map(M::AbstractMatrix{N}, P::AbstractPolyhedron{N};
+function linear_map(M::Union{AbstractMatrix{N}, Nothing},
+                    P::AbstractPolyhedron{N};
                     algorithm::String=(issparse(M) ? "division" : "inverse"),
                     check_invertibility::Bool=true,
-                    cond_tol::Number=DEFAULT_COND_TOL) where {N<:Real}
+                    cond_tol::Number=DEFAULT_COND_TOL,
+                    inverse::Union{AbstractMatrix{N}, Nothing}=nothing) where {N<:Real}
+    # if `inverse` is specified, we ignore other inputs and do not check them
+    if inverse != nothing
+        # we ignore `M` here and pass `inverse` as matrix instead
+        return _linear_map_hrep(inverse, P, true; inverse=inverse)
+    end
+
+    @assert M != nothing "a matrix must be specified unless the inverse is " *
+        "specified as well"
     @assert dim(P) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
         "applied to a set of dimension $(dim(P))"
     supported_algorithms = ["vrep", "inverse", "division"]
@@ -346,35 +359,6 @@ function linear_map(M::AbstractMatrix{N}, P::AbstractPolyhedron{N};
         use_inv = algorithm == "inverse"
         return _linear_map_hrep(M, P, use_inv)
     end
-end
-
-"""
-    linear_map(M::Union{AbstractMatrix{N}, Nothing}, P::AbstractPolyhedron{N};
-               inverse::AbstractMatrix{N}) where {N<:Real}
-
-Concrete linear map of a polyhedral set given the inverse of the matrix.
-
-### Input
-
-- `M`       -- any matrix or even `nothing` (is ignored)
-- `P`       -- polyhedral set
-- `inverse` -- the inverse of the matrix
-
-### Output
-
-A polyhedron in constraint representation.
-
-### Algorithm
-
-This method should be used if the matrix inverse is known.
-"""
-function linear_map(M::Union{AbstractMatrix{N}, Nothing},
-                    P::AbstractPolyhedron{N};
-                    inverse::AbstractMatrix{N}) where {N<:Real}
-    if M == nothing
-        M = inverse
-    end
-    return _linear_map_hrep(M, P, true; inverse=inverse)
 end
 
 # handle different numeric types
