@@ -3,7 +3,8 @@ import Base.rand
 export Hyperrectangle
 
 """
-    Hyperrectangle{N<:Real} <: AbstractHyperrectangle{N}
+    Hyperrectangle{N<:Real, VNC<:AbstractVector{N}, VNR<:AbstractVector{N}
+                  } <: AbstractHyperrectangle{N}
 
 Type that represents a hyperrectangle.
 
@@ -18,21 +19,55 @@ Cartesian product of one-dimensional intervals.
 
 ### Examples
 
-There is also a constructor from lower and upper bounds with keyword arguments
-`high` and `low`.
-The following two constructions are equivalent:
+The `Hyperrectangle` type stores a vector representing the center and another
+vector representing the radius. The default constructor `Hyperrectangle(c, r)`
+receives the center and radius, in that order. For instance,
 
-```jldoctest
+```jldoctest hyperrectangle_constructor
 julia> c = [-1.0, 1.0];
 
 julia> r = [2.0, 1.0];
 
+julia> H = Hyperrectangle(c, r)
+Hyperrectangle{Float64,Array{Float64,1},Array{Float64,1}}([-1.0, 1.0], [2.0, 1.0])
+```
+
+Which creates the hyperrectangle with vertices:
+
+```jldoctest hyperrectangle_constructor
+julia> vertices_list(H)
+4-element Array{Array{Float64,1},1}:
+ [1.0, 2.0]
+ [-3.0, 2.0]
+ [1.0, 0.0]
+ [-3.0, 0.0]
+```
+
+The getter functions for the center and the radius are `center` and
+`radius_hyperrectangle` (since `radius` corresponds to the radius of the
+enclosing ball of minimal volume):
+
+```jldoctest hyperrectangle_constructor
+julia> center(H)
+2-element Array{Float64,1}:
+ -1.0
+  1.0
+
+julia> radius_hyperrectangle(H)
+2-element Array{Float64,1}:
+ 2.0
+ 1.0
+```
+
+There is also a constructor from lower and upper bounds with keyword arguments
+`high` and `low`. The following construction results in the same hyperrectangle
+as in the previous paragraph:
+
+```jldoctest hyperrectangle_constructor
 julia> l = [-3.0, 0.0];
 
 julia> h = [1.0, 2.0];
 
-julia> Hyperrectangle(c, r)
-Hyperrectangle{Float64,Array{Float64,1},Array{Float64,1}}([-1.0, 1.0], [2.0, 1.0])
 julia> Hyperrectangle(low=l, high=h)
 Hyperrectangle{Float64,Array{Float64,1},Array{Float64,1}}([-1.0, 1.0], [2.0, 1.0])
 ```
