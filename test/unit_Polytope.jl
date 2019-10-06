@@ -129,8 +129,8 @@ for N in [Float64, Rational{Int}, Float32]
 
     M = N[2 1; 0 1]
     L1 = linear_map(M, P, algorithm="inverse")  # calculates inv(M) explicitly
-    L2 = linear_map(M, P, use_inv="division") # uses transpose(M) \ c.a for each constraint c of P
-    L3 = linear_map(M, P, use_inv="vrep") # uses V-representaion
+    L2 = linear_map(M, P, algorithm="division") # uses transpose(M) \ c.a for each constraint c of P
+    L3 = linear_map(M, P, algorithm="vrep") # uses V-representaion
     L4 = linear_map(M, P, cond_tol=1e3)  # set a custom tolerance for the condition number (invertibility check)
     L5 = linear_map(M, P, check_invertibility=true)  # invertibility known
     L6 = linear_map(M, P, inverse=inv(M))  # pass inverse
