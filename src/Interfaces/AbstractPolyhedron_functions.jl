@@ -230,7 +230,7 @@ function remove_redundant_constraints(
 end
 
 """
-    linear_map(M::Union{AbstractMatrix{N}, Nothing},
+    linear_map(M::AbstractMatrix{N},
                P::AbstractPolyhedron{N};
                [algorithm]::String=(issparse(M) ? "division" : "inverse"),
                [check_invertibility]::Bool=true,
@@ -242,7 +242,7 @@ Concrete linear map of a polyhedral set.
 
 ### Input
 
-- `M`         -- matrix (or `nothing` if `inverse` is specified; see below)
+- `M`         -- matrix
 - `P`         -- polyhedral set
 - `algorithm` -- (optional; default: `"division"` for sparse `M` and `"inverse"`
                  otherwise) the algorithm to be used; possible choices are:
@@ -306,7 +306,7 @@ If the matrix is known to be invertible, the the option `check_invertibility`
 can be used to skip the invertibility test.
 If the matrix inverse is even known, it can be specified with the option
 `inverse`, in which case we ignore the other options and also the original
-matrix `M` (which can also be `nothing` for this reason).
+matrix `M`.
 
 The algorithms `"division"` and `"inverse"` give control - in case `M` is
 invertible - on whether the full matrix inverse is computed or only the left
@@ -328,7 +328,7 @@ New subtypes of the interface should define their own `_linear_map_vrep`
 (resp. `_linear_map_hrep`) for special handling of the linear map; otherwise
 the fallback implementation for `AbstractPolyhedron` is used.
 """
-function linear_map(M::Union{AbstractMatrix{N}, Nothing},
+function linear_map(M::AbstractMatrix{N},
                     P::AbstractPolyhedron{N};
                     algorithm::String=(issparse(M) ? "division" : "inverse"),
                     check_invertibility::Bool=true,
@@ -336,8 +336,7 @@ function linear_map(M::Union{AbstractMatrix{N}, Nothing},
                     inverse::Union{AbstractMatrix{N}, Nothing}=nothing) where {N<:Real}
     # if `inverse` is specified, we ignore other inputs and do not check them
     if inverse != nothing
-        # we ignore `M` here and pass `inverse` as matrix instead
-        return _linear_map_hrep(inverse, P, true; inverse=inverse)
+        return _linear_map_hrep(M, P, true; inverse=inverse)
     end
 
     @assert M != nothing "a matrix must be specified unless the inverse is " *
