@@ -177,7 +177,7 @@ with respect to its base vertex ``q`` to be those vertices of ``P`` which have
 an edge in common with ``q``.  The extremal vertices can be computed as the
 solution of the ``n``-dimensional linear systems of equations ``D x = v_i``
 where for each ``i = 1, \\ldots, n``,
-``v = [-c_{n+1}, \\ldots, c_i, \\ldots, -c_{2n}]``.
+``v_i = [-c_{n+1}, \\ldots, c_i, \\ldots, -c_{2n}]``.
 
 We refer to [1, Section 3.2.1] for details.
 
