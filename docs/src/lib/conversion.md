@@ -47,4 +47,6 @@ convert(::Type{CartesianProduct{N, Interval{N}, Interval{N}}}, ::AbstractHyperre
 convert(::Type{CartesianProductArray{N, Interval{N}}}, ::AbstractHyperrectangle{N}) where {N<:Real}
 convert(::Type{Hyperrectangle}, ::Rectification{N, AH}) where {N<:Real, AH<:AbstractHyperrectangle{N}}
 convert(::Type{Interval}, ::Rectification{N, IN}) where {N<:Real, IN<:Interval{N}}
+convert(::Type{IntervalArithmetic.Interval}, ::Interval)
+convert(::Type{Interval}, ::IntervalArithmetic.Interval)
 ```

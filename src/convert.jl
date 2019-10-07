@@ -522,7 +522,7 @@ a single hyperrectangle.
 ### Input
 
 - `Hyperrectangle` -- type used for dispatch
-- `S`              -- cartesian product array of hyperrectangular set 
+- `S`              -- cartesian product array of hyperrectangular set
 
 ### Output
 
@@ -587,7 +587,7 @@ hyperrectangle.
 ### Input
 
 - `Hyperrectangle` -- type used for dispatch
-- `S`              -- cartesian product array of intervals 
+- `S`              -- cartesian product array of intervals
 
 ### Output
 
@@ -727,6 +727,42 @@ function convert(X::Type{HPOLYGON},
     @assert dim(H) == 2 "cannot convert a $(dim(H))-dimensional " *
         "hyperrectangle into a two-dimensional polygon"
     return HPOLYGON(constraints_list(H))
+end
+
+"""
+    convert(::Type{IntervalArithmetic.Interval}, x::Interval)
+
+Converts a `LazySets` interval to an `Interval` from `IntervalArithmetic`.
+
+### Input
+
+- `Interval` -- type used for dispatch, from `IntervalArithmetic`
+- `x`        -- interval (`LazySets.Interval`)
+
+### Output
+
+An `IntervalArithmetic.Interval`.
+"""
+function convert(::Type{IntervalArithmetic.Interval}, x::Interval)
+    return IntervalArithmetic.interval(min(x), max(x))
+end
+
+"""
+    convert(::Type{Interval}, x::IntervalArithmetic.Interval)
+
+Converts an `Interval` from `IntervalArithmetic` to an interval in `LazySets`.
+
+### Input
+
+- `Interval` -- type used for dispatch
+- `x`        -- interval (`LazySets.Interval`)
+
+### Output
+
+A `LazySets.Interval`.
+"""
+function convert(::Type{Interval}, x::IntervalArithmetic.Interval)
+    return Interval(IntervalArithmetic.inf(x), IntervalArithmetic.sup(x))
 end
 
 """
