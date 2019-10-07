@@ -522,7 +522,7 @@ a single hyperrectangle.
 ### Input
 
 - `Hyperrectangle` -- type used for dispatch
-- `S`              -- cartesian product array of hyperrectangular set 
+- `S`              -- cartesian product array of hyperrectangular set
 
 ### Output
 
@@ -587,7 +587,7 @@ hyperrectangle.
 ### Input
 
 - `Hyperrectangle` -- type used for dispatch
-- `S`              -- cartesian product array of intervals 
+- `S`              -- cartesian product array of intervals
 
 ### Output
 
@@ -760,10 +760,16 @@ Converts an `IntervalBox` from `IntervalArithmetic` to a hyperrectangular set.
 ### Output
 
 A `Hyperrectangle`.
+
+### Notes
+
+`IntervalArithmetic.IntervalBox` uses *static* vectors to store each component
+interval, hence the resulting `Hyperrectangle` has its center and radius represented
+as a static vector (`SArray`).
 """
 function convert(::Type{Hyperrectangle}, IB::IntervalArithmetic.IntervalBox)
-    low_IB = Vector(IntervalArithmetic.inf.(IB))    # TODO: temprary conversion, see #1214
-    high_IB = Vector(IntervalArithmetic.sup.(IB))   # TODO: temprary conversion, see #1214
+    low_IB = IntervalArithmetic.inf.(IB)
+    high_IB = IntervalArithmetic.sup.(IB)
     return Hyperrectangle(low=low_IB, high=high_IB)
 end
 
