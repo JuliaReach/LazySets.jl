@@ -222,7 +222,7 @@ vertices with respect to ``q`` given by the set ``\\{v_i\\}`` for
 where ``s := \\sum_{i=1}^n v_i`` is the sum of extremal vertices.
 """
 function center(P::HParallelotope{N}) where {N<:Real}
-    n = size(P.directions, 1)
+    n = dim(P)
     q = base_vertex(P)
     E = extremal_vertices(P)
     s = sum(E)
