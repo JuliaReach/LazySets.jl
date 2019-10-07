@@ -341,9 +341,6 @@ function linear_map(M::AbstractMatrix{N},
 
     @assert dim(P) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
         "applied to a set of dimension $(dim(P))"
-    supported_algorithms = ["vrep", "inverse", "division"]
-    @assert algorithm in supported_algorithms "supported algorithms: " *
-        "$supported_algorithms, but got $algorithm"
 
     # check invertibility
     if algorithm != "vrep" && check_invertibility && !isinvertible(M; cond_tol=cond_tol)
@@ -353,7 +350,14 @@ function linear_map(M::AbstractMatrix{N},
     if algorithm == "vrep"
         return _linear_map_vrep(M, P)
     else
-        use_inv = algorithm == "inverse"
+        if algorithm == "inverse"
+            use_inv = true
+        elseif algorithm == "division"
+            use_inv = false
+        else
+            throw(ArgumentError("got unknown algorithm \"$algorithm\"; " *
+                "available choices: \"vrep\", \"inverse\", \"division\""))
+        end
         return _linear_map_hrep(M, P, use_inv)
     end
 end
