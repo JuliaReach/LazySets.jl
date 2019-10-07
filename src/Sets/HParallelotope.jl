@@ -175,7 +175,7 @@ Let ``P`` be a parallelotope in constraint representation with directions
 matrix ``D`` and offset vector ``c``. We denote the *extremal vertices* of ``P``
 with respect to its base vertex ``q`` to be those vertices of ``P`` which have
 an edge in common with ``q``.  The extremal vertices can be computed as the
-solution of the ``n``-dimensional linear systems of equations ``D x = v^i``
+solution of the ``n``-dimensional linear systems of equations ``D x = v_i``
 where for each ``i = 1, \\ldots, n``,
 ``v = [-c_{n+1}, \\ldots, c_i, \\ldots, -c_{2n}]``.
 
