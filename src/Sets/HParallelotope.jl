@@ -214,7 +214,7 @@ The center of the parallelotope.
 
 Let ``P`` be a parallelotope with base vertex ``q`` and list of extremal
 vertices with respect to ``q`` given by the set ``\\{v_i\\}`` for
-``i = 1, \\ldots, n``. Then, it is plain that the center is located at
+``i = 1, \\ldots, n``. Then the center is located at
 
 ```math
     c = q + \\sum_{i=1}^n \\frac{v_i - q}{2}     = q(1-n/2) + \\frac{s}{2},
