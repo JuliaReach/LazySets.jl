@@ -150,7 +150,7 @@ system ``D_i x = c_{n+i}`` for ``i = 1, \\ldots, n``, see [1, Section 3.2.1].
 """
 function base_vertex(P::HParallelotope{N}) where {N<:Real}
     D, c = P.directions, P.offset
-    n = size(P.directions, 1)
+    n = dim(P)
     v = to_negative_vector(c[n+1:end]) # converts to a dense vector as well
     return D \ v
 end
