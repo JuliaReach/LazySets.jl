@@ -296,7 +296,7 @@ The list of constraints of `P`.
 """
 function constraints_list(P::HParallelotope{N}) where {N<:Real}
     D, c = P.directions, P.offset
-    n = size(D, 1)
+    n = dim(P)
     clist = Vector{LinearConstraint{N}}(undef, 2n)
     @inbounds for i in 1:n
         clist[i] = LinearConstraint(D[i, :], c[i])
