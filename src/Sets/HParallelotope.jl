@@ -186,7 +186,7 @@ We refer to [1, Section 3.2.1] for details.
 """
 function extremal_vertices(P::HParallelotope{N}) where {N<:Real}
     D, c = P.directions, P.offset
-    n = size(P.directions, 1)
+    n = dim(P)
     v = to_negative_vector(c[n+1:end])
     vertices = Vector{Vector{N}}(undef, n)
     @inbounds for i in 1:n
