@@ -339,8 +339,6 @@ function linear_map(M::AbstractMatrix{N},
         return _linear_map_hrep(M, P, true; inverse=inverse)
     end
 
-    @assert M != nothing "a matrix must be specified unless the inverse is " *
-        "specified as well"
     @assert dim(P) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
         "applied to a set of dimension $(dim(P))"
     supported_algorithms = ["vrep", "inverse", "division"]
