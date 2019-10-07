@@ -16,7 +16,7 @@ Type that represents a parallelotope in constraint form.
 
 ### Fields
 
-- `directions` -- matrix such that each row is the direction of two parallel constraints
+- `directions` -- square matrix such that each row is the direction of two parallel constraints
 - `offset`     -- vector such that each element is the offset of the corresponding constraint
 
 ### Notes
