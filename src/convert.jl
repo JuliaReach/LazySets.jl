@@ -730,6 +730,42 @@ function convert(X::Type{HPOLYGON},
 end
 
 """
+    convert(::Type{IntervalArithmetic.Interval}, x::Interval)
+
+Converts a `LazySets` interval to an `Interval` from `IntervalArithmetic`.
+
+### Input
+
+- `Interval` -- type used for dispatch, from `IntervalArithmetic`
+- `x`        -- interval (`LazySets.Interval`)
+
+### Output
+
+An `IntervalArithmetic.Interval`.
+"""
+function convert(::Type{IntervalArithmetic.Interval}, x::Interval)
+    return IntervalArithmetic.interval(min(x), max(x))
+end
+
+"""
+    convert(::Type{Interval}, x::IntervalArithmetic.Interval)
+
+Converts an `Interval` from `IntervalArithmetic` to an interval in `LazySets`.
+
+### Input
+
+- `Interval` -- type used for dispatch
+- `x`        -- interval (`IntervalArithmetic.Interval`)
+
+### Output
+
+A `LazySets.Interval`.
+"""
+function convert(::Type{Interval}, x::IntervalArithmetic.Interval)
+    return Interval(IntervalArithmetic.inf(x), IntervalArithmetic.sup(x))
+end
+
+"""
     convert(::Type{IntervalArithmetic.IntervalBox}, H::AbstractHyperrectangle)
 
 Converts a hyperrectangular set to an `IntervalBox` from `IntervalArithmetic`.
