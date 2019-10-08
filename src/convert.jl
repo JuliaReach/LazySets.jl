@@ -755,7 +755,7 @@ Converts an `Interval` from `IntervalArithmetic` to an interval in `LazySets`.
 ### Input
 
 - `Interval` -- type used for dispatch
-- `x`        -- interval (`LazySets.Interval`)
+- `x`        -- interval (`IntervalArithmetic.Interval`)
 
 ### Output
 
