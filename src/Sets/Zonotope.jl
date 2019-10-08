@@ -2,8 +2,7 @@ import Base: rand,
              split
 
 export Zonotope,
-       scale,
-       reduce_order
+       scale
 
 """
     Zonotope{N<:Real} <: AbstractZonotope{N}
