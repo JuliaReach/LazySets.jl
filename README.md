@@ -1,8 +1,8 @@
 # LazySets.jl
 
 [![Build Status](https://travis-ci.org/JuliaReach/LazySets.jl.svg?branch=master)](https://travis-ci.org/JuliaReach/LazySets.jl)
-[![Docs latest](https://img.shields.io/badge/docs-latest-blue.svg)](http://juliareach.github.io/LazySets.jl/latest/)
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/JuliaReach/LazySets.jl/blob/master/LICENSE)
+[![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](http://juliareach.github.io/LazySets.jl/dev/)
+[![License](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/JuliaReach/LazySets.jl/blob/master/LICENSE)
 [![DOI](https://zenodo.org/badge/105701832.svg)](https://zenodo.org/badge/latestdoi/105701832)
 [![Code coverage](http://codecov.io/github/JuliaReach/LazySets.jl/coverage.svg?branch=master)](https://codecov.io/github/JuliaReach/LazySets.jl?branch=master)
 [![Join the chat at https://gitter.im/JuliaReach/Lobby](https://badges.gitter.im/JuliaReach/Lobby.svg)](https://gitter.im/JuliaReach/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
@@ -11,12 +11,12 @@
 
 ## Resources
 
-- [Manual](http://juliareach.github.io/LazySets.jl/latest/)
-- [Contributing](https://juliareach.github.io/LazySets.jl/latest/about/#Contributing-1)
+- [Manual](http://juliareach.github.io/LazySets.jl/dev/)
+- [Contributing](https://juliareach.github.io/LazySets.jl/dev/about/#Contributing-1)
 - [Release notes of tagged versions](https://github.com/JuliaReach/LazySets.jl/releases)
 - [Release notes of the development version](https://github.com/JuliaReach/LazySets.jl/wiki/Release-log-tracker)
-- [Publications](https://juliareach.github.io/Reachability.jl/latest/publications/)
-- [Developers](https://juliareach.github.io/LazySets.jl/latest/about/#Credits-1)
+- [Publications](https://juliareach.github.io/Reachability.jl/dev/publications/)
+- [Developers](https://juliareach.github.io/LazySets.jl/dev/about/#Credits-1)
 
 ## Installing
 
