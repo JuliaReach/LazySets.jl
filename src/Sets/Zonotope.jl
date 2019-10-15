@@ -257,7 +257,7 @@ function scale(α::Real, Z::Zonotope)
 end
 
 """
-    reduce_order(Z::Zonotope, r::Union{Int, Rational{Int}})::Zonotope
+    reduce_order(Z::Zonotope, r::Union{Integer, Rational})::Zonotope
 
 Reduce the order of a zonotope by overapproximating with a zonotope with less
 generators.
@@ -273,9 +273,9 @@ A new zonotope with less generators, if possible.
 
 ### Algorithm
 
-See `overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Int, Rational{Int}}) where {N<:Real}` for details.
+See `overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, Rational}) where {N<:Real}` for details.
 """
-function reduce_order(Z::Zonotope{N}, r::Union{Int, Rational{Int}})::Zonotope{N} where {N<:Real}
+function reduce_order(Z::Zonotope{N}, r::Union{Integer, Rational})::Zonotope{N} where {N<:Real}
     return overapproximate(Z, Zonotope, r)
 end
 
