@@ -79,7 +79,7 @@ function isinvertible(M::Diagonal; cond_tol=nothing)
 end
 
 """
-    cross_product(M::Matrix{N}) where {N<:Real}
+    cross_product(M::AbstractMatrix{N}) where {N<:Real}
 
 Compute the high-dimensional cross product of ``n-1`` ``n``-dimensional vectors.
 
@@ -102,7 +102,7 @@ where ``M^{[i]}`` is defined as ``M`` with the ``i``-th row removed.
 See *Althoff, Stursberg, Buss: Computing Reachable Sets of Hybrid Systems Using
 a Combination of Zonotopes and Polytopes. 2009.*
 """
-function cross_product(M::Matrix{N})::Vector{N} where {N<:Real}
+function cross_product(M::AbstractMatrix{N})::Vector{N} where {N<:Real}
     n = size(M, 1)
     @assert 1 < n == size(M, 2) + 1 "the matrix must be n x (n-1) dimensional"
 
