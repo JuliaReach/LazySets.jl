@@ -1318,7 +1318,7 @@ function overapproximate(cap::Intersection{N,
 end
 
 """
-    overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r) where {N<:Real}
+    overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Int, Rational{Int}}) where {N<:Real}
 
 Reduce the order of a zonotope by overapproximating with a zonotope with less
 generators.
@@ -1340,7 +1340,7 @@ This function implements the algorithm described in A. Girard's
 
 If the desired order is smaller than one, the zonotope is *not* reduced.
 """
-function overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r) where {N<:Real}
+function overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Int, Rational{Int}}) where {N<:Real}
     c, G = Z.center, Z.generators
     d, p = dim(Z), ngens(Z)
 
