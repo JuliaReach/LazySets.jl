@@ -2,7 +2,8 @@ import Base: rand,
              split
 
 export Zonotope,
-       scale
+       scale,
+       reduce_order
 
 """
     Zonotope{N<:Real} <: AbstractZonotope{N}
@@ -253,6 +254,29 @@ function scale(α::Real, Z::Zonotope)
     c = α .* Z.center
     gi = α .* Z.generators
     return Zonotope(c, gi)
+end
+
+"""
+    reduce_order(Z::Zonotope, r)::Zonotope
+
+Reduce the order of a zonotope by overapproximating with a zonotope with less
+generators.
+
+### Input
+
+- `Z` -- zonotope
+- `r` -- desired order
+
+### Output
+
+A new zonotope with less generators, if possible.
+
+### Algorithm
+
+See `overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r) where {N<:Real}` for details.
+"""
+function reduce_order(Z::Zonotope{N}, r)::Zonotope{N} where {N<:Real}
+    return overapproximate(Z, Zonotope, r)
 end
 
 """
