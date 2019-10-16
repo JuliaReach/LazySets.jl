@@ -453,7 +453,6 @@ function constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true
         return constraints
     end
 
-    i = 0
     c = center(Z)
     m = binomial(p, n - 1)
     constraints = Vector{LinearConstraint{N, Vector{N}}}()
