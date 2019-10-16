@@ -123,6 +123,7 @@ This interface defines the following functions:
 ∈(::AbstractVector{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 constrained_dimensions(::AbstractPolyhedron)
 linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real}
+chebyshev_center(::AbstractPolyhedron{N}) where {N<:AbstractFloat}
 ```
 
 Plotting (bounded) polyhedra is available, too:

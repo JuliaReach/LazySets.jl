@@ -395,5 +395,14 @@ if test_suite_polyhedra
                             [N[1, 1], N[0, 1], N[1, 0], N[0, 0]])
         @test ispermutation([round.(v) for v in vertices_list(cap1)],
                             [round.(v) for v in vertices_list(cap2)])
+
+        # Chebyshev center
+        B = BallInf(N[0, 0], N(1))  # Chebyshev center is unique
+        c1 = chebyshev_center(B)
+        P = convert(HPolytope, B)
+        c2 = chebyshev_center(P)
+        c3, r = chebyshev_center(P; get_radius=true)
+        @test c1 == c2 == c3 == center(B) && c1 isa AbstractVector{N}
+        @test r == B.radius
     end
 end
