@@ -122,6 +122,10 @@ function cross_product(M::AbstractMatrix{N})::Vector{N} where {N<:Real}
     return v
 end
 
+# det cannot handle sparse matrices in some cases
+cross_product(M::AbstractSparseMatrix) = cross_product(Matrix(M))
+cross_product(M::SubArray{N, 2, <:AbstractSparseMatrix}) where {N} = cross_product(Matrix(M))
+
 """
     delete_zero_columns!(A::AbstractMatrix)
 
