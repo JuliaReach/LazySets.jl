@@ -112,8 +112,10 @@ end
 end
 
 @inline function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolytope{N},
-                          use_inv::Bool) where {N<:Real}
-    constraints = _linear_map_hrep_helper(M, P, use_inv)
+                                  use_inv::Bool;
+                                  inverse::Union{Nothing, AbstractMatrix{N}}=nothing
+                                 ) where {N<:Real}
+    constraints = _linear_map_hrep_helper(M, P, use_inv; inverse=inverse)
     m = size(M, 1) # output dimension
     if m == 1
         return convert(Interval, HPolygon(constraints))

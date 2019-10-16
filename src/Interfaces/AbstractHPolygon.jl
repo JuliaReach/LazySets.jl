@@ -595,7 +595,9 @@ function isbounded(P::AbstractHPolygon, use_type_assumption::Bool=true)::Bool
 end
 
 function _linear_map_hrep(M::AbstractMatrix{N}, P::HPOLYGON,
-                          use_inv::Bool) where {N<:Real, HPOLYGON<:AbstractHPolygon{N}}
-    constraints = _linear_map_hrep_helper(M, P, use_inv)
+                          use_inv::Bool;
+                          inverse::Union{Nothing, AbstractMatrix{N}}=nothing
+                         ) where {N<:Real, HPOLYGON<:AbstractHPolygon{N}}
+    constraints = _linear_map_hrep_helper(M, P, use_inv; inverse=inverse)
     return HPOLYGON(constraints)
 end

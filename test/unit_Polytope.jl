@@ -128,17 +128,18 @@ for N in [Float64, Rational{Int}, Float32]
     end
 
     M = N[2 1; 0 1]
-    L1 = linear_map(M, P, use_inv=true)  # calculates inv(M) explicitly
-    L2 = linear_map(M, P, use_inv=false) # uses transpose(M) \ c.a for each constraint c of P
-    L3 = linear_map(M, P, cond_tol=1e3)  # set a custom tolerance for the condition number (invertibility check)
+    L1 = linear_map(M, P, algorithm="inverse")  # calculates inv(M) explicitly
+    L2 = linear_map(M, P, algorithm="division")  # uses transpose(M) \ c.a for each constraint c of P
+    L3 = linear_map(M, P, algorithm="vrep")  # uses V-representaion
+    @test_throws ArgumentError linear_map(M, P, algorithm="xyz")  # unknown algorithm
+    L4 = linear_map(M, P, cond_tol=1e3)  # set a custom tolerance for the condition number (invertibility check)
+    L5 = linear_map(M, P, check_invertibility=false)  # invertibility known
+    L6 = linear_map(M, P, inverse=inv(M))  # pass inverse
     # needs M * an_element(Li) to be stable for rational, see #1105
     p = convert(Vector{N}, an_element(P))
-    @assert p ∈ P
-    @test all([M * p ∈ Li for Li in [L1, L2, L3]])
-
-    # do not check for invertibility => use the vertices
-    L4 = linear_map(M, P, check_invertibility=false)
-    @test L4 isa VPolygon{N}
+    @test p ∈ P
+    @test all([M * p ∈ Li for Li in [L1, L2, L3, L4, L5, L6]])
+    @test L3 isa VPolygon{N}
 
     # linear map for mixed types
     M = [2 1; 0 1] # Int's
