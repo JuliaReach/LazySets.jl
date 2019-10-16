@@ -458,7 +458,6 @@ function constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true
     constraints = Vector{LinearConstraint{N, Vector{N}}}()
     sizehint!(constraints, 2m)
     for columns in StrictlyIncreasingIndices(p, n-1)
-        i += 1
         c⁺ = cross_product(view(G, :, columns))
         iszero(c⁺) && continue
         normalize!(c⁺, 2)
