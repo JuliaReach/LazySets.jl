@@ -699,7 +699,7 @@ generators(Z::Zonotope)
 genmat(Z::Zonotope)
 scale(::Real, ::Zonotope)
 ngens(::Zonotope)
-reduce_order(::Zonotope, r)
+reduce_order(::Zonotope, ::Union{Integer, Rational})
 split(::Zonotope, ::Int)
 ```
 

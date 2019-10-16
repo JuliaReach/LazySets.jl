@@ -257,7 +257,7 @@ function scale(α::Real, Z::Zonotope)
 end
 
 """
-    reduce_order(Z::Zonotope, r)::Zonotope
+    reduce_order(Z::Zonotope, r::Union{Integer, Rational})::Zonotope
 
 Reduce the order of a zonotope by overapproximating with a zonotope with less
 generators.
@@ -273,38 +273,10 @@ A new zonotope with less generators, if possible.
 
 ### Algorithm
 
-This function implements the algorithm described in A. Girard's
-*Reachability of Uncertain Linear Systems Using Zonotopes*, HSCC. Vol. 5. 2005.
-
-If the desired order is smaller than one, the zonotope is *not* reduced.
+See `overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, Rational}) where {N<:Real}` for details.
 """
-function reduce_order(Z::Zonotope{N}, r)::Zonotope{N} where {N<:Real}
-    c, G = Z.center, Z.generators
-    d, p = dim(Z), ngens(Z)
-
-    if r * d >= p || r < 1
-        # do not reduce
-        return Z
-    end
-
-    h = zeros(N, p)
-    for i in 1:p
-        h[i] = norm(G[:, i], 1) - norm(G[:, i], Inf)
-    end
-    ind = sortperm(h)
-
-    m = p - floor(Int, d * (r - 1)) # subset of ngens that are reduced
-    rg = G[:, ind[1:m]] # reduced generators
-
-    # interval hull computation of reduced generators
-    Gbox = Diagonal(sum(abs.(rg), dims=2)[:])
-    if m < p
-        Gnotred = G[:, ind[m+1:end]]
-        Gred = [Gnotred Gbox]
-    else
-        Gred = Gbox
-    end
-    return Zonotope(c, Gred)
+function reduce_order(Z::Zonotope{N}, r::Union{Integer, Rational})::Zonotope{N} where {N<:Real}
+    return overapproximate(Z, Zonotope, r)
 end
 
 """
