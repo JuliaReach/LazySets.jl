@@ -453,13 +453,13 @@ function constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true
         return constraints
     end
 
-    i = 0
     c = center(Z)
     m = binomial(p, n - 1)
-    constraints = Vector{LinearConstraint{N, Vector{N}}}(undef, 2 * m)
+    constraints = Vector{LinearConstraint{N, Vector{N}}}()
+    sizehint!(constraints, 2m)
     for columns in StrictlyIncreasingIndices(p, n-1)
-        i += 1
         c⁺ = cross_product(view(G, :, columns))
+        iszero(c⁺) && continue
         normalize!(c⁺, 2)
 
         Δd = sum(abs.(transpose(G) * c⁺))
@@ -468,9 +468,8 @@ function constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true
         c⁻ = -c⁺
         d⁻ = -d⁺ + 2 * Δd  # identical to dot(c⁻, c) + Δd
 
-        constraints[i] = LinearConstraint(c⁺, d⁺)
-        constraints[i + m] = LinearConstraint(c⁻, d⁻)
+        push!(constraints, LinearConstraint(c⁺, d⁺))
+        push!(constraints, LinearConstraint(c⁻, d⁻))
     end
-    @assert i == m "expected 2*$m constraints, but only created 2*$i"
     return constraints
 end
