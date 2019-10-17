@@ -1,6 +1,7 @@
 export _At_mul_B,
        _At_ldiv_B,
        DEFAULT_COND_TOL,
+       hasfullrowrank,
        issquare,
        isinvertible,
        cross_product,
@@ -39,6 +40,23 @@ Check whether a matrix is square.
 function issquare(M::AbstractMatrix)::Bool
     m, n = size(M)
     return m == n
+end
+
+"""
+    hasfullrowrank(M::AbstractMatrix)
+
+Check whether a matrix has full row rank.
+
+### Input
+
+- `M` -- matrix
+
+### Output
+
+`true` iff the matrix has full row rank.
+"""
+function hasfullrowrank(M::AbstractMatrix)
+    return rank(M) == size(M, 1)
 end
 
 """
