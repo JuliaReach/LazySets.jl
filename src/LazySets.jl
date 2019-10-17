@@ -88,6 +88,7 @@ include("Sets/PolynomialZonotope.jl")
 # =================================
 # Types representing set operations
 # =================================
+include("LazyOperations/Bloating.jl")
 include("LazyOperations/CartesianProduct.jl")
 include("LazyOperations/Complement.jl")
 include("LazyOperations/ConvexHull.jl")
