@@ -37,6 +37,7 @@ using .Arrays
 include("Utils/helper_functions.jl")
 include("Utils/comparisons.jl")
 include("Utils/macros.jl")
+include("Utils/solvers.jl")
 include("Utils/samples.jl")
 
 # ==================
