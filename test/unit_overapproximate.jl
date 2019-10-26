@@ -70,10 +70,8 @@ for N in [Float64, Rational{Int}, Float32]
     d_oa_d_hp = overapproximate(lm, CartesianProductArray{N, Hyperrectangle{N}})
     d_oa_d_box = overapproximate(lm, CartesianProductArray, Approximations.BoxDirections)
     oa_d_hp = overapproximate(d_oa_d_hp)
-    oa_d_box = overapproximate(d_oa_d_box, Approximations.BoxDirections)
 
     @test oa == oa_d_hp
-    @test oa_box == oa_d_box
 
     for (oax, set_type) in [(d_oa_d_hp, Hyperrectangle), (d_oa_d_box, HPolytope)]
         @test oax isa CartesianProductArray
@@ -99,13 +97,6 @@ for N in [Float64, Rational{Int}, Float32]
     lm = LinearMap(M, Z)
     Zo = overapproximate(lm, Zonotope)
     @test box_approximation(Zo) == Hyperrectangle(N[0, 0], N[3, 3])
-
-    # intersection of two polyhedra
-    P = HPolyhedron([HalfSpace(N[1, 0], N(1)), HalfSpace(N[0, 1], N(1))])
-    Q = HPolyhedron([HalfSpace(N[-1, 0], N(1)), HalfSpace(N[0, -1], N(1))])
-    oa = overapproximate(P ∩ Q, BoxDirections)
-    B = BallInf(N[0, 0], N(1))
-    @test B ⊆ oa && oa ⊆ B
 
     # rectification
     r = Rectification(EmptySet{N}())
@@ -242,6 +233,23 @@ for N in [Float64, Float32]
 end
 
 for N in [Float64]
+    i1 = Interval(N[0, 1])
+    h = Hyperrectangle(low=N[3, 4], high=N[5, 7])
+    M = N[1 2 3; 4 5 6; 7 8 9]
+    cpa = CartesianProductArray([i1, h])
+    lm = M * cpa
+    d_oa_d_box = overapproximate(lm, CartesianProductArray, Approximations.BoxDirections)
+    oa_d_box = overapproximate(d_oa_d_box, Approximations.BoxDirections)
+    oa_box = overapproximate(lm, Approximations.BoxDirections)
+    @test oa_box == oa_d_box
+
+    # intersection of two polyhedra
+    P = HPolyhedron([HalfSpace(N[1, 0], N(1)), HalfSpace(N[0, 1], N(1))])
+    Q = HPolyhedron([HalfSpace(N[-1, 0], N(1)), HalfSpace(N[0, -1], N(1))])
+    oa = overapproximate(P ∩ Q, BoxDirections)
+    B = BallInf(N[0, 0], N(1))
+    @test B ⊆ oa && oa ⊆ B
+
     # decomposed linear map approximation
     i1 = Interval(N[0, 1])
     i2 = Interval(N[2, 3])

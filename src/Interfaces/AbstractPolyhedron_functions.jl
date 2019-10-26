@@ -9,12 +9,12 @@ export constrained_dimensions,
 
 # default LP solver for floating-point numbers
 function default_lp_solver(N::Type{<:AbstractFloat})
-    GLPKSolverLP(method=:Simplex)
+    GLPK.Optimizer(method=GLPK.SIMPLEX)
 end
 
 # default LP solver for rational numbers
 function default_lp_solver(N::Type{<:Rational})
-    GLPKSolverLP(method=:Exact)
+    GLPK.Optimizer(method=GLPK.EXACT)
 end
 
 # fallback method
@@ -168,31 +168,41 @@ function remove_redundant_constraints!(
     m, n = size(A)
     non_redundant_indices = 1:m
 
-    i = 1 # counter over reduced constraints
-
-    for j in 1:m    # loop over original constraints
+    for j in 1:m  # loop over original constraints
+        model = LPModel{N}()
+        x = MOI.add_variables(model, n)
         α = A[j, :]
-        Ar = A[non_redundant_indices, :]
-        br = b[non_redundant_indices]
-        br[i] = b[j] + one(N)
-        lp = linprog(-α, Ar, '<', br, -Inf, Inf, backend)
-        if lp.status == :Infeasible
+        obj = MOI.ScalarAffineFunction(MOI.ScalarAffineTerm.(α, x), zero(N))
+        MOI.set(model,
+                MOI.ObjectiveFunction{MOI.ScalarAffineFunction{N}}(), obj)
+        MOI.set(model, MOI.ObjectiveSense(), MOI.MAX_SENSE)
+        for k in non_redundant_indices
+            Ak = A[k, :]
+            if k == j
+                bk = b[j] + one(N)
+            else
+                bk = b[k]
+            end
+            saf =
+                MOI.ScalarAffineFunction(MOI.ScalarAffineTerm.(Ak, x), zero(N))
+            MOI.add_constraint(model, saf, MOI.LessThan(bk))
+        end
+        MOI.copy_to(backend, model)  # send model to solver
+        MOI.optimize!(backend)
+        status = MOI.get(backend, MOI.TerminationStatus())
+        if status ∈ [MOI.INFEASIBLE, MOI.INFEASIBLE_OR_UNBOUNDED]
             # the polyhedron is empty
             return false
-        elseif lp.status == :Optimal
-            objval = -lp.objval
+        elseif status == MOI.OPTIMAL
+            objval = MOI.get(backend, MOI.ObjectiveValue())
             if _leq(objval, b[j])
                 # the constraint is redundant
                 non_redundant_indices = setdiff(non_redundant_indices, j)
-            else
-                # the constraint is not redundant
-                i = i+1
             end
         else
-            error("LP is not optimal; the status of the LP is $(lp.status)")
+            error("LP is not optimal; the status of the LP is $(status)")
         end
     end
-
     deleteat!(constraints, setdiff(1:m, non_redundant_indices))
     return true
 end

@@ -73,7 +73,7 @@ for N in [Float64, Rational{Int}, Float32]
     clist = constraints_list(ms)
     P = HPolytope(clist)
     H = Hyperrectangle(N[0, 0], N[2, 2])
-    @test length(clist) == 4 && P ⊆ H && H ⊆ P
+    @test length(clist) == 4
 
     # =================
     # MinkowskiSumArray
@@ -178,4 +178,14 @@ for N in [Float64, Rational{Int}, Float32]
           e + e == e
     # mix of neutral and absorbing element
     @test z + e == e + z == e
+end
+
+# tests that only work with Float64
+for N in [Float64]
+    # inclusion
+    ms = MinkowskiSum(BallInf(N[0, 0], N(1)), BallInf(N[0, 0], N(1)))
+    clist = constraints_list(ms)
+    P = HPolytope(clist)
+    H = Hyperrectangle(N[0, 0], N[2, 2])
+    @test length(clist) == 4 && P ⊆ H && H ⊆ P
 end

@@ -469,8 +469,6 @@ function intersection(P1::AbstractHPolygon{N},
     return P
 end
 
-using MathProgBase.SolverInterface: AbstractMathProgSolver
-
 """
     intersection(P1::AbstractPolyhedron{N},
                  P2::AbstractPolyhedron{N};
@@ -523,7 +521,7 @@ function intersection(P1::AbstractPolyhedron{N},
     Q = HPOLY([constraints_list(P1); constraints_list(P2)])
 
     # remove redundant constraints
-    if backend isa AbstractMathProgSolver
+    if backend isa MathOptInterface.AbstractOptimizer
         # if Q is empty => the feasiblity LP for the list of constraints of Q
         # is infeasible and remove_redundant_constraints! returns `false`
         if remove_redundant_constraints!(Q, backend=backend)
@@ -532,9 +530,10 @@ function intersection(P1::AbstractPolyhedron{N},
             return EmptySet{N}()
         end
     else
-        # the correct way for this condition would be to check if `backend`
-        # isa Polyhedra.Library; since that would require using Polyhedra: Library
-        # and it is an optional dependency we opt to fallback without checking
+        require(:Polyhedra; fun_name="intersection")
+        if !(backend isa Polyhedra.Library)
+            error("unsupported backend: $backend")
+        end
 
         # convert to a Polyhedra's hrep
         Qph = polyhedron(Q; backend=backend)

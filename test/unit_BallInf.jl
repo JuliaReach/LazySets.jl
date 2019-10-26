@@ -111,12 +111,12 @@ for N in [Float64, Rational{Int}, Float32]
                         [N[4, 1], N[0, 1], N[-2, -3], N[2, -3]])
 end
 
-# tests that only work with Float64 and Rational{Int}
-for N in [Float64, Rational{Int}]
+# tests that only work with Float64
+for N in [Float64]
     # concrete Minkowski sum
     b = BallInf(N[1, 2], N(1))
     p = minkowski_sum(b, N[2 0; 0 1] * b)
-    @test p isa HPolytope && ispermutation(constraints_list(p),
+    @test p isa HPolytope{N} && ispermutation(constraints_list(p),
         [HalfSpace(N[0, -1], N(-2)), HalfSpace(N[0, 1], N(6)),
          HalfSpace(N[-1, 0], N(0)), HalfSpace(N[1, 0], N(6))])
 end

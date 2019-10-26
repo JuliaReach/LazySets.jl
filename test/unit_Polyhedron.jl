@@ -37,21 +37,10 @@ for N in [Float64, Rational{Int}, Float32]
     A, b = tosimplehrep([HalfSpace(N[1], N(2)), HalfSpace(N[-1], N(2))])
     @test (A == hcat(N[1; -1]) || A == hcat(N[-1; 1])) && b == N[2, 2]
 
-    # support vector
-    d = N[1, 0]
-    @test σ(d, p) == N[4, 2]
-    d = N[0, 1]
-    @test σ(d, p) == N[2, 4]
-    d = N[-1, 0]
-    @test σ(d, p) == N[-1, 1]
-    d = N[0, -1]
-    @test σ(d, p) == N[0, 0]
-
     # support vector of polyhedron with no constraints
     @test σ(N[1], p_univ) == N[Inf]
 
     # boundedness
-    @test isbounded(p)
     @test !isbounded(p_univ)
 
     # universality
@@ -91,8 +80,6 @@ for N in [Float64, Rational{Int}, Float32]
         # checking for emptiness
         P = HPolyhedron([LinearConstraint(N[1, 0], N(0))])    # x <= 0
         @test !isempty(P)
-        addconstraint!(P, LinearConstraint(N[-1, 0], N(-1)))  # x >= 1
-        @test isempty(P)
 
         # concrete linear map with noninvertible matrix throws an error
         @test_throws ArgumentError linear_map(N[2 3; 0 0], P)
@@ -112,17 +99,47 @@ unconstrained_HPolyhedron = HPolyhedron()
 @test unconstrained_HPolyhedron isa HPolyhedron{Float64}
 
 # Polyhedra tests that only work with Float64
-if test_suite_polyhedra
-    for N in [Float64]
-        # support function/vector
-        d = N[1, 0]
+for N in [Float64]
+    p = HPolyhedron{N}()
+    c1 = LinearConstraint(N[2, 2], N(12))
+    c2 = LinearConstraint(N[-3, 3], N(6))
+    c3 = LinearConstraint(N[-1, -1], N(0))
+    c4 = LinearConstraint(N[2, -4], N(0))
+    addconstraint!(p, c3)
+    addconstraint!(p, c1)
+    addconstraint!(p, c4)
+    addconstraint!(p, c2)
+
+    # support vector
+    d = N[1, 0]
+    @test σ(d, p) == N[4, 2]
+    d = N[0, 1]
+    @test σ(d, p) == N[2, 4]
+    d = N[-1, 0]
+    @test σ(d, p) == N[-1, 1]
+    d = N[0, -1]
+    @test σ(d, p) == N[0, 0]
+
+    # boundedness
+    @test isbounded(p)
+
+    if test_suite_polyhedra
         p_unbounded = HPolyhedron([LinearConstraint(N[-1, 0], N(0))])
-        @test σ(d, p_unbounded) == N[Inf, 0]
-        @test ρ(d, p_unbounded) == N(Inf)
         p_infeasible = HPolyhedron([LinearConstraint(N[1], N(0)),
                                     LinearConstraint(N[-1], N(-1))])
-        @test isempty(p_infeasible)
+
+        # support function/vector
+        d = N[1, 0]
+        @test σ(d, p_unbounded)[1] == N(Inf)
+        @test ρ(d, p_unbounded) == N(Inf)
         @test_throws ErrorException σ(N[1], p_infeasible)
+
+        # isempty
+        @test !isempty(p_unbounded)
+        @test isempty(p_infeasible)
+        P = HPolyhedron([LinearConstraint(N[1, 0], N(0))])    # x <= 0
+        addconstraint!(P, LinearConstraint(N[-1, 0], N(-1)))  # x >= 1
+        @test isempty(P)
 
         # intersection
         A = N[0 1; 1 0]

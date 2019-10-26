@@ -3,8 +3,7 @@ __precompile__(true)
 # main module for `LazySets.jl`
 module LazySets
 
-using GLPKMathProgInterface, LinearAlgebra, MathProgBase, Reexport, Requires,
-      SparseArrays
+using GLPK, LinearAlgebra, MathOptInterface, Reexport, Requires, SparseArrays
 using LinearAlgebra: checksquare
 import LinearAlgebra: norm, ×
 import Random
@@ -24,6 +23,21 @@ using .Assertions: @assert
 import .Assertions: activate_assertions, deactivate_assertions
 # activate assertions by default
 activate_assertions(LazySets)
+
+# MOI definition of an LP model; taken from:
+# http://www.juliaopt.org/MathOptInterface.jl/stable/apireference/#MathOptInterface.Utilities.@model
+const MOI = MathOptInterface
+MOI.Utilities.@model(
+    LPModel,                                                     # Name of model
+    (),                                                          # untyped scalar sets
+    (MOI.EqualTo, MOI.GreaterThan, MOI.LessThan, MOI.Interval),  #   typed scalar sets
+    (MOI.Zeros, MOI.Nonnegatives, MOI.Nonpositives),             # untyped vector sets
+    (),                                                          #   typed vector sets
+    (),                                                          # untyped scalar functions
+    (MOI.ScalarAffineFunction,),                                 #   typed scalar functions
+    (MOI.VectorOfVariables,),                                    # untyped vector functions
+    (MOI.VectorAffineFunction,)                                  #   typed vector functions
+    )
 
 # =======================
 # Arrays auxiliary module

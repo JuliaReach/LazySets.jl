@@ -166,30 +166,38 @@ function ∈(x::AbstractVector{N}, P::VPolytope{N};
     @assert n == dim(P) "a vector of length $(length(x)) cannot be " *
         "contained in a polytope of dimension $(dim(P))"
 
-    A = Matrix{N}(undef, n+1, m)
-    for j in 1:m
-        v_j = vertices[j]
-        # ⋀_i Σ_j λ_j v_j[i] = x[i]
-        for i in 1:n
-            A[i, j] = v_j[i]
-        end
-        # Σ_j λ_j = 1
-        A[n+1, j] = one(N)
+    m_lp = n + 1
+    n_lp = m
+    model = LPModel{N}()
+    vars = MOI.add_variables(model, n_lp)
+    # set objective (only a feasibility problem)
+    MOI.set(model, MOI.ObjectiveSense(), MOI.FEASIBILITY_SENSE)
+    # constraints ⋀ᵢ Σⱼ λⱼ vⱼ[i] = x[i]
+    for i in 1:n
+        v = MOI.ScalarAffineTerm.([v[i] for v in vertices], vars)
+        a = MOI.ScalarAffineFunction(v, zero(N))
+        MOI.add_constraint(model, a, MOI.EqualTo(x[i]))
     end
-    b = [x; one(N)]
-
-    lbounds = zeros(N, m)
-    ubounds = Inf
-    sense = fill('=', n + 1)
-    obj = zeros(N, m)
-
-    lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
-    if lp.status == :Optimal
+    # constraint Σⱼ λⱼ = 1
+    v = MOI.ScalarAffineTerm.(ones(N, n_lp), vars)
+    a = MOI.ScalarAffineFunction(v, zero(N))
+    MOI.add_constraint(model, a, MOI.EqualTo(one(N)))
+    # add variable bounds
+    zero_bound = MOI.GreaterThan(zero(N))
+    for i in 1:n_lp
+        MOI.add_constraint(model, MOI.SingleVariable(vars[i]), zero_bound)
+    end
+    # solve problem
+    MOI.copy_to(solver, model)  # send model to solver
+    MOI.optimize!(solver)
+    # interpret status
+    status = MOI.get(solver, MOI.TerminationStatus())
+    if status == MOI.OPTIMAL
         return true
-    elseif lp.status == :Infeasible
+    elseif status == MOI.INFEASIBLE
         return false
     end
-    @assert false "LP returned status $(lp.status) unexpectedly"
+    @assert false "LP returned status $(status) unexpectedly"
 end
 
 """
