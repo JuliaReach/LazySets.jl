@@ -126,4 +126,5 @@ pontryagin_difference
 ```@docs
 \(::LazySet, ::LazySet)
 difference(::IN, ::IN) where {N, IN<:Interval{N}}
+difference(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}) where {N}
 ```
