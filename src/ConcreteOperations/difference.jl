@@ -116,7 +116,7 @@ end
 
 # ============================================
 # Set difference between hyperrectangular sets
-# =============================================
+# ============================================
 
 """
     difference(X::AbstractHyperrectangle{N}, Y::AbstractHyperrectangle{N}) where {N}
