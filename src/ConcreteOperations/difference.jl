@@ -123,8 +123,6 @@ end
 
 Return the set difference between the given hyperrectangular sets.
 
-The backslash symbol, `\\`, can be used as an alias.
-
 ### Input
 
 - `X` -- first hyperrectangular set
@@ -144,6 +142,10 @@ union is in general not convex.
 ### Algorithm
 
 This function calls the implementation in `IntervalArithmetic.setdiff`.
+
+### Notes
+
+The backslash symbol, `\\`, can be used as an alias.
 """
 function difference(X::AbstractHyperrectangle{N}, Y::AbstractHyperrectangle{N}) where {N}
     Xib = convert(IA.IntervalBox, X)
