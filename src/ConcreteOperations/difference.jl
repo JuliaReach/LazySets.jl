@@ -3,6 +3,8 @@ export difference
 # alias for set difference
 import Base: \
 
+const IA = IntervalArithmetic
+
 """
     \\(X::LazySet, Y::LazySet)
 
@@ -110,4 +112,43 @@ function difference(I1::IN, I2::IN)::Union{EmptySet{N}, IN, UnionSet{N, IN, IN}}
             return UnionSet(Ileft, Iright)
         end
     end
+end
+
+# ============================================
+# Set difference between hyperrectangular sets
+# ============================================
+
+"""
+    difference(X::AbstractHyperrectangle{N}, Y::AbstractHyperrectangle{N}) where {N}
+
+Return the set difference between the given hyperrectangular sets.
+
+### Input
+
+- `X` -- first hyperrectangular set
+- `Y` -- second hyperrectangular set
+
+The set difference is defined as:
+
+```math
+    X \\setminus Y = \\{x: x ∈ X \\text{ and } x ∉ Y \\}
+```
+
+### Output
+
+A `UnionSetArray` consisting of the union of hyperrectangles. Note that this
+union is in general not convex.
+
+### Algorithm
+
+This function calls the implementation in `IntervalArithmetic.setdiff`.
+
+### Notes
+
+The backslash symbol, `\\`, can be used as an alias.
+"""
+function difference(X::AbstractHyperrectangle{N}, Y::AbstractHyperrectangle{N}) where {N}
+    Xib = convert(IA.IntervalBox, X)
+    Yib = convert(IA.IntervalBox, Y)
+    return UnionSetArray(convert.(Hyperrectangle, IA.setdiff(Xib, Yib)))
 end
