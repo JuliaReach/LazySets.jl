@@ -215,7 +215,7 @@ end
     ∈(x::AbstractVector{N}, ms::MinkowskiSum{N, <:AbstractSingleton, <:LazySet}) where {N}
 
 Check whether a given point is contained in the Minkowski sum of a singleton
-and a lazy set.
+and a set.
 
 ### Input
 
