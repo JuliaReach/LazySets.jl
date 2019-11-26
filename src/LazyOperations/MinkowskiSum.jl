@@ -212,7 +212,7 @@ function constraints_list(ms::MinkowskiSum)
 end
 
 """
-    ∈(x::AbstractVector{N}, ms::MinkowskiSum{N, <:Singleton, <:LazySets}) where {N}
+    ∈(x::AbstractVector{N}, ms::MinkowskiSum{N, <:Singleton, <:LazySet}) where {N}
 
 Check whether a given point is contained in the Minkowski sum of a singleton
 and a lazy set.
