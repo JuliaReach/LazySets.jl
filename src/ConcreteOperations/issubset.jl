@@ -116,7 +116,7 @@ function ⊆(P::AbstractPolytope{N},
           )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     @assert dim(P) == dim(H)
 
-    return _issusbset_vertices_list(P, H, witness)
+    return _issubset_vertices_list(P, H, witness)
 end
 
 
