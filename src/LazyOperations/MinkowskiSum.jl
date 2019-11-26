@@ -219,7 +219,7 @@ and a lazy set.
 
 ### Input
 
-- `x`  -- point (any vector type)
+- `x`  -- point
 - `ms` -- lazy minkowski sum of a singleton and a lazy set
 
 ### Output
