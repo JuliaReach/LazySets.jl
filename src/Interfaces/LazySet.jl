@@ -39,6 +39,15 @@ Every concrete `LazySet` must define the following functions:
     `Real`
 - `dim(S::LazySet)::Int` -- the ambient dimension of `S`
 
+The function
+- `ρ(d::AbstractVector{N}, S::LazySet{N}) where {N<:Real}` -- the support
+    function of `S` in a given direction `d`; note that the numeric type `N` of
+    `d` and `S` must be identical; for some set types `N` may be more
+    restrictive than `Real`
+is optional because there is a fallback implementation relying on `σ`.
+However, for unbounded sets (which includes most lazy set types) this fallback
+cannot be used and an explicit method must be implemented.
+
 The subtypes of `LazySet` (including abstract interfaces):
 
 ```jldoctest; setup = :(using LazySets: subtypes)
