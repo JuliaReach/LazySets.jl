@@ -211,6 +211,30 @@ function constraints_list(ms::MinkowskiSum)
     return constraints_list(minkowski_sum(ms.X, ms.Y))
 end
 
+"""
+    ∈(x::AbstractVector{N}, ms::MinkowskiSum{N, <:Singleton, <:LazySets}) where {N}
+
+Check whether a given point is contained in the minkowski sum of a singleton
+and a lazy set.
+
+### Input
+
+- `x`  -- point (any vector type)
+- `ms` -- lazy minkowski sum of a singleton and a lazy set
+
+### Output
+
+`true` iff ``x ∈ ms``.
+
+### Algorithm
+
+Note that ``x ∈ (S ⊕ P)``, where ``S`` is a singleton set, ``S = \\{s\\}`` and
+``P`` is a lazy set, ``(x-s) ∈ P``.
+"""
+function ∈(x::AbstractVector{N}, ms::MinkowskiSum{N, <:Singleton, <:AbstractPolytope}) where {N}
+    return (x - element(ms.X)) ∈ ms.Y
+end
+
 # =================================
 # Minkowski sum of an array of sets
 # =================================
