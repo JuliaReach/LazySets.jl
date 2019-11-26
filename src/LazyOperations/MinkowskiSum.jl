@@ -231,7 +231,7 @@ and a lazy set.
 Note that ``x ∈ (S ⊕ P)``, where ``S`` is a singleton set, ``S = \\{s\\}`` and
 ``P`` is a lazy set, ``(x-s) ∈ P``.
 """
-function ∈(x::AbstractVector{N}, ms::MinkowskiSum{N, <:Singleton, <:AbstractPolytope}) where {N}
+function ∈(x::AbstractVector{N}, ms::MinkowskiSum{N, <:Singleton, <:LazySet}) where {N}
     return (x - element(ms.X)) ∈ ms.Y
 end
 
