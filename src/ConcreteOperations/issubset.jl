@@ -184,7 +184,7 @@ end
 
 
 """
-    ⊆(P::AbstractPolytope{N}, S::LazySet{N}, witness::Bool=false;
+    ⊆(P::AbstractPolytope{N}, S::LazySet{N}, [witness]::Bool=false;
       algorithm="constraints")::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
 
 Check whether a polytope is contained in a convex set, and if not, optionally
