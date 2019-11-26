@@ -220,7 +220,7 @@ and a set.
 ### Input
 
 - `x`  -- point
-- `ms` -- lazy minkowski sum of a singleton and a lazy set
+- `ms` -- lazy Minkowski sum of a singleton and a set
 
 ### Output
 
