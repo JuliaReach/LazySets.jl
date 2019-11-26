@@ -229,7 +229,7 @@ and a set.
 ### Algorithm
 
 Note that ``x ∈ (S ⊕ P)``, where ``S`` is a singleton set, ``S = \\{s\\}`` and
-``P`` is a lazy set, ``(x-s) ∈ P``.
+``P`` is a set, if and only if ``(x-s) ∈ P``.
 """
 function ∈(x::AbstractVector{N}, ms::MinkowskiSum{N, <:AbstractSingleton, <:LazySet}) where {N}
     return _in_singleton_msum(x, ms.X, ms.Y)
