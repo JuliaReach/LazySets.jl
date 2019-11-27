@@ -69,6 +69,10 @@ for N in [Float64, Rational{Int}, Float32]
     # isempty
     @test !isempty(b)
 
+    # isuniversal
+    answer, w = isuniversal(b, true)
+    @test !isuniversal(b) && !answer && w ∉ b
+
     # membership
     b = BallInf(N[1, 1], N(1))
     @test N[0.5, -0.5] ∉ b

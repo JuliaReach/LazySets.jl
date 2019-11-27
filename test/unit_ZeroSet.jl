@@ -33,6 +33,10 @@ for N in [Float64, Rational{Int}, Float32]
     # isempty
     @test !isempty(Z)
 
+    # isuniversal
+    answer, w = isuniversal(Z, true)
+    @test !isuniversal(Z) && !answer && w ∉ Z
+
     # subset
     z = ZeroSet{N}(1)
     s1 = Singleton(N[0])

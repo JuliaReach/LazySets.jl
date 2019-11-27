@@ -153,6 +153,10 @@ for N in [Float64, Float32, Rational{Int}]
         addconstraint!(hp_shallow, c1)
         @test_throws AssertionError an_element(hp_shallow)
 
+        # isuniversal
+        answer, w = isuniversal(hp, true)
+        @test !isuniversal(hp) && !answer && w ∉ hp
+
         # hrep conversion
         @test tohrep(hp) == hp
 

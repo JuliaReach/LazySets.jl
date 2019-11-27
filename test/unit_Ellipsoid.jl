@@ -67,6 +67,10 @@ for N in [Float64, Float32]
     # isempty
     @test !isempty(E)
 
+    # isuniversal
+    answer, w = isuniversal(E, true)
+    @test !isuniversal(E) && !answer && w ∉ E
+
     # an_element and set membership functions
     M = Matrix{N}(2I, 2, 2)
     E = Ellipsoid(N[1, 2], M)
