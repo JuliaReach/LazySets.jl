@@ -185,7 +185,7 @@ end
 
 """
     ⊆(P::AbstractPolytope{N}, S::LazySet{N}, [witness]::Bool=false;
-      algorithm="constraints")::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+      algorithm=_default_issubset(P, S)) where {N<:Real}
 
 Check whether a polytope is contained in a convex set, and if not, optionally
 compute a witness.
@@ -195,7 +195,8 @@ compute a witness.
 - `P` -- inner polytope
 - `S` -- outer convex set
 - `witness`   -- (optional, default: `false`) compute a witness if activated
-- `algorithm` -- (optional, default: `"constraints"`) algorithm for the inclusion
+- `algorithm` -- (optional, default: `"constraints"` if the constraints list of `S`
+                 is available, otherwise `"vertices"`) algorithm for the inclusion
                  check; available options are:
 
     * `"constraints"`, using the list of constraints of `P` and support function
@@ -217,7 +218,7 @@ Since ``S`` is convex, ``P ⊆ S`` iff ``v_i ∈ S`` for all vertices ``v_i`` of
 ``P``.
 """
 function ⊆(P::AbstractPolytope{N}, S::LazySet{N}, witness::Bool=false;
-           algorithm="constraints")::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+           algorithm=_default_issubset(P, S)) where {N<:Real}
     @assert dim(P) == dim(S)
 
     if algorithm == "constraints"
@@ -226,6 +227,14 @@ function ⊆(P::AbstractPolytope{N}, S::LazySet{N}, witness::Bool=false;
         return _issubset_vertices_list(P, S, witness)
     else
         error("algorithm $algorithm unknown")
+    end
+end
+
+@inline function _default_issubset(P, S)
+    if !applicable(constraints_list, S)
+        return "vertices"
+    else
+        return "constraints"
     end
 end
 
