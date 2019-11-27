@@ -116,20 +116,7 @@ function ⊆(P::AbstractPolytope{N},
           )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     @assert dim(P) == dim(H)
 
-    for v in vertices_list(P)
-        if v ∉ H
-            if witness
-                return (false, v)
-            else
-                return false
-            end
-        end
-    end
-    if witness
-        return (true, N[])
-    else
-        return true
-    end
+    return _issubset_vertices_list(P, H, witness)
 end
 
 
@@ -197,8 +184,8 @@ end
 
 
 """
-    ⊆(P::AbstractPolytope{N}, S::LazySet{N}, [witness]::Bool=false
-     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    ⊆(P::AbstractPolytope{N}, S::LazySet{N}, [witness]::Bool=false;
+      algorithm=_default_issubset(P, S)) where {N<:Real}
 
 Check whether a polytope is contained in a convex set, and if not, optionally
 compute a witness.
@@ -207,7 +194,16 @@ compute a witness.
 
 - `P` -- inner polytope
 - `S` -- outer convex set
-- `witness` -- (optional, default: `false`) compute a witness if activated
+- `witness`   -- (optional, default: `false`) compute a witness if activated
+- `algorithm` -- (optional, default: `"constraints"` if the constraints list of `S`
+                 is available, otherwise `"vertices"`) algorithm for the inclusion
+                 check; available options are:
+
+    * `"constraints"`, using the list of constraints of `P` and support function
+      evaluations of `S`
+
+    * `"vertices"`, using the list of vertices of `P` and membership evaluations
+      of `S`
 
 ### Output
 
@@ -221,10 +217,29 @@ compute a witness.
 Since ``S`` is convex, ``P ⊆ S`` iff ``v_i ∈ S`` for all vertices ``v_i`` of
 ``P``.
 """
-function ⊆(P::AbstractPolytope{N}, S::LazySet{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+function ⊆(P::AbstractPolytope{N}, S::LazySet{N}, witness::Bool=false;
+           algorithm=_default_issubset(P, S)) where {N<:Real}
     @assert dim(P) == dim(S)
 
+    if algorithm == "constraints"
+        return _issubset_constraints_list(P, S, witness)
+    elseif algorithm == "vertices"
+        return _issubset_vertices_list(P, S, witness)
+    else
+        error("algorithm $algorithm unknown")
+    end
+end
+
+@inline function _default_issubset(P, S)
+    if applicable(constraints_list, S)
+        return "constraints"
+    else
+        return "vertices"
+    end
+end
+
+# check whether P ⊆ S by testing if each vertex of P belongs to S
+function _issubset_vertices_list(P, S, witness)
     for v in vertices_list(P)
         if v ∉ S
             if witness
