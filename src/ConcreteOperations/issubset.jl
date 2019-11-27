@@ -231,10 +231,10 @@ function ⊆(P::AbstractPolytope{N}, S::LazySet{N}, witness::Bool=false;
 end
 
 @inline function _default_issubset(P, S)
-    if !applicable(constraints_list, S)
-        return "vertices"
-    else
+    if applicable(constraints_list, S)
         return "constraints"
+    else
+        return "vertices"
     end
 end
 
