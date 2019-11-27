@@ -191,7 +191,7 @@ dim(::MinkowskiSum)
 isbounded(::MinkowskiSum)
 isempty(::MinkowskiSum)
 constraints_list(::MinkowskiSum)
-∈(::AbstractVector{N}, ::MinkowskiSum{N, <:AbstractSingleton, <:LazySet}) where {N}
+∈(::AbstractVector{N}, ::MinkowskiSum{N, S1, S2}) where {N, S1<:AbstractSingleton, S2<:LazySet}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

@@ -231,7 +231,7 @@ and a set.
 Note that ``x ∈ (S ⊕ P)``, where ``S`` is a singleton set, ``S = \\{s\\}`` and
 ``P`` is a set, if and only if ``(x-s) ∈ P``.
 """
-function ∈(x::AbstractVector{N}, ms::MinkowskiSum{N, <:AbstractSingleton, <:LazySet}) where {N}
+function ∈(x::AbstractVector{N}, ms::MinkowskiSum{N, S1, S2}) where {N, S1<:AbstractSingleton, S2<:LazySet}
     return _in_singleton_msum(x, ms.X, ms.Y)
 end
 
