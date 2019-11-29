@@ -113,7 +113,7 @@ Zonotope(center::AbstractVector{N}, generators_list::AbstractVector{VN};
 
 
 """
-    center(Z::Zonotope{N})::Vector{N} where {N<:Real}
+    center(Z::Zonotope{N}) where {N<:Real}
 
 Return the center of a zonotope.
 
@@ -125,7 +125,7 @@ Return the center of a zonotope.
 
 The center of the zonotope.
 """
-function center(Z::Zonotope{N})::Vector{N} where {N<:Real}
+function center(Z::Zonotope{N}) where {N<:Real}
     return Z.center
 end
 
@@ -275,7 +275,7 @@ A new zonotope with less generators, if possible.
 
 See `overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, Rational}) where {N<:Real}` for details.
 """
-function reduce_order(Z::Zonotope{N}, r::Union{Integer, Rational})::Zonotope{N} where {N<:Real}
+function reduce_order(Z::Zonotope{N}, r::Union{Integer, Rational}) where {N<:Real}
     return overapproximate(Z, Zonotope, r)
 end
 
