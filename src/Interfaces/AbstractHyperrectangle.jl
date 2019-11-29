@@ -237,7 +237,7 @@ A list of linear constraints.
 """
 function constraints_list(H::AbstractHyperrectangle{N}) where {N<:Real}
     n = dim(H)
-    constraints = Vector{LinearConstraint{N}}(undef, 2*n)
+    constraints = Vector{LinearConstraint{N, SingleEntryVector{N}}}(undef, 2*n)
     b, c = high(H), -low(H)
     one_N = one(N)
     for i in 1:n
@@ -332,7 +332,7 @@ This implementation uses the fact that the maximum is achieved in the vertex
 ``c + \\text{diag}(\\text{sign}(c)) r``, for any ``p``-norm, hence it suffices to
 take the ``p``-norm of this particular vertex. This statement is proved below.
 Note that, in particular, there is no need to compute the ``p``-norm for *each*
-vertex, which can be very expensive. 
+vertex, which can be very expensive.
 
 If ``X`` is an axis-aligned hyperrectangle and the ``n``-dimensional vectors center
 and radius of the hyperrectangle are denoted ``c`` and ``r`` respectively, then
