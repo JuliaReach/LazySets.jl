@@ -588,7 +588,7 @@ number of sets.
 A list of constraints.
 """
 function constraints_list(cpa::CartesianProductArray{N}) where {N<:Real}
-    clist = Vector{LinearConstraint{N}}()
+    clist = Vector{LinearConstraint{N, SparseVector{N, Int}}}()
     n = dim(cpa)
     sizehint!(clist, n)
     prev_step = 1
@@ -599,8 +599,7 @@ function constraints_list(cpa::CartesianProductArray{N}) where {N<:Real}
             indices = prev_step : (dim(c_low_list[1]) + prev_step - 1)
         end
         for constr in c_low_list
-            new_constr = LinearConstraint(sparsevec(indices, constr.a, n),
-                                          constr.b)
+            new_constr = LinearConstraint(sparsevec(indices, constr.a, n), constr.b)
             push!(clist, new_constr)
         end
         prev_step += dim(c_low_list[1])
