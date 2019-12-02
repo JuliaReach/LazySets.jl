@@ -29,13 +29,6 @@ for N in [Float64, Rational{Int}, Float32]
     @test isempty_known(I)
     @test !isempty(I)
 
-    # constraints_list for polytopic intersection
-    @test ispermutation(constraints_list(I),
-                        [HalfSpace(N[1, 0], N(2)),
-                         HalfSpace(N[0, 1], N(2)),
-                         HalfSpace(N[-1, 0], N(0)),
-                         HalfSpace(N[0, -1], N(0))])
-
     # =================
     # IntersectionArray
     # =================
@@ -74,11 +67,6 @@ for N in [Float64, Rational{Int}, Float32]
     IntersectionArray(10, N)
 
     # constraints_list for polytopic intersection
-    @test ispermutation(constraints_list(IA),
-                        [HalfSpace(N[1, 0], N(2)),
-                         HalfSpace(N[0, 1], N(2)),
-                         HalfSpace(N[-1, 0], N(0)),
-                         HalfSpace(N[0, -1], N(0))])
 
     # ================
     # common functions
@@ -87,19 +75,25 @@ for N in [Float64, Rational{Int}, Float32]
     # absorbing element
     @test absorbing(Intersection) == absorbing(IntersectionArray) == EmptySet
     @test I ∩ E == E ∩ I == IA ∩ E == E ∩ IA == E ∩ E == E
-
-    # =====================
-    # concrete operations
-    # =====================
-    cap =  HPolytope([HalfSpace(N[1], N(1))]) ∩ HPolytope([HalfSpace(N[-1], N(1))])  # x <= 1 && x >= -1
-    p = linear_map(reshape([N(1/2)], 1, 1), cap)
-    @test N[-0.5] ∈ p && N[0.5] ∈ p && (N[1.0] ∉ p || N[1.0] ∉ p)
 end
 
 # ======================
 # Tests for Float64 only
 # ======================
 for N in [Float64]
+    # constraints_list for polytopic intersection
+    B = BallInf(ones(N, 2), N(3))
+    H = Hyperrectangle(ones(N, 2), ones(N, 2))
+    I = B ∩ H
+    IA = IntersectionArray([B, H])
+    clist1 = constraints_list(I)
+    clist2 = constraints_list(IA)
+    @test ispermutation(clist1, clist2) &&
+          ispermutation(clist1, [HalfSpace(N[1, 0], N(2)),
+                                 HalfSpace(N[0, 1], N(2)),
+                                 HalfSpace(N[-1, 0], N(0)),
+                                 HalfSpace(N[0, -1], N(0))])
+
     # HalfSpace vs. Ball1 intersection
     X = Ball1(zeros(2), N(1));
     d = normalize(N[1, 0])
@@ -137,4 +131,11 @@ for N in [Float64]
     # need Polyhedra (in the general case), for the concrete linear map. As a valid workaround
     # if we don't want to load Polyhedra here is to convert the given set to a polygon in V-representation
     @test isapprox(ρ(d, convert(VPolygon, X) ∩ H, algorithm="projection", lazy_linear_map=false), N(0.5), atol=1e-6)
+
+    # =====================
+    # concrete operations
+    # =====================
+    cap =  HPolytope([HalfSpace(N[1], N(1))]) ∩ HPolytope([HalfSpace(N[-1], N(1))])  # x <= 1 && x >= -1
+    p = linear_map(reshape([N(1/2)], 1, 1), cap)
+    @test N[-0.5] ∈ p && N[0.5] ∈ p && (N[1.0] ∉ p || N[1.0] ∉ p)
 end

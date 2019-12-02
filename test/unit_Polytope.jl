@@ -39,23 +39,8 @@ for N in [Float64, Rational{Int}, Float32]
     addconstraint!(p, c4)
     addconstraint!(p, c2)
 
-    # support vector
-    d = N[1, 0]
-    @test σ(d, p) == N[4, 2]
-    d = N[0, 1]
-    @test σ(d, p) == N[2, 4]
-    d = N[-1, 0]
-    @test σ(d, p) == N[-1, 1]
-    d = N[0, -1]
-    @test σ(d, p) == N[0, 0]
-
     # support vector of polytope with no constraints
     @test_throws ErrorException σ(N[0], HPolytope{N}())
-
-    # boundedness
-    @test isbounded(p) && isbounded(p, false)
-    p2 = HPolytope{N}()
-    @test isbounded(p2) && !isbounded(p2, false)
 
     # membership
     @test N[5 / 4, 7 / 4] ∈ p
@@ -79,33 +64,19 @@ for N in [Float64, Rational{Int}, Float32]
         P = convert(HPolytope, H)
         vlist = vertices_list(P)
         @test ispermutation(vlist, [N[3, 3], N[3, -1], N[-1, -1], N[-1, 3]])
-        # check boundedness after conversion
-        HPolytope(constraints_list(H); check_boundedness=true)
 
         # isempty
-        @test !isempty(p)
         @test !isempty(HPolytope{N}())  # note: this object is illegal
 
         # H-representaion of an empty v-polytope
         @test tohrep(VPolytope{N}()) == EmptySet{N}()
     end
 
-    # remove redundant constraints
+    # translation
     P = HPolytope([HalfSpace(N[1, 0], N(1)),
                    HalfSpace(N[0, 1], N(1)),
                    HalfSpace(N[-1, -0], N(1)),
-                   HalfSpace(N[-0, -1], N(1)),
-                   HalfSpace(N[1, 0], N(2))]) # redundant
-
-    Pred = remove_redundant_constraints(P)
-    @test length(Pred.constraints) == 4
-    @test length(P.constraints) == 5
-
-    # test in-place removal of redundancies
-    remove_redundant_constraints!(P)
-    @test length(P.constraints) == 4
-
-    # translation
+                   HalfSpace(N[-0, -1], N(1))])
     P2 = translate(P, N[1, 2])
     @test P2 isa HPolytope{N} && ispermutation(constraints_list(P2),
         [HalfSpace(N[1, 0], N(2)), HalfSpace(N[0, 1], N(3)),
@@ -135,8 +106,7 @@ for N in [Float64, Rational{Int}, Float32]
     L4 = linear_map(M, P, cond_tol=1e3)  # set a custom tolerance for the condition number (invertibility check)
     L5 = linear_map(M, P, check_invertibility=false)  # invertibility known
     L6 = linear_map(M, P, inverse=inv(M))  # pass inverse
-    # needs M * an_element(Li) to be stable for rational, see #1105
-    p = convert(Vector{N}, an_element(P))
+    p = center(H)
     @test p ∈ P
     @test all([M * p ∈ Li for Li in [L1, L2, L3, L4, L5, L6]])
     @test L3 isa VPolygon{N}
@@ -188,12 +158,6 @@ for N in [Float64, Rational{Int}, Float32]
         Pe = polyhedron(Vempty, relative_dimension=2)
     end
 
-    # membership
-    @test N[.49, .49] ∈ p
-    @test N[.51, .51] ∉ p
-    q = VPolytope([N[0, 1], N[0, 2]])
-    @test N[0, 1//2] ∉ q
-
     # translation
     @test translate(p, N[1, 2]) == VPolytope([N[1, 2], N[2, 2], N[1, 3]])
 
@@ -210,9 +174,56 @@ end
 @test HPolytope() isa HPolytope{Float64}
 @test VPolytope() isa VPolytope{Float64}
 
-# Polyhedra tests that only work with Float64
-if test_suite_polyhedra
-    for N in [Float64]
+# tests that only work with Float64
+for N in [Float64]
+    p = HPolytope{N}()
+    c1 = LinearConstraint(N[2, 2], N(12))
+    c2 = LinearConstraint(N[-3, 3], N(6))
+    c3 = LinearConstraint(N[-1, -1], N(0))
+    c4 = LinearConstraint(N[2, -4], N(0))
+    addconstraint!(p, c3)
+    addconstraint!(p, c1)
+    addconstraint!(p, c4)
+    addconstraint!(p, c2)
+
+    # support vector
+    d = N[1, 0]
+    @test σ(d, p) == N[4, 2]
+    d = N[0, 1]
+    @test σ(d, p) == N[2, 4]
+    d = N[-1, 0]
+    @test σ(d, p) == N[-1, 1]
+    d = N[0, -1]
+    @test σ(d, p) == N[0, 0]
+
+    # boundedness
+    @test isbounded(p) && isbounded(p, false)
+    p2 = HPolytope{N}()
+    @test isbounded(p2) && !isbounded(p2, false)
+
+    # remove redundant constraints
+    P = HPolytope([HalfSpace(N[1, 0], N(1)),
+                   HalfSpace(N[0, 1], N(1)),
+                   HalfSpace(N[-1, -0], N(1)),
+                   HalfSpace(N[-0, -1], N(1)),
+                   HalfSpace(N[1, 0], N(2))]) # redundant
+
+    Pred = remove_redundant_constraints(P)
+    @test length(Pred.constraints) == 4
+    @test length(P.constraints) == 5
+
+    # test in-place removal of redundancies
+    remove_redundant_constraints!(P)
+    @test length(P.constraints) == 4
+
+    # membership
+    p = VPolytope([N[0, 0], N[1, 0], N[0, 1]])
+    @test N[.49, .49] ∈ p
+    @test N[.51, .51] ∉ p
+    q = VPolytope([N[0, 1], N[0, 2]])
+    @test N[0, 1//2] ∉ q
+
+    if test_suite_polyhedra
         # -----
         # H-rep
         # -----
@@ -256,7 +267,8 @@ if test_suite_polyhedra
         vl = vertices_list(p1)
         @test ispermutation(vl, [N[0], N[1]])
 
-        # checking for emptiness
+        # isempty
+        @test !isempty(p)
         P = HPolytope([LinearConstraint(N[1, 0], N(0))])      # x <= 0
         @test !isempty(P)
         addconstraint!(P, LinearConstraint(N[-1, 0], N(-1)))  # x >= 1
@@ -294,6 +306,10 @@ if test_suite_polyhedra
         P = HPolytope(A, b)
         @test tovrep(P) isa VPolytope{N}
         @test tohrep(P) isa HPolytope{N}  # no-op
+
+        # check boundedness after conversion
+        H = Hyperrectangle(N[1, 1], N[2, 2])
+        HPolytope(constraints_list(H); check_boundedness=true)
 
         # -----
         # V-rep
