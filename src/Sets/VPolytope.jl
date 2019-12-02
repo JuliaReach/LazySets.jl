@@ -7,7 +7,9 @@ export VPolytope,
        cartesian_product,
        linear_map,
        remove_redundant_vertices,
-       minkowski_sum
+       minkowski_sum,
+       tohrep,
+       tovrep
 
 """
     VPolytope{N<:Real} <: AbstractPolytope{N}
@@ -554,10 +556,6 @@ end
 function load_polyhedra_vpolytope() # function to be loaded by Requires
 return quote
 # see the interface file AbstractPolytope.jl for the imports
-
-export vertices_list,
-       tohrep,
-       tovrep
 
 # VPolytope from a VRep
 function VPolytope(P::VRep{N}) where {N}
