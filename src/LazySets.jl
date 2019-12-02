@@ -37,7 +37,6 @@ using .Arrays
 include("Utils/helper_functions.jl")
 include("Utils/comparisons.jl")
 include("Utils/macros.jl")
-include("Utils/samples.jl")
 
 # ==================
 # Abstract set types
@@ -124,6 +123,7 @@ include("ConcreteOperations/issubset.jl")
 include("ConcreteOperations/minkowski_difference.jl")
 include("ConcreteOperations/minkowski_sum.jl")
 include("ConcreteOperations/reflection.jl")
+include("Utils/samples.jl")
 
 # =====================
 # Approximations module
