@@ -25,11 +25,6 @@ for N in [Float64, Rational{Int}, Float32]
     @test isbounded(ResetMap(Singleton(N[1, 2]), r_none))  # bounded set without resets
     @test !isbounded(ResetMap(Universe{N}(2), r_1))  # unbounded set without enough resets
     @test isbounded(ResetMap(Universe{N}(2), r_12))  # unbounded set with enough resets
-    if N in [Float64]
-        @test !isbounded(ResetMap(HPolyhedron([HalfSpace(N[1, 1], N(1))]), r_none))  # unbounded set without resets
-        @test !isbounded(ResetMap(HPolyhedron([HalfSpace(N[1, 1], N(1))]), r_1))  # unbounded set without enough resets
-        @test isbounded(ResetMap(HPolyhedron([HalfSpace(N[1, 1], N(1))]), r_12))  # unbounded set, but captured by resets
-    end
 
     # an_element function
     an_element(rm)
@@ -56,6 +51,24 @@ for N in [Float64, Rational{Int}, Float32]
                          HalfSpace(N[0, -1, 0], N(-1)),
                          HalfSpace(N[0, 0, 1], N(0)),
                          HalfSpace(N[0, 0, -1], N(0))])
+end
+
+for N in [Float64]
+    b = BallInf(N[2, 2, 2], N(1))
+    r = Dict(1 => N(4), 3 => N(0))
+    r_none = Dict{Int, N}()  # no reset
+    r_1 = Dict{Int, N}(1 => N(1))  # reset x1
+    r_12 = Dict{Int, N}(1 => N(1), 2 => N(1))  # reset x1 and x2
+    rm = ResetMap(b, r)
+
+    # boundedness
+    P = HPolyhedron([HalfSpace(N[1, 1], N(1))])
+    @test !isbounded(ResetMap(P, r_none))  # unbounded set without resets
+    @test !isbounded(ResetMap(P, r_1))  # unbounded set without enough resets
+    @test isbounded(ResetMap(P, r_12))  # unbounded set, but captured by resets
+    @test !isbounded(ResetMap(HPolyhedron([HalfSpace(N[1, 1], N(1))]), r_none))  # unbounded set without resets
+    @test !isbounded(ResetMap(HPolyhedron([HalfSpace(N[1, 1], N(1))]), r_1))  # unbounded set without enough resets
+    @test isbounded(ResetMap(HPolyhedron([HalfSpace(N[1, 1], N(1))]), r_12))  # unbounded set, but captured by resets
 
     # intersection
     b2 = BallInf(N[4, 2, 0], N(1))
