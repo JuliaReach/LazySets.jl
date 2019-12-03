@@ -152,15 +152,20 @@ function ⊆(H1::AbstractHyperrectangle{N},
            witness::Bool=false
           )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     @assert dim(H1) == dim(H2)
-
-    for i in 1:dim(H1)
-        c_dist = center(H1)[i] - center(H2)[i]
+    zero_N = zero(N)
+    c1 = center(H1)
+    c2 = center(H2)
+    @inbounds for i in 1:dim(H1)
+        c_dist = c1[i] - c2[i]
         r_dist = radius_hyperrectangle(H1, i) - radius_hyperrectangle(H2, i)
-        if -r_dist < c_dist || c_dist < r_dist
+        # check if c_dist is in the interval [r_dist, -r_dist]
+        left = _leq(r_dist, c_dist)
+        right = _leq(c_dist, -r_dist)
+        if !left || !right
             if witness
                 # compute a witness 'p' in the difference
                 p = copy(center(H1))
-                if c_dist >= 0
+                if c_dist >= zero_N
                     p[i] += radius_hyperrectangle(H1, i)
                 else
                     p[i] -= radius_hyperrectangle(H1, i)
