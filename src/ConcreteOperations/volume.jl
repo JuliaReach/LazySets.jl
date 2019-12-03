@@ -27,8 +27,8 @@ function volume(H::AbstractHyperrectangle{N}) where {N<:AbstractFloat}
 end
 
 # fallback for rational
-function volume(X::AbstractHyperrectangle{N}) where {N}
-    r = radius_hyperrectangle(X)
+function volume(H::AbstractHyperrectangle{N}) where {N}
+    r = radius_hyperrectangle(H)
     vol = prod(2 .* r)
     return vol
 end
