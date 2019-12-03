@@ -1,3 +1,4 @@
+using LinearAlgebra: Diagonal
 for _dummy_ in 1:1 # avoid global variable warnings
     # reseeding with random seed
     rng = LazySets.GLOBAL_RNG
@@ -85,4 +86,12 @@ for _dummy_ in 1:1 # avoid global variable warnings
         B = LazySets.delete_zero_columns!(A)
         @test size(B) == (m, n-3)
     end
+
+    # Check if sets are equal
+    n = 3
+    I = Diagonal(ones(n))
+    X = HPolytope([I; -I], ones(2))
+    Y = convert(VPolytope, X)
+    @test LazySets.isequivalent(X, Y)
+
 end
