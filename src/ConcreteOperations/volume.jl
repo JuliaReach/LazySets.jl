@@ -23,7 +23,7 @@ function volume(H::AbstractHyperrectangle{N}) where {N<:AbstractFloat}
     n = dim(H)
     α = exp(n*log(2))
     vol = α * prod(r)
-    return  α * prod(r)
+    return vol
 end
 
 # fallback for rational
