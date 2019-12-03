@@ -80,3 +80,9 @@ LazySets.Sampler
 LazySets.RejectionSampler{S<:LazySet, D<:Distribution}
 LazySets._sample!
 ```
+
+## Volume
+
+```@docs
+volume
+```
