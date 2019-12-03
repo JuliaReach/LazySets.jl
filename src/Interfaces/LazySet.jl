@@ -685,23 +685,21 @@ isoperationtype(::LazySet) = error("`isoperationtype` cannot be applied to " *
                                    "a set instance; use `isoperation` instead")
 
 """
-    isequivalent(X::LazySet, Y::LazySet; eps=0.0; p=Inf )
+    isequivalent(X::LazySet, Y::LazySet)
 
-Return whether two LazySets are equal in the mathematical sense, i.e. equivalent. If `eps` is bigger than zero, the equivalence check is relaxed by a `p`-norm ball with radius `eps`.
+Return whether two LazySets are equal in the mathematical sense, i.e. equivalent.
 
 ### Input
 
 - `X` -- any `LazySet`
 - `Y` -- another `LazySet`
-- `eps` -- (optional, default=0.0) tolerance for equivalence check
-- `p` -- (optional, default=Inf) norm of `Ballp` used for the approximative equivalence check
 
 ### Output
-`true` iff `X` is equivalent to `Y` with tolerance `eps`.
+`true` iff `X` is equivalent to `Y`.
 
 ### Examples
 
-```jldoctest
+```
 julia> X = BallInf([0.1, 0.2], 0.3)
 julia> Y = convert(HPolytope, X)
 julia> X == Y
@@ -710,13 +708,9 @@ julia> is_equivalent(X, Y)
 true
 ```
 """
-function isequivalent(X::LazySet, Y::LazySet; eps=0.0; p=Inf )
+function isequivalent(X::LazySet, Y::LazySet)
     if X == Y
         return true
     end
-    if eps == 0.0
-        return X ⊆ Y && Y ⊆ X
-    else
-        return X ⊆ Y + Ballp(p, zeros(n),eps) &&
-               Y ⊆ X + Ballp(p, zeros(n),eps)
+    return X ⊆ Y && Y ⊆ X
 end
