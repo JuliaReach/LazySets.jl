@@ -157,10 +157,8 @@ function ⊆(H1::AbstractHyperrectangle{N},
     @inbounds for i in 1:dim(H1)
         c_dist = c1[i] - c2[i]
         r_dist = radius_hyperrectangle(H1, i) - radius_hyperrectangle(H2, i)
-        # check if c_dist is in the interval [r_dist, -r_dist]
-        left = _leq(r_dist, c_dist)
-        right = _leq(c_dist, -r_dist)
-        if !left || !right
+        # check if c_dist is not in the interval [r_dist, -r_dist]
+        if !_leq(r_dist, c_dist) || !_leq(c_dist, -r_dist)
             if witness
                 # compute a witness 'p' in the difference
                 p = copy(center(H1))
