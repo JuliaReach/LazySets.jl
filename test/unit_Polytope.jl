@@ -223,6 +223,11 @@ for N in [Float64]
     q = VPolytope([N[0, 1], N[0, 2]])
     @test N[0, 1//2] ∉ q
 
+    # inclusion (see #1809)
+    X = BallInf(N[0.1, 0.2, 0.1], N(0.3))
+    Y = convert(HPolytope, X)
+    @test Y ⊆ X
+
     if test_suite_polyhedra
         # -----
         # H-rep
