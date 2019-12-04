@@ -85,6 +85,17 @@ for N in [Float64, Rational{Int}, Float32]
     # concatenation of two convex hull arrays
     @test CH(cha, cha) isa ConvexHull
 
+    # list of vertices of the convex hull array of singleton
+    a = Singleton(N[-1, 0])
+    b = Singleton(N[1, 0])
+    c = Singleton(N[0, 1])
+    Δ = ConvexHullArray([a, b, c])
+    vlist = vertices_list(Δ)
+    @test ispermutation(vlist, [N[-1, 0], N[1, 0], N[0, 1]])
+    vΔ = convert(VPolytope, Δ)
+    vlist = vertices_list(vΔ)
+    @test ispermutation(vlist, [N[-1, 0], N[1, 0], N[0, 1]])
+
     # ================
     # common functions
     # ================
