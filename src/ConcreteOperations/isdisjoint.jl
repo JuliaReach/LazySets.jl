@@ -932,6 +932,9 @@ For `algorithm == "exact"`, see @ref(isempty(P::HPoly{N}, ::Bool)).
 For `algorithm == "sufficient"`, we rely on the intersection check between the
 set `X` and each constraint in `P`.
 This means one support function evaluation of `X` for each constraint of `P`.
+With the sufficiency algorithm, this function may return `false` even in the case
+where the intersection is empty. On the other hand, if the algorithm returns
+`true`, then it is guaranteed that the intersection is empty.
 """
 function is_intersection_empty(P::AbstractPolyhedron{N},
                                X::LazySet{N},
