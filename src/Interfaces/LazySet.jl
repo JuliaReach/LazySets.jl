@@ -704,10 +704,13 @@ First, the check `X == Y` is performed which returns `true` if and only if the g
 ### Examples
 
 ```jldoctest
-julia> X = BallInf([0.1, 0.2], 0.3)
-julia> Y = convert(HPolytope, X)
+julia> X = BallInf([0.1, 0.2], 0.3);
+
+julia> Y = convert(HPolytope, X);
+
 julia> X == Y
 false
+
 julia> isequivalent(X, Y)
 true
 ```
