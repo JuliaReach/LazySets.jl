@@ -92,6 +92,6 @@ for _dummy_ in 1:1 # avoid global variable warnings
     I = Diagonal(ones(n))
     X = HPolytope([I; -I], ones(2*n))
     Y = convert(VPolytope, X)
-    @test LazySets.isequivalent(X, Y)
+    @test isequivalent(X, Y)
 
 end
