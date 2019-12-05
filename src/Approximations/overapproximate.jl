@@ -762,9 +762,16 @@ using .TaylorModels: Taylor1, TaylorN, TaylorModelN, TaylorModel1,
                      normalize_taylor, linear_polynomial,
                      constant_term, evaluate, mid
 
-# helper functions
-@inline get_linear_coeffs(p::Taylor1) = linear_polynomial(p).coeffs[2:end]
-@inline get_linear_coeffs(p::TaylorN) = linear_polynomial(p).coeffs[2].coeffs
+@inline function get_linear_coeffs(p::Taylor1, n)
+    return linear_polynomial(p).coeffs[2:end]
+end
+
+@inline function get_linear_coeffs(p::TaylorN, n)
+    if p.order == 0
+        return zeros(eltype(p), n)
+    end
+    return linear_polynomial(p).coeffs[2].coeffs
+end
 
 """
     overapproximate(vTM::Vector{TaylorModel1{T, S}},
@@ -920,7 +927,7 @@ function overapproximate(vTM::Vector{TaylorModel1{T, S}},
     gen_rem = Vector{T}(undef, m) # generators of the remainder
 
     # compute overapproximation
-    return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
+    return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem, 1)
 end
 
 """
@@ -1008,10 +1015,10 @@ function overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
     gen_rem = Vector{T}(undef, m) # generators for the remainder
 
     # compute overapproximation
-    return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
+    return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem, n)
 end
 
-function _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
+function _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem, n)
     @inbounds for (i, x) in enumerate(vTM)
         xpol, xdom = polynomial(x), domain(x)
 
@@ -1029,7 +1036,7 @@ function _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
         # build the generators
         α = mid(rem_nonlin)
         c[i] = constant_term(Q) + α  # constant terms
-        gen_lin[i, :] = get_linear_coeffs(Q) # linear terms
+        gen_lin[i, :] = get_linear_coeffs(Q, n) # linear terms
         gen_rem[i] = abs(rem_nonlin.hi - α)
     end
     return Zonotope(c, hcat(gen_lin, Diagonal(gen_rem)))
