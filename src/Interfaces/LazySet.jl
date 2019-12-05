@@ -708,7 +708,7 @@ julia> X = BallInf([0.1, 0.2], 0.3)
 julia> Y = convert(HPolytope, X)
 julia> X == Y
 false
-julia> is_equivalent(X, Y)
+julia> isequivalent(X, Y)
 true
 ```
 """
