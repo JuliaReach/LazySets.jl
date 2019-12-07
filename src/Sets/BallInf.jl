@@ -221,9 +221,7 @@ function ρ(d::AbstractVector{N}, B::BallInf{N}) where {N<:Real}
     return res
 end
 
-"""
-Particular dispatch for SingleEntryVector
-"""
+# Particular dispatch for SingleEntryVector
 function ρ(d::SingleEntryVector{N}, B::BallInf{N}) where {N<:Real}
 
     @assert d.n == dim(B) "a $(d.n)-dimensional vector is " *
