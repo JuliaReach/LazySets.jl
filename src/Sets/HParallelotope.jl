@@ -126,6 +126,10 @@ function dim(P::HParallelotope{N}) where {N<:Real}
     return size(P.directions, 1)
 end
 
+# ========================
+# Type-specific functions
+# ========================
+
 """
     base_vertex(P::HParallelotope{N}) where {N<:Real}
 
@@ -276,10 +280,6 @@ An iterator over the generators of `P`.
 function generators(P::HParallelotope{N}) where {N<:Real}
     return generators_fallback(P)
 end
-
-# ========================
-# Type-specific functions
-# ========================
 
 """
     constraints_list(P::HParallelotope{N}) where {N<:Real}
