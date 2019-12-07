@@ -222,6 +222,21 @@ function ρ(d::AbstractVector{N}, B::BallInf{N}) where {N<:Real}
 end
 
 """
+Particular dispatch for SingleEntryVector
+"""
+function ρ(d::SingleEntryVector{N}, B::BallInf{N}) where {N<:Real}
+
+    @assert d.n == dim(B) "a $(d.n)-dimensional vector is " *
+                                "incompatible with a $(dim(B))-dimensional set"
+    c = B.center
+    if d.v < zero(N)
+        return d.v * (c[d.i] - B.radius)
+    else
+        return d.v * (c[d.i] + B.radius)
+    end
+end
+
+"""
     radius(B::BallInf, [p]::Real=Inf)::Real
 
 Return the radius of a ball in the infinity norm.
