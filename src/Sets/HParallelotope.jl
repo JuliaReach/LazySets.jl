@@ -257,7 +257,7 @@ for ``i = 1, \\ldots, n``.
 function genmat(P::HParallelotope{N}) where {N<:Real}
     E = extremal_vertices(P)
     q = base_vertex(P)
-    return 1/2 * hcat(E...)' .- q/2
+    return 1/2 * hcat(E...) .- q/2
 end
 
 """
