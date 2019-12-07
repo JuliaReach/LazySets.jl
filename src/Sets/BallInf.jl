@@ -223,15 +223,7 @@ end
 
 # Particular dispatch for SingleEntryVector
 function ρ(d::SingleEntryVector{N}, B::BallInf{N}) where {N<:Real}
-
-    @assert d.n == dim(B) "a $(d.n)-dimensional vector is " *
-                                "incompatible with a $(dim(B))-dimensional set"
-    c = B.center
-    if d.v < zero(N)
-        return d.v * (c[d.i] - B.radius)
-    else
-        return d.v * (c[d.i] + B.radius)
-    end
+    return _ρ_sev_hyperrectangle(d,B)
 end
 
 """
