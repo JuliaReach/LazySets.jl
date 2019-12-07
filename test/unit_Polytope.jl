@@ -228,6 +228,10 @@ for N in [Float64]
     Y = convert(HPolytope, X)
     @test Y ⊆ X
 
+    # double inclusion check
+    Z = convert(VPolytope, Y)
+    @test isequivalent(Y, Z)
+
     if test_suite_polyhedra
         # -----
         # H-rep
