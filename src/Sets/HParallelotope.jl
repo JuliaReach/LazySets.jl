@@ -193,10 +193,11 @@ function extremal_vertices(P::HParallelotope{N}) where {N<:Real}
     n = dim(P)
     v = to_negative_vector(c[n+1:end])
     vertices = Vector{Vector{N}}(undef, n)
+    h = copy(v)
     @inbounds for i in 1:n
-        h = copy(v)
         h[i] = c[i]
         vertices[i] = D \ h
+        h[i] = v[i]
     end
     return vertices
 end
