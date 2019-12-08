@@ -238,7 +238,7 @@ function get_radius!(sih::SymmetricIntervalHull{N},
     return sih.cache[i]
 end
 
-# Faster support function for sev and  sih: particular dispatch for SingleEntryVector
+# Faster support function calculation for sev and SymmetricIntervalHull
 function ρ(d::SingleEntryVector{N}, H::SymmetricIntervalHull{N}) where {N<:Real}
     @assert length(d) == dim(H) "a $(d.n)-dimensional vector is " *
                                 "incompatible with a $(dim(H))-dimensional set"
