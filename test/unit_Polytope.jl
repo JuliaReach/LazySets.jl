@@ -232,6 +232,10 @@ for N in [Float64]
     Z = convert(VPolytope, Y)
     @test isequivalent(Y, Z)
 
+    # negative double inclusion check
+    X_eps = BallInf(N[0.1, 0.2, 0.1], N(0.30001))
+    @test !isequivalent(X, X_eps)
+
     if test_suite_polyhedra
         # -----
         # H-rep
