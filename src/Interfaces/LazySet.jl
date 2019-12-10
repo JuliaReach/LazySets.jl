@@ -719,7 +719,7 @@ true
 ```
 """
 function isequivalent(X::LazySet, Y::LazySet)
-    if X == Y
+    if X ≈ Y
         return true
     end
     return X ⊆ Y && Y ⊆ X
