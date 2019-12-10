@@ -18,7 +18,8 @@ export LazySet,
        affine_map,
        is_interior_point,
        isoperation,
-       isoperationtype
+       isoperationtype,
+       isequivalent
 
 """
     LazySet{N}
@@ -682,3 +683,44 @@ end
 
 isoperationtype(::LazySet) = error("`isoperationtype` cannot be applied to " *
                                    "a set instance; use `isoperation` instead")
+
+"""
+    isequivalent(X::LazySet, Y::LazySet)
+
+Return whether two LazySets are equal in the mathematical sense, i.e. equivalent.
+
+### Input
+
+- `X` -- any `LazySet`
+- `Y` -- another `LazySet`
+
+### Output
+
+`true` iff `X` is equivalent to `Y`.
+
+## Algorithm
+
+First, the check `X == Y` is performed which returns `true` if and only if the given sets are of the same type,
+and have the same values (modulo floating-point tolerance). Otherwise, the double inclusion check `X ⊆ Y && Y ⊆ X` is
+used.
+
+### Examples
+
+```jldoctest
+julia> X = BallInf([0.1, 0.2], 0.3);
+
+julia> Y = convert(HPolytope, X);
+
+julia> X == Y
+false
+
+julia> isequivalent(X, Y)
+true
+```
+"""
+function isequivalent(X::LazySet, Y::LazySet)
+    if X ≈ Y
+        return true
+    end
+    return X ⊆ Y && Y ⊆ X
+end
