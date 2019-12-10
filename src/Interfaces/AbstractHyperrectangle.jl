@@ -302,7 +302,7 @@ function ρ(d::AbstractVector{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
 end
 
 # helper function for single entry vector
-function _ρ_sev_hyperrectangle(d::SingleEntryVector{N}, H) where {N<:Real}
+function _ρ_sev_hyperrectangle(d::SingleEntryVector{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
 
     @assert d.n == dim(H) "a $(d.n)-dimensional vector is " *
                                 "incompatible with a $(dim(H))-dimensional set"
