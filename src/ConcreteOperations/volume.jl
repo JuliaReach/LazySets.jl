@@ -15,7 +15,7 @@ The (Euclidean) volume of ``H``.
 
 ### Algorithm
 
-The volume of the hyperrectangle ``H`` with vector radius ``r`` is
+The volume of the ``n``-dimensional hyperrectangle ``H`` with vector radius ``r`` is
 ``2ⁿ ∏ᵢ rᵢ`` where ``rᵢ`` denotes the ``i``-th component of ``r``.
 """
 function volume(H::AbstractHyperrectangle{N}) where {N<:AbstractFloat}
