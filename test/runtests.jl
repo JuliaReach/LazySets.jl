@@ -159,7 +159,7 @@ if test_suite_plotting
     using Plots: plot
 
     # fix namespace conflicts with Plots
-    using LazySets: center
+    using LazySets: center, translate
 
     @time @testset "LazySets.plotting" begin include("unit_plot.jl") end
 end
