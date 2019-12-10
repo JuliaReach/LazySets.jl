@@ -702,7 +702,7 @@ Return whether two LazySets are equal in the mathematical sense, i.e. equivalent
 
 First, the check `X == Y` is performed which returns `true` if and only if the given sets are of the same type,
 and have the same values (modulo floating-point tolerance). Otherwise, the double inclusion check `X ⊆ Y && Y ⊆ X` is
-computed.
+used.
 
 ### Examples
 
