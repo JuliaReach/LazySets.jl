@@ -356,3 +356,25 @@ Return if a convex hull array is empty or not.
 function isempty(cha::ConvexHullArray)::Bool
     return all(X -> isempty(X), array(cha))
 end
+
+"""
+    vertices_list(X::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
+
+Return the list of vertices of the convex hull array of singletons.
+
+### Input
+
+- `X` -- convex hull array of singletons
+
+### Output
+
+The list of elements in the array that defines `X`.
+"""
+function vertices_list(X::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
+    m = length(X.array)
+    vertices = Vector{VT}(undef, m)
+    @inbounds for i in 1:m
+        vertices[i] = X.array[i].element
+    end
+    return vertices
+end
