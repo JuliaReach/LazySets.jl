@@ -223,7 +223,7 @@ end
 
 # Particular dispatch for SingleEntryVector
 function ρ(d::SingleEntryVector{N}, B::BallInf{N}) where {N<:Real}
-    return _ρ_sev_hyperrectangle(d,B)
+    return _ρ_sev_hyperrectangle(d, B)
 end
 
 """
