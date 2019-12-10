@@ -236,5 +236,5 @@ end
 
 # Particular dispatch for SingleEntryVector
 function ρ(d::SingleEntryVector{N}, H::Hyperrectangle{N}) where {N<:Real}
-    return _ρ_sev_hyperrectangle(d,H)
+    return _ρ_sev_hyperrectangle(d, H)
 end
