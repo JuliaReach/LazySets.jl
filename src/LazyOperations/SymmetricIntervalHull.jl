@@ -245,6 +245,6 @@ function ρ(d::SingleEntryVector{N}, H::SymmetricIntervalHull{N}) where {N<:Real
     if d.v < zero(N)
         return d.v * (- radius_hyperrectangle(H, d.i))
     else
-        return d.v * (+ radius_hyperrectangle(H, d.i))
+        return d.v * radius_hyperrectangle(H, d.i)
     end
 end
