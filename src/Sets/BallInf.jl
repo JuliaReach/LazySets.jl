@@ -1,6 +1,7 @@
 import Base.rand
 
-export BallInf
+export BallInf,
+       volume
 
 """
     BallInf{N<:Real} <: AbstractHyperrectangle{N}
@@ -302,4 +303,30 @@ function translate(B::BallInf{N}, v::AbstractVector{N}) where {N<:Real}
     @assert length(v) == dim(B) "cannot translate a $(dim(B))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     return BallInf(center(B) + v, B.radius)
+end
+
+@inline function _vol_prod(B::BallInf{N}, n) where {N<:Real}
+    vol = one(N)
+    diam = 2 * B.radius
+    for i in 1:n
+        vol *= diam
+    end
+    return vol
+end
+
+function volume(B::BallInf{N}) where {N<:AbstractFloat}
+    n = dim(B)
+    if n < 50
+        vol = _vol_prod(B, n)
+    else
+        r = B.radius
+        vol = exp(n*log(2r))
+    end
+    return vol
+end
+
+function volume(B::BallInf{N}) where {N<:Real}
+    n = dim(B)
+    vol = _vol_prod(B, n)
+    return vol
 end

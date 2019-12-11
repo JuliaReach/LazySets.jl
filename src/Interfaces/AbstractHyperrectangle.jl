@@ -6,7 +6,8 @@ export AbstractHyperrectangle,
        constraints_list,
        low, high,
        isflat,
-       rectify
+       rectify,
+       volume
 
 """
     AbstractHyperrectangle{N<:Real} <: AbstractZonotope{N}
@@ -332,7 +333,7 @@ This implementation uses the fact that the maximum is achieved in the vertex
 ``c + \\text{diag}(\\text{sign}(c)) r``, for any ``p``-norm, hence it suffices to
 take the ``p``-norm of this particular vertex. This statement is proved below.
 Note that, in particular, there is no need to compute the ``p``-norm for *each*
-vertex, which can be very expensive. 
+vertex, which can be very expensive.
 
 If ``X`` is an axis-aligned hyperrectangle and the ``n``-dimensional vectors center
 and radius of the hyperrectangle are denoted ``c`` and ``r`` respectively, then
@@ -569,4 +570,27 @@ The `Hyperrectangle` that corresponds to the rectification of `H`.
 """
 function rectify(H::AbstractHyperrectangle)
     Hyperrectangle(low=rectify(low(H)), high=rectify(high(H)))
+end
+
+"""
+    volume(H::AbstractHyperrectangle{N}) where {N<:Real}
+
+Return the volume of a hyperrectangular set.
+
+### Input
+
+- `H` -- hyperrectangular set
+
+### Output
+
+The volume of ``H``.
+
+### Algorithm
+
+The volume of the ``n``-dimensional hyperrectangle ``H`` with vector radius ``r`` is
+``2ⁿ ∏ᵢ rᵢ`` where ``rᵢ`` denotes the ``i``-th component of ``r``.
+"""
+function volume(H::AbstractHyperrectangle{N}) where {N<:Real}
+    vol = mapreduce(x -> 2x, *, radius_hyperrectangle(H))
+    return vol
 end
