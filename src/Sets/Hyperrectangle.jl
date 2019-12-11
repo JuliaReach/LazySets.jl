@@ -233,3 +233,8 @@ function translate(H::Hyperrectangle{N}, v::AbstractVector{N}; share::Bool=false
     radius = share ? H.radius : copy(H.radius)
     return Hyperrectangle(c, radius)
 end
+
+# Particular dispatch for SingleEntryVector
+function ρ(d::SingleEntryVector{N}, H::Hyperrectangle{N}) where {N<:Real}
+    return _ρ_sev_hyperrectangle(d, H)
+end

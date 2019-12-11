@@ -222,6 +222,11 @@ function ρ(d::AbstractVector{N}, B::BallInf{N}) where {N<:Real}
     return res
 end
 
+# Particular dispatch for SingleEntryVector
+function ρ(d::SingleEntryVector{N}, B::BallInf{N}) where {N<:Real}
+    return _ρ_sev_hyperrectangle(d, B)
+end
+
 """
     radius(B::BallInf, [p]::Real=Inf)::Real
 
