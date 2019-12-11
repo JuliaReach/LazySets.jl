@@ -172,10 +172,10 @@ true
 function ∈(x::AbstractVector{N}, B::Ball2{N})::Bool where {N<:AbstractFloat}
     @assert length(x) == dim(B)
     sum = zero(N)
-    for i in eachindex(x)
+    @inbounds for i in eachindex(x)
         sum += (B.center[i] - x[i])^2
     end
-    return sqrt(sum) <= B.radius
+    return _leq(sqrt(sum), B.radius)
 end
 
 """
