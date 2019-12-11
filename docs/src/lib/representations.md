@@ -24,6 +24,7 @@ rand(::Type{Ball2})
 sample(::Ball2{N}, ::Int) where {N<:AbstractFloat}
 translate(::Ball2{N}, ::AbstractVector{N}) where {N<:AbstractFloat}
 chebyshev_center(::Ball2{N}) where {N<:AbstractFloat}
+volume(::Ball2{N}) where {N<:AbstractFloat}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

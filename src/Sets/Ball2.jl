@@ -2,7 +2,8 @@ import Base: rand,
              ∈
 
 export Ball2,
-       sample
+       sample,
+       volume
 
 """
     Ball2{N<:AbstractFloat} <: AbstractCentrallySymmetric{N}
@@ -313,4 +314,35 @@ function chebyshev_center(B::Ball2{N}; compute_radius::Bool=false
         return center(B), B.radius
     end
     return center(B)
+end
+
+"""
+    volume(B::Ball2{N}) where {N<:AbstractFloat}
+
+Return the volume of a ball in the 2-norm.
+
+### Input
+
+- `B` -- ball in the 2-norm
+
+### Output
+
+The volume of ``B``.
+
+### Algorithm
+
+This function implements the well-known formula for the volume of an n-dimensional
+ball using factorials. For details see the wikipedia article
+[Volume of an n-ball](https://en.wikipedia.org/wiki/Volume_of_an_n-ball).
+"""
+function volume(B::Ball2{N}) where {N<:AbstractFloat}
+    n = dim(B)
+    k = div(n, 2)
+    R = radius(B)
+    if iseven(n)
+        vol = Base.pi^k * R^n / factorial(k)
+    else
+        vol = 2 * factorial(k) * (4*Base.pi)^k * R^n / factorial(n)
+    end
+    return vol
 end
