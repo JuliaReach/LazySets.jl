@@ -23,16 +23,27 @@ function volume(H::AbstractHyperrectangle{N}) where {N<:Real}
     return vol
 end
 
-function volume(B::BallInf{N}) where {N<:Real}
+@inline function _vol_prod(H::AbstractHyperrectangle{N}, n) where {N<:Real}
+    vol = one(N)
+    for i in 1:n
+        vol *= 2 * radius_hyperrectangle(H, i)
+    end
+    return vol
+end
+
+function volume(B::BallInf{N}) where {N<:AbstractFloat}
     n = dim(B)
     if n < 50
-        vol = one(N)
-        for i in 1:n
-            vol *= 2 * radius_hyperrectangle(B, i)
-        end
+        vol = _vol_prod(B, n)
     else
         r = B.radius
         vol = exp(n*log(2r))
     end
+    return vol
+end
+
+function volume(B::BallInf{N}) where {N<:Real}
+    n = dim(B)
+    vol = _vol_prod(B, n)
     return vol
 end
