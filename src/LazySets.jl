@@ -124,7 +124,6 @@ include("ConcreteOperations/issubset.jl")
 include("ConcreteOperations/minkowski_difference.jl")
 include("ConcreteOperations/minkowski_sum.jl")
 include("ConcreteOperations/reflection.jl")
-include("ConcreteOperations/volume.jl")
 
 # =====================
 # Approximations module
