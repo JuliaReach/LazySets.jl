@@ -11,24 +11,28 @@ Return the volume of a hyperrectangular set.
 
 ### Output
 
-The (Euclidean) volume of ``H``.
+The volume of ``H``.
 
 ### Algorithm
 
 The volume of the ``n``-dimensional hyperrectangle ``H`` with vector radius ``r`` is
 ``2ⁿ ∏ᵢ rᵢ`` where ``rᵢ`` denotes the ``i``-th component of ``r``.
 """
-function volume(H::AbstractHyperrectangle{N}) where {N<:AbstractFloat}
-    r = radius_hyperrectangle(H)
-    n = dim(H)
-    α = exp(n*log(2))
-    vol = α * prod(r)
+function volume(H::AbstractHyperrectangle{N}) where {N<:Real}
+    vol = mapreduce(x -> 2x, *, radius_hyperrectangle(H))
     return vol
 end
 
-# fallback for rational
-function volume(H::AbstractHyperrectangle{N}) where {N}
-    r = radius_hyperrectangle(H)
-    vol = prod(2 .* r)
+function volume(B::BallInf{N}) where {N}
+    n = dim(B)
+    if n < 50
+        vol = one(N)
+        for i in 1:n
+            vol *= 2 * radius_hyperrectangle(B, i)
+        end
+    else
+        r = B.radius
+        vol = exp(n*log(2r))
+    end
     return vol
 end
