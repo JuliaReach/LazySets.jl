@@ -1,7 +1,7 @@
 export volume
 
 """
-    volume(H::AbstractHyperrectangle)
+    volume(H::AbstractHyperrectangle{N}) where {N<:Real}
 
 Return the volume of a hyperrectangular set.
 
@@ -23,7 +23,7 @@ function volume(H::AbstractHyperrectangle{N}) where {N<:Real}
     return vol
 end
 
-function volume(B::BallInf{N}) where {N}
+function volume(B::BallInf{N}) where {N<:Real}
     n = dim(B)
     if n < 50
         vol = one(N)
