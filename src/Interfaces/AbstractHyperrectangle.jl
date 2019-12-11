@@ -594,11 +594,3 @@ function volume(H::AbstractHyperrectangle{N}) where {N<:Real}
     vol = mapreduce(x -> 2x, *, radius_hyperrectangle(H))
     return vol
 end
-
-@inline function _vol_prod(H::AbstractHyperrectangle{N}, n) where {N<:Real}
-    vol = one(N)
-    for i in 1:n
-        vol *= 2 * radius_hyperrectangle(H, i)
-    end
-    return vol
-end
