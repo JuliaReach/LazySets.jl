@@ -245,6 +245,7 @@ struct UnionSetArray{N<:Real, S<:LazySet{N}}
 end
 
 isoperationtype(::Type{<:UnionSetArray}) = true
+isconvextype(::Type{<:UnionSetArray}) = false
 
 # EmptySet is the neutral element for UnionSetArray
 @neutral(UnionSetArray, EmptySet)

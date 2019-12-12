@@ -36,7 +36,7 @@ struct Complement{N<:Real, S<:LazySet{N}}
 end
 
 isoperationtype(::Type{<:Complement}) = true
-isconvextype(::Type{<:Complement) = false
+isconvextype(::Type{<:Complement}) = false
 
 # the complement of the complement is the original set again
 Complement(C::Complement) = C.X
