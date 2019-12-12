@@ -121,8 +121,9 @@ function isuniversal(P::AbstractPolytope{N}, witness::Bool=false
                     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
     if witness
         constraints = constraints_list(P)
-        @assert !isempty(constraints) "polytopes without constraints are not " *
-            "allowed"
+        if isempty(constraints)
+            return (true, N[])  # special case for polytopes without constraints
+        end
         return isuniversal(constraints[1], true)
     else
         return false
