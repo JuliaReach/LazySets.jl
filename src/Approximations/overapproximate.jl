@@ -48,7 +48,7 @@ function overapproximate(S::LazySet{N},
                         )::HPolygon where {N<:Real}
     @assert dim(S) == 2
     if ε == Inf
-        constraints = Vector{LinearConstraint{N}}(undef, 4)
+        constraints = Vector{LinearConstraint{N, Vector{N}}}(undef, 4)
         constraints[1] = LinearConstraint(DIR_EAST(N), ρ(DIR_EAST(N), S))
         constraints[2] = LinearConstraint(DIR_NORTH(N), ρ(DIR_NORTH(N), S))
         constraints[3] = LinearConstraint(DIR_WEST(N), ρ(DIR_WEST(N), S))

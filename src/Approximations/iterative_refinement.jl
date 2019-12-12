@@ -59,10 +59,11 @@ Type that represents the polygonal approximation of a convex set.
 struct PolygonalOverapproximation{N<:Real}
     S::LazySet{N}
     approx_stack::Vector{LocalApproximation{N}}
-    constraints::Vector{LinearConstraint{N}}
+    constraints::Vector{LinearConstraint{N, Vector{N}}}
 
-    PolygonalOverapproximation(S::LazySet{N}) where {N<:Real} = new{N}(
-        S, Vector{LocalApproximation{N}}(), Vector{LinearConstraint{N}}())
+    function PolygonalOverapproximation(S::LazySet{N}) where {N<:Real}
+        return new{N}(S, Vector{LocalApproximation{N}}(), Vector{LinearConstraint{N,Vector{N}}}())
+    end
 end
 
 """
