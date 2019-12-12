@@ -32,7 +32,7 @@ struct Bloating{N<:AbstractFloat, S<:LazySet{N}} <:LazySet{N}
 end
 
 isoperationtype(::Type{<:Bloating}) = true
-isconvextype(::Type{<:Bloating}) = true
+isconvextype(::Type{Bloating{N, S}}) where {N, S} = isconvextype(S)
 
 """
     dim(B::Bloating)
