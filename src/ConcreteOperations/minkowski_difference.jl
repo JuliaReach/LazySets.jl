@@ -76,4 +76,4 @@ const pontryagin_difference = minkowski_difference
 
 # concrete minkowski difference with singleton
 minkowski_difference(X::LazySet, S::AbstractSingleton) = translate(X, -element(S))
-minkowski_difference(X::LazySet, ::ZerosSet) = X
+minkowski_difference(X::LazySet, ::ZeroSet) = X
