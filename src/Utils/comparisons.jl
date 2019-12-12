@@ -134,7 +134,7 @@ Determine if `x` is smaller than or equal to `y`.
 
 - `x`      -- number
 - `y`      -- another number (of possibly different numeric type than `x`)
-- `kwargs` -- optional arguments; see `?_leq` for the available options 
+- `kwargs` -- optional arguments; see `?_leq` for the available options
 
 ### Output
 
@@ -326,12 +326,17 @@ function ispermutation(u::AbstractVector{T}, v::AbstractVector)::Bool where {T}
     return true
 end
 
-# alias for Julia's containment check 
-function _in(x, itr) where {T}
+# alias for Julia's containment check
+function _in(x, itr)
     return x ∈ itr
 end
 
-# approximate containment check for numbers in floating point 
+# approximate containment check for numbers in floating point
+function _in(x::T, itr) where {T<:AbstractFloat}
+    return any(y -> _isapprox(x, y), itr)
+end
+
+# approximate containment check for a vector in floating point
 function _in(x::AbstractVector{T}, itr) where {T<:AbstractFloat}
     return any(y -> _isapprox(x, y), itr)
 end
