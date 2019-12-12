@@ -102,7 +102,7 @@ end
 
 default_tolerance(N::Type{<:Number}) = error("default tolerance for numeric type $N is not defined")
 default_tolerance(N::Type{<:Rational}) = Tolerance(zero(N), zero(N), zero(N))
-default_tolerance(N::Type{<:Int}) = Tolerance(zero(N), zero(N), zero(N))
+default_tolerance(N::Type{<:Integer}) = Tolerance(zero(N), zero(N), zero(N))
 default_tolerance(N::Type{<:AbstractFloat}) = Tolerance(Base.rtoldefault(N), sqrt(eps(N)), zero(N))
 
 """
