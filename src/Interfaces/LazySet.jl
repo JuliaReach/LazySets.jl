@@ -743,7 +743,7 @@ information, and `false` otherwise.
 ### Notes
 
 Since this operation only acts on types (not on values), it can return false
-negatives, i.e. there may be instances where the type is convex, even though the
+negatives, i.e. there may be instances where the set is convex, even though the
 answer of this function is `false`. The examples below illustrate this point.
 
 ### Examples
