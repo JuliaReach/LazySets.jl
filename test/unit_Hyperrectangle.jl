@@ -117,6 +117,10 @@ for N in [Float64, Rational{Int}, Float32]
     # isempty
     @test !isempty(H)
 
+    # isuniversal
+    answer, w = isuniversal(H, true)
+    @test !isuniversal(H) && !answer && w ∉ H
+
     # membership
     H = Hyperrectangle(N[1, 1], N[2, 3])
     @test N[-1.1, 4.1] ∉ H

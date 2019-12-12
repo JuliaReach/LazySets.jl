@@ -112,6 +112,7 @@ This interface defines the following functions:
 ```@docs
 dim(::AbstractCentrallySymmetric)
 isbounded(::AbstractCentrallySymmetric)
+isuniversal(::AbstractCentrallySymmetric{N}, ::Bool=false) where {N<:Real}
 an_element(::AbstractCentrallySymmetric{N}) where {N<:Real}
 isempty(::AbstractCentrallySymmetric)
 ```
@@ -129,6 +130,7 @@ This interface defines the following functions:
 
 ```@docs
 ∈(::AbstractVector{N}, ::AbstractPolyhedron{N}) where {N<:Real}
+isuniversal(::AbstractPolyhedron{N}, ::Bool=false) where {N<:Real}
 constrained_dimensions(::AbstractPolyhedron)
 linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 chebyshev_center(::AbstractPolyhedron{N}) where {N<:AbstractFloat}
@@ -155,6 +157,7 @@ This interface defines the following functions:
 
 ```@docs
 isbounded(::AbstractPolytope)
+isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real}
 singleton_list(::AbstractPolytope{N}) where {N<:Real}
 isempty(::AbstractPolytope)
 ```

@@ -62,6 +62,10 @@ for N in [Float64, Float32]
     # isempty
     @test !isempty(b)
 
+    # isuniversal
+    answer, w = isuniversal(b, true)
+    @test !isuniversal(b) && !answer && w ∉ b
+
     # an_element function
     b = Ball2(N[1, 2], N(2))
     @test an_element(b) ∈ b

@@ -43,6 +43,10 @@ for N in [Float64, Float32]
     # isempty
     @test !isempty(b)
 
+    # isuniversal
+    answer, w = isuniversal(b, true)
+    @test !isuniversal(b) && !answer && w ∉ b
+
     # membership & an_element
     @test an_element(b) ∈ b
 

@@ -54,6 +54,41 @@ function ∈(x::AbstractVector{N}, P::AbstractPolyhedron{N})::Bool where {N<:Rea
 end
 
 """
+    isuniversal(P::AbstractPolyhedron{N}, [witness]::Bool=false
+               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether a polyhedron is universal.
+
+### Input
+
+- `P`       -- polyhedron
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``P`` is universal
+* If `witness` option is activated:
+  * `(true, [])` iff ``P`` is universal
+  * `(false, v)` iff ``P`` is not universal and ``v ∉ P``
+
+### Algorithm
+
+`P` is universal iff it has no constraints.
+
+A witness is produced using `isuniversal(H)` where `H` is the first linear
+constraint of `P`.
+"""
+function isuniversal(P::AbstractPolyhedron{N}, witness::Bool=false
+                    )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    constraints = constraints_list(P)
+    if isempty(constraints)
+        return witness ? (true, N[]) : true
+    else
+        return witness ? isuniversal(constraints[1], true) : false
+    end
+end
+
+"""
     constrained_dimensions(P::AbstractPolyhedron)::Vector{Int} where {N<:Real}
 
 Return the indices in which a polyhedron is constrained.

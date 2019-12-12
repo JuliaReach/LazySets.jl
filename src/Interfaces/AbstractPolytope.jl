@@ -96,6 +96,40 @@ function isempty(P::AbstractPolytope)::Bool
     return isempty(vertices_list(P))
 end
 
+"""
+    isuniversal(P::AbstractPolytope{N}, [witness]::Bool=false
+               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether a polyhedron is universal.
+
+### Input
+
+- `P`       -- polyhedron
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `false`
+* If `witness` option is activated: `(false, v)` where ``v ∉ P``
+
+### Algorithm
+
+A witness is produced using `isuniversal(H)` where `H` is the first linear
+constraint of `P`.
+"""
+function isuniversal(P::AbstractPolytope{N}, witness::Bool=false
+                    )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    if witness
+        constraints = constraints_list(P)
+        if isempty(constraints)
+            return (true, N[])  # special case for polytopes without constraints
+        end
+        return isuniversal(constraints[1], true)
+    else
+        return false
+    end
+end
+
 # given a polytope P, apply the linear map P to each vertex of P
 # it is assumed that the interface function `vertices_list(P)` is available 
 @inline function _linear_map_vrep(M::AbstractMatrix{N}, P::AbstractPolytope{N}) where {N<:Real}

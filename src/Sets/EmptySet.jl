@@ -100,6 +100,33 @@ function isbounded(::EmptySet)::Bool
 end
 
 """
+    isuniversal(∅::EmptySet{N}, [witness]::Bool=false
+               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether an empty is universal.
+
+### Input
+
+- `∅`       -- empty set
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `false`
+* If `witness` option is activated: `(false, v)` where ``v ∉ S``, although
+  we currently throw an error
+"""
+function isuniversal(∅::EmptySet{N}, witness::Bool=false
+                    )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    if witness
+        error("witness production is currently not supported")
+        # return (false, zeros(N, dim(∅)))  # deactivated, see #1201
+    else
+        return false
+    end
+end
+
+"""
     ∈(x::AbstractVector{N}, ∅::EmptySet{N})::Bool where {N<:Real}
 
 Check whether a given point is contained in an empty set.

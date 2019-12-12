@@ -24,6 +24,10 @@ for N in [Float64, Rational{Int}, Float32]
     # isempty
     @test !isempty(h)
 
+    # isuniversal
+    answer, w = isuniversal(h, true)
+    @test !isuniversal(h) && !answer && w ∉ h
+
     # an_element function
     @test an_element(h) == N[0, 0]
 
