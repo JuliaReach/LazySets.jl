@@ -333,7 +333,7 @@ for N in [Float64]
     @test Matrix(genmat(Z1)) == N[1 -1 0; -1 0 0.5]
 
     # auxiliary function to get the linear coefficients
-    t = Taylor1(0) # t.order is 0
+    t = TaylorModels.Taylor1(0) # t.order is 0
     @test get_linear_coeffs(t) == N[0]
     p = x₁ + 2x₂ - 3x₃
     @test get_linear_coeffs(p) == N[1, 2, -3]
