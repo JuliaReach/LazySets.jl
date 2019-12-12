@@ -25,6 +25,7 @@ struct VPolytope{N<:Real} <: AbstractPolytope{N}
 end
 
 isoperationtype(::Type{<:VPolytope}) = false
+isconvextype(::Type{<:VPolytope}) = true
 
 # constructor for a VPolytope with empty vertices list
 VPolytope{N}() where {N<:Real} = VPolytope{N}(Vector{Vector{N}}())

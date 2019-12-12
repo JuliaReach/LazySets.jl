@@ -16,6 +16,7 @@ struct Singleton{N<:Real, VN<:AbstractVector{N}} <: AbstractSingleton{N}
 end
 
 isoperationtype(::Type{<:Singleton}) = false
+isconvextype(::Type{<:Singleton}) = true
 
 # --- AbstractSingleton interface functions ---
 

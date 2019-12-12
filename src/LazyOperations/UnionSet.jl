@@ -31,6 +31,7 @@ struct UnionSet{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}}
 end
 
 isoperationtype(::Type{<:UnionSet}) = true
+isconvextype(::Type{<:UnionSet}) = false
 
 # convenience constructor without type parameter
 UnionSet(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} = UnionSet{N, S1, S2}(X, Y)

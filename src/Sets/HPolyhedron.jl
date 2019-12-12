@@ -35,6 +35,7 @@ struct HPolyhedron{N<:Real} <: AbstractPolyhedron{N}
 end
 
 isoperationtype(::Type{<:HPolyhedron}) = false
+isconvextype(::Type{<:HPolyhedron}) = true
 
 # convenience constructor without type parameter
 HPolyhedron(constraints::Vector{<:LinearConstraint{N}}) where {N<:Real} =

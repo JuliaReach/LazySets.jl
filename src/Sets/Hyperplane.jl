@@ -35,6 +35,7 @@ struct Hyperplane{N<:Real} <: AbstractPolyhedron{N}
 end
 
 isoperationtype(::Type{<:Hyperplane}) = false
+isconvextype(::Type{<:Hyperplane}) = true
 
 # convenience constructor without type parameter
 Hyperplane(a::AbstractVector{N}, b::N) where {N<:Real} = Hyperplane{N}(a, b)

@@ -80,6 +80,7 @@ struct Interval{N<:Real, IN<:AbstractInterval{N}} <: AbstractHyperrectangle{N}
 end
 
 isoperationtype(::Type{<:Interval}) = false
+isconvextype(::Type{<:Interval}) = true
 
 # convenience constructor without type parameter for Rational
 Interval(interval::IN) where {N<:Rational, IN<:AbstractInterval{N}} =
