@@ -435,7 +435,7 @@ function ≈(X::LazySet, Y::LazySet)
     end
 
     for f in fieldnames(typeof(X))
-        if !(getfield(X, f) ≈ getfield(Y, f))
+        if !_isapprox(getfield(X, f), getfield(Y, f))
             return false
         end
     end

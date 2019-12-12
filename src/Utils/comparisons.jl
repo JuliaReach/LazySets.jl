@@ -101,6 +101,8 @@ set_atol(N::Type{NT}, ε::NT) where {NT<:Number} = begin
 end
 
 default_tolerance(N::Type{<:Number}) = error("default tolerance for numeric type $N is not defined")
+default_tolerance(N::Type{<:Rational}) = Tolerance(zero(N), zero(N), zero(N))
+default_tolerance(N::Type{<:Integer}) = Tolerance(zero(N), zero(N), zero(N))
 default_tolerance(N::Type{<:AbstractFloat}) = Tolerance(Base.rtoldefault(N), sqrt(eps(N)), zero(N))
 
 """
@@ -147,8 +149,9 @@ arguments to a common numeric type, returning them as a tuple. The conversion
 is such that the common type to which the values are converted can represent
 them as faithfully as possible.
 """
-_leq(x::N, y::M; kwargs...) where {N<:Real, M<:Real} =
-    _leq(promote(x, y)...; kwargs...)
+function _leq(x::N, y::M; kwargs...) where {N<:Real, M<:Real}
+    return _leq(promote(x, y)...; kwargs...)
+end
 
 """
     _geq(x::Real, y::Real; [kwargs...])
@@ -242,6 +245,11 @@ function _isapprox(x::N, y::N;
     end
 end
 
+# different numeric types with promotion
+function _isapprox(x::N, y::M; kwargs...) where {N<:Real, M<:Real}
+    return _isapprox(promote(x, y)...; kwargs...)
+end
+
 # generic "dense"
 function _isapprox(x::AbstractVector{N}, y::AbstractVector{N};
                    rtol::Real=_rtol(N),
@@ -266,6 +274,12 @@ function _isapprox(x::SparseVector{N}, y::SparseVector{N};
                    atol::Real=_atol(N)) where {N<:Real}
     @assert length(x) == length(y)
     return x.nzind == y.nzind && _isapprox(x.nzval, y.nzval, rtol=rtol, ztol=ztol, atol=atol)
+end
+
+# different numeric types with promotion
+function _isapprox(x::AbstractVector{N}, y::AbstractVector{M};
+                   kwargs...) where {N<:Real, M<:Real}
+    _isapprox(promote(x, y)...; kwargs...)
 end
 
 """
