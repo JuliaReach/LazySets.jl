@@ -61,7 +61,6 @@ function minkowski_difference(P::LazySet{N}, Q::LazySet{N}) where {N<:Real}
     end
 end
 
-
 """
     pontryagin_difference(P::LazySet{N}, Q::LazySet{N}) where {N<:Real}
 
@@ -74,3 +73,7 @@ Due to inconsistent naming conventions, both the name *Minkowski difference* and
 
 """
 const pontryagin_difference = minkowski_difference
+
+# concrete minkowski difference with singleton
+minkowski_difference(X::LazySet, S::AbstractSingleton) = translate(X, -element(S))
+minkowski_difference(X::LazySet, ::ZerosSet) = X
