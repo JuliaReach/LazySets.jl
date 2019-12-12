@@ -130,7 +130,7 @@ whose `constraints_list` is available) can be computed from a lazy translation:
 
 ```jldoctest translation
 julia> constraints_list(tr)
-6-element Array{HalfSpace{Float64,VN} where VN<:AbstractArray{Float64,1},1}:
+6-element Array{HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}},1}:
  HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}}([1.0, 0.0, 0.0], 5.0)
  HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}}([0.0, 1.0, 0.0], 3.0)
  HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}}([0.0, 0.0, 1.0], 3.0)
