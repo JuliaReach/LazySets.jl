@@ -66,8 +66,8 @@ Note that we have passed `1e-2` as additional argument for the `LinearMap` set
 (``\mathcal{X}'``) because by default such a set is just plotted as its box
 (or hyperrectangle) approximation.
 The value `1e-2` is the precision up to which the set is (over-)approximated
-with a polgon, which in this case is sufficient to obtain the actual set again.
-
+with a polygon, which in this case is sufficient to obtain the actual set again.
+If such value is not specified, it defaults to `1e-3`.
 
 ## Cartesian Decomposition
 
@@ -90,7 +90,7 @@ This will be a diamond-like shape (the box turned by `45°`).
 ```@example deco_label
 Y = Φ(pi/4) * Xhat
 
-plot!(example, Y, 1e-2, color="yellow", alpha=0.3)
+plot!(example, Y, color="yellow", alpha=0.3)
 ```
 
 However, we want our approximation be again a Cartesian product of intervals, so
@@ -100,7 +100,7 @@ we have to overapproximate this diamond-like shape again:
 ```@example deco_label
 Xhatp = overapproximate(Y)
 
-plot!(example, Xhatp, 1e-2, color="gray", alpha=0.3)
+plot!(example, Xhatp, color="gray", alpha=0.3)
 ```
 
 As we can see, the resulting box ``\hat{\mathcal{X}}'`` is *not* a tight
