@@ -105,7 +105,7 @@ struct AffineMap{N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM},
 end
 
 isoperationtype(::Type{<:AffineMap}) = true
-isconvextype(::Type{AffineMap{N, S, NM, MAT, VN}}) = isconvextype(S)
+isconvextype(::Type{AffineMap{N, S, NM, MAT, VN}}) where {N, S, NM, MAT, VN} = isconvextype(S)
 
 # convenience constructor from a UniformScaling
 function AffineMap(M::UniformScaling, X::LazySet, v::AbstractVector)
