@@ -760,14 +760,18 @@ return quote
 using .TaylorModels: Taylor1, TaylorN, TaylorModelN, TaylorModel1,
                      polynomial, remainder, domain,
                      normalize_taylor, linear_polynomial,
-                     constant_term, evaluate, mid
+                     constant_term, evaluate, mid, get_numvars
 
-@inline function get_linear_coeffs(p::Taylor1, n)
+@inline function get_linear_coeffs(p::Taylor1)
+    if p.order == 0
+        return zeros(eltype(p), 1)
+    end
     return linear_polynomial(p).coeffs[2:end]
 end
 
-@inline function get_linear_coeffs(p::TaylorN, n)
+@inline function get_linear_coeffs(p::TaylorN)
     if p.order == 0
+        n = get_numvars()
         return zeros(eltype(p), n)
     end
     return linear_polynomial(p).coeffs[2].coeffs
@@ -927,7 +931,7 @@ function overapproximate(vTM::Vector{TaylorModel1{T, S}},
     gen_rem = Vector{T}(undef, m) # generators of the remainder
 
     # compute overapproximation
-    return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem, 1)
+    return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
 end
 
 """
@@ -1005,7 +1009,7 @@ julia> Matrix(genmat(Z))
 We refer to the algorithm description for the univariate case.
 """
 function overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
-                         ::Type{Zonotope}) where {N,T, S}
+                         ::Type{Zonotope}) where {N, T, S}
     m = length(vTM)
     n = N # number of variables is get_numvars() in TaylorSeries
 
@@ -1015,10 +1019,10 @@ function overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
     gen_rem = Vector{T}(undef, m) # generators for the remainder
 
     # compute overapproximation
-    return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem, n)
+    return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
 end
 
-function _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem, n)
+function _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
     @inbounds for (i, x) in enumerate(vTM)
         xpol, xdom = polynomial(x), domain(x)
 
@@ -1036,7 +1040,7 @@ function _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem, n)
         # build the generators
         α = mid(rem_nonlin)
         c[i] = constant_term(Q) + α  # constant terms
-        gen_lin[i, :] = get_linear_coeffs(Q, n) # linear terms
+        gen_lin[i, :] = get_linear_coeffs(Q) # linear terms
         gen_rem[i] = abs(rem_nonlin.hi - α)
     end
     return Zonotope(c, hcat(gen_lin, Diagonal(gen_rem)))
