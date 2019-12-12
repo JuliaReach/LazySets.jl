@@ -10,6 +10,14 @@ export SparseMatrixExp,
        get_column,
        get_columns
 
+function load_expokit()
+return quote
+
+using .Expokit: expmv
+
+end end  # quote / load_expokit
+
+
 # --- SparseMatrixExp & ExponentialMap ---
 
 """
@@ -84,10 +92,9 @@ function size(spmexp::SparseMatrixExp, ax::Int)::Int
     return size(spmexp.M, ax)
 end
 
-function load_expokit_sparsematrixexp()
-return quote
-
 function get_column(spmexp::SparseMatrixExp{N}, j::Int)::Vector{N} where {N}
+    require(:Expokit; fun_name="get_column")
+
     n = size(spmexp, 1)
     aux = zeros(N, n)
     aux[j] = one(N)
@@ -96,6 +103,7 @@ end
 
 function get_columns(spmexp::SparseMatrixExp{N},
                      J::AbstractArray)::Matrix{N} where {N}
+    require(:Expokit; fun_name="get_columns")
 
     n = size(spmexp, 1)
     aux = zeros(N, n)
@@ -133,6 +141,8 @@ The result is of type `Transpose`; in Julia versions older than v0.7, the result
 was of type `RowVector`.
 """
 function get_row(spmexp::SparseMatrixExp{N}, i::Int) where {N}
+    require(:Expokit; fun_name="get_row")
+
     n = size(spmexp, 1)
     aux = zeros(N, n)
     aux[i] = one(N)
@@ -141,6 +151,8 @@ end
 
 function get_rows(spmexp::SparseMatrixExp{N},
                   I::AbstractArray{Int})::Matrix{N} where {N}
+    require(:Expokit; fun_name="get_rows")
+
     n = size(spmexp, 1)
     aux = zeros(N, n)
     ans = zeros(N, length(I), n)
@@ -156,8 +168,6 @@ function get_rows(spmexp::SparseMatrixExp{N},
     end
     return ans
 end
-
-end end  # quote / load_expokit_sparsematrixexp
 
 """
     ExponentialMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
@@ -261,9 +271,6 @@ function dim(em::ExponentialMap)::Int
     return size(em.spmexp.M, 1)
 end
 
-function load_expokit_exponentialmap()
-return quote
-
 """
     σ(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
 
@@ -288,6 +295,8 @@ We allow sparse direction vectors, but will convert them to dense vectors to be
 able to use `expmv`.
 """
 function σ(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
+    require(:Expokit; fun_name="σ")
+
     d_dense = d isa Vector ? d : Vector(d)
     v = expmv(one(N), transpose(em.spmexp.M), d_dense) # v   <- exp(M') * d
     return expmv(one(N), em.spmexp.M, σ(v, em.X)) # res <- exp(M) * σ(v, S)
@@ -316,6 +325,8 @@ We allow sparse direction vectors, but will convert them to dense vectors to be
 able to use `expmv`.
 """
 function ρ(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
+    require(:Expokit; fun_name="ρ")
+
     d_dense = d isa Vector ? d : Vector(d)
     v = expmv(one(N), transpose(em.spmexp.M), d_dense) # v <- exp(M^T) * d
     return ρ(v, em.X)
@@ -356,6 +367,8 @@ true
 ```
 """
 function ∈(x::AbstractVector{N}, em::ExponentialMap{N})::Bool where {N<:Real}
+    require(:Expokit; fun_name="∈")
+
     @assert length(x) == dim(em)
     return expmv(-one(N), em.spmexp.M, x) ∈ em.X
 end
@@ -379,6 +392,8 @@ We assume that the underlying set `X` is polytopic.
 Then the result is just the exponential map applied to the vertices of `X`.
 """
 function vertices_list(em::ExponentialMap{N})::Vector{Vector{N}} where {N<:Real}
+    require(:Expokit; fun_name="vertices_list")
+
     # collect low-dimensional vertices lists
     vlist_X = vertices_list(em.X)
 
@@ -391,8 +406,6 @@ function vertices_list(em::ExponentialMap{N})::Vector{Vector{N}} where {N<:Real}
 
     return vlist
 end
-
-end end  # quote / load_expokit_exponentialmap
 
 """
     isbounded(em::ExponentialMap)::Bool
@@ -507,9 +520,6 @@ function dim(eprojmap::ExponentialProjectionMap)::Int
     return size(eprojmap.projspmexp.L, 1)
 end
 
-function load_expokit_exponentialprojectionmap()
-return quote
-
 """
     σ(d::AbstractVector{N},
       eprojmap::ExponentialProjectionMap{N}) where {N<:Real}
@@ -537,6 +547,8 @@ able to use `expmv`.
 """
 function σ(d::AbstractVector{N},
            eprojmap::ExponentialProjectionMap{N}) where {N<:Real}
+    require(:Expokit; fun_name="σ")
+
     d_dense = d isa Vector ? d : Vector(d)
     daux = transpose(eprojmap.projspmexp.L) * d_dense
     aux1 = expmv(one(N), transpose(eprojmap.projspmexp.spmexp.M), daux)
@@ -547,8 +559,6 @@ function σ(d::AbstractVector{N},
     daux = expmv(one(N), eprojmap.projspmexp.spmexp.M, aux2)
     return eprojmap.projspmexp.L * daux
 end
-
-end end  # quote / load_expokit_exponentialprojectionmap
 
 """
     isbounded(eprojmap::ExponentialProjectionMap)::Bool

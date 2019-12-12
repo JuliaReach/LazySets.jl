@@ -74,6 +74,13 @@ RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet{N}, ::N=N(1e-3)) where {N
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractVector{VN}, ::N=N(1e-3), ::Int=40, ::Bool=false) where {N<:Real, VN<:LazySet{N}}
 ```
 
+For three-dimensional sets, we support `Makie`:
+
+```@docs
+plot3d
+plot3d!
+```
+
 ### Set functions that override Base functions
 
 ```@docs
