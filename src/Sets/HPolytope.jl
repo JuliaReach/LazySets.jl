@@ -147,7 +147,8 @@ return quote
 # see the interface file AbstractPolytope.jl for the imports
 
 function convert(::Type{HPolytope{N}}, P::HRep{N}) where {N}
-    constraints = LinearConstraint{N}[]
+    VT = Polyhedra.hvectortype(P)
+    constraints = Vector{LinearConstraint{N, VT}}()
     for hi in Polyhedra.allhalfspaces(P)
         a, b = hi.a, hi.β
         if isapproxzero(norm(a))
