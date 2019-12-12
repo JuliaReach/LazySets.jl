@@ -1,4 +1,5 @@
-using LazySets.Approximations: project
+using LazySets.Approximations: project,
+                               get_linear_coeffs
 
 for N in [Float64, Rational{Int}, Float32]
     c = N[0, 0]
@@ -330,4 +331,13 @@ for N in [Float64]
     Z1 = overapproximate(vTM, Zonotope)
     @test center(Z1) == N[3, -2.5]
     @test Matrix(genmat(Z1)) == N[1 -1 0; -1 0 0.5]
+
+    # auxiliary function to get the linear coefficients
+    t = TaylorModels.Taylor1(0) # t.order is 0
+    @test get_linear_coeffs(t) == N[0]
+    p = x₁ + 2x₂ - 3x₃
+    @test get_linear_coeffs(p) == N[1, 2, -3]
+    y = set_variables("y", numvars=2, order=1)
+    p = zero(y[1])
+    @test get_linear_coeffs(p) == N[0, 0]
 end

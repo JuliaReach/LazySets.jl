@@ -235,8 +235,12 @@ for N in [Float64, Rational{Int}, Float32]
     h = Hyperrectangle(low=N[0], high=N[1])
     q = Hyperrectangle(low=N[0], high=N[0.5])
     @test convert(Interval, difference(h, q).array[1]) == Interval(N(0.5), N(1))
-    
+
     # another set difference test in higher-dimensions
     b = BallInf(N[0, 0, 0], N(1))
     @test isempty(difference(b, b))
+
+    # volume of a hyperrectangular set
+    b = BallInf(N[0, 0, 0], N(1))
+    @test volume(b) ≈ N(8)
 end

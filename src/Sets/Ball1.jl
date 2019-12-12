@@ -245,7 +245,7 @@ all possible ``d_i``, the function `Iterators.product` is used.
 function constraints_list(B::Ball1{N}) where {N<:Real}
     n = LazySets.dim(B)
     c, r = B.center, B.radius
-    clist = Vector{LinearConstraint{N}}(undef, 2^n)
+    clist = Vector{LinearConstraint{N, Vector{N}}}(undef, 2^n)
     for (i, di) in enumerate(Iterators.product([[one(N), -one(N)] for i = 1:n]...))
         d = collect(di) # tuple -> vector
         clist[i] = LinearConstraint(d, dot(d, c) + r)

@@ -64,6 +64,7 @@ for _dummy_ in 1:1 # avoid global variable warnings
         v2 = [N[3 + tol, 4 - tol], N[2 - tol, 3 + tol], N[1 + tol, 2 + tol]]
         v3 = [N[2, 3], N[1, 2], N[4, 4]]
         @test ispermutation(v1, v2) && !ispermutation(v2, v3)
+        @test ispermutation(N[1], [N(1) + Base.rtoldefault(N)])
 
         # to_negative_vector
         for v in [N[-1, 0, 1], sparsevec([1, 3], N[-1, 1], 3), N(-1):N(1):N(1)]

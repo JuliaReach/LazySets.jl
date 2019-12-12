@@ -109,6 +109,14 @@ for N in [Float64, Rational{Int}, Float32]
     am = affine_map(M, B, v)
     @test ispermutation(vertices_list(am),
                         [N[4, 1], N[0, 1], N[-2, -3], N[2, -3]])
+
+    # volume
+    B = BallInf(N[0, 0], N(1))
+    @test volume(B) ≈ N(4)
+    if N <: AbstractFloat
+        B = BallInf(zeros(N, 100), N(1/2 + 1e-5))
+        @test volume(B) ≈ N(1.0020019812942185)
+    end
 end
 
 # tests that only work with Float64

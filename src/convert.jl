@@ -402,7 +402,7 @@ A polygon in constraint representation with the minimal number of constraints
 """
 function convert(::Type{HPOLYGON}, S::AbstractSingleton{N}
                 ) where {N<:Real, HPOLYGON<:AbstractHPolygon}
-    constraints_list = Vector{LinearConstraint{N}}(undef, 3)
+    constraints_list = Vector{LinearConstraint{N, Vector{N}}}(undef, 3)
     o = one(N)
     z = zero(N)
     v = element(S)

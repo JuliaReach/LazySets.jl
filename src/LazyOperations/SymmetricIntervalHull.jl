@@ -237,3 +237,10 @@ function get_radius!(sih::SymmetricIntervalHull{N},
     end
     return sih.cache[i]
 end
+
+# Faster support function calculation for sev and SymmetricIntervalHull
+function ρ(d::SingleEntryVector{N}, H::SymmetricIntervalHull{N}) where {N<:Real}
+    @assert length(d) == dim(H) "a $(d.n)-dimensional vector is " *
+                                "incompatible with a $(dim(H))-dimensional set"
+    return abs(d.v) * radius_hyperrectangle(H, d.i)
+end

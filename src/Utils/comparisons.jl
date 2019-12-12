@@ -341,11 +341,16 @@ function ispermutation(u::AbstractVector{T}, v::AbstractVector)::Bool where {T}
 end
 
 # alias for Julia's containment check
-function _in(x, itr) where {T}
+function _in(x, itr)
     return x ∈ itr
 end
 
 # approximate containment check for numbers in floating point
+function _in(x::T, itr) where {T<:AbstractFloat}
+    return any(y -> _isapprox(x, y), itr)
+end
+
+# approximate containment check for a vector in floating point
 function _in(x::AbstractVector{T}, itr) where {T<:AbstractFloat}
     return any(y -> _isapprox(x, y), itr)
 end

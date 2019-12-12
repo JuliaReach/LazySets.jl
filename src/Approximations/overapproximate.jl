@@ -48,7 +48,7 @@ function overapproximate(S::LazySet{N},
                         )::HPolygon where {N<:Real}
     @assert dim(S) == 2
     if ε == Inf
-        constraints = Vector{LinearConstraint{N}}(undef, 4)
+        constraints = Vector{LinearConstraint{N, Vector{N}}}(undef, 4)
         constraints[1] = LinearConstraint(DIR_EAST(N), ρ(DIR_EAST(N), S))
         constraints[2] = LinearConstraint(DIR_NORTH(N), ρ(DIR_NORTH(N), S))
         constraints[3] = LinearConstraint(DIR_WEST(N), ρ(DIR_WEST(N), S))
@@ -760,11 +760,22 @@ return quote
 using .TaylorModels: Taylor1, TaylorN, TaylorModelN, TaylorModel1,
                      polynomial, remainder, domain,
                      normalize_taylor, linear_polynomial,
-                     constant_term, evaluate, mid
+                     constant_term, evaluate, mid, get_numvars
 
-# helper functions
-@inline get_linear_coeffs(p::Taylor1) = linear_polynomial(p).coeffs[2:end]
-@inline get_linear_coeffs(p::TaylorN) = linear_polynomial(p).coeffs[2].coeffs
+@inline function get_linear_coeffs(p::Taylor1)
+    if p.order == 0
+        return zeros(eltype(p), 1)
+    end
+    return linear_polynomial(p).coeffs[2:end]
+end
+
+@inline function get_linear_coeffs(p::TaylorN)
+    if p.order == 0
+        n = get_numvars()
+        return zeros(eltype(p), n)
+    end
+    return linear_polynomial(p).coeffs[2].coeffs
+end
 
 """
     overapproximate(vTM::Vector{TaylorModel1{T, S}},
@@ -998,7 +1009,7 @@ julia> Matrix(genmat(Z))
 We refer to the algorithm description for the univariate case.
 """
 function overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
-                         ::Type{Zonotope}) where {N,T, S}
+                         ::Type{Zonotope}) where {N, T, S}
     m = length(vTM)
     n = N # number of variables is get_numvars() in TaylorSeries
 
