@@ -244,3 +244,14 @@ function ρ(d::SingleEntryVector{N}, H::SymmetricIntervalHull{N}) where {N<:Real
                                 "incompatible with a $(dim(H))-dimensional set"
     return abs(d.v) * radius_hyperrectangle(H, d.i)
 end
+
+# Faster support vector calculation for sev and SymmetricIntervalHull
+function σ(d::SingleEntryVector{N}, sih::SymmetricIntervalHull{N}) where {N<:Real}
+    @assert length(d) == dim(sih) "cannot compute the support vector of a " *
+                                  "$(dim(sih))-dimensional set along a vector of length $(d.n)"
+    if d.v < zero(N)
+        return SingleEntryVector(d.i, d.n, -radius_hyperrectangle(sih, d.i))
+    else
+        return SingleEntryVector(d.i, d.n, radius_hyperrectangle(sih, d.i))
+    end
+end
