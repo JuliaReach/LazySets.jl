@@ -774,6 +774,4 @@ julia> isconvextype(Intersection{Float64, BallInf{Float64}, BallInf{Float64}})
 true
 ```
 """
-function isconvextype(X::Type{<:LazySet})
-    error("`isconvextype` is not implemented for type $X")
-end
+isconvextype(X::Type{<:LazySet}) = false
