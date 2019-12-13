@@ -41,6 +41,7 @@ julia> subtypes(AbstractHPolygon)
 """
 abstract type AbstractHPolygon{N<:Real} <: AbstractPolygon{N} end
 
+isconvextype(::Type{<:AbstractHPolygon}) = true
 
 # --- AbstractPolygon interface functions ---
 

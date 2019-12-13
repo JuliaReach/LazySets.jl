@@ -26,6 +26,7 @@ julia> subtypes(AbstractPolygon)
 """
 abstract type AbstractPolygon{N<:Real} <: AbstractPolytope{N} end
 
+isconvextype(::Type{<:AbstractPolygon}) = true
 
 # --- LazySet interface functions ---
 

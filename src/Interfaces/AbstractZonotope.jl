@@ -45,9 +45,9 @@ julia> subtypes(AbstractZonotope)
  Zonotope
 ```
 """
-abstract type AbstractZonotope{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
-end
+abstract type AbstractZonotope{N<:Real} <: AbstractCentrallySymmetricPolytope{N} end
 
+isconvextype(::Type{<:AbstractZonotope}) = true
 
 # --- fallback implementations of AbstractZonotope functions ---
 
