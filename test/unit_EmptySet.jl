@@ -45,6 +45,10 @@ for N in [Float64, Rational{Int}, Float32]
     # boundedness
     @test isbounded(E)
 
+    # isuniversal
+    @test !isuniversal(E)
+    @test_throws ErrorException isuniversal(E, true)  # see #1201
+
     # membership
     @test N[0] ∉ E
     @test N[0, 0] ∉ E

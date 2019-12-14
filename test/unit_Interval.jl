@@ -61,6 +61,10 @@ for N in [Float64, Float32, Rational{Int}]
     # isempty
     @test !isempty(x)
 
+    # isuniversal
+    answer, w = isuniversal(x, true)
+    @test !isuniversal(x) && !answer && w ∉ x
+
     # translation
     @test translate(x, N[2]) == Interval(N(2), N(3))
 

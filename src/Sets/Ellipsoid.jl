@@ -79,6 +79,7 @@ struct Ellipsoid{N<:AbstractFloat} <: AbstractCentrallySymmetric{N}
 end
 
 isoperationtype(::Type{<:Ellipsoid}) = false
+isconvextype(::Type{<:Ellipsoid}) = true
 
 # convenience constructor without type parameter
 Ellipsoid(c::AbstractVector{N}, Q::AbstractMatrix{N}) where {N<:AbstractFloat} =

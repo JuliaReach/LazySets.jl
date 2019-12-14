@@ -18,7 +18,9 @@ export LazySet,
        affine_map,
        is_interior_point,
        isoperation,
-       isoperationtype
+       isoperationtype,
+       isequivalent,
+       isconvextype
 
 """
     LazySet{N}
@@ -39,14 +41,24 @@ Every concrete `LazySet` must define the following functions:
     `Real`
 - `dim(S::LazySet)::Int` -- the ambient dimension of `S`
 
+The function
+- `ρ(d::AbstractVector{N}, S::LazySet{N}) where {N<:Real}` -- the support
+    function of `S` in a given direction `d`; note that the numeric type `N` of
+    `d` and `S` must be identical; for some set types `N` may be more
+    restrictive than `Real`
+is optional because there is a fallback implementation relying on `σ`.
+However, for unbounded sets (which includes most lazy set types) this fallback
+cannot be used and an explicit method must be implemented.
+
 The subtypes of `LazySet` (including abstract interfaces):
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(LazySet, false)
-18-element Array{Any,1}:
+19-element Array{Any,1}:
  AbstractCentrallySymmetric
  AbstractPolyhedron
  AffineMap
+ Bloating
  CacheMinkowskiSum
  CartesianProduct
  CartesianProductArray
@@ -70,7 +82,7 @@ If we only consider *concrete* subtypes, then:
 julia> concrete_subtypes = subtypes(LazySet, true);
 
 julia> length(concrete_subtypes)
-38
+39
 
 julia> println.(concrete_subtypes);
 AffineMap
@@ -78,6 +90,7 @@ Ball1
 Ball2
 BallInf
 Ballp
+Bloating
 CacheMinkowskiSum
 CartesianProduct
 CartesianProductArray
@@ -423,7 +436,7 @@ function ≈(X::LazySet, Y::LazySet)
     end
 
     for f in fieldnames(typeof(X))
-        if !(getfield(X, f) ≈ getfield(Y, f))
+        if !_isapprox(getfield(X, f), getfield(Y, f))
             return false
         end
     end
@@ -671,3 +684,94 @@ end
 
 isoperationtype(::LazySet) = error("`isoperationtype` cannot be applied to " *
                                    "a set instance; use `isoperation` instead")
+
+"""
+    isequivalent(X::LazySet, Y::LazySet)
+
+Return whether two LazySets are equal in the mathematical sense, i.e. equivalent.
+
+### Input
+
+- `X` -- any `LazySet`
+- `Y` -- another `LazySet`
+
+### Output
+
+`true` iff `X` is equivalent to `Y`.
+
+## Algorithm
+
+First, the check `X == Y` is performed which returns `true` if and only if the given sets are of the same type,
+and have the same values (modulo floating-point tolerance). Otherwise, the double inclusion check `X ⊆ Y && Y ⊆ X` is
+used.
+
+### Examples
+
+```jldoctest
+julia> X = BallInf([0.1, 0.2], 0.3);
+
+julia> Y = convert(HPolytope, X);
+
+julia> X == Y
+false
+
+julia> isequivalent(X, Y)
+true
+```
+"""
+function isequivalent(X::LazySet, Y::LazySet)
+    if X ≈ Y
+        return true
+    end
+    return X ⊆ Y && Y ⊆ X
+end
+
+"""
+    isconvextype(X::Type{<:LazySet})
+
+Check whether the given `LazySet` type is convex.
+
+### Input
+
+- `X` -- subtype of `LazySet`
+
+### Output
+
+`true` if the given set type is guaranteed to be convex by using only type
+information, and `false` otherwise.
+
+### Notes
+
+Since this operation only acts on types (not on values), it can return false
+negatives, i.e. there may be instances where the set is convex, even though the
+answer of this function is `false`. The examples below illustrate this point.
+
+### Examples
+
+A ball in the infinity norm is always convex, hence we get:
+
+```jldoctest convex_types
+julia> isconvextype(BallInf)
+true
+```
+
+For instance, the union (`UnionSet`) of two sets may in general be either convex
+or not, since convexity cannot be decided by just using type information.
+Hence, `isconvextype` returns `false` if `X` is `Type{<:UnionSet}`.
+
+```jldoctest convex_types
+julia> isconvextype(UnionSet)
+false
+```
+
+However, the type parameters from the set operations allow to decide convexity
+in some cases, by falling back to the convexity of the type of its arguments.
+Consider for instance the lazy intersection. The intersection of two convex sets
+is always convex, hence we can get:
+
+```jldoctest convex_types
+julia> isconvextype(Intersection{Float64, BallInf{Float64}, BallInf{Float64}})
+true
+```
+"""
+isconvextype(X::Type{<:LazySet}) = false

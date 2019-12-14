@@ -42,6 +42,7 @@ struct SymmetricIntervalHull{N<:Real, S<:LazySet{N}} <: AbstractHyperrectangle{N
 end
 
 isoperationtype(::Type{<:SymmetricIntervalHull}) = true
+isconvextype(::Type{<:SymmetricIntervalHull}) = true
 
 # convenience constructor without type parameter
 SymmetricIntervalHull(X::S) where {N<:Real, S<:LazySet{N}} =
@@ -236,4 +237,11 @@ function get_radius!(sih::SymmetricIntervalHull{N},
         sih.cache[i] = max(right_bound[i], abs(left_bound[i]))
     end
     return sih.cache[i]
+end
+
+# Faster support function calculation for sev and SymmetricIntervalHull
+function ρ(d::SingleEntryVector{N}, H::SymmetricIntervalHull{N}) where {N<:Real}
+    @assert length(d) == dim(H) "a $(d.n)-dimensional vector is " *
+                                "incompatible with a $(dim(H))-dimensional set"
+    return abs(d.v) * radius_hyperrectangle(H, d.i)
 end

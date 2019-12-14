@@ -75,6 +75,7 @@ mutable struct HPolygonOpt{N<:Real} <: AbstractHPolygon{N}
 end
 
 isoperationtype(::Type{<:HPolygonOpt}) = false
+isconvextype(::Type{<:HPolygonOpt}) = true
 
 # convenience constructor without type parameter
 HPolygonOpt(constraints::Vector{<:LinearConstraint{N}},

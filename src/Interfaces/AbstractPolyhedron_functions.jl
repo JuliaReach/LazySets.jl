@@ -54,6 +54,41 @@ function ∈(x::AbstractVector{N}, P::AbstractPolyhedron{N})::Bool where {N<:Rea
 end
 
 """
+    isuniversal(P::AbstractPolyhedron{N}, [witness]::Bool=false
+               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether a polyhedron is universal.
+
+### Input
+
+- `P`       -- polyhedron
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``P`` is universal
+* If `witness` option is activated:
+  * `(true, [])` iff ``P`` is universal
+  * `(false, v)` iff ``P`` is not universal and ``v ∉ P``
+
+### Algorithm
+
+`P` is universal iff it has no constraints.
+
+A witness is produced using `isuniversal(H)` where `H` is the first linear
+constraint of `P`.
+"""
+function isuniversal(P::AbstractPolyhedron{N}, witness::Bool=false
+                    )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    constraints = constraints_list(P)
+    if isempty(constraints)
+        return witness ? (true, N[]) : true
+    else
+        return witness ? isuniversal(constraints[1], true) : false
+    end
+end
+
+"""
     constrained_dimensions(P::AbstractPolyhedron)::Vector{Int} where {N<:Real}
 
 Return the indices in which a polyhedron is constrained.
@@ -243,11 +278,11 @@ end
 """
     linear_map(M::AbstractMatrix{N},
                P::AbstractPolyhedron{N};
-               [algorithm]::String=(issparse(M) ? "division" : "inverse"),
+               [algorithm]::Union{String, Nothing}=nothing,
                [check_invertibility]::Bool=true,
                [cond_tol]::Number=DEFAULT_COND_TOL,
                [inverse]::Union{AbstractMatrix{N}, Nothing}=nothing
-               ) where {N<:Real}
+              ) where {N<:Real}
 
 Concrete linear map of a polyhedral set.
 
@@ -255,8 +290,8 @@ Concrete linear map of a polyhedral set.
 
 - `M`         -- matrix
 - `P`         -- polyhedral set
-- `algorithm` -- (optional; default: `"division"` for sparse `M` and `"inverse"`
-                 otherwise) the algorithm to be used; possible choices are:
+- `algorithm` -- (optional; default: `nothing`, see the Notes section below)
+                 algorithm to be used; possible choices are:
   - `"vrep"`     -- apply the linear map to each vertex of `P` (note that this
                     only works for *polytopes*)
   - `"inverse"`  -- compute the matrix inverse and apply it to each constraint
@@ -300,6 +335,16 @@ that was used:
       an `HPolygon` if `m = 2` and an `HPolytope` in other cases.
     - Otherwise, the output is an `HPolyhedron`.
 
+### Notes
+
+If `algorithm` is `nothing` (the default), we determine the algorithm as
+follows.
+If `M` is sparse or non-square, and has full row rank (which we check), we use
+`"division"`.
+If `M` is dense and square and invertible (either assumed or checked; see option
+`check_invertibility`), we use `"inverse"`.
+Otherwise, we use `"vrep"`.
+
 ### Algorithm
 
 This function implements two algorithms for the linear map:
@@ -315,17 +360,19 @@ polyhedron is bounded, which we check.
 
 If the matrix is known to be invertible, the the option `check_invertibility`
 can be used to skip the invertibility test.
+Note that we only check for invertibility if the `algorithm` is either
+unspecified or specified as `"inverse"`.
 If the matrix inverse is even known, it can be specified with the option
 `inverse`, in which case we ignore the other options and also the original
 matrix `M`.
 
-The algorithms `"division"` and `"inverse"` give control - in case `M` is
-invertible - on whether the full matrix inverse is computed or only the left
-division on the normal vectors is used.
-Note that this helps as a workaround when `M` is a sparse matrix (since the
-`inv` function is not available for sparse matrices).
-In this case, either use the algorithm `"division"` or convert `M` to a dense
-matrix (as in `linear_map(Matrix(M), P)`).
+The algorithms `"division"` and `"inverse"` give control about whether the full
+matrix inverse is computed or only the left division on the normal vectors is
+used.
+Note that this helps as a workaround when `M` is sparse (since the `inv`
+function is not available for sparse matrices) or rectangular.
+For sparse and invertible matrices, either use the algorithm `"division"` or
+convert `M` to a dense matrix (as in `linear_map(Matrix(M), P)`).
 
 Internally, this function operates on the level of the `AbstractPolyhedron`
 interface, but the actual algorithm uses dispatch on the concrete type of `P`,
@@ -341,10 +388,11 @@ the fallback implementation for `AbstractPolyhedron` is used.
 """
 function linear_map(M::AbstractMatrix{N},
                     P::AbstractPolyhedron{N};
-                    algorithm::String=(issparse(M) ? "division" : "inverse"),
+                    algorithm::Union{String, Nothing}=nothing,
                     check_invertibility::Bool=true,
                     cond_tol::Number=DEFAULT_COND_TOL,
-                    inverse::Union{AbstractMatrix{N}, Nothing}=nothing) where {N<:Real}
+                    inverse::Union{AbstractMatrix{N}, Nothing}=nothing
+                   ) where {N<:Real}
     # if `inverse` is specified, we ignore other inputs and do not check them
     if inverse != nothing
         return _linear_map_hrep(M, P, true; inverse=inverse)
@@ -353,9 +401,24 @@ function linear_map(M::AbstractMatrix{N},
     @assert dim(P) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
         "applied to a set of dimension $(dim(P))"
 
-    # check invertibility
-    if algorithm != "vrep" && check_invertibility && !isinvertible(M; cond_tol=cond_tol)
-        algorithm = "vrep"
+    if algorithm == nothing
+        if issparse(M) || !issquare(M)
+            if hasfullrowrank(M)
+                algorithm = "division"
+            else
+                algorithm = "vrep"
+            end
+        elseif !check_invertibility || isinvertible(M; cond_tol=cond_tol)
+            algorithm = "inverse"
+        else
+            algorithm = "vrep"
+        end
+    elseif algorithm == "inverse"
+        # check invertibility
+        if check_invertibility && !isinvertible(M; cond_tol=cond_tol)
+            throw(ArgumentError("algorithm \"inverse\" requires an " *
+                                "invertible matrix"))
+        end
     end
 
     if algorithm == "vrep"

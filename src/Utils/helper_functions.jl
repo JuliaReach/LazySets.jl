@@ -327,9 +327,10 @@ julia> N = Rational{Int};  # restriction of the number type
 julia> dict = implementing_sets(σ; signature=Type[AbstractVector{N}], index=2, type_args=N);
 
 julia> dict["missing"]  # some set types are not available with number type N
-3-element Array{Type,1}:
+4-element Array{Type,1}:
  Ball2
  Ballp
+ Bloating
  Ellipsoid
 
 julia> dict = LazySets.implementing_sets(convex_hull; binary=true);  # binary case

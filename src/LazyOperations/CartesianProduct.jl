@@ -54,6 +54,7 @@ struct CartesianProduct{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
 end
 
 isoperationtype(::Type{<:CartesianProduct}) = true
+isconvextype(::Type{CartesianProduct{N, S1, S1}}) where {N, S1, S2} = isconvextype(S1) && isconvextype(S2)
 
 # EmptySet is the absorbing element for CartesianProduct
 @absorbing(CartesianProduct, EmptySet)
@@ -335,6 +336,7 @@ function CartesianProductArray(n::Int=0, N::Type=Float64)::CartesianProductArray
 end
 
 isoperationtype(::Type{<:CartesianProductArray}) = true
+isconvextype(::Type{CartesianProductArray{N, S}}) where {N, S} = isconvextype(S)
 
 # EmptySet is the absorbing element for CartesianProductArray
 @absorbing(CartesianProductArray, EmptySet)
@@ -588,7 +590,7 @@ number of sets.
 A list of constraints.
 """
 function constraints_list(cpa::CartesianProductArray{N}) where {N<:Real}
-    clist = Vector{LinearConstraint{N}}()
+    clist = Vector{LinearConstraint{N, SparseVector{N, Int}}}()
     n = dim(cpa)
     sizehint!(clist, n)
     prev_step = 1
@@ -599,8 +601,7 @@ function constraints_list(cpa::CartesianProductArray{N}) where {N<:Real}
             indices = prev_step : (dim(c_low_list[1]) + prev_step - 1)
         end
         for constr in c_low_list
-            new_constr = LinearConstraint(sparsevec(indices, constr.a, n),
-                                          constr.b)
+            new_constr = LinearConstraint(sparsevec(indices, constr.a, n), constr.b)
             push!(clist, new_constr)
         end
         prev_step += dim(c_low_list[1])

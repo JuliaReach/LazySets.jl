@@ -15,4 +15,5 @@ TaylorModels = "314ce334-5f6e-57ae-acf6-00b6e903104a"
 
 [compat]
 BenchmarkTools = "≥ 0.4.2"
+Documenter = "^0.23"
 StaticArrays = "≥ 0.10.3"

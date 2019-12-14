@@ -49,6 +49,7 @@ struct ConvexHull{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
 end
 
 isoperationtype(::Type{<:ConvexHull}) = true
+isconvextype(::Type{<:ConvexHull}) = true
 
 # convenience constructor without type parameter
 ConvexHull(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} =
@@ -215,6 +216,7 @@ struct ConvexHullArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
 end
 
 isoperationtype(::Type{<:ConvexHullArray}) = true
+isconvextype(::Type{<:ConvexHullArray}) = true
 
 # constructor for an empty hull with optional size hint and numeric type
 function ConvexHullArray(n::Int=0, N::Type=Float64)::ConvexHullArray
@@ -355,4 +357,26 @@ Return if a convex hull array is empty or not.
 """
 function isempty(cha::ConvexHullArray)::Bool
     return all(X -> isempty(X), array(cha))
+end
+
+"""
+    vertices_list(X::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
+
+Return the list of vertices of the convex hull array of singletons.
+
+### Input
+
+- `X` -- convex hull array of singletons
+
+### Output
+
+The list of elements in the array that defines `X`.
+"""
+function vertices_list(X::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
+    m = length(X.array)
+    vertices = Vector{VT}(undef, m)
+    @inbounds for i in 1:m
+        vertices[i] = X.array[i].element
+    end
+    return vertices
 end

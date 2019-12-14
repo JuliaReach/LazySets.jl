@@ -11,6 +11,7 @@ Arrays
 cross_product(::AbstractMatrix{N}) where {N<:Real}
 delete_zero_columns!
 dot_zero
+hasfullrowrank
 inner
 is_cyclic_permutation
 isinvertible
@@ -78,4 +79,10 @@ sample
 LazySets.Sampler
 LazySets.RejectionSampler{S<:LazySet, D<:Distribution}
 LazySets._sample!
+```
+
+## Volume
+
+```@docs
+volume
 ```

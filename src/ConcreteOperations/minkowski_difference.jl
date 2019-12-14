@@ -42,8 +42,8 @@ It is denoted in [1] as the operation `P ~ Q`.
 
 [1] Ilya Kolmanovsky and Elmer G. Gilbert (1997). *Theory and computation
 of disturbance invariant sets for discrete-time linear systems.*
-[Mathematical Problems in Engineering Volume 4, Issue 4, Pages 317-367.](
-http://dx.doi.org/10.1155/S1024123X98000866)
+[Mathematical Problems in Engineering Volume 4, Issue 4, Pages
+317-367.](http://dx.doi.org/10.1155/S1024123X98000866)
 """
 function minkowski_difference(P::LazySet{N}, Q::LazySet{N}) where {N<:Real}
 
@@ -61,7 +61,6 @@ function minkowski_difference(P::LazySet{N}, Q::LazySet{N}) where {N<:Real}
     end
 end
 
-
 """
     pontryagin_difference(P::LazySet{N}, Q::LazySet{N}) where {N<:Real}
 
@@ -74,3 +73,7 @@ Due to inconsistent naming conventions, both the name *Minkowski difference* and
 
 """
 const pontryagin_difference = minkowski_difference
+
+# concrete minkowski difference with singleton
+minkowski_difference(X::LazySet, S::AbstractSingleton) = translate(X, -element(S))
+minkowski_difference(X::LazySet, ::ZeroSet) = X

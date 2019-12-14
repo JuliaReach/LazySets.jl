@@ -75,6 +75,12 @@ for N in [Float64, Rational{Int}, Float32]
     H = Hyperrectangle(N[0, 0], N[2, 2])
     @test length(clist) == 4
 
+    # membership in the sum of a singleton and a polytopic set
+    p = N[1, 2]
+    S = Singleton(N[1, 2])
+    X = BallInf(zeros(N, 2), N(4))
+    @test p ∈ S ⊕ X
+
     # =================
     # MinkowskiSumArray
     # =================

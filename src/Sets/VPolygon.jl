@@ -44,6 +44,7 @@ struct VPolygon{N<:Real, VN<:AbstractVector{N}} <: AbstractPolygon{N}
 end
 
 isoperationtype(::Type{<:VPolygon}) = false
+isconvextype(::Type{<:VPolygon}) = true
 
 # convenience constructor without type parameter
 VPolygon(vertices::Vector{VN};

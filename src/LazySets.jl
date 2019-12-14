@@ -51,7 +51,6 @@ using .Arrays
 include("Utils/helper_functions.jl")
 include("Utils/comparisons.jl")
 include("Utils/macros.jl")
-include("Utils/samples.jl")
 
 # ==================
 # Abstract set types
@@ -102,6 +101,7 @@ include("Sets/PolynomialZonotope.jl")
 # =================================
 # Types representing set operations
 # =================================
+include("LazyOperations/Bloating.jl")
 include("LazyOperations/CartesianProduct.jl")
 include("LazyOperations/Complement.jl")
 include("LazyOperations/ConvexHull.jl")
@@ -137,6 +137,7 @@ include("ConcreteOperations/issubset.jl")
 include("ConcreteOperations/minkowski_difference.jl")
 include("ConcreteOperations/minkowski_sum.jl")
 include("ConcreteOperations/reflection.jl")
+include("Utils/samples.jl")
 
 # =====================
 # Approximations module

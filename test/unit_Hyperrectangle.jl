@@ -117,6 +117,10 @@ for N in [Float64, Rational{Int}, Float32]
     # isempty
     @test !isempty(H)
 
+    # isuniversal
+    answer, w = isuniversal(H, true)
+    @test !isuniversal(H) && !answer && w ∉ H
+
     # membership
     H = Hyperrectangle(N[1, 1], N[2, 3])
     @test N[-1.1, 4.1] ∉ H
@@ -230,4 +234,17 @@ for N in [Float64, Rational{Int}, Float32]
     H1 = Hyperrectangle(N[0, 1], N[2, 3])
     H2 = Hyperrectangle(N[3, 2], N[1, 0])
     @test minkowski_sum(H1, H2) == Hyperrectangle(N[3, 3], N[3, 3])
+
+    # set difference
+    h = Hyperrectangle(low=N[0], high=N[1])
+    q = Hyperrectangle(low=N[0], high=N[0.5])
+    @test convert(Interval, difference(h, q).array[1]) == Interval(N(0.5), N(1))
+
+    # another set difference test in higher-dimensions
+    b = BallInf(N[0, 0, 0], N(1))
+    @test isempty(difference(b, b))
+
+    # volume of a hyperrectangular set
+    b = BallInf(N[0, 0, 0], N(1))
+    @test volume(b) ≈ N(8)
 end

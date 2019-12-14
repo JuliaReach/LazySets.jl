@@ -1,6 +1,7 @@
 import Base.rand
 
-export BallInf
+export BallInf,
+       volume
 
 """
     BallInf{N<:Real} <: AbstractHyperrectangle{N}
@@ -50,6 +51,7 @@ struct BallInf{N<:Real} <: AbstractHyperrectangle{N}
 end
 
 isoperationtype(::Type{<:BallInf}) = false
+isconvextype(::Type{<:BallInf}) = true
 
 # convenience constructor without type parameter
 BallInf(center::Vector{N}, radius::N) where {N<:Real} =
@@ -221,6 +223,11 @@ function ρ(d::AbstractVector{N}, B::BallInf{N}) where {N<:Real}
     return res
 end
 
+# Particular dispatch for SingleEntryVector
+function ρ(d::SingleEntryVector{N}, B::BallInf{N}) where {N<:Real}
+    return _ρ_sev_hyperrectangle(d, B)
+end
+
 """
     radius(B::BallInf, [p]::Real=Inf)::Real
 
@@ -302,4 +309,30 @@ function translate(B::BallInf{N}, v::AbstractVector{N}) where {N<:Real}
     @assert length(v) == dim(B) "cannot translate a $(dim(B))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     return BallInf(center(B) + v, B.radius)
+end
+
+@inline function _vol_prod(B::BallInf{N}, n) where {N<:Real}
+    vol = one(N)
+    diam = 2 * B.radius
+    for i in 1:n
+        vol *= diam
+    end
+    return vol
+end
+
+function volume(B::BallInf{N}) where {N<:AbstractFloat}
+    n = dim(B)
+    if n < 50
+        vol = _vol_prod(B, n)
+    else
+        r = B.radius
+        vol = exp(n*log(2r))
+    end
+    return vol
+end
+
+function volume(B::BallInf{N}) where {N<:Real}
+    n = dim(B)
+    vol = _vol_prod(B, n)
+    return vol
 end

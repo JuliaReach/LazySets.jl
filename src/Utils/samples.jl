@@ -1,3 +1,79 @@
+# ========================
+# Sampling from a LazySet
+# ========================
+
+"""
+    Sampler
+
+Abstract type for defining new sample methods.
+
+### Notes
+
+All subtypes should implement a `_sample!` method.
+"""
+abstract type Sampler end
+
+"""
+    sample(X::LazySet{N}, num_samples::Int;
+           [sampler]=nothing,
+           [rng]::AbstractRNG=GLOBAL_RNG,
+           [seed]::Union{Int, Nothing}=nothing) where {N}
+
+Sampling of an arbitrary bounded set `X`.
+
+### Input
+
+- `X`           -- (bounded) set to be sampled
+- `num_samples` -- number of random samples
+- `sampler`     -- sampler used (default: `nothing`, which falls back to
+                   `RejectionSampler`)
+- `rng`         -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed`        -- (optional, default: `nothing`) seed for reseeding
+
+### Output
+
+A vector of `num_samples` vectors.
+If `num_samples` is not passed, the result is just one sample (not wrapped in a
+vector).
+
+### Algorithm
+
+See the documentation of the respective `Sampler`.
+"""
+function sample(X::LazySet{N}, num_samples::Int;
+                sampler=nothing,
+                rng::AbstractRNG=GLOBAL_RNG,
+                seed::Union{Int, Nothing}=nothing) where {N<:Real}
+    @assert isbounded(X) "this function requires that the set `X` is bounded"
+
+    if sampler == nothing
+        require(:Distributions; fun_name="sample",
+                explanation="using the default `RejectionSampler` algorithm")
+        sampler = RejectionSampler
+    end
+    D = Vector{Vector{N}}(undef, num_samples) # preallocate output
+    _sample!(D, sampler(X); rng=rng, seed=seed)
+    return D
+end
+
+# without argument, returns a single element (instead of a singleton)
+function sample(X::LazySet{N}; kwargs...) where {N<:Real}
+    return sample(X, 1; kwargs...)[1]
+end
+
+# fallback implementation
+function _sample!(D::Vector{Vector{N}},
+                  sampler::Sampler;
+                  rng::AbstractRNG=GLOBAL_RNG,
+                  seed::Union{Int, Nothing}=nothing) where {N<:Real}
+    error("the method `_sample!` is not implemented for samplers of type " *
+          "$(typeof(sampler))")
+end
+
+# =============================
+# Code requiring Distributions
+# =============================
+
 function load_distributions_samples()
 return quote
 
@@ -122,63 +198,6 @@ function _sample_unit_nball_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
     return D
 end
 
-# ========================
-# Sampling from a LazySet
-# ========================
-
-"""
-    Sampler
-
-Abstract type for defining new sample methods.
-
-### Notes
-
-All subtypes should implement a `_sample!` method.
-"""
-abstract type Sampler end
-
-"""
-    sample(X::LazySet{N}, num_samples::Int;
-           rng::AbstractRNG=GLOBAL_RNG,
-           seed::Union{Int, Nothing}=nothing) where {N}
-
-Sampling of an arbitrary `LazySet` `X`.
-
-### Input
-
-- `X`           -- lazyset
-- `num_samples` -- number of random samples
-- `sampler`     -- Sampler used (default: `RejectionSampler`)
-- `rng`         -- (optional, default: `GLOBAL_RNG`) random number generator
-- `seed`        -- (optional, default: `nothing`) seed for reseeding
-
-### Output
-
-A vector of `num_samples` vectors.
-If `num_samples` is not passed one sample as a single vector is returned.
-
-### Algorithm
-
-See the documentation of `RejectionSampler`.
-"""
-function sample(X::LazySet{N}, num_samples::Int;
-                sampler=RejectionSampler,
-                rng::AbstractRNG=GLOBAL_RNG,
-                seed::Union{Int, Nothing}=nothing) where {N<:Real}
-    require(:Distributions; fun_name="sample")
-    @assert isbounded(X) "this function requires that the set `X` is bounded"*
-                            ", but it is not"
-
-    D = Vector{Vector{N}}(undef, num_samples) # preallocate output
-    _sample!(D, sampler(X); rng=rng, seed=seed)
-    return D
-end
-
-# without argument, returns a single element (instead of a singleton)
-function sample(X::LazySet{N}; kwargs...) where {N<:Real}
-    return sample(X, 1; kwargs...)[1]
-end
-
 # =====================
 # Rejection Sampling
 # =====================
@@ -190,8 +209,8 @@ Type used for rejection sampling of an arbitrary `LazySet` `X`.
 
 ### Fields
 
-- `X`           -- lazyset
-- `box_approx`  -- Distribution from which the sample is drawn
+- `X`          -- (bounded) set to be sampled
+- `box_approx` -- Distribution from which the sample is drawn
 
 ### Algorithm
 

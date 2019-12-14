@@ -1,14 +1,25 @@
-function load_mesh()
+export plot3d, plot3d!
+
+
+function load_polyhedra_mesh()
 return quote
 
 using .Polyhedra: Mesh
-using .Makie: mesh, mesh!
-import .Makie.AbstractPlotting: Automatic
 
-export plot3d, plot3d!
+end end  # quote / function load_polyhedra_mesh()
+
+
+function load_makie()
+return quote
+
+using .Makie: mesh, mesh!
+using .Makie.AbstractPlotting: Automatic
+
+end end  # quote / function load_makie()
+
 
 # helper function for 3D plotting; converts S to a polytope in H-representation
-function plot3d_helper(S::LazySet{N}, backend) where {N}
+function _plot3d_helper(S::LazySet{N}, backend) where {N}
     @assert dim(S) <= 3 "plot3d can only be used to plot sets of dimension three (or lower); " *
         "but the given set is $(dim(S))-dimensional"
 
@@ -24,11 +35,11 @@ end
 
 """
     plot3d(S::LazySet{N}; backend=default_polyhedra_backend(S, N),
-           alpha=1.0, color=:blue, colormap=:viridis, colorrange=Automatic(),
+           alpha=1.0, color=:blue, colormap=:viridis, colorrange=nothing,
            interpolate=false, linewidth=1, overdraw=false, shading=true,
            transparency=true, visible=true) where {N}
 
-Plot a three-dimensional convex set using Makie.
+Plot a three-dimensional convex set using `Makie`.
 
 ### Input
 
@@ -43,9 +54,10 @@ Plot a three-dimensional convex set using Makie.
 - `colormap`     -- (optional, default: `:viridis`) the color map of the main plot;
                     call `available_gradients()` to see what gradients are available,
                     and it can also be used as `[:red, :black]`
-- `colorrange`   -- (optional, default: `Automatic()`) a tuple `(min, max)` where
-                    `min` and `max` specify the data range to be used for indexing
-                    the colormap
+- `colorrange`   -- (optional, default: `nothing`, which falls back to
+                    `Makie.AbstractPlotting.Automatic()`) a tuple `(min, max)`
+                    where `min` and `max` specify the data range to be used for
+                    indexing the colormap
 - `interpolate`  -- (optional, default: `false`) a bool for heatmap and images,
                     it toggles color interpolation between nearby pixels
 - `linewidth`    -- (optional, default: `1`) a number that specifies the width of
@@ -103,17 +115,22 @@ julia> plot3d!(10. * rand(Hyperrectangle, dim=3), color=:red)
 ```
 """
 function plot3d(S::LazySet{N}; backend=default_polyhedra_backend(S, N),
-                alpha=1.0, color=:blue, colormap=:viridis, colorrange=Automatic(), interpolate=false,
+                alpha=1.0, color=:blue, colormap=:viridis, colorrange=nothing, interpolate=false,
                 linewidth=1, overdraw=false, shading=true, transparency=true, visible=true) where {N}
+    require(:Makie; fun_name="plot3d")
+    require(:Polyhedra; fun_name="plot3d")
 
-    P_poly_mesh = plot3d_helper(S, backend)
+    if colorrange == nothing
+        colorrange = Automatic()
+    end
+    P_poly_mesh = _plot3d_helper(S, backend)
     return mesh(P_poly_mesh, alpha=alpha, color=color, colormap=colormap, colorrange=colorrange,
                 interpolate=interpolate, linewidth=linewidth, transparency=transparency, visible=visible)
 end
 
 """
     plot3d!(S::LazySet{N}; backend=default_polyhedra_backend(S, N),
-            alpha=1.0, color=:blue, colormap=:viridis, colorrange=Automatic(), interpolate=false,
+            alpha=1.0, color=:blue, colormap=:viridis, colorrange=nothing, interpolate=false,
             linewidth=1, overdraw=false, shading=true, transparency=true, visible=true) where {N}
 
 Plot a three-dimensional convex set using Makie.
@@ -129,13 +146,15 @@ documentation](http://makie.juliaplots.org/stable/plot-attributes).
 See the documentation of `plot3d` for examples.
 """
 function plot3d!(S::LazySet{N}; backend=default_polyhedra_backend(S, N),
-                alpha=1.0, color=:blue, colormap=:viridis, colorrange=Automatic(), interpolate=false,
+                alpha=1.0, color=:blue, colormap=:viridis, colorrange=nothing, interpolate=false,
                 linewidth=1, overdraw=false, shading=true, transparency=true, visible=true) where {N}
+    require(:Makie; fun_name="plot3d!")
+    require(:Polyhedra; fun_name="plot3d!")
 
-    P_poly_mesh = plot3d_helper(S, backend)
+    if colorrange == nothing
+        colorrange = Automatic()
+    end
+    P_poly_mesh = _plot3d_helper(S, backend)
     return mesh!(P_poly_mesh, alpha=alpha, color=color, colormap=colormap, colorrange=colorrange,
                  interpolate=interpolate, linewidth=linewidth, transparency=transparency, visible=visible)
 end
-
-end # quote
-end # function load_mesh()

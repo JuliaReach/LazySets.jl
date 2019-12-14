@@ -29,6 +29,7 @@ Bounded polyhedra are called *polytopes* (see [`AbstractPolytope`](@ref)).
 """
 abstract type AbstractPolyhedron{N<:Real} <: LazySet{N} end
 
+isconvextype(::Type{<:AbstractPolyhedron}) = true
 
 # --- common AbstractPolyhedron functions ---
 

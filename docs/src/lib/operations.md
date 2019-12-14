@@ -12,6 +12,18 @@ Depth = 3
 CurrentModule = LazySets
 ```
 
+## Bloating
+
+```@docs
+Bloating
+dim(::Bloating)
+σ(::AbstractVector{N}, ::Bloating{N}) where {N<:AbstractFloat}
+ρ(::AbstractVector{N}, ::Bloating{N}) where {N<:AbstractFloat}
+isbounded(::Bloating)
+isempty(::Bloating)
+an_element(::Bloating)
+```
+
 ## Cartesian Product
 
 ### Binary Cartesian Product
@@ -93,6 +105,7 @@ dim(::ConvexHullArray)
 isbounded(::ConvexHullArray)
 array(::ConvexHullArray{N, S}) where {N<:Real, S<:LazySet{N}}
 isempty(::ConvexHullArray)
+vertices_list(::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -179,6 +192,7 @@ dim(::MinkowskiSum)
 isbounded(::MinkowskiSum)
 isempty(::MinkowskiSum)
 constraints_list(::MinkowskiSum)
+∈(::AbstractVector{N}, ::MinkowskiSum{N, S1, S2}) where {N, S1<:AbstractSingleton, S2<:LazySet}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

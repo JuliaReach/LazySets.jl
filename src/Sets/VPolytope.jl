@@ -7,7 +7,9 @@ export VPolytope,
        cartesian_product,
        linear_map,
        remove_redundant_vertices,
-       minkowski_sum
+       minkowski_sum,
+       tohrep,
+       tovrep
 
 """
     VPolytope{N<:Real} <: AbstractPolytope{N}
@@ -23,6 +25,7 @@ struct VPolytope{N<:Real} <: AbstractPolytope{N}
 end
 
 isoperationtype(::Type{<:VPolytope}) = false
+isconvextype(::Type{<:VPolytope}) = true
 
 # constructor for a VPolytope with empty vertices list
 VPolytope{N}() where {N<:Real} = VPolytope{N}(Vector{Vector{N}}())
@@ -562,10 +565,6 @@ end
 function load_polyhedra_vpolytope() # function to be loaded by Requires
 return quote
 # see the interface file AbstractPolytope.jl for the imports
-
-export vertices_list,
-       tohrep,
-       tovrep
 
 # VPolytope from a VRep
 function VPolytope(P::VRep{N}) where {N}

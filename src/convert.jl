@@ -402,7 +402,7 @@ A polygon in constraint representation with the minimal number of constraints
 """
 function convert(::Type{HPOLYGON}, S::AbstractSingleton{N}
                 ) where {N<:Real, HPOLYGON<:AbstractHPolygon}
-    constraints_list = Vector{LinearConstraint{N}}(undef, 3)
+    constraints_list = Vector{LinearConstraint{N, Vector{N}}}(undef, 3)
     o = one(N)
     z = zero(N)
     v = element(S)
@@ -848,4 +848,24 @@ An `Interval`.
 function convert(::Type{Interval},
                  r::Rectification{N, IN}) where {N<:Real, IN<:Interval{N}}
     return Interval(rectify([min(r.X), max(r.X)]))
+end
+
+"""
+    convert(::Type{VPolytope},
+            X::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
+
+Converts the convex hull array of singletons to a polytope in V-representation.
+
+### Input
+
+- `VPolytope` -- type used for dispatch
+- `X`         -- convex hull array of singletons
+
+### Output
+
+A polytope in vertex representation.
+"""
+function convert(::Type{VPolytope},
+                 X::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
+    return VPolytope(vertices_list(X))
 end

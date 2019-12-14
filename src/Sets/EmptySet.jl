@@ -14,6 +14,7 @@ Type that represents the empty set, i.e., the set with no elements.
 struct EmptySet{N<:Real} <: LazySet{N} end
 
 isoperationtype(::Type{<:EmptySet}) = false
+isconvextype(::Type{<:EmptySet}) = true
 
 # default constructor of type Float64
 EmptySet() = EmptySet{Float64}()
@@ -97,6 +98,33 @@ Determine whether an empty set is bounded.
 """
 function isbounded(::EmptySet)::Bool
     return true
+end
+
+"""
+    isuniversal(∅::EmptySet{N}, [witness]::Bool=false
+               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether an empty is universal.
+
+### Input
+
+- `∅`       -- empty set
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `false`
+* If `witness` option is activated: `(false, v)` where ``v ∉ S``, although
+  we currently throw an error
+"""
+function isuniversal(∅::EmptySet{N}, witness::Bool=false
+                    )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    if witness
+        error("witness production is currently not supported")
+        # return (false, zeros(N, dim(∅)))  # deactivated, see #1201
+    else
+        return false
+    end
 end
 
 """

@@ -107,6 +107,7 @@ struct Intersection{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
 end
 
 isoperationtype(::Type{<:Intersection}) = true
+isconvextype(::Type{Intersection{N, S1, S2}}) where {N, S1, S2} = isconvextype(S1) && isconvextype(S2)
 
 # convenience constructor without type parameter
 Intersection(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} =

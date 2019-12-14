@@ -38,6 +38,7 @@ struct Line{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
 end
 
 isoperationtype(::Type{<:Line}) = false
+isconvextype(::Type{<:Line}) = true
 
 # convenience constructor without type parameter
 Line(a::VN, b::N) where {N<:Real, VN<:AbstractVector{N}} = Line{N, VN}(a, b)

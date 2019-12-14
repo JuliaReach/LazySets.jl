@@ -60,6 +60,7 @@ struct LineSegment{N<:Real} <: AbstractZonotope{N}
 end
 
 isoperationtype(::Type{<:LineSegment}) = false
+isconvextype(::Type{<:LineSegment}) = true
 
 # convenience constructor without type parameter
 LineSegment(p::AbstractVector{N}, q::AbstractVector{N}) where {N<:Real} =

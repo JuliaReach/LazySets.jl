@@ -48,7 +48,7 @@ function overapproximate(S::LazySet{N},
                         )::HPolygon where {N<:Real}
     @assert dim(S) == 2
     if ε == Inf
-        constraints = Vector{LinearConstraint{N}}(undef, 4)
+        constraints = Vector{LinearConstraint{N, Vector{N}}}(undef, 4)
         constraints[1] = LinearConstraint(DIR_EAST(N), ρ(DIR_EAST(N), S))
         constraints[2] = LinearConstraint(DIR_NORTH(N), ρ(DIR_NORTH(N), S))
         constraints[3] = LinearConstraint(DIR_WEST(N), ρ(DIR_WEST(N), S))
@@ -760,11 +760,22 @@ return quote
 using .TaylorModels: Taylor1, TaylorN, TaylorModelN, TaylorModel1,
                      polynomial, remainder, domain,
                      normalize_taylor, linear_polynomial,
-                     constant_term, evaluate, mid
+                     constant_term, evaluate, mid, get_numvars
 
-# helper functions
-@inline get_linear_coeffs(p::Taylor1) = linear_polynomial(p).coeffs[2:end]
-@inline get_linear_coeffs(p::TaylorN) = linear_polynomial(p).coeffs[2].coeffs
+@inline function get_linear_coeffs(p::Taylor1)
+    if p.order == 0
+        return zeros(eltype(p), 1)
+    end
+    return linear_polynomial(p).coeffs[2:end]
+end
+
+@inline function get_linear_coeffs(p::TaylorN)
+    if p.order == 0
+        n = get_numvars()
+        return zeros(eltype(p), n)
+    end
+    return linear_polynomial(p).coeffs[2].coeffs
+end
 
 """
     overapproximate(vTM::Vector{TaylorModel1{T, S}},
@@ -998,7 +1009,7 @@ julia> Matrix(genmat(Z))
 We refer to the algorithm description for the univariate case.
 """
 function overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
-                         ::Type{Zonotope}) where {N,T, S}
+                         ::Type{Zonotope}) where {N, T, S}
     m = length(vTM)
     n = N # number of variables is get_numvars() in TaylorSeries
 
@@ -1315,4 +1326,56 @@ function overapproximate(cap::Intersection{N,
                                             <:CartesianProductArray{N}},
                             ::Type{CartesianProductArray}, oa) where {N}
     overapproximate(Intersection(cap.Y, cap.X), oa)
+end
+
+"""
+    overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, Rational}) where {N<:Real}
+
+Reduce the order of a zonotope by overapproximating with a zonotope with less
+generators.
+
+### Input
+
+- `Z` -- zonotope
+- `Zonotope` -- desired type for dispatch
+- `r` -- desired order
+
+### Output
+
+A new zonotope with less generators, if possible.
+
+### Algorithm
+
+This function implements the algorithm described in A. Girard's
+*Reachability of Uncertain Linear Systems Using Zonotopes*, HSCC. Vol. 5. 2005.
+
+If the desired order is smaller than one, the zonotope is *not* reduced.
+"""
+function overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, Rational}) where {N<:Real}
+    c, G = Z.center, Z.generators
+    d, p = dim(Z), ngens(Z)
+
+    if r * d >= p || r < 1
+        # do not reduce
+        return Z
+    end
+
+    h = zeros(N, p)
+    for i in 1:p
+        h[i] = norm(G[:, i], 1) - norm(G[:, i], Inf)
+    end
+    ind = sortperm(h)
+
+    m = p - floor(Int, d * (r - 1)) # subset of ngens that are reduced
+    rg = G[:, ind[1:m]] # reduced generators
+
+    # interval hull computation of reduced generators
+    Gbox = Diagonal(sum(abs.(rg), dims=2)[:])
+    if m < p
+        Gnotred = G[:, ind[m+1:end]]
+        Gred = [Gnotred Gbox]
+    else
+        Gred = Gbox
+    end
+    return Zonotope(c, Gred)
 end

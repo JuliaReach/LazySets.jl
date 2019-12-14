@@ -59,6 +59,13 @@ for N in [Float64, Rational{Int}, Float32]
     # isempty
     @test !isempty(z)
 
+    # isuniversal
+    answer, w = isuniversal(z, true)
+    @test !isuniversal(z) && !answer && w ∉ z
+
+    # an_element function
+    @test an_element(z) ∈ z
+
     # concrete operations
     gens = N[1 1; -1 1]
     Z1 = Zonotope(N[1, 1], gens)

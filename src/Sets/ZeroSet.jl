@@ -18,6 +18,7 @@ struct ZeroSet{N<:Real} <: AbstractSingleton{N}
 end
 
 isoperationtype(::Type{<:ZeroSet}) = false
+isconvextype(::Type{<:ZeroSet}) = true
 
 # default constructor of type Float64
 ZeroSet(dim::Int) = ZeroSet{Float64}(dim)

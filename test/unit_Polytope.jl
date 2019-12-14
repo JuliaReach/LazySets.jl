@@ -42,6 +42,15 @@ for N in [Float64, Rational{Int}, Float32]
     # support vector of polytope with no constraints
     @test_throws ErrorException σ(N[0], HPolytope{N}())
 
+    # boundedness
+    @test isbounded(p) && isbounded(p, false)
+    p2 = HPolytope{N}()
+    @test isbounded(p2) && !isbounded(p2, false)
+
+    # isuniversal
+    answer, w = isuniversal(p, true)
+    @test !isuniversal(p) && !answer && w ∉ p
+
     # membership
     @test N[5 / 4, 7 / 4] ∈ p
     @test N[4, 1] ∉ p
@@ -223,6 +232,19 @@ for N in [Float64]
     q = VPolytope([N[0, 1], N[0, 2]])
     @test N[0, 1//2] ∉ q
 
+    # inclusion (see #1809)
+    X = BallInf(N[0.1, 0.2, 0.1], N(0.3))
+    Y = convert(HPolytope, X)
+    @test Y ⊆ X
+
+    # double inclusion check
+    Z = convert(VPolytope, Y)
+    @test isequivalent(Y, Z)
+
+    # negative double inclusion check
+    X_eps = BallInf(N[0.1, 0.2, 0.1], N(0.30001))
+    @test !isequivalent(X, X_eps)
+
     if test_suite_polyhedra
         # -----
         # H-rep
@@ -328,6 +350,10 @@ for N in [Float64]
         cap = intersection(p1, p4)
         vlist = vertices_list(cap)
         @test vlist == [N[1, 1]]
+
+        # isuniversal
+        answer, w = isuniversal(p1, true)
+        @test !isuniversal(p1) && !answer && w ∉ p1
 
         # convex hull
         v1 = N[1, 0]

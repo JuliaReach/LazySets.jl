@@ -65,6 +65,10 @@ for N in [Float64, Rational{Int}, Float32]
     # isempty
     @test !isempty(b)
 
+    # isuniversal
+    answer, w = isuniversal(b, true)
+    @test !isuniversal(b) && !answer && w ∉ b
+
     # an_element & membership function
     @test an_element(b) ∈ b
 

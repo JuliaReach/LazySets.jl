@@ -6,7 +6,8 @@ export AbstractHyperrectangle,
        constraints_list,
        low, high,
        isflat,
-       rectify
+       rectify,
+       volume
 
 """
     AbstractHyperrectangle{N<:Real} <: AbstractZonotope{N}
@@ -35,9 +36,9 @@ julia> subtypes(AbstractHyperrectangle)
  SymmetricIntervalHull
 ```
 """
-abstract type AbstractHyperrectangle{N<:Real} <: AbstractZonotope{N}
-end
+abstract type AbstractHyperrectangle{N<:Real} <: AbstractZonotope{N} end
 
+isconvextype(::Type{<:AbstractHyperrectangle}) = true
 
 # --- AbstractZonotope interface functions ---
 
@@ -237,7 +238,7 @@ A list of linear constraints.
 """
 function constraints_list(H::AbstractHyperrectangle{N}) where {N<:Real}
     n = dim(H)
-    constraints = Vector{LinearConstraint{N}}(undef, 2*n)
+    constraints = Vector{LinearConstraint{N, SingleEntryVector{N}}}(undef, 2*n)
     b, c = high(H), -low(H)
     one_N = one(N)
     for i in 1:n
@@ -301,6 +302,15 @@ function ρ(d::AbstractVector{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
     return res
 end
 
+# helper function for single entry vector
+function _ρ_sev_hyperrectangle(d::SingleEntryVector{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
+
+    @assert d.n == dim(H) "a $(d.n)-dimensional vector is " *
+                                "incompatible with a $(dim(H))-dimensional set"
+    c = center(H)
+    return d.v * c[d.i] + abs(d.v) * radius_hyperrectangle(H, d.i)
+end
+
 """
     norm(H::AbstractHyperrectangle, [p]::Real=Inf)::Real
 
@@ -332,7 +342,7 @@ This implementation uses the fact that the maximum is achieved in the vertex
 ``c + \\text{diag}(\\text{sign}(c)) r``, for any ``p``-norm, hence it suffices to
 take the ``p``-norm of this particular vertex. This statement is proved below.
 Note that, in particular, there is no need to compute the ``p``-norm for *each*
-vertex, which can be very expensive. 
+vertex, which can be very expensive.
 
 If ``X`` is an axis-aligned hyperrectangle and the ``n``-dimensional vectors center
 and radius of the hyperrectangle are denoted ``c`` and ``r`` respectively, then
@@ -569,4 +579,27 @@ The `Hyperrectangle` that corresponds to the rectification of `H`.
 """
 function rectify(H::AbstractHyperrectangle)
     Hyperrectangle(low=rectify(low(H)), high=rectify(high(H)))
+end
+
+"""
+    volume(H::AbstractHyperrectangle{N}) where {N<:Real}
+
+Return the volume of a hyperrectangular set.
+
+### Input
+
+- `H` -- hyperrectangular set
+
+### Output
+
+The volume of ``H``.
+
+### Algorithm
+
+The volume of the ``n``-dimensional hyperrectangle ``H`` with vector radius ``r`` is
+``2ⁿ ∏ᵢ rᵢ`` where ``rᵢ`` denotes the ``i``-th component of ``r``.
+"""
+function volume(H::AbstractHyperrectangle{N}) where {N<:Real}
+    vol = mapreduce(x -> 2x, *, radius_hyperrectangle(H))
+    return vol
 end

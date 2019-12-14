@@ -35,6 +35,7 @@ struct HPolytope{N<:Real} <: AbstractPolytope{N}
 end
 
 isoperationtype(::Type{<:HPolytope}) = false
+isconvextype(::Type{<:HPolytope}) = true
 
 # convenience constructor without type parameter
 HPolytope(constraints::Vector{<:LinearConstraint{N}};
@@ -147,7 +148,8 @@ return quote
 # see the interface file AbstractPolytope.jl for the imports
 
 function convert(::Type{HPolytope{N}}, P::HRep{N}) where {N}
-    constraints = LinearConstraint{N}[]
+    VT = Polyhedra.hvectortype(P)
+    constraints = Vector{LinearConstraint{N, VT}}()
     for hi in Polyhedra.allhalfspaces(P)
         a, b = hi.a, hi.β
         if isapproxzero(norm(a))

@@ -62,6 +62,8 @@ reflect(::LazySet)
 is_interior_point(::AbstractVector{N}, ::LazySet{N}; p=Inf, ε=_rtol(N)) where {N<:Real}
 isoperationtype(::Type{<:LazySet})
 isoperation(::LazySet)
+isequivalent(::LazySet, ::LazySet)
+isconvextype(::Type{<:LazySet})
 ```
 
 Plotting is available for general one- or two-dimensional `LazySet`s, provided
@@ -71,6 +73,13 @@ that the overapproximation using iterative refinement is available:
 plot_recipe(::LazySet{N}, ::N=N(1e-3)) where {N<:Real}
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet{N}, ::N=N(1e-3)) where {N<:Real}
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractVector{VN}, ::N=N(1e-3), ::Int=40, ::Bool=false) where {N<:Real, VN<:LazySet{N}}
+```
+
+For three-dimensional sets, we support `Makie`:
+
+```@docs
+plot3d
+plot3d!
 ```
 
 ### Set functions that override Base functions
@@ -104,6 +113,7 @@ This interface defines the following functions:
 ```@docs
 dim(::AbstractCentrallySymmetric)
 isbounded(::AbstractCentrallySymmetric)
+isuniversal(::AbstractCentrallySymmetric{N}, ::Bool=false) where {N<:Real}
 an_element(::AbstractCentrallySymmetric{N}) where {N<:Real}
 isempty(::AbstractCentrallySymmetric)
 ```
@@ -121,6 +131,7 @@ This interface defines the following functions:
 
 ```@docs
 ∈(::AbstractVector{N}, ::AbstractPolyhedron{N}) where {N<:Real}
+isuniversal(::AbstractPolyhedron{N}, ::Bool=false) where {N<:Real}
 constrained_dimensions(::AbstractPolyhedron)
 linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 chebyshev_center(::AbstractPolyhedron{N}) where {N<:AbstractFloat}
@@ -147,6 +158,7 @@ This interface defines the following functions:
 
 ```@docs
 isbounded(::AbstractPolytope)
+isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real}
 singleton_list(::AbstractPolytope{N}) where {N<:Real}
 isempty(::AbstractPolytope)
 ```

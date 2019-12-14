@@ -62,6 +62,10 @@ for N in [Float64, Float32]
     # isempty
     @test !isempty(b)
 
+    # isuniversal
+    answer, w = isuniversal(b, true)
+    @test !isuniversal(b) && !answer && w ∉ b
+
     # an_element function
     b = Ball2(N[1, 2], N(2))
     @test an_element(b) ∈ b
@@ -114,4 +118,12 @@ for N in [Float64, Float32]
 
     # Chebyshev center
     @test chebyshev_center(B) == center(B)
+
+    # volume in dimension 2
+    B = Ball2(zeros(N, 2), N(2))
+    @test volume(B) ≈ pi * radius(B)^2
+
+    # volume in dimension 3
+    B = Ball2(zeros(N, 3), N(2))
+    @test volume(B) ≈ 4/3 * pi * radius(B)^3
 end

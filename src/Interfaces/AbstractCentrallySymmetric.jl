@@ -26,6 +26,7 @@ julia> subtypes(AbstractCentrallySymmetric)
 """
 abstract type AbstractCentrallySymmetric{N<:Real} <: LazySet{N} end
 
+isconvextype(::Type{<:AbstractCentrallySymmetric}) = false
 
 """
     dim(S::AbstractCentrallySymmetric)::Int
@@ -93,4 +94,36 @@ Return if a centrally symmetric set is empty or not.
 """
 function isempty(::AbstractCentrallySymmetric)::Bool
     return false
+end
+
+"""
+    isuniversal(S::AbstractCentrallySymmetric{N}, [witness]::Bool=false
+               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+
+Check whether a centrally symmetric set is universal.
+
+### Input
+
+- `S`       -- centrally symmetric set
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `false`
+* If `witness` option is activated: `(false, v)` where ``v ∉ S``
+
+### Algorithm
+
+A witness is obtained by computing the support vector in direction
+`d = [1, 0, …, 0]` and adding `d` on top.
+"""
+function isuniversal(S::AbstractCentrallySymmetric{N}, witness::Bool=false
+                    )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    if witness
+        d = SingleEntryVector{N}(1, dim(S))
+        w = σ(d, S) + d
+        return (false, w)
+    else
+        return false
+    end
 end

@@ -83,6 +83,7 @@ struct ResetMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
 end
 
 isoperationtype(::Type{<:ResetMap}) = true
+isconvextype(::Type{ResetMap{N, S}}) where {N, S} = isconvextype(S)
 
 # ZeroSet is "almost absorbing" for the linear map (only the dimension changes)
 # such that only the translation vector remains
@@ -359,7 +360,7 @@ function constraints_list(rm::ResetMap{N, S}
                          ) where {N<:Real, S<:AbstractHyperrectangle}
     H = rm.X
     n = dim(H)
-    constraints = Vector{LinearConstraint{N}}(undef, 2*n)
+    constraints = Vector{LinearConstraint{N, SingleEntryVector{N}}}(undef, 2*n)
     j = 1
     for i in 1:n
         ei = SingleEntryVector(i, n, one(N))

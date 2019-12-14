@@ -24,6 +24,7 @@ rand(::Type{Ball2})
 sample(::Ball2{N}, ::Int) where {N<:AbstractFloat}
 translate(::Ball2{N}, ::AbstractVector{N}) where {N<:AbstractFloat}
 chebyshev_center(::Ball2{N}) where {N<:AbstractFloat}
+volume(::Ball2{N}) where {N<:AbstractFloat}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -34,6 +35,7 @@ Inherited from [`AbstractCentrallySymmetric`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetric))
 * [`isbounded`](@ref isbounded(::AbstractCentrallySymmetric))
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetric))
+* [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetric{N}, ::Bool=false) where {N<:Real})
 * [`an_element`](@ref an_element(::AbstractCentrallySymmetric{N}) where {N<:Real})
 
 ### Infinity norm ball
@@ -55,6 +57,7 @@ Inherited from [`LazySet`](@ref):
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
+* [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real})
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
@@ -97,6 +100,7 @@ Inherited from [`LazySet`](@ref):
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
+* [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real})
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
@@ -123,6 +127,7 @@ Inherited from [`AbstractCentrallySymmetric`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetric))
 * [`isbounded`](@ref isbounded(::AbstractCentrallySymmetric))
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetric))
+* [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetric{N}, ::Bool=false) where {N<:Real})
 * [`an_element`](@ref an_element(::AbstractCentrallySymmetric{N}) where {N<:Real})
 
 ## Ellipsoid
@@ -145,6 +150,7 @@ Inherited from [`AbstractCentrallySymmetric`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetric))
 * [`isbounded`](@ref isbounded(::AbstractCentrallySymmetric))
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetric))
+* [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetric{N}, ::Bool=false) where {N<:Real})
 * [`an_element`](@ref an_element(::AbstractCentrallySymmetric{N}) where {N<:Real})
 
 ## Empty set
@@ -160,6 +166,7 @@ an_element(::EmptySet)
 rand(::Type{EmptySet})
 isbounded(::EmptySet)
 isempty(::EmptySet)
+isuniversal(::EmptySet{N}, ::Bool=false) where {N<:Real}
 norm(::EmptySet, ::Real=Inf)
 radius(::EmptySet, ::Real=Inf)
 diameter(::EmptySet, ::Real=Inf)
@@ -239,6 +246,7 @@ Inherited from [`LazySet`](@ref):
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
+* [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real})
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
@@ -296,6 +304,7 @@ Inherited from [`LazySet`](@ref):
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
+* [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real})
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
@@ -361,6 +370,7 @@ Inherited from [`LazySet`](@ref):
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
+* [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real})
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
@@ -386,6 +396,7 @@ Inherited from [`LazySet`](@ref):
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isempty`](@ref isempty(::AbstractPolytope))
+* [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real})
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 * [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real})
 
@@ -418,6 +429,7 @@ Inherited from [`LazySet`](@ref):
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isempty`](@ref isempty(::AbstractPolytope))
+* [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real})
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 
 Inherited from [`AbstractPolygon`](@ref):
@@ -459,6 +471,7 @@ Inherited from [`LazySet`](@ref):
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`isempty`](@ref isempty(::AbstractPolytope))
+* [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real})
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 * [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real})
 
@@ -527,6 +540,7 @@ isbounded(::HPolytope, ::Bool=true)
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
+* [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real})
 
 #### Polyhedra
 
@@ -535,10 +549,12 @@ The following methods are specific for `HPolyhedron`.
 ```@docs
 rand(::Type{HPolyhedron})
 isbounded(::HPolyhedron)
-isuniversal(::HPolyhedron{N}, ::Bool=false) where {N<:Real}
 vertices_list(::HPolyhedron{N}) where {N<:Real}
 singleton_list(::HPolyhedron{N}) where {N<:Real}
 ```
+
+Inherited from [`AbstractPolyhedron`](@ref):
+* [`isuniversal`](@ref isuniversal(::AbstractPolyhedron{N}, ::Bool=false) where {N<:Real})
 
 ### Vertex representation
 
@@ -565,6 +581,7 @@ Inherited from [`LazySet`](@ref):
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`isempty`](@ref isempty(::AbstractPolytope))
+* [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real})
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 * [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real})
 
@@ -595,6 +612,7 @@ Inherited from [`LazySet`](@ref):
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
+* [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real})
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
@@ -664,6 +682,7 @@ Inherited from [`LazySet`](@ref):
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
+* [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real})
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
@@ -699,7 +718,7 @@ generators(Z::Zonotope)
 genmat(Z::Zonotope)
 scale(::Real, ::Zonotope)
 ngens(::Zonotope)
-reduce_order(::Zonotope, r)
+reduce_order(::Zonotope, ::Union{Integer, Rational})
 split(::Zonotope, ::Int)
 ```
 
@@ -710,6 +729,7 @@ Inherited from [`LazySet`](@ref):
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
+* [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real})
 * [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
