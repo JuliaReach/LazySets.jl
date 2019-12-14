@@ -26,6 +26,7 @@ julia> subtypes(AbstractCentrallySymmetric)
 """
 abstract type AbstractCentrallySymmetric{N<:Real} <: LazySet{N} end
 
+isconvextype(::Type{<:AbstractCentrallySymmetric}) = false
 
 """
     dim(S::AbstractCentrallySymmetric)::Int

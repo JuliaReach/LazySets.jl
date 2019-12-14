@@ -26,6 +26,7 @@ julia> subtypes(AbstractSingleton)
 """
 abstract type AbstractSingleton{N<:Real} <: AbstractHyperrectangle{N} end
 
+isconvextype(::Type{<:AbstractSingleton}) = true
 
 # --- AbstractHyperrectangle interface functions ---
 

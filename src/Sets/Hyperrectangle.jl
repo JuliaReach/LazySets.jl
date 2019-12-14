@@ -88,6 +88,7 @@ struct Hyperrectangle{N<:Real, VNC<:AbstractVector{N}, VNR<:AbstractVector{N}
 end
 
 isoperationtype(::Type{<:Hyperrectangle}) = false
+isconvextype(::Type{<:Hyperrectangle}) = true
 
 # constructor from keyword arguments (lower and upper bounds)
 function Hyperrectangle(;

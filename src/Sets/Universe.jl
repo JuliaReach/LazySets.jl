@@ -14,6 +14,7 @@ struct Universe{N<:Real} <: AbstractPolyhedron{N}
 end
 
 isoperationtype(::Type{<:Universe}) = false
+isconvextype(::Type{<:Universe}) = true
 
 # default constructor of type Float64
 Universe(dim::Int) = Universe{Float64}(dim)

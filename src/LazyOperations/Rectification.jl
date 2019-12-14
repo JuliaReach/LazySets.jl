@@ -111,6 +111,7 @@ struct Rectification{N<:Real, S<:LazySet{N}}
 end
 
 isoperationtype(::Type{<:Rectification}) = true
+isconvextype(::Type{<:Rectification}) = false
 
 # convenience constructor without type parameter
 Rectification(X::S) where {N<:Real, S<:LazySet{N}} = Rectification{N, S}(X)

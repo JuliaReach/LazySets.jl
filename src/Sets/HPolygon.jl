@@ -66,6 +66,7 @@ struct HPolygon{N<:Real} <: AbstractHPolygon{N}
 end
 
 isoperationtype(::Type{<:HPolygon}) = false
+isconvextype(::Type{<:HPolygon}) = true
 
 # convenience constructor without type parameter
 HPolygon(constraints::Vector{<:LinearConstraint{N}};

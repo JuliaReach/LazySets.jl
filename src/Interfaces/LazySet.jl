@@ -19,7 +19,8 @@ export LazySet,
        is_interior_point,
        isoperation,
        isoperationtype,
-       isequivalent
+       isequivalent,
+       isconvextype
 
 """
     LazySet{N}
@@ -724,3 +725,53 @@ function isequivalent(X::LazySet, Y::LazySet)
     end
     return X ⊆ Y && Y ⊆ X
 end
+
+"""
+    isconvextype(X::Type{<:LazySet})
+
+Check whether the given `LazySet` type is convex.
+
+### Input
+
+- `X` -- subtype of `LazySet`
+
+### Output
+
+`true` if the given set type is guaranteed to be convex by using only type
+information, and `false` otherwise.
+
+### Notes
+
+Since this operation only acts on types (not on values), it can return false
+negatives, i.e. there may be instances where the set is convex, even though the
+answer of this function is `false`. The examples below illustrate this point.
+
+### Examples
+
+A ball in the infinity norm is always convex, hence we get:
+
+```jldoctest convex_types
+julia> isconvextype(BallInf)
+true
+```
+
+For instance, the union (`UnionSet`) of two sets may in general be either convex
+or not, since convexity cannot be decided by just using type information.
+Hence, `isconvextype` returns `false` if `X` is `Type{<:UnionSet}`.
+
+```jldoctest convex_types
+julia> isconvextype(UnionSet)
+false
+```
+
+However, the type parameters from the set operations allow to decide convexity
+in some cases, by falling back to the convexity of the type of its arguments.
+Consider for instance the lazy intersection. The intersection of two convex sets
+is always convex, hence we can get:
+
+```jldoctest convex_types
+julia> isconvextype(Intersection{Float64, BallInf{Float64}, BallInf{Float64}})
+true
+```
+"""
+isconvextype(X::Type{<:LazySet}) = false

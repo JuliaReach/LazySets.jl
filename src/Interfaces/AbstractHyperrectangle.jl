@@ -36,9 +36,9 @@ julia> subtypes(AbstractHyperrectangle)
  SymmetricIntervalHull
 ```
 """
-abstract type AbstractHyperrectangle{N<:Real} <: AbstractZonotope{N}
-end
+abstract type AbstractHyperrectangle{N<:Real} <: AbstractZonotope{N} end
 
+isconvextype(::Type{<:AbstractHyperrectangle}) = true
 
 # --- AbstractZonotope interface functions ---
 

@@ -63,6 +63,7 @@ is_interior_point(::AbstractVector{N}, ::LazySet{N}; p=Inf, ε=_rtol(N)) where {
 isoperationtype(::Type{<:LazySet})
 isoperation(::LazySet)
 isequivalent(::LazySet, ::LazySet)
+isconvextype(::Type{<:LazySet})
 ```
 
 Plotting is available for general one- or two-dimensional `LazySet`s, provided

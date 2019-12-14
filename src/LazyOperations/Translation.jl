@@ -153,6 +153,7 @@ struct Translation{N<:Real, VN<:AbstractVector{N}, S<:LazySet{N}} <: LazySet{N}
 end
 
 isoperationtype(::Type{<:Translation}) = true
+isconvextype(::Type{Translation{N, VN, S}}) where {N, VN, S} = isconvextype(S)
 
 # constructor from a Translation: perform the translation immediately
 Translation(tr::Translation{N}, v::AbstractVector{N}) where {N<:Real} =

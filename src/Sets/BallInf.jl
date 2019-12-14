@@ -51,6 +51,7 @@ struct BallInf{N<:Real} <: AbstractHyperrectangle{N}
 end
 
 isoperationtype(::Type{<:BallInf}) = false
+isconvextype(::Type{<:BallInf}) = true
 
 # convenience constructor without type parameter
 BallInf(center::Vector{N}, radius::N) where {N<:Real} =

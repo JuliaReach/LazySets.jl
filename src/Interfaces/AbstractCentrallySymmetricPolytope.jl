@@ -32,9 +32,9 @@ julia> subtypes(AbstractCentrallySymmetricPolytope)
  Ball1
 ```
 """
-abstract type AbstractCentrallySymmetricPolytope{N<:Real} <: AbstractPolytope{N}
-end
+abstract type AbstractCentrallySymmetricPolytope{N<:Real} <: AbstractPolytope{N} end
 
+isconvextype(::Type{<:AbstractCentrallySymmetricPolytope}) = true
 
 # --- common AbstractCentrallySymmetric functions (copy-pasted) ---
 

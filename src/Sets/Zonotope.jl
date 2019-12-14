@@ -100,6 +100,7 @@ struct Zonotope{N<:Real} <: AbstractZonotope{N}
 end
 
 isoperationtype(::Type{<:Zonotope}) = false
+isconvextype(::Type{<:Zonotope}) = true
 
 # constructor from center and list of generators
 Zonotope(center::AbstractVector{N}, generators_list::AbstractVector{VN};

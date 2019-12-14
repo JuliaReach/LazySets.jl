@@ -76,6 +76,7 @@ struct Ballp{N<:AbstractFloat} <: AbstractCentrallySymmetric{N}
 end
 
 isoperationtype(::Type{<:Ballp}) = false
+isconvextype(::Type{<:Ballp}) = true
 
 # convenience constructor without type parameter
 function Ballp(p::N, center::Vector{N}, radius::N) where {N<:Real}
