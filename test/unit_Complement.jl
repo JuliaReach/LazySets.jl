@@ -35,4 +35,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test isdisjoint(B1, C) && res && w == N[]
     res, w = isdisjoint(C, B1, true)
     @test isdisjoint(C, B1) && res && w == N[]
+
+    # test convexity from the type
+    @test isconvextype(typeof(Complement(Universe{N}(2))))
+    @test isconvextype(typeof(Complement(EmptySet{N}())))
+    @test isconvextype(typeof(Complement(HalfSpace(N[1], N(0)))))
 end

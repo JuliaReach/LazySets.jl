@@ -43,9 +43,9 @@ isoperationtype(::Type{<:Complement}) = true
 isconvextype(::Type{<:Complement}) = false
 
 # special cases which are always convex
-isconvextype(::Type{Complement{<:HalfSpace}}) = true
-isconvextype(::Type{Complement{<:EmptySet}}) = true
-isconvextype(::Type{Complement{<:Universe}}) = true
+isconvextype(::Type{Complement{N, HalfSpace{N, VN}}}) where {N, VN} = true
+isconvextype(::Type{Complement{N, EmptySet{N}}}) where {N} = true
+isconvextype(::Type{Complement{N, Universe{N}}}) where {N} = true
 
 # the complement of the complement is the original set again
 Complement(C::Complement) = C.X
