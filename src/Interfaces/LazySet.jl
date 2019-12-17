@@ -53,29 +53,33 @@ cannot be used and an explicit method must be implemented.
 The subtypes of `LazySet` (including abstract interfaces):
 
 ```jldoctest; setup = :(using LazySets: subtypes)
-julia> subtypes(LazySet, false)
-21-element Array{Any,1}:
- AbstractCentrallySymmetric
- AbstractPolyhedron
- AffineMap
- Bloating
- CacheMinkowskiSum
- CartesianProduct
- CartesianProductArray
- ConvexHull
- ConvexHullArray
- EmptySet
- ExponentialMap
- ExponentialProjectionMap
- Intersection
- IntersectionArray
- LinearMap
- MinkowskiSum
- MinkowskiSumArray
- ResetMap
- Translation
- UnionSet
- UnionSetArray
+julia> sub = subtypes(LazySet, false);
+
+julia> length(sub)
+21
+
+julia> println.(sub);
+AbstractCentrallySymmetric
+AbstractPolyhedron
+AffineMap
+Bloating
+CacheMinkowskiSum
+CartesianProduct
+CartesianProductArray
+ConvexHull
+ConvexHullArray
+EmptySet
+ExponentialMap
+ExponentialProjectionMap
+Intersection
+IntersectionArray
+LinearMap
+MinkowskiSum
+MinkowskiSumArray
+ResetMap
+Translation
+UnionSet
+UnionSetArray
 ```
 
 If we only consider *concrete* subtypes, then:
