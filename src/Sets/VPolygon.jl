@@ -197,7 +197,7 @@ function tohrep(P::VPolygon{N}, ::Type{HPOLYGON}=HPolygon
         upper_hull = [halfspace_left(vl[j], vl[j+1]) for j in i:length(vl)-1]
         mid_hull = [halfspace_left(vl[end], vl[1])]
         lower_hull = [halfspace_left(vl[j], vl[j+1]) for j in 1:i-1]
-        constraints_list = vcat(upper_hull, mid_hull, lower_hull)
+        constraints_list = vcat(upper_hull, mid_hull, lower_hull)                     
     end
     return HPOLYGON(constraints_list)
 end

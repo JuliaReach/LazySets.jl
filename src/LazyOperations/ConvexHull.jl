@@ -380,3 +380,19 @@ function vertices_list(X::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
     end
     return vertices
 end
+
+# lis of constraints of the convex hull array of singletons
+function constraints_list(X::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
+    n = dim(X)
+    ST = n == 2 ? VPolygon : VPolytope
+    V = convert(ST, X)
+    return constraints_list(V)
+end
+
+# membership in convex hull array of singletons
+function ∈(x::AbstractVector{N}, X::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
+    n = length(x)
+    ST = n == 2 ? VPolygon : VPolytope
+    V = convert(ST, X)
+    return x ∈ V
+end
