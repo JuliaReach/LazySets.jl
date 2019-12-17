@@ -277,12 +277,12 @@ end
 function _σ_sev_hyperrectangle(d::SingleEntryVector{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
 
     @assert d.n == dim(H) "a $(d.n)-dimensional vector is " *
-                                "incompatible with a $(dim(H))-dimensional set"
+                          "incompatible with a $(dim(H))-dimensional set"
     s = copy(center(H))
     if d.v < zero(N)
-      s[d.i] -= radius_hyperrectangle(H, d.i)
+        s[d.i] -= radius_hyperrectangle(H, d.i)
     else
-      s[d.i] += radius_hyperrectangle(H, d.i)
+        s[d.i] += radius_hyperrectangle(H, d.i)
     end
     return s
 end
