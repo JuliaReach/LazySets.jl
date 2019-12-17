@@ -167,6 +167,11 @@ function σ(d::AbstractVector{N}, B::BallInf{N}) where {N<:Real}
     return center(B) .+ sign_cadlag.(d) .* B.radius
 end
 
+# Particular dispatch for SingleEntryVector
+function σ(d::SingleEntryVector{N}, B::BallInf{N}) where {N<:Real}
+    return _σ_sev_hyperrectangle(d, B)
+end
+
 """
     ρ(d::AbstractVector{N}, B::BallInf{N}) where {N<:Real}
 

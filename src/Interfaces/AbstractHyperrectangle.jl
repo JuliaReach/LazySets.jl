@@ -273,6 +273,20 @@ function σ(d::AbstractVector{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
     return center(H) .+ sign_cadlag.(d) .* radius_hyperrectangle(H)
 end
 
+# helper function for single entry vector
+function _σ_sev_hyperrectangle(d::SingleEntryVector{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
+
+    @assert d.n == dim(H) "a $(d.n)-dimensional vector is " *
+                          "incompatible with a $(dim(H))-dimensional set"
+    s = copy(center(H))
+    if d.v < zero(N)
+        s[d.i] -= radius_hyperrectangle(H, d.i)
+    else
+        s[d.i] += radius_hyperrectangle(H, d.i)
+    end
+    return s
+end
+
 """
     ρ(d::AbstractVector{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
 
