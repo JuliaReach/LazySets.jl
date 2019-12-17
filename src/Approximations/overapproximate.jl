@@ -46,7 +46,8 @@ function overapproximate(S::LazySet{N},
                          ::Type{<:HPolygon},
                          ε::Real=Inf
                         )::HPolygon where {N<:Real}
-    @assert dim(S) == 2
+    @assert dim(S) == 2 "epsilon-close approximation is only available for " *
+                        "two-dimensional sets"
     if ε == Inf
         constraints = Vector{LinearConstraint{N, Vector{N}}}(undef, 4)
         constraints[1] = LinearConstraint(DIR_EAST(N), ρ(DIR_EAST(N), S))
@@ -56,6 +57,19 @@ function overapproximate(S::LazySet{N},
         return HPolygon(constraints, sort_constraints=false)
     else
         return tohrep(approximate(S, ε))
+    end
+end
+
+# no-go functions for dispatch in HPolytope
+function overapproximate(X::S, ::Type{<:HPolytope}) where {S<:LazySet}
+    if dim(X) == 2
+        throw(ArgumentError("ε-close approximation is only available using " *
+              "polygons in constraint representation; try with `overapproximate(X, HPolygon)`"))
+    else
+        throw(ArgumentError("ε-close approximation is only available for " *
+              "two-dimensional sets; try with `overapproximate(X, HPolytope, dirs)` " *
+              "where `dirs` is any instance of abstract directions, e.g. `BoxDirections(n)` " *
+              "or `OctDirections(n)` and `n` is the dimension of `X`"))
     end
 end
 
@@ -524,6 +538,11 @@ function overapproximate(X::LazySet{N}, dir::AbstractDirections{N}) where {N}
         addconstraint!(H, LinearConstraint(d, ρ(d, X)))
     end
     return H
+end
+
+# alias with HPolytope type as second argument
+function overapproximate(X::LazySet{N}, ::Type{<:HPolytope}, dirs::AbstractDirections{N}) where {N}
+    return overapproximate(X, dirs)
 end
 
 """
