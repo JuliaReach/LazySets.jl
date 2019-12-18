@@ -64,12 +64,12 @@ end
 function overapproximate(X::S, ::Type{<:HPolytope}) where {S<:LazySet}
     if dim(X) == 2
         throw(ArgumentError("ε-close approximation is only available using " *
-              "polygons in constraint representation; try with `overapproximate(X, HPolygon)`"))
+              "polygons in constraint representation; try `overapproximate(X, HPolygon)`"))
     else
         throw(ArgumentError("ε-close approximation is only available for " *
-              "two-dimensional sets; try with `overapproximate(X, HPolytope, dirs)` " *
-              "where `dirs` is any instance of abstract directions, e.g. `BoxDirections(n)` " *
-              "or `OctDirections(n)` and `n` is the dimension of `X`"))
+              "two-dimensional sets; try `overapproximate(X, HPolytope, dirs)` " *
+              "where `dirs` are template directions, e.g., `BoxDirections` " *
+              "or `OctDirections`"))
     end
 end
 
