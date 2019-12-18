@@ -105,6 +105,10 @@ for N in [Float64, Rational{Int}, Float32]
     r = Rectification(Ball1(N[0, 0], N(1)))
     @test overapproximate(r, Hyperrectangle) ==
         Hyperrectangle(low=N[0, 0], high=N[1, 1])
+
+    # HPolytope error messages
+    @test_throws ArgumentError overapproximate(Singleton(N[0, 0]), HPolytope)
+    @test_throws ArgumentError overapproximate(Singleton(N[0]), HPolytope)
 end
 
 # tests that do not work with Rational{Int}

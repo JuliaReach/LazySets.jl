@@ -29,6 +29,8 @@ for N in [Float64, Float32, Rational{Int}]
         @test length(dir) == length(box.constraints) == 2*n
         box = overapproximate(X, BoxDirections)
         @test length(dir) == length(box.constraints) == 2*n
+        box2 = overapproximate(X, HPolytope, dir)
+        @test box == box2
 
         # octagon directions
         dir = OctDirections{N}(n)
