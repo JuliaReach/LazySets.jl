@@ -481,7 +481,7 @@ struct ExponentialProjectionMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
 end
 
 isoperationtype(::Type{<:ExponentialProjectionMap}) = true
-isconvextype(::Type{ExponentialProjectionMap{N, S}}) = isconvextype(S)
+isconvextype(::Type{ExponentialProjectionMap{N, S}}) where {N, S} = isconvextype(S)
 
 """
 ```
