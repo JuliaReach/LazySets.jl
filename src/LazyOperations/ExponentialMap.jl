@@ -227,6 +227,7 @@ function ExponentialMap(spmexp::SparseMatrixExp{N}, Z::ZeroSet{N}
 end
 
 isoperationtype(::Type{<:ExponentialMap}) = true
+isconvextype(::Type{ExponentialMap{N, S}}) where {N, S} = isconvextype(S)
 
 # EmptySet is absorbing for ExponentialMap
 function ExponentialMap(spmexp::SparseMatrixExp{N}, ∅::EmptySet{N}
@@ -480,6 +481,7 @@ struct ExponentialProjectionMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
 end
 
 isoperationtype(::Type{<:ExponentialProjectionMap}) = true
+isconvextype(::Type{ExponentialProjectionMap{N, S}}) where {N, S} = isconvextype(S)
 
 """
 ```

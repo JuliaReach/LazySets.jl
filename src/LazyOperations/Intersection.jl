@@ -698,6 +698,7 @@ struct IntersectionArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
 end
 
 isoperationtype(::Type{<:IntersectionArray}) = true
+isconvextype(::Type{IntersectionArray{N, S}}) where {N, S} = isconvextype(S)
 
 # constructor for an empty sum with optional size hint and numeric type
 function IntersectionArray(n::Int=0, N::Type=Float64)::IntersectionArray

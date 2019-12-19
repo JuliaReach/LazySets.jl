@@ -108,7 +108,7 @@ struct LinearMap{N<:Real, S<:LazySet{N},
 end
 
 isoperationtype(::Type{<:LinearMap}) = true
-isconvextype(::Type{LinearMap{N, S}}) where {N, S} = isconvextype(S)
+isconvextype(::Type{<:LinearMap{N, S}}) where {N, S} = isconvextype(S)
 
 """
 ```
