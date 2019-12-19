@@ -227,7 +227,7 @@ function ExponentialMap(spmexp::SparseMatrixExp{N}, Z::ZeroSet{N}
 end
 
 isoperationtype(::Type{<:ExponentialMap}) = true
-isconvextype(::Type{ExponentialMap{N, S}}) = isconvextype(S)
+isconvextype(::Type{ExponentialMap{N, S}}) where {N, S} = isconvextype(S)
 
 # EmptySet is absorbing for ExponentialMap
 function ExponentialMap(spmexp::SparseMatrixExp{N}, ∅::EmptySet{N}
