@@ -552,8 +552,7 @@ end
 
 
 """
-    ⊆(L::LineSegment{N}, S::LazySet{N}, [witness]::Bool=false
-     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    ⊆(L::LineSegment{N}, S::LazySet{N}, [witness]::Bool=false) where {N<:Real}
 
 Check whether a line segment is contained in a convex set, and if not,
 optionally compute a witness.
@@ -576,8 +575,13 @@ optionally compute a witness.
 Since ``S`` is convex, ``L ⊆ S`` iff ``p ∈ S`` and ``q ∈ S``, where ``p, q`` are
 the end points of ``L``.
 """
-function ⊆(L::LineSegment{N}, S::LazySet{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+function ⊆(L::LineSegment{N}, S::ST, witness::Bool=false) where {N<:Real, ST<:LazySet{N}}
+
+    if !isconvextype(ST)
+        throw(ArgumentError("this function requires the set type to be convex, but " *
+                "it is not the case for a $ST"))
+    end
+
     p_in_S = L.p ∈ S
     result = p_in_S && L.q ∈ S
     if !witness
@@ -588,7 +592,6 @@ function ⊆(L::LineSegment{N}, S::LazySet{N}, witness::Bool=false
         return (result, p_in_S ? L.q : L.p)
     end
 end
-
 
 """
     ⊆(L::LineSegment{N}, H::AbstractHyperrectangle{N}, [witness]::Bool=false
