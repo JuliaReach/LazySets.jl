@@ -50,4 +50,5 @@ convert(::Type{Interval}, ::Rectification{N, IN}) where {N<:Real, IN<:Interval{N
 convert(::Type{IntervalArithmetic.Interval}, ::Interval)
 convert(::Type{Interval}, ::IntervalArithmetic.Interval)
 convert(::Type{VPolytope}, ::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
+convert(::Type{VPolygon}, ::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
 ```

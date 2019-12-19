@@ -869,3 +869,24 @@ function convert(::Type{VPolytope},
                  X::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
     return VPolytope(vertices_list(X))
 end
+
+"""
+    convert(::Type{VPolygon},
+            X::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
+
+Converts the convex hull array of singletons to a polygon in V-representation.
+
+### Input
+
+- `VPolygon`  -- type used for dispatch
+- `X`         -- convex hull array of singletons
+
+### Output
+
+A polygon in vertex representation.
+"""
+function convert(::Type{VPolygon},
+                 X::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
+    @assert dim(X) == 2
+    return VPolygon(vertices_list(X))
+end
