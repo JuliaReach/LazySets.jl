@@ -54,7 +54,7 @@ struct CartesianProduct{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
 end
 
 isoperationtype(::Type{<:CartesianProduct}) = true
-isconvextype(::Type{CartesianProduct{N, S1, S1}}) where {N, S1, S2} = isconvextype(S1) && isconvextype(S2)
+isconvextype(::Type{CartesianProduct{N, S1, S2}}) where {N, S1, S2} = isconvextype(S1) && isconvextype(S2)
 
 # EmptySet is the absorbing element for CartesianProduct
 @absorbing(CartesianProduct, EmptySet)
