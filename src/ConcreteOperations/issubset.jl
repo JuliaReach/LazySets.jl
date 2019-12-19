@@ -552,7 +552,7 @@ end
 
 
 """
-    ⊆(L::LineSegment{N}, S::LazySet{N}, [witness]::Bool=false) where {N<:Real}
+    ⊆(L::LineSegment{N}, S::ST, [witness]::Bool=false) where {N<:Real, ST<:LazySet{N}}
 
 Check whether a line segment is contained in a convex set, and if not,
 optionally compute a witness.

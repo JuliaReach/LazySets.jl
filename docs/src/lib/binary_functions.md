@@ -108,7 +108,7 @@ pontryagin_difference
 ⊆(::AbstractSingleton{N}, ::AbstractSingleton{N}, ::Bool=false) where {N<:Real}
 ⊆(::Ball2{N}, ::Ball2{N}, ::Bool=false) where {N<:AbstractFloat}
 ⊆(::Union{Ball2{N}, Ballp{N}}, ::AbstractSingleton{N}, ::Bool=false) where {N<:AbstractFloat}
-⊆(::LineSegment{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
+⊆(::LineSegment{N}, ::ST, ::Bool=false) where {N<:Real, ST<:LazySet{N}}
 ⊆(::LineSegment{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
 ⊆(::Interval, ::Interval)
 ⊆(::EmptySet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
