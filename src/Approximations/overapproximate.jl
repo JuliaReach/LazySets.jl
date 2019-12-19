@@ -28,7 +28,7 @@ end
                     ::Type{<:HPolygon},
                     [ε]::Real=Inf) where {N<:Real}
 
-Return an approximation of a given 2D convex set using iterative refinement.
+Return an approximation of a given 2D set using iterative refinement.
 
 ### Input
 
