@@ -92,9 +92,13 @@ for N in [Float64, Rational{Int}, Float32]
     Δ = ConvexHullArray([a, b, c])
     vlist = vertices_list(Δ)
     @test ispermutation(vlist, [N[-1, 0], N[1, 0], N[0, 1]])
+
     vΔ = convert(VPolytope, Δ)
     vlist = vertices_list(vΔ)
     @test ispermutation(vlist, [N[-1, 0], N[1, 0], N[0, 1]])
+
+    Δbox = overapproximate(Δ, Hyperrectangle)
+    @test Δ ⊆ Δbox && !(Δbox ⊆ Δ)
 
     # ================
     # common functions
