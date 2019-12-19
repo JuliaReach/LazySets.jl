@@ -28,19 +28,25 @@ end
                     ::Type{<:HPolygon},
                     [ε]::Real=Inf) where {N<:Real}
 
-Return an approximation of a given 2D convex set.
-If no error tolerance is given, or is `Inf`, the result is a box-shaped polygon.
-Otherwise the result is an ε-close approximation as a polygon.
+Return an approximation of a given 2D convex set using iterative refinement.
 
 ### Input
 
 - `S`        -- convex set, assumed to be two-dimensional
 - `HPolygon` -- type for dispatch
-- `ε`        -- (optional, default: `Inf`) error bound
+- `ε`        -- (optional, default: `Inf`) error tolerance
 
 ### Output
 
 A polygon in constraint representation.
+
+### Notes
+
+The result is always a convex overapproximation of the input set.
+
+If no error tolerance ε is given, or is `Inf`, the result is a box-shaped polygon.
+For convex input sets, the result is an ε-close approximation as a polygon,
+with respect to the Hausdorff distance.
 """
 function overapproximate(S::ST,
                          ::Type{<:HPolygon},
@@ -55,10 +61,6 @@ function overapproximate(S::ST,
         constraints[4] = LinearConstraint(DIR_SOUTH(N), ρ(DIR_SOUTH(N), S))
         return HPolygon(constraints, sort_constraints=false)
     else
-        if !isconvextype(ST)
-            throw(ArgumentError("this function requires the set type to be convex, but " *
-                    "it is not the case for a $ST"))
-        end
         return tohrep(approximate(S, ε))
     end
 end
