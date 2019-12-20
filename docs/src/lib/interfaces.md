@@ -8,7 +8,8 @@ This helps in several ways:
 - allow changes in the source code without changing the API.
 
 The interface functions are outlined in the interface documentation.
-See [Common Set Representations](@ref) for implementations of the interfaces.
+For implementations of the interfaces see the corresponding sub-pages linked in
+the respective sections.
 
 !!! note
     The naming convention is such that all interface names (with the exception
@@ -20,7 +21,7 @@ The following diagram shows the interface hierarchy.
 
 ```@contents
 Pages = ["interfaces.md"]
-Depth = 4
+Depth = 3
 ```
 
 ```@meta
@@ -99,6 +100,11 @@ CompactSet
 NonCompactSet
 ```
 
+### Implementations
+
+* [Empty set (EmptySet)](@ref def_EmptySet)
+* [Polynomial zonotope (PolynomialZonotope)](@ref def_PolynomialZonotope)
+
 ## Centrally symmetric set
 
 Centrally symmetric sets such as balls of different norms are characterized by a
@@ -119,6 +125,12 @@ isuniversal(::AbstractCentrallySymmetric{N}, ::Bool=false) where {N<:Real}
 an_element(::AbstractCentrallySymmetric{N}) where {N<:Real}
 isempty(::AbstractCentrallySymmetric)
 ```
+
+### Implementations
+
+* [Euclidean-norm ball (Ball2)](@ref def_Ball2)
+* [Ellipsoid](@ref def_Ellipsoid)
+* [p-norm ball (Ballp)](@ref def_Ballp)
 
 ## Polyhedron
 
@@ -146,7 +158,15 @@ Plotting (bounded) polyhedra is available, too:
 plot_recipe(::AbstractPolyhedron{N}, ::N=zero(N)) where {N<:Real}
 ```
 
-### Polytope
+### Implementations
+
+* [Half-space (HalfSpace)](@ref def_HalfSpace)
+* [Polyhedron in constraint representation (HPolyhedron)](@ref def_HPolyhedron)
+* [Hyperplane](@ref def_Hyperplane)
+* [Line](@ref def_Line)
+* [Universe](@ref def_Universe)
+
+## Polytope
 
 A polytope is a bounded set with finitely many vertices (*V-representation*)
 resp. facets (*H-representation*).
@@ -166,7 +186,12 @@ singleton_list(::AbstractPolytope{N}) where {N<:Real}
 isempty(::AbstractPolytope)
 ```
 
-#### Polygon
+### Implementations
+
+* [Polytope in constraint representation (HPolytope)](@ref def_HPolytope)
+* [Polytope in vertex representation (VPolytope)](@ref def_VPolytope)
+
+## Polygon
 
 A polygon is a two-dimensional polytope.
 
@@ -181,7 +206,20 @@ dim(P::AbstractPolygon)
 linear_map(::AbstractMatrix{N}, P::AbstractPolygon{N}) where {N<:Real}
 ```
 
-##### HPolygon
+The following helper functions are used for sorting directions:
+
+```@docs
+LazySets.jump2pi
+<=(::AbstractVector{N}, ::AbstractVector{N}) where {N<:AbstractFloat}
+<=(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
+LazySets.quadrant(::AbstractVector{Real})
+```
+
+### Implementations
+
+* [Polygon in vertex representation (VPolygon)](@ref def_VPolygon)
+
+## HPolygon
 
 An HPolygon is a polygon in H-representation (or constraint representation).
 
@@ -206,7 +244,12 @@ vertices_list(::AbstractHPolygon{N}) where {N<:Real}
 isbounded(::AbstractHPolygon, ::Bool=true)
 ```
 
-#### Centrally symmetric polytope
+### Implementations
+
+* [Polygon in constraint representation (HPolygon)](@ref def_HPolygon)
+* [Polygon in optimized constraint representation (HPolygonOpt)](@ref def_HPolygonOpt)
+
+## Centrally symmetric polytope
 
 A centrally symmetric polytope is a combination of two other interfaces:
 [Centrally symmetric set](@ref) and [Polytope](@ref).
@@ -223,7 +266,11 @@ an_element(::AbstractCentrallySymmetricPolytope{N}) where {N<:Real}
 isempty(::AbstractCentrallySymmetricPolytope)
 ```
 
-##### AbstractZonotope
+### Implementations
+
+* [Manhattan-norm ball (Ball1)](@ref def_Ball1)
+
+## AbstractZonotope
 
 A zonotope is a specific centrally symmetric polytope characterized by a
 center and a collection of generators.
@@ -249,7 +296,12 @@ vertices_list(::AbstractZonotope{N}) where {N<:Real}
 order(::AbstractZonotope)
 ```
 
-##### Hyperrectangle
+### Implementations
+
+* [Zonotope](@ref def_Zonotope)
+* [Line segment (LineSegment)](@ref def_LineSegment)
+
+## Hyperrectangle
 
 A hyperrectangle is a special centrally symmetric polytope with axis-aligned
 facets.
@@ -280,7 +332,13 @@ ngens(::AbstractHyperrectangle{N}) where {N<:Real}
 rectify(::AbstractHyperrectangle)
 ```
 
-##### Singleton
+### Implementations
+
+* [Hyperrectangle](@ref def_Hyperrectangle)
+* [Infinity-norm ball (BallInf)](@ref def_BallInf)
+* [Interval](@ref def_Interval)
+
+## Singleton
 
 A singleton is a special hyperrectangle consisting of only one point.
 
@@ -310,3 +368,8 @@ ngens(::AbstractSingleton)
 plot_recipe(::AbstractSingleton{N}, ::N=zero(N)) where {N<:Real}
 RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractSingleton{N}, ::N=zero(N)) where {N<:Real}
 ```
+
+### Implementations
+
+* [Singleton](@ref def_Singleton)
+* [Origin (ZeroSet)](@ref def_ZeroSet)
