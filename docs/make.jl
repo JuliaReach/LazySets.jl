@@ -29,7 +29,6 @@ makedocs(
         ],
         "Library" => Any[
         "Set Interfaces" => "lib/interfaces.md",
-        "Common Set Operations" => "lib/operations.md",
         "Comparisons" => "lib/comparisons.md",
         "Conversions between set representations" => "lib/conversion.md",
         "Binary Functions on Sets" => "lib/binary_functions.md",

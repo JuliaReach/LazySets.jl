@@ -1,0 +1,24 @@
+```@meta
+CurrentModule = LazySets
+```
+
+# [Linear map (LinearMap)](@id def_LinearMap)
+
+```@docs
+LinearMap
+*(::Union{AbstractMatrix, UniformScaling, AbstractVector, Real}, ::LazySet)
+dim(::LinearMap)
+ρ(::AbstractVector{N}, ::LinearMap{N}) where {N<:Real}
+σ(::AbstractVector{N}, ::LinearMap{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::LinearMap{N}) where {N<:Real}
+an_element(::LinearMap{N}) where {N<:Real}
+isbounded(::LinearMap)
+isempty(::LinearMap)
+vertices_list(::LinearMap{N}) where {N<:Real}
+constraints_list(::LinearMap{N}) where {N<:Real}
+linear_map(::AbstractMatrix{N}, ::LinearMap{N}) where {N<:Real}
+```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))

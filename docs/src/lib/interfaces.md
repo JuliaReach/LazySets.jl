@@ -102,8 +102,33 @@ NonCompactSet
 
 ### Implementations
 
+Concrete set representations:
+
 * [Empty set (EmptySet)](@ref def_EmptySet)
 * [Polynomial zonotope (PolynomialZonotope)](@ref def_PolynomialZonotope)
+
+Lazy set operations:
+
+* [Affine map (AffineMap)](@ref def_AffineMap)
+* [Linear map (LinearMap)](@ref def_LinearMap)
+* [Exponential map (ExponentialMap)](@ref def_ExponentialMap)
+* [Exponential projection map (ExponentialProjectionMap)](@ref def_ExponentialProjectionMap)
+* [Reset map (ResetMap)](@ref def_ResetMap)
+* [Translation](@ref def_Translation)
+* [Bloating](@ref def_Bloating)
+* [Binary Cartesian product (CartesianProduct)](@ref def_CartesianProduct)
+* [``n``-ary Cartesian product (CartesianProductArray)](@ref def_CartesianProductArray)
+* [Binary convex hull (ConvexHull)](@ref def_ConvexHull)
+* [``n``-ary convex hull (ConvexHullArray)](@ref def_ConvexHullArray)
+* [Binary intersection](@ref def_Intersection)
+* [``n``-ary intersection (IntersectionArray)](@ref def_IntersectionArray)
+* [Binary Minkowski sum (MinkowskiSum)](@ref def_MinkowskiSum)
+* [``n``-ary Minkowski sum (MinkowskiSumArray)](@ref def_MinkowskiSumArray)
+* [``n``-ary Minkowski sum with cache (CacheMinkowskiSum)](@ref def_CacheMinkowskiSum)
+* [Binary set union (UnionSet)](@ref def_UnionSet)
+* [``n``-ary set union (UnionSetArray)](@ref def_UnionSetArray)
+* [Complement](@ref def_Complement)
+* [Rectification](@ref def_Rectification)
 
 ## Centrally symmetric set
 
@@ -334,9 +359,15 @@ rectify(::AbstractHyperrectangle)
 
 ### Implementations
 
+Concrete set representations:
+
 * [Hyperrectangle](@ref def_Hyperrectangle)
 * [Infinity-norm ball (BallInf)](@ref def_BallInf)
 * [Interval](@ref def_Interval)
+
+Lazy set operations:
+
+* [Symmetric interval hull (SymmetricIntervalHull)](@ref def_SymmetricIntervalHull)
 
 ## Singleton
 
