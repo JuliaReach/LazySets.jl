@@ -2,7 +2,7 @@ import Base.convert
 
 #= conversion between set types =#
 
-# convert method for identity
+# convert methods for identity (no-ops)
 for T in subtypes(LazySet, true)
     @eval begin
         Base.convert(::Type{$T}, X::$T) = X
@@ -214,10 +214,6 @@ The `tovrep` function is invoked. It requires the `Polyhedra` package.
 function convert(::Type{VPolytope}, P::HPolytope)
     return tovrep(P)
 end
-
-# no-op's
-convert(::Type{HPolytope}, P::HPolytope) = P
-convert(::Type{VPolytope}, P::VPolytope) = P
 
 """
     convert(::Type{HPOLYGON}, P::HPolytope{N}) where
