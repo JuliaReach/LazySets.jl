@@ -2,6 +2,13 @@ import Base.convert
 
 #= conversion between set types =#
 
+# convert method for identity
+for T in subtypes(LazySet, true)
+    @eval begin
+        Base.convert(::Type{$T}, X::$T) = X
+    end
+end
+
 """
     convert(::Type{HPOLYGON1},
             P::HPOLYGON2) where {HPOLYGON1<:AbstractHPolygon,
