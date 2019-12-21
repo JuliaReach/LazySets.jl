@@ -57,4 +57,8 @@ for N in [Float64, Rational{Int}, Float32]
 
     # translation
     @test translate(Z, N[1, 2]) == Singleton(N[1, 2])
+
+    # element type
+    @test eltype(Z) == N
+    @test eltype(typeof(Z)) == N
 end
