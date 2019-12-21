@@ -1,4 +1,4 @@
-import Base: ==, ≈, copy
+import Base: ==, ≈, copy, eltype
 import Random.rand
 
 export LazySet,
@@ -131,6 +131,35 @@ abstract type LazySet{N} end
 
 # --- common LazySet functions ---
 
+"""
+    eltype(::Type{<:LazySet{N}}) where {N}
+
+Return the numeric type (`N`) of the given set type.
+
+### Input
+
+- `T` -- set type, used for dispatch
+
+### Output
+
+The numeric type of `T`.
+"""
+eltype(::Type{<:LazySet{N}}) where {N} = N
+
+"""
+    eltype(::LazySet{N}) where {N}
+
+Return the numeric type (`N`) of the given set.
+
+### Input
+
+- `X` -- set instance, used for dispatch
+
+### Output
+
+The numeric type of `X`.
+"""
+eltype(::LazySet{N}) where {N} = N
 
 """
     ρ(d::AbstractVector{N}, S::LazySet{N})::N where {N<:Real}
