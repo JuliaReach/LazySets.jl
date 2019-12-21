@@ -26,26 +26,31 @@ end
 """
     overapproximate(S::LazySet{N},
                     ::Type{<:HPolygon},
-                    [ε]::Real=Inf)::HPolygon where {N<:Real}
+                    [ε]::Real=Inf) where {N<:Real}
 
-Return an approximation of a given 2D convex set.
-If no error tolerance is given, or is `Inf`, the result is a box-shaped polygon.
-Otherwise the result is an ε-close approximation as a polygon.
+Return an approximation of a given 2D set using iterative refinement.
 
 ### Input
 
 - `S`        -- convex set, assumed to be two-dimensional
 - `HPolygon` -- type for dispatch
-- `ε`        -- (optional, default: `Inf`) error bound
+- `ε`        -- (optional, default: `Inf`) error tolerance
 
 ### Output
 
 A polygon in constraint representation.
+
+### Notes
+
+The result is always a convex overapproximation of the input set.
+
+If no error tolerance ε is given, or is `Inf`, the result is a box-shaped polygon.
+For convex input sets, the result is an ε-close approximation as a polygon,
+with respect to the Hausdorff distance.
 """
-function overapproximate(S::LazySet{N},
+function overapproximate(S::ST,
                          ::Type{<:HPolygon},
-                         ε::Real=Inf
-                        )::HPolygon where {N<:Real}
+                         ε::Real=Inf) where {N<:Real, ST<:LazySet{N}}
     @assert dim(S) == 2 "epsilon-close approximation is only available for " *
                         "two-dimensional sets"
     if ε == Inf
