@@ -2,7 +2,6 @@ import Base: *, ∈, isempty
 
 export CartesianProductArray,
        array,
-       swap,
        same_block_structure
 
 # =======================================
