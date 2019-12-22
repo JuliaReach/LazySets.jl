@@ -28,7 +28,7 @@ Depth = 3
 CurrentModule = LazySets
 ```
 
-## LazySet
+## [General sets (LazySet)](@id def_LazySet)
 
 Every convex set in this library implements this interface.
 
@@ -130,12 +130,12 @@ Lazy set operations:
 * [Complement](@ref def_Complement)
 * [Rectification](@ref def_Rectification)
 
-## Centrally symmetric set
+## [Centrally symmetric sets (AbstractCentrallySymmetric)](@id def_AbstractCentrallySymmetric)
 
 Centrally symmetric sets such as balls of different norms are characterized by a
 center.
 Note that there is a special interface combination
-[Centrally symmetric polytope](@ref).
+[Centrally symmetric polytope](@ref def_AbstractCentrallySymmetricPolytope).
 
 ```@docs
 AbstractCentrallySymmetric
@@ -157,7 +157,7 @@ isempty(::AbstractCentrallySymmetric)
 * [Ellipsoid](@ref def_Ellipsoid)
 * [p-norm ball (Ballp)](@ref def_Ballp)
 
-## Polyhedron
+## [Polyhedra (AbstractPolyhedron)](@id def_AbstractPolyhedron)
 
 A polyhedron has finitely many facets (*H-representation*) and is not
 necessarily bounded.
@@ -191,12 +191,12 @@ plot_recipe(::AbstractPolyhedron{N}, ::N=zero(N)) where {N<:Real}
 * [Line](@ref def_Line)
 * [Universe](@ref def_Universe)
 
-## Polytope
+## [Polytopes (AbstractPolytope)](@id def_AbstractPolytope)
 
 A polytope is a bounded set with finitely many vertices (*V-representation*)
 resp. facets (*H-representation*).
 Note that there is a special interface combination
-[Centrally symmetric polytope](@ref).
+[Centrally symmetric polytope](@ref def_AbstractCentrallySymmetricPolytope).
 
 ```@docs
 AbstractPolytope
@@ -216,7 +216,7 @@ isempty(::AbstractPolytope)
 * [Polytope in constraint representation (HPolytope)](@ref def_HPolytope)
 * [Polytope in vertex representation (VPolytope)](@ref def_VPolytope)
 
-## Polygon
+## [Polygons (AbstractPolygon)](@id def_AbstractPolygon)
 
 A polygon is a two-dimensional polytope.
 
@@ -244,7 +244,7 @@ LazySets.quadrant(::AbstractVector{Real})
 
 * [Polygon in vertex representation (VPolygon)](@ref def_VPolygon)
 
-## HPolygon
+## [Polygons in constraint representation (AbstractHPolygon)](@id def_AbstractHPolygon)
 
 An HPolygon is a polygon in H-representation (or constraint representation).
 
@@ -274,10 +274,11 @@ isbounded(::AbstractHPolygon, ::Bool=true)
 * [Polygon in constraint representation (HPolygon)](@ref def_HPolygon)
 * [Polygon in optimized constraint representation (HPolygonOpt)](@ref def_HPolygonOpt)
 
-## Centrally symmetric polytope
+## [Centrally symmetric polytopes (AbstractCentrallySymmetricPolytope)](@id def_AbstractCentrallySymmetricPolytope)
 
 A centrally symmetric polytope is a combination of two other interfaces:
-[Centrally symmetric set](@ref) and [Polytope](@ref).
+[Centrally symmetric sets](@ref def_AbstractCentrallySymmetric) and
+[Polytope](@ref def_AbstractPolytope).
 
 ```@docs
 AbstractCentrallySymmetricPolytope
@@ -295,7 +296,7 @@ isempty(::AbstractCentrallySymmetricPolytope)
 
 * [Manhattan-norm ball (Ball1)](@ref def_Ball1)
 
-## AbstractZonotope
+## [Zonotopes (AbstractZonotope)](@id def_AbstractZonotope)
 
 A zonotope is a specific centrally symmetric polytope characterized by a
 center and a collection of generators.
@@ -326,7 +327,7 @@ order(::AbstractZonotope)
 * [Zonotope](@ref def_Zonotope)
 * [Line segment (LineSegment)](@ref def_LineSegment)
 
-## Hyperrectangle
+## [Hyperrectangles (AbstractHyperrectangle)](@id def_AbstractHyperrectangle)
 
 A hyperrectangle is a special centrally symmetric polytope with axis-aligned
 facets.
@@ -369,7 +370,7 @@ Lazy set operations:
 
 * [Symmetric interval hull (SymmetricIntervalHull)](@ref def_SymmetricIntervalHull)
 
-## Singleton
+## [Singletons (AbstractSingleton)](@id def_AbstractSingleton)
 
 A singleton is a special hyperrectangle consisting of only one point.
 
