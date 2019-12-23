@@ -367,7 +367,7 @@ An element of the set is obtained by evaluating its support vector along
 direction ``[1, 0, …, 0]``.
 """
 function an_element(S::LazySet{N}) where {N<:Real}
-    e₁ = sparsevec([1], [one(N)], dim(P))
+    e₁ = sparsevec([1], [one(N)], dim(S))
     return σ(e₁, S)
 end
 
