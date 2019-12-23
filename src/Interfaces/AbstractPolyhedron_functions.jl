@@ -599,10 +599,11 @@ An element of the polyhedron is obtained by evaluating its support vector along
 direction ``[1, 0, …, 0]``.
 """
 function an_element(P::AbstractPolyhedron{N}) where {N<:Real}
-    if dim(P) == -1
+    n = dim(P)
+    if n == -1
         throw(ArgumentError("the dimension of this polyhedron is not defined, " *
                             "hence `an_element` is not available"))
     end
-    e₁ = sparsevec([1], [one(N)], dim(P))
+    e₁ = sparsevec([1], [one(N)], n)
     return σ(e₁, P)
 end
