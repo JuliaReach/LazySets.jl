@@ -89,6 +89,7 @@ include("Sets/PolynomialZonotope.jl")
 # =================================
 include("LazyOperations/Bloating.jl")
 include("LazyOperations/CartesianProduct.jl")
+include("LazyOperations/CartesianProductArray.jl")
 include("LazyOperations/Complement.jl")
 include("LazyOperations/ConvexHull.jl")
 include("LazyOperations/ExponentialMap.jl")
