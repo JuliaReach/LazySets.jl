@@ -28,8 +28,8 @@ makedocs(
             "Lazy Intersections" => "man/lazy_intersections.md"
         ],
         "Library" => Any[
-            "Set Interfaces" => "lib/interfaces.md",
-            "Concrete set representations" => [
+            "Interfaces" => "lib/interfaces.md",
+            "Sets" => [
                 "Ball1" => "lib/sets/Ball1.md",
                 "Ball2" => "lib/sets/Ball2.md",
                 "BallInf" => "lib/sets/BallInf.md",
@@ -54,7 +54,7 @@ makedocs(
                 "ZeroSet" => "lib/sets/ZeroSet.md",
                 "Zonotope" => "lib/sets/Zonotope.md",
             ],
-            "Lazy set representations" => [
+            "Lazy Operations" => [
                 "AffineMap" => "lib/lazy_operations/AffineMap.md",
                 "Bloating" => "lib/lazy_operations/Bloating.md",
                 "CartesianProduct" => "lib/lazy_operations/CartesianProduct.md",
@@ -70,9 +70,9 @@ makedocs(
                 "Translation" => "lib/lazy_operations/Translation.md",
                 "UnionSet" => "lib/lazy_operations/UnionSet.md",
             ],
-            "Comparisons" => "lib/comparisons.md",
+            "Concrete Operations" => "lib/binary_functions.md",
             "Conversions between set representations" => "lib/conversion.md",
-            "Binary Functions on Sets" => "lib/binary_functions.md",
+            "Comparisons" => "lib/comparisons.md",
             "Approximations" => "lib/approximations.md",
             "Utility Functions" => "lib/utils.md",
             "Parallel" => "lib/parallel.md",
