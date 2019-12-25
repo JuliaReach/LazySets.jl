@@ -587,7 +587,7 @@ Return some element of a convex set.
 
 ### Input
 
-- `S` -- convex set
+- `P` -- polyhedron
 
 ### Output
 
