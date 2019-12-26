@@ -360,9 +360,15 @@ Return some element of a convex set.
 ### Output
 
 An element of a convex set.
+
+### Algorithm
+
+An element of the set is obtained by evaluating its support vector along
+direction ``[1, 0, …, 0]``.
 """
 function an_element(S::LazySet{N}) where {N<:Real}
-    return σ(sparsevec([1], [one(N)], dim(S)), S)
+    e₁ = sparsevec([1], [one(N)], dim(S))
+    return σ(e₁, S)
 end
 
 """
