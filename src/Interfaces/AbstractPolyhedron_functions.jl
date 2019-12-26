@@ -5,7 +5,8 @@ export constrained_dimensions,
        remove_redundant_constraints,
        remove_redundant_constraints!,
        linear_map,
-       chebyshev_center
+       chebyshev_center,
+       an_element
 
 # default LP solver for floating-point numbers
 function default_lp_solver(N::Type{<:AbstractFloat})
@@ -577,4 +578,32 @@ function chebyshev_center(P::AbstractPolyhedron{N};
         return c, r
     end
     return c
+end
+
+"""
+    an_element(P::AbstractPolyhedron{N}) where {N<:Real}
+
+Return some element of a convex set.
+
+### Input
+
+- `P` -- polyhedron
+
+### Output
+
+An element of a polyhedron.
+
+### Algorithm
+
+An element of the polyhedron is obtained by evaluating its support vector along
+direction ``[1, 0, …, 0]``.
+"""
+function an_element(P::AbstractPolyhedron{N}) where {N<:Real}
+    n = dim(P)
+    if n == -1
+        throw(ArgumentError("the dimension of this polyhedron is not defined, " *
+                            "hence `an_element` is not available"))
+    end
+    e₁ = sparsevec([1], [one(N)], n)
+    return σ(e₁, P)
 end
