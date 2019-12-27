@@ -89,8 +89,7 @@ plot3d!
 ==(::LazySet, ::LazySet)
 ≈(::LazySet, ::LazySet)
 copy(::LazySet)
-Base.eltype(::Type{<:LazySet{N}}) where {N}
-Base.eltype(::LazySet{N}) where {N}
+eltype
 ```
 
 ### Aliases for set types
