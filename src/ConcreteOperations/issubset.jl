@@ -746,13 +746,29 @@ function ⊆(::EmptySet{N}, ::EmptySet{N}, witness::Bool=false
     return witness ? (true, N[]) : true
 end
 
+# ============================
+#  UnionSet and UnionSetArray
+# ============================
 
-# --- UnionSet ---
-
+# check if each set in the union is contained in X
+function _issubset_unionsetarray(cup::UnionSetArray{N}, X, witness) where {N}
+    result = true
+    w = N[]
+    for Y in array(cup)
+        if witness
+            result, w = ⊆(Y, X, witness)
+        else
+            result = ⊆(Y, X, witness)
+        end
+        if !result
+            break
+        end
+    end
+    return witness ? (result, w) : result
+end
 
 """
-    ⊆(cup::UnionSet{N}, X::LazySet{N}, [witness]::Bool=false
-     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    ⊆(cup::UnionSet{N}, X::LazySet{N}, [witness]::Bool=false) where {N<:Real}
 
 Check whether a union of two convex sets is contained in another set.
 
@@ -770,14 +786,12 @@ Check whether a union of two convex sets is contained in another set.
   * `(false, v)` iff ``\\text{cup} \\not\\subseteq X`` and
     ``v ∈ \\text{cup} \\setminus X``
 """
-function ⊆(cup::UnionSet{N}, X::LazySet{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
-    return ⊆(UnionSetArray([cup.X, cup.Y]), X, witness)
+function ⊆(cup::UnionSet{N}, X::LazySet{N}, witness::Bool=false) where {N<:Real}
+    return _issubset_unionset(UnionSetArray([cup.X, cup.Y]), X, witness)
 end
 
 """
-    ⊆(cup::UnionSetArray{N}, X::LazySet{N}, [witness]::Bool=false
-     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    ⊆(cup::UnionSetArray{N}, X::LazySet{N}, [witness]::Bool=false) where {N<:Real}
 
 Check whether a union of a finite number of convex sets is contained in another
 set.
@@ -796,21 +810,35 @@ set.
   * `(false, v)` iff ``\\text{cup} \\not\\subseteq X`` and
     ``v ∈ \\text{cup} \\setminus X``
 """
-function ⊆(cup::UnionSetArray{N}, X::LazySet{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
-    result = true
-    w = N[]
-    for Y in array(cup)
-        if witness
-            result, w = ⊆(Y, X, witness)
-        else
-            result = ⊆(Y, X, witness)
-        end
-        if !result
-            break
-        end
-    end
-    return witness ? (result, w) : result
+function ⊆(cup::UnionSetArray{N}, X::LazySet{N}, witness::Bool=false) where {N<:Real}
+    return _issubset_unionsetarray(UnionSetArray([cup.X, cup.Y]), X, witness)
+end
+
+# disambiguation: this method is preferred over
+# ⊆(S::LazySet{N}, H::AbstractHyperrectangle{N}
+# which uses a box overapproximation of S
+function ⊆(cup::UnionSet{N}, X::AbstractHyperrectangle{N},
+           witness::Bool=false) where {N<:Real}
+    return _issubset_unionsetarray(UnionSetArray([cup.X, cup.Y]), X, witness)
+end
+
+# same for UnionSetArray
+function ⊆(cup::UnionSetArray{N}, X::AbstractHyperrectangle{N},
+           witness::Bool=false) where {N<:Real}
+    return _issubset_unionsetarray(cup, X, witness)
+end
+
+# disambiguation: this method is preferred over
+# ⊆(S::LazySet{N}, P::AbstractPolyhedron{N}
+function ⊆(cup::UnionSet{N}, X::AbstractPolyhedron{N},
+           witness::Bool=false) where {N<:Real}
+    return _issubset_unionsetarray(UnionSetArray([cup.X, cup.Y]), X, witness)
+end
+
+# same for UnionSetArray
+function ⊆(cup::UnionSetArray{N}, X::AbstractPolyhedron{N},
+           witness::Bool=false) where {N<:Real}
+    return _issubset_unionsetarray(cup, X, witness)
 end
 
 
