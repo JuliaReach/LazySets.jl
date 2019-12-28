@@ -242,21 +242,21 @@ function convert(::Type{HPOLYGON}, P::HPolytope{N};
 end
 
 """
-    convert(::Type{Zonotope}, H::AbstractHyperrectangle)
+    convert(::Type{Zonotope}, Z::AbstractZonotope)
 
-Converts a hyperrectangular set to a zonotope.
+Converts a zonotopic set to a zonotope.
 
 ### Input
 
 - `Zonotope`
-- `H` -- hyperrectangular set
+- `Z` -- zonotopic set
 
 ### Output
 
 A zonotope.
 """
-function convert(::Type{Zonotope}, H::AbstractHyperrectangle)
-    return Zonotope(center(H), Diagonal(radius_hyperrectangle(H)))
+function convert(::Type{Zonotope}, Z::AbstractZonotope)
+    return Zonotope(center(Z), genmat(Z))
 end
 
 """
