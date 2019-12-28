@@ -26,7 +26,7 @@ for N in Ns
     # test interface method an_element and membership
     @test an_element(x) ∈ x
     # test containment
-    @test x ⊆ x && x ⊈ N(0.2) * x && x ⊆ N(2) * x
+    @test x ⊆ x
     @test x ⊆ Interval(N(0), N(2))
     @test x ⊈ Interval(N(-1), N(0.5))
 
@@ -157,5 +157,12 @@ for N in Ns
         @test !isflat(Interval(N(0), 2*ztol))
     elseif N == Rational{Int}
         @test isflat(Interval(N(0), 2*ztol))
+    end
+end
+
+for N in [Float64]
+    x = Interval(N(0), N(1))
+    if test_suite_polyhedra
+        @test x ⊈ N(0.2) * x && x ⊆ N(2) * x
     end
 end
