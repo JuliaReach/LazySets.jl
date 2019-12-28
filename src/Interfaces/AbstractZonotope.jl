@@ -359,6 +359,10 @@ this method; otherwise, redundant vertices may be present.
 function vertices_list(Z::AbstractZonotope{N};
                        apply_convex_hull::Bool=true) where {N<:Real}
     p = ngens(Z)
+    if p == 0
+        return [center(Z)]
+    end
+
     vlist = Vector{Vector{N}}()
     sizehint!(vlist, 2^p)
     G = genmat(Z)
