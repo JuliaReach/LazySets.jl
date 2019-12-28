@@ -203,6 +203,11 @@ for N in [Float64]
         @test ispermutation(vertices_list(P), [N[5, 0], [-5, 0]])
     end
 
+    # vertices for singleton zonotope (#1881)
+    S = Singleton(N[0, 0])
+    Z = convert(Zonotope, S)
+    @test vertices_list(Z) == [element(S)]
+
     # test that redundant vertices are removed by default (#1021)
     Z = Zonotope([0., 0.], [1. 0. 1.; 0. 1. 1.])
     vlistZ = vertices_list(Z)
