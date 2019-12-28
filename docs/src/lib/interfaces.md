@@ -352,7 +352,7 @@ low(::AbstractHyperrectangle{N}, ::Int) where {N<:Real}
 isflat(::AbstractHyperrectangle)
 split(::AbstractHyperrectangle{N}, ::AbstractVector{Int}) where {N<:Real}
 generators(::AbstractHyperrectangle)
-genmat(::AbstractHyperrectangle)
+genmat(::AbstractHyperrectangle{N}) where {N<:Real}
 ngens(::AbstractHyperrectangle{N}) where {N<:Real}
 rectify(::AbstractHyperrectangle)
 ```

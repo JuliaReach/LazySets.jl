@@ -40,4 +40,4 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`high`](@ref high(::AbstractHyperrectangle{N}) where {N<:Real})
 * [`low`](@ref low(::AbstractHyperrectangle{N}) where {N<:Real})
 * [`generators`](@ref generators(::AbstractHyperrectangle))
-* [`genmat`](@ref genmat(::AbstractHyperrectangle))
+* [`genmat`](@ref genmat(::AbstractHyperrectangle{N}) where {N<:Real})
