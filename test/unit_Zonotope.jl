@@ -118,6 +118,16 @@ for N in [Float64, Rational{Int}, Float32]
     @test genmat(Znogen) == Matrix{N}(undef, 2, 0)
     @test collect(generators(Znogen)) == Vector{N}()
 
+    # conversion from zonotopic sets
+    Z = Zonotope(N[0, 0], hcat(N[1, 1]))
+    @test Z == convert(Zonotope, Z) && Z == togrep(Z)
+    for AZ in [LineSegment(N[-1, -1], N[1, 1]),
+               Hyperrectangle(N[0, 0], N[1, 1]),
+               Singleton(N[0, 0])]
+        Z = Zonotope(center(AZ), genmat(AZ))
+        @test convert(Zonotope, AZ) == togrep(AZ) == Z
+    end
+
     # test conversion from hyperrectangular sets
     Z = convert(Zonotope, Hyperrectangle(N[2, 3], N[4, 5]))
     @test Z.center == N[2, 3] && diag(Z.generators) == N[4, 5]
