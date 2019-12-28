@@ -58,18 +58,15 @@ A matrix where each column represents one generator of `H`.
 """
 function genmat(H::AbstractHyperrectangle{N}) where {N<:Real}
     r = radius_hyperrectangle(H)
-    if any(iszero, r)
-        I = Int[]
-        vals = N[]
-        for (i, ri) in enumerate(r)
-            if !iszero(ri)
-                push!(I, i)
-                push!(vals, ri)
-            end
+    I = Int[]
+    vals = N[]
+    for (i, ri) in enumerate(r)
+        if !iszero(ri)
+            push!(I, i)
+            push!(vals, ri)
         end
-        return sparse(I, 1:length(I), vals, length(r), length(I))
     end
-    return Diagonal(r)
+    return sparse(I, 1:length(I), vals, length(r), length(I))
 end
 
 # iterator that wraps the generator matrix
