@@ -1,5 +1,5 @@
 export MinkowskiSumArray,
-       array,
+       array
 
 # ==================================
 # Minkowski sum of an array of sets
