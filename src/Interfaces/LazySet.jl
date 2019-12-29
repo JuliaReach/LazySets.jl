@@ -368,7 +368,7 @@ An element of the set is obtained by evaluating its support vector along
 direction ``[1, 0, …, 0]``.
 """
 function an_element(S::LazySet{N}) where {N<:Real}
-    e₁ = SingleEntryVector(1, n, one(N))
+    e₁ = SingleEntryVector(1, dim(S), one(N))
     return σ(e₁, S)
 end
 
