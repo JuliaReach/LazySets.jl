@@ -604,6 +604,6 @@ function an_element(P::AbstractPolyhedron{N}) where {N<:Real}
         throw(ArgumentError("the dimension of this polyhedron is not defined, " *
                             "hence `an_element` is not available"))
     end
-    e₁ = sparsevec([1], [one(N)], n)
+    e₁ = SingleEntryVector(1, n, one(N))
     return σ(e₁, P)
 end
