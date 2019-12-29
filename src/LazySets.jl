@@ -104,6 +104,7 @@ include("LazyOperations/ResetMap.jl")
 include("LazyOperations/SymmetricIntervalHull.jl")
 include("LazyOperations/Translation.jl")
 include("LazyOperations/UnionSet.jl")
+include("LazyOperations/UnionSetArray.jl")
 include("LazyOperations/Rectification.jl")  # must come after UnionSet
 
 # =======
