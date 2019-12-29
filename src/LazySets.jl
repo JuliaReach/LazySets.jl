@@ -98,6 +98,8 @@ include("LazyOperations/Intersection.jl")
 include("LazyOperations/LinearMap.jl")
 include("LazyOperations/AffineMap.jl")  # must come after LinearMap
 include("LazyOperations/MinkowskiSum.jl")
+include("LazyOperations/MinkowskiSumArray.jl")
+include("LazyOperations/CacheMinkowskiSum.jl")
 include("LazyOperations/ResetMap.jl")
 include("LazyOperations/SymmetricIntervalHull.jl")
 include("LazyOperations/Translation.jl")
