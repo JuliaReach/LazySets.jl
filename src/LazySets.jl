@@ -95,6 +95,7 @@ include("LazyOperations/ConvexHull.jl")
 include("LazyOperations/ConvexHullArray.jl")
 include("LazyOperations/ExponentialMap.jl")
 include("LazyOperations/Intersection.jl")
+include("LazyOperations/IntersectionArray.jl")
 include("LazyOperations/LinearMap.jl")
 include("LazyOperations/AffineMap.jl")  # must come after LinearMap
 include("LazyOperations/MinkowskiSum.jl")
