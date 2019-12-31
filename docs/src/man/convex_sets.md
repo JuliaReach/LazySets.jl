@@ -17,8 +17,7 @@ c3 = "red"
 c4 = "orange"
 
 function plot_raw()
-    plot(tickfont=font(30, "Times"), guidefontsize=45, aspectratio=1,
-         size=(300, 300), leg=false)
+    plot(tickfont=font(15, "Times"), aspectratio=1, size=(300, 300), leg=false)
 end
 
 function plotX(X, ε, modify, color; linecolor="black")
@@ -67,12 +66,12 @@ end
 
 ## Basic convex sets
 
-A set ``X ⊆ ℝⁿ`` is convex if for any two points ``x``, ``y`` in ``X`` the whole
-line segment connecting ``x`` and ``y`` is also contained in ``X``.
+A set ``X ⊆ \mathbb{R}^n`` is convex if for any two points ``x``, ``y`` in ``X``
+the whole line segment connecting ``x`` and ``y`` is also contained in ``X``.
 Formally:
 
 ```math
-    X = \{λ · ~ x + (1 − λ) · y \mid x, y ∈ X , λ ∈ [0, 1] ⊆ ℝ\}
+    X = \{λ · ~ x + (1 − λ) · y \mid x, y ∈ X , λ ∈ [0, 1] ⊆ \mathbb{R}\}
 ```
 
 Below we show an example of a convex set and a non-convex set.
@@ -256,3 +255,15 @@ plot_hyperplane!(x, y, c2)  # hide
 plot!(arrow_x, arrow_y, linecolor=c3, arrow=:arrow, linestyle=:dot, width=8)  # hide
 plot!(annotations=(xd, yd, text(L"d", 30)))  # hide
 ```
+
+## Operations on convex sets
+
+To be continued...
+
+## Composite convex sets
+
+To be continued...
+
+## Support function
+
+To be continued...
