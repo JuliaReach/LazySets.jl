@@ -64,7 +64,7 @@ Ball1(center::Vector{N}, radius::N) where {N<:Real} = Ball1{N}(center, radius)
 
 
 """
-    center(B::Ball1{N})::Vector{N} where {N<:Real}
+    center(B::Ball1{N}) where {N<:Real}
 
 Return the center of a ball in the 1-norm.
 
@@ -76,7 +76,7 @@ Return the center of a ball in the 1-norm.
 
 The center of the ball in the 1-norm.
 """
-function center(B::Ball1{N})::Vector{N} where {N<:Real}
+function center(B::Ball1{N}) where {N<:Real}
     return B.center
 end
 
@@ -85,7 +85,7 @@ end
 
 
 """
-    vertices_list(B::Ball1{N})::Vector{Vector{N}} where {N<:Real}
+    vertices_list(B::Ball1{N}) where {N<:Real}
 
 Return the list of vertices of a ball in the 1-norm.
 
@@ -97,20 +97,23 @@ Return the list of vertices of a ball in the 1-norm.
 
 A list containing the vertices of the ball in the 1-norm.
 """
-function vertices_list(B::Ball1{N})::Vector{Vector{N}} where {N<:Real}
+function vertices_list(B::Ball1{N}) where {N<:Real}
     # fast evaluation if B has radius 0
     if iszero(B.radius)
         return [B.center]
     end
-    vertices = Vector{Vector{N}}()
-    sizehint!(vertices, 2 * dim(B))
+    vertices = Vector{Vector{N}}(undef, 2 * dim(B))
+    j = 0
     v = copy(B.center)
-    for i in 1:dim(B)
+    @inbounds for i in 1:dim(B)
+        ci = v[i]
         v[i] += B.radius
-        push!(vertices, copy(v))
-        v[i] = B.center[i] - B.radius
-        push!(vertices, copy(v))
-        v[i] = B.center[i]
+        j += 1
+        vertices[j] = copy(v)
+        v[i] = ci - B.radius
+        j += 1
+        vertices[j] = copy(v)
+        v[i] = ci  # restore old value
     end
     return vertices
 end
@@ -141,7 +144,7 @@ function σ(d::AbstractVector{N}, B::Ball1{N}) where {N<:Real}
 end
 
 """
-    ∈(x::AbstractVector{N}, B::Ball1{N})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N}, B::Ball1{N}) where {N<:Real}
 
 Check whether a given point is contained in a ball in the 1-norm.
 
@@ -179,11 +182,12 @@ julia> [.5, 1.5] ∈ B
 true
 ```
 """
-function ∈(x::AbstractVector{N}, B::Ball1{N})::Bool where {N<:Real}
-    @assert length(x) == dim(B)
+function ∈(x::AbstractVector{N}, B::Ball1{N}) where {N<:Real}
+    @assert length(x) == dim(B) "a $(length(x))-dimensional vector is " *
+        "incompatible with a $(dim(B))-dimensional set"
     sum = zero(N)
-    for i in eachindex(x)
-        sum += abs(B.center[i] - x[i])
+    for (i, xi) in enumerate(x)
+        sum += abs(B.center[i] - xi)
     end
     return sum <= B.radius
 end
@@ -191,7 +195,7 @@ end
 """
     rand(::Type{Ball1}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
          [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
-        )::Ball1{N}
+        )
 
 Create a random ball in the 1-norm.
 
@@ -217,7 +221,7 @@ function rand(::Type{Ball1};
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int, Nothing}=nothing
-             )::Ball1{N}
+             )
     rng = reseed(rng, seed)
     center = randn(rng, N, dim)
     radius = abs(randn(rng, N))
@@ -244,7 +248,7 @@ The constraints can be defined as ``d_i^T (x-c) ≤ r`` for all ``d_i``, where
 all possible ``d_i``, the function `Iterators.product` is used.
 """
 function constraints_list(B::Ball1{N}) where {N<:Real}
-    n = LazySets.dim(B)
+    n = dim(B)
     c, r = B.center, B.radius
     clist = Vector{LinearConstraint{N, Vector{N}}}(undef, 2^n)
     for (i, di) in enumerate(Iterators.product([[one(N), -one(N)] for i = 1:n]...))
