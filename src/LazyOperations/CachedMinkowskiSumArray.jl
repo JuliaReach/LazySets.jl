@@ -1,4 +1,4 @@
-export CacheMinkowskiSum,
+export CachedMinkowskiSumArray,
        forget_sets!
 
 # =============================================================
@@ -30,7 +30,7 @@ function getindex(cp::CachedPair, idx::Int)
 end
 
 """
-    CacheMinkowskiSum{N<:Real, S<:LazySet{N}} <: LazySet{N}
+    CachedMinkowskiSumArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
 
 Type that represents the Minkowski sum of a finite number of convex sets.
 Support vector queries are cached.
@@ -45,7 +45,7 @@ Support vector queries are cached.
 This type assumes that the dimensions of all elements match.
 
 The `ZeroSet` is the neutral element and the `EmptySet` is the absorbing element
-for `CacheMinkowskiSum`.
+for `CachedMinkowskiSumArray`.
 
 The cache (field `cache`) is implemented as dictionary whose keys are directions
 and whose values are pairs `(k, s)` where `k` is the number of elements in the
@@ -56,43 +56,43 @@ the end.
 
 Constructors:
 
-- `CacheMinkowskiSum(array::Vector{<:LazySet})` -- default constructor
+- `CachedMinkowskiSumArray(array::Vector{<:LazySet})` -- default constructor
 
-- `CacheMinkowskiSum([n]::Int=0, [N]::Type=Float64)`
+- `CachedMinkowskiSumArray([n]::Int=0, [N]::Type=Float64)`
   -- constructor for an empty sum with optional size hint and numeric type
 """
-struct CacheMinkowskiSum{N<:Real, S<:LazySet{N}} <: LazySet{N}
+struct CachedMinkowskiSumArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
     cache::Dict{AbstractVector{N}, CachedPair{N}}
 
     # default constructor that initializes cache
-    CacheMinkowskiSum{N, S}(arr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
+    CachedMinkowskiSumArray{N, S}(arr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
         new{N, S}(arr, Dict{AbstractVector{N}, CachedPair{N}}())
 end
 
-isoperationtype(::Type{<:CacheMinkowskiSum}) = true
-isconvextype(::Type{CacheMinkowskiSum{N, S}}) where {N, S} = isconvextype(S)
+isoperationtype(::Type{<:CachedMinkowskiSumArray}) = true
+isconvextype(::Type{CachedMinkowskiSumArray{N, S}}) where {N, S} = isconvextype(S)
 
 # convenience constructor without type parameter
-CacheMinkowskiSum(arr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
-    CacheMinkowskiSum{N, S}(arr)
+CachedMinkowskiSumArray(arr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
+    CachedMinkowskiSumArray{N, S}(arr)
 
 # constructor for an empty sum with optional size hint and numeric type
-function CacheMinkowskiSum(n::Int=0, N::Type=Float64)::CacheMinkowskiSum
+function CachedMinkowskiSumArray(n::Int=0, N::Type=Float64)::CachedMinkowskiSumArray
     arr = Vector{LazySet{N}}()
     sizehint!(arr, n)
-    return CacheMinkowskiSum(arr)
+    return CachedMinkowskiSumArray(arr)
 end
 
-# ZeroSet is the neutral element for CacheMinkowskiSum
-@neutral(CacheMinkowskiSum, ZeroSet)
+# ZeroSet is the neutral element for CachedMinkowskiSumArray
+@neutral(CachedMinkowskiSumArray, ZeroSet)
 
-# EmptySet and Universe are the absorbing element for CacheMinkowskiSum
-@absorbing(CacheMinkowskiSum, EmptySet)
-# @absorbing(CacheMinkowskiSum, Universe)  # TODO problematic
+# EmptySet and Universe are the absorbing element for CachedMinkowskiSumArray
+@absorbing(CachedMinkowskiSumArray, EmptySet)
+# @absorbing(CachedMinkowskiSumArray, Universe)  # TODO problematic
 
 """
-    array(cms::CacheMinkowskiSum{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
+    array(cms::CachedMinkowskiSumArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
 
 Return the array of a caching Minkowski sum.
 
@@ -104,13 +104,13 @@ Return the array of a caching Minkowski sum.
 
 The array of a caching Minkowski sum.
 """
-function array(cms::CacheMinkowskiSum{N, S}
+function array(cms::CachedMinkowskiSumArray{N, S}
               )::Vector{S} where {N<:Real, S<:LazySet{N}}
     return cms.array
 end
 
 """
-    dim(cms::CacheMinkowskiSum)::Int
+    dim(cms::CachedMinkowskiSumArray)::Int
 
 Return the dimension of a caching Minkowski sum.
 
@@ -122,12 +122,12 @@ Return the dimension of a caching Minkowski sum.
 
 The ambient dimension of the caching Minkowski sum.
 """
-function dim(cms::CacheMinkowskiSum)::Int
+function dim(cms::CachedMinkowskiSumArray)::Int
     return length(cms.array) == 0 ? 0 : dim(cms.array[1])
 end
 
 """
-    σ(d::AbstractVector{N}, cms::CacheMinkowskiSum{N}) where {N<:Real}
+    σ(d::AbstractVector{N}, cms::CachedMinkowskiSumArray{N}) where {N<:Real}
 
 Return the support vector of a caching Minkowski sum in a given direction.
 
@@ -148,7 +148,7 @@ constant time.
 When sets are added to the caching Minkowski sum, the query is only performed
 for the new sets.
 """
-function σ(d::AbstractVector{N}, cms::CacheMinkowskiSum{N}) where {N<:Real}
+function σ(d::AbstractVector{N}, cms::CachedMinkowskiSumArray{N}) where {N<:Real}
     arr = array(cms)
     l = length(arr)
     cache = cms.cache
@@ -174,7 +174,7 @@ function σ(d::AbstractVector{N}, cms::CacheMinkowskiSum{N}) where {N<:Real}
 end
 
 """
-	isbounded(cms::CacheMinkowskiSum)::Bool
+	isbounded(cms::CachedMinkowskiSumArray)::Bool
 
 Determine whether a caching Minkowski sum is bounded.
 
@@ -186,12 +186,12 @@ Determine whether a caching Minkowski sum is bounded.
 
 `true` iff all wrapped sets are bounded.
 """
-function isbounded(cms::CacheMinkowskiSum)::Bool
+function isbounded(cms::CachedMinkowskiSumArray)::Bool
     return all(x -> isbounded(x), cms.array)
 end
 
 """
-    isempty(cms::CacheMinkowskiSum)::Bool
+    isempty(cms::CachedMinkowskiSumArray)::Bool
 
 Return if a caching Minkowski sum array is empty or not.
 
@@ -210,12 +210,12 @@ Usually they have been empty because otherwise the support vector query should
 have crashed before.
 In that case, the caching Minkowski sum should not be used further.
 """
-function isempty(cms::CacheMinkowskiSum)::Bool
+function isempty(cms::CachedMinkowskiSumArray)::Bool
     return any(X -> isempty(X), array(cms))
 end
 
 """
-    forget_sets!(cms::CacheMinkowskiSum)::Int
+    forget_sets!(cms::CachedMinkowskiSumArray)::Int
 
 Tell a caching Minkowski sum to forget the stored sets (but not the support
 vectors).
@@ -248,7 +248,7 @@ See the example below.
 ```jldoctest
 julia> x1 = BallInf(ones(3), 3.); x2 = Ball1(ones(3), 5.);
 
-julia> cms1 = CacheMinkowskiSum(2); cms2 = CacheMinkowskiSum(2);
+julia> cms1 = CachedMinkowskiSumArray(2); cms2 = CachedMinkowskiSumArray(2);
 
 julia> d = ones(3);
 
@@ -269,7 +269,7 @@ julia> idx1 = forget_sets!(cms2) # support vector was only computed for first se
 1
 ```
 """
-function forget_sets!(cms::CacheMinkowskiSum)::Int
+function forget_sets!(cms::CachedMinkowskiSumArray)::Int
     len = length(cms.array)
     sets_to_remove = len
     for pair in values(cms.cache)

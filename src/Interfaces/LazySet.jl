@@ -60,7 +60,7 @@ julia> subtypes(LazySet, false)
  AbstractPolyhedron
  AffineMap
  Bloating
- CacheMinkowskiSum
+ CachedMinkowskiSumArray
  CartesianProduct
  CartesianProductArray
  ConvexHull
@@ -92,7 +92,7 @@ Ball2
 BallInf
 Ballp
 Bloating
-CacheMinkowskiSum
+CachedMinkowskiSumArray
 CartesianProduct
 CartesianProductArray
 ConvexHull
