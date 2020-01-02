@@ -123,7 +123,7 @@ Lazy set operations:
 * [``n``-ary intersection (IntersectionArray)](@ref def_IntersectionArray)
 * [Binary Minkowski sum (MinkowskiSum)](@ref def_MinkowskiSum)
 * [``n``-ary Minkowski sum (MinkowskiSumArray)](@ref def_MinkowskiSumArray)
-* [``n``-ary Minkowski sum with cache (CacheMinkowskiSum)](@ref def_CacheMinkowskiSum)
+* [``n``-ary Minkowski sum with cache (CachedMinkowskiSumArray)](@ref def_CachedMinkowskiSumArray)
 * [Binary set union (UnionSet)](@ref def_UnionSet)
 * [``n``-ary set union (UnionSetArray)](@ref def_UnionSetArray)
 * [Complement](@ref def_Complement)

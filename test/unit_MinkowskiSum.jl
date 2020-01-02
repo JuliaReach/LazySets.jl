@@ -126,11 +126,11 @@ for N in [Float64, Rational{Int}, Float32]
     @test !isempty(msa)
 
     # =================
-    # CacheMinkowskiSum
+    # CachedMinkowskiSumArray
     # =================
 
     # caching Minkowski sum
-    cms = CacheMinkowskiSum(2, N)
+    cms = CachedMinkowskiSumArray(2, N)
     x1 = BallInf(ones(N, 3), N(3))
     x2 = Ball1(ones(N, 3), N(5))
     d = ones(N, 3)
@@ -158,7 +158,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # boundedness
     @test isbounded(cms)
-    @test !isbounded(CacheMinkowskiSum([Singleton(N[1]), HalfSpace(N[1], N(1))]))
+    @test !isbounded(CachedMinkowskiSumArray([Singleton(N[1]), HalfSpace(N[1], N(1))]))
 
     # isempty
     @test !isempty(cms)
@@ -170,16 +170,16 @@ for N in [Float64, Rational{Int}, Float32]
     # neutral element
     z = ZeroSet{N}(2)
     msa = MinkowskiSumArray(LazySet{N}[])
-    cms = CacheMinkowskiSum(LazySet{N}[])
+    cms = CachedMinkowskiSumArray(LazySet{N}[])
     @test neutral(MinkowskiSum) == neutral(MinkowskiSumArray) ==
-          neutral(CacheMinkowskiSum) == ZeroSet
+          neutral(CachedMinkowskiSumArray) == ZeroSet
     @test b1 + z == z + b1 == b1
     @test msa + z == z + msa == msa
     @test cms + z == z + cms == cms
     # absorbing element
     e = EmptySet{N}()
     @test absorbing(MinkowskiSum) == absorbing(MinkowskiSumArray) ==
-          absorbing(CacheMinkowskiSum) == EmptySet
+          absorbing(CachedMinkowskiSumArray) == EmptySet
     @test b1 + e == e + b1 == msa + e == e + msa == cms + e == e + cms ==
           e + e == e
     # mix of neutral and absorbing element

@@ -42,16 +42,16 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`an_element`](@ref an_element(::LazySet{N}) where {N<:Real})
 
-## [``n``-ary Minkowski sum with cache (CacheMinkowskiSum)](@id def_CacheMinkowskiSum)
+## [``n``-ary Minkowski sum with cache (CachedMinkowskiSumArray)](@id def_CachedMinkowskiSumArray)
 
 ```@docs
-CacheMinkowskiSum
-dim(::CacheMinkowskiSum)
-σ(::AbstractVector{N}, ::CacheMinkowskiSum{N}) where {N<:Real}
-isbounded(::CacheMinkowskiSum)
-isempty(::CacheMinkowskiSum)
-array(::CacheMinkowskiSum{N, S}) where {N<:Real, S<:LazySet{N}}
-forget_sets!(::CacheMinkowskiSum)
+CachedMinkowskiSumArray
+dim(::CachedMinkowskiSumArray)
+σ(::AbstractVector{N}, ::CachedMinkowskiSumArray{N}) where {N<:Real}
+isbounded(::CachedMinkowskiSumArray)
+isempty(::CachedMinkowskiSumArray)
+array(::CachedMinkowskiSumArray{N, S}) where {N<:Real, S<:LazySet{N}}
+forget_sets!(::CachedMinkowskiSumArray)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
