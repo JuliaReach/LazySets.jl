@@ -109,7 +109,7 @@ The table entries have the following meaning.
 | `LinearMap`                  | x   | x | x | x          | x | x       | x         |            |           |      |        | i        |
 | `MinkowskiSum`               | x   | x | x | i          |   | x       | x         |            |           |      |        | i        |
 | `MinkowskiSumArray`          | x   | x | x | i          |   | x       | x         |            |           |      |        | i        |
-| `CachedMinkowskiSumArray`          | x   | i | x | i          |   | x       | x         |            |           |      |        | i        |
+| `CachedMinkowskiSumArray`    | x   | i | x | i          |   | x       | x         |            |           |      |        | i        |
 | `ResetMap`                   | x   | x | x | x          |   | x       |           |            |           |      |        | i        |
 | `SymmetricIntervalHull`      | x   | i | x | i          | i | i       | i         | i          |           | i    | i      | i        |
 | `Translation`                | x   | x | x | x          | x | x       |           | x          |           |      |        | i        |
