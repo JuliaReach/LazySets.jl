@@ -88,7 +88,7 @@ for N in [Float64, Float32, Rational{Int}]
 
     ms = MinkowskiSum(b1, bi)
     msa = MinkowskiSumArray([b1, bi])
-    cms = CacheMinkowskiSum([b1, bi])
+    cms = CachedMinkowskiSumArray([b1, bi])
     cp = CartesianProduct(itv, itv)
     cpa = CartesianProductArray([itv, itv])
 
