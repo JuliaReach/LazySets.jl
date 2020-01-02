@@ -1,5 +1,5 @@
 """
-    LocalApproximation{N<:Real}
+    LocalApproximation{N<:Real, VN<:AbstractVector{N}}
 
 Type that represents a local approximation in 2D.
 
@@ -17,12 +17,12 @@ Type that represents a local approximation in 2D.
 
 The criteria for being refinable are determined in the method `new_approx`.
 """
-struct LocalApproximation{N<:Real}
-    p1::Vector{N}
-    d1::Vector{N}
-    p2::Vector{N}
-    d2::Vector{N}
-    q::Vector{N}
+struct LocalApproximation{N<:Real, VN<:AbstractVector{N}}
+    p1::VN
+    d1::VN
+    p2::VN
+    d2::VN
+    q::VN
     refinable::Bool
     err::N
 end
@@ -56,14 +56,16 @@ Type that represents the polygonal approximation of a convex set.
 - `constraints`  -- vector of linear constraints that are already finalized
                     (i.e., they satisfy the given error bound)
 """
-struct PolygonalOverapproximation{N<:Real}
-    S::LazySet{N}
-    approx_stack::Vector{LocalApproximation{N}}
-    constraints::Vector{LinearConstraint{N, Vector{N}}}
+struct PolygonalOverapproximation{N<:Real, SN<:LazySet{N}, VN<:AbstractVector{N}}
+    S::SN
+    approx_stack::Vector{LocalApproximation{N, VN}}
+    constraints::Vector{LinearConstraint{N, VN}}
+end
 
-    function PolygonalOverapproximation(S::LazySet{N}) where {N<:Real}
-        return new{N}(S, Vector{LocalApproximation{N}}(), Vector{LinearConstraint{N,Vector{N}}}())
-    end
+function PolygonalOverapproximation(S::SN) where {N<:Real, SN<:LazySet{N}}
+    empty_local_approx = Vector{LocalApproximation{N, Vector{N}}}()
+    empty_constraints = Vector{LinearConstraint{N,Vector{N}}}()
+    return PolygonalOverapproximation(S, empty_local_approx, empty_constraints)
 end
 
 """
@@ -85,20 +87,21 @@ approximation.
 
 A local approximation of `S` in the given directions.
 """
-function new_approx(S::LazySet, p1::Vector{N}, d1::Vector{N}, p2::Vector{N},
-                    d2::Vector{N}) where {N<:AbstractFloat}
+function new_approx(S::LazySet, p1::VN, d1::VN,
+                    p2::VN, d2::VN) where {N<:AbstractFloat, VN<:AbstractVector{N}}
     if norm(p1-p2, 2) <= _rtol(N)
         # this approximation cannot be refined and we set q = p1 by convention
-        ap = LocalApproximation{N}(p1, d1, p2, d2, p1, false, zero(N))
+        q = p1
+        refinable = false
+        err = zero(N)
     else
         ndir = normalize([p2[2]-p1[2], p1[1]-p2[1]])
         q = element(intersection(Line(d1, dot(d1, p1)), Line(d2, dot(d2, p2))))
-        approx_error = min(norm(q - σ(ndir, S)), dot(ndir, q - p1))
-        refinable = (approx_error > _rtol(N)) && (norm(p1-q, 2) > _rtol(N)) &&
+        err = min(norm(q - σ(ndir, S)), dot(ndir, q - p1))
+        refinable = (err > _rtol(N)) && (norm(p1-q, 2) > _rtol(N)) &&
                     (norm(q-p2, 2) > _rtol(N))
-        ap = LocalApproximation{N}(p1, d1, p2, d2, q, refinable, approx_error)
     end
-    return ap
+    return LocalApproximation(p1, d1, p2, d2, q, refinable, err)
 end
 
 """
@@ -118,9 +121,8 @@ end
 The list of local approximations in `Ω` of the set `Ω.S` is updated in-place and
 the new approximation is returned by this function.
 """
-function addapproximation!(Ω::PolygonalOverapproximation,
-                           p1::Vector{N}, d1::Vector{N}, p2::Vector{N},
-                           d2::Vector{N})::LocalApproximation{N} where {N<:Real}
+function addapproximation!(Ω::PolygonalOverapproximation, p1::VN, d1::VN,
+                           p2::VN, d2::VN) where {N<:Real, VN<:AbstractVector{N}}
 
     approx = new_approx(Ω.S, p1, d1, p2, d2)
     push!(Ω.approx_stack, approx)
@@ -143,11 +145,8 @@ set by splitting along the normal direction of the approximation.
 
 The tuple consisting of the refined right and left local approximations.
 """
-function refine(approx::LocalApproximation,
-                S::LazySet
-               )::Tuple{LocalApproximation, LocalApproximation}
+function refine(approx::LocalApproximation, S::LazySet)
     @assert approx.refinable
-
     ndir = normalize([approx.p2[2]-approx.p1[2], approx.p1[1]-approx.p2[1]])
     s = σ(ndir, S)
     ap1 = new_approx(S, approx.p1, approx.d1, s, ndir)
@@ -174,8 +173,7 @@ A polygon in constraint representation.
 Internally we keep the constraints sorted.
 Hence we do not need to use `addconstraint!` when creating the `HPolygon`.
 """
-function tohrep(Ω::PolygonalOverapproximation{N}
-               )::AbstractHPolygon{N} where {N<:Real}
+function tohrep(Ω::PolygonalOverapproximation{N, VN}) where {N<:Real, VN<:AbstractVector{N}}
     # already finalized
     if isempty(Ω.approx_stack)
         return HPolygon(Ω.constraints, sort_constraints=false)
@@ -205,8 +203,7 @@ local `Approximation2D`.
 
 An ε-close approximation of the given 2D convex set.
 """
-function approximate(S::LazySet{N}, ε::N
-                    )::PolygonalOverapproximation{N} where {N<:AbstractFloat}
+function approximate(S::LazySet{N}, ε::N) where {N<:AbstractFloat}
     # initialize box directions
     pe = σ(DIR_EAST(N), S)
     pn = σ(DIR_NORTH(N), S)
