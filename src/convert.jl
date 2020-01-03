@@ -898,7 +898,7 @@ end
     convert(::Type{MinkowskiSumArray},
             X::MinkowskiSum{N, ST, MinkowskiSumArray{N, ST}}) where {N, ST}
 
-Converts the minkowski sum of a minkowski sum array to a minkowski sum array.
+Converts the Minkowski sum of a Minkowski sum array to a Minkowski sum array.
 
 ### Input
 
