@@ -893,3 +893,23 @@ function convert(::Type{VPolygon},
     @assert dim(X) == 2
     return VPolygon(vertices_list(X))
 end
+
+"""
+    convert(::Type{MinkowskiSumArray},
+            X::MinkowskiSum{N, ST, MinkowskiSumArray{N, ST}}) where {N, ST}
+
+Converts the minkowski sum of a minkowski sum array to a minkowski sum array.
+
+### Input
+
+- `MinkowskiSumArray`  -- type used for dispatch
+- `X`                  -- minkowski sum of a minkowski sum array
+
+### Output
+
+A minkowski sum array.
+"""
+function convert(::Type{MinkowskiSumArray},
+                 X::MinkowskiSum{N, ST, MinkowskiSumArray{N, ST}}) where {N, ST}
+    return MinkowskiSumArray(vcat(X.X, X.Y.array))
+end

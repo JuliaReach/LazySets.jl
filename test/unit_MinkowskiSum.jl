@@ -125,6 +125,11 @@ for N in [Float64, Rational{Int}, Float32]
     # isempty
     @test !isempty(msa)
 
+    # convert m-sum of m-sum array to m-sum array (#1678)
+    s = Singleton(N[1, 2, 3])
+    X  = s ⊕ MinkowskiSumArray([s, s])
+    @test convert(MinkowskiSumArray, X) isa MinkowskiSumArray{N, Singleton{N, Vector{N}}}
+
     # =================
     # CachedMinkowskiSumArray
     # =================
