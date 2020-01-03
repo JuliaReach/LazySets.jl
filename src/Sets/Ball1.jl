@@ -4,7 +4,7 @@ import Base: rand,
 export Ball1
 
 """
-    Ball1{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
+    Ball1{N<:Real, VN<:AbstractVector{N}} <: AbstractCentrallySymmetricPolytope{N}
 
 Type that represents a ball in the 1-norm (also known as the Manhattan norm).
 The ball is also known as a
@@ -28,7 +28,7 @@ Unit ball in the 1-norm in the plane:
 
 ```jldoctest ball1_constructor
 julia> B = Ball1(zeros(2), 1.)
-Ball1{Float64}([0.0, 0.0], 1.0)
+Ball1{Float64,Array{Float64,1}}([0.0, 0.0], 1.0)
 julia> dim(B)
 2
 ```
@@ -42,14 +42,14 @@ julia> σ([0.,1], B)
  1.0
 ```
 """
-struct Ball1{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
-    center::Vector{N}
+struct Ball1{N<:Real, VN<:AbstractVector{N}} <: AbstractCentrallySymmetricPolytope{N}
+    center::VN
     radius::N
 
     # default constructor with domain constraint for radius
-    function Ball1(center::Vector{N}, radius::N) where {N<:Real}
+    function Ball1(center::VN, radius::N) where {N<:Real, VN<:AbstractVector{N}}
         @assert radius >= zero(N) "radius must not be negative"
-        return new{N}(center, radius)
+        return new{N, VN}(center, radius)
     end
 end
 
@@ -82,7 +82,7 @@ end
 
 
 """
-    vertices_list(B::Ball1{N}) where {N<:Real}
+    vertices_list(B::Ball1{N, VN}) where {N<:Real, VN<:AbstractVector{N}}
 
 Return the list of vertices of a ball in the 1-norm.
 
@@ -94,12 +94,12 @@ Return the list of vertices of a ball in the 1-norm.
 
 A list containing the vertices of the ball in the 1-norm.
 """
-function vertices_list(B::Ball1{N}) where {N<:Real}
+function vertices_list(B::Ball1{N, VN}) where {N<:Real, VN<:AbstractVector{N}}
     # fast evaluation if B has radius 0
     if iszero(B.radius)
         return [B.center]
     end
-    vertices = Vector{Vector{N}}(undef, 2 * dim(B))
+    vertices = Vector{VN}(undef, 2 * dim(B))
     j = 0
     v = copy(B.center)
     @inbounds for i in 1:dim(B)

@@ -8,7 +8,7 @@ CurrentModule = LazySets
 Ball1
 σ(::AbstractVector{N}, ::Ball1{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::Ball1{N}, ::Bool=false) where {N<:Real}
-vertices_list(::Ball1{N}) where {N<:Real}
+vertices_list(::Ball1{N, VN}) where {N<:Real, VN<:AbstractVector{N}}
 center(::Ball1{N}) where {N<:Real}
 rand(::Type{Ball1})
 constraints_list(::Ball1{N}) where {N<:Real}
