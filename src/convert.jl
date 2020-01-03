@@ -907,7 +907,7 @@ Converts the Minkowski sum of a Minkowski sum array to a Minkowski sum array.
 
 ### Output
 
-A minkowski sum array.
+A Minkowski sum array.
 """
 function convert(::Type{MinkowskiSumArray},
                  X::MinkowskiSum{N, ST, MinkowskiSumArray{N, ST}}) where {N, ST}
