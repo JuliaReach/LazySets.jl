@@ -903,7 +903,7 @@ Converts the minkowski sum of a minkowski sum array to a minkowski sum array.
 ### Input
 
 - `MinkowskiSumArray`  -- type used for dispatch
-- `X`                  -- minkowski sum of a minkowski sum array
+- `X`                  -- Minkowski sum of a Minkowski sum array
 
 ### Output
 
