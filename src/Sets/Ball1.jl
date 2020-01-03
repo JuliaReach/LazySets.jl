@@ -144,7 +144,7 @@ function σ(d::AbstractVector{N}, B::Ball1{N}) where {N<:Real}
 end
 
 """
-    ∈(x::AbstractVector{N}, B::Ball1{N}) where {N<:Real}
+    ∈(x::AbstractVector{N}, B::Ball1{N}, [failfast]::Bool=false) where {N<:Real}
 
 Check whether a given point is contained in a ball in the 1-norm.
 
@@ -152,6 +152,7 @@ Check whether a given point is contained in a ball in the 1-norm.
 
 - `x` -- point/vector
 - `B` -- ball in the 1-norm
+- `failfast` -- (optional, default: `false`) optimization for negative answer
 
 ### Output
 
@@ -159,10 +160,11 @@ Check whether a given point is contained in a ball in the 1-norm.
 
 ### Notes
 
-This implementation is worst-case optimized, i.e., it is optimistic and first
-computes (see below) the whole sum before comparing to the radius.
-In applications where the point is typically far away from the ball, a fail-fast
-implementation with interleaved comparisons could be more efficient.
+The default behavior (`failfast == false`) is worst-case optimized, i.e., the
+implementation is optimistic and first computes (see below) the whole sum before
+comparing to the radius.
+In applications where the point is typically far away from the ball, the option
+`failfast == true` terminates faster.
 
 ### Algorithm
 
@@ -182,12 +184,15 @@ julia> [.5, 1.5] ∈ B
 true
 ```
 """
-function ∈(x::AbstractVector{N}, B::Ball1{N}) where {N<:Real}
+function ∈(x::AbstractVector{N}, B::Ball1{N}, failfast::Bool=false) where {N<:Real}
     @assert length(x) == dim(B) "a $(length(x))-dimensional vector is " *
         "incompatible with a $(dim(B))-dimensional set"
     sum = zero(N)
     for (i, xi) in enumerate(x)
         sum += abs(B.center[i] - xi)
+        if failfast && sum > B.radius
+            return false
+        end
     end
     return sum <= B.radius
 end

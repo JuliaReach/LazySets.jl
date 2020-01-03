@@ -7,7 +7,7 @@ CurrentModule = LazySets
 ```@docs
 Ball1
 σ(::AbstractVector{N}, ::Ball1{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::Ball1{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::Ball1{N}, ::Bool=false) where {N<:Real}
 vertices_list(::Ball1{N}) where {N<:Real}
 center(::Ball1{N}) where {N<:Real}
 rand(::Type{Ball1})

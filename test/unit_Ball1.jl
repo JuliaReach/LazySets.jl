@@ -70,7 +70,12 @@ for N in [Float64, Rational{Int}, Float32]
     @test !isuniversal(b) && !answer && w ∉ b
 
     # an_element & membership function
-    @test an_element(b) ∈ b
+    e = an_element(b)
+    answer = e ∈ b
+    @test answer == ∈(e, b, true) == ∈(e, b, false) == true
+    e += N[2 * b.radius, 1]
+    answer = e ∈ b
+    @test answer == ∈(e, b, true) == ∈(e, b, false) == false
 
     # translation
     @test translate(b, N[1, 2]) == Ball1(N[1, 2], N(2))
