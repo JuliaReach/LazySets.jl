@@ -47,7 +47,7 @@ struct Ball1{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
     radius::N
 
     # default constructor with domain constraint for radius
-    function Ball1{N}(center::Vector{N}, radius::N) where {N<:Real}
+    function Ball1(center::Vector{N}, radius::N) where {N<:Real}
         @assert radius >= zero(N) "radius must not be negative"
         return new{N}(center, radius)
     end
@@ -55,9 +55,6 @@ end
 
 isoperationtype(::Type{<:Ball1}) = false
 isconvextype(::Type{<:Ball1}) = true
-
-# convenience constructor without type parameter
-Ball1(center::Vector{N}, radius::N) where {N<:Real} = Ball1{N}(center, radius)
 
 
 # --- AbstractCentrallySymmetric interface functions ---
