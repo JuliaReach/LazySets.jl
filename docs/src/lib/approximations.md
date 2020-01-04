@@ -60,7 +60,7 @@ PolygonalOverapproximation
 new_approx(S::LazySet, p1::VN, d1::VN,
            p2::VN, d2::VN) where {N<:AbstractFloat, VN<:AbstractVector{N}}
 addapproximation!(Ω::PolygonalOverapproximation, p1::VN, d1::VN, p2::VN, d2::VN) where {N<:Real, VN<:AbstractVector{N}}
-refine(approx::LocalApproximation, S::LazySet)
+refine(::LocalApproximation, ::LazySet)
 tohrep(::PolygonalOverapproximation)
 approximate(S::LazySet{N}, ε::N) where {N<:AbstractFloat}
 constraint(::LocalApproximation)
