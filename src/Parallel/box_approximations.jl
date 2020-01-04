@@ -3,7 +3,7 @@ export box_approximation,
        symmetric_interval_hull
 
 """
-    box_approximation(S::LazySet)::Hyperrectangle
+    box_approximation(S::LazySet{N}) where {N<:Real}
 
 Overapproximation a convex set by a tight hyperrectangle using a parallel
 algorithm.
@@ -22,8 +22,7 @@ The center of the hyperrectangle is obtained by averaging the support function
 of the given set in the canonical directions, and the lengths of the sides can
 be recovered from the distance among support functions in the same directions.
 """
-function box_approximation(S::LazySet{N};
-                          )::Union{Hyperrectangle{N}, EmptySet{N}} where N<:Real
+function box_approximation(S::LazySet{N}) where {N<:Real}
     (c, r) = box_approximation_helper_parallel(S)
     if r[1] < 0
         return EmptySet{N}()
@@ -32,8 +31,7 @@ function box_approximation(S::LazySet{N};
 end
 
 """
-    box_approximation_symmetric(S::LazySet{N}
-                               )::Union{Hyperrectangle{N}, EmptySet{N}} where {N<:Real}
+    box_approximation_symmetric(S::LazySet{N}) where {N<:Real}
 
 Overapproximate a convex set by a tight hyperrectangle centered in the origin,
 using a parallel algorithm.
@@ -51,8 +49,7 @@ A tight hyperrectangle centered in the origin.
 The center of the box is the origin, and the radius is obtained by computing the
 maximum value of the support function evaluated at the canonical directions.
 """
-function box_approximation_symmetric(S::LazySet{N}
-                                    )::Union{Hyperrectangle{N}, EmptySet{N}} where {N<:Real}
+function box_approximation_symmetric(S::LazySet{N}) where {N<:Real}
     (c, r) = box_approximation_helper_parallel(S)
     return Hyperrectangle(zeros(N, length(c)), abs.(c) .+ r)
 end

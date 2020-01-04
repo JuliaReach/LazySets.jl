@@ -109,7 +109,7 @@ function Interval(x::AbstractVector{N}) where {N<:Rational}
 end
 
 """
-    dim(x::Interval)::Int
+    dim(x::Interval)
 
 Return the ambient dimension of an interval.
 
@@ -121,7 +121,7 @@ Return the ambient dimension of an interval.
 
 The integer 1.
 """
-dim(x::Interval)::Int = 1
+dim(x::Interval) = 1
 
 """
     σ(d::AbstractVector{N}, x::Interval{N}) where {N<:Real}
@@ -162,7 +162,7 @@ function ρ(d::AbstractVector{N}, x::Interval{N}) where {N<:Real}
 end
 
 """
-    center(x::Interval{N})::Vector{N} where {N<:Real}
+    center(x::Interval{N}) where {N<:Real}
 
 Return the interval's center.
 
@@ -174,7 +174,7 @@ Return the interval's center.
 
 The center, or midpoint, of ``x``.
 """
-function center(x::Interval{N})::Vector{N} where {N<:Real}
+function center(x::Interval{N}) where {N<:Real}
     return [IntervalArithmetic.mid(x.dat)]
 end
 
@@ -271,7 +271,7 @@ function ∈(v::N, x::Interval{N}) where {N<:Real}
 end
 
 """
-    min(x::Interval{N})::N where {N<:Real}
+    min(x::Interval{N}) where {N<:Real}
 
 Return the lower component of an interval.
 
@@ -283,12 +283,12 @@ Return the lower component of an interval.
 
 The lower (`lo`) component of the interval.
 """
-function min(x::Interval{N})::N where {N<:Real}
+function min(x::Interval{N}) where {N<:Real}
     return x.dat.lo
 end
 
 """
-    max(x::Interval{N})::N where {N<:Real}
+    max(x::Interval{N}) where {N<:Real}
 
 Return the higher or upper component of an interval.
 
@@ -300,12 +300,12 @@ Return the higher or upper component of an interval.
 
 The higher (`hi`) component of the interval.
 """
-function max(x::Interval{N})::N where {N<:Real}
+function max(x::Interval{N}) where {N<:Real}
     return x.dat.hi
 end
 
 """
-    low(x::Interval{N})::Vector{N} where {N<:Real}
+    low(x::Interval{N}) where {N<:Real}
 
 Return the lower coordinate of an interval set.
 
@@ -317,12 +317,12 @@ Return the lower coordinate of an interval set.
 
 A vector with the lower coordinate of the interval.
 """
-function low(x::Interval{N})::Vector{N} where {N<:Real}
+function low(x::Interval{N}) where {N<:Real}
     return N[x.dat.lo]
 end
 
 """
-    high(x::Interval{N})::Vector{N} where {N<:Real}
+    high(x::Interval{N}) where {N<:Real}
 
 Return the higher coordinate of an interval set.
 
@@ -334,12 +334,12 @@ Return the higher coordinate of an interval set.
 
 A vector with the higher coordinate of the interval.
 """
-function high(x::Interval{N})::Vector{N} where {N<:Real}
+function high(x::Interval{N}) where {N<:Real}
     return N[x.dat.hi]
 end
 
 """
-    an_element(x::Interval{N})::Vector{N} where {N<:Real}
+    an_element(x::Interval{N}) where {N<:Real}
 
 Return some element of an interval.
 
@@ -351,14 +351,13 @@ Return some element of an interval.
 
 The left border (`min(x)`) of the interval.
 """
-function an_element(x::Interval{N})::Vector{N} where {N<:Real}
+function an_element(x::Interval{N}) where {N<:Real}
     return [min(x)]
 end
 
 """
     rand(::Type{Interval}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
-         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
-        )::Interval{N}
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
 
 Create a random interval.
 
@@ -382,8 +381,7 @@ function rand(::Type{Interval};
               N::Type{<:Real}=Float64,
               dim::Int=1,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing
-             )::Interval{N}
+              seed::Union{Int, Nothing}=nothing)
     @assert dim == 1 "cannot create a random Interval of dimension $dim"
     rng = reseed(rng, seed)
     x = randn(rng, N)
@@ -392,7 +390,7 @@ function rand(::Type{Interval};
 end
 
 """
-    vertices_list(x::Interval{N})::Vector{Vector{N}} where {N<:Real}
+    vertices_list(x::Interval{N}) where {N<:Real}
 
 Return the list of vertices of this interval.
 
@@ -404,7 +402,7 @@ Return the list of vertices of this interval.
 
 The list of vertices of the interval represented as two one-dimensional vectors.
 """
-function vertices_list(x::Interval{N})::Vector{Vector{N}} where {N<:Real}
+function vertices_list(x::Interval{N}) where {N<:Real}
     return [[min(x)], [max(x)]]
 end
 
@@ -437,7 +435,7 @@ end
 
 
 """
-    radius_hyperrectangle(x::Interval{N}, i::Int)::N where {N<:Real}
+    radius_hyperrectangle(x::Interval{N}, i::Int) where {N<:Real}
 
 Return the box radius of an interval in a given dimension.
 
@@ -450,13 +448,13 @@ Return the box radius of an interval in a given dimension.
 
 The box radius in the given dimension.
 """
-function radius_hyperrectangle(x::Interval{N}, i::Int)::N where {N<:Real}
+function radius_hyperrectangle(x::Interval{N}, i::Int) where {N<:Real}
     @assert i == 1 "an interval is one-dimensional"
     return (max(x) - min(x)) / N(2)
 end
 
 """
-    radius_hyperrectangle(x::Interval{N})::Vector{N} where {N<:Real}
+    radius_hyperrectangle(x::Interval{N}) where {N<:Real}
 
 Return the box radius of an interval in every dimension.
 
@@ -468,12 +466,12 @@ Return the box radius of an interval in every dimension.
 
 The box radius of the interval (a one-dimensional vector).
 """
-function radius_hyperrectangle(x::Interval{N})::Vector{N} where {N<:Real}
+function radius_hyperrectangle(x::Interval{N}) where {N<:Real}
     return [radius_hyperrectangle(x, 1)]
 end
 
 """
-    isflat(I::Interval)::Bool
+    isflat(I::Interval)
 
 Determine whether an interval is flat, i.e. whether its extreme values coincide.
 
@@ -491,7 +489,7 @@ For robustness with respect to floating-point inputs, this function relies on
 the result of `isapproxzero` when applied to the diameter of the interval.
 Hence, this function depends on the absolute zero tolerance `ABSZTOL`.
 """
-function isflat(I::Interval)::Bool
+function isflat(I::Interval)
     return isapproxzero(IntervalArithmetic.diam(I.dat))
 end
 

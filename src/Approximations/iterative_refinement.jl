@@ -120,7 +120,7 @@ the new approximation is returned by this function.
 """
 function addapproximation!(Ω::PolygonalOverapproximation,
                            p1::Vector{N}, d1::Vector{N}, p2::Vector{N},
-                           d2::Vector{N})::LocalApproximation{N} where {N<:Real}
+                           d2::Vector{N}) where {N<:Real}
 
     approx = new_approx(Ω.S, p1, d1, p2, d2)
     push!(Ω.approx_stack, approx)
@@ -128,8 +128,7 @@ function addapproximation!(Ω::PolygonalOverapproximation,
 end
 
 """
-    refine(approx::LocalApproximation, S::LazySet
-          )::Tuple{LocalApproximation, LocalApproximation}
+    refine(approx::LocalApproximation, S::LazySet)
 
 Refine a given local approximation of the polygonal approximation of a convex
 set by splitting along the normal direction of the approximation.
@@ -143,9 +142,7 @@ set by splitting along the normal direction of the approximation.
 
 The tuple consisting of the refined right and left local approximations.
 """
-function refine(approx::LocalApproximation,
-                S::LazySet
-               )::Tuple{LocalApproximation, LocalApproximation}
+function refine(approx::LocalApproximation, S::LazySet)
     @assert approx.refinable
 
     ndir = normalize([approx.p2[2]-approx.p1[2], approx.p1[1]-approx.p2[1]])
@@ -156,7 +153,7 @@ function refine(approx::LocalApproximation,
 end
 
 """
-    tohrep(Ω::PolygonalOverapproximation{N})::AbstractHPolygon{N}
+    tohrep(Ω::PolygonalOverapproximation{N})
         where {N<:Real}
 
 Convert a polygonal overapproximation into a concrete polygon.
@@ -174,8 +171,7 @@ A polygon in constraint representation.
 Internally we keep the constraints sorted.
 Hence we do not need to use `addconstraint!` when creating the `HPolygon`.
 """
-function tohrep(Ω::PolygonalOverapproximation{N}
-               )::AbstractHPolygon{N} where {N<:Real}
+function tohrep(Ω::PolygonalOverapproximation{N}) where {N<:Real}
     # already finalized
     if isempty(Ω.approx_stack)
         return HPolygon(Ω.constraints, sort_constraints=false)
@@ -189,8 +185,7 @@ function tohrep(Ω::PolygonalOverapproximation{N}
 end
 
 """
-    approximate(S::LazySet{N},
-                ε::N)::PolygonalOverapproximation{N} where {N<:AbstractFloat}
+    approximate(S::LazySet{N}, ε::N) where {N<:AbstractFloat}
 
 Return an ε-close approximation of the given 2D convex set (in terms of
 Hausdorff distance) as an inner and an outer approximation composed by sorted
@@ -205,8 +200,7 @@ local `Approximation2D`.
 
 An ε-close approximation of the given 2D convex set.
 """
-function approximate(S::LazySet{N}, ε::N
-                    )::PolygonalOverapproximation{N} where {N<:AbstractFloat}
+function approximate(S::LazySet{N}, ε::N) where {N<:AbstractFloat}
     # initialize box directions
     pe = σ(DIR_EAST(N), S)
     pn = σ(DIR_NORTH(N), S)

@@ -64,8 +64,7 @@ HPolytope{N}(A::AbstractMatrix{N}, b::AbstractVector{N};
 
 """
     rand(::Type{HPolytope}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
-         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
-        )::HPolytope{N}
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
 
 Create a random polytope in constraint representation.
 
@@ -94,8 +93,7 @@ function rand(::Type{HPolytope};
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int, Nothing}=nothing,
-              num_vertices::Int=-1
-             )::HPolytope{N}
+              num_vertices::Int=-1)
     require(:Polyhedra; fun_name="rand")
     rng = reseed(rng, seed)
     vpolytope = rand(VPolytope; N=N, dim=dim, rng=rng, seed=seed,
@@ -104,7 +102,7 @@ function rand(::Type{HPolytope};
 end
 
 """
-    isbounded(P::HPolytope, [use_type_assumption]::Bool=true)::Bool
+    isbounded(P::HPolytope, [use_type_assumption]::Bool=true)
 
 Determine whether a polytope in constraint representation is bounded.
 
@@ -124,7 +122,7 @@ Otherwise, `true` iff `P` is bounded.
 If `!use_type_assumption`, we convert `P` to an `HPolyhedron` `P2` and then use
 `isbounded(P2)`.
 """
-function isbounded(P::HPolytope, use_type_assumption::Bool=true)::Bool
+function isbounded(P::HPolytope, use_type_assumption::Bool=true)
     if use_type_assumption
         return true
     end
@@ -189,8 +187,7 @@ end # function load_polyhedra_hpolytope()
 
 """
     vertices_list(P::HPolytope{N};
-                  [backend]=nothing,
-                  [prune]::Bool=true)::Vector{Vector{N}} where {N<:Real}
+                  [backend]=nothing, [prune]::Bool=true) where {N<:Real}
 
 Return the list of vertices of a polytope in constraint representation.
 
@@ -220,8 +217,7 @@ For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/).
 """
 function vertices_list(P::HPolytope{N};
-                       backend=nothing,
-                       prune::Bool=true)::Vector{Vector{N}} where {N<:Real}
+                       backend=nothing, prune::Bool=true) where {N<:Real}
     if length(P.constraints) == 0
         return Vector{N}(Vector{N}(undef, 0))
     end

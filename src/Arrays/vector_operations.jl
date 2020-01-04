@@ -59,8 +59,7 @@ function remove_duplicates_sorted!(v::AbstractVector)
 end
 
 """
-    samedir(u::AbstractVector{N},
-            v::AbstractVector{N})::Tuple{Bool, Real} where {N<:Real}
+    samedir(u::AbstractVector{N}, v::AbstractVector{N}) where {N<:Real}
 
 Check whether two vectors point in the same direction.
 
@@ -92,8 +91,7 @@ julia> samedir([1, 2, 3], [-1, -2, -3])
 ```
 """
 function samedir(u::AbstractVector{N},
-                 v::AbstractVector{N}
-                )::Tuple{Bool, Real} where {N<:Real}
+                 v::AbstractVector{N}) where {N<:Real}
     @assert length(u) == length(v) "wrong dimension"
     no_factor = true
     factor = 0
@@ -124,7 +122,7 @@ function samedir(u::AbstractVector{N},
 end
 
 """
-    nonzero_indices(v::AbstractVector{N})::Vector{Int} where {N<:Real}
+    nonzero_indices(v::AbstractVector{N}) where {N<:Real}
 
 Return the indices in which a vector is non-zero.
 
@@ -137,7 +135,7 @@ Return the indices in which a vector is non-zero.
 A vector of ascending indices `i` such that the vector is non-zero in dimension
 `i`.
 """
-function nonzero_indices(v::AbstractVector{N})::Vector{Int} where {N<:Real}
+function nonzero_indices(v::AbstractVector{N}) where {N<:Real}
     n = length(v)
     res = Vector{Int}()
     sizehint!(res, n)
@@ -149,7 +147,7 @@ function nonzero_indices(v::AbstractVector{N})::Vector{Int} where {N<:Real}
     return res
 end
 
-function nonzero_indices(v::SparseVector{N})::Vector{Int} where {N<:Real}
+function nonzero_indices(v::SparseVector{N}) where {N<:Real}
     return v.nzind
 end
 
@@ -288,7 +286,7 @@ end
 
 """
     right_turn([O::AbstractVector{N}=[0, 0]], u::AbstractVector{N},
-               v::AbstractVector{N})::N where {N<:Real}
+               v::AbstractVector{N}) where {N<:Real}
 
 Compute a scalar that determines whether the acute angle defined by three 2D
 points `O`, `u`, `v` in the plane is a right turn (< 180° counter-clockwise)
@@ -314,19 +312,19 @@ determine the sense of rotation.
 """
 @inline function right_turn(O::AbstractVector{N},
                             u::AbstractVector{N},
-                            v::AbstractVector{N})::N where {N<:Real}
+                            v::AbstractVector{N}) where {N<:Real}
     return (u[1] - O[1]) * (v[2] - O[2]) - (u[2] - O[2]) * (v[1] - O[1])
 end
 
 # version for O = origin
 @inline function right_turn(u::AbstractVector{N},
-                            v::AbstractVector{N})::N where {N<:Real}
+                            v::AbstractVector{N}) where {N<:Real}
     return u[1] * v[2] - u[2] * v[1]
 end
 
 """
     is_right_turn([O::AbstractVector{N}=[0, 0]], u::AbstractVector{N},
-                  v::AbstractVector{N})::Bool where {N<:Real}
+                  v::AbstractVector{N}) where {N<:Real}
 
 Determine whether the acute angle defined by three 2D points `O`, `u`, `v`
 in the plane is a right turn (< 180° counter-clockwise) with
@@ -346,12 +344,12 @@ counter-clockwise) with respect to the center `O`.
 """
 @inline function is_right_turn(O::AbstractVector{N},
                                u::AbstractVector{N},
-                               v::AbstractVector{N})::Bool where {N<:Real}
+                               v::AbstractVector{N}) where {N<:Real}
     return right_turn(O, u, v) >= zero(N)
 end
 
 # version for O = origin
 @inline function is_right_turn(u::AbstractVector{N},
-                               v::AbstractVector{N})::Bool where {N<:Real}
+                               v::AbstractVector{N}) where {N<:Real}
     return right_turn(u, v) >= zero(N)
 end

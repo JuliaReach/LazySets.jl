@@ -64,7 +64,7 @@ const HPoly{N} = Union{HPolytope{N}, HPolyhedron{N}}
 
 
 """
-    dim(P::HPoly{N})::Int where {N<:Real}
+    dim(P::HPoly{N}) where {N<:Real}
 
 Return the dimension of a polyhedron in H-representation.
 
@@ -77,13 +77,13 @@ Return the dimension of a polyhedron in H-representation.
 The ambient dimension of the polyhedron in H-representation.
 If it has no constraints, the result is ``-1``.
 """
-function dim(P::HPoly{N})::Int where {N<:Real}
+function dim(P::HPoly{N}) where {N<:Real}
     return length(P.constraints) == 0 ? -1 : length(P.constraints[1].a)
 end
 
 """
-    ρ(d::AbstractVector{N}, P::HPoly{N}; solver=default_lp_solver(N)
-     )::N where {N<:Real}
+    ρ(d::AbstractVector{N}, P::HPoly{N};
+      solver=default_lp_solver(N)) where {N<:Real}
 
 Evaluate the support function of a polyhedron (in H-representation) in a given
 direction.
@@ -101,8 +101,8 @@ The support function of the polyhedron.
 If a polytope is unbounded in the given direction, we throw an error.
 If a polyhedron is unbounded in the given direction, the result is `Inf`.
 """
-function ρ(d::AbstractVector{N}, P::HPoly{N}; solver=default_lp_solver(N)
-          )::N where {N<:Real}
+function ρ(d::AbstractVector{N}, P::HPoly{N};
+           solver=default_lp_solver(N)) where {N<:Real}
     lp, unbounded = σ_helper(d, P, solver)
     if unbounded
         if P isa HPolytope
@@ -191,7 +191,7 @@ function σ_helper(d::AbstractVector{N}, P::HPoly{N}, solver) where {N<:Real}
 end
 
 """
-    isbounded(P::HPolyhedron)::Bool
+    isbounded(P::HPolyhedron)
 
 Determine whether a polyhedron in constraint representation is bounded.
 
@@ -209,7 +209,7 @@ We first check if the polyhedron has more than `max(dim(P), 1)` constraints,
 which is a necessary condition for boundedness.
 If so, we check boundedness via [`isbounded_unit_dimensions`](@ref).
 """
-function isbounded(P::HPolyhedron)::Bool
+function isbounded(P::HPolyhedron)
     if length(P.constraints) <= max(dim(P), 1)
         return false
     end
@@ -218,8 +218,7 @@ end
 
 """
     rand(::Type{HPolyhedron}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
-         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
-        )::HPolyhedron{N}
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
 
 Create a polyhedron.
 
@@ -244,8 +243,7 @@ function rand(::Type{HPolyhedron};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing
-             )::HPolyhedron{N}
+              seed::Union{Int, Nothing}=nothing)
     rng = reseed(rng, seed)
     P = rand(HPolytope; N=N, dim=dim, rng=rng)
     constraints_P = constraints_list(P)
@@ -265,8 +263,7 @@ end
 
 
 """
-    addconstraint!(P::HPoly{N},
-                   constraint::LinearConstraint{N})::Nothing where {N<:Real}
+    addconstraint!(P::HPoly{N}, constraint::LinearConstraint{N}) where {N<:Real}
 
 Add a linear constraint to a polyhedron in H-representation.
 
@@ -275,18 +272,13 @@ Add a linear constraint to a polyhedron in H-representation.
 - `P`          -- polyhedron in H-representation
 - `constraint` -- linear constraint to add
 
-### Output
-
-Nothing.
-
 ### Notes
 
 It is left to the user to guarantee that the dimension of all linear constraints
 is the same.
 """
 function addconstraint!(P::HPoly{N},
-                        constraint::LinearConstraint{N}
-                       )::Nothing where {N<:Real}
+                        constraint::LinearConstraint{N}) where {N<:Real}
     push!(P.constraints, constraint)
     return nothing
 end
@@ -363,7 +355,7 @@ end
 
 """
     remove_redundant_constraints!(P::HPoly{N};
-                                  backend=default_lp_solver(N))::Bool where {N<:Real}
+                                  backend=default_lp_solver(N)) where {N<:Real}
 
 Remove the redundant constraints in a polyhedron in H-representation; the
 polyhedron is updated in-place.
@@ -387,7 +379,7 @@ details.
 """
 function remove_redundant_constraints!(P::HPoly{N};
                                        backend=default_lp_solver(N)
-                                      )::Bool where {N<:Real}
+                                      ) where {N<:Real}
     remove_redundant_constraints!(P.constraints, backend=backend)
 end
 
@@ -560,7 +552,7 @@ function vertices_list(P::HPolyhedron{N}) where {N<:Real}
 end
 
 """
-    singleton_list(P::HPolyhedron{N})::Vector{Singleton{N}} where {N<:Real}
+    singleton_list(P::HPolyhedron{N}) where {N<:Real}
 
 Return the vertices of a polyhedron in H-representation as a list of singletons.
 
@@ -582,8 +574,7 @@ end
 """
    isempty(P::HPoly{N}, witness::Bool=false;
            [use_polyhedra_interface]::Bool=false, [solver]=default_lp_solver(N),
-           [backend]=nothing
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+           [backend]=nothing) where {N<:Real}
 
 Determine whether a polyhedron is empty.
 
@@ -623,8 +614,7 @@ function isempty(P::HPoly{N},
                  witness::Bool=false;
                  use_polyhedra_interface::Bool=false,
                  solver=default_lp_solver(N),
-                 backend=nothing
-                )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+                 backend=nothing) where {N<:Real}
     if length(constraints_list(P)) < 2
         # catch corner case because of problems in LP solver for Rationals
         return witness ? (false, an_element(P)) : false

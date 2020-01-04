@@ -13,8 +13,8 @@ Abstract type for sets with a single value.
 ### Notes
 
 Every concrete `AbstractSingleton` must define the following functions:
-- `element(::AbstractSingleton{N})::Vector{N}` -- return the single element
-- `element(::AbstractSingleton{N}, i::Int)::N` -- return the single element's
+- `element(::AbstractSingleton{N})` -- return the single element
+- `element(::AbstractSingleton{N}, i::Int)` -- return the single element's
     entry in the `i`-th dimension
 
 ```jldoctest; setup = :(using LazySets: subtypes)
@@ -32,7 +32,7 @@ isconvextype(::Type{<:AbstractSingleton}) = true
 
 
 """
-    radius_hyperrectangle(S::AbstractSingleton{N}, i::Int)::N where {N<:Real}
+    radius_hyperrectangle(S::AbstractSingleton{N}, i::Int) where {N<:Real}
 
 Return the box radius of a set with a single value in a given dimension.
 
@@ -46,13 +46,13 @@ Return the box radius of a set with a single value in a given dimension.
 Zero.
 """
 function radius_hyperrectangle(S::AbstractSingleton{N}, i::Int
-                              )::N where {N<:Real}
+                              ) where {N<:Real}
     return zero(N)
 end
 
 
 """
-    radius_hyperrectangle(S::AbstractSingleton{N})::Vector{N} where {N<:Real}
+    radius_hyperrectangle(S::AbstractSingleton{N}) where {N<:Real}
 
 Return the box radius of a set with a single value in every dimension.
 
@@ -64,14 +64,13 @@ Return the box radius of a set with a single value in every dimension.
 
 The zero vector.
 """
-function radius_hyperrectangle(S::AbstractSingleton{N}
-                              )::Vector{N} where {N<:Real}
+function radius_hyperrectangle(S::AbstractSingleton{N}) where {N<:Real}
     return zeros(N, dim(S))
 end
 
 
 """
-    high(S::AbstractSingleton{N})::Vector{N} where {N<:Real}
+    high(S::AbstractSingleton{N}) where {N<:Real}
 
 Return the higher coordinates of a set with a single value.
 
@@ -83,12 +82,12 @@ Return the higher coordinates of a set with a single value.
 
 A vector with the higher coordinates of the set with a single value.
 """
-function high(S::AbstractSingleton{N})::Vector{N} where {N<:Real}
+function high(S::AbstractSingleton{N}) where {N<:Real}
     return element(S)
 end
 
 """
-    high(S::AbstractSingleton{N}, i::Int)::N where {N<:Real}
+    high(S::AbstractSingleton{N}, i::Int) where {N<:Real}
 
 Return the higher coordinate of a set with a single value in the given
 dimension.
@@ -102,12 +101,12 @@ dimension.
 
 The higher coordinate of the set with a single value in the given dimension.
 """
-function high(S::AbstractSingleton{N}, i::Int)::N where {N<:Real}
+function high(S::AbstractSingleton{N}, i::Int) where {N<:Real}
     return element(S)[i]
 end
 
 """
-    low(S::AbstractSingleton{N})::Vector{N} where {N<:Real}
+    low(S::AbstractSingleton{N}) where {N<:Real}
 
 Return the lower coordinates of a set with a single value.
 
@@ -119,12 +118,12 @@ Return the lower coordinates of a set with a single value.
 
 A vector with the lower coordinates of the set with a single value.
 """
-function low(S::AbstractSingleton{N})::Vector{N} where {N<:Real}
+function low(S::AbstractSingleton{N}) where {N<:Real}
     return element(S)
 end
 
 """
-    low(S::AbstractSingleton{N}, i::Int)::N where {N<:Real}
+    low(S::AbstractSingleton{N}, i::Int) where {N<:Real}
 
 Return the lower coordinate of a set with a single value in the given
 dimension.
@@ -138,7 +137,7 @@ dimension.
 
 The lower coordinate of the set with a single value in the given dimension.
 """
-function low(S::AbstractSingleton{N}, i::Int)::N where {N<:Real}
+function low(S::AbstractSingleton{N}, i::Int) where {N<:Real}
     return element(S)[i]
 end
 
@@ -218,7 +217,7 @@ end
 
 
 """
-    center(S::AbstractSingleton{N})::Vector{N} where {N<:Real}
+    center(S::AbstractSingleton{N}) where {N<:Real}
 
 Return the center of a set with a single value.
 
@@ -230,7 +229,7 @@ Return the center of a set with a single value.
 
 The only element of the set.
 """
-function center(S::AbstractSingleton{N})::Vector{N} where {N<:Real}
+function center(S::AbstractSingleton{N}) where {N<:Real}
     return element(S)
 end
 
@@ -239,7 +238,7 @@ end
 
 
 """
-    vertices_list(S::AbstractSingleton{N})::Vector{Vector{N}} where {N<:Real}
+    vertices_list(S::AbstractSingleton{N}) where {N<:Real}
 
 Return the list of vertices of a set with a single value.
 
@@ -251,8 +250,7 @@ Return the list of vertices of a set with a single value.
 
 A list containing only a single vertex.
 """
-function vertices_list(S::AbstractSingleton{N}
-                      )::Vector{Vector{N}} where {N<:Real}
+function vertices_list(S::AbstractSingleton{N}) where {N<:Real}
     return [element(S)]
 end
 
@@ -321,7 +319,7 @@ function ρ(d::AbstractVector{N}, S::AbstractSingleton{N}) where {N<:Real}
 end
 
 """
-    ∈(x::AbstractVector{N}, S::AbstractSingleton{N})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N}, S::AbstractSingleton{N}) where {N<:Real}
 
 Check whether a given point is contained in a set with a single value.
 
@@ -339,12 +337,12 @@ Check whether a given point is contained in a set with a single value.
 This implementation performs an exact comparison, which may be insufficient with
 floating point computations.
 """
-function ∈(x::AbstractVector{N}, S::AbstractSingleton{N})::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, S::AbstractSingleton{N}) where {N<:Real}
     return x == element(S)
 end
 
 # this operation is forbidden, but it is a common error
-function ∈(S::AbstractSingleton{N}, X::LazySet{N})::Bool where {N<:Real}
+function ∈(S::AbstractSingleton{N}, X::LazySet{N}) where {N<:Real}
     error("cannot make a point-in-set check if the left-hand side is " *
           "a set; either check for set inclusion, as in `S ⊆ X`, or check for " *
           "membership, as in `element(S) ∈ X` (the results are equivalent but " *

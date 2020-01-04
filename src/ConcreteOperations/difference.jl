@@ -42,7 +42,7 @@ julia> X.dat \\ Y.dat  # computing the left division
 # =================================
 
 """
-    difference(I1::IN, I2::IN)::Union{EmptySet{N}, IN, UnionSet{N, IN, IN}} where {N, IN<:Interval{N}}
+    difference(I1::IN, I2::IN) where {N, IN<:Interval{N}}
 
 Return the set difference between the given intervals.
 
@@ -91,7 +91,7 @@ are flat or not. Three cases may arise:
 - Finally, if none of the intervals is flat, then `I₂` is strictly contained in
   `I₁` and the set union of `Ileft` and `Iright` is returned.
 """
-function difference(I1::IN, I2::IN)::Union{EmptySet{N}, IN, UnionSet{N, IN, IN}} where {N, IN<:Interval{N}}
+function difference(I1::IN, I2::IN) where {N, IN<:Interval{N}}
     I12 = intersection(I1, I2)
     if isempty(I12)
         return I1

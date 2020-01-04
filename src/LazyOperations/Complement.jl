@@ -63,12 +63,12 @@ Return the dimension of the complement of a convex set.
 
 The dimension of the complement of a convex set.
 """
-function dim(C::Complement)::Int
+function dim(C::Complement)
     return dim(C.X)
 end
 
 """
-    ∈(x::AbstractVector{N}, C::Complement{N})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N}, C::Complement{N}) where {N<:Real}
 
 Check whether a given point is contained in the complement of a convex set.
 
@@ -87,13 +87,13 @@ Check whether a given point is contained in the complement of a convex set.
     x ∈ X^C ⟺ x ∉ X
 ```
 """
-function ∈(x::AbstractVector{N}, C::Complement{N})::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, C::Complement{N}) where {N<:Real}
     @assert length(x) == dim(C)
     return x ∉ C.X
 end
 
 """
-    isempty(C::Complement)::Bool
+    isempty(C::Complement)
 
 Return if the complement of a convex set is empty or not.
 
@@ -109,6 +109,6 @@ Return if the complement of a convex set is empty or not.
 
 We use the `isuniversal` method.
 """
-function isempty(C::Complement)::Bool
+function isempty(C::Complement)
     return isuniversal(C.X)
 end

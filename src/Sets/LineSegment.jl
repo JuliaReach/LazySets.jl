@@ -71,7 +71,7 @@ LineSegment(p::AbstractVector{N}, q::AbstractVector{N}) where {N<:Real} =
 
 
 """
-    dim(L::LineSegment)::Int
+    dim(L::LineSegment)
 
 Return the ambient dimension of a line segment.
 
@@ -83,7 +83,7 @@ Return the ambient dimension of a line segment.
 
 The ambient dimension of the line segment, which is 2.
 """
-function dim(L::LineSegment)::Int
+function dim(L::LineSegment)
     return 2
 end
 
@@ -131,7 +131,7 @@ function an_element(L::LineSegment{N}) where {N<:Real}
 end
 
 """
-    ∈(x::AbstractVector{N}, L::LineSegment{N})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N}, L::LineSegment{N}) where {N<:Real}
 
 Check whether a given point is contained in a line segment.
 
@@ -159,7 +159,7 @@ Let ``L = (p, q)`` be the line segment with extremes ``p`` and ``q``, and let
 
 The algorithm is inspired from [here](https://stackoverflow.com/a/328110).
 """
-function ∈(x::AbstractVector{N}, L::LineSegment{N})::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, L::LineSegment{N}) where {N<:Real}
     @assert length(x) == dim(L)
     # check if the point is on the line through the line segment
     if (x[2] - L.p[2]) * (L.q[1] - L.p[1]) -
@@ -176,7 +176,7 @@ end
 
 
 """
-    center(L::LineSegment{N})::Vector{N} where {N<:Real}
+    center(L::LineSegment{N}) where {N<:Real}
 
 Return the center of a line segment.
 
@@ -188,7 +188,7 @@ Return the center of a line segment.
 
 The center of the line segment.
 """
-function center(L::LineSegment{N})::Vector{N} where {N<:Real}
+function center(L::LineSegment{N}) where {N<:Real}
     return L.p + (L.q - L.p) / 2
 end
 
@@ -239,8 +239,7 @@ end
 
 
 """
-    vertices_list(L::LineSegment{N}
-                 )::Vector{<:AbstractVector{N}} where {N<:Real}
+    vertices_list(L::LineSegment{N}) where {N<:Real}
 
 Return the list of vertices of a line segment.
 
@@ -252,8 +251,7 @@ Return the list of vertices of a line segment.
 
 The list of end points of the line segment.
 """
-function vertices_list(L::LineSegment{N}
-                      )::Vector{<:AbstractVector{N}} where {N<:Real}
+function vertices_list(L::LineSegment{N}) where {N<:Real}
     return [L.p, L.q]
 end
 
@@ -263,8 +261,7 @@ end
 
 """
     rand(::Type{LineSegment}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
-         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
-        )::LineSegment{N}
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
 
 Create a random line segment.
 
@@ -288,8 +285,7 @@ function rand(::Type{LineSegment};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing
-             )::LineSegment{N}
+              seed::Union{Int, Nothing}=nothing)
     @assert dim == 2 "cannot create a random LineSegment of dimension $dim"
     rng = reseed(rng, seed)
     p = randn(rng, N, dim)

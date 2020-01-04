@@ -39,7 +39,7 @@ function element(S::Singleton{N}) where {N<:Real}
 end
 
 """
-    element(S::Singleton{N}, i::Int)::N where {N<:Real}
+    element(S::Singleton{N}, i::Int) where {N<:Real}
 
 Return the i-th entry of the element of a singleton.
 
@@ -52,7 +52,7 @@ Return the i-th entry of the element of a singleton.
 
 The i-th entry of the element of the singleton.
 """
-function element(S::Singleton{N}, i::Int)::N where {N<:Real}
+function element(S::Singleton{N}, i::Int) where {N<:Real}
     return S.element[i]
 end
 
@@ -62,8 +62,7 @@ end
 
 """
     rand(::Type{Singleton}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
-         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
-        )::Singleton{N}
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
 
 Create a random singleton.
 
@@ -88,8 +87,7 @@ function rand(::Type{Singleton};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing
-             )::Singleton{N}
+              seed::Union{Int, Nothing}=nothing)
     rng = reseed(rng, seed)
     element = randn(rng, N, dim)
     return Singleton(element)

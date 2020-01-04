@@ -45,7 +45,7 @@ isoperationtype(::Type{<:ConvexHullArray}) = true
 isconvextype(::Type{<:ConvexHullArray}) = true
 
 # constructor for an empty hull with optional size hint and numeric type
-function ConvexHullArray(n::Int=0, N::Type=Float64)::ConvexHullArray
+function ConvexHullArray(n::Int=0, N::Type=Float64)
     a = Vector{LazySet{N}}()
     sizehint!(a, n)
     return ConvexHullArray(a)
@@ -68,7 +68,7 @@ Alias for `ConvexHullArray`.
 const CHArray = ConvexHullArray
 
 """
-    array(cha::ConvexHullArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
+    array(cha::ConvexHullArray{N, S}) where {N<:Real, S<:LazySet{N}}
 
 Return the array of a convex hull of a finite number of convex sets.
 
@@ -80,12 +80,12 @@ Return the array of a convex hull of a finite number of convex sets.
 
 The array of a convex hull of a finite number of convex sets.
 """
-function array(cha::ConvexHullArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
+function array(cha::ConvexHullArray{N, S}) where {N<:Real, S<:LazySet{N}}
     return cha.array
 end
 
 """
-    dim(cha::ConvexHullArray)::Int
+    dim(cha::ConvexHullArray)
 
 Return the dimension of the convex hull of a finite number of convex sets.
 
@@ -97,7 +97,7 @@ Return the dimension of the convex hull of a finite number of convex sets.
 
 The ambient dimension of the convex hull of a finite number of convex sets.
 """
-function dim(cha::ConvexHullArray)::Int
+function dim(cha::ConvexHullArray)
     @assert !isempty(cha.array)
     return dim(cha.array[1])
 end
@@ -151,7 +151,7 @@ function ρ(d::AbstractVector{N}, cha::ConvexHullArray{N}) where {N<:Real}
 end
 
 """
-    isbounded(cha::ConvexHullArray)::Bool
+    isbounded(cha::ConvexHullArray)
 
 Determine whether a convex hull of a finite number of convex sets is
 bounded.
@@ -164,12 +164,12 @@ bounded.
 
 `true` iff all wrapped sets are bounded.
 """
-function isbounded(cha::ConvexHullArray)::Bool
+function isbounded(cha::ConvexHullArray)
     return all(x -> isbounded(x), cha.array)
 end
 
 """
-    isempty(cha::ConvexHullArray)::Bool
+    isempty(cha::ConvexHullArray)
 
 Return if a convex hull array is empty or not.
 
@@ -181,7 +181,7 @@ Return if a convex hull array is empty or not.
 
 `true` iff all wrapped sets are empty.
 """
-function isempty(cha::ConvexHullArray)::Bool
+function isempty(cha::ConvexHullArray)
     return all(X -> isempty(X), array(cha))
 end
 

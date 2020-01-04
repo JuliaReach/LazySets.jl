@@ -106,7 +106,7 @@ end
 
 
 """
-    radius_hyperrectangle(H::Hyperrectangle{N}, i::Int)::N where {N<:Real}
+    radius_hyperrectangle(H::Hyperrectangle{N}, i::Int) where {N<:Real}
 
 Return the box radius of a hyperrectangle in a given dimension.
 
@@ -119,12 +119,12 @@ Return the box radius of a hyperrectangle in a given dimension.
 
 The radius in the given dimension.
 """
-function radius_hyperrectangle(H::Hyperrectangle{N}, i::Int)::N where {N<:Real}
+function radius_hyperrectangle(H::Hyperrectangle{N}, i::Int) where {N<:Real}
     return H.radius[i]
 end
 
 """
-    radius_hyperrectangle(H::Hyperrectangle{N})::Vector{N} where {N<:Real}
+    radius_hyperrectangle(H::Hyperrectangle{N}) where {N<:Real}
 
 Return the box radius of a hyperrectangle in every dimension.
 
@@ -136,7 +136,7 @@ Return the box radius of a hyperrectangle in every dimension.
 
 The box radius of the hyperrectangle.
 """
-function radius_hyperrectangle(H::Hyperrectangle{N})::Vector{N} where {N<:Real}
+function radius_hyperrectangle(H::Hyperrectangle{N}) where {N<:Real}
     return H.radius
 end
 
@@ -145,7 +145,7 @@ end
 
 
 """
-    center(H::Hyperrectangle{N})::Vector{N} where {N<:Real}
+    center(H::Hyperrectangle{N}) where {N<:Real}
 
 Return the center of a hyperrectangle.
 
@@ -157,7 +157,7 @@ Return the center of a hyperrectangle.
 
 The center of the hyperrectangle.
 """
-function center(H::Hyperrectangle{N})::Vector{N} where {N<:Real}
+function center(H::Hyperrectangle{N}) where {N<:Real}
     return H.center
 end
 
@@ -167,8 +167,7 @@ end
 
 """
     rand(::Type{Hyperrectangle}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
-         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
-        )::Hyperrectangle{N}
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
 
 Create a random hyperrectangle.
 
@@ -193,8 +192,7 @@ function rand(::Type{Hyperrectangle};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing
-             )::Hyperrectangle{N}
+              seed::Union{Int, Nothing}=nothing)
     rng = reseed(rng, seed)
     center = randn(rng, N, dim)
     radius = abs.(randn(rng, N, dim))

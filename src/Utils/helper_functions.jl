@@ -1,5 +1,5 @@
 """
-    sign_cadlag(x::N)::N where {N<:Real}
+    sign_cadlag(x::N) where {N<:Real}
 
 This function works like the sign function but is ``1`` for input ``0``.
 
@@ -27,7 +27,7 @@ julia> LazySets.sign_cadlag.([-0.6, 1.3, 0.0])
   1.0
 ```
 """
-function sign_cadlag(x::N)::N where {N<:Real}
+function sign_cadlag(x::N) where {N<:Real}
     return x < zero(x) ? -one(x) : one(x)
 end
 
@@ -82,7 +82,7 @@ function substitute!(substitution::Dict{Int, T},
 end
 
 """
-    reseed(rng::AbstractRNG, seed::Union{Int, Nothing})::AbstractRNG
+    reseed(rng::AbstractRNG, seed::Union{Int, Nothing})
 
 Reset the RNG seed if the seed argument is a number.
 
@@ -95,7 +95,7 @@ Reset the RNG seed if the seed argument is a number.
 
 The input RNG if the seed is `nothing`, and a reseeded RNG otherwise.
 """
-function reseed(rng::AbstractRNG, seed::Union{Int, Nothing})::AbstractRNG
+function reseed(rng::AbstractRNG, seed::Union{Int, Nothing})
     if seed != nothing
         return Random.seed!(rng, seed)
     end

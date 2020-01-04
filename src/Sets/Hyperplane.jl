@@ -66,7 +66,7 @@ end
 
 
 """
-    dim(hp::Hyperplane)::Int
+    dim(hp::Hyperplane)
 
 Return the dimension of a hyperplane.
 
@@ -78,12 +78,12 @@ Return the dimension of a hyperplane.
 
 The ambient dimension of the hyperplane.
 """
-function dim(hp::Hyperplane)::Int
+function dim(hp::Hyperplane)
     return length(hp.a)
 end
 
 """
-    ρ(d::AbstractVector{N}, hp::Hyperplane{N})::N where {N<:Real}
+    ρ(d::AbstractVector{N}, hp::Hyperplane{N}) where {N<:Real}
 
 Evaluate the support function of a hyperplane in a given direction.
 
@@ -97,7 +97,7 @@ Evaluate the support function of a hyperplane in a given direction.
 The support function of the hyperplane.
 If the set is unbounded in the given direction, the result is `Inf`.
 """
-function ρ(d::AbstractVector{N}, hp::Hyperplane{N})::N where {N<:Real}
+function ρ(d::AbstractVector{N}, hp::Hyperplane{N}) where {N<:Real}
     v, unbounded = σ_helper(d, hp, error_unbounded=false)
     if unbounded
         return N(Inf)
@@ -130,7 +130,7 @@ function σ(d::AbstractVector{N}, hp::Hyperplane{N}) where {N<:Real}
 end
 
 """
-    isbounded(hp::Hyperplane)::Bool
+    isbounded(hp::Hyperplane)
 
 Determine whether a hyperplane is bounded.
 
@@ -142,13 +142,12 @@ Determine whether a hyperplane is bounded.
 
 `false`.
 """
-function isbounded(::Hyperplane)::Bool
+function isbounded(::Hyperplane)
     return false
 end
 
 """
-    isuniversal(hp::Hyperplane{N}, [witness]::Bool=false
-               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    isuniversal(hp::Hyperplane{N}, [witness]::Bool=false) where {N<:Real}
 
 Check whether a hyperplane is universal.
 
@@ -167,8 +166,7 @@ Check whether a hyperplane is universal.
 A witness is produced by adding the normal vector to an element on the
 hyperplane.
 """
-function isuniversal(hp::Hyperplane{N}, witness::Bool=false
-                    )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+function isuniversal(hp::Hyperplane{N}, witness::Bool=false) where {N<:Real}
     if witness
         v = an_element(hp) + hp.a
         return (false, v)
@@ -178,7 +176,7 @@ function isuniversal(hp::Hyperplane{N}, witness::Bool=false
 end
 
 """
-    an_element(hp::Hyperplane{N})::Vector{N} where {N<:Real}
+    an_element(hp::Hyperplane{N}) where {N<:Real}
 
 Return some element of a hyperplane.
 
@@ -190,12 +188,12 @@ Return some element of a hyperplane.
 
 An element on the hyperplane.
 """
-function an_element(hp::Hyperplane{N})::Vector{N} where {N<:Real}
+function an_element(hp::Hyperplane{N}) where {N<:Real}
     return an_element_helper(hp)
 end
 
 """
-    ∈(x::AbstractVector{N}, hp::Hyperplane{N})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N}, hp::Hyperplane{N}) where {N<:Real}
 
 Check whether a given point is contained in a hyperplane.
 
@@ -212,14 +210,13 @@ Check whether a given point is contained in a hyperplane.
 
 We just check if ``x`` satisfies ``a⋅x = b``.
 """
-function ∈(x::AbstractVector{N}, hp::Hyperplane{N})::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, hp::Hyperplane{N}) where {N<:Real}
     return dot(x, hp.a) == hp.b
 end
 
 """
     rand(::Type{Hyperplane}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
-         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
-        )::Hyperplane{N}
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
 
 Create a random hyperplane.
 
@@ -244,8 +241,7 @@ function rand(::Type{Hyperplane};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing
-             )::Hyperplane{N}
+              seed::Union{Int, Nothing}=nothing)
     rng = reseed(rng, seed)
     a = randn(rng, N, dim)
     while iszero(a)
@@ -256,7 +252,7 @@ function rand(::Type{Hyperplane};
 end
 
 """
-    isempty(hp::Hyperplane)::Bool
+    isempty(hp::Hyperplane)
 
 Return if a hyperplane is empty or not.
 
@@ -268,12 +264,12 @@ Return if a hyperplane is empty or not.
 
 `false`.
 """
-function isempty(hp::Hyperplane)::Bool
+function isempty(hp::Hyperplane)
     return false
 end
 
 """
-    constrained_dimensions(hp::Hyperplane{N})::Vector{Int} where {N<:Real}
+    constrained_dimensions(hp::Hyperplane{N}) where {N<:Real}
 
 Return the indices in which a hyperplane is constrained.
 
@@ -290,7 +286,7 @@ dimension `i`.
 
 A 2D hyperplane with constraint ``x1 = 0`` is constrained in dimension 1 only.
 """
-function constrained_dimensions(hp::Hyperplane{N})::Vector{Int} where {N<:Real}
+function constrained_dimensions(hp::Hyperplane{N}) where {N<:Real}
     return nonzero_indices(hp.a)
 end
 
@@ -399,7 +395,7 @@ end
 
 """
     an_element_helper(hp::Hyperplane{N},
-                      [nonzero_entry_a]::Int)::Vector{N} where {N<:Real}
+                      [nonzero_entry_a]::Int) where {N<:Real}
 
 Helper function that computes an element on a hyperplane's hyperplane.
 
@@ -422,7 +418,7 @@ We compute the point on the hyperplane as follows:
 """
 @inline function an_element_helper(hp::Hyperplane{N},
                                    nonzero_entry_a::Int=findnext(x -> x!=zero(N), hp.a, 1)
-                                  )::Vector{N} where {N<:Real}
+                                  ) where {N<:Real}
     @assert nonzero_entry_a in 1:length(hp.a) "invalid index " *
         "$nonzero_entry_a for hyperplane"
     x = zeros(N, dim(hp))

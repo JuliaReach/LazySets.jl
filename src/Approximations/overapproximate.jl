@@ -79,19 +79,16 @@ function overapproximate(X::S, ::Type{<:HPolytope}) where {S<:LazySet}
 end
 
 """
-    overapproximate(S::LazySet, ε::Real)::HPolygon
+    overapproximate(S::LazySet, ε::Real)
 
 Alias for `overapproximate(S, HPolygon, ε)`.
 """
-function overapproximate(S::LazySet,
-                         ε::Real;
-                        )::HPolygon
+function overapproximate(S::LazySet, ε::Real)
     return overapproximate(S, HPolygon, ε)
 end
 
 """
-    overapproximate(S::LazySet,
-                    Type{<:Hyperrectangle})::Union{Hyperrectangle, EmptySet}
+    overapproximate(S::LazySet, Type{<:Hyperrectangle})
 
 Return an approximation of a given set as a hyperrectangle.
 
@@ -111,8 +108,7 @@ of the given set in the canonical directions, and the lengths of the sides can
 be recovered from the distance among support functions in the same directions.
 """
 function overapproximate(S::LazySet{N},
-                         ::Type{<:Hyperrectangle};
-                        )::Union{Hyperrectangle, EmptySet} where {N<:Real}
+                         ::Type{<:Hyperrectangle}) where {N<:Real}
     c, r = box_approximation_helper(S)
     if r[1] < 0
         return EmptySet{N}()
@@ -250,13 +246,11 @@ overapproximate(∅::EmptySet, ::Type{<:Hyperrectangle}) = ∅
 overapproximate(∅::EmptySet, ::Type{<:EmptySet}) = ∅
 
 """
-    overapproximate(S::LazySet)::Union{Hyperrectangle, EmptySet}
+    overapproximate(S::LazySet)
 
 Alias for `overapproximate(S, Hyperrectangle)`.
 """
-overapproximate(S::LazySet;
-               )::Union{Hyperrectangle, EmptySet} =
-    overapproximate(S, Hyperrectangle)
+overapproximate(S::LazySet) = overapproximate(S, Hyperrectangle)
 
 """
     overapproximate(S::LazySet{N}, ::Type{<:BallInf}) where {N<:Real}

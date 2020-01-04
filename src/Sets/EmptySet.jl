@@ -43,7 +43,7 @@ Return the dimension of the empty set, which is -1 by convention.
 
 `-1` by convention.
 """
-function dim(∅::EmptySet)::Int
+function dim(∅::EmptySet)
     return -1
 end
 
@@ -84,7 +84,7 @@ function ρ(d::AbstractVector{N}, ∅::EmptySet{N}) where {N<:Real}
 end
 
 """
-    isbounded(∅::EmptySet)::Bool
+    isbounded(∅::EmptySet)
 
 Determine whether an empty set is bounded.
 
@@ -96,13 +96,12 @@ Determine whether an empty set is bounded.
 
 `true`.
 """
-function isbounded(::EmptySet)::Bool
+function isbounded(::EmptySet)
     return true
 end
 
 """
-    isuniversal(∅::EmptySet{N}, [witness]::Bool=false
-               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    isuniversal(∅::EmptySet{N}, [witness]::Bool=false) where {N<:Real}
 
 Check whether an empty is universal.
 
@@ -117,8 +116,7 @@ Check whether an empty is universal.
 * If `witness` option is activated: `(false, v)` where ``v ∉ S``, although
   we currently throw an error
 """
-function isuniversal(∅::EmptySet{N}, witness::Bool=false
-                    )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+function isuniversal(∅::EmptySet{N}, witness::Bool=false) where {N<:Real}
     if witness
         error("witness production is currently not supported")
         # return (false, zeros(N, dim(∅)))  # deactivated, see #1201
@@ -128,7 +126,7 @@ function isuniversal(∅::EmptySet{N}, witness::Bool=false
 end
 
 """
-    ∈(x::AbstractVector{N}, ∅::EmptySet{N})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N}, ∅::EmptySet{N}) where {N<:Real}
 
 Check whether a given point is contained in an empty set.
 
@@ -148,7 +146,7 @@ julia> [1.0, 0.0] ∈ ∅
 false
 ```
 """
-function ∈(x::AbstractVector{N}, ∅::EmptySet{N})::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, ∅::EmptySet{N}) where {N<:Real}
     return false
 end
 
@@ -171,8 +169,7 @@ end
 
 """
     rand(::Type{EmptySet}; [N]::Type{<:Real}=Float64, [dim]::Int=0,
-         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
-        )::EmptySet{N}
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
 
 Create an empty set (note that there is nothing to randomize).
 
@@ -192,14 +189,13 @@ function rand(::Type{EmptySet};
               N::Type{<:Real}=Float64,
               dim::Int=0,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing
-             )::EmptySet{N}
+              seed::Union{Int, Nothing}=nothing)
     rng = reseed(rng, seed)
     return EmptySet{N}()
 end
 
 """
-    isempty(∅::EmptySet)::Bool
+    isempty(∅::EmptySet)
 
 Return if the empty set is empty or not.
 
@@ -211,7 +207,7 @@ Return if the empty set is empty or not.
 
 `true`.
 """
-function isempty(∅::EmptySet)::Bool
+function isempty(∅::EmptySet)
     return true
 end
 

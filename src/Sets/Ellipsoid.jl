@@ -94,7 +94,7 @@ Ellipsoid(Q::AbstractMatrix{N}) where {N<:AbstractFloat} =
 
 
 """
-    center(E::Ellipsoid{N})::Vector{N} where {N<:AbstractFloat}
+    center(E::Ellipsoid{N}) where {N<:AbstractFloat}
 
 Return the center of the ellipsoid.
 
@@ -106,7 +106,7 @@ Return the center of the ellipsoid.
 
 The center of the ellipsoid.
 """
-function center(E::Ellipsoid{N})::Vector{N} where {N<:AbstractFloat}
+function center(E::Ellipsoid{N}) where {N<:AbstractFloat}
     return E.center
 end
 
@@ -172,7 +172,7 @@ function ρ(d::AbstractVector{N}, E::Ellipsoid{N}) where {N<:AbstractFloat}
 end
 
 """
-    ∈(x::AbstractVector{N}, E::Ellipsoid{N})::Bool where {N<:AbstractFloat}
+    ∈(x::AbstractVector{N}, E::Ellipsoid{N}) where {N<:AbstractFloat}
 
 Check whether a given point is contained in an ellipsoid.
 
@@ -194,7 +194,7 @@ if and only if
 (x-c)^\\mathrm{T} Q^{-1} (x-c) ≤ 1.
 ```
 """
-function ∈(x::AbstractVector{N}, E::Ellipsoid{N})::Bool where {N<:AbstractFloat}
+function ∈(x::AbstractVector{N}, E::Ellipsoid{N}) where {N<:AbstractFloat}
     @assert length(x) == dim(E)
     w, Q = x-E.center, E.shape_matrix
     return dot(w, Q \ w) ≤ 1
@@ -202,8 +202,7 @@ end
 
 """
     rand(::Type{Ellipsoid}; [N]::Type{<:AbstractFloat}=Float64, [dim]::Int=2,
-         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
-        )::Ellipsoid{N}
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
 
 Create a random ellipsoid.
 
@@ -238,8 +237,7 @@ function rand(::Type{Ellipsoid};
               N::Type{<:AbstractFloat}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing
-             )::Ellipsoid{N}
+              seed::Union{Int, Nothing}=nothing)
     rng = reseed(rng, seed)
     center = randn(rng, N, dim)
     # random entries in [-1, 1]

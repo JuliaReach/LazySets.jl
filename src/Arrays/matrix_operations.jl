@@ -25,7 +25,7 @@ end
 LinearAlgebra.rank(M::SubArray{N, 2, <:SparseMatrixCSC}) where {N} = rank(sparse(M))
 
 """
-    issquare(M::AbstractMatrix)::Bool
+    issquare(M::AbstractMatrix)
 
 Check whether a matrix is square.
 
@@ -37,7 +37,7 @@ Check whether a matrix is square.
 
 `true` iff the matrix is square.
 """
-function issquare(M::AbstractMatrix)::Bool
+function issquare(M::AbstractMatrix)
     m, n = size(M)
     return m == n
 end
@@ -120,7 +120,7 @@ where ``M^{[i]}`` is defined as ``M`` with the ``i``-th row removed.
 See *Althoff, Stursberg, Buss: Computing Reachable Sets of Hybrid Systems Using
 a Combination of Zonotopes and Polytopes. 2009.*
 """
-function cross_product(M::AbstractMatrix{N})::Vector{N} where {N<:Real}
+function cross_product(M::AbstractMatrix{N}) where {N<:Real}
     n = size(M, 1)
     @assert 1 < n == size(M, 2) + 1 "the matrix must be n x (n-1) dimensional"
 

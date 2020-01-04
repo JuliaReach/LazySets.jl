@@ -62,7 +62,7 @@ BallInf(center::Vector{N}, radius::N) where {N<:Real} =
 
 
 """
-    radius_hyperrectangle(B::BallInf{N}, i::Int)::N where {N<:Real}
+    radius_hyperrectangle(B::BallInf{N}, i::Int) where {N<:Real}
 
 Return the box radius of a ball in the infinity norm in a given dimension.
 
@@ -75,12 +75,12 @@ Return the box radius of a ball in the infinity norm in a given dimension.
 
 The box radius of the ball in the infinity norm in the given dimension.
 """
-function radius_hyperrectangle(B::BallInf{N}, i::Int)::N where {N<:Real}
+function radius_hyperrectangle(B::BallInf{N}, i::Int) where {N<:Real}
     return B.radius
 end
 
 """
-    radius_hyperrectangle(B::BallInf{N})::Vector{N} where {N<:Real}
+    radius_hyperrectangle(B::BallInf{N}) where {N<:Real}
 
 Return the box radius of a ball in the infinity norm, which is the same in every
 dimension.
@@ -93,12 +93,12 @@ dimension.
 
 The box radius of the ball in the infinity norm.
 """
-function radius_hyperrectangle(B::BallInf{N})::Vector{N} where {N<:Real}
+function radius_hyperrectangle(B::BallInf{N}) where {N<:Real}
     return fill(B.radius, dim(B))
 end
 
 """
-    isflat(B::BallInf)::Bool
+    isflat(B::BallInf)
 
 Determine whether a ball in the infinity norm is flat, i.e. whether its radius
 is zero.
@@ -117,7 +117,7 @@ For robustness with respect to floating-point inputs, this function relies on
 the result of `isapproxzero` when applied to the radius of the ball.
 Hence, this function depends on the absolute zero tolerance `ABSZTOL`.
 """
-function isflat(B::BallInf)::Bool
+function isflat(B::BallInf)
     return isapproxzero(B.radius)
 end
 
@@ -126,7 +126,7 @@ end
 
 
 """
-    center(B::BallInf{N})::Vector{N} where {N<:Real}
+    center(B::BallInf{N}) where {N<:Real}
 
 Return the center of a ball in the infinity norm.
 
@@ -138,7 +138,7 @@ Return the center of a ball in the infinity norm.
 
 The center of the ball in the infinity norm.
 """
-function center(B::BallInf{N})::Vector{N} where {N<:Real}
+function center(B::BallInf{N}) where {N<:Real}
     return B.center
 end
 
@@ -234,7 +234,7 @@ function ρ(d::SingleEntryVector{N}, B::BallInf{N}) where {N<:Real}
 end
 
 """
-    radius(B::BallInf, [p]::Real=Inf)::Real
+    radius(B::BallInf, [p]::Real=Inf)
 
 Return the radius of a ball in the infinity norm.
 
@@ -252,14 +252,13 @@ A real number representing the radius.
 The radius is defined as the radius of the enclosing ball of the given
 ``p``-norm of minimal volume with the same center.
 """
-function radius(B::BallInf, p::Real=Inf)::Real
+function radius(B::BallInf, p::Real=Inf)
     return (p == Inf) ? B.radius : norm(fill(B.radius, dim(B)), p)
 end
 
 """
     rand(::Type{BallInf}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
-         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
-        )::BallInf{N}
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
 
 Create a random ball in the infinity norm.
 
@@ -284,8 +283,7 @@ function rand(::Type{BallInf};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing
-             )::BallInf{N}
+              seed::Union{Int, Nothing}=nothing)
     rng = reseed(rng, seed)
     center = randn(rng, N, dim)
     radius = abs(randn(rng, N))

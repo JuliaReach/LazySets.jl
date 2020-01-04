@@ -201,7 +201,7 @@ LinearMap(M::AbstractMatrix, tr::Translation) = AffineMap(M, tr.X, M * tr.v)
 # ============================
 
 """
-    dim(tr::Translation)::Int
+    dim(tr::Translation)
 
 Return the dimension of a translation.
 
@@ -213,7 +213,7 @@ Return the dimension of a translation.
 
 The dimension of a translation.
 """
-function dim(tr::Translation)::Int
+function dim(tr::Translation)
     return length(tr.v)
 end
 
@@ -277,7 +277,7 @@ function an_element(tr::Translation)
 end
 
 """
-    isempty(tr::Translation)::Bool
+    isempty(tr::Translation)
 
 Return if a translation is empty or not.
 
@@ -289,7 +289,7 @@ Return if a translation is empty or not.
 
 `true` iff the wrapped set is empty.
 """
-function isempty(tr::Translation)::Bool
+function isempty(tr::Translation)
     return isempty(tr.X)
 end
 
@@ -334,7 +334,7 @@ function _constraints_list_translation(X::LazySet, v::AbstractVector)
 end
 
 """
-    ∈(x::AbstractVector{N}, tr::Translation{N})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N}, tr::Translation{N}) where {N<:Real}
 
 Check whether a given point is contained in the translation of a convex set.
 
@@ -352,7 +352,7 @@ Check whether a given point is contained in the translation of a convex set.
 This implementation relies on the set membership function for the wrapped set
 `tr.X`, since ``x ∈ X ⊕ v`` iff ``x - v ∈ X``.
 """
-function ∈(x::AbstractVector{N}, tr::Translation{N})::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, tr::Translation{N}) where {N<:Real}
     return x - tr.v ∈ tr.X
 end
 

@@ -171,7 +171,7 @@ Return the dimension of a reset map.
 
 The dimension of a reset map.
 """
-function dim(rm::ResetMap)::Int
+function dim(rm::ResetMap)
     return dim(rm.X)
 end
 
@@ -248,7 +248,7 @@ function an_element(rm::ResetMap)
 end
 
 """
-    isempty(rm::ResetMap)::Bool
+    isempty(rm::ResetMap)
 
 Return if a reset map is empty or not.
 
@@ -260,7 +260,7 @@ Return if a reset map is empty or not.
 
 `true` iff the wrapped set is empty.
 """
-function isempty(rm::ResetMap)::Bool
+function isempty(rm::ResetMap)
     return isempty(rm.X)
 end
 

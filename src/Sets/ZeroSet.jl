@@ -28,7 +28,7 @@ ZeroSet(dim::Int) = ZeroSet{Float64}(dim)
 
 
 """
-    element(S::ZeroSet{N})::Vector{N} where {N<:Real}
+    element(S::ZeroSet{N}) where {N<:Real}
 
 Return the element of a zero set.
 
@@ -40,12 +40,12 @@ Return the element of a zero set.
 
 The element of the zero set, i.e., a zero vector.
 """
-function element(S::ZeroSet{N})::Vector{N} where {N<:Real}
+function element(S::ZeroSet{N}) where {N<:Real}
     return zeros(N, S.dim)
 end
 
 """
-    element(S::ZeroSet{N}, ::Int)::N where {N<:Real}
+    element(S::ZeroSet{N}, ::Int) where {N<:Real}
 
 Return the i-th entry of the element of a zero set.
 
@@ -58,7 +58,7 @@ Return the i-th entry of the element of a zero set.
 
 The i-th entry of the element of the zero set, i.e., 0.
 """
-function element(S::ZeroSet{N}, ::Int)::N where {N<:Real}
+function element(S::ZeroSet{N}, ::Int) where {N<:Real}
     return zero(N)
 end
 
@@ -67,7 +67,7 @@ end
 
 
 """
-    dim(Z::ZeroSet)::Int
+    dim(Z::ZeroSet)
 
 Return the ambient dimension of this zero set.
 
@@ -79,7 +79,7 @@ Return the ambient dimension of this zero set.
 
 The ambient dimension of the zero set.
 """
-function dim(Z::ZeroSet)::Int
+function dim(Z::ZeroSet)
     return Z.dim
 end
 
@@ -123,7 +123,7 @@ function ρ(d::AbstractVector{N}, Z::ZeroSet{N}) where {N<:Real}
 end
 
 """
-    ∈(x::AbstractVector{N}, Z::ZeroSet{N})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N}, Z::ZeroSet{N}) where {N<:Real}
 
 Check whether a given point is contained in a zero set.
 
@@ -147,7 +147,7 @@ julia> [0.0, 0.0] ∈ Z
 true
 ```
 """
-function ∈(x::AbstractVector{N}, Z::ZeroSet{N})::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, Z::ZeroSet{N}) where {N<:Real}
     @assert length(x) == dim(Z)
 
     zero_N = zero(N)
@@ -156,8 +156,7 @@ end
 
 """
     rand(::Type{ZeroSet}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
-         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
-        )::ZeroSet{N}
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
 
 Create a zero set (note that there is nothing to randomize).
 
@@ -177,8 +176,7 @@ function rand(::Type{ZeroSet};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing
-             )::ZeroSet{N}
+              seed::Union{Int, Nothing}=nothing)
     rng = reseed(rng, seed)
     return ZeroSet{N}(dim)
 end

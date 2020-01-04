@@ -33,7 +33,7 @@ struct CartesianProductArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
 end
 
 # constructor for an empty product with optional size hint and numeric type
-function CartesianProductArray(n::Int=0, N::Type=Float64)::CartesianProductArray
+function CartesianProductArray(n::Int=0, N::Type=Float64)
    arr = Vector{LazySet{N}}()
    sizehint!(arr, n)
    return CartesianProductArray(arr)
@@ -49,8 +49,7 @@ isconvextype(::Type{CartesianProductArray{N, S}}) where {N, S} = isconvextype(S)
 @declare_array_version(CartesianProduct, CartesianProductArray)
 
 """
-   array(cpa::CartesianProductArray{N, S}
-        )::Vector{S} where {N<:Real, S<:LazySet{N}}
+   array(cpa::CartesianProductArray{N, S}) where {N<:Real, S<:LazySet{N}}
 
 Return the array of a Cartesian product of a finite number of convex sets.
 
@@ -63,12 +62,12 @@ Return the array of a Cartesian product of a finite number of convex sets.
 The array of a Cartesian product of a finite number of convex sets.
 """
 function array(cpa::CartesianProductArray{N, S}
-             )::Vector{S} where {N<:Real, S<:LazySet{N}}
+             ) where {N<:Real, S<:LazySet{N}}
    return cpa.array
 end
 
 """
-   dim(cpa::CartesianProductArray)::Int
+   dim(cpa::CartesianProductArray)
 
 Return the dimension of a Cartesian product of a finite number of convex sets.
 
@@ -81,7 +80,7 @@ Return the dimension of a Cartesian product of a finite number of convex sets.
 The ambient dimension of the Cartesian product of a finite number of convex
 sets.
 """
-function dim(cpa::CartesianProductArray)::Int
+function dim(cpa::CartesianProductArray)
    return length(cpa.array) == 0 ? 0 : sum([dim(Xi) for Xi in cpa.array])
 end
 
@@ -214,7 +213,7 @@ function ρ(d::AbstractSparseVector{N}, cpa::CartesianProductArray{N}
 end
 
 """
-   isbounded(cpa::CartesianProductArray)::Bool
+   isbounded(cpa::CartesianProductArray)
 
 Determine whether a Cartesian product of a finite number of convex sets is
 bounded.
@@ -227,13 +226,12 @@ bounded.
 
 `true` iff all wrapped sets are bounded.
 """
-function isbounded(cpa::CartesianProductArray)::Bool
+function isbounded(cpa::CartesianProductArray)
    return all(x -> isbounded(x), cpa.array)
 end
 
 """
-   ∈(x::AbstractVector{N}, cpa::CartesianProductArray{N}
-    )::Bool where {N<:Real}
+   ∈(x::AbstractVector{N}, cpa::CartesianProductArray{N}) where {N<:Real}
 
 Check whether a given point is contained in a Cartesian product of a finite
 number of sets.
@@ -248,7 +246,7 @@ number of sets.
 `true` iff ``x ∈ \\text{cpa}``.
 """
 function ∈(x::AbstractVector{N}, cpa::CartesianProductArray{N}
-         )::Bool where {N<:Real}
+         ) where {N<:Real}
    @assert length(x) == dim(cpa)
 
    i0 = 1
@@ -263,7 +261,7 @@ function ∈(x::AbstractVector{N}, cpa::CartesianProductArray{N}
 end
 
 """
-   isempty(cpa::CartesianProductArray)::Bool
+   isempty(cpa::CartesianProductArray)
 
 Return if a Cartesian product is empty or not.
 
@@ -275,7 +273,7 @@ Return if a Cartesian product is empty or not.
 
 `true` iff any of the sub-blocks is empty.
 """
-function isempty(cpa::CartesianProductArray)::Bool
+function isempty(cpa::CartesianProductArray)
    return any(X -> isempty(X), array(cpa))
 end
 
@@ -315,8 +313,7 @@ function constraints_list(cpa::CartesianProductArray{N}) where {N<:Real}
 end
 
 """
-   vertices_list(cpa::CartesianProductArray{N}
-                )::Vector{Vector{N}} where {N<:Real}
+   vertices_list(cpa::CartesianProductArray{N}) where {N<:Real}
 
 Return the list of vertices of a (polytopic) Cartesian product of a finite
 number of sets.
@@ -335,8 +332,7 @@ We assume that the underlying sets are polytopic.
 Then the high-dimensional set of vertices is just the Cartesian product of the
 low-dimensional sets of vertices.
 """
-function vertices_list(cpa::CartesianProductArray{N}
-                     )::Vector{Vector{N}} where {N<:Real}
+function vertices_list(cpa::CartesianProductArray{N}) where {N<:Real}
    # collect low-dimensional vertices lists
    vlist_low = [vertices_list(X) for X in array(cpa)]
 
@@ -386,7 +382,7 @@ end
 
 """
    same_block_structure(x::AbstractVector{S1}, y::AbstractVector{S2}
-                       )::Bool where {S1<:LazySet, S2<:LazySet}
+                       ) where {S1<:LazySet, S2<:LazySet}
 
 Check whether two vectors of sets have the same block structure, i.e., the
 ``i``-th entry in the vectors have the same dimension.
@@ -401,7 +397,7 @@ Check whether two vectors of sets have the same block structure, i.e., the
 `true` iff the vectors have the same block structure.
 """
 function same_block_structure(x::AbstractVector{S1}, y::AbstractVector{S2}
-                            )::Bool where {S1<:LazySet, S2<:LazySet}
+                            ) where {S1<:LazySet, S2<:LazySet}
    if length(x) != length(y)
        return false
    end

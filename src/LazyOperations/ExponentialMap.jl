@@ -84,15 +84,15 @@ SparseMatrixExp(M::Matrix) =
 Base.IndexStyle(::Type{<:SparseMatrixExp}) = IndexCartesian()
 Base.getindex(spmexp::SparseMatrixExp, I::Vararg{Int, 2}) = get_column(spmexp, I[2])[I[1]]
 
-function size(spmexp::SparseMatrixExp)::Tuple{Int, Int}
+function size(spmexp::SparseMatrixExp)
     return size(spmexp.M)
 end
 
-function size(spmexp::SparseMatrixExp, ax::Int)::Int
+function size(spmexp::SparseMatrixExp, ax::Int)
     return size(spmexp.M, ax)
 end
 
-function get_column(spmexp::SparseMatrixExp{N}, j::Int)::Vector{N} where {N}
+function get_column(spmexp::SparseMatrixExp{N}, j::Int) where {N}
     require(:Expokit; fun_name="get_column")
 
     n = size(spmexp, 1)
@@ -101,8 +101,7 @@ function get_column(spmexp::SparseMatrixExp{N}, j::Int)::Vector{N} where {N}
     return expmv(one(N), spmexp.M, aux)
 end
 
-function get_columns(spmexp::SparseMatrixExp{N},
-                     J::AbstractArray)::Matrix{N} where {N}
+function get_columns(spmexp::SparseMatrixExp{N}, J::AbstractArray) where {N}
     require(:Expokit; fun_name="get_columns")
 
     n = size(spmexp, 1)
@@ -149,8 +148,7 @@ function get_row(spmexp::SparseMatrixExp{N}, i::Int) where {N}
     return transpose(expmv(one(N), transpose(spmexp.M), aux))
 end
 
-function get_rows(spmexp::SparseMatrixExp{N},
-                  I::AbstractArray{Int})::Matrix{N} where {N}
+function get_rows(spmexp::SparseMatrixExp{N}, I::AbstractArray{Int}) where {N}
     require(:Expokit; fun_name="get_rows")
 
     n = size(spmexp, 1)
@@ -256,7 +254,7 @@ function *(spmexp::SparseMatrixExp{N}, X::LazySet{N}) where {N<:Real}
 end
 
 """
-    dim(em::ExponentialMap)::Int
+    dim(em::ExponentialMap)
 
 Return the dimension of an exponential map.
 
@@ -268,7 +266,7 @@ Return the dimension of an exponential map.
 
 The ambient dimension of the exponential map.
 """
-function dim(em::ExponentialMap)::Int
+function dim(em::ExponentialMap)
     return size(em.spmexp.M, 1)
 end
 
@@ -334,7 +332,7 @@ function ρ(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
 end
 
 """
-    ∈(x::AbstractVector{N}, em::ExponentialMap{N})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
 
 Check whether a given point is contained in an exponential map of a convex set.
 
@@ -367,7 +365,7 @@ julia> [1.0, 1.0] ∈ em
 true
 ```
 """
-function ∈(x::AbstractVector{N}, em::ExponentialMap{N})::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
     require(:Expokit; fun_name="∈")
 
     @assert length(x) == dim(em)
@@ -375,7 +373,7 @@ function ∈(x::AbstractVector{N}, em::ExponentialMap{N})::Bool where {N<:Real}
 end
 
 """
-    vertices_list(em::ExponentialMap{N})::Vector{Vector{N}} where {N<:Real}
+    vertices_list(em::ExponentialMap{N}) where {N<:Real}
 
 Return the list of vertices of a (polytopic) exponential map.
 
@@ -392,7 +390,7 @@ A list of vertices.
 We assume that the underlying set `X` is polytopic.
 Then the result is just the exponential map applied to the vertices of `X`.
 """
-function vertices_list(em::ExponentialMap{N})::Vector{Vector{N}} where {N<:Real}
+function vertices_list(em::ExponentialMap{N}) where {N<:Real}
     require(:Expokit; fun_name="vertices_list")
 
     # collect low-dimensional vertices lists
@@ -409,7 +407,7 @@ function vertices_list(em::ExponentialMap{N})::Vector{Vector{N}} where {N<:Real}
 end
 
 """
-    isbounded(em::ExponentialMap)::Bool
+    isbounded(em::ExponentialMap)
 
 Determine whether an exponential map is bounded.
 
@@ -421,12 +419,12 @@ Determine whether an exponential map is bounded.
 
 `true` iff the exponential map is bounded.
 """
-function isbounded(em::ExponentialMap)::Bool
+function isbounded(em::ExponentialMap)
     return isbounded(em.X)
 end
 
 """
-    isempty(em::ExponentialMap)::Bool
+    isempty(em::ExponentialMap)
 
 Return if an exponential map is empty or not.
 
@@ -438,7 +436,7 @@ Return if an exponential map is empty or not.
 
 `true` iff the wrapped set is empty.
 """
-function isempty(em::ExponentialMap)::Bool
+function isempty(em::ExponentialMap)
     return isempty(em.X)
 end
 
@@ -506,7 +504,7 @@ function *(projspmexp::ProjectionSparseMatrixExp, X::LazySet)
 end
 
 """
-    dim(eprojmap::ExponentialProjectionMap)::Int
+    dim(eprojmap::ExponentialProjectionMap)
 
 Return the dimension of a projection of an exponential map.
 
@@ -518,7 +516,7 @@ Return the dimension of a projection of an exponential map.
 
 The ambient dimension of the projection of an exponential map.
 """
-function dim(eprojmap::ExponentialProjectionMap)::Int
+function dim(eprojmap::ExponentialProjectionMap)
     return size(eprojmap.projspmexp.L, 1)
 end
 
@@ -563,7 +561,7 @@ function σ(d::AbstractVector{N},
 end
 
 """
-    isbounded(eprojmap::ExponentialProjectionMap)::Bool
+    isbounded(eprojmap::ExponentialProjectionMap)
 
 Determine whether an exponential projection map is bounded.
 
@@ -581,7 +579,7 @@ We first check if the left or right projection matrix is zero or the wrapped set
 is bounded.
 Otherwise, we check boundedness via [`isbounded_unit_dimensions`](@ref).
 """
-function isbounded(eprojmap::ExponentialProjectionMap)::Bool
+function isbounded(eprojmap::ExponentialProjectionMap)
     if iszero(eprojmap.projspmexp.L) || iszero(eprojmap.projspmexp.R) ||
             isbounded(eprojmap.X)
         return true
@@ -590,7 +588,7 @@ function isbounded(eprojmap::ExponentialProjectionMap)::Bool
 end
 
 """
-    isempty(eprojmap::ExponentialProjectionMap)::Bool
+    isempty(eprojmap::ExponentialProjectionMap)
 
 Return if an exponential projection map is empty or not.
 
@@ -602,6 +600,6 @@ Return if an exponential projection map is empty or not.
 
 `true` iff the wrapped set is empty.
 """
-function isempty(eprojmap::ExponentialProjectionMap)::Bool
+function isempty(eprojmap::ExponentialProjectionMap)
     return isempty(eprojmap.X)
 end

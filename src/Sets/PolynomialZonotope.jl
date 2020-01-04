@@ -97,7 +97,7 @@ PolynomialZonotope(c::Vector{N},
                    G::Matrix{N}) where {N} = PolynomialZonotope{N}(c, E, F, G)
 
 """
-    dim(pz::PolynomialZonotope)::Int
+    dim(pz::PolynomialZonotope)
 
 Return the ambient dimension of a polynomial zonotope.
 
@@ -109,10 +109,10 @@ Return the ambient dimension of a polynomial zonotope.
 
 An integer representing the ambient dimension of the polynomial zonotope.
 """
-dim(pz::PolynomialZonotope)::Int = length(pz.c)
+dim(pz::PolynomialZonotope) = length(pz.c)
 
 """
-    σ(d::AbstractVector{N}, pz::PolynomialZonotope{N})::AbstractVector{N} where {N}
+    σ(d::AbstractVector{N}, pz::PolynomialZonotope{N}) where {N}
 
 Return the support vector of a polynomial zonotope along direction `d`.
 
@@ -125,12 +125,12 @@ Return the support vector of a polynomial zonotope along direction `d`.
 
 Vector representing the support vector.
 """
-function σ(d::AbstractVector{N}, pz::PolynomialZonotope{N})::AbstractVector{N} where {N}
+function σ(d::AbstractVector{N}, pz::PolynomialZonotope{N}) where {N}
     error("this function is not yet implemented")
 end
 
 """
-    ρ(d::AbstractVector{N}, pz::PolynomialZonotope{N})::AbstractVector{N} where {N}
+    ρ(d::AbstractVector{N}, pz::PolynomialZonotope{N}) where {N}
 
 Return the support function of a polynomial zonotope along direction `d`.
 
@@ -143,12 +143,12 @@ Return the support function of a polynomial zonotope along direction `d`.
 
 Value of the support function.
 """
-function ρ(d::AbstractVector{N}, pz::PolynomialZonotope{N})::N where {N}
+function ρ(d::AbstractVector{N}, pz::PolynomialZonotope{N}) where {N}
     error("this function is not yet implemented")
 end
 
 """
-    polynomial_order(pz::PolynomialZonotope)::Int
+    polynomial_order(pz::PolynomialZonotope)
 
 Polynomial order of a polynomial zonotope.
 
@@ -161,10 +161,10 @@ Polynomial order of a polynomial zonotope.
 The polynomial order, defined as the maximal power of the scale factors ``β_i``.
 Usually denoted ``η``.
 """
-polynomial_order(pz::PolynomialZonotope)::Int = length(pz.E)
+polynomial_order(pz::PolynomialZonotope) = length(pz.E)
 
 """
-    order(pz::PolynomialZonotope)::Rational{Int}
+    order(pz::PolynomialZonotope)
 
 Order of a polynomial zonotope.
 
@@ -177,7 +177,7 @@ Order of a polynomial zonotope.
 The order, a rational number defined as the total number of generators divided
 by the ambient dimension.
 """
-function order(pz::PolynomialZonotope)::Rational{Int}
+function order(pz::PolynomialZonotope)
     η = polynomial_order(pz)  # polynomial order
     p = size(pz.E[1], 2)  # number of dependent factors
     q = size(pz.G, 2)  # number of independent factors

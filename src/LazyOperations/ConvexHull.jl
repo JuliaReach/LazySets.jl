@@ -84,7 +84,7 @@ function swap(ch::ConvexHull)
 end
 
 """
-    dim(ch::ConvexHull)::Int
+    dim(ch::ConvexHull)
 
 Return the dimension of a convex hull of two convex sets.
 
@@ -96,7 +96,7 @@ Return the dimension of a convex hull of two convex sets.
 
 The ambient dimension of the convex hull of two convex sets.
 """
-function dim(ch::ConvexHull)::Int
+function dim(ch::ConvexHull)
     return dim(ch.X)
 end
 
@@ -143,7 +143,7 @@ function ρ(d::AbstractVector{N}, ch::ConvexHull{N}) where {N<:Real}
 end
 
 """
-    isbounded(ch::ConvexHull)::Bool
+    isbounded(ch::ConvexHull)
 
 Determine whether a convex hull of two convex sets is bounded.
 
@@ -155,12 +155,12 @@ Determine whether a convex hull of two convex sets is bounded.
 
 `true` iff both wrapped sets are bounded.
 """
-function isbounded(ch::ConvexHull)::Bool
+function isbounded(ch::ConvexHull)
     return isbounded(ch.X) && isbounded(ch.Y)
 end
 
 """
-    isempty(ch::ConvexHull)::Bool
+    isempty(ch::ConvexHull)
 
 Return if a convex hull of two convex sets is empty or not.
 
@@ -172,6 +172,6 @@ Return if a convex hull of two convex sets is empty or not.
 
 `true` iff both wrapped sets are empty.
 """
-function isempty(ch::ConvexHull)::Bool
+function isempty(ch::ConvexHull)
     return isempty(ch.X) && isempty(ch.Y)
 end

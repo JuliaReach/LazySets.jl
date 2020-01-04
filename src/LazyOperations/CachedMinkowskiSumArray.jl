@@ -78,7 +78,7 @@ CachedMinkowskiSumArray(arr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
     CachedMinkowskiSumArray{N, S}(arr)
 
 # constructor for an empty sum with optional size hint and numeric type
-function CachedMinkowskiSumArray(n::Int=0, N::Type=Float64)::CachedMinkowskiSumArray
+function CachedMinkowskiSumArray(n::Int=0, N::Type=Float64)
     arr = Vector{LazySet{N}}()
     sizehint!(arr, n)
     return CachedMinkowskiSumArray(arr)
@@ -92,7 +92,7 @@ end
 # @absorbing(CachedMinkowskiSumArray, Universe)  # TODO problematic
 
 """
-    array(cms::CachedMinkowskiSumArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
+    array(cms::CachedMinkowskiSumArray{N, S}) where {N<:Real, S<:LazySet{N}}
 
 Return the array of a caching Minkowski sum.
 
@@ -105,12 +105,12 @@ Return the array of a caching Minkowski sum.
 The array of a caching Minkowski sum.
 """
 function array(cms::CachedMinkowskiSumArray{N, S}
-              )::Vector{S} where {N<:Real, S<:LazySet{N}}
+              ) where {N<:Real, S<:LazySet{N}}
     return cms.array
 end
 
 """
-    dim(cms::CachedMinkowskiSumArray)::Int
+    dim(cms::CachedMinkowskiSumArray)
 
 Return the dimension of a caching Minkowski sum.
 
@@ -122,7 +122,7 @@ Return the dimension of a caching Minkowski sum.
 
 The ambient dimension of the caching Minkowski sum.
 """
-function dim(cms::CachedMinkowskiSumArray)::Int
+function dim(cms::CachedMinkowskiSumArray)
     return length(cms.array) == 0 ? 0 : dim(cms.array[1])
 end
 
@@ -174,7 +174,7 @@ function σ(d::AbstractVector{N}, cms::CachedMinkowskiSumArray{N}) where {N<:Rea
 end
 
 """
-	isbounded(cms::CachedMinkowskiSumArray)::Bool
+	isbounded(cms::CachedMinkowskiSumArray)
 
 Determine whether a caching Minkowski sum is bounded.
 
@@ -186,12 +186,12 @@ Determine whether a caching Minkowski sum is bounded.
 
 `true` iff all wrapped sets are bounded.
 """
-function isbounded(cms::CachedMinkowskiSumArray)::Bool
+function isbounded(cms::CachedMinkowskiSumArray)
     return all(x -> isbounded(x), cms.array)
 end
 
 """
-    isempty(cms::CachedMinkowskiSumArray)::Bool
+    isempty(cms::CachedMinkowskiSumArray)
 
 Return if a caching Minkowski sum array is empty or not.
 
@@ -210,12 +210,12 @@ Usually they have been empty because otherwise the support vector query should
 have crashed before.
 In that case, the caching Minkowski sum should not be used further.
 """
-function isempty(cms::CachedMinkowskiSumArray)::Bool
+function isempty(cms::CachedMinkowskiSumArray)
     return any(X -> isempty(X), array(cms))
 end
 
 """
-    forget_sets!(cms::CachedMinkowskiSumArray)::Int
+    forget_sets!(cms::CachedMinkowskiSumArray)
 
 Tell a caching Minkowski sum to forget the stored sets (but not the support
 vectors).
@@ -269,7 +269,7 @@ julia> idx1 = forget_sets!(cms2) # support vector was only computed for first se
 1
 ```
 """
-function forget_sets!(cms::CachedMinkowskiSumArray)::Int
+function forget_sets!(cms::CachedMinkowskiSumArray)
     len = length(cms.array)
     sets_to_remove = len
     for pair in values(cms.cache)

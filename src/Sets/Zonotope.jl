@@ -169,7 +169,7 @@ function generators(Z::Zonotope)
 end
 
 """
-    ngens(Z::Zonotope)::Int
+    ngens(Z::Zonotope)
 
 Return the number of generators of a zonotope.
 
@@ -181,7 +181,7 @@ Return the number of generators of a zonotope.
 
 Integer representing the number of generators.
 """
-ngens(Z::Zonotope)::Int = size(Z.generators, 2)
+ngens(Z::Zonotope) = size(Z.generators, 2)
 
 
 # --- LazySet interface functions ---
@@ -189,8 +189,7 @@ ngens(Z::Zonotope)::Int = size(Z.generators, 2)
 
 """
     rand(::Type{Zonotope}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
-         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
-        )::Zonotope{N}
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
 
 Create a random zonotope.
 
@@ -221,8 +220,7 @@ function rand(::Type{Zonotope};
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int, Nothing}=nothing,
-              num_generators::Int=-1
-             )::Zonotope{N}
+              num_generators::Int=-1)
     rng = reseed(rng, seed)
     center = randn(rng, N, dim)
     if num_generators < 0

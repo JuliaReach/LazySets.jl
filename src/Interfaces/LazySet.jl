@@ -40,7 +40,7 @@ Every concrete `LazySet` must define the following functions:
     of `S` in a given direction `d`; note that the numeric type `N` of `d` and
     `S` must be identical; for some set types `N` may be more restrictive than
     `Real`
-- `dim(S::LazySet)::Int` -- the ambient dimension of `S`
+- `dim(S::LazySet)` -- the ambient dimension of `S`
 
 The function
 - `ρ(d::AbstractVector{N}, S::LazySet{N}) where {N<:Real}` -- the support
@@ -163,7 +163,7 @@ The numeric type of `X`.
 eltype(::LazySet{N}) where {N} = N
 
 """
-    ρ(d::AbstractVector{N}, S::LazySet{N})::N where {N<:Real}
+    ρ(d::AbstractVector{N}, S::LazySet{N}) where {N<:Real}
 
 Evaluate the support function of a set in a given direction.
 
@@ -180,7 +180,7 @@ The support function of the set `S` for the direction `d`.
 
 The numeric type of the direction and the set must be identical.
 """
-function ρ(d::AbstractVector{N}, S::LazySet{N})::N where {N<:Real}
+function ρ(d::AbstractVector{N}, S::LazySet{N}) where {N<:Real}
     return dot(d, σ(d, S))
 end
 
@@ -206,7 +206,7 @@ Alias for the support vector σ.
 const support_vector = σ
 
 """
-    isbounded(S::LazySet)::Bool
+    isbounded(S::LazySet)
 
 Determine whether a set is bounded.
 
@@ -222,12 +222,12 @@ Determine whether a set is bounded.
 
 We check boundedness via [`isbounded_unit_dimensions`](@ref).
 """
-function isbounded(S::LazySet)::Bool
+function isbounded(S::LazySet)
     return isbounded_unit_dimensions(S)
 end
 
 """
-    isbounded_unit_dimensions(S::LazySet{N})::Bool where {N<:Real}
+    isbounded_unit_dimensions(S::LazySet{N}) where {N<:Real}
 
 Determine whether a set is bounded in each unit dimension.
 
@@ -244,7 +244,7 @@ Determine whether a set is bounded in each unit dimension.
 This function performs ``2n`` support function checks, where ``n`` is the
 ambient dimension of `S`.
 """
-function isbounded_unit_dimensions(S::LazySet{N})::Bool where {N<:Real}
+function isbounded_unit_dimensions(S::LazySet{N}) where {N<:Real}
     n = dim(S)
     @inbounds for i in 1:n
         for o in [one(N), -one(N)]
@@ -299,7 +299,7 @@ A real number representing the radius.
 """
 function radius(S::LazySet, p::Real=Inf)
     if p == Inf
-        return radius(Approximations.ballinf_approximation(S)::BallInf, p)
+        return radius(Approximations.ballinf_approximation(S), p)
     else
         error("the radius for this value of p=$p is not implemented")
     end
@@ -558,8 +558,7 @@ function reflect(P::LazySet)
 end
 
 """
-    isuniversal(X::LazySet{N}, [witness]::Bool=false
-               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    isuniversal(X::LazySet{N}, [witness]::Bool=false) where {N<:Real}
 
 Check whether a given convex set is universal, and otherwise optionally compute
 a witness.
@@ -580,8 +579,7 @@ a witness.
 
 This is a naive fallback implementation.
 """
-function isuniversal(X::LazySet{N}, witness::Bool=false
-                    )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+function isuniversal(X::LazySet{N}, witness::Bool=false) where {N<:Real}
     if isbounded(X)
         result = false
     else

@@ -70,7 +70,7 @@ end
     decompose(S::LazySet{N},
               partition::AbstractVector{<:AbstractVector{Int}},
               block_options
-             )::CartesianProductArray{N} where {N<:Real}
+             ) where {N<:Real}
 
 Decompose a high-dimensional set into a Cartesian product of overapproximations
 of the projections over the specified subspaces.
@@ -221,7 +221,7 @@ julia> typeof(res[1]), typeof(res[2])
 function decompose(S::LazySet{N},
                    partition::AbstractVector{<:AbstractVector{Int}},
                    block_options
-                  )::CartesianProductArray{N} where {N<:Real}
+                  ) where {N<:Real}
     n = dim(S)
     result = Vector{LazySet{N}}(undef, length(partition))
 
@@ -239,7 +239,7 @@ function decompose(S::LazySet{N},
                                         Real,
                                         Type{<:AbstractDirections}
                                        }
-                  )::CartesianProductArray{N} where {N<:Real}
+                  ) where {N<:Real}
     n = dim(S)
     result = Vector{LazySet{N}}(undef, length(partition))
 
@@ -260,7 +260,7 @@ end
             block::AbstractVector{Int},
             set_type::Type{<:LinearMap},
             [n]::Int=dim(S)
-           )::LinearMap{N} where {N<:Real}
+           ) where {N<:Real}
 
 Project a high-dimensional set to a given block by using a lazy linear map.
 
@@ -279,7 +279,7 @@ A lazy `LinearMap` representing a projection of the set `S` to block `block`.
                          block::AbstractVector{Int},
                          set_type::Type{<:LinearMap},
                          n::Int=dim(S)
-                        )::LinearMap{N} where {N<:Real}
+                        ) where {N<:Real}
     m = length(block)
     M = sparse(1:m, block, ones(N, m), m, n)
     return M * S

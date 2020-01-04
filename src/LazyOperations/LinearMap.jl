@@ -191,7 +191,7 @@ function LinearMap(M::AbstractMatrix{N}, ∅::EmptySet{N}) where {N<:Real}
 end
 
 """
-    dim(lm::LinearMap)::Int
+    dim(lm::LinearMap)
 
 Return the dimension of a linear map.
 
@@ -203,7 +203,7 @@ Return the dimension of a linear map.
 
 The ambient dimension of the linear map.
 """
-function dim(lm::LinearMap)::Int
+function dim(lm::LinearMap)
     return size(lm.M, 1)
 end
 
@@ -258,7 +258,7 @@ function ρ(d::AbstractVector{N}, lm::LinearMap{N}; kwargs...) where {N<:Real}
 end
 
 """
-    isbounded(lm::LinearMap; cond_tol::Number=DEFAULT_COND_TOL)::Bool
+    isbounded(lm::LinearMap; cond_tol::Number=DEFAULT_COND_TOL)
 
 Determine whether a linear map is bounded.
 
@@ -280,7 +280,7 @@ If the matrix is invertible, then the map being bounded is equivalent to the
 wrapped set being bounded, and hence the map is unbounded.
 Otherwise, we check boundedness via [`isbounded_unit_dimensions`](@ref).
 """
-function isbounded(lm::LinearMap; cond_tol::Number=DEFAULT_COND_TOL)::Bool
+function isbounded(lm::LinearMap; cond_tol::Number=DEFAULT_COND_TOL)
     if iszero(lm.M) || isbounded(lm.X)
         return true
     end
@@ -291,7 +291,7 @@ function isbounded(lm::LinearMap; cond_tol::Number=DEFAULT_COND_TOL)::Bool
 end
 
 """
-    ∈(x::AbstractVector{N}, lm::LinearMap{N})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N}, lm::LinearMap{N}) where {N<:Real}
 
 Check whether a given point is contained in a linear map of a convex set.
 
@@ -331,7 +331,7 @@ julia> [0.5, 0.5] ∈ M*B
 true
 ```
 """
-function ∈(x::AbstractVector{N}, lm::LinearMap{N})::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, lm::LinearMap{N}) where {N<:Real}
     return lm.M \ x ∈ lm.X
 end
 
@@ -354,7 +354,7 @@ function an_element(lm::LinearMap{N})::Vector{N} where {N<:Real}
 end
 
 """
-    isempty(lm::LinearMap)::Bool
+    isempty(lm::LinearMap)
 
 Return if a linear map is empty or not.
 
@@ -366,7 +366,7 @@ Return if a linear map is empty or not.
 
 `true` iff the wrapped set is empty.
 """
-function isempty(lm::LinearMap)::Bool
+function isempty(lm::LinearMap)
     return isempty(lm.X)
 end
 

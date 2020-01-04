@@ -25,7 +25,7 @@ function default_polyhedra_backend(P, N)
 end
 
 """
-    ∈(x::AbstractVector{N}, P::AbstractPolyhedron{N})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N}, P::AbstractPolyhedron{N}) where {N<:Real}
 
 Check whether a given point is contained in a polyhedron.
 
@@ -42,7 +42,7 @@ Check whether a given point is contained in a polyhedron.
 
 This implementation checks if the point lies inside each defining half-space.
 """
-function ∈(x::AbstractVector{N}, P::AbstractPolyhedron{N})::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, P::AbstractPolyhedron{N}) where {N<:Real}
     @assert length(x) == dim(P) "a $(length(x))-dimensional point cannot be " *
         "an element of a $(dim(P))-dimensional set"
 
@@ -56,7 +56,7 @@ end
 
 """
     isuniversal(P::AbstractPolyhedron{N}, [witness]::Bool=false
-               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+               ) where {N<:Real}
 
 Check whether a polyhedron is universal.
 
@@ -80,7 +80,7 @@ A witness is produced using `isuniversal(H)` where `H` is the first linear
 constraint of `P`.
 """
 function isuniversal(P::AbstractPolyhedron{N}, witness::Bool=false
-                    )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+                    ) where {N<:Real}
     constraints = constraints_list(P)
     if isempty(constraints)
         return witness ? (true, N[]) : true
@@ -90,7 +90,7 @@ function isuniversal(P::AbstractPolyhedron{N}, witness::Bool=false
 end
 
 """
-    constrained_dimensions(P::AbstractPolyhedron)::Vector{Int} where {N<:Real}
+    constrained_dimensions(P::AbstractPolyhedron) where {N<:Real}
 
 Return the indices in which a polyhedron is constrained.
 
@@ -107,7 +107,7 @@ dimension `i`.
 
 A 2D polyhedron with constraint ``x1 ≥ 0`` is constrained in dimension 1 only.
 """
-function constrained_dimensions(P::AbstractPolyhedron)::Vector{Int}
+function constrained_dimensions(P::AbstractPolyhedron)
     constraints = constraints_list(P)
     if isempty(constraints)
         return Int[]
@@ -158,7 +158,7 @@ end
 """
      remove_redundant_constraints!(
          constraints::AbstractVector{<:LinearConstraint{N}};
-         [backend]=default_lp_solver(N))::Bool where {N<:Real}
+         [backend]=default_lp_solver(N)) where {N<:Real}
 
 Remove the redundant constraints of a given list of linear constraints; the list
 is updated in-place.
@@ -198,7 +198,7 @@ FAQ](https://www.cs.mcgill.ca/~fukuda/soft/polyfaq/node24.html).
 """
 function remove_redundant_constraints!(
         constraints::AbstractVector{<:LinearConstraint{N}};
-        backend=default_lp_solver(N))::Bool where {N<:Real}
+        backend=default_lp_solver(N)) where {N<:Real}
 
     A, b = tosimplehrep(constraints)
     m, n = size(A)
