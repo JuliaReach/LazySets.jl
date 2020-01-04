@@ -69,7 +69,7 @@ for N in [Float64, Float32, Rational{Int}]
 
     # Test Cartesian Product with EmptySet
     s = Singleton(N[1])
-    E = EmptySet{N}()
+    E = EmptySet{N}(1)
     cs1 = E * s
     cs2 = s * E
     @test cs1 isa EmptySet
@@ -304,7 +304,7 @@ for N in [Float64, Float32, Rational{Int}]
     # ================
 
     # absorbing element
-    e = EmptySet{N}()
+    e = EmptySet{N}(2)
     b = BallInf(N[0, 0], N(2))
     @test absorbing(CartesianProduct) == absorbing(CartesianProductArray) ==
           EmptySet

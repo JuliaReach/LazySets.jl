@@ -11,20 +11,22 @@ export EmptySet, ∅,
 
 Type that represents the empty set, i.e., the set with no elements.
 """
-struct EmptySet{N<:Real} <: LazySet{N} end
+struct EmptySet{N<:Real} <: LazySet{N}
+    dim::Int
+end
 
 isoperationtype(::Type{<:EmptySet}) = false
 isconvextype(::Type{<:EmptySet}) = true
 
 # default constructor of type Float64
-EmptySet() = EmptySet{Float64}()
+EmptySet(dim::Int) = EmptySet{Float64}(dim)
 
 """
     ∅
 
-An `EmptySet` instance of type `Float64`.
+Alias for `EmptySet{Float64}`.
 """
-const ∅ = EmptySet{Float64}()
+const ∅ = EmptySet{Float64}
 
 
 # --- LazySet interface functions ---
@@ -33,7 +35,7 @@ const ∅ = EmptySet{Float64}()
 """
     dim(∅::EmptySet)
 
-Return the dimension of the empty set, which is -1 by convention.
+Return the dimension of an empty set.
 
 ### Input
 
@@ -41,10 +43,10 @@ Return the dimension of the empty set, which is -1 by convention.
 
 ### Output
 
-`-1` by convention.
+The dimension of the empty set.
 """
 function dim(∅::EmptySet)
-    return -1
+    return ∅.dim
 end
 
 """
@@ -118,8 +120,7 @@ Check whether an empty is universal.
 """
 function isuniversal(∅::EmptySet{N}, witness::Bool=false) where {N<:Real}
     if witness
-        error("witness production is currently not supported")
-        # return (false, zeros(N, dim(∅)))  # deactivated, see #1201
+        return (false, zeros(N, dim(∅)))
     else
         return false
     end
@@ -142,7 +143,7 @@ The output is always `false`.
 ### Examples
 
 ```jldoctest
-julia> [1.0, 0.0] ∈ ∅
+julia> [1.0, 0.0] ∈ EmptySet(2)
 false
 ```
 """
@@ -177,21 +178,21 @@ Create an empty set (note that there is nothing to randomize).
 
 - `EmptySet` -- type for dispatch
 - `N`        -- (optional, default: `Float64`) numeric type
-- `dim`      -- (optional, default: 0) dimension (is ignored)
+- `dim`      -- (optional, default: 2) dimension
 - `rng`      -- (optional, default: `GLOBAL_RNG`) random number generator
 - `seed`     -- (optional, default: `nothing`) seed for reseeding
 
 ### Output
 
-The (only) empty set of the given numeric type.
+The (only) empty set of the given numeric type and dimension.
 """
 function rand(::Type{EmptySet};
               N::Type{<:Real}=Float64,
-              dim::Int=0,
+              dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int, Nothing}=nothing)
     rng = reseed(rng, seed)
-    return EmptySet{N}()
+    return EmptySet{N}(dim)
 end
 
 """

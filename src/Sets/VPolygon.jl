@@ -171,7 +171,7 @@ function tohrep(P::VPolygon{N}, ::Type{HPOLYGON}=HPolygon
     n = length(vl)
     if n == 0
         # no vertex -> empy set
-        return EmptySet{N}()
+        return EmptySet{N}(2)
     elseif n == 1
         # only one vertex -> use function for singletons
         return convert(HPOLYGON, Singleton(vl[1]))

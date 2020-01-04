@@ -41,7 +41,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # emptiness check
     @test !isempty(am)
-    # @test isempty(AffineMap(M, EmptySet{N}(), v)) # requires #1201
+    @test isempty(AffineMap(M, EmptySet{N}(2), v))
 
     # ==================================
     # Type-specific methods

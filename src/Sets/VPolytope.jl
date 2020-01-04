@@ -471,7 +471,7 @@ function tohrep(P::VPolytope{N};
                 backend=default_polyhedra_backend(P, N)) where {N<:Real}
     vl = P.vertices
     if isempty(vl)
-        return EmptySet{N}()
+        return EmptySet{N}(dim(P))
     end
     require(:Polyhedra; fun_name="tohrep")
     return HPolytope(polyhedron(P; backend=backend))

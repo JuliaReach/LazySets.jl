@@ -207,8 +207,8 @@ simplified automatically.
 julia> E * ZeroSet(100)
 ZeroSet{Float64}(100)
 
-julia> E * EmptySet()
-EmptySet{Float64}()
+julia> E * EmptySet(2)
+EmptySet{Float64}(2)
 ```
 """
 struct ExponentialMap{N, S<:LazySet{N}} <: LazySet{N}

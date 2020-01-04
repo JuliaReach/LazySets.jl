@@ -47,7 +47,7 @@ maximum value of the support function evaluated at the canonical directions.
 function box_approximation_symmetric(S::LazySet{N}) where {N<:Real}
     (c, r) = box_approximation_helper(S)
     if r[1] < 0
-        return EmptySet{N}()
+        return EmptySet{N}(dim(S))
     end
     return Hyperrectangle(zeros(N, length(c)), abs.(c) .+ r)
 end

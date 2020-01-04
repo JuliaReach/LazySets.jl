@@ -111,7 +111,7 @@ function overapproximate(S::LazySet{N},
                          ::Type{<:Hyperrectangle}) where {N<:Real}
     c, r = box_approximation_helper(S)
     if r[1] < 0
-        return EmptySet{N}()
+        return EmptySet{N}(dim(S))
     end
     return Hyperrectangle(c, r)
 end
@@ -227,7 +227,7 @@ resulting box (which is simple), and finally convert the resulting set to a box.
 function overapproximate(r::Rectification{N}, ::Type{<:Hyperrectangle}
                         ) where {N<:Real}
     if isempty(r.X)
-        return EmptySet{N}()
+        return EmptySet{N}(dim(r))
     end
     return convert(Hyperrectangle, Rectification(box_approximation(r.X)))
 end
@@ -289,7 +289,7 @@ function overapproximate(S::LazySet{N}, ::Type{<:BallInf}) where {N<:Real}
             r = rcur
         elseif rcur < 0
             # contradicting bounds => set is empty
-            return EmptySet{N}()
+            return EmptySet{N}(dim(S))
         end
     end
     return BallInf(c, r)
@@ -1330,7 +1330,7 @@ function overapproximate(cap::Intersection{N,
     low_intersection = intersection(hpoly_low_dim, project(P, vars))
 
     if isempty(low_intersection)
-        return EmptySet{N}()
+        return EmptySet{N}(dim(cap))
     end
 
     decomposed_low_set = decompose(low_intersection, block_structure, oa)

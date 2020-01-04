@@ -30,7 +30,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test h.radius ≈ hexp.radius
 
     # empty set
-    E = EmptySet{N}()
+    E = EmptySet{N}(2)
     @test box_approximation(E) == E
 
     # ===================================================================
@@ -69,7 +69,7 @@ for N in [Float64, Rational{Int}, Float32]
     h = symmetric_interval_hull(b)
 
     # empty set
-    E = EmptySet{N}()
+    E = EmptySet{N}(2)
     @test box_approximation_symmetric(E) == E
 end
 

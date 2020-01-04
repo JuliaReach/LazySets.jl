@@ -69,7 +69,7 @@ for N in [Float64, Float32, Rational{Int}]
     vpt = VPolytope(vertices)
 
     # empty set
-    es = EmptySet{N}()
+    es = EmptySet{N}(2)
 
     # infinite sets
     hs = HalfSpace(v1, p1)

@@ -69,7 +69,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test !isdisjoint(U, B) && !res && w ∈ B && w ∈ U
     res, w = isdisjoint(U, U, true)
     @test !isdisjoint(U, U) && !res && w ∈ U
-    E = EmptySet{N}()
+    E = EmptySet{N}(2)
     res, w = isdisjoint(E, U, true)
     @test isdisjoint(E, U) && res && w == N[]
     res, w = isdisjoint(U, E, true)

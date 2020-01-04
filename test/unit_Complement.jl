@@ -38,6 +38,6 @@ for N in [Float64, Rational{Int}, Float32]
 
     # test convexity from the type
     @test isconvextype(typeof(Complement(Universe{N}(2))))
-    @test isconvextype(typeof(Complement(EmptySet{N}())))
+    @test isconvextype(typeof(Complement(EmptySet{N}(2))))
     @test isconvextype(typeof(Complement(HalfSpace(N[1], N(0)))))
 end

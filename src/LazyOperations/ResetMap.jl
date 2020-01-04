@@ -63,8 +63,8 @@ automatically.
 julia> ResetMap(ZeroSet(3), r)
 Singleton{Float64,SparseArrays.SparseVector{Float64,Int64}}(  [1]  =  4.0)
 
-julia> ResetMap(EmptySet(), r)
-EmptySet{Float64}()
+julia> ResetMap(EmptySet(3), r)
+EmptySet{Float64}(3)
 ```
 
 The (in this case unique) support vector of `rm` in direction `ones(3)` is:

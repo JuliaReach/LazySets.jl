@@ -262,7 +262,7 @@ function remove_redundant_constraints(
     if remove_redundant_constraints!(constraints_copy, backend=backend)
         return constraints_copy
     else  # the constraints are infeasible
-        return EmptySet{N}()
+        return EmptySet{N}(dim(constraints[1]))
     end
 end
 
@@ -517,7 +517,7 @@ function plot_recipe(P::AbstractPolyhedron{N}, ε::N=zero(N)) where {N<:Real}
         vlist = transpose(hcat(convex_hull(vertices_list(P))...))
         if isempty(vlist)
             @warn "received a polyhedron with no vertices during plotting"
-            return plot_recipe(EmptySet{N}(), ε)
+            return plot_recipe(EmptySet{N}(2), ε)
         end
         x, y = vlist[:, 1], vlist[:, 2]
 

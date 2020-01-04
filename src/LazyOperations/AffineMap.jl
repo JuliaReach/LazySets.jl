@@ -78,8 +78,8 @@ automatically.
 julia> AffineMap(A, ZeroSet{Int}(2), b3)
 Singleton{Int64,Array{Int64,1}}([1, 2, 3])
 
-julia> AffineMap(A, EmptySet{Int}(), b3)
-EmptySet{Int64}()
+julia> AffineMap(A, EmptySet{Int}(2), b3)
+EmptySet{Int64}(2)
 ```
 """
 struct AffineMap{N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM},
