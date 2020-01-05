@@ -185,7 +185,7 @@ function ∈(x::AbstractVector{N}, B::Ball1{N}, failfast::Bool=false) where {N<:
     @assert length(x) == dim(B) "a $(length(x))-dimensional vector is " *
         "incompatible with a $(dim(B))-dimensional set"
     sum = zero(N)
-    for (i, xi) in enumerate(x)
+    @inbounds for (i, xi) in enumerate(x)
         sum += abs(B.center[i] - xi)
         if failfast && sum > B.radius
             return false
