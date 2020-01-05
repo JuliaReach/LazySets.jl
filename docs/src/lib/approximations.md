@@ -57,11 +57,12 @@ box_approximation_helper
 ```@docs
 LocalApproximation
 PolygonalOverapproximation
-new_approx(::LazySet, ::Vector{Float64}, ::Vector{Float64}, ::Vector{Float64}, ::Vector{Float64})
-addapproximation!(::PolygonalOverapproximation, ::Vector{Float64}, ::Vector{Float64}, ::Vector{Float64}, ::Vector{Float64})
+new_approx(S::LazySet, p1::VN, d1::VN,
+           p2::VN, d2::VN) where {N<:AbstractFloat, VN<:AbstractVector{N}}
+addapproximation!(Ω::PolygonalOverapproximation, p1::VN, d1::VN, p2::VN, d2::VN) where {N<:Real, VN<:AbstractVector{N}}
 refine(::LocalApproximation, ::LazySet)
 tohrep(::PolygonalOverapproximation)
-approximate(::LazySet{Float64}, ::Float64)
+approximate(S::LazySet{N}, ε::N) where {N<:AbstractFloat}
 constraint(::LocalApproximation)
 ```
 
