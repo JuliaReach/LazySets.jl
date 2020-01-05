@@ -1,4 +1,4 @@
-if VERSION >= v"1.1"
+@static if VERSION >= v"1.1"
     Ns = [Float64, Float32, Rational{Int}]
 else
     # in pre-v1.1 versions, IntervalArithmetic always operated with Float64
