@@ -13,7 +13,7 @@ Abstract type for centrally symmetric sets.
 
 Every concrete `AbstractCentrallySymmetric` must define the following functions:
 
-- `center(::AbstractCentrallySymmetric{N})::Vector{N}` -- return the center
+- `center(::AbstractCentrallySymmetric{N})` -- return the center
     point
 
 ```jldoctest; setup = :(using LazySets: subtypes)
@@ -29,7 +29,7 @@ abstract type AbstractCentrallySymmetric{N<:Real} <: LazySet{N} end
 isconvextype(::Type{<:AbstractCentrallySymmetric}) = false
 
 """
-    dim(S::AbstractCentrallySymmetric)::Int
+    dim(S::AbstractCentrallySymmetric)
 
 Return the ambient dimension of a centrally symmetric set.
 
@@ -41,12 +41,12 @@ Return the ambient dimension of a centrally symmetric set.
 
 The ambient dimension of the set.
 """
-@inline function dim(S::AbstractCentrallySymmetric)::Int
+@inline function dim(S::AbstractCentrallySymmetric)
     return length(center(S))
 end
 
 """
-    isbounded(S::AbstractCentrallySymmetric)::Bool
+    isbounded(S::AbstractCentrallySymmetric)
 
 Determine whether a centrally symmetric set is bounded.
 
@@ -58,12 +58,12 @@ Determine whether a centrally symmetric set is bounded.
 
 `true` (since a set with a unique center must be bounded).
 """
-function isbounded(::AbstractCentrallySymmetric)::Bool
+function isbounded(::AbstractCentrallySymmetric)
     return true
 end
 
 """
-    an_element(S::AbstractCentrallySymmetric{N})::Vector{N} where {N<:Real}
+    an_element(S::AbstractCentrallySymmetric{N}) where {N<:Real}
 
 Return some element of a centrally symmetric set.
 
@@ -75,12 +75,12 @@ Return some element of a centrally symmetric set.
 
 The center of the centrally symmetric set.
 """
-function an_element(S::AbstractCentrallySymmetric{N})::Vector{N} where {N<:Real}
+function an_element(S::AbstractCentrallySymmetric{N}) where {N<:Real}
     return center(S)
 end
 
 """
-    isempty(S::AbstractCentrallySymmetric)::Bool
+    isempty(S::AbstractCentrallySymmetric)
 
 Return if a centrally symmetric set is empty or not.
 
@@ -92,13 +92,13 @@ Return if a centrally symmetric set is empty or not.
 
 `false`.
 """
-function isempty(::AbstractCentrallySymmetric)::Bool
+function isempty(::AbstractCentrallySymmetric)
     return false
 end
 
 """
     isuniversal(S::AbstractCentrallySymmetric{N}, [witness]::Bool=false
-               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+               ) where {N<:Real}
 
 Check whether a centrally symmetric set is universal.
 
@@ -118,7 +118,7 @@ A witness is obtained by computing the support vector in direction
 `d = [1, 0, …, 0]` and adding `d` on top.
 """
 function isuniversal(S::AbstractCentrallySymmetric{N}, witness::Bool=false
-                    )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+                    ) where {N<:Real}
     if witness
         d = SingleEntryVector{N}(1, dim(S))
         w = σ(d, S) + d

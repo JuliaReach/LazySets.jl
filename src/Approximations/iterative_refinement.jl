@@ -123,7 +123,6 @@ the new approximation is returned by this function.
 """
 function addapproximation!(Ω::PolygonalOverapproximation, p1::VN, d1::VN,
                            p2::VN, d2::VN) where {N<:Real, VN<:AbstractVector{N}}
-
     approx = new_approx(Ω.S, p1, d1, p2, d2)
     push!(Ω.approx_stack, approx)
     return approx

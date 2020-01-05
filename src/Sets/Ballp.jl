@@ -96,7 +96,7 @@ end
 
 
 """
-    center(B::Ballp{N})::Vector{N} where {N<:AbstractFloat}
+    center(B::Ballp{N}) where {N<:AbstractFloat}
 
 Return the center of a ball in the p-norm.
 
@@ -108,7 +108,7 @@ Return the center of a ball in the p-norm.
 
 The center of the ball in the p-norm.
 """
-function center(B::Ballp{N})::Vector{N} where {N<:AbstractFloat}
+function center(B::Ballp{N}) where {N<:AbstractFloat}
     return B.center
 end
 
@@ -163,7 +163,7 @@ function σ(d::AbstractVector{N}, B::Ballp{N}) where {N<:AbstractFloat}
 end
 
 """
-    ∈(x::AbstractVector{N}, B::Ballp{N})::Bool where {N<:AbstractFloat}
+    ∈(x::AbstractVector{N}, B::Ballp{N}) where {N<:AbstractFloat}
 
 Check whether a given point is contained in a ball in the p-norm.
 
@@ -201,7 +201,7 @@ julia> [.5, 1.5] ∈ B
 true
 ```
 """
-function ∈(x::AbstractVector{N}, B::Ballp{N})::Bool where {N<:AbstractFloat}
+function ∈(x::AbstractVector{N}, B::Ballp{N}) where {N<:AbstractFloat}
     @assert length(x) == dim(B)
     sum = zero(N)
     for i in eachindex(x)
@@ -212,8 +212,7 @@ end
 
 """
     rand(::Type{Ballp}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
-         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
-        )::Ballp{N}
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
 
 Create a random ball in the p-norm.
 
@@ -241,8 +240,7 @@ function rand(::Type{Ballp};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing
-             )::Ballp{N}
+              seed::Union{Int, Nothing}=nothing)
     rng = reseed(rng, seed)
     p = one(N) + abs(randn(rng, N))
     center = randn(rng, N, dim)

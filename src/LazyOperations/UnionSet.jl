@@ -65,7 +65,7 @@ function swap(cup::UnionSet)
 end
 
 """
-    dim(cup::UnionSet)::Int
+    dim(cup::UnionSet)
 
 Return the dimension of the set union of two convex sets.
 
@@ -77,7 +77,7 @@ Return the dimension of the set union of two convex sets.
 
 The ambient dimension of the union of two convex sets.
 """
-function dim(cup::UnionSet)::Int
+function dim(cup::UnionSet)
     return dim(cup.X)
 end
 
@@ -153,7 +153,7 @@ function ρ(d::AbstractVector{N}, cup::UnionSet{N}) where {N<:Real}
 end
 
 """
-    an_element(cup::UnionSet{N})::Vector{N} where {N<:Real}
+    an_element(cup::UnionSet{N}) where {N<:Real}
 
 Return some element of a union of two convex sets.
 
@@ -169,12 +169,12 @@ An element in the union of two convex sets.
 
 We use `an_element` on the first wrapped set.
 """
-function an_element(cup::UnionSet{N})::Vector{N} where {N<:Real}
+function an_element(cup::UnionSet{N}) where {N<:Real}
     return an_element(cup.X)
 end
 
 """
-    ∈(x::AbstractVector{N}, cup::UnionSet{N})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N}, cup::UnionSet{N}) where {N<:Real}
 
 Check whether a given point is contained in a union of two convex sets.
 
@@ -187,12 +187,12 @@ Check whether a given point is contained in a union of two convex sets.
 
 `true` iff ``x ∈ cup``.
 """
-function ∈(x::AbstractVector{N}, cup::UnionSet{N})::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, cup::UnionSet{N}) where {N<:Real}
     return x ∈ cup.X || x ∈ cup.Y
 end
 
 """
-    isempty(cup::UnionSet)::Bool
+    isempty(cup::UnionSet)
 
 Check whether a union of two convex sets is empty.
 
@@ -204,12 +204,12 @@ Check whether a union of two convex sets is empty.
 
 `true` iff the union is empty.
 """
-function isempty(cup::UnionSet)::Bool
+function isempty(cup::UnionSet)
     return isempty(cup.X) && isempty(cup.Y)
 end
 
 """
-    isbounded(cup::UnionSet)::Bool
+    isbounded(cup::UnionSet)
 
 Determine whether a union of two convex sets is bounded.
 
@@ -221,6 +221,6 @@ Determine whether a union of two convex sets is bounded.
 
 `true` iff the union is bounded.
 """
-function isbounded(cup::UnionSet)::Bool
+function isbounded(cup::UnionSet)
     return isbounded(cup.X) && isbounded(cup.Y)
 end

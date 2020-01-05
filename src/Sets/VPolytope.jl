@@ -45,7 +45,7 @@ end
 # --- LazySet interface functions ---
 
 """
-    dim(P::VPolytope)::Int
+    dim(P::VPolytope)
 
 Return the dimension of a polytope in V-representation.
 
@@ -74,7 +74,7 @@ true
 
 ```
 """
-function dim(P::VPolytope)::Int
+function dim(P::VPolytope)
     return length(P.vertices) == 0 ? -1 : length(P.vertices[1])
 end
 
@@ -123,7 +123,7 @@ end
 
 """
     ∈(x::AbstractVector{N}, P::VPolytope{N};
-      solver=default_lp_solver(N))::Bool where {N<:Real}
+      solver=default_lp_solver(N)) where {N<:Real}
 
 Check whether a given point is contained in a polytope in vertex representation.
 
@@ -154,7 +154,7 @@ Then we solve the following ``m``-dimensional linear program.
 ```
 """
 function ∈(x::AbstractVector{N}, P::VPolytope{N};
-           solver=default_lp_solver(N))::Bool where {N<:Real}
+           solver=default_lp_solver(N)) where {N<:Real}
     vertices = P.vertices
     m = length(vertices)
 
@@ -198,7 +198,7 @@ end
 """
     rand(::Type{VPolytope}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
          [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing,
-         [num_vertices]::Int=-1)::VPolytope{N}
+         [num_vertices]::Int=-1)
 
 Create a random polytope in vertex representation.
 
@@ -230,8 +230,7 @@ function rand(::Type{VPolytope};
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int, Nothing}=nothing,
-              num_vertices::Int=-1
-             )::VPolytope{N}
+              num_vertices::Int=-1)
     rng = reseed(rng, seed)
     if num_vertices < 0
         num_vertices = (dim == 1) ? rand(1:2) : rand(dim:5*dim)
@@ -295,7 +294,7 @@ end
 # --- AbstractPolytope interface functions ---
 
 """
-    vertices_list(P::VPolytope{N})::Vector{Vector{N}} where {N<:Real}
+    vertices_list(P::VPolytope{N}) where {N<:Real}
 
 Return the list of vertices of a polytope in V-representation.
 
@@ -307,7 +306,7 @@ Return the list of vertices of a polytope in V-representation.
 
 List of vertices.
 """
-function vertices_list(P::VPolytope{N})::Vector{Vector{N}} where {N<:Real}
+function vertices_list(P::VPolytope{N}) where {N<:Real}
     return P.vertices
 end
 
@@ -397,7 +396,7 @@ end
 """
     remove_redundant_vertices(P::VPolytope{N};
                               [backend]=nothing,
-                              [solver]=nothing)::VPolytope{N} where {N<:Real}
+                              [solver]=nothing) where {N<:Real}
 
 Return the polytope obtained by removing the redundant vertices of the given polytope.
 
@@ -426,7 +425,7 @@ Otherwise, the redundancy removal function of the polyhedral backend is used.
 """
 function remove_redundant_vertices(P::VPolytope{N};
                                    backend=nothing,
-                                   solver=nothing)::VPolytope{N} where {N<:Real}
+                                   solver=nothing) where {N<:Real}
     require(:Polyhedra; fun_name="remove_redundant_vertices")
     if backend == nothing
         backend = default_polyhedra_backend(P, N)

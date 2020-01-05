@@ -12,9 +12,9 @@ Abstract type for polygons (i.e., 2D polytopes).
 ### Notes
 
 Every concrete `AbstractPolygon` must define the following functions:
-- `tovrep(::AbstractPolygon{N})::VPolygon{N}`         -- transform into
+- `tovrep(::AbstractPolygon{N})`         -- transform into
     V-representation
-- `tohrep(::AbstractPolygon{N})::S where {S<:AbstractHPolygon{N}}` -- transform
+- `tohrep(::AbstractPolygon{N}) where {S<:AbstractHPolygon{N}}` -- transform
     into H-representation
 
 ```jldoctest; setup = :(using LazySets: subtypes)
@@ -32,7 +32,7 @@ isconvextype(::Type{<:AbstractPolygon}) = true
 
 
 """
-    dim(P::AbstractPolygon)::Int
+    dim(P::AbstractPolygon)
 
 Return the ambient dimension of a polygon.
 
@@ -44,12 +44,12 @@ Return the ambient dimension of a polygon.
 
 The ambient dimension of the polygon, which is 2.
 """
-@inline function dim(P::AbstractPolygon)::Int
+@inline function dim(P::AbstractPolygon)
     return 2
 end
 
 """
-    jump2pi(x::N)::N where {N<:AbstractFloat}
+    jump2pi(x::N) where {N<:AbstractFloat}
 
 Return ``x + 2π`` if ``x`` is negative, otherwise return ``x``.
 
@@ -76,12 +76,12 @@ julia> jump2pi(0.5)
 0.5
 ```
 """
-@inline function jump2pi(x::N)::N where {N<:AbstractFloat}
+@inline function jump2pi(x::N) where {N<:AbstractFloat}
     x < zero(N) ? 2 * pi + x : x
 end
 
 """
-    quadrant(w::AbstractVector{N})::Int where {N<:Real}
+    quadrant(w::AbstractVector{N}) where {N<:Real}
 
 Compute the quadrant where the direction `w` belongs.
 
@@ -108,14 +108,14 @@ The idea is to encode the following logic function:
 This function is inspired from AGPX's answer in:
 [Sort points in clockwise order?](https://stackoverflow.com/a/46635372)
 """
-@inline function quadrant(w::AbstractVector{N})::Int where {N<:Real}
+@inline function quadrant(w::AbstractVector{N}) where {N<:Real}
     dwx = w[1] >= zero(N) ? 1 : 0
     dwy = w[2] >= zero(N) ? 1 : 0
     return (1 - dwx) + (1 - dwy) + ((dwx & (1 - dwy)) << 1)
 end
 
 """
-    <=(u::AbstractVector{N}, v::AbstractVector{N})::Bool where {N<:Real}
+    <=(u::AbstractVector{N}, v::AbstractVector{N}) where {N<:Real}
 
 Compare two 2D vectors by their direction.
 
@@ -139,7 +139,7 @@ The implementation checks the quadrant of each direction, and compares
 directions using the right-hand rule (see [`is_right_turn`](@ref)).
 In particular, this method does not use the arctangent.
 """
-function <=(u::AbstractVector{N}, v::AbstractVector{N})::Bool where {N<:Real}
+function <=(u::AbstractVector{N}, v::AbstractVector{N}) where {N<:Real}
     qu, qv = quadrant(u), quadrant(v)
     if qu == qv
         # same quadrant, check right-turn with center 0
@@ -150,7 +150,7 @@ function <=(u::AbstractVector{N}, v::AbstractVector{N})::Bool where {N<:Real}
 end
 
 """
-    <=(u::AbstractVector{N}, v::AbstractVector{N})::Bool where {N<:AbstractFloat}
+    <=(u::AbstractVector{N}, v::AbstractVector{N}) where {N<:AbstractFloat}
 
 Compares two 2D vectors by their direction.
 
@@ -175,6 +175,6 @@ arguments implements the
 [`atan2` function](https://en.wikipedia.org/wiki/Atan2).
 """
 function <=(u::AbstractVector{N},
-            v::AbstractVector{N})::Bool where {N<:AbstractFloat}
+            v::AbstractVector{N}) where {N<:AbstractFloat}
     return jump2pi(atan(u[2], u[1])) <= jump2pi(atan(v[2], v[1]))
 end

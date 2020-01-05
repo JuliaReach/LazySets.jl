@@ -19,10 +19,10 @@ Such a type combination is necessary as long as Julia does not support
 Every concrete `AbstractCentrallySymmetricPolytope` must define the following
 functions:
 - from `AbstractCentrallySymmetric`:
-  - `center(::AbstractCentrallySymmetricPolytope{N})::Vector{N}` -- return the
+  - `center(::AbstractCentrallySymmetricPolytope{N})` -- return the
      center point
 - from `AbstractPolytope`:
-  - `vertices_list(::AbstractCentrallySymmetricPolytope{N})::Vector{Vector{N}}`
+  - `vertices_list(::AbstractCentrallySymmetricPolytope{N})`
      -- return a list of all vertices
 
 ```jldoctest; setup = :(using LazySets: subtypes)
@@ -40,7 +40,7 @@ isconvextype(::Type{<:AbstractCentrallySymmetricPolytope}) = true
 
 
 """
-    dim(P::AbstractCentrallySymmetricPolytope)::Int
+    dim(P::AbstractCentrallySymmetricPolytope)
 
 Return the ambient dimension of a centrally symmetric, polytopic set.
 
@@ -52,14 +52,13 @@ Return the ambient dimension of a centrally symmetric, polytopic set.
 
 The ambient dimension of the polytopic set.
 """
-@inline function dim(P::AbstractCentrallySymmetricPolytope)::Int
+@inline function dim(P::AbstractCentrallySymmetricPolytope)
     return length(center(P))
 end
 
 
 """
-    an_element(P::AbstractCentrallySymmetricPolytope{N})::Vector{N}
-        where {N<:Real}
+    an_element(P::AbstractCentrallySymmetricPolytope{N}) where {N<:Real}
 
 Return some element of a centrally symmetric polytope.
 
@@ -71,13 +70,12 @@ Return some element of a centrally symmetric polytope.
 
 The center of the centrally symmetric polytope.
 """
-function an_element(P::AbstractCentrallySymmetricPolytope{N}
-                   )::Vector{N} where {N<:Real}
+function an_element(P::AbstractCentrallySymmetricPolytope{N}) where {N<:Real}
     return center(P)
 end
 
 """
-    isempty(P::AbstractCentrallySymmetricPolytope)::Bool
+    isempty(P::AbstractCentrallySymmetricPolytope)
 
 Return if a centrally symmetric, polytopic set is empty or not.
 
@@ -89,6 +87,6 @@ Return if a centrally symmetric, polytopic set is empty or not.
 
 `false`.
 """
-function isempty(P::AbstractCentrallySymmetricPolytope)::Bool
+function isempty(P::AbstractCentrallySymmetricPolytope)
     return false
 end

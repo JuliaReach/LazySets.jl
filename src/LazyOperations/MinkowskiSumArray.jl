@@ -36,7 +36,7 @@ isoperationtype(::Type{<:MinkowskiSumArray}) = true
 isconvextype(::Type{MinkowskiSumArray{N, S}}) where {N, S} = isconvextype(S)
 
 # constructor for an empty sum with optional size hint and numeric type
-function MinkowskiSumArray(n::Int=0, N::Type=Float64)::MinkowskiSumArray
+function MinkowskiSumArray(n::Int=0, N::Type=Float64)
    arr = Vector{LazySet{N}}()
    sizehint!(arr, n)
    return MinkowskiSumArray(arr)
@@ -53,7 +53,7 @@ end
 @declare_array_version(MinkowskiSum, MinkowskiSumArray)
 
 """
-   array(msa::MinkowskiSumArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
+   array(msa::MinkowskiSumArray{N, S}) where {N<:Real, S<:LazySet{N}}
 
 Return the array of a Minkowski sum of a finite number of convex sets.
 
@@ -65,12 +65,12 @@ Return the array of a Minkowski sum of a finite number of convex sets.
 
 The array of a Minkowski sum of a finite number of convex sets.
 """
-function array(msa::MinkowskiSumArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
+function array(msa::MinkowskiSumArray{N, S}) where {N<:Real, S<:LazySet{N}}
    return msa.array
 end
 
 """
-   dim(msa::MinkowskiSumArray)::Int
+   dim(msa::MinkowskiSumArray)
 
 Return the dimension of a Minkowski sum of a finite number of sets.
 
@@ -82,7 +82,7 @@ Return the dimension of a Minkowski sum of a finite number of sets.
 
 The ambient dimension of the Minkowski sum of a finite number of sets.
 """
-function dim(msa::MinkowskiSumArray)::Int
+function dim(msa::MinkowskiSumArray)
    return length(msa.array) == 0 ? 0 : dim(msa.array[1])
 end
 
@@ -131,7 +131,7 @@ function ρ(d::AbstractVector{N}, msa::MinkowskiSumArray{N}) where {N<:Real}
 end
 
 """
-	isbounded(msa::MinkowskiSumArray)::Bool
+	isbounded(msa::MinkowskiSumArray)
 
 Determine whether a Minkowski sum of a finite number of convex sets is bounded.
 
@@ -143,12 +143,12 @@ Determine whether a Minkowski sum of a finite number of convex sets is bounded.
 
 `true` iff all wrapped sets are bounded.
 """
-function isbounded(msa::MinkowskiSumArray)::Bool
+function isbounded(msa::MinkowskiSumArray)
    return all(x -> isbounded(x), msa.array)
 end
 
 """
-   isempty(msa::MinkowskiSumArray)::Bool
+   isempty(msa::MinkowskiSumArray)
 
 Return if a Minkowski sum array is empty or not.
 
@@ -160,6 +160,6 @@ Return if a Minkowski sum array is empty or not.
 
 `true` iff any of the wrapped sets are empty.
 """
-function isempty(msa::MinkowskiSumArray)::Bool
+function isempty(msa::MinkowskiSumArray)
    return any(X -> isempty(X), array(msa))
 end

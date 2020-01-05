@@ -56,7 +56,7 @@ const LinearConstraint = HalfSpace
 
 
 """
-    dim(hs::HalfSpace)::Int
+    dim(hs::HalfSpace)
 
 Return the dimension of a half-space.
 
@@ -68,12 +68,12 @@ Return the dimension of a half-space.
 
 The ambient dimension of the half-space.
 """
-function dim(hs::HalfSpace)::Int
+function dim(hs::HalfSpace)
     return length(hs.a)
 end
 
 """
-    ρ(d::AbstractVector{N}, hs::HalfSpace{N})::N where {N<:Real}
+    ρ(d::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
 
 Evaluate the support function of a half-space in a given direction.
 
@@ -87,7 +87,7 @@ Evaluate the support function of a half-space in a given direction.
 The support function of the half-space.
 If the set is unbounded in the given direction, the result is `Inf`.
 """
-function ρ(d::AbstractVector{N}, hs::HalfSpace{N})::N where {N<:Real}
+function ρ(d::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
     v, unbounded = σ_helper(d, Hyperplane(hs.a, hs.b); error_unbounded=false,
                             halfspace=true)
     if unbounded
@@ -122,7 +122,7 @@ function σ(d::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
 end
 
 """
-    isbounded(hs::HalfSpace)::Bool
+    isbounded(hs::HalfSpace)
 
 Determine whether a half-space is bounded.
 
@@ -134,13 +134,12 @@ Determine whether a half-space is bounded.
 
 `false`.
 """
-function isbounded(::HalfSpace)::Bool
+function isbounded(::HalfSpace)
     return false
 end
 
 """
-    isuniversal(hs::HalfSpace{N}, [witness]::Bool=false
-               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    isuniversal(hs::HalfSpace{N}, [witness]::Bool=false) where {N<:Real}
 
 Check whether a half-space is universal.
 
@@ -158,8 +157,7 @@ Check whether a half-space is universal.
 
 Witness production falls back to `isuniversal(::Hyperplane)`.
 """
-function isuniversal(hs::HalfSpace{N}, witness::Bool=false
-                    )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+function isuniversal(hs::HalfSpace{N}, witness::Bool=false) where {N<:Real}
     if witness
         return isuniversal(Hyperplane(hs.a, hs.b), true)
     else
@@ -168,7 +166,7 @@ function isuniversal(hs::HalfSpace{N}, witness::Bool=false
 end
 
 """
-    an_element(hs::HalfSpace{N})::Vector{N} where {N<:Real}
+    an_element(hs::HalfSpace{N}) where {N<:Real}
 
 Return some element of a half-space.
 
@@ -180,12 +178,12 @@ Return some element of a half-space.
 
 An element on the defining hyperplane.
 """
-function an_element(hs::HalfSpace{N})::Vector{N} where {N<:Real}
+function an_element(hs::HalfSpace{N}) where {N<:Real}
     return an_element_helper(Hyperplane(hs.a, hs.b))
 end
 
 """
-    ∈(x::AbstractVector{N}, hs::HalfSpace{N})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
 
 Check whether a given point is contained in a half-space.
 
@@ -202,14 +200,13 @@ Check whether a given point is contained in a half-space.
 
 We just check if ``x`` satisfies ``a⋅x ≤ b``.
 """
-function ∈(x::AbstractVector{N}, hs::HalfSpace{N})::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
     return dot(x, hs.a) <= hs.b
 end
 
 """
     rand(::Type{HalfSpace}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
-         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
-        )::HalfSpace{N}
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
 
 Create a random half-space.
 
@@ -234,8 +231,7 @@ function rand(::Type{HalfSpace};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing
-             )::HalfSpace{N}
+              seed::Union{Int, Nothing}=nothing)
     rng = reseed(rng, seed)
     a = randn(rng, N, dim)
     while iszero(a)
@@ -246,7 +242,7 @@ function rand(::Type{HalfSpace};
 end
 
 """
-    isempty(hs::HalfSpace)::Bool
+    isempty(hs::HalfSpace)
 
 Return if a half-space is empty or not.
 
@@ -258,7 +254,7 @@ Return if a half-space is empty or not.
 
 `false`.
 """
-function isempty(hs::HalfSpace)::Bool
+function isempty(hs::HalfSpace)
     return false
 end
 
@@ -303,7 +299,7 @@ function constraints_list(A::AbstractMatrix{N}, b::AbstractVector{N}
 end
 
 """
-    constrained_dimensions(hs::HalfSpace{N})::Vector{Int} where {N<:Real}
+    constrained_dimensions(hs::HalfSpace{N}) where {N<:Real}
 
 Return the indices in which a half-space is constrained.
 
@@ -320,13 +316,12 @@ dimension `i`.
 
 A 2D half-space with constraint ``x1 ≥ 0`` is constrained in dimension 1 only.
 """
-function constrained_dimensions(hs::HalfSpace{N})::Vector{Int} where {N<:Real}
+function constrained_dimensions(hs::HalfSpace{N}) where {N<:Real}
     return nonzero_indices(hs.a)
 end
 
 """
-    halfspace_left(p::AbstractVector{N},
-                   q::AbstractVector{N})::HalfSpace{N} where {N<:Real}
+    halfspace_left(p::AbstractVector{N}, q::AbstractVector{N}) where {N<:Real}
 
 Return a half-space describing the 'left' of a two-dimensional line segment
 through two points.
@@ -382,7 +377,7 @@ true
 ```
 """
 function halfspace_left(p::AbstractVector{N},
-                        q::AbstractVector{N})::HalfSpace{N} where {N<:Real}
+                        q::AbstractVector{N}) where {N<:Real}
     @assert length(p) == length(q) == 2 "the points must be two-dimensional"
     @assert p != q "the points must not be equal"
     a = [q[2] - p[2], p[1] - q[1]]
@@ -390,8 +385,7 @@ function halfspace_left(p::AbstractVector{N},
 end
 
 """
-    halfspace_right(p::AbstractVector{N},
-                    q::AbstractVector{N})::HalfSpace{N} where {N<:Real}
+    halfspace_right(p::AbstractVector{N}, q::AbstractVector{N}) where {N<:Real}
 
 Return a half-space describing the 'right' of a two-dimensional line segment
 through two points.
@@ -411,7 +405,7 @@ describes the right-hand side of the directed line segment `pq`.
 See the documentation of `halfspace_left`.
 """
 function halfspace_right(p::AbstractVector{N},
-                         q::AbstractVector{N})::HalfSpace{N} where {N<:Real}
+                         q::AbstractVector{N}) where {N<:Real}
     return halfspace_left(q, p)
 end
 

@@ -283,7 +283,7 @@ function _isapprox(x::AbstractVector{N}, y::AbstractVector{M};
 end
 
 """
-    ispermutation(u::AbstractVector{T}, v::AbstractVector)::Bool where {T}
+    ispermutation(u::AbstractVector{T}, v::AbstractVector) where {T}
 
 Check that two vectors contain the same elements up to reordering.
 
@@ -312,7 +312,7 @@ Containment check is performed using `LazySets._in(e, v)`, so in the case of
 floating point numbers, the precision to which the check is made is determined
 by the type of elements in `v`. See `_in` and `_isapprox` for more information.
 """
-function ispermutation(u::AbstractVector{T}, v::AbstractVector)::Bool where {T}
+function ispermutation(u::AbstractVector{T}, v::AbstractVector) where {T}
     if length(u) != length(v)
         return false
     end

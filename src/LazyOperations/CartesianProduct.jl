@@ -90,7 +90,7 @@ function swap(cp::CartesianProduct)
 end
 
 """
-    dim(cp::CartesianProduct)::Int
+    dim(cp::CartesianProduct)
 
 Return the dimension of a Cartesian product.
 
@@ -102,7 +102,7 @@ Return the dimension of a Cartesian product.
 
 The ambient dimension of the Cartesian product.
 """
-function dim(cp::CartesianProduct)::Int
+function dim(cp::CartesianProduct)
     return dim(cp.X) + dim(cp.Y)
 end
 
@@ -147,7 +147,7 @@ function ρ(d::AbstractVector{N}, cp::CartesianProduct{N}) where {N<:Real}
 end
 
 """
-    isbounded(cp::CartesianProduct)::Bool
+    isbounded(cp::CartesianProduct)
 
 Determine whether a Cartesian product is bounded.
 
@@ -159,12 +159,12 @@ Determine whether a Cartesian product is bounded.
 
 `true` iff both wrapped sets are bounded.
 """
-function isbounded(cp::CartesianProduct)::Bool
+function isbounded(cp::CartesianProduct)
     return isbounded(cp.X) && isbounded(cp.Y)
 end
 
 """
-    ∈(x::AbstractVector{N}, cp::CartesianProduct{N})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N}, cp::CartesianProduct{N}) where {N<:Real}
 
 Check whether a given point is contained in a Cartesian product.
 
@@ -177,7 +177,7 @@ Check whether a given point is contained in a Cartesian product.
 
 `true` iff ``x ∈ cp``.
 """
-function ∈(x::AbstractVector{N}, cp::CartesianProduct{N})::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, cp::CartesianProduct{N}) where {N<:Real}
     @assert length(x) == dim(cp)
 
     n1 = dim(cp.X)
@@ -186,7 +186,7 @@ function ∈(x::AbstractVector{N}, cp::CartesianProduct{N})::Bool where {N<:Real
 end
 
 """
-    isempty(cp::CartesianProduct)::Bool
+    isempty(cp::CartesianProduct)
 
 Return if a Cartesian product is empty or not.
 
@@ -198,7 +198,7 @@ Return if a Cartesian product is empty or not.
 
 `true` iff any of the sub-blocks is empty.
 """
-function isempty(cp::CartesianProduct)::Bool
+function isempty(cp::CartesianProduct)
     return isempty(cp.X) || isempty(cp.Y)
 end
 
@@ -220,7 +220,7 @@ function constraints_list(cp::CartesianProduct{N}) where {N<:Real}
 end
 
 """
-    vertices_list(cp::CartesianProduct{N})::Vector{Vector{N}} where {N<:Real}
+    vertices_list(cp::CartesianProduct{N}) where {N<:Real}
 
 Return the list of vertices of a (polytopic) Cartesian product.
 
@@ -238,8 +238,7 @@ We assume that the underlying sets are polytopic.
 Then the high-dimensional set of vertices is just the Cartesian product of the
 low-dimensional sets of vertices.
 """
-function vertices_list(cp::CartesianProduct{N}
-                      )::Vector{Vector{N}} where {N<:Real}
+function vertices_list(cp::CartesianProduct{N}) where {N<:Real}
     # collect low-dimensional vertices lists
     vlist_low = (vertices_list(cp.X), vertices_list(cp.Y))
 

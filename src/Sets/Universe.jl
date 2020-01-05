@@ -41,7 +41,7 @@ function constraints_list(U::Universe{N}) where {N<:Real}
 end
 
 """
-    constrained_dimensions(U::Universe)::Vector{Int}
+    constrained_dimensions(U::Universe)
 
 Return the indices in which a universe is constrained.
 
@@ -53,7 +53,7 @@ Return the indices in which a universe is constrained.
 
 The empty vector, as the universe is unconstrained in every dimension.
 """
-function constrained_dimensions(U::Universe)::Vector{Int}
+function constrained_dimensions(U::Universe)
     return Int[]
 end
 
@@ -74,7 +74,7 @@ Return the dimension of a universe.
 
 The dimension of a universe.
 """
-function dim(U::Universe)::Int
+function dim(U::Universe)
     return U.dim
 end
 
@@ -120,7 +120,7 @@ function σ(d::AbstractVector{N}, U::Universe{N}) where {N<:Real}
 end
 
 """
-    ∈(x::AbstractVector{N}, U::Universe{N})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N}, U::Universe{N}) where {N<:Real}
 
 Check whether a given point is contained in a universe.
 
@@ -140,7 +140,7 @@ julia> [1.0, 0.0] ∈ Universe(2)
 true
 ```
 """
-function ∈(x::AbstractVector{N}, U::Universe{N})::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, U::Universe{N}) where {N<:Real}
     @assert length(x) == dim(U)
     return true
 end
@@ -164,8 +164,7 @@ end
 
 """
     rand(::Type{Universe}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
-         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
-        )::Universe{N}
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
 
 Create a universe (note that there is nothing to randomize).
 
@@ -185,14 +184,13 @@ function rand(::Type{Universe};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing
-             )::Universe{N}
+              seed::Union{Int, Nothing}=nothing)
     rng = reseed(rng, seed)
     return Universe{N}(dim)
 end
 
 """
-    isempty(U::Universe)::Bool
+    isempty(U::Universe)
 
 Return if a universe is empty or not.
 
@@ -204,12 +202,12 @@ Return if a universe is empty or not.
 
 `false`.
 """
-function isempty(U::Universe)::Bool
+function isempty(U::Universe)
     return false
 end
 
 """
-    isbounded(U::Universe)::Bool
+    isbounded(U::Universe)
 
 Determine whether a universe is bounded.
 
@@ -221,13 +219,12 @@ Determine whether a universe is bounded.
 
 `false` as the universe is unbounded.
 """
-function isbounded(U::Universe)::Bool
+function isbounded(U::Universe)
     return false
 end
 
 """
-    isuniversal(U::Universe{N}, [witness]::Bool=false
-               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    isuniversal(U::Universe{N}, [witness]::Bool=false) where {N<:Real}
 
 Check whether a universe is universal.
 
@@ -241,8 +238,7 @@ Check whether a universe is universal.
 * If `witness` option is deactivated: `true`
 * If `witness` option is activated: `(true, [])`
 """
-function isuniversal(U::Universe{N}, witness::Bool=false
-                    )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+function isuniversal(U::Universe{N}, witness::Bool=false) where {N<:Real}
     return witness ? (true, N[]) : true
 end
 

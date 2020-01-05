@@ -117,7 +117,7 @@ isconvextype(::Type{<:Rectification}) = false
 Rectification(X::S) where {N<:Real, S<:LazySet{N}} = Rectification{N, S}(X)
 
 """
-    dim(r::Rectification)::Int
+    dim(r::Rectification)
 
 Return the dimension of a rectification.
 
@@ -129,7 +129,7 @@ Return the dimension of a rectification.
 
 The ambient dimension of the rectification.
 """
-function dim(r::Rectification)::Int
+function dim(r::Rectification)
     return dim(r.X)
 end
 
@@ -286,7 +286,7 @@ function ρ(d::AbstractVector{N}, r::Rectification{N}) where {N<:Real}
 end
 
 """
-    an_element(r::Rectification{N})::Vector{N} where {N<:Real}
+    an_element(r::Rectification{N}) where {N<:Real}
 
 Return some element of a rectification.
 
@@ -299,12 +299,12 @@ Return some element of a rectification.
 An element in the rectification.
 The implementation relies on the `an_element` function of the wrapped set.
 """
-function an_element(r::Rectification{N})::Vector{N} where {N<:Real}
+function an_element(r::Rectification{N}) where {N<:Real}
     return rectify(an_element(r.X))
 end
 
 """
-    ∈(x::AbstractVector{N}, r::Rectification{N})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N}, r::Rectification{N}) where {N<:Real}
 
 Check whether a given point is contained in a rectification.
 
@@ -332,7 +332,7 @@ the answer is negative.
 Finally, if there are zero entries in the vector and the vector is not contained
 in the wrapped set, we give up and throw an error.
 """
-function ∈(x::AbstractVector{N}, r::Rectification{N})::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, r::Rectification{N}) where {N<:Real}
     # scan for negative entries
     if any(xi -> xi < zero(N), x)
         return false
@@ -354,7 +354,7 @@ function ∈(x::AbstractVector{N}, r::Rectification{N})::Bool where {N<:Real}
 end
 
 """
-    isempty(r::Rectification)::Bool
+    isempty(r::Rectification)
 
 Check whether a rectification is empty or not.
 
@@ -366,12 +366,12 @@ Check whether a rectification is empty or not.
 
 `true` iff the wrapped set is empty.
 """
-function isempty(r::Rectification)::Bool
+function isempty(r::Rectification)
     return isempty(r.X)
 end
 
 """
-    isbounded(r::Rectification)::Bool
+    isbounded(r::Rectification)
 
 Determine whether a rectification is bounded.
 
@@ -393,7 +393,7 @@ a heuristics.
 Otherwise, we check boundedness of ``X`` in every positive unit direction, which
 is sufficient and necessary for boundedness of ``r``.
 """
-function isbounded(r::Rectification{N})::Bool where {N<:Real}
+function isbounded(r::Rectification{N}) where {N<:Real}
     # check boundedness of the wrapped set
     if isbounded(r.X)
         return true

@@ -113,7 +113,7 @@ end
 
 
 """
-    dim(L::Line)::Int
+    dim(L::Line)
 
 Return the ambient dimension of a line.
 
@@ -125,7 +125,7 @@ Return the ambient dimension of a line.
 
 The ambient dimension of the line, which is 2.
 """
-function dim(L::Line)::Int
+function dim(L::Line)
     return 2
 end
 
@@ -149,7 +149,7 @@ function σ(d::AbstractVector{N}, L::Line{N}) where {N<:Real}
 end
 
 """
-    isbounded(L::Line)::Bool
+    isbounded(L::Line)
 
 Determine whether a line is bounded.
 
@@ -161,13 +161,12 @@ Determine whether a line is bounded.
 
 `false`.
 """
-function isbounded(::Line)::Bool
+function isbounded(::Line)
     return false
 end
 
 """
-    isuniversal(L::Line{N}, [witness]::Bool=false
-               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+    isuniversal(L::Line{N}, [witness]::Bool=false) where {N<:Real}
 
 Check whether a line is universal.
 
@@ -185,8 +184,7 @@ Check whether a line is universal.
 
 Witness production falls back to `isuniversal(::Hyperplane)`.
 """
-function isuniversal(L::Line{N}, witness::Bool=false
-                    )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+function isuniversal(L::Line{N}, witness::Bool=false) where {N<:Real}
     if witness
         return isuniversal(Hyperplane(L.a, L.b), true)
     else
@@ -195,7 +193,7 @@ function isuniversal(L::Line{N}, witness::Bool=false
 end
 
 """
-    an_element(L::Line{N})::Vector{N} where {N<:Real}
+    an_element(L::Line{N}) where {N<:Real}
 
 Return some element of a line.
 
@@ -214,7 +212,7 @@ Otherwise the result is some ``x = [x1, x2]`` such that ``a·[x1, x2] = b``.
 We first find out in which dimension ``a`` is nonzero, say, dimension 1, and
 then choose ``x1 = 1`` and accordingly ``x2 = \\frac{b - a1}{a2}``.
 """
-function an_element(L::Line{N})::Vector{N} where {N<:Real}
+function an_element(L::Line{N}) where {N<:Real}
     if L.b == zero(N)
         return zeros(N, 2)
     end
@@ -226,7 +224,7 @@ function an_element(L::Line{N})::Vector{N} where {N<:Real}
 end
 
 """
-    ∈(x::AbstractVector{N}, L::Line{N})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N}, L::Line{N}) where {N<:Real}
 
 Check whether a given point is contained in a line.
 
@@ -243,15 +241,14 @@ Check whether a given point is contained in a line.
 
 The point ``x`` belongs to the line if and only if ``a⋅x = b`` holds.
 """
-function ∈(x::AbstractVector{N}, L::Line{N})::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, L::Line{N}) where {N<:Real}
     @assert length(x) == dim(L)
     return dot(L.a, x) == L.b
 end
 
 """
     rand(::Type{Line}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
-         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
-        )::Line{N}
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
 
 Create a random line.
 
@@ -276,8 +273,7 @@ function rand(::Type{Line};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing
-             )::Line{N}
+              seed::Union{Int, Nothing}=nothing)
     @assert dim == 2 "cannot create a random Line of dimension $dim"
     rng = reseed(rng, seed)
     a = randn(rng, N, dim)
@@ -289,7 +285,7 @@ function rand(::Type{Line};
 end
 
 """
-    isempty(L::Line)::Bool
+    isempty(L::Line)
 
 Return if a line is empty or not.
 
@@ -301,12 +297,12 @@ Return if a line is empty or not.
 
 `false`.
 """
-function isempty(L::Line)::Bool
+function isempty(L::Line)
     return false
 end
 
 """
-    constrained_dimensions(L::Line{N})::Vector{Int} where {N<:Real}
+    constrained_dimensions(L::Line{N}) where {N<:Real}
 
 Return the indices in which a line is constrained.
 
@@ -323,7 +319,7 @@ A vector of ascending indices `i` such that the line is constrained in dimension
 
 A line with constraint ``x1 = 0`` is constrained in dimension 1 only.
 """
-function constrained_dimensions(L::Line{N})::Vector{Int} where {N<:Real}
+function constrained_dimensions(L::Line{N}) where {N<:Real}
     return nonzero_indices(L.a)
 end
 

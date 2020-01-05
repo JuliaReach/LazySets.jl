@@ -9,12 +9,12 @@ Abstract type for template direction representations.
 ### Notes
 
 All subtypes should implement the standard iterator methods from `Base` and the
-function `dim(d<:AbstractDirections)::Int`.
+function `dim(d<:AbstractDirections)`.
 """
 abstract type AbstractDirections{N} end
 
 """
-    dim(ad::AbstractDirections)::Int
+    dim(ad::AbstractDirections)
 
 Returns the dimension of the generated directions.
 
@@ -26,12 +26,12 @@ Returns the dimension of the generated directions.
 
 The dimension of the generated directions.
 """
-function dim(ad::AbstractDirections)::Int
+function dim(ad::AbstractDirections)
     return ad.n
 end
 
 """
-    isbounding(ad::AbstractDirections)::Bool
+    isbounding(ad::AbstractDirections)
 
 Checks if an overapproximation with a list of template directions results in a
 bounded set, given a bounded input set.
@@ -55,7 +55,7 @@ By default, this function returns `false` in order to be conservative.
 Custom subtypes of `AbstractDirections` should hence add a method for this
 function.
 """
-function isbounding(ad::AbstractDirections)::Bool
+function isbounding(ad::AbstractDirections)
     return false
 end
 

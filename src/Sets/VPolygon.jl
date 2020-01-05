@@ -62,7 +62,7 @@ VPolygon() = VPolygon{Float64}()
 
 """
     remove_redundant_vertices!(P::VPolygon{N};
-                               [algorithm]::String="monotone_chain")::VPolygon{N} where {N<:Real}
+                               [algorithm]::String="monotone_chain") where {N<:Real}
 
 Remove the redundant vertices of the given polygon.
 
@@ -83,13 +83,13 @@ given input polygon `P`; see `?convex_hull` for details on the available algorit
 The vertices of the output polygon are sorted in counter-clockwise fashion.
 """
 function remove_redundant_vertices!(P::VPolygon{N};
-                                    algorithm::String="monotone_chain")::VPolygon{N} where {N<:Real}
+                                    algorithm::String="monotone_chain") where {N<:Real}
     convex_hull!(P.vertices; algorithm=algorithm)
 end
 
 """
     remove_redundant_vertices(P::VPolygon{N};
-                              [algorithm]::String="monotone_chain")::VPolygon{N} where {N<:Real}
+                              [algorithm]::String="monotone_chain") where {N<:Real}
 
 Return the polygon obtained by removing the redundant vertices of the given polygon.
 
@@ -110,7 +110,7 @@ given input polygon `P`; see `?convex_hull` for details on the available algorit
 The vertices of the output polygon are sorted in counter-clockwise fashion.
 """
 function remove_redundant_vertices(P::VPolygon{N};
-                                   algorithm::String="monotone_chain")::VPolygon{N} where {N<:Real}
+                                   algorithm::String="monotone_chain") where {N<:Real}
     return remove_redundant_vertices!(copy(P), algorithm=algorithm)
 end
 
@@ -127,7 +127,7 @@ end
 
 
 """
-    tovrep(P::VPolygon{N})::VPolygon{N} where {N<:Real}
+    tovrep(P::VPolygon{N}) where {N<:Real}
 
 Build a vertex representation of the given polygon.
 
@@ -139,7 +139,7 @@ Build a vertex representation of the given polygon.
 
 The identity, i.e., the same polygon instance.
 """
-function tovrep(P::VPolygon{N})::VPolygon{N} where {N<:Real}
+function tovrep(P::VPolygon{N}) where {N<:Real}
     return P
 end
 
@@ -207,7 +207,7 @@ end
 
 
 """
-    vertices_list(P::VPolygon{N})::Vector{Vector{N}} where {N<:Real}
+    vertices_list(P::VPolygon{N}) where {N<:Real}
 
 Return the list of vertices of a convex polygon in vertex representation.
 
@@ -219,7 +219,7 @@ Return the list of vertices of a convex polygon in vertex representation.
 
 List of vertices.
 """
-function vertices_list(P::VPolygon{N})::Vector{Vector{N}} where {N<:Real}
+function vertices_list(P::VPolygon{N}) where {N<:Real}
     return P.vertices
 end
 
@@ -323,7 +323,7 @@ function _binary_support_vector(d::AbstractVector{N}, P::VPolygon{N}) where {N <
 end
 
 """
-    an_element(P::VPolygon{N})::Vector{N} where {N<:Real}
+    an_element(P::VPolygon{N}) where {N<:Real}
 
 Return some element of a polygon in vertex representation.
 
@@ -335,13 +335,13 @@ Return some element of a polygon in vertex representation.
 
 The first vertex of the polygon in vertex representation.
 """
-function an_element(P::VPolygon{N})::Vector{N} where {N<:Real}
+function an_element(P::VPolygon{N}) where {N<:Real}
     @assert !isempty(P.vertices) "the polygon has no vertices"
     return P.vertices[1]
 end
 
 """
-    ∈(x::AbstractVector{N}, P::VPolygon{N})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N}, P::VPolygon{N}) where {N<:Real}
 
 Check whether a given point is contained in a polygon in vertex representation.
 
@@ -380,7 +380,7 @@ julia> [44//10, 34//10] ∈ P  #  with rational numbers the answer is correct
 true
 ```
 """
-function ∈(x::AbstractVector{N}, P::VPolygon{N})::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, P::VPolygon{N}) where {N<:Real}
     @assert length(x) == 2
 
     # special cases: 0 or 1 vertex
@@ -457,8 +457,7 @@ end
 
 """
     rand(::Type{VPolygon}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
-         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
-        )::VPolygon{N}
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
 
 Create a random polygon in vertex representation.
 
@@ -492,8 +491,7 @@ function rand(::Type{VPolygon};
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int, Nothing}=nothing,
-              num_vertices::Int=-1
-             )::VPolygon{N}
+              num_vertices::Int=-1)
     @assert dim == 2 "cannot create a random VPolygon of dimension $dim"
     rng = reseed(rng, seed)
     if num_vertices < 0
@@ -559,7 +557,7 @@ end
 
 """
     convex_hull(P::VPolygon{N}, Q::VPolygon{N};
-                [algorithm]::String="monotone_chain")::VPolygon{N} where {N<:Real}
+                [algorithm]::String="monotone_chain") where {N<:Real}
 
 Return the convex hull of two polygons in vertex representation.
 
@@ -582,7 +580,7 @@ algorithms. The vertices of the output polygon are sorted in counter-clockwise
 fashion.
 """
 function convex_hull(P::VPolygon{N}, Q::VPolygon{N};
-                     algorithm::String="monotone_chain")::VPolygon{N} where {N<:Real}
+                     algorithm::String="monotone_chain") where {N<:Real}
     vunion = [P.vertices; Q.vertices]
     convex_hull!(vunion; algorithm=algorithm)
     return VPolygon(vunion, apply_convex_hull=false)

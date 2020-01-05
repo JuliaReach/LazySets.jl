@@ -31,7 +31,7 @@ isconvextype(::Type{<:UnionSetArray}) = false
 @declare_array_version(UnionSet, UnionSetArray)
 
 """
-   dim(cup::UnionSetArray)::Int
+   dim(cup::UnionSetArray)
 
 Return the dimension of the set union of a finite number of convex sets.
 
@@ -43,12 +43,12 @@ Return the dimension of the set union of a finite number of convex sets.
 
 The ambient dimension of the union of a finite number of convex sets.
 """
-function dim(cup::UnionSetArray)::Int
+function dim(cup::UnionSetArray)
    return dim(cup.array[1])
 end
 
 """
-   array(cup::UnionSetArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
+   array(cup::UnionSetArray{N, S}) where {N<:Real, S<:LazySet{N}}
 
 Return the array of a union of a finite number of convex sets.
 
@@ -60,7 +60,7 @@ Return the array of a union of a finite number of convex sets.
 
 The array that holds the union of a finite number of convex sets.
 """
-function array(cup::UnionSetArray{N, S})::Vector{S} where {N<:Real, S<:LazySet{N}}
+function array(cup::UnionSetArray{N, S}) where {N<:Real, S<:LazySet{N}}
    return cup.array
 end
 
@@ -141,7 +141,7 @@ function ρ(d::AbstractVector{N}, cup::UnionSetArray{N}) where {N<:Real}
 end
 
 """
-   an_element(cup::UnionSetArray{N})::Vector{N} where {N<:Real}
+   an_element(cup::UnionSetArray{N}) where {N<:Real}
 
 Return some element of a union of a finite number of convex sets.
 
@@ -157,12 +157,12 @@ An element in the union of a finite number of convex sets.
 
 We use `an_element` on the first wrapped set.
 """
-function an_element(cup::UnionSetArray{N})::Vector{N} where {N<:Real}
+function an_element(cup::UnionSetArray{N}) where {N<:Real}
    return an_element(array(cup)[1])
 end
 
 """
-   ∈(x::AbstractVector{N}, cup::UnionSetArray{N})::Bool where {N<:Real}
+   ∈(x::AbstractVector{N}, cup::UnionSetArray{N}) where {N<:Real}
 
 Check whether a given point is contained in a union of a finite number of convex
 sets.
@@ -176,12 +176,12 @@ sets.
 
 `true` iff ``x ∈ cup``.
 """
-function ∈(x::AbstractVector{N}, cup::UnionSetArray{N})::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, cup::UnionSetArray{N}) where {N<:Real}
    return any(X -> x ∈ X, array(cup))
 end
 
 """
-   isempty(cup::UnionSetArray)::Bool
+   isempty(cup::UnionSetArray)
 
 Check whether a union of a finite number of convex sets is empty.
 
@@ -193,12 +193,12 @@ Check whether a union of a finite number of convex sets is empty.
 
 `true` iff the union is empty.
 """
-function isempty(cup::UnionSetArray)::Bool
+function isempty(cup::UnionSetArray)
    return all(isempty, array(cup))
 end
 
 """
-   isbounded(cup::UnionSetArray)::Bool
+   isbounded(cup::UnionSetArray)
 
 Determine whether a union of a finite number of convex sets is bounded.
 
@@ -210,6 +210,6 @@ Determine whether a union of a finite number of convex sets is bounded.
 
 `true` iff the union is bounded.
 """
-function isbounded(cup::UnionSetArray)::Bool
+function isbounded(cup::UnionSetArray)
    return all(isbounded, array(cup))
 end

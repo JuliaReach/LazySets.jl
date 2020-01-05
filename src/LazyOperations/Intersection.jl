@@ -29,11 +29,11 @@ mutable struct IntersectionCache
     IntersectionCache() = new(Int8(-1))
 end
 
-function isempty_known(c::IntersectionCache)::Bool
+function isempty_known(c::IntersectionCache)
     return c.isempty != Int8(-1)
 end
 
-function isempty(c::IntersectionCache)::Bool
+function isempty(c::IntersectionCache)
     @assert isempty_known(c) "'isempty_known' only works if 'isempty' " *
         "returns 'true'"
     return c.isempty == Int8(1)
@@ -188,7 +188,7 @@ end
 
 
 """
-    dim(cap::Intersection)::Int
+    dim(cap::Intersection)
 
 Return the dimension of an intersection of two convex sets.
 
@@ -200,7 +200,7 @@ Return the dimension of an intersection of two convex sets.
 
 The ambient dimension of the intersection of two convex sets.
 """
-function dim(cap::Intersection)::Int
+function dim(cap::Intersection)
     return dim(cap.X)
 end
 
@@ -278,7 +278,7 @@ function ρ_helper(d::AbstractVector{N},
 end
 
 """
-    use_precise_ρ(cap::Intersection{N})::Bool where {N<:Real}
+    use_precise_ρ(cap::Intersection{N}) where {N<:Real}
 
 Determine whether a precise algorithm for computing ``ρ`` shall be applied.
 
@@ -299,7 +299,7 @@ returned.
 
 This function can be overwritten by the user to control the policy.
 """
-function use_precise_ρ(cap::Intersection{N})::Bool where {N<:Real}
+function use_precise_ρ(cap::Intersection{N}) where {N<:Real}
     return true
 end
 
@@ -522,7 +522,7 @@ function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2}
 end
 
 """
-    isbounded(cap::Intersection)::Bool
+    isbounded(cap::Intersection)
 
 Determine whether an intersection of two convex sets is bounded.
 
@@ -539,7 +539,7 @@ Determine whether an intersection of two convex sets is bounded.
 We first check if any of the wrapped sets is bounded.
 Otherwise, we check boundedness via [`isbounded_unit_dimensions`](@ref).
 """
-function isbounded(cap::Intersection)::Bool
+function isbounded(cap::Intersection)
     if isbounded(cap.X) || isbounded(cap.Y)
         return true
     end
@@ -547,7 +547,7 @@ function isbounded(cap::Intersection)::Bool
 end
 
 """
-    ∈(x::AbstractVector{N}, cap::Intersection{N})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N}, cap::Intersection{N}) where {N<:Real}
 
 Check whether a given point is contained in an intersection of two convex sets.
 
@@ -560,7 +560,7 @@ Check whether a given point is contained in an intersection of two convex sets.
 
 `true` iff ``x ∈ cap``.
 """
-function ∈(x::AbstractVector{N}, cap::Intersection{N})::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, cap::Intersection{N}) where {N<:Real}
     return (x ∈ cap.X) && (x ∈ cap.Y)
 end
 
@@ -602,7 +602,7 @@ end
 
 
 """
-    isempty(cap::Intersection)::Bool
+    isempty(cap::Intersection)
 
 Return if the intersection is empty or not.
 
@@ -618,7 +618,7 @@ Return if the intersection is empty or not.
 
 The result will be cached, so a second query will be fast.
 """
-function isempty(cap::Intersection)::Bool
+function isempty(cap::Intersection)
     if isempty_known(cap)
         # use cached result
         return isempty(cap.cache)

@@ -3,8 +3,7 @@
 # ===================================
 
 """
-    box_approximation(S::LazySet{N})::Union{Hyperrectangle{N}, EmptySet{N}}
-        where {N<:Real}
+    box_approximation(S::LazySet{N}) where {N<:Real}
 
 Overapproximate a convex set by a tight hyperrectangle.
 
@@ -16,8 +15,7 @@ Overapproximate a convex set by a tight hyperrectangle.
 
 A tight hyperrectangle.
 """
-function box_approximation(S::LazySet{N}
-                          )::Union{Hyperrectangle{N}, EmptySet{N}} where {N<:Real}
+function box_approximation(S::LazySet{N}) where {N<:Real}
     return overapproximate(S, Hyperrectangle)
 end
 
@@ -29,9 +27,7 @@ Alias for `box_approximation`.
 interval_hull = box_approximation
 
 """
-    box_approximation_symmetric(S::LazySet{N}
-                               )::Union{Hyperrectangle{N}, EmptySet{N}}
-                                where {N<:Real}
+    box_approximation_symmetric(S::LazySet{N}) where {N<:Real}
 
 Overapproximate a convex set by a tight hyperrectangle centered in the origin.
 
@@ -48,9 +44,7 @@ A tight hyperrectangle centered in the origin.
 The center of the box is the origin, and the radius is obtained by computing the
 maximum value of the support function evaluated at the canonical directions.
 """
-function box_approximation_symmetric(S::LazySet{N};
-                                    )::Union{Hyperrectangle{N},
-                                             EmptySet{N}} where {N<:Real}
+function box_approximation_symmetric(S::LazySet{N}) where {N<:Real}
     (c, r) = box_approximation_helper(S)
     if r[1] < 0
         return EmptySet{N}()
@@ -118,8 +112,7 @@ functions in the same directions.
 end
 
 """
-    ballinf_approximation(S::LazySet{N}
-                         )::Union{BallInf{N}, EmptySet{N}} where {N<:Real}
+    ballinf_approximation(S::LazySet{N}) where {N<:Real}
 
 Overapproximate a convex set by a tight ball in the infinity norm.
 
@@ -131,8 +124,7 @@ Overapproximate a convex set by a tight ball in the infinity norm.
 
 A tight ball in the infinity norm.
 """
-function ballinf_approximation(S::LazySet{N}
-                              )::Union{BallInf{N}, EmptySet{N}} where {N<:Real}
+function ballinf_approximation(S::LazySet{N}) where {N<:Real}
     return overapproximate(S, BallInf)
 end
 

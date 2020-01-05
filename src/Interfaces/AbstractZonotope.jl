@@ -28,8 +28,7 @@ ball in ``\\mathbb{R}^n`` by an affine transformation.
 See [`Zonotope`](@ref) for a standard implementation of this interface.
 
 Every concrete `AbstractZonotope` must define the following functions:
-- `genmat(::AbstractZonotope{N})::AbstractMatrix{N}` -- return the generator
-    matrix
+- `genmat(::AbstractZonotope{N})` -- return the generator matrix
 - `generators(::AbstractZonotope{N})` -- return an iterator over the generators
 
 Since the functions `genmat` and `generators` can be defined in terms of each
@@ -124,7 +123,7 @@ end
 
 
 """
-    ngens(Z::AbstractZonotope)::Int
+    ngens(Z::AbstractZonotope)
 
 Return the number of generators of a zonotopic set.
 
@@ -136,12 +135,12 @@ Return the number of generators of a zonotopic set.
 
 An integer representing the number of generators.
 """
-function ngens(Z::AbstractZonotope)::Int
+function ngens(Z::AbstractZonotope)
     return length(generators(Z))
 end
 
 """
-    order(Z::AbstractZonotope)::Rational
+    order(Z::AbstractZonotope)
 
 Return the order of a zonotope.
 
@@ -158,7 +157,7 @@ A rational number representing the order of the zonotope.
 The order of a zonotope is defined as the quotient of its number of generators
 and its dimension.
 """
-function order(Z::AbstractZonotope)::Rational
+function order(Z::AbstractZonotope)
     return ngens(Z) // dim(Z)
 end
 

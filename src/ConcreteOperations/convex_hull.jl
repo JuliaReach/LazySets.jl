@@ -72,7 +72,7 @@ end
                 [algorithm]=nothing,
                 [backend]=nothing,
                 [solver]=nothing
-                )::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
+                ) where {N<:Real, VN<:AbstractVector{N}}
 
 Compute the convex hull of the given points.
 
@@ -144,14 +144,14 @@ function convex_hull(points::Vector{VN};
                      algorithm=nothing,
                      backend=nothing,
                      solver=nothing
-                     )::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
+                     ) where {N<:Real, VN<:AbstractVector{N}}
     return convex_hull!(copy(points), algorithm=algorithm, backend=backend, solver=solver)
 end
 
 function convex_hull!(points::Vector{VN};
                       algorithm=nothing,
                       backend=nothing,
-                      solver=nothing)::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
+                      solver=nothing) where {N<:Real, VN<:AbstractVector{N}}
 
     m = length(points)
 
@@ -372,7 +372,7 @@ function _four_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N<
     return points
 end
 
-function _convex_hull_1d!(points::Vector{VN})::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
+function _convex_hull_1d!(points::Vector{VN}) where {N<:Real, VN<:AbstractVector{N}}
     points[1:2] = [minimum(points), maximum(points)]
     return resize!(points, 2)
 end
@@ -380,7 +380,7 @@ end
 function _convex_hull_nd!(points::Vector{VN};
                           backend=nothing,
                           solver=nothing
-                          )::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
+                          ) where {N<:Real, VN<:AbstractVector{N}}
     V = VPolytope(points)
     Vch = remove_redundant_vertices(V, backend=backend, solver=solver)
     m = length(Vch.vertices)
@@ -390,7 +390,7 @@ end
 
 function _convex_hull_2d!(points::Vector{VN};
                           algorithm="monotone_chain"
-                         )::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
+                         ) where {N<:Real, VN<:AbstractVector{N}}
     if algorithm == nothing
         algorithm = default_convex_hull_algorithm(points)
     end
@@ -405,7 +405,7 @@ end
 
 """
     monotone_chain!(points::Vector{VN}; sort::Bool=true
-                   )::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
+                   ) where {N<:Real, VN<:AbstractVector{N}}
 
 Compute the convex hull of points in the plane using Andrew's monotone chain
 method.
@@ -438,7 +438,7 @@ For further details see
 [Monotone chain](https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain)
 """
 function monotone_chain!(points::Vector{VN}; sort::Bool=true
-                        )::Vector{VN} where {N<:Real, VN<:AbstractVector{N}}
+                        ) where {N<:Real, VN<:AbstractVector{N}}
 
     @inline function build_hull!(semihull, iterator, points)
         @inbounds for i in iterator

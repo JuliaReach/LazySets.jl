@@ -1,7 +1,7 @@
 import Base.issubset
 
 # this operation is forbidden, but it is a common error so we give a detailed error message
-function ⊆(::AbstractVector{N}, ::LazySet{N})::Bool where {N<:Real}
+function ⊆(::AbstractVector{N}, ::LazySet{N}) where {N<:Real}
     error("cannot make an inclusion check if the left-hand side " *
           "is a vector; either wrap it as a set with one element, as in " *
           "`Singleton(v) ⊆ X`, or check for set membership, as in `v ∈ X` " *
@@ -53,7 +53,7 @@ end
 
 """
     ⊆(S::LazySet{N}, H::AbstractHyperrectangle{N}, [witness]::Bool=false
-     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+     ) where {N<:Real}
 
 Check whether a convex set is contained in a hyperrectangular set, and if not,
 optionally compute a witness.
@@ -77,13 +77,13 @@ optionally compute a witness.
 is the interval hull operator.
 """
 function ⊆(S::LazySet{N}, H::AbstractHyperrectangle{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     return ⊆(Approximations.interval_hull(S), H, witness)
 end
 
 """
     ⊆(P::AbstractPolytope{N}, H::AbstractHyperrectangle, [witness]::Bool=false
-     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+     ) where {N<:Real}
 
 Check whether a polytope is contained in a hyperrectangular set, and if not,
 optionally compute a witness.
@@ -113,7 +113,7 @@ Since ``H`` is convex, ``P ⊆ H`` iff ``v_i ∈ H`` for all vertices ``v_i`` of
 function ⊆(P::AbstractPolytope{N},
            H::AbstractHyperrectangle,
            witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     @assert dim(P) == dim(H)
 
     return _issubset_vertices_list(P, H, witness)
@@ -124,7 +124,7 @@ end
     ⊆(H1::AbstractHyperrectangle{N},
       H2::AbstractHyperrectangle{N},
       [witness]::Bool=false
-     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+     ) where {N<:Real}
 
 Check whether a given hyperrectangular set is contained in another
 hyperrectangular set, and if not, optionally compute a witness.
@@ -150,7 +150,7 @@ hyperrectangular set, and if not, optionally compute a witness.
 function ⊆(H1::AbstractHyperrectangle{N},
            H2::AbstractHyperrectangle{N},
            witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     @assert dim(H1) == dim(H2)
     c1 = center(H1)
     c2 = center(H2)
@@ -315,31 +315,31 @@ end
 function ⊆(P1::AbstractPolytope{N},
            P2::AbstractPolyhedron{N},
            witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     return invoke(⊆, Tuple{LazySet{N}, typeof(P2), Bool}, P1, P2, witness)
 end
 function ⊆(H::AbstractHyperrectangle{N},
            P::AbstractPolyhedron{N},
            witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     return invoke(⊆, Tuple{LazySet{N}, typeof(P), Bool}, H, P, witness)
 end
 function ⊆(S::AbstractSingleton{N},
            P::AbstractPolyhedron{N},
            witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     return invoke(⊆, Tuple{LazySet{N}, typeof(P), Bool}, S, P, witness)
 end
 function ⊆(L::LineSegment{N},
            P::AbstractPolyhedron{N},
            witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     return invoke(⊆, Tuple{LazySet{N}, typeof(P), Bool}, L, P, witness)
 end
 function ⊆(P::AbstractPolytope{N},
            H::AbstractHyperrectangle{N},
            witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     return invoke(⊆,
                   Tuple{LazySet{N}, AbstractHyperrectangle{N}, Bool},
                   P, H, witness)
@@ -351,7 +351,7 @@ end
 
 """
     ⊆(S::AbstractSingleton{N}, set::LazySet{N}, [witness]::Bool=false
-     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+     ) where {N<:Real}
 
 Check whether a given set with a single value is contained in a convex set, and
 if not, optionally compute a witness.
@@ -371,7 +371,7 @@ if not, optionally compute a witness.
     ``v ∈ S \\setminus \\text{set}``
 """
 function ⊆(S::AbstractSingleton{N}, set::LazySet{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     result = element(S) ∈ set
     if witness
         return (result, result ? N[] : element(S))
@@ -385,7 +385,7 @@ end
     ⊆(S::AbstractSingleton{N},
       H::AbstractHyperrectangle{N},
       [witness]::Bool=false
-     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+     ) where {N<:Real}
 
 Check whether a given set with a single value is contained in a hyperrectangular
 set, and if not, optionally compute a witness.
@@ -410,7 +410,7 @@ This copy-pasted method just exists to avoid method ambiguities.
 function ⊆(S::AbstractSingleton{N},
            H::AbstractHyperrectangle{N},
            witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     result = element(S) ∈ H
     if witness
         return (result, result ? N[] : element(S))
@@ -424,7 +424,7 @@ end
     ⊆(S1::AbstractSingleton{N},
       S2::AbstractSingleton{N},
       [witness]::Bool=false
-     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+     ) where {N<:Real}
 
 Check whether a given set with a single value is contained in another set with a
 single value, and if not, optionally compute a witness.
@@ -445,7 +445,7 @@ single value, and if not, optionally compute a witness.
 function ⊆(S1::AbstractSingleton{N},
            S2::AbstractSingleton{N},
            witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     result = element(S1) == element(S2)
     if witness
         return (result, result ? N[] : element(S1))
@@ -460,7 +460,7 @@ end
 
 """
     ⊆(B1::Ball2{N}, B2::Ball2{N}, [witness]::Bool=false
-     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:AbstractFloat}
+     ) where {N<:AbstractFloat}
 
 Check whether a ball in the 2-norm is contained in another ball in the 2-norm,
 and if not, optionally compute a witness.
@@ -483,7 +483,7 @@ and if not, optionally compute a witness.
 ``B1 ⊆ B2`` iff ``‖ c_1 - c_2 ‖_2 + r_1 ≤ r_2``
 """
 function ⊆(B1::Ball2{N}, B2::Ball2{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:AbstractFloat}
+          ) where {N<:AbstractFloat}
     result = norm(B1.center - B2.center, 2) + B1.radius <= B2.radius
     if witness
         if result
@@ -506,7 +506,7 @@ end
     ⊆(B::Union{Ball2{N}, Ballp{N}},
       S::AbstractSingleton{N},
       [witness]::Bool=false
-     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:AbstractFloat}
+     ) where {N<:AbstractFloat}
 
 Check whether a ball in the 2-norm or p-norm is contained in a set with a single
 value, and if not, optionally compute a witness.
@@ -527,7 +527,7 @@ value, and if not, optionally compute a witness.
 function ⊆(B::Union{Ball2{N}, Ballp{N}},
            S::AbstractSingleton{N},
            witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:AbstractFloat}
+          ) where {N<:AbstractFloat}
     result = B.center == element(S) && B.radius == 0
     if witness
         if result
@@ -553,7 +553,7 @@ end
 
 """
     ⊆(L::LineSegment{N}, S::LazySet{N}, [witness]::Bool=false
-     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+     ) where {N<:Real}
 
 Check whether a line segment is contained in a convex set, and if not,
 optionally compute a witness.
@@ -577,7 +577,7 @@ Since ``S`` is convex, ``L ⊆ S`` iff ``p ∈ S`` and ``q ∈ S``, where ``p, q
 the end points of ``L``.
 """
 function ⊆(L::LineSegment{N}, S::LazySet{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     p_in_S = L.p ∈ S
     result = p_in_S && L.q ∈ S
     if !witness
@@ -592,7 +592,7 @@ end
 
 """
     ⊆(L::LineSegment{N}, H::AbstractHyperrectangle{N}, [witness]::Bool=false
-     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+     ) where {N<:Real}
 
 Check whether a line segment is contained in a hyperrectangular set, and if not,
 optionally compute a witness.
@@ -620,7 +620,7 @@ Since ``H`` is convex, ``L ⊆ H`` iff ``p ∈ H`` and ``q ∈ H``, where ``p, q
 the end points of ``L``.
 """
 function ⊆(L::LineSegment{N}, H::AbstractHyperrectangle{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     p_in_H = L.p ∈ H
     result = p_in_H && L.q ∈ H
     if !witness
@@ -660,7 +660,7 @@ end
 
 """
     ⊆(∅::EmptySet{N}, X::LazySet{N}, [witness]::Bool=false
-     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+     ) where {N<:Real}
 
 Check whether an empty set is contained in another set.
 
@@ -676,7 +676,7 @@ Check whether an empty set is contained in another set.
 `true`.
 """
 function ⊆(∅::EmptySet{N}, X::LazySet{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     return witness ? (true, N[]) : true
 end
 
@@ -684,19 +684,19 @@ end
 function ⊆(∅::EmptySet{N},
            ::AbstractPolyhedron{N},
            witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     return witness ? (true, N[]) : true
 end
 function ⊆(∅::EmptySet{N},
            ::AbstractHyperrectangle{N},
            witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     return witness ? (true, N[]) : true
 end
 
 """
     ⊆(X::LazySet{N}, ∅::EmptySet{N}, [witness]::Bool=false
-     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+     ) where {N<:Real}
 
 Check whether a set is contained in an empty set.
 
@@ -716,7 +716,7 @@ We rely on `isempty(X)` for the emptiness check and on `an_element(X)` for
 witness production.
 """
 function ⊆(X::LazySet{N}, ∅::EmptySet{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     if isempty(X)
         return witness ? (true, N[]) : true
     else
@@ -726,7 +726,7 @@ end
 
 # disambiguation
 function ⊆(X::AbstractPolytope{N}, ::EmptySet{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     if isempty(X)
         return witness ? (true, N[]) : true
     else
@@ -734,15 +734,15 @@ function ⊆(X::AbstractPolytope{N}, ::EmptySet{N}, witness::Bool=false
     end
 end
 function ⊆(X::AbstractSingleton{N}, ::EmptySet{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     return witness ? (false, an_element(X)) : false
 end
 function ⊆(X::LineSegment{N}, ::EmptySet{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     return witness ? (false, an_element(X)) : false
 end
 function ⊆(::EmptySet{N}, ::EmptySet{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     return witness ? (true, N[]) : true
 end
 
@@ -752,7 +752,7 @@ end
 
 """
     ⊆(cup::UnionSet{N}, X::LazySet{N}, [witness]::Bool=false
-     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+     ) where {N<:Real}
 
 Check whether a union of two convex sets is contained in another set.
 
@@ -771,13 +771,13 @@ Check whether a union of two convex sets is contained in another set.
     ``v ∈ \\text{cup} \\setminus X``
 """
 function ⊆(cup::UnionSet{N}, X::LazySet{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     return ⊆(UnionSetArray([cup.X, cup.Y]), X, witness)
 end
 
 """
     ⊆(cup::UnionSetArray{N}, X::LazySet{N}, [witness]::Bool=false
-     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+     ) where {N<:Real}
 
 Check whether a union of a finite number of convex sets is contained in another
 set.
@@ -797,7 +797,7 @@ set.
     ``v ∈ \\text{cup} \\setminus X``
 """
 function ⊆(cup::UnionSetArray{N}, X::LazySet{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     result = true
     w = N[]
     for Y in array(cup)
@@ -819,7 +819,7 @@ end
 
 """
     ⊆(X::LazySet{N}, U::Universe{N}, [witness]::Bool=false
-     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+     ) where {N<:Real}
 
 Check whether a convex set is contained in a universe.
 
@@ -835,35 +835,35 @@ Check whether a convex set is contained in a universe.
 * If `witness` option is activated: `(true, [])`
 """
 function ⊆(X::LazySet{N}, U::Universe{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     return witness ? (true, N[]) : true
 end
 
 # disambiguation
 function ⊆(P::AbstractPolytope{N}, ::Universe{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     return witness ? (true, N[]) : true
 end
 function ⊆(P::AbstractHyperrectangle{N}, ::Universe{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     return witness ? (true, N[]) : true
 end
 function ⊆(S::AbstractSingleton{N}, ::Universe{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     return witness ? (true, N[]) : true
 end
 function ⊆(::LineSegment{N}, ::Universe{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     return witness ? (true, N[]) : true
 end
 function ⊆(::EmptySet{N}, ::Universe{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     return witness ? (true, N[]) : true
 end
 
 """
     ⊆(U::Universe{N}, X::LazySet{N}, [witness]::Bool=false
-     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+     ) where {N<:Real}
 
 Check whether a universe is contained in another convex set, and otherwise
 optionally compute a witness.
@@ -887,33 +887,33 @@ optionally compute a witness.
 We fall back to `isuniversal(X)`.
 """
 function ⊆(U::Universe{N}, X::LazySet{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     return isuniversal(X, witness)
 end
 
 # disambiguation
 function ⊆(::Universe{N}, ::Universe{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     return witness ? (true, N[]) : true
 end
 function ⊆(::Universe{N}, P::AbstractPolyhedron{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     return isuniversal(P, witness)
 end
 function ⊆(::Universe{N}, P::AbstractPolytope{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     return isuniversal(P, witness)
 end
 function ⊆(::Universe{N}, H::AbstractHyperrectangle{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     return isuniversal(H, witness)
 end
 function ⊆(::Universe{N}, S::AbstractSingleton{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     return isuniversal(S, witness)
 end
 function ⊆(::Universe{N}, ::EmptySet{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     return isuniversal(P, witness)
 end
 
@@ -923,7 +923,7 @@ end
 
 """
     ⊆(X::LazySet{N}, C::Complement{N}, [witness]::Bool=false
-     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+     ) where {N<:Real}
 
 Check whether a convex set is contained in the complement of another convex set,
 and otherwise optionally compute a witness.
@@ -951,7 +951,7 @@ We fall back to `isdisjoint(X, C.X)`, which can be justified as follows.
 ```
 """
 function ⊆(X::LazySet{N}, C::Complement{N}, witness::Bool=false
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     return isdisjoint(X, C.X, witness)
 end
 
@@ -962,7 +962,7 @@ end
 """
     ⊆(X::CartesianProductArray{N}, Y::CartesianProductArray{N},
       witness::Bool=false; check_block_equality::Bool=true
-     )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+     ) where {N<:Real}
 
 Check whether a Cartesian product of finitely many convex sets is contained in
 another Cartesian product of finitely many convex sets, and otherwise optionally
@@ -1002,7 +1002,7 @@ function ⊆(X::CartesianProductArray{N},
            Y::CartesianProductArray{N},
            witness::Bool=false;
            check_block_equality::Bool=true
-          )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+          ) where {N<:Real}
     aX = array(X)
     aY = array(Y)
     if check_block_equality && !same_block_structure(aX, aY)

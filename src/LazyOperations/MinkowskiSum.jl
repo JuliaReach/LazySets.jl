@@ -87,7 +87,7 @@ function swap(ms::MinkowskiSum)
 end
 
 """
-    dim(ms::MinkowskiSum)::Int
+    dim(ms::MinkowskiSum)
 
 Return the dimension of a Minkowski sum.
 
@@ -99,7 +99,7 @@ Return the dimension of a Minkowski sum.
 
 The ambient dimension of the Minkowski sum.
 """
-function dim(ms::MinkowskiSum)::Int
+function dim(ms::MinkowskiSum)
     return dim(ms.X)
 end
 
@@ -153,7 +153,7 @@ function ρ(d::AbstractVector{N}, ms::MinkowskiSum{N}) where {N<:Real}
 end
 
 """
-    isbounded(ms::MinkowskiSum)::Bool
+    isbounded(ms::MinkowskiSum)
 
 Determine whether a Minkowski sum is bounded.
 
@@ -165,12 +165,12 @@ Determine whether a Minkowski sum is bounded.
 
 `true` iff both wrapped sets are bounded.
 """
-function isbounded(ms::MinkowskiSum)::Bool
+function isbounded(ms::MinkowskiSum)
     return isbounded(ms.X) && isbounded(ms.Y)
 end
 
 """
-    isempty(ms::MinkowskiSum)::Bool
+    isempty(ms::MinkowskiSum)
 
 Return if a Minkowski sum is empty or not.
 
@@ -182,7 +182,7 @@ Return if a Minkowski sum is empty or not.
 
 `true` iff any of the wrapped sets are empty.
 """
-function isempty(ms::MinkowskiSum)::Bool
+function isempty(ms::MinkowskiSum)
     return isempty(ms.X) || isempty(ms.Y)
 end
 
@@ -249,8 +249,7 @@ end
 # ================
 
 @inline function σ_helper(d::AbstractVector{N},
-                          array::AbstractVector{<:LazySet}
-                         )::Vector{N} where {N<:Real}
+                          array::AbstractVector{<:LazySet}) where {N<:Real}
     svec = zeros(N, length(d))
     for sj in array
         svec += σ(d, sj)

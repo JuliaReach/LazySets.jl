@@ -14,8 +14,7 @@ Abstract type for compact convex polytopic sets.
 ### Notes
 
 Every concrete `AbstractPolytope` must define the following functions:
-- `vertices_list(::AbstractPolytope{N})::Vector{Vector{N}}` -- return a list of
-    all vertices
+- `vertices_list(::AbstractPolytope{N})` -- return a list of all vertices
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractPolytope)
@@ -41,7 +40,7 @@ isconvextype(::Type{<:AbstractPolytope}) = true
 # =============================================
 
 """
-    isbounded(P::AbstractPolytope)::Bool
+    isbounded(P::AbstractPolytope)
 
 Determine whether a polytopic set is bounded.
 
@@ -53,12 +52,12 @@ Determine whether a polytopic set is bounded.
 
 `true` (since a polytope must be bounded).
 """
-function isbounded(::AbstractPolytope)::Bool
+function isbounded(::AbstractPolytope)
     return true
 end
 
 """
-    singleton_list(P::AbstractPolytope{N})::Vector{Singleton{N}} where {N<:Real}
+    singleton_list(P::AbstractPolytope{N}) where {N<:Real}
 
 Return the vertices of a polytopic set as a list of singletons.
 
@@ -70,13 +69,12 @@ Return the vertices of a polytopic set as a list of singletons.
 
 List containing a singleton for each vertex.
 """
-function singleton_list(P::AbstractPolytope{N}
-                       )::Vector{Singleton{N}} where {N<:Real}
+function singleton_list(P::AbstractPolytope{N}) where {N<:Real}
     return [Singleton(vi) for vi in vertices_list(P)]
 end
 
 """
-    isempty(P::AbstractPolytope)::Bool
+    isempty(P::AbstractPolytope)
 
 Determine whether a polytope is empty.
 
@@ -93,13 +91,13 @@ Determine whether a polytope is empty.
 This algorithm checks whether the `vertices_list` of the given polytope is empty
 or not.
 """
-function isempty(P::AbstractPolytope)::Bool
+function isempty(P::AbstractPolytope)
     return isempty(vertices_list(P))
 end
 
 """
     isuniversal(P::AbstractPolytope{N}, [witness]::Bool=false
-               )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+               ) where {N<:Real}
 
 Check whether a polyhedron is universal.
 
@@ -119,7 +117,7 @@ A witness is produced using `isuniversal(H)` where `H` is the first linear
 constraint of `P`.
 """
 function isuniversal(P::AbstractPolytope{N}, witness::Bool=false
-                    )::Union{Bool, Tuple{Bool, Vector{N}}} where {N<:Real}
+                    ) where {N<:Real}
     if witness
         constraints = constraints_list(P)
         if isempty(constraints)

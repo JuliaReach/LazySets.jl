@@ -49,7 +49,7 @@ SymmetricIntervalHull(X::S) where {N<:Real, S<:LazySet{N}} =
     SymmetricIntervalHull{N, S}(X)
 
 """
-    SymmetricIntervalHull(∅::EmptySet)::EmptySet
+    SymmetricIntervalHull(∅::EmptySet)
 
 The symmetric interval hull of an empty set.
 
@@ -61,7 +61,7 @@ The symmetric interval hull of an empty set.
 
 The empty set because it is absorbing for the symmetric interval hull.
 """
-SymmetricIntervalHull(∅::EmptySet)::EmptySet = ∅
+SymmetricIntervalHull(∅::EmptySet) = ∅
 
 
 # --- AbstractHyperrectangle interface functions ---
@@ -69,7 +69,7 @@ SymmetricIntervalHull(∅::EmptySet)::EmptySet = ∅
 
 """
     radius_hyperrectangle(sih::SymmetricIntervalHull{N},
-                          i::Int)::N where {N<:Real}
+                          i::Int) where {N<:Real}
 
 Return the box radius of a symmetric interval hull of a convex set in a given
 dimension.
@@ -86,13 +86,12 @@ If it was computed before, this is just a look-up, otherwise it requires two
 support vector computations.
 """
 function radius_hyperrectangle(sih::SymmetricIntervalHull{N},
-                               i::Int)::N where {N<:Real}
+                               i::Int) where {N<:Real}
     return get_radius!(sih, i)
 end
 
 """
-    radius_hyperrectangle(sih::SymmetricIntervalHull{N}
-                         )::Vector{N} where {N<:Real}
+    radius_hyperrectangle(sih::SymmetricIntervalHull{N}) where {N<:Real}
 
 Return the box radius of a symmetric interval hull of a convex set in every
 dimension.
@@ -109,8 +108,7 @@ The box radius of the symmetric interval hull of a convex set.
 
 This function computes the symmetric interval hull explicitly.
 """
-function radius_hyperrectangle(sih::SymmetricIntervalHull{N}
-                              )::Vector{N} where {N<:Real}
+function radius_hyperrectangle(sih::SymmetricIntervalHull{N}) where {N<:Real}
     n = dim(sih)
     for i in 1:n
         get_radius!(sih, i, n)
@@ -123,7 +121,7 @@ end
 
 
 """
-    center(sih::SymmetricIntervalHull{N})::Vector{N} where {N<:Real}
+    center(sih::SymmetricIntervalHull{N}) where {N<:Real}
 
 Return the center of a symmetric interval hull of a convex set.
 
@@ -135,7 +133,7 @@ Return the center of a symmetric interval hull of a convex set.
 
 The origin.
 """
-function center(sih::SymmetricIntervalHull{N})::Vector{N} where {N<:Real}
+function center(sih::SymmetricIntervalHull{N}) where {N<:Real}
     return zeros(N, dim(sih))
 end
 
@@ -144,7 +142,7 @@ end
 
 
 """
-    dim(sih::SymmetricIntervalHull)::Int
+    dim(sih::SymmetricIntervalHull)
 
 Return the dimension of a symmetric interval hull of a convex set.
 
@@ -156,7 +154,7 @@ Return the dimension of a symmetric interval hull of a convex set.
 
 The ambient dimension of the symmetric interval hull of a convex set.
 """
-function dim(sih::SymmetricIntervalHull)::Int
+function dim(sih::SymmetricIntervalHull)
     return dim(sih.X)
 end
 
@@ -208,7 +206,7 @@ end
 """
     get_radius!(sih::SymmetricIntervalHull{N},
                 i::Int,
-                n::Int=dim(sih))::N where {N<:Real}
+                n::Int=dim(sih)) where {N<:Real}
 
 Compute the radius of a symmetric interval hull of a convex set in a given
 dimension.
@@ -230,7 +228,7 @@ negative unit vector in the dimension `i`.
 """
 function get_radius!(sih::SymmetricIntervalHull{N},
                      i::Int,
-                     n::Int=dim(sih))::N where {N<:Real}
+                     n::Int=dim(sih)) where {N<:Real}
     if sih.cache[i] == -one(N)
         right_bound = σ(sparsevec([i], [one(N)], n), sih.X)
         left_bound = σ(sparsevec([i], [-one(N)], n), sih.X)

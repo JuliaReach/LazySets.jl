@@ -154,7 +154,7 @@ end
 # ============================
 
 """
-    dim(am::AffineMap)::Int
+    dim(am::AffineMap)
 
 Return the dimension of an affine map.
 
@@ -166,7 +166,7 @@ Return the dimension of an affine map.
 
 The dimension of an affine map.
 """
-function dim(am::AffineMap)::Int
+function dim(am::AffineMap)
     return length(am.v)
 end
 
@@ -225,7 +225,7 @@ function an_element(am::AffineMap)
 end
 
 """
-    isempty(am::AffineMap)::Bool
+    isempty(am::AffineMap)
 
 Return whether an affine map is empty or not.
 
@@ -237,12 +237,12 @@ Return whether an affine map is empty or not.
 
 `true` iff the wrapped set is empty and the affine vector is empty.
 """
-function isempty(am::AffineMap)::Bool
+function isempty(am::AffineMap)
     return isempty(am.X)
 end
 
 """
-    isbounded(am::AffineMap; cond_tol::Number=DEFAULT_COND_TOL)::Bool
+    isbounded(am::AffineMap; cond_tol::Number=DEFAULT_COND_TOL)
 
 Determine whether an affine map is bounded.
 
@@ -264,7 +264,7 @@ If the matrix is invertible, then the map being bounded is equivalent to the
 wrapped set being bounded, and hence the map is unbounded.
 Otherwise, we check boundedness via [`isbounded_unit_dimensions`](@ref).
 """
-function isbounded(am::AffineMap; cond_tol::Number=DEFAULT_COND_TOL)::Bool
+function isbounded(am::AffineMap; cond_tol::Number=DEFAULT_COND_TOL)
     if iszero(am.M) || isbounded(am.X)
         return true
     end
@@ -275,7 +275,7 @@ function isbounded(am::AffineMap; cond_tol::Number=DEFAULT_COND_TOL)::Bool
 end
 
 """
-    ∈(x::AbstractVector{N}, am::AffineMap{N})::Bool where {N<:Real}
+    ∈(x::AbstractVector{N}, am::AffineMap{N}) where {N<:Real}
 
 Check whether a given point is contained in the affine map of a convex set.
 
@@ -317,13 +317,12 @@ julia> [0.5, 0.5] ∈ M*B
 true
 ```
 """
-function ∈(x::AbstractVector{N}, am::AffineMap{N})::Bool where {N<:Real}
+function ∈(x::AbstractVector{N}, am::AffineMap{N}) where {N<:Real}
     return ∈(am.M \ (x - am.v), am.X)
 end
 
 """
-    vertices_list(am::AffineMap{N};
-                  [apply_convex_hull]::Bool)::Vector{Vector{N}} where {N<:Real}
+    vertices_list(am::AffineMap{N}; [apply_convex_hull]::Bool) where {N<:Real}
 
 Return the list of vertices of a (polyhedral) affine map.
 
@@ -353,7 +352,7 @@ Note that we assume that the underlying set `X` is polyhedral, either concretely
 or lazily, i.e. there the function `vertices_list` should be applicable.
 """
 function vertices_list(am::AffineMap{N};
-                       apply_convex_hull::Bool=true)::Vector{Vector{N}} where {N<:Real}
+                       apply_convex_hull::Bool=true) where {N<:Real}
 
     # collect vertices list of the wrapped set
     vlist_X = vertices_list(am.X)

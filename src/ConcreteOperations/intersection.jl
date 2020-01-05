@@ -5,7 +5,7 @@ export intersection
 """
     intersection(S::AbstractSingleton{N},
                  X::LazySet{N}
-                )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+                ) where {N<:Real}
 
 Return the intersection of a singleton with another set.
 
@@ -21,27 +21,27 @@ Otherwise, the result is the empty set.
 """
 function intersection(S::AbstractSingleton{N},
                       X::LazySet{N}
-                     )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+                     ) where {N<:Real}
     return element(S) ∈ X ? S : EmptySet{N}()
 end
 
 # symmetric method
 function intersection(X::LazySet{N},
                       S::AbstractSingleton{N}
-                     )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+                     ) where {N<:Real}
     return intersection(S, X)
 end
 
 # disambiguation
 function intersection(S1::AbstractSingleton{N},
                       S2::AbstractSingleton{N}
-                     )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+                     ) where {N<:Real}
     return element(S1) == element(S2) ? S1 : EmptySet{N}()
 end
 
 """
     intersection(L1::Line{N}, L2::Line{N}
-                )::Union{Singleton{N}, Line{N}, EmptySet{N}} where {N<:Real}
+                ) where {N<:Real}
 
 Return the intersection of two 2D lines.
 
@@ -69,7 +69,7 @@ Line{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
 ```
 """
 function intersection(L1::Line{N}, L2::Line{N}
-                     )::Union{Singleton{N}, Line{N}, EmptySet{N}} where {N<:Real}
+                     ) where {N<:Real}
     b = [L1.b, L2.b]
     a = [transpose(L1.a); transpose(L2.a)]
     try
@@ -92,7 +92,7 @@ end
 """
     intersection(H1::AbstractHyperrectangle{N},
                  H2::AbstractHyperrectangle{N}
-                )::Union{<:Hyperrectangle{N}, EmptySet{N}} where {N<:Real}
+                ) where {N<:Real}
 
 Return the intersection of two hyperrectangles.
 
@@ -115,7 +115,7 @@ Otherwise the result uses these borders in each dimension.
 """
 function intersection(H1::AbstractHyperrectangle{N},
                       H2::AbstractHyperrectangle{N}
-                     )::Union{Hyperrectangle{N}, EmptySet{N}} where {N<:Real}
+                     ) where {N<:Real}
     n = dim(H1)
     c1 = center(H1)
     c2 = center(H2)
@@ -140,18 +140,18 @@ end
 # disambiguation
 function intersection(S::AbstractSingleton{N},
                       H::AbstractHyperrectangle{N}
-                     )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+                     ) where {N<:Real}
     return invoke(intersection, Tuple{typeof(S), LazySet{N}}, S, H)
 end
 function intersection(H::AbstractHyperrectangle{N},
                       S::AbstractSingleton{N}
-                     )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+                     ) where {N<:Real}
     return invoke(intersection, Tuple{typeof(S), LazySet{N}}, S, H)
 end
 
 """
     intersection(x::Interval{N}, y::Interval{N}
-                )::Union{Interval{N}, EmptySet{N}} where {N<:Real}
+                ) where {N<:Real}
 
 Return the intersection of two intervals.
 
@@ -166,7 +166,7 @@ If the intervals do not intersect, the result is the empty set.
 Otherwise the result is the interval that describes the intersection.
 """
 function intersection(x::Interval{N}, y::Interval{N}
-                     )::Union{Interval{N}, EmptySet{N}} where {N<:Real}
+                     ) where {N<:Real}
     if min(y) > max(x) || min(x) > max(y)
         return EmptySet{N}()
     else
@@ -176,7 +176,7 @@ end
 
 """
     intersection(X::Interval{N}, hs::HalfSpace{N}
-                )::Union{Interval{N}, EmptySet{N}} where {N<:Real}
+                ) where {N<:Real}
 
 Compute the intersection of an interval and a half-space.
 
@@ -199,7 +199,7 @@ zero.
 Then we distinguish the cases that `hs` is a lower or an upper bound.
 """
 function intersection(X::Interval{N}, hs::HalfSpace{N}
-                     )::Union{Interval{N}, EmptySet{N}} where {N<:Real}
+                     ) where {N<:Real}
     @assert dim(hs) == 1 "cannot take the intersection between an interval " *
                          "and a $(dim(hs))-dimensional half-space"
 
@@ -253,13 +253,13 @@ end
 
 # symmetric method
 function intersection(hs::HalfSpace{N}, X::Interval{N}
-                     )::Union{Interval{N}, EmptySet{N}} where {N<:Real}
+                     ) where {N<:Real}
     return intersection(X, hs)
 end
 
 """
     intersection(X::Interval{N}, hp::Hyperplane{N}
-                )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+                ) where {N<:Real}
 
 Compute the intersection of an interval and a hyperplane.
 
@@ -274,7 +274,7 @@ If the sets do not intersect, the result is the empty set.
 Otherwise the result is the singleton that describes the intersection.
 """
 function intersection(X::Interval{N}, hp::Hyperplane{N}
-                     )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+                     ) where {N<:Real}
     @assert dim(hp) == 1 "cannot take the intersection between an interval " *
                          "and a $(dim(hp))-dimensional hyperplane"
 
@@ -289,13 +289,13 @@ end
 
 # symmetric method
 function intersection(hp::Hyperplane{N}, X::Interval{N}
-                     )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+                     ) where {N<:Real}
     return intersection(X, hp)
 end
 
 """
     intersection(X::Interval{N}, Y::LazySet{N}
-                )::Union{Interval{N}, Singleton{N}, EmptySet{N}} where {N<:Real}
+                ) where {N<:Real}
 
 Compute the intersection of an interval and a convex set.
 
@@ -311,7 +311,7 @@ Otherwise the result is the interval that describes the intersection, which may
 be of type `Singleton` if the intersection is very small.
 """
 function intersection(X::Interval{N}, Y::LazySet{N}
-                     )::Union{Interval{N}, Singleton{N}, EmptySet{N}} where {N<:Real}
+                     ) where {N<:Real}
     lower = max(min(X), -ρ(N[-1], Y))
     upper = min(max(X), ρ(N[1], Y))
     if _isapprox(lower, upper)
@@ -325,25 +325,25 @@ end
 
 # symmetric method
 function intersection(Y::LazySet{N}, X::Interval{N}
-                     )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+                     ) where {N<:Real}
     return intersection(X, Y)
 end
 
 # disambiguation
 function intersection(X::Interval{N}, H::AbstractHyperrectangle{N}
-                     )::Union{Interval{N}, Singleton{N}, EmptySet{N}} where {N<:Real}
+                     ) where {N<:Real}
     return invoke(intersection, Tuple{Interval{N}, LazySet{N}}, X, H)
 end
 function intersection(H::AbstractHyperrectangle{N}, X::Interval{N}
-                     )::Union{Interval{N}, Singleton{N}, EmptySet{N}} where {N<:Real}
+                     ) where {N<:Real}
     return invoke(intersection, Tuple{Interval{N}, LazySet{N}}, X, H)
 end
 function intersection(X::Interval{N}, S::AbstractSingleton{N}
-                     )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+                     ) where {N<:Real}
     return invoke(intersection, Tuple{typeof(S), LazySet{N}}, S, X)
 end
 function intersection(S::AbstractSingleton{N}, X::Interval{N}
-                     )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+                     ) where {N<:Real}
     return invoke(intersection, Tuple{typeof(S), LazySet{N}}, S, X)
 end
 
@@ -351,7 +351,7 @@ end
     intersection(P1::AbstractHPolygon{N},
                  P2::AbstractHPolygon{N},
                  [prune]::Bool=true
-                )::Union{HPolygon{N}, EmptySet{N}} where {N<:Real}
+                ) where {N<:Real}
 
 Return the intersection of two polygons in constraint representation.
 
@@ -379,7 +379,7 @@ Redundancy of constraints is checked with
 function intersection(P1::AbstractHPolygon{N},
                       P2::AbstractHPolygon{N},
                       prune::Bool=true
-                     )::Union{HPolygon{N}, EmptySet{N}} where {N<:Real}
+                     ) where {N<:Real}
     # all constraints of one polygon are processed; now add the other polygon's
     # constraints
     @inline function add_remaining_constraints!(c, i, c1, i1, duplicates)
@@ -554,20 +554,20 @@ end
 # disambiguation
 function intersection(S::AbstractSingleton{N},
                       P::AbstractPolyhedron{N}
-                     )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+                     ) where {N<:Real}
     return invoke(intersection, Tuple{typeof(S), LazySet{N}}, S, P)
 end
 function intersection(P::AbstractPolyhedron{N},
                       S::AbstractSingleton{N}
-                     )::Union{Singleton{N}, EmptySet{N}} where {N<:Real}
+                     ) where {N<:Real}
     return invoke(intersection, Tuple{typeof(S), LazySet{N}}, S, P)
 end
 function intersection(X::Interval{N}, P::AbstractPolyhedron{N}
-                     )::Union{Interval{N}, Singleton{N}, EmptySet{N}} where {N<:Real}
+                     ) where {N<:Real}
     return invoke(intersection, Tuple{Interval{N}, LazySet{N}}, X, P)
 end
 function intersection(P::AbstractPolyhedron{N}, X::Interval{N}
-                     )::Union{Interval{N}, Singleton{N}, EmptySet{N}} where {N<:Real}
+                     ) where {N<:Real}
     return invoke(intersection, Tuple{Interval{N}, LazySet{N}}, X, P)
 end
 
