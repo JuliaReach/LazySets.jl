@@ -514,3 +514,21 @@ We consider the interval as a line segment with y coordinate equal to zero.
 function plot_recipe(I::Interval{N}, ε::N=zero(N)) where {N<:Real}
     return [min(I), max(I)], zeros(N, 2)
 end
+
+"""
+    scale(α::Real, x::Interval)
+
+Concrete scaling of an interval.
+
+### Input
+
+- `α` -- scalar
+- `x` -- interval
+
+### Output
+
+The interval obtained by applying the numerical scale to the given interval.
+"""
+function scale(α::Real, x::Interval)
+    return Interval(α * x.dat)
+end
