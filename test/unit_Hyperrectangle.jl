@@ -27,7 +27,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test collect(generators(h_flat)) ==
         [SingleEntryVector(1, 5, N(1)), SingleEntryVector(3, 5, N(2)),
          SingleEntryVector(5, 5, N(3))]
-    @test genmat(h_flat) == N[1 0 0; 0 0 0; 0 2 0; 0 0 0; 0 0 3]
+    @test genmat(h_flat) == sparse([1, 3, 5], [1, 3, 5], N[1, 2, 3])
     @test ngens(h_flat) == 3
 
     # 1D Hyperrectangle

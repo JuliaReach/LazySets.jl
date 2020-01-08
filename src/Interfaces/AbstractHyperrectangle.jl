@@ -54,10 +54,15 @@ Return the generator matrix of a hyperrectangular set.
 
 ### Output
 
-A matrix where each column represents one generator of `H`.
+A sparse matrix where each column represents one generator of `H`.
+
+### Notes
+
+Zero generators are dropped from the resulting matrix.
 """
-function genmat(H::AbstractHyperrectangle)
-    return genmat_fallback(H)
+function genmat(H::AbstractHyperrectangle{N}) where {N<:Real}
+    r = radius_hyperrectangle(H)
+    return dropzeros!(sparse(Diagonal(r)))
 end
 
 # iterator that wraps the generator matrix
