@@ -50,4 +50,3 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
 * [`generators`](@ref generators(::AbstractHyperrectangle))
 * [`genmat`](@ref genmat(::AbstractHyperrectangle))
-* [`constraints_list`](@ref constraints_list(::AbstractHyperrectangle{N}) where {N<:Real})
