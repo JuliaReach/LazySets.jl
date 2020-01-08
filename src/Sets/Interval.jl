@@ -5,7 +5,8 @@ import Base: +, -, *, ∈, ⊆, rand, min, max
 export Interval,
        dim, σ, center,
        vertices_list,
-       isflat
+       isflat,
+       linear_map
 
 """
     Interval{N<:Real, IN<:AbstractInterval{N}} <: AbstractHyperrectangle{N}
@@ -513,4 +514,25 @@ We consider the interval as a line segment with y coordinate equal to zero.
 """
 function plot_recipe(I::Interval{N}, ε::N=zero(N)) where {N<:Real}
     return [min(I), max(I)], zeros(N, 2)
+end
+
+"""
+    linear_map(M::AbstractMatrix{N}, x::Interval{N}) where {N<:Real}
+
+Concrete linear map of an interval.
+
+### Input
+
+- `M` -- matrix
+- `x` -- interval
+
+### Output
+
+An interval obtained by scaling `x` by the matrix `M`.
+"""
+function linear_map(M::AbstractMatrix{N}, x::Interval{N}) where {N<:Real}
+    @assert size(M) == (1, 1) "a linear map of size $(size(M)) " *
+        "cannot be applied to an interval"
+    α = M[1, 1]
+    return Interval(α * x.dat)
 end
