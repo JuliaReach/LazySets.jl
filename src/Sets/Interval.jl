@@ -5,7 +5,8 @@ import Base: +, -, *, ∈, ⊆, rand, min, max
 export Interval,
        dim, σ, center,
        vertices_list,
-       isflat
+       isflat,
+       constraints_list
 
 """
     Interval{N<:Real, IN<:AbstractInterval{N}} <: AbstractHyperrectangle{N}
@@ -406,6 +407,27 @@ function vertices_list(x::Interval{N}) where {N<:Real}
     return [[min(x)], [max(x)]]
 end
 
+"""
+    constraints_list(x::Interval{N}) where {N<:Real}
+
+Return the list of constraints of the given interval.
+
+### Input
+
+- `x` -- interval
+
+### Output
+
+The list of constraints of the interval represented as two one-dimensional
+half-spaces.
+"""
+function constraints_list(x::Interval{N}) where {N<:Real}
+    constraints = Vector{LinearConstraint{N, SingleEntryVector{N}}}(undef, 2)
+    e₁ = SingleEntryVector(1, 1, one(N))
+    constraints[1] = HalfSpace(e₁, max(x))
+    constraints[2] = HalfSpace(-e₁, -min(x))
+    return constraints
+end
 """
     translate(x::Interval{N}, v::AbstractVector{N}) where {N<:Real}
 
