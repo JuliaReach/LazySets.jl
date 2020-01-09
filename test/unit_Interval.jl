@@ -30,6 +30,9 @@ for N in Ns
     @test x ⊆ Interval(N(0), N(2))
     @test x ⊈ Interval(N(-1), N(0.5))
 
+    # concrete scale of interval
+    @test scale(N(0.5), x) == Interval(N(0.5)*min(x), N(0.5)*max(x))
+
     # radius_hyperrectangle
     @test radius_hyperrectangle(x) == [N(0.5)]
     @test radius_hyperrectangle(x, 1) == N(0.5)

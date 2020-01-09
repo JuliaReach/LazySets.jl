@@ -27,6 +27,7 @@ radius_hyperrectangle(::Interval{N}, ::Int) where {N<:Real}
 rand(::Type{Interval})
 isflat(::Interval)
 plot_recipe(::Interval{N}, ::N=zero(N)) where {N<:Real}
+scale(::N, ::Interval{N}) where {N<:Real}
 constraints_list(::Interval{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
