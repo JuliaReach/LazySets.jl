@@ -538,7 +538,7 @@ function plot_recipe(I::Interval{N}, ε::N=zero(N)) where {N<:Real}
 end
 
 """
-    scale(α::Real, x::Interval)
+    scale(α::N, x::Interval{N}) where {N<:Real}
 
 Concrete scaling of an interval.
 
