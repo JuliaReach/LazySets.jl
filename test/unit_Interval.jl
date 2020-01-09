@@ -35,6 +35,9 @@ for N in Ns
     # concrete linear map
     @test linear_map(hcat(N(2)...), x) == Interval(N(2) * x.dat)
 
+    # concrete scale of interval
+    @test scale(N(0.5), x) == Interval(N(0.5)*min(x), N(0.5)*max(x))
+
     # radius_hyperrectangle
     @test radius_hyperrectangle(x) == [N(0.5)]
     @test radius_hyperrectangle(x, 1) == N(0.5)

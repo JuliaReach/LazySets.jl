@@ -28,6 +28,8 @@ rand(::Type{Interval})
 isflat(::Interval)
 plot_recipe(::Interval{N}, ::N=zero(N)) where {N<:Real}
 linear_map(::AbstractMatrix{N}, ::Interval{N}) where {N<:Real}
+scale(::N, ::Interval{N}) where {N<:Real}
+constraints_list(::Interval{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
@@ -49,4 +51,3 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
 * [`generators`](@ref generators(::AbstractHyperrectangle))
 * [`genmat`](@ref genmat(::AbstractHyperrectangle))
-* [`constraints_list`](@ref constraints_list(::AbstractHyperrectangle{N}) where {N<:Real})

@@ -7,6 +7,7 @@ export Interval,
        vertices_list,
        isflat,
        linear_map
+       constraints_list
 
 """
     Interval{N<:Real, IN<:AbstractInterval{N}} <: AbstractHyperrectangle{N}
@@ -408,6 +409,27 @@ function vertices_list(x::Interval{N}) where {N<:Real}
 end
 
 """
+    constraints_list(x::Interval{N}) where {N<:Real}
+
+Return the list of constraints of the given interval.
+
+### Input
+
+- `x` -- interval
+
+### Output
+
+The list of constraints of the interval represented as two one-dimensional
+half-spaces.
+"""
+function constraints_list(x::Interval{N}) where {N<:Real}
+    constraints = Vector{LinearConstraint{N, SingleEntryVector{N}}}(undef, 2)
+    e₁ = SingleEntryVector(1, 1, one(N))
+    constraints[1] = HalfSpace(e₁, max(x))
+    constraints[2] = HalfSpace(-e₁, -min(x))
+    return constraints
+end
+"""
     translate(x::Interval{N}, v::AbstractVector{N}) where {N<:Real}
 
 Translate (i.e., shift) an interval by a given vector.
@@ -534,5 +556,23 @@ function linear_map(M::AbstractMatrix{N}, x::Interval{N}) where {N<:Real}
     @assert size(M) == (1, 1) "a linear map of size $(size(M)) " *
         "cannot be applied to an interval"
     α = M[1, 1]
+    return Interval(α * x.dat)
+end
+
+"""
+    scale(α::N, x::Interval{N}) where {N<:Real}
+
+Concrete scaling of an interval.
+
+### Input
+
+- `α` -- scalar
+- `x` -- interval
+
+### Output
+
+The interval obtained by applying the numerical scale to the given interval.
+"""
+function scale(α::N, x::Interval{N}) where {N<:Real}
     return Interval(α * x.dat)
 end
