@@ -551,6 +551,6 @@ Concrete scaling of an interval.
 
 The interval obtained by applying the numerical scale to the given interval.
 """
-function scale(α::Real, x::Interval)
+function scale(α::N, x::Interval{N}) where {N<:Real}
     return Interval(α * x.dat)
 end
