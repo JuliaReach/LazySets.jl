@@ -82,6 +82,15 @@ julia> plot(Bs, 1e-2)  # faster but less accurate than the previous call
             if Xi isa Intersection
                 res = plot_recipe(Xi, ε, Nφ)
             else
+                if !isbounded(Xi)
+                    # bound unbounded set with the plotting range
+                    p = plot!()
+                    xlim = xlims(p)
+                    ylim = ylims(p)
+                    low = [xlim[1], ylim[1]]
+                    high = [xlim[2], ylim[2]]
+                    Xi = intersection(Xi, Hyperrectangle(low=low, high=high))
+                end
                 # hard-code overapproximation here to avoid individual
                 # compilations for mixed sets
                 Pi = overapproximate(Xi, ε)
@@ -161,6 +170,15 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
         seriesalpha --> DEFAULT_ALPHA
         seriescolor --> DEFAULT_COLOR
 
+        if !isbounded(X)
+            # bound unbounded set with the plotting range
+            pa = plotattributes
+            xlims, ylims = pa[:xlims], pa[:ylims]
+            ε = 1.0
+            low = [xlims[1] - ε, ylims[1] - ε]
+            high = [xlims[2] + ε, ylims[2] + ε]
+            X = intersection(X, Hyperrectangle(low=low, high=high))
+        end
         res = plot_recipe(X, ε)
         if isempty(res)
             res
