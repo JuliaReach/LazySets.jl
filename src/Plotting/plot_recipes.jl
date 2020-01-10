@@ -11,6 +11,7 @@ DEFAULT_GRID = true
 DEFAULT_ASPECT_RATIO = :none
 PLOT_PRECISION = 1e-3
 PLOT_POLAR_DIRECTIONS = 40
+DEFAULT_PLOT_LIMIT = 1000
 
 """
     plot_list(list::AbstractVector{VN}, [ε]::N=N(PLOT_PRECISION),
@@ -170,15 +171,56 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
         seriesalpha --> DEFAULT_ALPHA
         seriescolor --> DEFAULT_COLOR
 
-        if !isbounded(X)
-            # bound unbounded set with the plotting range
-            pa = plotattributes
-            xlims, ylims = pa[:xlims], pa[:ylims]
-            ε = 1.0
-            low = [xlims[1] - ε, ylims[1] - ε]
-            high = [xlims[2] + ε, ylims[2] + ε]
-            X = intersection(X, Hyperrectangle(low=low, high=high))
+        # extract limit and extrema of plotted shapes if existings
+        lims = Dict()
+        extr = Dict()
+        p = plotattributes[:plot_object]
+        if length(p) > 0
+            subplot = p[1]
+            for symbol in [:x, :y]
+                lims[symbol] = subplot[Symbol(symbol,:axis)][:lims]
+                extr[symbol] = subplot[Symbol(symbol,:axis)][:extrema]
+            end
         end
+
+        if !isbounded(X)
+            # if the limit is :auto, set the limits to the current extrema
+            for symbol in [:x, :y]
+                if lims[symbol] == :auto
+                    emin = extr[symbol].emin
+                    emax = extr[symbol].emax
+                    # if the extrema is (-Inf,Inf), i.e. an empty plot,
+                    # set it to (0.,1.)
+                    lmin = isinf(emin) ? 0.0 : emin
+                    lmax = isinf(emax) ? 1.0 : emax
+                    lims[symbol] = (lmin, lmax)
+                    # set the limit of the plot
+                    subplot[Symbol(symbol,:axis)][:lims] = lims[symbol]
+                end
+            end
+            # otherwise keep the old limits
+
+            # bound unbounded set
+            low_lim = [lims[:x][1] - DEFAULT_PLOT_LIMIT, lims[:y][1] - DEFAULT_PLOT_LIMIT]
+            high_lim = [lims[:x][2] + DEFAULT_PLOT_LIMIT, lims[:y][2] + DEFAULT_PLOT_LIMIT]
+            X = intersection(X, Hyperrectangle(low=low_lim, high=high_lim))
+
+        # if there is already a plotted shape and the limits are fixed,
+        # automatically adjust the  axis limits (e.g. after plotting a unbounded set)
+        elseif  length(p) > 0 && lims[:x] != :auto && lims[:y] != :auto
+            # update limits such that the new set is contained in the plot windows
+            box = box_approximation(X)
+            min_box = low(box)
+            max_box = high(box)
+            for (idx,symbol) in enumerate([:x, :y])
+                # if the new set is not contained in limits, extend the limit
+                ϵ = 0.05
+                min_lim = min(lims[symbol][1], min_box[idx]*(1 - ϵ))
+                max_lim = max(lims[symbol][2], max_box[idx]*(1 + ϵ))
+                subplot[Symbol(symbol,:axis)][:lims] = (min_lim, max_lim)
+            end
+        end
+
         res = plot_recipe(X, ε)
         if isempty(res)
             res
