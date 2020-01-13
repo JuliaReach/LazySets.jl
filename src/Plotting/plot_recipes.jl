@@ -181,7 +181,7 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
                     emin = extr[symbol].emin
                     emax = extr[symbol].emax
                     # if the extrema are (-Inf,Inf), i.e. an empty plot,
-                    # set it to (0.,1.)
+                    # set it to (-1.,1.)
                     lmin = isinf(emin) ? -1.0 : emin
                     lmax = isinf(emax) ? 1.0 : emax
                     lims[symbol] = (lmin, lmax)
@@ -198,7 +198,7 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
 
         # if there is already a plotted shape and the limits are fixed,
         # automatically adjust the axis limits (e.g. after plotting a unbounded set)
-        elseif  length(p) > 0 && lims[:x] != :auto && lims[:y] != :auto
+        elseif length(p) > 0 && lims[:x] != :auto && lims[:y] != :auto
             # update limits such that the new set is contained in the plot windows
             box = box_approximation(X)
             min_box = low(box)
