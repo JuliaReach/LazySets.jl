@@ -6,7 +6,7 @@ export PolynomialZonotope, dim, σ,
        minkowski_sum
 
 """
-    PolynomialZonotope{N}
+    PolynomialZonotope{N} <: LazySet{N}
 
 Type that represents a polynomial zonotope.
 
@@ -68,7 +68,7 @@ the polynomial order ``η``.
     polynomialization and non-convex sets*, Hybrid Systems: Computation and
     Control, 2013, pp. 173–182.
 """
-struct PolynomialZonotope{N}
+struct PolynomialZonotope{N} <: LazySet{N}
     c::Vector{N}
     E::Vector{Matrix{N}}
     F::Vector{Matrix{N}}

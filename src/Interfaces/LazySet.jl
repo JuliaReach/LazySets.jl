@@ -55,7 +55,7 @@ The subtypes of `LazySet` (including abstract interfaces):
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(LazySet, false)
-19-element Array{Any,1}:
+20-element Array{Any,1}:
  AbstractCentrallySymmetric
  AbstractPolyhedron
  AffineMap
@@ -73,6 +73,7 @@ julia> subtypes(LazySet, false)
  LinearMap
  MinkowskiSum
  MinkowskiSumArray
+ PolynomialZonotope
  ResetMap
  Translation
 ```
@@ -83,7 +84,7 @@ If we only consider *concrete* subtypes, then:
 julia> concrete_subtypes = subtypes(LazySet, true);
 
 julia> length(concrete_subtypes)
-39
+40
 
 julia> println.(concrete_subtypes);
 AffineMap
@@ -116,6 +117,7 @@ LineSegment
 LinearMap
 MinkowskiSum
 MinkowskiSumArray
+PolynomialZonotope
 ResetMap
 Singleton
 SymmetricIntervalHull
