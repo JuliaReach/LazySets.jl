@@ -285,6 +285,15 @@ julia> plot(Singleton([0.5, 1.0]))
     seriescolor --> DEFAULT_COLOR
     seriestype := :scatter
 
+    p = plotattributes[:plot_object]
+    lims = _extract_limits(p)
+    if length(p) > 0
+        _update_plot_limits!(lims, S)
+    end
+
+    xlims --> lims[:x]
+    ylims --> lims[:y]
+
     plot_recipe(S, ε)
 end
 
