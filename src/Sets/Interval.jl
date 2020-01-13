@@ -563,19 +563,28 @@ function linear_map(M::AbstractMatrix{N}, x::Interval{N}) where {N<:Real}
                             "cannot be applied to an interval"
     nout = size(M, 1)
     if nout == 1
-        α = M[1, 1]
-        return Interval(α * x.dat)
+        return _linear_map_interval(M, x)
     else
-        cx = IntervalArithmetic.mid(x.dat)
-        gx = cx - min(x)
-        c = Vector{N}(undef, nout)
-        gen = Matrix{N}(undef, nout, 1)
-        @inbounds for i in 1:nout
-            c[i] = M[i, 1] * cx
-            gen[i] = M[i, 1] * gx
-        end
-        return Zonotope(c, gen, remove_zero_generators=false)
+        return _linear_map_zonotope(M, x)
     end
+end
+
+function _linear_map_interval(M::AbstractMatrix{N}, x::Interval{N}) where {N<:Real}
+    α = M[1, 1]
+    return Interval(α * x.dat)
+end
+
+function _linear_map_zonotope(M::AbstractMatrix{N}, x::Interval{N}) where {N<:Real}
+    nout = size(M, 1)
+    cx = IntervalArithmetic.mid(x.dat)
+    gx = cx - min(x)
+    c = Vector{N}(undef, nout)
+    gen = Matrix{N}(undef, nout, 1)
+    @inbounds for i in 1:nout
+        c[i] = M[i, 1] * cx
+        gen[i] = M[i, 1] * gx
+    end
+    return Zonotope(c, gen, remove_zero_generators=false)
 end
 
 """
