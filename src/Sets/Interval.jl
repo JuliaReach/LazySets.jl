@@ -550,13 +550,32 @@ Concrete linear map of an interval.
 
 ### Output
 
-An interval obtained by scaling `x` by the matrix `M`.
+Either an interval or a zonotope, depending on the leading dimension (i.e. the
+number of rows) of `M`:
+
+- If `size(M, 1) == 1`, the output is an interval obtained by scaling `x` by the
+  matrix `M`.
+- If `size(M, 1) > 1`, the output is a zonotope whose center is `M * center(x)`
+  and it has the single generator, `M * g`, where `g = (high(x)-low(x))/2`.
 """
-function linear_map(M::AbstractMatrix{N}, x::Interval{N}) where {N<:Real}
-    @assert size(M) == (1, 1) "a linear map of size $(size(M)) " *
-        "cannot be applied to an interval"
-    α = M[1, 1]
-    return Interval(α * x.dat)
+function linear_map3(M::AbstractMatrix{N}, x::Interval{N}) where {N<:Real}
+    @assert size(M, 2) == 1 "a linear map of size $(size(M)) " *
+                            "cannot be applied to an interval"
+    nout = size(M, 1)
+    if nout == 1
+        α = M[1, 1]
+        return Interval(α * x.dat)
+    else
+        cx = IntervalArithmetic.mid(x.dat)
+        gx = cx - min(x)
+        c = Vector{N}(undef, nout)
+        gen = Matrix{N}(undef, nout, 1)
+        @inbounds for i in 1:nout
+            c[i] = M[i, 1] * cx
+            gen[i] = M[i, 1] * gx
+        end
+        return Zonotope(c, gen, remove_zero_generators=false)
+    end
 end
 
 """
