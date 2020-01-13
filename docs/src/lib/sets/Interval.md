@@ -27,6 +27,7 @@ radius_hyperrectangle(::Interval{N}, ::Int) where {N<:Real}
 rand(::Type{Interval})
 isflat(::Interval)
 plot_recipe(::Interval{N}, ::N=zero(N)) where {N<:Real}
+linear_map(::AbstractMatrix{N}, ::Interval{N}) where {N<:Real}
 scale(::N, ::Interval{N}) where {N<:Real}
 constraints_list(::Interval{N}) where {N<:Real}
 ```
@@ -43,7 +44,6 @@ Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 
 Inherited from [`AbstractZonotope`](@ref):
 * [`ngens`](@ref ngens(::AbstractZonotope))
-* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractZonotope{N}) where {N<:Real})
 * [`order`](@ref order(::AbstractZonotope))
 
 Inherited from [`AbstractHyperrectangle`](@ref):

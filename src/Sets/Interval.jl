@@ -6,6 +6,7 @@ export Interval,
        dim, σ, center,
        vertices_list,
        isflat,
+       linear_map
        constraints_list
 
 """
@@ -535,6 +536,55 @@ We consider the interval as a line segment with y coordinate equal to zero.
 """
 function plot_recipe(I::Interval{N}, ε::N=zero(N)) where {N<:Real}
     return [min(I), max(I)], zeros(N, 2)
+end
+
+"""
+    linear_map(M::AbstractMatrix{N}, x::Interval{N}) where {N<:Real}
+
+Concrete linear map of an interval.
+
+### Input
+
+- `M` -- matrix
+- `x` -- interval
+
+### Output
+
+Either an interval or a zonotope, depending on the leading dimension (i.e. the
+number of rows) of `M`:
+
+- If `size(M, 1) == 1`, the output is an interval obtained by scaling `x` by the
+  matrix `M`.
+- If `size(M, 1) > 1`, the output is a zonotope whose center is `M * center(x)`
+  and it has the single generator, `M * g`, where `g = (high(x)-low(x))/2`.
+"""
+function linear_map(M::AbstractMatrix{N}, x::Interval{N}) where {N<:Real}
+    @assert size(M, 2) == 1 "a linear map of size $(size(M)) " *
+                            "cannot be applied to an interval"
+    nout = size(M, 1)
+    if nout == 1
+        return _linear_map_interval(M, x)
+    else
+        return _linear_map_zonotope(M, x)
+    end
+end
+
+function _linear_map_interval(M::AbstractMatrix{N}, x::Interval{N}) where {N<:Real}
+    α = M[1, 1]
+    return Interval(α * x.dat)
+end
+
+function _linear_map_zonotope(M::AbstractMatrix{N}, x::Interval{N}) where {N<:Real}
+    nout = size(M, 1)
+    cx = IntervalArithmetic.mid(x.dat)
+    gx = cx - min(x)
+    c = Vector{N}(undef, nout)
+    gen = Matrix{N}(undef, nout, 1)
+    @inbounds for i in 1:nout
+        c[i] = M[i, 1] * cx
+        gen[i] = M[i, 1] * gx
+    end
+    return Zonotope(c, gen, remove_zero_generators=false)
 end
 
 """

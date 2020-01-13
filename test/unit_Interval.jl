@@ -26,9 +26,18 @@ for N in Ns
     # test interface method an_element and membership
     @test an_element(x) ∈ x
     # test containment
-    @test x ⊆ x && x ⊈ N(0.2) * x && x ⊆ N(2) * x
+    @test x ⊆ x
+    @test x ⊈ N(0.2) * x
+    @test x ⊆ N(2) * x
     @test x ⊆ Interval(N(0), N(2))
     @test x ⊈ Interval(N(-1), N(0.5))
+
+    # concrete linear map
+    @test linear_map(hcat(N(2)...), x) == Interval(N(2) * x.dat)
+
+    # concrete linear map with zonotope output
+    M2 = hcat(N[1, 2, 3])
+    @test linear_map(M2, x) == Zonotope(N[0.5, 1.0, 1.5], [N[0.5, 1.0, 1.5]])
 
     # concrete scale of interval
     @test scale(N(0.5), x) == Interval(N(0.5)*min(x), N(0.5)*max(x))
