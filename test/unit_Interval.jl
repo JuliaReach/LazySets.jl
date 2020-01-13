@@ -35,6 +35,10 @@ for N in Ns
     # concrete linear map
     @test linear_map(hcat(N(2)...), x) == Interval(N(2) * x.dat)
 
+    # concrete linear map with zonotope output
+    M2 = hcat(N[1, 2, 3])
+    @test linear_map(M2, x) == Zonotope(N[0.5, 1.0, 1.5], [N[0.5, 1.0, 1.5]])
+
     # concrete scale of interval
     @test scale(N(0.5), x) == Interval(N(0.5)*min(x), N(0.5)*max(x))
 
