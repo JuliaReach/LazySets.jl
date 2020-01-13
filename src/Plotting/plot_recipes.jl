@@ -234,7 +234,7 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
             high_lim = [lims[:x][2] + DEFAULT_PLOT_LIMIT, lims[:y][2] + DEFAULT_PLOT_LIMIT]
             X = intersection(X, Hyperrectangle(low=low_lim, high=high_lim))
 
-        # if there is already a plotted shape and the limits are fixed,
+        # if there is already a plotted set and the limits are fixed,
         # automatically adjust the axis limits (e.g. after plotting a unbounded set)
         elseif length(p) > 0
             _update_plot_limits!(lims, X)
@@ -285,14 +285,14 @@ julia> plot(Singleton([0.5, 1.0]))
     seriescolor --> DEFAULT_COLOR
     seriestype := :scatter
 
+    # update fixed plot limits if necessary
     p = plotattributes[:plot_object]
-    lims = _extract_limits(p)
     if length(p) > 0
+        lims = _extract_limits(p)
         _update_plot_limits!(lims, S)
+        xlims --> lims[:x]
+        ylims --> lims[:y]
     end
-
-    xlims --> lims[:x]
-    ylims --> lims[:y]
 
     plot_recipe(S, ε)
 end
@@ -351,6 +351,15 @@ julia> plot(L, marker=0)
     markercolor --> DEFAULT_COLOR
     markershape --> :circle
     seriestype := :path
+
+    # update fixed plot limits if necessary
+    p = plotattributes[:plot_object]
+    if length(p) > 0
+        lims = _extract_limits(p)
+        _update_plot_limits!(lims, X)
+        xlims --> lims[:x]
+        ylims --> lims[:y]
+    end
 
     plot_recipe(X, ε)
 end
@@ -432,6 +441,15 @@ julia> plot(X, -1., 100)  # equivalent to the above line
     seriesalpha --> DEFAULT_ALPHA
     seriescolor --> DEFAULT_COLOR
     seriestype := :shape
+
+    # update fixed plot limits if necessary
+    p = plotattributes[:plot_object]
+    if length(p) > 0
+        lims = _extract_limits(p)
+        _update_plot_limits!(lims, cap)
+        xlims --> lims[:x]
+        ylims --> lims[:y]
+    end
 
     plot_recipe(cap, ε)
 end
