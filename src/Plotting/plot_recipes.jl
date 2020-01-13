@@ -13,6 +13,54 @@ PLOT_PRECISION = 1e-3
 PLOT_POLAR_DIRECTIONS = 40
 DEFAULT_PLOT_LIMIT = 1000
 
+function _extract_limits(p::RecipesBase.AbstractPlot)
+    lims = Dict()
+    if length(p) > 0
+        subplot = p[1]
+        for symbol in [:x, :y]
+            lims[symbol] = subplot[Symbol(symbol,:axis)][:lims]
+        end
+    else
+        lims[:x] = (:auto)
+        lims[:y] = (:auto)
+    end
+    return lims
+end
+
+function _extract_extrema(p::RecipesBase.AbstractPlot)
+    extrema = Dict()
+    if length(p) > 0
+        subplot = p[1]
+        for symbol in [:x, :y]
+            emin = subplot[Symbol(symbol,:axis)][:extrema].emin
+            emax = subplot[Symbol(symbol,:axis)][:extrema].emax
+            extrema[symbol] = (emin, emax)
+        end
+    else
+        extrema[:x] = (-Inf, Inf)
+        extrema[:y] = (-Inf, Inf)
+    end
+    return extrema
+end
+
+function _update_plot_limits!(lims, X::LazySet)
+    box = box_approximation(X)
+    min_box = low(box)
+    max_box = high(box)
+    for (idx,symbol) in enumerate([:x, :y])
+        if lims[symbol] != :auto
+            # if the new set is not contained in limits, extend the limit
+            ϵ = 0.05
+            min_offset = abs(min_box[idx])*ϵ
+            max_offset = abs(max_box[idx])*ϵ
+            min_lim = min(lims[symbol][1], min_box[idx] - min_offset)
+            max_lim = max(lims[symbol][2], max_box[idx] + max_offset)
+            lims[symbol] = (min_lim, max_lim)
+        end
+    end
+    nothing
+end
+
 """
     plot_list(list::AbstractVector{VN}, [ε]::N=N(PLOT_PRECISION),
               [Nφ]::Int=PLOT_POLAR_DIRECTIONS, [fast]::Bool=false; ...)
@@ -163,30 +211,20 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
         seriescolor --> DEFAULT_COLOR
 
         # extract limits and extrema of already plotted sets
-        lims = Dict()
-        extr = Dict()
         p = plotattributes[:plot_object]
-        if length(p) > 0
-            subplot = p[1]
-            for symbol in [:x, :y]
-                lims[symbol] = subplot[Symbol(symbol,:axis)][:lims]
-                extr[symbol] = subplot[Symbol(symbol,:axis)][:extrema]
-            end
-        end
+        lims = _extract_limits(p)
+        extr = _extract_extrema(p)
 
         if !isbounded(X)
             # if the limit is :auto, set the limits to the current extrema
             for symbol in [:x, :y]
                 if lims[symbol] == :auto
-                    emin = extr[symbol].emin
-                    emax = extr[symbol].emax
+                    emin, emax = extr[symbol]
                     # if the extrema are (-Inf,Inf), i.e. an empty plot,
                     # set it to (-1.,1.)
                     lmin = isinf(emin) ? -1.0 : emin
                     lmax = isinf(emax) ? 1.0 : emax
                     lims[symbol] = (lmin, lmax)
-                    # set the limit of the plot
-                    subplot[Symbol(symbol,:axis)][:lims] = lims[symbol]
                 end
             end
             # otherwise keep the old limits
@@ -198,19 +236,12 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
 
         # if there is already a plotted shape and the limits are fixed,
         # automatically adjust the axis limits (e.g. after plotting a unbounded set)
-        elseif length(p) > 0 && lims[:x] != :auto && lims[:y] != :auto
-            # update limits such that the new set is contained in the plot windows
-            box = box_approximation(X)
-            min_box = low(box)
-            max_box = high(box)
-            for (idx,symbol) in enumerate([:x, :y])
-                # if the new set is not contained in limits, extend the limit
-                ϵ = 0.05
-                min_lim = min(lims[symbol][1], min_box[idx]*(1 - ϵ))
-                max_lim = max(lims[symbol][2], max_box[idx]*(1 + ϵ))
-                subplot[Symbol(symbol,:axis)][:lims] = (min_lim, max_lim)
-            end
+        elseif length(p) > 0
+            _update_plot_limits!(lims, X)
         end
+
+        xlims --> lims[:x]
+        ylims --> lims[:y]
 
         res = plot_recipe(X, ε)
         if isempty(res)
