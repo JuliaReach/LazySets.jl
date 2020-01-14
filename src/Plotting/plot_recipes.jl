@@ -21,8 +21,8 @@ function _extract_limits(p::RecipesBase.AbstractPlot)
             lims[symbol] = subplot[Symbol(symbol,:axis)][:lims]
         end
     else
-        lims[:x] = (:auto)
-        lims[:y] = (:auto)
+        lims[:x] = :auto
+        lims[:y] = :auto
     end
     return lims
 end
@@ -75,6 +75,18 @@ function _update_plot_limits!(lims, X::LazySet)
         end
     end
     nothing
+end
+
+macro update_plot_limits!(S)
+    quote
+        p = plotattributes[:plot_object]
+        if length(p) > 0
+            lims = _extract_limits(p)
+            _update_plot_limits!(lims, $esc(S))
+            xlims --> lims[:x]
+            ylims --> lims[:y]
+        end
+    end
 end
 
 function _set_auto_limits_to_extrema!(lims, extr)
@@ -308,7 +320,7 @@ julia> plot(Singleton([0.5, 1.0]))
     seriescolor --> DEFAULT_COLOR
     seriestype := :scatter
 
-    # update fixed plot limits if necessary
+    # update manually set plot limits if necessary
     p = plotattributes[:plot_object]
     if length(p) > 0
         lims = _extract_limits(p)
@@ -375,7 +387,7 @@ julia> plot(L, marker=0)
     markershape --> :circle
     seriestype := :path
 
-    # update fixed plot limits if necessary
+    # update manually set plot limits if necessary
     p = plotattributes[:plot_object]
     if length(p) > 0
         lims = _extract_limits(p)
