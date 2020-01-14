@@ -77,6 +77,31 @@ function _update_plot_limits!(lims, X::LazySet)
     nothing
 end
 
+function _set_auto_limits_to_extrema!(lims, extr)
+    # if the limit is :auto, set the limits to the current extrema
+    for symbol in [:x, :y]
+        if lims[symbol] == :auto
+            emin, emax = extr[symbol]
+            # if the extrema are (-Inf,Inf), i.e. an empty plot,
+            # set it to (-1.,1.)
+            lmin = isinf(emin) ? -1.0 : emin
+            lmax = isinf(emax) ? 1.0 : emax
+            lims[symbol] = (lmin, lmax)
+        end
+    end
+    # otherwise keep the old limits
+    nothing
+end
+
+function bounding_hyperrectangle(lims)
+    low_lim = [lims[:x][1] - DEFAULT_PLOT_LIMIT, lims[:y][1] - DEFAULT_PLOT_LIMIT]
+    high_lim = [lims[:x][2] + DEFAULT_PLOT_LIMIT, lims[:y][2] + DEFAULT_PLOT_LIMIT]
+    return Hyperrectangle(low=low_lim, high=high_lim)
+end
+
+
+
+
 """
     plot_list(list::AbstractVector{VN}, [ε]::N=N(PLOT_PRECISION),
               [Nφ]::Int=PLOT_POLAR_DIRECTIONS, [fast]::Bool=false; ...)
@@ -232,23 +257,8 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
         extr = _extract_extrema(p)
 
         if !isbounded(X)
-            # if the limit is :auto, set the limits to the current extrema
-            for symbol in [:x, :y]
-                if lims[symbol] == :auto
-                    emin, emax = extr[symbol]
-                    # if the extrema are (-Inf,Inf), i.e. an empty plot,
-                    # set it to (-1.,1.)
-                    lmin = isinf(emin) ? -1.0 : emin
-                    lmax = isinf(emax) ? 1.0 : emax
-                    lims[symbol] = (lmin, lmax)
-                end
-            end
-            # otherwise keep the old limits
-
-            # bound unbounded set
-            low_lim = [lims[:x][1] - DEFAULT_PLOT_LIMIT, lims[:y][1] - DEFAULT_PLOT_LIMIT]
-            high_lim = [lims[:x][2] + DEFAULT_PLOT_LIMIT, lims[:y][2] + DEFAULT_PLOT_LIMIT]
-            X = intersection(X, Hyperrectangle(low=low_lim, high=high_lim))
+            _set_auto_limits_to_extrema!(lims, extr)
+            X = intersection(X,  bounding_hyperrectangle(lims))
 
         # if there is already a plotted set and the limits are fixed,
         # automatically adjust the axis limits (e.g. after plotting a unbounded set)
@@ -458,14 +468,29 @@ julia> plot(X, -1., 100)  # equivalent to the above line
     seriescolor --> DEFAULT_COLOR
     seriestype := :shape
 
-    # update fixed plot limits if necessary
+    # extract limits and extrema of already plotted sets
     p = plotattributes[:plot_object]
-    if length(p) > 0
-        lims = _extract_limits(p)
+    lims = _extract_limits(p)
+    extr = _extract_extrema(p)
+
+    if !isbounded(cap)
+        _set_auto_limits_to_extrema!(lims, extr)
+        bounding_box = bounding_hyperrectangle(lims)
+        if !isbounded(cap.X)
+            bounded_X = Intersection(bounding_box, cap.X)
+            cap = Intersection(bounded_X, cap.Y)
+        else
+            cap = Intersection(bounding_box, cap.Y)
+        end
+
+    # if there is already a plotted set and the limits are fixed,
+    # automatically adjust the axis limits (e.g. after plotting a unbounded set)
+    elseif length(p) > 0
         _update_plot_limits!(lims, cap)
-        xlims --> lims[:x]
-        ylims --> lims[:y]
     end
+
+    xlims --> lims[:x]
+    ylims --> lims[:y]
 
     plot_recipe(cap, ε)
 end
