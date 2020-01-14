@@ -93,14 +93,11 @@ function _set_auto_limits_to_extrema!(lims, extr)
     nothing
 end
 
-function bounding_hyperrectangle(lims)
+function _bounding_hyperrectangle(lims)
     low_lim = [lims[:x][1] - DEFAULT_PLOT_LIMIT, lims[:y][1] - DEFAULT_PLOT_LIMIT]
     high_lim = [lims[:x][2] + DEFAULT_PLOT_LIMIT, lims[:y][2] + DEFAULT_PLOT_LIMIT]
     return Hyperrectangle(low=low_lim, high=high_lim)
 end
-
-
-
 
 """
     plot_list(list::AbstractVector{VN}, [ε]::N=N(PLOT_PRECISION),
@@ -258,7 +255,7 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
 
         if !isbounded(X)
             _set_auto_limits_to_extrema!(lims, extr)
-            X = intersection(X,  bounding_hyperrectangle(lims))
+            X = intersection(X,  _bounding_hyperrectangle(lims))
 
         # if there is already a plotted set and the limits are fixed,
         # automatically adjust the axis limits (e.g. after plotting a unbounded set)
@@ -475,7 +472,7 @@ julia> plot(X, -1., 100)  # equivalent to the above line
 
     if !isbounded(cap)
         _set_auto_limits_to_extrema!(lims, extr)
-        bounding_box = bounding_hyperrectangle(lims)
+        bounding_box = _bounding_hyperrectangle(lims)
         if !isbounded(cap.X)
             bounded_X = Intersection(bounding_box, cap.X)
             cap = Intersection(bounded_X, cap.Y)
