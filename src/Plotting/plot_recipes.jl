@@ -63,18 +63,6 @@ function _update_plot_limits!(lims, X::LazySet)
     nothing
 end
 
-macro update_plot_limits!(S)
-    quote
-        p = plotattributes[:plot_object]
-        if length(p) > 0
-            lims = _extract_limits(p)
-            _update_plot_limits!(lims, $esc(S))
-            xlims --> lims[:x]
-            ylims --> lims[:y]
-        end
-    end
-end
-
 function _set_auto_limits_to_extrema!(lims, extr)
     # if the limit is :auto, set the limits to the current extrema
     for symbol in [:x, :y]
