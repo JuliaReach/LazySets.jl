@@ -49,15 +49,17 @@ function _update_plot_limits!(lims, X::LazySet)
     box_max = high(box)
     for (idx,symbol) in enumerate([:x, :y])
         if lims[symbol] != :auto
-            # scaling factor for obtaining offset from window width
-            ϵ = 0.05
-            # width of the plotting window in the direction `symbol`
+            # width of the plotting window including the new set in the `symbol` direction
             width = max(lims[symbol][2], box_max[idx]) -
                     min(lims[symbol][1], box_min[idx])
 
+            # scaling factor for beautification
+            ϵ = 0.05
+            offset = width*ϵ
+
             # extend the current plot limits if the new set (plus a small offset) falls outside
-            lims[symbol] = (min(lims[symbol][1], box_min[idx] - width*ϵ),
-                            max(lims[symbol][2], box_max[idx] + width*ϵ))
+            lims[symbol] = (min(lims[symbol][1], box_min[idx] - offset),
+                            max(lims[symbol][2], box_max[idx] + offset))
         end
     end
     nothing
