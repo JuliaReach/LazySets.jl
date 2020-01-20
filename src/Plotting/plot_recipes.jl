@@ -344,3 +344,13 @@ julia> plot(X, -1., 100)  # equivalent to the above line
 
     plot_recipe(cap, ε)
 end
+
+# non-convex sets
+
+@recipe function plot_union(cup::UnionSet{N}, ε::N=zero(N)) where {N<:Real}
+    @series [cup.X, cup.Y], ε
+end
+
+@recipe function plot_union(cup::UnionSetArray{N}, ε::N=zero(N)) where {N<:Real}
+    @series array(cup), ε
+end
