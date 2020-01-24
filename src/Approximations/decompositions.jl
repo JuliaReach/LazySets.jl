@@ -148,7 +148,7 @@ interface presented so far does not apply.
 See the paragraph *Advanced input for different block approximations* below for
 how to do that.
 
-#### Refining the decomposition I:  ``ε``-close approximation
+#### Refining the decomposition I: ``ε``-close approximation
 
 The ``ε`` option can be used to refine a decomposition, i.e., obtain a more
 accurate result.
@@ -580,7 +580,7 @@ function project(P::HPolyhedron{N}, block::AbstractVector{Int}) where {N}
     if constrained_dimensions(P) ⊆ block
         return HPolyhedron([HalfSpace(c.a[block], c.b) for c in constraints_list(P)])
     else
-        error("the concrete projection of a half-space " *
+        error("the concrete projection of a polyhedron " *
               "for a general block structure is not implemented yet")
     end
 end
