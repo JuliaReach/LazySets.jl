@@ -11,6 +11,81 @@ DEFAULT_GRID = true
 DEFAULT_ASPECT_RATIO = :none
 PLOT_PRECISION = 1e-3
 PLOT_POLAR_DIRECTIONS = 40
+DEFAULT_PLOT_LIMIT = 1000
+
+function _extract_limits(p::RecipesBase.AbstractPlot)
+    lims = Dict()
+    if length(p) > 0
+        subplot = p[1]
+        for symbol in [:x, :y]
+            lims[symbol] = subplot[Symbol(symbol,:axis)][:lims]
+        end
+    else
+        lims[:x] = :auto
+        lims[:y] = :auto
+    end
+    return lims
+end
+
+function _extract_extrema(p::RecipesBase.AbstractPlot)
+    extrema = Dict()
+    if length(p) > 0
+        subplot = p[1]
+        for symbol in [:x, :y]
+            emin = subplot[Symbol(symbol,:axis)][:extrema].emin
+            emax = subplot[Symbol(symbol,:axis)][:extrema].emax
+            extrema[symbol] = (emin, emax)
+        end
+    else
+        extrema[:x] = (-Inf, Inf)
+        extrema[:y] = (-Inf, Inf)
+    end
+    return extrema
+end
+
+function _update_plot_limits!(lims, X::LazySet)
+    box = box_approximation(X)
+    box_min = low(box)
+    box_max = high(box)
+    for (idx,symbol) in enumerate([:x, :y])
+        if lims[symbol] != :auto
+            # width of the plotting window including the new set in the `symbol` direction
+            width = max(lims[symbol][2], box_max[idx]) -
+                    min(lims[symbol][1], box_min[idx])
+
+            # scaling factor for beautification
+            ϵ = 0.05
+            offset = width*ϵ
+
+            # extend the current plot limits if the new set (plus a small offset) falls outside
+            lims[symbol] = (min(lims[symbol][1], box_min[idx] - offset),
+                            max(lims[symbol][2], box_max[idx] + offset))
+        end
+    end
+    nothing
+end
+
+function _set_auto_limits_to_extrema!(lims, extr)
+    # if the limit is :auto, set the limits to the current extrema
+    for symbol in [:x, :y]
+        if lims[symbol] == :auto
+            emin, emax = extr[symbol]
+            # if the extrema are (-Inf,Inf), i.e. an empty plot,
+            # set it to (-1.,1.)
+            lmin = isinf(emin) ? -1.0 : emin
+            lmax = isinf(emax) ? 1.0 : emax
+            lims[symbol] = (lmin, lmax)
+        end
+    end
+    # otherwise keep the old limits
+    nothing
+end
+
+function _bounding_hyperrectangle(lims, N)
+    low_lim = [lims[:x][1] - DEFAULT_PLOT_LIMIT, lims[:y][1] - DEFAULT_PLOT_LIMIT]
+    high_lim = [lims[:x][2] + DEFAULT_PLOT_LIMIT, lims[:y][2] + DEFAULT_PLOT_LIMIT]
+    return Hyperrectangle(low=convert.(N,low_lim), high=convert.(N,high_lim))
+end
 
 """
     plot_list(list::AbstractVector{VN}, [ε]::N=N(PLOT_PRECISION),
@@ -161,6 +236,24 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
         seriesalpha --> DEFAULT_ALPHA
         seriescolor --> DEFAULT_COLOR
 
+        # extract limits and extrema of already plotted sets
+        p = plotattributes[:plot_object]
+        lims = _extract_limits(p)
+        extr = _extract_extrema(p)
+
+        if !isbounded(X)
+            _set_auto_limits_to_extrema!(lims, extr)
+            X = intersection(X, _bounding_hyperrectangle(lims, eltype(X)))
+
+        # if there is already a plotted set and the limits are fixed,
+        # automatically adjust the axis limits (e.g. after plotting a unbounded set)
+        elseif length(p) > 0
+            _update_plot_limits!(lims, X)
+        end
+
+        xlims --> lims[:x]
+        ylims --> lims[:y]
+
         res = plot_recipe(X, ε)
         if isempty(res)
             res
@@ -202,6 +295,15 @@ julia> plot(Singleton([0.5, 1.0]))
     seriesalpha --> DEFAULT_ALPHA
     seriescolor --> DEFAULT_COLOR
     seriestype := :scatter
+
+    # update manually set plot limits if necessary
+    p = plotattributes[:plot_object]
+    if length(p) > 0
+        lims = _extract_limits(p)
+        _update_plot_limits!(lims, S)
+        xlims --> lims[:x]
+        ylims --> lims[:y]
+    end
 
     plot_recipe(S, ε)
 end
@@ -260,6 +362,15 @@ julia> plot(L, marker=0)
     markercolor --> DEFAULT_COLOR
     markershape --> :circle
     seriestype := :path
+
+    # update manually set plot limits if necessary
+    p = plotattributes[:plot_object]
+    if length(p) > 0
+        lims = _extract_limits(p)
+        _update_plot_limits!(lims, X)
+        xlims --> lims[:x]
+        ylims --> lims[:y]
+    end
 
     plot_recipe(X, ε)
 end
@@ -341,6 +452,30 @@ julia> plot(X, -1., 100)  # equivalent to the above line
     seriesalpha --> DEFAULT_ALPHA
     seriescolor --> DEFAULT_COLOR
     seriestype := :shape
+
+    # extract limits and extrema of already plotted sets
+    p = plotattributes[:plot_object]
+    lims = _extract_limits(p)
+    extr = _extract_extrema(p)
+
+    if !isbounded(cap)
+        _set_auto_limits_to_extrema!(lims, extr)
+        bounding_box = _bounding_hyperrectangle(lims, eltype(cap))
+        if !isbounded(cap.X)
+            bounded_X = Intersection(bounding_box, cap.X)
+            cap = Intersection(bounded_X, cap.Y)
+        else
+            cap = Intersection(bounding_box, cap.Y)
+        end
+
+    # if there is already a plotted set and the limits are fixed,
+    # automatically adjust the axis limits (e.g. after plotting a unbounded set)
+    elseif length(p) > 0
+        _update_plot_limits!(lims, cap)
+    end
+
+    xlims --> lims[:x]
+    ylims --> lims[:y]
 
     plot_recipe(cap, ε)
 end

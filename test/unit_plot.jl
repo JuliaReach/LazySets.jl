@@ -95,7 +95,7 @@ for N in [Float64, Float32, Rational{Int}]
     # ------------------------------------------------------------------
     # plot using epsilon-close approximation (default threshold ε value)
     # ------------------------------------------------------------------
-    if N == Float64 # Float32 requires promotion see #1304 
+    if N == Float64 # Float32 requires promotion see #1304
         plot(its)
     end
     plot(hpg)
@@ -105,10 +105,10 @@ for N in [Float64, Float32, Rational{Int}]
     plot(vpg)
     plot(vpt)
     plot(es)
-    @test_throws AssertionError plot(hs) # TODO see #576
-    @test_throws AssertionError plot(hp) # TODO see #576
-    @test_throws AssertionError plot(l) # TODO see #576
-    @test_throws AssertionError plot(uni) # TODO see #576
+    plot(hs)
+    plot(hp)
+    plot(l)
+    plot(uni)
     plot(ch)
     plot(cha)
     plot(sih)
