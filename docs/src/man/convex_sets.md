@@ -86,8 +86,8 @@ plot1(pentagon, true)  # hide
 ```
 
 ```@example convex_sets
-hourglass = [VPolygon([[0., 2.], [1., 0.9], [2, 2.]]),
-             VPolygon([[0., 0.], [1., 1.1], [2, 0.]])]
+hourglass = UnionSet(VPolygon([[0., 2.], [1., 0.9], [2, 2.]]),
+                     VPolygon([[0., 0.], [1., 1.1], [2, 0.]]))
 
 plot_raw()  # hide
 plot!(xlims=(0., 2.), ylims=(0., 2.), xticks=[0., 1., 2.],  # hide
