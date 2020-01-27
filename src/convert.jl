@@ -307,16 +307,15 @@ function convert(::Type{Zonotope}, cpa::CartesianProductArray{N, HN}
 end
 
 """
-    convert(::Type{Zonotope},
-            S::LinearMap{N, SN}
-            ) where {N, SN<:AbstractHyperrectangle{N}}
+    convert(::Type{Zonotope}, S::LinearMap{N, ZN}
+           ) where {N, ZN<:AbstractZonotope{N}}
 
-Converts the lazy linear map of a hyperrectangular set to a zonotope.
+Converts the lazy linear map of a zonotopic set to a zonotope.
 
 ### Input
 
 - `Zonotope` -- type, used for dispatch
-- `S`        -- linear map of a hyperrectangular set
+- `S`        -- linear map of a zonotopic set
 
 ### Output
 
@@ -324,12 +323,12 @@ A zonotope.
 
 ### Algorithm
 
-This method first converts the hyperrectangular set to a zonotope, and then
-applies the (concrete) linear map to the zonotope.
+This method first applies the (concrete) linear map to the zonotopic set and
+then converts the result to a `Zonotope` type.
 """
-function convert(::Type{Zonotope}, S::LinearMap{N, SN}
-                ) where {N, SN<:AbstractHyperrectangle{N}}
-    return linear_map(S.M, convert(Zonotope, S.X))
+function convert(::Type{Zonotope}, S::LinearMap{N, ZN}
+                ) where {N, ZN<:AbstractZonotope{N}}
+    return convert(Zonotope, linear_map(S.M, S.X))
 end
 
 """

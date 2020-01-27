@@ -482,6 +482,26 @@ function _overapproximate_convex_hull_zonotope_GGP09(
 end
 
 """
+    overapproximate(lm::LinearMap{N, <:AbstractZonotope{N}},
+                    ::Type{<:Zonotope}) where {N<:Real}
+
+Overapproximate a lazy linear map of a zonotopic set with a zonotope.
+
+### Input
+
+- `lm`       -- lazy linear map of a zonotopic set
+- `Zonotope` -- type for dispatch
+
+### Output
+
+The tight zonotope corresponding to `lm`.
+"""
+function overapproximate(lm::LinearMap{N, <:AbstractZonotope{N}},
+                         ::Type{<:Zonotope}) where {N<:Real}
+    return convert(Zonotope, lm)
+end
+
+"""
     overapproximate(Z::AbstractZonotope, ::Type{<:Hyperrectangle})
 
 Return a tight overapproximation of a zonotope with an axis-aligned box.
