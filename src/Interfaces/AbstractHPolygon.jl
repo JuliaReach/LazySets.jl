@@ -576,7 +576,7 @@ function isbounded(P::AbstractHPolygon, use_type_assumption::Bool=true)
     if use_type_assumption
         return true
     end
-    return isbounded(HPolyhedron(P.constraints))
+    return isbounded_unit_dimensions(P)
 end
 
 function _linear_map_hrep(M::AbstractMatrix{N}, P::HPOLYGON,
