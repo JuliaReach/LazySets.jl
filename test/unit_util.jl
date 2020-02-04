@@ -1,3 +1,5 @@
+using LazySets.Arrays: extend
+
 for _dummy_ in 1:1 # avoid global variable warnings
     # reseeding with random seed
     rng = LazySets.GLOBAL_RNG
@@ -87,7 +89,6 @@ for _dummy_ in 1:1 # avoid global variable warnings
         @test size(B) == (m, n-3)
 
         # extend by orthogonal complement
-        using LazySets.Arrays: extend
         M = N[1 1; 2 2; 3 4.]
         @assert rank(M) == 2
         Mext, inv_Mext = extend(M)
