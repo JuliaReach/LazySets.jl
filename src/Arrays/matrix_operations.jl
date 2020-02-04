@@ -5,7 +5,8 @@ export _At_mul_B,
        issquare,
        isinvertible,
        cross_product,
-       delete_zero_columns!
+       delete_zero_columns!,
+       extend
 
 # default tolerance for matrix condition number (see 'isinvertible')
 const DEFAULT_COND_TOL = 1e6
@@ -185,4 +186,56 @@ function delete_zero_columns!(A::AbstractMatrix, copy::Bool=false)
             return @view A[:, nonzero_columns]
         end
     end
+end
+
+"""
+    extend(M::AbstractMatrix; check_rank=true)
+
+Return an invertible extension of `M` whose first `n` colums span the column
+space of `M`, assuming that `size(M) = (m, n)`, `m > n` and the rank of `M` is `n`.
+
+### Input
+
+- `M`          -- rectangular `m × n` matrix with `m > n` and full rank (i.e. its rank is `n`)
+- `check_rank` -- (optional, default: `true`) if `true`, check the rank assumption,
+                  otherwise do not perform this check
+
+### Output
+
+The tuple `(Mext, inv_Mext)`, where `Mext` is a square `m × m` invertible matrix
+that extends `M`, i.e. in the sense that `Mext = [M | Q2]`, and the rank of `Mext`
+is `m`. Here, `inv_Mext` is the inverse of `Mext`.
+
+### Algorithm
+
+First we compute the QR decomposition of `M` to extract a suitable subspace of
+column vectors (`Q2`) that are orthogonal to the column span of `M`. Then we observe
+that the inverse of the extended matrix `Mext = [M | Q2]` is `[R⁻¹Qᵀ; Q2ᵀ]`.
+"""
+function extend(M::AbstractMatrix; check_rank=true)
+    m, n = size(M)
+
+    !(m > n) && throw(ArgumentError("this function requires that the number " *
+    "of rows is greater than the number of columns, but they are of size $m and " *
+    "$n respectively"))
+
+    if check_rank
+        r = rank(M)
+        !(r == n) && throw(ArgumentError("the rank of the given matrix is " *
+        "$r, but this function assumes that it is $n"))
+    end
+
+    # compute QR decomposition of M
+    Q, R = qr(M)
+
+    # Q2 spans the null space of M
+    Q2 = Q[:, (n + 1):end]
+
+    # extend M by appending the columns orthogonal to the column span of M
+    Mext = hcat(M, Q2)
+
+    # since the inverse is easy to compute, return it
+    inv_Mext = vcat(inv(R) * Q', Q2')
+
+    return Mext, inv_Mext
 end
