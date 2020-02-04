@@ -191,12 +191,13 @@ end
 """
     extend(M::AbstractMatrix; check_rank=true)
 
-Return an invertible extension of `M` whose first `n` colums span the column
+Return an invertible extension of `M` whose first `n` columns span the column
 space of `M`, assuming that `size(M) = (m, n)`, `m > n` and the rank of `M` is `n`.
 
 ### Input
 
-- `M`          -- rectangular `m × n` matrix with `m > n` and full rank (i.e. its rank is `n`)
+- `M`          -- rectangular `m × n` matrix with `m > n` and full rank (i.e. its
+                  rank is `n`)
 - `check_rank` -- (optional, default: `true`) if `true`, check the rank assumption,
                   otherwise do not perform this check
 
