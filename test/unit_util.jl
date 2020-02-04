@@ -96,6 +96,6 @@ for _dummy_ in 1:1 # avoid global variable warnings
         @test Mext * inv_Mext ≈ I(3)
         Md = N[1 1; 2 2; 3 4.]
         @test_throws ArgumentError extend(Md) # test default argument check
-        extend(M, check_rank=false) # argument check can be turned off
+        extend(Md, check_rank=false) # argument check can be turned off
     end
 end
