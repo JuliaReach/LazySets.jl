@@ -288,6 +288,10 @@ Concrete linear map of a polyhedral set.
   - `"inverse"`  -- compute the matrix inverse and apply it to each constraint
                     of `P`
   - `"division"` -- divide each constraint of `P` by `M` from the left
+  - `"lift"`     -- for rectangular non-invertible matrices, extend `M` to an
+                    invertible matrix and use the H-representation (only applies
+                    if the number of rows of `M` is bigger than the number of
+                    columns, and if `M` is full rank)
 - `check_invertibility` -- (optional, deault: `true`) check if the linear map is
                            invertible, in which case this function uses the
                            matrix inverse; if this flag is set to `false`, we
@@ -336,9 +340,21 @@ If `M` is dense and square and invertible (either assumed or checked; see option
 `check_invertibility`), we use `"inverse"`.
 Otherwise, we use `"vrep"`.
 
+Internally, this function operates on the level of the `AbstractPolyhedron`
+interface, but the actual algorithm uses dispatch on the concrete type of `P`,
+depending on the algorithm that is used:
+
+- `_linear_map_vrep(M, P)` if the vertex approach is used
+- `_linear_map_hrep(M, P, use_inv)` if the invertibility criterion is used,
+  where `use_inv` is determined by the algorithm
+
+New subtypes of the interface should define their own `_linear_map_vrep`
+(resp. `_linear_map_hrep`) for special handling of the linear map; otherwise
+the fallback implementation for `AbstractPolyhedron` is used.
+
 ### Algorithm
 
-This function implements two algorithms for the linear map:
+This function mainly implements two approaches for the linear map:
 
 - If the matrix ``M`` is invertible (which we check via a sufficient condition),
   then ``y = M x`` implies ``x = \\text{inv}(M) y`` and we transform the
@@ -365,17 +381,13 @@ function is not available for sparse matrices) or rectangular.
 For sparse and invertible matrices, either use the algorithm `"division"` or
 convert `M` to a dense matrix (as in `linear_map(Matrix(M), P)`).
 
-Internally, this function operates on the level of the `AbstractPolyhedron`
-interface, but the actual algorithm uses dispatch on the concrete type of `P`,
-depending on the algorithm that is used:
-
-- `_linear_map_vrep(M, P)` if the vertex approach is used
-- `_linear_map_hrep(M, P, use_inv)` if the invertibility criterion is used,
-  where `use_inv` is determined by the algorithm
-
-New subtypes of the interface should define their own `_linear_map_vrep`
-(resp. `_linear_map_hrep`) for special handling of the linear map; otherwise
-the fallback implementation for `AbstractPolyhedron` is used.
+If `M` is rectangular of size `m × n` with `m > n` and full rank (i.e. its rank
+is `n`), the algorithm `"lift"` is applicable. The idea is to embed the polytope
+into the `m`-dimensional space by appending zeros, i.e. extending all constraints
+of `P` to `m` dimensions, and constraining the last `m - n` dimensions to `0`.
+The matrix `M` is extended to an invertible `m × m` matrix and the algorithm
+using the inverse of the linear map is applied. For the implementation details of
+the extension of `M`, see `LazySets.Arrays.extend`.
 """
 function linear_map(M::AbstractMatrix{N},
                     P::AbstractPolyhedron{N};
@@ -389,7 +401,8 @@ function linear_map(M::AbstractMatrix{N},
         return _linear_map_hrep(M, P, true; inverse=inverse)
     end
 
-    @assert dim(P) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
+    m, n = size(M)
+    @assert dim(P) == n "a linear map of size $(size(M)) cannot be " *
         "applied to a set of dimension $(dim(P))"
 
     if algorithm == nothing
@@ -414,16 +427,27 @@ function linear_map(M::AbstractMatrix{N},
 
     if algorithm == "vrep"
         return _linear_map_vrep(M, P)
+
+    elseif algorithm == "inverse"
+        return _linear_map_hrep(M, P, true)
+
+    elseif algorithm == "division"
+        return _linear_map_hrep(M, P, false)
+
+    elseif algorithm == "lift"
+        # check preconditions for this algorithm
+        !(m > n) && throw(ArgumentError("this function requires that the number " *
+        "of rows of the linear map is greater than the number of columns, but " *
+        "they are of size $m and $n respectively"))
+
+        r = rank(M)
+        !(r == n) && throw(ArgumentError("the rank of the given matrix is " *
+        "$r, but this function assumes that it is $n"))
+
+        return _linear_map_hrep_lift(M, P)
     else
-        if algorithm == "inverse"
-            use_inv = true
-        elseif algorithm == "division"
-            use_inv = false
-        else
-            throw(ArgumentError("got unknown algorithm \"$algorithm\"; " *
-                "available choices: \"vrep\", \"inverse\", \"division\""))
-        end
-        return _linear_map_hrep(M, P, use_inv)
+        throw(ArgumentError("got unknown algorithm \"$algorithm\"; " *
+            "available choices: \"vrep\", \"inverse\", \"division\", \"lift\""))
     end
 end
 
@@ -481,6 +505,28 @@ function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
         end
     end
     return constraints_MP
+end
+
+# preconditions have been checked in the caller function
+function _linear_map_hrep_lift(M::AbstractMatrix{N}, P::AbstractPolyhedron{N}) where {N<:Real}
+    m, n = size(M)
+
+    # we extend M to an invertible m x m matrix by appending m-n columns
+    # orthogonal to the column space of M
+    Mext, inv_Mext = extend(M, check_rank=false)
+
+    # append zeros to the existing constraints, in the last m-n coordinates
+    cext = [HalfSpace(vcat(c.a, zeros(m-n)), c.b) for c in constraints_list(P)]
+
+    # now fix the last m-n coordinates to zero
+    id_out = Matrix(one(N)*I, m-n, m-n)
+    cext = vcat(cext, [HalfSpace(vcat(zeros(n), id_out[i, :]), zero(N)) for i in 1:(m-n)],
+                      [HalfSpace(vcat(zeros(n), -id_out[i, :]), zero(N)) for i in 1:(m-n)])
+
+    Pext = HPolytope(cext)
+
+    # now Mext is invertible and we can apply the linear with inverse function
+    return _linear_map_hrep(Mext, Pext, true, inverse=inv_Mext)
 end
 
 """
