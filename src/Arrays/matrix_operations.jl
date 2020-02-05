@@ -216,7 +216,7 @@ that the inverse of the extended matrix `Mext = [M | Q2]` is `[R⁻¹Qᵀ; Q2ᵀ
 function extend(M::AbstractMatrix; check_rank=true)
     m, n = size(M)
 
-    !(m > n) && throw(ArgumentError("this function requires that the number " *
+    m <= n && throw(ArgumentError("this function requires that the number " *
     "of rows is greater than the number of columns, but they are of size $m and " *
     "$n respectively"))
 
