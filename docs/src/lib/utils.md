@@ -29,6 +29,7 @@ _dr
 _above
 minmax
 arg_minmax
+extend
 ```
 
 ## Functions and Macros
