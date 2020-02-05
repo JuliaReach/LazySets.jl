@@ -525,7 +525,7 @@ function _linear_map_hrep_lift(M::AbstractMatrix{N}, P::AbstractPolyhedron{N}) w
 
     Pext = HPolytope(cext)
 
-    # now Mext is invertible and we can apply the linear with inverse function
+    # now Mext is invertible and we can apply the inverse algorithm
     return _linear_map_hrep(Mext, Pext, true, inverse=inv_Mext)
 end
 
