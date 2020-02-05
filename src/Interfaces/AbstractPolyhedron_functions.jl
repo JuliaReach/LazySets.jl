@@ -441,7 +441,7 @@ function linear_map(M::AbstractMatrix{N},
         "they are of size $m and $n respectively"))
 
         r = rank(M)
-        !(r == n) && throw(ArgumentError("the rank of the given matrix is " *
+        r != n && throw(ArgumentError("the rank of the given matrix is " *
         "$r, but this function requires that it is $n"))
 
         return _linear_map_hrep_lift(M, P)
