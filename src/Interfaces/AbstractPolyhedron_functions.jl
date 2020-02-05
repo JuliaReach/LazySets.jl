@@ -436,7 +436,7 @@ function linear_map(M::AbstractMatrix{N},
 
     elseif algorithm == "lift"
         # check preconditions for this algorithm
-        !(m > n) && throw(ArgumentError("this function requires that the number " *
+        m <= n && throw(ArgumentError("this function requires that the number " *
         "of rows of the linear map is greater than the number of columns, but " *
         "they are of size $m and $n respectively"))
 
