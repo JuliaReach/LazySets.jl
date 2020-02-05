@@ -222,7 +222,7 @@ function extend(M::AbstractMatrix; check_rank=true)
 
     if check_rank
         r = rank(M)
-        !(r == n) && throw(ArgumentError("the rank of the given matrix is " *
+        r != n && throw(ArgumentError("the rank of the given matrix is " *
         "$r, but this function assumes that it is $n"))
     end
 
