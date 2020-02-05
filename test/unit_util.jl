@@ -93,7 +93,7 @@ for _dummy_ in 1:1 # avoid global variable warnings
         @assert rank(M) == 2
         Mext, inv_Mext = extend(M)
         @test rank(Mext) == 3
-        @test Mext * inv_Mext ≈ I(3)
+        @test Mext * inv_Mext ≈ Matrix(one(N)I, 3, 3)
         Md = N[1 1; 2 2; 3 3.]
         @test_throws ArgumentError extend(Md) # test default argument check
         @test_throws ArgumentError extend(Md, check_rank=true)
