@@ -97,6 +97,5 @@ for _dummy_ in 1:1 # avoid global variable warnings
         Md = N[1 1; 2 2; 3 3.]
         @test_throws ArgumentError extend(Md) # test default argument check
         @test_throws ArgumentError extend(Md, check_rank=true)
-        extend(Md, check_rank=false) # argument check can be turned off
     end
 end
