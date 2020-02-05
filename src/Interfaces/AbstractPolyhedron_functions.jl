@@ -516,12 +516,12 @@ function _linear_map_hrep_lift(M::AbstractMatrix{N}, P::AbstractPolyhedron{N}) w
     Mext, inv_Mext = extend(M, check_rank=false)
 
     # append zeros to the existing constraints, in the last m-n coordinates
-    cext = [HalfSpace(vcat(c.a, zeros(m-n)), c.b) for c in constraints_list(P)]
+    cext = [HalfSpace(vcat(c.a, zeros(N, m-n)), c.b) for c in constraints_list(P)]
 
     # now fix the last m-n coordinates to zero
     id_out = Matrix(one(N)*I, m-n, m-n)
-    cext = vcat(cext, [HalfSpace(vcat(zeros(n), id_out[i, :]), zero(N)) for i in 1:(m-n)],
-                      [HalfSpace(vcat(zeros(n), -id_out[i, :]), zero(N)) for i in 1:(m-n)])
+    cext = vcat(cext, [HalfSpace(vcat(zeros(N, n), id_out[i, :]), zero(N)) for i in 1:(m-n)],
+                      [HalfSpace(vcat(zeros(N, n), -id_out[i, :]), zero(N)) for i in 1:(m-n)])
 
     Pext = HPolytope(cext)
 

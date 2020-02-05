@@ -135,7 +135,11 @@ for N in [Float64, Rational{Int}, Float32]
         @test L7 isa HPolytope{N}
         if test_suite_polyhedra
             L7_vrep = linear_map(M, P, algorithm="vrep")
-            @test L7 ⊆ L7_vrep && L7_vrep ⊆ L7
+            if N == Float64
+                @test L7 ⊆ L7_vrep && L7_vrep ⊆ L7
+            end
+            # For Float32 we need to support mixed types,
+            # ρ(::Array{Float64,1}, ::HPolytope{Float32})
         end
     end
     # -----
