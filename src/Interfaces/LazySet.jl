@@ -2,6 +2,7 @@ import Base: ==, ≈, copy, eltype
 import Random.rand
 
 export LazySet,
+       basetype,
        ρ, support_function,
        σ, support_vector,
        dim,
@@ -161,6 +162,51 @@ Return the numeric type (`N`) of the given set.
 The numeric type of `X`.
 """
 eltype(::LazySet{N}) where {N} = N
+
+"""
+    basetype(T::Type{<:LazySet})
+
+Return the base type of the given set type (i.e., without type parameters).
+
+### Input
+
+- `T` -- set type, used for dispatch
+
+### Output
+
+The base type of `T`.
+"""
+basetype(T::Type{<:LazySet}) = Base.typename(T).wrapper
+
+"""
+    basetype(S::LazySet)
+
+Return the base type of the given set (i.e., without type parameters).
+
+### Input
+
+- `S` -- set instance, used for dispatch
+
+### Output
+
+The base type of `S`.
+
+### Examples
+
+```jldoctest
+julia> z = rand(Zonotope);
+
+julia> basetype(z)
+Zonotope
+
+julia> basetype(z + z)
+MinkowskiSum
+
+julia> basetype(LinearMap(rand(2, 2), z + z))
+LinearMap
+```
+"""
+basetype(S::LazySet) = Base.typename(typeof(S)).wrapper
 
 """
     ρ(d::AbstractVector{N}, S::LazySet{N}) where {N<:Real}

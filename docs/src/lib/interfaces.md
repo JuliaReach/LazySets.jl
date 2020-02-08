@@ -50,6 +50,7 @@ support_function
 ### Other globally defined set functions
 
 ```@docs
+basetype
 norm(::LazySet, ::Real=Inf)
 radius(::LazySet, ::Real=Inf)
 diameter(::LazySet, ::Real=Inf)
