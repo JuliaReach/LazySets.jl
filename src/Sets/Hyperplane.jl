@@ -28,7 +28,7 @@ struct Hyperplane{N<:Real} <: AbstractPolyhedron{N}
     a::AbstractVector{N}
     b::N
 
-    function Hyperplane{N}(a::AbstractVector{N}, b::N) where {N<:Real}
+    function Hyperplane(a::AbstractVector{N}, b::N) where {N<:Real}
         @assert !iszero(a) "a hyperplane needs a non-zero normal vector"
         return new{N}(a, b)
     end
@@ -36,9 +36,6 @@ end
 
 isoperationtype(::Type{<:Hyperplane}) = false
 isconvextype(::Type{<:Hyperplane}) = true
-
-# convenience constructor without type parameter
-Hyperplane(a::AbstractVector{N}, b::N) where {N<:Real} = Hyperplane{N}(a, b)
 
 
 # --- polyhedron interface functions ---

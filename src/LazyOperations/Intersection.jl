@@ -93,11 +93,9 @@ struct Intersection{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     cache::IntersectionCache
 
     # default constructor with dimension check
-    function Intersection{N, S1, S2}(X::S1,
-                                     Y::S2;
-                                     cache::IntersectionCache=IntersectionCache()
-                                    ) where
-            {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}}
+    function Intersection(X::S1, Y::S2;
+                          cache::IntersectionCache=IntersectionCache()
+                         ) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}}
         @assert dim(X) == dim(Y) "sets in an intersection must have the same " *
             "dimension"
         return new{N, S1, S2}(X, Y, cache)
@@ -106,10 +104,6 @@ end
 
 isoperationtype(::Type{<:Intersection}) = true
 isconvextype(::Type{Intersection{N, S1, S2}}) where {N, S1, S2} = isconvextype(S1) && isconvextype(S2)
-
-# convenience constructor without type parameter
-Intersection(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} =
-    Intersection{N, S1, S2}(X, Y)
 
 # Universe is the neutral element for Intersection
 @neutral(Intersection, Universe)
@@ -180,7 +174,7 @@ The advantage of using this function instead of manually swapping the arguments
 is that the cache is shared.
 """
 function swap(cap::Intersection{N, S1, S2}) where {N<:Real, S1, S2}
-    return Intersection{N, S2, S1}(cap.Y, cap.X, cache=cap.cache)
+    return Intersection(cap.Y, cap.X, cache=cap.cache)
 end
 
 

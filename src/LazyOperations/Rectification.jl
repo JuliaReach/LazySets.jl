@@ -93,7 +93,7 @@ struct Rectification{N<:Real, S<:LazySet{N}}
     cache::RectificationCache{N}
 
     # default constructor that initializes cache
-    function Rectification{N, S}(X::S) where {N<:Real, S<:LazySet{N}}
+    function Rectification(X::S) where {N<:Real, S<:LazySet{N}}
         if X isa AbstractHyperrectangle || X isa CartesianProduct ||
                 X isa CartesianProductArray
             # set types with efficient support-vector computations
@@ -112,9 +112,6 @@ end
 
 isoperationtype(::Type{<:Rectification}) = true
 isconvextype(::Type{<:Rectification}) = false
-
-# convenience constructor without type parameter
-Rectification(X::S) where {N<:Real, S<:LazySet{N}} = Rectification{N, S}(X)
 
 """
     dim(r::Rectification)

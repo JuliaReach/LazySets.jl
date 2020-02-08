@@ -38,8 +38,8 @@ struct ConvexHull{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     Y::S2
 
     # default constructor with dimension check
-    function ConvexHull{N, S1, S2}(X::S1, Y::S2) where
-            {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}}
+    function ConvexHull(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N},
+                                             S2<:LazySet{N}}
         @assert dim(X) == dim(Y) "sets in a convex hull must have the same " *
             "dimension"
         return new{N, S1, S2}(X, Y)
@@ -48,10 +48,6 @@ end
 
 isoperationtype(::Type{<:ConvexHull}) = true
 isconvextype(::Type{<:ConvexHull}) = true
-
-# convenience constructor without type parameter
-ConvexHull(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} =
-    ConvexHull{N, S1, S2}(X, Y)
 
 # EmptySet is the neutral element for ConvexHull
 @neutral(ConvexHull, EmptySet)

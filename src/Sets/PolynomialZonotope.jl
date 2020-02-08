@@ -75,26 +75,18 @@ struct PolynomialZonotope{N}
     G::Matrix{N}
 
     # default constructor with dimension check
-    function PolynomialZonotope{N}(c::Vector{N},
-                                   E::Vector{Matrix{N}},
-                                   F::Vector{Matrix{N}},
-                                   G::Matrix{N}) where {N}
+    function PolynomialZonotope(c::Vector{N}, E::Vector{Matrix{N}},
+                                F::Vector{Matrix{N}}, G::Matrix{N}) where {N}
 
         # check polynomial order
         @assert length(E) == 1 + length(F)
 
-        return new(c, E, F, G)
+        return new{N}(c, E, F, G)
     end
 end
 
 isoperationtype(::Type{<:PolynomialZonotope}) = false
 isconvextype(::Type{<:PolynomialZonotope}) = false
-
-# type-less convenience constructor
-PolynomialZonotope(c::Vector{N},
-                   E::Vector{Matrix{N}},
-                   F::Vector{Matrix{N}},
-                   G::Matrix{N}) where {N} = PolynomialZonotope{N}(c, E, F, G)
 
 """
     dim(pz::PolynomialZonotope)

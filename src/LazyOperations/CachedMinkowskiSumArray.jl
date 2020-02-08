@@ -66,16 +66,12 @@ struct CachedMinkowskiSumArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
     cache::Dict{AbstractVector{N}, CachedPair{N}}
 
     # default constructor that initializes cache
-    CachedMinkowskiSumArray{N, S}(arr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
+    CachedMinkowskiSumArray(arr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
         new{N, S}(arr, Dict{AbstractVector{N}, CachedPair{N}}())
 end
 
 isoperationtype(::Type{<:CachedMinkowskiSumArray}) = true
 isconvextype(::Type{CachedMinkowskiSumArray{N, S}}) where {N, S} = isconvextype(S)
-
-# convenience constructor without type parameter
-CachedMinkowskiSumArray(arr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
-    CachedMinkowskiSumArray{N, S}(arr)
 
 # constructor for an empty sum with optional size hint and numeric type
 function CachedMinkowskiSumArray(n::Int=0, N::Type=Float64)

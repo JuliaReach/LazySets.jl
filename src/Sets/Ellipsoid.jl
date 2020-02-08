@@ -69,8 +69,8 @@ struct Ellipsoid{N<:AbstractFloat} <: AbstractCentrallySymmetric{N}
     shape_matrix::AbstractMatrix{N}
 
     # default constructor with dimension check
-    function Ellipsoid{N}(c::AbstractVector{N},
-                          Q::AbstractMatrix{N}) where {N<:AbstractFloat}
+    function Ellipsoid(c::AbstractVector{N},
+                       Q::AbstractMatrix{N}) where {N<:AbstractFloat}
         @assert length(c) == checksquare(Q)
         @assert isposdef(Q) "an ellipsoid's shape matrix must be positive " *
             "definite"
@@ -81,11 +81,7 @@ end
 isoperationtype(::Type{<:Ellipsoid}) = false
 isconvextype(::Type{<:Ellipsoid}) = true
 
-# convenience constructor without type parameter
-Ellipsoid(c::AbstractVector{N}, Q::AbstractMatrix{N}) where {N<:AbstractFloat} =
-    Ellipsoid{N}(c, Q)
-
-# convenience constructor for ellipsoid centered in the origin
+# constructor for ellipsoid centered in the origin
 Ellipsoid(Q::AbstractMatrix{N}) where {N<:AbstractFloat} =
     Ellipsoid(zeros(N, size(Q, 1)), Q)
 

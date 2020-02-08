@@ -59,8 +59,7 @@ struct Ballp{N<:AbstractFloat} <: AbstractCentrallySymmetric{N}
     radius::N
 
     # default constructor with domain constraint for radius and p
-    function Ballp{N}(p::N, center::Vector{N}, radius::N
-                     ) where {N<:Real}
+    function Ballp(p::N, center::Vector{N}, radius::N) where {N<:Real}
         @assert radius >= zero(N) "radius must not be negative"
         @assert p >= 1 "p must not be less than 1"
         if p == Inf
@@ -77,19 +76,6 @@ end
 
 isoperationtype(::Type{<:Ballp}) = false
 isconvextype(::Type{<:Ballp}) = true
-
-# convenience constructor without type parameter
-function Ballp(p::N, center::Vector{N}, radius::N) where {N<:Real}
-    if p == Inf
-        return BallInf(center, radius)
-    elseif p == 2
-        return Ball2(center, radius)
-    elseif p == 1
-        return Ball1(center, radius)
-    else
-        return Ballp{N}(p, center, radius)
-    end
-end
 
 
 # --- AbstractCentrallySymmetric interface functions ---

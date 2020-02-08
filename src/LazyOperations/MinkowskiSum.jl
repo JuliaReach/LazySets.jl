@@ -24,8 +24,8 @@ struct MinkowskiSum{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     Y::S2
 
     # default constructor with dimension check
-    function MinkowskiSum{N, S1, S2}(X::S1, Y::S2) where
-            {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}}
+    function MinkowskiSum(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N},
+                                               S2<:LazySet{N}}
         @assert dim(X) == dim(Y) "sets in a Minkowski sum must have the " *
             "same dimension"
         return new{N, S1, S2}(X, Y)
@@ -34,10 +34,6 @@ end
 
 isoperationtype(::Type{<:MinkowskiSum}) = true
 isconvextype(::Type{MinkowskiSum{N, S1, S2}}) where {N, S1, S2} = isconvextype(S1) && isconvextype(S2)
-
-# convenience constructor without type parameter
-MinkowskiSum(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} =
-    MinkowskiSum{N, S1, S2}(X, Y)
 
 # ZeroSet is the neutral element for MinkowskiSum
 @neutral(MinkowskiSum, ZeroSet)

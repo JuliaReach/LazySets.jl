@@ -30,7 +30,7 @@ struct Line{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
     b::N
 
     # default constructor with length constraint
-    function Line{N, VN}(a::VN, b::N) where {N<:Real, VN<:AbstractVector{N}}
+    function Line(a::VN, b::N) where {N<:Real, VN<:AbstractVector{N}}
         @assert length(a) == 2 "lines must be two-dimensional"
         @assert !iszero(a) "a line needs a non-zero normal vector"
         return new{N, VN}(a, b)
@@ -39,9 +39,6 @@ end
 
 isoperationtype(::Type{<:Line}) = false
 isconvextype(::Type{<:Line}) = true
-
-# convenience constructor without type parameter
-Line(a::VN, b::N) where {N<:Real, VN<:AbstractVector{N}} = Line{N, VN}(a, b)
 
 # constructor from a LinearConstraint
 Line(c::LinearConstraint{N}) where {N<:Real} = Line(c.a, c.b)
