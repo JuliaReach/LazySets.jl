@@ -516,8 +516,7 @@ function intersection(P1::AbstractPolyhedron{N},
 
     # if one of P1 or P2 is bounded => the result is bounded
     HPOLY = (P1 isa AbstractPolytope || P2 isa AbstractPolytope) ?
-        HPolytope{N} :
-        HPolyhedron{N}
+        HPolytope : HPolyhedron
 
     # concatenate the linear constraints
     Q = HPOLY([constraints_list(P1); constraints_list(P2)])

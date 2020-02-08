@@ -582,10 +582,11 @@ function isbounded(P::AbstractHPolygon, use_type_assumption::Bool=true)
     return isbounded_unit_dimensions(P)
 end
 
-function _linear_map_hrep(M::AbstractMatrix{N}, P::HPOLYGON,
+function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractHPolygon{N},
                           use_inv::Bool;
                           inverse::Union{Nothing, AbstractMatrix{N}}=nothing
-                         ) where {N<:Real, HPOLYGON<:AbstractHPolygon{N}}
+                         ) where {N<:Real}
     constraints = _linear_map_hrep_helper(M, P, use_inv; inverse=inverse)
-    return HPOLYGON(constraints)
+    T = basetype(P)
+    return T(constraints)
 end

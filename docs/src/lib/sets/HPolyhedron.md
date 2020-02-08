@@ -19,7 +19,7 @@ constraints_list(::HPoly{N}) where {N<:Real}
 tohrep(::HPoly{N}) where {N<:Real}
 tovrep(::HPoly{N}) where {N<:Real}
 isempty(::HPoly{N}, ::Bool=false) where {N<:Real}
-translate(::PT, ::AbstractVector{N}) where {N<:Real, PT<:HPoly{N}}
+translate(::HPoly{N}, ::AbstractVector{N}) where {N<:Real}
 polyhedron(::HPoly{N}) where {N<:Real}
 remove_redundant_constraints(::HPoly{N}) where {N<:Real}
 remove_redundant_constraints!(::HPoly{N}) where {N<:Real}

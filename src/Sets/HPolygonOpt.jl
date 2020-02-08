@@ -53,11 +53,11 @@ mutable struct HPolygonOpt{N<:Real} <: AbstractHPolygon{N}
     ind::Int
 
     # default constructor that applies sorting of the given constraints
-    function HPolygonOpt{N}(constraints::Vector{<:LinearConstraint{N}},
-                            ind::Int=1;
-                            sort_constraints::Bool=true,
-                            check_boundedness::Bool=false,
-                            prune::Bool=true) where {N<:Real}
+    function HPolygonOpt(constraints::Vector{<:LinearConstraint{N}},
+                         ind::Int=1;
+                         sort_constraints::Bool=true,
+                         check_boundedness::Bool=false,
+                         prune::Bool=true) where {N<:Real}
         if sort_constraints
             sorted_constraints = Vector{eltype(constraints)}()
             sizehint!(sorted_constraints, length(constraints))
@@ -77,21 +77,9 @@ end
 isoperationtype(::Type{<:HPolygonOpt}) = false
 isconvextype(::Type{<:HPolygonOpt}) = true
 
-# convenience constructor without type parameter
-HPolygonOpt(constraints::Vector{<:LinearConstraint{N}},
-            ind::Int=1;
-            sort_constraints::Bool=true,
-            check_boundedness::Bool=false,
-            prune::Bool=true) where {N<:Real} =
-    HPolygonOpt{N}(constraints,
-                   ind;
-                   sort_constraints=sort_constraints,
-                   check_boundedness=check_boundedness,
-                   prune=prune)
-
 # constructor with no constraints
 HPolygonOpt{N}() where {N<:Real} =
-    HPolygonOpt{N}(Vector{LinearConstraint{N, <:AbstractVector{N}}}())
+    HPolygonOpt(Vector{LinearConstraint{N, <:AbstractVector{N}}}())
 
 # constructor with no constraints of type Float64
 HPolygonOpt() = HPolygonOpt{Float64}()
@@ -103,15 +91,6 @@ HPolygonOpt(A::AbstractMatrix{N},
             check_boundedness::Bool=false,
             prune::Bool=true) where {N<:Real} =
     HPolygonOpt(constraints_list(A, b); sort_constraints=sort_constraints,
-                check_boundedness=check_boundedness, prune=prune)
-
-# constructor from a simple H-representation with type parameter
-HPolygonOpt{N}(A::AbstractMatrix{N},
-               b::AbstractVector{N};
-               sort_constraints::Bool=true,
-               check_boundedness::Bool=false,
-               prune::Bool=true) where {N<:Real} =
-    HPolygonOpt(A, b; sort_constraints=sort_constraints,
                 check_boundedness=check_boundedness, prune=prune)
 
 

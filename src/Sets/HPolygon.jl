@@ -45,10 +45,10 @@ struct HPolygon{N<:Real} <: AbstractHPolygon{N}
 
     # default constructor that applies sorting of the given constraints and
     # (checks for and) removes redundant constraints
-    function HPolygon{N}(constraints::Vector{<:LinearConstraint{N}};
-                         sort_constraints::Bool=true,
-                         check_boundedness::Bool=false,
-                         prune::Bool=true) where {N<:Real}
+    function HPolygon(constraints::Vector{<:LinearConstraint{N}};
+                      sort_constraints::Bool=true,
+                      check_boundedness::Bool=false,
+                      prune::Bool=true) where {N<:Real}
         if sort_constraints
             sorted_constraints = Vector{eltype(constraints)}()
             sizehint!(sorted_constraints, length(constraints))
@@ -68,19 +68,9 @@ end
 isoperationtype(::Type{<:HPolygon}) = false
 isconvextype(::Type{<:HPolygon}) = true
 
-# convenience constructor without type parameter
-HPolygon(constraints::Vector{<:LinearConstraint{N}};
-         sort_constraints::Bool=true,
-         check_boundedness::Bool=false,
-         prune::Bool=true) where {N<:Real} =
-    HPolygon{N}(constraints;
-                sort_constraints=sort_constraints,
-                check_boundedness=check_boundedness,
-                prune=prune)
-
 # constructor for an HPolygon with no constraints
 HPolygon{N}() where {N<:Real} =
-    HPolygon{N}(Vector{LinearConstraint{N, <:AbstractVector{N}}}())
+    HPolygon(Vector{LinearConstraint{N, <:AbstractVector{N}}}())
 
 # constructor for an HPolygon with no constraints of type Float64
 HPolygon() = HPolygon{Float64}()
@@ -92,15 +82,6 @@ HPolygon(A::AbstractMatrix{N},
          check_boundedness::Bool=false,
          prune::Bool=true) where {N<:Real} =
     HPolygon(constraints_list(A, b); sort_constraints=sort_constraints,
-             check_boundedness=check_boundedness, prune=prune)
-
-# constructor from a simple H-representation with type parameter
-HPolygon{N}(A::AbstractMatrix{N},
-            b::AbstractVector{N};
-            sort_constraints::Bool=true,
-            check_boundedness::Bool=false,
-            prune::Bool=true) where {N<:Real} =
-    HPolygon(A, b; sort_constraints=sort_constraints,
              check_boundedness=check_boundedness, prune=prune)
 
 
