@@ -103,18 +103,18 @@ for N in [Float64, Rational{Int}, Float32]
     LM = linear_map(N[2 3; 1 2], P) # invertible matrix
     @test LM isa HPolytope{N}
     if test_suite_polyhedra
-        LM = linear_map(N[2 3; 0 0], P)  # non-invertible matrix
+        LM = linear_map(N[2 3; 0 0], P, algorithm="vrep")  # non-invertible matrix
         @test LM isa VPolygon{N}
     end
 
     M = N[2 1; 0 1]
     L1 = linear_map(M, P, algorithm="inverse")  # calculates inv(M) explicitly
-    L2 = linear_map(M, P, algorithm="division")  # uses transpose(M) \ c.a for each constraint c of P
+    L2 = linear_map(M, P, algorithm="inverse_right")  # uses transpose(M) \ c.a for each constraint c of P
     L3 = linear_map(M, P, algorithm="vrep")  # uses V-representaion
     @test_throws ArgumentError linear_map(M, P, algorithm="xyz")  # unknown algorithm
     L4 = linear_map(M, P, cond_tol=1e3)  # set a custom tolerance for the condition number (invertibility check)
     L5 = linear_map(M, P, check_invertibility=false)  # invertibility known
-    L6 = linear_map(M, P, inverse=inv(M))  # pass inverse
+    L6 = linear_map(M, P, inverse=inv(M))  # pass inverse, uses "inverse"
     p = center(H)
     @test p ∈ P
     @test all([M * p ∈ Li for Li in [L1, L2, L3, L4, L5, L6]])
