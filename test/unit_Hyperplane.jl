@@ -64,10 +64,15 @@ for N in [Float64, Rational{Int}, Float32]
     @test ispermutation(constraints_list(hp),
                         [HalfSpace(a, b), HalfSpace(-a, -b)])
 
-    # test concrete linear map of a hyerplane
+    # test concrete linear map of a hyperplane
     H = Hyperplane(N[1, -1], N(0)) # x = y
     M = N[1 0; 0 0] # non-invertible matrix
-    @test_throws ArgumentError linear_map(M, H)
+    if N == Float32 || N == Float64
+        @test linear_map(M, H) isa Hyperplane{Float64}
+    elseif N == Rational{Int}
+        @test linear_map(M, H) isa Hyperplane{Rational{BigInt}}
+    end
+    @test_throws ArgumentError linear_map(M, H, algorithm="inv")
     M = N[2 2; 0 1] # invertible matrix
     @test linear_map(M, H) == Hyperplane(N[0.5, -2.0], N(0.0))
 
