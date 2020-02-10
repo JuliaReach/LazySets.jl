@@ -74,8 +74,8 @@ for N in [Float64, Rational{Int}, Float32]
     M = N[1 0; 0 0] # non-invertible matrix
     if N == Rational{Int}
         @test linear_map(M, L) isa HPolyhedron{Rational{BigInt}}
-    else
-        @test linear_map(M, L) isa HPolyhedron{N}
+    elseif N == Float32 || N == Float64
+        @test linear_map(M, L) isa HPolyhedron{Float64}
     end
     #M = N[2 2; 0 1] # invertible matrix
     #@test linear_map(M, L) == Line(N[0.5, -2.0], N(0.0)) #TODO: see _linear_map_hrep_helper in Line.jl
