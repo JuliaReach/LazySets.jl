@@ -724,8 +724,9 @@ function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
     method = algo.method
 
     # extend the polytope storing the y variables first
-    Ax_leq_b = [Polyhedra.HalfSpace(vcat(zeros(N, m), c.a), c.b) for c in constraints_list(P)]
-    y_eq_Mx = [Polyhedra.HyperPlane(vcat(-id_m[i, :], M[i, :]), zero(N)) for i in 1:m]
+    # TEMP: cast to dense vector
+    Ax_leq_b = [Polyhedra.HalfSpace(Vector(vcat(zeros(N, m), c.a)), c.b) for c in constraints_list(P)]
+    y_eq_Mx = [Polyhedra.HyperPlane(Vector(vcat(-id_m[i, :], M[i, :])), zero(N)) for i in 1:m]
 
     Phrep = Polyhedra.hrep(y_eq_Mx, Ax_leq_b)
     Phrep_cdd = polyhedron(Phrep, backend)
