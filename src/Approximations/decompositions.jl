@@ -525,9 +525,9 @@ function project(H::HalfSpace{N}, block::AbstractVector{Int}) where {N}
 end
 
 """
-    project(P::HPolyhedron{N}, block::AbstractVector{Int}) where {N}
+    project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}) where {N}
 
-Concrete projection of a polyhedron in half-space representation.
+Concrete projection of a polyhedral set.
 
 ### Input
 
@@ -536,7 +536,8 @@ Concrete projection of a polyhedron in half-space representation.
 
 ### Output
 
-A set representing the projection of `P` on the dimensions specified by `block`.
+An `HPolyhedron` representing the projection of `P` on the dimensions specified
+by `block`.
 
 ### Notes
 
@@ -547,16 +548,14 @@ of the `block` variables is implemented.
 
 Consider the four-dimensional cross-polytope (unit ball in the 1-norm):
 
-```jldoctest project_hpolyhedron
-julia> using LazySets.Approximations: project
-
-julia> P = convert(HPolyhedron, Ball1(zeros(4), 1.0));
+```jldoctest project_polyhedron
+julia> P = Ball1(zeros(4), 1.0);
 ```
 
 All dimensions are constrained, and computing the (trivial) projection on the whole
 space behaves as expected:
 
-```jldoctest project_hpolyhedron
+```jldoctest project_polyhedron
 julia> constrained_dimensions(P)
 4-element Array{Int64,1}:
  1
@@ -566,14 +565,14 @@ julia> constrained_dimensions(P)
 
 julia> P_1234 = project(P, [1, 2, 3, 4]);
 
-julia> P_1234 == P
+julia> P_1234 == convert(HPolyhedron, P)
 true
 ```
 Each constraint of the cross polytope is constrained in all dimensions.
 
 Now let's take a ball in the infinity norm and remove some constraints:
 
-```jldoctest project_hpolyhedron
+```jldoctest project_polyhedron
 julia> B = BallInf(zeros(4), 1.0);
 
 julia> c = constraints_list(B)[1:2]
@@ -591,14 +590,14 @@ julia> constrained_dimensions(P)
 
 Finally we take the concrete projection onto variables `1` and `2`:
 
-```jldoctest project_hpolyhedron
+```jldoctest project_polyhedron
 julia> project(P, [1, 2]) |> constraints_list
 2-element Array{HalfSpace{Float64,VN} where VN<:AbstractArray{Float64,1},1}:
  HalfSpace{Float64,Array{Float64,1}}([1.0, 0.0], 1.0)
  HalfSpace{Float64,Array{Float64,1}}([0.0, 1.0], 1.0)
 ```
 """
-function project(P::HPolyhedron{N}, block::AbstractVector{Int}) where {N}
+function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}) where {N}
     if constrained_dimensions(P) ⊆ block
         return HPolyhedron([HalfSpace(c.a[block], c.b) for c in constraints_list(P)])
     else
