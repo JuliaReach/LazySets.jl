@@ -237,7 +237,8 @@ function decompose(S::LazySet{N},
                    block_options::Union{Type{<:LazySet},
                                         Pair{<:UnionAll, <:Real},
                                         Real,
-                                        Type{<:AbstractDirections}
+                                        Type{<:AbstractDirections},
+                                        Nothing
                                        }
                   ) where {N<:Real}
     n = dim(S)
@@ -258,6 +259,40 @@ end
 """
     project(S::LazySet{N},
             block::AbstractVector{Int},
+            ::Nothing,
+            [n]::Int=dim(S)
+           ) where {N<:Real}
+
+Project a high-dimensional set to a given block by using a concrete linear map.
+
+### Input
+
+- `S`       -- set
+- `block`   -- block structure - a vector with the dimensions of interest
+- `nothing` -- used for dispatch
+- `n`       -- (optional, default: `dim(S)`) ambient dimension of the set `S`
+
+### Output
+
+A set representing the projection of the set `S` to block `block`.
+
+### Algorithm
+
+We apply the function `linear_map`.
+"""
+@inline function project(S::LazySet{N},
+                         block::AbstractVector{Int},
+                         ::Nothing,
+                         n::Int=dim(S)
+                        ) where {N<:Real}
+    m = length(block)
+    M = sparse(1:m, block, ones(N, m), m, n)
+    return linear_map(M, S)
+end
+
+"""
+    project(S::LazySet{N},
+            block::AbstractVector{Int},
             set_type::Type{<:LinearMap},
             [n]::Int=dim(S)
            ) where {N<:Real}
@@ -273,7 +308,7 @@ Project a high-dimensional set to a given block by using a lazy linear map.
 
 ### Output
 
-A lazy `LinearMap` representing a projection of the set `S` to block `block`.
+A lazy `LinearMap` representing the projection of the set `S` to block `block`.
 """
 @inline function project(S::LazySet{N},
                          block::AbstractVector{Int},
