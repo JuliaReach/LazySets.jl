@@ -405,3 +405,11 @@ RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractSingleton{N}, ::N=zero(N)
 
 * [Singleton](@ref def_Singleton)
 * [Origin (ZeroSet)](@ref def_ZeroSet)
+
+## [Affine maps (AbstractAffineMap)](@id def_AbstractAffineMap)
+
+An affine map consists of a linear map and a translation.
+
+```@docs
+AbstractAffineMap
+```

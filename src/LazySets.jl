@@ -53,6 +53,7 @@ include("Interfaces/AbstractHyperrectangle.jl")
 include("Interfaces/AbstractPolygon.jl")
 include("Interfaces/AbstractSingleton.jl")
 include("Interfaces/AbstractHPolygon.jl")
+include("Interfaces/AbstractAffineMap.jl")
 
 # =============================
 # Types representing basic sets

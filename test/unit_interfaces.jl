@@ -73,3 +73,15 @@ check_method_implementation(LazySet, dim, Function[S -> (S{Float64},)])
 # --- AbstractHPolygon ---
 
 # no functions yet
+
+# --- AbstractAffineMap ---
+
+# get_A
+@test check_method_implementation(AbstractAffineMap, get_A,
+                                  Function[S -> (S{Float64},)])
+# get_b
+@test check_method_implementation(AbstractAffineMap, get_b,
+                                  Function[S -> (S{Float64},)])
+# get_X
+@test check_method_implementation(AbstractAffineMap, get_X,
+                                  Function[S -> (S{Float64},)])

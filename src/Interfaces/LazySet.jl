@@ -56,7 +56,8 @@ The subtypes of `LazySet` (including abstract interfaces):
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(LazySet, false)
-19-element Array{Any,1}:
+20-element Array{Any,1}:
+ AbstractAffineMap
  AbstractCentrallySymmetric
  AbstractPolyhedron
  AffineMap
