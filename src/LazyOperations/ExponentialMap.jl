@@ -211,7 +211,7 @@ julia> E * EmptySet(2)
 EmptySet{Float64}(2)
 ```
 """
-struct ExponentialMap{N, S<:LazySet{N}} <: AbstractAffineMap{N, S}
+struct ExponentialMap{N<:Real, S<:LazySet{N}} <: AbstractAffineMap{N, S}
     spmexp::SparseMatrixExp{N}
     X::S
 end
