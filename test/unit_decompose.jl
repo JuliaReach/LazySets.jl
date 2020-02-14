@@ -24,6 +24,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test d.array[1] isa Interval &&
         σ(N[1], d.array[1])[1] == one(N) && σ(N[-1], d.array[1])[1] == -one(N)
 
+    d = decompose(b, partition, nothing)
+    @test d.array[1] isa Zonotope{N} && test_directions(d.array[1])
+
     # ===================
     # 1D/3D decomposition
     # ===================
