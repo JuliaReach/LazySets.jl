@@ -256,6 +256,13 @@ function decompose(S::LazySet, block_options; block_size::Int=1)
     return decompose(S, partition, block_options)
 end
 
+# return a sparse matrix with number type `N` representing the projection
+# in ambient dimension `n`, for the coordinates present in `block`
+function _projection_matrix(N, n::Int, block::AbstractVector{Int})
+    m = length(block)
+    return sparse(1:m, block, ones(N, m), m, n)
+end
+
 """
     project(S::LazySet{N},
             block::AbstractVector{Int},
@@ -285,8 +292,7 @@ We apply the function `linear_map`.
                          ::Nothing=nothing,
                          n::Int=dim(S)
                         ) where {N<:Real}
-    m = length(block)
-    M = sparse(1:m, block, ones(N, m), m, n)
+    M = _projection_matrix(N, n, block)
     return linear_map(M, S)
 end
 
@@ -315,8 +321,7 @@ A lazy `LinearMap` representing the projection of the set `S` to block `block`.
                          set_type::Type{<:LinearMap},
                          n::Int=dim(S)
                         ) where {N<:Real}
-    m = length(block)
-    M = sparse(1:m, block, ones(N, m), m, n)
+    M = _projection_matrix(N, n, block)
     return M * S
 end
 
@@ -636,7 +641,8 @@ function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}) where {N}
     if constrained_dimensions(P) ⊆ block
         return HPolyhedron([HalfSpace(c.a[block], c.b) for c in constraints_list(P)])
     else
-        error("the concrete projection of a polyhedron " *
-              "for a general block structure is not implemented yet")
+        n = dim(P)
+        M = _projection_matrix(N, n, block)
+        return linear_map(M, P)
     end
 end
