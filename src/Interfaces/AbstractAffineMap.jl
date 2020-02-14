@@ -16,6 +16,16 @@ Every concrete `AbstractAffineMap` must define the following functions:
 - `get_A(::AbstractAffineMap)` -- return the linear map
 - `get_b(::AbstractAffineMap)` -- return the affine translation vector
 - `get_X(::AbstractAffineMap)` -- return the set that the map is applied to
+
+```jldoctest; setup = :(using LazySets: subtypes)
+julia> subtypes(AbstractAffineMap)
+5-element Array{Any,1}:
+ AffineMap
+ ExponentialMap
+ LinearMap
+ ResetMap
+ Translation
+```
 """
 abstract type AbstractAffineMap{N<:Real, S<:LazySet{N}} <: LazySet{N} end
 

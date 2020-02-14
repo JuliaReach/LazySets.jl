@@ -11,7 +11,7 @@ export AffineMap,
 
 """
     AffineMap{N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM},
-              VN<:AbstractVector{NM}} <: LazySet{N}
+              VN<:AbstractVector{NM}} <: AbstractAffineMap{N, S}
 
 Type that represents an affine transformation ``M⋅X ⊕ v`` of a convex set ``X``.
 
@@ -83,7 +83,7 @@ EmptySet{Int64}(2)
 ```
 """
 struct AffineMap{N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM},
-                 VN<:AbstractVector{NM}} <: LazySet{N}
+                 VN<:AbstractVector{NM}} <: AbstractAffineMap{N, S}
     M::MAT
     X::S
     v::VN
@@ -147,6 +147,22 @@ end
 function AffineMap(M::AbstractMatrix{N}, ∅::EmptySet{N}, v::AbstractVector{N}
                   ) where {N<:Real}
     return ∅
+end
+
+
+# --- AbstractAffineMap interface functions ---
+
+
+function get_A(am::AffineMap)
+    return am.M
+end
+
+function get_b(am::AffineMap{N}) where {N<:Real}
+    return am.v
+end
+
+function get_X(am::AffineMap)
+    return am.X
 end
 
 # ============================

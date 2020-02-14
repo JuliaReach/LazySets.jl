@@ -5,7 +5,7 @@ export ResetMap,
        get_b
 
 """
-    ResetMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
+    ResetMap{N<:Real, S<:LazySet{N}} <: AbstractAffineMap{N, S}
 
 Type that represents a lazy reset map.
 A reset map is a special case of an affine map ``A x + b, x ∈ X`` where the
@@ -77,7 +77,7 @@ julia> σ(ones(3), rm)
  0.0
 ```
 """
-struct ResetMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
+struct ResetMap{N<:Real, S<:LazySet{N}} <: AbstractAffineMap{N, S}
     X::S
     resets::Dict{Int, N}
 end
@@ -95,6 +95,10 @@ end
 function ResetMap(∅::EmptySet{N}, resets::Dict{Int, N}) where {N<:Real}
     return ∅
 end
+
+
+# --- AbstractAffineMap interface functions ---
+
 
 """
     get_A(rm::ResetMap{N}) where {N<:Real}
@@ -152,6 +156,10 @@ function _get_b_from_dictionary(dict::Dict{Int, N}, n::Int) where {N<:Real}
         b[i] = val
     end
     return b
+end
+
+function get_X(rm::ResetMap)
+    return rm.X
 end
 
 

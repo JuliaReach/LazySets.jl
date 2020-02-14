@@ -5,7 +5,7 @@ export LinearMap,
        constraints_list
 
 """
-    LinearMap{N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} <: LazySet{N}
+    LinearMap{N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
 
 Type that represents a linear transformation ``M⋅S`` of a convex set ``S``.
 
@@ -94,7 +94,7 @@ EmptySet{Int64}(2)
 ```
 """
 struct LinearMap{N<:Real, S<:LazySet{N},
-                 NM, MAT<:AbstractMatrix{NM}} <: LazySet{N}
+                 NM, MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
     M::MAT
     X::S
 
@@ -189,6 +189,26 @@ end
 function LinearMap(M::AbstractMatrix{N}, ∅::EmptySet{N}) where {N<:Real}
     return ∅
 end
+
+
+# --- AbstractAffineMap interface functions ---
+
+
+function get_A(lm::LinearMap)
+    return lm.M
+end
+
+function get_b(lm::LinearMap{N}) where {N<:Real}
+    return spzeros(N, dim(lm))
+end
+
+function get_X(lm::LinearMap)
+    return lm.X
+end
+
+
+# --- LazySet interface functions ---
+
 
 """
     dim(lm::LinearMap)

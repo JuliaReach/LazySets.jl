@@ -413,3 +413,16 @@ An affine map consists of a linear map and a translation.
 ```@docs
 AbstractAffineMap
 ```
+
+This interface defines the following functions:
+
+```@docs
+```
+
+### Implementations
+
+* [Affine map (AffineMap)](@ref def_AffineMap)
+* [Exponential map (ExponentialMap)](@ref def_ExponentialMap)
+* [Linear map (LinearMap)](@ref def_LinearMap)
+* [Reset map (ResetMap)](@ref def_ResetMap)
+* [Translation](@ref def_Translation)
