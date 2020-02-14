@@ -283,7 +283,7 @@ for N in [Float64]
         @test L isa HPolyhedron{N}
         L = linear_map(sparse(Mnotinv), Pbdd, algorithm="vrep") # Requires Polyhedra because it works on vertices
         @test L isa VPolytope
-        # breaks because "inv_right" requires an invertible matrix 
+        # breaks because "inv_right" requires an invertible matrix
         @test_throws ArgumentError linear_map(sparse(Mnotinv), Punbdd, algorithm="inv_right")
 
         # remove a repeated constraint (#909)
@@ -292,5 +292,14 @@ for N in [Float64]
         addconstraint!(Q, Q.constraints[2])
         remove_redundant_constraints!(Q)
         @test length(constraints_list(Q)) == 2
+
+        # concrete projection of an unbounded set
+        # P = {x, y, z : x >= 0, y >= 0, z >= 0} is the positive orthant
+        P = HPolyhedron([HalfSpace(N[-1, 0, 0], N(0)),
+                         HalfSpace(N[0, -1, 0], N(0)),
+                         HalfSpace(N[0, 0, -1], N(0))])
+        πP = project(P, [1, 2])
+        @test πP isa HPolyhedron{N}
+        @test ispermutation(constraints_list(πP), [HalfSpace(N[-1, 0], N(0)), HalfSpace(N[0, -1], N(0))])
     end
 end
