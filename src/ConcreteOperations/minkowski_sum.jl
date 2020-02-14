@@ -218,8 +218,8 @@ function minkowski_sum(H1::AbstractHyperrectangle{N},
 end
 
 """
-    minkowski_sum(Z1::AbstractZonotope{N}, Z2::AbstractZonotope{N})
-        where {N<:Real}
+    minkowski_sum(Z1::AbstractZonotope{N}, Z2::AbstractZonotope{N};
+                  [remove_zero_generators::Bool]) where {N<:Real}
 
 Concrete Minkowski sum of a pair of zonotopic sets.
 
@@ -227,6 +227,8 @@ Concrete Minkowski sum of a pair of zonotopic sets.
 
 - `Z1` -- zonotopic set
 - `Z2` -- zonotopic set
+- `remove_zero_generators` -- (optional, default: `true`) if `true`, remove the
+                              zero generators from the resulting zonotope
 
 ### Output
 
@@ -235,9 +237,13 @@ A `Zonotope` corresponding to the concrete Minkowski sum of `Z1` and `Z2`.
 ### Algorithm
 
 The resulting zonotope is obtained by summing up the centers and concatenating
-the generators of `Z1` and `Z2`.
+the generators of `Z1` and `Z2`. If the flag `remove_zero_generators` is set to
+`true`, the zero generators (i.e. the generators which have all its components
+equal to zero) of `Z1 ⊕ Z2` are removed.
 """
-function minkowski_sum(Z1::AbstractZonotope{N},
-                       Z2::AbstractZonotope{N}) where {N<:Real}
-    return Zonotope(center(Z1) + center(Z2), [genmat(Z1) genmat(Z2)])
+function minkowski_sum(Z1::AbstractZonotope{N}, Z2::AbstractZonotope{N};
+                       remove_zero_generators::Bool=true) where {N<:Real}
+    cnew = center(Z1) + center(Z2)
+    Gnew = hcat(genmat(Z1), genmat(Z2))
+    return Zonotope(cnew, Gnew, remove_zero_generators=remove_zero_generators)
 end
