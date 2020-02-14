@@ -143,7 +143,7 @@ The output is always `false`.
 ### Examples
 
 ```jldoctest
-julia> [1.0, 0.0] ∈ EmptySet(2)
+julia> [1.0, 0.0] ∈ ∅(2)
 false
 ```
 """
