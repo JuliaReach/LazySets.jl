@@ -462,7 +462,7 @@ on heuristics on the types and values of `M` and `P`:
 - Otherwise, the `"elimination"` algorithm is used.
 
 Note that `"inverse"` does not require the external library `Polyhedra`, and so
-does `"inverse_right"`. However, the fallback method `"lift"` does require `Polyhedra`
+does `"inverse_right"`. However, the fallback method `"elimination"` does require `Polyhedra`
 as well as the library `CDDLib`.
 
 #### Inverse
