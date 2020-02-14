@@ -256,23 +256,6 @@ function an_element(rm::ResetMap)
 end
 
 """
-    isempty(rm::ResetMap)
-
-Return if a reset map is empty or not.
-
-### Input
-
-- `rm` -- reset map
-
-### Output
-
-`true` iff the wrapped set is empty.
-"""
-function isempty(rm::ResetMap)
-    return isempty(rm.X)
-end
-
-"""
     constraints_list(rm::ResetMap{N}) where {N<:Real}
 
 Return the list of constraints of a polytopic reset map.

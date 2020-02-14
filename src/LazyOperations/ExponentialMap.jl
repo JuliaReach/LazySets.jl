@@ -443,23 +443,6 @@ function isbounded(em::ExponentialMap)
     return isbounded(em.X)
 end
 
-"""
-    isempty(em::ExponentialMap)
-
-Return if an exponential map is empty or not.
-
-### Input
-
-- `em` -- exponential map
-
-### Output
-
-`true` iff the wrapped set is empty.
-"""
-function isempty(em::ExponentialMap)
-    return isempty(em.X)
-end
-
 # --- ProjectionSparseMatrixExp & ExponentialProjectionMap ---
 
 """

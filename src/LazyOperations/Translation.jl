@@ -219,23 +219,6 @@ end
 # ============================
 
 """
-    dim(tr::Translation)
-
-Return the dimension of a translation.
-
-### Input
-
-- `tr` -- translation
-
-### Output
-
-The dimension of a translation.
-"""
-function dim(tr::Translation)
-    return length(tr.v)
-end
-
-"""
     σ(d::AbstractVector{N}, tr::Translation{N}) where {N<:Real}
 
 Return the support vector of a translation.
@@ -292,23 +275,6 @@ translates this element according to the given translation vector.
 """
 function an_element(tr::Translation)
     return an_element(tr.X) + tr.v
-end
-
-"""
-    isempty(tr::Translation)
-
-Return if a translation is empty or not.
-
-### Input
-
-- `tr` -- translation
-
-### Output
-
-`true` iff the wrapped set is empty.
-"""
-function isempty(tr::Translation)
-    return isempty(tr.X)
 end
 
 """
