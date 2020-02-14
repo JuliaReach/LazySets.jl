@@ -653,7 +653,7 @@ function plot_recipe(cap::Intersection{N}, ε::N=zero(N),
     @assert dim(cap) <= 2 "cannot plot a $(dim(cap))-dimensional intersection"
 
     if isempty(cap)
-        return plot_recipe(EmptySet{N}(), ε)
+        return plot_recipe(EmptySet{N}(dim(cap)), ε)
     elseif dim(cap) == 1
         return plot_recipe(convert(Interval, cap), ε)
     else

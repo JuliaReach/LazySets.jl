@@ -19,6 +19,6 @@ for N in [Float64, Float32, Rational{Int}]
     @test bi.radius ≈ biexp.radius
 
     # empty set
-    E = EmptySet{N}()
+    E = EmptySet{N}(2)
     @test ballinf_approximation(E) == E
 end

@@ -105,7 +105,7 @@ for N in [Float64, Rational{Int}, Float32]
     # ================
 
     # neutral element
-    e = EmptySet{N}()
+    e = EmptySet{N}(2)
     @test neutral(ConvexHull) == neutral(ConvexHullArray) == EmptySet
     @test CH(b1, e) == CH(e, b1) == b1
     @test CH(cha, e) == CH(e, cha) == cha

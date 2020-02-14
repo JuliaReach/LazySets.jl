@@ -16,7 +16,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test UXY.X == U2.Y && UXY.Y == U2.X
 
     # neutral and absorbing elements
-    E = EmptySet{N}()
+    E = EmptySet{N}(2)
     @test neutral(UnionSet) == neutral(UnionSetArray) == EmptySet
     @test UnionSet(B1, E) == UnionSet(E, B1) == B1
     U = Universe{N}(2)

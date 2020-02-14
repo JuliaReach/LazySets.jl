@@ -22,7 +22,7 @@ Otherwise, the result is the empty set.
 function intersection(S::AbstractSingleton{N},
                       X::LazySet{N}
                      ) where {N<:Real}
-    return element(S) ∈ X ? S : EmptySet{N}()
+    return element(S) ∈ X ? S : EmptySet{N}(dim(S))
 end
 
 # symmetric method
@@ -36,7 +36,7 @@ end
 function intersection(S1::AbstractSingleton{N},
                       S2::AbstractSingleton{N}
                      ) where {N<:Real}
-    return element(S1) == element(S2) ? S1 : EmptySet{N}()
+    return element(S1) == element(S2) ? S1 : EmptySet{N}(dim(S1))
 end
 
 """
@@ -84,7 +84,7 @@ function intersection(L1::Line{N}, L2::Line{N}
             return L1
         else
             # lines are parallel but not identical
-            return EmptySet{N}()
+            return EmptySet{N}(dim(L1))
         end
     end
 end
@@ -131,7 +131,7 @@ function intersection(H1::AbstractHyperrectangle{N},
         high[i] = min(high1, high2)
         low[i] = max(low1, low2)
         if high[i] < low[i]
-            return EmptySet{N}()
+            return EmptySet{N}(dim(H1))
         end
     end
     return Hyperrectangle(high=high, low=low)
@@ -168,7 +168,7 @@ Otherwise the result is the interval that describes the intersection.
 function intersection(x::Interval{N}, y::Interval{N}
                      ) where {N<:Real}
     if min(y) > max(x) || min(x) > max(y)
-        return EmptySet{N}()
+        return EmptySet{N}(1)
     else
         return Interval(max(min(x), min(y)), min(max(x), max(y)))
     end
@@ -211,7 +211,7 @@ function intersection(X::Interval{N}, hs::HalfSpace{N}
             return X
         else
             # half-space is empty
-            return EmptySet{N}()
+            return EmptySet{N}(1)
         end
     end
 
@@ -233,7 +233,7 @@ function intersection(X::Interval{N}, hs::HalfSpace{N}
                 return Interval(lo, b_over_a)
             end
         else
-            return EmptySet{N}()
+            return EmptySet{N}(1)
         end
     else
         # half-space is a lower bound
@@ -246,7 +246,7 @@ function intersection(X::Interval{N}, hs::HalfSpace{N}
                 return Interval(b_over_a, hi)
             end
         else
-            return EmptySet{N}()
+            return EmptySet{N}(1)
         end
     end
 end
@@ -283,7 +283,7 @@ function intersection(X::Interval{N}, hp::Hyperplane{N}
     if _leq(min(X), p) && _leq(p, max(X))
         return Singleton([p])
     else
-        return EmptySet{N}()
+        return EmptySet{N}(1)
     end
 end
 
@@ -319,7 +319,7 @@ function intersection(X::Interval{N}, Y::LazySet{N}
     elseif lower < upper
         return Interval(lower, upper)
     else
-        return EmptySet{N}()
+        return EmptySet{N}(1)
     end
 end
 
@@ -463,7 +463,7 @@ function intersection(P1::AbstractHPolygon{N},
     if prune
         remove_redundant_constraints!(P)
         if isempty(P)
-            return EmptySet{N}()
+            return EmptySet{N}(2)
         end
     end
     return P
@@ -529,7 +529,7 @@ function intersection(P1::AbstractPolyhedron{N},
         if remove_redundant_constraints!(Q, backend=backend)
             return Q
         else
-            return EmptySet{N}()
+            return EmptySet{N}(dim(P1))
         end
     else
         # the correct way for this condition would be to check if `backend`
@@ -543,7 +543,7 @@ function intersection(P1::AbstractPolyhedron{N},
         removehredundancy!(Qph)
 
         if isempty(Qph)
-            return EmptySet{N}()
+            return EmptySet{N}(dim(P1))
         else
             # convert back to HPOLY
             return convert(HPOLY, Qph)
@@ -633,7 +633,7 @@ end
 
 # disambiguation
 function intersection(cup::UnionSet{N}, S::AbstractSingleton{N}) where {N<:Real}
-    return element(S) ∈ cup ? S : EmptySet{N}()
+    return element(S) ∈ cup ? S : EmptySet{N}(dim(S))
 end
 function intersection(S::AbstractSingleton{N}, cup::UnionSet{N}) where {N<:Real}
     return invoke(intersection, Tuple{UnionSet{N}, typeof(S)}, cup, S)
@@ -666,7 +666,7 @@ end
 # disambiguation
 function intersection(cup::UnionSetArray{N},
                       S::AbstractSingleton{N}) where {N<:Real}
-    return element(S) ∈ cup ? S : EmptySet{N}()
+    return element(S) ∈ cup ? S : EmptySet{N}(dim(S))
 end
 function intersection(S::AbstractSingleton{N},
                       cup::UnionSetArray{N}) where {N<:Real}

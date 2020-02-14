@@ -89,8 +89,8 @@ automatically.
 julia> A * ZeroSet{Int}(2)
 ZeroSet{Int64}(3)
 
-julia> A * EmptySet{Int}()
-EmptySet{Int64}()
+julia> A * EmptySet{Int}(2)
+EmptySet{Int64}(2)
 ```
 """
 struct LinearMap{N<:Real, S<:LazySet{N},

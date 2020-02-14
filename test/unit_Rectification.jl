@@ -54,7 +54,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # emptiness
     @test !isempty(RI1)
-    @test isempty(Rectification(EmptySet{N}()))
+    @test isempty(Rectification(EmptySet{N}(1)))
 
     # boundedness
     @test isbounded(RI1)

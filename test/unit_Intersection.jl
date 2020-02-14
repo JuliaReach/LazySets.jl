@@ -1,7 +1,7 @@
 for N in [Float64, Rational{Int}, Float32]
     B = BallInf(ones(N, 2), N(3))
     H = Hyperrectangle(ones(N, 2), ones(N, 2))
-    E = EmptySet{N}()
+    E = EmptySet{N}(2)
 
     # intersection of two sets
     I = Intersection(B, H)

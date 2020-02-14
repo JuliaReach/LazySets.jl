@@ -103,7 +103,7 @@ function difference(I1::IN, I2::IN) where {N, IN<:Interval{N}}
         flat_right = isflat(Iright)
 
         if flat_left && flat_right
-            return EmptySet{N}()
+            return EmptySet{N}(1)
         elseif flat_left && !flat_right
             return Iright
         elseif !flat_left && flat_right

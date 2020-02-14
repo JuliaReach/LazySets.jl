@@ -120,19 +120,19 @@ for N in Ns
     hs = HalfSpace(N[1], N(1.5))
     @test intersection(i, hs) == Interval(N(1), N(1.5))
     hs = HalfSpace(N[-2], N(-5))
-    @test intersection(i, hs) == EmptySet{N}()
+    @test intersection(i, hs) == EmptySet{N}(1)
     hs = HalfSpace(N[2], N(5))
     @test intersection(i, hs) == i
     # intersection with hyperplane
     hp = Hyperplane(N[2], N(3))
     @test intersection(i, hp) == Singleton(N[1.5])
     hp = Hyperplane(N[-1], N(-3))
-    @test intersection(i, hp) == EmptySet{N}()
+    @test intersection(i, hp) == EmptySet{N}(1)
     # other intersections
     Y = Ball1(N[2], N(0.5))
     @test intersection(i, Y) == Interval(N(1.5), N(2))
     Y = ConvexHull(Singleton(N[-5]), Singleton(N[-1]))
-    @test intersection(i, Y) == EmptySet{N}()
+    @test intersection(i, Y) == EmptySet{N}(1)
 
     # disjointness check
     @test !isdisjoint(A, B)
