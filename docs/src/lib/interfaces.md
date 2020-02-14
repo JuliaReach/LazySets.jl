@@ -417,6 +417,16 @@ AbstractAffineMap
 This interface defines the following functions:
 
 ```@docs
+dim(::AbstractAffineMap)
+σ(::AbstractVector{N}, ::AbstractAffineMap{N}) where {N<:Real}
+ρ(::AbstractVector{N}, ::AbstractAffineMap{N}) where {N<:Real}
+an_element(::AbstractAffineMap)
+isempty(::AbstractAffineMap)
+isbounded(::AbstractAffineMap)
+∈(::AbstractVector{N}, ::AbstractAffineMap{N}) where {N<:Real}
+vertices_list(::AbstractAffineMap{N}) where {N<:Real}
+constraints_list(::AbstractAffineMap{N}) where {N<:Real}
+linear_map(::AbstractMatrix{N}, ::AbstractAffineMap{N}) where {N<:Real}
 ```
 
 ### Implementations
