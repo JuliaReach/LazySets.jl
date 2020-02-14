@@ -259,7 +259,7 @@ end
 """
     project(S::LazySet{N},
             block::AbstractVector{Int},
-            ::Nothing,
+            [::Nothing=nothing],
             [n]::Int=dim(S)
            ) where {N<:Real}
 
@@ -269,7 +269,7 @@ Project a high-dimensional set to a given block by using a concrete linear map.
 
 - `S`       -- set
 - `block`   -- block structure - a vector with the dimensions of interest
-- `nothing` -- used for dispatch
+- `nothing` -- (default: `nothing`) used for dispatch
 - `n`       -- (optional, default: `dim(S)`) ambient dimension of the set `S`
 
 ### Output
@@ -282,7 +282,7 @@ We apply the function `linear_map`.
 """
 @inline function project(S::LazySet{N},
                          block::AbstractVector{Int},
-                         ::Nothing,
+                         ::Nothing=nothing,
                          n::Int=dim(S)
                         ) where {N<:Real}
     m = length(block)
