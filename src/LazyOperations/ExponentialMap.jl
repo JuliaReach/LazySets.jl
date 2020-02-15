@@ -1,4 +1,4 @@
-import Base: *, size, ∈, isempty
+import Base: *, size, ∈
 
 export SparseMatrixExp,
        ExponentialMap,
@@ -466,7 +466,7 @@ struct ProjectionSparseMatrixExp{N<:Real, MN1<:AbstractSparseMatrix{N},
 end
 
 """
-    ExponentialProjectionMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
+    ExponentialProjectionMap{N<:Real, S<:LazySet{N}} <: AbstractAffineMap{N, S}
 
 Type that represents the application of a projection of a sparse matrix
 exponential to a convex set.
@@ -476,7 +476,7 @@ exponential to a convex set.
 - `spmexp` -- projection of a sparse matrix exponential
 - `X`      -- convex set
 """
-struct ExponentialProjectionMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
+struct ExponentialProjectionMap{N<:Real, S<:LazySet{N}} <: AbstractAffineMap{N, S}
     projspmexp::ProjectionSparseMatrixExp
     X::S
 end
@@ -505,6 +505,27 @@ set.
 function *(projspmexp::ProjectionSparseMatrixExp, X::LazySet)
     return ExponentialProjectionMap(projspmexp, X)
 end
+
+
+# --- AbstractAffineMap interface functions ---
+
+
+function matrix(epm::ExponentialProjectionMap)
+    projspmexp = epm.projspmexp
+    return projspmexp.L * projspmexp.spmexp * projspmexp.R
+end
+
+function vector(epm::ExponentialProjectionMap{N}) where {N<:Real}
+    return spzeros(N, dim(epm))
+end
+
+function set(epm::ExponentialProjectionMap)
+    return epm.X
+end
+
+
+# --- LazySet interface functions ---
+
 
 """
     dim(eprojmap::ExponentialProjectionMap)
@@ -588,21 +609,4 @@ function isbounded(eprojmap::ExponentialProjectionMap)
         return true
     end
     return isbounded_unit_dimensions(eprojmap)
-end
-
-"""
-    isempty(eprojmap::ExponentialProjectionMap)
-
-Return if an exponential projection map is empty or not.
-
-### Input
-
-- `eprojmap` -- exponential projection map
-
-### Output
-
-`true` iff the wrapped set is empty.
-"""
-function isempty(eprojmap::ExponentialProjectionMap)
-    return isempty(eprojmap.X)
 end

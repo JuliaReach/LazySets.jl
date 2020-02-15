@@ -19,9 +19,10 @@ Every concrete `AbstractAffineMap` must define the following functions:
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractAffineMap)
-5-element Array{Any,1}:
+6-element Array{Any,1}:
  AffineMap
  ExponentialMap
+ ExponentialProjectionMap
  LinearMap
  ResetMap
  Translation
