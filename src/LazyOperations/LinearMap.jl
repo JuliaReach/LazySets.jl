@@ -451,3 +451,9 @@ The polytope representing the linear map of the lazy linear map of a set.
 function linear_map(M::AbstractMatrix{N}, lm::LinearMap{N}) where {N<:Real}
      return linear_map(M * lm.M, lm.X)
 end
+
+# lazy projection
+function Projection(X::LazySet{N}, vars::AbstractVector{Int}) where {N<:Real}
+    M = projection_matrix(N, dim(X), vars)
+    return LinearMap(M, X)
+end
