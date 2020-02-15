@@ -2,7 +2,8 @@ import Base: *, ∈, isempty
 
 export LinearMap,
        an_element,
-       constraints_list
+       constraints_list,
+       Projection
 
 """
     LinearMap{N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} <: LazySet{N}
@@ -452,8 +453,21 @@ function linear_map(M::AbstractMatrix{N}, lm::LinearMap{N}) where {N<:Real}
      return linear_map(M * lm.M, lm.X)
 end
 
-# lazy projection
-function Projection(X::LazySet{N}, vars::AbstractVector{Int}) where {N<:Real}
-    M = projection_matrix(N, dim(X), vars)
+"""
+    Projection(X::LazySet{N}, variables::AbstractVector{Int}) where {N<:Real}
+
+Return the lazy projection of a set.
+
+### Input
+
+- `X`         -- set
+- `variables` -- variables of interest
+
+### Output
+
+A lazy `LinearMap` that corresponds to projecting `X` along the given variables `variables`.
+"""
+function Projection(X::LazySet{N}, variables::AbstractVector{Int}) where {N<:Real}
+    M = projection_matrix(N, dim(X), variables)
     return LinearMap(M, X)
 end
