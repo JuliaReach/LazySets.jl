@@ -10,8 +10,8 @@ dim(::ResetMap)
 ρ(::AbstractVector{N}, ::ResetMap{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::ResetMap{N}) where {N<:Real}
 an_element(::ResetMap)
-get_A(::ResetMap{N}) where {N<:Real}
-get_b(::ResetMap{N}) where {N<:Real}
+matrix(::ResetMap{N}) where {N<:Real}
+vector(::ResetMap{N}) where {N<:Real}
 constraints_list(::ResetMap{N}) where {N<:Real}
 constraints_list(::ResetMap{N, S}) where {N<:Real, S<:AbstractHyperrectangle}
 ```

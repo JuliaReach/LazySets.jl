@@ -194,15 +194,15 @@ end
 # --- AbstractAffineMap interface functions ---
 
 
-function get_A(lm::LinearMap)
+function matrix(lm::LinearMap)
     return lm.M
 end
 
-function get_b(lm::LinearMap{N}) where {N<:Real}
+function vector(lm::LinearMap{N}) where {N<:Real}
     return spzeros(N, dim(lm))
 end
 
-function get_X(lm::LinearMap)
+function set(lm::LinearMap)
     return lm.X
 end
 

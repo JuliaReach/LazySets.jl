@@ -202,15 +202,15 @@ LinearMap(M::AbstractMatrix, tr::Translation) = AffineMap(M, tr.X, M * tr.v)
 # --- AbstractAffineMap interface functions ---
 
 
-function get_A(tr::Translation{N}) where {N<:Real}
+function matrix(tr::Translation{N}) where {N<:Real}
     return Diagonal(fill(one(N), dim(tr)))
 end
 
-function get_b(tr::Translation)
+function vector(tr::Translation)
     return tr.v
 end
 
-function get_X(tr::Translation)
+function set(tr::Translation)
     return tr.X
 end
 

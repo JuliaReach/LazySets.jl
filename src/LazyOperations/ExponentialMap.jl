@@ -257,15 +257,15 @@ end
 # --- AbstractAffineMap interface functions ---
 
 
-function get_A(em::ExponentialMap)
+function matrix(em::ExponentialMap)
     return em.spmexp
 end
 
-function get_b(em::ExponentialMap{N}) where {N<:Real}
+function vector(em::ExponentialMap{N}) where {N<:Real}
     return spzeros(N, dim(em))
 end
 
-function get_X(em::ExponentialMap)
+function set(em::ExponentialMap)
     return em.X
 end
 

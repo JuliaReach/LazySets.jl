@@ -76,12 +76,12 @@ check_method_implementation(LazySet, dim, Function[S -> (S{Float64},)])
 
 # --- AbstractAffineMap ---
 
-# get_A
-@test check_method_implementation(AbstractAffineMap, get_A,
+# matrix
+@test check_method_implementation(AbstractAffineMap, matrix,
                                   Function[S -> (S{Float64},)])
-# get_b
-@test check_method_implementation(AbstractAffineMap, get_b,
+# vector
+@test check_method_implementation(AbstractAffineMap, vector,
                                   Function[S -> (S{Float64},)])
-# get_X
-@test check_method_implementation(AbstractAffineMap, get_X,
+# set
+@test check_method_implementation(AbstractAffineMap, set,
                                   Function[S -> (S{Float64},)])

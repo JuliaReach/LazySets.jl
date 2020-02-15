@@ -144,14 +144,14 @@ end
 # --- AbstractAffineMap interface functions ---
 
 
-function get_A(am::AffineMap)
+function matrix(am::AffineMap)
     return am.M
 end
 
-function get_b(am::AffineMap{N}) where {N<:Real}
+function vector(am::AffineMap{N}) where {N<:Real}
     return am.v
 end
 
-function get_X(am::AffineMap)
+function set(am::AffineMap)
     return am.X
 end

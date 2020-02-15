@@ -1299,7 +1299,7 @@ function overapproximate(rm::ResetMap{N, <:CartesianProductArray{N}},
         error("we currently only support resets to zero")
     end
 
-    lm = get_A(rm) * rm.X
+    lm = matrix(rm) * rm.X
     return overapproximate(lm, CartesianProductArray, oa)
 end
 

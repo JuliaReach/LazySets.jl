@@ -1,7 +1,7 @@
 import Base: isempty, ∈
 
 export AbstractAffineMap,
-       get_A, get_b, get_X
+       matrix, vector, set
 
 """
     AbstractAffineMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
@@ -13,9 +13,9 @@ Abstract type for affine maps.
 See [`AffineMap`](@ref) for a standard implementation of this interface.
 
 Every concrete `AbstractAffineMap` must define the following functions:
-- `get_A(::AbstractAffineMap)` -- return the linear map
-- `get_b(::AbstractAffineMap)` -- return the affine translation vector
-- `get_X(::AbstractAffineMap)` -- return the set that the map is applied to
+- `matrix(::AbstractAffineMap)` -- return the linear map
+- `vector(::AbstractAffineMap)` -- return the affine translation vector
+- `set(::AbstractAffineMap)` -- return the set that the map is applied to
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractAffineMap)
@@ -50,7 +50,7 @@ Return the dimension of an affine map.
 The dimension of an affine map.
 """
 function dim(am::AbstractAffineMap)
-    return length(get_b(am))
+    return length(vector(am))
 end
 
 """
@@ -68,8 +68,8 @@ Return the support vector of an affine map.
 The support vector in the given direction.
 """
 function σ(d::AbstractVector{N}, am::AbstractAffineMap{N}) where {N<:Real}
-    A = get_A(am)
-    return A * σ(_At_mul_B(A, d), get_X(am)) + get_b(am)
+    A = matrix(am)
+    return A * σ(_At_mul_B(A, d), set(am)) + vector(am)
 end
 
 """
@@ -87,7 +87,7 @@ Return the support function of an affine map.
 The support function in the given direction.
 """
 function ρ(d::AbstractVector{N}, am::AbstractAffineMap{N}) where {N<:Real}
-    return ρ(_At_mul_B(get_A(am), d), get_X(am)) + dot(d, get_b(am))
+    return ρ(_At_mul_B(matrix(am), d), set(am)) + dot(d, vector(am))
 end
 
 """
@@ -105,7 +105,7 @@ An element of the affine map. It relies on the `an_element` function of the
 wrapped set.
 """
 function an_element(am::AbstractAffineMap)
-    return get_A(am) * an_element(get_X(am)) + get_b(am)
+    return matrix(am) * an_element(set(am)) + vector(am)
 end
 
 """
@@ -122,7 +122,7 @@ Return whether an affine map is empty or not.
 `true` iff the wrapped set is empty.
 """
 function isempty(am::AbstractAffineMap)
-    return isempty(get_X(am))
+    return isempty(set(am))
 end
 
 """
@@ -149,8 +149,8 @@ wrapped set being bounded, and hence the map is unbounded.
 Otherwise, we check boundedness via [`isbounded_unit_dimensions`](@ref).
 """
 function isbounded(am::AbstractAffineMap; cond_tol::Number=DEFAULT_COND_TOL)
-    M = get_A(am)
-    if iszero(M) || isbounded(get_X(am))
+    M = matrix(am)
+    if iszero(M) || isbounded(set(am))
         return true
     end
     if isinvertible(M; cond_tol=cond_tol)
@@ -203,7 +203,7 @@ true
 ```
 """
 function ∈(x::AbstractVector{N}, am::AbstractAffineMap{N}) where {N<:Real}
-    return get_A(am) \ (x - get_b(am)) ∈ get_X(am)
+    return matrix(am) \ (x - vector(am)) ∈ set(am)
 end
 
 """
@@ -240,14 +240,14 @@ or lazily, i.e. there the function `vertices_list` should be applicable.
 function vertices_list(am::AbstractAffineMap{N};
                        apply_convex_hull::Bool=true) where {N<:Real}
     # for a zero linear map, the result is just the affine translation
-    A = get_A(am)
-    b = get_b(am)
+    A = matrix(am)
+    b = vector(am)
     if iszero(A)
         return [b]
     end
 
     # collect vertices list of the wrapped set
-    X = get_X(am)
+    X = set(am)
     @assert applicable(vertices_list, X)  "this function requires that the " *
         "list of vertices is available, but it is not"
     vlist_X = vertices_list(X)
@@ -281,8 +281,8 @@ We assume that the underlying set `X` is polyhedral, i.e., offers a method
 Falls back to the list of constraints of the translation of a lazy linear map.
 """
 function constraints_list(am::AbstractAffineMap{N}) where {N<:Real}
-    return _constraints_list_translation(LinearMap(get_A(am), get_X(am)),
-                                         get_b(am))
+    return _constraints_list_translation(LinearMap(matrix(am), set(am)),
+                                         vector(am))
 end
 
 """
@@ -301,5 +301,5 @@ A set corresponding to the linear map of the lazy affine map of a set.
 """
 function linear_map(M::AbstractMatrix{N},
                     am::AbstractAffineMap{N}) where {N<:Real}
-     return translate(linear_map(M * get_A(am), get_X(am)), M * get_b(am))
+     return translate(linear_map(M * matrix(am), set(am)), M * vector(am))
 end

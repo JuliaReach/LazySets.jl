@@ -35,8 +35,8 @@ for N in [Float64, Rational{Int}, Float32]
     @test !isempty(rm)
 
     # getter for affine map
-    @test get_A(rm) == Diagonal(N[0, 1, 0])
-    @test get_b(rm) == sparsevec([1], N[4], 3)
+    @test matrix(rm) == Diagonal(N[0, 1, 0])
+    @test vector(rm) == sparsevec([1], N[4], 3)
 
     # constraints_list
     if test_suite_polyhedra
