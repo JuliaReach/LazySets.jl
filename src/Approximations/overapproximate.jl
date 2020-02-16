@@ -817,7 +817,7 @@ end
 
 """
     overapproximate(vTM::Vector{TaylorModel1{T, S}},
-                    ::Type{Zonotope}) where {T, S}
+                    ::Type{<:Zonotope}) where {T, S}
 
 Overapproximate a taylor model in one variable with a zonotope.
 
@@ -960,7 +960,7 @@ This algorithm proceeds in two steps:
    normalization onto the symmetric intervals ``[-1, 1]``.
 """
 function overapproximate(vTM::Vector{TaylorModel1{T, S}},
-                            ::Type{Zonotope}) where {T, S}
+                            ::Type{<:Zonotope}) where {T, S}
     m = length(vTM)
 
     # preallocations
@@ -974,7 +974,7 @@ end
 
 """
     overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
-                    ::Type{Zonotope}) where {N,T, S}
+                    ::Type{<:Zonotope}) where {N,T, S}
 
 
 Overapproximate a multivariate taylor model with a zonotope.
@@ -1047,7 +1047,7 @@ julia> Matrix(genmat(Z))
 We refer to the algorithm description for the univariate case.
 """
 function overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
-                         ::Type{Zonotope}) where {N, T, S}
+                         ::Type{<:Zonotope}) where {N, T, S}
     m = length(vTM)
     n = N # number of variables is get_numvars() in TaylorSeries
 
@@ -1104,7 +1104,7 @@ end
 
 """
     overapproximate(lm::LinearMap{N, <:AbstractZonotope{N}, NM,
-                                  <:AbstractIntervalMatrix{<:NM}},
+                                  <:AbstractIntervalMatrix{NM}},
                     ::Type{<:Zonotope}) where {N<:Real, NM}
 
 Overapproximate an interval-matrix linear map of a zonotopic set by a new
@@ -1138,7 +1138,7 @@ conventional matrix and a symmetric interval matrix) and a zonotope
 uncertain parameters and inputs. CDC 2007.
 """
 function overapproximate(lm::LinearMap{N, <:AbstractZonotope{N}, NM,
-                                       <:AbstractIntervalMatrix{<:NM}},
+                                       <:AbstractIntervalMatrix{NM}},
                          ::Type{<:Zonotope}) where {N<:Real, NM}
     Mc, Ms = split(lm.M)
     Z = lm.X
