@@ -239,7 +239,7 @@ function constraints_list(H::AbstractHyperrectangle{N}) where {N<:Real}
     constraints = Vector{LinearConstraint{N, SingleEntryVector{N}}}(undef, 2*n)
     b, c = high(H), -low(H)
     one_N = one(N)
-    for i in 1:n
+    @inbounds for i in 1:n
         ei = SingleEntryVector(i, n, one_N)
         constraints[i] = HalfSpace(ei, b[i])
         constraints[i+n] = HalfSpace(-ei, c[i])
@@ -277,10 +277,11 @@ function _σ_sev_hyperrectangle(d::SingleEntryVector{N}, H::AbstractHyperrectang
     @assert d.n == dim(H) "a $(d.n)-dimensional vector is " *
                           "incompatible with a $(dim(H))-dimensional set"
     s = copy(center(H))
+    idx = d.i
     if d.v < zero(N)
-        s[d.i] -= radius_hyperrectangle(H, d.i)
+        s[idx] -= radius_hyperrectangle(H, idx)
     else
-        s[d.i] += radius_hyperrectangle(H, d.i)
+        s[idx] += radius_hyperrectangle(H, idx)
     end
     return s
 end
