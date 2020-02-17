@@ -98,6 +98,7 @@ direction.
 ### Output
 
 The support function of the polyhedron.
+If the polyhedron is empty, the result is `-Inf`.
 If a polytope is unbounded in the given direction, we throw an error.
 If a polyhedron is unbounded in the given direction, the result is `Inf`.
 """
@@ -105,8 +106,7 @@ function ρ(d::AbstractVector{N}, P::HPoly{N};
            solver=default_lp_solver(N)) where {N<:Real}
     lp, unbounded, empty = σ_helper(d, P, solver)
     if empty
-        error("the support function in direction $(d) is undefined because " *
-              "the polytope is empty")
+        return N(-Inf)
     elseif unbounded
         if P isa HPolytope
             error("the support function in direction $(d) is undefined " *

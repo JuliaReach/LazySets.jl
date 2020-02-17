@@ -42,6 +42,9 @@ for N in [Float64, Rational{Int}, Float32]
     # support vector
     @test_throws ErrorException σ(N[0], E)
 
+    # support function
+    @test ρ(N[0], E) == N(-Inf)
+
     # boundedness
     @test isbounded(E)
 

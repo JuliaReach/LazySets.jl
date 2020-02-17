@@ -271,7 +271,7 @@ for N in [Float64]
         p_infeasible = HPolytope([LinearConstraint(N[1], N(0)),
                                   LinearConstraint(N[-1], N(-1))])
         @test_throws ErrorException σ(N[1], p_infeasible)
-        @test_throws ErrorException ρ(N[1], p_infeasible)
+        @test ρ(N[1], p_infeasible) == N(-Inf)
 
         # empty intersection
         A = [N(0) N(-1); N(-1) N(0); N(1) N(1)]

@@ -79,10 +79,10 @@ Evaluate the support function of an empty set in a given direction.
 
 ### Output
 
-An error.
+`-Inf`.
 """
 function ρ(d::AbstractVector{N}, ∅::EmptySet{N}) where {N<:Real}
-    error("the support function of an empty set does not exist")
+    return N(-Inf)
 end
 
 """
