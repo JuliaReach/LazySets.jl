@@ -912,3 +912,42 @@ function convert(::Type{MinkowskiSumArray},
                  X::MinkowskiSum{N, ST, MinkowskiSumArray{N, ST}}) where {N, ST}
     return MinkowskiSumArray(vcat(X.X, X.Y.array))
 end
+
+# =============================================
+# Functionality that requires GeometryTypes
+# =============================================
+
+function load_geometry_types_conversions()
+return quote
+
+using .GeometryTypes: origin, widths
+
+function convert(::Type{Hyperrectangle}, X::HyperRectangle{D, N}) where {D, N}
+    o = origin(X)
+    w = widths(X)
+    return Hyperrectangle(low=o, high=o+w)
+end
+
+function convert(::Type{Hyperrectangle}, X::HyperCube{D, N}) where {D, N}
+    o = origin(X)
+    w = widths(X)
+    return Hyperrectangle(low=o, high=o+w)
+end
+
+function convert(::Type{BallInf}, X::HyperCube{D, N}) where {D, N}
+    o = origin(X)
+    w_half = X.width / N(2) # See GeometryTypes#195
+    w = widths(X)
+    wvec_half = w / N(2)
+    return BallInf(o + wvec_half, w_half)
+end
+
+function convert(::Type{Ball2}, X::HyperSphere{D, N}) where {D, N}
+    o = origin(X)
+    r = GeometryTypes.radius(X)
+    return Ball2(o, r)
+end
+
+# TODO: Add conversions in the other sense
+
+end end  # quote / load_geometry_types_conversions()

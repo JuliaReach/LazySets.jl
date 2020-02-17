@@ -23,6 +23,7 @@ CDDLib = "0.5.3"
 Distributions = "0.19, 0.20, 0.21"
 Documenter = "0.23.0"
 Expokit = "0.2"
+GeometryTypes = "0.7"
 GLPK = "0.10, 0.11, 0.12"
 GLPKMathProgInterface = "0.4"
 GR = "0"
@@ -45,6 +46,7 @@ CDDLib = "3391f64e-dcde-5f30-b752-e11513730f60"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 Expokit = "a1e7a1ef-7a5d-5822-a38c-be74e1bb89f4"
+GeometryTypes = "4d00f742-c7ba-57c2-abde-4428a4b178cb"
 GR = "28b8d3ca-fb5f-59d9-8090-bfdbd6d07a71"
 IntervalMatrices = "5c1f47dc-42dd-5697-8aaa-4d102d140ba9"
 Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
@@ -55,4 +57,5 @@ TaylorModels = "314ce334-5f6e-57ae-acf6-00b6e903104a"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["CDDLib", "Distributions", "Documenter", "Expokit", "GR", "IntervalMatrices", "Makie", "Optim", "Plots", "Polyhedra", "TaylorModels", "Test"]
+test = ["CDDLib", "Distributions", "Documenter", "Expokit", "GR", "IntervalMatrices",
+        "Makie", "Optim", "Plots", "Polyhedra", "TaylorModels", "Test"]
