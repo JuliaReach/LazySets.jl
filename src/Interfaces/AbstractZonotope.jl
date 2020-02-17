@@ -69,7 +69,11 @@ function genmat_fallback(Z::AbstractZonotope{N}) where {N<:Real}
     if isempty(gens)
         return Matrix{N}(undef, dim(Z), 0)
     end
-    return hcat(gens...)
+    G = Matrix{N}(undef, dim(Z), length(gens))
+    @inbounds for (i, g) in enumerate(gens)
+        G[:, i] = g
+    end
+    return G
 end
 
 # iterator that wraps the generator matrix
