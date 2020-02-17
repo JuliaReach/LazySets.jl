@@ -112,3 +112,11 @@ We use the `isuniversal` method.
 function isempty(C::Complement)
     return isuniversal(C.X)
 end
+
+function isboundedtype(::Complement{<:Real, <:Universe})
+    return true
+end
+
+function isboundedtype(::Complement{<:Real, <:LazySet})
+    return false
+end

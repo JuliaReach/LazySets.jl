@@ -40,4 +40,8 @@ for N in [Float64, Rational{Int}, Float32]
     @test isconvextype(typeof(Complement(Universe{N}(2))))
     @test isconvextype(typeof(Complement(EmptySet{N}(2))))
     @test isconvextype(typeof(Complement(HalfSpace(N[1], N(0)))))
+
+    # test boundedness
+    @test isboundedtype(Complement(Universe{N}(2)))
+    @test !isboundedtype(Complement(EmptySet{N}(2)))
 end

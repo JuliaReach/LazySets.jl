@@ -43,7 +43,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test_throws ErrorException σ(N[0], E)
 
     # boundedness
-    @test isbounded(E)
+    @test isbounded(E) && isboundedtype(E)
 
     # isuniversal
     res, w = isuniversal(E, true)

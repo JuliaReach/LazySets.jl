@@ -141,7 +141,7 @@ for N in [Float64, Float32]
     p_univ = HPolyhedron{N}()
 
     # boundedness
-    @test !isbounded(p_univ)
+    @test !isbounded(p_univ) && !isboundedtype(p_univ)
     @test isbounded(p)
     @test !isbounded(HPolyhedron([HalfSpace(N[1, 0], N(1))]))
 
@@ -185,7 +185,7 @@ for N in [Float64]
     @test_broken an_element(P) ∈ P # see LazySets.jl/pull/2197
 
     # boundedness
-    @test isbounded(p)
+    @test isbounded(p) && !isboundedtype(p)
 
     if test_suite_polyhedra
         p_unbounded = HPolyhedron([LinearConstraint(N[-1, 0], N(0))])

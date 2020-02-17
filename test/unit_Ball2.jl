@@ -57,7 +57,7 @@ for N in [Float64, Float32]
     @test σ(d, b) == N[0, -2]
 
     # boundedness
-    @test isbounded(b)
+    @test isbounded(b) && isboundedtype(b)
 
     # isempty
     @test !isempty(b)

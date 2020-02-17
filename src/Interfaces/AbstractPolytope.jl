@@ -38,6 +38,10 @@ isconvextype(::Type{<:AbstractPolytope}) = true
 # Common AbstractPolytope functions
 # =============================================
 
+function isboundedtype(::AbstractPolytope)
+    return true
+end
+
 """
     isbounded(P::AbstractPolytope)
 

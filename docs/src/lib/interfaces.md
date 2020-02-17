@@ -58,6 +58,7 @@ basetype
 norm(::LazySet, ::Real=Inf)
 radius(::LazySet, ::Real=Inf)
 diameter(::LazySet, ::Real=Inf)
+isboundedtype(::LazySet)
 isbounded(::LazySet)
 _isbounded_unit_dimensions(::LazySet{N}) where {N<:Real}
 _isbounded_stiemke(::HPolyhedron{N}) where {N<:Real}

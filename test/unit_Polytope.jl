@@ -45,9 +45,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test_throws ErrorException σ(N[0], HPolytope{N}())
 
     # boundedness
-    @test isbounded(p) && isbounded(p, false)
+    @test isbounded(p) && isbounded(p, false) && isboundedtype(p)
     p2 = HPolytope{N}()
-    @test isbounded(p2) && !isbounded(p2, false)
+    @test isbounded(p2) && !isbounded(p2, false) && isboundedtype(p2)
 
     # isuniversal
     answer, w = isuniversal(p, true)
