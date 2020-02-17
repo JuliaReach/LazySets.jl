@@ -344,7 +344,7 @@ function ∈(x::AbstractVector{N}, r::Rectification{N}) where {N<:Real}
     end
 
     # scan for zero entries
-    if all(xi -> !iszero(xi), x)
+    if all(!iszero, x)
         return false
     end
 
