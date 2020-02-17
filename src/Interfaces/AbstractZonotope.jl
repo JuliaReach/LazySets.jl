@@ -131,8 +131,8 @@ Return a generator representation of a zonotopic set.
 ### Output
 
 The same set in generator representation.
-This fallback implementation returns a `Zonotope`; in general, other generator
-representations may be returned.
+This fallback implementation returns a `Zonotope`; however, more specific
+implementations may return other generator representations.
 """
 function togrep(Z::AbstractZonotope)
     return convert(Zonotope, Z)

@@ -129,4 +129,9 @@ for N in [Float64, Rational{Int}, Float32]
                                 HalfSpace(N[-1, 1], N(0)),  # x >= y
                                 HalfSpace(N[-1, -1], N(0)), # y >= -x
                                 HalfSpace(N[1, 1], N(2))])  # y <= 2-x
+
+    # conversion
+    z = convert(Zonotope, l)
+    G = hcat(N[1//2, 1//2])
+    @test center(z) == N[1//2, 1//2] && genmat(z) ∈ [G, -G]
 end

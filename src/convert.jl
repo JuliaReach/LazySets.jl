@@ -260,6 +260,24 @@ function convert(::Type{Zonotope}, H::AbstractHyperrectangle)
 end
 
 """
+    convert(::Type{Zonotope}, Z::AbstractZonotope)
+
+Converts a zonotopic set to a zonotope.
+
+### Input
+
+- `Zonotope`
+- `H` -- zonotopic set
+
+### Output
+
+A zonotope.
+"""
+function convert(::Type{Zonotope}, Z::AbstractZonotope)
+    return Zonotope(center(Z), genmat(Z))
+end
+
+"""
     convert(::Type{Zonotope}, cp::CartesianProduct{N, HN1, HN2}) where {N<:Real,
         HN1<:AbstractHyperrectangle{N}, HN2<:AbstractHyperrectangle{N}}
 
