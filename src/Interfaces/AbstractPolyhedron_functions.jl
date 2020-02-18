@@ -408,7 +408,7 @@ Concrete linear map of a polyhedral set.
 
 - `check_invertibility` -- (optional, default: `true`) if `true` check whether
                            given matrix `M` is invertible; set to `false` only
-                           if you know in advance that `M` is invertible
+                           if you know that `M` is invertible
 - `cond_tol`  -- (optional; default: `DEFAULT_COND_TOL`) tolerance of matrix
                  condition (used to check whether the matrix is invertible)
 - `inverse`   -- (optional; default: `nothing`) matrix inverse `M⁻¹`; use this
