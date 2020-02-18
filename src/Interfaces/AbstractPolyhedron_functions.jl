@@ -273,7 +273,6 @@ end
 struct LinearMapInverse{T, MT<:AbstractMatrix{T}} <: AbstractLinearMapAlgorithm
     inverse::MT
 end
-LinearMapInverse() = LinearMapInverse(Matrix{Float64}(undef, 0, 0))
 
 struct LinearMapInverseRight <: AbstractLinearMapAlgorithm
     #
@@ -293,7 +292,7 @@ struct LinearMapVRep <: AbstractLinearMapAlgorithm
 end
 
 function _check_algorithm_applies(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
-                ::LinearMapInverse; cond_tol=DEFAULT_COND_TOL, throw_error=false) where {N}
+                ::Type{LinearMapInverse}; cond_tol=DEFAULT_COND_TOL, throw_error=false) where {N}
 
     inv_condition = issquare(M) && isinvertible(M; cond_tol=cond_tol)
     if !inv_condition
@@ -313,7 +312,7 @@ function _check_algorithm_applies(M::AbstractMatrix{N}, P::AbstractPolyhedron{N}
 end
 
 function _check_algorithm_applies(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
-            ::LinearMapInverseRight; cond_tol=DEFAULT_COND_TOL, throw_error=false) where {N}
+            ::Type{LinearMapInverseRight}; cond_tol=DEFAULT_COND_TOL, throw_error=false) where {N}
     inv_condition = issquare(M) && isinvertible(M; cond_tol=cond_tol)
     if !inv_condition
         throw_error && throw(ArgumentError("algorithm \"inverse_right\" requires an " *
@@ -324,7 +323,7 @@ function _check_algorithm_applies(M::AbstractMatrix{N}, P::AbstractPolyhedron{N}
 end
 
 function _check_algorithm_applies(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
-                                   ::LinearMapLift; throw_error=false) where {N}
+                                   ::Type{LinearMapLift}; throw_error=false) where {N}
 
     m, n = size(M)
     size_condition = m > n
@@ -347,7 +346,7 @@ function _check_algorithm_applies(M::AbstractMatrix{N}, P::AbstractPolyhedron{N}
 end
 
 function _check_algorithm_applies(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
-                                   ::LinearMapVRep; throw_error=false) where {N}
+                                   ::Type{LinearMapVRep}; throw_error=false) where {N}
 
     # TODO: the second check should be !isbounded(P) but this may be expensive;
     # see also #998
@@ -363,9 +362,9 @@ end
 function _default_linear_map_algorithm(M::AbstractMatrix{N}, P::AbstractPolyhedron{N};
                 cond_tol=DEFAULT_COND_TOL, backend=nothing, elimination_method=nothing) where {N}
 
-    if _check_algorithm_applies(M, P, LinearMapInverse(), cond_tol=cond_tol)
+    if _check_algorithm_applies(M, P, LinearMapInverse, cond_tol=cond_tol)
         algo = LinearMapInverse(inv(M))
-    elseif _check_algorithm_applies(M, P, LinearMapLift())
+    elseif _check_algorithm_applies(M, P, LinearMapLift
         algo = LinearMapLift()
     else
         require(:Polyhedra; fun_name="linear_map with elimination")
@@ -596,14 +595,14 @@ function linear_map(M::AbstractMatrix{N},
         return _linear_map_vrep(M, P)
 
     elseif got_inv
-        algo = LinearMapInverse()
-        check_invertibility && _check_algorithm_applies(M, P, algo; cond_tol=cond_tol, throw_error=true)
-        return _linear_map_hrep_helper(M, P, algo)
+        algo = LinearMapInverse
+        check_invertibility && _check_algorithm_applies(M, P, LinearMapInverse; cond_tol=cond_tol, throw_error=true)
+        return _linear_map_hrep_helper(M, P, algo(inv(M))
 
     elseif got_inv_right
-        algo = LinearMapInverseRight()
+        algo = LinearMapInverseRight
         check_invertibility && _check_algorithm_applies(M, P, algo; cond_tol=cond_tol, throw_error=true)
-        return _linear_map_hrep_helper(M, P, LinearMapInverseRight())
+        return _linear_map_hrep_helper(M, P, algo())
 
     elseif algorithm == "elimination" || algorithm == "elim"
         require(:Polyhedra; fun_name="linear_map with elimination")
@@ -618,9 +617,9 @@ function linear_map(M::AbstractMatrix{N},
         return _linear_map_hrep_helper(M, P, algo)
 
     elseif algorithm == "lift"
-        algo = LinearMapLift()
+        algo = LinearMapLift
         _check_algorithm_applies(M, P, algo, throw_error=true)
-        return _linear_map_hrep_helper(M, P, algo)
+        return _linear_map_hrep_helper(M, P, algo())
 
     else
         throw(ArgumentError("got unknown algorithm \"$algorithm\"; " *
@@ -665,7 +664,7 @@ end
 # preconditions should have been checked in the callinear_map_hrep(M, P, algo)ler function
 function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
                           algo::LinearMapInverse) where {N}
-    inverse = isempty(algo.inverse) ? inv(M) : algo.inverse
+    inverse = algo.inverse
     constraints_P = constraints_list(P)
     constraints_MP = similar(constraints_P)
     @inbounds for (i, c) in enumerate(constraints_P)
