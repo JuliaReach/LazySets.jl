@@ -304,10 +304,9 @@ function _check_algorithm_applies(M::AbstractMatrix{N}, P::AbstractPolyhedron{N}
 
     dense_condition = !issparse(M)
     if !dense_condition
-        throw_error && throw(ArgumentError("the inverse of a sparse matrix can " *
-        "often be dense and can cause the computer to run out of memory. If you " *
-        "are sure you have enough memory, please convert your matrix to a dense matrix; " *
-        "try to pass `Matrix(M)`"))
+        throw_error && throw(ArgumentError("the inverse of a sparse matrix is not " *
+            "available; either convert your matrix to a dense matrix with `Matrix(M)`, " *
+            "or try the \"inverse_right\" algorithm"))
         return false
     end
     return true
@@ -336,10 +335,11 @@ function _check_algorithm_applies(M::AbstractMatrix{N}, P::AbstractPolyhedron{N}
         return false
     end
 
-    rank_condition = rank(M) == n
-    if !rank_condition
+    # rank condition
+    r = rank(M)
+    if r != n
         throw_error && throw(ArgumentError("the rank of the given matrix is " *
-            "$r, but algorithm \"lift\" requires that it is $n"))
+            "$r, but the algorithm \"lift\" requires it to be $n"))
         return false
     end
 
@@ -352,8 +352,8 @@ function _check_algorithm_applies(M::AbstractMatrix{N}, P::AbstractPolyhedron{N}
     # TODO: the second check should be !isbounded(P) but this may be expensive;
     # see also #998
     if !applicable(vertices_list, P) || (P isa HPolyhedron)
-        throw_error && throw(ArgumentError("algorithm \"vrep\" requires that the number " *
-            "list of vertices of the polyhedron is applicable, but it is not for a polyhedron " *
+        throw_error && throw(ArgumentError("algorithm \"vrep\" requires that the " *
+            "list of vertices of the polyhedron is available, but it is not for a polyhedron " *
             "of type $(typeof(P))"))
         return false
     end
