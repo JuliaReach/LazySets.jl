@@ -411,7 +411,7 @@ Concrete linear map of a polyhedral set.
                            if you know in advance that `M` is invertible
 - `cond_tol`  -- (optional; default: `DEFAULT_COND_TOL`) tolerance of matrix
                  condition (used to check whether the matrix is invertible)
-- `inverse`   -- (optional; default: `nothing`) matrix inverse `M⁻¹`; use
+- `inverse`   -- (optional; default: `nothing`) matrix inverse `M⁻¹`; use this
                  option if you have already computed the inverse matrix of `M`
 - `backend`   -- (optional: default: `nothing`) polyhedra backend
 - `elimination_method`  -- (optional: default: `nothing`) elimination method for
