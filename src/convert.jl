@@ -920,34 +920,51 @@ end
 function load_geometry_types_conversions()
 return quote
 
-using .GeometryTypes: origin, widths
+using .GeometryTypes: origin, widths, SVector, Vec, Point
 
-function convert(::Type{Hyperrectangle}, X::HyperRectangle{D, N}) where {D, N}
+# Conversions: GeometryTypes --> LazySets
+# ---------------------------------------
+
+function convert(::Type{Hyperrectangle},
+                X::Union{HyperRectangle{D, N}, HyperCube{D, N}}) where {D, N}
     o = origin(X)
     w = widths(X)
-    return Hyperrectangle(low=o, high=o+w)
-end
-
-function convert(::Type{Hyperrectangle}, X::HyperCube{D, N}) where {D, N}
-    o = origin(X)
-    w = widths(X)
-    return Hyperrectangle(low=o, high=o+w)
+    return Hyperrectangle(low=SVector(o), high=SVector(o+w))
 end
 
 function convert(::Type{BallInf}, X::HyperCube{D, N}) where {D, N}
     o = origin(X)
-    w_half = X.width / N(2) # See GeometryTypes#195
     w = widths(X)
-    wvec_half = w / N(2)
-    return BallInf(o + wvec_half, w_half)
+    c = Vector(o + w / N(2)) # TODO: add AbstractVector parameter for BallInf's center
+    r = X.width / N(2) # no getter function for width, cf. GeometryTypes#195
+    return BallInf(c, r)
 end
 
 function convert(::Type{Ball2}, X::HyperSphere{D, N}) where {D, N}
     o = origin(X)
     r = GeometryTypes.radius(X)
-    return Ball2(o, r)
+    return Ball2(Vector(o), r) # TODO: add AbstractVector parameter for Ball2's center
 end
 
-# TODO: Add conversions in the other sense
+# Conversions: LazySets --> GeometryTypes
+# ---------------------------------------
+
+function convert(::Type{HyperRectangle}, X::AbstractHyperrectangle{N}) where {N}
+    o = low(X)
+    w = radius_hyperrectangle(X) .* N(2)
+    return HyperRectangle(Vec(Tuple(o)), Vec(Tuple(w)))
+end
+
+function convert(::Type{HyperCube}, X::BallInf{N}) where {N}
+    o = center(X) .- radius_hyperrectangle(X)
+    w = radius(X) * N(2)
+    return HyperCube(Vec(Tuple(o)), w)
+end
+
+function convert(::Type{HyperSphere}, X::Ball2{N}) where {N}
+    o = center(X)
+    r = radius(X)
+    return HyperSphere(Point(Tuple(o)), r)
+end
 
 end end  # quote / load_geometry_types_conversions()
