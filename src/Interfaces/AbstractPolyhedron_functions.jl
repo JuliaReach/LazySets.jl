@@ -528,31 +528,6 @@ only the left division on the normal vectors is used. In particular, `"inverse_r
 is good as a workaround when `M` is sparse (since the `inv` function is not available
 for sparse matrices).
 
-### Vertex representation
-
-This algorithm is invoked with the keyword argument `algorithm="vrep"`.
-The idea is to convert the polyhedron to its vertex representation and apply the
-linear map to each vertex of `P`.
-
-The returned set is a polyhedron in vertex representation. Note that conversion of
-the result back to half-space representation is triggered by default, since this
-may be costly. If you used this algorithm and still want to convert back to
-half-space representation, apply `tohrep` to the result of `linear_map`.
-Note that this method only works for bounded polyhedra.
-
-### Lift
-
-This algorithm is invoked with the keyword argument `algorithm="lift"`.
-The algorithm applies if `M` is rectangular of size `m × n` with `m > n` and
-full rank (i.e. of rank `n`).
-
-The idea is to embed the polyhedron into the `m`-dimensional space by appending zeros,
-i.e. extending all constraints of `P` to `m` dimensions, and constraining the last
-`m - n` dimensions to `0`. The matrix `M` is extended to an invertible `m × m`
-matrix and the algorithm using the inverse of the linear map is applied.
-For the technical details of the extension of `M` to a higher-dimensional
-invertible matrix, see `LazySets.Arrays.extend`.
-
 ### Elimination
 
 This algorithm is invoked with the keyword argument `algorithm = "elimination"` or
@@ -565,11 +540,36 @@ given equalities and the inequalities, and then eliminate the last x variables
 (there are `length(x)` in total) using a call to `Polyhedra.eliminate` to a backend
 library that can do variable elimination, typically `CDDLib` with the
 `BlockElimination()` algorithm. In this way we have eliminated the "old" variables
-`x` and keps the "new" or transformed variables "y".
+`x` and kept the "new" or transformed variables "y".
 
 The default elimination method is block elimination. For possible options we refer
 to the documentation of Polyhedra,
 [projection/elimination](https://juliapolyhedra.github.io/Polyhedra.jl/latest/projection/).
+
+### Lift
+
+This algorithm is invoked with the keyword argument `algorithm="lift"`.
+The algorithm applies if `M` is rectangular of size `m × n` with `m > n` and
+full rank (i.e. of rank `n`).
+
+The idea is to embed the polyhedron into the `m`-dimensional space by appending zeros,
+i.e. extending all constraints of `P` to `m` dimensions, and constraining the last
+`m - n` dimensions to `0`. The matrix resulting matrix is extended to an invertible
+`m × m` matrix and the algorithm using the inverse of the linear map is applied.
+For the technical details of the extension of `M` to a higher-dimensional
+invertible matrix, see `LazySets.Arrays.extend`.
+
+### Vertex representation
+
+This algorithm is invoked with the keyword argument `algorithm="vrep"`.
+The idea is to convert the polyhedron to its vertex representation and apply the
+linear map to each vertex of `P`.
+
+The returned set is a polytope in vertex representation. Note that conversion of
+the result back to half-space representation is not computed by default, since this
+may be costly. If you used this algorithm and still want to convert back to
+half-space representation, apply `tohrep` to the result of this function.
+Note that this method only works for bounded polyhedra.
 """
 function linear_map(M::AbstractMatrix{N},
                     P::AbstractPolyhedron{N};
@@ -716,7 +716,7 @@ function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
     cext = vcat(cext, [HalfSpace(vcat(zeros(N, n), id_out[i, :]), zero(N)) for i in 1:(m-n)],
                       [HalfSpace(vcat(zeros(N, n), -id_out[i, :]), zero(N)) for i in 1:(m-n)])
 
-    Pext = HPolytope(cext)
+    Pext = HPolyhedron(cext)
 
     # now Mext is invertible and we can apply the inverse algorithm
     return _linear_map_hrep(Mext, Pext, LinearMapInverse(inv_Mext))
@@ -730,20 +730,20 @@ end
 function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
                           algo::LinearMapElimination) where {N<:Real}
     m, n = size(M)
-    id_m = Matrix(one(N)*I, m, m)
+    ₋Id_m = Matrix(-one(N)*I, m, m)
     backend = algo.backend
     method = algo.method
 
     # extend the polyhedron storing the y variables first
     Ax_leq_b = [Polyhedra.HalfSpace(vcat(zeros(N, m), c.a), c.b) for c in constraints_list(P)]
-    y_eq_Mx = [Polyhedra.HyperPlane(vcat(-id_m[i, :], M[i, :]), zero(N)) for i in 1:m]
+    y_eq_Mx = [Polyhedra.HyperPlane(vcat(₋Id_m[i, :], M[i, :]), zero(N)) for i in 1:m]
 
     Phrep = Polyhedra.hrep(y_eq_Mx, Ax_leq_b)
-    Phrep_cdd = polyhedron(Phrep, backend)
-    Peli_block = Polyhedra.eliminate(Phrep_cdd, (m+1):(m+n), method)
+    Phrep = polyhedron(Phrep, backend) # define concrete subtype
+    Peli_block = Polyhedra.eliminate(Phrep, (m+1):(m+n), method)
     Peli_block = Polyhedra.removeduplicates(Polyhedra.hrep(Peli_block))
 
-    # TODO: take constraints directly -- See #1988
+    # TODO: take constraints directly -- see #1988
     return constraints_list(HPolyhedron(Peli_block))
 end
 

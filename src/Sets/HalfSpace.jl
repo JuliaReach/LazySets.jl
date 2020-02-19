@@ -482,8 +482,7 @@ function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::HalfSpace{N},
                           algo::AbstractLinearMapAlgorithm) where {N<:Real}
     constraints = _linear_map_hrep(M, P, algo)
     if length(constraints) == 1
-        c = first(constraints)
-        return HalfSpace(c.a, c.b)
+        return first(constraints)
     else
         return HPolyhedron(constraints)
     end
