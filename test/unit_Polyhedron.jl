@@ -283,7 +283,7 @@ for N in [Float64]
         @test L isa HPolyhedron{N}
         L = linear_map(sparse(Mnotinv), Pbdd, algorithm="vrep") # Requires Polyhedra because it works on vertices
         @test L isa VPolytope
-        # breaks because "inv_right" requires an invertible matrix
+        # breaks because "inv_right" requires an invertible matrix 
         @test_throws ArgumentError linear_map(sparse(Mnotinv), Punbdd, algorithm="inv_right")
 
         # remove a repeated constraint (#909)
