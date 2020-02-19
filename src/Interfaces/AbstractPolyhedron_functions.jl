@@ -364,7 +364,7 @@ function _default_linear_map_algorithm(M::AbstractMatrix{N}, P::AbstractPolyhedr
 
     if _check_algorithm_applies(M, P, LinearMapInverse, cond_tol=cond_tol)
         algo = LinearMapInverse(inv(M))
-    elseif _check_algorithm_applies(M, P, LinearMapLift
+    elseif _check_algorithm_applies(M, P, LinearMapLift)
         algo = LinearMapLift()
     else
         require(:Polyhedra; fun_name="linear_map with elimination")
@@ -596,8 +596,8 @@ function linear_map(M::AbstractMatrix{N},
 
     elseif got_inv
         algo = LinearMapInverse
-        check_invertibility && _check_algorithm_applies(M, P, LinearMapInverse; cond_tol=cond_tol, throw_error=true)
-        return _linear_map_hrep_helper(M, P, algo(inv(M))
+        check_invertibility && _check_algorithm_applies(M, P, algo; cond_tol=cond_tol, throw_error=true)
+        return _linear_map_hrep_helper(M, P, algo(inv(M)))
 
     elseif got_inv_right
         algo = LinearMapInverseRight
@@ -605,6 +605,7 @@ function linear_map(M::AbstractMatrix{N},
         return _linear_map_hrep_helper(M, P, algo())
 
     elseif algorithm == "elimination" || algorithm == "elim"
+        algo = LinearMapElimination
         require(:Polyhedra; fun_name="linear_map with elimination")
         require(:CDDLib; fun_name="linear_map with elimination")
         if backend == nothing
@@ -613,8 +614,7 @@ function linear_map(M::AbstractMatrix{N},
         if elimination_method == nothing
             elimination_method = Polyhedra.BlockElimination()
         end
-        algo = LinearMapElimination(backend, elimination_method)
-        return _linear_map_hrep_helper(M, P, algo)
+        return _linear_map_hrep_helper(M, P, algo(backend, elimination_method))
 
     elseif algorithm == "lift"
         algo = LinearMapLift
