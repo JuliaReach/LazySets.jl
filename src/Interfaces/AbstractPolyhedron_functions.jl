@@ -474,15 +474,24 @@ following subsections.
 If the algorithm argument is not specified, a default option is chosen based
 on heuristics on the types and values of `M` and `P`:
 
-- If the `"inverse"` algorithm applies, it is used. This algorithm is applied
-  unconditionally if the `inverse` matrix is passed, or if `check_invertibility`
-  is set to `true`.
+- If the `"inverse"` algorithm applies, it is used.
+- If the `"inverse_right"` algorithm applies, it is used.
 - Otherwise, if the `"lift"` algorithm applies, it is used.
 - Otherwise, the `"elimination"` algorithm is used.
 
 Note that `"inverse"` does not require the external library `Polyhedra`, and neither
 does `"inverse_right"`. However, the fallback method `"elimination"` does require `Polyhedra`
 as well as the library `CDDLib`.
+
+The optional keyword arguments `inverse` and `check_invertibility`
+modify the default behavior:
+
+- If an inverse matrix is passed in `inverse`, the given algorithm is applied,
+  and if none is given, either `"inverse"` or `"inverse_right"` is applied
+  (in that order of preference).
+- If `check_invertibility` is set to `false`, the given algorithm is applied,
+  and if none is given, either `"inverse"` or `"inverse_right"` is applied
+  (in that order of preference).
 
 #### Inverse
 
@@ -574,7 +583,6 @@ function linear_map(M::AbstractMatrix{N},
     got_inv = got_algorithm && (algorithm == "inv" || algorithm == "inverse")
     got_inv_right = got_algorithm && (algorithm == "inv_right" || algorithm == "inverse_right")
 
-    # if `inverse` is passed, only `"inverse"` and `"inverse_right"` apply
     if inverse != nothing
         if !got_algorithm || got_inv
             algo = LinearMapInverse(inverse)
@@ -583,6 +591,14 @@ function linear_map(M::AbstractMatrix{N},
         else
             throw(ArgumentError("received an inverse matrix but only the algorithms " *
                                 "\"inverse\" and \"inverse_right\" apply, got $algorithm"))
+        end
+        return _linear_map_hrep_helper(M, P, algo)
+    elseif !check_invertibility
+        if got_inv || !issparse(M)
+            inverse = inv(M)
+            algo = LinearMapInverse(inverse)
+        else
+            algo = LinearMapInverseRight()
         end
         return _linear_map_hrep_helper(M, P, algo)
     end
