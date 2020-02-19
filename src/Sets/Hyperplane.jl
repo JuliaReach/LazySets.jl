@@ -436,7 +436,6 @@ function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::Hyperplane{N},
                                  algo::AbstractLinearMapAlgorithm) where {N<:Real}
     constraints = _linear_map_hrep(M, P, algo)
     @assert length(constraints) == 2
-    # TODO: assert that the constraints define a hyperplane?
     c = first(constraints)
     return Hyperplane(c.a, c.b)
 end

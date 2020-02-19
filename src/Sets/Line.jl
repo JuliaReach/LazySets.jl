@@ -325,15 +325,10 @@ end
 
 function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::Line{N},
                                  algo::AbstractLinearMapAlgorithm) where {N<:Real}
-    constraints = _linear_map_hrep(M, P, algo)
-    if length(constraints) == 1
-        c = first(constraints)
-        return Line(c.a, c.b)
-    else
-        # TODO: check and transform 2 constraints to a line? ie. add constructor
-        # from constraints? (see also the corresponding function for HalfSpace)
-        return HPolyhedron(constraints)
-    end
+     constraints = _linear_map_hrep(M, P, algo)
+     @assert length(constraints) == 2
+     c = first(constraints)
+     return Line(c.a, c.b)
 end
 
 """
