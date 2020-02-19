@@ -359,6 +359,18 @@ function _check_algorithm_applies(M::AbstractMatrix{N}, P::AbstractPolyhedron{N}
     return true
 end
 
+function _get_elimination_instance(N, backend, elimination_method)
+    require(:Polyhedra; fun_name="linear_map with elimination")
+    if backend == nothing
+        require(:CDDLib; fun_name="linear_map with elimination")
+        backend = default_cddlib_backend(N)
+    end
+    if elimination_method == nothing
+        elimination_method = Polyhedra.BlockElimination()
+    end
+    return LinearMapElimination(backend, elimination_method)
+end
+
 function _default_linear_map_algorithm(M::AbstractMatrix{N}, P::AbstractPolyhedron{N};
                 cond_tol=DEFAULT_COND_TOL, backend=nothing, elimination_method=nothing) where {N}
 
@@ -367,15 +379,7 @@ function _default_linear_map_algorithm(M::AbstractMatrix{N}, P::AbstractPolyhedr
     elseif _check_algorithm_applies(M, P, LinearMapLift)
         algo = LinearMapLift()
     else
-        require(:Polyhedra; fun_name="linear_map with elimination")
-        require(:CDDLib; fun_name="linear_map with elimination")
-        if backend == nothing
-            backend = default_cddlib_backend(N)
-        end
-        if elimination_method == nothing
-            elimination_method = Polyhedra.BlockElimination()
-        end
-        algo = LinearMapElimination(backend, elimination_method)
+        algo = _get_elimination_instance(N, backend, elimination_method)
     end
     return algo
 end
@@ -445,19 +449,19 @@ that was used:
 
 ### Notes
 
-Since the different linear map algorihms work at the level of constraints (not sets
+Since the different linear map algorithms work at the level of constraints (not sets
 representations), this function uses dispatch on two stages: once the algorithm
 has been defined, first the helper functions `_linear_map_hrep_helper` (resp.
 `_linear_map_vrep`) are invoked, which dispatch on the set type. Then, each helper
 function calls the concrete implementation of `_linear_map_hrep`, which dispatches
 on the algorithm, and returns a list of constraints.
 
-To simplify working with different algorithms different sets of options, the
+To simplify working with different algorithms and options, the
 types `<: AbstractLinearMapAlgorithm` are used. These types are singleton type
 or types that carry only the key data for the given algorithm, such as the matrix
 inverse or the polyhedra backend.
 
-New subtypes of the `Polyhedra` interface may define their own helper functions
+New subtypes of the `AbstractPolyhedron` interface may define their own helper functions
 `_linear_map_vrep`, respectively `_linear_map_hrep_helper` for special handling
 of the constraints returned by the implementations of `_linear_map_hrep`;
 otherwise the fallback implementation for `AbstractPolyhedron` is used, which
@@ -471,7 +475,7 @@ and variable lifting. Depending on the properties of `M` and `P`, one algorithm
 may be preferable over the other. Details on the algorithms are given in the
 following subsections.
 
-If the algorithm argument is not specified, a default option is chosen based
+Otherwise, if the algorithm argument is not specified, a default option is chosen based
 on heuristics on the types and values of `M` and `P`:
 
 - If the `"inverse"` algorithm applies, it is used.
@@ -505,7 +509,7 @@ from its default value, `DEFAULT_COND_TOL`, by passing a custom `cond_tol`.
 
 The algorithm is described next. Assuming that the matrix ``M`` is invertible
 (which we check via a sufficient condition,), ``y = M x`` implies
-``x = \\text{inv}(M) y`` and we  can transform the polyhedron
+``x = \\text{inv}(M) y`` and we can transform the polyhedron
 ``A x ≤ b`` to the polyhedron ``A \\text{inv}(M) y ≤ b``.
 
 If the dense condition on `M` is not fullfilled, there are two suggested
@@ -519,8 +523,8 @@ of `?\` for details.
 This algorithm is invoked with the keyword argument `algorithm="inverse_right"`
 (or `algorithm="inv_right"`). This algorithm applies to square and invertible matrices
 `M`. The idea is essentially the same as for the `"inverse"` algorithm; the difference
-is that in `"inv"` the full matrix inverse is computed, and in `"inv_right"`
-only the left division on the normal vectors is used. In particular, `"inv_right"`
+is that in `"inverse"` the full matrix inverse is computed, and in `"inverse_right"`
+only the left division on the normal vectors is used. In particular, `"inverse_right"`
 is good as a workaround when `M` is sparse (since the `inv` function is not available
 for sparse matrices).
 
@@ -540,9 +544,9 @@ Note that this method only works for bounded polyhedra.
 
 This algorithm is invoked with the keyword argument `algorithm="lift"`.
 The algorithm applies if `M` is rectangular of size `m × n` with `m > n` and
-full rank (i.e. its rank is `n`).
+full rank (i.e. of rank `n`).
 
-The idea is to embed the polytope into the `m`-dimensional space by appending zeros,
+The idea is to embed the polyhedron into the `m`-dimensional space by appending zeros,
 i.e. extending all constraints of `P` to `m` dimensions, and constraining the last
 `m - n` dimensions to `0`. The matrix `M` is extended to an invertible `m × m`
 matrix and the algorithm using the inverse of the linear map is applied.
@@ -611,31 +615,22 @@ function linear_map(M::AbstractMatrix{N},
         return _linear_map_vrep(M, P)
 
     elseif got_inv
-        algo = LinearMapInverse
-        check_invertibility && _check_algorithm_applies(M, P, algo; cond_tol=cond_tol, throw_error=true)
-        return _linear_map_hrep_helper(M, P, algo(inv(M)))
+        check_invertibility && _check_algorithm_applies(M, P, LinearMapInverse;
+                                cond_tol=cond_tol, throw_error=true)
+        return _linear_map_hrep_helper(M, P, LinearMapInverse(inv(M)))
 
     elseif got_inv_right
-        algo = LinearMapInverseRight
-        check_invertibility && _check_algorithm_applies(M, P, algo; cond_tol=cond_tol, throw_error=true)
-        return _linear_map_hrep_helper(M, P, algo())
+        check_invertibility && _check_algorithm_applies(M, P, LinearMapInverseRight;
+                                cond_tol=cond_tol, throw_error=true)
+        return _linear_map_hrep_helper(M, P, LinearMapInverseRight())
 
     elseif algorithm == "elimination" || algorithm == "elim"
-        algo = LinearMapElimination
-        require(:Polyhedra; fun_name="linear_map with elimination")
-        require(:CDDLib; fun_name="linear_map with elimination")
-        if backend == nothing
-            backend = default_cddlib_backend(N)
-        end
-        if elimination_method == nothing
-            elimination_method = Polyhedra.BlockElimination()
-        end
-        return _linear_map_hrep_helper(M, P, algo(backend, elimination_method))
+        algo = _get_elimination_instance(N, backend, elimination_method)
+        return _linear_map_hrep_helper(M, P, algo)
 
     elseif algorithm == "lift"
-        algo = LinearMapLift
-        _check_algorithm_applies(M, P, algo, throw_error=true)
-        return _linear_map_hrep_helper(M, P, algo())
+        _check_algorithm_applies(M, P, LinearMapLift, throw_error=true)
+        return _linear_map_hrep_helper(M, P, LinearMapLift())
 
     else
         throw(ArgumentError("got unknown algorithm \"$algorithm\"; " *
@@ -730,7 +725,7 @@ end
 # If P : Ax <= b and y = Mx, we consider the vector z = [y, x], write the
 # equalities and the inequalities, and then eliminate the last x variables
 # (there are length(x) in total) using Polyhedra.eliminate calls
-# to a backend library that can do variable elimination, typically CDDLib.
+# to a backend library that can do variable elimination, typically CDDLib,
 # with the BlockElimination() algorithm.
 function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
                           algo::LinearMapElimination) where {N<:Real}
@@ -739,7 +734,7 @@ function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
     backend = algo.backend
     method = algo.method
 
-    # extend the polytope storing the y variables first
+    # extend the polyhedron storing the y variables first
     Ax_leq_b = [Polyhedra.HalfSpace(vcat(zeros(N, m), c.a), c.b) for c in constraints_list(P)]
     y_eq_Mx = [Polyhedra.HyperPlane(vcat(-id_m[i, :], M[i, :]), zero(N)) for i in 1:m]
 
@@ -748,7 +743,8 @@ function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
     Peli_block = Polyhedra.eliminate(Phrep_cdd, (m+1):(m+n), method)
     Peli_block = Polyhedra.removeduplicates(Polyhedra.hrep(Peli_block))
 
-    return constraints_list(HPolytope(Peli_block)) # TODO: take constraints directly?
+    # TODO: take constraints directly -- See #1988
+    return constraints_list(HPolyhedron(Peli_block))
 end
 
 """
