@@ -480,8 +480,8 @@ on heuristics on the types and values of `M` and `P`:
 - Otherwise, the `"elimination"` algorithm is used.
 
 Note that `"inverse"` does not require the external library `Polyhedra`, and neither
-does `"inverse_right"`. However, the fallback method `"elimination"` does require `Polyhedra`
-as well as the library `CDDLib`.
+does `"inverse_right"`. However, the fallback method `"elimination"` requires
+`Polyhedra` as well as the library `CDDLib`.
 
 The optional keyword arguments `inverse` and `check_invertibility`
 modify the default behavior:
@@ -495,16 +495,16 @@ modify the default behavior:
 
 #### Inverse
 
-This algorithm is invoked with the keyword algorithm `algorithm="inv"` or
-`algorithm="inverse"`. The algorithm requries that `M` is invertible, square,
+This algorithm is invoked with the keyword argument `algorithm="inverse"`
+(or `algorithm="inv"`). The algorithm requires that `M` is invertible, square,
 and dense. If you know a priori that `M` is invertible, set the flag
 `check_invertibility=false`, such that no extra checks are done within `linear_map`.
-Otherwise, a sufficienty condition is performed, by checking the condition number
+Otherwise, we check the sufficient condition that the condition number
 of `M` is not too high. The threshold for the condition number can be modified
-from its default value passing a custom `cond_tol`.
+from its default value, `DEFAULT_COND_TOL`, by passing a custom `cond_tol`.
 
 The algorithm is described next. Assuming that the matrix ``M`` is invertible
-(which we check via a sufficient condition,), then ``y = M x`` implies
+(which we check via a sufficient condition,), ``y = M x`` implies
 ``x = \\text{inv}(M) y`` and we  can transform the polyhedron
 ``A x ≤ b`` to the polyhedron ``A \\text{inv}(M) y ≤ b``.
 
@@ -516,9 +516,9 @@ of `?\` for details.
 
 #### Inverse-right
 
-This algorithm is invoked with the keyword algorithm `algorithm="inv_right"` or
-`algorithm="inverse_right"`. This algorithm applies for square, invertible matrices
-`M`. The idea is essentially the same as for the `inverse` algorithm; the difference
+This algorithm is invoked with the keyword argument `algorithm="inverse_right"`
+(or `algorithm="inv_right"`). This algorithm applies to square and invertible matrices
+`M`. The idea is essentially the same as for the `"inverse"` algorithm; the difference
 is that in `"inv"` the full matrix inverse is computed, and in `"inv_right"`
 only the left division on the normal vectors is used. In particular, `"inv_right"`
 is good as a workaround when `M` is sparse (since the `inv` function is not available
@@ -526,7 +526,7 @@ for sparse matrices).
 
 ### Vertex representation
 
-This algorithm is invoked with the keyword algorithm `algorithm="vrep"`.
+This algorithm is invoked with the keyword argument `algorithm="vrep"`.
 The idea is to convert the polyhedron to its vertex representation and apply the
 linear map to each vertex of `P`.
 
@@ -538,7 +538,7 @@ Note that this method only works for bounded polyhedra.
 
 ### Lift
 
-This algorithm is invoked with the keyword algorithm `algorithm="lift"`.
+This algorithm is invoked with the keyword argument `algorithm="lift"`.
 The algorithm applies if `M` is rectangular of size `m × n` with `m > n` and
 full rank (i.e. its rank is `n`).
 
@@ -551,7 +551,7 @@ invertible matrix, see `LazySets.Arrays.extend`.
 
 ### Elimination
 
-This algorithm is invoked with the keyword `algorithm = "elimination"` or
+This algorithm is invoked with the keyword argument `algorithm = "elimination"` or
 `algorithm = "elim"`. The algorithm applies to any matrix `M` (invertible or not),
 and any polyhedron `P` (bounded or not).
 
@@ -639,7 +639,8 @@ function linear_map(M::AbstractMatrix{N},
 
     else
         throw(ArgumentError("got unknown algorithm \"$algorithm\"; " *
-            "available choices: \"vrep\", \"inverse\", \"inverse_right\", \"lift\", \"elimination\""))
+            "available choices: \"inverse\", \"inverse_right\", \"lift\", " *
+            "\"elimination\", \"vrep\""))
     end
 end
 
@@ -677,7 +678,7 @@ function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
     return HPolyhedron(constraints)
 end
 
-# preconditions should have been checked in the callinear_map_hrep(M, P, algo)ler function
+# preconditions should have been checked in the caller function
 function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
                           algo::LinearMapInverse) where {N}
     inverse = algo.inverse
