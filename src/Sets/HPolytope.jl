@@ -129,11 +129,9 @@ function isbounded(P::HPolytope, use_type_assumption::Bool=true)
     return isbounded(HPolyhedron(P.constraints))
 end
 
-function _linear_map_hrep(M::AbstractMatrix{N}, P::HPolytope{N},
-                          use_inv::Bool;
-                          inverse::Union{Nothing, AbstractMatrix{N}}=nothing
-                         ) where {N<:Real}
-    constraints = _linear_map_hrep_helper(M, P, use_inv; inverse=inverse)
+function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::HPolytope{N},
+                                 algo::AbstractLinearMapAlgorithm) where {N<:Real}
+    constraints = _linear_map_hrep(M, P, algo)
     return HPolytope(constraints)
 end
 

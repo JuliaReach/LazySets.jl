@@ -144,14 +144,13 @@ end
     end
 end
 
-@inline function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolytope{N},
-                                  use_inv::Bool;
-                                  inverse::Union{Nothing, AbstractMatrix{N}}=nothing
-                                 ) where {N<:Real}
-    constraints = _linear_map_hrep_helper(M, P, use_inv; inverse=inverse)
+function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::AbstractPolytope{N},
+                                 algo::AbstractLinearMapAlgorithm) where {N<:Real}
+    constraints = _linear_map_hrep(M, P, algo)
     m = size(M, 1) # output dimension
     if m == 1
-        return convert(Interval, HPolygon(constraints))
+        # TODO: create interval directly ?
+        return convert(Interval, HPolytope(constraints))
     elseif m == 2
         return HPolygon(constraints)
     else
