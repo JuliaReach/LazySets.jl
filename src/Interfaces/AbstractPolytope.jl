@@ -150,7 +150,7 @@ function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::AbstractPolytope{N},
     m = size(M, 1) # output dimension
     if m == 1
         # TODO: create interval directly ?
-        return convert(Interval, HPolygon(constraints))
+        return convert(Interval, HPolytope(constraints))
     elseif m == 2
         return HPolygon(constraints)
     else

@@ -67,14 +67,24 @@ for N in [Float64, Rational{Int}, Float32]
     # test concrete linear map of a hyperplane
     H = Hyperplane(N[1, -1], N(0)) # x = y
     M = N[1 0; 0 0] # non-invertible matrix
-    if N == Float32 || N == Float64
-        @test linear_map(M, H) isa Hyperplane{Float64}
-    elseif N == Rational{Int}
-        @test linear_map(M, H) isa Hyperplane{Rational{BigInt}}
+    # projection is y = 0
+    if test_suite_polyhedra
+        lm = linear_map(M, H)
+        if N == Float32 || N == Float64
+            @test lm isa Hyperplane{Float64}
+            @test lm.a ≈ N[0, -1] && lm.b ≈ N(0)
+        elseif N == Rational{Int}
+            @test lm isa Hyperplane{Rational{BigInt}}
+            @test lm.a == N[0//1, -1//1] && lm.b == N(0//1)
+        end
     end
+
     @test_throws ArgumentError linear_map(M, H, algorithm="inv")
     M = N[2 2; 0 1] # invertible matrix
-    @test linear_map(M, H) == Hyperplane(N[0.5, -2.0], N(0.0))
+
+    if test_suite_polyhedra
+        @test linear_map(M, H) == Hyperplane(N[0.5, -2.0], N(0.0))
+    end
 
     # translation
     @test translate(hp, N[1, 2, 3]) == Hyperplane(ones(N, 3), N(11))

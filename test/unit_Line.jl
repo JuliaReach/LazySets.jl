@@ -72,13 +72,21 @@ for N in [Float64, Rational{Int}, Float32]
     # concrete linear map of a line
     L = Line(N[1, -1], N(0)) # x = y
     M = N[1 0; 0 0] # non-invertible matrix
-    if N == Rational{Int}
-        @test linear_map(M, L) isa HPolyhedron{Rational{BigInt}}
-    elseif N == Float32 || N == Float64
-        @test linear_map(M, L) isa HPolyhedron{Float64}
+    # projection is y = 0
+    if test_suite_polyhedra
+        lm = linear_map(M, L)
+        if N == Float32 || N == Float64
+            @test lm isa Line{Float64}
+            @test lm.a ≈ N[0, -1] && lm.b ≈ N(0)
+        elseif N == Rational{Int}
+            @test lm isa Line{Rational{BigInt}}
+            @test lm.a == N[0//1, -1//1] && lm.b == N(0//1)
+        end
     end
-    #M = N[2 2; 0 1] # invertible matrix
-    #@test linear_map(M, L) == Line(N[0.5, -2.0], N(0.0)) #TODO: see _linear_map_hrep_helper in Line.jl
+    M = N[2 2; 0 1] # invertible matrix
+    lm = linear_map(M, L)
+    @test lm isa Line{N, Vector{N}}
+    @test lm.a ≈ N[1/2, -2] && lm.b ≈ N(0)
 
     # translation
     @test translate(l1, N[1, 2]) == Line(a1, N(3))

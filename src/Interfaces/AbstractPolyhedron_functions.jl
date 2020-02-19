@@ -349,8 +349,9 @@ function _check_algorithm_applies(M::AbstractMatrix{N}, P::AbstractPolyhedron{N}
                                    ::Type{LinearMapVRep}; throw_error=false) where {N}
 
     # TODO: the second check should be !isbounded(P) but this may be expensive;
-    # see also #998
-    if !applicable(vertices_list, P) || (P isa HPolyhedron)
+    # see also #998 and #1926
+    is_polytopic = P isa AbstractPolytope
+    if !is_polytopic
         throw_error && throw(ArgumentError("algorithm \"vrep\" requires that the " *
             "list of vertices of the polyhedron is available, but it is not for a polyhedron " *
             "of type $(typeof(P))"))
