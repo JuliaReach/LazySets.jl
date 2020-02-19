@@ -443,6 +443,26 @@ that was used:
       an `HPolygon` if `m = 2` and an `HPolytope` in other cases.
     - Otherwise, the output is an `HPolyhedron`.
 
+### Notes
+
+Since the different linear map algorihms work at the level of constraints (not sets
+representations), this function uses dispatch on two stages: once the algorithm
+has been defined, first the helper functions `_linear_map_hrep_helper` (resp.
+`_linear_map_vrep`) are invoked, which dispatch on the set type. Then, each helper
+function calls the concrete implementation of `_linear_map_hrep`, which dispatches
+on the algorithm, and returns a list of constraints.
+
+To simplify working with different algorithms different sets of options, the
+types `<: AbstractLinearMapAlgorithm` are used. These types are singleton type
+or types that carry only the key data for the given algorithm, such as the matrix
+inverse or the polyhedra backend.
+
+New subtypes of the `Polyhedra` interface may define their own helper functions
+`_linear_map_vrep`, respectively `_linear_map_hrep_helper` for special handling
+of the constraints returned by the implementations of `_linear_map_hrep`;
+otherwise the fallback implementation for `AbstractPolyhedron` is used, which
+instantiates an `HPolyhedron`.
+
 ### Algorithm
 
 This function mainly implements several approaches for the linear map: inverse,
@@ -536,27 +556,7 @@ library that can do variable elimination, typically `CDDLib` with the
 
 The default elimination method is block elimination. For possible options we refer
 to the documentation of Polyhedra,
-[projection/elimination](https://juliapolyhedra.github.io/Polyhedra.jl/latest/projection/)
-
-### Notes
-
-Since the different linear map algorihms work at the level of constraints (not sets
-representations), this function uses dispatch on two stages: once the algorithm
-has been defined, first the helper functions `_linear_map_hrep_helper` (resp.
-`_linear_map_vrep`) are invoked, which dispatch on the set type. Then, each helper
-function calls the concrete implementation of `_linear_map_hrep`, which dispatches
-on the algorithm, and returns a list of constraints.
-
-To simplify working with different algorithms different sets of options, the
-types `<: AbstractLinearMapAlgorithm` are used. These types are singleton type
-or types that carry only the key data for the given algorithm, such as the matrix
-inverse or the polyhedra backend.
-
-New subtypes of the `Polyhedra` interface may define their own helper functions
-`_linear_map_vrep`, respectively `_linear_map_hrep_helper` for special handling
-of the constraints returned by the implementations of `_linear_map_hrep`;
-otherwise the fallback implementation for `AbstractPolyhedron` is used, which
-instantiates an `HPolyhedron`.
+[projection/elimination](https://juliapolyhedra.github.io/Polyhedra.jl/latest/projection/).
 """
 function linear_map(M::AbstractMatrix{N},
                     P::AbstractPolyhedron{N};
