@@ -224,13 +224,17 @@ The radius vector is shared with the original hyperrectangle if `share == true`.
 
 We add the vector to the center of the hyperrectangle.
 """
-function translate(H::Hyperrectangle{N}, v::AbstractVector{N}; share::Bool=false
+function translate(H::Hyperrectangle{N}, v::AbstractVector{N}) where {N<:Real}
+    return translate!(copy(H), v)
+end
+
+function translate!(H::Hyperrectangle{N}, v::AbstractVector{N}; share::Bool=false
                   ) where {N<:Real}
     @assert length(v) == dim(H) "cannot translate a $(dim(H))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
-    c = center(H) + v
-    radius = share ? H.radius : copy(H.radius)
-    return Hyperrectangle(c, radius)
+    c = center(H)
+    c .+= v
+    return H
 end
 
 # Particular dispatch for SingleEntryVector

@@ -316,8 +316,34 @@ Translate (i.e., shift) a universe by a given vector.
 ### Output
 
 The universe.
+
+### Notes
+
+See also [`translate!(::Universe, AbstractVector)`](@ref) for the in-place version.
 """
 function translate(U::Universe{N}, v::AbstractVector{N}) where {N<:Real}
+    return translate!(copy(U))
+end
+
+"""
+    translate!(U::Universe{N}, v::AbstractVector{N}) where {N<:Real}
+
+Translate (i.e., shift) a universe by a given vector in-place.
+
+### Input
+
+- `U` -- universe
+- `v` -- translation vector
+
+### Output
+
+The universe.
+
+### Notes
+
+See also [`translate(::Universe, AbstractVector)`](@ref) for the out-of-place version.
+"""
+function translate!(U::Universe{N}, v::AbstractVector{N}) where {N<:Real}
     @assert length(v) == dim(U) "cannot translate a $(dim(U))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     return U

@@ -443,8 +443,7 @@ function is_tighter_same_dir_2D(c1::LinearConstraint{N},
 end
 
 """
-    translate(hs::HalfSpace{N}, v::AbstractVector{N}; share::Bool=false
-             ) where {N<:Real}
+    translate(hs::HalfSpace{N}, v::AbstractVector{N}) where {N<:Real}
 
 Translate (i.e., shift) a half-space by a given vector.
 
@@ -452,28 +451,24 @@ Translate (i.e., shift) a half-space by a given vector.
 
 - `hs`    -- half-space
 - `v`     -- translation vector
-- `share` -- (optional, default: `false`) flag for sharing unmodified parts of
-             the original set representation
 
 ### Output
 
 A translated half-space.
-
-### Notes
-
-The normal vectors of the halfspace (vector `a` in `a⋅x ≤ b`) is shared with the
-original halfspace if `share == true`.
 
 ### Algorithm
 
 A half-space ``a⋅x ≤ b`` is transformed to the half-space ``a⋅x ≤ b + a⋅v``.
 In other words, we add the dot product ``a⋅v`` to ``b``.
 """
-function translate(hs::HalfSpace{N}, v::AbstractVector{N}; share::Bool=false
-                  ) where {N<:Real}
+function translate(hs::HalfSpace{N}, v::AbstractVector{N}) where {N<:Real}
+    return translate!(copy(hs), v)
+end
+
+function translate!(hs::HalfSpace{N}, v::AbstractVector{N}) where {N<:Real}
     @assert length(v) == dim(hs) "cannot translate a $(dim(hs))-dimensional " *
                                  "set by a $(length(v))-dimensional vector"
-    a = share ? hs.a : copy(hs.a)
+    a = hs.a
     b = hs.b + dot(hs.a, v)
     return HalfSpace(a, b)
 end

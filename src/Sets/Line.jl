@@ -332,8 +332,7 @@ function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::Line{N},
 end
 
 """
-    translate(L::Line{N}, v::AbstractVector{N}; share::Bool=false
-             ) where {N<:Real}
+    translate(L::Line{N}, v::AbstractVector{N}) where {N<:Real}
 
 Translate (i.e., shift) a line by a given vector.
 
@@ -341,8 +340,6 @@ Translate (i.e., shift) a line by a given vector.
 
 - `L`     -- line
 - `v`     -- translation vector
-- `share` -- (optional, default: `false`) flag for sharing unmodified parts of
-             the original set representation
 
 ### Output
 
@@ -350,19 +347,45 @@ A translated line.
 
 ### Notes
 
-The normal vector of the line (vector `a` in `a⋅x = b`) is shared with the
-original line if `share == true`.
+### Notes
+
+See also [`translate!(::Line, AbstractVector)`](@ref) for the in-place version.
 
 ### Algorithm
 
 A line ``a⋅x = b`` is transformed to the line ``a⋅x = b + a⋅v``.
 In other words, we add the dot product ``a⋅v`` to ``b``.
 """
-function translate(L::Line{N}, v::AbstractVector{N}; share::Bool=false
-                  ) where {N<:Real}
+function translate(L::Line{N}, v::AbstractVector{N}) where {N<:Real}
+    return translate!(copy(L), v)
+end
+
+"""
+    translate!(L::Line{N}, v::AbstractVector{N}) where {N<:Real}
+
+Translate (i.e., shift) a line by a given vector in-place.
+
+### Input
+
+- `L`     -- line
+- `v`     -- translation vector
+
+### Output
+
+A translated line.
+
+### Notes
+
+See also [`translate(::Line, AbstractVector)`](@ref) for the out-of-place version.
+
+### Algorithm
+
+A line ``a⋅x = b`` is transformed to the line ``a⋅x = b + a⋅v``.
+In other words, we add the dot product ``a⋅v`` to ``b``.
+"""
+function translate!(L::Line{N}, v::AbstractVector{N}) where {N<:Real}
     @assert length(v) == dim(L) "cannot translate a $(dim(L))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
-    a = share ? L.a : copy(L.a)
-    b = L.b + dot(L.a, v)
-    return Line(a, b)
+    L.b .+= dot(L.a, v)
+    return L
 end

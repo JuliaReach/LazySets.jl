@@ -377,14 +377,46 @@ Translate (i.e., shift) a line segment by a given vector.
 
 A translated line segment.
 
+### Notes
+
+See also [`translate!(::LineSegment, AbstractVector)`](@ref) for the in-place version.
+
 ### Algorithm
 
 We add the vector to both defining points of the line segment.
 """
 function translate(L::LineSegment{N}, v::AbstractVector{N}) where {N<:Real}
+    return translate!(copy(L), v)
+end
+
+"""
+    translate!(L::LineSegment{N}, v::AbstractVector{N}) where {N<:Real}
+
+Translate (i.e., shift) a line segment by a given vector in-place.
+
+### Input
+
+- `L` -- line segment
+- `v` -- translation vector
+
+### Output
+
+A translated line segment.
+
+### Notes
+
+See also [`translate(::LineSegment, AbstractVector)`](@ref) for the out-of-place version.
+
+### Algorithm
+
+We add the vector to both defining points of the line segment.
+"""
+function translate!(L::LineSegment{N}, v::AbstractVector{N}) where {N<:Real}
     @assert length(v) == dim(L) "cannot translate a $(dim(L))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
-    return LineSegment(L.p + v, L.q + v)
+    L.p .+= v
+    L.q .+= v
+    return L
 end
 
 """

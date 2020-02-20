@@ -9,7 +9,9 @@ export VPolytope,
        remove_redundant_vertices,
        minkowski_sum,
        tohrep,
-       tovrep
+       tovrep,
+       translate,
+       translate!
 
 """
     VPolytope{N<:Real} <: AbstractPolytope{N}
@@ -281,14 +283,47 @@ Translate (i.e., shift) a polytope in vertex representation by a given vector.
 
 A translated polytope in vertex representation.
 
+### Notes
+
+See also [`translate!(::VPolytope, AbstractVector)`](@ref) for the in-place version.
+
 ### Algorithm
 
 We add the vector to each vertex of the polytope.
 """
 function translate(P::VPolytope{N}, v::AbstractVector{N}) where {N<:Real}
+    return translate!(copy(P), v)
+end
+
+"""
+    translate!(P::VPolytope{N}, v::AbstractVector{N}) where {N<:Real}
+
+Translate (i.e., shift) a polytope in vertex representation by a given vector in-place.
+
+### Input
+
+- `P` -- polytope in vertex representation
+- `v` -- translation vector
+
+### Output
+
+The same polytope `P` with its vertices translated by `v`.
+
+### Notes
+
+See also [`translate(::AbstractZontope, AbstractVector)`](@ref) for the out-of-place version.
+
+### Algorithm
+
+We add the vector to each vertex of the polytope.
+"""
+function translate!(P::VPolytope{N}, v::AbstractVector{N}) where {N<:Real}
     @assert length(v) == dim(P) "cannot translate a $(dim(P))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
-    return VPolytope([x + v for x in vertices_list(P)])
+    for vi in P.vertices
+        vi .+= v
+    end
+    return P
 end
 
 # --- AbstractPolytope interface functions ---

@@ -267,7 +267,13 @@ A translated ball in the p- norm.
 We add the vector to the center of the ball.
 """
 function translate(B::Ballp{N}, v::AbstractVector{N}) where {N<:AbstractFloat}
+    return translate!(copy(B), v)
+end
+
+function translate!(B::Ballp{N}, v::AbstractVector{N}) where {N<:AbstractFloat}
     @assert length(v) == dim(B) "cannot translate a $(dim(B))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
-    return Ballp(B.p, center(B) + v, B.radius)
+    c = center(B)
+    c .+= v
+    return B
 end
