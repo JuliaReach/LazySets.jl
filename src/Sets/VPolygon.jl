@@ -27,6 +27,41 @@ computation of the convex hull.
 - `VPolygon(vertices::Vector{Vector{N}};
             apply_convex_hull::Bool=true,
             algorithm::String="monotone_chain")`
+
+### Examples
+
+A polygon in vertex representation can be constructed by passing the list of
+vertices. For example, we can build the right triangle
+
+```jldoctest polygon_vrep
+julia> P = VPolygon([[0, 0], [1, 0], [0, 1]])
+VPolygon{Int64,Array{Int64,1}}(Array{Int64,1}[[0, 0], [1, 0], [0, 1]])
+
+julia> eltype(P)
+Int64
+```
+The element type of the polygon canbe changed by using a different vector type:
+
+```jldoctest polygon_vrep
+julia> P = VPolygon([[0, 0], [1, 0], [0, 1.]]) # mind the dot in [0, 1.]
+VPolygon{Float64,Array{Float64,1}}(Array{Float64,1}[[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]])
+
+julia> eltype(P)
+Float64
+```
+
+Alternatively, a `VPolygon` can be constructed passing a matrix of vertices,
+where each *column* represents a vertex:
+
+```jldoctest polygon_vrep
+julia> M = [0 1 0; 0 0 1.]
+2×3 Array{Float64,2}:
+ 0.0  1.0  0.0
+ 0.0  0.0  1.0
+
+ julia> VPolygon(M)
+ VPolygon{Float64,Array{Float64,1}}(Array{Float64,1}[[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]])
+```
 """
 struct VPolygon{N<:Real, VN<:AbstractVector{N}} <: AbstractPolygon{N}
     vertices::Vector{VN}
@@ -47,11 +82,10 @@ isoperationtype(::Type{<:VPolygon}) = false
 isconvextype(::Type{<:VPolygon}) = true
 
 # convenience constructor without type parameter
-VPolygon(vertices::Vector{VN};
-         apply_convex_hull::Bool=true,
-         algorithm::String="monotone_chain") where {N<:Real, VN<:AbstractVector{N}} =
-    VPolygon{N, VN}(vertices; apply_convex_hull=apply_convex_hull,
-                algorithm=algorithm)
+function VPolygon(vertices::Vector{VN}; apply_convex_hull::Bool=true,
+                  algorithm::String="monotone_chain") where {N<:Real, VN<:AbstractVector{N}}
+    return VPolygon{N, VN}(vertices; apply_convex_hull=apply_convex_hull, algorithm=algorithm)
+end
 
 # constructor with empty vertices list
 VPolygon{N}() where {N<:Real} =
@@ -59,6 +93,16 @@ VPolygon{N}() where {N<:Real} =
 
 # constructor with no vertices of type Float64
 VPolygon() = VPolygon{Float64}()
+
+# constructor from rectangular matrix
+function VPolygon(vertices_matrix::MT; apply_convex_hull::Bool=true,
+                  algorithm::String="monotone_chain") where {N<:Real, MT<:AbstractMatrix{N}}
+    @assert size(vertices_matrix, 1) == 2 "the number of rows of the matrix of vertices " *
+                                           "should be 2, but it is $(size(vertices_matrix, 1))"
+
+    vertices = [vertices_matrix[:, i] for i in 1:size(vertices_matrix, 2)]
+    return VPolygon(vertices; apply_convex_hull=apply_convex_hull, algorithm=algorithm)
+end
 
 """
     remove_redundant_vertices!(P::VPolygon{N};
