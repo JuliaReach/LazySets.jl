@@ -491,8 +491,8 @@ Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
 ```
 """
 function convert(::Type{Interval}, H::AbstractHyperrectangle)
-    @assert dim(H) == 1 "can only convert a one-dimensional $(typeof(H)) to `Interval`"
-    return Interval([low(H); high(H)])
+    @assert dim(H) == 1 "cannot convert a $(dim(H))-dimensional $(typeof(H)) to `Interval`"
+    return Interval(low(H)[1], high(H)[1])
 end
 
 """
@@ -510,7 +510,7 @@ Converts a convex set to an interval.
 An interval.
 """
 function convert(::Type{Interval}, S::LazySet{N}) where {N<:Real}
-    @assert dim(S) == 1 "can only convert a one-dimensional $(typeof(S)) to `Interval`"
+    @assert dim(S) == 1 "cannot convert a $(dim(H))-dimensional $(typeof(S)) to `Interval`"
     return Interval(-ρ(N[-1], S), ρ(N[1], S))
 end
 

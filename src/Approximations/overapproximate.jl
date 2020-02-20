@@ -588,7 +588,7 @@ end
 """
     overapproximate(S::LazySet{N}, ::Type{<:Interval}) where {N<:Real}
 
-Return the overapproximation of a real unidimensional set with an interval.
+Return the overapproximation of a unidimensional set with an interval.
 
 ### Input
 
@@ -601,12 +601,74 @@ An interval.
 
 ### Algorithm
 
-The method relies on the exact conversion to `Interval`. Two support
-function evaluations are needed in general.
+We use two support-function evaluations.
 """
 function overapproximate(S::LazySet{N}, ::Type{<:Interval}) where {N<:Real}
-    @assert dim(S) == 1 "cannot overapproximate a $(dim(S))-dimensional set with an `Interval`"
-    return convert(Interval, S)
+    @assert dim(S) == 1 "cannot overapproximate a $(dim(S))-dimensional set " *
+                        "with an `Interval`"
+    return Interval(-ρ(N[-1], S), ρ(N[1], S))
+end
+
+"""
+    overapproximate(cap::Intersection{N}, ::Type{<:Interval}) where {N<:Real}
+
+Return the overapproximation of a unidimensional intersection with an interval.
+
+### Input
+
+- `cap`      -- one-dimensional lazy intersection
+- `Interval` -- type for dispatch
+
+### Output
+
+An interval.
+
+### Algorithm
+
+The algorithm recursively overapproximates the two intersected sets with
+intervals and then intersects these.
+"""
+function overapproximate(cap::Intersection{N}, ::Type{<:Interval}) where {N<:Real}
+    @assert dim(cap) == 1 "cannot overapproximate a $(dim(cap))-dimensional " *
+                        "intersection with an `Interval`"
+    X = overapproximate(cap.X, Interval)
+    Y = overapproximate(cap.Y, Interval)
+    return intersection(X, Y)
+end
+
+"""
+    overapproximate(cap::IntersectionArray{N}, ::Type{<:Interval}) where {N<:Real}
+
+Return the overapproximation of a unidimensional intersection with an interval.
+
+### Input
+
+- `cap`      -- one-dimensional lazy intersection
+- `Interval` -- type for dispatch
+
+### Output
+
+An interval.
+
+### Algorithm
+
+The algorithm recursively overapproximates the two intersected sets with
+intervals and then intersects these.
+"""
+function overapproximate(cap::IntersectionArray{N},
+                         ::Type{<:Interval}) where {N<:Real}
+    @assert dim(cap) == 1 "cannot overapproximate a $(dim(cap))-dimensional " *
+                        "intersection with an `Interval`"
+    a = array(cap)
+    X = overapproximate(a[1], Interval)
+    @inbounds for i in 2:length(a)
+        Y = a[i]
+        X = intersection(X, Y)
+        if isempty(X)
+            return X
+        end
+    end
+    return X
 end
 
 function overapproximate_cap_helper(X::LazySet{N},             # convex set
