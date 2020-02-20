@@ -927,7 +927,7 @@ For `algorithm == "sufficient"`, witness production is not supported.
 
 ### Algorithm
 
-For `algorithm == "exact"`, see @ref(isempty(P::HPoly{N}, ::Bool)).
+For `algorithm == "exact"`, see [`isempty(P::HPoly, ::Bool)`](@ref).
 
 For `algorithm == "sufficient"`, we rely on the intersection check between the
 set `X` and each constraint in `P`.
