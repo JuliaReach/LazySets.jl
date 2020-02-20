@@ -20,7 +20,15 @@ Type that represents a (closed) half-space of the form ``a⋅x ≤ b``.
 
 ### Examples
 
-The set ``y ≥ 0`` in the plane:
+The half-space ``x + 2y - z ≤ 3``:
+
+```jldoctest
+julia> HalfSpace([1, 2, -1.], 3.)
+HalfSpace{Float64,Array{Float64,1}}([1.0, 2.0, -1.0], 3.0)
+```
+
+To represent the set ``y ≥ 0`` in the plane, we have to
+rearrange the expression as ``0x - y ≤ 0``:
 
 ```jldoctest
 julia> HalfSpace([0, -1.], 0.)
