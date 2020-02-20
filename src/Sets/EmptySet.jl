@@ -304,6 +304,10 @@ Translate (i.e., shift) an empty set by a given vector.
 The empty set.
 """
 function translate(∅::EmptySet{N}, v::AbstractVector{N}) where {N<:Real}
+    return copy(∅)
+end
+
+function translate!(∅::EmptySet{N}, v::AbstractVector{N}) where {N<:Real}
     return ∅
 end
 

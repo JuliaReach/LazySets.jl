@@ -443,6 +443,11 @@ Translate (i.e., shift) an interval by a given vector.
 
 A translated interval.
 
+### Notes
+
+The in-place version is not available because interval types
+are immutable.
+
 ### Algorithm
 
 We add the vector to the left and right of the interval.
@@ -452,7 +457,6 @@ function translate(x::Interval{N}, v::AbstractVector{N}) where {N<:Real}
                                 "set by a $(length(v))-dimensional vector"
     return Interval(x.dat + v[1])
 end
-
 
 # --- AbstractHyperrectangle interface functions ---
 

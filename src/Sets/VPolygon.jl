@@ -6,7 +6,9 @@ export VPolygon,
        remove_redundant_vertices!,
        convex_hull,
        linear_map,
-       minkowski_sum
+       minkowski_sum,
+       translate,
+       translate!
 
 """
     VPolygon{N<:Real, VN<:AbstractVector{N}} <: AbstractPolygon{N}
@@ -600,14 +602,48 @@ Translate (i.e., shift) a polygon in vertex representation by a given vector.
 
 A translated polygon in vertex representation.
 
+### Notes
+
+See also [`translate!(::VPolygon, AbstractVector)`](@ref) for the in-place version.
+
 ### Algorithm
 
 We add the vector to each vertex of the polygon.
 """
 function translate(P::VPolygon{N}, v::AbstractVector{N}) where {N<:Real}
+    return translate!(copy(P), v)
+end
+
+"""
+    translate!(P::VPolygon{N}, v::AbstractVector{N}) where {N<:Real}
+
+Translate (i.e., shift) a polygon in vertex representation by a given vector in-place
+
+### Input
+
+- `P` -- polygon in vertex representation
+- `v` -- translation vector
+
+### Output
+
+A translated polygon in vertex representation.
+
+### Notes
+
+See also [`translate(::VPolygon, AbstractVector)`](@ref) for the out-of-place version.
+
+### Algorithm
+
+We add the vector to each vertex of the polygon.
+"""
+function translate!(P::VPolygon{N}, v::AbstractVector{N}) where {N<:Real}
     @assert length(v) == dim(P) "cannot translate a $(dim(P))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
-    return VPolygon([x + v for x in vertices_list(P)])
+
+    for vi in P.vertices
+        vi .+= v
+    end
+    return P
 end
 
 """

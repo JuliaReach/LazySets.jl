@@ -163,8 +163,7 @@ function σ(d::AbstractVector{N}, P::HPolygon{N};
 end
 
 """
-    translate(v::AbstractVector{N}, P::HPolygon{N}; share::Bool=false
-             ) where {N<:Real}
+    translate(v::AbstractVector{N}, P::HPolygon{N}) where {N<:Real}
 
 Translate (i.e., shift) a polygon in constraint representation by a given
 vector.
@@ -173,28 +172,24 @@ vector.
 
 - `P`     -- polygon in constraint representation
 - `v`     -- translation vector
-- `share` -- (optional, default: `false`) flag for sharing unmodified parts of
-             the original set representation
 
 ### Output
 
 A translated polygon in constraint representation.
 
-### Notes
-
-The normal vectors of the constraints (vector `a` in `a⋅x ≤ b`) are shared with
-the original constraints if `share == true`.
-
 ### Algorithm
 
 We translate every constraint.
 """
-function translate(P::HPolygon{N}, v::AbstractVector{N}; share::Bool=false
-                  ) where {N<:Real}
+function translate(P::HPolygon{N}, v::AbstractVector{N}) where {N<:Real}
+    return translate!(copy(P), v)
+end
+
+function translate!(P::HPolygon{N}, v::AbstractVector{N}) where {N<:Real}
     @assert length(v) == dim(P) "cannot translate a $(dim(P))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
-    constraints = [translate(c, v; share=share) for c in constraints_list(P)]
-    return HPolygon(constraints;
-                    sort_constraints=false, check_boundedness=false,
-                    prune=false)
+
+    constraints = P.constraints
+    map!(c -> translate!(c, v), constraints, constraints)
+    return P
 end

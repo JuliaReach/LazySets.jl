@@ -4,7 +4,9 @@ export AbstractZonotope,
        genmat,
        generators,
        ngens,
-       order
+       order,
+       translate,
+       translate!
 
 """
     AbstractZonotope{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
@@ -292,39 +294,61 @@ function linear_map(M::AbstractMatrix{N}, Z::AbstractZonotope{N}
 end
 
 """
-    translate(Z::AbstractZonotope{N}, v::AbstractVector{N}; share::Bool=false
-             ) where {N<:Real}
+    translate(Z::AbstractZonotope{N}, v::AbstractVector{N}) where {N<:Real}
 
 Translate (i.e., shift) a zonotope by a given vector.
 
 ### Input
 
-- `Z`     -- zonotope
-- `v`     -- translation vector
-- `share` -- (optional, default: `false`) flag for sharing unmodified parts of
-             the original set representation
+- `Z` -- zonotope
+- `v` -- translation vector
 
 ### Output
 
-A translated zonotope.
+A zonotope.
 
 ### Notes
 
-The generator matrix is shared with the original zonotope if `share == true`.
+See also [@ref](`translate!`) for the in-place version.
 
 ### Algorithm
 
 We add the vector to the center of the zonotope.
 """
-function translate(Z::AbstractZonotope{N}, v::AbstractVector{N};
-                   share::Bool=false) where {N<:Real}
-    @assert length(v) == dim(Z) "cannot translate a $(dim(Z))-dimensional " *
-                                "set by a $(length(v))-dimensional vector"
-    c = center(Z) + v
-    G = share ? genmat(Z) : copy(genmat(Z))
-    return Zonotope(c, G)
+function translate(Z::AbstractZonotope{N}, v::AbstractVector{N}) where {N<:Real}
+    return translate!(copy(Z), v)
 end
 
+"""
+    translate!(Z::AbstractZonotope{N}, v::AbstractVector{N}) where {N<:Real}
+
+Translate (i.e., shift) a zonotope by a given vector in-place.
+
+### Input
+
+- `Z` -- zonotope
+- `v` -- translation vector
+
+### Output
+
+A zonotope.
+
+### Notes
+
+See also [`translate(::AbstractZontope, AbstractVector)`](@ref) for the out-of-place version.
+
+### Algorithm
+
+We add the vector to the center of the zonotope.
+"""
+function translate!(Z::AbstractZonotope{N}, v::AbstractVector{N}) where {N<:Real}
+    @assert length(v) == dim(Z) "cannot translate a $(dim(Z))-dimensional " *
+                                "set by a $(length(v))-dimensional vector"
+    c = center(Z)
+    c .+= v
+    G = genmat(Z)
+    return Z
+end
 
 # --- AbstractPolytope interface functions ---
 

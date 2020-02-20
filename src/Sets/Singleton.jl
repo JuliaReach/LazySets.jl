@@ -1,6 +1,8 @@
 import Base.rand
 
-export Singleton
+export Singleton,
+       translate,
+       translate!
 
 """
     Singleton{N<:Real, VN<:AbstractVector{N}} <: AbstractSingleton{N}
@@ -107,12 +109,44 @@ Translate (i.e., shift) a singleton by a given vector.
 
 A translated singleton.
 
+### Notes
+
+See also [`translate!(::Singleton, AbstractVector)`](@ref) for the in-place version.
+
 ### Algorithm
 
 We add the vector to the point in the singleton.
 """
 function translate(S::Singleton{N}, v::AbstractVector{N}) where {N<:Real}
+    return translate!(copy(S), v)
+end
+
+"""
+    translate!(S::Singleton{N}, v::AbstractVector{N}) where {N<:Real}
+
+Translate (i.e., shift) a singleton by a given vector in-place.
+
+### Input
+
+- `S` -- singleton
+- `v` -- translation vector
+
+### Output
+
+A translated singleton.
+
+### Notes
+
+See also [`translate(::Singleton, AbstractVector)`](@ref) for the out-of-place version.
+
+### Algorithm
+
+We add the vector to the point in the singleton.
+"""
+function translate!(S::Singleton{N}, v::AbstractVector{N}) where {N<:Real}
     @assert length(v) == dim(S) "cannot translate a $(dim(S))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
-    return Singleton(element(S) + v)
+    e = element(S)
+    e .+= v
+    return S
 end
