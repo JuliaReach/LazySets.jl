@@ -142,7 +142,6 @@ include("Approximations/Approximations.jl")
 # ==================================
 # Plotting (requires Approximations)
 # ==================================
-include("Plotting/plot_recipes.jl")
 include("Plotting/mesh.jl")
 
 # ==========================

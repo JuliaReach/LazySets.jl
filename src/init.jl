@@ -5,6 +5,7 @@ function __init__()
     @require Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a" include("Initialization/init_Makie.jl")
     @require Optim = "429524aa-4258-5aef-a3af-852621145aeb" include("Initialization/init_Optim.jl")
     @require Polyhedra = "67491407-f73d-577b-9b50-8179a7c68029" include("Initialization/init_Polyhedra.jl")
+    @require RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01" include("Initialization/init_RecipesBase.jl")
 end
 
 """
