@@ -1,6 +1,6 @@
 name = "LazySets"
 uuid = "b4f0291d-fe17-52bc-9479-3d1a343d9043"
-version = "1.28.0"
+version = "1.29.0"
 
 [deps]
 Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
