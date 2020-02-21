@@ -943,7 +943,7 @@ end
 function convert(::Type{Ball2}, X::HyperSphere{D, N}) where {D, N}
     o = origin(X)
     r = GeometryTypes.radius(X)
-    return Ball2(Vector(o), r) # TODO: add AbstractVector parameter for Ball2's center
+    return Ball2(Vector(o), r) # TODO: add AbstractVector parameter for Ball2's center, cf. #1999
 end
 
 # Conversions: LazySets --> GeometryTypes
