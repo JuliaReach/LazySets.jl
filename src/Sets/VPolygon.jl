@@ -40,7 +40,7 @@ VPolygon{Int64,Array{Int64,1}}(Array{Int64,1}[[0, 0], [1, 0], [0, 1]])
 julia> eltype(P)
 Int64
 ```
-The element type of the polygon canbe changed by using a different vector type:
+The element type of the polygon can be changed by using a different vector type:
 
 ```jldoctest polygon_vrep
 julia> P = VPolygon([[0, 0], [1, 0], [0, 1.]]) # mind the dot in [0, 1.]
