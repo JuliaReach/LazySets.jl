@@ -59,8 +59,8 @@ julia> M = [0 1 0; 0 0 1.]
  0.0  1.0  0.0
  0.0  0.0  1.0
 
- julia> VPolygon(M)
- VPolygon{Float64,Array{Float64,1}}(Array{Float64,1}[[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]])
+julia> VPolygon(M)
+VPolygon{Float64,Array{Float64,1}}(Array{Float64,1}[[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]])
 ```
 """
 struct VPolygon{N<:Real, VN<:AbstractVector{N}} <: AbstractPolygon{N}
