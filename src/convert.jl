@@ -935,7 +935,7 @@ end
 function convert(::Type{BallInf}, X::HyperCube{D, N}) where {D, N}
     o = origin(X)
     w = widths(X)
-    c = Vector(o + w / N(2)) # TODO: add AbstractVector parameter for BallInf's center
+    c = Vector(o + w / N(2)) # TODO: add AbstractVector parameter for BallInf's center, cf. #1870
     r = X.width / N(2) # no getter function for width, cf. GeometryTypes#195
     return BallInf(c, r)
 end
