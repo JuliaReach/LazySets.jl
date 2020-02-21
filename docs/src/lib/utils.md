@@ -40,6 +40,7 @@ binary_search_constraints
 get_radius!
 is_tighter_same_dir_2D
 sign_cadlag
+_leq_trig
 _random_zero_sum_vector
 rectify
 require(::Symbol)
