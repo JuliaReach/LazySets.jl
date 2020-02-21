@@ -140,9 +140,9 @@ directions using the right-hand rule (see [`is_right_turn`](@ref)).
 In particular, this method does not use the arctangent.
 """
 function <=(u::AbstractVector{N}, v::AbstractVector{N}) where {N<:Real}
-    @assert length(u) == length(v) == 2 "comparison of vectors by their direction " *
-           "requires that the vectors `u` and `v` are of length 2, but their lengths " *
-           "are $(length(u)) and $(length(v)) respectively"
+    @assert length(u) == length(v) == 2 "comparison of vectors `u` and `v` " *
+           "by their direction requires they are are of length 2, " *
+           "but their lengths are $(length(u)) and $(length(v)) respectively"
 
     return _leq_quadrant(u, v)
 end
