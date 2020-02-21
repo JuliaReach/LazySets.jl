@@ -36,18 +36,6 @@ vertices. For example, we can build the right triangle
 ```jldoctest polygon_vrep
 julia> P = VPolygon([[0, 0], [1, 0], [0, 1]])
 VPolygon{Int64,Array{Int64,1}}(Array{Int64,1}[[0, 0], [1, 0], [0, 1]])
-
-julia> eltype(P)
-Int64
-```
-The element type of the polygon can be changed by using a different vector type:
-
-```jldoctest polygon_vrep
-julia> P = VPolygon([[0, 0], [1, 0], [0, 1.]]) # mind the dot in [0, 1.]
-VPolygon{Float64,Array{Float64,1}}(Array{Float64,1}[[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]])
-
-julia> eltype(P)
-Float64
 ```
 
 Alternatively, a `VPolygon` can be constructed passing a matrix of vertices,
