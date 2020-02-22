@@ -141,7 +141,7 @@ In particular, this method does not use the arctangent.
 """
 function <=(u::AbstractVector{N}, v::AbstractVector{N}) where {N<:Real}
     @assert length(u) == length(v) == 2 "comparison of vectors `u` and `v` " *
-           "by their direction requires they are are of length 2, " *
+           "by their direction requires they are of length 2, " *
            "but their lengths are $(length(u)) and $(length(v)) respectively"
 
     return _leq_quadrant(u, v)
