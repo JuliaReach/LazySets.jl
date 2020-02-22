@@ -6,14 +6,16 @@ CurrentModule = LazySets
 
 ```@docs
 AffineMap
-dim(::AffineMap)
-σ(::AbstractVector{N}, ::AffineMap{N}) where {N<:Real}
-ρ(::AbstractVector{N}, ::AffineMap{N}) where {N<:Real}
-an_element(::AffineMap)
-isempty(::AffineMap)
-isbounded(::AffineMap)
-∈(::AbstractVector{N}, ::AffineMap{N}) where {N<:Real}
-vertices_list(::AffineMap{N}) where {N<:Real}
-constraints_list(::AffineMap{N}) where {N<:Real}
-linear_map(::AbstractMatrix{N}, ::AffineMap{N}) where {N<:Real}
 ```
+
+Inherited from [`AbstractAffineMap`](@ref):
+* [`dim`](@ref dim(::AbstractAffineMap))
+* [`σ`](@ref σ(::AbstractVector{N}, ::AbstractAffineMap{N}) where {N<:Real})
+* [`ρ`](@ref ρ(::AbstractVector{N}, ::AbstractAffineMap{N}) where {N<:Real})
+* [`an_element`](@ref an_element(::AbstractAffineMap))
+* [`isempty`](@ref isempty(::AbstractAffineMap))
+* [`isbounded`](@ref isbounded(::AbstractAffineMap))
+* [`∈`](@ref ∈(::AbstractVector{N}, ::AbstractAffineMap{N}) where {N<:Real})
+* [`vertices_list`](@ref vertices_list(::AbstractAffineMap{N}) where {N<:Real})
+* [`constraints_list`](@ref constraints_list(::AbstractAffineMap{N}) where {N<:Real})
+* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractAffineMap{N}) where {N<:Real})

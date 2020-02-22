@@ -6,7 +6,8 @@ export Translation,
        linear_map
 
 """
-    Translation{N<:Real, VN<:AbstractVector{N}, S<:LazySet{N}} <: LazySet{N}
+    Translation{N<:Real, VN<:AbstractVector{N},
+                S<:LazySet{N}} <: AbstractAffineMap{N, S}
 
 Type that represents a lazy translation.
 
@@ -139,7 +140,8 @@ julia> constraints_list(tr)
  HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}}([0.0, 0.0, -1.0], -1.0)
 ```
 """
-struct Translation{N<:Real, VN<:AbstractVector{N}, S<:LazySet{N}} <: LazySet{N}
+struct Translation{N<:Real, VN<:AbstractVector{N},
+                   S<:LazySet{N}} <: AbstractAffineMap{N, S}
     X::S
     v::VN
 
@@ -196,26 +198,25 @@ Translation(lm::LinearMap{N}, v::AbstractVector{N}) where {N<:Real} =
 # M * (X ⊕ v) = (M * X) ⊕ (M * v)
 LinearMap(M::AbstractMatrix, tr::Translation) = AffineMap(M, tr.X, M * tr.v)
 
+
+# --- AbstractAffineMap interface functions ---
+
+
+function matrix(tr::Translation{N}) where {N<:Real}
+    return Diagonal(fill(one(N), dim(tr)))
+end
+
+function vector(tr::Translation)
+    return tr.v
+end
+
+function set(tr::Translation)
+    return tr.X
+end
+
 # ============================
 # LazySet interface functions
 # ============================
-
-"""
-    dim(tr::Translation)
-
-Return the dimension of a translation.
-
-### Input
-
-- `tr` -- translation
-
-### Output
-
-The dimension of a translation.
-"""
-function dim(tr::Translation)
-    return length(tr.v)
-end
 
 """
     σ(d::AbstractVector{N}, tr::Translation{N}) where {N<:Real}
@@ -274,23 +275,6 @@ translates this element according to the given translation vector.
 """
 function an_element(tr::Translation)
     return an_element(tr.X) + tr.v
-end
-
-"""
-    isempty(tr::Translation)
-
-Return if a translation is empty or not.
-
-### Input
-
-- `tr` -- translation
-
-### Output
-
-`true` iff the wrapped set is empty.
-"""
-function isempty(tr::Translation)
-    return isempty(tr.X)
 end
 
 """

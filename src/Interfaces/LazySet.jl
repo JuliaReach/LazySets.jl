@@ -56,10 +56,10 @@ The subtypes of `LazySet` (including abstract interfaces):
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(LazySet, false)
-19-element Array{Any,1}:
+14-element Array{Any,1}:
+ AbstractAffineMap
  AbstractCentrallySymmetric
  AbstractPolyhedron
- AffineMap
  Bloating
  CachedMinkowskiSumArray
  CartesianProduct
@@ -67,15 +67,10 @@ julia> subtypes(LazySet, false)
  ConvexHull
  ConvexHullArray
  EmptySet
- ExponentialMap
- ExponentialProjectionMap
  Intersection
  IntersectionArray
- LinearMap
  MinkowskiSum
  MinkowskiSumArray
- ResetMap
- Translation
 ```
 
 If we only consider *concrete* subtypes, then:

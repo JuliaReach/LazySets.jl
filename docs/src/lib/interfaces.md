@@ -406,3 +406,34 @@ RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractSingleton{N}, ::N
 
 * [Singleton](@ref def_Singleton)
 * [Origin (ZeroSet)](@ref def_ZeroSet)
+
+## [Affine maps (AbstractAffineMap)](@id def_AbstractAffineMap)
+
+An affine map consists of a linear map and a translation.
+
+```@docs
+AbstractAffineMap
+```
+
+This interface defines the following functions:
+
+```@docs
+dim(::AbstractAffineMap)
+σ(::AbstractVector{N}, ::AbstractAffineMap{N}) where {N<:Real}
+ρ(::AbstractVector{N}, ::AbstractAffineMap{N}) where {N<:Real}
+an_element(::AbstractAffineMap)
+isempty(::AbstractAffineMap)
+isbounded(::AbstractAffineMap)
+∈(::AbstractVector{N}, ::AbstractAffineMap{N}) where {N<:Real}
+vertices_list(::AbstractAffineMap{N}) where {N<:Real}
+constraints_list(::AbstractAffineMap{N}) where {N<:Real}
+linear_map(::AbstractMatrix{N}, ::AbstractAffineMap{N}) where {N<:Real}
+```
+
+### Implementations
+
+* [Affine map (AffineMap)](@ref def_AffineMap)
+* [Exponential map (ExponentialMap)](@ref def_ExponentialMap)
+* [Linear map (LinearMap)](@ref def_LinearMap)
+* [Reset map (ResetMap)](@ref def_ResetMap)
+* [Translation](@ref def_Translation)

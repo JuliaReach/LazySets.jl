@@ -1,11 +1,9 @@
 import Base: isempty
 
-export ResetMap,
-       get_A,
-       get_b
+export ResetMap
 
 """
-    ResetMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
+    ResetMap{N<:Real, S<:LazySet{N}} <: AbstractAffineMap{N, S}
 
 Type that represents a lazy reset map.
 A reset map is a special case of an affine map ``A x + b, x ∈ X`` where the
@@ -41,17 +39,17 @@ The corresponding affine map ``A x + b`` would be:
     \begin{pmatrix} 4 & 0 & 0 \end{pmatrix}
 ```
 
-Use the function `get_A` (resp. `get_b`) to create the matrix `A` (resp. vector
-`b`) corresponding to a given reset map.
+Use the function `matrix` (resp. `vector`) to create the matrix `A` (resp.
+vector `b`) corresponding to a given reset map.
 
 ```jldoctest resetmap
-julia> get_A(rm)
+julia> matrix(rm)
 3×3 LinearAlgebra.Diagonal{Float64,Array{Float64,1}}:
  0.0   ⋅    ⋅
   ⋅   1.0   ⋅
   ⋅    ⋅   0.0
 
-julia> get_b(rm)
+julia> vector(rm)
 3-element SparseArrays.SparseVector{Float64,Int64} with 1 stored entry:
   [1]  =  4.0
 ```
@@ -77,7 +75,7 @@ julia> σ(ones(3), rm)
  0.0
 ```
 """
-struct ResetMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
+struct ResetMap{N<:Real, S<:LazySet{N}} <: AbstractAffineMap{N, S}
     X::S
     resets::Dict{Int, N}
 end
@@ -88,7 +86,7 @@ isconvextype(::Type{ResetMap{N, S}}) where {N, S} = isconvextype(S)
 # ZeroSet is "almost absorbing" for the linear map (only the dimension changes)
 # such that only the translation vector remains
 function ResetMap(Z::ZeroSet{N}, resets::Dict{Int, N}) where {N<:Real}
-    return Singleton(_get_b_from_dictionary(resets, dim(Z)))
+    return Singleton(_vector_from_dictionary(resets, dim(Z)))
 end
 
 # EmptySet is absorbing for ResetMap
@@ -96,8 +94,12 @@ function ResetMap(∅::EmptySet{N}, resets::Dict{Int, N}) where {N<:Real}
     return ∅
 end
 
+
+# --- AbstractAffineMap interface functions ---
+
+
 """
-    get_A(rm::ResetMap{N}) where {N<:Real}
+    matrix(rm::ResetMap{N}) where {N<:Real}
 
 Return the ``A`` matrix of the affine map ``A x + b, x ∈ X`` represented by a
 reset map.
@@ -116,7 +118,7 @@ reset map.
 We construct the identity matrix and set all entries in the reset dimensions to
 zero.
 """
-function get_A(rm::ResetMap{N}) where {N<:Real}
+function matrix(rm::ResetMap{N}) where {N<:Real}
     n = dim(rm)
     v = ones(N, n)
     for i in keys(rm.resets)
@@ -126,7 +128,7 @@ function get_A(rm::ResetMap{N}) where {N<:Real}
 end
 
 """
-    get_b(rm::ResetMap{N}) where {N<:Real}
+    vector(rm::ResetMap{N}) where {N<:Real}
 
 Return the ``b`` vector of the affine map ``A x + b, x ∈ X`` represented by a
 reset map.
@@ -142,16 +144,20 @@ reset map.
 The vector contains the reset value for all reset dimensions, and is zero for
 all other dimensions.
 """
-function get_b(rm::ResetMap{N}) where {N<:Real}
-    return _get_b_from_dictionary(rm.resets, dim(rm))
+function vector(rm::ResetMap{N}) where {N<:Real}
+    return _vector_from_dictionary(rm.resets, dim(rm))
 end
 
-function _get_b_from_dictionary(dict::Dict{Int, N}, n::Int) where {N<:Real}
+function _vector_from_dictionary(dict::Dict{Int, N}, n::Int) where {N<:Real}
     b = sparsevec(Int[], N[], n)
     for (i, val) in dict
         b[i] = val
     end
     return b
+end
+
+function set(rm::ResetMap)
+    return rm.X
 end
 
 
@@ -248,23 +254,6 @@ function an_element(rm::ResetMap)
 end
 
 """
-    isempty(rm::ResetMap)
-
-Return if a reset map is empty or not.
-
-### Input
-
-- `rm` -- reset map
-
-### Output
-
-`true` iff the wrapped set is empty.
-"""
-function isempty(rm::ResetMap)
-    return isempty(rm.X)
-end
-
-"""
     constraints_list(rm::ResetMap{N}) where {N<:Real}
 
 Return the list of constraints of a polytopic reset map.
@@ -314,7 +303,7 @@ function constraints_list(rm::ResetMap{N}) where {N<:Real}
         return res
     end
 
-    constraints = copy(constraints_list(LinearMap(get_A(rm), rm.X)))
+    constraints = copy(constraints_list(LinearMap(matrix(rm), set(rm))))
     for (i, c) in enumerate(constraints)
         constrained_dim = find_unique_nonzero_entry(c.a)
         if constrained_dim > 0  # constraint in only one dimension
