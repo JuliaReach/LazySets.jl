@@ -377,6 +377,11 @@ for N in [Float64, Float32, Rational{Int}]
 
     # empty VPolygon: conversion to hrep
     @test tohrep(VPolygon{N}()) isa EmptySet{N}
+
+    # test VPolygon constructor given the matrix of vertices
+    m = N[4 0; 6 2; 4 4]'
+    P = VPolygon(m)
+    @test is_cyclic_permutation(vertices_list(P), [N[4, 0], N[6, 2], N[4, 4]])
 end
 
 function same_constraints(v::Vector{<:LinearConstraint{N}})::Bool where N<:Real
