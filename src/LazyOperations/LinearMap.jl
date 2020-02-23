@@ -2,7 +2,8 @@ import Base: *, ∈, isempty
 
 export LinearMap,
        an_element,
-       constraints_list
+       constraints_list,
+       Projection
 
 """
     LinearMap{N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
@@ -420,4 +421,41 @@ The polytope representing the linear map of the lazy linear map of a set.
 """
 function linear_map(M::AbstractMatrix{N}, lm::LinearMap{N}) where {N<:Real}
      return linear_map(M * lm.M, lm.X)
+end
+
+"""
+    Projection(X::LazySet{N}, variables::AbstractVector{Int}) where {N<:Real}
+
+Return the lazy projection of a set.
+
+### Input
+
+- `X`         -- set
+- `variables` -- variables of interest
+
+### Output
+
+A lazy `LinearMap` that corresponds to projecting `X` along the given variables
+`variables`.
+
+### Examples
+
+The projection of a three-dimensional cube into the first two coordinates:
+
+```jldoctest Projection
+julia> B = BallInf(zeros(3), 1.0)
+BallInf{Float64}([0.0, 0.0, 0.0], 1.0)
+
+julia> Bproj = Projection(B, [1, 2])
+LinearMap{Float64,BallInf{Float64},Float64,SparseArrays.SparseMatrixCSC{Float64,Int64}}(
+  [1, 1]  =  1.0
+  [2, 2]  =  1.0, BallInf{Float64}([0.0, 0.0, 0.0], 1.0))
+
+julia> isequivalent(Bproj, BallInf(zeros(2), 1.0))
+true
+```
+"""
+function Projection(X::LazySet{N}, variables::AbstractVector{Int}) where {N<:Real}
+    M = projection_matrix(variables, dim(X), N)
+    return LinearMap(M, X)
 end

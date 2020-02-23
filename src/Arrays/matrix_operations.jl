@@ -6,7 +6,8 @@ export _At_mul_B,
        isinvertible,
        cross_product,
        delete_zero_columns!,
-       extend
+       extend,
+       projection_matrix
 
 # default tolerance for matrix condition number (see 'isinvertible')
 const DEFAULT_COND_TOL = 1e6
@@ -239,4 +240,41 @@ function extend(M::AbstractMatrix; check_rank=true)
     inv_Mext = vcat(inv(R) * Q', Q2')
 
     return Mext, inv_Mext
+end
+
+"""
+    projection_matrix(block::AbstractVector{Int}, n::Int, [N]::DataType=Float64)
+
+Return the projection matrix associated to the given block of variables.
+
+### Input
+
+- `block` -- integer vector with the variables of interest
+- `n`     -- integer representing the ambient dimension
+- `N`     -- (optional, default: `Float64`) number type
+
+### Output
+
+
+A sparse matrix that corresponds to the projection onto the variables in `block`.
+
+### Examples
+
+```jldoctest projection_matrix
+julia> using LazySets: projection_matrix
+
+julia> projection_matrix([1, 3], 4)
+2×4 SparseArrays.SparseMatrixCSC{Float64,Int64} with 2 stored entries:
+  [1, 1]  =  1.0
+  [2, 3]  =  1.0
+
+julia> Matrix(ans)
+2×4 Array{Float64,2}:
+ 1.0  0.0  0.0  0.0
+ 0.0  0.0  1.0  0.0
+```
+"""
+function projection_matrix(block::AbstractVector{Int}, n::Int, N::DataType=Float64)
+    m = length(block)
+    return sparse(1:m, block, ones(N, m), m, n)
 end

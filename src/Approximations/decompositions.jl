@@ -256,13 +256,6 @@ function decompose(S::LazySet, block_options; block_size::Int=1)
     return decompose(S, partition, block_options)
 end
 
-# return a sparse matrix with number type `N` representing the projection
-# in ambient dimension `n`, for the coordinates present in `block`
-function _projection_matrix(N, n::Int, block::AbstractVector{Int})
-    m = length(block)
-    return sparse(1:m, block, ones(N, m), m, n)
-end
-
 """
     project(S::LazySet{N},
             block::AbstractVector{Int},
@@ -292,7 +285,7 @@ We apply the function `linear_map`.
                          ::Nothing=nothing,
                          n::Int=dim(S)
                         ) where {N<:Real}
-    M = _projection_matrix(N, n, block)
+    M = projection_matrix(block, n, N)
     return linear_map(M, S)
 end
 
@@ -321,7 +314,7 @@ A lazy `LinearMap` representing the projection of the set `S` to block `block`.
                          set_type::Type{<:LinearMap},
                          n::Int=dim(S)
                         ) where {N<:Real}
-    M = _projection_matrix(N, n, block)
+    M = projection_matrix(block, n, N)
     return M * S
 end
 
@@ -644,7 +637,7 @@ function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}) where {N}
         clist = [HalfSpace(c.a[block], c.b) for c in constraints_list(P)]
     else
         n = dim(P)
-        M = _projection_matrix(N, n, block)
+        M = projection_matrix(block, n, N)
         lm = linear_map(M, P)
         clist = constraints_list(lm)
     end
