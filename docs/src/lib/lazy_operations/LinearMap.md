@@ -24,3 +24,9 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
+
+The lazy projection of a set can be conveniently constructed using `Projection`.
+
+```@docs
+Projection
+```

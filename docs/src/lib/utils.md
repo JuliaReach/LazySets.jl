@@ -30,6 +30,7 @@ _above
 minmax
 arg_minmax
 extend
+projection_matrix
 ```
 
 ## Functions and Macros
