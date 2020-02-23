@@ -285,7 +285,7 @@ We apply the function `linear_map`.
                          ::Nothing=nothing,
                          n::Int=dim(S)
                         ) where {N<:Real}
-    M = projection_matrix(N, n, block)
+    M = projection_matrix(block, n, N)
     return linear_map(M, S)
 end
 
