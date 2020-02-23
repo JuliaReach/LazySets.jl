@@ -4,7 +4,8 @@ export AbstractZonotope,
        genmat,
        generators,
        ngens,
-       order
+       order,
+       togrep
 
 """
     AbstractZonotope{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
@@ -116,6 +117,25 @@ An iterator over the generators of `Z`.
 """
 function generators_fallback(Z::AbstractZonotope{N}) where {N<:Real}
     return FallbackGeneratorIterator(genmat(Z))
+end
+
+"""
+    togrep(Z::AbstractZonotope)
+
+Return a generator representation of a zonotopic set.
+
+### Input
+
+- `Z` -- zonotopic set
+
+### Output
+
+The same set in generator representation.
+This fallback implementation returns a `Zonotope`; however, more specific
+implementations may return other generator representations.
+"""
+function togrep(Z::AbstractZonotope)
+    return convert(Zonotope, Z)
 end
 
 

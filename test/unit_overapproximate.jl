@@ -36,9 +36,15 @@ for N in [Float64, Rational{Int}, Float32]
 
     # Interval approximation
     b = Ball1(N[0], N(1))
-    p = overapproximate(b, LazySets.Interval)
+    p1 = overapproximate(b, LazySets.Interval)
+    cap = Intersection(b, BallInf(N[1], N(1)))
+    p2 = overapproximate(cap, LazySets.Interval)
+    caparray = IntersectionArray([b, BallInf(N[1], N(1)), BallInf(N[1//2], N(1//4))])
+    p3 = overapproximate(caparray, LazySets.Interval)
     for d in [N[1], N[-1]]
-        @test σ(d, p)[1] ≈ σ(d, b)[1]
+        for (o, p) in [(b, cap, caparray), (p1, p2, p3)]
+            @test σ(d, o)[1] ≈ d[1]
+        end
     end
 
     # approximation with an axis-aligned hyperrectangle

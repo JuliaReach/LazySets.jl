@@ -12,12 +12,14 @@ dim(::LinearMap)
 σ(::AbstractVector{N}, ::LinearMap{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::LinearMap{N}) where {N<:Real}
 an_element(::LinearMap{N}) where {N<:Real}
-isbounded(::LinearMap)
-isempty(::LinearMap)
 vertices_list(::LinearMap{N}) where {N<:Real}
 constraints_list(::LinearMap{N}) where {N<:Real}
 linear_map(::AbstractMatrix{N}, ::LinearMap{N}) where {N<:Real}
 ```
+Inherited from [`AbstractAffineMap`](@ref):
+* [`isempty`](@ref isempty(::AbstractAffineMap))
+* [`isbounded`](@ref isbounded(::AbstractAffineMap))
+
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))

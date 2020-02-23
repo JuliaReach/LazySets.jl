@@ -260,6 +260,24 @@ function convert(::Type{Zonotope}, H::AbstractHyperrectangle)
 end
 
 """
+    convert(::Type{Zonotope}, Z::AbstractZonotope)
+
+Converts a zonotopic set to a zonotope.
+
+### Input
+
+- `Zonotope`
+- `H` -- zonotopic set
+
+### Output
+
+A zonotope.
+"""
+function convert(::Type{Zonotope}, Z::AbstractZonotope)
+    return Zonotope(center(Z), genmat(Z))
+end
+
+"""
     convert(::Type{Zonotope}, cp::CartesianProduct{N, HN1, HN2}) where {N<:Real,
         HN1<:AbstractHyperrectangle{N}, HN2<:AbstractHyperrectangle{N}}
 
@@ -491,8 +509,8 @@ Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
 ```
 """
 function convert(::Type{Interval}, H::AbstractHyperrectangle)
-    @assert dim(H) == 1 "can only convert a one-dimensional $(typeof(H)) to `Interval`"
-    return Interval([low(H); high(H)])
+    @assert dim(H) == 1 "cannot convert a $(dim(H))-dimensional $(typeof(H)) to `Interval`"
+    return Interval(low(H)[1], high(H)[1])
 end
 
 """
@@ -510,7 +528,7 @@ Converts a convex set to an interval.
 An interval.
 """
 function convert(::Type{Interval}, S::LazySet{N}) where {N<:Real}
-    @assert dim(S) == 1 "can only convert a one-dimensional $(typeof(S)) to `Interval`"
+    @assert dim(S) == 1 "cannot convert a $(dim(H))-dimensional $(typeof(S)) to `Interval`"
     return Interval(-ρ(N[-1], S), ρ(N[1], S))
 end
 

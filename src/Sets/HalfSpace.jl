@@ -20,7 +20,15 @@ Type that represents a (closed) half-space of the form ``a⋅x ≤ b``.
 
 ### Examples
 
-The set ``y ≥ 0`` in the plane:
+The half-space ``x + 2y - z ≤ 3``:
+
+```jldoctest
+julia> HalfSpace([1, 2, -1.], 3.)
+HalfSpace{Float64,Array{Float64,1}}([1.0, 2.0, -1.0], 3.0)
+```
+
+To represent the set ``y ≥ 0`` in the plane, we have to
+rearrange the expression as ``0x - y ≤ 0``:
 
 ```jldoctest
 julia> HalfSpace([0, -1.], 0.)
@@ -442,13 +450,6 @@ function is_tighter_same_dir_2D(c1::LinearConstraint{N},
     return lt(c1.b, c1.a[1] / c2.a[1] * c2.b)
 end
 
-function _linear_map_hrep(M::AbstractMatrix{N}, P::HalfSpace{N}, use_inv::Bool;
-                          inverse::Union{Nothing, AbstractMatrix{N}}=nothing
-                         ) where {N<:Real}
-    constraint = _linear_map_hrep_helper(M, P, use_inv; inverse=inverse)[1]
-    return HalfSpace(constraint.a, constraint.b)
-end
-
 """
     translate(hs::HalfSpace{N}, v::AbstractVector{N}; share::Bool=false
              ) where {N<:Real}
@@ -483,4 +484,14 @@ function translate(hs::HalfSpace{N}, v::AbstractVector{N}; share::Bool=false
     a = share ? hs.a : copy(hs.a)
     b = hs.b + dot(hs.a, v)
     return HalfSpace(a, b)
+end
+
+function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::HalfSpace{N},
+                          algo::AbstractLinearMapAlgorithm) where {N<:Real}
+    constraints = _linear_map_hrep(M, P, algo)
+    if length(constraints) == 1
+        return first(constraints)
+    else
+        return HPolyhedron(constraints)
+    end
 end

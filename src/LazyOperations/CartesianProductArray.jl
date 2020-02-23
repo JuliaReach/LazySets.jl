@@ -227,7 +227,7 @@ bounded.
 `true` iff all wrapped sets are bounded.
 """
 function isbounded(cpa::CartesianProductArray)
-   return all(x -> isbounded(x), cpa.array)
+   return all(isbounded, cpa.array)
 end
 
 """
@@ -274,7 +274,7 @@ Return if a Cartesian product is empty or not.
 `true` iff any of the sub-blocks is empty.
 """
 function isempty(cpa::CartesianProductArray)
-   return any(X -> isempty(X), array(cpa))
+   return any(isempty, array(cpa))
 end
 
 """

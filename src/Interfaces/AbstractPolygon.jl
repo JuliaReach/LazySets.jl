@@ -140,6 +140,14 @@ directions using the right-hand rule (see [`is_right_turn`](@ref)).
 In particular, this method does not use the arctangent.
 """
 function <=(u::AbstractVector{N}, v::AbstractVector{N}) where {N<:Real}
+    @assert length(u) == length(v) == 2 "comparison of vectors `u` and `v` " *
+           "by their direction requires they are of length 2, " *
+           "but their lengths are $(length(u)) and $(length(v)) respectively"
+
+    return _leq_quadrant(u, v)
+end
+
+function _leq_quadrant(u::AbstractVector{N}, v::AbstractVector{N}) where {N<:Real}
     qu, qv = quadrant(u), quadrant(v)
     if qu == qv
         # same quadrant, check right-turn with center 0
@@ -150,7 +158,7 @@ function <=(u::AbstractVector{N}, v::AbstractVector{N}) where {N<:Real}
 end
 
 """
-    <=(u::AbstractVector{N}, v::AbstractVector{N}) where {N<:AbstractFloat}
+    _leq_trig(u::AbstractVector{N}, v::AbstractVector{N}) where {N<:AbstractFloat}
 
 Compares two 2D vectors by their direction.
 
@@ -161,7 +169,7 @@ Compares two 2D vectors by their direction.
 
 ### Output
 
-True iff ``\\arg(u) [2π] ≤ \\arg(v) [2π]``
+`true` iff ``\\arg(u) [2π] ≤ \\arg(v) [2π]``.
 
 ### Notes
 
@@ -171,10 +179,8 @@ direction (1, 0).
 ### Algorithm
 
 The implementation uses the arctangent function with sign, `atan`, which for two
-arguments implements the
-[`atan2` function](https://en.wikipedia.org/wiki/Atan2).
+arguments implements the [`atan2` function](https://en.wikipedia.org/wiki/Atan2).
 """
-function <=(u::AbstractVector{N},
-            v::AbstractVector{N}) where {N<:AbstractFloat}
+function _leq_trig(u::AbstractVector{N}, v::AbstractVector{N}) where {N<:AbstractFloat}
     return jump2pi(atan(u[2], u[1])) <= jump2pi(atan(v[2], v[1]))
 end

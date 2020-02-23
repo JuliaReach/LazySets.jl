@@ -27,6 +27,7 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`ngens`](@ref ngens(::AbstractZonotope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractZonotope{N}) where {N<:Real})
 * [`order`](@ref order(::AbstractZonotope))
+* [`togrep`](@ref togrep(::AbstractZonotope))
 * [`translate`](@ref translate(::AbstractZonotope{N}, ::AbstractVector{N}) where {N<:Real})
 
 Inherited from [`AbstractHyperrectangle`](@ref):

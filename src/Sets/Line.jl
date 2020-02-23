@@ -323,11 +323,12 @@ function constrained_dimensions(L::Line{N}) where {N<:Real}
     return nonzero_indices(L.a)
 end
 
-function _linear_map_hrep(M::AbstractMatrix{N}, P::Line{N}, use_inv::Bool;
-                          inverse::Union{Nothing, AbstractMatrix{N}}=nothing
-                         ) where {N<:Real}
-    constraint = _linear_map_hrep_helper(M, P, use_inv; inverse=inverse)[1]
-    return Line(constraint.a, constraint.b)
+function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::Line{N},
+                                 algo::AbstractLinearMapAlgorithm) where {N<:Real}
+     constraints = _linear_map_hrep(M, P, algo)
+     @assert length(constraints) == 2
+     c = first(constraints)
+     return Line(c.a, c.b)
 end
 
 """

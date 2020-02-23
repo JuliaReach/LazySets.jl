@@ -73,8 +73,8 @@ that the overapproximation using iterative refinement is available:
 
 ```@docs
 plot_recipe(::LazySet{N}, ::N=N(1e-3)) where {N<:Real}
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::LazySet{N}, ::N=N(1e-3)) where {N<:Real}
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractVector{VN}, ::N=N(1e-3), ::Int=40, ::Bool=false) where {N<:Real, VN<:LazySet{N}}
+RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::LazySet{N}, ::N=N(1e-3)) where {N<:Real}
+RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractVector{VN}, ::N=N(1e-3), ::Int=40, ::Bool=false) where {N<:Real, VN<:LazySet{N}}
 ```
 
 For three-dimensional sets, we support `Makie`:
@@ -320,6 +320,7 @@ constraints_list(::AbstractZonotope{N}) where {N<:Real}
 constraints_list(::AbstractZonotope{N}; ::Bool=true) where {N<:AbstractFloat}
 vertices_list(::AbstractZonotope{N}) where {N<:Real}
 order(::AbstractZonotope)
+togrep(::AbstractZonotope)
 ```
 
 ### Implementations
@@ -398,10 +399,41 @@ generators(::AbstractSingleton{N}) where {N<:Real}
 genmat(::AbstractSingleton{N}) where {N<:Real}
 ngens(::AbstractSingleton)
 plot_recipe(::AbstractSingleton{N}, ::N=zero(N)) where {N<:Real}
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::AbstractSingleton{N}, ::N=zero(N)) where {N<:Real}
+RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractSingleton{N}, ::N=zero(N)) where {N<:Real}
 ```
 
 ### Implementations
 
 * [Singleton](@ref def_Singleton)
 * [Origin (ZeroSet)](@ref def_ZeroSet)
+
+## [Affine maps (AbstractAffineMap)](@id def_AbstractAffineMap)
+
+An affine map consists of a linear map and a translation.
+
+```@docs
+AbstractAffineMap
+```
+
+This interface defines the following functions:
+
+```@docs
+dim(::AbstractAffineMap)
+σ(::AbstractVector{N}, ::AbstractAffineMap{N}) where {N<:Real}
+ρ(::AbstractVector{N}, ::AbstractAffineMap{N}) where {N<:Real}
+an_element(::AbstractAffineMap)
+isempty(::AbstractAffineMap)
+isbounded(::AbstractAffineMap)
+∈(::AbstractVector{N}, ::AbstractAffineMap{N}) where {N<:Real}
+vertices_list(::AbstractAffineMap{N}) where {N<:Real}
+constraints_list(::AbstractAffineMap{N}) where {N<:Real}
+linear_map(::AbstractMatrix{N}, ::AbstractAffineMap{N}) where {N<:Real}
+```
+
+### Implementations
+
+* [Affine map (AffineMap)](@ref def_AffineMap)
+* [Exponential map (ExponentialMap)](@ref def_ExponentialMap)
+* [Linear map (LinearMap)](@ref def_LinearMap)
+* [Reset map (ResetMap)](@ref def_ResetMap)
+* [Translation](@ref def_Translation)

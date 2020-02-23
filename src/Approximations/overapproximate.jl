@@ -588,7 +588,7 @@ end
 """
     overapproximate(S::LazySet{N}, ::Type{<:Interval}) where {N<:Real}
 
-Return the overapproximation of a real unidimensional set with an interval.
+Return the overapproximation of a unidimensional set with an interval.
 
 ### Input
 
@@ -601,12 +601,74 @@ An interval.
 
 ### Algorithm
 
-The method relies on the exact conversion to `Interval`. Two support
-function evaluations are needed in general.
+We use two support-function evaluations.
 """
 function overapproximate(S::LazySet{N}, ::Type{<:Interval}) where {N<:Real}
-    @assert dim(S) == 1 "cannot overapproximate a $(dim(S))-dimensional set with an `Interval`"
-    return convert(Interval, S)
+    @assert dim(S) == 1 "cannot overapproximate a $(dim(S))-dimensional set " *
+                        "with an `Interval`"
+    return Interval(-ρ(N[-1], S), ρ(N[1], S))
+end
+
+"""
+    overapproximate(cap::Intersection{N}, ::Type{<:Interval}) where {N<:Real}
+
+Return the overapproximation of a unidimensional intersection with an interval.
+
+### Input
+
+- `cap`      -- one-dimensional lazy intersection
+- `Interval` -- type for dispatch
+
+### Output
+
+An interval.
+
+### Algorithm
+
+The algorithm recursively overapproximates the two intersected sets with
+intervals and then intersects these.
+"""
+function overapproximate(cap::Intersection{N}, ::Type{<:Interval}) where {N<:Real}
+    @assert dim(cap) == 1 "cannot overapproximate a $(dim(cap))-dimensional " *
+                        "intersection with an `Interval`"
+    X = overapproximate(cap.X, Interval)
+    Y = overapproximate(cap.Y, Interval)
+    return intersection(X, Y)
+end
+
+"""
+    overapproximate(cap::IntersectionArray{N}, ::Type{<:Interval}) where {N<:Real}
+
+Return the overapproximation of a unidimensional intersection with an interval.
+
+### Input
+
+- `cap`      -- one-dimensional lazy intersection
+- `Interval` -- type for dispatch
+
+### Output
+
+An interval.
+
+### Algorithm
+
+The algorithm recursively overapproximates the two intersected sets with
+intervals and then intersects these.
+"""
+function overapproximate(cap::IntersectionArray{N},
+                         ::Type{<:Interval}) where {N<:Real}
+    @assert dim(cap) == 1 "cannot overapproximate a $(dim(cap))-dimensional " *
+                        "intersection with an `Interval`"
+    a = array(cap)
+    X = overapproximate(a[1], Interval)
+    @inbounds for i in 2:length(a)
+        Y = a[i]
+        X = intersection(X, Y)
+        if isempty(X)
+            return X
+        end
+    end
+    return X
 end
 
 function overapproximate_cap_helper(X::LazySet{N},             # convex set
@@ -817,7 +879,7 @@ end
 
 """
     overapproximate(vTM::Vector{TaylorModel1{T, S}},
-                    ::Type{Zonotope}) where {T, S}
+                    ::Type{<:Zonotope}) where {T, S}
 
 Overapproximate a taylor model in one variable with a zonotope.
 
@@ -960,7 +1022,7 @@ This algorithm proceeds in two steps:
    normalization onto the symmetric intervals ``[-1, 1]``.
 """
 function overapproximate(vTM::Vector{TaylorModel1{T, S}},
-                            ::Type{Zonotope}) where {T, S}
+                            ::Type{<:Zonotope}) where {T, S}
     m = length(vTM)
 
     # preallocations
@@ -974,7 +1036,7 @@ end
 
 """
     overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
-                    ::Type{Zonotope}) where {N,T, S}
+                    ::Type{<:Zonotope}) where {N,T, S}
 
 
 Overapproximate a multivariate taylor model with a zonotope.
@@ -1047,7 +1109,7 @@ julia> Matrix(genmat(Z))
 We refer to the algorithm description for the univariate case.
 """
 function overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
-                         ::Type{Zonotope}) where {N, T, S}
+                         ::Type{<:Zonotope}) where {N, T, S}
     m = length(vTM)
     n = N # number of variables is get_numvars() in TaylorSeries
 
@@ -1104,7 +1166,7 @@ end
 
 """
     overapproximate(lm::LinearMap{N, <:AbstractZonotope{N}, NM,
-                                  <:AbstractIntervalMatrix{<:NM}},
+                                  <:AbstractIntervalMatrix{NM}},
                     ::Type{<:Zonotope}) where {N<:Real, NM}
 
 Overapproximate an interval-matrix linear map of a zonotopic set by a new
@@ -1138,7 +1200,7 @@ conventional matrix and a symmetric interval matrix) and a zonotope
 uncertain parameters and inputs. CDC 2007.
 """
 function overapproximate(lm::LinearMap{N, <:AbstractZonotope{N}, NM,
-                                       <:AbstractIntervalMatrix{<:NM}},
+                                       <:AbstractIntervalMatrix{NM}},
                          ::Type{<:Zonotope}) where {N<:Real, NM}
     Mc, Ms = split(lm.M)
     Z = lm.X
@@ -1299,7 +1361,7 @@ function overapproximate(rm::ResetMap{N, <:CartesianProductArray{N}},
         error("we currently only support resets to zero")
     end
 
-    lm = get_A(rm) * rm.X
+    lm = matrix(rm) * rm.X
     return overapproximate(lm, CartesianProductArray, oa)
 end
 

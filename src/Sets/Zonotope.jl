@@ -135,6 +135,23 @@ end
 
 
 """
+    togrep(Z::Zonotope)
+
+Return a generator representation of a zonotope.
+
+### Input
+
+- `Z` -- zonotopic set
+
+### Output
+
+The same set `Z`.
+"""
+function togrep(Z::Zonotope)
+    return Z
+end
+
+"""
    genmat(Z::Zonotope)
 
 Return the generator matrix of a zonotope.

@@ -26,6 +26,7 @@ Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 Inherited from [`AbstractZonotope`](@ref):
 * [`ngens`](@ref ngens(::AbstractZonotope))
 * [`order`](@ref order(::AbstractZonotope))
+* [`togrep`](@ref togrep(::AbstractZonotope))
 
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))

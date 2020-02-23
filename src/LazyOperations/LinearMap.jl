@@ -6,7 +6,7 @@ export LinearMap,
        Projection
 
 """
-    LinearMap{N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} <: LazySet{N}
+    LinearMap{N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
 
 Type that represents a linear transformation ``M⋅S`` of a convex set ``S``.
 
@@ -95,7 +95,7 @@ EmptySet{Int64}(2)
 ```
 """
 struct LinearMap{N<:Real, S<:LazySet{N},
-                 NM, MAT<:AbstractMatrix{NM}} <: LazySet{N}
+                 NM, MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
     M::MAT
     X::S
 
@@ -191,6 +191,26 @@ function LinearMap(M::AbstractMatrix{N}, ∅::EmptySet{N}) where {N<:Real}
     return ∅
 end
 
+
+# --- AbstractAffineMap interface functions ---
+
+
+function matrix(lm::LinearMap)
+    return lm.M
+end
+
+function vector(lm::LinearMap{N}) where {N<:Real}
+    return spzeros(N, dim(lm))
+end
+
+function set(lm::LinearMap)
+    return lm.X
+end
+
+
+# --- LazySet interface functions ---
+
+
 """
     dim(lm::LinearMap)
 
@@ -259,39 +279,6 @@ function ρ(d::AbstractVector{N}, lm::LinearMap{N}; kwargs...) where {N<:Real}
 end
 
 """
-    isbounded(lm::LinearMap; cond_tol::Number=DEFAULT_COND_TOL)
-
-Determine whether a linear map is bounded.
-
-### Input
-
-- `lm`       -- linear map
-- `cond_tol` -- (optional) tolerance of matrix condition (used to check whether
-                the matrix is invertible)
-
-### Output
-
-`true` iff the linear map is bounded.
-
-### Algorithm
-
-We first check if the matrix is zero or the wrapped set is bounded.
-If not, we perform a sufficient check whether the matrix is invertible.
-If the matrix is invertible, then the map being bounded is equivalent to the
-wrapped set being bounded, and hence the map is unbounded.
-Otherwise, we check boundedness via [`isbounded_unit_dimensions`](@ref).
-"""
-function isbounded(lm::LinearMap; cond_tol::Number=DEFAULT_COND_TOL)
-    if iszero(lm.M) || isbounded(lm.X)
-        return true
-    end
-    if isinvertible(lm.M; cond_tol=cond_tol)
-        return false
-    end
-    return isbounded_unit_dimensions(lm)
-end
-
-"""
     ∈(x::AbstractVector{N}, lm::LinearMap{N}) where {N<:Real}
 
 Check whether a given point is contained in a linear map of a convex set.
@@ -352,23 +339,6 @@ It relies on the `an_element` function of the wrapped set.
 """
 function an_element(lm::LinearMap{N})::Vector{N} where {N<:Real}
     return lm.M * an_element(lm.X)
-end
-
-"""
-    isempty(lm::LinearMap)
-
-Return if a linear map is empty or not.
-
-### Input
-
-- `lm` -- linear map
-
-### Output
-
-`true` iff the wrapped set is empty.
-"""
-function isempty(lm::LinearMap)
-    return isempty(lm.X)
 end
 
 """
