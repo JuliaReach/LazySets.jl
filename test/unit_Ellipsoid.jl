@@ -78,4 +78,10 @@ for N in [Float64, Float32]
 
     # translation
     @test translate(E, N[1, 2]) == Ellipsoid(N[2, 4], M)
+
+    # check_posdef optional constructor flag
+    @test_throws ArgumentError Ellipsoid(N[1 1; 1 1])
+    E = Ellipsoid(N[1 1; 1 1], check_posdef=false)
+    @test E.center == zeros(2) && E.shape_matrix == N[1 1; 1 1]
+
 end

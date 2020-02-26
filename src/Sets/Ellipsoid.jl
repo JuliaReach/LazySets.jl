@@ -24,21 +24,39 @@ of an ellipse.
 - `shape_matrix` -- real positive definite matrix, i.e. it is equal to its transpose
                     and ``x^\\mathrm{T}Qx > 0`` for all nonzero ``x``
 
+## Notes
+
+By default, the inner constructor checks that the given shape matrix is positive
+definite. Use the flag `check_posdef=false` to disable this check.
+
 ### Examples
 
-If the center is not specified, it is assumed that the center is the origin.
-For instance, a 3D ellipsoid with center at the origin and the shape matrix being
+An ellipsoid can be created passing its center and shape matrix (which should be
+positive definite).
+
+For instance, we create a two-dimensional ellipsoid with center `[1, 1]`:
+
+```julia
+julia> E = Ellipsoid(ones(2), Diagonal([2.0, 0.5]))
+Ellipsoid{Float64}([1.0, 1.0], [2.0 0.0; 0.0 0.5])
+```
+
+If the center is not specified, it is assumed that it is the origin. For instance,
+a three-dimensional ellipsoid centered at the origin and the shape matrix being
 the identity can be created with:
 
 ```jldoctest ellipsoid_constructor
 julia> using LinearAlgebra
 
-julia> E = Ellipsoid(Matrix{Float64}(I, 3, 3))
+julia> E = Ellipsoid(Matrix(1.0I, 3, 3))
 Ellipsoid{Float64}([0.0, 0.0, 0.0], [1.0 0.0 0.0; 0.0 1.0 0.0; 0.0 0.0 1.0])
 
 julia> dim(E)
 3
+```
+The function `an_element` returns some element of the ellipsoid:
 
+```jldoctest ellipsoid_constructor
 julia> an_element(E)
 3-element Array{Float64,1}:
  0.0
@@ -46,8 +64,7 @@ julia> an_element(E)
  0.0
 ```
 
-This ellipsoid corresponds to the unit Euclidean ball. Let's evaluate its support
-vector in a given direction:
+We can evaluate its support vector in a given direction, say `[1, 1, 1]`:
 
 ```jldoctest ellipsoid_constructor
 julia> σ(ones(3), E)
@@ -56,13 +73,6 @@ julia> σ(ones(3), E)
  0.5773502691896258
  0.5773502691896258
 ```
-
-A two-dimensional ellipsoid with given center and shape matrix:
-
-```julia
-julia> E = Ellipsoid(ones(2), Diagonal([2.0, 0.5]))
-Ellipsoid{Float64}([1.0, 1.0], [2.0 0.0; 0.0 0.5])
-```
 """
 struct Ellipsoid{N<:AbstractFloat} <: AbstractCentrallySymmetric{N}
     center::AbstractVector{N}
@@ -70,10 +80,16 @@ struct Ellipsoid{N<:AbstractFloat} <: AbstractCentrallySymmetric{N}
 
     # default constructor with dimension check
     function Ellipsoid{N}(c::AbstractVector{N},
-                          Q::AbstractMatrix{N}) where {N<:AbstractFloat}
-        @assert length(c) == checksquare(Q)
-        @assert isposdef(Q) "an ellipsoid's shape matrix must be positive " *
-            "definite"
+                          Q::AbstractMatrix{N};
+                          check_posdef::Bool=true) where {N<:AbstractFloat}
+
+        @assert length(c) == checksquare(Q) "the length of the center and the size "
+            "of the shape matrix do not match; they are $(length(c)) and $(size(Q)) respectively"
+
+        if check_posdef
+            isposdef(Q) || throw(ArgumentError("an ellipsoid's shape matrix " *
+                                               "must be positive definite"))
+        end
         return new{N}(c, Q)
     end
 end
@@ -82,13 +98,14 @@ isoperationtype(::Type{<:Ellipsoid}) = false
 isconvextype(::Type{<:Ellipsoid}) = true
 
 # convenience constructor without type parameter
-Ellipsoid(c::AbstractVector{N}, Q::AbstractMatrix{N}) where {N<:AbstractFloat} =
-    Ellipsoid{N}(c, Q)
+# TODO: remove it (see #1946)
+Ellipsoid(c::AbstractVector{N}, Q::AbstractMatrix{N}; check_posdef::Bool=true) where {N<:AbstractFloat} =
+    Ellipsoid{N}(c, Q, check_posdef=check_posdef)
 
 # convenience constructor for ellipsoid centered in the origin
-Ellipsoid(Q::AbstractMatrix{N}) where {N<:AbstractFloat} =
-    Ellipsoid(zeros(N, size(Q, 1)), Q)
-
+function Ellipsoid(Q::AbstractMatrix{N}; check_posdef::Bool=true) where {N<:AbstractFloat}
+    return Ellipsoid(zeros(N, size(Q, 1)), Q; check_posdef=check_posdef)
+end
 
 # --- AbstractCentrallySymmetric interface functions ---
 
@@ -109,7 +126,6 @@ The center of the ellipsoid.
 function center(E::Ellipsoid{N}) where {N<:AbstractFloat}
     return E.center
 end
-
 
 # --- LazySet interface functions ---
 
