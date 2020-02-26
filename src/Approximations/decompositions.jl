@@ -237,7 +237,8 @@ function decompose(S::LazySet{N},
                    block_options::Union{Type{<:LazySet},
                                         Pair{<:UnionAll, <:Real},
                                         Real,
-                                        Type{<:AbstractDirections}
+                                        Type{<:AbstractDirections},
+                                        Nothing
                                        }
                   ) where {N<:Real}
     n = dim(S)
@@ -258,6 +259,39 @@ end
 """
     project(S::LazySet{N},
             block::AbstractVector{Int},
+            [::Nothing=nothing],
+            [n]::Int=dim(S)
+           ) where {N<:Real}
+
+Project a high-dimensional set to a given block by using a concrete linear map.
+
+### Input
+
+- `S`       -- set
+- `block`   -- block structure - a vector with the dimensions of interest
+- `nothing` -- (default: `nothing`) used for dispatch
+- `n`       -- (optional, default: `dim(S)`) ambient dimension of the set `S`
+
+### Output
+
+A set representing the projection of the set `S` to block `block`.
+
+### Algorithm
+
+We apply the function `linear_map`.
+"""
+@inline function project(S::LazySet{N},
+                         block::AbstractVector{Int},
+                         ::Nothing=nothing,
+                         n::Int=dim(S)
+                        ) where {N<:Real}
+    M = projection_matrix(block, n, N)
+    return linear_map(M, S)
+end
+
+"""
+    project(S::LazySet{N},
+            block::AbstractVector{Int},
             set_type::Type{<:LinearMap},
             [n]::Int=dim(S)
            ) where {N<:Real}
@@ -273,15 +307,14 @@ Project a high-dimensional set to a given block by using a lazy linear map.
 
 ### Output
 
-A lazy `LinearMap` representing a projection of the set `S` to block `block`.
+A lazy `LinearMap` representing the projection of the set `S` to block `block`.
 """
 @inline function project(S::LazySet{N},
                          block::AbstractVector{Int},
                          set_type::Type{<:LinearMap},
                          n::Int=dim(S)
                         ) where {N<:Real}
-    m = length(block)
-    M = sparse(1:m, block, ones(N, m), m, n)
+    M = projection_matrix(block, n, N)
     return M * S
 end
 
@@ -457,10 +490,24 @@ Concrete projection of a half-space.
 A set representing the projection of the half-space `H` on the dimensions
 specified by `block`.
 
-### Notes
+### Algorithm
 
-Currently only the case where the unconstrained dimensions of `H` are a subset
-of the `block` variables is implemented.
+If the unconstrained dimensions of `H` are a subset of the `block` variables,
+the projection is applied to the normal direction of `H`.
+Otherwise, the projection results in the universal set.
+
+The latter can be seen as follows.
+Without loss of generality consider a projection onto a single and constrained
+dimension ``xₖ`` (projections in multiple dimensions can be modeled as repeated
+one-dimensional projections).
+We can write the projection as an existentially quantified linear constraint:
+
+```math
+    ∃xₖ: a₁x₁ + … + aₖxₖ + … + aₙxₙ ≤ b
+```
+
+Since ``aₖ ≠ 0``, there is always a value for ``xₖ`` that satisfies the
+constraint for any valuation of the other variables.
 
 ### Examples
 
@@ -471,8 +518,6 @@ of variables to be `[1, 2, 3]`:
 ```jldoctest project_halfspace
 julia> H = HalfSpace([1.0, 1.0, 0.0], 1.0)
 HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0, 0.0], 1.0)
-
-julia> using LazySets.Approximations: project
 
 julia> project(H, [1, 2, 3])
 HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0, 0.0], 1.0)
@@ -492,20 +537,30 @@ the half-space projected on the dimensions where it is constrained only:
 julia> project(H, constrained_dimensions(H))
 HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
 ```
+
+If a constrained dimension is projected, we get the universal set of the
+dimension corresponding to the projection.
+
+```jldoctest project_halfspace
+julia> project(H, [1, 3])
+Universe{Float64}(2)
+
+julia> project(H, [1])
+Universe{Float64}(1)
+```
 """
 function project(H::HalfSpace{N}, block::AbstractVector{Int}) where {N}
     if constrained_dimensions(H) ⊆ block
         return HalfSpace(H.a[block], H.b)
     else
-        error("the concrete projection of a half-space " *
-              "for a general block structure is not implemented yet")
+        return Universe(length(block))
     end
 end
 
 """
-    project(P::HPolyhedron{N}, block::AbstractVector{Int}) where {N}
+    project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}) where {N}
 
-Concrete projection of a polyhedron in half-space representation.
+Concrete projection of a polyhedral set.
 
 ### Input
 
@@ -514,27 +569,28 @@ Concrete projection of a polyhedron in half-space representation.
 
 ### Output
 
-A set representing the projection of `P` on the dimensions specified by `block`.
+An `HPolyhedron` representing the projection of `P` on the dimensions specified
+by `block`.
 
-### Notes
+### Algorithm
 
-Currently only the case where the unconstrained dimensions of `P` are a subset
-of the `block` variables is implemented.
+- If the unconstrained dimensions of `P` are a subset of the `block` variables,
+  each half-sace `c` of `P` is transformed to `HalfSpace(c.a[block], c.b)`.
+- In the general case, we compute the concrete linear map of the projection
+  matrix associated to the given block structure.
 
 ### Examples
 
 Consider the four-dimensional cross-polytope (unit ball in the 1-norm):
 
-```jldoctest project_hpolyhedron
-julia> using LazySets.Approximations: project
-
-julia> P = convert(HPolyhedron, Ball1(zeros(4), 1.0));
+```jldoctest project_polyhedron
+julia> P = Ball1(zeros(4), 1.0);
 ```
 
 All dimensions are constrained, and computing the (trivial) projection on the whole
 space behaves as expected:
 
-```jldoctest project_hpolyhedron
+```jldoctest project_polyhedron
 julia> constrained_dimensions(P)
 4-element Array{Int64,1}:
  1
@@ -544,14 +600,14 @@ julia> constrained_dimensions(P)
 
 julia> P_1234 = project(P, [1, 2, 3, 4]);
 
-julia> P_1234 == P
+julia> P_1234 == convert(HPolyhedron, P)
 true
 ```
 Each constraint of the cross polytope is constrained in all dimensions.
 
 Now let's take a ball in the infinity norm and remove some constraints:
 
-```jldoctest project_hpolyhedron
+```jldoctest project_polyhedron
 julia> B = BallInf(zeros(4), 1.0);
 
 julia> c = constraints_list(B)[1:2]
@@ -569,18 +625,21 @@ julia> constrained_dimensions(P)
 
 Finally we take the concrete projection onto variables `1` and `2`:
 
-```jldoctest project_hpolyhedron
+```jldoctest project_polyhedron
 julia> project(P, [1, 2]) |> constraints_list
 2-element Array{HalfSpace{Float64,VN} where VN<:AbstractArray{Float64,1},1}:
  HalfSpace{Float64,Array{Float64,1}}([1.0, 0.0], 1.0)
  HalfSpace{Float64,Array{Float64,1}}([0.0, 1.0], 1.0)
 ```
 """
-function project(P::HPolyhedron{N}, block::AbstractVector{Int}) where {N}
+function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}) where {N}
     if constrained_dimensions(P) ⊆ block
-        return HPolyhedron([HalfSpace(c.a[block], c.b) for c in constraints_list(P)])
+        clist = [HalfSpace(c.a[block], c.b) for c in constraints_list(P)]
     else
-        error("the concrete projection of a polyhedron " *
-              "for a general block structure is not implemented yet")
+        n = dim(P)
+        M = projection_matrix(block, n, N)
+        lm = linear_map(M, P)
+        clist = constraints_list(lm)
     end
+    return HPolyhedron(clist)
 end

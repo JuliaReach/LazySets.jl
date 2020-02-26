@@ -72,10 +72,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test a * X isa LinearMap{N, BallInf{N}, N, Matrix{N}}
 
     # absorbing elements
-    X = N[0 -1 ; 1 0] * ZeroSet{N}(2)
-    @test X isa ZeroSet{N} && dim(X) == 2
-    X = N[0 -1 ; 1 0] * EmptySet{N}()
-    @test X isa EmptySet{N}
+    for neutral in [ZeroSet{N}(2), EmptySet{N}(2)]
+        @test N[0 -1 ; 1 0] * neutral == neutral
+    end
 
     # vertices_list
     b = BallInf(N[0, 0], N(1))

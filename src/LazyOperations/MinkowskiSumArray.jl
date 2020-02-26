@@ -144,7 +144,7 @@ Determine whether a Minkowski sum of a finite number of convex sets is bounded.
 `true` iff all wrapped sets are bounded.
 """
 function isbounded(msa::MinkowskiSumArray)
-   return all(x -> isbounded(x), msa.array)
+   return all(isbounded, msa.array)
 end
 
 """
@@ -161,5 +161,5 @@ Return if a Minkowski sum array is empty or not.
 `true` iff any of the wrapped sets are empty.
 """
 function isempty(msa::MinkowskiSumArray)
-   return any(X -> isempty(X), array(msa))
+   return any(isempty, array(msa))
 end

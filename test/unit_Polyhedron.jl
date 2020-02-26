@@ -81,8 +81,10 @@ for N in [Float64, Rational{Int}, Float32]
         P = HPolyhedron([LinearConstraint(N[1, 0], N(0))])    # x <= 0
         @test !isempty(P)
 
-        # concrete linear map with noninvertible matrix throws an error
-        @test_throws ArgumentError linear_map(N[2 3; 0 0], P)
+        # concrete linear map with non-invertible matrix
+        if N == Float64
+            @test linear_map(N[2 3; 0 0], P) isa HPolyhedron
+        end
     end
 
     if !test_suite_polyhedra
@@ -90,7 +92,15 @@ for N in [Float64, Rational{Int}, Float32]
         # throws an assertion error, since tovrep(HPolytope(...)) is required
         H = Hyperrectangle(N[1, 1], N[2, 2])
         P = convert(HPolyhedron, H)
-        @test_throws AssertionError linear_map(N[2 3; 0 0], P)
+        if N != Float32
+            # conversion to vrep with Float32 fails
+            @test_throws ArgumentError linear_map(N[2 3; 0 0], P, algorithm="vrep")
+        end
+
+        if N != Rational{Int} # in floating-point we can use elimination
+            lm = linear_map(N[2 3; 0 0], P, algorithm="elimination")
+            @test lm isa HPolyhedron{Float64}
+        end
     end
 end
 
@@ -244,29 +254,37 @@ for N in [Float64]
         Minv = N[1 2; -1 0.4]
         @assert isinvertible(Minv)
 
-        # invertible matrix times a bounded polyhedron 
+        # invertible matrix times a bounded polyhedron
         L = linear_map(Minv, Pbdd)
         @test L isa HPolyhedron{N}
 
-        # invertible matrix times an unbounded polyhedron 
+        # invertible matrix times an unbounded polyhedron
         L = linear_map(Minv, Punbdd)
         @test L isa HPolyhedron{N}
 
-        # not invertible matrix times a bounded polyhedron 
-        L = linear_map(Mnotinv, Pbdd) # Requires Polyhedra because it works on vertices
+        # not invertible matrix times a bounded polyhedron
+        L = linear_map(Mnotinv, Pbdd, algorithm="vrep") # Requires Polyhedra because it works on vertices
         @test L isa VPolytope
+
+        L = linear_map(Mnotinv, Pbdd, algorithm="elimination")
+        @test L isa HPolyhedron
+
+        # test default
+        L = linear_map(Mnotinv, Pbdd)
+        @test L isa HPolyhedron
 
         # not invertible matrix times an unbounded polyhedron
-        @test_throws ArgumentError linear_map(Mnotinv, Punbdd)
+        @test linear_map(Mnotinv, Punbdd) isa HPolyhedron
 
         # check that we can use sparse matrices as well ; Requires SparseArrays
-        L = linear_map(sparse(Minv), Pbdd)
+        L = linear_map(sparse(Minv), Pbdd, algorithm="inv_right")
         @test L isa HPolyhedron{N}
-        L = linear_map(sparse(Minv), Punbdd)
+        L = linear_map(sparse(Minv), Punbdd, algorithm="inv_right")
         @test L isa HPolyhedron{N}
-        L = linear_map(sparse(Mnotinv), Pbdd) # Requires Polyhedra because it works on vertices
+        L = linear_map(sparse(Mnotinv), Pbdd, algorithm="vrep") # Requires Polyhedra because it works on vertices
         @test L isa VPolytope
-        @test_throws ArgumentError linear_map(sparse(Mnotinv), Punbdd)
+        # breaks because "inv_right" requires an invertible matrix 
+        @test_throws ArgumentError linear_map(sparse(Mnotinv), Punbdd, algorithm="inv_right")
 
         # remove a repeated constraint (#909)
         Q = HPolyhedron([HalfSpace([-1.29817, 1.04012], 6.07731),
@@ -274,5 +292,14 @@ for N in [Float64]
         addconstraint!(Q, Q.constraints[2])
         remove_redundant_constraints!(Q)
         @test length(constraints_list(Q)) == 2
+
+        # concrete projection of an unbounded set
+        # P = {x, y, z : x >= 0, y >= 0, z >= 0} is the positive orthant
+        P = HPolyhedron([HalfSpace(N[-1, 0, 0], N(0)),
+                         HalfSpace(N[0, -1, 0], N(0)),
+                         HalfSpace(N[0, 0, -1], N(0))])
+        πP = project(P, [1, 2])
+        @test πP isa HPolyhedron{N}
+        @test ispermutation(constraints_list(πP), [HalfSpace(N[-1, 0], N(0)), HalfSpace(N[0, -1], N(0))])
     end
 end

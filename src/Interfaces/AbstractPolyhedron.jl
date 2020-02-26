@@ -33,6 +33,8 @@ isconvextype(::Type{<:AbstractPolyhedron}) = true
 
 # --- common AbstractPolyhedron functions ---
 
+# supertype for all linear map algorithms
+abstract type AbstractLinearMapAlgorithm end
 
 # To account for the compilation order, functions are defined in the file
 # AbstractPolyhedron_functions.jl

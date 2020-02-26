@@ -27,6 +27,29 @@ computation of the convex hull.
 - `VPolygon(vertices::Vector{Vector{N}};
             apply_convex_hull::Bool=true,
             algorithm::String="monotone_chain")`
+
+### Examples
+
+A polygon in vertex representation can be constructed by passing the list of
+vertices. For example, we can build the right triangle
+
+```jldoctest polygon_vrep
+julia> P = VPolygon([[0, 0], [1, 0], [0, 1]])
+VPolygon{Int64,Array{Int64,1}}(Array{Int64,1}[[0, 0], [1, 0], [0, 1]])
+```
+
+Alternatively, a `VPolygon` can be constructed passing a matrix of vertices,
+where each *column* represents a vertex:
+
+```jldoctest polygon_vrep
+julia> M = [0 1 0; 0 0 1.]
+2×3 Array{Float64,2}:
+ 0.0  1.0  0.0
+ 0.0  0.0  1.0
+
+julia> VPolygon(M)
+VPolygon{Float64,Array{Float64,1}}(Array{Float64,1}[[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]])
+```
 """
 struct VPolygon{N<:Real, VN<:AbstractVector{N}} <: AbstractPolygon{N}
     vertices::Vector{VN}
@@ -48,11 +71,20 @@ isoperationtype(::Type{<:VPolygon}) = false
 isconvextype(::Type{<:VPolygon}) = true
 
 # constructor with empty vertices list
-VPolygon{N}() where {N<:Real} =
-    VPolygon(Vector{Vector{N}}(), apply_convex_hull=false)
+VPolygon{N}() where {N<:Real} = VPolygon(Vector{Vector{N}}(), apply_convex_hull=false)
 
 # constructor with no vertices of type Float64
 VPolygon() = VPolygon{Float64}()
+
+# constructor from rectangular matrix
+function VPolygon(vertices_matrix::MT; apply_convex_hull::Bool=true,
+                  algorithm::String="monotone_chain") where {N<:Real, MT<:AbstractMatrix{N}}
+    @assert size(vertices_matrix, 1) == 2 "the number of rows of the matrix of vertices " *
+                                           "should be 2, but it is $(size(vertices_matrix, 1))"
+
+    vertices = [vertices_matrix[:, j] for j in 1:size(vertices_matrix, 2)]
+    return VPolygon(vertices; apply_convex_hull=apply_convex_hull, algorithm=algorithm)
+end
 
 """
     remove_redundant_vertices!(P::VPolygon{N};
@@ -165,7 +197,7 @@ function tohrep(P::VPolygon{N}, ::Type{HPOLYGON}=HPolygon
     n = length(vl)
     if n == 0
         # no vertex -> empy set
-        return EmptySet{N}()
+        return EmptySet{N}(2)
     elseif n == 1
         # only one vertex -> use function for singletons
         return convert(HPOLYGON, Singleton(vl[1]))

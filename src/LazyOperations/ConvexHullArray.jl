@@ -165,7 +165,7 @@ bounded.
 `true` iff all wrapped sets are bounded.
 """
 function isbounded(cha::ConvexHullArray)
-    return all(x -> isbounded(x), cha.array)
+    return all(isbounded, cha.array)
 end
 
 """
@@ -182,7 +182,7 @@ Return if a convex hull array is empty or not.
 `true` iff all wrapped sets are empty.
 """
 function isempty(cha::ConvexHullArray)
-    return all(X -> isempty(X), array(cha))
+    return all(isempty, array(cha))
 end
 
 """

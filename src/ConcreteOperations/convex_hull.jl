@@ -48,7 +48,7 @@ function convex_hull(X::LazySet{N}, Y::LazySet{N};
                          algorithm=algorithm, backend=backend, solver=solver)
     m = length(chull)
     if m == 0
-        return EmptySet{N}()
+        return EmptySet{N}(n)
     elseif m == 1
             return Singleton(chull[1])
     elseif n == 1

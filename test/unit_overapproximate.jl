@@ -8,7 +8,7 @@ for N in [Float64, Rational{Int}, Float32]
     # overapproximating a set of type T1 with an unsupported type T2 is the
     # identity if T1 = T2
     @test_throws MethodError overapproximate(ZeroSet{N}(2), EmptySet)
-    e = EmptySet{N}()
+    e = EmptySet{N}(2)
     @test overapproximate(e, EmptySet) == e
     # the third argument is ignored
     oa = overapproximate(b, Ball1, Hyperrectangle)
@@ -36,9 +36,15 @@ for N in [Float64, Rational{Int}, Float32]
 
     # Interval approximation
     b = Ball1(N[0], N(1))
-    p = overapproximate(b, LazySets.Interval)
+    p1 = overapproximate(b, LazySets.Interval)
+    cap = Intersection(b, BallInf(N[1], N(1)))
+    p2 = overapproximate(cap, LazySets.Interval)
+    caparray = IntersectionArray([b, BallInf(N[1], N(1)), BallInf(N[1//2], N(1//4))])
+    p3 = overapproximate(caparray, LazySets.Interval)
     for d in [N[1], N[-1]]
-        @test σ(d, p)[1] ≈ σ(d, b)[1]
+        for (o, p) in [(b, cap, caparray), (p1, p2, p3)]
+            @test σ(d, o)[1] ≈ d[1]
+        end
     end
 
     # approximation with an axis-aligned hyperrectangle
@@ -100,7 +106,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test box_approximation(Zo) == Hyperrectangle(N[0, 0], N[3, 3])
 
     # rectification
-    r = Rectification(EmptySet{N}())
+    r = Rectification(EmptySet{N}(2))
     @test overapproximate(r, Hyperrectangle) isa EmptySet{N}
     r = Rectification(Ball1(N[0, 0], N(1)))
     @test overapproximate(r, Hyperrectangle) ==
@@ -287,7 +293,7 @@ for N in [Float64]
     o_d_int_g_3_neg = overapproximate(d_int_g_3_neg, CartesianProductArray, Hyperrectangle)
 
     @test overapproximate(o_d_int_g) ≈ overapproximate(d_int_g)
-    @test isempty(d_int_g_3) && o_d_int_g_3 == EmptySet{N}()
+    @test isempty(d_int_g_3) && o_d_int_g_3 == EmptySet{N}(4)
     @test overapproximate(o_d_int_g_3_neg) ≈ overapproximate(d_int_g_3_neg)
     @test overapproximate(d_int_cpa, Hyperrectangle) == l_int_cpa
     @test all([X isa CartesianProductArray for X in [d_int_cpa, o_d_int_g, o_d_int_g_3_neg]])

@@ -20,7 +20,7 @@ translate(::LineSegment{N}, ::AbstractVector{N}) where {N<:Real}
 generators(::LineSegment{N}) where {N<:Real}
 genmat(::LineSegment)
 plot_recipe(::LineSegment{N}, ::N=zero(N)) where {N<:Real}
-RecipesBase.apply_recipe(::Dict{Symbol,Any}, ::Union{LineSegment{N}, Interval{N}}, ::N=zero(N)) where {N<:Real}
+RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::Union{LineSegment{N}, Interval{N}}, ::N=zero(N)) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -38,3 +38,4 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`ngens`](@ref ngens(::AbstractZonotope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractZonotope{N}) where {N<:Real})
 * [`order`](@ref order(::AbstractZonotope))
+* [`togrep`](@ref togrep(::AbstractZonotope))

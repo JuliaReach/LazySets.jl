@@ -95,7 +95,7 @@ struct Rectification{N<:Real, S<:LazySet{N}}
     # default constructor that initializes cache
     function Rectification(X::S) where {N<:Real, S<:LazySet{N}}
         if X isa AbstractHyperrectangle || X isa CartesianProduct ||
-                X isa CartesianProductArray
+                X isa CartesianProductArray || X isa EmptySet
             # set types with efficient support-vector computations
             set = X
         elseif dim(X) == 1 && isbounded(X)
@@ -341,7 +341,7 @@ function ∈(x::AbstractVector{N}, r::Rectification{N}) where {N<:Real}
     end
 
     # scan for zero entries
-    if all(xi -> !iszero(xi), x)
+    if all(!iszero, x)
         return false
     end
 

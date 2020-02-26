@@ -341,7 +341,7 @@ function remove_redundant_constraints(P::HPoly{N};
     if remove_redundant_constraints!(Pred, backend=backend)
         return Pred
     else # the polyhedron P is empty
-        return EmptySet{N}()
+        return EmptySet{N}(dim(P))
     end
 end
 

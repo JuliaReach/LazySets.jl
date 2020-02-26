@@ -2,7 +2,7 @@ for N in [Float64, Rational{Int}, Float32]
     # random empty set
     rand(EmptySet)
 
-    E = EmptySet{N}()
+    E = EmptySet{N}(2)
     B = BallInf(ones(N, 2), N(1))
 
     # testing that the empty set is an absorbing element for the cartesian product
@@ -37,7 +37,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test CH(E, E) == E
 
     # dim
-    @test dim(E) == -1
+    @test dim(E) == 2
 
     # support vector
     @test_throws ErrorException σ(N[0], E)
@@ -46,8 +46,8 @@ for N in [Float64, Rational{Int}, Float32]
     @test isbounded(E)
 
     # isuniversal
-    @test !isuniversal(E)
-    @test_throws ErrorException isuniversal(E, true)  # see #1201
+    res, w = isuniversal(E, true)
+    @test !isuniversal(E) && !res && w ∉ E
 
     # membership
     @test N[0] ∉ E
@@ -75,6 +75,5 @@ for N in [Float64, Rational{Int}, Float32]
     @test translate(E, N[1, 2]) == E
 end
 
-# default Float64 constructors
-@test ∅ == EmptySet{Float64}()
-@test EmptySet() == EmptySet{Float64}()
+# default Float64 constructor
+@test EmptySet(2) == ∅(2) == EmptySet{Float64}(2)

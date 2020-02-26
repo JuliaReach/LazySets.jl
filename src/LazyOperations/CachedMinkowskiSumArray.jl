@@ -183,7 +183,7 @@ Determine whether a caching Minkowski sum is bounded.
 `true` iff all wrapped sets are bounded.
 """
 function isbounded(cms::CachedMinkowskiSumArray)
-    return all(x -> isbounded(x), cms.array)
+    return all(isbounded, cms.array)
 end
 
 """
@@ -207,7 +207,7 @@ have crashed before.
 In that case, the caching Minkowski sum should not be used further.
 """
 function isempty(cms::CachedMinkowskiSumArray)
-    return any(X -> isempty(X), array(cms))
+    return any(isempty, array(cms))
 end
 
 """

@@ -12,6 +12,7 @@ generators(Z::Zonotope)
 genmat(Z::Zonotope)
 scale(::Real, ::Zonotope)
 ngens(::Zonotope)
+togrep(::Zonotope)
 reduce_order(::Zonotope, ::Union{Integer, Rational})
 split(::Zonotope, ::Int)
 ```

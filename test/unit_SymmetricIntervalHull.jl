@@ -1,6 +1,6 @@
 for N in [Float64, Rational{Int}, Float32]
     # constructor from empty set
-    E = EmptySet{N}()
+    E = EmptySet{N}(2)
     @test SymmetricIntervalHull(E) == E
 
     # normal constructor

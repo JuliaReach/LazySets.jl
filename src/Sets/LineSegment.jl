@@ -206,7 +206,8 @@ Return the generator matrix of a line segment.
 A matrix with a single column representing the generator of `L`.
 """
 function genmat(L::LineSegment)
-    return genmat_fallback(L)
+    ngens = L.p == L.q ? 0 : 1
+    return genmat_fallback(L, ngens=ngens)
 end
 
 """

@@ -128,7 +128,7 @@ We first check if any of the wrapped sets is bounded.
 Otherwise, we check boundedness via [`isbounded_unit_dimensions`](@ref).
 """
 function isbounded(ia::IntersectionArray)
-   if any(x -> isbounded(x), ia.array)
+   if any(isbounded, ia.array)
        return true
    end
    return isbounded_unit_dimensions(ia)

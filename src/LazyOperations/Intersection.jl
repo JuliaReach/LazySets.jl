@@ -647,7 +647,7 @@ function plot_recipe(cap::Intersection{N}, ε::N=zero(N),
     @assert dim(cap) <= 2 "cannot plot a $(dim(cap))-dimensional intersection"
 
     if isempty(cap)
-        return plot_recipe(EmptySet{N}(), ε)
+        return plot_recipe(EmptySet{N}(dim(cap)), ε)
     elseif dim(cap) == 1
         return plot_recipe(convert(Interval, cap), ε)
     else
@@ -692,7 +692,7 @@ function load_optim_intersection()
 return quote
 
 """
-    _line_search(ℓ, X, H; [kwargs...])
+    _line_search(ℓ, X, H::Union{<:HalfSpace, <:Hyperplane, <:Line}; [kwargs...])
 
 Given a compact and convex set ``X`` and a halfspace ``H = \\{x: a^T x ≤ b \\}``
 or a hyperplane ``H = \\{x: a^T x = b \\}``, calculate:
@@ -752,7 +752,8 @@ julia> _line_search([1.0, 0.0], X, H, upper=1e3, method=GoldenSection())
 (1.0, 381.9660112501051)
 ```
 """
-function _line_search(ℓ, X, H::Union{HalfSpace, Hyperplane, Line}; kwargs...)
+function _line_search(ℓ, X, H::Union{<:HalfSpace, <:Hyperplane, <:Line};
+                      kwargs...)
     options = Dict(kwargs)
 
     # Initialization

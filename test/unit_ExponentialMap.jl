@@ -52,10 +52,9 @@ for N in [Float64, Float32]
     @test emap isa ExponentialMap{N}
 
     # absorbing elements
-    X = me * ZeroSet{N}(6)
-    @test X isa ZeroSet{N} && dim(X) == 6
-    X = me * EmptySet{N}()
-    @test X isa EmptySet{N}
+    for neutral in [ZeroSet{N}(6), EmptySet{N}(6)]
+        @test me * neutral == neutral
+    end
 
     # dimension
     @test dim(emap) == n
@@ -113,8 +112,7 @@ for N in [Float64, Float32]
     @test isbounded(projmap)
     @test isbounded(ProjectionSparseMatrixExp(spzeros(N, nb, nb), me, R) * HalfSpace(ones(N, nb), N(1)))
     @test isbounded(ProjectionSparseMatrixExp(L, me, spzeros(N, nb, nb)) * HalfSpace(ones(N, nb), N(1)))
-    # the following test crashes because ρ(::ExponentialProjectionMap) is not implemented yet
-    @test_throws ErrorException !isbounded(proj * HalfSpace(ones(N, nb), N(1)))
+    @test !isbounded(proj * HalfSpace(ones(N, nb), N(1)))
 
     # isempty
     @test !isempty(projmap)

@@ -182,7 +182,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test msa + z == z + msa == msa
     @test cms + z == z + cms == cms
     # absorbing element
-    e = EmptySet{N}()
+    e = EmptySet{N}(2)
     @test absorbing(MinkowskiSum) == absorbing(MinkowskiSumArray) ==
           absorbing(CachedMinkowskiSumArray) == EmptySet
     @test b1 + e == e + b1 == msa + e == e + msa == cms + e == e + cms ==

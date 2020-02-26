@@ -25,7 +25,7 @@ be recovered from the distance among support functions in the same directions.
 function box_approximation(S::LazySet{N}) where {N<:Real}
     (c, r) = box_approximation_helper_parallel(S)
     if r[1] < 0
-        return EmptySet{N}()
+        return EmptySet{N}(dim(S))
     end
     return Hyperrectangle(c, r)
 end
