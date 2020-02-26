@@ -59,18 +59,51 @@ Fallback definition of `genmat` for zonotopic sets.
 
 ### Input
 
-- `Z` -- zonotopic set
+- `Z`     -- zonotopic set
+- `gens`  -- (optional; default: `generators(Z)`) iterator over generators
+- `ngens` -- (optional; default: `nothing`) number of generators or `nothing` if
+             unknown
 
 ### Output
 
 A matrix where each column represents one generator of `Z`.
+
+### Notes
+
+Passing the number of generators is much more efficient as otherwise the
+generators have to be obtained from the iterator (`gens`) and stored in an
+intermediate vector until the final result matrix can be allocated.
 """
-function genmat_fallback(Z::AbstractZonotope{N}) where {N<:Real}
-    gens = generators(Z)
+function genmat_fallback(Z::AbstractZonotope{N};
+                         gens=generators(Z),
+                         ngens=nothing) where {N<:Real}
     if isempty(gens)
         return Matrix{N}(undef, dim(Z), 0)
+    elseif ngens == nothing
+        return _genmat_fallback_generic(Z, gens)
+    else
+        return _genmat_fallback_ngens(Z, gens, ngens)
     end
-    return hcat(gens...)
+end
+
+function _genmat_fallback_generic(Z::AbstractZonotope{N}, gens) where {N<:Real}
+    Gv = Vector{Vector{N}}()
+    @inbounds for (i, g) in enumerate(gens)
+        push!(Gv, g)
+    end
+    G = Matrix{N}(undef, dim(Z), length(Gv))
+    @inbounds for (i, g) in enumerate(Gv)
+        G[:, i] = g
+    end
+    return G
+end
+
+function _genmat_fallback_ngens(Z::AbstractZonotope{N}, gens, ngens) where {N<:Real}
+    G = Matrix{N}(undef, dim(Z), ngens)
+    @inbounds for (i, g) in enumerate(gens)
+        G[:, i] = g
+    end
+    return G
 end
 
 # iterator that wraps the generator matrix

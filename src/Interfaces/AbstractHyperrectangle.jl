@@ -57,7 +57,8 @@ Return the generator matrix of a hyperrectangular set.
 A matrix where each column represents one generator of `H`.
 """
 function genmat(H::AbstractHyperrectangle)
-    return genmat_fallback(H)
+    gens = generators(H)
+    return genmat_fallback(H, gens=gens, ngens=length(gens))
 end
 
 # iterator that wraps the generator matrix
