@@ -195,7 +195,7 @@ end
 
 # default Float64 constructors
 @test HPolytope() isa HPolytope{Float64}
-@test VPolytope() isa VPolytope{Float64}
+@test VPolytope() isa VPolytope{Float64,Array{Float64,1}}
 
 # tests that only work with Float64
 for N in [Float64]

@@ -12,7 +12,7 @@ export VPolytope,
        tovrep
 
 """
-    VPolytope{N<:Real} <: AbstractPolytope{N}
+    VPolytope{N<:Real, VN<:AbstractVector{N}} <: AbstractPolytope{N}
 
 Type that represents a convex polytope in V-representation.
 
@@ -27,7 +27,7 @@ vertices. For example, we can build the tetrahedron:
 
 ```jldoctest polytope_vrep
 julia> P = VPolytope([0 0 0; 1 0 0; 0 1 0; 0 0 1])
-VPolytope{Int64}(Array{Int64,1}[[0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+VPolytope{Int64,Array{Int64,1}}(Array{Int64,1}[[0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
 ```
 
 Alternatively, a `VPolytope` can be constructed passing a matrix of vertices,
@@ -41,18 +41,18 @@ julia> M = [0 0 0; 1 0 0; 0 1 0; 0 0 1]'
  0  0  0  1
 
 julia> VPolytope(M)
-VPolytope{Int64}(Array{Int64,1}[[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]])
+VPolytope{Int64,Array{Int64,1}}(Array{Int64,1}[[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]])
 ```
 """
-struct VPolytope{N<:Real} <: AbstractPolytope{N}
-    vertices::Vector{Vector{N}}
+struct VPolytope{N<:Real, VN<:AbstractVector{N}} <: AbstractPolytope{N}
+    vertices::Vector{VN}
 end
 
 isoperationtype(::Type{<:VPolytope}) = false
 isconvextype(::Type{<:VPolytope}) = true
 
 # constructor for a VPolytope with empty vertices list
-VPolytope{N}() where {N<:Real} = VPolytope{N}(Vector{Vector{N}}())
+VPolytope{N}() where {N<:Real} = VPolytope(Vector{Vector{N}}())
 
 # constructor for a VPolytope with no vertices of type Float64
 VPolytope() = VPolytope{Float64}()
@@ -91,17 +91,17 @@ If it is empty, the result is ``-1``.
 ### Examples
 
 ```jldoctest
-julia> v = VPolytope();
+julia> v = VPolytope()
+VPolytope{Float64,Array{Float64,1}}(Array{Float64,1}[])
 
-julia> dim(v) > 0
-false
+julia> dim(v)
+-1
 
 julia> v = VPolytope([ones(3)])
-VPolytope{Float64}(Array{Float64,1}[[1.0, 1.0, 1.0]])
+VPolytope{Float64,Array{Float64,1}}(Array{Float64,1}[[1.0, 1.0, 1.0]])
 
 julia> dim(v) == 3
 true
-
 ```
 """
 function dim(P::VPolytope)
@@ -294,7 +294,7 @@ function linear_map(M::AbstractMatrix{N}, P::VPolytope{N}) where {N<:Real}
 end
 
 @inline function _linear_map_vrep(M::AbstractMatrix{N}, P::VPolytope{N}) where {N<:Real}
-    return broadcast(v -> M * v, vertices_list(P)) |> VPolytope{N}
+    return broadcast(v -> M * v, vertices_list(P)) |> VPolytope
 end
 
 """
@@ -562,7 +562,7 @@ function minkowski_sum(P1::VPolytope{N}, P2::VPolytope{N};
     vlist1 = _vertices_list(P1, backend)
     vlist2 = _vertices_list(P2, backend)
     n, m = length(vlist1), length(vlist2)
-    Vout = Vector{Vector{N}}()
+    Vout = Vector{Vector{N}}() # TODO: use common inner array type from P1 and P2, #2011
     sizehint!(Vout, n * m)
     for vi in vlist1
         for vj in vlist2
@@ -589,6 +589,7 @@ return quote
 
 # VPolytope from a VRep
 function VPolytope(P::VRep{N}) where {N}
+    # TODO: use point type of the VRep #2010
     vertices = Vector{Vector{N}}()
     for vi in Polyhedra.points(P)
         push!(vertices, vi)
