@@ -18,7 +18,31 @@ Type that represents a convex polytope in V-representation.
 
 ### Fields
 
-- `vertices` -- the list of vertices
+- `vertices` -- list of vertices
+
+### Examples
+
+A polytope in vertex representation can be constructed by passing the list of
+vertices. For example, we can build the tetrahedron:
+
+```jldoctest polytope_vrep
+julia> P = VPolytope([0 0 0; 1 0 0; 0 1 0; 0 0 1])
+VPolytope{Int64}(Array{Int64,1}[[0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+```
+
+Alternatively, a `VPolytope` can be constructed passing a matrix of vertices,
+where each *column* represents a vertex:
+
+```jldoctest polytope_vrep
+julia> M = [0 0 0; 1 0 0; 0 1 0; 0 0 1]'
+3×4 LinearAlgebra.Adjoint{Int64,Array{Int64,2}}:
+ 0  1  0  0
+ 0  0  1  0
+ 0  0  0  1
+
+julia> VPolytope(M)
+VPolytope{Int64}(Array{Int64,1}[[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]])
+```
 """
 struct VPolytope{N<:Real} <: AbstractPolytope{N}
     vertices::Vector{Vector{N}}
@@ -40,6 +64,12 @@ function VPolytope(P::VPolygon, share::Bool=false)
         v = copy(v)
     end
     return VPolytope(v)
+end
+
+# constructor from rectangular matrix
+function VPolytope(vertices_matrix::MT) where {N, MT<:AbstractMatrix{N}}
+    vertices = [vertices_matrix[:, j] for j in 1:size(vertices_matrix, 2)]
+    return VPolytope(vertices)
 end
 
 # --- LazySet interface functions ---

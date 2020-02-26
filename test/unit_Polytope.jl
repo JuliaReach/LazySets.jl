@@ -246,6 +246,10 @@ for N in [Float64]
     q = VPolytope([N[0, 1], N[0, 2]])
     @test N[0, 1//2] ∉ q
 
+    # creation from a matrix (each column is a vertex)
+    pmat = VPolytope(copy(N[0 0; 1 0; 0 1]'))
+    @test p == pmat
+
     # inclusion (see #1809)
     X = BallInf(N[0.1, 0.2, 0.1], N(0.3))
     Y = convert(HPolytope, X)
