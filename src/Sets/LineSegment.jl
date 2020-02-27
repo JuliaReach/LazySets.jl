@@ -51,8 +51,8 @@ struct LineSegment{N<:Real} <: AbstractZonotope{N}
     q::AbstractVector{N}
 
     # default constructor with length constraint
-    function LineSegment{N}(p::AbstractVector{N},
-                            q::AbstractVector{N}) where {N<:Real}
+    function LineSegment(p::AbstractVector{N},
+                         q::AbstractVector{N}) where {N<:Real}
         @assert length(p) == length(q) == 2 "points for line segments must " *
             "be two-dimensional"
         return new{N}(p, q)
@@ -61,10 +61,6 @@ end
 
 isoperationtype(::Type{<:LineSegment}) = false
 isconvextype(::Type{<:LineSegment}) = true
-
-# convenience constructor without type parameter
-LineSegment(p::AbstractVector{N}, q::AbstractVector{N}) where {N<:Real} =
-    LineSegment{N}(p, q)
 
 
 # --- LazySet interface functions ---

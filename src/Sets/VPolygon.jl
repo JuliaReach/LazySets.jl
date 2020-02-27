@@ -55,9 +55,10 @@ struct VPolygon{N<:Real, VN<:AbstractVector{N}} <: AbstractPolygon{N}
     vertices::Vector{VN}
 
     # default constructor that applies a convex hull algorithm
-    function VPolygon{N, VN}(vertices::Vector{VN};
-                         apply_convex_hull::Bool=true,
-                         algorithm::String="monotone_chain") where {N<:Real, VN<:AbstractVector{N}}
+    function VPolygon(vertices::Vector{VN};
+                      apply_convex_hull::Bool=true,
+                      algorithm::String="monotone_chain"
+                     ) where {N<:Real, VN<:AbstractVector{N}}
         if apply_convex_hull
             return new{N, VN}(convex_hull(vertices, algorithm=algorithm))
         else
@@ -69,15 +70,8 @@ end
 isoperationtype(::Type{<:VPolygon}) = false
 isconvextype(::Type{<:VPolygon}) = true
 
-# convenience constructor without type parameter
-function VPolygon(vertices::Vector{VN}; apply_convex_hull::Bool=true,
-                  algorithm::String="monotone_chain") where {N<:Real, VN<:AbstractVector{N}}
-    return VPolygon{N, VN}(vertices; apply_convex_hull=apply_convex_hull, algorithm=algorithm)
-end
-
 # constructor with empty vertices list
-VPolygon{N}() where {N<:Real} =
-    VPolygon{N, Vector{N}}(Vector{Vector{N}}(), apply_convex_hull=false)
+VPolygon{N}() where {N<:Real} = VPolygon(Vector{Vector{N}}(), apply_convex_hull=false)
 
 # constructor with no vertices of type Float64
 VPolygon() = VPolygon{Float64}()

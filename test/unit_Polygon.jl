@@ -31,7 +31,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test LazySets.isredundant(h2, h1, h3)
     @test !LazySets.isredundant(h3, h2, h4)
     @test LazySets.isredundant(h2, h2, h3) && LazySets.isredundant(h3, h2, h3)
-    p2 = HPolygon{N}([h1, h2, h3, h4]; sort_constraints=false) # sorted in the right order
+    p2 = HPolygon([h1, h2, h3, h4]; sort_constraints=false) # sorted in the right order
     @test length(p2.constraints) == 4
     remove_redundant_constraints!(p2)
     @test length(p2.constraints) == 3
@@ -111,7 +111,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test p ⊆ p
 
     # HPolygon/HPolygonOpt tests
-    for hp in [p, po]
+    for (hp, t_hp) in [(p, HPolygon), (po, HPolygonOpt)]
         # Test Dimension
         @test dim(hp) == 2
 
@@ -168,7 +168,7 @@ for N in [Float64, Float32, Rational{Int}]
         @test ispermutation(constraints_list(vp), hp.constraints)
 
         # translation
-        @test translate(hp, N[1, 2]) == typeof(hp)(
+        @test translate(hp, N[1, 2]) == t_hp(
             [HalfSpace(N[2, 2], N(18)), HalfSpace(N[-3, 3], N(9)),
              HalfSpace(N[-1, -1], N(-3)), HalfSpace(N[2, -4], N(-6))])
 

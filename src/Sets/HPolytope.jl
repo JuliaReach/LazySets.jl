@@ -24,9 +24,8 @@ assumption in this type.
 struct HPolytope{N<:Real} <: AbstractPolytope{N}
     constraints::Vector{LinearConstraint{N}}
 
-    function HPolytope{N}(constraints::Vector{<:LinearConstraint{N}};
-                          check_boundedness::Bool=false
-                         ) where {N<:Real}
+    function HPolytope(constraints::Vector{<:LinearConstraint{N}};
+                       check_boundedness::Bool=false) where {N<:Real}
         P = new{N}(constraints)
         @assert (!check_boundedness ||
                  isbounded(P, false)) "the polytope is not bounded"
@@ -37,14 +36,9 @@ end
 isoperationtype(::Type{<:HPolytope}) = false
 isconvextype(::Type{<:HPolytope}) = true
 
-# convenience constructor without type parameter
-HPolytope(constraints::Vector{<:LinearConstraint{N}};
-          check_boundedness::Bool=false) where {N<:Real} =
-    HPolytope{N}(constraints; check_boundedness=check_boundedness)
-
 # constructor with no constraints
 HPolytope{N}() where {N<:Real} =
-    HPolytope{N}(Vector{LinearConstraint{N, <:AbstractVector{N}}}())
+    HPolytope(Vector{LinearConstraint{N, <:AbstractVector{N}}}())
 
 # constructor with no constraints of type Float64
 HPolytope() = HPolytope{Float64}()
@@ -54,10 +48,6 @@ HPolytope(A::AbstractMatrix{N}, b::AbstractVector{N};
           check_boundedness::Bool=false) where {N<:Real} =
     HPolytope(constraints_list(A, b); check_boundedness=check_boundedness)
 
-# constructor from a simple H-representation with type parameter
-HPolytope{N}(A::AbstractMatrix{N}, b::AbstractVector{N};
-             check_boundedness::Bool=false) where {N<:Real} =
-    HPolytope(A, b; check_boundedness=check_boundedness)
 
 # --- LazySet interface functions ---
 

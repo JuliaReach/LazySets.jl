@@ -28,8 +28,8 @@ Type that represents a convex polyhedron in H-representation.
 struct HPolyhedron{N<:Real} <: AbstractPolyhedron{N}
     constraints::Vector{LinearConstraint{N}}
 
-    function HPolyhedron{N}(constraints::Vector{<:LinearConstraint{N}}
-                           ) where {N<:Real}
+    function HPolyhedron(constraints::Vector{<:LinearConstraint{N}}
+                        ) where {N<:Real}
         return new{N}(constraints)
     end
 end
@@ -37,13 +37,9 @@ end
 isoperationtype(::Type{<:HPolyhedron}) = false
 isconvextype(::Type{<:HPolyhedron}) = true
 
-# convenience constructor without type parameter
-HPolyhedron(constraints::Vector{<:LinearConstraint{N}}) where {N<:Real} =
-    HPolyhedron{N}(constraints)
-
 # constructor with no constraints
 HPolyhedron{N}() where {N<:Real} =
-    HPolyhedron{N}(Vector{LinearConstraint{N, <:AbstractVector{N}}}())
+    HPolyhedron(Vector{LinearConstraint{N, <:AbstractVector{N}}}())
 
 # constructor with no constraints of type Float64
 HPolyhedron() = HPolyhedron{Float64}()
@@ -51,10 +47,6 @@ HPolyhedron() = HPolyhedron{Float64}()
 # constructor from a simple H-representation
 HPolyhedron(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real} =
     HPolyhedron(constraints_list(A, b))
-
-# constructor from a simple H-representation with type parameter
-HPolyhedron{N}(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real} =
-    HPolyhedron(A, b)
 
 # convenience union type
 const HPoly{N} = Union{HPolytope{N}, HPolyhedron{N}}
@@ -384,8 +376,8 @@ function remove_redundant_constraints!(P::HPoly{N};
 end
 
 """
-    translate(P::PT, v::AbstractVector{N}; share::Bool=false
-             ) where {N<:Real, PT<:HPoly{N}}
+    translate(P::HPoly{N}, v::AbstractVector{N}; share::Bool=false
+             ) where {N<:Real}
 
 Translate (i.e., shift) a polyhedron in constraint representation by a given
 vector.
@@ -410,12 +402,13 @@ the original constraints if `share == true`.
 
 We translate every constraint.
 """
-function translate(P::PT, v::AbstractVector{N}; share::Bool=false
-                  ) where {N<:Real, PT<:HPoly{N}}
+function translate(P::HPoly{N}, v::AbstractVector{N}; share::Bool=false
+                  ) where {N<:Real}
     @assert length(v) == dim(P) "cannot translate a $(dim(P))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     constraints = [translate(c, v; share=share) for c in constraints_list(P)]
-    return PT(constraints)
+    T = basetype(P)
+    return T(constraints)
 end
 
 # ========================================================
@@ -649,9 +642,9 @@ function isempty(P::HPoly{N},
 end
 
 convert(::Type{HPolytope}, P::HPolyhedron{N}) where {N<:Real} =
-    HPolytope{N}(copy(constraints_list(P)))
+    HPolytope(copy(constraints_list(P)))
 convert(::Type{HPolyhedron}, P::HPolytope{N}) where {N<:Real} =
-    HPolyhedron{N}(copy(constraints_list(P)))
+    HPolyhedron(copy(constraints_list(P)))
 
 # ==========================================
 # Lower level methods that use Polyhedra.jl

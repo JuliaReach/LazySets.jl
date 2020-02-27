@@ -429,7 +429,7 @@ function convert(::Type{HPOLYGON}, S::AbstractSingleton{N}
     constraints_list[1] = LinearConstraint([o, o], v[1] + v[2])
     constraints_list[2] = LinearConstraint([-o, z], -v[1])
     constraints_list[3] = LinearConstraint([z, -o], -v[2])
-    return HPOLYGON{N}(constraints_list)
+    return HPOLYGON(constraints_list)
 end
 
 """
