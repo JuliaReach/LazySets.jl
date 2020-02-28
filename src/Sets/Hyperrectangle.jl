@@ -75,7 +75,7 @@ Hyperrectangle{Float64,Array{Float64,1},Array{Float64,1}}([-1.0, 1.0], [2.0, 1.0
 By default, the constructor checks that that radius of the hyperrecatangle
 is nonnegative. To supress this check, use the `check_bounds` optional flag
 in the constructor. Note that if `check_bounds` is set to `false`, the behavior
-the set may be wrong/undefined.
+of a set with contradictory bounds is undefined.
 """
 struct Hyperrectangle{N<:Real, VNC<:AbstractVector{N}, VNR<:AbstractVector{N}
                      } <: AbstractHyperrectangle{N}
