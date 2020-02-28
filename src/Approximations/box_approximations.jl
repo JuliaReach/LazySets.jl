@@ -59,7 +59,7 @@ box_approximation_symmetric(∅::EmptySet) = ∅
     symmetric_interval_hull(X::LazySet)
 
 Return a set that tightly overapproximates `X` with a hyperrectangular set symmetric
-respect to the origin.
+with respect to the origin.
 """
 function symmetric_interval_hull(X::LazySet)
     return box_approximation_symmetric(X)
