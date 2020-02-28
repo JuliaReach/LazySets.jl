@@ -56,6 +56,11 @@ for N in Ns
     v = vertices_list(m)
     @test N[1.5] in v && N[-2] in v
 
+    # the concrete Minkowski sum of intervals returns an interval
+    sum_x_y = minkowski_sum(x, y)
+    @test sum_x_y isa Interval
+    @test min(sum_x_y) == N[-2] && max(sum_x_y) == N[1.5]
+
     # subtraction
     d = x - y
     @test dim(d) == 1

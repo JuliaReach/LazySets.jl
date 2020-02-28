@@ -247,3 +247,7 @@ function minkowski_sum(Z1::AbstractZonotope{N}, Z2::AbstractZonotope{N};
     Gnew = hcat(genmat(Z1), genmat(Z2))
     return Zonotope(cnew, Gnew, remove_zero_generators=remove_zero_generators)
 end
+
+function minkowski_sum(x::Interval, y::Interval)
+    return Interval(x.dat + y.dat)
+end
