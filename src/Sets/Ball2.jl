@@ -267,7 +267,7 @@ function sample(B::Ball2{N, VN}, nsamples::Int=1;
                 seed::Union{Int, Nothing}=nothing) where {N<:AbstractFloat, VN<:AbstractVector{N}}
     require(:Distributions; fun_name="sample")
     n = dim(B)
-    D = Vector{VN}(undef, nsamples) # preallocate output
+    D = Vector{Vector{N}}(undef, nsamples) # preallocate output
     _sample_unit_nball_muller!(D, n, nsamples, rng=rng, seed=seed)
 
     # customize for the given ball
