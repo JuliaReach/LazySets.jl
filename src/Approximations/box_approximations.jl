@@ -69,11 +69,8 @@ end
 function symmetric_interval_hull(x::Interval)
     abs_inf = abs(min(x))
     abs_sup = abs(max(x))
-    if abs_sup > abs_inf
-        return Interval(-abs_sup, abs_sup)
-    else
-        return Interval(-abs_inf, abs_inf)
-    end
+    bound = max(abs_sup, abs_inf)
+    return Interval(-bound, bound)
 end
 
 """
