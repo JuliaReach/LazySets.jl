@@ -68,7 +68,7 @@ Finally, let δ = 0.1.
 Using `LazySets`, we can define this problem as follows:
 
 ```jldoctest index_label
-julia> using LazySets, SparseArrays, LinearAlgebra
+julia> using LazySets, SparseArrays
 
 julia> A = sprandn(1000, 1000, 0.01);
 
@@ -79,15 +79,12 @@ julia> X0 = Ball2(ones(1000), 0.1);
 julia> B = randn(1000, 2);
 
 julia> U = BallInf(zeros(2), 1.2);
-
 ```
 
 The `@time` macro shows that building $\mathcal{Y}$ with `LazySets` is
 instantaneous.
 
 ```jldoctest index_label
-julia> using Expokit
-
 julia> Y = CH(SparseMatrixExp(A * δ) * X0 + δ * B * U, X0);
 ```
 
@@ -96,8 +93,8 @@ parameterized by the types of its arguments, corresponding to the mathematical
 formulation:
 
 ```jldoctest index_label
-julia> typeof(Y)
-ConvexHull{Float64,MinkowskiSum{Float64,ExponentialMap{Float64,Ball2{Float64}},LinearMap{Float64,BallInf{Float64},Float64,Array{Float64,2}}},Ball2{Float64}}
+julia> basetype(Y)
+ConvexHull
 ```
 
 Now suppose that we are interested in observing the projection of $\mathcal{Y}$
