@@ -56,11 +56,25 @@ end
 box_approximation_symmetric(∅::EmptySet) = ∅
 
 """
-    symmetric_interval_hull
+    symmetric_interval_hull(X::LazySet)
 
-Alias for `box_approximation_symmetric`.
+Return a set that tightly overapproximates `X` with a hyperrectangular set symmetric
+respect to the origin.
 """
-symmetric_interval_hull = box_approximation_symmetric
+function symmetric_interval_hull(X::LazySet)
+    return box_approximation_symmetric(X)
+end
+
+# interval specialization
+function symmetric_interval_hull(x::Interval)
+    abs_inf = abs(min(x))
+    abs_sup = abs(max(x))
+    if abs_sup > abs_inf
+        return Interval(-abs_sup, abs_sup)
+    else
+        return Interval(-abs_inf, abs_inf)
+    end
+end
 
 """
     box_approximation_helper(S::LazySet{N}) where {N<:Real}
