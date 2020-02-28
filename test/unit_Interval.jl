@@ -59,7 +59,7 @@ for N in Ns
     # the concrete Minkowski sum of intervals returns an interval
     sum_x_y = minkowski_sum(x, y)
     @test sum_x_y isa Interval
-    @test min(sum_x_y) == N[-2] && max(sum_x_y) == N[1.5]
+    @test min(sum_x_y) == N(-2) && max(sum_x_y) == N(1.5)
 
     # subtraction
     d = x - y
