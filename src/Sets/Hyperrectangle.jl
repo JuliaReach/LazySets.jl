@@ -71,6 +71,11 @@ julia> h = [1.0, 2.0];
 julia> Hyperrectangle(low=l, high=h)
 Hyperrectangle{Float64,Array{Float64,1},Array{Float64,1}}([-1.0, 1.0], [2.0, 1.0])
 ```
+
+By default, the constructor checks that that radius of the hyperrecatangle
+is nonnegative. To supress this check, use the `check_bounds` optional flag
+in the constructor. Note that if `check_bounds` is set to `false`, the behavior
+of a set with contradictory bounds is undefined.
 """
 struct Hyperrectangle{N<:Real, VNC<:AbstractVector{N}, VNR<:AbstractVector{N}
                      } <: AbstractHyperrectangle{N}
@@ -78,11 +83,13 @@ struct Hyperrectangle{N<:Real, VNC<:AbstractVector{N}, VNR<:AbstractVector{N}
     radius::VNR
 
     # default constructor with length comparison & domain constraint for radius
-    function Hyperrectangle(center::VNC, radius::VNR) where
+    function Hyperrectangle(center::VNC, radius::VNR; check_bounds::Bool=true) where
             {N<:Real, VNC<:AbstractVector{N}, VNR<:AbstractVector{N}}
         @assert length(center) == length(radius) "length of center and " *
             "radius must be equal"
-        @assert all(v -> v >= zero(N), radius) "radius must not be negative"
+        if check_bounds
+            @assert all(v -> v >= zero(N), radius) "radius must not be negative"
+        end
         return new{N, VNC, VNR}(center, radius)
     end
 end
@@ -91,14 +98,13 @@ isoperationtype(::Type{<:Hyperrectangle}) = false
 isconvextype(::Type{<:Hyperrectangle}) = true
 
 # constructor from keyword arguments (lower and upper bounds)
-function Hyperrectangle(;
-                        high::AbstractVector{N},
-                        low::AbstractVector{N}) where {N<:Real}
-    @assert all(i -> low[i] <= high[i], eachindex(low)) "lower bound must be lower than upper bound"
+function Hyperrectangle(; high::AbstractVector{N},
+                          low::AbstractVector{N},
+                          check_bounds::Bool=true) where {N<:Real}
     # compute center and radius from high and low vectors
     center = (high .+ low) ./ 2
     radius = high .- center
-    return Hyperrectangle(center, radius)
+    return Hyperrectangle(center, radius, check_bounds=check_bounds)
 end
 
 

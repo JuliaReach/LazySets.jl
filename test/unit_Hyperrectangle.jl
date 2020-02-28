@@ -106,6 +106,11 @@ for N in [Float64, Rational{Int}, Float32]
     @test H1.radius == H2.radius
     @test_throws AssertionError Hyperrectangle(low=h, high=l)
 
+    # constructor without bounds check
+    @test_throws AssertionError Hyperrectangle(low=N[1], high=N[0]) # default: true
+    @test_throws AssertionError Hyperrectangle(low=N[1], high=N[0], check_bounds=true)
+    @test Hyperrectangle(low=N[1], high=N[0], check_bounds=false) isa Hyperrectangle
+
     # Test low and high methods for a hyperrectangle
     H = Hyperrectangle(low=l, high=h)
     @test low(H) == l
