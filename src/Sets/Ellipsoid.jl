@@ -1,6 +1,7 @@
 import Base.rand
 
-export Ellipsoid
+export Ellipsoid,
+       shape_matrix
 
 """
     Ellipsoid{N<:AbstractFloat} <:  AbstractCentrallySymmetric{N}
@@ -54,6 +55,23 @@ Ellipsoid{Float64}([0.0, 0.0, 0.0], [1.0 0.0 0.0; 0.0 1.0 0.0; 0.0 0.0 1.0])
 julia> dim(E)
 3
 ```
+The center and shape matrix of the ellipsoid can be retrieved with the functions
+`center` and `shape_matrix` respectively:
+
+```jldoctest ellipsoid_constructor
+julia> center(E)
+3-element Array{Float64,1}:
+ 0.0
+ 0.0
+ 0.0
+
+julia> shape_matrix(E)
+3×3 Array{Float64,2}:
+ 1.0  0.0  0.0
+ 0.0  1.0  0.0
+ 0.0  0.0  1.0
+```
+
 The function `an_element` returns some element of the ellipsoid:
 
 ```jldoctest ellipsoid_constructor
@@ -62,6 +80,9 @@ julia> an_element(E)
  0.0
  0.0
  0.0
+
+julia> an_element(E) ∈ E
+true
 ```
 
 We can evaluate its support vector in a given direction, say `[1, 1, 1]`:
@@ -120,6 +141,23 @@ The center of the ellipsoid.
 """
 function center(E::Ellipsoid{N}) where {N<:AbstractFloat}
     return E.center
+end
+
+"""
+    shape_matrix(E::Ellipsoid{N}) where {N<:AbstractFloat}
+
+Return the shape matrix of the ellipsoid.
+
+### Input
+
+- `E` -- ellipsoid
+
+### Output
+
+The shape matrix of the ellipsoid.
+"""
+function shape_matrix(E::Ellipsoid{N}) where {N<:AbstractFloat}
+    return E.shape_matrix
 end
 
 # --- LazySet interface functions ---

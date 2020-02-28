@@ -16,6 +16,8 @@ for N in [Float64, Float32]
     # test constructor
     E = Ellipsoid(Diagonal(N[1]))
     @test E.center == N[0]
+    @test center(E) == N[0]
+    @test shape_matrix(E) == Diagonal(N[1])
 
     # 2D Ellipsoid
     E = Ellipsoid(N[0, 0], Diagonal(N[1, 1]))
