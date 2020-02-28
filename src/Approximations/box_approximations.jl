@@ -65,6 +65,18 @@ function symmetric_interval_hull(X::LazySet)
     return box_approximation_symmetric(X)
 end
 
+# special case for hyperrectangles in low dimensions
+function symmetric_interval_hull(X::Hyperrectangle)
+    if dim(X) == 1
+        S = symmetric_interval_hull(convert(Interval, X))
+        return convert(Hyperrectangle, X)
+    elseif dim(X) == 2
+        return _symmetric_interval_hull_2D(X)
+    else
+        return box_approximation_symmetric(X)
+    end
+end
+
 # interval specialization
 function symmetric_interval_hull(x::Interval)
     abs_inf = abs(min(x))
@@ -74,6 +86,20 @@ function symmetric_interval_hull(x::Interval)
     else
         return Interval(-abs_inf, abs_inf)
     end
+end
+
+# 2D hyperrectangle specialization
+function _symmetric_interval_hull_2D(H::Hyperrectangle{N}) where {N}
+    @inbounds begin
+        # the hyperrectangle seen as the cartesian product [v₁⁻, v₁⁺] x [v₂⁻, v₂⁺]
+        v₁⁺ = abs(H.center[1] + H.radius[1])
+        v₁⁻ = abs(H.center[1] - H.radius[1])
+        v₂⁺ = abs(H.center[2] + H.radius[2])
+        v₂⁻ = abs(H.center[2] - H.radius[2])
+    end
+    r₁ = v₁⁺ > v₁⁻ ? v₁⁺ : v₁⁻
+    r₂ = v₂⁺ > v₂⁻ ? v₂⁺ : v₂⁻
+    return Hyperrectangle(zeros(N, 2), [r₁, r₂])
 end
 
 """
