@@ -62,6 +62,14 @@ Alias for `box_approximation_symmetric`.
 """
 symmetric_interval_hull = box_approximation_symmetric
 
+# interval specialization
+function box_approximation_symmetric(x::Interval)
+    abs_inf = abs(min(x))
+    abs_sup = abs(max(x))
+    bound = max(abs_sup, abs_inf)
+    return Interval(-bound, bound)
+end
+
 """
     box_approximation_helper(S::LazySet{N}) where {N<:Real}
 
