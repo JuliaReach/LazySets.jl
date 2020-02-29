@@ -6,7 +6,7 @@ export Ball2,
        volume
 
 """
-    Ball2{N<:AbstractFloat} <: AbstractCentrallySymmetric{N}
+    Ball2{N<:AbstractFloat, VN<:AbstractVector{N}} <: AbstractCentrallySymmetric{N}
 
 Type that represents a ball in the 2-norm.
 
@@ -34,7 +34,8 @@ radius 0.5:
 
 ```jldoctest ball2_label
 julia> B = Ball2(zeros(5), 0.5)
-Ball2{Float64}([0.0, 0.0, 0.0, 0.0, 0.0], 0.5)
+Ball2{Float64,Array{Float64,1}}([0.0, 0.0, 0.0, 0.0, 0.0], 0.5)
+
 julia> dim(B)
 5
 ```
@@ -51,14 +52,14 @@ julia> σ([1.,2.,3.,4.,5.], B)
  0.3370999312316211
 ```
 """
-struct Ball2{N<:AbstractFloat} <: AbstractCentrallySymmetric{N}
-    center::Vector{N}
+struct Ball2{N<:AbstractFloat, VN<:AbstractVector{N}} <: AbstractCentrallySymmetric{N}
+    center::VN
     radius::N
 
     # default constructor with domain constraint for radius
-    function Ball2(center::Vector{N}, radius::N) where {N<:AbstractFloat}
+    function Ball2(center::VN, radius::N) where {N<:AbstractFloat, VN<:AbstractVector{N}}
         @assert radius >= zero(N) "radius must not be negative"
-        return new{N}(center, radius)
+        return new{N, VN}(center, radius)
     end
 end
 
@@ -161,9 +162,11 @@ Then ``x ∈ B`` iff ``\\left( ∑_{i=1}^n |c_i - x_i|^2 \\right)^{1/2} ≤ r``.
 
 ```jldoctest
 julia> B = Ball2([1., 1.], sqrt(0.5))
-Ball2{Float64}([1.0, 1.0], 0.7071067811865476)
+Ball2{Float64,Array{Float64,1}}([1.0, 1.0], 0.7071067811865476)
+
 julia> [.5, 1.6] ∈ B
 false
+
 julia> [.5, 1.5] ∈ B
 true
 ```
@@ -236,9 +239,9 @@ function translate(B::Ball2{N}, v::AbstractVector{N}) where {N<:AbstractFloat}
 end
 
 """
-    sample(B::Ball2{N}, nsamples::Int=1;
+    sample(B::Ball2{N, VN}, nsamples::Int=1;
            [rng]::AbstractRNG=GLOBAL_RNG,
-           [seed]::Union{Int, Nothing}=nothing) where {N<:AbstractFloat}
+           [seed]::Union{Int, Nothing}=nothing) where {N<:AbstractFloat, VN<:AbstractVector{N}}
 
 Return samples from a uniform distribution on the given ball in the 2-norm.
 
@@ -259,9 +262,9 @@ Random sampling with uniform distribution in `B` is computed using Muller's meth
 of normalized Gaussians. This function requires the package `Distributions`.
 See `_sample_unit_nball_muller!` for implementation details.
 """
-function sample(B::Ball2{N}, nsamples::Int=1;
+function sample(B::Ball2{N, VN}, nsamples::Int=1;
                 rng::AbstractRNG=GLOBAL_RNG,
-                seed::Union{Int, Nothing}=nothing) where {N<:AbstractFloat}
+                seed::Union{Int, Nothing}=nothing) where {N<:AbstractFloat, VN<:AbstractVector{N}}
     require(:Distributions; fun_name="sample")
     n = dim(B)
     D = Vector{Vector{N}}(undef, nsamples) # preallocate output
