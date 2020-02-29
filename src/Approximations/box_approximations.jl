@@ -49,7 +49,7 @@ function box_approximation_symmetric(S::LazySet{N}) where {N<:Real}
 end
 
 # fallback returns a hyperrectangular set
-function _box_approximation_symmetric_fallback(S::LazySet)
+function _box_approximation_symmetric_fallback(S::LazySet{N}) where {N<:Real}
     (c, r) = box_approximation_helper(S)
     if r[1] < 0
         return EmptySet{N}(dim(S))
