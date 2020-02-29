@@ -123,7 +123,7 @@ isconvextype(::Type{<:Ellipsoid}) = true
 
 # convenience constructor for ellipsoid centered in the origin
 function Ellipsoid(Q::AbstractMatrix{N}; check_posdef::Bool=true) where {N<:AbstractFloat}
-    # TODO: use similar vector type for the center
+    # TODO: use similar vector type for the center, see #2032
     return Ellipsoid(zeros(N, size(Q, 1)), Q; check_posdef=check_posdef)
 end
 
