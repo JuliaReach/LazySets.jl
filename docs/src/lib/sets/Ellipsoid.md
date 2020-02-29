@@ -11,6 +11,7 @@ Ellipsoid
 ∈(::AbstractVector{N}, ::Ellipsoid{N}) where {N<:AbstractFloat}
 rand(::Type{Ellipsoid})
 center(::Ellipsoid{N}) where {N<:AbstractFloat}
+shape_matrix(::Ellipsoid{N}) where {N<:AbstractFloat}
 translate(::Ellipsoid{N}, ::AbstractVector{N}) where {N<:AbstractFloat}
 ```
 Inherited from [`LazySet`](@ref):
