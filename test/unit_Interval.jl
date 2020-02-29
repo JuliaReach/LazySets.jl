@@ -56,6 +56,9 @@ for N in Ns
     v = vertices_list(m)
     @test N[1.5] in v && N[-2] in v
 
+    # the concrete Minkowski sum of intervals returns an interval
+    @test minkowski_sum(x, y) == Interval(N(-2), N(1.5))
+    
     # subtraction
     d = x - y
     @test dim(d) == 1

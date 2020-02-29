@@ -88,6 +88,7 @@ minkowski_sum(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}) where {N
 minkowski_sum(::AbstractZonotope{N}, ::AbstractZonotope{N}) where {N<:Real}
 minkowski_sum(::VPolygon{N}, ::VPolygon{N}) where {N<:Real}
 minkowski_sum(::PolynomialZonotope, ::Zonotope)
+minkowski_sum(::Interval, ::Interval)
 ```
 
 ## Minkowski difference
