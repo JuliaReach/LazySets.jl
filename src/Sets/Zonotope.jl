@@ -6,7 +6,7 @@ export Zonotope,
        reduce_order
 
 """
-    Zonotope{N<:Real} <: AbstractZonotope{N}
+    Zonotope{N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
 
 Type that represents a zonotope.
 
@@ -29,12 +29,14 @@ segments.
 Zonotopes can be equivalently described as the image of a unit infinity-norm
 ball in ``\\mathbb{R}^n`` by an affine transformation.
 
-Zonotopes can be constructed in two different ways: either passing the generators as a matrix, where
-each column represents a generator, or passing a list of vectors where each vector represents a generator.
-Below we illustrate both ways.
+Zonotopes can be constructed in two different ways: either passing the generators
+as a matrix, where each column represents a generator, or passing a list of vectors
+where each vector represents a generator. Below we illustrate both ways.
 
 The optional argument `remove_zero_generators` controls whether we remove zero
 columns from the `generators` matrix. This option is active by default.
+
+
 
 ### Examples
 
@@ -83,19 +85,21 @@ julia> Z.generators
  0.0  1.0  1.0
 ```
 """
-struct Zonotope{N<:Real} <: AbstractZonotope{N}
-    center::AbstractVector{N}
-    generators::AbstractMatrix{N}
+struct Zonotope{N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
+    center::VN
+    generators::MN
 
-    function Zonotope(center::AbstractVector{N}, generators::AbstractMatrix{N};
-                      remove_zero_generators::Bool=true) where {N<:Real}
+    function Zonotope(center::VN, generators::MN;
+                      remove_zero_generators::Bool=true) where {N<:Real,
+                                                                VN<:AbstractVector{N},
+                                                                MN<:AbstractMatrix{N}}
         @assert length(center) == size(generators, 1) "the dimension of the " *
             "center ($(length(center))) and the generators " *
             "($(size(generators, 1))) need to match"
         if remove_zero_generators
             generators = delete_zero_columns!(generators)
         end
-        new{N}(center, generators)
+        new{N, VN, MN}(center, generators)
     end
 end
 
@@ -103,12 +107,39 @@ isoperationtype(::Type{<:Zonotope}) = false
 isconvextype(::Type{<:Zonotope}) = true
 
 # constructor from center and list of generators
-Zonotope(center::AbstractVector{N}, generators_list::AbstractVector{VN};
-         remove_zero_generators::Bool=true
-        ) where {N<:Real, VN<:AbstractVector{N}} =
-    Zonotope(center, hcat(generators_list...);
-             remove_zero_generators=remove_zero_generators)
+function Zonotope(center::Vector{N}, generators_list::AbstractVector{Vector{N}};
+                  remove_zero_generators::Bool=true) where {N<:Real}
+    num_generators = length(generators_list)
+    G = Matrix{N}(undef, length(center), num_generators)
+    for (i, gi) in enumerate(generators_list)
+        (remove_zero_generators && iszero(gi)) && continue
+        @inbounds G[:, i] = gi
+    end
+    return Zonotope(center, G; remove_zero_generators=false)
+end
 
+function Zonotope2(center::Vector{N}, generators_list::AbstractVector{Vector{N}};
+                  remove_zero_generators::Bool=true) where {N<:Real}
+    num_generators = length(generators_list)
+    G = Matrix{N}(undef, length(center), num_generators)
+    if remove_zero_generators
+        for (i, gi) in enumerate(generators_list)
+            iszero(gi) && continue
+            @inbounds G[:, i] = gi
+        end
+    else
+        for (i, gi) in enumerate(generators_list)
+            @inbounds G[:, i] = gi
+        end
+    end
+    return Zonotope(center, G; remove_zero_generators=false)
+end
+
+function Zonotope(center::VN, generators_list::AbstractVector{VN};
+                  remove_zero_generators::Bool=true) where {N<:Real, VN<:AbstractVector{N}}
+    G = hcat(generators_list...)
+    return Zonotope(center, G; remove_zero_generators=remove_zero_generators)
+end
 
 # --- AbstractCentrallySymmetric interface functions ---
 
