@@ -57,6 +57,7 @@ box_approximation_symmetric(∅::EmptySet) = ∅
 
 """
     symmetric_interval_hull
+
 Alias for `box_approximation_symmetric`.
 """
 symmetric_interval_hull = box_approximation_symmetric
