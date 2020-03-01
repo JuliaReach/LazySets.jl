@@ -45,6 +45,7 @@ The center of the box is the origin, and the radius is obtained by computing the
 maximum value of the support function evaluated at the canonical directions.
 """
 function box_approximation_symmetric(S::LazySet{N}) where {N<:Real}
+    # fallback returns a hyperrectangular set
     (c, r) = box_approximation_helper(S)
     if r[1] < 0
         return EmptySet{N}(dim(S))
@@ -68,6 +69,20 @@ function box_approximation_symmetric(x::Interval)
     abs_sup = abs(max(x))
     bound = max(abs_sup, abs_inf)
     return Interval(-bound, bound)
+end
+
+# hyperrectangle specialization
+@inline function _maxabs(c::N, r::N) where {N}
+    return c >= zero(N) ? c + r : -c + r
+end
+
+function box_approximation_symmetric(H::Hyperrectangle{N}) where {N<:Real}
+    n = dim(H)
+    r = Vector{N}(undef, n)
+    @inbounds for i in 1:n
+        r[i] = _maxabs(H.center[i], H.radius[i])
+    end
+    return Hyperrectangle(zeros(N, n), r)
 end
 
 """
