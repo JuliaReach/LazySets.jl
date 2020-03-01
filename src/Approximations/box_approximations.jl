@@ -76,26 +76,15 @@ function box_approximation_symmetric(x::Interval)
 end
 
 # hyperrectangle specialization
-function box_approximation_symmetric(H::Hyperrectangle{N}) where {N}
-    if dim(H) == 2
-        return _box_approximation_symmetric_2D(H)
-    else
-        return _box_approximation_symmetric_fallback(H)
+function box_approximation_symmetric(H::Hyperrectangle{N}) where {N<:Real}
+    n = dim(H)
+    r = Vector{N}(undef, n)
+    @inbounds for i in 1:n
+        v⁺ = abs(H.center[i] + H.radius[i])
+        v⁻ = abs(H.center[i] - H.radius[i])
+        r[i] = max(v⁺, v⁻)
     end
-end
-
-# 2D hyperrectangle specialization
-function _box_approximation_symmetric_2D(H::Hyperrectangle{N}) where {N}
-    @inbounds begin
-        # the hyperrectangle is seen as the cartesian product [v₁⁻, v₁⁺] x [v₂⁻, v₂⁺]
-        v₁⁺ = abs(H.center[1] + H.radius[1])
-        v₁⁻ = abs(H.center[1] - H.radius[1])
-        v₂⁺ = abs(H.center[2] + H.radius[2])
-        v₂⁻ = abs(H.center[2] - H.radius[2])
-    end
-    r₁ = max(v₁⁺, v₁⁻)
-    r₂ = max(v₂⁺, v₂⁻)
-    return Hyperrectangle(zeros(N, 2), [r₁, r₂])
+    return Hyperrectangle(zeros(N, n), r)
 end
 
 """
