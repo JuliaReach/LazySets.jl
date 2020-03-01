@@ -46,19 +46,21 @@ for N in Ns
     @test radius_hyperrectangle(x) == [N(0.5)]
     @test radius_hyperrectangle(x, 1) == N(0.5)
 
-    # + operator (= concrete Minkowski sum of intervals)
+    # + operator = lazy Minkowski sum of intervals
     y = Interval(N(-2), N(0.5))
     m = x + y
+    @test m isa MinkowskiSum
     @test dim(m) == 1
     @test σ(N[1], m) == N[1.5]
     @test σ(N[-1], m) == N[-2]
+    m = convert(Interval, m) # concretize into an interval
     @test min(m) == N(-2) && max(m) == N(1.5)
     v = vertices_list(m)
     @test N[1.5] in v && N[-2] in v
 
     # the concrete Minkowski sum of intervals returns an interval
     @test minkowski_sum(x, y) == Interval(N(-2), N(1.5))
-    
+
     # subtraction
     d = x - y
     @test dim(d) == 1
@@ -77,7 +79,7 @@ for N in Ns
     @test N[0.5] in v && N[-2] in v
 
     # test different arithmetic operations
-    r = (x + y) - (d + p)
+    r = minkowski_sum(x, y) - minkowski_sum(d, p)
     @test min(r) == N(-5.5) && max(r) == N(4)
 
     # isempty

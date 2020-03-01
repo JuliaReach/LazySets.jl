@@ -53,4 +53,5 @@ convert(::Type{Interval}, ::IntervalArithmetic.Interval)
 convert(::Type{VPolytope}, ::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
 convert(::Type{VPolygon}, ::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
 convert(::Type{MinkowskiSumArray}, ::MinkowskiSum{N, ST, MinkowskiSumArray{N, ST}}) where {N, ST}
+convert(::Type{Interval}, ::MinkowskiSum{N, IT, IT}) where {N, IT<:Interval{N}}
 ```
