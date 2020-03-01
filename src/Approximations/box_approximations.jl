@@ -76,13 +76,15 @@ function box_approximation_symmetric(x::Interval)
 end
 
 # hyperrectangle specialization
+@inline function _maxabs(c::N, r::N) where {N}
+    return c >= zero(N) ? c + r : -c + r
+end
+
 function box_approximation_symmetric(H::Hyperrectangle{N}) where {N<:Real}
     n = dim(H)
     r = Vector{N}(undef, n)
     @inbounds for i in 1:n
-        v⁺ = abs(H.center[i] + H.radius[i])
-        v⁻ = abs(H.center[i] - H.radius[i])
-        r[i] = max(v⁺, v⁻)
+        r[i] = _maxabs(H.center[i], H.radius[i])
     end
     return Hyperrectangle(zeros(N, n), r)
 end
