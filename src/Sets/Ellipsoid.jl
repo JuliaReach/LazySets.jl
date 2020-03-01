@@ -4,7 +4,8 @@ export Ellipsoid,
        shape_matrix
 
 """
-    Ellipsoid{N<:AbstractFloat} <:  AbstractCentrallySymmetric{N}
+    Ellipsoid{N<:AbstractFloat, VN<:AbstractVector{N},
+              MN<:AbstractMatrix{N}} <: AbstractCentrallySymmetric{N}
 
 Type that represents an ellipsoid.
 
@@ -37,9 +38,11 @@ positive definite).
 
 For instance, we create a two-dimensional ellipsoid with center `[1, 1]`:
 
-```julia
+```jldoctest ellipsoid_constructor
+julia> using LinearAlgebra
+
 julia> E = Ellipsoid(ones(2), Diagonal([2.0, 0.5]))
-Ellipsoid{Float64}([1.0, 1.0], [2.0 0.0; 0.0 0.5])
+Ellipsoid{Float64,Array{Float64,1},Diagonal{Float64,Array{Float64,1}}}([1.0, 1.0], [2.0 0.0; 0.0 0.5])
 ```
 
 If the center is not specified, it is assumed that it is the origin. For instance,
@@ -47,10 +50,8 @@ a three-dimensional ellipsoid centered at the origin and the shape matrix being
 the identity can be created with:
 
 ```jldoctest ellipsoid_constructor
-julia> using LinearAlgebra
-
 julia> E = Ellipsoid(Matrix(1.0I, 3, 3))
-Ellipsoid{Float64}([0.0, 0.0, 0.0], [1.0 0.0 0.0; 0.0 1.0 0.0; 0.0 0.0 1.0])
+Ellipsoid{Float64,Array{Float64,1},Array{Float64,2}}([0.0, 0.0, 0.0], [1.0 0.0 0.0; 0.0 1.0 0.0; 0.0 0.0 1.0])
 
 julia> dim(E)
 3
@@ -95,14 +96,16 @@ julia> σ(ones(3), E)
  0.5773502691896258
 ```
 """
-struct Ellipsoid{N<:AbstractFloat} <: AbstractCentrallySymmetric{N}
-    center::AbstractVector{N}
-    shape_matrix::AbstractMatrix{N}
+struct Ellipsoid{N<:AbstractFloat, VN<:AbstractVector{N},
+                 MN<:AbstractMatrix{N}} <: AbstractCentrallySymmetric{N}
+    center::VN
+    shape_matrix::MN
 
     # default constructor with dimension check
-    function Ellipsoid(c::AbstractVector{N},
-                       Q::AbstractMatrix{N};
-                       check_posdef::Bool=true) where {N<:AbstractFloat}
+    function Ellipsoid(c::VN, Q::MN;
+                       check_posdef::Bool=true) where {N<:AbstractFloat,
+                                                       VN<:AbstractVector{N},
+                                                       MN<:AbstractMatrix{N}}
 
         @assert length(c) == checksquare(Q) "the length of the center and the size "
             "of the shape matrix do not match; they are $(length(c)) and $(size(Q)) respectively"
@@ -111,7 +114,7 @@ struct Ellipsoid{N<:AbstractFloat} <: AbstractCentrallySymmetric{N}
             isposdef(Q) || throw(ArgumentError("an ellipsoid's shape matrix " *
                                                "must be positive definite"))
         end
-        return new{N}(c, Q)
+        return new{N, VN, MN}(c, Q)
     end
 end
 
@@ -120,6 +123,7 @@ isconvextype(::Type{<:Ellipsoid}) = true
 
 # convenience constructor for ellipsoid centered in the origin
 function Ellipsoid(Q::AbstractMatrix{N}; check_posdef::Bool=true) where {N<:AbstractFloat}
+    # TODO: use similar vector type for the center, see #2032
     return Ellipsoid(zeros(N, size(Q, 1)), Q; check_posdef=check_posdef)
 end
 
