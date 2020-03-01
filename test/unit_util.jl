@@ -1,4 +1,5 @@
-using LazySets.Arrays: extend
+using LazySets.Arrays: extend,
+                       _vector_type, _matrix_type
 
 for _dummy_ in 1:1 # avoid global variable warnings
     # reseeding with random seed
@@ -73,6 +74,31 @@ for _dummy_ in 1:1 # avoid global variable warnings
             u = LazySets.Arrays.to_negative_vector(v)
             @test u isa Vector{N} && u == N[1, 0, -1]
         end
+
+        # ============================================
+        # Corresponding vector types and matrix types
+        # ============================================
+
+        # sparse
+        vec = sparsevec([1, 3], N[1, 3], 3)
+        mat = sparse([1, 3], [1, 3], N[1, 3], 3, 3)
+        @test _vector_type(typeof(vec)) == SparseVector{N, Int}
+        @test _matrix_type(typeof(vec)) == SparseMatrixCSC{N,Int64}
+        @test _vector_type(typeof(mat)) == SparseVector{N, Int}
+        @test _matrix_type(typeof(mat)) == SparseMatrixCSC{N,Int64}
+
+        # regular
+        vec = N[1, 0, 3]
+        mat = N[1 0 0; 0 0 0; 0 0 3]
+        @assert _vector_type(typeof(vec)) == Vector{N}
+        @assert _matrix_type(typeof(vec)) == Matrix{N}
+        @assert _vector_type(typeof(mat)) == Vector{N}
+        @assert _matrix_type(typeof(mat)) == Matrix{N}
+
+        # other: Diagonal
+        mat = Diagonal(N[1, 2])
+        @test _vector_type(typeof(mat)) == Vector{N}
+        @assert _matrix_type(typeof(mat)) == Diagonal{N,Array{N,1}}
     end
 
     for N in [Float64, Float32]
