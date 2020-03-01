@@ -4,7 +4,7 @@ export BallInf,
        volume
 
 """
-    BallInf{N<:Real} <: AbstractHyperrectangle{N}
+    BallInf{N<:Real, VN<:AbstractVector{N}} <: AbstractHyperrectangle{N}
 
 Type that represents a ball in the infinity norm.
 
@@ -32,21 +32,23 @@ positive ``x=y`` direction:
 
 ```jldoctest
 julia> B = BallInf(zeros(2), 1.0)
-BallInf{Float64}([0.0, 0.0], 1.0)
+BallInf{Float64,Array{Float64,1}}([0.0, 0.0], 1.0)
+
 julia> dim(B)
 2
+
 julia> ρ([1., 1.], B)
 2.0
 ```
 """
-struct BallInf{N<:Real} <: AbstractHyperrectangle{N}
-    center::Vector{N}
+struct BallInf{N<:Real, VN<:AbstractVector{N}} <: AbstractHyperrectangle{N}
+    center::VN
     radius::N
 
     # default constructor with domain constraint for radius
-    function BallInf(center::Vector{N}, radius::N) where {N<:Real}
+    function BallInf(center::VN, radius::N) where {N<:Real, VN<:AbstractVector{N}}
         @assert radius >= zero(N) "radius must not be negative"
-        return new{N}(center, radius)
+        return new{N, VN}(center, radius)
     end
 end
 
