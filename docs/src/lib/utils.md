@@ -31,8 +31,8 @@ minmax
 arg_minmax
 extend
 projection_matrix
-_vector_type
-_matrix_type
+LazySets.Arrays._vector_type
+LazySets.Arrays._matrix_type
 ```
 
 ## Functions and Macros
