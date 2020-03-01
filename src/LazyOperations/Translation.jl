@@ -35,10 +35,10 @@ julia> v = [1.0, 0.0, 0.0]; # translation along dimension 1
 julia> tr = Translation(X, v);
 
 julia> typeof(tr)
-Translation{Float64,Array{Float64,1},BallInf{Float64}}
+Translation{Float64,Array{Float64,1},BallInf{Float64,Array{Float64,1}}}
 
 julia> tr.X
-BallInf{Float64}([2.0, 2.0, 2.0], 1.0)
+BallInf{Float64,Array{Float64,1}}([2.0, 2.0, 2.0], 1.0)
 
 julia> tr.v
 3-element Array{Float64,1}:
@@ -63,7 +63,7 @@ The translation of a translation is performed immediately:
 
 ```jldoctest translation
 julia> tr = (X+v)+v
-Translation{Float64,Array{Float64,1},BallInf{Float64}}(BallInf{Float64}([2.0, 2.0, 2.0], 1.0), [2.0, 0.0, 0.0])
+Translation{Float64,Array{Float64,1},BallInf{Float64,Array{Float64,1}}}(BallInf{Float64,Array{Float64,1}}([2.0, 2.0, 2.0], 1.0), [2.0, 0.0, 0.0])
 
 julia> tr.v
 3-element Array{Float64,1}:
