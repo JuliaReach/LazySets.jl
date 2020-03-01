@@ -107,21 +107,11 @@ isoperationtype(::Type{<:Zonotope}) = false
 isconvextype(::Type{<:Zonotope}) = true
 
 # constructor from center and list of generators
-function Zonotope(center::Vector{N}, generators_list::AbstractVector{Vector{N}};
-                  remove_zero_generators::Bool=true) where {N<:Real}
-    num_generators = length(generators_list)
-    G = Matrix{N}(undef, length(center), num_generators)
-    for (i, gi) in enumerate(generators_list)
-        (remove_zero_generators && iszero(gi)) && continue
-        @inbounds G[:, i] = gi
-    end
-    return Zonotope(center, G; remove_zero_generators=false)
-end
-
-function Zonotope2(center::Vector{N}, generators_list::AbstractVector{Vector{N}};
-                  remove_zero_generators::Bool=true) where {N<:Real}
-    num_generators = length(generators_list)
-    G = Matrix{N}(undef, length(center), num_generators)
+function Zonotope(center::VN, generators_list::AbstractVector{VN};
+                  remove_zero_generators::Bool=true) where {N<:Real, VN<:AbstractVector{N}}
+    n = length(center)
+    p = length(generators_list)
+    G = Matrix{N}(undef, n, p)
     if remove_zero_generators
         for (i, gi) in enumerate(generators_list)
             iszero(gi) && continue
@@ -133,12 +123,6 @@ function Zonotope2(center::Vector{N}, generators_list::AbstractVector{Vector{N}}
         end
     end
     return Zonotope(center, G; remove_zero_generators=false)
-end
-
-function Zonotope(center::VN, generators_list::AbstractVector{VN};
-                  remove_zero_generators::Bool=true) where {N<:Real, VN<:AbstractVector{N}}
-    G = hcat(generators_list...)
-    return Zonotope(center, G; remove_zero_generators=remove_zero_generators)
 end
 
 # --- AbstractCentrallySymmetric interface functions ---
