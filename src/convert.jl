@@ -939,7 +939,7 @@ Converts the Minkowski sum of two intervals into an interval.
 ### Input
 
 - `Interval` -- type used for dispatch
-- `X`        -- Minkowski sum of a pair of intervals
+- `x`        -- Minkowski sum of a pair of intervals
 
 ### Output
 
