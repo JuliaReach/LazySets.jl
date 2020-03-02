@@ -418,7 +418,8 @@ function intersection(P1::AbstractHPolygon{N},
     elseif length(c2) == 0
         return P1
     end
-    c = Vector{LinearConstraint{N}}(undef, length(c1) + length(c2))
+    # TODO: use common vector type of P1 and P2, see #2046
+    c = Vector{LinearConstraint{N, Vector{N}}}(undef, length(c1) + length(c2))
     i1 = 1
     i2 = 1
     duplicates = 0
