@@ -1489,7 +1489,7 @@ using a hyperrectangle.
 
 ### Input
 
-- `S`              -- affine map of a hyperrectangular set
+- `am`              -- affine map of a hyperrectangular set
 - `Hyperrectangle` -- type for dispatch
 
 ### Output
