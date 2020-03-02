@@ -51,7 +51,7 @@ Return a corresponding matrix type with respect to type `T`.
 
 ### Input
 
-- `T` -- vector type
+- `T` -- vector or matrix type
 
 ### Output
 
