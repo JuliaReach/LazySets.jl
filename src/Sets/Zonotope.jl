@@ -99,7 +99,8 @@ struct Zonotope{N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: Abstra
         if remove_zero_generators
             generators = delete_zero_columns!(generators)
         end
-        new{N, VN, MN}(center, generators)
+        MT = typeof(generators)
+        new{N, VN, MT}(center, generators)
     end
 end
 
@@ -111,7 +112,7 @@ function Zonotope(center::VN, generators_list::AbstractVector{VN};
                   remove_zero_generators::Bool=true) where {N<:Real, VN<:AbstractVector{N}}
     n = length(center)
     p = length(generators_list)
-    G = Matrix{N}(undef, n, p)
+    G = Matrix{N}(undef, n, p) # TODO: generalize type, see #2040
     if remove_zero_generators
         for (i, gi) in enumerate(generators_list)
             iszero(gi) && continue
