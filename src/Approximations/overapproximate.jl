@@ -1481,7 +1481,7 @@ function overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, R
 end
 
 """
-    overapproximate(am::AffineMap{N, <:AbstractHyperrectangle{N}},
+    overapproximate(am::AbstractAffineMap{N, <:AbstractHyperrectangle{N}},
                     ::Type{<:Hyperrectangle}) where {N}
 
 Overapproximate the affine map of a hyperrectangular set
