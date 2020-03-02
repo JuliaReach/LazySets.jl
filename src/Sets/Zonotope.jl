@@ -121,20 +121,7 @@ isconvextype(::Type{<:Zonotope}) = true
 # constructor from center and list of generators
 function Zonotope(center::VN, generators_list::AbstractVector{VN};
                   remove_zero_generators::Bool=true) where {N<:Real, VN<:AbstractVector{N}}
-    n = length(center)
-    p = length(generators_list)
-    G = Matrix{N}(undef, n, p) # TODO: generalize type, see #2040
-    if remove_zero_generators
-        for (i, gi) in enumerate(generators_list)
-            iszero(gi) && continue
-            @inbounds G[:, i] = gi
-        end
-    else
-        for (i, gi) in enumerate(generators_list)
-            @inbounds G[:, i] = gi
-        end
-    end
-    return Zonotope(center, G; remove_zero_generators=false)
+    return Zonotope(center, hcat(generators_list...); remove_zero_generators=remove_zero_generators)
 end
 
 # --- AbstractCentrallySymmetric interface functions ---
