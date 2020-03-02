@@ -190,7 +190,7 @@ A hyperrectangle.
 
 If `c` and `r` denote the center and vector radius of a hyperrectangle `H`,
 a tight hyperrectangular overapproximation of `M * H` is obtained by transforming
-`c ↦ M*c` and `r ↦ abs.(M) * c`, where `abs.(⋅)` denotes the element-wise absolute
+`c ↦ M*c` and `r ↦ abs.(M) * r`, where `abs.(⋅)` denotes the element-wise absolute
 value operator.
 """
 function overapproximate(lm::LinearMap{N, <:AbstractHyperrectangle{N}},
