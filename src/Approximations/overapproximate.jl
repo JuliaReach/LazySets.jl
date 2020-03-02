@@ -1503,7 +1503,7 @@ and `v` the translation vector, a tight hyperrectangular overapproximation of
 `M * H + v` is obtained by transforming `c ↦ M*c+v` and `r ↦ abs.(M) * r`, where
 `abs.(⋅)` denotes the element-wise absolute value operator.
 """
-function overapproximate(am::AffineMap{N, <:AbstractHyperrectangle{N}},
+function overapproximate(am::AbstractAffineMap{N, <:AbstractHyperrectangle{N}},
                          ::Type{<:Hyperrectangle}) where {N<:Real}
     M, X, v = am.M, am.X, am.v
     center_MXv = M * center(X) + v
