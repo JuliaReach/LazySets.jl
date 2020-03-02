@@ -44,12 +44,25 @@ A two-dimensional zonotope with given center and set of generators:
 
 ```jldoctest zonotope_label
 julia> Z = Zonotope([1.0, 0.0], [0.1 0.0; 0.0 0.1])
-Zonotope{Float64}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
 
 julia> dim(Z)
 2
+
+julia> center(Z)
+2-element Array{Float64,1}:
+ 1.0
+ 0.0
+
+julia> genmat(Z)
+2×2 Array{Float64,2}:
+ 0.1  0.0
+ 0.0  0.1
 ```
-Here, each column of the second input corresponds to a generator.
+Here, the first vector in the `Zonotope` constructor corresponds to the zonotope's
+center, and each column of the second argument corresponds to a generator. The
+functions `center` and `genmat` return the center and the generator matrix of this
+zonotope respectively.
 
 We can collect its vertices using `vertices_list`:
 
@@ -77,9 +90,9 @@ vectors, each vector representing a generator:
 
 ```jldoctest
 julia> Z = Zonotope(ones(2), [[1., 0.], [0., 1.], [1., 1.]])
-Zonotope{Float64}([1.0, 1.0], [1.0 0.0 1.0; 0.0 1.0 1.0])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.0, 1.0], [1.0 0.0 1.0; 0.0 1.0 1.0])
 
-julia> Z.generators
+julia> genmat(Z)
 2×3 Array{Float64,2}:
  1.0  0.0  1.0
  0.0  1.0  1.0

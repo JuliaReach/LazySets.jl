@@ -701,7 +701,7 @@ The cartesian product is obtained by:
   in the off-diagonal; for this reason, the generator matrix of the returned
   zonotope is built as a sparse matrix.
 """
-function convert(::Type{Zonotope}, cp::CartesianProduct{N, Zonotope{N}, Zonotope{N}}) where {N<:Real}
+function convert(::Type{Zonotope}, cp::CartesianProduct{N, <:Zonotope{N}, <:Zonotope{N}}) where {N<:Real}
     Z1, Z2 = cp.X, cp.Y
     c = vcat(Z1.center, Z2.center)
     G = blockdiag(sparse(Z1.generators), sparse(Z2.generators))
