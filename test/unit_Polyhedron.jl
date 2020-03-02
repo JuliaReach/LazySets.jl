@@ -11,7 +11,7 @@ for N in [Float64, Rational{Int}, Float32]
     b = [N(1), N(2)]
     p = HPolyhedron(A, b)
     c = p.constraints
-    @test c isa Vector{LinearConstraint{N}}
+    @test c isa Vector{LinearConstraint{N, Vector{N}}}
     @test c[1].a == N[1, 2] && c[1].b == N(1)
     @test c[2].a == N[-1, 1] && c[2].b == N(2)
 
@@ -283,7 +283,7 @@ for N in [Float64]
         @test L isa HPolyhedron{N}
         L = linear_map(sparse(Mnotinv), Pbdd, algorithm="vrep") # Requires Polyhedra because it works on vertices
         @test L isa VPolytope
-        # breaks because "inv_right" requires an invertible matrix 
+        # breaks because "inv_right" requires an invertible matrix
         @test_throws ArgumentError linear_map(sparse(Mnotinv), Punbdd, algorithm="inv_right")
 
         # remove a repeated constraint (#909)
