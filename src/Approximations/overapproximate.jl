@@ -1500,7 +1500,7 @@ A hyperrectangle.
 
 If `c` and `r` denote the center and vector radius of a hyperrectangle `H`
 and `v` the translation vector, a tight hyperrectangular overapproximation of
-`M * H + v` is obtained by transforming `c ↦ M*c+v` and `r ↦ abs.(M) * c`, where
+`M * H + v` is obtained by transforming `c ↦ M*c+v` and `r ↦ abs.(M) * r`, where
 `abs.(⋅)` denotes the element-wise absolute value operator.
 """
 function overapproximate(am::AffineMap{N, <:AbstractHyperrectangle{N}},
