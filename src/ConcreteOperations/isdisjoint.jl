@@ -958,6 +958,8 @@ function is_intersection_empty(P::AbstractPolyhedron{N},
         return false
     elseif algorithm == "exact"
         # exact check for empty intersection using a feasibility LP
+        println(constraints_list(P))
+        println(constraints_list(X))
         return isempty(HPolyhedron([constraints_list(P); constraints_list(X)]),
                        witness; solver=solver)
     else

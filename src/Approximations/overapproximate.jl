@@ -549,7 +549,7 @@ If the directions are known to be bounded, the result is an `HPolytope`,
 otherwise the result is an `HPolyhedron`.
 """
 function overapproximate(X::LazySet{N}, dir::AbstractDirections{N}) where {N}
-    halfspaces = Vector{LinearConstraint{N}}()
+    halfspaces = Vector{LinearConstraint{N, Vector{N}}}() # FIXME 
     sizehint!(halfspaces, length(dir))
     T = isbounding(dir) ? HPolytope : HPolyhedron
     H = T(halfspaces)
@@ -677,8 +677,9 @@ function overapproximate_cap_helper(X::LazySet{N},             # convex set
                                     kwargs...
                                    ) where {N<:Real}
     Hi = constraints_list(P)
+    VN = eltype(Hi)
     m = length(Hi)
-    constraints = Vector{HalfSpace{N}}()
+    constraints = Vector{HalfSpace{N, VN}}()
     sizehint!(constraints, length(dir))
     return_type = HPolytope
 
