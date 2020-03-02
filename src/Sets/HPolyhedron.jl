@@ -17,7 +17,7 @@ export HPolyhedron,
        constrained_dimensions
 
 """
-    HPolyhedron{N<:Real} <: AbstractPolyhedron{N}
+    HPolyhedron{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
 
 Type that represents a convex polyhedron in H-representation.
 
@@ -25,24 +25,27 @@ Type that represents a convex polyhedron in H-representation.
 
 - `constraints` -- vector of linear constraints
 """
-struct HPolyhedron{N<:Real} <: AbstractPolyhedron{N}
-    constraints::Vector{LinearConstraint{N}}
+struct HPolyhedron{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
+    constraints::Vector{LinearConstraint{N, VN}}
 
-    function HPolyhedron(constraints::Vector{<:LinearConstraint{N}}
-                        ) where {N<:Real}
-        return new{N}(constraints)
+    function HPolyhedron(constraints::Vector{LinearConstraint{N, VN}}) where {N<:Real,
+                                                                              VN<:AbstractVector{N}}
+        return new{N, VN}(constraints)
     end
 end
 
 isoperationtype(::Type{<:HPolyhedron}) = false
 isconvextype(::Type{<:HPolyhedron}) = true
 
-# constructor with no constraints
-HPolyhedron{N}() where {N<:Real} =
-    HPolyhedron(Vector{LinearConstraint{N, <:AbstractVector{N}}}())
+# constructor for an HPolyhedron with no constraints and given numeric type
+function HPolyhedron{N}() where {N<:Real}
+    HPolyhedron(Vector{LinearConstraint{N, Vector{N}}}())
+end
 
-# constructor with no constraints of type Float64
-HPolyhedron() = HPolyhedron{Float64}()
+# constructor for an HPolyhedron without explicit numeric type, defaults to Float64
+function HPolyhedron() where {N<:Real}
+    HPolyhedron{Float64}()
+end
 
 # constructor from a simple H-representation
 HPolyhedron(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real} =
@@ -654,8 +657,9 @@ function load_polyhedra_hpolyhedron() # function to be loaded by Requires
 return quote
 # see the interface file AbstractPolytope.jl for the imports
 
-function convert(::Type{HPolyhedron{N}}, P::HRep{N}) where {N}
-    constraints = LinearConstraint{N}[]
+function convert(::Type{HPolyhedron}, P::HRep{N}) where {N}
+    VN = Polyhedra.hvectortype(P)
+    constraints = Vector{LinearConstraint{N, VN}}()
     for hi in Polyhedra.allhalfspaces(P)
         a, b = hi.a, hi.β
         if isapproxzero(norm(a))
@@ -666,10 +670,6 @@ function convert(::Type{HPolyhedron{N}}, P::HRep{N}) where {N}
         push!(constraints, HalfSpace(a, b))
     end
     return HPolyhedron(constraints)
-end
-
-function convert(::Type{HPolyhedron}, P::HRep{N}) where {N}
-    return convert(HPolyhedron{N}, P)
 end
 
 """
