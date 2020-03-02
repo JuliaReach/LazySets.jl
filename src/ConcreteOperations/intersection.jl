@@ -520,7 +520,9 @@ function intersection(P1::AbstractPolyhedron{N},
         HPolytope : HPolyhedron
 
     # concatenate the linear constraints
-    Q = HPOLY([constraints_list(P1); constraints_list(P2)])
+    clist_P1 = [LinearConstraint(Vector(c.a), c.b) for c in constraints_list(P1)] # TODO: fix this temporary patch
+    clist_P2 = [LinearConstraint(Vector(c.a), c.b) for c in constraints_list(P2)]
+    Q = HPOLY([clist_P1; clist_P2])
 
     # remove redundant constraints
     if backend isa AbstractMathProgSolver
