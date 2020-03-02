@@ -152,7 +152,7 @@ function convert(::Type{HPolytope}, P::HRep{N}) where {N}
 end
 
 """
-    HPolytope(P::HRep{T, N}) where {T, N}
+    HPolytope(P::HRep{N}) where {N}
 
 Return a polytope in H-representation given a `HRep` polyhedron
 from `Polyhedra.jl`.
@@ -166,7 +166,7 @@ from `Polyhedra.jl`.
 An `HPolytope`.
 """
 function HPolytope(P::HRep{N}) where {N}
-    convert(HPolytope{N}, P)
+    convert(HPolytope, P)
 end
 
 end # quote
