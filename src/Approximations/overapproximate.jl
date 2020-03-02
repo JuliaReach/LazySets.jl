@@ -1479,3 +1479,34 @@ function overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, R
     end
     return Zonotope(c, Gred)
 end
+
+"""
+    overapproximate(am::AffineMap{N, <:AbstractHyperrectangle{N}},
+                    ::Type{<:Hyperrectangle}) where {N}
+
+Overapproximate the affine map of a hyperrectangular set
+using a hyperrectangle.
+
+### Input
+
+- `S`              -- affine map of a hyperrectangular set
+- `Hyperrectangle` -- type for dispatch
+
+### Output
+
+A hyperrectangle.
+
+### Algorithm
+
+If `c` and `r` denote the center and vector radius of a hyperrectangle `H`
+and `v` the translation vector, a tight hyperrectangular overapproximation of
+`M * H + v` is obtained by transforming `c ↦ M*c+v` and `r ↦ abs.(M) * c`, where
+`abs.(⋅)` denotes the element-wise absolute value operator.
+"""
+function overapproximate(am::AffineMap{N, <:AbstractHyperrectangle{N}},
+                         ::Type{<:Hyperrectangle}) where {N<:Real}
+    M, X, v = am.M, am.X, am.v
+    center_MXv = M * center(X) + v
+    radius_MX = abs.(M) * radius_hyperrectangle(X)
+    return Hyperrectangle(center_MXv, radius_MX)
+end
