@@ -1505,7 +1505,7 @@ and `v` the translation vector, a tight hyperrectangular overapproximation of
 """
 function overapproximate(am::AbstractAffineMap{N, <:AbstractHyperrectangle{N}},
                          ::Type{<:Hyperrectangle}) where {N<:Real}
-    M, X, v = matrix(am), set(X), vector(am)
+    M, X, v = matrix(am), set(am), vector(am)
     center_MXv = M * center(X) + v
     radius_MX = abs.(M) * radius_hyperrectangle(X)
     return Hyperrectangle(center_MXv, radius_MX)
