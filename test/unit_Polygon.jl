@@ -60,7 +60,7 @@ for N in [Float64, Float32, Rational{Int}]
     # conversion to optimized polygon
     po = convert(HPolygonOpt, p)
     # conversion back
-    #convert(HPolygon, po)  # TODO: review after #2036
+    convert(HPolygon, po)
     # conversion from HPolytope
     polytope = HPolytope{N}()
     addconstraint!(polytope, c1)
