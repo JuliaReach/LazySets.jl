@@ -21,7 +21,6 @@ low(::Interval{N}) where {N<:Real}
 high(::Interval{N}) where {N<:Real}
 radius_hyperrectangle(::Interval{N}) where {N<:Real}
 radius_hyperrectangle(::Interval{N}, ::Int) where {N<:Real}
-+(::Interval{N}, ::Interval{N}) where {N<:Real}
 -(::Interval{N}, ::Interval{N}) where {N<:Real}
 *(::Interval{N}, ::Interval{N}) where {N<:Real}
 rand(::Type{Interval})

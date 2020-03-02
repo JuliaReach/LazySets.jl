@@ -181,24 +181,6 @@ function center(x::Interval{N}) where {N<:Real}
 end
 
 """
-    +(x::Interval{N}, y::Interval{N}) where {N<:Real}
-
-Return the sum of the intervals.
-
-### Input
-
-- `x` -- interval
-- `y` -- interval
-
-### Output
-
-The sum of the intervals as a new `Interval` set.
-"""
-function +(x::Interval{N}, y::Interval{N}) where {N<:Real}
-    return Interval(x.dat + y.dat)
-end
-
-"""
     -(x::Interval{N}, y::Interval{N}) where {N<:Real}
 
 Return the difference of the intervals.

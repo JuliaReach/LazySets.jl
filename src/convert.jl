@@ -930,3 +930,21 @@ function convert(::Type{MinkowskiSumArray},
                  X::MinkowskiSum{N, ST, MinkowskiSumArray{N, ST}}) where {N, ST}
     return MinkowskiSumArray(vcat(X.X, X.Y.array))
 end
+
+"""
+    convert(::Type{Interval}, x::MinkowskiSum{N, IT, IT}) where {N, IT<:Interval{N}}
+
+Converts the Minkowski sum of two intervals into an interval.
+
+### Input
+
+- `Interval` -- type used for dispatch
+- `x`        -- Minkowski sum of a pair of intervals
+
+### Output
+
+An interval.
+"""
+function convert(::Type{Interval}, x::MinkowskiSum{N, IT, IT}) where {N, IT<:Interval{N}}
+    return minkowski_sum(x.X, x.Y)
+end
