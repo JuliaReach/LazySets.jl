@@ -50,7 +50,7 @@ struct HPolygon{N<:Real, VN<:AbstractVector{N}} <: AbstractHPolygon{N}
                       check_boundedness::Bool=false,
                       prune::Bool=true) where {N<:Real, VN<:AbstractVector{N}}
         if sort_constraints
-            sorted_constraints = Vector{VN}()
+            sorted_constraints = Vector{LinearConstraint{N, VN}}()
             sizehint!(sorted_constraints, length(constraints))
             for ci in constraints
                 addconstraint!(sorted_constraints, ci; prune=prune)
