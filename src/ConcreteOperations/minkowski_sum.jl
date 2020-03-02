@@ -181,7 +181,6 @@ function _minkowski_sum_hrep(A::AbstractMatrix{N}, b::AbstractVector{N},
     PQ = HPolyhedron(E, f)
     PQ_cdd = polyhedron(PQ, backend=backend)
     W_cdd = Polyhedra.eliminate(PQ_cdd, nP+1:2nP, algorithm)
-    println(W_cdd)
     W = convert(HPolyhedron, W_cdd)
     if prune
         success = remove_redundant_constraints!(W)
@@ -190,7 +189,6 @@ function _minkowski_sum_hrep(A::AbstractMatrix{N}, b::AbstractVector{N},
                   "sets are infeasible")
         end
     end
-    println(W)
     return W
 end
 
