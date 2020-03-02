@@ -673,7 +673,7 @@ function convert(::Type{HPolyhedron}, P::HRep{N}) where {N}
 end
 
 """
-    HPolyhedron(P::HRep{T, N}, backend=nothing) where {T, N}
+     HPolyhedron(P::HRep{N}) where {N}
 
 Return a polyhedron in H-representation given a `HRep` polyhedron
 from `Polyhedra.jl`.
@@ -687,7 +687,7 @@ from `Polyhedra.jl`.
 An `HPolyhedron`.
 """
 function HPolyhedron(P::HRep{N}) where {N}
-    convert(HPolyhedron{N}, P)
+    convert(HPolyhedron, P)
 end
 
 """
