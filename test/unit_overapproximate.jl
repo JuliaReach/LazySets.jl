@@ -115,6 +115,11 @@ for N in [Float64, Rational{Int}, Float32]
     # HPolytope error messages
     @test_throws ArgumentError overapproximate(Singleton(N[0, 0]), HPolytope)
     @test_throws ArgumentError overapproximate(Singleton(N[0]), HPolytope)
+
+    # Hyperrectangle of AffineMap
+    A = N[1 2; 1 3; 1 4]; X = Hyperrectangle(N[0, 1], N[0, 1]); b = N[1, 2, 3];
+    am = AffineMap(A, X, b)
+    @test overapproximate(am, Hyperrectangle) == Hyperrectangle(N[3, 5, 7], N[2, 3, 4])
 end
 
 # tests that do not work with Rational{Int}

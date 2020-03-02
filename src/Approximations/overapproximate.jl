@@ -190,7 +190,7 @@ A hyperrectangle.
 
 If `c` and `r` denote the center and vector radius of a hyperrectangle `H`,
 a tight hyperrectangular overapproximation of `M * H` is obtained by transforming
-`c ↦ M*c` and `r ↦ abs.(M) * c`, where `abs.(⋅)` denotes the element-wise absolute
+`c ↦ M*c` and `r ↦ abs.(M) * r`, where `abs.(⋅)` denotes the element-wise absolute
 value operator.
 """
 function overapproximate(lm::LinearMap{N, <:AbstractHyperrectangle{N}},
@@ -1478,4 +1478,35 @@ function overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, R
         Gred = Gbox
     end
     return Zonotope(c, Gred)
+end
+
+"""
+    overapproximate(am::AbstractAffineMap{N, <:AbstractHyperrectangle{N}},
+                    ::Type{<:Hyperrectangle}) where {N}
+
+Overapproximate the affine map of a hyperrectangular set
+using a hyperrectangle.
+
+### Input
+
+- `am`             -- affine map of a hyperrectangular set
+- `Hyperrectangle` -- type for dispatch
+
+### Output
+
+A hyperrectangle.
+
+### Algorithm
+
+If `c` and `r` denote the center and vector radius of a hyperrectangle `H`
+and `v` the translation vector, a tight hyperrectangular overapproximation of
+`M * H + v` is obtained by transforming `c ↦ M*c+v` and `r ↦ abs.(M) * r`, where
+`abs.(⋅)` denotes the element-wise absolute value operator.
+"""
+function overapproximate(am::AbstractAffineMap{N, <:AbstractHyperrectangle{N}},
+                         ::Type{<:Hyperrectangle}) where {N<:Real}
+    M, X, v = matrix(am), set(am), vector(am)
+    center_MXv = M * center(X) + v
+    radius_MX = abs.(M) * radius_hyperrectangle(X)
+    return Hyperrectangle(center_MXv, radius_MX)
 end
