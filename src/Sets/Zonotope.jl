@@ -36,8 +36,6 @@ where each vector represents a generator. Below we illustrate both ways.
 The optional argument `remove_zero_generators` controls whether we remove zero
 columns from the `generators` matrix. This option is active by default.
 
-
-
 ### Examples
 
 A two-dimensional zonotope with given center and set of generators:
