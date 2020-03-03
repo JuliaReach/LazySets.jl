@@ -37,7 +37,7 @@ convert(::Type{Zonotope}, ::AbstractHyperrectangle)
 convert(::Type{Zonotope}, ::AbstractZonotope)
 convert(::Type{IntervalArithmetic.IntervalBox}, ::AbstractHyperrectangle)
 convert(::Type{Hyperrectangle}, ::IntervalArithmetic.IntervalBox)
-convert(::Type{Zonotope}, ::CartesianProduct{N, Zonotope{N}, Zonotope{N}}) where {N<:Real}
+convert(::Type{Zonotope}, ::CartesianProduct{N, ZN1, ZN2}) where {N<:Real, ZN1<:Zonotope{N}, ZN2<:Zonotope{N}})
 convert(::Type{Hyperrectangle}, ::CartesianProduct{N, HN1, HN2}) where {N<:Real, HN1<:AbstractHyperrectangle{N}, HN2<:AbstractHyperrectangle{N}}
 convert(::Type{Zonotope}, ::CartesianProduct{N, HN1, HN2}) where {N<:Real, HN1<:AbstractHyperrectangle{N}, HN2<:AbstractHyperrectangle{N}}
 convert(::Type{Zonotope}, ::CartesianProductArray{N, HN}) where {N<:Real, HN<:AbstractHyperrectangle{N}}

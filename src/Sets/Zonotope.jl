@@ -6,7 +6,7 @@ export Zonotope,
        reduce_order
 
 """
-    Zonotope{N<:Real} <: AbstractZonotope{N}
+    Zonotope{N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
 
 Type that represents a zonotope.
 
@@ -29,9 +29,9 @@ segments.
 Zonotopes can be equivalently described as the image of a unit infinity-norm
 ball in ``\\mathbb{R}^n`` by an affine transformation.
 
-Zonotopes can be constructed in two different ways: either passing the generators as a matrix, where
-each column represents a generator, or passing a list of vectors where each vector represents a generator.
-Below we illustrate both ways.
+Zonotopes can be constructed in two different ways: either passing the generators
+as a matrix, where each column represents a generator, or passing a list of vectors
+where each vector represents a generator. Below we illustrate both ways.
 
 The optional argument `remove_zero_generators` controls whether we remove zero
 columns from the `generators` matrix. This option is active by default.
@@ -42,12 +42,25 @@ A two-dimensional zonotope with given center and set of generators:
 
 ```jldoctest zonotope_label
 julia> Z = Zonotope([1.0, 0.0], [0.1 0.0; 0.0 0.1])
-Zonotope{Float64}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
 
 julia> dim(Z)
 2
+
+julia> center(Z)
+2-element Array{Float64,1}:
+ 1.0
+ 0.0
+
+julia> genmat(Z)
+2×2 Array{Float64,2}:
+ 0.1  0.0
+ 0.0  0.1
 ```
-Here, each column of the second input corresponds to a generator.
+Here, the first vector in the `Zonotope` constructor corresponds to the zonotope's
+center, and each column of the second argument corresponds to a generator. The
+functions `center` and `genmat` return the center and the generator matrix of this
+zonotope respectively.
 
 We can collect its vertices using `vertices_list`:
 
@@ -75,27 +88,30 @@ vectors, each vector representing a generator:
 
 ```jldoctest
 julia> Z = Zonotope(ones(2), [[1., 0.], [0., 1.], [1., 1.]])
-Zonotope{Float64}([1.0, 1.0], [1.0 0.0 1.0; 0.0 1.0 1.0])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.0, 1.0], [1.0 0.0 1.0; 0.0 1.0 1.0])
 
-julia> Z.generators
+julia> genmat(Z)
 2×3 Array{Float64,2}:
  1.0  0.0  1.0
  0.0  1.0  1.0
 ```
 """
-struct Zonotope{N<:Real} <: AbstractZonotope{N}
-    center::AbstractVector{N}
-    generators::AbstractMatrix{N}
+struct Zonotope{N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
+    center::VN
+    generators::MN
 
-    function Zonotope(center::AbstractVector{N}, generators::AbstractMatrix{N};
-                      remove_zero_generators::Bool=true) where {N<:Real}
+    function Zonotope(center::VN, generators::MN;
+                      remove_zero_generators::Bool=true) where {N<:Real,
+                                                                VN<:AbstractVector{N},
+                                                                MN<:AbstractMatrix{N}}
         @assert length(center) == size(generators, 1) "the dimension of the " *
             "center ($(length(center))) and the generators " *
             "($(size(generators, 1))) need to match"
         if remove_zero_generators
             generators = delete_zero_columns!(generators)
         end
-        new{N}(center, generators)
+        MT = typeof(generators)
+        new{N, VN, MT}(center, generators)
     end
 end
 
@@ -103,12 +119,10 @@ isoperationtype(::Type{<:Zonotope}) = false
 isconvextype(::Type{<:Zonotope}) = true
 
 # constructor from center and list of generators
-Zonotope(center::AbstractVector{N}, generators_list::AbstractVector{VN};
-         remove_zero_generators::Bool=true
-        ) where {N<:Real, VN<:AbstractVector{N}} =
-    Zonotope(center, hcat(generators_list...);
-             remove_zero_generators=remove_zero_generators)
-
+function Zonotope(center::VN, generators_list::AbstractVector{VN};
+                  remove_zero_generators::Bool=true) where {N<:Real, VN<:AbstractVector{N}}
+    return Zonotope(center, hcat(generators_list...); remove_zero_generators=remove_zero_generators)
+end
 
 # --- AbstractCentrallySymmetric interface functions ---
 
