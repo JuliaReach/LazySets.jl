@@ -58,7 +58,7 @@ if test_suite_polyhedra || test_suite_plotting
 end
 
 if test_suite_basic
-    #=
+
     # =========================
     # Testing utility functions
     # =========================
@@ -120,19 +120,18 @@ if test_suite_basic
     # =========================================================
     @time @testset "LazySets.Complement" begin include("unit_Complement.jl") end
     @time @testset "LazySets.PolynomialZonotope" begin include("unit_PolynomialZonotope.jl") end
-    @time @testset "LazySets.Rectification" begin include("unit_Rectification.jl") end # FALLA
-    =#
-#    @time @testset "LazySets.UnionSet" begin include("unit_UnionSet.jl") end
+    @time @testset "LazySets.Rectification" begin include("unit_Rectification.jl") end
+        @time @testset "LazySets.UnionSet" begin include("unit_UnionSet.jl") end
 
     # ===================
     # Concrete operations
     # ===================
-#    @time @testset "LazySets.samples" begin include("unit_samples.jl") end
+    @time @testset "LazySets.samples" begin include("unit_samples.jl") end
 
     # =================================================================
     # Algorithms for approximation of convex sets using support vectors
     # =================================================================
-#    @time @testset "LazySets.Approximations.overapproximation" begin include("unit_overapproximate.jl") end # FALLA
+    @time @testset "LazySets.Approximations.overapproximation" begin include("unit_overapproximate.jl") end
     @time @testset "LazySets.Approximations.underapproximation" begin include("unit_underapproximate.jl") end
     @time @testset "LazySets.Approximations.template_directions" begin include("unit_template_directions.jl") end
     @time @testset "LazySets.Approximations.box_approximation" begin include("unit_box_approximation.jl") end
