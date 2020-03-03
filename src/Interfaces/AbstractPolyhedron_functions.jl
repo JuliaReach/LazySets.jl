@@ -679,7 +679,7 @@ function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
                           algo::LinearMapInverse) where {N}
     inverse = algo.inverse
     constraints_P = constraints_list(P)
-    constraints_MP = similar(constraints_P)
+    constraints_MP = _similar(constraints_P)
     @inbounds for (i, c) in enumerate(constraints_P)
         cinv = vec(_At_mul_B(c.a, inverse))
         constraints_MP[i] = LinearConstraint(cinv, c.b)
@@ -687,11 +687,19 @@ function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
     return constraints_MP
 end
 
+function _similar(constraints::Vector{LinearConstraint{N, VN}}) where {N, VN<:AbstractVector{N}}
+    return Vector{LinearConstraint{N, Vector{N}}}(undef, length(constraints))
+end
+
+function _similar(constraints::LinearConstraint{N, VN}) where {N, VN<:AbstractVector{N}}
+    return LinearConstraint{N, Vector{N}}()
+end
+
 # preconditions should have been checked in the caller function
 function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
                           algo::LinearMapInverseRight) where {N}
     constraints_P = constraints_list(P)
-    constraints_MP = similar(constraints_P)
+    constraints_MP = _similar(constraints_P)
     @inbounds for (i, c) in enumerate(constraints_P)
         # take left division for each constraint c, transpose(M) \ c.a
         cinv = _At_ldiv_B(M, c.a)

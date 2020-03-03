@@ -3,7 +3,7 @@ import Base.<=
 export HPolygon
 
 """
-    HPolygon{N<:Real} <: AbstractHPolygon{N}
+    HPolygon{N<:Real, VN<:AbstractVector{N}} <: AbstractHPolygon{N}
 
 Type that represents a convex polygon in constraint representation whose edges
 are sorted in counter-clockwise fashion with respect to their normal directions.
@@ -40,24 +40,24 @@ The user has to make sure that the `HPolygon` is not used before the constraints
 actually describe a bounded set.
 The function `isbounded` can be used to manually assert boundedness.
 """
-struct HPolygon{N<:Real} <: AbstractHPolygon{N}
-    constraints::Vector{LinearConstraint{N}}
+struct HPolygon{N<:Real, VN<:AbstractVector{N}} <: AbstractHPolygon{N}
+    constraints::Vector{LinearConstraint{N, VN}}
 
     # default constructor that applies sorting of the given constraints and
     # (checks for and) removes redundant constraints
-    function HPolygon(constraints::Vector{<:LinearConstraint{N}};
+    function HPolygon(constraints::Vector{LinearConstraint{N, VN}};
                       sort_constraints::Bool=true,
                       check_boundedness::Bool=false,
-                      prune::Bool=true) where {N<:Real}
+                      prune::Bool=true) where {N<:Real, VN<:AbstractVector{N}}
         if sort_constraints
-            sorted_constraints = Vector{eltype(constraints)}()
+            sorted_constraints = Vector{LinearConstraint{N, VN}}()
             sizehint!(sorted_constraints, length(constraints))
             for ci in constraints
                 addconstraint!(sorted_constraints, ci; prune=prune)
             end
-            P = new{N}(sorted_constraints)
+            P = new{N, VN}(sorted_constraints)
         else
-            P = new{N}(constraints)
+            P = new{N, VN}(constraints)
         end
         @assert (!check_boundedness ||
                  isbounded(P, false)) "the polygon is not bounded"
@@ -69,11 +69,19 @@ isoperationtype(::Type{<:HPolygon}) = false
 isconvextype(::Type{<:HPolygon}) = true
 
 # constructor for an HPolygon with no constraints
-HPolygon{N}() where {N<:Real} =
-    HPolygon(Vector{LinearConstraint{N, <:AbstractVector{N}}}())
+function HPolygon{N, VN}() where {N<:Real, VN<:AbstractVector{N}}
+    HPolygon(Vector{LinearConstraint{N, VN}}())
+end
 
-# constructor for an HPolygon with no constraints of type Float64
-HPolygon() = HPolygon{Float64}()
+# constructor for an HPolygon with no constraints and given numeric type
+function HPolygon{N}() where {N<:Real}
+    HPolygon(Vector{LinearConstraint{N, Vector{N}}}())
+end
+
+# constructor for an HPolygon without explicit numeric type, defaults to Float64
+function HPolygon() where {N<:Real}
+    HPolygon{Float64}()
+end
 
 # constructor from a simple H-representation
 HPolygon(A::AbstractMatrix{N},

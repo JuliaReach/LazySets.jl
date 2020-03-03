@@ -58,6 +58,7 @@ if test_suite_polyhedra || test_suite_plotting
 end
 
 if test_suite_basic
+
     # =========================
     # Testing utility functions
     # =========================

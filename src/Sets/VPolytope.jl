@@ -504,7 +504,7 @@ function tohrep(P::VPolytope{N};
         return EmptySet{N}(dim(P))
     end
     require(:Polyhedra; fun_name="tohrep")
-    return HPolytope(polyhedron(P; backend=backend))
+    return convert(HPolytope, polyhedron(P; backend=backend))
 end
 
 """

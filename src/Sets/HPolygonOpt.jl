@@ -3,7 +3,7 @@ import Base.<=
 export HPolygonOpt
 
 """
-    HPolygonOpt{N<:Real} <: AbstractHPolygon{N}
+    HPolygonOpt{N<:Real, VN<:AbstractVector{N}} <: AbstractHPolygon{N}
 
 Type that represents a convex polygon in constraint representation whose edges
 are sorted in counter-clockwise fashion with respect to their normal directions.
@@ -48,25 +48,25 @@ The user has to make sure that the `HPolygonOpt` is not used before the
 constraints actually describe a bounded set.
 The function `isbounded` can be used to manually assert boundedness.
 """
-mutable struct HPolygonOpt{N<:Real} <: AbstractHPolygon{N}
-    constraints::Vector{LinearConstraint{N}}
+mutable struct HPolygonOpt{N<:Real, VN<:AbstractVector{N}} <: AbstractHPolygon{N}
+    constraints::Vector{LinearConstraint{N, VN}}
     ind::Int
 
     # default constructor that applies sorting of the given constraints
-    function HPolygonOpt(constraints::Vector{<:LinearConstraint{N}},
+    function HPolygonOpt(constraints::Vector{LinearConstraint{N, VN}},
                          ind::Int=1;
                          sort_constraints::Bool=true,
                          check_boundedness::Bool=false,
-                         prune::Bool=true) where {N<:Real}
+                         prune::Bool=true) where {N<:Real, VN<:AbstractVector{N}}
         if sort_constraints
-            sorted_constraints = Vector{eltype(constraints)}()
+            sorted_constraints = Vector{LinearConstraint{N, VN}}()
             sizehint!(sorted_constraints, length(constraints))
             for ci in constraints
                 addconstraint!(sorted_constraints, ci; prune=prune)
             end
-            P = new{N}(sorted_constraints, ind)
+            P = new{N, VN}(sorted_constraints, ind)
         else
-            P = new{N}(constraints, ind)
+            P = new{N, VN}(constraints, ind)
         end
         @assert (!check_boundedness ||
                  isbounded(P, false)) "the polygon is not bounded"
@@ -77,12 +77,20 @@ end
 isoperationtype(::Type{<:HPolygonOpt}) = false
 isconvextype(::Type{<:HPolygonOpt}) = true
 
-# constructor with no constraints
-HPolygonOpt{N}() where {N<:Real} =
-    HPolygonOpt(Vector{LinearConstraint{N, <:AbstractVector{N}}}())
+# constructor for an HPolygon with no constraints
+function HPolygonOpt{N, VN}() where {N<:Real, VN<:AbstractVector{N}}
+    HPolygonOpt(Vector{LinearConstraint{N, VN}}())
+end
 
-# constructor with no constraints of type Float64
-HPolygonOpt() = HPolygonOpt{Float64}()
+# constructor for an HPolygonOpt with no constraints and given numeric type
+function HPolygonOpt{N}() where {N<:Real}
+    HPolygonOpt(Vector{LinearConstraint{N, Vector{N}}}())
+end
+
+# constructor for an HPolygonOpt without explicit numeric type, defaults to Float64
+function HPolygonOpt() where {N<:Real}
+    HPolygonOpt{Float64}()
+end
 
 # constructor from a simple H-representation
 HPolygonOpt(A::AbstractMatrix{N},
