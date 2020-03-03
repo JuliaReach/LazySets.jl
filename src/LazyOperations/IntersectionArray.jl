@@ -185,7 +185,8 @@ redundant constraints.
 function constraints_list(ia::IntersectionArray{N}) where {N<:Real}
    constraints = Vector{LinearConstraint{N, Vector{N}}}() # TODO: use vector type of ia
    for X in array(ia)
-       append!(constraints, constraints_list(X))
+       clist_X = [LinearConstraint(Vector(c.a), c.b) for c in constraints_list(X)]
+       append!(constraints, clist_X)
    end
    remove_redundant_constraints!(constraints)
    return constraints
