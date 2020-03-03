@@ -6,7 +6,7 @@ export IntersectionArray,
 # ================================
 
 """
-   IntersectionArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
+    IntersectionArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
 
 Type that represents the intersection of a finite number of convex sets.
 
@@ -51,7 +51,7 @@ end
 @declare_array_version(Intersection, IntersectionArray)
 
 """
-   array(ia::IntersectionArray{N, S}) where {N<:Real, S<:LazySet{N}}
+    array(ia::IntersectionArray{N, S}) where {N<:Real, S<:LazySet{N}}
 
 Return the array of an intersection of a finite number of convex sets.
 
@@ -72,7 +72,7 @@ end
 
 
 """
-   dim(ia::IntersectionArray)
+    dim(ia::IntersectionArray)
 
 Return the dimension of an intersection of a finite number of sets.
 
@@ -89,7 +89,7 @@ function dim(ia::IntersectionArray)
 end
 
 """
-   σ(d::AbstractVector{N}, ia::IntersectionArray{N}) where {N<:Real}
+    σ(d::AbstractVector{N}, ia::IntersectionArray{N}) where {N<:Real}
 
 Return the support vector of an intersection of a finite number of sets in a
 given direction.
@@ -110,7 +110,7 @@ function σ(d::AbstractVector{N}, ia::IntersectionArray{N}) where {N<:Real}
 end
 
 """
-   isbounded(ia::IntersectionArray)
+    isbounded(ia::IntersectionArray)
 
 Determine whether an intersection of a finite number of convex sets is bounded.
 
@@ -135,7 +135,7 @@ function isbounded(ia::IntersectionArray)
 end
 
 """
-   ∈(x::AbstractVector{N}, ia::IntersectionArray{N}) where {N<:Real}
+    ∈(x::AbstractVector{N}, ia::IntersectionArray{N}) where {N<:Real}
 
 Check whether a given point is contained in an intersection of a finite number
 of convex sets.
@@ -159,7 +159,7 @@ function ∈(x::AbstractVector{N}, ia::IntersectionArray{N}) where {N<:Real}
 end
 
 """
-   constraints_list(ia::IntersectionArray{N}) where {N<:Real}
+    constraints_list(ia::IntersectionArray{N}) where {N<:Real}
 
 Return the list of constraints of an intersection of a finite number of
 (polyhedral) sets.
