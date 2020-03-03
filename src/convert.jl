@@ -679,7 +679,7 @@ function convert(::Type{CartesianProductArray{N, Interval{N}}},
 end
 
 """
-    convert(::Type{Zonotope}, cp::CartesianProduct{N, Zonotope{N}, Zonotope{N}}) where {N<:Real}
+    convert(::Type{Zonotope}, cp::CartesianProduct{N, <:Zonotope{N}, <:Zonotope{N}}) where {N<:Real}
 
 Converts the cartesian product of two zonotopes to a new zonotope.
 
