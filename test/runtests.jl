@@ -121,7 +121,7 @@ if test_suite_basic
     @time @testset "LazySets.Complement" begin include("unit_Complement.jl") end
     @time @testset "LazySets.PolynomialZonotope" begin include("unit_PolynomialZonotope.jl") end
     @time @testset "LazySets.Rectification" begin include("unit_Rectification.jl") end
-        @time @testset "LazySets.UnionSet" begin include("unit_UnionSet.jl") end
+    @time @testset "LazySets.UnionSet" begin include("unit_UnionSet.jl") end
 
     # ===================
     # Concrete operations
