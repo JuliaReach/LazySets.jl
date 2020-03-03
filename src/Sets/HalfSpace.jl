@@ -492,4 +492,5 @@ function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::HalfSpace{N},
 end
 
 # TODO: after #2032, #2041 remove use of this function
-_to_vector_constraints(P) = [LinearConstraint(convert(Vector, c.a), c.b) for c in constraints_list(P)]
+_normal_Vector(P::LazySet) = [LinearConstraint(convert(Vector, c.a), c.b) for c in constraints_list(P)]
+_normal_Vector(c::LinearConstraint) = LinearConstraint(convert(Vector, c.a), c.b)

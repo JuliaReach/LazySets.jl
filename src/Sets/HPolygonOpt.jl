@@ -77,6 +77,11 @@ end
 isoperationtype(::Type{<:HPolygonOpt}) = false
 isconvextype(::Type{<:HPolygonOpt}) = true
 
+# constructor for an HPolygon with no constraints
+function HPolygonOpt{N, VN}() where {N<:Real, VN<:AbstractVector{N}}
+    HPolygonOpt(Vector{LinearConstraint{N, VN}}())
+end
+
 # constructor for an HPolygonOpt with no constraints and given numeric type
 function HPolygonOpt{N}() where {N<:Real}
     HPolygonOpt(Vector{LinearConstraint{N, Vector{N}}}())

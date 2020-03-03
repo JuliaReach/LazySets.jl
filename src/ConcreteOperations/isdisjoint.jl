@@ -958,8 +958,8 @@ function is_intersection_empty(P::AbstractPolyhedron{N},
         return false
     elseif algorithm == "exact"
         # exact check for empty intersection using a feasibility LP
-        clist_P = _to_vector_constraints(P) # TODO
-        clist_X =_to_vector_constraints(X) # TODO
+        clist_P = _normal_Vector(P) # TODO
+        clist_X =_normal_Vector(X) # TODO
         return isempty(HPolyhedron([clist_P; clist_X]), witness; solver=solver)
     else
         error("algorithm $algorithm unknown")
