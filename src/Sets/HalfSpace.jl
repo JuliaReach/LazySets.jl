@@ -490,3 +490,6 @@ function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::HalfSpace{N},
         return HPolyhedron(constraints)
     end
 end
+
+# TODO: after #2032, #2041 remove use of this function
+_to_vector_constraints(P) = [LinearConstraint(convert(Vector, c.a), c.b) for c in constraints_list(P)]

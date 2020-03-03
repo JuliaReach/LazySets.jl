@@ -677,9 +677,8 @@ function overapproximate_cap_helper(X::LazySet{N},             # convex set
                                     kwargs...
                                    ) where {N<:Real}
     Hi = constraints_list(P)
-    VN = eltype(Hi)
     m = length(Hi)
-    constraints = Vector{HalfSpace{N, VN}}()
+    constraints = Vector{HalfSpace{N, Vector{N}}}() # TODO: use directions type, see #2031
     sizehint!(constraints, length(dir))
     return_type = HPolytope
 
@@ -695,7 +694,7 @@ function overapproximate_cap_helper(X::LazySet{N},             # convex set
             # unbounded in this direction => return a polyhedron later
             return_type = HPolyhedron
         else
-            push!(constraints, HalfSpace(di, ρ_X_Hi_min))
+            push!(constraints, HalfSpace(Vector(di), ρ_X_Hi_min)) # TODO: remove vector
         end
     end
     return return_type(constraints)

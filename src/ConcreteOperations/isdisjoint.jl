@@ -966,9 +966,6 @@ function is_intersection_empty(P::AbstractPolyhedron{N},
     end
 end
 
-# TODO: after #2032, #2041,
-_to_vector_constraints(P) = [LinearConstraint(convert(Vector, c.a), c.b) for c in constraints_list(P)]
-
 # symmetric method
 function is_intersection_empty(X::LazySet{N},
                                P::AbstractPolyhedron{N},
