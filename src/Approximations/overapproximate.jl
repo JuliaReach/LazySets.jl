@@ -554,7 +554,7 @@ function overapproximate(X::LazySet{N}, dir::AbstractDirections{N}) where {N}
     T = isbounding(dir) ? HPolytope : HPolyhedron
     H = T(halfspaces)
     for d in dir
-        addconstraint!(H, LinearConstraint(Vector(d), ρ(d, X))) # TODO: fix after #2051
+        addconstraint!(H, _normal_Vector(LinearConstraint(d, ρ(d, X)))) # TODO: fix after #2051
     end
     return H
 end
@@ -694,7 +694,7 @@ function overapproximate_cap_helper(X::LazySet{N},             # convex set
             # unbounded in this direction => return a polyhedron later
             return_type = HPolyhedron
         else
-            push!(constraints, HalfSpace(Vector(di), ρ_X_Hi_min)) # TODO: remove vector
+            push!(constraints, _normal_Vector(HalfSpace(di, ρ_X_Hi_min))) # TODO: remove vector
         end
     end
     return return_type(constraints)
@@ -831,10 +831,10 @@ function overapproximate(cap::Intersection{N,
                          dir::AbstractDirections{N};
                          kwargs...
                         ) where {N<:Real}
-    H = HPolytope{N}()
-    c = constraints_list(H)
-    append!(c, constraints_list(cap.X))
-    append!(c, constraints_list(cap.Y))
+    H = HPolytope{N, Vector{N}}()
+    c = H.constraints
+    push!(c, _normal_Vector(cap.X))
+    append!(c, _normal_Vector(cap.Y))
     return overapproximate(H, dir; kwargs...)
 end
 

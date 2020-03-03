@@ -520,8 +520,8 @@ function intersection(P1::AbstractPolyhedron{N},
         HPolytope : HPolyhedron
 
     # concatenate the linear constraints
-    clist_P1 = _to_vector_constraints(P1) # TODO fix to similar type
-    clist_P2 = _to_vector_constraints(P2)
+    clist_P1 = _normal_Vector(P1) # TODO fix to similar type
+    clist_P2 = _normal_Vector(P2)
     Q = HPOLY([clist_P1; clist_P2])
 
     # remove redundant constraints

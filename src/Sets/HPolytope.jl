@@ -36,6 +36,11 @@ end
 isoperationtype(::Type{<:HPolytope}) = false
 isconvextype(::Type{<:HPolytope}) = true
 
+# constructor for an HPolyhedron with no constraints
+function HPolytope{N, VN}() where {N<:Real, VN<:AbstractVector{N}}
+    HPolytope(Vector{LinearConstraint{N, VN}}())
+end
+
 # constructor for an HPolygon with no constraints and given numeric type
 function HPolytope{N}() where {N<:Real}
     HPolytope(Vector{LinearConstraint{N, Vector{N}}}())
