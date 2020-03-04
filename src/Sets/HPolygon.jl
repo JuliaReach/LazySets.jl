@@ -79,7 +79,7 @@ function HPolygon{N}() where {N<:Real}
 end
 
 # constructor for an HPolygon without explicit numeric type, defaults to Float64
-function HPolygon() where {N<:Real}
+function HPolygon()
     HPolygon{Float64}()
 end
 
