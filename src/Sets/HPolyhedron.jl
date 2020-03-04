@@ -48,7 +48,7 @@ function HPolyhedron{N}() where {N<:Real}
 end
 
 # constructor for an HPolyhedron without explicit numeric type, defaults to Float64
-function HPolyhedron() where {N<:Real}
+function HPolyhedron()
     HPolyhedron{Float64}()
 end
 
