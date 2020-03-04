@@ -47,7 +47,7 @@ function HPolytope{N}() where {N<:Real}
 end
 
 # constructor for an HPolytope without explicit numeric type, defaults to Float64
-function HPolytope() where {N<:Real}
+function HPolytope()
     HPolytope{Float64}()
 end
 
