@@ -88,7 +88,7 @@ function HPolygonOpt{N}() where {N<:Real}
 end
 
 # constructor for an HPolygonOpt without explicit numeric type, defaults to Float64
-function HPolygonOpt() where {N<:Real}
+function HPolygonOpt()
     HPolygonOpt{Float64}()
 end
 
