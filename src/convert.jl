@@ -706,7 +706,7 @@ function convert(::Type{Zonotope}, cp::CartesianProduct{N, ZN1, ZN2}
                 ) where {N<:Real, ZN1<:AbstractZonotope{N}, ZN2<:AbstractZonotope{N}}
     Z1, Z2 = cp.X, cp.Y
     c = vcat(center(Z1), center(Z2))
-    G = blockdiag(sparse(genmat(Z1), genmat(Z2)))
+    G = blockdiag(sparse(genmat(Z1)), sparse(genmat(Z2)))
     return Zonotope(c, G)
 end
 
