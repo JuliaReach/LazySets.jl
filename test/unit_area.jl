@@ -1,6 +1,7 @@
 # not implemented for dimension != 2
 p = BallInf(zeros(3), 1.0)
-@test_throws ArgumentError area(p)
+@test_throws ArgumentError surface(p)
+@test_throws AssertionError area(p)
 
 # sets with zero area
 p = Singleton([0.0, 1.0])
@@ -17,5 +18,8 @@ vlist = [[3, 4.], [5, 11.], [12, 8.], [9, 5.], [5, 6.]]
 p = VPolygon(vlist) # convex hull => 4 points
 @test area(p) ≈ 35.0
 
+# test surface function, which falls back to the area function for 2D sets
+@test surface(p) ≈ 35.0
+
 # general case (non-convex)
-@test LazySets._area_2D(vlist) ≈ 30.0
+@test LazySets._area_polygon(vlist) ≈ 30.0

@@ -23,7 +23,8 @@ export LazySet,
        isoperationtype,
        isequivalent,
        isconvextype,
-       area
+       area,
+       surface
 
 """
     LazySet{N}
@@ -881,9 +882,9 @@ true
 isconvextype(X::Type{<:LazySet}) = false
 
 """
-    area(X::LazySet{N}) where {N}
+    surface(X::LazySet{N}) where {N}
 
-Compute the area of a set.
+Compute the surface area of a set.
 
 ### Input
 
@@ -891,19 +892,19 @@ Compute the area of a set.
 
 ### Output
 
-A number representing the area of `X`.
+A number representing the surface area of `X`.
 """
-function area(X::LazySet{N}) where {N}
+function surface(X::LazySet{N}) where {N}
     if dim(X) == 2
-        return area_2D(X)
+        return area(X)
     else
-        throw(ArgumentError("the area function only applies to two-dimensional sets, " *
-                            "but the given set is $(dim(X))-dimensional"))
+        throw(ArgumentError("the surface function is only implemented for " *
+                    "two-dimensional sets, but the given set is $(dim(X))-dimensional"))
     end
 end
 
 """
-    area_2D(X::LazySet{N}) where {N}
+    area(X::LazySet{N}) where {N}
 
 Compute the area of a two-dimensional polytopic set using the Shoelace formula.
 
@@ -915,19 +916,24 @@ Compute the area of a two-dimensional polytopic set using the Shoelace formula.
 
 A number representing the area of `X`.
 
+### Notes
+
+This algorithm is applicable to any lazy set `X` such that its list of vertices,
+`vertices_list`, can be computed.
+
 ### Algorithm
 
-Let `m` be the number of vertices of `X`. The following instances are special-cased:
+Let `m` be the number of vertices of `X`. The following instances are considered:
 
 - `m = 0, 1, 2`: the output is zero.
 - `m = 3`: the triangle case is computed using the Shoelace formula with 3 points.
 - `m = 4`: the quadrilateral case is obtained by the factored version of the Shoelace
            formula with 4 points.
 
-Otherwise, the general Shoelace formula is used; for detals see the wikipedia article
-[Shoelace formula](https://en.wikipedia.org/wiki/Shoelace_formula).
+Otherwise, the general Shoelace formula is used; for detals see the wikipedia
+article [Shoelace formula](https://en.wikipedia.org/wiki/Shoelace_formula).
 """
-function area_2D(X::LazySet{N}) where {N}
+function area(X::LazySet{N}) where {N}
     @assert dim(X) == 2 "this function only applies to two-dimensional sets, " *
     "but the given set is $(dim(X))-dimensional"
 
@@ -939,28 +945,36 @@ function area_2D(X::LazySet{N}) where {N}
     end
 
     if m == 3 # triangle
-        A = vlist[1]
-        B = vlist[2]
-        C = vlist[3]
-        res = A[1] * (B[2] - C[2]) + B[1] * (C[2] - A[2]) + C[1] * (A[2] - B[2])
-        return abs(res/2)
+        res = _area_triangle(vlist)
 
     elseif m == 4 # quadrilateral
-        A = vlist[1]
-        B = vlist[2]
-        C = vlist[3]
-        D = vlist[4]
-        res = A[1] * (B[2] - D[2]) + B[1] * (C[2] - A[2]) + C[1] * (D[2] - B[2]) + D[1] * (A[2] - C[2])
-        return abs(res/2)
+        res = _area_quadrilateral(vlist)
 
     else # general case
-        return _area_2D(vlist)
+        res = _area_polygon(vlist)
     end
 
+    return res
+end
+
+function _area_triangle(v::Vector{VN}) where {N, VN<:AbstractVector{N}}
+    A = v[1]
+    B = v[2]
+    C = v[3]
+    res = A[1] * (B[2] - C[2]) + B[1] * (C[2] - A[2]) + C[1] * (A[2] - B[2])
     return abs(res/2)
 end
 
-function _area_2D(v::Vector{VN}) where {N, VN<:AbstractVector{N}}
+function _area_quadrilateral(v::Vector{VN}) where {N, VN<:AbstractVector{N}}
+    A = v[1]
+    B = v[2]
+    C = v[3]
+    D = v[4]
+    res = A[1] * (B[2] - D[2]) + B[1] * (C[2] - A[2]) + C[1] * (D[2] - B[2]) + D[1] * (A[2] - C[2])
+    return abs(res/2)
+end
+
+function _area_polygon(v::Vector{VN}) where {N, VN<:AbstractVector{N}}
     m = length(v)
     res = zero(N)
     for i in 1:m-1
