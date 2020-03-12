@@ -934,7 +934,7 @@ function area_2D(X::LazySet{N}) where {N}
     vlist = vertices_list(X)
     m = length(vlist)
 
-    if 0 <= m <= 2
+    if m <= 2
         return zero(N)
     end
 
