@@ -22,7 +22,8 @@ export LazySet,
        isoperation,
        isoperationtype,
        isequivalent,
-       isconvextype
+       isconvextype,
+       area
 
 """
     LazySet{N}
@@ -878,3 +879,93 @@ true
 ```
 """
 isconvextype(X::Type{<:LazySet}) = false
+
+"""
+    area(X::LazySet{N}) where {N}
+
+Compute the area of a set.
+
+### Input
+
+- `X` -- set
+
+### Output
+
+A number representing the area of `X`.
+"""
+function area(X::LazySet{N}) where {N}
+    if dim(X) == 2
+        return area_2D(X)
+    else
+        throw(ArgumentError("the area of a $(dim(X))-dimensional set is not " *
+                            "implemented yet"))
+    end
+end
+
+"""
+    area_2D(X::LazySet{N}) where {N}
+
+Compute the area of a two-dimensional polytopic set using the Shoelace formula.
+
+### Input
+
+- `X` -- two-dimensional set
+
+### Output
+
+A number representing the area of `X`.
+
+### Algorithm
+
+Let `m` be the number of vertices of `X`. The following instances are special-cased:
+
+- `m = 0, 1, 2`: the output is zero.
+- `m = 3`: the triangle case is computed using the Shoelace formula with 3 points.
+- `m = 4`: the quadrilateral case is obtained by the factored version of the Shoelace
+           formula with 4 points.
+
+Otherwise, the general Shoelace formula is used; for detals see the wikipedia article
+[Shoelace formula](https://en.wikipedia.org/wiki/Shoelace_formula).
+"""
+function area_2D(X::LazySet{N}) where {N}
+    @assert dim(X) == 2 "this function only applies to two-dimensional sets, " *
+    "but the given set is $(dim(X))-dimensional"
+
+    vlist = vertices_list(X)
+    m = length(vlist)
+
+    if 0 <= m <= 2
+        return zero(N)
+    end
+
+    if m == 3 # triangle
+        A = vlist[1]
+        B = vlist[2]
+        C = vlist[3]
+        res = A[1] * (B[2] - C[2]) + B[1] * (C[2] - A[2]) + C[1] * (A[2] - B[2])
+        return abs(res/2)
+
+    elseif m == 4 # quadrilateral
+        A = vlist[1]
+        B = vlist[2]
+        C = vlist[3]
+        D = vlist[4]
+        res = A[1] * (B[2] - D[2]) + B[1] * (C[2] - A[2]) + C[1] * (D[2] - B[2]) + D[1] * (A[2] - C[2])
+        return abs(res/2)
+
+    else # general case
+        return _area_2D(vlist)
+    end
+
+    return abs(res/2)
+end
+
+function _area_2D(v::Vector{VN}) where {N, VN<:AbstractVector{N}}
+    m = length(v)
+    res = zero(N)
+    for i in 1:m-1
+        @inbounds res += v[i][1] * v[i+1][2] - v[i+1][1] * v[i][2]
+    end
+    @inbounds res += v[m][1] * v[1][2] - v[1][1] * v[m][2]
+    return abs(res/2)
+end

@@ -127,6 +127,7 @@ if test_suite_basic
     # Concrete operations
     # ===================
     @time @testset "LazySets.samples" begin include("unit_samples.jl") end
+    @time @testset "LazySets.area" begin include("unit_area.jl") end
 
     # =================================================================
     # Algorithms for approximation of convex sets using support vectors
