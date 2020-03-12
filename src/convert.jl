@@ -679,7 +679,8 @@ function convert(::Type{CartesianProductArray{N, Interval{N}}},
 end
 
 """
-    convert(::Type{Zonotope}, cp::CartesianProduct{N, Zonotope{N}, Zonotope{N}}) where {N<:Real}
+    convert(::Type{Zonotope}, cp::CartesianProduct{N, ZN1, ZN2}
+           ) where {N<:Real, ZN1<:AbstractZonotope{N}, ZN2<:AbstractZonotope{N}}
 
 Converts the cartesian product of two zonotopes to a new zonotope.
 
@@ -701,10 +702,11 @@ The cartesian product is obtained by:
   in the off-diagonal; for this reason, the generator matrix of the returned
   zonotope is built as a sparse matrix.
 """
-function convert(::Type{Zonotope}, cp::CartesianProduct{N, Zonotope{N}, Zonotope{N}}) where {N<:Real}
+function convert(::Type{Zonotope}, cp::CartesianProduct{N, ZN1, ZN2}
+                ) where {N<:Real, ZN1<:AbstractZonotope{N}, ZN2<:AbstractZonotope{N}}
     Z1, Z2 = cp.X, cp.Y
-    c = vcat(Z1.center, Z2.center)
-    G = blockdiag(sparse(Z1.generators), sparse(Z2.generators))
+    c = vcat(center(Z1), center(Z2))
+    G = blockdiag(sparse(genmat(Z1)), sparse(genmat(Z2)))
     return Zonotope(c, G)
 end
 
