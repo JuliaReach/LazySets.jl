@@ -17,7 +17,7 @@ export HPolyhedron,
        constrained_dimensions
 
 """
-    HPolyhedron{N<:Real} <: AbstractPolyhedron{N}
+    HPolyhedron{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
 
 Type that represents a convex polyhedron in H-representation.
 
@@ -25,24 +25,32 @@ Type that represents a convex polyhedron in H-representation.
 
 - `constraints` -- vector of linear constraints
 """
-struct HPolyhedron{N<:Real} <: AbstractPolyhedron{N}
-    constraints::Vector{LinearConstraint{N}}
+struct HPolyhedron{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
+    constraints::Vector{LinearConstraint{N, VN}}
 
-    function HPolyhedron(constraints::Vector{<:LinearConstraint{N}}
-                        ) where {N<:Real}
-        return new{N}(constraints)
+    function HPolyhedron(constraints::Vector{LinearConstraint{N, VN}}) where {N<:Real,
+                                                                              VN<:AbstractVector{N}}
+        return new{N, VN}(constraints)
     end
 end
 
 isoperationtype(::Type{<:HPolyhedron}) = false
 isconvextype(::Type{<:HPolyhedron}) = true
 
-# constructor with no constraints
-HPolyhedron{N}() where {N<:Real} =
-    HPolyhedron(Vector{LinearConstraint{N, <:AbstractVector{N}}}())
+# constructor for an HPolyhedron with no constraints
+function HPolyhedron{N, VN}() where {N<:Real, VN<:AbstractVector{N}}
+    HPolyhedron(Vector{LinearConstraint{N, VN}}())
+end
 
-# constructor with no constraints of type Float64
-HPolyhedron() = HPolyhedron{Float64}()
+# constructor for an HPolyhedron with no constraints and given numeric type
+function HPolyhedron{N}() where {N<:Real}
+    HPolyhedron(Vector{LinearConstraint{N, Vector{N}}}())
+end
+
+# constructor for an HPolyhedron without explicit numeric type, defaults to Float64
+function HPolyhedron()
+    HPolyhedron{Float64}()
+end
 
 # constructor from a simple H-representation
 HPolyhedron(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real} =
@@ -448,7 +456,7 @@ function convex_hull(P1::HPoly{N},
     Pch = Polyhedra.convexhull(polyhedron(P1; backend=backend),
                                polyhedron(P2; backend=backend))
     removehredundancy!(Pch)
-    return convert(typeof(P1), Pch)
+    return convert(basetype(P1), Pch)
 end
 
 """
@@ -481,7 +489,7 @@ function cartesian_product(P1::HPoly{N},
     require(:Polyhedra; fun_name="`cartesian_product")
     Pcp = Polyhedra.hcartesianproduct(polyhedron(P1; backend=backend),
                                       polyhedron(P2; backend=backend))
-    return convert(typeof(P1), Pcp)
+    return convert(basetype(P1), Pcp)
 end
 
 """
@@ -654,8 +662,9 @@ function load_polyhedra_hpolyhedron() # function to be loaded by Requires
 return quote
 # see the interface file AbstractPolytope.jl for the imports
 
-function convert(::Type{HPolyhedron{N}}, P::HRep{N}) where {N}
-    constraints = LinearConstraint{N}[]
+function convert(::Type{HPolyhedron}, P::HRep{N}) where {N}
+    VN = Polyhedra.hvectortype(P)
+    constraints = Vector{LinearConstraint{N, VN}}()
     for hi in Polyhedra.allhalfspaces(P)
         a, b = hi.a, hi.β
         if isapproxzero(norm(a))
@@ -668,12 +677,8 @@ function convert(::Type{HPolyhedron{N}}, P::HRep{N}) where {N}
     return HPolyhedron(constraints)
 end
 
-function convert(::Type{HPolyhedron}, P::HRep{N}) where {N}
-    return convert(HPolyhedron{N}, P)
-end
-
 """
-    HPolyhedron(P::HRep{T, N}, backend=nothing) where {T, N}
+     HPolyhedron(P::HRep{N}) where {N}
 
 Return a polyhedron in H-representation given a `HRep` polyhedron
 from `Polyhedra.jl`.
@@ -687,7 +692,7 @@ from `Polyhedra.jl`.
 An `HPolyhedron`.
 """
 function HPolyhedron(P::HRep{N}) where {N}
-    convert(HPolyhedron{N}, P)
+    convert(HPolyhedron, P)
 end
 
 """

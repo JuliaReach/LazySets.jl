@@ -21,7 +21,7 @@ convert(::Type{Interval}, ::LazySet{N}) where {N<:Real}
 convert(::Type{Hyperrectangle}, cpa::CartesianProductArray{N, HN}) where {N<:Real, HN<:AbstractHyperrectangle{N}}
 convert(::Type{Hyperrectangle}, cpa::CartesianProductArray{N, Interval{N}}) where {N<:Real}
 convert(::Type{HPOLYGON}, ::AbstractHyperrectangle) where {HPOLYGON<:AbstractHPolygon}
-convert(::Type{HPOLYGON}, ::HPolytope{N}) where {N<:Real, HPOLYGON<:AbstractHPolygon}
+convert(::Type{HPOLYGON}, ::HPolytope{N, VN}) where {N<:Real, VN<:AbstractVector{N}, HPOLYGON<:AbstractHPolygon}
 convert(::Type{HPOLYGON}, ::AbstractSingleton{N}) where {N<:Real, HPOLYGON<:AbstractHPolygon}
 convert(::Type{HPOLYGON}, ::LineSegment{N}) where {N<:Real, HPOLYGON<:AbstractHPolygon}
 convert(::Type{HPolyhedron}, ::AbstractPolytope)

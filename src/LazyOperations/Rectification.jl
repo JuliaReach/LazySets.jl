@@ -544,7 +544,7 @@ end
 # construct a polyhedron corresponding to an index vector and a bit vector
 # (see `to_union_of_projections`)
 function construct_constraints(indices, bits, n, ::Type{N}) where {N<:Real}
-    P = HPolyhedron{N}()
+    P = HPolyhedron{N, SingleEntryVector{N}}()
     for (i, b) in enumerate(bits)
         direction = SingleEntryVector(indices[i], n,
                                                      (b ? -one(N) : one(N)))

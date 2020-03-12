@@ -18,7 +18,7 @@ for N in [Float64, Rational{Int}, Float32]
     b = [N(1), N(2)]
     p = HPolytope(A, b)
     c = p.constraints
-    @test c isa Vector{LinearConstraint{N}}
+    @test c isa Vector{LinearConstraint{N, Vector{N}}}
     @test c[1].a == N[1, 2] && c[1].b == N(1)
     @test c[2].a == N[-1, 1] && c[2].b == N(2)
     @test_throws AssertionError HPolytope(N[1 0; 0 1], N[1, 1];
@@ -60,7 +60,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     if test_suite_polyhedra
         # conversion to and from Polyhedra's VRep data structure
-        cl = constraints_list(HPolytope(polyhedron(p)))
+        cl = constraints_list(convert(HPolytope, polyhedron(p)))
         @test length(p.constraints) == length(cl)
     end
 

@@ -418,7 +418,8 @@ function intersection(P1::AbstractHPolygon{N},
     elseif length(c2) == 0
         return P1
     end
-    c = Vector{LinearConstraint{N}}(undef, length(c1) + length(c2))
+    # TODO: use common vector type of P1 and P2, see #2046
+    c = Vector{LinearConstraint{N, Vector{N}}}(undef, length(c1) + length(c2))
     i1 = 1
     i2 = 1
     duplicates = 0
@@ -519,7 +520,9 @@ function intersection(P1::AbstractPolyhedron{N},
         HPolytope : HPolyhedron
 
     # concatenate the linear constraints
-    Q = HPOLY([constraints_list(P1); constraints_list(P2)])
+    clist_P1 = _normal_Vector(P1) # TODO fix to similar type
+    clist_P2 = _normal_Vector(P2)
+    Q = HPOLY([clist_P1; clist_P2])
 
     # remove redundant constraints
     if backend isa AbstractMathProgSolver

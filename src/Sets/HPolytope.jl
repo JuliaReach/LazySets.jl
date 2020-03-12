@@ -5,7 +5,7 @@ export HPolytope,
        isbounded
 
 """
-    HPolytope{N<:Real} <: AbstractPolytope{N}
+    HPolytope{N<:Real, VN<:AbstractVector{N}} <: AbstractPolytope{N}
 
 Type that represents a convex polytope in H-representation.
 
@@ -21,12 +21,12 @@ Type that represents a convex polytope in H-representation.
 Recall that a polytope is a bounded polyhedron. Boundedness is a running
 assumption in this type.
 """
-struct HPolytope{N<:Real} <: AbstractPolytope{N}
-    constraints::Vector{LinearConstraint{N}}
+struct HPolytope{N<:Real, VN<:AbstractVector{N}} <: AbstractPolytope{N}
+    constraints::Vector{LinearConstraint{N, VN}}
 
-    function HPolytope(constraints::Vector{<:LinearConstraint{N}};
-                       check_boundedness::Bool=false) where {N<:Real}
-        P = new{N}(constraints)
+    function HPolytope(constraints::Vector{LinearConstraint{N, VN}};
+                       check_boundedness::Bool=false) where {N<:Real, VN<:AbstractVector{N}}
+        P = new{N, VN}(constraints)
         @assert (!check_boundedness ||
                  isbounded(P, false)) "the polytope is not bounded"
         return P
@@ -36,12 +36,20 @@ end
 isoperationtype(::Type{<:HPolytope}) = false
 isconvextype(::Type{<:HPolytope}) = true
 
-# constructor with no constraints
-HPolytope{N}() where {N<:Real} =
-    HPolytope(Vector{LinearConstraint{N, <:AbstractVector{N}}}())
+# constructor for an HPolyhedron with no constraints
+function HPolytope{N, VN}() where {N<:Real, VN<:AbstractVector{N}}
+    HPolytope(Vector{LinearConstraint{N, VN}}())
+end
 
-# constructor with no constraints of type Float64
-HPolytope() = HPolytope{Float64}()
+# constructor for an HPolygon with no constraints and given numeric type
+function HPolytope{N}() where {N<:Real}
+    HPolytope(Vector{LinearConstraint{N, Vector{N}}}())
+end
+
+# constructor for an HPolytope without explicit numeric type, defaults to Float64
+function HPolytope()
+    HPolytope{Float64}()
+end
 
 # constructor from a simple H-representation
 HPolytope(A::AbstractMatrix{N}, b::AbstractVector{N};
@@ -133,7 +141,7 @@ function load_polyhedra_hpolytope() # function to be loaded by Requires
 return quote
 # see the interface file AbstractPolytope.jl for the imports
 
-function convert(::Type{HPolytope{N}}, P::HRep{N}) where {N}
+function convert(::Type{HPolytope}, P::HRep{N}) where {N}
     VT = Polyhedra.hvectortype(P)
     constraints = Vector{LinearConstraint{N, VT}}()
     for hi in Polyhedra.allhalfspaces(P)
@@ -148,12 +156,8 @@ function convert(::Type{HPolytope{N}}, P::HRep{N}) where {N}
     return HPolytope(constraints)
 end
 
-function convert(::Type{HPolytope}, P::HRep{N}) where {N}
-    return convert(HPolytope{N}, P)
-end
-
 """
-    HPolytope(P::HRep{T, N}) where {T, N}
+    HPolytope(P::HRep{N}) where {N}
 
 Return a polytope in H-representation given a `HRep` polyhedron
 from `Polyhedra.jl`.
@@ -167,7 +171,7 @@ from `Polyhedra.jl`.
 An `HPolytope`.
 """
 function HPolytope(P::HRep{N}) where {N}
-    convert(HPolytope{N}, P)
+    convert(HPolytope, P)
 end
 
 end # quote

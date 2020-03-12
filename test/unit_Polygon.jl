@@ -86,9 +86,9 @@ for N in [Float64, Float32, Rational{Int}]
     @test isbounded(p) && isbounded(po)
     @test !isbounded(HPolygon{N}(), false) &&
           !isbounded(HPolygonOpt{N}(), false)
-    @test_throws AssertionError HPolygon(LinearConstraint{N}[];
+    @test_throws AssertionError HPolygon(LinearConstraint{N, Vector{N}}[];
                                         check_boundedness=true)
-    @test_throws AssertionError HPolygonOpt(LinearConstraint{N}[];
+    @test_throws AssertionError HPolygonOpt(LinearConstraint{N, Vector{N}}[];
                                            check_boundedness=true)
 
     # isempty
@@ -486,6 +486,6 @@ for N in [Float64]
 end
 
 # default Float64 constructors
-@test HPolygon() isa HPolygon{Float64}
-@test HPolygonOpt() isa HPolygonOpt{Float64}
+@test HPolygon() isa HPolygon{Float64, Vector{Float64}}
+@test HPolygonOpt() isa HPolygonOpt{Float64, Vector{Float64}}
 @test VPolygon() isa VPolygon{Float64}

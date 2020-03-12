@@ -549,12 +549,12 @@ If the directions are known to be bounded, the result is an `HPolytope`,
 otherwise the result is an `HPolyhedron`.
 """
 function overapproximate(X::LazySet{N}, dir::AbstractDirections{N}) where {N}
-    halfspaces = Vector{LinearConstraint{N}}()
+    halfspaces = Vector{LinearConstraint{N, Vector{N}}}() # TODO: use vector element type in `dir`
     sizehint!(halfspaces, length(dir))
     T = isbounding(dir) ? HPolytope : HPolyhedron
     H = T(halfspaces)
     for d in dir
-        addconstraint!(H, LinearConstraint(d, ρ(d, X)))
+        addconstraint!(H, _normal_Vector(LinearConstraint(d, ρ(d, X)))) # TODO: fix after #2051
     end
     return H
 end
@@ -678,7 +678,7 @@ function overapproximate_cap_helper(X::LazySet{N},             # convex set
                                    ) where {N<:Real}
     Hi = constraints_list(P)
     m = length(Hi)
-    constraints = Vector{HalfSpace{N}}()
+    constraints = Vector{HalfSpace{N, Vector{N}}}() # TODO: use directions type, see #2031
     sizehint!(constraints, length(dir))
     return_type = HPolytope
 
@@ -694,7 +694,7 @@ function overapproximate_cap_helper(X::LazySet{N},             # convex set
             # unbounded in this direction => return a polyhedron later
             return_type = HPolyhedron
         else
-            push!(constraints, HalfSpace(di, ρ_X_Hi_min))
+            push!(constraints, _normal_Vector(HalfSpace(di, ρ_X_Hi_min))) # TODO: remove vector
         end
     end
     return return_type(constraints)
@@ -831,10 +831,10 @@ function overapproximate(cap::Intersection{N,
                          dir::AbstractDirections{N};
                          kwargs...
                         ) where {N<:Real}
-    H = HPolytope{N}()
-    c = constraints_list(H)
-    append!(c, constraints_list(cap.X))
-    append!(c, constraints_list(cap.Y))
+    H = HPolytope{N, Vector{N}}()
+    c = H.constraints
+    push!(c, _normal_Vector(cap.X))
+    append!(c, _normal_Vector(cap.Y))
     return overapproximate(H, dir; kwargs...)
 end
 
