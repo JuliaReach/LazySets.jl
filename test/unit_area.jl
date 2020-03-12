@@ -5,7 +5,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws AssertionError area(p)
 
     # sets with zero area
-    p = Singleton([0, 1])
+    p = Singleton(N[0, 1])
     @test area(p) ≈ N(0)
     p = Interval(N(0), N(1)) × Interval(N(0), N(0))
     @test area(p) ≈ N(0)
