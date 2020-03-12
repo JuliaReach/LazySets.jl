@@ -897,8 +897,8 @@ function area(X::LazySet{N}) where {N}
     if dim(X) == 2
         return area_2D(X)
     else
-        throw(ArgumentError("the area of a $(dim(X))-dimensional set is not " *
-                            "implemented yet"))
+        throw(ArgumentError("the area function only applies to two-dimensional sets, " *
+                            "but the given set is $(dim(X))-dimensional"))
     end
 end
 
