@@ -14,7 +14,7 @@ p = VPolygon([[13, 14.], [16, 30.], [50, 10.]])
 
 # quadrilateral
 vlist = [[3, 4.], [5, 11.], [12, 8.], [9, 5.], [5, 6.]]
-p = VPolygon(vlist) # convex hull => 5 points
+p = VPolygon(vlist) # convex hull => 4 points
 @test area(p) ≈ 35.0
 
 # general case (non-convex)
