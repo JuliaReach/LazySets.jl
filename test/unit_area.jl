@@ -1,4 +1,4 @@
-# not implemented for dimension >= 3
+# not implemented for dimension != 2
 p = BallInf(zeros(3), 1.0)
 @test_throws ArgumentError area(p)
 
