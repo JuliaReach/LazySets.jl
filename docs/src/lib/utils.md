@@ -9,7 +9,7 @@ CurrentModule = LazySets
 ```@docs
 Arrays
 cross_product(::AbstractMatrix{N}) where {N<:Real}
-delete_zero_columns!
+nonzero_columns
 dot_zero
 hasfullrowrank
 inner

@@ -111,7 +111,8 @@ for _dummy_ in 1:1 # avoid global variable warnings
         n = 10
         A = rand(N, m, n)
         A[:, 1] = A[:, 5] = A[:, n] = zeros(N, m)
-        B = LazySets.delete_zero_columns!(A)
+        nzcol = LazySets.Arrays.nonzero_columns(A)
+        B = A[:, nzcol]
         @test size(B) == (m, n-3)
 
         # extend by orthogonal complement

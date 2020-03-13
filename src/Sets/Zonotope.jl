@@ -107,11 +107,15 @@ struct Zonotope{N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: Abstra
         @assert length(center) == size(generators, 1) "the dimension of the " *
             "center ($(length(center))) and the generators " *
             "($(size(generators, 1))) need to match"
+        G = generators
         if remove_zero_generators
-            generators = delete_zero_columns!(generators)
+            nzcol = nonzero_columns(generators)
+            if length(nzcol) < size(generators, 2)
+                G = view(generators, :, nzcol)
+            end
         end
         MT = typeof(generators)
-        new{N, VN, MT}(center, generators)
+        new{N, VN, MT}(center, G)
     end
 end
 
