@@ -164,8 +164,8 @@ function nonzero_columns(A::AbstractMatrix)
     nzcol = Vector{Int}()
     sizehint!(nzcol, n)
     for j in 1:n
-        if !iszero(view(A, :, i))
-            push!(nzcol, i)
+        if !iszero(view(A, :, j))
+            push!(nzcol, j)
         end
     end
     return nzcol
