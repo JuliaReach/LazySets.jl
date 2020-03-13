@@ -950,3 +950,7 @@ An interval.
 function convert(::Type{Interval}, x::MinkowskiSum{N, IT, IT}) where {N, IT<:Interval{N}}
     return minkowski_sum(x.X, x.Y)
 end
+
+function convert(::Type{HalfSpace{N, Vector{N}}}, hs::HalfSpace{N, SingleEntryVector{N}}) where {N}
+    return HalfSpace(Vector(hs.a), hs.b)
+end
