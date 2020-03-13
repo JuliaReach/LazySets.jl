@@ -976,10 +976,9 @@ end
 
 function _area_polygon(v::Vector{VN}) where {N, VN<:AbstractVector{N}}
     m = length(v)
-    res = zero(N)
+    @inbounds res = v[m][1] * v[1][2] - v[1][1] * v[m][2]
     for i in 1:m-1
         @inbounds res += v[i][1] * v[i+1][2] - v[i+1][1] * v[i][2]
     end
-    @inbounds res += v[m][1] * v[1][2] - v[1][1] * v[m][2]
     return abs(res/2)
 end
