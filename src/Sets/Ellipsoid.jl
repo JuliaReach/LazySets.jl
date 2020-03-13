@@ -281,7 +281,7 @@ The idea for the shape matrix comes from
 The matrix is symmetric positive definite, but also diagonally dominant.
 
 ```math
-Q =  \frac{1}{2}(S + S^T) + nI,
+Q =  \\frac{1}{2}(S + S^T) + nI,
 ```
 where ``n`` = `dim` (defaults to 2), and ``S`` is a ``n \\times n`` random
 matrix whose coefficients are uniformly distributed in the interval ``[-1, 1]``.
