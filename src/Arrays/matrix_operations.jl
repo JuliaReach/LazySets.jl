@@ -5,7 +5,7 @@ export _At_mul_B,
        issquare,
        isinvertible,
        cross_product,
-       delete_zero_columns!,
+       nonzero_columns,
        extend,
        projection_matrix
 
@@ -147,46 +147,32 @@ cross_product(M::AbstractSparseMatrix) = cross_product(Matrix(M))
 cross_product(M::SubArray{N, 2, <:AbstractSparseMatrix}) where {N} = cross_product(Matrix(M))
 
 """
-    delete_zero_columns!(A::AbstractMatrix)
+    nonzero_columns(A::AbstractMatrix)
 
-Remove all columns that only contain zeros from a given matrix.
+Return all columns that have at least one non-zero entry.
 
 ### Input
 
-- `A`    -- matrix
-- `copy` -- (optional, default: `false`) flag to copy the matrix
+- `A` -- matrix
 
 ### Output
 
-A matrix.
-
-If the input matrix `A` does not contain any zero column, we return `A` unless
-the option `copy` is set.
-If the input matrix contains zero columns, we always return a copy if the option
-`copy` is set and otherwise a `SubArray` via `@view`.
+A vector of indices.
 """
-function delete_zero_columns!(A::AbstractMatrix, copy::Bool=false)
+function nonzero_columns(A::AbstractMatrix)
     n = size(A, 2)
-    nonzero_columns = Vector{Int}()
-    sizehint!(nonzero_columns, n)
+    nzcol = Vector{Int}()
+    sizehint!(nzcol, n)
     for i in 1:n
-        if !iszero(A[:, i])
-            push!(nonzero_columns, i)
+        if !iszero(view(A, :, i))
+            push!(nzcol, i)
         end
     end
-    if copy
-        if length(nonzero_columns) == n
-            return copy(A)
-        else
-            return A[:, nonzero_columns]
-        end
-    else
-        if length(nonzero_columns) == n
-            return A
-        else
-            return @view A[:, nonzero_columns]
-        end
-    end
+    return nzcol
+end
+
+function nonzero_columns(A::SparseMatrixCSC)
+    return collect(i for i in 1:A.n if A.colptr[i] < A.colptr[i+1])
 end
 
 """
