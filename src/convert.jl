@@ -216,8 +216,8 @@ function convert(::Type{VPolytope}, P::HPolytope)
 end
 
 """
-    convert(::Type{HPOLYGON}, P::HPolytope{N}) where
-        {N<:Real, HPOLYGON<:AbstractHPolygon}
+    convert(::Type{HPOLYGON}, P::HPolytope{N, VN};
+            prune::Bool=true) where {N<:Real, VN<:AbstractVector{N}, HPOLYGON<:AbstractHPolygon}
 
 Convert from 2D polytope in H-representation to polygon in H-representation.
 
@@ -248,8 +248,8 @@ Converts a hyperrectangular set to a zonotope.
 
 ### Input
 
-- `Zonotope`
-- `H` -- hyperrectangular set
+- `Zonotope` -- type, used for dispatch
+- `H`        -- hyperrectangular set
 
 ### Output
 
@@ -259,6 +259,12 @@ function convert(::Type{Zonotope}, H::AbstractHyperrectangle)
     return Zonotope(center(H), Diagonal(radius_hyperrectangle(H)))
 end
 
+function convert(::Type{Zonotope}, S::Singleton{N, VN}) where {N, VN<:AbstractVector{N}}
+    MT = LazySets.Arrays._matrix_type(VN)
+    zero_genmat = MT(undef, dim(S), 0)
+    return Zonotope(element(S), zero_genmat, remove_zero_generators=false)
+end
+
 """
     convert(::Type{Zonotope}, Z::AbstractZonotope)
 
@@ -266,8 +272,8 @@ Converts a zonotopic set to a zonotope.
 
 ### Input
 
-- `Zonotope`
-- `H` -- zonotopic set
+- `Zonotope` -- type, used for dispatch
+- `H`        -- zonotopic set
 
 ### Output
 
