@@ -66,6 +66,8 @@ isoperationtype(::Type{<:LazySet})
 isoperation(::LazySet)
 isequivalent(::LazySet, ::LazySet)
 isconvextype(::Type{<:LazySet})
+surface(::LazySet{N}) where {N}
+area(::LazySet{N}) where {N}
 ```
 
 Plotting is available for general one- or two-dimensional `LazySet`s, provided
