@@ -114,8 +114,14 @@ struct Zonotope{N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: Abstra
                 G = view(generators, :, nzcol)
             end
         end
-        MT = typeof(generators)
-        new{N, VN, MT}(center, G)
+        return _Zonotope(center, G)
+    end
+
+    # constructor with fixed types
+    function _Zonotope(center::VN, generators::MN) where {N<:Real,
+                                                          VN<:AbstractVector{N},
+                                                          MN<:AbstractMatrix{N}}
+        return new{N, VN, MN}(center, generators)
     end
 end
 
