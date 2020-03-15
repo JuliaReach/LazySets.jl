@@ -110,4 +110,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test_throws ArgumentError linear_map(M, H, algorithm="vrep")
     M = N[2 2; 0 1] # invertible matrix
     @test linear_map(M, H) == HalfSpace(N[0.5, -2.0], N(0.0))
+
+    # conversion of the normal vector
+    hs_sev = HalfSpace(SingleEntryVector(2, 3, N(1)), N(1))
+    hs_vec = convert(HalfSpace{N, Vector{N}}, hs_sev)
+    @test hs_vec.a == N[0, 1, 0] && hs_vec.b == N(1)
 end
