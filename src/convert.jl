@@ -255,8 +255,14 @@ Converts a hyperrectangular set to a zonotope.
 
 A zonotope.
 """
-function convert(::Type{Zonotope}, H::AbstractHyperrectangle)
-    return Zonotope(center(H), Diagonal(radius_hyperrectangle(H)))
+function convert(::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
+    if isflat(H)
+        r = radius_hyperrectangle(H)
+        G = Diagonal(r[r .!= zero(N)])
+    else
+        G = genmat(H)
+    end
+    return Zonotope(center(H), G)
 end
 
 function convert(::Type{Zonotope}, S::Singleton{N, VN}) where {N, VN<:AbstractVector{N}}

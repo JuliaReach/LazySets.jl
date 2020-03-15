@@ -100,27 +100,12 @@ struct Zonotope{N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: Abstra
     center::VN
     generators::MN
 
-    function Zonotope(center::VN, generators::MN;
-                      remove_zero_generators::Bool=true) where {N<:Real,
-                                                                VN<:AbstractVector{N},
-                                                                MN<:AbstractMatrix{N}}
+    function Zonotope(center::VN, generators::MN) where {N<:Real,
+                                                         VN<:AbstractVector{N},
+                                                         MN<:AbstractMatrix{N}}
         @assert length(center) == size(generators, 1) "the dimension of the " *
             "center ($(length(center))) and the generators " *
             "($(size(generators, 1))) need to match"
-        G = generators
-        if remove_zero_generators
-            nzcol = nonzero_columns(generators)
-            if length(nzcol) < size(generators, 2)
-                G = view(generators, :, nzcol)
-            end
-        end
-        return _Zonotope(center, G)
-    end
-
-    # constructor with fixed types
-    function _Zonotope(center::VN, generators::MN) where {N<:Real,
-                                                          VN<:AbstractVector{N},
-                                                          MN<:AbstractMatrix{N}}
         return new{N, VN, MN}(center, generators)
     end
 end
@@ -129,9 +114,25 @@ isoperationtype(::Type{<:Zonotope}) = false
 isconvextype(::Type{<:Zonotope}) = true
 
 # constructor from center and list of generators
-function Zonotope(center::VN, generators_list::AbstractVector{VN};
-                  remove_zero_generators::Bool=true) where {N<:Real, VN<:AbstractVector{N}}
-    return Zonotope(center, hcat(generators_list...); remove_zero_generators=remove_zero_generators)
+using LazySets.Arrays: _vector_type, _matrix_type
+function Zonotope(center::VN, generators_list::AbstractVector{VN}) where {N<:Real, VN<:AbstractVector{N}}
+    MT = _matrix_type(VN)
+    G = MT(undef, length(center), length(generators_list)) # TODO: generic undef creator?
+    for gi in generators_list
+        @inbounds G[:, i] = gi
+    end
+    return Zonotope(center, G)
+end
+
+function remove_zero_generators(Z::Zonotope{N, VN, MN}) where {N<:Real,
+                                                               VN<:AbstractVector{N},
+                                                               MN<:AbstractMatrix{N}}
+    generators = genmat(Z)
+    nzcol = nonzero_columns(generators)
+    p = length(nzcol)
+    pmax = size(generators, 2)
+    G = (p == pmax) ? generators : view(generators, :, nzcol)
+    return Zonotope(center, G)
 end
 
 # --- AbstractCentrallySymmetric interface functions ---
