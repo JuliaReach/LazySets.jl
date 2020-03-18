@@ -6,7 +6,7 @@ export LineSegment,
        constraints_list
 
 """
-    LineSegment{N<:Real} <: AbstractZonotope{N}
+    LineSegment{N<:Real, VN<:AbstractVector{N}} <: AbstractZonotope{N}
 
 Type that represents a line segment in 2D between two points ``p`` and ``q``.
 
@@ -21,7 +21,8 @@ A line segment along the ``x = y`` diagonal:
 
 ```jldoctest linesegment_constructor
 julia> s = LineSegment([0., 0], [1., 1.])
-LineSegment{Float64}([0.0, 0.0], [1.0, 1.0])
+LineSegment{Float64,Array{Float64,1}}([0.0, 0.0], [1.0, 1.0])
+
 julia> dim(s)
 2
 ```
@@ -40,22 +41,23 @@ a witness (which is just the common point in this case):
 ```jldoctest linesegment_constructor
 julia> sn = LineSegment([1., 0], [0., 1.])
 LineSegment{Float64}([1.0, 0.0], [0.0, 1.0])
+
 julia> isempty(s ∩ sn)
 false
+
 julia> is_intersection_empty(s, sn, true)
 (false, [0.5, 0.5])
 ```
 """
-struct LineSegment{N<:Real} <: AbstractZonotope{N}
-    p::AbstractVector{N}
-    q::AbstractVector{N}
+struct LineSegment{N<:Real, VN<:AbstractVector{N}} <: AbstractZonotope{N}
+    p::VN
+    q::VN
 
     # default constructor with length constraint
-    function LineSegment(p::AbstractVector{N},
-                         q::AbstractVector{N}) where {N<:Real}
+    function LineSegment(p::VN, q::VN) where {N<:Real, VN<:AbstractVector{N}}
         @assert length(p) == length(q) == 2 "points for line segments must " *
-            "be two-dimensional"
-        return new{N}(p, q)
+            "be two-dimensional but their lengths are $(length(p)) and $(length(q))"
+        return new{N, VN}(p, q)
     end
 end
 
@@ -157,14 +159,17 @@ The algorithm is inspired from [here](https://stackoverflow.com/a/328110).
 """
 function ∈(x::AbstractVector{N}, L::LineSegment{N}) where {N<:Real}
     @assert length(x) == dim(L)
-    # check if the point is on the line through the line segment
-    if (x[2] - L.p[2]) * (L.q[1] - L.p[1]) -
-            (x[1] - L.p[1]) * (L.q[2] - L.p[2]) != 0
+
+    # check if point x is on the line through the line segment (p, q)
+    p = L.p
+    q = L.q
+    if isapproxzero(right_turn(p, q, x))
+        # check if the point is inside the box approximation of the line segment
+        return min(p[1], q[1]) <= x[1] <= max(p[1], q[1]) &&
+               min(p[2], q[2]) <= x[2] <= max(p[2], q[2])
+    else
         return false
     end
-    # check if the point is inside the box approximation of the line segment
-    return min(L.p[1], L.q[1]) <= x[1] <= max(L.p[1], L.q[1]) &&
-           min(L.p[2], L.q[2]) <= x[2] <= max(L.p[2], L.q[2])
 end
 
 
@@ -224,11 +229,13 @@ Return an iterator over the (single) generator of a line segment.
 A one-element iterator over the generator of `L`.
 """
 function generators(L::LineSegment{N}) where {N<:Real}
-    if L.p == L.q
+    p = L.p
+    q = L.q
+    if _isapprox(p, q)
         # degenerate line segment has no generators
         return EmptyGeneratorIterator{N}()
     end
-    return [L.p - center(L)]
+    return [(p - q) / 2]
 end
 
 
@@ -355,7 +362,7 @@ constraints.
 """
 function constraints_list(L::LineSegment{N}) where {N<:Real}
     p, q = L.p, L.q
-    d = [(p[2]-q[2]), (q[1]-p[1])]
+    d = [p[2] - q[2], q[1] - p[1]]
     return [halfspace_left(L), halfspace_right(L),
             halfspace_right(p, p + d), halfspace_left(q, q + d)]
 end
