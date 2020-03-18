@@ -40,7 +40,7 @@ a witness (which is just the common point in this case):
 
 ```jldoctest linesegment_constructor
 julia> sn = LineSegment([1., 0], [0., 1.])
-LineSegment{Float64}([1.0, 0.0], [0.0, 1.0])
+LineSegment{Float64,Array{Float64,1}}([1.0, 0.0], [0.0, 1.0])
 
 julia> isempty(s ∩ sn)
 false
