@@ -17,7 +17,7 @@ A union of polytopes in vertex representation.
 
 ### Notes
 
-This functions requires that you have properly installed
+This function requires that you have properly installed
 the Julia package [MiniQhull.jl](https://github.com/gridap/MiniQhull.jl), including
 the library [Qhull](http://www.qhull.org/).
 
