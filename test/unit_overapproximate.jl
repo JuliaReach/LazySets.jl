@@ -320,7 +320,17 @@ for N in [Float64]
     Y_zonotope = overapproximate(Y, Zonotope) # overapproximate with a zonotope
     @test Y_polygon ⊆ Y_zonotope
 
-    #decomposed linear map approximation
+    # Zonotope approximation with fixed generator directions
+    X = Ball1(zeros(N, 2), N(1))
+    Y = overapproximate(X, Zonotope, BoxDirections{N}(2))
+    @test Y == Zonotope(N[0, 0], N[1 0; 0 1])
+    Y = overapproximate(X, Zonotope, OctDirections{N}(2))
+    @test Y == Zonotope(N[0, 0], N[1//2 1//2; 1//2 -1//2])
+    X = Ball1(zeros(N, 3), N(1))
+    Y = overapproximate(X, Zonotope, BoxDirections{N}(3))
+    @test Y == Zonotope(N[0, 0, 0], N[1 0 0; 0 1 0; 0 0 1])
+
+    # decomposed linear map approximation
     i1 = Interval(N[0, 1])
     i2 = Interval(N[2, 3])
     M = N[1 2; 0 1]
