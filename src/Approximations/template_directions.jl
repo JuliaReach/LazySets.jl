@@ -2,7 +2,7 @@ import LazySets: dim, inner
 using LazySets: isapproxzero
 
 """
-    AbstractDirections{N}
+    AbstractDirections{N, VN}
 
 Abstract type for template direction representations.
 
@@ -10,8 +10,13 @@ Abstract type for template direction representations.
 
 All subtypes should implement the standard iterator methods from `Base` and the
 function `dim(d<:AbstractDirections)`.
+
+This type is parameterzed by `N` and `VN`, where:
+
+- `N` stands for the numeric type
+- `VN` stands for the vector type with coefficients of type `N`
 """
-abstract type AbstractDirections{N} end
+abstract type AbstractDirections{N, VN} end
 
 """
     dim(ad::AbstractDirections)
@@ -59,35 +64,84 @@ function isbounding(ad::AbstractDirections)
     return false
 end
 
+"""
+    isnormalized(ad::AbstractDirections)
+
+Returns whether the given template directions is normalized with respect to the
+2-norm.
+
+### Input
+
+- `ad` -- template directions
+
+### Output
+
+`true` if the 2-norm of each element in `ad` is one and `false` otherwise.
+"""
+function isnormalized(ad::AbstractDirections) end
+
 # ==================================================
 # Box directions
 # ==================================================
 
 """
-    BoxDirections{N} <: AbstractDirections{N}
+    BoxDirections{N, VN} <: AbstractDirections{N, VN}
 
 Box direction representation.
 
 ### Fields
 
 - `n` -- dimension
+
+### Notes
+
+The set representation used in this template is a `LazySets.Arrays.SingleEntryVector`.
+
+### Examples
+
+
 """
-struct BoxDirections{N} <: AbstractDirections{N}
+struct BoxDirections{N, VN<:AbstractVector{N}} <: AbstractDirections{N, VN}
     n::Int
 end
 
-# constructor for type Float64
-BoxDirections(n::Int) = BoxDirections{Float64}(n)
+# convenience constructor for type Float64
+BoxDirections(n::Int) = BoxDirections{Float64, SingleEntryVector{Float64}}(n)
 
-Base.eltype(::Type{BoxDirections{N}}) where {N} = AbstractVector{N}
+Base.eltype(::Type{BoxDirections{N, VN}}) where {N, VN} = VN
 Base.length(bd::BoxDirections) = 2 * bd.n
 isbounding(::BoxDirections) = true
+isnormalized(::BoxDirections) = true
 
-function Base.iterate(bd::BoxDirections{N}, state::Int=1) where {N}
+function Base.iterate(bd::BoxDirections{N, SingleEntryVector{N}}, state::Int=1) where {N}
     if state == 0
         return nothing
     end
+    # note that:
+    # (1, 0)   state = 1
+    # (0, 1)   state = 2
+    # (0, -1)  state = -2
+    # (-1, 0)  state = -1
     vec = SingleEntryVector(abs(state), bd.n, convert(N, sign(state)))
+    state = (state == bd.n) ? -bd.n : state + 1
+    return (vec, state)
+end
+
+function Base.iterate(bd::BoxDirections{N, Vector{N}}, state::Int=1) where {N}
+    if state == 0
+        return nothing
+    end
+    vec = zeros(N, bd.n)
+    vec[abs(state)] = convert(N, sign(state))
+    state = (state == bd.n) ? -bd.n : state + 1
+    return (vec, state)
+end
+
+function Base.iterate(bd::BoxDirections{N, SparseVector{Int, Int}}, state::Int=1) where {N}
+    if state == 0
+        return nothing
+    end
+    vec = sparsevec(convert(N, sign(state)), [abs(state)], bd.n)
     state = (state == bd.n) ? -bd.n : state + 1
     return (vec, state)
 end
@@ -97,7 +151,7 @@ end
 # ==================================================
 
 """
-    OctDirections{N} <: AbstractDirections{N}
+    OctDirections{N, VN} <: AbstractDirections{N, VN}
 
 Octagon direction representation.
 
@@ -110,18 +164,18 @@ Octagon direction representation.
 Octagon directions consist of all vectors that are zero almost everywhere except
 in two dimensions ``i``, ``j`` (possibly ``i = j``) where it is ``±1``.
 """
-struct OctDirections{N} <: AbstractDirections{N}
+struct OctDirections{N, VN} <: AbstractDirections{N, VN}
     n::Int
 end
 
 # constructor for type Float64
-OctDirections(n::Int) = OctDirections{Float64}(n)
+OctDirections(n::Int) = OctDirections{Float64, SparseVector{Int, Int}}(n)
 
-Base.eltype(::Type{OctDirections{N}}) where {N} = AbstractVector{N}
+Base.eltype(::Type{OctDirections{N, VN}}) where {N, VN} = VN
 Base.length(od::OctDirections) = 2 * od.n^2
 isbounding(::OctDirections) = true
 
-function Base.iterate(od::OctDirections{N}) where {N}
+function Base.iterate(od::OctDirections{N, SparseVector{Int, Int}}) where {N}
     if od.n == 1
         # fall back to box directions in 1D case
         return iterate(od, 1)
@@ -138,7 +192,7 @@ end
 # - i = i + 1, j = i + 1
 # - for any pair (i, j) create four vectors [..., i: ±1, ..., j: ±1, ...]
 # in the end continue with box directions
-function Base.iterate(od::OctDirections{N}, state::Tuple) where {N}
+function Base.iterate(od::OctDirections{N, SparseVector{Int, Int}}, state::Tuple) where {N}
     # continue with octagon directions
     vec = state[1]
     i = state[2]
@@ -171,9 +225,9 @@ function Base.iterate(od::OctDirections{N}, state::Tuple) where {N}
     return (copy(vec), (vec, i, j))
 end
 
-function Base.iterate(od::OctDirections{N}, state::Int) where {N}
+function Base.iterate(od::OctDirections{N, SparseVector{Int, Int}}, state::Int) where {N}
     # continue with box directions
-    return iterate(BoxDirections{N}(od.n), state)
+    return iterate(BoxDirections{N, SparseVector{Int, Int}}(od.n), state)
 end
 
 # ==================================================
@@ -181,7 +235,7 @@ end
 # ==================================================
 
 """
-    BoxDiagDirections{N} <: AbstractDirections{N}
+    BoxDiagDirections{N, VN} <: AbstractDirections{N, VN}
 
 Box-diagonal direction representation.
 
@@ -196,22 +250,22 @@ entries are ±1) and box directions (one entry is ±1, all other entries are 0).
 The iterator first enumerates all diagonal directions, and then all box
 directions.
 """
-struct BoxDiagDirections{N} <: AbstractDirections{N}
+struct BoxDiagDirections{N, VN} <: AbstractDirections{N, VN}
     n::Int
 end
 
 # constructor for type Float64
-BoxDiagDirections(n::Int) = BoxDiagDirections{Float64}(n)
+BoxDiagDirections(n::Int) = BoxDiagDirections{Float64, Vector{N}}(n)
 
-Base.eltype(::Type{BoxDiagDirections{N}}) where {N} = AbstractVector{N}
+Base.eltype(::Type{BoxDiagDirections{N, VN}}) where {N, VN} = VN
 Base.length(bdd::BoxDiagDirections) = bdd.n == 1 ? 2 : 2^bdd.n + 2 * bdd.n
 isbounding(::BoxDiagDirections) = true
 
-Base.iterate(bdd::BoxDiagDirections{N}) where {N} =
-    (ones(N, bdd.n), ones(N, bdd.n))
+function Base.iterate(bdd::BoxDiagDirections{N, Vector{N}}) where {N}
+    return (ones(N, bdd.n), ones(N, bdd.n))
+end
 
-function Base.iterate(bdd::BoxDiagDirections{N},
-                      state::AbstractVector) where {N}
+function Base.iterate(bdd::BoxDiagDirections{N}, state::Vector{N}) where {N}
     # continue with diagonal directions
     i = 1
     while i <= bdd.n && state[i] < 0
@@ -232,9 +286,9 @@ function Base.iterate(bdd::BoxDiagDirections{N},
     end
 end
 
-function Base.iterate(bdd::BoxDiagDirections{N}, state::Int) where {N}
+function Base.iterate(bdd::BoxDiagDirections{N, Vector{N}}, state::Int) where {N}
     # continue with box directions
-    return iterate(BoxDirections{N}(bdd.n), state)
+    return iterate(BoxDirections{N, Vector{N}}(bdd.n), state)
 end
 
 # ==================================================
@@ -242,7 +296,7 @@ end
 # ==================================================
 
 """
-    PolarDirections{N<:AbstractFloat} <: AbstractDirections{N}
+    PolarDirections{N<:AbstractFloat, VN<:AbstractVector{N}} <: AbstractDirections{N, VN}
 
 Polar directions representation.
 
@@ -277,35 +331,36 @@ julia> pd.Nφ
 2
 ```
 """
-struct PolarDirections{N<:AbstractFloat} <: AbstractDirections{N}
+struct PolarDirections{N<:AbstractFloat, VN<:AbstractVector{N}} <: AbstractDirections{N, VN}
     Nφ::Int
-    stack::Vector{Vector{N}} # stores the polar directions
-
-    function PolarDirections{N}(Nφ::Int) where {N<:AbstractFloat}
-        if Nφ <= 0
-            throw(ArgumentError("Nφ = $Nφ is invalid; it shoud be at least 1"))
-        end
-        stack = Vector{Vector{N}}()
-        # discretization of the polar angle
-        φ = range(N(0.0), N(2*pi), length=Nφ+1)
-
-        for φᵢ in φ[1:Nφ]  # skip last (repeated) angle
-            d = N[cos(φᵢ), sin(φᵢ)]
-            push!(stack, d)
-        end
-        return new{N}(Nφ, stack)
-    end
+    stack::Vector{VN} # stores the polar directions
 end
 
+# convenience constructor
 PolarDirections(Nφ::Int) = PolarDirections{Float64}(Nφ)
 
+function PolarDirections{Float64}(Nφ::Int)
+    if Nφ <= 0
+        throw(ArgumentError("Nφ = $Nφ is invalid; it shoud be at least 1"))
+    end
+    stack = Vector{Vector{Float64}}()
+    # discretization of the polar angle
+    φ = range(0.0, 2*pi, length=Nφ+1)
+
+    for φᵢ in φ[1:Nφ]  # skip last (repeated) angle
+        d = [cos(φᵢ), sin(φᵢ)]
+        push!(stack, d)
+    end
+    return PolarDirections{Float64, Vector{Float64}}(Nφ, stack)
+end
+
 # common functions
-Base.eltype(::Type{PolarDirections{N}}) where {N} = Vector{N}
+Base.eltype(::Type{PolarDirections{N, VN}}) where {N, VN} = VN
 Base.length(pd::PolarDirections) = length(pd.stack)
 dim(::PolarDirections) = 2
 isbounding(pd::PolarDirections) = pd.Nφ > 2
 
-function Base.iterate(pd::PolarDirections, state::Int=1)
+function Base.iterate(pd::PolarDirections{N, Vector{N}}, state::Int=1) where {N}
     state == length(pd.stack)+1 && return nothing
     return (pd.stack[state], state + 1)
 end
@@ -315,7 +370,7 @@ end
 # ==================================================
 
 """
-    SphericalDirections{N<:AbstractFloat} <: AbstractDirections{N}
+    SphericalDirections{N<:AbstractFloat, VN<:AbstractVector{N}} <: AbstractDirections{N, VN}
 
 Spherical directions representation.
 
@@ -352,7 +407,7 @@ julia> using LazySets.Approximations: SphericalDirections
 julia> sd = SphericalDirections(3)
 SphericalDirections{Float64}(3, 3, Array{Float64,1}[[0.0, 0.0, 1.0], [0.0, 0.0, -1.0], [1.0, 0.0, 6.12323e-17], [-1.0, 1.22465e-16, 6.12323e-17]])
 
-julia> sd.Nθ, sd.Nφ 
+julia> sd.Nθ, sd.Nφ
 (3, 3)
 ```
 
@@ -370,41 +425,41 @@ julia> length(sd_4_8)
 16
 ```
 """
-struct SphericalDirections{N<:AbstractFloat} <: AbstractDirections{N}
+struct SphericalDirections{N<:AbstractFloat, VN<:AbstractVector{N}} <: AbstractDirections{N, VN}
     Nθ::Int
     Nφ::Int
-    stack::Vector{Vector{N}} # stores the spherical directions
-
-    function SphericalDirections{N}(Nθ::Int, Nφ::Int) where {N<:AbstractFloat}
-        if Nθ <= 1 || Nφ <= 1
-            throw(ArgumentError("(Nθ, Nφ) = ($Nθ, $Nφ) is invalid; both shoud be at least 2"))
-        end
-        stack = Vector{Vector{N}}()
-        θ = range(N(0), N(pi), length=Nθ)      # discretization of the azimuthal angle
-        φ = range(N(0.0), N(2*pi), length=Nφ)  # discretization of the polar angle
-
-        # add north pole (θ = 0)
-        push!(stack, N[0, 0, 1])
-
-        # add south pole (θ = pi)
-        push!(stack, N[0, 0, -1])
-
-        for φᵢ in φ[1:Nφ-1]  # delete repeated angle
-            for θⱼ in θ[2:Nθ-1] # delete north and south poles
-                d = N[sin(θⱼ)*cos(φᵢ), sin(θⱼ)*sin(φᵢ), cos(θⱼ)]
-                push!(stack, d)
-            end
-        end
-        return new{N}(Nθ, Nφ, stack)
-    end
+    stack::Vector{VN} # stores the spherical directions
 end
 
 # convenience constructors
-SphericalDirections(Nθ::Int) = SphericalDirections{Float64}(Nθ, Nθ)
-SphericalDirections(Nθ::Int, Nφ::Int) = SphericalDirections{Float64}(Nθ, Nφ)
+SphericalDirections(Nθ::Int) = SphericalDirections(Nθ, Nθ)
+SphericalDirections(Nθ::Int, Nφ::Int) = SphericalDirections{Float64, Vector{Float64}}(Nθ::Int, Nφ::Int)
+
+function SphericalDirections{Float64, Vector{Float64}}(Nθ::Int, Nφ::Int)
+    if Nθ <= 1 || Nφ <= 1
+        throw(ArgumentError("(Nθ, Nφ) = ($Nθ, $Nφ) is invalid; both shoud be at least 2"))
+    end
+    stack = Vector{Vector{Float64}}()
+    θ = range(0.0, pi, length=Nθ)    # discretization of the azimuthal angle
+    φ = range(0.0, 2*pi, length=Nφ)  # discretization of the polar angle
+
+    # add north pole (θ = 0)
+    push!(stack, Float64[0, 0, 1])
+
+    # add south pole (θ = pi)
+    push!(stack, Float64[0, 0, -1])
+
+    for φᵢ in φ[1:Nφ-1]  # delete repeated angle
+        for θⱼ in θ[2:Nθ-1] # delete north and south poles
+            d = [sin(θⱼ)*cos(φᵢ), sin(θⱼ)*sin(φᵢ), cos(θⱼ)]
+            push!(stack, d)
+        end
+    end
+    return SphericalDirections{Float64, Vector{Float64}}(Nθ, Nφ, stack)
+end
 
 # common functions
-Base.eltype(::Type{SphericalDirections{N}}) where {N} = Vector{N}
+Base.eltype(::Type{SphericalDirections{N, VN}}) where {N, VN} = VN
 Base.length(sd::SphericalDirections) = length(sd.stack)
 dim(::SphericalDirections) = 3
 isbounding(sd::SphericalDirections) = sd.Nθ > 2 && sd.Nφ > 2
@@ -419,7 +474,7 @@ end
 # ==================================================
 
 """
-    CustomDirections{N, VN<:AbstractVector{N}} <: AbstractDirections{N}
+    CustomDirections{N, VN<:AbstractVector{N}} <: AbstractDirections{N, VN}
 
 User-defined template directions.
 
@@ -439,16 +494,16 @@ norm using the given directions).
 The dimension will also be determined automatically, unless the empty vector is
 passed (in which case the optional argument `n` needs to be specified).
 """
-struct CustomDirections{N, VN<:AbstractVector{N}} <: AbstractDirections{N}
+struct CustomDirections{N, VN<:AbstractVector{N}} <: AbstractDirections{N, VN}
     directions::Vector{VN}
     n::Int
     isbounding::Bool
 
-    CustomDirections{N, VN}(directions::Vector{VN};
-                            n::Int=determine_dimension(directions),
-                            isbounding::Bool=_isbounding(directions)
-                           ) where {N, VN<:AbstractVector{N}} =
-        new{N, VN}(directions, n, isbounding)
+    function CustomDirections{N, VN}(directions::Vector{VN};
+                                     n::Int=determine_dimension(directions),
+                                     isbounding::Bool=_isbounding(directions)) where {N, VN<:AbstractVector{N}}
+        return new{N, VN}(directions, n, isbounding)
+    end
 end
 
 # convenience constructor
