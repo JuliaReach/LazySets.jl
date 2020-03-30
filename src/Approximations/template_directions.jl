@@ -31,9 +31,7 @@ Returns the dimension of the generated directions.
 
 The dimension of the generated directions.
 """
-function dim(ad::AbstractDirections)
-    return ad.n
-end
+function dim(ad::AbstractDirections) end
 
 """
     isbounding(ad::AbstractDirections)
@@ -110,6 +108,9 @@ BoxDirections(n::Int) = BoxDirections{Float64, SingleEntryVector{Float64}}(n)
 
 Base.eltype(::Type{BoxDirections{N, VN}}) where {N, VN} = VN
 Base.length(bd::BoxDirections) = 2 * bd.n
+
+# interface functions
+dim(bd::BoxDirections) = bd.n
 isbounding(::BoxDirections) = true
 isnormalized(::BoxDirections) = true
 
@@ -173,6 +174,9 @@ OctDirections(n::Int) = OctDirections{Float64, SparseVector{Int, Int}}(n)
 
 Base.eltype(::Type{OctDirections{N, VN}}) where {N, VN} = VN
 Base.length(od::OctDirections) = 2 * od.n^2
+
+# interface function
+dim(od::OctDirections) = od.n
 isbounding(::OctDirections) = true
 
 function Base.iterate(od::OctDirections{N, SparseVector{Int, Int}}) where {N}
@@ -259,6 +263,9 @@ BoxDiagDirections(n::Int) = BoxDiagDirections{Float64, Vector{N}}(n)
 
 Base.eltype(::Type{BoxDiagDirections{N, VN}}) where {N, VN} = VN
 Base.length(bdd::BoxDiagDirections) = bdd.n == 1 ? 2 : 2^bdd.n + 2 * bdd.n
+
+# interface function
+dim(bdd::BoxDiagDirections) = bdd.n
 isbounding(::BoxDiagDirections) = true
 
 function Base.iterate(bdd::BoxDiagDirections{N, Vector{N}}) where {N}
@@ -357,7 +364,9 @@ end
 # common functions
 Base.eltype(::Type{PolarDirections{N, VN}}) where {N, VN} = VN
 Base.length(pd::PolarDirections) = length(pd.stack)
-dim(::PolarDirections) = 2
+
+# interface functions
+dim(pd::PolarDirections) = 2
 isbounding(pd::PolarDirections) = pd.Nφ > 2
 
 function Base.iterate(pd::PolarDirections{N, Vector{N}}, state::Int=1) where {N}
@@ -461,6 +470,8 @@ end
 # common functions
 Base.eltype(::Type{SphericalDirections{N, VN}}) where {N, VN} = VN
 Base.length(sd::SphericalDirections) = length(sd.stack)
+
+# interface functions
 dim(::SphericalDirections) = 3
 isbounding(sd::SphericalDirections) = sd.Nθ > 2 && sd.Nφ > 2
 
@@ -529,6 +540,9 @@ end
 
 Base.eltype(::Type{CustomDirections{N, VN}}) where {N, VN} = VN
 Base.length(cd::CustomDirections) = length(cd.directions)
+
+# interface functions
+dim(cd::CustomDirections) = cd.n
 isbounding(cd::CustomDirections) = cd.isbounding
 
 function Base.iterate(cd::CustomDirections{N}, state::Int=1) where {N}
