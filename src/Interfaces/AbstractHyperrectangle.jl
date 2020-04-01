@@ -18,7 +18,7 @@ Abstract type for hyperrectangular sets.
 
 See [`Hyperrectangle`](@ref) for a standard implementation of this interface.
 
-Hyperrectangular sets are paricular cases of zonotopic sets, hence this interface
+Hyperrectangular sets are particular cases of zonotopic sets, hence this interface
 is a subtype of the `AbstractZonotope` interface.
 
 Let `X` be a set such that `typeof(X)` is a concrete subtype of `AbstractHyperrectangle`
