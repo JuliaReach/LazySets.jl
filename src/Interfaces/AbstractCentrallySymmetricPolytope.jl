@@ -17,13 +17,13 @@ Such a type combination is necessary as long as Julia does not support
 ### Notes
 
 Every concrete `AbstractCentrallySymmetricPolytope` must define the following
-functions:
-- from `AbstractCentrallySymmetric`:
-  - `center(::AbstractCentrallySymmetricPolytope{N})` -- return the
-     center point
-- from `AbstractPolytope`:
-  - `vertices_list(::AbstractCentrallySymmetricPolytope{N})`
-     -- return a list of all vertices
+functions. Let `X` be an `AbstractCentrallySymmetricPolytope`.
+
+- `center(X)` -- return the center of `X`
+
+The following function is optional:
+
+- `vertices_list` -- return a list of all vertices
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractCentrallySymmetricPolytope)

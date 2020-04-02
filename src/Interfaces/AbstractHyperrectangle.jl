@@ -19,14 +19,16 @@ Abstract type for hyperrectangular sets.
 See [`Hyperrectangle`](@ref) for a standard implementation of this interface.
 
 Hyperrectangular sets are particular cases of zonotopic sets, hence this interface
-is a subtype of the `AbstractZonotope` interface.
+is a subtype of the `AbstractZonotope` interface. As such, any concrete implementation
+of `AbstractHyperrectangle` should implement the methods required for that interface,
+see the notes in [`AbstractZonotope`] for that interface.
 
-Let `X` be a set such that `typeof(X)` is a concrete subtype of `AbstractHyperrectangle`
-and let `n` denote the dimension of `X`. Every concrete implementation of the
-`AbstractHyperrectangle` interface must define the following functions:
+In addition, every concrete implementation of the `AbstractHyperrectangle` interface
+must also define the functions described below. Let `X` be a set such that
+`typeof(X)` is a concrete subtype of `AbstractHyperrectangle` and let `n` denote
+the dimension of `X`.
 
-- `center(X)`                   -- return the center of `X`
-- `radius_hyperrectangle(X, i)` -- return the `n`-dimensional radius of `X`
+- `radius_hyperrectangle(X)` -- return the `n`-dimensional radius of `X`
 - `radius_hyperrectangle(X, i)` -- return the `i`-th component of `X`'s radius
 - `isflat(X)`                   -- determine whether the radius of `X` is zero
                                    in some dimension
