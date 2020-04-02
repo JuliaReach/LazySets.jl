@@ -189,7 +189,7 @@ function vertices_list(H::AbstractHyperrectangle{N}) where {N<:Real}
     trivector = Vector{Int8}(undef, n)
     m = 1
     c = center(H)
-    v = copy(c)
+    v = convert(Vector{N}, copy(c))
     @inbounds for i in 1:n
         ri = radius_hyperrectangle(H, i)
         if iszero(ri)
