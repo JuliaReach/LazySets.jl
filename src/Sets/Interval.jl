@@ -602,5 +602,5 @@ Return the center along a given dimension of a interval.
 The center along a given dimension of the interval.
 """
 function center(x::Interval{N}, i::Int) where {N<:Real}
-    return x.center[i]
+    return center(x)[i]
 end
