@@ -617,3 +617,21 @@ function volume(H::AbstractHyperrectangle{N}) where {N<:Real}
     vol = mapreduce(x -> 2x, *, radius_hyperrectangle(H))
     return vol
 end
+
+"""
+    center(H::AbstractHyperrectangle{N}, i::Int) where {N<:Real}
+
+Return the center along a given dimension of a hyperrectangular set.
+
+### Input
+
+- `H` -- hyperrectangular set
+- `i` -- dimension of interest
+
+### Output
+
+The center along a given dimension of the hyperrectangular set.
+"""
+function center(H::AbstractHyperrectangle{N}, i::Int) where {N<:Real}
+    return H.center[i]
+end

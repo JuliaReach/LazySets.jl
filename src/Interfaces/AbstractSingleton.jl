@@ -141,6 +141,24 @@ function low(S::AbstractSingleton{N}, i::Int) where {N<:Real}
     return element(S)[i]
 end
 
+"""
+    center(S::AbstractSingleton{N}, i::Int) where {N<:Real}
+
+Return the center along a given dimension of a set with a single value.
+
+### Input
+
+- `S` -- set with a single value
+- `i` -- dimension of interest
+
+### Output
+
+The center along a given dimension of the set with a single value.
+"""
+function center(S::AbstractSingleton{N}, i::Int) where {N<:Real}
+    return element(S)[i]
+end
+
 
 # --- AbstractZonotope interface functions ---
 

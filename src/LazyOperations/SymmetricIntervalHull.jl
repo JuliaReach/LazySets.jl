@@ -112,6 +112,24 @@ function radius_hyperrectangle(sih::SymmetricIntervalHull{N}) where {N<:Real}
     return sih.cache
 end
 
+"""
+    center(sih::SymmetricIntervalHull{N}, i::Int) where {N<:Real}
+
+Return the center along a given dimension of a symmetric interval hull of a convex set.
+
+### Input
+
+- `sih` -- symmetric interval hull of a convex set
+- `i` -- dimension of interest
+
+### Output
+
+The center along a given dimension of the symmetric interval hull of a convex set.
+"""
+function center(sih::SymmetricIntervalHull{N}, i::Int) where {N<:Real}
+    return zero(N)
+end
+
 
 # --- AbstractCentrallySymmetric interface functions ---
 

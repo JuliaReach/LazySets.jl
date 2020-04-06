@@ -167,6 +167,24 @@ function center(H::Hyperrectangle{N}) where {N<:Real}
     return H.center
 end
 
+"""
+    center(H::Hyperrectangle{N}, i::Int) where {N<:Real}
+
+Return the center along a given dimension of a hyperrectangle.
+
+### Input
+
+- `H` -- hyperrectangle
+- `i` -- dimension of interest
+
+### Output
+
+The center along a given dimension of the hyperrectangle.
+"""
+function center(H::Hyperrectangle{N}, i::Int) where {N<:Real}
+    return H.center[i]
+end
+
 
 # --- LazySet interface functions ---
 

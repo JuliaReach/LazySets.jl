@@ -586,3 +586,21 @@ The interval obtained by applying the numerical scale to the given interval.
 function scale(α::N, x::Interval{N}) where {N<:Real}
     return Interval(α * x.dat)
 end
+
+"""
+    center(H::Interval{N}, i::Int) where {N<:Real}
+
+Return the center along a given dimension of a interval.
+
+### Input
+
+- `x` -- interval
+- `i` -- dimension of interest
+
+### Output
+
+The center along a given dimension of the interval.
+"""
+function center(x::Interval{N}, i::Int) where {N<:Real}
+    return x.center[i]
+end
