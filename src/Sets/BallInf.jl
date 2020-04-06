@@ -352,6 +352,6 @@ Return the center along a given dimension of a ball in the infinity norm.
 
 The center along a given dimension of the ball in the infinity norm.
 """
-function center(B::BallInf{N}, i::Int) where {N<:Real}
+@inline function center(B::BallInf{N}, i::Int) where {N<:Real}
     return B.center[i]
 end

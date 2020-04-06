@@ -601,6 +601,6 @@ Return the center along a given dimension of a interval.
 
 The center along a given dimension of the interval.
 """
-function center(x::Interval{N}, i::Int) where {N<:Real}
+@inline function center(x::Interval{N}, i::Int) where {N<:Real}
     return center(x)[i]
 end

@@ -181,7 +181,7 @@ Return the center along a given dimension of a hyperrectangle.
 
 The center along a given dimension of the hyperrectangle.
 """
-function center(H::Hyperrectangle{N}, i::Int) where {N<:Real}
+@inline function center(H::Hyperrectangle{N}, i::Int) where {N<:Real}
     return H.center[i]
 end
 

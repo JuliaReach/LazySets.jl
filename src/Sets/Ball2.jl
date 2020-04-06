@@ -279,6 +279,28 @@ function sample(B::Ball2{N, VN}, nsamples::Int=1;
 end
 
 
+# --- AbstractHyperrectangle interface functions ---
+
+
+"""
+    center(B::Ball2{N}, i::Int) where {N<:Real}
+
+Return the center along a given dimension of a ball in the 2-norm.
+
+### Input
+
+- `B` -- ball in the 2-norm
+- `i` -- dimension of interest
+
+### Output
+
+The center along a given dimension of the ball in the 2-norm.
+"""
+@inline function center(B::Ball2{N}, i::Int) where {N<:Real}
+    B.center[i]
+end
+
+
 # --- Ball2 functions ---
 
 

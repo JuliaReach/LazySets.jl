@@ -222,6 +222,7 @@ function translate(Z::ZeroSet{N}, v::AbstractVector{N}) where {N<:Real}
     return Singleton(v)
 end
 
+
 # --- AbstractHyperrectangle interface functions ---
 
 
@@ -239,6 +240,7 @@ Return the center along a given dimension of a zero set.
 
 The center along a given dimension of the zero set.
 """
-function center(Z::ZeroSet{N}, i::Int) where {N<:Real}
+@inline function center(Z::ZeroSet{N}, i::Int) where {N<:Real}
+    @boundscheck _check_bounds(Z, i)
     return zero(N)
 end

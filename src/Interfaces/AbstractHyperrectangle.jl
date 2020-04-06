@@ -632,6 +632,6 @@ Return the center along a given dimension of a hyperrectangular set.
 
 The center along a given dimension of the hyperrectangular set.
 """
-function center(H::AbstractHyperrectangle{N}, i::Int) where {N<:Real}
+@inline function center(H::AbstractHyperrectangle{N}, i::Int) where {N<:Real}
     return center(H)[i]
 end

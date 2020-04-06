@@ -147,8 +147,9 @@ Return the center of a symmetric interval hull of a convex set.
 
 The origin.
 """
-function center(sih::SymmetricIntervalHull{N}) where {N<:Real}
-    return zeros(N, dim(sih))
+@inline function center(sih::SymmetricIntervalHull{N}, i::Int) where {N<:Real}
+    @boundscheck _check_bounds(sih, i)
+    return zero(N)
 end
 
 

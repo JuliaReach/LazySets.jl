@@ -155,7 +155,7 @@ Return the center along a given dimension of a set with a single value.
 
 The center along a given dimension of the set with a single value.
 """
-function center(S::AbstractSingleton{N}, i::Int) where {N<:Real}
+@inline function center(S::AbstractSingleton{N}, i::Int) where {N<:Real}
     return element(S)[i]
 end
 

@@ -99,6 +99,28 @@ function center(B::Ballp{N}) where {N<:AbstractFloat}
 end
 
 
+# --- AbstractHyperrectangle interface functions ---
+
+
+"""
+    center(B::Ballp{N}, i::Int) where {N<:Real}
+
+Return the center along a given dimension of a ball in the p-norm.
+
+### Input
+
+- `B` -- ball in the p-norm
+- `i` -- dimension of interest
+
+### Output
+
+The center along a given dimension of the ball in the p-norm.
+"""
+@inline function center(B::Ballp{N}, i::Int) where {N<:Real}
+    B.center[i]
+end
+
+
 # --- LazySet interface functions ---
 
 
