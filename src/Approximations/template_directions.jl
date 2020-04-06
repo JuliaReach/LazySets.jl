@@ -76,7 +76,9 @@ Returns whether the given template directions is normalized with respect to the
 
 `true` if the 2-norm of each element in `ad` is one and `false` otherwise.
 """
-function isnormalized(ad::AbstractDirections) end
+function isnormalized(ad::AbstractDirections)
+    return false
+end
 
 # ==================================================
 # Box directions
