@@ -126,7 +126,8 @@ Return the center along a given dimension of a symmetric interval hull of a conv
 
 The center along a given dimension of the symmetric interval hull of a convex set.
 """
-function center(sih::SymmetricIntervalHull{N}, i::Int) where {N<:Real}
+@inline function center(sih::SymmetricIntervalHull{N}, i::Int) where {N<:Real}
+    @boundscheck _check_bounds(sih, i)
     return zero(N)
 end
 
@@ -147,9 +148,8 @@ Return the center of a symmetric interval hull of a convex set.
 
 The origin.
 """
-@inline function center(sih::SymmetricIntervalHull{N}, i::Int) where {N<:Real}
-    @boundscheck _check_bounds(sih, i)
-    return zero(N)
+function center(sih::SymmetricIntervalHull{N}) where {N<:Real}
+    return zeros(N, dim(sih))
 end
 
 

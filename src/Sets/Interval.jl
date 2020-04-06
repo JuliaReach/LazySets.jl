@@ -602,5 +602,6 @@ Return the center along a given dimension of a interval.
 The center along a given dimension of the interval.
 """
 @inline function center(x::Interval{N}, i::Int) where {N<:Real}
-    return center(x)[i]
+    @boundscheck i == 1 || throw(ArgumentError("an interval has dimension one, but the index is $i"))
+    return IntervalArithmetic.mid(x.dat)
 end
