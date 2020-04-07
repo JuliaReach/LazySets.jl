@@ -501,7 +501,7 @@ The integer passed as an argument is used to discretize ``φ``:
 
 ```jldoctest; filter = r"2246[0-9]*e-16"
 julia> pd = PolarDirections(2)
-PolarDirections{Float64,Array{Float64,1}}(2, [[1.0, 0.0], [-1.0, 1.2246467991473532e-16]])
+PolarDirections{Float64,Array{Float64,1}}(2, Array{Float64,1}[[1.0, 0.0], [-1.0, 1.2246467991473532e-16]])
 
 julia> length(pd)
 2
@@ -582,8 +582,7 @@ A `SphericalDirections` template can be built in different ways. If you pass
 only one integer, the same value is used to discretize both ``θ`` and ``φ``:
 
 ```jldoctest spherical_directions; filter = r"1232[0-9]*e-17.*2246[0-9]*e-16.*1232[0-9]*e-17"
-julia> sd = SphericalDirections(3)
-SphericalDirections{Float64,Array{Float64,1}}(3, 3, [[0.0, 0.0, 1.0], [0.0, 0.0, -1.0], [1.0, 0.0, 6.123233995736766e-17], [-1.0, 1.2246467991473532e-16, 6.123233995736766e-17]])
+julia> sd = SphericalDirections(3);
 
 julia> sd.Nθ, sd.Nφ
 (3, 3)
@@ -687,7 +686,7 @@ Creating a template with box directions in dimension two:
 
 ```jldoctest
 julia> dirs = CustomDirections([[1.0, 0.0], [-1.0, 0.0], [0.0, 1.0], [0.0, -1.0]])
-CustomDirections{Float64,Array{Float64,1}}([[1.0, 0.0], [-1.0, 0.0], [0.0, 1.0], [0.0, -1.0]], 2, true, true)
+CustomDirections{Float64,Array{Float64,1}}(Array{Float64,1}[[1.0, 0.0], [-1.0, 0.0], [0.0, 1.0], [0.0, -1.0]], 2, true, true)
 
 julia> LazySets.Approximations.isbounding(dirs)
 true
