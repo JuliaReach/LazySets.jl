@@ -200,7 +200,7 @@ for N in [Float64]
     # 2D
     Z = Zonotope(N[0, 0], Matrix{N}(I, 2, 2))
     P = HPolytope(constraints_list(Z))
-    for d in LazySets.Approximations.BoxDiagDirections{N}(2)
+    for d in BoxDiagDirections{N}(2)
         @test ρ(d, P) == ρ(d, Z)
     end
     # sparse matrix (#1468)
