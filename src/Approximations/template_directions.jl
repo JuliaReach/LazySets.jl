@@ -512,20 +512,21 @@ struct PolarDirections{N<:AbstractFloat, VN<:AbstractVector{N}} <: AbstractDirec
     stack::Vector{VN} # stores the polar directions
 end
 
-# convenience constructor for type Float64
+# convenience constructors
 PolarDirections(Nφ::Int) = PolarDirections{Float64, Vector{Float64}}(Nφ)
+PolarDirections{N}(Nφ::Int) where {N} = PolarDirections{N, Vector{N}}(Nφ)
 
-function PolarDirections{Float64, Vector{Float64}}(Nφ::Int)
+function PolarDirections{N, Vector{N}}(Nφ::Int) where {N}
     if Nφ <= 0
         throw(ArgumentError("Nφ = $Nφ is invalid; it shoud be at least 1"))
     end
-    stack = Vector{Vector{Float64}}(undef, Nφ)
-    φ = range(0.0, 2*pi, length=Nφ+1)  # discretization of the polar angle
+    stack = Vector{Vector{N}}(undef, Nφ)
+    φ = range(N(0), N(2*pi), length=Nφ+1)  # discretization of the polar angle
 
     @inbounds for i in 1:Nφ  # skip last (repeated) angle
-        stack[i] = [cos(φ[i]), sin(φ[i])]
+        stack[i] = N[cos(φ[i]), sin(φ[i])]
     end
-    return PolarDirections{Float64, Vector{Float64}}(Nφ, stack)
+    return PolarDirections{N, Vector{N}}(Nφ, stack)
 end
 
 Base.eltype(::Type{PolarDirections{N, VN}}) where {N, VN} = VN
@@ -533,7 +534,7 @@ Base.length(pd::PolarDirections) = pd.Nφ
 
 # interface functions
 dim(pd::PolarDirections) = 2
-isbounding(pd::Type{<:PolarDirections}) = pd.Nφ > 2
+isbounding(pd::PolarDirections) = pd.Nφ > 2
 isnormalized(::Type{<:PolarDirections}) = true
 
 function Base.iterate(pd::PolarDirections{N, Vector{N}}, state::Int=1) where {N}
@@ -614,28 +615,29 @@ end
 # convenience constructors
 SphericalDirections(Nθ::Int) = SphericalDirections(Nθ, Nθ)
 SphericalDirections(Nθ::Int, Nφ::Int) = SphericalDirections{Float64, Vector{Float64}}(Nθ::Int, Nφ::Int)
+SphericalDirections{N}(Nθ::Int, Nφ::Int) where {N} = SphericalDirections{N, Vector{N}}(Nθ::Int, Nφ::Int)
 
-function SphericalDirections{Float64, Vector{Float64}}(Nθ::Int, Nφ::Int)
+function SphericalDirections{N, Vector{N}}(Nθ::Int, Nφ::Int) where {N}
     if Nθ <= 1 || Nφ <= 1
         throw(ArgumentError("(Nθ, Nφ) = ($Nθ, $Nφ) is invalid; both shoud be at least 2"))
     end
-    stack = Vector{Vector{Float64}}()
-    θ = range(0.0, pi, length=Nθ)    # discretization of the azimuthal angle
-    φ = range(0.0, 2*pi, length=Nφ)  # discretization of the polar angle
+    stack = Vector{Vector{N}}()
+    θ = range(N(0), N(pi), length=Nθ)    # discretization of the azimuthal angle
+    φ = range(N(0), N(2*pi), length=Nφ)  # discretization of the polar angle
 
     # add north pole (θ = 0)
-    push!(stack, Float64[0, 0, 1])
+    push!(stack, N[0, 0, 1])
 
     # add south pole (θ = pi)
-    push!(stack, Float64[0, 0, -1])
+    push!(stack, N[0, 0, -1])
 
     for φᵢ in φ[1:Nφ-1]  # delete repeated angle
         for θⱼ in θ[2:Nθ-1] # delete north and south poles
-            d = [sin(θⱼ)*cos(φᵢ), sin(θⱼ)*sin(φᵢ), cos(θⱼ)]
+            d = N[sin(θⱼ)*cos(φᵢ), sin(θⱼ)*sin(φᵢ), cos(θⱼ)]
             push!(stack, d)
         end
     end
-    return SphericalDirections{Float64, Vector{Float64}}(Nθ, Nφ, stack)
+    return SphericalDirections{N, Vector{N}}(Nθ, Nφ, stack)
 end
 
 Base.eltype(::Type{SphericalDirections{N, VN}}) where {N, VN} = VN
@@ -643,7 +645,7 @@ Base.length(sd::SphericalDirections) = length(sd.stack)
 
 # interface functions
 dim(::SphericalDirections) = 3
-isbounding(sd::Type{<:SphericalDirections}) = sd.Nθ > 2 && sd.Nφ > 2
+isbounding(sd::SphericalDirections) = sd.Nθ > 2 && sd.Nφ > 2
 isnormalized(::Type{<:SphericalDirections}) = true
 
 function Base.iterate(sd::SphericalDirections, state::Int=1)

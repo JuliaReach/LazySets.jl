@@ -92,7 +92,7 @@ for N in [Float64]
 
         # custom directions
         # empty list of directions
-        dir = CustomDirections(Vector{N}[]; n=n)
+        dir = CustomDirections(Vector{N}[], n)
         @test dim(dir) == n
         P = overapproximate(X, dir)
         @test isempty(constraints_list(P))
