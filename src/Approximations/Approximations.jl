@@ -7,7 +7,7 @@ support vectors.
 module Approximations
 
 using LazySets, LazySets.Arrays, Requires, LinearAlgebra, SparseArrays
-using LazySets: _rtol, _normal_Vector
+using LazySets: _isapprox, _rtol, _normal_Vector
 using ..Assertions: @assert, activate_assertions
 # activate assertions by default
 activate_assertions(Approximations)
