@@ -9,6 +9,7 @@ Ballp
 σ(::AbstractVector{N}, ::Ballp{N}) where {N<:AbstractFloat}
 ∈(::AbstractVector{N}, ::Ballp{N}) where {N<:AbstractFloat}
 center(::Ballp{N}) where {N<:AbstractFloat}
+center(::Ballp{N}, ::Int) where {N<:Real}
 rand(::Type{Ballp})
 translate(::Ballp{N}, ::AbstractVector{N}) where {N<:AbstractFloat}
 ```

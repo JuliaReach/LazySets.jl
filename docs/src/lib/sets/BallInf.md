@@ -15,6 +15,7 @@ rand(::Type{BallInf})
 σ(::AbstractVector{N}, ::BallInf{N}) where {N<:Real}
 ρ(::AbstractVector{N}, ::BallInf{N}) where {N<:Real}
 translate(::BallInf{N}, ::AbstractVector{N}) where {N<:Real}
+center(::BallInf{N}, ::Int) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))

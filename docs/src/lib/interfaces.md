@@ -359,6 +359,7 @@ generators(::AbstractHyperrectangle)
 genmat(::AbstractHyperrectangle)
 ngens(::AbstractHyperrectangle{N}) where {N<:Real}
 rectify(::AbstractHyperrectangle)
+center(::AbstractHyperrectangle{N}, ::Int) where {N<:Real}
 ```
 
 ### Implementations
@@ -389,6 +390,7 @@ This interface defines the following functions:
 ∈(::AbstractVector{N}, ::AbstractSingleton{N}) where {N<:Real}
 an_element(::AbstractSingleton{N}) where {N<:Real}
 center(::AbstractSingleton{N}) where {N<:Real}
+center(::AbstractSingleton{N}, ::Int) where {N<:Real}
 vertices_list(::AbstractSingleton{N}) where {N<:Real}
 radius_hyperrectangle(::AbstractSingleton{N}) where {N<:Real}
 radius_hyperrectangle(::AbstractSingleton{N}, ::Int) where {N<:Real}
