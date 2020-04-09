@@ -432,7 +432,8 @@ function _overapproximate_convex_hull_zonotope_G05(
                  (G1[:, 1:ngens(Z2)] .- G2) / N(2),
                  G1[:, ngens(Z2)+1:end])
     end
-    return Zonotope(c, G)
+    Z = Zonotope(c, G)
+    return remove_zero_generators(Z)
 end
 
 function _overapproximate_convex_hull_zonotope_GGP09(
@@ -1143,7 +1144,8 @@ function _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
         gen_lin[i, :] = get_linear_coeffs(Q) # linear terms
         gen_rem[i] = abs(rem_nonlin.hi - α)
     end
-    return Zonotope(c, hcat(gen_lin, Diagonal(gen_rem)))
+    Z = Zonotope(c, hcat(gen_lin, Diagonal(gen_rem)))
+    return remove_zero_generators(Z)
 end
 
 end # quote

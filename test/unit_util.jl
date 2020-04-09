@@ -109,10 +109,13 @@ for _dummy_ in 1:1 # avoid global variable warnings
         # remove zero columns
         m = 3
         n = 10
-        A = rand(N, m, n)
+        A = ones(N, m, n)
         A[:, 1] = A[:, 5] = A[:, n] = zeros(N, m)
-        B = LazySets.delete_zero_columns!(A)
+        nzcol = LazySets.Arrays.nonzero_columns(A)
+        B = A[:, nzcol]
         @test size(B) == (m, n-3)
+        Asp = sparse(A)
+        @test LazySets.Arrays.nonzero_columns(Asp) == [2, 3, 4, 6, 7, 8, 9]
 
         # extend by orthogonal complement
         M = N[1 1; 2 2; 3 4.]

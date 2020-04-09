@@ -3,7 +3,10 @@ import Base: rand,
 
 export Zonotope,
        scale,
-       reduce_order
+       reduce_order,
+       remove_zero_generators
+
+using LazySets.Arrays: _vector_type, _matrix_type
 
 """
     Zonotope{N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
@@ -32,9 +35,6 @@ ball in ``\\mathbb{R}^n`` by an affine transformation.
 Zonotopes can be constructed in two different ways: either passing the generators
 as a matrix, where each column represents a generator, or passing a list of vectors
 where each vector represents a generator. Below we illustrate both ways.
-
-The optional argument `remove_zero_generators` controls whether we remove zero
-columns from the `generators` matrix. This option is active by default.
 
 ### Examples
 
@@ -100,18 +100,13 @@ struct Zonotope{N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: Abstra
     center::VN
     generators::MN
 
-    function Zonotope(center::VN, generators::MN;
-                      remove_zero_generators::Bool=true) where {N<:Real,
-                                                                VN<:AbstractVector{N},
-                                                                MN<:AbstractMatrix{N}}
+    function Zonotope(center::VN, generators::MN) where {N<:Real,
+                                                         VN<:AbstractVector{N},
+                                                         MN<:AbstractMatrix{N}}
         @assert length(center) == size(generators, 1) "the dimension of the " *
             "center ($(length(center))) and the generators " *
             "($(size(generators, 1))) need to match"
-        if remove_zero_generators
-            generators = delete_zero_columns!(generators)
-        end
-        MT = typeof(generators)
-        new{N, VN, MT}(center, generators)
+        return new{N, VN, MN}(center, generators)
     end
 end
 
@@ -119,9 +114,41 @@ isoperationtype(::Type{<:Zonotope}) = false
 isconvextype(::Type{<:Zonotope}) = true
 
 # constructor from center and list of generators
-function Zonotope(center::VN, generators_list::AbstractVector{VN};
-                  remove_zero_generators::Bool=true) where {N<:Real, VN<:AbstractVector{N}}
-    return Zonotope(center, hcat(generators_list...); remove_zero_generators=remove_zero_generators)
+function Zonotope(center::VN, generators_list::AbstractVector{VN}) where {N<:Real, VN<:AbstractVector{N}}
+    MT = _matrix_type(VN)
+    G = MT(undef, length(center), length(generators_list))
+    for (j, gj) in enumerate(generators_list)
+        @inbounds G[:, j] = gj
+    end
+    return Zonotope(center, G)
+end
+
+"""
+    remove_zero_generators(Z::Zonotope{N, VN, MN}) where {N<:Real,
+                                                          VN<:AbstractVector{N},
+                                                          MN<:AbstractMatrix{N}}
+
+Return a new zonotope removing the generators which are zero of the given zonotope.
+
+### Input
+
+- `Z` -- zonotope
+
+### Output
+
+A zonotope that has the same generators as `Z` but removing those which are zero.
+"""
+function remove_zero_generators(Z::Zonotope{N, VN, MN}) where {N<:Real,
+                                                               VN<:AbstractVector{N},
+                                                               MN<:AbstractMatrix{N}}
+    generators = Z.generators
+    c = Z.center
+
+    nzcol = nonzero_columns(generators)
+    p = length(nzcol)
+    pmax = size(generators, 2)
+    G = (p == pmax) ? generators : generators[:, nzcol]
+    return Zonotope(c, G)
 end
 
 # --- AbstractCentrallySymmetric interface functions ---
