@@ -136,7 +136,7 @@ Return a new zonotope removing the generators which are zero of the given zonoto
 
 ### Output
 
-A zonotope with has the same generators as `Z` but removing those which are zero.
+A zonotope that has the same generators as `Z` but removing those which are zero.
 """
 function remove_zero_generators(Z::Zonotope{N, VN, MN}) where {N<:Real,
                                                                VN<:AbstractVector{N},
