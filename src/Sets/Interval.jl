@@ -566,7 +566,7 @@ function _linear_map_zonotope(M::AbstractMatrix{N}, x::Interval{N}) where {N<:Re
         c[i] = M[i, 1] * cx
         gen[i] = M[i, 1] * gx
     end
-    return Zonotope(c, gen, remove_zero_generators=false)
+    return Zonotope(c, gen)
 end
 
 """

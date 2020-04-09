@@ -51,7 +51,9 @@ for N in [Float64, Rational{Int}, Float32]
     g[:, 3] = ones(N, 2)
     g[1, 2] = N(2)
     z = Zonotope(N[1, 2], g)
-    @test size(z.generators) == (2, 2)
+    @test size(z.generators) == (2, 5)
+    zred = remove_zero_generators(z)
+    @test size(zred.generators) == (2, 2)
 
     # boundedness
     @test isbounded(z)

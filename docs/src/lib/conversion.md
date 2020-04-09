@@ -33,7 +33,7 @@ convert(::Type{VPolygon}, ::AbstractHPolygon)
 convert(::Type{VPolygon}, ::AbstractPolytope)
 convert(::Type{VPolytope}, ::AbstractPolytope)
 convert(::Type{VPolytope}, ::HPolytope)
-convert(::Type{Zonotope}, ::AbstractHyperrectangle)
+convert(::Type{Zonotope}, ::AbstractHyperrectangle{N}) where {N}
 convert(::Type{Zonotope}, ::AbstractZonotope)
 convert(::Type{IntervalArithmetic.IntervalBox}, ::AbstractHyperrectangle)
 convert(::Type{Hyperrectangle}, ::IntervalArithmetic.IntervalBox)
