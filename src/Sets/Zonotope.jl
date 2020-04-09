@@ -6,7 +6,6 @@ export Zonotope,
        reduce_order,
        remove_zero_generators
 
-# constructor from center and list of generators
 using LazySets.Arrays: _vector_type, _matrix_type
 
 """
@@ -114,6 +113,7 @@ end
 isoperationtype(::Type{<:Zonotope}) = false
 isconvextype(::Type{<:Zonotope}) = true
 
+# constructor from center and list of generators
 function Zonotope(center::VN, generators_list::AbstractVector{VN}) where {N<:Real, VN<:AbstractVector{N}}
     MT = _matrix_type(VN)
     G = MT(undef, length(center), length(generators_list))

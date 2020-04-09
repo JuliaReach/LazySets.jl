@@ -432,7 +432,8 @@ function _overapproximate_convex_hull_zonotope_G05(
                  (G1[:, 1:ngens(Z2)] .- G2) / N(2),
                  G1[:, ngens(Z2)+1:end])
     end
-    return Zonotope(c, G)
+    Z = Zonotope(c, G)
+    return remove_zero_generators(Z)
 end
 
 function _overapproximate_convex_hull_zonotope_GGP09(
@@ -1032,6 +1033,9 @@ function overapproximate(vTM::Vector{TaylorModel1{T, S}},
 
     # compute overapproximation
     return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
+
+    # remove generators which are zero
+    return remove_zero_generators(Z)
 end
 
 """
@@ -1119,7 +1123,10 @@ function overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
     gen_rem = Vector{T}(undef, m) # generators for the remainder
 
     # compute overapproximation
-    return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
+    Z = _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
+
+    # remove generators which are zero
+    return remove_zero_generators(Z)
 end
 
 function _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
