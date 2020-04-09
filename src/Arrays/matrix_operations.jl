@@ -172,6 +172,7 @@ function nonzero_columns(A::AbstractMatrix)
 end
 
 function nonzero_columns(A::SparseMatrixCSC)
+    dropzeros!(A)
     return collect(j for j in 1:A.n if A.colptr[j] < A.colptr[j+1])
 end
 
