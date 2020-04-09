@@ -3,7 +3,8 @@ import Base: rand,
 
 export Zonotope,
        scale,
-       reduce_order
+       reduce_order,
+       remove_zero_generators
 
 # constructor from center and list of generators
 using LazySets.Arrays: _vector_type, _matrix_type
@@ -35,9 +36,6 @@ ball in ``\\mathbb{R}^n`` by an affine transformation.
 Zonotopes can be constructed in two different ways: either passing the generators
 as a matrix, where each column represents a generator, or passing a list of vectors
 where each vector represents a generator. Below we illustrate both ways.
-
-The optional argument `remove_zero_generators` controls whether we remove zero
-columns from the `generators` matrix. This option is active by default.
 
 ### Examples
 
@@ -118,22 +116,39 @@ isconvextype(::Type{<:Zonotope}) = true
 
 function Zonotope(center::VN, generators_list::AbstractVector{VN}) where {N<:Real, VN<:AbstractVector{N}}
     MT = _matrix_type(VN)
-    G = MT(undef, length(center), length(generators_list)) # TODO: generic undef creator?
-    for gi in generators_list
-        @inbounds G[:, i] = gi
+    G = MT(undef, length(center), length(generators_list))
+    for (j, gj) in enumerate(generators_list)
+        @inbounds G[:, j] = gj
     end
     return Zonotope(center, G)
 end
 
+"""
+    remove_zero_generators(Z::Zonotope{N, VN, MN}) where {N<:Real,
+                                                          VN<:AbstractVector{N},
+                                                          MN<:AbstractMatrix{N}}
+
+Return a new zonotope removing the generators which are zero of the given zonotope.
+
+### Input
+
+- `Z` -- zonotope
+
+### Output
+
+A zonotope with has the same generators as `Z` but removing those which are zero.
+"""
 function remove_zero_generators(Z::Zonotope{N, VN, MN}) where {N<:Real,
                                                                VN<:AbstractVector{N},
                                                                MN<:AbstractMatrix{N}}
-    generators = genmat(Z)
+    generators = Z.generators
+    c = Z.center
+
     nzcol = nonzero_columns(generators)
     p = length(nzcol)
     pmax = size(generators, 2)
-    G = (p == pmax) ? generators : view(generators, :, nzcol)
-    return Zonotope(center, G)
+    G = (p == pmax) ? generators : generators[:, nzcol]
+    return Zonotope(c, G)
 end
 
 # --- AbstractCentrallySymmetric interface functions ---

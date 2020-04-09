@@ -268,7 +268,7 @@ end
 function convert(::Type{Zonotope}, S::Singleton{N, VN}) where {N, VN<:AbstractVector{N}}
     MT = LazySets.Arrays._matrix_type(VN)
     zero_genmat = MT(undef, dim(S), 0)
-    return Zonotope(element(S), zero_genmat, remove_zero_generators=false)
+    return Zonotope(element(S), zero_genmat)
 end
 
 """

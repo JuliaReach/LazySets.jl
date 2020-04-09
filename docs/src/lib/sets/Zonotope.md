@@ -15,6 +15,7 @@ ngens(::Zonotope)
 togrep(::Zonotope)
 reduce_order(::Zonotope, ::Union{Integer, Rational})
 split(::Zonotope, ::Int)
+remove_zero_generators(::Zonotope)
 ```
 
 Inherited from [`LazySet`](@ref):
