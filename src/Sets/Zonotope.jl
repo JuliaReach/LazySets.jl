@@ -5,6 +5,9 @@ export Zonotope,
        scale,
        reduce_order
 
+# constructor from center and list of generators
+using LazySets.Arrays: _vector_type, _matrix_type
+
 """
     Zonotope{N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
 
@@ -113,8 +116,6 @@ end
 isoperationtype(::Type{<:Zonotope}) = false
 isconvextype(::Type{<:Zonotope}) = true
 
-# constructor from center and list of generators
-using LazySets.Arrays: _vector_type, _matrix_type
 function Zonotope(center::VN, generators_list::AbstractVector{VN}) where {N<:Real, VN<:AbstractVector{N}}
     MT = _matrix_type(VN)
     G = MT(undef, length(center), length(generators_list)) # TODO: generic undef creator?
