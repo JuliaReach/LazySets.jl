@@ -258,7 +258,20 @@ A zonotope.
 function convert(::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
     if isflat(H)
         r = radius_hyperrectangle(H)
-        G = Diagonal(r[r .!= zero(N)])
+        n = length(r)
+
+        nzgen = 0
+        Gnz = Vector{N}()
+        sizehint!(Gnz, n * n)
+        @inbounds for (i, ri) in enumerate(r)
+            if ri != zero(N)
+                col = zeros(N, n)
+                col[i] = ri
+                append!(Gnz, col)
+                nzgen += 1
+            end
+        end
+        G = reshape(Gnz, n, nzgen)
     else
         G = genmat(H)
     end
