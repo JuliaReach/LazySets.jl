@@ -1033,9 +1033,6 @@ function overapproximate(vTM::Vector{TaylorModel1{T, S}},
 
     # compute overapproximation
     return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
-
-    # remove generators which are zero
-    return remove_zero_generators(Z)
 end
 
 """
@@ -1123,13 +1120,11 @@ function overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
     gen_rem = Vector{T}(undef, m) # generators for the remainder
 
     # compute overapproximation
-    Z = _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
-
-    # remove generators which are zero
-    return remove_zero_generators(Z)
+    return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
 end
 
 function _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
+    nz_gen_rem = 0 # counter for non-zero generators of the remainder
     @inbounds for (i, x) in enumerate(vTM)
         xpol, xdom = polynomial(x), domain(x)
 
@@ -1148,9 +1143,22 @@ function _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
         α = mid(rem_nonlin)
         c[i] = constant_term(Q) + α  # constant terms
         gen_lin[i, :] = get_linear_coeffs(Q) # linear terms
-        gen_rem[i] = abs(rem_nonlin.hi - α)
+        aux = abs(rem_nonlin.hi - α)
+        gen_rem[i] = aux
+        if !isapproxzero(aux)
+            nz_gen_rem += 1
+        end
     end
-    return Zonotope(c, hcat(gen_lin, Diagonal(gen_rem)))
+    if nz_gen_rem > 0
+        D = Diagonal(gen_rem)
+        if nz_gen_rem < size(D, 2)
+            D = D[:, 1:nz_gen_rem]
+        end
+        Z = Zonotope(c, hcat(gen_lin, D))
+    else
+        Z = Zonotope(c, gen_lin)
+    end
+    return Z
 end
 
 end # quote
