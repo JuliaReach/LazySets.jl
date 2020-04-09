@@ -1144,9 +1144,9 @@ function _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
         c[i] = constant_term(Q) + α  # constant terms
         gen_lin[i, :] = get_linear_coeffs(Q) # linear terms
         aux = abs(rem_nonlin.hi - α)
-        gen_rem[i] = aux
         if !isapproxzero(aux)
             nz_gen_rem += 1
+            gen_rem[nz_gen_rem] = aux
         end
     end
     if nz_gen_rem > 0
