@@ -487,7 +487,7 @@ function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::HalfSpace{N},
     if length(constraints) == 1
         return first(constraints)
     elseif isempty(constraints)
-        return Universe(size(M, 1))
+        return Universe{N}(size(M, 1))
     else
         return HPolyhedron(constraints)
     end
