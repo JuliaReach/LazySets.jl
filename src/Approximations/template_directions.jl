@@ -251,7 +251,7 @@ By default, each direction is represented in this iterator as a sparse vector:
 julia> eltype(dirs)
 SparseArrays.SparseVector{Float64,Int64}
 ```
-In two dimensions, the directions defined by `BoxDiagDirections` are normal to
+In two dimensions, the directions defined by `OctDirections` are normal to
 the facets of an octagon.
 
 ```jldoctest dirs_Oct
