@@ -181,7 +181,7 @@ isbounding(::Type{<:BoxDirections}) = true
 isnormalized(::Type{<:BoxDirections}) = true
 
 # The idea is that positive states run through vectors with +1 entry,
-# and negative states run through -1 entries
+# and negative states run through vectors with -1 entry
 # (1, 0)   state = 1
 # (0, 1)   state = 2
 # (0, -1)  state = -2
