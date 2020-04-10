@@ -328,7 +328,7 @@ function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::Line{N},
         c = first(constraints)
         return Line(c.a, c.b)
     elseif isempty(constraints)
-        return Universe(size(M, 1))
+        return Universe{N}(size(M, 1))
     else
         error("unexpected number of $(length(constraints)) constraints")
     end
