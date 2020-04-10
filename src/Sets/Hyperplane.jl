@@ -432,9 +432,15 @@ end
 function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::Hyperplane{N},
                                  algo::AbstractLinearMapAlgorithm) where {N<:Real}
     constraints = _linear_map_hrep(M, P, algo)
-    @assert length(constraints) == 2
-    c = first(constraints)
-    return Hyperplane(c.a, c.b)
+    if length(constraints) == 2
+        # assuming these constaraints define a hyperplane
+        c = first(constraints)
+        return Hyperplane(c.a, c.b)
+    elseif isempty(constraints)
+        return Universe(size(M, 1))
+    else
+        error("unexpected number of $(length(constraints)) constraints")
+    end
 end
 
 """
