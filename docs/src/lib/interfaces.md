@@ -177,6 +177,7 @@ constrained_dimensions(::AbstractPolyhedron)
 linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 chebyshev_center(::AbstractPolyhedron{N}) where {N<:AbstractFloat}
 an_element(::AbstractPolyhedron{N}) where {N<:Real}
+isbounded(P::AbstractPolyhedron{N}) where {N}
 ```
 
 Plotting (bounded) polyhedra is available, too:
