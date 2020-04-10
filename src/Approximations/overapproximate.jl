@@ -549,13 +549,13 @@ A polyhedron overapproximating the set `X` with the directions from `dir`.
 If the directions are known to be bounded, the result is an `HPolytope`,
 otherwise the result is an `HPolyhedron`.
 """
-function overapproximate(X::LazySet{N}, dir::AbstractDirections{N}) where {N}
-    halfspaces = Vector{LinearConstraint{N, Vector{N}}}() # TODO: use vector element type in `dir`
+function overapproximate(X::LazySet{N}, dir::AbstractDirections{N, VN}) where {N, VN}
+    halfspaces = Vector{LinearConstraint{N, VN}}()
     sizehint!(halfspaces, length(dir))
     T = isbounding(dir) ? HPolytope : HPolyhedron
     H = T(halfspaces)
     for d in dir
-        addconstraint!(H, _normal_Vector(LinearConstraint(d, ρ(d, X)))) # TODO: fix after #2051
+        addconstraint!(H, LinearConstraint(d, ρ(d, X)))
     end
     return H
 end
