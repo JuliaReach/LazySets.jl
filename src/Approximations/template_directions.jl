@@ -233,7 +233,7 @@ Octagon directions consist of all vectors that are zero almost everywhere except
 in two dimensions ``i``, ``j`` (possibly ``i = j``) where it is ``±1``. In dimension
 ``n``, there are ``2n^2`` such directions.
 
-## Examples
+### Examples
 
 The template can be constructed by passing the dimension. For example, in dimension
 two,
