@@ -180,7 +180,7 @@ dim(bd::BoxDirections) = bd.n
 isbounding(::Type{<:BoxDirections}) = true
 isnormalized(::Type{<:BoxDirections}) = true
 
-# The idea is that a positive states run through vectors wtih +1 entry,
+# The idea is that positive states run through vectors with +1 entry,
 # and negative states run through -1 entries
 # (1, 0)   state = 1
 # (0, 1)   state = 2
