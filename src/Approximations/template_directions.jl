@@ -118,7 +118,7 @@ other entries are 0. In dimension ``n``, there are ``2n`` such directions.
 
 The default vector representation used in this template is a
 `LazySets.Arrays.SingleEntryVector`, although other implementations can be used
-such as a regular `Vector` and a sparse vector, `SparseVector`.`
+such as a regular `Vector` and a sparse vector, `SparseVector`.
 
 ### Examples
 
