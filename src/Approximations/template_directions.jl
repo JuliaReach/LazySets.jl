@@ -116,7 +116,7 @@ Box directions representation.
 Box directions can be seen as the vectors where only one entry is ±1, and all
 other entries are 0. In dimension ``n``, there are ``2n`` such directions.
 
-The deafault vector representation used in this template is a
+The default vector representation used in this template is a
 `LazySets.Arrays.SingleEntryVector`, although other implementations can be used
 such as a regular `Vector` and a sparse vector, `SparseVector`.`
 
