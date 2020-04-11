@@ -899,7 +899,7 @@ Determine whether a polyhedron is bounded.
 
 The algorithm is based on Stiemke's theorem of alternatives:
 
-Proposition 1. If ``ker(A)≠\{0\} \\implies P`` is unbounded.
+Proposition 1. If ``ker(A)≠\\{0\\} \\implies P`` is unbounded.
 
 Proposition 2. Assume that ``ker(A)={0}``
 and ``P`` is non-empty. Then ``P`` is bounded if and only if the following linear
