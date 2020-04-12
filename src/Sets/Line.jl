@@ -322,10 +322,16 @@ end
 
 function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::Line{N},
                                  algo::AbstractLinearMapAlgorithm) where {N<:Real}
-     constraints = _linear_map_hrep(M, P, algo)
-     @assert length(constraints) == 2
-     c = first(constraints)
-     return Line(c.a, c.b)
+    constraints = _linear_map_hrep(M, P, algo)
+    if length(constraints) == 2
+        # assuming these constraints define a line
+        c = first(constraints)
+        return Line(c.a, c.b)
+    elseif isempty(constraints)
+        return Universe{N}(size(M, 1))
+    else
+        error("unexpected number of $(length(constraints)) constraints")
+    end
 end
 
 """
