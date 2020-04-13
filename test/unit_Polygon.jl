@@ -240,6 +240,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test vertices_list(P) == Vector{Vector{N}}()
     P = HPolygon([HalfSpace(N[1, 0], N(0)), HalfSpace(N[-1, 0], N(-1))])
     @test vertices_list(P) == Vector{Vector{N}}()
+    @test isempty(P)
 
     # empty intersection results in empty set
     p3 = tohrep(VPolygon([N[0, 0]]))
