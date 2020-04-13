@@ -123,11 +123,19 @@ function vertices_list(P::AbstractHPolygon{N};
         return points
     end
     @inbounds for i in 1:n-1
-        points[i] = element(intersection(Line(P.constraints[i]),
-                                         Line(P.constraints[i+1])))
+        cap = intersection(Line(P.constraints[i]), Line(P.constraints[i+1]))
+        if cap isa EmptySet
+            return Vector{Vector{N}}()
+        else
+            points[i] = element(cap)
+        end
     end
-    points[n] = element(intersection(Line(P.constraints[n]),
-                                     Line(P.constraints[1])))
+    cap = intersection(Line(P.constraints[n]), Line(P.constraints[1]))
+    if cap isa EmptySet
+        return Vector{Vector{N}}()
+    else
+        points[n] = element(cap)
+    end
 
     # check if polygon was empty
     if check_feasibility

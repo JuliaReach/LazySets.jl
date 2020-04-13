@@ -236,7 +236,9 @@ for N in [Float64, Float32, Rational{Int}]
 
     # check that empty polygon (infeasible constraints) has no vertices (#918)
     P = HPolygon([HalfSpace(N[1, 1], N(0)), HalfSpace(N[-1, 0], N(-1)),
-        HalfSpace(N[0, -1], N(-1))])
+                  HalfSpace(N[0, -1], N(-1))])
+    @test vertices_list(P) == Vector{Vector{N}}()
+    P = HPolygon([HalfSpace(N[1, 0], N(0)), HalfSpace(N[-1, 0], N(-1))])
     @test vertices_list(P) == Vector{Vector{N}}()
 
     # empty intersection results in empty set
