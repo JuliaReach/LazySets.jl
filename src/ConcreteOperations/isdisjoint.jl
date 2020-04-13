@@ -129,7 +129,7 @@ end
 # --- disjointness check for 1D intervals ---
 
 """
-    is_intersection_empty(I1::Interval{N}, I2::Interval{N}; witness::Bool=false) where {N<:Real}
+    is_intersection_empty(I1::Interval{N}, I2::Interval{N}, witness::Bool=false) where {N<:Real}
 
 Check whether two intervals do not intersect, and otherwise optionally
 compute a witness.
