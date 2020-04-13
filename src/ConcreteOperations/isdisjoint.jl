@@ -155,7 +155,7 @@ interval and the left-most point of the first interval, or vice-versa.
 A witness is computed by taking the maximum over the left-most points of each
 interval, which is guaranteed to belong to the intersection.
 """
-function is_intersection_empty(I1::Interval{N}, I2::Interval{N}; witness::Bool=false) where {N<:Real}
+function is_intersection_empty(I1::Interval{N}, I2::Interval{N}, witness::Bool=false) where {N<:Real}
     if witness
         return _is_intersection_empty(I1, I2, Val(true))
     else
