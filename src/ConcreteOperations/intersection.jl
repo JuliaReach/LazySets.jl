@@ -70,8 +70,9 @@ Line{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
 """
 function intersection(L1::Line{N}, L2::Line{N}
                      ) where {N<:Real}
+    det = L1.a[1]*L2.a[2] - L1.a[2]*L2.a[1]
     # are the lines parallel?
-    if isapprox(L1.a[1]*L2.a[2], L2.a[1]*L1.a[2])
+    if isapproxzero(det)
         # are they the same line?
         if isapprox(L1.b, L2.b)
             return L1
@@ -80,9 +81,9 @@ function intersection(L1::Line{N}, L2::Line{N}
             return EmptySet{N}(dim(L1))
         end
     else
-        b = [L1.b, L2.b]
-        a = [transpose(L1.a); transpose(L2.a)]
-        return Singleton(a \ b)
+        x = (L1.b*L2.a[2] - L1.a[2]*L2.b)/det
+        y = (L1.a[1]*L2.b - L1.b*L2.a[1])/det
+        return Singleton([x, y])
     end
 end
 
