@@ -71,9 +71,9 @@ Line{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
 function intersection(L1::Line{N}, L2::Line{N}
                      ) where {N<:Real}
     # are the lines parallel?
-    if (L1.a[1]*L2.a[2]) == (L2.a[1]*L1.a[2])
+    if isapprox(L1.a[1]*L2.a[2], L2.a[1]*L1.a[2])
         # are they the same line?
-        if (L1.b == L2.b)
+        if isapprox(L1.b, L2.b)
             return L1
         else
             # lines are parallel but not identical
