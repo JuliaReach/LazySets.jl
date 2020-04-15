@@ -75,7 +75,7 @@ for N in [Float64, Rational{Int}, Float32]
         # convert hyperrectangle to a HPolyhedron
         H = Hyperrectangle(N[1, 1], N[2, 2])
         P = convert(HPolyhedron, H)
-        @test_throws ArgumentError vertices_list(P) # the vertices list is not defined, see #820
+        @test vertices_list(P) == 4
 
         # checking for emptiness
         P = HPolyhedron([LinearConstraint(N[1, 0], N(0))])    # x <= 0
@@ -200,7 +200,7 @@ for N in [Float64]
         @test length(cl) == 4
 
         # vertices_list
-        @test_throws ArgumentError vertices_list(p1)
+        vertices_list(p1) ≈ [N[1.0], N[0.0]]
 
         # tovrep from HPolyhedron
         @test tohrep(p1) isa HPolyhedron{N} # test no-op

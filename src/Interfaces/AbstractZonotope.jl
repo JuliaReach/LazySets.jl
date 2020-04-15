@@ -242,6 +242,15 @@ function ρ(d::AbstractVector{N}, Z::AbstractZonotope{N}) where {N<:Real}
     return dot(center(Z), d) + sum(abs.(transpose(genmat(Z)) * d))
 end
 
+#using StaticArrays
+#=
+function ρ(d::Vector{N}, Z::Zonotope{N, VN, MN}) where {N, VN<:SVector,
+                                                        D, MN<:SArray{Tuple{D,0},N,2,0}}
+    #println("QQQQ")
+    return dot(center(Z), d)
+end
+=#
+
 """
     σ(d::AbstractVector{N}, Z::AbstractZonotope{N}) where {N<:Real}
 
