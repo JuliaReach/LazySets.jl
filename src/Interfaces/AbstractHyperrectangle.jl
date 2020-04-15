@@ -569,8 +569,8 @@ function split(H::AbstractHyperrectangle{N}, num_blocks::AbstractVector{Int}
     end
 
     # create hyperrectangles for every combination of the center points
-    result = Vector{Hyperrectangle{N, typeof(center(H)), typeof(radius)}}(undef, total_number)
-    @inbounds for (i, center) in enumerate(product(centers...))
+    result = Vector{Hyperrectangle{N}}(undef, total_number)
+    for (i, center) in enumerate(product(centers...))
         result[i] = Hyperrectangle(collect(center), copy(radius))
     end
     return result
