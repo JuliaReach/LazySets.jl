@@ -900,7 +900,7 @@ The list of vertices of `P`, or an error if `P` is unbounded.
 ### Notes
 
 This function returns an error if the polyhedron is unbounded. Otherwise,
-the polyhedron is converted to an `HPolytpe` and its list of vertices is computed.
+the polyhedron is converted to an `HPolytope` and its list of vertices is computed.
 
 ### Examples
 
