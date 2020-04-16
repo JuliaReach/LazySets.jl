@@ -75,7 +75,7 @@ for N in [Float64, Rational{Int}, Float32]
         # convert hyperrectangle to a HPolyhedron
         H = Hyperrectangle(N[1, 1], N[2, 2])
         P = convert(HPolyhedron, H)
-        @test vertices_list(P) == 4
+        @test length(vertices_list(P)) == 4
 
         # checking for emptiness
         P = HPolyhedron([LinearConstraint(N[1, 0], N(0))])    # x <= 0
