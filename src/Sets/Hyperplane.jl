@@ -6,7 +6,7 @@ export Hyperplane,
        an_element
 
 """
-    Hyperplane{N<:Real} <: AbstractPolyhedron{N}
+    Hyperplane{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
 
 Type that represents a hyperplane of the form ``a⋅x = b``.
 
@@ -21,16 +21,16 @@ The plane ``y = 0``:
 
 ```jldoctest
 julia> Hyperplane([0, 1.], 0.)
-Hyperplane{Float64}([0.0, 1.0], 0.0)
+Hyperplane{Float64,Array{Float64,1}}([0.0, 1.0], 0.0)
 ```
 """
-struct Hyperplane{N<:Real} <: AbstractPolyhedron{N}
-    a::AbstractVector{N}
+struct Hyperplane{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
+    a::VN
     b::N
 
-    function Hyperplane(a::AbstractVector{N}, b::N) where {N<:Real}
+    function Hyperplane(a::VN, b::N) where {N<:Real, VN<:AbstractVector{N}}
         @assert !iszero(a) "a hyperplane needs a non-zero normal vector"
-        return new{N}(a, b)
+        return new{N, VN}(a, b)
     end
 end
 
