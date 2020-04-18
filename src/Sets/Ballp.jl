@@ -4,7 +4,7 @@ import Base: rand,
 export Ballp
 
 """
-    Ballp{N<:AbstractFloat} <: AbstractCentrallySymmetric{N}
+    Ballp{N<:AbstractFloat, VN<:AbstractVector{N}} <: AbstractCentrallySymmetric{N}
 
 Type that represents a ball in the p-norm, for ``1 ≤ p ≤ ∞``.
 
@@ -36,7 +36,8 @@ A five-dimensional ball in the ``p=3/2`` norm centered at the origin of radius
 
 ```jldoctest ballp_constructor
 julia> B = Ballp(3/2, zeros(5), 0.5)
-Ballp{Float64}(1.5, [0.0, 0.0, 0.0, 0.0, 0.0], 0.5)
+Ballp{Float64,Array{Float64,1}}(1.5, [0.0, 0.0, 0.0, 0.0, 0.0], 0.5)
+
 julia> dim(B)
 5
 ```
@@ -53,13 +54,13 @@ julia> σ([1., 2, 3, 4, 5], B)
  0.33790011086518895
 ```
 """
-struct Ballp{N<:AbstractFloat} <: AbstractCentrallySymmetric{N}
+struct Ballp{N<:AbstractFloat, VN<:AbstractVector{N}} <: AbstractCentrallySymmetric{N}
     p::N
-    center::Vector{N}
+    center::VN
     radius::N
 
     # default constructor with domain constraint for radius and p
-    function Ballp(p::N, center::Vector{N}, radius::N) where {N<:Real}
+    function Ballp(p::N, center::VN, radius::N) where {N<:Real, VN<:AbstractVector{N}}
         @assert radius >= zero(N) "radius must not be negative"
         @assert p >= 1 "p must not be less than 1"
         if p == Inf
@@ -69,7 +70,7 @@ struct Ballp{N<:AbstractFloat} <: AbstractCentrallySymmetric{N}
         elseif p == 1
             return Ball1(center, radius)
         else
-            return new{N}(p, center, radius)
+            return new{N, VN}(p, center, radius)
         end
     end
 end
