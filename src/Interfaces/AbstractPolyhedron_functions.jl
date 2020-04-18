@@ -887,9 +887,9 @@ Determine whether a polyhedron is bounded.
 
 ### Input
 
-- `P` -- polyhedron
-- `backend`     -- (optional, default: `default_lp_solver(N)`) the backend used
-                   to solve the linear program
+- `P`       -- polyhedron
+- `backend` -- (optional, default: `default_lp_solver(N)`) the backend used
+               to solve the linear program
 
 ### Output
 
@@ -897,12 +897,12 @@ Determine whether a polyhedron is bounded.
 
 ### Algorithm
 
-The algorithm is based on Stiemke's theorem of alternatives:
+The algorithm is based on Stiemke's theorem of alternatives.
 
-Proposition 1. If ``ker(A)≠\\{0\\} \\implies P`` is unbounded.
+Proposition 1. If ``ker(A)≠\\{0\\}``, then ``P`` is unbounded.
 
-Proposition 2. Assume that ``ker(A)={0}``
-and ``P`` is non-empty. Then ``P`` is bounded if and only if the following linear
+Proposition 2. Assume that ``ker(A)={0}`` and ``P`` is non-empty.
+Then ``P`` is bounded if and only if the following linear
 program admits a feasible solution: ``min∥y∥_1`` subject to ``A^Ty=0`` and ``y≥1``.
 """
 function isbounded(P::AbstractPolyhedron{N}; solver=LazySets.default_lp_solver(N)) where {N<:Real}
