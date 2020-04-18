@@ -915,6 +915,6 @@ function isbounded(P::AbstractPolyhedron{N}; solver=LazySets.default_lp_solver(N
 
     At = copy(transpose(A))
     c = fill(one(N), m)
-    lp = linprog(c, At, '=', zeros(n), 1.0, Inf, solver)
+    lp = linprog(c, At, '=', zeros(n), one(N), Inf, solver)
     return (lp.status == :Optimal)
 end
