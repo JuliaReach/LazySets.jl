@@ -56,6 +56,12 @@ If the lines are identical, the result is the first line.
 If the lines are parallel and not identical, the result is the empty set.
 Otherwise the result is the only intersection point.
 
+### Algorithm
+
+We first check whether the lines are parallel.
+If not, we use [Cramer's rule](https://en.wikipedia.org/wiki/Cramer%27s_rule)
+to compute the intersection point.
+
 ### Examples
 
 The line ``y = -x + 1`` intersected with the line ``y = x``:
@@ -70,22 +76,20 @@ Line{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
 """
 function intersection(L1::Line{N}, L2::Line{N}
                      ) where {N<:Real}
-    b = [L1.b, L2.b]
-    a = [transpose(L1.a); transpose(L2.a)]
-    try
-        # results in LAPACKException or SingularException if parallel
-        return Singleton(a \ b)
-    catch e
-        @assert e isa LAPACKException || e isa SingularException "unexpected " *
-            "$(typeof(e)) from LAPACK occurred while intersecting lines:\n$e"
-        # lines are parallel
-        if an_element(L1) ∈ L2
-            # lines are identical
+    det = L1.a[1]*L2.a[2] - L1.a[2]*L2.a[1]
+    # are the lines parallel?
+    if isapproxzero(det)
+        # are they the same line?
+        if isapprox(L1.b, L2.b)
             return L1
         else
             # lines are parallel but not identical
             return EmptySet{N}(dim(L1))
         end
+    else
+        x = (L1.b*L2.a[2] - L1.a[2]*L2.b)/det
+        y = (L1.a[1]*L2.b - L1.b*L2.a[1])/det
+        return Singleton([x, y])
     end
 end
 
