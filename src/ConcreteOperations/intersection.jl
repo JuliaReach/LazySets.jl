@@ -56,6 +56,12 @@ If the lines are identical, the result is the first line.
 If the lines are parallel and not identical, the result is the empty set.
 Otherwise the result is the only intersection point.
 
+### Algorithm
+
+We first check whether the lines are parallel.
+If not, we use [Cramer's rule](https://en.wikipedia.org/wiki/Cramer%27s_rule)
+to compute the intersection point.
+
 ### Examples
 
 The line ``y = -x + 1`` intersected with the line ``y = x``:
