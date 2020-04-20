@@ -151,6 +151,7 @@ isbounded(::AbstractCentrallySymmetric)
 isuniversal(::AbstractCentrallySymmetric{N}, ::Bool=false) where {N<:Real}
 an_element(::AbstractCentrallySymmetric{N}) where {N<:Real}
 isempty(::AbstractCentrallySymmetric)
+center(::AbstractCentrallySymmetric{N}, ::Int) where {N<:Real}
 ```
 
 ### Implementations
@@ -359,7 +360,6 @@ generators(::AbstractHyperrectangle)
 genmat(::AbstractHyperrectangle)
 ngens(::AbstractHyperrectangle{N}) where {N<:Real}
 rectify(::AbstractHyperrectangle)
-center(::AbstractHyperrectangle{N}, ::Int) where {N<:Real}
 ```
 
 ### Implementations

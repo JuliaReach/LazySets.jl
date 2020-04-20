@@ -42,4 +42,7 @@ for N in [Float64, Rational{Int}, Float32]
     h = SymmetricIntervalHull(Singleton(N[1, 2]))
     @test high(h) == N[1, 2]
     @test low(h) == N[-1, -2]
+
+    #center
+    @test center(h) == N[0, 0]
 end

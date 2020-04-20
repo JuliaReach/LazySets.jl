@@ -25,6 +25,8 @@ check_method_implementation(LazySet, dim, Function[S -> (S{Float64},)])
 # center
 @test check_method_implementation(AbstractCentrallySymmetric, center,
                                   Function[S -> (S{Float64},)])
+@test check_method_implementation(AbstractCentrallySymmetric, center,
+                                  Function[S -> (S{Float64}, Int64)])
 
 # --- AbstractCentrallySymmetricPolytope ---
 # (copies methods from AbstractCentrallySymmetric)

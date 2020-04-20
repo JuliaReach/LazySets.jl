@@ -128,3 +128,21 @@ function isuniversal(S::AbstractCentrallySymmetric{N}, witness::Bool=false
         return false
     end
 end
+
+"""
+    center(H::AbstractCentrallySymmetric{N}, i::Int) where {N<:Real}
+
+Return the center along a given dimension of a centrally symmetric set.
+
+### Input
+
+- `S` -- centrally symmetric set
+- `i` -- dimension of interest
+
+### Output
+
+The center along a given dimension of the centrally symmetric set.
+"""
+@inline function center(S::AbstractCentrallySymmetric{N}, i::Int) where {N<:Real}
+    return center(S)[i]
+end
