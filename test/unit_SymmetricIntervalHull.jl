@@ -43,6 +43,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test high(h) == N[1, 2]
     @test low(h) == N[-1, -2]
 
-    #center
+    # center
     @test center(h) == N[0, 0]
+    @test center(h, 1) == zero(N)
 end
