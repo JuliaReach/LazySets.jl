@@ -255,7 +255,9 @@ Determine whether a set is bounded.
 
 ### Input
 
-- `S` -- set
+- `S`         -- set
+- `algorithm` -- (optional, default: `"support_function"`) algorithm choice, possible
+                 options are `"support_function"` and `"stiemke"`
 
 ### Output
 
@@ -263,14 +265,21 @@ Determine whether a set is bounded.
 
 ### Algorithm
 
-We check boundedness via [`isbounded_unit_dimensions`](@ref).
+See the documentation of [`_isbounded_unit_dimensions`](@ref) or
+[`_isbounded_stiemke`](@ref) for details.
 """
-function isbounded(S::LazySet)
-    return isbounded_unit_dimensions(S)
+function isbounded(S::LazySet; algorithm="support_function")
+    if algorithm == "support_function"
+        return _isbounded_unit_dimensions(S)
+    elseif algorithm == "stiemke"
+        return _isbounded_stiemke(S)
+    else
+        throw(ArgumentError("unknown algorithm $algorithm"))
+    end
 end
 
 """
-    isbounded_unit_dimensions(S::LazySet{N}) where {N<:Real}
+    _isbounded_unit_dimensions(S::LazySet{N}) where {N<:Real}
 
 Determine whether a set is bounded in each unit dimension.
 
@@ -287,7 +296,7 @@ Determine whether a set is bounded in each unit dimension.
 This function performs ``2n`` support function checks, where ``n`` is the
 ambient dimension of `S`.
 """
-function isbounded_unit_dimensions(S::LazySet{N}) where {N<:Real}
+function _isbounded_unit_dimensions(S::LazySet{N}) where {N<:Real}
     n = dim(S)
     @inbounds for i in 1:n
         for o in [one(N), -one(N)]
@@ -298,6 +307,53 @@ function isbounded_unit_dimensions(S::LazySet{N}) where {N<:Real}
         end
     end
     return true
+end
+
+"""
+    _isbounded_stiemke(P::LazySet{N}; solver=LazySets.default_lp_solver(N)) where {N<:Real}
+
+Determine whether a polyhedron is bounded using Stiemke's theorem of alternatives.
+
+### Input
+
+- `P`       -- polyhedron
+- `backend` -- (optional, default: `default_lp_solver(N)`) the backend used
+               to solve the linear program
+
+### Output
+
+`true` iff the polyhedron is bounded
+
+### Algorithm
+
+We first check if the polyhedron has more than `max(dim(P), 1)` constraints,
+which is a necessary condition for boundedness.
+
+The algorithm is based on Stiemke's theorem of alternatives, see e.g. [1].
+
+Let the polyhedron ``P`` be given in constraint form ``Ax ≤ b``.
+
+Proposition 1. If ``\\ker(A)≠\\{0\\}``, then ``P`` is unbounded.
+
+Proposition 2. Assume that ``ker(A)={0}`` and ``P`` is non-empty.
+Then ``P`` is bounded if and only if the following linear
+program admits a feasible solution: ``\\min∥y∥_1`` subject to ``A^Ty=0`` and ``y≥1``.
+
+[1] Mangasarian, Olvi L. *Nonlinear programming.*
+    Society for Industrial and Applied Mathematics, 1994.
+"""
+function _isbounded_stiemke(P::LazySet{N}; solver=LazySets.default_lp_solver(N)) where {N<:Real}
+    A, b = tosimplehrep(P)
+    m, n = size(A)
+
+    if !isempty(nullspace(A))
+        return false
+    end
+
+    At = copy(transpose(A))
+    c = fill(one(N), m)
+    lp = linprog(c, At, '=', zeros(n), one(N), Inf, solver)
+    return (lp.status == :Optimal)
 end
 
 """

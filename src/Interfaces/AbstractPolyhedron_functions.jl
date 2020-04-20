@@ -881,7 +881,7 @@ function an_element(P::AbstractPolyhedron{N}) where {N<:Real}
 end
 
 """
-    isbounded(P::AbstractPolyhedron{N}; solver=LazySets.default_lp_solver(N)) where {N}
+    isbounded(P::AbstractPolyhedron{N}; solver=LazySets.default_lp_solver(N)) where {N<:Real}
 
 Determine whether a polyhedron is bounded.
 
@@ -897,26 +897,14 @@ Determine whether a polyhedron is bounded.
 
 ### Algorithm
 
-The algorithm is based on Stiemke's theorem of alternatives.
+We first check if the polyhedron has more than `max(dim(P), 1)` constraints,
+which is a necessary condition for boundedness.
 
-Let the polyhedron ``P`` be given in constraint form ``Ax ≤ b``.
-
-Proposition 1. If ``\\ker(A)≠\\{0\\}``, then ``P`` is unbounded.
-
-Proposition 2. Assume that ``ker(A)={0}`` and ``P`` is non-empty.
-Then ``P`` is bounded if and only if the following linear
-program admits a feasible solution: ``\\min∥y∥_1`` subject to ``A^Ty=0`` and ``y≥1``.
+If so, we check boundedness via [`_isbounded_stiemke`](@ref).
 """
 function isbounded(P::AbstractPolyhedron{N}; solver=LazySets.default_lp_solver(N)) where {N<:Real}
-    A, b = tosimplehrep(P)
-    m, n = size(A)
-
-    if !isempty(nullspace(A))
+    if length(P.constraints) <= max(dim(P), 1)
         return false
     end
-
-    At = copy(transpose(A))
-    c = fill(one(N), m)
-    lp = linprog(c, At, '=', zeros(n), one(N), Inf, solver)
-    return (lp.status == :Optimal)
+    return _isbounded_stiemke(P, solver=solver)
 end
