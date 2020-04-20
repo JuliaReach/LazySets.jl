@@ -279,7 +279,7 @@ function sample(B::Ball2{N, VN}, nsamples::Int=1;
 end
 
 
-# --- AbstractHyperrectangle interface functions ---
+# --- AbstractCentrallySymmetric interface functions ---
 
 
 """
