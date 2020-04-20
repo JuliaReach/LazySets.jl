@@ -15,6 +15,7 @@ Every concrete `AbstractCentrallySymmetric` must define the following functions:
 
 - `center(::AbstractCentrallySymmetric{N})` -- return the center
     point
+- `center(::AbstractCentrallySymmetric{N}, i::Int)` -- return the center point at index `i`
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractCentrallySymmetric)

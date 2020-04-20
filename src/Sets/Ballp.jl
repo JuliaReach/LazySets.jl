@@ -99,7 +99,7 @@ function center(B::Ballp{N}) where {N<:AbstractFloat}
 end
 
 
-# --- AbstractHyperrectangle interface functions ---
+# --- AbstractCentrallySymmetric interface functions ---
 
 
 """

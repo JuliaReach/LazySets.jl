@@ -337,21 +337,3 @@ function volume(B::BallInf{N}) where {N<:Real}
     vol = _vol_prod(B, n)
     return vol
 end
-
-"""
-    center(B::BallInf{N}, i::Int) where {N<:Real}
-
-Return the center along a given dimension of a ball in the infinity norm.
-
-### Input
-
-- `B` -- ball in the infinity norm
-- `i` -- dimension of interest
-
-### Output
-
-The center along a given dimension of the ball in the infinity norm.
-"""
-@inline function center(B::BallInf{N}, i::Int) where {N<:Real}
-    return B.center[i]
-end

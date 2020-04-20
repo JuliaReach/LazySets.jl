@@ -11,7 +11,6 @@ Ball2
 center(::Ball2{N}) where {N<:AbstractFloat}
 rand(::Type{Ball2})
 sample(::Ball2{N}, ::Int) where {N<:AbstractFloat}
-center(::Ball2{N}, ::Int) where {N<:Real}
 translate(::Ball2{N}, ::AbstractVector{N}) where {N<:AbstractFloat}
 chebyshev_center(::Ball2{N}) where {N<:AbstractFloat}
 volume(::Ball2{N}) where {N<:AbstractFloat}

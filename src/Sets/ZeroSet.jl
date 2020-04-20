@@ -223,7 +223,7 @@ function translate(Z::ZeroSet{N}, v::AbstractVector{N}) where {N<:Real}
 end
 
 
-# --- AbstractHyperrectangle interface functions ---
+# --- AbstractCentrallySymmetric interface functions ---
 
 
 """
