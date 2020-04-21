@@ -20,7 +20,7 @@ for N in Ns
 
     @test dim(x) == 1
     @test center(x) == N[0.5]
-    @test center(x, 1) == N[0.5]
+    @test center(x, 1) == N(0.5)
     @test_throws ArgumentError center(x, 2)
     @test min(x) == N(0) && max(x) == N(1)
     v = vertices_list(x)
