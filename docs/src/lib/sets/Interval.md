@@ -29,6 +29,7 @@ plot_recipe(::Interval{N}, ::N=zero(N)) where {N<:Real}
 linear_map(::AbstractMatrix{N}, ::Interval{N}) where {N<:Real}
 scale(::N, ::Interval{N}) where {N<:Real}
 constraints_list(::Interval{N}) where {N<:Real}
+center(::Interval{N}, ::Int) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
