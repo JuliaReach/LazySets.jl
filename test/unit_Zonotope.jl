@@ -130,6 +130,13 @@ for N in [Float64, Rational{Int}, Float32]
         @test convert(Zonotope, AZ) == togrep(AZ) == Z
     end
 
+    # conversion from lazy affine map
+    A = N[1 0; 0 1]
+    b = N[1, 1]
+    B = BallInf(N[0, 0], N(1))
+    Z = convert(Zonotope, A * B + b)
+    @test Z == Zonotope(N[1, 1], N[1 0; 0 1])
+
     # test conversion from hyperrectangular sets
     Z = convert(Zonotope, Hyperrectangle(N[2, 3], N[4, 5]))
     @test Z.center == N[2, 3] && diag(Z.generators) == N[4, 5]
