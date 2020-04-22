@@ -113,7 +113,7 @@ function intersection(a::LineSegment{N}, b::Line{N}) where {N<:Real}
     if m == ap
         # if this equals a, then all of the segment is the intersection
         return a
-    elseif typeof(m) <: Singleton && m.element ∈ a
+    elseif m isa Singleton && m.element ∈ a
         # if the intersection between lines is in the segment
         return m
     else
