@@ -983,6 +983,6 @@ end
 function convert(::Type{Zonotope},
                  am::AbstractAffineMap{N, <:AbstractZonotope{N}}) where {N<:Real}
     Z1 = convert(Zonotope, linear_map(matrix(am), set(am)))
-    Z2 = translate(Z1, vector(am))
+    Z2 = translate(Z1, vector(am), share=true)
     return Z2
 end
