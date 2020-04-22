@@ -979,3 +979,10 @@ end
 function convert(::Type{HalfSpace{N, Vector{N}}}, hs::HalfSpace{N, <:AbstractVector{N}}) where {N}
     return HalfSpace(Vector(hs.a), hs.b)
 end
+
+function convert(::Type{Zonotope},
+                 am::AbstractAffineMap{N, <:AbstractZonotope{N}}) where {N<:Real}
+    Z1 = convert(Zonotope, linear_map(matrix(am), set(am)))
+    Z2 = translate(Z1, vector(am), share=true)
+    return Z2
+end
