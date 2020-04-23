@@ -103,6 +103,31 @@ for N in [Float64, Rational{Int}, Float32]
     intersection_empty, point = is_intersection_empty(l1, l1_copy, true)
     @test !is_intersection_empty(l1, l1_copy) && !intersection_empty && point ∈ l1
 
+    # intersection
+    s1 = LineSegment(N[-5.0,-5.0], N[5.0,5.0])
+    # colinear shifted down
+    s2 = LineSegment(N[-6.0,-6.0], N[4.0,4.0])
+    @test intersection(s1, s2) isa LineSegment
+    @test isapprox(intersection(s1, s2).p, N[-5,-5])
+    @test isapprox(intersection(s1, s2).q, N[4,4])
+    # parallel, not intersect
+    s3 = LineSegment(N[-5.0,-4.0], N[4.0,5.0])
+    @test intersection(s1, s3) isa EmptySet
+    # intersect outside of segment
+    s4 = LineSegment(N[0.0,10.0], N[6.0,5.0])
+    @test intersection(s1, s4) isa EmptySet
+    # intersect in segment
+    s5 = LineSegment(N[5.0,-5.0], N[-5.0,5.0])
+    @test intersection(s1, s5) isa Singleton
+    @test isapprox(intersection(s1,s5).element, N[0,0])
+    # parallel, no points in common
+    s6 = LineSegment(N[10.0, 10.0], N[11.0,11.0])
+    @test intersection(s1, s6) isa EmptySet
+    # parallel one point in common
+    s7 = LineSegment(N[5.0,5.0], N[6.0,6.0])
+    @test intersection(s1, s7) isa Singleton
+    @test isapprox(intersection(s1,s7).element, N[5,5])
+
     # subset
     l = LineSegment(N[1, 1], N[2, 2])
     b1 = Ball1(N[1.5, 1.5], N(1.1))
