@@ -94,6 +94,44 @@ function intersection(L1::Line{N}, L2::Line{N}
 end
 
 """
+    intersection(a::LineSegment{N}, b::Line{N}) where {N<:Real}
+
+Compute the intersection of a line and a line segment.
+
+### Input
+
+- `a`  -- LineSegment
+- `b` -- Line
+
+### Output
+
+If the sets do not intersect, the result is the empty set.
+Otherwise the result is the singleton or line segment that describes the intersection.
+"""
+
+function intersection(a::LineSegment{N}, b::Line{N}) where {N<:Real}
+    # cast a as line
+    ap = Line(a.p, a.q)
+    # find intersection between a' and b
+    m = intersection(ap, b)
+    if m == ap
+        # if this equals a, then all of the segment is the intersection
+        return a
+    elseif m isa Singleton && m.element ∈ a
+        # if the intersection between lines is in the segment
+        return m
+    else
+        # no intersection
+        return EmptySet{N}(2)
+    end
+end
+
+# symmetric method
+function intersection(a::Line{N}, b::LineSegment{N}) where {N<:Real}
+    return intersection(b,a)
+end
+
+"""
     intersection(H1::AbstractHyperrectangle{N},
                  H2::AbstractHyperrectangle{N}
                 ) where {N<:Real}
