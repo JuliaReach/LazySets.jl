@@ -331,7 +331,8 @@ which is a necessary condition for boundedness.
 
 The algorithm is based on Stiemke's theorem of alternatives, see e.g. [1].
 
-Let the polyhedron ``P`` be given in constraint form ``Ax ≤ b``.
+Let the polyhedron ``P`` be given in constraint form ``Ax ≤ b``. We assume that
+the polyhedron is not empty.
 
 Proposition 1. If ``\\ker(A)≠\\{0\\}``, then ``P`` is unbounded.
 
