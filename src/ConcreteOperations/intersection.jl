@@ -132,6 +132,56 @@ function intersection(a::Line{N}, b::LineSegment{N}) where {N<:Real}
 end
 
 """
+    function intersection(a::LineSegment{N}, b::LineSegment{N}) where {N<:Real}
+
+Return the intersection of two 2D line segments.
+
+### Input
+
+- `a` -- first line segment
+- `b` -- second line segment
+
+### Output
+
+If the line segments cross, or are parallel and have one point in common,
+that point is returned.
+If the line segments are parallel and have a line segment in common, that
+segment is returned.
+Otherwise, if there is no intersection, an empty set is returned.
+
+"""
+
+function intersection(a::LineSegment{N}, b::LineSegment{N}) where {N<:Real}
+    # cast a as line
+    ap = Line(a.p, a.q)
+    bp = Line(b.p, b.q)
+    # find intersection between a' and b
+    m = intersection(ap, bp)
+    if m == ap
+        # determine which segment is in both
+        p1 = max(min(a.p[1], a.q[1]), min(b.p[1], b.q[1]))
+        p2 = max(min(a.p[2], a.q[2]), min(b.p[2], b.q[2]))
+        q1 = min(max(a.p[1], a.q[1]), max(b.p[1], b.q[1]))
+        q2 = min(max(a.p[2], a.q[2]), max(b.p[2], b.q[2]))
+        if LazySets._isapprox(p1, q1) && LazySets._isapprox(p2, q2)
+             # edges have a point in common
+             return Singleton([p1, p2])
+        elseif LazySets._leq(p1, q1) && LazySets._leq(p2, q2)
+             return LineSegment([p1, p2], [q1, q2])
+        else
+            # no intersection
+            return EmptySet{N}(2)
+        end
+    elseif m isa Singleton && m.element ∈ a && m.element ∈ b
+        # if the intersection between lines is in the segments
+        return m
+    else
+        # no intersection
+        return EmptySet{N}(2)
+    end
+end
+
+"""
     intersection(H1::AbstractHyperrectangle{N},
                  H2::AbstractHyperrectangle{N}
                 ) where {N<:Real}
