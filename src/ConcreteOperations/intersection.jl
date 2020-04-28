@@ -135,7 +135,7 @@ function intersection(a::LineSegment{N}, b::LineSegment{N}) where {N<:Real}
         return m
     else
         # no intersection
-        return return EmptySet{N}(2)
+        return EmptySet{N}(2)
     end
 end
 
