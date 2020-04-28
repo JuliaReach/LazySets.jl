@@ -127,6 +127,11 @@ for N in [Float64, Rational{Int}, Float32]
     s7 = LineSegment(N[5.0,5.0], N[6.0,6.0])
     @test intersection(s1, s7) isa Singleton
     @test isapprox(intersection(s1,s7).element, N[5,5])
+    s8 = LineSegment(N[0.0,0.0], N[1.0,0.0])
+    s9 = LineSegment(N[0.0,0.0], N[2.0,0.0])
+    @test intersection(s8, s8) isa LineSegment
+    @test isapprox(intersection(s1, s2).p, N[0,0])
+    @test isapprox(intersection(s1, s2).q, N[1,0])
 
     # subset
     l = LineSegment(N[1, 1], N[2, 2])

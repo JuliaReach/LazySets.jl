@@ -121,15 +121,15 @@ function intersection(a::LineSegment{N}, b::LineSegment{N}) where {N<:Real}
         p2 = max(min(a.p[2], a.q[2]), min(b.p[2], b.q[2]))
         q1 = min(max(a.p[1], a.q[1]), max(b.p[1], b.q[1]))
         q2 = min(max(a.p[2], a.q[2]), max(b.p[2], b.q[2]))
-        if p1 < q1 && p2 < q2
-          return LineSegment([p1, p2], [q1, q2])
-        elseif p1 == q1 && p2 == q2
-          # edges have a point in common
-          return Singleton([p1, p2])
+        if LazySets._isapprox(p1, q1) && LazySets._isapprox(p2, q2)
+             # edges have a point in common
+             return Singleton([p1, p2])
+        elseif LazySets._leq(p1, q1) && LazySets._leq(p2, q2)
+             return LineSegment([p1, p2], [q1, q2])
         else
-          # no intersection
-          return return EmptySet{N}(2)
-        end
+            # no intersection
+            return EmptySet{N}(2)
+       end
     elseif m isa Singleton && m.element ∈ a && m.element ∈ b
         # if the intersection between lines is in the segments
         return m
