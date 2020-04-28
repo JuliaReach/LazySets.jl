@@ -129,7 +129,7 @@ function intersection(a::LineSegment{N}, b::LineSegment{N}) where {N<:Real}
         else
             # no intersection
             return EmptySet{N}(2)
-       end
+        end
     elseif m isa Singleton && m.element ∈ a && m.element ∈ b
         # if the intersection between lines is in the segments
         return m
