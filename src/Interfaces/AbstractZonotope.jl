@@ -498,12 +498,17 @@ function constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true
     # special handling of 1D case
     if n == 1
         if p > 1
-            error("1D-zonotope constraints currently only support a single " *
-                  "generator")
+            Z_1g = remove_zero_generators(Z)
+            if ngens(Z_1g) > 1
+                error("1D-zonotope constraints currently only support a " *
+                      "single generator")
+            end
+        else
+            Z_1g = Z
         end
 
-        c = center(Z)[1]
-        g = G[:, 1][1]
+        c = center(Z_1g)[1]
+        g = genmat(Z_1g)[:, 1][1]
         constraints = [LinearConstraint([N(1)], c + g),
                        LinearConstraint([N(-1)], g - c)]
         return constraints
