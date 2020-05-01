@@ -508,7 +508,7 @@ function constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true
         end
 
         c = center(Z_1g)[1]
-        g = genmat(Z_1g)[:, 1][1]
+        g = genmat(Z_1g)[1, 1]
         constraints = [LinearConstraint([N(1)], c + g),
                        LinearConstraint([N(-1)], g - c)]
         return constraints
