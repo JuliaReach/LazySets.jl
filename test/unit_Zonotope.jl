@@ -225,6 +225,16 @@ for N in [Float64]
         Z = Zonotope(N[0, 0], N[2 3; 0 0])
         P = tovrep(HPolygon(constraints_list(Z)))
         @test ispermutation(vertices_list(P), [N[5, 0], [-5, 0]])
+
+        # test that zero generators are ignored (#2147)
+        G = spzeros(N, 100, 100)
+        G[1, 1] = N(1)
+        Z = Zonotope(zeros(N, 100), G)
+        v1 = zeros(N, 100)
+        v1[1] = N(1)
+        v2 = zeros(N, 100)
+        v2[1] = N(-1)
+        @test ispermutation(vertices_list(Z), [v1, v2])
     end
 
     # vertices for singleton zonotope (#1881)
