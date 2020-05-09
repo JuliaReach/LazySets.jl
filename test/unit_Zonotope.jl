@@ -190,9 +190,10 @@ for N in [Float64, Rational{Int}, Float32]
     constraints = constraints_list(Z)
     @test constraints isa Vector{<:HalfSpace{N}} && length(constraints) == 6
 
-    # 1D projection works correctly even with zero generators
-    B = BallInf(N[0, 0], N(1))
-    project(B, [1])
+    # 1D projection works correctly even with zero generators (#2147)
+    Z = convert(Zonotope, BallInf(N[0, 0], N(1)))
+    Z2 = project(Z, [1])
+    @test Z2 == Zonotope(N[0], hcat(N[1]))
 end
 
 for N in [Float64]
