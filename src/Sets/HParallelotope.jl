@@ -10,7 +10,7 @@ export HParallelotope,
        constraints_list
 
 """
-HParallelotope{N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
+    HParallelotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
 
 Type that represents a parallelotope in constraint form.
 
@@ -53,12 +53,12 @@ we refer to [3].
 [3] Matthias Althoff, Olaf Stursberg, and Martin Buss. *Computing reachable sets of hybrid systems using
     a combination of zonotopes and polytopes.* Nonlinear analysis: hybrid systems 4.2 (2010): 233-249.
 """
-struct HParallelotope{N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
+struct HParallelotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
     directions::MN
     offset::VN
 
     # default constructor with dimension check
-    function HParallelotope(D::MN, c::VN) where {N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}}
+    function HParallelotope(D::MN, c::VN) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}}
         @assert length(c) == 2*checksquare(D) "the length of the offset direction should be twice the size " *
             "of the directions matrix, but they are $(length(c)) and $(size(D)) dimensional respectively"
         return new{N, VN, MN}(D, c)
@@ -299,7 +299,7 @@ function constraints_list(P::HParallelotope{N}) where N
     D, c = P.directions, P.offset
     n = dim(P)
     if isempty(D)
-        return Vector{LinearConstraint{N, Vector}}()
+        return Vector{LinearConstraint{N, Vector{N}}}()
     end
     VT = typeof(D[1, :])
     clist = Vector{LinearConstraint{N, VT}}(undef, 2n)
