@@ -10,7 +10,7 @@ directions(::HParallelotope)
 offset(::HParallelotope)
 dim(::HParallelotope)
 base_vertex(::HParallelotope)
-extremal_vertices(::HParallelotope)
+extremal_vertices(::HParallelotope{N}) where {N}
 center(::HParallelotope)
 genmat(::HParallelotope)
 generators(::HParallelotope)
