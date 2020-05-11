@@ -643,3 +643,10 @@ function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}) where {N}
     end
     return HPolyhedron(clist)
 end
+
+function project(Z::Zonotope{N}, block::AbstractVector{Int}) where {N}
+    n = dim(Z)
+    M = projection_matrix(block, n, N)
+    lm = remove_zero_generators(linear_map(M, Z))
+    return lm
+end

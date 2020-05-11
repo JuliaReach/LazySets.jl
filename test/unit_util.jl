@@ -1,5 +1,8 @@
 using LazySets.Arrays: extend,
-                       _vector_type, _matrix_type
+                       _vector_type, _matrix_type,
+                       to_negative_vector,
+                       nonzero_columns,
+                       remove_zero_columns
 
 for _dummy_ in 1:1 # avoid global variable warnings
     # reseeding with random seed
@@ -42,6 +45,13 @@ for _dummy_ in 1:1 # avoid global variable warnings
     @test rank(Matrix(A)) == rank(A) == rank(view(A, :, :))
 
     for N in [Float64, Rational{Int}, Float32]
+        # removal of zero columns
+        A = N[1 2; 3 4]
+        @test remove_zero_columns(A) === A
+	@test remove_zero_columns(sparse(A)) == A
+        B = N[1 0 2; 3 0 4]
+        @test remove_zero_columns(B) == remove_zero_columns(sparse(B)) == A
+
         # substitution
         x = N[1, 2, 3]
         substitution = Dict(1 => N(4), 3 => N(0))
@@ -71,7 +81,7 @@ for _dummy_ in 1:1 # avoid global variable warnings
 
         # to_negative_vector
         for v in [N[-1, 0, 1], sparsevec([1, 3], N[-1, 1], 3), N(-1):N(1):N(1)]
-            u = LazySets.Arrays.to_negative_vector(v)
+            u = to_negative_vector(v)
             @test u isa Vector{N} && u == N[1, 0, -1]
         end
 
@@ -111,11 +121,11 @@ for _dummy_ in 1:1 # avoid global variable warnings
         n = 10
         A = ones(N, m, n)
         A[:, 1] = A[:, 5] = A[:, n] = zeros(N, m)
-        nzcol = LazySets.Arrays.nonzero_columns(A)
+        nzcol = nonzero_columns(A)
         B = A[:, nzcol]
         @test size(B) == (m, n-3)
         Asp = sparse(A)
-        @test LazySets.Arrays.nonzero_columns(Asp) == [2, 3, 4, 6, 7, 8, 9]
+        @test nonzero_columns(Asp) == [2, 3, 4, 6, 7, 8, 9]
 
         # extend by orthogonal complement
         M = N[1 1; 2 2; 3 4.]

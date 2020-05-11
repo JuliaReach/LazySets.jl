@@ -410,17 +410,18 @@ this method; otherwise, redundant vertices may be present.
 """
 function vertices_list(Z::AbstractZonotope{N};
                        apply_convex_hull::Bool=true) where {N<:Real}
-    p = ngens(Z)
+    c = center(Z)
+    G = remove_zero_columns(genmat(Z))
+    p = size(G, 2)
     if p == 0
-        return [center(Z)]
+        return [c]
     end
 
     vlist = Vector{Vector{N}}()
     sizehint!(vlist, 2^p)
-    G = genmat(Z)
 
     for ξi in Iterators.product([[1, -1] for i = 1:p]...)
-        push!(vlist, center(Z) .+ G * collect(ξi))
+        push!(vlist, c .+ G * collect(ξi))
     end
 
     return apply_convex_hull ? convex_hull!(vlist) : vlist

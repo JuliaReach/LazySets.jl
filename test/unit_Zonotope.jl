@@ -190,9 +190,10 @@ for N in [Float64, Rational{Int}, Float32]
     constraints = constraints_list(Z)
     @test constraints isa Vector{<:HalfSpace{N}} && length(constraints) == 6
 
-    # 1D projection works correctly even with zero generators
-    B = BallInf(N[0, 0], N(1))
-    project(B, [1])
+    # 1D projection works correctly even with zero generators (#2147)
+    Z = convert(Zonotope, BallInf(N[0, 0], N(1)))
+    Z2 = project(Z, [1])
+    @test Z2 == Zonotope(N[0], hcat(N[1]))
 end
 
 for N in [Float64]
@@ -224,6 +225,16 @@ for N in [Float64]
         Z = Zonotope(N[0, 0], N[2 3; 0 0])
         P = tovrep(HPolygon(constraints_list(Z)))
         @test ispermutation(vertices_list(P), [N[5, 0], [-5, 0]])
+
+        # test that zero generators are ignored (#2147)
+        G = spzeros(N, 100, 100)
+        G[1, 1] = N(1)
+        Z = Zonotope(zeros(N, 100), G)
+        v1 = zeros(N, 100)
+        v1[1] = N(1)
+        v2 = zeros(N, 100)
+        v2[1] = N(-1)
+        @test ispermutation(vertices_list(Z), [v1, v2])
     end
 
     # vertices for singleton zonotope (#1881)

@@ -20,6 +20,7 @@ is_right_turn
 issquare
 nonzero_indices
 remove_duplicates_sorted!
+remove_zero_columns
 right_turn
 samedir
 SingleEntryVector
