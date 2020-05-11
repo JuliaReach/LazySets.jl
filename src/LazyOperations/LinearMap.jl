@@ -131,6 +131,11 @@ function *(map::Union{AbstractMatrix, UniformScaling, AbstractVector, Real}, X::
     return LinearMap(map, X)
 end
 
+# scaling from the right
+function *(X::LazySet, map::Real)
+    return LinearMap(map, X)
+end
+
 # convenience constructor from a vector
 function LinearMap(v::AbstractVector, X::LazySet)
     n = dim(X)

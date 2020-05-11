@@ -236,8 +236,11 @@ for N in [Float64, Float32, Rational{Int}]
 
     # check that empty polygon (infeasible constraints) has no vertices (#918)
     P = HPolygon([HalfSpace(N[1, 1], N(0)), HalfSpace(N[-1, 0], N(-1)),
-        HalfSpace(N[0, -1], N(-1))])
+                  HalfSpace(N[0, -1], N(-1))])
     @test vertices_list(P) == Vector{Vector{N}}()
+    P = HPolygon([HalfSpace(N[1, 0], N(0)), HalfSpace(N[-1, 0], N(-1))])
+    @test vertices_list(P) == Vector{Vector{N}}()
+    @test isempty(P)
 
     # empty intersection results in empty set
     p3 = tohrep(VPolygon([N[0, 0]]))
@@ -483,6 +486,14 @@ for N in [Float64]
     I3 = Interval(N(4), N(5))
     @test !is_intersection_empty(I1 × I2 , p3)
     @test is_intersection_empty(I1 × I3 , p3)
+
+    # redundancy with almost-parallel constraints (numeric issues, #2102)
+    Hs = [HalfSpace([0.05125918978413134, 0.0], 0.956012965730266),
+          HalfSpace([-0.0363879863894044, 0.3036279569180349], -0.370213880061176),
+          HalfSpace([0.03529692609786872, -0.2945239519959644], 0.36249837124872736)]
+    H = HalfSpace([-0.012707966980287463, 3.809113859067846e-15], -0.2348665397215645)
+    addconstraint!(Hs, H)
+    @test length(Hs) == 4
 end
 
 # default Float64 constructors

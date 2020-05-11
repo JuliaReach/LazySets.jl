@@ -20,6 +20,8 @@ for N in Ns
 
     @test dim(x) == 1
     @test center(x) == N[0.5]
+    @test center(x, 1) == N(0.5)
+    @test_throws ArgumentError center(x, 2)
     @test min(x) == N(0) && max(x) == N(1)
     v = vertices_list(x)
     @test N[0] in v && N[1] in v
@@ -144,6 +146,13 @@ for N in Ns
     @test isdisjoint(A, Interval(N(-1), N(1)), false)
     s, w = isdisjoint(A, B, true)
     @test s == false && w ∈ A && w ∈ B
+    # disjoint with tolerance
+    if N == Float64
+        @test !isdisjoint(Interval(0.0, 1.0), Interval(1.0 + 1e-10, 2.0))
+        LazySets.set_rtol(Float64, 1e-10)
+        @test isdisjoint(Interval(0.0, 1.0), Interval(1.0 + 1e-10, 2.0))
+        LazySets.set_rtol(Float64, LazySets.default_tolerance(Float64).rtol) # restore
+    end
 
     # conversion from a hyperrectangular set to an interval
     H = Hyperrectangle(N[0], N[1/2])

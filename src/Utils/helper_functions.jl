@@ -440,3 +440,8 @@ function _implementing_sets_unary!(dict, op, signature, index, type_args)
         end
     end
 end
+
+# check that the given coordinate i can be used to index an arbitrary element in the set X
+@inline function _check_bounds(X, i)
+    1 <= i <= dim(X) || throw(ArgumentError("there is no index at coordinate $i, since the set is of dimension $(dim(X))"))
+end

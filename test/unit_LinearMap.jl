@@ -33,6 +33,7 @@ for N in [Float64, Rational{Int}, Float32]
     # scalar multiplication
     b = BallInf(N[0, 0], N(1))
     lm = N(2) * b
+    @test lm == b * N(2)
     # repeated scalar multiplication
     lm2 = N(2) * lm
     # Test Dimension

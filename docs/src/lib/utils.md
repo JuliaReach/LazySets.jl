@@ -9,7 +9,7 @@ CurrentModule = LazySets
 ```@docs
 Arrays
 cross_product(::AbstractMatrix{N}) where {N<:Real}
-delete_zero_columns!
+nonzero_columns
 dot_zero
 hasfullrowrank
 inner
@@ -20,6 +20,7 @@ is_right_turn
 issquare
 nonzero_indices
 remove_duplicates_sorted!
+remove_zero_columns
 right_turn
 samedir
 SingleEntryVector

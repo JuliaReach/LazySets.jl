@@ -9,6 +9,7 @@ using LinearAlgebra, SparseArrays
 using ..Assertions: @assert, activate_assertions
 # activate assertions by default
 activate_assertions(Arrays)
+using ..LazySets: _geq
 
 include("matrix_operations.jl")
 include("vector_operations.jl")

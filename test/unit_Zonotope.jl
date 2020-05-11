@@ -51,7 +51,9 @@ for N in [Float64, Rational{Int}, Float32]
     g[:, 3] = ones(N, 2)
     g[1, 2] = N(2)
     z = Zonotope(N[1, 2], g)
-    @test size(z.generators) == (2, 2)
+    @test size(z.generators) == (2, 5)
+    zred = remove_zero_generators(z)
+    @test size(zred.generators) == (2, 2)
 
     # boundedness
     @test isbounded(z)
@@ -128,6 +130,13 @@ for N in [Float64, Rational{Int}, Float32]
         @test convert(Zonotope, AZ) == togrep(AZ) == Z
     end
 
+    # conversion from lazy affine map
+    A = N[1 0; 0 1]
+    b = N[1, 1]
+    B = BallInf(N[0, 0], N(1))
+    Z = convert(Zonotope, A * B + b)
+    @test Z == Zonotope(N[1, 1], N[1 0; 0 1])
+
     # test conversion from hyperrectangular sets
     Z = convert(Zonotope, Hyperrectangle(N[2, 3], N[4, 5]))
     @test Z.center == N[2, 3] && diag(Z.generators) == N[4, 5]
@@ -180,6 +189,11 @@ for N in [Float64, Rational{Int}, Float32]
     B = BallInf(zeros(N, 3), N(1))  # equivalent to Z
     constraints = constraints_list(Z)
     @test constraints isa Vector{<:HalfSpace{N}} && length(constraints) == 6
+
+    # 1D projection works correctly even with zero generators (#2147)
+    Z = convert(Zonotope, BallInf(N[0, 0], N(1)))
+    Z2 = project(Z, [1])
+    @test Z2 == Zonotope(N[0], hcat(N[1]))
 end
 
 for N in [Float64]
@@ -200,7 +214,7 @@ for N in [Float64]
     # 2D
     Z = Zonotope(N[0, 0], Matrix{N}(I, 2, 2))
     P = HPolytope(constraints_list(Z))
-    for d in LazySets.Approximations.BoxDiagDirections{N}(2)
+    for d in BoxDiagDirections{N}(2)
         @test ρ(d, P) == ρ(d, Z)
     end
     # sparse matrix (#1468)
@@ -211,6 +225,16 @@ for N in [Float64]
         Z = Zonotope(N[0, 0], N[2 3; 0 0])
         P = tovrep(HPolygon(constraints_list(Z)))
         @test ispermutation(vertices_list(P), [N[5, 0], [-5, 0]])
+
+        # test that zero generators are ignored (#2147)
+        G = spzeros(N, 100, 100)
+        G[1, 1] = N(1)
+        Z = Zonotope(zeros(N, 100), G)
+        v1 = zeros(N, 100)
+        v1[1] = N(1)
+        v2 = zeros(N, 100)
+        v2[1] = N(-1)
+        @test ispermutation(vertices_list(Z), [v1, v2])
     end
 
     # vertices for singleton zonotope (#1881)

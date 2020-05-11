@@ -56,6 +56,12 @@ If the lines are identical, the result is the first line.
 If the lines are parallel and not identical, the result is the empty set.
 Otherwise the result is the only intersection point.
 
+### Algorithm
+
+We first check whether the lines are parallel.
+If not, we use [Cramer's rule](https://en.wikipedia.org/wiki/Cramer%27s_rule)
+to compute the intersection point.
+
 ### Examples
 
 The line ``y = -x + 1`` intersected with the line ``y = x``:
@@ -70,22 +76,108 @@ Line{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
 """
 function intersection(L1::Line{N}, L2::Line{N}
                      ) where {N<:Real}
-    b = [L1.b, L2.b]
-    a = [transpose(L1.a); transpose(L2.a)]
-    try
-        # results in LAPACKException or SingularException if parallel
-        return Singleton(a \ b)
-    catch e
-        @assert e isa LAPACKException || e isa SingularException "unexpected " *
-            "$(typeof(e)) from LAPACK occurred while intersecting lines:\n$e"
-        # lines are parallel
-        if an_element(L1) ∈ L2
-            # lines are identical
+    det = L1.a[1]*L2.a[2] - L1.a[2]*L2.a[1]
+    # are the lines parallel?
+    if isapproxzero(det)
+        # are they the same line?
+        if isapprox(L1.b, L2.b)
             return L1
         else
             # lines are parallel but not identical
             return EmptySet{N}(dim(L1))
         end
+    else
+        x = (L1.b*L2.a[2] - L1.a[2]*L2.b)/det
+        y = (L1.a[1]*L2.b - L1.b*L2.a[1])/det
+        return Singleton([x, y])
+    end
+end
+
+"""
+    intersection(a::LineSegment{N}, b::Line{N}) where {N<:Real}
+
+Compute the intersection of a line and a line segment.
+
+### Input
+
+- `a`  -- LineSegment
+- `b` -- Line
+
+### Output
+
+If the sets do not intersect, the result is the empty set.
+Otherwise the result is the singleton or line segment that describes the intersection.
+"""
+
+function intersection(a::LineSegment{N}, b::Line{N}) where {N<:Real}
+    # cast a as line
+    ap = Line(a.p, a.q)
+    # find intersection between a' and b
+    m = intersection(ap, b)
+    if m == ap
+        # if this equals a, then all of the segment is the intersection
+        return a
+    elseif m isa Singleton && m.element ∈ a
+        # if the intersection between lines is in the segment
+        return m
+    else
+        # no intersection
+        return EmptySet{N}(2)
+    end
+end
+
+# symmetric method
+function intersection(a::Line{N}, b::LineSegment{N}) where {N<:Real}
+    return intersection(b,a)
+end
+
+"""
+    function intersection(a::LineSegment{N}, b::LineSegment{N}) where {N<:Real}
+
+Return the intersection of two 2D line segments.
+
+### Input
+
+- `a` -- first line segment
+- `b` -- second line segment
+
+### Output
+
+If the line segments cross, or are parallel and have one point in common,
+that point is returned.
+If the line segments are parallel and have a line segment in common, that
+segment is returned.
+Otherwise, if there is no intersection, an empty set is returned.
+
+"""
+
+function intersection(a::LineSegment{N}, b::LineSegment{N}) where {N<:Real}
+    # cast a as line
+    ap = Line(a.p, a.q)
+    bp = Line(b.p, b.q)
+    # find intersection between a' and b
+    m = intersection(ap, bp)
+    if m == ap
+        # determine which segment is in both
+        p1 = max(min(a.p[1], a.q[1]), min(b.p[1], b.q[1]))
+        p2 = max(min(a.p[2], a.q[2]), min(b.p[2], b.q[2]))
+        q1 = min(max(a.p[1], a.q[1]), max(b.p[1], b.q[1]))
+        q2 = min(max(a.p[2], a.q[2]), max(b.p[2], b.q[2]))
+        if LazySets._isapprox(p1, q1) && LazySets._isapprox(p2, q2)
+             # edges have a point in common
+             return Singleton([p1, p2])
+        elseif LazySets._leq(p1, q1) && LazySets._leq(p2, q2)
+             return LineSegment([p1, p2], [q1, q2])
+        else
+            # no intersection
+            return EmptySet{N}(2)
+        end
+    elseif m isa Singleton && m.element ∈ a && m.element ∈ b
+        # if the intersection between lines is in the segments
+        return m
+    else
+        # no intersection
+        return EmptySet{N}(2)
     end
 end
 

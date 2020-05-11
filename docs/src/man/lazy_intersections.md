@@ -19,7 +19,7 @@ Mathematically, it is the set
 Let's make two rotated ellipsoids and plot them in the same pair of axes.
 
 ```@example ellipsoids
-using Plots, LazySets, LazySets.Approximations
+using Plots, LazySets
 
 E₁ = Ellipsoid(zeros(2), [1 0; 0 2.])
 E₂ = Ellipsoid(ones(2), [2 0; 0 1.])
@@ -96,8 +96,7 @@ the min of the support function of each set. We can see in the following experim
 the resulting set is quite tight.
 
 ```@example ellipsoids
-import LazySets.Approximations.overapproximate
-using LazySets.Approximations, Polyhedra
+using Polyhedra
 
 # overapproximate the lazy intersection using a box
 Xbox = overapproximate(E₁ ∩ E₂, BoxDirections(2))

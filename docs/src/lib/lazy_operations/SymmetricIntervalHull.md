@@ -8,6 +8,7 @@ CurrentModule = LazySets
 SymmetricIntervalHull
 dim(::SymmetricIntervalHull)
 σ(::AbstractVector{N}, ::SymmetricIntervalHull{N}) where {N<:Real}
+center(::SymmetricIntervalHull{N}, ::Int) where {N<:Real}
 center(::SymmetricIntervalHull{N}) where {N<:Real}
 radius_hyperrectangle(::SymmetricIntervalHull{N}) where {N<:Real}
 radius_hyperrectangle(::SymmetricIntervalHull{N}, ::Int) where {N<:Real}

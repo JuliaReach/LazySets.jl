@@ -410,17 +410,18 @@ this method; otherwise, redundant vertices may be present.
 """
 function vertices_list(Z::AbstractZonotope{N};
                        apply_convex_hull::Bool=true) where {N<:Real}
-    p = ngens(Z)
+    c = center(Z)
+    G = remove_zero_columns(genmat(Z))
+    p = size(G, 2)
     if p == 0
-        return [center(Z)]
+        return [c]
     end
 
     vlist = Vector{Vector{N}}()
     sizehint!(vlist, 2^p)
-    G = genmat(Z)
 
     for ξi in Iterators.product([[1, -1] for i = 1:p]...)
-        push!(vlist, center(Z) .+ G * collect(ξi))
+        push!(vlist, c .+ G * collect(ξi))
     end
 
     return apply_convex_hull ? convex_hull!(vlist) : vlist
@@ -497,13 +498,8 @@ function constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true
 
     # special handling of 1D case
     if n == 1
-        if p > 1
-            error("1D-zonotope constraints currently only support a single " *
-                  "generator")
-        end
-
         c = center(Z)[1]
-        g = G[:, 1][1]
+        g = sum(abs.(view(G, 1, :)))
         constraints = [LinearConstraint([N(1)], c + g),
                        LinearConstraint([N(-1)], g - c)]
         return constraints

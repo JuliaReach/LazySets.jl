@@ -345,11 +345,11 @@ counter-clockwise) with respect to the center `O`.
 @inline function is_right_turn(O::AbstractVector{N},
                                u::AbstractVector{N},
                                v::AbstractVector{N}) where {N<:Real}
-    return right_turn(O, u, v) >= zero(N)
+    return _geq(right_turn(O, u, v), zero(N))
 end
 
 # version for O = origin
 @inline function is_right_turn(u::AbstractVector{N},
                                v::AbstractVector{N}) where {N<:Real}
-    return right_turn(u, v) >= zero(N)
+    return _geq(right_turn(u, v), zero(N))
 end

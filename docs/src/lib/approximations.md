@@ -71,6 +71,7 @@ constraint(::LocalApproximation)
 ```@docs
 AbstractDirections
 isbounding
+isnormalized
 BoxDirections
 OctDirections
 BoxDiagDirections

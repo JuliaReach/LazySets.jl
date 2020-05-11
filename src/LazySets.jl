@@ -25,6 +25,11 @@ import .Assertions: activate_assertions, deactivate_assertions
 # activate assertions by default
 activate_assertions(LazySets)
 
+# =====================
+# Numeric approximation
+# =====================
+include("Utils/comparisons.jl")
+
 # =======================
 # Arrays auxiliary module
 # =======================
@@ -35,7 +40,6 @@ using .Arrays
 # Auxiliary functions
 # ===================
 include("Utils/helper_functions.jl")
-include("Utils/comparisons.jl")
 include("Utils/macros.jl")
 
 # ==================

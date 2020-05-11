@@ -78,6 +78,9 @@ for N in [Float64, Rational{Int}, Float32]
         if N == Float32 || N == Float64
             @test lm isa Line{Float64}
             @test lm.a ≈ N[0, -1] && lm.b ≈ N(0)
+
+            # returned set is universal
+            @test linear_map(N[1 1], L) == Universe{N}(1)
         elseif N == Rational{Int}
             @test lm isa Line{Rational{BigInt}}
             @test lm.a == N[0//1, -1//1] && lm.b == N(0//1)

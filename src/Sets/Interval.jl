@@ -566,7 +566,7 @@ function _linear_map_zonotope(M::AbstractMatrix{N}, x::Interval{N}) where {N<:Re
         c[i] = M[i, 1] * cx
         gen[i] = M[i, 1] * gx
     end
-    return Zonotope(c, gen, remove_zero_generators=false)
+    return Zonotope(c, gen)
 end
 
 """
@@ -585,4 +585,23 @@ The interval obtained by applying the numerical scale to the given interval.
 """
 function scale(α::N, x::Interval{N}) where {N<:Real}
     return Interval(α * x.dat)
+end
+
+"""
+    center(H::Interval{N}, i::Int) where {N<:Real}
+
+Return the center along a given dimension of a interval.
+
+### Input
+
+- `x` -- interval
+- `i` -- dimension of interest
+
+### Output
+
+The center along a given dimension of the interval.
+"""
+@inline function center(x::Interval{N}, i::Int) where {N<:Real}
+    @boundscheck i == 1 || throw(ArgumentError("an interval has dimension one, but the index is $i"))
+    return IntervalArithmetic.mid(x.dat)
 end

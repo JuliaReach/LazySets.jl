@@ -129,8 +129,7 @@ end
 # --- disjointness check for 1D intervals ---
 
 """
-    is_intersection_empty(I1::Interval{N}, I2::Interval{N},
-                          witness::Bool=false) where {N<:Real}
+    is_intersection_empty(I1::Interval{N}, I2::Interval{N}, witness::Bool=false) where {N<:Real}
 
 Check whether two intervals do not intersect, and otherwise optionally
 compute a witness.
@@ -156,14 +155,21 @@ interval and the left-most point of the first interval, or vice-versa.
 A witness is computed by taking the maximum over the left-most points of each
 interval, which is guaranteed to belong to the intersection.
 """
-function is_intersection_empty(I1::Interval{N}, I2::Interval{N},
-                               witness::Bool=false) where {N<:Real}
-    check = min(I2) > max(I1) || min(I1) > max(I2)
-    if !witness
-        return check
+function is_intersection_empty(I1::Interval{N}, I2::Interval{N}, witness::Bool=false) where {N<:Real}
+    if witness
+        return _is_intersection_empty(I1, I2, Val(true))
     else
-        return (check, [max(min(I1), min(I2))])
+        return _is_intersection_empty(I1, I2, Val(false))
     end
+end
+
+function _is_intersection_empty(I1::Interval{N}, I2::Interval{N}, witness::Val{false}) where {N<:Real}
+    return !_leq(min(I2), max(I1)) || !_leq(min(I1), max(I2))
+end
+
+function _is_intersection_empty(I1::Interval{N}, I2::Interval{N}, witness::Val{true}) where {N<:Real}
+    check  = _is_intersection_empty(I1, I2, Val(false))
+    return (check, [max(min(I1), min(I2))])
 end
 
 # --- AbstractSingleton ---

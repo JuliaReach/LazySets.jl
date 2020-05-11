@@ -5,9 +5,10 @@ export _At_mul_B,
        issquare,
        isinvertible,
        cross_product,
-       delete_zero_columns!,
+       nonzero_columns,
        extend,
-       projection_matrix
+       projection_matrix,
+       remove_zero_columns
 
 # default tolerance for matrix condition number (see 'isinvertible')
 const DEFAULT_COND_TOL = 1e6
@@ -147,46 +148,33 @@ cross_product(M::AbstractSparseMatrix) = cross_product(Matrix(M))
 cross_product(M::SubArray{N, 2, <:AbstractSparseMatrix}) where {N} = cross_product(Matrix(M))
 
 """
-    delete_zero_columns!(A::AbstractMatrix)
+    nonzero_columns(A::AbstractMatrix)
 
-Remove all columns that only contain zeros from a given matrix.
+Return all columns that have at least one non-zero entry.
 
 ### Input
 
-- `A`    -- matrix
-- `copy` -- (optional, default: `false`) flag to copy the matrix
+- `A` -- matrix
 
 ### Output
 
-A matrix.
-
-If the input matrix `A` does not contain any zero column, we return `A` unless
-the option `copy` is set.
-If the input matrix contains zero columns, we always return a copy if the option
-`copy` is set and otherwise a `SubArray` via `@view`.
+A vector of indices.
 """
-function delete_zero_columns!(A::AbstractMatrix, copy::Bool=false)
+function nonzero_columns(A::AbstractMatrix)
     n = size(A, 2)
-    nonzero_columns = Vector{Int}()
-    sizehint!(nonzero_columns, n)
-    for i in 1:n
-        if !iszero(A[:, i])
-            push!(nonzero_columns, i)
+    nzcol = Vector{Int}()
+    sizehint!(nzcol, n)
+    for j in 1:n
+        if !iszero(view(A, :, j))
+            push!(nzcol, j)
         end
     end
-    if copy
-        if length(nonzero_columns) == n
-            return copy(A)
-        else
-            return A[:, nonzero_columns]
-        end
-    else
-        if length(nonzero_columns) == n
-            return A
-        else
-            return @view A[:, nonzero_columns]
-        end
-    end
+    return nzcol
+end
+
+function nonzero_columns(A::SparseMatrixCSC)
+    dropzeros!(A)
+    return collect(j for j in 1:A.n if A.colptr[j] < A.colptr[j+1])
 end
 
 """
@@ -277,4 +265,27 @@ julia> Matrix(ans)
 function projection_matrix(block::AbstractVector{Int}, n::Int, N::DataType=Float64)
     m = length(block)
     return sparse(1:m, block, ones(N, m), m, n)
+end
+
+"""
+    remove_zero_columns(A::AbstractMatrix)
+
+Return a matrix with all columns containing only zero entries removed.
+
+### Input
+
+- `A` -- matrix
+
+### Output
+
+The original matrix `A` if it contains no zero columns or otherwise a new matrix
+where those columns have been removed.
+"""
+function remove_zero_columns(A::AbstractMatrix)
+    nzcol = nonzero_columns(A)
+    if length(nzcol) == size(A, 2)
+        return A
+    else
+        return A[:, nzcol]
+    end
 end
