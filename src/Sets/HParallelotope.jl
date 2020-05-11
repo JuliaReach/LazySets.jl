@@ -283,7 +283,7 @@ function generators(P::HParallelotope)
 end
 
 """
-    constraints_list(P::HParallelotope)
+    constraints_list(P::HParallelotope{N}) where {N}
 
 Return the list of constraints of the given parallelotope.
 
