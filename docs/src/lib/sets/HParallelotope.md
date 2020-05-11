@@ -14,7 +14,7 @@ extremal_vertices(::HParallelotope)
 center(::HParallelotope)
 genmat(::HParallelotope)
 generators(::HParallelotope)
-constraints_list(::HParallelotope)
+constraints_list(::HParallelotope{N}) where {N}
 ```
 
 Inherited from [`LazySet`](@ref):
