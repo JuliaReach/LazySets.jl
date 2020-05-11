@@ -155,12 +155,12 @@ system ``D_i x = c_{n+i}`` for ``i = 1, \\ldots, n``, see [1, Section 3.2.1].
 function base_vertex(P::HParallelotope)
     D, c = P.directions, P.offset
     n = dim(P)
-    v = to_negative_vector(view(c, (n+1):length(c))) # converts to a dense vector as well
+    v = to_negative_vector(view(c, (n+1):2n)) # converts to a dense vector as well
     return D \ v
 end
 
 """
-    extremal_vertices(P::HParallelotope)
+    extremal_vertices(P::HParallelotope{N, VN}) where {N, VN}
 
 Compute the extremal vertices with respect to the base vertex of the
 given parallelotope in constraint representation.
@@ -188,11 +188,11 @@ We refer to [1, Section 3.2.1] for details.
 [1] Tommaso Dreossi, Thao Dang, and Carla Piazza. *Reachability computation for
     polynomial dynamical systems.* Formal Methods in System Design 50.1 (2017): 1-38.
 """
-function extremal_vertices(P::HParallelotope)
+function extremal_vertices(P::HParallelotope{N, VN}) where {N, VN}
     D, c = P.directions, P.offset
     n = dim(P)
-    v = to_negative_vector(view(c, n+1, length(c))
-    vertices = Vector{Vector}(undef, n)
+    v = to_negative_vector(view(c, n+1, 2n))
+    vertices = Vector{VN}(undef, n)
     h = copy(v)
     @inbounds for i in 1:n
         h[i] = c[i]
@@ -283,7 +283,7 @@ function generators(P::HParallelotope)
 end
 
 """
-    constraints_list(P::HParallelotope{N}) where {N}
+    constraints_list(P::HParallelotope{N, VN}) where {N, VN}
 
 Return the list of constraints of the given parallelotope.
 
@@ -295,14 +295,13 @@ Return the list of constraints of the given parallelotope.
 
 The list of constraints of `P`.
 """
-function constraints_list(P::HParallelotope{N}) where {N}
+function constraints_list(P::HParallelotope{N, VN}) where {N, VN}
     D, c = P.directions, P.offset
     n = dim(P)
     if isempty(D)
-        return Vector{LinearConstraint{N, Vector{N}}}()
+        return Vector{LinearConstraint{N, VN}}()
     end
-    VT = typeof(D[1, :])
-    clist = Vector{LinearConstraint{N, VT}}(undef, 2n)
+    clist = Vector{LinearConstraint{N, VN}}(undef, 2n)
     @inbounds for i in 1:n
         clist[i] = LinearConstraint(D[i, :], c[i])
         clist[i+n] = LinearConstraint(-D[i, :], c[i+n])
