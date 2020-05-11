@@ -10,7 +10,7 @@ export HParallelotope,
        constraints_list
 
 """
-    HParallelotope{N<:Real, VN<:AbstractVector, MN<:AbstractMatrix} <: AbstractZonotope
+HParallelotope{N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
 
 Type that represents a parallelotope in constraint form.
 
@@ -53,12 +53,12 @@ we refer to [3].
 [3] Matthias Althoff, Olaf Stursberg, and Martin Buss. *Computing reachable sets of hybrid systems using
     a combination of zonotopes and polytopes.* Nonlinear analysis: hybrid systems 4.2 (2010): 233-249.
 """
-struct HParallelotope{N<:Real, VN<:AbstractVector, MN<:AbstractMatrix} <: AbstractZonotope
+struct HParallelotope{N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
     directions::MN
     offset::VN
 
     # default constructor with dimension check
-    function HParallelotope(D::MN, c::VN) where {N<:Real, VN<:AbstractVector, MN<:AbstractMatrix}
+    function HParallelotope(D::MN, c::VN) where {N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}}
         @assert length(c) == 2*checksquare(D) "the length of the offset direction should be twice the size " *
             "of the directions matrix, but they are $(length(c)) and $(size(D)) dimensional respectively"
         return new{N, VN, MN}(D, c)
@@ -155,7 +155,7 @@ system ``D_i x = c_{n+i}`` for ``i = 1, \\ldots, n``, see [1, Section 3.2.1].
 function base_vertex(P::HParallelotope)
     D, c = P.directions, P.offset
     n = dim(P)
-    v = to_negative_vector(c[n+1:end]) # converts to a dense vector as well
+    v = to_negative_vector(view(c, (n+1):length(c))) # converts to a dense vector as well
     return D \ v
 end
 
