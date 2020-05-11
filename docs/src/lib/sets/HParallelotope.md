@@ -10,11 +10,11 @@ directions(::HParallelotope)
 offset(::HParallelotope)
 dim(::HParallelotope)
 base_vertex(::HParallelotope)
-extremal_vertices(::HParallelotope{N}) where {N}
+extremal_vertices(::HParallelotope{N, VN}) where {N, VN}
 center(::HParallelotope)
 genmat(::HParallelotope)
 generators(::HParallelotope)
-constraints_list(::HParallelotope{N}) where {N}
+constraints_list(::HParallelotope{N, VN}) where {N, VN}
 ```
 
 Inherited from [`LazySet`](@ref):
