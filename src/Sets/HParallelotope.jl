@@ -295,7 +295,7 @@ Return the list of constraints of the given parallelotope.
 
 The list of constraints of `P`.
 """
-function constraints_list(P::HParallelotope)
+function constraints_list(P::HParallelotope{N}) where N
     D, c = P.directions, P.offset
     n = dim(P)
     if isempty(D)
