@@ -34,8 +34,13 @@ A polygon in vertex representation can be constructed by passing the list of
 vertices. For example, we can build the right triangle
 
 ```jldoctest polygon_vrep
-julia> P = VPolygon([[0, 0], [1, 0], [0, 1]])
-VPolygon{Int64,Array{Int64,1}}(Array{Int64,1}[[0, 0], [1, 0], [0, 1]])
+julia> P = VPolygon([[0, 0], [1, 0], [0, 1]]);
+
+julia> P.vertices
+3-element Array{Array{Int64,1},1}:
+ [0, 0]
+ [1, 0]
+ [0, 1]
 ```
 
 Alternatively, a `VPolygon` can be constructed passing a matrix of vertices,
@@ -47,8 +52,13 @@ julia> M = [0 1 0; 0 0 1.]
  0.0  1.0  0.0
  0.0  0.0  1.0
 
-julia> VPolygon(M)
-VPolygon{Float64,Array{Float64,1}}(Array{Float64,1}[[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]])
+julia> P = VPolygon(M);
+
+julia> P.vertices
+3-element Array{Array{Float64,1},1}:
+ [0.0, 0.0]
+ [1.0, 0.0]
+ [0.0, 1.0]
 ```
 """
 struct VPolygon{N<:Real, VN<:AbstractVector{N}} <: AbstractPolygon{N}
