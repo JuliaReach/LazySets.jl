@@ -25,23 +25,34 @@ Type that represents a convex polytope in V-representation.
 A polytope in vertex representation can be constructed by passing the list of
 vertices. For example, we can build the tetrahedron:
 
-```jldoctest polytope_vrep
-julia> P = VPolytope([0 0 0; 1 0 0; 0 1 0; 0 0 1])
-VPolytope{Int64,Array{Int64,1}}(Array{Int64,1}[[0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+```jldoctest
+julia> P = VPolytope([0 0 0; 1 0 0; 0 1 0; 0 0 1]);
+
+julia> P.vertices
+3-element Array{Array{Int64,1},1}:
+ [0, 1, 0, 0]
+ [0, 0, 1, 0]
+ [0, 0, 0, 1]
 ```
 
 Alternatively, a `VPolytope` can be constructed passing a matrix of vertices,
 where each *column* represents a vertex:
 
-```jldoctest polytope_vrep
+```jldoctest
 julia> M = [0 0 0; 1 0 0; 0 1 0; 0 0 1]'
 3×4 LinearAlgebra.Adjoint{Int64,Array{Int64,2}}:
  0  1  0  0
  0  0  1  0
  0  0  0  1
 
-julia> VPolytope(M)
-VPolytope{Int64,Array{Int64,1}}(Array{Int64,1}[[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]])
+julia> P = VPolytope(M);
+
+julia> P.vertices
+4-element Array{Array{Int64,1},1}:
+ [0, 0, 0]
+ [1, 0, 0]
+ [0, 1, 0]
+ [0, 0, 1]
 ```
 """
 struct VPolytope{N<:Real, VN<:AbstractVector{N}} <: AbstractPolytope{N}
@@ -91,14 +102,19 @@ If it is empty, the result is ``-1``.
 ### Examples
 
 ```jldoctest
-julia> v = VPolytope()
-VPolytope{Float64,Array{Float64,1}}(Array{Float64,1}[])
+julia> v = VPolytope();
+
+julia> v.vertices
+0-element Array{Array{Float64,1},1}
 
 julia> dim(v)
 -1
 
-julia> v = VPolytope([ones(3)])
-VPolytope{Float64,Array{Float64,1}}(Array{Float64,1}[[1.0, 1.0, 1.0]])
+julia> v = VPolytope([ones(3)]);
+
+julia> v.vertices
+1-element Array{Array{Float64,1},1}:
+ [1.0, 1.0, 1.0]
 
 julia> dim(v) == 3
 true

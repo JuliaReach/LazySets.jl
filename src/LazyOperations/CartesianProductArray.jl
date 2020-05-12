@@ -472,8 +472,17 @@ julia> using LazySets: block_to_dimension_indices
 
 julia> cpa = CartesianProductArray([BallInf(zeros(n), 1.0) for n in [1, 3, 2, 3]]);
 
-julia> block_to_dimension_indices(cpa, [2, 4, 8])
-(Tuple{Int64,Int64}[(-1, -1), (2, 4), (-1, -1), (7, 9)], 2)
+julia> m, k = block_to_dimension_indices(cpa, [2, 4, 8]);
+
+julia> m
+4-element Array{Tuple{Int64,Int64},1}:
+ (-1, -1)
+ (2, 4)
+ (-1, -1)
+ (7, 9)
+
+julia> k
+2
 ```
 This vector represents the mapping "second block from dimension 2 to dimension 4,
 fourth block from dimension 7 to dimension 9."
