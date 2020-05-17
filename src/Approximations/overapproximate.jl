@@ -1545,8 +1545,8 @@ We preprocess the directions in that respect.
 ### Algorithm
 
 We solve a linear program parametric in the vertices ``v_j`` of `X` and the
-directions ``d_k`` in `dir` presented in [1, Section 4.2] (adapting the notation
-to the one used in this library).
+directions ``d_k`` in `dir` presented in Section 4.2 in [1], adapting the
+notation to the one used in this library.
 
 ```math
     \\min \\sum_{k=1}^l α_k \\
