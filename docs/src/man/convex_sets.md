@@ -113,7 +113,8 @@ The [`UnionSet`](@ref def_UnionSet) represents the union of two sets.
 The simplest convex set is the empty set.
 
 ```@example convex_sets
-E = EmptySet()
+dimension = 2
+E = EmptySet(dimension)
 
 plot_raw()  # hide
 plot!(xlims=(0., 2.), ylims=(0., 2.), xticks=[0., 1., 2.],  # hide
