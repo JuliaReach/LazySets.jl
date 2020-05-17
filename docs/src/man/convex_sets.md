@@ -1,7 +1,11 @@
 # Introduction to Convex Sets
 
 In this section we give a short overview about convex sets supported in this
-library and the corresponding lazy set calculus using support functions.
+library.
+Currently we only list the basic convex sets and we refer to
+[this presentation](https://schillic.github.io/resources/supplement/slides_ConvexSets2019.pdf)
+for a short explanation of operations on convex sets and composite set
+representations that are supported here and that we plan to add in the future.
 
 ```@contents
 Pages = ["convex_sets.md"]
@@ -95,6 +99,15 @@ plot!(xlims=(0., 2.), ylims=(0., 2.), xticks=[0., 1., 2.],  # hide
 plot3(hourglass, true; linecolor=c3)  # hide
 ```
 
+The set types used in this example will be explained later.
+As a quick summary, the set type [`VPolygon`](@ref def_VPolygon) represents a
+[convex polygon](https://en.wikipedia.org/wiki/Convex_polytope) as the convex
+hull of a given list of vertices (as opposed to a representation as the
+intersection of a given list of linear constraints; for that representation see
+the set type [`HPolygon`](@ref def_HPolygon)).
+The [`UnionSet`](@ref def_UnionSet) represents the union of two sets.
+
+
 ### Empty set
 
 The simplest convex set is the empty set.
@@ -118,6 +131,18 @@ S = Singleton([1.0, 1.0])
 plot_raw()  # hide
 plot!(S, markercolor=c2, markersize=10, xlims=(0., 2.), ylims=(0., 2.),  # hide
       xticks=[0., 1., 2.], yticks=[1., 2.], top_margin=3mm)  # hide
+```
+
+As a special case, the library also offers a representation of the singleton
+consisting of the origin.
+
+```@example convex_sets
+dimension = 2
+Z = ZeroSet(dimension)
+
+plot_raw()  # hide
+plot!(Z, markercolor=c2, markersize=10, xlims=(-1., 1.), ylims=(-1., 1.),  # hide
+      xticks=[-1., 0., 1.], yticks=[-1., 0., 1.], top_margin=3mm)  # hide
 ```
 
 ### Unit balls
@@ -214,8 +239,8 @@ that for ``p < 1`` the unit balls are not convex.
 #### Hyperplane
 
 A hyperplane is the generalization of the line (in 2D) and the plane (in 3D).
-Formally, a hyperplane is parametric in a normal vector ``d`` and a constant
-``c`` and represents the set of points ``x`` satisfying ``⟨d, x⟩ = c`` (where
+Formally, a hyperplane is parametric in a normal vector ``a`` and a constant
+``b`` and represents the set of points ``x`` satisfying ``⟨a, x⟩ = b`` (where
 ``⟨·⟩`` denotes the dot product).
 
 ```@example convex_sets
@@ -225,22 +250,22 @@ x = [0., 1.]  # hide
 y = [1., 0.]  # hide
 arrow_x = [0.5, 0.7]  # hide
 arrow_y = [0.5, 0.7]  # hide
-xd = 0.5  # hide
-yd = 0.7  # hide
+xa = 0.5  # hide
+ya = 0.7  # hide
 
 plot_raw()  # hide
 plot!(xlims=(0., 1.0), ylims=(0., 1.0), xticks=[0., 1.], yticks=[1.],  # hide
       top_margin=3mm)  # hide
 plot_hyperplane!(x, y, c1)  # hide
 plot!(arrow_x, arrow_y, linecolor=c3, arrow=:arrow, linestyle=:dot, width=8)  # hide
-plot!(annotations=(xd, yd, text(L"d", 30)))  # hide
+plot!(annotations=(xa, ya, text(L"a", 30)))  # hide
 ```
 
 #### Half-space
 
 A half-space is characterized by a hyperplane and represents all points that lie
 on one side of that hyperplane.
-Formally, it is the set of points ``x`` satisfying ``⟨d, x⟩ ≤ c``.
+Formally, it is the set of points ``x`` satisfying ``⟨a, x⟩ ≤ b``.
 
 ```@example convex_sets
 Hs = HalfSpace([1.0, 1.0], 1.0)
@@ -253,7 +278,7 @@ plot!(xlims=(0., 1.0), ylims=(0., 1.0), xticks=[0., 1.], yticks=[1.],  # hide
 plot2(X, true)  # hide
 plot_hyperplane!(x, y, c2)  # hide
 plot!(arrow_x, arrow_y, linecolor=c3, arrow=:arrow, linestyle=:dot, width=8)  # hide
-plot!(annotations=(xd, yd, text(L"d", 30)))  # hide
+plot!(annotations=(xa, ya, text(L"a", 30)))  # hide
 ```
 
 ## Operations on convex sets
@@ -261,9 +286,5 @@ plot!(annotations=(xd, yd, text(L"d", 30)))  # hide
 To be continued...
 
 ## Composite convex sets
-
-To be continued...
-
-## Support function
 
 To be continued...
