@@ -40,6 +40,7 @@ include("template_directions.jl")
 include("overapproximate.jl")
 include("underapproximate.jl")
 include("decompositions.jl")
+include("distance.jl")
 include("hausdorff_distance.jl")
 include("init.jl")
 
