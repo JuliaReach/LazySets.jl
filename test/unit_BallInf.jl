@@ -54,6 +54,11 @@ for N in [Float64, Rational{Int}, Float32]
     d = N[1, -1]
     @test σ(d, b) == N[2, -2]
 
+    # center
+    c = N[1, 2]
+    b = BallInf(c, N(2))
+    @test center(b) == c && center(b, 1) == N(1) && center(b, 2) == N(2)
+
     # support vector for single entry vector
     svec = σ(SingleEntryVector(2, 3, N(2)), BallInf(zeros(N, 3), N(2)))
     @test svec[1] ∈ Interval(N[-2, 2]) && svec[2] == N(2) && svec[3] ∈ Interval(N[-2, 2])
