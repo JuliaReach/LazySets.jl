@@ -293,6 +293,8 @@ This interface defines the following functions:
 dim(::AbstractCentrallySymmetricPolytope)
 an_element(::AbstractCentrallySymmetricPolytope{N}) where {N<:Real}
 isempty(::AbstractCentrallySymmetricPolytope)
+isuniversal(::AbstractCentrallySymmetricPolytope{N}, ::Bool=false) where {N<:Real}
+center(::AbstractCentrallySymmetricPolytope{N}, ::Int) where {N<:Real}
 ```
 
 ### Implementations
