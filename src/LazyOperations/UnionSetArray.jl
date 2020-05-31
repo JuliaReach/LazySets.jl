@@ -213,3 +213,32 @@ Determine whether a union of a finite number of convex sets is bounded.
 function isbounded(cup::UnionSetArray)
    return all(isbounded, array(cup))
 end
+
+"""
+    vertices_list(cup::UnionSetArray; apply_convex_hull::Bool=true,
+                  backend=nothing)
+
+Return the list of vertices of a union of a finite number of convex sets.
+
+### Input
+
+- `cup`               -- union of a finite number of convex sets
+- `apply_convex_hull` -- (optional, default: `true`) if `true`, post-process the
+                         vertices using a convex-hull algorithm
+- `backend`           -- (optional, default: `nothing`) backend for computing
+                         the convex hull (see argument `apply_convex_hull`)
+
+### Output
+
+The list of vertices, possibly reduced to the list of vertices of the convex
+hull.
+"""
+function vertices_list(cup::UnionSetArray;
+                       apply_convex_hull::Bool=true,
+                       backend=nothing)
+    vlist = vcat([vertices_list(Xi) for Xi in array(cup)]...)
+    if apply_convex_hull
+        convex_hull!(vlist, backend=backend)
+    end
+    return vlist
+end

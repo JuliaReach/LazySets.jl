@@ -554,7 +554,7 @@ Compute the Minkowski sum between two polytopes in vertex representation.
 - `P1`                -- polytope
 - `P2`                -- another polytope
 - `apply_convex_hull` -- (optional, default: `true`) if `true`, post-process the
-                         pairwise sums using a convex hull algorithm
+                         pairwise sums using a convex hull algorithm
 - `backend`           -- (optional, default: `nothing`) the backend for
                          polyhedral computations used to post-process with a
                          convex hull; see `default_polyhedra_backend(P1, N)`
