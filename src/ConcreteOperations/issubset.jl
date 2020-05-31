@@ -152,10 +152,8 @@ function ⊆(H1::AbstractHyperrectangle{N},
            witness::Bool=false
           ) where {N<:Real}
     @assert dim(H1) == dim(H2)
-    c1 = center(H1)
-    c2 = center(H2)
     @inbounds for i in 1:dim(H1)
-        c_dist = c1[i] - c2[i]
+        c_dist = center(H1, i) - center(H2, i)
         r_dist = radius_hyperrectangle(H1, i) - radius_hyperrectangle(H2, i)
         # check if c_dist is not in the interval [r_dist, -r_dist]
         if !_leq(r_dist, c_dist) || !_leq(c_dist, -r_dist)

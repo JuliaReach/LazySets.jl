@@ -498,7 +498,7 @@ function constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true
 
     # special handling of 1D case
     if n == 1
-        c = center(Z)[1]
+        c = center(Z, 1)
         g = sum(abs.(view(G, 1, :)))
         constraints = [LinearConstraint([N(1)], c + g),
                        LinearConstraint([N(-1)], g - c)]
