@@ -18,10 +18,18 @@ function default_lp_solver(N::Type{<:Rational})
     GLPKSolverLP(method=:Exact)
 end
 
-# fallback method
+# Polyhedra backend (fallback method)
 function default_polyhedra_backend(P, N)
     require(:Polyhedra; fun_name="default_polyhedra_backend")
     error("no default backend for numeric type $N")
+end
+
+# default LP solver for Polyhedra (fallback method)
+# NOTE: exists in parallel to `default_lp_solver` because we use different
+# interfaces (see #1493)
+function default_lp_solver_polyhedra(N, varargs...)
+    require(:Polyhedra; fun_name="default_lp_solver_polyhedra")
+    error("no default solver for numeric type $N")
 end
 
 """

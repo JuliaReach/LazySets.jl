@@ -13,16 +13,26 @@ eval(quote
         return Polyhedra.default_library(LazySets.dim(P), N)
     end
 
-    # NOTE: exists in parallel to `default_lp_solver` because we use different
-    # interfaces (see #1493)
-    function default_lp_solver_polyhedra(N::Type{<:AbstractFloat})
-        return JuMP.optimizer_with_attributes(GLPK.Optimizer)
+    function default_lp_solver_polyhedra(N::Type{<:AbstractFloat};
+                                         presolve::Bool=false)
+        if presolve
+            return JuMP.optimizer_with_attributes(GLPK.Optimizer,
+                                                  "presolve" => GLPK.ON)
+        else
+            return JuMP.optimizer_with_attributes(GLPK.Optimizer)
+        end
     end
 
-    # NOTE: exists in parallel to `default_lp_solver` because we use different
-    # interfaces (see #1493)
-    function default_lp_solver_polyhedra(N::Type{<:Rational})
-        return JuMP.optimizer_with_attributes(() -> GLPK.Optimizer(method=GLPK.EXACT))
+    function default_lp_solver_polyhedra(N::Type{<:Rational};
+                                         presolve::Bool=false)
+        if presolve
+            return JuMP.optimizer_with_attributes(
+                () -> GLPK.Optimizer(method=GLPK.EXACT),
+                "presolve" => GLPK.ON)
+        else
+            return JuMP.optimizer_with_attributes(
+                () -> GLPK.Optimizer(method=GLPK.EXACT))
+        end
     end
 end)
 
