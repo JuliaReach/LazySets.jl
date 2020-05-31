@@ -209,24 +209,16 @@ function intersection(H1::AbstractHyperrectangle{N},
                       H2::AbstractHyperrectangle{N}
                      ) where {N<:Real}
     n = dim(H1)
-    c1 = center(H1)
-    c2 = center(H2)
-    r1 = radius_hyperrectangle(H1)
-    r2 = radius_hyperrectangle(H2)
-    high = Vector{N}(undef, n)
-    low = Vector{N}(undef, n)
+    v_high = Vector{N}(undef, n)
+    v_low = Vector{N}(undef, n)
     for i in 1:n
-        high1 = c1[i] + r1[i]
-        low1 = c1[i] - r1[i]
-        high2 = c2[i] + r2[i]
-        low2 = c2[i] - r2[i]
-        high[i] = min(high1, high2)
-        low[i] = max(low1, low2)
-        if high[i] < low[i]
+        v_high[i] = min(high(H1, i), high(H2, i))
+        v_low[i] = max(low(H1, i), low(H2, i))
+        if v_high[i] < v_low[i]
             return EmptySet{N}(dim(H1))
         end
     end
-    return Hyperrectangle(high=high, low=low)
+    return Hyperrectangle(high=v_high, low=v_low)
 end
 
 # disambiguation
