@@ -18,10 +18,18 @@ function default_lp_solver(N::Type{<:Rational})
     GLPKSolverLP(method=:Exact)
 end
 
-# fallback method
+# Polyhedra backend (fallback method)
 function default_polyhedra_backend(P, N)
     require(:Polyhedra; fun_name="default_polyhedra_backend")
     error("no default backend for numeric type $N")
+end
+
+# default LP solver for Polyhedra (fallback method)
+# NOTE: exists in parallel to `default_lp_solver` because we use different
+# interfaces (see #1493)
+function default_lp_solver_polyhedra(N, varargs...)
+    require(:Polyhedra; fun_name="default_lp_solver_polyhedra")
+    error("no default solver for numeric type $N")
 end
 
 """
@@ -807,7 +815,7 @@ end
     chebyshev_center(P::AbstractPolyhedron{N};
                      [get_radius]::Bool=false,
                      [backend]=default_polyhedra_backend(P, N),
-                     [solver]=JuMP.with_optimizer(GLPK.Optimizer)
+                     [solver]=default_lp_solver_polyhedra(N; presolve=true)
                      ) where {N<:AbstractFloat}
 
 Compute the [Chebyshev center](https://en.wikipedia.org/wiki/Chebyshev_center)
@@ -821,8 +829,9 @@ of a polytope.
                   Chebyshev center
 - `backend`    -- (optional; default: `default_polyhedra_backend(P, N)`) the
                   backend for polyhedral computations
-- `solver`     -- (optional; default: `JuMP.with_optimizer(GLPK.Optimizer)`) the
-                  LP solver passed to `Polyhedra`
+- `solver`     -- (optional; default:
+                  `default_lp_solver_polyhedra(N; presolve=true)`) the LP
+                  solver passed to `Polyhedra`
 
 ### Output
 
@@ -839,7 +848,7 @@ In general, the center of such a ball is not unique (but the radius is).
 function chebyshev_center(P::AbstractPolyhedron{N};
                           get_radius::Bool=false,
                           backend=default_polyhedra_backend(P, N),
-                          solver=JuMP.with_optimizer(GLPK.Optimizer)
+                          solver=default_lp_solver_polyhedra(N; presolve=true)
                          ) where {N<:AbstractFloat}
     require(:Polyhedra; fun_name="chebyshev_center")
     # convert to HPolyhedron to ensure `polyhedron` is applicable (see #1505)
