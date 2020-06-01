@@ -63,6 +63,13 @@ for N in [Float64, Rational{Int}, Float32]
         disjoint2, point2 = isdisjoint(S, U, true)
         @test isdisjoint(U, S) && isdisjoint(S, U) && disjoint1 &&
               disjoint2 && point1 == point2 == N[]
+
+        # vertices list
+        @test ispermutation(vertices_list(U),
+            [N[1, 1], N[1, -1], N[-1, 1], N[-1, -1],
+            N[1, 2], N[1, 0], N[2, 1], N[0, 1]])
+        @test ispermutation(vertices_list(U, apply_convex_hull=true),
+            [N[1, -1], N[-1, 1], N[-1, -1], N[1, 2], N[2, 1]])
     end
 end
 
