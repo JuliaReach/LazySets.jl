@@ -186,6 +186,34 @@ function isempty(cha::ConvexHullArray)
 end
 
 """
+    vertices_list(cha::ConvexHullArray; apply_convex_hull::Bool=true,
+                  backend=nothing)
+
+Return the list of vertices of the convex hull of a finite number of convex sets.
+
+### Input
+
+- `cha`               -- convex hull of a finite number of convex sets
+- `apply_convex_hull` -- (optional, default: `true`) if `true`, post-process the
+                         vertices using a convex-hull algorithm
+- `backend`           -- (optional, default: `nothing`) backend for computing
+                         the convex hull (see argument `apply_convex_hull`)
+
+### Output
+
+The list of vertices.
+"""
+function vertices_list(cha::ConvexHullArray;
+                       apply_convex_hull::Bool=true,
+                       backend=nothing)
+    vlist = vcat([vertices_list(Xi) for Xi in array(cha)]...)
+    if apply_convex_hull
+        convex_hull!(vlist, backend=backend)
+    end
+    return vlist
+end
+
+"""
     vertices_list(X::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
 
 Return the list of vertices of the convex hull array of singletons.
