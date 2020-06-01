@@ -66,10 +66,10 @@ for N in [Float64, Rational{Int}, Float32]
 
         # vertices list
         @test ispermutation(vertices_list(U),
-            [N[1, -1], N[-1, 1], N[-1, -1], N[1, 2], N[2, 1]])
-        @test ispermutation(vertices_list(U, apply_convex_hull=false),
             [N[1, 1], N[1, -1], N[-1, 1], N[-1, -1],
             N[1, 2], N[1, 0], N[2, 1], N[0, 1]])
+        @test ispermutation(vertices_list(U, apply_convex_hull=true),
+            [N[1, -1], N[-1, 1], N[-1, -1], N[1, 2], N[2, 1]])
     end
 end
 
