@@ -553,7 +553,7 @@ Converts a convex set to an interval.
 An interval.
 """
 function convert(::Type{Interval}, S::LazySet{N}) where {N<:Real}
-    @assert dim(S) == 1 "cannot convert a $(dim(H))-dimensional $(typeof(S)) to `Interval`"
+    @assert dim(S) == 1 "cannot convert a $(dim(S))-dimensional $(typeof(S)) to `Interval`"
     return Interval(-ρ(N[-1], S), ρ(N[1], S))
 end
 
