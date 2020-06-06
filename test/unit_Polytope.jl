@@ -1,3 +1,5 @@
+using LazySets: linear_map_inverse
+
 global test_suite_polyhedra
 
 for N in [Float64, Rational{Int}, Float32]
@@ -112,9 +114,10 @@ for N in [Float64, Rational{Int}, Float32]
     L4 = linear_map(M, P, cond_tol=1e3)  # set a custom tolerance for the condition number (invertibility check)
     L5 = linear_map(M, P, check_invertibility=false)  # invertibility known
     L6 = linear_map(M, P, inverse=inv(M))  # pass inverse, uses "inverse"
+    L7 = linear_map_inverse(inv(M), P)  # convenience function to pass inverse but not M
     p = center(H)
     @test p ∈ P
-    @test all([M * p ∈ Li for Li in [L1, L2, L3, L4, L5, L6]])
+    @test all([M * p ∈ Li for Li in [L1, L2, L3, L4, L5, L6, L7]])
     @test L3 isa VPolygon{N}
 
     # linear map for mixed types

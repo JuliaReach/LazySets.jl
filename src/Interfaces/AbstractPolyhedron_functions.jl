@@ -685,11 +685,23 @@ end
 # preconditions should have been checked in the caller function
 function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
                           algo::LinearMapInverse) where {N}
-    inverse = algo.inverse
+    return _linear_map_inverse_hrep(algo.inverse, P)
+end
+
+function linear_map_inverse(Minv::AbstractMatrix{N},
+                            P::AbstractPolyhedron{N}) where {N}
+    @assert size(Minv, 2) == dim(P) "a linear map of size $(size(Minv)) " *
+        "cannot be applied to a set of dimension $(dim(P))"
+    constraints = _linear_map_inverse_hrep(Minv, P)
+    return HPolyhedron(constraints)
+end
+
+function _linear_map_inverse_hrep(Minv::AbstractMatrix{N},
+                                  P::AbstractPolyhedron{N}) where {N}
     constraints_P = constraints_list(P)
     constraints_MP = _preallocate_constraints(constraints_P)
     @inbounds for (i, c) in enumerate(constraints_P)
-        cinv = vec(_At_mul_B(c.a, inverse))
+        cinv = vec(_At_mul_B(c.a, Minv))
         constraints_MP[i] = LinearConstraint(cinv, c.b)
     end
     return constraints_MP
