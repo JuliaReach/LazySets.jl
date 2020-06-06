@@ -307,7 +307,8 @@ function isredundant(cmid::LinearConstraint{N},
         if samedir(cright.a, cleft.a)[1]
             # angle is 0°, i.e., all three constraints have the same direction
             # constraint is redundant unless it is tighter than the other two
-            @assert samedir(cright.a, cmid.a)[1] && samedir(cleft.a, cmid.a)[1]
+            @assert samedir(cright.a, cmid.a)[1] &&
+                    samedir(cleft.a, cmid.a)[1] "inconsistent constraints"
             return !is_tighter_same_dir_2D(cmid, cright, strict=true) &&
                    !is_tighter_same_dir_2D(cmid, cleft, strict=true)
         else
