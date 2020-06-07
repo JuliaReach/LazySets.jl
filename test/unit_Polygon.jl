@@ -494,6 +494,18 @@ for N in [Float64]
     H = HalfSpace([-0.012707966980287463, 3.809113859067846e-15], -0.2348665397215645)
     addconstraint!(Hs, H)
     @test length(Hs) == 4
+
+    # redundancy with almost-parallel constraints and order issues (#2169)
+    Hs = [
+        HalfSpace([1.3877787807814457e-17, 0.0], -7.27918967693285e-18)
+        HalfSpace([3.642919299551295e-17, 2.7755575615628914e-17], 3.194076233118193e-17)
+        HalfSpace([-6.938893903907228e-17, 0.03196481037863655], 0.1022675780516848)
+        HalfSpace([-0.022382796523655775, -3.469446951953614e-18], 0.05268494728581621)
+        HalfSpace([-8.673617379884035e-19, -0.01331598581298936], 0.020336411343083463)
+        HalfSpace([0.01620615792275367, -2.949029909160572e-17], 0.03845370605895632)
+       ]
+    P = HPolygon(copy(Hs))
+    @test ispermutation(P.constraints, Hs[3:6])
 end
 
 # default Float64 constructors

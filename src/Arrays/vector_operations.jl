@@ -96,12 +96,12 @@ function samedir(u::AbstractVector{N},
     no_factor = true
     factor = 0
     @inbounds for i in 1:length(u)
-        if u[i] == 0
-            if v[i] != 0
+        if isapproxzero(u[i])
+            if !isapproxzero(v[i])
                 return (false, 0)
             end
             continue
-        elseif v[i] == 0
+        elseif isapproxzero(v[i])
             return (false, 0)
         end
         if no_factor
