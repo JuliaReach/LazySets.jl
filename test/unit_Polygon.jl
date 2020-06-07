@@ -248,9 +248,15 @@ for N in [Float64, Float32, Rational{Int}]
     @test intersection(p3, p4) isa EmptySet{N}
 
     # concrete linear map
-    # in 2D and for an invertible map we get an HPolygon; see #631 and #1093
+    # in 2D and for an invertible map we get an HPolygon (see #631 and #1093)
     HP = convert(HPolygon, BallInf(N[0, 0], N(1)))
     @test linear_map(N[1 0; 0 2], HP) isa HPolygon{N}
+    # in higher dimensions we get an HPolytope (#2168)
+    if test_suite_polyhedra
+        p4 = convert(HPolygon, BallInf(zeros(N, 2), N(1)))
+        A = ones(N, 4, 2)
+        @test linear_map(A, p4) isa HPolytope
+    end
 
     # vertices_list removes duplicates by default (#1405)
     p3 = HPolygon([HalfSpace(N[1, 0], N(0)), HalfSpace(N[0, 1], N(0)),

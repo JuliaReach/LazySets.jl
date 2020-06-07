@@ -597,10 +597,3 @@ function isbounded(P::AbstractHPolygon, use_type_assumption::Bool=true)
     end
     return isbounded_unit_dimensions(P)
 end
-
-function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::AbstractHPolygon{N},
-            algo::AbstractLinearMapAlgorithm) where {N<:Real}
-    constraints = _linear_map_hrep(M, P, algo)
-    T = basetype(P)
-    return T(constraints)
-end
