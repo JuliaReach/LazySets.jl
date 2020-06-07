@@ -305,12 +305,19 @@ function isredundant(cmid::LinearConstraint{N},
     elseif is_right_turn(cleft.a, cright.a)
         # angle is 0° or 180°
         if samedir(cright.a, cleft.a)[1]
-            # angle is 0°, i.e., all three constraints have the same direction
-            # constraint is redundant unless it is tighter than the other two
-            @assert samedir(cright.a, cmid.a)[1] &&
-                    samedir(cleft.a, cmid.a)[1] "inconsistent constraints"
-            return !is_tighter_same_dir_2D(cmid, cright, strict=true) &&
-                   !is_tighter_same_dir_2D(cmid, cleft, strict=true)
+            # angle is 0°
+            if samedir(cright.a, cmid.a)[1] && samedir(cleft.a, cmid.a)[1]
+                # all three constraints have the same direction
+                # constraint is redundant unless it is tighter than the others
+                return !is_tighter_same_dir_2D(cmid, cright, strict=true) &&
+                       !is_tighter_same_dir_2D(cmid, cleft, strict=true)
+            else
+                # surrounding constraints have the same direction but the
+                # central constraint does not -> corner case with just three
+                # unbounding constraints (usually occurs during incremental
+                # addition of constraints)
+                return false
+            end
         else
             # angle is 180°
             samedir_check = true
