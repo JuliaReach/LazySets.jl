@@ -266,6 +266,12 @@ for N in [Float64]
     X_eps = BallInf(N[0.1, 0.2, 0.1], N(0.30001))
     @test !isequivalent(X, X_eps)
 
+    # rectangular map
+    M2 = N[2 1; 0 1; 3 3]
+    Q = linear_map(M2, P)
+    P2 = linear_map_inverse(M2, Q)
+    @test isequivalent(P2, P)
+
     if test_suite_polyhedra
         # -----
         # H-rep
