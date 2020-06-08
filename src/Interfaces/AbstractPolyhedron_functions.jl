@@ -690,7 +690,7 @@ end
 
 function linear_map_inverse(Minv::AbstractMatrix{N},
                             P::AbstractPolyhedron{N}) where {N}
-    @assert size(Minv, 2) == dim(P) "a linear map of size $(size(Minv)) " *
+    @assert size(Minv, 1) == dim(P) "a linear map of size $(size(Minv)) " *
         "cannot be applied to a set of dimension $(dim(P))"
     constraints = _linear_map_inverse_hrep(Minv, P)
     return HPolyhedron(constraints)
