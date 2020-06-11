@@ -326,6 +326,7 @@ constraints_list(::AbstractZonotope{N}; ::Bool=true) where {N<:AbstractFloat}
 vertices_list(::AbstractZonotope{N}) where {N<:Real}
 order(::AbstractZonotope)
 togrep(::AbstractZonotope)
+rectify(Z::AbstractZonotope{N}) where {N}
 ```
 
 ### Implementations
