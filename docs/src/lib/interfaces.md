@@ -178,7 +178,7 @@ linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 chebyshev_center(::AbstractPolyhedron{N}) where {N<:AbstractFloat}
 an_element(::AbstractPolyhedron{N}) where {N<:Real}
 vertices_list(::AbstractPolyhedron, ::Bool=true)
-singleton_list(::AbstractPolyhedron, ::Bool=false)
+singleton_list(::AbstractPolyhedron, ::Bool=true)
 ```
 
 Plotting (bounded) polyhedra is available, too:
