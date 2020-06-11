@@ -1635,3 +1635,51 @@ function overapproximate(X::LazySet{N}, ::Type{<:Zonotope},
     end
     return Zonotope(c, G)
 end
+
+"""
+    overapproximate(r::Rectification{<:Zonotope}, ::Type{<:Zonotope})
+
+Overapproximation of the rectification of a zonotopic set.
+
+### Input
+
+- `r` -- Lazy Rectification of a zonotope
+- `Zonotope` -- type for dispatch
+
+### Output
+
+The zonotope overapproximation of the set obtained by rectifying `Z`.
+
+### Algorithm
+
+This function implements [Theorem 3.1, 1].
+
+[1] *Singh, G., Gehr, T., Mirman, M., Püschel, M., & Vechev, M. (2018). Fast
+and effective robustness certification. In Advances in Neural Information
+Processing Systems (pp. 10802-10813).*
+"""
+function overapproximate(r::Rectification{N, <:Zonotope{N}}, ::Type{<:Zonotope}) where {N}
+    Z = copy(r.X)
+    c = Z.center
+    G = Z.generators
+    n, m = size(G)
+    H = overapproximate(Z, Hyperrectangle)
+    Gnew = zeros(N, n, n)
+
+    @inbounds for i in 1:n
+        lx, ux = H.center[i] - H.radius[i], H.center[i] + H.radius[i]
+        if !_leq(lx, zero(N))
+            nothing
+        elseif _leq(ux, zero(N)) || isapproxzero(lx)
+            c[i] = zero(N)
+            G[i, :] = zeros(N, m)
+        else
+            λ = ux / (ux - lx)
+            μ = - λ * lx / 2
+            c[i] = c[i] * λ + μ
+            G[i, :] = G[i, :] .* λ
+            Gnew[i, i] = μ
+        end
+    end
+    return Zonotope(c, hcat(G, Gnew))
+end

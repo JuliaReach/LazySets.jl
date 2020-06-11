@@ -43,4 +43,3 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`constraints_list`](@ref constraints_list(::AbstractZonotope{N}; ::Bool=true) where {N<:AbstractFloat})
 * [`vertices_list`](@ref vertices_list(::AbstractZonotope{N}) where {N<:Real})
 * [`order`](@ref order(::AbstractZonotope))
-* [`rectify`](@ref rectify(Z::AbstractZonotope{N}) where {N})

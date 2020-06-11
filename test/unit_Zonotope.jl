@@ -194,14 +194,6 @@ for N in [Float64, Rational{Int}, Float32]
     Z = convert(Zonotope, BallInf(N[0, 0], N(1)))
     Z2 = project(Z, [1])
     @test Z2 == Zonotope(N[0], hcat(N[1]))
-
-    # rectify
-    Z = Zonotope(N[0, 0], N[1 1 1; 1 1 0])
-    @test rectify(Z) == Zonotope(N[3/4, 1/2], N[1/2 1/2 1/2 3/4 0; 1/2 1/2 0 0 1/2])
-    Z = Zonotope(N[-2, -2], N[1 1; 1 0])
-    @test rectify(Z) == convert(Zonotope, Singleton(N[0, 0]))
-    Z = Zonotope(N[-2, 2], N[1 1; 1 0])
-    @test rectify(Z) == remove_zero_generators(Zonotope([0, 2.], [0. 0; 1 0]))
 end
 
 for N in [Float64]

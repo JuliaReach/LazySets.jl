@@ -120,6 +120,14 @@ for N in [Float64, Rational{Int}, Float32]
     A = N[1 2; 1 3; 1 4]; X = Hyperrectangle(N[0, 1], N[0, 1]); b = N[1, 2, 3];
     am = AffineMap(A, X, b)
     @test overapproximate(am, Hyperrectangle) == Hyperrectangle(N[3, 5, 7], N[2, 3, 4])
+
+    # rectification of a zonotope
+    Z = Zonotope(N[0, 0], N[1 1 1; 1 1 0])
+    @test overapproximate(Rectification(Z), Zonotope) == Zonotope(N[3/4, 1/2], N[1/2 1/2 1/2 3/4 0; 1/2 1/2 0 0 1/2])
+    Z = Zonotope(N[-2, -2], N[1 1; 1 0])
+    @test overapproximate(Rectification(Z), Zonotope) == convert(Zonotope, Singleton(N[0, 0]))
+    Z = Zonotope(N[-2, 2], N[1 1; 1 0])
+    @test overapproximate(Rectification(Z), Zonotope) == remove_zero_generators(Zonotope([0, 2.], [0. 0; 1 0]))
 end
 
 # tests that do not work with Rational{Int}
