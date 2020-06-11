@@ -541,7 +541,7 @@ The zonotope obtained by rectifying `Z`.
 
 ### Algorithm
 
-This function implements [Theroem 3.1, 1].
+This function implements [Theorem 3.1, 1].
 
 [1] *Singh, G., Gehr, T., Mirman, M., Püschel, M., & Vechev, M. (2018). Fast
 and effective robustness certification. In Advances in Neural Information
