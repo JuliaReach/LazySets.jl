@@ -1637,7 +1637,7 @@ function overapproximate(X::LazySet{N}, ::Type{<:Zonotope},
 end
 
 """
-    overapproximate(r::Rectification{<:Zonotope}, ::Type{<:Zonotope})
+    overapproximate(r::Rectification{N, <:Zonotope{N}}, ::Type{<:AbstractZonotope}) where {N}
 
 Overapproximation of the rectification of a zonotopic set.
 
@@ -1658,13 +1658,14 @@ This function implements [Theorem 3.1, 1].
 and effective robustness certification. In Advances in Neural Information
 Processing Systems (pp. 10802-10813).*
 """
-function overapproximate(r::Rectification{N, <:Zonotope{N}}, ::Type{<:Zonotope}) where {N}
+function overapproximate(r::Rectification{N, <:Zonotope{N}}, ::Type{<:AbstractZonotope}) where {N}
     Z = copy(r.X)
-    c = Z.center
-    G = Z.generators
+    c = center(Z)
+    G = genmat(Z)
     n, m = size(G)
     H = overapproximate(Z, Hyperrectangle)
-    Gnew = zeros(N, n, n)
+    row_idx = Vector{Int}()
+    μ_idx = Vector{N}()
 
     @inbounds for i in 1:n
         lx, ux = H.center[i] - H.radius[i], H.center[i] + H.radius[i]
@@ -1672,14 +1673,28 @@ function overapproximate(r::Rectification{N, <:Zonotope{N}}, ::Type{<:Zonotope})
             nothing
         elseif _leq(ux, zero(N)) || isapproxzero(lx)
             c[i] = zero(N)
-            G[i, :] = zeros(N, m)
+            for j in 1:m
+                G[i, j] = zero(N)
+            end
         else
             λ = ux / (ux - lx)
             μ = - λ * lx / 2
             c[i] = c[i] * λ + μ
-            G[i, :] = G[i, :] .* λ
-            Gnew[i, i] = μ
+            for j in 1:m
+                G[i, j] = G[i, j] * λ
+            end
+            push!(row_idx, i)
+            push!(μ_idx, μ)
         end
     end
-    return Zonotope(c, hcat(G, remove_zero_columns(Gnew)))
+
+    q = length(row_idx)
+    Gnew = zeros(N, n, q)
+    j = 1
+    for i in row_idx
+        Gnew[i, j] = μ_idx[j]
+        j += 1
+    end
+    
+    return Zonotope(c, hcat(G, Gnew))
 end
