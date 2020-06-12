@@ -1643,7 +1643,7 @@ Overapproximation of the rectification of a zonotopic set.
 
 ### Input
 
-- `r` -- Lazy Rectification of a zonotope
+- `r` -- lazy rectification of a zonotopic set
 - `Zonotope` -- type for dispatch
 
 ### Output
