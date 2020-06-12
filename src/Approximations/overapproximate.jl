@@ -1637,7 +1637,7 @@ function overapproximate(X::LazySet{N}, ::Type{<:Zonotope},
 end
 
 """
-    overapproximate(r::Rectification{N, <:Zonotope{N}}, ::Type{<:AbstractZonotope}) where {N}
+    overapproximate(r::Rectification{N, <:AbstractZonotope{N}}, ::Type{<:Zonotope}) where {N}
 
 Overapproximation of the rectification of a zonotopic set.
 
