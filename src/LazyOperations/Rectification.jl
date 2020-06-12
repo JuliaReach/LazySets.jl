@@ -114,6 +114,23 @@ isoperationtype(::Type{<:Rectification}) = true
 isconvextype(::Type{<:Rectification}) = false
 
 """
+    set(r::Rectification)
+
+Return the set of a rectification.
+
+### Input
+
+- `r` -- rectification
+
+### Output
+
+The set of the rectification.
+"""
+function set(r::Rectification)
+    return r.X
+end
+
+"""
     dim(r::Rectification)
 
 Return the dimension of a rectification.
