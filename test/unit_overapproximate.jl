@@ -127,7 +127,7 @@ for N in [Float64, Rational{Int}, Float32]
     Z = Zonotope(N[-2, -2], N[1 1; 1 0])
     @test overapproximate(Rectification(Z), Zonotope) == convert(Zonotope, Singleton(N[0, 0]))
     Z = Zonotope(N[-2, 2], N[1 1; 1 0])
-    @test overapproximate(Rectification(Z), Zonotope) == remove_zero_generators(Zonotope([0, 2.], [0. 0; 1 0]))
+    @test overapproximate(Rectification(Z), Zonotope) == Zonotope(N[0, 2], hcat(N[0, 1]))
 end
 
 # tests that do not work with Rational{Int}
