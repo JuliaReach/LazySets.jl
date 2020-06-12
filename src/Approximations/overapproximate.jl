@@ -1668,7 +1668,7 @@ function overapproximate(r::Rectification{N, <:AbstractZonotope{N}}, ::Type{<:Zo
     μ_idx = Vector{N}()
 
     @inbounds for i in 1:n
-        lx, ux = H.center[i] - H.radius[i], H.center[i] + H.radius[i]
+        lx, ux = low(H, i), high(H, i)
         if !_leq(lx, zero(N))
             nothing
         elseif _leq(ux, zero(N)) || isapproxzero(lx)
