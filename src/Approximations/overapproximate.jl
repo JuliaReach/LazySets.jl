@@ -1691,7 +1691,7 @@ function overapproximate(r::Rectification{N, <:AbstractZonotope{N}}, ::Type{<:Zo
     q = length(row_idx)
     Gnew = zeros(N, n, q)
     j = 1
-    for i in row_idx
+    @inbounds for i in row_idx
         Gnew[i, j] = μ_idx[j]
         j += 1
     end
