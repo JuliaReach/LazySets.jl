@@ -1681,5 +1681,5 @@ function overapproximate(r::Rectification{N, <:Zonotope{N}}, ::Type{<:Zonotope})
             Gnew[i, i] = μ
         end
     end
-    return Zonotope(c, hcat(G, Gnew))
+    return Zonotope(c, hcat(G, remove_zero_columns(Gnew)))
 end
