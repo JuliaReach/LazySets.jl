@@ -1648,7 +1648,7 @@ Overapproximation of the rectification of a zonotopic set.
 
 ### Output
 
-The zonotope overapproximation of the set obtained by rectifying `Z`.
+A zonotope overapproximation of the set obtained by rectifying `Z`.
 
 ### Algorithm
 
