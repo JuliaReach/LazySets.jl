@@ -1658,7 +1658,7 @@ This function implements [Theorem 3.1, 1].
 and effective robustness certification. In Advances in Neural Information
 Processing Systems (pp. 10802-10813).*
 """
-function overapproximate(r::Rectification{N, <:Zonotope{N}}, ::Type{<:AbstractZonotope}) where {N}
+function overapproximate(r::Rectification{N, <:AbstractZonotope{N}}, ::Type{<:Zonotope}) where {N}
     Z = copy(r.X)
     c = center(Z)
     G = genmat(Z)
