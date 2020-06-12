@@ -116,7 +116,7 @@ isconvextype(::Type{<:Rectification}) = false
 """
     set(r::Rectification)
 
-Return the set of a rectification.
+Return the original set of a rectification.
 
 ### Input
 
@@ -124,7 +124,7 @@ Return the set of a rectification.
 
 ### Output
 
-The set of the rectification.
+The original set of the rectification.
 """
 function set(r::Rectification)
     return r.X
