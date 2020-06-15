@@ -1659,7 +1659,7 @@ and effective robustness certification. In Advances in Neural Information
 Processing Systems (pp. 10802-10813).*
 """
 function overapproximate(r::Rectification{N, <:AbstractZonotope{N}}, ::Type{<:Zonotope}) where {N}
-    Z = copy(r.X)
+    Z = copy(set(r))
     c = center(Z)
     G = genmat(Z)
     n, m = size(G)
