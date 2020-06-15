@@ -1671,7 +1671,7 @@ function overapproximate(r::Rectification{N, <:AbstractZonotope{N}}, ::Type{<:Zo
         lx, ux = low(H, i), high(H, i)
         if !_leq(lx, zero(N))
             nothing
-        elseif _leq(ux, zero(N)) || isapproxzero(lx)
+        elseif _leq(ux, zero(N))
             c[i] = zero(N)
             for j in 1:m
                 G[i, j] = zero(N)
