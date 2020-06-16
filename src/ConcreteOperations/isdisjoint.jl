@@ -1339,6 +1339,15 @@ function is_intersection_empty(hs::HalfSpace{N},
     return is_intersection_empty(cpa, hs)
 end
 
+function is_intersection_empty(cpa::CartesianProductArray{N,S} where S<:LazySet{N},
+                               ::Universe{N}) where {N<:Real}
+    return isempty(cpa)
+end
+function is_intersection_empty(::Universe{N},
+                               cpa::CartesianProductArray{N,S} where S<:LazySet{N}) where {N<:Real}
+    return isempty(cpa)
+end
+
 """
     is_intersection_empty(X::CartesianProductArray{N},
                           Y::CartesianProductArray{N}) where {N<:Real}
