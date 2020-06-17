@@ -1179,20 +1179,23 @@ Check whether a universe and another set do not intersect.
 
 `true` iff ``X ≠ ∅``.
 """
-function is_intersection_empty(U::Universe{N}, X::LazySet{N},
-                               witness::Bool=false) where {N<:Real}
+function is_intersection_empty(U::Universe{N}, X::LazySet{N}, witness::Bool=false) where {N<:Real}
+    return _is_intersection_empty_universe(X, U, witness)
+end
+
+# symmetric method
+function is_intersection_empty(X::LazySet{N}, U::Universe{N}, witness::Bool=false) where {N<:Real}
+    return _is_intersection_empty_universe(X, U, witness)
+end
+
+function _is_intersection_empty_universe(X, U::Universe{N}, witness) where {N}
+    @assert dim(X) == dim(U) "the dimensions of the given sets should match but they are $(dim(X)) and $(dim(U)) respectively"
     result = isempty(X)
     if result
         return witness ? (result, N[]) : result
     else
         return witness ? (result, an_element(X)) : result
     end
-end
-
-# symmetric method
-function is_intersection_empty(X::LazySet{N}, U::Universe{N},
-                               witness::Bool=false) where {N<:Real}
-    return is_intersection_empty(U, X, witness)
 end
 
 # disambiguation
@@ -1339,13 +1342,13 @@ function is_intersection_empty(hs::HalfSpace{N},
     return is_intersection_empty(cpa, hs)
 end
 
-function is_intersection_empty(cpa::CartesianProductArray{N,S} where S<:LazySet{N},
-                               ::Universe{N}) where {N<:Real}
-    return isempty(cpa)
+function is_intersection_empty(cpa::CartesianProductArray{N,S}, U::Universe{N},
+                               witness::Bool=false) where {N<:Real, S<:LazySet{N}}
+    return _is_intersection_empty_universe(cpa, U, witness)
 end
-function is_intersection_empty(::Universe{N},
-                               cpa::CartesianProductArray{N,S} where S<:LazySet{N}) where {N<:Real}
-    return isempty(cpa)
+function is_intersection_empty(U::Universe{N}, cpa::CartesianProductArray{N, S},
+                               witness::Bool=false) where {N<:Real, S<:LazySet{N}}
+    return _is_intersection_empty_universe(cpa, U, witness)
 end
 
 """
