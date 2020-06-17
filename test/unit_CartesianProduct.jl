@@ -330,6 +330,11 @@ for N in [Float64, Float32]
           is_intersection_empty(cpa1_box, G_empty)
     @test !is_intersection_empty(cpa1, G) &&
           !is_intersection_empty(Approximations.overapproximate(cpa1), G)
+    @test !is_intersection_empty(cpa1, Universe(4)) &&
+          !is_intersection_empty(Universe(4), cpa2)
+    @test_throws AssertionError(is_intersection_empty(cpa1, Universe(3)))
+    @test_throws AssertionError(is_intersection_empty(Universe(5), cpa2))
+
 end
 
 for N in [Float64]
