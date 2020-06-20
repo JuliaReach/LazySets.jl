@@ -1720,7 +1720,8 @@ A zonotope overapproximation of the convex hull array of zonotopic sets.
 
 ### Algorithm
 
-This function iteratively applies the overapproximation algorithm for the convex hull of two zonotopes to the given array of zonotopes.
+This function iteratively applies the overapproximation algorithm for the
+convex hull of two zonotopes to the given array of zonotopes.
 """
 function overapproximate(CHA::ConvexHullArray{N, <:AbstractZonotope{N}}, ::Type{<:Zonotope}) where {N}
     arr = array(CHA)
