@@ -1727,8 +1727,6 @@ function overapproximate(CHA::ConvexHullArray{N, <:AbstractZonotope{N}}, ::Type{
     n = length(arr)
     if n == 1
         return arr[1]
-    elseif n == 2
-        return overapproximate(ConvexHull(arr[1], arr[2]), Zonotope)
     else
         Zaux = overapproximate(ConvexHull(arr[1], arr[2]), Zonotope)
         for k in 3:n
