@@ -373,4 +373,15 @@ for N in [Float64]
     y = set_variables("y", numvars=2, order=1)
     p = zero(y[1])
     @test get_linear_coeffs(p) == N[0, 0]
+
+    # Zonotope approximation of convex hull array of zonotopes
+    Z1 = Zonotope(N[3, 0], N[1 2 1; 1 1 2])
+    Z2 = Zonotope(N[1, 0], N[-2 1; 1 1])
+    Z3 = Zonotope(N[0, 0], N[1 0; 0 1])
+    @test overapproximate(ConvexHullArray([Z1]), Zonotope) == Z1
+    @test overapproximate(ConvexHullArray([Z1, Z2]), Zonotope) == overapproximate(ConvexHull(Z1, Z2), Zonotope)
+    Y = overapproximate(ConvexHullArray([Z1, Z2, Z3]), Zonotope)
+    @test Z1 ⊆ Y
+    @test Z2 ⊆ Y
+    @test Z3 ⊆ Y
 end

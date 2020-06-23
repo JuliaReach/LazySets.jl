@@ -1703,3 +1703,36 @@ function overapproximate(r::Rectification{N, <:AbstractZonotope{N}}, ::Type{<:Zo
     
     return Zonotope(c, remove_zero_columns(Gout))
 end
+
+"""
+    overapproximate(CHA::ConvexHullArray{N, <:AbstractZonotope{N}}, ::Type{<:Zonotope}) where {N}
+
+Overapproximation of the convex hull array of zonotopic sets.
+
+### Input
+
+- `CHA` -- convex hull array of zonotopic sets
+- `Zonotope` -- type for dispatch
+
+### Output
+
+A zonotope overapproximation of the convex hull array of zonotopic sets.
+
+### Algorithm
+
+This function iteratively applies the overapproximation algorithm for the
+convex hull of two zonotopes to the given array of zonotopes.
+"""
+function overapproximate(CHA::ConvexHullArray{N, <:AbstractZonotope{N}}, ::Type{<:Zonotope}) where {N}
+    arr = array(CHA)
+    n = length(arr)
+    if n == 1
+        return arr[1]
+    else
+        Zaux = overapproximate(ConvexHull(arr[1], arr[2]), Zonotope)
+        for k in 3:n
+            Zaux = overapproximate(ConvexHull(Zaux, arr[k]), Zonotope)
+        end
+        return Zaux
+    end
+end
