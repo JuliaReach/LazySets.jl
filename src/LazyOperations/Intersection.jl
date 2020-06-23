@@ -728,28 +728,34 @@ The default method is `Optim.Brent()`.
 ```jldoctest _line_search
 julia> X = Ball1(zeros(2), 1.0);
 
-julia> H = HalfSpace([-1.0, 0.0], -1.0); # x >= 0
+julia> H = HalfSpace([-1.0, 0.0], -1.0);  # x >= 1
 
 julia> using Optim
 
 julia> using LazySets: _line_search
 
-julia> _line_search([1.0, 0.0], X, H) # uses Brent's method by default
-(1.0, 999999.9849478417)
+julia> v = _line_search([1.0, 0.0], X, H);  # uses Brent's method by default
+
+julia> v[1]
+1.0
 ```
 
 We can specify the upper bound in Brent's method:
 
 ```julia _line_search
-julia> _line_search([1.0, 0.0], X, H, upper=1e3)
-(1.0, 999.9999849478418)
+julia> v = _line_search([1.0, 0.0], X, H, upper=1e3);
+
+julia> v[1]
+1.0
 ```
 
-Instead of using Brent, we use the Golden Section method:
+Instead of Brent's method we can use the Golden Section method:
 
 ```julia _line_search
-julia> _line_search([1.0, 0.0], X, H, upper=1e3, method=GoldenSection())
-(1.0, 381.9660112501051)
+julia> v = _line_search([1.0, 0.0], X, H, upper=1e3, method=GoldenSection());
+
+julia> v[1]
+1.0
 ```
 """
 function _line_search(ℓ, X, H::Union{<:HalfSpace, <:Hyperplane, <:Line};
