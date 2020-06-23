@@ -123,7 +123,7 @@ for N in [Float64]
     RP = Rectification(P)
     @test ρ(N[1, 0], RP) ≈ N(1.5)
     @test ρ(N[0, 1], RP) ≈ N(1)
-    @test ρ(N[1, 1], RP) == ρ(N[1, 1], P)
+    @test ρ(N[1, 1], RP) ≈ ρ(N[1, 1], P) == N(2)
 #     @test ρ(N[-1, 0], RP) ≈ N(0)
     @test N(0) ≤ ρ(N[-1, 0], RP) ≤ N(1e-8)
 #     @test ρ(N[0, -1], RP) ≈ N(0)
