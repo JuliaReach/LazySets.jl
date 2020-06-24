@@ -434,12 +434,12 @@ function is_tighter_same_dir_2D(c1::LinearConstraint{N},
                                 c2::LinearConstraint{N};
                                 strict::Bool=false) where {N<:Real}
     @assert dim(c1) == dim(c2) == 2 "this method requires 2D constraints"
-    @assert c1.a <= c2.a <= c1.a "the constraints must have the same " *
+    @assert samedir(c1.a, c2.a)[1] "the constraints must have the same " *
         "normal direction"
 
     lt = strict ? (<) : (<=)
-    if c1.a[1] == zero(N)
-        @assert c2.a[1] == zero(N)
+    if isapproxzero(c1.a[1])
+        @assert isapproxzero(c2.a[1])
         return lt(c1.b, c1.a[2] / c2.a[2] * c2.b)
     end
     return lt(c1.b, c1.a[1] / c2.a[1] * c2.b)
