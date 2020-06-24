@@ -478,3 +478,29 @@ function translate(hp::Hyperplane{N}, v::AbstractVector{N}; share::Bool=false
     b = hp.b + dot(hp.a, v)
     return Hyperplane(a, b)
 end
+
+# ============================================
+# Functionality that requires ModelingToolkit
+# ============================================
+function load_modeling_toolkit_hyperplane()
+return quote
+
+# TODO add docstring + examples
+function Hyperplane(expr::Operation, vars=get_variables(expr); N::Type{<:Real}=Float64)
+    (expr.op == ==) || throw(ArgumentError("expected an expression of the form `ax == b`, got $expr"))
+
+    # simplify to the form a*x + β == 0
+    a, b = expr.args
+    sexpr = simplify(a - b)
+
+    # compute the linear coefficients by taking first order derivatives
+    coeffs = [N(α.value) for α in gradient(sexpr, collect(vars))]
+
+    # get the constant term by expression substitution
+    dvars = Dict(to_symbolic(vi) => zero(N) for vi in vars)
+    β = -N(ModelingToolkit.SymbolicUtils.substitute(to_symbolic(sexpr), dvars, fold=true))
+
+    return Hyperplane(coeffs, β)
+end
+
+end end  # quote / load_modeling_toolkit_hyperplane()

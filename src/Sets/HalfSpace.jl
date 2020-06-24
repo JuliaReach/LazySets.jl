@@ -496,3 +496,54 @@ end
 # TODO: after #2032, #2041 remove use of this function
 _normal_Vector(P::LazySet) = [LinearConstraint(convert(Vector, c.a), c.b) for c in constraints_list(P)]
 _normal_Vector(c::LinearConstraint) = LinearConstraint(convert(Vector, c.a), c.b)
+
+
+# ============================================
+# Functionality that requires ModelingToolkit
+# ============================================
+function load_modeling_toolkit_halfspace()
+return quote
+
+# TODO add docstring + examples
+function HalfSpace(expr::Operation, vars=get_variables(expr); N::Type{<:Real}=Float64)
+
+    # find sense and normalize
+    if expr.op == <
+        a, b = expr.args
+        sexpr = simplify(a - b)
+
+    elseif expr.op == >
+        a, b = expr.args
+        sexpr = simplify(b - a)
+
+    elseif (expr.op == |) && (expr.args[1].op == <)
+        a, b = expr.args[1].args
+        sexpr = simplify(a - b)
+
+    elseif (expr.op == |) && (expr.args[2].op == <)
+        a, b = expr.args[2].args
+        sexpr = simplify(a - b)
+
+    elseif (expr.op == |) && (expr.args[1].op == >)
+        a, b = expr.args[1].args
+        sexpr = simplify(b - a)
+
+    elseif (expr.op == |) && (expr.args[2].op == >)
+        a, b = expr.args[2].args
+        sexpr = simplify(b - a)
+
+    else
+        throw(ArgumentError("expected an expression describing a half-space, got $expr"))
+    end
+
+    # compute the linear coefficients by taking first order derivatives
+    coeffs = [N(α.value) for α in gradient(sexpr, collect(vars))]
+
+    # get the constant term by expression substitution
+    dvars = Dict(to_symbolic(vi) => zero(N) for vi in vars)
+    β = -N(ModelingToolkit.SymbolicUtils.substitute(to_symbolic(sexpr), dvars, fold=true))
+
+    return HalfSpace(coeffs, β)
+end
+
+end end  # quote / load_modeling_toolkit_halfspace()

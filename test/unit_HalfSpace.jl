@@ -122,3 +122,31 @@ for N in [Float64, Rational{Int}, Float32]
     hs_vec = convert(HalfSpace{N, Vector{N}}, hs_sev)
     @test hs_vec.a == N[0, 1, 0] && hs_vec.b == N(1)
 end
+
+# tests that require ModelingToolkit
+vars = @variables x y
+@test HalfSpace(2x + 3y < 5) == HalfSpace([2.0, 3.0], 5.0)
+@test HalfSpace(2x + 3y < 5, vars) == HalfSpace([2.0, 3.0], 5.0)
+@test HalfSpace(2x + 3y < 5, N=Int) == HalfSpace([2, 3], 5)
+
+@test HalfSpace(2x + 3y > 5) == HalfSpace([-2.0, -3.0], -5.0)
+@test HalfSpace(2x + 3y > 5, vars) == HalfSpace([-2.0, -3.0], -5.0)
+
+@test HalfSpace(2x + 3y ≤ 5) == HalfSpace([2.0, 3.0], 5.0)
+@test HalfSpace(2x + 3y ≤ 5, vars) == HalfSpace([2.0, 3.0], 5.0)
+
+@test HalfSpace(2x <= 5y - 1) == HalfSpace([2.0, -5.0], -1.0)
+@test HalfSpace(2x ≤ 5y - 1) == HalfSpace([2.0, -5.0], -1.0)
+
+@test HalfSpace(2x + 3y ≥ 5) == HalfSpace([-2.0, -3.0], -5.0)
+@test HalfSpace(2x + 3y ≥ 5, vars) == HalfSpace([-2.0, -3.0], -5.0)
+
+# doesn't work because get_vars returns variables [y, x]
+# => both tests below require vars to pass
+@test HalfSpace(2x ≥ 5y - 1, vars) == HalfSpace([-2.0, 5.0], 1.0)
+@test HalfSpace(2x >= 5y - 1, vars) == HalfSpace([-2.0, 5.0], 1.0)
+
+# test with sparse variables
+@variables x[1:5]
+@test HalfSpace(2x[1] + 5x[4] <= 10., x) == HalfSpace([2.0, 0.0, 0.0, 5.0, 0.0], 10.0)
+@test HalfSpace(2x[1] + 5x[4] >= -10. + x[3], x) == HalfSpace([-2.0, 0.0, 1.0, -5.0, 0.0], 10.0)
