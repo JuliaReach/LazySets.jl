@@ -418,10 +418,10 @@ function vertices_list(Z::AbstractZonotope{N};
     end
     if n == 2
       if all(G .> 0) | all(G .< 0)
-	    return hcat(zeros(N, n, 1),
-                        cumsum(sortslices(G,dims=2,by=x->x[2]/x[1]), dims=2)[:, 1:size(G,2)-1],
-                        cumsum(sortslices(G,dims=2,by=x->x[1]/x[2]), dims=2)
-	    )
+           return hcat(-sum(G, dims=2),
+                        2*cumsum(sortslices(G,dims=2,by=x->x[2]/x[1]), dims=2)[:, 1:size(G,2)-1] .- sum(G, dims=2),
+                        2*cumsum(sortslices(G,dims=2,by=x->x[1]/x[2]), dims=2) .- sum(G, dims=2)
+           ) .+ c
       end
     end
 
