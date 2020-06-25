@@ -407,6 +407,11 @@ factors are ``ξ_i ∈ \\{-1, 1\\}``.
 There are at most ``2^p`` distinct vertices. Use the flag `apply_convex_hull` to
 control whether a convex hull algorithm is applied to the vertices computed by
 this method; otherwise, redundant vertices may be present.
+
+We use a trick to speed up enumerating vertices of 2-dimensional zonotopic
+sets with all generators in the first quadrant or third quadrant (same sign).
+Namely, sort the generators in angle and add them clockwise in increasing
+order and anticlockwise in decreasing order.
 """
 function vertices_list(Z::AbstractZonotope{N};
                        apply_convex_hull::Bool=true) where {N<:Real}
