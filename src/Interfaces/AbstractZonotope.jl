@@ -412,9 +412,17 @@ function vertices_list(Z::AbstractZonotope{N};
                        apply_convex_hull::Bool=true) where {N<:Real}
     c = center(Z)
     G = remove_zero_columns(genmat(Z))
-    p = size(G, 2)
+    n, p = size(G)
     if p == 0
         return [c]
+    end
+    if n == 2
+      if all(G .> 0) | all(G .< 0)
+	    return hcat(zeros(N, n, 1),
+                        cumsum(sortslices(G,dims=2,by=x->x[2]/x[1]), dims=2)[:, 1:size(G,2)-1],
+                        cumsum(sortslices(G,dims=2,by=x->x[1]/x[2]), dims=2)
+	    )
+      end
     end
 
     vlist = Vector{Vector{N}}()
