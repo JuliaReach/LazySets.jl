@@ -23,7 +23,7 @@ eval(quote
     end
 
     function default_lp_solver_polyhedra(N::Type{<:AbstractFloat};
-                                         presolve::Bool=false)
+                                         presolve::Bool=true)
         if presolve
             return JuMP.optimizer_with_attributes(GLPK.Optimizer,
                                                   "presolve" => GLPK.ON)
