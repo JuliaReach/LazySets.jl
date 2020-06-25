@@ -51,6 +51,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # membership
     @test N[5 / 4, 7 / 4] ∈ p && N[4, 1] ∉ p
+    @test [Inf, Inf] ∉ p
 
     # constrained dimensions
     @test constrained_dimensions(p) == [1, 2]
@@ -133,7 +134,7 @@ for N in [Float64]
     # an_element
     P = HPolyhedron([HalfSpace(N[3//50, -4//10], N(1)),
                      HalfSpace(N[-1//50, 1//10], N(-1))])
-    @test an_element(P) ∈ P
+    @test_broken an_element(P) ∈ P
 
     # boundedness
     @test isbounded(p)
