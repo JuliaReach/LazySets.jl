@@ -5,12 +5,21 @@ eval(quote
                       removehredundancy!, removevredundancy!
     import JuMP, GLPK
 
-    function default_polyhedra_backend(P, N::Type{<:AbstractFloat})
-        return Polyhedra.default_library(LazySets.dim(P), N)
+    function default_polyhedra_backend(P, N::Type{<:Number})
+        if LazySets.dim(P) == 1
+            return default_polyhedra_backend_1d(N)
+        else
+            return default_polyhedra_backend_nd(N)
+        end
     end
 
-    function default_polyhedra_backend(P, N::Type{<:Rational})
-        return Polyhedra.default_library(LazySets.dim(P), N)
+    function default_polyhedra_backend_1d(N::Type{<:Number}, solver=nothing)
+        return Polyhedra.IntervalLibrary{N}()
+    end
+
+    function default_polyhedra_backend_nd(N::Type{<:Number},
+                                          solver=default_lp_solver_polyhedra(N))
+        return Polyhedra.DefaultLibrary{N}(solver)
     end
 
     function default_lp_solver_polyhedra(N::Type{<:AbstractFloat};
