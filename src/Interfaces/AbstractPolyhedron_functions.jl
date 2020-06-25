@@ -55,7 +55,7 @@ function ∈(x::AbstractVector{N}, P::AbstractPolyhedron{N}) where {N<:Real}
         "an element of a $(dim(P))-dimensional set"
 
     for c in constraints_list(P)
-        if dot(c.a, x) > c.b
+        if !_leq(dot(c.a, x), c.b)
             return false
         end
     end
