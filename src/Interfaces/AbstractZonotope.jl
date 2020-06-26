@@ -422,11 +422,15 @@ function vertices_list(Z::AbstractZonotope{N};
         return [c]
     end
     if n == 2
-      if all(G .> 0) | all(G .< 0)
-           return hcat(-sum(G, dims=2),
-                        2*cumsum(sortslices(G,dims=2,by=x->x[2]/x[1]), dims=2)[:, 1:size(G,2)-1] .- sum(G, dims=2),
-                        2*cumsum(sortslices(G,dims=2,by=x->x[1]/x[2]), dims=2) .- sum(G, dims=2)
-           ) .+ c
+      if same_sign(G)
+        sorted_G = sortslices(G, dims=2,by=x->atan(x[2], x[1]))
+        index = ones(p, 2*p)
+        for i in 1:p
+          index[i, i+1:i+p-1] *= -1
+        end
+        index[:, 1] *= -1
+        V = sorted_G * index .+ c
+        return [V[:, i] for i in 1:2*p]
       end
     end
 
