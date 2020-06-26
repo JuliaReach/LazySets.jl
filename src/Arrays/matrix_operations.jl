@@ -307,8 +307,8 @@ flase otherwise.
 """
 function same_sign(G)
     s = sign(first(G))
-    for j in size(G, 2)
-        for i in size(G, 1)
+    for j in 1:size(G, 2)
+        for i in 1:size(G, 1)
             s != sign(G[i, j]) && return false
         end
     end
