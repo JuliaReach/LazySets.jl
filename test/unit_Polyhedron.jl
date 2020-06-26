@@ -100,6 +100,11 @@ for N in [Float64, Rational{Int}, Float32]
         if N != Rational{Int} # in floating-point we can use elimination
             lm = linear_map(N[2 3; 0 0], P, algorithm="elimination")
             @test lm isa HPolyhedron{Float64}
+
+            B = N[4e8 2; 0 1]
+            P = CartesianProduct(BallInf(N[0.01], N(0.08)), Singleton(N[1.0]))
+            lm = linear_map(B, P)
+            @test lm isa HPolytope{Float64}
         end
     end
 end
