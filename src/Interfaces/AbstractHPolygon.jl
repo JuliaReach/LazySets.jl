@@ -63,7 +63,6 @@ function tovrep(P::AbstractHPolygon{N}) where {N<:Real}
     return VPolygon(vertices_list(P; apply_convex_hull=false))
 end
 
-
 """
     tohrep(P::HPOLYGON) where {HPOLYGON<:AbstractHPolygon}
 
@@ -79,6 +78,27 @@ The identity, i.e., the same polygon instance.
 """
 function tohrep(P::HPOLYGON) where {HPOLYGON<:AbstractHPolygon}
     return P
+end
+
+"""
+    normalize(P::AbstractHPolygon{N}, p=N(2)) where {N<:Real}
+
+Normalize a polygon in constraint representation.
+
+### Input
+
+- `P` -- polygon in constraint representation
+- `p` -- (optional, default: `2`) norm
+
+### Output
+
+A new polygon in constraint representation whose normal directions ``a_i``
+are normalized, i.e., such that ``‖a_i‖_p = 1`` holds.
+"""
+function normalize(P::AbstractHPolygon{N}, p=N(2)) where {N<:Real}
+    constraints = [normalize(hs, p) for hs in constraints_list(P)]
+    T = basetype(P)
+    return T(constraints)
 end
 
 

@@ -108,6 +108,16 @@ end
 unconstrained_HPolyhedron = HPolyhedron()
 @test unconstrained_HPolyhedron isa HPolyhedron{Float64}
 
+# tests that only work with Float64 and Float32
+for N in [Float64, Float32]
+    # normalization
+    p1 = HPolyhedron([HalfSpace(N[1e5], N(3e5)), HalfSpace(N[-2e5], N(4e5))])
+    p2 = normalize(p1)
+    for hs in constraints_list(p2)
+        @test norm(hs.a) == N(1)
+    end
+end
+
 # Polyhedra tests that only work with Float64
 for N in [Float64]
     p = HPolyhedron{N}()
