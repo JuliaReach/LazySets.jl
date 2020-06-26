@@ -51,7 +51,6 @@ for N in [Float64, Rational{Int}, Float32]
 
     # membership
     @test N[5 / 4, 7 / 4] ∈ p && N[4, 1] ∉ p
-    @test [Inf, Inf] ∉ p
 
     # constrained dimensions
     @test constrained_dimensions(p) == [1, 2]
@@ -130,6 +129,9 @@ for N in [Float64]
     @test σ(d, p) == N[-1, 1]
     d = N[0, -1]
     @test σ(d, p) == N[0, 0]
+
+    # membership
+    @test [Inf, Inf] ∉ p
 
     # an_element
     P = HPolyhedron([HalfSpace(N[3//50, -4//10], N(1)),
