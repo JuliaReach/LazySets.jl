@@ -18,6 +18,7 @@ addconstraint!(::HPoly{N}, ::LinearConstraint{N}) where {N<:Real}
 constraints_list(::HPoly{N}) where {N<:Real}
 tohrep(::HPoly{N}) where {N<:Real}
 tovrep(::HPoly{N}) where {N<:Real}
+normalize(::HPoly{N}, p=N(2)) where {N<:Real}
 isempty(::HPoly{N}, ::Bool=false) where {N<:Real}
 translate(::HPoly{N}, ::AbstractVector{N}) where {N<:Real}
 polyhedron(::HPoly{N}) where {N<:Real}

@@ -319,6 +319,27 @@ function tohrep(P::HPoly{N}) where {N<:Real}
 end
 
 """
+    normalize(P::HPoly{N}, p=N(2)) where {N<:Real}
+
+Normalize a polyhedron in constraint representation.
+
+### Input
+
+- `P` -- polyhedron in constraint representation
+- `p` -- (optional, default: `2`) norm
+
+### Output
+
+A new polyhedron in constraint representation whose normal directions ``a_i``
+are normalized, i.e., such that ``‖a_i‖_p = 1`` holds.
+"""
+function normalize(P::HPoly{N}, p=N(2)) where {N<:Real}
+    constraints = [normalize(hs, p) for hs in constraints_list(P)]
+    T = basetype(P)
+    return T(constraints)
+end
+
+"""
     remove_redundant_constraints(P::HPoly{N};
                                  backend=default_lp_solver(N)
                                 ) where {N<:Real}
@@ -668,8 +689,6 @@ function convert(::Type{HPolyhedron}, P::HRep{N}) where {N}
     for hi in Polyhedra.allhalfspaces(P)
         a, b = hi.a, hi.β
         if isapproxzero(norm(a))
-            @assert b >= zero(N) "the half-space is inconsistent since it has a " *
-                "zero normal direction but the constraint is negative"
             continue
         end
         push!(constraints, HalfSpace(a, b))
