@@ -453,6 +453,15 @@ for N in [Float64, Float32]
                                 po1.constraints[i], po2.constraints[i]])
     end
 
+    for (hp, t_hp) in [(p1, HPolygon), (po1, HPolygonOpt)]
+        # normalization
+        p2 = normalize(hp)
+        @test p2 isa t_hp{N}
+        for hs in constraints_list(p2)
+            @test norm(hs.a) ≈ N(1)
+        end
+    end
+
     # check redundancy removal
     p2 = HPolygon([
         HalfSpace(N[-1.29817, 1.04012], N(6.07731)),

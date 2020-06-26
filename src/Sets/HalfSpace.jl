@@ -55,6 +55,29 @@ Alias for `HalfSpace`
 """
 const LinearConstraint = HalfSpace
 
+"""
+    normalize(hs::HalfSpace{N}, p=N(2)) where {N<:Real}
+
+Normalize a half-space.
+
+### Input
+
+- `hs` -- half-space
+- `p`  -- (optional, default: `2`) norm
+
+### Output
+
+A new half-space whose normal direction ``a`` is normalized, i.e., such that
+``‖a‖_p = 1`` holds.
+"""
+function normalize(hs::HalfSpace{N}, p=N(2)) where {N<:Real}
+    nₐ = norm(hs.a, p)
+    a = LinearAlgebra.normalize(hs.a, p)
+    b = hs.b / nₐ
+    return HalfSpace(a, b)
+end
+
+
 # --- LazySet interface functions ---
 
 
