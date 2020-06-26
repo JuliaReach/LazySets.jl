@@ -8,8 +8,7 @@ export _At_mul_B,
        nonzero_columns,
        extend,
        projection_matrix,
-       remove_zero_columns,
-       same_sign
+       remove_zero_columns
 
 # default tolerance for matrix condition number (see 'isinvertible')
 const DEFAULT_COND_TOL = 1e6
@@ -289,28 +288,4 @@ function remove_zero_columns(A::AbstractMatrix)
     else
         return A[:, nzcol]
     end
-end
-
-"""
-    same_sign(G::AbstractMatrix)
-
-Return a bool value for whether all the signs are the same.
-
-### Input
-
-- `G` -- matrix
-
-### Output
-
-true if all the elements in G having the same sign.
-flase otherwise.
-"""
-function same_sign(G)
-    s = sign(first(G))
-    for j in 1:size(G, 2)
-        for i in 1:size(G, 1)
-            s != sign(G[i, j]) && return false
-        end
-    end
-    return true
 end

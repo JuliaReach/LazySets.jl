@@ -421,8 +421,8 @@ function vertices_list(Z::AbstractZonotope{N};
     if p == 0
         return [c]
     end
-    if n == 2 & p > 2 & apply_convex_hull
-      if same_sign(G)
+    if n == 2 && p > 2 && apply_convex_hull
+      if sum(abs.(G)) == sum(G)
         sorted_G = sortslices(G, dims=2,by=x->atan(x[2], x[1]))
         index = ones(p, 2*p)
         for i in 1:p
