@@ -145,10 +145,13 @@ for N in [Float64]
     d = N[0, -1]
     @test σ(d, p) == N[0, 0]
 
+    # membership
+    @test [Inf, Inf] ∉ p
+
     # an_element
     P = HPolyhedron([HalfSpace(N[3//50, -4//10], N(1)),
                      HalfSpace(N[-1//50, 1//10], N(-1))])
-    @test an_element(P) ∈ P
+    @test_broken an_element(P) ∈ P # see LazySets.jl/pull/2197
 
     # boundedness
     @test isbounded(p)
