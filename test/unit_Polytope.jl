@@ -483,5 +483,11 @@ for N in [Float64]
         c3, r = chebyshev_center(P; get_radius=true)
         @test c1 == c2 == c3 == center(B) && c1 isa AbstractVector{N}
         @test r == B.radius
+
+        # concrete projection
+        πP = project(P, [1])
+        @test πP isa HPolytope{N}
+        @test ispermutation(constraints_list(πP), [HalfSpace(N[-1], N(1)),
+                                                   HalfSpace(N[1], N(1))])
     end
 end
