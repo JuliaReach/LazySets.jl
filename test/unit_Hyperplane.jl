@@ -117,13 +117,15 @@ for N in [Float64]
 end
 
 # tests that require ModelingToolkit
-vars = @variables x y
-@test Hyperplane(2x + 3y == 5) == Hyperplane([2.0, 3.0], 5.0)
-@test Hyperplane(2x + 3y == 5, N=Int) == Hyperplane([2, 3], 5)
-@test Hyperplane(2x + 3y == 5, vars) == Hyperplane([2.0, 3.0,], 5.0)
-@test Hyperplane(2x == 5y) == Hyperplane([2.0, -5.0,], 0.0)
-@test Hyperplane(2x == 5y, vars) == Hyperplane([2.0, -5.0,], 0.0)
+@static if VERSION >= v"1.3" && isdefined(@__MODULE__, :ModelingToolkit)
+    vars = @variables x y
+    @test Hyperplane(2x + 3y == 5) == Hyperplane([2.0, 3.0], 5.0)
+    @test Hyperplane(2x + 3y == 5, N=Int) == Hyperplane([2, 3], 5)
+    @test Hyperplane(2x + 3y == 5, vars) == Hyperplane([2.0, 3.0,], 5.0)
+    @test Hyperplane(2x == 5y) == Hyperplane([2.0, -5.0,], 0.0)
+    @test Hyperplane(2x == 5y, vars) == Hyperplane([2.0, -5.0,], 0.0)
 
-# test with sparse variables
-@variables x[1:5]
-@test Hyperplane(2x[1] + 5x[4] == 10., x) == Hyperplane([2.0, 0.0, 0.0, 5.0, 0.0], 10.0)
+    # test with sparse variables
+    @variables x[1:5]
+    @test Hyperplane(2x[1] + 5x[4] == 10., x) == Hyperplane([2.0, 0.0, 0.0, 5.0, 0.0], 10.0)
+end

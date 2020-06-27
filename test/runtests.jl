@@ -10,7 +10,9 @@ using IntervalArithmetic: IntervalBox
 import Distributions, Expokit, IntervalMatrices, Optim, TaylorModels
 using IntervalMatrices: ±, IntervalMatrix
 using TaylorModels: set_variables, TaylorModelN
-using ModelingToolkit
+@static if VERSION >= v"1.3"
+    using ModelingToolkit
+end
 
 # ==============================
 # Non-exported helper functions
