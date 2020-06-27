@@ -267,14 +267,12 @@ Concrete linear map of a (polyhedral) Cartesian product.
 
 ### Output
 
-A polytope.
+A polytope if `cp` is bounded and a polyhedron otherwise.
 
 ### Algorithm
 
-We check if the matrix is invertible.
-If so, we convert the Cartesian product to constraint representation.
-Otherwise, we convert the Cartesian product to vertex representation.
-In both cases, we then call `linear_map` on the resulting polytope.
+We convert the Cartesian product to constraint representation and then call
+`linear_map` on the corresponding polyhedron.
 """
 function linear_map(M::AbstractMatrix{N}, cp::CartesianProduct{N}
                    ) where {N<:Real}
@@ -285,13 +283,8 @@ function linear_map_cartesian_product(M, cp)
     @assert dim(cp) == size(M, 2) "a linear map of size $(size(M)) cannot " *
                                   "be applied to a set of dimension $(dim(cp))"
 
-    if !isinvertible(M)
-        # use vertex representation
-        P = VPolytope(vertices_list(cp))
-    else
-        # use constraint representation
-        T = isbounded(cp) ? HPolytope : HPolyhedron
-        P = T(constraints_list(cp))
-    end
+    # use constraint representation
+    T = isbounded(cp) ? HPolytope : HPolyhedron
+    P = T(constraints_list(cp))
     return linear_map(M, P)
 end
