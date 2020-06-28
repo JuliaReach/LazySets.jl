@@ -49,7 +49,7 @@ function is_intersection_empty(X::LazySet{N},
 end
 
 # --- alias ---
-@static if VERSION <= v"1.5"
+@static if VERSION <= v"1.4"
     """
         isdisjoint(X, Y)
 
