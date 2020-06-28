@@ -65,7 +65,7 @@ else
     An alternative name for `is_intersection_empty(X, Y)`.
     """
     Base.isdisjoint(X::LazySet, Y::LazySet) = is_intersection_empty(X, Y)
-    Base.isdisjoint(X::LazySet, Y::LazySet, witness::Bool) = is_intersection_empty(X, Y, witness)
+    Base.isdisjoint(X::LazySet, Y::LazySet, args...; kwargs...) = is_intersection_empty(X, Y, args...; kwargs...)
 end
 
 # --- AbstractHyperrectangle ---
