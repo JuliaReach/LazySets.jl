@@ -422,16 +422,16 @@ function vertices_list(Z::AbstractZonotope{N};
         return [c]
     end
     if n == 2 && p > 2 && apply_convex_hull
-      if sum(abs, G) == abs(sum(G))
-        sorted_G = sortslices(G, dims=2,by=x->atan(x[2], x[1]))
-        index = ones(p, 2*p)
-        for i in 1:p
-          index[i, i+1:i+p-1] *= -1
+        if sum(abs, G) == abs(sum(G))
+            sorted_G = sortslices(G, dims=2,by=x->atan(x[2], x[1]))
+            index = ones(p, 2*p)
+            for i in 1:p
+                index[i, i+1:i+p-1] *= -1
+            end
+            index[:, 1] *= -1
+            V = sorted_G * index .+ c
+            return [V[:, i] for i in 1:2*p]
         end
-        index[:, 1] *= -1
-        V = sorted_G * index .+ c
-        return [V[:, i] for i in 1:2*p]
-      end
     end
 
     vlist = Vector{Vector{N}}()
