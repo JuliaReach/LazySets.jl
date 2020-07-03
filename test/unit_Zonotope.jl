@@ -278,4 +278,11 @@ for N in [Float64]
     Z3 = Zonotope(N[2, 1], Matrix{N}(I, 2, 2))
     @test_throws ErrorException isdisjoint(Z2, Z3, true)
     @test !isdisjoint(Z2, Z3)
+    
+    # issubset
+    Z = Zonotope(N[0, 0], N[1 1; -1 1])
+    H1 = Hyperrectangle(low=N[-2, -2], high=N[2, 2])
+    H2 = Hyperrectangle(low=N[-2, -2], high=N[2, 0])
+    @test issubset(Z, H1)
+    @test !issubset(Z, H2)
 end

@@ -1027,3 +1027,49 @@ function ⊆(X::CartesianProductArray{N},
     end
     return witness ? (true, N[]) : true
 end
+
+
+# --- AbstractZonotope ---
+
+
+"""
+    ⊆(Z::AbstractZonotope{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
+
+Check whether a zonotopic set is contained in a hyperrectangular set.
+
+### Input
+
+- `Z` -- inner zonotopic set
+- `H` -- outer hyperrectangular set
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+`true` iff ``Z ⊆ H`` otherwise `false`
+
+### Algorithm
+
+Algorithm based on Lemma 3.1 of [1]
+
+[1] Mitchell, I. M., Budzis, J., & Bolyachevets, A. (2019, April). Invariant,
+ viability and discriminating kernel under-approximation via zonotope scaling.
+ In Proceedings of the 22nd ACM International Conference on Hybrid Systems:
+ Computation and Control (pp. 268-269).
+"""
+function ⊆(Z::AbstractZonotope{N}, H::AbstractHyperrectangle{N}) where {N}
+    c = center(Z)
+    g = genmat(Z)
+    n = dim(Z)
+    m = ngens(Z)
+    Gn = copy(c)
+    Gp = copy(c)
+    for i=1:m
+       Gp[i] = Gp[i] + sum(norm.(g[i, :]))
+       Gn[i] = Gn[i] - sum(norm.(g[i, :]))
+    end
+    result = true
+    for i=1:n
+       result = result && _leq(Gp[i], high(H)[i]) && _geq(Gn[i], low(H)[i])
+    end
+    return result
+end
