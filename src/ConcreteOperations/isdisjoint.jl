@@ -422,7 +422,12 @@ function is_intersection_empty(Z::Zonotope{N},
     end
 
     v = H.b - dot(H.a, Z.center)
-    abs_sum = sum(abs(dot(H.a, Z.generators[:, i])) for i = 1:ngens(Z))
+    p = ngens(Z)
+    if p == 0
+        abs_sum = zero(N)
+    else
+        abs_sum = sum(abs(dot(H.a, Z.generators[:, i])) for i = 1:ngens(Z))
+    end
     return v < -abs_sum || v > abs_sum
 end
 

@@ -268,6 +268,9 @@ for N in [Float64]
     H1 = Hyperplane(N[1, 1], N(3))
     intersection_empty, point = is_intersection_empty(Z1, H1, true)
     @test point ∈ Z1 && point ∈ H1
+    # zonotope without generators (#2204)
+    Z3 = Zonotope(N[0, 0], Matrix{N}(undef, 2, 0))
+    @test isdisjoint(Z3, H1)
 
     # isdisjoint
     result, w = isdisjoint(Z1, Z2, true)
