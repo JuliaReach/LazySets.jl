@@ -1060,10 +1060,9 @@ function ⊆(Z::AbstractZonotope{N}, H::AbstractHyperrectangle{N}) where {N}
     c = center(Z)
     g = genmat(Z)
     n = dim(Z)
-    m = ngens(Z)
     Gn = copy(c)
     Gp = copy(c)
-    for i=1:m
+    for i=1:n
        Gp[i] = Gp[i] + sum(norm.(g[i, :]))
        Gn[i] = Gn[i] - sum(norm.(g[i, :]))
     end
