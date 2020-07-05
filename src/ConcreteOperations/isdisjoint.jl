@@ -596,7 +596,7 @@ end
 
 
 @inline function is_intersection_empty_helper_hyperplane(
-        hp::Union{Hyperplane{N}, Line{N}},
+        hp::Union{Hyperplane{N}, Line2D{N}},
         X::LazySet{N},
         witness::Bool=false
        ) where {N<:Real}
@@ -628,7 +628,7 @@ end
 
 """
     is_intersection_empty(X::LazySet{N},
-                          hp::Union{Hyperplane{N}, Line{N}},
+                          hp::Union{Hyperplane{N}, Line2D{N}},
                           [witness]::Bool=false
                          ) where {N<:Real}
 
@@ -670,14 +670,14 @@ We follow
 for the line-hyperplane intersection.
 """
 function is_intersection_empty(X::LazySet{N},
-                               hp::Union{Hyperplane{N}, Line{N}},
+                               hp::Union{Hyperplane{N}, Line2D{N}},
                                witness::Bool=false
                               ) where {N<:Real}
     return is_intersection_empty_helper_hyperplane(hp, X, witness)
 end
 
 # symmetric function
-function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
+function is_intersection_empty(hp::Union{Hyperplane{N}, Line2D{N}},
                                X::LazySet{N},
                                witness::Bool=false
                               ) where {N<:Real}
@@ -685,15 +685,15 @@ function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
 end
 
 # disambiguation
-function is_intersection_empty(hp1::Union{Hyperplane{N}, Line{N}},
-                               hp2::Union{Hyperplane{N}, Line{N}},
+function is_intersection_empty(hp1::Union{Hyperplane{N}, Line2D{N}},
+                               hp2::Union{Hyperplane{N}, Line2D{N}},
                                witness::Bool=false
                               ) where {N<:Real}
     return is_intersection_empty_helper_hyperplane(hp1, hp2, witness)
 end
 
 # disambiguation
-function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
+function is_intersection_empty(hp::Union{Hyperplane{N}, Line2D{N}},
                                S::AbstractSingleton{N},
                                witness::Bool=false
                               ) where {N<:Real}
@@ -702,7 +702,7 @@ end
 
 # symmetric method
 function is_intersection_empty(S::AbstractSingleton{N},
-                               hp::Union{Hyperplane{N}, Line{N}},
+                               hp::Union{Hyperplane{N}, Line2D{N}},
                                witness::Bool=false
                               ) where {N<:Real}
     return is_intersection_empty_helper_singleton(S, hp, witness)
@@ -885,7 +885,7 @@ function is_intersection_empty(S::AbstractSingleton{N},
 end
 
 # disambiguation
-function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
+function is_intersection_empty(hp::Union{Hyperplane{N}, Line2D{N}},
                                hs::HalfSpace{N},
                                witness::Bool=false
                               ) where {N<:Real}
@@ -894,7 +894,7 @@ end
 
 # symmetric method
 function is_intersection_empty(hs::HalfSpace{N},
-                               hp::Union{Hyperplane{N}, Line{N}},
+                               hp::Union{Hyperplane{N}, Line2D{N}},
                                witness::Bool=false
                               ) where {N<:Real}
     return is_intersection_empty_helper_halfspace(hs, hp, witness)
@@ -1034,7 +1034,7 @@ end
 
 # disambiguation
 function is_intersection_empty(P::AbstractPolyhedron{N},
-                               hp::Union{Hyperplane{N}, Line{N}},
+                               hp::Union{Hyperplane{N}, Line2D{N}},
                                witness::Bool=false;
                                solver=default_lp_solver(N),
                                algorithm="exact"
@@ -1045,7 +1045,7 @@ function is_intersection_empty(P::AbstractPolyhedron{N},
 end
 
 # symmetric method
-function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
+function is_intersection_empty(hp::Union{Hyperplane{N}, Line2D{N}},
                                P::AbstractPolyhedron{N},
                                witness::Bool=false;
                                solver=default_lp_solver(N),
@@ -1239,13 +1239,13 @@ function is_intersection_empty(hs::HalfSpace{N}, U::Universe{N},
                   U, hs, witness)
 end
 function is_intersection_empty(U::Universe{N},
-                               hp::Union{Hyperplane{N}, Line{N}},
+                               hp::Union{Hyperplane{N}, Line2D{N}},
                                witness::Bool=false) where {N<:Real}
     return invoke(is_intersection_empty,
                   Tuple{Universe{N}, LazySet{N}, Bool},
                   U, hp, witness)
 end
-function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
+function is_intersection_empty(hp::Union{Hyperplane{N}, Line2D{N}},
                                U::Universe{N},
                                witness::Bool=false) where {N<:Real}
     return invoke(is_intersection_empty,

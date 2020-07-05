@@ -81,7 +81,7 @@ function check_method_ambiguity_binary(op;
         HPolyhedron([H2]),
         Hyperplane(ones(2), 1.),
         Hyperrectangle(zeros(2), ones(2)),
-        Line(ones(2), 1.),
+        Line2D(ones(2), 1.),
         LineSegment(zeros(2), ones(2)),
         Singleton(zeros(2)),
         Universe(2),

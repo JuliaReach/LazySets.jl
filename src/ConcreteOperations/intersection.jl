@@ -40,7 +40,7 @@ function intersection(S1::AbstractSingleton{N},
 end
 
 """
-    intersection(L1::Line{N}, L2::Line{N}
+    intersection(L1::Line2D{N}, L2::Line2D{N}
                 ) where {N<:Real}
 
 Return the intersection of two 2D lines.
@@ -67,14 +67,14 @@ to compute the intersection point.
 The line ``y = -x + 1`` intersected with the line ``y = x``:
 
 ```jldoctest
-julia> intersection(Line([-1., 1.], 0.), Line([1., 1.], 1.))
+julia> intersection(Line2D([-1., 1.], 0.), Line2D([1., 1.], 1.))
 Singleton{Float64,Array{Float64,1}}([0.5, 0.5])
 
-julia> intersection(Line([1., 1.], 1.), Line([1., 1.], 1.))
-Line{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
+julia> intersection(Line2D([1., 1.], 1.), Line2D([1., 1.], 1.))
+Line2D{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
 ```
 """
-function intersection(L1::Line{N}, L2::Line{N}
+function intersection(L1::Line2D{N}, L2::Line2D{N}
                      ) where {N<:Real}
     det = L1.a[1]*L2.a[2] - L1.a[2]*L2.a[1]
     # are the lines parallel?
@@ -94,14 +94,14 @@ function intersection(L1::Line{N}, L2::Line{N}
 end
 
 """
-    intersection(a::LineSegment{N}, b::Line{N}) where {N<:Real}
+    intersection(a::LineSegment{N}, b::Line2D{N}) where {N<:Real}
 
 Compute the intersection of a line and a line segment.
 
 ### Input
 
 - `a`  -- LineSegment
-- `b` -- Line
+- `b` -- Line2D
 
 ### Output
 
@@ -109,9 +109,9 @@ If the sets do not intersect, the result is the empty set.
 Otherwise the result is the singleton or line segment that describes the intersection.
 """
 
-function intersection(a::LineSegment{N}, b::Line{N}) where {N<:Real}
+function intersection(a::LineSegment{N}, b::Line2D{N}) where {N<:Real}
     # cast a as line
-    ap = Line(a.p, a.q)
+    ap = Line2D(a.p, a.q)
     # find intersection between a' and b
     m = intersection(ap, b)
     if m == ap
@@ -127,7 +127,7 @@ function intersection(a::LineSegment{N}, b::Line{N}) where {N<:Real}
 end
 
 # symmetric method
-function intersection(a::Line{N}, b::LineSegment{N}) where {N<:Real}
+function intersection(a::Line2D{N}, b::LineSegment{N}) where {N<:Real}
     return intersection(b,a)
 end
 
@@ -153,8 +153,8 @@ Otherwise, if there is no intersection, an empty set is returned.
 
 function intersection(a::LineSegment{N}, b::LineSegment{N}) where {N<:Real}
     # cast a as line
-    ap = Line(a.p, a.q)
-    bp = Line(b.p, b.q)
+    ap = Line2D(a.p, a.q)
+    bp = Line2D(b.p, b.q)
     # find intersection between a' and b
     m = intersection(ap, bp)
     if m == ap

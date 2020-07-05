@@ -18,7 +18,7 @@ julia> subtypes(AbstractPolyhedron)
  HPolyhedron
  HalfSpace
  Hyperplane
- Line
+ Line2D
  Universe
 ```
 

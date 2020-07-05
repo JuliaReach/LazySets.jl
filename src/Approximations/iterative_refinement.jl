@@ -96,7 +96,7 @@ function new_approx(S::LazySet, p1::VN, d1::VN,
         err = zero(N)
     else
         ndir = normalize([p2[2]-p1[2], p1[1]-p2[1]])
-        q = element(intersection(Line(d1, dot(d1, p1)), Line(d2, dot(d2, p2))))
+        q = element(intersection(Line2D(d1, dot(d1, p1)), Line2D(d2, dot(d2, p2))))
         err = min(norm(q - σ(ndir, S)), dot(ndir, q - p1))
         refinable = (err > _rtol(N)) && (norm(p1-q, 2) > _rtol(N)) &&
                     (norm(q-p2, 2) > _rtol(N))

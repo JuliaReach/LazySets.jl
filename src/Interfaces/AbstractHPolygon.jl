@@ -143,14 +143,14 @@ function vertices_list(P::AbstractHPolygon{N};
         return points
     end
     @inbounds for i in 1:n-1
-        cap = intersection(Line(P.constraints[i]), Line(P.constraints[i+1]))
+        cap = intersection(Line2D(P.constraints[i]), Line2D(P.constraints[i+1]))
         if cap isa EmptySet
             return Vector{Vector{N}}()
         else
             points[i] = element(cap)
         end
     end
-    cap = intersection(Line(P.constraints[n]), Line(P.constraints[1]))
+    cap = intersection(Line2D(P.constraints[n]), Line2D(P.constraints[1]))
     if cap isa EmptySet
         return Vector{Vector{N}}()
     else
@@ -206,8 +206,8 @@ of the constraints).
 """
 function an_element(P::AbstractHPolygon{N}) where {N<:Real}
     @assert length(P.constraints) >= 2 "polygon has less than two constraints"
-    return element(intersection(Line(P.constraints[1]),
-                                Line(P.constraints[2])))
+    return element(intersection(Line2D(P.constraints[1]),
+                                Line2D(P.constraints[2])))
 end
 
 """
@@ -352,7 +352,7 @@ function isredundant(cmid::LinearConstraint{N},
         # not the same direction => constraint is not redundant
         return false
     end
-    cap = intersection(Line(cright), Line(cleft))
+    cap = intersection(Line2D(cright), Line2D(cleft))
     @assert cap isa Singleton
     return cap ⊆ cmid
 end

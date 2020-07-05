@@ -45,7 +45,7 @@ makedocs(
                 "Hyperplane" => "lib/sets/Hyperplane.md",
                 "Hyperrectangle" => "lib/sets/Hyperrectangle.md",
                 "Interval" => "lib/sets/Interval.md",
-                "Line" => "lib/sets/Line.md",
+                "Line2D" => "lib/sets/Line2D.md",
                 "LineSegment" => "lib/sets/LineSegment.md",
                 "PolynomialZonotope" => "lib/sets/PolynomialZonotope.md",
                 "Singleton" => "lib/sets/Singleton.md",
