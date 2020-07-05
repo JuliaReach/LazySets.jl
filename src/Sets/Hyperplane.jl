@@ -527,8 +527,7 @@ Hyperplane{Float64,Array{Float64,1}}([1.0, -1.0, 0.0, 0.0], -0.0)
 ### Algorithm
 
 It is assumed that the expression is of the form
-`EXPR0: α*x1 + ⋯ + α*xn + γ CMP β*x1 + ⋯ + β*xn + δ`,
-where `CMP` is `==`.
+`EXPR0: α*x1 + ⋯ + α*xn + γ == β*x1 + ⋯ + β*xn + δ`.
 This expression is transformed, by rearrangement and substitution, into the
 canonical form `EXPR1 : a1 * x1 + ⋯ + an * xn == b`. The method used to identify
 the coefficients is to take derivatives with respect to the ambient variables `vars`.
