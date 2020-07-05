@@ -2,21 +2,21 @@
 CurrentModule = LazySets
 ```
 
-# [Line](@id def_Line)
+# [Line2D](@id def_Line)
 
 ```@docs
-Line
-dim(::Line)
-σ(::AbstractVector{N}, ::Line{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::Line{N}) where {N<:Real}
-an_element(::Line{N}) where {N<:Real}
-rand(::Type{Line})
-isbounded(::Line)
-isuniversal(::Line{N}, ::Bool=false) where {N<:Real}
-isempty(::Line)
-constrained_dimensions(::Line{N}) where {N<:Real}
-constraints_list(::Line{N}) where {N<:Real}
-translate(::Line{N}, ::AbstractVector{N}) where {N<:Real}
+Line2D
+dim(::Line2D)
+σ(::AbstractVector{N}, ::Line2D{N}) where {N<:Real}
+∈(::AbstractVector{N}, ::Line2D{N}) where {N<:Real}
+an_element(::Line2D{N}) where {N<:Real}
+rand(::Type{Line2D})
+isbounded(::Line2D)
+isuniversal(::Line2D{N}, ::Bool=false) where {N<:Real}
+isempty(::Line2D)
+constrained_dimensions(::Line2D{N}) where {N<:Real}
+constraints_list(::Line2D{N}) where {N<:Real}
+translate(::Line2D{N}, ::AbstractVector{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

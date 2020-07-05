@@ -450,7 +450,7 @@ that was used:
 
 - If the invertibility criterion was used:
 
-    - The types of `HalfSpace`, `Hyperplane`, `Line` and `AbstractHPolygon` are
+    - The types of `HalfSpace`, `Hyperplane`, `Line2D` and `AbstractHPolygon` are
       preserved.
     - If `P` is an `AbstractPolytope`, then the output is an `Interval` if `m = 1`,
       an `HPolygon` if `m = 2` and an `HPolytope` in other cases.

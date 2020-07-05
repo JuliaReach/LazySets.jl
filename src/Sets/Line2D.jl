@@ -2,11 +2,11 @@ import Base: rand,
              ∈,
              isempty
 
-export Line,
+export Line2D,
        an_element
 
 """
-    Line{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
+    Line2D{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
 
 Type that represents a line in 2D of the form ``a⋅x = b`` (i.e., a special case
 of a `Hyperplane`).
@@ -21,31 +21,31 @@ of a `Hyperplane`).
 The line ``y = -x + 1``:
 
 ```jldoctest
-julia> Line([1., 1.], 1.)
-Line{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
+julia> Line2D([1., 1.], 1.)
+Line2D{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
 ```
 """
-struct Line{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
+struct Line2D{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
     a::VN
     b::N
 
     # default constructor with length constraint
-    function Line(a::VN, b::N) where {N<:Real, VN<:AbstractVector{N}}
+    function Line2D(a::VN, b::N) where {N<:Real, VN<:AbstractVector{N}}
         @assert length(a) == 2 "lines must be two-dimensional"
         @assert !iszero(a) "a line needs a non-zero normal vector"
         return new{N, VN}(a, b)
     end
 end
 
-isoperationtype(::Type{<:Line}) = false
-isconvextype(::Type{<:Line}) = true
+isoperationtype(::Type{<:Line2D}) = false
+isconvextype(::Type{<:Line2D}) = true
 
 # constructor from a LinearConstraint
-Line(c::LinearConstraint{N}) where {N<:Real} = Line(c.a, c.b)
+Line2D(c::LinearConstraint{N}) where {N<:Real} = Line2D(c.a, c.b)
 
 
 """
-    Line(p::AbstractVector{N}, q::AbstractVector{N}) where {N<:Real}
+    Line2D(p::AbstractVector{N}, q::AbstractVector{N}) where {N<:Real}
 
 Constructor a line give two points.
 
@@ -68,20 +68,20 @@ two points is
 ```
 The particular case ``x₂ = x₁`` defines a line parallel to the ``y``-axis (vertical line).
 """
-function Line(p::AbstractVector{N}, q::AbstractVector{N}) where {N<:Real}
+function Line2D(p::AbstractVector{N}, q::AbstractVector{N}) where {N<:Real}
     x₁, y₁ = p[1], p[2]
     x₂, y₂ = q[1], q[2]
 
     if x₁ == x₂  # line is vertical
         a = [one(N), zero(N)]
         b = x₁
-        return LazySets.Line(a, b)
+        return LazySets.Line2D(a, b)
     end
 
     k = (y₁ - y₂)/(x₂ - x₁)
     a = [k, one(N)]
     b = y₁ + k * x₁
-    return Line(a, b)
+    return Line2D(a, b)
 end
 
 
@@ -89,7 +89,7 @@ end
 
 
 """
-    constraints_list(L::Line{N}) where {N<:Real}
+    constraints_list(L::Line2D{N}) where {N<:Real}
 
 Return the list of constraints of a line.
 
@@ -101,7 +101,7 @@ Return the list of constraints of a line.
 
 A list containing two half-spaces.
 """
-function constraints_list(L::Line{N}) where {N<:Real}
+function constraints_list(L::Line2D{N}) where {N<:Real}
     return _constraints_list_hyperplane(L.a, L.b)
 end
 
@@ -110,7 +110,7 @@ end
 
 
 """
-    dim(L::Line)
+    dim(L::Line2D)
 
 Return the ambient dimension of a line.
 
@@ -122,12 +122,12 @@ Return the ambient dimension of a line.
 
 The ambient dimension of the line, which is 2.
 """
-function dim(L::Line)
+function dim(L::Line2D)
     return 2
 end
 
 """
-    σ(d::AbstractVector{N}, L::Line{N}) where {N<:Real}
+    σ(d::AbstractVector{N}, L::Line2D{N}) where {N<:Real}
 
 Return the support vector of a line in a given direction.
 
@@ -141,12 +141,12 @@ Return the support vector of a line in a given direction.
 The support vector in the given direction, which is defined the same way as for
 the more general `Hyperplane`.
 """
-function σ(d::AbstractVector{N}, L::Line{N}) where {N<:Real}
+function σ(d::AbstractVector{N}, L::Line2D{N}) where {N<:Real}
     return σ(d, Hyperplane(L.a, L.b))
 end
 
 """
-    isbounded(L::Line)
+    isbounded(L::Line2D)
 
 Determine whether a line is bounded.
 
@@ -158,12 +158,12 @@ Determine whether a line is bounded.
 
 `false`.
 """
-function isbounded(::Line)
+function isbounded(::Line2D)
     return false
 end
 
 """
-    isuniversal(L::Line{N}, [witness]::Bool=false) where {N<:Real}
+    isuniversal(L::Line2D{N}, [witness]::Bool=false) where {N<:Real}
 
 Check whether a line is universal.
 
@@ -181,7 +181,7 @@ Check whether a line is universal.
 
 Witness production falls back to `isuniversal(::Hyperplane)`.
 """
-function isuniversal(L::Line{N}, witness::Bool=false) where {N<:Real}
+function isuniversal(L::Line2D{N}, witness::Bool=false) where {N<:Real}
     if witness
         return isuniversal(Hyperplane(L.a, L.b), true)
     else
@@ -190,7 +190,7 @@ function isuniversal(L::Line{N}, witness::Bool=false) where {N<:Real}
 end
 
 """
-    an_element(L::Line{N}) where {N<:Real}
+    an_element(L::Line2D{N}) where {N<:Real}
 
 Return some element of a line.
 
@@ -209,7 +209,7 @@ Otherwise the result is some ``x = [x1, x2]`` such that ``a·[x1, x2] = b``.
 We first find out in which dimension ``a`` is nonzero, say, dimension 1, and
 then choose ``x1 = 1`` and accordingly ``x2 = \\frac{b - a1}{a2}``.
 """
-function an_element(L::Line{N}) where {N<:Real}
+function an_element(L::Line2D{N}) where {N<:Real}
     if L.b == zero(N)
         return zeros(N, 2)
     end
@@ -221,7 +221,7 @@ function an_element(L::Line{N}) where {N<:Real}
 end
 
 """
-    ∈(x::AbstractVector{N}, L::Line{N}) where {N<:Real}
+    ∈(x::AbstractVector{N}, L::Line2D{N}) where {N<:Real}
 
 Check whether a given point is contained in a line.
 
@@ -238,20 +238,20 @@ Check whether a given point is contained in a line.
 
 The point ``x`` belongs to the line if and only if ``a⋅x = b`` holds.
 """
-function ∈(x::AbstractVector{N}, L::Line{N}) where {N<:Real}
+function ∈(x::AbstractVector{N}, L::Line2D{N}) where {N<:Real}
     @assert length(x) == dim(L)
     return dot(L.a, x) == L.b
 end
 
 """
-    rand(::Type{Line}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
+    rand(::Type{Line2D}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
          [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
 
 Create a random line.
 
 ### Input
 
-- `Line` -- type for dispatch
+- `Line2D` -- type for dispatch
 - `N`    -- (optional, default: `Float64`) numeric type
 - `dim`  -- (optional, default: 2) dimension
 - `rng`  -- (optional, default: `GLOBAL_RNG`) random number generator
@@ -266,23 +266,23 @@ A random line.
 All numbers are normally distributed with mean 0 and standard deviation 1.
 Additionally, the constraint `a` is nonzero.
 """
-function rand(::Type{Line};
+function rand(::Type{Line2D};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int, Nothing}=nothing)
-    @assert dim == 2 "cannot create a random Line of dimension $dim"
+    @assert dim == 2 "cannot create a random Line2D of dimension $dim"
     rng = reseed(rng, seed)
     a = randn(rng, N, dim)
     while iszero(a)
         a = randn(rng, N, dim)
     end
     b = randn(rng, N)
-    return Line(a, b)
+    return Line2D(a, b)
 end
 
 """
-    isempty(L::Line)
+    isempty(L::Line2D)
 
 Return if a line is empty or not.
 
@@ -294,12 +294,12 @@ Return if a line is empty or not.
 
 `false`.
 """
-function isempty(L::Line)
+function isempty(L::Line2D)
     return false
 end
 
 """
-    constrained_dimensions(L::Line{N}) where {N<:Real}
+    constrained_dimensions(L::Line2D{N}) where {N<:Real}
 
 Return the indices in which a line is constrained.
 
@@ -316,17 +316,17 @@ A vector of ascending indices `i` such that the line is constrained in dimension
 
 A line with constraint ``x1 = 0`` is constrained in dimension 1 only.
 """
-function constrained_dimensions(L::Line{N}) where {N<:Real}
+function constrained_dimensions(L::Line2D{N}) where {N<:Real}
     return nonzero_indices(L.a)
 end
 
-function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::Line{N},
+function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::Line2D{N},
                                  algo::AbstractLinearMapAlgorithm) where {N<:Real}
     constraints = _linear_map_hrep(M, P, algo)
     if length(constraints) == 2
         # assuming these constraints define a line
         c = first(constraints)
-        return Line(c.a, c.b)
+        return Line2D(c.a, c.b)
     elseif isempty(constraints)
         return Universe{N}(size(M, 1))
     else
@@ -335,7 +335,7 @@ function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::Line{N},
 end
 
 """
-    translate(L::Line{N}, v::AbstractVector{N}; share::Bool=false
+    translate(L::Line2D{N}, v::AbstractVector{N}; share::Bool=false
              ) where {N<:Real}
 
 Translate (i.e., shift) a line by a given vector.
@@ -361,11 +361,11 @@ original line if `share == true`.
 A line ``a⋅x = b`` is transformed to the line ``a⋅x = b + a⋅v``.
 In other words, we add the dot product ``a⋅v`` to ``b``.
 """
-function translate(L::Line{N}, v::AbstractVector{N}; share::Bool=false
+function translate(L::Line2D{N}, v::AbstractVector{N}; share::Bool=false
                   ) where {N<:Real}
     @assert length(v) == dim(L) "cannot translate a $(dim(L))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     a = share ? L.a : copy(L.a)
     b = L.b + dot(L.a, v)
-    return Line(a, b)
+    return Line2D(a, b)
 end

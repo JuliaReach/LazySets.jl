@@ -109,7 +109,7 @@ Hyperrectangle
 Intersection
 IntersectionArray
 Interval
-Line
+Line2D
 LineSegment
 LinearMap
 MinkowskiSum
