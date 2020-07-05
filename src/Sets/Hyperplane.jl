@@ -497,7 +497,7 @@ Return the hyperplane given by a symbolic expression.
             use those as the ambient variables in the set with respect to which derivations
             take place; otherwise, use only the variables which appear in the given
             expression (but be careful because the order may change; see `Notes` below fo details)
-- `N`    -- (optional, default: `Float64`) the numeric type of the returned half-space
+- `N`    -- (optional, default: `Float64`) the numeric type of the returned hyperplane
 
 ### Output
 
