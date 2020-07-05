@@ -411,7 +411,11 @@ this method; otherwise, redundant vertices may be present.
 We use a trick to speed up enumerating vertices of 2-dimensional zonotopic
 sets with all generators in the first quadrant or third quadrant (same sign).
 Namely, sort the generators in angle and add them clockwise in increasing
-order and anticlockwise in decreasing order.
+order and anticlockwise in decreasing order, the algorithm detail:
+https://math.stackexchange.com/q/3356460
+
+To avoid cumulative sum from both directions separately, we build a 2d index matrix
+to sum generators for both directions in one matrix-vector product.
 """
 function vertices_list(Z::AbstractZonotope{N};
                        apply_convex_hull::Bool=true) where {N<:Real}
