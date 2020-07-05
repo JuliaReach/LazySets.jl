@@ -426,7 +426,7 @@ function vertices_list(Z::AbstractZonotope{N};
             sorted_G = sortslices(G, dims=2, by=x->atan(x[2], x[1]))
             index = ones(N, p, 2*p)
             @inbounds for i in 1:p
-                index[i, i+1:i+p-1] *= -1
+                index[i, i+1:i+p-1] .= -one(N)
             end
             index[:, 1] *= -1
             V = sorted_G * index .+ c
