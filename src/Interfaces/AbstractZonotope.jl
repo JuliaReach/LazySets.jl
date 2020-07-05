@@ -407,14 +407,35 @@ factors are ``ξ_i ∈ \\{-1, 1\\}``.
 There are at most ``2^p`` distinct vertices. Use the flag `apply_convex_hull` to
 control whether a convex hull algorithm is applied to the vertices computed by
 this method; otherwise, redundant vertices may be present.
+
+We use a trick to speed up enumerating vertices of 2-dimensional zonotopic
+sets with all generators in the first quadrant or third quadrant (same sign).
+Namely, sort the generators in angle and add them clockwise in increasing
+order and anticlockwise in decreasing order, the algorithm detail:
+https://math.stackexchange.com/q/3356460
+
+To avoid cumulative sum from both directions separately, we build a 2d index matrix
+to sum generators for both directions in one matrix-vector product.
 """
 function vertices_list(Z::AbstractZonotope{N};
                        apply_convex_hull::Bool=true) where {N<:Real}
     c = center(Z)
     G = remove_zero_columns(genmat(Z))
-    p = size(G, 2)
+    n, p = size(G)
     if p == 0
         return [c]
+    end
+    if n == 2 && p > 2 && apply_convex_hull
+        if sum(abs, G) == abs(sum(G))
+            sorted_G = sortslices(G, dims=2, by=x->atan(x[2], x[1]))
+            index = ones(N, p, 2*p)
+            @inbounds for i in 1:p
+                index[i, i+1:i+p-1] .= -one(N)
+            end
+            index[:, 1] .= -one(N)
+            V = sorted_G * index .+ c
+            return [V[:, i] for i in 1:2*p]
+        end
     end
 
     vlist = Vector{Vector{N}}()

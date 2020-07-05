@@ -247,6 +247,22 @@ for N in [Float64]
     vlistZ = vertices_list(Z)
     @test length(vlistZ) == 6
     @test ispermutation(vlistZ, [N[-2, -2], N[0, -2], N[2, 0], N[2, 2], N[0, 2], N[-2, 0]])
+
+    # test 3d zonotope vertex enumeration
+    Z = Zonotope([0., 0., 0.], [1. 0. 1.; 0. 1. 1.; 0.1 1. 1.])
+    vlistZ = vertices_list(Z)
+    @test length(vlistZ) == 8
+
+    # test 2d zonotope generators in positive orthant vertex enumeration
+    Z = Zonotope([0., 0.], [1. 0. 1.; 0. 1. 1.])
+    vlistZ = vertices_list(Z)
+    @test length(vlistZ) == 6
+
+    # test 2d zonotope generators in negative orthant vertex enumeration
+    Z = Zonotope([0., 0.], -[1. 0. 1.; 0. 1. 1.])
+    vlistZ = vertices_list(Z)
+    @test length(vlistZ) == 6
+
     # option to not apply the convex hull operation
     vlistZ = vertices_list(Z, apply_convex_hull=false)
     @test length(vlistZ) == 8
