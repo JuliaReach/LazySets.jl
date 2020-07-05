@@ -538,7 +538,7 @@ Return the half-space given by a symbolic expression.
 - `vars` -- (optional, default: `get_variables(expr)`), if an array of variables is given,
             use those as the ambient variables in the set with respect to which derivations
             take place; otherwise, use only the variables which appear in the given
-            expression (but be careful because the order may change; see `Notes` below fo details)
+            expression (but be careful because the order may change; see the examples below for details)
 - `N`    -- (optional, default: `Float64`) the numeric type of the returned half-space
 
 ### Output
