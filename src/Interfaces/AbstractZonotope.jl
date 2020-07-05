@@ -432,7 +432,7 @@ function vertices_list(Z::AbstractZonotope{N};
             @inbounds for i in 1:p
                 index[i, i+1:i+p-1] .= -one(N)
             end
-            index[:, 1] = -one(N)
+            index[:, 1] .= -one(N)
             V = sorted_G * index .+ c
             return [V[:, i] for i in 1:2*p]
         end
