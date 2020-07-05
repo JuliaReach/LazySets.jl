@@ -566,7 +566,7 @@ julia> HalfSpace(x[1] >= x[2], x)
 HalfSpace{Float64,Array{Float64,1}}([-1.0, 1.0, 0.0, 0.0], -0.0)
 ```
 
-Be careful with using the default `vars` value, becaus it may introduce a wrong
+Be careful with using the default `vars` value because it may introduce a wrong
 order.
 
 ```julia
