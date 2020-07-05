@@ -5,8 +5,8 @@ for N in [Float64, Rational{Int}, Float32]
     @test b isa CompactSet && !(b isa NonCompactSet)
 
     # non-compact set
-    @test Line <: NonCompactSet && !(Line <: CompactSet)
-    l = Line(N[0, 1], N(1))
+    @test Line2D <: NonCompactSet && !(Line2D <: CompactSet)
+    l = Line2D(N[0, 1], N(1))
     @test l isa NonCompactSet && !(l isa CompactSet)
 
     # lazy operations are neither compact nor non-compact by default
