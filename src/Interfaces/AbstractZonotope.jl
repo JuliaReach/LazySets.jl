@@ -551,15 +551,15 @@ end
     vertices_list(MS::MinkowskiSum{N, <:AbstractZonotope{N},
                     <:AbstractZonotope{N}}) where{N<:Real}
 
-Return the list of constraints defining a zonotopic set.
+Return the list of vertices for the Minkowski sum of two zonotopic sets.
 
 ### Input
 
-- `MS` -- minkowski sum of two zonotopic sets
+- `MS` -- Minkowski sum of two zonotopic sets
 
 ### Output
 
-The list of vertices of the minkowski sum of two zonotopic set.
+The list of vertices of the Minkowski sum of two zonotopic sets.
 """
 function vertices_list(MS::MinkowskiSum{N, <:AbstractZonotope{N},
                         <:AbstractZonotope{N}}) where{N<:Real}
