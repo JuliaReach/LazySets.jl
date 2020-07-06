@@ -252,3 +252,22 @@ end
     end
     return svec
 end
+
+"""
+    vertices_list(MS::MinkowskiSum{N, <:AbstractZonotope{N},
+                    <:AbstractZonotope{N}}) where{N<:Real}
+
+Return the list of vertices for the Minkowski sum of two zonotopic sets.
+
+### Input
+
+- `MS` -- Minkowski sum of two zonotopic sets
+
+### Output
+
+The list of vertices of the Minkowski sum of two zonotopic sets.
+"""
+function vertices_list(MS::MinkowskiSum{N, <:AbstractZonotope{N},
+                        <:AbstractZonotope{N}}) where{N<:Real}
+    return vertices_list(minkowski_sum(MS.X, MS.Y))
+end

@@ -242,11 +242,6 @@ for N in [Float64]
     Z = convert(Zonotope, S)
     @test vertices_list(Z) == [element(S)]
 
-    #vertices for minkowski sum of zonotopic sets
-    X = Zonotope(N[0, 0], [N[1, 0]])
-    Y = Zonotope(N[0, 0], [N[1, 1]])
-    @test ispermutation(vertices_list(X + Y), [N[2, 1], N[0, 1], N[-2, -1], N[0, -1]])
-
     # test that redundant vertices are removed by default (#1021)
     Z = Zonotope([0., 0.], [1. 0. 1.; 0. 1. 1.])
     vlistZ = vertices_list(Z)

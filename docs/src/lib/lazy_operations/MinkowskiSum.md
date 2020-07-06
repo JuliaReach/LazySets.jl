@@ -18,6 +18,7 @@ isbounded(::MinkowskiSum)
 isempty(::MinkowskiSum)
 constraints_list(::MinkowskiSum)
 ∈(::AbstractVector{N}, ::MinkowskiSum{N, S1, S2}) where {N, S1<:AbstractSingleton, S2<:LazySet}
+vertices_list(MS::MinkowskiSum{N, <:AbstractZonotope{N}, <:AbstractZonotope{N}}) where{N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
