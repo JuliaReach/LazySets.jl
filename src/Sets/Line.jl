@@ -2,7 +2,10 @@ import Base: rand,
              ∈,
              isempty
 
-export Line, an_element
+export Line,
+       an_element,
+       translate,
+       translate!
 
 """
     Line{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
@@ -35,7 +38,7 @@ struct Line{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
     n::VN
 
     # default constructor with length constraint
-    function Line(p::VN, n::N; check_direction::Bool=true) where {N, VN<:AbstractVector{N}}
+    function Line(p::VN, n::VN; check_direction::Bool=true) where {N, VN<:AbstractVector{N}}
         if check_direction
             @assert !iszero(n) "a line needs a non-zero direction vector"
         end
@@ -47,8 +50,27 @@ isoperationtype(::Type{<:Line}) = false
 isconvextype(::Type{<:Line}) = true
 
 direction(L::Line) = L.n
-normalize!(L::Line, p::Real=2) = normalize!(L.n, p)
-normalize(L::Line, p::Real=2) = normalize!(copy(L), p)
+
+function normalize!(L::Line, p::Real=2)
+    normalize!(L.n, p)
+    return L
+end
+
+function normalize(L::Line, p::Real=2.)
+    return Line(copy(L.p), normalize(L.n, p))
+end
+
+function distance(x::AbstractVector, y::AbstractVector, p::Real=2.)
+    return norm(x - y, p)
+end
+
+function distance(x::AbstractVector, L::Line, p::Real=2.)
+    q = L.p  # point in the line
+    n = L.n  # direction of the line
+
+    t = dot(x - q, n) / dot(n, n)
+    return distance(x, q + t*n, p)
+end
 
 """
     Line(p::AbstractVector, q::AbstractVector)
@@ -68,7 +90,7 @@ The line which passes through `p` and `q`.
 
 Given two points ``p ∈ \\mathbb{R}^n`` and ``q ∈ \\mathbb{R}^n``, the line that
 passes through these two points is
-`L: `\\{y ∈ \\mathbb{R}^n: y = p + λ(p - q), λ ∈ \\mathbb{R}\\}``.
+`L: `\\{y ∈ \\mathbb{R}^n: y = p + λ(q - p), λ ∈ \\mathbb{R}\\}``.
 """
 function Line(p::AbstractVector, q::AbstractVector)
     Line(p, q - p)
@@ -90,7 +112,7 @@ Return the list of constraints of a line.
 A list containing two half-spaces.
 """
 function constraints_list(L::Line)
-    return _constraints_list_hyperplane(L.a, L.b)
+    # TODO
 end
 
 
@@ -113,6 +135,28 @@ The ambient dimension of the line.
 dim(L::Line) = length(L.p)
 
 """
+    ρ(d::AbstractVector, L::Line)
+
+Return the support function of a line in a given direction.
+
+### Input
+
+- `d` -- direction
+- `L` -- line
+
+### Output
+
+The support function in the given direction.
+"""
+function ρ(d::AbstractVector, L::Line)
+    if isapproxzero(d, L.n)
+        return dot(d, L.p)
+    else
+        return Inf
+    end
+end
+
+"""
     σ(d::AbstractVector{N}, L::Line{N}) where {N<:Real}
 
 Return the support vector of a line in a given direction.
@@ -124,11 +168,14 @@ Return the support vector of a line in a given direction.
 
 ### Output
 
-The support vector in the given direction, which is defined the same way as for
-the more general `Hyperplane`.
+The support vector in the given direction.
 """
-function σ(d::AbstractVector{N}, L::Line{N}) where {N<:Real}
-    return σ(d, Hyperplane(L.a, L.b))
+function σ(d::AbstractVector, L::Line)
+    if isapproxzero(d, L.n)
+        return L.p
+    else
+        return Inf
+    end
 end
 
 """
@@ -160,11 +207,9 @@ Check whether a line is universal.
 
 * If `witness` option is deactivated: `false`
 * If `witness` option is activated: `(false, v)` where ``v ∉ P``
-
-### Algorithm
-
-Witness production falls back to `isuniversal(::Hyperplane)`.
 """
+isuniversal(L::Line; witness::Bool=false) = isuniversal(L, Val(witness))
+
 isuniversal(L::Line, ::Val{false}) = false
 
 """
@@ -240,7 +285,7 @@ function rand(::Type{Line};
     while iszero(n)
         n = randn(rng, N, dim)
     end
-    p = randn(rng, N)
+    p = randn(rng, N, dim)
     return Line(p, n)
 end
 
@@ -273,30 +318,26 @@ Return the indices in which a line is constrained.
 A vector of ascending indices `i` such that the line is constrained in dimension
 `i`.
 
+### Algorithm
+
+For each coordinate ``i``, vector of the form ``x_i = p_i + λ n_i`` are constrained
+i.e. (they belong to the line and are bounded) if and only if ``n_i`` is zero.
+Hence, this function returns all indices of the normal vector ``n`` for which
+the ``i``-th coordinate is nonzero.
+
 ### Examples
 
-A line with constraint ``x1 = 0`` is constrained in dimension 1 only.
+The line ``y = 5`` in two dimensions can be written as ``p = [0, 5]`` and
+``n = [1, 0)]``. This line constrains dimension ``2``.
+
+```jldoctest
+julia> constrained_dimensions(Line([0, 5.], [1, 0.]))
+1-element Array{Int64,1}:
+ 2
+```
 """
 function constrained_dimensions(L::Line)
-    # TODO
-end
-
-
-function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::Line{N},
-                                 algo::AbstractLinearMapAlgorithm) where {N<:Real}
-    # TODO
-    #=
-    constraints = _linear_map_hrep(M, P, algo)
-    if length(constraints) == 2
-        # assuming these constraints define a line
-        c = first(constraints)
-        return Line(c.a, c.b)
-    elseif isempty(constraints)
-        return Universe{N}(size(M, 1))
-    else
-        error("unexpected number of $(length(constraints)) constraints")
-    end
-    =#
+    return findall(isapproxzero, L.n)
 end
 
 """
@@ -320,13 +361,13 @@ See also `translate!` for the in-place version.
 function translate(L::Line, v::AbstractVector)
     @assert length(v) == dim(L) "cannot translate a $(dim(L))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
-    return translate(copy(L), v)
+    return translate!(copy(L), v)
 end
 
 """
     translate!(L::Line, v::AbstractVector)
 
-Translate (i.e., shift) a line by a given vector in-place.
+Translate (i.e., shift) a line by a given vector storing the result in `L`.
 
 ### Input
 
@@ -335,7 +376,7 @@ Translate (i.e., shift) a line by a given vector in-place.
 
 ### Output
 
-A translated line.
+A translated line, modifying `L` in-place.
 """
 function translate!(L::Line, v::AbstractVector)
     L.p .+= v
