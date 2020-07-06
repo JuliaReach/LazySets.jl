@@ -1059,16 +1059,13 @@ Algorithm based on Lemma 3.1 of [1]
 function ⊆(Z::AbstractZonotope{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
     c = center(Z)
     G = genmat(Z)
-    n = dim(Z)
-    Gn = copy(c)
-    Gp = copy(c)
-    for i=1:n
-        aux = sum(norm.(G[i, :]))
-        Gp[i] = Gp[i] + aux
-        Gn[i] = Gn[i] - aux
-    end
+    n, m = size(G)
     for i = 1:n
-        if !_leq(Gp[i], high(H, i)) || !_geq(Gn[i], low(H, i))
+        aux = zero(N)
+        @inbounds for j in 1:m
+            aux += abs(G[i, j])
+        end
+        if !_leq(c[i] + aux, high(H, i)) || !_geq(c[i] - aux, low(H, i))
             return false
         end
     end
