@@ -1056,7 +1056,7 @@ Algorithm based on Lemma 3.1 of [1]
  In Proceedings of the 22nd ACM International Conference on Hybrid Systems:
  Computation and Control (pp. 268-269).
 """
-function ⊆(Z::AbstractZonotope{N}, H::AbstractHyperrectangle{N}) where {N}
+function ⊆(Z::AbstractZonotope{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
     c = center(Z)
     g = genmat(Z)
     n = dim(Z)
