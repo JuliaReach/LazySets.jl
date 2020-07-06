@@ -1060,12 +1060,14 @@ function ⊆(Z::AbstractZonotope{N}, H::AbstractHyperrectangle{N}) where {N<:Rea
     c = center(Z)
     G = genmat(Z)
     n, m = size(G)
-    for i = 1:n
+    @inbounds for i = 1:n
         aux = zero(N)
-        @inbounds for j in 1:m
+        for j in 1:m
             aux += abs(G[i, j])
         end
-        if !_leq(c[i] + aux, high(H, i)) || !_geq(c[i] - aux, low(H, i))
+        ubound = c[i] + aux
+        lbound = c[i] - aux
+        if !_leq(ubound, high(H, i)) || !_geq(lbound, low(H, i))
             return false
         end
     end
