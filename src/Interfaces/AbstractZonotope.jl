@@ -546,3 +546,22 @@ function constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true
     end
     return constraints
 end
+
+"""
+    vertices_list(MS::MinkowskiSum{N, <:AbstractZonotope{N},
+                    <:AbstractZonotope{N}}) where{N<:Real}
+
+Return the list of constraints defining a zonotopic set.
+
+### Input
+
+- `MS` -- minkowski sum of two zonotopic sets
+
+### Output
+
+The list of vertices of the minkowski sum of two zonotopic set.
+"""
+function vertices_list(MS::MinkowskiSum{N, <:AbstractZonotope{N},
+                        <:AbstractZonotope{N}}) where{N<:Real}
+    return vertices_list(minkowski_sum(MS.X, MS.Y))
+end
