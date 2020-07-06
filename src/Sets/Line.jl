@@ -174,7 +174,7 @@ function σ(d::AbstractVector, L::Line)
     if isapproxzero(d, L.n)
         return L.p
     else
-        return Inf
+        error("the support vector is undefined because the line is unbounded")
     end
 end
 
