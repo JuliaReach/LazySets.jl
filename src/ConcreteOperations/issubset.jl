@@ -1066,9 +1066,10 @@ function ⊆(Z::AbstractZonotope{N}, H::AbstractHyperrectangle{N}) where {N<:Rea
        Gp[i] = Gp[i] + sum(norm.(g[i, :]))
        Gn[i] = Gn[i] - sum(norm.(g[i, :]))
     end
-    result = true
-    for i=1:n
-       result = result && _leq(Gp[i], high(H)[i]) && _geq(Gn[i], low(H)[i])
+    for i = 1:n
+        if !_leq(Gp[i], high(H, i)) || !_geq(Gn[i], low(H, i))
+            return false
+        end
     end
-    return result
+    return true
 end
