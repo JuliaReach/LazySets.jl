@@ -254,20 +254,18 @@ end
 end
 
 """
-    vertices_list(MS::MinkowskiSum{N, <:AbstractZonotope{N},
-                    <:AbstractZonotope{N}}) where{N<:Real}
+    vertices_list(ms::MinkowskiSum{N, Z1, Z2}) where {N<:Real, Z1<:AbstractZonotope{N}, Z2<:AbstractZonotope{N}}
 
 Return the list of vertices for the Minkowski sum of two zonotopic sets.
 
 ### Input
 
-- `MS` -- Minkowski sum of two zonotopic sets
+- `ms` -- Minkowski sum of two zonotopic sets
 
 ### Output
 
 The list of vertices of the Minkowski sum of two zonotopic sets.
 """
-function vertices_list(MS::MinkowskiSum{N, <:AbstractZonotope{N},
-                        <:AbstractZonotope{N}}) where{N<:Real}
-    return vertices_list(minkowski_sum(MS.X, MS.Y))
+function vertices_list(v::MinkowskiSum{N, Z1, Z2}) where {N<:Real, Z1<:AbstractZonotope{N}, Z2<:AbstractZonotope{N}}
+    return vertices_list(minkowski_sum(ms.X, ms.Y))
 end
