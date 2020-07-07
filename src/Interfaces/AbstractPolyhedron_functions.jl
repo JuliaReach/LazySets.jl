@@ -6,7 +6,9 @@ export constrained_dimensions,
        remove_redundant_constraints!,
        linear_map,
        chebyshev_center,
-       an_element
+       an_element,
+       vertices_list,
+       singleton_list
 
 # default LP solver for floating-point numbers
 function default_lp_solver(N::Type{<:AbstractFloat})
@@ -899,4 +901,68 @@ function an_element(P::AbstractPolyhedron{N}) where {N<:Real}
     end
     e₁ = SingleEntryVector(1, n, one(N))
     return σ(e₁, P)
+end
+
+"""
+    vertices_list(P::AbstractPolyhedron; check_boundedness::Bool=true)
+
+Return the list of vertices of a polyhedron in constraint representation.
+
+### Input
+
+- `P`                 -- polyhedron in constraint representation
+- `check_boundedness` -- (optional, default: `true`) if `true`, check whether the
+                         polyhedron is bounded
+
+### Output
+
+The list of vertices of `P`, or an error if `P` is unbounded.
+
+### Notes
+
+This function returns an error if the polyhedron is unbounded. Otherwise,
+the polyhedron is converted to an `HPolytope` and its list of vertices is computed.
+
+### Examples
+
+```jldoctest
+julia> P = HPolyhedron([HalfSpace([1.0, 0.0], 1.0),
+                        HalfSpace([0.0, 1.0], 1.0),
+                        HalfSpace([-1.0, 0.0], 1.0),
+                        HalfSpace([0.0, -1.0], 1.0)]);
+
+julia> length(vertices_list(P))
+4
+```
+"""
+function vertices_list(P::AbstractPolyhedron; check_boundedness::Bool=true)
+    if check_boundedness && !isbounded(P)
+        throw(ArgumentError("the list of vertices of an unbounded " *
+                            "polyhedron is not defined"))
+    end
+    return vertices_list(HPolytope(constraints_list(P), check_boundedness=false))
+end
+
+"""
+    singleton_list(P::AbstractPolyhedron; check_boundedness::Bool=true)
+
+Return the vertices of a polyhedron in H-representation as a list of singletons.
+
+### Input
+
+- `P`                 -- polyhedron in constraint representation
+- `check_boundedness` -- (optional, default: `true`) if `true`, check whether the
+                         polyhedron is bounded
+
+### Output
+
+The list of vertices of `P`, as `Singleton`, or an error if `P` is unbounded.
+
+### Notes
+
+This function returns an error if the polyhedron is unbounded. Otherwise,
+the polyhedron is converted to an `HPolytpe` and its list of vertices is computed.
+"""
+function singleton_list(P::AbstractPolyhedron; check_boundedness::Bool=true)
+    return [Singleton(x) for x in vertices_list(P)]
 end

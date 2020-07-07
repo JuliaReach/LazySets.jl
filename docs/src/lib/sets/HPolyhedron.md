@@ -41,9 +41,10 @@ The following methods are specific to `HPolyhedron`.
 ```@docs
 rand(::Type{HPolyhedron})
 isbounded(::HPolyhedron)
-vertices_list(::HPolyhedron{N}) where {N<:Real}
-singleton_list(::HPolyhedron{N}) where {N<:Real}
 ```
 
 Inherited from [`AbstractPolyhedron`](@ref):
+
 * [`isuniversal`](@ref isuniversal(::AbstractPolyhedron{N}, ::Bool=false) where {N<:Real})
+* [`vertices_list`](@ref vertices_list(::AbstractPolyhedron, ::Bool=false))
+* [`singleton_list`](@ref singleton_list(::AbstractPolyhedron, ::Bool=false))
