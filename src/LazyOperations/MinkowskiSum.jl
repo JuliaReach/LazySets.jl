@@ -266,6 +266,6 @@ Return the list of vertices for the Minkowski sum of two zonotopic sets.
 
 The list of vertices of the Minkowski sum of two zonotopic sets.
 """
-function vertices_list(v::MinkowskiSum{N, Z1, Z2}) where {N<:Real, Z1<:AbstractZonotope{N}, Z2<:AbstractZonotope{N}}
+function vertices_list(ms::MinkowskiSum{N, Z1, Z2}) where {N<:Real, Z1<:AbstractZonotope{N}, Z2<:AbstractZonotope{N}}
     return vertices_list(minkowski_sum(ms.X, ms.Y))
 end
