@@ -50,6 +50,37 @@ isoperationtype(::Type{<:Line}) = false
 isconvextype(::Type{<:Line}) = true
 
 """
+    Line(; from::AbstractVector, to::AbstractVector, normalize=true)
+
+Constructor of a line given two points.
+
+### Input
+
+- `from`      -- point
+- `to`        -- another point
+- `normalize` -- (optional, default: `true`) if `true`, the direction of the line
+                 has norm 1 (w.r.t the Euclidean norm)
+
+### Output
+
+The line which passes through `p` and `q`.
+
+### Algorithm
+
+Given two points ``p ∈ \\mathbb{R}^n`` and ``q ∈ \\mathbb{R}^n``, the line that
+passes through these two points is
+`L: `\\{y ∈ \\mathbb{R}^n: y = p + λ(q - p), λ ∈ \\mathbb{R}\\}``.
+"""
+function Line(; from::AbstractVector, to::AbstractVector, normalize=true)
+    d = from - to
+    if normalize && iszero(d)
+        throw(ArgumentError("points `$from` and `$to` should be distinct"))
+    end
+    n = d / dot(d, d)
+    return Line(from, n)
+end
+
+"""
     direction(L::Line)
 
 Return the direction of the line.
@@ -111,37 +142,6 @@ function normalize(L::Line, p::Real=2.0)
     return Line(copy(L.p), normalize(L.n, p))
 end
 
-"""
-    Line(p::AbstractVector, q::AbstractVector; [normalize]=true)
-
-Constructor of a line give two points.
-
-### Input
-
-- `p`         -- point
-- `q`         -- another point
-- `normalize` -- (optional, default: `true`) if `true`, the direction of the line
-                 has norm 1 (w.r.t the Euclidean norm)
-
-### Output
-
-The line which passes through `p` and `q`.
-
-### Algorithm
-
-Given two points ``p ∈ \\mathbb{R}^n`` and ``q ∈ \\mathbb{R}^n``, the line that
-passes through these two points is
-`L: `\\{y ∈ \\mathbb{R}^n: y = p + λ(q - p), λ ∈ \\mathbb{R}\\}``.
-"""
-function Line(p::AbstractVector, q::AbstractVector; normalize=true)
-    d = q - p
-    if normalize && iszero(d)
-        throw(ArgumentError("points `p` and `q` should be distinct"))
-    end
-    n = d / dot(d, d)
-    return Line(p, n)
-end
-
 # --- polyhedron interface functions ---
 
 """
@@ -166,12 +166,14 @@ function constraints_list(L::Line{N, VN}) where {N, VN}
     m = size(K, 2)
     @assert m == d - 1 "expected $(d - 1) normal half-spaces, got $m"
 
-    out = Vector{HalfSpace{N, VN}}(undef, m)
-
+    out = Vector{HalfSpace{N, VN}}(undef, 2m)
+    idx = 1
     @inbounds for j in 1:m
         Kj = K[:, j]
         b = dot(Kj, p)
-        out[j] = HalfSpace(Kj, b)
+        out[idx] = HalfSpace(Kj, b)
+        out[idx+1] = HalfSpace(-Kj, -b)
+        idx += 2
     end
     return out
 end
@@ -309,7 +311,16 @@ The point ``x`` belongs to the line ``L : p + λ⋅n`` if and only if
 function ∈(x::AbstractVector, L::Line)
     @assert length(x) == dim(L) "expected the point and the line to have the same dimension, " *
                                 "but they are $(length(x)) and $(dim(L)) respectively"
-    return samedir(x - L.p, L.n)
+    _isapprox(x, L.p) && return true
+    return first(samedir(x - L.p, L.n))
+end
+
+# FIXME temp required to fix ambiguity errors
+function ∈(x::AbstractVector{N}, L::Line{N, VN}) where {N<:Real, VN<:AbstractVector{N}}
+    @assert length(x) == dim(L) "expected the point and the line to have the same dimension, " *
+                                "but they are $(length(x)) and $(dim(L)) respectively"
+    _isapprox(x, L.p) && return true
+    return first(samedir(x - L.p, L.n))
 end
 
 """

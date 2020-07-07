@@ -58,7 +58,7 @@ Compute the distance between two vectors with respect to the given `p`-norm,
 computed as
 
 ```math
-    \|x - y\|_p = \left( \sum_{i=1}^n | x_i - y_i | ^p \right)^{1/p}
+    \\|x - y\\|_p = \\left( \\sum_{i=1}^n | x_i - y_i |^p \\right)^{1/p}
 ```
 
 ### Input
@@ -70,7 +70,7 @@ computed as
 
 ### Output
 
-A scalar representing ``\Vert x - y \Vert_p``.
+A scalar representing ``‖ x - y ‖_p``.
 """
 function distance(x::AbstractVector, y::AbstractVector, p::Real=2.0)
     return norm(x - y, p)
