@@ -51,14 +51,50 @@ function distance(H1::AbstractHyperrectangle{N},
     return norm(d, p)
 end
 
-function distance(x::AbstractVector, y::AbstractVector, p::Real=2.)
+"""
+    distance(x::AbstractVector, y::AbstractVector, p::Real=2.0)
+
+Compute the distance between two vectors with respect to the given `p`-norm,
+computed as
+
+```math
+    \|x - y\|_p = \left( \sum_{i=1}^n | x_i - y_i | ^p \right)^{1/p}
+```
+
+### Input
+
+- `x` -- vector
+- `y` -- vector
+- `p` -- (optional, default: `2.0`) the `p`-norm used; `p = 2.0` corresponds to
+         the usual Euclidean norm
+
+### Output
+
+A scalar representing ``\Vert x - y \Vert_p``.
+"""
+function distance(x::AbstractVector, y::AbstractVector, p::Real=2.0)
     return norm(x - y, p)
 end
 
-function distance(x::AbstractVector, L::Line, α::Real=2.)
-    p = L.p  # point in the line
-    n = L.n  # direction of the line
+"""
+    distance(x::AbstractVector, L::Line, p::Real=2.0)
 
-    t = dot(x - p, n) / dot(n, n)
-    return distance(x, p + t*n, α)
+Compute the distance between point `x` and the line with respect to the given
+`p`-norm.
+
+### Input
+
+- `x` -- vector
+- `L` -- line
+- `p` -- (optional, default: `2.0`) the `p`-norm used; `p = 2.0` corresponds to
+         the usual Euclidean norm
+
+### Output
+
+A scalar representing the distance between `x` and the line `L`.
+"""
+function distance(x::AbstractVector, L::Line, p::Real=2.0)
+    n = L.n  # direction of the line
+    t = dot(x - L.p, n) / dot(n, n)
+    return distance(x, L.p + t*n, p)
 end

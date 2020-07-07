@@ -49,14 +49,65 @@ end
 isoperationtype(::Type{<:Line}) = false
 isconvextype(::Type{<:Line}) = true
 
+"""
+    direction(L::Line)
+
+Return the direction of the line.
+
+### Input
+
+- `L` -- line
+
+### Output
+
+The line's field corresponding to the direction to the line.
+
+### Notes
+
+The direction is not necessarily normalized.
+See [`normalize(::Line, ::Real)`](@ref) / [`normalize!(::Line, ::Real)`](@ref)
+for such operation.
+"""
 direction(L::Line) = L.n
 
-function normalize!(L::Line, p::Real=2)
+"""
+    normalize!(L::Line, p::Real=2.0)
+
+Normalize the direction of a line storing the result in `L`.
+
+### Input
+
+- `L` -- line
+- `p` -- (optional, default: `2.0`) vector `p`-norm used in the normalization
+
+### Output
+
+A line whose direction has unit norm w.r.t the given `p`-norm.
+"""
+function normalize!(L::Line, p::Real=2.0)
     normalize!(L.n, p)
     return Lx
 end
 
-function normalize(L::Line, p::Real=2.)
+"""
+    normalize(L::Line, p::Real=2.0)
+
+Normalize the direction of a line.
+
+### Input
+
+- `L` -- line
+- `p` -- (optional, default: `2.0`) vector `p`-norm used in the normalization
+
+### Output
+
+A line whose direction has unit norm w.r.t the given `p`-norm.
+
+### Notes
+
+See also [`normalize!(::Line, ::Real)`](@ref) for the in-place version.
+"""
+function normalize(L::Line, p::Real=2.0)
     return Line(copy(L.p), normalize(L.n, p))
 end
 
@@ -94,7 +145,7 @@ end
 # --- polyhedron interface functions ---
 
 """
-    constraints_list(L::Line)
+    constraints_list(L::Line{N, VN}) where {N, VN}
 
 Return the list of constraints of a line.
 
@@ -108,17 +159,19 @@ A list containing `n-1` half-spaces whose intersection is `L`, where `n` is the
 ambient dimension of `L`.
 """
 function constraints_list(L::Line{N, VN}) where {N, VN}
-    n = reshape(L.n, 1, dim(L))
+    p = L.p
+    d = length(p)
+    n = reshape(L.n, 1, d)
     K = nullspace(n)
     m = size(K, 2)
-    @assert m == n-1 "expected $(n - 1) normal half-spaces, got $m"
+    @assert m == d - 1 "expected $(d - 1) normal half-spaces, got $m"
 
-    out = HalfSpace{N, VN}(undef, m)
+    out = Vector{HalfSpace{N, VN}}(undef, m)
 
     @inbounds for j in 1:m
         Kj = K[:, j]
         b = dot(Kj, p)
-        out[i] = HalfSpace(Kj, b)
+        out[j] = HalfSpace(Kj, b)
     end
     return out
 end
