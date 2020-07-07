@@ -50,3 +50,15 @@ function distance(H1::AbstractHyperrectangle{N},
     end
     return norm(d, p)
 end
+
+function distance(x::AbstractVector, y::AbstractVector, p::Real=2.)
+    return norm(x - y, p)
+end
+
+function distance(x::AbstractVector, L::Line, α::Real=2.)
+    p = L.p  # point in the line
+    n = L.n  # direction of the line
+
+    t = dot(x - p, n) / dot(n, n)
+    return distance(x, p + t*n, α)
+end

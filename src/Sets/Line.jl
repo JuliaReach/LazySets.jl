@@ -53,34 +53,24 @@ direction(L::Line) = L.n
 
 function normalize!(L::Line, p::Real=2)
     normalize!(L.n, p)
-    return L
+    return Lx
 end
 
 function normalize(L::Line, p::Real=2.)
     return Line(copy(L.p), normalize(L.n, p))
 end
 
-function distance(x::AbstractVector, y::AbstractVector, p::Real=2.)
-    return norm(x - y, p)
-end
-
-function distance(x::AbstractVector, L::Line, p::Real=2.)
-    q = L.p  # point in the line
-    n = L.n  # direction of the line
-
-    t = dot(x - q, n) / dot(n, n)
-    return distance(x, q + t*n, p)
-end
-
 """
-    Line(p::AbstractVector, q::AbstractVector)
+    Line(p::AbstractVector, q::AbstractVector; [normalize]=true)
 
 Constructor of a line give two points.
 
 ### Input
 
-- `p` -- point
-- `q` -- another point
+- `p`         -- point
+- `q`         -- another point
+- `normalize` -- (optional, default: `true`) if `true`, the direction of the line
+                 has norm 1 (w.r.t the Euclidean norm)
 
 ### Output
 
@@ -92,8 +82,13 @@ Given two points ``p ∈ \\mathbb{R}^n`` and ``q ∈ \\mathbb{R}^n``, the line t
 passes through these two points is
 `L: `\\{y ∈ \\mathbb{R}^n: y = p + λ(q - p), λ ∈ \\mathbb{R}\\}``.
 """
-function Line(p::AbstractVector, q::AbstractVector)
-    Line(p, q - p)
+function Line(p::AbstractVector, q::AbstractVector; normalize=true)
+    d = q - p
+    if normalize && iszero(d)
+        throw(ArgumentError("points `p` and `q` should be distinct"))
+    end
+    n = d / dot(d, d)
+    return Line(p, n)
 end
 
 # --- polyhedron interface functions ---
@@ -109,12 +104,24 @@ Return the list of constraints of a line.
 
 ### Output
 
-A list containing two half-spaces.
+A list containing `n-1` half-spaces whose intersection is `L`, where `n` is the
+ambient dimension of `L`.
 """
-function constraints_list(L::Line)
-    # TODO
-end
+function constraints_list(L::Line{N, VN}) where {N, VN}
+    n = reshape(L.n, 1, dim(L))
+    K = nullspace(n)
+    m = size(K, 2)
+    @assert m == n-1 "expected $(n - 1) normal half-spaces, got $m"
 
+    out = HalfSpace{N, VN}(undef, m)
+
+    @inbounds for j in 1:m
+        Kj = K[:, j]
+        b = dot(Kj, p)
+        out[i] = HalfSpace(Kj, b)
+    end
+    return out
+end
 
 # --- LazySet interface functions ---
 
