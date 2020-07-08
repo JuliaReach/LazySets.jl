@@ -476,3 +476,21 @@ function monotone_chain!(points::Vector{VN}; sort::Bool=true
     end
     return resize!(points, m)
 end
+
+"""
+    convex_hull(U::UnionSetArray{N, <:AbstractPolytope{N}}; kwargs...) where {N}
+Compute the convex hull of an array of polytopes
+
+### Input
+
+- `U` -- UnionSetArray of polytopes
+
+### Output
+
+List of vectors containing the vertices of the convex hull of an array of
+the given polytopes.
+"""
+function convex_hull(U::UnionSetArray{N, <:AbstractPolytope{N}}; kwargs...) where {N}
+    vlist = mapreduce(vertices_list, vcat, U.array)
+    return convex_hull(vlist; kwargs...)
+end
