@@ -500,28 +500,28 @@ generator to be splitted, and the second vector corresponds to the exponent of
 
 Splitting of a two-dimensional zonotope along its generators:
 
-```jldoctest zonotope_label
+```
 julia> Z = Zonotope([1.0, 0.0], [0.1 0.0; 0.0 0.1])
 Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
 
 julia> split(Z, [1, 2], [2, 2])
 16-element Array{Zonotope{Float64,Array{Float64,1},Array{Float64,2}},1}:
- Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.9249999999999999, -0.07500000000000001], [0.025 0.0; 0.0 0.025])
- Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.9249999999999999, -0.025], [0.025 0.0; 0.0 0.025])
- Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.9249999999999999, 0.025], [0.025 0.0; 0.0 0.025])
- Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.9249999999999999, 0.07500000000000001], [0.025 0.0; 0.0 0.025])
- Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.975, -0.07500000000000001], [0.025 0.0; 0.0 0.025])
- Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.975, -0.025], [0.025 0.0; 0.0 0.025])
- Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.975, 0.025], [0.025 0.0; 0.0 0.025])
- Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.975, 0.07500000000000001], [0.025 0.0; 0.0 0.025])
- Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.0250000000000001, -0.07500000000000001], [0.025 0.0; 0.0 0.025])
- Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.0250000000000001, -0.025], [0.025 0.0; 0.0 0.025])
- Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.0250000000000001, 0.025], [0.025 0.0; 0.0 0.025])
- Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.0250000000000001, 0.07500000000000001], [0.025 0.0; 0.0 0.025])
- Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, -0.07500000000000001], [0.025 0.0; 0.0 0.025])
- Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, -0.025], [0.025 0.0; 0.0 0.025])
- Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, 0.025], [0.025 0.0; 0.0 0.025])
- Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, 0.07500000000000001], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.925, -0.075], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.925, -0.025], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.925, 0.025], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.925, 0.075], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.975, -0.075], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.975, -0.025], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.975, 0.025], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.975, 0.075], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.025, -0.075], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.025, -0.025], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.025, 0.025], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.025, 0.075], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, -0.075], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, -0.025], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, 0.025], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, 0.075], [0.025 0.0; 0.0 0.025])
 ```
 Here the zonotope is splitted along both of its generators 4 times.
 """
