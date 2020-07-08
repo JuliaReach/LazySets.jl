@@ -39,6 +39,7 @@ RecipesBase = "0.6, 0.7, 0.8, 1.0"
 Reexport = "0.2"
 Requires = "0.5, 1.0"
 TaylorModels = "0.3"
+StaticArrays = "0.12"
 julia = "1"
 
 [extras]
@@ -53,8 +54,9 @@ MiniQhull = "978d7f02-9e05-4691-894f-ae31a51d76ca"
 Optim = "429524aa-4258-5aef-a3af-852621145aeb"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 Polyhedra = "67491407-f73d-577b-9b50-8179a7c68029"
+StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 TaylorModels = "314ce334-5f6e-57ae-acf6-00b6e903104a"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["CDDLib", "Distributions", "Documenter", "Expokit", "GR", "IntervalMatrices", "Makie", "Optim", "Plots", "Polyhedra", "TaylorModels", "Test"]
+test = ["CDDLib", "Distributions", "Documenter", "Expokit", "GR", "IntervalMatrices", "Makie", "Optim", "Plots", "Polyhedra", "StaticArrays", "TaylorModels", "Test"]

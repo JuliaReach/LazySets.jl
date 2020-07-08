@@ -7,6 +7,7 @@ export Zonotope,
        remove_zero_generators
 
 using LazySets.Arrays: _vector_type, _matrix_type
+using StaticArrays: SMatrix, SVector, MMatrix, MVector
 
 """
     Zonotope{N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
@@ -371,19 +372,129 @@ nonlinear systems with uncertain parameters using conservative linearization.
 In Proc. of the 47th IEEE Conference on Decision and Control.*
 """
 function split(Z::Zonotope, j::Int)
-    @assert 1 <= j <= ngens(Z) "cannot split a zonotope with $(ngens(Z)) generators along index $j"
     c, G = Z.center, Z.generators
-    Gj = G[:, j]
-    Gj_half = Gj / 2
 
-    c₁ = c - Gj_half
-    c₂ = c + Gj_half
-
-    G₁ = copy(G)
-    G₁[:, j] = Gj_half
-    G₂ = copy(G₁)
-
+    c₁ = similar(c)
+    G₁ = similar(G)
     Z₁ = Zonotope(c₁, G₁)
+
+    c₂ = similar(c)
+    G₂ = similar(G)
     Z₂ = Zonotope(c₂, G₂)
+
+    split!(Z₁, Z₂, Z, j)
+end
+
+function split!(Z₁::Zonotope, Z₂::Zonotope, Z::Zonotope, j::Int)
+    c, G = Z.center, Z.generators
+    n, p = size(G)
+    @assert 1 <= j <= p "cannot split a zonotope with $p generators along index $j"
+
+    c₁, G₁ = Z₁.center, Z₁.generators
+    c₂, G₂ = Z₂.center, Z₂.generators
+    copyto!(G₁, G)
+    copyto!(G₂, G)
+
+    @inbounds for i in 1:n
+        α = G[i, j] / 2
+        c₁[i] = c[i] - α
+        c₂[i] = c[i] + α
+        G₁[i, j] = α
+        G₂[i, j] = α
+    end
     return Z₁, Z₂
+end
+
+"""
+    split(Z::Zonotope{N, SVector{n, N}, <:SMatrix{n, p, N}}, j::Int) where {N, n, p}
+
+Return two zonotopes obtained by splitting the given zonotope.
+
+### Input
+
+- `Z` -- zonotope
+- `j` -- index of the generator to be split
+
+### Output
+
+The zonotopes obtained by splitting `Z` into two zonotopes such that
+their union is `Z` and their intersection is possibly non-empty.
+
+### Algorithm
+
+This function implements [Prop. 3, 1], that we state next. The zonotope
+``Z = ⟨c, g^{(1, …, p)}⟩`` is split into:
+
+```math
+Z₁ = ⟨c - \\frac{1}{2}g^{(j)}, (g^{(1, …,j-1)}, \\frac{1}{2}g^{(j)}, g^{(j+1, …, p)})⟩ \\\\
+Z₂ = ⟨c + \\frac{1}{2}g^{(j)}, (g^{(1, …,j-1)}, \\frac{1}{2}g^{(j)}, g^{(j+1, …, p)})⟩,
+```
+such that ``Z₁ ∪ Z₂ = Z`` and ``Z₁ ∩ Z₂ = Z^*``, where
+
+```math
+Z^* = ⟨c, (g^{(1,…,j-1)}, g^{(j+1,…, p)})⟩.
+```
+
+[1] *Althoff, M., Stursberg, O., & Buss, M. (2008). Reachability analysis of
+nonlinear systems with uncertain parameters using conservative linearization.
+In Proc. of the 47th IEEE Conference on Decision and Control.*
+"""
+function split(Z::Zonotope{N, SVector{n, N}, <:SMatrix{n, p, N}}, j::Int) where {N, n, p}
+    @assert 1 <= j <= p "cannot split a zonotope with $p generators along index $j"
+    c, G = Z.center, Z.generators
+
+    c₁ = MVector{n, N}(undef)
+    c₂ = MVector{n, N}(undef)
+
+    G₁ = MMatrix{n, p}(G)
+    G₂ = MMatrix{n, p}(G)
+
+    @inbounds for i in 1:n
+        α = G[i, j] / 2
+        c₁[i] = c[i] - α
+        c₂[i] = c[i] + α
+        G₁[i, j] = α
+        G₂[i, j] = α
+    end
+
+    Z₁ = Zonotope(SVector{n}(c₁), SMatrix{n, p}(G₁))
+    Z₂ = Zonotope(SVector{n}(c₂), SMatrix{n, p}(G₂))
+    return Z₁, Z₂
+end
+
+"""
+    split(Z::Zonotope, gens::AbstractVector{Int}, n::AbstractVector{Int})
+
+Return a vector zonotopes obtained form splitting in the given generators the
+given zonotope.
+
+### Input
+
+- `Z` -- zonotope
+- `gens` -- vector of indices of the generators to be splitted
+- `n` -- vector of integers describing the number of partitions in the
+         corresponding generator
+
+### Output
+
+The zonotopes obtained by splitting `Z` into `2^{n_i}` zonotopes for each
+generator `i` such that their union is `Z` and their intersection is
+possibly non-empty.
+"""
+function split(Z::Zonotope, gens::AbstractVector, n::AbstractVector)
+    @assert length(gens) == length(n) "the number of generators doesn't match the" *
+    " number of indicated partitions ($(length(gens)) and $(length(n)))"
+    @assert length(gens) <= ngens(Z) "the number of generators to split is greater" *
+    " than the number of generators of the zonotope (($(length(gens)) and $(ngens(Z)))"
+    Zs = [Z]
+    for i = 1:length(gens)
+        for j = 1:n[i]
+            km = length(Zs)
+            for k = 1:km
+                append!(Zs, split(Zs[k], gens[i]))
+            end
+            deleteat!(Zs, 1:km)
+        end
+    end
+    return Zs
 end
