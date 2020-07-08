@@ -480,6 +480,50 @@ given zonotope.
 The zonotopes obtained by splitting `Z` into `2^{n_i}` zonotopes for each
 generator `i` such that their union is `Z` and their intersection is
 possibly non-empty.
+
+### Examples
+
+Splitting of a two-dimensional zonotope along its first generator:
+
+```jldoctest zonotope_label
+julia> Z = Zonotope([1.0, 0.0], [0.1 0.0; 0.0 0.1])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
+
+julia> split(Z, [1], [1])
+2-element Array{Zonotope{Float64,Array{Float64,1},Array{Float64,2}},1}:
+ Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.95, 0.0], [0.05 0.0; 0.0 0.1])
+ Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.05, 0.0], [0.05 0.0; 0.0 0.1])
+```
+Here, the first vector in the arguments corresponds to the zonotope's
+generator to be splitted, and the second vector corresponds to the exponent of
+`2^n` times that the zonotope will be splitted along the corresponding generator.
+
+Splitting of a two-dimensional zonotope along its generators:
+
+```jldoctest zonotope_label
+julia> Z = Zonotope([1.0, 0.0], [0.1 0.0; 0.0 0.1])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
+
+julia> split(Z, [1, 2], [2, 2])
+16-element Array{Zonotope{Float64,Array{Float64,1},Array{Float64,2}},1}:
+ Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.9249999999999999, -0.07500000000000001], [0.025 0.0; 0.0 0.025])
+ Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.9249999999999999, -0.025], [0.025 0.0; 0.0 0.025])
+ Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.9249999999999999, 0.025], [0.025 0.0; 0.0 0.025])
+ Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.9249999999999999, 0.07500000000000001], [0.025 0.0; 0.0 0.025])
+ Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.975, -0.07500000000000001], [0.025 0.0; 0.0 0.025])
+ Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.975, -0.025], [0.025 0.0; 0.0 0.025])
+ Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.975, 0.025], [0.025 0.0; 0.0 0.025])
+ Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.975, 0.07500000000000001], [0.025 0.0; 0.0 0.025])
+ Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.0250000000000001, -0.07500000000000001], [0.025 0.0; 0.0 0.025])
+ Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.0250000000000001, -0.025], [0.025 0.0; 0.0 0.025])
+ Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.0250000000000001, 0.025], [0.025 0.0; 0.0 0.025])
+ Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.0250000000000001, 0.07500000000000001], [0.025 0.0; 0.0 0.025])
+ Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, -0.07500000000000001], [0.025 0.0; 0.0 0.025])
+ Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, -0.025], [0.025 0.0; 0.0 0.025])
+ Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, 0.025], [0.025 0.0; 0.0 0.025])
+ Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, 0.07500000000000001], [0.025 0.0; 0.0 0.025])
+```
+Here the zonotope is splitted along both of its generators 4 times.
 """
 function split(Z::Zonotope, gens::AbstractVector, n::AbstractVector)
     @assert length(gens) == length(n) "the number of generators doesn't match the" *
