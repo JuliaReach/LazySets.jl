@@ -15,6 +15,8 @@ ngens(::Zonotope)
 togrep(::Zonotope)
 reduce_order(::Zonotope, ::Union{Integer, Rational})
 split(::Zonotope, ::Int)
+split(Z::Zonotope, gens::AbstractVector, n::AbstractVector)
+split(Z::Zonotope{N, SVector{n, N}, <:SMatrix{n, p, N}}, j::Int) where {N, n, p}
 remove_zero_generators(::Zonotope)
 ```
 
