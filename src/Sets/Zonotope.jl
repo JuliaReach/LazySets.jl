@@ -439,7 +439,7 @@ Z^* = ⟨c, (g^{(1,…,j-1)}, g^{(j+1,…, p)})⟩.
 nonlinear systems with uncertain parameters using conservative linearization.
 In Proc. of the 47th IEEE Conference on Decision and Control.*
 """
-function split(Z::Zonotope{N, SVector{n, N}, <:SMatrix{n, p, N}}, j::Int) where {N, n, p}
+function split(Z::Zonotope{N, SV, SM}, j::Int) where {N, n, p, SV<:SVector{n, N}, SM<:SMatrix{n, p, N}}
     @assert 1 <= j <= p "cannot split a zonotope with $p generators along index $j"
     c, G = Z.center, Z.generators
 
