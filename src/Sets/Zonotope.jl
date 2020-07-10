@@ -407,7 +407,7 @@ end
 function load_static_arrays()
 return quote
 
-using StaticArrays: SMatrix, SVector, MMatrix, MVector
+using .StaticArrays: SMatrix, SVector, MMatrix, MVector
 
 """
     split(Z::Zonotope{N, SVector{n, N}, <:SMatrix{n, p, N}}, j::Int) where {N, n, p}
