@@ -7,7 +7,6 @@ export Zonotope,
        remove_zero_generators
 
 using LazySets.Arrays: _vector_type, _matrix_type
-using StaticArrays: SMatrix, SVector, MMatrix, MVector
 
 """
     Zonotope{N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
@@ -405,6 +404,11 @@ function split!(Z₁::Zonotope, Z₂::Zonotope, Z::Zonotope, j::Int)
     return Z₁, Z₂
 end
 
+function load_static_arrays()
+return quote
+
+using StaticArrays: SMatrix, SVector, MMatrix, MVector
+
 """
     split(Z::Zonotope{N, SVector{n, N}, <:SMatrix{n, p, N}}, j::Int) where {N, n, p}
 
@@ -461,6 +465,7 @@ function split(Z::Zonotope{N, SV, SM}, j::Int) where {N, n, p, SV<:SVector{n, N}
     Z₂ = Zonotope(SVector{n}(c₂), SMatrix{n, p}(G₂))
     return Z₁, Z₂
 end
+end end  # quote / load_static_arrays
 
 """
     split(Z::Zonotope, gens::AbstractVector{Int}, n::AbstractVector{Int})
