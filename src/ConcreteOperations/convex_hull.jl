@@ -479,7 +479,8 @@ end
 
 """
     convex_hull(U::UnionSetArray{N, <:AbstractPolytope{N}}) where {N}
-Compute the convex hull of an array of polytopes
+    
+Compute the convex hull of a union of a finite number of polytopes.
 
 ### Input
 
@@ -487,8 +488,7 @@ Compute the convex hull of an array of polytopes
 
 ### Output
 
-List of vectors containing the vertices of the convex hull of an array of
-the given polytopes.
+A list of the vertices of the convex hull.
 """
 function convex_hull(U::UnionSetArray{N, <:AbstractPolytope{N}}) where {N}
     vlist = mapreduce(vertices_list, vcat, U.array)
