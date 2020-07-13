@@ -420,8 +420,7 @@ end end  # quote / load_static_arrays
 """
     split(Z::Zonotope, gens::AbstractVector{Int}, n::AbstractVector{Int})
 
-Return a vector zonotopes obtained form splitting in the given generators the
-given zonotope.
+Split a zonotope along the given generators into a vector of zonotopes.
 
 ### Input
 
