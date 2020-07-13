@@ -178,6 +178,8 @@ constrained_dimensions(::AbstractPolyhedron)
 linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 chebyshev_center(::AbstractPolyhedron{N}) where {N<:AbstractFloat}
 an_element(::AbstractPolyhedron{N}) where {N<:Real}
+vertices_list(::AbstractPolyhedron)
+singleton_list(::AbstractPolyhedron)
 ```
 
 Plotting (bounded) polyhedra is available, too:
@@ -327,6 +329,7 @@ constraints_list(::AbstractZonotope{N}; ::Bool=true) where {N<:AbstractFloat}
 vertices_list(::AbstractZonotope{N}) where {N<:Real}
 order(::AbstractZonotope)
 togrep(::AbstractZonotope)
+⊆(Z::AbstractZonotope{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
 ```
 
 ### Implementations

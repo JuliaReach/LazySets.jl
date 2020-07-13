@@ -9,8 +9,6 @@ export HPolyhedron,
        tohrep, tovrep,
        convex_hull,
        cartesian_product,
-       vertices_list,
-       singleton_list,
        isempty,
        remove_redundant_constraints,
        remove_redundant_constraints!,
@@ -542,55 +540,6 @@ function tovrep(P::HPoly{N};
     require(:Polyhedra; fun_name="tovrep")
     P = polyhedron(P; backend=backend)
     return VPolytope(P)
-end
-
-"""
-    vertices_list(P::HPolyhedron{N}) where {N<:Real}
-
-Return the list of vertices of a polyhedron in constraint representation.
-
-### Input
-
-- `P` -- polyhedron in constraint representation
-
-### Output
-
-This function returns an error because the polyhedron is possibly unbounded.
-If `P` is known to be bounded, try converting to `HPolytope` first:
-
-```jldoctest
-julia> P = HPolyhedron([HalfSpace([1.0, 0.0], 1.0),
-                        HalfSpace([0.0, 1.0], 1.0),
-                        HalfSpace([-1.0, 0.0], 1.0),
-                        HalfSpace([0.0, -1.0], 1.0)]);
-
-julia> P_as_polytope = convert(HPolytope, P);
-```
-"""
-function vertices_list(P::HPolyhedron{N}) where {N<:Real}
-    throw(ArgumentError("the list of vertices of a (possibly unbounded) " *
-        "polyhedron is not defined; if the polyhedron is bounded, try " *
-        "converting to `HPolytope` first"))
-end
-
-"""
-    singleton_list(P::HPolyhedron{N}) where {N<:Real}
-
-Return the vertices of a polyhedron in H-representation as a list of singletons.
-
-### Input
-
-- `P` -- polytope in constraint representation
-
-### Output
-
-This function returns an error because the polyhedron is possibly unbounded.
-If `P` is known to be bounded, try converting to `HPolytope` first.
-"""
-function singleton_list(P::HPolyhedron{N}) where {N<:Real}
-    throw(ArgumentError("the list of singletons of a (possibly unbounded) " *
-        "polyhedron is not defined; if the polyhedron is bounded, try " *
-        "converting to `HPolytope` first"))
 end
 
 """

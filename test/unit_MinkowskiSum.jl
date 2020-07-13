@@ -81,6 +81,11 @@ for N in [Float64, Rational{Int}, Float32]
     X = BallInf(zeros(N, 2), N(4))
     @test p ∈ S ⊕ X
 
+    # vertices for minkowski sum of zonotopic sets
+    X = Zonotope(N[0, 0], [N[1, 0]])
+    Y = Zonotope(N[0, 0], [N[1, 1]])
+    @test ispermutation(vertices_list(X + Y), [N[2, 1], N[0, 1], N[-2, -1], N[0, -1]])
+
     # =================
     # MinkowskiSumArray
     # =================
