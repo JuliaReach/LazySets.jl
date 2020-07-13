@@ -425,7 +425,7 @@ Split a zonotope along the given generators into a vector of zonotopes.
 ### Input
 
 - `Z` -- zonotope
-- `gens` -- vector of indices of the generators to be splitted
+- `gens` -- vector of indices of the generators to be split
 - `n` -- vector of integers describing the number of partitions in the
          corresponding generator
 
