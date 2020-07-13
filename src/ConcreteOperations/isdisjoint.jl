@@ -49,15 +49,7 @@ function is_intersection_empty(X::LazySet{N},
 end
 
 # --- alias ---
-@static if VERSION <= v"1.4"
-    """
-        isdisjoint(X, Y)
-
-    An alternative name for `is_intersection_empty(X, Y)`.
-    """
-    const isdisjoint = is_intersection_empty
-
-else
+@static if VERSION >= v"1.5.0-beta1.0"
 
     """
         isdisjoint(X, Y)
@@ -65,7 +57,16 @@ else
     An alternative name for `is_intersection_empty(X, Y)`.
     """
     Base.isdisjoint(X::LazySet, Y::LazySet) = is_intersection_empty(X, Y)
-    Base.isdisjoint(X::LazySet, Y::LazySet, args...; kwargs...) = is_intersection_empty(X, Y, args...; kwargs...)
+    Base.isdisjoint(X::LazySet, Y::LazySet, args...; kwargs...) = is_intersection_empty(X, Y, args...; kwargs...)  
+
+else 
+    
+    """
+        isdisjoint(X, Y)
+
+    An alternative name for `is_intersection_empty(X, Y)`.
+    """
+    const isdisjoint = is_intersection_empty
 end
 
 # --- AbstractHyperrectangle ---
