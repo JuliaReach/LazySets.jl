@@ -449,7 +449,7 @@ julia> split(Z, [1], [1])
  Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.05, 0.0], [0.05 0.0; 0.0 0.1])
 ```
 Here, the first vector in the arguments corresponds to the zonotope's
-generator to be splitted, and the second vector corresponds to the exponent of
+generator to be split, and the second vector corresponds to the exponent of
 `2^n` times that the zonotope will be split along the corresponding generator.
 
 Splitting of a two-dimensional zonotope along its generators:
