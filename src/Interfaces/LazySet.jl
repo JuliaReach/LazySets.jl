@@ -109,6 +109,7 @@ Hyperrectangle
 Intersection
 IntersectionArray
 Interval
+Line{N,VN} where VN<:AbstractArray{N,1} where N<:Real
 Line2D
 LineSegment
 LinearMap
