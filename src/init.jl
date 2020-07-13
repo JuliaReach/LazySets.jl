@@ -6,7 +6,7 @@ function __init__()
     @require MiniQhull = "978d7f02-9e05-4691-894f-ae31a51d76ca" include("Initialization/init_MiniQhull.jl")
     @require Optim = "429524aa-4258-5aef-a3af-852621145aeb" include("Initialization/init_Optim.jl")
     @require Polyhedra = "67491407-f73d-577b-9b50-8179a7c68029" include("Initialization/init_Polyhedra.jl")
-    @require StaticArrays = "67491407-f73d-577b-9b50-8179a7c68029" include("Initialization/init_StaticArrays.jl")
+    @require StaticArrays = "90137ffa-7385-5640-81b9-e52037218182" include("Initialization/init_StaticArrays.jl")
 end
 
 """

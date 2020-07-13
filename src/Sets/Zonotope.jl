@@ -401,70 +401,20 @@ function split!(Z₁::Zonotope, Z₂::Zonotope, Z::Zonotope, j::Int)
         G₁[i, j] = α
         G₂[i, j] = α
     end
-    return Z₁, Z₂
+    return _split_ret(Z₁, Z₂)
 end
+
+_split_ret(Z₁::Zonotope, Z₂::Zonotope) = (Z₁, Z₂)
 
 function load_static_arrays()
 return quote
 
-using .StaticArrays: SMatrix, SVector, MMatrix, MVector
-
-"""
-    split(Z::Zonotope{N, SVector{n, N}, <:SMatrix{n, p, N}}, j::Int) where {N, n, p}
-
-Return two zonotopes obtained by splitting the given zonotope.
-
-### Input
-
-- `Z` -- zonotope
-- `j` -- index of the generator to be split
-
-### Output
-
-The zonotopes obtained by splitting `Z` into two zonotopes such that
-their union is `Z` and their intersection is possibly non-empty.
-
-### Algorithm
-
-This function implements [Prop. 3, 1], that we state next. The zonotope
-``Z = ⟨c, g^{(1, …, p)}⟩`` is split into:
-
-```math
-Z₁ = ⟨c - \\frac{1}{2}g^{(j)}, (g^{(1, …,j-1)}, \\frac{1}{2}g^{(j)}, g^{(j+1, …, p)})⟩ \\\\
-Z₂ = ⟨c + \\frac{1}{2}g^{(j)}, (g^{(1, …,j-1)}, \\frac{1}{2}g^{(j)}, g^{(j+1, …, p)})⟩,
-```
-such that ``Z₁ ∪ Z₂ = Z`` and ``Z₁ ∩ Z₂ = Z^*``, where
-
-```math
-Z^* = ⟨c, (g^{(1,…,j-1)}, g^{(j+1,…, p)})⟩.
-```
-
-[1] *Althoff, M., Stursberg, O., & Buss, M. (2008). Reachability analysis of
-nonlinear systems with uncertain parameters using conservative linearization.
-In Proc. of the 47th IEEE Conference on Decision and Control.*
-"""
-function split(Z::Zonotope{N, SV, SM}, j::Int) where {N, n, p, SV<:SVector{n, N}, SM<:SMatrix{n, p, N}}
-    @assert 1 <= j <= p "cannot split a zonotope with $p generators along index $j"
-    c, G = Z.center, Z.generators
-
-    c₁ = MVector{n, N}(undef)
-    c₂ = MVector{n, N}(undef)
-
-    G₁ = MMatrix{n, p}(G)
-    G₂ = MMatrix{n, p}(G)
-
-    @inbounds for i in 1:n
-        α = G[i, j] / 2
-        c₁[i] = c[i] - α
-        c₂[i] = c[i] + α
-        G₁[i, j] = α
-        G₂[i, j] = α
-    end
-
-    Z₁ = Zonotope(SVector{n}(c₁), SMatrix{n, p}(G₁))
-    Z₂ = Zonotope(SVector{n}(c₂), SMatrix{n, p}(G₂))
+function _split_ret(Z₁::Zonotope{N, SV, SM}, Z₂::Zonotope{N, SV, SM}) where {N, n, p, SV<:MVector{n, N}, SM<:MMatrix{n, p, N}}
+    Z₁ = Zonotope(SVector{n}(Z₁.center), SMatrix{n, p}(Z₁.generators))
+    Z₂ = Zonotope(SVector{n}(Z₂.center), SMatrix{n, p}(Z₂.generators))
     return Z₁, Z₂
 end
+
 end end  # quote / load_static_arrays
 
 """
