@@ -96,13 +96,16 @@ direction.
 ### Output
 
 The support function of the polyhedron.
+If the polyhedron is empty, the result is `-Inf`.
 If a polytope is unbounded in the given direction, we throw an error.
 If a polyhedron is unbounded in the given direction, the result is `Inf`.
 """
 function ρ(d::AbstractVector{N}, P::HPoly{N};
            solver=default_lp_solver(N)) where {N<:Real}
-    lp, unbounded = σ_helper(d, P, solver)
-    if unbounded
+    lp, unbounded, empty = σ_helper(d, P, solver)
+    if empty
+        return N(-Inf)
+    elseif unbounded
         if P isa HPolytope
             error("the support function in direction $(d) is undefined " *
                   "because the polytope is unbounded")
@@ -132,8 +135,10 @@ The support vector in the given direction.
 """
 function σ(d::AbstractVector{N}, P::HPoly{N}; solver=default_lp_solver(N)
           ) where {N<:Real}
-    lp, unbounded = σ_helper(d, P, solver)
-    if unbounded
+    lp, unbounded, empty = σ_helper(d, P, solver)
+    if empty
+        error("the support vector is undefined because the polyhedron is empty")
+    elseif unbounded
         if P isa HPolytope
             error("the support vector in direction $(d) is undefined because " *
                   "the polytope is unbounded")
@@ -169,6 +174,7 @@ function σ_helper(d::AbstractVector{N}, P::HPoly{N}, solver) where {N<:Real}
 
     (A, b) = tosimplehrep(P)
     if length(b) == 0
+        empty = false
         unbounded = true
         lp = nothing
     else
@@ -177,15 +183,17 @@ function σ_helper(d::AbstractVector{N}, P::HPoly{N}, solver) where {N<:Real}
         u = Inf
         lp = linprog(c, A, sense, b, l, u, solver)
         if lp.status == :Unbounded
+            empty = false
             unbounded = true
         elseif lp.status == :Infeasible
-            error("the support vector is undefined because the polyhedron is " *
-                  "empty")
+            empty = true
+            unbounded = false
         else
+            empty = false
             unbounded = false
         end
     end
-    return (lp, unbounded)
+    return (lp, unbounded, empty)
 end
 
 """

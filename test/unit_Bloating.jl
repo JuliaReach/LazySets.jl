@@ -42,7 +42,7 @@ for N in [Float64, Float32]
         @test σ(d, X) == σ(d, B + Bp)
         @test ρ(d, X) == ρ(d, B + Bp) == N(1 + ε)
         @test_throws ErrorException σ(N[1], Y)
-        @test_throws ErrorException ρ(N[1], Y)
+        @test ρ(N[1], Y) == N(-Inf)
         d = N[1, 99//100]
         @test σ(d, X) == σ(d, B + Bp)
         @test ρ(d, X) == ρ(d, B + Bp)
