@@ -49,13 +49,50 @@ function is_intersection_empty(X::LazySet{N},
 end
 
 # --- alias ---
+@static if VERSION >= v"1.5.0-beta1.0"
 
-"""
-    isdisjoint(X, Y)
+    """
+        isdisjoint(X, Y)
 
-An alternative name for `is_intersection_empty(X, Y)`.
-"""
-const isdisjoint = is_intersection_empty
+    An alternative name for `is_intersection_empty(X, Y)`.
+    """
+    Base.isdisjoint(X::LazySet, Y::LazySet; kwargs...) = is_intersection_empty(X, Y; kwargs...)
+    Base.isdisjoint(X::LazySet, Y::LazySet, witness::Bool; kwargs...) = is_intersection_empty(X, Y, witness; kwargs...)
+
+    # TODO simplify with @eval block
+    Base.isdisjoint(X::LazySet, Y::Complement, witness::Bool; kwargs...) = is_intersection_empty(X, Y, witness; kwargs...)
+    Base.isdisjoint(X::LazySet, Y::Complement; kwargs...) = is_intersection_empty(X, Y; kwargs...)
+    Base.isdisjoint(X::Complement, Y::LazySet; kwargs...) = is_intersection_empty(X, Y; kwargs...)
+    Base.isdisjoint(X::Complement, Y::LazySet, witness::Bool; kwargs...) = is_intersection_empty(X, Y, witness; kwargs...)
+
+    Base.isdisjoint(X::LazySet, Y::UnionSet, witness::Bool; kwargs...) = is_intersection_empty(X, Y, witness; kwargs...)
+    Base.isdisjoint(X::LazySet, Y::UnionSet; kwargs...) = is_intersection_empty(X, Y; kwargs...)
+    Base.isdisjoint(X::UnionSet, Y::LazySet; kwargs...) = is_intersection_empty(X, Y; kwargs...)
+    Base.isdisjoint(X::UnionSet, Y::LazySet, witness::Bool; kwargs...) = is_intersection_empty(X, Y, witness; kwargs...)
+    Base.isdisjoint(X::UnionSet, Y::UnionSet, witness::Bool; kwargs...) = is_intersection_empty(X, Y, witness; kwargs...)
+    Base.isdisjoint(X::UnionSet, Y::UnionSet) = is_intersection_empty(X, Y)
+
+    Base.isdisjoint(X::LazySet, Y::UnionSetArray, witness::Bool; kwargs...) = is_intersection_empty(X, Y, witness; kwargs...)
+    Base.isdisjoint(X::LazySet, Y::UnionSetArray; kwargs...) = is_intersection_empty(X, Y; kwargs...)
+    Base.isdisjoint(X::UnionSetArray, Y::LazySet; kwargs...) = is_intersection_empty(X, Y; kwargs...)
+    Base.isdisjoint(X::UnionSetArray, Y::LazySet, witness::Bool; kwargs...) = is_intersection_empty(X, Y, witness; kwargs...)
+    Base.isdisjoint(X::UnionSetArray, Y::UnionSet, witness::Bool; kwargs...) = is_intersection_empty(X, Y, witness; kwargs...)
+
+    Base.isdisjoint(X::UnionSetArray, Y::UnionSet; kwargs...) = is_intersection_empty(X, Y; kwargs...)
+    Base.isdisjoint(X::UnionSet, Y::UnionSetArray; kwargs...) = is_intersection_empty(X, Y; kwargs...)
+    Base.isdisjoint(X::UnionSet, Y::UnionSetArray, witness::Bool; kwargs...) = is_intersection_empty(X, Y, witness; kwargs...)
+
+    Base.isdisjoint(X::UnionSetArray, Y::UnionSetArray, witness::Bool; kwargs...) = is_intersection_empty(X, Y, witness; kwargs...)
+    Base.isdisjoint(X::UnionSetArray, Y::UnionSetArray) = is_intersection_empty(X, Y)
+else
+
+    """
+        isdisjoint(X, Y)
+
+    An alternative name for `is_intersection_empty(X, Y)`.
+    """
+    const isdisjoint = is_intersection_empty
+end
 
 # --- AbstractHyperrectangle ---
 
