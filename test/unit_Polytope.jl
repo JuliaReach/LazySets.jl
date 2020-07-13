@@ -376,17 +376,14 @@ for N in [Float64]
 
         # intersection
         p1 = VPolytope(vertices_list(BallInf(N[0, 0], N(1))))
-        p2 = VPolytope(vertices_list(BallInf(N[2, 2], N(1))))
+        p2 = VPolytope(vertices_list(BallInf(N[1, 1], N(1))))
         cap = intersection(p1, p2)
-        @test vertices_list(cap) ≈ [N[1, 1]]
+        vlist = [N[1, 1], N[0, 1], N[1, 0], N[0, 0]]
+        @test ispermutation(vertices_list(cap), vlist)
         # other polytopic sets
         p3 = VPolygon(vertices_list(p2))
         cap = intersection(p1, p3)
-        @test vertices_list(cap) ≈ [N[1, 1]]
-        p4 = BallInf(N[2, 2], N(1))
-        cap = intersection(p1, p4)
-        vlist = vertices_list(cap)
-        @test vlist == [N[1, 1]]
+        @test ispermutation(vertices_list(cap), vlist)
 
         # isuniversal
         answer, w = isuniversal(p1, true)
