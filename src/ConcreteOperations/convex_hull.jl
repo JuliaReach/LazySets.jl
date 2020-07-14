@@ -478,8 +478,8 @@ function monotone_chain!(points::Vector{VN}; sort::Bool=true
 end
 
 """
-    convex_hull(U::UnionSetArray{N, <:AbstractPolytope{N}}) where {N}
-    
+    convex_hull(U::UnionSetArray{N, PT}) where {N, PT<:AbstractPolytope{N}}
+
 Compute the convex hull of a union of a finite number of polytopes.
 
 ### Input
@@ -490,7 +490,7 @@ Compute the convex hull of a union of a finite number of polytopes.
 
 A list of the vertices of the convex hull.
 """
-function convex_hull(U::UnionSetArray{N, <:AbstractPolytope{N}}) where {N}
+function convex_hull(U::UnionSetArray{N, PT}) where {N, PT<:AbstractPolytope{N}}
     vlist = mapreduce(vertices_list, vcat, U.array)
     return convex_hull(vlist)
 end
