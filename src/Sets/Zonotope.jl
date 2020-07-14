@@ -427,3 +427,55 @@ function linear_map!(Zout::Zonotope, M::AbstractMatrix, Z::Zonotope)
     mul!(Zout.generators, M, Z.generators)
     return Zout
 end
+
+"""
+    quadratic_map(Z::Zonotope{N}, Q::Array{A}) where {N, A<:Array{N}}
+
+Return the overapproximation of the quadratic map of the given zonotope.
+
+### Input
+
+- `Z` -- zonotope
+- `Q` -- array of square matrices
+
+### Output
+
+The overapproximation of the quadratic map of the given zonotope.
+
+### Algorithm
+
+This function implements [Lemma 1, 1]
+
+[1] *Matthias Althoff and Bruce H. Krogh. 2012. Avoiding geometric intersection
+operations in reachability analysis of hybrid systems. In Proceedings of the
+15th ACM international conference on Hybrid Systems: Computation and Control
+(HSCC ’12). Association for Computing Machinery, New York, NY, USA, 45–54.*
+"""
+function quadratic_map(Z::Zonotope{N}, Q::Array{A}) where {N, A<:Array{N}}
+    @assert length(Q) == dim(Z) "the length of Q needs to match the dimension of Z"
+    G = genmat(Z)
+    c = center(Z)
+    n, p = size(G)
+    h = Array{N}(undef, n, binomial(p+2, 2)-1)
+    d = Vector{N}(undef, n)
+    for i=1:n
+        aux = 0
+        g(x) = G[:, x]
+        for s=1:p
+            aux += g(s)' * Q[i] * g(s)
+        end
+        d[i] = c' * Q[i] * c + 0.5 * aux
+        for j=1:p
+            h[i, j] = c' * Q[i] * g(j) + g(j)' * Q[i] * c
+            h[i, p+j] = 0.5 * g(j)' * Q[i] * g(j)
+        end
+        l = 0
+        for j=1:p-1
+            for k=j+1:p
+                l += 1
+                h[i, 2p+l] = g(j)' * Q[i] * g(k) + g(k)' * Q[i] * g(j)
+            end
+        end
+    end
+    return Zonotope(d, h)
+end
