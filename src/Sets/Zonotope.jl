@@ -450,7 +450,7 @@ julia> split(Z, [1], [1])
 ```
 Here, the first vector in the arguments corresponds to the zonotope's
 generator to be split, and the second vector corresponds to the exponent of
-`2^n` times that the zonotope will be split along the corresponding generator.
+`2^n` parts that the zonotope will be split into along the corresponding generator.
 
 Splitting of a two-dimensional zonotope along its generators:
 
