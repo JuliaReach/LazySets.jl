@@ -477,7 +477,7 @@ Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, -0.025], [0.025 0.0;
 Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, 0.025], [0.025 0.0; 0.0 0.025])
 Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, 0.075], [0.025 0.0; 0.0 0.025])
 ```
-Here the zonotope is split along both of its generators four times.
+Here the zonotope is split along both of its generators, each time into four parts.
 """
 function split(Z::Zonotope, gens::AbstractVector, n::AbstractVector)
     @assert length(gens) == length(n) "the number of generators doesn't match the" *
