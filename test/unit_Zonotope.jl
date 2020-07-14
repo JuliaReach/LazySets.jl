@@ -163,6 +163,7 @@ for N in [Float64, Rational{Int}, Float32]
     Z1, Z2, Z3, Z4 = split(Z, [1, 2], [1, 1])
     @test Z1 ⊆ Z && Z2 ⊆ Z && Z3 ⊆ Z && Z4 ⊆ Z
     Z = Zonotope(SVector{2}(N[0, 0]), SMatrix{2, 2}(N[1 1; -1 1]))
+    Z1, Z2 = split(Z, 1)
     @test Z1 ⊆ Z && Z2 ⊆ Z
 
     # converts the cartesian product of two zonotopes to a new zonotope
