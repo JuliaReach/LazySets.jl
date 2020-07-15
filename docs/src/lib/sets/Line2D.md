@@ -2,7 +2,7 @@
 CurrentModule = LazySets
 ```
 
-# [Line2D](@id def_Line)
+# [Line2D](@id def_Line2D)
 
 ```@docs
 Line2D
