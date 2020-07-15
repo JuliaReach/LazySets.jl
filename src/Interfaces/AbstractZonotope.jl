@@ -649,5 +649,5 @@ Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, 0.075], [0.025 0.0; 
 Here the zonotope is split along both of its generators, each time into four parts.
 """
 function split(Z::AbstractZonotope, gens::AbstractVector{Int}, nparts::AbstractVector{Int})
-    return _split(convert(Zonotope), gens, nparts)
+    return _split(convert(Zonotope, Z), gens, nparts)
 end
