@@ -326,9 +326,6 @@ Determine whether a polyhedron is bounded using Stiemke's theorem of alternative
 
 ### Algorithm
 
-We first check if the polyhedron has more than `max(dim(P), 1)` constraints,
-which is a necessary condition for boundedness.
-
 The algorithm is based on Stiemke's theorem of alternatives, see e.g. [1].
 
 Let the polyhedron ``P`` be given in constraint form ``Ax ≤ b``. We assume that
