@@ -1,4 +1,4 @@
-import Base: ∈
+import Base: ∈, split
 
 export AbstractZonotope,
        genmat,
@@ -6,7 +6,6 @@ export AbstractZonotope,
        ngens,
        order,
        togrep,
-       split,
        split!
 
 """

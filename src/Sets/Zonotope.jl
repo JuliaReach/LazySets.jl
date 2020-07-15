@@ -1,5 +1,4 @@
-import Base: rand,
-             split
+import Base: rand
 
 export Zonotope,
        scale,
