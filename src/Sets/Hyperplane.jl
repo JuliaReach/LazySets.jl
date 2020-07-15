@@ -6,7 +6,7 @@ export Hyperplane,
        an_element
 
 """
-    Hyperplane{N<:Real} <: AbstractPolyhedron{N}
+    Hyperplane{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
 
 Type that represents a hyperplane of the form ``a⋅x = b``.
 
@@ -21,16 +21,16 @@ The plane ``y = 0``:
 
 ```jldoctest
 julia> Hyperplane([0, 1.], 0.)
-Hyperplane{Float64}([0.0, 1.0], 0.0)
+Hyperplane{Float64,Array{Float64,1}}([0.0, 1.0], 0.0)
 ```
 """
-struct Hyperplane{N<:Real} <: AbstractPolyhedron{N}
-    a::AbstractVector{N}
+struct Hyperplane{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
+    a::VN
     b::N
 
-    function Hyperplane(a::AbstractVector{N}, b::N) where {N<:Real}
+    function Hyperplane(a::VN, b::N) where {N<:Real, VN<:AbstractVector{N}}
         @assert !iszero(a) "a hyperplane needs a non-zero normal vector"
-        return new{N}(a, b)
+        return new{N, VN}(a, b)
     end
 end
 
@@ -432,9 +432,15 @@ end
 function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::Hyperplane{N},
                                  algo::AbstractLinearMapAlgorithm) where {N<:Real}
     constraints = _linear_map_hrep(M, P, algo)
-    @assert length(constraints) == 2
-    c = first(constraints)
-    return Hyperplane(c.a, c.b)
+    if length(constraints) == 2
+        # assuming these constraints define a hyperplane
+        c = first(constraints)
+        return Hyperplane(c.a, c.b)
+    elseif isempty(constraints)
+        return Universe{N}(size(M, 1))
+    else
+        error("unexpected number of $(length(constraints)) constraints")
+    end
 end
 
 """

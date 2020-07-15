@@ -5,24 +5,43 @@ eval(quote
                       removehredundancy!, removevredundancy!
     import JuMP, GLPK
 
-    function default_polyhedra_backend(P, N::Type{<:AbstractFloat})
-        return Polyhedra.default_library(LazySets.dim(P), N)
+    function default_polyhedra_backend(P, N::Type{<:Number})
+        if LazySets.dim(P) == 1
+            return default_polyhedra_backend_1d(N)
+        else
+            return default_polyhedra_backend_nd(N)
+        end
     end
 
-    function default_polyhedra_backend(P, N::Type{<:Rational})
-        return Polyhedra.default_library(LazySets.dim(P), N)
+    function default_polyhedra_backend_1d(N::Type{<:Number}, solver=nothing)
+        return Polyhedra.IntervalLibrary{N}()
     end
 
-    # NOTE: exists in parallel to `default_lp_solver` because we use different
-    # interfaces (see #1493)
-    function default_lp_solver_polyhedra(N::Type{<:AbstractFloat})
-        return JuMP.with_optimizer(GLPK.Optimizer)
+    function default_polyhedra_backend_nd(N::Type{<:Number},
+                                          solver=default_lp_solver_polyhedra(N))
+        return Polyhedra.DefaultLibrary{N}(solver)
     end
 
-    # NOTE: exists in parallel to `default_lp_solver` because we use different
-    # interfaces (see #1493)
-    function default_lp_solver_polyhedra(N::Type{<:Rational})
-        return JuMP.with_optimizer(GLPK.Optimizer, method=GLPK.EXACT)
+    function default_lp_solver_polyhedra(N::Type{<:AbstractFloat};
+                                         presolve::Bool=true)
+        if presolve
+            return JuMP.optimizer_with_attributes(GLPK.Optimizer,
+                                                  "presolve" => GLPK.ON)
+        else
+            return JuMP.optimizer_with_attributes(GLPK.Optimizer)
+        end
+    end
+
+    function default_lp_solver_polyhedra(N::Type{<:Rational};
+                                         presolve::Bool=false)
+        if presolve
+            return JuMP.optimizer_with_attributes(
+                () -> GLPK.Optimizer(method=GLPK.EXACT),
+                "presolve" => GLPK.ON)
+        else
+            return JuMP.optimizer_with_attributes(
+                () -> GLPK.Optimizer(method=GLPK.EXACT))
+        end
     end
 end)
 

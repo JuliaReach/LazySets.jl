@@ -136,19 +136,19 @@ Return a new zonotope removing the generators which are zero of the given zonoto
 
 ### Output
 
-A zonotope that has the same generators as `Z` but removing those which are zero.
+If there are no zero generators, the result is the original zonotope `Z`.
+Otherwise the result is a new zonotope that has the center and generators as `Z`
+except for those generators that are zero.
 """
 function remove_zero_generators(Z::Zonotope{N, VN, MN}) where {N<:Real,
                                                                VN<:AbstractVector{N},
                                                                MN<:AbstractMatrix{N}}
-    generators = Z.generators
-    c = Z.center
-
-    nzcol = nonzero_columns(generators)
-    p = length(nzcol)
-    pmax = size(generators, 2)
-    G = (p == pmax) ? generators : generators[:, nzcol]
-    return Zonotope(c, G)
+    G = Z.generators
+    G2 = remove_zero_columns(G)
+    if G === G2
+        return Z
+    end
+    return Zonotope(Z.center, G2)
 end
 
 # --- AbstractCentrallySymmetric interface functions ---

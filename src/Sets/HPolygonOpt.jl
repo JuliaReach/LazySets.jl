@@ -149,8 +149,8 @@ function σ(d::AbstractVector{N}, P::HPolygonOpt{N};
             if (k == 0)
                 P.ind = n
                 # corner case: wrap-around in constraints list
-                return element(intersection(Line(P.constraints[n]),
-                                            Line(P.constraints[1])))
+                return element(intersection(Line2D(P.constraints[n]),
+                                            Line2D(P.constraints[1])))
             else
                 P.ind = k
             end
@@ -163,26 +163,26 @@ function σ(d::AbstractVector{N}, P::HPolygonOpt{N};
             if (k == n+1)
                 P.ind = n
                 # corner case: wrap-around in constraints list
-                return element(intersection(Line(P.constraints[n]),
-                                            Line(P.constraints[1])))
+                return element(intersection(Line2D(P.constraints[n]),
+                                            Line2D(P.constraints[1])))
             else
                 P.ind = k-1
             end
         end
-        return element(intersection(Line(P.constraints[P.ind]),
-                                    Line(P.constraints[P.ind + 1])))
+        return element(intersection(Line2D(P.constraints[P.ind]),
+                                    Line2D(P.constraints[P.ind + 1])))
     else
         # binary search
         k = binary_search_constraints(d, P.constraints, n, P.ind)
         if k == 1 || k == n+1
             P.ind = 1
             # corner cases: wrap-around in constraints list
-            return element(intersection(Line(P.constraints[n]),
-                                        Line(P.constraints[1])))
+            return element(intersection(Line2D(P.constraints[n]),
+                                        Line2D(P.constraints[1])))
         else
             P.ind = k
-            return element(intersection(Line(P.constraints[k-1]),
-                                        Line(P.constraints[k])))
+            return element(intersection(Line2D(P.constraints[k-1]),
+                                        Line2D(P.constraints[k])))
         end
     end
 end

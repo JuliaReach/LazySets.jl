@@ -120,6 +120,14 @@ for N in [Float64, Rational{Int}, Float32]
     A = N[1 2; 1 3; 1 4]; X = Hyperrectangle(N[0, 1], N[0, 1]); b = N[1, 2, 3];
     am = AffineMap(A, X, b)
     @test overapproximate(am, Hyperrectangle) == Hyperrectangle(N[3, 5, 7], N[2, 3, 4])
+
+    # rectification of a zonotope
+    Z = Zonotope(N[0, 0], N[1 1 1; 1 1 0])
+    @test overapproximate(Rectification(Z), Zonotope) == Zonotope(N[3/4, 1/2], N[1/2 1/2 1/2 3/4 0; 1/2 1/2 0 0 1/2])
+    Z = Zonotope(N[-2, -2], N[1 1; 1 0])
+    @test overapproximate(Rectification(Z), Zonotope) == convert(Zonotope, Singleton(N[0, 0]))
+    Z = Zonotope(N[-2, 2], N[1 1; 1 0])
+    @test overapproximate(Rectification(Z), Zonotope) == Zonotope(N[0, 2], hcat(N[0, 1]))
 end
 
 # tests that do not work with Rational{Int}
@@ -320,7 +328,17 @@ for N in [Float64]
     Y_zonotope = overapproximate(Y, Zonotope) # overapproximate with a zonotope
     @test Y_polygon ⊆ Y_zonotope
 
-    #decomposed linear map approximation
+    # Zonotope approximation with fixed generator directions
+    X = Ball1(zeros(N, 2), N(1))
+    Y = overapproximate(X, Zonotope, BoxDirections{N}(2))
+    @test Y == Zonotope(N[0, 0], N[1 0; 0 1])
+    Y = overapproximate(X, Zonotope, OctDirections{N}(2))
+    @test remove_zero_generators(Y) == Zonotope(N[0, 0], N[1//2 1//2; 1//2 -1//2])
+    X = Ball1(zeros(N, 3), N(1))
+    Y = overapproximate(X, Zonotope, BoxDirections{N}(3))
+    @test Y == Zonotope(N[0, 0, 0], N[1 0 0; 0 1 0; 0 0 1])
+
+    # decomposed linear map approximation
     i1 = Interval(N[0, 1])
     i2 = Interval(N[2, 3])
     M = N[1 2; 0 1]
@@ -355,4 +373,15 @@ for N in [Float64]
     y = set_variables("y", numvars=2, order=1)
     p = zero(y[1])
     @test get_linear_coeffs(p) == N[0, 0]
+
+    # Zonotope approximation of convex hull array of zonotopes
+    Z1 = Zonotope(N[3, 0], N[1 2 1; 1 1 2])
+    Z2 = Zonotope(N[1, 0], N[-2 1; 1 1])
+    Z3 = Zonotope(N[0, 0], N[1 0; 0 1])
+    @test overapproximate(ConvexHullArray([Z1]), Zonotope) == Z1
+    @test overapproximate(ConvexHullArray([Z1, Z2]), Zonotope) == overapproximate(ConvexHull(Z1, Z2), Zonotope)
+    Y = overapproximate(ConvexHullArray([Z1, Z2, Z3]), Zonotope)
+    @test Z1 ⊆ Y
+    @test Z2 ⊆ Y
+    @test Z3 ⊆ Y
 end

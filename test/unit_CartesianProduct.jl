@@ -128,8 +128,8 @@ for N in [Float64, Float32, Rational{Int}]
         length(constraints_list(cp)) == 4
     M = N[2 1; 0 0]  # singular matrix
     lm = linear_map(M, cp)
-    @test lm isa VPolytope{N} &&
-        box_approximation(lm) == Hyperrectangle(N[7//2, 0], N[3//2, 0])
+    @test lm isa (N == Float64 ? HPolytope{N} : HPolytope)
+    @test box_approximation(lm) == Hyperrectangle(N[7//2, 0], N[3//2, 0])
 
     # ==================================
     # Conversions of Cartesian Products
@@ -253,8 +253,8 @@ for N in [Float64, Float32, Rational{Int}]
         length(constraints_list(cpa)) == 4
     M = N[2 1; 0 0]  # singular matrix
     lm = linear_map(M, cpa)
-    @test lm isa VPolytope{N} &&
-        box_approximation(lm) == Hyperrectangle(N[7//2, 0], N[3//2, 0])
+    @test lm isa (N == Float64 ? HPolytope{N} : HPolytope)
+    @test box_approximation(lm) == Hyperrectangle(N[7//2, 0], N[3//2, 0])
 
     # ========================================
     # Conversions of Cartesian Product Arrays
@@ -330,6 +330,11 @@ for N in [Float64, Float32]
           is_intersection_empty(cpa1_box, G_empty)
     @test !is_intersection_empty(cpa1, G) &&
           !is_intersection_empty(Approximations.overapproximate(cpa1), G)
+    @test !is_intersection_empty(cpa1, Universe{N}(4)) &&
+          !is_intersection_empty(Universe{N}(4), cpa2)
+    @test_throws AssertionError is_intersection_empty(cpa1, Universe{N}(3))
+    @test_throws AssertionError is_intersection_empty(Universe{N}(5), cpa2)
+
 end
 
 for N in [Float64]

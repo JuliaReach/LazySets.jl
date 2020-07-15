@@ -1,3 +1,5 @@
+using LazySets: linear_map_inverse
+
 global test_suite_polyhedra
 
 for N in [Float64, Rational{Int}, Float32]
@@ -112,9 +114,10 @@ for N in [Float64, Rational{Int}, Float32]
     L4 = linear_map(M, P, cond_tol=1e3)  # set a custom tolerance for the condition number (invertibility check)
     L5 = linear_map(M, P, check_invertibility=false)  # invertibility known
     L6 = linear_map(M, P, inverse=inv(M))  # pass inverse, uses "inverse"
+    L7 = linear_map_inverse(inv(M), P)  # convenience function to pass inverse but not M
     p = center(H)
     @test p ∈ P
-    @test all([M * p ∈ Li for Li in [L1, L2, L3, L4, L5, L6]])
+    @test all([M * p ∈ Li for Li in [L1, L2, L3, L4, L5, L6, L7]])
     @test L3 isa VPolygon{N}
 
     # linear map for mixed types
@@ -197,6 +200,16 @@ end
 @test HPolytope() isa HPolytope{Float64}
 @test VPolytope() isa VPolytope{Float64,Array{Float64,1}}
 
+# tests that only work with Float64 and Float32
+for N in [Float64, Float32]
+    # normalization
+    p1 = HPolytope([HalfSpace(N[1e5], N(3e5)), HalfSpace(N[-2e5], N(4e5))])
+    p2 = normalize(p1)
+    for hs in constraints_list(p2)
+        @test norm(hs.a) == N(1)
+    end
+end
+
 # tests that only work with Float64
 for N in [Float64]
     p = HPolytope{N}()
@@ -262,6 +275,12 @@ for N in [Float64]
     # negative double inclusion check
     X_eps = BallInf(N[0.1, 0.2, 0.1], N(0.30001))
     @test !isequivalent(X, X_eps)
+
+    # rectangular map
+    M2 = N[2 1; 0 1; 3 3]
+    Q = linear_map(M2, P)
+    P2 = linear_map_inverse(M2, Q)
+    @test isequivalent(P2, P)
 
     if test_suite_polyhedra
         # -----
@@ -357,17 +376,14 @@ for N in [Float64]
 
         # intersection
         p1 = VPolytope(vertices_list(BallInf(N[0, 0], N(1))))
-        p2 = VPolytope(vertices_list(BallInf(N[2, 2], N(1))))
+        p2 = VPolytope(vertices_list(BallInf(N[1, 1], N(1))))
         cap = intersection(p1, p2)
-        @test vertices_list(cap) ≈ [N[1, 1]]
+        vlist = [N[1, 1], N[0, 1], N[1, 0], N[0, 0]]
+        @test ispermutation(vertices_list(cap), vlist)
         # other polytopic sets
         p3 = VPolygon(vertices_list(p2))
         cap = intersection(p1, p3)
-        @test vertices_list(cap) ≈ [N[1, 1]]
-        p4 = BallInf(N[2, 2], N(1))
-        cap = intersection(p1, p4)
-        vlist = vertices_list(cap)
-        @test vlist == [N[1, 1]]
+        @test ispermutation(vertices_list(cap), vlist)
 
         # isuniversal
         answer, w = isuniversal(p1, true)
@@ -464,5 +480,11 @@ for N in [Float64]
         c3, r = chebyshev_center(P; get_radius=true)
         @test c1 == c2 == c3 == center(B) && c1 isa AbstractVector{N}
         @test r == B.radius
+
+        # concrete projection
+        πP = project(P, [1])
+        @test πP isa HPolytope{N}
+        @test ispermutation(constraints_list(πP), [HalfSpace(N[-1], N(1)),
+                                                   HalfSpace(N[1], N(1))])
     end
 end

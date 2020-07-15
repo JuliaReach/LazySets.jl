@@ -14,6 +14,14 @@ for N in [Float64, Rational{Int}, Float32]
     RB2 = Rectification(B2)
     RB3 = Rectification(B3)
 
+    # set
+    @test set(RI1) == I1
+    @test set(RI2) == I2
+    @test set(RI3) == I3
+    @test set(RB1) == B1
+    @test set(RB2) == B2
+    @test set(RB3) == B3
+
     # dimension
     @test dim(RI1) == dim(RI2) == dim(RI3) == 1
     @test dim(RB1) == dim(RB2) == dim(RB3) == 2
@@ -115,7 +123,7 @@ for N in [Float64]
     RP = Rectification(P)
     @test ρ(N[1, 0], RP) ≈ N(1.5)
     @test ρ(N[0, 1], RP) ≈ N(1)
-    @test ρ(N[1, 1], RP) == ρ(N[1, 1], P)
+    @test ρ(N[1, 1], RP) ≈ ρ(N[1, 1], P) == N(2)
 #     @test ρ(N[-1, 0], RP) ≈ N(0)
     @test N(0) ≤ ρ(N[-1, 0], RP) ≤ N(1e-8)
 #     @test ρ(N[0, -1], RP) ≈ N(0)

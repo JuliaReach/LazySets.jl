@@ -14,6 +14,7 @@ makedocs(
         "Home" => "index.md",
         "Manual" => Any[
             "Getting Started" => "man/getting_started.md",
+            "Introduction to Convex Sets" => "man/convex_sets.md",
             "Polyhedral Approximations" => "man/polyhedral_approximations.md",
             "Decomposing an Affine Map" => "man/decompose_example.md",
             "Fast 2D LPs" => "man/fast_2d_LPs.md",
@@ -44,7 +45,7 @@ makedocs(
                 "Hyperplane" => "lib/sets/Hyperplane.md",
                 "Hyperrectangle" => "lib/sets/Hyperrectangle.md",
                 "Interval" => "lib/sets/Interval.md",
-                "Line" => "lib/sets/Line.md",
+                "Line2D" => "lib/sets/Line2D.md",
                 "LineSegment" => "lib/sets/LineSegment.md",
                 "PolynomialZonotope" => "lib/sets/PolynomialZonotope.md",
                 "Singleton" => "lib/sets/Singleton.md",

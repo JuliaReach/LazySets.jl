@@ -553,7 +553,7 @@ Converts a convex set to an interval.
 An interval.
 """
 function convert(::Type{Interval}, S::LazySet{N}) where {N<:Real}
-    @assert dim(S) == 1 "cannot convert a $(dim(H))-dimensional $(typeof(S)) to `Interval`"
+    @assert dim(S) == 1 "cannot convert a $(dim(S))-dimensional $(typeof(S)) to `Interval`"
     return Interval(-ρ(N[-1], S), ρ(N[1], S))
 end
 
@@ -978,4 +978,11 @@ end
 
 function convert(::Type{HalfSpace{N, Vector{N}}}, hs::HalfSpace{N, <:AbstractVector{N}}) where {N}
     return HalfSpace(Vector(hs.a), hs.b)
+end
+
+function convert(::Type{Zonotope},
+                 am::AbstractAffineMap{N, <:AbstractZonotope{N}}) where {N<:Real}
+    Z1 = convert(Zonotope, linear_map(matrix(am), set(am)))
+    Z2 = translate(Z1, vector(am), share=true)
+    return Z2
 end

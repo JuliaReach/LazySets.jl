@@ -30,7 +30,7 @@ is_intersection_empty(::AbstractSingleton{N}, ::AbstractSingleton{N}, ::Bool=fal
 is_intersection_empty(::Zonotope{N}, ::Hyperplane{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::Ball2{N}, ::Ball2{N}, ::Bool=false) where {N<:AbstractFloat}
 is_intersection_empty(::LineSegment{N}, ::LineSegment{N}, ::Bool=false) where {N<:Real}
-is_intersection_empty(::LazySet{N}, ::Union{Hyperplane{N}, Line{N}}, ::Bool=false) where {N<:Real}
+is_intersection_empty(::LazySet{N}, ::Union{Hyperplane{N}, Line2D{N}}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::LazySet{N}, ::HalfSpace{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::HalfSpace{N}, ::HalfSpace{N}, ::Bool=false) where {N<:Real}
 is_intersection_empty(::AbstractPolyhedron{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
@@ -53,6 +53,7 @@ convex_hull(::HPoly{N}, ::HPoly{N}) where {N<:Real}
 convex_hull(::VPolytope{N}, ::VPolytope{N}) where {N<:Real}
 convex_hull(::VPolygon{N}, ::VPolygon{N}) where {N<:Real}
 convex_hull(::Vector{VN}) where {N<:Real, VN<:AbstractVector{N}}
+convex_hull(::UnionSetArray{N, PT}; kwargs...) where {N, PT<:AbstractPolytope{N}}
 monotone_chain!
 ```
 
@@ -60,7 +61,7 @@ monotone_chain!
 
 ```@docs
 intersection(::AbstractSingleton{N}, ::LazySet{N}) where {N<:Real}
-intersection(::Line{N}, ::Line{N}) where {N<:Real}
+intersection(::Line2D{N}, ::Line2D{N}) where {N<:Real}
 intersection(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}) where {N<:Real}
 intersection(::Interval{N}, ::Interval{N}) where {N<:Real}
 intersection(::Interval{N}, ::HalfSpace{N}) where {N<:Real}

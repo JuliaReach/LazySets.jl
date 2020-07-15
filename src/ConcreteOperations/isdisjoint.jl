@@ -49,13 +49,50 @@ function is_intersection_empty(X::LazySet{N},
 end
 
 # --- alias ---
+@static if VERSION >= v"1.5.0-beta1.0"
 
-"""
-    isdisjoint(X, Y)
+    """
+        isdisjoint(X, Y)
 
-An alternative name for `is_intersection_empty(X, Y)`.
-"""
-const isdisjoint = is_intersection_empty
+    An alternative name for `is_intersection_empty(X, Y)`.
+    """
+    Base.isdisjoint(X::LazySet, Y::LazySet; kwargs...) = is_intersection_empty(X, Y; kwargs...)
+    Base.isdisjoint(X::LazySet, Y::LazySet, witness::Bool; kwargs...) = is_intersection_empty(X, Y, witness; kwargs...)
+
+    # TODO simplify with @eval block
+    Base.isdisjoint(X::LazySet, Y::Complement, witness::Bool; kwargs...) = is_intersection_empty(X, Y, witness; kwargs...)
+    Base.isdisjoint(X::LazySet, Y::Complement; kwargs...) = is_intersection_empty(X, Y; kwargs...)
+    Base.isdisjoint(X::Complement, Y::LazySet; kwargs...) = is_intersection_empty(X, Y; kwargs...)
+    Base.isdisjoint(X::Complement, Y::LazySet, witness::Bool; kwargs...) = is_intersection_empty(X, Y, witness; kwargs...)
+
+    Base.isdisjoint(X::LazySet, Y::UnionSet, witness::Bool; kwargs...) = is_intersection_empty(X, Y, witness; kwargs...)
+    Base.isdisjoint(X::LazySet, Y::UnionSet; kwargs...) = is_intersection_empty(X, Y; kwargs...)
+    Base.isdisjoint(X::UnionSet, Y::LazySet; kwargs...) = is_intersection_empty(X, Y; kwargs...)
+    Base.isdisjoint(X::UnionSet, Y::LazySet, witness::Bool; kwargs...) = is_intersection_empty(X, Y, witness; kwargs...)
+    Base.isdisjoint(X::UnionSet, Y::UnionSet, witness::Bool; kwargs...) = is_intersection_empty(X, Y, witness; kwargs...)
+    Base.isdisjoint(X::UnionSet, Y::UnionSet) = is_intersection_empty(X, Y)
+
+    Base.isdisjoint(X::LazySet, Y::UnionSetArray, witness::Bool; kwargs...) = is_intersection_empty(X, Y, witness; kwargs...)
+    Base.isdisjoint(X::LazySet, Y::UnionSetArray; kwargs...) = is_intersection_empty(X, Y; kwargs...)
+    Base.isdisjoint(X::UnionSetArray, Y::LazySet; kwargs...) = is_intersection_empty(X, Y; kwargs...)
+    Base.isdisjoint(X::UnionSetArray, Y::LazySet, witness::Bool; kwargs...) = is_intersection_empty(X, Y, witness; kwargs...)
+    Base.isdisjoint(X::UnionSetArray, Y::UnionSet, witness::Bool; kwargs...) = is_intersection_empty(X, Y, witness; kwargs...)
+
+    Base.isdisjoint(X::UnionSetArray, Y::UnionSet; kwargs...) = is_intersection_empty(X, Y; kwargs...)
+    Base.isdisjoint(X::UnionSet, Y::UnionSetArray; kwargs...) = is_intersection_empty(X, Y; kwargs...)
+    Base.isdisjoint(X::UnionSet, Y::UnionSetArray, witness::Bool; kwargs...) = is_intersection_empty(X, Y, witness; kwargs...)
+
+    Base.isdisjoint(X::UnionSetArray, Y::UnionSetArray, witness::Bool; kwargs...) = is_intersection_empty(X, Y, witness; kwargs...)
+    Base.isdisjoint(X::UnionSetArray, Y::UnionSetArray) = is_intersection_empty(X, Y)
+else
+
+    """
+        isdisjoint(X, Y)
+
+    An alternative name for `is_intersection_empty(X, Y)`.
+    """
+    const isdisjoint = is_intersection_empty
+end
 
 # --- AbstractHyperrectangle ---
 
@@ -129,8 +166,7 @@ end
 # --- disjointness check for 1D intervals ---
 
 """
-    is_intersection_empty(I1::Interval{N}, I2::Interval{N},
-                          witness::Bool=false) where {N<:Real}
+    is_intersection_empty(I1::Interval{N}, I2::Interval{N}, witness::Bool=false) where {N<:Real}
 
 Check whether two intervals do not intersect, and otherwise optionally
 compute a witness.
@@ -156,14 +192,21 @@ interval and the left-most point of the first interval, or vice-versa.
 A witness is computed by taking the maximum over the left-most points of each
 interval, which is guaranteed to belong to the intersection.
 """
-function is_intersection_empty(I1::Interval{N}, I2::Interval{N},
-                               witness::Bool=false) where {N<:Real}
-    check = min(I2) > max(I1) || min(I1) > max(I2)
-    if !witness
-        return check
+function is_intersection_empty(I1::Interval{N}, I2::Interval{N}, witness::Bool=false) where {N<:Real}
+    if witness
+        return _is_intersection_empty(I1, I2, Val(true))
     else
-        return (check, [max(min(I1), min(I2))])
+        return _is_intersection_empty(I1, I2, Val(false))
     end
+end
+
+function _is_intersection_empty(I1::Interval{N}, I2::Interval{N}, witness::Val{false}) where {N<:Real}
+    return !_leq(min(I2), max(I1)) || !_leq(min(I1), max(I2))
+end
+
+function _is_intersection_empty(I1::Interval{N}, I2::Interval{N}, witness::Val{true}) where {N<:Real}
+    check  = _is_intersection_empty(I1, I2, Val(false))
+    return (check, [max(min(I1), min(I2))])
 end
 
 # --- AbstractSingleton ---
@@ -416,7 +459,12 @@ function is_intersection_empty(Z::Zonotope{N},
     end
 
     v = H.b - dot(H.a, Z.center)
-    abs_sum = sum(abs(dot(H.a, Z.generators[:, i])) for i = 1:ngens(Z))
+    p = ngens(Z)
+    if p == 0
+        abs_sum = zero(N)
+    else
+        abs_sum = sum(abs(dot(H.a, Z.generators[:, i])) for i = 1:ngens(Z))
+    end
     return v < -abs_sum || v > abs_sum
 end
 
@@ -585,7 +633,7 @@ end
 
 
 @inline function is_intersection_empty_helper_hyperplane(
-        hp::Union{Hyperplane{N}, Line{N}},
+        hp::Union{Hyperplane{N}, Line2D{N}},
         X::LazySet{N},
         witness::Bool=false
        ) where {N<:Real}
@@ -617,7 +665,7 @@ end
 
 """
     is_intersection_empty(X::LazySet{N},
-                          hp::Union{Hyperplane{N}, Line{N}},
+                          hp::Union{Hyperplane{N}, Line2D{N}},
                           [witness]::Bool=false
                          ) where {N<:Real}
 
@@ -659,14 +707,14 @@ We follow
 for the line-hyperplane intersection.
 """
 function is_intersection_empty(X::LazySet{N},
-                               hp::Union{Hyperplane{N}, Line{N}},
+                               hp::Union{Hyperplane{N}, Line2D{N}},
                                witness::Bool=false
                               ) where {N<:Real}
     return is_intersection_empty_helper_hyperplane(hp, X, witness)
 end
 
 # symmetric function
-function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
+function is_intersection_empty(hp::Union{Hyperplane{N}, Line2D{N}},
                                X::LazySet{N},
                                witness::Bool=false
                               ) where {N<:Real}
@@ -674,15 +722,15 @@ function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
 end
 
 # disambiguation
-function is_intersection_empty(hp1::Union{Hyperplane{N}, Line{N}},
-                               hp2::Union{Hyperplane{N}, Line{N}},
+function is_intersection_empty(hp1::Union{Hyperplane{N}, Line2D{N}},
+                               hp2::Union{Hyperplane{N}, Line2D{N}},
                                witness::Bool=false
                               ) where {N<:Real}
     return is_intersection_empty_helper_hyperplane(hp1, hp2, witness)
 end
 
 # disambiguation
-function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
+function is_intersection_empty(hp::Union{Hyperplane{N}, Line2D{N}},
                                S::AbstractSingleton{N},
                                witness::Bool=false
                               ) where {N<:Real}
@@ -691,7 +739,7 @@ end
 
 # symmetric method
 function is_intersection_empty(S::AbstractSingleton{N},
-                               hp::Union{Hyperplane{N}, Line{N}},
+                               hp::Union{Hyperplane{N}, Line2D{N}},
                                witness::Bool=false
                               ) where {N<:Real}
     return is_intersection_empty_helper_singleton(S, hp, witness)
@@ -874,7 +922,7 @@ function is_intersection_empty(S::AbstractSingleton{N},
 end
 
 # disambiguation
-function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
+function is_intersection_empty(hp::Union{Hyperplane{N}, Line2D{N}},
                                hs::HalfSpace{N},
                                witness::Bool=false
                               ) where {N<:Real}
@@ -883,7 +931,7 @@ end
 
 # symmetric method
 function is_intersection_empty(hs::HalfSpace{N},
-                               hp::Union{Hyperplane{N}, Line{N}},
+                               hp::Union{Hyperplane{N}, Line2D{N}},
                                witness::Bool=false
                               ) where {N<:Real}
     return is_intersection_empty_helper_halfspace(hs, hp, witness)
@@ -1023,7 +1071,7 @@ end
 
 # disambiguation
 function is_intersection_empty(P::AbstractPolyhedron{N},
-                               hp::Union{Hyperplane{N}, Line{N}},
+                               hp::Union{Hyperplane{N}, Line2D{N}},
                                witness::Bool=false;
                                solver=default_lp_solver(N),
                                algorithm="exact"
@@ -1034,7 +1082,7 @@ function is_intersection_empty(P::AbstractPolyhedron{N},
 end
 
 # symmetric method
-function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
+function is_intersection_empty(hp::Union{Hyperplane{N}, Line2D{N}},
                                P::AbstractPolyhedron{N},
                                witness::Bool=false;
                                solver=default_lp_solver(N),
@@ -1173,20 +1221,23 @@ Check whether a universe and another set do not intersect.
 
 `true` iff ``X ≠ ∅``.
 """
-function is_intersection_empty(U::Universe{N}, X::LazySet{N},
-                               witness::Bool=false) where {N<:Real}
+function is_intersection_empty(U::Universe{N}, X::LazySet{N}, witness::Bool=false) where {N<:Real}
+    return _is_intersection_empty_universe(X, U, witness)
+end
+
+# symmetric method
+function is_intersection_empty(X::LazySet{N}, U::Universe{N}, witness::Bool=false) where {N<:Real}
+    return _is_intersection_empty_universe(X, U, witness)
+end
+
+function _is_intersection_empty_universe(X, U::Universe{N}, witness) where {N}
+    @assert dim(X) == dim(U) "the dimensions of the given sets should match but they are $(dim(X)) and $(dim(U)) respectively"
     result = isempty(X)
     if result
         return witness ? (result, N[]) : result
     else
         return witness ? (result, an_element(X)) : result
     end
-end
-
-# symmetric method
-function is_intersection_empty(X::LazySet{N}, U::Universe{N},
-                               witness::Bool=false) where {N<:Real}
-    return is_intersection_empty(U, X, witness)
 end
 
 # disambiguation
@@ -1225,13 +1276,13 @@ function is_intersection_empty(hs::HalfSpace{N}, U::Universe{N},
                   U, hs, witness)
 end
 function is_intersection_empty(U::Universe{N},
-                               hp::Union{Hyperplane{N}, Line{N}},
+                               hp::Union{Hyperplane{N}, Line2D{N}},
                                witness::Bool=false) where {N<:Real}
     return invoke(is_intersection_empty,
                   Tuple{Universe{N}, LazySet{N}, Bool},
                   U, hp, witness)
 end
-function is_intersection_empty(hp::Union{Hyperplane{N}, Line{N}},
+function is_intersection_empty(hp::Union{Hyperplane{N}, Line2D{N}},
                                U::Universe{N},
                                witness::Bool=false) where {N<:Real}
     return invoke(is_intersection_empty,
@@ -1331,6 +1382,15 @@ end
 function is_intersection_empty(hs::HalfSpace{N},
                                cpa::CartesianProductArray{N}) where {N<:Real}
     return is_intersection_empty(cpa, hs)
+end
+
+function is_intersection_empty(cpa::CartesianProductArray{N,S}, U::Universe{N},
+                               witness::Bool=false) where {N<:Real, S<:LazySet{N}}
+    return _is_intersection_empty_universe(cpa, U, witness)
+end
+function is_intersection_empty(U::Universe{N}, cpa::CartesianProductArray{N, S},
+                               witness::Bool=false) where {N<:Real, S<:LazySet{N}}
+    return _is_intersection_empty_universe(cpa, U, witness)
 end
 
 """

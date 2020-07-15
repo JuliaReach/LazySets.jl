@@ -54,7 +54,7 @@ if test_suite_polyhedra || test_suite_plotting
     using CDDLib # for tests that require CDDLib specific backend=...
 
     # fix namespace conflicts with Polyhedra
-    using LazySets: dim, HalfSpace, Interval, Line, translate
+    using LazySets: dim, HalfSpace, Interval, Line2D, translate
 end
 
 if test_suite_basic
@@ -91,7 +91,7 @@ if test_suite_basic
     @time @testset "LazySets.HalfSpace" begin include("unit_HalfSpace.jl") end
     @time @testset "LazySets.Interval" begin include("unit_Interval.jl") end
     @time @testset "LazySets.LineSegment" begin include("unit_LineSegment.jl") end
-    @time @testset "LazySets.Line" begin include("unit_Line.jl") end
+    @time @testset "LazySets.Line2D" begin include("unit_Line2D.jl") end
     @time @testset "LazySets.Universe" begin include("unit_Universe.jl") end
 
     # =========================================
@@ -139,6 +139,7 @@ if test_suite_basic
     @time @testset "LazySets.Approximations.ballinf_approximation" begin include("unit_ballinf_approximation.jl") end
     @time @testset "LazySets.Approximations.radiusdiameter" begin include("unit_radiusdiameter.jl") end
     @time @testset "LazySets.Approximations.decompose" begin include("unit_decompose.jl") end
+    @time @testset "LazySets.Approximations.distance" begin include("unit_distance.jl") end
     @time @testset "LazySets.Approximations.hausdorff_distance" begin include("unit_hausdorff_distance.jl") end
 
     # ========================

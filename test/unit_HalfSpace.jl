@@ -111,8 +111,24 @@ for N in [Float64, Rational{Int}, Float32]
     M = N[2 2; 0 1] # invertible matrix
     @test linear_map(M, H) == HalfSpace(N[0.5, -2.0], N(0.0))
 
+    if test_suite_polyhedra
+        if N == Float64 || N == Float32
+            @test linear_map(N[1 1], H) == Universe{N}(1)
+        end
+    end
+
     # conversion of the normal vector
     hs_sev = HalfSpace(SingleEntryVector(2, 3, N(1)), N(1))
     hs_vec = convert(HalfSpace{N, Vector{N}}, hs_sev)
     @test hs_vec.a == N[0, 1, 0] && hs_vec.b == N(1)
+end
+
+# tests that only work with Float64 and Float32
+for N in [Float64, Float32]
+    # normalization
+    hs1 = HalfSpace(N[1e5, 2e5], N(3e5))
+    hs2 = normalize(hs1)
+    @test norm(hs2.a) ≈ N(1) && hs2.b == hs1.b / norm(hs1.a)
+    @test normalize(hs1, N(1)) == HalfSpace(N[1//3, 2//3], N(1))
+    @test normalize(hs1, N(Inf)) == HalfSpace(N[1//2, 1], N(3//2))
 end

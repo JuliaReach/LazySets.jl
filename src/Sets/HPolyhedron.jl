@@ -9,8 +9,6 @@ export HPolyhedron,
        tohrep, tovrep,
        convex_hull,
        cartesian_product,
-       vertices_list,
-       singleton_list,
        isempty,
        remove_redundant_constraints,
        remove_redundant_constraints!,
@@ -293,6 +291,27 @@ function tohrep(P::HPoly{N}) where {N<:Real}
 end
 
 """
+    normalize(P::HPoly{N}, p=N(2)) where {N<:Real}
+
+Normalize a polyhedron in constraint representation.
+
+### Input
+
+- `P` -- polyhedron in constraint representation
+- `p` -- (optional, default: `2`) norm
+
+### Output
+
+A new polyhedron in constraint representation whose normal directions ``a_i``
+are normalized, i.e., such that ``‖a_i‖_p = 1`` holds.
+"""
+function normalize(P::HPoly{N}, p=N(2)) where {N<:Real}
+    constraints = [normalize(hs, p) for hs in constraints_list(P)]
+    T = basetype(P)
+    return T(constraints)
+end
+
+"""
     remove_redundant_constraints(P::HPoly{N};
                                  backend=default_lp_solver(N)
                                 ) where {N<:Real}
@@ -498,55 +517,6 @@ function tovrep(P::HPoly{N};
 end
 
 """
-    vertices_list(P::HPolyhedron{N}) where {N<:Real}
-
-Return the list of vertices of a polyhedron in constraint representation.
-
-### Input
-
-- `P` -- polyhedron in constraint representation
-
-### Output
-
-This function returns an error because the polyhedron is possibly unbounded.
-If `P` is known to be bounded, try converting to `HPolytope` first:
-
-```jldoctest
-julia> P = HPolyhedron([HalfSpace([1.0, 0.0], 1.0),
-                        HalfSpace([0.0, 1.0], 1.0),
-                        HalfSpace([-1.0, 0.0], 1.0),
-                        HalfSpace([0.0, -1.0], 1.0)]);
-
-julia> P_as_polytope = convert(HPolytope, P);
-```
-"""
-function vertices_list(P::HPolyhedron{N}) where {N<:Real}
-    throw(ArgumentError("the list of vertices of a (possibly unbounded) " *
-        "polyhedron is not defined; if the polyhedron is bounded, try " *
-        "converting to `HPolytope` first"))
-end
-
-"""
-    singleton_list(P::HPolyhedron{N}) where {N<:Real}
-
-Return the vertices of a polyhedron in H-representation as a list of singletons.
-
-### Input
-
-- `P` -- polytope in constraint representation
-
-### Output
-
-This function returns an error because the polyhedron is possibly unbounded.
-If `P` is known to be bounded, try converting to `HPolytope` first.
-"""
-function singleton_list(P::HPolyhedron{N}) where {N<:Real}
-    throw(ArgumentError("the list of singletons of a (possibly unbounded) " *
-        "polyhedron is not defined; if the polyhedron is bounded, try " *
-        "converting to `HPolytope` first"))
-end
-
-"""
    isempty(P::HPoly{N}, witness::Bool=false;
            [use_polyhedra_interface]::Bool=false, [solver]=default_lp_solver(N),
            [backend]=nothing) where {N<:Real}
@@ -642,8 +612,6 @@ function convert(::Type{HPolyhedron}, P::HRep{N}) where {N}
     for hi in Polyhedra.allhalfspaces(P)
         a, b = hi.a, hi.β
         if isapproxzero(norm(a))
-            @assert b >= zero(N) "the half-space is inconsistent since it has a " *
-                "zero normal direction but the constraint is negative"
             continue
         end
         push!(constraints, HalfSpace(a, b))

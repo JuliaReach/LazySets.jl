@@ -130,6 +130,13 @@ for N in [Float64, Rational{Int}, Float32]
         @test convert(Zonotope, AZ) == togrep(AZ) == Z
     end
 
+    # conversion from lazy affine map
+    A = N[1 0; 0 1]
+    b = N[1, 1]
+    B = BallInf(N[0, 0], N(1))
+    Z = convert(Zonotope, A * B + b)
+    @test Z == Zonotope(N[1, 1], N[1 0; 0 1])
+
     # test conversion from hyperrectangular sets
     Z = convert(Zonotope, Hyperrectangle(N[2, 3], N[4, 5]))
     @test Z.center == N[2, 3] && diag(Z.generators) == N[4, 5]
@@ -182,6 +189,11 @@ for N in [Float64, Rational{Int}, Float32]
     B = BallInf(zeros(N, 3), N(1))  # equivalent to Z
     constraints = constraints_list(Z)
     @test constraints isa Vector{<:HalfSpace{N}} && length(constraints) == 6
+
+    # 1D projection works correctly even with zero generators (#2147)
+    Z = convert(Zonotope, BallInf(N[0, 0], N(1)))
+    Z2 = project(Z, [1])
+    @test Z2 == Zonotope(N[0], hcat(N[1]))
 end
 
 for N in [Float64]
@@ -213,6 +225,16 @@ for N in [Float64]
         Z = Zonotope(N[0, 0], N[2 3; 0 0])
         P = tovrep(HPolygon(constraints_list(Z)))
         @test ispermutation(vertices_list(P), [N[5, 0], [-5, 0]])
+
+        # test that zero generators are ignored (#2147)
+        G = spzeros(N, 100, 100)
+        G[1, 1] = N(1)
+        Z = Zonotope(zeros(N, 100), G)
+        v1 = zeros(N, 100)
+        v1[1] = N(1)
+        v2 = zeros(N, 100)
+        v2[1] = N(-1)
+        @test ispermutation(vertices_list(Z), [v1, v2])
     end
 
     # vertices for singleton zonotope (#1881)
@@ -225,6 +247,22 @@ for N in [Float64]
     vlistZ = vertices_list(Z)
     @test length(vlistZ) == 6
     @test ispermutation(vlistZ, [N[-2, -2], N[0, -2], N[2, 0], N[2, 2], N[0, 2], N[-2, 0]])
+
+    # test 3d zonotope vertex enumeration
+    Z = Zonotope([0., 0., 0.], [1. 0. 1.; 0. 1. 1.; 0.1 1. 1.])
+    vlistZ = vertices_list(Z)
+    @test length(vlistZ) == 8
+
+    # test 2d zonotope generators in positive orthant vertex enumeration
+    Z = Zonotope([0., 0.], [1. 0. 1.; 0. 1. 1.])
+    vlistZ = vertices_list(Z)
+    @test length(vlistZ) == 6
+
+    # test 2d zonotope generators in negative orthant vertex enumeration
+    Z = Zonotope([0., 0.], -[1. 0. 1.; 0. 1. 1.])
+    vlistZ = vertices_list(Z)
+    @test length(vlistZ) == 6
+
     # option to not apply the convex hull operation
     vlistZ = vertices_list(Z, apply_convex_hull=false)
     @test length(vlistZ) == 8
@@ -246,6 +284,9 @@ for N in [Float64]
     H1 = Hyperplane(N[1, 1], N(3))
     intersection_empty, point = is_intersection_empty(Z1, H1, true)
     @test point ∈ Z1 && point ∈ H1
+    # zonotope without generators (#2204)
+    Z3 = Zonotope(N[0, 0], Matrix{N}(undef, 2, 0))
+    @test isdisjoint(Z3, H1)
 
     # isdisjoint
     result, w = isdisjoint(Z1, Z2, true)
@@ -253,4 +294,11 @@ for N in [Float64]
     Z3 = Zonotope(N[2, 1], Matrix{N}(I, 2, 2))
     @test_throws ErrorException isdisjoint(Z2, Z3, true)
     @test !isdisjoint(Z2, Z3)
+    
+    # issubset
+    Z = Zonotope(N[0, 0], N[1 1; -1 1])
+    H1 = Hyperrectangle(low=N[-2, -2], high=N[2, 2])
+    H2 = Hyperrectangle(low=N[-2, -2], high=N[2, 0])
+    @test issubset(Z, H1)
+    @test !issubset(Z, H2)
 end

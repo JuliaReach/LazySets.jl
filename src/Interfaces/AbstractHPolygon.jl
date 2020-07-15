@@ -63,7 +63,6 @@ function tovrep(P::AbstractHPolygon{N}) where {N<:Real}
     return VPolygon(vertices_list(P; apply_convex_hull=false))
 end
 
-
 """
     tohrep(P::HPOLYGON) where {HPOLYGON<:AbstractHPolygon}
 
@@ -79,6 +78,27 @@ The identity, i.e., the same polygon instance.
 """
 function tohrep(P::HPOLYGON) where {HPOLYGON<:AbstractHPolygon}
     return P
+end
+
+"""
+    normalize(P::AbstractHPolygon{N}, p=N(2)) where {N<:Real}
+
+Normalize a polygon in constraint representation.
+
+### Input
+
+- `P` -- polygon in constraint representation
+- `p` -- (optional, default: `2`) norm
+
+### Output
+
+A new polygon in constraint representation whose normal directions ``a_i``
+are normalized, i.e., such that ``‖a_i‖_p = 1`` holds.
+"""
+function normalize(P::AbstractHPolygon{N}, p=N(2)) where {N<:Real}
+    constraints = [normalize(hs, p) for hs in constraints_list(P)]
+    T = basetype(P)
+    return T(constraints)
 end
 
 
@@ -123,11 +143,19 @@ function vertices_list(P::AbstractHPolygon{N};
         return points
     end
     @inbounds for i in 1:n-1
-        points[i] = element(intersection(Line(P.constraints[i]),
-                                         Line(P.constraints[i+1])))
+        cap = intersection(Line2D(P.constraints[i]), Line2D(P.constraints[i+1]))
+        if cap isa EmptySet
+            return Vector{Vector{N}}()
+        else
+            points[i] = element(cap)
+        end
     end
-    points[n] = element(intersection(Line(P.constraints[n]),
-                                     Line(P.constraints[1])))
+    cap = intersection(Line2D(P.constraints[n]), Line2D(P.constraints[1]))
+    if cap isa EmptySet
+        return Vector{Vector{N}}()
+    else
+        points[n] = element(cap)
+    end
 
     # check if polygon was empty
     if check_feasibility
@@ -178,8 +206,8 @@ of the constraints).
 """
 function an_element(P::AbstractHPolygon{N}) where {N<:Real}
     @assert length(P.constraints) >= 2 "polygon has less than two constraints"
-    return element(intersection(Line(P.constraints[1]),
-                                Line(P.constraints[2])))
+    return element(intersection(Line2D(P.constraints[1]),
+                                Line2D(P.constraints[2])))
 end
 
 """
@@ -297,11 +325,19 @@ function isredundant(cmid::LinearConstraint{N},
     elseif is_right_turn(cleft.a, cright.a)
         # angle is 0° or 180°
         if samedir(cright.a, cleft.a)[1]
-            # angle is 0°, i.e., all three constraints have the same direction
-            # constraint is redundant unless it is tighter than the other two
-            @assert samedir(cright.a, cmid.a)[1] && samedir(cleft.a, cmid.a)[1]
-            return !is_tighter_same_dir_2D(cmid, cright, strict=true) &&
-                   !is_tighter_same_dir_2D(cmid, cleft, strict=true)
+            # angle is 0°
+            if samedir(cright.a, cmid.a)[1] && samedir(cleft.a, cmid.a)[1]
+                # all three constraints have the same direction
+                # constraint is redundant unless it is tighter than the others
+                return !is_tighter_same_dir_2D(cmid, cright, strict=true) &&
+                       !is_tighter_same_dir_2D(cmid, cleft, strict=true)
+            else
+                # surrounding constraints have the same direction but the
+                # central constraint does not -> corner case with just three
+                # unbounding constraints (usually occurs during incremental
+                # addition of constraints)
+                return false
+            end
         else
             # angle is 180°
             samedir_check = true
@@ -316,7 +352,7 @@ function isredundant(cmid::LinearConstraint{N},
         # not the same direction => constraint is not redundant
         return false
     end
-    cap = intersection(Line(cright), Line(cleft))
+    cap = intersection(Line2D(cright), Line2D(cleft))
     @assert cap isa Singleton
     return cap ⊆ cmid
 end
@@ -580,11 +616,4 @@ function isbounded(P::AbstractHPolygon, use_type_assumption::Bool=true)
         return false
     end
     return isbounded_unit_dimensions(P)
-end
-
-function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::AbstractHPolygon{N},
-            algo::AbstractLinearMapAlgorithm) where {N<:Real}
-    constraints = _linear_map_hrep(M, P, algo)
-    T = basetype(P)
-    return T(constraints)
 end

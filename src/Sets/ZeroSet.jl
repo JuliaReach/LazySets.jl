@@ -221,3 +221,26 @@ function translate(Z::ZeroSet{N}, v::AbstractVector{N}) where {N<:Real}
                                 "set by a $(length(v))-dimensional vector"
     return Singleton(v)
 end
+
+
+# --- AbstractCentrallySymmetric interface functions ---
+
+
+"""
+    center(Z::ZeroSet{N}, i::Int) where {N<:Real}
+
+Return the center along a given dimension of a zero set.
+
+### Input
+
+- `Z` -- zero set
+- `i` -- dimension of interest
+
+### Output
+
+The center along a given dimension of the zero set.
+"""
+@inline function center(Z::ZeroSet{N}, i::Int) where {N<:Real}
+    @boundscheck _check_bounds(Z, i)
+    return zero(N)
+end

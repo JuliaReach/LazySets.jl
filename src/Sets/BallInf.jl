@@ -211,16 +211,17 @@ function ρ(d::AbstractVector{N}, B::BallInf{N}) where {N<:Real}
     @assert length(d) == dim(B) "a $(length(d))-dimensional vector is " *
                                 "incompatible with a $(dim(B))-dimensional set"
     c = center(B)
+    r = B.radius
     if length(d) > 30
         # more efficient for higher dimensions
-        return dot(d, c) + B.radius * sum(abs, d)
+        return dot(d, c) + r * sum(abs, d)
     end
     res = zero(N)
     @inbounds for (i, di) in enumerate(d)
         if di < zero(N)
-            res += di * (c[i] - B.radius)
+            res += di * (c[i] - r)
         elseif di > zero(N)
-            res += di * (c[i] + B.radius)
+            res += di * (c[i] + r)
         end
     end
     return res

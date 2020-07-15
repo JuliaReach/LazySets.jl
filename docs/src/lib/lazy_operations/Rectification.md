@@ -9,6 +9,7 @@ Hence this set type is not part of the convex-set family `LazySet`.
 
 ```@docs
 Rectification
+set(::Rectification)
 dim(::Rectification)
 σ(::AbstractVector{N}, ::Rectification{N}) where {N<:Real}
 σ(::AbstractVector{N}, ::Rectification{N, <:AbstractHyperrectangle{N}}) where {N<:Real}

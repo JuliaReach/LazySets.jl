@@ -151,6 +151,7 @@ isbounded(::AbstractCentrallySymmetric)
 isuniversal(::AbstractCentrallySymmetric{N}, ::Bool=false) where {N<:Real}
 an_element(::AbstractCentrallySymmetric{N}) where {N<:Real}
 isempty(::AbstractCentrallySymmetric)
+center(::AbstractCentrallySymmetric{N}, ::Int) where {N<:Real}
 ```
 
 ### Implementations
@@ -178,6 +179,8 @@ linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 chebyshev_center(::AbstractPolyhedron{N}) where {N<:AbstractFloat}
 an_element(::AbstractPolyhedron{N}) where {N<:Real}
 isbounded(::AbstractPolyhedron{N}) where {N}
+vertices_list(::AbstractPolyhedron)
+singleton_list(::AbstractPolyhedron)
 ```
 
 Plotting (bounded) polyhedra is available, too:
@@ -191,7 +194,7 @@ plot_recipe(::AbstractPolyhedron{N}, ::N=zero(N)) where {N<:Real}
 * [Half-space (HalfSpace)](@ref def_HalfSpace)
 * [Polyhedron in constraint representation (HPolyhedron)](@ref def_HPolyhedron)
 * [Hyperplane](@ref def_Hyperplane)
-* [Line](@ref def_Line)
+* [Line2D](@ref def_Line)
 * [Universe](@ref def_Universe)
 
 ## [Polytopes (AbstractPolytope)](@id def_AbstractPolytope)
@@ -265,6 +268,7 @@ tohrep(::HPOLYGON) where {HPOLYGON<:AbstractHPolygon}
 tovrep(::AbstractHPolygon{N}) where {N<:Real}
 addconstraint!(::AbstractHPolygon{N}, ::LinearConstraint{N}) where {N<:Real}
 addconstraint!(::Vector{LC}, ::LinearConstraint{N}) where {N<:Real, LC<:LinearConstraint{N}}
+normalize(P::AbstractHPolygon{N}, p=N(2)) where {N<:Real}
 isredundant(::LinearConstraint{N}, ::LinearConstraint{N}, ::LinearConstraint{N}) where {N<:Real}
 remove_redundant_constraints!(::AbstractHPolygon)
 constraints_list(::AbstractHPolygon{N}) where {N<:Real}
@@ -293,6 +297,8 @@ This interface defines the following functions:
 dim(::AbstractCentrallySymmetricPolytope)
 an_element(::AbstractCentrallySymmetricPolytope{N}) where {N<:Real}
 isempty(::AbstractCentrallySymmetricPolytope)
+isuniversal(::AbstractCentrallySymmetricPolytope{N}, ::Bool=false) where {N<:Real}
+center(::AbstractCentrallySymmetricPolytope{N}, ::Int) where {N<:Real}
 ```
 
 ### Implementations
@@ -324,6 +330,7 @@ constraints_list(::AbstractZonotope{N}; ::Bool=true) where {N<:AbstractFloat}
 vertices_list(::AbstractZonotope{N}) where {N<:Real}
 order(::AbstractZonotope)
 togrep(::AbstractZonotope)
+⊆(Z::AbstractZonotope{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
 ```
 
 ### Implementations

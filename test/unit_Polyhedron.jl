@@ -75,7 +75,7 @@ for N in [Float64, Rational{Int}, Float32]
         # convert hyperrectangle to a HPolyhedron
         H = Hyperrectangle(N[1, 1], N[2, 2])
         P = convert(HPolyhedron, H)
-        @test_throws ArgumentError vertices_list(P) # the vertices list is not defined, see #820
+        @test length(vertices_list(P)) == 4
 
         # checking for emptiness
         P = HPolyhedron([LinearConstraint(N[1, 0], N(0))])    # x <= 0
@@ -100,6 +100,11 @@ for N in [Float64, Rational{Int}, Float32]
         if N != Rational{Int} # in floating-point we can use elimination
             lm = linear_map(N[2 3; 0 0], P, algorithm="elimination")
             @test lm isa HPolyhedron{Float64}
+
+            B = N[4e8 2; 0 1]
+            P = CartesianProduct(BallInf(N[0.01], N(0.08)), Singleton(N[1.0]))
+            lm = linear_map(B, P)
+            @test lm isa HPolytope{Float64}
         end
     end
 end
@@ -107,6 +112,16 @@ end
 # default Float64 constructors
 unconstrained_HPolyhedron = HPolyhedron()
 @test unconstrained_HPolyhedron isa HPolyhedron{Float64}
+
+# tests that only work with Float64 and Float32
+for N in [Float64, Float32]
+    # normalization
+    p1 = HPolyhedron([HalfSpace(N[1e5], N(3e5)), HalfSpace(N[-2e5], N(4e5))])
+    p2 = normalize(p1)
+    for hs in constraints_list(p2)
+        @test norm(hs.a) == N(1)
+    end
+end
 
 # Polyhedra tests that only work with Float64
 for N in [Float64]
@@ -130,10 +145,13 @@ for N in [Float64]
     d = N[0, -1]
     @test σ(d, p) == N[0, 0]
 
+    # membership
+    @test [Inf, Inf] ∉ p
+
     # an_element
     P = HPolyhedron([HalfSpace(N[3//50, -4//10], N(1)),
                      HalfSpace(N[-1//50, 1//10], N(-1))])
-    @test an_element(P) ∈ P
+    @test_broken an_element(P) ∈ P # see LazySets.jl/pull/2197
 
     # boundedness
     @test isbounded(p)
@@ -200,7 +218,7 @@ for N in [Float64]
         @test length(cl) == 4
 
         # vertices_list
-        @test_throws ArgumentError vertices_list(p1)
+        vertices_list(p1) ≈ [N[1.0], N[0.0]]
 
         # tovrep from HPolyhedron
         @test tohrep(p1) isa HPolyhedron{N} # test no-op

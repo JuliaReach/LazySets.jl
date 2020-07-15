@@ -569,8 +569,10 @@ Concrete projection of a polyhedral set.
 
 ### Output
 
-An `HPolyhedron` representing the projection of `P` on the dimensions specified
-by `block`.
+A polyhedron representing the projection of `P` on the dimensions specified by
+`block`.
+If `P` was bounded, the result is an `HPolytope`; otherwise the result is an
+`HPolyhedron`.
 
 ### Algorithm
 
@@ -600,7 +602,7 @@ julia> constrained_dimensions(P)
 
 julia> P_1234 = project(P, [1, 2, 3, 4]);
 
-julia> P_1234 == convert(HPolyhedron, P)
+julia> P_1234 == convert(HPolytope, P)
 true
 ```
 Each constraint of the cross polytope is constrained in all dimensions.
@@ -641,5 +643,13 @@ function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}) where {N}
         lm = linear_map(M, P)
         clist = constraints_list(lm)
     end
-    return HPolyhedron(clist)
+    T = isbounded(P) ? HPolytope : HPolyhedron
+    return T(clist)
+end
+
+function project(Z::Zonotope{N}, block::AbstractVector{Int}) where {N}
+    n = dim(Z)
+    M = projection_matrix(block, n, N)
+    lm = remove_zero_generators(linear_map(M, Z))
+    return lm
 end

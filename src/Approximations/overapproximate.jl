@@ -1512,3 +1512,227 @@ function overapproximate(am::AbstractAffineMap{N, <:AbstractHyperrectangle{N}},
     radius_MX = abs.(M) * radius_hyperrectangle(X)
     return Hyperrectangle(center_MXv, radius_MX)
 end
+
+"""
+    overapproximate(X::LazySet{N}, ::Type{<:Zonotope},
+                    dir::AbstractDirections{N};
+                    solver=default_lp_solver(N)) where {N<:Real}
+
+Overapproximate a polytopic set with a zonotope of minimal total generator sum
+using only generators in the given directions.
+
+### Input
+
+- `X`        -- polytopic set
+- `Zonotope` -- type for dispatch
+- `dir`      -- directions used for the generators
+- `solver`   -- (optional, default: `default_lp_solver(N)`) the backend used to
+                solve the linear program
+
+### Output
+
+A zonotope that overapproximates `X` and uses at most the directions provided in
+`dir` (redundant directions will be ignored).
+Under this constraint, the zonotope has the minimal sum of generator vectors.
+
+### Notes
+
+The algorithm only requires one representative of each generator direction and
+their additive inverse (e.g. only one of `[1, 0]` and `[-1, 0]`) and assumes
+that the directions are normalized.
+We preprocess the directions in that respect.
+
+### Algorithm
+
+We solve a linear program parametric in the vertices ``v_j`` of `X` and the
+directions ``d_k`` in `dir` presented in Section 4.2 in [1], adapting the
+notation to the one used in this library.
+
+```math
+    \\min \\sum_{k=1}^l α_k \\
+    s.t. \\
+    c + \\sum_{k=1}^l b_{kj} * d_k = v_j \\quad \\forall j \\
+    -α_k ≤ b_{kj} ≤ α_k \\quad \\forall k, j \\
+    α_k ≥ 0 \\quad \\forall k
+```
+
+The resulting zonotope has center `c` and generators `α_k · d_k`.
+
+Note that the first type of side constraints is vector-based and that the
+nonnegativity constraints (last type) are not stated explicitly in [1].
+
+[1] Zonotopes as bounding volumes, L. J. Guibas et al, Proc. of Symposium on
+    Discrete Algorithms, pp. 803-812.
+"""
+function overapproximate(X::LazySet{N}, ::Type{<:Zonotope},
+                         dir::AbstractDirections{N};
+                         solver=default_lp_solver(N)) where {N<:Real}
+    # TODO "normalization" here involves two steps: removing opposite directions
+    # and normalizing the direction vector
+    # for the latter we can use the normalization information from dispatch on
+    # the directions (some typical such directions are normalized by definition)
+    function normalize_directions(dir::AD) where {AD}
+        dirs = Vector{Vector{N}}()
+        for d in dir
+            d_normalized = normalize(d)
+            if (d_normalized ∉ dirs) && (-d_normalized ∉ dirs)
+                push!(dirs, d_normalized)
+            end
+        end
+        return dirs
+    end
+
+    n = dim(X)
+    dirs = normalize_directions(dir)
+    l = length(dirs)
+    V = vertices_list(X)
+    m = length(V)
+    nvariables = l + n + l * m  # l 'α_k' + n 'p[i]' + lm 'b_lj'
+    nconstraints = n * m + 2 * l * m  # nm 'p_j' + 2lm 'b_kj'
+
+    obj = vcat(ones(l), zeros(nvariables - l))
+    A = spzeros(N, nconstraints, nvariables)
+    sense = vcat(fill('=', n * m), fill('<', 2 * l * m))
+    b = zeros(N, nconstraints)
+    r = 1
+    # constraints p[i] + \sum_k v_j*b_kj = p_j
+    col_offset_p = l
+    col_offset_b = l + n + 1
+    for (j, vj) in enumerate(V)
+        for i in 1:n
+            A[r, col_offset_p + i] = N(1)  # p[i]
+            for (k, dk) in enumerate(dirs)
+                A[r, col_offset_b + (k - 1) * m] = dk[i]
+            end
+            b[r] = vj[i]
+            r += 1
+        end
+        col_offset_b += 1
+    end
+    # constraints -α_k ± b_kj <= 0
+    col_offset_b = l + n
+    for k in 1:l
+        for j in 1:m
+            for sign_b in N[1, -1]
+                A[r, k] = N(-1)  # - α_k
+                A[r, col_offset_b + j] = sign_b  # ± b_kj
+                r += 1
+            end
+        end
+        col_offset_b += m
+    end
+    lower_bounds = vcat(zeros(N, l), fill(N(-Inf), nvariables - l))
+    lp = linprog(obj, A, sense, b, lower_bounds, Inf, solver)
+
+    if lp.status != :Optimal
+        error("got unexpected status from LP solver: $(lp.status)")
+    end
+    c = lp.sol[(col_offset_p+1):(col_offset_p+n)]
+    ck = lp.sol[1:l]
+    G = Matrix{N}(undef, n, l)
+    for (j, dj) in enumerate(dirs)
+        G[:, j] = ck[j] * dj
+    end
+    return Zonotope(c, G)
+end
+
+"""
+    overapproximate(r::Rectification{N, <:AbstractZonotope{N}}, ::Type{<:Zonotope}) where {N}
+
+Overapproximation of the rectification of a zonotopic set.
+
+### Input
+
+- `r` -- lazy rectification of a zonotopic set
+- `Zonotope` -- type for dispatch
+
+### Output
+
+A zonotope overapproximation of the set obtained by rectifying `Z`.
+
+### Algorithm
+
+This function implements [Theorem 3.1, 1].
+
+[1] *Singh, G., Gehr, T., Mirman, M., Püschel, M., & Vechev, M. (2018). Fast
+and effective robustness certification. In Advances in Neural Information
+Processing Systems (pp. 10802-10813).*
+"""
+function overapproximate(r::Rectification{N, <:AbstractZonotope{N}}, ::Type{<:Zonotope}) where {N}
+    Z = copy(set(r))
+    c = center(Z)
+    G = genmat(Z)
+    n, m = size(G)
+    H = overapproximate(Z, Hyperrectangle)
+    row_idx = Vector{Int}()
+    μ_idx = Vector{N}()
+
+    @inbounds for i in 1:n
+        lx, ux = low(H, i), high(H, i)
+        if !_leq(lx, zero(N))
+            nothing
+        elseif _leq(ux, zero(N))
+            c[i] = zero(N)
+            for j in 1:m
+                G[i, j] = zero(N)
+            end
+        else
+            λ = ux / (ux - lx)
+            μ = - λ * lx / 2
+            c[i] = c[i] * λ + μ
+            for j in 1:m
+                G[i, j] = G[i, j] * λ
+            end
+            push!(row_idx, i)
+            push!(μ_idx, μ)
+        end
+    end
+
+    q = length(row_idx)
+    if q >= 1
+        Gnew = zeros(N, n, q)
+        j = 1
+        @inbounds for i in row_idx
+            Gnew[i, j] = μ_idx[j]
+            j += 1
+        end
+        Gout = hcat(G, Gnew)
+    else
+        Gout = G
+    end
+    
+    return Zonotope(c, remove_zero_columns(Gout))
+end
+
+"""
+    overapproximate(CHA::ConvexHullArray{N, <:AbstractZonotope{N}}, ::Type{<:Zonotope}) where {N}
+
+Overapproximation of the convex hull array of zonotopic sets.
+
+### Input
+
+- `CHA` -- convex hull array of zonotopic sets
+- `Zonotope` -- type for dispatch
+
+### Output
+
+A zonotope overapproximation of the convex hull array of zonotopic sets.
+
+### Algorithm
+
+This function iteratively applies the overapproximation algorithm for the
+convex hull of two zonotopes to the given array of zonotopes.
+"""
+function overapproximate(CHA::ConvexHullArray{N, <:AbstractZonotope{N}}, ::Type{<:Zonotope}) where {N}
+    arr = array(CHA)
+    n = length(arr)
+    if n == 1
+        return arr[1]
+    else
+        Zaux = overapproximate(ConvexHull(arr[1], arr[2]), Zonotope)
+        for k in 3:n
+            Zaux = overapproximate(ConvexHull(Zaux, arr[k]), Zonotope)
+        end
+        return Zaux
+    end
+end

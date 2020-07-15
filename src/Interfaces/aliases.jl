@@ -30,6 +30,6 @@ is non-compact or not depends on the argument(s).
 const NonCompactSet = Union{
     HalfSpace,
     Hyperplane,
-    Line,
+    Line2D,
     Universe
     }

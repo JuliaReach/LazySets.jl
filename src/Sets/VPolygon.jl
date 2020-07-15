@@ -34,8 +34,13 @@ A polygon in vertex representation can be constructed by passing the list of
 vertices. For example, we can build the right triangle
 
 ```jldoctest polygon_vrep
-julia> P = VPolygon([[0, 0], [1, 0], [0, 1]])
-VPolygon{Int64,Array{Int64,1}}(Array{Int64,1}[[0, 0], [1, 0], [0, 1]])
+julia> P = VPolygon([[0, 0], [1, 0], [0, 1]]);
+
+julia> P.vertices
+3-element Array{Array{Int64,1},1}:
+ [0, 0]
+ [1, 0]
+ [0, 1]
 ```
 
 Alternatively, a `VPolygon` can be constructed passing a matrix of vertices,
@@ -47,8 +52,13 @@ julia> M = [0 1 0; 0 0 1.]
  0.0  1.0  0.0
  0.0  0.0  1.0
 
-julia> VPolygon(M)
-VPolygon{Float64,Array{Float64,1}}(Array{Float64,1}[[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]])
+julia> P = VPolygon(M);
+
+julia> P.vertices
+3-element Array{Array{Float64,1},1}:
+ [0.0, 0.0]
+ [1.0, 0.0]
+ [0.0, 1.0]
 ```
 """
 struct VPolygon{N<:Real, VN<:AbstractVector{N}} <: AbstractPolygon{N}
@@ -397,12 +407,7 @@ julia> [4.5, 3.1] ∈ P
 false
 julia> [4.5, 3.0] ∈ P
 true
-julia> [4.4, 3.4] ∈ P  #  point lies on the edge -> floating-point error
-false
-julia> P = VPolygon([[2//1, 3//1], [3//1, 1//1], [5//1, 1//1], [4//1, 5//1]];
-                     apply_convex_hull=false);
-
-julia> [44//10, 34//10] ∈ P  #  with rational numbers the answer is correct
+julia> [4.4, 3.4] ∈ P  #  point lies on the edge
 true
 ```
 """

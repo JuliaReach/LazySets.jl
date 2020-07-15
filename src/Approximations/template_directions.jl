@@ -500,8 +500,12 @@ Cartesian components of each direction are obtained with
 The integer passed as an argument is used to discretize ``φ``:
 
 ```jldoctest; filter = r"2246[0-9]*e-16"
-julia> pd = PolarDirections(2)
-PolarDirections{Float64,Array{Float64,1}}(2, Array{Float64,1}[[1.0, 0.0], [-1.0, 1.2246467991473532e-16]])
+julia> pd = PolarDirections(2);
+
+julia> pd.stack
+2-element Array{Array{Float64,1},1}:
+ [1.0, 0.0]
+ [-1.0, 1.2246467991473532e-16]
 
 julia> length(pd)
 2
@@ -685,8 +689,14 @@ passed (in which case the optional argument `n` needs to be specified).
 Creating a template with box directions in dimension two:
 
 ```jldoctest
-julia> dirs = CustomDirections([[1.0, 0.0], [-1.0, 0.0], [0.0, 1.0], [0.0, -1.0]])
-CustomDirections{Float64,Array{Float64,1}}(Array{Float64,1}[[1.0, 0.0], [-1.0, 0.0], [0.0, 1.0], [0.0, -1.0]], 2, true, true)
+julia> dirs = CustomDirections([[1.0, 0.0], [-1.0, 0.0], [0.0, 1.0], [0.0, -1.0]]);
+
+julia> dirs.directions
+4-element Array{Array{Float64,1},1}:
+ [1.0, 0.0]
+ [-1.0, 0.0]
+ [0.0, 1.0]
+ [0.0, -1.0]
 
 julia> LazySets.Approximations.isbounding(dirs)
 true

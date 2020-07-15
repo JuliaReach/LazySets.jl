@@ -74,7 +74,7 @@ for N in [Float64, Float32, Rational{Int}]
     # infinite sets
     hs = HalfSpace(v1, p1)
     hp = Hyperplane(v1, p1)
-    l = Line(v1, p1)
+    l = Line2D(v1, p1)
     uni = Universe{N}(2)
 
     # unary set operations

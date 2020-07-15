@@ -244,7 +244,7 @@ end
 function ρ_helper(d::AbstractVector{N},
                   cap::Intersection{N,
                                     <:LazySet{N},
-                                    <:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}},
+                                    <:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}},
                   algorithm::String;
                   kwargs...) where {N<:Real}
     @assert isbounded(cap.X) "the first set in the intersection must be bounded"
@@ -303,7 +303,7 @@ end
       [algorithm]::String="line_search",
       [kwargs...]) where {N<:Real,
                           S1<:LazySet{N},
-                          S2<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}}
+                          S2<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}}
 
 Return the support function of the intersection of a compact set and a
 half-space/hyperplane/line in a given direction.
@@ -364,7 +364,7 @@ function ρ(d::AbstractVector{N},
            algorithm::String="line_search",
            kwargs...) where {N<:Real,
                              S1<:LazySet{N},
-                             S2<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}}
+                             S2<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}}
     return ρ_helper(d, cap, algorithm; kwargs...)
 end
 
@@ -373,7 +373,7 @@ function ρ(d::AbstractVector{N},
            cap::Intersection{N, S1, S2};
            algorithm::String="line_search",
            kwargs...) where {N<:Real,
-                             S1<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
+                             S1<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}},
                              S2<:LazySet{N}}
     return ρ_helper(d, swap(cap), algorithm; kwargs...)
 end
@@ -480,14 +480,14 @@ end
 function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2};
            algorithm::String="line_search", kwargs...
           ) where {N<:Real, S1<:AbstractPolytope{N},
-                   S2<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}}
+                   S2<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}}
     return ρ_helper(d, cap, algorithm; kwargs...)
 end
 
 # symmetric method
 function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2};
            algorithm::String="line_search", kwargs...
-          ) where {N<:Real, S1<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
+          ) where {N<:Real, S1<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}},
                    S2<:AbstractPolytope{N}}
     return ρ_helper(d, swap(cap), algorithm; kwargs...)
 end
@@ -496,22 +496,22 @@ end
 function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2};
            algorithm::String="line_search", kwargs...
           ) where {N<:Real, S1<:AbstractPolyhedron{N},
-                   S2<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}}
+                   S2<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}}
     return ρ(d, HPolyhedron([constraints_list(cap.X); constraints_list(cap.Y)]))
 end
 
 # symmetric method
 function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2};
            algorithm::String="line_search", kwargs...
-          ) where {N<:Real, S1<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
+          ) where {N<:Real, S1<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}},
                    S2<:AbstractPolyhedron{N}}
     return ρ(d, HPolyhedron([constraints_list(cap.X); constraints_list(cap.Y)]))
 end
 
 # disambiguation
 function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2}
-          ) where {N<:Real, S1<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}},
-                   S2<:Union{HalfSpace{N}, Hyperplane{N}, Line{N}}}
+          ) where {N<:Real, S1<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}},
+                   S2<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}}
     return ρ(d, HPolyhedron([constraints_list(cap.X); constraints_list(cap.Y)]))
 end
 
@@ -692,7 +692,7 @@ function load_optim_intersection()
 return quote
 
 """
-    _line_search(ℓ, X, H::Union{<:HalfSpace, <:Hyperplane, <:Line}; [kwargs...])
+    _line_search(ℓ, X, H::Union{<:HalfSpace, <:Hyperplane, <:Line2D}; [kwargs...])
 
 Given a compact and convex set ``X`` and a halfspace ``H = \\{x: a^T x ≤ b \\}``
 or a hyperplane ``H = \\{x: a^T x = b \\}``, calculate:
@@ -728,31 +728,37 @@ The default method is `Optim.Brent()`.
 ```jldoctest _line_search
 julia> X = Ball1(zeros(2), 1.0);
 
-julia> H = HalfSpace([-1.0, 0.0], -1.0); # x >= 0
+julia> H = HalfSpace([-1.0, 0.0], -1.0);  # x >= 1
 
 julia> using Optim
 
 julia> using LazySets: _line_search
 
-julia> _line_search([1.0, 0.0], X, H) # uses Brent's method by default
-(1.0, 999999.9849478417)
+julia> v = _line_search([1.0, 0.0], X, H);  # uses Brent's method by default
+
+julia> v[1]
+1.0
 ```
 
 We can specify the upper bound in Brent's method:
 
 ```julia _line_search
-julia> _line_search([1.0, 0.0], X, H, upper=1e3)
-(1.0, 999.9999849478418)
+julia> v = _line_search([1.0, 0.0], X, H, upper=1e3);
+
+julia> v[1]
+1.0
 ```
 
-Instead of using Brent, we use the Golden Section method:
+Instead of Brent's method we can use the Golden Section method:
 
 ```julia _line_search
-julia> _line_search([1.0, 0.0], X, H, upper=1e3, method=GoldenSection())
-(1.0, 381.9660112501051)
+julia> v = _line_search([1.0, 0.0], X, H, upper=1e3, method=GoldenSection());
+
+julia> v[1]
+1.0
 ```
 """
-function _line_search(ℓ, X, H::Union{<:HalfSpace, <:Hyperplane, <:Line};
+function _line_search(ℓ, X, H::Union{<:HalfSpace, <:Hyperplane, <:Line2D};
                       kwargs...)
     options = Dict(kwargs)
 
@@ -765,7 +771,7 @@ function _line_search(ℓ, X, H::Union{<:HalfSpace, <:Hyperplane, <:Line};
     else
         if H isa HalfSpace
             lower = 0.0
-        elseif (H isa Hyperplane) || (H isa Line)
+        elseif (H isa Hyperplane) || (H isa Line2D)
             lower = -1e6 # "big": TODO relate with f(λ)
         end
     end
@@ -793,7 +799,7 @@ end # quote
 end # load_optim
 
 """
-    _projection(ℓ, X, H::Union{Hyperplane{N}, Line{N}};
+    _projection(ℓ, X, H::Union{Hyperplane{N}, Line2D{N}};
                 [lazy_linear_map]=false,
                 [lazy_2d_intersection]=true,
                 [algorithm_2d_intersection]=nothing,
@@ -845,7 +851,7 @@ if it is not given, the default support function algorithm is used (e.g. `"line_
 You can still pass additional arguments to the `"line_search"` backend through the
 `kwargs`.
 """
-function _projection(ℓ, X, H::Union{Hyperplane{N}, Line{N}};
+function _projection(ℓ, X, H::Union{Hyperplane{N}, Line2D{N}};
                      lazy_linear_map=false,
                      lazy_2d_intersection=true,
                      algorithm_2d_intersection=nothing,
@@ -858,7 +864,7 @@ function _projection(ℓ, X, H::Union{Hyperplane{N}, Line{N}};
     x_dir = [one(N), zero(N)]
     y_dir = [zero(N), one(N)]
 
-    Lγ = Line(x_dir, γ)
+    Lγ = Line2D(x_dir, γ)
 
     Xnℓ = lazy_linear_map ? LinearMap(Πnℓ, X) : linear_map(Πnℓ, X)
     Xnℓ⋂Lγ = lazy_2d_intersection ? Intersection(Xnℓ, Lγ) : intersection(Xnℓ, Lγ)
