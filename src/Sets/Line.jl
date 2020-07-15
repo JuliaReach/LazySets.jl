@@ -30,7 +30,7 @@ The line passing through the point ``[-1, 2, 3]`` and parallel to the vector
 
 ```jldoctest
 julia> Line([-1, 2, 3.], [3, 0, -1.])
-Line{Float64,Array{Float64,1}}([-1.0, -1.0, 1.0], 1.0)
+Line{Float64,Array{Float64,1}}([-1.0, 2.0, 3.0], [3.0, 0.0, -1.0])
 ```
 """
 struct Line{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
