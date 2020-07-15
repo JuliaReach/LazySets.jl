@@ -336,41 +336,11 @@ function reduce_order(Z::Zonotope{N}, r::Union{Integer, Rational}) where {N<:Rea
     return overapproximate(Z, Zonotope, r)
 end
 
-"""
-    split(Z::Zonotope, j::Int)
+# ============================
+# Zonotope splitting methods
+# ============================
 
-Return two zonotopes obtained by splitting the given zonotope.
-
-### Input
-
-- `Z` -- zonotope
-- `j` -- index of the generator to be split
-
-### Output
-
-The zonotope obtained by splitting `Z` into two zonotopes such that
-their union is `Z` and their intersection is possibly non-empty.
-
-### Algorithm
-
-This function implements [Prop. 3, 1], that we state next. The zonotope
-``Z = ⟨c, g^{(1, …, p)}⟩`` is split into:
-
-```math
-Z₁ = ⟨c - \\frac{1}{2}g^{(j)}, (g^{(1, …,j-1)}, \\frac{1}{2}g^{(j)}, g^{(j+1, …, p)})⟩ \\\\
-Z₂ = ⟨c + \\frac{1}{2}g^{(j)}, (g^{(1, …,j-1)}, \\frac{1}{2}g^{(j)}, g^{(j+1, …, p)})⟩,
-```
-such that ``Z₁ ∪ Z₂ = Z`` and ``Z₁ ∩ Z₂ = Z^*``, where
-
-```math
-Z^* = ⟨c, (g^{(1,…,j-1)}, g^{(j+1,…, p)})⟩.
-```
-
-[1] *Althoff, M., Stursberg, O., & Buss, M. (2008). Reachability analysis of
-nonlinear systems with uncertain parameters using conservative linearization.
-In Proc. of the 47th IEEE Conference on Decision and Control.*
-"""
-function split(Z::Zonotope, j::Int)
+function _split(Z::Zonotope, j::Int)
     c, G = Z.center, Z.generators
 
     c₁ = similar(c)
@@ -392,15 +362,15 @@ function split!(Z₁::Zonotope, Z₂::Zonotope, Z::Zonotope, j::Int)
     c₁, G₁ = Z₁.center, Z₁.generators
     c₂, G₂ = Z₂.center, Z₂.generators
     copyto!(G₁, G)
-    copyto!(G₂, G)
 
     @inbounds for i in 1:n
         α = G[i, j] / 2
         c₁[i] = c[i] - α
         c₂[i] = c[i] + α
         G₁[i, j] = α
-        G₂[i, j] = α
     end
+    copyto!(G₂, G₁)
+
     return _split_ret(Z₁, Z₂)
 end
 
@@ -417,79 +387,20 @@ end
 
 end end  # quote / load_static_arrays
 
-"""
-    split(Z::Zonotope, gens::AbstractVector{Int}, n::AbstractVector{Int})
+function _split(Z::Zonotope, gens::AbstractVector, n::AbstractVector)
+    p = length(gens)
+    @assert p == length(n) "the number of generators doesn't match the " *
+                            "number of indicated partitions ($p and $(length(n)))"
 
-Split a zonotope along the given generators into a vector of zonotopes.
+    @assert p <= ngens(Z) "the number of generators to split is greater " *
+                          "than the number of generators of the zonotope ($p and $(ngens(Z)))"
 
-### Input
-
-- `Z` -- zonotope
-- `gens` -- vector of indices of the generators to be split
-- `n` -- vector of integers describing the number of partitions in the
-         corresponding generator
-
-### Output
-
-The zonotopes obtained by splitting `Z` into `2^{n_i}` zonotopes for each
-generator `i` such that their union is `Z` and their intersection is
-possibly non-empty.
-
-### Examples
-
-Splitting of a two-dimensional zonotope along its first generator:
-
-```jldoctest zonotope_label
-julia> Z = Zonotope([1.0, 0.0], [0.1 0.0; 0.0 0.1])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
-
-julia> split(Z, [1], [1])
-2-element Array{Zonotope{Float64,Array{Float64,1},Array{Float64,2}},1}:
- Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.95, 0.0], [0.05 0.0; 0.0 0.1])
- Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.05, 0.0], [0.05 0.0; 0.0 0.1])
-```
-Here, the first vector in the arguments corresponds to the zonotope's
-generator to be split, and the second vector corresponds to the exponent of
-`2^n` parts that the zonotope will be split into along the corresponding generator.
-
-Splitting of a two-dimensional zonotope along its generators:
-
-```
-julia> Z = Zonotope([1.0, 0.0], [0.1 0.0; 0.0 0.1])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
-
-julia> split(Z, [1, 2], [2, 2])
-16-element Array{Zonotope{Float64,Array{Float64,1},Array{Float64,2}},1}:
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.925, -0.075], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.925, -0.025], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.925, 0.025], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.925, 0.075], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.975, -0.075], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.975, -0.025], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.975, 0.025], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.975, 0.075], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.025, -0.075], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.025, -0.025], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.025, 0.025], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.025, 0.075], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, -0.075], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, -0.025], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, 0.025], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, 0.075], [0.025 0.0; 0.0 0.025])
-```
-Here the zonotope is split along both of its generators, each time into four parts.
-"""
-function split(Z::Zonotope, gens::AbstractVector, n::AbstractVector)
-    @assert length(gens) == length(n) "the number of generators doesn't match the" *
-    " number of indicated partitions ($(length(gens)) and $(length(n)))"
-    @assert length(gens) <= ngens(Z) "the number of generators to split is greater" *
-    " than the number of generators of the zonotope (($(length(gens)) and $(ngens(Z)))"
     Zs = [Z]
     for i = 1:length(gens)
         for j = 1:n[i]
             km = length(Zs)
             for k = 1:km
-                append!(Zs, split(Zs[k], gens[i]))
+                append!(Zs, _split(Zs[k], gens[i]))
             end
             deleteat!(Zs, 1:km)
         end
