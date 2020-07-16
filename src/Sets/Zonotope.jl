@@ -395,11 +395,11 @@ function _split(Z::Zonotope, gens::AbstractVector, n::AbstractVector)
                           "than the number of generators of the zonotope ($p and $(ngens(Z)))"
 
     Zs = [Z]
-    for i = 1:length(gens)
+    for (i, g) in enumerate(gens)
         for j = 1:n[i]
             km = length(Zs)
             for k = 1:km
-                append!(Zs, _split(Zs[k], gens[i]))
+                append!(Zs, split(Zs[k], g))
             end
             deleteat!(Zs, 1:km)
         end
