@@ -393,7 +393,7 @@ A vector of ascending indices `i` such that the line is constrained in dimension
 ### Algorithm
 
 For each coordinate ``i``, vectors of the form ``x_i = p_i + λ n_i`` are constrained
-i.e. (they belong to the line and are bounded) if and only if ``n_i`` is zero.
+(i.e. they belong to the line and are bounded) if and only if ``n_i`` is zero.
 Hence, this function returns all indices of the normal vector ``n`` for which
 the ``i``-th coordinate is nonzero.
 
