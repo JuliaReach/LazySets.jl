@@ -184,4 +184,12 @@ for N in Ns
     elseif N == Rational{Int}
         @test isflat(Interval(N(0), 2*ztol))
     end
+
+    # rectification
+    x = Interval(N(-2), N(-1))
+    @test rectify(x) == Interval(N(0), N(0))
+    x = Interval(N(-2), N(2))
+    @test rectify(x) == Interval(N(0), N(2))
+    x = Interval(N(1), N(2))
+    @test rectify(x) == x
 end
