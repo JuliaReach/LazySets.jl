@@ -431,8 +431,6 @@ A translated line.
 See also `translate!` for the in-place version.
 """
 function translate(L::Line, v::AbstractVector)
-    @assert length(v) == dim(L) "cannot translate a $(dim(L))-dimensional " *
-                                "set by a $(length(v))-dimensional vector"
     return translate!(copy(L), v)
 end
 
@@ -451,6 +449,9 @@ Translate (i.e., shift) a line by a given vector storing the result in `L`.
 A translated line, modifying `L` in-place.
 """
 function translate!(L::Line, v::AbstractVector)
+    @assert length(v) == dim(L) "cannot translate a $(dim(L))-dimensional " *
+                                "set by a $(length(v))-dimensional vector"
+
     L.p .+= v
     return L
 end
