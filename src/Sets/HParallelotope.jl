@@ -145,7 +145,8 @@ The base vertex of ``P``.
 
 ### Algorithm
 
-Intuitively, the base vertex is the point on which the generators are anchored.
+Intuitively, the base vertex is the point from which we get the relative
+positions of all the other points.
 The base vertex can be computed as the solution of the ``n``-dimensional linear
 system ``D_i x = c_{n+i}`` for ``i = 1, \\ldots, n``, see [1, Section 3.2.1].
 
