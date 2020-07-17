@@ -1454,32 +1454,7 @@ This function implements the algorithm described in A. Girard's
 If the desired order is smaller than one, the zonotope is *not* reduced.
 """
 function overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, Rational}) where {N<:Real}
-    c, G = Z.center, Z.generators
-    d, p = dim(Z), ngens(Z)
-
-    if r * d >= p || r < 1
-        # do not reduce
-        return Z
-    end
-
-    h = zeros(N, p)
-    for i in 1:p
-        h[i] = norm(G[:, i], 1) - norm(G[:, i], Inf)
-    end
-    ind = sortperm(h)
-
-    m = p - floor(Int, d * (r - 1)) # subset of ngens that are reduced
-    rg = G[:, ind[1:m]] # reduced generators
-
-    # interval hull computation of reduced generators
-    Gbox = Diagonal(sum(abs.(rg), dims=2)[:])
-    if m < p
-        Gnotred = G[:, ind[m+1:end]]
-        Gred = [Gnotred Gbox]
-    else
-        Gred = Gbox
-    end
-    return Zonotope(c, Gred)
+    return reduce_order(Z, r)
 end
 
 """
@@ -1700,7 +1675,7 @@ function overapproximate(r::Rectification{N, <:AbstractZonotope{N}}, ::Type{<:Zo
     else
         Gout = G
     end
-    
+
     return Zonotope(c, remove_zero_columns(Gout))
 end
 

@@ -5,7 +5,8 @@ export AbstractZonotope,
        generators,
        ngens,
        order,
-       togrep
+       togrep,
+       reduce_order
 
 """
     AbstractZonotope{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
@@ -545,4 +546,24 @@ function constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true
         push!(constraints, LinearConstraint(c⁻, d⁻))
     end
     return constraints
+end
+
+"""
+    reduce_order(Z::AbstractZonotope, r::Number, method::AbstractReductionMethod=GIR05())
+
+Reduce the order of a zonotope by overapproximating with a zonotope with less
+generators.
+
+### Input
+
+- `Z`      -- zonotope
+- `r`      -- desired order
+- `method` -- (optional, default: `GIR05()`) the reduction method used
+
+### Output
+
+A new zonotope with less generators, if possible.
+"""
+function reduce_order(Z::AbstractZonotope, r::Number, method::AbstractReductionMethod=GIR05())
+    _reduce_order(convert(Zonotope, Z), r, method)
 end
