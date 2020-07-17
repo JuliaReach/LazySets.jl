@@ -27,6 +27,16 @@ branches:
   - /^testing-.*$/  # testing branches
   - /^v[0-9]+\.[0-9]+\.[0-9]+$/  # version tags
 
+matrix:
+  include:
+    - julia: 1.0
+      env: TEST_SUITE='using Pkg; Pkg.build("LazySets"); Pkg.test("LazySets"; coverage=true); Pkg.add(PackageSpec(name="ModelingToolkit", version="3.10.2"))'; DOCS=false
+    - julia: 1.4
+      env: TEST_SUITE='using Pkg; Pkg.build("LazySets"); Pkg.add(PackageSpec(name="ModelingToolkit", version="3.10.2")); Pkg.test("LazySets"; coverage=true)'; DOCS=false
+
+script:
+  - julia -e "$TEST_SUITE"
+
 jobs:
   include:
     - stage: "Documentation"
