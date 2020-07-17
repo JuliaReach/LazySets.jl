@@ -400,7 +400,7 @@ the ``i``-th coordinate is nonzero.
 ### Examples
 
 The line ``y = 5`` in two dimensions can be written as ``p = [0, 5]`` and
-``n = [1, 0)]``. This line constrains dimension ``2``.
+``n = [1, 0]``. This line constrains dimension ``2``.
 
 ```jldoctest
 julia> constrained_dimensions(Line([0, 5.], [1, 0.]))
