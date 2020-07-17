@@ -5,7 +5,8 @@ import Base: rand,
 export Line,
        an_element,
        translate,
-       translate!
+       translate!,
+       distance
 
 """
     Line{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
@@ -20,7 +21,7 @@ normalized).
 
 ### Fields
 
-- `p` -- point in the line
+- `p` -- point on the line
 - `n` -- direction
 
 ### Examples
@@ -63,7 +64,7 @@ Constructor of a line given two points.
 
 ### Output
 
-The line which passes through `p` and `q`.
+The line which passes through `from` and `to`.
 
 ### Algorithm
 
@@ -76,7 +77,7 @@ function Line(; from::AbstractVector, to::AbstractVector, normalize=true)
     if normalize && iszero(d)
         throw(ArgumentError("points `$from` and `$to` should be distinct"))
     end
-    n = d / dot(d, d)
+    n = normalize ? d / dot(d, d) : d
     return Line(from, n)
 end
 
@@ -452,4 +453,27 @@ A translated line, modifying `L` in-place.
 function translate!(L::Line, v::AbstractVector)
     L.p .+= v
     return L
+end
+
+"""
+    distance(x::AbstractVector, L::Line, p::Real=2.0)
+
+Compute the distance between point `x` and the line with respect to the given
+`p`-norm.
+
+### Input
+
+- `x` -- vector
+- `L` -- line
+- `p` -- (optional, default: `2.0`) the `p`-norm used; `p = 2.0` corresponds to
+         the usual Euclidean norm
+
+### Output
+
+A scalar representing the distance between `x` and the line `L`.
+"""
+function distance(x::AbstractVector, L::Line, p::Real=2.0)
+    n = L.n  # direction of the line
+    t = dot(x - L.p, n) / dot(n, n)
+    return distance(x, L.p + t*n, p)
 end
