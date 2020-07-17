@@ -43,9 +43,13 @@ for N in [Float64, Rational{Int}, Float32]
 
     # concrete linear map
     B = BallInf(ones(N, 2), N(1))
-    tr = B ⊕ N[1, 0]
+    v = N[1, 0]
+    tr = B ⊕ v
     clm = linear_map(N[1 2; 0 1], tr)
     @test ispermutation(vertices_list(clm), [N[5, 2], [1, 0], [3, 0], [7, 2]])
+
+    # concretize
+    @test concretize(tr) == translate(B, v)
 
     # ==================================
     # Type-specific methods

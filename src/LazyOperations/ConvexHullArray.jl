@@ -228,3 +228,17 @@ function ∈(x::AbstractVector{N}, X::ConvexHullArray{N, Singleton{N, VT}}) wher
     V = convert(ST, X)
     return x ∈ V
 end
+
+function concretize(cha::ConvexHullArray)
+    a = array(cha)
+    @assert !isempty(a) "an empty convex hull is not allowed"
+    X = cha
+    @inbounds for (i, Y) in enumerate(a)
+        if i == 1
+            X = concretize(Y)
+        else
+            X = convex_hull(X, concretize(Y))
+        end
+    end
+    return X
+end

@@ -46,4 +46,9 @@ for N in [Float64, Rational{Int}, Float32]
     # center
     @test center(h) == N[0, 0]
     @test center(h, 1) == zero(N)
+
+    # concretize
+    B = Ball1(N[0, 0], N(1))
+    h = SymmetricIntervalHull(B)
+    @test concretize(h) == symmetric_interval_hull(B)
 end

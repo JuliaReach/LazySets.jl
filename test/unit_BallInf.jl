@@ -143,6 +143,9 @@ for N in [Float64, Rational{Int}, Float32]
         B = BallInf(zeros(N, 100), N(1/2 + 1e-5))
         @test volume(B) ≈ N(1.0020019812942185)
     end
+
+    # concretize
+    @test concretize(B) === B
 end
 
 # tests that only work with Float64

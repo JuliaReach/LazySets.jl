@@ -240,6 +240,10 @@ end
 
 @inline _in_singleton_msum(x, X, Y) = (x - element(X)) ∈ Y
 
+function concretize(ms::MinkowskiSum)
+    return minkowski_sum(concretize(ms.X), concretize(ms.Y))
+end
+
 # ================
 # Helper functions
 # ================

@@ -288,3 +288,7 @@ function linear_map_cartesian_product(M, cp)
     P = T(constraints_list(cp))
     return linear_map(M, P)
 end
+
+function concretize(cp::CartesianProduct)
+    return cartesian_product(concretize(cp.X), concretize(cp.Y))
+end

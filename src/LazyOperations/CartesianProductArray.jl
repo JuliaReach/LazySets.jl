@@ -4,10 +4,6 @@ export CartesianProductArray,
        array,
        same_block_structure
 
-# =======================================
-#  Cartesian product of an array of sets
-# =======================================
-
 """
    CartesianProductArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
 
@@ -586,3 +582,23 @@ function linear_map(M::AbstractMatrix{N}, cpa::CartesianProductArray{N}
                   ) where {N<:Real}
    return linear_map_cartesian_product(M, cpa)
 end
+
+function load_polyhedra_concretize_cpa() # function to be loaded by Requires
+return quote
+
+function concretize(cpa::CartesianProductArray)
+    a = array(cpa)
+    @assert !isempty(a) "an empty Cartesian product is not allowed"
+    X = cpa
+    @inbounds for (i, Y) in enumerate(a)
+        if i == 1
+            X = concretize(Y)
+        else
+            X = cartesian_product(X, concretize(Y))
+        end
+    end
+    return X
+end
+
+end # quote
+end # function load_polyhedra_concretize_cpa()

@@ -65,6 +65,9 @@ for N in [Float64, Rational{Int}, Float32]
     # inclusion check
     h = Hyperrectangle(N[-1, 0], N[1, 2])
     @test h ⊆ am && am ⊆ h
+
+    # concretize
+    @test concretize(am) == affine_map(M, B2, v)
 end
 
 # tests that only work with Float64 and Float32

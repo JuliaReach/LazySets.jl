@@ -191,3 +191,17 @@ function constraints_list(ia::IntersectionArray{N}) where {N<:Real}
    remove_redundant_constraints!(constraints)
    return constraints
 end
+
+function concretize(ia::IntersectionArray)
+    a = array(ia)
+    @assert !isempty(a) "an empty intersection is not allowed"
+    X = ia
+    @inbounds for (i, Y) in enumerate(a)
+        if i == 1
+            X = concretize(Y)
+        else
+            X = intersection(X, concretize(Y))
+        end
+    end
+    return X
+end

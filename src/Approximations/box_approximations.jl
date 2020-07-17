@@ -63,6 +63,10 @@ Alias for `box_approximation_symmetric`.
 """
 symmetric_interval_hull = box_approximation_symmetric
 
+function LazySets.concretize(sih::SymmetricIntervalHull)
+    return symmetric_interval_hull(LazySets.concretize(sih.X))
+end
+
 # interval specialization
 function box_approximation_symmetric(x::Interval)
     abs_inf = abs(min(x))

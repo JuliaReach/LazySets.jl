@@ -70,6 +70,7 @@ isequivalent(::LazySet, ::LazySet)
 isconvextype(::Type{<:LazySet})
 surface(::LazySet{N}) where {N}
 area(::LazySet{N}) where {N}
+concretize(X::LazySet)
 ```
 
 Plotting is available for general one- or two-dimensional `LazySet`s, provided

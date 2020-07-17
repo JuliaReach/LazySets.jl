@@ -131,6 +131,14 @@ for N in [Float64, Float32, Rational{Int}]
     @test lm isa (N == Float64 ? HPolytope{N} : HPolytope)
     @test box_approximation(lm) == Hyperrectangle(N[7//2, 0], N[3//2, 0])
 
+    cp = CartesianProduct(VPolytope([N[1]]), VPolytope([N[2]]))
+    if test_suite_polyhedra
+        # concretize
+        @test concretize(cp) == VPolytope([N[1, 2]])
+    else
+        @test concretize(cp) === cp
+    end
+
     # ==================================
     # Conversions of Cartesian Products
     # ==================================
@@ -255,6 +263,14 @@ for N in [Float64, Float32, Rational{Int}]
     lm = linear_map(M, cpa)
     @test lm isa (N == Float64 ? HPolytope{N} : HPolytope)
     @test box_approximation(lm) == Hyperrectangle(N[7//2, 0], N[3//2, 0])
+
+    cpa = CartesianProductArray([VPolytope([N[1]]), VPolytope([N[2]])])
+    if test_suite_polyhedra
+        # concretize
+        @test concretize(cpa) == VPolytope([N[1, 2]])
+    else
+        @test concretize(cpa) === cpa
+    end
 
     # ========================================
     # Conversions of Cartesian Product Arrays
