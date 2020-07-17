@@ -10,9 +10,9 @@ julia:
   - 1.0
   - 1.4
 
-cache:
-  directories:
-  - $HOME/.julia/artifacts
+#cache:
+#  directories:
+#  - $HOME/.julia/artifacts
 
 notifications:
   email: false
