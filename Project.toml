@@ -32,6 +32,7 @@ JuMP = "0.21"
 Makie = "0.9"
 MathProgBase = "0.7"
 MiniQhull = "0.1"
+ModelingToolkit = "1.1.3, 3.10"
 Optim = "0.15, 0.16, 0.17, 0.18, 0.19, 0.20, 0.21"
 Plots = "0.25, 0.26, 0.27, 0.28, 0.29"
 Polyhedra = "0.6"
@@ -50,6 +51,7 @@ GR = "28b8d3ca-fb5f-59d9-8090-bfdbd6d07a71"
 IntervalMatrices = "5c1f47dc-42dd-5697-8aaa-4d102d140ba9"
 Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
 MiniQhull = "978d7f02-9e05-4691-894f-ae31a51d76ca"
+ModelingToolkit = "961ee093-0014-501f-94e3-6117800e7a78"
 Optim = "429524aa-4258-5aef-a3af-852621145aeb"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 Polyhedra = "67491407-f73d-577b-9b50-8179a7c68029"
@@ -57,4 +59,5 @@ TaylorModels = "314ce334-5f6e-57ae-acf6-00b6e903104a"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["CDDLib", "Distributions", "Documenter", "Expokit", "GR", "IntervalMatrices", "Makie", "Optim", "Plots", "Polyhedra", "TaylorModels", "Test"]
+test = ["CDDLib", "Distributions", "Documenter", "Expokit", "GR", "IntervalMatrices",
+        "Makie", "ModelingToolkit", "Optim", "Plots", "Polyhedra", "TaylorModels", "Test"]
