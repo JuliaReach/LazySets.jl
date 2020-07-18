@@ -26,7 +26,7 @@ install:
 build_script:
   - echo "%JL_BUILD_SCRIPT%"
   - C:\julia\bin\julia -e "%JL_BUILD_SCRIPT%"
-  - C:\julia\bin\julia -e 'using Pkg; Pkg.add(PackageSpec(name="ModelingToolkit", version="3.10.2"))'
+  - C:\julia\bin\julia -e "using Pkg; Pkg.add(PackageSpec(name=\"ModelingToolkit\", version=\"3.10.2\"))"
 
 test_script:
   - echo "%JL_TEST_SCRIPT%"
