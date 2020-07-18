@@ -244,3 +244,20 @@ The center along a given dimension of the zero set.
     @boundscheck _check_bounds(Z, i)
     return zero(N)
 end
+
+"""
+    rectify(Z::ZeroSet)
+
+Concrete rectification of a zero set.
+
+### Input
+
+- `Z` -- zero set
+
+### Output
+
+The same set.
+"""
+function rectify(Z::ZeroSet)
+    return Z
+end
