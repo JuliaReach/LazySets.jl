@@ -29,4 +29,4 @@ build_script:
 
 test_script:
   - echo "%JL_TEST_SCRIPT%"
-  - C:\julia\bin\julia -e "using Pkg; Pkg.add(PackageSpec(name='ModelingToolkit', version='3.10.2')); %JL_TEST_SCRIPT%"
+  - C:\julia\bin\julia -e 'using Pkg; Pkg.add(PackageSpec(name="ModelingToolkit", version="3.10.2")); %JL_TEST_SCRIPT%'
