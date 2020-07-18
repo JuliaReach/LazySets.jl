@@ -166,9 +166,11 @@ julia> plot(Bs, 1e-2)  # faster but less accurate than the previous call
                     continue
                 end
                 res = vlist[:, 1], vlist[:, 2]
-                # add first vertex to "close" the polygon
-                push!(res[1], vlist[1, 1])
-                push!(res[2], vlist[1, 2])
+                if length(res[1]) > 2
+                    # add first vertex to "close" the polygon
+                    push!(res[1], vlist[1, 1])
+                    push!(res[2], vlist[1, 2])
+                end
             end
             if isempty(res)
                 continue
@@ -259,8 +261,16 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
             res
         else
             x, y = res
-            if length(x) == 1 || norm([x[1], y[1]] - [x[2], y[2]]) ≈ 0
+            if length(x) == 1 ||
+                    (length(x) == 2 && norm([x[1], y[1]] - [x[2], y[2]]) ≈ 0)
+                # single point
                 seriestype := :scatter
+            elseif length(x) == 2
+                # flat line segment
+                linecolor   --> DEFAULT_COLOR
+                markercolor --> DEFAULT_COLOR
+                markershape --> :circle
+                seriestype := :path
             else
                 seriestype := :shape
             end
