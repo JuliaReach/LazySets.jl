@@ -118,7 +118,7 @@ A line whose direction has unit norm w.r.t the given `p`-norm.
 """
 function normalize!(L::Line, p::Real=2.0)
     normalize!(L.n, p)
-    return Lx
+    return L
 end
 
 """
@@ -140,7 +140,7 @@ A line whose direction has unit norm w.r.t the given `p`-norm.
 See also [`normalize!(::Line, ::Real)`](@ref) for the in-place version.
 """
 function normalize(L::Line, p::Real=2.0)
-    return Line(copy(L.p), normalize(L.n, p))
+    normalize!(copy(L), p)
 end
 
 # --- polyhedron interface functions ---
@@ -268,12 +268,15 @@ Check whether a line is universal.
 
 ### Output
 
-* If `witness` option is deactivated: `false`
-* If `witness` option is activated: `(false, v)` where ``v ∉ P``
+* If `witness` is `false`: `true` if the ambient dimension is one, `false` otherwise
+
+* If `witness` is `true`: `(true, [])` if the ambient dimension is one,
+  `(false, v)` where ``v ∉ P`` otherwise
 """
 isuniversal(L::Line; witness::Bool=false) = isuniversal(L, Val(witness))
 
-isuniversal(L::Line, ::Val{false}) = false
+# TODO implement case with witness
+isuniversal(L::Line, ::Val{false}) = dim(L) == 1
 
 """
     an_element(L::Line)
