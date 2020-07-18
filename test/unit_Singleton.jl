@@ -122,4 +122,8 @@ for N in [Float64, Rational{Int}, Float32]
         @test is_intersection_empty(S2, X) &&
             is_intersection_empty(S2, X, true)[1]
     end
+
+    # rectification
+    @test rectify(S1) == S1
+    @test rectify(Singleton(N[-1, -1])) == S2
 end

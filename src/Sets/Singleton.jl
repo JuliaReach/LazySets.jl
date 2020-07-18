@@ -116,3 +116,20 @@ function translate(S::Singleton{N}, v::AbstractVector{N}) where {N<:Real}
                                 "set by a $(length(v))-dimensional vector"
     return Singleton(element(S) + v)
 end
+
+"""
+    rectify(S::Singleton)
+
+Concrete rectification of a singleton.
+
+### Input
+
+- `S` -- singleton
+
+### Output
+
+The `Singleton` that corresponds to the rectification of `S`.
+"""
+function rectify(S::Singleton)
+    return Singleton(rectify(element(S)))
+end
