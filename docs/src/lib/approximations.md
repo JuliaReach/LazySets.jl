@@ -41,6 +41,12 @@ overapproximate
 underapproximate
 ```
 
+## Approximations
+
+```@docs
+approximate
+```
+
 ## Box Approximations
 
 ```@docs
