@@ -7,8 +7,7 @@ export constrained_dimensions,
        linear_map,
        chebyshev_center,
        an_element,
-       vertices_list,
-       singleton_list
+       vertices_list
 
 # default LP solver for floating-point numbers
 function default_lp_solver(N::Type{<:AbstractFloat})
@@ -942,28 +941,4 @@ function vertices_list(P::AbstractPolyhedron; check_boundedness::Bool=true)
                             "polyhedron is not defined"))
     end
     return vertices_list(HPolytope(constraints_list(P), check_boundedness=false))
-end
-
-"""
-    singleton_list(P::AbstractPolyhedron; check_boundedness::Bool=true)
-
-Return the vertices of a polyhedron in H-representation as a list of singletons.
-
-### Input
-
-- `P`                 -- polyhedron in constraint representation
-- `check_boundedness` -- (optional, default: `true`) if `true`, check whether the
-                         polyhedron is bounded
-
-### Output
-
-The list of vertices of `P`, as `Singleton`, or an error if `P` is unbounded.
-
-### Notes
-
-This function returns an error if the polyhedron is unbounded. Otherwise,
-the polyhedron is converted to an `HPolytpe` and its list of vertices is computed.
-"""
-function singleton_list(P::AbstractPolyhedron; check_boundedness::Bool=true)
-    return [Singleton(x) for x in vertices_list(P)]
 end

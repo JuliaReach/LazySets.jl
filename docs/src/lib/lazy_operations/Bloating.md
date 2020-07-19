@@ -13,3 +13,6 @@ isbounded(::Bloating)
 isempty(::Bloating)
 an_element(::Bloating)
 ```
+
+Inherited from [`LazySet`](@ref):
+* [`singleton_list`](@ref singleton_list(::LazySet))

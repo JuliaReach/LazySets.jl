@@ -23,6 +23,9 @@ isbounded(::Rectification{N}) where {N<:Real}
 to_union_of_projections(::Rectification{N}, ::Bool=false) where {N<:Real}
 ```
 
+Inherited from [`LazySet`](@ref):
+* [`singleton_list`](@ref singleton_list(::LazySet))
+
 ## Rectification cache
 
 ```@docs

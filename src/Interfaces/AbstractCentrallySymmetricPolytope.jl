@@ -3,8 +3,7 @@ import Base.isempty
 export AbstractCentrallySymmetricPolytope,
        center,
        an_element,
-       vertices_list,
-       singleton_list
+       vertices_list
 
 """
     AbstractCentrallySymmetricPolytope{N<:Real} <: AbstractPolytope{N}

@@ -45,6 +45,7 @@ support_vector
 ρ(::AbstractVector{N}, ::LazySet{N}) where {N<:Real}
 support_function
 σ
+singleton_list(::LazySet)
 delaunay
 ```
 
@@ -180,7 +181,6 @@ linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 chebyshev_center(::AbstractPolyhedron{N}) where {N<:AbstractFloat}
 an_element(::AbstractPolyhedron{N}) where {N<:Real}
 vertices_list(::AbstractPolyhedron)
-singleton_list(::AbstractPolyhedron)
 ```
 
 Plotting (bounded) polyhedra is available, too:
@@ -213,7 +213,6 @@ This interface defines the following functions:
 ```@docs
 isbounded(::AbstractPolytope)
 isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real}
-singleton_list(::AbstractPolytope{N}) where {N<:Real}
 isempty(::AbstractPolytope)
 ```
 
