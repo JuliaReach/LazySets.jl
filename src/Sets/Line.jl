@@ -212,7 +212,7 @@ Return the support function of a line in a given direction.
 The support function in the given direction.
 """
 ρ(d::AbstractVector, L::Line) = _ρ(d, L)
-ρ(d::AbstractVector{N}, L::Line{N, <:AbstractVector{N}}) where {N<:Real} = _ρ(d, L) # FIXME disambiguation
+ρ(d::AbstractVector{N}, L::Line{N, <:AbstractVector{N}}) where {N<:Real} = _ρ(d, L) # disambiguation
 
 function _ρ(d::AbstractVector, L::Line)
     if isapproxzero(dot(d, L.n))
@@ -315,10 +315,10 @@ Check whether a given point is contained in a line.
 The point ``x`` belongs to the line ``L : p + λ⋅n`` if and only if
 ``x - p`` is proportional to the direction ``n``.
 """
-∈(x::AbstractVector, L::Line) = _in(x, L)
-∈(x::AbstractVector{N}, L::Line{N, VN}) where {N<:Real, VN<:AbstractVector{N}} = _in(x, L)
+∈(x::AbstractVector, L::Line) = __in(x, L)
+∈(x::AbstractVector{N}, L::Line{N, VN}) where {N<:Real, VN<:AbstractVector{N}} = __in(x, L)
 
-function _in(x::AbstractVector, L::Line)
+function __in(x::AbstractVector, L::Line)
     @assert length(x) == dim(L) "expected the point and the line to have the same dimension, " *
                                 "but they are $(length(x)) and $(dim(L)) respectively"
     _isapprox(x, L.p) && return true
