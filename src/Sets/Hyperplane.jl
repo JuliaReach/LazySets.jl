@@ -547,7 +547,7 @@ function Hyperplane(expr::Operation, vars=get_variables(expr); N::Type{<:Real}=F
 
     # get the constant term by expression substitution
     zeroed_vars = Dict(v => zero(N) for v in vars)
-    β = -N(substitute(sexpr, zeroed_vars)
+    β = -N(substitute(sexpr, zeroed_vars).value)
 
     return Hyperplane(coeffs, β)
 end
