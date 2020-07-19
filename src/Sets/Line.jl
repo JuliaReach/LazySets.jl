@@ -156,16 +156,16 @@ Return the list of constraints of a line.
 
 ### Output
 
-A list containing `n-1` half-spaces whose intersection is `L`, where `n` is the
+A list containing `2n-2` half-spaces whose intersection is `L`, where `n` is the
 ambient dimension of `L`.
 """
 function constraints_list(L::Line{N, VN}) where {N, VN}
     p = L.p
-    d = length(p)
-    n = reshape(L.n, 1, d)
-    K = nullspace(n)
+    n = length(p)
+    d = reshape(L.n, 1, n)
+    K = nullspace(d)
     m = size(K, 2)
-    @assert m == d - 1 "expected $(d - 1) normal half-spaces, got $m"
+    @assert m == n - 1 "expected $(n - 1) normal half-spaces, got $m"
 
     out = Vector{HalfSpace{N, VN}}(undef, 2m)
     idx = 1
@@ -211,8 +211,11 @@ Return the support function of a line in a given direction.
 
 The support function in the given direction.
 """
-function ρ(d::AbstractVector, L::Line)
-    if isapproxzero(d, L.n)
+ρ(d::AbstractVector, L::Line) = _ρ(d, L)
+ρ(d::AbstractVector{N}, L::Line{N, <:AbstractVector{N}}) where {N<:Real} = _ρ(d, L) # FIXME disambiguation
+
+function _ρ(d::AbstractVector, L::Line)
+    if isapproxzero(dot(d, L.n))
         return dot(d, L.p)
     else
         return Inf
@@ -220,7 +223,7 @@ function ρ(d::AbstractVector, L::Line)
 end
 
 """
-    σ(d::AbstractVector{N}, L::Line{N}) where {N<:Real}
+    σ(d::AbstractVector, L::Line)
 
 Return the support vector of a line in a given direction.
 
@@ -234,10 +237,10 @@ Return the support vector of a line in a given direction.
 The support vector in the given direction.
 """
 function σ(d::AbstractVector, L::Line)
-    if isapproxzero(d, L.n)
+    if isapproxzero(dot(d, L.n))
         return L.p
     else
-        error("the support vector is undefined because the line is unbounded")
+        throw(ArgumentError("the support vector is undefined because the line is unbounded"))
     end
 end
 
@@ -312,19 +315,16 @@ Check whether a given point is contained in a line.
 The point ``x`` belongs to the line ``L : p + λ⋅n`` if and only if
 ``x - p`` is proportional to the direction ``n``.
 """
-function ∈(x::AbstractVector, L::Line)
-    @assert length(x) == dim(L) "expected the point and the line to have the same dimension, " *
-                                "but they are $(length(x)) and $(dim(L)) respectively"
-    _isapprox(x, L.p) && return true
-    return first(samedir(x - L.p, L.n))
-end
+∈(x::AbstractVector, L::Line) = _in(x, L)
+∈(x::AbstractVector{N}, L::Line{N, VN}) where {N<:Real, VN<:AbstractVector{N}} = _in(x, L)
 
-# FIXME temp required to fix ambiguity errors
-function ∈(x::AbstractVector{N}, L::Line{N, VN}) where {N<:Real, VN<:AbstractVector{N}}
+function _in(x::AbstractVector, L::Line)
     @assert length(x) == dim(L) "expected the point and the line to have the same dimension, " *
                                 "but they are $(length(x)) and $(dim(L)) respectively"
     _isapprox(x, L.p) && return true
-    return first(samedir(x - L.p, L.n))
+
+    # TODO pass "minus" option to samedir
+    return first(samedir(x - L.p, L.n)) || first(samedir(x - L.p, -L.n))
 end
 
 """

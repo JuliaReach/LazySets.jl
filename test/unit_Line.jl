@@ -14,6 +14,14 @@ for N in [Float64, Rational{Int}, Float32]
     # dimension
     @test dim(l1) == 2
 
+    # support function
+    @test ρ(N[0, 1], l1) == N(1)
+    @test ρ(N[1, 0], l1) == N(Inf)
+
+    # support vector
+    @test σ(N[0, 1], l1) == N[0, 1]
+    @test_throws ArgumentError σ(N[1, 0], l1) == N(Inf)
+
     # boundedness
     @test !isbounded(l1)
 
