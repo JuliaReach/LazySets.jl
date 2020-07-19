@@ -958,6 +958,76 @@ end
 
 
 """
+    ⊆(X::CartesianProduct{N}, Y::CartesianProduct{N}, witness::Bool=false;
+      check_block_equality::Bool=true) where {N<:Real}
+
+Check whether a Cartesian product of two convex sets is contained in another
+Cartesian product of two convex sets, and otherwise optionally compute a
+witness.
+
+### Input
+
+- `X`       -- Cartesian product of two convex sets
+- `Y`       -- Cartesian product of two convex sets
+- `witness` -- (optional, default: `false`) compute a witness if activated
+- `check_block_equality` -- (optional, default: `true`) flag for checking that
+               the block structure of the two sets is identical
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``X ⊆ Y``
+* If `witness` option is activated:
+  * `(true, [])` iff ``X ⊆ Y``
+  * `(false, v)` iff ``X \\not\\subseteq Y`` and
+    ``v ∈ X \\setminus Y``
+
+### Notes
+
+This algorithm requires that the two Cartesian products share the same block
+structure.
+Depending on the value of `check_block_equality`, we check this property.
+
+### Algorithm
+
+We check for inclusion for each block of the Cartesian products.
+
+For witness production, we obtain a witness in one of the blocks.
+We then construct a high-dimensional witness by obtaining any point in the other
+blocks (using `an_element`) and concatenating these points.
+"""
+function ⊆(X::CartesianProduct{N}, Y::CartesianProduct{N}, witness::Bool=false;
+           check_block_equality::Bool=true) where {N<:Real}
+    n1 = dim(X.X)
+    n2 = dim(X.Y)
+    if check_block_equality && (n1 != dim(Y.X) || n2 != dim(Y.Y))
+        throw(ArgumentError("this inclusion check requires Cartesian products" *
+                            "with the same block structure"))
+    end
+
+    # check first block
+    result = ⊆(X.X, Y.X, witness)
+    if !witness && !result
+        return false
+    elseif witness && !result[1]
+        # construct a witness
+        w = vcat(result[2], an_element(X.Y))
+        return (false, w)
+    end
+
+    # check second block
+    result = ⊆(X.Y, Y.Y, witness)
+    if !witness && !result
+        return false
+    elseif witness && !result[1]
+        # construct a witness
+        w = vcat(an_element(X.X), result[2])
+        return (false, w)
+    end
+
+    return witness ? (true, N[]) : true
+end
+
+"""
     ⊆(X::CartesianProductArray{N}, Y::CartesianProductArray{N},
       witness::Bool=false; check_block_equality::Bool=true
      ) where {N<:Real}

@@ -122,6 +122,7 @@ pontryagin_difference
 ⊆(::LazySet{N}, ::Universe{N}, ::Bool=false) where {N<:Real}
 ⊆(::Universe{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 ⊆(::LazySet{N}, ::Complement{N}, ::Bool=false) where {N<:Real}
+⊆(::CartesianProduct{N}, ::CartesianProduct{N}, ::Bool=false) where {N<:Real}
 ⊆(::CartesianProductArray{N}, ::CartesianProductArray{N}, ::Bool=false) where {N<:Real}
 ```
 
