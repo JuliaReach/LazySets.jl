@@ -10,6 +10,7 @@ using LazySets, LazySets.Arrays, Requires, LinearAlgebra, SparseArrays,
       MathProgBase
 using LazySets: _isapprox, _leq, _rtol, _normal_Vector, isapproxzero,
                 default_lp_solver
+import LazySets: distance
 using ..Assertions: @assert, activate_assertions
 # activate assertions by default
 activate_assertions(Approximations)

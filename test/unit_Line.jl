@@ -34,9 +34,6 @@ for N in [Float64, Rational{Int}, Float32]
     # an_element and membership
     an_element(l1) ∈ l1
 
-    # constrained dimensions
-    @test constrained_dimensions(l1) == [2]
-
     # constraints_list
     if N <: AbstractFloat
         @test ispermutation(constraints_list(l2),

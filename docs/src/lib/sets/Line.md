@@ -16,7 +16,6 @@ rand(::Type{Line})
 isbounded(::Line)
 isuniversal(::Line; ::Bool=false)
 isempty(::Line)
-constrained_dimensions(::Line)
 constraints_list(::Line{N, VN}) where {N, VN}
 translate(::Line, ::AbstractVector)
 translate!(::Line, ::AbstractVector)
