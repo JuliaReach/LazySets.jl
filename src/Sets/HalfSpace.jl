@@ -628,8 +628,8 @@ function HalfSpace(expr::Operation, vars=get_variables(expr); N::Type{<:Real}=Fl
     coeffs = [N(α.value) for α in gradient(sexpr, collect(vars))]
 
     # get the constant term by expression substitution
-    dvars = Dict(to_symbolic(vi) => zero(N) for vi in vars)
-    β = -N(ModelingToolkit.SymbolicUtils.substitute(to_symbolic(sexpr), dvars, fold=true))
+    zeroed_vars = Dict(v => zero(N) for v in vars)
+    β = -N(substitute(sexpr, zeroed_vars)
 
     return HalfSpace(coeffs, β)
 end
