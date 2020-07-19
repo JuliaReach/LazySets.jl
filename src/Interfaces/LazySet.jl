@@ -24,7 +24,8 @@ export LazySet,
        isequivalent,
        isconvextype,
        area,
-       surface
+       surface,
+       singleton_list
 
 """
     LazySet{N}
@@ -981,6 +982,28 @@ function _area_polygon(v::Vector{VN}) where {N, VN<:AbstractVector{N}}
         @inbounds res += v[i][1] * v[i+1][2] - v[i+1][1] * v[i][2]
     end
     return abs(res/2)
+end
+
+"""
+    singleton_list(P::LazySet)
+
+Return the vertices of a polytopic set as a list of singletons.
+
+### Input
+
+- `P`                 -- polytopic set
+
+### Output
+
+The list of vertices of `P`, as `Singleton`.
+
+### Notes
+
+This function relies on `vertices_list`, which raises an error if the set is
+not polytopic (e.g., unbounded).
+"""
+function singleton_list(P::LazySet)
+    return [Singleton(x) for x in vertices_list(P)]
 end
 
 # =========================
