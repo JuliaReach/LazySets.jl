@@ -45,6 +45,7 @@ support_vector
 ρ(::AbstractVector{N}, ::LazySet{N}) where {N<:Real}
 support_function
 σ
+delaunay
 ```
 
 ### Other globally defined set functions
