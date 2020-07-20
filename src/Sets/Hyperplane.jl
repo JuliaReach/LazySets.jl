@@ -546,8 +546,8 @@ function Hyperplane(expr::Operation, vars=get_variables(expr); N::Type{<:Real}=F
     coeffs = [N(α.value) for α in gradient(sexpr, collect(vars))]
 
     # get the constant term by expression substitution
-    dvars = Dict(to_symbolic(vi) => zero(N) for vi in vars)
-    β = -N(ModelingToolkit.SymbolicUtils.substitute(to_symbolic(sexpr), dvars, fold=true))
+    zeroed_vars = Dict(v => zero(N) for v in vars)
+    β = -N(ModelingToolkit.substitute(sexpr, zeroed_vars).value)
 
     return Hyperplane(coeffs, β)
 end
