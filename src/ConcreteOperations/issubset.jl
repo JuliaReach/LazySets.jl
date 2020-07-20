@@ -985,7 +985,9 @@ witness.
 
 This algorithm requires that the two Cartesian products share the same block
 structure.
-Depending on the value of `check_block_equality`, we check this property.
+If `check_block_equality` is activated, we check this property and, if it does
+not hold, we use a fallback implementation based on conversion to constraint
+representation (assuming that the sets are polyhedral).
 
 ### Algorithm
 
@@ -1000,8 +1002,7 @@ function ⊆(X::CartesianProduct{N}, Y::CartesianProduct{N}, witness::Bool=false
     n1 = dim(X.X)
     n2 = dim(X.Y)
     if check_block_equality && (n1 != dim(Y.X) || n2 != dim(Y.Y))
-        throw(ArgumentError("this inclusion check requires Cartesian products" *
-                            "with the same block structure"))
+        return invoke(⊆, Tuple{LazySet{N}, LazySet{N}, Bool}, X, Y, witness)
     end
 
     # check first block
@@ -1056,7 +1057,9 @@ compute a witness.
 
 This algorithm requires that the two Cartesian products share the same block
 structure.
-Depending on the value of `check_block_equality`, we check this property.
+If `check_block_equality` is activated, we check this property and, if it does
+not hold, we use a fallback implementation based on conversion to constraint
+representation (assuming that the sets are polyhedral).
 
 ### Algorithm
 
@@ -1074,8 +1077,7 @@ function ⊆(X::CartesianProductArray{N},
     aX = array(X)
     aY = array(Y)
     if check_block_equality && !same_block_structure(aX, aY)
-        throw(ArgumentError("this inclusion check requires Cartesian products" *
-                            "with the same block structure"))
+        return invoke(⊆, Tuple{LazySet{N}, LazySet{N}, Bool}, X, Y, witness)
     end
 
     for i in 1:length(aX)
