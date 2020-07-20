@@ -241,43 +241,6 @@ function convert(::Type{HPOLYGON}, P::HPolytope{N, VN};
     return H
 end
 
-"""
-    convert(::Type{Zonotope}, H::AbstractHyperrectangle)
-
-Converts a hyperrectangular set to a zonotope.
-
-### Input
-
-- `Zonotope` -- type, used for dispatch
-- `H`        -- hyperrectangular set
-
-### Output
-
-A zonotope.
-"""
-function convert(::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
-    if isflat(H)
-        r = radius_hyperrectangle(H)
-        n = length(r)
-
-        nzgen = 0
-        Gnz = Vector{N}()
-        sizehint!(Gnz, n * n)
-        @inbounds for (i, ri) in enumerate(r)
-            if ri != zero(N)
-                col = zeros(N, n)
-                col[i] = ri
-                append!(Gnz, col)
-                nzgen += 1
-            end
-        end
-        G = reshape(Gnz, n, nzgen)
-    else
-        G = genmat(H)
-    end
-    return Zonotope(center(H), G)
-end
-
 function convert(::Type{Zonotope}, S::Singleton{N, VN}) where {N, VN<:AbstractVector{N}}
     MT = LazySets.Arrays._matrix_type(VN)
     zero_genmat = MT(undef, dim(S), 0)
