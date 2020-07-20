@@ -1534,7 +1534,7 @@ function is_intersection_empty(::Hyperplane, ::EmptySet)
     return true
 end
 
-function is_intersection_empty(::Hyperplane, ::EmptySet)
+function is_intersection_empty(::Line2D, ::EmptySet)
     return true
 end
 
