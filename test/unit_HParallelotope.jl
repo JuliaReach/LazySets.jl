@@ -22,4 +22,17 @@ for N in [Float32, Float64, Rational{Int}]
                                   HalfSpace(-D[1, :], c[4]),
                                   HalfSpace(-D[2, :], c[5]),
                                   HalfSpace(-D[3, :], c[6])]
+
+    P = HParallelotope([1 0; 0 1.], [1, 1, 1, 1.])
+
+    # test center
+    @test center(P) == N[0, 0]
+
+    # test vertices functions
+    @test base_vertex(P) == N[-1, -1]
+    @test extremal_vertices(P) == [N[1, -1], N[-1, 1]]
+
+    # test generators getters
+    @test genmat(P) == N[1 0; 0 1]
+    @test collect(generators(P)) == N[1 0; 0 1]
 end
