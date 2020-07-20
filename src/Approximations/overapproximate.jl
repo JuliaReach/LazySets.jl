@@ -1513,6 +1513,24 @@ function overapproximate(am::AbstractAffineMap{N, <:AbstractHyperrectangle{N}},
     return Hyperrectangle(center_MXv, radius_MX)
 end
 
+function overapproximate(P::Union{VPolytope, VPolygon},
+                         ::Type{<:Hyperrectangle}) where {N<:Real}
+    n = dim(P)
+    vlist = vertices_list(P)
+    low = copy(vlist[1])
+    high = copy(vlist[1])
+    @inbounds for v in @view vlist[2:length(vlist)]
+        for i in 1:n
+            if v[i] > high[i]
+                high[i] = v[i]
+            elseif v[i] < low[i]
+                low[i] = v[i]
+            end
+        end
+    end
+    return Hyperrectangle(low=low, high=high)
+end
+
 """
     overapproximate(X::LazySet{N}, ::Type{<:Zonotope},
                     dir::AbstractDirections{N};
