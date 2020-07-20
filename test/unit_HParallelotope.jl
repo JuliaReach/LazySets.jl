@@ -34,5 +34,8 @@ for N in [Float32, Float64, Rational{Int}]
 
     # test generators getters
     @test genmat(P) == N[1 0; 0 1]
+end
+
+for N in [Float64]
     @test collect(generators(P)) == N[1 0; 0 1]
 end
