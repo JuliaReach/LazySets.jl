@@ -9,7 +9,7 @@ for N in [Float64, Rational{Int}, Float32]
     l2 = Line(N[0, 1], N[1, 0]) # point and direction
 
     # the lines are the same modulo the sign of the normal vector
-    @test l1.p ≈ l2.p && l1.n ≈ -l2.n
+    @test l1.p ≈ l2.p && l1.d ≈ -l2.d
 
     # dimension
     @test dim(l1) == 2
