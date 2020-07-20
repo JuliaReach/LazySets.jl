@@ -23,7 +23,7 @@ for N in [Float32, Float64, Rational{Int}]
                                   HalfSpace(-D[2, :], c[5]),
                                   HalfSpace(-D[3, :], c[6])]
 
-    P = HParallelotope([1 0; 0 1.], [1, 1, 1, 1.])
+    P = HParallelotope(N[1 0; 0 1], N[1, 1, 1, 1])
 
     # test center
     @test center(P) == N[0, 0]
@@ -37,5 +37,6 @@ for N in [Float32, Float64, Rational{Int}]
 end
 
 for N in [Float64]
-    @test collect(generators(P)) == N[1 0; 0 1]
+    P = HParallelotope(N[1 0; 0 1], N[1, 1, 1, 1])
+    @test collect(generators(P)) == [N[1, 0], N[0, 1]]
 end
