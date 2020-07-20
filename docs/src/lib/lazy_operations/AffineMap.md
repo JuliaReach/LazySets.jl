@@ -19,3 +19,6 @@ Inherited from [`AbstractAffineMap`](@ref):
 * [`vertices_list`](@ref vertices_list(::AbstractAffineMap{N}) where {N<:Real})
 * [`constraints_list`](@ref constraints_list(::AbstractAffineMap{N}) where {N<:Real})
 * [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractAffineMap{N}) where {N<:Real})
+
+Inherited from [`LazySet`](@ref):
+* [`singleton_list`](@ref singleton_list(::LazySet))

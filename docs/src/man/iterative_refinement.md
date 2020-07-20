@@ -161,7 +161,7 @@ point epsilon in the given numerical precision.
 ## Algorithm
 
 Having presented the individual steps, we give the pseudocode of the iterative
-refinement algorithm, see `approximate(S, ε)`.
+refinement algorithm, see `_approximate(S, ε)`.
 
 The algorithm consists of the following steps:
 
@@ -187,7 +187,7 @@ As a final example consider the iterative refinement of the ball `b` for
 different values of the approximation threshold `ε`.
 
 ```@example example_iterative_refinement
-import LazySets.Approximations:overapproximate, approximate
+import LazySets.Approximations:overapproximate, _approximate
 
 p0 = plot(b, 1e-6, aspectratio=1)
 p1 = plot!(p0, overapproximate(b, 1.), alpha=0.4, aspectratio=1)
@@ -205,7 +205,7 @@ Meanwhile, the number of constraints of the polygonal overapproximation
 increases, in this example by a power of 2 when the error is divided by a factor 10.
 
 ```@example example_iterative_refinement
-h = ε ->  length(approximate(b, ε).constraints)
+h = ε ->  length(_approximate(b, ε).constraints)
 h(1.), h(0.1), h(0.01)
 ```
 

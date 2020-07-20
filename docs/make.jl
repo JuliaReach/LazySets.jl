@@ -1,6 +1,6 @@
 ENV["GKSwstype"] = "100"  # set 'GR environment' to 'no output' (for Travis CI)
 using Documenter, LazySets
-import Polyhedra, Optim, Expokit, TaylorModels, Distributions
+import Polyhedra, Optim, Expokit, TaylorModels, Distributions, MiniQhull
 
 include("init.jl")
 
