@@ -6,10 +6,7 @@ export PolynomialZonotope, dim, σ,
        minkowski_sum
 
 """
-    PolynomialZonotope{N, VTC<:AbstractVector{N},
-                       VMTE<:AbstractVector{<:AbstractMatrix{N}},
-                       VMTF<:AbstractVector{<:AbstractMatrix{N}},
-                       MTG<:AbstractMatrix{N}}
+    PolynomialZonotope{N, VT, VMT, MT}
 
 Type that represents a polynomial zonotope.
 
@@ -71,26 +68,19 @@ the polynomial order ``η``.
     polynomialization and non-convex sets*, Hybrid Systems: Computation and
     Control, 2013, pp. 173–182.
 """
-struct PolynomialZonotope{N, VTC<:AbstractVector{N},
-                          VMTE<:AbstractVector{<:AbstractMatrix{N}},
-                          VMTF<:AbstractVector{<:AbstractMatrix{N}},
-                          MTG<:AbstractMatrix{N}}
-    c::VTC
-    E::VMTE
-    F::VMTF
-    G::MTG
+struct PolynomialZonotope{N, VT, VMT, MT}
+    c::VT
+    E::VMT
+    F::VMT
+    G::MT
 
     # default constructor with dimension check
-    function PolynomialZonotope(c::VTC, E::VMTE, F::VMTF, G::MTG) where {
-            N, VTC<:AbstractVector{N},
-            VMTE<:AbstractVector{<:AbstractMatrix{N}},
-            VMTF<:AbstractVector{<:AbstractMatrix{N}},
-            MTG<:AbstractMatrix{N}}
-
+    function PolynomialZonotope(c::VT, E::VMT, F::VMT, G::MT) where {VT, VMT, MT}
         # check polynomial order
         @assert length(E) == 1 + length(F)
+        N = typeof(c[1])
 
-        return new{N, VTC, VMTE, VMTF, MTG}(c, E, F, G)
+        return new{N, VT, VMT, MT}(c, E, F, G)
     end
 end
 
