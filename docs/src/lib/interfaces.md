@@ -194,7 +194,8 @@ plot_recipe(::AbstractPolyhedron{N}, ::N=zero(N)) where {N<:Real}
 * [Half-space (HalfSpace)](@ref def_HalfSpace)
 * [Polyhedron in constraint representation (HPolyhedron)](@ref def_HPolyhedron)
 * [Hyperplane](@ref def_Hyperplane)
-* [Line2D](@ref def_Line)
+* [Line2D](@ref def_Line2D)
+* [Line](@ref def_Line)
 * [Universe](@ref def_Universe)
 
 ## [Polytopes (AbstractPolytope)](@id def_AbstractPolytope)

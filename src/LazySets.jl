@@ -6,7 +6,7 @@ module LazySets
 using GLPKMathProgInterface, LinearAlgebra, MathProgBase, Reexport, Requires,
       SparseArrays
 using LinearAlgebra: checksquare
-import LinearAlgebra: norm, ×, normalize
+import LinearAlgebra: norm, ×, normalize, normalize!
 import Random
 using Random: AbstractRNG, GLOBAL_RNG, SamplerType, shuffle
 import InteractiveUtils: subtypes
@@ -76,6 +76,7 @@ include("Sets/Hyperplane.jl")
 include("Sets/Hyperrectangle.jl")
 include("Sets/Interval.jl")
 include("Sets/Line2D.jl")
+include("Sets/Line.jl")
 include("Sets/LineSegment.jl")
 include("Sets/Singleton.jl")
 include("Sets/Universe.jl")

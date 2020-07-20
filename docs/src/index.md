@@ -203,6 +203,7 @@ Pages = [
     "lib/sets/HPolyhedron.md",
     "lib/sets/Hyperplane.md",
     "lib/sets/Line2D.md",
+    "lib/sets/Line.md",
     "lib/sets/Universe.md",
     "lib/sets/HPolytope.md",
     "lib/sets/VPolytope.md",

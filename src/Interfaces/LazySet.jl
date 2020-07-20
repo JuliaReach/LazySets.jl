@@ -82,7 +82,7 @@ If we only consider *concrete* subtypes, then:
 julia> concrete_subtypes = subtypes(LazySet, true);
 
 julia> length(concrete_subtypes)
-39
+40
 
 julia> println.(concrete_subtypes);
 AffineMap
@@ -113,6 +113,7 @@ Interval
 Line2D
 LineSegment
 LinearMap
+Line{N,VN} where VN<:AbstractArray{N,1} where N<:Real
 MinkowskiSum
 MinkowskiSumArray
 ResetMap
