@@ -2,7 +2,6 @@ eval(quote
     using .ModelingToolkit: get_variables,
                             gradient,
                             simplify,
-                            substitute,
                             Operation
 
 end)

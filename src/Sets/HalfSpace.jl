@@ -629,7 +629,7 @@ function HalfSpace(expr::Operation, vars=get_variables(expr); N::Type{<:Real}=Fl
 
     # get the constant term by expression substitution
     zeroed_vars = Dict(v => zero(N) for v in vars)
-    β = -N(substitute(sexpr, zeroed_vars).value)
+    β = -N(ModelingToolkit.substitute(sexpr, zeroed_vars).value)
 
     return HalfSpace(coeffs, β)
 end
