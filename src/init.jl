@@ -7,6 +7,7 @@ function __init__()
     @require ModelingToolkit = "961ee093-0014-501f-94e3-6117800e7a78" include("Initialization/init_ModelingToolkit.jl")
     @require Optim = "429524aa-4258-5aef-a3af-852621145aeb" include("Initialization/init_Optim.jl")
     @require Polyhedra = "67491407-f73d-577b-9b50-8179a7c68029" include("Initialization/init_Polyhedra.jl")
+    @require StaticArrays = "90137ffa-7385-5640-81b9-e52037218182" include("Initialization/init_StaticArrays.jl")
 end
 
 """

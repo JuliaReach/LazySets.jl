@@ -111,6 +111,19 @@ for N in [Float64, Rational{Int}, Float32]
         [Hyperrectangle(N[2.5, 3], N[0.5, 1]),
          Hyperrectangle(N[3.5, 3], N[0.5, 1])])
 
+    # split along the second generator if we see the BallInf as a zonotope
+    B2 = BallInf(N[1, 1], N(1))
+    Z2 = split(B2, 2)
+    @test Z2[1] == Zonotope(N[1, 0.5], N[1 0; 0 0.5])
+    @test Z2[2] == Zonotope(N[1, 1.5], N[1 0; 0 0.5])
+
+    # repaeated split method if we see the BallInf as a zonotope
+    Z4 = split(B2, [1, 2], [1, 1])
+    @test Z4[1] == Zonotope(N[0.5, 0.5], N[0.5 0; 0 0.5])
+    @test Z4[2] == Zonotope(N[0.5, 1.5], N[0.5 0; 0 0.5])
+    @test Z4[3] == Zonotope(N[1.5, 0.5], N[0.5 0; 0 0.5])
+    @test Z4[4] == Zonotope(N[1.5, 1.5], N[0.5 0; 0 0.5])
+
     # translation
     b = BallInf(N[1, 2], N(1))
     @test translate(b, N[1, 2]) == BallInf(N[2, 4], N(1))

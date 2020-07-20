@@ -1,11 +1,12 @@
-import Base: ∈
+import Base: ∈, split
 
 export AbstractZonotope,
        genmat,
        generators,
        ngens,
        order,
-       togrep
+       togrep,
+       split!
 
 """
     AbstractZonotope{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
@@ -545,4 +546,108 @@ function constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true
         push!(constraints, LinearConstraint(c⁻, d⁻))
     end
     return constraints
+end
+
+"""
+    split(Z::AbstractZonotope, j::Int)
+
+Return two zonotopes obtained by splitting the given zonotope.
+
+### Input
+
+- `Z` -- zonotope
+- `j` -- index of the generator to be split
+
+### Output
+
+The zonotope obtained by splitting `Z` into two zonotopes such that
+their union is `Z` and their intersection is possibly non-empty.
+
+### Algorithm
+
+This function implements [Prop. 3, 1], that we state next. The zonotope
+``Z = ⟨c, g^{(1, …, p)}⟩`` is split into:
+
+```math
+Z₁ = ⟨c - \\frac{1}{2}g^{(j)}, (g^{(1, …,j-1)}, \\frac{1}{2}g^{(j)}, g^{(j+1, …, p)})⟩ \\\\
+Z₂ = ⟨c + \\frac{1}{2}g^{(j)}, (g^{(1, …,j-1)}, \\frac{1}{2}g^{(j)}, g^{(j+1, …, p)})⟩,
+```
+such that ``Z₁ ∪ Z₂ = Z`` and ``Z₁ ∩ Z₂ = Z^*``, where
+
+```math
+Z^* = ⟨c, (g^{(1,…,j-1)}, g^{(j+1,…, p)})⟩.
+```
+
+[1] *Althoff, M., Stursberg, O., & Buss, M. (2008). Reachability analysis of
+nonlinear systems with uncertain parameters using conservative linearization.
+In Proc. of the 47th IEEE Conference on Decision and Control.*
+"""
+function split(Z::AbstractZonotope, j::Int)
+    return _split(convert(Zonotope, Z), j)
+end
+
+"""
+    split(Z::AbstractZonotope, gens::AbstractVector{Int}, nparts::AbstractVector{Int})
+
+Split a zonotope along the given generators into a vector of zonotopes.
+
+### Input
+
+- `Z`    -- zonotope
+- `gens` -- vector of indices of the generators to be split
+- `n`    -- vector of integers describing the number of partitions in the
+            corresponding generator
+
+### Output
+
+The zonotopes obtained by splitting `Z` into `2^{n_i}` zonotopes for each
+generator `i` such that their union is `Z` and their intersection is
+possibly non-empty.
+
+### Examples
+
+Splitting of a two-dimensional zonotope along its first generator:
+
+```jldoctest zonotope_label
+julia> Z = Zonotope([1.0, 0.0], [0.1 0.0; 0.0 0.1])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
+
+julia> split(Z, [1], [1])
+2-element Array{Zonotope{Float64,Array{Float64,1},Array{Float64,2}},1}:
+ Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.95, 0.0], [0.05 0.0; 0.0 0.1])
+ Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.05, 0.0], [0.05 0.0; 0.0 0.1])
+```
+Here, the first vector in the arguments corresponds to the zonotope's
+generator to be split, and the second vector corresponds to the exponent of
+`2^n` parts that the zonotope will be split into along the corresponding generator.
+
+Splitting of a two-dimensional zonotope along its generators:
+
+```
+julia> Z = Zonotope([1.0, 0.0], [0.1 0.0; 0.0 0.1])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
+
+julia> split(Z, [1, 2], [2, 2])
+16-element Array{Zonotope{Float64,Array{Float64,1},Array{Float64,2}},1}:
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.925, -0.075], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.925, -0.025], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.925, 0.025], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.925, 0.075], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.975, -0.075], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.975, -0.025], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.975, 0.025], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.975, 0.075], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.025, -0.075], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.025, -0.025], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.025, 0.025], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.025, 0.075], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, -0.075], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, -0.025], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, 0.025], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, 0.075], [0.025 0.0; 0.0 0.025])
+```
+Here the zonotope is split along both of its generators, each time into four parts.
+"""
+function split(Z::AbstractZonotope, gens::AbstractVector{Int}, nparts::AbstractVector{Int})
+    return _split(convert(Zonotope, Z), gens, nparts)
 end

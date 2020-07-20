@@ -14,7 +14,8 @@ scale(::Real, ::Zonotope)
 ngens(::Zonotope)
 togrep(::Zonotope)
 reduce_order(::Zonotope, ::Union{Integer, Rational})
-split(::Zonotope, ::Int)
+split(::AbstractZonotope, ::Int)
+split(::AbstractZonotope, ::AbstractVector{Int}, ::AbstractVector{Int})
 remove_zero_generators(::Zonotope)
 ```
 
