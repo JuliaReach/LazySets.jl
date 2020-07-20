@@ -14,15 +14,15 @@ export Line,
 Type that represents a line in the form
 
 ```math
-    \\{y ∈ \\mathbb{R}^n: y = p + λn, λ ∈ \\mathbb{R}\\}
+    \\{y ∈ \\mathbb{R}^n: y = p + λd, λ ∈ \\mathbb{R}\\}
 ```
-where ``p`` is a point on the line and ``n`` is its direction vector (not necessarily
+where ``p`` is a point on the line and ``d`` is its direction vector (not necessarily
 normalized).
 
 ### Fields
 
 - `p` -- point on the line
-- `n` -- direction
+- `d` -- direction
 
 ### Examples
 
@@ -36,14 +36,14 @@ Line{Float64,Array{Float64,1}}([-1.0, 2.0, 3.0], [3.0, 0.0, -1.0])
 """
 struct Line{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
     p::VN
-    n::VN
+    d::VN
 
     # default constructor with length constraint
-    function Line(p::VN, n::VN; check_direction::Bool=true) where {N, VN<:AbstractVector{N}}
+    function Line(p::VN, d::VN; check_direction::Bool=true) where {N, VN<:AbstractVector{N}}
         if check_direction
-            @assert !iszero(n) "a line needs a non-zero direction vector"
+            @assert !iszero(d) "a line needs a non-zero direction vector"
         end
-        return new{N, VN}(p, n)
+        return new{N, VN}(p, d)
     end
 end
 
@@ -77,8 +77,8 @@ function Line(; from::AbstractVector, to::AbstractVector, normalize=true)
     if normalize && iszero(d)
         throw(ArgumentError("points `$from` and `$to` should be distinct"))
     end
-    n = normalize ? d / dot(d, d) : d
-    return Line(from, n)
+    d_n = normalize ? d / dot(d, d) : d
+    return Line(from, d_n)
 end
 
 """
@@ -100,7 +100,7 @@ The direction is not necessarily normalized.
 See [`normalize(::Line, ::Real)`](@ref) / [`normalize!(::Line, ::Real)`](@ref)
 for such operation.
 """
-direction(L::Line) = L.n
+direction(L::Line) = L.d
 
 """
     normalize!(L::Line, p::Real=2.0)
@@ -117,7 +117,7 @@ Normalize the direction of a line storing the result in `L`.
 A line whose direction has unit norm w.r.t the given `p`-norm.
 """
 function normalize!(L::Line, p::Real=2.0)
-    normalize!(L.n, p)
+    normalize!(L.d, p)
     return L
 end
 
@@ -162,7 +162,7 @@ ambient dimension of `L`.
 function constraints_list(L::Line{N, VN}) where {N, VN}
     p = L.p
     n = length(p)
-    d = reshape(L.n, 1, n)
+    d = reshape(L.d, 1, n)
     K = nullspace(d)
     m = size(K, 2)
     @assert m == n - 1 "expected $(n - 1) normal half-spaces, got $m"
@@ -215,7 +215,7 @@ The support function in the given direction.
 ρ(d::AbstractVector{N}, L::Line{N, <:AbstractVector{N}}) where {N<:Real} = _ρ(d, L) # disambiguation
 
 function _ρ(d::AbstractVector, L::Line)
-    if isapproxzero(dot(d, L.n))
+    if isapproxzero(dot(d, L.d))
         return dot(d, L.p)
     else
         return Inf
@@ -237,7 +237,7 @@ Return the support vector of a line in a given direction.
 The support vector in the given direction.
 """
 function σ(d::AbstractVector, L::Line)
-    if isapproxzero(dot(d, L.n))
+    if isapproxzero(dot(d, L.d))
         return L.p
     else
         throw(ArgumentError("the support vector is undefined because the line is unbounded"))
@@ -312,8 +312,8 @@ Check whether a given point is contained in a line.
 
 ### Algorithm
 
-The point ``x`` belongs to the line ``L : p + λ⋅n`` if and only if
-``x - p`` is proportional to the direction ``n``.
+The point ``x`` belongs to the line ``L : p + λd`` if and only if
+``x - p`` is proportional to the direction ``d``.
 """
 ∈(x::AbstractVector, L::Line) = __in(x, L)
 ∈(x::AbstractVector{N}, L::Line{N, VN}) where {N<:Real, VN<:AbstractVector{N}} = __in(x, L)
@@ -324,7 +324,7 @@ function __in(x::AbstractVector, L::Line)
     _isapprox(x, L.p) && return true
 
     # TODO pass "minus" option to samedir
-    return first(samedir(x - L.p, L.n)) || first(samedir(x - L.p, -L.n))
+    return first(samedir(x - L.p, L.d)) || first(samedir(x - L.p, -L.d))
 end
 
 """
@@ -356,12 +356,12 @@ function rand(::Type{Line};
               seed::Union{Int, Nothing}=nothing)
 
     rng = reseed(rng, seed)
-    n = randn(rng, N, dim)
-    while iszero(n)
-        n = randn(rng, N, dim)
+    d = randn(rng, N, dim)
+    while iszero(d)
+        d = randn(rng, N, dim)
     end
     p = randn(rng, N, dim)
-    return Line(p, n)
+    return Line(p, d)
 end
 
 """
@@ -441,7 +441,7 @@ Compute the distance between point `x` and the line with respect to the given
 A scalar representing the distance between `x` and the line `L`.
 """
 function distance(x::AbstractVector, L::Line, p::Real=2.0)
-    n = L.n  # direction of the line
-    t = dot(x - L.p, n) / dot(n, n)
-    return distance(x, L.p + t*n, p)
+    d = L.d  # direction of the line
+    t = dot(x - L.p, d) / dot(d, d)
+    return distance(x, L.p + t*d, p)
 end
