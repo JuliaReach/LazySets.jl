@@ -73,6 +73,19 @@ for N in [Float64, Rational{Int}, Float32]
 
     # translation
     @test translate(E, N[1, 2]) == E
+
+    # disjointness
+    for X in [B, Singleton(N[0, 0])]
+        @test isdisjoint(E, X) && isdisjoint(X, E)
+    end
+end
+
+# tests that only work with Float64 and Float32
+for N in [Float64, Float32]
+    B = Ball2(N[0, 0], N(1))
+    E = EmptySet{N}(2)
+
+    @test isdisjoint(E, B) && isdisjoint(B, E)
 end
 
 # default Float64 constructor
