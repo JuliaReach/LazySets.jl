@@ -754,7 +754,7 @@ end
         witness::Bool=false
        ) where {N<:Real}
     if !witness
-        return -ρ(-hs.a, X) > hs.b
+        return !_leq(-ρ(-hs.a, X), hs.b)
     end
 
     # for witness production, we compute the support vector instead
