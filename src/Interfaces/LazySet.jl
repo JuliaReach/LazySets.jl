@@ -25,7 +25,8 @@ export LazySet,
        isconvextype,
        area,
        surface,
-       singleton_list
+       singleton_list,
+       concretize
 
 """
     LazySet{N}
@@ -1005,6 +1006,28 @@ not polytopic (e.g., unbounded).
 """
 function singleton_list(P::LazySet)
     return [Singleton(x) for x in vertices_list(P)]
+end
+
+"""
+    concretize(X::LazySet)
+
+Construct a concrete representation of a (possibly lazy) set.
+
+### Input
+
+- `X` -- set
+
+### Output
+
+A concrete representation of `X` (as far as possible).
+
+### Notes
+
+Since not every lazy set has a concrete set representation in this library, the
+result may be partially lazy.
+"""
+function concretize(X::LazySet)
+    return X
 end
 
 # =========================

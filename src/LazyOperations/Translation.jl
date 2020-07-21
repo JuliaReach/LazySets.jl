@@ -365,3 +365,7 @@ function linear_map(M::AbstractMatrix{N}, tr::Translation{N}) where {N<:Real}
 
     return translate(linear_map(M, tr.X), M * tr.v)
 end
+
+function concretize(tr::Translation)
+    return translate(concretize(tr.X), tr.v)
+end

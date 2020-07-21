@@ -29,6 +29,9 @@ for N in [Float64, Rational{Int}, Float32]
     # isempty
     @test !isempty(ch)
 
+    # concretize
+    @test concretize(ch) == convex_hull(ch.X, ch.Y)
+
     # ===============
     # ConvexHullArray
     # ===============
@@ -99,6 +102,10 @@ for N in [Float64, Rational{Int}, Float32]
 
     Δbox = overapproximate(Δ, Hyperrectangle)
     @test Δ ⊆ Δbox && !(Δbox ⊆ Δ)
+
+    # concretize
+    cha2 = ConvexHullArray([b1, b2])
+    @test concretize(cha2) == convex_hull(b1, b2)
 
     # ================
     # common functions

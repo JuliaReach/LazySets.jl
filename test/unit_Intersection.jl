@@ -29,6 +29,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test isempty_known(I)
     @test !isempty(I)
 
+    # concretize
+    @test concretize(I) == intersection(B, H)
+
     # =================
     # IntersectionArray
     # =================
@@ -66,7 +69,8 @@ for N in [Float64, Rational{Int}, Float32]
     # constructor with size hint and type
     IntersectionArray(10, N)
 
-    # constraints_list for polytopic intersection
+    # concretize
+    @test concretize(IA) == intersection(B, H)
 
     # ================
     # common functions

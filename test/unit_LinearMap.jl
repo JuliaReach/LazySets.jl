@@ -96,6 +96,9 @@ for N in [Float64, Rational{Int}, Float32]
     M = N[2 3; 1 2]
     L = LinearMap(M, b)
     V = linear_map(M, LinearMap(M, b))
+
+    # concretize
+    @test concretize(L) == linear_map(M, b)
 end
 
 # tests that only work with Float64
