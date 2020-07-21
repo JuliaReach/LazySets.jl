@@ -43,4 +43,10 @@ for N in [Float64, Rational{Int}, Float32]
 
     # translation
     @test translate(l2, N[0, 1]) == Line(N[0, 2], N[1, 0])
+
+    # distance
+    distance(N[1, 0], l1) == N(1)
+    distance(l1, N[1, 0]) == N(1)
+    distance(Singleton(N[1, 0]), l1) == N(1)
+    distance(l1, Singleton(N[1, 0])) == N(1)
 end
