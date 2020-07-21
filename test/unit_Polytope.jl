@@ -366,6 +366,13 @@ for N in [Float64]
         @test tovrep(P) isa VPolytope{N}
         @test tohrep(P) isa HPolytope{N}  # no-op
 
+        # linear map
+        H = BallInf(N[0, 0], N(1))
+        P = convert(HPolytope, H)
+        M = N[2 3; 1 2]
+        MP = linear_map(M, P)  # check concrete linear map
+        @test M * an_element(P) ∈ MP   # check that the image of an element is in the linear map
+
         # check boundedness after conversion
         H = Hyperrectangle(N[1, 1], N[2, 2])
         HPolytope(constraints_list(H); check_boundedness=true)
