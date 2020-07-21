@@ -21,6 +21,8 @@ translate(::Line, ::AbstractVector)
 translate!(::Line, ::AbstractVector)
 normalize(::Line, ::Real=2.0)
 normalize!(::Line, ::Real=2.0)
+distance(::AbstractVector, ::Line, ::Real=2.0)
+distance(::AbstractSingleton, ::Line, ::Real=2.0)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

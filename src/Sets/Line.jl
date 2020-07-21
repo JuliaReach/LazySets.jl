@@ -445,3 +445,26 @@ function distance(x::AbstractVector, L::Line, p::Real=2.0)
     t = dot(x - L.p, d) / dot(d, d)
     return distance(x, L.p + t*d, p)
 end
+distance(L::Line, x::AbstractVector, p::Real=2.0) = distance(x, L, p)
+
+"""
+    distance(x::AbstractSingleton, L::Line, p::Real=2.0)
+
+Compute the distance between the singleton `x` and the line with respect to the given
+`p`-norm.
+
+### Input
+
+- `x` -- singleton, i.e. a set with one element
+- `L` -- line
+- `p` -- (optional, default: `2.0`) the `p`-norm used; `p = 2.0` corresponds to
+         the usual Euclidean norm
+
+### Output
+
+A scalar representing the distance between the element wrapped by `x` and the line `L`.
+"""
+function distance(x::AbstractSingleton, L::Line, p::Real=2.0)
+    return distance(element(x), L, p)
+end
+distance(L::Line, x::AbstractSingleton, p::Real=2.0) = distance(x, L, p)
