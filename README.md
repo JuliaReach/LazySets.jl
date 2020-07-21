@@ -20,7 +20,7 @@
 
 ## Installing
 
-`LazySets.jl` is a registered Julia package and as such you can install it by activating the `pkg` mode (type `]`, and to leave it, type `<backspace>`),
+`LazySets.jl` is a registered Julia package and [as such you can install it](https://julialang.github.io/Pkg.jl/v1/managing-packages/) by activating the `pkg` mode (type `]`, and to leave it, type `<backspace>`),
 followed by
 
 ```julia
@@ -55,4 +55,3 @@ This library has been applied in a number of scientic works. In reverse chronolo
 - ARCH-COMP18 Category Report: Continuous and Hybrid Systems with Linear Continuous Dynamics. Matthias Althoff, Stanley Bak, Xin Chen, Chuchu Fan, Marcelo Forets, Goran Frehse, Niklas Kochdumper, Yangge Li, Sayan Mitra, Rajarshi Ray, Christian Schilling and Stefan Schupp (2018) ARCH18. 5th International Workshop on Applied Verification of Continuous and Hybrid Systems, 54: 23–52. doi: 10.29007/73mb. Packages: Reachability.jl.
 
 - Reach Set Approximation through Decomposition with Low-dimensional Sets and High-dimensional Matrices. Sergiy Bogomolov, Marcelo Forets, Goran Frehse, Frédéric Viry, Andreas Podelski and Christian Schilling (2018) HSCC'18 Proceedings of the 21st International Conference on Hybrid Systems: Computation and Control: 41–50. See the ACM Digital Library link, or the arXiv: 1801.09526. Packages: LazySets.jl and Reachability.jl.
-
