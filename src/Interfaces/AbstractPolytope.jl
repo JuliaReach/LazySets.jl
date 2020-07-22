@@ -2,7 +2,6 @@ import Base.isempty
 
 export AbstractPolytope,
        vertices_list,
-       singleton_list,
        isempty,
        minkowski_sum
 
@@ -54,23 +53,6 @@ Determine whether a polytopic set is bounded.
 """
 function isbounded(::AbstractPolytope)
     return true
-end
-
-"""
-    singleton_list(P::AbstractPolytope{N}) where {N<:Real}
-
-Return the vertices of a polytopic set as a list of singletons.
-
-### Input
-
-- `P` -- polytopic set
-
-### Output
-
-List containing a singleton for each vertex.
-"""
-function singleton_list(P::AbstractPolytope{N}) where {N<:Real}
-    return [Singleton(vi) for vi in vertices_list(P)]
 end
 
 """

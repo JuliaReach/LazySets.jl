@@ -14,7 +14,8 @@ scale(::Real, ::Zonotope)
 ngens(::Zonotope)
 togrep(::Zonotope)
 reduce_order(::Zonotope, ::Union{Integer, Rational})
-split(::Zonotope, ::Int)
+split(::AbstractZonotope, ::Int)
+split(::AbstractZonotope, ::AbstractVector{Int}, ::AbstractVector{Int})
 remove_zero_generators(::Zonotope)
 ```
 
@@ -22,11 +23,11 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`singleton_list`](@ref singleton_list(::LazySet))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real})
-* [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetricPolytope))

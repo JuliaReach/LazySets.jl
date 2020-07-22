@@ -59,7 +59,6 @@ end
     Base.isdisjoint(X::LazySet, Y::LazySet; kwargs...) = is_intersection_empty(X, Y; kwargs...)
     Base.isdisjoint(X::LazySet, Y::LazySet, witness::Bool; kwargs...) = is_intersection_empty(X, Y, witness; kwargs...)
 
-    # TODO simplify with @eval block
     Base.isdisjoint(X::LazySet, Y::Complement, witness::Bool; kwargs...) = is_intersection_empty(X, Y, witness; kwargs...)
     Base.isdisjoint(X::LazySet, Y::Complement; kwargs...) = is_intersection_empty(X, Y; kwargs...)
     Base.isdisjoint(X::Complement, Y::LazySet; kwargs...) = is_intersection_empty(X, Y; kwargs...)
@@ -1481,4 +1480,96 @@ function is_intersection_empty(H::AbstractHyperrectangle{N},
                                cpa::CartesianProductArray{N},
                                witness::Bool=false) where {N<:Real}
     return is_intersection_empty(cpa, H, witness)
+end
+
+function is_intersection_empty(::EmptySet, ::LazySet)
+    return true
+end
+
+function is_intersection_empty(::EmptySet, ::AbstractPolyhedron)
+    return true
+end
+
+function is_intersection_empty(::EmptySet, ::AbstractSingleton)
+    return true
+end
+
+function is_intersection_empty(::EmptySet, ::Universe)
+    return true
+end
+
+function is_intersection_empty(::EmptySet, ::HalfSpace)
+    return true
+end
+
+function is_intersection_empty(::EmptySet, ::Hyperplane)
+    return true
+end
+
+function is_intersection_empty(::EmptySet, ::Line2D)
+    return true
+end
+
+function is_intersection_empty(::AbstractPolyhedron, ::EmptySet)
+    return true
+end
+
+function is_intersection_empty(::AbstractSingleton, ::EmptySet)
+    return true
+end
+
+function is_intersection_empty(::LazySet, ::EmptySet)
+    return true
+end
+
+function is_intersection_empty(::Universe, ::EmptySet)
+    return true
+end
+
+function is_intersection_empty(::HalfSpace, ::EmptySet)
+    return true
+end
+
+function is_intersection_empty(::Hyperplane, ::EmptySet)
+    return true
+end
+
+function is_intersection_empty(::Line2D, ::EmptySet)
+    return true
+end
+
+function is_intersection_empty(::EmptySet, ::EmptySet)
+    return true
+end
+
+# TODO duplicates #2219
+function is_intersection_empty(::EmptySet{N}, ::LazySet{N}) where {N<:Real}
+    return true
+end
+function is_intersection_empty(::EmptySet{N}, ::Universe{N}) where {N<:Real}
+    return true
+end
+function is_intersection_empty(::EmptySet{N}, ::HalfSpace{N}) where {N<:Real}
+    return true
+end
+function is_intersection_empty(::EmptySet{N}, ::Hyperplane{N}) where {N<:Real}
+    return true
+end
+function is_intersection_empty(::EmptySet{N}, ::Line2D{N}) where {N<:Real}
+    return true
+end
+function is_intersection_empty(::LazySet{N}, ::EmptySet{N}) where {N<:Real}
+    return true
+end
+function is_intersection_empty(::Universe{N}, ::EmptySet{N}) where {N<:Real}
+    return true
+end
+function is_intersection_empty(::HalfSpace{N}, ::EmptySet{N}) where {N<:Real}
+    return true
+end
+function is_intersection_empty(::Hyperplane{N}, ::EmptySet{N}) where {N<:Real}
+    return true
+end
+function is_intersection_empty(::Line2D{N}, ::EmptySet{N}) where {N<:Real}
+    return true
 end

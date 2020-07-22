@@ -15,10 +15,10 @@ radius_hyperrectangle(::SymmetricIntervalHull{N}, ::Int) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`singleton_list`](@ref singleton_list(::LazySet))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
-* [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))

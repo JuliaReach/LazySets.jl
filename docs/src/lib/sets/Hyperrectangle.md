@@ -14,11 +14,11 @@ translate(::Hyperrectangle{N}, ::AbstractVector{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`singleton_list`](@ref singleton_list(::LazySet))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real})
-* [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetricPolytope))

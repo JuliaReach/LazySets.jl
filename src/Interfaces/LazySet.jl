@@ -24,7 +24,9 @@ export LazySet,
        isequivalent,
        isconvextype,
        area,
-       surface
+       surface,
+       singleton_list,
+       concretize
 
 """
     LazySet{N}
@@ -81,7 +83,7 @@ If we only consider *concrete* subtypes, then:
 julia> concrete_subtypes = subtypes(LazySet, true);
 
 julia> length(concrete_subtypes)
-39
+40
 
 julia> println.(concrete_subtypes);
 AffineMap
@@ -112,6 +114,7 @@ Interval
 Line2D
 LineSegment
 LinearMap
+Line{N,VN} where VN<:AbstractArray{N,1} where N<:Real
 MinkowskiSum
 MinkowskiSumArray
 ResetMap
@@ -1036,3 +1039,92 @@ function _area_polygon(v::Vector{VN}) where {N, VN<:AbstractVector{N}}
     end
     return abs(res/2)
 end
+
+"""
+    singleton_list(P::LazySet)
+
+Return the vertices of a polytopic set as a list of singletons.
+
+### Input
+
+- `P`                 -- polytopic set
+
+### Output
+
+The list of vertices of `P`, as `Singleton`.
+
+### Notes
+
+This function relies on `vertices_list`, which raises an error if the set is
+not polytopic (e.g., unbounded).
+"""
+function singleton_list(P::LazySet)
+    return [Singleton(x) for x in vertices_list(P)]
+end
+
+"""
+    concretize(X::LazySet)
+
+Construct a concrete representation of a (possibly lazy) set.
+
+### Input
+
+- `X` -- set
+
+### Output
+
+A concrete representation of `X` (as far as possible).
+
+### Notes
+
+Since not every lazy set has a concrete set representation in this library, the
+result may be partially lazy.
+"""
+function concretize(X::LazySet)
+    return X
+end
+
+# =========================
+# Code requiring MiniQhull
+# =========================
+
+function load_delaunay_MiniQhull()
+return quote
+
+import .MiniQhull: delaunay
+export delaunay
+
+"""
+    delaunay(X::LazySet)
+
+Compute the Delaunay triangulation of the given convex set.
+
+### Input
+
+- `X` -- set
+
+### Output
+
+A union of polytopes in vertex representation.
+
+### Notes
+
+This function requires that you have properly installed the package
+[MiniQhull.jl](https://github.com/gridap/MiniQhull.jl), including the library
+[Qhull](http://www.qhull.org/).
+
+The method works in arbitrary dimension and the requirement is that the list of
+vertices of `X` can be obtained.
+"""
+function delaunay(X::LazySet)
+    n = dim(X)
+    v = vertices_list(X)
+    m = length(v)
+    coordinates = vcat(v...)
+    connectivity_matrix = delaunay(n, m, coordinates)
+    nelements = size(connectivity_matrix, 2)
+    elements = [VPolytope(v[connectivity_matrix[:, i]]) for i in 1:nelements]
+    return UnionSetArray(elements)
+end
+
+end end  # load_delaunay_MiniQhull

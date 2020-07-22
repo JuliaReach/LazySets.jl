@@ -15,6 +15,7 @@ an_element(::Interval{N}) where {N<:Real}
 vertices_list(::Interval{N}) where {N<:Real}
 translate(::Interval{N}, ::AbstractVector{N}) where {N<:Real}
 center(::Interval{N}) where {N<:Real}
+center(::Interval{N}, ::Int) where {N<:Real}
 min(::Interval{N}) where {N<:Real}
 max(::Interval{N}) where {N<:Real}
 low(::Interval{N}) where {N<:Real}
@@ -29,15 +30,15 @@ plot_recipe(::Interval{N}, ::N=zero(N)) where {N<:Real}
 linear_map(::AbstractMatrix{N}, ::Interval{N}) where {N<:Real}
 scale(::N, ::Interval{N}) where {N<:Real}
 constraints_list(::Interval{N}) where {N<:Real}
-center(::Interval{N}, ::Int) where {N<:Real}
+rectify(x::Interval{N}) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`singleton_list`](@ref singleton_list(::LazySet))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real})
-* [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))

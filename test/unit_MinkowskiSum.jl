@@ -69,7 +69,8 @@ for N in [Float64, Rational{Int}, Float32]
     @test v ∈ Ball1(N[1, 1], N(1))
 
     # constraints list
-    ms = MinkowskiSum(BallInf(N[0, 0], N(1)), BallInf(N[0, 0], N(1)))
+    B = BallInf(N[0, 0], N(1))
+    ms = MinkowskiSum(B, B)
     clist = constraints_list(ms)
     P = HPolytope(clist)
     H = Hyperrectangle(N[0, 0], N[2, 2])
@@ -85,6 +86,9 @@ for N in [Float64, Rational{Int}, Float32]
     X = Zonotope(N[0, 0], [N[1, 0]])
     Y = Zonotope(N[0, 0], [N[1, 1]])
     @test ispermutation(vertices_list(X + Y), [N[2, 1], N[0, 1], N[-2, -1], N[0, -1]])
+
+    # concretize
+    @test concretize(ms) == minkowski_sum(B, B)
 
     # =================
     # MinkowskiSumArray
@@ -134,6 +138,10 @@ for N in [Float64, Rational{Int}, Float32]
     s = Singleton(N[1, 2, 3])
     X  = s ⊕ MinkowskiSumArray([s, s])
     @test convert(MinkowskiSumArray, X) isa MinkowskiSumArray{N, Singleton{N, Vector{N}}}
+
+    # concretize
+    msa = MinkowskiSumArray([B, B])
+    @test concretize(msa) == minkowski_sum(B, B)
 
     # =================
     # CachedMinkowskiSumArray

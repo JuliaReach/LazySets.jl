@@ -684,6 +684,10 @@ function linear_map(M::AbstractMatrix{N}, cap::Intersection{N}) where {N}
     return linear_map(M, intersection(cap.X, cap.Y))
 end
 
+function concretize(cap::Intersection)
+    return intersection(concretize(cap.X), concretize(cap.Y))
+end
+
 # ==================================
 # Algorithms for lazy intersection
 # ==================================

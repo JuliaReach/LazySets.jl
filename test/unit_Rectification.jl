@@ -101,6 +101,11 @@ for N in [Float64, Rational{Int}, Float32]
     RB = Rectification(B)
     @test ρ(N[1, 0], RB) == ρ(N[-1, 0], RB) == ρ(N[0, 1], RB) ==
           ρ(N[0, -1], RB) == N(0)
+
+    # concretize
+    @test concretize(RI1) == rectify(I1)
+    @test concretize(RI2) == rectify(I2)
+    @test concretize(RI3) == rectify(I3)
 end
 
 # tests that only work with Float64

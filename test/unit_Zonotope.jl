@@ -160,6 +160,11 @@ for N in [Float64, Rational{Int}, Float32]
     Z = Zonotope(N[0, 0], N[1 1; -1 1])
     Z1, Z2 = split(Z, 1) # in this case the splitting is exact
     @test Z1 ⊆ Z && Z2 ⊆ Z
+    Z1, Z2, Z3, Z4 = split(Z, [1, 2], [1, 1])
+    @test Z1 ⊆ Z && Z2 ⊆ Z && Z3 ⊆ Z && Z4 ⊆ Z
+    Z = Zonotope(SVector{2}(N[0, 0]), SMatrix{2, 2}(N[1 1; -1 1]))
+    Z1, Z2 = split(Z, 1)
+    @test Z1 ⊆ Z && Z2 ⊆ Z
 
     # converts the cartesian product of two zonotopes to a new zonotope
     Z1 = Zonotope(N[0], hcat(N[1]))
@@ -294,7 +299,7 @@ for N in [Float64]
     Z3 = Zonotope(N[2, 1], Matrix{N}(I, 2, 2))
     @test_throws ErrorException isdisjoint(Z2, Z3, true)
     @test !isdisjoint(Z2, Z3)
-    
+
     # issubset
     Z = Zonotope(N[0, 0], N[1 1; -1 1])
     H1 = Hyperrectangle(low=N[-2, -2], high=N[2, 2])

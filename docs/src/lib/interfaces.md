@@ -45,6 +45,8 @@ support_vector
 ρ(::AbstractVector{N}, ::LazySet{N}) where {N<:Real}
 support_function
 σ
+singleton_list(::LazySet)
+delaunay
 ```
 
 ### Other globally defined set functions
@@ -68,6 +70,7 @@ isequivalent(::LazySet, ::LazySet)
 isconvextype(::Type{<:LazySet})
 surface(::LazySet{N}) where {N}
 area(::LazySet{N}) where {N}
+concretize(X::LazySet)
 ```
 
 Plotting is available for general one- or two-dimensional `LazySet`s, provided
@@ -180,7 +183,6 @@ chebyshev_center(::AbstractPolyhedron{N}) where {N<:AbstractFloat}
 an_element(::AbstractPolyhedron{N}) where {N<:Real}
 isbounded(::AbstractPolyhedron{N}) where {N}
 vertices_list(::AbstractPolyhedron)
-singleton_list(::AbstractPolyhedron)
 ```
 
 Plotting (bounded) polyhedra is available, too:
@@ -194,7 +196,8 @@ plot_recipe(::AbstractPolyhedron{N}, ::N=zero(N)) where {N<:Real}
 * [Half-space (HalfSpace)](@ref def_HalfSpace)
 * [Polyhedron in constraint representation (HPolyhedron)](@ref def_HPolyhedron)
 * [Hyperplane](@ref def_Hyperplane)
-* [Line2D](@ref def_Line)
+* [Line2D](@ref def_Line2D)
+* [Line](@ref def_Line)
 * [Universe](@ref def_Universe)
 
 ## [Polytopes (AbstractPolytope)](@id def_AbstractPolytope)
@@ -213,7 +216,6 @@ This interface defines the following functions:
 ```@docs
 isbounded(::AbstractPolytope)
 isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real}
-singleton_list(::AbstractPolytope{N}) where {N<:Real}
 isempty(::AbstractPolytope)
 ```
 

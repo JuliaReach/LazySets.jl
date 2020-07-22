@@ -64,4 +64,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # center
     @test center(Z, 1) == zero(N)
+
+    # rectification
+    @test rectify(Z) == Z
 end

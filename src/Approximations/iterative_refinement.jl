@@ -184,7 +184,7 @@ function tohrep(Ω::PolygonalOverapproximation)
 end
 
 """
-    approximate(S::LazySet{N}, ε::N) where {N<:AbstractFloat}
+    _approximate(S::LazySet{N}, ε::N) where {N<:AbstractFloat}
 
 Return an ε-close approximation of the given 2D convex set (in terms of
 Hausdorff distance) as an inner and an outer approximation composed by sorted
@@ -199,7 +199,7 @@ local `Approximation2D`.
 
 An ε-close approximation of the given 2D convex set.
 """
-function approximate(S::LazySet{N}, ε::N) where {N<:AbstractFloat}
+function _approximate(S::LazySet{N}, ε::N) where {N<:AbstractFloat}
     # initialize box directions
     pe = σ(DIR_EAST(N), S)
     pn = σ(DIR_NORTH(N), S)

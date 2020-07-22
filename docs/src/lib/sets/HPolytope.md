@@ -23,5 +23,4 @@ isbounded(::HPolytope, ::Bool=true)
 ```
 
 Inherited from [`AbstractPolytope`](@ref):
-* [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 * [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real})

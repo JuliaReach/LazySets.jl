@@ -61,7 +61,7 @@ function overapproximate(S::ST,
         constraints[4] = LinearConstraint(DIR_SOUTH(N), ρ(DIR_SOUTH(N), S))
         return HPolygon(constraints, sort_constraints=false)
     else
-        return tohrep(approximate(S, ε))
+        return tohrep(_approximate(S, ε))
     end
 end
 
