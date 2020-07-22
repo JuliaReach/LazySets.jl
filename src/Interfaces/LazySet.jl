@@ -328,6 +328,11 @@ Determine whether a polyhedron is bounded using Stiemke's theorem of alternative
 
 `true` iff the polyhedron is bounded
 
+### Notes
+
+The algorithm doesn't check whether the polyhedron is empty; use `isempty` for
+that purpose.
+
 ### Algorithm
 
 The algorithm is based on Stiemke's theorem of alternatives, see e.g. [1].
