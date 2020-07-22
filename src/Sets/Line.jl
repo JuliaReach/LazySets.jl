@@ -492,6 +492,6 @@ function _linear_map(M::AbstractMatrix, L::Line)
                                  "applied to a set of dimension $(dim(L))"
 
     Mp = M * L.p
-    Mn = M * L.d
-    return Line(Mp, Mn)
+    Md = M * L.d
+    return Line(Mp, Md)
 end
