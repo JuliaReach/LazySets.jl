@@ -40,8 +40,9 @@ implementation of the other function call the fallback implementation
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractZonotope)
-3-element Array{Any,1}:
+4-element Array{Any,1}:
  AbstractHyperrectangle
+ HParallelotope
  LineSegment
  Zonotope
 ```
