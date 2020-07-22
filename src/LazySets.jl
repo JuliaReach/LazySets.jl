@@ -85,6 +85,7 @@ include("Sets/VPolygon.jl")
 include("Sets/VPolytope.jl")
 include("Sets/ZeroSet.jl")
 include("Sets/Zonotope.jl")
+include("Sets/HParallelotope.jl")
 
 # ==================================
 # Types representing non-convex sets
