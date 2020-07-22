@@ -1773,5 +1773,5 @@ function overapproximate(Z::AbstractZonotope, ::Type{<:HParallelotope})
     G = genmat(Z)
     Γ = view(G, :, V)
     □Γ⁻¹Z = box_approximation(linear_map(inv(Γ), Z))
-    return linear_map(Γ, □Γ⁻¹Z) # todo: use known fact that the matrix is invertible
+    return convert(HParallelotope, linear_map(Γ, □Γ⁻¹Z)) # todo: use known fact that the matrix is invertible
 end
