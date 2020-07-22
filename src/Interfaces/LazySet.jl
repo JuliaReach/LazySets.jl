@@ -314,7 +314,8 @@ function _isbounded_unit_dimensions(S::LazySet{N}) where {N<:Real}
 end
 
 """
-    _isbounded_stiemke(P::LazySet{N}; solver=LazySets.default_lp_solver(N)) where {N<:Real}
+    _isbounded_stiemke(P::LazySet{N}; solver=LazySets.default_lp_solver(N),
+                       check_nonempty::Bool=true) where {N<:Real}
 
 Determine whether a polyhedron is bounded using Stiemke's theorem of alternatives.
 
@@ -323,6 +324,8 @@ Determine whether a polyhedron is bounded using Stiemke's theorem of alternative
 - `P`       -- polyhedron
 - `backend` -- (optional, default: `default_lp_solver(N)`) the backend used
                to solve the linear program
+- `check_nonempty` -- (optional, default: `true`) if `true`, check the
+                      precondition to this algorithm that `P` is non-empty
 
 ### Output
 
@@ -330,8 +333,8 @@ Determine whether a polyhedron is bounded using Stiemke's theorem of alternative
 
 ### Notes
 
-The algorithm doesn't check whether the polyhedron is empty; use `isempty` for
-that purpose.
+The algorithm internally calls `isempty` to check whether the polyhedron is empty.
+This computation can be avoided using the `check_nonempty` flag.
 
 ### Algorithm
 
@@ -349,7 +352,12 @@ program admits a feasible solution: ``\\min∥y∥_1`` subject to ``A^Ty=0`` and
 [1] Mangasarian, Olvi L. *Nonlinear programming.*
     Society for Industrial and Applied Mathematics, 1994.
 """
-function _isbounded_stiemke(P::LazySet{N}; solver=LazySets.default_lp_solver(N)) where {N<:Real}
+function _isbounded_stiemke(P::LazySet{N}; solver=LazySets.default_lp_solver(N),
+                            check_nonempty::Bool=true) where {N<:Real}
+    if check_nonempty && isempty(P)
+        return true
+    end
+
     A, b = tosimplehrep(P)
     m, n = size(A)
 
