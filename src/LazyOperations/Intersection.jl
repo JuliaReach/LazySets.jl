@@ -531,13 +531,13 @@ Determine whether an intersection of two convex sets is bounded.
 ### Algorithm
 
 We first check if any of the wrapped sets is bounded.
-Otherwise, we check boundedness via [`isbounded_unit_dimensions`](@ref).
+Otherwise, we check boundedness via [`_isbounded_unit_dimensions`](@ref).
 """
 function isbounded(cap::Intersection)
     if isbounded(cap.X) || isbounded(cap.Y)
         return true
     end
-    return isbounded_unit_dimensions(cap)
+    return _isbounded_unit_dimensions(cap)
 end
 
 """

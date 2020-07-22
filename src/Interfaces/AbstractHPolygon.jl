@@ -615,5 +615,5 @@ function isbounded(P::AbstractHPolygon, use_type_assumption::Bool=true)
     if isempty(constraints_list(P))
         return false
     end
-    return isbounded_unit_dimensions(P)
+    return _isbounded_unit_dimensions(P)
 end

@@ -10,7 +10,7 @@ export LazySet,
        radius,
        diameter,
        an_element,
-       isbounded, isbounded_unit_dimensions,
+       isbounded,
        neutral,
        absorbing,
        tosimplehrep,
@@ -260,8 +260,8 @@ Determine whether a set is bounded.
 ### Input
 
 - `S`         -- set
-- `algorithm` -- (optional, default: `"support_function"`) algorithm choice, possible
-                 options are `"support_function"` and `"stiemke"`
+- `algorithm` -- (optional, default: `"support_function"`) algorithm choice,
+                 possible options are `"support_function"` and `"stiemke"`
 
 ### Output
 

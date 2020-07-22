@@ -57,7 +57,8 @@ norm(::LazySet, ::Real=Inf)
 radius(::LazySet, ::Real=Inf)
 diameter(::LazySet, ::Real=Inf)
 isbounded(::LazySet)
-isbounded_unit_dimensions(::LazySet{N}) where {N<:Real}
+_isbounded_unit_dimensions(::LazySet{N}) where {N<:Real}
+_isbounded_stiemke(::LazySet{N}) where {N<:Real}
 an_element(::LazySet{N}) where {N<:Real}
 tosimplehrep(::LazySet)
 isuniversal(::LazySet{N}, ::Bool=false) where {N<:Real}
@@ -181,7 +182,7 @@ constrained_dimensions(::AbstractPolyhedron)
 linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 chebyshev_center(::AbstractPolyhedron{N}) where {N<:AbstractFloat}
 an_element(::AbstractPolyhedron{N}) where {N<:Real}
-isbounded(::AbstractPolyhedron{N}) where {N}
+isbounded(::AbstractPolyhedron{N}) where {N<:Real}
 vertices_list(::AbstractPolyhedron)
 ```
 

@@ -147,7 +147,7 @@ We first check if the matrix is zero or the wrapped set is bounded.
 If not, we perform a sufficient check whether the matrix is invertible.
 If the matrix is invertible, then the map being bounded is equivalent to the
 wrapped set being bounded, and hence the map is unbounded.
-Otherwise, we check boundedness via [`isbounded_unit_dimensions`](@ref).
+Otherwise, we check boundedness via [`_isbounded_unit_dimensions`](@ref).
 """
 function isbounded(am::AbstractAffineMap; cond_tol::Number=DEFAULT_COND_TOL)
     M = matrix(am)
@@ -157,7 +157,7 @@ function isbounded(am::AbstractAffineMap; cond_tol::Number=DEFAULT_COND_TOL)
     if isinvertible(M; cond_tol=cond_tol)
         return false
     end
-    return isbounded_unit_dimensions(am)
+    return _isbounded_unit_dimensions(am)
 end
 
 """
