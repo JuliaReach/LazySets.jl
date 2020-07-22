@@ -986,3 +986,25 @@ function convert(::Type{Zonotope},
     Z2 = translate(Z1, vector(am), share=true)
     return Z2
 end
+
+"""
+    convert(::Type{<:HParallelotope}, Z::AbstractZonotope)
+
+Converts a zonotopic set into a parallelotope in constraint representation.
+
+### Input
+
+- `HParallelotope` -- type used for dispatch
+- `Z`        -- zonotopic set
+
+### Output
+
+A parallelotope in constraint representation.
+"""
+function convert(::Type{<:HParallelotope}, Z::AbstractZonotope)
+    n = Int(2order(Z)*dim(Z))
+    D = reduce(hcat, [constraints_list(Z)[i].a for i in 1:2:n])'
+    c = [constraints_list(Z)[i].b for i in 1:2:n-1]
+    append!(c, [constraints_list(Z)[i].b for i in 2:2:n])
+    return HParallelotope(D, c)
+end

@@ -1700,7 +1700,7 @@ function overapproximate(r::Rectification{N, <:AbstractZonotope{N}}, ::Type{<:Zo
     else
         Gout = G
     end
-    
+
     return Zonotope(c, remove_zero_columns(Gout))
 end
 
@@ -1735,4 +1735,43 @@ function overapproximate(CHA::ConvexHullArray{N, <:AbstractZonotope{N}}, ::Type{
         end
         return Zaux
     end
+end
+
+"""
+    overapproximate(Z::AbstractZonotope, ::Type{<:HParallelotope})
+
+Overapproximation of a zonotope with a parallelotopic set in constraint
+representation.
+
+### Input
+
+- `Z` -- zonotopic set
+- `HParallelotope` -- type for dispatch
+
+### Output
+
+An overapproximation of the given zonotope using a parallelotope.
+
+### Algorithm
+
+The algorithm is based on propositions discussed in Section 5 of [1]
+
+[1] Althoff, M., Stursberg, O., & Buss, M. (2010). *Computing reachable sets of
+hybrid systems using a combination of zonotopes and polytopes*. Nonlinear
+analysis: hybrid systems, 4(2), 233-249.
+"""
+function overapproximate(Z::AbstractZonotope, ::Type{<:HParallelotope})
+    p, n = ngens(Z), dim(Z)
+    if p == n
+        return Z
+    elseif p > n
+        V = 1:n # could use difference selection criteria
+    else
+        error("the zonotope order is $(order(Z)) but it should be at least 1")
+    end
+
+    G = genmat(Z)
+    Γ = view(G, :, V)
+    □Γ⁻¹Z = box_approximation(linear_map(inv(Γ), Z))
+    return linear_map(Γ, □Γ⁻¹Z) # todo: use known fact that the matrix is invertible
 end
