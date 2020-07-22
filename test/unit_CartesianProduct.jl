@@ -139,6 +139,22 @@ for N in [Float64, Float32, Rational{Int}]
         @test concretize(cp) === cp
     end
 
+    # inclusion
+    # same block structure
+    cp1 = CartesianProduct(Ball1(N[2], N(1)), Ball1(N[0, 0], N(2)))
+    cp2 = CartesianProduct(Interval(N(1), N(3)), BallInf(N[0, 0], N(3)))
+    res, w = ⊆(cp1, cp2, true)
+    @test cp1 ⊆ cp2 && res && w == N[]
+    res, w = ⊆(cp2, cp1, true)
+    @test cp2 ⊈ cp1 && !res && w ∈ cp2 && w ∉ cp1
+    # different block structure
+    cp1 = CartesianProduct(Interval(N(1), N(2)), BallInf(N[1, 1], N(1)))
+    cp2 = CartesianProduct(BallInf(N[1, 1], N(2)), Interval(N(0), N(2)))
+    res, w = ⊆(cp1, cp2, true)
+    @test cp1 ⊆ cp2 && res && w == N[]
+    res, w = ⊆(cp2, cp1, true)
+    @test cp2 ⊈ cp1 && !res && w ∈ cp2 && w ∉ cp1
+
     # ==================================
     # Conversions of Cartesian Products
     # ==================================
@@ -297,6 +313,13 @@ for N in [Float64, Float32, Rational{Int}]
     # inclusion
     cpa1 = CartesianProductArray(aX)
     cpa2 = CartesianProductArray(aY)
+    res, w = ⊆(cpa1, cpa2, true)
+    @test cpa1 ⊆ cpa2 && res && w == N[]
+    res, w = ⊆(cpa2, cpa1, true)
+    @test cpa2 ⊈ cpa1 && !res && w ∈ cpa2 && w ∉ cpa1
+    # different block structure
+    cpa1 = CartesianProductArray([Interval(N(1), N(2)), BallInf(N[1, 1], N(1))])
+    cpa2 = CartesianProductArray([BallInf(N[1, 1], N(2)), Interval(N(0), N(2))])
     res, w = ⊆(cpa1, cpa2, true)
     @test cpa1 ⊆ cpa2 && res && w == N[]
     res, w = ⊆(cpa2, cpa1, true)
