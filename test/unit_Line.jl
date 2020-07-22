@@ -51,9 +51,11 @@ for N in [Float64, Rational{Int}, Float32]
     distance(l1, Singleton(N[1, 0])) == N(1)
 
     # concrete linear map
-    mirror = N[-1 0; 0 1]
-    l = Line(from=N[0, 1], to=N[1, 1])
-    @test isequivalent(linear_map(mirror, l), l)
-    rot = N[0 -1; 1 0] # π/2 ccw rotation
-    @test isequivalent(linear_map(rot, l), Line(N[-1, 0], N[0, 1]))
+    if N <: AbstractFloat
+        mirror = N[-1 0; 0 1]
+        l = Line(from=N[0, 1], to=N[1, 1])
+        @test isequivalent(linear_map(mirror, l), l)
+        rot = N[0 -1; 1 0] # π/2 ccw rotation
+        @test isequivalent(linear_map(rot, l), Line(N[-1, 0], N[0, 1]))
+    end
 end
