@@ -468,3 +468,30 @@ function distance(x::AbstractSingleton, L::Line, p::Real=2.0)
     return distance(element(x), L, p)
 end
 distance(L::Line, x::AbstractSingleton, p::Real=2.0) = distance(x, L, p)
+
+"""
+    linear_map(M::AbstractMatrix, L::Line)
+
+Concrete linear map of a line.
+
+### Input
+
+- `M` -- matrix
+- `L` -- line
+
+### Output
+
+The line obtained by applying the linear map to the point and direction of `L`.
+"""
+linear_map(M::AbstractMatrix, L::Line) = _linear_map(M, L)
+
+linear_map(M::AbstractMatrix{N}, L::Line{N,VN}) where {N<:Real, VN<:AbstractVector{N}} = _linear_map(M, L)
+
+function _linear_map(M::AbstractMatrix, L::Line)
+    @assert dim(L) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
+                                 "applied to a set of dimension $(dim(L))"
+
+    Mp = M * L.p
+    Md = M * L.d
+    return Line(Mp, Md)
+end
