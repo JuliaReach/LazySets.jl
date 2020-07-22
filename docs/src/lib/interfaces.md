@@ -58,7 +58,7 @@ radius(::LazySet, ::Real=Inf)
 diameter(::LazySet, ::Real=Inf)
 isbounded(::LazySet)
 _isbounded_unit_dimensions(::LazySet{N}) where {N<:Real}
-_isbounded_stiemke(::LazySet{N}) where {N<:Real}
+_isbounded_stiemke(::HPolyhedron{N}) where {N<:Real}
 an_element(::LazySet{N}) where {N<:Real}
 tosimplehrep(::LazySet)
 isuniversal(::LazySet{N}, ::Bool=false) where {N<:Real}

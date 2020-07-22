@@ -926,10 +926,11 @@ which is a necessary condition for boundedness.
 If so, we check boundedness via [`_isbounded_stiemke`](@ref).
 """
 function isbounded(P::AbstractPolyhedron{N}; solver=LazySets.default_lp_solver(N)) where {N<:Real}
-    if length(P.constraints) <= max(dim(P), 1)
+    constraints = constraints_list(P)
+    if length(constraints) <= max(dim(P), 1)
         return false
     end
-    return _isbounded_stiemke(P, solver=solver)
+    return _isbounded_stiemke(HPolyhedron(constraints), solver=solver)
 end
 
 """

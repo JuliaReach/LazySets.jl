@@ -314,7 +314,7 @@ function _isbounded_unit_dimensions(S::LazySet{N}) where {N<:Real}
 end
 
 """
-    _isbounded_stiemke(P::LazySet{N}; solver=LazySets.default_lp_solver(N),
+    _isbounded_stiemke(P::HPolyhedron{N}; solver=LazySets.default_lp_solver(N),
                        check_nonempty::Bool=true) where {N<:Real}
 
 Determine whether a polyhedron is bounded using Stiemke's theorem of alternatives.
@@ -352,7 +352,7 @@ program admits a feasible solution: ``\\min∥y∥_1`` subject to ``A^Ty=0`` and
 [1] Mangasarian, Olvi L. *Nonlinear programming.*
     Society for Industrial and Applied Mathematics, 1994.
 """
-function _isbounded_stiemke(P::LazySet{N}; solver=LazySets.default_lp_solver(N),
+function _isbounded_stiemke(P::HPolyhedron{N}; solver=LazySets.default_lp_solver(N),
                             check_nonempty::Bool=true) where {N<:Real}
     if check_nonempty && isempty(P)
         return true
