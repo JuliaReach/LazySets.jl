@@ -29,9 +29,6 @@ pkg> add LazySets
 
 See the [Getting started](https://juliareach.github.io/LazySets.jl/dev/man/getting_started/) section of the manual for other options.
 
-```julia
-pkg> add LazySets
-```
 
 ## Ecosystem
 
