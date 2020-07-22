@@ -42,6 +42,8 @@ for N in [Float64, Rational{Int}, Float32]
 
     # boundedness
     @test !isbounded(p_univ)
+    @test isbounded(p)
+    @test !isbounded(HPolyhedron([HalfSpace(N[1.0, 0.0], N(1))]))
 
     # universality
     @test !isuniversal(p)
