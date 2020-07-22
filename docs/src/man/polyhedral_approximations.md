@@ -32,7 +32,7 @@ matrices ``M``, all scalars ``\lambda``, and all vectors
 ``\ell \in \mathbb{R}^n``, we have:
 
 ```math
-\begin{align*}
+\begin{aligned}
 \quad \rho_{\lambda\mathcal{X}} (\ell) &= \rho_{\mathcal{X}} (\lambda \ell),
 \text{ and } \rho_{\lambda\mathcal{X}} (\ell) = \lambda \rho_{\mathcal{X}} (\ell) \text{ if } \lambda > 0 \tag{1.1} \\[1mm]
 %
@@ -43,7 +43,7 @@ matrices ``M``, all scalars ``\lambda``, and all vectors
 \quad \rho_{\mathcal{X} \times \mathcal{Y}} (\ell) &= \ell^\mathrm{T} \sigma_{\mathcal{X} \times \mathcal{Y}}(\ell) = \rho_{\mathcal{X}}(\ell_1^\mathrm{T}) + \rho_{\mathcal{Y}}(\ell_2^\mathrm{T}) \tag{1.4} \\[1mm]
 %
 \quad \rho_{\mathrm{CH}(\mathcal{X}\cup\mathcal{Y})} (\ell) &= \max (\rho_{\mathcal{X}} (\ell), \rho_{\mathcal{Y}} (\ell)) \tag{1.5}
-\end{align*}
+\end{aligned}
 ```
 
 ## Support Vector
@@ -64,7 +64,7 @@ any support vector is implied.
 as in Proposition 1, the following hold:
 
 ```math
-\begin{align*}
+\begin{aligned}
 \quad \sigma_{\lambda\mathcal{X}} (\ell) &= \lambda \sigma_{\mathcal{X}} (\lambda \ell) \tag{2.1} \\[1mm]
 %
 \quad \sigma_{M\mathcal{X}} (\ell) &= M\sigma_{\mathcal{X}} (M^\mathrm{T} \ell) \tag{2.2} \\[1mm]
@@ -76,7 +76,7 @@ as in Proposition 1, the following hold:
 \quad \sigma_{\mathrm{CH}(\mathcal{X}\cup\mathcal{Y})} (\ell) &=
 \text{argmax}_{x, y} (\ell^\mathrm{T} x, \ell^\mathrm{T} y),
 \text{ where } x \in \sigma_{\mathcal{X}}(\ell), y \in \sigma_{\mathcal{Y}}(\ell) \tag{2.5}
-\end{align*}
+\end{aligned}
 ```
 
 ## Polyhedral approximation of a convex set
@@ -94,9 +94,9 @@ Given directions ``\ell_1,\ldots,\ell_m``, a tight overapproximation of
 ``\mathcal{X}`` is the *outer polyhedron* given by the constraints
 
 ```math
-\begin{equation*}
+\begin{aligned}
 \quad \bigwedge_i \ell_i^T x \leq \rho_\mathcal{X}(\ell_i) \tag{3}
-\end{equation*}
+\end{aligned}
 ```
 
 For instance, a bounding box involves evaluating the support function in ``2n``
