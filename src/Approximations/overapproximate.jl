@@ -1738,7 +1738,7 @@ function overapproximate(CHA::ConvexHullArray{N, <:AbstractZonotope{N}}, ::Type{
 end
 
 """
-    overapproximate(Z::Zonotope, ::Type{<:HParallelotope}; indices=1:dim(Z))
+    overapproximate(Z::Zonotope, ::Type{<:HParallelotope}, indices=1:dim(Z))
 
 Overapproximation of a zonotope with a parallelotopic set in constraint
 representation.
