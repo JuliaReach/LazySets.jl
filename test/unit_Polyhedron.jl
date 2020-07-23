@@ -42,19 +42,6 @@ for N in [Float64, Rational{Int}, Float32]
     # support vector of polyhedron with no constraints
     @test σ(N[1], p_univ) == N[Inf]
 
-    # boundedness
-    @test !isbounded(p_univ)
-    @test isbounded(p)
-    @test !isbounded(HPolyhedron([HalfSpace(N[1, 0], N(1))]))
-    
-    @test _isbounded_stiemke(p_univ)
-    @test _isbounded_stiemke(p)
-    @test !_isbounded_stiemke(HPolyhedron([HalfSpace(N[1, 0], N(1))]))
-
-    @test _isbounded_unit_dimensions(p_univ)
-    @test _isbounded_unit_dimensions(p)
-    @test !_isbounded_unit_dimensions(HPolyhedron([HalfSpace(N[1, 0], N(1))]))
-    
     # universality
     @test !isuniversal(p)
     res, w = isuniversal(p, true)
@@ -133,6 +120,32 @@ for N in [Float64, Float32]
     for hs in constraints_list(p2)
         @test norm(hs.a) == N(1)
     end
+    
+    # 2D HPolyhedron
+    p = HPolyhedron{N}()
+    c1 = LinearConstraint(N[2, 2], N(12))
+    c2 = LinearConstraint(N[-3, 3], N(6))
+    c3 = LinearConstraint(N[-1, -1], N(0))
+    c4 = LinearConstraint(N[2, -4], N(0))
+    addconstraint!(p, c3)
+    addconstraint!(p, c1)
+    addconstraint!(p, c4)
+    addconstraint!(p, c2)
+
+    p_univ = HPolyhedron{N}()
+
+    # boundedness
+    @test !isbounded(p_univ)
+    @test isbounded(p)
+    @test !isbounded(HPolyhedron([HalfSpace(N[1, 0], N(1))]))
+
+    @test _isbounded_stiemke(p_univ)
+    @test _isbounded_stiemke(p)
+    @test !_isbounded_stiemke(HPolyhedron([HalfSpace(N[1, 0], N(1))]))
+
+    @test _isbounded_unit_dimensions(p_univ)
+    @test _isbounded_unit_dimensions(p)
+    @test !_isbounded_unit_dimensions(HPolyhedron([HalfSpace(N[1, 0], N(1))]))
 end
 
 # Polyhedra tests that only work with Float64
