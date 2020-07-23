@@ -145,7 +145,14 @@ for N in [Float64, Rational{Int}, Float32]
     end
 
     # concretize
+    B = BallInf(N[0, 0], N(1))
     @test concretize(B) === B
+
+    # constraints iterator
+    @test ispermutation(collect(constraints(B)), constraints_list(B))
+
+    # vertices iterator
+    @test ispermutation(collect(vertices(B)), vertices_list(B))
 end
 
 # tests that only work with Float64
