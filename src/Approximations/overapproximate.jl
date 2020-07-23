@@ -1762,7 +1762,7 @@ The algorithm is based on Proposition 8 discussed in Section 5 of [1].
 hybrid systems using a combination of zonotopes and polytopes*. Nonlinear
 analysis: hybrid systems, 4(2), 233-249.
 """
-function overapproximate(Z::Zonotope, ::Type{<:HParallelotope}; indices=1:dim(Z))
+function overapproximate(Z::Zonotope, ::Type{<:HParallelotope}, indices=1:dim(Z))
     Zred = _overapproximate_hparallelotope(Z, HParallelotope, indices)
     return convert(HParallelotope, Zred)
 end
