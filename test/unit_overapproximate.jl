@@ -254,6 +254,11 @@ for N in [Float64, Float32]
     Y = overapproximate(rm, CartesianProductArray, Hyperrectangle)
     @test array(Y) == [Hyperrectangle(N[0, 0], N[1, 1]),
         Hyperrectangle(N[0, 0], N[0, 2]), Hyperrectangle(N[0, 0], N[3, 0])]
+
+    # HParallelotope
+    Z = Zonotope(N[0, 0], N[1 0 1; 0 1 1])
+    @test overapproximate(Z, HParallelotope) ==
+        HParallelotope(N[0 -1; 1 0], N[2, 2, 2, 2])
 end
 
 for N in [Float64]
