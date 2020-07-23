@@ -1002,7 +1002,7 @@ representation.
 
 A parallelotope in constraint representation.
 """
-function convert(::Type{<:HParallelotope}, Z::AbstractZonotope)
+function convert(::Type{<:HParallelotope}, Z::AbstractZonotope{N}) where {N}
     @assert order(Z) == 1 "cannot convert a zonotope that is not of order 1 to"*
                           " a parallelotope"
     n = dim(Z)
