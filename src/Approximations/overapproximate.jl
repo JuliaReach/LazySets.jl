@@ -1754,7 +1754,7 @@ An overapproximation of the given zonotope using a parallelotope.
 
 ### Algorithm
 
-The algorithm is based on propositions discussed in Section 5 of [1]
+The algorithm is based on Proposition 8 discussed in Section 5 of [1]
 
 [1] Althoff, M., Stursberg, O., & Buss, M. (2010). *Computing reachable sets of
 hybrid systems using a combination of zonotopes and polytopes*. Nonlinear
