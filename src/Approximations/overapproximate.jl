@@ -1745,7 +1745,7 @@ representation.
 
 ### Input
 
-- `Z` -- zonotopic set
+- `Z` -- zonotope
 - `HParallelotope` -- type for dispatch
 - `indices` -- (optional; default: `1:dim(Z)`) generator indices selected when
                 constructing the parallelotope
