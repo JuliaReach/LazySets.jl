@@ -162,18 +162,6 @@ function genmat(S::AbstractSingleton{N}) where {N<:Real}
     return Matrix{N}(undef, dim(S), 0)
 end
 
-# iterator that wraps the generator matrix
-struct EmptyGeneratorIterator{N<:Real}
-end
-
-Base.length(::EmptyGeneratorIterator) = 0
-
-Base.eltype(::Type{EmptyGeneratorIterator{N}}) where {N} = Vector{N}
-
-function Base.iterate(::EmptyGeneratorIterator, state=nothing)
-    return nothing
-end
-
 """
     generators(S::AbstractSingleton)
 
@@ -188,7 +176,7 @@ Return an (empty) iterator over the generators of a set with a single value.
 An empty iterator.
 """
 function generators(S::AbstractSingleton{N}) where {N<:Real}
-    return EmptyGeneratorIterator{N}()
+    return EmptyIterator{Vector{N}}()
 end
 
 """
