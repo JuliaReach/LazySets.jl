@@ -1004,11 +1004,19 @@ A parallelotope in constraint representation.
 """
 function convert(::Type{<:HParallelotope}, Z::AbstractZonotope)
     @assert order(Z) == 1 "cannot convert a zonotope that is not of order 1 to"*
-                            " a parallelotope"
-    n = Int(2*dim(Z))
+                          " a parallelotope"
+    n = dim(Z)
+
     constraints = constraints_list(Z)
-    D = reduce(hcat, [constraints[i].a for i in 1:2:n])'
-    c = [constraints[i].b for i in 1:2:n-1]
-    append!(c, [constraints[i].b for i in 2:2:n])
+
+    D = Matrix{N}(undef, n, n)
+    c = Vector{N}(undef, 2n)
+    j = 1
+    @inbounds for i in 1:n
+        D[i, :] = constraints[j].a
+        c[i] = constraints[j].b
+        c[i+n] = constraints[j+1].b
+        j += 2
+    end
     return HParallelotope(D, c)
 end
