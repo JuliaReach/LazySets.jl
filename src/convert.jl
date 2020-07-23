@@ -1006,8 +1006,9 @@ function convert(::Type{<:HParallelotope}, Z::AbstractZonotope)
     @assert order(Z) == 1 "cannot convert a zonotope that is not of order 1 to"*
                             " a parallelotope"
     n = Int(2order(Z)*dim(Z))
-    D = reduce(hcat, [constraints_list(Z)[i].a for i in 1:2:n])'
-    c = [constraints_list(Z)[i].b for i in 1:2:n-1]
-    append!(c, [constraints_list(Z)[i].b for i in 2:2:n])
+    constraints = constraints_list(Z)
+    D = reduce(hcat, [constraints[i].a for i in 1:2:n])'
+    c = [constraints[i].b for i in 1:2:n-1]
+    append!(c, [constraints[i].b for i in 2:2:n])
     return HParallelotope(D, c)
 end
