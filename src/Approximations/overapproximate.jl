@@ -1763,7 +1763,7 @@ analysis: hybrid systems, 4(2), 233-249.
 function overapproximate(Z::AbstractZonotope, ::Type{<:HParallelotope})
     p, n = ngens(Z), dim(Z)
     if p == n
-        return Z
+        return convert(HParallelotope, Z)
     elseif p < n
         error("the zonotope order is $(order(Z)) but it should be at least 1")
     end
