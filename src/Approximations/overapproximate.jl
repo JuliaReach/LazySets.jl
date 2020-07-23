@@ -1764,12 +1764,11 @@ function overapproximate(Z::AbstractZonotope, ::Type{<:HParallelotope})
     p, n = ngens(Z), dim(Z)
     if p == n
         return Z
-    elseif p > n
-        V = 1:n # could use difference selection criteria
-    else
+    elseif p < n
         error("the zonotope order is $(order(Z)) but it should be at least 1")
     end
 
+    V = 1:n  # could use difference selection criteria
     G = genmat(Z)
     Γ = view(G, :, V)
     □Γ⁻¹Z = box_approximation(linear_map(inv(Γ), Z))
