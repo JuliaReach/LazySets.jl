@@ -8,3 +8,4 @@ end)
 
 eval(load_modeling_toolkit_hyperplane())
 eval(load_modeling_toolkit_halfspace())
+eval(load_modeling_toolkit_hpolyhedron())

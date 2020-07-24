@@ -725,3 +725,47 @@ function _isbounded_stiemke(P::HPolyhedron{N}; solver=LazySets.default_lp_solver
     lp = linprog(c, At, '=', zeros(n), one(N), Inf, solver)
     return (lp.status == :Optimal)
 end
+
+# ============================================
+# Functionality that requires ModelingToolkit
+# ============================================
+function load_modeling_toolkit_hpolyhedron()
+
+return quote
+
+"""
+    HPolyhedron(expr::Vector{<:Operation}, vars=get_variables(first(expr)); N::Type{<:Real}=Float64)
+
+Return the polyhedron in half-space representation given by a list of symbolic expressions.
+
+### Input
+
+- `expr` -- vector of symbolic expressions that describes each half-space
+- `vars` -- (optional, default: `get_variables(expr)`), if an array of variables is given,
+            use those as the ambient variables in the set with respect to which derivations
+            take place; otherwise, use only the variables which appear in the given
+            expression (but be careful because the order may change)
+- `N`    -- (optional, default: `Float64`) the numeric type of the returned half-space
+
+### Output
+
+An `HPolyhedron`.
+
+### Examples
+
+```julia
+julia> using ModelingToolkit
+
+julia> vars = @variables x y
+(x, y)
+
+julia> HPolyhedron([x + y <= 1, x + y >= -1], vars)
+HPolyhedron{Float64,Array{Float64,1}}(HalfSpace{Float64,Array{Float64,1}}[HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0], 1.
+0), HalfSpace{Float64,Array{Float64,1}}([-1.0, -1.0], 1.0)])
+```
+"""
+function HPolyhedron(expr::Vector{<:Operation}, vars=get_variables(first(expr)); N::Type{<:Real}=Float64)
+    return HPolyhedron([HalfSpace(ex, vars; N=N) for ex in expr])
+end
+
+end end  # quote / load_modeling_toolkit_hpolyhedron()
