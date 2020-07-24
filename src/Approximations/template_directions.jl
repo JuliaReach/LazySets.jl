@@ -317,7 +317,7 @@ end
 # - i = i + 1, j = i + 1
 # - for any pair (i, j) create four vectors [..., i: ±1, ..., j: ±1, ...]
 # in the end continue with box directions
-function Base.iterate(od::OctDirections{N, SparseVector{N, Int}}, state::Tuple) where {N}
+function _iterate_state(od, state)
     # continue with octagon directions
     vec = state[1]
     i = state[2]
@@ -350,9 +350,36 @@ function Base.iterate(od::OctDirections{N, SparseVector{N, Int}}, state::Tuple) 
     return (copy(vec), (vec, i, j))
 end
 
+function Base.iterate(od::OctDirections{N, SparseVector{N, Int}}, state::Tuple) where {N}
+    _iterate_state(od, state)
+end
+
 function Base.iterate(od::OctDirections{N, SparseVector{N, Int}}, state::Int) where {N}
     # continue with box directions
     return iterate(BoxDirections{N, SparseVector{N, Int}}(od.n), state)
+end
+
+# ----------------------------------
+# implementation with regular arrays
+# ----------------------------------
+function Base.iterate(od::OctDirections{N, Vector{N}}) where {N}
+    if od.n == 1
+        # fall back to box directions in 1D case
+        return iterate(od, 1)
+    end
+    vec = zeros(N, od.n)
+    vec[1] = one(N)
+    vec[2] = one(N)
+    return (copy(vec), (vec, 1, 2))
+end
+
+function Base.iterate(od::OctDirections{N, Vector{N}}, state::Tuple) where {N}
+    _iterate_state(od, state)
+end
+
+function Base.iterate(od::OctDirections{N, Vector{N}}, state::Int) where {N}
+    # continue with box directions
+    return iterate(BoxDirections{N, Vector{N}}(od.n), state)
 end
 
 # ==================================================
