@@ -904,6 +904,36 @@ function an_element(P::AbstractPolyhedron{N}) where {N<:Real}
 end
 
 """
+    isbounded(P::AbstractPolyhedron{N}; solver=LazySets.default_lp_solver(N)) where {N<:Real}
+
+Determine whether a polyhedron is bounded.
+
+### Input
+
+- `P`       -- polyhedron
+- `backend` -- (optional, default: `default_lp_solver(N)`) the backend used
+               to solve the linear program
+
+### Output
+
+`true` iff the polyhedron is bounded
+
+### Algorithm
+
+We first check if the polyhedron has more than `max(dim(P), 1)` constraints,
+which is a necessary condition for boundedness.
+
+If so, we check boundedness via [`_isbounded_stiemke`](@ref).
+"""
+function isbounded(P::AbstractPolyhedron{N}; solver=LazySets.default_lp_solver(N)) where {N<:Real}
+    constraints = constraints_list(P)
+    if length(constraints) <= max(dim(P), 1)
+        return false
+    end
+    return _isbounded_stiemke(HPolyhedron(constraints), solver=solver)
+end
+
+"""
     vertices_list(P::AbstractPolyhedron; check_boundedness::Bool=true)
 
 Return the list of vertices of a polyhedron in constraint representation.

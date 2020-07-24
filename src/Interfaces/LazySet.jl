@@ -10,7 +10,7 @@ export LazySet,
        radius,
        diameter,
        an_element,
-       isbounded, isbounded_unit_dimensions,
+       isbounded,
        neutral,
        absorbing,
        tosimplehrep,
@@ -259,7 +259,9 @@ Determine whether a set is bounded.
 
 ### Input
 
-- `S` -- set
+- `S`         -- set
+- `algorithm` -- (optional, default: `"support_function"`) algorithm choice,
+                 possible options are `"support_function"` and `"stiemke"`
 
 ### Output
 
@@ -267,14 +269,21 @@ Determine whether a set is bounded.
 
 ### Algorithm
 
-We check boundedness via [`isbounded_unit_dimensions`](@ref).
+See the documentation of [`_isbounded_unit_dimensions`](@ref) or
+[`_isbounded_stiemke`](@ref) for details.
 """
-function isbounded(S::LazySet)
-    return isbounded_unit_dimensions(S)
+function isbounded(S::LazySet; algorithm="support_function")
+    if algorithm == "support_function"
+        return _isbounded_unit_dimensions(S)
+    elseif algorithm == "stiemke"
+        return _isbounded_stiemke(S)
+    else
+        throw(ArgumentError("unknown algorithm $algorithm"))
+    end
 end
 
 """
-    isbounded_unit_dimensions(S::LazySet{N}) where {N<:Real}
+    _isbounded_unit_dimensions(S::LazySet{N}) where {N<:Real}
 
 Determine whether a set is bounded in each unit dimension.
 
@@ -291,7 +300,7 @@ Determine whether a set is bounded in each unit dimension.
 This function performs ``2n`` support function checks, where ``n`` is the
 ambient dimension of `S`.
 """
-function isbounded_unit_dimensions(S::LazySet{N}) where {N<:Real}
+function _isbounded_unit_dimensions(S::LazySet{N}) where {N<:Real}
     n = dim(S)
     @inbounds for i in 1:n
         for o in [one(N), -one(N)]
