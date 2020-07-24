@@ -40,6 +40,8 @@ for N in [Float64, Float32, Rational{Int}]
         @test length(dir) == length(oct.constraints) == 2 * n^2
         oct = overapproximate(X, OctDirections)
         @test length(dir) == length(oct.constraints) == 2 * n^2
+        # octagon direction using regular arrays
+        @test [v for v in OctDirections{N, Vector{N}}(n)] == Vector(collect.(OctDirections{N}(n)))
 
         # box-diagonal directions
         dir = BoxDiagDirections{N}(n)

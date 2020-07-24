@@ -317,7 +317,7 @@ end
 # - i = i + 1, j = i + 1
 # - for any pair (i, j) create four vectors [..., i: ±1, ..., j: ±1, ...]
 # in the end continue with box directions
-function _iterate_state(od, state)
+function _iterate_state(od::OctDirections{N}, state) where {N}
     # continue with octagon directions
     vec = state[1]
     i = state[2]
