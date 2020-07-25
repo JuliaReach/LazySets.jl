@@ -42,6 +42,7 @@ import .Arrays: distance
 # ===================
 include("Utils/helper_functions.jl")
 include("Utils/macros.jl")
+include("Utils/iterators.jl")
 
 # ==================
 # Abstract set types

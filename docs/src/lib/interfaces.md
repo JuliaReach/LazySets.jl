@@ -46,6 +46,8 @@ support_vector
 support_function
 σ
 singleton_list(::LazySet)
+constraints(::LazySet)
+vertices(::LazySet)
 delaunay
 ```
 

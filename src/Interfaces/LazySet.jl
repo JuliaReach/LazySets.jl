@@ -26,7 +26,9 @@ export LazySet,
        area,
        surface,
        singleton_list,
-       concretize
+       concretize,
+       constraints,
+       vertices
 
 """
     LazySet{N}
@@ -1038,6 +1040,48 @@ result may be partially lazy.
 """
 function concretize(X::LazySet)
     return X
+end
+
+"""
+    constraints(X::LazySet)
+
+Construct an iterator over the constraints of a polyhedral set.
+
+### Input
+
+- `X` -- polyhedral set
+
+### Output
+
+An iterator over the constraints of `X`.
+"""
+function constraints(X::LazySet)
+    return _constraints_fallback(X)
+end
+
+"""
+    vertices(X::LazySet)
+
+Construct an iterator over the vertices of a polyhedral set.
+
+### Input
+
+- `X` -- polyhedral set
+
+### Output
+
+An iterator over the vertices of `X`.
+"""
+function vertices(X::LazySet)
+    return _vertices_fallback(X)
+end
+
+function _constraints_fallback(X::LazySet)
+    return VectorIterator(constraints_list(X))
+end
+
+function _vertices_fallback(X::LazySet)
+    return VectorIterator(vertices_list(X))
 end
 
 # =========================

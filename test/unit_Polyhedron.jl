@@ -66,6 +66,12 @@ for N in [Float64, Rational{Int}, Float32]
         [HalfSpace(N[2, 2], N(18)), HalfSpace(N[-3, 3], N(9)),
          HalfSpace(N[-1, -1], N(-3)), HalfSpace(N[2, -4], N(-6))])
 
+    # constraints iterator
+    @test ispermutation(collect(constraints(p)), constraints_list(p))
+
+    # vertices iterator
+    @test ispermutation(collect(vertices(p)), vertices_list(p))
+
     if test_suite_polyhedra
         # conversion to and from Polyhedra's VRep data structure
         cl = constraints_list(HPolyhedron(polyhedron(p)))

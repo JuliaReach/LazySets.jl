@@ -233,7 +233,7 @@ function generators(L::LineSegment{N}) where {N<:Real}
     q = L.q
     if _isapprox(p, q)
         # degenerate line segment has no generators
-        return EmptyGeneratorIterator{N}()
+        return EmptyIterator{Vector{N}}()
     end
     return [(p - q) / 2]
 end
