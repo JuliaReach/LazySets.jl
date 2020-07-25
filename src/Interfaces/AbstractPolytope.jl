@@ -6,7 +6,7 @@ export AbstractPolytope,
        minkowski_sum
 
 """
-    AbstractPolytope{N<:Real} <: AbstractPolyhedron{N}
+    AbstractPolytope{N} <: AbstractPolyhedron{N}
 
 Abstract type for compact convex polytopic sets.
 
@@ -30,7 +30,7 @@ properties:
 1. They are the intersection of a finite number of closed half-spaces.
 2. They are the convex hull of finitely many vertices.
 """
-abstract type AbstractPolytope{N<:Real} <: AbstractPolyhedron{N} end
+abstract type AbstractPolytope{N} <: AbstractPolyhedron{N} end
 
 isconvextype(::Type{<:AbstractPolytope}) = true
 
@@ -78,8 +78,7 @@ function isempty(P::AbstractPolytope)
 end
 
 """
-    isuniversal(P::AbstractPolytope{N}, [witness]::Bool=false
-               ) where {N<:Real}
+    isuniversal(P::AbstractPolytope{N}, [witness]::Bool=false) where {N}
 
 Check whether a polyhedron is universal.
 
@@ -98,8 +97,7 @@ Check whether a polyhedron is universal.
 A witness is produced using `isuniversal(H)` where `H` is the first linear
 constraint of `P`.
 """
-function isuniversal(P::AbstractPolytope{N}, witness::Bool=false
-                    ) where {N<:Real}
+function isuniversal(P::AbstractPolytope{N}, witness::Bool=false) where {N}
     if witness
         constraints = constraints_list(P)
         if isempty(constraints)
@@ -113,7 +111,7 @@ end
 
 # given a polytope P, apply the linear map P to each vertex of P
 # it is assumed that the interface function `vertices_list(P)` is available
-@inline function _linear_map_vrep(M::AbstractMatrix{N}, P::AbstractPolytope{N}) where {N<:Real}
+@inline function _linear_map_vrep(M::AbstractMatrix{N}, P::AbstractPolytope{N}) where {N}
     vertices = broadcast(v -> M * v, vertices_list(P))
     m = size(M, 1) # output dimension
     if m == 1
@@ -127,7 +125,7 @@ end
 end
 
 function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::AbstractPolytope{N},
-                                 algo::AbstractLinearMapAlgorithm) where {N<:Real}
+                                 algo::AbstractLinearMapAlgorithm) where {N}
     constraints = _linear_map_hrep(M, P, algo)
     m = size(M, 1) # output dimension
     if m == 1

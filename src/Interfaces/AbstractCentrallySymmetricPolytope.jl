@@ -6,7 +6,7 @@ export AbstractCentrallySymmetricPolytope,
        vertices_list
 
 """
-    AbstractCentrallySymmetricPolytope{N<:Real} <: AbstractPolytope{N}
+    AbstractCentrallySymmetricPolytope{N} <: AbstractPolytope{N}
 
 Abstract type for centrally symmetric, polytopic sets.
 It combines the `AbstractCentrallySymmetric` and `AbstractPolytope` interfaces.
@@ -31,7 +31,7 @@ julia> subtypes(AbstractCentrallySymmetricPolytope)
  Ball1
 ```
 """
-abstract type AbstractCentrallySymmetricPolytope{N<:Real} <: AbstractPolytope{N} end
+abstract type AbstractCentrallySymmetricPolytope{N} <: AbstractPolytope{N} end
 
 isconvextype(::Type{<:AbstractCentrallySymmetricPolytope}) = true
 
@@ -58,7 +58,7 @@ end
 
 
 """
-    an_element(P::AbstractCentrallySymmetricPolytope{N}) where {N<:Real}
+    an_element(P::AbstractCentrallySymmetricPolytope)
 
 Return some element of a centrally symmetric polytope.
 
@@ -70,7 +70,7 @@ Return some element of a centrally symmetric polytope.
 
 The center of the centrally symmetric polytope.
 """
-function an_element(P::AbstractCentrallySymmetricPolytope{N}) where {N<:Real}
+function an_element(P::AbstractCentrallySymmetricPolytope)
     return center(P)
 end
 
@@ -92,8 +92,8 @@ function isempty(::AbstractCentrallySymmetricPolytope)
 end
 
 """
-    isuniversal(S::AbstractCentrallySymmetricPolytope{N}, [witness]::Bool=false
-               ) where {N<:Real}
+    isuniversal(S::AbstractCentrallySymmetricPolytope{N},
+                [witness]::Bool=false) where {N}
 
 Check whether a centrally symmetric polytope is universal.
 
@@ -113,7 +113,7 @@ A witness is obtained by computing the support vector in direction
 `d = [1, 0, …, 0]` and adding `d` on top.
 """
 function isuniversal(S::AbstractCentrallySymmetricPolytope{N},
-                     witness::Bool=false) where {N<:Real}
+                     witness::Bool=false) where {N}
     if witness
         d = SingleEntryVector{N}(1, dim(S))
         w = σ(d, S) + d
@@ -124,7 +124,7 @@ function isuniversal(S::AbstractCentrallySymmetricPolytope{N},
 end
 
 """
-    center(H::AbstractCentrallySymmetricPolytope{N}, i::Int) where {N<:Real}
+    center(H::AbstractCentrallySymmetricPolytope{N}, i::Int) where {N}
 
 Return the center along a given dimension of a centrally symmetric polytope.
 
@@ -137,7 +137,6 @@ Return the center along a given dimension of a centrally symmetric polytope.
 
 The center along a given dimension of the centrally symmetric polytope.
 """
-@inline function center(S::AbstractCentrallySymmetricPolytope{N},
-                        i::Int) where {N<:Real}
+@inline function center(S::AbstractCentrallySymmetricPolytope{N}, i::Int) where {N}
     return center(S)[i]
 end
