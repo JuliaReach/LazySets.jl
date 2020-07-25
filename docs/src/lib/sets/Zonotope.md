@@ -17,6 +17,7 @@ reduce_order(::Zonotope, ::Union{Integer, Rational})
 split(::AbstractZonotope, ::Int)
 split(::AbstractZonotope, ::AbstractVector{Int}, ::AbstractVector{Int})
 remove_zero_generators(::Zonotope)
+linear_map!(::Zonotope, ::AbstractMatrix, ::Zonotope)
 ```
 
 Inherited from [`LazySet`](@ref):
