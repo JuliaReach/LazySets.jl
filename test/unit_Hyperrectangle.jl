@@ -257,4 +257,7 @@ for N in [Float64, Rational{Int}, Float32]
     # volume of a hyperrectangular set
     b = BallInf(N[0, 0, 0], N(1))
     @test volume(b) ≈ N(8)
+
+    # concete projection
+    @test project(BallInf(zeros(N, 4), N(1)), [1, 2]) == Hyperrectangle(zeros(N, 2), ones(N, 2))
 end
