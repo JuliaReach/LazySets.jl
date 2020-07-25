@@ -495,3 +495,39 @@ function _linear_map(M::AbstractMatrix, L::Line)
     Md = M * L.d
     return Line(Mp, Md)
 end
+
+"""
+    constrained_dimensions(L::Line)
+
+Return the indices in which a line is constrained.
+
+### Input
+
+- `L` -- line
+
+### Output
+
+A vector of ascending indices `i` such that the line is constrained in dimension
+`i`.
+
+### Algorithm
+
+For each coordinate ``i``, vectors of the form ``x_i = p_i + λ n_i`` are constrained
+(i.e. they belong to the line and are bounded) if and only if ``n_i`` is zero.
+Hence, this function returns all indices of the normal vector ``n`` for which
+the ``i``-th coordinate is nonzero.
+
+### Examples
+
+The line ``y = 5`` in two dimensions can be written as ``p = [0, 5]`` and
+``n = [1, 0]``. This line constrains dimension ``2``.
+
+```jldoctest
+julia> constrained_dimensions(Line([0, 5.], [1, 0.]))
+1-element Array{Int64,1}:
+ 2
+```
+"""
+function constrained_dimensions(L::Line)
+    return findall(isapproxzero, L.n)
+end
