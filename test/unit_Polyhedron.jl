@@ -126,7 +126,7 @@ for N in [Float64, Float32]
     for hs in constraints_list(p2)
         @test norm(hs.a) == N(1)
     end
-    
+
     # 2D HPolyhedron
     p = HPolyhedron{N}()
     c1 = LinearConstraint(N[2, 2], N(12))
@@ -356,4 +356,12 @@ for N in [Float64]
         @test πP isa HPolyhedron{N}
         @test ispermutation(constraints_list(πP), [HalfSpace(N[-1, 0], N(0)), HalfSpace(N[0, -1], N(0))])
     end
+end
+
+# tests that require ModelingToolkit
+@static if VERSION >= v"1.3" && isdefined(@__MODULE__, :ModelingToolkit)
+    vars = @variables x y
+    p1 = HPolyhedron([x + y <= 1, x + y >= -1,  x - y <= 1, x - y >= -1], vars)
+    b1 = Ball1(zeros(2), 1.0)
+    @test isequivalent(p1, b1)
 end
