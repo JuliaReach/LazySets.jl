@@ -654,7 +654,7 @@ function project(Z::Zonotope{N}, block::AbstractVector{Int}) where {N}
     return lm
 end
 
-function project(H::AbstractHyperrectangle{N}, block::AbstractVector{Int}) where {N}
+function project(H::AbstractHyperrectangle, block::AbstractVector{Int})
     πc = center(H)[block]
     πr = radius_hyperrectangle(H)[block]
     return Hyperrectangle(πc, πr, check_bounds=false)
