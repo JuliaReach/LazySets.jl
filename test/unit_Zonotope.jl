@@ -90,6 +90,13 @@ for N in [Float64, Rational{Int}, Float32]
     @test Z5.center == N[0, 1]
     @test Z5.generators == N[0.5 0.5 0.5 0; -0.5 0.5 0 0.5]
 
+    # in-place linear map
+    Zin = convert(Zonotope, BallInf(zeros(N, 2), N(1)))
+    Zout = Zonotope(similar(Zin.center), similar(Zin.generators))
+    M = N[0 1; -1 0]
+    LazySets.linear_map!(Zout, M, Zin)
+    @test Zout == Zonotope(N[0, 0], N[0 1; -1 0])
+
     # intersection with a hyperplane
     H1 = Hyperplane(N[1, 1], N(3))
     intersection_empty, point = is_intersection_empty(Z1, H1, true)
