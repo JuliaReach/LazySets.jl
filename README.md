@@ -28,14 +28,6 @@ pkg> add LazySets
 
 See the [Getting started](https://juliareach.github.io/LazySets.jl/dev/man/getting_started/) section of the manual for other options.
 
-
-## Ecosystem
-
-`LazySets.jl` is applied in a number of projects in the Julia technical computing stack:
-
-- [ReachabilityAnalysis.jl](https://github.com/JuliaReach/ReachabilityAnalysis.jl) -- Methods to compute sets of states reachable by dynamical systems
-- [NeuralVerification.jl](https://github.com/sisl/NeuralVerification.jl) -- Methods to soundly verify deep neural networks
-
 ## Publications
 
 This library has been applied in a number of scientic works. In reverse chronological order,
@@ -51,3 +43,12 @@ This library has been applied in a number of scientic works. In reverse chronolo
 - ARCH-COMP18 Category Report: Continuous and Hybrid Systems with Linear Continuous Dynamics. Matthias Althoff, Stanley Bak, Xin Chen, Chuchu Fan, Marcelo Forets, Goran Frehse, Niklas Kochdumper, Yangge Li, Sayan Mitra, Rajarshi Ray, Christian Schilling and Stefan Schupp (2018) ARCH18. 5th International Workshop on Applied Verification of Continuous and Hybrid Systems, 54: 23–52. doi: 10.29007/73mb. Packages: Reachability.jl.
 
 - Reach Set Approximation through Decomposition with Low-dimensional Sets and High-dimensional Matrices. Sergiy Bogomolov, Marcelo Forets, Goran Frehse, Frédéric Viry, Andreas Podelski and Christian Schilling (2018) HSCC'18 Proceedings of the 21st International Conference on Hybrid Systems: Computation and Control: 41–50. See the ACM Digital Library link, or the arXiv: 1801.09526. Packages: LazySets.jl and Reachability.jl.
+
+## Ecosystem
+
+`LazySets.jl` is applied in a number of projects in the Julia technical computing stack:
+
+- [ReachabilityAnalysis.jl](https://github.com/JuliaReach/ReachabilityAnalysis.jl) -- Methods to compute sets of states reachable by dynamical systems
+- [NeuralVerification.jl](https://github.com/sisl/NeuralVerification.jl) -- Methods to soundly verify deep neural networks
+- [Photometry.jl](https://github.com/JuliaAstro/Photometry.jl) -- A package for performing astronomical photometry using modern and efficient algorithms.
+
