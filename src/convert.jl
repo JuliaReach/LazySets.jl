@@ -988,7 +988,7 @@ function convert(::Type{Zonotope},
 end
 
 """
-    convert(::Type{<:HParallelotope}, Z::AbstractZonotope{N}) where {N}
+    convert(::Type{HParallelotope}, Z::AbstractZonotope{N}) where {N}
 
 Converts a zonotopic set of order one into a parallelotope in constraint
 representation.
@@ -1007,7 +1007,7 @@ A parallelotope in constraint representation.
 This function requires that the list of constraints of `Z` are obtained in
 the particular order returned from the constraints list function of a `Zonotope`.
 """
-function convert(::Type{<:HParallelotope}, Z::AbstractZonotope{N}) where {N}
+function convert(::Type{HParallelotope}, Z::AbstractZonotope{N}) where {N}
     @assert order(Z) == 1 "cannot convert a zonotope that is not of order 1 to"*
                           " a parallelotope"
     n = dim(Z)
