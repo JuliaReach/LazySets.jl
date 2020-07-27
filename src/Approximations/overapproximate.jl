@@ -1767,7 +1767,7 @@ function overapproximate(Z::AbstractZonotope, ::Type{<:HParallelotope}, indices=
     return convert(HParallelotope, Zred)
 end
 
-function _overapproximate_hparallelotope(Z::AbstractZonotope, ::Type{<:HParallelotope}, indices=1:dim(Z))
+function _overapproximate_hparallelotope(Z::AbstractZonotope, indices=1:dim(Z))
     length(indices) == dim(Z) || throw(ArgumentError("the number of generator indices is $(length(indices)), " *
                                                      "but it was expected to be $(dim(Z))"))
 
