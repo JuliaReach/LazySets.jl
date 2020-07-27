@@ -1763,7 +1763,7 @@ hybrid systems using a combination of zonotopes and polytopes*. Nonlinear
 analysis: hybrid systems, 4(2), 233-249.
 """
 function overapproximate(Z::AbstractZonotope, ::Type{<:HParallelotope}, indices=1:dim(Z))
-    Zred = _overapproximate_hparallelotope(Z, HParallelotope, indices)
+    Zred = _overapproximate_hparallelotope(Z, indices)
     return convert(HParallelotope, Zred)
 end
 
