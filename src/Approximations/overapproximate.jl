@@ -1700,7 +1700,7 @@ function overapproximate(r::Rectification{N, <:AbstractZonotope{N}}, ::Type{<:Zo
     else
         Gout = G
     end
-    
+
     return Zonotope(c, remove_zero_columns(Gout))
 end
 
@@ -1735,4 +1735,51 @@ function overapproximate(CHA::ConvexHullArray{N, <:AbstractZonotope{N}}, ::Type{
         end
         return Zaux
     end
+end
+
+"""
+    overapproximate(Z::AbstractZonotope, ::Type{<:HParallelotope}, indices=1:dim(Z))
+
+Overapproximation of a zonotopic set with a parallelotopic set in constraint
+representation.
+
+### Input
+
+- `Z`              -- zonotopic set
+- `HParallelotope` -- type for dispatch
+- `indices`        -- (optional; default: `1:dim(Z)`) generator indices selected
+                       when constructing the parallelotope
+
+### Output
+
+An overapproximation of the given zonotope using a parallelotope.
+
+### Algorithm
+
+The algorithm is based on Proposition 8 discussed in Section 5 of [1].
+
+[1] Althoff, M., Stursberg, O., & Buss, M. (2010). *Computing reachable sets of
+hybrid systems using a combination of zonotopes and polytopes*. Nonlinear
+analysis: hybrid systems, 4(2), 233-249.
+"""
+function overapproximate(Z::AbstractZonotope, ::Type{<:HParallelotope}, indices=1:dim(Z))
+    Zred = _overapproximate_hparallelotope(Z, indices)
+    return convert(HParallelotope, Zred)
+end
+
+function _overapproximate_hparallelotope(Z::AbstractZonotope, indices=1:dim(Z))
+    length(indices) == dim(Z) || throw(ArgumentError("the number of generator indices is $(length(indices)), " *
+                                                     "but it was expected to be $(dim(Z))"))
+
+    p, n = ngens(Z), dim(Z)
+    if p == n
+        return Z
+    elseif p < n
+        error("the zonotope order is $(order(Z)) but it should be at least 1")
+    end
+
+    G = genmat(Z)
+    Γ = G[:, indices]
+    □Γ⁻¹Z = box_approximation(linear_map(inv(Γ), Z))
+    return linear_map(Γ, □Γ⁻¹Z)
 end

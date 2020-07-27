@@ -254,6 +254,18 @@ for N in [Float64, Float32]
     Y = overapproximate(rm, CartesianProductArray, Hyperrectangle)
     @test array(Y) == [Hyperrectangle(N[0, 0], N[1, 1]),
         Hyperrectangle(N[0, 0], N[0, 2]), Hyperrectangle(N[0, 0], N[3, 0])]
+
+    # overapprox with an HParallelotope
+    Z = Zonotope(N[0, 0], N[1 0 1; 0 1 1])
+    @test overapproximate(Z, HParallelotope) == HParallelotope(N[0 -1; 1 0], N[2, 2, 2, 2])
+    @test overapproximate(Z, HParallelotope, 1:2) == HParallelotope(N[0 -1; 1 0], N[2, 2, 2, 2])
+    # TODO requires LazySets#2282
+    #@test overapproximate(Z, HParallelotope, 2:3) ≈ HParallelotope(N[1 0; 1/√2 -1/√2], N[2, √2, 2, √2])
+
+    # order 1 zonotope remains unchanged
+    Z = Zonotope(N[0, 0], N[1 0; 0 1])
+    @test LazySets.Approximations._overapproximate_hparallelotope(Z) === Z
+    @test overapproximate(Z, HParallelotope) == HParallelotope(N[0 -1; 1 0], N[1, 1, 1, 1])
 end
 
 for N in [Float64]
