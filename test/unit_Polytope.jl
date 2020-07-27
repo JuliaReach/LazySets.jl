@@ -194,6 +194,11 @@ for N in [Float64, Rational{Int}, Float32]
     p[1] = N(5)
     # test that Pcopy is independent of P ( = deepcopy)
     @test Pcopy.vertices[1] == [N(1)]
+
+    # test concrete projection
+    V = VPolytope([N[0, 0, 1], N[0, 1, 0], N[0, -1, 0], N[1, 0, 0]])
+    @test project(V, [1]) == VPolytope([N[0], N[0], N[0], N[1]])
+    @test project(V, [1, 2]) == VPolytope([N[0, 0], N[0, 1], N[0, -1], N[1, 0]])
 end
 
 # default Float64 constructors
