@@ -264,7 +264,7 @@ for N in [Float64, Float32]
 
     # order 1 zonotope remains unchanged
     Z = Zonotope(N[0, 0], N[1 0; 0 1])
-    @test LazySets.Approximations._overapproximate_hparallelotope(Z, HParallelotope) === Z
+    @test LazySets.Approximations._overapproximate_hparallelotope(Z) === Z
     @test overapproximate(Z, HParallelotope) == HParallelotope(N[0 -1; 1 0], N[1, 1, 1, 1])
 end
 
