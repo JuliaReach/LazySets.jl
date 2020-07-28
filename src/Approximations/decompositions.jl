@@ -665,5 +665,5 @@ function project(V::Union{<:VPolygon{N}, <:VPolytope{N}},
     n = dim(V)
     M = projection_matrix(block, n, N)
     πvertices = broadcast(v -> M * v, vertices_list(V))
-    return basetype(V)(πvertices)
+    return VPolytope(πvertices)
 end
