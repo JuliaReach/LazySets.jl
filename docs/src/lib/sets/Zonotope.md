@@ -18,7 +18,7 @@ split(::AbstractZonotope, ::Int)
 split(::AbstractZonotope, ::AbstractVector{Int}, ::AbstractVector{Int})
 remove_zero_generators(::Zonotope)
 linear_map!(::Zonotope, ::AbstractMatrix, ::Zonotope)
-quadratic_map(::Zonotope{N}, ::Array{A}) where {N, A<:Array{N}}
+quadratic_map(Q::Vector{MT}, Z::Zonotope{N}) where {N, MT<:AbstractMatrix{N}}
 ```
 
 Inherited from [`LazySet`](@ref):
