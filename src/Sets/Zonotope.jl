@@ -429,7 +429,7 @@ function linear_map!(Zout::Zonotope, M::AbstractMatrix, Z::Zonotope)
 end
 
 """
-    quadratic_map(Z::Zonotope{N}, Q::Array{A}) where {N, A<:Array{N}}
+    quadratic_map(Q::Vector{MT}, Z::Zonotope{N}) where {N, MT<:AbstractMatrix{N}}
 
 Return the overapproximation of the quadratic map of the given zonotope.
 
