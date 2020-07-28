@@ -451,7 +451,7 @@ operations in reachability analysis of hybrid systems. In Proceedings of the
 15th ACM international conference on Hybrid Systems: Computation and Control
 (HSCC ’12). Association for Computing Machinery, New York, NY, USA, 45–54.*
 """
-function quadratic_map(Z::Zonotope{N}, Q::Array{A}) where {N, A<:Array{N}}
+function quadratic_map(Q::Vector{MT}, Z::Zonotope{N}) where {N, MT<:AbstractMatrix{N}}
     @assert length(Q) == dim(Z) "the number of matrices needs to match the dimension of the zonotope"
     G = genmat(Z)
     c = center(Z)
