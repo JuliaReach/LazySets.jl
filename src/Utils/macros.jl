@@ -1,3 +1,5 @@
+using ExprTools: splitdef, combinedef
+
 """
     @neutral(SET, NEUT)
 
@@ -326,4 +328,39 @@ macro array_absorbing(FUN, ABS, SETARR)
             return Y
         end
     end
+end
+
+"""
+    @commutative(FUN)
+
+Macro to declare that a given function `FUN` is commutative, returning the original
+`FUN` and a new method of `FUN` where the first and second arguments are swapped.
+
+### Input
+
+- `FUN` -- function name
+
+### Output
+
+A quoted expression containing the function definitions.
+"""
+macro commutative(FUN)
+
+    # split the function definition expression
+    def = splitdef(FUN)
+    FUNARGS = copy(def[:args])
+
+    # swap arguments 1 and 2
+    aux = def[:args][1]
+    def[:args][1] = def[:args][2]
+    def[:args][2] = aux
+
+    # the new function calls f with swapped arguments
+    def[:body] = quote ($(def[:name]))($(FUNARGS...)) end
+
+    _FUN = combinedef(def)
+    return quote
+        $(esc(FUN))
+        $(esc(_FUN))
+     end
 end

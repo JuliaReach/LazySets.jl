@@ -3,9 +3,7 @@
 export intersection
 
 """
-    intersection(S::AbstractSingleton{N},
-                 X::LazySet{N}
-                ) where {N<:Real}
+    intersection(S::AbstractSingleton{N}, X::LazySet{N}) where {N<:Real}
 
 Return the intersection of a singleton with another set.
 
@@ -19,17 +17,8 @@ Return the intersection of a singleton with another set.
 If the sets intersect, the result is `S`.
 Otherwise, the result is the empty set.
 """
-function intersection(S::AbstractSingleton{N},
-                      X::LazySet{N}
-                     ) where {N<:Real}
+@commutative function intersection(S::AbstractSingleton{N}, X::LazySet{N}) where {N<:Real}
     return element(S) ∈ X ? S : EmptySet{N}(dim(S))
-end
-
-# symmetric method
-function intersection(X::LazySet{N},
-                      S::AbstractSingleton{N}
-                     ) where {N<:Real}
-    return intersection(S, X)
 end
 
 # disambiguation
