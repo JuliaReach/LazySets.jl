@@ -459,8 +459,8 @@ function quadratic_map(Q::Vector{MT}, Z::Zonotope{N}) where {N, MT<:AbstractMatr
     h = Array{N}(undef, n, binomial(p+2, 2)-1)
     d = Vector{N}(undef, n)
     g(x) = view(G, :, x)
+    cᵀ = c'
     for (i, Qᵢ) in enumerate(Q)
-        cᵀ = c'
         cᵀQᵢ = cᵀ * Qᵢ
         Qᵢc = Qᵢ * c
         aux = 0
