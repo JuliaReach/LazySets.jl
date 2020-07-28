@@ -665,5 +665,17 @@ function project(V::Union{<:VPolygon{N}, <:VPolytope{N}},
     n = dim(V)
     M = projection_matrix(block, n, N)
     πvertices = broadcast(v -> M * v, vertices_list(V))
-    return VPolytope(πvertices)
+
+    m = size(M, 1)
+    if m == 1
+        # convex_hull in 1d returns the minimum and maximum points, in that order
+        aux = convex_hull(πvertices)
+        a = first(aux[1])
+        b = length(aux) == 1 ? a : first(aux[2])
+        return Interval(a, b)
+    elseif m == 2
+        return VPolygon(convex_hull(πvertices))
+    else
+        return VPolytope(πvertices)
+    end
 end

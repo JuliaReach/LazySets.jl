@@ -394,9 +394,10 @@ for N in [Float64, Float32, Rational{Int}]
 
     # test concrete projection
     V = VPolygon([N[0, 1], N[1, 0], N[-1, 0]])
-    @test project(V, [1]) == VPolytope([N[-1], N[1], N[0]])
+    @test project(V, [1]) == Interval(N(-1), N(1))
+    @test project(V, 1:2) == V
     V = VPolygon([N[1, 0], N[1, 1]])
-    @test project(V, [1]) == VPolytope([N[1], N[1]])
+    @test project(V, [1]) == Interval(N(1), N(1))
 end
 
 function same_constraints(v::Vector{<:LinearConstraint{N}})::Bool where N<:Real
