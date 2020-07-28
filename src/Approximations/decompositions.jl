@@ -674,7 +674,7 @@ function project(V::Union{<:VPolygon{N}, <:VPolytope{N}},
         b = length(aux) == 1 ? a : first(aux[2])
         return Interval(a, b)
     elseif m == 2
-        return VPolygon(convex_hull(πvertices))
+        return VPolygon(πvertices; apply_convex_hull=true)
     else
         return VPolytope(πvertices)
     end
