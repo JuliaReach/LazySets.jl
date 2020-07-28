@@ -17,6 +17,8 @@ Return the intersection of a singleton with another set.
 If the sets intersect, the result is `S`.
 Otherwise, the result is the empty set.
 """
+intersection(S::AbstractSingleton{N}, X::LazySet{N}) where {N<:Real}
+
 @commutative function intersection(S::AbstractSingleton{N}, X::LazySet{N}) where {N<:Real}
     return element(S) ∈ X ? S : EmptySet{N}(dim(S))
 end
