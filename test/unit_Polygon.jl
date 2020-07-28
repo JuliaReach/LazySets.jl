@@ -391,6 +391,12 @@ for N in [Float64, Float32, Rational{Int}]
     m = N[4 0; 6 2; 4 4]'
     P = VPolygon(m)
     @test is_cyclic_permutation(vertices_list(P), [N[4, 0], N[6, 2], N[4, 4]])
+
+    # test concrete projection
+    V = VPolygon([N[0, 1], N[1, 0], N[-1, 0]])
+    @test project(V, [1]) == VPolytope([N[-1], N[1], N[0]])
+    V = VPolygon([N[1, 0], N[1, 1]])
+    @test project(V, [1]) == VPolytope([N[1], N[1]])
 end
 
 function same_constraints(v::Vector{<:LinearConstraint{N}})::Bool where N<:Real

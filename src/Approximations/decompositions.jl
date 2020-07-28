@@ -659,3 +659,11 @@ function project(H::AbstractHyperrectangle, block::AbstractVector{Int})
     πr = radius_hyperrectangle(H)[block]
     return Hyperrectangle(πc, πr, check_bounds=false)
 end
+
+function project(V::Union{<:VPolygon{N}, <:VPolytope{N}},
+                 block::AbstractVector{Int}) where {N}
+    n = dim(V)
+    M = projection_matrix(block, n, N)
+    πvertices = broadcast(v -> M * v, vertices_list(V))
+    return VPolytope(πvertices)
+end
