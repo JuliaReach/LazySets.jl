@@ -554,29 +554,36 @@ end
 # Zonotope vertex enumeration methods
 # ====================================
 
-function _vertices_list_2D(c::AbstractVector{N}, G::AbstractMatrix{N}; apply_convex_hull::Bool) where {N}
-    if same_sign(G)
-        return _vertices_list_2D_positive(c, G)
-    else
-        # FIXME generalized 2D vertices list function is not implemented yet
-        # See LazySets#2209
-        return _vertices_list_iterative(c, G, apply_convex_hull=apply_convex_hull)
-    end
+@inline function _angles(point::AbstractVector{N})  where{N}
+    (atan(point[2], point[1]) / π * 180 + 360) % 360
 end
 
-function _vertices_list_2D_positive(c::AbstractVector{N}, G::AbstractMatrix{N}) where {N}
-    n, p = size(G)
-
-    # TODO special case p = 1 or p = 2 ?
-
-    sorted_G = sortslices(G, dims=2, by=x->atan(x[2], x[1]))
-    index = ones(N, p, 2*p)
-    @inbounds for i in 1:p
-        index[i, i+1:i+p-1] .= -one(N)
+function _single_quadrant_vertices_enum(G::AbstractMatrix{N}, sorted::Bool=true) where{N}
+    if !sorted
+        G = sortslices(G, dims=2, by=_angles)
     end
-    index[:, 1] .= -one(N)
-    V = sorted_G * index .+ c
-    return [V[:, i] for i in 1:2*p]
+    return VPolygon(2*cumsum(hcat(G, -G), dims=2) .- sum(G, dims=2))
+end
+
+function _vertices_list_2D(c::AbstractVector{N}, G::AbstractMatrix{N}; apply_convex_hull::Bool) where {N}
+    if apply_convex_hull
+        return _vertices_list_iterative(c, G, apply_convex_hull)
+    end
+    angles = mapslices(_angles, G, dims=1)[1, :]
+    perm = sortperm(angles)
+    sorted_angles = angles[perm]
+    sorted_G = G[:, perm]
+    polygons  = Vector{VPolygon{N}}()
+    sizehint!(polygons, 4)
+
+    @inbounds for i in zip(0:90:360, 90:90:360)
+        index = i[1] .<= sorted_angles .< i[2]
+        if sum(index) > 0
+            push!(polygons, _single_quadrant_vertices_enum(sorted_G[:, index]))
+        end
+    end
+
+    return vertices_list(translate(reduce(minkowski_sum, polygons), c))
 end
 
 function _vertices_list_iterative(c::AbstractVector{N}, G::AbstractMatrix{N}; apply_convex_hull::Bool) where {N}
@@ -590,3 +597,4 @@ function _vertices_list_iterative(c::AbstractVector{N}, G::AbstractMatrix{N}; ap
 
     return apply_convex_hull ? convex_hull!(vlist) : vlist
 end
+
