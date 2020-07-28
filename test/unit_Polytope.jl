@@ -197,8 +197,9 @@ for N in [Float64, Rational{Int}, Float32]
 
     # test concrete projection
     V = VPolytope([N[0, 0, 1], N[0, 1, 0], N[0, -1, 0], N[1, 0, 0]])
-    @test project(V, [1]) == VPolytope([N[0], N[0], N[0], N[1]])
-    @test project(V, [1, 2]) == VPolytope([N[0, 0], N[0, 1], N[0, -1], N[1, 0]])
+    @test project(V, [1]) == Interval(N(0), N(1))
+    @test project(V, [1, 2]) == VPolygon([N[0, 0], N[0, 1], N[0, -1], N[1, 0]])
+    @test project(V, [1, 2, 3]) == V
 end
 
 # default Float64 constructors
