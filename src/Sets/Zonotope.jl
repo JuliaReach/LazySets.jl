@@ -458,22 +458,23 @@ function quadratic_map(Z::Zonotope{N}, Q::Array{A}) where {N, A<:Array{N}}
     n, p = size(G)
     h = Array{N}(undef, n, binomial(p+2, 2)-1)
     d = Vector{N}(undef, n)
-    for i=1:n
+    g(x) = view(G, :, x)
+    for (i, Qᵢ) in enumerate(Q)
+        cᵀ = c'
+        cᵀQᵢ = cᵀ * Qᵢ
+        Qᵢc = Qᵢ * c
         aux = 0
-        g(x) = G[:, x]
-        for s=1:p
-            aux += g(s)' * Q[i] * g(s)
-        end
-        d[i] = c' * Q[i] * c + 0.5 * aux
         for j=1:p
-            h[i, j] = c' * Q[i] * g(j) + g(j)' * Q[i] * c
-            h[i, p+j] = 0.5 * g(j)' * Q[i] * g(j)
+            aux += g(j)' * Qᵢ * g(j)
+            h[i, j] = cᵀQᵢ * g(j) + g(j)' * Qᵢc
+            h[i, p+j] = 0.5 * g(j)' * Qᵢ * g(j)
         end
+        d[i] = cᵀQᵢ * c + 0.5 * aux
         l = 0
         for j=1:p-1
             for k=j+1:p
                 l += 1
-                h[i, 2p+l] = g(j)' * Q[i] * g(k) + g(k)' * Q[i] * g(j)
+                h[i, 2p+l] = g(j)' * Qᵢ * g(k) + g(k)' * Qᵢ * g(j)
             end
         end
     end
