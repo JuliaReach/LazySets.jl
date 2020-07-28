@@ -444,7 +444,7 @@ The overapproximation of the quadratic map of the given zonotope.
 
 ### Algorithm
 
-This function implements [Lemma 1, 1]
+This function implements [Lemma 1, 1].
 
 [1] *Matthias Althoff and Bruce H. Krogh. 2012. Avoiding geometric intersection
 operations in reachability analysis of hybrid systems. In Proceedings of the
