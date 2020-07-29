@@ -482,9 +482,11 @@ function quadratic_map(Q::Vector{MT}, Z::Zonotope{N}) where {N, MT<:AbstractMatr
         d[i] = cᵀQᵢ * c + 0.5 * aux
         l = 0
         for j=1:p-1
+            gjᵀQᵢ = g(j)' * Qᵢ
+            Qᵢgj = Qᵢ * g(j)
             for k=j+1:p
                 l += 1
-                h[i, 2p+l] = g(j)' * Qᵢ * g(k) + g(k)' * Qᵢ * g(j)
+                h[i, 2p+l] = gjᵀQᵢ * g(k) + g(k)' * Qᵢgj
             end
         end
     end
