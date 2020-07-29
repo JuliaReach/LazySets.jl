@@ -40,8 +40,7 @@ function intersection(S1::AbstractSingleton{N},
 end
 
 """
-    intersection(L1::Line2D{N}, L2::Line2D{N}
-                ) where {N<:Real}
+    intersection(L1::Line2D{N}, L2::Line2D{N}) where {N<:Real}
 
 Return the intersection of two 2D lines.
 
@@ -74,21 +73,18 @@ julia> intersection(Line2D([1., 1.], 1.), Line2D([1., 1.], 1.))
 Line2D{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
 ```
 """
-function intersection(L1::Line2D{N}, L2::Line2D{N}
-                     ) where {N<:Real}
-    det = L1.a[1]*L2.a[2] - L1.a[2]*L2.a[1]
-    # are the lines parallel?
-    if isapproxzero(det)
-        # are they the same line?
-        if isapprox(L1.b, L2.b)
-            return L1
-        else
-            # lines are parallel but not identical
-            return EmptySet{N}(dim(L1))
+function intersection(L1::Line2D{N}, L2::Line2D{N}) where {N<:Real}
+    disjoint, det = _isdisjoint(L1, L2)
+    if disjoint
+        return EmptySet{N}(dim(L1))
+    elseif isapprox(L1.b, L2.b) # lines are identical
+        return L1
+    else # intersection is a point
+        @inbounds begin
+            det⁻¹ = 1/det
+            x = (L1.b * L2.a[2] - L1.a[2] * L2.b) * det⁻¹
+            y = (L1.a[1] * L2.b - L1.b * L2.a[1]) * det⁻¹
         end
-    else
-        x = (L1.b*L2.a[2] - L1.a[2]*L2.b)/det
-        y = (L1.a[1]*L2.b - L1.b*L2.a[1])/det
         return Singleton([x, y])
     end
 end
