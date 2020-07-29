@@ -432,7 +432,7 @@ end
 """
     quadratic_map(Q::Vector{MT}, Z::Zonotope{N}) where {N, MT<:AbstractMatrix{N}}
 
-Return the overapproximation of the quadratic map of the given zonotope.
+Return an overapproximation of the quadratic map of the given zonotope.
 
 ### Input
 
@@ -441,16 +441,16 @@ Return the overapproximation of the quadratic map of the given zonotope.
 
 ### Output
 
-The overapproximation of the quadratic map of the given zonotope.
+An overapproximation of the quadratic map of the given zonotope.
 
 ### Notes
 
 Mathematically, a quadratic map of a zonotope is defined as:
 
 ```math
-Z_Q = \\right\\{ \\lambda | \\lambda_i = x^T Q\\^{(i)} x, x \\in Z \\left\\}
+Z_Q = \\right\\{ \\lambda | \\lambda_i = x^T Q\\^{(i)} x,~i = 1, \\ldots, n,~x \\in Z \\left\\}
 ```
-such that each coordinate ``i`` of the resulting zonotope is influenzed by ``Q\\^{(i)}``
+such that each coordinate ``i`` of the resulting zonotope is influenced by ``Q\\^{(i)}``
 
 ### Algorithm
 
