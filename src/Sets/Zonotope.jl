@@ -449,7 +449,7 @@ Mathematically, a quadratic map of a zonotope is defined as:
 ```math
 Z_Q = \\right\\{ \\lambda | \\lambda_i = x^T Q\\^{(i)} x, x \\in Z \\left\\}
 ```
-such that each coordinate ``i`` of the resulting zonotope is influenzed by ``Q\\^{(i)}``
+such that each coordinate ``i`` of the resulting zonotope is influenced by ``Q\\^{(i)}``
 
 ### Algorithm
 
