@@ -318,6 +318,7 @@ for N in [Float64]
     Z = Zonotope(N[0, 0], N[1 0; 0 1])
     Q1 = N[1/2 0; 0 1/2]
     Q2 = N[0 1/2; 1/2 0]
+    # note that there may be repeated generators (though zero generaors are removed)
     @test quadratic_map([Q1, Q2], Z) == Zonotope(N[0.5, 0], N[0.25 0.25 0; 0 0 1])
     Z = Zonotope(N[0, 0], N[1 1; 0 1])
     Q1 = N[1 1; 1 1]
