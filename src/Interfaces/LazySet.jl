@@ -696,11 +696,6 @@ Convert a convex set to a pair `(x, y)` of points for plotting.
 
 A pair `(x, y)` of points that can be plotted.
 
-### Notes
-
-Plotting of unbounded sets is not implemented yet (see
-[#576](https://github.com/JuliaReach/LazySets.jl/issues/576)).
-
 ### Algorithm
 
 We first assert that `X` is bounded.

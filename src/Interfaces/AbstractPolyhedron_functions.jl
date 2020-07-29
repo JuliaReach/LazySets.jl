@@ -815,12 +815,11 @@ function plot_recipe(P::AbstractPolyhedron{N}, ε::N=zero(N)) where {N<:Real}
         end
         x, y = vlist[:, 1], vlist[:, 2]
 
-        if length(x) > 1
+        if length(x) > 2
             # add first vertex to "close" the polygon
             push!(x, x[1])
             push!(y, y[1])
         end
-
         return x, y
     end
 end

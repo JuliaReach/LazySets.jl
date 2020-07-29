@@ -166,9 +166,11 @@ julia> plot(Bs, 1e-2)  # faster but less accurate than the previous call
                     continue
                 end
                 res = vlist[:, 1], vlist[:, 2]
-                # add first vertex to "close" the polygon
-                push!(res[1], vlist[1, 1])
-                push!(res[2], vlist[1, 2])
+                if length(res[1]) > 2
+                    # add first vertex to "close" the polygon
+                    push!(res[1], vlist[1, 1])
+                    push!(res[2], vlist[1, 2])
+                end
             end
             if isempty(res)
                 continue
@@ -259,8 +261,16 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
             res
         else
             x, y = res
-            if length(x) == 1 || norm([x[1], y[1]] - [x[2], y[2]]) ≈ 0
+            if length(x) == 1 ||
+                    (length(x) == 2 && norm([x[1], y[1]] - [x[2], y[2]]) ≈ 0)
+                # single point
                 seriestype := :scatter
+            elseif length(x) == 2
+                # flat line segment
+                linecolor   --> DEFAULT_COLOR
+                markercolor --> DEFAULT_COLOR
+                markershape --> :circle
+                seriestype := :path
             else
                 seriestype := :shape
             end
@@ -306,73 +316,6 @@ julia> plot(Singleton([0.5, 1.0]))
     end
 
     plot_recipe(S, ε)
-end
-
-"""
-    plot_linesegment(X::Union{Interval{N}, LineSegment{N}}, [ε]::N=zero(N); ...)
-        where {N<:Real}
-
-Plot a line segment or an interval.
-
-### Input
-
-- `X` -- line segment or interval
-- `ε` -- (optional, default: `0`) ignored, used for dispatch
-
-### Examples
-
-```julia
-julia> L = LineSegment([0., 0.], [1., 1.]);
-
-julia> plot(L)
-```
-
-To control the color of the line, use the `linecolor` keyword argument, and to
-control the color of the end points, use the `markercolor` keyword argument.
-To control the width, use `linewidth`.
-
-```julia
-julia> plot(L, markercolor="green", linecolor="red", linewidth=2.)
-```
-
-To omit the markers, use `markershape=:none`.
-You also need to pass a value for `seriestype=:path` explicitly (this seems to
-be an external bug).
-
-```julia
-julia> plot(L, seriestype=:path, markershape=:none)
-```
-
-A shorter alternative is to pass `marker=0`, but this may result in small dots
-as markers based on the plotting backend.
-
-```julia
-julia> plot(L, marker=0)
-```
-"""
-@recipe function plot_linesegment(X::Union{Interval{N}, LineSegment{N}},
-                                  ε::N=zero(N)) where {N<:Real}
-    label --> DEFAULT_LABEL
-    grid --> DEFAULT_GRID
-    if DEFAULT_ASPECT_RATIO != :none
-        aspect_ratio --> DEFAULT_ASPECT_RATIO
-    end
-    seriesalpha --> DEFAULT_ALPHA
-    linecolor   --> DEFAULT_COLOR
-    markercolor --> DEFAULT_COLOR
-    markershape --> :circle
-    seriestype := :path
-
-    # update manually set plot limits if necessary
-    p = plotattributes[:plot_object]
-    if length(p) > 0
-        lims = _extract_limits(p)
-        _update_plot_limits!(lims, X)
-        xlims --> lims[:x]
-        ylims --> lims[:y]
-    end
-
-    plot_recipe(X, ε)
 end
 
 """
