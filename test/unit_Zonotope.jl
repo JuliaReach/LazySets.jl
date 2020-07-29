@@ -313,4 +313,14 @@ for N in [Float64]
     H2 = Hyperrectangle(low=N[-2, -2], high=N[2, 0])
     @test issubset(Z, H1)
     @test !issubset(Z, H2)
+
+    # quadratic map
+    Z = Zonotope(N[0, 0], N[1 0; 0 1])
+    Q1 = N[1/2 0; 0 1/2]
+    Q2 = N[0 1/2; 1/2 0]
+    @test quadratic_map([Q1, Q2], Z) == Zonotope(N[0.5, 0], N[0.25 0.25 0; 0 0 1])
+    Z = Zonotope(N[0, 0], N[1 1; 0 1])
+    Q1 = N[1 1; 1 1]
+    Q2 = N[-1 0; 0 -1]
+    @test quadratic_map([Q1, Q2], Z) == Zonotope(N[2.5, -1.5], N[0.5 2 4; -0.5 -1 -2])
 end

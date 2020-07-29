@@ -3,7 +3,8 @@ import Base: rand
 export Zonotope,
        scale,
        reduce_order,
-       remove_zero_generators
+       remove_zero_generators,
+       quadratic_map
 
 using LazySets.Arrays: _vector_type, _matrix_type
 
@@ -447,9 +448,9 @@ The overapproximation of the quadratic map of the given zonotope.
 Mathematically, a quadratic map of a zonotope is defined as:
 
 ```math
-Z_Q = \\right\\{ \\lambda | \\lambda_i = x^T Q\\^{(i)} x,~i = 1, \\ldots, n,~x \\in Z \\left\\}
+Z_Q = \\right\\{ \\lambda | \\lambda_i = x^T Q\\^{(i)} x, x \\in Z \\left\\}
 ```
-such that each coordinate ``i`` of the resulting zonotope is influenced by ``Q\\^{(i)}``
+such that each coordinate ``i`` of the resulting zonotope is influenzed by ``Q\\^{(i)}``
 
 ### Algorithm
 
@@ -487,5 +488,5 @@ function quadratic_map(Q::Vector{MT}, Z::Zonotope{N}) where {N, MT<:AbstractMatr
             end
         end
     end
-    return Zonotope(d, h)
+    return Zonotope(d, remove_zero_columns(h))
 end
