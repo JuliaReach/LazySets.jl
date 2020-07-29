@@ -27,3 +27,9 @@ _ztol(eltype(0.01)) == sqrt(eps(Float64))
 @test !_isapprox(1//1, 1//1 + 1//1000000000000)
 @test _isapprox(2e-15, 1e-15)
 @test !_isapprox(2e-6, 1e-6)
+
+# approximate equality for arrays
+for N in [Float32, Float64]
+    @test _isapprox(N[1, 2, 3], N[1, 2, 3])
+    @test _isapprox(N[1 0; 0 1], N[1 0; 0 1])
+end

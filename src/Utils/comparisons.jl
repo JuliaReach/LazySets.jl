@@ -282,6 +282,28 @@ function _isapprox(x::AbstractVector{N}, y::AbstractVector{M};
     _isapprox(promote(x, y)...; kwargs...)
 end
 
+# matrices
+function _isapprox(A::AbstractMatrix{N}, B::AbstractMatrix{N};
+                   rtol::Real=_rtol(N),
+                   ztol::Real=_ztol(N),
+                   atol::Real=_atol(N)) where {N<:Real}
+    if size(A) != size(B)
+        return false
+    end
+    @inbounds for i in eachindex(A)
+        if !_isapprox(A[i], B[i], rtol=rtol, ztol=ztol, atol=atol)
+            return false
+        end
+    end
+    return true
+end
+
+# matrices with different numeric types with promotion
+function _isapprox(A::AbstractMatrix{N}, B::AbstractMatrix{M};
+                   kwargs...) where {N<:Real, M<:Real}
+    _isapprox(promote(A, B)...; kwargs...)
+end
+
 """
     ispermutation(u::AbstractVector{T}, v::AbstractVector) where {T}
 
