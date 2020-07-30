@@ -314,6 +314,28 @@ function scale(α::Real, Z::Zonotope)
 end
 
 """
+    scale!(α::Real, Z::Zonotope)
+
+Concrete scaling of a zonotope modifing `Z` in-place
+
+### Input
+
+- `α` -- scalar
+- `Z` -- zonotope
+
+### Output
+
+The zonotope `Z` after applying the numerical scale `α` to is center and generators.
+"""
+function scale!(α::Real, Z::Zonotope)
+    c = Z.center
+    G = Z.generators
+    c .= α .* c
+    G .= α .* G
+    return Z
+end
+
+"""
     reduce_order(Z::Zonotope, r::Union{Integer, Rational})
 
 Reduce the order of a zonotope by overapproximating with a zonotope with less

@@ -97,6 +97,11 @@ for N in [Float64, Rational{Int}, Float32]
     LazySets.linear_map!(Zout, M, Zin)
     @test Zout == Zonotope(N[0, 0], N[0 1; -1 0])
 
+    # in-place scale
+    Z5aux = copy(Z3)
+    scale!(N(0.5), Z5aux)
+    @test isequivalent(Z5, Z5aux)
+
     # intersection with a hyperplane
     H1 = Hyperplane(N[1, 1], N(3))
     intersection_empty, point = is_intersection_empty(Z1, H1, true)
