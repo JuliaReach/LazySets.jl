@@ -1564,9 +1564,20 @@ nonnegativity constraints (last type) are not stated explicitly in [1].
 [1] Zonotopes as bounding volumes, L. J. Guibas et al, Proc. of Symposium on
     Discrete Algorithms, pp. 803-812.
 """
-function overapproximate(X::LazySet{N}, ::Type{<:Zonotope},
-                         dir::AbstractDirections{N};
-                         solver=default_lp_solver(N)) where {N<:Real}
+function overapproximate(X::LazySet{N}, ZT::Type{<:Zonotope};
+                         algorithm="vrep", kwargs...) where {N}
+    if algorithm == "vrep"
+        _overapproximate_zonotope_vrep(X, ZT, kwargs...)
+    elseif algorithm == "cpa"
+        _overapproximate_zonotope_cpa(X, ZT, kwargs...)
+    else
+        throw(ArgumentError("algorithm $algorithm is not known"))
+    end
+end
+
+function _overapproximate_zonotope_vrep(X::LazySet{N}, ::Type{<:Zonotope},
+                                        dir::AbstractDirections{N};
+                                        solver=default_lp_solver(N)) where {N}
     # TODO "normalization" here involves two steps: removing opposite directions
     # and normalizing the direction vector
     # for the latter we can use the normalization information from dispatch on
@@ -1634,6 +1645,31 @@ function overapproximate(X::LazySet{N}, ::Type{<:Zonotope},
         G[:, j] = ck[j] * dj
     end
     return Zonotope(c, G)
+end
+
+function _overapproximate_zonotope_cpa(X::AbstractPolytope, ::Type{<:Zonotope},
+                                       dirs=OctDirections)
+    n = dim(X)
+    p = Vector(undef, Int(floor(n/2)))
+    j = 1
+    if isa(X, VPolytope)
+        for i=1:2:n-1
+            p[j] = project(X, [i, i+1])
+            j += 1
+        end
+    else
+        for i=1:2:n-1
+            p[j] = concretize(Projection(X, [i, i+1]))
+            j += 1
+        end
+    end
+
+    if !iseven(n)
+        push!(p, project(X, [n]))
+    end
+
+    Z = [_overapproximate_zonotope_vrep(poly, Zonotope, dirs(2)) for poly in p]
+    return reduce(×, Z)
 end
 
 """
