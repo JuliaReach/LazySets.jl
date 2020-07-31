@@ -1514,9 +1514,61 @@ function overapproximate(am::AbstractAffineMap{N, <:AbstractHyperrectangle{N}},
 end
 
 """
-    overapproximate(X::LazySet{N}, ::Type{<:Zonotope},
-                    dir::AbstractDirections{N};
-                    solver=default_lp_solver(N)) where {N<:Real}
+    overapproximate(X::LazySet, ZT::Type{<:Zonotope},
+                    dir::AbstractDirections;
+                    algorithm="vrep", kwargs...)
+
+Overapproximate a polytopic set with a zonotope.
+
+### Input
+
+- `X`         -- polytopic set
+- `Zonotope`  -- type for dispatch
+- `dir`       -- directions used for the generators
+- `algorithm` -- (optional, default: `"vrep"`) method used to compute the overapproximation
+- `kwargs`    -- further algorithm choices
+
+### Output
+
+A zonotope that overapproximates `X` and uses at most the directions provided in
+`dir` (redundant directions will be ignored).
+
+### Notes
+
+Two algorithms are available:
+
+- `"vrep"` -- Overapproximate a polytopic set with a zonotope.of minimal total generator sum
+              using only generators in the given directions. Under this constraint,
+              the zonotope has the minimal sum of generator vectors. See the docstring
+              of [`_overapproximate_zonotope_vrep`](@ref) for further details.
+
+- `"cpa"` -- Overapproximate a polytopic set with a zonotope using a cartesian
+             decomposition into two-dimensional blocks. See the docstring
+             of [`_overapproximate_zonotope_cpa`](@ref) for further details.
+"""
+function overapproximate(X::LazySet, ZT::Type{<:Zonotope},
+                         dir::AbstractDirections;
+                         algorithm="vrep", kwargs...)
+    if algorithm == "vrep"
+        return  _overapproximate_zonotope_vrep(X, dir, kwargs...)
+    elseif algorithm == "cpa"
+        cpa = _overapproximate_zonotope_cpa(X, dir)
+        return convert(Zonotope, cpa)
+    else
+        throw(ArgumentError("algorithm $algorithm is not known"))
+    end
+end
+
+function overapproximate(X::LazySet, ZT::Type{<:Zonotope},
+                         dir::Type{<:AbstractDirections};
+                         algorithm="vrep", kwargs...)
+    overapproximate(X, ZT, dir(dim(X)), algorithm=algorithm, kwargs...)
+end
+
+"""
+    _overapproximate_zonotope_vrep(X::LazySet{N},
+                                   dir::AbstractDirections{N};
+                                   solver=default_lp_solver(N)) where {N}
 
 Overapproximate a polytopic set with a zonotope of minimal total generator sum
 using only generators in the given directions.
@@ -1524,7 +1576,6 @@ using only generators in the given directions.
 ### Input
 
 - `X`        -- polytopic set
-- `Zonotope` -- type for dispatch
 - `dir`      -- directions used for the generators
 - `solver`   -- (optional, default: `default_lp_solver(N)`) the backend used to
                 solve the linear program
@@ -1564,18 +1615,7 @@ nonnegativity constraints (last type) are not stated explicitly in [1].
 [1] Zonotopes as bounding volumes, L. J. Guibas et al, Proc. of Symposium on
     Discrete Algorithms, pp. 803-812.
 """
-function overapproximate(X::LazySet{N}, ZT::Type{<:Zonotope};
-                         algorithm="vrep", kwargs...) where {N}
-    if algorithm == "vrep"
-        _overapproximate_zonotope_vrep(X, ZT, kwargs...)
-    elseif algorithm == "cpa"
-        _overapproximate_zonotope_cpa(X, ZT, kwargs...)
-    else
-        throw(ArgumentError("algorithm $algorithm is not known"))
-    end
-end
-
-function _overapproximate_zonotope_vrep(X::LazySet{N}, ::Type{<:Zonotope},
+function _overapproximate_zonotope_vrep(X::LazySet{N},
                                         dir::AbstractDirections{N};
                                         solver=default_lp_solver(N)) where {N}
     # TODO "normalization" here involves two steps: removing opposite directions
@@ -1647,32 +1687,46 @@ function _overapproximate_zonotope_vrep(X::LazySet{N}, ::Type{<:Zonotope},
     return Zonotope(c, G)
 end
 
-function _overapproximate_zonotope_cpa(X::AbstractPolytope, ::Type{<:Zonotope},
-                                       dirs=OctDirections)
+# overload on direction type
+function _overapproximate_zonotope_vrep(X::LazySet{N},
+                                        dir::Type{<:AbstractDirections{N}};
+                                        solver=default_lp_solver(N)) where {N}
     n = dim(X)
-    if isa(X, VPolytope) || isa(X, VPolygon)
-        if iseven(n)
-            p = Vector{VPolygon}(undef, Int(floor(n/2)))
-        else
-            p = Vector{Union{VPolygon, Interval}}(undef, Int(floor(n/2)))
-        end
-    elseif isa(X, HPolytope)
-        p = Vector{HPolygon}(undef, Int(floor(n/2)))
+    return _overapproximate_zonotope_vrep(X, dir(2), solver=solver)
+end
+
+function _overapproximate_zonotope_cpa(X::LazySet, dir::Type{<:AbstractDirections})
+    n = dim(X)
+    nblocks = Int(floor(n/2))
+
+    # overapproximate 2D blocks
+    if n > 1
+        πX_2D = [project(X, [i, i+1]) for i in 1:2:nblocks]
+        Z_2D = [_overapproximate_zonotope_vrep(poly, Zonotope, dir(2)) for poly in πX_2D]
+    end
+
+    if iseven(n)
+        out = Z_2D
     else
-        throw(ArgumentError("The algorithm 'cpa' only supports 'VPolygon',"*
-                            " 'VPolytope' and 'HPolytope'"))
+        # odd case projects onto an interval
+        πX_n = project(X, [n])
+        πX_n = overapproximate(πX_n, Interval)
+        πX_n = convert(Zonotope, πX_n)
+
+        if n == 1
+            out = [πX_n]
+        else
+            out = vcat(Z_2D, πX_n)
+        end
     end
-    j = 1
-    for i=1:2:n-1
-        p[j] = project(X, [i, i+1])
-        j += 1
-    end
-    Z = [_overapproximate_zonotope_vrep(poly, Zonotope, dirs(2)) for poly in p]
-    if !iseven(n)
-        z = project(X, [n])
-        push!(Z, _overapproximate_zonotope_vrep(z, Zonotope, dirs(1)))
-    end
-    return reduce(×, Z)
+
+    return CartesianProductArray(out)
+end
+
+# overload on direction type
+function _overapproximate_zonotope_cpa(X::AbstractPolytope,
+                                       dir::AbstractDirections)
+    _overapproximate_zonotope_cpa(X, typeof(dir))
 end
 
 """
