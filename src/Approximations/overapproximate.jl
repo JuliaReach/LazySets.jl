@@ -1695,6 +1695,32 @@ function _overapproximate_zonotope_vrep(X::LazySet{N},
     return _overapproximate_zonotope_vrep(X, dir(2), solver=solver)
 end
 
+"""
+    _overapproximate_zonotope_cpa(X::LazySet, dir::Type{<:AbstractDirections})
+
+Overapproximate a polytopic set with a zonotope using cartesian decomposition.
+
+### Input
+
+- `X`        -- polytopic set
+- `dir`      -- directions used for the generators
+
+### Output
+
+A zonotope that overapproximates `X`.
+
+### Notes
+
+The algorithm decomposes `X` in 2D sets and overapproximates those sets with
+zonotopes, then does a cartesian product with the sets.
+
+### Algorithm
+
+The algorithm used is based on the section 8.2.4 of [1].
+
+[1] Le Guernic, C. (2009). Reachability analysis of hybrid systems with linear
+continuous dynamics (Doctoral dissertation).
+"""
 function _overapproximate_zonotope_cpa(X::LazySet, dir::Type{<:AbstractDirections})
     n = dim(X)
     nblocks = Int(floor(n/2))
