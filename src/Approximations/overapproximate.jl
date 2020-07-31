@@ -1647,31 +1647,26 @@ function _overapproximate_zonotope_vrep(X::LazySet{N}, ::Type{<:Zonotope},
     return Zonotope(c, G)
 end
 
-function _overapproximate_zonotope_cpa(X::VPolytope, ::Type{<:Zonotope},
+function _overapproximate_zonotope_cpa(X::AbstractPolytope, ::Type{<:Zonotope},
                                        dirs=OctDirections)
     n = dim(X)
-    p = Vector(undef, Int(floor(n/2)))
+    if isa(X, VPolytope) || isa(X, VPolygon)
+        if iseven(n)
+            p = Vector{VPolygon}(undef, Int(floor(n/2)))
+        else
+            p = Vector{Union{VPolygon, Interval}}(undef, Int(floor(n/2)))
+        end
+    elseif isa(X, HPolytope)
+        p = Vector{HPolygon}(undef, Int(floor(n/2)))
+    else
+        throw(ArgumentError("The algorithm 'cpa' only supports 'VPolygon',"*
+                            " 'VPolytope' and 'HPolytope'"))
+    end
     j = 1
     for i=1:2:n-1
         p[j] = project(X, [i, i+1])
         j += 1
     end
-    return _cpa(p, dirs, n)
-end
-
-function _overapproximate_zonotope_cpa(X::HPolytope, ::Type{<:Zonotope},
-                                       dirs=OctDirections)
-    n = dim(X)
-    p = Vector(undef, Int(floor(n/2)))
-    j = 1
-    for i=1:2:n-1
-        p[j] = concretize(Projection(X, [i, i+1]))
-        j += 1
-    end
-    return _cpa(p, dirs, n)
-end
-
-function _cpa(p, dirs, n)
     Z = [_overapproximate_zonotope_vrep(poly, Zonotope, dirs(2)) for poly in p]
     if !iseven(n)
         z = project(X, [n])
