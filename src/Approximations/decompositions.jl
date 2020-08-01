@@ -260,7 +260,7 @@ end
     project(S::LazySet{N},
             block::AbstractVector{Int},
             [::Nothing=nothing],
-            [n]::Int=dim(S)
+            [n]::Int=dim(S); kwargs...
            ) where {N<:Real}
 
 Project a high-dimensional set to a given block by using a concrete linear map.
@@ -283,10 +283,10 @@ We apply the function `linear_map`.
 @inline function project(S::LazySet{N},
                          block::AbstractVector{Int},
                          ::Nothing=nothing,
-                         n::Int=dim(S)
+                         n::Int=dim(S); kwargs...)
                         ) where {N<:Real}
     M = projection_matrix(block, n, N)
-    return linear_map(M, S)
+    return linear_map(M, S, kwargs...)
 end
 
 """
@@ -558,7 +558,7 @@ function project(H::HalfSpace{N}, block::AbstractVector{Int}) where {N}
 end
 
 """
-    project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}) where {N}
+    project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}; kwargs...) where {N}
 
 Concrete projection of a polyhedral set.
 
@@ -634,13 +634,13 @@ julia> project(P, [1, 2]) |> constraints_list
  HalfSpace{Float64,Array{Float64,1}}([0.0, 1.0], 1.0)
 ```
 """
-function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}) where {N}
+function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}; kwargs...) where {N}
     if constrained_dimensions(P) ⊆ block
         clist = [HalfSpace(c.a[block], c.b) for c in constraints_list(P)]
     else
         n = dim(P)
         M = projection_matrix(block, n, N)
-        lm = linear_map(M, P)
+        lm = linear_map(M, P, kwargs...)
         clist = constraints_list(lm)
     end
     T = isbounded(P) ? HPolytope : HPolyhedron
