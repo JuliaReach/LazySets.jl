@@ -296,8 +296,8 @@ struct LinearMapElimination{T, S} <: AbstractLinearMapAlgorithm
     method::S
 end
 
-struct LinearMapVRep <: AbstractLinearMapAlgorithm
-    #
+struct LinearMapVRep{T} <: AbstractLinearMapAlgorithm
+    backend::T
 end
 
 function _check_algorithm_applies(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
@@ -622,7 +622,8 @@ function linear_map(M::AbstractMatrix{N},
         return _linear_map_hrep_helper(M, P, algo)
 
     elseif algorithm == "vrep"
-        return _linear_map_vrep(M, P)
+        algo = LinearMapVRep(backend)
+        return _linear_map_vrep(M, P, algo)
 
     elseif got_inv
         check_invertibility && _check_algorithm_applies(M, P, LinearMapInverse;
@@ -664,15 +665,16 @@ end
 
 # TODO: merge the preconditions into _check_algorithm_applies ?
 # review this method after #998
-function _linear_map_vrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N}) where {N<:Real}
+function _linear_map_vrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
+                          algo::LinearMapVRep) where {N<:Real}
     if !isbounded(P)
         throw(ArgumentError("the linear map in vertex representation for an " *
-            "unbounded set is not defined"))
+                            "unbounded set is not defined"))
     end
-    require(:Polyhedra; fun_name="linear_map",
-            explanation="of a $(typeof(P)) by a non-invertible matrix")
+
     # since P is bounded, we pass an HPolytope and then convert it to vertex representation
-    P = tovrep(HPolytope(constraints_list(P), check_boundedness=false))
+    P_hpoly = HPolytope(constraints_list(P), check_boundedness=false)
+    P = tovrep(P_hpoly, backend=algo.backend)
     return _linear_map_vrep(M, P)
 end
 

@@ -113,7 +113,8 @@ end
 
 # given a polytope P, apply the linear map P to each vertex of P
 # it is assumed that the interface function `vertices_list(P)` is available
-@inline function _linear_map_vrep(M::AbstractMatrix{N}, P::AbstractPolytope{N}) where {N<:Real}
+@inline function _linear_map_vrep(M::AbstractMatrix{N}, P::AbstractPolytope{N},
+                                  ::LinearMapVRep) where {N<:Real}
     vertices = broadcast(v -> M * v, vertices_list(P))
     m = size(M, 1) # output dimension
     if m == 1

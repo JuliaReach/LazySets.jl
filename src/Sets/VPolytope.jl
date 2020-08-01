@@ -309,7 +309,7 @@ function linear_map(M::AbstractMatrix{N}, P::VPolytope{N}) where {N<:Real}
     return _linear_map_vrep(M, P)
 end
 
-@inline function _linear_map_vrep(M::AbstractMatrix{N}, P::VPolytope{N}) where {N<:Real}
+@inline function _linear_map_vrep(M::AbstractMatrix{N}, P::VPolytope{N}, ::LinearMapVRep) where {N<:Real}
     return broadcast(v -> M * v, vertices_list(P)) |> VPolytope
 end
 
