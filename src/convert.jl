@@ -1056,7 +1056,7 @@ end
 
 """
     convert(::Type{Zonotope}, cpa::CartesianProductArray{N,
-            AbstractZonotope{N}}) where {N}
+            <:AbstractZonotope{N}}) where {N}
 
 Converts a cartesian product array of zonotopes into a zonotope.
 
