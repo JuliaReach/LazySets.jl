@@ -1049,7 +1049,7 @@ This function requires the use of `SparseArrays`.
 function convert(::Type{Zonotope}, cp::CartesianProduct{N, <:AbstractZonotope{N}
                  , <:AbstractZonotope{N}}) where {N}
     Z1, Z2 = cp.X, cp.Y
-    c = vcat(center(Z1), center(Z2))
+    c = sparse(vcat(center(Z1), center(Z2)))
     G = blockdiag(sparse(genmat(Z1)), sparse(genmat(Z2)))
     return Zonotope(c, G)
 end
