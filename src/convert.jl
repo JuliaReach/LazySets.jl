@@ -1071,7 +1071,7 @@ A zonotope.
 
 ### Notes
 
-This function requires tthe use of `SparseArrays`.
+This function requires the use of `SparseArrays`.
 """
 function convert(::Type{Zonotope}, cpa::CartesianProductArray{N,
                  <:AbstractZonotope{N}}) where {N}
