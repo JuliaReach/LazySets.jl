@@ -55,6 +55,6 @@ convert(::Type{VPolygon}, ::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
 convert(::Type{MinkowskiSumArray}, ::MinkowskiSum{N, ST, MinkowskiSumArray{N, ST}}) where {N, ST}
 convert(::Type{Interval}, ::MinkowskiSum{N, IT, IT}) where {N, IT<:Interval{N}}
 convert(::Type{HParallelotope}, Z::AbstractZonotope{N}) where {N}
-convert(::Type{Zonotope}, cp::CartesianProduct{N, <:AbstractZonotope{N}, <:AbstractZonotope{N}}) where {N}
+convert(::Type{Zonotope}, cp::CartesianProduct{N, AZ, AZ}) where {N, AZ<:AbstractZonotope{N}}
 convert(::Type{Zonotope}, cpa::CartesianProductArray{N, AbstractZonotope{N}}) where {N}
 ```
