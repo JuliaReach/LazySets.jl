@@ -117,6 +117,10 @@ function isboundedtype(::Type{<:Complement{<:Real, <:Universe}})
     return true
 end
 
-function isboundedtype(::Type{<:Complement{<:Real, <:LazySet}})
+function isboundedtype(::Type{<:Complement})
     return false
+end
+
+function isboundedtype(X::Complement)
+    return isboundedtype(typeof(X))
 end
