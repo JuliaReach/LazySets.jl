@@ -256,6 +256,30 @@ Alias for the support vector σ.
 const support_vector = σ
 
 """
+    isboundedtype(::Type{<:LazySet})
+
+Determine whether a set type only represents bounded sets.
+
+### Input
+
+- `LazySet` -- set type for dispatch
+
+### Output
+
+`true` if the set type only represents bounded sets.
+Note that some sets may still represent an unbounded set even though their type
+actually does not (example: [`HPolytope`](@ref)).
+
+### Notes
+
+By default this function returns `false`.
+All set types that can determine boundedness should override this behavior.
+"""
+function isboundedtype(::Type{<:LazySet})
+    return false
+end
+
+"""
     isboundedtype(S::LazySet)
 
 Determine whether a set is bounded only based on type information.
@@ -270,13 +294,12 @@ Determine whether a set is bounded only based on type information.
 Note that some sets may still represent an unbounded set even though their type
 actually does not (example: [`HPolytope`](@ref)).
 
-### Notes
+### Algorithm
 
-By default this function returns `false`.
-All set types that can determine boundedness should override this behavior.
+See `isboundedtype(typeof(X))`.
 """
-function isboundedtype(S::LazySet)
-    return false
+function isboundedtype(X::LazySet)
+    return isboundedtype(typeof(X))
 end
 
 """

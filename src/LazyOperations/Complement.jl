@@ -113,10 +113,10 @@ function isempty(C::Complement)
     return isuniversal(C.X)
 end
 
-function isboundedtype(::Complement{<:Real, <:Universe})
+function isboundedtype(::Type{<:Complement{<:Real, <:Universe}})
     return true
 end
 
-function isboundedtype(::Complement{<:Real, <:LazySet})
+function isboundedtype(::Type{<:Complement{<:Real, <:LazySet}})
     return false
 end
