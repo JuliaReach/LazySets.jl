@@ -104,6 +104,7 @@ pontryagin_difference
 ## Subset check
 
 ```@docs
+issubset
 ⊆(::LazySet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 ⊆(::LazySet{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
 ⊆(::AbstractPolytope{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}

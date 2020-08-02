@@ -1,5 +1,29 @@
 import Base.issubset
 
+"""
+    issubset(X::LazySet, Y::LazySet{N}, [witness]::Bool=false, args...)
+
+Alias for `⊆` (inclusion check).
+
+### Input
+
+- `X`       -- set
+- `Y`       -- set
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``X ⊆ Y``
+* If `witness` option is activated:
+  * `(true, [])` iff ``X ⊆ Y``
+  * `(false, v)` iff ``X ⊈ Y`` and ``v ∈ X \\setminus Y``
+
+### Notes
+
+For more documentation see `⊆`.
+"""
+function issubset end
+
 # this operation is forbidden, but it is a common error so we give a detailed error message
 function ⊆(::AbstractVector{N}, ::LazySet{N}) where {N<:Real}
     error("cannot make an inclusion check if the left-hand side " *
