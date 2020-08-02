@@ -275,18 +275,18 @@ actually does not (example: [`HPolytope`](@ref)).
 By default this function returns `false`.
 All set types that can determine boundedness should override this behavior.
 """
-function isboundedtype(::Type{<:LazySet})
+function isboundedtype(::Type{T}) where {T<:LazySet}
     return false
 end
 
 """
-    isboundedtype(S::LazySet)
+    isboundedtype(X::LazySet)
 
 Determine whether a set is bounded only based on type information.
 
 ### Input
 
-- `S` -- set
+- `X` -- set
 
 ### Output
 
