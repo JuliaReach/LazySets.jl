@@ -257,9 +257,7 @@ function _issubset_vertices_list(P, S, witness)
 end
 
 """
-    ⊆(X::LazySet{N},
-      P::AbstractPolyhedron{N},
-      witness::Bool=false
+    ⊆(X::LazySet{N}, P::AbstractPolyhedron{N}, [witness]::Bool=false
      ) where {N<:Real}
 
 Check whether a convex set is contained in a polyhedron, and if not, optionally
@@ -635,20 +633,22 @@ end
 
 
 """
-    ⊆(x::Interval, y::Interval)
+    ⊆(x::Interval, y::Interval, [witness]::Bool=false)
 
 Check whether an interval is contained in another interval.
 
 ### Input
 
-- `x` -- interval
-- `y` -- interval
+- `x`       -- interval
+- `y`       -- interval
+- `witness` -- (optional, default: `false`) compute a witness if activated
 
 ### Output
 
 `true` iff ``x ⊆ y``.
 """
-function ⊆(x::Interval, y::Interval)
+function ⊆(x::Interval, y::Interval, witness::Bool=false)
+    witness && raise(ValueError("witness production is not supported yet"))
     return x.dat ⊆ y.dat
 end
 
@@ -958,7 +958,7 @@ end
 
 
 """
-    ⊆(X::CartesianProduct{N}, Y::CartesianProduct{N}, witness::Bool=false;
+    ⊆(X::CartesianProduct{N}, Y::CartesianProduct{N}, [witness]::Bool=false;
       check_block_equality::Bool=true) where {N<:Real}
 
 Check whether a Cartesian product of two convex sets is contained in another
@@ -1030,7 +1030,7 @@ end
 
 """
     ⊆(X::CartesianProductArray{N}, Y::CartesianProductArray{N},
-      witness::Bool=false; check_block_equality::Bool=true
+      [witness]::Bool=false; check_block_equality::Bool=true
      ) where {N<:Real}
 
 Check whether a Cartesian product of finitely many convex sets is contained in
@@ -1105,14 +1105,15 @@ end
 
 
 """
-    ⊆(Z::AbstractZonotope{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
+    ⊆(Z::AbstractZonotope{N}, H::AbstractHyperrectangle{N},
+      [witness]::Bool=false) where {N<:Real}
 
 Check whether a zonotopic set is contained in a hyperrectangular set.
 
 ### Input
 
-- `Z` -- inner zonotopic set
-- `H` -- outer hyperrectangular set
+- `Z`       -- inner zonotopic set
+- `H`       -- outer hyperrectangular set
 - `witness` -- (optional, default: `false`) compute a witness if activated
 
 ### Output
@@ -1128,7 +1129,10 @@ Algorithm based on Lemma 3.1 of [1]
  In Proceedings of the 22nd ACM International Conference on Hybrid Systems:
  Computation and Control (pp. 268-269).
 """
-function ⊆(Z::AbstractZonotope{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
+function ⊆(Z::AbstractZonotope{N}, H::AbstractHyperrectangle{N},
+           witness::Bool=false) where {N<:Real}
+    witness && raise(ValueError("witness production is not supported yet"))
+
     c = center(Z)
     G = genmat(Z)
     n, m = size(G)
