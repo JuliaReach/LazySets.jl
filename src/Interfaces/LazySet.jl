@@ -268,7 +268,7 @@ Determine whether a set is bounded only based on type information.
 
 `true` if the set is bounded based on type information.
 Note that some sets may still represent an unbounded set even though their type
-actually (example: [`HPolytope`](@ref)).
+actually does not (example: [`HPolytope`](@ref)).
 
 ### Notes
 
