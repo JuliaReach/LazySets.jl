@@ -1,6 +1,6 @@
 """
     underapproximate(X::LazySet{N}, dirs::AbstractDirections;
-                    [apply_convex_hull]::Bool=false) where {N<:Real}
+                    [apply_convex_hull]::Bool=false) where {N}
 
 Compute the underapproximation of a convex set by sampling support vectors.
 
@@ -14,16 +14,27 @@ Compute the underapproximation of a convex set by sampling support vectors.
 
 The `VPolytope` obtained by taking the convex hull of the support vectors of `X`
 along the directions determined by `dirs`.
+
+### Notes
+
+Since the support vectors are not always unique, this algorithm may return
+a strict underapproximation even if the set can be exactly approximated using
+the given template. For example,
 """
 function underapproximate(X::LazySet{N}, dirs::AbstractDirections;
-                          apply_convex_hull::Bool=false) where {N<:Real}
-    @assert LazySets.dim(X) == LazySets.dim(dirs)
-    vinner = Vector{Vector{N}}(undef, length(dirs)) # TODO could be generalized to eltype(dirs)
+                          apply_convex_hull::Bool=false) where {N}
+    @assert dim(X) == dim(dirs) "the dimension of the set, $(dim(X)), doesn't match " *
+                                "the dimension of the template directions, $(dim(dirs))"
+    vinner = Vector{Vector{N}}(undef, length(dirs))
     @inbounds for (i, di) in enumerate(dirs)
-        vinner[i] = σ(Vector(di), X)
+        vinner[i] = σ(di, X)
     end
     if apply_convex_hull
         convex_hull!(vinner)
     end
     return VPolytope(vinner)
+end
+
+function underapproximate(X::LazySet, dirs::Type{<:AbstractDirections}; kwargs...)
+    return underapproximate(X, dirs(dim(X)), kwargs...)
 end
