@@ -493,6 +493,10 @@ function quadratic_map(Q::Vector{MT}, Z::Zonotope{N}) where {N, MT<:AbstractMatr
     return Zonotope(d, remove_zero_columns(h))
 end
 
+function _upwards(vec)
+    return vec[2] > 0 || (vec[2] == 0 && vec[1] > 0)
+end
+
 function bound_intersect_2d(Z::AbstractZonotope, L::Line2D)
     c = center(Z)
     P = copy(c)
@@ -501,7 +505,7 @@ function bound_intersect_2d(Z::AbstractZonotope, L::Line2D)
     g(x) = view(G, :, x)
     for i = 1:r
         gi = g(i)
-        if !_above(gi)
+        if !_upwards(gi)
             gi .= -gi
         end
         P .= P - gi
