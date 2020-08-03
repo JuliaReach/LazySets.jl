@@ -1028,8 +1028,8 @@ function convert(::Type{HParallelotope}, Z::AbstractZonotope{N}) where {N}
 end
 
 """
-    convert(::Type{Zonotope}, cp::CartesianProduct{N, <:AbstractZonotope{N}
-            , <:AbstractZonotope{N}}) where {N}
+    convert(::Type{Zonotope}, cp::CartesianProduct{N, AZ1, AZ2}) where
+         {N, AZ1<:AbstractZonotope{N}, AZ2<:AbstractZonotope{N}}
 
 Converts a cartesian product of two zonotopes into a zonotope.
 
