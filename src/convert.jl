@@ -1075,8 +1075,8 @@ This function requires the use of `SparseArrays`.
 """
 function convert(::Type{Zonotope}, cpa::CartesianProductArray{N, AZ}) where
         {N, AZ<:AbstractZonotope{N}}
-    array = array(cpa)
-    c = sparse(reduce(vcat, center.(array)))
-    G = reduce(blockdiag, sparse.(genmat.(array)))
+    arr = array(cpa)
+    c = sparse(reduce(vcat, center.(arr)))
+    G = reduce(blockdiag, sparse.(genmat.(arr)))
     return Zonotope(c, G)
 end
