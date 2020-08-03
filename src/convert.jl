@@ -1044,7 +1044,7 @@ A zonotope.
 
 ### Notes
 
-This function requires the use of `SparseArrays`.
+This implementation creates a `Zonotope` with sparse vector and matrix representation.
 """
 function convert(::Type{Zonotope}, cp::CartesianProduct{N, <:AbstractZonotope{N}
                  , <:AbstractZonotope{N}}) where {N}
