@@ -60,4 +60,4 @@ Schilling (2020) ARCH20. To appear in 7th International Workshop on Applied Veri
 - [ReachabilityAnalysis.jl](https://github.com/JuliaReach/ReachabilityAnalysis.jl) -- Methods to compute sets of states reachable by dynamical systems.
 - [NeuralVerification.jl](https://github.com/sisl/NeuralVerification.jl) -- Methods to soundly verify deep neural networks.
 - [Photometry.jl](https://github.com/JuliaAstro/Photometry.jl) -- A package for performing astronomical photometry using modern and efficient algorithms.
-
+- [InvariantSets.jl](https://github.com/ueliwechsler/InvariantSets.jl)
