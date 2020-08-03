@@ -492,3 +492,29 @@ function quadratic_map(Q::Vector{MT}, Z::Zonotope{N}) where {N, MT<:AbstractMatr
     end
     return Zonotope(d, remove_zero_columns(h))
 end
+
+function bound_intersect_2d(Z::AbstractZonotope, L::Line2D)
+    c = center(Z)
+    P = copy(c)
+    G = genmat(Z)
+    r = ngens(Z)
+    g(x) = view(G, :, x)
+    for i = 1:r
+        gi = g(i)
+        if !_above(gi)
+            gi .= -gi
+        end
+        P .= P - gi
+    end
+    G = sortslices(G, dims=2, by=x->atan(x[2], x[1])) # sort gens
+    if P[1] < L.b
+        G .= G[:,end:-1:1]
+    end
+    j = 1
+    while isempty(intersection(LineSegment(P, P+2g(j)), L)) # TODO use `isdisjoint`
+        P .= P + 2g(j)
+        j += 1
+    end
+    vec = intersection(LineSegment(P, P+2g(j)), L)
+    return vec
+end
