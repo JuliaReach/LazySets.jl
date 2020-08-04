@@ -1026,3 +1026,57 @@ function convert(::Type{HParallelotope}, Z::AbstractZonotope{N}) where {N}
     end
     return HParallelotope(D, c)
 end
+
+"""
+    convert(::Type{Zonotope}, cp::CartesianProduct{N, AZ1, AZ2}) where
+         {N, AZ1<:AbstractZonotope{N}, AZ2<:AbstractZonotope{N}}
+
+Converts a cartesian product of two zonotopes into a zonotope.
+
+### Input
+
+- `Zonotope` -- type used for dispatch
+- `cp`       -- cartesian product of two zonotopes
+
+### Output
+
+A zonotope.
+
+### Notes
+
+This implementation creates a `Zonotope` with sparse vector and matrix representation.
+"""
+function convert(::Type{Zonotope}, cp::CartesianProduct{N, AZ1, AZ2}) where
+         {N, AZ1<:AbstractZonotope{N}, AZ2<:AbstractZonotope{N}}
+    Z1, Z2 = cp.X, cp.Y
+    c = vcat(center(Z1), center(Z2))
+    G = blockdiag(sparse(genmat(Z1)), sparse(genmat(Z2)))
+    return Zonotope(c, G)
+end
+
+"""
+    convert(::Type{Zonotope}, cpa::CartesianProductArray{N, AZ})
+        where {N, AZ<:AbstractZonotope{N}}
+
+Converts a cartesian product array of zonotopes into a zonotope.
+
+### Input
+
+- `Zonotope` -- type used for dispatch
+- `cpa`       -- cartesian product array of zonotopes
+
+### Output
+
+A zonotope.
+
+### Notes
+
+This function requires the use of `SparseArrays`.
+"""
+function convert(::Type{Zonotope}, cpa::CartesianProductArray{N, AZ}) where
+        {N, AZ<:AbstractZonotope{N}}
+    arr = array(cpa)
+    c = reduce(vcat, center.(arr))
+    G = reduce(blockdiag, sparse.(genmat.(arr)))
+    return Zonotope(c, G)
+end
