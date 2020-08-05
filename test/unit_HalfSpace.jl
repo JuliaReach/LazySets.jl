@@ -133,7 +133,7 @@ for N in [Float64, Float32]
     @test normalize(hs1, N(Inf)) == HalfSpace(N[1//2, 1], N(3//2))
 end
 
-for N in Float64
+for N in [Float64]
     # test robustness of membership function (see LazySets#2312)
     o = N[0.07768723948819561, -0.5762273280928935, 0.28897399484750297, 1.9299362784322858]
     H = HalfSpace(N[-0.09291863543681655, -0.2176689899601838, -0.07453829739226348, 0.048948632014371496], N(0.1911363393469332))
