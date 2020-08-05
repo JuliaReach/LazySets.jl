@@ -233,3 +233,49 @@ end
 function _vertices_list(P::HPolytope, backend)
     return vertices_list(P, backend=backend)
 end
+
+# ============================================
+# Functionality that requires ModelingToolkit
+# ============================================
+function load_modeling_toolkit_hpolytope()
+
+return quote
+
+"""
+    HPolytope(expr::Vector{<:Operation}, vars=get_variables(first(expr)); N::Type{<:Real}=Float64)
+
+Return the polytope in half-space representation given by a list of symbolic expressions.
+
+### Input
+
+- `expr` -- vector of symbolic expressions that describes each half-space
+- `vars` -- (optional, default: `get_variables(expr)`), if an array of variables is given,
+            use those as the ambient variables in the set with respect to which derivations
+            take place; otherwise, use only the variables which appear in the given
+            expression (but be careful because the order may change)
+- `N`    -- (optional, default: `Float64`) the numeric type of the returned half-space
+
+### Output
+
+An `HPolytope`.
+
+### Examples
+
+```julia
+julia> using ModelingToolkit
+
+julia> vars = @variables x y
+(x, y)
+
+julia> HPolytope([x <= 1, x >= 0, y <= 1, y >= 0], vars)
+HPolytope{Float64,Array{Float64,1}}(HalfSpace{Float64,Array{Float64,1}}[HalfSpace{Float64,Array{Float64,1}}([1.0, 0.0], 1.0),
+HalfSpace{Float64,Array{Float64,1}}([-1.0, 0.0], 0.0), HalfSpace{Float64,Array{Float64,1}}([0.0, 1.0], 1.0),
+HalfSpace{Float64,Array{Float64,1}}([0.0, -1.0], 0.0)])
+```
+"""
+function HPolytope(expr::Vector{<:Operation}, vars=get_variables(first(expr));
+                   N::Type{<:Real}=Float64, check_boundedness::Bool=false)
+    return HPolytope([HalfSpace(ex, vars; N=N) for ex in expr], check_boundedness=check_boundedness)
+end
+
+end end  # quote / load_modeling_toolkit_hpolytope()
