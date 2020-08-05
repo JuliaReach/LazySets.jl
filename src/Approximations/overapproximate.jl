@@ -1712,7 +1712,7 @@ A zonotope that overapproximates `X`.
 ### Notes
 
 The algorithm decomposes `X` in 2D sets and overapproximates those sets with
-zonotopes, then does a cartesian product with the sets.
+zonotopes, and finally takes the cartesian product of the sets and converts to a zonotope.
 
 ### Algorithm
 
