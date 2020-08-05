@@ -227,7 +227,7 @@ Check whether a given point is contained in a half-space.
 We just check if ``x`` satisfies ``a⋅x ≤ b``.
 """
 function ∈(x::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
-    return dot(x, hs.a) <= hs.b
+    return _leq(dot(x, hs.a), hs.b)
 end
 
 """
