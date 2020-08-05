@@ -1537,7 +1537,7 @@ A zonotope that overapproximates `X` and uses at most the directions provided in
 
 Two algorithms are available:
 
-- `"vrep"` -- Overapproximate a polytopic set with a zonotope.of minimal total generator sum
+- `"vrep"` -- Overapproximate a polytopic set with a zonotope of minimal total generator sum
               using only generators in the given directions. Under this constraint,
               the zonotope has the minimal sum of generator vectors. See the docstring
               of [`_overapproximate_zonotope_vrep`](@ref) for further details.
