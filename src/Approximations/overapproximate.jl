@@ -1691,8 +1691,7 @@ end
 function _overapproximate_zonotope_vrep(X::LazySet{N},
                                         dir::Type{<:AbstractDirections{N}};
                                         solver=default_lp_solver(N)) where {N}
-    n = dim(X)
-    return _overapproximate_zonotope_vrep(X, dir(2), solver=solver)
+    return _overapproximate_zonotope_vrep(X, dir(dim(X)), solver=solver)
 end
 
 """
