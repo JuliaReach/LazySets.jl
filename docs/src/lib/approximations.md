@@ -33,6 +33,8 @@ uniform_partition
 
 ```@docs
 overapproximate
+LazySets.Approximations._overapproximate_zonotope_vrep
+LazySets.Approximations._overapproximate_zonotope_cpa
 ```
 
 ## Underapproximations

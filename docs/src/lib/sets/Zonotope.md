@@ -19,8 +19,6 @@ split(::AbstractZonotope, ::AbstractVector{Int}, ::AbstractVector{Int})
 remove_zero_generators(::Zonotope)
 linear_map!(::Zonotope, ::AbstractMatrix, ::Zonotope)
 quadratic_map(::Vector{MT}, ::Zonotope{N}) where {N, MT<:AbstractMatrix{N}}
-LazySets._overapproximate_zonotope_vrep
-LazySets._overapproximate_zonotope_cpa
 ```
 
 Inherited from [`LazySet`](@ref):
