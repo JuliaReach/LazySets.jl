@@ -23,7 +23,7 @@ eval(quote
    julia> vars = @variables x[1:2] y
    (Operation[x₁, x₂], y)
 
-   julia> _vec(vars)
+   julia> LazySets._vec(vars)
    3-element Array{Operation,1}:
     x₁
     x₂
