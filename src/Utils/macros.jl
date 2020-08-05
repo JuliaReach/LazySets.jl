@@ -327,3 +327,40 @@ macro array_absorbing(FUN, ABS, SETARR)
         end
     end
 end
+
+using MacroTools
+
+# refactor / rename to set_linear
+macro set(expr)
+
+    # hyperplane
+    if @capture(expr, var_ : lhs_ == rhs_)
+        return quote Hyperplane($(esc(lhs)) == $(esc(rhs)), $(esc(var))) end
+    end
+
+    # linear constraint
+    if @capture(expr, (var_ : lhs_ <= rhs_) | (var_ : lhs_ ≤ rhs_) | (var_ : lhs_ < rhs_))
+        return quote HalfSpace($(esc(lhs)) <= $(esc(rhs)), $(esc(var))) end
+
+    elseif @capture(expr, (var_ : lhs_ >= rhs_) | (var_ : lhs_ ≥ rhs_) | (var_ : lhs_ > rhs_))
+        return quote HalfSpace($(esc(lhs)) >= $(esc(rhs)), $(esc(var))) end
+    end
+
+    # intersection of linear constraints
+    # TODO
+
+end
+
+#=
+macro set(expr)
+    if expr.head == :(&&)
+
+        for ex in expr.args
+            esc(:(@set_linear $expr))
+        end
+        return quote HalfSpace($(esc(lhs)) >= $(esc(rhs)), $(esc(var))) end
+    else
+        return esc(:(@set_linear $expr))
+    end
+end
+=#
