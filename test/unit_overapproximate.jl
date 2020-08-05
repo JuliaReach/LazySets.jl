@@ -357,6 +357,9 @@ for N in [Float64]
     V = convert(VPolytope, B)
     @test overapproximate(V, Zonotope, BoxDirections, algorithm="vrep") == Z
     @test overapproximate(V, Zonotope, BoxDirections, algorithm="cpa") == Z
+    # test dispatch of internal functions
+    @test _overapproximate_zonotope_vrep(V, BoxDirections) == Z
+    @test _overapproximate_zonotope_cpa(V, BoxDirections) == Z
 
     # decomposed linear map approximation
     i1 = Interval(N[0, 1])
