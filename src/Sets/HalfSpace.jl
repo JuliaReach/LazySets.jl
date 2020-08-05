@@ -528,7 +528,7 @@ function load_modeling_toolkit_halfspace()
 return quote
 
 """
-    HalfSpace(expr::Operation, vars=get_variables(expr); N::Type{<:Real}=Float64)
+    HalfSpace(expr::Operation, vars::Union{<:Operation, <:Vector{Operation}}=get_variables(expr); N::Type{<:Real}=Float64)
 
 Return the half-space given by a symbolic expression.
 
@@ -593,7 +593,7 @@ Note in particular that strict inequalities are relaxed as being smaller-or-equa
 Finally, the returned set is the half-space with normal vector `[a1, …, an]` and
 displacement `b`.
 """
-function HalfSpace(expr::Operation, vars=get_variables(expr); N::Type{<:Real}=Float64)
+function HalfSpace(expr::Operation, vars::Union{<:Operation, <:Vector{Operation}}=get_variables(expr); N::Type{<:Real}=Float64)
 
     # find sense and normalize
     if expr.op == <
@@ -632,6 +632,11 @@ function HalfSpace(expr::Operation, vars=get_variables(expr); N::Type{<:Real}=Fl
     β = -N(ModelingToolkit.substitute(sexpr, zeroed_vars).value)
 
     return HalfSpace(coeffs, β)
+end
+
+function HalfSpace(expr::Operation, vars::NTuple{L, Union{<:Operation, <:Vector{Operation}}}; N::Type{<:Real}=Float64) where {L}
+    vars = _vec(vars)
+    return HalfSpace(expr, vars, N=N)
 end
 
 end end  # quote / load_modeling_toolkit_halfspace()

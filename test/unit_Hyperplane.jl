@@ -128,4 +128,8 @@ end
     # test with sparse variables
     @variables x[1:5]
     @test Hyperplane(2x[1] + 5x[4] == 10., x) == Hyperplane([2.0, 0.0, 0.0, 5.0, 0.0], 10.0)
+
+    # test passing a combination of operations
+    vars = @variables x[1:2] t
+    @test Hyperplane(x[1] == t, vars) == Hyperplane([1.0, 0.0, -1.0], 0.0)
 end
