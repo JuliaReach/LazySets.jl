@@ -1728,7 +1728,7 @@ function _overapproximate_zonotope_cpa(X::LazySet, dir::Type{<:AbstractDirection
     # overapproximate 2D blocks
     if n > 1
         πX_2D = [project(X, [i, i+1]) for i in 1:2:nblocks]
-        Z_2D = [_overapproximate_zonotope_vrep(poly, Zonotope, dir(2)) for poly in πX_2D]
+        Z_2D = [_overapproximate_zonotope_vrep(poly, dir(2)) for poly in πX_2D]
     end
 
     if iseven(n)
