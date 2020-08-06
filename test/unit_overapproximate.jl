@@ -349,6 +349,17 @@ for N in [Float64]
     X = Ball1(zeros(N, 3), N(1))
     Y = overapproximate(X, Zonotope, BoxDirections{N}(3))
     @test Y == Zonotope(N[0, 0, 0], N[1 0 0; 0 1 0; 0 0 1])
+    B = BallInf(zeros(N, 3), N(1))
+    H = convert(HPolytope, B)
+    Z = Zonotope(N[0, 0, 0], N[1 0 0; 0 1 0; 0 0 1])
+    @test overapproximate(H, Zonotope, BoxDirections, algorithm="vrep") == Z
+    @test overapproximate(H, Zonotope, BoxDirections, algorithm="cpa") == Z
+    V = convert(VPolytope, B)
+    @test overapproximate(V, Zonotope, BoxDirections, algorithm="vrep") == Z
+    @test overapproximate(V, Zonotope, BoxDirections, algorithm="cpa") == Z
+    # test dispatch of internal functions
+    @test Approximations._overapproximate_zonotope_vrep(V, BoxDirections) == Z
+    @test convert(Zonotope, Approximations._overapproximate_zonotope_cpa(V, BoxDirections)) == Z
 
     # decomposed linear map approximation
     i1 = Interval(N[0, 1])

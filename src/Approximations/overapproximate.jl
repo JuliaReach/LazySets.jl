@@ -1514,9 +1514,61 @@ function overapproximate(am::AbstractAffineMap{N, <:AbstractHyperrectangle{N}},
 end
 
 """
-    overapproximate(X::LazySet{N}, ::Type{<:Zonotope},
-                    dir::AbstractDirections{N};
-                    solver=default_lp_solver(N)) where {N<:Real}
+    overapproximate(X::LazySet, ZT::Type{<:Zonotope},
+                    dir::AbstractDirections;
+                    algorithm="vrep", kwargs...)
+
+Overapproximate a polytopic set with a zonotope.
+
+### Input
+
+- `X`         -- polytopic set
+- `Zonotope`  -- type for dispatch
+- `dir`       -- directions used for the generators
+- `algorithm` -- (optional, default: `"vrep"`) method used to compute the overapproximation
+- `kwargs`    -- further algorithm choices
+
+### Output
+
+A zonotope that overapproximates `X` and uses at most the directions provided in
+`dir` (redundant directions will be ignored).
+
+### Notes
+
+Two algorithms are available:
+
+- `"vrep"` -- Overapproximate a polytopic set with a zonotope of minimal total generator sum
+              using only generators in the given directions. Under this constraint,
+              the zonotope has the minimal sum of generator vectors. See the docstring
+              of [`_overapproximate_zonotope_vrep`](@ref) for further details.
+
+- `"cpa"` -- Overapproximate a polytopic set with a zonotope using a cartesian
+             decomposition into two-dimensional blocks. See the docstring
+             of [`_overapproximate_zonotope_cpa`](@ref) for further details.
+"""
+function overapproximate(X::LazySet, ZT::Type{<:Zonotope},
+                         dir::AbstractDirections;
+                         algorithm="vrep", kwargs...)
+    if algorithm == "vrep"
+        return  _overapproximate_zonotope_vrep(X, dir, kwargs...)
+    elseif algorithm == "cpa"
+        cpa = _overapproximate_zonotope_cpa(X, dir)
+        return convert(Zonotope, cpa)
+    else
+        throw(ArgumentError("algorithm $algorithm is not known"))
+    end
+end
+
+function overapproximate(X::LazySet, ZT::Type{<:Zonotope},
+                         dir::Type{<:AbstractDirections};
+                         algorithm="vrep", kwargs...)
+    overapproximate(X, ZT, dir(dim(X)), algorithm=algorithm, kwargs...)
+end
+
+"""
+    _overapproximate_zonotope_vrep(X::LazySet{N},
+                                   dir::AbstractDirections{N};
+                                   solver=default_lp_solver(N)) where {N}
 
 Overapproximate a polytopic set with a zonotope of minimal total generator sum
 using only generators in the given directions.
@@ -1524,7 +1576,6 @@ using only generators in the given directions.
 ### Input
 
 - `X`        -- polytopic set
-- `Zonotope` -- type for dispatch
 - `dir`      -- directions used for the generators
 - `solver`   -- (optional, default: `default_lp_solver(N)`) the backend used to
                 solve the linear program
@@ -1564,9 +1615,9 @@ nonnegativity constraints (last type) are not stated explicitly in [1].
 [1] Zonotopes as bounding volumes, L. J. Guibas et al, Proc. of Symposium on
     Discrete Algorithms, pp. 803-812.
 """
-function overapproximate(X::LazySet{N}, ::Type{<:Zonotope},
-                         dir::AbstractDirections{N};
-                         solver=default_lp_solver(N)) where {N<:Real}
+function _overapproximate_zonotope_vrep(X::LazySet{N},
+                                        dir::AbstractDirections{N};
+                                        solver=default_lp_solver(N)) where {N}
     # TODO "normalization" here involves two steps: removing opposite directions
     # and normalizing the direction vector
     # for the latter we can use the normalization information from dispatch on
@@ -1634,6 +1685,73 @@ function overapproximate(X::LazySet{N}, ::Type{<:Zonotope},
         G[:, j] = ck[j] * dj
     end
     return Zonotope(c, G)
+end
+
+# overload on direction type
+function _overapproximate_zonotope_vrep(X::LazySet{N},
+                                        dir::Type{<:AbstractDirections};
+                                        solver=default_lp_solver(N)) where {N}
+    return _overapproximate_zonotope_vrep(X, dir(dim(X)), solver=solver)
+end
+
+"""
+    _overapproximate_zonotope_cpa(X::LazySet, dir::Type{<:AbstractDirections})
+
+Overapproximate a polytopic set with a zonotope using cartesian decomposition.
+
+### Input
+
+- `X`        -- polytopic set
+- `dir`      -- directions used for the generators
+
+### Output
+
+A zonotope that overapproximates `X`.
+
+### Notes
+
+The algorithm decomposes `X` in 2D sets and overapproximates those sets with
+zonotopes, and finally takes the cartesian product of the sets and converts to a zonotope.
+
+### Algorithm
+
+The algorithm used is based on the section 8.2.4 of [1].
+
+[1] Le Guernic, C. (2009). Reachability analysis of hybrid systems with linear
+continuous dynamics (Doctoral dissertation).
+"""
+function _overapproximate_zonotope_cpa(X::LazySet, dir::Type{<:AbstractDirections})
+    n = dim(X)
+
+    # overapproximate 2D blocks
+    if n > 1
+        nblocks = Int(floor(n/2))
+        πX_2D = [project(X, [i, i+1]) for i in 1:2:nblocks]
+        Z_2D = [_overapproximate_zonotope_vrep(poly, dir(2)) for poly in πX_2D]
+    end
+
+    if iseven(n)
+        out = Z_2D
+    else
+        # odd case projects onto an interval
+        πX_n = project(X, [n])
+        πX_n = overapproximate(πX_n, Interval)
+        πX_n = convert(Zonotope, πX_n)
+
+        if n == 1
+            out = [πX_n]
+        else
+            out = vcat(Z_2D, πX_n)
+        end
+    end
+
+    return CartesianProductArray(out)
+end
+
+# overload on direction type
+function _overapproximate_zonotope_cpa(X::AbstractPolytope,
+                                       dir::AbstractDirections)
+    _overapproximate_zonotope_cpa(X, typeof(dir))
 end
 
 """

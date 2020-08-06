@@ -8,8 +8,8 @@ CurrentModule = LazySets
 Zonotope
 center(::Zonotope{N}) where {N<:Real}
 rand(::Type{Zonotope})
-generators(Z::Zonotope)
-genmat(Z::Zonotope)
+generators(::Zonotope)
+genmat(::Zonotope)
 scale(::Real, ::Zonotope)
 ngens(::Zonotope)
 togrep(::Zonotope)
@@ -18,7 +18,7 @@ split(::AbstractZonotope, ::Int)
 split(::AbstractZonotope, ::AbstractVector{Int}, ::AbstractVector{Int})
 remove_zero_generators(::Zonotope)
 linear_map!(::Zonotope, ::AbstractMatrix, ::Zonotope)
-quadratic_map(Q::Vector{MT}, Z::Zonotope{N}) where {N, MT<:AbstractMatrix{N}}
+quadratic_map(::Vector{MT}, ::Zonotope{N}) where {N, MT<:AbstractMatrix{N}}
 ```
 
 Inherited from [`LazySet`](@ref):
