@@ -358,7 +358,7 @@ for N in [Float64]
     @test overapproximate(V, Zonotope, BoxDirections, algorithm="vrep") == Z
     @test overapproximate(V, Zonotope, BoxDirections, algorithm="cpa") == Z
     # test dispatch of internal functions
-    @test Approximations._overapproximate_zonotope_vrep(V, BoxDirections(3)) == Z
+    @test Approximations._overapproximate_zonotope_vrep(V, BoxDirections == Z
     @test convert(Zonotope, Approximations._overapproximate_zonotope_cpa(V, BoxDirections)) == Z
 
     # decomposed linear map approximation

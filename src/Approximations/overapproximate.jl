@@ -1689,7 +1689,7 @@ end
 
 # overload on direction type
 function _overapproximate_zonotope_vrep(X::LazySet{N},
-                                        dir::Type{<:AbstractDirections{N}};
+                                        dir::Type{<:AbstractDirections};
                                         solver=default_lp_solver(N)) where {N}
     return _overapproximate_zonotope_vrep(X, dir(dim(X)), solver=solver)
 end
