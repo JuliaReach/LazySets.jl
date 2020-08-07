@@ -463,10 +463,10 @@ function _is_intersection_empty(Z::Zonotope{N}, H::Hyperplane{N}, ::Val{false}) 
     n, p = size(G)
     abs_sum = zero(N)
     if p > 0
-        @inbounds for i in 1:n
+        @inbounds for j in 1:p
             aux = zero(N)
-            @simd for j in 1:p
-                aux += H.a[j] * G[j, i]
+            @simd for i in 1:n
+                aux += H.a[i] * G[i, j]
             end
             abs_sum += abs(aux)
         end
