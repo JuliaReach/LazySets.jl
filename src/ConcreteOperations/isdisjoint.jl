@@ -418,8 +418,7 @@ end
 
 
 """
-    is_intersection_empty(Z::Zonotope{N}, H::Hyperplane{N}, witness::Bool=false
-                         ) where {N<:Real}
+    is_intersection_empty(Z::Zonotope{N}, H::Hyperplane{N}, witness::Bool=false) where {N<:Real}
 
 Check whether a zonotope and a hyperplane do not intersect, and otherwise
 optionally compute a witness.
@@ -446,34 +445,26 @@ center, and ``g_i`` are the zonotope's generators.
 For witness production we fall back to a less efficient implementation for
 general sets as the first argument.
 """
-function is_intersection_empty(Z::Zonotope{N},
-                               H::Hyperplane{N},
-                               witness::Bool=false
-                              ) where {N<:Real}
-    if witness
-        # use less efficient implementation that supports witness production
-        return invoke(is_intersection_empty,
-                      Tuple{LazySet{N}, Hyperplane{N}, Bool},
-                      Z, H, witness)
-    end
+function is_intersection_empty(Z::Zonotope{N}, H::Hyperplane{N}, witness::Bool=false) where {N<:Real}
+    c, G = Z.center, Z.generators
+    v = H.b - dot(H.a, c)
 
-    v = H.b - dot(H.a, Z.center)
-    p = ngens(Z)
-    if p == 0
-        abs_sum = zero(N)
-    else
-        abs_sum = sum(abs(dot(H.a, Z.generators[:, i])) for i = 1:ngens(Z))
+    n, p = size(G)
+    abs_sum = zero(N)
+    if p > 0
+        @inbounds for i in 1:n
+            aux = zero(N)
+            @simd for j in 1:p
+                aux += H.a[i] * G[j, i]
+            end
+            abs_sum += abs(aux)
+        end
     end
-    return v < -abs_sum || v > abs_sum
+    return !_geq(v, -abs_sum) || !_leq(v, abs_sum)
 end
 
 # symmetric method
-function is_intersection_empty(H::Hyperplane{N},
-                               Z::Zonotope{N},
-                               witness::Bool=false
-                              ) where {N<:Real}
-    return is_intersection_empty(Z, H, witness)
-end
+is_intersection_empty(H::Hyperplane{N}, Z::Zonotope{N}, witness::Bool=false) where {N<:Real} = is_intersection_empty(Z, H, witness)
 
 """
     is_intersection_empty(Z1::Zonotope{N}, Z2::Zonotope{N}, witness::Bool=false
