@@ -446,6 +446,17 @@ For witness production we fall back to a less efficient implementation for
 general sets as the first argument.
 """
 function is_intersection_empty(Z::Zonotope{N}, H::Hyperplane{N}, witness::Bool=false) where {N<:Real}
+    if witness
+        return _is_intersection_empty(Z, H, Val(true))
+    else
+        return _is_intersection_empty(Z, H, Val(false))
+    end
+end
+
+# symmetric method
+is_intersection_empty(H::Hyperplane{N}, Z::Zonotope{N}, witness::Bool=false) where {N<:Real} = is_intersection_empty(Z, H, witness)
+
+function _is_intersection_empty(Z::Zonotope{N}, H::Hyperplane{N}, ::Val{false}) where {N}
     c, G = Z.center, Z.generators
     v = H.b - dot(H.a, c)
 
@@ -463,8 +474,9 @@ function is_intersection_empty(Z::Zonotope{N}, H::Hyperplane{N}, witness::Bool=f
     return !_geq(v, -abs_sum) || !_leq(v, abs_sum)
 end
 
-# symmetric method
-is_intersection_empty(H::Hyperplane{N}, Z::Zonotope{N}, witness::Bool=false) where {N<:Real} = is_intersection_empty(Z, H, witness)
+function _is_intersection_empty(Z::Zonotope, H::Hyperplane, ::Val{true})
+    is_intersection_empty_helper_hyperplane(H, Z, true)
+end
 
 """
     is_intersection_empty(Z1::Zonotope{N}, Z2::Zonotope{N}, witness::Bool=false
