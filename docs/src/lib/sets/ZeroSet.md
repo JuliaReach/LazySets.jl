@@ -44,6 +44,7 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 Inherited from [`AbstractSingleton`](@ref):
 * [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton{N}) where {N<:Real})
 * [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton{N}, ::Int) where {N<:Real})
+* [`vertices`](@ref vertices(::AbstractSingleton{N}) where {N})
 * [`vertices_list`](@ref vertices_list(::AbstractSingleton{N}) where {N<:Real})
 * [`center`](@ref center(::AbstractSingleton{N}) where {N<:Real})
 * [`an_element`](@ref an_element(::AbstractSingleton{N}) where {N<:Real})
