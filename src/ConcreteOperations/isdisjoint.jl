@@ -1015,7 +1015,7 @@ function is_intersection_empty(P::AbstractPolyhedron{N},
                               ) where {N<:Real}
     if algorithm == "sufficient"
         # sufficient check for empty intersection using half-space checks
-        for Hi in constraints_list(P)
+        for Hi in constraints(P)
             if is_intersection_empty(X, Hi)
                 if witness
                     return (true, N[])

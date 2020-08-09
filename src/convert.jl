@@ -235,7 +235,7 @@ function convert(::Type{HPOLYGON}, P::HPolytope{N, VN};
                  prune::Bool=true) where {N<:Real, VN<:AbstractVector{N}, HPOLYGON<:AbstractHPolygon}
     @assert dim(P) == 2 "polytope must be two-dimensional for conversion"
     H = HPOLYGON(Vector{LinearConstraint{N, VN}}())
-    for ci in constraints_list(P)
+    for ci in constraints(P)
         addconstraint!(H, ci; prune=prune)
     end
     return H

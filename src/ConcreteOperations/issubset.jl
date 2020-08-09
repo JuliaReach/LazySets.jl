@@ -297,7 +297,7 @@ function _issubset_constraints_list(S::LazySet{N}, P::LazySet{N},
                                     witness::Bool=false) where {N<:Real}
     @assert dim(S) == dim(P)
 
-    @inbounds for H in constraints_list(P)
+    @inbounds for H in constraints(P)
         if !_leq(ρ(H.a, S), H.b)
             if witness
                 return (false, σ(H.a, S))

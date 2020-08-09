@@ -96,9 +96,9 @@ A new polygon in constraint representation whose normal directions ``a_i``
 are normalized, i.e., such that ``‖a_i‖_p = 1`` holds.
 """
 function normalize(P::AbstractHPolygon{N}, p=N(2)) where {N<:Real}
-    constraints = [normalize(hs, p) for hs in constraints_list(P)]
+    clist = [normalize(hs, p) for hs in constraints(P)]
     T = basetype(P)
-    return T(constraints)
+    return T(clist)
 end
 
 

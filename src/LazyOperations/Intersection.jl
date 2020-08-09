@@ -444,8 +444,7 @@ function ρ_helper(d::AbstractVector{N}, cap::Intersection{N, S1, S2}; kwargs...
 
     # more precise algorithm
     @assert isbounded(cap.X) "the first set in the intersection must be bounded"
-    return minimum([ρ(d, cap.X ∩ Hi; kwargs...)
-                   for Hi in constraints_list(cap.Y)])
+    return minimum([ρ(d, cap.X ∩ Hi; kwargs...) for Hi in constraints(cap.Y)])
 end
 
 """

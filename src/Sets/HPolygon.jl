@@ -182,8 +182,8 @@ function translate(P::HPolygon{N}, v::AbstractVector{N}; share::Bool=false
                   ) where {N<:Real}
     @assert length(v) == dim(P) "cannot translate a $(dim(P))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
-    constraints = [translate(c, v; share=share) for c in constraints_list(P)]
-    return HPolygon(constraints;
+    clist = [translate(c, v; share=share) for c in constraints(P)]
+    return HPolygon(clist;
                     sort_constraints=false, check_boundedness=false,
                     prune=false)
 end

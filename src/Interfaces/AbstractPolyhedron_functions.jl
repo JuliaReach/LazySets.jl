@@ -55,7 +55,7 @@ function ∈(x::AbstractVector{N}, P::AbstractPolyhedron{N}) where {N<:Real}
     @assert length(x) == dim(P) "a $(length(x))-dimensional point cannot be " *
         "an element of a $(dim(P))-dimensional set"
 
-    for c in constraints_list(P)
+    for c in constraints(P)
         if !_leq(dot(c.a, x), c.b)
             return false
         end
@@ -732,7 +732,7 @@ function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
 
     # append zeros to the existing constraints, in the last m-n coordinates
     # TODO: cast to common vector type instead of Vector(c.a), see #1942, #1952
-    cext = [HalfSpace(vcat(Vector(c.a), zeros(N, m-n)), c.b) for c in constraints_list(P)]
+    cext = [HalfSpace(vcat(Vector(c.a), zeros(N, m-n)), c.b) for c in constraints(P)]
 
     # now fix the last m-n coordinates to zero
     id_out = Matrix(one(N)*I, m-n, m-n)
@@ -760,7 +760,7 @@ function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
     # extend the polytope storing the y variables first
     # append zeros to the existing constraints, in the last m-n coordinates
     # TODO: cast to common vector type instead of hard-coding Vector(c.a), see #1942 and #1952
-    Ax_leq_b = [Polyhedra.HalfSpace(vcat(zeros(N, m), Vector(c.a)), c.b) for c in constraints_list(P)]
+    Ax_leq_b = [Polyhedra.HalfSpace(vcat(zeros(N, m), Vector(c.a)), c.b) for c in constraints(P)]
     y_eq_Mx = [Polyhedra.HyperPlane(vcat(₋Id_m[i, :], Vector(M[i, :])), zero(N)) for i in 1:m]
 
     Phrep = Polyhedra.hrep(y_eq_Mx, Ax_leq_b)
