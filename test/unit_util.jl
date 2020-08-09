@@ -48,7 +48,7 @@ for _dummy_ in 1:1 # avoid global variable warnings
         # removal of zero columns
         A = N[1 2; 3 4]
         @test remove_zero_columns(A) === A
-	@test remove_zero_columns(sparse(A)) == A
+        @test remove_zero_columns(sparse(A)) == A
         B = N[1 0 2; 3 0 4]
         @test remove_zero_columns(B) == remove_zero_columns(sparse(B)) == A
 

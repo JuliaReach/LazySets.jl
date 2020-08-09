@@ -115,8 +115,7 @@ for N in [Float64, Rational{Int}, Float32]
 end
 
 # default Float64 constructors
-unconstrained_HPolyhedron = HPolyhedron()
-@test unconstrained_HPolyhedron isa HPolyhedron{Float64}
+@test HPolyhedron() isa HPolyhedron{Float64}
 
 # tests that only work with Float64 and Float32
 for N in [Float64, Float32]
@@ -356,12 +355,12 @@ for N in [Float64]
         @test πP isa HPolyhedron{N}
         @test ispermutation(constraints_list(πP), [HalfSpace(N[-1, 0], N(0)), HalfSpace(N[0, -1], N(0))])
     end
-end
 
-# tests that require ModelingToolkit
-@static if VERSION >= v"1.3" && isdefined(@__MODULE__, :ModelingToolkit)
-    vars = @variables x y
-    p1 = HPolyhedron([x + y <= 1, x + y >= -1,  x - y <= 1, x - y >= -1], vars)
-    b1 = Ball1(zeros(2), 1.0)
-    @test isequivalent(p1, b1)
+    # tests that require ModelingToolkit
+    @static if VERSION >= v"1.3" && isdefined(@__MODULE__, :ModelingToolkit)
+        vars = @variables x y
+        p1 = HPolyhedron([x + y <= 1, x + y >= -1,  x - y <= 1, x - y >= -1], vars)
+        b1 = Ball1(zeros(2), 1.0)
+        @test isequivalent(p1, b1)
+    end
 end
