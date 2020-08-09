@@ -503,7 +503,7 @@ function _vertices_list_2D(c::AbstractVector{N}, G::AbstractMatrix{N}) where {N}
     else
         # FIXME generalized 2D vertices list function is not implemented yet
         # See LazySets#2209
-        return _vertices_list_iterative(c, G)
+        return _vertices_list_iterative(c, G, apply_convex_hull=apply_convex_hull)
     end
 end
 
