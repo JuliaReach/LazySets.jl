@@ -638,7 +638,7 @@ We add the vector to each vertex of the polygon.
 function translate(P::VPolygon{N}, v::AbstractVector{N}) where {N<:Real}
     @assert length(v) == dim(P) "cannot translate a $(dim(P))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
-    return VPolygon([x + v for x in vertices_list(P)])
+    return VPolygon([x + v for x in vertices(P)])
 end
 
 """

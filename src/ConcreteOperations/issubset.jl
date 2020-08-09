@@ -240,7 +240,7 @@ end
 
 # check whether P ⊆ S by testing if each vertex of P belongs to S
 function _issubset_vertices_list(P, S, witness)
-    for v in vertices_list(P)
+    for v in vertices(P)
         if v ∉ S
             if witness
                 return (false, v)

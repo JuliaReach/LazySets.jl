@@ -33,7 +33,7 @@ original set is contained in either the positive or negative orthant or
 is axis-aligned.
 """
 function approximate(R::Rectification; apply_convex_hull::Bool=false)
-    vlist = [rectify(v) for v in vertices_list(set(R))]
+    vlist = [rectify(v) for v in vertices(set(R))]
     if apply_convex_hull
         vlist = convex_hull(vlist)
     end

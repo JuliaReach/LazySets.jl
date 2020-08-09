@@ -1012,7 +1012,7 @@ This function relies on `vertices_list`, which raises an error if the set is
 not polytopic (e.g., unbounded).
 """
 function singleton_list(P::LazySet)
-    return [Singleton(x) for x in vertices_list(P)]
+    return [Singleton(x) for x in vertices(P)]
 end
 
 """
