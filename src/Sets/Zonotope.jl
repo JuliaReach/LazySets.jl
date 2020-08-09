@@ -497,7 +497,7 @@ end
 # Zonotope vertex enumeration methods
 # ====================================
 
-function _vertices_list_2D(c, G)
+function _vertices_list_2D(c::AbstractVector{N}, G::AbstractMatrix{N}) where {N}
     if same_sign(G)
         return _vertices_list_2D_positive(c, G)
     else
