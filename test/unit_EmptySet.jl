@@ -68,6 +68,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test_throws ErrorException radius(E)
     @test_throws ErrorException diameter(E)
 
+    # vertices / vertices_list
+    @test collect(vertices(E)) == vertices_list(E) == Vector{Vector{N}}()
+
     # linear map of an empty set
     linear_map(ones(N, 2, 2), E) == E
 
