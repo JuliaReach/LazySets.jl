@@ -522,7 +522,7 @@ function _vertices_list_2D_positive(c::AbstractVector{N}, G::AbstractMatrix{N}) 
     return [V[:, i] for i in 1:2*p]
 end
 
-function _vertices_list_iterative(c::AbstractVector{N}, G::AbstractMatrix{N}; apply_convex_hull::Bool=true) where {N}
+function _vertices_list_iterative(c::AbstractVector{N}, G::AbstractMatrix{N}; apply_convex_hull::Bool) where {N}
     p = size(G, 2)
     vlist = Vector{Vector{N}}()
     sizehint!(vlist, 2^p)
