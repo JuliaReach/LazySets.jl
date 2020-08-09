@@ -492,3 +492,44 @@ function quadratic_map(Q::Vector{MT}, Z::Zonotope{N}) where {N, MT<:AbstractMatr
     end
     return Zonotope(d, remove_zero_columns(h))
 end
+
+# ====================================
+# Zonotope vertex enumeration methods
+# ====================================
+
+function _vertices_list_2D(c, G)
+    if same_sign(G)
+        return _vertices_list_2D_positive(c, G)
+    else
+        # FIXME generalized 2D vertices list function is not implemented yet
+        # See LazySets#2209
+        return _vertices_list_iterative(c, G)
+    end
+end
+
+function _vertices_list_2D_positive(c::AbstractVector{N}, G::AbstractMatrix{N}) where {N}
+    n, p = size(G)
+
+    # TODO special case p = 1 or p = 2 ?
+
+    sorted_G = sortslices(G, dims=2, by=x->atan(x[2], x[1]))
+    index = ones(N, p, 2*p)
+    @inbounds for i in 1:p
+        index[i, i+1:i+p-1] .= -one(N)
+    end
+    index[:, 1] .= -one(N)
+    V = sorted_G * index .+ c
+    return [V[:, i] for i in 1:2*p]
+end
+
+function _vertices_list_iterative(c::AbstractVector{N}, G::AbstractMatrix{N}; apply_convex_hull::Bool=true) where {N}
+    p = size(G, 2)
+    vlist = Vector{Vector{N}}()
+    sizehint!(vlist, 2^p)
+
+    for ξi in Iterators.product([[1, -1] for i = 1:p]...)
+        push!(vlist, c .+ G * collect(ξi))
+    end
+
+    return apply_convex_hull ? convex_hull!(vlist) : vlist
+end
