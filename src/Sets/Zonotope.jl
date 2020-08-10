@@ -67,10 +67,10 @@ We can collect its vertices using `vertices_list`:
 ```jldoctest zonotope_label
 julia> vertices_list(Z)
 4-element Array{Array{Float64,1},1}:
- [1.1, 0.1]
- [0.9, 0.1]
  [0.9, -0.1]
+ [0.9, 0.1]
  [1.1, -0.1]
+ [1.1, 0.1]
 ```
 
 The support vector along a given direction can be computed using `σ`
@@ -497,7 +497,7 @@ end
 # Zonotope vertex enumeration methods
 # ====================================
 
-function _vertices_list_2D(c::AbstractVector{N}, G::AbstractMatrix{N}) where {N}
+function _vertices_list_2D(c::AbstractVector{N}, G::AbstractMatrix{N}; apply_convex_hull::Bool) where {N}
     if same_sign(G)
         return _vertices_list_2D_positive(c, G)
     else
