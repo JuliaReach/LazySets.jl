@@ -1901,3 +1901,61 @@ function _overapproximate_hparallelotope(Z::AbstractZonotope, indices=1:dim(Z))
     □Γ⁻¹Z = box_approximation(linear_map(inv(Γ), Z))
     return linear_map(Γ, □Γ⁻¹Z)
 end
+
+"""
+    overapproximate(X::Intersection{N, <:AbstractZonotope{N}, <:Hyperplane{N}},
+                    dirs::AbstractDirections{N}) where {N}
+
+Overapproximation of a zonotopic set with a parallelotopic set in constraint
+representation.
+
+### Input
+
+- `Z`              -- zonotopic set
+- `HParallelotope` -- type for dispatch
+- `indices`        -- (optional; default: `1:dim(Z)`) generator indices selected
+                       when constructing the parallelotope
+
+### Output
+
+An overapproximation of the given zonotope using a parallelotope.
+
+### Algorithm
+
+The algorithm is based on Proposition 8 discussed in Section 5 of [1].
+
+[1] Althoff, M., Stursberg, O., & Buss, M. (2010). *Computing reachable sets of
+hybrid systems using a combination of zonotopes and polytopes*. Nonlinear
+analysis: hybrid systems, 4(2), 233-249.
+"""
+function overapproximate(X::Intersection{N, <:AbstractZonotope{N}, <:Hyperplane{N}},
+                         dirs::AbstractDirections{N}) where {N}
+    dim(X) == dim(dirs) || throw(ArgumentError("the dimension of the set, $(dim(X)) doesn't" *
+                                 " match the dimension of the template, $(dim(dirs))"))
+    Z, G = X.X, X.Y
+
+    if isdisjoint(Z, G)
+        return EmptySet{N}(dim(Z))
+    end
+
+    n = G.a                           # normal vector to the hyperplane
+    γ = G.b                           # displacement of the hyperplane
+    Lᵧ = Line2D([one(N), zero(N)], γ)  # line (x, y) : x = γ
+
+    constraints = Vector{HalfSpace{N, eltype(dirs)}}()
+    for l in dirs
+       Πₙₗ = vcat(n', l')              # projection map
+       πZₙₗ = linear_map(Πₙₗ, Z)
+
+       ρₗ = bound_intersect_2D(πZₙₗ, Lᵧ)
+
+       push!(constraints, HalfSpace(l, ρₗ))
+    end
+    T = isbounding(dirs) ? HPolytope : HPolyhedron
+    return T(constraints)
+end
+
+function overapproximate(X::Intersection{N, <:AbstractZonotope{N},
+                         <:Hyperplane{N}}, dirs::Type{<:AbstractDirections{N}}) where {N}
+    return overapproximate(X, dirs(dim(X)))
+end

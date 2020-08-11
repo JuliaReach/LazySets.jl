@@ -492,3 +492,63 @@ function quadratic_map(Q::Vector{MT}, Z::Zonotope{N}) where {N, MT<:AbstractMatr
     end
     return Zonotope(d, remove_zero_columns(h))
 end
+
+"""
+    bound_intersect_2D(Z::Zonotope, L::Line2D)
+
+Return the support function in the direction [0, 1] of the intersection between
+the given zonotope and line.
+
+### Input
+
+- `Z` -- zonotope
+- `L` -- vertical line 2D
+
+### Output
+
+The support function in the direction [0, 1] of the intersection between the
+given zonotope and line.
+
+### Notes
+
+The given line must be vertical and the algorithm assumes that the intetrsection
+between the given sets is not empty.
+
+### Algorithm
+
+This function implements [Algorithm 8.2, 1].
+
+[1] *Colas Le Guernic. Reachability Analysis of Hybrid Systems with Linear
+Continuous Dynamics. Computer Science [cs]. Université Joseph-Fourier - Grenoble
+I, 2009. English. fftel-00422569v2f*
+"""
+function bound_intersect_2D(Z::Zonotope, L::Line2D)
+    dim(X) == 2 || throw(ArgumentError("the dimension of the set, but needs" *
+                                       " to be 2, but is $(dim(X))"))
+    c = center(Z)
+    P = copy(c)
+    G = genmat(Z)
+    r = ngens(Z)
+    g(x) = view(G, :, x)
+    for i = 1:r
+        gi = g(i)
+        if !_above(gi)
+            gi .= -gi
+        end
+        P .= P - gi
+    end
+    G = sortslices(G, dims=2, by=x->atan(x[2], x[1])) # sort gens
+    if P[1] < L.b
+        G .= G[:,end:-1:1]
+    end
+    j = 1
+    while isdisjoint(LineSegment(P, P+2g(j)), L)
+        P .= P + 2g(j)
+        j += 1
+        if j > size(G, 2)
+            error("Got unexpected error, check that the sets intersect")
+        end
+    end
+    vec = intersection(LineSegment(P, P+2g(j)), L)
+    return element(vec)[2]
+end
