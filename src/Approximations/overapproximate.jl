@@ -1906,27 +1906,24 @@ end
     overapproximate(X::Intersection{N, <:AbstractZonotope{N}, <:Hyperplane{N}},
                     dirs::AbstractDirections{N}) where {N}
 
-Overapproximation of a zonotopic set with a parallelotopic set in constraint
-representation.
+Overapproximation of the intersection between a zonotopic set and a hyperplane
 
 ### Input
 
-- `Z`              -- zonotopic set
-- `HParallelotope` -- type for dispatch
-- `indices`        -- (optional; default: `1:dim(Z)`) generator indices selected
-                       when constructing the parallelotope
+- `X`    -- intersection between a zonotopic set and a hyperplane
+- `dirs` -- type of direction representation
 
 ### Output
 
-An overapproximation of the given zonotope using a parallelotope.
+An overapproximation of the intersection between a zonotopic set and a hyperplane.
 
 ### Algorithm
 
-The algorithm is based on Proposition 8 discussed in Section 5 of [1].
+This function implements [Algorithm 8.1, 1].
 
-[1] Althoff, M., Stursberg, O., & Buss, M. (2010). *Computing reachable sets of
-hybrid systems using a combination of zonotopes and polytopes*. Nonlinear
-analysis: hybrid systems, 4(2), 233-249.
+[1] *Colas Le Guernic. Reachability Analysis of Hybrid Systems with Linear
+Continuous Dynamics. Computer Science [cs]. Université Joseph-Fourier - Grenoble
+I, 2009. English. fftel-00422569v2f*
 """
 function overapproximate(X::Intersection{N, <:AbstractZonotope{N}, <:Hyperplane{N}},
                          dirs::AbstractDirections{N}) where {N}
@@ -1958,4 +1955,9 @@ end
 function overapproximate(X::Intersection{N, <:AbstractZonotope{N},
                          <:Hyperplane{N}}, dirs::Type{<:AbstractDirections{N}}) where {N}
     return overapproximate(X, dirs(dim(X)))
+end
+
+function overapproximate(X::Intersection{N, <:Hyperplane{N}, <:AbstractZonotope{N}},
+                         dirs::AbstractDirections{N}) where {N}
+    return overapproximate(X.X ∩ X.Y, dirs)
 end
