@@ -418,8 +418,7 @@ end
 
 
 """
-    is_intersection_empty(Z::Zonotope{N}, H::Hyperplane{N}, witness::Bool=false
-                         ) where {N<:Real}
+    is_intersection_empty(Z::Zonotope{N}, H::Hyperplane{N}, witness::Bool=false) where {N<:Real}
 
 Check whether a zonotope and a hyperplane do not intersect, and otherwise
 optionally compute a witness.
@@ -446,33 +445,58 @@ center, and ``g_i`` are the zonotope's generators.
 For witness production we fall back to a less efficient implementation for
 general sets as the first argument.
 """
-function is_intersection_empty(Z::Zonotope{N},
-                               H::Hyperplane{N},
-                               witness::Bool=false
-                              ) where {N<:Real}
+function is_intersection_empty(Z::Zonotope{N}, H::Hyperplane{N}, witness::Bool=false) where {N<:Real}
     if witness
-        # use less efficient implementation that supports witness production
-        return invoke(is_intersection_empty,
-                      Tuple{LazySet{N}, Hyperplane{N}, Bool},
-                      Z, H, witness)
-    end
-
-    v = H.b - dot(H.a, Z.center)
-    p = ngens(Z)
-    if p == 0
-        abs_sum = zero(N)
+        return _is_intersection_empty(Z, H, Val(true))
     else
-        abs_sum = sum(abs(dot(H.a, Z.generators[:, i])) for i = 1:ngens(Z))
+        return _is_intersection_empty(Z, H, Val(false))
     end
-    return v < -abs_sum || v > abs_sum
 end
 
 # symmetric method
-function is_intersection_empty(H::Hyperplane{N},
-                               Z::Zonotope{N},
-                               witness::Bool=false
-                              ) where {N<:Real}
-    return is_intersection_empty(Z, H, witness)
+is_intersection_empty(H::Hyperplane{N}, Z::Zonotope{N}, witness::Bool=false) where {N<:Real} = is_intersection_empty(Z, H, witness)
+
+function _is_intersection_empty(Z::Zonotope{N}, H::Hyperplane{N}, ::Val{false}) where {N}
+    c, G = Z.center, Z.generators
+    v = H.b - dot(H.a, c)
+
+    n, p = size(G)
+    p == 0 && return !isapproxzero(v)
+    abs_sum = _isdisjoint_zonotope_hyperplane(G, H.a)
+    return !_geq(v, -abs_sum) || !_leq(v, abs_sum)
+end
+
+@inline function _isdisjoint_zonotope_hyperplane(G::AbstractMatrix{N}, a::AbstractVector{N}) where {N}
+    n, p = size(G)
+    abs_sum = zero(N)
+    @inbounds for j in 1:p
+        aux = zero(N)
+        @simd for i in 1:n
+            aux += a[i] * G[i, j]
+        end
+        abs_sum += abs(aux)
+    end
+    return abs_sum
+end
+
+@inline function _isdisjoint_zonotope_hyperplane(G::AbstractMatrix{N}, a::SparseVector{N}) where {N}
+    return sum(abs, transpose(a) * G)
+end
+
+@inline function _isdisjoint_zonotope_hyperplane(G::AbstractMatrix{N}, a::SingleEntryVector{N}) where {N}
+    p = size(G, 2)
+    i = a.i
+    v = abs(a.v)
+    abs_sum = zero(N)
+    @inbounds for j in 1:p
+        abs_sum += abs(G[i, j])
+    end
+    abs_sum *= v
+    return abs_sum
+end
+
+function _is_intersection_empty(Z::Zonotope, H::Hyperplane, ::Val{true})
+    is_intersection_empty_helper_hyperplane(H, Z, true)
 end
 
 """
@@ -720,12 +744,31 @@ function is_intersection_empty(hp::Union{Hyperplane{N}, Line2D{N}},
     return is_intersection_empty_helper_hyperplane(hp, X, witness)
 end
 
-# disambiguation
 function is_intersection_empty(hp1::Union{Hyperplane{N}, Line2D{N}},
                                hp2::Union{Hyperplane{N}, Line2D{N}},
                                witness::Bool=false
                               ) where {N<:Real}
-    return is_intersection_empty_helper_hyperplane(hp1, hp2, witness)
+    if isequivalent(hp1, hp2)
+        res = false
+        if witness
+            w = an_element(hp1)
+        end
+    else
+        cap = intersection(hp1, hp2)
+        res = cap isa EmptySet
+        if !res && witness
+            w = an_element(cap)
+        end
+    end
+    if witness
+        if res
+            return (true, N[])
+        else
+            return (false, w)
+        end
+    else
+        return res
+    end
 end
 
 # disambiguation
