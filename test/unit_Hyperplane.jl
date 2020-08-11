@@ -93,6 +93,12 @@ for N in [Float64, Rational{Int}, Float32]
     @test translate(hp, N[1, 2, 3]) == Hyperplane(ones(N, 3), N(11))
 
     # intersection emptiness
+    hp2 = Hyperplane(hp.a, hp.b)
+    res, v = is_intersection_empty(hp, hp2, true)
+    @test !is_intersection_empty(hp, hp2) && !res && v ∈ hp && v ∈ hp2
+    hp2 = Hyperplane(hp.a, hp.b + N(1))
+    res, v = is_intersection_empty(hp, hp2, true)
+    @test is_intersection_empty(hp, hp2) && res && v == N[]
     u = Universe{N}(3)
     res, v = is_intersection_empty(u, hp, true)
     @test !is_intersection_empty(u, hp) && !res && v ∈ hp && v ∈ u
