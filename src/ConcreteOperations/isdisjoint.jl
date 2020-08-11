@@ -744,12 +744,31 @@ function is_intersection_empty(hp::Union{Hyperplane{N}, Line2D{N}},
     return is_intersection_empty_helper_hyperplane(hp, X, witness)
 end
 
-# disambiguation
 function is_intersection_empty(hp1::Union{Hyperplane{N}, Line2D{N}},
                                hp2::Union{Hyperplane{N}, Line2D{N}},
                                witness::Bool=false
                               ) where {N<:Real}
-    return is_intersection_empty_helper_hyperplane(hp1, hp2, witness)
+    if isequivalent(hp1, hp2)
+        res = false
+        if witness
+            w = an_element(hp1)
+        end
+    else
+        cap = intersection(hp1, hp2)
+        res = cap isa EmptySet
+        if !res && witness
+            w = an_element(cap)
+        end
+    end
+    if witness
+        if res
+            return (true, N[])
+        else
+            return (false, w)
+        end
+    else
+        return res
+    end
 end
 
 # disambiguation
