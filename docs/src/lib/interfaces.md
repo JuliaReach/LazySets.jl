@@ -364,6 +364,7 @@ radius(::AbstractHyperrectangle, ::Real=Inf)
 σ(::AbstractVector, ::AbstractHyperrectangle)
 ρ(::AbstractVector, ::AbstractHyperrectangle)
 ∈(::AbstractVector, ::AbstractHyperrectangle)
+vertices(::AbstractHyperrectangle)
 vertices_list(::AbstractHyperrectangle)
 constraints_list(::AbstractHyperrectangle{N}) where {N}
 high(::AbstractHyperrectangle)
