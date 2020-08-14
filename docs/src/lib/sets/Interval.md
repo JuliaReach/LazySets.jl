@@ -30,10 +30,10 @@ plot_recipe(::Interval{N}, ::N=zero(N)) where {N<:Real}
 linear_map(::AbstractMatrix{N}, ::Interval{N}) where {N<:Real}
 scale(::N, ::Interval{N}) where {N<:Real}
 constraints_list(::Interval{N}) where {N<:Real}
-rectify(x::Interval{N}) where {N<:Real}
+rectify(::Interval{N}) where {N<:Real}
+diameter(::Interval, ::Real=Inf)
 ```
 Inherited from [`LazySet`](@ref):
-* [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`singleton_list`](@ref singleton_list(::LazySet))
 
 Inherited from [`AbstractPolytope`](@ref):

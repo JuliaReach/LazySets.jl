@@ -113,6 +113,10 @@ for N in Ns
     h = convert(Hyperrectangle, x)
     @test h isa Hyperrectangle && center(h) == radius_hyperrectangle(h) == N[0.5]
 
+    # diameter
+    x = Interval(N(1), N(3))
+    @test diameter(x) == diameter(x, Inf) == diameter(x, 2) == N(2)
+
     # concrete intersection
     A = Interval(N(5), N(7))
     B = Interval(N(3), N(6))

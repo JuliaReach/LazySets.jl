@@ -633,3 +633,25 @@ function rectify(x::Interval{N}) where {N<:Real}
         return Interval(zero(N), max(x.dat.hi, zero(N)))
     end
 end
+
+"""
+    diameter(x::Interval, [p]::Real=Inf)
+
+Compute the diameter of an interval.
+
+### Input
+
+- `x` -- interval
+- `p` -- (optional, default: `Inf`) norm
+
+### Output
+
+A real number representing the diameter.
+
+### Notes
+
+In one dimension all norms are equivalent.
+"""
+function diameter(x::Interval, p::Real=Inf)
+    return norm(max(x) - min(x), p)
+end
