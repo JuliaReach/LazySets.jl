@@ -655,3 +655,31 @@ In one dimension all norms are equivalent.
 function diameter(x::Interval, p::Real=Inf)
     return norm(max(x) - min(x), p)
 end
+
+"""
+    split(x::Interval, num_blocks)
+
+Partition an interval into uniform sub-intervals.
+
+### Input
+
+- `x`          -- interval
+- `num_blocks` -- number of blocks, possibly wrapped in a vector
+
+### Output
+
+A list of `Interval`s.
+"""
+function split(x::Interval, num_blocks::AbstractVector{Int})
+    @assert length(num_blocks) == 1 "an interval can only be split along one " *
+        "dimension"
+    return split(x, num_blocks[1])
+end
+
+function split(x::Interval, num_blocks::Int)
+    @assert num_blocks > 0 "can only split into a positive number of intervals"
+    if num_blocks == 1
+        return [x]
+    end
+    return [Interval(x2) for x2 in IntervalArithmetic.mince(x.dat, num_blocks)]
+end

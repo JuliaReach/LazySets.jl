@@ -117,6 +117,10 @@ for N in Ns
     x = Interval(N(1), N(3))
     @test diameter(x) == diameter(x, Inf) == diameter(x, 2) == N(2)
 
+    # split
+    @test split(x, 4) == [Interval(N(1), N(3//2)), Interval(N(3//2), N(2)),
+                          Interval(N(2), N(5//2)), Interval(N(5//2), N(3))]
+
     # concrete intersection
     A = Interval(N(5), N(7))
     B = Interval(N(3), N(6))

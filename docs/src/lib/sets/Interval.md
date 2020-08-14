@@ -32,6 +32,7 @@ scale(::N, ::Interval{N}) where {N<:Real}
 constraints_list(::Interval{N}) where {N<:Real}
 rectify(::Interval{N}) where {N<:Real}
 diameter(::Interval, ::Real=Inf)
+split(::Interval, ::AbstractVector{Int})
 ```
 Inherited from [`LazySet`](@ref):
 * [`singleton_list`](@ref singleton_list(::LazySet))
