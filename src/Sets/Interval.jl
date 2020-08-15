@@ -1,6 +1,6 @@
 import IntervalArithmetic
 using IntervalArithmetic: AbstractInterval
-if VERSION >= v"1.1"
+@static if VERSION >= v"1.1"
     using IntervalArithmetic: mince
 end
 import Base: +, -, *, ∈, ⊆, rand, min, max
