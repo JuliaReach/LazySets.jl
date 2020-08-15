@@ -656,7 +656,7 @@ A real number representing the diameter.
 In one dimension all norms are the same.
 """
 function diameter(x::Interval, p::Real=Inf)
-    return norm(IntervalArithmetic.diam(x.dat), p)
+    return IntervalArithmetic.diam(x.dat)
 end
 
 """
