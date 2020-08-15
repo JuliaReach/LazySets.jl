@@ -653,7 +653,7 @@ A real number representing the diameter.
 
 ### Notes
 
-In one dimension all norms are equivalent.
+In one dimension all norms are the same.
 """
 function diameter(x::Interval, p::Real=Inf)
     return norm(max(x) - min(x), p)
