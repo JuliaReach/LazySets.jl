@@ -1,5 +1,8 @@
 import IntervalArithmetic
 using IntervalArithmetic: AbstractInterval
+@static if VERSION >= v"1.1"
+    using IntervalArithmetic: mince
+end
 import Base: +, -, *, ∈, ⊆, rand, min, max
 
 export Interval,
@@ -631,5 +634,67 @@ function rectify(x::Interval{N}) where {N<:Real}
     else
         # lower end is negative
         return Interval(zero(N), max(x.dat.hi, zero(N)))
+    end
+end
+
+"""
+    diameter(x::Interval, [p]::Real=Inf)
+
+Compute the diameter of an interval, defined as ``\\Vert b - a\\Vert`` in the ``p`-norm, where ``a`` (resp. ``b``) are the minimum (resp. maximum) of the given interval.
+
+### Input
+
+- `x` -- interval
+- `p` -- (optional, default: `Inf`) norm
+
+### Output
+
+A real number representing the diameter.
+
+### Notes
+
+In one dimension all norms are the same.
+"""
+function diameter(x::Interval, p::Real=Inf)
+    return IntervalArithmetic.diam(x.dat)
+end
+
+"""
+    split(x::Interval, k)
+
+Partition an interval into `k` uniform sub-intervals.
+
+### Input
+
+- `x` -- interval
+- `k` -- number of sub-intervals, possibly wrapped in a vector of length 1
+
+### Output
+
+A list of `k` `Interval`s.
+"""
+function split(x::Interval, k::AbstractVector{Int})
+    @assert length(k) == 1 "an interval can only be split along one dimension"
+    return split(x, k[1])
+end
+
+function split(x::Interval, k::Int)
+    @assert k > 0 "can only split into a positive number of intervals"
+    return [Interval(x2) for x2 in mince(x.dat, k)]
+end
+
+@static if VERSION < v"1.1"
+    # IntervalArithmetic.mince() is not available -> define it here
+    function mince(x::IntervalArithmetic.Interval, n)
+        width = (x.hi - x.lo) / n
+        result = Vector{typeof(x)}(undef, n)
+        lo = x.lo
+        @inbounds for i in 1:n-1
+            hi = lo + width
+            result[i] = IntervalArithmetic.Interval(lo, hi)
+            lo = hi
+        end
+        result[n] = IntervalArithmetic.Interval(lo, x.hi)  # avoid rounding error
+        return result
     end
 end
