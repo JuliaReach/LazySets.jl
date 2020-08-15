@@ -1,5 +1,8 @@
 import IntervalArithmetic
 using IntervalArithmetic: AbstractInterval
+if VERSION >= v"1.1"
+    using IntervalArithmetic: mince
+end
 import Base: +, -, *, ∈, ⊆, rand, min, max
 
 export Interval,
@@ -657,29 +660,41 @@ function diameter(x::Interval, p::Real=Inf)
 end
 
 """
-    split(x::Interval, num_blocks)
+    split(x::Interval, k)
 
-Partition an interval into uniform sub-intervals.
+Partition an interval into `k` uniform sub-intervals.
 
 ### Input
 
-- `x`          -- interval
-- `num_blocks` -- number of blocks, possibly wrapped in a vector
+- `x` -- interval
+- `k` -- number of sub-intervals, possibly wrapped in a vector of length 1
 
 ### Output
 
-A list of `Interval`s.
+A list of `k` `Interval`s.
 """
-function split(x::Interval, num_blocks::AbstractVector{Int})
-    @assert length(num_blocks) == 1 "an interval can only be split along one " *
-        "dimension"
-    return split(x, num_blocks[1])
+function split(x::Interval, k::AbstractVector{Int})
+    @assert length(k) == 1 "an interval can only be split along one dimension"
+    return split(x, k[1])
 end
 
-function split(x::Interval, num_blocks::Int)
-    @assert num_blocks > 0 "can only split into a positive number of intervals"
-    if num_blocks == 1
-        return [x]
+function split(x::Interval, k::Int)
+    @assert k > 0 "can only split into a positive number of intervals"
+    return [Interval(x2) for x2 in mince(x.dat, k)]
+end
+
+if VERSION < v"1.1"
+    # IntervalArithmetic.mince() is not available -> define it here
+    function mince(x::IntervalArithmetic.Interval, n)
+        width = (x.hi - x.lo) / n
+        result = Vector{typeof(x)}(undef, n)
+        lo = x.lo
+        @inbounds for i in 1:n-1
+            hi = lo + width
+            result[i] = IntervalArithmetic.Interval(lo, hi)
+            lo = hi
+        end
+        result[n] = IntervalArithmetic.Interval(lo, x.hi)  # avoid rounding error
+        return result
     end
-    return [Interval(x2) for x2 in IntervalArithmetic.mince(x.dat, num_blocks)]
 end
