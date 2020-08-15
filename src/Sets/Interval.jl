@@ -640,7 +640,7 @@ end
 """
     diameter(x::Interval, [p]::Real=Inf)
 
-Compute the diameter of an interval.
+Compute the diameter of an interval, defined as ``\\Vert b - a\\Vert`` in the ``p`-norm, where ``a`` (resp. ``b``) are the minimum (resp. maximum) of the given interval.
 
 ### Input
 
