@@ -683,7 +683,7 @@ function split(x::Interval, k::Int)
     return [Interval(x2) for x2 in mince(x.dat, k)]
 end
 
-if VERSION < v"1.1"
+@static if VERSION < v"1.1"
     # IntervalArithmetic.mince() is not available -> define it here
     function mince(x::IntervalArithmetic.Interval, n)
         width = (x.hi - x.lo) / n
