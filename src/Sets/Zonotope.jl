@@ -525,7 +525,7 @@ I, 2009. English. fftel-00422569v2f*
 function bound_intersect_2D(Z::Zonotope, L::Line2D)
     dim(X) == 2 || throw(ArgumentError("the dimension of the set, but needs" *
                                        " to be 2, but is $(dim(X))"))
-    !isdisjoint(Z, Z) || throw(ArgumentError("the intersection between Z and L" *
+    !isdisjoint(Z, L) || throw(ArgumentError("the intersection between Z and L" *
                                              " can't be empty"))
     c = center(Z)
     P = copy(c)
