@@ -1749,7 +1749,7 @@ function _overapproximate_zonotope_cpa(X::LazySet, dir::Type{<:AbstractDirection
 end
 
 # overload on direction type
-function _overapproximate_zonotope_cpa(X::AbstractPolytope,
+function _overapproximate_zonotope_cpa(X::LazySet,
                                        dir::AbstractDirections)
     _overapproximate_zonotope_cpa(X, typeof(dir))
 end
@@ -1955,9 +1955,4 @@ end
 function overapproximate(X::Intersection{N, <:AbstractZonotope{N},
                          <:Hyperplane{N}}, dirs::Type{<:AbstractDirections{N}}) where {N}
     return overapproximate(X, dirs(dim(X)))
-end
-
-function overapproximate(X::Intersection{N, <:Hyperplane{N}, <:AbstractZonotope{N}},
-                         dirs::AbstractDirections{N}) where {N}
-    return overapproximate(X.X ∩ X.Y, dirs)
 end
