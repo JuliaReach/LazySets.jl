@@ -133,7 +133,7 @@ end
 """
     convert(::Type{VPolygon}, X::LazySet)
 
-Generic conversion to polygon in vertex representation
+Generic conversion to polygon in vertex representation.
 
 ### Input
 
@@ -147,7 +147,7 @@ The 2D set represented as a polygon.
 ### Algorithm
 
 First we concretize `X` obtaining a (possibly) new representation `Xc`; then we
-wrap the result into a polygon in vertex representation by compuing the list of
+wrap the result into a polygon in vertex representation by computing the list of
 vertices of `Xc`. The vertices of the resulting polygon in vertex representation
 are guaranteed to be sorted in counter-clockwise fashion.
 """
