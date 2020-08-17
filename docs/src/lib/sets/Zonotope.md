@@ -19,7 +19,7 @@ split(::AbstractZonotope, ::AbstractVector{Int}, ::AbstractVector{Int})
 remove_zero_generators(::Zonotope)
 linear_map!(::Zonotope, ::AbstractMatrix, ::Zonotope)
 quadratic_map(::Vector{MT}, ::Zonotope{N}) where {N, MT<:AbstractMatrix{N}}
-bound_intersect_2D(::Zonotope, ::Line2D)
+LazySets._bound_intersect_2D(::Zonotope, ::Line2D)
 ```
 
 Inherited from [`LazySet`](@ref):
