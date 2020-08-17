@@ -1724,8 +1724,7 @@ function _overapproximate_zonotope_cpa(X::LazySet, dir::Type{<:AbstractDirection
     n = dim(X)
     # overapproximate 2D blocks
     if n > 1
-        nblocks = Int(floor(n/2))
-        πX_2D = [project(X, [i, i+1]) for i in 1:2:nblocks]
+        πX_2D = [project(X, [i, i+1]) for i in 1:2:n]
         Z_2D = [_overapproximate_zonotope_vrep(poly, dir(2)) for poly in πX_2D]
     end
 
