@@ -130,7 +130,27 @@ function convert(::Type{VPolygon}, P::AbstractPolytope)
     return VPolygon(vertices_list(P))
 end
 
-# generic conversion to polygon in vertex representation
+"""
+    convert(::Type{VPolygon}, X::LazySet)
+
+Generic conversion to polygon in vertex representation
+
+### Input
+
+- `type` -- target type
+- `X`    -- set
+
+### Output
+
+The 2D set represented as a polygon.
+
+### Algorithm
+
+First we concretize `X` obtaining a (possibly) new representation `Xc`; then we
+wrap the result into a polygon in vertex representation by compuing the list of
+vertices of `Xc`. The vertices of the resulting polygon in vertex representation
+are guaranteed to be sorted in counter-clockwise fashion.
+"""
 function convert(::Type{VPolygon}, X::LazySet)
     @assert dim(X) == 2 "set must be two-dimensional for conversion"
     return VPolygon(vertices_list(concretize(X)))
