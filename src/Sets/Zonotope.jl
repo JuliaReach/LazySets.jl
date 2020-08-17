@@ -494,7 +494,7 @@ function quadratic_map(Q::Vector{MT}, Z::Zonotope{N}) where {N, MT<:AbstractMatr
 end
 
 """
-    bound_intersect_2D(Z::Zonotope, L::Line2D)
+    _bound_intersect_2D(Z::Zonotope, L::Line2D)
 
 Return the support function in the direction [0, 1] of the intersection between
 the given zonotope and line.
@@ -511,7 +511,7 @@ given zonotope and line.
 
 ### Notes
 
-The given line must be vertical and the algorithm assumes that the intetrsection
+The algorithm assumes that the given line is vertical and that the intetrsection
 between the given sets is not empty.
 
 ### Algorithm
@@ -522,7 +522,7 @@ This function implements [Algorithm 8.2, 1].
 Continuous Dynamics. Computer Science [cs]. Université Joseph-Fourier - Grenoble
 I, 2009. English. fftel-00422569v2f*
 """
-function bound_intersect_2D(Z::Zonotope, L::Line2D)
+function _bound_intersect_2D(Z::Zonotope, L::Line2D)
     dim(X) == 2 || throw(ArgumentError("the dimension of the set, but needs" *
                                        " to be 2, but is $(dim(X))"))
     !isdisjoint(Z, L) || throw(ArgumentError("the intersection between Z and L" *

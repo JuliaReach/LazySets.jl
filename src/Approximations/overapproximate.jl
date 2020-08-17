@@ -1944,7 +1944,7 @@ function overapproximate(X::Intersection{N, <:AbstractZonotope{N}, <:Hyperplane{
        Πₙₗ = vcat(n', l')              # projection map
        πZₙₗ = linear_map(Πₙₗ, Z)
 
-       ρₗ = bound_intersect_2D(πZₙₗ, Lᵧ)
+       ρₗ = _bound_intersect_2D(πZₙₗ, Lᵧ)
 
        push!(constraints, HalfSpace(l, ρₗ))
     end
