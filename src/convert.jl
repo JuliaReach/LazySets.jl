@@ -130,6 +130,12 @@ function convert(::Type{VPolygon}, P::AbstractPolytope)
     return VPolygon(vertices_list(P))
 end
 
+# generic conversion to polygon in vertex representation
+function convert(::Type{VPolygon}, X::LazySet)
+    @assert dim(X) == 2 "set must be two-dimensional for conversion"
+    return VPolygon(vertices_list(concretize(X)))
+end
+
 """
     convert(::Type{HPolytope}, P::AbstractPolytope)
 

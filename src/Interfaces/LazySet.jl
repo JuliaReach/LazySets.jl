@@ -947,7 +947,8 @@ function area(X::LazySet{N}) where {N}
     @assert dim(X) == 2 "this function only applies to two-dimensional sets, " *
     "but the given set is $(dim(X))-dimensional"
 
-    vlist = vertices_list(X)
+    Xpoly = convert(VPolygon, X)
+    vlist = vertices_list(Xpoly)
     m = length(vlist)
 
     if m <= 2
