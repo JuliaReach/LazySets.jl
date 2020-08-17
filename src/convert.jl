@@ -146,10 +146,9 @@ The 2D set represented as a polygon.
 
 ### Algorithm
 
-First we concretize `X` obtaining a (possibly) new representation `Xc`; then we
-wrap the result into a polygon in vertex representation by computing the list of
-vertices of `Xc`. The vertices of the resulting polygon in vertex representation
-are guaranteed to be sorted in counter-clockwise fashion.
+We compute the list of vertices of `X` and wrap the result in a polygon in
+vertex representation, which guarantees that the vertices are sorted in
+counter-clockwise fashion.
 """
 function convert(::Type{VPolygon}, X::LazySet)
     @assert dim(X) == 2 "set must be two-dimensional for conversion"
