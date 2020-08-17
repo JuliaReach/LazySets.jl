@@ -131,6 +131,31 @@ function convert(::Type{VPolygon}, P::AbstractPolytope)
 end
 
 """
+    convert(::Type{VPolygon}, X::LazySet)
+
+Generic conversion to polygon in vertex representation.
+
+### Input
+
+- `type` -- target type
+- `X`    -- set
+
+### Output
+
+The 2D set represented as a polygon.
+
+### Algorithm
+
+We compute the list of vertices of `X` and wrap the result in a polygon in
+vertex representation, which guarantees that the vertices are sorted in
+counter-clockwise fashion.
+"""
+function convert(::Type{VPolygon}, X::LazySet)
+    @assert dim(X) == 2 "set must be two-dimensional for conversion"
+    return VPolygon(vertices_list(X))
+end
+
+"""
     convert(::Type{HPolytope}, P::AbstractPolytope)
 
 Convert a polytopic set to a polytope in H-representation.

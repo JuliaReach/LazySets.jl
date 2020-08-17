@@ -146,6 +146,10 @@ for N in [Float64, Rational{Int}, Float32]
         @test volume(B) ≈ N(1.0020019812942185)
     end
 
+    # area
+    B = BallInf(N[0, 0], N(1))
+    @test area(B) ≈ N(4)
+
     # concretize
     B = BallInf(N[0, 0], N(1))
     @test concretize(B) === B
