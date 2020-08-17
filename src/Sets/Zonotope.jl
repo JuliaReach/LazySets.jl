@@ -511,7 +511,7 @@ given zonotope and line.
 
 ### Notes
 
-The algorithm assumes that the given line is vertical and that the intetrsection
+The algorithm assumes that the given line is vertical and that the intersection
 between the given sets is not empty.
 
 ### Algorithm
