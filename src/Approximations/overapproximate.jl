@@ -1925,8 +1925,8 @@ This function implements [Algorithm 8.1, 1].
 Continuous Dynamics. Computer Science [cs]. Université Joseph-Fourier - Grenoble
 I, 2009. English. fftel-00422569v2f*
 """
-function overapproximate(X::Intersection{N, <:AbstractZonotope{N}, <:Hyperplane{N}},
-                         dirs::AbstractDirections{N}) where {N}
+function overapproximate(X::Intersection{N, <:AbstractZonotope, <:Hyperplane},
+                         dirs::AbstractDirections{N}) where {N<:Real}
     dim(X) == dim(dirs) || throw(ArgumentError("the dimension of the set, $(dim(X)) doesn't" *
                                  " match the dimension of the template, $(dim(dirs))"))
     Z, G = X.X, X.Y
@@ -1944,7 +1944,7 @@ function overapproximate(X::Intersection{N, <:AbstractZonotope{N}, <:Hyperplane{
         Πₙₗ = vcat(n', l')              # projection map
         πZₙₗ = linear_map(Πₙₗ, Z)
 
-        ρₗ = _bound_intersect_2D(πZₙₗ, Lᵧ)
+        ρₗ = LazySets._bound_intersect_2D(πZₙₗ, Lᵧ)
 
         push!(constraints, HalfSpace(l, ρₗ))
     end
@@ -1952,12 +1952,17 @@ function overapproximate(X::Intersection{N, <:AbstractZonotope{N}, <:Hyperplane{
     return T(constraints)
 end
 
-function overapproximate(X::Intersection{N, <:AbstractZonotope{N},
-                         <:Hyperplane{N}}, dirs::Type{<:AbstractDirections{N}}) where {N}
+function overapproximate(X::Intersection{N, <:Hyperplane, <:AbstractZonotope},
+                         dirs::AbstractDirections{N}) where {N<:Real}
+    return overapproximate(X.Y ∩ X.X, dirs)
+end
+
+function overapproximate(X::Intersection{N, <:AbstractZonotope,
+                         <:Hyperplane}, dirs::Type{<:AbstractDirections}) where {N<:Real}
     return overapproximate(X, dirs(dim(X)))
 end
 
-function overapproximate(X::Intersection{N, <:Hyperplane{N}, <:AbstractZonotope{N}},
-                         dirs::AbstractDirections{N}) where {N}
-    return overapproximate(X.X ∩ X.Y, dirs)
+function overapproximate(X::Intersection{N, <:Hyperplane, <:AbstractZonotope},
+                         dirs::Type{<:AbstractDirections}) where {N<:Real}
+    return overapproximate(X.Y ∩ X.X, dirs(dim(X)))
 end
