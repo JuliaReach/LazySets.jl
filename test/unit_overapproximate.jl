@@ -407,4 +407,14 @@ for N in [Float64]
     @test Z1 ⊆ Y
     @test Z2 ⊆ Y
     @test Z3 ⊆ Y
+
+    # overapproximation of intersection between vertical line and Zonotope
+    Z = Zonotope(N[0, 0], N[1 0; 0 1])
+    L = Line2D(N[-1, -1], N[1, 1])
+    cap = overapproximate(Z ∩ L, OctDirections)
+    @test isequivalent(cap, (L ∩ Z))
+    Z = Zonotope(N[0, 0], N[1 0; 0 1])
+    L = Line2D(N[-1, -1], N[1, 1/2])
+    cap = overapproximate(Z ∩ L, OctDirections)
+    @test (L ∩ Z) ⊆ cap
 end

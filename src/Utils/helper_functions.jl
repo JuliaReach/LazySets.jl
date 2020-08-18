@@ -446,3 +446,7 @@ end
 @inline function _check_bounds(X, i)
     1 <= i <= dim(X) || throw(ArgumentError("there is no index at coordinate $i, since the set is of dimension $(dim(X))"))
 end
+
+function _isupwards(vec)
+    return vec[2] > 0 || (vec[2] == 0 && vec[1] > 0)
+end

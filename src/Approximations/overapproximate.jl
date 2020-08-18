@@ -1898,3 +1898,68 @@ function _overapproximate_hparallelotope(Z::AbstractZonotope, indices=1:dim(Z))
     □Γ⁻¹Z = box_approximation(linear_map(inv(Γ), Z))
     return linear_map(Γ, □Γ⁻¹Z)
 end
+
+"""
+    overapproximate(X::Intersection{N, <:AbstractZonotope{N}, <:Hyperplane{N}},
+                    dirs::AbstractDirections{N}) where {N}
+
+Overapproximation of the intersection between a zonotopic set and a hyperplane
+
+### Input
+
+- `X`    -- intersection between a zonotopic set and a hyperplane
+- `dirs` -- type of direction representation
+
+### Output
+
+An overapproximation of the intersection between a zonotopic set and a hyperplane.
+
+### Algorithm
+
+This function implements [Algorithm 8.1, 1].
+
+[1] *Colas Le Guernic. Reachability Analysis of Hybrid Systems with Linear
+Continuous Dynamics. Computer Science [cs]. Université Joseph-Fourier - Grenoble
+I, 2009. English. fftel-00422569v2f*
+"""
+function overapproximate(X::Intersection{N, <:AbstractZonotope, <:Hyperplane},
+                         dirs::AbstractDirections{N}) where {N<:Real}
+    dim(X) == dim(dirs) || throw(ArgumentError("the dimension of the set, $(dim(X)) doesn't" *
+                                 " match the dimension of the template, $(dim(dirs))"))
+    Z, G = X.X, X.Y
+
+    if isdisjoint(Z, G)
+        return EmptySet{N}(dim(Z))
+    end
+
+    n = G.a                           # normal vector to the hyperplane
+    γ = G.b                           # displacement of the hyperplane
+    Lᵧ = Line2D([one(N), zero(N)], γ)  # line (x, y) : x = γ
+
+    constraints = Vector{HalfSpace{N, eltype(dirs)}}()
+    for l in dirs
+        Πₙₗ = vcat(n', l')              # projection map
+        πZₙₗ = linear_map(Πₙₗ, Z)
+
+        ρₗ = LazySets._bound_intersect_2D(πZₙₗ, Lᵧ)
+
+        push!(constraints, HalfSpace(l, ρₗ))
+    end
+    T = isbounding(dirs) ? HPolytope : HPolyhedron
+    return T(constraints)
+end
+
+function overapproximate(X::Intersection{N, <:Hyperplane, <:AbstractZonotope},
+                         dirs::AbstractDirections{N}) where {N<:Real}
+    return overapproximate(X.Y ∩ X.X, dirs)
+end
+
+function overapproximate(X::Intersection{N, <:AbstractZonotope,
+                         <:Hyperplane}, dirs::Type{<:AbstractDirections}) where {N<:Real}
+    return overapproximate(X, dirs(dim(X)))
+end
+
+function overapproximate(X::Intersection{N, <:Hyperplane, <:AbstractZonotope},
+                         dirs::Type{<:AbstractDirections}) where {N<:Real}
+    return overapproximate(X.Y ∩ X.X, dirs(dim(X)))
+end
