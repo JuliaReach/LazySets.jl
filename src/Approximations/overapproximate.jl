@@ -1941,12 +1941,12 @@ function overapproximate(X::Intersection{N, <:AbstractZonotope{N}, <:Hyperplane{
 
     constraints = Vector{HalfSpace{N, eltype(dirs)}}()
     for l in dirs
-       Πₙₗ = vcat(n', l')              # projection map
-       πZₙₗ = linear_map(Πₙₗ, Z)
+        Πₙₗ = vcat(n', l')              # projection map
+        πZₙₗ = linear_map(Πₙₗ, Z)
 
-       ρₗ = _bound_intersect_2D(πZₙₗ, Lᵧ)
+        ρₗ = _bound_intersect_2D(πZₙₗ, Lᵧ)
 
-       push!(constraints, HalfSpace(l, ρₗ))
+        push!(constraints, HalfSpace(l, ρₗ))
     end
     T = isbounding(dirs) ? HPolytope : HPolyhedron
     return T(constraints)
