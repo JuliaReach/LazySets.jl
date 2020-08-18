@@ -551,8 +551,8 @@ function _bound_intersect_2D(Z::Zonotope, L::Line2D)
             error("Got unexpected error, check that the sets intersect")
         end
     end
-    vec = intersection(LineSegment(P, P+2g(j)), L)
-    return element(vec)[2]
+    singleton = intersection(LineSegment(P, P+2g(j)), L)
+    return element(singleton)[2]
 end
 # ====================================
 # Zonotope vertex enumeration methods
