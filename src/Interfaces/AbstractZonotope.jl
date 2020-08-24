@@ -241,7 +241,7 @@ the generator matrix of `Z`.
 
 """
 function ρ(d::AbstractVector{N}, Z::AbstractZonotope{N}) where {N<:Real}
-    return dot(center(Z), d) + sum(abs.(transpose(genmat(Z)) * d))
+    return dot(center(Z), d) + sum(abs, transpose(genmat(Z)) * d)
 end
 
 """
