@@ -58,6 +58,9 @@ for N in [Float64, Rational{Int}, Float32]
     # translation
     @test translate(U, N[1, 2]) == U
 
+    # constraints / constraints_list
+    @test collect(constraints(U)) == constraints_list(U) == Vector{N}()
+
     # concrete intersection
     @test intersection(B, U) == intersection(U, B) == B
     @test intersection(U, U) == U

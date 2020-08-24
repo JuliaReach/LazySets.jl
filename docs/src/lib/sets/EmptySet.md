@@ -16,6 +16,8 @@ rand(::Type{EmptySet})
 isbounded(::EmptySet)
 isempty(::EmptySet)
 isuniversal(::EmptySet{N}, ::Bool=false) where {N<:Real}
+vertices(::EmptySet{N}) where {N}
+vertices_list(::EmptySet{N}) where {N}
 norm(::EmptySet, ::Real=Inf)
 radius(::EmptySet, ::Real=Inf)
 diameter(::EmptySet, ::Real=Inf)

@@ -226,6 +226,23 @@ end
 
 
 """
+    vertices(S::AbstractSingleton{N}) where {N}
+
+Construct an iterator over the vertices of a set with a single value.
+
+### Input
+
+- `S` -- set with a single value
+
+### Output
+
+An iterator with a single value.
+"""
+function vertices(S::AbstractSingleton{N}) where {N}
+    return SingletonIterator(element(S))
+end
+
+"""
     vertices_list(S::AbstractSingleton{N}) where {N<:Real}
 
 Return the list of vertices of a set with a single value.

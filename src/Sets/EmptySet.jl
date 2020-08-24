@@ -274,6 +274,40 @@ function diameter(S::EmptySet, p::Real=Inf)
 end
 
 """
+    vertices(∅::EmptySet{N}) where {N}
+
+Construct an iterator over the vertices of an empty set.
+
+### Input
+
+- `∅` -- empty set
+
+### Output
+
+The empty iterator, as the empty set does not contain any vertices.
+"""
+function vertices(∅::EmptySet{N}) where {N}
+    return EmptyIterator{Vector{Vector{N}}}()
+end
+
+"""
+    vertices_list(∅::EmptySet{N}) where {N}
+
+Return the list of vertices of an empty set.
+
+### Input
+
+- `∅` -- empty set
+
+### Output
+
+The empty list of vertices, as the empty set does not contain any vertices.
+"""
+function vertices_list(∅::EmptySet{N}) where {N}
+    return Vector{Vector{N}}[]
+end
+
+"""
     linear_map(M::AbstractMatrix{N}, ∅::EmptySet{N}) where {N}
 
 Return the linear map of an empty set.
