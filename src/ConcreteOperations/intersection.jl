@@ -695,8 +695,8 @@ Compute the intersection of two polygons in vertex representation.
 
 ### Input
 
-- `P1`        -- polytope in vertex representation
-- `P2`        -- polytope in vertex representation
+- `P1` -- polygon in vertex representation
+- `P2` -- polygon in vertex representation
 
 ### Output
 
