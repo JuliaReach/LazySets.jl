@@ -30,6 +30,15 @@ for N in [Float64, Rational{Int}, Float32]
     @test N[7, 4] ∉ l
     @test N[1.5, 1.6] ∉ l
 
+    # approximate membership test
+    if N == Float64
+        @test N[1.5, 1.5] ∈ LineSegment(N[1.5, 1.50000000000001], N[1.5, 2.0])
+        r = LazySets._rtol(N)
+        LazySets.set_rtol(N, 1e-20)
+        @test !(N[1.5, 1.5] ∈ LineSegment(N[1.5, 1.50000000000001], N[1.5, 2.0]))
+        LazySets.set_rtol(N, r)
+    end
+
     # center/generators
     @test center(l) == N[1.5, 1.5]
     @test collect(generators(l)) ∈ [[N[1/2, 1/2]], [N[-1/2, -1/2]]]

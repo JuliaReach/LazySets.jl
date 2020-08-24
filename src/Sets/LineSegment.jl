@@ -165,8 +165,8 @@ function ∈(x::AbstractVector{N}, L::LineSegment{N}) where {N<:Real}
     q = L.q
     if isapproxzero(right_turn(p, q, x))
         # check if the point is inside the box approximation of the line segment
-        return min(p[1], q[1]) <= x[1] <= max(p[1], q[1]) &&
-               min(p[2], q[2]) <= x[2] <= max(p[2], q[2])
+        return _leq(min(p[1], q[1]), x[1]) && _leq(x[1], max(p[1], q[1])) &&
+               _leq(min(p[2], q[2]), x[2]) && _leq(x[2], max(p[2], q[2]))
     else
         return false
     end
