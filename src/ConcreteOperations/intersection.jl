@@ -658,8 +658,8 @@ function intersection(P::AbstractPolyhedron{N}, X::Interval{N}
 end
 
 """
-    intersection(P1::Union{VPolytope{N}, VPolygon{N}},
-                 P2::Union{VPolytope{N}, VPolygon{N}};
+    intersection(P1::VPolytope{N},
+                 P2::VPolytope{N};
                  [backend]=default_polyhedra_backend(P1, N),
                  [prunefunc]=removevredundancy!) where {N<:Real}
 
@@ -676,21 +676,44 @@ Compute the intersection of two polytopes in vertex representation.
 
 ### Output
 
-A `VPolygon` if both arguments are `VPolygon`s, and a `VPolytope` otherwise.
+A `VPolytope`.
 """
-function intersection(P1::Union{VPolytope{N}, VPolygon{N}},
-                      P2::Union{VPolytope{N}, VPolygon{N}};
+function intersection(P1::VPolytope{N},
+                      P2::VPolytope{N};
                       backend=default_polyhedra_backend(P1, N),
                       prunefunc=removevredundancy!) where {N<:Real}
-    Q1 = polyhedron(convert(VPolytope, P1); backend=backend)
-    Q2 = polyhedron(convert(VPolytope, P2); backend=backend)
+    Q1 = polyhedron(P1; backend=backend)
+    Q2 = polyhedron(P2; backend=backend)
     Pint = Polyhedra.intersect(Q1, Q2)
-    prunefunc(Pint)
-    res = VPolytope(Pint)
-    if P1 isa VPolygon && P2 isa VPolygon
-        return convert(VPolygon, res)
-    end
-    return res
+    return VPolytope(Pint)
+end
+
+"""
+    intersection(P1::VPolygon, P2::VPolygon)
+
+Compute the intersection of two polygons in vertex representation.
+
+### Input
+
+- `P1`        -- polytope in vertex representation
+- `P2`        -- polytope in vertex representation
+
+### Output
+
+A `VPolygon`.
+
+### Algorithm
+
+This function applies the [Sutherland–Hodgman polygon
+clipping algorithm](https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm).
+The implementation is based on the one found in
+[rosetta code](http://www.rosettacode.org/wiki/Sutherland-Hodgman_polygon_clipping#Julia).
+"""
+function intersection(P1::VPolygon, P2::VPolygon)
+    v1 = vertices_list(P1)
+    v2 = vertices_list(P2)
+    v12 = _intersection_vrep(v1, v2)
+    return VPolygon(v12)
 end
 
 """
