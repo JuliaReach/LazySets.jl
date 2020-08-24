@@ -359,3 +359,20 @@ In the special case of an empty set, we define the sequence as `nothing`.
 function plot_recipe(∅::EmptySet{N}, ε::N=zero(N)) where {N<:Real}
     return []
 end
+
+"""
+    area(∅::EmptySet{N}) where {N}
+
+Return the area of an empty set.
+
+### Input
+
+- `∅` -- empty set
+
+### Output
+
+The zero element of type `N`.
+"""
+function area(∅::EmptySet{N}) where {N}
+    return zero(N)
+end

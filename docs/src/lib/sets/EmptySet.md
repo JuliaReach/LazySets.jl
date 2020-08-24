@@ -25,6 +25,7 @@ linear_map(::AbstractMatrix{N}, ::EmptySet{N}) where {N}
 translate(::EmptySet{N}, ::AbstractVector{N}) where {N<:Real}
 plot_recipe(::EmptySet{N}, ::N=zero(N)) where {N<:Real}
 RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::EmptySet{N}, ::N=zero(N)) where {N<:Real}
+area(::EmptySet{N}) where {N}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
