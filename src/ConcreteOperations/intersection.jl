@@ -690,7 +690,8 @@ function intersection(P1::VPolytope{N},
 end
 
 """
-    intersection(P1::VPolygon, P2::VPolygon)
+    intersection(P1::VPolygon{N}, P2::VPolygon{N};
+                 apply_convex_hull::Bool=true) where {N}
 
 Compute the intersection of two polygons in vertex representation.
 
@@ -698,10 +699,12 @@ Compute the intersection of two polygons in vertex representation.
 
 - `P1` -- polygon in vertex representation
 - `P2` -- polygon in vertex representation
+- `apply_convex_hull` -- (default, optional: `true`) use the flag to skip the
+                         computation of the convex hull in the resulting `VPolygon`
 
 ### Output
 
-A `VPolygon`.
+A `VPolygon` or an `EmptySet` if the intersection is empty.
 
 ### Algorithm
 
@@ -710,11 +713,16 @@ clipping algorithm](https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_alg
 The implementation is based on the one found in
 [rosetta code](http://www.rosettacode.org/wiki/Sutherland-Hodgman_polygon_clipping#Julia).
 """
-function intersection(P1::VPolygon, P2::VPolygon)
+function intersection(P1::VPolygon{N}, P2::VPolygon{N};
+                      apply_convex_hull::Bool=true) where {N}
     v1 = vertices_list(P1)
     v2 = vertices_list(P2)
     v12 = _intersection_vrep(v1, v2)
-    return VPolygon(v12)
+    if isempty(v12)
+        return EmptySet{N}(2)
+    else
+        return VPolygon(v12, apply_convex_hull=apply_convex_hull)
+    end
 end
 
 """
