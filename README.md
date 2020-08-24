@@ -43,7 +43,7 @@ Schilling (2020) ARCH20. To appear in 7th International Workshop on Applied Veri
 
 [7] **Reachability analysis of linear hybrid systems via block decomposition.** Sergiy Bogomolov, Marcelo Forets, Goran Frehse, Kostiantyn Potomkin, Christian Schilling. [Get pdf from arXiv: 1905.02458](https://arxiv.org/abs/1905.02458). Accepted in [Embedded Systems Week 2020](http://esweek.hosting2.acm.org/).
 
-[6] **Algorithms for verifying deep neural networks.** Liu, C., Arnon, T., Lazarus, C., Barrett, C., & Kochenderfer, M. J. (2019). arXiv preprint arXiv:1903.06758.
+[6] **Algorithms for verifying deep neural networks.** Liu, C., Arnon, T., Lazarus, C., Barrett, C., & Kochenderfer, M. J. (2019). [Get pdf from arXiv: 1903.06758](https://arxiv.org/abs/1903.06758).
 
 [5] **ARCH-COMP19 Category Report: Continuous and Hybrid Systems with Linear Continuous Dynamics.** Matthias Althoff, Stanley Bak, Marcelo Forets, Goran Frehse, Niklas Kochdumper, Rajarshi Ray, Christian Schilling and Stefan Schupp (2019) ARCH19. 6th International Workshop on Applied Verification of Continuous and Hybrid Systems, vol 61, pages 14--40 [doi: 10.29007/bj1w](https://easychair.org/publications/paper/1gbP).
 
