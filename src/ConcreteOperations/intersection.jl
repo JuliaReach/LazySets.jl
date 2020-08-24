@@ -685,6 +685,7 @@ function intersection(P1::VPolytope{N},
     Q1 = polyhedron(P1; backend=backend)
     Q2 = polyhedron(P2; backend=backend)
     Pint = Polyhedra.intersect(Q1, Q2)
+    prunefunc(Pint)
     return VPolytope(Pint)
 end
 
