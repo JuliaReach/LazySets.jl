@@ -661,7 +661,7 @@ end
     intersection(P1::VPolytope{N},
                  P2::VPolytope{N};
                  [backend]=default_polyhedra_backend(P1, N),
-                 [prunefunc]=removevredundancy!) where {N<:Real}
+                 [prunefunc]=removevredundancy!) where {N}
 
 Compute the intersection of two polytopes in vertex representation.
 
@@ -678,10 +678,35 @@ Compute the intersection of two polytopes in vertex representation.
 
 A `VPolytope`.
 """
-function intersection(P1::VPolytope{N},
-                      P2::VPolytope{N};
-                      backend=default_polyhedra_backend(P1, N),
-                      prunefunc=removevredundancy!) where {N<:Real}
+function intersection(P1::Union{VPolygon{N}, VPolytope{N}},
+                      P2::Union{VPolygon{N}, VPolytope{N}};
+                      backend=nothing,
+                      prunefunc=nothing) where {N}
+    n = dim(P1)
+    @assert n == dim(P2) "expected polytopes with the equal dimensions but they " *
+                         "are $(dim(P1)) and $(dim(P2)) respectively"
+
+    # fast path for one and two-dimensional sets
+    if n == 1
+        Q1 = overapproximate(P1, Interval)
+        Q2 = overapproximate(P2, Interval)
+        Pint = intersection(Q1, Q2)
+        return convert(VPolytope, Pint)
+    elseif n == 2
+        Q1 = convert(VPolygon, P1)
+        Q2 = convert(VPolygon, P2)
+        Pint = intersection(Q1, Q2)
+        return convert(VPolytope, Pint)
+    end
+
+    if isnothing(backend)
+        backend = default_polyhedra_backend(P1, N)
+    end
+    if isnothing(prunefunc)
+        prunefunc = removevredundancy!
+    end
+
+    # general case: convert to half-space representation
     Q1 = polyhedron(P1; backend=backend)
     Q2 = polyhedron(P2; backend=backend)
     Pint = Polyhedra.intersect(Q1, Q2)
