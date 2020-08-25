@@ -399,25 +399,25 @@ for N in [Float64]
         @test ispermutation(vertices_list(cap), vlist)
 
         # 2D intersection
-        p = VPolytope([N[0, 0], N[1, 0], N[0, 1], N[1, 1]])
-        q = VPolytope([N[1, -1/2], N[-1/2, 1], N[-1/2, -1/2]])
-        x = intersection(p, q)
-        o = VPolytope([N[0, 0], N[1/2, 0], N[0, 1/2]])
-        @test x ⊆ o && o ⊆ x # TODO use isequivalent
+        paux = VPolytope([N[0, 0], N[1, 0], N[0, 1], N[1, 1]])
+        qaux = VPolytope([N[1, -1/2], N[-1/2, 1], N[-1/2, -1/2]])
+        xaux = intersection(paux, qaux)
+        oaux = VPolytope([N[0, 0], N[1/2, 0], N[0, 1/2]])
+        @test xaux ⊆ oaux && oaux ⊆ xaux # TODO use isequivalent
 
         # mixed types
-        p = VPolygon([N[0, 0], N[1, 0], N[0, 1], N[1, 1]])
-        q = VPolytope([N[1, -1/2], N[-1/2, 1], N[-1/2, -1/2]])
-        x = intersection(p, q)
-        o = VPolytope([N[0, 0], N[1/2, 0], N[0, 1/2]])
-        @test x ⊆ o && o ⊆ x # TODO use isequivalent
+        paux = VPolygon([N[0, 0], N[1, 0], N[0, 1], N[1, 1]])
+        qaux = VPolytope([N[1, -1/2], N[-1/2, 1], N[-1/2, -1/2]])
+        xaux = intersection(paux, qaux)
+        oaux = VPolytope([N[0, 0], N[1/2, 0], N[0, 1/2]])
+        @test xaux ⊆ oaux && oaux ⊆ xaux # TODO use isequivalent
 
         # 1D set
-        p = VPolytope([N[0], N[1]])
-        q = VPolytope([N[-1/2], N[1/2]])
-        x = intersection(p, q)
-        o = VPolytope([N[0], N[1/2]])
-        @test x ⊆ o && o ⊆ x # TODO use isequivalent
+        paux = VPolytope([N[0], N[1]])
+        qaux = VPolytope([N[-1/2], N[1/2]])
+        xaux = intersection(paux, qaux)
+        oaux = VPolytope([N[0], N[1/2]])
+        @test xaux ⊆ oaux && oaux ⊆ xaux # TODO use isequivalent
 
         # isuniversal
         answer, w = isuniversal(p1, true)

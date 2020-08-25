@@ -217,12 +217,12 @@ for N in [Float64, Float32, Rational{Int}]
     @test length(constraints_list(p3)) == 4
 
     # concrete intersection of V-rep
-    p = VPolygon([N[0, 0], N[1, 0], N[0, 1], N[1, 1]])
-    q = VPolygon([N[1, -1/2], N[-1/2, 1], N[-1/2, -1/2]])
-    x = intersection(p, q)
-    o = VPolygon([N[0, 0], N[1/2, 0], N[0, 1/2]])
-    @test x ⊆ o && o ⊆ x # TODO use isequivalent
-    @test LazySets._intersection_vrep(p.vertices, q.vertices) == x.vertices
+    paux = VPolygon([N[0, 0], N[1, 0], N[0, 1], N[1, 1]])
+    qaux = VPolygon([N[1, -1/2], N[-1/2, 1], N[-1/2, -1/2]])
+    xaux = intersection(paux, qaux)
+    oaux = VPolygon([N[0, 0], N[1/2, 0], N[0, 1/2]])
+    @test xaux ⊆ oaux && oaux ⊆ xaux # TODO use isequivalent
+    @test LazySets._intersection_vrep(paux.vertices, qaux.vertices) == xaux.vertices
 
     # check that tighter constraints are used in intersection (#883)
     h1 = HalfSpace([N(1), N(0)], N(3))
