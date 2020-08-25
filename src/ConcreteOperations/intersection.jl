@@ -683,7 +683,7 @@ function intersection(P1::Union{VPolygon{N}, VPolytope{N}},
                       backend=nothing,
                       prunefunc=nothing) where {N}
     n = dim(P1)
-    @assert n == dim(P2) "expected polytopes with the equal dimensions but they " *
+    @assert n == dim(P2) "expected polytopes with equal dimensions but they " *
                          "are $(dim(P1)) and $(dim(P2)) respectively"
 
     # fast path for one and two-dimensional sets
