@@ -398,6 +398,27 @@ for N in [Float64]
         cap = intersection(p1, p3)
         @test ispermutation(vertices_list(cap), vlist)
 
+        # 2D intersection
+        paux = VPolytope([N[0, 0], N[1, 0], N[0, 1], N[1, 1]])
+        qaux = VPolytope([N[1, -1/2], N[-1/2, 1], N[-1/2, -1/2]])
+        xaux = intersection(paux, qaux)
+        oaux = VPolytope([N[0, 0], N[1/2, 0], N[0, 1/2]])
+        @test xaux ⊆ oaux && oaux ⊆ xaux # TODO use isequivalent
+
+        # mixed types
+        paux = VPolygon([N[0, 0], N[1, 0], N[0, 1], N[1, 1]])
+        qaux = VPolytope([N[1, -1/2], N[-1/2, 1], N[-1/2, -1/2]])
+        xaux = intersection(paux, qaux)
+        oaux = VPolytope([N[0, 0], N[1/2, 0], N[0, 1/2]])
+        @test xaux ⊆ oaux && oaux ⊆ xaux # TODO use isequivalent
+
+        # 1D set
+        paux = VPolytope([N[0], N[1]])
+        qaux = VPolytope([N[-1/2], N[1/2]])
+        xaux = intersection(paux, qaux)
+        oaux = VPolytope([N[0], N[1/2]])
+        @test xaux ⊆ oaux && oaux ⊆ xaux # TODO use isequivalent
+
         # isuniversal
         answer, w = isuniversal(p1, true)
         @test !isuniversal(p1) && !answer && w ∉ p1
