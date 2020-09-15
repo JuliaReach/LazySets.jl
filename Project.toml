@@ -23,7 +23,7 @@ CDDLib = "0.6"
 Distributions = "0.19, 0.20, 0.21, 0.22"
 Documenter = "0.23, 0.24, 0.25"
 Expokit = "0.2"
-GLPK = "0.11, 0.12, 0.13"
+GLPK = "0.11, 0.12, 0.13, 0.14"
 GLPKMathProgInterface = "0.4, 0.5"
 GR = "0"
 IntervalArithmetic = "0.15, 0.16, 0.17"
@@ -39,8 +39,8 @@ Polyhedra = "0.6"
 RecipesBase = "0.6, 0.7, 0.8, 1.0"
 Reexport = "0.2"
 Requires = "0.5, 1.0"
-TaylorModels = "0.3"
 StaticArrays = "0.12"
+TaylorModels = "0.3"
 julia = "1"
 
 [extras]
@@ -61,5 +61,4 @@ TaylorModels = "314ce334-5f6e-57ae-acf6-00b6e903104a"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["CDDLib", "Distributions", "Documenter", "Expokit", "GR", "IntervalMatrices",
-        "Makie", "ModelingToolkit", "Optim", "Plots", "Polyhedra", "StaticArrays", "TaylorModels", "Test"]
+test = ["CDDLib", "Distributions", "Documenter", "Expokit", "GR", "IntervalMatrices", "Makie", "ModelingToolkit", "Optim", "Plots", "Polyhedra", "StaticArrays", "TaylorModels", "Test"]
