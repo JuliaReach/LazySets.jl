@@ -462,11 +462,12 @@ function _is_intersection_empty(Z::Zonotope{N}, H::Hyperplane{N}, ::Val{false}) 
 
     n, p = size(G)
     p == 0 && return !isapproxzero(v)
-    abs_sum = _isdisjoint_zonotope_hyperplane(G, H.a)
+    abs_sum = _abs_sum(H.a, G)
     return !_geq(v, -abs_sum) || !_leq(v, abs_sum)
 end
 
-@inline function _isdisjoint_zonotope_hyperplane(G::AbstractMatrix{N}, a::AbstractVector{N}) where {N}
+# computes ‖a^T G‖₁
+@inline function _abs_sum(a::AbstractVector{N}, G::AbstractMatrix{N}) where {N}
     n, p = size(G)
     abs_sum = zero(N)
     @inbounds for j in 1:p
@@ -479,11 +480,13 @@ end
     return abs_sum
 end
 
-@inline function _isdisjoint_zonotope_hyperplane(G::AbstractMatrix{N}, a::SparseVector{N}) where {N}
+# computes ‖a^T G‖₁ for a being a sprase vector
+@inline function _abs_sum(a::SparseVector{N}, G::AbstractMatrix{N}) where {N}
     return sum(abs, transpose(a) * G)
 end
 
-@inline function _isdisjoint_zonotope_hyperplane(G::AbstractMatrix{N}, a::SingleEntryVector{N}) where {N}
+# computes ‖a^T G‖₁ for a having only one nonzero element
+@inline function _abs_sum(a::SingleEntryVector{N}, G::AbstractMatrix{N}) where {N}
     p = size(G, 2)
     i = a.i
     v = abs(a.v)
