@@ -7,7 +7,6 @@ import Pkg
              Pkg.PackageSpec("GLPK", v"0.13"),
              Pkg.PackageSpec("GLPKMathProgInterface", v"0.5"),
              Pkg.PackageSpec("GR", v"0.44"),
-             Pkg.PackageSpec("IntervalArithmetic", v"0.15"),
              Pkg.PackageSpec("IntervalMatrices", v"0.6"),
              Pkg.PackageSpec("ModelingToolkit", v"0.8.0"),
              Pkg.PackageSpec("Optim", v"0.21"),
