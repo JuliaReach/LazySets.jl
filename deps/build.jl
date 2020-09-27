@@ -11,6 +11,5 @@ import Pkg
              Pkg.PackageSpec("ModelingToolkit", v"0.8.0"),
              Pkg.PackageSpec("Optim", v"0.21"),
              Pkg.PackageSpec("RecipesBase", v"0.7"),
-             Pkg.PackageSpec("Requires", v"0.5"),
              Pkg.PackageSpec("TaylorModels", v"0.1")])
 end
