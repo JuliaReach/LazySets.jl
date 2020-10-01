@@ -567,7 +567,7 @@ end
 
 function _vertices_list_2D(c::AbstractVector{N}, G::AbstractMatrix{N}; apply_convex_hull::Bool) where {N}
     if apply_convex_hull
-        return _vertices_list_iterative(c, G, apply_convex_hull)
+        return _vertices_list_iterative(c, G, apply_convex_hull=apply_convex_hull)
     end
     angles = mapslices(_angles, G, dims=1)[1, :]
     perm = sortperm(angles)
@@ -597,4 +597,3 @@ function _vertices_list_iterative(c::AbstractVector{N}, G::AbstractMatrix{N}; ap
 
     return apply_convex_hull ? convex_hull!(vlist) : vlist
 end
-
