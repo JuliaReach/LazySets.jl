@@ -528,7 +528,7 @@ function load_modeling_toolkit_halfspace()
 return quote
 
 # returns `(true, sexpr)` if expr represents a half-space,
-# where sexpr is the simpified expression sexpr := LHS - RHS <= 0
+# where sexpr is the simplified expression sexpr := LHS - RHS <= 0
 # otherwise, returns `(false, expr)`
 function _is_halfspace(expr::Operation)
     got_halfspace = true
