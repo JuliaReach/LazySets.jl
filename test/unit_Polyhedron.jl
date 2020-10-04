@@ -362,5 +362,9 @@ for N in [Float64]
         p1 = HPolyhedron([x + y <= 1, x + y >= -1,  x - y <= 1, x - y >= -1], vars)
         b1 = Ball1(zeros(2), 1.0)
         @test isequivalent(p1, b1)
+
+        p2 = HPolyhedron([x == 0, y <= 0], vars)
+        h2 = HPolyhedron([HalfSpace([1.0, 0.0], 0.0), HalfSpace([-1.0, 0.0], 0.0), HalfSpace([0.0, 1.0], 0.0)])
+        @test p2 ⊆ h2 && h2 ⊆ p2 # isequivalent(p2, h2) see #2370
     end
 end
