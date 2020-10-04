@@ -486,7 +486,7 @@ function load_modeling_toolkit_hyperplane()
 return quote
 
 # returns `(true, sexpr)` if expr represents a hyperplane,
-# where sexpr is the simpified expression sexpr := LHS - RHS == 0
+# where sexpr is the simplified expression sexpr := LHS - RHS == 0
 # otherwise, returns `(false, expr)`
 function _is_hyperplane(expr::Operation)
     got_hyperplane = expr.op == ==
