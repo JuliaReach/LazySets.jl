@@ -153,8 +153,8 @@ for N in [Float64, Float32]
     ε = N(0.01)
     p = tovrep(overapproximate(b, ε))
     for v in vertices_list(p)
-    @test norm(v) >= N(1)
-    @test norm(v) <= N(1 + ε)
+    @test _geq(norm(v), N(1))
+    @test _leq(norm(v), N(1 + ε))
     end
 
     # Check that there are no redundant constraints for a ballinf

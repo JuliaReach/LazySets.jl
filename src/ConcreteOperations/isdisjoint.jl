@@ -1639,7 +1639,7 @@ Check whether two two-dimensional lines do not intersect.
   * `(false, v)` iff ``L1 ∩ L2 ≠ ∅`` and ``v ∈ L1 ∩ L2``
 """
 function is_intersection_empty(L1::Line2D{N}, L2::Line2D{N}, witness::Bool=false) where {N<:Real}
-    disjoint, _ = _isdisjoint(L1, L2)
+    disjoint = _isdisjoint(L1, L2)
     if !witness
         return disjoint
     else
@@ -1653,7 +1653,11 @@ end
 
 # the lines do not intersect <=> det is zero and they are not identical
 function _isdisjoint(L1::Line2D, L2::Line2D)
-    @inbounds det = L1.a[1] * L2.a[2] - L1.a[2] * L2.a[1]
+    det = _det(L1, L2)
     disjoint = isapproxzero(det) && !isapprox(L1.b, L2.b)
-    return disjoint, det
+    return disjoint
+end
+
+@inline function _det(L1::Line2D, L2::Line2D)
+    @inbounds det = L1.a[1] * L2.a[2] - L1.a[2] * L2.a[1]
 end

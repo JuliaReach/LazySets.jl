@@ -74,11 +74,13 @@ Line2D{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
 ```
 """
 function intersection(L1::Line2D{N}, L2::Line2D{N}) where {N<:Real}
-    disjoint, det = _isdisjoint(L1, L2)
-    if disjoint
-        return EmptySet{N}(dim(L1))
-    elseif isapprox(L1.b, L2.b) # lines are identical
-        return L1
+    det = _det(L1, L2)
+    if isapproxzero(det)
+        if isapprox(L1.b, L2.b) # lines are identical
+            return L1
+        else
+            return EmptySet{N}(dim(L1)) # lines are disjoint
+        end
     else # intersection is a point
         @inbounds begin
             det⁻¹ = 1/det
