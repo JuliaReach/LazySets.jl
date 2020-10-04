@@ -632,7 +632,7 @@ Finally, the returned set is the half-space with normal vector `[a1, …, an]` a
 displacement `b`.
 """
 function HalfSpace(expr::Operation, vars::Union{<:Operation, <:Vector{Operation}}=get_variables(expr); N::Type{<:Real}=Float64)
-    (valid, sexpr) = _is_halfspace(expr)
+    valid, sexpr = _is_halfspace(expr)
     if !valid
         throw(ArgumentError("expected an expression describing a half-space, got $expr"))
     end
