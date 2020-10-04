@@ -1616,3 +1616,48 @@ end
 function is_intersection_empty(::Line2D{N}, ::EmptySet{N}) where {N<:Real}
     return true
 end
+
+# =================================================================
+# Disjointness methods for two-dimensional lines and line segments
+# =================================================================
+
+"""
+    is_intersection_empty(L1::Line2D{N}, L2::Line2D{N}, witness::Bool=false) where {N<:Real}
+
+Check whether two two-dimensional lines do not intersect.
+
+### Input
+
+- `L1` -- line
+- `L2` -- line
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``L1 ∩ L2 = ∅``
+* If `witness` option is activated:
+  * `(true, [])` iff ``L1 ∩ L2 = ∅``
+  * `(false, v)` iff ``L1 ∩ L2 ≠ ∅`` and ``v ∈ L1 ∩ L2``
+"""
+function is_intersection_empty(L1::Line2D{N}, L2::Line2D{N}, witness::Bool=false) where {N<:Real}
+    disjoint = _isdisjoint(L1, L2)
+    if !witness
+        return disjoint
+    else
+        if disjoint
+            return (true, N[])
+        else
+            return (false, an_element(intersection(L1, L2)))
+        end
+    end
+end
+
+# the lines do not intersect <=> det is zero and they are not identical
+function _isdisjoint(L1::Line2D, L2::Line2D)
+    det = _det(L1, L2)
+    disjoint = isapproxzero(det) && !isapprox(L1.b, L2.b)
+    return disjoint
+end
+
+@inline function _det(L1::Line2D, L2::Line2D)
+    @inbounds det = L1.a[1] * L2.a[2] - L1.a[2] * L2.a[1]
+end
