@@ -2,6 +2,7 @@ import Base: rand
 
 export Zonotope,
        scale,
+       scale!,
        reduce_order,
        remove_zero_generators,
        quadratic_map
