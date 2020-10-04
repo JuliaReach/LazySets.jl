@@ -762,10 +762,37 @@ julia> vars = @variables x y
 julia> HPolyhedron([x + y <= 1, x + y >= -1], vars)
 HPolyhedron{Float64,Array{Float64,1}}(HalfSpace{Float64,Array{Float64,1}}[HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0], 1.
 0), HalfSpace{Float64,Array{Float64,1}}([-1.0, -1.0], 1.0)])
+
+julia> X = HPolyhedron([x == 0, y <= 0], var)
+HPolyhedron{Float64,Array{Float64,1}}(HalfSpace{Float64,Array{Float64,1}}[HalfSpace{Float64,Array{Float64,1}}([1.0, 0.0], -0.0), HalfSp
+ace{Float64,Array{Float64,1}}([-1.0, -0.0], 0.0), HalfSpace{Float64,Array{Float64,1}}([0.0, 1.0], -0.0)])
 ```
 """
 function HPolyhedron(expr::Vector{<:Operation}, vars=get_variables(first(expr)); N::Type{<:Real}=Float64)
-    return HPolyhedron([HalfSpace(ex, vars; N=N) for ex in expr])
+    clist = Vector{HalfSpace{N, Vector{N}}}()
+    sizehint!(clist, length(expr))
+    got_hyperplane = false
+    got_halfspace = false
+    zeroed_vars = Dict(v => zero(N) for v in vars)
+    for ex in expr
+        got_hyperplane, sexpr = _is_hyperplane(ex)
+        if !got_hyperplane
+            got_halfspace, sexpr = _is_halfspace(ex)
+        end
+
+        if !got_halfspace && !got_hyperplane
+            throw(ArgumentError("expected an expression describing either a half-space of a hyperplane, got $expr"))
+        end
+
+        coeffs = [N(α.value) for α in gradient(sexpr, collect(vars))]
+        β = -N(ModelingToolkit.substitute(sexpr, zeroed_vars).value)
+
+        push!(clist, HalfSpace(coeffs, β))
+        if got_hyperplane
+            push!(clist, HalfSpace(-coeffs, -β))
+        end
+    end
+    return HPolyhedron(clist)
 end
 
 end end  # quote / load_modeling_toolkit_hpolyhedron()
