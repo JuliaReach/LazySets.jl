@@ -491,7 +491,7 @@ return quote
 function _is_hyperplane(expr::Operation)
     got_hyperplane = expr.op == ==
     if got_hyperplane
-        # simplify to the form a*x + β == 0
+        # simplify to the form a*x + b == 0
         a, b = expr.args
         sexpr = simplify(a - b)
     end
