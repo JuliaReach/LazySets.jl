@@ -1644,7 +1644,7 @@ function is_intersection_empty(L1::Line2D{N}, L2::Line2D{N}, witness::Bool=false
         return disjoint
     else
         if disjoint
-            return (true, [])
+            return (true, N[])
         else
             return (false, an_element(intersection(L1, L2)))
         end
