@@ -774,17 +774,18 @@ function HPolyhedron(expr::Vector{<:Operation}, vars=get_variables(first(expr));
     got_hyperplane = false
     got_halfspace = false
     zeroed_vars = Dict(v => zero(N) for v in vars)
+    vars_list = collect(vars)
     for ex in expr
         got_hyperplane, sexpr = _is_hyperplane(ex)
         if !got_hyperplane
             got_halfspace, sexpr = _is_halfspace(ex)
+            if !got_halfspace
+                throw(ArgumentError("expected an expression describing either " *
+                    "a half-space of a hyperplane, got $expr"))
+            end
         end
 
-        if !got_halfspace && !got_hyperplane
-            throw(ArgumentError("expected an expression describing either a half-space of a hyperplane, got $expr"))
-        end
-
-        coeffs = [N(α.value) for α in gradient(sexpr, collect(vars))]
+        coeffs = [N(α.value) for α in gradient(sexpr, vars_list)]
         β = -N(ModelingToolkit.substitute(sexpr, zeroed_vars).value)
 
         push!(clist, HalfSpace(coeffs, β))
