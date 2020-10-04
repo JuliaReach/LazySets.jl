@@ -43,6 +43,7 @@ is_intersection_empty(::Interval{N}, ::Interval{N}, ::Bool=false) where {N<:Real
 is_intersection_empty(::CartesianProductArray{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 is_intersection_empty(::CartesianProductArray{N}, ::CartesianProductArray{N}) where {N<:Real}
 is_intersection_empty(::CartesianProductArray{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
+is_intersection_empty(::Line2D{N}, ::Line2D{N}, ::Bool=false) where {N<:Real}
 ```
 
 ## Convex hull
