@@ -2,6 +2,7 @@ import Base: rand
 
 export Zonotope,
        scale,
+       scale!,
        reduce_order,
        remove_zero_generators,
        quadratic_map
@@ -311,6 +312,28 @@ function scale(α::Real, Z::Zonotope)
     c = α .* Z.center
     gi = α .* Z.generators
     return Zonotope(c, gi)
+end
+
+"""
+    scale!(α::Real, Z::Zonotope)
+
+Concrete scaling of a zonotope modifing `Z` in-place
+
+### Input
+
+- `α` -- scalar
+- `Z` -- zonotope
+
+### Output
+
+The zonotope `Z` after applying the numerical scale `α` to its center and generators.
+"""
+function scale!(α::Real, Z::Zonotope)
+    c = Z.center
+    G = Z.generators
+    c .= α .* c
+    G .= α .* G
+    return Z
 end
 
 """
