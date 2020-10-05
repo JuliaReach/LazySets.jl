@@ -326,7 +326,7 @@ Concrete scaling of a zonotope modifing `Z` in-place
 
 ### Output
 
-The zonotope `Z` after applying the numerical scale `α` to is center and generators.
+The zonotope `Z` after applying the numerical scale `α` to its center and generators.
 """
 function scale!(α::Real, Z::Zonotope)
     c = Z.center
