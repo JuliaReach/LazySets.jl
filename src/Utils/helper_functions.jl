@@ -500,14 +500,14 @@ function read_gen(filename::String)
     new_polygon = true
     open(filename) do f
         for line in eachline(f)
-          if !isempty(line)
-              push!(Mi, map(x -> parse(Float64, x), split(line)))
-              new_polygon = true
-          elseif isempty(line) && new_polygon
-              push!(P, VPolygon(Mi))
-              Mi = Vector{Vector{Float64}}()
-              new_polygon = false
-          end
+            if !isempty(line)
+                push!(Mi, map(x -> parse(Float64, x), split(line)))
+                new_polygon = true
+             elseif isempty(line) && new_polygon
+                push!(P, VPolygon(Mi))
+                Mi = Vector{Vector{Float64}}()
+                new_polygon = false
+             end
         end
     end
     return P
