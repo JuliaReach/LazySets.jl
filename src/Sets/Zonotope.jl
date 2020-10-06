@@ -399,7 +399,7 @@ end
 
 _split_ret(Z₁::Zonotope, Z₂::Zonotope) = (Z₁, Z₂)
 
-function load_static_arrays()
+function load_split_static()
 return quote
 
 function _split_ret(Z₁::Zonotope{N, SV, SM}, Z₂::Zonotope{N, SV, SM}) where {N, n, p, SV<:MVector{n, N}, SM<:MMatrix{n, p, N}}
@@ -408,7 +408,7 @@ function _split_ret(Z₁::Zonotope{N, SV, SM}, Z₂::Zonotope{N, SV, SM}) where 
     return Z₁, Z₂
 end
 
-end end  # quote / load_static_arrays
+end end  # quote / load_split_static
 
 function _split(Z::Zonotope, gens::AbstractVector, n::AbstractVector)
     p = length(gens)
@@ -614,8 +614,19 @@ function _vertices_list_iterative(c::VN, G::MN; apply_convex_hull::Bool) where {
     return apply_convex_hull ? convex_hull!(vlist) : vlist
 end
 
+# special case 2D zonotope of order 1/2
+function _vertices_list_2D_order_one_half(c::VN, G::MN; apply_convex_hull::Bool) where {N, VN<:AbstractVector{N}, MN}
+    vlist = Vector{VN}(undef, 2)
+    g = view(G, :, 1)
+    @inbounds begin
+        vlist[1] = c .+ g
+        vlist[2] = c .- g
+    end
+    return apply_convex_hull ? _two_points_2d!(vlist) : vlist
+end
+
 # special case 2D zonotope of order 1
-function _vertices_list_iterative_ord1(c::VN, G::MN; apply_convex_hull::Bool) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}}
+function _vertices_list_2D_order_one(c::VN, G::MN; apply_convex_hull::Bool) where {N, VN<:AbstractVector{N}, MN}
     vlist = Vector{VN}(undef, 4)
     a = [one(N), one(N)]
     b = [one(N), -one(N)]
