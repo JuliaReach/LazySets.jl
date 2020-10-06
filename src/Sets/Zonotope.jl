@@ -555,7 +555,7 @@ end
 # ====================================
 
 @inline function _angles(point::AbstractVector{N})  where{N}
-    (atan(point[2], point[1]) / π * 180 + 360) % 360
+    (atand(point[2], point[1]) + 360) % 360
 end
 
 function _single_quadrant_vertices_enum(G::AbstractMatrix{N}, sorted::Bool=true) where{N}
