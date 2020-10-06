@@ -604,9 +604,6 @@ end
 
 function _vertices_list_iterative(c::VN, G::MN; apply_convex_hull::Bool) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}}
     p = size(G, 2)
-    if p == 1
-        return _vertices_list_iterative_ord1(c, G, apply_convex_hull=apply_convex_hull)
-    end
     vlist = Vector{VN}()
     sizehint!(vlist, 2^p)
 

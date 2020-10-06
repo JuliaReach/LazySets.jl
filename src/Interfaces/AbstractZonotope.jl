@@ -438,7 +438,11 @@ function vertices_list(Z::AbstractZonotope{N};
         return vertices_list(convert(Interval, Z))
 
     elseif n == 2
-        return _vertices_list_2D(c, G, apply_convex_hull=apply_convex_hull)
+        if p == 1
+            return _vertices_list_iterative_ord1(c, G, apply_convex_hull=apply_convex_hull)
+        else
+            return _vertices_list_2D(c, G, apply_convex_hull=apply_convex_hull)
+        end
 
     else
         return _vertices_list_iterative(c, G, apply_convex_hull=apply_convex_hull)
