@@ -490,9 +490,6 @@ This is parsed as
  VPolygon{Float64,Array{Float64,1}}([[1.01, 1.01], [0.99, 1.01], [0.99, 0.99], [1.01, 0.99]])
  VPolygon{Float64,Array{Float64,1}}([[0.908463, 1.31047], [0.873089, 1.31047], [0.873089, 1.28452], [0.908463, 1.28452]])
 ```
-
-The input file should end with at least one empty line before the end of files
-(this is to detect the last polygon).
 """
 function read_gen(filename::String)
     Mi = Vector{Vector{Float64}}()
