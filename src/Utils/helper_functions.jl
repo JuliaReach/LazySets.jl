@@ -453,7 +453,7 @@ end
 
 
 """
-    read_gen(filename)
+    read_gen(filename::String)
 
 Read a sequence of polygons stored in vertex representation (gen format).
 
