@@ -602,9 +602,12 @@ function _vertices_list_2D_positive(c::AbstractVector{N}, G::AbstractMatrix{N}) 
     return [V[:, i] for i in 1:2*p]
 end
 
-function _vertices_list_iterative(c::AbstractVector{N}, G::AbstractMatrix{N}; apply_convex_hull::Bool) where {N}
+function _vertices_list_iterative(c::VN, G::MN; apply_convex_hull::Bool) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}}
     p = size(G, 2)
-    vlist = Vector{Vector{N}}()
+    if p == 1
+        return _vertices_list_iterative_ord1(c, G, apply_convex_hull=apply_convex_hull)
+    end
+    vlist = Vector{VN}()
     sizehint!(vlist, 2^p)
 
     for ξi in Iterators.product([[1, -1] for i = 1:p]...)
@@ -612,4 +615,18 @@ function _vertices_list_iterative(c::AbstractVector{N}, G::AbstractMatrix{N}; ap
     end
 
     return apply_convex_hull ? convex_hull!(vlist) : vlist
+end
+
+# special case 2D zonotope of order 1
+function _vertices_list_iterative_ord1(c::VN, G::MN; apply_convex_hull::Bool) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}}
+    vlist = Vector{VN}(undef, 4)
+    a = [one(N), one(N)]
+    b = [one(N), -one(N)]
+    @inbounds begin
+        vlist[1] = c .+ G * a
+        vlist[2] = c .- G * a
+        vlist[3] = c .+ G * b
+        vlist[4] = c .- G * b
+    end
+    return apply_convex_hull ? _four_points_2d!(vlist) : vlist
 end
