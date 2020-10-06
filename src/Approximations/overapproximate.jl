@@ -1963,3 +1963,29 @@ function overapproximate(X::Intersection{N, <:Hyperplane, <:AbstractZonotope},
                          dirs::Type{<:AbstractDirections}) where {N<:Real}
     return overapproximate(X.Y ∩ X.X, dirs(dim(X)))
 end
+
+# ===========================================================
+# Functionality that requires IntervalConstraintProgramming
+# ===========================================================
+
+# function to be loaded by Requires
+function load_paving_overapproximation()
+
+return quote
+
+using .IntervalConstraintProgramming: Paving
+
+function overapproximate(p::Paving{L, N}, dirs::AbstractDirections{N, VN}) where {L, N, VN}
+    # enclose outer approximation
+    Uouter = UnionSetArray(convert.(Hyperrectangle, p.boundary))
+    constraints = [HalfSpace(d, ρ(d, Uouter)) for d in dirs]
+    return HPolyhedron(constraints)
+end
+
+# alias with HPolyhedron type as second argument
+function overapproximate(p::Paving{L, N}, ::Type{<:HPolyhedron}, dirs::AbstractDirections{N, VN}) where {L, N, VN}
+    return overapproximate(p, dirs)
+end
+
+end # quote
+end # load_paving_overapproximation
