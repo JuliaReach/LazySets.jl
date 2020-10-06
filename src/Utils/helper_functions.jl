@@ -468,7 +468,7 @@ A list of polygons in vertex representation.
 ### Notes
 
 The `x` and `y` coordinates of each vertex should be separated by an empty space,
-and polygons are separated by empty lines. For example:
+and polygons are separated by empty lines (even the last polygon). For example:
 
 ```julia
 1.01 1.01
