@@ -1,3 +1,3 @@
-using .StaticArrays: SMatrix, SVector, MMatrix, MVector
+using .StaticArrays: SMatrix, SVector, MMatrix, MVector, SA
 
-eval(load_static_arrays())
+eval(load_split_static())
