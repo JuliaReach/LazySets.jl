@@ -146,6 +146,23 @@ function radius_hyperrectangle(H::Hyperrectangle{N}) where {N<:Real}
     return H.radius
 end
 
+function load_genmat_hyperrectangle_static()
+return quote
+    function genmat(H::Hyperrectangle{N, SVector{L, N}, SVector{L, N}}) where {L, N}
+        gens = zeros(MMatrix{L, L})
+        nzcol = Vector{Int}()
+        sizehint!(nzcol, L)
+        @inbounds for i in 1:L
+            r = H.radius[i]
+            if !isapproxzero(r)
+                gens[i, i] = r
+                push!(nzcol, i)
+            end
+        end
+        return SMatrix(gens[:, nzcol])
+    end
+end
+end
 
 # --- AbstractCentrallySymmetric interface functions ---
 

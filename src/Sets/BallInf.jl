@@ -119,6 +119,22 @@ function isflat(B::BallInf)
     return isapproxzero(B.radius)
 end
 
+function load_genmat_ballinf_static()
+return quote
+    function genmat(B::BallInf{N, SVector{L, N}}) where {L, N}
+        r = B.radius
+        if isapproxzero(B.radius)
+            return SMatrix{L, 0, N, 0}()
+        else
+            gens = zeros(MMatrix{L, L})
+            @inbounds for i in 1:L
+                gens[i, i] = r
+            end
+            return SMatrix(gens)
+        end
+    end
+end
+end
 
 # --- AbstractCentrallySymmetric interface functions ---
 
