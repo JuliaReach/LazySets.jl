@@ -311,11 +311,11 @@ function _convert_2D(::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
     c = center(H)
     rx = radius_hyperrectangle(H, 1)
     ry = radius_hyperrectangle(H, 2)
-    G = _genmat_2D_prune(c, rx, ry)
+    G = _genmat_2D(c, rx, ry)
     return Zonotope(c, G)
 end
 
-@inline function _genmat_2D_prune(c::AbstractVector{N}, rx, ry) where {N}
+@inline function _genmat_2D(c::AbstractVector{N}, rx, ry) where {N}
     flat_x = isapproxzero(rx)
     flat_y = isapproxzero(ry)
     ncols = !flat_x + !flat_y
@@ -333,7 +333,7 @@ end
 
 function load_genmat_2D_static()
 return quote
-    @inline function _genmat_2D_prune(c::SVector{L, N}, rx, ry) where {L, N}
+    @inline function _genmat_2D(c::SVector{L, N}, rx, ry) where {L, N}
         flat_x = isapproxzero(rx)
         flat_y = isapproxzero(ry)
         if !flat_x && !flat_y
