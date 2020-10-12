@@ -285,7 +285,7 @@ function convert(ZT::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
         return _convert_2D(ZT, H)
     end
 
-    if prune && isflat(H)
+    if isflat(H)
         r = radius_hyperrectangle(H)
         n = length(r)
 
