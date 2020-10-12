@@ -149,9 +149,8 @@ end
 function load_genmat_hyperrectangle_static()
 return quote
     function genmat(H::Hyperrectangle{N, SVector{L, N}, SVector{L, N}}) where {L, N}
-        gens = zeros(MMatrix{L, L})
+        gens = zeros(MMatrix{L, L, N})
         nzcol = Vector{Int}()
-        sizehint!(nzcol, L)
         @inbounds for i in 1:L
             r = H.radius[i]
             if !isapproxzero(r)
@@ -159,7 +158,19 @@ return quote
                 push!(nzcol, i)
             end
         end
-        return SMatrix(gens[:, nzcol])
+        m = length(nzcol)
+        return SMatrix{L, m}(view(gens, :, nzcol))
+    end
+
+    # this function is type-stable, though it doesn't prune the generators according
+    # to flat dimensions of H
+    function _genmat_static(H::Hyperrectangle{N, SVector{L, N}, SVector{L, N}}) where {L, N}
+        gens = zeros(MMatrix{L, L, N})
+        @inbounds for i in 1:L
+            r = H.radius[i]
+            gens[i, i] = r
+        end
+        return SMatrix{L, L}(gens)
     end
 end
 end

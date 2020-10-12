@@ -337,6 +337,10 @@ return quote
         G = SMatrix{2, 2, N, 4}(rx, zero(N), zero(N), ry)
         return Zonotope(c, G)
     end
+
+    function _convert_static(::Type{Zonotope}, H::Hyperrectangle{N, <:SVector, <:SVector}) where {N}
+        return Zonotope(center(H), _genmat_static(H))
+    end
 end end  # quote / load_genmat_2D_static
 
 function convert(::Type{Zonotope}, S::Singleton{N, VN}) where {N, VN<:AbstractVector{N}}
