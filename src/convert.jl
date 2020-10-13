@@ -284,7 +284,26 @@ function convert(ZT::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
     if dim(H) == 2
         return _convert_2D(ZT, H)
     end
-    return Zonotope(center(H), genmat(H))
+
+    if isflat(H)
+        r = radius_hyperrectangle(H)
+        n = length(r)
+
+        nzgen = 0
+        Gnz = Vector{N}()
+        sizehint!(Gnz, n * n)
+        @inbounds for (i, ri) in enumerate(r)
+            if ri != zero(N)
+                col = zeros(N, n)
+                col[i] = ri
+                append!(Gnz, col)
+                nzgen += 1
+            end
+        end
+    elseif !flat_y
+        @inbounds begin G[1] = zero(N); G[2] = ry end
+    end
+    return G
 end
 
 function _convert_2D(::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
