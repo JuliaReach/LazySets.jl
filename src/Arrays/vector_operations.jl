@@ -111,7 +111,7 @@ function samedir(u::AbstractVector{N},
             if factor < 0
                 return (false, 0)
             end
-        elseif factor != u[i] / v[i]
+        elseif !_isapprox(factor, u[i] / v[i])
             return (false, 0)
         end
     end
