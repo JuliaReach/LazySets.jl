@@ -1994,7 +1994,7 @@ An overapproximation of a paving using a polyhedron in constraint representation
 
 This function takes the union of the elements in the boundary of p, first
 converted into hyperrectangles, and then calculates the support function of the
-set along each  direction in dirs, to compute the HPolytope constraints.
+set along each  direction in dirs, to compute the `HPolyhedron` constraints.
 
 ### Requires IntervalConstraintProgramming
 """
