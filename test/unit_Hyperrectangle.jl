@@ -236,15 +236,9 @@ for N in [Float64, Rational{Int}, Float32]
           Hyperrectangle(N[0, 0], N[1, 1])
 
     # conversion to a zonotope
-    if N <: Rational
-        H = Hyperrectangle(low=N[5//10, 6//10], high=N[124//10, 2355//10])
-        Hz = convert(Zonotope, H)
-        @test Hz == Zonotope(N[129//20, 2361//20], N[119//20 0//1; 0//1 2349//20])
-    else
-        H = Hyperrectangle(low=N[0.5, 0.6], high=N[12.4, 235.5])
-        Hz = convert(Zonotope, H)
-        @test Hz == Zonotope(N[6.45, 118.05], N[5.95 0.0; 0.0 117.45])
-    end
+    H = Hyperrectangle(low=N[5//10, 6//10], high=N[124//10, 2355//10])
+    Hz = convert(Zonotope, H)
+    @test Hz == Zonotope(N[129//20, 2361//20], N[119//20 0//1; 0//1 2349//20])
 
     # conversion of a hyperrectangle with static array components to a zonotope
     # the specialized method for 2D static arrays is also tested
