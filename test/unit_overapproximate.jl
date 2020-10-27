@@ -428,7 +428,8 @@ for N in [Float64]
             C = IntervalConstraintProgramming.@constraint x^2 + y^2 <= 1
             p = IntervalConstraintProgramming.pave(C, dom, 0.01)
             dirs = OctDirections(2)
-            H = overapproximate(p, dirs);B2 = Ball2(N[0., 0.], N(1.))
+            H = overapproximate(p, dirs)
+            B2 = Ball2(N[0, 0], N(1))
             @test B2 ⊆ H
         end
 
