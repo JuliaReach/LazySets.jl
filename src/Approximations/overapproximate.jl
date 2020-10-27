@@ -1984,7 +1984,7 @@ Overapproximation of a Paving-type set representation using an HPolytope.
 ### Input
 
 - `p`    -- paving
-- `dirs` -- directions of the HPolytope
+- `dirs` -- template directions
 
 ### Output
 
