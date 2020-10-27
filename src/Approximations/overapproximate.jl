@@ -1988,7 +1988,7 @@ Overapproximation of a Paving-type set representation using an HPolytope.
 
 ### Output
 
-An overapproximation of a Paving-type set using an HPolytope with constraints in direction dirs.
+An overapproximation of a paving using a polyhedron in constraint representation (`HPolyhedron`) with constraints in direction `dirs`.
 
 ### Algorithm
 
