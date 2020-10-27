@@ -422,7 +422,7 @@ for N in [Float64]
         cap = overapproximate(Z ∩ L, OctDirections)
         @test (L ∩ Z) ⊆ cap
 
-        # overapproximate of a pave with an HPolytope
+        # overapproximate a nonlinear constraint with an HPolyhedron
         if N == Float64
             dom = IntervalBox(IntervalArithmetic.Interval(-2, 2), IntervalArithmetic.Interval(-2, 2))
             C = IntervalConstraintProgramming.@constraint x^2 + y^2 <= 1
