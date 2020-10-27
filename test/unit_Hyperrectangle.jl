@@ -248,20 +248,11 @@ for N in [Float64, Rational{Int}, Float32]
 
     # conversion of a hyperrectangle with static array components to a zonotope
     # the specialized method for 2D static arrays is also tested
-    if N <: Rational
-        H = Hyperrectangle(low=SA[5//10, 6//10], high=N[124//10, 2355//10])
-        Hz = convert(Zonotope, H)
-        Hz_sp = LazySets._convert_2D_static(Zonotope, H)
-        Z = Zonotope(SA[129//20, 2361//20], SA[119//20 0//1; 0//1 2349//20])
-        @test Hz == Z && Hz_sp == Z
-
-    else
-        H = Hyperrectangle(low=SA[0.5, 0.6], high=SA[12.4, 235.5])
-        Hz = convert(Zonotope, H)
-        Hz_sp = LazySets._convert_2D_static(Zonotope, H)
-        Z = Zonotope(SA[6.45, 118.05], SA[5.95 0.0; 0.0 117.45])
-        @test Hz == Z && H == Z
-    end
+    H = Hyperrectangle(low=SA[N(5//10), N(6//10)], high=N[N(124//10), N(2355//10)])
+    Hz = convert(Zonotope, H)
+    Hz_sp = LazySets._convert_2D_static(Zonotope, H)
+    Z = Zonotope(SA[N(129//20), N(2361//20)], SA[N(119//20) N(0//1); N(0//1) N(2349//20)])
+    @test Hz == Z && Hz_sp == Z
 
     # rectification
     H = Hyperrectangle(N[-1, 2], N[4, 5])
