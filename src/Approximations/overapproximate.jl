@@ -2009,7 +2009,7 @@ end
 """
     overapproximate(p::Paving{L, N}, ::Type{<:HPolyhedron}, dirs::AbstractDirections{N, VN}) where {L, N, VN}
 
-Dispath in
+Dispatch to
 
     overapproximate(p::Paving{L, N}, dirs::AbstractDirections{N, VN}) where {L, N, VN}
 """
