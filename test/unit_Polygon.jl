@@ -540,6 +540,16 @@ for N in [Float64]
        ]
     P = HPolygon(copy(Hs))
     @test ispermutation(P.constraints, Hs[3:6])
+
+    # redundancy with almost-parallel constraints and approximation issues (#2386)
+    P = HPolygon([HalfSpace([1.0, 0.0], 1.0),
+                  HalfSpace([0.0, 1.0], 1.0),
+                  HalfSpace([-1.0, 0.0], 1.0),
+                  HalfSpace([0.0, -1.0], 1.0),
+                  HalfSpace([0.17178027783046604, -0.342877222169534], -0.3988040749330524),
+                  HalfSpace([0.17228094170254737, -0.3438765582974526], -0.5161575)
+                 ])
+    @test vertices_list(P) == [[-1.0, 1.0]]
 end
 
 # default Float64 constructors
