@@ -159,6 +159,27 @@ for N in [Float64, Rational{Int}, Float32]
 
     # vertices iterator
     @test ispermutation(collect(vertices(B)), vertices_list(B))
+
+    # conversion to a zonoope
+    B = BallInf(N[0, 0], N(1))
+    ZB = convert(Zonotope, B)
+    @test ZB == Zonotope(N[0, 0], N[1 0; 0 1])
+    B = BallInf(N[0, 0], N(0))  # flat case
+    ZB = convert(Zonotope, B)
+    @test ZB == Zonotope(N[0, 0], Matrix{N}(undef, 2, 0))
+
+   # conversion to a zonotope, static arrays
+   B = BallInf(SA[N(0), N(0)], N(1))
+   ZB = convert(Zonotope, B)
+   @test ZB == Zonotope(SVector{2}(N[0, 0]), SMatrix{2, 2}(N[1 0; 0 1]))
+   B = BallInf(SA[N(0), N(0)], N(0))  # flat case
+   ZB = convert(Zonotope, B)
+   @test ZB == Zonotope(SVector{2}(N[0, 0]), SMatrix{2, 0, N, 0}())
+
+   # internal function
+   B = BallInf(SA[N(0), N(0)], N(1))
+   Zs = LazySets._convert_2D_static(Zonotope, B)
+   @test Zs == Zonotope(SVector{2}(N[0, 0]), SMatrix{2, 2}(N[1 0; 0 1]))
 end
 
 # tests that only work with Float64

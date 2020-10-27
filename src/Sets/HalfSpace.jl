@@ -527,6 +527,44 @@ _normal_Vector(c::LinearConstraint) = LinearConstraint(convert(Vector, c.a), c.b
 function load_modeling_toolkit_halfspace()
 return quote
 
+# returns `(true, sexpr)` if expr represents a half-space,
+# where sexpr is the simplified expression sexpr := LHS - RHS <= 0
+# otherwise, returns `(false, expr)`
+function _is_halfspace(expr::Operation)
+    got_halfspace = true
+
+    # find sense and normalize
+    if expr.op == <
+        a, b = expr.args
+        sexpr = simplify(a - b)
+
+    elseif expr.op == >
+        a, b = expr.args
+        sexpr = simplify(b - a)
+
+    elseif (expr.op == |) && (expr.args[1].op == <)
+        a, b = expr.args[1].args
+        sexpr = simplify(a - b)
+
+    elseif (expr.op == |) && (expr.args[2].op == <)
+        a, b = expr.args[2].args
+        sexpr = simplify(a - b)
+
+    elseif (expr.op == |) && (expr.args[1].op == >)
+        a, b = expr.args[1].args
+        sexpr = simplify(b - a)
+
+    elseif (expr.op == |) && (expr.args[2].op == >)
+        a, b = expr.args[2].args
+        sexpr = simplify(b - a)
+
+    else
+        got_halfspace = false
+    end
+
+    return got_halfspace ? (true, sexpr) : (false, expr)
+end
+
 """
     HalfSpace(expr::Operation, vars::Union{<:Operation, <:Vector{Operation}}=get_variables(expr); N::Type{<:Real}=Float64)
 
@@ -594,33 +632,8 @@ Finally, the returned set is the half-space with normal vector `[a1, …, an]` a
 displacement `b`.
 """
 function HalfSpace(expr::Operation, vars::Union{<:Operation, <:Vector{Operation}}=get_variables(expr); N::Type{<:Real}=Float64)
-
-    # find sense and normalize
-    if expr.op == <
-        a, b = expr.args
-        sexpr = simplify(a - b)
-
-    elseif expr.op == >
-        a, b = expr.args
-        sexpr = simplify(b - a)
-
-    elseif (expr.op == |) && (expr.args[1].op == <)
-        a, b = expr.args[1].args
-        sexpr = simplify(a - b)
-
-    elseif (expr.op == |) && (expr.args[2].op == <)
-        a, b = expr.args[2].args
-        sexpr = simplify(a - b)
-
-    elseif (expr.op == |) && (expr.args[1].op == >)
-        a, b = expr.args[1].args
-        sexpr = simplify(b - a)
-
-    elseif (expr.op == |) && (expr.args[2].op == >)
-        a, b = expr.args[2].args
-        sexpr = simplify(b - a)
-
-    else
+    valid, sexpr = _is_halfspace(expr)
+    if !valid
         throw(ArgumentError("expected an expression describing a half-space, got $expr"))
     end
 

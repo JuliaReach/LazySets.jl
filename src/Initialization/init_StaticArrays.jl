@@ -1,3 +1,4 @@
-using .StaticArrays: SMatrix, SVector, MMatrix, MVector
+using .StaticArrays: SMatrix, SVector, MMatrix, MVector, SA
 
-eval(load_static_arrays())
+eval(load_split_static())
+eval(load_genmat_2D_static())
