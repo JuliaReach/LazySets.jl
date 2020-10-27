@@ -1975,6 +1975,29 @@ return quote
 
 using .IntervalConstraintProgramming: Paving
 
+
+"""
+    overapproximate(p::Paving{L, N}, dirs::AbstractDirections{N, VN}) where {L, N, VN}
+
+Overapproximation of a Paving-type set representation using an HPolytope.
+
+### Input
+
+- `p`    -- type of pave representation
+- `dirs` -- directions of the HPolytope
+
+### Output
+
+An overapproximation of a Paving-type set using an HPolytope with constraints in direction dirs.
+
+### Algorithm
+
+This function takes the union of the elements in the boundary of p, first
+converted into hyperrectangles, and then calculates the support function of the
+set along each  direction in dirs, to compute the HPolytope constraints.
+
+### Requires IntervalConstraintProgramming
+"""
 function overapproximate(p::Paving{L, N}, dirs::AbstractDirections{N, VN}) where {L, N, VN}
     # enclose outer approximation
     Uouter = UnionSetArray(convert.(Hyperrectangle, p.boundary))
@@ -1983,6 +2006,13 @@ function overapproximate(p::Paving{L, N}, dirs::AbstractDirections{N, VN}) where
 end
 
 # alias with HPolyhedron type as second argument
+"""
+    overapproximate(p::Paving{L, N}, ::Type{<:HPolyhedron}, dirs::AbstractDirections{N, VN}) where {L, N, VN}
+
+Dispath in
+
+    overapproximate(p::Paving{L, N}, dirs::AbstractDirections{N, VN}) where {L, N, VN}
+"""
 function overapproximate(p::Paving{L, N}, ::Type{<:HPolyhedron}, dirs::AbstractDirections{N, VN}) where {L, N, VN}
     return overapproximate(p, dirs)
 end

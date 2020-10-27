@@ -421,5 +421,16 @@ for N in [Float64]
         L = Line2D(N[-1, -1], N[1, 1/2])
         cap = overapproximate(Z ∩ L, OctDirections)
         @test (L ∩ Z) ⊆ cap
+
+        # overapproximate of a pave with an HPolytope
+        if N == Float64
+            dom = IntervalBox(IntervalArithmetic.Interval(-2, 2), IntervalArithmetic.Interval(-2, 2))
+            C = IntervalConstraintProgramming.@constraint x^2 + y^2 <= 1
+            p = IntervalConstraintProgramming.pave(C, dom, 0.01)
+            dirs = OctDirections(2)
+            H = overapproximate(p, dirs);B2 = Ball2(N[0., 0.], N(1.))
+            @test B2 ⊆ H
+        end
+
     end
 end
