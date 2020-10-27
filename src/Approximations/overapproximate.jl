@@ -2006,13 +2006,6 @@ function overapproximate(p::Paving{L, N}, dirs::AbstractDirections{N, VN}) where
 end
 
 # alias with HPolyhedron type as second argument
-"""
-    overapproximate(p::Paving{L, N}, ::Type{<:HPolyhedron}, dirs::AbstractDirections{N, VN}) where {L, N, VN}
-
-Dispatch to
-
-    overapproximate(p::Paving{L, N}, dirs::AbstractDirections{N, VN}) where {L, N, VN}
-"""
 function overapproximate(p::Paving{L, N}, ::Type{<:HPolyhedron}, dirs::AbstractDirections{N, VN}) where {L, N, VN}
     return overapproximate(p, dirs)
 end
