@@ -175,6 +175,11 @@ for N in [Float64, Rational{Int}, Float32]
    B = BallInf(SA[N(0), N(0)], N(0))  # flat case
    ZB = convert(Zonotope, B)
    @test ZB == Zonotope(SVector{2}(N[0, 0]), SMatrix{2, 0, N, 0}())
+   # specialized method (no prunning)
+   B = BallInf(SA[1.0, 2.0], 1.0)
+   ZB = LazySets._convert_2D_static(Zonotope, B)
+   @test ZB == Zonotope(SA[1.0, 2.0], SA[1.0 0.0; 0.0 1.0])
+
 
    # internal function
    B = BallInf(SA[N(0), N(0)], N(1))
