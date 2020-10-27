@@ -1979,7 +1979,7 @@ using .IntervalConstraintProgramming: Paving
 """
     overapproximate(p::Paving{L, N}, dirs::AbstractDirections{N, VN}) where {L, N, VN}
 
-Overapproximation of a Paving-type set representation using an HPolytope.
+Overapproximation of a Paving-type set representation using a polyhedron in constraint representation.
 
 ### Input
 
