@@ -2,6 +2,47 @@
 
 export intersection
 
+for T in [:LazySet, :AbstractSingleton]
+    @eval begin
+        function intersection(∅::EmptySet, X::$T)
+            @assert dim(∅) == dim(X) "cannot take the intersection between a " *
+                "$(dim(∅))-dimensional empty set and a $(dim(X))-dimensional set"
+            return ∅
+        end
+
+        # symmetric method
+        function intersection(X::$T, ∅::EmptySet)
+            @assert dim(∅) == dim(X) "cannot take the intersection between a " *
+                "$(dim(∅))-dimensional empty set and a $(dim(X))-dimensional set"
+            return ∅
+        end
+    end
+end
+
+for T in [:Interval, :Universe]  # TODO #2219
+    @eval begin
+        function intersection(∅::EmptySet{N}, X::$T{N}) where {N<:Real}
+            @assert dim(∅) == dim(X) "cannot take the intersection between a " *
+                "$(dim(∅))-dimensional empty set and a $(dim(X))-dimensional set"
+            return ∅
+        end
+
+        # symmetric method
+        function intersection(X::$T{N}, ∅::EmptySet{N}) where {N<:Real}
+            @assert dim(∅) == dim(X) "cannot take the intersection between a " *
+                "$(dim(∅))-dimensional empty set and a $(dim(X))-dimensional set"
+            return ∅
+        end
+    end
+end
+
+# disambiguation
+function intersection(∅1::EmptySet, ∅2::EmptySet)
+    @assert dim(∅1) == dim(∅2) "cannot take the intersection between two " *
+            "empty sets of dimensions $(dim(∅1)) and $(dim(∅2))"
+    return ∅1
+end
+
 """
     intersection(S::AbstractSingleton{N},
                  X::LazySet{N}
