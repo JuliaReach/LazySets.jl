@@ -9,7 +9,7 @@
 
 `LazySets` is a [Julia](http://julialang.org) package for calculus with convex sets.
 
-## Resources
+## 🎯 Resources
 
 - [Manual](http://juliareach.github.io/LazySets.jl/dev/)
 - [Contributing](https://juliareach.github.io/LazySets.jl/dev/about/#Contributing-1)
@@ -17,7 +17,7 @@
 - [Release notes of the development version](https://github.com/JuliaReach/LazySets.jl/wiki/Release-log-tracker)
 - [Developers](https://juliareach.github.io/LazySets.jl/dev/about/#Credits-1)
 
-## Installing
+## 💾 Installing
 
 `LazySets.jl` is a registered Julia package and [as such you can install it](https://julialang.github.io/Pkg.jl/v1/managing-packages/) by activating the `pkg` mode (type `]`, and to leave it, type `<backspace>`),
 followed by
@@ -28,7 +28,7 @@ pkg> add LazySets
 
 See the [Getting started](https://juliareach.github.io/LazySets.jl/dev/man/getting_started/) section of the manual for other options.
 
-## Publications
+## :blue_book: Publications
 
 This library has been applied in a number of scientic works. In reverse chronological order,
 
@@ -56,7 +56,7 @@ Schilling (2020) ARCH20. To appear in 7th International Workshop on Applied Veri
 
 [1] **Reach Set Approximation through Decomposition with Low-dimensional Sets and High-dimensional Matrices.** Sergiy Bogomolov, Marcelo Forets, Goran Frehse, Frédéric Viry, Andreas Podelski and Christian Schilling (2018) [HSCC'18](https://www.hscc2018.deib.polimi.it/) Proceedings of the 21st International Conference on Hybrid Systems: Computation and Control: 41–50. See the [ACM Digital Library link](http://dx.doi.org/10.1145/3178126.3178128), or the [arXiv: 1801.09526](https://arxiv.org/abs/1801.09526).
 
-## Ecosystem
+## :earth_africa: Ecosystem
 
 `LazySets.jl` is applied in a number of projects in the Julia technical computing stack:
 
