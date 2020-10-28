@@ -485,7 +485,7 @@ end
     return sum(abs, transpose(a) * G)
 end
 
-# computes ‖a^T G‖₁ for a having only one nonzero element
+# computes ‖a^T G‖₁ for `a` having only one nonzero element
 @inline function _abs_sum(a::SingleEntryVector{N}, G::AbstractMatrix{N}) where {N}
     p = size(G, 2)
     i = a.i
