@@ -238,10 +238,11 @@ The support function of the zonotopic set in the given direction.
 
 The support value is ``cᵀ d + ‖Gᵀ d‖₁`` where ``c`` is the center and ``G`` is
 the generator matrix of `Z`.
-
 """
 function ρ(d::AbstractVector{N}, Z::AbstractZonotope{N}) where {N<:Real}
-    return dot(center(Z), d) + sum(abs, transpose(genmat(Z)) * d)
+    c = center(Z)
+    G = genmat(Z)
+    return dot(c, d) + _abs_sum(d, G)
 end
 
 """
