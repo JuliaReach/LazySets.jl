@@ -63,4 +63,6 @@ TaylorModels = "314ce334-5f6e-57ae-acf6-00b6e903104a"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["CDDLib", "Distributions", "Documenter", "Expokit", "GR", "IntervalMatrices", "Makie", "ModelingToolkit", "Optim", "Plots", "Polyhedra", "StaticArrays", "TaylorModels", "Test"]
+test = ["CDDLib", "Distributions", "Documenter", "Expokit", "GR", "IntervalConstraintProgramming",
+        "IntervalMatrices", "Makie", "ModelingToolkit", "Optim", "Plots", "Polyhedra", "StaticArrays",
+        "TaylorModels", "Test"]
