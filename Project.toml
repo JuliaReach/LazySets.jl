@@ -27,6 +27,7 @@ GLPK = "0.11, 0.12, 0.13, 0.14"
 GLPKMathProgInterface = "0.4, 0.5"
 GR = "0"
 IntervalArithmetic = "0.15, 0.16, 0.17"
+IntervalConstraintProgramming = "0.9, 0.10, 0.11, 0.12"
 IntervalMatrices = "0.2, 0.3, 0.4, 0.5, 0.6"
 JuMP = "0.21"
 Makie = "0.9, 0.10, 0.11"
@@ -50,6 +51,7 @@ Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 Expokit = "a1e7a1ef-7a5d-5822-a38c-be74e1bb89f4"
 GR = "28b8d3ca-fb5f-59d9-8090-bfdbd6d07a71"
 IntervalMatrices = "5c1f47dc-42dd-5697-8aaa-4d102d140ba9"
+IntervalConstraintProgramming = "138f1668-1576-5ad7-91b9-7425abbf3153"
 Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
 MiniQhull = "978d7f02-9e05-4691-894f-ae31a51d76ca"
 ModelingToolkit = "961ee093-0014-501f-94e3-6117800e7a78"
@@ -61,4 +63,6 @@ TaylorModels = "314ce334-5f6e-57ae-acf6-00b6e903104a"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["CDDLib", "Distributions", "Documenter", "Expokit", "GR", "IntervalMatrices", "Makie", "ModelingToolkit", "Optim", "Plots", "Polyhedra", "StaticArrays", "TaylorModels", "Test"]
+test = ["CDDLib", "Distributions", "Documenter", "Expokit", "GR", "IntervalConstraintProgramming",
+        "IntervalMatrices", "Makie", "ModelingToolkit", "Optim", "Plots", "Polyhedra", "StaticArrays",
+        "TaylorModels", "Test"]

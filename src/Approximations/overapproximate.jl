@@ -1990,3 +1990,52 @@ function overapproximate(X::Intersection{N, <:Hyperplane, <:AbstractZonotope},
                          dirs::Type{<:AbstractDirections}) where {N<:Real}
     return overapproximate(X.Y ∩ X.X, dirs(dim(X)))
 end
+
+# ===========================================================
+# Functionality that requires IntervalConstraintProgramming
+# ===========================================================
+
+# function to be loaded by Requires
+function load_paving_overapproximation()
+
+return quote
+
+using .IntervalConstraintProgramming: Paving
+
+
+"""
+    overapproximate(p::Paving{L, N}, dirs::AbstractDirections{N, VN}) where {L, N, VN}
+
+Overapproximation of a Paving-type set representation using a polyhedron in constraint representation.
+
+### Input
+
+- `p`    -- paving
+- `dirs` -- template directions
+
+### Output
+
+An overapproximation of a paving using a polyhedron in constraint representation (`HPolyhedron`) with constraints in direction `dirs`.
+
+### Algorithm
+
+This function takes the union of the elements in the boundary of p, first
+converted into hyperrectangles, and then calculates the support function of the
+set along each  direction in dirs, to compute the `HPolyhedron` constraints.
+
+### Requires IntervalConstraintProgramming
+"""
+function overapproximate(p::Paving{L, N}, dirs::AbstractDirections{N, VN}) where {L, N, VN}
+    # enclose outer approximation
+    Uouter = UnionSetArray(convert.(Hyperrectangle, p.boundary))
+    constraints = [HalfSpace(d, ρ(d, Uouter)) for d in dirs]
+    return HPolyhedron(constraints)
+end
+
+# alias with HPolyhedron type as second argument
+function overapproximate(p::Paving{L, N}, ::Type{<:HPolyhedron}, dirs::AbstractDirections{N, VN}) where {L, N, VN}
+    return overapproximate(p, dirs)
+end
+
+end # quote
+end # load_paving_overapproximation
