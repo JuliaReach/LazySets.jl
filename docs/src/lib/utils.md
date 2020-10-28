@@ -78,6 +78,12 @@ LazySets.subtypes(::Any, ::Bool)
 implementing_sets
 ```
 
+## Reading and writing
+
+```@docs
+LazySets.read_gen(::String)
+```
+
 ## Sampling
 
 ```@docs

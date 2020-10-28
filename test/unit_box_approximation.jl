@@ -29,6 +29,11 @@ for N in [Float64, Rational{Int}, Float32]
     @test h.center ≈ hexp.center
     @test h.radius ≈ hexp.radius
 
+    # Box approximation of a VPolytope
+    P = VPolytope([N[0, 0], N[2, 1], N[1, 2]])
+    H = box_approximation(P)
+    @test H == Hyperrectangle(N[1, 1], N[1, 1])
+
     # empty set
     E = EmptySet{N}(2)
     @test box_approximation(E) == E

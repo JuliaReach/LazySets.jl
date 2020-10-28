@@ -426,7 +426,7 @@ this method; otherwise, redundant vertices may be present.
 function vertices_list(Z::AbstractZonotope{N};
                        apply_convex_hull::Bool=true) where {N<:Real}
     c = center(Z)
-    G = remove_zero_columns(genmat(Z))
+    G = genmat(Z)
     n, p = size(G)
 
     # empty generators => sole vertex is the center
@@ -438,10 +438,17 @@ function vertices_list(Z::AbstractZonotope{N};
         return vertices_list(convert(Interval, Z))
 
     elseif n == 2
-        return _vertices_list_2D(c, G, apply_convex_hull=apply_convex_hull)
+        if p == 1
+            return _vertices_list_2D_order_one_half(c, G, apply_convex_hull=apply_convex_hull)
+        elseif p == 2
+            return _vertices_list_2D_order_one(c, G, apply_convex_hull=apply_convex_hull)
+        else
+            return _vertices_list_2D(c, G, apply_convex_hull=apply_convex_hull)
+        end
 
     else
-        return _vertices_list_iterative(c, G, apply_convex_hull=apply_convex_hull)
+        Gred = remove_zero_columns(G)
+        return _vertices_list_iterative(c, Gred, apply_convex_hull=apply_convex_hull)
     end
 end
 

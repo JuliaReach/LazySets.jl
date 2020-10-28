@@ -1513,6 +1513,33 @@ function overapproximate(am::AbstractAffineMap{N, <:AbstractHyperrectangle{N}},
     return Hyperrectangle(center_MXv, radius_MX)
 end
 
+function overapproximate(P::Union{VPolytope, VPolygon},
+                         ::Type{<:Hyperrectangle})
+    n = dim(P)
+    vlist = vertices_list(P)
+    @assert !isempty(vlist) "cannot overapproximate an empty polytope"
+
+    @inbounds v1 = vlist[1]
+    center = similar(v1)
+    radius = similar(v1)
+
+    @inbounds for i in 1:n
+        low_i = v1[i]
+        high_i = v1[i]
+        for v in vlist
+            if v[i] > high_i
+                high_i = v[i]
+            elseif v[i] < low_i
+                low_i = v[i]
+            end
+        end
+        radius_i = (high_i - low_i) / 2
+        center[i] = low_i + radius_i
+        radius[i] = radius_i
+    end
+    return Hyperrectangle(center, radius)
+end
+
 """
     overapproximate(X::LazySet, ZT::Type{<:Zonotope},
                     dir::AbstractDirections;
