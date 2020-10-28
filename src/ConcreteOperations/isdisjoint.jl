@@ -480,7 +480,7 @@ end
     return abs_sum
 end
 
-# computes ‖a^T G‖₁ for a being a sprase vector
+# computes ‖a^T G‖₁ for `a` being a sparse vector
 @inline function _abs_sum(a::SparseVector{N}, G::AbstractMatrix{N}) where {N}
     return sum(abs, transpose(a) * G)
 end
