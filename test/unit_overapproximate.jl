@@ -423,15 +423,13 @@ for N in [Float64]
         @test (L ∩ Z) ⊆ cap
 
         # overapproximate a nonlinear constraint with an HPolyhedron
-        if N == Float64
-            dom = IntervalBox(IntervalArithmetic.Interval(-2, 2), IntervalArithmetic.Interval(-2, 2))
-            C = IntervalConstraintProgramming.@constraint x^2 + y^2 <= 1
-            p = IntervalConstraintProgramming.pave(C, dom, 0.01)
-            dirs = OctDirections(2)
-            H = overapproximate(p, dirs)
-            B2 = Ball2(N[0, 0], N(1))
-            @test B2 ⊆ H
-        end
+        dom = IntervalBox(IA.Interval(-2, 2), IA.Interval(-2, 2))
+        C = @constraint x^2 + y^2 <= 1
+        p = pave(C, dom, 0.01)
+        dirs = OctDirections(2)
+        H = overapproximate(p, dirs)
+        B2 = Ball2(N[0, 0], N(1))
+        @test B2 ⊆ H
 
     end
 end
