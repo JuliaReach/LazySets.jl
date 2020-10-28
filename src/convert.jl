@@ -266,47 +266,7 @@ function convert(::Type{HPOLYGON}, P::HPolytope{N, VN};
     return H
 end
 
-"""
-    convert(::Type{Zonotope}, H::AbstractHyperrectangle)
-
-Converts a hyperrectangular set to a zonotope.
-
-### Input
-
-- `Zonotope` -- type, used for dispatch
-- `H`        -- hyperrectangular set
-
-### Output
-
-A zonotope.
-"""
-function convert(ZT::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
-    if dim(H) == 2
-        return _convert_2D(ZT, H)
-    end
-
-    if isflat(H)
-        r = radius_hyperrectangle(H)
-        n = length(r)
-
-        nzgen = 0
-        Gnz = Vector{N}()
-        sizehint!(Gnz, n * n)
-        @inbounds for (i, ri) in enumerate(r)
-            if ri != zero(N)
-                col = zeros(N, n)
-                col[i] = ri
-                append!(Gnz, col)
-                nzgen += 1
-            end
-        end
-        G = reshape(Gnz, n, nzgen)
-    else
-        G = genmat(H)
-    end
-    return Zonotope(center(H), G)
-end
-
+# fast conversion from a 2D hyperrectangular set to a zonotope
 function _convert_2D(::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
     c = center(H)
     rx = radius_hyperrectangle(H, 1)
@@ -348,7 +308,7 @@ return quote
         return G
     end
 
-    # this function is type-stable, though it doesn't prune the generators according
+    # this function is type-stable but doesn't prune the generators according
     # to flat dimensions of H
     function _convert_2D_static(::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
         c = center(H)
@@ -356,6 +316,10 @@ return quote
         ry = radius_hyperrectangle(H, 2)
         G = SMatrix{2, 2, N, 4}(rx, zero(N), zero(N), ry)
         return Zonotope(c, G)
+    end
+
+    function _convert_static(::Type{Zonotope}, H::Hyperrectangle{N, <:SVector, <:SVector}) where {N}
+        return Zonotope(center(H), _genmat_static(H))
     end
 end end  # quote / load_genmat_2D_static
 
@@ -380,8 +344,15 @@ Converts a zonotopic set to a zonotope.
 A zonotope.
 """
 function convert(::Type{Zonotope}, Z::AbstractZonotope)
-    return Zonotope(center(Z), genmat(Z))
+    return _convert_zonotope_fallback(Z)
 end
+
+function convert(::Type{Zonotope}, H::AbstractHyperrectangle)
+    dim(H) == 2 && return _convert_2D(Zonotope, H)
+    return _convert_zonotope_fallback(H)
+end
+
+_convert_zonotope_fallback(Z) = Zonotope(center(Z), genmat(Z))
 
 """
     convert(::Type{Zonotope}, cp::CartesianProduct{N, HN1, HN2}) where {N<:Real,

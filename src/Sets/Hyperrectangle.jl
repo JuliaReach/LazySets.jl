@@ -146,6 +146,34 @@ function radius_hyperrectangle(H::Hyperrectangle{N}) where {N<:Real}
     return H.radius
 end
 
+function load_genmat_hyperrectangle_static()
+return quote
+    function genmat(H::Hyperrectangle{N, SVector{L, N}, SVector{L, N}}) where {L, N}
+        gens = zeros(MMatrix{L, L, N})
+        nzcol = Vector{Int}()
+        @inbounds for i in 1:L
+            r = H.radius[i]
+            if !isapproxzero(r)
+                gens[i, i] = r
+                push!(nzcol, i)
+            end
+        end
+        m = length(nzcol)
+        return SMatrix{L, m}(view(gens, :, nzcol))
+    end
+
+    # this function is type-stable, though it doesn't prune the generators according
+    # to flat dimensions of H
+    function _genmat_static(H::Hyperrectangle{N, SVector{L, N}, SVector{L, N}}) where {L, N}
+        gens = zeros(MMatrix{L, L, N})
+        @inbounds for i in 1:L
+            r = H.radius[i]
+            gens[i, i] = r
+        end
+        return SMatrix{L, L}(gens)
+    end
+end
+end
 
 # --- AbstractCentrallySymmetric interface functions ---
 
