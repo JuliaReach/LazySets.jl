@@ -1,3 +1,5 @@
+# NOTE: This script is only supposed to be executed by our own build script.
+
 import Pkg
 
 # https://docs.travis-ci.com/user/languages/julia/#dependency-management
