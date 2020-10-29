@@ -347,13 +347,13 @@ function an_element(lm::LinearMap{N})::Vector{N} where {N<:Real}
 end
 
 """
-    vertices_list(lm::LinearMap{N}; prune::Bool=true)::Vector{Vector{N}} where {N<:Real}
+    vertices_list(lm::LinearMap; prune::Bool=true)
 
 Return the list of vertices of a (polyhedral) linear map.
 
 ### Input
 
-- `lm` -- linear map
+- `lm`    -- linear map
 - `prune` -- (optional, default: `true`) if true removes redundant vertices
 
 ### Output
@@ -362,24 +362,15 @@ A list of vertices.
 
 ### Algorithm
 
-We assume that the underlying set `X` is polyhedral.
-Then the result is just the linear map applied to the vertices of `X`.
+We assume that the underlying set `X` is polyhedral, and compute the list of vertices
+of `X`. The result is just the linear map applied to each vertex of `X`.
 """
-function vertices_list(lm::LinearMap{N}; prune::Bool=true)::Vector{Vector{N}} where {N<:Real}
-    # for a zero map, the result is just the list containing the origin
-    if iszero(lm.M)
-        return [zeros(N, dim(lm))]
-    end
-
-    # collect low-dimensional vertices lists
+function vertices_list(lm::LinearMap; prune::Bool=true)
+    # collect list of vertices of the wrapped set
     vlist_X = vertices_list(lm.X)
 
-    # create resulting vertices list
-    vlist = Vector{Vector{N}}()
-    sizehint!(vlist, length(vlist_X))
-    for v in vlist_X
-        push!(vlist, lm.M * v)
-    end
+    # apply the linear map to each vertex
+    vlist = broadcast(x -> lm.M * x, vlist_X)
 
     return prune ? convex_hull(vlist) : vlist
 end
