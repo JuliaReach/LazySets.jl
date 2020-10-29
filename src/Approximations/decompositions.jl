@@ -636,7 +636,7 @@ julia> project(P, [1, 2]) |> constraints_list
 """
 function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}) where {N}
     if constrained_dimensions(P) ⊆ block
-        clist = [HalfSpace(c.a[block], c.b) for c in constraints_list(P)]
+        clist = [HalfSpace(c.a[block], c.b) for c in constraints(P)]
     else
         n = dim(P)
         M = projection_matrix(block, n, N)

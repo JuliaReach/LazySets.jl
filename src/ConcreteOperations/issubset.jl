@@ -240,7 +240,7 @@ end
 
 # check whether P ⊆ S by testing if each vertex of P belongs to S
 function _issubset_vertices_list(P, S, witness)
-    for v in vertices_list(P)
+    for v in vertices(P)
         if v ∉ S
             if witness
                 return (false, v)
@@ -297,7 +297,7 @@ function _issubset_constraints_list(S::LazySet{N}, P::LazySet{N},
                                     witness::Bool=false) where {N<:Real}
     @assert dim(S) == dim(P)
 
-    @inbounds for H in constraints_list(P)
+    @inbounds for H in constraints(P)
         if !_leq(ρ(H.a, S), H.b)
             if witness
                 return (false, σ(H.a, S))
