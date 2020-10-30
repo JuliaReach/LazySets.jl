@@ -725,3 +725,75 @@ function _isbounded_stiemke(P::HPolyhedron{N}; solver=LazySets.default_lp_solver
     lp = linprog(c, At, '=', zeros(n), one(N), Inf, solver)
     return (lp.status == :Optimal)
 end
+
+# ============================================
+# Functionality that requires ModelingToolkit
+# ============================================
+function load_modeling_toolkit_hpolyhedron()
+
+return quote
+
+"""
+    HPolyhedron(expr::Vector{<:Operation}, vars=get_variables(first(expr)); N::Type{<:Real}=Float64)
+
+Return the polyhedron in half-space representation given by a list of symbolic expressions.
+
+### Input
+
+- `expr` -- vector of symbolic expressions that describes each half-space
+- `vars` -- (optional, default: `get_variables(expr)`), if an array of variables is given,
+            use those as the ambient variables in the set with respect to which derivations
+            take place; otherwise, use only the variables which appear in the given
+            expression (but be careful because the order may change)
+- `N`    -- (optional, default: `Float64`) the numeric type of the returned half-space
+
+### Output
+
+An `HPolyhedron`.
+
+### Examples
+
+```julia
+julia> using ModelingToolkit
+
+julia> vars = @variables x y
+(x, y)
+
+julia> HPolyhedron([x + y <= 1, x + y >= -1], vars)
+HPolyhedron{Float64,Array{Float64,1}}(HalfSpace{Float64,Array{Float64,1}}[HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0], 1.
+0), HalfSpace{Float64,Array{Float64,1}}([-1.0, -1.0], 1.0)])
+
+julia> X = HPolyhedron([x == 0, y <= 0], var)
+HPolyhedron{Float64,Array{Float64,1}}(HalfSpace{Float64,Array{Float64,1}}[HalfSpace{Float64,Array{Float64,1}}([1.0, 0.0], -0.0), HalfSp
+ace{Float64,Array{Float64,1}}([-1.0, -0.0], 0.0), HalfSpace{Float64,Array{Float64,1}}([0.0, 1.0], -0.0)])
+```
+"""
+function HPolyhedron(expr::Vector{<:Operation}, vars=get_variables(first(expr)); N::Type{<:Real}=Float64)
+    clist = Vector{HalfSpace{N, Vector{N}}}()
+    sizehint!(clist, length(expr))
+    got_hyperplane = false
+    got_halfspace = false
+    zeroed_vars = Dict(v => zero(N) for v in vars)
+    vars_list = collect(vars)
+    for ex in expr
+        got_hyperplane, sexpr = _is_hyperplane(ex)
+        if !got_hyperplane
+            got_halfspace, sexpr = _is_halfspace(ex)
+            if !got_halfspace
+                throw(ArgumentError("expected an expression describing either " *
+                    "a half-space of a hyperplane, got $expr"))
+            end
+        end
+
+        coeffs = [N(α.value) for α in gradient(sexpr, vars_list)]
+        β = -N(ModelingToolkit.substitute(sexpr, zeroed_vars).value)
+
+        push!(clist, HalfSpace(coeffs, β))
+        if got_hyperplane
+            push!(clist, HalfSpace(-coeffs, -β))
+        end
+    end
+    return HPolyhedron(clist)
+end
+
+end end  # quote / load_modeling_toolkit_hpolyhedron()

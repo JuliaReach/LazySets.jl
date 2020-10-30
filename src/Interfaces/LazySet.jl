@@ -26,7 +26,9 @@ export LazySet,
        area,
        surface,
        singleton_list,
-       concretize
+       concretize,
+       constraints,
+       vertices
 
 """
     LazySet{N}
@@ -383,7 +385,7 @@ function diameter(S::LazySet, p::Real=Inf)
 end
 
 """
-    affine_map(M::AbstractMatrix, X::LazySet, v::AbstractVector)
+    affine_map(M::AbstractMatrix, X::LazySet, v::AbstractVector; kwargs...)
 
 Compute a concrete affine map.
 
@@ -401,8 +403,8 @@ A set representing the affine map of `X`.
 
 The implementation applies the functions `linear_map` and `translate`.
 """
-function affine_map(M::AbstractMatrix, X::LazySet, v::AbstractVector)
-    return translate(linear_map(M, X), v)
+function affine_map(M::AbstractMatrix, X::LazySet, v::AbstractVector; kwargs...)
+    return translate(linear_map(M, X; kwargs...), v)
 end
 
 """
@@ -694,11 +696,6 @@ Convert a convex set to a pair `(x, y)` of points for plotting.
 
 A pair `(x, y)` of points that can be plotted.
 
-### Notes
-
-Plotting of unbounded sets is not implemented yet (see
-[#576](https://github.com/JuliaReach/LazySets.jl/issues/576)).
-
 ### Algorithm
 
 We first assert that `X` is bounded.
@@ -950,7 +947,8 @@ function area(X::LazySet{N}) where {N}
     @assert dim(X) == 2 "this function only applies to two-dimensional sets, " *
     "but the given set is $(dim(X))-dimensional"
 
-    vlist = vertices_list(X)
+    Xpoly = convert(VPolygon, X)
+    vlist = vertices_list(Xpoly)
     m = length(vlist)
 
     if m <= 2
@@ -1038,6 +1036,48 @@ result may be partially lazy.
 """
 function concretize(X::LazySet)
     return X
+end
+
+"""
+    constraints(X::LazySet)
+
+Construct an iterator over the constraints of a polyhedral set.
+
+### Input
+
+- `X` -- polyhedral set
+
+### Output
+
+An iterator over the constraints of `X`.
+"""
+function constraints(X::LazySet)
+    return _constraints_fallback(X)
+end
+
+"""
+    vertices(X::LazySet)
+
+Construct an iterator over the vertices of a polyhedral set.
+
+### Input
+
+- `X` -- polyhedral set
+
+### Output
+
+An iterator over the vertices of `X`.
+"""
+function vertices(X::LazySet)
+    return _vertices_fallback(X)
+end
+
+function _constraints_fallback(X::LazySet)
+    return VectorIterator(constraints_list(X))
+end
+
+function _vertices_fallback(X::LazySet)
+    return VectorIterator(vertices_list(X))
 end
 
 # =========================

@@ -7,9 +7,11 @@ using IntervalArithmetic: IntervalBox
 # ========================
 # Optional dependencies
 # ========================
-import Distributions, Expokit, IntervalMatrices, Optim, TaylorModels
+import Distributions, Expokit, IntervalMatrices, Optim, TaylorModels, IntervalConstraintProgramming
 using IntervalMatrices: ±, IntervalMatrix
 using TaylorModels: set_variables, TaylorModelN
+using IntervalConstraintProgramming
+
 @static if VERSION >= v"1.3"
     using ModelingToolkit
 end

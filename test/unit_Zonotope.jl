@@ -90,6 +90,18 @@ for N in [Float64, Rational{Int}, Float32]
     @test Z5.center == N[0, 1]
     @test Z5.generators == N[0.5 0.5 0.5 0; -0.5 0.5 0 0.5]
 
+    # in-place linear map
+    Zin = convert(Zonotope, BallInf(zeros(N, 2), N(1)))
+    Zout = Zonotope(similar(Zin.center), similar(Zin.generators))
+    M = N[0 1; -1 0]
+    LazySets.linear_map!(Zout, M, Zin)
+    @test Zout == Zonotope(N[0, 0], N[0 1; -1 0])
+
+    # in-place scale
+    Z5aux = copy(Z3)
+    scale!(N(0.5), Z5aux)
+    @test isequivalent(Z5, Z5aux)
+
     # intersection with a hyperplane
     H1 = Hyperplane(N[1, 1], N(3))
     intersection_empty, point = is_intersection_empty(Z1, H1, true)
@@ -269,7 +281,7 @@ for N in [Float64]
     @test length(vlistZ) == 6
 
     # option to not apply the convex hull operation
-    vlistZ = vertices_list(Z, apply_convex_hull=false)
+    vlistZ = LazySets._vertices_list_iterative(Z.center, Z.generators, apply_convex_hull=false)
     @test length(vlistZ) == 8
     @test ispermutation(convex_hull(vlistZ), [N[-2, -2], N[0, -2], N[2, 0], N[2, 2], N[0, 2], N[-2, 0]])
 
@@ -306,4 +318,15 @@ for N in [Float64]
     H2 = Hyperrectangle(low=N[-2, -2], high=N[2, 0])
     @test issubset(Z, H1)
     @test !issubset(Z, H2)
+
+    # quadratic map
+    Z = Zonotope(N[0, 0], N[1 0; 0 1])
+    Q1 = N[1/2 0; 0 1/2]
+    Q2 = N[0 1/2; 1/2 0]
+    # note that there may be repeated generators (though zero generaors are removed)
+    @test quadratic_map([Q1, Q2], Z) == Zonotope(N[0.5, 0], N[0.25 0.25 0; 0 0 1])
+    Z = Zonotope(N[0, 0], N[1 1; 0 1])
+    Q1 = N[1 1; 1 1]
+    Q2 = N[-1 0; 0 -1]
+    @test quadratic_map([Q1, Q2], Z) == Zonotope(N[2.5, -1.5], N[0.5 2 4; -0.5 -1 -2])
 end

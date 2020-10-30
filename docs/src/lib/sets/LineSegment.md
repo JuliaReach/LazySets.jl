@@ -19,7 +19,6 @@ constraints_list(::LineSegment{N}) where {N<:Real}
 translate(::LineSegment{N}, ::AbstractVector{N}) where {N<:Real}
 generators(::LineSegment{N}) where {N<:Real}
 genmat(::LineSegment)
-plot_recipe(::LineSegment{N}, ::N=zero(N)) where {N<:Real}
 RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::Union{LineSegment{N}, Interval{N}}, ::N=zero(N)) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):

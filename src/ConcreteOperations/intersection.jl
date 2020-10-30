@@ -2,6 +2,47 @@
 
 export intersection
 
+for T in [:LazySet, :AbstractSingleton]
+    @eval begin
+        function intersection(∅::EmptySet, X::$T)
+            @assert dim(∅) == dim(X) "cannot take the intersection between a " *
+                "$(dim(∅))-dimensional empty set and a $(dim(X))-dimensional set"
+            return ∅
+        end
+
+        # symmetric method
+        function intersection(X::$T, ∅::EmptySet)
+            @assert dim(∅) == dim(X) "cannot take the intersection between a " *
+                "$(dim(∅))-dimensional empty set and a $(dim(X))-dimensional set"
+            return ∅
+        end
+    end
+end
+
+for T in [:Interval, :Universe]  # TODO #2219
+    @eval begin
+        function intersection(∅::EmptySet{N}, X::$T{N}) where {N<:Real}
+            @assert dim(∅) == dim(X) "cannot take the intersection between a " *
+                "$(dim(∅))-dimensional empty set and a $(dim(X))-dimensional set"
+            return ∅
+        end
+
+        # symmetric method
+        function intersection(X::$T{N}, ∅::EmptySet{N}) where {N<:Real}
+            @assert dim(∅) == dim(X) "cannot take the intersection between a " *
+                "$(dim(∅))-dimensional empty set and a $(dim(X))-dimensional set"
+            return ∅
+        end
+    end
+end
+
+# disambiguation
+function intersection(∅1::EmptySet, ∅2::EmptySet)
+    @assert dim(∅1) == dim(∅2) "cannot take the intersection between two " *
+            "empty sets of dimensions $(dim(∅1)) and $(dim(∅2))"
+    return ∅1
+end
+
 """
     intersection(S::AbstractSingleton{N},
                  X::LazySet{N}
@@ -40,8 +81,7 @@ function intersection(S1::AbstractSingleton{N},
 end
 
 """
-    intersection(L1::Line2D{N}, L2::Line2D{N}
-                ) where {N<:Real}
+    intersection(L1::Line2D{N}, L2::Line2D{N}) where {N<:Real}
 
 Return the intersection of two 2D lines.
 
@@ -74,21 +114,20 @@ julia> intersection(Line2D([1., 1.], 1.), Line2D([1., 1.], 1.))
 Line2D{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
 ```
 """
-function intersection(L1::Line2D{N}, L2::Line2D{N}
-                     ) where {N<:Real}
-    det = L1.a[1]*L2.a[2] - L1.a[2]*L2.a[1]
-    # are the lines parallel?
+function intersection(L1::Line2D{N}, L2::Line2D{N}) where {N<:Real}
+    det = _det(L1, L2)
     if isapproxzero(det)
-        # are they the same line?
-        if isapprox(L1.b, L2.b)
+        if isapprox(L1.b, L2.b) # lines are identical
             return L1
         else
-            # lines are parallel but not identical
-            return EmptySet{N}(dim(L1))
+            return EmptySet{N}(dim(L1)) # lines are disjoint
         end
-    else
-        x = (L1.b*L2.a[2] - L1.a[2]*L2.b)/det
-        y = (L1.a[1]*L2.b - L1.b*L2.a[1])/det
+    else # intersection is a point
+        @inbounds begin
+            det⁻¹ = 1/det
+            x = (L1.b * L2.a[2] - L1.a[2] * L2.b) * det⁻¹
+            y = (L1.a[1] * L2.b - L1.b * L2.a[1]) * det⁻¹
+        end
         return Singleton([x, y])
     end
 end
@@ -658,10 +697,10 @@ function intersection(P::AbstractPolyhedron{N}, X::Interval{N}
 end
 
 """
-    intersection(P1::Union{VPolytope{N}, VPolygon{N}},
-                 P2::Union{VPolytope{N}, VPolygon{N}};
+    intersection(P1::VPolytope{N},
+                 P2::VPolytope{N};
                  [backend]=default_polyhedra_backend(P1, N),
-                 [prunefunc]=removevredundancy!) where {N<:Real}
+                 [prunefunc]=removevredundancy!) where {N}
 
 Compute the intersection of two polytopes in vertex representation.
 
@@ -676,21 +715,78 @@ Compute the intersection of two polytopes in vertex representation.
 
 ### Output
 
-A `VPolygon` if both arguments are `VPolygon`s, and a `VPolytope` otherwise.
+A `VPolytope`.
 """
-function intersection(P1::Union{VPolytope{N}, VPolygon{N}},
-                      P2::Union{VPolytope{N}, VPolygon{N}};
-                      backend=default_polyhedra_backend(P1, N),
-                      prunefunc=removevredundancy!) where {N<:Real}
-    Q1 = polyhedron(convert(VPolytope, P1); backend=backend)
-    Q2 = polyhedron(convert(VPolytope, P2); backend=backend)
+function intersection(P1::Union{VPolygon{N}, VPolytope{N}},
+                      P2::Union{VPolygon{N}, VPolytope{N}};
+                      backend=nothing,
+                      prunefunc=nothing) where {N}
+    n = dim(P1)
+    @assert n == dim(P2) "expected polytopes with equal dimensions but they " *
+                         "are $(dim(P1)) and $(dim(P2)) respectively"
+
+    # fast path for one and two-dimensional sets
+    if n == 1
+        Q1 = overapproximate(P1, Interval)
+        Q2 = overapproximate(P2, Interval)
+        Pint = intersection(Q1, Q2)
+        return convert(VPolytope, Pint)
+    elseif n == 2
+        Q1 = convert(VPolygon, P1)
+        Q2 = convert(VPolygon, P2)
+        Pint = intersection(Q1, Q2)
+        return convert(VPolytope, Pint)
+    end
+
+    if isnothing(backend)
+        backend = default_polyhedra_backend(P1, N)
+    end
+    if isnothing(prunefunc)
+        prunefunc = removevredundancy!
+    end
+
+    # general case: convert to half-space representation
+    Q1 = polyhedron(P1; backend=backend)
+    Q2 = polyhedron(P2; backend=backend)
     Pint = Polyhedra.intersect(Q1, Q2)
     prunefunc(Pint)
-    res = VPolytope(Pint)
-    if P1 isa VPolygon && P2 isa VPolygon
-        return convert(VPolygon, res)
+    return VPolytope(Pint)
+end
+
+"""
+    intersection(P1::VPolygon{N}, P2::VPolygon{N};
+                 apply_convex_hull::Bool=true) where {N}
+
+Compute the intersection of two polygons in vertex representation.
+
+### Input
+
+- `P1` -- polygon in vertex representation
+- `P2` -- polygon in vertex representation
+- `apply_convex_hull` -- (default, optional: `true`) use the flag to skip the
+                         computation of the convex hull in the resulting `VPolygon`
+
+### Output
+
+A `VPolygon` or an `EmptySet` if the intersection is empty.
+
+### Algorithm
+
+This function applies the [Sutherland–Hodgman polygon
+clipping algorithm](https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm).
+The implementation is based on the one found in
+[rosetta code](http://www.rosettacode.org/wiki/Sutherland-Hodgman_polygon_clipping#Julia).
+"""
+function intersection(P1::VPolygon{N}, P2::VPolygon{N};
+                      apply_convex_hull::Bool=true) where {N}
+    v1 = vertices_list(P1)
+    v2 = vertices_list(P2)
+    v12 = _intersection_vrep(v1, v2)
+    if isempty(v12)
+        return EmptySet{N}(2)
+    else
+        return VPolygon(v12, apply_convex_hull=apply_convex_hull)
     end
-    return res
 end
 
 """

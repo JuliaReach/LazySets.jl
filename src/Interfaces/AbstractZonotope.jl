@@ -238,10 +238,11 @@ The support function of the zonotopic set in the given direction.
 
 The support value is ``cᵀ d + ‖Gᵀ d‖₁`` where ``c`` is the center and ``G`` is
 the generator matrix of `Z`.
-
 """
 function ρ(d::AbstractVector{N}, Z::AbstractZonotope{N}) where {N}
-    return dot(center(Z), d) + sum(abs.(transpose(genmat(Z)) * d))
+    c = center(Z)
+    G = genmat(Z)
+    return dot(c, d) + _abs_sum(d, G)
 end
 
 """
@@ -346,8 +347,7 @@ function linear_map(M::AbstractMatrix{N}, Z::AbstractZonotope{N}) where {N}
 end
 
 """
-    translate(Z::AbstractZonotope{N}, v::AbstractVector{N}; share::Bool=false
-             ) where {N}
+    translate(Z::AbstractZonotope{N}, v::AbstractVector{N}; share::Bool=false) where {N}
 
 Translate (i.e., shift) a zonotope by a given vector.
 
@@ -384,8 +384,7 @@ end
 
 
 """
-    vertices_list(Z::AbstractZonotope{N}; [apply_convex_hull]::Bool=true
-                 ) where {N}
+    vertices_list(Z::AbstractZonotope{N}; [apply_convex_hull]::Bool=true) where {N}
 
 Return the vertices of a zonotopic set.
 
@@ -401,13 +400,7 @@ List of vertices as a vector of vectors.
 
 ### Algorithm
 
-If the zonotopic set has ``p`` generators, each vertex is the result of summing
-the center with some linear combination of generators, where the combination
-factors are ``ξ_i ∈ \\{-1, 1\\}``.
-
-There are at most ``2^p`` distinct vertices. Use the flag `apply_convex_hull` to
-control whether a convex hull algorithm is applied to the vertices computed by
-this method; otherwise, redundant vertices may be present.
+#### Two-dimensional case
 
 We use a trick to speed up enumerating vertices of 2-dimensional zonotopic
 sets with all generators in the first quadrant or third quadrant (same sign).
@@ -417,36 +410,44 @@ https://math.stackexchange.com/q/3356460
 
 To avoid cumulative sum from both directions separately, we build a 2d index matrix
 to sum generators for both directions in one matrix-vector product.
+
+#### General case
+
+If the zonotopic set has ``p`` generators, each vertex is the result of summing
+the center with some linear combination of generators, where the combination
+factors are ``ξ_i ∈ \\{-1, 1\\}``.
+
+There are at most ``2^p`` distinct vertices. Use the flag `apply_convex_hull` to
+control whether a convex hull algorithm is applied to the vertices computed by
+this method; otherwise, redundant vertices may be present.
 """
 function vertices_list(Z::AbstractZonotope{N};
                        apply_convex_hull::Bool=true) where {N}
     c = center(Z)
-    G = remove_zero_columns(genmat(Z))
+    G = genmat(Z)
     n, p = size(G)
+
+    # empty generators => sole vertex is the center
     if p == 0
         return [c]
     end
-    if n == 2 && p > 2 && apply_convex_hull
-        if sum(abs, G) == abs(sum(G))
-            sorted_G = sortslices(G, dims=2, by=x->atan(x[2], x[1]))
-            index = ones(N, p, 2*p)
-            @inbounds for i in 1:p
-                index[i, i+1:i+p-1] .= -one(N)
-            end
-            index[:, 1] .= -one(N)
-            V = sorted_G * index .+ c
-            return [V[:, i] for i in 1:2*p]
+
+    if n == 1
+        return vertices_list(convert(Interval, Z))
+
+    elseif n == 2
+        if p == 1
+            return _vertices_list_2D_order_one_half(c, G, apply_convex_hull=apply_convex_hull)
+        elseif p == 2
+            return _vertices_list_2D_order_one(c, G, apply_convex_hull=apply_convex_hull)
+        else
+            return _vertices_list_2D(c, G, apply_convex_hull=apply_convex_hull)
         end
+
+    else
+        Gred = remove_zero_columns(G)
+        return _vertices_list_iterative(c, Gred, apply_convex_hull=apply_convex_hull)
     end
-
-    vlist = Vector{Vector{N}}()
-    sizehint!(vlist, 2^p)
-
-    for ξi in Iterators.product([[1, -1] for i = 1:p]...)
-        push!(vlist, c .+ G * collect(ξi))
-    end
-
-    return apply_convex_hull ? convex_hull!(vlist) : vlist
 end
 
 """

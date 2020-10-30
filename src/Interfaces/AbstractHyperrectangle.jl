@@ -189,7 +189,8 @@ function vertices_list(H::AbstractHyperrectangle{N}) where {N<:Real}
     trivector = Vector{Int8}(undef, n)
     m = 1
     c = center(H)
-    v = copy(c)
+    v = similar(c)
+    copyto!(v, c)
     @inbounds for i in 1:n
         ri = radius_hyperrectangle(H, i)
         if iszero(ri)
@@ -204,7 +205,7 @@ function vertices_list(H::AbstractHyperrectangle{N}) where {N<:Real}
     # create vertices by modifying the three-valued vector and constructing the
     # corresponding point; for efficiency, we create a copy of the old point and
     # modify every entry that has changed in the three-valued vector
-    vlist = Vector{Vector{N}}(undef, m)
+    vlist = Vector{typeof(c)}(undef, m)
     vlist[1] = copy(v)
     @inbounds for i in 2:m
         for j in 1:length(v)

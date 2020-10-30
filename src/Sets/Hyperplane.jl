@@ -485,8 +485,21 @@ end
 function load_modeling_toolkit_hyperplane()
 return quote
 
+# returns `(true, sexpr)` if expr represents a hyperplane,
+# where sexpr is the simplified expression sexpr := LHS - RHS == 0
+# otherwise, returns `(false, expr)`
+function _is_hyperplane(expr::Operation)
+    got_hyperplane = expr.op == ==
+    if got_hyperplane
+        # simplify to the form a*x + b == 0
+        a, b = expr.args
+        sexpr = simplify(a - b)
+    end
+    return got_hyperplane ? (true, sexpr) : (false, expr)
+end
+
 """
-    Hyperplane(expr::Operation, vars=get_variables(expr); N::Type{<:Real}=Float64)
+    Hyperplane(expr::Operation, vars::Union{<:Operation, <:Vector{Operation}}=get_variables(expr); N::Type{<:Real}=Float64)
 
 Return the hyperplane given by a symbolic expression.
 
@@ -535,12 +548,11 @@ Therefore, the order in which the variables appear in `vars` affects the final r
 Finally, the returned set is the hyperplane with normal vector `[a1, …, an]` and
 displacement `b`.
 """
-function Hyperplane(expr::Operation, vars=get_variables(expr); N::Type{<:Real}=Float64)
-    (expr.op == ==) || throw(ArgumentError("expected an expression of the form `ax == b`, got $expr"))
-
-    # simplify to the form a*x + β == 0
-    a, b = expr.args
-    sexpr = simplify(a - b)
+function Hyperplane(expr::Operation, vars::Union{<:Operation, <:Vector{Operation}}=get_variables(expr); N::Type{<:Real}=Float64)
+    valid, sexpr = _is_hyperplane(expr)
+    if !valid
+        throw(ArgumentError("expected an expression of the form `ax == b`, got $expr"))
+    end
 
     # compute the linear coefficients by taking first order derivatives
     coeffs = [N(α.value) for α in gradient(sexpr, collect(vars))]
@@ -550,6 +562,11 @@ function Hyperplane(expr::Operation, vars=get_variables(expr); N::Type{<:Real}=F
     β = -N(ModelingToolkit.substitute(sexpr, zeroed_vars).value)
 
     return Hyperplane(coeffs, β)
+end
+
+function Hyperplane(expr::Operation, vars::NTuple{L, Union{<:Operation, <:Vector{Operation}}}; N::Type{<:Real}=Float64) where {L}
+    vars = _vec(vars)
+    return Hyperplane(expr, vars, N=N)
 end
 
 end end  # quote / load_modeling_toolkit_hyperplane()

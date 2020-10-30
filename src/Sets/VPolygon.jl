@@ -5,8 +5,7 @@ export VPolygon,
        remove_redundant_vertices,
        remove_redundant_vertices!,
        convex_hull,
-       linear_map,
-       minkowski_sum
+       linear_map
 
 """
     VPolygon{N<:Real, VN<:AbstractVector{N}} <: AbstractPolygon{N}
@@ -641,61 +640,52 @@ function translate(P::VPolygon{N}, v::AbstractVector{N}) where {N<:Real}
     return VPolygon([x + v for x in vertices_list(P)])
 end
 
-"""
-    minkowski_sum(P::VPolygon{N}, Q::VPolygon{N}) where {N<:Real}
+# =======================
+# Concrete intersection
+# =======================
 
-The Minkowski Sum of two polygon in vertex representation.
-
-### Input
-
-- `P` -- polygon in vertex representation
-- `Q` -- another polygon in vertex representation
-
-### Output
-
-A polygon in vertex representation.
-
-### Algorithm
-
-We treat each edge of the polygons as a vector, attaching them in polar order
-(attaching the tail of the next vector to the head of the previous vector). The
-resulting polygonal chain will be a polygon, which is the Minkowski sum of the
-given polygons. This algorithm assumes that the vertices of P and Q are sorted
-in counter-clockwise fashion and has linear complexity O(m+n) where m and n are
-the number of vertices of P and Q respectively.
-
-"""
-function minkowski_sum(P::VPolygon{N}, Q::VPolygon{N}) where {N<:Real}
-    vlistP = vertices_list(P)
-    vlistQ = vertices_list(Q)
-    mP = length(vlistP)
-    mQ = length(vlistQ)
-
-    EAST = N[1, 0]
-    ORIGIN = N[0, 0]
-    k = _σ_helper(EAST, P)
-    j = _σ_helper(EAST, Q)
-    R = Vector{Vector{N}}(undef, mP+mQ)
-    fill!(R, ORIGIN)
-
-    i = 1
-    while i <= size(R, 1)
-        P₁, P₂ = vlistP[(k-1)%mP + 1], vlistP[(k%mP + 1)]
-        P₁P₂ = P₂ - P₁
-        Q₁, Q₂ = vlistQ[(j-1)%mQ + 1], vlistQ[(j%mQ + 1)]
-        Q₁Q₂ = Q₂ - Q₁
-        R[i] = P₁ + Q₁
-        turn = right_turn(P₁P₂, Q₁Q₂, ORIGIN)
-        if turn > 0
-            k += 1
-        elseif turn < 0
-            j += 1
-        else
-            pop!(R)
-            k += 1
-            j += 1
-        end
-        i += 1
+function _isinside(p, a, b)
+    @inbounds begin
+        α = (b[1] - a[1]) * (p[2] - a[2])
+        β = (b[2] - a[2]) * (p[1] - a[1])
     end
-    return VPolygon(R)
+    return !_leq(α, β)
+end
+
+function _intersection_line_segments(a, b, s, f)
+    @inbounds begin
+        dc = [a[1] - b[1], a[2] - b[2]]
+        dp = [s[1] - f[1], s[2] - f[2]]
+        n1 = a[1] * b[2] - a[2] * b[1]
+        n2 = s[1] * f[2] - s[2] * f[1]
+        n3 = 1.0 / (dc[1] * dp[2] - dc[2] * dp[1])
+
+        α = (n1 * dp[1] - n2 * dc[1]) * n3
+        β = (n1 * dp[2] - n2 * dc[2]) * n3
+    end
+    return [α, β]
+end
+
+function _intersection_vrep(spoly::Vector{VT}, cpoly::Vector{VT}) where {N, VT<:AbstractVector{N}}
+    outarr = spoly
+    q = cpoly[end]
+    for p in cpoly
+        inarr = outarr
+        outarr = Vector{VT}()
+        isempty(inarr) && break
+        s = inarr[end]
+        for vtx in inarr
+            if _isinside(vtx, q, p)
+                if !_isinside(s, q, p)
+                    push!(outarr, _intersection_line_segments(q, p, s, vtx))
+                end
+                push!(outarr, vtx)
+            elseif _isinside(s, q, p)
+                push!(outarr, _intersection_line_segments(q, p, s, vtx))
+            end
+            s = vtx
+        end
+        q = p
+    end
+    return outarr
 end

@@ -82,6 +82,49 @@ function Line(; from::AbstractVector, to::AbstractVector, normalize=true)
 end
 
 """
+    Line(a::AbstractVector{N}, b::N; normalize=true) where {N}
+
+Constructor of a two-dimensional line given `ax = b`.
+
+### Input
+
+- `a`         -- two-dimensional vector
+- `b`         -- scalar
+- `normalize` -- (optional, default: `true`) if `true`, the direction of the line
+                 has norm 1 (w.r.t the Euclidean norm)
+
+### Output
+
+The `Line` that satisfies `a ⋅ x = b`.
+"""
+function Line(a::AbstractVector{N}, b::N; normalize=true) where {N}
+    @assert length(a) == 2 "expected a normal vector of length two, but it is $(length(a))-dimensional"
+
+    got_horizontal = iszero(a[1])
+    got_vertical = iszero(a[2])
+
+    if got_horizontal && got_vertical
+        throw(ArgumentError("the vector $a must be non-zero"))
+    end
+
+    if got_horizontal
+        α = b / a[2]
+        p = [zero(N), α]
+        q = [one(N), α]
+    elseif got_vertical
+        β = b / a[1]
+        p = [β, zero(N)]
+        q = [β, one(N)]
+    else
+        α = b / a[2]
+        μ = a[1] / a[2]
+        p = [zero(N), α]
+        q = [one(N), α - μ]
+    end
+    return Line(from=p, to=q, normalize=normalize)
+end
+
+"""
     direction(L::Line)
 
 Return the direction of the line.

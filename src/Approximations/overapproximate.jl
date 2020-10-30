@@ -1513,10 +1513,89 @@ function overapproximate(am::AbstractAffineMap{N, <:AbstractHyperrectangle{N}},
     return Hyperrectangle(center_MXv, radius_MX)
 end
 
+function overapproximate(P::Union{VPolytope, VPolygon},
+                         ::Type{<:Hyperrectangle})
+    n = dim(P)
+    vlist = vertices_list(P)
+    @assert !isempty(vlist) "cannot overapproximate an empty polytope"
+
+    @inbounds v1 = vlist[1]
+    center = similar(v1)
+    radius = similar(v1)
+
+    @inbounds for i in 1:n
+        low_i = v1[i]
+        high_i = v1[i]
+        for v in vlist
+            if v[i] > high_i
+                high_i = v[i]
+            elseif v[i] < low_i
+                low_i = v[i]
+            end
+        end
+        radius_i = (high_i - low_i) / 2
+        center[i] = low_i + radius_i
+        radius[i] = radius_i
+    end
+    return Hyperrectangle(center, radius)
+end
+
 """
-    overapproximate(X::LazySet{N}, ::Type{<:Zonotope},
-                    dir::AbstractDirections{N};
-                    solver=default_lp_solver(N)) where {N<:Real}
+    overapproximate(X::LazySet, ZT::Type{<:Zonotope},
+                    dir::AbstractDirections;
+                    algorithm="vrep", kwargs...)
+
+Overapproximate a polytopic set with a zonotope.
+
+### Input
+
+- `X`         -- polytopic set
+- `Zonotope`  -- type for dispatch
+- `dir`       -- directions used for the generators
+- `algorithm` -- (optional, default: `"vrep"`) method used to compute the overapproximation
+- `kwargs`    -- further algorithm choices
+
+### Output
+
+A zonotope that overapproximates `X` and uses at most the directions provided in
+`dir` (redundant directions will be ignored).
+
+### Notes
+
+Two algorithms are available:
+
+- `"vrep"` -- Overapproximate a polytopic set with a zonotope of minimal total generator sum
+              using only generators in the given directions. Under this constraint,
+              the zonotope has the minimal sum of generator vectors. See the docstring
+              of [`_overapproximate_zonotope_vrep`](@ref) for further details.
+
+- `"cpa"` -- Overapproximate a polytopic set with a zonotope using a cartesian
+             decomposition into two-dimensional blocks. See the docstring
+             of [`_overapproximate_zonotope_cpa`](@ref) for further details.
+"""
+function overapproximate(X::LazySet, ZT::Type{<:Zonotope},
+                         dir::AbstractDirections;
+                         algorithm="vrep", kwargs...)
+    if algorithm == "vrep"
+        return  _overapproximate_zonotope_vrep(X, dir, kwargs...)
+    elseif algorithm == "cpa"
+        cpa = _overapproximate_zonotope_cpa(X, dir)
+        return convert(Zonotope, cpa)
+    else
+        throw(ArgumentError("algorithm $algorithm is not known"))
+    end
+end
+
+function overapproximate(X::LazySet, ZT::Type{<:Zonotope},
+                         dir::Type{<:AbstractDirections};
+                         algorithm="vrep", kwargs...)
+    overapproximate(X, ZT, dir(dim(X)), algorithm=algorithm, kwargs...)
+end
+
+"""
+    _overapproximate_zonotope_vrep(X::LazySet{N},
+                                   dir::AbstractDirections{N};
+                                   solver=default_lp_solver(N)) where {N}
 
 Overapproximate a polytopic set with a zonotope of minimal total generator sum
 using only generators in the given directions.
@@ -1524,7 +1603,6 @@ using only generators in the given directions.
 ### Input
 
 - `X`        -- polytopic set
-- `Zonotope` -- type for dispatch
 - `dir`      -- directions used for the generators
 - `solver`   -- (optional, default: `default_lp_solver(N)`) the backend used to
                 solve the linear program
@@ -1564,9 +1642,9 @@ nonnegativity constraints (last type) are not stated explicitly in [1].
 [1] Zonotopes as bounding volumes, L. J. Guibas et al, Proc. of Symposium on
     Discrete Algorithms, pp. 803-812.
 """
-function overapproximate(X::LazySet{N}, ::Type{<:Zonotope},
-                         dir::AbstractDirections{N};
-                         solver=default_lp_solver(N)) where {N<:Real}
+function _overapproximate_zonotope_vrep(X::LazySet{N},
+                                        dir::AbstractDirections{N};
+                                        solver=default_lp_solver(N)) where {N}
     # TODO "normalization" here involves two steps: removing opposite directions
     # and normalizing the direction vector
     # for the latter we can use the normalization information from dispatch on
@@ -1636,6 +1714,70 @@ function overapproximate(X::LazySet{N}, ::Type{<:Zonotope},
     return Zonotope(c, G)
 end
 
+# overload on direction type
+function _overapproximate_zonotope_vrep(X::LazySet{N},
+                                        dir::Type{<:AbstractDirections};
+                                        solver=default_lp_solver(N)) where {N}
+    return _overapproximate_zonotope_vrep(X, dir(dim(X)), solver=solver)
+end
+
+"""
+    _overapproximate_zonotope_cpa(X::LazySet, dir::Type{<:AbstractDirections})
+
+Overapproximate a polytopic set with a zonotope using cartesian decomposition.
+
+### Input
+
+- `X`        -- polytopic set
+- `dir`      -- directions used for the generators
+
+### Output
+
+A zonotope that overapproximates `X`.
+
+### Notes
+
+The algorithm decomposes `X` in 2D sets and overapproximates those sets with
+zonotopes, and finally takes the cartesian product of the sets and converts to a zonotope.
+
+### Algorithm
+
+The algorithm used is based on the section 8.2.4 of [1].
+
+[1] Le Guernic, C. (2009). Reachability analysis of hybrid systems with linear
+continuous dynamics (Doctoral dissertation).
+"""
+function _overapproximate_zonotope_cpa(X::LazySet, dir::Type{<:AbstractDirections})
+    n = dim(X)
+    # overapproximate 2D blocks
+    if n > 1
+        πX_2D = [project(X, [i, i+1]) for i in 1:2:n-1]
+        Z_2D = [_overapproximate_zonotope_vrep(poly, dir(2)) for poly in πX_2D]
+    end
+
+    if iseven(n)
+        out = Z_2D
+    else
+        # odd case projects onto an interval
+        πX_n = project(X, [n])
+        πX_n = overapproximate(πX_n, Interval)
+        πX_n = convert(Zonotope, πX_n)
+
+        if n == 1
+            out = [πX_n]
+        else
+            out = vcat(Z_2D, πX_n)
+        end
+    end
+    return CartesianProductArray(out)
+end
+
+# overload on direction type
+function _overapproximate_zonotope_cpa(X::LazySet,
+                                       dir::AbstractDirections)
+    _overapproximate_zonotope_cpa(X, typeof(dir))
+end
+
 """
     overapproximate(r::Rectification{N, <:AbstractZonotope{N}}, ::Type{<:Zonotope}) where {N}
 
@@ -1700,7 +1842,7 @@ function overapproximate(r::Rectification{N, <:AbstractZonotope{N}}, ::Type{<:Zo
     else
         Gout = G
     end
-    
+
     return Zonotope(c, remove_zero_columns(Gout))
 end
 
@@ -1736,3 +1878,164 @@ function overapproximate(CHA::ConvexHullArray{N, <:AbstractZonotope{N}}, ::Type{
         return Zaux
     end
 end
+
+"""
+    overapproximate(Z::AbstractZonotope, ::Type{<:HParallelotope}, indices=1:dim(Z))
+
+Overapproximation of a zonotopic set with a parallelotopic set in constraint
+representation.
+
+### Input
+
+- `Z`              -- zonotopic set
+- `HParallelotope` -- type for dispatch
+- `indices`        -- (optional; default: `1:dim(Z)`) generator indices selected
+                       when constructing the parallelotope
+
+### Output
+
+An overapproximation of the given zonotope using a parallelotope.
+
+### Algorithm
+
+The algorithm is based on Proposition 8 discussed in Section 5 of [1].
+
+[1] Althoff, M., Stursberg, O., & Buss, M. (2010). *Computing reachable sets of
+hybrid systems using a combination of zonotopes and polytopes*. Nonlinear
+analysis: hybrid systems, 4(2), 233-249.
+"""
+function overapproximate(Z::AbstractZonotope, ::Type{<:HParallelotope}, indices=1:dim(Z))
+    Zred = _overapproximate_hparallelotope(Z, indices)
+    return convert(HParallelotope, Zred)
+end
+
+function _overapproximate_hparallelotope(Z::AbstractZonotope, indices=1:dim(Z))
+    length(indices) == dim(Z) || throw(ArgumentError("the number of generator indices is $(length(indices)), " *
+                                                     "but it was expected to be $(dim(Z))"))
+
+    p, n = ngens(Z), dim(Z)
+    if p == n
+        return Z
+    elseif p < n
+        error("the zonotope order is $(order(Z)) but it should be at least 1")
+    end
+
+    G = genmat(Z)
+    Γ = G[:, indices]
+    □Γ⁻¹Z = box_approximation(linear_map(inv(Γ), Z))
+    return linear_map(Γ, □Γ⁻¹Z)
+end
+
+"""
+    overapproximate(X::Intersection{N, <:AbstractZonotope{N}, <:Hyperplane{N}},
+                    dirs::AbstractDirections{N}) where {N}
+
+Overapproximation of the intersection between a zonotopic set and a hyperplane
+
+### Input
+
+- `X`    -- intersection between a zonotopic set and a hyperplane
+- `dirs` -- type of direction representation
+
+### Output
+
+An overapproximation of the intersection between a zonotopic set and a hyperplane.
+
+### Algorithm
+
+This function implements [Algorithm 8.1, 1].
+
+[1] *Colas Le Guernic. Reachability Analysis of Hybrid Systems with Linear
+Continuous Dynamics. Computer Science [cs]. Université Joseph-Fourier - Grenoble
+I, 2009. English. fftel-00422569v2f*
+"""
+function overapproximate(X::Intersection{N, <:AbstractZonotope, <:Hyperplane},
+                         dirs::AbstractDirections{N}) where {N<:Real}
+    dim(X) == dim(dirs) || throw(ArgumentError("the dimension of the set, $(dim(X)) doesn't" *
+                                 " match the dimension of the template, $(dim(dirs))"))
+    Z, G = X.X, X.Y
+
+    if isdisjoint(Z, G)
+        return EmptySet{N}(dim(Z))
+    end
+
+    n = G.a                           # normal vector to the hyperplane
+    γ = G.b                           # displacement of the hyperplane
+    Lᵧ = Line2D([one(N), zero(N)], γ)  # line (x, y) : x = γ
+
+    constraints = Vector{HalfSpace{N, eltype(dirs)}}()
+    for l in dirs
+        Πₙₗ = vcat(n', l')              # projection map
+        πZₙₗ = linear_map(Πₙₗ, Z)
+
+        ρₗ = LazySets._bound_intersect_2D(πZₙₗ, Lᵧ)
+
+        push!(constraints, HalfSpace(l, ρₗ))
+    end
+    T = isbounding(dirs) ? HPolytope : HPolyhedron
+    return T(constraints)
+end
+
+function overapproximate(X::Intersection{N, <:Hyperplane, <:AbstractZonotope},
+                         dirs::AbstractDirections{N}) where {N<:Real}
+    return overapproximate(X.Y ∩ X.X, dirs)
+end
+
+function overapproximate(X::Intersection{N, <:AbstractZonotope,
+                         <:Hyperplane}, dirs::Type{<:AbstractDirections}) where {N<:Real}
+    return overapproximate(X, dirs(dim(X)))
+end
+
+function overapproximate(X::Intersection{N, <:Hyperplane, <:AbstractZonotope},
+                         dirs::Type{<:AbstractDirections}) where {N<:Real}
+    return overapproximate(X.Y ∩ X.X, dirs(dim(X)))
+end
+
+# ===========================================================
+# Functionality that requires IntervalConstraintProgramming
+# ===========================================================
+
+# function to be loaded by Requires
+function load_paving_overapproximation()
+
+return quote
+
+using .IntervalConstraintProgramming: Paving
+
+
+"""
+    overapproximate(p::Paving{L, N}, dirs::AbstractDirections{N, VN}) where {L, N, VN}
+
+Overapproximation of a Paving-type set representation using a polyhedron in constraint representation.
+
+### Input
+
+- `p`    -- paving
+- `dirs` -- template directions
+
+### Output
+
+An overapproximation of a paving using a polyhedron in constraint representation (`HPolyhedron`) with constraints in direction `dirs`.
+
+### Algorithm
+
+This function takes the union of the elements in the boundary of p, first
+converted into hyperrectangles, and then calculates the support function of the
+set along each  direction in dirs, to compute the `HPolyhedron` constraints.
+
+### Requires IntervalConstraintProgramming
+"""
+function overapproximate(p::Paving{L, N}, dirs::AbstractDirections{N, VN}) where {L, N, VN}
+    # enclose outer approximation
+    Uouter = UnionSetArray(convert.(Hyperrectangle, p.boundary))
+    constraints = [HalfSpace(d, ρ(d, Uouter)) for d in dirs]
+    return HPolyhedron(constraints)
+end
+
+# alias with HPolyhedron type as second argument
+function overapproximate(p::Paving{L, N}, ::Type{<:HPolyhedron}, dirs::AbstractDirections{N, VN}) where {L, N, VN}
+    return overapproximate(p, dirs)
+end
+
+end # quote
+end # load_paving_overapproximation

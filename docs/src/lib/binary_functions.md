@@ -43,6 +43,7 @@ is_intersection_empty(::Interval{N}, ::Interval{N}, ::Bool=false) where {N<:Real
 is_intersection_empty(::CartesianProductArray{N}, ::AbstractPolyhedron{N}) where {N<:Real}
 is_intersection_empty(::CartesianProductArray{N}, ::CartesianProductArray{N}) where {N<:Real}
 is_intersection_empty(::CartesianProductArray{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
+is_intersection_empty(::Line2D{N}, ::Line2D{N}, ::Bool=false) where {N<:Real}
 ```
 
 ## Convex hull
@@ -69,7 +70,8 @@ intersection(::Interval{N}, ::Hyperplane{N}) where {N<:Real}
 intersection(::Interval{N}, ::LazySet{N}) where {N<:Real}
 intersection(::AbstractHPolygon{N}, ::AbstractHPolygon{N}, ::Bool=true) where {N<:Real}
 intersection(::AbstractPolyhedron{N}, ::AbstractPolyhedron{N}) where {N<:Real}
-intersection(::Union{VPolytope{N}, VPolygon{N}}, ::Union{VPolytope{N}, VPolygon{N}}) where {N<:Real}
+intersection(::Union{VPolytope{N}, VPolygon{N}}, ::Union{VPolytope{N}, VPolygon{N}}) where {N}
+intersection(::VPolygon{N}, ::VPolygon{N}; ::Bool=true) where {N}
 intersection(::UnionSet{N}, ::LazySet{N}) where {N<:Real}
 intersection(::UnionSetArray{N}, ::LazySet{N}) where {N<:Real}
 intersection(::Universe{N}, ::LazySet{N}) where {N<:Real}

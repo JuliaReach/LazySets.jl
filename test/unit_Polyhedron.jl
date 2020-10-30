@@ -66,6 +66,12 @@ for N in [Float64, Rational{Int}, Float32]
         [HalfSpace(N[2, 2], N(18)), HalfSpace(N[-3, 3], N(9)),
          HalfSpace(N[-1, -1], N(-3)), HalfSpace(N[2, -4], N(-6))])
 
+    # constraints iterator
+    @test ispermutation(collect(constraints(p)), constraints_list(p))
+
+    # vertices iterator
+    @test ispermutation(collect(vertices(p)), vertices_list(p))
+
     if test_suite_polyhedra
         # conversion to and from Polyhedra's VRep data structure
         cl = constraints_list(HPolyhedron(polyhedron(p)))
@@ -109,8 +115,7 @@ for N in [Float64, Rational{Int}, Float32]
 end
 
 # default Float64 constructors
-unconstrained_HPolyhedron = HPolyhedron()
-@test unconstrained_HPolyhedron isa HPolyhedron{Float64}
+@test HPolyhedron() isa HPolyhedron{Float64}
 
 # tests that only work with Float64 and Float32
 for N in [Float64, Float32]
@@ -120,7 +125,7 @@ for N in [Float64, Float32]
     for hs in constraints_list(p2)
         @test norm(hs.a) == N(1)
     end
-    
+
     # 2D HPolyhedron
     p = HPolyhedron{N}()
     c1 = LinearConstraint(N[2, 2], N(12))
@@ -349,5 +354,17 @@ for N in [Float64]
         πP = project(P, [1, 2])
         @test πP isa HPolyhedron{N}
         @test ispermutation(constraints_list(πP), [HalfSpace(N[-1, 0], N(0)), HalfSpace(N[0, -1], N(0))])
+    end
+
+    # tests that require ModelingToolkit
+    @static if VERSION >= v"1.3" && isdefined(@__MODULE__, :ModelingToolkit)
+        vars = @variables x y
+        p1 = HPolyhedron([x + y <= 1, x + y >= -1,  x - y <= 1, x - y >= -1], vars)
+        b1 = Ball1(zeros(2), 1.0)
+        @test isequivalent(p1, b1)
+
+        p2 = HPolyhedron([x == 0, y <= 0], vars)
+        h2 = HPolyhedron([HalfSpace([1.0, 0.0], 0.0), HalfSpace([-1.0, 0.0], 0.0), HalfSpace([0.0, 1.0], 0.0)])
+        @test p2 ⊆ h2 && h2 ⊆ p2 # isequivalent(p2, h2) see #2370
     end
 end

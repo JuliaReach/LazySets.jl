@@ -199,6 +199,10 @@ for N in [Float64, Float32, Rational{Int}]
                                                 N[9,12], N[7, 12], N[4, 10]])
     end
 
+    # ===================================
+    # Concrete intersection
+    # ===================================
+
     # concrete intersection of H-rep
     p2 = HPolygon{N}()
     c1 = LinearConstraint(N[2, 2], N(14))
@@ -211,6 +215,14 @@ for N in [Float64, Float32, Rational{Int}]
     addconstraint!(p2, c2)
     p3 = intersection(p, p2)
     @test length(constraints_list(p3)) == 4
+
+    # concrete intersection of V-rep
+    paux = VPolygon([N[0, 0], N[1, 0], N[0, 1], N[1, 1]])
+    qaux = VPolygon([N[1, -1/2], N[-1/2, 1], N[-1/2, -1/2]])
+    xaux = intersection(paux, qaux)
+    oaux = VPolygon([N[0, 0], N[1/2, 0], N[0, 1/2]])
+    @test xaux ⊆ oaux && oaux ⊆ xaux # TODO use isequivalent
+    @test LazySets._intersection_vrep(paux.vertices, qaux.vertices) == xaux.vertices
 
     # check that tighter constraints are used in intersection (#883)
     h1 = HalfSpace([N(1), N(0)], N(3))
@@ -391,6 +403,13 @@ for N in [Float64, Float32, Rational{Int}]
     m = N[4 0; 6 2; 4 4]'
     P = VPolygon(m)
     @test is_cyclic_permutation(vertices_list(P), [N[4, 0], N[6, 2], N[4, 4]])
+
+    # test concrete projection
+    V = VPolygon([N[0, 1], N[1, 0], N[-1, 0]])
+    @test project(V, [1]) == Interval(N(-1), N(1))
+    @test project(V, 1:2) == V
+    V = VPolygon([N[1, 0], N[1, 1]])
+    @test project(V, [1]) == Interval(N(1), N(1))
 end
 
 function same_constraints(v::Vector{<:LinearConstraint{N}})::Bool where N<:Real
@@ -521,6 +540,16 @@ for N in [Float64]
        ]
     P = HPolygon(copy(Hs))
     @test ispermutation(P.constraints, Hs[3:6])
+
+    # redundancy with almost-parallel constraints and approximation issues (#2386)
+    P = HPolygon([HalfSpace([1.0, 0.0], 1.0),
+                  HalfSpace([0.0, 1.0], 1.0),
+                  HalfSpace([-1.0, 0.0], 1.0),
+                  HalfSpace([0.0, -1.0], 1.0),
+                  HalfSpace([0.17178027783046604, -0.342877222169534], -0.3988040749330524),
+                  HalfSpace([0.17228094170254737, -0.3438765582974526], -0.5161575)
+                 ])
+    @test vertices_list(P) == [[-1.0, 1.0]]
 end
 
 # default Float64 constructors

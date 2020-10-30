@@ -165,8 +165,8 @@ function ∈(x::AbstractVector{N}, L::LineSegment{N}) where {N<:Real}
     q = L.q
     if isapproxzero(right_turn(p, q, x))
         # check if the point is inside the box approximation of the line segment
-        return min(p[1], q[1]) <= x[1] <= max(p[1], q[1]) &&
-               min(p[2], q[2]) <= x[2] <= max(p[2], q[2])
+        return _leq(min(p[1], q[1]), x[1]) && _leq(x[1], max(p[1], q[1])) &&
+               _leq(min(p[2], q[2]), x[2]) && _leq(x[2], max(p[2], q[2]))
     else
         return false
     end
@@ -233,7 +233,7 @@ function generators(L::LineSegment{N}) where {N<:Real}
     q = L.q
     if _isapprox(p, q)
         # degenerate line segment has no generators
-        return EmptyGeneratorIterator{N}()
+        return EmptyIterator{Vector{N}}()
     end
     return [(p - q) / 2]
 end
@@ -389,22 +389,4 @@ function translate(L::LineSegment{N}, v::AbstractVector{N}) where {N<:Real}
     @assert length(v) == dim(L) "cannot translate a $(dim(L))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     return LineSegment(L.p + v, L.q + v)
-end
-
-"""
-    plot_recipe(L::LineSegment{N}, [ε]::N=zero(N)) where {N<:Real}
-
-Convert a line segment to a pair `(x, y)` of points for plotting.
-
-### Input
-
-- `L` -- line segment
-- `ε` -- (optional, default: `0`) ignored, used for dispatch
-
-### Output
-
-A pair `(x, y)` of two points that can be plotted.
-"""
-function plot_recipe(L::LineSegment{N}, ε::N=zero(N)) where {N<:Real}
-    return [L.p[1], L.q[1]], [L.p[2], L.q[2]]
 end

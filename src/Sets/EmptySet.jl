@@ -274,6 +274,40 @@ function diameter(S::EmptySet, p::Real=Inf)
 end
 
 """
+    vertices(∅::EmptySet{N}) where {N}
+
+Construct an iterator over the vertices of an empty set.
+
+### Input
+
+- `∅` -- empty set
+
+### Output
+
+The empty iterator, as the empty set does not contain any vertices.
+"""
+function vertices(∅::EmptySet{N}) where {N}
+    return EmptyIterator{Vector{Vector{N}}}()
+end
+
+"""
+    vertices_list(∅::EmptySet{N}) where {N}
+
+Return the list of vertices of an empty set.
+
+### Input
+
+- `∅` -- empty set
+
+### Output
+
+The empty list of vertices, as the empty set does not contain any vertices.
+"""
+function vertices_list(∅::EmptySet{N}) where {N}
+    return Vector{Vector{N}}[]
+end
+
+"""
     linear_map(M::AbstractMatrix{N}, ∅::EmptySet{N}) where {N}
 
 Return the linear map of an empty set.
@@ -324,4 +358,21 @@ In the special case of an empty set, we define the sequence as `nothing`.
 """
 function plot_recipe(∅::EmptySet{N}, ε::N=zero(N)) where {N<:Real}
     return []
+end
+
+"""
+    area(∅::EmptySet{N}) where {N}
+
+Return the area of an empty set.
+
+### Input
+
+- `∅` -- empty set
+
+### Output
+
+The zero element of type `N`.
+"""
+function area(∅::EmptySet{N}) where {N}
+    return zero(N)
 end

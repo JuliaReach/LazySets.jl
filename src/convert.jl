@@ -131,6 +131,31 @@ function convert(::Type{VPolygon}, P::AbstractPolytope)
 end
 
 """
+    convert(::Type{VPolygon}, X::LazySet)
+
+Generic conversion to polygon in vertex representation.
+
+### Input
+
+- `type` -- target type
+- `X`    -- set
+
+### Output
+
+The 2D set represented as a polygon.
+
+### Algorithm
+
+We compute the list of vertices of `X` and wrap the result in a polygon in
+vertex representation, which guarantees that the vertices are sorted in
+counter-clockwise fashion.
+"""
+function convert(::Type{VPolygon}, X::LazySet)
+    @assert dim(X) == 2 "set must be two-dimensional for conversion"
+    return VPolygon(vertices_list(X))
+end
+
+"""
     convert(::Type{HPolytope}, P::AbstractPolytope)
 
 Convert a polytopic set to a polytope in H-representation.
@@ -241,42 +266,62 @@ function convert(::Type{HPOLYGON}, P::HPolytope{N, VN};
     return H
 end
 
-"""
-    convert(::Type{Zonotope}, H::AbstractHyperrectangle)
-
-Converts a hyperrectangular set to a zonotope.
-
-### Input
-
-- `Zonotope` -- type, used for dispatch
-- `H`        -- hyperrectangular set
-
-### Output
-
-A zonotope.
-"""
-function convert(::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
-    if isflat(H)
-        r = radius_hyperrectangle(H)
-        n = length(r)
-
-        nzgen = 0
-        Gnz = Vector{N}()
-        sizehint!(Gnz, n * n)
-        @inbounds for (i, ri) in enumerate(r)
-            if ri != zero(N)
-                col = zeros(N, n)
-                col[i] = ri
-                append!(Gnz, col)
-                nzgen += 1
-            end
-        end
-        G = reshape(Gnz, n, nzgen)
-    else
-        G = genmat(H)
-    end
-    return Zonotope(center(H), G)
+# fast conversion from a 2D hyperrectangular set to a zonotope
+function _convert_2D(::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
+    c = center(H)
+    rx = radius_hyperrectangle(H, 1)
+    ry = radius_hyperrectangle(H, 2)
+    G = _genmat_2D(c, rx, ry)
+    return Zonotope(c, G)
 end
+
+@inline function _genmat_2D(c::AbstractVector{N}, rx, ry) where {N}
+    flat_x = isapproxzero(rx)
+    flat_y = isapproxzero(ry)
+    ncols = !flat_x + !flat_y
+    G = Matrix{N}(undef, 2, ncols)
+    if !flat_x
+        @inbounds begin G[1] = rx; G[2] = zero(N) end
+        if !flat_y
+            @inbounds begin G[3] = zero(N); G[4] = ry end
+        end
+    elseif !flat_y
+        @inbounds begin G[1] = zero(N); G[2] = ry end
+    end
+    return G
+end
+
+function load_genmat_2D_static()
+return quote
+    @inline function _genmat_2D(c::SVector{L, N}, rx, ry) where {L, N}
+        flat_x = isapproxzero(rx)
+        flat_y = isapproxzero(ry)
+        if !flat_x && !flat_y
+            G = SMatrix{2, 2, N, 4}(rx, zero(N), zero(N), ry)
+        elseif !flat_x && flat_y
+            G = SMatrix{2, 1, N, 2}(rx, zero(N))
+        elseif flat_x && !flat_y
+            G = SMatrix{2, 1, N, 2}(zero(N), ry)
+        else
+            G = SMatrix{2, 0, N, 0}()
+        end
+        return G
+    end
+
+    # this function is type-stable but doesn't prune the generators according
+    # to flat dimensions of H
+    function _convert_2D_static(::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
+        c = center(H)
+        rx = radius_hyperrectangle(H, 1)
+        ry = radius_hyperrectangle(H, 2)
+        G = SMatrix{2, 2, N, 4}(rx, zero(N), zero(N), ry)
+        return Zonotope(c, G)
+    end
+
+    function _convert_static(::Type{Zonotope}, H::Hyperrectangle{N, <:SVector, <:SVector}) where {N}
+        return Zonotope(center(H), _genmat_static(H))
+    end
+end end  # quote / load_genmat_2D_static
 
 function convert(::Type{Zonotope}, S::Singleton{N, VN}) where {N, VN<:AbstractVector{N}}
     MT = LazySets.Arrays._matrix_type(VN)
@@ -299,8 +344,15 @@ Converts a zonotopic set to a zonotope.
 A zonotope.
 """
 function convert(::Type{Zonotope}, Z::AbstractZonotope)
-    return Zonotope(center(Z), genmat(Z))
+    return _convert_zonotope_fallback(Z)
 end
+
+function convert(::Type{Zonotope}, H::AbstractHyperrectangle)
+    dim(H) == 2 && return _convert_2D(Zonotope, H)
+    return _convert_zonotope_fallback(H)
+end
+
+_convert_zonotope_fallback(Z) = Zonotope(center(Z), genmat(Z))
 
 """
     convert(::Type{Zonotope}, cp::CartesianProduct{N, HN1, HN2}) where {N<:Real,
@@ -985,4 +1037,98 @@ function convert(::Type{Zonotope},
     Z1 = convert(Zonotope, linear_map(matrix(am), set(am)))
     Z2 = translate(Z1, vector(am), share=true)
     return Z2
+end
+
+"""
+    convert(::Type{HParallelotope}, Z::AbstractZonotope{N}) where {N}
+
+Converts a zonotopic set of order one into a parallelotope in constraint
+representation.
+
+### Input
+
+- `HParallelotope` -- type used for dispatch
+- `Z`              -- zonotopic set
+
+### Output
+
+A parallelotope in constraint representation.
+
+### Notes
+
+This function requires that the list of constraints of `Z` are obtained in
+the particular order returned from the constraints list function of a `Zonotope`.
+"""
+function convert(::Type{HParallelotope}, Z::AbstractZonotope{N}) where {N}
+    @assert order(Z) == 1 "cannot convert a zonotope that is not of order 1 to"*
+                          " a parallelotope"
+    n = dim(Z)
+
+    Z = convert(Zonotope, Z)
+    constraints = constraints_list(Z) # TODO refactor + use _constraints_list_zonotope
+
+    D = Matrix{N}(undef, n, n)
+    c = Vector{N}(undef, 2n)
+    j = 1
+    @inbounds for i in 1:n
+        D[i, :] = constraints[j].a
+        c[i] = constraints[j].b
+        c[i+n] = constraints[j+1].b
+        j += 2
+    end
+    return HParallelotope(D, c)
+end
+
+"""
+    convert(::Type{Zonotope}, cp::CartesianProduct{N, AZ1, AZ2}) where
+         {N, AZ1<:AbstractZonotope{N}, AZ2<:AbstractZonotope{N}}
+
+Converts a cartesian product of two zonotopes into a zonotope.
+
+### Input
+
+- `Zonotope` -- type used for dispatch
+- `cp`       -- cartesian product of two zonotopes
+
+### Output
+
+A zonotope.
+
+### Notes
+
+This implementation creates a `Zonotope` with sparse vector and matrix representation.
+"""
+function convert(::Type{Zonotope}, cp::CartesianProduct{N, AZ1, AZ2}) where
+         {N, AZ1<:AbstractZonotope{N}, AZ2<:AbstractZonotope{N}}
+    Z1, Z2 = cp.X, cp.Y
+    c = vcat(center(Z1), center(Z2))
+    G = blockdiag(sparse(genmat(Z1)), sparse(genmat(Z2)))
+    return Zonotope(c, G)
+end
+
+"""
+    convert(::Type{Zonotope}, cpa::CartesianProductArray{N, AZ})
+        where {N, AZ<:AbstractZonotope{N}}
+
+Converts a cartesian product array of zonotopes into a zonotope.
+
+### Input
+
+- `Zonotope` -- type used for dispatch
+- `cpa`       -- cartesian product array of zonotopes
+
+### Output
+
+A zonotope.
+
+### Notes
+
+This function requires the use of `SparseArrays`.
+"""
+function convert(::Type{Zonotope}, cpa::CartesianProductArray{N, AZ}) where
+        {N, AZ<:AbstractZonotope{N}}
+    arr = array(cpa)
+    c = reduce(vcat, center.(arr))
+    G = reduce(blockdiag, sparse.(genmat.(arr)))
+    return Zonotope(c, G)
 end

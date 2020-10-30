@@ -68,6 +68,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test_throws ErrorException radius(E)
     @test_throws ErrorException diameter(E)
 
+    # vertices / vertices_list
+    @test collect(vertices(E)) == vertices_list(E) == Vector{Vector{N}}()
+
     # linear map of an empty set
     linear_map(ones(N, 2, 2), E) == E
 
@@ -90,3 +93,16 @@ end
 
 # default Float64 constructor
 @test EmptySet(2) == ∅(2) == EmptySet{Float64}(2)
+
+# intersection
+for X in LazySets.subtypes(LazySet, true)
+    if X <: HParallelotope || isoperationtype(X)  # TODO #2390 and #2391
+        continue
+    end
+    if X <: Line  # TODO #2219 (Line has type parameter by default)
+        X = Line
+    end
+    Y = rand(X)
+    E = EmptySet(dim(Y))
+    @test intersection(Y, E) == intersection(E, Y) == E
+end

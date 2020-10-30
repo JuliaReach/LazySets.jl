@@ -185,6 +185,10 @@ for N in [Float64, Float32, Rational{Int}]
           Hcp.X == Interval(N(-1), N(1)) &&
           Hcp.Y == Interval(N(-2), N(4))
 
+    cp = Zonotope(N[0, 0], N[1 0; 0 1]) × Zonotope(N[1, 1], N[0 1; 1 0])
+    @test convert(Zonotope, cp) == Zonotope(N[0, 0, 1, 1], N[1 0 0 0; 0 1 0 0;
+                                                             0 0 0 1; 0 0 1 0])
+
     # =====================
     # CartesianProductArray
     # =====================
@@ -337,6 +341,11 @@ for N in [Float64, Float32, Rational{Int}]
     Hcp = convert(CartesianProductArray{N, Interval{N}}, H)
     @test Hcp isa CartesianProductArray &&
           all([array(Hcp)[i] == Interval(N(-1), N(2*i-1)) for i in 1:3])
+
+    cpa = CartesianProductArray([Zonotope(N[0, 0], N[1 0; 0 1]),
+                                 Zonotope(N[1, 1], N[0 1; 1 0])])
+    @test convert(Zonotope, cpa) == Zonotope(N[0, 0, 1, 1], N[1 0 0 0; 0 1 0 0;
+                                                              0 0 0 1; 0 0 1 0])
 
     # ================
     # common functions

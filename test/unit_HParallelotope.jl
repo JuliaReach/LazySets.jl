@@ -36,6 +36,16 @@ for N in [Float32, Float64, Rational{Int}]
     @test genmat(P) == N[1 0; 0 1]
 end
 
+for N in [Float32, Float64]
+    # conversion from zonotope
+    Z = Zonotope(N[0, 0], N[1 0; 0 1])
+    @test convert(HParallelotope, Z) ==
+        HParallelotope(N[0 -1; 1 0], N[1, 1, 1, 1])
+    Z = Zonotope(N[0, 0], N[1 0 1; 0 1 1])
+    @test_throws AssertionError convert(HParallelotope, Z)
+end
+
+
 for N in [Float64]
     P = HParallelotope(N[1 0; 0 1], N[1, 1, 1, 1])
     @test collect(generators(P)) == [N[1, 0], N[0, 1]]

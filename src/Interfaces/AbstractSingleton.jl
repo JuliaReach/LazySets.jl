@@ -162,18 +162,6 @@ function genmat(S::AbstractSingleton{N}) where {N<:Real}
     return Matrix{N}(undef, dim(S), 0)
 end
 
-# iterator that wraps the generator matrix
-struct EmptyGeneratorIterator{N<:Real}
-end
-
-Base.length(::EmptyGeneratorIterator) = 0
-
-Base.eltype(::Type{EmptyGeneratorIterator{N}}) where {N} = Vector{N}
-
-function Base.iterate(::EmptyGeneratorIterator, state=nothing)
-    return nothing
-end
-
 """
     generators(S::AbstractSingleton)
 
@@ -188,7 +176,7 @@ Return an (empty) iterator over the generators of a set with a single value.
 An empty iterator.
 """
 function generators(S::AbstractSingleton{N}) where {N<:Real}
-    return EmptyGeneratorIterator{N}()
+    return EmptyIterator{Vector{N}}()
 end
 
 """
@@ -236,6 +224,23 @@ end
 
 # --- AbstractPolytope interface functions ---
 
+
+"""
+    vertices(S::AbstractSingleton{N}) where {N}
+
+Construct an iterator over the vertices of a set with a single value.
+
+### Input
+
+- `S` -- set with a single value
+
+### Output
+
+An iterator with a single value.
+"""
+function vertices(S::AbstractSingleton{N}) where {N}
+    return SingletonIterator(element(S))
+end
 
 """
     vertices_list(S::AbstractSingleton{N}) where {N<:Real}

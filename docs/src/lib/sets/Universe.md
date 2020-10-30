@@ -18,6 +18,7 @@ isuniversal(::Universe{N}, ::Bool=false) where {N<:Real}
 norm(::Universe, ::Real=Inf)
 radius(::Universe, ::Real=Inf)
 diameter(::Universe, ::Real=Inf)
+constraints(::Universe{N}) where {N}
 constraints_list(::Universe{N}) where {N<:Real}
 constrained_dimensions(::Universe)
 translate(::Universe{N}, ::AbstractVector{N}) where {N<:Real}
