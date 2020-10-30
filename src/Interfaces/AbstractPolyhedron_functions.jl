@@ -402,7 +402,7 @@ end
                [cond_tol]::Number=DEFAULT_COND_TOL,
                [inverse]::Union{AbstractMatrix{N}, Nothing}=nothing,
                [backend]=nothing,
-               [elimination_method]=nothing) where {N<:Real}
+               [elimination_method]=nothing) where {N}
 
 Concrete linear map of a polyhedral set.
 
@@ -588,7 +588,7 @@ function linear_map(M::AbstractMatrix{N},
                     cond_tol::Number=DEFAULT_COND_TOL,
                     inverse::Union{AbstractMatrix{N}, Nothing}=nothing,
                     backend=nothing,
-                    elimination_method=nothing) where {N<:Real}
+                    elimination_method=nothing) where {N}
 
    size(M, 2) != dim(P) && throw(ArgumentError("a linear map of size $(size(M)) " *
                             "cannot be applied to a set of dimension $(dim(P))"))
@@ -646,19 +646,6 @@ function linear_map(M::AbstractMatrix{N},
         throw(ArgumentError("got unknown algorithm \"$algorithm\"; " *
             "available choices: \"inverse\", \"inverse_right\", \"lift\", " *
             "\"elimination\", \"vrep\""))
-    end
-end
-
-# handle different numeric types
-function linear_map(M::AbstractMatrix{NM},
-                    P::AbstractPolyhedron{NP};
-                    kwargs...) where {NM<:Real, NP<:Real}
-    N = promote_type(NM, NP)
-    if N != NP
-        error("conversion between numeric types of polyhedra not implemented " *
-            "yet (see #1181)")
-    else
-        return linear_map(N.(M), P; kwargs...)
     end
 end
 
