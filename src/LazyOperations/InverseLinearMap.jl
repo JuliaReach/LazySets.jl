@@ -4,6 +4,58 @@ export InverseLinearMap,
        an_element,
        constraints_list
 
+"""
+   InverseLinearMap{N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
+
+Given a linear transformation ``M``, this type represents the linear
+transformation ``M⁻¹⋅S`` of a convex set ``S``.
+
+### Fields
+
+- `M` -- matrix/linear map
+- `X` -- convex set
+
+### Notes
+
+This type is parametric in the elements of the inverse linear map, `NM`, which is
+independent of the numeric type of the wrapped set (`N`).
+Typically `NM = N`, but there may be exceptions, e.g., if `NM` is an interval
+that holds numbers of type `N`, where `N` is a floating point number type such
+as `Float64`.
+
+### Examples
+
+For the examples we create a ``3×3`` matrix and a unit three-dimensional square.
+
+```jldoctest constructors
+julia> A = [1 2 3; 2 3 1; 3 1 2]; X = BallInf([0, 0, 0], 1); Y = BallInf([0], 1);
+```
+
+```jldoctest constructors
+julia> ilm = InverseLinearMap(A, X)
+InverseLinearMap{Int64,BallInf{Int64,Array{Int64,1}},Int64,Array{Int64,2}}([1 2 3; 2 3 1; 3 1 2], BallInf{Int64,Array{Int64,1}}([0, 0, 0], 1))
+```
+
+Applying a linear map to a `InverseLinearMap` object combines the two maps into
+a single `InverseLinearMap` instance.
+Again we can make use of the conversion for convenience.
+
+```jldoctest constructors
+julia> B = transpose(A); ilm2 = InverseLinearMap(B, ilm)
+InverseLinearMap{Int64,BallInf{Int64,Array{Int64,1}},Int64,Array{Int64,2}}([14 11 11; 11 14 11; 11 11 14], BallInf{Int64,Array{Int64,1}}([0, 0, 0], 1))
+
+julia> ilm2.M == B*A
+true
+```
+
+The application of a `InverseLinearMap` to a `ZeroSet` or an `EmptySet` is
+simplified automatically.
+
+```jldoctest constructors
+julia> InverseLinearMap(A, ZeroSet{Int}(3))
+ZeroSet{Int64}(3)
+```
+"""
 struct InverseLinearMap{N<:Real, S<:LazySet{N},
                  NM, MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
     M::MAT
@@ -39,11 +91,11 @@ function InverseLinearMap(α::Real, X::LazySet)
 end
 
 # combine two linear maps into a single linear map
-function InverseLinearMap(M::AbstractMatrix, lm::LinearMap)
-    return InverseLinearMap(M * lm.M, lm.X)
+function InverseLinearMap(M::AbstractMatrix, ilm::InverseLinearMap)
+    return InverseLinearMap(ilm.M * M, ilm.X)
 end
 
-# ZeroSet is "almost absorbing" for LinearMap (only the dimension changes)
+# ZeroSet is "almost absorbing" for InverseLinearMap (only the dimension changes)
 function InverseLinearMap(M::AbstractMatrix{N}, Z::ZeroSet{N}) where {N}
     @assert dim(Z) == size(M, 2) "a linear map of size $(size(M)) cannot " *
             "be applied to a set of dimension $(dim(Z))"
@@ -58,91 +110,224 @@ end
 
 # --- AbstractAffineMap interface functions ---
 
-function matrix(lm::InverseLinearMap)
-    return lm.M
+function matrix(ilm::InverseLinearMap)
+    return ilm.M
 end
 
-function vector(lm::InverseLinearMap{N}) where {N}
-    return spzeros(N, dim(lm))
+function vector(ilm::InverseLinearMap{N}) where {N}
+    return spzeros(N, dim(ilm))
 end
 
-function set(lm::InverseLinearMap)
-    return lm.X
+function set(ilm::InverseLinearMap)
+    return ilm.X
 end
 
+"""
+    dim(ilm::InverseLinearMap)
 
-function dim(lm::LinearMap)
-    return size(lm.M, 1)
+Return the dimension of an inverse linear map.
+
+### Input
+
+- `ilm` -- inverse linear map
+
+### Output
+
+The ambient dimension of the inverse linear map.
+"""
+function dim(ilm::InverseLinearMap)
+    return size(ilm.M, 1)
 end
 
+"""
+    σ(d::AbstractVector{N}, ilm::InverseLinearMap{N}) where {N<:Real}
+
+Return the support vector of the inverse linear map.
+
+### Input
+
+- `d`   -- direction
+- `ilm` -- inverse linear map
+
+### Output
+
+The support vector in the given direction.
+If the direction has norm zero, the result depends on the wrapped set.
+
+### Notes
+
+If ``L = M^{-1}⋅S``, where ``M`` is a matrix and ``S`` is a convex set, since
+(M^T)^{-1}=(M^{-1})^T, it follows that ``σ(d, L) = M^{-1}⋅σ((M^T)^{-1} d, S)``
+for any direction ``d``.
+"""
+function σ(d::AbstractArray{N,1}, ilm::InverseLinearMap{N,S,NM,MAT}) where {N<:Real, S<:LazySet{N}, NM, MAT}
+    return ilm.M \ σ(transpose(ilm.M) \ d, ilm.X) #TODO: Check this formula
+end
+
+"""
+    ρ(d::AbstractVector{N}, ilm::InverseLinearMap{N}; kwargs...) where {N<:Real}
+
+Return the support function of the inverse linear map.
+
+### Input
+
+- `d`      -- direction
+- `ilm`    -- inverse linear map
+- `kwargs` -- additional arguments that are passed to the support function
+              algorithm
+
+### Output
+
+The support function in the given direction.
+If the direction has norm zero, the result depends on the wrapped set.
+
+### Notes
+
+If ``L = M^{-1}⋅S``, where ``M`` is a matrix and ``S`` is a convex set, it follows
+that ``ρ(d, L) = ρ((M^T)^{-1} d, S)`` for any direction ``d``.
+"""
 function ρ(d::AbstractVector, lm::InverseLinearMap)
     return ρ(transpose(lm.M) \ d, lm.X)
 end
 
-function σ(d::AbstractVector, lm::LinearMap)
-    return lm.M \ σ(transpose(lm.M) \ d, lm.X)
-end
 
+"""
+    ∈(x::AbstractVector{N}, ilm::InverseLinearMap{N}) where {N<:Real}
 
+Check whether a given point is contained in an inverse linear map of a convex set.
+
+### Input
+
+- `x`   -- point/vector
+- `ilm` -- inverse linear map of a convex set
+
+### Output
+
+`true` iff ``x ∈ ilm``.
+
+### Algorithm
+
+This implementation does not explicitly invert the matrix since it uses the
+property ``x ∈ M^{-1}⋅S`` iff ``M⋅x ∈ S``..
+
+### Examples
+
+```jldoctest
+julia> ilm = LinearMap([0.5 0.0; 0.0 -0.5], BallInf([0., 0.], 1.));
+
+julia> [1.0, 1.0] ∈ ilm
+false
+julia> [0.1, 0.1] ∈ ilm
+true
 ```
-Note that ``x ∈ M^{-1}⋅S`` iff ``M⋅x ∈ S``.
-```
+"""
 function ∈(x::AbstractVector, lm::InverseLinearMap)
     return lm.M * x ∈ lm.X
 end
 
+"""
+    an_element(ilm::InverseLinearMap{N})::Vector{N} where {N<:Real}
 
+Return some element of an inverse linear map.
 
+### Input
+
+- `ilm` -- inverse linear map
+
+### Output
+
+An element in the inverse linear map.
+It relies on the `an_element` function of the wrapped set.
+"""
 function an_element(lm::InverseLinearMap)
     return lm.M \ an_element(lm.X)
 end
 
+"""
+    vertices_list(ilm::InverseLinearMap{N}; prune::Bool=true)::Vector{Vector{N}} where {N<:Real}
 
+Return the list of vertices of a (polyhedral) inverse linear map.
 
+### Input
 
-function vertices_list(lm::InverseLinearMap{N}; prune::Bool=true) where {N}
+- `ilm`   -- inverse linear map
+- `prune` -- (optional, default: `true`) if true removes redundant vertices
+
+### Output
+
+A list of vertices.
+
+### Algorithm
+
+We assume that the underlying set `X` is polyhedral.
+Then the result is just the inverse linear map applied to the vertices of `X`.
+"""
+function vertices_list(ilm::InverseLinearMap{N}; prune::Bool=true) where {N}
     # for a zero map, the result is just the list containing the origin
-    if iszero(lm.M)
-        return [zeros(N, dim(lm))]
+    if iszero(ilm.M)
+        return [zeros(N, dim(ilm))]
     end
 
     # collect low-dimensional vertices lists
-    vlist_X = vertices_list(lm.X)
+    vlist_X = vertices_list(ilm.X)
 
     # create resulting vertices list
     vlist = Vector{Vector{N}}()
     sizehint!(vlist, length(vlist_X))
     for v in vlist_X
-        push!(vlist, lm.M \ v)
+        push!(vlist, ilm.M \ v)
     end
 
     return prune ? convex_hull(vlist) : vlist
 end
 
-
-function constraints_list(lm::InverseLinearMap{N}) where {N}
-    return constraints_list(linear_map_inverse(lm.M, lm.X))
-end
-
-
 """
-    linear_map(M::AbstractMatrix{N}, lm::LinearMap{N}) where {N<:Real}
+    constraints_list(ilm::InverseLinearMap{N}) where {N<:Real}
 
-Return the linear map of a lazy linear map.
+Return the list of constraints of a (polyhedral) inverse linear map.
 
 ### Input
 
-- `M`  -- matrix
-- `lm` -- linear map
+- `ilm` -- inverse linear map
 
 ### Output
 
-The polytope representing the linear map of the lazy linear map of a set.
+The list of constraints of the inverse linear map.
+
+### Notes
+
+We assume that the underlying set `X` is polyhedral, i.e., offers a method
+`constraints_list(X)`.
+
+### Algorithm
+
+We fall back to a concrete set representation and apply `linear_map_inverse`.
 """
-function linear_map(M::AbstractMatrix{N}, lm::InverseLinearMap{N}) where {N<:Real}
-    return linear_map(M * inv(lm.M), lm.X) #TODO: agregar nota sobre calculo de inv(lm.M)
+function constraints_list(ilm::InverseLinearMap{N}) where {N}
+    return constraints_list(linear_map_inverse(ilm.M, ilm.X))
 end
 
-function concretize(lm::LinearMap)
-    return linear_map(inv(lm.M), concretize(lm.X))
+
+"""
+    linear_map(M::AbstractMatrix{N}, ilm::InverseLinearMap{N}) where {N<:Real}
+
+Return the linear map of a lazy inverse linear map.
+
+### Input
+
+- `M`   -- matrix
+- `ilm` -- inverse linear map
+
+### Output
+
+The polytope representing the linear map of the lazy inverse linear map of a set.
+"""
+function linear_map(M::AbstractMatrix{N}, ilm::InverseLinearMap{N}) where {N<:Real}
+    #TODO: Check if linear_map needs matrix of Int64
+    return linear_map(M * inv(ilm.M), ilm.X)
+end
+
+function concretize(ilm::InverseLinearMap)
+    #TODO: Check if linear_map needs matrix of Int64
+    return linear_map(inv(ilm.M), concretize(ilm.X))
 end
