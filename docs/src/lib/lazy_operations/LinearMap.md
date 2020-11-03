@@ -12,7 +12,7 @@ dim(::LinearMap)
 σ(::AbstractVector{N}, ::LinearMap{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::LinearMap{N}) where {N<:Real}
 an_element(::LinearMap{N}) where {N<:Real}
-vertices_list(::LinearMap{N}) where {N<:Real}
+vertices_list(::LinearMap)
 constraints_list(::LinearMap{N}) where {N<:Real}
 linear_map(::AbstractMatrix{N}, ::LinearMap{N}) where {N<:Real}
 ```
