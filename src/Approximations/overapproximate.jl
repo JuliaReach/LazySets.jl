@@ -536,7 +536,7 @@ end
 """
     overapproximate(X::LazySet{N}, dir::AbstractDirections{N}) where {N}
 
-Overapproximating a set with template directions.
+Overapproximate a (possibly unbounded) set with template directions.
 
 ### Input
 
@@ -546,23 +546,50 @@ Overapproximating a set with template directions.
 ### Output
 
 A polyhedron overapproximating the set `X` with the directions from `dir`.
-If the directions are known to be bounded, the result is an `HPolytope`,
-otherwise the result is an `HPolyhedron`.
+The overapproximation is computed using support functions. If the obtained set is
+bounded, the result is an `HPolytope`. Otherwise the result is an `HPolyhedron`.
 """
 function overapproximate(X::LazySet{N}, dir::AbstractDirections{N, VN}) where {N, VN}
-    halfspaces = Vector{LinearConstraint{N, VN}}()
-    sizehint!(halfspaces, length(dir))
-    T = isbounding(dir) ? HPolytope : HPolyhedron
-    H = T(halfspaces)
+    H = Vector{LinearConstraint{N, VN}}()
+    sizehint!(H, length(dir))
+
     for d in dir
-        addconstraint!(H, LinearConstraint(d, ρ(d, X)))
+        sf = ρ(d, X)
+        if !isinf(sf)
+            addconstraint!(H, LinearConstraint(d, sf))
+        end
     end
-    return H
+    remove_redundant_constraints!(H) || throw(ArgumentError("unable to remove redundant constraints"))
+    P = HPolyhedron(H)
+    if _isbounded_stiemke(P) # P is bounded
+        return HPolytope(H)
+    else
+        return P
+    end
 end
 
 # alias with HPolytope type as second argument
 function overapproximate(X::LazySet{N}, ::Type{<:HPolytope}, dirs::AbstractDirections{N}) where {N}
-    return overapproximate(X, dirs)
+    p = overapproximate(X, dirs)
+    !isa(p, HPolytope) || throw(ArgumentError("can't overapproximate with an `HPolytope`; the set is unbounded"))
+    return p
+end
+
+# alias with HPolyhedron type as second argument
+function overapproximate(X::LazySet{N}, ::Type{<:HPolyhedron}, dirs::AbstractDirections{N}) where {N}
+    return convert(HPolyhedron, overapproximate(X, dirs))
+end
+
+# this function overapproximates a bounded polyhedron witht a list of directions
+# that define a bounded set (without checking these assumptions); the result is always bounded
+function _overapproximate_bounded_polyhedron(X::LazySet{N}, dir::AbstractDirections{N, VN}) where {N, VN}
+    H = Vector{LinearConstraint{N, VN}}()
+    sizehint!(H, length(dir))
+    for d in dir
+        sf = ρ(d, X)
+        addconstraint!(H, LinearConstraint(d, sf))
+    end
+    return HPolytope(H, check_boundedness=false)
 end
 
 """
