@@ -470,8 +470,10 @@ It first computes the vertices and then converts the corresponding polytope
 to constraint representation.
 """
 function constraints_list(Z::AbstractZonotope)
-    return constraints_list(VPolytope(vertices_list(Z)))
+    return _constraints_list_fallback(Z)
 end
+
+@inline _constraints_list_fallback(Z) = constraints_list(VPolytope(vertices_list(Z)))
 
 """
     constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true) where {N<:AbstractFloat}
@@ -514,7 +516,7 @@ function constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true) wh
 
     # use fallback implementation if order < 1 or matrix is not full rank
     if p < n || (check_full_rank && rank(G) < n)
-        return invoke(constraints_list, Tuple{AbstractZonotope{<:Real}}, Z)
+        return _constraints_list_fallback(Z)
     end
 
     # special handling of 1D case

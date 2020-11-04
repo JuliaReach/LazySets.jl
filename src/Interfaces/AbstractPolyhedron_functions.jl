@@ -34,7 +34,7 @@ function default_lp_solver_polyhedra(N, varargs...)
 end
 
 """
-    ∈(x::AbstractVector{N}, P::AbstractPolyhedron{N}) where {N<:Real}
+    ∈(x::AbstractVector, P::AbstractPolyhedron)
 
 Check whether a given point is contained in a polyhedron.
 
@@ -51,7 +51,7 @@ Check whether a given point is contained in a polyhedron.
 
 This implementation checks if the point lies inside each defining half-space.
 """
-function ∈(x::AbstractVector{N}, P::AbstractPolyhedron{N}) where {N<:Real}
+function ∈(x::AbstractVector, P::AbstractPolyhedron)
     @assert length(x) == dim(P) "a $(length(x))-dimensional point cannot be " *
         "an element of a $(dim(P))-dimensional set"
 
@@ -64,8 +64,7 @@ function ∈(x::AbstractVector{N}, P::AbstractPolyhedron{N}) where {N<:Real}
 end
 
 """
-    isuniversal(P::AbstractPolyhedron{N}, [witness]::Bool=false
-               ) where {N<:Real}
+    isuniversal(P::AbstractPolyhedron{N}, [witness]::Bool=false) where {N}
 
 Check whether a polyhedron is universal.
 
@@ -88,8 +87,7 @@ Check whether a polyhedron is universal.
 A witness is produced using `isuniversal(H)` where `H` is the first linear
 constraint of `P`.
 """
-function isuniversal(P::AbstractPolyhedron{N}, witness::Bool=false
-                    ) where {N<:Real}
+function isuniversal(P::AbstractPolyhedron{N}, witness::Bool=false) where {N}
     constraints = constraints_list(P)
     if isempty(constraints)
         return witness ? (true, N[]) : true
@@ -99,7 +97,7 @@ function isuniversal(P::AbstractPolyhedron{N}, witness::Bool=false
 end
 
 """
-    constrained_dimensions(P::AbstractPolyhedron) where {N<:Real}
+    constrained_dimensions(P::AbstractPolyhedron)
 
 Return the indices in which a polyhedron is constrained.
 
@@ -131,8 +129,7 @@ function constrained_dimensions(P::AbstractPolyhedron)
 end
 
 """
-    tosimplehrep(constraints::AbstractVector{LC})
-        where {N<:Real, LC<:LinearConstraint{N}}
+    tosimplehrep(constraints::AbstractVector{LC}) where {N, LC<:LinearConstraint{N}}
 
 Return the simple H-representation ``Ax ≤ b`` from a list of linear constraints.
 
@@ -145,8 +142,7 @@ Return the simple H-representation ``Ax ≤ b`` from a list of linear constraint
 The tuple `(A, b)` where `A` is the matrix of normal directions and `b` is the
 vector of offsets.
 """
-function tosimplehrep(constraints::AbstractVector{LC}
-                     ) where {N<:Real, LC<:LinearConstraint{N}}
+function tosimplehrep(constraints::AbstractVector{LC}) where {N, LC<:LinearConstraint{N}}
     n = length(constraints)
     if n == 0
         A = Matrix{N}(undef, 0, 0)
@@ -165,9 +161,8 @@ function tosimplehrep(constraints::AbstractVector{LC}
 end
 
 """
-     remove_redundant_constraints!(
-         constraints::AbstractVector{<:LinearConstraint{N}};
-         [backend]=default_lp_solver(N)) where {N<:Real}
+    remove_redundant_constraints!(constraints::AbstractVector{<:LinearConstraint{N}};
+                                  backend=default_lp_solver(N)) where {N}
 
 Remove the redundant constraints of a given list of linear constraints; the list
 is updated in-place.
@@ -205,9 +200,8 @@ If the calculation finished successfully, this function returns `true`.
 For details, see [Fukuda's Polyhedra
 FAQ](https://www.cs.mcgill.ca/~fukuda/soft/polyfaq/node24.html).
 """
-function remove_redundant_constraints!(
-        constraints::AbstractVector{<:LinearConstraint{N}};
-        backend=default_lp_solver(N)) where {N<:Real}
+function remove_redundant_constraints!(constraints::AbstractVector{<:LinearConstraint{N}};
+                                       backend=default_lp_solver(N)) where {N}
 
     A, b = tosimplehrep(constraints)
     m, n = size(A)
@@ -243,9 +237,8 @@ function remove_redundant_constraints!(
 end
 
 """
-    remove_redundant_constraints(
-        constraints::AbstractVector{<:LinearConstraint{N}};
-        backend=default_lp_solver(N)) where {N<:Real}
+    remove_redundant_constraints(constraints::AbstractVector{<:LinearConstraint{N}};
+                                 backend=default_lp_solver(N)) where {N}
 
 Remove the redundant constraints of a given list of linear constraints.
 
@@ -264,9 +257,8 @@ constraints are infeasible.
 See `remove_redundant_constraints!(::AbstractVector{<:LinearConstraint})` for
 details.
 """
-function remove_redundant_constraints(
-        constraints::AbstractVector{<:LinearConstraint{N}};
-        backend=default_lp_solver(N)) where {N<:Real}
+function remove_redundant_constraints(constraints::AbstractVector{<:LinearConstraint{N}};
+                                      backend=default_lp_solver(N)) where {N}
     constraints_copy = copy(constraints)
     if remove_redundant_constraints!(constraints_copy, backend=backend)
         return constraints_copy
@@ -649,9 +641,22 @@ function linear_map(M::AbstractMatrix{N},
     end
 end
 
+# handle different numeric types
+function linear_map(M::AbstractMatrix{NM},
+                    P::AbstractPolyhedron{NP};
+                    kwargs...) where {NM, NP}
+    N = promote_type(NM, NP)
+    if N != NP
+        error("conversion between numeric types of polyhedra not implemented " *
+            "yet (see #1181)")
+    else
+        return linear_map(N.(M), P; kwargs...)
+    end
+end
+
 # TODO: merge the preconditions into _check_algorithm_applies ?
 # review this method after #998
-function _linear_map_vrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N}) where {N<:Real}
+function _linear_map_vrep(M::AbstractMatrix, P::AbstractPolyhedron)
     if !isbounded(P)
         throw(ArgumentError("the linear map in vertex representation for an " *
             "unbounded set is not defined"))
@@ -664,28 +669,25 @@ function _linear_map_vrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N}) where 
 end
 
 # generic function for the AbstractPolyhedron interface => returns an HPolyhedron
-function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
-                                 algo::AbstractLinearMapAlgorithm) where {N<:Real}
+function _linear_map_hrep_helper(M::AbstractMatrix, P::AbstractPolyhedron,
+                                 algo::AbstractLinearMapAlgorithm)
     constraints = _linear_map_hrep(M, P, algo)
     return HPolyhedron(constraints)
 end
 
 # preconditions should have been checked in the caller function
-function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
-                          algo::LinearMapInverse) where {N}
+function _linear_map_hrep(M::AbstractMatrix, P::AbstractPolyhedron, algo::LinearMapInverse)
     return _linear_map_inverse_hrep(algo.inverse, P)
 end
 
-function linear_map_inverse(Minv::AbstractMatrix{N},
-                            P::AbstractPolyhedron{N}) where {N}
+function linear_map_inverse(Minv::AbstractMatrix, P::AbstractPolyhedron)
     @assert size(Minv, 1) == dim(P) "a linear map of size $(size(Minv)) " *
         "cannot be applied to a set of dimension $(dim(P))"
     constraints = _linear_map_inverse_hrep(Minv, P)
     return HPolyhedron(constraints)
 end
 
-function _linear_map_inverse_hrep(Minv::AbstractMatrix{N},
-                                  P::AbstractPolyhedron{N}) where {N}
+function _linear_map_inverse_hrep(Minv::AbstractMatrix, P::AbstractPolyhedron)
     constraints_P = constraints_list(P)
     constraints_MP = _preallocate_constraints(constraints_P)
     @inbounds for (i, c) in enumerate(constraints_P)
@@ -710,7 +712,7 @@ end
 
 # preconditions should have been checked in the caller function
 function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
-                          algo::LinearMapLift) where {N<:Real}
+                          algo::LinearMapLift) where {N}
     m, n = size(M)
 
     # we extend M to an invertible m x m matrix by appending m-n columns
@@ -738,7 +740,7 @@ end
 # to a backend library that can do variable elimination, typically CDDLib,
 # with the BlockElimination() algorithm.
 function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
-                          algo::LinearMapElimination) where {N<:Real}
+                          algo::LinearMapElimination) where {N}
     m, n = size(M)
     ₋Id_m = Matrix(-one(N)*I, m, m)
     backend = algo.backend
@@ -765,7 +767,7 @@ end
 end
 
 """
-    plot_recipe(P::AbstractPolyhedron{N}, [ε]::N=zero(N)) where {N<:Real}
+    plot_recipe(P::AbstractPolyhedron{N}, [ε]::N=zero(N)) where {N}
 
 Convert a (bounded) polyhedron to a pair `(x, y)` of points for plotting.
 
@@ -788,7 +790,7 @@ Three-dimensional or higher-dimensional polytopes are not supported.
 For two-dimensional polytopes (i.e., polygons) we compute their set of vertices
 using `vertices_list` and then plot the convex hull of these vertices.
 """
-function plot_recipe(P::AbstractPolyhedron{N}, ε::N=zero(N)) where {N<:Real}
+function plot_recipe(P::AbstractPolyhedron{N}, ε::N=zero(N)) where {N}
     @assert dim(P) <= 2 "cannot plot a $(dim(P))-dimensional $(typeof(P))"
     @assert isbounded(P) "cannot plot an unbounded $(typeof(P))"
 
@@ -862,7 +864,7 @@ function chebyshev_center(P::AbstractPolyhedron{N};
 end
 
 """
-    an_element(P::AbstractPolyhedron{N}) where {N<:Real}
+    an_element(P::AbstractPolyhedron{N}) where {N}
 
 Return some element of a convex set.
 
@@ -879,7 +881,7 @@ An element of a polyhedron.
 An element of the polyhedron is obtained by evaluating its support vector along
 direction ``[1, 0, …, 0]``.
 """
-function an_element(P::AbstractPolyhedron{N}) where {N<:Real}
+function an_element(P::AbstractPolyhedron{N}) where {N}
     n = dim(P)
     if n == -1
         throw(ArgumentError("the dimension of this polyhedron is not defined, " *
@@ -890,7 +892,7 @@ function an_element(P::AbstractPolyhedron{N}) where {N<:Real}
 end
 
 """
-    isbounded(P::AbstractPolyhedron{N}; solver=LazySets.default_lp_solver(N)) where {N<:Real}
+    isbounded(P::AbstractPolyhedron{N}; solver=LazySets.default_lp_solver(N)) where {N}
 
 Determine whether a polyhedron is bounded.
 
@@ -911,7 +913,7 @@ which is a necessary condition for boundedness.
 
 If so, we check boundedness via [`_isbounded_stiemke`](@ref).
 """
-function isbounded(P::AbstractPolyhedron{N}; solver=LazySets.default_lp_solver(N)) where {N<:Real}
+function isbounded(P::AbstractPolyhedron{N}; solver=LazySets.default_lp_solver(N)) where {N}
     constraints = constraints_list(P)
     if length(constraints) <= max(dim(P), 1)
         return false
