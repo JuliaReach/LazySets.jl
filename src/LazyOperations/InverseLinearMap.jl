@@ -267,7 +267,7 @@ function vertices_list(ilm::InverseLinearMap{N}; prune::Bool=true)  where {N}
     vlist_X = vertices_list(ilm.X) #TODO: Requires Polyhedra? (Mention in the Docstring)
 
     # create resulting vertices list
-    vlist = Vector{eltype(vlist_X)}(); #TODO check: vlist = Vector{Vector{N}}(); // vlist = eltype(vlist_X);
+    vlist = Vector{eltype(vlist_X)}();
     sizehint!(vlist, length(vlist_X))
     for v in vlist_X
         push!(vlist, ilm.M \ v)
@@ -322,7 +322,8 @@ The polytope representing the linear map of the lazy inverse linear map of a set
 This function is inefficient in the sense that it requires computing the
 concrete inverse of M, which is what InverseLinearMap is supposed to avoid.
 """
-function linear_map(M::AbstractMatrix{N}, ilm::InverseLinearMap{N}) where {N} # TODO: Until related PR is solved, it should be: where {N<:Real}
+#function linear_map(M::AbstractMatrix{N}, ilm::InverseLinearMap{N}) where {N} #  where {N<:Real}
+function linear_map(M::AbstractMatrix{N}, ilm::InverseLinearMap{N}) where {N<:Real}
     return linear_map(M * inv(ilm.M), ilm.X)
 end
 
