@@ -181,7 +181,11 @@ for N in [Float64]
     # an_element
     P = HPolyhedron([HalfSpace(N[3//50, -4//10], N(1)),
                      HalfSpace(N[-1//50, 1//10], N(-1))])
-    @test_broken an_element(P) ∈ P # see LazySets.jl/pull/2197
+    @test an_element(P) ∈ P
+
+    # an_element for an unbounded polyhedron
+    P = HPolyhedron([HalfSpace(N[-1, 0], N(-1)])
+    @test an_element(P) ∈ P
 
     # boundedness
     @test isbounded(p)
