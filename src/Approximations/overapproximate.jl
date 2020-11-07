@@ -588,7 +588,7 @@ function _overapproximate_bounded_polyhedron(X::LazySet{N}, dir::AbstractDirecti
     sizehint!(H, length(dir))
     for d in dir
         sf = ρ(d, X)
-        addconstraint!(H, LinearConstraint(d, sf))
+        push!(H, LinearConstraint(d, sf))
     end
     return HPolytope(H, check_boundedness=false)
 end
