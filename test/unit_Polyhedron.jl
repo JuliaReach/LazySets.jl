@@ -184,7 +184,7 @@ for N in [Float64]
     @test an_element(P) ∈ P
 
     # an_element for an unbounded polyhedron
-    P = HPolyhedron([HalfSpace(N[-1, 0], N(-1)])
+    P = HPolyhedron([HalfSpace(N[-1, 0], N(-1))])
     @test an_element(P) ∈ P
 
     # boundedness
