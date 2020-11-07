@@ -185,7 +185,11 @@ for N in [Float64]
 
     # an_element for an unbounded polyhedron
     P = HPolyhedron([HalfSpace(N[-1, 0], N(-1))])
-    @test an_element(P) ∈ P
+    y = an_element(P)
+    # check that all entries are finite
+    @test all(!isinf, y)
+    # check that the points belong to P
+    @test y ∈ P
 
     # boundedness
     @test isbounded(p)
