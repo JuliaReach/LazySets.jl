@@ -556,7 +556,7 @@ function overapproximate(X::LazySet{N}, dir::AbstractDirections{N, VN}) where {N
     for d in dir
         sf = ρ(d, X)
         if !isinf(sf)
-            addconstraint!(H, LinearConstraint(d, sf))
+            push!(H, LinearConstraint(d, sf))
         end
     end
     remove_redundant_constraints!(H) || throw(ArgumentError("unable to remove redundant constraints"))
