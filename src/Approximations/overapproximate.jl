@@ -570,9 +570,10 @@ end
 
 # alias with HPolytope type as second argument
 function overapproximate(X::LazySet{N}, ::Type{<:HPolytope}, dirs::AbstractDirections{N}) where {N}
-    p = overapproximate(X, dirs)
-    !isa(p, HPolytope) || throw(ArgumentError("can't overapproximate with an `HPolytope`; the set is unbounded"))
-    return p
+    P = overapproximate(X, dirs)
+    isa(P, HPolytope) || throw(ArgumentError("can't overapproximate with an `HPolytope` " *
+                                "because the set is unbounded; try using an `HPolyhedron`"))
+    return P
 end
 
 # alias with HPolyhedron type as second argument
