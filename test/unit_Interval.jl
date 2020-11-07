@@ -18,6 +18,10 @@ for N in Ns
     # type-less constructor
     x = Interval(N(0), N(1))
 
+    # constructor with promotion
+    y = Interval(0, N(1))
+    @test y == x
+
     @test dim(x) == 1
     @test center(x) == N[0.5]
     @test center(x, 1) == N(0.5)

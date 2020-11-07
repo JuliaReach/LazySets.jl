@@ -95,6 +95,11 @@ Interval(interval::IN) where {N<:Rational, IN<:AbstractInterval{N}} =
 Interval(lo::N, hi::N) where {N<:Real} =
     Interval(IntervalArithmetic.Interval(lo, hi))
 
+# constructor from two numbers with type promotion
+function Interval(lo::N, hi::M) where {N<:Real, M<:Real}
+    Interval(IntervalArithmetic.Interval(promote(lo, hi)...))
+end
+
 # constructor from two rational numbers
 Interval(lo::N, hi::N) where {N<:Rational} =
     Interval{N, IntervalArithmetic.AbstractInterval{N}}(
