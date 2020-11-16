@@ -607,7 +607,7 @@ function _vertices_list_iterative(c::VN, G::MN; apply_convex_hull::Bool) where {
     vlist = Vector{VN}()
     sizehint!(vlist, 2^p)
 
-    for ξi in Iterators.product([[1, -1] for i = 1:p]...)
+    for ξi in Iterators.product([(1, -1) for i = 1:p]...)
         push!(vlist, c .+ G * collect(ξi))
     end
 
