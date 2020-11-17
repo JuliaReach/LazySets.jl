@@ -221,7 +221,7 @@ end
 
 
 """
-    ρ(d::AbstractVector{N}, Z::AbstractZonotope{N}) where {N}
+    ρ(d::AbstractVector, Z::AbstractZonotope)
 
 Return the support function of a zonotopic set in a given direction.
 
@@ -239,14 +239,14 @@ The support function of the zonotopic set in the given direction.
 The support value is ``cᵀ d + ‖Gᵀ d‖₁`` where ``c`` is the center and ``G`` is
 the generator matrix of `Z`.
 """
-function ρ(d::AbstractVector{N}, Z::AbstractZonotope{N}) where {N}
+function ρ(d::AbstractVector, Z::AbstractZonotope)
     c = center(Z)
     G = genmat(Z)
     return dot(c, d) + _abs_sum(d, G)
 end
 
 """
-    σ(d::AbstractVector{N}, Z::AbstractZonotope{N}) where {N}
+    σ(d::AbstractVector, Z::AbstractZonotope)
 
 Return the support vector of a zonotopic set in a given direction.
 
@@ -261,14 +261,13 @@ A support vector in the given direction.
 If the direction has norm zero, the vertex with ``ξ_i = 1 \\ \\ ∀ i = 1,…, p``
 is returned.
 """
-function σ(d::AbstractVector{N}, Z::AbstractZonotope{N}) where {N}
+function σ(d::AbstractVector, Z::AbstractZonotope)
     G = genmat(Z)
     return center(Z) .+ G * sign_cadlag.(_At_mul_B(G, d))
 end
 
 """
-    ∈(x::AbstractVector{N}, Z::AbstractZonotope{N};
-      solver=default_lp_solver(N)) where {N}
+    ∈(x::AbstractVector, Z::AbstractZonotope; solver=nothing)
 
 Check whether a given point is contained in a zonotopic set.
 
@@ -276,8 +275,8 @@ Check whether a given point is contained in a zonotopic set.
 
 - `x`      -- point/vector
 - `Z`      -- zonotopic set
-- `solver` -- (optional, default: `default_lp_solver(N)`) the backend used to
-              solve the linear program
+- `solver` -- (optional, default: `nothing`) the backend used to solve the
+              linear program
 
 ### Output
 
@@ -294,6 +293,10 @@ julia> [1.0, 0.1] ∈ Z
 true
 ```
 
+### Notes
+
+If `solver == nothing`, we fall back to `default_lp_solver(N)`.
+
 ### Algorithm
 
 The membership problem is computed by stating and solving the following linear
@@ -305,11 +308,11 @@ elements ``(x_0, ξ_1, …, ξ_p)`` constrained to ``0 ≤ x_0 ≤ ∞``,
 ``ξ_i ∈ [-1, 1]`` for all ``i = 1, …, p``, and such that ``x-c = Gξ`` holds.
 If a feasible solution exists, the optimal value ``x_0 = 0`` is achieved.
 """
-function ∈(x::AbstractVector{N}, Z::AbstractZonotope{N};
-           solver=default_lp_solver(N)) where {N}
+function ∈(x::AbstractVector, Z::AbstractZonotope; solver=nothing)
     @assert length(x) == dim(Z)
 
     p, n = ngens(Z), dim(Z)
+    N = promote_type(eltype(x), eltype(Z))
     # (n+1) x (p+1) matrix with block-diagonal blocks 1 and genmat(Z)
     A = [[one(N); zeros(N, p)]'; [zeros(N, n) genmat(Z)]]
     b = [zero(N); (x - center(Z))]
@@ -318,12 +321,15 @@ function ∈(x::AbstractVector{N}, Z::AbstractZonotope{N};
     sense = ['>'; fill('=', n)]
     obj = [one(N); zeros(N, p)]
 
+    if solver == nothing
+        solver = default_lp_solver(N)
+    end
     lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
     return (lp.status == :Optimal) # Infeasible or Unbounded => false
 end
 
 """
-    linear_map(M::AbstractMatrix{N}, Z::AbstractZonotope{N}) where {N}
+    linear_map(M::AbstractMatrix, Z::AbstractZonotope)
 
 Concrete linear map of a zonotopic set.
 
@@ -337,7 +343,7 @@ Concrete linear map of a zonotopic set.
 The zonotope obtained by applying the linear map to the center and generators
 of ``Z``.
 """
-function linear_map(M::AbstractMatrix{N}, Z::AbstractZonotope{N}) where {N}
+function linear_map(M::AbstractMatrix, Z::AbstractZonotope)
     @assert dim(Z) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
                                  "applied to a set of dimension $(dim(Z))"
 
@@ -347,7 +353,7 @@ function linear_map(M::AbstractMatrix{N}, Z::AbstractZonotope{N}) where {N}
 end
 
 """
-    translate(Z::AbstractZonotope{N}, v::AbstractVector{N}; share::Bool=false) where {N}
+    translate(Z::AbstractZonotope, v::AbstractVector; share::Bool=false)
 
 Translate (i.e., shift) a zonotope by a given vector.
 
@@ -370,8 +376,7 @@ The generator matrix is shared with the original zonotope if `share == true`.
 
 We add the vector to the center of the zonotope.
 """
-function translate(Z::AbstractZonotope{N}, v::AbstractVector{N};
-                   share::Bool=false) where {N}
+function translate(Z::AbstractZonotope, v::AbstractVector; share::Bool=false)
     @assert length(v) == dim(Z) "cannot translate a $(dim(Z))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     c = center(Z) + v
@@ -384,7 +389,7 @@ end
 
 
 """
-    vertices_list(Z::AbstractZonotope{N}; [apply_convex_hull]::Bool=true) where {N}
+    vertices_list(Z::AbstractZonotope; [apply_convex_hull]::Bool=true)
 
 Return the vertices of a zonotopic set.
 
@@ -421,8 +426,7 @@ There are at most ``2^p`` distinct vertices. Use the flag `apply_convex_hull` to
 control whether a convex hull algorithm is applied to the vertices computed by
 this method; otherwise, redundant vertices may be present.
 """
-function vertices_list(Z::AbstractZonotope{N};
-                       apply_convex_hull::Bool=true) where {N}
+function vertices_list(Z::AbstractZonotope; apply_convex_hull::Bool=true)
     c = center(Z)
     G = genmat(Z)
     n, p = size(G)

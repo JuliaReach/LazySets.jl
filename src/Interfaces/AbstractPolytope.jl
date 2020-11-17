@@ -111,7 +111,7 @@ end
 
 # given a polytope P, apply the linear map P to each vertex of P
 # it is assumed that the interface function `vertices_list(P)` is available
-@inline function _linear_map_vrep(M::AbstractMatrix{N}, P::AbstractPolytope{N}) where {N}
+@inline function _linear_map_vrep(M::AbstractMatrix, P::AbstractPolytope)
     vertices = broadcast(v -> M * v, vertices_list(P))
     m = size(M, 1) # output dimension
     if m == 1
@@ -124,8 +124,8 @@ end
     end
 end
 
-function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::AbstractPolytope{N},
-                                 algo::AbstractLinearMapAlgorithm) where {N}
+function _linear_map_hrep_helper(M::AbstractMatrix, P::AbstractPolytope,
+                                 algo::AbstractLinearMapAlgorithm)
     constraints = _linear_map_hrep(M, P, algo)
     m = size(M, 1) # output dimension
     if m == 1

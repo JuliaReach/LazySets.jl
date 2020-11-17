@@ -573,14 +573,14 @@ may be costly. If you used this algorithm and still want to convert back to
 half-space representation, apply `tohrep` to the result of this function.
 Note that this method only works for bounded polyhedra.
 """
-function linear_map(M::AbstractMatrix{N},
-                    P::AbstractPolyhedron{N};
+function linear_map(M::AbstractMatrix{NM},
+                    P::AbstractPolyhedron{NP};
                     algorithm::Union{String, Nothing}=nothing,
                     check_invertibility::Bool=true,
                     cond_tol::Number=DEFAULT_COND_TOL,
-                    inverse::Union{AbstractMatrix{N}, Nothing}=nothing,
+                    inverse::Union{AbstractMatrix, Nothing}=nothing,
                     backend=nothing,
-                    elimination_method=nothing) where {N}
+                    elimination_method=nothing) where {NM, NP}
 
    size(M, 2) != dim(P) && throw(ArgumentError("a linear map of size $(size(M)) " *
                             "cannot be applied to a set of dimension $(dim(P))"))
@@ -627,6 +627,7 @@ function linear_map(M::AbstractMatrix{N},
         return _linear_map_hrep_helper(M, P, LinearMapInverseRight())
 
     elseif algorithm == "elimination" || algorithm == "elim"
+        N = promote_type(NM, NP)
         algo = _get_elimination_instance(N, backend, elimination_method)
         return _linear_map_hrep_helper(M, P, algo)
 
@@ -711,9 +712,10 @@ function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
 end
 
 # preconditions should have been checked in the caller function
-function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
-                          algo::LinearMapLift) where {N}
+function _linear_map_hrep(M::AbstractMatrix{NM}, P::AbstractPolyhedron{NP},
+                          algo::LinearMapLift) where {NM, NP}
     m, n = size(M)
+    N = promote_type(NM, NP)
 
     # we extend M to an invertible m x m matrix by appending m-n columns
     # orthogonal to the column space of M
@@ -739,9 +741,10 @@ end
 # (there are length(x) in total) using Polyhedra.eliminate calls
 # to a backend library that can do variable elimination, typically CDDLib,
 # with the BlockElimination() algorithm.
-function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
-                          algo::LinearMapElimination) where {N}
+function _linear_map_hrep(M::AbstractMatrix{NM}, P::AbstractPolyhedron{NP},
+                          algo::LinearMapElimination) where {NM, NP}
     m, n = size(M)
+    N = promote_type(NM, NP)
     ₋Id_m = Matrix(-one(N)*I, m, m)
     backend = algo.backend
     method = algo.method
@@ -767,7 +770,7 @@ end
 end
 
 """
-    plot_recipe(P::AbstractPolyhedron{N}, [ε]::N=zero(N)) where {N}
+    plot_recipe(P::AbstractPolyhedron{N}, [ε]=zero(N)) where {N}
 
 Convert a (bounded) polyhedron to a pair `(x, y)` of points for plotting.
 
@@ -790,7 +793,7 @@ Three-dimensional or higher-dimensional polytopes are not supported.
 For two-dimensional polytopes (i.e., polygons) we compute their set of vertices
 using `vertices_list` and then plot the convex hull of these vertices.
 """
-function plot_recipe(P::AbstractPolyhedron{N}, ε::N=zero(N)) where {N}
+function plot_recipe(P::AbstractPolyhedron{N}, ε=zero(N)) where {N}
     @assert dim(P) <= 2 "cannot plot a $(dim(P))-dimensional $(typeof(P))"
     @assert isbounded(P) "cannot plot an unbounded $(typeof(P))"
 
@@ -818,7 +821,7 @@ end
                      [get_radius]::Bool=false,
                      [backend]=default_polyhedra_backend(P, N),
                      [solver]=default_lp_solver_polyhedra(N; presolve=true)
-                     ) where {N<:AbstractFloat}
+                     ) where {N}
 
 Compute the [Chebyshev center](https://en.wikipedia.org/wiki/Chebyshev_center)
 of a polytope.
@@ -851,7 +854,7 @@ function chebyshev_center(P::AbstractPolyhedron{N};
                           get_radius::Bool=false,
                           backend=default_polyhedra_backend(P, N),
                           solver=default_lp_solver_polyhedra(N; presolve=true)
-                         ) where {N<:AbstractFloat}
+                         ) where {N}
     require(:Polyhedra; fun_name="chebyshev_center")
     # convert to HPolyhedron to ensure `polyhedron` is applicable (see #1505)
     Q = polyhedron(convert(HPolyhedron, P); backend=backend)
