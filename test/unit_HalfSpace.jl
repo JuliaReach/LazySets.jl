@@ -141,6 +141,10 @@ for N in [Float64]
 
     # tests that require ModelingToolkit
     @static if VERSION >= v"1.3" && isdefined(@__MODULE__, :ModelingToolkit)
+        # case with only 1 variable
+        vars = @variables x
+        @test HalfSpace(x <= 2.0, vars) == HalfSpace([1.0], 2.0)
+
         vars = @variables x y
         @test HalfSpace(2x + 3y < 5) == HalfSpace([2.0, 3.0], 5.0)
         @test HalfSpace(2x + 3y < 5, vars) == HalfSpace([2.0, 3.0], 5.0)

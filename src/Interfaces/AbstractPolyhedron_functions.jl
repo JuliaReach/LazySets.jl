@@ -864,42 +864,52 @@ function chebyshev_center(P::AbstractPolyhedron{N};
 end
 
 """
-    an_element(P::AbstractPolyhedron{N}) where {N}
+    an_element(P::AbstractPolyhedron{N};
+               [solver]=default_lp_solver(N)) where {N}
 
 Return some element of a convex set.
 
 ### Input
 
-- `P` -- polyhedron
+- `P`       -- polyhedron
+- `solver`  -- (optional, default: `default_lp_solver(N)`) LP solver
 
 ### Output
 
-An element of a polyhedron.
+An element of the polyhedron, or an error if the polyhedron is empty.
 
 ### Algorithm
 
-An element of the polyhedron is obtained by evaluating its support vector along
-direction ``[1, 0, …, 0]``.
+An element of the polyhedron is obtained by solving a feasibility linear program.
 """
-function an_element(P::AbstractPolyhedron{N}) where {N}
-    n = dim(P)
-    if n == -1
-        throw(ArgumentError("the dimension of this polyhedron is not defined, " *
-                            "hence `an_element` is not available"))
+function an_element(P::AbstractPolyhedron{N};
+                    solver=default_lp_solver(N)) where {N}
+
+    A, b = tosimplehrep(P)
+
+    lbounds, ubounds = -Inf, Inf
+    sense = '<'
+    obj = zeros(N, size(A, 2))
+    lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
+
+    if lp.status == :Optimal
+        return lp.sol
+    elseif lp.status == :Infeasible
+        error("can't return an element, the polyhedron is empty")
+    else
+        error("LP returned status $(lp.status) unexpectedly")
     end
-    e₁ = SingleEntryVector(1, n, one(N))
-    return σ(e₁, P)
 end
 
 """
-    isbounded(P::AbstractPolyhedron{N}; solver=LazySets.default_lp_solver(N)) where {N}
+    isbounded(P::AbstractPolyhedron{N}; [solver]=default_lp_solver(N)) where {N}
 
 Determine whether a polyhedron is bounded.
 
 ### Input
 
 - `P`       -- polyhedron
-- `backend` -- (optional, default: `default_lp_solver(N)`) the backend used
+- `solver`  -- (optional, default: `default_lp_solver(N)`) the backend used
                to solve the linear program
 
 ### Output
@@ -913,7 +923,7 @@ which is a necessary condition for boundedness.
 
 If so, we check boundedness via [`_isbounded_stiemke`](@ref).
 """
-function isbounded(P::AbstractPolyhedron{N}; solver=LazySets.default_lp_solver(N)) where {N}
+function isbounded(P::AbstractPolyhedron{N}; solver=default_lp_solver(N)) where {N}
     constraints = constraints_list(P)
     if length(constraints) <= max(dim(P), 1)
         return false

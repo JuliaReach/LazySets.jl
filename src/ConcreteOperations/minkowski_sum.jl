@@ -244,6 +244,35 @@ function minkowski_sum(Z1::AbstractZonotope{N}, Z2::AbstractZonotope{N}) where {
 end
 
 """
+    minkowski_sum(X::AbstractSingleton, Y::AbstractSingleton)
+
+Concrete Minkowski sum of a pair of singletons.
+
+### Input
+
+- `X` -- singleton
+- `Y` -- singleton
+
+### Output
+
+A singleton
+
+### Algorithm
+
+The singleton obtained by summing the elements in `X` and `Y`.
+"""
+function minkowski_sum(X::AbstractSingleton, Y::AbstractSingleton)
+    @assert dim(X) == dim(Y) "expected that the singletons have the same dimension, " *
+                "but they are $(dim(X)) and $(dim(Y)) respectively"
+    return _minkowski_sum(X, Y)
+end
+
+_minkowski_sum(X::AbstractSingleton, Y::AbstractSingleton) = Singleton(element(X) + element(Y))
+_minkowski_sum(X::AbstractSingleton, Y::ZeroSet) = X
+_minkowski_sum(X::ZeroSet, Y::AbstractSingleton) = Y
+_minkowski_sum(X::ZeroSet, Y::ZeroSet) = X
+
+"""
     minkowski_sum(x::Interval, y::Interval)
 
 Concrete Minkowski sum of a pair of intervals.
