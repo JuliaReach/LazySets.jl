@@ -632,7 +632,7 @@ function is_intersection_empty(ls1::LineSegment,
         if u < 0 || u > 1
             empty_intersection = true
         else
-            t = cross(p1p2, s) / u_denominator
+            t = _cross(p1p2, s) / u_denominator
             empty_intersection = t < 0 || t > 1
             if witness
                 v = ls1.p + t * r
