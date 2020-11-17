@@ -1,5 +1,7 @@
 using LazySets, LazySets.Approximations, Test, LinearAlgebra, SparseArrays, StaticArrays
 
+using LazySets: _leq, _geq, isapproxzero, _isapprox, _ztol
+
 import IntervalArithmetic
 const IA = IntervalArithmetic
 using IntervalArithmetic: IntervalBox
