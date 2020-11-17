@@ -208,10 +208,10 @@ end
 
 # common code for singletons
 @inline function is_intersection_empty_helper_singleton(
-        S::AbstractSingleton, X::LazySet, witness::Bool=false
-       )
+        S::AbstractSingleton, X::LazySet, witness::Bool=false)
     empty_intersection = element(S) ∉ X
     if witness
+        N = promote_type(eltype(S), eltype(X))
         return (empty_intersection, empty_intersection ? N[] : element(S))
     else
         return empty_intersection
