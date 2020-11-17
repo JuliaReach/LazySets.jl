@@ -262,12 +262,15 @@ A singleton
 The singleton obtained by summing the elements in `X` and `Y`.
 """
 function minkowski_sum(X::AbstractSingleton, Y::AbstractSingleton)
-    return Singleton(element(X) + element(Y))
+    @assert dim(X) == dim(Y) "expected that the singletons have the same dimension, " *
+                "but they are $(dim(X)) and $(dim(Y)) respectively"
+    return _minkowski_sum(X, Y)
 end
 
-minkowski_sum(X::AbstractSingleton, Y::ZeroSet) = X
-minkowski_sum(X::ZeroSet, Y::AbstractSingleton) = Y
-minkowski_sum(X::ZeroSet, Y::ZeroSet) = X
+_minkowski_sum(X::AbstractSingleton, Y::AbstractSingleton) = Singleton(element(X) + element(Y))
+_minkowski_sum(X::AbstractSingleton, Y::ZeroSet) = X
+_minkowski_sum(X::ZeroSet, Y::AbstractSingleton) = Y
+_minkowski_sum(X::ZeroSet, Y::ZeroSet) = X
 
 """
     minkowski_sum(x::Interval, y::Interval)
