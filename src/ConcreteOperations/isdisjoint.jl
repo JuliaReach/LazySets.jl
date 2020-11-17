@@ -1566,38 +1566,6 @@ function is_intersection_empty(::EmptySet, ::EmptySet)
     return true
 end
 
-# TODO duplicates #2219
-function is_intersection_empty(::EmptySet, ::LazySet)
-    return true
-end
-function is_intersection_empty(::EmptySet, ::Universe)
-    return true
-end
-function is_intersection_empty(::EmptySet, ::HalfSpace)
-    return true
-end
-function is_intersection_empty(::EmptySet, ::Hyperplane)
-    return true
-end
-function is_intersection_empty(::EmptySet, ::Line2D)
-    return true
-end
-function is_intersection_empty(::LazySet, ::EmptySet)
-    return true
-end
-function is_intersection_empty(::Universe, ::EmptySet)
-    return true
-end
-function is_intersection_empty(::HalfSpace, ::EmptySet)
-    return true
-end
-function is_intersection_empty(::Hyperplane, ::EmptySet)
-    return true
-end
-function is_intersection_empty(::Line2D, ::EmptySet)
-    return true
-end
-
 # =================================================================
 # Disjointness methods for two-dimensional lines and line segments
 # =================================================================

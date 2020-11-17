@@ -581,8 +581,14 @@ function linear_map(M::AbstractMatrix{NM},
                     inverse::Union{AbstractMatrix, Nothing}=nothing,
                     backend=nothing,
                     elimination_method=nothing) where {NM, NP}
+    N = promote_type(NM, NP)
+    N != NP && error("conversion between numeric types of polyhedra not " *
+        "implemented yet (see #1181)")
+    if NM != NP
+        M = N.(M)
+    end
 
-   size(M, 2) != dim(P) && throw(ArgumentError("a linear map of size $(size(M)) " *
+    size(M, 2) != dim(P) && throw(ArgumentError("a linear map of size $(size(M)) " *
                             "cannot be applied to a set of dimension $(dim(P))"))
 
     got_algorithm = algorithm != nothing
@@ -627,7 +633,6 @@ function linear_map(M::AbstractMatrix{NM},
         return _linear_map_hrep_helper(M, P, LinearMapInverseRight())
 
     elseif algorithm == "elimination" || algorithm == "elim"
-        N = promote_type(NM, NP)
         algo = _get_elimination_instance(N, backend, elimination_method)
         return _linear_map_hrep_helper(M, P, algo)
 
@@ -639,19 +644,6 @@ function linear_map(M::AbstractMatrix{NM},
         throw(ArgumentError("got unknown algorithm \"$algorithm\"; " *
             "available choices: \"inverse\", \"inverse_right\", \"lift\", " *
             "\"elimination\", \"vrep\""))
-    end
-end
-
-# handle different numeric types
-function linear_map(M::AbstractMatrix{NM},
-                    P::AbstractPolyhedron{NP};
-                    kwargs...) where {NM, NP}
-    N = promote_type(NM, NP)
-    if N != NP
-        error("conversion between numeric types of polyhedra not implemented " *
-            "yet (see #1181)")
-    else
-        return linear_map(N.(M), P; kwargs...)
     end
 end
 
