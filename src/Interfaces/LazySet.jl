@@ -679,7 +679,7 @@ function is_interior_point(d::AbstractVector{N}, P::LazySet{N};
 end
 
 """
-    plot_recipe(X::LazySet{N}, [ε]::N=N(PLOT_PRECISION)) where {N<:Real}
+    plot_recipe(X::LazySet{N}, [ε]=N(PLOT_PRECISION)) where {N}
 
 Convert a convex set to a pair `(x, y)` of points for plotting.
 
@@ -708,7 +708,7 @@ On the other hand, if you only want to produce a fast box-overapproximation of
 `X`, pass `ε=Inf`.
 Finally, we use the plot recipe for polygons.
 """
-function plot_recipe(X::LazySet{N}, ε::N=N(PLOT_PRECISION)) where {N<:Real}
+function plot_recipe(X::LazySet{N}, ε=N(PLOT_PRECISION)) where {N}
     @assert dim(X) <= 2 "cannot plot a $(dim(X))-dimensional $(typeof(X))"
     @assert isbounded(X) "cannot plot an unbounded $(typeof(X))"
 
