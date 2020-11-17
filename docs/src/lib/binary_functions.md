@@ -92,6 +92,7 @@ minkowski_sum(::AbstractZonotope{N}, ::AbstractZonotope{N}) where {N<:Real}
 minkowski_sum(::VPolygon{N}, ::VPolygon{N}) where {N<:Real}
 minkowski_sum(::PolynomialZonotope, ::Zonotope)
 minkowski_sum(::Interval, ::Interval)
+minkowski_sum(::AbstractSingleton, ::AbstractSingleton)
 ```
 
 ## Minkowski difference
