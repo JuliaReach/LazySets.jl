@@ -585,7 +585,7 @@ function overapproximate(X::LazySet{N}, ::Type{<:HPolyhedron}, dirs::AbstractDir
     return convert(HPolyhedron, overapproximate(X, dirs, prune=true))
 end
 
-# this function overapproximates a bounded polyhedron witht a list of directions
+# this function overapproximates a bounded polyhedron with a list of directions
 # that define a bounded set (without checking these assumptions); the result is always bounded
 function _overapproximate_bounded_polyhedron(X::LazySet{N}, dir::AbstractDirections{N, VN}; prune::Bool=true) where {N, VN}
     H = Vector{LinearConstraint{N, VN}}()
