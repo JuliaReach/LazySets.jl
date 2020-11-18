@@ -29,13 +29,13 @@ Inherited from [`LazySet`](@ref):
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
-* [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real})
+* [`isuniversal`](@ref isuniversal(::AbstractPolytope, ::Bool=false))
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
 
 Inherited from [`AbstractZonotope`](@ref):
 * [`ngens`](@ref ngens(::AbstractZonotope))
-* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractZonotope{N}) where {N<:Real})
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractZonotope))
 * [`order`](@ref order(::AbstractZonotope))
 * [`togrep`](@ref togrep(::AbstractZonotope))

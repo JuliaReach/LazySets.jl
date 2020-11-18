@@ -15,10 +15,12 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`singleton_list`](@ref singleton_list(::LazySet))
 
+Inherited from [`AbstractPolyhedron`](@ref):
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolyhedron))
+
 Inherited from [`AbstractPolytope`](@ref):
 * [`isempty`](@ref isempty(::AbstractPolytope))
-* [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real})
-* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real})
+* [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N})
 
 Inherited from [`AbstractPolygon`](@ref):
 * [`dim`](@ref dim(::AbstractPolygon))

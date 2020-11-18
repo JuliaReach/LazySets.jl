@@ -42,7 +42,7 @@ Every `LazySet` type must define a function `σ` to compute the support vector.
 
 ```@docs
 support_vector
-ρ(::AbstractVector{N}, ::LazySet{N}) where {N<:Real}
+ρ(::AbstractVector, ::LazySet)
 support_function
 σ
 singleton_list(::LazySet)
@@ -178,7 +178,7 @@ AbstractPolyhedron
 This interface defines the following functions:
 
 ```@docs
-∈(::AbstractVector{N}, ::AbstractPolyhedron{N}) where {N<:Real}
+∈(::AbstractVector, ::AbstractPolyhedron)
 isuniversal(::AbstractPolyhedron{N}, ::Bool=false) where {N<:Real}
 constrained_dimensions(::AbstractPolyhedron)
 linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real}
@@ -218,7 +218,7 @@ This interface defines the following functions:
 
 ```@docs
 isbounded(::AbstractPolytope)
-isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real}
+isuniversal(::AbstractPolytope, ::Bool=false)
 isempty(::AbstractPolytope)
 ```
 
@@ -300,10 +300,10 @@ This interface defines the following functions:
 
 ```@docs
 dim(::AbstractCentrallySymmetricPolytope)
-an_element(::AbstractCentrallySymmetricPolytope{N}) where {N<:Real}
+an_element(::AbstractCentrallySymmetricPolytope)
 isempty(::AbstractCentrallySymmetricPolytope)
-isuniversal(::AbstractCentrallySymmetricPolytope{N}, ::Bool=false) where {N<:Real}
-center(::AbstractCentrallySymmetricPolytope{N}, ::Int) where {N<:Real}
+isuniversal(::AbstractCentrallySymmetricPolytope, ::Bool=false)
+center(::AbstractCentrallySymmetricPolytope, ::Int)
 ```
 
 ### Implementations
@@ -324,18 +324,17 @@ This interface defines the following functions:
 ```@docs
 ngens(::AbstractZonotope)
 genmat_fallback(::AbstractZonotope{N}) where {N<:Real}
-generators_fallback(::AbstractZonotope{N}) where {N<:Real}
-ρ(::AbstractVector{N}, ::AbstractZonotope{N}) where {N<:Real}
-σ(::AbstractVector{N}, ::AbstractZonotope{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::AbstractZonotope{N}) where {N<:Real}
-linear_map(::AbstractMatrix{N}, ::AbstractZonotope{N}) where {N<:Real}
-translate(::AbstractZonotope{N}, ::AbstractVector{N}) where {N<:Real}
-constraints_list(::AbstractZonotope{N}) where {N<:Real}
+generators_fallback(::AbstractZonotope)
+ρ(::AbstractVector, ::AbstractZonotope)
+σ(::AbstractVector, ::AbstractZonotope)
+∈(::AbstractVector, ::AbstractZonotope)
+linear_map(::AbstractMatrix, ::AbstractZonotope)
+translate(::AbstractZonotope, ::AbstractVector)
+constraints_list(::AbstractZonotope)
 constraints_list(::AbstractZonotope{N}; ::Bool=true) where {N<:AbstractFloat}
-vertices_list(::AbstractZonotope{N}) where {N<:Real}
+vertices_list(::AbstractZonotope)
 order(::AbstractZonotope)
 togrep(::AbstractZonotope)
-⊆(Z::AbstractZonotope{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
 ```
 
 ### Implementations
