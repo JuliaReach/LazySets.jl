@@ -33,9 +33,9 @@ Inherited from [`LazySet`](@ref):
 * [`singleton_list`](@ref singleton_list(::LazySet))
 
 Inherited from [`AbstractPolyhedron`](@ref):
-* [`∈`](@ref ∈(::AbstractVector{N}, ::AbstractPolyhedron{N}) where {N<:Real})
+* [`∈`](@ref ∈(::AbstractVector, ::AbstractPolyhedron))
 * [`constrained_dimensions`](@ref constrained_dimensions(::AbstractPolyhedron)
-* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real})
+* [`linear_map`](@ref linear_map(::AbstractMatrix{NM}, ::AbstractPolyhedron{NP}) where {NM, NP})
 
 The following methods are specific to `HPolyhedron`.
 
@@ -46,5 +46,5 @@ isbounded(::HPolyhedron)
 
 Inherited from [`AbstractPolyhedron`](@ref):
 
-* [`isuniversal`](@ref isuniversal(::AbstractPolyhedron{N}, ::Bool=false) where {N<:Real})
+* [`isuniversal`](@ref isuniversal(::AbstractPolyhedron{N}, ::Bool=false) where {N})
 * [`vertices_list`](@ref vertices_list(::AbstractPolyhedron, ::Bool=false))

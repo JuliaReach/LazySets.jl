@@ -205,7 +205,7 @@ end
 
 
 """
-    center(S::AbstractSingleton{N}) where {N<:Real}
+    center(S::AbstractSingleton)
 
 Return the center of a set with a single value.
 
@@ -217,7 +217,7 @@ Return the center of a set with a single value.
 
 The only element of the set.
 """
-function center(S::AbstractSingleton{N}) where {N<:Real}
+function center(S::AbstractSingleton)
     return element(S)
 end
 

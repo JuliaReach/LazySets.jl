@@ -22,14 +22,14 @@ Inherited from [`AbstractPolytope`](@ref):
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
-* [`an_element`](@ref an_element(::AbstractCentrallySymmetricPolytope{N}) where {N<:Real})
+* [`an_element`](@ref an_element(::AbstractCentrallySymmetricPolytope))
 
 Inherited from [`AbstractZonotope`](@ref):
 * [`ngens`](@ref ngens(::AbstractZonotope))
-* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractZonotope{N}) where {N<:Real})
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractZonotope))
 * [`order`](@ref order(::AbstractZonotope))
 * [`togrep`](@ref togrep(::AbstractZonotope))
-* [`translate`](@ref translate(::AbstractZonotope{N}, ::AbstractVector{N}) where {N<:Real})
+* [`translate`](@ref translate(::AbstractZonotope, ::AbstractVector))
 
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`ρ`](@ref ρ(::AbstractVector{N}, ::AbstractHyperrectangle{N}) where {N<:Real})

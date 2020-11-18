@@ -42,7 +42,7 @@ Every `LazySet` type must define a function `σ` to compute the support vector.
 
 ```@docs
 support_vector
-ρ(::AbstractVector{N}, ::LazySet{N}) where {N<:Real}
+ρ(::AbstractVector, ::LazySet)
 support_function
 σ
 singleton_list(::LazySet)
@@ -61,9 +61,9 @@ diameter(::LazySet, ::Real=Inf)
 isbounded(::LazySet)
 _isbounded_unit_dimensions(::LazySet{N}) where {N<:Real}
 _isbounded_stiemke(::HPolyhedron{N}) where {N<:Real}
-an_element(::LazySet{N}) where {N<:Real}
+an_element(::LazySet{N}) where {N}
 tosimplehrep(::LazySet)
-isuniversal(::LazySet{N}, ::Bool=false) where {N<:Real}
+isuniversal(::LazySet{N}, ::Bool=false) where {N}
 affine_map(M::AbstractMatrix, X::LazySet, v::AbstractVector)
 reflect(::LazySet)
 is_interior_point(::AbstractVector{N}, ::LazySet{N}; p=Inf, ε=_rtol(N)) where {N<:Real}
@@ -80,7 +80,7 @@ Plotting is available for general one- or two-dimensional `LazySet`s, provided
 that the overapproximation using iterative refinement is available:
 
 ```@docs
-plot_recipe(::LazySet{N}, ::N=N(1e-3)) where {N<:Real}
+plot_recipe(::LazySet{N}, ::Any=zero(N)) where {N}
 RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::LazySet{N}, ::N=N(1e-3)) where {N<:Real}
 RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractVector{VN}, ::N=N(1e-3), ::Int=40, ::Bool=false) where {N<:Real, VN<:LazySet{N}}
 ```
@@ -154,10 +154,10 @@ This interface defines the following functions:
 ```@docs
 dim(::AbstractCentrallySymmetric)
 isbounded(::AbstractCentrallySymmetric)
-isuniversal(::AbstractCentrallySymmetric{N}, ::Bool=false) where {N<:Real}
-an_element(::AbstractCentrallySymmetric{N}) where {N<:Real}
+isuniversal(::AbstractCentrallySymmetric{N}, ::Bool=false) where {N}
+an_element(::AbstractCentrallySymmetric)
 isempty(::AbstractCentrallySymmetric)
-center(::AbstractCentrallySymmetric{N}, ::Int) where {N<:Real}
+center(::AbstractCentrallySymmetric, ::Int)
 ```
 
 ### Implementations
@@ -178,20 +178,20 @@ AbstractPolyhedron
 This interface defines the following functions:
 
 ```@docs
-∈(::AbstractVector{N}, ::AbstractPolyhedron{N}) where {N<:Real}
-isuniversal(::AbstractPolyhedron{N}, ::Bool=false) where {N<:Real}
+∈(::AbstractVector, ::AbstractPolyhedron)
+isuniversal(::AbstractPolyhedron{N}, ::Bool=false) where {N}
 constrained_dimensions(::AbstractPolyhedron)
-linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real}
-chebyshev_center(::AbstractPolyhedron{N}) where {N<:AbstractFloat}
-an_element(::AbstractPolyhedron{N}) where {N<:Real}
-isbounded(::AbstractPolyhedron{N}) where {N<:Real}
+linear_map(::AbstractMatrix{NM}, ::AbstractPolyhedron{NP}) where {NM, NP}
+chebyshev_center(::AbstractPolyhedron{N}) where {N}
+an_element(::AbstractPolyhedron{N}) where {N}
+isbounded(::AbstractPolyhedron{N}) where {N}
 vertices_list(::AbstractPolyhedron)
 ```
 
 Plotting (bounded) polyhedra is available, too:
 
 ```@docs
-plot_recipe(::AbstractPolyhedron{N}, ::N=zero(N)) where {N<:Real}
+plot_recipe(::AbstractPolyhedron{N}, ::Any=zero(N)) where {N}
 ```
 
 ### Implementations
@@ -218,7 +218,7 @@ This interface defines the following functions:
 
 ```@docs
 isbounded(::AbstractPolytope)
-isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real}
+isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N}
 isempty(::AbstractPolytope)
 ```
 
@@ -300,10 +300,10 @@ This interface defines the following functions:
 
 ```@docs
 dim(::AbstractCentrallySymmetricPolytope)
-an_element(::AbstractCentrallySymmetricPolytope{N}) where {N<:Real}
+an_element(::AbstractCentrallySymmetricPolytope)
 isempty(::AbstractCentrallySymmetricPolytope)
-isuniversal(::AbstractCentrallySymmetricPolytope{N}, ::Bool=false) where {N<:Real}
-center(::AbstractCentrallySymmetricPolytope{N}, ::Int) where {N<:Real}
+isuniversal(::AbstractCentrallySymmetricPolytope{N}, ::Bool=false) where {N}
+center(::AbstractCentrallySymmetricPolytope, ::Int)
 ```
 
 ### Implementations
@@ -323,19 +323,18 @@ This interface defines the following functions:
 
 ```@docs
 ngens(::AbstractZonotope)
-genmat_fallback(::AbstractZonotope{N}) where {N<:Real}
-generators_fallback(::AbstractZonotope{N}) where {N<:Real}
-ρ(::AbstractVector{N}, ::AbstractZonotope{N}) where {N<:Real}
-σ(::AbstractVector{N}, ::AbstractZonotope{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::AbstractZonotope{N}) where {N<:Real}
-linear_map(::AbstractMatrix{N}, ::AbstractZonotope{N}) where {N<:Real}
-translate(::AbstractZonotope{N}, ::AbstractVector{N}) where {N<:Real}
-constraints_list(::AbstractZonotope{N}) where {N<:Real}
+genmat_fallback(::AbstractZonotope{N}) where {N}
+generators_fallback(::AbstractZonotope)
+ρ(::AbstractVector, ::AbstractZonotope)
+σ(::AbstractVector, ::AbstractZonotope)
+∈(::AbstractVector, ::AbstractZonotope)
+linear_map(::AbstractMatrix, ::AbstractZonotope)
+translate(::AbstractZonotope, ::AbstractVector)
+constraints_list(::AbstractZonotope)
 constraints_list(::AbstractZonotope{N}; ::Bool=true) where {N<:AbstractFloat}
-vertices_list(::AbstractZonotope{N}) where {N<:Real}
+vertices_list(::AbstractZonotope)
 order(::AbstractZonotope)
 togrep(::AbstractZonotope)
-⊆(Z::AbstractZonotope{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
 ```
 
 ### Implementations
@@ -401,7 +400,7 @@ This interface defines the following functions:
 ρ(::AbstractVector{N}, ::AbstractSingleton{N}) where {N<:Real}
 ∈(::AbstractVector{N}, ::AbstractSingleton{N}) where {N<:Real}
 an_element(::AbstractSingleton{N}) where {N<:Real}
-center(::AbstractSingleton{N}) where {N<:Real}
+center(::AbstractSingleton)
 vertices(::AbstractSingleton{N}) where {N}
 vertices_list(::AbstractSingleton{N}) where {N<:Real}
 radius_hyperrectangle(::AbstractSingleton{N}) where {N<:Real}
