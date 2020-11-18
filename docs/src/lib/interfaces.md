@@ -80,8 +80,8 @@ that the overapproximation using iterative refinement is available:
 
 ```@docs
 plot_recipe(::LazySet{N}, ::Any=zero(N)) where {N}
-RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::LazySet{N}, ::N=N(1e-3)) where {N<:Real}
-RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractVector{VN}, ::N=N(1e-3), ::Int=40, ::Bool=false) where {N<:Real, VN<:LazySet{N}}
+RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::LazySet{N}, ::N=N(1e-3)) where {N}
+RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractVector{VN}, ::N=N(1e-3), ::Int=40, ::Bool=false) where {N, VN<:LazySet{N}}
 ```
 
 For three-dimensional sets, we support `Makie`:
@@ -412,7 +412,7 @@ generators(::AbstractSingleton{N}) where {N}
 genmat(::AbstractSingleton{N}) where {N}
 ngens(::AbstractSingleton)
 plot_recipe(::AbstractSingleton{N}, ::Any=zero(N)) where {N}
-RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractSingleton{N}, ::N=zero(N)) where {N<:Real}
+RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractSingleton{N}, ::N=zero(N)) where {N}
 ```
 
 ### Implementations
