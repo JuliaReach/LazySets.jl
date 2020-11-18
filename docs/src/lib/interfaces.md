@@ -265,18 +265,18 @@ AbstractHPolygon
 This interface defines the following functions:
 
 ```@docs
-an_element(::AbstractHPolygon{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::AbstractHPolygon{N}) where {N<:Real}
+an_element(::AbstractHPolygon)
+∈(::AbstractVector, ::AbstractHPolygon)
 rand(::Type{HPOLYGON}) where {HPOLYGON<:AbstractHPolygon}
 tohrep(::HPOLYGON) where {HPOLYGON<:AbstractHPolygon}
-tovrep(::AbstractHPolygon{N}) where {N<:Real}
-addconstraint!(::AbstractHPolygon{N}, ::LinearConstraint{N}) where {N<:Real}
-addconstraint!(::Vector{LC}, ::LinearConstraint{N}) where {N<:Real, LC<:LinearConstraint{N}}
-normalize(P::AbstractHPolygon{N}, p=N(2)) where {N<:Real}
-isredundant(::LinearConstraint{N}, ::LinearConstraint{N}, ::LinearConstraint{N}) where {N<:Real}
+tovrep(::AbstractHPolygon)
+addconstraint!(::AbstractHPolygon, ::LinearConstraint)
+addconstraint!(::Vector{LC}, ::LinearConstraint) where {LC<:LinearConstraint}
+normalize(P::AbstractHPolygon{N}, p=N(2)) where {N}
+isredundant(::LinearConstraint, ::LinearConstraint, ::LinearConstraint)
 remove_redundant_constraints!(::AbstractHPolygon)
-constraints_list(::AbstractHPolygon{N}) where {N<:Real}
-vertices_list(::AbstractHPolygon{N}) where {N<:Real}
+constraints_list(::AbstractHPolygon)
+vertices_list(::AbstractHPolygon{N}) where {N}
 isbounded(::AbstractHPolygon, ::Bool=true)
 ```
 
