@@ -40,7 +40,7 @@ Inherited from [`AbstractSingleton`](@ref):
 * [`σ`](@ref σ(::AbstractVector{N}, ::AbstractSingleton{N}) where {N<:Real})
 * [`∈`](@ref ∈(::AbstractVector{N}, ::AbstractSingleton{N}) where {N<:Real})
 * [`an_element`](@ref an_element(::AbstractSingleton{N}) where {N<:Real})
-* [`center`](@ref center(::AbstractSingleton{N}) where {N<:Real})
+* [`center`](@ref center(::AbstractSingleton))
 * [`vertices`](@ref vertices(::AbstractSingleton{N}) where {N})
 * [`vertices_list`](@ref vertices_list(::AbstractSingleton{N}) where {N<:Real})
 * [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton{N}) where {N<:Real})

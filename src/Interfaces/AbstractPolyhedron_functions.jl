@@ -387,14 +387,14 @@ function _default_linear_map_algorithm(M::AbstractMatrix{N}, P::AbstractPolyhedr
 end
 
 """
-    linear_map(M::AbstractMatrix{N},
-               P::AbstractPolyhedron{N};
+    linear_map(M::AbstractMatrix{NM},
+               P::AbstractPolyhedron{NP};
                [algorithm]::Union{String, Nothing}=nothing,
                [check_invertibility]::Bool=true,
                [cond_tol]::Number=DEFAULT_COND_TOL,
                [inverse]::Union{AbstractMatrix{N}, Nothing}=nothing,
                [backend]=nothing,
-               [elimination_method]=nothing) where {N}
+               [elimination_method]=nothing) where {NM, NP}
 
 Concrete linear map of a polyhedral set.
 

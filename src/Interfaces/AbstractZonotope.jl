@@ -55,7 +55,9 @@ isconvextype(::Type{<:AbstractZonotope}) = true
 
 
 """
-    genmat_fallback(Z::AbstractZonotope{N}) where {N}
+    genmat_fallback(Z::AbstractZonotope{N};
+                    [gens]=generators(Z),
+                    [ngens]=nothing) where {N}
 
 Fallback definition of `genmat` for zonotopic sets.
 

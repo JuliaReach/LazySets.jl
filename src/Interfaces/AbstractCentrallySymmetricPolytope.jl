@@ -18,10 +18,9 @@ Such a type combination is necessary as long as Julia does not support
 Every concrete `AbstractCentrallySymmetricPolytope` must define the following
 functions:
 - from `AbstractCentrallySymmetric`:
-  - `center(::AbstractCentrallySymmetricPolytope{N})` -- return the
-     center point
+  - `center(::AbstractCentrallySymmetricPolytope)` -- return the center point
 - from `AbstractPolytope`:
-  - `vertices_list(::AbstractCentrallySymmetricPolytope{N})`
+  - `vertices_list(::AbstractCentrallySymmetricPolytope)`
      -- return a list of all vertices
 
 ```jldoctest; setup = :(using LazySets: subtypes)
@@ -124,7 +123,7 @@ function isuniversal(S::AbstractCentrallySymmetricPolytope{N},
 end
 
 """
-    center(H::AbstractCentrallySymmetricPolytope, i::Int)
+    center(S::AbstractCentrallySymmetricPolytope, i::Int)
 
 Return the center along a given dimension of a centrally symmetric polytope.
 

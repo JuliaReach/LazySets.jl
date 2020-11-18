@@ -35,7 +35,7 @@ Inherited from [`LazySet`](@ref):
 Inherited from [`AbstractPolyhedron`](@ref):
 * [`∈`](@ref ∈(::AbstractVector, ::AbstractPolyhedron))
 * [`constrained_dimensions`](@ref constrained_dimensions(::AbstractPolyhedron)
-* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolyhedron))
+* [`linear_map`](@ref linear_map(::AbstractMatrix{NM}, ::AbstractPolyhedron{NP}) where {NM, NP})
 
 The following methods are specific to `HPolyhedron`.
 

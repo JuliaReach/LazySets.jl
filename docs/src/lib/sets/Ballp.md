@@ -21,5 +21,5 @@ Inherited from [`AbstractCentrallySymmetric`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetric))
 * [`isbounded`](@ref isbounded(::AbstractCentrallySymmetric))
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetric))
-* [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetric{N}, ::Bool=false) where {N<:Real})
-* [`an_element`](@ref an_element(::AbstractCentrallySymmetric{N}) where {N<:Real})
+* [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetric{N}, ::Bool=false) where {N})
+* [`an_element`](@ref an_element(::AbstractCentrallySymmetric))
