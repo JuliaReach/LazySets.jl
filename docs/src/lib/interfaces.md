@@ -239,16 +239,15 @@ This interface defines the following functions:
 
 ```@docs
 dim(P::AbstractPolygon)
-linear_map(::AbstractMatrix{N}, P::AbstractPolygon{N}) where {N<:Real}
 ```
 
 The following helper functions are used for sorting directions:
 
 ```@docs
 LazySets.jump2pi
-<=(::AbstractVector{N}, ::AbstractVector{N}) where {N<:AbstractFloat}
-<=(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
-LazySets.quadrant(::AbstractVector{Real})
+<=(::AbstractVector, ::AbstractVector)
+LazySets._leq_trig(::AbstractVector{N}, ::AbstractVector{N}) where {N<:AbstractFloat}
+LazySets.quadrant(::AbstractVector{N}) where {N}
 ```
 
 ### Implementations
