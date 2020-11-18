@@ -23,6 +23,7 @@ Inherited from [`AbstractPolytope`](@ref):
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetricPolytope))
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
+* [`an_element`](@ref an_element(::AbstractCentrallySymmetricPolytope))
 
 Inherited from [`AbstractZonotope`](@ref):
 * [`ngens`](@ref ngens(::AbstractZonotope))
@@ -37,14 +38,13 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`constraints_list`](@ref constraints_list(::AbstractHyperrectangle{N}) where {N})
 
 Inherited from [`AbstractSingleton`](@ref):
-* [`σ`](@ref σ(::AbstractVector{N}, ::AbstractSingleton{N}) where {N<:Real})
-* [`∈`](@ref ∈(::AbstractVector{N}, ::AbstractSingleton{N}) where {N<:Real})
-* [`an_element`](@ref an_element(::AbstractSingleton{N}) where {N<:Real})
+* [`σ`](@ref σ(::AbstractVector, ::AbstractSingleton))
+* [`∈`](@ref ∈(::AbstractVector, ::AbstractSingleton))
 * [`center`](@ref center(::AbstractSingleton))
 * [`vertices`](@ref vertices(::AbstractSingleton{N}) where {N})
-* [`vertices_list`](@ref vertices_list(::AbstractSingleton{N}) where {N<:Real})
-* [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton{N}) where {N<:Real})
-* [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton{N}, ::Int) where {N<:Real})
-* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractSingleton{N}) where {N<:Real})
-* [`generators`](@ref generators(::AbstractSingleton{N}) where {N<:Real})
-* [`genmat`](@ref genmat(::AbstractSingleton{N}) where {N<:Real})
+* [`vertices_list`](@ref vertices_list(::AbstractSingleton))
+* [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton{N}) where {N})
+* [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton{N}, ::Int) where {N})
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractSingleton))
+* [`generators`](@ref generators(::AbstractSingleton{N}) where {N})
+* [`genmat`](@ref genmat(::AbstractSingleton{N}) where {N})

@@ -397,24 +397,23 @@ AbstractSingleton
 This interface defines the following functions:
 
 ```@docs
-σ(::AbstractVector{N}, ::AbstractSingleton{N}) where {N<:Real}
-ρ(::AbstractVector{N}, ::AbstractSingleton{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::AbstractSingleton{N}) where {N<:Real}
-an_element(::AbstractSingleton{N}) where {N<:Real}
+σ(::AbstractVector, ::AbstractSingleton)
+ρ(::AbstractVector, ::AbstractSingleton)
+∈(::AbstractVector, ::AbstractSingleton)
 center(::AbstractSingleton)
 vertices(::AbstractSingleton{N}) where {N}
-vertices_list(::AbstractSingleton{N}) where {N<:Real}
-radius_hyperrectangle(::AbstractSingleton{N}) where {N<:Real}
-radius_hyperrectangle(::AbstractSingleton{N}, ::Int) where {N<:Real}
-high(::AbstractSingleton{N}) where {N<:Real}
-high(::AbstractSingleton{N}, ::Int) where {N<:Real}
-low(::AbstractSingleton{N}) where {N<:Real}
-low(::AbstractSingleton{N}, ::Int) where {N<:Real}
-linear_map(::AbstractMatrix{N}, ::AbstractSingleton{N}) where {N<:Real}
-generators(::AbstractSingleton{N}) where {N<:Real}
-genmat(::AbstractSingleton{N}) where {N<:Real}
+vertices_list(::AbstractSingleton)
+radius_hyperrectangle(::AbstractSingleton{N}) where {N}
+radius_hyperrectangle(::AbstractSingleton{N}, ::Int) where {N}
+high(::AbstractSingleton)
+high(::AbstractSingleton, ::Int)
+low(::AbstractSingleton)
+low(::AbstractSingleton, ::Int)
+linear_map(::AbstractMatrix, ::AbstractSingleton)
+generators(::AbstractSingleton{N}) where {N}
+genmat(::AbstractSingleton{N}) where {N}
 ngens(::AbstractSingleton)
-plot_recipe(::AbstractSingleton{N}, ::N=zero(N)) where {N<:Real}
+plot_recipe(::AbstractSingleton{N}, ::Any=zero(N)) where {N}
 RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractSingleton{N}, ::N=zero(N)) where {N<:Real}
 ```
 
