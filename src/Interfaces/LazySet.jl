@@ -114,10 +114,10 @@ Hyperrectangle
 Intersection
 IntersectionArray
 Interval
+Line
 Line2D
 LineSegment
 LinearMap
-Line{N,VN} where VN<:AbstractArray{N,1} where N<:Real
 MinkowskiSum
 MinkowskiSumArray
 ResetMap

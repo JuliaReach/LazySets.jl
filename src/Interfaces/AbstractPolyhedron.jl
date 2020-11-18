@@ -18,8 +18,8 @@ julia> subtypes(AbstractPolyhedron)
  HPolyhedron
  HalfSpace
  Hyperplane
+ Line
  Line2D
- Line{N,VN} where VN<:AbstractArray{N,1} where N<:Real
  Universe
 ```
 
