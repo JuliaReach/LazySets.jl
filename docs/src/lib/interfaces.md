@@ -434,15 +434,15 @@ This interface defines the following functions:
 
 ```@docs
 dim(::AbstractAffineMap)
-σ(::AbstractVector{N}, ::AbstractAffineMap{N}) where {N<:Real}
-ρ(::AbstractVector{N}, ::AbstractAffineMap{N}) where {N<:Real}
+σ(::AbstractVector, ::AbstractAffineMap)
+ρ(::AbstractVector, ::AbstractAffineMap)
 an_element(::AbstractAffineMap)
 isempty(::AbstractAffineMap)
 isbounded(::AbstractAffineMap)
-∈(::AbstractVector{N}, ::AbstractAffineMap{N}) where {N<:Real}
-vertices_list(::AbstractAffineMap{N}) where {N<:Real}
-constraints_list(::AbstractAffineMap{N}) where {N<:Real}
-linear_map(::AbstractMatrix{N}, ::AbstractAffineMap{N}) where {N<:Real}
+∈(::AbstractVector, ::AbstractAffineMap)
+vertices_list(::AbstractAffineMap)
+constraints_list(::AbstractAffineMap)
+linear_map(::AbstractMatrix, ::AbstractAffineMap)
 ```
 
 ### Implementations
