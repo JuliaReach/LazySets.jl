@@ -37,9 +37,9 @@ Inherited from [`AbstractZonotope`](@ref):
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
-* [`high`](@ref high(::AbstractHyperrectangle{N}) where {N<:Real})
-* [`low`](@ref low(::AbstractHyperrectangle{N}) where {N<:Real})
-* [`constraints_list`](@ref constraints_list(::AbstractHyperrectangle{N}) where {N<:Real})
+* [`high`](@ref high(::AbstractHyperrectangle))
+* [`low`](@ref low(::AbstractHyperrectangle))
+* [`constraints_list`](@ref constraints_list(::AbstractHyperrectangle{N}) where {N})
 
 Inherited from [`AbstractSingleton`](@ref):
 * [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton{N}) where {N<:Real})

@@ -356,21 +356,22 @@ This interface defines the following functions:
 ```@docs
 norm(::AbstractHyperrectangle, ::Real=Inf)
 radius(::AbstractHyperrectangle, ::Real=Inf)
-σ(::AbstractVector{N}, ::AbstractHyperrectangle{N}) where {N<:Real}
-ρ(::AbstractVector{N}, ::AbstractHyperrectangle{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::AbstractHyperrectangle{N}) where {N<:Real}
-vertices_list(::AbstractHyperrectangle{N}) where {N<:Real}
-constraints_list(::AbstractHyperrectangle{N}) where {N<:Real}
-high(::AbstractHyperrectangle{N}) where {N<:Real}
-high(::AbstractHyperrectangle{N}, ::Int) where {N<:Real}
-low(::AbstractHyperrectangle{N}) where {N<:Real}
-low(::AbstractHyperrectangle{N}, ::Int) where {N<:Real}
+σ(::AbstractVector, ::AbstractHyperrectangle)
+ρ(::AbstractVector, ::AbstractHyperrectangle)
+∈(::AbstractVector, ::AbstractHyperrectangle)
+vertices_list(::AbstractHyperrectangle)
+constraints_list(::AbstractHyperrectangle{N}) where {N}
+high(::AbstractHyperrectangle)
+high(::AbstractHyperrectangle, ::Int)
+low(::AbstractHyperrectangle)
+low(::AbstractHyperrectangle, ::Int)
 isflat(::AbstractHyperrectangle)
-split(::AbstractHyperrectangle{N}, ::AbstractVector{Int}) where {N<:Real}
+split(::AbstractHyperrectangle{N}, ::AbstractVector{Int}) where {N}
 generators(::AbstractHyperrectangle)
 genmat(::AbstractHyperrectangle)
-ngens(::AbstractHyperrectangle{N}) where {N<:Real}
+ngens(::AbstractHyperrectangle{N}) where {N}
 rectify(::AbstractHyperrectangle)
+volume(::AbstractHyperrectangle)
 ```
 
 ### Implementations
