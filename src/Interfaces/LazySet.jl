@@ -43,17 +43,13 @@ elements ``x, y ∈ S`` and ``0 ≤ λ ≤ 1`` it holds that ``λ·x + (1-λ)·y
 for using different numeric types.
 
 Every concrete `LazySet` must define the following functions:
-- `σ(d::AbstractVector{N}, S::LazySet{N}) where {N<:Real}` -- the support vector
-    of `S` in a given direction `d`; note that the numeric type `N` of `d` and
-    `S` must be identical; for some set types `N` may be more restrictive than
-    `Real`
+- `σ(d::AbstractVector, S::LazySet)` -- the support vector of `S` in a given
+    direction `d`
 - `dim(S::LazySet)` -- the ambient dimension of `S`
 
 The function
-- `ρ(d::AbstractVector{N}, S::LazySet{N}) where {N<:Real}` -- the support
-    function of `S` in a given direction `d`; note that the numeric type `N` of
-    `d` and `S` must be identical; for some set types `N` may be more
-    restrictive than `Real`
+- `ρ(d::AbstractVector, S::LazySet)` -- the support function of `S` in a given
+    direction `d`
 is optional because there is a fallback implementation relying on `σ`.
 However, for unbounded sets (which includes most lazy set types) this fallback
 cannot be used and an explicit method must be implemented.
