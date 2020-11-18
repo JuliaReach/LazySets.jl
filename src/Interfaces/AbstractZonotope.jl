@@ -138,7 +138,7 @@ function Base.iterate(it::FallbackGeneratorIterator, state::Int=1)
 end
 
 """
-    generators_fallback(Z::AbstractZonotope{N}) where {N}
+    generators_fallback(Z::AbstractZonotope)
 
 Fallback definition of `generators` for zonotopic sets.
 
@@ -150,7 +150,7 @@ Fallback definition of `generators` for zonotopic sets.
 
 An iterator over the generators of `Z`.
 """
-function generators_fallback(Z::AbstractZonotope{N}) where {N}
+function generators_fallback(Z::AbstractZonotope)
     return FallbackGeneratorIterator(genmat(Z))
 end
 

@@ -124,7 +124,7 @@ function isuniversal(S::AbstractCentrallySymmetricPolytope{N},
 end
 
 """
-    center(H::AbstractCentrallySymmetricPolytope{N}, i::Int) where {N}
+    center(H::AbstractCentrallySymmetricPolytope, i::Int)
 
 Return the center along a given dimension of a centrally symmetric polytope.
 
@@ -137,6 +137,6 @@ Return the center along a given dimension of a centrally symmetric polytope.
 
 The center along a given dimension of the centrally symmetric polytope.
 """
-@inline function center(S::AbstractCentrallySymmetricPolytope{N}, i::Int) where {N}
+@inline function center(S::AbstractCentrallySymmetricPolytope, i::Int)
     return center(S)[i]
 end
