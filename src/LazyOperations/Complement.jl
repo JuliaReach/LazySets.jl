@@ -4,7 +4,7 @@ import Base: ∈,
 export Complement
 
 """
-    Complement{N<:Real, S<:LazySet{N}}
+    Complement{N, S<:LazySet{N}}
 
 Type that represents the complement of a convex set.
 
@@ -33,7 +33,7 @@ julia> Complement(C)
 BallInf{Float64,Array{Float64,1}}([0.0, 0.0], 1.0)
 ```
 """
-struct Complement{N<:Real, S<:LazySet{N}}
+struct Complement{N, S<:LazySet{N}}
     X::S
 end
 
@@ -68,7 +68,7 @@ function dim(C::Complement)
 end
 
 """
-    ∈(x::AbstractVector{N}, C::Complement{N}) where {N<:Real}
+    ∈(x::AbstractVector, C::Complement)
 
 Check whether a given point is contained in the complement of a convex set.
 
@@ -87,7 +87,7 @@ Check whether a given point is contained in the complement of a convex set.
     x ∈ X^C ⟺ x ∉ X
 ```
 """
-function ∈(x::AbstractVector{N}, C::Complement{N}) where {N<:Real}
+function ∈(x::AbstractVector, C::Complement)
     @assert length(x) == dim(C)
     return x ∉ C.X
 end

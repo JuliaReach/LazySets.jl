@@ -6,7 +6,7 @@ export UnionSetArray,
 # ========================================
 
 """
-   UnionSetArray{N<:Real, S<:LazySet{N}}
+   UnionSetArray{N, S<:LazySet{N}}
 
 Type that represents the set union of a finite number of convex sets.
 
@@ -14,7 +14,7 @@ Type that represents the set union of a finite number of convex sets.
 
 - `array` -- array of convex sets
 """
-struct UnionSetArray{N<:Real, S<:LazySet{N}}
+struct UnionSetArray{N, S<:LazySet{N}}
    array::Vector{S}
 end
 
@@ -48,7 +48,7 @@ function dim(cup::UnionSetArray)
 end
 
 """
-   array(cup::UnionSetArray{N, S}) where {N<:Real, S<:LazySet{N}}
+   array(cup::UnionSetArray{N, S}) where {N, S<:LazySet{N}}
 
 Return the array of a union of a finite number of convex sets.
 
@@ -60,12 +60,12 @@ Return the array of a union of a finite number of convex sets.
 
 The array that holds the union of a finite number of convex sets.
 """
-function array(cup::UnionSetArray{N, S}) where {N<:Real, S<:LazySet{N}}
+function array(cup::UnionSetArray{N, S}) where {N, S<:LazySet{N}}
    return cup.array
 end
 
 """
-   σ(d::AbstractVector{N}, cup::UnionSetArray{N}; [algorithm]="support_vector") where {N<:Real}
+   σ(d::AbstractVector, cup::UnionSetArray; [algorithm]="support_vector")
 
 Return the support vector of the union of a finite number of convex sets in
 a given direction.
@@ -98,24 +98,27 @@ computed (without passing through the support vector), consider using the altern
 `algorithm="support_function"` implementation, which evaluates the support function
 of each set directly and then calls only the support vector of one of the ``Xᵢ``.
 """
-function σ(d::AbstractVector{N}, cup::UnionSetArray{N}; algorithm="support_vector") where {N<:Real}
+function σ(d::AbstractVector, cup::UnionSetArray; algorithm="support_vector")
    A = array(cup)
+
    if algorithm == "support_vector"
        σarray = map(Xi -> σ(d, Xi), A)
        ρarray = map(vi -> dot(d, vi), σarray)
        m = argmax(ρarray)
        return σarray[m]
+
    elseif algorithm == "support_function"
        ρarray = map(Xi -> ρ(d, Xi), A)
        m = argmax(ρarray)
        return σ(d, A[m])
+
    else
        error("algorithm $algorithm for the support vector of a `UnionSetArray` is unknown")
    end
 end
 
 """
-   ρ(d::AbstractVector{N}, cup::UnionSetArray{N}) where {N<:Real}
+   ρ(d::AbstractVector, cup::UnionSetArray)
 
 Return the support function of the union of a finite number of convex sets in
 a given direction.
@@ -134,14 +137,14 @@ The support function in the given direction.
 The support function of the union of a finite number of convex sets ``X₁, X₂, ...``
 can be obtained as the maximum of ``ρ(d, X₂), ρ(d, X₂), ...``.
 """
-function ρ(d::AbstractVector{N}, cup::UnionSetArray{N}) where {N<:Real}
+function ρ(d::AbstractVector, cup::UnionSetArray)
    A = array(cup)
    ρarray = map(Xi -> ρ(d, Xi), A)
    return maximum(ρarray)
 end
 
 """
-   an_element(cup::UnionSetArray{N}) where {N<:Real}
+   an_element(cup::UnionSetArray)
 
 Return some element of a union of a finite number of convex sets.
 
@@ -157,12 +160,12 @@ An element in the union of a finite number of convex sets.
 
 We use `an_element` on the first wrapped set.
 """
-function an_element(cup::UnionSetArray{N}) where {N<:Real}
+function an_element(cup::UnionSetArray)
    return an_element(array(cup)[1])
 end
 
 """
-   ∈(x::AbstractVector{N}, cup::UnionSetArray{N}) where {N<:Real}
+   ∈(x::AbstractVector, cup::UnionSetArray)
 
 Check whether a given point is contained in a union of a finite number of convex
 sets.
@@ -176,7 +179,7 @@ sets.
 
 `true` iff ``x ∈ cup``.
 """
-function ∈(x::AbstractVector{N}, cup::UnionSetArray{N}) where {N<:Real}
+function ∈(x::AbstractVector, cup::UnionSetArray)
    return any(X -> x ∈ X, array(cup))
 end
 

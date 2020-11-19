@@ -1,7 +1,7 @@
 export AffineMap
 
 """
-    AffineMap{N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM},
+    AffineMap{N, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM},
               VN<:AbstractVector{NM}} <: AbstractAffineMap{N, S}
 
 Type that represents an affine transformation ``M⋅X ⊕ v`` of a convex set ``X``.
@@ -73,14 +73,14 @@ julia> AffineMap(A, EmptySet{Int}(2), b3)
 EmptySet{Int64}(2)
 ```
 """
-struct AffineMap{N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM},
+struct AffineMap{N, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM},
                  VN<:AbstractVector{NM}} <: AbstractAffineMap{N, S}
     M::MAT
     X::S
     v::VN
 
     # default constructor with dimension match check
-    function AffineMap(M::MAT, X::S, v::VN) where {N<:Real, S<:LazySet{N}, NM,
+    function AffineMap(M::MAT, X::S, v::VN) where {N, S<:LazySet{N}, NM,
                                                    MAT<:AbstractMatrix{NM},
                                                    VN<:AbstractVector{NM}}
 
@@ -104,7 +104,7 @@ function AffineMap(M::UniformScaling, X::LazySet, v::AbstractVector)
 end
 
 # convenience constructor from a scalar
-function AffineMap(α::N, X::LazySet, v::AbstractVector) where {N<:Real}
+function AffineMap(α::N, X::LazySet, v::AbstractVector) where {N}
     if α == one(N)
         return Translation(X, v)
     end
@@ -122,8 +122,7 @@ end
 
 # ZeroSet is "almost absorbing" for the linear map (only the dimension changes)
 # such that only the translation vector remains
-function AffineMap(M::AbstractMatrix{N}, Z::ZeroSet{N}, v::AbstractVector{N}
-                  ) where {N<:Real}
+function AffineMap(M::AbstractMatrix, Z::ZeroSet, v::AbstractVector)
     @assert dim(Z) == size(M, 2) "a matrix of size $(size(M)) cannot be " *
         "applied to a set of dimension $(dim(Z))"
 
@@ -135,8 +134,7 @@ function AffineMap(M::AbstractMatrix{N}, Z::ZeroSet{N}, v::AbstractVector{N}
 end
 
 # EmptySet is absorbing for AffineMap
-function AffineMap(M::AbstractMatrix{N}, ∅::EmptySet{N}, v::AbstractVector{N}
-                  ) where {N<:Real}
+function AffineMap(M::AbstractMatrix, ∅::EmptySet, v::AbstractVector)
     return ∅
 end
 
@@ -148,7 +146,7 @@ function matrix(am::AffineMap)
     return am.M
 end
 
-function vector(am::AffineMap{N}) where {N<:Real}
+function vector(am::AffineMap)
     return am.v
 end
 

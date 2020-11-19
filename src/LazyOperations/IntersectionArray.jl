@@ -6,7 +6,7 @@ export IntersectionArray,
 # ================================
 
 """
-    IntersectionArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
+    IntersectionArray{N, S<:LazySet{N}} <: LazySet{N}
 
 Type that represents the intersection of a finite number of convex sets.
 
@@ -27,7 +27,7 @@ Constructors:
 - `IntersectionArray([n]::Int=0, [N]::Type=Float64)`
  -- constructor for an empty sum with optional size hint and numeric type
 """
-struct IntersectionArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
+struct IntersectionArray{N, S<:LazySet{N}} <: LazySet{N}
    array::Vector{S}
 end
 
@@ -51,7 +51,7 @@ end
 @declare_array_version(Intersection, IntersectionArray)
 
 """
-    array(ia::IntersectionArray{N, S}) where {N<:Real, S<:LazySet{N}}
+    array(ia::IntersectionArray)
 
 Return the array of an intersection of a finite number of convex sets.
 
@@ -63,7 +63,7 @@ Return the array of an intersection of a finite number of convex sets.
 
 The array of an intersection of a finite number of convex sets.
 """
-function array(ia::IntersectionArray{N, S}) where {N<:Real, S<:LazySet{N}}
+function array(ia::IntersectionArray)
    return ia.array
 end
 
@@ -89,7 +89,7 @@ function dim(ia::IntersectionArray)
 end
 
 """
-    σ(d::AbstractVector{N}, ia::IntersectionArray{N}) where {N<:Real}
+    σ(d::AbstractVector, ia::IntersectionArray)
 
 Return the support vector of an intersection of a finite number of sets in a
 given direction.
@@ -104,7 +104,7 @@ given direction.
 The support vector in the given direction.
 If the direction has norm zero, the result depends on the individual sets.
 """
-function σ(d::AbstractVector{N}, ia::IntersectionArray{N}) where {N<:Real}
+function σ(d::AbstractVector, ia::IntersectionArray)
    # TODO implement
    error("not implemented yet")
 end
@@ -135,7 +135,7 @@ function isbounded(ia::IntersectionArray)
 end
 
 """
-    ∈(x::AbstractVector{N}, ia::IntersectionArray{N}) where {N<:Real}
+    ∈(x::AbstractVector, ia::IntersectionArray)
 
 Check whether a given point is contained in an intersection of a finite number
 of convex sets.
@@ -149,7 +149,7 @@ of convex sets.
 
 `true` iff ``x ∈ ia``.
 """
-function ∈(x::AbstractVector{N}, ia::IntersectionArray{N}) where {N<:Real}
+function ∈(x::AbstractVector, ia::IntersectionArray)
    for S in ia.array
        if x ∉ S
            return false
@@ -159,7 +159,7 @@ function ∈(x::AbstractVector{N}, ia::IntersectionArray{N}) where {N<:Real}
 end
 
 """
-    constraints_list(ia::IntersectionArray{N}) where {N<:Real}
+    constraints_list(ia::IntersectionArray{N}) where {N}
 
 Return the list of constraints of an intersection of a finite number of
 (polyhedral) sets.
@@ -182,7 +182,7 @@ We assume that the underlying sets are polyhedral, i.e., offer a method
 We create the polyhedron from the `constraints_list`s of the sets and remove
 redundant constraints.
 """
-function constraints_list(ia::IntersectionArray{N}) where {N<:Real}
+function constraints_list(ia::IntersectionArray{N}) where {N}
    constraints = Vector{LinearConstraint{N, Vector{N}}}() # TODO: use vector type of ia
    for X in array(ia)
        clist_X = _normal_Vector(X)

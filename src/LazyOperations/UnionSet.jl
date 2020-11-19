@@ -8,7 +8,7 @@ export UnionSet,
 # ========================================
 
 """
-    UnionSet{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}}
+    UnionSet{N, S1<:LazySet{N}, S2<:LazySet{N}}
 
 Type that represents the set union of two convex sets.
 
@@ -17,12 +17,12 @@ Type that represents the set union of two convex sets.
 - `X` -- convex set
 - `Y` -- convex set
 """
-struct UnionSet{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}}
+struct UnionSet{N, S1<:LazySet{N}, S2<:LazySet{N}}
     X::S1
     Y::S2
 
     # default constructor with dimension check
-    function UnionSet(X::S1, Y::S2) where{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}}
+    function UnionSet(X::S1, Y::S2) where {N, S1<:LazySet{N}, S2<:LazySet{N}}
         @assert dim(X) == dim(Y) "sets in a union must have the same dimension"
         return new{N, S1, S2}(X, Y)
     end
@@ -79,7 +79,7 @@ function dim(cup::UnionSet)
 end
 
 """
-    σ(d::AbstractVector{N}, cup::UnionSet{N}; [algorithm]="support_vector") where {N<:Real}
+    σ(d::AbstractVector, cup::UnionSet; [algorithm]="support_vector")
 
 Return the support vector of the union of two convex sets in a given direction.
 
@@ -112,21 +112,24 @@ computed (without passing through the support vector), consider using the altern
 of each set directly and then calls only the support vector of either ``X`` *or*
 ``Y``.
 """
-function σ(d::AbstractVector{N}, cup::UnionSet{N}; algorithm="support_vector") where {N<:Real}
+function σ(d::AbstractVector, cup::UnionSet; algorithm="support_vector")
     X, Y = cup.X, cup.Y
+
     if algorithm == "support_vector"
         σX, σY = σ(d, X), σ(d, Y)
         return dot(d, σX) > dot(d, σY) ? σX : σY
+
     elseif algorithm == "support_function"
         m = argmax([ρ(d, X), ρ(d, Y)])
         return m == 1 ? σ(d, X) : σ(d, Y)
+
     else
         error("algorithm $algorithm for the support vector of a `UnionSet` is unknown")
     end
 end
 
 """
-    ρ(d::AbstractVector{N}, cup::UnionSet{N}) where {N<:Real}
+    ρ(d::AbstractVector, cup::UnionSet)
 
 Return the support function of the union of two convex sets in a given direction.
 
@@ -144,13 +147,13 @@ The support function in the given direction.
 The support function of the union of two convex sets ``X`` and ``Y`` is the
 maximum of the support functions of ``X`` and ``Y``.
 """
-function ρ(d::AbstractVector{N}, cup::UnionSet{N}) where {N<:Real}
+function ρ(d::AbstractVector, cup::UnionSet)
     X, Y = cup.X, cup.Y
     return max(ρ(d, X), ρ(d, Y))
 end
 
 """
-    an_element(cup::UnionSet{N}) where {N<:Real}
+    an_element(cup::UnionSet)
 
 Return some element of a union of two convex sets.
 
@@ -166,12 +169,12 @@ An element in the union of two convex sets.
 
 We use `an_element` on the first wrapped set.
 """
-function an_element(cup::UnionSet{N}) where {N<:Real}
+function an_element(cup::UnionSet)
     return an_element(cup.X)
 end
 
 """
-    ∈(x::AbstractVector{N}, cup::UnionSet{N}) where {N<:Real}
+    ∈(x::AbstractVector, cup::UnionSet)
 
 Check whether a given point is contained in a union of two convex sets.
 
@@ -184,7 +187,7 @@ Check whether a given point is contained in a union of two convex sets.
 
 `true` iff ``x ∈ cup``.
 """
-function ∈(x::AbstractVector{N}, cup::UnionSet{N}) where {N<:Real}
+function ∈(x::AbstractVector, cup::UnionSet)
     return x ∈ cup.X || x ∈ cup.Y
 end
 
