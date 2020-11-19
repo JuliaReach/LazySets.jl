@@ -24,6 +24,7 @@ translate(::HPoly{N}, ::AbstractVector{N}) where {N<:Real}
 polyhedron(::HPoly{N}) where {N<:Real}
 remove_redundant_constraints(::HPoly{N}) where {N<:Real}
 remove_redundant_constraints!(::HPoly{N}) where {N<:Real}
+_isbounded_stiemke(::HPolyhedron{N}) where {N<:Real}
 ```
 
 Inherited from [`LazySet`](@ref):

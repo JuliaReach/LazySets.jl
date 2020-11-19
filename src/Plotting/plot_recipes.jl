@@ -90,7 +90,7 @@ end
 """
     plot_list(list::AbstractVector{VN}, [ε]::N=N(PLOT_PRECISION),
               [Nφ]::Int=PLOT_POLAR_DIRECTIONS, [fast]::Bool=false; ...)
-        where {N<:Real, VN<:LazySet{N}}
+        where {N, VN<:LazySet{N}}
 
 Plot a list of convex sets.
 
@@ -139,7 +139,7 @@ julia> plot(Bs, 1e-2)  # faster but less accurate than the previous call
 """
 @recipe function plot_list(list::AbstractVector{VN}, ε::N=N(PLOT_PRECISION),
                            Nφ::Int=PLOT_POLAR_DIRECTIONS, fast::Bool=false
-                          ) where {N<:Real, VN<:LazySet{N}}
+                          ) where {N, VN<:LazySet{N}}
     if fast
         label --> DEFAULT_LABEL
         grid --> DEFAULT_GRID
@@ -199,7 +199,7 @@ julia> plot(Bs, 1e-2)  # faster but less accurate than the previous call
 end
 
 """
-    plot_lazyset(X::LazySet{N}, [ε]::N=N(PLOT_PRECISION); ...) where {N<:Real}
+    plot_lazyset(X::LazySet{N}, [ε]::N=N(PLOT_PRECISION); ...) where {N}
 
 Plot a convex set.
 
@@ -210,7 +210,7 @@ Plot a convex set.
 
 ### Notes
 
-See [`plot_recipe(::LazySet{<:Real})`](@ref).
+See [`plot_recipe(::LazySet)`](@ref).
 
 For polyhedral set types (subtypes of `AbstractPolyhedron`), the argument `ε` is
 ignored.
@@ -225,8 +225,7 @@ julia> plot(B, 1e-3)  # default accuracy value (explicitly given for clarity)
 julia> plot(B, 1e-2)  # faster but less accurate than the previous call
 ```
 """
-@recipe function plot_lazyset(X::LazySet{N}, ε::N=N(PLOT_PRECISION)
-                             ) where {N<:Real}
+@recipe function plot_lazyset(X::LazySet{N}, ε::N=N(PLOT_PRECISION)) where {N}
     if dim(X) == 1
         plot_recipe(X, ε)
     else
@@ -280,7 +279,7 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
 end
 
 """
-    plot_singleton(S::AbstractSingleton{N}, [ε]::N=zero(N); ...) where {N<:Real}
+    plot_singleton(S::AbstractSingleton{N}, [ε]::N=zero(N); ...) where {N}
 
 Plot a singleton.
 
@@ -295,8 +294,7 @@ Plot a singleton.
 julia> plot(Singleton([0.5, 1.0]))
 ```
 """
-@recipe function plot_singleton(S::AbstractSingleton{N}, ε::N=zero(N)
-                               ) where {N<:Real}
+@recipe function plot_singleton(S::AbstractSingleton{N}, ε::N=zero(N)) where {N}
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
     if DEFAULT_ASPECT_RATIO != :none
@@ -328,7 +326,7 @@ Plot an empty set.
 - `∅` -- empty set
 - `ε` -- (optional, default: `0`) ignored, used for dispatch
 """
-@recipe function plot_emptyset(∅::EmptySet{N}, ε::N=zero(N)) where {N<:Real}
+@recipe function plot_emptyset(∅::EmptySet{N}, ε::N=zero(N)) where {N}
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
     if DEFAULT_ASPECT_RATIO != :none
@@ -340,7 +338,7 @@ end
 
 """
     plot_intersection(cap::Intersection{N}, [ε]::N=zero(N),
-                      [Nφ]::Int=PLOT_POLAR_DIRECTIONS) where {N<:Real}
+                      [Nφ]::Int=PLOT_POLAR_DIRECTIONS) where {N}
 
 Plot a lazy intersection.
 
@@ -386,7 +384,7 @@ julia> plot(X, -1., 100)  # equivalent to the above line
 @recipe function plot_intersection(cap::Intersection{N},
                                    ε::N=zero(N),
                                    Nφ::Int=PLOT_POLAR_DIRECTIONS
-                                  ) where {N<:Real}
+                                  ) where {N}
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
     if DEFAULT_ASPECT_RATIO != :none
@@ -425,10 +423,10 @@ end
 
 # non-convex sets
 
-@recipe function plot_union(cup::UnionSet{N}, ε::N=zero(N)) where {N<:Real}
+@recipe function plot_union(cup::UnionSet{N}, ε::N=zero(N)) where {N}
     @series [cup.X, cup.Y], ε
 end
 
-@recipe function plot_union(cup::UnionSetArray{N}, ε::N=zero(N)) where {N<:Real}
+@recipe function plot_union(cup::UnionSetArray{N}, ε::N=zero(N)) where {N}
     @series array(cup), ε
 end

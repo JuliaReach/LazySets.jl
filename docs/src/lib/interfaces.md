@@ -59,8 +59,7 @@ norm(::LazySet, ::Real=Inf)
 radius(::LazySet, ::Real=Inf)
 diameter(::LazySet, ::Real=Inf)
 isbounded(::LazySet)
-_isbounded_unit_dimensions(::LazySet{N}) where {N<:Real}
-_isbounded_stiemke(::HPolyhedron{N}) where {N<:Real}
+_isbounded_unit_dimensions(::LazySet{N}) where {N}
 an_element(::LazySet{N}) where {N}
 tosimplehrep(::LazySet)
 isuniversal(::LazySet{N}, ::Bool=false) where {N}
@@ -81,8 +80,8 @@ that the overapproximation using iterative refinement is available:
 
 ```@docs
 plot_recipe(::LazySet{N}, ::Any=zero(N)) where {N}
-RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::LazySet{N}, ::N=N(1e-3)) where {N<:Real}
-RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractVector{VN}, ::N=N(1e-3), ::Int=40, ::Bool=false) where {N<:Real, VN<:LazySet{N}}
+RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::LazySet{N}, ::N=N(1e-3)) where {N}
+RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractVector{VN}, ::N=N(1e-3), ::Int=40, ::Bool=false) where {N, VN<:LazySet{N}}
 ```
 
 For three-dimensional sets, we support `Makie`:
@@ -239,16 +238,15 @@ This interface defines the following functions:
 
 ```@docs
 dim(P::AbstractPolygon)
-linear_map(::AbstractMatrix{N}, P::AbstractPolygon{N}) where {N<:Real}
 ```
 
 The following helper functions are used for sorting directions:
 
 ```@docs
 LazySets.jump2pi
-<=(::AbstractVector{N}, ::AbstractVector{N}) where {N<:AbstractFloat}
-<=(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
-LazySets.quadrant(::AbstractVector{Real})
+<=(::AbstractVector, ::AbstractVector)
+LazySets._leq_trig(::AbstractVector{N}, ::AbstractVector{N}) where {N<:AbstractFloat}
+LazySets.quadrant(::AbstractVector{N}) where {N}
 ```
 
 ### Implementations
@@ -266,18 +264,18 @@ AbstractHPolygon
 This interface defines the following functions:
 
 ```@docs
-an_element(::AbstractHPolygon{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::AbstractHPolygon{N}) where {N<:Real}
+an_element(::AbstractHPolygon)
+∈(::AbstractVector, ::AbstractHPolygon)
 rand(::Type{HPOLYGON}) where {HPOLYGON<:AbstractHPolygon}
 tohrep(::HPOLYGON) where {HPOLYGON<:AbstractHPolygon}
-tovrep(::AbstractHPolygon{N}) where {N<:Real}
-addconstraint!(::AbstractHPolygon{N}, ::LinearConstraint{N}) where {N<:Real}
-addconstraint!(::Vector{LC}, ::LinearConstraint{N}) where {N<:Real, LC<:LinearConstraint{N}}
-normalize(P::AbstractHPolygon{N}, p=N(2)) where {N<:Real}
-isredundant(::LinearConstraint{N}, ::LinearConstraint{N}, ::LinearConstraint{N}) where {N<:Real}
+tovrep(::AbstractHPolygon)
+addconstraint!(::AbstractHPolygon, ::LinearConstraint)
+addconstraint!(::Vector{LC}, ::LinearConstraint) where {LC<:LinearConstraint}
+normalize(P::AbstractHPolygon{N}, p=N(2)) where {N}
+isredundant(::LinearConstraint, ::LinearConstraint, ::LinearConstraint)
 remove_redundant_constraints!(::AbstractHPolygon)
-constraints_list(::AbstractHPolygon{N}) where {N<:Real}
-vertices_list(::AbstractHPolygon{N}) where {N<:Real}
+constraints_list(::AbstractHPolygon)
+vertices_list(::AbstractHPolygon{N}) where {N}
 isbounded(::AbstractHPolygon, ::Bool=true)
 ```
 
@@ -356,21 +354,22 @@ This interface defines the following functions:
 ```@docs
 norm(::AbstractHyperrectangle, ::Real=Inf)
 radius(::AbstractHyperrectangle, ::Real=Inf)
-σ(::AbstractVector{N}, ::AbstractHyperrectangle{N}) where {N<:Real}
-ρ(::AbstractVector{N}, ::AbstractHyperrectangle{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::AbstractHyperrectangle{N}) where {N<:Real}
-vertices_list(::AbstractHyperrectangle{N}) where {N<:Real}
-constraints_list(::AbstractHyperrectangle{N}) where {N<:Real}
-high(::AbstractHyperrectangle{N}) where {N<:Real}
-high(::AbstractHyperrectangle{N}, ::Int) where {N<:Real}
-low(::AbstractHyperrectangle{N}) where {N<:Real}
-low(::AbstractHyperrectangle{N}, ::Int) where {N<:Real}
+σ(::AbstractVector, ::AbstractHyperrectangle)
+ρ(::AbstractVector, ::AbstractHyperrectangle)
+∈(::AbstractVector, ::AbstractHyperrectangle)
+vertices_list(::AbstractHyperrectangle)
+constraints_list(::AbstractHyperrectangle{N}) where {N}
+high(::AbstractHyperrectangle)
+high(::AbstractHyperrectangle, ::Int)
+low(::AbstractHyperrectangle)
+low(::AbstractHyperrectangle, ::Int)
 isflat(::AbstractHyperrectangle)
-split(::AbstractHyperrectangle{N}, ::AbstractVector{Int}) where {N<:Real}
+split(::AbstractHyperrectangle{N}, ::AbstractVector{Int}) where {N}
 generators(::AbstractHyperrectangle)
 genmat(::AbstractHyperrectangle)
-ngens(::AbstractHyperrectangle{N}) where {N<:Real}
+ngens(::AbstractHyperrectangle{N}) where {N}
 rectify(::AbstractHyperrectangle)
+volume(::AbstractHyperrectangle)
 ```
 
 ### Implementations
@@ -396,25 +395,24 @@ AbstractSingleton
 This interface defines the following functions:
 
 ```@docs
-σ(::AbstractVector{N}, ::AbstractSingleton{N}) where {N<:Real}
-ρ(::AbstractVector{N}, ::AbstractSingleton{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::AbstractSingleton{N}) where {N<:Real}
-an_element(::AbstractSingleton{N}) where {N<:Real}
+σ(::AbstractVector, ::AbstractSingleton)
+ρ(::AbstractVector, ::AbstractSingleton)
+∈(::AbstractVector, ::AbstractSingleton)
 center(::AbstractSingleton)
 vertices(::AbstractSingleton{N}) where {N}
-vertices_list(::AbstractSingleton{N}) where {N<:Real}
-radius_hyperrectangle(::AbstractSingleton{N}) where {N<:Real}
-radius_hyperrectangle(::AbstractSingleton{N}, ::Int) where {N<:Real}
-high(::AbstractSingleton{N}) where {N<:Real}
-high(::AbstractSingleton{N}, ::Int) where {N<:Real}
-low(::AbstractSingleton{N}) where {N<:Real}
-low(::AbstractSingleton{N}, ::Int) where {N<:Real}
-linear_map(::AbstractMatrix{N}, ::AbstractSingleton{N}) where {N<:Real}
-generators(::AbstractSingleton{N}) where {N<:Real}
-genmat(::AbstractSingleton{N}) where {N<:Real}
+vertices_list(::AbstractSingleton)
+radius_hyperrectangle(::AbstractSingleton{N}) where {N}
+radius_hyperrectangle(::AbstractSingleton{N}, ::Int) where {N}
+high(::AbstractSingleton)
+high(::AbstractSingleton, ::Int)
+low(::AbstractSingleton)
+low(::AbstractSingleton, ::Int)
+linear_map(::AbstractMatrix, ::AbstractSingleton)
+generators(::AbstractSingleton{N}) where {N}
+genmat(::AbstractSingleton{N}) where {N}
 ngens(::AbstractSingleton)
-plot_recipe(::AbstractSingleton{N}, ::N=zero(N)) where {N<:Real}
-RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractSingleton{N}, ::N=zero(N)) where {N<:Real}
+plot_recipe(::AbstractSingleton{N}, ::Any=zero(N)) where {N}
+RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractSingleton{N}, ::N=zero(N)) where {N}
 ```
 
 ### Implementations
@@ -434,15 +432,15 @@ This interface defines the following functions:
 
 ```@docs
 dim(::AbstractAffineMap)
-σ(::AbstractVector{N}, ::AbstractAffineMap{N}) where {N<:Real}
-ρ(::AbstractVector{N}, ::AbstractAffineMap{N}) where {N<:Real}
+σ(::AbstractVector, ::AbstractAffineMap)
+ρ(::AbstractVector, ::AbstractAffineMap)
 an_element(::AbstractAffineMap)
 isempty(::AbstractAffineMap)
 isbounded(::AbstractAffineMap)
-∈(::AbstractVector{N}, ::AbstractAffineMap{N}) where {N<:Real}
-vertices_list(::AbstractAffineMap{N}) where {N<:Real}
-constraints_list(::AbstractAffineMap{N}) where {N<:Real}
-linear_map(::AbstractMatrix{N}, ::AbstractAffineMap{N}) where {N<:Real}
+∈(::AbstractVector, ::AbstractAffineMap)
+vertices_list(::AbstractAffineMap)
+constraints_list(::AbstractAffineMap)
+linear_map(::AbstractMatrix, ::AbstractAffineMap)
 ```
 
 ### Implementations

@@ -36,11 +36,11 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`togrep`](@ref togrep(::AbstractZonotope))
 
 Inherited from [`AbstractHyperrectangle`](@ref):
-* [`∈`](@ref ∈(::AbstractVector{N}, ::AbstractHyperrectangle{N}) where {N<:Real})
+* [`∈`](@ref ∈(::AbstractVector, ::AbstractHyperrectangle))
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
-* [`vertices_list`](@ref vertices_list(::AbstractHyperrectangle{N}) where {N<:Real})
-* [`high`](@ref high(::AbstractHyperrectangle{N}) where {N<:Real})
-* [`low`](@ref low(::AbstractHyperrectangle{N}) where {N<:Real})
+* [`vertices_list`](@ref vertices_list(::AbstractHyperrectangle))
+* [`high`](@ref high(::AbstractHyperrectangle))
+* [`low`](@ref low(::AbstractHyperrectangle))
 * [`generators`](@ref generators(::AbstractHyperrectangle))
 * [`genmat`](@ref genmat(::AbstractHyperrectangle))
-* [`constraints_list`](@ref constraints_list(::AbstractHyperrectangle{N}) where {N<:Real})
+* [`constraints_list`](@ref constraints_list(::AbstractHyperrectangle{N}) where {N})
