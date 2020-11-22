@@ -244,6 +244,7 @@ overapproximate(∅::EmptySet, options...) = ∅
 overapproximate(∅::EmptySet) = ∅
 overapproximate(∅::EmptySet, ::Type{<:Hyperrectangle}) = ∅
 overapproximate(∅::EmptySet, ::Type{<:EmptySet}) = ∅
+overapproximate(∅::EmptySet, ::Real) = ∅
 
 """
     overapproximate(S::LazySet)
