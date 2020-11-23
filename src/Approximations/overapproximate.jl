@@ -24,6 +24,36 @@ function overapproximate(X::S, ::Type{S}, args...) where {S<:LazySet}
 end
 
 """
+    overapproximate(S::LazySet)
+
+Alias for `overapproximate(S, Hyperrectangle)` resp. `box_approximation(S)`.
+"""
+overapproximate(S::LazySet) = box_approximation(S)
+
+"""
+    overapproximate(S::LazySet, ::Type{<:Hyperrectangle})
+
+Alias for `box_approximation(S)`.
+"""
+function overapproximate(S::LazySet, ::Type{<:Hyperrectangle})
+    return box_approximation(S)
+end
+
+# alias while Rectification is not a LazySet (#1895)
+function overapproximate(r::Rectification, ::Type{<:Hyperrectangle})
+    return box_approximation(r)
+end
+
+"""
+    overapproximate(S::LazySet, ::Type{<:BallInf})
+
+Alias for `ballinf_approximation(S)`.
+"""
+function overapproximate(S::LazySet, ::Type{<:BallInf})
+    return ballinf_approximation(S)
+end
+
+"""
     overapproximate(S::LazySet{N},
                     ::Type{<:HPolygon},
                     [ε]::Real=Inf) where {N<:Real}
@@ -87,214 +117,15 @@ function overapproximate(S::LazySet, ε::Real)
     return overapproximate(S, HPolygon, ε)
 end
 
-"""
-    overapproximate(S::LazySet, Type{<:Hyperrectangle})
-
-Return an approximation of a given set as a hyperrectangle.
-
-### Input
-
-- `S`              -- set
-- `Hyperrectangle` -- type for dispatch
-
-### Output
-
-A hyperrectangle.
-
-### Algorithm
-
-The center of the hyperrectangle is obtained by averaging the support function
-of the given set in the canonical directions, and the lengths of the sides can
-be recovered from the distance among support functions in the same directions.
-"""
-function overapproximate(S::LazySet{N},
-                         ::Type{<:Hyperrectangle}) where {N<:Real}
-    c, r = box_approximation_helper(S)
-    if r[1] < 0
-        return EmptySet{N}(dim(S))
-    end
-    return Hyperrectangle(c, r)
-end
-
-"""
-    overapproximate(S::CartesianProductArray{N, <:AbstractHyperrectangle{N}},
-                    ::Type{<:Hyperrectangle}) where {N<:Real}
-
-Return a tight overapproximation of the Cartesian product array of a finite
-number of convex sets with and hyperrectangle.
-
-### Input
-
-- `S`              -- Cartesian product array of a finite number of convex set
-- `Hyperrectangle` -- type for dispatch
-
-### Output
-
-A hyperrectangle.
-
-### Algorithm
-
-This method falls back to the corresponding `convert` method. Since the sets wrapped
-by the Cartesian product array are hyperrectangles, it can be done efficiently
-without overapproximation.
-"""
-function overapproximate(S::CartesianProductArray{N, <:AbstractHyperrectangle{N}},
-                          ::Type{<:Hyperrectangle}) where {N<:Real}
-    return convert(Hyperrectangle, S)
-end
-
-"""
-    overapproximate(S::CartesianProduct{N, <:AbstractHyperrectangle{N}, <:AbstractHyperrectangle{N}},
-                    ::Type{<:Hyperrectangle}) where {N<:Real}
-
-Return a tight overapproximation of the Cartesian product of two
-hyperrectangles by a new hyperrectangle.
-
-### Input
-
-- `S`              -- Cartesian product of two hyperrectangular sets
-- `Hyperrectangle` -- type for dispatch
-
-### Output
-
-A hyperrectangle.
-
-### Algorithm
-
-This method falls back to the corresponding `convert` method. Since the sets wrapped
-by the Cartesian product are hyperrectangles, it can be done efficiently
-without overapproximation.
-"""
-function overapproximate(S::CartesianProduct{N, <:AbstractHyperrectangle{N}, <:AbstractHyperrectangle{N}},
-                          ::Type{<:Hyperrectangle}) where {N<:Real}
-    return convert(Hyperrectangle, S)
-end
-
-"""
-    overapproximate(lm::LinearMap{N, <:AbstractHyperrectangle{N}},
-                    ::Type{<:Hyperrectangle}) where {N}
-
-Return a tight overapproximation of the linear map of a hyperrectangular set
-using a hyperrectangle.
-
-### Input
-
-- `S`              -- linear map of a hyperrectangular set
-- `Hyperrectangle` -- type for dispatch
-
-### Output
-
-A hyperrectangle.
-
-### Algorithm
-
-If `c` and `r` denote the center and vector radius of a hyperrectangle `H`,
-a tight hyperrectangular overapproximation of `M * H` is obtained by transforming
-`c ↦ M*c` and `r ↦ abs.(M) * r`, where `abs.(⋅)` denotes the element-wise absolute
-value operator.
-"""
-function overapproximate(lm::LinearMap{N, <:AbstractHyperrectangle{N}},
-                         ::Type{<:Hyperrectangle}) where {N<:Real}
-    M, X = lm.M, lm.X
-    center_MX = M * center(X)
-    radius_MX = abs.(M) * radius_hyperrectangle(X)
-    return Hyperrectangle(center_MX, radius_MX)
-end
-
-"""
-    overapproximate(r::Rectification{N}, ::Type{<:Hyperrectangle}
-                   ) where {N<:Real}
-
-Overapproximate the rectification of a convex set by a tight hyperrectangle.
-
-### Input
-
-- `r`              -- rectification of a convex set
-- `Hyperrectangle` -- type for dispatch
-
-### Output
-
-A hyperrectangle.
-
-### Algorithm
-
-Box approximation and rectification distribute.
-Hence we first check whether the wrapped set is empty.
-If so, we return the empty set.
-Otherwise, we compute the box approximation of the wrapped set, rectify the
-resulting box (which is simple), and finally convert the resulting set to a box.
-"""
-function overapproximate(r::Rectification{N}, ::Type{<:Hyperrectangle}
-                        ) where {N<:Real}
-    if isempty(r.X)
-        return EmptySet{N}(dim(r))
-    end
-    return convert(Hyperrectangle, Rectification(box_approximation(r.X)))
-end
-
-# special case: box approximation of a box
-function overapproximate(S::AbstractHyperrectangle, ::Type{<:Hyperrectangle})
-    return Hyperrectangle(center(S), radius_hyperrectangle(S))
-end
-
 # special case: overapproximation of empty set
 overapproximate(∅::EmptySet, options...) = ∅
 
 # disambiguation
 overapproximate(∅::EmptySet) = ∅
-overapproximate(∅::EmptySet, ::Type{<:Hyperrectangle}) = ∅
-overapproximate(∅::EmptySet, ::Type{<:EmptySet}) = ∅
-overapproximate(∅::EmptySet, ::Real) = ∅
-
-"""
-    overapproximate(S::LazySet)
-
-Alias for `overapproximate(S, Hyperrectangle)`.
-"""
-overapproximate(S::LazySet) = overapproximate(S, Hyperrectangle)
-
-"""
-    overapproximate(S::LazySet{N}, ::Type{<:BallInf}) where {N<:Real}
-
-Overapproximate a convex set by a tight ball in the infinity norm.
-
-### Input
-
-- `S`       -- convex set
-- `BallInf` -- type for dispatch
-
-### Output
-
-A tight ball in the infinity norm.
-
-### Algorithm
-
-The center and radius of the box are obtained by evaluating the support function
-of the given convex set along the canonical directions.
-"""
-function overapproximate(S::LazySet{N}, ::Type{<:BallInf}) where {N<:Real}
-    n = dim(S)
-    c = Vector{N}(undef, n)
-    r = zero(N)
-    d = zeros(N, n)
-
-    @inbounds for i in 1:n
-        d[i] = one(N)
-        htop = ρ(d, S)
-        d[i] = -one(N)
-        hbottom = -ρ(d, S)
-        d[i] = zero(N)
-        c[i] = (htop + hbottom) / 2
-        rcur = (htop - hbottom) / 2
-        if (rcur > r)
-            r = rcur
-        elseif rcur < 0
-            # contradicting bounds => set is empty
-            return EmptySet{N}(dim(S))
-        end
-    end
-    return BallInf(c, r)
+for ST in LazySets.subtypes(LazySet, true)
+    @eval overapproximate(∅::EmptySet, ::Type{<:$ST}) = ∅
 end
+overapproximate(∅::EmptySet, ::Real) = ∅
 
 """
     overapproximate(X::ConvexHull{N, <:AbstractZonotope{N}, <:AbstractZonotope{N}},
@@ -501,37 +332,6 @@ The tight zonotope corresponding to `lm`.
 function overapproximate(lm::LinearMap{N, <:AbstractZonotope{N}},
                          ::Type{<:Zonotope}) where {N<:Real}
     return convert(Zonotope, lm)
-end
-
-"""
-    overapproximate(Z::AbstractZonotope, ::Type{<:Hyperrectangle})
-
-Return a tight overapproximation of a zonotope with an axis-aligned box.
-
-### Input
-
-- `Z`              -- zonotope
-- `Hyperrectangle` -- type for dispatch
-
-### Output
-
-A hyperrectangle.
-
-### Algorithm
-
-This function implements the method in [Section 5.1.2, 1]. A zonotope
-``Z = ⟨c, G⟩`` can be overapproximated tightly by an axis-aligned box
-(i.e. a `Hyperrectangle`) such that its center is ``c`` and the radius along
-dimension ``i`` is the column-sum of the absolute values of the ``i``-th row
-of ``G`` for ``i = 1,…, p``, where ``p`` is the number of generators of ``Z``.
-
-[1] *Althoff, M., Stursberg, O., & Buss, M. (2010). Computing reachable sets of
-hybrid systems using a combination of zonotopes and polytopes. Nonlinear analysis:
-hybrid systems, 4(2), 233-249.*
-"""
-function overapproximate(Z::AbstractZonotope, ::Type{<:Hyperrectangle})
-    r = sum(abs.(genmat(Z)), dims=2)[:]
-    return Hyperrectangle(center(Z), r)
 end
 
 """
@@ -1481,64 +1281,6 @@ function overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, R
         Gred = Gbox
     end
     return Zonotope(c, Gred)
-end
-
-"""
-    overapproximate(am::AbstractAffineMap{N, <:AbstractHyperrectangle{N}},
-                    ::Type{<:Hyperrectangle}) where {N}
-
-Overapproximate the affine map of a hyperrectangular set
-using a hyperrectangle.
-
-### Input
-
-- `am`             -- affine map of a hyperrectangular set
-- `Hyperrectangle` -- type for dispatch
-
-### Output
-
-A hyperrectangle.
-
-### Algorithm
-
-If `c` and `r` denote the center and vector radius of a hyperrectangle `H`
-and `v` the translation vector, a tight hyperrectangular overapproximation of
-`M * H + v` is obtained by transforming `c ↦ M*c+v` and `r ↦ abs.(M) * r`, where
-`abs.(⋅)` denotes the element-wise absolute value operator.
-"""
-function overapproximate(am::AbstractAffineMap{N, <:AbstractHyperrectangle{N}},
-                         ::Type{<:Hyperrectangle}) where {N<:Real}
-    M, X, v = matrix(am), set(am), vector(am)
-    center_MXv = M * center(X) + v
-    radius_MX = abs.(M) * radius_hyperrectangle(X)
-    return Hyperrectangle(center_MXv, radius_MX)
-end
-
-function overapproximate(P::Union{VPolytope, VPolygon},
-                         ::Type{<:Hyperrectangle})
-    n = dim(P)
-    vlist = vertices_list(P)
-    @assert !isempty(vlist) "cannot overapproximate an empty polytope"
-
-    @inbounds v1 = vlist[1]
-    center = similar(v1)
-    radius = similar(v1)
-
-    @inbounds for i in 1:n
-        low_i = v1[i]
-        high_i = v1[i]
-        for v in vlist
-            if v[i] > high_i
-                high_i = v[i]
-            elseif v[i] < low_i
-                low_i = v[i]
-            end
-        end
-        radius_i = (high_i - low_i) / 2
-        center[i] = low_i + radius_i
-        radius[i] = radius_i
-    end
-    return Hyperrectangle(center, radius)
 end
 
 """
