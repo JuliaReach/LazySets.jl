@@ -65,6 +65,9 @@ struct HParallelotope{N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: 
     end
 end
 
+isoperationtype(::Type{<:HParallelotope}) = false
+isconvextype(::Type{<:HParallelotope}) = true
+
 # =================
 # Getter functions
 # =================
