@@ -45,6 +45,15 @@ function overapproximate(r::Rectification, ::Type{<:Hyperrectangle})
 end
 
 """
+    overapproximate(S::LazySet, ::Type{<:BallInf})
+
+Alias for `ballinf_approximation(S)`.
+"""
+function overapproximate(S::LazySet, ::Type{<:BallInf})
+    return ballinf_approximation(S)
+end
+
+"""
     overapproximate(S::LazySet{N},
                     ::Type{<:HPolygon},
                     [ε]::Real=Inf) where {N<:Real}
@@ -115,49 +124,6 @@ overapproximate(∅::EmptySet, options...) = ∅
 overapproximate(∅::EmptySet) = ∅
 overapproximate(∅::EmptySet, ::Type{<:EmptySet}) = ∅
 overapproximate(∅::EmptySet, ::Real) = ∅
-
-"""
-    overapproximate(S::LazySet{N}, ::Type{<:BallInf}) where {N<:Real}
-
-Overapproximate a convex set by a tight ball in the infinity norm.
-
-### Input
-
-- `S`       -- convex set
-- `BallInf` -- type for dispatch
-
-### Output
-
-A tight ball in the infinity norm.
-
-### Algorithm
-
-The center and radius of the box are obtained by evaluating the support function
-of the given convex set along the canonical directions.
-"""
-function overapproximate(S::LazySet{N}, ::Type{<:BallInf}) where {N<:Real}
-    n = dim(S)
-    c = Vector{N}(undef, n)
-    r = zero(N)
-    d = zeros(N, n)
-
-    @inbounds for i in 1:n
-        d[i] = one(N)
-        htop = ρ(d, S)
-        d[i] = -one(N)
-        hbottom = -ρ(d, S)
-        d[i] = zero(N)
-        c[i] = (htop + hbottom) / 2
-        rcur = (htop - hbottom) / 2
-        if (rcur > r)
-            r = rcur
-        elseif rcur < 0
-            # contradicting bounds => set is empty
-            return EmptySet{N}(dim(S))
-        end
-    end
-    return BallInf(c, r)
-end
 
 """
     overapproximate(X::ConvexHull{N, <:AbstractZonotope{N}, <:AbstractZonotope{N}},
