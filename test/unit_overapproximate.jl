@@ -12,7 +12,8 @@ for N in [Float64, Rational{Int}, Float32]
     # identity if T1 = T2
     @test_throws MethodError overapproximate(ZeroSet{N}(2), EmptySet)
     e = EmptySet{N}(2)
-    @test overapproximate(e, EmptySet) == e
+    @test overapproximate(e, EmptySet) == overapproximate(e, 1e-3) ==
+          overapproximate(e, Hyperrectangle) == overapproximate(e) == e
     # the third argument is ignored
     oa = overapproximate(b, Ball1, Hyperrectangle)
     @test oa isa Ball1
