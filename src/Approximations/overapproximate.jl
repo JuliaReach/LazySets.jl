@@ -122,7 +122,9 @@ overapproximate(∅::EmptySet, options...) = ∅
 
 # disambiguation
 overapproximate(∅::EmptySet) = ∅
-overapproximate(∅::EmptySet, ::Type{<:EmptySet}) = ∅
+for ST in LazySets.subtypes(LazySet, true)
+    @eval overapproximate(∅::EmptySet, ::Type{<:$ST}) = ∅
+end
 overapproximate(∅::EmptySet, ::Real) = ∅
 
 """
