@@ -1,96 +1,69 @@
+using LazySets: translate, ispermutation
+
 for N in [Float64, Rational{Int}, Float32]
     # random line
     rand(Line)
 
     # construction
-    a1 = N[0, 1]
-    b1 = N(1)
-    l1 = Line(a1, b1)
-    l2 = Line(N[1, 0], N(1))
-    l3 = Line(N[0, 1], N(2))
-    l4 = Line(N[1, 1], N(0))
-    l1_copy = Line(N[0, 1], N(1))
+    l1 = Line(from=N[0, 1], to=N[1, 1]) # two points in the line
+    l2 = Line(N[0, 1], N[1, 0]) # point and direction
 
-    # alternative construction from two points
-    # line with positive slope
-    L = Line([1.0, 0.0], [2.0, 0.5])
-    @test [1.0, 0.0] ∈ L &&
-          [2.0, 0.5] ∈ L &&
-          [2.0, 1.5] ∉ L
+    # construction given a 2d direction and offset
+    ll = Line(N[0, 1], N(1)) # y == 1
+    @test N[0, 1] ∈ ll && N[1, 1] ∈ ll
+    ll = Line(N[1, 0], N(1)) # x == 1
+    @test N[1, 0] ∈ ll && N[1, 1] ∈ ll
+    ll = Line(N[1, -1], N(0)) # x == y
+    @test N[0, 0] ∈ ll && N[1, 1] ∈ ll
 
-    # vertical line
-    L = Line([1.0, 0.0], [1.0, 2.5])
-    @test [1.0, 0.0] ∈ L &&
-          [1.0, 2.5] ∈ L &&
-          [1.0, 10.0] ∈ L
-          [10.0, 10.0] ∉ L
-
-    # corner case: zero normal vector
-    @test_throws AssertionError Line(N[0, 0], N(1))
+    # the lines are the same modulo the sign of the normal vector
+    @test l1.p ≈ l2.p && l1.d ≈ -l2.d
 
     # dimension
     @test dim(l1) == 2
 
+    # support function
+    @test ρ(N[0, 1], l1) == N(1)
+    @test ρ(N[1, 0], l1) == N(Inf)
+
     # support vector
-    σ(N[0, 1], l1)
-    σ(N[1, 0], l2)
-    σ(N[0, 1], l3)
+    @test σ(N[0, 1], l1) == N[0, 1]
+    @test_throws ArgumentError σ(N[1, 0], l1) == N(Inf)
 
     # boundedness
     @test !isbounded(l1)
 
     # universality
     @test !isuniversal(l1)
-    res, w = isuniversal(l1, true)
-    @test !res && w ∉ l1
 
     # isempty
     @test !isempty(l1)
 
     # an_element and membership
     an_element(l1) ∈ l1
-    an_element(l2) ∈ l2
-    an_element(l3) ∈ l3
-    an_element(l4) ∈ l4
-
-    # constrained dimensions
-    @test constrained_dimensions(l1) == [2]
-    @test constrained_dimensions(l4) == [1, 2]
 
     # constraints_list
-    @test ispermutation(constraints_list(l1),
-                        [HalfSpace(a1, b1), HalfSpace(-a1, -b1)])
-
-    # concrete intersection
-    cap11 = intersection(l1, l1_copy)
-    cap12 = intersection(l1, l2)
-    cap13 = intersection(l1, l3)
-    @test cap11 isa Line && cap11.a == l1.a && cap11.b == l1.b
-    @test cap12 isa Singleton && element(cap12) == N[1, 1]
-    @test cap13 isa EmptySet{N}
-
-    # concrete linear map of a line
-    L = Line(N[1, -1], N(0)) # x = y
-    M = N[1 0; 0 0] # non-invertible matrix
-    # projection is y = 0
-    if test_suite_polyhedra
-        lm = linear_map(M, L)
-        if N == Float32 || N == Float64
-            @test lm isa Line{Float64}
-            @test lm.a ≈ N[0, -1] && lm.b ≈ N(0)
-
-            # returned set is universal
-            @test linear_map(N[1 1], L) == Universe{N}(1)
-        elseif N == Rational{Int}
-            @test lm isa Line{Rational{BigInt}}
-            @test lm.a == N[0//1, -1//1] && lm.b == N(0//1)
-        end
+    if N <: AbstractFloat
+        @test ispermutation(constraints_list(l2),
+                            [HalfSpace(N[0, 1], N(1)),    # y <= 1
+                             HalfSpace(N[0, -1], N(-1))]) # y >= 1
     end
-    M = N[2 2; 0 1] # invertible matrix
-    lm = linear_map(M, L)
-    @test lm isa Line{N, Vector{N}}
-    @test lm.a ≈ N[1/2, -2] && lm.b ≈ N(0)
 
     # translation
-    @test translate(l1, N[1, 2]) == Line(a1, N(3))
+    @test translate(l2, N[0, 1]) == Line(N[0, 2], N[1, 0])
+
+    # distance
+    distance(N[1, 0], l1) == N(1)
+    distance(l1, N[1, 0]) == N(1)
+    distance(Singleton(N[1, 0]), l1) == N(1)
+    distance(l1, Singleton(N[1, 0])) == N(1)
+
+    # concrete linear map
+    if N <: AbstractFloat
+        mirror = N[-1 0; 0 1]
+        l = Line(from=N[0, 1], to=N[1, 1])
+        @test isequivalent(linear_map(mirror, l), l)
+        rot = N[0 -1; 1 0] # π/2 ccw rotation
+        @test isequivalent(linear_map(rot, l), Line(N[-1, 0], N[0, 1]))
+    end
 end

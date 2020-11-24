@@ -23,6 +23,9 @@ isbounded(::UnionSet)
 vertices_list(::UnionSet)
 ```
 
+Inherited from [`LazySet`](@ref):
+* [`singleton_list`](@ref singleton_list(::LazySet))
+
 ## [``n``-ary set union (UnionSetArray)](@id def_UnionSetArray)
 
 ```@docs
@@ -37,3 +40,6 @@ isempty(::UnionSetArray)
 isbounded(::UnionSetArray)
 vertices_list(::UnionSetArray)
 ```
+
+Inherited from [`LazySet`](@ref):
+* [`singleton_list`](@ref singleton_list(::LazySet))

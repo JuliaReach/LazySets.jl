@@ -18,13 +18,14 @@ vertices_list(::ExponentialMap{N}) where {N<:Real}
 Inherited from [`AbstractAffineMap`](@ref):
 * [`an_element`](@ref an_element(::AbstractAffineMap))
 * [`isempty`](@ref isempty(::AbstractAffineMap))
-* [`constraints_list`](@ref constraints_list(::AbstractAffineMap{N}) where {N<:Real})
-* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractAffineMap{N}) where {N<:Real})
+* [`constraints_list`](@ref constraints_list(::AbstractAffineMap))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractAffineMap))
 
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`singleton_list`](@ref singleton_list(::LazySet))
 
 ### Sparse matrix exponential
 
@@ -45,15 +46,16 @@ isbounded(::ExponentialProjectionMap)
 Inherited from [`AbstractAffineMap`](@ref):
 * [`an_element`](@ref an_element(::AbstractAffineMap))
 * [`isempty`](@ref isempty(::AbstractAffineMap))
-* [`∈`](@ref ∈(::AbstractVector{N}, ::AbstractAffineMap{N}) where {N<:Real})
-* [`vertices_list`](@ref vertices_list(::AbstractAffineMap{N}) where {N<:Real})
-* [`constraints_list`](@ref constraints_list(::AbstractAffineMap{N}) where {N<:Real})
-* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractAffineMap{N}) where {N<:Real})
+* [`∈`](@ref ∈(::AbstractVector, ::AbstractAffineMap))
+* [`vertices_list`](@ref vertices_list(::AbstractAffineMap))
+* [`constraints_list`](@ref constraints_list(::AbstractAffineMap))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractAffineMap))
 
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`singleton_list`](@ref singleton_list(::LazySet))
 
 ### Projection of a sparse matrix exponential
 

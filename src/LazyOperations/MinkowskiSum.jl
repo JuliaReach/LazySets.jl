@@ -240,6 +240,10 @@ end
 
 @inline _in_singleton_msum(x, X, Y) = (x - element(X)) ∈ Y
 
+function concretize(ms::MinkowskiSum)
+    return minkowski_sum(concretize(ms.X), concretize(ms.Y))
+end
+
 # ================
 # Helper functions
 # ================
@@ -251,4 +255,21 @@ end
         svec += σ(d, sj)
     end
     return svec
+end
+
+"""
+    vertices_list(ms::MinkowskiSum{N, Z1, Z2}) where {N<:Real, Z1<:AbstractZonotope{N}, Z2<:AbstractZonotope{N}}
+
+Return the list of vertices for the Minkowski sum of two zonotopic sets.
+
+### Input
+
+- `ms` -- Minkowski sum of two zonotopic sets
+
+### Output
+
+The list of vertices of the Minkowski sum of two zonotopic sets.
+"""
+function vertices_list(ms::MinkowskiSum{N, Z1, Z2}) where {N<:Real, Z1<:AbstractZonotope{N}, Z2<:AbstractZonotope{N}}
+    return vertices_list(minkowski_sum(ms.X, ms.Y))
 end

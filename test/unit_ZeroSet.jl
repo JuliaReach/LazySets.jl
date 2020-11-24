@@ -64,4 +64,11 @@ for N in [Float64, Rational{Int}, Float32]
 
     # center
     @test center(Z, 1) == zero(N)
+
+    # vertices / vertices_list
+    @test collect(vertices(Z)) == vertices_list(Z)
+    @test vertices_list(Z)[1] == zeros(dim(Z))
+
+    # rectification
+    @test rectify(Z) == Z
 end

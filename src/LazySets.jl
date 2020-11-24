@@ -6,13 +6,13 @@ module LazySets
 using GLPKMathProgInterface, LinearAlgebra, MathProgBase, Reexport, Requires,
       SparseArrays
 using LinearAlgebra: checksquare
-import LinearAlgebra: norm, ×
+import LinearAlgebra: norm, ×, normalize, normalize!
 import Random
 using Random: AbstractRNG, GLOBAL_RNG, SamplerType, shuffle
 import InteractiveUtils: subtypes
 
 export Arrays
-export ×
+export ×, normalize
 
 # ==========
 # Assertions
@@ -35,12 +35,14 @@ include("Utils/comparisons.jl")
 # =======================
 include("Arrays/Arrays.jl")
 using .Arrays
+import .Arrays: distance
 
 # ===================
 # Auxiliary functions
 # ===================
 include("Utils/helper_functions.jl")
 include("Utils/macros.jl")
+include("Utils/iterators.jl")
 
 # ==================
 # Abstract set types
@@ -75,6 +77,7 @@ include("Sets/HPolyhedron.jl")
 include("Sets/Hyperplane.jl")
 include("Sets/Hyperrectangle.jl")
 include("Sets/Interval.jl")
+include("Sets/Line2D.jl")
 include("Sets/Line.jl")
 include("Sets/LineSegment.jl")
 include("Sets/Singleton.jl")
@@ -83,6 +86,7 @@ include("Sets/VPolygon.jl")
 include("Sets/VPolytope.jl")
 include("Sets/ZeroSet.jl")
 include("Sets/Zonotope.jl")
+include("Sets/HParallelotope.jl")
 
 # ==================================
 # Types representing non-convex sets

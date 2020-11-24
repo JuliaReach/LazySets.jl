@@ -16,15 +16,19 @@ rand(::Type{EmptySet})
 isbounded(::EmptySet)
 isempty(::EmptySet)
 isuniversal(::EmptySet{N}, ::Bool=false) where {N<:Real}
+vertices(::EmptySet{N}) where {N}
+vertices_list(::EmptySet{N}) where {N}
 norm(::EmptySet, ::Real=Inf)
 radius(::EmptySet, ::Real=Inf)
 diameter(::EmptySet, ::Real=Inf)
 linear_map(::AbstractMatrix{N}, ::EmptySet{N}) where {N}
 translate(::EmptySet{N}, ::AbstractVector{N}) where {N<:Real}
 plot_recipe(::EmptySet{N}, ::N=zero(N)) where {N<:Real}
-RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::EmptySet{N}, ::N=zero(N)) where {N<:Real}
+RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::EmptySet{N}, ::N=zero(N)) where {N}
+area(::EmptySet{N}) where {N}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`singleton_list`](@ref singleton_list(::LazySet))

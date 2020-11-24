@@ -55,6 +55,29 @@ Alias for `HalfSpace`
 """
 const LinearConstraint = HalfSpace
 
+"""
+    normalize(hs::HalfSpace{N}, p=N(2)) where {N<:Real}
+
+Normalize a half-space.
+
+### Input
+
+- `hs` -- half-space
+- `p`  -- (optional, default: `2`) norm
+
+### Output
+
+A new half-space whose normal direction ``a`` is normalized, i.e., such that
+``‖a‖_p = 1`` holds.
+"""
+function normalize(hs::HalfSpace{N}, p=N(2)) where {N<:Real}
+    nₐ = norm(hs.a, p)
+    a = LinearAlgebra.normalize(hs.a, p)
+    b = hs.b / nₐ
+    return HalfSpace(a, b)
+end
+
+
 # --- LazySet interface functions ---
 
 
@@ -204,7 +227,7 @@ Check whether a given point is contained in a half-space.
 We just check if ``x`` satisfies ``a⋅x ≤ b``.
 """
 function ∈(x::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
-    return dot(x, hs.a) <= hs.b
+    return _leq(dot(x, hs.a), hs.b)
 end
 
 """
@@ -434,12 +457,12 @@ function is_tighter_same_dir_2D(c1::LinearConstraint{N},
                                 c2::LinearConstraint{N};
                                 strict::Bool=false) where {N<:Real}
     @assert dim(c1) == dim(c2) == 2 "this method requires 2D constraints"
-    @assert c1.a <= c2.a <= c1.a "the constraints must have the same " *
+    @assert samedir(c1.a, c2.a)[1] "the constraints must have the same " *
         "normal direction"
 
     lt = strict ? (<) : (<=)
-    if c1.a[1] == zero(N)
-        @assert c2.a[1] == zero(N)
+    if isapproxzero(c1.a[1])
+        @assert isapproxzero(c2.a[1])
         return lt(c1.b, c1.a[2] / c2.a[2] * c2.b)
     end
     return lt(c1.b, c1.a[1] / c2.a[1] * c2.b)
@@ -496,3 +519,137 @@ end
 # TODO: after #2032, #2041 remove use of this function
 _normal_Vector(P::LazySet) = [LinearConstraint(convert(Vector, c.a), c.b) for c in constraints_list(P)]
 _normal_Vector(c::LinearConstraint) = LinearConstraint(convert(Vector, c.a), c.b)
+
+
+# ============================================
+# Functionality that requires ModelingToolkit
+# ============================================
+function load_modeling_toolkit_halfspace()
+return quote
+
+# returns `(true, sexpr)` if expr represents a half-space,
+# where sexpr is the simplified expression sexpr := LHS - RHS <= 0
+# otherwise, returns `(false, expr)`
+function _is_halfspace(expr::Operation)
+    got_halfspace = true
+
+    # find sense and normalize
+    if expr.op == <
+        a, b = expr.args
+        sexpr = simplify(a - b)
+
+    elseif expr.op == >
+        a, b = expr.args
+        sexpr = simplify(b - a)
+
+    elseif (expr.op == |) && (expr.args[1].op == <)
+        a, b = expr.args[1].args
+        sexpr = simplify(a - b)
+
+    elseif (expr.op == |) && (expr.args[2].op == <)
+        a, b = expr.args[2].args
+        sexpr = simplify(a - b)
+
+    elseif (expr.op == |) && (expr.args[1].op == >)
+        a, b = expr.args[1].args
+        sexpr = simplify(b - a)
+
+    elseif (expr.op == |) && (expr.args[2].op == >)
+        a, b = expr.args[2].args
+        sexpr = simplify(b - a)
+
+    else
+        got_halfspace = false
+    end
+
+    return got_halfspace ? (true, sexpr) : (false, expr)
+end
+
+"""
+    HalfSpace(expr::Operation, vars::Union{<:Operation, <:Vector{Operation}}=get_variables(expr); N::Type{<:Real}=Float64)
+
+Return the half-space given by a symbolic expression.
+
+### Input
+
+- `expr` -- symbolic expression that describes a half-space
+- `vars` -- (optional, default: `get_variables(expr)`), if an array of variables is given,
+            use those as the ambient variables in the set with respect to which derivations
+            take place; otherwise, use only the variables which appear in the given
+            expression (but be careful because the order may change; see the examples below for details)
+- `N`    -- (optional, default: `Float64`) the numeric type of the returned half-space
+
+### Output
+
+A `HalfSpace`.
+
+### Examples
+
+```julia
+julia> using ModelingToolkit
+
+julia> vars = @variables x y
+(x, y)
+
+julia> HalfSpace(x - y <= 2)
+HalfSpace{Float64,Array{Float64,1}}([1.0, -1.0], 2.0)
+
+julia> HalfSpace(x >= y)
+HalfSpace{Float64,Array{Float64,1}}([1.0, -1.0], -0.0)
+
+julia> vars = @variables x[1:4]
+(Operation[x₁, x₂, x₃, x₄],)
+
+julia> HalfSpace(x[1] >= x[2], x)
+HalfSpace{Float64,Array{Float64,1}}([-1.0, 1.0, 0.0, 0.0], -0.0)
+```
+
+Be careful with using the default `vars` value because it may introduce a wrong
+order.
+
+```julia
+julia> vars = @variables x y
+(x, y)
+
+julia> HalfSpace(2x ≥ 5y - 1) # wrong
+HalfSpace{Float64,Array{Float64,1}}([5.0, -2.0], 1.0)
+
+julia> HalfSpace(2x ≥ 5y - 1, vars) # correct
+HalfSpace{Float64,Array{Float64,1}}([-2.0, 5.0], 1.0)
+```
+
+### Algorithm
+
+It is assumed that the expression is of the form
+`EXPR0: α*x1 + ⋯ + α*xn + γ CMP β*x1 + ⋯ + β*xn + δ`,
+where `CMP` is one among `<`, `<=`, `≤`, `>`, `>=` or `≥`.
+This expression is transformed, by rearrangement and substitution, into the
+canonical form `EXPR1 : a1 * x1 + ⋯ + an * xn ≤ b`. The method used to identify
+the coefficients is to take derivatives with respect to the ambient variables `vars`.
+Therefore, the order in which the variables appear in `vars` affects the final result.
+Note in particular that strict inequalities are relaxed as being smaller-or-equal.
+Finally, the returned set is the half-space with normal vector `[a1, …, an]` and
+displacement `b`.
+"""
+function HalfSpace(expr::Operation, vars::Union{<:Operation, <:Vector{Operation}}=get_variables(expr); N::Type{<:Real}=Float64)
+    valid, sexpr = _is_halfspace(expr)
+    if !valid
+        throw(ArgumentError("expected an expression describing a half-space, got $expr"))
+    end
+
+    # compute the linear coefficients by taking first order derivatives
+    coeffs = [N(α.value) for α in gradient(sexpr, collect(vars))]
+
+    # get the constant term by expression substitution
+    zeroed_vars = Dict(v => zero(N) for v in vars)
+    β = -N(ModelingToolkit.substitute(sexpr, zeroed_vars).value)
+
+    return HalfSpace(coeffs, β)
+end
+
+function HalfSpace(expr::Operation, vars::NTuple{L, Union{<:Operation, <:Vector{Operation}}}; N::Type{<:Real}=Float64) where {L}
+    vars = _vec(vars)
+    return HalfSpace(expr, vars, N=N)
+end
+
+end end  # quote / load_modeling_toolkit_halfspace()

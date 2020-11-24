@@ -122,3 +122,54 @@ for N in [Float64, Rational{Int}, Float32]
     hs_vec = convert(HalfSpace{N, Vector{N}}, hs_sev)
     @test hs_vec.a == N[0, 1, 0] && hs_vec.b == N(1)
 end
+
+# tests that only work with Float64 and Float32
+for N in [Float64, Float32]
+    # normalization
+    hs1 = HalfSpace(N[1e5, 2e5], N(3e5))
+    hs2 = normalize(hs1)
+    @test norm(hs2.a) ≈ N(1) && hs2.b == hs1.b / norm(hs1.a)
+    @test normalize(hs1, N(1)) == HalfSpace(N[1//3, 2//3], N(1))
+    @test normalize(hs1, N(Inf)) == HalfSpace(N[1//2, 1], N(3//2))
+end
+
+for N in [Float64]
+    # test robustness of membership function (see LazySets#2312)
+    o = N[0.07768723948819561, -0.5762273280928935, 0.28897399484750297, 1.9299362784322858]
+    H = HalfSpace(N[-0.09291863543681655, -0.2176689899601838, -0.07453829739226348, 0.048948632014371496], N(0.1911363393469332))
+    @test o ∈ H
+
+    # tests that require ModelingToolkit
+    @static if VERSION >= v"1.3" && isdefined(@__MODULE__, :ModelingToolkit)
+        # case with only 1 variable
+        vars = @variables x
+        @test HalfSpace(x <= 2.0, vars) == HalfSpace([1.0], 2.0)
+
+        vars = @variables x y
+        @test HalfSpace(2x + 3y < 5) == HalfSpace([2.0, 3.0], 5.0)
+        @test HalfSpace(2x + 3y < 5, vars) == HalfSpace([2.0, 3.0], 5.0)
+        @test HalfSpace(2x + 3y < 5, N=Int) == HalfSpace([2, 3], 5)
+
+        @test HalfSpace(2x + 3y > 5) == HalfSpace([-2.0, -3.0], -5.0)
+        @test HalfSpace(2x + 3y > 5, vars) == HalfSpace([-2.0, -3.0], -5.0)
+
+        @test HalfSpace(2x + 3y ≤ 5) == HalfSpace([2.0, 3.0], 5.0)
+        @test HalfSpace(2x + 3y ≤ 5, vars) == HalfSpace([2.0, 3.0], 5.0)
+
+        @test HalfSpace(2x <= 5y - 1) == HalfSpace([2.0, -5.0], -1.0)
+        @test HalfSpace(2x ≤ 5y - 1) == HalfSpace([2.0, -5.0], -1.0)
+
+        @test HalfSpace(2x + 3y ≥ 5) == HalfSpace([-2.0, -3.0], -5.0)
+        @test HalfSpace(2x + 3y ≥ 5, vars) == HalfSpace([-2.0, -3.0], -5.0)
+
+        # doesn't work because get_vars returns variables [y, x]
+        # => both tests below require vars to pass
+        @test HalfSpace(2x ≥ 5y - 1, vars) == HalfSpace([-2.0, 5.0], 1.0)
+        @test HalfSpace(2x >= 5y - 1, vars) == HalfSpace([-2.0, 5.0], 1.0)
+
+        # test with sparse variables
+        @variables x[1:5]
+        @test HalfSpace(2x[1] + 5x[4] <= 10., x) == HalfSpace([2.0, 0.0, 0.0, 5.0, 0.0], 10.0)
+        @test HalfSpace(2x[1] + 5x[4] >= -10. + x[3], x) == HalfSpace([-2.0, 0.0, 1.0, -5.0, 0.0], 10.0)
+    end
+end

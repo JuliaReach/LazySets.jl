@@ -34,6 +34,8 @@ extend
 projection_matrix
 LazySets.Arrays._vector_type
 LazySets.Arrays._matrix_type
+LazySets.Arrays.distance(::AbstractVector, ::AbstractVector, ::Real=2.0)
+LazySets.Arrays.same_sign
 ```
 
 ## Functions and Macros
@@ -74,6 +76,12 @@ StrictlyIncreasingIndices
 ```@docs
 LazySets.subtypes(::Any, ::Bool)
 implementing_sets
+```
+
+## Reading and writing
+
+```@docs
+LazySets.read_gen(::String)
 ```
 
 ## Sampling

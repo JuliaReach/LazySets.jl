@@ -958,6 +958,77 @@ end
 
 
 """
+    ⊆(X::CartesianProduct{N}, Y::CartesianProduct{N}, witness::Bool=false;
+      check_block_equality::Bool=true) where {N<:Real}
+
+Check whether a Cartesian product of two convex sets is contained in another
+Cartesian product of two convex sets, and otherwise optionally compute a
+witness.
+
+### Input
+
+- `X`       -- Cartesian product of two convex sets
+- `Y`       -- Cartesian product of two convex sets
+- `witness` -- (optional, default: `false`) compute a witness if activated
+- `check_block_equality` -- (optional, default: `true`) flag for checking that
+               the block structure of the two sets is identical
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``X ⊆ Y``
+* If `witness` option is activated:
+  * `(true, [])` iff ``X ⊆ Y``
+  * `(false, v)` iff ``X \\not\\subseteq Y`` and
+    ``v ∈ X \\setminus Y``
+
+### Notes
+
+This algorithm requires that the two Cartesian products share the same block
+structure.
+If `check_block_equality` is activated, we check this property and, if it does
+not hold, we use a fallback implementation based on conversion to constraint
+representation (assuming that the sets are polyhedral).
+
+### Algorithm
+
+We check for inclusion for each block of the Cartesian products.
+
+For witness production, we obtain a witness in one of the blocks.
+We then construct a high-dimensional witness by obtaining any point in the other
+blocks (using `an_element`) and concatenating these points.
+"""
+function ⊆(X::CartesianProduct{N}, Y::CartesianProduct{N}, witness::Bool=false;
+           check_block_equality::Bool=true) where {N<:Real}
+    n1 = dim(X.X)
+    n2 = dim(X.Y)
+    if check_block_equality && (n1 != dim(Y.X) || n2 != dim(Y.Y))
+        return invoke(⊆, Tuple{LazySet{N}, LazySet{N}, Bool}, X, Y, witness)
+    end
+
+    # check first block
+    result = ⊆(X.X, Y.X, witness)
+    if !witness && !result
+        return false
+    elseif witness && !result[1]
+        # construct a witness
+        w = vcat(result[2], an_element(X.Y))
+        return (false, w)
+    end
+
+    # check second block
+    result = ⊆(X.Y, Y.Y, witness)
+    if !witness && !result
+        return false
+    elseif witness && !result[1]
+        # construct a witness
+        w = vcat(an_element(X.X), result[2])
+        return (false, w)
+    end
+
+    return witness ? (true, N[]) : true
+end
+
+"""
     ⊆(X::CartesianProductArray{N}, Y::CartesianProductArray{N},
       witness::Bool=false; check_block_equality::Bool=true
      ) where {N<:Real}
@@ -986,7 +1057,9 @@ compute a witness.
 
 This algorithm requires that the two Cartesian products share the same block
 structure.
-Depending on the value of `check_block_equality`, we check this property.
+If `check_block_equality` is activated, we check this property and, if it does
+not hold, we use a fallback implementation based on conversion to constraint
+representation (assuming that the sets are polyhedral).
 
 ### Algorithm
 
@@ -1004,8 +1077,7 @@ function ⊆(X::CartesianProductArray{N},
     aX = array(X)
     aY = array(Y)
     if check_block_equality && !same_block_structure(aX, aY)
-        throw(ArgumentError("this inclusion check requires Cartesian products" *
-                            "with the same block structure"))
+        return invoke(⊆, Tuple{LazySet{N}, LazySet{N}, Bool}, X, Y, witness)
     end
 
     for i in 1:length(aX)
@@ -1026,4 +1098,50 @@ function ⊆(X::CartesianProductArray{N},
         end
     end
     return witness ? (true, N[]) : true
+end
+
+
+# --- AbstractZonotope ---
+
+
+"""
+    ⊆(Z::AbstractZonotope{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
+
+Check whether a zonotopic set is contained in a hyperrectangular set.
+
+### Input
+
+- `Z` -- inner zonotopic set
+- `H` -- outer hyperrectangular set
+- `witness` -- (optional, default: `false`) compute a witness if activated
+
+### Output
+
+`true` iff ``Z ⊆ H`` otherwise `false`
+
+### Algorithm
+
+Algorithm based on Lemma 3.1 of [1]
+
+[1] Mitchell, I. M., Budzis, J., & Bolyachevets, A. (2019, April). Invariant,
+ viability and discriminating kernel under-approximation via zonotope scaling.
+ In Proceedings of the 22nd ACM International Conference on Hybrid Systems:
+ Computation and Control (pp. 268-269).
+"""
+function ⊆(Z::AbstractZonotope{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
+    c = center(Z)
+    G = genmat(Z)
+    n, m = size(G)
+    @inbounds for i = 1:n
+        aux = zero(N)
+        for j in 1:m
+            aux += abs(G[i, j])
+        end
+        ubound = c[i] + aux
+        lbound = c[i] - aux
+        if !_leq(ubound, high(H, i)) || !_geq(lbound, low(H, i))
+            return false
+        end
+    end
+    return true
 end

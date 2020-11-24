@@ -1,4 +1,6 @@
-using LazySets, LazySets.Approximations, Test, LinearAlgebra, SparseArrays
+using LazySets, LazySets.Approximations, Test, LinearAlgebra, SparseArrays, StaticArrays
+
+using LazySets: _leq, _geq, isapproxzero, _isapprox, _ztol
 
 import IntervalArithmetic
 const IA = IntervalArithmetic
@@ -7,9 +9,14 @@ using IntervalArithmetic: IntervalBox
 # ========================
 # Optional dependencies
 # ========================
-import Distributions, Expokit, IntervalMatrices, Optim, TaylorModels
+import Distributions, Expokit, IntervalMatrices, Optim, TaylorModels, IntervalConstraintProgramming
 using IntervalMatrices: ±, IntervalMatrix
 using TaylorModels: set_variables, TaylorModelN
+using IntervalConstraintProgramming
+
+@static if VERSION >= v"1.3"
+    using ModelingToolkit
+end
 
 # ==============================
 # Non-exported helper functions
@@ -54,7 +61,7 @@ if test_suite_polyhedra || test_suite_plotting
     using CDDLib # for tests that require CDDLib specific backend=...
 
     # fix namespace conflicts with Polyhedra
-    using LazySets: dim, HalfSpace, Interval, Line, translate
+    using LazySets: dim, HalfSpace, Interval, Line2D, translate
 end
 
 if test_suite_basic
@@ -74,6 +81,7 @@ if test_suite_basic
     # =======================================
     # Testing types that inherit from LazySet
     # =======================================
+    @time @testset "LazySets.LazySet" begin include("unit_LazySet.jl") end
     @time @testset "LazySets.Singleton" begin include("unit_Singleton.jl") end
     @time @testset "LazySets.Ball1" begin include("unit_Ball1.jl") end
     @time @testset "LazySets.Ball2" begin include("unit_Ball2.jl") end
@@ -91,8 +99,10 @@ if test_suite_basic
     @time @testset "LazySets.HalfSpace" begin include("unit_HalfSpace.jl") end
     @time @testset "LazySets.Interval" begin include("unit_Interval.jl") end
     @time @testset "LazySets.LineSegment" begin include("unit_LineSegment.jl") end
+    @time @testset "LazySets.Line2D" begin include("unit_Line2D.jl") end
     @time @testset "LazySets.Line" begin include("unit_Line.jl") end
     @time @testset "LazySets.Universe" begin include("unit_Universe.jl") end
+    @time @testset "LazySets.HParallelotope" begin include("unit_HParallelotope.jl") end
 
     # =========================================
     # Testing types representing set operations

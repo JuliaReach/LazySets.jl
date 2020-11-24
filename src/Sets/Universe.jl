@@ -22,6 +22,22 @@ Universe(dim::Int) = Universe{Float64}(dim)
 
 # --- AbstractPolyhedron interface functions ---
 
+"""
+    constraints_list(U::Universe{N}) where {N}
+
+Construct an iterator over the constraints of a universe.
+
+### Input
+
+- `U` -- universe
+
+### Output
+
+The empty iterator, as the universe is unconstrained.
+"""
+function constraints(U::Universe{N}) where {N}
+    return EmptyIterator{Vector{N}}()
+end
 
 """
     constraints_list(U::Universe{N}) where {N<:Real}
@@ -321,4 +337,11 @@ function translate(U::Universe{N}, v::AbstractVector{N}) where {N<:Real}
     @assert length(v) == dim(U) "cannot translate a $(dim(U))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     return U
+end
+
+function linear_map_inverse(Minv::AbstractMatrix{N}, U::Universe{N}) where {N}
+    @assert size(Minv, 1) == dim(U) "a linear map of size $(size(Minv)) " *
+        "cannot be applied to a universe of dimension $(dim(U))"
+    n = size(Minv, 2)
+    return Universe{N}(n)
 end

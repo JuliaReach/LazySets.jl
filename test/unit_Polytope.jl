@@ -194,11 +194,27 @@ for N in [Float64, Rational{Int}, Float32]
     p[1] = N(5)
     # test that Pcopy is independent of P ( = deepcopy)
     @test Pcopy.vertices[1] == [N(1)]
+
+    # test concrete projection
+    V = VPolytope([N[0, 0, 1], N[0, 1, 0], N[0, -1, 0], N[1, 0, 0]])
+    @test project(V, [1]) == Interval(N(0), N(1))
+    @test project(V, [1, 2]) == VPolygon([N[0, 0], N[0, 1], N[0, -1], N[1, 0]])
+    @test project(V, [1, 2, 3]) == V
 end
 
 # default Float64 constructors
 @test HPolytope() isa HPolytope{Float64}
 @test VPolytope() isa VPolytope{Float64,Array{Float64,1}}
+
+# tests that only work with Float64 and Float32
+for N in [Float64, Float32]
+    # normalization
+    p1 = HPolytope([HalfSpace(N[1e5], N(3e5)), HalfSpace(N[-2e5], N(4e5))])
+    p2 = normalize(p1)
+    for hs in constraints_list(p2)
+        @test norm(hs.a) == N(1)
+    end
+end
 
 # tests that only work with Float64
 for N in [Float64]
@@ -356,6 +372,13 @@ for N in [Float64]
         @test tovrep(P) isa VPolytope{N}
         @test tohrep(P) isa HPolytope{N}  # no-op
 
+        # linear map
+        H = BallInf(N[0, 0], N(1))
+        P = convert(HPolytope, H)
+        M = N[2 3; 1 2]
+        MP = linear_map(M, P)  # check concrete linear map
+        @test M * an_element(P) ∈ MP   # check that the image of an element is in the linear map
+
         # check boundedness after conversion
         H = Hyperrectangle(N[1, 1], N[2, 2])
         HPolytope(constraints_list(H); check_boundedness=true)
@@ -366,17 +389,35 @@ for N in [Float64]
 
         # intersection
         p1 = VPolytope(vertices_list(BallInf(N[0, 0], N(1))))
-        p2 = VPolytope(vertices_list(BallInf(N[2, 2], N(1))))
+        p2 = VPolytope(vertices_list(BallInf(N[1, 1], N(1))))
         cap = intersection(p1, p2)
-        @test vertices_list(cap) ≈ [N[1, 1]]
+        vlist = [N[1, 1], N[0, 1], N[1, 0], N[0, 0]]
+        @test ispermutation(vertices_list(cap), vlist)
         # other polytopic sets
         p3 = VPolygon(vertices_list(p2))
         cap = intersection(p1, p3)
-        @test vertices_list(cap) ≈ [N[1, 1]]
-        p4 = BallInf(N[2, 2], N(1))
-        cap = intersection(p1, p4)
-        vlist = vertices_list(cap)
-        @test vlist == [N[1, 1]]
+        @test ispermutation(vertices_list(cap), vlist)
+
+        # 2D intersection
+        paux = VPolytope([N[0, 0], N[1, 0], N[0, 1], N[1, 1]])
+        qaux = VPolytope([N[1, -1/2], N[-1/2, 1], N[-1/2, -1/2]])
+        xaux = intersection(paux, qaux)
+        oaux = VPolytope([N[0, 0], N[1/2, 0], N[0, 1/2]])
+        @test xaux ⊆ oaux && oaux ⊆ xaux # TODO use isequivalent
+
+        # mixed types
+        paux = VPolygon([N[0, 0], N[1, 0], N[0, 1], N[1, 1]])
+        qaux = VPolytope([N[1, -1/2], N[-1/2, 1], N[-1/2, -1/2]])
+        xaux = intersection(paux, qaux)
+        oaux = VPolytope([N[0, 0], N[1/2, 0], N[0, 1/2]])
+        @test xaux ⊆ oaux && oaux ⊆ xaux # TODO use isequivalent
+
+        # 1D set
+        paux = VPolytope([N[0], N[1]])
+        qaux = VPolytope([N[-1/2], N[1/2]])
+        xaux = intersection(paux, qaux)
+        oaux = VPolytope([N[0], N[1/2]])
+        @test xaux ⊆ oaux && oaux ⊆ xaux # TODO use isequivalent
 
         # isuniversal
         answer, w = isuniversal(p1, true)
@@ -473,5 +514,11 @@ for N in [Float64]
         c3, r = chebyshev_center(P; get_radius=true)
         @test c1 == c2 == c3 == center(B) && c1 isa AbstractVector{N}
         @test r == B.radius
+
+        # concrete projection
+        πP = project(P, [1])
+        @test πP isa HPolytope{N}
+        @test ispermutation(constraints_list(πP), [HalfSpace(N[-1], N(1)),
+                                                   HalfSpace(N[1], N(1))])
     end
 end

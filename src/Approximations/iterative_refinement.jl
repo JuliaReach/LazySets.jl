@@ -1,5 +1,5 @@
 """
-    LocalApproximation{N<:Real, VN<:AbstractVector{N}}
+    LocalApproximation{N, VN<:AbstractVector{N}}
 
 Type that represents a local approximation in 2D.
 
@@ -17,7 +17,7 @@ Type that represents a local approximation in 2D.
 
 The criteria for being refinable are determined in the method `new_approx`.
 """
-struct LocalApproximation{N<:Real, VN<:AbstractVector{N}}
+struct LocalApproximation{N, VN<:AbstractVector{N}}
     p1::VN
     d1::VN
     p2::VN
@@ -45,7 +45,7 @@ function constraint(approx::LocalApproximation)
 end
 
 """
-    PolygonalOverapproximation{N<:Real, SN<:LazySet{N}, VN<:AbstractVector{N}}
+    PolygonalOverapproximation{N, SN<:LazySet{N}, VN<:AbstractVector{N}}
 
 Type that represents the polygonal approximation of a convex set.
 
@@ -56,13 +56,13 @@ Type that represents the polygonal approximation of a convex set.
 - `constraints`  -- vector of linear constraints that are already finalized
                     (i.e., they satisfy the given error bound)
 """
-struct PolygonalOverapproximation{N<:Real, SN<:LazySet{N}, VN<:AbstractVector{N}}
+struct PolygonalOverapproximation{N, SN<:LazySet{N}, VN<:AbstractVector{N}}
     S::SN
     approx_stack::Vector{LocalApproximation{N, VN}}
     constraints::Vector{LinearConstraint{N, VN}}
 end
 
-function PolygonalOverapproximation(S::SN) where {N<:Real, SN<:LazySet{N}}
+function PolygonalOverapproximation(S::SN) where {N, SN<:LazySet{N}}
     empty_local_approx = Vector{LocalApproximation{N, Vector{N}}}()
     empty_constraints = Vector{LinearConstraint{N,Vector{N}}}()
     return PolygonalOverapproximation(S, empty_local_approx, empty_constraints)
@@ -96,7 +96,7 @@ function new_approx(S::LazySet, p1::VN, d1::VN,
         err = zero(N)
     else
         ndir = normalize([p2[2]-p1[2], p1[1]-p2[1]])
-        q = element(intersection(Line(d1, dot(d1, p1)), Line(d2, dot(d2, p2))))
+        q = element(intersection(Line2D(d1, dot(d1, p1)), Line2D(d2, dot(d2, p2))))
         err = min(norm(q - σ(ndir, S)), dot(ndir, q - p1))
         refinable = (err > _rtol(N)) && (norm(p1-q, 2) > _rtol(N)) &&
                     (norm(q-p2, 2) > _rtol(N))
@@ -106,7 +106,7 @@ end
 
 """
     addapproximation!(Ω::PolygonalOverapproximation, p1::VN, d1::VN,
-                      p2::VN, d2::VN) where {N<:Real, VN<:AbstractVector{N}}
+                      p2::VN, d2::VN) where {N, VN<:AbstractVector{N}}
 
 ### Input
 
@@ -122,7 +122,7 @@ The list of local approximations in `Ω` of the set `Ω.S` is updated in-place a
 the new approximation is returned by this function.
 """
 function addapproximation!(Ω::PolygonalOverapproximation, p1::VN, d1::VN,
-                           p2::VN, d2::VN) where {N<:Real, VN<:AbstractVector{N}}
+                           p2::VN, d2::VN) where {N, VN<:AbstractVector{N}}
     approx = new_approx(Ω.S, p1, d1, p2, d2)
     push!(Ω.approx_stack, approx)
     return approx
@@ -184,7 +184,7 @@ function tohrep(Ω::PolygonalOverapproximation)
 end
 
 """
-    approximate(S::LazySet{N}, ε::N) where {N<:AbstractFloat}
+    _approximate(S::LazySet{N}, ε::N) where {N<:AbstractFloat}
 
 Return an ε-close approximation of the given 2D convex set (in terms of
 Hausdorff distance) as an inner and an outer approximation composed by sorted
@@ -199,7 +199,7 @@ local `Approximation2D`.
 
 An ε-close approximation of the given 2D convex set.
 """
-function approximate(S::LazySet{N}, ε::N) where {N<:AbstractFloat}
+function _approximate(S::LazySet{N}, ε::N) where {N<:AbstractFloat}
     # initialize box directions
     pe = σ(DIR_EAST(N), S)
     pn = σ(DIR_NORTH(N), S)

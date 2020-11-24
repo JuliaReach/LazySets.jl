@@ -4,7 +4,7 @@ export AbstractAffineMap,
        matrix, vector, set
 
 """
-    AbstractAffineMap{N<:Real, S<:LazySet{N}} <: LazySet{N}
+    AbstractAffineMap{N, S<:LazySet{N}} <: LazySet{N}
 
 Abstract type for affine maps.
 
@@ -28,7 +28,7 @@ julia> subtypes(AbstractAffineMap)
  Translation
 ```
 """
-abstract type AbstractAffineMap{N<:Real, S<:LazySet{N}} <: LazySet{N} end
+abstract type AbstractAffineMap{N, S<:LazySet{N}} <: LazySet{N} end
 
 isoperationtype(::Type{<:AbstractAffineMap}) = true
 isconvextype(::Type{<:AbstractAffineMap{N, S}}) where {N, S} = isconvextype(S)
@@ -55,7 +55,7 @@ function dim(am::AbstractAffineMap)
 end
 
 """
-    σ(d::AbstractVector{N}, am::AbstractAffineMap{N}) where {N<:Real}
+    σ(d::AbstractVector, am::AbstractAffineMap)
 
 Return the support vector of an affine map.
 
@@ -68,13 +68,13 @@ Return the support vector of an affine map.
 
 The support vector in the given direction.
 """
-function σ(d::AbstractVector{N}, am::AbstractAffineMap{N}) where {N<:Real}
+function σ(d::AbstractVector, am::AbstractAffineMap)
     A = matrix(am)
     return A * σ(_At_mul_B(A, d), set(am)) + vector(am)
 end
 
 """
-    ρ(d::AbstractVector{N}, am::AbstractAffineMap{N}) where {N<:Real}
+    ρ(d::AbstractVector, am::AbstractAffineMap)
 
 Return the support function of an affine map.
 
@@ -87,7 +87,7 @@ Return the support function of an affine map.
 
 The support function in the given direction.
 """
-function ρ(d::AbstractVector{N}, am::AbstractAffineMap{N}) where {N<:Real}
+function ρ(d::AbstractVector, am::AbstractAffineMap)
     return ρ(_At_mul_B(matrix(am), d), set(am)) + dot(d, vector(am))
 end
 
@@ -147,7 +147,7 @@ We first check if the matrix is zero or the wrapped set is bounded.
 If not, we perform a sufficient check whether the matrix is invertible.
 If the matrix is invertible, then the map being bounded is equivalent to the
 wrapped set being bounded, and hence the map is unbounded.
-Otherwise, we check boundedness via [`isbounded_unit_dimensions`](@ref).
+Otherwise, we check boundedness via [`_isbounded_unit_dimensions`](@ref).
 """
 function isbounded(am::AbstractAffineMap; cond_tol::Number=DEFAULT_COND_TOL)
     M = matrix(am)
@@ -157,11 +157,11 @@ function isbounded(am::AbstractAffineMap; cond_tol::Number=DEFAULT_COND_TOL)
     if isinvertible(M; cond_tol=cond_tol)
         return false
     end
-    return isbounded_unit_dimensions(am)
+    return _isbounded_unit_dimensions(am)
 end
 
 """
-    ∈(x::AbstractVector{N}, am::AbstractAffineMap{N}) where {N<:Real}
+    ∈(x::AbstractVector, am::AbstractAffineMap)
 
 Check whether a given point is contained in the affine map of a convex set.
 
@@ -203,13 +203,12 @@ julia> [0.5, 0.5] ∈ M*B
 true
 ```
 """
-function ∈(x::AbstractVector{N}, am::AbstractAffineMap{N}) where {N<:Real}
+function ∈(x::AbstractVector, am::AbstractAffineMap)
     return matrix(am) \ (x - vector(am)) ∈ set(am)
 end
 
 """
-    vertices_list(am::AbstractAffineMap{N};
-                  [apply_convex_hull]::Bool) where {N<:Real}
+    vertices_list(am::AbstractAffineMap; [apply_convex_hull]::Bool)
 
 Return the list of vertices of a (polyhedral) affine map.
 
@@ -238,8 +237,7 @@ under the affine map, pass `apply_convex_hull=false` as a keyword argument.
 Note that we assume that the underlying set `X` is polyhedral, either concretely
 or lazily, i.e. there the function `vertices_list` should be applicable.
 """
-function vertices_list(am::AbstractAffineMap{N};
-                       apply_convex_hull::Bool=true) where {N<:Real}
+function vertices_list(am::AbstractAffineMap; apply_convex_hull::Bool=true)
     # for a zero linear map, the result is just the affine translation
     A = matrix(am)
     b = vector(am)
@@ -260,7 +258,7 @@ function vertices_list(am::AbstractAffineMap{N};
 end
 
 """
-    constraints_list(am::AbstractAffineMap{N}) where {N<:Real}
+    constraints_list(am::AbstractAffineMap)
 
 Return the list of constraints of a (polyhedral) affine map.
 
@@ -281,13 +279,13 @@ We assume that the underlying set `X` is polyhedral, i.e., offers a method
 
 Falls back to the list of constraints of the translation of a lazy linear map.
 """
-function constraints_list(am::AbstractAffineMap{N}) where {N<:Real}
+function constraints_list(am::AbstractAffineMap)
     return _constraints_list_translation(LinearMap(matrix(am), set(am)),
                                          vector(am))
 end
 
 """
-    linear_map(M::AbstractMatrix{N}, am::AbstractAffineMap{N}) where {N<:Real}
+    linear_map(M::AbstractMatrix, am::AbstractAffineMap)
 
 Return the linear map of a lazy affine map.
 
@@ -300,7 +298,6 @@ Return the linear map of a lazy affine map.
 
 A set corresponding to the linear map of the lazy affine map of a set.
 """
-function linear_map(M::AbstractMatrix{N},
-                    am::AbstractAffineMap{N}) where {N<:Real}
+function linear_map(M::AbstractMatrix, am::AbstractAffineMap)
      return translate(linear_map(M * matrix(am), set(am)), M * vector(am))
 end

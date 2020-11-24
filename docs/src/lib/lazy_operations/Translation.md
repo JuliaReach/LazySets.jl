@@ -19,9 +19,10 @@ Inherited from [`AbstractAffineMap`](@ref):
 * [`dim`](@ref dim(::AbstractAffineMap))
 * [`isempty`](@ref isempty(::AbstractAffineMap))
 * [`isbounded`](@ref isbounded(::AbstractAffineMap))
-* [`vertices_list`](@ref vertices_list(::AbstractAffineMap{N}) where {N<:Real})
+* [`vertices_list`](@ref vertices_list(::AbstractAffineMap))
 
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`singleton_list`](@ref singleton_list(::LazySet))

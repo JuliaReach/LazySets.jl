@@ -155,3 +155,11 @@ end
 function set(am::AffineMap)
     return am.X
 end
+
+
+# --- LazySet interface functions ---
+
+
+function concretize(am::AffineMap)
+    return affine_map(am.M, concretize(am.X), am.v)
+end

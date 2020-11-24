@@ -33,12 +33,20 @@ uniform_partition
 
 ```@docs
 overapproximate
+LazySets.Approximations._overapproximate_zonotope_vrep
+LazySets.Approximations._overapproximate_zonotope_cpa
 ```
 
 ## Underapproximations
 
 ```@docs
 underapproximate
+```
+
+## Approximations
+
+```@docs
+approximate
 ```
 
 ## Box Approximations
@@ -62,7 +70,7 @@ new_approx(S::LazySet, p1::VN, d1::VN,
 addapproximation!(Ω::PolygonalOverapproximation, p1::VN, d1::VN, p2::VN, d2::VN) where {N<:Real, VN<:AbstractVector{N}}
 refine(::LocalApproximation, ::LazySet)
 tohrep(::PolygonalOverapproximation)
-approximate(S::LazySet{N}, ε::N) where {N<:AbstractFloat}
+_approximate(S::LazySet{N}, ε::N) where {N<:AbstractFloat}
 constraint(::LocalApproximation)
 ```
 

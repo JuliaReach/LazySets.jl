@@ -6,7 +6,7 @@ export PolynomialZonotope, dim, σ,
        minkowski_sum
 
 """
-    PolynomialZonotope{N}
+    PolynomialZonotope{N, VT, VMT, MT}
 
 Type that represents a polynomial zonotope.
 
@@ -68,20 +68,19 @@ the polynomial order ``η``.
     polynomialization and non-convex sets*, Hybrid Systems: Computation and
     Control, 2013, pp. 173–182.
 """
-struct PolynomialZonotope{N}
-    c::Vector{N}
-    E::Vector{Matrix{N}}
-    F::Vector{Matrix{N}}
-    G::Matrix{N}
+struct PolynomialZonotope{N, VT, VMT, MT}
+    c::VT
+    E::VMT
+    F::VMT
+    G::MT
 
     # default constructor with dimension check
-    function PolynomialZonotope(c::Vector{N}, E::Vector{Matrix{N}},
-                                F::Vector{Matrix{N}}, G::Matrix{N}) where {N}
-
+    function PolynomialZonotope(c::VT, E::VMT, F::VMT, G::MT) where {VT, VMT, MT}
         # check polynomial order
         @assert length(E) == 1 + length(F)
+        N = typeof(c[1])
 
-        return new{N}(c, E, F, G)
+        return new{N, VT, VMT, MT}(c, E, F, G)
     end
 end
 

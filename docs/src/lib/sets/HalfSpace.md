@@ -13,6 +13,7 @@ dim(::HalfSpace)
 ∈(::AbstractVector{N}, ::HalfSpace{N}) where {N<:Real}
 an_element(::HalfSpace{N}) where {N<:Real}
 rand(::Type{HalfSpace})
+normalize(::HalfSpace{N}, p=N(2)) where {N<:Real}
 isbounded(::HalfSpace)
 isuniversal(::HalfSpace{N}, ::Bool=false) where {N<:Real}
 isempty(::HalfSpace)
@@ -22,7 +23,7 @@ constrained_dimensions(::HalfSpace{N}) where {N<:Real}
 translate(::HalfSpace{N}, ::AbstractVector{N}) where {N<:Real}
 halfspace_left(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
 halfspace_right(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
-tosimplehrep(::AbstractVector{LC}) where {N<:Real, LC<:LinearConstraint{N}}
+tosimplehrep(::AbstractVector{LC}) where {N, LC<:LinearConstraint{N}}
 remove_redundant_constraints
 remove_redundant_constraints!
 ```

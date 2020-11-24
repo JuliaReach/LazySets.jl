@@ -3,11 +3,10 @@ import Base.isempty
 export AbstractCentrallySymmetricPolytope,
        center,
        an_element,
-       vertices_list,
-       singleton_list
+       vertices_list
 
 """
-    AbstractCentrallySymmetricPolytope{N<:Real} <: AbstractPolytope{N}
+    AbstractCentrallySymmetricPolytope{N} <: AbstractPolytope{N}
 
 Abstract type for centrally symmetric, polytopic sets.
 It combines the `AbstractCentrallySymmetric` and `AbstractPolytope` interfaces.
@@ -19,10 +18,9 @@ Such a type combination is necessary as long as Julia does not support
 Every concrete `AbstractCentrallySymmetricPolytope` must define the following
 functions:
 - from `AbstractCentrallySymmetric`:
-  - `center(::AbstractCentrallySymmetricPolytope{N})` -- return the
-     center point
+  - `center(::AbstractCentrallySymmetricPolytope)` -- return the center point
 - from `AbstractPolytope`:
-  - `vertices_list(::AbstractCentrallySymmetricPolytope{N})`
+  - `vertices_list(::AbstractCentrallySymmetricPolytope)`
      -- return a list of all vertices
 
 ```jldoctest; setup = :(using LazySets: subtypes)
@@ -32,7 +30,7 @@ julia> subtypes(AbstractCentrallySymmetricPolytope)
  Ball1
 ```
 """
-abstract type AbstractCentrallySymmetricPolytope{N<:Real} <: AbstractPolytope{N} end
+abstract type AbstractCentrallySymmetricPolytope{N} <: AbstractPolytope{N} end
 
 isconvextype(::Type{<:AbstractCentrallySymmetricPolytope}) = true
 
@@ -59,7 +57,7 @@ end
 
 
 """
-    an_element(P::AbstractCentrallySymmetricPolytope{N}) where {N<:Real}
+    an_element(P::AbstractCentrallySymmetricPolytope)
 
 Return some element of a centrally symmetric polytope.
 
@@ -71,7 +69,7 @@ Return some element of a centrally symmetric polytope.
 
 The center of the centrally symmetric polytope.
 """
-function an_element(P::AbstractCentrallySymmetricPolytope{N}) where {N<:Real}
+function an_element(P::AbstractCentrallySymmetricPolytope)
     return center(P)
 end
 
@@ -93,8 +91,8 @@ function isempty(::AbstractCentrallySymmetricPolytope)
 end
 
 """
-    isuniversal(S::AbstractCentrallySymmetricPolytope{N}, [witness]::Bool=false
-               ) where {N<:Real}
+    isuniversal(S::AbstractCentrallySymmetricPolytope{N},
+                [witness]::Bool=false) where {N}
 
 Check whether a centrally symmetric polytope is universal.
 
@@ -114,7 +112,7 @@ A witness is obtained by computing the support vector in direction
 `d = [1, 0, …, 0]` and adding `d` on top.
 """
 function isuniversal(S::AbstractCentrallySymmetricPolytope{N},
-                     witness::Bool=false) where {N<:Real}
+                     witness::Bool=false) where {N}
     if witness
         d = SingleEntryVector{N}(1, dim(S))
         w = σ(d, S) + d
@@ -125,7 +123,7 @@ function isuniversal(S::AbstractCentrallySymmetricPolytope{N},
 end
 
 """
-    center(H::AbstractCentrallySymmetricPolytope{N}, i::Int) where {N<:Real}
+    center(S::AbstractCentrallySymmetricPolytope, i::Int)
 
 Return the center along a given dimension of a centrally symmetric polytope.
 
@@ -138,7 +136,6 @@ Return the center along a given dimension of a centrally symmetric polytope.
 
 The center along a given dimension of the centrally symmetric polytope.
 """
-@inline function center(S::AbstractCentrallySymmetricPolytope{N},
-                        i::Int) where {N<:Real}
+@inline function center(S::AbstractCentrallySymmetricPolytope, i::Int)
     return center(S)[i]
 end

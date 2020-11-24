@@ -7,16 +7,23 @@ CurrentModule = LazySets
 ```@docs
 Line
 dim(::Line)
-σ(::AbstractVector{N}, ::Line{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::Line{N}) where {N<:Real}
-an_element(::Line{N}) where {N<:Real}
+ρ(::AbstractVector, ::Line)
+σ(::AbstractVector, ::Line)
+∈(::AbstractVector, ::Line)
+an_element(::Line)
+direction(::Line)
 rand(::Type{Line})
 isbounded(::Line)
-isuniversal(::Line{N}, ::Bool=false) where {N<:Real}
+isuniversal(::Line; ::Bool=false)
 isempty(::Line)
-constrained_dimensions(::Line{N}) where {N<:Real}
-constraints_list(::Line{N}) where {N<:Real}
-translate(::Line{N}, ::AbstractVector{N}) where {N<:Real}
+constraints_list(::Line{N, VN}) where {N, VN}
+translate(::Line, ::AbstractVector)
+translate!(::Line, ::AbstractVector)
+normalize(::Line, ::Real=2.0)
+normalize!(::Line, ::Real=2.0)
+distance(::AbstractVector, ::Line, ::Real=2.0)
+distance(::AbstractSingleton, ::Line, ::Real=2.0)
+linear_map(::AbstractMatrix, ::Line)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

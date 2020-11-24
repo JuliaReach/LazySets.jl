@@ -18,6 +18,10 @@ for N in Ns
     # type-less constructor
     x = Interval(N(0), N(1))
 
+    # constructor with promotion
+    y = Interval(0, N(1))
+    @test y == x
+
     @test dim(x) == 1
     @test center(x) == N[0.5]
     @test center(x, 1) == N(0.5)
@@ -113,6 +117,14 @@ for N in Ns
     h = convert(Hyperrectangle, x)
     @test h isa Hyperrectangle && center(h) == radius_hyperrectangle(h) == N[0.5]
 
+    # diameter
+    x = Interval(N(1), N(3))
+    @test diameter(x) == diameter(x, Inf) == diameter(x, 2) == N(2)
+
+    # split
+    @test split(x, 4) == [Interval(N(1), N(3//2)), Interval(N(3//2), N(2)),
+                          Interval(N(2), N(5//2)), Interval(N(5//2), N(3))]
+
     # concrete intersection
     A = Interval(N(5), N(7))
     B = Interval(N(3), N(6))
@@ -184,4 +196,12 @@ for N in Ns
     elseif N == Rational{Int}
         @test isflat(Interval(N(0), 2*ztol))
     end
+
+    # rectification
+    x = Interval(N(-2), N(-1))
+    @test rectify(x) == Interval(N(0), N(0))
+    x = Interval(N(-2), N(2))
+    @test rectify(x) == Interval(N(0), N(2))
+    x = Interval(N(1), N(2))
+    @test rectify(x) == x
 end

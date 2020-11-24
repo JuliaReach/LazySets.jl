@@ -198,3 +198,7 @@ function vertices_list(ch::ConvexHull;
     end
     return vlist
 end
+
+function concretize(ch::ConvexHull)
+    return convex_hull(concretize(ch.X), concretize(ch.Y))
+end

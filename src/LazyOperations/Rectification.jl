@@ -587,3 +587,7 @@ function construct_projection(set::LazySet{N}, negative_dimensions,
     end
     return Diagonal(v) * set
 end
+
+function concretize(r::Rectification)
+    return rectify(concretize(r.X))
+end

@@ -9,8 +9,6 @@ export HPolyhedron,
        tohrep, tovrep,
        convex_hull,
        cartesian_product,
-       vertices_list,
-       singleton_list,
        isempty,
        remove_redundant_constraints,
        remove_redundant_constraints!,
@@ -191,32 +189,6 @@ function σ_helper(d::AbstractVector{N}, P::HPoly{N}, solver) where {N<:Real}
 end
 
 """
-    isbounded(P::HPolyhedron)
-
-Determine whether a polyhedron in constraint representation is bounded.
-
-### Input
-
-- `P` -- polyhedron in constraint representation
-
-### Output
-
-`true` iff the polyhedron is bounded.
-
-### Algorithm
-
-We first check if the polyhedron has more than `max(dim(P), 1)` constraints,
-which is a necessary condition for boundedness.
-If so, we check boundedness via [`isbounded_unit_dimensions`](@ref).
-"""
-function isbounded(P::HPolyhedron)
-    if length(P.constraints) <= max(dim(P), 1)
-        return false
-    end
-    return isbounded_unit_dimensions(P)
-end
-
-"""
     rand(::Type{HPolyhedron}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
          [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
 
@@ -316,6 +288,27 @@ The same polyhedron instance.
 """
 function tohrep(P::HPoly{N}) where {N<:Real}
     return P
+end
+
+"""
+    normalize(P::HPoly{N}, p=N(2)) where {N<:Real}
+
+Normalize a polyhedron in constraint representation.
+
+### Input
+
+- `P` -- polyhedron in constraint representation
+- `p` -- (optional, default: `2`) norm
+
+### Output
+
+A new polyhedron in constraint representation whose normal directions ``a_i``
+are normalized, i.e., such that ``‖a_i‖_p = 1`` holds.
+"""
+function normalize(P::HPoly{N}, p=N(2)) where {N<:Real}
+    constraints = [normalize(hs, p) for hs in constraints_list(P)]
+    T = basetype(P)
+    return T(constraints)
 end
 
 """
@@ -524,55 +517,6 @@ function tovrep(P::HPoly{N};
 end
 
 """
-    vertices_list(P::HPolyhedron{N}) where {N<:Real}
-
-Return the list of vertices of a polyhedron in constraint representation.
-
-### Input
-
-- `P` -- polyhedron in constraint representation
-
-### Output
-
-This function returns an error because the polyhedron is possibly unbounded.
-If `P` is known to be bounded, try converting to `HPolytope` first:
-
-```jldoctest
-julia> P = HPolyhedron([HalfSpace([1.0, 0.0], 1.0),
-                        HalfSpace([0.0, 1.0], 1.0),
-                        HalfSpace([-1.0, 0.0], 1.0),
-                        HalfSpace([0.0, -1.0], 1.0)]);
-
-julia> P_as_polytope = convert(HPolytope, P);
-```
-"""
-function vertices_list(P::HPolyhedron{N}) where {N<:Real}
-    throw(ArgumentError("the list of vertices of a (possibly unbounded) " *
-        "polyhedron is not defined; if the polyhedron is bounded, try " *
-        "converting to `HPolytope` first"))
-end
-
-"""
-    singleton_list(P::HPolyhedron{N}) where {N<:Real}
-
-Return the vertices of a polyhedron in H-representation as a list of singletons.
-
-### Input
-
-- `P` -- polytope in constraint representation
-
-### Output
-
-This function returns an error because the polyhedron is possibly unbounded.
-If `P` is known to be bounded, try converting to `HPolytope` first.
-"""
-function singleton_list(P::HPolyhedron{N}) where {N<:Real}
-    throw(ArgumentError("the list of singletons of a (possibly unbounded) " *
-        "polyhedron is not defined; if the polyhedron is bounded, try " *
-        "converting to `HPolytope` first"))
-end
-
-"""
    isempty(P::HPoly{N}, witness::Bool=false;
            [use_polyhedra_interface]::Bool=false, [solver]=default_lp_solver(N),
            [backend]=nothing) where {N<:Real}
@@ -668,8 +612,6 @@ function convert(::Type{HPolyhedron}, P::HRep{N}) where {N}
     for hi in Polyhedra.allhalfspaces(P)
         a, b = hi.a, hi.β
         if isapproxzero(norm(a))
-            @assert b >= zero(N) "the half-space is inconsistent since it has a " *
-                "zero normal direction but the constraint is negative"
             continue
         end
         push!(constraints, HalfSpace(a, b))
@@ -725,3 +667,133 @@ end
 
 end # quote
 end # function load_polyhedra_hpolyhedron()
+
+"""
+    _isbounded_stiemke(P::HPolyhedron{N}; solver=LazySets.default_lp_solver(N),
+                       check_nonempty::Bool=true) where {N<:Real}
+
+Determine whether a polyhedron is bounded using Stiemke's theorem of alternatives.
+
+### Input
+
+- `P`       -- polyhedron
+- `backend` -- (optional, default: `default_lp_solver(N)`) the backend used
+               to solve the linear program
+- `check_nonempty` -- (optional, default: `true`) if `true`, check the
+                      precondition to this algorithm that `P` is non-empty
+
+### Output
+
+`true` iff the polyhedron is bounded
+
+### Notes
+
+The algorithm internally calls `isempty` to check whether the polyhedron is empty.
+This computation can be avoided using the `check_nonempty` flag.
+
+### Algorithm
+
+The algorithm is based on Stiemke's theorem of alternatives, see e.g. [1].
+
+Let the polyhedron ``P`` be given in constraint form ``Ax ≤ b``. We assume that
+the polyhedron is not empty.
+
+Proposition 1. If ``\\ker(A)≠\\{0\\}``, then ``P`` is unbounded.
+
+Proposition 2. Assume that ``ker(A)={0}`` and ``P`` is non-empty.
+Then ``P`` is bounded if and only if the following linear
+program admits a feasible solution: ``\\min∥y∥_1`` subject to ``A^Ty=0`` and ``y≥1``.
+
+[1] Mangasarian, Olvi L. *Nonlinear programming.*
+    Society for Industrial and Applied Mathematics, 1994.
+"""
+function _isbounded_stiemke(P::HPolyhedron{N}; solver=LazySets.default_lp_solver(N),
+                            check_nonempty::Bool=true) where {N<:Real}
+    if check_nonempty && isempty(P)
+        return true
+    end
+
+    A, b = tosimplehrep(P)
+    m, n = size(A)
+
+    if !isempty(nullspace(A))
+        return false
+    end
+
+    At = copy(transpose(A))
+    c = ones(N, m)
+    lp = linprog(c, At, '=', zeros(n), one(N), Inf, solver)
+    return (lp.status == :Optimal)
+end
+
+# ============================================
+# Functionality that requires ModelingToolkit
+# ============================================
+function load_modeling_toolkit_hpolyhedron()
+
+return quote
+
+"""
+    HPolyhedron(expr::Vector{<:Operation}, vars=get_variables(first(expr)); N::Type{<:Real}=Float64)
+
+Return the polyhedron in half-space representation given by a list of symbolic expressions.
+
+### Input
+
+- `expr` -- vector of symbolic expressions that describes each half-space
+- `vars` -- (optional, default: `get_variables(expr)`), if an array of variables is given,
+            use those as the ambient variables in the set with respect to which derivations
+            take place; otherwise, use only the variables which appear in the given
+            expression (but be careful because the order may change)
+- `N`    -- (optional, default: `Float64`) the numeric type of the returned half-space
+
+### Output
+
+An `HPolyhedron`.
+
+### Examples
+
+```julia
+julia> using ModelingToolkit
+
+julia> vars = @variables x y
+(x, y)
+
+julia> HPolyhedron([x + y <= 1, x + y >= -1], vars)
+HPolyhedron{Float64,Array{Float64,1}}(HalfSpace{Float64,Array{Float64,1}}[HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0], 1.
+0), HalfSpace{Float64,Array{Float64,1}}([-1.0, -1.0], 1.0)])
+
+julia> X = HPolyhedron([x == 0, y <= 0], var)
+HPolyhedron{Float64,Array{Float64,1}}(HalfSpace{Float64,Array{Float64,1}}[HalfSpace{Float64,Array{Float64,1}}([1.0, 0.0], -0.0), HalfSp
+ace{Float64,Array{Float64,1}}([-1.0, -0.0], 0.0), HalfSpace{Float64,Array{Float64,1}}([0.0, 1.0], -0.0)])
+```
+"""
+function HPolyhedron(expr::Vector{<:Operation}, vars=get_variables(first(expr)); N::Type{<:Real}=Float64)
+    clist = Vector{HalfSpace{N, Vector{N}}}()
+    sizehint!(clist, length(expr))
+    got_hyperplane = false
+    got_halfspace = false
+    zeroed_vars = Dict(v => zero(N) for v in vars)
+    vars_list = collect(vars)
+    for ex in expr
+        got_hyperplane, sexpr = _is_hyperplane(ex)
+        if !got_hyperplane
+            got_halfspace, sexpr = _is_halfspace(ex)
+            if !got_halfspace
+                throw(ArgumentError("expected an expression describing either " *
+                    "a half-space of a hyperplane, got $expr"))
+            end
+        end
+
+        coeffs = [N(α.value) for α in gradient(sexpr, vars_list)]
+        β = -N(ModelingToolkit.substitute(sexpr, zeroed_vars).value)
+
+        push!(clist, HalfSpace(coeffs, β))
+        if got_hyperplane
+            push!(clist, HalfSpace(-coeffs, -β))
+        end
+    end
+    return HPolyhedron(clist)
+end
+
+end end  # quote / load_modeling_toolkit_hpolyhedron()

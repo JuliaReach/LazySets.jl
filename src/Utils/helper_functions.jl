@@ -220,9 +220,10 @@ concrete types are obtained), using the `concrete` flag:
 
 ```jldoctest subtypes
 julia> subtypes(AbstractPolytope, true)
-14-element Array{Type,1}:
+15-element Array{Type,1}:
  Ball1
  BallInf
+ HParallelotope
  HPolygon
  HPolygonOpt
  HPolytope
@@ -444,4 +445,70 @@ end
 # check that the given coordinate i can be used to index an arbitrary element in the set X
 @inline function _check_bounds(X, i)
     1 <= i <= dim(X) || throw(ArgumentError("there is no index at coordinate $i, since the set is of dimension $(dim(X))"))
+end
+
+function _isupwards(vec)
+    return vec[2] > 0 || (vec[2] == 0 && vec[1] > 0)
+end
+
+
+"""
+    read_gen(filename::String)
+
+Read a sequence of polygons stored in vertex representation (gen format).
+
+### Input
+
+- `filename` -- path of the file containing the polygons
+
+### Output
+
+A list of polygons in vertex representation.
+
+### Notes
+
+The `x` and `y` coordinates of each vertex should be separated by an empty space,
+and polygons are separated by empty lines (even the last polygon). For example:
+
+```julia
+1.01 1.01
+0.99 1.01
+0.99 0.99
+1.01 0.99
+
+0.908463 1.31047
+0.873089 1.31047
+0.873089 1.28452
+0.908463 1.28452
+
+
+```
+This is parsed as
+
+```julia
+2-element Array{VPolygon{Float64,Array{Float64,1}},1}:
+ VPolygon{Float64,Array{Float64,1}}([[1.01, 1.01], [0.99, 1.01], [0.99, 0.99], [1.01, 0.99]])
+ VPolygon{Float64,Array{Float64,1}}([[0.908463, 1.31047], [0.873089, 1.31047], [0.873089, 1.28452], [0.908463, 1.28452]])
+```
+"""
+function read_gen(filename::String)
+    Mi = Vector{Vector{Float64}}()
+    P = Vector{VPolygon{Float64, Vector{Float64}}}()
+
+    # detects when we finished reading a new polygon, needed because polygons
+    # may be separated by more than one end-of-line
+    new_polygon = true
+    open(filename) do f
+        for line in eachline(f)
+            if !isempty(line)
+                push!(Mi, map(x -> parse(Float64, x), split(line)))
+                new_polygon = true
+             elseif isempty(line) && new_polygon
+                push!(P, VPolygon(Mi))
+                Mi = Vector{Vector{Float64}}()
+                new_polygon = false
+             end
+        end
+    end
+    return P
 end

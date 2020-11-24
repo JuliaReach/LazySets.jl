@@ -1,5 +1,7 @@
 global test_suite_polyhedra
 
+using LazySets: _isbounded_stiemke, _isbounded_unit_dimensions
+
 for N in [Float64, Rational{Int}, Float32]
     # random polyhedron
     rand(HPolyhedron)
@@ -40,9 +42,6 @@ for N in [Float64, Rational{Int}, Float32]
     # support vector of polyhedron with no constraints
     @test σ(N[1], p_univ) == N[Inf]
 
-    # boundedness
-    @test !isbounded(p_univ)
-
     # universality
     @test !isuniversal(p)
     res, w = isuniversal(p, true)
@@ -67,6 +66,12 @@ for N in [Float64, Rational{Int}, Float32]
         [HalfSpace(N[2, 2], N(18)), HalfSpace(N[-3, 3], N(9)),
          HalfSpace(N[-1, -1], N(-3)), HalfSpace(N[2, -4], N(-6))])
 
+    # constraints iterator
+    @test ispermutation(collect(constraints(p)), constraints_list(p))
+
+    # vertices iterator
+    @test ispermutation(collect(vertices(p)), vertices_list(p))
+
     if test_suite_polyhedra
         # conversion to and from Polyhedra's VRep data structure
         cl = constraints_list(HPolyhedron(polyhedron(p)))
@@ -75,7 +80,7 @@ for N in [Float64, Rational{Int}, Float32]
         # convert hyperrectangle to a HPolyhedron
         H = Hyperrectangle(N[1, 1], N[2, 2])
         P = convert(HPolyhedron, H)
-        @test_throws ArgumentError vertices_list(P) # the vertices list is not defined, see #820
+        @test length(vertices_list(P)) == 4
 
         # checking for emptiness
         P = HPolyhedron([LinearConstraint(N[1, 0], N(0))])    # x <= 0
@@ -100,13 +105,53 @@ for N in [Float64, Rational{Int}, Float32]
         if N != Rational{Int} # in floating-point we can use elimination
             lm = linear_map(N[2 3; 0 0], P, algorithm="elimination")
             @test lm isa HPolyhedron{Float64}
+
+            B = N[4e8 2; 0 1]
+            P = CartesianProduct(BallInf(N[0.01], N(0.08)), Singleton(N[1.0]))
+            lm = linear_map(B, P)
+            @test lm isa HPolytope{Float64}
         end
     end
 end
 
 # default Float64 constructors
-unconstrained_HPolyhedron = HPolyhedron()
-@test unconstrained_HPolyhedron isa HPolyhedron{Float64}
+@test HPolyhedron() isa HPolyhedron{Float64}
+
+# tests that only work with Float64 and Float32
+for N in [Float64, Float32]
+    # normalization
+    p1 = HPolyhedron([HalfSpace(N[1e5], N(3e5)), HalfSpace(N[-2e5], N(4e5))])
+    p2 = normalize(p1)
+    for hs in constraints_list(p2)
+        @test norm(hs.a) == N(1)
+    end
+
+    # 2D HPolyhedron
+    p = HPolyhedron{N}()
+    c1 = LinearConstraint(N[2, 2], N(12))
+    c2 = LinearConstraint(N[-3, 3], N(6))
+    c3 = LinearConstraint(N[-1, -1], N(0))
+    c4 = LinearConstraint(N[2, -4], N(0))
+    addconstraint!(p, c3)
+    addconstraint!(p, c1)
+    addconstraint!(p, c4)
+    addconstraint!(p, c2)
+
+    p_univ = HPolyhedron{N}()
+
+    # boundedness
+    @test !isbounded(p_univ)
+    @test isbounded(p)
+    @test !isbounded(HPolyhedron([HalfSpace(N[1, 0], N(1))]))
+
+    @test _isbounded_stiemke(p_univ)
+    @test _isbounded_stiemke(p)
+    @test !_isbounded_stiemke(HPolyhedron([HalfSpace(N[1, 0], N(1))]))
+
+    @test _isbounded_unit_dimensions(p_univ)
+    @test _isbounded_unit_dimensions(p)
+    @test !_isbounded_unit_dimensions(HPolyhedron([HalfSpace(N[1, 0], N(1))]))
+end
 
 # Polyhedra tests that only work with Float64
 for N in [Float64]
@@ -130,10 +175,21 @@ for N in [Float64]
     d = N[0, -1]
     @test σ(d, p) == N[0, 0]
 
+    # membership
+    @test [Inf, Inf] ∉ p
+
     # an_element
     P = HPolyhedron([HalfSpace(N[3//50, -4//10], N(1)),
                      HalfSpace(N[-1//50, 1//10], N(-1))])
     @test an_element(P) ∈ P
+
+    # an_element for an unbounded polyhedron
+    P = HPolyhedron([HalfSpace(N[-1, 0], N(-1))])
+    y = an_element(P)
+    # check that all entries are finite
+    @test all(!isinf, y)
+    # check that the points belong to P
+    @test y ∈ P
 
     # boundedness
     @test isbounded(p)
@@ -200,7 +256,7 @@ for N in [Float64]
         @test length(cl) == 4
 
         # vertices_list
-        @test_throws ArgumentError vertices_list(p1)
+        vertices_list(p1) ≈ [N[1.0], N[0.0]]
 
         # tovrep from HPolyhedron
         @test tohrep(p1) isa HPolyhedron{N} # test no-op
@@ -306,5 +362,17 @@ for N in [Float64]
         πP = project(P, [1, 2])
         @test πP isa HPolyhedron{N}
         @test ispermutation(constraints_list(πP), [HalfSpace(N[-1, 0], N(0)), HalfSpace(N[0, -1], N(0))])
+    end
+
+    # tests that require ModelingToolkit
+    @static if VERSION >= v"1.3" && isdefined(@__MODULE__, :ModelingToolkit)
+        vars = @variables x y
+        p1 = HPolyhedron([x + y <= 1, x + y >= -1,  x - y <= 1, x - y >= -1], vars)
+        b1 = Ball1(zeros(2), 1.0)
+        @test isequivalent(p1, b1)
+
+        p2 = HPolyhedron([x == 0, y <= 0], vars)
+        h2 = HPolyhedron([HalfSpace([1.0, 0.0], 0.0), HalfSpace([-1.0, 0.0], 0.0), HalfSpace([0.0, 1.0], 0.0)])
+        @test p2 ⊆ h2 && h2 ⊆ p2 # isequivalent(p2, h2) see #2370
     end
 end

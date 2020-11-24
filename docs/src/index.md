@@ -4,7 +4,7 @@
 CurrentModule = LazySets
 ```
 
-`LazySets` is a [Julia](http://julialang.org) package for calculus with convex
+[LazySets.jl](http://github.com/JuliaReach/LazySets.jl) is a [Julia](http://julialang.org) package for calculus with convex
 sets.
 
 The aim is to provide a scalable library for solving complex set-based problems,
@@ -202,8 +202,10 @@ Pages = [
     "lib/sets/HalfSpace.md",
     "lib/sets/HPolyhedron.md",
     "lib/sets/Hyperplane.md",
+    "lib/sets/Line2D.md",
     "lib/sets/Line.md",
     "lib/sets/Universe.md",
+    "lib/sets/HParallelotope.md",
     "lib/sets/HPolytope.md",
     "lib/sets/VPolytope.md",
     "lib/sets/HPolygon.md",

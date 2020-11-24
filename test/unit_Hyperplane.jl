@@ -93,6 +93,12 @@ for N in [Float64, Rational{Int}, Float32]
     @test translate(hp, N[1, 2, 3]) == Hyperplane(ones(N, 3), N(11))
 
     # intersection emptiness
+    hp2 = Hyperplane(hp.a, hp.b)
+    res, v = is_intersection_empty(hp, hp2, true)
+    @test !is_intersection_empty(hp, hp2) && !res && v ∈ hp && v ∈ hp2
+    hp2 = Hyperplane(hp.a, hp.b + N(1))
+    res, v = is_intersection_empty(hp, hp2, true)
+    @test is_intersection_empty(hp, hp2) && res && v == N[]
     u = Universe{N}(3)
     res, v = is_intersection_empty(u, hp, true)
     @test !is_intersection_empty(u, hp) && !res && v ∈ hp && v ∈ u
@@ -114,4 +120,22 @@ for N in [Float64]
     b = BallInf(N[2, 2, 2], N(1))
     empty_intersection, v = is_intersection_empty(b, hp, true)
     @test !empty_intersection && !is_intersection_empty(b, hp) && v ∈ hp && v ∈ b
+
+    # tests that require ModelingToolkit
+    @static if VERSION >= v"1.3" && isdefined(@__MODULE__, :ModelingToolkit)
+        vars = @variables x y
+        @test Hyperplane(2x + 3y == 5) == Hyperplane([2.0, 3.0], 5.0)
+        @test Hyperplane(2x + 3y == 5, N=Int) == Hyperplane([2, 3], 5)
+        @test Hyperplane(2x + 3y == 5, vars) == Hyperplane([2.0, 3.0,], 5.0)
+        @test Hyperplane(2x == 5y) == Hyperplane([2.0, -5.0,], 0.0)
+        @test Hyperplane(2x == 5y, vars) == Hyperplane([2.0, -5.0,], 0.0)
+
+        # test with sparse variables
+        @variables x[1:5]
+        @test Hyperplane(2x[1] + 5x[4] == 10., x) == Hyperplane([2.0, 0.0, 0.0, 5.0, 0.0], 10.0)
+
+        # test passing a combination of operations
+        vars = @variables x[1:2] t
+        @test Hyperplane(x[1] == t, vars) == Hyperplane([1.0, 0.0, -1.0], 0.0)
+    end
 end

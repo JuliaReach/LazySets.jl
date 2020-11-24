@@ -128,8 +128,32 @@ for N in [Float64, Float32, Rational{Int}]
         length(constraints_list(cp)) == 4
     M = N[2 1; 0 0]  # singular matrix
     lm = linear_map(M, cp)
-    @test lm isa VPolytope{N} &&
-        box_approximation(lm) == Hyperrectangle(N[7//2, 0], N[3//2, 0])
+    @test lm isa (N == Float64 ? HPolytope{N} : HPolytope)
+    @test box_approximation(lm) == Hyperrectangle(N[7//2, 0], N[3//2, 0])
+
+    cp = CartesianProduct(VPolytope([N[1]]), VPolytope([N[2]]))
+    if test_suite_polyhedra
+        # concretize
+        @test concretize(cp) == VPolytope([N[1, 2]])
+    else
+        @test concretize(cp) === cp
+    end
+
+    # inclusion
+    # same block structure
+    cp1 = CartesianProduct(Ball1(N[2], N(1)), Ball1(N[0, 0], N(2)))
+    cp2 = CartesianProduct(Interval(N(1), N(3)), BallInf(N[0, 0], N(3)))
+    res, w = ⊆(cp1, cp2, true)
+    @test cp1 ⊆ cp2 && res && w == N[]
+    res, w = ⊆(cp2, cp1, true)
+    @test cp2 ⊈ cp1 && !res && w ∈ cp2 && w ∉ cp1
+    # different block structure
+    cp1 = CartesianProduct(Interval(N(1), N(2)), BallInf(N[1, 1], N(1)))
+    cp2 = CartesianProduct(BallInf(N[1, 1], N(2)), Interval(N(0), N(2)))
+    res, w = ⊆(cp1, cp2, true)
+    @test cp1 ⊆ cp2 && res && w == N[]
+    res, w = ⊆(cp2, cp1, true)
+    @test cp2 ⊈ cp1 && !res && w ∈ cp2 && w ∉ cp1
 
     # ==================================
     # Conversions of Cartesian Products
@@ -160,6 +184,10 @@ for N in [Float64, Float32, Rational{Int}]
     @test Hcp isa CartesianProduct &&
           Hcp.X == Interval(N(-1), N(1)) &&
           Hcp.Y == Interval(N(-2), N(4))
+
+    cp = Zonotope(N[0, 0], N[1 0; 0 1]) × Zonotope(N[1, 1], N[0 1; 1 0])
+    @test convert(Zonotope, cp) == Zonotope(N[0, 0, 1, 1], N[1 0 0 0; 0 1 0 0;
+                                                             0 0 0 1; 0 0 1 0])
 
     # =====================
     # CartesianProductArray
@@ -253,8 +281,16 @@ for N in [Float64, Float32, Rational{Int}]
         length(constraints_list(cpa)) == 4
     M = N[2 1; 0 0]  # singular matrix
     lm = linear_map(M, cpa)
-    @test lm isa VPolytope{N} &&
-        box_approximation(lm) == Hyperrectangle(N[7//2, 0], N[3//2, 0])
+    @test lm isa (N == Float64 ? HPolytope{N} : HPolytope)
+    @test box_approximation(lm) == Hyperrectangle(N[7//2, 0], N[3//2, 0])
+
+    cpa = CartesianProductArray([VPolytope([N[1]]), VPolytope([N[2]])])
+    if test_suite_polyhedra
+        # concretize
+        @test concretize(cpa) == VPolytope([N[1, 2]])
+    else
+        @test concretize(cpa) === cpa
+    end
 
     # ========================================
     # Conversions of Cartesian Product Arrays
@@ -285,6 +321,13 @@ for N in [Float64, Float32, Rational{Int}]
     @test cpa1 ⊆ cpa2 && res && w == N[]
     res, w = ⊆(cpa2, cpa1, true)
     @test cpa2 ⊈ cpa1 && !res && w ∈ cpa2 && w ∉ cpa1
+    # different block structure
+    cpa1 = CartesianProductArray([Interval(N(1), N(2)), BallInf(N[1, 1], N(1))])
+    cpa2 = CartesianProductArray([BallInf(N[1, 1], N(2)), Interval(N(0), N(2))])
+    res, w = ⊆(cpa1, cpa2, true)
+    @test cpa1 ⊆ cpa2 && res && w == N[]
+    res, w = ⊆(cpa2, cpa1, true)
+    @test cpa2 ⊈ cpa1 && !res && w ∈ cpa2 && w ∉ cpa1
 
     # convert a hyperrectangle to the cartesian product array of intervals
     # convert a hyperrectangle to a cartesian product of intervals
@@ -298,6 +341,11 @@ for N in [Float64, Float32, Rational{Int}]
     Hcp = convert(CartesianProductArray{N, Interval{N}}, H)
     @test Hcp isa CartesianProductArray &&
           all([array(Hcp)[i] == Interval(N(-1), N(2*i-1)) for i in 1:3])
+
+    cpa = CartesianProductArray([Zonotope(N[0, 0], N[1 0; 0 1]),
+                                 Zonotope(N[1, 1], N[0 1; 1 0])])
+    @test convert(Zonotope, cpa) == Zonotope(N[0, 0, 1, 1], N[1 0 0 0; 0 1 0 0;
+                                                              0 0 0 1; 0 0 1 0])
 
     # ================
     # common functions

@@ -125,13 +125,13 @@ Determine whether an intersection of a finite number of convex sets is bounded.
 ### Algorithm
 
 We first check if any of the wrapped sets is bounded.
-Otherwise, we check boundedness via [`isbounded_unit_dimensions`](@ref).
+Otherwise, we check boundedness via [`_isbounded_unit_dimensions`](@ref).
 """
 function isbounded(ia::IntersectionArray)
    if any(isbounded, ia.array)
        return true
    end
-   return isbounded_unit_dimensions(ia)
+   return _isbounded_unit_dimensions(ia)
 end
 
 """
@@ -190,4 +190,18 @@ function constraints_list(ia::IntersectionArray{N}) where {N<:Real}
    end
    remove_redundant_constraints!(constraints)
    return constraints
+end
+
+function concretize(ia::IntersectionArray)
+    a = array(ia)
+    @assert !isempty(a) "an empty intersection is not allowed"
+    X = ia
+    @inbounds for (i, Y) in enumerate(a)
+        if i == 1
+            X = concretize(Y)
+        else
+            X = intersection(X, concretize(Y))
+        end
+    end
+    return X
 end

@@ -152,4 +152,10 @@ for N in [Float64, Rational{Int}]
     S = Singleton(N[1])
     ch = convex_hull(S, S)
     @test ch isa Singleton{N} && element(ch) == element(S)
+
+    # UnionSetArray
+    V1 = VPolytope([N[0, 0], N[1, 0], N[0, 1]])
+    V2 = VPolytope([N[1, 1], N[1, 0], N[0, 1]])
+    U = UnionSetArray([V1, V2]);
+    @test ispermutation(convex_hull(U), [N[0, 0], N[1, 0], N[0, 1], N[1, 1]])
 end

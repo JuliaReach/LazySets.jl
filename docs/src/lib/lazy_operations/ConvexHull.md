@@ -21,7 +21,8 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`an_element`](@ref an_element(::LazySet{N}) where {N<:Real})
+* [`an_element`](@ref an_element(::LazySet{N}) where {N})
+* [`singleton_list`](@ref singleton_list(::LazySet))
 
 ## [``n``-ary convex hull (ConvexHullArray)](@id def_ConvexHullArray)
 
@@ -40,4 +41,5 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`an_element`](@ref an_element(::LazySet{N}) where {N<:Real})
+* [`an_element`](@ref an_element(::LazySet{N}) where {N})
+* [`singleton_list`](@ref singleton_list(::LazySet))
