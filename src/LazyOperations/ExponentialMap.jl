@@ -389,6 +389,7 @@ function ∈(x::AbstractVector, em::ExponentialMap)
     require(:Expokit; fun_name="∈")
 
     @assert length(x) == dim(em)
+    N = promote_type(eltype(x), eltype(em))
     y = expmv(-one(N), em.spmexp.M, x)
     return y ∈ em.X
 end
