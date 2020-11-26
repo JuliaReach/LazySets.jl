@@ -56,7 +56,7 @@ end
 """
     overapproximate(S::LazySet{N},
                     ::Type{<:HPolygon},
-                    [ε]::Real=Inf) where {N<:Real}
+                    [ε]::Real=Inf) where {N}
 
 Return an approximation of a given 2D set using iterative refinement.
 
@@ -78,9 +78,9 @@ If no error tolerance ε is given, or is `Inf`, the result is a box-shaped polyg
 For convex input sets, the result is an ε-close approximation as a polygon,
 with respect to the Hausdorff distance.
 """
-function overapproximate(S::ST,
+function overapproximate(S::LazySet{N},
                          ::Type{<:HPolygon},
-                         ε::Real=Inf) where {N<:Real, ST<:LazySet{N}}
+                         ε::Real=Inf) where {N}
     @assert dim(S) == 2 "epsilon-close approximation is only available for " *
                         "two-dimensional sets"
     if ε == Inf
@@ -128,8 +128,8 @@ end
 overapproximate(∅::EmptySet, ::Real) = ∅
 
 """
-    overapproximate(X::ConvexHull{N, <:AbstractZonotope{N}, <:AbstractZonotope{N}},
-                    ::Type{<:Zonotope}) where {N<:Real}
+    overapproximate(X::ConvexHull{N, <:AbstractZonotope, <:AbstractZonotope},
+                    ::Type{<:Zonotope}) where {N}
 
 Overapproximate the convex hull of two zonotopes.
 
@@ -216,9 +216,9 @@ constructed in the first phase.
 [3] The zonotope abstract domain Taylor1+. K. Ghorbal, E. Goubault, S. Putot.
     CAV 2009.
 """
-function overapproximate(X::ConvexHull{N, <:AbstractZonotope{N}, <:AbstractZonotope{N}},
+function overapproximate(X::ConvexHull{N, <:AbstractZonotope, <:AbstractZonotope},
                          ::Type{<:Zonotope};
-                         algorithm="mean") where {N<:Real}
+                         algorithm="mean") where {N}
     # execute specific algorithm
     if algorithm == "mean"
         return _overapproximate_convex_hull_zonotope_G05(X)
@@ -229,8 +229,7 @@ function overapproximate(X::ConvexHull{N, <:AbstractZonotope{N}, <:AbstractZonot
     end
 end
 
-function _overapproximate_convex_hull_zonotope_G05(
-        X::ConvexHull{N}) where {N<:Real}
+function _overapproximate_convex_hull_zonotope_G05(X::ConvexHull{N}) where {N}
     # reduce to the same order if possible
     m1, m2 = ngens(X.X), ngens(X.Y)
     if m1 < m2
@@ -268,8 +267,7 @@ function _overapproximate_convex_hull_zonotope_G05(
     return remove_zero_generators(Z)
 end
 
-function _overapproximate_convex_hull_zonotope_GGP09(
-        X::ConvexHull{N}) where {N<:Real}
+function _overapproximate_convex_hull_zonotope_GGP09(X::ConvexHull{N}) where {N}
     Z1, Z2 = X.X, X.Y
     m = min(ngens(Z1), ngens(Z2))
     G1, G2 = genmat(Z1), genmat(Z2)
@@ -315,8 +313,8 @@ function _overapproximate_convex_hull_zonotope_GGP09(
 end
 
 """
-    overapproximate(lm::LinearMap{N, <:AbstractZonotope{N}},
-                    ::Type{<:Zonotope}) where {N<:Real}
+    overapproximate(lm::LinearMap{N, <:AbstractZonotope},
+                    ::Type{<:Zonotope}) where {N}
 
 Overapproximate a lazy linear map of a zonotopic set with a zonotope.
 
@@ -329,13 +327,13 @@ Overapproximate a lazy linear map of a zonotopic set with a zonotope.
 
 The tight zonotope corresponding to `lm`.
 """
-function overapproximate(lm::LinearMap{N, <:AbstractZonotope{N}},
-                         ::Type{<:Zonotope}) where {N<:Real}
+function overapproximate(lm::LinearMap{N, <:AbstractZonotope},
+                         ::Type{<:Zonotope}) where {N}
     return convert(Zonotope, lm)
 end
 
 """
-    overapproximate(X::LazySet{N}, dir::AbstractDirections{N}) where {N}
+    overapproximate(X::LazySet{N}, dir::AbstractDirections) where {N}
 
 Overapproximating a set with template directions.
 
@@ -362,7 +360,7 @@ function overapproximate(X::LazySet{N}, dir::AbstractDirections{N, VN}) where {N
 end
 
 # alias with HPolytope type as second argument
-function overapproximate(X::LazySet{N}, ::Type{<:HPolytope}, dirs::AbstractDirections{N}) where {N}
+function overapproximate(X::LazySet{N}, ::Type{<:HPolytope}, dirs::AbstractDirections) where {N}
     return overapproximate(X, dirs)
 end
 
@@ -388,7 +386,7 @@ function overapproximate(X::LazySet{N},
 end
 
 """
-    overapproximate(S::LazySet{N}, ::Type{<:Interval}) where {N<:Real}
+    overapproximate(S::LazySet{N}, ::Type{<:Interval}) where {N}
 
 Return the overapproximation of a unidimensional set with an interval.
 
@@ -405,14 +403,14 @@ An interval.
 
 We use two support-function evaluations.
 """
-function overapproximate(S::LazySet{N}, ::Type{<:Interval}) where {N<:Real}
+function overapproximate(S::LazySet{N}, ::Type{<:Interval}) where {N}
     @assert dim(S) == 1 "cannot overapproximate a $(dim(S))-dimensional set " *
                         "with an `Interval`"
     return Interval(-ρ(N[-1], S), ρ(N[1], S))
 end
 
 """
-    overapproximate(cap::Intersection{N}, ::Type{<:Interval}) where {N<:Real}
+    overapproximate(cap::Intersection, ::Type{<:Interval})
 
 Return the overapproximation of a unidimensional intersection with an interval.
 
@@ -430,7 +428,7 @@ An interval.
 The algorithm recursively overapproximates the two intersected sets with
 intervals and then intersects these.
 """
-function overapproximate(cap::Intersection{N}, ::Type{<:Interval}) where {N<:Real}
+function overapproximate(cap::Intersection, ::Type{<:Interval})
     @assert dim(cap) == 1 "cannot overapproximate a $(dim(cap))-dimensional " *
                         "intersection with an `Interval`"
     X = overapproximate(cap.X, Interval)
@@ -439,7 +437,7 @@ function overapproximate(cap::Intersection{N}, ::Type{<:Interval}) where {N<:Rea
 end
 
 """
-    overapproximate(cap::IntersectionArray{N}, ::Type{<:Interval}) where {N<:Real}
+    overapproximate(cap::IntersectionArray, ::Type{<:Interval})
 
 Return the overapproximation of a unidimensional intersection with an interval.
 
@@ -457,8 +455,7 @@ An interval.
 The algorithm recursively overapproximates the two intersected sets with
 intervals and then intersects these.
 """
-function overapproximate(cap::IntersectionArray{N},
-                         ::Type{<:Interval}) where {N<:Real}
+function overapproximate(cap::IntersectionArray, ::Type{<:Interval})
     @assert dim(cap) == 1 "cannot overapproximate a $(dim(cap))-dimensional " *
                         "intersection with an `Interval`"
     a = array(cap)
@@ -473,13 +470,14 @@ function overapproximate(cap::IntersectionArray{N},
     return X
 end
 
-function overapproximate_cap_helper(X::LazySet{N},             # convex set
-                                    P::AbstractPolyhedron{N},  # polyhedron
-                                    dir::AbstractDirections{N};
+function overapproximate_cap_helper(X::LazySet,             # convex set
+                                    P::AbstractPolyhedron,  # polyhedron
+                                    dir::AbstractDirections;
                                     kwargs...
-                                   ) where {N<:Real}
+                                   )
     Hi = constraints_list(P)
     m = length(Hi)
+    N = promote_type(eltype(X), eltype(P))
     constraints = Vector{HalfSpace{N, Vector{N}}}() # TODO: use directions type, see #2031
     sizehint!(constraints, length(dir))
     return_type = HPolytope
@@ -503,10 +501,10 @@ function overapproximate_cap_helper(X::LazySet{N},             # convex set
 end
 
 """
-    overapproximate(cap::Intersection{N, <:LazySet, <:AbstractPolyhedron{N}},
-                    dir::AbstractDirections{N};
+    overapproximate(cap::Intersection{N, <:LazySet, <:AbstractPolyhedron},
+                    dir::AbstractDirections;
                     kwargs...
-                   ) where {N<:Real}
+                   ) where {N}
 
 Return the overapproximation of the intersection between a compact set and a
 polytope given a set of template directions.
@@ -548,69 +546,69 @@ intersection is empty.
 """
 function overapproximate(cap::Intersection{N,
                                            <:LazySet,
-                                           <:AbstractPolyhedron{N}},
-                         dir::AbstractDirections{N};
+                                           <:AbstractPolyhedron},
+                         dir::AbstractDirections;
                          kwargs...
-                        ) where {N<:Real}
+                        ) where {N}
     return overapproximate_cap_helper(cap.X, cap.Y, dir; kwargs...)
 end
 
 # symmetric method
 function overapproximate(cap::Intersection{N,
-                                           <:AbstractPolyhedron{N},
+                                           <:AbstractPolyhedron,
                                            <:LazySet},
-                         dir::AbstractDirections{N};
+                         dir::AbstractDirections;
                          kwargs...
-                        ) where {N<:Real}
+                        ) where {N}
     return overapproximate_cap_helper(cap.Y, cap.X, dir; kwargs...)
 end
 
 # disambiguation
 function overapproximate(cap::Intersection{N,
-                                           <:AbstractPolyhedron{N},
-                                           <:AbstractPolyhedron{N}},
-                         dir::AbstractDirections{N};
+                                           <:AbstractPolyhedron,
+                                           <:AbstractPolyhedron},
+                         dir::AbstractDirections;
                          kwargs...
-                        ) where {N<:Real}
+                        ) where {N}
     # important: the result may not be a polytope!
     return overapproximate_cap_helper(cap.X, cap.Y, dir; kwargs...)
 end
 
 # disambiguation
 function overapproximate(cap::Intersection{N,
-                                           <:AbstractPolytope{N},
-                                           <:AbstractPolyhedron{N}},
-                         dir::AbstractDirections{N};
+                                           <:AbstractPolytope,
+                                           <:AbstractPolyhedron},
+                         dir::AbstractDirections;
                          kwargs...
-                        ) where {N<:Real}
+                        ) where {N}
     return overapproximate_cap_helper(cap.X, cap.Y, dir; kwargs...)
 end
 
 # symmetric method
 function overapproximate(cap::Intersection{N,
-                                           <:AbstractPolyhedron{N},
-                                           <:AbstractPolytope{N}},
-                         dir::AbstractDirections{N};
+                                           <:AbstractPolyhedron,
+                                           <:AbstractPolytope},
+                         dir::AbstractDirections;
                          kwargs...
-                        ) where {N<:Real}
+                        ) where {N}
     return overapproximate_cap_helper(cap.Y, cap.X, dir; kwargs...)
 end
 
 # disambiguation
 function overapproximate(cap::Intersection{N,
-                                           <:AbstractPolytope{N},
-                                           <:AbstractPolytope{N}},
-                         dir::AbstractDirections{N};
+                                           <:AbstractPolytope,
+                                           <:AbstractPolytope},
+                         dir::AbstractDirections;
                          kwargs...
-                        ) where {N<:Real}
+                        ) where {N}
     return overapproximate_cap_helper(cap.X, cap.Y, dir; kwargs...)
 end
 
 """
-    overapproximate(cap::Intersection{N, <:HalfSpace{N}, <:AbstractPolytope{N}},
-                    dir::AbstractDirections{N};
+    overapproximate(cap::Intersection{N, <:HalfSpace, <:AbstractPolytope},
+                    dir::AbstractDirections;
                     [kwargs]...
-                   ) where {N<:Real}
+                   ) where {N}
 
 Return the overapproximation of the intersection between a half-space and a
 polytope given a set of template directions.
@@ -628,11 +626,11 @@ A polytope in H-representation such that the normal direction of each half-space
 is given by an element of `dir`.
 """
 function overapproximate(cap::Intersection{N,
-                                           <:HalfSpace{N},
-                                           <:AbstractPolytope{N}},
-                         dir::AbstractDirections{N};
+                                           <:HalfSpace,
+                                           <:AbstractPolytope},
+                         dir::AbstractDirections;
                          kwargs...
-                        ) where {N<:Real}
+                        ) where {N}
     H = HPolytope{N, Vector{N}}()
     c = H.constraints
     push!(c, _normal_Vector(cap.X))
@@ -642,11 +640,11 @@ end
 
 # symmetric method
 function overapproximate(cap::Intersection{N,
-                                           <:AbstractPolytope{N},
-                                           <:HalfSpace{N}},
-                         dir::AbstractDirections{N};
+                                           <:AbstractPolytope,
+                                           <:HalfSpace},
+                         dir::AbstractDirections;
                          kwargs...
-                        ) where {N<:Real}
+                        ) where {N}
     return overapproximate(swap(cap), dir; kwargs...)
 end
 
@@ -968,9 +966,9 @@ function convert(::Type{IntervalMatrices.Interval{T}},
 end
 
 """
-    overapproximate(lm::LinearMap{N, <:AbstractZonotope{N}, NM,
+    overapproximate(lm::LinearMap{N, <:AbstractZonotope, NM,
                                   <:AbstractIntervalMatrix{NM}},
-                    ::Type{<:Zonotope}) where {N<:Real, NM}
+                    ::Type{<:Zonotope}) where {N, NM}
 
 Overapproximate an interval-matrix linear map of a zonotopic set by a new
 zonotope.
@@ -1002,9 +1000,9 @@ conventional matrix and a symmetric interval matrix) and a zonotope
 [1] Althoff, Stursberg, Buss. Reachability analysis of linear systems with
 uncertain parameters and inputs. CDC 2007.
 """
-function overapproximate(lm::LinearMap{N, <:AbstractZonotope{N}, NM,
+function overapproximate(lm::LinearMap{N, <:AbstractZonotope, NM,
                                        <:AbstractIntervalMatrix{NM}},
-                         ::Type{<:Zonotope}) where {N<:Real, NM}
+                         ::Type{<:Zonotope}) where {N, NM}
     Mc, Ms = split(lm.M)
     Z = lm.X
     c = Mc * center(Z)
@@ -1030,9 +1028,9 @@ end end  # quote / load_intervalmatrices_overapproximation()
 # ==========================================
 
 """
-    overapproximate(lm::LinearMap{N, <:CartesianProductArray{N}},
+    overapproximate(lm::LinearMap{N, <:CartesianProductArray},
                     ::Type{CartesianProductArray{N, S}}
-                   ) where {N, S<:LazySet{N}}
+                   ) where {N, S<:LazySet}
 
 Decompose a lazy linear map of a Cartesian product array while keeping the
 original block structure.
@@ -1046,16 +1044,16 @@ original block structure.
 
 A `CartesianProductArray` representing the decomposed linear map.
 """
-function overapproximate(lm::LinearMap{N, <:CartesianProductArray{N}},
+function overapproximate(lm::LinearMap{N, <:CartesianProductArray},
                          ::Type{CartesianProductArray{N, S}}
-                        ) where {N, S<:LazySet{N}}
+                        ) where {N, S<:LazySet}
     cpa = array(lm.X)
     arr = Vector{S}(undef, length(cpa))
     return _overapproximate_lm_cpa!(arr, lm.M, cpa, S)
 end
 
 """
-    overapproximate(lm::LinearMap{N, <:CartesianProductArray{N}},
+    overapproximate(lm::LinearMap{N, <:CartesianProductArray},
                     ::Type{<:CartesianProductArray},
                     dir::Type{<:AbstractDirections}) where {N}
 
@@ -1072,7 +1070,7 @@ directions while keeping the original block structure.
 
 A `CartesianProductArray` representing the decomposed linear map.
 """
-function overapproximate(lm::LinearMap{N, <:CartesianProductArray{N}},
+function overapproximate(lm::LinearMap{N, <:CartesianProductArray},
                          ::Type{<:CartesianProductArray},
                          dir::Type{<:AbstractDirections}) where {N}
     cpa = array(lm.X)
@@ -1081,7 +1079,7 @@ function overapproximate(lm::LinearMap{N, <:CartesianProductArray{N}},
 end
 
 """
-    overapproximate(lm::LinearMap{N, <:CartesianProductArray{N}},
+    overapproximate(lm::LinearMap{N, <:CartesianProductArray},
                     ::Type{<:CartesianProductArray},
                     set_type::Type{<:LazySet}) where {N}
 
@@ -1098,7 +1096,7 @@ while keeping the original block structure.
 
 A `CartesianProductArray` representing the decomposed linear map.
 """
-function overapproximate(lm::LinearMap{N, <:CartesianProductArray{N}},
+function overapproximate(lm::LinearMap{N, <:CartesianProductArray},
                          ::Type{<:CartesianProductArray},
                          set_type::Type{<:LazySet}) where {N}
     cpa = array(lm.X)
@@ -1108,7 +1106,7 @@ end
 
 function _overapproximate_lm_cpa!(arr, M, cpa, overapprox_option)
     # construct Minkowski sum for block row
-    function _block_row(cpa::Vector{S}, M::AbstractMatrix{N},
+    function _block_row(cpa::Vector{S}, M::AbstractMatrix,
                         row_range::UnitRange{Int}) where {N, S<:LazySet{N}}
         arr_inner = Vector{LinearMap{N, <:S}}(undef, length(cpa))
         col_start_ind, col_end_ind = 1, 0
@@ -1133,7 +1131,7 @@ function _overapproximate_lm_cpa!(arr, M, cpa, overapprox_option)
 end
 
 """
-    overapproximate(rm::ResetMap{N, <:CartesianProductArray{N}},
+    overapproximate(rm::ResetMap{N, <:CartesianProductArray},
                     ::Type{<:CartesianProductArray}, oa) where {N}
 
 Overapproximate a reset map (that only resets to zero) of a Cartesian product
@@ -1158,7 +1156,7 @@ This implementation currently only supports resets to zero.
 We convert the `ResetMap` into a `LinearMap` and then call the corresponding
 overapproximation method.
 """
-function overapproximate(rm::ResetMap{N, <:CartesianProductArray{N}},
+function overapproximate(rm::ResetMap{N, <:CartesianProductArray},
                          ::Type{<:CartesianProductArray}, oa) where {N}
     if any(!iszero, values(rm.resets))
         error("we currently only support resets to zero")
@@ -1170,8 +1168,8 @@ end
 
 """
     overapproximate(cap::Intersection{N,
-                                      <:CartesianProductArray{N},
-                                      <:AbstractPolyhedron{N}},
+                                      <:CartesianProductArray,
+                                      <:AbstractPolyhedron},
                     ::Type{CartesianProductArray}, oa) where {N}
 
 Return the intersection of the Cartesian product of a finite number of convex
@@ -1202,8 +1200,8 @@ blocks and the newly computed blocks.
 The result is a `CartesianProductArray` with the same block structure as in `X`.
 """
 function overapproximate(cap::Intersection{N,
-                                           <:CartesianProductArray{N},
-                                           <:AbstractPolyhedron{N}},
+                                           <:CartesianProductArray,
+                                           <:AbstractPolyhedron},
                             ::Type{CartesianProductArray}, oa) where {N}
 
     cpa, P = cap.X, cap.Y
@@ -1225,14 +1223,14 @@ end
 
 # symmetric method
 function overapproximate(cap::Intersection{N,
-                                            <:AbstractPolyhedron{N},
-                                            <:CartesianProductArray{N}},
+                                            <:AbstractPolyhedron,
+                                            <:CartesianProductArray},
                             ::Type{CartesianProductArray}, oa) where {N}
     overapproximate(Intersection(cap.Y, cap.X), oa)
 end
 
 """
-    overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, Rational}) where {N<:Real}
+    overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, Rational}) where {N}
 
 Reduce the order of a zonotope by overapproximating with a zonotope with less
 generators.
@@ -1254,7 +1252,7 @@ This function implements the algorithm described in A. Girard's
 
 If the desired order is smaller than one, the zonotope is *not* reduced.
 """
-function overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, Rational}) where {N<:Real}
+function overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, Rational}) where {N}
     c, G = Z.center, Z.generators
     d, p = dim(Z), ngens(Z)
 
@@ -1337,7 +1335,7 @@ end
 
 """
     _overapproximate_zonotope_vrep(X::LazySet{N},
-                                   dir::AbstractDirections{N};
+                                   dir::AbstractDirections;
                                    solver=default_lp_solver(N)) where {N}
 
 Overapproximate a polytopic set with a zonotope of minimal total generator sum
@@ -1386,7 +1384,7 @@ nonnegativity constraints (last type) are not stated explicitly in [1].
     Discrete Algorithms, pp. 803-812.
 """
 function _overapproximate_zonotope_vrep(X::LazySet{N},
-                                        dir::AbstractDirections{N};
+                                        dir::AbstractDirections;
                                         solver=default_lp_solver(N)) where {N}
     # TODO "normalization" here involves two steps: removing opposite directions
     # and normalizing the direction vector
@@ -1522,7 +1520,7 @@ function _overapproximate_zonotope_cpa(X::LazySet,
 end
 
 """
-    overapproximate(r::Rectification{N, <:AbstractZonotope{N}}, ::Type{<:Zonotope}) where {N}
+    overapproximate(r::Rectification{N, <:AbstractZonotope}, ::Type{<:Zonotope}) where {N}
 
 Overapproximation of the rectification of a zonotopic set.
 
@@ -1543,7 +1541,7 @@ This function implements [Theorem 3.1, 1].
 and effective robustness certification. In Advances in Neural Information
 Processing Systems (pp. 10802-10813).*
 """
-function overapproximate(r::Rectification{N, <:AbstractZonotope{N}}, ::Type{<:Zonotope}) where {N}
+function overapproximate(r::Rectification{N, <:AbstractZonotope}, ::Type{<:Zonotope}) where {N}
     Z = copy(set(r))
     c = center(Z)
     G = genmat(Z)
@@ -1590,7 +1588,7 @@ function overapproximate(r::Rectification{N, <:AbstractZonotope{N}}, ::Type{<:Zo
 end
 
 """
-    overapproximate(CHA::ConvexHullArray{N, <:AbstractZonotope{N}}, ::Type{<:Zonotope}) where {N}
+    overapproximate(CHA::ConvexHullArray{N, <:AbstractZonotope}, ::Type{<:Zonotope}) where {N}
 
 Overapproximation of the convex hull array of zonotopic sets.
 
@@ -1608,7 +1606,7 @@ A zonotope overapproximation of the convex hull array of zonotopic sets.
 This function iteratively applies the overapproximation algorithm for the
 convex hull of two zonotopes to the given array of zonotopes.
 """
-function overapproximate(CHA::ConvexHullArray{N, <:AbstractZonotope{N}}, ::Type{<:Zonotope}) where {N}
+function overapproximate(CHA::ConvexHullArray{N, <:AbstractZonotope}, ::Type{<:Zonotope}) where {N}
     arr = array(CHA)
     n = length(arr)
     if n == 1
@@ -1670,8 +1668,8 @@ function _overapproximate_hparallelotope(Z::AbstractZonotope, indices=1:dim(Z))
 end
 
 """
-    overapproximate(X::Intersection{N, <:AbstractZonotope{N}, <:Hyperplane{N}},
-                    dirs::AbstractDirections{N}) where {N}
+    overapproximate(X::Intersection{N, <:AbstractZonotope, <:Hyperplane},
+                    dirs::AbstractDirections) where {N}
 
 Overapproximation of the intersection between a zonotopic set and a hyperplane
 
@@ -1693,7 +1691,7 @@ Continuous Dynamics. Computer Science [cs]. Université Joseph-Fourier - Grenobl
 I, 2009. English. fftel-00422569v2f*
 """
 function overapproximate(X::Intersection{N, <:AbstractZonotope, <:Hyperplane},
-                         dirs::AbstractDirections{N}) where {N<:Real}
+                         dirs::AbstractDirections) where {N}
     dim(X) == dim(dirs) || throw(ArgumentError("the dimension of the set, $(dim(X)) doesn't" *
                                  " match the dimension of the template, $(dim(dirs))"))
     Z, G = X.X, X.Y
@@ -1720,17 +1718,17 @@ function overapproximate(X::Intersection{N, <:AbstractZonotope, <:Hyperplane},
 end
 
 function overapproximate(X::Intersection{N, <:Hyperplane, <:AbstractZonotope},
-                         dirs::AbstractDirections{N}) where {N<:Real}
+                         dirs::AbstractDirections) where {N}
     return overapproximate(X.Y ∩ X.X, dirs)
 end
 
 function overapproximate(X::Intersection{N, <:AbstractZonotope,
-                         <:Hyperplane}, dirs::Type{<:AbstractDirections}) where {N<:Real}
+                         <:Hyperplane}, dirs::Type{<:AbstractDirections}) where {N}
     return overapproximate(X, dirs(dim(X)))
 end
 
 function overapproximate(X::Intersection{N, <:Hyperplane, <:AbstractZonotope},
-                         dirs::Type{<:AbstractDirections}) where {N<:Real}
+                         dirs::Type{<:AbstractDirections}) where {N}
     return overapproximate(X.Y ∩ X.X, dirs(dim(X)))
 end
 
