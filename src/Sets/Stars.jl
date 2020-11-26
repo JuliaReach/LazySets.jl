@@ -13,14 +13,15 @@ isoperationtype(::Type{<:AbstractStarSet}) = false
 isconvextype(::Type{<:AbstractStarSet}) = false
 
 function linear_map(M::AbstractMatrix, X::AbstractStarSet)
-    # .......
+    # check dims
+
+    X′ = similar(X)
+    center(X′) .= M * c
+    basis(X′) .= broadcast(v -> M * v, V)
+    predicate(X′) .= copy(P)
 end
 
 function affine_map(M::AbstractMatrix, X::AbstractStarSet, v::AbstractVector)
-    # .......
-end
-
-function intersection(X::AbstractStarSet, H::HalfSpace)
     # .......
 end
 
@@ -116,3 +117,7 @@ end
 center(X::Star) = X.s
 basis(X::Star) = X.V
 predicate(X::Star) = X.P
+
+function intersection(X::Star, H::HalfSpace)
+    # .......
+end
