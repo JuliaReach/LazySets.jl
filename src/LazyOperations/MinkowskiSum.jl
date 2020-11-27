@@ -247,9 +247,9 @@ end
 # Helper functions
 # ================
 
-@inline function σ_helper(d::AbstractVector,
-                          array::AbstractVector{<:LazySet})
-    svec = zeros(d)
+@inline function σ_helper(d::AbstractVector{N},
+                          array::AbstractVector{<:LazySet}) where {N}
+    svec = zeros(N, length(d))
     for sj in array
         svec += σ(d, sj)
     end

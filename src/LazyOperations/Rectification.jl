@@ -113,6 +113,10 @@ end
 isoperationtype(::Type{<:Rectification}) = true
 isconvextype(::Type{<:Rectification}) = false
 
+# redundant if Rectification <: LazySet
+eltype(::Type{<:Rectification{N}}) where {N} = N
+eltype(r::Rectification) = eltype(typeof(r))
+
 """
     set(r::Rectification)
 

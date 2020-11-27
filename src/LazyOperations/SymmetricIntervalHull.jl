@@ -66,7 +66,7 @@ SymmetricIntervalHull(∅::EmptySet) = ∅
 """
     radius_hyperrectangle(sih::SymmetricIntervalHull, i::Int)
 
-Return the box radius of a symmetric interval hull of a convex set in a given
+Return the box radius of the symmetric interval hull of a convex set in a given
 dimension.
 
 ### Input
@@ -87,7 +87,7 @@ end
 """
     radius_hyperrectangle(sih::SymmetricIntervalHull)
 
-Return the box radius of a symmetric interval hull of a convex set in every
+Return the box radius of the symmetric interval hull of a convex set in every
 dimension.
 
 ### Input
@@ -111,20 +111,20 @@ function radius_hyperrectangle(sih::SymmetricIntervalHull)
 end
 
 """
-    center(sih::SymmetricIntervalHull, i::Int)
+    center(sih::SymmetricIntervalHull{N}, i::Int) where {N}
 
 Return the center along a given dimension of a symmetric interval hull of a convex set.
 
 ### Input
 
 - `sih` -- symmetric interval hull of a convex set
-- `i` -- dimension of interest
+- `i`   -- dimension of interest
 
 ### Output
 
 The center along a given dimension of the symmetric interval hull of a convex set.
 """
-@inline function center(sih::SymmetricIntervalHull, i::Int)
+@inline function center(sih::SymmetricIntervalHull{N}, i::Int) where {N}
     @boundscheck _check_bounds(sih, i)
     return zero(N)
 end
@@ -221,7 +221,7 @@ end
                 i::Int,
                 n::Int=dim(sih)) where {N}
 
-Compute the radius of a symmetric interval hull of a convex set in a given
+Compute the radius of the symmetric interval hull of a convex set in a given
 dimension.
 
 ### Input
@@ -232,7 +232,7 @@ dimension.
 
 ### Output
 
-The radius of a symmetric interval hull of a convex set in a given dimension.
+The radius of the symmetric interval hull of a convex set in a given dimension.
 
 ### Algorithm
 
