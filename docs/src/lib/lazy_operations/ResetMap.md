@@ -7,13 +7,13 @@ CurrentModule = LazySets
 ```@docs
 ResetMap
 dim(::ResetMap)
-ρ(::AbstractVector{N}, ::ResetMap{N}) where {N<:Real}
-σ(::AbstractVector{N}, ::ResetMap{N}) where {N<:Real}
+ρ(::AbstractVector, ::ResetMap)
+σ(::AbstractVector, ::ResetMap)
 an_element(::ResetMap)
-matrix(::ResetMap{N}) where {N<:Real}
-vector(::ResetMap{N}) where {N<:Real}
-constraints_list(::ResetMap{N}) where {N<:Real}
-constraints_list(::ResetMap{N, S}) where {N<:Real, S<:AbstractHyperrectangle}
+matrix(::ResetMap)
+vector(::ResetMap)
+constraints_list(::ResetMap)
+constraints_list(::ResetMap{N, S}) where {N, S<:AbstractHyperrectangle}
 ```
 Inherited from [`AbstractAffineMap`](@ref):
 * [`isempty`](@ref isempty(::AbstractAffineMap))

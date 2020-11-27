@@ -11,16 +11,16 @@ Hence this set type is not part of the convex-set family `LazySet`.
 Rectification
 set(::Rectification)
 dim(::Rectification)
-σ(::AbstractVector{N}, ::Rectification{N}) where {N<:Real}
-σ(::AbstractVector{N}, ::Rectification{N, <:AbstractHyperrectangle{N}}) where {N<:Real}
-σ(::AbstractVector{N}, ::Rectification{N, <:CartesianProduct{N}}) where {N<:Real}
-σ(::AbstractVector{N}, ::Rectification{N, <:CartesianProductArray{N}}) where {N<:Real}
-ρ(::AbstractVector{N}, ::Rectification{N}) where {N<:Real}
-an_element(::Rectification{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::Rectification{N}) where {N<:Real}
+σ(::AbstractVector, ::Rectification)
+σ(::AbstractVector, ::Rectification{N, <:AbstractHyperrectangle{N}}) where {N}
+σ(::AbstractVector, ::Rectification{N, <:CartesianProduct{N}}) where {N}
+σ(::AbstractVector, ::Rectification{N, <:CartesianProductArray{N}}) where {N}
+ρ(::AbstractVector, ::Rectification)
+an_element(::Rectification)
+∈(::AbstractVector, ::Rectification)
 isempty(::Rectification)
-isbounded(::Rectification{N}) where {N<:Real}
-to_union_of_projections(::Rectification{N}, ::Bool=false) where {N<:Real}
+isbounded(::Rectification)
+to_union_of_projections(::Rectification, ::Bool=false)
 ```
 
 Inherited from [`LazySet`](@ref):

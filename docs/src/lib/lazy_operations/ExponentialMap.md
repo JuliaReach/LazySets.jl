@@ -9,11 +9,11 @@ CurrentModule = LazySets
 ```@docs
 ExponentialMap
 dim(::ExponentialMap)
-ρ(::AbstractVector{N}, ::ExponentialMap{N}) where {N<:Real}
-σ(::AbstractVector{N}, ::ExponentialMap{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::ExponentialMap{N}) where {N<:Real}
+ρ(::AbstractVector, ::ExponentialMap)
+σ(::AbstractVector, ::ExponentialMap)
+∈(::AbstractVector, ::ExponentialMap)
 isbounded(::ExponentialMap)
-vertices_list(::ExponentialMap{N}) where {N<:Real}
+vertices_list(::ExponentialMap)
 ```
 Inherited from [`AbstractAffineMap`](@ref):
 * [`an_element`](@ref an_element(::AbstractAffineMap))
@@ -31,7 +31,7 @@ Inherited from [`LazySet`](@ref):
 
 ```@docs
 SparseMatrixExp
-*(::SparseMatrixExp{N}, ::LazySet{N}) where {N<:Real}
+*(::SparseMatrixExp, ::LazySet)
 get_row(::SparseMatrixExp, ::Int)
 ```
 
@@ -40,7 +40,7 @@ get_row(::SparseMatrixExp, ::Int)
 ```@docs
 ExponentialProjectionMap
 dim(::ExponentialProjectionMap)
-σ(::AbstractVector{N}, ::ExponentialProjectionMap{N}) where {N<:Real}
+σ(::AbstractVector, ::ExponentialProjectionMap)
 isbounded(::ExponentialProjectionMap)
 ```
 Inherited from [`AbstractAffineMap`](@ref):

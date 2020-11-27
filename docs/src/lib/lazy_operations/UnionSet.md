@@ -14,10 +14,10 @@ UnionSet
 ∪(::LazySet, ::LazySet)
 swap(::UnionSet)
 dim(::UnionSet)
-σ(::AbstractVector{N}, ::UnionSet{N}; algorithm="support_vector") where {N<:Real}
-ρ(::AbstractVector{N}, ::UnionSet{N}) where {N<:Real}
-an_element(::UnionSet{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::UnionSet{N}) where {N<:Real}
+σ(::AbstractVector, ::UnionSet; algorithm="support_vector")
+ρ(::AbstractVector, ::UnionSet)
+an_element(::UnionSet)
+∈(::AbstractVector, ::UnionSet)
 isempty(::UnionSet)
 isbounded(::UnionSet)
 vertices_list(::UnionSet)
@@ -31,11 +31,11 @@ Inherited from [`LazySet`](@ref):
 ```@docs
 UnionSetArray
 dim(::UnionSetArray)
-array(::UnionSetArray{N, S}) where {N<:Real, S<:LazySet{N}}
-σ(::AbstractVector{N}, ::UnionSetArray{N}; algorithm="support_vector") where {N<:Real}
-ρ(::AbstractVector{N}, ::UnionSetArray{N}) where {N<:Real}
-an_element(::UnionSetArray{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::UnionSetArray{N}) where {N<:Real}
+array(::UnionSetArray)
+σ(::AbstractVector, ::UnionSetArray; algorithm="support_vector")
+ρ(::AbstractVector, ::UnionSetArray)
+an_element(::UnionSetArray)
+∈(::AbstractVector, ::UnionSetArray)
 isempty(::UnionSetArray)
 isbounded(::UnionSetArray)
 vertices_list(::UnionSetArray)

@@ -10,6 +10,6 @@ Hence this set type is not part of the convex-set family `LazySet`.
 ```@docs
 Complement
 dim(::Complement)
-∈(::AbstractVector{N}, ::Complement{N}) where {N<:Real}
+∈(::AbstractVector, ::Complement)
 isempty(::Complement)
 ```
