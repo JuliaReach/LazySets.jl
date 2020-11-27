@@ -878,13 +878,9 @@ end
 """
     get_constrained_lowdimset(cpa::CartesianProductArray{N, S},
                               P::AbstractPolyhedron{N}
-                             ) where {N<:Real, S<:LazySet{N}}
+                              ) where {N, S<:LazySet{N}}
 
 Preprocess step for intersection between Cartesian product array and polyhedron.
-Returns low-dimensional a `CartesianProductArray` in the constrained dimensions
-of the original cpa,
-constrained variables and variables in corresponding blocks, original block
-structure of low-dimensional set and list of constrained blocks.
 
 ### Input
 
@@ -895,9 +891,17 @@ structure of low-dimensional set and list of constrained blocks.
 
 A tuple of low-dimensional set, list of constrained dimensions, original block
 structure of low-dimensional set and corresponding blocks indices.
+
+### Notes
+
+This function returns a low-dimensional `CartesianProductArray` in the constrained
+dimensions of the original cpa, constrained variables and variables in
+corresponding blocks, original block structure of low-dimensional set and list
+of constrained blocks.
 """
-function get_constrained_lowdimset(cpa::CartesianProductArray,
-                                   P::AbstractPolyhedron)
+function get_constrained_lowdimset(cpa::CartesianProductArray{N, S},
+                                   P::AbstractPolyhedron{N}
+                                   ) where {N, S<:LazySet{N}}
 
     if isbounded(P)
         blocks, non_empty_length = block_to_dimension_indices(cpa)
