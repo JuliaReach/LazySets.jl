@@ -311,10 +311,11 @@ function ρ(d::AbstractVector, H::AbstractHyperrectangle)
     c = center(H)
     res = zero(N)
     @inbounds for (i, di) in enumerate(d)
+        ri = radius_hyperrectangle(H, i)
         if di < zero(N)
-            res += di * (c[i] - radius_hyperrectangle(H, i))
+            res += di * (c[i] - ri)
         elseif di > zero(N)
-            res += di * (c[i] + radius_hyperrectangle(H, i))
+            res += di * (c[i] + ri)
         end
     end
     return res

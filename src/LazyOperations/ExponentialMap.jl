@@ -347,6 +347,7 @@ function ρ(d::AbstractVector, em::ExponentialMap)
     require(:Expokit; fun_name="ρ")
 
     d_dense = d isa Vector ? d : Vector(d)
+    N = promote_type(eltype(d), eltype(em))
     v = expmv(one(N), transpose(em.spmexp.M), d_dense) # v <- exp(M^T) * d
     return ρ(v, em.X)
 end
@@ -573,11 +574,11 @@ We allow sparse direction vectors, but will convert them to dense vectors to be
 able to use `expmv`.
 """
 function σ(d::AbstractVector, eprojmap::ExponentialProjectionMap)
-    N = promote_type(eltype(d), eltype(eprojmap))
     require(:Expokit; fun_name="σ")
 
     d_dense = d isa Vector ? d : Vector(d)
     daux = transpose(eprojmap.projspmexp.L) * d_dense
+    N = promote_type(eltype(d), eltype(eprojmap))
     aux1 = expmv(one(N), transpose(eprojmap.projspmexp.spmexp.M), daux)
     daux = _At_mul_B(eprojmap.projspmexp.R, aux1)
     svec = σ(daux, eprojmap.X)
