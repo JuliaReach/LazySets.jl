@@ -520,8 +520,8 @@ end
 
 """
    substitute_blocks(low_dim_cpa::CartesianProductArray{N},
-                        orig_cpa::CartesianProductArray{N},
-                          blocks::Vector{Tuple{Int,Int}}) where {N}
+                     orig_cpa::CartesianProductArray{N},
+                     blocks::Vector{Tuple{Int,Int}}) where {N}
 
 Return merged Cartesian Product Array between original CPA and some low-dimensional CPA,
 which represents updated subset of variables in specified blocks.
@@ -529,16 +529,16 @@ which represents updated subset of variables in specified blocks.
 ### Input
 
 - `low_dim_cpa` -- low-dimensional cartesian product array
-- `orig_cpa` -- original high-dimensional Cartesian product array
-- `blocks` -- index of the first variable in each block of `orig_cpa`
+- `orig_cpa`    -- original high-dimensional Cartesian product array
+- `blocks`      -- index of the first variable in each block of `orig_cpa`
 
 ### Output
 
-Merged cartesian product array
+Merged cartesian product array.
 """
 function substitute_blocks(low_dim_cpa::CartesianProductArray{N},
-                          orig_cpa::CartesianProductArray{N},
-                          blocks::Vector{Tuple{Int,Int}}) where {N}
+                           orig_cpa::CartesianProductArray{N},
+                           blocks::Vector{Tuple{Int,Int}}) where {N}
 
    array = Vector{LazySet{N}}(undef, length(orig_cpa.array))
    index = 1

@@ -48,7 +48,7 @@ function dim(cup::UnionSetArray)
 end
 
 """
-   array(cup::UnionSetArray{N, S}) where {N, S<:LazySet{N}}
+   array(cup::UnionSetArray)
 
 Return the array of a union of a finite number of convex sets.
 
@@ -60,7 +60,7 @@ Return the array of a union of a finite number of convex sets.
 
 The array that holds the union of a finite number of convex sets.
 """
-function array(cup::UnionSetArray{N, S}) where {N, S<:LazySet{N}}
+function array(cup::UnionSetArray)
    return cup.array
 end
 

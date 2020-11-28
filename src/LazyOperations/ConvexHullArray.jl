@@ -68,7 +68,7 @@ Alias for `ConvexHullArray`.
 const CHArray = ConvexHullArray
 
 """
-    array(cha::ConvexHullArray{N, S}) where {N, S<:LazySet{N}}
+    array(cha::ConvexHullArray)
 
 Return the array of a convex hull of a finite number of convex sets.
 
@@ -80,7 +80,7 @@ Return the array of a convex hull of a finite number of convex sets.
 
 The array of a convex hull of a finite number of convex sets.
 """
-function array(cha::ConvexHullArray{N, S}) where {N, S<:LazySet{N}}
+function array(cha::ConvexHullArray)
     return cha.array
 end
 

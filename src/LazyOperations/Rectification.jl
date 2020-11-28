@@ -384,7 +384,7 @@ function isempty(r::Rectification)
 end
 
 """
-    isbounded(r::Rectification)
+    isbounded(r::Rectification{N}) where {N}
 
 Determine whether a rectification is bounded.
 

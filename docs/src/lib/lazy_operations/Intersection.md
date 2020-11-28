@@ -13,7 +13,7 @@ dim(::Intersection)
 ρ(::AbstractVector, ::Intersection)
 ρ(::AbstractVector, ::Intersection{N, S1, S2}) where {N, S1<:LazySet{N}, S2<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}}
 ρ(::AbstractVector, ::Intersection{N, S1, S2}) where {N, S1<:LazySet{N}, S2<:AbstractPolyhedron{N}}
-ρ(::AbstractVector, ::Intersection{N, S1, S2}) where {, S1<:AbstractPolyhedron{N}, S2<:AbstractPolyhedron{N}}
+ρ(::AbstractVector, ::Intersection{N, S1, S2}) where {N, S1<:AbstractPolyhedron{N}, S2<:AbstractPolyhedron{N}}
 σ(::AbstractVector, ::Intersection)
 isbounded(::Intersection)
 isempty(::Intersection)
@@ -51,8 +51,8 @@ dim(::IntersectionArray)
 σ(::AbstractVector, ::IntersectionArray)
 isbounded(::IntersectionArray)
 ∈(::AbstractVector, ::IntersectionArray)
-array(::IntersectionArray{N, S}) where {N, S<:LazySet{N}}
-constraints_list(::IntersectionArray)
+array(::IntersectionArray)
+constraints_list(::IntersectionArray{N}) where {N}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

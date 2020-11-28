@@ -19,7 +19,7 @@ dim(::Rectification)
 an_element(::Rectification)
 ∈(::AbstractVector, ::Rectification)
 isempty(::Rectification)
-isbounded(::Rectification)
+isbounded(::Rectification{N}) where {N}
 to_union_of_projections(::Rectification, ::Bool=false)
 ```
 

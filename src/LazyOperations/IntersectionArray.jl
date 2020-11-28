@@ -125,7 +125,7 @@ Determine whether an intersection of a finite number of convex sets is bounded.
 ### Algorithm
 
 We first check if any of the wrapped sets is bounded.
-Otherwise, we check boundedness via [`_isbounded_unit_dimensions`](@ref).
+Otherwise, we check boundedness via [`LazySets._isbounded_unit_dimensions`](@ref).
 """
 function isbounded(ia::IntersectionArray)
    if any(isbounded, ia.array)

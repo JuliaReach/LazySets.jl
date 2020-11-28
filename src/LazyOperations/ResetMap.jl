@@ -255,7 +255,7 @@ function an_element(rm::ResetMap)
 end
 
 """
-    constraints_list(rm::ResetMap)
+    constraints_list(rm::ResetMap{N}) where {N}
 
 Return the list of constraints of a polytopic reset map.
 
