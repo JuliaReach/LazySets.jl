@@ -7,17 +7,17 @@ CurrentModule = LazySets
 ```@docs
 LineSegment
 dim(::LineSegment)
-σ(::AbstractVector{N}, ::LineSegment{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::LineSegment{N}) where {N<:Real}
-center(::LineSegment{N}) where {N<:Real}
-an_element(::LineSegment{N}) where {N<:Real}
+σ(::AbstractVector, ::LineSegment)
+∈(::AbstractVector, ::LineSegment)
+center(::LineSegment)
+an_element(::LineSegment)
 rand(::Type{LineSegment})
 halfspace_left(::LineSegment)
 halfspace_right(::LineSegment)
-vertices_list(::LineSegment{N}) where {N<:Real}
-constraints_list(::LineSegment{N}) where {N<:Real}
-translate(::LineSegment{N}, ::AbstractVector{N}) where {N<:Real}
-generators(::LineSegment{N}) where {N<:Real}
+vertices_list(::LineSegment)
+constraints_list(::LineSegment)
+translate(::LineSegment, ::AbstractVector)
+generators(::LineSegment{N}) where {N}
 genmat(::LineSegment)
 ```
 Inherited from [`LazySet`](@ref):
