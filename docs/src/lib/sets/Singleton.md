@@ -7,9 +7,9 @@ CurrentModule = LazySets
 ```@docs
 Singleton
 rand(::Type{Singleton})
-element(::Singleton{N}) where {N<:Real}
-element(::Singleton{N}, ::Int) where {N<:Real}
-translate(::Singleton{N}, ::AbstractVector{N}) where {N<:Real}
+element(::Singleton)
+element(::Singleton, ::Int)
+translate(::Singleton, ::AbstractVector)
 rectify(S::Singleton)
 ```
 Inherited from [`LazySet`](@ref):

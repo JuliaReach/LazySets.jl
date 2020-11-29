@@ -6,15 +6,15 @@ CurrentModule = LazySets
 
 ```@docs
 BallInf
-center(::BallInf{N}) where {N<:Real}
+center(::BallInf)
 radius(::BallInf, ::Real=Inf)
-radius_hyperrectangle(::BallInf{N}) where {N<:Real}
-radius_hyperrectangle(::BallInf{N}, ::Int) where {N<:Real}
+radius_hyperrectangle(::BallInf)
+radius_hyperrectangle(::BallInf, ::Int)
 isflat(::BallInf)
 rand(::Type{BallInf})
-σ(::AbstractVector{N}, ::BallInf{N}) where {N<:Real}
-ρ(::AbstractVector{N}, ::BallInf{N}) where {N<:Real}
-translate(::BallInf{N}, ::AbstractVector{N}) where {N<:Real}
+σ(::AbstractVector, ::BallInf)
+ρ(::AbstractVector, ::BallInf)
+translate(::BallInf, ::AbstractVector)
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))

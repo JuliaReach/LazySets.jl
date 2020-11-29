@@ -103,7 +103,7 @@ An integer representing the ambient dimension of the polynomial zonotope.
 dim(pz::PolynomialZonotope) = length(pz.c)
 
 """
-    σ(d::AbstractVector{N}, pz::PolynomialZonotope{N}) where {N}
+    σ(d::AbstractVector, pz::PolynomialZonotope)
 
 Return the support vector of a polynomial zonotope along direction `d`.
 
@@ -116,12 +116,12 @@ Return the support vector of a polynomial zonotope along direction `d`.
 
 Vector representing the support vector.
 """
-function σ(d::AbstractVector{N}, pz::PolynomialZonotope{N}) where {N}
+function σ(d::AbstractVector, pz::PolynomialZonotope)
     error("this function is not yet implemented")
 end
 
 """
-    ρ(d::AbstractVector{N}, pz::PolynomialZonotope{N}) where {N}
+    ρ(d::AbstractVector, pz::PolynomialZonotope)
 
 Return the support function of a polynomial zonotope along direction `d`.
 
@@ -134,7 +134,7 @@ Return the support function of a polynomial zonotope along direction `d`.
 
 Value of the support function.
 """
-function ρ(d::AbstractVector{N}, pz::PolynomialZonotope{N}) where {N}
+function ρ(d::AbstractVector, pz::PolynomialZonotope)
     error("this function is not yet implemented")
 end
 

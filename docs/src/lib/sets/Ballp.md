@@ -6,11 +6,11 @@ CurrentModule = LazySets
 
 ```@docs
 Ballp
-σ(::AbstractVector{N}, ::Ballp{N}) where {N<:AbstractFloat}
-∈(::AbstractVector{N}, ::Ballp{N}) where {N<:AbstractFloat}
-center(::Ballp{N}) where {N<:AbstractFloat}
+σ(::AbstractVector, ::Ballp)
+∈(::AbstractVector, ::Ballp)
+center(::Ballp)
 rand(::Type{Ballp})
-translate(::Ballp{N}, ::AbstractVector{N}) where {N<:AbstractFloat}
+translate(::Ballp, ::AbstractVector)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

@@ -4,7 +4,7 @@ import Base: rand,
 export Ball1
 
 """
-    Ball1{N<:Real, VN<:AbstractVector{N}} <: AbstractCentrallySymmetricPolytope{N}
+    Ball1{N, VN<:AbstractVector{N}} <: AbstractCentrallySymmetricPolytope{N}
 
 Type that represents a ball in the 1-norm (also known as the Manhattan norm).
 The ball is also known as a
@@ -42,12 +42,12 @@ julia> σ([0.,1], B)
  1.0
 ```
 """
-struct Ball1{N<:Real, VN<:AbstractVector{N}} <: AbstractCentrallySymmetricPolytope{N}
+struct Ball1{N, VN<:AbstractVector{N}} <: AbstractCentrallySymmetricPolytope{N}
     center::VN
     radius::N
 
     # default constructor with domain constraint for radius
-    function Ball1(center::VN, radius::N) where {N<:Real, VN<:AbstractVector{N}}
+    function Ball1(center::VN, radius::N) where {N, VN<:AbstractVector{N}}
         @assert radius >= zero(N) "radius must not be negative"
         return new{N, VN}(center, radius)
     end
@@ -61,7 +61,7 @@ isconvextype(::Type{<:Ball1}) = true
 
 
 """
-    center(B::Ball1{N}) where {N<:Real}
+    center(B::Ball1)
 
 Return the center of a ball in the 1-norm.
 
@@ -73,7 +73,7 @@ Return the center of a ball in the 1-norm.
 
 The center of the ball in the 1-norm.
 """
-function center(B::Ball1{N}) where {N<:Real}
+function center(B::Ball1)
     return B.center
 end
 
@@ -82,7 +82,7 @@ end
 
 
 """
-    vertices_list(B::Ball1{N, VN}) where {N<:Real, VN<:AbstractVector{N}}
+    vertices_list(B::Ball1{N, VN}) where {N, VN<:AbstractVector}
 
 Return the list of vertices of a ball in the 1-norm.
 
@@ -94,7 +94,7 @@ Return the list of vertices of a ball in the 1-norm.
 
 A list containing the vertices of the ball in the 1-norm.
 """
-function vertices_list(B::Ball1{N, VN}) where {N<:Real, VN<:AbstractVector{N}}
+function vertices_list(B::Ball1{N, VN}) where {N, VN<:AbstractVector}
     # fast evaluation if B has radius 0
     if iszero(B.radius)
         return [B.center]
@@ -120,7 +120,7 @@ end
 
 
 """
-    σ(d::AbstractVector{N}, B::Ball1{N}) where {N<:Real}
+    σ(d::AbstractVector, B::Ball1)
 
 Return the support vector of a ball in the 1-norm in a given direction.
 
@@ -133,7 +133,7 @@ Return the support vector of a ball in the 1-norm in a given direction.
 
 Support vector in the given direction.
 """
-function σ(d::AbstractVector{N}, B::Ball1{N}) where {N<:Real}
+function σ(d::AbstractVector, B::Ball1)
     res = copy(B.center)
     imax = argmax(abs.(d))
     res[imax] += sign(d[imax]) * B.radius
@@ -141,7 +141,7 @@ function σ(d::AbstractVector{N}, B::Ball1{N}) where {N<:Real}
 end
 
 """
-    ∈(x::AbstractVector{N}, B::Ball1{N}, [failfast]::Bool=false) where {N<:Real}
+    ∈(x::AbstractVector, B::Ball1, [failfast]::Bool=false)
 
 Check whether a given point is contained in a ball in the 1-norm.
 
@@ -181,9 +181,10 @@ julia> [.5, 1.5] ∈ B
 true
 ```
 """
-function ∈(x::AbstractVector{N}, B::Ball1{N}, failfast::Bool=false) where {N<:Real}
+function ∈(x::AbstractVector, B::Ball1, failfast::Bool=false)
     @assert length(x) == dim(B) "a $(length(x))-dimensional vector is " *
         "incompatible with a $(dim(B))-dimensional set"
+    N = promote_type(eltype(x), eltype(B))
     sum = zero(N)
     @inbounds for (i, xi) in enumerate(x)
         sum += abs(B.center[i] - xi)
@@ -231,7 +232,7 @@ function rand(::Type{Ball1};
 end
 
 """
-    constraints_list(P::Ball1{N}) where {N<:Real}
+    constraints_list(P::Ball1{N}) where {N}
 
 Return the list of constraints defining a ball in the 1-norm.
 
@@ -249,7 +250,7 @@ The constraints can be defined as ``d_i^T (x-c) ≤ r`` for all ``d_i``, where
 ``d_i`` is a vector with elements ``1`` or ``-1`` in ``n`` dimensions. To span
 all possible ``d_i``, the function `Iterators.product` is used.
 """
-function constraints_list(B::Ball1{N}) where {N<:Real}
+function constraints_list(B::Ball1{N}) where {N}
     n = dim(B)
     c, r = B.center, B.radius
     clist = Vector{LinearConstraint{N, Vector{N}}}(undef, 2^n)
@@ -261,7 +262,7 @@ function constraints_list(B::Ball1{N}) where {N<:Real}
 end
 
 """
-    translate(B::Ball1{N}, v::AbstractVector{N}) where {N<:Real}
+    translate(B::Ball1, v::AbstractVector)
 
 Translate (i.e., shift) a ball in the 1-norm by a given vector.
 
@@ -278,7 +279,7 @@ A translated ball in the 1-norm.
 
 We add the vector to the center of the ball.
 """
-function translate(B::Ball1{N}, v::AbstractVector{N}) where {N<:Real}
+function translate(B::Ball1, v::AbstractVector)
     @assert length(v) == dim(B) "cannot translate a $(dim(B))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     return Ball1(center(B) + v, B.radius)

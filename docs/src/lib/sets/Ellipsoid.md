@@ -6,13 +6,13 @@ CurrentModule = LazySets
 
 ```@docs
 Ellipsoid
-ρ(::AbstractVector{N}, ::Ellipsoid{N}) where {N<:AbstractFloat}
-σ(::AbstractVector{N}, ::Ellipsoid{N}) where {N<:AbstractFloat}
-∈(::AbstractVector{N}, ::Ellipsoid{N}) where {N<:AbstractFloat}
+ρ(::AbstractVector, ::Ellipsoid)
+σ(::AbstractVector, ::Ellipsoid)
+∈(::AbstractVector, ::Ellipsoid)
 rand(::Type{Ellipsoid})
-center(::Ellipsoid{N}) where {N<:AbstractFloat}
-shape_matrix(::Ellipsoid{N}) where {N<:AbstractFloat}
-translate(::Ellipsoid{N}, ::AbstractVector{N}) where {N<:AbstractFloat}
+center(::Ellipsoid)
+shape_matrix(::Ellipsoid)
+translate(::Ellipsoid, ::AbstractVector)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

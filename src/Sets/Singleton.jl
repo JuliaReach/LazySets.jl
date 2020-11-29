@@ -3,7 +3,7 @@ import Base.rand
 export Singleton
 
 """
-    Singleton{N<:Real, VN<:AbstractVector{N}} <: AbstractSingleton{N}
+    Singleton{N, VN<:AbstractVector{N}} <: AbstractSingleton{N}
 
 Type that represents a singleton, that is, a set with a unique element.
 
@@ -11,7 +11,7 @@ Type that represents a singleton, that is, a set with a unique element.
 
 - `element` -- the only element of the set
 """
-struct Singleton{N<:Real, VN<:AbstractVector{N}} <: AbstractSingleton{N}
+struct Singleton{N, VN<:AbstractVector{N}} <: AbstractSingleton{N}
     element::VN
 end
 
@@ -22,7 +22,7 @@ isconvextype(::Type{<:Singleton}) = true
 
 
 """
-    element(S::Singleton{N}) where {N<:Real}
+    element(S::Singleton)
 
 Return the element of a singleton.
 
@@ -34,12 +34,12 @@ Return the element of a singleton.
 
 The element of the singleton.
 """
-function element(S::Singleton{N}) where {N<:Real}
+function element(S::Singleton)
     return S.element
 end
 
 """
-    element(S::Singleton{N}, i::Int) where {N<:Real}
+    element(S::Singleton, i::Int)
 
 Return the i-th entry of the element of a singleton.
 
@@ -52,7 +52,7 @@ Return the i-th entry of the element of a singleton.
 
 The i-th entry of the element of the singleton.
 """
-function element(S::Singleton{N}, i::Int) where {N<:Real}
+function element(S::Singleton, i::Int)
     return S.element[i]
 end
 
@@ -94,7 +94,7 @@ function rand(::Type{Singleton};
 end
 
 """
-    translate(S::Singleton{N}, v::AbstractVector{N}) where {N<:Real}
+    translate(S::Singleton, v::AbstractVector)
 
 Translate (i.e., shift) a singleton by a given vector.
 
@@ -111,7 +111,7 @@ A translated singleton.
 
 We add the vector to the point in the singleton.
 """
-function translate(S::Singleton{N}, v::AbstractVector{N}) where {N<:Real}
+function translate(S::Singleton, v::AbstractVector)
     @assert length(v) == dim(S) "cannot translate a $(dim(S))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     return Singleton(element(S) + v)

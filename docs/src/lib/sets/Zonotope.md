@@ -6,7 +6,7 @@ CurrentModule = LazySets
 
 ```@docs
 Zonotope
-center(::Zonotope{N}) where {N<:Real}
+center(::Zonotope)
 rand(::Type{Zonotope})
 generators(::Zonotope)
 genmat(::Zonotope)
