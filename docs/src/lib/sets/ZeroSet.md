@@ -7,15 +7,15 @@ CurrentModule = LazySets
 ```@docs
 ZeroSet
 dim(::ZeroSet)
-σ(::AbstractVector{N}, ::ZeroSet{N}) where {N<:Real}
-ρ(::AbstractVector{N}, ::ZeroSet{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::ZeroSet{N}) where {N<:Real}
+σ(::AbstractVector, ::ZeroSet)
+ρ(::AbstractVector, ::ZeroSet)
+∈(::AbstractVector, ::ZeroSet)
 rand(::Type{ZeroSet})
-element(::ZeroSet{N}) where {N<:Real}
-element(::ZeroSet{N}, ::Int) where {N<:Real}
-linear_map(::AbstractMatrix{N}, ::ZeroSet{N}) where {N<:Real}
-translate(::ZeroSet{N}, ::AbstractVector{N}) where {N<:Real}
-center(::ZeroSet{N}, ::Int) where {N<:Real}
+element(::ZeroSet{N}) where {N}
+element(::ZeroSet{N}, ::Int) where {N}
+linear_map(::AbstractMatrix, ::ZeroSet)
+translate(::ZeroSet, ::AbstractVector)
+center(::ZeroSet{N}, ::Int) where {N}
 rectify(Z::ZeroSet)
 ```
 Inherited from [`LazySet`](@ref):
