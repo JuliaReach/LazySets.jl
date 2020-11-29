@@ -5,11 +5,11 @@ import Base: rand,
 export Universe
 
 """
-    Universe{N<:Real} <: AbstractPolyhedron{N}
+    Universe{N} <: AbstractPolyhedron{N}
 
 Type that represents the universal set, i.e., the set of all elements.
 """
-struct Universe{N<:Real} <: AbstractPolyhedron{N}
+struct Universe{N} <: AbstractPolyhedron{N}
     dim::Int
 end
 
@@ -40,7 +40,7 @@ function constraints(U::Universe{N}) where {N}
 end
 
 """
-    constraints_list(U::Universe{N}) where {N<:Real}
+    constraints_list(U::Universe{N}) where {N}
 
 Return the list of constraints defining a universe.
 
@@ -52,7 +52,7 @@ Return the list of constraints defining a universe.
 
 The empty list of constraints, as the universe is unconstrained.
 """
-function constraints_list(U::Universe{N}) where {N<:Real}
+function constraints_list(U::Universe{N}) where {N}
     return LinearConstraint{N, Vector{N}}[]
 end
 
@@ -95,7 +95,7 @@ function dim(U::Universe)
 end
 
 """
-    ρ(d::AbstractVector{N}, U::Universe{N}) where {N<:Real}
+    ρ(d::AbstractVector, U::Universe)
 
 Return the support function of a universe.
 
@@ -113,12 +113,13 @@ The support function in the given direction.
 If the direction is all zero, the result is zero.
 Otherwise, the result is `Inf`.
 """
-function ρ(d::AbstractVector{N}, U::Universe{N}) where {N<:Real}
+function ρ(d::AbstractVector, U::Universe)
+    N = promote_type(eltype(d), eltype(U))
     return iszero(d) ? zero(N) : N(Inf)
 end
 
 """
-    σ(d::AbstractVector{N}, U::Universe{N}) where {N<:Real}
+    σ(d::AbstractVector, U::Universe)
 
 Return the support vector of a universe.
 
@@ -131,12 +132,13 @@ Return the support vector of a universe.
 
 A vector with infinity values, except in dimensions where the direction is zero.
 """
-function σ(d::AbstractVector{N}, U::Universe{N}) where {N<:Real}
+function σ(d::AbstractVector, U::Universe)
+    N = promote_type(eltype(d), eltype(U))
     return [v == zero(N) ? v : v > zero(N) ? N(Inf) : N(-Inf) for v in d]
 end
 
 """
-    ∈(x::AbstractVector{N}, U::Universe{N}) where {N<:Real}
+    ∈(x::AbstractVector, U::Universe)
 
 Check whether a given point is contained in a universe.
 
@@ -156,13 +158,13 @@ julia> [1.0, 0.0] ∈ Universe(2)
 true
 ```
 """
-function ∈(x::AbstractVector{N}, U::Universe{N}) where {N<:Real}
+function ∈(x::AbstractVector, U::Universe)
     @assert length(x) == dim(U)
     return true
 end
 
 """
-    an_element(U::Universe{N}) where {N<:Real}
+    an_element(U::Universe{N}) where {N}
 
 Return some element of a universe.
 
@@ -174,7 +176,7 @@ Return some element of a universe.
 
 The origin.
 """
-function an_element(U::Universe{N}) where {N<:Real}
+function an_element(U::Universe{N}) where {N}
     return zeros(N, dim(U))
 end
 
@@ -240,7 +242,7 @@ function isbounded(U::Universe)
 end
 
 """
-    isuniversal(U::Universe{N}, [witness]::Bool=false) where {N<:Real}
+    isuniversal(U::Universe{N}, [witness]::Bool=false) where {N}
 
 Check whether a universe is universal.
 
@@ -254,7 +256,7 @@ Check whether a universe is universal.
 * If `witness` option is deactivated: `true`
 * If `witness` option is activated: `(true, [])`
 """
-function isuniversal(U::Universe{N}, witness::Bool=false) where {N<:Real}
+function isuniversal(U::Universe{N}, witness::Bool=false) where {N}
     return witness ? (true, N[]) : true
 end
 
@@ -320,7 +322,7 @@ function diameter(U::Universe, p::Real=Inf)
 end
 
 """
-    translate(U::Universe{N}, v::AbstractVector{N}) where {N<:Real}
+    translate(U::Universe, v::AbstractVector)
 
 Translate (i.e., shift) a universe by a given vector.
 
@@ -333,7 +335,7 @@ Translate (i.e., shift) a universe by a given vector.
 
 The universe.
 """
-function translate(U::Universe{N}, v::AbstractVector{N}) where {N<:Real}
+function translate(U::Universe, v::AbstractVector)
     @assert length(v) == dim(U) "cannot translate a $(dim(U))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     return U
