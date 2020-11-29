@@ -6,14 +6,14 @@ CurrentModule = LazySets
 
 ```@docs
 Ball2
-σ(::AbstractVector{N}, ::Ball2{N}) where {N<:AbstractFloat}
-∈(::AbstractVector{N}, ::Ball2{N}) where {N<:AbstractFloat}
-center(::Ball2{N}) where {N<:AbstractFloat}
+σ(::AbstractVector, ::Ball2)
+∈(::AbstractVector, ::Ball2)
+center(::Ball2)
 rand(::Type{Ball2})
-sample(::Ball2{N}, ::Int) where {N<:AbstractFloat}
-translate(::Ball2{N}, ::AbstractVector{N}) where {N<:AbstractFloat}
-chebyshev_center(::Ball2{N}) where {N<:AbstractFloat}
-volume(::Ball2{N}) where {N<:AbstractFloat}
+sample(::Ball2{N}, ::Int) where {N}
+translate(::Ball2, ::AbstractVector)
+chebyshev_center(::Ball2)
+volume(::Ball2)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
