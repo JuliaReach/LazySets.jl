@@ -38,7 +38,7 @@ struct ConvexHull{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     Y::S2
 
     # default constructor with dimension check
-       function ConvexHull(X::S1, Y::S2) where {S1<:LazySet, S2<:LazySet}
+       function ConvexHull(X::S1, Y::S2) where {N, S1<:LazySet{N}, S2<:LazySet{N}}
            N = promote_type(eltype(X), eltype(Y))
            @assert dim(X) == dim(Y) "sets in a convex hull must have the same dimension"
         return new{N, S1, S2}(X, Y)
