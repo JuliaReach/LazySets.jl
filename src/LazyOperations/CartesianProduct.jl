@@ -48,6 +48,9 @@ Hyperrectangle{Float64,Array{Float64,1},Array{Float64,1}}([0.5, 3.0], [0.5, 1.0]
 struct CartesianProduct{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     X::S1
     Y::S2
+    function CartesianProduct(X::LazySet{N}, Y::LazySet{N}) where {N}
+        return new{N, typeof(X), typeof(Y)}(X, Y)
+    end
 end
 
 isoperationtype(::Type{<:CartesianProduct}) = true
