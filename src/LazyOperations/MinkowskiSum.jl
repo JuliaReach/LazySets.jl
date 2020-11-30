@@ -24,7 +24,7 @@ struct MinkowskiSum{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     Y::S2
 
     # default constructor with dimension check
-    function MinkowskiSum(X::LazySet{N}, Y::Lazyset{N}) where {N}
+    function MinkowskiSum(X::LazySet{N}, Y::LazySet{N}) where {N}
         @assert dim(X) == dim(Y) "sets in a Minkowski sum must have the same dimension"
         return new{N, typeof(X), typeof(Y)}(X, Y)
     end
