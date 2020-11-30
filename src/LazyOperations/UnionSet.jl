@@ -22,9 +22,9 @@ struct UnionSet{N, S1<:LazySet{N}, S2<:LazySet{N}}
     Y::S2
 
     # default constructor with dimension check
-    function UnionSet(X::S1, Y::S2) where {N, S1<:LazySet{N}, S2<:LazySet{N}}
+    function UnionSet(X::LazySet{N}, Y::LazySet{N}) where {N}
         @assert dim(X) == dim(Y) "sets in a union must have the same dimension"
-        return new{N, S1, S2}(X, Y)
+        return new{N, typeof(X), typeof(Y)}(X, Y)
     end
 end
 
