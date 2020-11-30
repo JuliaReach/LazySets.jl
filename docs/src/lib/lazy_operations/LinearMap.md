@@ -8,13 +8,13 @@ CurrentModule = LazySets
 LinearMap
 *(::Union{AbstractMatrix, UniformScaling, AbstractVector, Real}, ::LazySet)
 dim(::LinearMap)
-ρ(::AbstractVector{N}, ::LinearMap{N}) where {N<:Real}
-σ(::AbstractVector{N}, ::LinearMap{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::LinearMap{N}) where {N<:Real}
-an_element(::LinearMap{N}) where {N<:Real}
+ρ(::AbstractVector, ::LinearMap)
+σ(::AbstractVector, ::LinearMap)
+∈(::AbstractVector, ::LinearMap)
+an_element(::LinearMap)
 vertices_list(::LinearMap)
-constraints_list(::LinearMap{N}) where {N<:Real}
-linear_map(::AbstractMatrix{N}, ::LinearMap{N}) where {N<:Real}
+constraints_list(::LinearMap)
+linear_map(::AbstractMatrix, ::LinearMap)
 ```
 Inherited from [`AbstractAffineMap`](@ref):
 * [`isempty`](@ref isempty(::AbstractAffineMap))

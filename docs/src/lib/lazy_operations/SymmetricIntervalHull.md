@@ -7,11 +7,11 @@ CurrentModule = LazySets
 ```@docs
 SymmetricIntervalHull
 dim(::SymmetricIntervalHull)
-σ(::AbstractVector{N}, ::SymmetricIntervalHull{N}) where {N<:Real}
-center(::SymmetricIntervalHull{N}, ::Int) where {N<:Real}
-center(::SymmetricIntervalHull{N}) where {N<:Real}
-radius_hyperrectangle(::SymmetricIntervalHull{N}) where {N<:Real}
-radius_hyperrectangle(::SymmetricIntervalHull{N}, ::Int) where {N<:Real}
+σ(::AbstractVector, ::SymmetricIntervalHull)
+center(::SymmetricIntervalHull{N}, ::Int) where {N}
+center(::SymmetricIntervalHull{N}) where {N}
+radius_hyperrectangle(::SymmetricIntervalHull)
+radius_hyperrectangle(::SymmetricIntervalHull, ::Int)
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
@@ -37,7 +37,7 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`∈`](@ref ∈(::AbstractVector, ::AbstractHyperrectangle))
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
-* [`constraints_list`](@ref constraints_list(::AbstractHyperrectangle{N}) where {N})
+* [`constraints_list`](@ref constraints_list(::AbstractHyperrectangle))
 * [`vertices_list`](@ref vertices_list(::AbstractHyperrectangle))
 * [`high`](@ref high(::AbstractHyperrectangle))
 * [`low`](@ref low(::AbstractHyperrectangle))

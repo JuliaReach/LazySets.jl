@@ -6,8 +6,7 @@ export Translation,
        linear_map
 
 """
-    Translation{N<:Real, VN<:AbstractVector{N},
-                S<:LazySet{N}} <: AbstractAffineMap{N, S}
+    Translation{N, VN<:AbstractVector{N}, S<:LazySet{N}} <: AbstractAffineMap{N, S}
 
 Type that represents a lazy translation.
 
@@ -140,16 +139,15 @@ julia> constraints_list(tr)
  HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}}([0.0, 0.0, -1.0], -1.0)
 ```
 """
-struct Translation{N<:Real, VN<:AbstractVector{N},
-                   S<:LazySet{N}} <: AbstractAffineMap{N, S}
+struct Translation{N, VN<:AbstractVector{N}, S<:LazySet{N}} <: AbstractAffineMap{N, S}
     X::S
     v::VN
 
     # default constructor with dimension check
-    function Translation(X::S, v::VN) where {N<:Real, VN<:AbstractVector{N},
-                                             S<:LazySet{N}}
+    function Translation(X::S, v::VN) where {N, VN<:AbstractVector{N}, S<:LazySet{N}}
         @assert dim(X) == length(v) "cannot create a translation of a set of " *
             "dimension $(dim(X)) along a vector of length $(length(v))"
+
         return new{N, VN, S}(X, v)
     end
 end
@@ -158,8 +156,7 @@ isoperationtype(::Type{<:Translation}) = true
 isconvextype(::Type{Translation{N, VN, S}}) where {N, VN, S} = isconvextype(S)
 
 # constructor from a Translation: perform the translation immediately
-Translation(tr::Translation{N}, v::AbstractVector{N}) where {N<:Real} =
-    Translation(tr.X, tr.v + v)
+Translation(tr::Translation{N}, v::AbstractVector{N}) where {N} = Translation(tr.X, tr.v + v)
 
 """
     +(X::LazySet, v::AbstractVector)
@@ -191,8 +188,7 @@ Unicode alias constructor ⊕ (`oplus`) for the lazy translation operator.
 ⊕(v::AbstractVector, X::LazySet) = Translation(X, v)
 
 # the translation of a lazy linear map is a (lazy) affine map
-Translation(lm::LinearMap{N}, v::AbstractVector{N}) where {N<:Real} =
-    AffineMap(lm.M, lm.X, v)
+Translation(lm::LinearMap, v::AbstractVector) = AffineMap(lm.M, lm.X, v)
 
 # the linear map of a translation is a (lazy) affine map:
 # M * (X ⊕ v) = (M * X) ⊕ (M * v)
@@ -202,7 +198,7 @@ LinearMap(M::AbstractMatrix, tr::Translation) = AffineMap(M, tr.X, M * tr.v)
 # --- AbstractAffineMap interface functions ---
 
 
-function matrix(tr::Translation{N}) where {N<:Real}
+function matrix(tr::Translation{N}) where {N}
     return Diagonal(fill(one(N), dim(tr)))
 end
 
@@ -219,7 +215,7 @@ end
 # ============================
 
 """
-    σ(d::AbstractVector{N}, tr::Translation{N}) where {N<:Real}
+    σ(d::AbstractVector, tr::Translation)
 
 Return the support vector of a translation.
 
@@ -233,12 +229,12 @@ Return the support vector of a translation.
 The support vector in the given direction.
 If the direction has norm zero, the result depends on the wrapped set.
 """
-function σ(d::AbstractVector{N}, tr::Translation{N}) where {N<:Real}
+function σ(d::AbstractVector, tr::Translation)
     return tr.v + σ(d, tr.X)
 end
 
 """
-    ρ(d::AbstractVector{N}, tr::Translation{N}) where {N<:Real}
+    ρ(d::AbstractVector, tr::Translation)
 
 Return the support function of a translation.
 
@@ -251,7 +247,7 @@ Return the support function of a translation.
 
 The support function in the given direction.
 """
-function ρ(d::AbstractVector{N}, tr::Translation{N}) where {N<:Real}
+function ρ(d::AbstractVector, tr::Translation)
     return dot(d, tr.v) + ρ(d, tr.X)
 end
 
@@ -278,7 +274,7 @@ function an_element(tr::Translation)
 end
 
 """
-    constraints_list(tr::Translation{N}) where {N<:Real}
+    constraints_list(tr::Translation)
 
 Return the list of constraints of the translation of a set.
 
@@ -301,7 +297,7 @@ Let the translation be defined by the set of points `y` such that `y = x + v` fo
 all `x ∈ X`. Then, each defining halfspace `a⋅x ≤ b` is transformed to
 `a⋅y ≤ b + a⋅v`.
 """
-function constraints_list(tr::Translation{N}) where {N<:Real}
+function constraints_list(tr::Translation)
     return _constraints_list_translation(tr.X, tr.v)
 end
 
@@ -318,7 +314,7 @@ function _constraints_list_translation(X::LazySet, v::AbstractVector)
 end
 
 """
-    ∈(x::AbstractVector{N}, tr::Translation{N}) where {N<:Real}
+    ∈(x::AbstractVector, tr::Translation)
 
 Check whether a given point is contained in the translation of a convex set.
 
@@ -336,12 +332,12 @@ Check whether a given point is contained in the translation of a convex set.
 This implementation relies on the set membership function for the wrapped set
 `tr.X`, since ``x ∈ X ⊕ v`` iff ``x - v ∈ X``.
 """
-function ∈(x::AbstractVector{N}, tr::Translation{N}) where {N<:Real}
+function ∈(x::AbstractVector, tr::Translation)
     return x - tr.v ∈ tr.X
 end
 
 """
-    linear_map(M::AbstractMatrix{N}, tr::Translation{N}) where {N<:Real}
+    linear_map(M::AbstractMatrix, tr::Translation)
 
 Concrete linear map of a polyhedron in constraint representation.
 
@@ -359,7 +355,7 @@ The type of the result depends on the type of the set wrapped by `tr`.
 
 We compute `translate(linear_map(M, tr.X), M * tr.v)`.
 """
-function linear_map(M::AbstractMatrix{N}, tr::Translation{N}) where {N<:Real}
+function linear_map(M::AbstractMatrix, tr::Translation)
     @assert dim(tr) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
         "applied to a set of dimension $(dim(tr))"
 

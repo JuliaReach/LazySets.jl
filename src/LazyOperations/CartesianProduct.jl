@@ -5,7 +5,7 @@ export CartesianProduct,
        swap
 
 """
-    CartesianProduct{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
+    CartesianProduct{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
 
 Type that represents a Cartesian product of two convex sets.
 
@@ -45,9 +45,12 @@ julia> convert(Hyperrectangle, I12)
 Hyperrectangle{Float64,Array{Float64,1},Array{Float64,1}}([0.5, 3.0], [0.5, 1.0])
 ```
 """
-struct CartesianProduct{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
+struct CartesianProduct{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     X::S1
     Y::S2
+    function CartesianProduct(X::LazySet{N}, Y::LazySet{N}) where {N}
+        return new{N, typeof(X), typeof(Y)}(X, Y)
+    end
 end
 
 isoperationtype(::Type{<:CartesianProduct}) = true
@@ -107,7 +110,7 @@ function dim(cp::CartesianProduct)
 end
 
 """
-    σ(d::AbstractVector{N}, cp::CartesianProduct{N}) where {N<:Real}
+    σ(d::AbstractVector, cp::CartesianProduct)
 
 Return the support vector of a Cartesian product.
 
@@ -121,13 +124,13 @@ Return the support vector of a Cartesian product.
 The support vector in the given direction.
 If the direction has norm zero, the result depends on the wrapped sets.
 """
-function σ(d::AbstractVector{N}, cp::CartesianProduct{N}) where {N<:Real}
+function σ(d::AbstractVector, cp::CartesianProduct)
     n1 = dim(cp.X)
     return [σ(d[1:n1], cp.X); σ(d[n1+1:length(d)], cp.Y)]
 end
 
 """
-    ρ(d::AbstractVector{N}, cp::CartesianProduct{N}) where {N<:Real}
+    ρ(d::AbstractVector, cp::CartesianProduct)
 
 Return the support function of a Cartesian product.
 
@@ -141,7 +144,7 @@ Return the support function of a Cartesian product.
 The support function in the given direction.
 If the direction has norm zero, the result depends on the wrapped sets.
 """
-function ρ(d::AbstractVector{N}, cp::CartesianProduct{N}) where {N<:Real}
+function ρ(d::AbstractVector, cp::CartesianProduct)
     n1 = dim(cp.X)
     return ρ(d[1:n1], cp.X) + ρ(d[n1+1:length(d)], cp.Y)
 end
@@ -164,7 +167,7 @@ function isbounded(cp::CartesianProduct)
 end
 
 """
-    ∈(x::AbstractVector{N}, cp::CartesianProduct{N}) where {N<:Real}
+    ∈(x::AbstractVector, cp::CartesianProduct)
 
 Check whether a given point is contained in a Cartesian product.
 
@@ -177,7 +180,7 @@ Check whether a given point is contained in a Cartesian product.
 
 `true` iff ``x ∈ cp``.
 """
-function ∈(x::AbstractVector{N}, cp::CartesianProduct{N}) where {N<:Real}
+function ∈(x::AbstractVector, cp::CartesianProduct)
     @assert length(x) == dim(cp)
 
     n1 = dim(cp.X)
@@ -203,7 +206,7 @@ function isempty(cp::CartesianProduct)
 end
 
 """
-    constraints_list(cp::CartesianProduct{N}) where {N<:Real}
+    constraints_list(cp::CartesianProduct)
 
 Return the list of constraints of a (polyhedral) Cartesian product.
 
@@ -215,12 +218,12 @@ Return the list of constraints of a (polyhedral) Cartesian product.
 
 A list of constraints.
 """
-function constraints_list(cp::CartesianProduct{N}) where {N<:Real}
+function constraints_list(cp::CartesianProduct)
     return constraints_list(CartesianProductArray([cp.X, cp.Y]))
 end
 
 """
-    vertices_list(cp::CartesianProduct{N}) where {N<:Real}
+    vertices_list(cp::CartesianProduct{N}) where {N}
 
 Return the list of vertices of a (polytopic) Cartesian product.
 
@@ -238,7 +241,7 @@ We assume that the underlying sets are polytopic.
 Then the high-dimensional set of vertices is just the Cartesian product of the
 low-dimensional sets of vertices.
 """
-function vertices_list(cp::CartesianProduct{N}) where {N<:Real}
+function vertices_list(cp::CartesianProduct{N}) where {N}
     # collect low-dimensional vertices lists
     vlist_low = (vertices_list(cp.X), vertices_list(cp.Y))
 
@@ -256,7 +259,7 @@ function vertices_list(cp::CartesianProduct{N}) where {N<:Real}
 end
 
 """
-    linear_map(M::AbstractMatrix{N}, cp::CartesianProduct{N}) where {N<:Real}
+    linear_map(M::AbstractMatrix, cp::CartesianProduct)
 
 Concrete linear map of a (polyhedral) Cartesian product.
 
@@ -274,8 +277,7 @@ A polytope if `cp` is bounded and a polyhedron otherwise.
 We convert the Cartesian product to constraint representation and then call
 `linear_map` on the corresponding polyhedron.
 """
-function linear_map(M::AbstractMatrix{N}, cp::CartesianProduct{N}
-                   ) where {N<:Real}
+function linear_map(M::AbstractMatrix, cp::CartesianProduct)
     return linear_map_cartesian_product(M, cp)
 end
 
