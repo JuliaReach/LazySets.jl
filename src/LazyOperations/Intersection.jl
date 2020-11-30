@@ -93,12 +93,9 @@ struct Intersection{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     cache::IntersectionCache
 
     # default constructor with dimension check
-    function Intersection(X::S1, Y::S2;
-                          cache::IntersectionCache=IntersectionCache()
-                         ) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}}
-        @assert dim(X) == dim(Y) "sets in an intersection must have the same " *
-            "dimension"
-        return new{N, S1, S2}(X, Y, cache)
+    function Intersection(X::S1, Y::S2; cache::IntersectionCache=IntersectionCache()) where {N}
+        @assert dim(X) == dim(Y) "sets in an intersection must have the same dimension"
+        return new{N, typeof(X), typeof(Y)}(X, Y, cache)
     end
 end
 
