@@ -7,10 +7,10 @@ CurrentModule = LazySets
 ```@docs
 Hyperrectangle
 rand(::Type{Hyperrectangle})
-center(::Hyperrectangle{N}) where {N<:Real}
-radius_hyperrectangle(::Hyperrectangle{N}) where {N<:Real}
-radius_hyperrectangle(::Hyperrectangle{N}, ::Int) where {N<:Real}
-translate(::Hyperrectangle{N}, ::AbstractVector{N}) where {N<:Real}
+center(::Hyperrectangle)
+radius_hyperrectangle(::Hyperrectangle)
+radius_hyperrectangle(::Hyperrectangle, ::Int)
+translate(::Hyperrectangle, ::AbstractVector)
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
