@@ -352,3 +352,58 @@ function minkowski_sum(P::VPolygon{N}, Q::VPolygon{N}) where {N<:Real}
     end
     return VPolygon(R)
 end
+
+"""
+    minkowski_sum(P1::VPolytope, P2::VPolytope;
+                  [apply_convex_hull]=true,
+                  [backend]=nothing,
+                  [solver]=nothing)
+
+Compute the Minkowski sum between two polytopes in vertex representation.
+
+### Input
+
+- `P1`                -- polytope
+- `P2`                -- another polytope
+- `apply_convex_hull` -- (optional, default: `true`) if `true`, post-process the
+                         pairwise sums using a convex hull algorithm
+- `backend`           -- (optional, default: `nothing`) the backend for
+                         polyhedral computations used to post-process with a
+                         convex hull; see `default_polyhedra_backend(P1, N)`
+- `solver`            -- (optional, default: `nothing`) the backend used to
+                         solve the linear program; see
+                         `default_lp_solver_polyhedra(N)`
+
+### Output
+
+A new polytope in vertex representation whose vertices are the convex hull of
+the sum of all possible sums of vertices of `P1` and `P2`.
+"""
+function minkowski_sum(P1::VPolytope, P2::VPolytope;
+                       apply_convex_hull::Bool=true,
+                       backend=nothing,
+                       solver=nothing)
+
+    @assert dim(P1) == dim(P2) "cannot compute the Minkowski sum between a polyotope " *
+        "of dimension $(dim(P1)) and a polytope of dimension $((dim(P2)))"
+
+    vlist1 = _vertices_list(P1, backend)
+    vlist2 = _vertices_list(P2, backend)
+    n, m = length(vlist1), length(vlist2)
+    N = promote_type(eltype(P1), eltype(P2))
+    Vout = Vector{Vector{N}}() # TODO: use common inner array type from P1 and P2, #2011
+    sizehint!(Vout, n * m)
+    for vi in vlist1
+        for vj in vlist2
+            push!(Vout, vi + vj)
+        end
+    end
+    if apply_convex_hull
+        if backend == nothing
+            backend = default_polyhedra_backend(P1, N)
+            solver = default_lp_solver_polyhedra(N)
+        end
+        convex_hull!(Vout, backend=backend, solver=solver)
+    end
+    return VPolytope(Vout)
+end

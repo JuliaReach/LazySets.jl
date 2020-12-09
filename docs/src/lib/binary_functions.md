@@ -51,7 +51,7 @@ is_intersection_empty(::Line2D, ::Line2D, ::Bool=false)
 ```@docs
 convex_hull(::LazySet{N}, ::LazySet{N}) where {N<:Real}
 convex_hull(::HPoly{N}, ::HPoly{N}) where {N<:Real}
-convex_hull(::VPolytope{N}, ::VPolytope{N}) where {N<:Real}
+convex_hull(::VPolytope, ::VPolytope)
 convex_hull(::VPolygon, ::VPolygon)
 convex_hull(::Vector{VN}) where {N<:Real, VN<:AbstractVector{N}}
 convex_hull(::UnionSetArray{N, PT}; kwargs...) where {N, PT<:AbstractPolytope{N}}
@@ -86,7 +86,7 @@ intersection(::CartesianProductArray{N}, ::AbstractPolyhedron{N}) where {N<:Real
 ```@docs
 minkowski_sum(::LazySet{N}, ::LazySet{N}) where {N<:Real}
 minkowski_sum(::AbstractPolyhedron{N}, ::AbstractPolyhedron{N}) where {N<:Real}
-minkowski_sum(::VPolytope{N}, ::VPolytope{N}) where {N<:Real}
+minkowski_sum(::VPolytope, ::VPolytope)
 minkowski_sum(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}) where {N<:Real}
 minkowski_sum(::AbstractZonotope{N}, ::AbstractZonotope{N}) where {N<:Real}
 minkowski_sum(::VPolygon{N}, ::VPolygon{N}) where {N<:Real}
