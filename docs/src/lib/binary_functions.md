@@ -52,7 +52,7 @@ is_intersection_empty(::Line2D, ::Line2D, ::Bool=false)
 convex_hull(::LazySet{N}, ::LazySet{N}) where {N<:Real}
 convex_hull(::HPoly{N}, ::HPoly{N}) where {N<:Real}
 convex_hull(::VPolytope{N}, ::VPolytope{N}) where {N<:Real}
-convex_hull(::VPolygon{N}, ::VPolygon{N}) where {N<:Real}
+convex_hull(::VPolygon, ::VPolygon)
 convex_hull(::Vector{VN}) where {N<:Real, VN<:AbstractVector{N}}
 convex_hull(::UnionSetArray{N, PT}; kwargs...) where {N, PT<:AbstractPolytope{N}}
 monotone_chain!

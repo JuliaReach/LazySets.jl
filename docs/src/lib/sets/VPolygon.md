@@ -6,17 +6,17 @@ CurrentModule = LazySets
 
 ```@docs
 VPolygon
-σ(::AbstractVector{N}, ::VPolygon{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::VPolygon{N}) where {N<:Real}
-an_element(::VPolygon{N}) where {N<:Real}
+σ(::AbstractVector, ::VPolygon)
+∈(::AbstractVector, ::VPolygon)
+an_element(::VPolygon)
 rand(::Type{VPolygon})
-vertices_list(::VPolygon{N}) where {N<:Real}
-tohrep(::VPolygon{N}, ::Type{HPOLYGON}=HPolygon) where {N<:Real, HPOLYGON<:AbstractHPolygon}
-tovrep(::VPolygon{N}) where {N<:Real}
-constraints_list(::VPolygon{N}) where {N<:Real}
-translate(::VPolygon{N}, ::AbstractVector{N}) where {N<:Real}
-remove_redundant_vertices(::VPolygon{N}; ::String="monotone_chain") where {N<:Real}
-remove_redundant_vertices!(::VPolygon{N}; ::String="monotone_chain") where {N<:Real}
+vertices_list(::VPolygon)
+tohrep(::VPolygon{N}, ::Type{HPOLYGON}=HPolygon) where {N, HPOLYGON<:AbstractHPolygon}
+tovrep(::VPolygon)
+constraints_list(::VPolygon)
+translate(::VPolygon, ::AbstractVector)
+remove_redundant_vertices(::VPolygon; ::String="monotone_chain")
+remove_redundant_vertices!(::VPolygon; ::String="monotone_chain")
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

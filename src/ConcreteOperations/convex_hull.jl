@@ -494,3 +494,33 @@ function convex_hull(U::UnionSetArray{N, PT}; kwargs...) where {N, PT<:AbstractP
     vlist = mapreduce(vertices_list, vcat, U.array)
     return convex_hull(vlist; kwargs...)
 end
+
+"""
+    convex_hull(P::VPolygon, Q::VPolygon; [algorithm]::String="monotone_chain")
+
+Return the convex hull of two polygons in vertex representation.
+
+### Input
+
+- `P`         -- polygon in vertex representation
+- `Q`         -- another polygon in vertex representation
+- `algorithm` -- (optional, default: "monotone_chain") the algorithm used to
+                 compute the convex hull
+
+### Output
+
+A new polygon such that its vertices are the convex hull of the given two polygons.
+
+### Algorithm
+
+A convex hull algorithm is used to compute the convex hull of the vertices of the
+given input polygons `P` and `Q`; see `?convex_hull` for details on the available
+algorithms. The vertices of the output polygon are sorted in counter-clockwise
+fashion.
+"""
+function convex_hull(P::VPolygon, Q::VPolygon;
+                     algorithm::String="monotone_chain")
+    vunion = [P.vertices; Q.vertices]
+    convex_hull!(vunion; algorithm=algorithm)
+    return VPolygon(vunion, apply_convex_hull=false)
+end
