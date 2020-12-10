@@ -11,20 +11,20 @@ HPolyhedron
 The following methods are shared between `HPolytope` and `HPolyhedron`.
 
 ```@docs
-dim(::HPoly{N}) where {N<:Real}
-ρ(::AbstractVector{N}, ::HPoly{N}) where {N<:Real}
-σ(::AbstractVector{N}, ::HPoly{N}) where {N<:Real}
-addconstraint!(::HPoly{N}, ::LinearConstraint{N}) where {N<:Real}
-constraints_list(::HPoly{N}) where {N<:Real}
-tohrep(::HPoly{N}) where {N<:Real}
-tovrep(::HPoly{N}) where {N<:Real}
-normalize(::HPoly{N}, p=N(2)) where {N<:Real}
-isempty(::HPoly{N}, ::Bool=false) where {N<:Real}
-translate(::HPoly{N}, ::AbstractVector{N}) where {N<:Real}
-polyhedron(::HPoly{N}) where {N<:Real}
-remove_redundant_constraints(::HPoly{N}) where {N<:Real}
-remove_redundant_constraints!(::HPoly{N}) where {N<:Real}
-LazySets._isbounded_stiemke(::HPolyhedron{N}) where {N<:Real}
+dim(::HPoly)
+ρ(::AbstractVector{N}, ::HPoly{N}) where {N}
+σ(::AbstractVector{N}, ::HPoly{N}) where {N}
+addconstraint!(::HPoly, ::LinearConstraint)
+constraints_list(::HPoly)
+tohrep(::HPoly)
+tovrep(::HPoly{N}) where {N}
+normalize(::HPoly{N}, p=N(2)) where {N}
+isempty(::HPoly{N}, ::Bool=false) where {N}
+translate(::HPoly, ::AbstractVector)
+polyhedron(::HPoly{N}) where {N}
+remove_redundant_constraints(::HPoly{N}) where {N}
+remove_redundant_constraints!(::HPoly{N}) where {N}
+LazySets._isbounded_stiemke(::HPolyhedron{N}) where {N}
 ```
 
 Inherited from [`LazySet`](@ref):
