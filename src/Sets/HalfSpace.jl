@@ -9,7 +9,7 @@ export HalfSpace, LinearConstraint,
        halfspace_left, halfspace_right
 
 """
-    HalfSpace{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
+    HalfSpace{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
 
 Type that represents a (closed) half-space of the form ``a⋅x ≤ b``.
 
@@ -35,11 +35,11 @@ julia> HalfSpace([0, -1.], 0.)
 HalfSpace{Float64,Array{Float64,1}}([0.0, -1.0], 0.0)
 ```
 """
-struct HalfSpace{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
+struct HalfSpace{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
     a::VN
     b::N
 
-    function HalfSpace(a::VN, b::N) where {N<:Real, VN<:AbstractVector{N}}
+    function HalfSpace(a::VN, b::N) where {N, VN<:AbstractVector{N}}
         @assert !iszero(a) "a half-space needs a non-zero normal vector"
         return new{N, VN}(a, b)
     end
@@ -56,7 +56,7 @@ Alias for `HalfSpace`
 const LinearConstraint = HalfSpace
 
 """
-    normalize(hs::HalfSpace{N}, p=N(2)) where {N<:Real}
+    normalize(hs::HalfSpace{N}, p=N(2)) where {N}
 
 Normalize a half-space.
 
@@ -70,7 +70,7 @@ Normalize a half-space.
 A new half-space whose normal direction ``a`` is normalized, i.e., such that
 ``‖a‖_p = 1`` holds.
 """
-function normalize(hs::HalfSpace{N}, p=N(2)) where {N<:Real}
+function normalize(hs::HalfSpace{N}, p=N(2)) where {N}
     nₐ = norm(hs.a, p)
     a = LinearAlgebra.normalize(hs.a, p)
     b = hs.b / nₐ
@@ -99,7 +99,7 @@ function dim(hs::HalfSpace)
 end
 
 """
-    ρ(d::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
+    ρ(d::AbstractVector, hs::HalfSpace)
 
 Evaluate the support function of a half-space in a given direction.
 
@@ -113,17 +113,18 @@ Evaluate the support function of a half-space in a given direction.
 The support function of the half-space.
 If the set is unbounded in the given direction, the result is `Inf`.
 """
-function ρ(d::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
+function ρ(d::AbstractVector, hs::HalfSpace)
     v, unbounded = σ_helper(d, Hyperplane(hs.a, hs.b); error_unbounded=false,
                             halfspace=true)
     if unbounded
+        N = promote_type(eltype(d), eltype(hs))
         return N(Inf)
     end
     return dot(d, v)
 end
 
 """
-    σ(d::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
+    σ(d::AbstractVector, hs::HalfSpace)
 
 Return the support vector of a half-space.
 
@@ -141,7 +142,7 @@ following two cases:
 In both cases the result is any point on the boundary (the defining hyperplane).
 Otherwise this function throws an error.
 """
-function σ(d::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
+function σ(d::AbstractVector, hs::HalfSpace)
     v, unbounded = σ_helper(d, Hyperplane(hs.a, hs.b); error_unbounded=true,
                             halfspace=true)
     return v
@@ -165,7 +166,7 @@ function isbounded(::HalfSpace)
 end
 
 """
-    isuniversal(hs::HalfSpace{N}, [witness]::Bool=false) where {N<:Real}
+    isuniversal(hs::HalfSpace, [witness]::Bool=false)
 
 Check whether a half-space is universal.
 
@@ -183,7 +184,7 @@ Check whether a half-space is universal.
 
 Witness production falls back to `isuniversal(::Hyperplane)`.
 """
-function isuniversal(hs::HalfSpace{N}, witness::Bool=false) where {N<:Real}
+function isuniversal(hs::HalfSpace, witness::Bool=false)
     if witness
         return isuniversal(Hyperplane(hs.a, hs.b), true)
     else
@@ -192,7 +193,7 @@ function isuniversal(hs::HalfSpace{N}, witness::Bool=false) where {N<:Real}
 end
 
 """
-    an_element(hs::HalfSpace{N}) where {N<:Real}
+    an_element(hs::HalfSpace)
 
 Return some element of a half-space.
 
@@ -204,12 +205,12 @@ Return some element of a half-space.
 
 An element on the defining hyperplane.
 """
-function an_element(hs::HalfSpace{N}) where {N<:Real}
+function an_element(hs::HalfSpace)
     return an_element_helper(Hyperplane(hs.a, hs.b))
 end
 
 """
-    ∈(x::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
+    ∈(x::AbstractVector, hs::HalfSpace)
 
 Check whether a given point is contained in a half-space.
 
@@ -226,7 +227,7 @@ Check whether a given point is contained in a half-space.
 
 We just check if ``x`` satisfies ``a⋅x ≤ b``.
 """
-function ∈(x::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
+function ∈(x::AbstractVector, hs::HalfSpace)
     return _leq(dot(x, hs.a), hs.b)
 end
 
@@ -285,7 +286,7 @@ function isempty(hs::HalfSpace)
 end
 
 """
-    constraints_list(hs::HalfSpace{N}) where {N<:Real}
+    constraints_list(hs::HalfSpace)
 
 Return the list of constraints of a half-space.
 
@@ -297,12 +298,12 @@ Return the list of constraints of a half-space.
 
 A singleton list containing the half-space.
 """
-function constraints_list(hs::HalfSpace{N}) where {N<:Real}
+function constraints_list(hs::HalfSpace)
     return [hs]
 end
 
 """
-    constraints_list(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real}
+    constraints_list(A::AbstractMatrix{N}, b::AbstractVector)
 
 Convert a matrix-vector representation to a linear-constraint representation.
 
@@ -315,8 +316,7 @@ Convert a matrix-vector representation to a linear-constraint representation.
 
 A list of linear constraints.
 """
-function constraints_list(A::AbstractMatrix{N}, b::AbstractVector{N}
-                         ) where {N<:Real}
+function constraints_list(A::AbstractMatrix, b::AbstractVector)
     m = size(A, 1)
     @assert m == length(b) "a matrix with $m rows is incompatible with a " *
                            "vector of length $(length(b))"
@@ -325,7 +325,7 @@ function constraints_list(A::AbstractMatrix{N}, b::AbstractVector{N}
 end
 
 """
-    constrained_dimensions(hs::HalfSpace{N}) where {N<:Real}
+    constrained_dimensions(hs::HalfSpace)
 
 Return the indices in which a half-space is constrained.
 
@@ -342,12 +342,12 @@ dimension `i`.
 
 A 2D half-space with constraint ``x1 ≥ 0`` is constrained in dimension 1 only.
 """
-function constrained_dimensions(hs::HalfSpace{N}) where {N<:Real}
+function constrained_dimensions(hs::HalfSpace)
     return nonzero_indices(hs.a)
 end
 
 """
-    halfspace_left(p::AbstractVector{N}, q::AbstractVector{N}) where {N<:Real}
+    halfspace_left(p::AbstractVector, q::AbstractVector)
 
 Return a half-space describing the 'left' of a two-dimensional line segment
 through two points.
@@ -402,8 +402,7 @@ julia> B ⊆ H && H ⊆ B
 true
 ```
 """
-function halfspace_left(p::AbstractVector{N},
-                        q::AbstractVector{N}) where {N<:Real}
+function halfspace_left(p::AbstractVector, q::AbstractVector)
     @assert length(p) == length(q) == 2 "the points must be two-dimensional"
     @assert p != q "the points must not be equal"
     a = [q[2] - p[2], p[1] - q[1]]
@@ -411,7 +410,7 @@ function halfspace_left(p::AbstractVector{N},
 end
 
 """
-    halfspace_right(p::AbstractVector{N}, q::AbstractVector{N}) where {N<:Real}
+    halfspace_right(p::AbstractVector, q::AbstractVector)
 
 Return a half-space describing the 'right' of a two-dimensional line segment
 through two points.
@@ -430,14 +429,14 @@ describes the right-hand side of the directed line segment `pq`.
 
 See the documentation of `halfspace_left`.
 """
-function halfspace_right(p::AbstractVector{N},
-                         q::AbstractVector{N}) where {N<:Real}
+function halfspace_right(p::AbstractVector, q::AbstractVector)
     return halfspace_left(q, p)
 end
 
 """
-    is_tighter_same_dir_2D(c1::LinearConstraint{N},
-                           c2::LinearConstraint{N}) where {N<:Real}
+    is_tighter_same_dir_2D(c1::LinearConstraint,
+                           c2::LinearConstraint;
+                           [strict]::Bool=false)
 
 Check if the first of two two-dimensional constraints with equivalent normal
 direction is tighter.
@@ -453,9 +452,9 @@ direction is tighter.
 
 `true` iff the first constraint is tighter.
 """
-function is_tighter_same_dir_2D(c1::LinearConstraint{N},
-                                c2::LinearConstraint{N};
-                                strict::Bool=false) where {N<:Real}
+function is_tighter_same_dir_2D(c1::LinearConstraint,
+                                c2::LinearConstraint;
+                                strict::Bool=false)
     @assert dim(c1) == dim(c2) == 2 "this method requires 2D constraints"
     @assert samedir(c1.a, c2.a)[1] "the constraints must have the same " *
         "normal direction"
@@ -469,8 +468,7 @@ function is_tighter_same_dir_2D(c1::LinearConstraint{N},
 end
 
 """
-    translate(hs::HalfSpace{N}, v::AbstractVector{N}; share::Bool=false
-             ) where {N<:Real}
+    translate(hs::HalfSpace, v::AbstractVector; [share]::Bool=false)
 
 Translate (i.e., shift) a half-space by a given vector.
 
@@ -495,8 +493,7 @@ original halfspace if `share == true`.
 A half-space ``a⋅x ≤ b`` is transformed to the half-space ``a⋅x ≤ b + a⋅v``.
 In other words, we add the dot product ``a⋅v`` to ``b``.
 """
-function translate(hs::HalfSpace{N}, v::AbstractVector{N}; share::Bool=false
-                  ) where {N<:Real}
+function translate(hs::HalfSpace, v::AbstractVector; share::Bool=false)
     @assert length(v) == dim(hs) "cannot translate a $(dim(hs))-dimensional " *
                                  "set by a $(length(v))-dimensional vector"
     a = share ? hs.a : copy(hs.a)
@@ -504,12 +501,13 @@ function translate(hs::HalfSpace{N}, v::AbstractVector{N}; share::Bool=false
     return HalfSpace(a, b)
 end
 
-function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::HalfSpace{N},
-                          algo::AbstractLinearMapAlgorithm) where {N<:Real}
-    constraints = _linear_map_hrep(M, P, algo)
+function _linear_map_hrep_helper(M::AbstractMatrix, hs::HalfSpace,
+                          algo::AbstractLinearMapAlgorithm)
+    constraints = _linear_map_hrep(M, hs, algo)
     if length(constraints) == 1
         return first(constraints)
     elseif isempty(constraints)
+        N = promote_type(eltype(M), eltype(hs))
         return Universe{N}(size(M, 1))
     else
         return HPolyhedron(constraints)
