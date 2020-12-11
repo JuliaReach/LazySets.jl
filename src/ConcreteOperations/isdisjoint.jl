@@ -407,7 +407,7 @@ end
 
 
 """
-    is_intersection_empty(Z::Zonotope, H::Hyperplane, witness::Bool=false)
+    is_intersection_empty(Z::AbstractZonotope, H::Hyperplane, witness::Bool=false)
 
 Check whether a zonotope and a hyperplane do not intersect, and otherwise
 optionally compute a witness.
@@ -434,7 +434,7 @@ center, and ``g_i`` are the zonotope's generators.
 For witness production we fall back to a less efficient implementation for
 general sets as the first argument.
 """
-function is_intersection_empty(Z::Zonotope, H::Hyperplane, witness::Bool=false)
+function is_intersection_empty(Z::AbstractZonotope, H::Hyperplane, witness::Bool=false)
     if witness
         return _is_intersection_empty(Z, H, Val(true))
     else
@@ -443,10 +443,11 @@ function is_intersection_empty(Z::Zonotope, H::Hyperplane, witness::Bool=false)
 end
 
 # symmetric method
-is_intersection_empty(H::Hyperplane, Z::Zonotope, witness::Bool=false) = is_intersection_empty(Z, H, witness)
+is_intersection_empty(H::Hyperplane, Z::AbstractZonotope, witness::Bool=false) =
+    is_intersection_empty(Z, H, witness)
 
-function _is_intersection_empty(Z::Zonotope, H::Hyperplane, ::Val{false})
-    c, G = Z.center, Z.generators
+function _is_intersection_empty(Z::AbstractZonotope, H::Hyperplane, ::Val{false})
+    c, G = center(Z), genmat(Z)
     v = H.b - dot(H.a, c)
 
     n, p = size(G)
@@ -489,12 +490,13 @@ end
     return abs_sum
 end
 
-function _is_intersection_empty(Z::Zonotope, H::Hyperplane, ::Val{true})
+function _is_intersection_empty(Z::AbstractZonotope, H::Hyperplane, ::Val{true})
     is_intersection_empty_helper_hyperplane(H, Z, true)
 end
 
 """
-    is_intersection_empty(Z1::Zonotope, Z2::Zonotope, witness::Bool=false)
+    is_intersection_empty(Z1::AbstractZonotope, Z2::AbstractZonotope,
+                          witness::Bool=false)
 
 Check whether two zonotopes do not intersect, and otherwise optionally compute a
 witness.
@@ -518,11 +520,12 @@ witness.
 are the center and generators of zonotope `Zi` and ``Z(c, g)`` represents the
 zonotope with center ``c`` and generators ``g``.
 """
-function is_intersection_empty(Z1::Zonotope, Z2::Zonotope, witness::Bool=false)
+function is_intersection_empty(Z1::AbstractZonotope, Z2::AbstractZonotope,
+                               witness::Bool=false)
     n = dim(Z1)
     @assert n == dim(Z2) "zonotopes need to have the same dimensions"
     N = promote_type(eltype(Z1), eltype(Z2))
-    Z = Zonotope(zeros(N, n), hcat(Z1.generators, Z2.generators))
+    Z = Zonotope(zeros(N, n), hcat(genmat(Z1), genmat(Z2)))
     result = (center(Z1) - center(Z2)) ∈ Z
     if result
         return witness ? (true, N[]) : true
