@@ -2,8 +2,7 @@ export PolynomialZonotope, dim, σ,
        polynomial_order,
        order,
        linear_map,
-       scale,
-       minkowski_sum
+       scale
 
 """
     PolynomialZonotope{N, VT, VMT, MT}
@@ -222,27 +221,3 @@ function scale(α::Number, pz::PolynomialZonotope)
     G = α * pz.G
     return PolynomialZonotope(c, E, F, G)
 end
-
-"""
-    minkowski_sum(pz::PolynomialZonotope, z::Zonotope)
-
-Return the Minkowski sum of a polynomial zonotope and a usual zonotope.
-
-### Input
-
-- `pz` -- polynomial zonotope
-- `z`  -- usual zonotope
-
-## Output
-
-Polynomial zonotope such that its center is the sum of the centers of `pz` and `z`
-and its generators is the matrix that results by concatenating them.
-"""
-function minkowski_sum(pz::PolynomialZonotope, z::Zonotope)
-    c = pz.c + z.center
-    G = [pz.G z.generators]
-    return PolynomialZonotope(c, pz.E, pz.F, G)
-end
-
-# symmetric method
-minkowski_sum(z::Zonotope, pz::PolynomialZonotope) = minkowski_sum(pz, z)
