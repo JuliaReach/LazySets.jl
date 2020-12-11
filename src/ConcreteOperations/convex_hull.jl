@@ -558,3 +558,39 @@ function convex_hull(P1::VPolytope, P2::VPolytope; backend=nothing)
     convex_hull!(vunion; backend=backend)
     return VPolytope(vunion)
 end
+
+"""
+    convex_hull(P1::HPoly{N}, P2::HPoly{N};
+               [backend]=default_polyhedra_backend(P1, N)) where {N<:Real}
+
+Compute the convex hull of the set union of two polyhedra in H-representation.
+
+### Input
+
+- `P1`         -- polyhedron
+- `P2`         -- another polyhedron
+- `backend`    -- (optional, default: `default_polyhedra_backend(P1, N)`)
+                  the polyhedral computations backend
+
+### Output
+
+The `HPolyhedron` (resp. `HPolytope`) obtained by the concrete convex hull of
+`P1` and `P2`.
+
+### Notes
+
+For performance reasons, it is suggested to use the `CDDLib.Library()` backend
+for the `convex_hull`.
+
+For further information on the supported backends see
+[Polyhedra's documentation](https://juliapolyhedra.github.io/).
+"""
+function convex_hull(P1::HPoly{N},
+                     P2::HPoly{N};
+                     backend=default_polyhedra_backend(P1, N)) where {N<:Real}
+    require(:Polyhedra; fun_name="convex_hull")
+    Pch = Polyhedra.convexhull(polyhedron(P1; backend=backend),
+                               polyhedron(P2; backend=backend))
+    removehredundancy!(Pch)
+    return convert(basetype(P1), Pch)
+end

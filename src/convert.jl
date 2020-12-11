@@ -1132,3 +1132,7 @@ function convert(::Type{Zonotope}, cpa::CartesianProductArray{N, AZ}) where
     G = reduce(blockdiag, sparse.(genmat.(arr)))
     return Zonotope(c, G)
 end
+
+convert(::Type{HPolytope}, P::HPolyhedron) = HPolytope(copy(constraints_list(P)))
+
+convert(::Type{HPolyhedron}, P::HPolytope) = HPolyhedron(copy(constraints_list(P)))

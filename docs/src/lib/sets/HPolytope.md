@@ -18,7 +18,7 @@ Below follows the additional functionality specific to `HPolytope`.
 
 ```@docs
 rand(::Type{HPolytope})
-vertices_list(::HPolytope{N}) where {N<:Real}
+vertices_list(::HPolytope{N}) where {N}
 isbounded(::HPolytope, ::Bool=true)
 ```
 

@@ -6,8 +6,8 @@ CurrentModule = LazySets
 
 ```@docs
 HPolygonOpt
-σ(::AbstractVector{N}, ::HPolygonOpt{N}) where {N<:Real}
-translate(::HPolygonOpt{N}, ::AbstractVector{N}) where {N<:Real}
+σ(::AbstractVector, ::HPolygonOpt)
+translate(::HPolygonOpt, ::AbstractVector)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

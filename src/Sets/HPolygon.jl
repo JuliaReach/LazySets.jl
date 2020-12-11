@@ -3,7 +3,7 @@ import Base.<=
 export HPolygon
 
 """
-    HPolygon{N<:Real, VN<:AbstractVector{N}} <: AbstractHPolygon{N}
+    HPolygon{N, VN<:AbstractVector{N}} <: AbstractHPolygon{N}
 
 Type that represents a convex polygon in constraint representation whose edges
 are sorted in counter-clockwise fashion with respect to their normal directions.
@@ -40,7 +40,7 @@ The user has to make sure that the `HPolygon` is not used before the constraints
 actually describe a bounded set.
 The function `isbounded` can be used to manually assert boundedness.
 """
-struct HPolygon{N<:Real, VN<:AbstractVector{N}} <: AbstractHPolygon{N}
+struct HPolygon{N, VN<:AbstractVector{N}} <: AbstractHPolygon{N}
     constraints::Vector{LinearConstraint{N, VN}}
 
     # default constructor that applies sorting of the given constraints and
@@ -48,7 +48,7 @@ struct HPolygon{N<:Real, VN<:AbstractVector{N}} <: AbstractHPolygon{N}
     function HPolygon(constraints::Vector{LinearConstraint{N, VN}};
                       sort_constraints::Bool=true,
                       check_boundedness::Bool=false,
-                      prune::Bool=true) where {N<:Real, VN<:AbstractVector{N}}
+                      prune::Bool=true) where {N, VN<:AbstractVector{N}}
         if sort_constraints
             sorted_constraints = Vector{LinearConstraint{N, VN}}()
             sizehint!(sorted_constraints, length(constraints))
@@ -69,12 +69,12 @@ isoperationtype(::Type{<:HPolygon}) = false
 isconvextype(::Type{<:HPolygon}) = true
 
 # constructor for an HPolygon with no constraints
-function HPolygon{N, VN}() where {N<:Real, VN<:AbstractVector{N}}
+function HPolygon{N, VN}() where {N, VN<:AbstractVector{N}}
     HPolygon(Vector{LinearConstraint{N, VN}}())
 end
 
 # constructor for an HPolygon with no constraints and given numeric type
-function HPolygon{N}() where {N<:Real}
+function HPolygon{N}() where {N}
     HPolygon(Vector{LinearConstraint{N, Vector{N}}}())
 end
 
@@ -84,11 +84,11 @@ function HPolygon()
 end
 
 # constructor from a simple H-representation
-HPolygon(A::AbstractMatrix{N},
-         b::AbstractVector{N};
+HPolygon(A::AbstractMatrix,
+         b::AbstractVector;
          sort_constraints::Bool=true,
          check_boundedness::Bool=false,
-         prune::Bool=true) where {N<:Real} =
+         prune::Bool=true) =
     HPolygon(constraints_list(A, b); sort_constraints=sort_constraints,
              check_boundedness=check_boundedness, prune=prune)
 
@@ -97,9 +97,8 @@ HPolygon(A::AbstractMatrix{N},
 
 
 """
-    σ(d::AbstractVector{N}, P::HPolygon{N};
-      [linear_search]::Bool=(length(P.constraints) < BINARY_SEARCH_THRESHOLD)
-     ) where {N<:Real}
+    σ(d::AbstractVector, P::HPolygon;
+      [linear_search]::Bool=(length(P.constraints) < BINARY_SEARCH_THRESHOLD))
 
 Return the support vector of a polygon in a given direction.
 
@@ -124,9 +123,8 @@ Comparison of directions is performed using polar angles; see the overload of
 For polygons with `BINARY_SEARCH_THRESHOLD = 10` or more constraints we use a
 binary search by default.
 """
-function σ(d::AbstractVector{N}, P::HPolygon{N};
-           linear_search::Bool=(length(P.constraints) < BINARY_SEARCH_THRESHOLD)
-          ) where {N<:Real}
+function σ(d::AbstractVector, P::HPolygon;
+           linear_search::Bool=(length(P.constraints) < BINARY_SEARCH_THRESHOLD))
     n = length(P.constraints)
     @assert n > 0 "the polygon has no constraints"
 
@@ -152,8 +150,7 @@ function σ(d::AbstractVector{N}, P::HPolygon{N};
 end
 
 """
-    translate(v::AbstractVector{N}, P::HPolygon{N}; share::Bool=false
-             ) where {N<:Real}
+    translate(v::AbstractVector, P::HPolygon; [share]::Bool=false)
 
 Translate (i.e., shift) a polygon in constraint representation by a given
 vector.
@@ -178,8 +175,7 @@ the original constraints if `share == true`.
 
 We translate every constraint.
 """
-function translate(P::HPolygon{N}, v::AbstractVector{N}; share::Bool=false
-                  ) where {N<:Real}
+function translate(P::HPolygon, v::AbstractVector; share::Bool=false)
     @assert length(v) == dim(P) "cannot translate a $(dim(P))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     constraints = [translate(c, v; share=share) for c in constraints_list(P)]
