@@ -337,7 +337,7 @@ ball using factorials. For details see the wikipedia article
 function volume(B::Ball2)
     n = dim(B)
     k = div(n, 2)
-    R = radius(B)
+    R = B.radius
     if iseven(n)
         vol = Base.pi^k * R^n / factorial(k)
     else

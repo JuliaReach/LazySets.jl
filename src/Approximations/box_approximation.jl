@@ -284,3 +284,19 @@ function box_approximation(P::Union{VPolytope, VPolygon})
     end
     return Hyperrectangle(center, radius)
 end
+
+# centrally symmetric sets only require n support-function evaluations
+function box_approximation(X::AbstractCentrallySymmetric{N}) where {N}
+    n = dim(X)
+    c = center(X)
+    r = Vector{N}(undef, n)
+    @inbounds for i in 1:n
+        r[i] = ρ(SingleEntryVector(i, n, one(N)), X) - c[i]
+    end
+    return Hyperrectangle(c, r)
+end
+
+# balls result in a hypercube with the same radius
+function box_approximation(B::Union{Ball1, Ball2, BallInf, Ballp})
+    return Hyperrectangle(center(B), fill(B.radius, dim(B)))
+end

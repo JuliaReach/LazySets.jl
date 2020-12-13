@@ -146,6 +146,10 @@ for N in [Float64, Float32]
     o = overapproximate_lmap(50)
     @test o.center == N[1, 1] && o.radius == N[2, 2]
 
+    # box approximation of centrally symmetric set
+    e = Ellipsoid(zeros(N, 2), N[2 -1; -1 2])
+    @test box_approximation(e).radius ≈ N[sqrt(2), sqrt(2)]
+
     # Approximation of a 2D centered unit ball in norm 1
     # All vertices v should be like this:
     # ‖v‖ >= 1 and ‖v‖ <= 1+ε
