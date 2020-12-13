@@ -27,7 +27,7 @@ is_intersection_empty(::AbstractHyperrectangle, ::AbstractHyperrectangle, ::Bool
 is_intersection_empty(::LazySet, ::AbstractSingleton, ::Bool=false)
 is_intersection_empty(::AbstractHyperrectangle, ::AbstractSingleton, ::Bool=false)
 is_intersection_empty(::AbstractSingleton, ::AbstractSingleton, ::Bool=false)
-is_intersection_empty(::Zonotope, ::Hyperplane, ::Bool=false)
+is_intersection_empty(::AbstractZonotope, ::Union{Hyperplane, Line2D}, ::Bool=false)
 is_intersection_empty(::Ball2, ::Ball2, ::Bool=false)
 is_intersection_empty(::LineSegment, ::LineSegment, ::Bool=false)
 is_intersection_empty(::LazySet, ::Union{Hyperplane, Line2D}, ::Bool=false)
@@ -38,7 +38,7 @@ is_intersection_empty(::UnionSet, ::LazySet, ::Bool=false)
 is_intersection_empty(::UnionSetArray, ::LazySet, ::Bool=false)
 is_intersection_empty(::Universe, ::LazySet, ::Bool=false)
 is_intersection_empty(::Complement, ::LazySet, ::Bool=false)
-is_intersection_empty(::Zonotope, ::Zonotope, ::Bool=false)
+is_intersection_empty(::AbstractZonotope, ::AbstractZonotope, ::Bool=false)
 is_intersection_empty(::Interval, ::Interval, ::Bool=false)
 is_intersection_empty(::CartesianProductArray, ::AbstractPolyhedron)
 is_intersection_empty(::CartesianProductArray, ::CartesianProductArray)
@@ -90,7 +90,7 @@ minkowski_sum(::VPolytope, ::VPolytope)
 minkowski_sum(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}) where {N<:Real}
 minkowski_sum(::AbstractZonotope{N}, ::AbstractZonotope{N}) where {N<:Real}
 minkowski_sum(::VPolygon{N}, ::VPolygon{N}) where {N<:Real}
-minkowski_sum(::PolynomialZonotope, ::Zonotope)
+minkowski_sum(::PolynomialZonotope, ::AbstractZonotope)
 minkowski_sum(::Interval, ::Interval)
 minkowski_sum(::AbstractSingleton, ::AbstractSingleton)
 ```
