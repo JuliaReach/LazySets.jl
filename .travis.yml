@@ -27,6 +27,8 @@ branches:
   - /^testing-.*$/  # testing branches
   - /^v[0-9]+\.[0-9]+\.[0-9]+$/  # version tags
 
+script:
+ - julia --project --color=yes --check-bounds=yes -e 'using Pkg; include("deps/build_private.jl"); if VERSION >= v"1.1.0-rc1"; Pkg.build(verbose=true); else Pkg.build(); end; Pkg.test(coverage=true)'
 jobs:
   include:
     - stage: "Documentation"

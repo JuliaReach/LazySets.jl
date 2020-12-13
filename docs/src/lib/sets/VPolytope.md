@@ -7,17 +7,17 @@ CurrentModule = LazySets
 ```@docs
 VPolytope
 dim(::VPolytope)
-σ(::AbstractVector{N}, ::VPolytope{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::VPolytope{N}) where {N<:Real}
+σ(::AbstractVector, ::VPolytope)
+∈(::AbstractVector{N}, ::VPolytope{N}) where {N}
 rand(::Type{VPolytope})
-translate(::VPolytope{N}, ::AbstractVector{N}) where {N<:Real}
-vertices_list(::VPolytope{N}) where {N<:Real}
-remove_redundant_vertices(::VPolytope{N}) where {N<:Real}
-constraints_list(::VPolytope{N}) where {N<:Real}
-tohrep(::VPolytope{N}) where {N<:Real}
+translate(::VPolytope, ::AbstractVector)
+vertices_list(::VPolytope)
+remove_redundant_vertices(::VPolytope{N}) where {N}
+constraints_list(::VPolytope)
+tohrep(::VPolytope{N}) where {N}
 tovrep(::VPolytope)
-polyhedron(::VPolytope{N}) where {N<:Real}
-linear_map(::AbstractMatrix{N}, ::VPolytope{N}) where {N<:Real}
+polyhedron(::VPolytope{N}) where {N}
+linear_map(::AbstractMatrix, ::VPolytope)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -25,8 +25,10 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`singleton_list`](@ref singleton_list(::LazySet))
 
+Inherited from [`AbstractPolyhedron`](@ref):
+* [`linear_map`](@ref linear_map(::AbstractMatrix{NM}, ::AbstractPolyhedron{NP}) where {NM, NP})
+
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`isempty`](@ref isempty(::AbstractPolytope))
-* [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real})
-* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractPolyhedron{N}) where {N<:Real})
+* [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N})

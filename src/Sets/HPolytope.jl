@@ -5,7 +5,7 @@ export HPolytope,
        isbounded
 
 """
-    HPolytope{N<:Real, VN<:AbstractVector{N}} <: AbstractPolytope{N}
+    HPolytope{N, VN<:AbstractVector{N}} <: AbstractPolytope{N}
 
 Type that represents a convex polytope in H-representation.
 
@@ -21,11 +21,11 @@ Type that represents a convex polytope in H-representation.
 Recall that a polytope is a bounded polyhedron. Boundedness is a running
 assumption in this type.
 """
-struct HPolytope{N<:Real, VN<:AbstractVector{N}} <: AbstractPolytope{N}
+struct HPolytope{N, VN<:AbstractVector{N}} <: AbstractPolytope{N}
     constraints::Vector{LinearConstraint{N, VN}}
 
     function HPolytope(constraints::Vector{LinearConstraint{N, VN}};
-                       check_boundedness::Bool=false) where {N<:Real, VN<:AbstractVector{N}}
+                       check_boundedness::Bool=false) where {N, VN<:AbstractVector{N}}
         P = new{N, VN}(constraints)
         @assert (!check_boundedness ||
                  isbounded(P, false)) "the polytope is not bounded"
@@ -37,12 +37,12 @@ isoperationtype(::Type{<:HPolytope}) = false
 isconvextype(::Type{<:HPolytope}) = true
 
 # constructor for an HPolyhedron with no constraints
-function HPolytope{N, VN}() where {N<:Real, VN<:AbstractVector{N}}
+function HPolytope{N, VN}() where {N, VN<:AbstractVector{N}}
     HPolytope(Vector{LinearConstraint{N, VN}}())
 end
 
 # constructor for an HPolygon with no constraints and given numeric type
-function HPolytope{N}() where {N<:Real}
+function HPolytope{N}() where {N}
     HPolytope(Vector{LinearConstraint{N, Vector{N}}}())
 end
 
@@ -52,8 +52,8 @@ function HPolytope()
 end
 
 # constructor from a simple H-representation
-HPolytope(A::AbstractMatrix{N}, b::AbstractVector{N};
-          check_boundedness::Bool=false) where {N<:Real} =
+HPolytope(A::AbstractMatrix, b::AbstractVector;
+          check_boundedness::Bool=false) =
     HPolytope(constraints_list(A, b); check_boundedness=check_boundedness)
 
 
@@ -127,8 +127,8 @@ function isbounded(P::HPolytope, use_type_assumption::Bool=true)
     return isbounded(HPolyhedron(P.constraints))
 end
 
-function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::HPolytope{N},
-                                 algo::AbstractLinearMapAlgorithm) where {N<:Real}
+function _linear_map_hrep_helper(M::AbstractMatrix, P::HPolytope,
+                                 algo::AbstractLinearMapAlgorithm)
     constraints = _linear_map_hrep(M, P, algo)
     return HPolytope(constraints)
 end
@@ -157,7 +157,7 @@ function convert(::Type{HPolytope}, P::HRep{N}) where {N}
 end
 
 """
-    HPolytope(P::HRep{N}) where {N}
+    HPolytope(P::HRep)
 
 Return a polytope in H-representation given a `HRep` polyhedron
 from `Polyhedra.jl`.
@@ -170,7 +170,7 @@ from `Polyhedra.jl`.
 
 An `HPolytope`.
 """
-function HPolytope(P::HRep{N}) where {N}
+function HPolytope(P::HRep)
     convert(HPolytope, P)
 end
 
@@ -179,7 +179,7 @@ end # function load_polyhedra_hpolytope()
 
 """
     vertices_list(P::HPolytope{N};
-                  [backend]=nothing, [prune]::Bool=true) where {N<:Real}
+                  [backend]=nothing, [prune]::Bool=true) where {N}
 
 Return the list of vertices of a polytope in constraint representation.
 
@@ -209,7 +209,7 @@ For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/).
 """
 function vertices_list(P::HPolytope{N};
-                       backend=nothing, prune::Bool=true) where {N<:Real}
+                       backend=nothing, prune::Bool=true) where {N}
     if length(P.constraints) == 0
         return Vector{N}(Vector{N}(undef, 0))
     end
@@ -233,3 +233,49 @@ end
 function _vertices_list(P::HPolytope, backend)
     return vertices_list(P, backend=backend)
 end
+
+# ============================================
+# Functionality that requires ModelingToolkit
+# ============================================
+function load_modeling_toolkit_hpolytope()
+
+return quote
+
+"""
+    HPolytope(expr::Vector{<:Operation}, vars=get_variables(first(expr)); N::Type{<:Real}=Float64)
+
+Return the polytope in half-space representation given by a list of symbolic expressions.
+
+### Input
+
+- `expr` -- vector of symbolic expressions that describes each half-space
+- `vars` -- (optional, default: `get_variables(expr)`), if an array of variables is given,
+            use those as the ambient variables in the set with respect to which derivations
+            take place; otherwise, use only the variables which appear in the given
+            expression (but be careful because the order may change)
+- `N`    -- (optional, default: `Float64`) the numeric type of the returned half-space
+
+### Output
+
+An `HPolytope`.
+
+### Examples
+
+```julia
+julia> using ModelingToolkit
+
+julia> vars = @variables x y
+(x, y)
+
+julia> HPolytope([x <= 1, x >= 0, y <= 1, y >= 0], vars)
+HPolytope{Float64,Array{Float64,1}}(HalfSpace{Float64,Array{Float64,1}}[HalfSpace{Float64,Array{Float64,1}}([1.0, 0.0], 1.0),
+HalfSpace{Float64,Array{Float64,1}}([-1.0, 0.0], 0.0), HalfSpace{Float64,Array{Float64,1}}([0.0, 1.0], 1.0),
+HalfSpace{Float64,Array{Float64,1}}([0.0, -1.0], 0.0)])
+```
+"""
+function HPolytope(expr::Vector{<:Operation}, vars=get_variables(first(expr));
+                   N::Type{<:Real}=Float64, check_boundedness::Bool=false)
+    return HPolytope([HalfSpace(ex, vars; N=N) for ex in expr], check_boundedness=check_boundedness)
+end
+
+end end  # quote / load_modeling_toolkit_hpolytope()

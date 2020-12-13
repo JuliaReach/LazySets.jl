@@ -6,7 +6,7 @@ export Hyperplane,
        an_element
 
 """
-    Hyperplane{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
+    Hyperplane{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
 
 Type that represents a hyperplane of the form ``a⋅x = b``.
 
@@ -24,11 +24,11 @@ julia> Hyperplane([0, 1.], 0.)
 Hyperplane{Float64,Array{Float64,1}}([0.0, 1.0], 0.0)
 ```
 """
-struct Hyperplane{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
+struct Hyperplane{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
     a::VN
     b::N
 
-    function Hyperplane(a::VN, b::N) where {N<:Real, VN<:AbstractVector{N}}
+    function Hyperplane(a::VN, b::N) where {N, VN<:AbstractVector{N}}
         @assert !iszero(a) "a hyperplane needs a non-zero normal vector"
         return new{N, VN}(a, b)
     end
@@ -42,7 +42,7 @@ isconvextype(::Type{<:Hyperplane}) = true
 
 
 """
-    constraints_list(hp::Hyperplane{N}) where {N<:Real}
+    constraints_list(hp::Hyperplane)
 
 Return the list of constraints of a hyperplane.
 
@@ -54,7 +54,7 @@ Return the list of constraints of a hyperplane.
 
 A list containing two half-spaces.
 """
-function constraints_list(hp::Hyperplane{N}) where {N<:Real}
+function constraints_list(hp::Hyperplane)
     return _constraints_list_hyperplane(hp.a, hp.b)
 end
 
@@ -80,7 +80,7 @@ function dim(hp::Hyperplane)
 end
 
 """
-    ρ(d::AbstractVector{N}, hp::Hyperplane{N}) where {N<:Real}
+    ρ(d::AbstractVector, hp::Hyperplane)
 
 Evaluate the support function of a hyperplane in a given direction.
 
@@ -94,16 +94,17 @@ Evaluate the support function of a hyperplane in a given direction.
 The support function of the hyperplane.
 If the set is unbounded in the given direction, the result is `Inf`.
 """
-function ρ(d::AbstractVector{N}, hp::Hyperplane{N}) where {N<:Real}
+function ρ(d::AbstractVector, hp::Hyperplane)
     v, unbounded = σ_helper(d, hp, error_unbounded=false)
     if unbounded
+        N = promote_type(eltype(d), eltype(hp))
         return N(Inf)
     end
     return dot(d, v)
 end
 
 """
-    σ(d::AbstractVector{N}, hp::Hyperplane{N}) where {N<:Real}
+    σ(d::AbstractVector, hp::Hyperplane)
 
 Return the support vector of a hyperplane.
 
@@ -121,7 +122,7 @@ following two cases:
 In all cases, the result is any point on the hyperplane.
 Otherwise this function throws an error.
 """
-function σ(d::AbstractVector{N}, hp::Hyperplane{N}) where {N<:Real}
+function σ(d::AbstractVector, hp::Hyperplane)
     v, unbounded = σ_helper(d, hp, error_unbounded=true)
     return v
 end
@@ -144,7 +145,7 @@ function isbounded(::Hyperplane)
 end
 
 """
-    isuniversal(hp::Hyperplane{N}, [witness]::Bool=false) where {N<:Real}
+    isuniversal(hp::Hyperplane, [witness]::Bool=false)
 
 Check whether a hyperplane is universal.
 
@@ -163,7 +164,7 @@ Check whether a hyperplane is universal.
 A witness is produced by adding the normal vector to an element on the
 hyperplane.
 """
-function isuniversal(hp::Hyperplane{N}, witness::Bool=false) where {N<:Real}
+function isuniversal(hp::Hyperplane, witness::Bool=false)
     if witness
         v = an_element(hp) + hp.a
         return (false, v)
@@ -173,7 +174,7 @@ function isuniversal(hp::Hyperplane{N}, witness::Bool=false) where {N<:Real}
 end
 
 """
-    an_element(hp::Hyperplane{N}) where {N<:Real}
+    an_element(hp::Hyperplane)
 
 Return some element of a hyperplane.
 
@@ -185,12 +186,12 @@ Return some element of a hyperplane.
 
 An element on the hyperplane.
 """
-function an_element(hp::Hyperplane{N}) where {N<:Real}
+function an_element(hp::Hyperplane)
     return an_element_helper(hp)
 end
 
 """
-    ∈(x::AbstractVector{N}, hp::Hyperplane{N}) where {N<:Real}
+    ∈(x::AbstractVector, hp::Hyperplane)
 
 Check whether a given point is contained in a hyperplane.
 
@@ -207,7 +208,7 @@ Check whether a given point is contained in a hyperplane.
 
 We just check if ``x`` satisfies ``a⋅x = b``.
 """
-function ∈(x::AbstractVector{N}, hp::Hyperplane{N}) where {N<:Real}
+function ∈(x::AbstractVector, hp::Hyperplane)
     return dot(x, hp.a) == hp.b
 end
 
@@ -266,7 +267,7 @@ function isempty(hp::Hyperplane)
 end
 
 """
-    constrained_dimensions(hp::Hyperplane{N}) where {N<:Real}
+    constrained_dimensions(hp::Hyperplane)
 
 Return the indices in which a hyperplane is constrained.
 
@@ -283,7 +284,7 @@ dimension `i`.
 
 A 2D hyperplane with constraint ``x1 = 0`` is constrained in dimension 1 only.
 """
-function constrained_dimensions(hp::Hyperplane{N}) where {N<:Real}
+function constrained_dimensions(hp::Hyperplane)
     return nonzero_indices(hp.a)
 end
 
@@ -293,10 +294,10 @@ end
 
 """
 ```
-    σ_helper(d::AbstractVector{N},
-             hp::Hyperplane{N};
+    σ_helper(d::AbstractVector,
+             hp::Hyperplane;
              error_unbounded::Bool=true,
-             [halfspace]::Bool=false) where {N<:Real}
+             [halfspace]::Bool=false)
 ```
 
 Return the support vector of a hyperplane.
@@ -338,10 +339,10 @@ Since there is only a single constraint, the feasible set of the dual problem is
 It is easy to see that this problem is infeasible whenever `a` is not parallel
 to `d`.
 """
-@inline function σ_helper(d::AbstractVector{N},
-                          hp::Hyperplane{N};
+@inline function σ_helper(d::AbstractVector,
+                          hp::Hyperplane;
                           error_unbounded::Bool=true,
-                          halfspace::Bool=false) where {N<:Real}
+                          halfspace::Bool=false)
     @assert (length(d) == dim(hp)) "cannot compute the support vector of a " *
         "$(dim(hp))-dimensional " * (halfspace ? "halfspace" : "hyperplane") *
         " along a vector of length $(length(d))"
@@ -353,6 +354,7 @@ to `d`.
         return (an_element(hp), false)
     else
         # not the zero vector, check if it is a normal vector
+        N = promote_type(eltype(d), eltype(hp))
         factor = zero(N)
         for i in 1:length(hp.a)
             if hp.a[i] == 0
@@ -392,7 +394,7 @@ end
 
 """
     an_element_helper(hp::Hyperplane{N},
-                      [nonzero_entry_a]::Int) where {N<:Real}
+                      [nonzero_entry_a]::Int) where {N}
 
 Helper function that computes an element on a hyperplane's hyperplane.
 
@@ -415,7 +417,7 @@ We compute the point on the hyperplane as follows:
 """
 @inline function an_element_helper(hp::Hyperplane{N},
                                    nonzero_entry_a::Int=findnext(x -> x!=zero(N), hp.a, 1)
-                                  ) where {N<:Real}
+                                  ) where {N}
     @assert nonzero_entry_a in 1:length(hp.a) "invalid index " *
         "$nonzero_entry_a for hyperplane"
     x = zeros(N, dim(hp))
@@ -424,13 +426,12 @@ We compute the point on the hyperplane as follows:
 end
 
 # internal helper function
-function _constraints_list_hyperplane(a::AbstractVector{N}, b::N
-                                     ) where {N<:Real}
+function _constraints_list_hyperplane(a::AbstractVector, b)
     return [HalfSpace(a, b), HalfSpace(-a, -b)]
 end
 
 function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::Hyperplane{N},
-                                 algo::AbstractLinearMapAlgorithm) where {N<:Real}
+                                 algo::AbstractLinearMapAlgorithm) where {N}
     constraints = _linear_map_hrep(M, P, algo)
     if length(constraints) == 2
         # assuming these constraints define a hyperplane
@@ -444,8 +445,7 @@ function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::Hyperplane{N},
 end
 
 """
-    translate(hp::Hyperplane{N}, v::AbstractVector{N}; share::Bool=false
-             ) where {N<:Real}
+    translate(hp::Hyperplane, v::AbstractVector; share::Bool=false)
 
 Translate (i.e., shift) a hyperplane by a given vector.
 
@@ -470,8 +470,7 @@ the original hyperplane if `share == true`.
 A hyperplane ``a⋅x = b`` is transformed to the hyperplane ``a⋅x = b + a⋅v``.
 In other words, we add the dot product ``a⋅v`` to ``b``.
 """
-function translate(hp::Hyperplane{N}, v::AbstractVector{N}; share::Bool=false
-                  ) where {N<:Real}
+function translate(hp::Hyperplane, v::AbstractVector; share::Bool=false)
     @assert length(v) == dim(hp) "cannot translate a $(dim(hp))-dimensional " *
                                  "set by a $(length(v))-dimensional vector"
     a = share ? hp.a : copy(hp.a)
@@ -485,8 +484,21 @@ end
 function load_modeling_toolkit_hyperplane()
 return quote
 
+# returns `(true, sexpr)` if expr represents a hyperplane,
+# where sexpr is the simplified expression sexpr := LHS - RHS == 0
+# otherwise, returns `(false, expr)`
+function _is_hyperplane(expr::Operation)
+    got_hyperplane = expr.op == ==
+    if got_hyperplane
+        # simplify to the form a*x + b == 0
+        a, b = expr.args
+        sexpr = simplify(a - b)
+    end
+    return got_hyperplane ? (true, sexpr) : (false, expr)
+end
+
 """
-    Hyperplane(expr::Operation, vars=get_variables(expr); N::Type{<:Real}=Float64)
+    Hyperplane(expr::Operation, vars::Union{<:Operation, <:Vector{Operation}}=get_variables(expr); N::Type{<:Real}=Float64)
 
 Return the hyperplane given by a symbolic expression.
 
@@ -535,12 +547,11 @@ Therefore, the order in which the variables appear in `vars` affects the final r
 Finally, the returned set is the hyperplane with normal vector `[a1, …, an]` and
 displacement `b`.
 """
-function Hyperplane(expr::Operation, vars=get_variables(expr); N::Type{<:Real}=Float64)
-    (expr.op == ==) || throw(ArgumentError("expected an expression of the form `ax == b`, got $expr"))
-
-    # simplify to the form a*x + β == 0
-    a, b = expr.args
-    sexpr = simplify(a - b)
+function Hyperplane(expr::Operation, vars::Union{<:Operation, <:Vector{Operation}}=get_variables(expr); N::Type{<:Real}=Float64)
+    valid, sexpr = _is_hyperplane(expr)
+    if !valid
+        throw(ArgumentError("expected an expression of the form `ax == b`, got $expr"))
+    end
 
     # compute the linear coefficients by taking first order derivatives
     coeffs = [N(α.value) for α in gradient(sexpr, collect(vars))]
@@ -550,6 +561,11 @@ function Hyperplane(expr::Operation, vars=get_variables(expr); N::Type{<:Real}=F
     β = -N(ModelingToolkit.substitute(sexpr, zeroed_vars).value)
 
     return Hyperplane(coeffs, β)
+end
+
+function Hyperplane(expr::Operation, vars::NTuple{L, Union{<:Operation, <:Vector{Operation}}}; N::Type{<:Real}=Float64) where {L}
+    vars = _vec(vars)
+    return Hyperplane(expr, vars, N=N)
 end
 
 end end  # quote / load_modeling_toolkit_hyperplane()

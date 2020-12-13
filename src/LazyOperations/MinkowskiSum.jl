@@ -5,7 +5,7 @@ export MinkowskiSum, ⊕,
        swap
 
 """
-    MinkowskiSum{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
+    MinkowskiSum{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
 
 Type that represents the Minkowski sum of two convex sets.
 
@@ -19,16 +19,14 @@ Type that represents the Minkowski sum of two convex sets.
 The `ZeroSet` is the neutral element and the `EmptySet` is the absorbing element
 for `MinkowskiSum`.
 """
-struct MinkowskiSum{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
+struct MinkowskiSum{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     X::S1
     Y::S2
 
     # default constructor with dimension check
-    function MinkowskiSum(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N},
-                                               S2<:LazySet{N}}
-        @assert dim(X) == dim(Y) "sets in a Minkowski sum must have the " *
-            "same dimension"
-        return new{N, S1, S2}(X, Y)
+    function MinkowskiSum(X::LazySet{N}, Y::LazySet{N}) where {N}
+        @assert dim(X) == dim(Y) "sets in a Minkowski sum must have the same dimension"
+        return new{N, typeof(X), typeof(Y)}(X, Y)
     end
 end
 
@@ -100,7 +98,7 @@ function dim(ms::MinkowskiSum)
 end
 
 """
-    σ(d::AbstractVector{N}, ms::MinkowskiSum{N}) where {N<:Real}
+    σ(d::AbstractVector, ms::MinkowskiSum)
 
 Return the support vector of a Minkowski sum.
 
@@ -120,12 +118,12 @@ The support vector in direction ``d`` of the Minkowski sum of two sets ``X``
 and ``Y`` is the sum of the support vectors of ``X`` and ``Y`` in direction
 ``d``.
 """
-function σ(d::AbstractVector{N}, ms::MinkowskiSum{N}) where {N<:Real}
+function σ(d::AbstractVector, ms::MinkowskiSum)
     return σ(d, ms.X) + σ(d, ms.Y)
 end
 
 """
-    ρ(d::AbstractVector{N}, ms::MinkowskiSum{N}) where {N<:Real}
+    ρ(d::AbstractVector, ms::MinkowskiSum)
 
 Return the support function of a Minkowski sum.
 
@@ -144,7 +142,7 @@ The support function in direction ``d`` of the Minkowski sum of two sets ``X``
 and ``Y`` is the sum of the support functions of ``X`` and ``Y`` in direction
 ``d``.
 """
-function ρ(d::AbstractVector{N}, ms::MinkowskiSum{N}) where {N<:Real}
+function ρ(d::AbstractVector, ms::MinkowskiSum)
     return ρ(d, ms.X) + ρ(d, ms.Y)
 end
 
@@ -205,7 +203,7 @@ function constraints_list(ms::MinkowskiSum)
 end
 
 """
-    ∈(x::AbstractVector{N}, ms::MinkowskiSum{N, <:AbstractSingleton, <:LazySet}) where {N}
+    ∈(x::AbstractVector, ms::MinkowskiSum{N, S1, S2}) where {N, S1<:AbstractSingleton, S2<:LazySet}
 
 Check whether a given point is contained in the Minkowski sum of a singleton
 and a set.
@@ -224,17 +222,17 @@ and a set.
 Note that ``x ∈ (S ⊕ P)``, where ``S`` is a singleton set, ``S = \\{s\\}`` and
 ``P`` is a set, if and only if ``(x-s) ∈ P``.
 """
-function ∈(x::AbstractVector{N}, ms::MinkowskiSum{N, S1, S2}) where {N, S1<:AbstractSingleton, S2<:LazySet}
+function ∈(x::AbstractVector, ms::MinkowskiSum{N, S1, S2}) where {N, S1<:AbstractSingleton, S2<:LazySet}
     return _in_singleton_msum(x, ms.X, ms.Y)
 end
 
 # symmetric method
-function ∈(x::AbstractVector{N}, ms::MinkowskiSum{N, <:LazySet, <:AbstractSingleton}) where {N}
+function ∈(x::AbstractVector, ms::MinkowskiSum{N, <:LazySet, <:AbstractSingleton}) where {N}
     return _in_singleton_msum(x, ms.Y, ms.X)
 end
 
 # disambiguation
-function ∈(x::AbstractVector{N}, ms::MinkowskiSum{N, <:AbstractSingleton, <:AbstractSingleton}) where {N}
+function ∈(x::AbstractVector, ms::MinkowskiSum{N, <:AbstractSingleton, <:AbstractSingleton}) where {N}
     return _in_singleton_msum(x, ms.X, ms.Y)
 end
 
@@ -249,7 +247,7 @@ end
 # ================
 
 @inline function σ_helper(d::AbstractVector{N},
-                          array::AbstractVector{<:LazySet}) where {N<:Real}
+                          array::AbstractVector{<:LazySet}) where {N}
     svec = zeros(N, length(d))
     for sj in array
         svec += σ(d, sj)
@@ -258,7 +256,7 @@ end
 end
 
 """
-    vertices_list(ms::MinkowskiSum{N, Z1, Z2}) where {N<:Real, Z1<:AbstractZonotope{N}, Z2<:AbstractZonotope{N}}
+    vertices_list(ms::MinkowskiSum{N, Z1, Z2}) where {N, Z1<:AbstractZonotope{N}, Z2<:AbstractZonotope{N}}
 
 Return the list of vertices for the Minkowski sum of two zonotopic sets.
 
@@ -270,6 +268,6 @@ Return the list of vertices for the Minkowski sum of two zonotopic sets.
 
 The list of vertices of the Minkowski sum of two zonotopic sets.
 """
-function vertices_list(ms::MinkowskiSum{N, Z1, Z2}) where {N<:Real, Z1<:AbstractZonotope{N}, Z2<:AbstractZonotope{N}}
+function vertices_list(ms::MinkowskiSum{N, Z1, Z2}) where {N, Z1<:AbstractZonotope{N}, Z2<:AbstractZonotope{N}}
     return vertices_list(minkowski_sum(ms.X, ms.Y))
 end

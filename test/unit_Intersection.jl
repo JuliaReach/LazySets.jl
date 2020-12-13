@@ -41,26 +41,26 @@ for N in [Float64, Rational{Int}, Float32]
     @test LazySets.is_array_constructor(IntersectionArray)
 
     # intersection of an array of sets
-    IA = IntersectionArray([B, H])
+    IArr = IntersectionArray([B, H])
 
     # dim
-    @test dim(IA) == 2
+    @test dim(IArr) == 2
 
     # support vector (currently throws an error)
-    @test_throws ErrorException σ(ones(N, 2), IA)
+    @test_throws ErrorException σ(ones(N, 2), IArr)
 
     # boundedness
-    @test isbounded(IA)
+    @test isbounded(IArr)
     @test isbounded(IntersectionArray([Singleton(N[1]), HalfSpace(N[1], N(1))]))
     # the following tests crash because ρ(::IntersectionArray) is not implemented yet
     @test_throws ErrorException isbounded(IntersectionArray([HalfSpace(N[1], N(1)), HalfSpace(N[1], N(-1))]))
     @test_throws ErrorException !isbounded(IntersectionArray([HalfSpace(ones(N, 2), N(1)), HalfSpace(ones(N, 2), N(-1))]))
 
     # isempty
-    @test_throws MethodError isempty(IA)
+    @test_throws MethodError isempty(IArr)
 
     # membership
-    @test ones(N, 2) ∈ IA && N[5, 5] ∉ IA
+    @test ones(N, 2) ∈ IArr && N[5, 5] ∉ IArr
 
     # array getter
     v = Vector{LazySet{N}}()
@@ -70,7 +70,7 @@ for N in [Float64, Rational{Int}, Float32]
     IntersectionArray(10, N)
 
     # concretize
-    @test concretize(IA) == intersection(B, H)
+    @test concretize(IArr) == intersection(B, H)
 
     # ================
     # common functions
@@ -78,7 +78,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # absorbing element
     @test absorbing(Intersection) == absorbing(IntersectionArray) == EmptySet
-    @test I ∩ E == E ∩ I == IA ∩ E == E ∩ IA == E ∩ E == E
+    @test I ∩ E == E ∩ I == IArr ∩ E == E ∩ IArr == E ∩ E == E
 end
 
 # ======================
@@ -89,9 +89,9 @@ for N in [Float64]
     B = BallInf(ones(N, 2), N(3))
     H = Hyperrectangle(ones(N, 2), ones(N, 2))
     I = B ∩ H
-    IA = IntersectionArray([B, H])
+    IArr = IntersectionArray([B, H])
     clist1 = constraints_list(I)
-    clist2 = constraints_list(IA)
+    clist2 = constraints_list(IArr)
     @test ispermutation(clist1, clist2) &&
           ispermutation(clist1, [HalfSpace(N[1, 0], N(2)),
                                  HalfSpace(N[0, 1], N(2)),

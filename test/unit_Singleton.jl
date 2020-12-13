@@ -66,17 +66,18 @@ for N in [Float64, Rational{Int}, Float32]
     @test_throws ErrorException S.element ⊆ S
 
     # an_element function
-    @test an_element(S) ∈ S
+    @test an_element(S) == element(S)
 
-    # vertices_list
-    @test vertices_list(S)[1] ∈ S
+    # vertices / vertices_list
+    @test collect(vertices(S)) == vertices_list(S)
+    @test vertices_list(S) == [element(S)]
 
     # radius_hyperrectangle
     @test iszero(radius_hyperrectangle(S))
 
     # high and low
-    @test high(S) == N[1, 1]
-    @test low(S) == N[1, 1]
+    @test high(S) == element(S)
+    @test low(S) == element(S)
 
     # concrete linear map
     M = N[0 1; -1 0]
@@ -126,4 +127,7 @@ for N in [Float64, Rational{Int}, Float32]
     # rectification
     @test rectify(S1) == S1
     @test rectify(Singleton(N[-1, -1])) == S2
+
+    # concrete minkowski sum
+    @test minkowski_sum(Singleton(N[1, 2]), Singleton(N[3, 4])) == Singleton(N[4, 6])
 end

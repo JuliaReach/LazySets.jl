@@ -15,7 +15,7 @@ export HPolyhedron,
        constrained_dimensions
 
 """
-    HPolyhedron{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
+    HPolyhedron{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
 
 Type that represents a convex polyhedron in H-representation.
 
@@ -23,10 +23,10 @@ Type that represents a convex polyhedron in H-representation.
 
 - `constraints` -- vector of linear constraints
 """
-struct HPolyhedron{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
+struct HPolyhedron{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
     constraints::Vector{LinearConstraint{N, VN}}
 
-    function HPolyhedron(constraints::Vector{LinearConstraint{N, VN}}) where {N<:Real,
+    function HPolyhedron(constraints::Vector{LinearConstraint{N, VN}}) where {N,
                                                                               VN<:AbstractVector{N}}
         return new{N, VN}(constraints)
     end
@@ -36,12 +36,12 @@ isoperationtype(::Type{<:HPolyhedron}) = false
 isconvextype(::Type{<:HPolyhedron}) = true
 
 # constructor for an HPolyhedron with no constraints
-function HPolyhedron{N, VN}() where {N<:Real, VN<:AbstractVector{N}}
+function HPolyhedron{N, VN}() where {N, VN<:AbstractVector{N}}
     HPolyhedron(Vector{LinearConstraint{N, VN}}())
 end
 
 # constructor for an HPolyhedron with no constraints and given numeric type
-function HPolyhedron{N}() where {N<:Real}
+function HPolyhedron{N}() where {N}
     HPolyhedron(Vector{LinearConstraint{N, Vector{N}}}())
 end
 
@@ -51,7 +51,7 @@ function HPolyhedron()
 end
 
 # constructor from a simple H-representation
-HPolyhedron(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real} =
+HPolyhedron(A::AbstractMatrix, b::AbstractVector) =
     HPolyhedron(constraints_list(A, b))
 
 # convenience union type
@@ -62,7 +62,7 @@ const HPoly{N} = Union{HPolytope{N}, HPolyhedron{N}}
 
 
 """
-    dim(P::HPoly{N}) where {N<:Real}
+    dim(P::HPoly)
 
 Return the dimension of a polyhedron in H-representation.
 
@@ -75,13 +75,12 @@ Return the dimension of a polyhedron in H-representation.
 The ambient dimension of the polyhedron in H-representation.
 If it has no constraints, the result is ``-1``.
 """
-function dim(P::HPoly{N}) where {N<:Real}
+function dim(P::HPoly)
     return length(P.constraints) == 0 ? -1 : length(P.constraints[1].a)
 end
 
 """
-    ρ(d::AbstractVector{N}, P::HPoly{N};
-      solver=default_lp_solver(N)) where {N<:Real}
+    ρ(d::AbstractVector{N}, P::HPoly{N}; solver=default_lp_solver(N)) where {N}
 
 Evaluate the support function of a polyhedron (in H-representation) in a given
 direction.
@@ -100,7 +99,7 @@ If a polytope is unbounded in the given direction, we throw an error.
 If a polyhedron is unbounded in the given direction, the result is `Inf`.
 """
 function ρ(d::AbstractVector{N}, P::HPoly{N};
-           solver=default_lp_solver(N)) where {N<:Real}
+           solver=default_lp_solver(N)) where {N}
     lp, unbounded = σ_helper(d, P, solver)
     if unbounded
         if P isa HPolytope
@@ -113,8 +112,7 @@ function ρ(d::AbstractVector{N}, P::HPoly{N};
 end
 
 """
-    σ(d::AbstractVector{N}, P::HPoly{N}; solver=default_lp_solver(N)
-     ) where {N<:Real}
+    σ(d::AbstractVector{N}, P::HPoly{N}; solver=default_lp_solver(N)) where {N}
 
 Return the support vector of a polyhedron (in H-representation) in a given
 direction.
@@ -130,8 +128,8 @@ direction.
 
 The support vector in the given direction.
 """
-function σ(d::AbstractVector{N}, P::HPoly{N}; solver=default_lp_solver(N)
-          ) where {N<:Real}
+function σ(d::AbstractVector{N}, P::HPoly{N};
+           solver=default_lp_solver(N)) where {N}
     lp, unbounded = σ_helper(d, P, solver)
     if unbounded
         if P isa HPolytope
@@ -162,7 +160,7 @@ function σ(d::AbstractVector{N}, P::HPoly{N}; solver=default_lp_solver(N)
     end
 end
 
-function σ_helper(d::AbstractVector{N}, P::HPoly{N}, solver) where {N<:Real}
+function σ_helper(d::AbstractVector, P::HPoly, solver)
     # let c = -d as a Vector since GLPK does not accept sparse vectors
     # (see #1011)
     c = to_negative_vector(d)
@@ -235,7 +233,7 @@ end
 
 
 """
-    addconstraint!(P::HPoly{N}, constraint::LinearConstraint{N}) where {N<:Real}
+    addconstraint!(P::HPoly, constraint::LinearConstraint)
 
 Add a linear constraint to a polyhedron in H-representation.
 
@@ -249,14 +247,13 @@ Add a linear constraint to a polyhedron in H-representation.
 It is left to the user to guarantee that the dimension of all linear constraints
 is the same.
 """
-function addconstraint!(P::HPoly{N},
-                        constraint::LinearConstraint{N}) where {N<:Real}
+function addconstraint!(P::HPoly, constraint::LinearConstraint)
     push!(P.constraints, constraint)
     return nothing
 end
 
 """
-    constraints_list(P::HPoly{N}) where {N<:Real}
+    constraints_list(P::HPoly)
 
 Return the list of constraints defining a polyhedron in H-representation.
 
@@ -268,12 +265,12 @@ Return the list of constraints defining a polyhedron in H-representation.
 
 The list of constraints of the polyhedron.
 """
-function constraints_list(P::HPoly{N}) where {N<:Real}
+function constraints_list(P::HPoly)
     return P.constraints
 end
 
 """
-    tohrep(P::HPoly{N}) where {N<:Real}
+    tohrep(P::HPoly)
 
 Return a constraint representation of the given polyhedron in constraint
 representation (no-op).
@@ -286,12 +283,12 @@ representation (no-op).
 
 The same polyhedron instance.
 """
-function tohrep(P::HPoly{N}) where {N<:Real}
+function tohrep(P::HPoly)
     return P
 end
 
 """
-    normalize(P::HPoly{N}, p=N(2)) where {N<:Real}
+    normalize(P::HPoly{N}, p=N(2)) where {N}
 
 Normalize a polyhedron in constraint representation.
 
@@ -305,7 +302,7 @@ Normalize a polyhedron in constraint representation.
 A new polyhedron in constraint representation whose normal directions ``a_i``
 are normalized, i.e., such that ``‖a_i‖_p = 1`` holds.
 """
-function normalize(P::HPoly{N}, p=N(2)) where {N<:Real}
+function normalize(P::HPoly{N}, p=N(2)) where {N}
     constraints = [normalize(hs, p) for hs in constraints_list(P)]
     T = basetype(P)
     return T(constraints)
@@ -313,8 +310,7 @@ end
 
 """
     remove_redundant_constraints(P::HPoly{N};
-                                 backend=default_lp_solver(N)
-                                ) where {N<:Real}
+                                 backend=default_lp_solver(N)) where {N}
 
 Remove the redundant constraints in a polyhedron in H-representation.
 
@@ -336,8 +332,7 @@ See `remove_redundant_constraints!(::AbstractVector{<:LinearConstraint})` for
 details.
 """
 function remove_redundant_constraints(P::HPoly{N};
-                                      backend=default_lp_solver(N)
-                                     ) where {N<:Real}
+                                      backend=default_lp_solver(N)) where {N}
     Pred = copy(P)
     if remove_redundant_constraints!(Pred, backend=backend)
         return Pred
@@ -348,7 +343,7 @@ end
 
 """
     remove_redundant_constraints!(P::HPoly{N};
-                                  backend=default_lp_solver(N)) where {N<:Real}
+                                  backend=default_lp_solver(N)) where {N}
 
 Remove the redundant constraints in a polyhedron in H-representation; the
 polyhedron is updated in-place.
@@ -371,14 +366,12 @@ See `remove_redundant_constraints!(::AbstractVector{<:LinearConstraint})` for
 details.
 """
 function remove_redundant_constraints!(P::HPoly{N};
-                                       backend=default_lp_solver(N)
-                                      ) where {N<:Real}
+                                       backend=default_lp_solver(N)) where {N}
     remove_redundant_constraints!(P.constraints, backend=backend)
 end
 
 """
-    translate(P::HPoly{N}, v::AbstractVector{N}; share::Bool=false
-             ) where {N<:Real}
+    translate(P::HPoly, v::AbstractVector; [share]::Bool=false)
 
 Translate (i.e., shift) a polyhedron in constraint representation by a given
 vector.
@@ -403,8 +396,7 @@ the original constraints if `share == true`.
 
 We translate every constraint.
 """
-function translate(P::HPoly{N}, v::AbstractVector{N}; share::Bool=false
-                  ) where {N<:Real}
+function translate(P::HPoly, v::AbstractVector; share::Bool=false)
     @assert length(v) == dim(P) "cannot translate a $(dim(P))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     constraints = [translate(c, v; share=share) for c in constraints_list(P)]
@@ -417,77 +409,8 @@ end
 # ========================================================
 
 """
-    convex_hull(P1::HPoly{N}, P2::HPoly{N};
-               [backend]=default_polyhedra_backend(P1, N)) where {N<:Real}
-
-Compute the convex hull of the set union of two polyhedra in H-representation.
-
-### Input
-
-- `P1`         -- polyhedron
-- `P2`         -- another polyhedron
-- `backend`    -- (optional, default: `default_polyhedra_backend(P1, N)`)
-                  the polyhedral computations backend
-
-### Output
-
-The `HPolyhedron` (resp. `HPolytope`) obtained by the concrete convex hull of
-`P1` and `P2`.
-
-### Notes
-
-For performance reasons, it is suggested to use the `CDDLib.Library()` backend
-for the `convex_hull`.
-
-For further information on the supported backends see
-[Polyhedra's documentation](https://juliapolyhedra.github.io/).
-"""
-function convex_hull(P1::HPoly{N},
-                     P2::HPoly{N};
-                     backend=default_polyhedra_backend(P1, N)) where {N<:Real}
-    require(:Polyhedra; fun_name="convex_hull")
-    Pch = Polyhedra.convexhull(polyhedron(P1; backend=backend),
-                               polyhedron(P2; backend=backend))
-    removehredundancy!(Pch)
-    return convert(basetype(P1), Pch)
-end
-
-"""
-    cartesian_product(P1::HPoly{N}, P2::HPoly{N};
-                      [backend]=default_polyhedra_backend(P1, N)
-                     ) where {N<:Real}
-
-Compute the Cartesian product of two polyhedra in H-representaion.
-
-### Input
-
-- `P1`         -- polyhedron
-- `P2`         -- another polyhedron
-- `backend`    -- (optional, default: `default_polyhedra_backend(P1, N)`)
-                  the polyhedral computations backend
-
-### Output
-
-The polyhedron obtained by the concrete cartesian product of `P1` and `P2`.
-
-### Notes
-
-For further information on the supported backends see
-[Polyhedra's documentation](https://juliapolyhedra.github.io/).
-"""
-function cartesian_product(P1::HPoly{N},
-                           P2::HPoly{N};
-                           backend=default_polyhedra_backend(P1, N)
-                          ) where {N<:Real}
-    require(:Polyhedra; fun_name="`cartesian_product")
-    Pcp = Polyhedra.hcartesianproduct(polyhedron(P1; backend=backend),
-                                      polyhedron(P2; backend=backend))
-    return convert(basetype(P1), Pcp)
-end
-
-"""
     tovrep(P::HPoly{N};
-          [backend]=default_polyhedra_backend(P, N)) where {N<:Real}
+          [backend]=default_polyhedra_backend(P, N)) where {N}
 
 Transform a polyhedron in H-representation to a polytope in V-representation.
 
@@ -510,7 +433,7 @@ For further information on the supported backends see [Polyhedra's
 documentation](https://juliapolyhedra.github.io/).
 """
 function tovrep(P::HPoly{N};
-                backend=default_polyhedra_backend(P, N)) where {N<:Real}
+                backend=default_polyhedra_backend(P, N)) where {N}
     require(:Polyhedra; fun_name="tovrep")
     P = polyhedron(P; backend=backend)
     return VPolytope(P)
@@ -519,7 +442,7 @@ end
 """
    isempty(P::HPoly{N}, witness::Bool=false;
            [use_polyhedra_interface]::Bool=false, [solver]=default_lp_solver(N),
-           [backend]=nothing) where {N<:Real}
+           [backend]=nothing) where {N}
 
 Determine whether a polyhedron is empty.
 
@@ -559,7 +482,7 @@ function isempty(P::HPoly{N},
                  witness::Bool=false;
                  use_polyhedra_interface::Bool=false,
                  solver=default_lp_solver(N),
-                 backend=nothing) where {N<:Real}
+                 backend=nothing) where {N}
     if length(constraints_list(P)) < 2
         # catch corner case because of problems in LP solver for Rationals
         return witness ? (false, an_element(P)) : false
@@ -592,11 +515,6 @@ function isempty(P::HPoly{N},
         error("LP returned status $(lp.status) unexpectedly")
     end
 end
-
-convert(::Type{HPolytope}, P::HPolyhedron{N}) where {N<:Real} =
-    HPolytope(copy(constraints_list(P)))
-convert(::Type{HPolyhedron}, P::HPolytope{N}) where {N<:Real} =
-    HPolyhedron(copy(constraints_list(P)))
 
 # ==========================================
 # Lower level methods that use Polyhedra.jl
@@ -638,8 +556,7 @@ function HPolyhedron(P::HRep{N}) where {N}
 end
 
 """
-    polyhedron(P::HPoly{N};
-               [backend]=default_polyhedra_backend(P, N)) where {N<:Real}
+    polyhedron(P::HPoly{N}; [backend]=default_polyhedra_backend(P, N)) where {N}
 
 Return an `HRep` polyhedron from `Polyhedra.jl` given a polytope in
 H-representation.
@@ -660,7 +577,7 @@ For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/).
 """
 function polyhedron(P::HPoly{N};
-                    backend=default_polyhedra_backend(P, N)) where {N<:Real}
+                    backend=default_polyhedra_backend(P, N)) where {N}
     A, b = tosimplehrep(P)
     return Polyhedra.polyhedron(Polyhedra.hrep(A, b), backend)
 end
@@ -670,7 +587,7 @@ end # function load_polyhedra_hpolyhedron()
 
 """
     _isbounded_stiemke(P::HPolyhedron{N}; solver=LazySets.default_lp_solver(N),
-                       check_nonempty::Bool=true) where {N<:Real}
+                       check_nonempty::Bool=true) where {N}
 
 Determine whether a polyhedron is bounded using Stiemke's theorem of alternatives.
 
@@ -708,7 +625,7 @@ program admits a feasible solution: ``\\min∥y∥_1`` subject to ``A^Ty=0`` and
     Society for Industrial and Applied Mathematics, 1994.
 """
 function _isbounded_stiemke(P::HPolyhedron{N}; solver=LazySets.default_lp_solver(N),
-                            check_nonempty::Bool=true) where {N<:Real}
+                            check_nonempty::Bool=true) where {N}
     if check_nonempty && isempty(P)
         return true
     end
@@ -762,10 +679,38 @@ julia> vars = @variables x y
 julia> HPolyhedron([x + y <= 1, x + y >= -1], vars)
 HPolyhedron{Float64,Array{Float64,1}}(HalfSpace{Float64,Array{Float64,1}}[HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0], 1.
 0), HalfSpace{Float64,Array{Float64,1}}([-1.0, -1.0], 1.0)])
+
+julia> X = HPolyhedron([x == 0, y <= 0], var)
+HPolyhedron{Float64,Array{Float64,1}}(HalfSpace{Float64,Array{Float64,1}}[HalfSpace{Float64,Array{Float64,1}}([1.0, 0.0], -0.0), HalfSp
+ace{Float64,Array{Float64,1}}([-1.0, -0.0], 0.0), HalfSpace{Float64,Array{Float64,1}}([0.0, 1.0], -0.0)])
 ```
 """
 function HPolyhedron(expr::Vector{<:Operation}, vars=get_variables(first(expr)); N::Type{<:Real}=Float64)
-    return HPolyhedron([HalfSpace(ex, vars; N=N) for ex in expr])
+    clist = Vector{HalfSpace{N, Vector{N}}}()
+    sizehint!(clist, length(expr))
+    got_hyperplane = false
+    got_halfspace = false
+    zeroed_vars = Dict(v => zero(N) for v in vars)
+    vars_list = collect(vars)
+    for ex in expr
+        got_hyperplane, sexpr = _is_hyperplane(ex)
+        if !got_hyperplane
+            got_halfspace, sexpr = _is_halfspace(ex)
+            if !got_halfspace
+                throw(ArgumentError("expected an expression describing either " *
+                    "a half-space of a hyperplane, got $expr"))
+            end
+        end
+
+        coeffs = [N(α.value) for α in gradient(sexpr, vars_list)]
+        β = -N(ModelingToolkit.substitute(sexpr, zeroed_vars).value)
+
+        push!(clist, HalfSpace(coeffs, β))
+        if got_hyperplane
+            push!(clist, HalfSpace(-coeffs, -β))
+        end
+    end
+    return HPolyhedron(clist)
 end
 
 end end  # quote / load_modeling_toolkit_hpolyhedron()

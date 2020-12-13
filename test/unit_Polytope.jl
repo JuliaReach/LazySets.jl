@@ -194,6 +194,12 @@ for N in [Float64, Rational{Int}, Float32]
     p[1] = N(5)
     # test that Pcopy is independent of P ( = deepcopy)
     @test Pcopy.vertices[1] == [N(1)]
+
+    # test concrete projection
+    V = VPolytope([N[0, 0, 1], N[0, 1, 0], N[0, -1, 0], N[1, 0, 0]])
+    @test project(V, [1]) == Interval(N(0), N(1))
+    @test project(V, [1, 2]) == VPolygon([N[0, 0], N[0, 1], N[0, -1], N[1, 0]])
+    @test project(V, [1, 2, 3]) == V
 end
 
 # default Float64 constructors
@@ -391,6 +397,27 @@ for N in [Float64]
         p3 = VPolygon(vertices_list(p2))
         cap = intersection(p1, p3)
         @test ispermutation(vertices_list(cap), vlist)
+
+        # 2D intersection
+        paux = VPolytope([N[0, 0], N[1, 0], N[0, 1], N[1, 1]])
+        qaux = VPolytope([N[1, -1/2], N[-1/2, 1], N[-1/2, -1/2]])
+        xaux = intersection(paux, qaux)
+        oaux = VPolytope([N[0, 0], N[1/2, 0], N[0, 1/2]])
+        @test xaux ⊆ oaux && oaux ⊆ xaux # TODO use isequivalent
+
+        # mixed types
+        paux = VPolygon([N[0, 0], N[1, 0], N[0, 1], N[1, 1]])
+        qaux = VPolytope([N[1, -1/2], N[-1/2, 1], N[-1/2, -1/2]])
+        xaux = intersection(paux, qaux)
+        oaux = VPolytope([N[0, 0], N[1/2, 0], N[0, 1/2]])
+        @test xaux ⊆ oaux && oaux ⊆ xaux # TODO use isequivalent
+
+        # 1D set
+        paux = VPolytope([N[0], N[1]])
+        qaux = VPolytope([N[-1/2], N[1/2]])
+        xaux = intersection(paux, qaux)
+        oaux = VPolytope([N[0], N[1/2]])
+        @test xaux ⊆ oaux && oaux ⊆ xaux # TODO use isequivalent
 
         # isuniversal
         answer, w = isuniversal(p1, true)

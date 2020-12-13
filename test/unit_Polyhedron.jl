@@ -115,8 +115,7 @@ for N in [Float64, Rational{Int}, Float32]
 end
 
 # default Float64 constructors
-unconstrained_HPolyhedron = HPolyhedron()
-@test unconstrained_HPolyhedron isa HPolyhedron{Float64}
+@test HPolyhedron() isa HPolyhedron{Float64}
 
 # tests that only work with Float64 and Float32
 for N in [Float64, Float32]
@@ -182,7 +181,15 @@ for N in [Float64]
     # an_element
     P = HPolyhedron([HalfSpace(N[3//50, -4//10], N(1)),
                      HalfSpace(N[-1//50, 1//10], N(-1))])
-    @test_broken an_element(P) ∈ P # see LazySets.jl/pull/2197
+    @test an_element(P) ∈ P
+
+    # an_element for an unbounded polyhedron
+    P = HPolyhedron([HalfSpace(N[-1, 0], N(-1))])
+    y = an_element(P)
+    # check that all entries are finite
+    @test all(!isinf, y)
+    # check that the points belong to P
+    @test y ∈ P
 
     # boundedness
     @test isbounded(p)
@@ -356,12 +363,16 @@ for N in [Float64]
         @test πP isa HPolyhedron{N}
         @test ispermutation(constraints_list(πP), [HalfSpace(N[-1, 0], N(0)), HalfSpace(N[0, -1], N(0))])
     end
-end
 
-# tests that require ModelingToolkit
-@static if VERSION >= v"1.3" && isdefined(@__MODULE__, :ModelingToolkit)
-    vars = @variables x y
-    p1 = HPolyhedron([x + y <= 1, x + y >= -1,  x - y <= 1, x - y >= -1], vars)
-    b1 = Ball1(zeros(2), 1.0)
-    @test isequivalent(p1, b1)
+    # tests that require ModelingToolkit
+    @static if VERSION >= v"1.3" && isdefined(@__MODULE__, :ModelingToolkit)
+        vars = @variables x y
+        p1 = HPolyhedron([x + y <= 1, x + y >= -1,  x - y <= 1, x - y >= -1], vars)
+        b1 = Ball1(zeros(2), 1.0)
+        @test isequivalent(p1, b1)
+
+        p2 = HPolyhedron([x == 0, y <= 0], vars)
+        h2 = HPolyhedron([HalfSpace([1.0, 0.0], 0.0), HalfSpace([-1.0, 0.0], 0.0), HalfSpace([0.0, 1.0], 0.0)])
+        @test p2 ⊆ h2 && h2 ⊆ p2 # isequivalent(p2, h2) see #2370
+    end
 end

@@ -3,7 +3,7 @@ export SingleEntryVector
 """
     SingleEntryVector{N} <: AbstractVector{N}
 
-A lazy unit vector with arbitrary one-element.
+A sparse unit vector with arbitrary one-element.
 
 ### Fields
 
@@ -51,4 +51,9 @@ end
 function inner(e1::SingleEntryVector{N}, A::AbstractMatrix{N},
                e2::SingleEntryVector{N}) where {N}
     return A[e1.i, e2.i] * e1.v * e2.v
+end
+
+# norm
+function LinearAlgebra.norm(e::SingleEntryVector, p::Real=Inf)
+    return abs(e.v)
 end

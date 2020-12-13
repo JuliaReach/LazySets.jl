@@ -6,13 +6,13 @@ CurrentModule = LazySets
 
 ```@docs
 Ball1
-σ(::AbstractVector{N}, ::Ball1{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::Ball1{N}, ::Bool=false) where {N<:Real}
-vertices_list(::Ball1{N, VN}) where {N<:Real, VN<:AbstractVector{N}}
-center(::Ball1{N}) where {N<:Real}
+σ(::AbstractVector, ::Ball1)
+∈(::AbstractVector, ::Ball1, ::Bool=false)
+vertices_list(::Ball1{N, VN}) where {N, VN<:AbstractVector}
+center(::Ball1)
 rand(::Type{Ball1})
-constraints_list(::Ball1{N}) where {N<:Real}
-translate(::Ball1{N}, ::AbstractVector{N}) where {N<:Real}
+constraints_list(::Ball1{N}) where {N}
+translate(::Ball1, ::AbstractVector)
 ```
 
 Inherited from [`LazySet`](@ref):
@@ -23,9 +23,9 @@ Inherited from [`LazySet`](@ref):
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
-* [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real})
+* [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N})
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetricPolytope))
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
-* [`an_element`](@ref an_element(::AbstractCentrallySymmetricPolytope{N}) where {N<:Real})
+* [`an_element`](@ref an_element(::AbstractCentrallySymmetricPolytope))

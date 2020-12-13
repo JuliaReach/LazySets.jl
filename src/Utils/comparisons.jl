@@ -250,36 +250,39 @@ function _isapprox(x::N, y::M; kwargs...) where {N<:Real, M<:Real}
     return _isapprox(promote(x, y)...; kwargs...)
 end
 
-# generic "dense"
-function _isapprox(x::AbstractVector{N}, y::AbstractVector{N};
+# numeric arrays
+function _isapprox(A::AbstractArray{N}, B::AbstractArray{N};
                    rtol::Real=_rtol(N),
                    ztol::Real=_ztol(N),
                    atol::Real=_atol(N)) where {N<:Real}
-    n = length(x)
-    if length(x) != length(y)
+    if size(A) != size(B)
         return false
     end
-    @inbounds for i in 1:n
-        if !_isapprox(x[i], y[i], rtol=rtol, ztol=ztol, atol=atol)
+    @inbounds for i in eachindex(A)
+        if !_isapprox(A[i], B[i], rtol=rtol, ztol=ztol, atol=atol)
             return false
         end
     end
     return true
 end
 
-# sparse
+# sparse numeric vectors
 function _isapprox(x::SparseVector{N}, y::SparseVector{N};
                    rtol::Real=_rtol(N),
                    ztol::Real=_ztol(N),
                    atol::Real=_atol(N)) where {N<:Real}
-    @assert length(x) == length(y)
-    return x.nzind == y.nzind && _isapprox(x.nzval, y.nzval, rtol=rtol, ztol=ztol, atol=atol)
+    if length(x) != length(y)
+        return false
+    elseif x.nzind != y.nzind
+        return false
+    end
+    return _isapprox(x.nzval, y.nzval, rtol=rtol, ztol=ztol, atol=atol)
 end
 
-# different numeric types with promotion
-function _isapprox(x::AbstractVector{N}, y::AbstractVector{M};
+# numeric arrays with different numeric types with promotion
+function _isapprox(A::AbstractArray{N}, B::AbstractArray{M};
                    kwargs...) where {N<:Real, M<:Real}
-    _isapprox(promote(x, y)...; kwargs...)
+    _isapprox(promote(A, B)...; kwargs...)
 end
 
 """

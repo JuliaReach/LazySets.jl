@@ -33,7 +33,6 @@ convert(::Type{VPolygon}, ::AbstractHPolygon)
 convert(::Type{VPolygon}, ::AbstractPolytope)
 convert(::Type{VPolytope}, ::AbstractPolytope)
 convert(::Type{VPolytope}, ::HPolytope)
-convert(::Type{Zonotope}, ::AbstractHyperrectangle{N}) where {N}
 convert(::Type{Zonotope}, ::AbstractZonotope)
 convert(::Type{IntervalArithmetic.IntervalBox}, ::AbstractHyperrectangle)
 convert(::Type{Hyperrectangle}, ::IntervalArithmetic.IntervalBox)
@@ -52,7 +51,10 @@ convert(::Type{IntervalArithmetic.Interval}, ::Interval)
 convert(::Type{Interval}, ::IntervalArithmetic.Interval)
 convert(::Type{VPolytope}, ::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
 convert(::Type{VPolygon}, ::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
+convert(::Type{VPolygon}, ::LazySet)
 convert(::Type{MinkowskiSumArray}, ::MinkowskiSum{N, ST, MinkowskiSumArray{N, ST}}) where {N, ST}
 convert(::Type{Interval}, ::MinkowskiSum{N, IT, IT}) where {N, IT<:Interval{N}}
 convert(::Type{HParallelotope}, Z::AbstractZonotope{N}) where {N}
+convert(::Type{Zonotope}, ::CartesianProduct{N, AZ1, AZ2}) where {N, AZ1<:AbstractZonotope{N}, AZ2<:AbstractZonotope{N}}
+convert(::Type{Zonotope}, ::CartesianProductArray{N, AZ}) where {N, AZ<:AbstractZonotope{N}}
 ```

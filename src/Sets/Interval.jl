@@ -1,5 +1,8 @@
 import IntervalArithmetic
 using IntervalArithmetic: AbstractInterval
+@static if VERSION >= v"1.1"
+    using IntervalArithmetic: mince
+end
 import Base: +, -, *, ∈, ⊆, rand, min, max
 
 export Interval,
@@ -10,7 +13,7 @@ export Interval,
        constraints_list
 
 """
-    Interval{N<:Real, IN<:AbstractInterval{N}} <: AbstractHyperrectangle{N}
+    Interval{N, IN<:AbstractInterval{N}} <: AbstractHyperrectangle{N}
 
 Type representing an interval on the real line.
 Mathematically, it is of the form
@@ -77,7 +80,7 @@ julia> Interval(0//1, 2//1)
 Interval{Rational{Int64},AbstractInterval{Rational{Int64}}}([0//1, 2//1])
 ```
 """
-struct Interval{N<:Real, IN<:AbstractInterval{N}} <: AbstractHyperrectangle{N}
+struct Interval{N, IN<:AbstractInterval{N}} <: AbstractHyperrectangle{N}
     dat::IN
 end
 
@@ -88,9 +91,11 @@ isconvextype(::Type{<:Interval}) = true
 Interval(interval::IN) where {N<:Rational, IN<:AbstractInterval{N}} =
     Interval{N, IntervalArithmetic.AbstractInterval{N}}(interval)
 
-# constructor from two numbers
-Interval(lo::N, hi::N) where {N<:Real} =
-    Interval(IntervalArithmetic.Interval(lo, hi))
+# constructor from two numbers with type promotion
+function Interval(lo::N1, hi::N2) where {N1, N2}
+    N = promote_type(N1, N2)
+    Interval(IntervalArithmetic.Interval(N(lo), N(hi)))
+end
 
 # constructor from two rational numbers
 Interval(lo::N, hi::N) where {N<:Rational} =
@@ -98,16 +103,9 @@ Interval(lo::N, hi::N) where {N<:Rational} =
         IntervalArithmetic.Interval(lo, hi))
 
 # constructor from a vector
-function Interval(x::AbstractVector{N}) where {N<:Real}
+function Interval(x::AbstractVector)
     @assert length(x) == 2 "vector for Interval constructor has to be 2D"
-    Interval(IntervalArithmetic.Interval(x[1], x[2]))
-end
-
-# constructor from a rational vector
-function Interval(x::AbstractVector{N}) where {N<:Rational}
-    @assert length(x) == 2 "vector for Interval constructor has to be 2D"
-    Interval{N, IntervalArithmetic.AbstractInterval{N}}(
-        IntervalArithmetic.Interval(x[1], x[2]))
+    Interval(x[1], x[2])
 end
 
 """
@@ -126,7 +124,7 @@ The integer 1.
 dim(x::Interval) = 1
 
 """
-    σ(d::AbstractVector{N}, x::Interval{N}) where {N<:Real}
+    σ(d::AbstractVector, x::Interval)
 
 Return the support vector of an interval in a given direction.
 
@@ -139,13 +137,14 @@ Return the support vector of an interval in a given direction.
 
 Support vector in the given direction.
 """
-function σ(d::AbstractVector{N}, x::Interval{N}) where {N<:Real}
+function σ(d::AbstractVector, x::Interval)
     @assert length(d) == dim(x)
+    N = promote_type(eltype(d), eltype(x))
     return d[1] > zero(N) ? high(x) : low(x)
 end
 
 """
-    ρ(d::AbstractVector{N}, x::Interval{N}) where {N<:Real}
+    ρ(d::AbstractVector, x::Interval)
 
 Evaluate the support function of an interval in a given direction.
 
@@ -158,13 +157,14 @@ Evaluate the support function of an interval in a given direction.
 
 Evaluation of the support function in the given direction.
 """
-function ρ(d::AbstractVector{N}, x::Interval{N}) where {N<:Real}
+function ρ(d::AbstractVector, x::Interval)
     @assert length(d) == dim(x)
+    N = promote_type(eltype(d), eltype(x))
     return d[1] * (d[1] > zero(N) ? max(x) : min(x))
 end
 
 """
-    center(x::Interval{N}) where {N<:Real}
+    center(x::Interval)
 
 Return the interval's center.
 
@@ -176,12 +176,12 @@ Return the interval's center.
 
 The center, or midpoint, of ``x``.
 """
-function center(x::Interval{N}) where {N<:Real}
+function center(x::Interval)
     return [IntervalArithmetic.mid(x.dat)]
 end
 
 """
-    -(x::Interval{N}, y::Interval{N}) where {N<:Real}
+    -(x::Interval, y::Interval)
 
 Return the difference of the intervals.
 
@@ -194,13 +194,13 @@ Return the difference of the intervals.
 
 The difference of the intervals as a new `Interval` set.
 """
-function -(x::Interval{N}, y::Interval{N}) where {N<:Real}
+function -(x::Interval, y::Interval)
     return Interval(x.dat - y.dat)
 end
 
 """
 ```
-    *(x::Interval{N}, y::Interval{N}) where {N<:Real}
+    *(x::Interval, y::Interval)
 ```
 
 Return the product of the intervals.
@@ -214,12 +214,12 @@ Return the product of the intervals.
 
 The product of the intervals as a new `Interval` set.
 """
-function *(x::Interval{N}, y::Interval{N}) where {N<:Real}
+function *(x::Interval, y::Interval)
     return Interval(x.dat * y.dat)
 end
 
 """
-    ∈(v::AbstractVector{N}, x::Interval{N}) where {N<:Real})
+    ∈(v::AbstractVector, x::Interval))
 
 Return whether a vector is contained in the interval.
 
@@ -232,12 +232,12 @@ Return whether a vector is contained in the interval.
 
 `true` iff `x` contains `v`'s first component.
 """
-function ∈(v::AbstractVector{N}, x::Interval{N}) where {N<:Real}
+function ∈(v::AbstractVector, x::Interval)
     return v[1] ∈ x.dat
 end
 
 """
-    ∈(v::N, x::Interval{N}) where {N<:Real}
+    ∈(v::N, x::Interval{N}) where {N}
 
 Return whether a number is contained in the interval.
 
@@ -250,12 +250,12 @@ Return whether a number is contained in the interval.
 
 `true` iff `x` contains `v`.
 """
-function ∈(v::N, x::Interval{N}) where {N<:Real}
+function ∈(v::N, x::Interval{N}) where {N}
     return v ∈ x.dat
 end
 
 """
-    min(x::Interval{N}) where {N<:Real}
+    min(x::Interval)
 
 Return the lower component of an interval.
 
@@ -267,12 +267,12 @@ Return the lower component of an interval.
 
 The lower (`lo`) component of the interval.
 """
-function min(x::Interval{N}) where {N<:Real}
+function min(x::Interval)
     return x.dat.lo
 end
 
 """
-    max(x::Interval{N}) where {N<:Real}
+    max(x::Interval)
 
 Return the higher or upper component of an interval.
 
@@ -284,12 +284,12 @@ Return the higher or upper component of an interval.
 
 The higher (`hi`) component of the interval.
 """
-function max(x::Interval{N}) where {N<:Real}
+function max(x::Interval)
     return x.dat.hi
 end
 
 """
-    low(x::Interval{N}) where {N<:Real}
+    low(x::Interval{N}) where {N}
 
 Return the lower coordinate of an interval set.
 
@@ -301,12 +301,12 @@ Return the lower coordinate of an interval set.
 
 A vector with the lower coordinate of the interval.
 """
-function low(x::Interval{N}) where {N<:Real}
+function low(x::Interval{N}) where {N}
     return N[x.dat.lo]
 end
 
 """
-    high(x::Interval{N}) where {N<:Real}
+    high(x::Interval{N}) where {N}
 
 Return the higher coordinate of an interval set.
 
@@ -318,12 +318,12 @@ Return the higher coordinate of an interval set.
 
 A vector with the higher coordinate of the interval.
 """
-function high(x::Interval{N}) where {N<:Real}
+function high(x::Interval{N}) where {N}
     return N[x.dat.hi]
 end
 
 """
-    an_element(x::Interval{N}) where {N<:Real}
+    an_element(x::Interval)
 
 Return some element of an interval.
 
@@ -335,7 +335,7 @@ Return some element of an interval.
 
 The left border (`min(x)`) of the interval.
 """
-function an_element(x::Interval{N}) where {N<:Real}
+function an_element(x::Interval)
     return [min(x)]
 end
 
@@ -374,7 +374,7 @@ function rand(::Type{Interval};
 end
 
 """
-    vertices_list(x::Interval{N}) where {N<:Real}
+    vertices_list(x::Interval)
 
 Return the list of vertices of this interval.
 
@@ -386,12 +386,12 @@ Return the list of vertices of this interval.
 
 The list of vertices of the interval represented as two one-dimensional vectors.
 """
-function vertices_list(x::Interval{N}) where {N<:Real}
+function vertices_list(x::Interval)
     return [[min(x)], [max(x)]]
 end
 
 """
-    constraints_list(x::Interval{N}) where {N<:Real}
+    constraints_list(x::Interval{N}) where {N}
 
 Return the list of constraints of the given interval.
 
@@ -404,7 +404,7 @@ Return the list of constraints of the given interval.
 The list of constraints of the interval represented as two one-dimensional
 half-spaces.
 """
-function constraints_list(x::Interval{N}) where {N<:Real}
+function constraints_list(x::Interval{N}) where {N}
     constraints = Vector{LinearConstraint{N, SingleEntryVector{N}}}(undef, 2)
     e₁ = SingleEntryVector(1, 1, one(N))
     constraints[1] = HalfSpace(e₁, max(x))
@@ -412,7 +412,7 @@ function constraints_list(x::Interval{N}) where {N<:Real}
     return constraints
 end
 """
-    translate(x::Interval{N}, v::AbstractVector{N}) where {N<:Real}
+    translate(x::Interval, v::AbstractVector)
 
 Translate (i.e., shift) an interval by a given vector.
 
@@ -429,7 +429,7 @@ A translated interval.
 
 We add the vector to the left and right of the interval.
 """
-function translate(x::Interval{N}, v::AbstractVector{N}) where {N<:Real}
+function translate(x::Interval, v::AbstractVector)
     @assert length(v) == dim(x) "cannot translate a $(dim(x))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     return Interval(x.dat + v[1])
@@ -440,7 +440,7 @@ end
 
 
 """
-    radius_hyperrectangle(x::Interval{N}, i::Int) where {N<:Real}
+    radius_hyperrectangle(x::Interval{N}, i::Int) where {N}
 
 Return the box radius of an interval in a given dimension.
 
@@ -453,13 +453,13 @@ Return the box radius of an interval in a given dimension.
 
 The box radius in the given dimension.
 """
-function radius_hyperrectangle(x::Interval{N}, i::Int) where {N<:Real}
+function radius_hyperrectangle(x::Interval{N}, i::Int) where {N}
     @assert i == 1 "an interval is one-dimensional"
     return (max(x) - min(x)) / N(2)
 end
 
 """
-    radius_hyperrectangle(x::Interval{N}) where {N<:Real}
+    radius_hyperrectangle(x::Interval)
 
 Return the box radius of an interval in every dimension.
 
@@ -471,7 +471,7 @@ Return the box radius of an interval in every dimension.
 
 The box radius of the interval (a one-dimensional vector).
 """
-function radius_hyperrectangle(x::Interval{N}) where {N<:Real}
+function radius_hyperrectangle(x::Interval)
     return [radius_hyperrectangle(x, 1)]
 end
 
@@ -499,7 +499,7 @@ function isflat(I::Interval)
 end
 
 """
-    plot_recipe(I::Interval{N}, [ε]::N=zero(N)) where {N<:Real}
+    plot_recipe(I::Interval{N}, [ε]=zero(N)) where {N}
 
 Convert an interval to a pair `(x, y)` of points for plotting.
 
@@ -516,12 +516,12 @@ A pair `(x, y)` of two points that can be plotted.
 
 We consider the interval as a line segment with y coordinate equal to zero.
 """
-function plot_recipe(I::Interval{N}, ε::N=zero(N)) where {N<:Real}
+function plot_recipe(I::Interval{N}, ε=zero(N)) where {N}
     return [min(I), max(I)], zeros(N, 2)
 end
 
 """
-    linear_map(M::AbstractMatrix{N}, x::Interval{N}) where {N<:Real}
+    linear_map(M::AbstractMatrix, x::Interval)
 
 Concrete linear map of an interval.
 
@@ -540,7 +540,7 @@ number of rows) of `M`:
 - If `size(M, 1) > 1`, the output is a zonotope whose center is `M * center(x)`
   and it has the single generator, `M * g`, where `g = (high(x)-low(x))/2`.
 """
-function linear_map(M::AbstractMatrix{N}, x::Interval{N}) where {N<:Real}
+function linear_map(M::AbstractMatrix, x::Interval)
     @assert size(M, 2) == 1 "a linear map of size $(size(M)) " *
                             "cannot be applied to an interval"
     nout = size(M, 1)
@@ -551,15 +551,16 @@ function linear_map(M::AbstractMatrix{N}, x::Interval{N}) where {N<:Real}
     end
 end
 
-function _linear_map_interval(M::AbstractMatrix{N}, x::Interval{N}) where {N<:Real}
+function _linear_map_interval(M::AbstractMatrix, x::Interval)
     α = M[1, 1]
     return Interval(α * x.dat)
 end
 
-function _linear_map_zonotope(M::AbstractMatrix{N}, x::Interval{N}) where {N<:Real}
+function _linear_map_zonotope(M::AbstractMatrix, x::Interval)
     nout = size(M, 1)
     cx = IntervalArithmetic.mid(x.dat)
     gx = cx - min(x)
+    N = promote_type(eltype(M), eltype(x))
     c = Vector{N}(undef, nout)
     gen = Matrix{N}(undef, nout, 1)
     @inbounds for i in 1:nout
@@ -570,7 +571,7 @@ function _linear_map_zonotope(M::AbstractMatrix{N}, x::Interval{N}) where {N<:Re
 end
 
 """
-    scale(α::N, x::Interval{N}) where {N<:Real}
+    scale(α::Real, x::Interval)
 
 Concrete scaling of an interval.
 
@@ -583,12 +584,12 @@ Concrete scaling of an interval.
 
 The interval obtained by applying the numerical scale to the given interval.
 """
-function scale(α::N, x::Interval{N}) where {N<:Real}
+function scale(α::Real, x::Interval)
     return Interval(α * x.dat)
 end
 
 """
-    center(H::Interval{N}, i::Int) where {N<:Real}
+    center(H::Interval, i::Int)
 
 Return the center along a given dimension of a interval.
 
@@ -601,13 +602,13 @@ Return the center along a given dimension of a interval.
 
 The center along a given dimension of the interval.
 """
-@inline function center(x::Interval{N}, i::Int) where {N<:Real}
+@inline function center(x::Interval, i::Int)
     @boundscheck i == 1 || throw(ArgumentError("an interval has dimension one, but the index is $i"))
     return IntervalArithmetic.mid(x.dat)
 end
 
 """
-    rectify(x::Interval{N}) where {N<:Real}
+    rectify(x::Interval{N}) where {N}
 
 Concrete rectification of an interval.
 
@@ -624,12 +625,74 @@ The `Interval` that corresponds to the rectification of `x`.
 Note that the result is an `Interval` even if the set becomes a singleton (which
 is the case if the original interval was nonpositive).
 """
-function rectify(x::Interval{N}) where {N<:Real}
+function rectify(x::Interval{N}) where {N}
     if x.dat.lo >= zero(N)
         # interval is already nonnegative
         return x
     else
         # lower end is negative
         return Interval(zero(N), max(x.dat.hi, zero(N)))
+    end
+end
+
+"""
+    diameter(x::Interval, [p]::Real=Inf)
+
+Compute the diameter of an interval, defined as ``\\Vert b - a\\Vert`` in the ``p`-norm, where ``a`` (resp. ``b``) are the minimum (resp. maximum) of the given interval.
+
+### Input
+
+- `x` -- interval
+- `p` -- (optional, default: `Inf`) norm
+
+### Output
+
+A real number representing the diameter.
+
+### Notes
+
+In one dimension all norms are the same.
+"""
+function diameter(x::Interval, p::Real=Inf)
+    return IntervalArithmetic.diam(x.dat)
+end
+
+"""
+    split(x::Interval, k)
+
+Partition an interval into `k` uniform sub-intervals.
+
+### Input
+
+- `x` -- interval
+- `k` -- number of sub-intervals, possibly wrapped in a vector of length 1
+
+### Output
+
+A list of `k` `Interval`s.
+"""
+function split(x::Interval, k::AbstractVector{Int})
+    @assert length(k) == 1 "an interval can only be split along one dimension"
+    return split(x, k[1])
+end
+
+function split(x::Interval, k::Int)
+    @assert k > 0 "can only split into a positive number of intervals"
+    return [Interval(x2) for x2 in mince(x.dat, k)]
+end
+
+@static if VERSION < v"1.1"
+    # IntervalArithmetic.mince() is not available -> define it here
+    function mince(x::IntervalArithmetic.Interval, n)
+        width = (x.hi - x.lo) / n
+        result = Vector{typeof(x)}(undef, n)
+        lo = x.lo
+        @inbounds for i in 1:n-1
+            hi = lo + width
+            result[i] = IntervalArithmetic.Interval(lo, hi)
+            lo = hi
+        end
+        result[n] = IntervalArithmetic.Interval(lo, x.hi)  # avoid rounding error
+        return result
     end
 end

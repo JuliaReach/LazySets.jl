@@ -90,7 +90,7 @@ end
 """
     plot_list(list::AbstractVector{VN}, [ε]::N=N(PLOT_PRECISION),
               [Nφ]::Int=PLOT_POLAR_DIRECTIONS, [fast]::Bool=false; ...)
-        where {N<:Real, VN<:LazySet{N}}
+        where {N, VN<:LazySet{N}}
 
 Plot a list of convex sets.
 
@@ -139,7 +139,7 @@ julia> plot(Bs, 1e-2)  # faster but less accurate than the previous call
 """
 @recipe function plot_list(list::AbstractVector{VN}, ε::N=N(PLOT_PRECISION),
                            Nφ::Int=PLOT_POLAR_DIRECTIONS, fast::Bool=false
-                          ) where {N<:Real, VN<:LazySet{N}}
+                          ) where {N, VN<:LazySet{N}}
     if fast
         label --> DEFAULT_LABEL
         grid --> DEFAULT_GRID
@@ -166,9 +166,11 @@ julia> plot(Bs, 1e-2)  # faster but less accurate than the previous call
                     continue
                 end
                 res = vlist[:, 1], vlist[:, 2]
-                # add first vertex to "close" the polygon
-                push!(res[1], vlist[1, 1])
-                push!(res[2], vlist[1, 2])
+                if length(res[1]) > 2
+                    # add first vertex to "close" the polygon
+                    push!(res[1], vlist[1, 1])
+                    push!(res[2], vlist[1, 2])
+                end
             end
             if isempty(res)
                 continue
@@ -197,7 +199,7 @@ julia> plot(Bs, 1e-2)  # faster but less accurate than the previous call
 end
 
 """
-    plot_lazyset(X::LazySet{N}, [ε]::N=N(PLOT_PRECISION); ...) where {N<:Real}
+    plot_lazyset(X::LazySet{N}, [ε]::N=N(PLOT_PRECISION); ...) where {N}
 
 Plot a convex set.
 
@@ -208,7 +210,7 @@ Plot a convex set.
 
 ### Notes
 
-See [`plot_recipe(::LazySet{<:Real})`](@ref).
+See [`plot_recipe(::LazySet)`](@ref).
 
 For polyhedral set types (subtypes of `AbstractPolyhedron`), the argument `ε` is
 ignored.
@@ -223,8 +225,7 @@ julia> plot(B, 1e-3)  # default accuracy value (explicitly given for clarity)
 julia> plot(B, 1e-2)  # faster but less accurate than the previous call
 ```
 """
-@recipe function plot_lazyset(X::LazySet{N}, ε::N=N(PLOT_PRECISION)
-                             ) where {N<:Real}
+@recipe function plot_lazyset(X::LazySet{N}, ε::N=N(PLOT_PRECISION)) where {N}
     if dim(X) == 1
         plot_recipe(X, ε)
     else
@@ -259,8 +260,16 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
             res
         else
             x, y = res
-            if length(x) == 1 || norm([x[1], y[1]] - [x[2], y[2]]) ≈ 0
+            if length(x) == 1 ||
+                    (length(x) == 2 && norm([x[1], y[1]] - [x[2], y[2]]) ≈ 0)
+                # single point
                 seriestype := :scatter
+            elseif length(x) == 2
+                # flat line segment
+                linecolor   --> DEFAULT_COLOR
+                markercolor --> DEFAULT_COLOR
+                markershape --> :circle
+                seriestype := :path
             else
                 seriestype := :shape
             end
@@ -270,7 +279,7 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
 end
 
 """
-    plot_singleton(S::AbstractSingleton{N}, [ε]::N=zero(N); ...) where {N<:Real}
+    plot_singleton(S::AbstractSingleton{N}, [ε]::N=zero(N); ...) where {N}
 
 Plot a singleton.
 
@@ -285,8 +294,7 @@ Plot a singleton.
 julia> plot(Singleton([0.5, 1.0]))
 ```
 """
-@recipe function plot_singleton(S::AbstractSingleton{N}, ε::N=zero(N)
-                               ) where {N<:Real}
+@recipe function plot_singleton(S::AbstractSingleton{N}, ε::N=zero(N)) where {N}
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
     if DEFAULT_ASPECT_RATIO != :none
@@ -309,73 +317,6 @@ julia> plot(Singleton([0.5, 1.0]))
 end
 
 """
-    plot_linesegment(X::Union{Interval{N}, LineSegment{N}}, [ε]::N=zero(N); ...)
-        where {N<:Real}
-
-Plot a line segment or an interval.
-
-### Input
-
-- `X` -- line segment or interval
-- `ε` -- (optional, default: `0`) ignored, used for dispatch
-
-### Examples
-
-```julia
-julia> L = LineSegment([0., 0.], [1., 1.]);
-
-julia> plot(L)
-```
-
-To control the color of the line, use the `linecolor` keyword argument, and to
-control the color of the end points, use the `markercolor` keyword argument.
-To control the width, use `linewidth`.
-
-```julia
-julia> plot(L, markercolor="green", linecolor="red", linewidth=2.)
-```
-
-To omit the markers, use `markershape=:none`.
-You also need to pass a value for `seriestype=:path` explicitly (this seems to
-be an external bug).
-
-```julia
-julia> plot(L, seriestype=:path, markershape=:none)
-```
-
-A shorter alternative is to pass `marker=0`, but this may result in small dots
-as markers based on the plotting backend.
-
-```julia
-julia> plot(L, marker=0)
-```
-"""
-@recipe function plot_linesegment(X::Union{Interval{N}, LineSegment{N}},
-                                  ε::N=zero(N)) where {N<:Real}
-    label --> DEFAULT_LABEL
-    grid --> DEFAULT_GRID
-    if DEFAULT_ASPECT_RATIO != :none
-        aspect_ratio --> DEFAULT_ASPECT_RATIO
-    end
-    seriesalpha --> DEFAULT_ALPHA
-    linecolor   --> DEFAULT_COLOR
-    markercolor --> DEFAULT_COLOR
-    markershape --> :circle
-    seriestype := :path
-
-    # update manually set plot limits if necessary
-    p = plotattributes[:plot_object]
-    if length(p) > 0
-        lims = _extract_limits(p)
-        _update_plot_limits!(lims, X)
-        xlims --> lims[:x]
-        ylims --> lims[:y]
-    end
-
-    plot_recipe(X, ε)
-end
-
-"""
     plot_emptyset(∅::EmptySet, [ε]::N=zero(N); ...)
 
 Plot an empty set.
@@ -385,7 +326,7 @@ Plot an empty set.
 - `∅` -- empty set
 - `ε` -- (optional, default: `0`) ignored, used for dispatch
 """
-@recipe function plot_emptyset(∅::EmptySet{N}, ε::N=zero(N)) where {N<:Real}
+@recipe function plot_emptyset(∅::EmptySet{N}, ε::N=zero(N)) where {N}
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
     if DEFAULT_ASPECT_RATIO != :none
@@ -397,7 +338,7 @@ end
 
 """
     plot_intersection(cap::Intersection{N}, [ε]::N=zero(N),
-                      [Nφ]::Int=PLOT_POLAR_DIRECTIONS) where {N<:Real}
+                      [Nφ]::Int=PLOT_POLAR_DIRECTIONS) where {N}
 
 Plot a lazy intersection.
 
@@ -443,7 +384,7 @@ julia> plot(X, -1., 100)  # equivalent to the above line
 @recipe function plot_intersection(cap::Intersection{N},
                                    ε::N=zero(N),
                                    Nφ::Int=PLOT_POLAR_DIRECTIONS
-                                  ) where {N<:Real}
+                                  ) where {N}
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
     if DEFAULT_ASPECT_RATIO != :none
@@ -482,10 +423,10 @@ end
 
 # non-convex sets
 
-@recipe function plot_union(cup::UnionSet{N}, ε::N=zero(N)) where {N<:Real}
+@recipe function plot_union(cup::UnionSet{N}, ε::N=zero(N)) where {N}
     @series [cup.X, cup.Y], ε
 end
 
-@recipe function plot_union(cup::UnionSetArray{N}, ε::N=zero(N)) where {N<:Real}
+@recipe function plot_union(cup::UnionSetArray{N}, ε::N=zero(N)) where {N}
     @series array(cup), ε
 end

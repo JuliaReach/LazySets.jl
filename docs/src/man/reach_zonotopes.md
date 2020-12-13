@@ -37,7 +37,7 @@ wrapper (represented as a multiplication `*` of a matrix and a set) and a
 If the parameter `lazy` is `false`, the implementation calls the concrete
 counterparts `linear_map` and `minkowski_sum`.
 
-For further applications of LazySets in reachability analysis, we refer to the library [JuliaReach/Reachability.jl](https://github.com/JuliaReach/Reachability.jl).
+For further applications of LazySets in reachability analysis, we refer to the library [JuliaReach/ReachabilityAnalysis.jl](https://github.com/JuliaReach/ReachabilityAnalysis.jl).
 
 ## Algorithm
 
