@@ -7,8 +7,8 @@ CurrentModule = LazySets
 ```@docs
 Bloating
 dim(::Bloating)
-σ(::AbstractVector{N}, ::Bloating{N}) where {N<:AbstractFloat}
-ρ(::AbstractVector{N}, ::Bloating{N}) where {N<:AbstractFloat}
+σ(::AbstractVector, ::Bloating)
+ρ(::AbstractVector, ::Bloating)
 isbounded(::Bloating)
 isempty(::Bloating)
 an_element(::Bloating)
