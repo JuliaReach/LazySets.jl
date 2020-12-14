@@ -12,6 +12,7 @@ dim(::Bloating)
 isbounded(::Bloating)
 isempty(::Bloating)
 an_element(::Bloating)
+constraints_list(::Bloating)
 ```
 
 Inherited from [`LazySet`](@ref):

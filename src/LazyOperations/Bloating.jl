@@ -150,3 +150,34 @@ The implementation returns the result of `an_element` for the wrapped set.
 function an_element(B::Bloating)
     return an_element(B.X)
 end
+
+"""
+    constraints_list(B::Bloating)
+
+Return the list of constraints of a bloated set.
+
+### Input
+
+- `B` -- bloated set
+
+### Output
+
+The list of constraints of the bloated set.
+
+### Notes
+
+The constraints list is only available for bloating in the `p`-norm for
+``p = 1`` or ``p = ∞`` and if `constraints_list` is available for the unbloated
+set.
+
+### Algorithm
+
+We compute a concrete set representation via `minkowski_sum` and call
+`constraints_list` on the result.
+"""
+function constraints_list(B::Bloating)
+    @assert (B.p == 1 || B.p == Inf) "the constraints list is only available " *
+        "for bloating in the 1-norm or in the infinity norm"
+
+    return constraints_list(minkowski_sum(B.X, _bloating_ball(B)))
+end

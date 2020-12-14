@@ -46,5 +46,11 @@ for N in [Float64, Float32]
         d = N[1, 99//100]
         @test σ(d, X) == σ(d, B + Bp)
         @test ρ(d, X) == ρ(d, B + Bp)
+
+        # tests for infinity norm
+        if p == Inf
+            B_bloated = BallInf(zeros(N, 2), N(11/10))
+            @test constraints_list(X) == constraints_list(B_bloated)
+        end
     end
 end
