@@ -773,7 +773,8 @@ Convert a (bounded) polyhedron to a pair `(x, y)` of points for plotting.
 
 ### Output
 
-A pair `(x, y)` of points that can be plotted.
+A pair `(x, y)` of points that can be plotted, where `x` is the vector of x-coordinates
+and `y` is a vector of `y` is the vector of y-coordinates.
 
 ### Algorithm
 
@@ -792,14 +793,21 @@ function plot_recipe(P::AbstractPolyhedron{N}, ε=zero(N)) where {N}
     if dim(P) == 1
         return plot_recipe(convert(Interval, P), ε)
     else
-        vlist = transpose(hcat(convex_hull(vertices_list(P))...))
-        if isempty(vlist)
+        vlist = convex_hull(vertices_list(P))
+        m = length(vlist)
+        if m == 0
             @warn "received a polyhedron with no vertices during plotting"
             return plot_recipe(EmptySet{N}(2), ε)
         end
-        x, y = vlist[:, 1], vlist[:, 2]
 
-        if length(x) > 2
+        x = Vector{N}(undef, m)
+        y = Vector{N}(undef, m)
+        @inbounds for (i, vi) in enumerate(vlist)
+            x[i] = vi[1]
+            y[i] = vi[2]
+        end
+
+        if m > 2
             # add first vertex to "close" the polygon
             push!(x, x[1])
             push!(y, y[1])
