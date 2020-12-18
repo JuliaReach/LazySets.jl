@@ -456,7 +456,7 @@ function _is_intersection_empty(Z::AbstractZonotope, H::Union{Hyperplane, Line2D
     return !_geq(v, -abs_sum) || !_leq(v, abs_sum)
 end
 
-function _is_intersection_empty(Z::Zonotope, H::Hyperplane, ::Val{true})
+function _is_intersection_empty(Z::AbstractZonotope, H::Union{Hyperplane, Line2D}, ::Val{true})
     is_intersection_empty_helper_hyperplane(H, Z, true)
 end
 
