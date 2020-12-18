@@ -774,7 +774,7 @@ Convert a (bounded) polyhedron to a pair `(x, y)` of points for plotting.
 ### Output
 
 A pair `(x, y)` of points that can be plotted, where `x` is the vector of x-coordinates
-and `y` is a vector of `y` is the vector of y-coordinates.
+and `y` is the vector of y-coordinates.
 
 ### Algorithm
 
