@@ -587,9 +587,7 @@ Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
 """
 function convert(::Type{Interval}, H::AbstractHyperrectangle)
     @assert dim(H) == 1 "can only convert a one-dimensional $(typeof(H)) to `Interval`"
-    r = radius_hyperrectangle(H, 1)
-    c = center(H, 1)
-    return Interval(c-r, c+r)
+    return Interval(low(H, 1), high(H, 1))
 end
 
 """
