@@ -90,6 +90,35 @@ end
 
 # --- LazySet interface functions ---
 
+"""
+    ρ(d::AbstractVector, B::Ball2)
+
+Return the support function of a 2-norm ball in a given direction.
+
+### Input
+
+- `d` -- direction
+- `B` -- ball in the 2-norm
+
+### Output
+
+The support function in the given direction.
+
+### Notes
+
+Let ``c`` and ``r`` be the center and radius of the ball ``B`` in the 2-norm,
+respectively. Then:
+
+```math
+ρ(d, B) = ⟨d, c⟩ + r ‖d‖_2.
+```
+"""
+function ρ(d::AbstractVector, B::Ball2)
+    c = B.center
+    r = B.radius
+    dnorm = norm(d, 2)
+    return dot(d, c) + dnorm * r
+end
 
 """
     σ(d::AbstractVector, B::Ball2)

@@ -6,6 +6,7 @@ CurrentModule = LazySets
 
 ```@docs
 Ball2
+ρ(::AbstractVector, ::Ball2)
 σ(::AbstractVector, ::Ball2)
 ∈(::AbstractVector, ::Ball2)
 center(::Ball2)
