@@ -699,3 +699,19 @@ end
         return result
     end
 end
+
+function vertices_list(x::IntervalArithmetic.Interval{N}) where {N}
+    a = IntervalArithmetic.inf(x)
+    b = IntervalArithmetic.sup(x)
+    ST = IntervalArithmetic.SVector{1, N}
+    if _isapprox(a, b)
+        vlist = [ST(a)]
+    else
+        vlist = [ST(a), ST(b)]
+    end
+    return vlist
+end
+
+function vertices_list(H::IntervalArithmetic.IntervalBox)
+    return vertices_list(convert(Hyperrectangle, H))
+end
