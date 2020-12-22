@@ -1,4 +1,39 @@
-export inner
+export inner,
+       _abs_sum
+
+# computes ‖a^T G‖₁
+@inline function _abs_sum(a::AbstractVector, G::AbstractMatrix)
+   n, p = size(G)
+   N = promote_type(eltype(a), eltype(G))
+   abs_sum = zero(N)
+   @inbounds for j in 1:p
+       aux = zero(N)
+       @simd for i in 1:n
+           aux += a[i] * G[i, j]
+       end
+       abs_sum += abs(aux)
+   end
+   return abs_sum
+end
+
+# computes ‖a^T G‖₁ for `a` being a sparse vector
+@inline function _abs_sum(a::AbstractSparseVector, G::AbstractMatrix)
+   return sum(abs, transpose(a) * G)
+end
+
+# computes ‖a^T G‖₁ for `a` having only one nonzero element
+@inline function _abs_sum(a::SingleEntryVector, G::AbstractMatrix)
+   p = size(G, 2)
+   i = a.i
+   v = abs(a.v)
+   N = promote_type(eltype(a), eltype(G))
+   abs_sum = zero(N)
+   @inbounds for j in 1:p
+       abs_sum += abs(G[i, j])
+   end
+   abs_sum *= v
+   return abs_sum
+end
 
 """
     inner(x::AbstractVector{N}, A::AbstractMatrix{N}, y::AbstractVector{N}
