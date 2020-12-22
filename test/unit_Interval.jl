@@ -211,5 +211,5 @@ for N in Ns
     @test is_cyclic_permutation(vlistIB, [SA[N(1), N(1)], SA[N(0), N(1)], SA[N(1), N(0)], SA[N(0), N(0)]])
 
     vlistI = vertices_list(b[1])
-    @test is_cyclic_permutation(vlistI, [SA[N(0)], SA[N(1)]]
+    @test is_cyclic_permutation(vlistI, [SA[N(0)], SA[N(1)]])
 end
