@@ -204,4 +204,12 @@ for N in Ns
     @test rectify(x) == Interval(N(0), N(2))
     x = Interval(N(1), N(2))
     @test rectify(x) == x
+
+    # list of vertices of IA types
+    b = (0 .. 1) × (0 .. 1)
+    vlistIB = vertices_list(b)
+    @test is_cyclic_permutation(vlistIB, [SA[N(1), N(1)], SA[N(0), N(1)], SA[N(1), N(0)], SA[N(0), N(0)]])
+
+    vlistI = vertices_list(b[1])
+    @test is_cyclic_permutation(vlistI, [SA[N(0)], SA[N(1)]]
 end
