@@ -29,6 +29,10 @@ for N in Ns
     @test min(x) == N(0) && max(x) == N(1)
     v = vertices_list(x)
     @test N[0] in v && N[1] in v
+
+    # vertices list for degenerate interval
+    @test vertices_list(Interval(N(0), N(0))) == [[N(0)]]
+
     # test interface method an_element and membership
     @test an_element(x) ∈ x
     # test containment

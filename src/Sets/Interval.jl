@@ -384,10 +384,13 @@ Return the list of vertices of this interval.
 
 ### Output
 
-The list of vertices of the interval represented as two one-dimensional vectors.
+The list of vertices of the interval represented as two one-dimensional vectors,
+or just one if the interval is degenerate (the endpoints match within the tolerance).
 """
 function vertices_list(x::Interval)
-    return [[min(x)], [max(x)]]
+    a = min(x)
+    b = max(x)
+    return _isapprox(a, b) ? [[a]] : [[a], [b]]
 end
 
 """
