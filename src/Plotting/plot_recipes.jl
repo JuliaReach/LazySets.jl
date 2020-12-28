@@ -382,8 +382,7 @@ julia> plot(Singleton([0.5, 1.0]))
         ylims --> lims[:y]
     end
 
-    p = element(S)
-    [p[1], p[2]]
+    plot_recipe(S, ε)
 end
 
 """
