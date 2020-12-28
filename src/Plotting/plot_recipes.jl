@@ -254,7 +254,7 @@ function _plot_singleton_list_1D(list::Vector{SN}) where {N, SN<:AbstractSinglet
     x, y
 end
 
-function _plot_singleton_list_2D(list::Vector{SN}) where {N, SN<:AbstractSingleton{N}}
+function _plot_singleton_list_2D(list::AbstractVector{SN}) where {N, SN<:AbstractSingleton{N}}
     m = length(list)
     x = Vector{N}()
     y = Vector{N}()
