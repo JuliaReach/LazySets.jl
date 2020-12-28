@@ -199,7 +199,7 @@ julia> plot(Bs, 1e-2)  # faster but less accurate than the previous call
 end
 
 # recipe for vector of singletons
-@recipe function plot_list(list::Vector{SN}) where {N, SN<:AbstractSingleton{N}}
+@recipe function plot_list(list::AbstractVector{SN}) where {N, SN<:AbstractSingleton{N}}
 
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
