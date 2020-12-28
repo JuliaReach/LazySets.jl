@@ -198,6 +198,75 @@ julia> plot(Bs, 1e-2)  # faster but less accurate than the previous call
     end
 end
 
+# recipe for vector of singletons
+@recipe function plot_list(list::AbstractVector{SN}) where {N, SN<:AbstractSingleton{N}}
+
+    label --> DEFAULT_LABEL
+    grid --> DEFAULT_GRID
+    if DEFAULT_ASPECT_RATIO != :none
+        aspect_ratio --> DEFAULT_ASPECT_RATIO
+    end
+    seriesalpha --> DEFAULT_ALPHA
+    seriescolor --> DEFAULT_COLOR
+    seriestype --> :scatter
+
+    _plot_singleton_list(list)
+end
+
+# plot recipe for the union of singletons
+@recipe function plot_list(X::UnionSetArray{N, SN}) where {N, SN<:AbstractSingleton{N}}
+
+    label --> DEFAULT_LABEL
+    grid --> DEFAULT_GRID
+    if DEFAULT_ASPECT_RATIO != :none
+        aspect_ratio --> DEFAULT_ASPECT_RATIO
+    end
+    seriesalpha --> DEFAULT_ALPHA
+    seriescolor --> DEFAULT_COLOR
+    seriestype --> :scatter
+
+    list = array(X)
+    _plot_singleton_list(list)
+end
+
+function _plot_singleton_list(list)
+    n = dim(first(list))
+    if n == 1
+        _plot_singleton_list_1D(list)
+    elseif n == 2
+        _plot_singleton_list_2D(list)
+    else
+        throw(ArgumentError("plotting a vector of singletons is only available for dimensions " *
+             "one or two, got dimension $n"))
+    end
+end
+
+function _plot_singleton_list_1D(list::AbstractVector{SN}) where {N, SN<:AbstractSingleton{N}}
+    m = length(list)
+
+    x = Vector{N}(undef, m)
+    y = zeros(N, m)
+
+    @inbounds for (i, Xi) in enumerate(list)
+        p = element(Xi)
+        x[i] = p[1]
+    end
+    x, y
+end
+
+function _plot_singleton_list_2D(list::AbstractVector{SN}) where {N, SN<:AbstractSingleton{N}}
+    m = length(list)
+    x = Vector{N}(undef, m)
+    y = Vector{N}(undef, m)
+
+    @inbounds for (i, Xi) in enumerate(list)
+        p = element(Xi)
+        x[i] = p[1]
+        y[i] = p[2]
+    end
+    x, y
+end
+
 """
     plot_lazyset(X::LazySet{N}, [ε]::N=N(PLOT_PRECISION); ...) where {N}
 
