@@ -230,6 +230,31 @@ end
 end
 
 function _plot_singleton_list(list::Vector{SN}) where {N, SN<:AbstractSingleton{N}}
+    n = dim(first(list))
+    if n == 1
+        _plot_singleton_list_1D(list)
+    elseif n == 2
+        _plot_singleton_list_2D(list)
+    else
+        throw(ArgumentError("plotting a vector of singletons is only available for dimensions " *
+             "one or two, got dimension $n"))
+    end
+end
+
+function _plot_singleton_list_1D(list::Vector{SN}) where {N, SN<:AbstractSingleton{N}}
+    m = length(list)
+    x = Vector{N}()
+    y = Vector{N}()
+
+    for Xi in list
+        p = element(Xi)
+        push!(x, p[1])
+        push!(y, zero(N))
+    end
+    x, y
+end
+
+function _plot_singleton_list_2D(list::Vector{SN}) where {N, SN<:AbstractSingleton{N}}
     m = length(list)
     x = Vector{N}()
     y = Vector{N}()
