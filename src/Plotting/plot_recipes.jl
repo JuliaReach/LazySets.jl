@@ -229,7 +229,7 @@ end
     _plot_singleton_list(list)
 end
 
-function _plot_singleton_list(list::Vector{SN}) where {N, SN<:AbstractSingleton{N}}
+function _plot_singleton_list(list)
     n = dim(first(list))
     if n == 1
         _plot_singleton_list_1D(list)
