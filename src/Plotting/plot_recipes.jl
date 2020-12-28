@@ -256,13 +256,13 @@ end
 
 function _plot_singleton_list_2D(list::AbstractVector{SN}) where {N, SN<:AbstractSingleton{N}}
     m = length(list)
-    x = Vector{N}()
-    y = Vector{N}()
+    x = Vector{N}(undef, m)
+    y = Vector{N}(undef, m)
 
-    for Xi in list
+    @inbounds for (i, Xi) in enumerate(list)
         p = element(Xi)
-        push!(x, p[1])
-        push!(y, p[2])
+        x[i] = p[1]
+        y[i] = p[2]
     end
     x, y
 end
