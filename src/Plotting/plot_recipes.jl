@@ -243,13 +243,13 @@ end
 
 function _plot_singleton_list_1D(list::Vector{SN}) where {N, SN<:AbstractSingleton{N}}
     m = length(list)
-    x = Vector{N}()
-    y = Vector{N}()
+```suggestion
+    x = Vector{N}(undef, m)
+    y = zeros(N, m)
 
-    for Xi in list
+    @inbounds for (i, Xi) in enumerate(list)
         p = element(Xi)
-        push!(x, p[1])
-        push!(y, zero(N))
+        x[i] = p[1]
     end
     x, y
 end
