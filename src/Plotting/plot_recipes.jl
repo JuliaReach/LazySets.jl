@@ -243,7 +243,7 @@ end
 
 function _plot_singleton_list_1D(list::AbstractVector{SN}) where {N, SN<:AbstractSingleton{N}}
     m = length(list)
-```suggestion
+
     x = Vector{N}(undef, m)
     y = zeros(N, m)
 
