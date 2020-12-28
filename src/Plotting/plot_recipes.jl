@@ -198,6 +198,50 @@ julia> plot(Bs, 1e-2)  # faster but less accurate than the previous call
     end
 end
 
+# recipe for vector of singletons
+@recipe function plot_list(list::Vector{SN}) where {N, SN<:AbstractSingleton{N}}
+
+    label --> DEFAULT_LABEL
+    grid --> DEFAULT_GRID
+    if DEFAULT_ASPECT_RATIO != :none
+        aspect_ratio --> DEFAULT_ASPECT_RATIO
+    end
+    seriesalpha --> DEFAULT_ALPHA
+    seriescolor --> DEFAULT_COLOR
+    seriestype --> :scatter
+
+    _plot_singleton_list(list)
+end
+
+# plot recipe for the union of singletons
+@recipe function plot_list(X::UnionSetArray{N, SN}) where {N, SN<:AbstractSingleton{N}}
+
+    label --> DEFAULT_LABEL
+    grid --> DEFAULT_GRID
+    if DEFAULT_ASPECT_RATIO != :none
+        aspect_ratio --> DEFAULT_ASPECT_RATIO
+    end
+    seriesalpha --> DEFAULT_ALPHA
+    seriescolor --> DEFAULT_COLOR
+    seriestype --> :scatter
+
+    list = array(X)
+    _plot_singleton_list(list)
+end
+
+function _plot_singleton_list(list::Vector{SN}) where {N, SN<:AbstractSingleton{N}}
+    m = length(list)
+    x = Vector{N}()
+    y = Vector{N}()
+
+    for Xi in list
+        p = element(Xi)
+        push!(x, p[1])
+        push!(y, p[2])
+    end
+    x, y
+end
+
 """
     plot_lazyset(X::LazySet{N}, [ε]::N=N(PLOT_PRECISION); ...) where {N}
 
@@ -313,7 +357,8 @@ julia> plot(Singleton([0.5, 1.0]))
         ylims --> lims[:y]
     end
 
-    plot_recipe(S, ε)
+    p = element(S)
+    [p[1], p[2]]
 end
 
 """
