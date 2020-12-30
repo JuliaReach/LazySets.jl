@@ -10,7 +10,7 @@ export Zonotope,
 using LazySets.Arrays: _vector_type, _matrix_type
 
 """
-    Zonotope{N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
+    Zonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
 
 Type that represents a zonotope.
 
@@ -97,11 +97,11 @@ julia> genmat(Z)
  0.0  1.0  1.0
 ```
 """
-struct Zonotope{N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
+struct Zonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
     center::VN
     generators::MN
 
-    function Zonotope(center::VN, generators::MN) where {N<:Real,
+    function Zonotope(center::VN, generators::MN) where {N,
                                                          VN<:AbstractVector{N},
                                                          MN<:AbstractMatrix{N}}
         @assert length(center) == size(generators, 1) "the dimension of the " *
@@ -115,7 +115,7 @@ isoperationtype(::Type{<:Zonotope}) = false
 isconvextype(::Type{<:Zonotope}) = true
 
 # constructor from center and list of generators
-function Zonotope(center::VN, generators_list::AbstractVector{VN}) where {N<:Real, VN<:AbstractVector{N}}
+function Zonotope(center::VN, generators_list::AbstractVector{VN}) where {VN<:AbstractVector}
     MT = _matrix_type(VN)
     G = MT(undef, length(center), length(generators_list))
     for (j, gj) in enumerate(generators_list)
@@ -125,9 +125,7 @@ function Zonotope(center::VN, generators_list::AbstractVector{VN}) where {N<:Rea
 end
 
 """
-    remove_zero_generators(Z::Zonotope{N, VN, MN}) where {N<:Real,
-                                                          VN<:AbstractVector{N},
-                                                          MN<:AbstractMatrix{N}}
+    remove_zero_generators(Z::Zonotope)
 
 Return a new zonotope removing the generators which are zero of the given zonotope.
 
@@ -141,9 +139,7 @@ If there are no zero generators, the result is the original zonotope `Z`.
 Otherwise the result is a new zonotope that has the center and generators as `Z`
 except for those generators that are zero.
 """
-function remove_zero_generators(Z::Zonotope{N, VN, MN}) where {N<:Real,
-                                                               VN<:AbstractVector{N},
-                                                               MN<:AbstractMatrix{N}}
+function remove_zero_generators(Z::Zonotope)
     G = Z.generators
     G2 = remove_zero_columns(G)
     if G === G2
@@ -156,7 +152,7 @@ end
 
 
 """
-    center(Z::Zonotope{N}) where {N<:Real}
+    center(Z::Zonotope)
 
 Return the center of a zonotope.
 
@@ -168,7 +164,7 @@ Return the center of a zonotope.
 
 The center of the zonotope.
 """
-function center(Z::Zonotope{N}) where {N<:Real}
+function center(Z::Zonotope)
     return Z.center
 end
 
@@ -353,9 +349,10 @@ A new zonotope with less generators, if possible.
 
 ### Algorithm
 
-See `overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, Rational}) where {N<:Real}` for details.
+See `overapproximate(Z::Zonotope, ::Type{<:Zonotope}, r::Union{Integer, Rational})`
+for details.
 """
-function reduce_order(Z::Zonotope{N}, r::Union{Integer, Rational}) where {N<:Real}
+function reduce_order(Z::Zonotope, r::Union{Integer, Rational})
     return overapproximate(Z, Zonotope, r)
 end
 
@@ -607,7 +604,7 @@ function _vertices_list_iterative(c::VN, G::MN; apply_convex_hull::Bool) where {
     vlist = Vector{VN}()
     sizehint!(vlist, 2^p)
 
-    for ξi in Iterators.product([[1, -1] for i = 1:p]...)
+    for ξi in Iterators.product([(1, -1) for i = 1:p]...)
         push!(vlist, c .+ G * collect(ξi))
     end
 

@@ -30,7 +30,7 @@ function getindex(cp::CachedPair, idx::Int)
 end
 
 """
-    CachedMinkowskiSumArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
+    CachedMinkowskiSumArray{N, S<:LazySet{N}} <: LazySet{N}
 
 Type that represents the Minkowski sum of a finite number of convex sets.
 Support vector queries are cached.
@@ -61,12 +61,12 @@ Constructors:
 - `CachedMinkowskiSumArray([n]::Int=0, [N]::Type=Float64)`
   -- constructor for an empty sum with optional size hint and numeric type
 """
-struct CachedMinkowskiSumArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
+struct CachedMinkowskiSumArray{N, S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
     cache::Dict{AbstractVector{N}, CachedPair{N}}
 
     # default constructor that initializes cache
-    CachedMinkowskiSumArray(arr::Vector{S}) where {N<:Real, S<:LazySet{N}} =
+    CachedMinkowskiSumArray(arr::Vector{S}) where {N, S<:LazySet{N}} =
         new{N, S}(arr, Dict{AbstractVector{N}, CachedPair{N}}())
 end
 
@@ -88,7 +88,7 @@ end
 # @absorbing(CachedMinkowskiSumArray, Universe)  # TODO problematic
 
 """
-    array(cms::CachedMinkowskiSumArray{N, S}) where {N<:Real, S<:LazySet{N}}
+    array(cms::CachedMinkowskiSumArray)
 
 Return the array of a caching Minkowski sum.
 
@@ -100,8 +100,7 @@ Return the array of a caching Minkowski sum.
 
 The array of a caching Minkowski sum.
 """
-function array(cms::CachedMinkowskiSumArray{N, S}
-              ) where {N<:Real, S<:LazySet{N}}
+function array(cms::CachedMinkowskiSumArray)
     return cms.array
 end
 
@@ -123,7 +122,7 @@ function dim(cms::CachedMinkowskiSumArray)
 end
 
 """
-    σ(d::AbstractVector{N}, cms::CachedMinkowskiSumArray{N}) where {N<:Real}
+    σ(d::AbstractVector, cms::CachedMinkowskiSumArray)
 
 Return the support vector of a caching Minkowski sum in a given direction.
 
@@ -144,7 +143,7 @@ constant time.
 When sets are added to the caching Minkowski sum, the query is only performed
 for the new sets.
 """
-function σ(d::AbstractVector{N}, cms::CachedMinkowskiSumArray{N}) where {N<:Real}
+function σ(d::AbstractVector, cms::CachedMinkowskiSumArray)
     arr = array(cms)
     l = length(arr)
     cache = cms.cache

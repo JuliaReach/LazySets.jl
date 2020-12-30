@@ -219,6 +219,31 @@ function convert(::Type{HPolytope}, P::VPolytope)
 end
 
 """
+    convert(::Type{VPolytope}, X::LazySet; [prune]::Bool=true)
+
+Generic conversion to polytope in vertex representation.
+
+### Input
+
+- `type`  -- target type
+- `X`     -- set
+- `prune` -- (optional, default: `true`) option to remove redundant vertices
+
+### Output
+
+The given set represented as a polytope in vertex representation.
+
+### Algorithm
+
+We compute the list of vertices of `X` and wrap the result in a polytope in
+vertex representation, `VPolytope`. Use the option `prune` to select whether or not
+to remove redundant vertices before constructing the polytope.
+"""
+function convert(::Type{VPolytope}, X::LazySet; prune::Bool=true)
+    return VPolytope(vertices_list(X, prune=prune))
+end
+
+"""
     convert(::Type{VPolytope}, P::HPolytope)
 
 Convert from polytope in H-representation to polytope in V-representation.
@@ -586,8 +611,8 @@ Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
 ```
 """
 function convert(::Type{Interval}, H::AbstractHyperrectangle)
-    @assert dim(H) == 1 "cannot convert a $(dim(H))-dimensional $(typeof(H)) to `Interval`"
-    return Interval(low(H)[1], high(H)[1])
+    @assert dim(H) == 1 "can only convert a one-dimensional $(typeof(H)) to `Interval`"
+    return Interval(low(H, 1), high(H, 1))
 end
 
 """
@@ -1132,3 +1157,7 @@ function convert(::Type{Zonotope}, cpa::CartesianProductArray{N, AZ}) where
     G = reduce(blockdiag, sparse.(genmat.(arr)))
     return Zonotope(c, G)
 end
+
+convert(::Type{HPolytope}, P::HPolyhedron) = HPolytope(copy(constraints_list(P)))
+
+convert(::Type{HPolyhedron}, P::HPolytope) = HPolyhedron(copy(constraints_list(P)))

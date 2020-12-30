@@ -33,6 +33,10 @@ eval(quote
     function _vec(vars::NTuple{L, Union{<:Operation, <:Vector{Operation}}}) where {L}
         return collect(reduce(vcat, vars))
     end
+
+    # case with a single variable
+    _vec(vars::Tuple{Operation}) = [vars[1]]
+
 end)
 
 eval(load_modeling_toolkit_hyperplane())

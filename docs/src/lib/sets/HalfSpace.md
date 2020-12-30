@@ -8,22 +8,22 @@ CurrentModule = LazySets
 HalfSpace
 LinearConstraint
 dim(::HalfSpace)
-ρ(::AbstractVector{N}, ::HalfSpace{N}) where {N<:Real}
-σ(::AbstractVector{N}, ::HalfSpace{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::HalfSpace{N}) where {N<:Real}
-an_element(::HalfSpace{N}) where {N<:Real}
+ρ(::AbstractVector, ::HalfSpace)
+σ(::AbstractVector, ::HalfSpace)
+∈(::AbstractVector, ::HalfSpace)
+an_element(::HalfSpace)
 rand(::Type{HalfSpace})
-normalize(::HalfSpace{N}, p=N(2)) where {N<:Real}
+normalize(::HalfSpace{N}, p=N(2)) where {N}
 isbounded(::HalfSpace)
-isuniversal(::HalfSpace{N}, ::Bool=false) where {N<:Real}
+isuniversal(::HalfSpace, ::Bool=false)
 isempty(::HalfSpace)
-constraints_list(::HalfSpace{N}) where {N<:Real}
-constraints_list(::AbstractMatrix{N}, ::AbstractVector{N}) where {N<:Real}
-constrained_dimensions(::HalfSpace{N}) where {N<:Real}
-translate(::HalfSpace{N}, ::AbstractVector{N}) where {N<:Real}
-halfspace_left(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
-halfspace_right(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
-tosimplehrep(::AbstractVector{LC}) where {N<:Real, LC<:LinearConstraint{N}}
+constraints_list(::HalfSpace)
+constraints_list(::AbstractMatrix, ::AbstractVector)
+constrained_dimensions(::HalfSpace)
+translate(::HalfSpace, ::AbstractVector)
+halfspace_left(::AbstractVector, ::AbstractVector)
+halfspace_right(::AbstractVector, ::AbstractVector)
+tosimplehrep(::AbstractVector{LC}) where {N, LC<:LinearConstraint{N}}
 remove_redundant_constraints
 remove_redundant_constraints!
 ```

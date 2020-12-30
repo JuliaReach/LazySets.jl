@@ -6,7 +6,7 @@ export MinkowskiSumArray,
 # ==================================
 
 """
-   MinkowskiSumArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
+   MinkowskiSumArray{N, S<:LazySet{N}} <: LazySet{N}
 
 Type that represents the Minkowski sum of a finite number of convex sets.
 
@@ -28,7 +28,7 @@ Constructors:
 - `MinkowskiSumArray([n]::Int=0, [N]::Type=Float64)`
  -- constructor for an empty sum with optional size hint and numeric type
 """
-struct MinkowskiSumArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
+struct MinkowskiSumArray{N, S<:LazySet{N}} <: LazySet{N}
    array::Vector{S}
 end
 
@@ -53,7 +53,7 @@ end
 @declare_array_version(MinkowskiSum, MinkowskiSumArray)
 
 """
-   array(msa::MinkowskiSumArray{N, S}) where {N<:Real, S<:LazySet{N}}
+   array(msa::MinkowskiSumArray)
 
 Return the array of a Minkowski sum of a finite number of convex sets.
 
@@ -65,7 +65,7 @@ Return the array of a Minkowski sum of a finite number of convex sets.
 
 The array of a Minkowski sum of a finite number of convex sets.
 """
-function array(msa::MinkowskiSumArray{N, S}) where {N<:Real, S<:LazySet{N}}
+function array(msa::MinkowskiSumArray)
    return msa.array
 end
 
@@ -87,7 +87,7 @@ function dim(msa::MinkowskiSumArray)
 end
 
 """
-   σ(d::AbstractVector{N}, msa::MinkowskiSumArray{N}) where {N<:Real}
+   σ(d::AbstractVector, msa::MinkowskiSumArray)
 
 Return the support vector of a Minkowski sum of a finite number of sets in a
 given direction.
@@ -102,12 +102,12 @@ given direction.
 The support vector in the given direction.
 If the direction has norm zero, the result depends on the summand sets.
 """
-function σ(d::AbstractVector{N}, msa::MinkowskiSumArray{N}) where {N<:Real}
+function σ(d::AbstractVector, msa::MinkowskiSumArray)
    return σ_helper(d, msa.array)
 end
 
 """
-   ρ(d::AbstractVector{N}, msa::MinkowskiSumArray{N}) where {N<:Real}
+   ρ(d::AbstractVector, msa::MinkowskiSumArray)
 
 Return the support function of a Minkowski sum array of a finite number of sets
 in a given direction.
@@ -126,8 +126,8 @@ The support function in the given direction.
 The support function of the Minkowski sum of sets is the sum of the support
 functions of each set.
 """
-function ρ(d::AbstractVector{N}, msa::MinkowskiSumArray{N}) where {N<:Real}
-   return sum([ρ(d, Xi) for Xi in msa.array])
+function ρ(d::AbstractVector, msa::MinkowskiSumArray)
+   return sum(ρ(d, Xi) for Xi in msa.array)
 end
 
 """

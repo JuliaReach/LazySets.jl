@@ -205,6 +205,7 @@ Pages = [
     "lib/sets/Line2D.md",
     "lib/sets/Line.md",
     "lib/sets/Universe.md",
+    "lib/sets/HParallelotope.md",
     "lib/sets/HPolytope.md",
     "lib/sets/VPolytope.md",
     "lib/sets/HPolygon.md",

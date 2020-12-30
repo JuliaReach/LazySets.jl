@@ -5,7 +5,7 @@ export CartesianProductArray,
        same_block_structure
 
 """
-   CartesianProductArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
+   CartesianProductArray{N, S<:LazySet{N}} <: LazySet{N}
 
 Type that represents the Cartesian product of a finite number of convex sets.
 
@@ -24,7 +24,7 @@ Constructors:
 - `CartesianProductArray([n]::Int=0, [N]::Type=Float64)`
  -- constructor for an empty product with optional size hint and numeric type
 """
-struct CartesianProductArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
+struct CartesianProductArray{N, S<:LazySet{N}} <: LazySet{N}
    array::Vector{S}
 end
 
@@ -45,7 +45,7 @@ isconvextype(::Type{CartesianProductArray{N, S}}) where {N, S} = isconvextype(S)
 @declare_array_version(CartesianProduct, CartesianProductArray)
 
 """
-   array(cpa::CartesianProductArray{N, S}) where {N<:Real, S<:LazySet{N}}
+   array(cpa::CartesianProductArray{N, S}) where {N, S<:LazySet{N}}
 
 Return the array of a Cartesian product of a finite number of convex sets.
 
@@ -57,8 +57,7 @@ Return the array of a Cartesian product of a finite number of convex sets.
 
 The array of a Cartesian product of a finite number of convex sets.
 """
-function array(cpa::CartesianProductArray{N, S}
-             ) where {N<:Real, S<:LazySet{N}}
+function array(cpa::CartesianProductArray)
    return cpa.array
 end
 
@@ -81,7 +80,7 @@ function dim(cpa::CartesianProductArray)
 end
 
 """
-   σ(d::AbstractVector{N}, cpa::CartesianProductArray{N}) where {N<:Real}
+   σ(d::AbstractVector, cpa::CartesianProductArray)
 
 Support vector of a Cartesian product array.
 
@@ -95,7 +94,7 @@ Support vector of a Cartesian product array.
 The support vector in the given direction.
 If the direction has norm zero, the result depends on the product sets.
 """
-function σ(d::AbstractVector{N}, cpa::CartesianProductArray{N}) where {N<:Real}
+function σ(d::AbstractVector, cpa::CartesianProductArray)
    svec = similar(d)
    i0 = 1
    for Xi in cpa.array
@@ -107,8 +106,7 @@ function σ(d::AbstractVector{N}, cpa::CartesianProductArray{N}) where {N<:Real}
 end
 
 # faster version for sparse vectors
-function σ(d::AbstractSparseVector{N}, cpa::CartesianProductArray{N}
-         ) where {N<:Real}
+function σ(d::AbstractSparseVector, cpa::CartesianProductArray)
    # idea: We walk through the blocks of `cpa` (i.e., the sets `Xi`) and search
    # for corresponding non-zero entries in `d` (stored in `indices`).
    # `next_idx` is the next index of `indices` such that
@@ -147,7 +145,7 @@ function σ(d::AbstractSparseVector{N}, cpa::CartesianProductArray{N}
 end
 
 """
-   ρ(d::AbstractVector{N}, cp::CartesianProductArray{N}) where {N<:Real}
+   ρ(d::AbstractVector, cpa::CartesianProductArray)
 
 Return the support function of a Cartesian product array.
 
@@ -161,7 +159,8 @@ Return the support function of a Cartesian product array.
 The support function in the given direction.
 If the direction has norm zero, the result depends on the wrapped sets.
 """
-function ρ(d::AbstractVector{N}, cpa::CartesianProductArray{N}) where {N<:Real}
+function ρ(d::AbstractVector, cpa::CartesianProductArray)
+   N = promote_type(eltype(d), eltype(cpa))
    sfun = zero(N)
    i0 = 1
    for Xi in cpa.array
@@ -173,8 +172,8 @@ function ρ(d::AbstractVector{N}, cpa::CartesianProductArray{N}) where {N<:Real}
 end
 
 # faster version for sparse vectors
-function ρ(d::AbstractSparseVector{N}, cpa::CartesianProductArray{N}
-         ) where {N<:Real}
+function ρ(d::AbstractSparseVector, cpa::CartesianProductArray)
+   N = promote_type(eltype(d), eltype(cpa))
    # idea: see the σ method for AbstractSparseVector
    sfun = zero(N)
    indices, _ = SparseArrays.findnz(d)
@@ -227,7 +226,7 @@ function isbounded(cpa::CartesianProductArray)
 end
 
 """
-   ∈(x::AbstractVector{N}, cpa::CartesianProductArray{N}) where {N<:Real}
+   ∈(x::AbstractVector, cpa::CartesianProductArray)
 
 Check whether a given point is contained in a Cartesian product of a finite
 number of sets.
@@ -241,8 +240,7 @@ number of sets.
 
 `true` iff ``x ∈ \\text{cpa}``.
 """
-function ∈(x::AbstractVector{N}, cpa::CartesianProductArray{N}
-         ) where {N<:Real}
+function ∈(x::AbstractVector, cpa::CartesianProductArray)
    @assert length(x) == dim(cpa)
 
    i0 = 1
@@ -274,7 +272,7 @@ function isempty(cpa::CartesianProductArray)
 end
 
 """
-   constraints_list(cpa::CartesianProductArray{N}) where {N<:Real}
+   constraints_list(cpa::CartesianProductArray{N}) where {N}
 
 Return the list of constraints of a (polyhedral) Cartesian product of a finite
 number of sets.
@@ -287,7 +285,7 @@ number of sets.
 
 A list of constraints.
 """
-function constraints_list(cpa::CartesianProductArray{N}) where {N<:Real}
+function constraints_list(cpa::CartesianProductArray{N}) where {N}
    clist = Vector{LinearConstraint{N, SparseVector{N, Int}}}()
    n = dim(cpa)
    sizehint!(clist, n)
@@ -309,7 +307,7 @@ function constraints_list(cpa::CartesianProductArray{N}) where {N<:Real}
 end
 
 """
-   vertices_list(cpa::CartesianProductArray{N}) where {N<:Real}
+   vertices_list(cpa::CartesianProductArray{N}) where {N}
 
 Return the list of vertices of a (polytopic) Cartesian product of a finite
 number of sets.
@@ -328,7 +326,7 @@ We assume that the underlying sets are polytopic.
 Then the high-dimensional set of vertices is just the Cartesian product of the
 low-dimensional sets of vertices.
 """
-function vertices_list(cpa::CartesianProductArray{N}) where {N<:Real}
+function vertices_list(cpa::CartesianProductArray{N}) where {N}
    # collect low-dimensional vertices lists
    vlist_low = [vertices_list(X) for X in array(cpa)]
 
@@ -522,8 +520,8 @@ end
 
 """
    substitute_blocks(low_dim_cpa::CartesianProductArray{N},
-                        orig_cpa::CartesianProductArray{N},
-                          blocks::Vector{Tuple{Int,Int}}) where {N}
+                     orig_cpa::CartesianProductArray{N},
+                     blocks::Vector{Tuple{Int,Int}}) where {N}
 
 Return merged Cartesian Product Array between original CPA and some low-dimensional CPA,
 which represents updated subset of variables in specified blocks.
@@ -531,16 +529,16 @@ which represents updated subset of variables in specified blocks.
 ### Input
 
 - `low_dim_cpa` -- low-dimensional cartesian product array
-- `orig_cpa` -- original high-dimensional Cartesian product array
-- `blocks` -- index of the first variable in each block of `orig_cpa`
+- `orig_cpa`    -- original high-dimensional Cartesian product array
+- `blocks`      -- index of the first variable in each block of `orig_cpa`
 
 ### Output
 
-Merged cartesian product array
+Merged cartesian product array.
 """
 function substitute_blocks(low_dim_cpa::CartesianProductArray{N},
-                          orig_cpa::CartesianProductArray{N},
-                          blocks::Vector{Tuple{Int,Int}}) where {N}
+                           orig_cpa::CartesianProductArray{N},
+                           blocks::Vector{Tuple{Int,Int}}) where {N}
 
    array = Vector{LazySet{N}}(undef, length(orig_cpa.array))
    index = 1
@@ -557,8 +555,7 @@ function substitute_blocks(low_dim_cpa::CartesianProductArray{N},
 end
 
 """
-   linear_map(M::AbstractMatrix{N}, cpa::CartesianProductArray{N}
-             ) where {N<:Real}
+    linear_map(M::AbstractMatrix, cpa::CartesianProductArray)
 
 Concrete linear map of a Cartesian product of a finite number of convex sets.
 
@@ -578,8 +575,7 @@ If so, we convert the Cartesian product to constraint representation.
 Otherwise, we convert the Cartesian product to vertex representation.
 In both cases, we then call `linear_map` on the resulting polytope.
 """
-function linear_map(M::AbstractMatrix{N}, cpa::CartesianProductArray{N}
-                  ) where {N<:Real}
+function linear_map(M::AbstractMatrix, cpa::CartesianProductArray)
    return linear_map_cartesian_product(M, cpa)
 end
 

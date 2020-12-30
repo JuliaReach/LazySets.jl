@@ -43,17 +43,13 @@ elements ``x, y ∈ S`` and ``0 ≤ λ ≤ 1`` it holds that ``λ·x + (1-λ)·y
 for using different numeric types.
 
 Every concrete `LazySet` must define the following functions:
-- `σ(d::AbstractVector{N}, S::LazySet{N}) where {N<:Real}` -- the support vector
-    of `S` in a given direction `d`; note that the numeric type `N` of `d` and
-    `S` must be identical; for some set types `N` may be more restrictive than
-    `Real`
+- `σ(d::AbstractVector, S::LazySet)` -- the support vector of `S` in a given
+    direction `d`
 - `dim(S::LazySet)` -- the ambient dimension of `S`
 
 The function
-- `ρ(d::AbstractVector{N}, S::LazySet{N}) where {N<:Real}` -- the support
-    function of `S` in a given direction `d`; note that the numeric type `N` of
-    `d` and `S` must be identical; for some set types `N` may be more
-    restrictive than `Real`
+- `ρ(d::AbstractVector, S::LazySet)` -- the support function of `S` in a given
+    direction `d`
 is optional because there is a fallback implementation relying on `σ`.
 However, for unbounded sets (which includes most lazy set types) this fallback
 cannot be used and an explicit method must be implemented.
@@ -114,10 +110,10 @@ Hyperrectangle
 Intersection
 IntersectionArray
 Interval
+Line
 Line2D
 LineSegment
 LinearMap
-Line{N,VN} where VN<:AbstractArray{N,1} where N<:Real
 MinkowskiSum
 MinkowskiSumArray
 ResetMap
@@ -212,7 +208,7 @@ LinearMap
 basetype(S::LazySet) = Base.typename(typeof(S)).wrapper
 
 """
-    ρ(d::AbstractVector{N}, S::LazySet{N}) where {N<:Real}
+    ρ(d::AbstractVector, S::LazySet)
 
 Evaluate the support function of a set in a given direction.
 
@@ -224,12 +220,8 @@ Evaluate the support function of a set in a given direction.
 ### Output
 
 The support function of the set `S` for the direction `d`.
-
-### Notes
-
-The numeric type of the direction and the set must be identical.
 """
-function ρ(d::AbstractVector{N}, S::LazySet{N}) where {N<:Real}
+function ρ(d::AbstractVector, S::LazySet)
     return dot(d, σ(d, S))
 end
 
@@ -285,7 +277,7 @@ function isbounded(S::LazySet; algorithm="support_function")
 end
 
 """
-    _isbounded_unit_dimensions(S::LazySet{N}) where {N<:Real}
+    _isbounded_unit_dimensions(S::LazySet{N}) where {N}
 
 Determine whether a set is bounded in each unit dimension.
 
@@ -302,7 +294,7 @@ Determine whether a set is bounded in each unit dimension.
 This function performs ``2n`` support function checks, where ``n`` is the
 ambient dimension of `S`.
 """
-function _isbounded_unit_dimensions(S::LazySet{N}) where {N<:Real}
+function _isbounded_unit_dimensions(S::LazySet{N}) where {N}
     n = dim(S)
     @inbounds for i in 1:n
         for o in [one(N), -one(N)]
@@ -408,7 +400,7 @@ function affine_map(M::AbstractMatrix, X::LazySet, v::AbstractVector; kwargs...)
 end
 
 """
-    an_element(S::LazySet{N}) where {N<:Real}
+    an_element(S::LazySet{N}) where {N}
 
 Return some element of a convex set.
 
@@ -425,7 +417,7 @@ An element of a convex set.
 An element of the set is obtained by evaluating its support vector along
 direction ``[1, 0, …, 0]``.
 """
-function an_element(S::LazySet{N}) where {N<:Real}
+function an_element(S::LazySet{N}) where {N}
     e₁ = SingleEntryVector(1, dim(S), one(N))
     return σ(e₁, S)
 end
@@ -588,7 +580,7 @@ This fallback implementation relies on `constraints_list(S)`.
 tosimplehrep(S::LazySet) = tosimplehrep(constraints_list(S))
 
 """
-    reflect(P::LazySet{N}) where {N<:Real}
+    reflect(P::LazySet)
 
 Concrete reflection of a convex set `P`, resulting in the reflected set `-P`.
 
@@ -616,7 +608,7 @@ function reflect(P::LazySet)
 end
 
 """
-    isuniversal(X::LazySet{N}, [witness]::Bool=false) where {N<:Real}
+    isuniversal(X::LazySet{N}, [witness]::Bool=false) where {N}
 
 Check whether a given convex set is universal, and otherwise optionally compute
 a witness.
@@ -637,7 +629,7 @@ a witness.
 
 This is a naive fallback implementation.
 """
-function isuniversal(X::LazySet{N}, witness::Bool=false) where {N<:Real}
+function isuniversal(X::LazySet{N}, witness::Bool=false) where {N}
     if isbounded(X)
         result = false
     else
@@ -683,7 +675,7 @@ function is_interior_point(d::AbstractVector{N}, P::LazySet{N};
 end
 
 """
-    plot_recipe(X::LazySet{N}, [ε]::N=N(PLOT_PRECISION)) where {N<:Real}
+    plot_recipe(X::LazySet{N}, [ε]=N(PLOT_PRECISION)) where {N}
 
 Convert a convex set to a pair `(x, y)` of points for plotting.
 
@@ -712,7 +704,7 @@ On the other hand, if you only want to produce a fast box-overapproximation of
 `X`, pass `ε=Inf`.
 Finally, we use the plot recipe for polygons.
 """
-function plot_recipe(X::LazySet{N}, ε::N=N(PLOT_PRECISION)) where {N<:Real}
+function plot_recipe(X::LazySet{N}, ε=N(PLOT_PRECISION)) where {N}
     @assert dim(X) <= 2 "cannot plot a $(dim(X))-dimensional $(typeof(X))"
     @assert isbounded(X) "cannot plot an unbounded $(typeof(X))"
 

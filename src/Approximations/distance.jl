@@ -1,8 +1,8 @@
 export distance
 
 """
-    distance(H1::AbstractHyperrectangle{N}, H2::AbstractHyperrectangle{N};
-             p::Real=2) where {N<:Real}
+    distance(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle;
+             [p]::Real=2)
 
 Compute the standard distance between two hyperrectangular sets, defined as
 
@@ -25,12 +25,13 @@ of the shortest line segment between any pair of points.
 
 See also [`hausdorff_distance`](@ref) for an alternative distance notion.
 """
-function distance(H1::AbstractHyperrectangle{N},
-                  H2::AbstractHyperrectangle{N};
-                  p::Real=2) where {N<:Real}
+function distance(H1::AbstractHyperrectangle,
+                  H2::AbstractHyperrectangle;
+                  p::Real=2)
     n = dim(H1)
     @assert n == dim(H2) "incompatible set dimensions $n and $(dim(H2))"
 
+    N = promote_type(eltype(H1), eltype(H2))
     d = Vector{N}(undef, n)
     @inbounds for i in 1:n
         # find relative position in dimension i

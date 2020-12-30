@@ -7,19 +7,19 @@ CurrentModule = LazySets
 ```@docs
 Universe
 dim(::Universe)
-ρ(::AbstractVector{N}, ::Universe{N}) where {N<:Real}
-σ(::AbstractVector{N}, ::Universe{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::Universe{N}) where {N<:Real}
+ρ(::AbstractVector, ::Universe)
+σ(::AbstractVector, ::Universe)
+∈(::AbstractVector, ::Universe)
 rand(::Type{Universe})
-an_element(::Universe{N}) where {N<:Real}
+an_element(::Universe{N}) where {N}
 isempty(::Universe)
 isbounded(::Universe)
-isuniversal(::Universe{N}, ::Bool=false) where {N<:Real}
+isuniversal(::Universe{N}, ::Bool=false) where {N}
 norm(::Universe, ::Real=Inf)
 radius(::Universe, ::Real=Inf)
 diameter(::Universe, ::Real=Inf)
 constraints(::Universe{N}) where {N}
-constraints_list(::Universe{N}) where {N<:Real}
+constraints_list(::Universe{N}) where {N}
 constrained_dimensions(::Universe)
-translate(::Universe{N}, ::AbstractVector{N}) where {N<:Real}
+translate(::Universe, ::AbstractVector)
 ```

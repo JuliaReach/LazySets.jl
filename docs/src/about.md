@@ -107,6 +107,7 @@ Here we list the names of the maintainers of the `LazySets.jl` library, as well 
 ### Contributors
 
 - [Tomer Arnon](https://github.com/tomerarnon), Stanford University
+- [Daniel Freire Caporale](https://github.com/dfcaporale), Universidad de la República
 - [Sebastián Guadalupe](https://github.com/SebastianGuadalupe), Universidad de la República
 - [Kostiantyn Potomkin](https://github.com/kpotomkin), Australian National University
 - [Frédéric Viry](https://github.com/viryfrederic), CERFACS, France

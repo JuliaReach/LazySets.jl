@@ -130,6 +130,7 @@ include("convert.jl")
 # ===========================
 # Concrete operations on sets
 # ===========================
+include("ConcreteOperations/cartesian_product.jl")
 include("ConcreteOperations/convex_hull.jl")
 include("ConcreteOperations/difference.jl")
 include("ConcreteOperations/intersection.jl")

@@ -8,7 +8,7 @@ export ConvexHullArray, CHArray,
 # ================================
 
 """
-    ConvexHullArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
+    ConvexHullArray{N, S<:LazySet{N}} <: LazySet{N}
 
 Type that represents the symbolic convex hull of a finite number of convex sets.
 
@@ -37,7 +37,7 @@ julia> b = [Ball2([2*pi*i/100, sin(2*pi*i/100)], 0.05) for i in 1:100];
 julia> c = ConvexHullArray(b);
 ```
 """
-struct ConvexHullArray{N<:Real, S<:LazySet{N}} <: LazySet{N}
+struct ConvexHullArray{N, S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
 end
 
@@ -68,7 +68,7 @@ Alias for `ConvexHullArray`.
 const CHArray = ConvexHullArray
 
 """
-    array(cha::ConvexHullArray{N, S}) where {N<:Real, S<:LazySet{N}}
+    array(cha::ConvexHullArray)
 
 Return the array of a convex hull of a finite number of convex sets.
 
@@ -80,7 +80,7 @@ Return the array of a convex hull of a finite number of convex sets.
 
 The array of a convex hull of a finite number of convex sets.
 """
-function array(cha::ConvexHullArray{N, S}) where {N<:Real, S<:LazySet{N}}
+function array(cha::ConvexHullArray)
     return cha.array
 end
 
@@ -103,7 +103,7 @@ function dim(cha::ConvexHullArray)
 end
 
 """
-    σ(d::AbstractVector{N}, cha::ConvexHullArray{N}) where {N<:Real}
+    σ(d::AbstractVector, cha::ConvexHullArray)
 
 Return the support vector of a convex hull array in a given direction.
 
@@ -112,7 +112,7 @@ Return the support vector of a convex hull array in a given direction.
 - `d`   -- direction
 - `cha` -- convex hull array
 """
-function σ(d::AbstractVector{N}, cha::ConvexHullArray{N}) where {N<:Real}
+function σ(d::AbstractVector, cha::ConvexHullArray)
     s = σ(d, cha.array[1])
     ri = dot(d, s)
     rmax = ri
@@ -128,7 +128,7 @@ function σ(d::AbstractVector{N}, cha::ConvexHullArray{N}) where {N<:Real}
 end
 
 """
-    ρ(d::AbstractVector{N}, cha::ConvexHullArray{N}) where {N<:Real}
+    ρ(d::AbstractVector, cha::ConvexHullArray)
 
 Return the support function of a convex hull array in a given direction.
 
@@ -146,7 +146,7 @@ The support function of the convex hull array in the given direction.
 This algorihm calculates the maximum over all ``ρ(d, X_i)`` where the
 ``X_1, …, X_k`` are the sets in the array `cha`.
 """
-function ρ(d::AbstractVector{N}, cha::ConvexHullArray{N}) where {N<:Real}
+function ρ(d::AbstractVector, cha::ConvexHullArray)
     return maximum([ρ(d, Xi) for Xi in array(cha)])
 end
 

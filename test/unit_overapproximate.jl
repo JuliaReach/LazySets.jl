@@ -12,7 +12,8 @@ for N in [Float64, Rational{Int}, Float32]
     # identity if T1 = T2
     @test_throws MethodError overapproximate(ZeroSet{N}(2), EmptySet)
     e = EmptySet{N}(2)
-    @test overapproximate(e, EmptySet) == e
+    @test overapproximate(e, EmptySet) == overapproximate(e, 1e-3) ==
+          overapproximate(e, Hyperrectangle) == overapproximate(e) == e
     # the third argument is ignored
     oa = overapproximate(b, Ball1, Hyperrectangle)
     @test oa isa Ball1
@@ -144,6 +145,10 @@ for N in [Float64, Float32]
     end
     o = overapproximate_lmap(50)
     @test o.center == N[1, 1] && o.radius == N[2, 2]
+
+    # box approximation of centrally symmetric set
+    e = Ellipsoid(zeros(N, 2), N[2 -1; -1 2])
+    @test box_approximation(e).radius ≈ N[sqrt(2), sqrt(2)]
 
     # Approximation of a 2D centered unit ball in norm 1
     # All vertices v should be like this:

@@ -244,6 +244,35 @@ function minkowski_sum(Z1::AbstractZonotope{N}, Z2::AbstractZonotope{N}) where {
 end
 
 """
+    minkowski_sum(X::AbstractSingleton, Y::AbstractSingleton)
+
+Concrete Minkowski sum of a pair of singletons.
+
+### Input
+
+- `X` -- singleton
+- `Y` -- singleton
+
+### Output
+
+A singleton
+
+### Algorithm
+
+The singleton obtained by summing the elements in `X` and `Y`.
+"""
+function minkowski_sum(X::AbstractSingleton, Y::AbstractSingleton)
+    @assert dim(X) == dim(Y) "expected that the singletons have the same dimension, " *
+                "but they are $(dim(X)) and $(dim(Y)) respectively"
+    return _minkowski_sum(X, Y)
+end
+
+_minkowski_sum(X::AbstractSingleton, Y::AbstractSingleton) = Singleton(element(X) + element(Y))
+_minkowski_sum(X::AbstractSingleton, Y::ZeroSet) = X
+_minkowski_sum(X::ZeroSet, Y::AbstractSingleton) = Y
+_minkowski_sum(X::ZeroSet, Y::ZeroSet) = X
+
+"""
     minkowski_sum(x::Interval, y::Interval)
 
 Concrete Minkowski sum of a pair of intervals.
@@ -323,3 +352,82 @@ function minkowski_sum(P::VPolygon{N}, Q::VPolygon{N}) where {N<:Real}
     end
     return VPolygon(R)
 end
+
+"""
+    minkowski_sum(P1::VPolytope, P2::VPolytope;
+                  [apply_convex_hull]=true,
+                  [backend]=nothing,
+                  [solver]=nothing)
+
+Compute the Minkowski sum between two polytopes in vertex representation.
+
+### Input
+
+- `P1`                -- polytope
+- `P2`                -- another polytope
+- `apply_convex_hull` -- (optional, default: `true`) if `true`, post-process the
+                         pairwise sums using a convex hull algorithm
+- `backend`           -- (optional, default: `nothing`) the backend for
+                         polyhedral computations used to post-process with a
+                         convex hull; see `default_polyhedra_backend(P1, N)`
+- `solver`            -- (optional, default: `nothing`) the backend used to
+                         solve the linear program; see
+                         `default_lp_solver_polyhedra(N)`
+
+### Output
+
+A new polytope in vertex representation whose vertices are the convex hull of
+the sum of all possible sums of vertices of `P1` and `P2`.
+"""
+function minkowski_sum(P1::VPolytope, P2::VPolytope;
+                       apply_convex_hull::Bool=true,
+                       backend=nothing,
+                       solver=nothing)
+
+    @assert dim(P1) == dim(P2) "cannot compute the Minkowski sum between a polyotope " *
+        "of dimension $(dim(P1)) and a polytope of dimension $((dim(P2)))"
+
+    vlist1 = _vertices_list(P1, backend)
+    vlist2 = _vertices_list(P2, backend)
+    n, m = length(vlist1), length(vlist2)
+    N = promote_type(eltype(P1), eltype(P2))
+    Vout = Vector{Vector{N}}() # TODO: use common inner array type from P1 and P2, #2011
+    sizehint!(Vout, n * m)
+    for vi in vlist1
+        for vj in vlist2
+            push!(Vout, vi + vj)
+        end
+    end
+    if apply_convex_hull
+        if backend == nothing
+            backend = default_polyhedra_backend(P1, N)
+            solver = default_lp_solver_polyhedra(N)
+        end
+        convex_hull!(Vout, backend=backend, solver=solver)
+    end
+    return VPolytope(Vout)
+end
+
+"""
+    minkowski_sum(PZ::PolynomialZonotope, Z::AbstractZonotope)
+
+Return the Minkowski sum of a polynomial zonotope and a usual zonotopic set.
+
+### Input
+
+- `PZ` -- polynomial zonotope
+- `Z`  -- usual zonotopic set
+
+## Output
+
+A polynomial zonotope whose center is the sum of the centers of `PZ` and `Z`
+and whose generators are the concatenation of the generators of `PZ` and `Z`.
+"""
+function minkowski_sum(PZ::PolynomialZonotope, Z::AbstractZonotope)
+    c = PZ.c + center(Z)
+    G = [PZ.G genmat(Z)]
+    return PolynomialZonotope(c, PZ.E, PZ.F, G)
+end
+
+# symmetric method
+minkowski_sum(Z::AbstractZonotope, PZ::PolynomialZonotope) = minkowski_sum(PZ, Z)

@@ -37,7 +37,9 @@ const DIR_WEST(N) = [-one(N), zero(N)]
 const DIR_SOUTH(N) = [zero(N), -one(N)]
 
 include("iterative_refinement.jl")
-include("box_approximations.jl")
+include("box_approximation.jl")
+include("symmetric_interval_hull.jl")
+include("ballinf_approximation.jl")
 include("template_directions.jl")
 include("overapproximate.jl")
 include("underapproximate.jl")

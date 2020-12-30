@@ -18,6 +18,10 @@ for N in Ns
     # type-less constructor
     x = Interval(N(0), N(1))
 
+    # constructor with promotion
+    y = Interval(0, N(1))
+    @test y == x
+
     @test dim(x) == 1
     @test center(x) == N[0.5]
     @test center(x, 1) == N(0.5)
@@ -25,6 +29,10 @@ for N in Ns
     @test min(x) == N(0) && max(x) == N(1)
     v = vertices_list(x)
     @test N[0] in v && N[1] in v
+
+    # vertices list for degenerate interval
+    @test vertices_list(Interval(N(0), N(0))) == [[N(0)]]
+
     # test interface method an_element and membership
     @test an_element(x) ∈ x
     # test containment
@@ -200,4 +208,12 @@ for N in Ns
     @test rectify(x) == Interval(N(0), N(2))
     x = Interval(N(1), N(2))
     @test rectify(x) == x
+
+    # list of vertices of IA types
+    b = IA.IntervalBox(IA.Interval(0 , 1), IA.Interval(0, 1))
+    vlistIB = vertices_list(b)
+    @test is_cyclic_permutation(vlistIB, [SA[N(1), N(1)], SA[N(0), N(1)], SA[N(1), N(0)], SA[N(0), N(0)]])
+
+    vlistI = vertices_list(b[1])
+    @test is_cyclic_permutation(vlistI, [SA[N(0)], SA[N(1)]])
 end

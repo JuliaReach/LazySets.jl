@@ -19,7 +19,7 @@ for T in [:LazySet, :AbstractSingleton]
     end
 end
 
-for T in [:Interval, :Universe]  # TODO #2219
+for T in [:Interval, :Universe, :AbstractSingleton]  # TODO #2219
     @eval begin
         function intersection(∅::EmptySet{N}, X::$T{N}) where {N<:Real}
             @assert dim(∅) == dim(X) "cannot take the intersection between a " *

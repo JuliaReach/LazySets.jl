@@ -255,7 +255,6 @@ Return the support function of a line in a given direction.
 The support function in the given direction.
 """
 ρ(d::AbstractVector, L::Line) = _ρ(d, L)
-ρ(d::AbstractVector{N}, L::Line{N, <:AbstractVector{N}}) where {N<:Real} = _ρ(d, L) # disambiguation
 
 function _ρ(d::AbstractVector, L::Line)
     if isapproxzero(dot(d, L.d))
@@ -358,10 +357,7 @@ Check whether a given point is contained in a line.
 The point ``x`` belongs to the line ``L : p + λd`` if and only if
 ``x - p`` is proportional to the direction ``d``.
 """
-∈(x::AbstractVector, L::Line) = __in(x, L)
-∈(x::AbstractVector{N}, L::Line{N, VN}) where {N<:Real, VN<:AbstractVector{N}} = __in(x, L)
-
-function __in(x::AbstractVector, L::Line)
+function ∈(x::AbstractVector, L::Line)
     @assert length(x) == dim(L) "expected the point and the line to have the same dimension, " *
                                 "but they are $(length(x)) and $(dim(L)) respectively"
     _isapprox(x, L.p) && return true
@@ -526,11 +522,7 @@ Concrete linear map of a line.
 
 The line obtained by applying the linear map to the point and direction of `L`.
 """
-linear_map(M::AbstractMatrix, L::Line) = _linear_map(M, L)
-
-linear_map(M::AbstractMatrix{N}, L::Line{N,VN}) where {N<:Real, VN<:AbstractVector{N}} = _linear_map(M, L)
-
-function _linear_map(M::AbstractMatrix, L::Line)
+function linear_map(M::AbstractMatrix, L::Line)
     @assert dim(L) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
                                  "applied to a set of dimension $(dim(L))"
 
