@@ -333,37 +333,6 @@ function overapproximate(lm::LinearMap{N, <:AbstractZonotope},
 end
 
 """
-    overapproximate(Z::AbstractZonotope, ::Type{<:Hyperrectangle})
-
-Return a tight overapproximation of a zonotope with an axis-aligned box.
-
-### Input
-
-- `Z`              -- zonotope
-- `Hyperrectangle` -- type for dispatch
-
-### Output
-
-A hyperrectangle.
-
-### Algorithm
-
-This function implements the method in [Section 5.1.2, 1]. A zonotope
-``Z = ⟨c, G⟩`` can be overapproximated tightly by an axis-aligned box
-(i.e. a `Hyperrectangle`) such that its center is ``c`` and the radius along
-dimension ``i`` is the column-sum of the absolute values of the ``i``-th row
-of ``G`` for ``i = 1,…, p``, where ``p`` is the number of generators of ``Z``.
-
-[1] *Althoff, M., Stursberg, O., & Buss, M. (2010). Computing reachable sets of
-hybrid systems using a combination of zonotopes and polytopes. Nonlinear analysis:
-hybrid systems, 4(2), 233-249.*
-"""
-function overapproximate(Z::AbstractZonotope, ::Type{<:Hyperrectangle})
-    r = sum(abs.(genmat(Z)), dims=2)[:]
-    return Hyperrectangle(center(Z), r)
-end
-
-"""
     overapproximate(X::LazySet{N}, dir::AbstractDirections) where {N}
 
 Overapproximate a (possibly unbounded) set with template directions.
