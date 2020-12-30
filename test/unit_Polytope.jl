@@ -492,6 +492,12 @@ for N in [Float64]
         Q = minkowski_sum(P1, P2)
         @test ispermutation(vertices_list(Q), [N[0, 0, 0], N[0, 1, 0], N[1, 0, 0], N[1, 1, 0]])
 
+        # fallback conversion to vertex representation
+        B3 = BallInf(zeros(N, 3), N(1))
+        U = Matrix(N(1)*I, 3, 3) * B3
+        Uv = convert(VPolytope, U, prune=false)
+        @test ispermutation(vertices_list(Uv), vertices_list(B3))
+
         # -----------------
         # mixed H-rep/V-rep
         # -----------------

@@ -219,6 +219,31 @@ function convert(::Type{HPolytope}, P::VPolytope)
 end
 
 """
+    convert(::Type{VPolytope}, X::LazySet; [prune]::Bool=true)
+
+Generic conversion to polytope in vertex representation.
+
+### Input
+
+- `type`  -- target type
+- `X`     -- set
+- `prune` -- (optional, default: `true`)
+
+### Output
+
+The given set represented as a polytope in vertex representation.
+
+### Algorithm
+
+We compute the list of vertices of `X` and wrap the result in a polytope in
+vertex representation, `VPolytope`. Use the option `prune` to select whether or not
+to apply a convex hull previous to the construction of the polytope.
+"""
+function convert(::Type{VPolytope}, X::LazySet; prune::Bool=true)
+    return VPolytope(vertices_list(X, prune=prune))
+end
+
+"""
     convert(::Type{VPolytope}, P::HPolytope)
 
 Convert from polytope in H-representation to polytope in V-representation.
