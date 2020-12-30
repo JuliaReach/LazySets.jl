@@ -227,7 +227,7 @@ Generic conversion to polytope in vertex representation.
 
 - `type`  -- target type
 - `X`     -- set
-- `prune` -- (optional, default: `true`)
+- `prune` -- (optional, default: `true`) option to remove redundant vertices
 
 ### Output
 
