@@ -237,7 +237,7 @@ The given set represented as a polytope in vertex representation.
 
 We compute the list of vertices of `X` and wrap the result in a polytope in
 vertex representation, `VPolytope`. Use the option `prune` to select whether or not
-to apply a convex hull previous to the construction of the polytope.
+to remove redundant vertices before constructing the polytope.
 """
 function convert(::Type{VPolytope}, X::LazySet; prune::Bool=true)
     return VPolytope(vertices_list(X, prune=prune))
