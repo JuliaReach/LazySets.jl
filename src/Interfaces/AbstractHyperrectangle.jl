@@ -19,12 +19,17 @@ Abstract type for hyperrectangular sets.
 See [`Hyperrectangle`](@ref) for a standard implementation of this interface.
 
 Every concrete `AbstractHyperrectangle` must define the following functions:
-- `radius_hyperrectangle(::AbstractHyperrectangle{N})` -- return the
+
+- `radius_hyperrectangle(::AbstractHyperrectangle)` -- return the
     hyperrectangle's radius, which is a full-dimensional vector
-- `radius_hyperrectangle(::AbstractHyperrectangle{N}, i::Int)` -- return the
+
+- `radius_hyperrectangle(::AbstractHyperrectangle, i::Int)` -- return the
     hyperrectangle's radius in the `i`-th dimension
-- `isflat(::AbstractHyperrectangle{N})` -- determine whether the
+
+- `isflat(::AbstractHyperrectangle)` -- determine whether the
     hyperrectangle's radius is zero in some dimension
+
+Every hyperrectangular set is also a zonotopic set; see [`AbstractZonotope`](@ref).
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractHyperrectangle)
