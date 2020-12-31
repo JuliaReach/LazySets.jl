@@ -405,10 +405,6 @@ function _overapproximate_bounded_polyhedron(X::LazySet{N}, dir::AbstractDirecti
     return HPolytope(H, check_boundedness=false)
 end
 
-function overapproximate(X::LazySet{N}, ::Type{<:HPolytope}, dirs::AbstractDirections) where {N}
-    return overapproximate(X, dirs)
-end
-
 """
     overapproximate(X::LazySet{N}, dir::Type{<:AbstractDirections}) where {N}
 
