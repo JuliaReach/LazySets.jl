@@ -351,29 +351,26 @@ The overapproximation is computed using support functions. If the obtained set i
 bounded, the result is an `HPolytope`. Otherwise the result is an `HPolyhedron`.
 """
 function overapproximate(X::LazySet{N}, dir::AbstractDirections{N, VN}; prune::Bool=true) where {N, VN}
+    n = dim(X)
     H = Vector{LinearConstraint{N, VN}}()
     sizehint!(H, length(dir))
 
     for d in dir
         sf = ρ(d, X)
         if !isinf(sf)
-            addconstraint!(H, LinearConstraint(d, sf))
+            push!(H, LinearConstraint(d, sf))
         end
     end
     if prune
         remove_redundant_constraints!(H) || throw(ArgumentError("unable to remove redundant constraints"))
     end
-    # if the input is bounded and the directions are bounding => output is bounded
-    if isbounded(X) && isbounding(dir)
-        return HPolytope(H, check_boundedness=false)
-    end
 
-    # check boundedness of the output
-    P = HPolyhedron(H)
-    if _isbounded_stiemke(P) # P is bounded
-        return HPolytope(H, check_boundedness=false)
+    # if the input is bounded and the directions are bounding => output is bounded
+    # otherwise, check boundedness of the output
+    if (isbounded(X) && isbounding(dir)) || _isbounded_stiemke(HPolyhedron(P))
+        return dim(X) == 2 ? HPolygon(H) : HPolytope(H, check_boundedness=false)
     else
-        return P
+        return HPolyhedron(P)
     end
 end
 
