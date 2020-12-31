@@ -185,7 +185,7 @@ The set union of such array corresponds to the concrete set complement.
 function constraints_list(C::Complement)
     clist = constraints_list(C.X)
     out = similar(clist)
-    for (i, ci) in enumerate(clist)
+    @inbounds for (i, ci) in enumerate(clist)
         out[i] = complement(ci)
     end
     return out
