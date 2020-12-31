@@ -385,7 +385,7 @@ end
 """
     translate!(Z::AbstractZonotope, v::AbstractVector)
 
-Translate (i.e., shift) a zonotope by a given vector in-place
+Translate (i.e., shift) a zonotope by a given vector in-place.
 
 ### Input
 
