@@ -402,6 +402,7 @@ function _overapproximate_bounded_polyhedron(X::LazySet{N}, dir::AbstractDirecti
         remove_redundant_constraints!(H) || throw(ArgumentError("unable to remove redundant constraints"))
     end
     return HPolytope(H, check_boundedness=false)
+end
 
 function overapproximate(X::LazySet{N}, ::Type{<:HPolytope}, dirs::AbstractDirections) where {N}
     return overapproximate(X, dirs)
