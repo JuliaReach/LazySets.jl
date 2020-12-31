@@ -333,7 +333,7 @@ function overapproximate(lm::LinearMap{N, <:AbstractZonotope},
 end
 
 """
-    overapproximate(X::LazySet{N}, dir::AbstractDirections) where {N}
+    overapproximate(X::LazySet{N}, dir::AbstractDirections; [prune]::Bool=true) where {N}
 
 Overapproximate a (possibly unbounded) set with template directions.
 
@@ -350,7 +350,7 @@ A polyhedron overapproximating the set `X` with the directions from `dir`.
 The overapproximation is computed using support functions. If the obtained set is
 bounded, the result is an `HPolytope`. Otherwise the result is an `HPolyhedron`.
 """
-function overapproximate(X::LazySet{N}, dir::AbstractDirections{N, VN}) where {N, VN}
+function overapproximate(X::LazySet{N}, dir::AbstractDirections{N, VN}; prune::Bool=true) where {N, VN}
     H = Vector{LinearConstraint{N, VN}}()
     sizehint!(H, length(dir))
 
@@ -360,8 +360,9 @@ function overapproximate(X::LazySet{N}, dir::AbstractDirections{N, VN}) where {N
             addconstraint!(H, LinearConstraint(d, sf))
         end
     end
-    remove_redundant_constraints!(H) || throw(ArgumentError("unable to remove redundant constraints"))
-
+    if prune
+        remove_redundant_constraints!(H) || throw(ArgumentError("unable to remove redundant constraints"))
+    end
     # if the input is bounded and the directions are bounding => output is bounded
     if isbounded(X) && isbounding(dir)
         return HPolytope(H, check_boundedness=false)
