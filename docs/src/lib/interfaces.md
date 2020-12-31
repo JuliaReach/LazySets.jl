@@ -329,6 +329,7 @@ generators_fallback(::AbstractZonotope)
 ∈(::AbstractVector, ::AbstractZonotope)
 linear_map(::AbstractMatrix, ::AbstractZonotope)
 translate(::AbstractZonotope, ::AbstractVector)
+translate!(::AbstractZonotope, ::AbstractVector)
 constraints_list(::AbstractZonotope)
 constraints_list(::AbstractZonotope{N}; ::Bool=true) where {N<:AbstractFloat}
 vertices_list(::AbstractZonotope)

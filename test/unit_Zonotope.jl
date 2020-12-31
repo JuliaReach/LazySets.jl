@@ -76,6 +76,9 @@ for N in [Float64, Rational{Int}, Float32]
 
     # translation
     @test translate(Z1, N[1, 2]) == Zonotope(N[2, 3], gens)
+    Z1c = copy(Z1)
+    translate!(Z1c, N[1, 2]) # in-place translation
+    @test Z1c == Zonotope(N[2, 3], gens)
 
     # concrete Minkowski sum
     Z3 = minkowski_sum(Z1, Z2)

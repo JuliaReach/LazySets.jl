@@ -5,6 +5,8 @@ export AbstractZonotope,
        generators,
        ngens,
        order,
+       translate,
+       translate!,
        togrep,
        split!
 
@@ -355,7 +357,7 @@ function linear_map(M::AbstractMatrix, Z::AbstractZonotope)
 end
 
 """
-    translate(Z::AbstractZonotope, v::AbstractVector; share::Bool=false)
+    translate(Z::AbstractZonotope, v::AbstractVector)
 
 Translate (i.e., shift) a zonotope by a given vector.
 
@@ -363,8 +365,6 @@ Translate (i.e., shift) a zonotope by a given vector.
 
 - `Z`     -- zonotope
 - `v`     -- translation vector
-- `share` -- (optional, default: `false`) flag for sharing unmodified parts of
-             the original set representation
 
 ### Output
 
@@ -372,20 +372,46 @@ A translated zonotope.
 
 ### Notes
 
-The generator matrix is shared with the original zonotope if `share == true`.
+See also [@ref](`translate!`) for the in-place version.
 
 ### Algorithm
 
-We add the vector to the center of the zonotope.
+We add the translation vector to the center of the zonotope.
 """
-function translate(Z::AbstractZonotope, v::AbstractVector; share::Bool=false)
-    @assert length(v) == dim(Z) "cannot translate a $(dim(Z))-dimensional " *
-                                "set by a $(length(v))-dimensional vector"
-    c = center(Z) + v
-    G = share ? genmat(Z) : copy(genmat(Z))
-    return Zonotope(c, G)
+function translate(Z::AbstractZonotope, v::AbstractVector)
+    return translate!(copy(Z), v)
 end
 
+"""
+    translate!(Z::AbstractZonotope, v::AbstractVector)
+
+Translate (i.e., shift) a zonotope by a given vector in-place.
+
+### Input
+
+- `Z`     -- zonotope
+- `v`     -- translation vector
+
+### Output
+
+A translated zonotope.
+
+### Notes
+
+See also [@ref](`translate`) for the out-of-place version.
+
+### Algorithm
+
+We add the translation vector to the center of the zonotope.
+"""
+function translate!(Z::AbstractZonotope, v::AbstractVector)
+    @assert length(v) == dim(Z) "cannot translate a $(dim(Z))-dimensional " *
+                                "set by a $(length(v))-dimensional vector"
+    c = center(Z)
+    c .+= v
+    G = genmat(Z)
+    return Z
+end
 
 # --- AbstractPolytope interface functions ---
 
