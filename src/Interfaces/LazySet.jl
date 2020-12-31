@@ -5,6 +5,7 @@ export LazySet,
        basetype,
        ρ, support_function,
        σ, support_vector,
+       complement,
        dim,
        norm,
        radius,
@@ -1116,3 +1117,28 @@ function delaunay(X::LazySet)
 end
 
 end end  # load_delaunay_MiniQhull
+
+"""
+    complement(X::LazySet)
+
+Return the complement of a set.
+
+### Input
+
+- `X` -- set
+
+### Output
+
+A `UnionSetArray` of half-spaces, i.e. the output is the union of the linear
+constraints which are obtained by complementing each constraint of `X`.
+
+### Algorithm
+
+The principle used in this function is that if ``X`` and ``Y`` are any pair of sets,
+then ``(X ∩ Y)^C = X^C ∪ Y^C``. In particular, we can apply this rule for each constraint
+that defines a polyhedral set, hence the concrete complement can be represented as the set
+union of the complement of each constraint.
+"""
+function complement(X::LazySet)
+    return UnionSetArray(constraints_list(Complement(X)))
+end

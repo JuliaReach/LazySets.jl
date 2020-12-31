@@ -114,53 +114,6 @@ function isempty(C::Complement)
     return isuniversal(C.X)
 end
 
-# -- Concrete complement implementations --
-
-"""
-    complement(X::LazySet)
-
-Return the complement of a set.
-
-### Input
-
-- `X` -- set
-
-### Output
-
-A `UnionSetArray` of half-spaces, i.e. the output is the union of the linear
-constraints which are obtained by complementing each constraint of `X`.
-
-### Algorithm
-
-The principle used in this function is that if ``X`` and ``Y`` are any pair of sets,
-then ``(X ∩ Y)^C = X^C ∪ Y^C``. In particular, we can apply this rule for each constraint
-that defines a polyhedral set, hence the concrete complement can be represented as the set
-union of the complement of each constraint.
-"""
-function complement(X::LazySet)
-    return UnionSetArray(constraints_list(Complement(X)))
-end
-
-"""
-    complement(H::HalfSpace)
-
-Return the complement of a half-space.
-
-### Input
-
-- `H` -- halfspace
-
-### Output
-
-The halfspace that is complementary to `H`. If ``H: \\langle a, x \\rangle ≤ b``,
-then this function returns the halfspace ``H′: \\langle a, x \\rangle ≥ b``.
-(Note that complementarity is understood in a relaxed sense, since the intersection
-of ``H`` and ``H′`` is non-empty).
-"""
-function complement(H::HalfSpace)
-    return HalfSpace(-H.a, -H.b)
-end
-
 # --  Fallback implementation, requires constraints list of C.X --
 
 """

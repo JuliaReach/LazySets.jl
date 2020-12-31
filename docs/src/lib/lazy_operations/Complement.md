@@ -18,7 +18,5 @@ The concrete complement can be computed with the function `complement` (mind the
 as it is usual for functions).
 
 ```@docs
-complement(::LazySet)
-complement(::HalfSpace)
 constraints_list(::Complement)
 ```
