@@ -26,6 +26,7 @@ halfspace_right(::AbstractVector, ::AbstractVector)
 tosimplehrep(::AbstractVector{LC}) where {N, LC<:LinearConstraint{N}}
 remove_redundant_constraints
 remove_redundant_constraints!
+complement(::HalfSpace)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

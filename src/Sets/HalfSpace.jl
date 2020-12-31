@@ -5,6 +5,7 @@ import Base: rand,
 
 export HalfSpace, LinearConstraint,
        an_element,
+       complement,
        constrained_dimensions,
        halfspace_left, halfspace_right
 
@@ -651,3 +652,23 @@ function HalfSpace(expr::Operation, vars::NTuple{L, Union{<:Operation, <:Vector{
 end
 
 end end  # quote / load_modeling_toolkit_halfspace()
+
+"""
+    complement(H::HalfSpace)
+
+Return the complement of a half-space.
+
+### Input
+
+- `H` -- halfspace
+
+### Output
+
+The halfspace that is complementary to `H`. If ``H: \\langle a, x \\rangle ≤ b``,
+then this function returns the halfspace ``H′: \\langle a, x \\rangle ≥ b``.
+(Note that complementarity is understood in a relaxed sense, since the intersection
+of ``H`` and ``H′`` is non-empty).
+"""
+function complement(H::HalfSpace)
+    return HalfSpace(-H.a, -H.b)
+end
