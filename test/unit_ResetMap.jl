@@ -57,7 +57,7 @@ for N in [Float64, Rational{Int}, Float32]
                          HalfSpace(N[0, 0, -1], N(0))])
 
     # constraints list of a lazy set
-    if test_suite_polyhedra
+    if test_suite_polyhedra && N == Float64
         rm = ResetMap(b, r)
         rm_id = ResetMap(Matrix(one(N)*I, 3, 3) * b, r)
         X = HPolytope(constraints_list(rm))
