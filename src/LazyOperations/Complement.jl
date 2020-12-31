@@ -127,7 +127,7 @@ Return the complement of a set.
 
 ### Output
 
-A `UnionSetArray` of half-spaces, i.e. the output is the the union of the linear
+A `UnionSetArray` of half-spaces, i.e. the output is the union of the linear
 constraints which are obtained by complementing each constraint of `X`.
 
 ### Algorithm
