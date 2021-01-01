@@ -81,6 +81,9 @@ for N in [Float64, Rational{Int}, Float32]
     for X in [B, Singleton(N[0, 0])]
         @test isdisjoint(E, X) && isdisjoint(X, E)
     end
+
+    # projection
+    @test project(EmptySet{N}(5), [1, 4, 5]) == EmptySet{N}(3)
 end
 
 # tests that only work with Float64 and Float32
