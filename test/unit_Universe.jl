@@ -91,6 +91,9 @@ for N in [Float64, Rational{Int}, Float32]
     # inverse linear map
     M = ones(N, 2, 3)
     @test linear_map_inverse(M, U) == Universe{N}(3)
+
+    # projection
+    @test project(Universe{N}(5), [1, 4, 5]) == Universe{N}(3)
 end
 
 # default Float64 constructor
