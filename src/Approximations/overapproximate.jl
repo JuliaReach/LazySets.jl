@@ -379,7 +379,7 @@ function overapproximate(X::LazySet{N}, ::Type{<:HPolytope}, dirs::AbstractDirec
     P = overapproximate(X, dirs, prune=prune)
     isbounded(P) || throw(ArgumentError("can't overapproximate with an `HPolytope` " *
                                         "because the set is unbounded; try using an `HPolyhedron`"))
-    return P
+    return convert(HPolytope, P)
 end
 
 # alias with HPolyhedron type as second argument
