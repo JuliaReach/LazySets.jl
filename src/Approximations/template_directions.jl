@@ -98,6 +98,35 @@ end
 
 isnormalized(::AD) where {AD<:AbstractDirections} = isnormalized(AD)
 
+"""
+    project(S::LazySet,
+            block::AbstractVector{Int},
+            directions::Type{<:AbstractDirections},
+            [n]::Int
+           )
+
+Project a high-dimensional set to a given block using template directions.
+
+### Input
+
+- `S`          -- set
+- `block`      -- block structure - a vector with the dimensions of interest
+- `directions` -- template directions
+- `n`          -- (optional, default: `dim(S)`) ambient dimension of the set `S`
+
+### Output
+
+The template direction approximation of the projection of `S`.
+"""
+@inline function project(S::LazySet,
+                         block::AbstractVector{Int},
+                         directions::Type{<:AbstractDirections},
+                         n::Int=dim(S)
+                        )
+    lm = project(S, block, LinearMap, n)
+    return overapproximate(lm, directions(length(block)))
+end
+
 # ==================================================
 # Box directions
 # ==================================================

@@ -74,6 +74,10 @@ surface(::LazySet{N}) where {N}
 area(::LazySet{N}) where {N}
 concretize(::LazySet)
 complement(::LazySet)
+project(::LazySet, ::AbstractVector{Int}, ::Nothing)
+project(::LazySet, ::AbstractVector{Int}, ::Type{<:LazySet})
+project(::LazySet, ::AbstractVector{Int}, ::Pair{<:UnionAll, <:Real})
+project(::LazySet, ::AbstractVector{Int}, ::Real)
 ```
 
 Plotting is available for general one- or two-dimensional `LazySet`s, provided
@@ -186,6 +190,7 @@ chebyshev_center(::AbstractPolyhedron{N}) where {N}
 an_element(::AbstractPolyhedron{N}) where {N}
 isbounded(::AbstractPolyhedron{N}) where {N}
 vertices_list(::AbstractPolyhedron)
+project(::AbstractPolyhedron{N}, ::AbstractVector{Int}) where {N}
 ```
 
 Plotting (bounded) polyhedra is available, too:

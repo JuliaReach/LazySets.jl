@@ -20,7 +20,6 @@ Approximations
 
 ```@docs
 decompose
-project
 ```
 
 ### Convenience functions
@@ -80,6 +79,7 @@ constraint(::LocalApproximation)
 AbstractDirections
 isbounding
 isnormalized
+project(::LazySet, ::AbstractVector{Int}, ::Type{<:AbstractDirections})
 BoxDirections
 OctDirections
 BoxDiagDirections
