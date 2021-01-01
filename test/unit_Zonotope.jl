@@ -210,6 +210,10 @@ for N in [Float64, Rational{Int}, Float32]
     constraints = constraints_list(Z)
     @test constraints isa Vector{<:HalfSpace{N}} && length(constraints) == 6
 
+    # concrete projection returns a zonotope
+    πZ12 = project(Z, 1:2)
+    @test πZ12 == Zonotope(zeros(N, 2), Matrix(N(1)*I, 2, 2))
+   
     # 1D projection works correctly even with zero generators (#2147)
     Z = convert(Zonotope, BallInf(N[0, 0], N(1)))
     Z2 = project(Z, [1])
