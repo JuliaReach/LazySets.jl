@@ -356,3 +356,7 @@ function volume(B::BallInf)
     vol = _vol_prod(B, n)
     return vol
 end
+
+function project(B::BallInf, block::AbstractVector{Int})
+    return BallInf(B.center[block], B.radius)
+end

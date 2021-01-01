@@ -262,3 +262,7 @@ function translate(B::Ballp, v::AbstractVector)
                                 "set by a $(length(v))-dimensional vector"
     return Ballp(B.p, center(B) + v, B.radius)
 end
+
+function project(B::Ballp, block::AbstractVector{Int})
+    return Ballp(B.p, B.center[block], B.radius)
+end
