@@ -1094,10 +1094,7 @@ function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}) where {N}
 
     # general case
     if general_case
-        n = dim(P)
-        M = projection_matrix(block, n, N)
-        lm = linear_map(M, P)
-        clist = constraints_list(lm)
+        clist = _project_polyhedron(P, block)
     end
 
     if isbounded(P)
@@ -1105,4 +1102,9 @@ function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}) where {N}
     else
          return HPolyhedron(clist)
     end
+end
+
+function _project_polyhedron(P::LazySet, block)
+    lm = project(P, block, nothing)
+    return constraints_list(lm)
 end
