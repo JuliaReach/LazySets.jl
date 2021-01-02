@@ -126,4 +126,8 @@ for N in [Float64, Float32]
     # volume in dimension 3
     B = Ball2(zeros(N, 3), N(2))
     @test volume(B) ≈ 4/3 * pi * radius(B)^3
+
+    # projection
+    b4 = Ball2(N[4, 3, 2, 1], N(2))
+    @test project(b4, [2, 4]) == Ball2(N[3, 1], N(2))
 end

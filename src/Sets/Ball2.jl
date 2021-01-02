@@ -374,3 +374,7 @@ function volume(B::Ball2)
     end
     return vol
 end
+
+function project(B::Ball2, block::AbstractVector{Int})
+    return Ball2(B.center[block], B.radius)
+end

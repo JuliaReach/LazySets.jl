@@ -284,3 +284,7 @@ function translate(B::Ball1, v::AbstractVector)
                                 "set by a $(length(v))-dimensional vector"
     return Ball1(center(B) + v, B.radius)
 end
+
+function project(B::Ball1, block::AbstractVector{Int})
+    return Ball1(B.center[block], B.radius)
+end

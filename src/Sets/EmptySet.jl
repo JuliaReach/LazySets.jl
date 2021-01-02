@@ -376,3 +376,7 @@ The zero element of type `N`.
 function area(∅::EmptySet{N}) where {N}
     return zero(N)
 end
+
+function project(∅::EmptySet{N}, block::AbstractVector{Int}) where {N}
+    return EmptySet{N}(length(block))
+end
