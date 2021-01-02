@@ -29,7 +29,8 @@ export LazySet,
        singleton_list,
        concretize,
        constraints,
-       vertices
+       vertices,
+       project
 
 """
     LazySet{N}
@@ -1141,4 +1142,167 @@ union of the complement of each constraint.
 """
 function complement(X::LazySet)
     return UnionSetArray(constraints_list(Complement(X)))
+end
+
+# -- concrete projection --
+
+"""
+    project(S::LazySet{N},
+            block::AbstractVector{Int},
+            [::Nothing=nothing],
+            [n]::Int=dim(S)
+           ) where {N}
+
+Project a high-dimensional set to a given block by using a concrete linear map.
+
+### Input
+
+- `S`       -- set
+- `block`   -- block structure - a vector with the dimensions of interest
+- `nothing` -- (default: `nothing`) used for dispatch
+- `n`       -- (optional, default: `dim(S)`) ambient dimension of the set `S`
+
+### Output
+
+A set representing the projection of the set `S` to block `block`.
+
+### Algorithm
+
+We apply the function `linear_map`.
+"""
+@inline function project(S::LazySet{N},
+                         block::AbstractVector{Int},
+                         ::Nothing=nothing,
+                         n::Int=dim(S)
+                        ) where {N}
+    M = projection_matrix(block, n, N)
+    return linear_map(M, S)
+end
+
+"""
+    project(S::LazySet,
+            block::AbstractVector{Int},
+            set_type::Type{<:LazySet},
+            [n]::Int=dim(S)
+           )
+
+Project a high-dimensional set to a given block and set type, possibly involving
+an overapproximation.
+
+### Input
+
+- `S`        -- set
+- `block`    -- block structure - a vector with the dimensions of interest
+- `set_type` -- target set type
+- `n`        -- (optional, default: `dim(S)`) ambient dimension of the set `S`
+
+### Output
+
+A set of type `set_type` representing an overapproximation of the projection of
+`S`.
+
+### Algorithm
+
+1. Project the set `S` with `M⋅S`, where `M` is the identity matrix in the block
+coordinates and zero otherwise.
+2. Overapproximate the projected lazy set using `overapproximate` and
+`set_type`.
+"""
+@inline function project(S::LazySet,
+                         block::AbstractVector{Int},
+                         set_type::Type{<:LazySet},
+                         n::Int=dim(S)
+                        )
+    lm = project(S, block, LinearMap, n)
+    return overapproximate(lm, set_type)
+end
+
+"""
+    project(S::LazySet,
+            block::AbstractVector{Int},
+            set_type_and_precision::Pair{<:UnionAll, <:Real},
+            [n]::Int=dim(S)
+           )
+
+Project a high-dimensional set to a given block and set type with a certified
+error bound.
+
+### Input
+
+- `S`     -- set
+- `block` -- block structure - a vector with the dimensions of interest
+- `set_type_and_precision` -- pair `(T, ε)` of a target set type `T` and an
+                              error bound `ε` for approximation
+- `n`     -- (optional, default: `dim(S)`) ambient dimension of the set `S`
+
+### Output
+
+A set representing the epsilon-close approximation of the projection of `S`.
+
+### Notes
+
+Currently we only support `HPolygon` as set type, which implies that the set
+must be two-dimensional.
+
+### Algorithm
+
+1. Project the set `S` with `M⋅S`, where `M` is the identity matrix in the block
+coordinates and zero otherwise.
+2. Overapproximate the projected lazy set with the given error bound `ε`.
+"""
+@inline function project(S::LazySet,
+                         block::AbstractVector{Int},
+                         set_type_and_precision::Pair{<:UnionAll, <:Real},
+                         n::Int=dim(S)
+                        )
+    set_type = set_type_and_precision[1]
+    ε = set_type_and_precision[2]
+    @assert length(block) == 2 && set_type == HPolygon "currently only 2D " *
+        "HPolygon decomposition is supported"
+
+    lm = project(S, block, LinearMap, n)
+    return overapproximate(lm, set_type, ε)
+end
+
+"""
+    project(S::LazySet,
+            block::AbstractVector{Int},
+            ε::Real,
+            [n]::Int=dim(S)
+           )
+
+Project a high-dimensional set to a given block and set type with a certified
+error bound.
+
+### Input
+
+- `S`     -- set
+- `block` -- block structure - a vector with the dimensions of interest
+- `ε`     -- error bound for approximation
+- `n`     -- (optional, default: `dim(S)`) ambient dimension of the set `S`
+
+### Output
+
+A set representing the epsilon-close approximation of the projection of `S`.
+
+### Algorithm
+
+1. Project the set `S` with `M⋅S`, where `M` is the identity matrix in the block
+coordinates and zero otherwise.
+2. Overapproximate the projected lazy set with the given error bound `ε`.
+The target set type is chosen automatically.
+"""
+@inline function project(S::LazySet,
+                         block::AbstractVector{Int},
+                         ε::Real,
+                         n::Int=dim(S)
+                        )
+    # currently we only support HPolygon
+    if length(block) == 2
+        set_type = HPolygon
+    else
+        throw(ArgumentError("ε-close approximation is only supported for 2D " *
+                            "blocks"))
+    end
+    return project(S, block, set_type => ε, n)
 end

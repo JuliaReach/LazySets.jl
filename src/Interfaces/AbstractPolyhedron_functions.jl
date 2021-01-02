@@ -973,3 +973,93 @@ function vertices_list(P::AbstractPolyhedron; check_boundedness::Bool=true)
     end
     return vertices_list(HPolytope(constraints_list(P), check_boundedness=false))
 end
+
+"""
+    project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}) where {N}
+
+Concrete projection of a polyhedral set.
+
+### Input
+
+- `P`        -- set
+- `block`    -- block structure, a vector with the dimensions of interest
+
+### Output
+
+A polyhedron representing the projection of `P` on the dimensions specified by
+`block`.
+If `P` was bounded, the result is an `HPolytope`; otherwise the result is an
+`HPolyhedron`.
+
+### Algorithm
+
+- If the unconstrained dimensions of `P` are a subset of the `block` variables,
+  each half-sace `c` of `P` is transformed to `HalfSpace(c.a[block], c.b)`.
+- In the general case, we compute the concrete linear map of the projection
+  matrix associated to the given block structure.
+
+### Examples
+
+Consider the four-dimensional cross-polytope (unit ball in the 1-norm):
+
+```jldoctest project_polyhedron
+julia> P = Ball1(zeros(4), 1.0);
+```
+
+All dimensions are constrained, and computing the (trivial) projection on the whole
+space behaves as expected:
+
+```jldoctest project_polyhedron
+julia> constrained_dimensions(P)
+4-element Array{Int64,1}:
+ 1
+ 2
+ 3
+ 4
+
+julia> P_1234 = project(P, [1, 2, 3, 4]);
+
+julia> P_1234 == convert(HPolytope, P)
+true
+```
+Each constraint of the cross polytope is constrained in all dimensions.
+
+Now let's take a ball in the infinity norm and remove some constraints:
+
+```jldoctest project_polyhedron
+julia> B = BallInf(zeros(4), 1.0);
+
+julia> c = constraints_list(B)[1:2]
+2-element Array{HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}},1}:
+ HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}}([1.0, 0.0, 0.0, 0.0], 1.0)
+ HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}}([0.0, 1.0, 0.0, 0.0], 1.0)
+
+julia> P = HPolyhedron(c);
+
+julia> constrained_dimensions(P)
+2-element Array{Int64,1}:
+ 1
+ 2
+```
+
+Finally we take the concrete projection onto variables `1` and `2`:
+
+```jldoctest project_polyhedron
+julia> project(P, [1, 2]) |> constraints_list
+2-element Array{HalfSpace{Float64,Array{Float64,1}},1}:
+ HalfSpace{Float64,Array{Float64,1}}([1.0, 0.0], 1.0)
+ HalfSpace{Float64,Array{Float64,1}}([0.0, 1.0], 1.0)
+```
+"""
+function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}) where {N}
+    if constrained_dimensions(P) ⊆ block
+        clist = [HalfSpace(c.a[block], c.b) for c in constraints_list(P)]
+    else
+        n = dim(P)
+        M = projection_matrix(block, n, N)
+        lm = linear_map(M, P)
+        clist = constraints_list(lm)
+    end
+    T = isbounded(P) ? HPolytope : HPolyhedron
+    return T(clist)
+end

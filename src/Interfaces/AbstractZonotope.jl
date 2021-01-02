@@ -684,3 +684,9 @@ Here the zonotope is split along both of its generators, each time into four par
 function split(Z::AbstractZonotope, gens::AbstractVector{Int}, nparts::AbstractVector{Int})
     return _split(convert(Zonotope, Z), gens, nparts)
 end
+
+function project(Z::AbstractZonotope{N}, block::AbstractVector{Int}) where {N}
+    n = dim(Z)
+    M = projection_matrix(block, n, N)
+    return remove_zero_generators(linear_map(M, Z))
+end
