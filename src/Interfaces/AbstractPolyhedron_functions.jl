@@ -184,7 +184,7 @@ Note that the result may be `true` even if the constraints are infeasible.
 For example, ``x ≤ 0 && x ≥ 1`` will return `true` without removing any
 constraint.
 To check if the constraints are infeasible, use
-`isempty(HPolyhedron(constraints)`.
+`isempty(HPolyhedron(constraints))`.
 
 ### Algorithm
 
@@ -993,8 +993,12 @@ If `P` was bounded, the result is an `HPolytope`; otherwise the result is an
 
 ### Algorithm
 
-- If the unconstrained dimensions of `P` are a subset of the `block` variables,
-  each half-sace `c` of `P` is transformed to `HalfSpace(c.a[block], c.b)`.
+- We first try to exploit the special case where each of the constraints of `P`
+  and `block` are *compatible*, which is one of the two cases described below.
+  Let `c` be a constraint of `P` and let ``D_c`` and ``D_b`` be the set of
+  dimensions in which `c` resp. `block` are constrained.
+  - If ``D_c ⊆ D_b``, then one can project the normal vector of `c`.
+  - If ``D_c ∩ D_b = ∅``, then the constraint becomes redundant.
 - In the general case, we compute the concrete linear map of the projection
   matrix associated to the given block structure.
 
@@ -1052,14 +1056,53 @@ julia> project(P, [1, 2]) |> constraints_list
 ```
 """
 function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}) where {N}
-    if constrained_dimensions(P) ⊆ block
-        clist = [HalfSpace(c.a[block], c.b) for c in constraints_list(P)]
-    else
+    general_case = false
+
+    # cheap case
+    clist = nothing  # allocate later
+    @inbounds for c in constraints(P)
+        subset_status = 0  # initially 0, set to 1 if subset and -1 if disjoint
+        for i in constrained_dimensions(c)
+            if i in block
+                # case 1: is a subset
+                if subset_status == -1
+                    general_case = true
+                    break
+                elseif subset_status == 0
+                    subset_status = 1
+                end
+            else
+                # case 1: is disjoint
+                if subset_status == 1
+                    general_case = true
+                    break
+                elseif subset_status == 0
+                    subset_status = -1
+                end
+            end
+        end
+        if subset_status == 1
+            # simple projection of half-space
+            hs = HalfSpace(c.a[block], c.b)
+            if clist == nothing
+                clist = [hs]  # get the right type of the constraints
+            else
+                push!(clist, hs)
+            end
+        end
+    end
+
+    # general case
+    if general_case
         n = dim(P)
         M = projection_matrix(block, n, N)
         lm = linear_map(M, P)
         clist = constraints_list(lm)
     end
-    T = isbounded(P) ? HPolytope : HPolyhedron
-    return T(clist)
+
+    if isbounded(P)
+         return HPolytope(clist; check_boundedness=false)
+    else
+         return HPolyhedron(clist)
+    end
 end
