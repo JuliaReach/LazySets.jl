@@ -185,6 +185,13 @@ for N in [Float64, Rational{Int}, Float32]
    Zs = LazySets._convert_2D_static(Zonotope, B)
    @test Zs == Zonotope(SVector{2}(N[0, 0]), SMatrix{2, 2}(N[1 0; 0 1]))
 
+    # set difference
+    B = BallInf(N[0, 0, 0], N(1))
+    @test isempty(difference(B, B))
+
+    # volume
+    @test volume(B) ≈ N(8)
+
     # projection
     b4 = BallInf(N[4, 3, 2, 1], N(2))
     @test project(b4, [2, 4]) == BallInf(N[3, 1], N(2))
