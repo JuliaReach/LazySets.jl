@@ -1056,32 +1056,41 @@ julia> project(P, [1, 2]) |> constraints_list
 ```
 """
 function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}) where {N}
+    function _check_constrained_dimensions(c::HalfSpace)
+        # 1 = constrained dimensions subset of block
+        # -1 = constrained dimensions disjoint from block
+        # 0 = mixed case
+        status = 0
+        for i in constrained_dimensions(c)
+            if i in block
+                # case 1: is a subset
+                if status == -1
+                    status = 0
+                    break
+                end
+                status = 1
+            else
+                # case 1: is disjoint
+                if status == 1
+                    status = 0
+                    break
+                end
+                status = -1
+            end
+        end
+        return status
+    end
+
     general_case = false
 
     # cheap case
     clist = nothing  # allocate later
     @inbounds for c in constraints(P)
-        subset_status = 0  # initially 0, set to 1 if subset and -1 if disjoint
-        for i in constrained_dimensions(c)
-            if i in block
-                # case 1: is a subset
-                if subset_status == -1
-                    general_case = true
-                    break
-                elseif subset_status == 0
-                    subset_status = 1
-                end
-            else
-                # case 1: is disjoint
-                if subset_status == 1
-                    general_case = true
-                    break
-                elseif subset_status == 0
-                    subset_status = -1
-                end
-            end
-        end
-        if subset_status == 1
+        status = _check_constrained_dimensions(c)
+        if status == 0
+            general_case = true
+            break
+        elseif status == 1
             # simple projection of half-space
             hs = HalfSpace(c.a[block], c.b)
             if clist == nothing
@@ -1089,6 +1098,8 @@ function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}) where {N}
             else
                 push!(clist, hs)
             end
+        elseif status == -1
+            # drop the constraint because it became redundant
         end
     end
 
@@ -1105,6 +1116,6 @@ function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}) where {N}
 end
 
 function _project_polyhedron(P::LazySet, block)
-    lm = project(P, block, nothing)
-    return constraints_list(lm)
+    projected = project(P, block)  # concrete projection of P
+    return constraints_list(projected)
 end
