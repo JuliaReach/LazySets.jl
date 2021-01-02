@@ -990,6 +990,8 @@ A polyhedron representing the projection of `P` on the dimensions specified by
 `block`.
 If `P` was bounded, the result is an `HPolytope`; otherwise the result is an
 `HPolyhedron`.
+Note that there are more specific methods for specific input types, which give a
+different output type; e.g., projecting a `Ball1` results in a `Ball1`.
 
 ### Algorithm
 
@@ -1003,11 +1005,11 @@ If `P` was bounded, the result is an `HPolytope`; otherwise the result is an
 Consider the four-dimensional cross-polytope (unit ball in the 1-norm):
 
 ```jldoctest project_polyhedron
-julia> P = Ball1(zeros(4), 1.0);
+julia> P = convert(HPolytope, Ball1(zeros(4), 1.0));
 ```
 
-All dimensions are constrained, and computing the (trivial) projection on the whole
-space behaves as expected:
+All dimensions are constrained, and computing the (trivial) projection on the
+whole space behaves as expected:
 
 ```jldoctest project_polyhedron
 julia> constrained_dimensions(P)
@@ -1017,9 +1019,7 @@ julia> constrained_dimensions(P)
  3
  4
 
-julia> P_1234 = project(P, [1, 2, 3, 4]);
-
-julia> P_1234 == convert(HPolytope, P)
+julia> project(P, [1, 2, 3, 4]) == P
 true
 ```
 Each constraint of the cross polytope is constrained in all dimensions.
