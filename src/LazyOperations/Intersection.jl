@@ -55,6 +55,11 @@ Type that represents the intersection of two convex sets.
 - `cache` -- internal cache for avoiding recomputation; see
              [`IntersectionCache`](@ref)
 
+### Notes
+
+If the arguments of the lazy intersection are half-spaces, the set is simplified
+to a polyhedron in constraint representation (`HPolyhedron`).
+
 ### Examples
 
 Create an expression, ``Z``, which lazily represents the intersection of two
@@ -115,6 +120,11 @@ Alias for `Intersection`.
 """
 ∩(X::LazySet, Y::LazySet) = Intersection(X, Y)
 
+# --- simplifications ---
+
+Intersection(H1::HalfSpace, H2::HalfSpace) = HPolyhedron([H1, H2])
+Intersection(H::HalfSpace, P::HPolyhedron) = HPolyhedron(vcat(P.constraints, H))
+Intersection(P::HPolyhedron, H::HalfSpace) = HPolyhedron(vcat(P.constraints, H))
 
 # --- cache propagation functions ---
 
