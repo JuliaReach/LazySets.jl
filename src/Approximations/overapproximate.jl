@@ -370,7 +370,7 @@ function overapproximate(X::LazySet{N}, dir::AbstractDirections{N, VN}; prune::B
     if (isbounded(X) && isbounding(dir)) || _isbounded_stiemke(HPolyhedron(P))
         return HPolytope(H, check_boundedness=false)
     else
-        return HPolyhedron(P)
+        return HPolyhedron(H)
     end
 end
 
