@@ -74,9 +74,9 @@ surface(::LazySet{N}) where {N}
 area(::LazySet{N}) where {N}
 concretize(::LazySet)
 complement(::LazySet)
-project(S::LazySet{N}, ::AbstractVector{Int}, ::Nothing, ::Int=dim(S)) where {N}
-project(S::LazySet, ::AbstractVector{Int}, ::Type{<:LazySet}, ::Int=dim(S))
-project(S::LazySet, ::AbstractVector{Int}, ::Pair{<:UnionAll, <:Real}, ::Int=dim(S))
+project(S::LazySet{N}, ::AbstractVector{Int}, ::Nothing=nothing, ::Int=dim(S)) where {N}
+project(S::LazySet, ::AbstractVector{Int}, ::Type{var"#s27"} where var"#s27"<:LazySet, ::Int=dim(S))
+project(S::LazySet, ::AbstractVector{Int}, ::Pair{var"#s14",var"#s12"} where var"#s12"<:Real where var"#s14"<:UnionAll, ::Int=dim(S))
 project(S::LazySet, ::AbstractVector{Int}, ::Real, ::Int=dim(S))
 ```
 
