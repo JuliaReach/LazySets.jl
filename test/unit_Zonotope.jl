@@ -76,6 +76,9 @@ for N in [Float64, Rational{Int}, Float32]
 
     # translation
     @test translate(Z1, N[1, 2]) == Zonotope(N[2, 3], gens)
+    Z1c = copy(Z1)
+    translate!(Z1c, N[1, 2]) # in-place translation
+    @test Z1c == Zonotope(N[2, 3], gens)
 
     # concrete Minkowski sum
     Z3 = minkowski_sum(Z1, Z2)
@@ -207,6 +210,10 @@ for N in [Float64, Rational{Int}, Float32]
     constraints = constraints_list(Z)
     @test constraints isa Vector{<:HalfSpace{N}} && length(constraints) == 6
 
+    # concrete projection returns a zonotope
+    πZ12 = project(Z, 1:2)
+    @test πZ12 == Zonotope(zeros(N, 2), Matrix(N(1)*I, 2, 2))
+   
     # 1D projection works correctly even with zero generators (#2147)
     Z = convert(Zonotope, BallInf(N[0, 0], N(1)))
     Z2 = project(Z, [1])
@@ -294,23 +301,22 @@ for N in [Float64]
 
     gens = N[1 1; -1 1]
     Z1 = Zonotope(N[1, 1], gens)
-    Z2 = Zonotope(N[-1, 1], Matrix{N}(I, 2, 2))
-    Z3 = minkowski_sum(Z1, Z2)
+    Z2 = Zonotope(N[-2, -1], Matrix{N}(I, 2, 2))
 
-    # intersection with a hyperplane
+    # isdisjoint with a hyperplane
     H1 = Hyperplane(N[1, 1], N(3))
     intersection_empty, point = is_intersection_empty(Z1, H1, true)
-    @test point ∈ Z1 && point ∈ H1
+    @test !intersection_empty && point ∈ Z1 && point ∈ H1
     # zonotope without generators (#2204)
     Z3 = Zonotope(N[0, 0], Matrix{N}(undef, 2, 0))
     @test isdisjoint(Z3, H1)
 
-    # isdisjoint
+    # isdisjoint with another zonotope
     result, w = isdisjoint(Z1, Z2, true)
     @test isdisjoint(Z1, Z2) && result && w == N[]
     Z3 = Zonotope(N[2, 1], Matrix{N}(I, 2, 2))
-    @test_throws ErrorException isdisjoint(Z2, Z3, true)
-    @test !isdisjoint(Z2, Z3)
+    @test_throws ErrorException isdisjoint(Z1, Z3, true)
+    @test !isdisjoint(Z1, Z3)
 
     # issubset
     Z = Zonotope(N[0, 0], N[1 1; -1 1])

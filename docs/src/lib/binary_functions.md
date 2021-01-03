@@ -104,6 +104,7 @@ pontryagin_difference
 ## Subset check
 
 ```@docs
+issubset
 ⊆(::LazySet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 ⊆(::LazySet{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
 ⊆(::AbstractPolytope{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
@@ -118,7 +119,7 @@ pontryagin_difference
 ⊆(::Union{Ball2{N}, Ballp{N}}, ::AbstractSingleton{N}, ::Bool=false) where {N<:AbstractFloat}
 ⊆(::LineSegment{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 ⊆(::LineSegment{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
-⊆(::Interval, ::Interval)
+⊆(::Interval, ::Interval, ::Bool=false)
 ⊆(::EmptySet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
 ⊆(::LazySet{N}, ::EmptySet{N}, ::Bool=false) where {N<:Real}
 ⊆(::UnionSet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
@@ -128,6 +129,7 @@ pontryagin_difference
 ⊆(::LazySet{N}, ::Complement{N}, ::Bool=false) where {N<:Real}
 ⊆(::CartesianProduct{N}, ::CartesianProduct{N}, ::Bool=false) where {N<:Real}
 ⊆(::CartesianProductArray{N}, ::CartesianProductArray{N}, ::Bool=false) where {N<:Real}
+⊆(::AbstractZonotope{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
 ```
 
 ## Set difference

@@ -43,12 +43,10 @@ See the documentation of the respective `Sampler`.
 function sample(X::LazySet{N}, num_samples::Int;
                 sampler=nothing,
                 rng::AbstractRNG=GLOBAL_RNG,
-                seed::Union{Int, Nothing}=nothing) where {N<:Real}
+                seed::Union{Int, Nothing}=nothing) where {N}
     @assert isbounded(X) "this function requires that the set `X` is bounded"
 
     if sampler == nothing
-        require(:Distributions; fun_name="sample",
-                explanation="using the default `RejectionSampler` algorithm")
         sampler = RejectionSampler
     end
     D = Vector{Vector{N}}(undef, num_samples) # preallocate output
@@ -57,7 +55,7 @@ function sample(X::LazySet{N}, num_samples::Int;
 end
 
 # without argument, returns a single element (instead of a singleton)
-function sample(X::LazySet{N}; kwargs...) where {N<:Real}
+function sample(X::LazySet{N}; kwargs...) where {N}
     return sample(X, 1; kwargs...)[1]
 end
 
@@ -65,9 +63,86 @@ end
 function _sample!(D::Vector{Vector{N}},
                   sampler::Sampler;
                   rng::AbstractRNG=GLOBAL_RNG,
-                  seed::Union{Int, Nothing}=nothing) where {N<:Real}
+                  seed::Union{Int, Nothing}=nothing) where {N}
     error("the method `_sample!` is not implemented for samplers of type " *
           "$(typeof(sampler))")
+end
+
+# =====================
+# Rejection Sampling
+# =====================
+
+# represents a uniform distribution over the interval [a, b]
+struct DefaultUniform{N}
+    a::N
+    b::N
+end
+
+function Base.rand(rng::AbstractRNG, U::DefaultUniform)
+    (U.b - U.a) * rand(rng) + U.a
+end
+
+"""
+    RejectionSampler{S<:LazySet, D} <: Sampler
+
+Type used for rejection sampling of an arbitrary `LazySet` `X`.
+
+### Fields
+
+- `X`          -- (bounded) set to be sampled
+- `box_approx` -- Distribution from which the sample is drawn
+
+### Algorithm
+
+Draw a sample ``x`` from a uniform distribution of a box-overapproximation of the
+original set ``X`` in all ``n`` dimensions. The function rejects a drawn sample ``x``
+and redraws as long as the sample is not contained in the original set ``X``,
+i.e., ``x ∉ X``.
+"""
+struct RejectionSampler{S<:LazySet, D} <: Sampler
+    X::S
+    box_approx::Vector{D}
+end
+
+
+function RejectionSampler(X, distribution=DefaultUniform)
+    B = box_approximation(X)
+    box_approx = [distribution(low(B, i), high(B, i)) for i in 1:dim(B)]
+    return RejectionSampler(X, box_approx)
+end
+
+"""
+    _sample!(D::Vector{Vector{N}},
+             sampler::RejectionSampler;
+             rng::AbstractRNG=GLOBAL_RNG,
+             seed::Union{Int, Nothing}=nothing) where {N}
+
+Sample points using rejection sampling.
+
+### Input
+
+- `D`           -- output, vector of points
+- `sampler`     -- Sampler from which the points are sampled
+- `rng`         -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed`        -- (optional, default: `nothing`) seed for reseeding
+
+### Output
+
+A vector of `num_samples` vectors.
+"""
+function _sample!(D::Vector{Vector{N}},
+                  sampler::RejectionSampler;
+                  rng::AbstractRNG=GLOBAL_RNG,
+                  seed::Union{Int, Nothing}=nothing) where {N}
+    rng = reseed(rng, seed)
+    @inbounds for i in 1:length(D)
+        w = rand.(Ref(rng), sampler.box_approx)
+        while w ∉ sampler.X
+            w = rand.(Ref(rng), sampler.box_approx)
+        end
+        D[i] = w
+    end
+    return D
 end
 
 # =============================
@@ -77,7 +152,7 @@ end
 function load_distributions_samples()
 return quote
 
-using .Distributions: Distribution, Uniform, Normal
+using .Distributions: Uniform, Normal
 import .Distributions
 
 # ======================================================
@@ -194,74 +269,6 @@ function _sample_unit_nball_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
         r = rand(rng, Zrad)
         β = r^one_over_n / sqrt(α)
         D[j] = v .* β
-    end
-    return D
-end
-
-# =====================
-# Rejection Sampling
-# =====================
-
-"""
-    RejectionSampler{S<:LazySet, D<:Distribution} <: Sampler
-
-Type used for rejection sampling of an arbitrary `LazySet` `X`.
-
-### Fields
-
-- `X`          -- (bounded) set to be sampled
-- `box_approx` -- Distribution from which the sample is drawn
-
-### Algorithm
-
-Draw a sample ``x`` from a uniform distribution of a box-overapproximation of the
-original set ``X`` in all ``n`` dimensions. The function rejects a drawn sample ``x``
-and redraws as long as the sample is not contained in the original set ``X``,
-i.e., ``x ∉ X``.
-"""
-struct RejectionSampler{S<:LazySet, D<:Distribution} <: Sampler
-    X::S
-    box_approx::Vector{D}
-end
-
-function RejectionSampler(X, distribution=Uniform)
-    B = box_approximation(X)
-    canonical_support = hcat(low(B), high(B))
-    dims = size(canonical_support, 1)
-    box_approx = [distribution(canonical_support[i,:]...) for i = 1:dims]
-    return RejectionSampler(X, box_approx)
-end
-
-"""
-    _sample!(D::Vector{Vector{N}},
-             sampler::RejectionSampler;
-             rng::AbstractRNG=GLOBAL_RNG,
-             seed::Union{Int, Nothing}=nothing) where {N<:Real}
-
-Sample points using rejection sampling.
-
-### Input
-
-- `D`           -- output, vector of points
-- `sampler`     -- Sampler from which the points are sampled
-- `rng`         -- (optional, default: `GLOBAL_RNG`) random number generator
-- `seed`        -- (optional, default: `nothing`) seed for reseeding
-
-### Output
-
-A vector of `num_samples` vectors.
-"""
-function _sample!(D::Vector{Vector{N}},
-                  sampler::RejectionSampler;
-                  rng::AbstractRNG=GLOBAL_RNG,
-                  seed::Union{Int, Nothing}=nothing) where {N<:Real}
-    rng = reseed(rng, seed)
-    @inbounds for i in 1:length(D)
-        w = rand.(Ref(rng), sampler.box_approx)
-        while w ∉ sampler.X
-            w = rand.(Ref(rng), sampler.box_approx)
-        end
-        D[i] = w
     end
     return D
 end

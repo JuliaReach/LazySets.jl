@@ -482,7 +482,7 @@ witness.
 
 ### Algorithm
 
-``Z1 ∩ Z2 ≠ ∅`` iff ``c_1 - c_2 ∈ Z(0, (g_1, g_2))`` where ``c_i`` and ``g_i``
+``Z1 ∩ Z2 = ∅`` iff ``c_1 - c_2 ∉ Z(0, (g_1, g_2))`` where ``c_i`` and ``g_i``
 are the center and generators of zonotope `Zi` and ``Z(c, g)`` represents the
 zonotope with center ``c`` and generators ``g``.
 """
@@ -492,7 +492,7 @@ function is_intersection_empty(Z1::AbstractZonotope, Z2::AbstractZonotope,
     @assert n == dim(Z2) "zonotopes need to have the same dimensions"
     N = promote_type(eltype(Z1), eltype(Z2))
     Z = Zonotope(zeros(N, n), hcat(genmat(Z1), genmat(Z2)))
-    result = (center(Z1) - center(Z2)) ∈ Z
+    result = (center(Z1) - center(Z2)) ∉ Z
     if result
         return witness ? (true, N[]) : true
     elseif witness

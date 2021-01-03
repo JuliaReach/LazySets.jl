@@ -96,4 +96,8 @@ for N in [Float64, Rational{Int}, Float32]
                                 HalfSpace(N[-1, 1], N(1)),  # -x + y <= 1
                                 HalfSpace(N[1, -1], N(1)), # x - y <= 1
                                 HalfSpace(N[-1, -1], N(1))])  # x + y >= -1
+
+    # projection
+    b4 = Ball1(N[4, 3, 2, 1], N(2))
+    @test project(b4, [2, 4]) == Ball1(N[3, 1], N(2))
 end

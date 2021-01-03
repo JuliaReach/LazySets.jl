@@ -63,7 +63,7 @@ _isbounded_unit_dimensions(::LazySet{N}) where {N}
 an_element(::LazySet{N}) where {N}
 tosimplehrep(::LazySet)
 isuniversal(::LazySet{N}, ::Bool=false) where {N}
-affine_map(M::AbstractMatrix, X::LazySet, v::AbstractVector)
+affine_map(::AbstractMatrix, ::LazySet, v::AbstractVector)
 reflect(::LazySet)
 is_interior_point(::AbstractVector{N}, ::LazySet{N}; p=Inf, ε=_rtol(N)) where {N<:Real}
 isoperationtype(::Type{<:LazySet})
@@ -72,7 +72,12 @@ isequivalent(::LazySet, ::LazySet)
 isconvextype(::Type{<:LazySet})
 surface(::LazySet{N}) where {N}
 area(::LazySet{N}) where {N}
-concretize(X::LazySet)
+concretize(::LazySet)
+complement(::LazySet)
+project(S::LazySet{N}, ::AbstractVector{Int}, ::Nothing, ::Int=dim(S)) where {N}
+project(S::LazySet, ::AbstractVector{Int}, ::Type{<:LazySet}, ::Int=dim(S))
+project(S::LazySet, ::AbstractVector{Int}, ::Pair{<:UnionAll, <:Real}, ::Int=dim(S))
+project(S::LazySet, ::AbstractVector{Int}, ::Real, ::Int=dim(S))
 ```
 
 Plotting is available for general one- or two-dimensional `LazySet`s, provided
@@ -185,6 +190,7 @@ chebyshev_center(::AbstractPolyhedron{N}) where {N}
 an_element(::AbstractPolyhedron{N}) where {N}
 isbounded(::AbstractPolyhedron{N}) where {N}
 vertices_list(::AbstractPolyhedron)
+project(::AbstractPolyhedron{N}, ::AbstractVector{Int}) where {N}
 ```
 
 Plotting (bounded) polyhedra is available, too:
@@ -328,6 +334,7 @@ generators_fallback(::AbstractZonotope)
 ∈(::AbstractVector, ::AbstractZonotope)
 linear_map(::AbstractMatrix, ::AbstractZonotope)
 translate(::AbstractZonotope, ::AbstractVector)
+translate!(::AbstractZonotope, ::AbstractVector)
 constraints_list(::AbstractZonotope)
 constraints_list(::AbstractZonotope{N}; ::Bool=true) where {N<:AbstractFloat}
 vertices_list(::AbstractZonotope)

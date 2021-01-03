@@ -624,3 +624,9 @@ function volume(H::AbstractHyperrectangle)
     vol = mapreduce(x -> 2x, *, radius_hyperrectangle(H))
     return vol
 end
+
+function project(H::AbstractHyperrectangle, block::AbstractVector{Int})
+    πc = center(H)[block]
+    πr = radius_hyperrectangle(H)[block]
+    return Hyperrectangle(πc, πr, check_bounds=false)
+end

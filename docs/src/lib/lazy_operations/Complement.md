@@ -13,3 +13,10 @@ dim(::Complement)
 ∈(::AbstractVector, ::Complement)
 isempty(::Complement)
 ```
+
+The concrete complement can be computed with the function `complement` (mind the lowercase,
+as it is usual for functions).
+
+```@docs
+constraints_list(::Complement)
+```

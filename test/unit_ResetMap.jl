@@ -9,6 +9,10 @@ for N in [Float64, Rational{Int}, Float32]
     rm = ResetMap(b, r)
     # rm is the line segment in 3D from [4, 1, 0] to [4, 3, 0]
 
+    # type
+    @test isoperationtype(typeof(rm)) == true
+    @test isconvextype(typeof(rm)) == true
+
     # dimension
     @test dim(rm) == 3
 
@@ -51,6 +55,15 @@ for N in [Float64, Rational{Int}, Float32]
                          HalfSpace(N[0, -1, 0], N(-1)),
                          HalfSpace(N[0, 0, 1], N(0)),
                          HalfSpace(N[0, 0, -1], N(0))])
+
+    # constraints list of a lazy set
+    if test_suite_polyhedra && N == Float64
+        rm = ResetMap(b, r)
+        rm_id = ResetMap(Matrix(one(N)*I, 3, 3) * b, r)
+        X = HPolytope(constraints_list(rm))
+        Y = HPolytope(constraints_list(rm_id))
+        @test (X ⊆ Y) && (Y ⊆ X) # TODO use isequivalent(X, Y), requires LazySets#2370 and #1914
+    end
 end
 
 for N in [Float64]
