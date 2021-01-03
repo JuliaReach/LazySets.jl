@@ -78,8 +78,6 @@ struct DefaultUniform{N}
     b::N
 end
 
-using Random
-
 function Base.rand(rng::AbstractRNG, U::DefaultUniform)
     (U.b - U.a) * rand(rng) + U.a
 end
@@ -154,7 +152,7 @@ end
 function load_distributions_samples()
 return quote
 
-using .Distributions: Distribution, Uniform, Normal
+using .Distributions: Uniform, Normal
 import .Distributions
 
 # ======================================================
