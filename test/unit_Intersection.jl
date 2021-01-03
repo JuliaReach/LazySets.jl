@@ -32,6 +32,12 @@ for N in [Float64, Rational{Int}, Float32]
     # concretize
     @test concretize(I) == intersection(B, H)
 
+    # conversion of intersection of polyhedral types to polyhedral types
+    H1 = HalfSpace(N[1, 1], N(1))
+    H2 = HalfSpace(N[-1, -1], N(1))
+    P12 = convert(HPolyhedron, H1 ∩ H2)
+    @test P12 == HPolyhedron([H1, H2])
+
     # =================
     # IntersectionArray
     # =================
@@ -71,6 +77,10 @@ for N in [Float64, Rational{Int}, Float32]
 
     # concretize
     @test concretize(IArr) == intersection(B, H)
+
+    # conversion of intersection of polyhedral types to polyhedral types
+    P12 = convert(HPolyhedron, IntersectionArray([H1, H2]))
+    @test P12 == HPolyhedron([H1, H2])
 
     # ================
     # common functions
