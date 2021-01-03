@@ -1159,5 +1159,18 @@ function convert(::Type{Zonotope}, cpa::CartesianProductArray{N, AZ}) where
 end
 
 convert(::Type{HPolytope}, P::HPolyhedron) = HPolytope(copy(constraints_list(P)))
-
 convert(::Type{HPolyhedron}, P::HPolytope) = HPolyhedron(copy(constraints_list(P)))
+
+for T in [HPolygon, HPolygonOpt, HPolytope, HPolyhedron]
+@eval begin
+    function convert(::Type{$T}, P::Intersection{N, S1, S2}) where {N, S1<:AbstractPolyhedron{N}, S2<:AbstractPolyhedron{N}}
+        clist = vcat(constraints_list(P.X), constraints_list(P.Y))
+        return ($T)(clist)
+    end
+
+    function convert(::Type{$T}, P::IntersectionArray{N, S}) where {N, S<:AbstractPolyhedron}
+        clist = reduce(vcat, constraints_list.(array(P)))
+        return ($T)(clist)
+    end
+end
+end
