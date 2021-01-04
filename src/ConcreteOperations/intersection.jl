@@ -732,10 +732,10 @@ function intersection(P1::Union{VPolygon{N}, VPolytope{N}},
         Pint = intersection(Q1, Q2)
         return convert(VPolytope, Pint)
     elseif n == 2
-        Q1 = convert(VPolygon, P1)
-        Q2 = convert(VPolygon, P2)
-        Pint = intersection(Q1, Q2)
-        return convert(VPolytope, Pint)
+        v1 = convex_hull(vertices_list(P1))
+        v2 = convex_hull(vertices_list(P2))
+        v12 = _intersection_vrep_2d(v1, v2)
+        return VPolytope(v12)
     end
 
     if isnothing(backend)
@@ -781,7 +781,7 @@ function intersection(P1::VPolygon{N}, P2::VPolygon{N};
                       apply_convex_hull::Bool=true) where {N}
     v1 = vertices_list(P1)
     v2 = vertices_list(P2)
-    v12 = _intersection_vrep(v1, v2)
+    v12 = _intersection_vrep_2d(v1, v2)
     if isempty(v12)
         return EmptySet{N}(2)
     else
