@@ -404,7 +404,6 @@ function _minkowski_sum_vrep_nd(vlist1::Vector{VT}, vlist2::Vector{VT};
                                 backend=nothing,
                                 solver=nothing) where {N, VT<:AbstractVector{N}}
     n, m = length(vlist1), length(vlist2)
-    N = promote_type(eltype(P1), eltype(P2))
     Vout = Vector{VT}()
     sizehint!(Vout, n * m)
     for vi in vlist1
