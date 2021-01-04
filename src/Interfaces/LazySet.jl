@@ -1182,9 +1182,9 @@ end
 """
     project(S::LazySet,
             block::AbstractVector{Int},
-            set_type::Type{<:LazySet},
+            set_type::Type{TS},
             [n]::Int=dim(S)
-           )
+           ) where {TS<:LazySet}
 
 Project a high-dimensional set to a given block and set type, possibly involving
 an overapproximation.
@@ -1210,9 +1210,9 @@ coordinates and zero otherwise.
 """
 @inline function project(S::LazySet,
                          block::AbstractVector{Int},
-                         set_type::Type{<:LazySet},
+                         set_type::Type{TS},
                          n::Int=dim(S)
-                        )
+                        ) where {TS<:LazySet}
     lm = project(S, block, LinearMap, n)
     return overapproximate(lm, set_type)
 end
@@ -1220,9 +1220,9 @@ end
 """
     project(S::LazySet,
             block::AbstractVector{Int},
-            set_type_and_precision::Pair{<:UnionAll, <:Real},
+            set_type_and_precision::Pair{T, N},
             [n]::Int=dim(S)
-           )
+           ) where {T<:UnionAll, N<:Real}
 
 Project a high-dimensional set to a given block and set type with a certified
 error bound.
@@ -1252,9 +1252,9 @@ coordinates and zero otherwise.
 """
 @inline function project(S::LazySet,
                          block::AbstractVector{Int},
-                         set_type_and_precision::Pair{<:UnionAll, <:Real},
+                         set_type_and_precision::Pair{T, N},
                          n::Int=dim(S)
-                        )
+                        ) where {T<:UnionAll, N<:Real}
     set_type = set_type_and_precision[1]
     ε = set_type_and_precision[2]
     @assert length(block) == 2 && set_type == HPolygon "currently only 2D " *
