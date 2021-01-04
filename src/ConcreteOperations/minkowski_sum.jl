@@ -332,9 +332,9 @@ function _minkowski_sum_vrep_2d(vlistP::Vector{VT},
 
     EAST = N[1, 0]
     ORIGIN = N[0, 0]
-    k = _σ_helper(EAST, P)
-    j = _σ_helper(EAST, Q)
-    R = Vector{Vector{N}}(undef, mP+mQ)
+    k = _σ_helper(EAST, vlistP)
+    j = _σ_helper(EAST, vlistQ)
+    R = Vector{VT}(undef, mP+mQ)
     fill!(R, ORIGIN)
 
     i = 1
