@@ -12,8 +12,8 @@ The following methods are shared between `HPolytope` and `HPolyhedron`.
 
 ```@docs
 dim(::HPoly)
-ρ(::AbstractVector{N}, ::HPoly{N}) where {N}
-σ(::AbstractVector{N}, ::HPoly{N}) where {N}
+ρ(::AbstractVector{M}, ::HPoly{N}) where {M, N}
+σ(::AbstractVector{M}, ::HPoly{N}) where {M, N}
 addconstraint!(::HPoly, ::LinearConstraint)
 constraints_list(::HPoly)
 tohrep(::HPoly)
