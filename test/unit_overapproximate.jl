@@ -69,7 +69,7 @@ for N in [Float64, Rational{Int}, Float32]
     OA = overapproximate(M*H, Hyperrectangle)
     @test OA isa Hyperrectangle && OA.center == N[0, 0] && OA.radius == N[1, 2]
 
-    #overapproximation of Minkowski sum of linear maps for each block in the row block
+    # overapproximation of Minkowski sum of linear maps for each block in the row block
     i1 = Interval(N[0, 1])
     h = Hyperrectangle(low=N[3, 4], high=N[5, 7])
     M = N[1 2 3; 4 5 6; 7 8 9]
