@@ -15,7 +15,7 @@ an_element(::LinearMap)
 vertices_list(::LinearMap)
 constraints_list(::LinearMap)
 linear_map(::AbstractMatrix, ::LinearMap)
-project(S::LazySet{N}, ::AbstractVector{Int}, ::Type{T} where T<:LinearMap, ::Int=dim(S)) where {N}
+project(S::LazySet{N}, ::AbstractVector{Int}, ::Type{LM}, ::Int=dim(S)) where {N, LM<:LinearMap}
 ```
 Inherited from [`AbstractAffineMap`](@ref):
 * [`isempty`](@ref isempty(::AbstractAffineMap))
