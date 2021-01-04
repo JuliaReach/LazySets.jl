@@ -80,7 +80,8 @@ function dim(P::HPoly)
 end
 
 """
-    ρ(d::AbstractVector{N}, P::HPoly{N}; solver=default_lp_solver(N)) where {N}
+    ρ(d::AbstractVector{M}, P::HPoly{N};
+      solver=default_lp_solver(M, N)) where {M, N}
 
 Evaluate the support function of a polyhedron (in H-representation) in a given
 direction.
@@ -89,7 +90,7 @@ direction.
 
 - `d`      -- direction
 - `P`      -- polyhedron in H-representation
-- `solver` -- (optional, default: `default_lp_solver(N)`) the backend used to
+- `solver` -- (optional, default: `default_lp_solver(M, N)`) the backend used to
               solve the linear program
 
 ### Output
@@ -98,8 +99,8 @@ The support function of the polyhedron.
 If a polytope is unbounded in the given direction, we throw an error.
 If a polyhedron is unbounded in the given direction, the result is `Inf`.
 """
-function ρ(d::AbstractVector{N}, P::HPoly{N};
-           solver=default_lp_solver(N)) where {N}
+function ρ(d::AbstractVector{M}, P::HPoly{N};
+           solver=default_lp_solver(M, N)) where {M, N}
     lp, unbounded = σ_helper(d, P, solver)
     if unbounded
         if P isa HPolytope
@@ -112,7 +113,8 @@ function ρ(d::AbstractVector{N}, P::HPoly{N};
 end
 
 """
-    σ(d::AbstractVector{N}, P::HPoly{N}; solver=default_lp_solver(N)) where {N}
+    σ(d::AbstractVector{M}, P::HPoly{N};
+      solver=default_lp_solver(M, N) where {M, N}
 
 Return the support vector of a polyhedron (in H-representation) in a given
 direction.
@@ -121,15 +123,15 @@ direction.
 
 - `d`      -- direction
 - `P`      -- polyhedron in H-representation
-- `solver` -- (optional, default: `default_lp_solver(N)`) the backend used to
+- `solver` -- (optional, default: `default_lp_solver(M, N)`) the backend used to
               solve the linear program
 
 ### Output
 
 The support vector in the given direction.
 """
-function σ(d::AbstractVector{N}, P::HPoly{N};
-           solver=default_lp_solver(N)) where {N}
+function σ(d::AbstractVector{M}, P::HPoly{N};
+           solver=default_lp_solver(M, N)) where {M, N}
     lp, unbounded = σ_helper(d, P, solver)
     if unbounded
         if P isa HPolytope

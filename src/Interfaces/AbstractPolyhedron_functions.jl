@@ -19,6 +19,11 @@ function default_lp_solver(N::Type{<:Rational})
     GLPKSolverLP(method=:Exact)
 end
 
+# helper function given two possibly different numeric types
+function default_lp_solver(M::Type{<:Number}, N::Type{<:Number})
+    return default_lp_solver(promote_type(M, N))
+end
+
 # Polyhedra backend (fallback method)
 function default_polyhedra_backend(P, N)
     require(:Polyhedra; fun_name="default_polyhedra_backend")
