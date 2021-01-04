@@ -413,7 +413,7 @@ function _minkowski_sum_vrep_nd(vlist1::Vector{VT}, vlist2::Vector{VT};
     end
     if apply_convex_hull
         if backend == nothing
-            backend = default_polyhedra_backend(N)
+            backend = default_polyhedra_backend_nd(N)
             solver = default_lp_solver_polyhedra(N)
         end
         convex_hull!(Vout, backend=backend, solver=solver)
