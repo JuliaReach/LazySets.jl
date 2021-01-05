@@ -458,7 +458,7 @@ The box radius in the given dimension.
 """
 function radius_hyperrectangle(x::Interval{N}, i::Int) where {N}
     @assert i == 1 "an interval is one-dimensional"
-    return (max(x) - min(x)) / N(2)
+    return (max(x) + min(x)) / N(2)
 end
 
 """
