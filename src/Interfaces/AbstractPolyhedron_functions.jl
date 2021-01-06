@@ -25,7 +25,7 @@ function default_lp_solver(M::Type{<:Number}, N::Type{<:Number})
 end
 
 # Polyhedra backend (fallback method)
-function default_polyhedra_backend(P, N)
+function default_polyhedra_backend(P::LazySet{N}) where {N}
     require(:Polyhedra; fun_name="default_polyhedra_backend")
     error("no default backend for numeric type $N")
 end
@@ -824,7 +824,7 @@ end
 """
     chebyshev_center(P::AbstractPolyhedron{N};
                      [get_radius]::Bool=false,
-                     [backend]=default_polyhedra_backend(P, N),
+                     [backend]=default_polyhedra_backend(P),
                      [solver]=default_lp_solver_polyhedra(N; presolve=true)
                      ) where {N}
 
@@ -837,7 +837,7 @@ of a polytope.
 - `get_radius` -- (optional; default: `false`) option to additionally return the
                   radius of the largest ball enclosed by `P` around the
                   Chebyshev center
-- `backend`    -- (optional; default: `default_polyhedra_backend(P, N)`) the
+- `backend`    -- (optional; default: `default_polyhedra_backend(P)`) the
                   backend for polyhedral computations
 - `solver`     -- (optional; default:
                   `default_lp_solver_polyhedra(N; presolve=true)`) the LP
@@ -857,7 +857,7 @@ In general, the center of such a ball is not unique (but the radius is).
 """
 function chebyshev_center(P::AbstractPolyhedron{N};
                           get_radius::Bool=false,
-                          backend=default_polyhedra_backend(P, N),
+                          backend=default_polyhedra_backend(P),
                           solver=default_lp_solver_polyhedra(N; presolve=true)
                          ) where {N}
     require(:Polyhedra; fun_name="chebyshev_center")

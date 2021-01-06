@@ -387,7 +387,7 @@ Return the polytope obtained by removing the redundant vertices of the given pol
 
 - `P`       -- polytope in vertex representation
 - `backend` -- (optional, default: `nothing`) the backend for polyhedral
-               computations; see `default_polyhedra_backend(P, N)` or
+               computations; see `default_polyhedra_backend(P)` or
                [Polyhedra's documentation](https://juliapolyhedra.github.io/)
                for further information
 - `solver`  -- (optional, default: `nothing`) the linear programming
@@ -411,7 +411,7 @@ function remove_redundant_vertices(P::VPolytope{N};
                                    solver=nothing) where {N}
     require(:Polyhedra; fun_name="remove_redundant_vertices")
     if backend == nothing
-        backend = default_polyhedra_backend(P, N)
+        backend = default_polyhedra_backend(P)
     end
     Q = polyhedron(P; backend=backend)
     if Polyhedra.supportssolver(typeof(Q))
@@ -428,14 +428,14 @@ end
 
 """
     tohrep(P::VPolytope{N};
-           [backend]=default_polyhedra_backend(P, N)) where {N}
+           [backend]=default_polyhedra_backend(P)) where {N}
 
 Transform a polytope in V-representation to a polytope in H-representation.
 
 ### Input
 
 - `P`       -- polytope in vertex representation
-- `backend` -- (optional, default: `default_polyhedra_backend(P, N)`) the
+- `backend` -- (optional, default: `default_polyhedra_backend(P)`) the
                backend for polyhedral computations; see [Polyhedra's
                documentation](https://juliapolyhedra.github.io/) for further
                information
@@ -451,7 +451,7 @@ The conversion may not preserve the numeric type (e.g., with `N == Float32`)
 depending on the backend.
 """
 function tohrep(P::VPolytope{N};
-                backend=default_polyhedra_backend(P, N)) where {N}
+                backend=default_polyhedra_backend(P)) where {N}
     vl = P.vertices
     if isempty(vl)
         return EmptySet{N}(dim(P))
@@ -497,15 +497,16 @@ function VPolytope(P::VRep{N}) where {N}
 end
 
 """
-    polyhedron(P::VPolytope{N};
-               [backend]=default_polyhedra_backend(P, N)) where {N}
+    polyhedron(P::VPolytope;
+               [backend]=default_polyhedra_backend(P),
+               [relative_dimension]=nothing)
 
 Return an `VRep` polyhedron from `Polyhedra.jl` given a polytope in V-representation.
 
 ### Input
 
 - `P`       -- polytope
-- `backend` -- (optional, default: `default_polyhedra_backend(P, N)`) the
+- `backend` -- (optional, default: `default_polyhedra_backend(P)`) the
                backend for polyhedral computations; see [Polyhedra's
                documentation](https://juliapolyhedra.github.io/) for further
                information
@@ -528,9 +529,9 @@ such that a line segment in two dimensions has dimension two. However,
 `Polyhedra.dim` will assign a dimension equal to one to a line segment
 because it uses a different convention.
 """
-function polyhedron(P::VPolytope{N};
-                    backend=default_polyhedra_backend(P, N),
-                    relative_dimension=nothing) where {N}
+function polyhedron(P::VPolytope;
+                    backend=default_polyhedra_backend(P),
+                    relative_dimension=nothing)
     if isempty(P)
         if relative_dimension == nothing
             error("the conversion to a `Polyhedra.polyhedron` requires the (relative) dimension " *

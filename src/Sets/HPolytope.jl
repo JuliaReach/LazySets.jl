@@ -204,7 +204,7 @@ by passing, e.g. `backend=CDDLib.Library()`.
 
 If the polytope is not two-dimensional, the concrete polyhedra manipulation
 library `Polyhedra` is used. The actual computation is performed by a given
-backend; for the default backend used in `LazySets` see `default_polyhedra_backend(N)`.
+backend; for the default backend used in `LazySets` see `default_polyhedra_backend(P)`.
 For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/).
 """
@@ -219,7 +219,7 @@ function vertices_list(P::HPolytope{N};
     else
         require(:Polyhedra; fun_name="vertices_list")
         if backend == nothing
-            backend = default_polyhedra_backend(P, N)
+            backend = default_polyhedra_backend(P)
         end
         Q = polyhedron(P; backend=backend)
         if prune
