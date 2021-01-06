@@ -576,7 +576,7 @@ end
 
 function _vertices_list_2D(c::AbstractVector{N}, G::AbstractMatrix{N}; apply_convex_hull::Bool) where {N}
     if same_sign(G)
-        return _vertices_list_2D_positive(c, G)
+        return _vertices_list_2D_positive(c, G, apply_convex_hull=apply_convex_hull)
     else
         # FIXME generalized 2D vertices list function is not implemented yet
         # See LazySets#2209
@@ -584,7 +584,7 @@ function _vertices_list_2D(c::AbstractVector{N}, G::AbstractMatrix{N}; apply_con
     end
 end
 
-function _vertices_list_2D_positive(c::AbstractVector{N}, G::AbstractMatrix{N}) where {N}
+function _vertices_list_2D_positive(c::AbstractVector{N}, G::AbstractMatrix{N}; apply_convex_hull::Bool) where {N}
     n, p = size(G)
 
     # TODO special case p = 1 or p = 2 ?
@@ -596,7 +596,12 @@ function _vertices_list_2D_positive(c::AbstractVector{N}, G::AbstractMatrix{N}) 
     end
     index[:, 1] .= -one(N)
     V = sorted_G * index .+ c
-    return [V[:, i] for i in 1:2*p]
+    vlist = [V[:, i] for i in 1:2*p]
+
+    if apply_convex_hull
+        convex_hull!(vlist)
+    end
+    return vlist
 end
 
 function _vertices_list_iterative(c::VN, G::MN; apply_convex_hull::Bool) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}}
