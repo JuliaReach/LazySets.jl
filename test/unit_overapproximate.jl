@@ -368,6 +368,12 @@ for N in [Float64]
     # test dispatch of internal functions
     @test Approximations._overapproximate_zonotope_vrep(V, BoxDirections) == Z
     @test convert(Zonotope, Approximations._overapproximate_zonotope_cpa(V, BoxDirections)) == Z
+    # lazy intersection
+    Z = convert(Zonotope, BallInf(zeros(N, 2), N(2)))
+    H = convert(HPolygon, BallInf(3 * ones(N, 2), N(2)))
+    Z2 = overapproximate(Intersection(Z, H), Zonotope, BoxDirections(2))
+    @test ispermutation(vertices_list(Z2),
+        vertices_list(BallInf(fill(N(3//2) , 2), N(1//2))))
 
     # decomposed linear map approximation
     i1 = Interval(N[0, 1])

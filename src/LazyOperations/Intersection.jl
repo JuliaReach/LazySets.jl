@@ -593,6 +593,33 @@ function constraints_list(cap::Intersection)
     return constraints
 end
 
+"""
+    vertices_list(cap::Intersection)
+
+Return the list of vertices of a lazy intersection of two sets.
+
+### Input
+
+- `cap` -- intersection of two (polyhedral) sets
+
+### Output
+
+A list containing the vertices of the lazy intersection of two sets.
+
+### Notes
+
+We assume that the underlying sets are polyhedral and that the intersection is
+bounded.
+
+### Algorithm
+
+We compute the concrete intersection using `intersection` and then take the
+vertices of that representation.
+"""
+function vertices_list(cap::Intersection)
+    return vertices_list(intersection(cap.X, cap.Y))
+end
+
 
 # --- Intersection functions ---
 

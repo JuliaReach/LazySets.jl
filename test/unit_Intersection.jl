@@ -46,6 +46,11 @@ for N in [Float64, Rational{Int}, Float32]
     Ih12 = Intersection(H1, H2, cache=LazySets.IntersectionCache())
     @test Ih12.X == H1 && Ih12.Y == H2
 
+    # vertices
+    I2 = Intersection(BallInf(zeros(N, 2), N(2)), BallInf(3 * ones(N, 2), N(2)))
+    @test ispermutation(vertices_list(I2),
+        vertices_list(BallInf(fill(N(3//2) , 2), N(1//2))))
+
     # =================
     # IntersectionArray
     # =================
