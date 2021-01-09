@@ -281,6 +281,10 @@ for N in [Float64]
     Z = Zonotope([0., 0.], [1. 0. 1.; 0. 1. 1.])
     vlistZ = vertices_list(Z)
     @test length(vlistZ) == 6
+    # redundant vertices are removed automatically
+    Z = Zonotope(N[1, 3], N[0 0 1; 0 0 0])
+    vlistZ = vertices_list(Z)
+    @test length(vlistZ) == 2
 
     # test 2d zonotope generators in negative orthant vertex enumeration
     Z = Zonotope([0., 0.], -[1. 0. 1.; 0. 1. 1.])

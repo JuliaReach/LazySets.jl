@@ -222,7 +222,7 @@ for N in [Float64, Float32, Rational{Int}]
     xaux = intersection(paux, qaux)
     oaux = VPolygon([N[0, 0], N[1/2, 0], N[0, 1/2]])
     @test xaux ⊆ oaux && oaux ⊆ xaux # TODO use isequivalent
-    @test LazySets._intersection_vrep(paux.vertices, qaux.vertices) == xaux.vertices
+    @test LazySets._intersection_vrep_2d(paux.vertices, qaux.vertices) == xaux.vertices
 
     # check that tighter constraints are used in intersection (#883)
     h1 = HalfSpace([N(1), N(0)], N(3))

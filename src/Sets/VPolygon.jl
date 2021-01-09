@@ -657,8 +657,9 @@ function _intersection_line_segments(a, b, s, f)
     return [α, β]
 end
 
-function _intersection_vrep(spoly::AbstractVector{VT},
-                            cpoly::AbstractVector{VT}) where {VT<:AbstractVector}
+# Note: this method assumes that the vertices are sorted in ccw order
+function _intersection_vrep_2d(spoly::AbstractVector{VT},
+                               cpoly::AbstractVector{VT}) where {VT<:AbstractVector}
     outarr = spoly
     q = cpoly[end]
     for p in cpoly
