@@ -411,15 +411,15 @@ end
 # ========================================================
 
 """
-    tovrep(P::HPoly{N};
-          [backend]=default_polyhedra_backend(P, N)) where {N}
+    tovrep(P::HPoly;
+          [backend]=default_polyhedra_backend(P))
 
 Transform a polyhedron in H-representation to a polytope in V-representation.
 
 ### Input
 
 - `P`       -- polyhedron in constraint representation
-- `backend` -- (optional, default: `default_polyhedra_backend(P, N)`) the
+- `backend` -- (optional, default: `default_polyhedra_backend(P)`) the
                backend for polyhedral computations
 
 ### Output
@@ -434,8 +434,8 @@ depending on the backend.
 For further information on the supported backends see [Polyhedra's
 documentation](https://juliapolyhedra.github.io/).
 """
-function tovrep(P::HPoly{N};
-                backend=default_polyhedra_backend(P, N)) where {N}
+function tovrep(P::HPoly;
+                backend=default_polyhedra_backend(P))
     require(:Polyhedra; fun_name="tovrep")
     P = polyhedron(P; backend=backend)
     return VPolytope(P)
@@ -470,7 +470,7 @@ Determine whether a polyhedron is empty.
 
 The default value of the `backend` is set internally and depends on whether the
 `use_polyhedra_interface` option is set or not.
-If the option is set, we use `default_polyhedra_backend(P, N)`.
+If the option is set, we use `default_polyhedra_backend(P)`.
 
 Witness production is not supported if `use_polyhedra_interface` is `true`.
 
@@ -493,7 +493,7 @@ function isempty(P::HPoly{N},
         require(:Polyhedra; fun_name="isempty", explanation="with the active " *
             "option `use_polyhedra_interface`")
         if backend == nothing
-            backend = default_polyhedra_backend(P, N)
+            backend = default_polyhedra_backend(P)
         end
         result = Polyhedra.isempty(polyhedron(P; backend=backend), solver)
         if result
@@ -558,7 +558,7 @@ function HPolyhedron(P::HRep{N}) where {N}
 end
 
 """
-    polyhedron(P::HPoly{N}; [backend]=default_polyhedra_backend(P, N)) where {N}
+    polyhedron(P::HPoly; [backend]=default_polyhedra_backend(P))
 
 Return an `HRep` polyhedron from `Polyhedra.jl` given a polytope in
 H-representation.
@@ -566,7 +566,7 @@ H-representation.
 ### Input
 
 - `P`       -- polytope
-- `backend` -- (optional, default: call `default_polyhedra_backend(P, N)`)
+- `backend` -- (optional, default: call `default_polyhedra_backend(P)`)
                 the polyhedral computations backend
 
 ### Output
@@ -578,8 +578,8 @@ An `HRep` polyhedron.
 For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/).
 """
-function polyhedron(P::HPoly{N};
-                    backend=default_polyhedra_backend(P, N)) where {N}
+function polyhedron(P::HPoly;
+                    backend=default_polyhedra_backend(P))
     A, b = tosimplehrep(P)
     return Polyhedra.polyhedron(Polyhedra.hrep(A, b), backend)
 end

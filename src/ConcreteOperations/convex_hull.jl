@@ -560,8 +560,8 @@ function convex_hull(P1::VPolytope, P2::VPolytope; backend=nothing)
 end
 
 """
-    convex_hull(P1::HPoly{N}, P2::HPoly{N};
-               [backend]=default_polyhedra_backend(P1, N)) where {N<:Real}
+    convex_hull(P1::HPoly, P2::HPoly;
+               [backend]=default_polyhedra_backend(P1))
 
 Compute the convex hull of the set union of two polyhedra in H-representation.
 
@@ -569,7 +569,7 @@ Compute the convex hull of the set union of two polyhedra in H-representation.
 
 - `P1`         -- polyhedron
 - `P2`         -- another polyhedron
-- `backend`    -- (optional, default: `default_polyhedra_backend(P1, N)`)
+- `backend`    -- (optional, default: `default_polyhedra_backend(P1)`)
                   the polyhedral computations backend
 
 ### Output
@@ -585,9 +585,8 @@ for the `convex_hull`.
 For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/).
 """
-function convex_hull(P1::HPoly{N},
-                     P2::HPoly{N};
-                     backend=default_polyhedra_backend(P1, N)) where {N<:Real}
+function convex_hull(P1::HPoly, P2::HPoly;
+                     backend=default_polyhedra_backend(P1))
     require(:Polyhedra; fun_name="convex_hull")
     Pch = Polyhedra.convexhull(polyhedron(P1; backend=backend),
                                polyhedron(P2; backend=backend))

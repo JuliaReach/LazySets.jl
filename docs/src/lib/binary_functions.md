@@ -14,8 +14,8 @@ CurrentModule = LazySets
 ## Cartesian product
 
 ```@docs
-cartesian_product(::HPoly{N}, ::HPoly{N}) where {N<:Real}
-cartesian_product(::VPolytope{N}, ::VPolytope{N}) where N
+cartesian_product(::HPoly, ::HPoly)
+cartesian_product(::VPolytope, ::VPolytope)
 ```
 
 ## Check for emptiness of intersection
@@ -50,7 +50,7 @@ is_intersection_empty(::Line2D, ::Line2D, ::Bool=false)
 
 ```@docs
 convex_hull(::LazySet{N}, ::LazySet{N}) where {N<:Real}
-convex_hull(::HPoly{N}, ::HPoly{N}) where {N<:Real}
+convex_hull(::HPoly, ::HPoly)
 convex_hull(::VPolytope, ::VPolytope)
 convex_hull(::VPolygon, ::VPolygon)
 convex_hull(::Vector{VN}) where {N<:Real, VN<:AbstractVector{N}}
@@ -70,7 +70,7 @@ intersection(::Interval{N}, ::Hyperplane{N}) where {N<:Real}
 intersection(::Interval{N}, ::LazySet{N}) where {N<:Real}
 intersection(::AbstractHPolygon{N}, ::AbstractHPolygon{N}, ::Bool=true) where {N<:Real}
 intersection(::AbstractPolyhedron{N}, ::AbstractPolyhedron{N}) where {N<:Real}
-intersection(::Union{VPolytope{N}, VPolygon{N}}, ::Union{VPolytope{N}, VPolygon{N}}) where {N}
+intersection(::Union{VPolytope, VPolygon}, ::Union{VPolytope, VPolygon})
 intersection(::VPolygon{N}, ::VPolygon{N}; ::Bool=true) where {N}
 intersection(::UnionSet{N}, ::LazySet{N}) where {N<:Real}
 intersection(::UnionSetArray{N}, ::LazySet{N}) where {N<:Real}

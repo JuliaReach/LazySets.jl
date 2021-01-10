@@ -16,7 +16,7 @@ remove_redundant_vertices(::VPolytope{N}) where {N}
 constraints_list(::VPolytope)
 tohrep(::VPolytope{N}) where {N}
 tovrep(::VPolytope)
-polyhedron(::VPolytope{N}) where {N}
+polyhedron(::VPolytope)
 linear_map(::AbstractMatrix, ::VPolytope)
 ```
 Inherited from [`LazySet`](@ref):
