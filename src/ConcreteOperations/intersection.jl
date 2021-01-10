@@ -623,7 +623,7 @@ to run a feasiblity LP to remove the redundant constraints of the intersection.
 
 If you want to use the `Polyhedra` library, pass an appropriate backend. For
 example, to use the default Polyhedra library use
-`default_polyhedra_backend(P, N)` or use `CDDLib.Library()` for the CDD library.
+`default_polyhedra_backend(P)` or use `CDDLib.Library()` for the CDD library.
 
 There are some shortcomings of the removal of constraints using the default
 Polyhedra library; see e.g. #1038 and Polyhedra#146. It is safer to check for
@@ -697,10 +697,9 @@ function intersection(P::AbstractPolyhedron{N}, X::Interval{N}
 end
 
 """
-    intersection(P1::VPolytope{N},
-                 P2::VPolytope{N};
-                 [backend]=default_polyhedra_backend(P1, N),
-                 [prunefunc]=removevredundancy!) where {N}
+    intersection(P1::Union{VPolygon, VPolytope}, P2::Union{VPolygon, VPolytope};
+                 [backend]=nothing,
+                 [prunefunc]=removevredundancy!)
 
 Compute the intersection of two polytopes in vertex representation.
 
@@ -708,8 +707,8 @@ Compute the intersection of two polytopes in vertex representation.
 
 - `P1`        -- polytope in vertex representation
 - `P2`        -- polytope in vertex representation
-- `backend`   -- (optional, default: `default_polyhedra_backend(P1, N)`) the
-                 backend for polyhedral computations
+- `backend`   -- (optional, default: `nothing`) the backend for polyhedral
+                 computations
 - `prunefunc` -- (optional, default: `removevredundancy!`) function to prune
                  the vertices of the result
 
@@ -717,10 +716,10 @@ Compute the intersection of two polytopes in vertex representation.
 
 A `VPolytope`.
 """
-function intersection(P1::Union{VPolygon{N}, VPolytope{N}},
-                      P2::Union{VPolygon{N}, VPolytope{N}};
+function intersection(P1::Union{VPolygon, VPolytope},
+                      P2::Union{VPolygon, VPolytope};
                       backend=nothing,
-                      prunefunc=nothing) where {N}
+                      prunefunc=nothing)
     n = dim(P1)
     @assert n == dim(P2) "expected polytopes with equal dimensions but they " *
                          "are $(dim(P1)) and $(dim(P2)) respectively"
@@ -739,7 +738,7 @@ function intersection(P1::Union{VPolygon{N}, VPolytope{N}},
     end
 
     if isnothing(backend)
-        backend = default_polyhedra_backend(P1, N)
+        backend = default_polyhedra_backend(P1)
     end
     if isnothing(prunefunc)
         prunefunc = removevredundancy!

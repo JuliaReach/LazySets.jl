@@ -17,11 +17,11 @@ dim(::HPoly)
 addconstraint!(::HPoly, ::LinearConstraint)
 constraints_list(::HPoly)
 tohrep(::HPoly)
-tovrep(::HPoly{N}) where {N}
+tovrep(::HPoly)
 normalize(::HPoly{N}, p=N(2)) where {N}
 isempty(::HPoly{N}, ::Bool=false) where {N}
 translate(::HPoly, ::AbstractVector)
-polyhedron(::HPoly{N}) where {N}
+polyhedron(::HPoly)
 remove_redundant_constraints(::HPoly{N}) where {N}
 remove_redundant_constraints!(::HPoly{N}) where {N}
 LazySets._isbounded_stiemke(::HPolyhedron{N}) where {N}
