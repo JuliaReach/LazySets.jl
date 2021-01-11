@@ -301,18 +301,27 @@ const binary_or_brute_force = 10
 
 # return the index of a support vector of P along d from the list of vertices of P
 function _σ_helper(d::AbstractVector, P::VPolygon)
-    if length(P.vertices) > binary_or_brute_force
-        return _binary_support_vector(d, P)
+    vlist = P.vertices
+    return _σ_helper(d, vlist)
+end
+
+function _σ_helper(d::AbstractVector, vlist::Vector{VN}) where {N, VN<:AbstractVector{N}}
+    if length(vlist) > binary_or_brute_force
+        return _binary_support_vector(d, vlist)
     else
-        return _brute_force_support_vector(d, P)
+        return _brute_force_support_vector(d, vlist)
     end
 end
 
 function _brute_force_support_vector(d::AbstractVector, P::VPolygon)
+    return _brute_force_support_vector(d, P.vertices)
+end
+
+function _brute_force_support_vector(d::AbstractVector{M}, vlist::Vector{VT}) where {M, T, VT<:AbstractVector{T}}
     i_max = 1
-    N = promote_type(eltype(d), eltype(P))
-    @inbounds for i in 2:length(P.vertices)
-        if dot(d, P.vertices[i] - P.vertices[i_max]) > zero(N)
+    N = promote_type(M, T)
+    @inbounds for i in 2:length(vlist)
+        if dot(d, vlist[i] - vlist[i_max]) > zero(N)
             i_max = i
         end
     end
@@ -320,30 +329,43 @@ function _brute_force_support_vector(d::AbstractVector, P::VPolygon)
 end
 
 function _binary_support_vector(d::AbstractVector, P::VPolygon)
-    m = length(P.vertices)
+    return _binary_support_vector(d, P.vertices)
+end
+
+function _binary_support_vector(d::AbstractVector, vlist::Vector{VT}) where {T, VT<:AbstractVector{T}}
+    m = length(vlist)
     @assert m > 2 "the number of vertices in the binary support vector approach should " *
                   "be at least three, but it is $m"
-    push!(P.vertices, P.vertices[1]) # add extra vertice on the end equal to the first
-    a = 1; b = m + 1 # start chain = [1,n+1] with P.vertices[n+1]=P.vertices[1]
-    A = P.vertices[2] - P.vertices[1]
+
+    # add extra vertex on the end equal to the first
+    push!(vlist, vlist[1])
+
+    # start chain = [1,n+1] with P.vertices[n+1] = P.vertices[1]
+    a = 1; b = m + 1
+    A = vlist[2] - vlist[1]
     upA = _up(d, A)
+
     # test if P.vertices[0] is a local maximum
-    if (!upA && !_above(d, P.vertices[m], P.vertices[1])) # P.vertices[1] is the maximum
-        pop!(P.vertices) # remove the extra point added
+    if (!upA && !_above(d, vlist[m], vlist[1]))
+        # if vlist[1] is the maximum, remove the extra point added
+        pop!(vlist)
         return 1
     end
     while true
-        c = round(Int, (a + b) / 2) # midpoint of [a,b], and 1<c<n+1
-        C = P.vertices[c + 1] - P.vertices[c]
+        # midpoint of [a,b], and 1<c<n+1
+        c = round(Int, (a + b) / 2)
+        C = vlist[c + 1] - vlist[c]
         upC = _up(d, C)
-        if (!upC && !_above(d, P.vertices[c - 1], P.vertices[c])) # P.vertices[c] is a local maximum
-            pop!(P.vertices) # remove the extra point added
-            return c # thus it is the maximum
+        if (!upC && !_above(d, vlist[c - 1], vlist[c]))
+            # vlist[c] is a local maximum, remove the extra point added
+            pop!(vlist)
+            return c
         end
+
         # no max yet, so continue with the binary search
         # pick one of the two subchains [a,c] or [c,b]
-        if (upA && upC && !_above(d, P.vertices[a], P.vertices[c])) ||
-        (!upA && (upC || (!upC && _above(d, P.vertices[a], P.vertices[c]))))
+        if (upA && upC && !_above(d, vlist[a], vlist[c])) ||
+        (!upA && (upC || (!upC && _above(d, vlist[a], vlist[c]))))
             a = c
             A = C
             upA = upC
@@ -351,7 +373,7 @@ function _binary_support_vector(d::AbstractVector, P::VPolygon)
             b = c
         end
         if (b <= a + 1) # the chain is impossibly small
-            pop!(P.vertices) # remove the extra point added
+            pop!(vlist) # remove the extra point added
             throw(ErrorException("something went wrong")) # return an error
         end
     end
