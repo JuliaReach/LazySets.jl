@@ -1,5 +1,4 @@
 export dot_zero,
-       sign_cadlag,
        remove_duplicates_sorted!,
        samedir,
        nonzero_indices,
