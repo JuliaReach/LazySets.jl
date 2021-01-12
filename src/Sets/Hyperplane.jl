@@ -487,7 +487,7 @@ return quote
 # returns `(true, sexpr)` if expr represents a hyperplane,
 # where sexpr is the simplified expression sexpr := LHS - RHS == 0
 # otherwise, returns `(false, expr)`
-function _is_hyperplane(expr::Operation)
+function _is_hyperplane(expr::Term)
     got_hyperplane = expr.op == ==
     if got_hyperplane
         # simplify to the form a*x + b == 0
@@ -498,17 +498,18 @@ function _is_hyperplane(expr::Operation)
 end
 
 """
-    Hyperplane(expr::Operation, vars::Union{<:Operation, <:Vector{Operation}}=get_variables(expr); N::Type{<:Real}=Float64)
+    Hyperplane(expr::Term, vars=_get_variables(expr); N::Type{<:Real}=Float64)
 
 Return the hyperplane given by a symbolic expression.
 
 ### Input
 
 - `expr` -- symbolic expression that describes a hyperplane
-- `vars` -- (optional, default: `get_variables(expr)`), if an array of variables is given,
+- `vars` -- (optional, default: `_get_variables(expr)`), if an array of variables is given,
             use those as the ambient variables in the set with respect to which derivations
             take place; otherwise, use only the variables which appear in the given
-            expression (but be careful because the order may change; in doubt, pass `vars` explicitly)
+            expression (but be careful because the order may be incorrect;
+            it is advised to always `vars` explicitly)
 - `N`    -- (optional, default: `Float64`) the numeric type of the returned hyperplane
 
 ### Output
@@ -530,7 +531,7 @@ julia> Hyperplane(x == y)
 Hyperplane{Float64,Array{Float64,1}}([1.0, -1.0], -0.0)
 
 julia> vars = @variables x[1:4]
-(Operation[x₁, x₂, x₃, x₄],)
+(Num[x₁, x₂, x₃, x₄],)
 
 julia> Hyperplane(x[1] == x[2], x)
 Hyperplane{Float64,Array{Float64,1}}([1.0, -1.0, 0.0, 0.0], -0.0)
@@ -547,23 +548,23 @@ Therefore, the order in which the variables appear in `vars` affects the final r
 Finally, the returned set is the hyperplane with normal vector `[a1, …, an]` and
 displacement `b`.
 """
-function Hyperplane(expr::Operation, vars::Union{<:Operation, <:Vector{Operation}}=get_variables(expr); N::Type{<:Real}=Float64)
+function Hyperplane(expr::Term, vars=_get_variables(expr); N::Type{<:Real}=Float64)
     valid, sexpr = _is_hyperplane(expr)
     if !valid
         throw(ArgumentError("expected an expression of the form `ax == b`, got $expr"))
     end
 
     # compute the linear coefficients by taking first order derivatives
-    coeffs = [N(α.value) for α in gradient(sexpr, collect(vars))]
+    coeffs = [N(α.val) for α in gradient(sexpr, collect(vars))]
 
     # get the constant term by expression substitution
     zeroed_vars = Dict(v => zero(N) for v in vars)
-    β = -N(ModelingToolkit.substitute(sexpr, zeroed_vars).value)
+    β = -N(ModelingToolkit.substitute(sexpr, zeroed_vars))
 
     return Hyperplane(coeffs, β)
 end
 
-function Hyperplane(expr::Operation, vars::NTuple{L, Union{<:Operation, <:Vector{Operation}}}; N::Type{<:Real}=Float64) where {L}
+function Hyperplane(expr::Term, vars::NTuple{L, Union{<:Num, <:Vector{Num}}}; N::Type{<:Real}=Float64) where {L}
     vars = _vec(vars)
     return Hyperplane(expr, vars, N=N)
 end

@@ -242,7 +242,7 @@ function load_modeling_toolkit_hpolytope()
 return quote
 
 """
-    HPolytope(expr::Vector{<:Operation}, vars=get_variables(first(expr)); N::Type{<:Real}=Float64)
+    HPolytope(expr::Vector{<:Term}, vars=_get_variables(expr); N::Type{<:Real}=Float64)
 
 Return the polytope in half-space representation given by a list of symbolic expressions.
 
@@ -252,7 +252,8 @@ Return the polytope in half-space representation given by a list of symbolic exp
 - `vars` -- (optional, default: `get_variables(expr)`), if an array of variables is given,
             use those as the ambient variables in the set with respect to which derivations
             take place; otherwise, use only the variables which appear in the given
-            expression (but be careful because the order may change)
+            expression (but be careful because the order may be incorrect; it is advised
+            to always pass `vars` explicitly)
 - `N`    -- (optional, default: `Float64`) the numeric type of the returned half-space
 
 ### Output
@@ -273,7 +274,7 @@ HalfSpace{Float64,Array{Float64,1}}([-1.0, 0.0], 0.0), HalfSpace{Float64,Array{F
 HalfSpace{Float64,Array{Float64,1}}([0.0, -1.0], 0.0)])
 ```
 """
-function HPolytope(expr::Vector{<:Operation}, vars=get_variables(first(expr));
+function HPolytope(expr::Vector{<:Term}, vars=_get_variables(expr);
                    N::Type{<:Real}=Float64, check_boundedness::Bool=false)
     return HPolytope([HalfSpace(ex, vars; N=N) for ex in expr], check_boundedness=check_boundedness)
 end
