@@ -39,7 +39,7 @@ eval(quote
     _vec(vars::Tuple{Num}) = [vars[1]]
 
     _get_variables(expr::Term) = ModelingToolkit.get_variables(expr)
-    _get_variables(expr::Vector{<:Term}) = unique(reduce(vcat, get_variables(ex) for ex in expr))
+    _get_variables(expr::Vector{<:Term}) = unique(reduce(vcat, _get_variables(ex) for ex in expr))
 end)
 
 eval(load_modeling_toolkit_hyperplane())
