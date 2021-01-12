@@ -683,7 +683,7 @@ julia> HPolyhedron([x + y <= 1, x + y >= -1], vars)
 HPolyhedron{Float64,Array{Float64,1}}(HalfSpace{Float64,Array{Float64,1}}[HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0], 1.
 0), HalfSpace{Float64,Array{Float64,1}}([-1.0, -1.0], 1.0)])
 
-julia> X = HPolyhedron([x == 0, y <= 0], var)
+julia> X = HPolyhedron([x == 0, y <= 0], vars)
 HPolyhedron{Float64,Array{Float64,1}}(HalfSpace{Float64,Array{Float64,1}}[HalfSpace{Float64,Array{Float64,1}}([1.0, 0.0], -0.0), HalfSp
 ace{Float64,Array{Float64,1}}([-1.0, -0.0], 0.0), HalfSpace{Float64,Array{Float64,1}}([0.0, 1.0], -0.0)])
 ```
