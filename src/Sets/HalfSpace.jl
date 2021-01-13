@@ -533,7 +533,7 @@ function _is_halfspace(expr::Term)
     got_halfspace = true
 
     # find sense and normalize
-    if (expr.op == <=) || (expr.op == <)
+    if expr.op in (<=, <)
         a, b = expr.args
         sexpr = simplify(a - b)
 
