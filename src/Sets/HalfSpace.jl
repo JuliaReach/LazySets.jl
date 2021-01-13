@@ -529,15 +529,15 @@ return quote
 # returns `(true, sexpr)` if expr represents a half-space,
 # where sexpr is the simplified expression sexpr := LHS - RHS <= 0
 # otherwise, returns `(false, expr)`
-function _is_halfspace(expr::Operation)
+function _is_halfspace(expr::Term)
     got_halfspace = true
 
     # find sense and normalize
-    if expr.op == <
+    if expr.op in (<=, <)
         a, b = expr.args
         sexpr = simplify(a - b)
 
-    elseif expr.op == >
+    elseif expr.op in (>=, >)
         a, b = expr.args
         sexpr = simplify(b - a)
 
@@ -565,7 +565,7 @@ function _is_halfspace(expr::Operation)
 end
 
 """
-    HalfSpace(expr::Operation, vars::Union{<:Operation, <:Vector{Operation}}=get_variables(expr); N::Type{<:Real}=Float64)
+    HalfSpace(expr::Term, vars=_get_variables(expr); N::Type{<:Real}=Float64)
 
 Return the half-space given by a symbolic expression.
 
@@ -575,7 +575,8 @@ Return the half-space given by a symbolic expression.
 - `vars` -- (optional, default: `get_variables(expr)`), if an array of variables is given,
             use those as the ambient variables in the set with respect to which derivations
             take place; otherwise, use only the variables which appear in the given
-            expression (but be careful because the order may change; see the examples below for details)
+            expression (but be careful because the order may be incorrect; it is advised to
+            always pass `vars` explicitly; see the examples below for details)
 - `N`    -- (optional, default: `Float64`) the numeric type of the returned half-space
 
 ### Output
@@ -590,14 +591,14 @@ julia> using ModelingToolkit
 julia> vars = @variables x y
 (x, y)
 
-julia> HalfSpace(x - y <= 2)
+julia> HalfSpace(x - y <= 2, vars)
 HalfSpace{Float64,Array{Float64,1}}([1.0, -1.0], 2.0)
 
-julia> HalfSpace(x >= y)
-HalfSpace{Float64,Array{Float64,1}}([1.0, -1.0], -0.0)
+julia> HalfSpace(x >= y, vars)
+HalfSpace{Float64,Array{Float64,1}}([-1.0, 1.0], -0.0)
 
 julia> vars = @variables x[1:4]
-(Operation[x₁, x₂, x₃, x₄],)
+(Num[x₁, x₂, x₃, x₄],)
 
 julia> HalfSpace(x[1] >= x[2], x)
 HalfSpace{Float64,Array{Float64,1}}([-1.0, 1.0, 0.0, 0.0], -0.0)
@@ -610,11 +611,17 @@ order.
 julia> vars = @variables x y
 (x, y)
 
-julia> HalfSpace(2x ≥ 5y - 1) # wrong
-HalfSpace{Float64,Array{Float64,1}}([5.0, -2.0], 1.0)
+julia> HalfSpace(2x ≥ 5y - 1) # correct
+HalfSpace{Float64,Array{Float64,1}}([-2.0, 5.0], 1.0)
 
 julia> HalfSpace(2x ≥ 5y - 1, vars) # correct
 HalfSpace{Float64,Array{Float64,1}}([-2.0, 5.0], 1.0)
+
+julia> HalfSpace(y - x ≥ 1) # incorrect
+HalfSpace{Float64,Array{Float64,1}}([-1.0, 1.0], -1.0)
+
+julia> HalfSpace(y - x ≥ 1, vars) # correct
+HalfSpace{Float64,Array{Float64,1}}([1.0, -1.0], -1.0)
 ```
 
 ### Algorithm
@@ -630,23 +637,23 @@ Note in particular that strict inequalities are relaxed as being smaller-or-equa
 Finally, the returned set is the half-space with normal vector `[a1, …, an]` and
 displacement `b`.
 """
-function HalfSpace(expr::Operation, vars::Union{<:Operation, <:Vector{Operation}}=get_variables(expr); N::Type{<:Real}=Float64)
+function HalfSpace(expr::Term, vars=_get_variables(expr); N::Type{<:Real}=Float64)
     valid, sexpr = _is_halfspace(expr)
     if !valid
         throw(ArgumentError("expected an expression describing a half-space, got $expr"))
     end
 
     # compute the linear coefficients by taking first order derivatives
-    coeffs = [N(α.value) for α in gradient(sexpr, collect(vars))]
+    coeffs = [N(α.val) for α in gradient(sexpr, collect(vars))]
 
     # get the constant term by expression substitution
     zeroed_vars = Dict(v => zero(N) for v in vars)
-    β = -N(ModelingToolkit.substitute(sexpr, zeroed_vars).value)
+    β = -N(ModelingToolkit.substitute(sexpr, zeroed_vars))
 
     return HalfSpace(coeffs, β)
 end
 
-function HalfSpace(expr::Operation, vars::NTuple{L, Union{<:Operation, <:Vector{Operation}}}; N::Type{<:Real}=Float64) where {L}
+function HalfSpace(expr::Term, vars::NTuple{L, Union{<:Num, <:Vector{Num}}}; N::Type{<:Real}=Float64) where {L}
     vars = _vec(vars)
     return HalfSpace(expr, vars, N=N)
 end

@@ -527,4 +527,13 @@ for N in [Float64]
         @test ispermutation(constraints_list(πP), [HalfSpace(N[-1], N(1)),
                                                    HalfSpace(N[1], N(1))])
     end
+
+    # tests that require ModelingToolkit
+    @static if VERSION >= v"1.3" && isdefined(@__MODULE__, :ModelingToolkit)
+        vars = @variables x y
+        p1 = HPolytope([x + y <= 1, x + y >= -1,  x - y <= 1, x - y >= -1], vars)
+        b1 = Ball1(zeros(2), 1.0)
+        @test isequivalent(p1, b1)
+    end
+
 end
