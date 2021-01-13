@@ -321,7 +321,7 @@ julia> dict["available"]  # tovrep is only available for polyhedral set types
 julia> dict = implementing_sets(σ; signature=Type[AbstractVector{Float64}], index=2);
 
 julia> dict["missing"]  # every set type implements function σ
-0-element Array{Type,1}
+Type[]
 
 julia> N = Rational{Int};  # restriction of the number type
 

@@ -102,7 +102,7 @@ If it is empty, the result is ``-1``.
 julia> v = VPolytope();
 
 julia> v.vertices
-0-element Array{Array{Float64,1},1}
+Array{Float64,1}[]
 
 julia> dim(v)
 -1
