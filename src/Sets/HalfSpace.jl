@@ -537,7 +537,7 @@ function _is_halfspace(expr::Term)
         a, b = expr.args
         sexpr = simplify(a - b)
 
-    elseif (expr.op == >=) || (expr.op == >)
+    elseif expr.op in (>=, >)
         a, b = expr.args
         sexpr = simplify(b - a)
 
