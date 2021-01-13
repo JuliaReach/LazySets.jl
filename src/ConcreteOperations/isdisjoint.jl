@@ -46,11 +46,6 @@ end
 # --- alias ---
 @static if VERSION >= v"1.5.0-beta1.0"
 
-    """
-        isdisjoint(X, Y)
-
-    An alternative name for `is_intersection_empty(X, Y)`.
-    """
     Base.isdisjoint(X::LazySet, Y::LazySet; kwargs...) = is_intersection_empty(X, Y; kwargs...)
     Base.isdisjoint(X::LazySet, Y::LazySet, witness::Bool; kwargs...) = is_intersection_empty(X, Y, witness; kwargs...)
 
@@ -80,11 +75,6 @@ end
     Base.isdisjoint(X::UnionSetArray, Y::UnionSetArray) = is_intersection_empty(X, Y)
 else
 
-    """
-        isdisjoint(X, Y)
-
-    An alternative name for `is_intersection_empty(X, Y)`.
-    """
     const isdisjoint = is_intersection_empty
 end
 

@@ -20,8 +20,10 @@ cartesian_product(::VPolytope, ::VPolytope)
 
 ## Check for emptiness of intersection
 
+!!! note
+    Starting with Julia v1.5, `isdisjoint` can be used as an alternative name to `is_intersection_empty`.
+
 ```@docs
-isdisjoint
 is_intersection_empty(::LazySet, ::LazySet, ::Bool=false)
 is_intersection_empty(::AbstractHyperrectangle, ::AbstractHyperrectangle, ::Bool=false)
 is_intersection_empty(::LazySet, ::AbstractSingleton, ::Bool=false)
