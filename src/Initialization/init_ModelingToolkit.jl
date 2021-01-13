@@ -11,7 +11,7 @@ eval(quote
 
    ### Input
 
-   - `vars` -- tuple where each element is either variable like (`Num`) or a
+   - `vars` -- tuple where each element is either a variable-like (`Num`) or a
                vector of variables (`Vector{Num}`)
 
    ### Output
