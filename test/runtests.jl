@@ -6,6 +6,10 @@ import IntervalArithmetic
 const IA = IntervalArithmetic
 using IntervalArithmetic: IntervalBox
 
+# fix random number generator seed
+using Random
+Random.seed!(1234)
+
 # ========================
 # Optional dependencies
 # ========================
