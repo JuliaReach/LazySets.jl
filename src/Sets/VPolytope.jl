@@ -101,8 +101,8 @@ If it is empty, the result is ``-1``.
 ```jldoctest
 julia> v = VPolytope();
 
-julia> v.vertices
-0-element Array{Array{Float64,1},1}
+julia> isempty(v.vertices)
+true
 
 julia> dim(v)
 -1
