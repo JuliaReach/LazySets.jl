@@ -4,7 +4,8 @@ import Base: rand,
 export VPolygon,
        remove_redundant_vertices,
        remove_redundant_vertices!,
-       linear_map
+       linear_map,
+       project
 
 """
     VPolygon{N, VN<:AbstractVector{N}} <: AbstractPolygon{N}
@@ -681,4 +682,14 @@ function _intersection_vrep_2d(spoly::AbstractVector{VT},
         q = p
     end
     return outarr
+end
+
+function project(V::VPolygon, block::AbstractVector{Int})
+    if length(block) == 2 && 1 ∈ block && 2 ∈ block
+        return V
+    elseif length(block) == 1 && (1 ∈ block || 2 ∈ block)
+        return _project_vrep(vertices_list(V), 2, block)
+    else
+        throw(ArgumentError("can't project a two-dimensional polygon into variables $block"))
+    end
 end

@@ -546,11 +546,13 @@ end
 end # quote
 end # function load_polyhedra_vpolytope()
 
-function project(V::Union{<:VPolygon{N}, <:VPolytope{N}},
-                 block::AbstractVector{Int}) where {N}
-    n = dim(V)
-    M = projection_matrix(block, n, N)
-    πvertices = broadcast(v -> M * v, vertices_list(V))
+function project(V::VPolytope, block::AbstractVector{Int})
+    return _project_vrep(vertices_list(V), dim(V), block)
+end
+
+function _project_vrep(vlist::AbstractVector{VN}, n, block) where {N, VN<:AbstractVector{N}}
+    M = projection_matrix(block, n, VN)
+    πvertices = broadcast(v -> M * v, vlist)
 
     m = size(M, 1)
     if m == 1
