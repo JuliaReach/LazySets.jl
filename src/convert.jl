@@ -10,36 +10,6 @@ for T in subtypes(LazySet, true)
 end
 
 """
-    convert(::Type{HPOLYGON1},
-            P::HPOLYGON2) where {HPOLYGON1<:AbstractHPolygon,
-                                 HPOLYGON2<:AbstractHPolygon}
-
-Convert between polygon types in H-representation.
-
-### Input
-
-- `type` -- target type
-- `P`    -- source polygon
-
-### Output
-
-The polygon represented as the target type.
-
-### Notes
-
-We need the `Union` type for `HPOLYGON1` because the target type must be
-concrete.
-"""
-function convert(::Type{HPOLYGON1},
-                 P::HPOLYGON2) where {HPOLYGON1<:AbstractHPolygon,
-                                      HPOLYGON2<:AbstractHPolygon}
-    if P isa HPOLYGON1
-        return P
-    end
-    return HPOLYGON1(P.constraints)
-end
-
-"""
     convert(T::Type{HPOLYGON}, P::VPolygon) where {HPOLYGON<:AbstractHPolygon}
 
 Converts a polygon in vertex representation to a polygon in constraint representation.
@@ -55,6 +25,29 @@ A polygon in constraint representation.
 """
 function convert(T::Type{HPOLYGON}, P::VPolygon) where {HPOLYGON<:AbstractHPolygon}
     return tohrep(P, T)
+end
+
+"""
+    convert(::Type{HPOLYGON}, X::LazySet) where {HPOLYGON<:AbstractHPolygon}
+
+Converts a polyhedral set to a polygon in vertex representation.
+
+### Input
+
+- `PT` -- type used for dispatch
+- `X`  -- set
+
+### Output
+
+A polygon in constraint representation.
+
+### Algorithm
+
+We compute the list of constraints of `X`, then instantiate the polygon.
+"""
+function convert(::Type{HPOLYGON}, X::LazySet) where {HPOLYGON<:AbstractHPolygon}
+    @assert dim(X) == 2 "set must be two-dimensional for conversion, but it is of dimension $(dim(X))"
+    return HPOLYGON(constraints_list(X))
 end
 
 """
