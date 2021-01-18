@@ -47,7 +47,8 @@ We compute the list of constraints of `X`, then instantiate the polygon.
 """
 function convert(::Type{HPOLYGON}, X::LazySet) where {HPOLYGON<:AbstractHPolygon}
     @assert dim(X) == 2 "set must be two-dimensional for conversion, but it is of dimension $(dim(X))"
-    return HPOLYGON(constraints_list(X))
+    PT = basetype(HPOLYGON)
+    return PT(constraints_list(X))
 end
 
 """
