@@ -66,4 +66,7 @@ for N in [Float64, Rational{Int}, Float32]
         rot = N[0 -1; 1 0] # π/2 ccw rotation
         @test isequivalent(linear_map(rot, l), Line(N[-1, 0], N[0, 1]))
     end
+
+    # constrained dimensions
+    @test constrained_dimensions(l1) == [2]
 end
