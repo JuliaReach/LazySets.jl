@@ -82,7 +82,7 @@ The following table summarizes each optional dependency and the features availab
 |`IntervalConstraintProgramming` |Conservative polyhedral approximation of a region defined implicitly via nonlinear constraints|
 |`IntervalMatrices` |Set operations that involve matrices whose coefficients are intervals|
 |`Makie` |Plotting library, mainly for 3D and interactive plots|
-|`MiniQhull` |Voronoi-Delaunay triangularization of `LazySets` types|
+|`MiniQhull` |Voronoi-Delaunay triangulation of `LazySets` types|
 |`ModelingToolkit` |Create sets using symbolic expressions|
 |`Optim` |Numerical optimization package|
 |`Plots` |Plotting library, mainly 2D plots|
