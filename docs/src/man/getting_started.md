@@ -66,7 +66,7 @@ An optional dependency is a package that is not required to compile and use `Laz
 although some extra functionality is available provided that you load that package. Internally, optional
 dependencies in Julia are handled with the package [Requires.jl](https://github.com/JuliaPackaging/Requires.jl).
 
-For example, if you want to work with sets defined symbolically as in `var = @variables x[1:10]; Hyperplane(x[1] + x[2] == 1/2, var)` to define the hyperplane $H : \{ x \in \mathbb{R}^n : x_1 + x_2 == 1/2\}$, install [ModelingToolkit.jl](https://github.com/SciML/ModelingToolkit.jl) so that such constructor (and other symbolic features) are automatically available once doing `using ModelingToolkit` in your session.
+For example, if you want to work with sets defined symbolically as in `var = @variables x[1:10]; Hyperplane(x[1] + x[2] == 1/2, var)` to define the hyperplane $H : \{ x \in \mathbb{R}^{10} : x_1 + x_2 == 1/2\}$, install [ModelingToolkit.jl](https://github.com/SciML/ModelingToolkit.jl) so that such constructor (and other symbolic features) are automatically available once doing `using ModelingToolkit` in your session.
 Another optional dependency is [`Expokit.jl`](https://github.com/acroy/Expokit.jl), a package that provides
 lazy matrix exponentiation routines for linear maps of `LazySets` types.
 
