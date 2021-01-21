@@ -66,19 +66,31 @@ An optional dependency is a package that is not required to compile and use `Laz
 although some extra functionality is available provided that you load that package. Internally, optional
 dependencies in Julia are handled with the package [Requires.jl](https://github.com/JuliaPackaging/Requires.jl).
 
-For example, if you want to work with sets defined symbolically as in `var = @variables x[1:10]; Hyperplane(x[1] + x[2] == 1/2, var)` to define the hyperplane $H : \{ x \in \mathbb{R}^{10} : x_1 + x_2 == 1/2\}$, install [ModelingToolkit.jl](https://github.com/SciML/ModelingToolkit.jl) so that such constructor (and other symbolic features) are automatically available once doing `using ModelingToolkit` in your session.
-Another optional dependency is [`Expokit.jl`](https://github.com/acroy/Expokit.jl), a package that provides
-lazy matrix exponentiation routines for linear maps of `LazySets` types.
+For example, if you want to work with sets defined using simple algebraic expressions you can install and
+use [ModelingToolkit.jl](https://github.com/SciML/ModelingToolkit.jl).
 
-The following table summarizes each optional dependency and the features available together with `LazySets.jl`:
+```julia
+julia> using LazySets, ModelingToolkit
+
+julia> var = @variables x[1:10]
+(Num[x₁, x₂, x₃, x₄, x₅, x₆, x₇, x₈, x₉, x₁₀],)
+
+julia> Hyperplane(x[1] + x[2] == 1/2, var)
+Hyperplane{Float64,Array{Float64,1}}([1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 0.5)
+```
+defines the hyperplane $H : \{ x \in \mathbb{R}^{10} : x_1 + x_2 == 1/2\}$. The `Hyperplane` constructor
+(and other constructors) automatically work with ModelingToolkit's variables once `using ModelingToolkit` is ran
+in your session. Another optional dependency is [Polyhedra.jl](http://github.com/JuliaPolyhedra/Polyhedra.jl)
+that is used whenever you want to work with concrete polyhedra representations in dimension higher than 2, e.g.
+to solve the vertex enumeration problem (converting from constraint to vertex representation of a polytope).
+There are many other optional dependencies. The following table summarizes each optional dependency and the
+features available when used together with `LazySets.jl`:
 
 |Dependency|Features|
 |----------|-------|
 |`CDDLib` |Polyhedral computations backend|
 |`Distributions` |Random sampling|
-|`Documenter` |Building the projects' documentation|
 |`Expokit` |Computing the action of a matrix exponential over a set|
-|`GR` |Plotting backend|
 |`IntervalConstraintProgramming` |Conservative polyhedral approximation of a region defined implicitly via nonlinear constraints|
 |`IntervalMatrices` |Set operations that involve matrices whose coefficients are intervals|
 |`Makie` |Plotting library, mainly for 3D and interactive plots|
@@ -90,8 +102,12 @@ The following table summarizes each optional dependency and the features availab
 |`StaticArrays` |Statically defined arrays, mainly for low dimensions|
 |`TaylorModels` |Taylor expansion of functions with rigorous interval remainder|
 
+As a plotting backend we recommend using [GR](https://github.com/jheinen/GR.jl) together with Plots; that is,  do `] add Plots GR` and then
+load `Plots` to use `GR` as default (2D) plotting backend.
+
 Use the following command to install *all* optional dependencies:
 
 ```julia
-julia> ] add CDDLib Distributions Documenter Expokit GR IntervalConstraintProgramming IntervalMatrices Makie MiniQhull ModelingToolkit Optim Plots Polyhedra StaticArrays TaylorModels
+julia> ] add CDDLib Distributions Expokit IntervalConstraintProgramming IntervalMatrices Makie MiniQhull ModelingToolkit Optim Plots Polyhedra StaticArrays TaylorModels
 ```
+In addition, to build the project's documentation locally you need to install [Documenter.jl](https://github.com/JuliaDocs/Documenter.jl).
