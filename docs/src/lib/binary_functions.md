@@ -129,7 +129,7 @@ issubset
 ⊆(::LazySet, ::Universe, ::Bool=false)
 ⊆(::Universe, ::LazySet, ::Bool=false)
 ⊆(::LazySet, ::Complement, ::Bool=false)
-⊆(::CartesianProduct, ::CartesianProduct{N}, ::Bool=false)
+⊆(::CartesianProduct, ::CartesianProduct, ::Bool=false)
 ⊆(::CartesianProductArray, ::CartesianProductArray, ::Bool=false)
 ⊆(::AbstractZonotope, ::AbstractHyperrectangle, ::Bool=false)
 ```
