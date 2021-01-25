@@ -242,7 +242,7 @@ function load_modeling_toolkit_hpolytope()
 return quote
 
 """
-    HPolytope(expr::Vector{<:Term}, vars=_get_variables(expr); N::Type{<:Real}=Float64)
+    HPolytope(expr::Vector{<:Symbolic}, vars=_get_variables(expr); N::Type{<:Real}=Float64)
 
 Return the polytope in half-space representation given by a list of symbolic expressions.
 
@@ -274,7 +274,7 @@ HalfSpace{Float64,Array{Float64,1}}([-1.0, 0.0], 0.0), HalfSpace{Float64,Array{F
 HalfSpace{Float64,Array{Float64,1}}([0.0, -1.0], 0.0)])
 ```
 """
-function HPolytope(expr::Vector{<:Term}, vars=_get_variables(expr);
+function HPolytope(expr::Vector{<:Symbolic}, vars=_get_variables(expr);
                    N::Type{<:Real}=Float64, check_boundedness::Bool=false)
     return HPolytope([HalfSpace(ex, vars; N=N) for ex in expr], check_boundedness=check_boundedness)
 end

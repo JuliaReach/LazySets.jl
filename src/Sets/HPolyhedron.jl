@@ -653,7 +653,7 @@ function load_modeling_toolkit_hpolyhedron()
 return quote
 
 """
-    HPolyhedron(expr::Vector{<:Term}, vars=_get_variables(expr); N::Type{<:Real}=Float64)
+    HPolyhedron(expr::Vector{<:Symbolic}, vars=_get_variables(expr); N::Type{<:Real}=Float64)
 
 Return the polyhedron in half-space representation given by a list of symbolic expressions.
 
@@ -688,7 +688,7 @@ HPolyhedron{Float64,Array{Float64,1}}(HalfSpace{Float64,Array{Float64,1}}[HalfSp
 ace{Float64,Array{Float64,1}}([-1.0, -0.0], 0.0), HalfSpace{Float64,Array{Float64,1}}([0.0, 1.0], -0.0)])
 ```
 """
-function HPolyhedron(expr::Vector{<:Term}, vars=_get_variables(expr); N::Type{<:Real}=Float64)
+function HPolyhedron(expr::Vector{<:Symbolic}, vars=_get_variables(expr); N::Type{<:Real}=Float64)
     clist = Vector{HalfSpace{N, Vector{N}}}()
     sizehint!(clist, length(expr))
     got_hyperplane = false

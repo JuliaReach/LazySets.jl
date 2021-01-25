@@ -487,18 +487,18 @@ return quote
 # returns `(true, sexpr)` if expr represents a hyperplane,
 # where sexpr is the simplified expression sexpr := LHS - RHS == 0
 # otherwise, returns `(false, expr)`
-function _is_hyperplane(expr::Term)
-    got_hyperplane = expr.op == ==
+function _is_hyperplane(expr::Symbolic)
+    got_hyperplane = operation(expr) == ==
     if got_hyperplane
         # simplify to the form a*x + b == 0
-        a, b = expr.args
+        a, b = arguments(expr)
         sexpr = simplify(a - b)
     end
     return got_hyperplane ? (true, sexpr) : (false, expr)
 end
 
 """
-    Hyperplane(expr::Term, vars=_get_variables(expr); N::Type{<:Real}=Float64)
+    Hyperplane(expr::Symbolic, vars=_get_variables(expr); N::Type{<:Real}=Float64)
 
 Return the hyperplane given by a symbolic expression.
 
@@ -548,7 +548,7 @@ Therefore, the order in which the variables appear in `vars` affects the final r
 Finally, the returned set is the hyperplane with normal vector `[a1, …, an]` and
 displacement `b`.
 """
-function Hyperplane(expr::Term, vars=_get_variables(expr); N::Type{<:Real}=Float64)
+function Hyperplane(expr::Symbolic, vars=_get_variables(expr); N::Type{<:Real}=Float64)
     valid, sexpr = _is_hyperplane(expr)
     if !valid
         throw(ArgumentError("expected an expression of the form `ax == b`, got $expr"))
@@ -564,7 +564,7 @@ function Hyperplane(expr::Term, vars=_get_variables(expr); N::Type{<:Real}=Float
     return Hyperplane(coeffs, β)
 end
 
-function Hyperplane(expr::Term, vars::NTuple{L, Union{<:Num, <:Vector{Num}}}; N::Type{<:Real}=Float64) where {L}
+function Hyperplane(expr::Symbolic, vars::NTuple{L, Union{<:Num, <:Vector{Num}}}; N::Type{<:Real}=Float64) where {L}
     vars = _vec(vars)
     return Hyperplane(expr, vars, N=N)
 end

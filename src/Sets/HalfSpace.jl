@@ -529,32 +529,34 @@ return quote
 # returns `(true, sexpr)` if expr represents a half-space,
 # where sexpr is the simplified expression sexpr := LHS - RHS <= 0
 # otherwise, returns `(false, expr)`
-function _is_halfspace(expr::Term)
+function _is_halfspace(expr::Symbolic)
     got_halfspace = true
 
     # find sense and normalize
-    if expr.op in (<=, <)
-        a, b = expr.args
+    op = operation(expr)
+    args = arguments(expr)
+    if op in (<=, <)
+        a, b = args
         sexpr = simplify(a - b)
 
-    elseif expr.op in (>=, >)
-        a, b = expr.args
+    elseif op in (>=, >)
+        a, b = args
         sexpr = simplify(b - a)
 
-    elseif (expr.op == |) && (expr.args[1].op == <)
-        a, b = expr.args[1].args
+    elseif (op == |) && (operation(args[1]) == <)
+        a, b = arguments(args[1])
         sexpr = simplify(a - b)
 
-    elseif (expr.op == |) && (expr.args[2].op == <)
-        a, b = expr.args[2].args
+    elseif (op == |) && (operation(args[2]) == <)
+        a, b = arguments(args[2])
         sexpr = simplify(a - b)
 
-    elseif (expr.op == |) && (expr.args[1].op == >)
-        a, b = expr.args[1].args
+    elseif (op == |) && (operation(args[1]) == >)
+        a, b = arguments(args[1])
         sexpr = simplify(b - a)
 
-    elseif (expr.op == |) && (expr.args[2].op == >)
-        a, b = expr.args[2].args
+    elseif (op == |) && (operation(args[2]) == >)
+        a, b = arguments(args[2])
         sexpr = simplify(b - a)
 
     else
@@ -565,7 +567,7 @@ function _is_halfspace(expr::Term)
 end
 
 """
-    HalfSpace(expr::Term, vars=_get_variables(expr); N::Type{<:Real}=Float64)
+    HalfSpace(expr::Symbolic, vars=_get_variables(expr); N::Type{<:Real}=Float64)
 
 Return the half-space given by a symbolic expression.
 
@@ -637,7 +639,7 @@ Note in particular that strict inequalities are relaxed as being smaller-or-equa
 Finally, the returned set is the half-space with normal vector `[a1, …, an]` and
 displacement `b`.
 """
-function HalfSpace(expr::Term, vars=_get_variables(expr); N::Type{<:Real}=Float64)
+function HalfSpace(expr::Symbolic, vars=_get_variables(expr); N::Type{<:Real}=Float64)
     valid, sexpr = _is_halfspace(expr)
     if !valid
         throw(ArgumentError("expected an expression describing a half-space, got $expr"))
