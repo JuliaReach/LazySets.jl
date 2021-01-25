@@ -78,7 +78,7 @@ julia> var = @variables x[1:10]
 julia> Hyperplane(x[1] + x[2] == 1/2, var)
 Hyperplane{Float64,Array{Float64,1}}([1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 0.5)
 ```
-defines the hyperplane $H : \{ x \in \mathbb{R}^{10} : x_1 + x_2 == 1/2\}$. The `Hyperplane` constructor
+defines the hyperplane $H : \{ x \in \mathbb{R}^{10} : x_1 + x_2 = 1/2\}$. The `Hyperplane` constructor
 (and other constructors) automatically work with ModelingToolkit's variables once `using ModelingToolkit` is ran
 in your session. Another optional dependency is [Polyhedra.jl](http://github.com/JuliaPolyhedra/Polyhedra.jl)
 that is used whenever you want to work with concrete polyhedra representations in dimension higher than 2, e.g.
@@ -111,3 +111,12 @@ Use the following command to install *all* optional dependencies:
 julia> ] add CDDLib Distributions Expokit IntervalConstraintProgramming IntervalMatrices Makie MiniQhull ModelingToolkit Optim Plots Polyhedra StaticArrays TaylorModels
 ```
 In addition, to build the project's documentation locally you need to install [Documenter.jl](https://github.com/JuliaDocs/Documenter.jl).
+
+## Running the unit tests
+
+To run the full test suite, first install all the optional dependencies and then do
+
+```julia
+] test LazySets
+```
+It is possible to use optional flags to select a portion of tests to be run. See the script `test/runtests.jl` for details.
