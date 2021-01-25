@@ -1,8 +1,11 @@
 eval(quote
     using .ModelingToolkit: gradient,
                             simplify,
-                            Num, # variable like, e.g. x[1]
-                            Term # term like, eg. x[1] + x[2] == 1
+                            Num,  # variable like, e.g. x[1]
+                            Term, # term like, eg. x[1] + x[2] == 1
+                            Symbolic,
+                            operation,
+                            arguments
 
    """
        _vec(vars::NTuple{L, Union{<:Num, <:Vector{Num}}}) where {L}
@@ -38,8 +41,8 @@ eval(quote
     # case with a single variable
     _vec(vars::Tuple{Num}) = [vars[1]]
 
-    _get_variables(expr::Term) = ModelingToolkit.get_variables(expr)
-    _get_variables(expr::Vector{<:Term}) = unique(reduce(vcat, _get_variables(ex) for ex in expr))
+    _get_variables(expr::Symbolic) = ModelingToolkit.get_variables(expr)
+    _get_variables(expr::Vector{<:Symbolic}) = unique(reduce(vcat, _get_variables(ex) for ex in expr))
 end)
 
 eval(load_modeling_toolkit_hyperplane())
