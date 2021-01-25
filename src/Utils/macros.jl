@@ -35,13 +35,13 @@ macro neutral(SET, NEUT)
         end
 
         # create functions to declare the neutral element
-        function $SET(X::LazySet{N}, ::$NEUT{N}) where {N<:Real}
+        function $SET(X::LazySet{N}, ::$NEUT{N}) where {N}
             return X
         end
-        function $SET(::$NEUT{N}, X::LazySet{N}) where {N<:Real}
+        function $SET(::$NEUT{N}, X::LazySet{N}) where {N}
             return X
         end
-        function $SET(Y::$NEUT{N}, ::$NEUT{N}) where {N<:Real}
+        function $SET(Y::$NEUT{N}, ::$NEUT{N}) where {N}
             return Y
         end
 
@@ -105,13 +105,13 @@ macro absorbing(SET, ABS)
         end
 
         # create functions to declare the absorbing element
-        function $SET(::LazySet{N}, Y::$ABS{N}) where {N<:Real}
+        function $SET(::LazySet{N}, Y::$ABS{N}) where {N}
             return Y
         end
-        function $SET(Y::$ABS{N}, ::LazySet{N}) where {N<:Real}
+        function $SET(Y::$ABS{N}, ::LazySet{N}) where {N}
             return Y
         end
-        function $SET(Y::$ABS{N}, ::$ABS{N}) where {N<:Real}
+        function $SET(Y::$ABS{N}, ::$ABS{N}) where {N}
             return Y
         end
 
@@ -183,19 +183,19 @@ macro declare_array_version(SET, SETARR)
         end
 
         # create in-place modification functions for array version
-        function $_SET!(X::LazySet{N}, Y::LazySet{N}) where {N<:Real}
+        function $_SET!(X::LazySet{N}, Y::LazySet{N}) where {N}
             # no array type: just use the lazy operation
             return $SET(X, Y)
         end
-        function $_SET!(X::LazySet{N}, arr::$SETARR{N}) where {N<:Real}
+        function $_SET!(X::LazySet{N}, arr::$SETARR{N}) where {N}
             push!(array(arr), X)
             return arr
         end
-        function $_SET!(arr::$SETARR{N}, X::LazySet{N}) where {N<:Real}
+        function $_SET!(arr::$SETARR{N}, X::LazySet{N}) where {N}
             push!(array(arr), X)
             return arr
         end
-        function $_SET!(arr1::$SETARR{N}, arr2::$SETARR{N}) where {N<:Real}
+        function $_SET!(arr1::$SETARR{N}, arr2::$SETARR{N}) where {N}
             append!(array(arr1), array(arr2))
             return arr1
         end
@@ -251,10 +251,10 @@ quoted expressions:
 """
 macro neutral_absorbing(SET, NEUT, ABS)
     return quote
-        function $SET(::$NEUT{N}, Y::$ABS{N}) where {N<:Real}
+        function $SET(::$NEUT{N}, Y::$ABS{N}) where {N}
             return Y
         end
-        function $SET(Y::$ABS{N}, ::$NEUT{N}) where {N<:Real}
+        function $SET(Y::$ABS{N}, ::$NEUT{N}) where {N}
             return Y
         end
     end
@@ -285,10 +285,10 @@ quoted expressions:
 """
 macro array_neutral(FUN, NEUT, SETARR)
     return quote
-        function $FUN(::$NEUT{N}, X::$SETARR{N}) where {N<:Real}
+        function $FUN(::$NEUT{N}, X::$SETARR{N}) where {N}
             return X
         end
-        function $FUN(X::$SETARR{N}, ::$NEUT{N}) where {N<:Real}
+        function $FUN(X::$SETARR{N}, ::$NEUT{N}) where {N}
             return X
         end
     end
@@ -319,10 +319,10 @@ quoted expressions:
 """
 macro array_absorbing(FUN, ABS, SETARR)
     return quote
-        function $FUN(Y::$ABS{N}, ::$SETARR{N}) where {N<:Real}
+        function $FUN(Y::$ABS{N}, ::$SETARR{N}) where {N}
             return Y
         end
-        function $FUN(::$SETARR{N}, Y::$ABS{N}) where {N<:Real}
+        function $FUN(::$SETARR{N}, Y::$ABS{N}) where {N}
             return Y
         end
     end
