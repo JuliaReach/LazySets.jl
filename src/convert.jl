@@ -28,7 +28,7 @@ function convert(T::Type{HPOLYGON}, P::VPolygon) where {HPOLYGON<:AbstractHPolyg
 end
 
 """
-    convert(::Type{HPOLYGON}, X::LazySet) where {HPOLYGON<:AbstractHPolygon}
+    convert(::Type{HPOLYGON}, X::LazySet; [check_boundedness]::Bool=true) where {HPOLYGON<:AbstractHPolygon}
 
 Converts a polyhedral set to a polygon in vertex representation.
 
@@ -36,6 +36,8 @@ Converts a polyhedral set to a polygon in vertex representation.
 
 - `PT` -- type used for dispatch
 - `X`  -- set
+- `check_boundedness` -- (optional, default `true`) if `true` check whether the
+                         set `X` is bounded before creating the polygon
 
 ### Output
 
@@ -45,9 +47,12 @@ A polygon in constraint representation.
 
 We compute the list of constraints of `X`, then instantiate the polygon.
 """
-function convert(::Type{HPOLYGON}, X::LazySet) where {HPOLYGON<:AbstractHPolygon}
+function convert(::Type{HPOLYGON}, X::LazySet; check_boundedness::Bool=true) where {HPOLYGON<:AbstractHPolygon}
     @assert dim(X) == 2 "set must be two-dimensional for conversion, but it is of dimension $(dim(X))"
     PT = basetype(HPOLYGON)
+    if check_boundedness && !isbounded(X)
+        throw(ArgumentError("expected a bounded set for conversion to `HPolygon`"))
+    end
     return PT(constraints_list(X))
 end
 
