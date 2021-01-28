@@ -296,7 +296,7 @@ function concretize(cp::CartesianProduct)
 end
 
 """
-    project(cp::CartesianProduct{N, Interval{N, IA.Interval{N}}, <:AbstractHyperrectangle{N}}, vars::AbstractVector{Int}) where {N}
+    project(cp::CartesianProduct{N, <:Interval, <:AbstractHyperrectangle{N}}, block::AbstractVector{Int}) where {N}
 
 Concrete projection of a Cartesian product between an interval and a
 hyperrectangle.
@@ -311,17 +311,17 @@ hyperrectangle.
 A set representing the projection of the cartesian product `cp` on the
 dimensions specified by `block`.
 """
-function project(cp::CartesianProduct{N, Interval{N, IA.Interval{N}}, <:AbstractHyperrectangle{N}}, vars::AbstractVector{Int}) where {N}
-    Δt = cp.X
+function project(cp::CartesianProduct{N, <:Interval, <:AbstractHyperrectangle{N}}, block::AbstractVector{Int}) where {N}
+    I = cp.X
     H = cp.Y
-    vars_vec = collect(vars)
+    block_vec = collect(block)
     if 1 ∉ vars
-        vars_vec .-= 1
+        block_vec .-= 1
         cH = center(H)
         rH = radius_hyperrectangle(H)
     else
-        cH = vcat(center(Δt), center(H))
-        rH = vcat(radius_hyperrectangle(Δt), radius_hyperrectangle(H))
+        cH = vcat(center(I), center(H))
+        rH = vcat(radius_hyperrectangle(I), radius_hyperrectangle(H))
     end
-    return Hyperrectangle(cH[vars_vec], rH[vars_vec], check_bounds=false)
+    return Hyperrectangle(cH[block_vec], rH[block_vec], check_bounds=false)
 end
