@@ -130,4 +130,9 @@ for N in [Float64, Rational{Int}, Float32]
 
     # concrete minkowski sum
     @test minkowski_sum(Singleton(N[1, 2]), Singleton(N[3, 4])) == Singleton(N[4, 6])
+    
+    # projection
+    S = Singleton(N[1, 2, 3])
+    @test project(S, 1:2) == Singleton(N[1, 2])
+    @test project(S, [1, 3]) == Singleton(N[1, 3])
 end
