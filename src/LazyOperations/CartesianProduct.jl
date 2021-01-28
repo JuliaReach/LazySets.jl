@@ -298,7 +298,7 @@ end
 """
     project(cp::CartesianProduct{N, Interval{N, IA.Interval{N}}, <:AbstractHyperrectangle{N}}, vars::AbstractVector{Int}) where {N}
 
-Concrete projection of a cartesian product between an interval and an
+Concrete projection of a Cartesian product between an interval and a
 hyperrectangle.
 
 ### Input
