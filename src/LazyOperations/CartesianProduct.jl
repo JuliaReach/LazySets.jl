@@ -303,7 +303,7 @@ hyperrectangle.
 
 ### Input
 
-- `cp`       -- cartesian product between an interval and an hyperrectangle
+- `cp`       -- Cartesian product between an interval and a hyperrectangle
 - `block`    -- block structure, a vector with the dimensions of interest
 
 ### Output
