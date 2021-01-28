@@ -13,7 +13,6 @@ CurrentModule = LazySets
 ```
 
 ```@docs
-convert(::Type{HPOLYGON1}, ::HPOLYGON2) where {HPOLYGON1<:AbstractHPolygon, HPOLYGON2<:AbstractHPolygon}
 convert(::Type{HPOLYGON}, ::VPolygon) where {HPOLYGON<:AbstractHPolygon}
 convert(::Type{Hyperrectangle}, ::AbstractHyperrectangle)
 convert(::Type{Interval}, ::AbstractHyperrectangle)
@@ -24,6 +23,7 @@ convert(::Type{HPOLYGON}, ::AbstractHyperrectangle) where {HPOLYGON<:AbstractHPo
 convert(::Type{HPOLYGON}, ::HPolytope{N, VN}) where {N<:Real, VN<:AbstractVector{N}, HPOLYGON<:AbstractHPolygon}
 convert(::Type{HPOLYGON}, ::AbstractSingleton{N}) where {N<:Real, HPOLYGON<:AbstractHPolygon}
 convert(::Type{HPOLYGON}, ::LineSegment{N}) where {N<:Real, HPOLYGON<:AbstractHPolygon}
+convert(::Type{HPOLYGON}, ::LazySet) where {HPOLYGON<:AbstractHPolygon}
 convert(::Type{HPolyhedron}, ::AbstractPolytope)
 convert(::Type{HPolytope}, ::AbstractHPolygon)
 convert(::Type{HPolytope}, ::AbstractHyperrectangle)

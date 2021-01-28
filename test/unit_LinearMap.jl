@@ -99,6 +99,12 @@ for N in [Float64, Rational{Int}, Float32]
 
     # concretize
     @test concretize(L) == linear_map(M, b)
+
+    # conversion to polygon in constraint representation
+    if N <: AbstractFloat
+        Lp = convert(HPolygon, L)
+        @test isequivalent(Lp, L)
+    end
 end
 
 # tests that only work with Float64
