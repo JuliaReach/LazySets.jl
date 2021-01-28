@@ -315,7 +315,7 @@ function project(cp::CartesianProduct{N, <:Interval, <:AbstractHyperrectangle{N}
     I = cp.X
     H = cp.Y
     block_vec = collect(block)
-    if 1 ∉ vars
+    if 1 ∉ block_vec
         block_vec .-= 1
         cH = center(H)
         rH = radius_hyperrectangle(H)
