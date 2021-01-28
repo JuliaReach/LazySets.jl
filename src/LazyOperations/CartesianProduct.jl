@@ -346,10 +346,9 @@ function project(cp::CartesianProduct{N, <:Interval, <:AbstractZonotope{N}}, blo
     Z = cp.Y
     if 1 ∉ block_vec
         block_vec .-= 1
-        M = projection_matrix(block_vec, dim(Z), N)
     else
-        M = projection_matrix(block_vec, dim(cp), N)
         Z = convert(Zonotope, cp)
     end
+    M = projection_matrix(block_vec, dim(Z), N)
     return linear_map(M, Z)
 end
