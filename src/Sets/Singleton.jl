@@ -133,3 +133,22 @@ The `Singleton` that corresponds to the rectification of `S`.
 function rectify(S::Singleton)
     return Singleton(rectify(element(S)))
 end
+
+"""
+    project(S::Singleton, block::AbstractVector{Int})
+
+Concrete projection of a singleton.
+
+### Input
+
+- `S`     -- singleton
+- `block` -- block structure, a vector with the dimensions of interest
+
+### Output
+
+A set representing the projection of the singleton `S` on the dimensions
+specified by `block`.
+"""
+function project(S::Singleton, block::AbstractVector{Int})
+    return Singleton(element(S)[block])
+end
