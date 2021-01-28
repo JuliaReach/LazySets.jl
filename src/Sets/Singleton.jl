@@ -141,8 +141,8 @@ Concrete projection of a singleton.
 
 ### Input
 
-- `S`        -- set
-- `block`    -- block structure, a vector with the dimensions of interest
+- `S`     -- singleton
+- `block` -- block structure, a vector with the dimensions of interest
 
 ### Output
 
