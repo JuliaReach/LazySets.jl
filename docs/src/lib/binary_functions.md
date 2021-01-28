@@ -107,31 +107,31 @@ pontryagin_difference
 
 ```@docs
 issubset
-⊆(::LazySet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-⊆(::LazySet{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
-⊆(::AbstractPolytope{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-⊆(::AbstractPolytope{N}, ::AbstractHyperrectangle, ::Bool=false) where {N<:Real}
-⊆(::AbstractZonotope{N}, ::AbstractHyperrectangle{N}) where {N<:Real}
-⊆(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
-⊆(::LazySet{N}, ::AbstractPolyhedron{N}, ::Bool=false) where {N<:Real}
-⊆(::AbstractSingleton{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-⊆(::AbstractSingleton{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
-⊆(::AbstractSingleton{N}, ::AbstractSingleton{N}, ::Bool=false) where {N<:Real}
-⊆(::Ball2{N}, ::Ball2{N}, ::Bool=false) where {N<:AbstractFloat}
-⊆(::Union{Ball2{N}, Ballp{N}}, ::AbstractSingleton{N}, ::Bool=false) where {N<:AbstractFloat}
-⊆(::LineSegment{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-⊆(::LineSegment{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
+⊆(::LazySet, ::LazySet, ::Bool=false)
+⊆(::LazySet, ::AbstractHyperrectangle, ::Bool=false)
+⊆(::AbstractPolytope, ::LazySet, ::Bool=false)
+⊆(::AbstractPolytope, ::AbstractHyperrectangle, ::Bool=false)
+⊆(::AbstractZonotope, ::AbstractHyperrectangle)
+⊆(::AbstractHyperrectangle, ::AbstractHyperrectangle, ::Bool=false)
+⊆(::LazySet, ::AbstractPolyhedron, ::Bool=false)
+⊆(::AbstractSingleton, ::LazySet, ::Bool=false)
+⊆(::AbstractSingleton, ::AbstractHyperrectangle, ::Bool=false)
+⊆(::AbstractSingleton, ::AbstractSingleton, ::Bool=false)
+⊆(::Ball2, ::Ball2, ::Bool=false)
+⊆(::Union{Ball2, Ballp}, ::AbstractSingleton, ::Bool=false)
+⊆(::LineSegment, ::LazySet, ::Bool=false)
+⊆(::LineSegment, ::AbstractHyperrectangle, ::Bool=false)
 ⊆(::Interval, ::Interval, ::Bool=false)
-⊆(::EmptySet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-⊆(::LazySet{N}, ::EmptySet{N}, ::Bool=false) where {N<:Real}
-⊆(::UnionSet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-⊆(::UnionSetArray{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-⊆(::LazySet{N}, ::Universe{N}, ::Bool=false) where {N<:Real}
-⊆(::Universe{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-⊆(::LazySet{N}, ::Complement{N}, ::Bool=false) where {N<:Real}
-⊆(::CartesianProduct{N}, ::CartesianProduct{N}, ::Bool=false) where {N<:Real}
-⊆(::CartesianProductArray{N}, ::CartesianProductArray{N}, ::Bool=false) where {N<:Real}
-⊆(::AbstractZonotope{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
+⊆(::EmptySet, ::LazySet, ::Bool=false)
+⊆(::LazySet, ::EmptySet, ::Bool=false)
+⊆(::UnionSet, ::LazySet, ::Bool=false)
+⊆(::UnionSetArray, ::LazySet, ::Bool=false)
+⊆(::LazySet, ::Universe, ::Bool=false)
+⊆(::Universe, ::LazySet, ::Bool=false)
+⊆(::LazySet, ::Complement, ::Bool=false)
+⊆(::CartesianProduct, ::CartesianProduct, ::Bool=false)
+⊆(::CartesianProductArray, ::CartesianProductArray, ::Bool=false)
+⊆(::AbstractZonotope, ::AbstractHyperrectangle, ::Bool=false)
 ```
 
 ## Set difference
