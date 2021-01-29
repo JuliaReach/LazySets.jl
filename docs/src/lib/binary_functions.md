@@ -16,6 +16,7 @@ CurrentModule = LazySets
 ```@docs
 cartesian_product(::HPoly, ::HPoly)
 cartesian_product(::VPolytope, ::VPolytope)
+cartesian_product(::LazySet, ::LazySet)
 ```
 
 ## Check for emptiness of intersection
