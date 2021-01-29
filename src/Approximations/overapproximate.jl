@@ -1322,7 +1322,7 @@ end
 """
     overapproximate(X::LazySet, ZT::Type{<:Zonotope},
                     dir::AbstractDirections;
-                    algorithm="vrep", kwargs...)
+                    [algorithm]="vrep", kwargs...)
 
 Overapproximate a polytopic set with a zonotope.
 
