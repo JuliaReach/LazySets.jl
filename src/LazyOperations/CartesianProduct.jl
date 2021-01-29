@@ -325,3 +325,30 @@ function project(cp::CartesianProduct{N, <:Interval, <:AbstractHyperrectangle{N}
     end
     return Hyperrectangle(cH[block_vec], rH[block_vec], check_bounds=false)
 end
+
+"""
+    project(cp::CartesianProduct{N, <:Interval, <:AbstractZonotope{N}}, block::AbstractVector{Int}) where {N}
+
+Concrete projection of a Cartesian product between an interval and a zonotopic set.
+
+### Input
+
+- `cp`       -- Cartesian product between an interval and a zonotopic set
+- `block`    -- block structure, a vector with the dimensions of interest
+
+### Output
+
+A set representing the projection of the cartesian product `cp` on the
+dimensions specified by `block`.
+"""
+function project(cp::CartesianProduct{N, <:Interval, <:AbstractZonotope{N}}, block::AbstractVector{Int}) where {N}
+    block_vec = collect(block)
+    Z = cp.Y
+    if 1 ∉ block_vec
+        block_vec .-= 1
+    else
+        Z = convert(Zonotope, cp)
+    end
+    M = projection_matrix(block_vec, dim(Z), N)
+    return linear_map(M, Z)
+end
