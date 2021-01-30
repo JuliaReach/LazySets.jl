@@ -11,6 +11,7 @@ element(::Singleton)
 element(::Singleton, ::Int)
 translate(::Singleton, ::AbstractVector)
 rectify(S::Singleton)
+project(::Singleton, ::AbstractVector{Int})
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))

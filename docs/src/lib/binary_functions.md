@@ -81,6 +81,8 @@ intersection(::AbstractPolyhedron{N}, ::ResetMap{N}) where {N<:Real}
 intersection(::CartesianProductArray{N}, ::CartesianProductArray{N}) where {N<:Real}
 intersection(::LinearMap{N}, ::LazySet{N}) where {N<:Real}
 intersection(::CartesianProductArray{N}, ::AbstractPolyhedron{N}) where {N<:Real}
+intersection(::LineSegment{N}, ::Line2D{N}) where {N<:Real}
+intersection(::LineSegment{N}, ::LineSegment{N}) where {N<:Real}
 ```
 
 ## Minkowski sum

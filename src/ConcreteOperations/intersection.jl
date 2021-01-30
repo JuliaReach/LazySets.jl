@@ -139,7 +139,7 @@ Compute the intersection of a line and a line segment.
 
 ### Input
 
-- `a`  -- LineSegment
+- `a` -- LineSegment
 - `b` -- Line2D
 
 ### Output
@@ -147,7 +147,6 @@ Compute the intersection of a line and a line segment.
 If the sets do not intersect, the result is the empty set.
 Otherwise the result is the singleton or line segment that describes the intersection.
 """
-
 function intersection(a::LineSegment{N}, b::Line2D{N}) where {N<:Real}
     # cast a as line
     ap = Line2D(a.p, a.q)
@@ -171,7 +170,7 @@ function intersection(a::Line2D{N}, b::LineSegment{N}) where {N<:Real}
 end
 
 """
-    function intersection(a::LineSegment{N}, b::LineSegment{N}) where {N<:Real}
+    intersection(a::LineSegment{N}, b::LineSegment{N}) where {N<:Real}
 
 Return the intersection of two 2D line segments.
 
@@ -182,14 +181,18 @@ Return the intersection of two 2D line segments.
 
 ### Output
 
-If the line segments cross, or are parallel and have one point in common,
-that point is returned.
-If the line segments are parallel and have a line segment in common, that
-segment is returned.
-Otherwise, if there is no intersection, an empty set is returned.
+A singleton, line segment or the empty set depending on the result of the intersection.
 
+### Notes
+
+- If the line segments cross, or are parallel and have one point in common,
+  that point is returned.
+
+- If the line segments are parallel and have a line segment in common, that
+  segment is returned.
+
+- Otherwise, if there is no intersection, an empty set is returned.
 """
-
 function intersection(a::LineSegment{N}, b::LineSegment{N}) where {N<:Real}
     # cast a as line
     ap = Line2D(a.p, a.q)

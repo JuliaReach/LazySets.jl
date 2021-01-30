@@ -20,6 +20,8 @@ isempty(::CartesianProduct)
 constraints_list(::CartesianProduct)
 vertices_list(cp::CartesianProduct{N}) where {N}
 linear_map(M::AbstractMatrix, cp::CartesianProduct)
+project(::CartesianProduct{N, IT, HT}, ::AbstractVector{Int}) where {N, IT<:Interval, HT<:AbstractHyperrectangle{N}}
+project(::CartesianProduct{N, IT, ZT}, ::AbstractVector{Int}) where {N, IT<:Interval, ZT<:AbstractZonotope{N}}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

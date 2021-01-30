@@ -296,10 +296,9 @@ function concretize(cp::CartesianProduct)
 end
 
 """
-    project(cp::CartesianProduct{N, <:Interval, <:AbstractHyperrectangle{N}}, block::AbstractVector{Int}) where {N}
+    project(cp::CartesianProduct{N, IT, HT}, block::AbstractVector{Int}) where {N, IT<:Interval, HT<:AbstractHyperrectangle{N}}
 
-Concrete projection of a Cartesian product between an interval and a
-hyperrectangle.
+Concrete projection of a Cartesian product between an interval and a hyperrectangle.
 
 ### Input
 
@@ -308,10 +307,10 @@ hyperrectangle.
 
 ### Output
 
-A set representing the projection of the cartesian product `cp` on the
+A hyperrectangle representing the projection of the cartesian product `cp` on the
 dimensions specified by `block`.
 """
-function project(cp::CartesianProduct{N, <:Interval, <:AbstractHyperrectangle{N}}, block::AbstractVector{Int}) where {N}
+function project(cp::CartesianProduct{N, IT, HT}, block::AbstractVector{Int}) where {N, IT<:Interval, HT<:AbstractHyperrectangle{N}}
     I = cp.X
     H = cp.Y
     block_vec = collect(block)
@@ -327,9 +326,9 @@ function project(cp::CartesianProduct{N, <:Interval, <:AbstractHyperrectangle{N}
 end
 
 """
-    project(cp::CartesianProduct{N, <:Interval, <:AbstractZonotope{N}}, block::AbstractVector{Int}) where {N}
+    project(cp::CartesianProduct{N, IT, ZT}, block::AbstractVector{Int}) where {N, IT<:Interval, ZT<:AbstractZonotope{N}}
 
-Concrete projection of a Cartesian product between an interval and a zonotopic set.
+Concrete projection of the Cartesian product between an interval and a zonotopic set.
 
 ### Input
 
@@ -338,10 +337,10 @@ Concrete projection of a Cartesian product between an interval and a zonotopic s
 
 ### Output
 
-A set representing the projection of the cartesian product `cp` on the
+A zonotope representing the projection of the cartesian product `cp` on the
 dimensions specified by `block`.
 """
-function project(cp::CartesianProduct{N, <:Interval, <:AbstractZonotope{N}}, block::AbstractVector{Int}) where {N}
+function project(cp::CartesianProduct{N, IT, ZT}, block::AbstractVector{Int}) where {N, IT<:Interval, ZT<:AbstractZonotope{N}}
     block_vec = collect(block)
     Z = cp.Y
     if 1 ∉ block_vec
