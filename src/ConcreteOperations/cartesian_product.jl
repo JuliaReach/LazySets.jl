@@ -25,21 +25,20 @@ For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/).
 """
 function cartesian_product(X::LazySet, Y::LazySet; backend=nothing, algorithm::String="vrep")
-    require(:Polyhedra; fun_name="cartesian_product")
 
     if algorithm == "vrep"
-        Yv = convert(VPolytope, Y)
+        Yv = VPolytope(vertices_list(Y))
         if dim(X) == 1 # special case
             Xv = convert(Interval, X)
             return cartesian_product(Xv, Yv)
         end
-        Xv = convert(VPolytope, X)
-        Pout = _cartesian_product_vrep(Xv, Yv, backend=backend)
+        Xv = VPolytope(vertices_list(X))
+        Pout = cartesian_product(Xv, Yv, backend=backend)
 
     elseif algorithm == "hrep"
-        Xp = convert(HPolytope, X)
-        Yp = convert(HPolytope, Y)
-        Pout = _cartesian_product_hrep(Xp, Yp, backend=backend)
+        Xp = HPolyhedron(constraints_list(X))
+        Yp = HPolyhedron(constraints_list(Y))
+        Pout = cartesian_product(Xp, Yp, backend=backend)
 
     else
         throw(ArgumentError("expected algorithm `vrep` or `hrep`, got $algorithm"))
@@ -73,9 +72,16 @@ function cartesian_product(P1::VPolytope, P2::VPolytope; backend=nothing)
     return _cartesian_product_vrep(P1, P2, backend1=backend, backend2=backend)
 end
 
-function _cartesian_product_vrep(P1, P2,
+function _cartesian_product_vrep(P1, P2;
                                  backend1=default_polyhedra_backend(P1),
                                  backend2=default_polyhedra_backend(P2))
+    if isnothing(backend1)
+        backend1 = default_polyhedra_backend(P1)
+    end
+    if isnothing(backend2)
+        backend2 = default_polyhedra_backend(P2)
+    end
+
     P1′ = polyhedron(P1; backend=backend1)
     P2′ = polyhedron(P2; backend=backend2)
     Pout = Polyhedra.vcartesianproduct(P1′, P2′)
@@ -105,12 +111,17 @@ For further information on the supported backends see
 function cartesian_product(P1::HPoly, P2::HPoly; backend=nothing)
     require(:Polyhedra; fun_name="`cartesian_product")
 
-    return _cartesian_product_vrep(P1, P2, backend1=backend, backend2=backend)
+    return _cartesian_product_hrep(P1, P2, backend1=backend, backend2=backend)
 end
 
-function _cartesian_product_hrep(P1, P2,
-                                 backend1=default_polyhedra_backend(P1),
-                                 backend2=default_polyhedra_backend(P2))
+function _cartesian_product_hrep(P1, P2; backend1, backend2)
+    if isnothing(backend1)
+        backend1 = default_polyhedra_backend(P1)
+    end
+    if isnothing(backend2)
+        backend2 = default_polyhedra_backend(P2)
+    end
+
     P1′ = polyhedron(P1; backend=backend1)
     P2′ = polyhedron(P2; backend=backend2)
     Pout = Polyhedra.hcartesianproduct(P1′, P2′)
