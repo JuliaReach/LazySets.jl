@@ -130,7 +130,8 @@ end
 
 # if the first set is an interval => the result is always a polytope
 function cartesian_product(I::Interval, P::Union{VPolygon, VPolytope})
-    a = min(I); b = max(I)
+    a = min(I)
+    b = max(I)
     vlist = vertices_list(P)
     m = length(vlist)
 
