@@ -1061,37 +1061,12 @@ julia> project(P, [1, 2]) |> constraints_list
 ```
 """
 function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}) where {N}
-    function _check_constrained_dimensions(c::HalfSpace)
-        # 1 = constrained dimensions subset of block
-        # -1 = constrained dimensions disjoint from block
-        # 0 = mixed case
-        status = 0
-        for i in constrained_dimensions(c)
-            if i in block
-                # case 1: is a subset
-                if status == -1
-                    status = 0
-                    break
-                end
-                status = 1
-            else
-                # case 1: is disjoint
-                if status == 1
-                    status = 0
-                    break
-                end
-                status = -1
-            end
-        end
-        return status
-    end
-
     general_case = false
 
     # cheap case
     clist = nothing  # allocate later
     @inbounds for c in constraints(P)
-        status = _check_constrained_dimensions(c)
+        status = _check_constrained_dimensions(c, block)
         if status == 0
             general_case = true
             break
@@ -1120,7 +1095,33 @@ function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}) where {N}
     end
 end
 
-function _project_polyhedron(P::LazySet, block)
-    projected = project(P, block)  # concrete projection of P
-    return constraints_list(projected)
+function _check_constrained_dimensions(c::HalfSpace, block)
+    # 1 = constrained dimensions subset of block
+    # -1 = constrained dimensions disjoint from block
+    # 0 = mixed case
+    status = 0
+    for i in constrained_dimensions(c)
+        if i in block
+            # case 1: is a subset
+            if status == -1
+                status = 0
+                break
+            end
+            status = 1
+        else
+            # case 1: is disjoint
+            if status == 1
+                status = 0
+                break
+            end
+            status = -1
+        end
+    end
+    return status
+end
+
+function _project_polyhedron(P::LazySet{N}, block) where {N}
+    M = projection_matrix(block, dim(P), N)
+    πP = linear_map(M, P)
+    return constraints_list(πP)
 end

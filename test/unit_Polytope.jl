@@ -536,4 +536,19 @@ for N in [Float64]
         @test isequivalent(p1, b1)
     end
 
+    # concrete projection of a polytope (see issue #2536)
+    if test_suite_polyhedra && N == Float64
+        X = HPolytope([HalfSpace([1.0, 1.0, 0.0], 4.0),
+                       HalfSpace([-1.0, -1.0, -0.0], -4.0),
+                       HalfSpace([-1.0, 0.0, 0.0], -0.0),
+                       HalfSpace([0.0, -1.0, 0.0], -0.0),
+                       HalfSpace([0.0, 0.0, -1.0], -0.0),
+                       HalfSpace([1.0, 0.0, 0.0], 10.0),
+                       HalfSpace([0.0, 1.0, 0.0], 10.0),
+                       HalfSpace([0.0, 0.0, 1.0], 10.0),
+                       HalfSpace([0.0, 1.0, 1.0], 6.0)])
+        v12 = [N[0, 4], N[4, 0]]
+        @test ispermutation(vertices_list(project(X, 1:2)), v12)
+        @test ispermutation(vertices_list(overapproximate(Projection(X, [1, 2]), 1e-3)), v12)
+    end
 end
