@@ -10,7 +10,7 @@ Compute the Cartesian product of two sets.
 - `X`         -- set
 - `Y`         -- another set
 - `backend`   -- (optional, default: `nothing`) the polyhedral computations backend
-- `algorithm` -- (optional, default: "vrep") the method used to transform each set
+- `algorithm` -- (optional, default: "hrep") the method used to transform each set
                  `X` and `Y` before taking the Cartesian product; choose between
                  "vrep" (use the vertex representation) and "hrep" (use the constraint representation)
 
@@ -23,8 +23,11 @@ obtained by the concrete Cartesian product of `X` and `Y`.
 
 For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/).
+
+If `X` can be converted to a one-dimensional interval and the vertices of `Y`
+are available use `algorithm="vrep"`.
 """
-function cartesian_product(X::LazySet, Y::LazySet; backend=nothing, algorithm::String="vrep")
+function cartesian_product(X::LazySet, Y::LazySet; backend=nothing, algorithm::String="hrep")
 
     if algorithm == "vrep"
         Yv = VPolytope(vertices_list(Y))
