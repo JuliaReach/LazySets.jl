@@ -17,7 +17,8 @@ abstract type Sampler end
     sample(X::LazySet{N}, num_samples::Int;
            [sampler]=nothing,
            [rng]::AbstractRNG=GLOBAL_RNG,
-           [seed]::Union{Int, Nothing}=nothing) where {N}
+           [seed]::Union{Int, Nothing}=nothing,
+           [VN]=Vector{N}) where {N}
 
 Sampling of an arbitrary bounded set `X`.
 
@@ -29,6 +30,7 @@ Sampling of an arbitrary bounded set `X`.
                    `RejectionSampler`)
 - `rng`         -- (optional, default: `GLOBAL_RNG`) random number generator
 - `seed`        -- (optional, default: `nothing`) seed for reseeding
+- `VN`          -- (optiona, default: `Vector{N}`) vector type of the sampled points
 
 ### Output
 
@@ -41,15 +43,13 @@ vector).
 See the documentation of the respective `Sampler`.
 """
 function sample(X::LazySet{N}, num_samples::Int;
-                sampler=nothing,
+                sampler=_default_sampler(X),
                 rng::AbstractRNG=GLOBAL_RNG,
-                seed::Union{Int, Nothing}=nothing) where {N}
+                seed::Union{Int, Nothing}=nothing,
+                VN=Vector{N}) where {N}
     @assert isbounded(X) "this function requires that the set `X` is bounded"
 
-    if sampler == nothing
-        sampler = RejectionSampler
-    end
-    D = Vector{Vector{N}}(undef, num_samples) # preallocate output
+    D = Vector{VN}(undef, num_samples) # preallocate output
     _sample!(D, sampler(X); rng=rng, seed=seed)
     return D
 end
@@ -60,10 +60,10 @@ function sample(X::LazySet{N}; kwargs...) where {N}
 end
 
 # fallback implementation
-function _sample!(D::Vector{Vector{N}},
+function _sample!(D::Vector{VN},
                   sampler::Sampler;
                   rng::AbstractRNG=GLOBAL_RNG,
-                  seed::Union{Int, Nothing}=nothing) where {N}
+                  seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
     error("the method `_sample!` is not implemented for samplers of type " *
           "$(typeof(sampler))")
 end
@@ -111,11 +111,38 @@ function RejectionSampler(X, distribution=DefaultUniform)
     return RejectionSampler(X, box_approx)
 end
 
+set(sampler::RejectionSampler) = sampler.X
+
 """
-    _sample!(D::Vector{Vector{N}},
+    UniformSampler{S<:LazySet, D} <: Sampler
+
+Type used for uniform sampling of an arbitrary `LazySet` `X`.
+
+### Fields
+
+- `X` -- set to be sampled
+
+### Algorithm
+
+Draw a sample ``x`` from a uniform distribution of the original set ``X``.
+"""
+struct UniformSampler{S<:LazySet, D} <: Sampler
+    X::S
+end
+
+UniformSampler(X::LazySet) = UniformSampler{typeof(X), DefaultUniform{eltype(X)}}(X)
+
+set(sampler::UniformSampler) = sampler.X
+
+# default sampler algorithms
+_default_sampler(X::LazySet) = RejectionSampler
+_default_sampler(X::LineSegment) = UniformSampler
+
+"""
+    _sample!(D::Vector{VN},
              sampler::RejectionSampler;
              rng::AbstractRNG=GLOBAL_RNG,
-             seed::Union{Int, Nothing}=nothing) where {N}
+             seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
 
 Sample points using rejection sampling.
 
@@ -130,10 +157,10 @@ Sample points using rejection sampling.
 
 A vector of `num_samples` vectors.
 """
-function _sample!(D::Vector{Vector{N}},
+function _sample!(D::Vector{VN},
                   sampler::RejectionSampler;
                   rng::AbstractRNG=GLOBAL_RNG,
-                  seed::Union{Int, Nothing}=nothing) where {N}
+                  seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
     rng = reseed(rng, seed)
     @inbounds for i in 1:length(D)
         w = rand.(Ref(rng), sampler.box_approx)
@@ -141,6 +168,42 @@ function _sample!(D::Vector{Vector{N}},
             w = rand.(Ref(rng), sampler.box_approx)
         end
         D[i] = w
+    end
+    return D
+end
+
+"""
+    _sample!(D::Vector{VN},
+             sampler::UniformSampler{<:LineSegment, <:DefaultUniform};
+             rng::AbstractRNG=GLOBAL_RNG,
+             seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
+
+Sample points of a line segment using uniform sampling in-place.
+
+### Input
+
+- `D`           -- output, vector of points
+- `sampler`     -- Sampler from which the points are sampled
+- `rng`         -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed`        -- (optional, default: `nothing`) seed for reseeding
+
+### Output
+
+A vector of `num_samples` vectors, where `num_samples` is the length of `D`.
+"""
+function _sample!(D::Vector{VN},
+                  sampler::UniformSampler{<:LineSegment, <:DefaultUniform};
+                  rng::AbstractRNG=GLOBAL_RNG,
+                  seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
+    rng = reseed(rng, seed)
+    U = DefaultUniform(zero(N), one(N))
+    L = set(sampler)
+    p = L.p
+    q = L.q
+
+    @inbounds for i in 1:length(D)
+        λ = rand(rng, U)
+        D[i] = p + λ * (q - p)
     end
     return D
 end
