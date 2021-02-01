@@ -10,7 +10,7 @@ Compute the Cartesian product of two sets.
 - `X`         -- set
 - `Y`         -- another set
 - `backend`   -- (optional, default: `nothing`) the polyhedral computations backend
-- `algorithm` -- (optional, default: "vrep") the method used to transform the each set
+- `algorithm` -- (optional, default: "vrep") the method used to transform each set
                  `X` and `Y` before taking the Cartesian product; choose between
                  "vrep" (use the vertex representation) and "hrep" (use the constraint representation)
 
