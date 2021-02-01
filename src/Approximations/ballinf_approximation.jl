@@ -36,7 +36,7 @@ function ballinf_approximation(S::LazySet{N}) where {N}
         rcur = (htop - hbottom) / 2
         if (rcur > r)
             r = rcur
-        elseif rcur < 0
+        elseif !_geq(rcur, zero(N))
             # contradicting bounds => set is empty
             return EmptySet{N}(dim(S))
         end
