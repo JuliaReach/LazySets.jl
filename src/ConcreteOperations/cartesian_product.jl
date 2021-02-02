@@ -32,7 +32,7 @@ function cartesian_product(X::LazySet, Y::LazySet; backend=nothing, algorithm::S
     if algorithm == "vrep"
         Yv = VPolytope(vertices_list(Y))
         if dim(X) == 1 # special case
-            Xv = convert(Interval, X)
+            Xv = convert(Interval, X)  # works if X is convex
             return cartesian_product(Xv, Yv)
         end
         Xv = VPolytope(vertices_list(X))
