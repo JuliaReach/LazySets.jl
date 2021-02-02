@@ -90,9 +90,10 @@ LazySets.read_gen(::String)
 _sample_unit_nsphere_muller!
 _sample_unit_nball_muller!
 sample
+LazySets._sample!
 LazySets.Sampler
 LazySets.RejectionSampler{S<:LazySet, D<:Distribution}
-LazySets._sample!
+LazySets.UniformSampler
 ```
 
 ## Volume
