@@ -30,7 +30,7 @@ Sampling of an arbitrary bounded set `X`.
                    `RejectionSampler`)
 - `rng`         -- (optional, default: `GLOBAL_RNG`) random number generator
 - `seed`        -- (optional, default: `nothing`) seed for reseeding
-- `VN`          -- (optiona, default: `Vector{N}`) vector type of the sampled points
+- `VN`          -- (optional, default: `Vector{N}`) vector type of the sampled points
 
 ### Output
 
