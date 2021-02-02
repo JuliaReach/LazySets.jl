@@ -410,6 +410,15 @@ for N in [Float64, Float32, Rational{Int}]
     @test project(V, 1:2) == V
     V = VPolygon([N[1, 0], N[1, 1]])
     @test project(V, [1]) == Interval(N(1), N(1))
+
+    # concrete cartesian product
+    V = VPolygon([N[0, 1], N[1, 0], N[-1, 0]])
+    I = Interval(N(0), N(1))
+    Vcp = cartesian_product(I, V)
+    Vcp′ = VPolytope([N[0, -1, 0], N[0, 1, 0], N[0, 0, 1], N[1, -1, 0], N[1, 1, 0], N[1, 0, 1]])
+    # FIXME isapprox between arrays isequivalent(cartesian_product(I, V), Vcp) # TODO isequivalent(....)
+    @test LazySets._issubset_vertices_list(Vcp, Vcp′, false)
+    @test LazySets._issubset_vertices_list(Vcp′, Vcp, false)
 end
 
 function same_constraints(v::Vector{<:LinearConstraint{N}})::Bool where N<:Real
