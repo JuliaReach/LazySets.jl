@@ -16,7 +16,7 @@ Compute the Cartesian product of two sets.
 
 ### Output
 
-The `VPolytope` (if "vrep" was useed) or `HPolytope` (if "hrep" was used)
+The `VPolytope` (if "vrep" was used) or `HPolytope` (if "hrep" was used)
 obtained by the concrete Cartesian product of `X` and `Y`.
 
 ### Notes
