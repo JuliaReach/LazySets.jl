@@ -15,7 +15,7 @@ abstract type Sampler end
 
 """
     sample(X::LazySet{N}, num_samples::Int;
-           [sampler]=nothing,
+           [sampler]=_default_sampler(X),
            [rng]::AbstractRNG=GLOBAL_RNG,
            [seed]::Union{Int, Nothing}=nothing,
            [VN]=Vector{N}) where {N}
@@ -26,8 +26,9 @@ Sampling of an arbitrary bounded set `X`.
 
 - `X`           -- (bounded) set to be sampled
 - `num_samples` -- number of random samples
-- `sampler`     -- sampler used (default: `nothing`, which falls back to
-                   `RejectionSampler`)
+- `sampler`     -- (optional, default: `_default_sampler(X)`) the sampler used;
+                   falls back to `RejectionSampler` or `UniformSampler` depending
+                   on the type of `X` 
 - `rng`         -- (optional, default: `GLOBAL_RNG`) random number generator
 - `seed`        -- (optional, default: `nothing`) seed for reseeding
 - `VN`          -- (optional, default: `Vector{N}`) vector type of the sampled points
