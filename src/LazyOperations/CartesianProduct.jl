@@ -351,3 +351,33 @@ function project(cp::CartesianProduct{N, IT, ZT}, block::AbstractVector{Int}) wh
     M = projection_matrix(block_vec, dim(Z), N)
     return linear_map(M, Z)
 end
+
+"""
+    project(cp::CartesianProduct{N, IT, Union{VP1, VP2}},
+            block::AbstractVector{Int}) where {N, IT<:Interval, VP1<:VPolygon{N}, VP2<:VPolytope{N}}
+
+Concrete projection of the Cartesian product between an interval and a set in vertex representation.
+
+### Input
+
+- `cp`       -- Cartesian product between an interval and a `VPolygon` or a `VPolytope`
+- `block`    -- block structure, a vector with the dimensions of interest
+
+### Output
+
+A `VPolytope` representing the projection of the cartesian product `cp` on the
+dimensions specified by `block`.
+"""
+function project(cp::CartesianProduct{N, IT, Union{VP1, VP2}},
+                 block::AbstractVector{Int}) where {N, IT<:Interval, VP1<:VPolygon{N}, VP2<:VPolytope{N}}
+    I = cp.X
+    P = cp.Y
+    block_vec = collect(block)
+    if 1 ∉ block_vec
+        Pout = project(P, block_vec .- 1)
+    else
+        out = cartesian_product(I, P)
+        Pout = project(out, block_vec)
+    end
+    return Pout
+end
