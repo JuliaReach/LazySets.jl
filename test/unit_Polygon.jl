@@ -419,6 +419,11 @@ for N in [Float64, Float32, Rational{Int}]
     # FIXME isapprox between arrays isequivalent(cartesian_product(I, V), Vcp) # TODO isequivalent(....)
     @test LazySets._issubset_vertices_list(Vcp, Vcp′, false)
     @test LazySets._issubset_vertices_list(Vcp′, Vcp, false)
+
+    # concrete projection of a cartesian product
+    @test project(I × V, 2:3) === V
+    @test project(I×V, 1:1) == I
+    @test project(I×V, 1:2) == VPolygon([N[0, -1], N[1, -1], N[1, 1], [0, 1]]) # TODO use isequivalent
 end
 
 function same_constraints(v::Vector{<:LinearConstraint{N}})::Bool where N<:Real
