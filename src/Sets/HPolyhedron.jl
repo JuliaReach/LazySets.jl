@@ -443,7 +443,7 @@ end
 
 """
    isempty(P::HPoly{N}, witness::Bool=false;
-           [use_polyhedra_interface]::Bool=false, [solver]=default_lp_solver(N),
+           [use_polyhedra_interface]::Bool=false, [solver]=nothing,
            [backend]=nothing) where {N}
 
 Determine whether a polyhedron is empty.
@@ -454,10 +454,11 @@ Determine whether a polyhedron is empty.
 - `witness` -- (optional, default: `false`) compute a witness if activated
 - `use_polyhedra_interface` -- (optional, default: `false`) if `true`, we use
                the `Polyhedra` interface for the emptiness test
-- `solver`  -- (optional, default: `default_lp_solver(N)`) LP-solver backend
+- `solver`  -- (optional, default: `nothing`) LP-solver backend, uses `default_lp_solver(N)`
+               if it is not provided
 - `backend` -- (optional, default: `nothing`) backend for polyhedral
-               computations in `Polyhedra`; its value is set internally (see the
-               Notes below for details)
+               computations in `Polyhedra`, uses `default_polyhedra_backend(P)` if
+               it is not provided
 
 ### Output
 
@@ -483,7 +484,7 @@ Otherwise, we set up the LP internally.
 function isempty(P::HPoly{N},
                  witness::Bool=false;
                  use_polyhedra_interface::Bool=false,
-                 solver=default_lp_solver(N),
+                 solver=nothing,
                  backend=nothing) where {N}
     if length(constraints_list(P)) < 2
         # catch corner case because of problems in LP solver for Rationals
@@ -492,10 +493,17 @@ function isempty(P::HPoly{N},
     if use_polyhedra_interface
         require(:Polyhedra; fun_name="isempty", explanation="with the active " *
             "option `use_polyhedra_interface`")
+
         if backend == nothing
             backend = default_polyhedra_backend(P)
         end
-        result = Polyhedra.isempty(polyhedron(P; backend=backend), solver)
+
+        if isnothing(solver)
+            result = Polyhedra.isempty(polyhedron(P; backend=backend))
+        else
+            result = Polyhedra.isempty(polyhedron(P; backend=backend), solver)
+        end
+
         if result
             return witness ? (true, N[]) : true
         elseif witness
@@ -508,6 +516,9 @@ function isempty(P::HPoly{N},
         lbounds, ubounds = -Inf, Inf
         sense = '<'
         obj = zeros(N, size(A, 2))
+        if isnothing(solver)
+            solver = default_lp_solver(N)
+        end
         lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
         if lp.status == :Optimal
             return witness ? (false, lp.sol) : false
