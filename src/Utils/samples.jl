@@ -135,6 +135,32 @@ UniformSampler(X::LazySet) = UniformSampler{typeof(X), DefaultUniform{eltype(X)}
 
 set(sampler::UniformSampler) = sampler.X
 
+"""
+    PolytopeSampler{S<:LazySet, D} <: Sampler
+
+Type used for sampling of a convex polytope `X`.
+
+### Fields
+
+- `X` -- convex polytope to be sampled
+
+### Algorithm
+
+Choose a random convex combination of the vertices of `X`.
+
+### Notes
+
+The sampling is not uniform - points in the center of the polytope are more
+likely to be sampled.
+"""
+struct PolytopeSampler{S<:LazySet, D} <: Sampler
+    X::S
+end
+
+PolytopeSampler(X::LazySet) = PolytopeSampler{typeof(X), DefaultUniform{eltype(X)}}(X)
+
+set(sampler::PolytopeSampler) = sampler.X
+
 # default sampler algorithms
 _default_sampler(X::LazySet) = RejectionSampler
 _default_sampler(X::LineSegment) = UniformSampler
@@ -206,6 +232,31 @@ function _sample!(D::Vector{VN},
         λ = rand(rng, U)
         D[i] = p + λ * (q - p)
     end
+    return D
+end
+
+function _sample!(D::Vector{VN},
+                  sampler::PolytopeSampler{<:LazySet, <:DefaultUniform};
+                  rng::AbstractRNG=GLOBAL_RNG,
+                  seed::Union{Int, Nothing}=nothing
+                 ) where {N, VN<:AbstractVector{N}}
+    rng = reseed(rng, seed)
+    U = DefaultUniform(zero(N), one(N))
+    P = set(sampler)
+    vlist = vertices_list(P)
+    m = length(vlist)
+
+    @inbounds for i in 1:length(D)
+        # get a list of m uniform numbers (https://cs.stackexchange.com/a/3229)
+        r = [rand() for _ in 1:m-1]
+        push!(r, 0.0)
+        push!(r, 1.0)
+        sort!(r)
+        r = [r[i+1] - r[i] for i in 1:m]
+        # get the corresponding convex combination
+        D[i] = sum(r[j] * vlist[j] for j in 1:m)
+    end
+
     return D
 end
 
