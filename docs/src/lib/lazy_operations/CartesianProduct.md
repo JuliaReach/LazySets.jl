@@ -22,6 +22,7 @@ vertices_list(cp::CartesianProduct{N}) where {N}
 linear_map(M::AbstractMatrix, cp::CartesianProduct)
 project(::CartesianProduct{N, IT, HT}, ::AbstractVector{Int}) where {N, IT<:Interval, HT<:AbstractHyperrectangle{N}}
 project(::CartesianProduct{N, IT, ZT}, ::AbstractVector{Int}) where {N, IT<:Interval, ZT<:AbstractZonotope{N}}
+project(::CartesianProduct{N, IT, Union{VP1, VP2}}, ::AbstractVector{Int}) where {N, IT<:Interval, VP1<:VPolygon{N}, VP2<:VPolytope{N}}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
