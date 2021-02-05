@@ -28,7 +28,7 @@ Sampling of an arbitrary bounded set `X`.
 - `num_samples` -- number of random samples
 - `sampler`     -- (optional, default: `_default_sampler(X)`) the sampler used;
                    falls back to `RejectionSampler` or `UniformSampler` depending
-                   on the type of `X` 
+                   on the type of `X`
 - `rng`         -- (optional, default: `GLOBAL_RNG`) random number generator
 - `seed`        -- (optional, default: `nothing`) seed for reseeding
 - `VN`          -- (optional, default: `Vector{N}`) vector type of the sampled points
@@ -339,3 +339,97 @@ end
 
 end # quote
 end # function load_distributions_samples()
+
+
+# =========================
+# Hit and Run Monte Carlo
+# =========================
+
+struct HitAndRun{S, D, PT, L} <: Sampler
+    X::S      #  set
+    p::PT     # starting point
+    thin::L   # thin level
+end
+
+set(sampler::HitAndRun) = sampler.X
+
+# FIXME an_element(X) gives a point in the boundary, but the algorithm works
+# better with an interior point
+function HitAndRun(X::LazySet; p=an_element(X), thin=10)
+    return HitAndRun{typeof(X), DefaultUniform{eltype(X)}, typeof(p), typeof(thin)}(X, p, thin)
+end
+
+# compute a unitay random direction in the given dimensions
+function _unitary_random_direction(n)
+    return normalize!(randn(n))
+end
+
+# distance we have to travel in direction dir,
+# from point p, to reach a given hyperplane a^T x = b
+function _distance(a, b, p, dir)
+    α = dot(a, dir)
+    LazySets.isapproxzero(α) && throw(ArgumentError("the direction is parallel to the hyperplane"))
+    λ = (b - dot(a, p)) / α
+    return λ
+end
+
+function _distance(H::Hyperplane, p, dir)
+    return _distance(H.a, H.b, p, dir)
+end
+
+function _sample!(D::Vector{VN},
+                  sampler::HitAndRun;
+                  rng::AbstractRNG=GLOBAL_RNG,
+                  seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
+
+    # initialization
+    X = set(sampler)
+    p = an_element(X)
+    n = dim(X)
+    clist = constraints_list(X)
+    D[1] = p
+
+    thin = sampler.thin
+    if thin == 1
+        for i in 2:length(D)
+            D[i] = hitandrun(clist, D[i-1])
+        end
+
+    else
+        aux = similar(p)
+        for i in 2:length(D)
+            D[i] = similar(p)
+            copy!(aux, D[i-1])
+            for _ in 1:thin
+                hitandrun!(D[i], clist, aux)
+                copy!(aux, D[i])
+            end
+        end
+    end
+    return D
+end
+
+hitandrun(clist::Vector{<:HalfSpace}, p) = hitandrun!(similar(p), clist, p)
+
+function hitandrun!(q, clist::Vector{HT}, p) where {N, VT, HT<:HalfSpace{N, VT}}
+
+    n = dim(first(clist))
+    dir = _unitary_random_direction(n)
+    m = length(clist)
+    λ = Vector{N}(undef, m)
+    @inbounds for (i, c) in enumerate(clist)
+        λ[i] = _distance(c.a, c.b, p, dir)
+    end
+
+    # FIXME any of the following collections may be empty
+    λ₊ = minimum(λ[λ .> 0])
+    λ₋ = maximum(λ[λ .< 0])
+
+    @assert (λ₊ > 0) && (λ₋ < 0)
+
+    U = LazySets.DefaultUniform(λ₋, λ₊)
+    μ = rand(U)
+
+    q .= p + μ * dir
+    return q
+end
