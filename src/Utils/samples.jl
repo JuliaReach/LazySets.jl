@@ -14,8 +14,7 @@ All subtypes should implement a `_sample!` method.
 abstract type Sampler end
 
 """
-    sample(X::LazySet{N}, num_samples::Int;
-           [sampler]=_default_sampler(X),
+    sample(X::LazySet{N}, num_samples::Int, [sampler]::Type{Sampler}=_default_sampler(X);
            [rng]::AbstractRNG=GLOBAL_RNG,
            [seed]::Union{Int, Nothing}=nothing,
            [VN]=Vector{N}) where {N}
@@ -43,31 +42,28 @@ vector).
 
 See the documentation of the respective `Sampler`.
 """
-function sample(X::LazySet{N}, num_samples::Int;
-                sampler=_default_sampler(X),
+function sample(X::LazySet{N}, num_samples::Int, sampler::Type{<:Sampler}=_default_sampler(X);
                 rng::AbstractRNG=GLOBAL_RNG,
                 seed::Union{Int, Nothing}=nothing,
                 VN=Vector{N}) where {N}
-    @assert isbounded(X) "this function requires that the set `X` is bounded"
+
+    S = sampler(X)
+    return sample(X, num_samples, S, rng=rng, seed=seed, VN=VN)
+end
+
+function sample(X::LazySet{N}, num_samples::Int, sampler::Sampler;
+                rng::AbstractRNG=GLOBAL_RNG,
+                seed::Union{Int, Nothing}=nothing,
+                VN=Vector{N}) where {N}
 
     D = Vector{VN}(undef, num_samples) # preallocate output
-    _sample!(D, sampler(X); rng=rng, seed=seed)
+    _sample!(D, sampler; rng=rng, seed=seed)
     return D
 end
 
-# without argument, returns a single element (instead of a singleton)
-function sample(X::LazySet{N}; kwargs...) where {N}
-    return sample(X, 1; kwargs...)[1]
-end
-
-# fallback implementation
-function _sample!(D::Vector{VN},
-                  sampler::Sampler;
-                  rng::AbstractRNG=GLOBAL_RNG,
-                  seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
-    error("the method `_sample!` is not implemented for samplers of type " *
-          "$(typeof(sampler))")
-end
+# without argument, returns a single sample (instead of a vector containing a single vector)
+sample(X::LazySet; kwargs...) = sample(X, 1; kwargs...)[1]
+sample(X::LazySet, sampler::Union{Type{Sampler}, Sampler}; kwargs...) = sample(X, 1, sampler; kwargs...)[1]
 
 # =====================
 # Rejection Sampling
@@ -104,7 +100,6 @@ struct RejectionSampler{S<:LazySet, D} <: Sampler
     X::S
     box_approx::Vector{D}
 end
-
 
 function RejectionSampler(X, distribution=DefaultUniform)
     B = box_approximation(X)
@@ -383,6 +378,7 @@ function _sample!(D::Vector{VN},
                   seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
 
     # initialization
+    rng = reseed(rng, seed)
     X = set(sampler)
     p = an_element(X)
     n = dim(X)
@@ -411,25 +407,47 @@ end
 
 hitandrun(clist::Vector{<:HalfSpace}, p) = hitandrun!(similar(p), clist, p)
 
-function hitandrun!(q, clist::Vector{HT}, p) where {N, VT, HT<:HalfSpace{N, VT}}
+function hitandrun!(q, clist::Vector{HT}, p; MAXITER=1000) where {N, VT, HT<:HalfSpace{N, VT}}
 
     n = dim(first(clist))
-    dir = _unitary_random_direction(n)
     m = length(clist)
     λ = Vector{N}(undef, m)
-    @inbounds for (i, c) in enumerate(clist)
-        λ[i] = _distance(c.a, c.b, p, dir)
+    k = 1
+    while k <= MAXITER
+        dir = _unitary_random_direction(n)
+        @inbounds for (i, c) in enumerate(clist)
+            λ[i] = _distance(c.a, c.b, p, dir)
+        end
+
+        λ₋ = -Inf   # maximum of negative coeffs
+        λ₊ = Inf # minimum of positive coeffs
+        for λi in λ
+            if λi < zero(N) && λi > λ₋
+                λ₋ = λi
+            end
+            if λi > zero(N) && λi < λ₊
+                λ₊ = λi
+            end
+        end
+
+        # build pointf
+        U = DefaultUniform(λ₋, λ₊)
+        μ = rand(U)
+        q .= p + μ * dir
+
+        # check membership
+        found = true
+        for c in clist
+            if !_leq(dot(c.a, q), c.b)
+                found = false
+                break
+            end
+        end
+        found && break
+        k += 1
     end
-
-    # FIXME any of the following collections may be empty
-    λ₊ = minimum(λ[λ .> 0])
-    λ₋ = maximum(λ[λ .< 0])
-
-    @assert (λ₊ > 0) && (λ₋ < 0)
-
-    U = LazySets.DefaultUniform(λ₋, λ₊)
-    μ = rand(U)
-
-    q .= p + μ * dir
+    if k > MAXITER
+        @warn "maximum number of hit and run iterations reached, try increasing `MAXITER` or choose another starting point"
+    end
     return q
 end
