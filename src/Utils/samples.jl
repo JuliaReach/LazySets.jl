@@ -105,7 +105,6 @@ struct RejectionSampler{S<:LazySet, D} <: Sampler
     box_approx::Vector{D}
 end
 
-
 function RejectionSampler(X, distribution=DefaultUniform)
     B = box_approximation(X)
     box_approx = [distribution(low(B, i), high(B, i)) for i in 1:dim(B)]
@@ -148,10 +147,25 @@ Type used for sampling of a convex polytope `X`.
 
 Choose a random convex combination of the vertices of `X`.
 
+Let ``V = \\{v_i\\}_i`` denote the set of vertices of `X`.
+Then any point ``p \\in \\mathbb{R}^n` of the convex polytope ``X`` is a convex
+combination of its vertices, i.e., ``p = \\sum_{i} v_i α_i`` for some
+(non-negative) coefficients ``\\{α_i\\}_i`` that add up to 1.
+The algorithm chooses a random convex combination (the ``α_i``).
+To produce such combination we apply the finite difference operator on a sorted
+uniform sample over ``[0, 1]``; the method can be found in [1] and [2].
+
 ### Notes
 
 The sampling is not uniform - points in the center of the polytope are more
 likely to be sampled.
+
+### References
+
+[1] *Rubin, Donald B. The bayesian bootstrap. The annals of statistics (1981):
+130-134.*
+
+[2] https://cs.stackexchange.com/questions/3227/uniform-sampling-from-a-simplex/3229
 """
 struct PolytopeSampler{S<:LazySet, D} <: Sampler
     X::S
@@ -235,6 +249,16 @@ function _sample!(D::Vector{VN},
     return D
 end
 
+function Base.rand(rng::AbstractRNG, U::DefaultUniform, n::Int)
+    [rand(rng, U) for i in 1:n]
+end
+
+function rand!(x, rng::AbstractRNG, U::DefaultUniform)
+    @inbounds for i in eachindex(x)
+        x[i] = rand(rng, U)
+    end
+end
+
 function _sample!(D::Vector{VN},
                   sampler::PolytopeSampler{<:LazySet, <:DefaultUniform};
                   rng::AbstractRNG=GLOBAL_RNG,
@@ -246,15 +270,20 @@ function _sample!(D::Vector{VN},
     vlist = vertices_list(P)
     m = length(vlist)
 
+    # vector used to store the combination coefficients
+    r = Vector{N}(undef, m-1)
+
     @inbounds for i in 1:length(D)
         # get a list of m uniform numbers (https://cs.stackexchange.com/a/3229)
-        r = [rand() for _ in 1:m-1]
-        push!(r, 0.0)
-        push!(r, 1.0)
+        # and compute the corresponding linear combination in-place
+        rand!(r, rng, U)
         sort!(r)
-        r = [r[i+1] - r[i] for i in 1:m]
-        # get the corresponding convex combination
-        D[i] = sum(r[j] * vlist[j] for j in 1:m)
+        D[i] = r[1] * vlist[1]  # r[1] - 0 == r[1]
+        for j in 2:m-1
+            α = r[j] - r[j-1]
+            D[i] .+= α * vlist[j]
+        end
+        D[i] .+= (1 - r[m-1]) * vlist[m]
     end
 
     return D
