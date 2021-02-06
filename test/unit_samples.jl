@@ -21,6 +21,10 @@ for N in [Float64]
     # default distribution
     @test LazySets.RejectionSampler(P2).box_approx == [DefaultUniform(-3.0,1.0), DefaultUniform(-4.0,2.0)]
 
+    # polytope sampler
+    p1_samples = LazySets.sample(P1, 100, sampler=LazySets.PolytopeSampler)
+    @test all(v ∈ P1 for v in p1_samples)
+
     # specifying a distribution from Distributions.jl
     @test LazySets.RejectionSampler(P2, Uniform).box_approx == [Uniform(-3.0, 1.0), Uniform(-4.0,2.0)]
     @test LazySets.RejectionSampler(P2, Normal).box_approx == [Normal(-3.0, 1.0), Normal(-4.0, 2.0)]

@@ -94,6 +94,7 @@ LazySets._sample!
 LazySets.Sampler
 LazySets.RejectionSampler{S<:LazySet, D<:Distribution}
 LazySets.UniformSampler
+LazySets.PolytopeSampler
 ```
 
 ## Volume
