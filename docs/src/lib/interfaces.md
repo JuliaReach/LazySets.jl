@@ -457,3 +457,15 @@ linear_map(::AbstractMatrix, ::AbstractAffineMap)
 * [Linear map (LinearMap)](@ref def_LinearMap)
 * [Reset map (ResetMap)](@ref def_ResetMap)
 * [Translation](@ref def_Translation)
+
+## [Star sets (AbstractStar)](@id def_AbstractStar)
+
+An affine map consists of a linear map and a translation.
+
+```@docs
+AbstractAffineMap
+```
+
+### Implementations
+
+* [Star](@ref def_Star)

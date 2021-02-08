@@ -146,20 +146,66 @@ end
 
 """
     center(X::Star)
+
+Return the center of a star.
+
+### Input
+
+- `X` -- star
+
+### Output
+
+The center of the star.
 """
 center(X::Star) = X.c
 
+"""
+    basis(X::Star)
 
+Return the basis vectors of a star.
 
+### Input
+
+- `X` -- star
+
+### Output
+
+A matrix where each column is a basis vector of the star.
+"""
 basis(X::Star) = X.V
 
+"""
+    predicate(X::Star)
+
+Return the predicate of a star.
+
+### Input
+
+- `X` -- star
+
+### Output
+
+A polyhedral set representing the predicate of the star.
+"""
 predicate(X::Star) = X.P
 
 """
     dim(X::Star)
+
+Return the dimension of a star.
+
+### Input
+
+- `X` -- star set
+
+### Output
+
+The ambient dimension of the star set.
 """
 dim(X::Star) = length(X.c)
 
 # =====================================
 # Support function and support vector
 # =====================================
+
+# TODO
