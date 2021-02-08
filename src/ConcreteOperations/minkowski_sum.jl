@@ -370,7 +370,7 @@ function _minkowski_sum_vrep_2d_singleton(vlistP::Vector{VT},
 
     if min(mP, mQ) != 1
         throw(ArgumentError("expected one argument to have only one vertex, got $mP and $mQ respectively"))
-    elseif mQ == 1
+    elseif mP != 1
         return _minkowski_sum_vrep_2d_singleton(vlistQ, vlistP)
     end
 
