@@ -505,6 +505,17 @@ for N in [Float64, Float32]
         HalfSpace(N[2.17022, -0.130831], N(-2.14411))])
     addconstraint!(p2, p2.constraints[2])
     @test length(p2.constraints) == 6
+
+    # test that concrete minkowski sum of a singleton and a polygon works
+    x = VPolygon([N[1, 1]])
+    y = VPolygon([N[1.1, 2.2], N[0.9, 2.2], N[0.9, 2.0], N[1.1, 2.0]])
+    v = minkowski_sum(x, y)
+
+    a = VPolygon([N[2.1, 3.2], N[1.9, 3.2], N[1.9, 3.0], N[2.1, 3.0]])
+    @test v == a
+    x = VPolygon([N[1, 1]])
+    y = VPolygon([N[2, 1]])
+    @test minkowski_sum(x, y) == VPolygon([N[3, 2]])
 end
 
 for N in [Float64]
