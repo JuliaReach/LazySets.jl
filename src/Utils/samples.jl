@@ -344,15 +344,15 @@ struct HitAndRun{S, D, VT} <: Sampler
     X::S        # set
     p::VT       # starting point
     thin::Int   # thin level
-    MAXITER::Int # maximum number of iterations to find a point in X
+    maxiter::Int # maximum number of iterations to find a point in X
 end
 
 set(sampler::HitAndRun) = sampler.X
 
 # FIXME an_element(X) gives a point in the boundary, but the algorithm works
 # better with an interior point
-function HitAndRun(X::LazySet; p=an_element(X), thin=2, MAXITER=1000)
-    return HitAndRun{typeof(X), DefaultUniform{eltype(X)}, typeof(p)}(X, p, thin, MAXITER)
+function HitAndRun(X::LazySet; p=an_element(X), thin=2, maxiter=1000)
+    return HitAndRun{typeof(X), DefaultUniform{eltype(X)}, typeof(p)}(X, p, thin, maxiter)
 end
 
 # compute a unitay random direction in the given dimensions
@@ -385,12 +385,12 @@ function _sample!(D::Vector{VN},
     n = dim(X)
     clist = constraints_list(X)
     D[1] = p
-    MAXITER = sampler.MAXITER
+    maxiter = sampler.maxiter
 
     thin = sampler.thin
     if thin == 1
         for i in 2:length(D)
-            D[i] = hitandrun(clist, D[i-1], MAXITER=MAXITER)
+            D[i] = hitandrun(clist, D[i-1], maxiter=maxiter)
         end
 
     else
@@ -399,7 +399,7 @@ function _sample!(D::Vector{VN},
             D[i] = similar(p)
             copy!(aux, D[i-1])
             for _ in 1:thin
-                hitandrun!(D[i], clist, aux, MAXITER=MAXITER)
+                hitandrun!(D[i], clist, aux, maxiter=maxiter)
                 copy!(aux, D[i])
             end
         end
@@ -408,17 +408,17 @@ function _sample!(D::Vector{VN},
 end
 
 # return q = p + μ*dir such that q belongs to the intersection of half-spaces
-# use MAXITER > 1 if the starting point p is not an interior point
-hitandrun(clist::Vector{<:HalfSpace}, p; MAXITER=1000) = hitandrun!(similar(p), clist, p, MAXITER=MAXITER)
+# use maxiter > 1 if the starting point p is not an interior point
+hitandrun(clist::Vector{<:HalfSpace}, p; maxiter=1000) = hitandrun!(similar(p), clist, p, maxiter=maxiter)
 
 # hit and run iteration starting from p and storing the result in q
-function hitandrun!(q, clist::Vector{HT}, p; MAXITER=1000) where {N, VT, HT<:HalfSpace{N, VT}}
+function hitandrun!(q, clist::Vector{HT}, p; maxiter=1000) where {N, VT, HT<:HalfSpace{N, VT}}
 
     n = dim(first(clist))
     m = length(clist)
     λ = Vector{N}(undef, m)
     k = 1
-    while k <= MAXITER
+    while k <= maxiter
         dir = _unitary_random_direction(n)
         @inbounds for (i, c) in enumerate(clist)
             λ[i] = _distance(c.a, c.b, p, dir)
@@ -451,8 +451,8 @@ function hitandrun!(q, clist::Vector{HT}, p; MAXITER=1000) where {N, VT, HT<:Hal
         found && break
         k += 1
     end
-    if k > MAXITER
-        @warn "maximum number of iterations reached, try increasing `MAXITER` or choose another starting point"
+    if k > maxiter
+        @warn "maximum number of iterations reached, try increasing `maxiter` or choose another starting point"
     end
     return q
 end
