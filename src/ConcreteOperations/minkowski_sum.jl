@@ -329,6 +329,9 @@ function _minkowski_sum_vrep_2d(vlistP::Vector{VT},
                                 vlistQ::Vector{VT}) where {N, VT<:AbstractVector{N}}
     mP = length(vlistP)
     mQ = length(vlistQ)
+    if mP == 1 || mQ == 1
+        return _minkowski_sum_vrep_2d_singleton(vlistP, vlistQ)
+    end
 
     EAST = N[1, 0]
     ORIGIN = N[0, 0]
@@ -355,6 +358,29 @@ function _minkowski_sum_vrep_2d(vlistP::Vector{VT},
             j += 1
         end
         i += 1
+    end
+    return R
+end
+
+# assume that at least one of the arguments has length 1
+function _minkowski_sum_vrep_2d_singleton(vlistP::Vector{VT},
+                                          vlistQ::Vector{VT}) where {N, VT<:AbstractVector{N}}
+    mP = length(vlistP)
+    mQ = length(vlistQ)
+
+    if min(mP, mQ) != 1
+        throw(ArgumentError("expected one argument to have only one vertex, got $mP and $mQ respectively"))
+    elseif mQ == 1
+        return _minkowski_sum_vrep_2d_singleton(vlistQ, vlistP)
+    end
+
+    # vlistP has only one vertex, mP == 1
+    R = Vector{VT}(undef, mQ)
+    @inbounds begin
+        p = vlistP[1]
+        for i in 1:mQ
+            R[i] = p + vlistQ[i]
+        end
     end
     return R
 end
