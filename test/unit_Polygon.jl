@@ -513,6 +513,9 @@ for N in [Float64, Float32]
 
     a = VPolygon([N[2.1, 3.2], N[1.9, 3.2], N[1.9, 3.0], N[2.1, 3.0]])
     @test v == a
+    x = VPolygon([N[1, 1]])
+    y = VPolygon([N[2, 1]])
+    @test minkowski_sum(x, y) == VPolygon([N[3, 2]])
 end
 
 for N in [Float64]
