@@ -66,10 +66,10 @@ julia> center(S)
  3.0
  3.0
 
- julia> basis(S)
- 2×2 Array{Float64,2}:
-  1.0  0.0
-  0.0  1.0
+julia> basis(S)
+2×2 Array{Float64,2}:
+ 1.0  0.0
+ 0.0  1.0
 
 julia> predicate(S)
 BallInf{Float64,Array{Float64,1}}([0.0, 0.0], 1.0)
