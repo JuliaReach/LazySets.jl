@@ -9,8 +9,7 @@ for N in [Float64]
          0.0 -1.0]
     b = [1.0, 2.0, 3.0, 4.0]
     P2 = HPolyhedron(A, b)
-    P3 = HPolyhedron([0.0 0.1], [3.0])
-    P4 = Ball2([0.2, -0.3, -1.1, 0.6, -0.7], 0.4)
+    P3 = VPolygon([N[0, -1], N[2, 1]])
 
     # Test rand samples are contained in the set
     p1 = LazySets.sample(P1)
@@ -21,9 +20,13 @@ for N in [Float64]
     # default distribution
     @test LazySets.RejectionSampler(P2).distribution == [DefaultUniform(-3.0,1.0), DefaultUniform(-4.0,2.0)]
 
-    # polytope sampler
-    p1_samples = LazySets.sample(P1, 100, sampler=LazySets.RandomWalkSampler())
-    @test all(v ∈ P1 for v in p1_samples)
+    # random-walk sampler
+    for P in [P1, P2, P3]
+        for sampler in [LazySets.RandomWalkSampler(true), LazySets.RandomWalkSampler(false)]
+            p_samples = LazySets.sample(P, 100, sampler=sampler)
+            @test all(v ∈ P for v in p_samples)
+        end
+    end
 
     # specifying a distribution from Distributions.jl
     @test LazySets.RejectionSampler(P2, Uniform).distribution == [Uniform(-3.0, 1.0), Uniform(-4.0,2.0)]
