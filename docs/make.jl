@@ -50,6 +50,7 @@ makedocs(
                 "LineSegment" => "lib/sets/LineSegment.md",
                 "PolynomialZonotope" => "lib/sets/PolynomialZonotope.md",
                 "Singleton" => "lib/sets/Singleton.md",
+                "Star" => "lib/sets/Star.md",
                 "Universe" => "lib/sets/Universe.md",
                 "VPolygon" => "lib/sets/VPolygon.md",
                 "VPolytope" => "lib/sets/VPolytope.md",

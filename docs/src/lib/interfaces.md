@@ -457,3 +457,13 @@ linear_map(::AbstractMatrix, ::AbstractAffineMap)
 * [Linear map (LinearMap)](@ref def_LinearMap)
 * [Reset map (ResetMap)](@ref def_ResetMap)
 * [Translation](@ref def_Translation)
+
+## [Star sets (AbstractStar)](@id def_AbstractStar)
+
+```@docs
+AbstractStar
+```
+
+### Implementations
+
+* [Star](@ref def_Star)

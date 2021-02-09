@@ -49,6 +49,7 @@ include("Utils/iterators.jl")
 # Abstract set types
 # ==================
 include("Interfaces/LazySet.jl")
+include("Interfaces/AbstractStar.jl")
 include("Interfaces/AbstractPolyhedron.jl")
 include("Sets/HalfSpace.jl")  # must come before AbstractPolyhedron_functions
 include("Interfaces/AbstractPolyhedron_functions.jl")
@@ -82,6 +83,7 @@ include("Sets/Line2D.jl")
 include("Sets/Line.jl")
 include("Sets/LineSegment.jl")
 include("Sets/Singleton.jl")
+include("Sets/Star.jl")
 include("Sets/Universe.jl")
 include("Sets/VPolygon.jl")
 include("Sets/VPolytope.jl")
