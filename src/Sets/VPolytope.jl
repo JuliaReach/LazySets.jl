@@ -308,7 +308,7 @@ function linear_map(M::AbstractMatrix, P::VPolytope)
 end
 
 @inline function _linear_map_vrep(M::AbstractMatrix, P::VPolytope)
-    return broadcast(v -> M * v, vertices_list(P)) |> VPolytope
+    return broadcast(v -> M * v, vertices_list(P)) |> unique |> VPolytope
 end
 
 """

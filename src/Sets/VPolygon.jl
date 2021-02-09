@@ -155,7 +155,7 @@ function linear_map(M::AbstractMatrix, P::VPolygon)
 end
 
 @inline function _linear_map_vrep(M::AbstractMatrix, P::VPolygon)
-    return broadcast(v -> M * v, vertices_list(P)) |> VPolygon
+    return broadcast(v -> M * v, vertices_list(P)) |> unique |> VPolygon
 end
 
 # --- AbstractPolygon interface functions ---
