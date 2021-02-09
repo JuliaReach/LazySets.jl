@@ -148,7 +148,7 @@ Type used for sampling of a convex polytope `X`.
 Choose a random convex combination of the vertices of `X`.
 
 Let ``V = \\{v_i\\}_i`` denote the set of vertices of `X`.
-Then any point ``p \\in \\mathbb{R}^n` of the convex polytope ``X`` is a convex
+Then any point ``p \\in \\mathbb{R}^n`` of the convex polytope ``X`` is a convex
 combination of its vertices, i.e., ``p = \\sum_{i} v_i α_i`` for some
 (non-negative) coefficients ``\\{α_i\\}_i`` that add up to 1.
 The algorithm chooses a random convex combination (the ``α_i``).
