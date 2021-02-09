@@ -460,10 +460,8 @@ linear_map(::AbstractMatrix, ::AbstractAffineMap)
 
 ## [Star sets (AbstractStar)](@id def_AbstractStar)
 
-An affine map consists of a linear map and a translation.
-
 ```@docs
-AbstractAffineMap
+AbstractStar
 ```
 
 ### Implementations
