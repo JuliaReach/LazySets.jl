@@ -293,7 +293,7 @@ function _issubset_constraints_list(S::LazySet, P::LazySet, witness::Bool=false)
 end
 
 # disambiguations
-for ST in [AbstractPolytope, AbstractHyperrectangle, AbstractSingleton, LineSegment]
+for ST in [AbstractPolytope, AbstractHyperrectangle, LineSegment]
     @eval ⊆(X::($ST), P::AbstractPolyhedron, witness::Bool=false) = _issubset_constraints_list(X, P, witness)
 end
 
@@ -333,8 +333,10 @@ function _issubset_singleton(S, X, witness)
     end
 end
 
-# disambiguation
-⊆(S::AbstractSingleton, H::AbstractHyperrectangle, witness::Bool=false) = _issubset_singleton(S, H, witness)
+# disambiguations
+for ST in [AbstractHyperrectangle, AbstractPolyhedron]
+    @eval ⊆(X::AbstractSingleton, Y::($ST), witness::Bool=false) = _issubset_singleton(X, Y, witness)
+end
 
 """
     ⊆(S1::AbstractSingleton, S2::AbstractSingleton, witness::Bool=false)
