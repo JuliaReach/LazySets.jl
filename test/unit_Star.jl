@@ -14,4 +14,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test basis(S) == N[1 0; 0 1]
     @test predicate(S) == BallInf(N[0, 0], N(1))
     @test dim(S) == 2
+
+    # support function
+     @test ρ(N[1, 0], S) == N(4)
 end

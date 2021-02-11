@@ -194,4 +194,18 @@ dim(X::Star) = length(X.c)
 # Support function and support vector
 # =====================================
 
-# TODO
+"""
+    ρ(ℓ, X::Star)
+Evaluate the support function of a star in a given direction.
+### Input
+- `ℓ` -- direction
+- `X` -- star set
+### Output
+The support function in the given direction.
+"""
+function ρ(ℓ, X::Star)
+    c = center(X)
+    V = basis(X)
+    P = predicate(X)
+    return dot(ℓ, c) + ρ(transpose(V) * ℓ, P)
+end
