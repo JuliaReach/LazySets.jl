@@ -1,7 +1,16 @@
 export Star,
        center,
        basis,
-       predicate
+       predicate,
+       ρ,
+       σ,
+       an_element,
+       isempty,
+       isbounded,
+       ∈,
+       vertices_list,
+       constraints_list,
+       linear_map
 
 """
     Star{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:AbstractPolyhedron{N}} <: AbstractStar{N}
