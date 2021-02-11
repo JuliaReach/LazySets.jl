@@ -235,3 +235,151 @@ function σ(ℓ::AbstractVector, X::Star)
     P = predicate(X)
     return σ(ℓ, AffineMap(V, P, c))
 end
+
+"""
+    an_element(X::Star)
+
+Return some element of a star.
+
+### Input
+
+- `X` -- star set
+
+### Output
+
+An element of the star. It relies on the `an_element` function of the
+predicate of the star.
+"""
+function an_element(X::Star)
+    c = center(X)
+    V = basis(X)
+    P = predicate(X)
+    return an_element(AffineMap(V, P, c))
+end
+
+"""
+    isempty(X::Star)
+
+Return whether the star is empty or not.
+
+### Input
+
+- `X` -- star set
+
+### Output
+
+`true` iff the predicate of the star is empty.
+"""
+function isempty(X::Star)
+    c = center(X)
+    V = basis(X)
+    P = predicate(X)
+    return isempty(AffineMap(V, P, c))
+end
+
+"""
+    isbounded(X::Star; cond_tol::Number=DEFAULT_COND_TOL)
+
+Determine whether a star is bounded.
+
+### Input
+
+- `X` -- star set
+- `cond_tol` -- (optional) tolerance of matrix condition (used to check whether
+                the matrix is invertible)
+
+### Output
+
+`true` iff the star is bounded.
+"""
+function isbounded(X::Star; cond_tol::Number=DEFAULT_COND_TOL)
+    c = center(X)
+    V = basis(X)
+    P = predicate(X)
+    return isbounded(AffineMap(V, P, c), cond_tol)
+end
+
+"""
+    ∈(x::AbstractVector, X::Star)
+
+Check whether a given point is contained in the star.
+
+### Input
+
+- `x` -- point/vector
+- `S` -- star set
+
+### Output
+
+`true` iff ``x ∈ S``.
+"""
+function ∈(x::AbstractVector, S::Star)
+    c = center(X)
+    V = basis(X)
+    P = predicate(X)
+    return ∈(x, AffineMap(V, P, c))
+end
+
+"""
+    vertices_list(X::Star; apply_convex_hull::Bool=true)
+
+Return the list of vertices of a star set.
+
+### Input
+
+- `X` -- star set
+- `apply_convex_hull` -- (optional, default: `true`) if `true`, apply the convex
+                         hull operation to the list of vertices transformed by
+                         the affine map
+
+### Output
+
+A list of vertices.
+"""
+function vertices_list(X::Star; apply_convex_hull::Bool=true)
+    c = center(X)
+    V = basis(X)
+    P = predicate(X)
+    return vertices_list(AffineMap(V, P, c), apply_convex_hull)
+end
+
+"""
+    constraints_list(X::Star)
+
+Return the list of constraints of a star.
+
+### Input
+
+- `X` -- star set
+
+### Output
+
+The list of constraints of the star.
+"""
+function constraints_list(X::Star)
+    c = center(X)
+    V = basis(X)
+    P = predicate(X)
+    return constraints_list(AffineMap(V, P, c))
+end
+
+"""
+    linear_map(M::AbstractMatrix, X::Star)
+
+Return the linear map of a star.
+
+### Input
+
+- `M`  -- matrix
+- `X` -- star set
+
+### Output
+
+A set corresponding to the linear map of the star.
+"""
+function linear_map(M::AbstractMatrix, X::Star)
+    c = center(X)
+    V = basis(X)
+    P = predicate(X)
+    return linear_map(M, AffineMap(V, P, c))
+end
