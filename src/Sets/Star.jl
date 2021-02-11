@@ -214,3 +214,24 @@ function ρ(ℓ::AbstractVector, X::Star)
     P = predicate(X)
     return dot(ℓ, c) + ρ(transpose(V) * ℓ, P)
 end
+
+"""
+    σ(ℓ::AbstractVector, X::Star)
+
+Evaluate the support vector of a star in a given direction.
+
+### Input
+
+- `ℓ` -- direction
+- `X` -- star set
+
+### Output
+
+A support vector in the given direction.
+"""
+function σ(ℓ::AbstractVector, X::Star)
+    c = center(X)
+    V = basis(X)
+    P = predicate(X)
+    return c + V * σ(transpose(V) * ℓ, P)
+end
