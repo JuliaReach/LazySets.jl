@@ -23,7 +23,7 @@ for N in [Float64, Float32, Rational{Int}]
 
     # support vector
     @test σ(N[1, 1], S) == N[4, 4]
-    @test -σ(N[-1, -1], S) == N[-2, 2]
+    @test σ(N[-1, -1], S) == N[2, 2]
     @test σ(N[1, -1], S) == N[4, 2]
     @test σ(N[-1, 1], S) == N[2, 4]
 end
