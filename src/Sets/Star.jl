@@ -212,7 +212,7 @@ function ρ(ℓ::AbstractVector, X::Star)
     c = center(X)
     V = basis(X)
     P = predicate(X)
-    return dot(ℓ, c) + ρ(transpose(V) * ℓ, P)
+    return ρ(ℓ, AffineMap(V, P, c))
 end
 
 """
@@ -233,5 +233,5 @@ function σ(ℓ::AbstractVector, X::Star)
     c = center(X)
     V = basis(X)
     P = predicate(X)
-    return c + V * σ(transpose(V) * ℓ, P)
+    return σ(ℓ, AffineMap(V, P, c))
 end
