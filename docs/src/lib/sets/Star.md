@@ -10,4 +10,5 @@ dim(::Star)
 center(::Star)
 predicate(::Star)
 basis(::Star)
+ρ(::AbstractVector, ::Star)
 ```

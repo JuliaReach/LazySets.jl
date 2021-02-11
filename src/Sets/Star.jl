@@ -195,15 +195,20 @@ dim(X::Star) = length(X.c)
 # =====================================
 
 """
-    ρ(ℓ, X::Star)
+    ρ(ℓ::AbstractVector, X::Star)
+
 Evaluate the support function of a star in a given direction.
+
 ### Input
+
 - `ℓ` -- direction
 - `X` -- star set
+
 ### Output
+
 The support function in the given direction.
 """
-function ρ(ℓ, X::Star)
+function ρ(ℓ::AbstractVector, X::Star)
     c = center(X)
     V = basis(X)
     P = predicate(X)
