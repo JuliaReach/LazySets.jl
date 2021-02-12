@@ -284,7 +284,7 @@ function rand(::Type{VPolytope};
 end
 
 """
-    linear_map(M::AbstractMatrix, P::VPolytope)
+    linear_map(M::AbstractMatrix, P::VPolytope; [convex_hull]::Bool=false)
 
 Concrete linear map of a polytope in vertex representation.
 
@@ -292,6 +292,8 @@ Concrete linear map of a polytope in vertex representation.
 
 - `M` -- matrix
 - `P` -- polytope in vertex representation
+- `convex_hull` -- (optional, default: `false`) flag for applying a convex hull
+  to eliminate redundant vertices
 
 ### Output
 
@@ -302,13 +304,18 @@ A polytope in vertex representation.
 The linear map ``M`` is applied to each vertex of the given set ``P``, obtaining
 a polytope in V-representation. The output type is again a `VPolytope`.
 """
-function linear_map(M::AbstractMatrix, P::VPolytope)
+function linear_map(M::AbstractMatrix, P::VPolytope; convex_hull::Bool=false)
     @assert dim(P) == size(M, 2) "a linear map of size $(size(M)) cannot be applied to a set of dimension $(dim(P))"
-    return _linear_map_vrep(M, P)
+    return _linear_map_vrep(M, P; convex_hull=convex_hull)
 end
 
-@inline function _linear_map_vrep(M::AbstractMatrix, P::VPolytope)
-    return broadcast(v -> M * v, vertices_list(P)) |> unique |> VPolytope
+@inline function _linear_map_vrep(M::AbstractMatrix, P::VPolytope;
+                                  convex_hull::Bool=false)
+    vlist = broadcast(v -> M * v, vertices_list(P))
+    if convex_hull
+        convex_hull!(vlist)
+    end
+    return VPolytope(vlist)
 end
 
 """
