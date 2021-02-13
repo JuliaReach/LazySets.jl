@@ -285,6 +285,11 @@ function _isapprox(A::AbstractArray{N}, B::AbstractArray{M};
     _isapprox(promote(A, B)...; kwargs...)
 end
 
+# fallback definition
+function _isapprox(x, y; kwargs...)
+    return x ≈ y
+end
+
 """
     ispermutation(u::AbstractVector{T}, v::AbstractVector) where {T}
 
@@ -341,8 +346,6 @@ function ispermutation(u::AbstractVector{T}, v::AbstractVector) where {T}
             occurrence_map[e] = 1
         end
     end
-    println(has_duplicates)
-    println(occurrence_map)
     if has_duplicates
         for e in v
             found = false
