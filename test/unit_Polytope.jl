@@ -206,7 +206,7 @@ for N in [Float64, Rational{Int}, Float32]
     P = VPolytope([N[1, 1], N[-1, 1], N[1, -1], N[-1, -1]])
     Q1 = linear_map(A, P)
     vlist1 = convex_hull(vertices_list(Q1))
-    Q2 = linear_map(A, P; convex_hull=true)
+    Q2 = linear_map(A, P; apply_convex_hull=true)
     vlist2 = vertices_list(Q2)
     @test ispermutation(vlist1, [N[1, 0], N[-1, 0]])
     @test ispermutation(vlist1, vlist2)

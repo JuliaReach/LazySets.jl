@@ -272,7 +272,7 @@ for N in [Float64, Float32, Rational{Int}]
     # linear_map with redundant vertices
     A = N[1 0; 0 0]
     P = VPolygon([N[1, 1], N[-1, 1], N[1, -1], N[-1, -1]])
-    Q = linear_map(A, P; convex_hull=true)
+    Q = linear_map(A, P; apply_convex_hull=true)
     @test ispermutation(vertices_list(Q), [N[1, 0], N[-1, 0]])
 
     # vertices_list removes duplicates by default (#1405)
