@@ -314,6 +314,9 @@ false
 Containment check is performed using `LazySets._in(e, v)`, so in the case of
 floating point numbers, the precision to which the check is made is determined
 by the type of elements in `v`. See `_in` and `_isapprox` for more information.
+
+Note that approximate equality is not an equivalence relation.
+Hence the result may depend on the order of the elements.
 """
 function ispermutation(u::AbstractVector{T}, v::AbstractVector) where {T}
     if length(u) != length(v)
@@ -325,19 +328,37 @@ function ispermutation(u::AbstractVector{T}, v::AbstractVector) where {T}
         if !_in(e, v)
             return false
         end
-        if haskey(occurrence_map, e)
-            occurrence_map[e] += 1
-            has_duplicates = true
-        else
+        found = false
+        for k in keys(occurrence_map)
+            if _isapprox(k, e)
+                occurrence_map[k] += 1
+                has_duplicates = true
+                found = true
+                break
+            end
+        end
+        if !found
             occurrence_map[e] = 1
         end
     end
+    println(has_duplicates)
+    println(occurrence_map)
     if has_duplicates
         for e in v
-            if !haskey(occurrence_map, e) || occurrence_map[e] == 0
+            found = false
+            for k in keys(occurrence_map)
+                if _isapprox(k, e)
+                    found = true
+                    occurrence_map[k] -= 1
+                    if occurrence_map[k] < 0
+                        return false
+                    end
+                    break
+                end
+            end
+            if !found
                 return false
             end
-            occurrence_map[e] -= 1
         end
     end
     return true
