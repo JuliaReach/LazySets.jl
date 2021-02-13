@@ -810,9 +810,8 @@ Return whether two LazySets are equal in the mathematical sense, i.e. equivalent
 
 ## Algorithm
 
-First, the check `X == Y` is performed which returns `true` if and only if the given sets are of the same type,
-and have the same values (modulo floating-point tolerance). Otherwise, the double inclusion check `X ⊆ Y && Y ⊆ X` is
-used.
+First we check `X ≈ Y`.
+If that fails, we check the double inclusion `X ⊆ Y && Y ⊆ X`.
 
 ### Examples
 
@@ -829,9 +828,16 @@ true
 ```
 """
 function isequivalent(X::LazySet, Y::LazySet)
-    if X ≈ Y
-        return true
+    try  # TODO temporary try-catch construct until ≈ is fixed for all set types
+        if X ≈ Y
+            return true
+        end
+    catch e
     end
+    return _isequivalent_inclusion(X, Y)
+end
+
+function _isequivalent_inclusion(X::LazySet, Y::LazySet)
     return X ⊆ Y && Y ⊆ X
 end
 
