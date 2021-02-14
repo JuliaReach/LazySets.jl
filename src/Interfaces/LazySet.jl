@@ -810,7 +810,8 @@ Return whether two LazySets are equal in the mathematical sense, i.e. equivalent
 
 ## Algorithm
 
-First we check `X ≈ Y`.
+First we check `X ≈ Y`, which returns `true` if and only if `X` and `Y` have the
+same type and approximately the same values (checked with `LazySets._isapprox`).
 If that fails, we check the double inclusion `X ⊆ Y && Y ⊆ X`.
 
 ### Examples
