@@ -72,6 +72,11 @@ for N in [Float64, Rational{Int}, Float32]
     # vertices iterator
     @test ispermutation(collect(vertices(p)), vertices_list(p))
 
+    # equivalence check
+    p1 = HPolyhedron([HalfSpace(N[1], N(1))])
+    p2 = HPolyhedron([HalfSpace(N[1], N(-1))])
+    @test isequivalent(p1, p1) && !isequivalent(p1, p2)
+
     if test_suite_polyhedra
         # conversion to and from Polyhedra's VRep data structure
         cl = constraints_list(HPolyhedron(polyhedron(p)))
