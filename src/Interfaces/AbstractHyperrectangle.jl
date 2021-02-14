@@ -146,6 +146,128 @@ end
 
 
 """
+    vertices(H::AbstractHyperrectangle)
+
+Construct an iterator over the vertices of a hyperrectangular set.
+
+### Input
+
+- `H` -- hyperrectangular set
+
+### Output
+
+An iterator over the vertices.
+
+### Algorithm
+
+We implement two different iterators, depending on whether the set is flat in
+some dimension.
+"""
+function vertices(H::AbstractHyperrectangle)
+    n = dim(H)
+    start = -1
+    @inbounds for i in 1:n
+        if iszero(radius_hyperrectangle(H, i))
+            start = i  # found flat dimension
+            break
+        end
+    end
+    if start == -1
+        # no flat dimensions -> use more efficient implementation
+        return HyperrectangleVertexIteratorNonflat(H)
+    end
+    flats = falses(n)
+    flats[start] = true
+    n_flats = 1
+    # find remaining flat dimensions
+    @inbounds for i in (start+1):n
+        if iszero(radius_hyperrectangle(H, i))
+            flats[i] = true
+            n_flats += 1
+        end
+    end
+    return HyperrectangleVertexIteratorFlat(H, flats, n_flats)
+end
+
+struct HyperrectangleVertexIteratorNonflat{N, TH<:AbstractHyperrectangle{N}}
+    H::TH
+end
+
+function Base.length(it::HyperrectangleVertexIteratorNonflat)
+    return 2^(dim(it.H))
+end
+
+function Base.eltype(::Type{<:HyperrectangleVertexIteratorNonflat{N}}) where {N}
+    return Vector{N}
+end
+
+# Note: Base.iterate(::HyperrectangleVertexIteratorNonflat) defined later
+
+function Base.iterate(it::HyperrectangleVertexIteratorNonflat, state)
+    v_it, mask = state
+
+    @inbounds for (i, mi) in enumerate(mask)
+        if mi
+            # decrement bit vector = flip to false and stop
+            v_it[i] = low(it.H, i)
+            mask[i] = false
+            return (copy(v_it), state)
+        else
+            # decrement bit vector = flip back to true and continue
+            v_it[i] = high(it.H, i)
+            mask[i] = true
+        end
+    end
+    # no bit flip to false occurred => end of iterator
+    return nothing
+end
+
+struct HyperrectangleVertexIteratorFlat{N, TH<:AbstractHyperrectangle{N}}
+    H::TH
+    flats::BitArray
+    n_flats::Int
+end
+
+function Base.length(it::HyperrectangleVertexIteratorFlat)
+    return 2^it.n_flats
+end
+
+function Base.eltype(::Type{<:HyperrectangleVertexIteratorFlat{N}}) where {N}
+    return Vector{N}
+end
+
+function Base.iterate(it::Union{HyperrectangleVertexIteratorNonflat,
+                                HyperrectangleVertexIteratorFlat})
+    mask = trues(dim(it.H))
+    v_it = high(it.H)
+    v = copy(v_it)
+    state = (v_it, mask)
+    return (v, state)
+end
+
+function Base.iterate(it::HyperrectangleVertexIteratorFlat, state)
+    v_it, mask = state
+
+    @inbounds for (i, mi) in enumerate(mask)
+        if it.flats[i]
+            continue
+        end
+        if mi
+            # decrement bit vector = flip to false and stop
+            v_it[i] = low(it.H, i)
+            mask[i] = false
+            return (copy(v_it), state)
+        else
+            # decrement bit vector = flip back to true and continue
+            v_it[i] = high(it.H, i)
+            mask[i] = true
+        end
+    end
+    # no bit flip to false occurred => end of iterator
+    return nothing
+end
+
+"""
     vertices_list(H::AbstractHyperrectangle)
 
 Return the list of vertices of a hyperrectangular set.
@@ -216,10 +338,10 @@ function vertices_list(H::AbstractHyperrectangle)
         for j in 1:length(v)
             if trivector[j] == Int8(-1)
                 trivector[j] = Int8(1)
-                v[j] = c[j] + radius_hyperrectangle(H, j)
+                v[j] = high(H, j)
             elseif trivector[j] == Int8(1)
                 trivector[j] = Int8(-1)
-                v[j] = c[j] - radius_hyperrectangle(H, j)
+                v[j] = low(H, j)
                 break
             end
         end

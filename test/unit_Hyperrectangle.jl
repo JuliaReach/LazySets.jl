@@ -196,6 +196,14 @@ for N in [Float64, Rational{Int}, Float32]
     P = linear_map(Diagonal(N[1, 2, 3, 4]), overapproximate(H1 * H1))
     @test P isa Zonotope
 
+    # vertices
+    H = Hyperrectangle(N[1, 2], N[3, 4])  # non-flat
+    @test ispermutation(collect(vertices(H)), vertices_list(H)) &&
+          ispermutation(vertices_list(H), [N[-2, -2], [4, -2], [-2, 6], [4, 6]])
+    H = Hyperrectangle(N[1, 2], N[3, 0])  # flat
+    @test ispermutation(collect(vertices(H)), vertices_list(H)) &&
+          ispermutation(vertices_list(H), [N[-2, 2], [4, 2]])
+
     # check that vertices_list is computed correctly if the hyperrectangle
     # is "degenerate"/flat, i.e., its radius contains zeros
     # these tests would crash if all 2^100 vertices were computed (see #92)
