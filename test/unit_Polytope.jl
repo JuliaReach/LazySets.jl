@@ -195,11 +195,21 @@ for N in [Float64, Rational{Int}, Float32]
     # test that Pcopy is independent of P ( = deepcopy)
     @test Pcopy.vertices[1] == [N(1)]
 
-    # test concrete projection
+    # concrete projection
     V = VPolytope([N[0, 0, 1], N[0, 1, 0], N[0, -1, 0], N[1, 0, 0]])
     @test project(V, [1]) == Interval(N(0), N(1))
     @test project(V, [1, 2]) == VPolygon([N[0, 0], N[0, 1], N[0, -1], N[1, 0]])
     @test project(V, [1, 2, 3]) == V
+
+    # linear_map with redundant vertices
+    A = N[1 0; 0 0]
+    P = VPolytope([N[1, 1], N[-1, 1], N[1, -1], N[-1, -1]])
+    Q1 = linear_map(A, P)
+    vlist1 = convex_hull(vertices_list(Q1))
+    Q2 = linear_map(A, P; apply_convex_hull=true)
+    vlist2 = vertices_list(Q2)
+    @test ispermutation(vlist1, [N[1, 0], N[-1, 0]])
+    @test ispermutation(vlist1, vlist2)
 end
 
 # default Float64 constructors

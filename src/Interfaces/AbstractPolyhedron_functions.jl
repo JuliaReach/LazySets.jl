@@ -415,6 +415,7 @@ Concrete linear map of a polyhedral set.
     - `"elimination"`, alias: `"elim"`
     - `"lift"`
     - `"vrep"`
+    - `"vrep_chull"`
 
 - `check_invertibility` -- (optional, default: `true`) if `true` check whether
                            given matrix `M` is invertible; set to `false` only
@@ -568,7 +569,8 @@ invertible matrix, see `LazySets.Arrays.extend`.
 
 ### Vertex representation
 
-This algorithm is invoked with the keyword argument `algorithm="vrep"`.
+This algorithm is invoked with the keyword argument `algorithm` either `"vrep"`
+or `"vrep_chull"`.
 The idea is to convert the polyhedron to its vertex representation and apply the
 linear map to each vertex of `P`.
 
@@ -625,7 +627,10 @@ function linear_map(M::AbstractMatrix{NM},
         return _linear_map_hrep_helper(M, P, algo)
 
     elseif algorithm == "vrep"
-        return _linear_map_vrep(M, P)
+        return _linear_map_vrep(M, P; apply_convex_hull=false)
+
+    elseif algorithm == "vrep_chull"
+        return _linear_map_vrep(M, P; apply_convex_hull=true)
 
     elseif got_inv
         check_invertibility && _check_algorithm_applies(M, P, LinearMapInverse;
@@ -654,7 +659,8 @@ end
 
 # TODO: merge the preconditions into _check_algorithm_applies ?
 # review this method after #998
-function _linear_map_vrep(M::AbstractMatrix, P::AbstractPolyhedron)
+function _linear_map_vrep(M::AbstractMatrix, P::AbstractPolyhedron;
+                          apply_convex_hull::Bool=false)
     if !isbounded(P)
         throw(ArgumentError("the linear map in vertex representation for an " *
             "unbounded set is not defined"))
@@ -663,7 +669,7 @@ function _linear_map_vrep(M::AbstractMatrix, P::AbstractPolyhedron)
             explanation="of a $(typeof(P)) by a non-invertible matrix")
     # since P is bounded, we pass an HPolytope and then convert it to vertex representation
     P = tovrep(HPolytope(constraints_list(P), check_boundedness=false))
-    return _linear_map_vrep(M, P)
+    return _linear_map_vrep(M, P; apply_convex_hull=apply_convex_hull)
 end
 
 # generic function for the AbstractPolyhedron interface => returns an HPolyhedron

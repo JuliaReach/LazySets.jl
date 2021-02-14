@@ -111,16 +111,21 @@ end
 
 # given a polytope P, apply the linear map P to each vertex of P
 # it is assumed that the interface function `vertices_list(P)` is available
-@inline function _linear_map_vrep(M::AbstractMatrix, P::AbstractPolytope)
-    vertices = broadcast(v -> M * v, vertices_list(P))
+@inline function _linear_map_vrep(M::AbstractMatrix, P::AbstractPolytope;
+                                  apply_convex_hull::Bool=false)
+    vlist = broadcast(v -> M * v, vertices_list(P))
+
     m = size(M, 1) # output dimension
     if m == 1
-        # TODO: substitute with Interval(convex_hull(vertices)...): convex hull 1D
-        return Interval(minimum(vertices)[1], maximum(vertices)[1])
+        # TODO: substitute with Interval(convex_hull(vlist)...): convex hull 1D
+        return Interval(minimum(vlist)[1], maximum(vlist)[1])
     elseif m == 2
-        return VPolygon(vertices)
+        return VPolygon(vlist)
     else
-        return VPolytope(vertices)
+        if apply_convex_hull
+            convex_hull!(vlist)
+        end
+        return VPolytope(vlist)
     end
 end
 
