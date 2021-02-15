@@ -423,14 +423,11 @@ intersection(Y::LazySet, X::Interval) = _intersection_interval(X, Y)
 # disambiguations
 intersection(X::Interval, H::AbstractHyperrectangle) = _intersection_interval(X, H)
 intersection(H::AbstractHyperrectangle, X::Interval) = _intersection_interval(X, H)
-intersection(X::Interval, S::AbstractSingleton) = _intersection_interval(X, S)
-intersection(S::AbstractSingleton, X::Interval) = _intersection_interval(X, S)
+intersection(X::Interval, S::AbstractSingleton) = _intersection_singleton(S, X)
+intersection(S::AbstractSingleton, X::Interval) = _intersection_singleton(S, X)
 
 """
-    intersection(P1::AbstractHPolygon{N},
-                 P2::AbstractHPolygon{N},
-                 [prune]::Bool=true
-                ) where {N<:Real}
+    intersection(P1::AbstractHPolygon, P2::AbstractHPolygon, [prune]::Bool=true)
 
 Return the intersection of two polygons in constraint representation.
 
@@ -867,14 +864,14 @@ end
 intersection(rm::ResetMap, P::AbstractPolyhedron) = intersection(P, rm)
 
 # more efficient version for polytopic
-function intersection(P::AbstractPolyhedron{M},
-                      rm::ResetMap{N, <:AbstractPolytope}) where {M, N}
+function intersection(P::AbstractPolyhedron,
+                      rm::ResetMap{N, <:AbstractPolytope}) where {N}
     return intersection(P, HPolytope(constraints_list(rm)))
 end
 
 # symmetric method
 function intersection(rm::ResetMap{N, <:AbstractPolytope},
-                      P::AbstractPolyhedron{M}) where {N, M}
+                      P::AbstractPolyhedron) where {N}
     return intersection(P, rm)
 end
 
