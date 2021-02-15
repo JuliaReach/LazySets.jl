@@ -1,3 +1,34 @@
+# ==================
+# 2D box directions
+# ==================
+
+const DIR_EAST(N) = [one(N), zero(N)]
+const DIR_NORTH(N) = [zero(N), one(N)]
+const DIR_WEST(N) = [-one(N), zero(N)]
+const DIR_SOUTH(N) = [zero(N), -one(N)]
+
+dir_east(N, ::AbstractVector) = DIR_EAST(N)
+dir_north(N, ::AbstractVector) = DIR_NORTH(N)
+dir_west(N, ::AbstractVector) = DIR_WEST(N)
+dir_south(N, ::AbstractVector) = DIR_SOUTH(N)
+
+function load_staticarrays_directions()
+return quote
+
+using .StaticArrays: SVector
+
+const DIR_EAST_STATIC(N) = SVector{2}([one(N), zero(N)])
+const DIR_NORTH_STATIC(N) = SVector{2}([zero(N), one(N)])
+const DIR_WEST_STATIC(N) = SVector{2}([-one(N), zero(N)])
+const DIR_SOUTH_STATIC(N) = SVector{2}([zero(N), -one(N)])
+
+dir_east(N, ::SVector) = DIR_EAST_STATIC(N)
+dir_north(N, ::SVector) = DIR_NORTH_STATIC(N)
+dir_west(N, ::SVector) = DIR_WEST_STATIC(N)
+dir_south(N, ::SVector) = DIR_SOUTH_STATIC(N)
+
+end end  # quote / load_staticarrays_directions
+
 # ================================================
 # Concrete overapproximation with a hyperrectangle
 # ================================================

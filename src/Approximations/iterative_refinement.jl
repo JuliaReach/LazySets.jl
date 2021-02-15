@@ -205,14 +205,18 @@ function _approximate(S::LazySet{N}, ε::N) where {N<:AbstractFloat}
     pn = σ(DIR_NORTH(N), S)
     pw = σ(DIR_WEST(N), S)
     ps = σ(DIR_SOUTH(N), S)
+    east = dir_east(N, pe)
+    north = dir_north(N, pe)
+    west = dir_west(N, pe)
+    south = dir_south(N, pe)
 
     Ω = PolygonalOverapproximation(S)
 
     # add constraints in reverse (i.e., clockwise) order to the stack
-    addapproximation!(Ω, ps, DIR_SOUTH(N), pe, DIR_EAST(N))
-    addapproximation!(Ω, pw, DIR_WEST(N), ps, DIR_SOUTH(N))
-    addapproximation!(Ω, pn, DIR_NORTH(N), pw, DIR_WEST(N))
-    addapproximation!(Ω, pe, DIR_EAST(N), pn, DIR_NORTH(N))
+    addapproximation!(Ω, ps, south, pe, east)
+    addapproximation!(Ω, pw, west, ps, south)
+    addapproximation!(Ω, pn, north, pw, west)
+    addapproximation!(Ω, pe, east, pn, north)
 
     approx_stack = Ω.approx_stack
     while !isempty(approx_stack)
