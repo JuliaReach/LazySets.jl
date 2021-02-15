@@ -518,6 +518,12 @@ for N in [Float64, Float32]
     addconstraint!(p2, p2.constraints[2])
     @test length(p2.constraints) == 6
 
+    # correct sorting of constraints in intersection (#2187)
+    h = Hyperrectangle(N[0.98069, 0.85020],
+                       N[0.00221, 0.00077])
+    p = overapproximate(Ball2(N[1, 1], N(15//100)), 1e-4)
+    @test !isempty(intersection(HPolygon(constraints_list(h)), p))
+
     # test that concrete minkowski sum of a singleton and a polygon works
     x = VPolygon([N[1, 1]])
     y = VPolygon([N[1.1, 2.2], N[0.9, 2.2], N[0.9, 2.0], N[1.1, 2.0]])
