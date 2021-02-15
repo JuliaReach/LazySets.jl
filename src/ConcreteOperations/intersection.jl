@@ -44,9 +44,7 @@ function intersection(∅1::EmptySet, ∅2::EmptySet)
 end
 
 """
-    intersection(S::AbstractSingleton{N},
-                 X::LazySet{N}
-                ) where {N<:Real}
+    intersection(S::AbstractSingleton{N}, X::LazySet{N}) where {N<:Real}
 
 Return the intersection of a singleton with another set.
 
@@ -60,17 +58,10 @@ Return the intersection of a singleton with another set.
 If the sets intersect, the result is `S`.
 Otherwise, the result is the empty set.
 """
-function intersection(S::AbstractSingleton{N},
-                      X::LazySet{N}
-                     ) where {N<:Real}
-    return element(S) ∈ X ? S : EmptySet{N}(dim(S))
-end
+intersection(S::AbstractSingleton{N}, X::LazySet{N}) where {N<:Real}
 
-# symmetric method
-function intersection(X::LazySet{N},
-                      S::AbstractSingleton{N}
-                     ) where {N<:Real}
-    return intersection(S, X)
+@commutative function intersection(S::AbstractSingleton{N}, X::LazySet{N}) where {N<:Real}
+    return element(S) ∈ X ? S : EmptySet{N}(dim(S))
 end
 
 # disambiguation
