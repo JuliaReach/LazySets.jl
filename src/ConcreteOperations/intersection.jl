@@ -2,7 +2,7 @@
 
 export intersection
 
-for T in [:LazySet, :AbstractSingleton]
+for T in [:LazySet, :AbstractSingleton, :Interval, :Universe]
     @eval begin
         function intersection(∅::EmptySet, X::$T)
             @assert dim(∅) == dim(X) "cannot take the intersection between a " *
@@ -19,34 +19,15 @@ for T in [:LazySet, :AbstractSingleton]
     end
 end
 
-for T in [:Interval, :Universe, :AbstractSingleton]  # TODO #2219
-    @eval begin
-        function intersection(∅::EmptySet{N}, X::$T{N}) where {N<:Real}
-            @assert dim(∅) == dim(X) "cannot take the intersection between a " *
-                "$(dim(∅))-dimensional empty set and a $(dim(X))-dimensional set"
-            return ∅
-        end
-
-        # symmetric method
-        function intersection(X::$T{N}, ∅::EmptySet{N}) where {N<:Real}
-            @assert dim(∅) == dim(X) "cannot take the intersection between a " *
-                "$(dim(∅))-dimensional empty set and a $(dim(X))-dimensional set"
-            return ∅
-        end
-    end
-end
-
 # disambiguation
-function intersection(∅1::EmptySet, ∅2::EmptySet)
-    @assert dim(∅1) == dim(∅2) "cannot take the intersection between two " *
-            "empty sets of dimensions $(dim(∅1)) and $(dim(∅2))"
-    return ∅1
+function intersection(∅₁::EmptySet, ∅₂::EmptySet)
+    @assert dim(∅₁) == dim(∅₂) "cannot take the intersection between two " *
+            "empty sets of dimensions $(dim(∅₁)) and $(dim(∅₂))"
+    return ∅₁
 end
 
 """
-    intersection(S::AbstractSingleton{N},
-                 X::LazySet{N}
-                ) where {N<:Real}
+    intersection(S::AbstractSingleton, X::LazySet)
 
 Return the intersection of a singleton with another set.
 
@@ -60,30 +41,28 @@ Return the intersection of a singleton with another set.
 If the sets intersect, the result is `S`.
 Otherwise, the result is the empty set.
 """
-function intersection(S::AbstractSingleton{N},
-                      X::LazySet{N}
-                     ) where {N<:Real}
+function intersection(S::AbstractSingleton, X::LazySet)
+    return _intersection_singleton(S, X)
+end
+
+function _intersection_singleton(S::AbstractSingleton, X)
+    N = promote_type(eltype(S), eltype(X))
     return element(S) ∈ X ? S : EmptySet{N}(dim(S))
 end
 
 # symmetric method
-function intersection(X::LazySet{N},
-                      S::AbstractSingleton{N}
-                     ) where {N<:Real}
-    return intersection(S, X)
-end
+intersection(X::LazySet, S::AbstractSingleton) = intersection(S, X)
 
 # disambiguation
-function intersection(S1::AbstractSingleton{N},
-                      S2::AbstractSingleton{N}
-                     ) where {N<:Real}
-    return element(S1) == element(S2) ? S1 : EmptySet{N}(dim(S1))
+function intersection(S1::AbstractSingleton, S2::AbstractSingleton)
+    N = promote_type(eltype(S1), eltype(S1))
+    return _isapprox(element(S1), element(S2)) ? S1 : EmptySet{N}(dim(S1))
 end
 
 """
-    intersection(L1::Line2D{N}, L2::Line2D{N}) where {N<:Real}
+    intersection(L1::Line2D, L2::Line2D)
 
-Return the intersection of two 2D lines.
+Return the intersection of two two-dimensional lines.
 
 ### Input
 
@@ -92,9 +71,11 @@ Return the intersection of two 2D lines.
 
 ### Output
 
-If the lines are identical, the result is the first line.
-If the lines are parallel and not identical, the result is the empty set.
-Otherwise the result is the only intersection point.
+Three outcomes are possible:
+
+- If the lines are identical, the result is the first line.
+- If the lines are parallel and not identical, the result is the empty set.
+- Otherwise the result is the only intersection point.
 
 ### Algorithm
 
@@ -114,12 +95,13 @@ julia> intersection(Line2D([1., 1.], 1.), Line2D([1., 1.], 1.))
 Line2D{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
 ```
 """
-function intersection(L1::Line2D{N}, L2::Line2D{N}) where {N<:Real}
+function intersection(L1::Line2D, L2::Line2D)
     det = _det(L1, L2)
     if isapproxzero(det)
         if isapprox(L1.b, L2.b) # lines are identical
             return L1
         else
+            N = promote_type(eltype(L1), eltype(L2))
             return EmptySet{N}(dim(L1)) # lines are disjoint
         end
     else # intersection is a point
@@ -133,9 +115,9 @@ function intersection(L1::Line2D{N}, L2::Line2D{N}) where {N<:Real}
 end
 
 """
-    intersection(a::LineSegment{N}, b::Line2D{N}) where {N<:Real}
+    intersection(a::LineSegment, b::Line2D)
 
-Compute the intersection of a line and a line segment.
+Compute the intersection of a line and a line segment in two dimensions.
 
 ### Input
 
@@ -147,7 +129,7 @@ Compute the intersection of a line and a line segment.
 If the sets do not intersect, the result is the empty set.
 Otherwise the result is the singleton or line segment that describes the intersection.
 """
-function intersection(a::LineSegment{N}, b::Line2D{N}) where {N<:Real}
+function intersection(a::LineSegment, b::Line2D)
     # cast a as line
     ap = Line2D(a.p, a.q)
     # find intersection between a' and b
@@ -160,19 +142,18 @@ function intersection(a::LineSegment{N}, b::Line2D{N}) where {N<:Real}
         return m
     else
         # no intersection
+        N = promote_type(eltype(a), eltype(b))
         return EmptySet{N}(2)
     end
 end
 
 # symmetric method
-function intersection(a::Line2D{N}, b::LineSegment{N}) where {N<:Real}
-    return intersection(b,a)
-end
+intersection(a::Line2D, b::LineSegment) = intersection(b, a)
 
 """
-    intersection(a::LineSegment{N}, b::LineSegment{N}) where {N<:Real}
+    intersection(a::LineSegment, b::LineSegment)
 
-Return the intersection of two 2D line segments.
+Return the intersection of two two-dimensional line segments.
 
 ### Input
 
@@ -193,30 +174,37 @@ A singleton, line segment or the empty set depending on the result of the inters
 
 - Otherwise, if there is no intersection, an empty set is returned.
 """
-function intersection(a::LineSegment{N}, b::LineSegment{N}) where {N<:Real}
-    # cast a as line
+function intersection(a::LineSegment, b::LineSegment)
+
+    # cast each segment as a line
     ap = Line2D(a.p, a.q)
     bp = Line2D(b.p, b.q)
-    # find intersection between a' and b
+
+    # find intersection between the lines
     m = intersection(ap, bp)
+    N = promote_type(eltype(a), eltype(b))
     if m == ap
         # determine which segment is in both
         p1 = max(min(a.p[1], a.q[1]), min(b.p[1], b.q[1]))
         p2 = max(min(a.p[2], a.q[2]), min(b.p[2], b.q[2]))
         q1 = min(max(a.p[1], a.q[1]), max(b.p[1], b.q[1]))
         q2 = min(max(a.p[2], a.q[2]), max(b.p[2], b.q[2]))
-        if LazySets._isapprox(p1, q1) && LazySets._isapprox(p2, q2)
+        if _isapprox(p1, q1) && _isapprox(p2, q2)
              # edges have a point in common
              return Singleton([p1, p2])
-        elseif LazySets._leq(p1, q1) && LazySets._leq(p2, q2)
+
+        elseif _leq(p1, q1) && _leq(p2, q2)
              return LineSegment([p1, p2], [q1, q2])
+
         else
             # no intersection
             return EmptySet{N}(2)
         end
+
     elseif m isa Singleton && m.element ∈ a && m.element ∈ b
         # if the intersection between lines is in the segments
         return m
+
     else
         # no intersection
         return EmptySet{N}(2)
@@ -224,9 +212,7 @@ function intersection(a::LineSegment{N}, b::LineSegment{N}) where {N<:Real}
 end
 
 """
-    intersection(H1::AbstractHyperrectangle{N},
-                 H2::AbstractHyperrectangle{N}
-                ) where {N<:Real}
+    intersection(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle)
 
 Return the intersection of two hyperrectangles.
 
@@ -247,13 +233,12 @@ leftmost right border of the hyperrectangles.
 If these borders contradict, then the intersection is empty.
 Otherwise the result uses these borders in each dimension.
 """
-function intersection(H1::AbstractHyperrectangle{N},
-                      H2::AbstractHyperrectangle{N}
-                     ) where {N<:Real}
+function intersection(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle)
     n = dim(H1)
+    N = promote_type(eltype(H1), eltype(H2))
     v_high = Vector{N}(undef, n)
     v_low = Vector{N}(undef, n)
-    for i in 1:n
+    @inbounds for i in 1:n
         v_high[i] = min(high(H1, i), high(H2, i))
         v_low[i] = max(low(H1, i), low(H2, i))
         if v_high[i] < v_low[i]
@@ -263,21 +248,12 @@ function intersection(H1::AbstractHyperrectangle{N},
     return Hyperrectangle(high=v_high, low=v_low)
 end
 
-# disambiguation
-function intersection(S::AbstractSingleton{N},
-                      H::AbstractHyperrectangle{N}
-                     ) where {N<:Real}
-    return invoke(intersection, Tuple{typeof(S), LazySet{N}}, S, H)
-end
-function intersection(H::AbstractHyperrectangle{N},
-                      S::AbstractSingleton{N}
-                     ) where {N<:Real}
-    return invoke(intersection, Tuple{typeof(S), LazySet{N}}, S, H)
-end
+# disambiguations
+intersection(S::AbstractSingleton, H::AbstractHyperrectangle) = _intersection_singleton(S, H)
+intersection(H::AbstractHyperrectangle, S::AbstractSingleton) = _intersection_singleton(S, H)
 
 """
-    intersection(x::Interval{N}, y::Interval{N}
-                ) where {N<:Real}
+    intersection(x::Interval, y::Interval)
 
 Return the intersection of two intervals.
 
@@ -291,9 +267,9 @@ Return the intersection of two intervals.
 If the intervals do not intersect, the result is the empty set.
 Otherwise the result is the interval that describes the intersection.
 """
-function intersection(x::Interval{N}, y::Interval{N}
-                     ) where {N<:Real}
+function intersection(x::Interval, y::Interval)
     if min(y) > max(x) || min(x) > max(y)
+        N = promote_type(eltype(x), eltype(y))
         return EmptySet{N}(1)
     else
         return Interval(max(min(x), min(y)), min(max(x), max(y)))
@@ -301,8 +277,7 @@ function intersection(x::Interval{N}, y::Interval{N}
 end
 
 """
-    intersection(X::Interval{N}, hs::HalfSpace{N}
-                ) where {N<:Real}
+    intersection(X::Interval, hs::HalfSpace)
 
 Compute the intersection of an interval and a half-space.
 
@@ -315,22 +290,20 @@ Compute the intersection of an interval and a half-space.
 
 If the sets do not intersect, the result is the empty set.
 If the interval is fully contained in the half-space, the result is the original
-interval.
-Otherwise the result is the interval that describes the intersection.
+interval. Otherwise the result is the interval that describes the intersection.
 
 ### Algorithm
 
 We first handle the special case that the normal vector `a` of `hs` is close to
-zero.
-Then we distinguish the cases that `hs` is a lower or an upper bound.
+zero. Then we distinguish the cases that `hs` is a lower or an upper bound.
 """
-function intersection(X::Interval{N}, hs::HalfSpace{N}
-                     ) where {N<:Real}
+function intersection(X::Interval, hs::HalfSpace)
     @assert dim(hs) == 1 "cannot take the intersection between an interval " *
                          "and a $(dim(hs))-dimensional half-space"
 
     a = hs.a[1]
     b = hs.b
+    N = promote_type(eltype(X), eltype(hs))
     if _isapprox(a, zero(N))
         if _geq(b, zero(N))
             # half-space is universal
@@ -378,14 +351,10 @@ function intersection(X::Interval{N}, hs::HalfSpace{N}
 end
 
 # symmetric method
-function intersection(hs::HalfSpace{N}, X::Interval{N}
-                     ) where {N<:Real}
-    return intersection(X, hs)
-end
+intersection(hs::HalfSpace, X::Interval) = intersection(X, hs)
 
 """
-    intersection(X::Interval{N}, hp::Hyperplane{N}
-                ) where {N<:Real}
+    intersection(X::Interval, hp::Hyperplane)
 
 Compute the intersection of an interval and a hyperplane.
 
@@ -399,8 +368,7 @@ Compute the intersection of an interval and a hyperplane.
 If the sets do not intersect, the result is the empty set.
 Otherwise the result is the singleton that describes the intersection.
 """
-function intersection(X::Interval{N}, hp::Hyperplane{N}
-                     ) where {N<:Real}
+function intersection(X::Interval, hp::Hyperplane)
     @assert dim(hp) == 1 "cannot take the intersection between an interval " *
                          "and a $(dim(hp))-dimensional hyperplane"
 
@@ -409,19 +377,16 @@ function intersection(X::Interval{N}, hp::Hyperplane{N}
     if _leq(min(X), p) && _leq(p, max(X))
         return Singleton([p])
     else
+        N = promote_type(eltype(X), eltype(hp))
         return EmptySet{N}(1)
     end
 end
 
 # symmetric method
-function intersection(hp::Hyperplane{N}, X::Interval{N}
-                     ) where {N<:Real}
-    return intersection(X, hp)
-end
+intersection(hp::Hyperplane, X::Interval) = intersection(X, hp)
 
 """
-    intersection(X::Interval{N}, Y::LazySet{N}
-                ) where {N<:Real}
+    intersection(X::Interval, Y::LazySet)
 
 Compute the intersection of an interval and a convex set.
 
@@ -436,8 +401,12 @@ If the sets do not intersect, the result is the empty set.
 Otherwise the result is the interval that describes the intersection, which may
 be of type `Singleton` if the intersection is very small.
 """
-function intersection(X::Interval{N}, Y::LazySet{N}
-                     ) where {N<:Real}
+function intersection(X::Interval, Y::LazySet)
+    return _intersection_interval(X, Y)
+end
+
+function _intersection_interval(X::Interval, Y::LazySet)
+    N = promote_type(eltype(X), eltype(Y))
     lower = max(min(X), -ρ(N[-1], Y))
     upper = min(max(X), ρ(N[1], Y))
     if _isapprox(lower, upper)
@@ -448,30 +417,14 @@ function intersection(X::Interval{N}, Y::LazySet{N}
         return EmptySet{N}(1)
     end
 end
-
 # symmetric method
-function intersection(Y::LazySet{N}, X::Interval{N}
-                     ) where {N<:Real}
-    return intersection(X, Y)
-end
+intersection(Y::LazySet, X::Interval) = intersection(X, Y)
 
-# disambiguation
-function intersection(X::Interval{N}, H::AbstractHyperrectangle{N}
-                     ) where {N<:Real}
-    return invoke(intersection, Tuple{Interval{N}, LazySet{N}}, X, H)
-end
-function intersection(H::AbstractHyperrectangle{N}, X::Interval{N}
-                     ) where {N<:Real}
-    return invoke(intersection, Tuple{Interval{N}, LazySet{N}}, X, H)
-end
-function intersection(X::Interval{N}, S::AbstractSingleton{N}
-                     ) where {N<:Real}
-    return invoke(intersection, Tuple{typeof(S), LazySet{N}}, S, X)
-end
-function intersection(S::AbstractSingleton{N}, X::Interval{N}
-                     ) where {N<:Real}
-    return invoke(intersection, Tuple{typeof(S), LazySet{N}}, S, X)
-end
+# disambiguations
+intersection(X::Interval, H::AbstractHyperrectangle) = _intersection_interval(X, H)
+intersection(H::AbstractHyperrectangle, X::Interval) = _intersection_interval(X, H)
+intersection(X::Interval, S::AbstractSingleton) = _intersection_interval(X, S)
+intersection(S::AbstractSingleton, X::Interval) = _intersection_interval(X, S)
 
 """
     intersection(P1::AbstractHPolygon{N},
@@ -502,10 +455,8 @@ one.
 Redundancy of constraints is checked with
 [`remove_redundant_constraints!(::AbstractHPolygon)`](@ref).
 """
-function intersection(P1::AbstractHPolygon{N},
-                      P2::AbstractHPolygon{N},
-                      prune::Bool=true
-                     ) where {N<:Real}
+function intersection(P1::AbstractHPolygon, P2::AbstractHPolygon, prune::Bool=true)
+
     # all constraints of one polygon are processed; now add the other polygon's
     # constraints
     @inline function add_remaining_constraints!(c, i, c1, i1, duplicates)
@@ -544,7 +495,9 @@ function intersection(P1::AbstractHPolygon{N},
     elseif length(c2) == 0
         return P1
     end
+
     # TODO: use common vector type of P1 and P2, see #2046
+    N = promote_type(eltype(P1), eltype(P2))
     c = Vector{LinearConstraint{N, Vector{N}}}(undef, length(c1) + length(c2))
     i1 = 1
     i2 = 1
@@ -601,7 +554,7 @@ using MathProgBase.SolverInterface: AbstractMathProgSolver
 """
     intersection(P1::AbstractPolyhedron{N},
                  P2::AbstractPolyhedron{N};
-                 backend=default_lp_solver(N)) where {N<:Real}
+                 [backend]=default_lp_solver(N)) where {N}
 
 Compute the intersection of two polyhedra.
 
@@ -639,7 +592,7 @@ This implementation unifies the constraints of the two sets obtained from the
 """
 function intersection(P1::AbstractPolyhedron{N},
                       P2::AbstractPolyhedron{N};
-                      backend=default_lp_solver(N)) where {N<:Real}
+                      backend=default_lp_solver(N)) where {N}
 
     # if one of P1 or P2 is bounded => the result is bounded
     HPOLY = (P1 isa AbstractPolytope || P2 isa AbstractPolytope) ?
@@ -679,25 +632,11 @@ function intersection(P1::AbstractPolyhedron{N},
     end
 end
 
-# disambiguation
-function intersection(S::AbstractSingleton{N},
-                      P::AbstractPolyhedron{N}
-                     ) where {N<:Real}
-    return invoke(intersection, Tuple{typeof(S), LazySet{N}}, S, P)
-end
-function intersection(P::AbstractPolyhedron{N},
-                      S::AbstractSingleton{N}
-                     ) where {N<:Real}
-    return invoke(intersection, Tuple{typeof(S), LazySet{N}}, S, P)
-end
-function intersection(X::Interval{N}, P::AbstractPolyhedron{N}
-                     ) where {N<:Real}
-    return invoke(intersection, Tuple{Interval{N}, LazySet{N}}, X, P)
-end
-function intersection(P::AbstractPolyhedron{N}, X::Interval{N}
-                     ) where {N<:Real}
-    return invoke(intersection, Tuple{Interval{N}, LazySet{N}}, X, P)
-end
+# disambiguations
+intersection(S::AbstractSingleton, P::AbstractPolyhedron) = _intersection_singleton(S, P)
+intersection(P::AbstractPolyhedron, S::AbstractSingleton) = _intersection_singleton(S, P)
+intersection(X::Interval, P::AbstractPolyhedron) = _intersection_interval(X, P)
+intersection(P::AbstractPolyhedron, X::Interval) = _intersection_interval(X, P)
 
 """
     intersection(P1::Union{VPolygon, VPolytope}, P2::Union{VPolygon, VPolytope};
@@ -756,8 +695,7 @@ function intersection(P1::Union{VPolygon, VPolytope},
 end
 
 """
-    intersection(P1::VPolygon{N}, P2::VPolygon{N};
-                 apply_convex_hull::Bool=true) where {N}
+    intersection(P1::VPolygon, P2::VPolygon; apply_convex_hull::Bool=true)
 
 Compute the intersection of two polygons in vertex representation.
 
@@ -779,12 +717,13 @@ clipping algorithm](https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_alg
 The implementation is based on the one found in
 [rosetta code](http://www.rosettacode.org/wiki/Sutherland-Hodgman_polygon_clipping#Julia).
 """
-function intersection(P1::VPolygon{N}, P2::VPolygon{N};
-                      apply_convex_hull::Bool=true) where {N}
+function intersection(P1::VPolygon, P2::VPolygon; apply_convex_hull::Bool=true)
     v1 = vertices_list(P1)
     v2 = vertices_list(P2)
     v12 = _intersection_vrep_2d(v1, v2)
+
     if isempty(v12)
+        N = promote_type(eltype(P1), eltype(P2))
         return EmptySet{N}(2)
     else
         return VPolygon(v12, apply_convex_hull=apply_convex_hull)
@@ -792,7 +731,7 @@ function intersection(P1::VPolygon{N}, P2::VPolygon{N};
 end
 
 """
-    intersection(cup::UnionSet{N}, X::LazySet{N}) where {N<:Real}
+    intersection(cup::UnionSet, X::LazySet)
 
 Return the intersection of a union of two convex sets and another convex set.
 
@@ -806,25 +745,21 @@ Return the intersection of a union of two convex sets and another convex set.
 The union of the pairwise intersections, expressed as a `UnionSet`.
 If one of those sets is empty, only the other set is returned.
 """
-function intersection(cup::UnionSet{N}, X::LazySet{N}) where {N<:Real}
+function intersection(cup::UnionSet, X::LazySet)
     return intersection(cup.X, X) ∪ intersection(cup.Y, X)
 end
 
 # symmetric method
-function intersection(X::LazySet{N}, cup::UnionSet{N}) where {N<:Real}
+function intersection(X::LazySet, cup::UnionSet)
     return intersection(cup, X)
 end
 
 # disambiguation
-function intersection(cup::UnionSet{N}, S::AbstractSingleton{N}) where {N<:Real}
-    return element(S) ∈ cup ? S : EmptySet{N}(dim(S))
-end
-function intersection(S::AbstractSingleton{N}, cup::UnionSet{N}) where {N<:Real}
-    return invoke(intersection, Tuple{UnionSet{N}, typeof(S)}, cup, S)
-end
+intersection(S::AbstractSingleton, cup::UnionSet) = _intersection_singleton(S, cup)
+intersection(cup::UnionSet, S::AbstractSingleton) = _intersection_singleton(S, cup)
 
 """
-    intersection(cup::UnionSetArray{N}, X::LazySet{N}) where {N<:Real}
+    intersection(cup::UnionSetArray, X::LazySet)
 
 Return the intersection of a union of a finite number of convex sets and another
 convex set.
@@ -838,27 +773,19 @@ convex set.
 
 The union of the pairwise intersections, expressed as a `UnionSetArray`.
 """
-function intersection(cup::UnionSetArray{N}, X::LazySet{N}) where {N<:Real}
+function intersection(cup::UnionSetArray, X::LazySet)
     return UnionSetArray([intersection(Y, X) for Y in array(cup)])
 end
 
 # symmetric method
-function intersection(X::LazySet{N}, cup::UnionSetArray{N}) where {N<:Real}
-    return intersection(cup, X)
-end
+intersection(X::LazySet, cup::UnionSetArray) = intersection(cup, X)
 
 # disambiguation
-function intersection(cup::UnionSetArray{N},
-                      S::AbstractSingleton{N}) where {N<:Real}
-    return element(S) ∈ cup ? S : EmptySet{N}(dim(S))
-end
-function intersection(S::AbstractSingleton{N},
-                      cup::UnionSetArray{N}) where {N<:Real}
-    return invoke(intersection, Tuple{UnionSetArray{N}, typeof(S)}, cup, S)
-end
+intersection(S::AbstractSingleton, cup::UnionSetArray) = _intersection_singleton(S, cup)
+intersection(cup::UnionSetArray, S::AbstractSingleton) = _intersection_singleton(S, cup)
 
 """
-    intersection(L::LinearMap{N}, S::LazySet{N}) where {N<:Real}
+    intersection(L::LinearMap, S::LazySet)
 
 Return the intersection of a lazy linear map and a convex set.
 
@@ -871,22 +798,20 @@ Return the intersection of a lazy linear map and a convex set.
 
 The polytope obtained by the intersection of `l.M * L.X` and `S`.
 """
-function intersection(L::LinearMap{N}, S::LazySet{N}) where {N<:Real}
+function intersection(L::LinearMap, S::LazySet)
     return intersection(linear_map(L.M, L.X), S)
 end
 
 # symmetric method
-function intersection(S::LazySet{N}, L::LinearMap{N}) where {N}
-    return intersection(L, S)
-end
+intersection(S::LazySet, L::LinearMap) = intersection(L, S)
 
 # disambiguation
-function intersection(L1::LinearMap{N}, L2::LinearMap{N}) where {N}
+function intersection(L1::LinearMap, L2::LinearMap)
     return intersection(linear_map(L1.M, L1.X), linear_map(L2.M, L2.X))
 end
 
 """
-    intersection(U::Universe{N}, X::LazySet{N}) where {N<:Real}
+    intersection(U::Universe, X::LazySet)
 
 Return the intersection of a universe and a convex set.
 
@@ -899,40 +824,24 @@ Return the intersection of a universe and a convex set.
 
 The set `X`.
 """
-function intersection(U::Universe{N}, X::LazySet{N}) where {N<:Real}
+function intersection(U::Universe, X::LazySet)
     return X
 end
 
 # symmetric method
-function intersection(X::LazySet{N}, U::Universe{N}) where {N<:Real}
-    return X
-end
+intersection(X::LazySet, U::Universe) = X
 
-# disambiguation
-function intersection(U::Universe{N}, ::Universe{N}) where {N<:Real}
-    return U
-end
-function intersection(U::Universe{N}, P::AbstractPolyhedron{N}) where {N<:Real}
-    return P
-end
-function intersection(P::AbstractPolyhedron{N}, U::Universe{N}) where {N<:Real}
-    return P
-end
-function intersection(U::Universe{N}, S::AbstractSingleton{N}) where {N<:Real}
-    return S
-end
-function intersection(S::AbstractSingleton{N}, U::Universe{N}) where {N<:Real}
-    return S
-end
-function intersection(X::Interval{N}, U::Universe{N}) where {N<:Real}
-    return X
-end
-function intersection(U::Universe{N}, X::Interval{N}) where {N<:Real}
-    return X
-end
+# disambiguations
+intersection(U::Universe, ::Universe) = U
+intersection(U::Universe, P::AbstractPolyhedron) = P
+intersection(P::AbstractPolyhedron, U::Universe) = P
+intersection(U::Universe, S::AbstractSingleton) = S
+intersection(S::AbstractSingleton, U::Universe) = S
+intersection(X::Interval, U::Universe) = X
+intersection(U::Universe, X::Interval) = X
 
 """
-    intersection(P::AbstractPolyhedron{N}, rm::ResetMap{N}) where {N<:Real}
+    intersection(P::AbstractPolyhedron, rm::ResetMap)
 
 Return the intersection of a polyhedron and a polyhedral reset map.
 
@@ -950,38 +859,32 @@ A polyhedron.
 We assume that `rm` is polyhedral, i.e., has a `constraints_list` method
 defined.
 """
-function intersection(P::AbstractPolyhedron{N}, rm::ResetMap{N}) where {N<:Real}
+function intersection(P::AbstractPolyhedron, rm::ResetMap)
     return intersection(P, HPolyhedron(constraints_list(rm)))
 end
 
 # symmetric method
-function intersection(rm::ResetMap{N}, P::AbstractPolyhedron{N}) where {N<:Real}
-    return intersection(P, rm)
-end
+intersection(rm::ResetMap, P::AbstractPolyhedron) = intersection(P, rm)
 
 # more efficient version for polytopic
-function intersection(P::AbstractPolyhedron{N},
-                      rm::ResetMap{N, <:AbstractPolytope}) where {N<:Real}
+function intersection(P::AbstractPolyhedron{M},
+                      rm::ResetMap{N, <:AbstractPolytope}) where {M, N}
     return intersection(P, HPolytope(constraints_list(rm)))
 end
 
 # symmetric method
 function intersection(rm::ResetMap{N, <:AbstractPolytope},
-                      P::AbstractPolyhedron{N}) where {N<:Real}
+                      P::AbstractPolyhedron{M}) where {N, M}
     return intersection(P, rm)
 end
 
-function intersection(U::Universe{N}, X::CartesianProductArray{N}) where {N<:Real}
-    return X
-end
+intersection(U::Universe, X::CartesianProductArray) = X
 
 # symmetric method
-function intersection(X::CartesianProductArray{N}, U::Universe{N}) where {N<:Real}
-    return intersection(U, X)
-end
+intersection(X::CartesianProductArray, U::Universe) = intersection(U, X)
 
 """
-        intersection(X::CartesianProductArray{N}, Y::CartesianProductArray{N})
+        intersection(X::CartesianProductArray, Y::CartesianProductArray)
 
 Return the intersection between cartesian products of a finite number of convex sets.
 
@@ -998,15 +901,14 @@ The decomposed set which represents concrete intersection between `X` and `Y`
 
 This algorithm intersect corresponding blocks between sets.
 """
-function intersection(X::CartesianProductArray{N}, Y::CartesianProductArray{N}) where {N<:Real}
+function intersection(X::CartesianProductArray, Y::CartesianProductArray)
     @assert same_block_structure(array(X), array(Y)) "block structure has to be the same"
 
     return CartesianProductArray([intersection(array(X)[i], array(Y)[i]) for i in eachindex(array(X))])
 end
 
 """
-    intersection(cpa::CartesianProductArray{N}, P::AbstractPolyhedron{N}
-                ) where {N<:Real}
+    intersection(cpa::CartesianProductArray, P::AbstractPolyhedron)
 
 Compute the intersection of a Cartesian product of a finite number of polyhedral
 sets with a polyhedron.
@@ -1064,8 +966,8 @@ minimal dimension.
 Finally, we convert ``Y`` to a polyhedron and intersect it with a suitable
 projection of `P`.
 """
-function intersection(cpa::CartesianProductArray{N}, P::AbstractPolyhedron{N}
-                     ) where {N<:Real}
+function intersection(cpa::CartesianProductArray, P::AbstractPolyhedron)
+
     # search for the indices of the block trisection into
     # "unconstrained | constrained | unconstrained" (the first and third section
     # may be empty)
@@ -1107,16 +1009,13 @@ function intersection(cpa::CartesianProductArray{N}, P::AbstractPolyhedron{N}
     return CartesianProductArray(result_array)
 end
 
-function _intersection_cpa_polyhedron(cpa::CartesianProductArray{N},
-                                      P::AbstractPolyhedron{N},
-                                      constrained_dims) where {N<:Real}
+function _intersection_cpa_polyhedron(cpa::CartesianProductArray,
+                                      P::AbstractPolyhedron,
+                                      constrained_dims)
     T = isbounded(cpa) ? HPolytope : HPolyhedron
     hpoly_low_dim = T(constraints_list(cpa))
     cap_low_dim = intersection(hpoly_low_dim, project(P, constrained_dims))
 end
 
 # symmetric method
-function intersection(P::AbstractPolyhedron{N}, cpa::CartesianProductArray{N}
-                     ) where {N<:Real}
-    return intersection(cpa, P)
-end
+intersection(P::AbstractPolyhedron, cpa::CartesianProductArray) = intersection(cpa, P)
