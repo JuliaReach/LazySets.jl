@@ -83,7 +83,6 @@ include("Sets/Line2D.jl")
 include("Sets/Line.jl")
 include("Sets/LineSegment.jl")
 include("Sets/Singleton.jl")
-include("Sets/Star.jl")
 include("Sets/Universe.jl")
 include("Sets/VPolygon.jl")
 include("Sets/VPolytope.jl")
@@ -124,6 +123,7 @@ include("LazyOperations/Rectification.jl")  # must come after UnionSet
 # Aliases
 # =======
 include("Interfaces/aliases.jl")
+include("Sets/Star.jl")
 
 # =============================
 # Conversions between set types

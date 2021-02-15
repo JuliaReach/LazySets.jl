@@ -117,12 +117,15 @@ function Star(c::VN, Vlist::AbstractVector{VN}, P::PT) where {N, VN<:AbstractVec
     return Star(c, V, P)
 end
 
+# type used for dispatch
+const STAR{N, VN<:AbstractVector{N},
+              MN<:AbstractMatrix{N},
+              PT<:AbstractPolyhedron{N}} = AffineMap{N, PT, N, MN, VN}
+
 # ============================
 # Star set getter functions
 # ============================
 
-#=
-const STAR =
 """
     center(X::STAR)
 
@@ -136,10 +139,10 @@ Return the center of a star.
 
 The center of the star.
 """
-center(X::STAR) = X.c
+center(X::STAR) = vector(X)
 
 """
-    basis(X::Star)
+    basis(X::STAR)
 
 Return the basis vectors of a star.
 
@@ -151,10 +154,10 @@ Return the basis vectors of a star.
 
 A matrix where each column is a basis vector of the star.
 """
-basis(X::Star) = X.V
+basis(X::STAR) = matrix(X)
 
 """
-    predicate(X::Star)
+    predicate(X::STAR)
 
 Return the predicate of a star.
 
@@ -166,26 +169,4 @@ Return the predicate of a star.
 
 A polyhedral set representing the predicate of the star.
 """
-predicate(X::Star) = X.P
-
-"""
-    dim(X::Star)
-
-Return the dimension of a star.
-
-### Input
-
-- `X` -- star set
-
-### Output
-
-The ambient dimension of the star set.
-"""
-dim(X::Star) = length(X.c)
-
-# =====================================
-# Support function and support vector
-# =====================================
-
-# TODO
-=#
+predicate(X::STAR) = set(X)
