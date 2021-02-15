@@ -82,6 +82,12 @@ Interval{Rational{Int64},AbstractInterval{Rational{Int64}}}([0//1, 2//1])
 """
 struct Interval{N, IN<:AbstractInterval{N}} <: AbstractHyperrectangle{N}
     dat::IN
+
+    function Interval(dat::IN) where {N, IN<:AbstractInterval{N}}
+        @assert isfinite(dat.lo) && isfinite(dat.hi) "intervals must be bounded"
+
+        return new{N, IN}(dat)
+    end
 end
 
 isoperationtype(::Type{<:Interval}) = false

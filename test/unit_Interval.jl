@@ -22,6 +22,10 @@ for N in Ns
     y = Interval(0, N(1))
     @test y == x
 
+    # unbounded intervals are caught
+    @test_throws AssertionError Interval(-Inf, zero(N))
+    @test_throws AssertionError Interval(zero(N), Inf)
+
     @test dim(x) == 1
     @test center(x) == N[0.5]
     @test center(x, 1) == N(0.5)
