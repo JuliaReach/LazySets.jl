@@ -64,26 +64,26 @@ monotone_chain!
 ## Intersection of two sets
 
 ```@docs
-intersection(::AbstractSingleton{N}, ::LazySet{N}) where {N<:Real}
-intersection(::Line2D{N}, ::Line2D{N}) where {N<:Real}
-intersection(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}) where {N<:Real}
-intersection(::Interval{N}, ::Interval{N}) where {N<:Real}
-intersection(::Interval{N}, ::HalfSpace{N}) where {N<:Real}
-intersection(::Interval{N}, ::Hyperplane{N}) where {N<:Real}
-intersection(::Interval{N}, ::LazySet{N}) where {N<:Real}
-intersection(::AbstractHPolygon{N}, ::AbstractHPolygon{N}, ::Bool=true) where {N<:Real}
-intersection(::AbstractPolyhedron{N}, ::AbstractPolyhedron{N}) where {N<:Real}
+intersection(::AbstractSingleton, ::LazySet)
+intersection(::Line2D, ::Line2D)
+intersection(::AbstractHyperrectangle, ::AbstractHyperrectangle)
+intersection(::Interval, ::Interval)
+intersection(::Interval, ::HalfSpace)
+intersection(::Interval, ::Hyperplane)
+intersection(::Interval, ::LazySet)
+intersection(::AbstractHPolygon, ::AbstractHPolygon, ::Bool=true)
+intersection(::AbstractPolyhedron{N}, ::AbstractPolyhedron{N}) where {N}
 intersection(::Union{VPolytope, VPolygon}, ::Union{VPolytope, VPolygon})
-intersection(::VPolygon{N}, ::VPolygon{N}; ::Bool=true) where {N}
-intersection(::UnionSet{N}, ::LazySet{N}) where {N<:Real}
-intersection(::UnionSetArray{N}, ::LazySet{N}) where {N<:Real}
-intersection(::Universe{N}, ::LazySet{N}) where {N<:Real}
-intersection(::AbstractPolyhedron{N}, ::ResetMap{N}) where {N<:Real}
-intersection(::CartesianProductArray{N}, ::CartesianProductArray{N}) where {N<:Real}
-intersection(::LinearMap{N}, ::LazySet{N}) where {N<:Real}
-intersection(::CartesianProductArray{N}, ::AbstractPolyhedron{N}) where {N<:Real}
-intersection(::LineSegment{N}, ::Line2D{N}) where {N<:Real}
-intersection(::LineSegment{N}, ::LineSegment{N}) where {N<:Real}
+intersection(::VPolygon, ::VPolygon; ::Bool=true)
+intersection(::UnionSet, ::LazySet)
+intersection(::UnionSetArray, ::LazySet)
+intersection(::Universe, ::LazySet)
+intersection(::AbstractPolyhedron, ::ResetMap)
+intersection(::CartesianProductArray, ::CartesianProductArray)
+intersection(::LinearMap, ::LazySet)
+intersection(::CartesianProductArray, ::AbstractPolyhedron)
+intersection(::LineSegment, ::Line2D)
+intersection(::LineSegment, ::LineSegment)
 ```
 
 ## Minkowski sum
