@@ -418,7 +418,7 @@ function _intersection_interval(X::Interval, Y::LazySet)
     end
 end
 # symmetric method
-intersection(Y::LazySet, X::Interval) = intersection(X, Y)
+intersection(Y::LazySet, X::Interval) = _intersection_interval(X, Y)
 
 # disambiguations
 intersection(X::Interval, H::AbstractHyperrectangle) = _intersection_interval(X, H)
