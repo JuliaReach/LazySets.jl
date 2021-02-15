@@ -4,7 +4,7 @@ export Star,
        predicate
 
 """
-    Star{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:AbstractPolyhedron{N}} <: AbstractStar{N}
+    Star{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:AbstractPolyhedron{N}}
 
 Type that represents a generalized star set where the predicate is polyhedral, i.e.
 
@@ -32,6 +32,10 @@ is also used to denote the subset of ``\\mathbb{R}^n`` such that ``P(α) = ⊤``
 
 The ``m`` basis vectors (each one ``n``-dimensional) are stored as the columns
 of an ``n × m`` matrix.
+
+Internally, this function is implemented as the lazy affine map of the polyhedral
+set `P`, with the transformation matrix and translation vector being `V` and `c`
+respectively.
 
 ### Examples
 
@@ -99,21 +103,8 @@ definition. For applications in reachability analysis of neural networks, see
       *Star-based reachability analysis of deep neural networks.*
       In International Symposium on Formal Methods (pp. 670-686). Springer, Cham.
 """
-struct Star{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:AbstractPolyhedron{N}} <: AbstractStar{N}
-    c::VN # center
-    V::MN # basis
-    P::PT # predicate
-
-    # default constructor with size checks
-    function Star(c::VN, V::MN, P::PT) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:AbstractPolyhedron{N}}
-        @assert length(c) == size(V, 1) "the center of the basis vectors should be compatible, " *
-                                        "but they are of length $(length(c)) and $(size(V, 1)) respectively"
-
-        @assert dim(P) == size(V, 2) "the number of basis vectors should be compatible " *
-                                     "with the predicates' dimension, but they are $(size(V, 2)) and $(dim(P)) respectively"
-
-        return new{N, VN, MN, PT}(c, V, P)
-    end
+function Star(c::VN, V::MN, P::PT) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:AbstractPolyhedron{N}}
+    return AffineMap(V, P, c)
 end
 
 # constructor from center and list of generators
@@ -130,8 +121,10 @@ end
 # Star set getter functions
 # ============================
 
+#=
+const STAR =
 """
-    center(X::Star)
+    center(X::STAR)
 
 Return the center of a star.
 
@@ -143,7 +136,7 @@ Return the center of a star.
 
 The center of the star.
 """
-center(X::Star) = X.c
+center(X::STAR) = X.c
 
 """
     basis(X::Star)
@@ -195,3 +188,4 @@ dim(X::Star) = length(X.c)
 # =====================================
 
 # TODO
+=#
