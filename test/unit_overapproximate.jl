@@ -158,9 +158,14 @@ for N in [Float64, Float32]
     ε = N(0.01)
     p = tovrep(overapproximate(b, ε))
     for v in vertices_list(p)
-    @test _geq(norm(v), N(1))
-    @test _leq(norm(v), N(1 + ε))
+        @test _geq(norm(v), N(1))
+        @test _leq(norm(v), N(1 + ε))
     end
+
+    # static vectors
+    b = BallInf(SVector{2}(N[1, 0]), N(1))
+    p = overapproximate(b, ε)
+    @test isequivalent(b, p)
 
     # Check that there are no redundant constraints for a ballinf
     b = BallInf(N[0.5, 0.5], N(0.1))
