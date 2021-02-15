@@ -77,7 +77,7 @@ Interval of other numeric types can be created as well, eg. a rational interval:
 
 ```jldoctest interval_constructor
 julia> Interval(0//1, 2//1)
-Interval{Rational{Int64},AbstractInterval{Rational{Int64}}}([0//1, 2//1])
+Interval{Rational{Int64},IntervalArithmetic.Interval{Rational{Int64}}}([0//1, 2//1])
 ```
 """
 struct Interval{N, IN<:AbstractInterval{N}} <: AbstractHyperrectangle{N}
