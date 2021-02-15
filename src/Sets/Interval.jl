@@ -90,29 +90,20 @@ struct Interval{N, IN<:AbstractInterval{N}} <: AbstractHyperrectangle{N}
     end
 end
 
-isoperationtype(::Type{<:Interval}) = false
-isconvextype(::Type{<:Interval}) = true
-
-# convenience constructor without type parameter for Rational
-Interval(interval::IN) where {N<:Rational, IN<:AbstractInterval{N}} =
-    Interval{N, IntervalArithmetic.AbstractInterval{N}}(interval)
-
 # constructor from two numbers with type promotion
 function Interval(lo::N1, hi::N2) where {N1, N2}
     N = promote_type(N1, N2)
     Interval(IntervalArithmetic.Interval(N(lo), N(hi)))
 end
 
-# constructor from two rational numbers
-Interval(lo::N, hi::N) where {N<:Rational} =
-    Interval{N, IntervalArithmetic.AbstractInterval{N}}(
-        IntervalArithmetic.Interval(lo, hi))
-
 # constructor from a vector
 function Interval(x::AbstractVector)
     @assert length(x) == 2 "vector for Interval constructor has to be 2D"
     Interval(x[1], x[2])
 end
+
+isoperationtype(::Type{<:Interval}) = false
+isconvextype(::Type{<:Interval}) = true
 
 """
     dim(x::Interval)
