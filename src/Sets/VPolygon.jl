@@ -151,14 +151,7 @@ end
 
 function linear_map(M::AbstractMatrix, P::VPolygon; apply_convex_hull::Bool=false)
     @assert size(M, 2) == 2 "a linear map of size $(size(M)) cannot be applied to a set of dimension 2"
-    return _linear_map_vrep(M, P)
-end
-
-@inline function _linear_map_vrep(M::AbstractMatrix, P::VPolygon;
-                                  apply_convex_hull::Bool=false)
-    # note: `apply_convex_hull` is ignored because the VPolygon constructor
-    # always runs a convex-hull algorithm
-    return broadcast(v -> M * v, vertices_list(P)) |> VPolygon
+    return _linear_map_vrep(M, P, apply_convex_hull=apply_convex_hull)
 end
 
 # --- AbstractPolygon interface functions ---
