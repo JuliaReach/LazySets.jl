@@ -102,6 +102,16 @@ for N in [Float64, Rational{Int}, Float32]
     # absorbing element
     @test absorbing(Intersection) == absorbing(IntersectionArray) == EmptySet
     @test I ∩ E == E ∩ I == IArr ∩ E == E ∩ IArr == E ∩ E == E
+
+    # intersection between a hyperrectangular set and an axis-aligned halfspace
+    SV = SingleEntryVector(1, 2, N(1))
+    H = HalfSpace(SV, N(2))
+    B1 = Hyperrectangle(N[1, 1], N[1, 1])
+    @test intersection(H, B1) == B1
+    B2 = Hyperrectangle(N[2, 1], N[1, 1])
+    @test intersection(H, B2) == Hyperrectangle(N[1.5, 1], N[0.5, 1])
+    B3 = Hyperrectangle(N[10, 10], N[1, 1])
+    @test intersection(H, B3) == EmptySet{N}(2)
 end
 
 # ======================

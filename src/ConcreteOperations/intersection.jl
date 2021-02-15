@@ -304,6 +304,7 @@ function intersection(X::Interval, hs::HalfSpace)
     a = hs.a[1]
     b = hs.b
     N = promote_type(eltype(X), eltype(hs))
+
     if _isapprox(a, zero(N))
         if _geq(b, zero(N))
             # half-space is universal
@@ -314,25 +315,32 @@ function intersection(X::Interval, hs::HalfSpace)
         end
     end
 
+    empty, lbound, ubound = _intersection_interval_halfspace(min(X), max(X), a, b, N)
+
+    if empty
+        return EmptySet{N}(1)
+    else
+        return Interval(lbound, ubound)
+    end
+end
+
+function _intersection_interval_halfspace(lo, hi, a, b, N)
     # idea:
     # ax ≤ b  <=>  x ≤ b/a  (if a > 0)
     # ax ≤ b  <=>  x ≥ b/a  (if a < 0)
     b_over_a = b / a
-    lo = min(X)
-    hi = max(X)
 
+    empty = false
     if a > zero(N)
         # half-space is an upper bound
         # check whether ax ≤ b for x = lo
         if _leq(lo, b_over_a)
             # new upper bound: min(hi, b_over_a)
             if _leq(hi, b_over_a)
-                return X
+                return (empty, lo, hi)
             else
-                return Interval(lo, b_over_a)
+                return (empty, lo, b_over_a)
             end
-        else
-            return EmptySet{N}(1)
         end
     else
         # half-space is a lower bound
@@ -340,14 +348,15 @@ function intersection(X::Interval, hs::HalfSpace)
         if _geq(hi, b_over_a)
             # new lower bound: max(lo, b_over_a)
             if _leq(b_over_a, lo)
-                return X
+                return (empty, lo, hi)
             else
-                return Interval(b_over_a, hi)
+                return (empty, b_over_a, hi)
             end
-        else
-            return EmptySet{N}(1)
         end
     end
+
+    # intersection is empty
+    return (true, hi, lo)
 end
 
 # symmetric method
@@ -425,6 +434,37 @@ intersection(X::Interval, H::AbstractHyperrectangle) = _intersection_interval(X,
 intersection(H::AbstractHyperrectangle, X::Interval) = _intersection_interval(X, H)
 intersection(X::Interval, S::AbstractSingleton) = _intersection_singleton(S, X)
 intersection(S::AbstractSingleton, X::Interval) = _intersection_singleton(S, X)
+
+# special case of an axis-aligned half-space and a hyperrectangular set
+function intersection(B::AbstractHyperrectangle, H::HalfSpace{N, <:SingleEntryVector{N}}) where {N}
+    n = dim(H)
+    a = H.a
+    b = H.b
+    i = a.i
+    ai = a.v
+
+    v_high_i = high(B, i)
+    v_low_i = low(B, i)
+
+    # intersect the half-space with the hyperrectangle's interval side
+    (empty, lo, hi) = _intersection_interval_halfspace(v_low_i, v_high_i, ai, b, N)
+
+    if empty
+        return EmptySet{N}(n)
+
+    else
+        v_low′ = copy(low(B))
+        v_low′[i] = lo
+
+        v_high′ = copy(high(B))
+        v_high′[i] = hi
+
+        return Hyperrectangle(low=v_low′, high=v_high′)
+    end
+ end
+
+# symmetric method
+intersection(H::HalfSpace{N, <:SingleEntryVector{N}}, B::AbstractHyperrectangle) where {N} = intersection(B, H)
 
 """
     intersection(P1::AbstractHPolygon, P2::AbstractHPolygon, [prune]::Bool=true)
