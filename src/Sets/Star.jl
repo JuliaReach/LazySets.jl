@@ -4,9 +4,9 @@ export Star,
        predicate
 
 """
-    Star{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:AbstractPolyhedron{N}}
+    Star(c::VN, V::MN, P::PT) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:AbstractPolyhedron{N}}
 
-Type that represents a generalized star set where the predicate is polyhedral, i.e.
+Generalized star set with a polyhedral predicate, i.e.
 
 ```math
 X = \\{x ∈ \\mathbb{R}^n : x = x₀ + \\sum_{i=1}^m α_i v_i,~~\\textrm{s.t. } P(α) = ⊤ \\},
