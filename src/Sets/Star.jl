@@ -4,9 +4,9 @@ export Star,
        predicate
 
 """
-    Star{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:AbstractPolyhedron{N}} <: AbstractStar{N}
+    Star(c::VN, V::MN, P::PT) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:AbstractPolyhedron{N}}
 
-Type that represents a generalized star set where the predicate is polyhedral, i.e.
+Generalized star set with a polyhedral predicate, i.e.
 
 ```math
 X = \\{x ∈ \\mathbb{R}^n : x = x₀ + \\sum_{i=1}^m α_i v_i,~~\\textrm{s.t. } P(α) = ⊤ \\},
@@ -33,6 +33,10 @@ is also used to denote the subset of ``\\mathbb{R}^n`` such that ``P(α) = ⊤``
 The ``m`` basis vectors (each one ``n``-dimensional) are stored as the columns
 of an ``n × m`` matrix.
 
+Internally, this function is implemented as the lazy affine map of the polyhedral
+set `P`, with the transformation matrix and translation vector being `V` and `c`
+respectively.
+
 ### Examples
 
 This example is drawn from Example 1 in [2]. Consider the two-dimensional plane
@@ -55,7 +59,7 @@ Finally, the star set ``X = ⟨c, V, P⟩`` defines the set:
 
 ```jldoctest star_constructor
 julia> S = Star(c, V, P)
-Star{Float64,Array{Float64,1},Array{Float64,2},BallInf{Float64,Array{Float64,1}}}([3.0, 3.0], [1.0 0.0; 0.0 1.0], BallInf{Float64,Array{Float64,1}}([0.0, 0.0], 1.0))
+AffineMap{Float64,BallInf{Float64,Array{Float64,1}},Float64,Array{Float64,2},Array{Float64,1}}([1.0 0.0; 0.0 1.0], BallInf{Float64,Array{Float64,1}}([0.0, 0.0], 1.0), [3.0, 3.0])
 ```
 
 We can use getter functions for each component field:
@@ -99,21 +103,8 @@ definition. For applications in reachability analysis of neural networks, see
       *Star-based reachability analysis of deep neural networks.*
       In International Symposium on Formal Methods (pp. 670-686). Springer, Cham.
 """
-struct Star{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:AbstractPolyhedron{N}} <: AbstractStar{N}
-    c::VN # center
-    V::MN # basis
-    P::PT # predicate
-
-    # default constructor with size checks
-    function Star(c::VN, V::MN, P::PT) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:AbstractPolyhedron{N}}
-        @assert length(c) == size(V, 1) "the center of the basis vectors should be compatible, " *
-                                        "but they are of length $(length(c)) and $(size(V, 1)) respectively"
-
-        @assert dim(P) == size(V, 2) "the number of basis vectors should be compatible " *
-                                     "with the predicates' dimension, but they are $(size(V, 2)) and $(dim(P)) respectively"
-
-        return new{N, VN, MN, PT}(c, V, P)
-    end
+function Star(c::VN, V::MN, P::PT) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:AbstractPolyhedron{N}}
+    return AffineMap(V, P, c)
 end
 
 # constructor from center and list of generators
@@ -126,12 +117,17 @@ function Star(c::VN, Vlist::AbstractVector{VN}, P::PT) where {N, VN<:AbstractVec
     return Star(c, V, P)
 end
 
+# type used for dispatch
+const STAR{N, VN<:AbstractVector{N},
+              MN<:AbstractMatrix{N},
+              PT<:AbstractPolyhedron{N}} = AffineMap{N, PT, N, MN, VN}
+
 # ============================
 # Star set getter functions
 # ============================
 
 """
-    center(X::Star)
+    center(X::STAR)
 
 Return the center of a star.
 
@@ -143,10 +139,10 @@ Return the center of a star.
 
 The center of the star.
 """
-center(X::Star) = X.c
+center(X::STAR) = vector(X)
 
 """
-    basis(X::Star)
+    basis(X::STAR)
 
 Return the basis vectors of a star.
 
@@ -158,10 +154,10 @@ Return the basis vectors of a star.
 
 A matrix where each column is a basis vector of the star.
 """
-basis(X::Star) = X.V
+basis(X::STAR) = matrix(X)
 
 """
-    predicate(X::Star)
+    predicate(X::STAR)
 
 Return the predicate of a star.
 
@@ -173,25 +169,4 @@ Return the predicate of a star.
 
 A polyhedral set representing the predicate of the star.
 """
-predicate(X::Star) = X.P
-
-"""
-    dim(X::Star)
-
-Return the dimension of a star.
-
-### Input
-
-- `X` -- star set
-
-### Output
-
-The ambient dimension of the star set.
-"""
-dim(X::Star) = length(X.c)
-
-# =====================================
-# Support function and support vector
-# =====================================
-
-# TODO
+predicate(X::STAR) = set(X)

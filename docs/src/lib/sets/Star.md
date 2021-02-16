@@ -6,8 +6,7 @@ CurrentModule = LazySets
 
 ```@docs
 Star
-dim(::Star)
-center(::Star)
-predicate(::Star)
-basis(::Star)
+center(::LazySets.STAR)
+predicate(::LazySets.STAR)
+basis(::LazySets.STAR)
 ```
