@@ -576,7 +576,9 @@ function intersection(P1::AbstractHPolygon, P2::AbstractHPolygon, prune::Bool=tr
         deleteat!(c, length(c)-duplicates+1:length(c))
     end
 
-    P = HPolygon(c, sort_constraints=false)
+    # TODO see #2187: the above code does *not* sort the constraints correctly.
+    # after fixing the above code, we should pass sort_constraints=false again
+    P = HPolygon(c, sort_constraints=true)
     if prune
         remove_redundant_constraints!(P)
         if isempty(P)
