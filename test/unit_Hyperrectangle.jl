@@ -151,6 +151,9 @@ for N in [Float64, Rational{Int}, Float32]
          Hyperrectangle(N[2.5, 0], N[1.5, 2]),
          Hyperrectangle(N[-0.5, 4], N[1.5, 2]),
          Hyperrectangle(N[2.5, 4], N[1.5, 2])])
+    H = Hyperrectangle(N[0, 0], N[1, 2])
+    S = split(H, [2, 2])
+    @test typeof(S) == Vector{typeof(H)}
 
     # subset
     H1 = Hyperrectangle(N[1, 3], N[0.5, 0.5])
