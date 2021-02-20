@@ -14,8 +14,7 @@ All subtypes should implement a `_sample!` method.
 abstract type Sampler end
 
 """
-    sample(X::LazySet{N}, num_samples::Int;
-           [sampler]=_default_sampler(X),
+    sample(X::LazySet{N}, num_samples::Int, [sampler]::Type{Sampler}=_default_sampler(X);
            [rng]::AbstractRNG=GLOBAL_RNG,
            [seed]::Union{Int, Nothing}=nothing,
            [VN]=Vector{N}) where {N}
@@ -28,7 +27,7 @@ Sampling of an arbitrary bounded set `X`.
 - `num_samples` -- number of random samples
 - `sampler`     -- (optional, default: `_default_sampler(X)`) the sampler used;
                    falls back to `RejectionSampler` or `UniformSampler` depending
-                   on the type of `X` 
+                   on the type of `X`
 - `rng`         -- (optional, default: `GLOBAL_RNG`) random number generator
 - `seed`        -- (optional, default: `nothing`) seed for reseeding
 - `VN`          -- (optional, default: `Vector{N}`) vector type of the sampled points
@@ -43,31 +42,28 @@ vector).
 
 See the documentation of the respective `Sampler`.
 """
-function sample(X::LazySet{N}, num_samples::Int;
-                sampler=_default_sampler(X),
+function sample(X::LazySet{N}, num_samples::Int, sampler::Type{<:Sampler}=_default_sampler(X);
                 rng::AbstractRNG=GLOBAL_RNG,
                 seed::Union{Int, Nothing}=nothing,
                 VN=Vector{N}) where {N}
-    @assert isbounded(X) "this function requires that the set `X` is bounded"
+
+    S = sampler(X)
+    return sample(X, num_samples, S, rng=rng, seed=seed, VN=VN)
+end
+
+function sample(X::LazySet{N}, num_samples::Int, sampler::Sampler;
+                rng::AbstractRNG=GLOBAL_RNG,
+                seed::Union{Int, Nothing}=nothing,
+                VN=Vector{N}) where {N}
 
     D = Vector{VN}(undef, num_samples) # preallocate output
-    _sample!(D, sampler(X); rng=rng, seed=seed)
+    _sample!(D, sampler; rng=rng, seed=seed)
     return D
 end
 
-# without argument, returns a single element (instead of a singleton)
-function sample(X::LazySet{N}; kwargs...) where {N}
-    return sample(X, 1; kwargs...)[1]
-end
-
-# fallback implementation
-function _sample!(D::Vector{VN},
-                  sampler::Sampler;
-                  rng::AbstractRNG=GLOBAL_RNG,
-                  seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
-    error("the method `_sample!` is not implemented for samplers of type " *
-          "$(typeof(sampler))")
-end
+# without argument, returns a single sample (instead of a vector containing a single vector)
+sample(X::LazySet; kwargs...) = sample(X, 1; kwargs...)[1]
+sample(X::LazySet, sampler::Union{Type{Sampler}, Sampler}; kwargs...) = sample(X, 1, sampler; kwargs...)[1]
 
 # =====================
 # Rejection Sampling
@@ -419,3 +415,125 @@ end
 
 end # quote
 end # function load_distributions_samples()
+
+
+# =========================
+# Hit and Run Monte Carlo
+# =========================
+
+struct HitAndRun{S, D, VT} <: Sampler
+    X::S        # set
+    p::VT       # starting point
+    thin::Int   # thin level
+    maxiter::Int # maximum number of iterations to find a point in X
+end
+
+set(sampler::HitAndRun) = sampler.X
+
+# FIXME an_element(X) gives a point in the boundary, but the algorithm works
+# better with an interior point
+function HitAndRun(X::LazySet; p=an_element(X), thin=2, maxiter=1000)
+    return HitAndRun{typeof(X), DefaultUniform{eltype(X)}, typeof(p)}(X, p, thin, maxiter)
+end
+
+# compute a unitay random direction in the given dimensions
+function _unitary_random_direction(n)
+    return normalize!(randn(n))
+end
+
+# distance we have to travel in direction dir,
+# from point p, to reach a given hyperplane a^T x = b
+function _distance(a, b, p, dir)
+    α = dot(a, dir)
+    LazySets.isapproxzero(α) && throw(ArgumentError("the direction is parallel to the hyperplane"))
+    λ = (b - dot(a, p)) / α
+    return λ
+end
+
+function _distance(H::Hyperplane, p, dir)
+    return _distance(H.a, H.b, p, dir)
+end
+
+function _sample!(D::Vector{VN},
+                  sampler::HitAndRun;
+                  rng::AbstractRNG=GLOBAL_RNG,
+                  seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
+
+    # initialization
+    rng = reseed(rng, seed)
+    X = set(sampler)
+    p = an_element(X)
+    n = dim(X)
+    clist = constraints_list(X)
+    D[1] = p
+    maxiter = sampler.maxiter
+
+    thin = sampler.thin
+    if thin == 1
+        for i in 2:length(D)
+            D[i] = hitandrun(clist, D[i-1], maxiter=maxiter)
+        end
+
+    else
+        aux = similar(p)
+        for i in 2:length(D)
+            D[i] = similar(p)
+            copy!(aux, D[i-1])
+            for _ in 1:thin
+                hitandrun!(D[i], clist, aux, maxiter=maxiter)
+                copy!(aux, D[i])
+            end
+        end
+    end
+    return D
+end
+
+# return q = p + μ*dir such that q belongs to the intersection of half-spaces
+# use maxiter > 1 if the starting point p is not an interior point
+hitandrun(clist::Vector{<:HalfSpace}, p; maxiter=1000) = hitandrun!(similar(p), clist, p, maxiter=maxiter)
+
+# hit and run iteration starting from p and storing the result in q
+function hitandrun!(q, clist::Vector{HT}, p; maxiter=1000) where {N, VT, HT<:HalfSpace{N, VT}}
+
+    n = dim(first(clist))
+    m = length(clist)
+    λ = Vector{N}(undef, m)
+    k = 1
+    while k <= maxiter
+        dir = _unitary_random_direction(n)
+        @inbounds for (i, c) in enumerate(clist)
+            λ[i] = _distance(c.a, c.b, p, dir)
+        end
+
+        λ₋ = -Inf   # maximum of negative coeffs
+        λ₊ = Inf # minimum of positive coeffs
+        for λi in λ
+            if λi < zero(N) && λi > λ₋
+                λ₋ = λi
+            end
+            if λi > zero(N) && λi < λ₊
+                λ₊ = λi
+            end
+        end
+
+        # build pointf
+        U = DefaultUniform(λ₋, λ₊)
+        μ = rand(U)
+        q .= p + μ * dir
+
+        # check membership
+        found = true
+        for c in clist
+            if !_leq(dot(c.a, q), c.b)
+                found = false
+                break
+            end
+        end
+        found && break
+        k += 1
+    end
+    if k > maxiter
+        @warn "maximum number of iterations reached, try increasing `maxiter` or choose another starting point"
+    end
+    return q
+end
