@@ -2,7 +2,7 @@
 
 export intersection
 
-for T in [:LazySet, :AbstractSingleton, :Interval, :Universe]
+for T in [:LazySet, :AbstractSingleton, :Interval, :Universe, :LinearMap]
     @eval begin
         function intersection(∅::EmptySet, X::$T)
             @assert dim(∅) == dim(X) "cannot take the intersection between a " *
@@ -434,6 +434,8 @@ intersection(X::Interval, H::AbstractHyperrectangle) = _intersection_interval(X,
 intersection(H::AbstractHyperrectangle, X::Interval) = _intersection_interval(X, H)
 intersection(X::Interval, S::AbstractSingleton) = _intersection_singleton(S, X)
 intersection(S::AbstractSingleton, X::Interval) = _intersection_singleton(S, X)
+intersection(X::Interval, L::LinearMap) = _intersection_interval(X, L)
+intersection(L::LinearMap, X::Interval) = _intersection_interval(X, L)
 
 # special case of an axis-aligned half-space and a hyperrectangular set
 function intersection(B::AbstractHyperrectangle, H::HalfSpace{N, <:SingleEntryVector{N}}) where {N}
@@ -465,6 +467,16 @@ function intersection(B::AbstractHyperrectangle, H::HalfSpace{N, <:SingleEntryVe
 
 # symmetric method
 intersection(H::HalfSpace{N, <:SingleEntryVector{N}}, B::AbstractHyperrectangle) where {N} = intersection(B, H)
+
+# disambiguations
+intersection(H::HalfSpace{N, <:SingleEntryVector{N}}, X::Interval) where {N} = _intersection_interval(X, H)
+intersection(X::Interval, H::HalfSpace{N, <:SingleEntryVector{N}}) where {N} = _intersection_interval(X, H)
+intersection(S::AbstractSingleton, H::HalfSpace) = _intersection_singleton(S, H)
+intersection(H::HalfSpace, S::AbstractSingleton) = _intersection_singleton(S, H)
+intersection(S::AbstractSingleton, H::HalfSpace{N, <:SingleEntryVector{N}}) where {N} =
+    _intersection_singleton(S, H)
+intersection(H::HalfSpace{N, <:SingleEntryVector{N}}, S::AbstractSingleton) where {N} =
+     _intersection_singleton(S, H)
 
 """
     intersection(P1::AbstractHPolygon, P2::AbstractHPolygon, [prune]::Bool=true)
@@ -848,6 +860,8 @@ intersection(S::LazySet, L::LinearMap) = intersection(L, S)
 function intersection(L1::LinearMap, L2::LinearMap)
     return intersection(linear_map(L1.M, L1.X), linear_map(L2.M, L2.X))
 end
+intersection(S::AbstractSingleton, L::LinearMap) = _intersection_singleton(S, L)
+intersection(L::LinearMap, S::AbstractSingleton) = _intersection_singleton(S, L)
 
 """
     intersection(U::Universe, X::LazySet)
@@ -878,6 +892,8 @@ intersection(U::Universe, S::AbstractSingleton) = S
 intersection(S::AbstractSingleton, U::Universe) = S
 intersection(X::Interval, U::Universe) = X
 intersection(U::Universe, X::Interval) = X
+intersection(L::LinearMap, U::Universe) = L
+intersection(U::Universe, L::LinearMap) = L
 
 """
     intersection(P::AbstractPolyhedron, rm::ResetMap)
@@ -921,6 +937,22 @@ intersection(U::Universe, X::CartesianProductArray) = X
 
 # symmetric method
 intersection(X::CartesianProductArray, U::Universe) = intersection(U, X)
+
+# disambiguation
+intersection(P::AbstractSingleton, rm::ResetMap) = _intersection_singleton(S, rm)
+intersection(rm::ResetMap, P::AbstractSingleton) = _intersection_singleton(S, rm)
+intersection(P::AbstractSingleton, rm::ResetMap{N, <:AbstractPolytope}) where {N} =
+    _intersection_singleton(S, rm)
+intersection(rm::ResetMap{N, <:AbstractPolytope}, P::AbstractSingleton) where {N} =
+    _intersection_singleton(S, rm)
+intersection(U::Universe, rm::ResetMap) = rm
+intersection(rm::ResetMap, U::Universe) = rm
+intersection(U::Universe, rm::ResetMap{N, <:AbstractPolytope}) where {N} = rm
+intersection(rm::ResetMap{N, <:AbstractPolytope}, U::Universe) where {N} = rm
+intersection(rm::ResetMap, X::Interval) = _intersection_interval(X, Y)
+intersection(X::Interval, rm::ResetMap) = _intersection_interval(X, Y)
+intersection(rm::ResetMap{N, <:AbstractPolytope}, X::Interval) where {N} = _intersection_interval(X, Y)
+intersection(X::Interval, rm::ResetMap{N, <:AbstractPolytope}) where {N} = _intersection_interval(X, Y)
 
 """
         intersection(X::CartesianProductArray, Y::CartesianProductArray)
@@ -1006,7 +1038,11 @@ Finally, we convert ``Y`` to a polyhedron and intersect it with a suitable
 projection of `P`.
 """
 function intersection(cpa::CartesianProductArray, P::AbstractPolyhedron)
+    return _intersection_cpa_polyhedron(cpa, P)
+end
 
+function _intersection_cpa_polyhedron(cpa::CartesianProductArray,
+                                      P::AbstractPolyhedron)
     # search for the indices of the block trisection into
     # "unconstrained | constrained | unconstrained" (the first and third section
     # may be empty)
@@ -1038,7 +1074,7 @@ function intersection(cpa::CartesianProductArray, P::AbstractPolyhedron)
         lower_bound = upper_bound + 1
     end
     # compute intersection with constrained blocks
-    cap = _intersection_cpa_polyhedron(
+    cap = _intersection_cpa_polyhedron_constrained(
         CartesianProductArray(blocks[cb_start:cb_end]), P, dim_start:dim_end)
 
     # construct result
@@ -1048,13 +1084,19 @@ function intersection(cpa::CartesianProductArray, P::AbstractPolyhedron)
     return CartesianProductArray(result_array)
 end
 
-function _intersection_cpa_polyhedron(cpa::CartesianProductArray,
-                                      P::AbstractPolyhedron,
-                                      constrained_dims)
+function _intersection_cpa_polyhedron_constrained(cpa::CartesianProductArray,
+                                                  P::AbstractPolyhedron,
+                                                  constrained_dims)
     T = isbounded(cpa) ? HPolytope : HPolyhedron
     hpoly_low_dim = T(constraints_list(cpa))
     cap_low_dim = intersection(hpoly_low_dim, project(P, constrained_dims))
 end
 
 # symmetric method
-intersection(P::AbstractPolyhedron, cpa::CartesianProductArray) = intersection(cpa, P)
+intersection(P::AbstractPolyhedron, cpa::CartesianProductArray) = _intersection_cpa_polyhedron(cpa, P)
+
+# disambiguation
+intersection(S::AbstractSingleton, cpa::CartesianProductArray) = _intersection_singleton(S, cpa)
+intersection(cpa::CartesianProductArray, S::AbstractSingleton) = _intersection_singleton(S, cpa)
+intersection(cpa::CartesianProductArray, X::Interval) = _intersection_interval(X, cpa)
+intersection(X::Interval, cpa::CartesianProductArray) = _intersection_interval(X, cpa)
