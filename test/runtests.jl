@@ -160,8 +160,12 @@ if test_suite_basic
     # ========================
     # Testing method ambiguity
     # ========================
-    include("check_method_ambiguity_binary.jl")
-    @time @testset "LazySets.binary_operations" begin include("unit_binary_operations.jl") end
+    @time @testset "LazySets.method_ambiguities" begin
+        for package in [LazySets, Approximations, Arrays, Assertions, LazySets.Parallel]
+            ambiguities = detect_ambiguities(package)
+            @test isempty(ambiguities)
+        end
+    end
 
     # ====================================
     # Testing common API of all interfaces
