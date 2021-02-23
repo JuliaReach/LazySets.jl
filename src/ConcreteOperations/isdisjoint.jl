@@ -712,7 +712,8 @@ end
 
 function is_intersection_empty(hp1::Union{Hyperplane, Line2D},
                                hp2::Union{Hyperplane, Line2D},
-                               witness::Bool=false
+                               witness::Bool=false;
+                               kwargs...
                               )
     if isequivalent(hp1, hp2)
         res = false
@@ -991,6 +992,17 @@ function is_intersection_empty(P::AbstractPolyhedron,
                                solver=nothing,
                                algorithm="exact"
                               )
+    return _is_intersection_empty_polyhedron(P, X, witness;
+                                             solver=solver, algorithm=algorithm)
+end
+
+function _is_intersection_empty_polyhedron(P::AbstractPolyhedron,
+                                           X::LazySet,
+                                           witness::Bool=false;
+                                           solver=nothing,
+                                           algorithm="exact"
+                                          )
+
     N = promote_type(eltype(P), eltype(X))
     if algorithm == "sufficient"
         # sufficient check for empty intersection using half-space checks
@@ -1026,8 +1038,8 @@ function is_intersection_empty(X::LazySet,
                                solver=nothing,
                                algorithm="exact"
                               )
-    return is_intersection_empty(P, X, witness;
-                                 solver=solver, algorithm=algorithm)
+    return _is_intersection_empty_polyhedron(P, X, witness;
+                                             solver=solver, algorithm=algorithm)
 end
 
 # disambiguation
@@ -1037,9 +1049,8 @@ function is_intersection_empty(P::AbstractPolyhedron,
                                solver=nothing,
                                algorithm="exact"
                               )
-    return invoke(is_intersection_empty,
-                  Tuple{typeof(P), LazySet, Bool},
-                  P, Q, witness; solver=solver, algorithm=algorithm)
+    return _is_intersection_empty_polyhedron(P, Q, witness;
+                                             solver=solver, algorithm=algorithm)
 end
 
 # disambiguation
@@ -1081,9 +1092,8 @@ function is_intersection_empty(P::AbstractPolyhedron,
                                solver=nothing,
                                algorithm="exact"
                               )
-    return invoke(is_intersection_empty,
-                  Tuple{typeof(P), LazySet, Bool},
-                  P, hp, witness, solver=solver, algorithm=algorithm)
+    return _is_intersection_empty_polyhedron(P, hp, witness;
+                                             solver=solver, algorithm=algorithm)
 end
 
 # symmetric method
@@ -1093,9 +1103,8 @@ function is_intersection_empty(hp::Union{Hyperplane, Line2D},
                                solver=nothing,
                                algorithm="exact"
                               )
-    return invoke(is_intersection_empty,
-                  Tuple{typeof(P), LazySet, Bool},
-                  P, hp, witness, solver=solver, algorithm=algorithm)
+    return _is_intersection_empty_polyhedron(P, hp, witness;
+                                             solver=solver, algorithm=algorithm)
 end
 
 
@@ -1356,6 +1365,10 @@ Finally we determine whether `Q` and the projected `P` intersect.
 """
 function is_intersection_empty(cpa::CartesianProductArray,
                                P::AbstractPolyhedron)
+    return _is_intersection_empty_cpa_polyhedron(cpa, P)
+end
+
+function _is_intersection_empty_cpa_polyhedron(cpa::CartesianProductArray, P)
     cpa_low_dim, vars, _block_structure = get_constrained_lowdimset(cpa, P)
     hpoly_low_dim = HPolytope(constraints_list(cpa_low_dim))
     return isdisjoint(hpoly_low_dim, project(P, vars))
@@ -1364,7 +1377,7 @@ end
 # symmetric method
 function is_intersection_empty(P::AbstractPolyhedron,
                                cpa::CartesianProductArray)
-    return is_intersection_empty(cpa, P)
+    return _is_intersection_empty_cpa_polyhedron(cpa, P)
 end
 
 # disambiguation
@@ -1372,7 +1385,16 @@ function is_intersection_empty(cpa::CartesianProductArray, hs::HalfSpace)
     return is_intersection_empty_helper_halfspace(hs, cpa)
 end
 function is_intersection_empty(hs::HalfSpace, cpa::CartesianProductArray)
-    return is_intersection_empty(cpa, hs)
+    return is_intersection_empty_helper_halfspace(hs, cpa)
+end
+
+function is_intersection_empty(cpa::CartesianProductArray, S::AbstractSingleton,
+                               witness::Bool=false)
+    return is_intersection_empty_helper_singleton(S, cpa, witness)
+end
+function is_intersection_empty(S::AbstractSingleton, cpa::CartesianProductArray,
+                               witness::Bool=false)
+    return is_intersection_empty_helper_singleton(S, cpa, witness)
 end
 
 function is_intersection_empty(cpa::CartesianProductArray, U::Universe,
@@ -1382,6 +1404,17 @@ end
 function is_intersection_empty(U::Universe, cpa::CartesianProductArray,
                                witness::Bool=false)
     return _is_intersection_empty_universe(cpa, U, witness)
+end
+
+function is_intersection_empty(cpa::CartesianProductArray,
+                               hp::Union{Hyperplane, Line2D},
+                               witness::Bool=false)
+    return return _is_intersection_empty_cpa_polyhedron(cpa, hp)
+end
+function is_intersection_empty(hp::Union{Hyperplane, Line2D},
+                               cpa::CartesianProductArray,
+                               witness::Bool=false)
+    return return _is_intersection_empty_cpa_polyhedron(cpa, hp)
 end
 
 """
@@ -1495,11 +1528,7 @@ function is_intersection_empty(::EmptySet, ::HalfSpace)
     return true
 end
 
-function is_intersection_empty(::EmptySet, ::Hyperplane)
-    return true
-end
-
-function is_intersection_empty(::EmptySet, ::Line2D)
+function is_intersection_empty(::EmptySet, ::Union{Hyperplane, Line2D})
     return true
 end
 
@@ -1523,11 +1552,7 @@ function is_intersection_empty(::HalfSpace, ::EmptySet)
     return true
 end
 
-function is_intersection_empty(::Hyperplane, ::EmptySet)
-    return true
-end
-
-function is_intersection_empty(::Line2D, ::EmptySet)
+function is_intersection_empty(::Union{Hyperplane, Line2D}, ::EmptySet)
     return true
 end
 
