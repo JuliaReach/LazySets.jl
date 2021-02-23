@@ -102,7 +102,7 @@ minkowski_sum(::AbstractSingleton, ::AbstractSingleton)
 
 ## Minkowski difference
 ```@docs
-minkowski_difference(::LazySet{N}, ::LazySet{N}) where {N<:Real}
+minkowski_difference(::LazySet, ::LazySet)
 pontryagin_difference
 ```
 
