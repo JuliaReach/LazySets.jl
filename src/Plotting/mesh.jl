@@ -26,6 +26,8 @@ function _plot3d_helper(S::LazySet, backend)
     @assert applicable(constraints_list, S) "plot3d requires that the list of constraints of `S`, " *
         "`constraints_list(S)` is applicable; try overapproximating with an `HPolytope` first"
 
+    @assert isbounded(S) "plot3d requires a bounded set"
+
     P = HPolytope(constraints_list(S))
     remove_redundant_constraints!(P)
     P_poly = polyhedron(P, backend=backend)
