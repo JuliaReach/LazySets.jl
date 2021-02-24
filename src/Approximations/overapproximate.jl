@@ -65,6 +65,8 @@ Return an approximation of a given 2D set using iterative refinement.
 - `S`        -- convex set, assumed to be two-dimensional
 - `HPolygon` -- type for dispatch
 - `ε`        -- (optional, default: `Inf`) error tolerance
+- `prune`    -- (optional, default: `true`) flag for removing redundant
+                constraints in the end
 
 ### Output
 
@@ -80,7 +82,8 @@ with respect to the Hausdorff distance.
 """
 function overapproximate(S::LazySet{N},
                          ::Type{<:HPolygon},
-                         ε::Real=Inf) where {N}
+                         ε::Real=Inf;
+                         prune::Bool=true) where {N}
     @assert dim(S) == 2 "epsilon-close approximation is only available for " *
                         "two-dimensional sets"
     if ε == Inf
@@ -91,7 +94,11 @@ function overapproximate(S::LazySet{N},
         constraints[4] = LinearConstraint(DIR_SOUTH(N), ρ(DIR_SOUTH(N), S))
         return HPolygon(constraints, sort_constraints=false)
     else
-        return tohrep(_approximate(S, ε))
+        P = tohrep(_approximate(S, ε))
+        if prune
+            remove_redundant_constraints!(P)
+        end
+        return P
     end
 end
 

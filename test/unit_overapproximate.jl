@@ -209,6 +209,13 @@ for N in [Float64, Float32]
     @test lcl[8].a ≈ N[sqrt(2)/2, -sqrt(2)/2]
     @test lcl[8].b ≈ N(1)
 
+    # no redundant constraints (#369)
+    theta = N(-pi / 4)
+    A = [cos(theta) -sin(theta); sin(theta) cos(theta)]
+    V = VPolygon([N[-0.9, 0.7], N[-1.1, 0.2], N[-1.4, 1.1], N[-2.0, 0.7], N[-1.5, 0.3]])
+    AV = overapproximate(A * V, 1e-2)
+    @test length(AV.constraints) == 5
+
     # Zonotope approximation of convex hull of two zonotopes
 
     # same order (mean method only)
