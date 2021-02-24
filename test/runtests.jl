@@ -160,12 +160,12 @@ if test_suite_basic
     # ========================
     # Testing method ambiguity
     # ========================
-    @time @testset "LazySets.method_ambiguities" begin
+    @static if VERSION >= v"1.1" @time @testset "LazySets.method_ambiguities" begin
         for package in [LazySets, Approximations, Arrays, Assertions, LazySets.Parallel]
             ambiguities = detect_ambiguities(package)
             @test isempty(ambiguities)
         end
-    end
+    end end
 
     # ====================================
     # Testing common API of all interfaces
