@@ -372,7 +372,8 @@ A translated zonotope.
 
 ### Notes
 
-See also [@ref](`translate!`) for the in-place version.
+See also [`translate!(Z::AbstractZonotope, v::AbstractVector)`](@ref) for the
+in-place version.
 
 ### Algorithm
 
@@ -398,7 +399,8 @@ A translated zonotope.
 
 ### Notes
 
-See also [@ref](`translate`) for the out-of-place version.
+See also [`translate(Z::AbstractZonotope, v::AbstractVector)`](@ref) for the
+out-of-place version.
 
 ### Algorithm
 
