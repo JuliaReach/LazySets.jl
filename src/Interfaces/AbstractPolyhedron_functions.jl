@@ -935,7 +935,7 @@ Determine whether a polyhedron is bounded.
 We first check if the polyhedron has more than `max(dim(P), 1)` constraints,
 which is a necessary condition for boundedness.
 
-If so, we check boundedness via [`_isbounded_stiemke`](@ref).
+If so, we check boundedness via `_isbounded_stiemke`.
 """
 function isbounded(P::AbstractPolyhedron{N}; solver=default_lp_solver(N)) where {N}
     constraints = constraints_list(P)
