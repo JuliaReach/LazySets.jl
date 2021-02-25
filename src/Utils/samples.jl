@@ -18,6 +18,7 @@ abstract type Sampler end
            [sampler]=_default_sampler(X),
            [rng]::AbstractRNG=GLOBAL_RNG,
            [seed]::Union{Int, Nothing}=nothing,
+           [include_vertices]=false,
            [VN]=Vector{N}) where {N}
 
 Sampling of an arbitrary bounded set `X`.
@@ -31,6 +32,7 @@ Sampling of an arbitrary bounded set `X`.
                    on the type of `X` 
 - `rng`         -- (optional, default: `GLOBAL_RNG`) random number generator
 - `seed`        -- (optional, default: `nothing`) seed for reseeding
+- `include_vertices` -- (optional, default: `false`) option to include the vertices
 - `VN`          -- (optional, default: `Vector{N}`) vector type of the sampled points
 
 ### Output
@@ -42,16 +44,35 @@ vector).
 ### Algorithm
 
 See the documentation of the respective `Sampler`.
+
+### Notes
+
+If `include_vertices == true`, we include all vertices computed with `vertices`.
+Alternatively if a number ``k`` is passed, we plot the first ``k`` vertices
+returned by `vertices`.
 """
 function sample(X::LazySet{N}, num_samples::Int;
                 sampler=_default_sampler(X),
                 rng::AbstractRNG=GLOBAL_RNG,
                 seed::Union{Int, Nothing}=nothing,
+                include_vertices=false,
                 VN=Vector{N}) where {N}
     @assert isbounded(X) "this function requires that the set `X` is bounded"
 
     D = Vector{VN}(undef, num_samples) # preallocate output
     _sample!(D, sampler(X); rng=rng, seed=seed)
+
+    if include_vertices != false
+        k = (include_vertices isa Bool) ? Inf : include_vertices
+        for v in vertices(X)
+            push!(D, v)
+            k -= 1
+            if k <= 0
+                break
+            end
+        end
+    end
+
     return D
 end
 
