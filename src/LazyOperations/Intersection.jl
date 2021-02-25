@@ -511,7 +511,8 @@ function ρ(d::AbstractVector, cap::Intersection{N, S1, S2};
 end
 
 # disambiguation
-function ρ(d::AbstractVector, cap::Intersection{N, S1, S2}
+function ρ(d::AbstractVector, cap::Intersection{N, S1, S2};
+           algorithm::String="line_search", kwargs...
           ) where {N, S1<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}},
                    S2<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}}
     return ρ(d, HPolyhedron([constraints_list(cap.X); constraints_list(cap.Y)]))

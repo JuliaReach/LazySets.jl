@@ -130,9 +130,14 @@ overapproximate(∅::EmptySet, options...) = ∅
 # disambiguation
 overapproximate(∅::EmptySet) = ∅
 for ST in LazySets.subtypes(LazySet, true)
+    if ST == HPolygon  # must be defined separately below with extra argument
+        continue
+    end
     @eval overapproximate(∅::EmptySet, ::Type{<:$ST}) = ∅
 end
 overapproximate(∅::EmptySet, ::Real) = ∅
+overapproximate(∅::EmptySet, ::Type{<:HPolygon}, ε::Real=Inf) = ∅
+overapproximate(∅::EmptySet, ::Type{<:EmptySet}, args...) = ∅
 
 """
     overapproximate(X::ConvexHull{N, <:AbstractZonotope, <:AbstractZonotope},
@@ -394,6 +399,12 @@ function overapproximate(X::LazySet{N}, ::Type{<:HPolyhedron}, dirs::AbstractDir
     return convert(HPolyhedron, overapproximate(X, dirs, prune=true))
 end
 
+# disambiguation
+overapproximate(∅::EmptySet{N}, ::Type{<:HPolytope}, dirs::AbstractDirections{N};
+                prune::Bool=true) where {N} = ∅
+overapproximate(∅::EmptySet{N}, ::Type{<:HPolyhedron},
+                dirs::AbstractDirections{N}; prune::Bool=true) where {N} = ∅
+
 # this function overapproximates a bounded polyhedron with a list of directions
 # that define a bounded set (without checking these assumptions); the result is always bounded
 function _overapproximate_bounded_polyhedron(X::LazySet{N}, dir::AbstractDirections{N, VN}; prune::Bool=true) where {N, VN}
@@ -429,6 +440,10 @@ function overapproximate(X::LazySet{N},
                          dir::Type{<:AbstractDirections}; kwargs...) where {N}
     return overapproximate(X, dir{N}(dim(X)); kwargs...)
 end
+
+# disambiguation
+overapproximate(∅::EmptySet, dir::Type{<:AbstractDirections}; kwargs...) = ∅
+overapproximate(∅::EmptySet, dir::AbstractDirections; prune::Bool=true) = ∅
 
 """
     overapproximate(S::LazySet{N}, ::Type{<:Interval}) where {N}
@@ -1376,6 +1391,18 @@ function overapproximate(X::LazySet, ZT::Type{<:Zonotope},
                          dir::Type{<:AbstractDirections};
                          algorithm="vrep", kwargs...)
     overapproximate(X, ZT, dir(dim(X)), algorithm=algorithm, kwargs...)
+end
+
+# disambiguation
+function overapproximate(∅::EmptySet, ZT::Type{<:Zonotope},
+                         dir::AbstractDirections;
+                         algorithm="vrep", kwargs...)
+    return ∅
+end
+function overapproximate(∅::EmptySet, ZT::Type{<:Zonotope},
+                         dir::Type{<:AbstractDirections};
+                         algorithm="vrep", kwargs...)
+    return ∅
 end
 
 """
