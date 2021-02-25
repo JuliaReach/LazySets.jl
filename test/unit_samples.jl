@@ -28,4 +28,12 @@ for N in [Float64]
     # specifying a distribution from Distributions.jl
     @test LazySets.RejectionSampler(P2, Uniform).box_approx == [Uniform(-3.0, 1.0), Uniform(-4.0,2.0)]
     @test LazySets.RejectionSampler(P2, Normal).box_approx == [Normal(-3.0, 1.0), Normal(-4.0, 2.0)]
+
+    # including vertices
+    for k in 0:4
+        p1 = sample(P1, 10; include_vertices=k)
+        @test length(p1) == 10 + k
+    end
+    @test length(sample(P1, 10; include_vertices=false)) == 10
+    @test length(sample(P1, 10; include_vertices=true)) == 42
 end
