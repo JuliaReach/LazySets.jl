@@ -265,8 +265,8 @@ Determine whether a set is bounded.
 
 ### Algorithm
 
-See the documentation of [`_isbounded_unit_dimensions`](@ref) or
-[`_isbounded_stiemke`](@ref) for details.
+See the documentation of `_isbounded_unit_dimensions` or `_isbounded_stiemke`
+for details.
 """
 function isbounded(S::LazySet; algorithm="support_function")
     if algorithm == "support_function"
