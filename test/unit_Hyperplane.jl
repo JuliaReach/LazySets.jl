@@ -82,6 +82,11 @@ for N in [Float64, Rational{Int}, Float32]
         end
     end
 
+    # projection
+    H = Hyperplane(N[1, -1], N(0))  # x = y
+    @test project(H, [1]) == project(H, [2]) == Universe{N}(1)
+    @test project(H, [1, 2]) == H
+
     @test_throws ArgumentError linear_map(M, H, algorithm="inv")
     M = N[2 2; 0 1] # invertible matrix
 
