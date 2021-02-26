@@ -298,7 +298,7 @@ end
 function project(cp::CartesianProduct, block::AbstractVector{Int})
     res = _project_cp_same_block(cp, block)
     if res == nothing
-        res = invoke(project, Tuple{LazySet, typeof(block)}, cp, block)
+        res = _project_linear_map(cp, block)
     end
     return res
 end
