@@ -756,10 +756,10 @@ julia> project(H, [1])
 Universe{Float64}(1)
 ```
 """
-function project(H::HalfSpace, block::AbstractVector{Int})
+function project(H::HalfSpace{N}, block::AbstractVector{Int}) where {N}
     if constrained_dimensions(H) ⊆ block
         return HalfSpace(H.a[block], H.b)
     else
-        return Universe(length(block))
+        return Universe{N}(length(block))
     end
 end
