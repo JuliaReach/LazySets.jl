@@ -368,3 +368,29 @@ function translate(L::Line2D, v::AbstractVector; share::Bool=false)
     b = L.b + dot(L.a, v)
     return Line2D(a, b)
 end
+
+function project(L::Line2D{N}, block::AbstractVector{Int}) where {N}
+    m = length(block)
+    if m == 2
+        @assert ispermutation(block, 1:2) "invalid dimensions $block for projection"
+        return L  # no projection
+    elseif m == 1
+        # projection to dimension i
+        cdims = constrained_dimensions(L)
+        if length(cdims) == 1
+            @inbounds if cdims[1] == block[1]
+                # L: aᵢxᵢ = b where aᵢ ≠ 0
+                return Singleton([L.b / L.a[cdims[1]]])
+            else
+                # L: aⱼxⱼ = b where i ≠ j
+                return Universe{N}(1)
+            end
+        else
+            # L is constrained in both dimensions
+            @assert length(cdims) == 2
+            return Universe{N}(1)
+        end
+    else
+        throw(ArgumentError("cannot project a two-dimensional line to $m dimensions"))
+    end
+end

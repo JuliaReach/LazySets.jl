@@ -478,6 +478,14 @@ function translate(hp::Hyperplane, v::AbstractVector; share::Bool=false)
     return Hyperplane(a, b)
 end
 
+function project(hp::Hyperplane{N}, block::AbstractVector{Int}) where {N}
+    if constrained_dimensions(hp) ⊆ block
+        return Hyperplane(hp.a[block], hp.b)
+    else
+        return Universe{N}(length(block))
+    end
+end
+
 # ============================================
 # Functionality that requires ModelingToolkit
 # ============================================
