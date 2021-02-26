@@ -295,6 +295,26 @@ function concretize(cp::CartesianProduct)
     return cartesian_product(concretize(cp.X), concretize(cp.Y))
 end
 
+function project(cp::CartesianProduct, block::AbstractVector{Int})
+    res = _project_cp_same_block(cp, block)
+    if res == nothing
+        res = _project_linear_map(cp, block)
+    end
+    return res
+end
+
+function _project_cp_same_block(cp, block)
+    min, max = extrema(block)
+    n1 = dim(cp.X)
+    if max <= n1
+        return project(cp.X, block)
+    elseif min > n1
+        return project(cp.Y, block .- n1)
+    else
+        return nothing
+    end
+end
+
 """
     project(cp::CartesianProduct{N, IT, HT}, block::AbstractVector{Int}) where {N, IT<:Interval, HT<:AbstractHyperrectangle{N}}
 

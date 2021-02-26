@@ -1182,6 +1182,13 @@ We apply the function `linear_map`.
                          ::Nothing=nothing,
                          n::Int=dim(S)
                         ) where {N}
+    return _project_linear_map(S, block, n)
+end
+
+@inline function _project_linear_map(S::LazySet{N},
+                                     block::AbstractVector{Int},
+                                     n::Int=dim(S)
+                                    ) where {N}
     M = projection_matrix(block, n, N)
     return linear_map(M, S)
 end
