@@ -177,13 +177,17 @@ if test_suite_basic
 end
 
 if test_suite_plotting
-    import Plots
-    using Plots: plot
+    @static if VERSION >= v"1.1"
+        # define `plot` function as `RecipesBase.apply_recipe`
+        import RecipesBase
+        struct DummyBackend <: RecipesBase.AbstractBackend end
+        struct DummyPlot <: RecipesBase.AbstractPlot{DummyBackend} end
+        Base.length(::DummyPlot) = 0
+        dict = Dict{Symbol, Any}(:plot_object => DummyPlot())
+        plot(args...; kwargs...) = RecipesBase.apply_recipe(dict, args...; kwargs...)
 
-    # fix namespace conflicts with Plots
-    using LazySets: center, translate
-
-    @time @testset "LazySets.plotting" begin include("unit_plot.jl") end
+        @time @testset "LazySets.plotting" begin include("unit_plot.jl") end
+    end
 end
 
 if test_suite_doctests

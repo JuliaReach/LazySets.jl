@@ -131,16 +131,6 @@ julia> hull = convex_hull(points);
 julia> typeof(hull)
 Array{Array{Float64,1},1}
 ```
-
-Plot both the random points and the computed convex hull polygon:
-
-```jldoctest ch_label
-julia> using Plots;
-
-julia> plot([Tuple(pi) for pi in points], seriestype=:scatter);
-
-julia> plot!(VPolygon(hull), alpha=0.2);
-```
 """
 function convex_hull(points::Vector{VN};
                      algorithm=nothing,
