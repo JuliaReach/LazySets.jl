@@ -155,6 +155,13 @@ for N in [Float64, Float32, Rational{Int}]
     res, w = ⊆(cp2, cp1, true)
     @test cp2 ⊈ cp1 && !res && w ∈ cp2 && w ∉ cp1
 
+    # projection
+    P = Singleton(N[11, 12])
+    Q = Singleton(N[13, 14, 15])
+    cp = P × Q
+    @test project(cp, [2]) == Singleton(N[12])
+    @test project(cp, [3, 5]) == Singleton(N[13, 15])
+
     # ==================================
     # Conversions of Cartesian Products
     # ==================================
@@ -420,4 +427,12 @@ for N in [Float64]
     Q = array(cap)[2]
     @test ispermutation(constraints_list(Q), [HalfSpace(N[-1, 0], N(-1)),
         HalfSpace(N[0, -1], N(-2)), HalfSpace(N[1, 1], N(3))])
+
+    if test_suite_polyhedra
+        # projection to mixed dimensions
+        P = Singleton(N[11, 12])
+        Q = Singleton(N[13, 14, 15])
+        cp = P × Q
+        @test isequivalent(project(cp, [1, 4]), Singleton(N[11, 14]))
+    end
 end
