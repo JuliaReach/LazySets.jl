@@ -530,3 +530,14 @@ function linear_map(M::AbstractMatrix, L::Line)
     Md = M * L.d
     return Line(Mp, Md)
 end
+
+function project(L::Line{N}, block::AbstractVector{Int}) where {N}
+    d = L.d[block]
+    if iszero(d)
+        return Singleton(L.p[block])  # projected out all nontrivial dimensions
+    elseif length(d) == 1
+        return Universe{N}(1)  # special case: 1D line is a universe
+    else
+        return Line(L.p[block], d)
+    end
+end

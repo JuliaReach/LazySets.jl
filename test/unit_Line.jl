@@ -66,4 +66,13 @@ for N in [Float64, Rational{Int}, Float32]
         rot = N[0 -1; 1 0] # π/2 ccw rotation
         @test isequivalent(linear_map(rot, l), Line(N[-1, 0], N[0, 1]))
     end
+
+    # projection
+    L = Line(N[1, 2, 3], N[1, 0, 0])
+    @test project(L, [1]) == Universe{N}(1)
+    @test project(L, [2]) == Singleton(N[2])
+    @test project(L, [3]) == Singleton(N[3])
+    @test project(L, [1, 2]) == Line(N[1, 2], N[1, 0])
+    @test project(L, [1, 3]) == Line(N[1, 3], N[1, 0])
+    @test project(L, [2, 3]) == Singleton(N[2, 3])
 end
