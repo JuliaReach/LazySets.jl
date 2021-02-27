@@ -26,7 +26,7 @@ end
 # Non-exported helper functions
 # ==============================
 using LazySets: ispermutation
-using LazySets.Arrays: isinvertible, inner,
+using LazySets.Arrays: isinvertible, inner, allequal,
                        is_cyclic_permutation, SingleEntryVector
 
 global test_suite_basic = true
