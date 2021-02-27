@@ -296,22 +296,21 @@ function concretize(cp::CartesianProduct)
 end
 
 function project(cp::CartesianProduct, block::AbstractVector{Int})
-    res = _project_cp_same_block(cp, block)
-    if res == nothing
-        res = _project_linear_map(cp, block)
-    end
-    return res
-end
-
-function _project_cp_same_block(cp, block)
-    min, max = extrema(block)
     n1 = dim(cp.X)
-    if max <= n1
+    if block[end] <= n1
+        # projection completely in the first block
         return project(cp.X, block)
-    elseif min > n1
+    elseif block[1] > n1
+        # projection completely in the second block
         return project(cp.Y, block .- n1)
-    else
-        return nothing
+    end
+    # projection is a new Cartesian product of the block-wise projections
+    for (i, bi) in enumerate(block)
+        if bi > n1
+            X = project(cp.X, block[1:i-1])
+            Y = project(cp.Y, block[i:end] .- n1)
+            return CartesianProduct(X, Y)
+        end
     end
 end
 

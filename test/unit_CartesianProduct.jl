@@ -161,6 +161,7 @@ for N in [Float64, Float32, Rational{Int}]
     cp = P × Q
     @test project(cp, [2]) == Singleton(N[12])
     @test project(cp, [3, 5]) == Singleton(N[13, 15])
+    @test project(cp, [1, 4, 5]) == Singleton(N[11]) × Singleton(N[14, 15])
 
     # ==================================
     # Conversions of Cartesian Products
