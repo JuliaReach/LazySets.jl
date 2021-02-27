@@ -161,6 +161,7 @@ for N in [Float64, Float32, Rational{Int}]
     cp = P × Q
     @test project(cp, [2]) == Singleton(N[12])
     @test project(cp, [3, 5]) == Singleton(N[13, 15])
+    @test project(cp, [1, 4, 5]) == Singleton(N[11]) × Singleton(N[14, 15])
 
     # ==================================
     # Conversions of Cartesian Products
@@ -298,6 +299,20 @@ for N in [Float64, Float32, Rational{Int}]
     else
         @test concretize(cpa) === cpa
     end
+
+    # projection
+    P = Singleton(N[11, 12])
+    Q = Singleton(N[13, 14, 15])
+    R = Singleton(N[16, 17])
+    cpa = CartesianProductArray([P, Q, R])
+    @test project(cpa, [2]) == Singleton(N[12])
+    @test project(cpa, [4]) == Singleton(N[14])
+    @test project(cpa, [6]) == Singleton(N[16])
+    @test project(cpa, [3, 5]) == Singleton(N[13, 15])
+    @test project(cpa, [2, 7]) == Singleton(N[12]) × Singleton(N[17])
+    @test project(cpa, [1, 4, 5]) == Singleton(N[11]) × Singleton(N[14, 15])
+    @test project(cpa, [1, 4, 7]) == CartesianProductArray(
+        [Singleton(N[11]), Singleton(N[14]), Singleton(N[17])])
 
     # ========================================
     # Conversions of Cartesian Product Arrays
