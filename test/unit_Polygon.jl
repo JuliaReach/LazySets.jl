@@ -438,17 +438,6 @@ for N in [Float64, Float32, Rational{Int}]
     @test project(I×V, 1:2) == VPolygon([N[0, -1], N[1, -1], N[1, 1], [0, 1]]) # TODO use isequivalent
 end
 
-function same_constraints(v::Vector{<:LinearConstraint{N}})::Bool where N<:Real
-    c1 = v[1]
-    for k = 2:length(v)
-        c2 = v[2]
-        if c1.a != c2.a || c1.b != c2.b
-            return false
-        end
-    end
-    return true
-end
-
 for N in [Float64, Float32]
     v1 = N[1//10, 3//10]
     v2 = N[1//5, 1//10]
@@ -494,8 +483,8 @@ for N in [Float64, Float32]
     @test n == length(p2.constraints) == length(po1.constraints) ==
           length(po2.constraints)
     for i in 1:n
-        @test same_constraints([p1.constraints[i], p2.constraints[i],
-                                po1.constraints[i], po2.constraints[i]])
+        @test allequal([p1.constraints[i], p2.constraints[i],
+                        po1.constraints[i], po2.constraints[i]])
     end
 
     for (hp, t_hp) in [(p1, HPolygon), (po1, HPolygonOpt)]
