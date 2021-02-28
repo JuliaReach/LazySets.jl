@@ -255,7 +255,11 @@ If ``L = M⋅S``, where ``M`` is a matrix and ``S`` is a convex set, it follows
 that ``σ(d, L) = M⋅σ(M^T d, S)`` for any direction ``d``.
 """
 function σ(d::AbstractVector, lm::LinearMap)
-    return lm.M * σ(_At_mul_B(lm.M, d), lm.X)
+    return _σ_linear_map(d, lm.M, lm.X)
+end
+
+function _σ_linear_map(d::AbstractVector, M::AbstractMatrix, X::LazySet)
+    return M * σ(_At_mul_B(M, d), X)
 end
 
 """
@@ -281,7 +285,11 @@ If ``L = M⋅S``, where ``M`` is a matrix and ``S`` is a convex set, it follows
 that ``ρ(d, L) = ρ(M^T d, S)`` for any direction ``d``.
 """
 function ρ(d::AbstractVector, lm::LinearMap; kwargs...)
-    return ρ(_At_mul_B(lm.M, d), lm.X; kwargs...)
+    return _ρ_linear_map(d, lm.M, lm.X; kwargs...)
+end
+
+function _ρ_linear_map(d::AbstractVector, M::AbstractMatrix, X::LazySet; kwargs...)
+    return ρ(_At_mul_B(M, d), X; kwargs...)
 end
 
 """
