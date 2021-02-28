@@ -118,9 +118,7 @@ degree of accuracy, and template directions.
 These options are exemplified below, where we use the following example.
 
 ```jldoctest decompose_examples
-julia> using LazySets.Approximations: decompose
-
-julia> S = Ball2(zeros(4), 1.);  # set to be decomposed (4D 2-norm unit ball)
+julia> S = Ball2(zeros(4), 1.0);  # set to be decomposed (4D 2-norm unit ball)
 
 julia> P2d = [1:2, 3:4];  # a partition with two blocks of size two
 
@@ -132,14 +130,14 @@ julia> P1d = [[1], [2], [3], [4]];  # a partition with four blocks of size one
 We can decompose using polygons in constraint representation:
 
 ```jldoctest decompose_examples
-julia> all([ai isa HPolygon for ai in array(decompose(S, P2d, HPolygon))])
+julia> all(ai isa HPolygon for ai in array(decompose(S, P2d, HPolygon)))
 true
 ```
 
 For decomposition into 1D subspaces, we can use `Interval`:
 
 ```jldoctest decompose_examples
-julia> all([ai isa Interval for ai in array(decompose(S, P1d, Interval))])
+julia> all(ai isa Interval for ai in array(decompose(S, P1d, Interval)))
 true
 ```
 
@@ -183,8 +181,6 @@ function of the given input set over the template directions.
 For example, octagonal 2D approximations of the set `S` are obtained with:
 
 ```jldoctest decompose_examples
-julia> using LazySets.Approximations: OctDirections
-
 julia> B = decompose(S, P2d, OctDirections);
 
 julia> length(B.array) == 2 && all(dim(bi) == 2 for bi in B.array)

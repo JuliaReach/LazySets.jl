@@ -723,9 +723,11 @@ User-defined template directions.
 
 ### Fields
 
-- `directions` -- list of template directions
-- `n`          -- dimension
-- `isbounding` -- boundedness status
+- `directions`          -- list of template directions
+- `n`                   -- (optional; default: computed from `directions) dimension
+- `check_boundedness`   -- (optional; default: `true`) flag to check boundedness
+- `check_normalization` -- (optional; default: `true`) flag to check whether all
+                           directions are normalized
 
 ### Notes
 
@@ -792,7 +794,7 @@ function _isbounding(directions::Vector{VN}) where {N, VN<:AbstractVector{N}}
 end
 
 function _isnormalized(directions::Vector{VN}) where {N, VN<:AbstractVector{N}}
-    return all(x -> _isapprox(x, one(N)), norm.(directions, 2))
+    return all(x -> _isapprox(norm(x, 2), one(N)), directions)
 end
 
 Base.eltype(::Type{CustomDirections{N, VN}}) where {N, VN} = VN
