@@ -152,7 +152,7 @@ function ∈(x::AbstractVector, Z::ZeroSet)
     @assert length(x) == dim(Z)
 
     N = promote_type(eltype(x), eltype(Z))
-    return all(i -> x[i] == zero(N), eachindex(x))
+    return all(==(zero(N)), x)
 end
 
 """
