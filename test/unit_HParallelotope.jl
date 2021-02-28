@@ -34,6 +34,9 @@ for N in [Float32, Float64, Rational{Int}]
 
     # test generators getters
     @test genmat(P) == N[1 0; 0 1]
+
+    # random parallelotope
+    rand(HParallelotope)
 end
 
 for N in [Float32, Float64]

@@ -312,3 +312,36 @@ function constraints_list(P::HParallelotope{N, VN}) where {N, VN}
     end
     return clist
 end
+
+"""
+    rand(::Type{HParallelotope}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
+
+Create a random parallelotope.
+
+### Input
+
+- `HParallelotope` -- type for dispatch
+- `N`             -- (optional, default: `Float64`) numeric type
+- `dim`           -- (optional, default: 2) dimension
+- `rng`           -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed`          -- (optional, default: `nothing`) seed for reseeding
+
+### Output
+
+A random parallelotope.
+
+### Notes
+
+All numbers are normally distributed with mean 0 and standard deviation 1.
+"""
+function rand(::Type{HParallelotope};
+              N::Type{<:Real}=Float64,
+              dim::Int=2,
+              rng::AbstractRNG=GLOBAL_RNG,
+              seed::Union{Int, Nothing}=nothing)
+    rng = reseed(rng, seed)
+    D = randn(N, dim, dim)
+    offset = randn(N, 2 * dim)
+    return HParallelotope(D, offset)
+end
