@@ -3,7 +3,8 @@ using LazySets.Arrays: extend,
                        to_negative_vector,
                        nonzero_columns,
                        remove_zero_columns,
-                       to_matrix
+                       to_matrix,
+                       same_sign
 
 for _dummy_ in 1:1 # avoid global variable warnings
     # reseeding with random seed
@@ -100,6 +101,12 @@ for N in [Float64, Rational{Int}, Float32]
     V = [sparsevec([2], N[2]), sparsevec([1, 2], N[1, 3])]
     M = to_matrix(V)
     @test M isa SparseMatrixCSC{N} && M == M0
+
+    # same sign
+    A = (N isa AbstractFloat) ? rand(N, 100, 100) : ones(N, 100, 100)
+    @test same_sign(A, optimistic=true) == same_sign(A, optimistic=false) == true
+    A[50, 50] = N(-1)
+    @test same_sign(A, optimistic=true) == same_sign(A, optimistic=false) == false
 
     # ============================================
     # Corresponding vector types and matrix types
