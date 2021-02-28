@@ -15,6 +15,7 @@ center(::HParallelotope)
 genmat(::HParallelotope)
 generators(::HParallelotope)
 constraints_list(::HParallelotope{N, VN}) where {N, VN}
+rand(::Type{HParallelotope})
 ```
 
 Inherited from [`LazySet`](@ref):
