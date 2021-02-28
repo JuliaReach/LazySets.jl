@@ -108,12 +108,8 @@ function Star(c::VN, V::MN, P::PT) where {N, VN<:AbstractVector{N}, MN<:Abstract
 end
 
 # constructor from center and list of generators
-function Star(c::VN, Vlist::AbstractVector{VN}, P::PT) where {N, VN<:AbstractVector{N}, PT<:AbstractPolyhedron{N}}
-    MT = _matrix_type(VN)
-    V = MT(undef, length(c), length(Vlist))
-    for (j, vj) in enumerate(Vlist)
-        @inbounds V[:, j] = vj
-    end
+function Star(c::VN, vlist::AbstractVector{VN}, P::PT) where {N, VN<:AbstractVector{N}, PT<:AbstractPolyhedron{N}}
+    V = to_matrix(vlist, length(c))
     return Star(c, V, P)
 end
 
