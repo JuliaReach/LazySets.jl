@@ -116,11 +116,7 @@ isconvextype(::Type{<:Zonotope}) = true
 
 # constructor from center and list of generators
 function Zonotope(center::VN, generators_list::AbstractVector{VN}) where {VN<:AbstractVector}
-    MT = _matrix_type(VN)
-    G = MT(undef, length(center), length(generators_list))
-    for (j, gj) in enumerate(generators_list)
-        @inbounds G[:, j] = gj
-    end
+    G = to_matrix(generators_list, length(center))
     return Zonotope(center, G)
 end
 

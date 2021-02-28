@@ -2,7 +2,8 @@ using LazySets.Arrays: extend,
                        _vector_type, _matrix_type,
                        to_negative_vector,
                        nonzero_columns,
-                       remove_zero_columns
+                       remove_zero_columns,
+                       to_matrix
 
 for _dummy_ in 1:1 # avoid global variable warnings
     # reseeding with random seed
@@ -90,6 +91,15 @@ for N in [Float64, Rational{Int}, Float32]
         u = to_negative_vector(v)
         @test u isa Vector{N} && u == N[1, 0, -1]
     end
+
+    # vector -> matrix conversion
+    M0 = N[0 1; 2 3]
+    V = [N[0, 2], N[1, 3]]
+    M = to_matrix(V)
+    @test M isa Matrix{N} && M == M0
+    V = [sparsevec([2], N[2]), sparsevec([1, 2], N[1, 3])]
+    M = to_matrix(V)
+    @test M isa SparseMatrixCSC{N} && M == M0
 
     # ============================================
     # Corresponding vector types and matrix types
