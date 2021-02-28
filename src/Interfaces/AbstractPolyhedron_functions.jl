@@ -293,8 +293,8 @@ struct LinearMapElimination{T, S} <: AbstractLinearMapAlgorithm
     method::S
 end
 
-struct LinearMapVRep <: AbstractLinearMapAlgorithm
-    #
+struct LinearMapVRep{T} <: AbstractLinearMapAlgorithm
+    backend::T
 end
 
 function _check_algorithm_applies(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
@@ -627,10 +627,11 @@ function linear_map(M::AbstractMatrix{NM},
         return _linear_map_hrep_helper(M, P, algo)
 
     elseif algorithm == "vrep"
-        return _linear_map_vrep(M, P; apply_convex_hull=false)
+        algo = LinearMapVRep(backend)
+        return _linear_map_vrep(M, P, algo; apply_convex_hull=false)
 
     elseif algorithm == "vrep_chull"
-        return _linear_map_vrep(M, P; apply_convex_hull=true)
+        return _linear_map_vrep(M, P, algo; apply_convex_hull=true)
 
     elseif got_inv
         check_invertibility && _check_algorithm_applies(M, P, LinearMapInverse;
@@ -659,17 +660,24 @@ end
 
 # TODO: merge the preconditions into _check_algorithm_applies ?
 # review this method after #998
-function _linear_map_vrep(M::AbstractMatrix, P::AbstractPolyhedron;
+function _linear_map_vrep(M::AbstractMatrix, P::AbstractPolyhedron,
+                          algo::LinearMapVRep=LinearMapVRep(nothing);
                           apply_convex_hull::Bool=false)
     if !isbounded(P)
         throw(ArgumentError("the linear map in vertex representation for an " *
-            "unbounded set is not defined"))
+                            "unbounded set is not defined"))
     end
     require(:Polyhedra; fun_name="linear_map",
             explanation="of a $(typeof(P)) by a non-invertible matrix")
     # since P is bounded, we pass an HPolytope and then convert it to vertex representation
-    P = tovrep(HPolytope(constraints_list(P), check_boundedness=false))
-    return _linear_map_vrep(M, P; apply_convex_hull=apply_convex_hull)
+
+    P_hpoly = HPolytope(constraints_list(P), check_boundedness=false)
+    backend = algo.backend
+    if backend == nothing
+        backend = default_polyhedra_backend(P)
+    end
+    P = tovrep(P_hpoly, backend=backend)
+    return _linear_map_vrep(M, P, algo; apply_convex_hull=apply_convex_hull)
 end
 
 # generic function for the AbstractPolyhedron interface => returns an HPolyhedron

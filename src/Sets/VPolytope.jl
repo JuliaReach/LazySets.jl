@@ -305,11 +305,14 @@ The linear map ``M`` is applied to each vertex of the given set ``P``, obtaining
 a polytope in V-representation. The output type is again a `VPolytope`.
 """
 function linear_map(M::AbstractMatrix, P::VPolytope; apply_convex_hull::Bool=false)
-    @assert dim(P) == size(M, 2) "a linear map of size $(size(M)) cannot be applied to a set of dimension $(dim(P))"
+    @assert dim(P) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
+        "applied to a set of dimension $(dim(P))"
+
     return _linear_map_vrep(M, P; apply_convex_hull=apply_convex_hull)
 end
 
-@inline function _linear_map_vrep(M::AbstractMatrix, P::VPolytope;
+@inline function _linear_map_vrep(M::AbstractMatrix, P::VPolytope,
+                                  algo::LinearMapVRep=LinearMapVRep(nothing);
                                   apply_convex_hull::Bool=false)
     vlist = broadcast(v -> M * v, vertices_list(P))
     if apply_convex_hull

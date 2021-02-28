@@ -111,7 +111,8 @@ end
 
 # given a polytope P, apply the linear map P to each vertex of P
 # it is assumed that the interface function `vertices_list(P)` is available
-@inline function _linear_map_vrep(M::AbstractMatrix, P::AbstractPolytope;
+@inline function _linear_map_vrep(M::AbstractMatrix, P::AbstractPolytope,
+                                  algo::LinearMapVRep=LinearMapVRep(nothing);
                                   apply_convex_hull::Bool=false)
     vlist = broadcast(v -> M * v, vertices_list(P))
 
