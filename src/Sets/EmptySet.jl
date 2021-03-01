@@ -85,6 +85,10 @@ function ρ(d::AbstractVector, ∅::EmptySet)
     error("the support function of an empty set does not exist")
 end
 
+function isboundedtype(::Type{<:EmptySet})
+    return true
+end
+
 """
     isbounded(∅::EmptySet)
 

@@ -12,6 +12,7 @@ export LazySet,
        diameter,
        an_element,
        isbounded,
+       isboundedtype,
        neutral,
        absorbing,
        tosimplehrep,
@@ -247,6 +248,31 @@ function σ end
 Alias for the support vector σ.
 """
 const support_vector = σ
+
+"""
+    isboundedtype(::Type{<:LazySet})
+
+Determine whether a set type only represents bounded sets.
+
+### Input
+
+- `LazySet` -- set type for dispatch
+
+### Output
+
+`true` if the set type only represents bounded sets.
+Note that some sets may still represent an unbounded set even though their type
+actually does not (example: [`HPolytope`](@ref), because the construction with
+non-bounding linear constraints is allowed).
+
+### Notes
+
+By default this function returns `false`.
+All set types that can determine boundedness should override this behavior.
+"""
+function isboundedtype(::Type{T}) where {T<:LazySet}
+    return false
+end
 
 """
     isbounded(S::LazySet)

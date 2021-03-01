@@ -114,6 +114,14 @@ function isempty(C::Complement)
     return isuniversal(C.X)
 end
 
+function isboundedtype(::Type{<:Complement{<:Real, <:Universe}})
+    return true
+end
+
+function isboundedtype(::Type{<:Complement})
+    return false
+end
+
 # --  Fallback implementation, requires constraints list of C.X --
 
 """
