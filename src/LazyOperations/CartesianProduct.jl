@@ -295,27 +295,28 @@ function concretize(cp::CartesianProduct)
     return cartesian_product(concretize(cp.X), concretize(cp.Y))
 end
 
-function project(cp::CartesianProduct, block::AbstractVector{Int})
+function project(cp::CartesianProduct, block::AbstractVector{Int}; kwargs...)
     n1 = dim(cp.X)
     if block[end] <= n1
         # projection completely in the first block
-        return project(cp.X, block)
+        return project(cp.X, block; kwargs...)
     elseif block[1] > n1
         # projection completely in the second block
-        return project(cp.Y, block .- n1)
+        return project(cp.Y, block .- n1; kwargs...)
     end
     # projection is a new Cartesian product of the block-wise projections
     for (i, bi) in enumerate(block)
         if bi > n1
-            X = project(cp.X, block[1:i-1])
-            Y = project(cp.Y, block[i:end] .- n1)
+            X = project(cp.X, block[1:i-1]; kwargs...)
+            Y = project(cp.Y, block[i:end] .- n1; kwargs...)
             return CartesianProduct(X, Y)
         end
     end
 end
 
 """
-    project(cp::CartesianProduct{N, IT, HT}, block::AbstractVector{Int}) where {N, IT<:Interval, HT<:AbstractHyperrectangle{N}}
+    project(cp::CartesianProduct{N, IT, HT}, block::AbstractVector{Int};
+            [kwargs...]) where {N, IT<:Interval, HT<:AbstractHyperrectangle{N}}
 
 Concrete projection of a Cartesian product between an interval and a hyperrectangle.
 
@@ -329,7 +330,8 @@ Concrete projection of a Cartesian product between an interval and a hyperrectan
 A hyperrectangle representing the projection of the cartesian product `cp` on the
 dimensions specified by `block`.
 """
-function project(cp::CartesianProduct{N, IT, HT}, block::AbstractVector{Int}) where {N, IT<:Interval, HT<:AbstractHyperrectangle{N}}
+function project(cp::CartesianProduct{N, IT, HT}, block::AbstractVector{Int};
+                 kwargs...) where {N, IT<:Interval, HT<:AbstractHyperrectangle{N}}
     I = cp.X
     H = cp.Y
     block_vec = collect(block)
@@ -345,7 +347,8 @@ function project(cp::CartesianProduct{N, IT, HT}, block::AbstractVector{Int}) wh
 end
 
 """
-    project(cp::CartesianProduct{N, IT, ZT}, block::AbstractVector{Int}) where {N, IT<:Interval, ZT<:AbstractZonotope{N}}
+    project(cp::CartesianProduct{N, IT, ZT}, block::AbstractVector{Int};
+            [kwargs...]) where {N, IT<:Interval, ZT<:AbstractZonotope{N}}
 
 Concrete projection of the Cartesian product between an interval and a zonotopic set.
 
@@ -359,7 +362,8 @@ Concrete projection of the Cartesian product between an interval and a zonotopic
 A zonotope representing the projection of the cartesian product `cp` on the
 dimensions specified by `block`.
 """
-function project(cp::CartesianProduct{N, IT, ZT}, block::AbstractVector{Int}) where {N, IT<:Interval, ZT<:AbstractZonotope{N}}
+function project(cp::CartesianProduct{N, IT, ZT}, block::AbstractVector{Int};
+                 kwargs...) where {N, IT<:Interval, ZT<:AbstractZonotope{N}}
     block_vec = collect(block)
     Z = cp.Y
     if 1 ∉ block_vec
@@ -373,7 +377,8 @@ end
 
 """
     project(cp::CartesianProduct{N, IT, Union{VP1, VP2}},
-            block::AbstractVector{Int}) where {N, IT<:Interval, VP1<:VPolygon{N}, VP2<:VPolytope{N}}
+            block::AbstractVector{Int};
+            [kwargs...]) where {N, IT<:Interval, VP1<:VPolygon{N}, VP2<:VPolytope{N}}
 
 Concrete projection of the Cartesian product between an interval and a set in vertex representation.
 
@@ -388,15 +393,16 @@ A `VPolytope` representing the projection of the cartesian product `cp` on the
 dimensions specified by `block`.
 """
 function project(cp::CartesianProduct{N, IT, Union{VP1, VP2}},
-                 block::AbstractVector{Int}) where {N, IT<:Interval, VP1<:VPolygon{N}, VP2<:VPolytope{N}}
+                 block::AbstractVector{Int};
+                 kwargs...) where {N, IT<:Interval, VP1<:VPolygon{N}, VP2<:VPolytope{N}}
     I = cp.X
     P = cp.Y
     block_vec = collect(block)
     if 1 ∉ block_vec
-        Pout = project(P, block_vec .- 1)
+        Pout = project(P, block_vec .- 1; kwargs...)
     else
         out = cartesian_product(I, P)
-        Pout = project(out, block_vec)
+        Pout = project(out, block_vec; kwargs...)
     end
     return Pout
 end

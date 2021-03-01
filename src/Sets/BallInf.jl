@@ -357,6 +357,6 @@ function volume(B::BallInf)
     return vol
 end
 
-function project(B::BallInf, block::AbstractVector{Int})
+function project(B::BallInf, block::AbstractVector{Int}; kwargs...)
     return BallInf(B.center[block], B.radius)
 end

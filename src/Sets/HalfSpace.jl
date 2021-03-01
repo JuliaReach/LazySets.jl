@@ -683,7 +683,7 @@ function complement(H::HalfSpace)
 end
 
 """
-    project(H::HalfSpace, block::AbstractVector{Int})
+    project(H::HalfSpace, block::AbstractVector{Int}; [kwargs...])
 
 Concrete projection of a half-space.
 
@@ -756,7 +756,7 @@ julia> project(H, [1])
 Universe{Float64}(1)
 ```
 """
-function project(H::HalfSpace{N}, block::AbstractVector{Int}) where {N}
+function project(H::HalfSpace{N}, block::AbstractVector{Int}; kwargs...) where {N}
     if constrained_dimensions(H) ⊆ block
         return HalfSpace(H.a[block], H.b)
     else

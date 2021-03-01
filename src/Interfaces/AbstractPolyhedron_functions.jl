@@ -986,7 +986,8 @@ function vertices_list(P::AbstractPolyhedron; check_boundedness::Bool=true)
 end
 
 """
-    project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}) where {N}
+    project(P::AbstractPolyhedron{N}, block::AbstractVector{Int};
+            [kwargs...]) where {N}
 
 Concrete projection of a polyhedral set.
 
@@ -1066,7 +1067,8 @@ julia> project(P, [1, 2]) |> constraints_list
  HalfSpace{Float64,Array{Float64,1}}([0.0, 1.0], 1.0)
 ```
 """
-function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}) where {N}
+function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int};
+                 kwargs...) where {N}
     general_case = false
 
     # cheap case
@@ -1091,7 +1093,7 @@ function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}) where {N}
 
     # general case
     if general_case
-        clist = _project_polyhedron(P, block)
+        clist = _project_polyhedron(P, block; kwargs...)
     end
 
     if isbounded(P)
@@ -1126,8 +1128,8 @@ function _check_constrained_dimensions(c::HalfSpace, block)
     return status
 end
 
-function _project_polyhedron(P::LazySet{N}, block) where {N}
+function _project_polyhedron(P::LazySet{N}, block; kwargs...) where {N}
     M = projection_matrix(block, dim(P), N)
-    πP = linear_map(M, P)
+    πP = linear_map(M, P; kwargs...)
     return constraints_list(πP)
 end

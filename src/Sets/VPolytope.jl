@@ -553,7 +553,7 @@ end
 end # quote
 end # function load_polyhedra_vpolytope()
 
-function project(V::VPolytope, block::AbstractVector{Int})
+function project(V::VPolytope, block::AbstractVector{Int}; kwargs...)
     return _project_vrep(vertices_list(V), dim(V), block)
 end
 

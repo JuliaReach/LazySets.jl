@@ -135,7 +135,7 @@ function rectify(S::Singleton)
 end
 
 """
-    project(S::Singleton, block::AbstractVector{Int})
+    project(S::Singleton, block::AbstractVector{Int}; kwargs...)
 
 Concrete projection of a singleton.
 
@@ -149,6 +149,6 @@ Concrete projection of a singleton.
 A set representing the projection of the singleton `S` on the dimensions
 specified by `block`.
 """
-function project(S::Singleton, block::AbstractVector{Int})
+function project(S::Singleton, block::AbstractVector{Int}; kwargs...)
     return Singleton(element(S)[block])
 end

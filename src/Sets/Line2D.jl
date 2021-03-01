@@ -369,7 +369,7 @@ function translate(L::Line2D, v::AbstractVector; share::Bool=false)
     return Line2D(a, b)
 end
 
-function project(L::Line2D{N}, block::AbstractVector{Int}) where {N}
+function project(L::Line2D{N}, block::AbstractVector{Int}; kwargs...) where {N}
     m = length(block)
     if m == 2
         @assert ispermutation(block, 1:2) "invalid dimensions $block for projection"

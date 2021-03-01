@@ -579,7 +579,7 @@ function linear_map(M::AbstractMatrix, cpa::CartesianProductArray)
    return linear_map_cartesian_product(M, cpa)
 end
 
-function project(cpa::CartesianProductArray, block::AbstractVector{Int})
+function project(cpa::CartesianProductArray, block::AbstractVector{Int}; kwargs...)
     target_sets = LazySet[]
     m = length(block)
 
@@ -602,7 +602,8 @@ function project(cpa::CartesianProductArray, block::AbstractVector{Int})
             end
 
             # project this block
-            push!(target_sets, project(Xj, block[i_start:i_end] .- n_sum_old))
+            projected = project(Xj, block[i_start:i_end] .- n_sum_old; kwargs...)
+            push!(target_sets, projected)
 
             if i_end == m
                 # last index visited

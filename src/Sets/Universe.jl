@@ -348,6 +348,6 @@ function linear_map_inverse(Minv::AbstractMatrix{N}, U::Universe{N}) where {N}
     return Universe{N}(n)
 end
 
-function project(U::Universe{N}, block::AbstractVector{Int}) where {N}
+function project(U::Universe{N}, block::AbstractVector{Int}; kwargs...) where {N}
     return Universe{N}(length(block))
 end
