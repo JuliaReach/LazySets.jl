@@ -12,6 +12,7 @@ activate_assertions(Arrays)
 using ..LazySets: _geq, isapproxzero, _isapprox
 
 include("SingleEntryVector.jl")
+include("array_operations.jl")
 include("matrix_operations.jl")
 include("vector_operations.jl")
 include("matrix_vector_operations.jl")
