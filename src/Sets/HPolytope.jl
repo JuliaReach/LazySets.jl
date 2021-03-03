@@ -14,7 +14,7 @@ P = \bigcap_{i = 1}^m H_i,
 ```
 where each ``H_i = \\{x \\in \\mathbb{R}^n : a_i^T x \\leq b_i \\}`` is a half-space,
 ``a_i \\in \\mathbb{R}^n`` is the normal vector of the ``i``-th half-space and ``b_i`` is the displacement.
-It is assumed that ``P`` is bounded (see also [`HPolyhedron`](@ref)).
+It is assumed that ``P`` is bounded (see also [`HPolyhedron`](@ref) which does not make such assumption).
 
 ### Fields
 
