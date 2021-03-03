@@ -58,6 +58,7 @@ basetype
 norm(::LazySet, ::Real=Inf)
 radius(::LazySet, ::Real=Inf)
 diameter(::LazySet, ::Real=Inf)
+isboundedtype(::Type{<:LazySet})
 isbounded(::LazySet)
 _isbounded_unit_dimensions(::LazySet{N}) where {N}
 an_element(::LazySet{N}) where {N}

@@ -45,6 +45,10 @@ The ambient dimension of the set.
     return length(center(S))
 end
 
+function isboundedtype(::Type{<:AbstractCentrallySymmetric})
+    return true
+end
+
 """
     isbounded(S::AbstractCentrallySymmetric)
 

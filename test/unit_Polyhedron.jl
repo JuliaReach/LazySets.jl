@@ -161,7 +161,7 @@ for N in [Float64, Float32]
     p_univ = HPolyhedron{N}()
 
     # boundedness
-    @test !isbounded(p_univ)
+    @test !isbounded(p_univ) && !isboundedtype(typeof(p_univ))
     @test isbounded(p)
     @test !isbounded(HPolyhedron([HalfSpace(N[1, 0], N(1))]))
 
