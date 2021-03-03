@@ -625,7 +625,7 @@ function volume(H::AbstractHyperrectangle)
     return vol
 end
 
-function project(H::AbstractHyperrectangle, block::AbstractVector{Int})
+function project(H::AbstractHyperrectangle, block::AbstractVector{Int}; kwargs...)
     πc = center(H)[block]
     πr = radius_hyperrectangle(H)[block]
     return Hyperrectangle(πc, πr, check_bounds=false)

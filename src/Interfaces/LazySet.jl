@@ -1183,7 +1183,8 @@ end
     project(S::LazySet{N},
             block::AbstractVector{Int},
             [::Nothing=nothing],
-            [n]::Int=dim(S)
+            [n]::Int=dim(S);
+            [kwargs...]
            ) where {N}
 
 Project a high-dimensional set to a given block by using a concrete linear map.
@@ -1206,14 +1207,16 @@ We apply the function `linear_map`.
 @inline function project(S::LazySet{N},
                          block::AbstractVector{Int},
                          ::Nothing=nothing,
-                         n::Int=dim(S)
+                         n::Int=dim(S);
+                         kwargs...
                         ) where {N}
-    return _project_linear_map(S, block, n)
+    return _project_linear_map(S, block, n; kwargs...)
 end
 
 @inline function _project_linear_map(S::LazySet{N},
                                      block::AbstractVector{Int},
-                                     n::Int=dim(S)
+                                     n::Int=dim(S);
+                                     kwargs...
                                     ) where {N}
     M = projection_matrix(block, n, N)
     return linear_map(M, S)
@@ -1223,7 +1226,8 @@ end
     project(S::LazySet,
             block::AbstractVector{Int},
             set_type::Type{TS},
-            [n]::Int=dim(S)
+            [n]::Int=dim(S);
+            [kwargs...]
            ) where {TS<:LazySet}
 
 Project a high-dimensional set to a given block and set type, possibly involving
@@ -1251,7 +1255,8 @@ coordinates and zero otherwise.
 @inline function project(S::LazySet,
                          block::AbstractVector{Int},
                          set_type::Type{TS},
-                         n::Int=dim(S)
+                         n::Int=dim(S);
+                         kwargs...
                         ) where {TS<:LazySet}
     lm = project(S, block, LinearMap, n)
     return overapproximate(lm, set_type)
@@ -1261,7 +1266,8 @@ end
     project(S::LazySet,
             block::AbstractVector{Int},
             set_type_and_precision::Pair{T, N},
-            [n]::Int=dim(S)
+            [n]::Int=dim(S);
+            [kwargs...]
            ) where {T<:UnionAll, N<:Real}
 
 Project a high-dimensional set to a given block and set type with a certified
@@ -1293,7 +1299,8 @@ coordinates and zero otherwise.
 @inline function project(S::LazySet,
                          block::AbstractVector{Int},
                          set_type_and_precision::Pair{T, N},
-                         n::Int=dim(S)
+                         n::Int=dim(S);
+                         kwargs...
                         ) where {T<:UnionAll, N<:Real}
     set_type = set_type_and_precision[1]
     ε = set_type_and_precision[2]
@@ -1308,7 +1315,8 @@ end
     project(S::LazySet,
             block::AbstractVector{Int},
             ε::Real,
-            [n]::Int=dim(S)
+            [n]::Int=dim(S);
+            [kwargs...]
            )
 
 Project a high-dimensional set to a given block and set type with a certified
@@ -1335,7 +1343,8 @@ The target set type is chosen automatically.
 @inline function project(S::LazySet,
                          block::AbstractVector{Int},
                          ε::Real,
-                         n::Int=dim(S)
+                         n::Int=dim(S);
+                         kwargs...
                         )
     # currently we only support HPolygon
     if length(block) == 2

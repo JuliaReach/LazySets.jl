@@ -687,7 +687,7 @@ function split(Z::AbstractZonotope, gens::AbstractVector{Int}, nparts::AbstractV
     return _split(convert(Zonotope, Z), gens, nparts)
 end
 
-function project(Z::AbstractZonotope{N}, block::AbstractVector{Int}) where {N}
+function project(Z::AbstractZonotope{N}, block::AbstractVector{Int}; kwargs...) where {N}
     n = dim(Z)
     M = projection_matrix(block, n, N)
     return remove_zero_generators(linear_map(M, Z))

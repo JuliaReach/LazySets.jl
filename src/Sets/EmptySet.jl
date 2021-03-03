@@ -381,6 +381,6 @@ function area(∅::EmptySet{N}) where {N}
     return zero(N)
 end
 
-function project(∅::EmptySet{N}, block::AbstractVector{Int}) where {N}
+function project(∅::EmptySet{N}, block::AbstractVector{Int}; kwargs...) where {N}
     return EmptySet{N}(length(block))
 end

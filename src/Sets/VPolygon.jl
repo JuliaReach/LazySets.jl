@@ -680,7 +680,7 @@ function _intersection_vrep_2d(spoly::AbstractVector{VT},
     return outarr
 end
 
-function project(V::VPolygon, block::AbstractVector{Int})
+function project(V::VPolygon, block::AbstractVector{Int}; kwargs...)
     if length(block) == 2 && 1 ∈ block && 2 ∈ block
         return V
     elseif length(block) == 1 && (1 ∈ block || 2 ∈ block)

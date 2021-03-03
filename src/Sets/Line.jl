@@ -531,7 +531,7 @@ function linear_map(M::AbstractMatrix, L::Line)
     return Line(Mp, Md)
 end
 
-function project(L::Line{N}, block::AbstractVector{Int}) where {N}
+function project(L::Line{N}, block::AbstractVector{Int}; kwargs...) where {N}
     d = L.d[block]
     if iszero(d)
         return Singleton(L.p[block])  # projected out all nontrivial dimensions

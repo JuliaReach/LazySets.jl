@@ -102,7 +102,8 @@ isnormalized(::AD) where {AD<:AbstractDirections} = isnormalized(AD)
     project(S::LazySet,
             block::AbstractVector{Int},
             directions::Type{<:AbstractDirections},
-            [n]::Int
+            [n]::Int;
+            [kwargs...]
            )
 
 Project a high-dimensional set to a given block using template directions.
@@ -121,9 +122,10 @@ The template direction approximation of the projection of `S`.
 @inline function project(S::LazySet,
                          block::AbstractVector{Int},
                          directions::Type{<:AbstractDirections},
-                         n::Int=dim(S)
+                         n::Int=dim(S);
+                         kwargs...
                         )
-    lm = project(S, block, LinearMap, n)
+    lm = project(S, block, LinearMap, n; kwargs...)
     return overapproximate(lm, directions(length(block)))
 end
 
