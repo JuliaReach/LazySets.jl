@@ -70,7 +70,7 @@ end
     decompose(S::LazySet{N},
               partition::AbstractVector{<:AbstractVector{Int}},
               block_options
-             ) where {N<:Real}
+             ) where {N}
 
 Decompose a high-dimensional set into a Cartesian product of overapproximations
 of the projections over the specified subspaces.
@@ -118,9 +118,7 @@ degree of accuracy, and template directions.
 These options are exemplified below, where we use the following example.
 
 ```jldoctest decompose_examples
-julia> using LazySets.Approximations: decompose
-
-julia> S = Ball2(zeros(4), 1.);  # set to be decomposed (4D 2-norm unit ball)
+julia> S = Ball2(zeros(4), 1.0);  # set to be decomposed (4D 2-norm unit ball)
 
 julia> P2d = [1:2, 3:4];  # a partition with two blocks of size two
 
@@ -132,14 +130,14 @@ julia> P1d = [[1], [2], [3], [4]];  # a partition with four blocks of size one
 We can decompose using polygons in constraint representation:
 
 ```jldoctest decompose_examples
-julia> all([ai isa HPolygon for ai in array(decompose(S, P2d, HPolygon))])
+julia> all(ai isa HPolygon for ai in array(decompose(S, P2d, HPolygon)))
 true
 ```
 
 For decomposition into 1D subspaces, we can use `Interval`:
 
 ```jldoctest decompose_examples
-julia> all([ai isa Interval for ai in array(decompose(S, P1d, Interval))])
+julia> all(ai isa Interval for ai in array(decompose(S, P1d, Interval)))
 true
 ```
 
@@ -183,8 +181,6 @@ function of the given input set over the template directions.
 For example, octagonal 2D approximations of the set `S` are obtained with:
 
 ```jldoctest decompose_examples
-julia> using LazySets.Approximations: OctDirections
-
 julia> B = decompose(S, P2d, OctDirections);
 
 julia> length(B.array) == 2 && all(dim(bi) == 2 for bi in B.array)
@@ -221,7 +217,7 @@ julia> typeof(res[1]), typeof(res[2])
 function decompose(S::LazySet{N},
                    partition::AbstractVector{<:AbstractVector{Int}},
                    block_options
-                  ) where {N<:Real}
+                  ) where {N}
     n = dim(S)
     result = Vector{LazySet{N}}(undef, length(partition))
 
@@ -240,7 +236,7 @@ function decompose(S::LazySet{N},
                                         Type{<:AbstractDirections},
                                         Nothing
                                        }
-                  ) where {N<:Real}
+                  ) where {N}
     n = dim(S)
     result = Vector{LazySet{N}}(undef, length(partition))
 
@@ -254,428 +250,4 @@ end
 function decompose(S::LazySet, block_options; block_size::Int=1)
     partition = uniform_partition(dim(S), block_size)
     return decompose(S, partition, block_options)
-end
-
-"""
-    project(S::LazySet{N},
-            block::AbstractVector{Int},
-            [::Nothing=nothing],
-            [n]::Int=dim(S)
-           ) where {N<:Real}
-
-Project a high-dimensional set to a given block by using a concrete linear map.
-
-### Input
-
-- `S`       -- set
-- `block`   -- block structure - a vector with the dimensions of interest
-- `nothing` -- (default: `nothing`) used for dispatch
-- `n`       -- (optional, default: `dim(S)`) ambient dimension of the set `S`
-
-### Output
-
-A set representing the projection of the set `S` to block `block`.
-
-### Algorithm
-
-We apply the function `linear_map`.
-"""
-@inline function project(S::LazySet{N},
-                         block::AbstractVector{Int},
-                         ::Nothing=nothing,
-                         n::Int=dim(S)
-                        ) where {N<:Real}
-    M = projection_matrix(block, n, N)
-    return linear_map(M, S)
-end
-
-"""
-    project(S::LazySet{N},
-            block::AbstractVector{Int},
-            set_type::Type{<:LinearMap},
-            [n]::Int=dim(S)
-           ) where {N<:Real}
-
-Project a high-dimensional set to a given block by using a lazy linear map.
-
-### Input
-
-- `S`         -- set
-- `block`     -- block structure - a vector with the dimensions of interest
-- `LinearMap` -- used for dispatch
-- `n`         -- (optional, default: `dim(S)`) ambient dimension of the set `S`
-
-### Output
-
-A lazy `LinearMap` representing the projection of the set `S` to block `block`.
-"""
-@inline function project(S::LazySet{N},
-                         block::AbstractVector{Int},
-                         set_type::Type{<:LinearMap},
-                         n::Int=dim(S)
-                        ) where {N<:Real}
-    M = projection_matrix(block, n, N)
-    return M * S
-end
-
-"""
-    project(S::LazySet{N},
-            block::AbstractVector{Int},
-            set_type::Type{<:LazySet},
-            [n]::Int=dim(S)
-           ) where {N<:Real}
-
-Project a high-dimensional set to a given block and set type, possibly involving
-an overapproximation.
-
-### Input
-
-- `S`        -- set
-- `block`    -- block structure - a vector with the dimensions of interest
-- `set_type` -- target set type
-- `n`        -- (optional, default: `dim(S)`) ambient dimension of the set `S`
-
-### Output
-
-A set of type `set_type` representing an overapproximation of the projection of
-`S`.
-
-### Algorithm
-
-1. Project the set `S` with `M⋅S`, where `M` is the identity matrix in the block
-coordinates and zero otherwise.
-2. Overapproximate the projected lazy set using `overapproximate` and
-`set_type`.
-"""
-@inline function project(S::LazySet{N},
-                         block::AbstractVector{Int},
-                         set_type::Type{<:LazySet},
-                         n::Int=dim(S)
-                        ) where {N<:Real}
-    lm = project(S, block, LinearMap, n)
-    return overapproximate(lm, set_type)
-end
-
-"""
-    project(S::LazySet{N},
-            block::AbstractVector{Int},
-            set_type_and_precision::Pair{<:UnionAll, <:Real},
-            [n]::Int=dim(S)
-           ) where {N<:Real}
-
-Project a high-dimensional set to a given block and set type with a certified
-error bound.
-
-### Input
-
-- `S`     -- set
-- `block` -- block structure - a vector with the dimensions of interest
-- `set_type_and_precision` -- pair `(T, ε)` of a target set type `T` and an
-                              error bound `ε` for approximation
-- `n`     -- (optional, default: `dim(S)`) ambient dimension of the set `S`
-
-### Output
-
-A set representing the epsilon-close approximation of the projection of `S`.
-
-### Notes
-
-Currently we only support `HPolygon` as set type, which implies that the set
-must be two-dimensional.
-
-### Algorithm
-
-1. Project the set `S` with `M⋅S`, where `M` is the identity matrix in the block
-coordinates and zero otherwise.
-2. Overapproximate the projected lazy set with the given error bound `ε`.
-"""
-@inline function project(S::LazySet{N},
-                         block::AbstractVector{Int},
-                         set_type_and_precision::Pair{<:UnionAll, <:Real},
-                         n::Int=dim(S)
-                        ) where {N<:Real}
-    set_type = set_type_and_precision[1]
-    ε = set_type_and_precision[2]
-    @assert length(block) == 2 && set_type == HPolygon "currently only 2D " *
-        "HPolygon decomposition is supported"
-
-    lm = project(S, block, LinearMap, n)
-    return overapproximate(lm, set_type, ε)
-end
-
-"""
-    project(S::LazySet{N},
-            block::AbstractVector{Int},
-            ε::Real,
-            [n]::Int=dim(S)
-           ) where {N<:Real}
-
-Project a high-dimensional set to a given block and set type with a certified
-error bound.
-
-### Input
-
-- `S`     -- set
-- `block` -- block structure - a vector with the dimensions of interest
-- `ε`     -- error bound for approximation
-- `n`     -- (optional, default: `dim(S)`) ambient dimension of the set `S`
-
-### Output
-
-A set representing the epsilon-close approximation of the projection of `S`.
-
-### Algorithm
-
-1. Project the set `S` with `M⋅S`, where `M` is the identity matrix in the block
-coordinates and zero otherwise.
-2. Overapproximate the projected lazy set with the given error bound `ε`.
-The target set type is chosen automatically.
-"""
-@inline function project(S::LazySet{N},
-                         block::AbstractVector{Int},
-                         ε::Real,
-                         n::Int=dim(S)
-                        ) where {N<:Real}
-    # currently we only support HPolygon
-    if length(block) == 2
-        set_type = HPolygon
-    else
-        throw(ArgumentError("ε-close approximation is only supported for 2D " *
-                            "blocks"))
-    end
-    return project(S, block, set_type => ε, n)
-end
-
-"""
-    project(S::LazySet{N},
-            block::AbstractVector{Int},
-            directions::Type{<:AbstractDirections},
-            [n]::Int
-           ) where {N<:Real}
-
-Project a high-dimensional set to a given block using template directions.
-
-### Input
-
-- `S`          -- set
-- `block`      -- block structure - a vector with the dimensions of interest
-- `directions` -- template directions
-- `n`          -- (optional, default: `dim(S)`) ambient dimension of the set `S`
-
-### Output
-
-The template direction approximation of the projection of `S`.
-"""
-@inline function project(S::LazySet{N},
-                         block::AbstractVector{Int},
-                         directions::Type{<:AbstractDirections},
-                         n::Int=dim(S)
-                        ) where {N<:Real}
-    lm = project(S, block, LinearMap, n)
-    return overapproximate(lm, directions(length(block)))
-end
-
-"""
-    project(H::HalfSpace{N}, block::AbstractVector{Int})
-
-Concrete projection of a half-space.
-
-### Input
-
-- `H`        -- set
-- `block`    -- block structure, a vector with the dimensions of interest
-
-### Output
-
-A set representing the projection of the half-space `H` on the dimensions
-specified by `block`.
-
-### Algorithm
-
-If the unconstrained dimensions of `H` are a subset of the `block` variables,
-the projection is applied to the normal direction of `H`.
-Otherwise, the projection results in the universal set.
-
-The latter can be seen as follows.
-Without loss of generality consider a projection onto a single and constrained
-dimension ``xₖ`` (projections in multiple dimensions can be modeled as repeated
-one-dimensional projections).
-We can write the projection as an existentially quantified linear constraint:
-
-```math
-    ∃xₖ: a₁x₁ + … + aₖxₖ + … + aₙxₙ ≤ b
-```
-
-Since ``aₖ ≠ 0``, there is always a value for ``xₖ`` that satisfies the
-constraint for any valuation of the other variables.
-
-### Examples
-
-Consider the half-space ``x + y + 0⋅z ≤ 1``, whose ambient dimension is `3`.
-The (trivial) projection in the three dimensions is achieved letting the block
-of variables to be `[1, 2, 3]`:
-
-```jldoctest project_halfspace
-julia> H = HalfSpace([1.0, 1.0, 0.0], 1.0)
-HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0, 0.0], 1.0)
-
-julia> project(H, [1, 2, 3])
-HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0, 0.0], 1.0)
-```
-
-Projecting along dimensions `1` and `2` only:
-
-```jldoctest project_halfspace
-julia> project(H, [1, 2])
-HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
-```
-
-In general, use the call syntax `project(H, constrained_dimensions(H))` to return
-the half-space projected on the dimensions where it is constrained only:
-
-```jldoctest project_halfspace
-julia> project(H, constrained_dimensions(H))
-HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
-```
-
-If a constrained dimension is projected, we get the universal set of the
-dimension corresponding to the projection.
-
-```jldoctest project_halfspace
-julia> project(H, [1, 3])
-Universe{Float64}(2)
-
-julia> project(H, [1])
-Universe{Float64}(1)
-```
-"""
-function project(H::HalfSpace{N}, block::AbstractVector{Int}) where {N}
-    if constrained_dimensions(H) ⊆ block
-        return HalfSpace(H.a[block], H.b)
-    else
-        return Universe(length(block))
-    end
-end
-
-"""
-    project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}) where {N}
-
-Concrete projection of a polyhedral set.
-
-### Input
-
-- `P`        -- set
-- `block`    -- block structure, a vector with the dimensions of interest
-
-### Output
-
-A polyhedron representing the projection of `P` on the dimensions specified by
-`block`.
-If `P` was bounded, the result is an `HPolytope`; otherwise the result is an
-`HPolyhedron`.
-
-### Algorithm
-
-- If the unconstrained dimensions of `P` are a subset of the `block` variables,
-  each half-sace `c` of `P` is transformed to `HalfSpace(c.a[block], c.b)`.
-- In the general case, we compute the concrete linear map of the projection
-  matrix associated to the given block structure.
-
-### Examples
-
-Consider the four-dimensional cross-polytope (unit ball in the 1-norm):
-
-```jldoctest project_polyhedron
-julia> P = Ball1(zeros(4), 1.0);
-```
-
-All dimensions are constrained, and computing the (trivial) projection on the whole
-space behaves as expected:
-
-```jldoctest project_polyhedron
-julia> constrained_dimensions(P)
-4-element Array{Int64,1}:
- 1
- 2
- 3
- 4
-
-julia> P_1234 = project(P, [1, 2, 3, 4]);
-
-julia> P_1234 == convert(HPolytope, P)
-true
-```
-Each constraint of the cross polytope is constrained in all dimensions.
-
-Now let's take a ball in the infinity norm and remove some constraints:
-
-```jldoctest project_polyhedron
-julia> B = BallInf(zeros(4), 1.0);
-
-julia> c = constraints_list(B)[1:2]
-2-element Array{HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}},1}:
- HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}}([1.0, 0.0, 0.0, 0.0], 1.0)
- HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}}([0.0, 1.0, 0.0, 0.0], 1.0)
-
-julia> P = HPolyhedron(c);
-
-julia> constrained_dimensions(P)
-2-element Array{Int64,1}:
- 1
- 2
-```
-
-Finally we take the concrete projection onto variables `1` and `2`:
-
-```jldoctest project_polyhedron
-julia> project(P, [1, 2]) |> constraints_list
-2-element Array{HalfSpace{Float64,Array{Float64,1}},1}:
- HalfSpace{Float64,Array{Float64,1}}([1.0, 0.0], 1.0)
- HalfSpace{Float64,Array{Float64,1}}([0.0, 1.0], 1.0)
-```
-"""
-function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int}) where {N}
-    if constrained_dimensions(P) ⊆ block
-        clist = [HalfSpace(c.a[block], c.b) for c in constraints_list(P)]
-    else
-        n = dim(P)
-        M = projection_matrix(block, n, N)
-        lm = linear_map(M, P)
-        clist = constraints_list(lm)
-    end
-    T = isbounded(P) ? HPolytope : HPolyhedron
-    return T(clist)
-end
-
-function project(Z::Zonotope{N}, block::AbstractVector{Int}) where {N}
-    n = dim(Z)
-    M = projection_matrix(block, n, N)
-    lm = remove_zero_generators(linear_map(M, Z))
-    return lm
-end
-
-function project(H::AbstractHyperrectangle, block::AbstractVector{Int})
-    πc = center(H)[block]
-    πr = radius_hyperrectangle(H)[block]
-    return Hyperrectangle(πc, πr, check_bounds=false)
-end
-
-function project(V::Union{<:VPolygon{N}, <:VPolytope{N}},
-                 block::AbstractVector{Int}) where {N}
-    n = dim(V)
-    M = projection_matrix(block, n, N)
-    πvertices = broadcast(v -> M * v, vertices_list(V))
-
-    m = size(M, 1)
-    if m == 1
-        # convex_hull in 1d returns the minimum and maximum points, in that order
-        aux = convex_hull(πvertices)
-        a = first(aux[1])
-        b = length(aux) == 1 ? a : first(aux[2])
-        return Interval(a, b)
-    elseif m == 2
-        return VPolygon(πvertices; apply_convex_hull=true)
-    else
-        return VPolytope(πvertices)
-    end
 end

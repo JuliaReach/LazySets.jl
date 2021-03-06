@@ -2,6 +2,7 @@ import Base: rand
 
 export Zonotope,
        scale,
+       scale!,
        reduce_order,
        remove_zero_generators,
        quadratic_map
@@ -9,7 +10,7 @@ export Zonotope,
 using LazySets.Arrays: _vector_type, _matrix_type
 
 """
-    Zonotope{N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
+    Zonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
 
 Type that represents a zonotope.
 
@@ -67,10 +68,10 @@ We can collect its vertices using `vertices_list`:
 ```jldoctest zonotope_label
 julia> vertices_list(Z)
 4-element Array{Array{Float64,1},1}:
- [0.9, -0.1]
- [0.9, 0.1]
- [1.1, -0.1]
  [1.1, 0.1]
+ [0.9, 0.1]
+ [0.9, -0.1]
+ [1.1, -0.1]
 ```
 
 The support vector along a given direction can be computed using `σ`
@@ -96,11 +97,11 @@ julia> genmat(Z)
  0.0  1.0  1.0
 ```
 """
-struct Zonotope{N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
+struct Zonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
     center::VN
     generators::MN
 
-    function Zonotope(center::VN, generators::MN) where {N<:Real,
+    function Zonotope(center::VN, generators::MN) where {N,
                                                          VN<:AbstractVector{N},
                                                          MN<:AbstractMatrix{N}}
         @assert length(center) == size(generators, 1) "the dimension of the " *
@@ -114,19 +115,13 @@ isoperationtype(::Type{<:Zonotope}) = false
 isconvextype(::Type{<:Zonotope}) = true
 
 # constructor from center and list of generators
-function Zonotope(center::VN, generators_list::AbstractVector{VN}) where {N<:Real, VN<:AbstractVector{N}}
-    MT = _matrix_type(VN)
-    G = MT(undef, length(center), length(generators_list))
-    for (j, gj) in enumerate(generators_list)
-        @inbounds G[:, j] = gj
-    end
+function Zonotope(center::VN, generators_list::AbstractVector{VN}) where {VN<:AbstractVector}
+    G = to_matrix(generators_list, length(center))
     return Zonotope(center, G)
 end
 
 """
-    remove_zero_generators(Z::Zonotope{N, VN, MN}) where {N<:Real,
-                                                          VN<:AbstractVector{N},
-                                                          MN<:AbstractMatrix{N}}
+    remove_zero_generators(Z::Zonotope)
 
 Return a new zonotope removing the generators which are zero of the given zonotope.
 
@@ -140,9 +135,7 @@ If there are no zero generators, the result is the original zonotope `Z`.
 Otherwise the result is a new zonotope that has the center and generators as `Z`
 except for those generators that are zero.
 """
-function remove_zero_generators(Z::Zonotope{N, VN, MN}) where {N<:Real,
-                                                               VN<:AbstractVector{N},
-                                                               MN<:AbstractMatrix{N}}
+function remove_zero_generators(Z::Zonotope)
     G = Z.generators
     G2 = remove_zero_columns(G)
     if G === G2
@@ -155,7 +148,7 @@ end
 
 
 """
-    center(Z::Zonotope{N}) where {N<:Real}
+    center(Z::Zonotope)
 
 Return the center of a zonotope.
 
@@ -167,7 +160,7 @@ Return the center of a zonotope.
 
 The center of the zonotope.
 """
-function center(Z::Zonotope{N}) where {N<:Real}
+function center(Z::Zonotope)
     return Z.center
 end
 
@@ -314,6 +307,28 @@ function scale(α::Real, Z::Zonotope)
 end
 
 """
+    scale!(α::Real, Z::Zonotope)
+
+Concrete scaling of a zonotope modifing `Z` in-place
+
+### Input
+
+- `α` -- scalar
+- `Z` -- zonotope
+
+### Output
+
+The zonotope `Z` after applying the numerical scale `α` to its center and generators.
+"""
+function scale!(α::Real, Z::Zonotope)
+    c = Z.center
+    G = Z.generators
+    c .= α .* c
+    G .= α .* G
+    return Z
+end
+
+"""
     reduce_order(Z::Zonotope, r::Union{Integer, Rational})
 
 Reduce the order of a zonotope by overapproximating with a zonotope with less
@@ -330,9 +345,10 @@ A new zonotope with less generators, if possible.
 
 ### Algorithm
 
-See `overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, Rational}) where {N<:Real}` for details.
+See `overapproximate(Z::Zonotope, ::Type{<:Zonotope}, r::Union{Integer, Rational})`
+for details.
 """
-function reduce_order(Z::Zonotope{N}, r::Union{Integer, Rational}) where {N<:Real}
+function reduce_order(Z::Zonotope, r::Union{Integer, Rational})
     return overapproximate(Z, Zonotope, r)
 end
 
@@ -376,7 +392,7 @@ end
 
 _split_ret(Z₁::Zonotope, Z₂::Zonotope) = (Z₁, Z₂)
 
-function load_static_arrays()
+function load_split_static()
 return quote
 
 function _split_ret(Z₁::Zonotope{N, SV, SM}, Z₂::Zonotope{N, SV, SM}) where {N, n, p, SV<:MVector{n, N}, SM<:MMatrix{n, p, N}}
@@ -385,7 +401,7 @@ function _split_ret(Z₁::Zonotope{N, SV, SM}, Z₂::Zonotope{N, SV, SM}) where 
     return Z₁, Z₂
 end
 
-end end  # quote / load_static_arrays
+end end  # quote / load_split_static
 
 function _split(Z::Zonotope, gens::AbstractVector, n::AbstractVector)
     p = length(gens)
@@ -556,7 +572,7 @@ end
 
 function _vertices_list_2D(c::AbstractVector{N}, G::AbstractMatrix{N}; apply_convex_hull::Bool) where {N}
     if same_sign(G)
-        return _vertices_list_2D_positive(c, G)
+        return _vertices_list_2D_positive(c, G, apply_convex_hull=apply_convex_hull)
     else
         # FIXME generalized 2D vertices list function is not implemented yet
         # See LazySets#2209
@@ -564,7 +580,7 @@ function _vertices_list_2D(c::AbstractVector{N}, G::AbstractMatrix{N}; apply_con
     end
 end
 
-function _vertices_list_2D_positive(c::AbstractVector{N}, G::AbstractMatrix{N}) where {N}
+function _vertices_list_2D_positive(c::AbstractVector{N}, G::AbstractMatrix{N}; apply_convex_hull::Bool) where {N}
     n, p = size(G)
 
     # TODO special case p = 1 or p = 2 ?
@@ -576,17 +592,47 @@ function _vertices_list_2D_positive(c::AbstractVector{N}, G::AbstractMatrix{N}) 
     end
     index[:, 1] .= -one(N)
     V = sorted_G * index .+ c
-    return [V[:, i] for i in 1:2*p]
+    vlist = [V[:, i] for i in 1:2*p]
+
+    if apply_convex_hull
+        convex_hull!(vlist)
+    end
+    return vlist
 end
 
-function _vertices_list_iterative(c::AbstractVector{N}, G::AbstractMatrix{N}; apply_convex_hull::Bool) where {N}
+function _vertices_list_iterative(c::VN, G::MN; apply_convex_hull::Bool) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}}
     p = size(G, 2)
-    vlist = Vector{Vector{N}}()
+    vlist = Vector{VN}()
     sizehint!(vlist, 2^p)
 
-    for ξi in Iterators.product([[1, -1] for i = 1:p]...)
+    for ξi in Iterators.product([(1, -1) for i = 1:p]...)
         push!(vlist, c .+ G * collect(ξi))
     end
 
     return apply_convex_hull ? convex_hull!(vlist) : vlist
+end
+
+# special case 2D zonotope of order 1/2
+function _vertices_list_2D_order_one_half(c::VN, G::MN; apply_convex_hull::Bool) where {N, VN<:AbstractVector{N}, MN}
+    vlist = Vector{VN}(undef, 2)
+    g = view(G, :, 1)
+    @inbounds begin
+        vlist[1] = c .+ g
+        vlist[2] = c .- g
+    end
+    return apply_convex_hull ? _two_points_2d!(vlist) : vlist
+end
+
+# special case 2D zonotope of order 1
+function _vertices_list_2D_order_one(c::VN, G::MN; apply_convex_hull::Bool) where {N, VN<:AbstractVector{N}, MN}
+    vlist = Vector{VN}(undef, 4)
+    a = [one(N), one(N)]
+    b = [one(N), -one(N)]
+    @inbounds begin
+        vlist[1] = c .+ G * a
+        vlist[2] = c .- G * a
+        vlist[3] = c .+ G * b
+        vlist[4] = c .- G * b
+    end
+    return apply_convex_hull ? _four_points_2d!(vlist) : vlist
 end

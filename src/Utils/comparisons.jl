@@ -250,40 +250,8 @@ function _isapprox(x::N, y::M; kwargs...) where {N<:Real, M<:Real}
     return _isapprox(promote(x, y)...; kwargs...)
 end
 
-# generic "dense"
-function _isapprox(x::AbstractVector{N}, y::AbstractVector{N};
-                   rtol::Real=_rtol(N),
-                   ztol::Real=_ztol(N),
-                   atol::Real=_atol(N)) where {N<:Real}
-    n = length(x)
-    if length(x) != length(y)
-        return false
-    end
-    @inbounds for i in 1:n
-        if !_isapprox(x[i], y[i], rtol=rtol, ztol=ztol, atol=atol)
-            return false
-        end
-    end
-    return true
-end
-
-# sparse
-function _isapprox(x::SparseVector{N}, y::SparseVector{N};
-                   rtol::Real=_rtol(N),
-                   ztol::Real=_ztol(N),
-                   atol::Real=_atol(N)) where {N<:Real}
-    @assert length(x) == length(y)
-    return x.nzind == y.nzind && _isapprox(x.nzval, y.nzval, rtol=rtol, ztol=ztol, atol=atol)
-end
-
-# different numeric types with promotion
-function _isapprox(x::AbstractVector{N}, y::AbstractVector{M};
-                   kwargs...) where {N<:Real, M<:Real}
-    _isapprox(promote(x, y)...; kwargs...)
-end
-
-# matrices
-function _isapprox(A::AbstractMatrix{N}, B::AbstractMatrix{N};
+# numeric arrays
+function _isapprox(A::AbstractArray{N}, B::AbstractArray{N};
                    rtol::Real=_rtol(N),
                    ztol::Real=_ztol(N),
                    atol::Real=_atol(N)) where {N<:Real}
@@ -298,10 +266,28 @@ function _isapprox(A::AbstractMatrix{N}, B::AbstractMatrix{N};
     return true
 end
 
-# matrices with different numeric types with promotion
-function _isapprox(A::AbstractMatrix{N}, B::AbstractMatrix{M};
+# sparse numeric vectors
+function _isapprox(x::SparseVector{N}, y::SparseVector{N};
+                   rtol::Real=_rtol(N),
+                   ztol::Real=_ztol(N),
+                   atol::Real=_atol(N)) where {N<:Real}
+    if length(x) != length(y)
+        return false
+    elseif x.nzind != y.nzind
+        return false
+    end
+    return _isapprox(x.nzval, y.nzval, rtol=rtol, ztol=ztol, atol=atol)
+end
+
+# numeric arrays with different numeric types with promotion
+function _isapprox(A::AbstractArray{N}, B::AbstractArray{M};
                    kwargs...) where {N<:Real, M<:Real}
     _isapprox(promote(A, B)...; kwargs...)
+end
+
+# fallback definition
+function _isapprox(x, y; kwargs...)
+    return x ≈ y
 end
 
 """
@@ -333,6 +319,9 @@ false
 Containment check is performed using `LazySets._in(e, v)`, so in the case of
 floating point numbers, the precision to which the check is made is determined
 by the type of elements in `v`. See `_in` and `_isapprox` for more information.
+
+Note that approximate equality is not an equivalence relation.
+Hence the result may depend on the order of the elements.
 """
 function ispermutation(u::AbstractVector{T}, v::AbstractVector) where {T}
     if length(u) != length(v)
@@ -344,19 +333,35 @@ function ispermutation(u::AbstractVector{T}, v::AbstractVector) where {T}
         if !_in(e, v)
             return false
         end
-        if haskey(occurrence_map, e)
-            occurrence_map[e] += 1
-            has_duplicates = true
-        else
+        found = false
+        for k in keys(occurrence_map)
+            if _isapprox(k, e)
+                occurrence_map[k] += 1
+                has_duplicates = true
+                found = true
+                break
+            end
+        end
+        if !found
             occurrence_map[e] = 1
         end
     end
     if has_duplicates
         for e in v
-            if !haskey(occurrence_map, e) || occurrence_map[e] == 0
+            found = false
+            for k in keys(occurrence_map)
+                if _isapprox(k, e)
+                    found = true
+                    occurrence_map[k] -= 1
+                    if occurrence_map[k] < 0
+                        return false
+                    end
+                    break
+                end
+            end
+            if !found
                 return false
             end
-            occurrence_map[e] -= 1
         end
     end
     return true

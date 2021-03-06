@@ -98,6 +98,37 @@ end
 
 isnormalized(::AD) where {AD<:AbstractDirections} = isnormalized(AD)
 
+"""
+    project(S::LazySet,
+            block::AbstractVector{Int},
+            directions::Type{<:AbstractDirections},
+            [n]::Int;
+            [kwargs...]
+           )
+
+Project a high-dimensional set to a given block using template directions.
+
+### Input
+
+- `S`          -- set
+- `block`      -- block structure - a vector with the dimensions of interest
+- `directions` -- template directions
+- `n`          -- (optional, default: `dim(S)`) ambient dimension of the set `S`
+
+### Output
+
+The template direction approximation of the projection of `S`.
+"""
+@inline function project(S::LazySet,
+                         block::AbstractVector{Int},
+                         directions::Type{<:AbstractDirections},
+                         n::Int=dim(S);
+                         kwargs...
+                        )
+    lm = project(S, block, LinearMap, n; kwargs...)
+    return overapproximate(lm, directions(length(block)))
+end
+
 # ==================================================
 # Box directions
 # ==================================================
@@ -552,7 +583,7 @@ function PolarDirections{N, Vector{N}}(Nφ::Int) where {N}
         throw(ArgumentError("Nφ = $Nφ is invalid; it shoud be at least 1"))
     end
     stack = Vector{Vector{N}}(undef, Nφ)
-    φ = range(N(0), N(2*pi), length=Nφ+1)  # discretization of the polar angle
+    φ = range(N(0), stop=N(2*pi), length=Nφ+1)  # discretization of the polar angle
 
     @inbounds for i in 1:Nφ  # skip last (repeated) angle
         stack[i] = N[cos(φ[i]), sin(φ[i])]
@@ -652,8 +683,8 @@ function SphericalDirections{N, Vector{N}}(Nθ::Int, Nφ::Int) where {N}
         throw(ArgumentError("(Nθ, Nφ) = ($Nθ, $Nφ) is invalid; both shoud be at least 2"))
     end
     stack = Vector{Vector{N}}()
-    θ = range(N(0), N(pi), length=Nθ)    # discretization of the azimuthal angle
-    φ = range(N(0), N(2*pi), length=Nφ)  # discretization of the polar angle
+    θ = range(N(0), stop=N(pi), length=Nθ)    # discretization of the azimuthal angle
+    φ = range(N(0), stop=N(2*pi), length=Nφ)  # discretization of the polar angle
 
     # add north pole (θ = 0)
     push!(stack, N[0, 0, 1])
@@ -694,9 +725,11 @@ User-defined template directions.
 
 ### Fields
 
-- `directions` -- list of template directions
-- `n`          -- dimension
-- `isbounding` -- boundedness status
+- `directions`          -- list of template directions
+- `n`                   -- (optional; default: computed from `directions) dimension
+- `check_boundedness`   -- (optional; default: `true`) flag to check boundedness
+- `check_normalization` -- (optional; default: `true`) flag to check whether all
+                           directions are normalized
 
 ### Notes
 
@@ -763,7 +796,7 @@ function _isbounding(directions::Vector{VN}) where {N, VN<:AbstractVector{N}}
 end
 
 function _isnormalized(directions::Vector{VN}) where {N, VN<:AbstractVector{N}}
-    return all(x -> _isapprox(x, one(N)), norm.(directions, 2))
+    return all(x -> _isapprox(norm(x, 2), one(N)), directions)
 end
 
 Base.eltype(::Type{CustomDirections{N, VN}}) where {N, VN} = VN

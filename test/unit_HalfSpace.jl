@@ -117,6 +117,11 @@ for N in [Float64, Rational{Int}, Float32]
         end
     end
 
+    # projection
+    H = HalfSpace(N[1, -1], N(0))  # x <= y
+    @test project(H, [1]) == project(H, [2]) == Universe{N}(1)
+    @test project(H, [1, 2]) == H
+
     # conversion of the normal vector
     hs_sev = HalfSpace(SingleEntryVector(2, 3, N(1)), N(1))
     hs_vec = convert(HalfSpace{N, Vector{N}}, hs_sev)
@@ -141,6 +146,10 @@ for N in [Float64]
 
     # tests that require ModelingToolkit
     @static if VERSION >= v"1.3" && isdefined(@__MODULE__, :ModelingToolkit)
+        # case with only 1 variable
+        vars = @variables x
+        @test HalfSpace(x <= 2.0, vars) == HalfSpace([1.0], 2.0)
+
         vars = @variables x y
         @test HalfSpace(2x + 3y < 5) == HalfSpace([2.0, 3.0], 5.0)
         @test HalfSpace(2x + 3y < 5, vars) == HalfSpace([2.0, 3.0], 5.0)

@@ -155,6 +155,14 @@ for N in [Float64, Float32, Rational{Int}]
     res, w = ⊆(cp2, cp1, true)
     @test cp2 ⊈ cp1 && !res && w ∈ cp2 && w ∉ cp1
 
+    # projection
+    P = Singleton(N[11, 12])
+    Q = Singleton(N[13, 14, 15])
+    cp = P × Q
+    @test project(cp, [2]) == Singleton(N[12])
+    @test project(cp, [3, 5]) == Singleton(N[13, 15])
+    @test project(cp, [1, 4, 5]) == Singleton(N[11]) × Singleton(N[14, 15])
+
     # ==================================
     # Conversions of Cartesian Products
     # ==================================
@@ -292,6 +300,20 @@ for N in [Float64, Float32, Rational{Int}]
         @test concretize(cpa) === cpa
     end
 
+    # projection
+    P = Singleton(N[11, 12])
+    Q = Singleton(N[13, 14, 15])
+    R = Singleton(N[16, 17])
+    cpa = CartesianProductArray([P, Q, R])
+    @test project(cpa, [2]) == Singleton(N[12])
+    @test project(cpa, [4]) == Singleton(N[14])
+    @test project(cpa, [6]) == Singleton(N[16])
+    @test project(cpa, [3, 5]) == Singleton(N[13, 15])
+    @test project(cpa, [2, 7]) == Singleton(N[12]) × Singleton(N[17])
+    @test project(cpa, [1, 4, 5]) == Singleton(N[11]) × Singleton(N[14, 15])
+    @test project(cpa, [1, 4, 7]) == CartesianProductArray(
+        [Singleton(N[11]), Singleton(N[14]), Singleton(N[17])])
+
     # ========================================
     # Conversions of Cartesian Product Arrays
     # ========================================
@@ -383,6 +405,16 @@ for N in [Float64, Float32]
     @test_throws AssertionError is_intersection_empty(cpa1, Universe{N}(3))
     @test_throws AssertionError is_intersection_empty(Universe{N}(5), cpa2)
 
+    # projection
+    @static if VERSION >= v"1.1"
+        cp = Interval(N(0), N(2)) × Hyperrectangle(N[2, 3], N[1, 1])
+        @test project(cp, 1:2) == Hyperrectangle(N[1, 2], N[1, 1])
+        @test project(cp, 2:3) == Hyperrectangle(N[2, 3], N[1, 1])
+
+        cp = Interval(N(0), N(2)) × Zonotope(N[2, 3], N[1 0; 0 1])
+        @test isequivalent(project(cp, 1:2), Zonotope(N[1, 2], N[1 0; 0 1]))
+        @test isequivalent(project(cp, 2:3), Zonotope(N[2, 3], N[1 0; 0 1]))
+    end
 end
 
 for N in [Float64]
@@ -410,4 +442,12 @@ for N in [Float64]
     Q = array(cap)[2]
     @test ispermutation(constraints_list(Q), [HalfSpace(N[-1, 0], N(-1)),
         HalfSpace(N[0, -1], N(-2)), HalfSpace(N[1, 1], N(3))])
+
+    if test_suite_polyhedra
+        # projection to mixed dimensions
+        P = Singleton(N[11, 12])
+        Q = Singleton(N[13, 14, 15])
+        cp = P × Q
+        @test isequivalent(project(cp, [1, 4]), Singleton(N[11, 14]))
+    end
 end

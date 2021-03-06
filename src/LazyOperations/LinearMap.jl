@@ -6,7 +6,7 @@ export LinearMap,
        Projection
 
 """
-    LinearMap{N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
+    LinearMap{N, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
 
 Type that represents a linear transformation ``M⋅S`` of a convex set ``S``.
 
@@ -94,13 +94,13 @@ julia> A * EmptySet{Int}(2)
 EmptySet{Int64}(2)
 ```
 """
-struct LinearMap{N<:Real, S<:LazySet{N},
+struct LinearMap{N, S<:LazySet{N},
                  NM, MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
     M::MAT
     X::S
 
     # default constructor with dimension match check
-    function LinearMap(M::MAT, X::S) where {N<:Real, S<:LazySet{N}, NM,
+    function LinearMap(M::MAT, X::S) where {N, S<:LazySet{N}, NM,
                                             MAT<:AbstractMatrix{NM}}
         @assert dim(X) == size(M, 2) "a linear map of size $(size(M)) cannot " *
             "be applied to a set of dimension $(dim(X))"
@@ -149,7 +149,7 @@ function LinearMap(v::AbstractVector, X::LazySet)
 end
 
 # convenience constructor from a UniformScaling
-function LinearMap(M::UniformScaling{N}, X::LazySet) where {N<:Real}
+function LinearMap(M::UniformScaling{N}, X::LazySet) where {N}
     if M.λ == one(N)
         return X
     end
@@ -177,7 +177,7 @@ function LinearMap(α::Real, lm::LinearMap)
 end
 
 # more efficient version
-function LinearMap(M::UniformScaling{N}, lm::LinearMap) where {N<:Real}
+function LinearMap(M::UniformScaling{N}, lm::LinearMap) where {N}
     if M.λ == one(N)
         return lm
     end
@@ -185,14 +185,15 @@ function LinearMap(M::UniformScaling{N}, lm::LinearMap) where {N<:Real}
 end
 
 # ZeroSet is "almost absorbing" for LinearMap (only the dimension changes)
-function LinearMap(M::AbstractMatrix{N}, Z::ZeroSet{N}) where {N<:Real}
+function LinearMap(M::AbstractMatrix, Z::ZeroSet)
+    N = promote_type(eltype(M), eltype(Z))
     @assert dim(Z) == size(M, 2) "a linear map of size $(size(M)) cannot " *
             "be applied to a set of dimension $(dim(Z))"
     return ZeroSet{N}(size(M, 1))
 end
 
 # EmptySet is absorbing for LinearMap
-function LinearMap(M::AbstractMatrix{N}, ∅::EmptySet{N}) where {N<:Real}
+function LinearMap(M::AbstractMatrix, ∅::EmptySet)
     return ∅
 end
 
@@ -204,7 +205,7 @@ function matrix(lm::LinearMap)
     return lm.M
 end
 
-function vector(lm::LinearMap{N}) where {N<:Real}
+function vector(lm::LinearMap{N}) where {N}
     return spzeros(N, dim(lm))
 end
 
@@ -234,7 +235,7 @@ function dim(lm::LinearMap)
 end
 
 """
-    σ(d::AbstractVector{N}, lm::LinearMap{N}) where {N<:Real}
+    σ(d::AbstractVector, lm::LinearMap)
 
 Return the support vector of the linear map.
 
@@ -253,12 +254,12 @@ If the direction has norm zero, the result depends on the wrapped set.
 If ``L = M⋅S``, where ``M`` is a matrix and ``S`` is a convex set, it follows
 that ``σ(d, L) = M⋅σ(M^T d, S)`` for any direction ``d``.
 """
-function σ(d::AbstractVector{N}, lm::LinearMap{N}) where {N<:Real}
+function σ(d::AbstractVector, lm::LinearMap)
     return lm.M * σ(_At_mul_B(lm.M, d), lm.X)
 end
 
 """
-    ρ(d::AbstractVector{N}, lm::LinearMap{N}; kwargs...) where {N<:Real}
+    ρ(d::AbstractVector, lm::LinearMap; kwargs...)
 
 Return the support function of the linear map.
 
@@ -279,12 +280,12 @@ If the direction has norm zero, the result depends on the wrapped set.
 If ``L = M⋅S``, where ``M`` is a matrix and ``S`` is a convex set, it follows
 that ``ρ(d, L) = ρ(M^T d, S)`` for any direction ``d``.
 """
-function ρ(d::AbstractVector{N}, lm::LinearMap{N}; kwargs...) where {N<:Real}
+function ρ(d::AbstractVector, lm::LinearMap; kwargs...)
     return ρ(_At_mul_B(lm.M, d), lm.X; kwargs...)
 end
 
 """
-    ∈(x::AbstractVector{N}, lm::LinearMap{N}) where {N<:Real}
+    ∈(x::AbstractVector, lm::LinearMap)
 
 Check whether a given point is contained in a linear map of a convex set.
 
@@ -324,12 +325,12 @@ julia> [0.5, 0.5] ∈ M*B
 true
 ```
 """
-function ∈(x::AbstractVector{N}, lm::LinearMap{N}) where {N<:Real}
+function ∈(x::AbstractVector, lm::LinearMap)
     return lm.M \ x ∈ lm.X
 end
 
 """
-    an_element(lm::LinearMap{N})::Vector{N} where {N<:Real}
+    an_element(lm::LinearMap)
 
 Return some element of a linear map.
 
@@ -342,18 +343,18 @@ Return some element of a linear map.
 An element in the linear map.
 It relies on the `an_element` function of the wrapped set.
 """
-function an_element(lm::LinearMap{N})::Vector{N} where {N<:Real}
+function an_element(lm::LinearMap)
     return lm.M * an_element(lm.X)
 end
 
 """
-    vertices_list(lm::LinearMap{N}; prune::Bool=true)::Vector{Vector{N}} where {N<:Real}
+    vertices_list(lm::LinearMap; prune::Bool=true)
 
 Return the list of vertices of a (polyhedral) linear map.
 
 ### Input
 
-- `lm` -- linear map
+- `lm`    -- linear map
 - `prune` -- (optional, default: `true`) if true removes redundant vertices
 
 ### Output
@@ -362,30 +363,21 @@ A list of vertices.
 
 ### Algorithm
 
-We assume that the underlying set `X` is polyhedral.
-Then the result is just the linear map applied to the vertices of `X`.
+We assume that the underlying set `X` is polyhedral, and compute the list of vertices
+of `X`. The result is just the linear map applied to each vertex of `X`.
 """
-function vertices_list(lm::LinearMap{N}; prune::Bool=true)::Vector{Vector{N}} where {N<:Real}
-    # for a zero map, the result is just the list containing the origin
-    if iszero(lm.M)
-        return [zeros(N, dim(lm))]
-    end
-
-    # collect low-dimensional vertices lists
+function vertices_list(lm::LinearMap; prune::Bool=true)
+    # collect list of vertices of the wrapped set
     vlist_X = vertices_list(lm.X)
 
-    # create resulting vertices list
-    vlist = Vector{Vector{N}}()
-    sizehint!(vlist, length(vlist_X))
-    for v in vlist_X
-        push!(vlist, lm.M * v)
-    end
+    # apply the linear map to each vertex
+    vlist = broadcast(x -> lm.M * x, vlist_X)
 
     return prune ? convex_hull(vlist) : vlist
 end
 
 """
-    constraints_list(lm::LinearMap{N}) where {N<:Real}
+    constraints_list(lm::LinearMap)
 
 Return the list of constraints of a (polyhedral) linear map.
 
@@ -406,12 +398,12 @@ We assume that the underlying set `X` is polyhedral, i.e., offers a method
 
 We fall back to a concrete set representation and apply `linear_map`.
 """
-function constraints_list(lm::LinearMap{N}) where {N<:Real}
+function constraints_list(lm::LinearMap)
     return constraints_list(linear_map(lm.M, lm.X))
 end
 
 """
-    linear_map(M::AbstractMatrix{N}, lm::LinearMap{N}) where {N<:Real}
+    linear_map(M::AbstractMatrix, lm::LinearMap)
 
 Return the linear map of a lazy linear map.
 
@@ -424,7 +416,7 @@ Return the linear map of a lazy linear map.
 
 The polytope representing the linear map of the lazy linear map of a set.
 """
-function linear_map(M::AbstractMatrix{N}, lm::LinearMap{N}) where {N<:Real}
+function linear_map(M::AbstractMatrix, lm::LinearMap)
     return linear_map(M * lm.M, lm.X)
 end
 
@@ -464,7 +456,38 @@ julia> isequivalent(Bproj, BallInf(zeros(2), 1.0))
 true
 ```
 """
-function Projection(X::LazySet{N}, variables::AbstractVector{Int}) where {N<:Real}
+function Projection(X::LazySet{N}, variables::AbstractVector{Int}) where {N}
     M = projection_matrix(variables, dim(X), N)
     return LinearMap(M, X)
+end
+
+"""
+    project(S::LazySet{N},
+            block::AbstractVector{Int},
+            set_type::Type{LM},
+            [n]::Int=dim(S);
+            [kwargs...]
+           ) where {N, LM<:LinearMap}
+
+Project a high-dimensional set to a given block by using a lazy linear map.
+
+### Input
+
+- `S`         -- set
+- `block`     -- block structure - a vector with the dimensions of interest
+- `LinearMap` -- used for dispatch
+- `n`         -- (optional, default: `dim(S)`) ambient dimension of the set `S`
+
+### Output
+
+A lazy `LinearMap` representing the projection of the set `S` to block `block`.
+"""
+@inline function project(S::LazySet{N},
+                         block::AbstractVector{Int},
+                         set_type::Type{LM},
+                         n::Int=dim(S);
+                         kwargs...
+                        ) where {N, LM<:LinearMap}
+    M = projection_matrix(block, n, N)
+    return M * S
 end

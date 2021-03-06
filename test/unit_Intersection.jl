@@ -32,6 +32,25 @@ for N in [Float64, Rational{Int}, Float32]
     # concretize
     @test concretize(I) == intersection(B, H)
 
+    # conversion of intersection of polyhedral types to polyhedral types
+    H1 = HalfSpace(N[1, 1], N(1))
+    H2 = HalfSpace(N[-1, -1], N(1))
+    P12 = convert(HPolyhedron, H1 ∩ H2)
+    @test P12 == HPolyhedron([H1, H2])
+
+    # simplification of lazy intersection of half-spaces to polyhedron
+    @test H1 ∩ H2 == HPolyhedron([H1, H2])
+    H3 = HalfSpace(N[1, 0], N(3))
+    @test H1 ∩ H2 ∩ H3 == HPolyhedron([H1, H2, H3])
+    # make lazy intersection of half-spaces by specifying the cache
+    Ih12 = Intersection(H1, H2, cache=LazySets.IntersectionCache())
+    @test Ih12.X == H1 && Ih12.Y == H2
+
+    # vertices
+    I2 = Intersection(BallInf(zeros(N, 2), N(2)), BallInf(3 * ones(N, 2), N(2)))
+    @test ispermutation(vertices_list(I2),
+        vertices_list(BallInf(fill(N(3//2) , 2), N(1//2))))
+
     # =================
     # IntersectionArray
     # =================
@@ -72,6 +91,10 @@ for N in [Float64, Rational{Int}, Float32]
     # concretize
     @test concretize(IArr) == intersection(B, H)
 
+    # conversion of intersection of polyhedral types to polyhedral types
+    P12 = convert(HPolyhedron, IntersectionArray([H1, H2]))
+    @test P12 == HPolyhedron([H1, H2])
+
     # ================
     # common functions
     # ================
@@ -79,6 +102,16 @@ for N in [Float64, Rational{Int}, Float32]
     # absorbing element
     @test absorbing(Intersection) == absorbing(IntersectionArray) == EmptySet
     @test I ∩ E == E ∩ I == IArr ∩ E == E ∩ IArr == E ∩ E == E
+
+    # intersection between a hyperrectangular set and an axis-aligned halfspace
+    SV = SingleEntryVector(1, 2, N(1))
+    H = HalfSpace(SV, N(2))
+    B1 = Hyperrectangle(N[1, 1], N[1, 1])
+    @test intersection(H, B1) == B1
+    B2 = Hyperrectangle(N[2, 1], N[1, 1])
+    @test intersection(H, B2) == Hyperrectangle(N[1.5, 1], N[0.5, 1])
+    B3 = Hyperrectangle(N[10, 10], N[1, 1])
+    @test intersection(H, B3) == EmptySet{N}(2)
 end
 
 # ======================

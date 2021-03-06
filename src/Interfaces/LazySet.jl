@@ -5,12 +5,14 @@ export LazySet,
        basetype,
        ρ, support_function,
        σ, support_vector,
+       complement,
        dim,
        norm,
        radius,
        diameter,
        an_element,
        isbounded,
+       isboundedtype,
        neutral,
        absorbing,
        tosimplehrep,
@@ -28,7 +30,8 @@ export LazySet,
        singleton_list,
        concretize,
        constraints,
-       vertices
+       vertices,
+       project
 
 """
     LazySet{N}
@@ -43,17 +46,13 @@ elements ``x, y ∈ S`` and ``0 ≤ λ ≤ 1`` it holds that ``λ·x + (1-λ)·y
 for using different numeric types.
 
 Every concrete `LazySet` must define the following functions:
-- `σ(d::AbstractVector{N}, S::LazySet{N}) where {N<:Real}` -- the support vector
-    of `S` in a given direction `d`; note that the numeric type `N` of `d` and
-    `S` must be identical; for some set types `N` may be more restrictive than
-    `Real`
+- `σ(d::AbstractVector, S::LazySet)` -- the support vector of `S` in a given
+    direction `d`
 - `dim(S::LazySet)` -- the ambient dimension of `S`
 
 The function
-- `ρ(d::AbstractVector{N}, S::LazySet{N}) where {N<:Real}` -- the support
-    function of `S` in a given direction `d`; note that the numeric type `N` of
-    `d` and `S` must be identical; for some set types `N` may be more
-    restrictive than `Real`
+- `ρ(d::AbstractVector, S::LazySet)` -- the support function of `S` in a given
+    direction `d`
 is optional because there is a fallback implementation relying on `σ`.
 However, for unbounded sets (which includes most lazy set types) this fallback
 cannot be used and an explicit method must be implemented.
@@ -114,10 +113,10 @@ Hyperrectangle
 Intersection
 IntersectionArray
 Interval
+Line
 Line2D
 LineSegment
 LinearMap
-Line{N,VN} where VN<:AbstractArray{N,1} where N<:Real
 MinkowskiSum
 MinkowskiSumArray
 ResetMap
@@ -212,7 +211,7 @@ LinearMap
 basetype(S::LazySet) = Base.typename(typeof(S)).wrapper
 
 """
-    ρ(d::AbstractVector{N}, S::LazySet{N}) where {N<:Real}
+    ρ(d::AbstractVector, S::LazySet)
 
 Evaluate the support function of a set in a given direction.
 
@@ -224,12 +223,8 @@ Evaluate the support function of a set in a given direction.
 ### Output
 
 The support function of the set `S` for the direction `d`.
-
-### Notes
-
-The numeric type of the direction and the set must be identical.
 """
-function ρ(d::AbstractVector{N}, S::LazySet{N}) where {N<:Real}
+function ρ(d::AbstractVector, S::LazySet)
     return dot(d, σ(d, S))
 end
 
@@ -255,6 +250,31 @@ Alias for the support vector σ.
 const support_vector = σ
 
 """
+    isboundedtype(::Type{<:LazySet})
+
+Determine whether a set type only represents bounded sets.
+
+### Input
+
+- `LazySet` -- set type for dispatch
+
+### Output
+
+`true` if the set type only represents bounded sets.
+Note that some sets may still represent an unbounded set even though their type
+actually does not (example: [`HPolytope`](@ref), because the construction with
+non-bounding linear constraints is allowed).
+
+### Notes
+
+By default this function returns `false`.
+All set types that can determine boundedness should override this behavior.
+"""
+function isboundedtype(::Type{T}) where {T<:LazySet}
+    return false
+end
+
+"""
     isbounded(S::LazySet)
 
 Determine whether a set is bounded.
@@ -271,8 +291,8 @@ Determine whether a set is bounded.
 
 ### Algorithm
 
-See the documentation of [`_isbounded_unit_dimensions`](@ref) or
-[`_isbounded_stiemke`](@ref) for details.
+See the documentation of `_isbounded_unit_dimensions` or `_isbounded_stiemke`
+for details.
 """
 function isbounded(S::LazySet; algorithm="support_function")
     if algorithm == "support_function"
@@ -285,7 +305,7 @@ function isbounded(S::LazySet; algorithm="support_function")
 end
 
 """
-    _isbounded_unit_dimensions(S::LazySet{N}) where {N<:Real}
+    _isbounded_unit_dimensions(S::LazySet{N}) where {N}
 
 Determine whether a set is bounded in each unit dimension.
 
@@ -302,7 +322,7 @@ Determine whether a set is bounded in each unit dimension.
 This function performs ``2n`` support function checks, where ``n`` is the
 ambient dimension of `S`.
 """
-function _isbounded_unit_dimensions(S::LazySet{N}) where {N<:Real}
+function _isbounded_unit_dimensions(S::LazySet{N}) where {N}
     n = dim(S)
     @inbounds for i in 1:n
         for o in [one(N), -one(N)]
@@ -408,7 +428,7 @@ function affine_map(M::AbstractMatrix, X::LazySet, v::AbstractVector; kwargs...)
 end
 
 """
-    an_element(S::LazySet{N}) where {N<:Real}
+    an_element(S::LazySet{N}) where {N}
 
 Return some element of a convex set.
 
@@ -425,7 +445,7 @@ An element of a convex set.
 An element of the set is obtained by evaluating its support vector along
 direction ``[1, 0, …, 0]``.
 """
-function an_element(S::LazySet{N}) where {N<:Real}
+function an_element(S::LazySet{N}) where {N}
     e₁ = SingleEntryVector(1, dim(S), one(N))
     return σ(e₁, S)
 end
@@ -588,7 +608,7 @@ This fallback implementation relies on `constraints_list(S)`.
 tosimplehrep(S::LazySet) = tosimplehrep(constraints_list(S))
 
 """
-    reflect(P::LazySet{N}) where {N<:Real}
+    reflect(P::LazySet)
 
 Concrete reflection of a convex set `P`, resulting in the reflected set `-P`.
 
@@ -616,7 +636,7 @@ function reflect(P::LazySet)
 end
 
 """
-    isuniversal(X::LazySet{N}, [witness]::Bool=false) where {N<:Real}
+    isuniversal(X::LazySet{N}, [witness]::Bool=false) where {N}
 
 Check whether a given convex set is universal, and otherwise optionally compute
 a witness.
@@ -637,7 +657,7 @@ a witness.
 
 This is a naive fallback implementation.
 """
-function isuniversal(X::LazySet{N}, witness::Bool=false) where {N<:Real}
+function isuniversal(X::LazySet{N}, witness::Bool=false) where {N}
     if isbounded(X)
         result = false
     else
@@ -683,7 +703,7 @@ function is_interior_point(d::AbstractVector{N}, P::LazySet{N};
 end
 
 """
-    plot_recipe(X::LazySet{N}, [ε]::N=N(PLOT_PRECISION)) where {N<:Real}
+    plot_recipe(X::LazySet{N}, [ε]=N(PLOT_PRECISION)) where {N}
 
 Convert a convex set to a pair `(x, y)` of points for plotting.
 
@@ -712,7 +732,7 @@ On the other hand, if you only want to produce a fast box-overapproximation of
 `X`, pass `ε=Inf`.
 Finally, we use the plot recipe for polygons.
 """
-function plot_recipe(X::LazySet{N}, ε::N=N(PLOT_PRECISION)) where {N<:Real}
+function plot_recipe(X::LazySet{N}, ε=N(PLOT_PRECISION)) where {N}
     @assert dim(X) <= 2 "cannot plot a $(dim(X))-dimensional $(typeof(X))"
     @assert isbounded(X) "cannot plot an unbounded $(typeof(X))"
 
@@ -816,9 +836,9 @@ Return whether two LazySets are equal in the mathematical sense, i.e. equivalent
 
 ## Algorithm
 
-First, the check `X == Y` is performed which returns `true` if and only if the given sets are of the same type,
-and have the same values (modulo floating-point tolerance). Otherwise, the double inclusion check `X ⊆ Y && Y ⊆ X` is
-used.
+First we check `X ≈ Y`, which returns `true` if and only if `X` and `Y` have the
+same type and approximately the same values (checked with `LazySets._isapprox`).
+If that fails, we check the double inclusion `X ⊆ Y && Y ⊆ X`.
 
 ### Examples
 
@@ -835,9 +855,16 @@ true
 ```
 """
 function isequivalent(X::LazySet, Y::LazySet)
-    if X ≈ Y
-        return true
+    try  # TODO temporary try-catch construct until ≈ is fixed for all set types
+        if X ≈ Y
+            return true
+        end
+    catch e
     end
+    return _isequivalent_inclusion(X, Y)
+end
+
+function _isequivalent_inclusion(X::LazySet, Y::LazySet)
     return X ⊆ Y && Y ⊆ X
 end
 
@@ -1124,3 +1151,207 @@ function delaunay(X::LazySet)
 end
 
 end end  # load_delaunay_MiniQhull
+
+"""
+    complement(X::LazySet)
+
+Return the complement of a set.
+
+### Input
+
+- `X` -- set
+
+### Output
+
+A `UnionSetArray` of half-spaces, i.e. the output is the union of the linear
+constraints which are obtained by complementing each constraint of `X`.
+
+### Algorithm
+
+The principle used in this function is that if ``X`` and ``Y`` are any pair of sets,
+then ``(X ∩ Y)^C = X^C ∪ Y^C``. In particular, we can apply this rule for each constraint
+that defines a polyhedral set, hence the concrete complement can be represented as the set
+union of the complement of each constraint.
+"""
+function complement(X::LazySet)
+    return UnionSetArray(constraints_list(Complement(X)))
+end
+
+# -- concrete projection --
+
+"""
+    project(S::LazySet{N},
+            block::AbstractVector{Int},
+            [::Nothing=nothing],
+            [n]::Int=dim(S);
+            [kwargs...]
+           ) where {N}
+
+Project a high-dimensional set to a given block by using a concrete linear map.
+
+### Input
+
+- `S`       -- set
+- `block`   -- block structure - a vector with the dimensions of interest
+- `nothing` -- (default: `nothing`) used for dispatch
+- `n`       -- (optional, default: `dim(S)`) ambient dimension of the set `S`
+
+### Output
+
+A set representing the projection of the set `S` to block `block`.
+
+### Algorithm
+
+We apply the function `linear_map`.
+"""
+@inline function project(S::LazySet{N},
+                         block::AbstractVector{Int},
+                         ::Nothing=nothing,
+                         n::Int=dim(S);
+                         kwargs...
+                        ) where {N}
+    return _project_linear_map(S, block, n; kwargs...)
+end
+
+@inline function _project_linear_map(S::LazySet{N},
+                                     block::AbstractVector{Int},
+                                     n::Int=dim(S);
+                                     kwargs...
+                                    ) where {N}
+    M = projection_matrix(block, n, N)
+    return linear_map(M, S)
+end
+
+"""
+    project(S::LazySet,
+            block::AbstractVector{Int},
+            set_type::Type{TS},
+            [n]::Int=dim(S);
+            [kwargs...]
+           ) where {TS<:LazySet}
+
+Project a high-dimensional set to a given block and set type, possibly involving
+an overapproximation.
+
+### Input
+
+- `S`        -- set
+- `block`    -- block structure - a vector with the dimensions of interest
+- `set_type` -- target set type
+- `n`        -- (optional, default: `dim(S)`) ambient dimension of the set `S`
+
+### Output
+
+A set of type `set_type` representing an overapproximation of the projection of
+`S`.
+
+### Algorithm
+
+1. Project the set `S` with `M⋅S`, where `M` is the identity matrix in the block
+coordinates and zero otherwise.
+2. Overapproximate the projected lazy set using `overapproximate` and
+`set_type`.
+"""
+@inline function project(S::LazySet,
+                         block::AbstractVector{Int},
+                         set_type::Type{TS},
+                         n::Int=dim(S);
+                         kwargs...
+                        ) where {TS<:LazySet}
+    lm = project(S, block, LinearMap, n)
+    return overapproximate(lm, set_type)
+end
+
+"""
+    project(S::LazySet,
+            block::AbstractVector{Int},
+            set_type_and_precision::Pair{T, N},
+            [n]::Int=dim(S);
+            [kwargs...]
+           ) where {T<:UnionAll, N<:Real}
+
+Project a high-dimensional set to a given block and set type with a certified
+error bound.
+
+### Input
+
+- `S`     -- set
+- `block` -- block structure - a vector with the dimensions of interest
+- `set_type_and_precision` -- pair `(T, ε)` of a target set type `T` and an
+                              error bound `ε` for approximation
+- `n`     -- (optional, default: `dim(S)`) ambient dimension of the set `S`
+
+### Output
+
+A set representing the epsilon-close approximation of the projection of `S`.
+
+### Notes
+
+Currently we only support `HPolygon` as set type, which implies that the set
+must be two-dimensional.
+
+### Algorithm
+
+1. Project the set `S` with `M⋅S`, where `M` is the identity matrix in the block
+coordinates and zero otherwise.
+2. Overapproximate the projected lazy set with the given error bound `ε`.
+"""
+@inline function project(S::LazySet,
+                         block::AbstractVector{Int},
+                         set_type_and_precision::Pair{T, N},
+                         n::Int=dim(S);
+                         kwargs...
+                        ) where {T<:UnionAll, N<:Real}
+    set_type = set_type_and_precision[1]
+    ε = set_type_and_precision[2]
+    @assert length(block) == 2 && set_type == HPolygon "currently only 2D " *
+        "HPolygon decomposition is supported"
+
+    lm = project(S, block, LinearMap, n)
+    return overapproximate(lm, set_type, ε)
+end
+
+"""
+    project(S::LazySet,
+            block::AbstractVector{Int},
+            ε::Real,
+            [n]::Int=dim(S);
+            [kwargs...]
+           )
+
+Project a high-dimensional set to a given block and set type with a certified
+error bound.
+
+### Input
+
+- `S`     -- set
+- `block` -- block structure - a vector with the dimensions of interest
+- `ε`     -- error bound for approximation
+- `n`     -- (optional, default: `dim(S)`) ambient dimension of the set `S`
+
+### Output
+
+A set representing the epsilon-close approximation of the projection of `S`.
+
+### Algorithm
+
+1. Project the set `S` with `M⋅S`, where `M` is the identity matrix in the block
+coordinates and zero otherwise.
+2. Overapproximate the projected lazy set with the given error bound `ε`.
+The target set type is chosen automatically.
+"""
+@inline function project(S::LazySet,
+                         block::AbstractVector{Int},
+                         ε::Real,
+                         n::Int=dim(S);
+                         kwargs...
+                        )
+    # currently we only support HPolygon
+    if length(block) == 2
+        set_type = HPolygon
+    else
+        throw(ArgumentError("ε-close approximation is only supported for 2D " *
+                            "blocks"))
+    end
+    return project(S, block, set_type => ε, n)
+end

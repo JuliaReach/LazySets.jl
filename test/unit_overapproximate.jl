@@ -1,5 +1,8 @@
-using LazySets.Approximations: project,
-                               get_linear_coeffs
+using LazySets.Approximations: project
+
+@static if VERSION >= v"1.4"
+    using LazySets.Approximations: get_linear_coeffs
+end
 
 for N in [Float64, Rational{Int}, Float32]
     c = N[0, 0]
@@ -9,7 +12,8 @@ for N in [Float64, Rational{Int}, Float32]
     # identity if T1 = T2
     @test_throws MethodError overapproximate(ZeroSet{N}(2), EmptySet)
     e = EmptySet{N}(2)
-    @test overapproximate(e, EmptySet) == e
+    @test overapproximate(e, EmptySet) == overapproximate(e, 1e-3) ==
+          overapproximate(e, Hyperrectangle) == overapproximate(e) == e
     # the third argument is ignored
     oa = overapproximate(b, Ball1, Hyperrectangle)
     @test oa isa Ball1
@@ -65,7 +69,7 @@ for N in [Float64, Rational{Int}, Float32]
     OA = overapproximate(M*H, Hyperrectangle)
     @test OA isa Hyperrectangle && OA.center == N[0, 0] && OA.radius == N[1, 2]
 
-    #overapproximation of Minkowski sum of linear maps for each block in the row block
+    # overapproximation of Minkowski sum of linear maps for each block in the row block
     i1 = Interval(N[0, 1])
     h = Hyperrectangle(low=N[3, 4], high=N[5, 7])
     M = N[1 2 3; 4 5 6; 7 8 9]
@@ -142,6 +146,10 @@ for N in [Float64, Float32]
     o = overapproximate_lmap(50)
     @test o.center == N[1, 1] && o.radius == N[2, 2]
 
+    # box approximation of centrally symmetric set
+    e = Ellipsoid(zeros(N, 2), N[2 -1; -1 2])
+    @test box_approximation(e).radius ≈ N[sqrt(2), sqrt(2)]
+
     # Approximation of a 2D centered unit ball in norm 1
     # All vertices v should be like this:
     # ‖v‖ >= 1 and ‖v‖ <= 1+ε
@@ -150,9 +158,14 @@ for N in [Float64, Float32]
     ε = N(0.01)
     p = tovrep(overapproximate(b, ε))
     for v in vertices_list(p)
-    @test norm(v) >= N(1)
-    @test norm(v) <= N(1 + ε)
+        @test _geq(norm(v), N(1))
+        @test _leq(norm(v), N(1 + ε))
     end
+
+    # static vectors
+    b = BallInf(SVector{2}(N[1, 0]), N(1))
+    p = overapproximate(b, ε)
+    @test isequivalent(b, p)
 
     # Check that there are no redundant constraints for a ballinf
     b = BallInf(N[0.5, 0.5], N(0.1))
@@ -195,6 +208,13 @@ for N in [Float64, Float32]
     @test lcl[7].b ≈ N(1)
     @test lcl[8].a ≈ N[sqrt(2)/2, -sqrt(2)/2]
     @test lcl[8].b ≈ N(1)
+
+    # no redundant constraints (#369)
+    theta = N(-pi / 4)
+    A = [cos(theta) -sin(theta); sin(theta) cos(theta)]
+    V = VPolygon([N[-0.9, 0.7], N[-1.1, 0.2], N[-1.4, 1.1], N[-2.0, 0.7], N[-1.5, 0.3]])
+    AV = overapproximate(A * V, 1e-2)
+    @test length(AV.constraints) == 5
 
     # Zonotope approximation of convex hull of two zonotopes
 
@@ -360,6 +380,12 @@ for N in [Float64]
     # test dispatch of internal functions
     @test Approximations._overapproximate_zonotope_vrep(V, BoxDirections) == Z
     @test convert(Zonotope, Approximations._overapproximate_zonotope_cpa(V, BoxDirections)) == Z
+    # lazy intersection
+    Z = convert(Zonotope, BallInf(zeros(N, 2), N(2)))
+    H = convert(HPolygon, BallInf(3 * ones(N, 2), N(2)))
+    Z2 = overapproximate(Intersection(Z, H), Zonotope, BoxDirections(2))
+    @test ispermutation(vertices_list(Z2),
+        vertices_list(BallInf(fill(N(3//2) , 2), N(1//2))))
 
     # decomposed linear map approximation
     i1 = Interval(N[0, 1])
@@ -371,50 +397,62 @@ for N in [Float64]
     oa = overapproximate(lm, OctDirections)
     @test oa ⊆ d_oa
 
-    # =======================================
-    # Zonotope overapprox. of a Taylor model
-    # =======================================
-    x₁, x₂, x₃ = set_variables(N, ["x₁", "x₂", "x₃"], order=5)
-    Dx₁ = IA.Interval(N(1.0), N(3.0))
-    Dx₂ = IA.Interval(N(-1.0), N(1.0))
-    Dx₃ = IA.Interval(N(-1.0), N(0.0))
-    D = Dx₁ × Dx₂ × Dx₃   # domain
-    x0 = IntervalBox(IA.mid.(D)...)
-    I = IA.Interval(N(0.0), N(0.0)) # interval remainder
-    p₁ = 1 + x₁ - x₂
-    p₂ = x₃ - x₁
-    vTM = [TaylorModels.TaylorModelN(pi, I, x0, D) for pi in [p₁, p₂]]
-    Z1 = overapproximate(vTM, Zonotope)
-    @test center(Z1) == N[3, -2.5]
-    @test Matrix(genmat(Z1)) == N[1 -1 0; -1 0 0.5]
+    @static if VERSION >= v"1.4"
+        # =======================================
+        # Zonotope overapprox. of a Taylor model
+        # =======================================
+        x₁, x₂, x₃ = set_variables(N, ["x₁", "x₂", "x₃"], order=5)
+        Dx₁ = IA.Interval(N(1.0), N(3.0))
+        Dx₂ = IA.Interval(N(-1.0), N(1.0))
+        Dx₃ = IA.Interval(N(-1.0), N(0.0))
+        D = Dx₁ × Dx₂ × Dx₃   # domain
+        x0 = IntervalBox(IA.mid.(D)...)
+        I = IA.Interval(N(0.0), N(0.0)) # interval remainder
+        p₁ = 1 + x₁ - x₂
+        p₂ = x₃ - x₁
+        vTM = [TaylorModels.TaylorModelN(pi, I, x0, D) for pi in [p₁, p₂]]
+        Z1 = overapproximate(vTM, Zonotope)
+        @test center(Z1) == N[3, -2.5]
+        @test Matrix(genmat(Z1)) == N[1 -1 0; -1 0 0.5]
 
-    # auxiliary function to get the linear coefficients
-    t = TaylorModels.Taylor1(0) # t.order is 0
-    @test get_linear_coeffs(t) == N[0]
-    p = x₁ + 2x₂ - 3x₃
-    @test get_linear_coeffs(p) == N[1, 2, -3]
-    y = set_variables("y", numvars=2, order=1)
-    p = zero(y[1])
-    @test get_linear_coeffs(p) == N[0, 0]
+        # auxiliary function to get the linear coefficients
+        t = TaylorModels.Taylor1(0) # t.order is 0
+        @test get_linear_coeffs(t) == N[0]
+        p = x₁ + 2x₂ - 3x₃
+        @test get_linear_coeffs(p) == N[1, 2, -3]
+        y = set_variables("y", numvars=2, order=1)
+        p = zero(y[1])
+        @test get_linear_coeffs(p) == N[0, 0]
 
-    # Zonotope approximation of convex hull array of zonotopes
-    Z1 = Zonotope(N[3, 0], N[1 2 1; 1 1 2])
-    Z2 = Zonotope(N[1, 0], N[-2 1; 1 1])
-    Z3 = Zonotope(N[0, 0], N[1 0; 0 1])
-    @test overapproximate(ConvexHullArray([Z1]), Zonotope) == Z1
-    @test overapproximate(ConvexHullArray([Z1, Z2]), Zonotope) == overapproximate(ConvexHull(Z1, Z2), Zonotope)
-    Y = overapproximate(ConvexHullArray([Z1, Z2, Z3]), Zonotope)
-    @test Z1 ⊆ Y
-    @test Z2 ⊆ Y
-    @test Z3 ⊆ Y
+        # Zonotope approximation of convex hull array of zonotopes
+        Z1 = Zonotope(N[3, 0], N[1 2 1; 1 1 2])
+        Z2 = Zonotope(N[1, 0], N[-2 1; 1 1])
+        Z3 = Zonotope(N[0, 0], N[1 0; 0 1])
+        @test overapproximate(ConvexHullArray([Z1]), Zonotope) == Z1
+        @test overapproximate(ConvexHullArray([Z1, Z2]), Zonotope) == overapproximate(ConvexHull(Z1, Z2), Zonotope)
+        Y = overapproximate(ConvexHullArray([Z1, Z2, Z3]), Zonotope)
+        @test Z1 ⊆ Y
+        @test Z2 ⊆ Y
+        @test Z3 ⊆ Y
 
-    # overapproximation of intersection between vertical line and Zonotope
-    Z = Zonotope(N[0, 0], N[1 0; 0 1])
-    L = Line2D(N[-1, -1], N[1, 1])
-    cap = overapproximate(Z ∩ L, OctDirections)
-    @test isequivalent(cap, (L ∩ Z))
-    Z = Zonotope(N[0, 0], N[1 0; 0 1])
-    L = Line2D(N[-1, -1], N[1, 1/2])
-    cap = overapproximate(Z ∩ L, OctDirections)
-    @test (L ∩ Z) ⊆ cap
+        # overapproximation of intersection between vertical line and Zonotope
+        Z = Zonotope(N[0, 0], N[1 0; 0 1])
+        L = Line2D(N[-1, -1], N[1, 1])
+        cap = overapproximate(Z ∩ L, OctDirections)
+        @test isequivalent(cap, (L ∩ Z))
+        Z = Zonotope(N[0, 0], N[1 0; 0 1])
+        L = Line2D(N[-1, -1], N[1, 1/2])
+        cap = overapproximate(Z ∩ L, OctDirections)
+        @test (L ∩ Z) ⊆ cap
+
+        # overapproximate a nonlinear constraint with an HPolyhedron
+        dom = IntervalBox(IA.Interval(-2, 2), IA.Interval(-2, 2))
+        C = @constraint x^2 + y^2 <= 1
+        p = pave(C, dom, 0.01)
+        dirs = OctDirections(2)
+        H = overapproximate(p, dirs)
+        B2 = Ball2(N[0, 0], N(1))
+        @test B2 ⊆ H
+
+    end
 end

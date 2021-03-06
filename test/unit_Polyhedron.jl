@@ -72,6 +72,11 @@ for N in [Float64, Rational{Int}, Float32]
     # vertices iterator
     @test ispermutation(collect(vertices(p)), vertices_list(p))
 
+    # equivalence check
+    p1 = HPolyhedron([HalfSpace(N[1], N(1))])
+    p2 = HPolyhedron([HalfSpace(N[1], N(-1))])
+    @test isequivalent(p1, p1) && !isequivalent(p1, p2)
+
     if test_suite_polyhedra
         # conversion to and from Polyhedra's VRep data structure
         cl = constraints_list(HPolyhedron(polyhedron(p)))
@@ -112,6 +117,22 @@ for N in [Float64, Rational{Int}, Float32]
             @test lm isa HPolytope{Float64}
         end
     end
+
+    if test_suite_polyhedra
+        # robustness of empty set (see issue #2532)
+        s1 = HalfSpace(N[-1.0], -N(1.0000000000000002)) # x  >= 1.0000000000000002
+        s2 = HalfSpace(N[1.0], N(1.0)) # x <= 1
+        P = s1 ∩ s2
+
+        if N == Float64
+            # can't prove emptiness on Float64
+            @test isempty(P) == false
+
+        elseif N == Rational{Int}
+            # can prove emptiness using exact arithmetic
+            @test isempty(P, use_polyhedra_interface=true, backend=CDDLib.Library(:exact)) == true
+        end
+    end
 end
 
 # default Float64 constructors
@@ -140,7 +161,7 @@ for N in [Float64, Float32]
     p_univ = HPolyhedron{N}()
 
     # boundedness
-    @test !isbounded(p_univ)
+    @test !isbounded(p_univ) && !isboundedtype(typeof(p_univ))
     @test isbounded(p)
     @test !isbounded(HPolyhedron([HalfSpace(N[1, 0], N(1))]))
 
@@ -181,7 +202,15 @@ for N in [Float64]
     # an_element
     P = HPolyhedron([HalfSpace(N[3//50, -4//10], N(1)),
                      HalfSpace(N[-1//50, 1//10], N(-1))])
-    @test_broken an_element(P) ∈ P # see LazySets.jl/pull/2197
+    @test an_element(P) ∈ P
+
+    # an_element for an unbounded polyhedron
+    P = HPolyhedron([HalfSpace(N[-1, 0], N(-1))])
+    y = an_element(P)
+    # check that all entries are finite
+    @test all(!isinf, y)
+    # check that the points belong to P
+    @test y ∈ P
 
     # boundedness
     @test isbounded(p)
@@ -362,5 +391,9 @@ for N in [Float64]
         p1 = HPolyhedron([x + y <= 1, x + y >= -1,  x - y <= 1, x - y >= -1], vars)
         b1 = Ball1(zeros(2), 1.0)
         @test isequivalent(p1, b1)
+
+        p2 = HPolyhedron([x == 0, y <= 0], vars)
+        h2 = HPolyhedron([HalfSpace([1.0, 0.0], 0.0), HalfSpace([-1.0, 0.0], 0.0), HalfSpace([0.0, 1.0], 0.0)])
+        @test p2 ⊆ h2 && h2 ⊆ p2 # isequivalent(p2, h2) see #2370
     end
 end

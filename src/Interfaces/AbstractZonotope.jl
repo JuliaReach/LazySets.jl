@@ -5,11 +5,13 @@ export AbstractZonotope,
        generators,
        ngens,
        order,
+       translate,
+       translate!,
        togrep,
        split!
 
 """
-    AbstractZonotope{N<:Real} <: AbstractCentrallySymmetricPolytope{N}
+    AbstractZonotope{N} <: AbstractCentrallySymmetricPolytope{N}
 
 Abstract type for zonotopic sets.
 
@@ -47,7 +49,7 @@ julia> subtypes(AbstractZonotope)
  Zonotope
 ```
 """
-abstract type AbstractZonotope{N<:Real} <: AbstractCentrallySymmetricPolytope{N} end
+abstract type AbstractZonotope{N} <: AbstractCentrallySymmetricPolytope{N} end
 
 isconvextype(::Type{<:AbstractZonotope}) = true
 
@@ -55,7 +57,9 @@ isconvextype(::Type{<:AbstractZonotope}) = true
 
 
 """
-    genmat_fallback(Z::AbstractZonotope{N}) where {N<:Real}
+    genmat_fallback(Z::AbstractZonotope{N};
+                    [gens]=generators(Z),
+                    [ngens]=nothing) where {N}
 
 Fallback definition of `genmat` for zonotopic sets.
 
@@ -78,7 +82,7 @@ intermediate vector until the final result matrix can be allocated.
 """
 function genmat_fallback(Z::AbstractZonotope{N};
                          gens=generators(Z),
-                         ngens=nothing) where {N<:Real}
+                         ngens=nothing) where {N}
     if isempty(gens)
         return Matrix{N}(undef, dim(Z), 0)
     elseif ngens == nothing
@@ -88,7 +92,7 @@ function genmat_fallback(Z::AbstractZonotope{N};
     end
 end
 
-function _genmat_fallback_generic(Z::AbstractZonotope{N}, gens) where {N<:Real}
+function _genmat_fallback_generic(Z::AbstractZonotope{N}, gens) where {N}
     Gv = Vector{Vector{N}}()
     @inbounds for (i, g) in enumerate(gens)
         push!(Gv, g)
@@ -100,7 +104,7 @@ function _genmat_fallback_generic(Z::AbstractZonotope{N}, gens) where {N<:Real}
     return G
 end
 
-function _genmat_fallback_ngens(Z::AbstractZonotope{N}, gens, ngens) where {N<:Real}
+function _genmat_fallback_ngens(Z::AbstractZonotope{N}, gens, ngens) where {N}
     G = Matrix{N}(undef, dim(Z), ngens)
     @inbounds for (i, g) in enumerate(gens)
         G[:, i] = g
@@ -138,7 +142,7 @@ function Base.iterate(it::FallbackGeneratorIterator, state::Int=1)
 end
 
 """
-    generators_fallback(Z::AbstractZonotope{N}) where {N<:Real}
+    generators_fallback(Z::AbstractZonotope)
 
 Fallback definition of `generators` for zonotopic sets.
 
@@ -150,7 +154,7 @@ Fallback definition of `generators` for zonotopic sets.
 
 An iterator over the generators of `Z`.
 """
-function generators_fallback(Z::AbstractZonotope{N}) where {N<:Real}
+function generators_fallback(Z::AbstractZonotope)
     return FallbackGeneratorIterator(genmat(Z))
 end
 
@@ -221,7 +225,7 @@ end
 
 
 """
-    ρ(d::AbstractVector{N}, Z::AbstractZonotope{N}) where {N<:Real}
+    ρ(d::AbstractVector, Z::AbstractZonotope)
 
 Return the support function of a zonotopic set in a given direction.
 
@@ -238,14 +242,15 @@ The support function of the zonotopic set in the given direction.
 
 The support value is ``cᵀ d + ‖Gᵀ d‖₁`` where ``c`` is the center and ``G`` is
 the generator matrix of `Z`.
-
 """
-function ρ(d::AbstractVector{N}, Z::AbstractZonotope{N}) where {N<:Real}
-    return dot(center(Z), d) + sum(abs, transpose(genmat(Z)) * d)
+function ρ(d::AbstractVector, Z::AbstractZonotope)
+    c = center(Z)
+    G = genmat(Z)
+    return dot(c, d) + _abs_sum(d, G)
 end
 
 """
-    σ(d::AbstractVector{N}, Z::AbstractZonotope{N}) where {N<:Real}
+    σ(d::AbstractVector, Z::AbstractZonotope)
 
 Return the support vector of a zonotopic set in a given direction.
 
@@ -260,14 +265,13 @@ A support vector in the given direction.
 If the direction has norm zero, the vertex with ``ξ_i = 1 \\ \\ ∀ i = 1,…, p``
 is returned.
 """
-function σ(d::AbstractVector{N}, Z::AbstractZonotope{N}) where {N<:Real}
+function σ(d::AbstractVector, Z::AbstractZonotope)
     G = genmat(Z)
     return center(Z) .+ G * sign_cadlag.(_At_mul_B(G, d))
 end
 
 """
-    ∈(x::AbstractVector{N}, Z::AbstractZonotope{N};
-      solver=default_lp_solver(N)) where {N<:Real}
+    ∈(x::AbstractVector, Z::AbstractZonotope; solver=nothing)
 
 Check whether a given point is contained in a zonotopic set.
 
@@ -275,8 +279,8 @@ Check whether a given point is contained in a zonotopic set.
 
 - `x`      -- point/vector
 - `Z`      -- zonotopic set
-- `solver` -- (optional, default: `default_lp_solver(N)`) the backend used to
-              solve the linear program
+- `solver` -- (optional, default: `nothing`) the backend used to solve the
+              linear program
 
 ### Output
 
@@ -293,6 +297,10 @@ julia> [1.0, 0.1] ∈ Z
 true
 ```
 
+### Notes
+
+If `solver == nothing`, we fall back to `default_lp_solver(N)`.
+
 ### Algorithm
 
 The membership problem is computed by stating and solving the following linear
@@ -304,11 +312,11 @@ elements ``(x_0, ξ_1, …, ξ_p)`` constrained to ``0 ≤ x_0 ≤ ∞``,
 ``ξ_i ∈ [-1, 1]`` for all ``i = 1, …, p``, and such that ``x-c = Gξ`` holds.
 If a feasible solution exists, the optimal value ``x_0 = 0`` is achieved.
 """
-function ∈(x::AbstractVector{N}, Z::AbstractZonotope{N};
-           solver=default_lp_solver(N)) where {N<:Real}
+function ∈(x::AbstractVector, Z::AbstractZonotope; solver=nothing)
     @assert length(x) == dim(Z)
 
     p, n = ngens(Z), dim(Z)
+    N = promote_type(eltype(x), eltype(Z))
     # (n+1) x (p+1) matrix with block-diagonal blocks 1 and genmat(Z)
     A = [[one(N); zeros(N, p)]'; [zeros(N, n) genmat(Z)]]
     b = [zero(N); (x - center(Z))]
@@ -317,12 +325,15 @@ function ∈(x::AbstractVector{N}, Z::AbstractZonotope{N};
     sense = ['>'; fill('=', n)]
     obj = [one(N); zeros(N, p)]
 
+    if solver == nothing
+        solver = default_lp_solver(N)
+    end
     lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
     return (lp.status == :Optimal) # Infeasible or Unbounded => false
 end
 
 """
-    linear_map(M::AbstractMatrix{N}, Z::AbstractZonotope{N}) where {N<:Real}
+    linear_map(M::AbstractMatrix, Z::AbstractZonotope)
 
 Concrete linear map of a zonotopic set.
 
@@ -336,8 +347,7 @@ Concrete linear map of a zonotopic set.
 The zonotope obtained by applying the linear map to the center and generators
 of ``Z``.
 """
-function linear_map(M::AbstractMatrix{N}, Z::AbstractZonotope{N}
-                   ) where {N<:Real}
+function linear_map(M::AbstractMatrix, Z::AbstractZonotope)
     @assert dim(Z) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
                                  "applied to a set of dimension $(dim(Z))"
 
@@ -347,8 +357,7 @@ function linear_map(M::AbstractMatrix{N}, Z::AbstractZonotope{N}
 end
 
 """
-    translate(Z::AbstractZonotope{N}, v::AbstractVector{N}; share::Bool=false
-             ) where {N<:Real}
+    translate(Z::AbstractZonotope, v::AbstractVector)
 
 Translate (i.e., shift) a zonotope by a given vector.
 
@@ -356,8 +365,6 @@ Translate (i.e., shift) a zonotope by a given vector.
 
 - `Z`     -- zonotope
 - `v`     -- translation vector
-- `share` -- (optional, default: `false`) flag for sharing unmodified parts of
-             the original set representation
 
 ### Output
 
@@ -365,28 +372,54 @@ A translated zonotope.
 
 ### Notes
 
-The generator matrix is shared with the original zonotope if `share == true`.
+See also [`translate!(Z::AbstractZonotope, v::AbstractVector)`](@ref) for the
+in-place version.
 
 ### Algorithm
 
-We add the vector to the center of the zonotope.
+We add the translation vector to the center of the zonotope.
 """
-function translate(Z::AbstractZonotope{N}, v::AbstractVector{N};
-                   share::Bool=false) where {N<:Real}
-    @assert length(v) == dim(Z) "cannot translate a $(dim(Z))-dimensional " *
-                                "set by a $(length(v))-dimensional vector"
-    c = center(Z) + v
-    G = share ? genmat(Z) : copy(genmat(Z))
-    return Zonotope(c, G)
+function translate(Z::AbstractZonotope, v::AbstractVector)
+    return translate!(copy(Z), v)
 end
 
+"""
+    translate!(Z::AbstractZonotope, v::AbstractVector)
+
+Translate (i.e., shift) a zonotope by a given vector in-place.
+
+### Input
+
+- `Z`     -- zonotope
+- `v`     -- translation vector
+
+### Output
+
+A translated zonotope.
+
+### Notes
+
+See also [`translate(Z::AbstractZonotope, v::AbstractVector)`](@ref) for the
+out-of-place version.
+
+### Algorithm
+
+We add the translation vector to the center of the zonotope.
+"""
+function translate!(Z::AbstractZonotope, v::AbstractVector)
+    @assert length(v) == dim(Z) "cannot translate a $(dim(Z))-dimensional " *
+                                "set by a $(length(v))-dimensional vector"
+    c = center(Z)
+    c .+= v
+    G = genmat(Z)
+    return Z
+end
 
 # --- AbstractPolytope interface functions ---
 
 
 """
-    vertices_list(Z::AbstractZonotope{N}; [apply_convex_hull]::Bool=true
-                 ) where {N<:Real}
+    vertices_list(Z::AbstractZonotope; [apply_convex_hull]::Bool=true)
 
 Return the vertices of a zonotopic set.
 
@@ -423,10 +456,9 @@ There are at most ``2^p`` distinct vertices. Use the flag `apply_convex_hull` to
 control whether a convex hull algorithm is applied to the vertices computed by
 this method; otherwise, redundant vertices may be present.
 """
-function vertices_list(Z::AbstractZonotope{N};
-                       apply_convex_hull::Bool=true) where {N<:Real}
+function vertices_list(Z::AbstractZonotope; apply_convex_hull::Bool=true)
     c = center(Z)
-    G = remove_zero_columns(genmat(Z))
+    G = genmat(Z)
     n, p = size(G)
 
     # empty generators => sole vertex is the center
@@ -438,15 +470,22 @@ function vertices_list(Z::AbstractZonotope{N};
         return vertices_list(convert(Interval, Z))
 
     elseif n == 2
-        return _vertices_list_2D(c, G, apply_convex_hull=apply_convex_hull)
+        if p == 1
+            return _vertices_list_2D_order_one_half(c, G, apply_convex_hull=apply_convex_hull)
+        elseif p == 2
+            return _vertices_list_2D_order_one(c, G, apply_convex_hull=apply_convex_hull)
+        else
+            return _vertices_list_2D(c, G, apply_convex_hull=apply_convex_hull)
+        end
 
     else
-        return _vertices_list_iterative(c, G, apply_convex_hull=apply_convex_hull)
+        Gred = remove_zero_columns(G)
+        return _vertices_list_iterative(c, Gred, apply_convex_hull=apply_convex_hull)
     end
 end
 
 """
-    constraints_list(P::AbstractZonotope{N}) where {N<:Real}
+    constraints_list(P::AbstractZonotope)
 
 Return the list of constraints defining a zonotopic set.
 
@@ -464,13 +503,14 @@ This is the (inefficient) fallback implementation for rational numbers.
 It first computes the vertices and then converts the corresponding polytope
 to constraint representation.
 """
-function constraints_list(Z::AbstractZonotope{N}) where {N<:Real}
-    return constraints_list(VPolytope(vertices_list(Z)))
+function constraints_list(Z::AbstractZonotope)
+    return _constraints_list_fallback(Z)
 end
 
+@inline _constraints_list_fallback(Z) = constraints_list(VPolytope(vertices_list(Z)))
+
 """
-    constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true
-                    ) where {N<:AbstractFloat}
+    constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true) where {N<:AbstractFloat}
 
 Return the list of constraints defining a zonotopic set.
 
@@ -503,15 +543,14 @@ Reachable Sets of Hybrid Systems Using a Combination of Zonotopes and Polytopes.
 The one-dimensional case is not covered by that algorithm; we manually handle
 this case, assuming that there is only one generator.
 """
-function constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true
-                         ) where {N<:AbstractFloat}
+function constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true) where {N<:AbstractFloat}
     G = genmat(Z)
     p = ngens(Z)
     n = dim(Z)
 
     # use fallback implementation if order < 1 or matrix is not full rank
     if p < n || (check_full_rank && rank(G) < n)
-        return invoke(constraints_list, Tuple{AbstractZonotope{<:Real}}, Z)
+        return _constraints_list_fallback(Z)
     end
 
     # special handling of 1D case
@@ -646,4 +685,10 @@ Here the zonotope is split along both of its generators, each time into four par
 """
 function split(Z::AbstractZonotope, gens::AbstractVector{Int}, nparts::AbstractVector{Int})
     return _split(convert(Zonotope, Z), gens, nparts)
+end
+
+function project(Z::AbstractZonotope{N}, block::AbstractVector{Int}; kwargs...) where {N}
+    n = dim(Z)
+    M = projection_matrix(block, n, N)
+    return remove_zero_generators(linear_map(M, Z))
 end

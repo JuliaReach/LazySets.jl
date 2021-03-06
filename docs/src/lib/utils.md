@@ -34,8 +34,10 @@ extend
 projection_matrix
 LazySets.Arrays._vector_type
 LazySets.Arrays._matrix_type
+LazySets.Arrays.allequal
 LazySets.Arrays.distance(::AbstractVector, ::AbstractVector, ::Real=2.0)
 LazySets.Arrays.same_sign
+LazySets.Arrays.to_matrix
 ```
 
 ## Functions and Macros
@@ -78,15 +80,23 @@ LazySets.subtypes(::Any, ::Bool)
 implementing_sets
 ```
 
+## Reading and writing
+
+```@docs
+LazySets.read_gen(::String)
+```
+
 ## Sampling
 
 ```@docs
 _sample_unit_nsphere_muller!
 _sample_unit_nball_muller!
 sample
+LazySets._sample!
 LazySets.Sampler
 LazySets.RejectionSampler{S<:LazySet, D<:Distribution}
-LazySets._sample!
+LazySets.UniformSampler
+LazySets.PolytopeSampler
 ```
 
 ## Volume

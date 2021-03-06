@@ -166,7 +166,7 @@ hyperplane guard ``g_i``:
 
 `LazySets` offers an order reduction function for zonotopes, which we used here
 with an upper bound of 10 generators. We plot the reachable states for the time
-interval ``[0, 4]`` and time step ``δ = 0.001``.
+interval ``[0, 4]`` and time step ``δ = 0.01``.
 
 ```@example example_reach_zonotopes_hybrid
     # dynamics
@@ -188,7 +188,7 @@ interval ``[0, 4]`` and time step ``δ = 0.001``.
     μ = 0.001
 
     # discretization step
-    δ = 0.001
+    δ = 0.01
 
     # time bound
     T = 4.

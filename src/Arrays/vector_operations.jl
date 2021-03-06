@@ -1,5 +1,4 @@
 export dot_zero,
-       sign_cadlag,
        remove_duplicates_sorted!,
        samedir,
        nonzero_indices,
@@ -111,7 +110,7 @@ function samedir(u::AbstractVector{N},
             if factor < 0
                 return (false, 0)
             end
-        elseif factor != u[i] / v[i]
+        elseif !_isapprox(factor, u[i] / v[i])
             return (false, 0)
         end
     end
@@ -378,4 +377,31 @@ A scalar representing ``‖ x - y ‖_p``.
 """
 function distance(x::AbstractVector, y::AbstractVector, p::Real=2.0)
     return norm(x - y, p)
+end
+
+"""
+    allequal(x)
+
+Check whether all elements in a sequence are equal
+
+### Input
+
+- `x` -- sequence
+
+### Output
+
+`true` iff all elements in `x` are equal.
+
+### Notes
+
+The code is taken from [here](https://stackoverflow.com/a/47578613).
+"""
+function allequal(x)
+    length(x) < 2 && return true
+    e1 = @inbounds x[1]
+    i = 2
+    @inbounds for i=2:length(x)
+        x[i] == e1 || return false
+    end
+    return true
 end

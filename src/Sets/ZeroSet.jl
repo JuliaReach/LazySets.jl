@@ -5,7 +5,7 @@ export ZeroSet,
        linear_map
 
 """
-    ZeroSet{N<:Real} <: AbstractSingleton{N}
+    ZeroSet{N} <: AbstractSingleton{N}
 
 Type that represents the zero set, i.e., the set that only contains the origin.
 
@@ -13,7 +13,7 @@ Type that represents the zero set, i.e., the set that only contains the origin.
 
 - `dim` -- the ambient dimension of this zero set
 """
-struct ZeroSet{N<:Real} <: AbstractSingleton{N}
+struct ZeroSet{N} <: AbstractSingleton{N}
     dim::Int
 end
 
@@ -28,7 +28,7 @@ ZeroSet(dim::Int) = ZeroSet{Float64}(dim)
 
 
 """
-    element(S::ZeroSet{N}) where {N<:Real}
+    element(S::ZeroSet{N}) where {N}
 
 Return the element of a zero set.
 
@@ -40,12 +40,12 @@ Return the element of a zero set.
 
 The element of the zero set, i.e., a zero vector.
 """
-function element(S::ZeroSet{N}) where {N<:Real}
+function element(S::ZeroSet{N}) where {N}
     return zeros(N, S.dim)
 end
 
 """
-    element(S::ZeroSet{N}, ::Int) where {N<:Real}
+    element(S::ZeroSet{N}, ::Int) where {N}
 
 Return the i-th entry of the element of a zero set.
 
@@ -58,7 +58,7 @@ Return the i-th entry of the element of a zero set.
 
 The i-th entry of the element of the zero set, i.e., 0.
 """
-function element(S::ZeroSet{N}, ::Int) where {N<:Real}
+function element(S::ZeroSet{N}, ::Int) where {N}
     return zero(N)
 end
 
@@ -84,7 +84,7 @@ function dim(Z::ZeroSet)
 end
 
 """
-    σ(d::AbstractVector{N}, Z::ZeroSet{N}) where {N<:Real}
+    σ(d::AbstractVector, Z::ZeroSet)
 
 Return the support vector of a zero set.
 
@@ -98,13 +98,13 @@ Return the support vector of a zero set.
 The returned value is the origin since it is the only point that belongs to this
 set.
 """
-function σ(d::AbstractVector{N}, Z::ZeroSet{N}) where {N<:Real}
+function σ(d::AbstractVector, Z::ZeroSet)
     @assert length(d) == dim(Z) "the direction has the wrong dimension"
     return element(Z)
 end
 
 """
-    ρ(d::AbstractVector{N}, Z::ZeroSet{N}) where {N<:Real}
+    ρ(d::AbstractVector, Z::ZeroSet)
 
 Evaluate the support function of a zero set in a given direction.
 
@@ -117,13 +117,14 @@ Evaluate the support function of a zero set in a given direction.
 
 `0`.
 """
-function ρ(d::AbstractVector{N}, Z::ZeroSet{N}) where {N<:Real}
+function ρ(d::AbstractVector, Z::ZeroSet)
     @assert length(d) == dim(Z) "the direction has the wrong dimension"
+    N = promote_type(eltype(d), eltype(Z))
     return zero(N)
 end
 
 """
-    ∈(x::AbstractVector{N}, Z::ZeroSet{N}) where {N<:Real}
+    ∈(x::AbstractVector, Z::ZeroSet)
 
 Check whether a given point is contained in a zero set.
 
@@ -147,11 +148,11 @@ julia> [0.0, 0.0] ∈ Z
 true
 ```
 """
-function ∈(x::AbstractVector{N}, Z::ZeroSet{N}) where {N<:Real}
+function ∈(x::AbstractVector, Z::ZeroSet)
     @assert length(x) == dim(Z)
 
-    zero_N = zero(N)
-    return all(i -> x[i] == zero_N, eachindex(x))
+    N = promote_type(eltype(x), eltype(Z))
+    return all(==(zero(N)), x)
 end
 
 """
@@ -182,7 +183,7 @@ function rand(::Type{ZeroSet};
 end
 
 """
-    linear_map(M::AbstractMatrix{N}, Z::ZeroSet{N}) where {N<:Real}
+    linear_map(M::AbstractMatrix, Z::ZeroSet)
 
 Concrete linear map of a zero set.
 
@@ -195,7 +196,7 @@ Concrete linear map of a zero set.
 
 The zero set whose dimension matches the output dimension of the given matrix.
 """
-function linear_map(M::AbstractMatrix{N}, Z::ZeroSet{N}) where {N<:Real}
+function linear_map(M::AbstractMatrix, Z::ZeroSet)
     @assert dim(Z) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
                                  "applied to a set of dimension $(dim(Z))"
 
@@ -203,7 +204,7 @@ function linear_map(M::AbstractMatrix{N}, Z::ZeroSet{N}) where {N<:Real}
 end
 
 """
-    translate(Z::ZeroSet{N}, v::AbstractVector{N}) where {N<:Real}
+    translate(Z::ZeroSet, v::AbstractVector)
 
 Translate (i.e., shift) a zero set by a given vector.
 
@@ -216,7 +217,7 @@ Translate (i.e., shift) a zero set by a given vector.
 
 A singleton containing the vector `v`.
 """
-function translate(Z::ZeroSet{N}, v::AbstractVector{N}) where {N<:Real}
+function translate(Z::ZeroSet, v::AbstractVector)
     @assert length(v) == dim(Z) "cannot translate a $(dim(Z))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     return Singleton(v)
@@ -227,7 +228,7 @@ end
 
 
 """
-    center(Z::ZeroSet{N}, i::Int) where {N<:Real}
+    center(Z::ZeroSet{N}, i::Int) where {N}
 
 Return the center along a given dimension of a zero set.
 
@@ -240,7 +241,7 @@ Return the center along a given dimension of a zero set.
 
 The center along a given dimension of the zero set.
 """
-@inline function center(Z::ZeroSet{N}, i::Int) where {N<:Real}
+@inline function center(Z::ZeroSet{N}, i::Int) where {N}
     @boundscheck _check_bounds(Z, i)
     return zero(N)
 end

@@ -91,6 +91,15 @@ for N in [Float64, Rational{Int}, Float32]
     @test lm isa Line2D{N, Vector{N}}
     @test lm.a ≈ N[1/2, -2] && lm.b ≈ N(0)
 
+    # projection
+    L = Line2D(N[1, -1], N(0))  # x = y
+    @test project(L, [1]) == project(L, [2]) == Universe{N}(1)
+    @test project(L, [1, 2]) == L
+    L = Line2D(N[2, 0], N(4))  # x = 2
+    @test project(L, [1]) == Singleton(N[2])
+    @test project(L, [2]) == Universe{N}(1)
+    @test project(L, [1, 2]) == L
+
     # translation
     @test translate(l1, N[1, 2]) == Line2D(a1, N(3))
 end

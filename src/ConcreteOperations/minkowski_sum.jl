@@ -1,10 +1,10 @@
 export minkowski_sum
 
 """
-    minkowski_sum(P::LazySet{N}, Q::LazySet{N};
+    minkowski_sum(P::LazySet, Q::LazySet;
                   [backend]=nothing,
                   [algorithm]=nothing,
-                  [prune]=true) where {N<:Real}
+                  [prune]=true)
 
 Concrete Minkowski sum for a pair of lazy sets using their constraint representation.
 
@@ -41,10 +41,10 @@ julia> ...
 julia> minkowski_sum(P, Q)
 ```
 """
-function minkowski_sum(P::LazySet{N}, Q::LazySet{N};
+function minkowski_sum(P::LazySet, Q::LazySet;
                        backend=nothing,
                        algorithm=nothing,
-                       prune=true) where {N<:Real}
+                       prune=true)
     @assert applicable(constraints_list, P) &&
         applicable(constraints_list, Q) "this function requires that the " *
         "list of constraints is available for both arguments; try " *
@@ -59,10 +59,10 @@ function minkowski_sum(P::LazySet{N}, Q::LazySet{N};
 end
 
 """
-    minkowski_sum(P::AbstractPolyhedron{N}, Q::AbstractPolyhedron{N};
+    minkowski_sum(P::AbstractPolyhedron, Q::AbstractPolyhedron;
                   [backend]=nothing,
                   [algorithm]=nothing,
-                  [prune]=true) where {N<:Real}
+                  [prune]=true)
 
 Compute the Minkowski sum between two polyhedra in constraint representation.
 
@@ -127,17 +127,17 @@ which itself uses `CDDLib` for variable elimination. The available algorithms ar
 
 [1] Kvasnica, Michal. "Minkowski addition of convex polytopes." (2005): 1-10.
 """
-function minkowski_sum(P::AbstractPolyhedron{N}, Q::AbstractPolyhedron{N};
+function minkowski_sum(P::AbstractPolyhedron, Q::AbstractPolyhedron;
                        backend=nothing,
                        algorithm=nothing,
-                       prune=true) where {N<:Real}
+                       prune=true)
     return _minkowski_sum_hrep_preprocess(P, Q, backend, algorithm, prune)
 end
 
-function minkowski_sum(P::HPolytope{N}, Q::HPolytope{N};
+function minkowski_sum(P::HPolytope, Q::HPolytope;
                        backend=nothing,
                        algorithm=nothing,
-                       prune=true) where {N<:Real}
+                       prune=true)
     res = _minkowski_sum_hrep_preprocess(P, Q, backend, algorithm, prune)
     return convert(HPolytope, res)
 end
@@ -157,13 +157,14 @@ end
 # simple H-representation,
 # P = {x : Ax <= b} and Q = {x : Cx <= d}
 # using the projection methods. See the documentation of `minkowski_sum` for details.
-function _minkowski_sum_hrep(A::AbstractMatrix{N}, b::AbstractVector{N},
-                             C::AbstractMatrix{N}, d::AbstractVector{N};
+function _minkowski_sum_hrep(A::AbstractMatrix, b::AbstractVector,
+                             C::AbstractMatrix, d::AbstractVector;
                              backend=nothing,
                              algorithm=nothing,
-                             prune=true) where {N<:Real}
+                             prune=true)
 
     if backend == nothing
+        N = promote_type(eltype(A), eltype(b), eltype(C), eltype(d))
         backend = default_cddlib_backend(N)
     end
 
@@ -193,8 +194,7 @@ function _minkowski_sum_hrep(A::AbstractMatrix{N}, b::AbstractVector{N},
 end
 
 """
-    minkowski_sum(H1::AbstractHyperrectangle{N}, H2::AbstractHyperrectangle{N})
-        where {N<:Real}
+    minkowski_sum(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle)
 
 Concrete Minkowski sum of a pair of hyperrectangular sets.
 
@@ -212,14 +212,14 @@ A `Hyperrectangle` corresponding to the concrete Minkowski sum of `H1` and `H2`.
 The resulting hyperrectangle is obtained by summing up the centers and
 radiuses of `H1` and `H2`.
 """
-function minkowski_sum(H1::AbstractHyperrectangle{N},
-                       H2::AbstractHyperrectangle{N}) where {N<:Real}
-    return Hyperrectangle(center(H1) + center(H2),
-                          radius_hyperrectangle(H1) + radius_hyperrectangle(H2))
+function minkowski_sum(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle)
+    c = center(H1) + center(H2)
+    r = radius_hyperrectangle(H1) + radius_hyperrectangle(H2)
+    return Hyperrectangle(c, r)
 end
 
 """
-    minkowski_sum(Z1::AbstractZonotope{N}, Z2::AbstractZonotope{N}) where {N<:Real}
+    minkowski_sum(Z1::AbstractZonotope, Z2::AbstractZonotope)
 
 Concrete Minkowski sum of a pair of zonotopic sets.
 
@@ -237,11 +237,40 @@ A `Zonotope` corresponding to the concrete Minkowski sum of `Z1` and `Z2`.
 The resulting zonotope is obtained by summing up the centers and concatenating
 the generators of `Z1` and `Z2`.
 """
-function minkowski_sum(Z1::AbstractZonotope{N}, Z2::AbstractZonotope{N}) where {N<:Real}
+function minkowski_sum(Z1::AbstractZonotope, Z2::AbstractZonotope)
     cnew = center(Z1) + center(Z2)
     Gnew = hcat(genmat(Z1), genmat(Z2))
     return Zonotope(cnew, Gnew)
 end
+
+"""
+    minkowski_sum(X::AbstractSingleton, Y::AbstractSingleton)
+
+Concrete Minkowski sum of a pair of singletons.
+
+### Input
+
+- `X` -- singleton
+- `Y` -- singleton
+
+### Output
+
+A singleton
+
+### Algorithm
+
+The singleton obtained by summing the elements in `X` and `Y`.
+"""
+function minkowski_sum(X::AbstractSingleton, Y::AbstractSingleton)
+    @assert dim(X) == dim(Y) "expected that the singletons have the same dimension, " *
+                "but they are $(dim(X)) and $(dim(Y)) respectively"
+    return _minkowski_sum(X, Y)
+end
+
+_minkowski_sum(X::AbstractSingleton, Y::AbstractSingleton) = Singleton(element(X) + element(Y))
+_minkowski_sum(X::AbstractSingleton, Y::ZeroSet) = X
+_minkowski_sum(X::ZeroSet, Y::AbstractSingleton) = Y
+_minkowski_sum(X::ZeroSet, Y::ZeroSet) = X
 
 """
     minkowski_sum(x::Interval, y::Interval)
@@ -265,3 +294,180 @@ arithmetic.
 function minkowski_sum(x::Interval, y::Interval)
     return Interval(x.dat + y.dat)
 end
+
+"""
+    minkowski_sum(P::VPolygon, Q::VPolygon)
+
+The Minkowski Sum of two polygon in vertex representation.
+
+### Input
+
+- `P` -- polygon in vertex representation
+- `Q` -- another polygon in vertex representation
+
+### Output
+
+A polygon in vertex representation.
+
+### Algorithm
+
+We treat each edge of the polygons as a vector, attaching them in polar order
+(attaching the tail of the next vector to the head of the previous vector). The
+resulting polygonal chain will be a polygon, which is the Minkowski sum of the
+given polygons. This algorithm assumes that the vertices of P and Q are sorted
+in counter-clockwise fashion and has linear complexity O(m+n) where m and n are
+the number of vertices of P and Q respectively.
+"""
+function minkowski_sum(P::VPolygon, Q::VPolygon)
+    vlistP = vertices_list(P)
+    vlistQ = vertices_list(Q)
+    R = _minkowski_sum_vrep_2d(vlistP, vlistQ)
+    return VPolygon(R)
+end
+
+function _minkowski_sum_vrep_2d(vlistP::Vector{VT},
+                                vlistQ::Vector{VT}) where {N, VT<:AbstractVector{N}}
+    mP = length(vlistP)
+    mQ = length(vlistQ)
+    if mP == 1 || mQ == 1
+        return _minkowski_sum_vrep_2d_singleton(vlistP, vlistQ)
+    end
+
+    EAST = N[1, 0]
+    ORIGIN = N[0, 0]
+    k = _σ_helper(EAST, vlistP)
+    j = _σ_helper(EAST, vlistQ)
+    R = Vector{VT}(undef, mP+mQ)
+    fill!(R, ORIGIN)
+
+    i = 1
+    while i <= size(R, 1)
+        P₁, P₂ = vlistP[(k-1)%mP + 1], vlistP[(k%mP + 1)]
+        P₁P₂ = P₂ - P₁
+        Q₁, Q₂ = vlistQ[(j-1)%mQ + 1], vlistQ[(j%mQ + 1)]
+        Q₁Q₂ = Q₂ - Q₁
+        R[i] = P₁ + Q₁
+        turn = right_turn(P₁P₂, Q₁Q₂, ORIGIN)
+        if turn > 0
+            k += 1
+        elseif turn < 0
+            j += 1
+        else
+            pop!(R)
+            k += 1
+            j += 1
+        end
+        i += 1
+    end
+    return R
+end
+
+# assume that at least one of the arguments has length 1
+function _minkowski_sum_vrep_2d_singleton(vlistP::Vector{VT},
+                                          vlistQ::Vector{VT}) where {N, VT<:AbstractVector{N}}
+    mP = length(vlistP)
+    mQ = length(vlistQ)
+
+    if min(mP, mQ) != 1
+        throw(ArgumentError("expected one argument to have only one vertex, got $mP and $mQ respectively"))
+    elseif mP != 1
+        return _minkowski_sum_vrep_2d_singleton(vlistQ, vlistP)
+    end
+
+    # vlistP has only one vertex, mP == 1
+    R = Vector{VT}(undef, mQ)
+    @inbounds begin
+        p = vlistP[1]
+        for i in 1:mQ
+            R[i] = p + vlistQ[i]
+        end
+    end
+    return R
+end
+
+"""
+    minkowski_sum(P1::VPolytope, P2::VPolytope;
+                  [apply_convex_hull]=true,
+                  [backend]=nothing,
+                  [solver]=nothing)
+
+Compute the Minkowski sum between two polytopes in vertex representation.
+
+### Input
+
+- `P1`                -- polytope
+- `P2`                -- another polytope
+- `apply_convex_hull` -- (optional, default: `true`) if `true`, post-process the
+                         pairwise sums using a convex hull algorithm
+- `backend`           -- (optional, default: `nothing`) the backend for
+                         polyhedral computations used to post-process with a
+                         convex hull; see `default_polyhedra_backend(P1)`
+- `solver`            -- (optional, default: `nothing`) the backend used to
+                         solve the linear program; see
+                         `default_lp_solver_polyhedra(N)`
+
+### Output
+
+A new polytope in vertex representation whose vertices are the convex hull of
+the sum of all possible sums of vertices of `P1` and `P2`.
+"""
+function minkowski_sum(P1::VPolytope, P2::VPolytope;
+                       apply_convex_hull::Bool=true,
+                       backend=nothing,
+                       solver=nothing)
+
+    @assert dim(P1) == dim(P2) "cannot compute the Minkowski sum between a polyotope " *
+        "of dimension $(dim(P1)) and a polytope of dimension $((dim(P2)))"
+
+    vlist1 = _vertices_list(P1, backend)
+    vlist2 = _vertices_list(P2, backend)
+    Vout = _minkowski_sum_vrep_nd(vlist1, vlist2, apply_convex_hull=apply_convex_hull, backend=backend, solver=solver)
+    return VPolytope(Vout)
+end
+
+function _minkowski_sum_vrep_nd(vlist1::Vector{VT}, vlist2::Vector{VT};
+                                apply_convex_hull::Bool=true,
+                                backend=nothing,
+                                solver=nothing) where {N, VT<:AbstractVector{N}}
+    n, m = length(vlist1), length(vlist2)
+    Vout = Vector{VT}()
+    sizehint!(Vout, n * m)
+    for vi in vlist1
+        for vj in vlist2
+            push!(Vout, vi + vj)
+        end
+    end
+    if apply_convex_hull
+        if backend == nothing
+            require(:Polyhedra; fun_name="minkowski_sum")
+            backend = default_polyhedra_backend_nd(N)
+            solver = default_lp_solver_polyhedra(N)
+        end
+        convex_hull!(Vout, backend=backend, solver=solver)
+    end
+    return Vout
+end
+
+"""
+    minkowski_sum(PZ::PolynomialZonotope, Z::AbstractZonotope)
+
+Return the Minkowski sum of a polynomial zonotope and a usual zonotopic set.
+
+### Input
+
+- `PZ` -- polynomial zonotope
+- `Z`  -- usual zonotopic set
+
+## Output
+
+A polynomial zonotope whose center is the sum of the centers of `PZ` and `Z`
+and whose generators are the concatenation of the generators of `PZ` and `Z`.
+"""
+function minkowski_sum(PZ::PolynomialZonotope, Z::AbstractZonotope)
+    c = PZ.c + center(Z)
+    G = [PZ.G genmat(Z)]
+    return PolynomialZonotope(c, PZ.E, PZ.F, G)
+end
+
+# symmetric method
+minkowski_sum(Z::AbstractZonotope, PZ::PolynomialZonotope) = minkowski_sum(PZ, Z)

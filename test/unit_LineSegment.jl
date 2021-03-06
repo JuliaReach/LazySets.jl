@@ -173,4 +173,9 @@ for N in [Float64, Rational{Int}, Float32]
     z = convert(Zonotope, l)
     G = hcat(N[1//2, 1//2])
     @test center(z) == N[1//2, 1//2] && genmat(z) ∈ [G, -G]
+
+    # sampling
+    L = LineSegment(N[0, 0], N[1, 1])
+    @test sample(L) ∈ L
+    @test all(x -> x ∈ L, sample(L, 10))
 end

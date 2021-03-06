@@ -122,13 +122,6 @@ but overapproximation with template directions can be used in any dimension.
 
 Let's time it!
 
-```@example ellipsoids
-using BenchmarkTools
-
-@btime overapproximate($E₁ ∩ $E₂, BoxDirections(2))
-@btime overapproximate($E₁ ∩ $E₂, OctDirections(2));
-```
-
 We can work with higher dimensional ellipsoids as well:
 
 ```@example ellipsoids
@@ -139,18 +132,16 @@ function rand_ellipsoid(n)
     A = rand(n,n)
     Q = (A+transpose(A))/2 + n * I
     Ellipsoid(rand(n), Q)
-end;
-```
+end
 
-```@example ellipsoids
-for n in [2, 5, 50, 100]
+for n in [2, 5, 10]
     println("\nn = $n\n")
     global E₁, E₂ = rand_ellipsoid(n), rand_ellipsoid(n)
 
     # overapproximate the lazy intersection using an n-dimensional box
-    @btime overapproximate($E₁ ∩ $E₂, BoxDirections($n))
-    
+    @time overapproximate(E₁ ∩ E₂, BoxDirections(n))
+
     # overapproximate the lazy intersection using octagonal directions in R^n
-    @btime overapproximate($E₁ ∩ $E₂, OctDirections($n))
+    @time overapproximate(E₁ ∩ E₂, OctDirections(n))
 end;
 ```

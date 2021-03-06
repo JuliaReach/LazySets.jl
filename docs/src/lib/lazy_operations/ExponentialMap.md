@@ -9,17 +9,17 @@ CurrentModule = LazySets
 ```@docs
 ExponentialMap
 dim(::ExponentialMap)
-ρ(::AbstractVector{N}, ::ExponentialMap{N}) where {N<:Real}
-σ(::AbstractVector{N}, ::ExponentialMap{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::ExponentialMap{N}) where {N<:Real}
+ρ(::AbstractVector, ::ExponentialMap)
+σ(::AbstractVector, ::ExponentialMap)
+∈(::AbstractVector, ::ExponentialMap)
 isbounded(::ExponentialMap)
-vertices_list(::ExponentialMap{N}) where {N<:Real}
+vertices_list(::ExponentialMap{N}) where {N}
 ```
 Inherited from [`AbstractAffineMap`](@ref):
 * [`an_element`](@ref an_element(::AbstractAffineMap))
 * [`isempty`](@ref isempty(::AbstractAffineMap))
-* [`constraints_list`](@ref constraints_list(::AbstractAffineMap{N}) where {N<:Real})
-* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractAffineMap{N}) where {N<:Real})
+* [`constraints_list`](@ref constraints_list(::AbstractAffineMap))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractAffineMap))
 
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -31,7 +31,7 @@ Inherited from [`LazySet`](@ref):
 
 ```@docs
 SparseMatrixExp
-*(::SparseMatrixExp{N}, ::LazySet{N}) where {N<:Real}
+*(::SparseMatrixExp, ::LazySet)
 get_row(::SparseMatrixExp, ::Int)
 ```
 
@@ -40,16 +40,16 @@ get_row(::SparseMatrixExp, ::Int)
 ```@docs
 ExponentialProjectionMap
 dim(::ExponentialProjectionMap)
-σ(::AbstractVector{N}, ::ExponentialProjectionMap{N}) where {N<:Real}
+σ(::AbstractVector, ::ExponentialProjectionMap)
 isbounded(::ExponentialProjectionMap)
 ```
 Inherited from [`AbstractAffineMap`](@ref):
 * [`an_element`](@ref an_element(::AbstractAffineMap))
 * [`isempty`](@ref isempty(::AbstractAffineMap))
-* [`∈`](@ref ∈(::AbstractVector{N}, ::AbstractAffineMap{N}) where {N<:Real})
-* [`vertices_list`](@ref vertices_list(::AbstractAffineMap{N}) where {N<:Real})
-* [`constraints_list`](@ref constraints_list(::AbstractAffineMap{N}) where {N<:Real})
-* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractAffineMap{N}) where {N<:Real})
+* [`∈`](@ref ∈(::AbstractVector, ::AbstractAffineMap))
+* [`vertices_list`](@ref vertices_list(::AbstractAffineMap))
+* [`constraints_list`](@ref constraints_list(::AbstractAffineMap))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractAffineMap))
 
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

@@ -222,7 +222,7 @@ for N in [Float64, Float32, Rational{Int}]
     xaux = intersection(paux, qaux)
     oaux = VPolygon([N[0, 0], N[1/2, 0], N[0, 1/2]])
     @test xaux ⊆ oaux && oaux ⊆ xaux # TODO use isequivalent
-    @test LazySets._intersection_vrep(paux.vertices, qaux.vertices) == xaux.vertices
+    @test LazySets._intersection_vrep_2d(paux.vertices, qaux.vertices) == xaux.vertices
 
     # check that tighter constraints are used in intersection (#883)
     h1 = HalfSpace([N(1), N(0)], N(3))
@@ -269,6 +269,18 @@ for N in [Float64, Float32, Rational{Int}]
         A = ones(N, 4, 2)
         @test linear_map(A, p4) isa HPolytope
     end
+    # linear_map with redundant vertices
+    A = N[1 0; 0 0]
+    P = VPolygon([N[1, 1], N[-1, 1], N[1, -1], N[-1, -1]])
+    Q = linear_map(A, P; apply_convex_hull=true)
+    @test ispermutation(vertices_list(Q), [N[1, 0], N[-1, 0]])
+    # non-square matrices
+    A = N[1 0]
+    Q = linear_map(A, P)
+    @test !(Q isa VPolygon) && dim(Q) == 1
+    A = N[1 0; 0 1; 1 1]
+    Q = linear_map(A, P)
+    @test !(Q isa VPolygon) && dim(Q) == 3
 
     # vertices_list removes duplicates by default (#1405)
     p3 = HPolygon([HalfSpace(N[1, 0], N(0)), HalfSpace(N[0, 1], N(0)),
@@ -410,17 +422,20 @@ for N in [Float64, Float32, Rational{Int}]
     @test project(V, 1:2) == V
     V = VPolygon([N[1, 0], N[1, 1]])
     @test project(V, [1]) == Interval(N(1), N(1))
-end
 
-function same_constraints(v::Vector{<:LinearConstraint{N}})::Bool where N<:Real
-    c1 = v[1]
-    for k = 2:length(v)
-        c2 = v[2]
-        if c1.a != c2.a || c1.b != c2.b
-            return false
-        end
-    end
-    return true
+    # concrete cartesian product
+    V = VPolygon([N[0, 1], N[1, 0], N[-1, 0]])
+    I = Interval(N(0), N(1))
+    Vcp = cartesian_product(I, V)
+    Vcp′ = VPolytope([N[0, -1, 0], N[0, 1, 0], N[0, 0, 1], N[1, -1, 0], N[1, 1, 0], N[1, 0, 1]])
+    # FIXME isapprox between arrays isequivalent(cartesian_product(I, V), Vcp) # TODO isequivalent(....)
+    @test LazySets._issubset_vertices_list(Vcp, Vcp′, false)
+    @test LazySets._issubset_vertices_list(Vcp′, Vcp, false)
+
+    # concrete projection of a cartesian product
+    @test project(I × V, 2:3) === V
+    @test project(I×V, 1:1) == I
+    @test project(I×V, 1:2) == VPolygon([N[0, -1], N[1, -1], N[1, 1], [0, 1]]) # TODO use isequivalent
 end
 
 for N in [Float64, Float32]
@@ -465,11 +480,11 @@ for N in [Float64, Float32]
         addconstraint!(po2, constraint, linear_search=i<=2)
     end
     n = length(p1.constraints)
-    @test n == length(p2.constraints) == length(po2.constraints) ==
+    @test n == length(p2.constraints) == length(po1.constraints) ==
           length(po2.constraints)
     for i in 1:n
-        @test same_constraints([p1.constraints[i], p2.constraints[i],
-                                po1.constraints[i], po2.constraints[i]])
+        @test allequal([p1.constraints[i], p2.constraints[i],
+                        po1.constraints[i], po2.constraints[i]])
     end
 
     for (hp, t_hp) in [(p1, HPolygon), (po1, HPolygonOpt)]
@@ -491,6 +506,23 @@ for N in [Float64, Float32]
         HalfSpace(N[2.17022, -0.130831], N(-2.14411))])
     addconstraint!(p2, p2.constraints[2])
     @test length(p2.constraints) == 6
+
+    # correct sorting of constraints in intersection (#2187)
+    h = Hyperrectangle(N[0.98069, 0.85020],
+                       N[0.00221, 0.00077])
+    p = overapproximate(Ball2(N[1, 1], N(15//100)), 1e-4)
+    @test !isempty(intersection(HPolygon(constraints_list(h)), p))
+
+    # test that concrete minkowski sum of a singleton and a polygon works
+    x = VPolygon([N[1, 1]])
+    y = VPolygon([N[1.1, 2.2], N[0.9, 2.2], N[0.9, 2.0], N[1.1, 2.0]])
+    v = minkowski_sum(x, y)
+
+    a = VPolygon([N[2.1, 3.2], N[1.9, 3.2], N[1.9, 3.0], N[2.1, 3.0]])
+    @test v == a
+    x = VPolygon([N[1, 1]])
+    y = VPolygon([N[2, 1]])
+    @test minkowski_sum(x, y) == VPolygon([N[3, 2]])
 end
 
 for N in [Float64]
@@ -540,6 +572,16 @@ for N in [Float64]
        ]
     P = HPolygon(copy(Hs))
     @test ispermutation(P.constraints, Hs[3:6])
+
+    # redundancy with almost-parallel constraints and approximation issues (#2386)
+    P = HPolygon([HalfSpace([1.0, 0.0], 1.0),
+                  HalfSpace([0.0, 1.0], 1.0),
+                  HalfSpace([-1.0, 0.0], 1.0),
+                  HalfSpace([0.0, -1.0], 1.0),
+                  HalfSpace([0.17178027783046604, -0.342877222169534], -0.3988040749330524),
+                  HalfSpace([0.17228094170254737, -0.3438765582974526], -0.5161575)
+                 ])
+    @test vertices_list(P) == [[-1.0, 1.0]]
 end
 
 # default Float64 constructors

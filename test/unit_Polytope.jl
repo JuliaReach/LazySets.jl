@@ -45,9 +45,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test_throws ErrorException σ(N[0], HPolytope{N}())
 
     # boundedness
-    @test isbounded(p) && isbounded(p, false)
+    @test isbounded(p) && isbounded(p, false) && isboundedtype(typeof(p))
     p2 = HPolytope{N}()
-    @test isbounded(p2) && !isbounded(p2, false)
+    @test isbounded(p2) && !isbounded(p2, false) && isboundedtype(typeof(p2))
 
     # isuniversal
     answer, w = isuniversal(p, true)
@@ -195,11 +195,21 @@ for N in [Float64, Rational{Int}, Float32]
     # test that Pcopy is independent of P ( = deepcopy)
     @test Pcopy.vertices[1] == [N(1)]
 
-    # test concrete projection
+    # concrete projection
     V = VPolytope([N[0, 0, 1], N[0, 1, 0], N[0, -1, 0], N[1, 0, 0]])
     @test project(V, [1]) == Interval(N(0), N(1))
     @test project(V, [1, 2]) == VPolygon([N[0, 0], N[0, 1], N[0, -1], N[1, 0]])
     @test project(V, [1, 2, 3]) == V
+
+    # linear_map with redundant vertices
+    A = N[1 0; 0 0]
+    P = VPolytope([N[1, 1], N[-1, 1], N[1, -1], N[-1, -1]])
+    Q1 = linear_map(A, P)
+    vlist1 = convex_hull(vertices_list(Q1))
+    Q2 = linear_map(A, P; apply_convex_hull=true)
+    vlist2 = vertices_list(Q2)
+    @test ispermutation(vlist1, [N[1, 0], N[-1, 0]])
+    @test ispermutation(vlist1, vlist2)
 end
 
 # default Float64 constructors
@@ -492,6 +502,12 @@ for N in [Float64]
         Q = minkowski_sum(P1, P2)
         @test ispermutation(vertices_list(Q), [N[0, 0, 0], N[0, 1, 0], N[1, 0, 0], N[1, 1, 0]])
 
+        # fallback conversion to vertex representation
+        B3 = BallInf(zeros(N, 3), N(1))
+        U = Matrix(N(1)*I, 3, 3) * B3
+        Uv = convert(VPolytope, U, prune=false)
+        @test ispermutation(vertices_list(Uv), vertices_list(B3))
+
         # -----------------
         # mixed H-rep/V-rep
         # -----------------
@@ -520,5 +536,29 @@ for N in [Float64]
         @test πP isa HPolytope{N}
         @test ispermutation(constraints_list(πP), [HalfSpace(N[-1], N(1)),
                                                    HalfSpace(N[1], N(1))])
+    end
+
+    # tests that require ModelingToolkit
+    @static if VERSION >= v"1.3" && isdefined(@__MODULE__, :ModelingToolkit)
+        vars = @variables x y
+        p1 = HPolytope([x + y <= 1, x + y >= -1,  x - y <= 1, x - y >= -1], vars)
+        b1 = Ball1(zeros(2), 1.0)
+        @test isequivalent(p1, b1)
+    end
+
+    # concrete projection of a polytope (see issue #2536)
+    if test_suite_polyhedra && N == Float64
+        X = HPolytope([HalfSpace([1.0, 1.0, 0.0], 4.0),
+                       HalfSpace([-1.0, -1.0, -0.0], -4.0),
+                       HalfSpace([-1.0, 0.0, 0.0], -0.0),
+                       HalfSpace([0.0, -1.0, 0.0], -0.0),
+                       HalfSpace([0.0, 0.0, -1.0], -0.0),
+                       HalfSpace([1.0, 0.0, 0.0], 10.0),
+                       HalfSpace([0.0, 1.0, 0.0], 10.0),
+                       HalfSpace([0.0, 0.0, 1.0], 10.0),
+                       HalfSpace([0.0, 1.0, 1.0], 6.0)])
+        v12 = [N[0, 4], N[4, 0]]
+        @test ispermutation(vertices_list(project(X, 1:2)), v12)
+        @test ispermutation(vertices_list(overapproximate(Projection(X, [1, 2]), 1e-3)), v12)
     end
 end

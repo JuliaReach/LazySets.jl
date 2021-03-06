@@ -7,11 +7,11 @@ export EmptySet, ∅,
        linear_map
 
 """
-    EmptySet{N<:Real} <: LazySet{N}
+    EmptySet{N} <: LazySet{N}
 
 Type that represents the empty set, i.e., the set with no elements.
 """
-struct EmptySet{N<:Real} <: LazySet{N}
+struct EmptySet{N} <: LazySet{N}
     dim::Int
 end
 
@@ -50,7 +50,7 @@ function dim(∅::EmptySet)
 end
 
 """
-    σ(d::AbstractVector{N}, ∅::EmptySet{N}) where {N<:Real}
+    σ(d::AbstractVector, ∅::EmptySet)
 
 Return the support vector of an empty set.
 
@@ -63,12 +63,12 @@ Return the support vector of an empty set.
 
 An error.
 """
-function σ(d::AbstractVector{N}, ∅::EmptySet{N}) where {N<:Real}
+function σ(d::AbstractVector, ∅::EmptySet)
     error("the support vector of an empty set does not exist")
 end
 
 """
-    ρ(d::AbstractVector{N}, ∅::EmptySet{N}) where {N<:Real}
+    ρ(d::AbstractVector, ∅::EmptySet)
 
 Evaluate the support function of an empty set in a given direction.
 
@@ -81,8 +81,12 @@ Evaluate the support function of an empty set in a given direction.
 
 An error.
 """
-function ρ(d::AbstractVector{N}, ∅::EmptySet{N}) where {N<:Real}
+function ρ(d::AbstractVector, ∅::EmptySet)
     error("the support function of an empty set does not exist")
+end
+
+function isboundedtype(::Type{<:EmptySet})
+    return true
 end
 
 """
@@ -103,7 +107,7 @@ function isbounded(::EmptySet)
 end
 
 """
-    isuniversal(∅::EmptySet{N}, [witness]::Bool=false) where {N<:Real}
+    isuniversal(∅::EmptySet{N}, [witness]::Bool=false) where {N}
 
 Check whether an empty is universal.
 
@@ -118,7 +122,7 @@ Check whether an empty is universal.
 * If `witness` option is activated: `(false, v)` where ``v ∉ S``, although
   we currently throw an error
 """
-function isuniversal(∅::EmptySet{N}, witness::Bool=false) where {N<:Real}
+function isuniversal(∅::EmptySet{N}, witness::Bool=false) where {N}
     if witness
         return (false, zeros(N, dim(∅)))
     else
@@ -127,7 +131,7 @@ function isuniversal(∅::EmptySet{N}, witness::Bool=false) where {N<:Real}
 end
 
 """
-    ∈(x::AbstractVector{N}, ∅::EmptySet{N}) where {N<:Real}
+    ∈(x::AbstractVector, ∅::EmptySet)
 
 Check whether a given point is contained in an empty set.
 
@@ -147,7 +151,7 @@ julia> [1.0, 0.0] ∈ ∅(2)
 false
 ```
 """
-function ∈(x::AbstractVector{N}, ∅::EmptySet{N}) where {N<:Real}
+function ∈(x::AbstractVector, ∅::EmptySet)
     return false
 end
 
@@ -324,7 +328,7 @@ The empty set.
 linear_map(M::AbstractMatrix{N}, ∅::EmptySet{N}) where {N} = ∅
 
 """
-    translate(∅::EmptySet{N}, v::AbstractVector{N}) where {N<:Real}
+    translate(∅::EmptySet, v::AbstractVector)
 
 Translate (i.e., shift) an empty set by a given vector.
 
@@ -337,12 +341,12 @@ Translate (i.e., shift) an empty set by a given vector.
 
 The empty set.
 """
-function translate(∅::EmptySet{N}, v::AbstractVector{N}) where {N<:Real}
+function translate(∅::EmptySet, v::AbstractVector)
     return ∅
 end
 
 """
-    plot_recipe(∅::EmptySet{N}, [ε]::N=zero(N)) where {N<:Real}
+    plot_recipe(∅::EmptySet{N}, [ε]=zero(N)) where {N}
 
 Convert an empty set to a sequence of points for plotting.
 In the special case of an empty set, we define the sequence as `nothing`.
@@ -356,7 +360,7 @@ In the special case of an empty set, we define the sequence as `nothing`.
 
 `nothing`.
 """
-function plot_recipe(∅::EmptySet{N}, ε::N=zero(N)) where {N<:Real}
+function plot_recipe(∅::EmptySet{N}, ε=zero(N)) where {N}
     return []
 end
 
@@ -375,4 +379,8 @@ The zero element of type `N`.
 """
 function area(∅::EmptySet{N}) where {N}
     return zero(N)
+end
+
+function project(∅::EmptySet{N}, block::AbstractVector{Int}; kwargs...) where {N}
+    return EmptySet{N}(length(block))
 end

@@ -1,3 +1,5 @@
+using LazySets: linear_map_inverse
+
 for N in [Float64, Rational{Int}, Float32]
     # random universe
     rand(Universe)
@@ -85,6 +87,13 @@ for N in [Float64, Rational{Int}, Float32]
     @test U ⊈ B && !res && w ∉ B
     res, w = ⊆(U, U, true)
     @test U ⊆ U && res && w == N[]
+
+    # inverse linear map
+    M = ones(N, 2, 3)
+    @test linear_map_inverse(M, U) == Universe{N}(3)
+
+    # projection
+    @test project(Universe{N}(5), [1, 4, 5]) == Universe{N}(3)
 end
 
 # default Float64 constructor

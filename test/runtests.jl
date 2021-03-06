@@ -1,15 +1,23 @@
 using LazySets, LazySets.Approximations, Test, LinearAlgebra, SparseArrays, StaticArrays
 
+using LazySets: _leq, _geq, isapproxzero, _isapprox, _ztol
+
 import IntervalArithmetic
 const IA = IntervalArithmetic
 using IntervalArithmetic: IntervalBox
 
+# fix random number generator seed
+using Random
+Random.seed!(1234)
+
 # ========================
 # Optional dependencies
 # ========================
-import Distributions, Expokit, IntervalMatrices, Optim, TaylorModels
+import Distributions, Expokit, IntervalMatrices, Optim, TaylorModels, IntervalConstraintProgramming
 using IntervalMatrices: ±, IntervalMatrix
 using TaylorModels: set_variables, TaylorModelN
+using IntervalConstraintProgramming
+
 @static if VERSION >= v"1.3"
     using ModelingToolkit
 end
@@ -18,7 +26,7 @@ end
 # Non-exported helper functions
 # ==============================
 using LazySets: ispermutation
-using LazySets.Arrays: isinvertible, inner,
+using LazySets.Arrays: isinvertible, inner, allequal,
                        is_cyclic_permutation, SingleEntryVector
 
 global test_suite_basic = true
@@ -77,6 +85,7 @@ if test_suite_basic
     # =======================================
     # Testing types that inherit from LazySet
     # =======================================
+    @time @testset "LazySets.LazySet" begin include("unit_LazySet.jl") end
     @time @testset "LazySets.Singleton" begin include("unit_Singleton.jl") end
     @time @testset "LazySets.Ball1" begin include("unit_Ball1.jl") end
     @time @testset "LazySets.Ball2" begin include("unit_Ball2.jl") end
@@ -127,6 +136,7 @@ if test_suite_basic
     @time @testset "LazySets.Complement" begin include("unit_Complement.jl") end
     @time @testset "LazySets.PolynomialZonotope" begin include("unit_PolynomialZonotope.jl") end
     @time @testset "LazySets.Rectification" begin include("unit_Rectification.jl") end
+    @time @testset "LazySets.Star" begin include("unit_Star.jl") end
     @time @testset "LazySets.UnionSet" begin include("unit_UnionSet.jl") end
 
     # ===================
@@ -151,8 +161,12 @@ if test_suite_basic
     # ========================
     # Testing method ambiguity
     # ========================
-    include("check_method_ambiguity_binary.jl")
-    @time @testset "LazySets.binary_operations" begin include("unit_binary_operations.jl") end
+    @static if VERSION >= v"1.1" @time @testset "LazySets.method_ambiguities" begin
+        for package in [LazySets, Approximations, Arrays, Assertions, LazySets.Parallel]
+            ambiguities = detect_ambiguities(package)
+            @test isempty(ambiguities)
+        end
+    end end
 
     # ====================================
     # Testing common API of all interfaces
@@ -164,13 +178,17 @@ if test_suite_basic
 end
 
 if test_suite_plotting
-    import Plots
-    using Plots: plot
+    @static if VERSION >= v"1.1"
+        # define `plot` function as `RecipesBase.apply_recipe`
+        import RecipesBase
+        struct DummyBackend <: RecipesBase.AbstractBackend end
+        struct DummyPlot <: RecipesBase.AbstractPlot{DummyBackend} end
+        Base.length(::DummyPlot) = 0
+        dict = Dict{Symbol, Any}(:plot_object => DummyPlot())
+        plot(args...; kwargs...) = RecipesBase.apply_recipe(dict, args...; kwargs...)
 
-    # fix namespace conflicts with Plots
-    using LazySets: center, translate
-
-    @time @testset "LazySets.plotting" begin include("unit_plot.jl") end
+        @time @testset "LazySets.plotting" begin include("unit_plot.jl") end
+    end
 end
 
 if test_suite_doctests

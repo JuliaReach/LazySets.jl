@@ -2,7 +2,7 @@ export hausdorff_distance
 
 """
     hausdorff_distance(X::LazySet{N}, Y::LazySet{N}; [p]::N=N(Inf),
-                       [ε]::N=N(1e-3)) where {N<:Real}
+                       [ε]=N(1e-3)) where {N}
 
 Compute the Hausdorff distance between two convex sets up to a given threshold.
 
@@ -49,10 +49,10 @@ As long as this bound does not work, we increase the bound by ``2``.
 
 Given a value ``δ``, to check whether the sets are within Hausdorff distance
 ``δ``, we simply check the inclusions given above, where on the right-hand side
-we use a lazy `MinkowskiSum` with a `Ballp` centered in the origin.
+we use a lazy `Bloating`.
 """
 function hausdorff_distance(X::LazySet{N}, Y::LazySet{N}; p::N=N(Inf),
-                            ε::N=N(1e-3)) where {N<:Real}
+                            ε=N(1e-3)) where {N}
     @assert ε > zero(N) "the value ε must be positive"
     @assert isbounded(X) && isbounded(Y) "the Hausdorff distance is only " *
         "defined for compact sets"
@@ -90,15 +90,14 @@ function _mutual_issubset_in_δ_bloating(X, Y, δ, n, p)
 end
 
 function _issubset_in_δ_bloating(X::LazySet{N}, Y, δ, n, p) where {N}
-    return X ⊆ Y + Ballp(p, zeros(N, n), δ)
+    return X ⊆ Bloating(Y, δ, p)
 end
 
 # for polytopes the default implementation of `⊆` requires membership in the rhs
-# set, which will be a MinkowskiSum and hence not available; we use the
-# alternative based on constraints_list on the right instead
-function _issubset_in_δ_bloating(X::AbstractPolytope{N}, Y, δ, n, p
-                                ) where {N<:Real}
-    return LazySets._issubset_constraints_list(X, Y + Ballp(p, zeros(N, n), δ))
+# set, which will be a Bloating and hence not available; we use the alternative
+# based on constraints_list on the right instead
+function _issubset_in_δ_bloating(X::AbstractPolytope{N}, Y, δ, n, p) where {N}
+    return LazySets._issubset_constraints_list(X, Bloating(Y, δ, p))
 end
 
 

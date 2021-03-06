@@ -102,10 +102,8 @@ struct Ellipsoid{N<:AbstractFloat, VN<:AbstractVector{N},
     shape_matrix::MN
 
     # default constructor with dimension check
-    function Ellipsoid(c::VN, Q::MN;
-                       check_posdef::Bool=true) where {N<:AbstractFloat,
-                                                       VN<:AbstractVector{N},
-                                                       MN<:AbstractMatrix{N}}
+    function Ellipsoid(c::VN, Q::MN; check_posdef::Bool=true) where
+            {N<:AbstractFloat, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}}
 
         @assert length(c) == checksquare(Q) "the length of the center and the size "
             "of the shape matrix do not match; they are $(length(c)) and $(size(Q)) respectively"
@@ -122,7 +120,7 @@ isoperationtype(::Type{<:Ellipsoid}) = false
 isconvextype(::Type{<:Ellipsoid}) = true
 
 # convenience constructor for ellipsoid centered in the origin
-function Ellipsoid(Q::AbstractMatrix{N}; check_posdef::Bool=true) where {N<:AbstractFloat}
+function Ellipsoid(Q::AbstractMatrix{N}; check_posdef::Bool=true) where {N}
     # TODO: use similar vector type for the center, see #2032
     return Ellipsoid(zeros(N, size(Q, 1)), Q; check_posdef=check_posdef)
 end
@@ -131,7 +129,7 @@ end
 
 
 """
-    center(E::Ellipsoid{N}) where {N<:AbstractFloat}
+    center(E::Ellipsoid)
 
 Return the center of the ellipsoid.
 
@@ -143,12 +141,12 @@ Return the center of the ellipsoid.
 
 The center of the ellipsoid.
 """
-function center(E::Ellipsoid{N}) where {N<:AbstractFloat}
+function center(E::Ellipsoid)
     return E.center
 end
 
 """
-    shape_matrix(E::Ellipsoid{N}) where {N<:AbstractFloat}
+    shape_matrix(E::Ellipsoid)
 
 Return the shape matrix of the ellipsoid.
 
@@ -160,7 +158,7 @@ Return the shape matrix of the ellipsoid.
 
 The shape matrix of the ellipsoid.
 """
-function shape_matrix(E::Ellipsoid{N}) where {N<:AbstractFloat}
+function shape_matrix(E::Ellipsoid)
     return E.shape_matrix
 end
 
@@ -168,7 +166,7 @@ end
 
 
 """
-    σ(d::AbstractVector{N}, E::Ellipsoid{N}) where {N<:AbstractFloat}
+    σ(d::AbstractVector, E::Ellipsoid)
 
 Return the support vector of an ellipsoid in a given direction.
 
@@ -193,7 +191,8 @@ vector,
 = c + \\dfrac{Qd}{\\sqrt{d^\\mathrm{T}Q d}}.
 ```
 """
-function σ(d::AbstractVector{N}, E::Ellipsoid{N}) where {N<:AbstractFloat}
+function σ(d::AbstractVector, E::Ellipsoid)
+    N = promote_type(eltype(d), eltype(E))
     if norm(d, 2) == zero(N)
         return an_element(E)
     end
@@ -202,7 +201,7 @@ function σ(d::AbstractVector{N}, E::Ellipsoid{N}) where {N<:AbstractFloat}
 end
 
 """
-    ρ(d::AbstractVector{N}, E::Ellipsoid{N}) where {N<:AbstractFloat}
+    ρ(d::AbstractVector, E::Ellipsoid)
 
 Return the support function of an ellipsoid in a given direction.
 
@@ -220,12 +219,12 @@ The support function of the ellipsoid in the given direction.
 The support value is ``cᵀ d + ‖Bᵀ d‖₂`` where ``c`` is the center and
 ``Q = B Bᵀ`` is the shape matrix of `E`.
 """
-function ρ(d::AbstractVector{N}, E::Ellipsoid{N}) where {N<:AbstractFloat}
+function ρ(d::AbstractVector, E::Ellipsoid)
     return dot(center(E), d) + sqrt(inner(d, E.shape_matrix, d))
 end
 
 """
-    ∈(x::AbstractVector{N}, E::Ellipsoid{N}) where {N<:AbstractFloat}
+    ∈(x::AbstractVector, E::Ellipsoid)
 
 Check whether a given point is contained in an ellipsoid.
 
@@ -247,7 +246,7 @@ if and only if
 (x-c)^\\mathrm{T} Q^{-1} (x-c) ≤ 1.
 ```
 """
-function ∈(x::AbstractVector{N}, E::Ellipsoid{N}) where {N<:AbstractFloat}
+function ∈(x::AbstractVector, E::Ellipsoid)
     @assert length(x) == dim(E)
     w, Q = x-E.center, E.shape_matrix
     return dot(w, Q \ w) ≤ 1
@@ -312,8 +311,7 @@ function rand(::Type{Ellipsoid};
 end
 
 """
-    translate(E::Ellipsoid{N}, v::AbstractVector{N}; share::Bool=false
-             ) where {N<:AbstractFloat}
+    translate(E::Ellipsoid, v::AbstractVector; [share]::Bool=false)
 
 Translate (i.e., shift) an ellipsoid by a given vector.
 
@@ -336,8 +334,7 @@ The shape matrix is shared with the original ellipsoid if `share == true`.
 
 We add the vector to the center of the ellipsoid.
 """
-function translate(E::Ellipsoid{N}, v::AbstractVector{N}; share::Bool=false
-                  ) where {N<:AbstractFloat}
+function translate(E::Ellipsoid, v::AbstractVector; share::Bool=false)
     @assert length(v) == dim(E) "cannot translate a $(dim(E))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     c = center(E) + v

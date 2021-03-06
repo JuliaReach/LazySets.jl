@@ -40,6 +40,7 @@ import .Arrays: distance
 # ===================
 # Auxiliary functions
 # ===================
+include("Utils/compat.jl")
 include("Utils/helper_functions.jl")
 include("Utils/macros.jl")
 include("Utils/iterators.jl")
@@ -48,6 +49,7 @@ include("Utils/iterators.jl")
 # Abstract set types
 # ==================
 include("Interfaces/LazySet.jl")
+include("Interfaces/AbstractStar.jl")
 include("Interfaces/AbstractPolyhedron.jl")
 include("Sets/HalfSpace.jl")  # must come before AbstractPolyhedron_functions
 include("Interfaces/AbstractPolyhedron_functions.jl")
@@ -122,6 +124,7 @@ include("LazyOperations/Rectification.jl")  # must come after UnionSet
 # Aliases
 # =======
 include("Interfaces/aliases.jl")
+include("Sets/Star.jl")
 
 # =============================
 # Conversions between set types
@@ -131,6 +134,7 @@ include("convert.jl")
 # ===========================
 # Concrete operations on sets
 # ===========================
+include("ConcreteOperations/cartesian_product.jl")
 include("ConcreteOperations/convex_hull.jl")
 include("ConcreteOperations/difference.jl")
 include("ConcreteOperations/intersection.jl")

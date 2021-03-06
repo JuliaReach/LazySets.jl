@@ -7,7 +7,7 @@ export ConvexHull, CH,
        swap
 
 """
-    ConvexHull{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
+    ConvexHull{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
 
 Type that represents the convex hull of the union of two convex sets.
 
@@ -33,16 +33,14 @@ julia> typeof(c)
 ConvexHull{Float64,Ball2{Float64,Array{Float64,1}},Ball2{Float64,Array{Float64,1}}}
 ```
 """
-struct ConvexHull{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
+struct ConvexHull{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     X::S1
     Y::S2
 
-    # default constructor with dimension check
-    function ConvexHull(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N},
-                                             S2<:LazySet{N}}
-        @assert dim(X) == dim(Y) "sets in a convex hull must have the same " *
-            "dimension"
-        return new{N, S1, S2}(X, Y)
+    # default constructor with dimension check  
+    function ConvexHull(X::LazySet{N}, Y::LazySet{N}) where {N}
+        @assert dim(X) == dim(Y) "sets in a convex hull must have the same dimension"
+        return new{N, typeof(X), typeof(Y)}(X, Y)
     end
 end
 
@@ -97,7 +95,7 @@ function dim(ch::ConvexHull)
 end
 
 """
-    σ(d::AbstractVector{N}, ch::ConvexHull{N}) where {N<:Real}
+    σ(d::AbstractVector, ch::ConvexHull)
 
 Return the support vector of a convex hull of two convex sets in a given
 direction.
@@ -111,7 +109,7 @@ direction.
 
 The support vector of the convex hull in the given direction.
 """
-function σ(d::AbstractVector{N}, ch::ConvexHull{N}) where {N<:Real}
+function σ(d::AbstractVector, ch::ConvexHull)
     σ1 = σ(d, ch.X)
     σ2 = σ(d, ch.Y)
     ρ1 = dot(d, σ1)
@@ -120,7 +118,7 @@ function σ(d::AbstractVector{N}, ch::ConvexHull{N}) where {N<:Real}
 end
 
 """
-    ρ(d::AbstractVector{N}, ch::ConvexHull{N}) where {N<:Real}
+    ρ(d::AbstractVector, ch::ConvexHull)
 
 Return the support function of a convex hull of two convex sets in a given
 direction.
@@ -134,7 +132,7 @@ direction.
 
 The support function of the convex hull in the given direction.
 """
-function ρ(d::AbstractVector{N}, ch::ConvexHull{N}) where {N<:Real}
+function ρ(d::AbstractVector, ch::ConvexHull)
     return max(ρ(d, ch.X), ρ(d, ch.Y))
 end
 

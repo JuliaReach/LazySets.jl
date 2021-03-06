@@ -37,9 +37,16 @@ for N in [Float64, Float32, Rational{Int}]
         @test isbounding(dir)
         @test dim(dir) == n
         oct = overapproximate(X, dir)
-        @test length(dir) == length(oct.constraints) == 2 * n^2
-        oct = overapproximate(X, OctDirections)
-        @test length(dir) == length(oct.constraints) == 2 * n^2
+
+        # two constraints are redundant
+        @test length(dir) == 2 * n^2 >=  length(oct.constraints)
+
+        # do not remove redundant constraints
+        oct = overapproximate(X, dir, prune=false)
+        @test length(dir) == 2 * n^2 == length(oct.constraints)
+
+        oct = overapproximate(X, OctDirections) # same passing only the type
+        @test length(dir) == 2 * n^2 >=  length(oct.constraints)
         # octagon direction using regular arrays
         @test [v for v in OctDirections{N, Vector{N}}(n)] == Vector(collect.(OctDirections{N}(n)))
 
@@ -47,10 +54,10 @@ for N in [Float64, Float32, Rational{Int}]
         dir = BoxDiagDirections{N}(n)
         @test isbounding(dir)
         @test dim(dir) == n
-        boxdiag = overapproximate(X, dir)
+        boxdiag = overapproximate(X, dir, prune=false)
         @test length(dir) == length(boxdiag.constraints) ==
               (n == 1 ? 2 : 2^n + 2*n)
-        boxdiag = overapproximate(X, BoxDiagDirections)
+        boxdiag = overapproximate(X, BoxDiagDirections, prune=false)
         @test length(dir) == length(boxdiag.constraints) ==
               (n == 1 ? 2 : 2^n + 2*n)
 

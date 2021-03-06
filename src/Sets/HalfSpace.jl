@@ -5,11 +5,12 @@ import Base: rand,
 
 export HalfSpace, LinearConstraint,
        an_element,
+       complement,
        constrained_dimensions,
        halfspace_left, halfspace_right
 
 """
-    HalfSpace{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
+    HalfSpace{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
 
 Type that represents a (closed) half-space of the form ``a⋅x ≤ b``.
 
@@ -35,11 +36,11 @@ julia> HalfSpace([0, -1.], 0.)
 HalfSpace{Float64,Array{Float64,1}}([0.0, -1.0], 0.0)
 ```
 """
-struct HalfSpace{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
+struct HalfSpace{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
     a::VN
     b::N
 
-    function HalfSpace(a::VN, b::N) where {N<:Real, VN<:AbstractVector{N}}
+    function HalfSpace(a::VN, b::N) where {N, VN<:AbstractVector{N}}
         @assert !iszero(a) "a half-space needs a non-zero normal vector"
         return new{N, VN}(a, b)
     end
@@ -56,7 +57,7 @@ Alias for `HalfSpace`
 const LinearConstraint = HalfSpace
 
 """
-    normalize(hs::HalfSpace{N}, p=N(2)) where {N<:Real}
+    normalize(hs::HalfSpace{N}, p=N(2)) where {N}
 
 Normalize a half-space.
 
@@ -70,7 +71,7 @@ Normalize a half-space.
 A new half-space whose normal direction ``a`` is normalized, i.e., such that
 ``‖a‖_p = 1`` holds.
 """
-function normalize(hs::HalfSpace{N}, p=N(2)) where {N<:Real}
+function normalize(hs::HalfSpace{N}, p=N(2)) where {N}
     nₐ = norm(hs.a, p)
     a = LinearAlgebra.normalize(hs.a, p)
     b = hs.b / nₐ
@@ -99,7 +100,7 @@ function dim(hs::HalfSpace)
 end
 
 """
-    ρ(d::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
+    ρ(d::AbstractVector, hs::HalfSpace)
 
 Evaluate the support function of a half-space in a given direction.
 
@@ -113,17 +114,18 @@ Evaluate the support function of a half-space in a given direction.
 The support function of the half-space.
 If the set is unbounded in the given direction, the result is `Inf`.
 """
-function ρ(d::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
+function ρ(d::AbstractVector, hs::HalfSpace)
     v, unbounded = σ_helper(d, Hyperplane(hs.a, hs.b); error_unbounded=false,
                             halfspace=true)
     if unbounded
+        N = promote_type(eltype(d), eltype(hs))
         return N(Inf)
     end
     return dot(d, v)
 end
 
 """
-    σ(d::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
+    σ(d::AbstractVector, hs::HalfSpace)
 
 Return the support vector of a half-space.
 
@@ -141,7 +143,7 @@ following two cases:
 In both cases the result is any point on the boundary (the defining hyperplane).
 Otherwise this function throws an error.
 """
-function σ(d::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
+function σ(d::AbstractVector, hs::HalfSpace)
     v, unbounded = σ_helper(d, Hyperplane(hs.a, hs.b); error_unbounded=true,
                             halfspace=true)
     return v
@@ -165,7 +167,7 @@ function isbounded(::HalfSpace)
 end
 
 """
-    isuniversal(hs::HalfSpace{N}, [witness]::Bool=false) where {N<:Real}
+    isuniversal(hs::HalfSpace, [witness]::Bool=false)
 
 Check whether a half-space is universal.
 
@@ -183,7 +185,7 @@ Check whether a half-space is universal.
 
 Witness production falls back to `isuniversal(::Hyperplane)`.
 """
-function isuniversal(hs::HalfSpace{N}, witness::Bool=false) where {N<:Real}
+function isuniversal(hs::HalfSpace, witness::Bool=false)
     if witness
         return isuniversal(Hyperplane(hs.a, hs.b), true)
     else
@@ -192,7 +194,7 @@ function isuniversal(hs::HalfSpace{N}, witness::Bool=false) where {N<:Real}
 end
 
 """
-    an_element(hs::HalfSpace{N}) where {N<:Real}
+    an_element(hs::HalfSpace)
 
 Return some element of a half-space.
 
@@ -204,12 +206,12 @@ Return some element of a half-space.
 
 An element on the defining hyperplane.
 """
-function an_element(hs::HalfSpace{N}) where {N<:Real}
+function an_element(hs::HalfSpace)
     return an_element_helper(Hyperplane(hs.a, hs.b))
 end
 
 """
-    ∈(x::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
+    ∈(x::AbstractVector, hs::HalfSpace)
 
 Check whether a given point is contained in a half-space.
 
@@ -226,7 +228,7 @@ Check whether a given point is contained in a half-space.
 
 We just check if ``x`` satisfies ``a⋅x ≤ b``.
 """
-function ∈(x::AbstractVector{N}, hs::HalfSpace{N}) where {N<:Real}
+function ∈(x::AbstractVector, hs::HalfSpace)
     return _leq(dot(x, hs.a), hs.b)
 end
 
@@ -285,7 +287,7 @@ function isempty(hs::HalfSpace)
 end
 
 """
-    constraints_list(hs::HalfSpace{N}) where {N<:Real}
+    constraints_list(hs::HalfSpace)
 
 Return the list of constraints of a half-space.
 
@@ -297,12 +299,12 @@ Return the list of constraints of a half-space.
 
 A singleton list containing the half-space.
 """
-function constraints_list(hs::HalfSpace{N}) where {N<:Real}
+function constraints_list(hs::HalfSpace)
     return [hs]
 end
 
 """
-    constraints_list(A::AbstractMatrix{N}, b::AbstractVector{N}) where {N<:Real}
+    constraints_list(A::AbstractMatrix{N}, b::AbstractVector)
 
 Convert a matrix-vector representation to a linear-constraint representation.
 
@@ -315,8 +317,7 @@ Convert a matrix-vector representation to a linear-constraint representation.
 
 A list of linear constraints.
 """
-function constraints_list(A::AbstractMatrix{N}, b::AbstractVector{N}
-                         ) where {N<:Real}
+function constraints_list(A::AbstractMatrix, b::AbstractVector)
     m = size(A, 1)
     @assert m == length(b) "a matrix with $m rows is incompatible with a " *
                            "vector of length $(length(b))"
@@ -325,7 +326,7 @@ function constraints_list(A::AbstractMatrix{N}, b::AbstractVector{N}
 end
 
 """
-    constrained_dimensions(hs::HalfSpace{N}) where {N<:Real}
+    constrained_dimensions(hs::HalfSpace)
 
 Return the indices in which a half-space is constrained.
 
@@ -342,12 +343,12 @@ dimension `i`.
 
 A 2D half-space with constraint ``x1 ≥ 0`` is constrained in dimension 1 only.
 """
-function constrained_dimensions(hs::HalfSpace{N}) where {N<:Real}
+function constrained_dimensions(hs::HalfSpace)
     return nonzero_indices(hs.a)
 end
 
 """
-    halfspace_left(p::AbstractVector{N}, q::AbstractVector{N}) where {N<:Real}
+    halfspace_left(p::AbstractVector, q::AbstractVector)
 
 Return a half-space describing the 'left' of a two-dimensional line segment
 through two points.
@@ -402,8 +403,7 @@ julia> B ⊆ H && H ⊆ B
 true
 ```
 """
-function halfspace_left(p::AbstractVector{N},
-                        q::AbstractVector{N}) where {N<:Real}
+function halfspace_left(p::AbstractVector, q::AbstractVector)
     @assert length(p) == length(q) == 2 "the points must be two-dimensional"
     @assert p != q "the points must not be equal"
     a = [q[2] - p[2], p[1] - q[1]]
@@ -411,7 +411,7 @@ function halfspace_left(p::AbstractVector{N},
 end
 
 """
-    halfspace_right(p::AbstractVector{N}, q::AbstractVector{N}) where {N<:Real}
+    halfspace_right(p::AbstractVector, q::AbstractVector)
 
 Return a half-space describing the 'right' of a two-dimensional line segment
 through two points.
@@ -430,14 +430,14 @@ describes the right-hand side of the directed line segment `pq`.
 
 See the documentation of `halfspace_left`.
 """
-function halfspace_right(p::AbstractVector{N},
-                         q::AbstractVector{N}) where {N<:Real}
+function halfspace_right(p::AbstractVector, q::AbstractVector)
     return halfspace_left(q, p)
 end
 
 """
-    is_tighter_same_dir_2D(c1::LinearConstraint{N},
-                           c2::LinearConstraint{N}) where {N<:Real}
+    is_tighter_same_dir_2D(c1::LinearConstraint,
+                           c2::LinearConstraint;
+                           [strict]::Bool=false)
 
 Check if the first of two two-dimensional constraints with equivalent normal
 direction is tighter.
@@ -453,9 +453,9 @@ direction is tighter.
 
 `true` iff the first constraint is tighter.
 """
-function is_tighter_same_dir_2D(c1::LinearConstraint{N},
-                                c2::LinearConstraint{N};
-                                strict::Bool=false) where {N<:Real}
+function is_tighter_same_dir_2D(c1::LinearConstraint,
+                                c2::LinearConstraint;
+                                strict::Bool=false)
     @assert dim(c1) == dim(c2) == 2 "this method requires 2D constraints"
     @assert samedir(c1.a, c2.a)[1] "the constraints must have the same " *
         "normal direction"
@@ -469,8 +469,7 @@ function is_tighter_same_dir_2D(c1::LinearConstraint{N},
 end
 
 """
-    translate(hs::HalfSpace{N}, v::AbstractVector{N}; share::Bool=false
-             ) where {N<:Real}
+    translate(hs::HalfSpace, v::AbstractVector; [share]::Bool=false)
 
 Translate (i.e., shift) a half-space by a given vector.
 
@@ -495,8 +494,7 @@ original halfspace if `share == true`.
 A half-space ``a⋅x ≤ b`` is transformed to the half-space ``a⋅x ≤ b + a⋅v``.
 In other words, we add the dot product ``a⋅v`` to ``b``.
 """
-function translate(hs::HalfSpace{N}, v::AbstractVector{N}; share::Bool=false
-                  ) where {N<:Real}
+function translate(hs::HalfSpace, v::AbstractVector; share::Bool=false)
     @assert length(v) == dim(hs) "cannot translate a $(dim(hs))-dimensional " *
                                  "set by a $(length(v))-dimensional vector"
     a = share ? hs.a : copy(hs.a)
@@ -504,12 +502,13 @@ function translate(hs::HalfSpace{N}, v::AbstractVector{N}; share::Bool=false
     return HalfSpace(a, b)
 end
 
-function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::HalfSpace{N},
-                          algo::AbstractLinearMapAlgorithm) where {N<:Real}
-    constraints = _linear_map_hrep(M, P, algo)
+function _linear_map_hrep_helper(M::AbstractMatrix, hs::HalfSpace,
+                          algo::AbstractLinearMapAlgorithm)
+    constraints = _linear_map_hrep(M, hs, algo)
     if length(constraints) == 1
         return first(constraints)
     elseif isempty(constraints)
+        N = promote_type(eltype(M), eltype(hs))
         return Universe{N}(size(M, 1))
     else
         return HPolyhedron(constraints)
@@ -527,8 +526,48 @@ _normal_Vector(c::LinearConstraint) = LinearConstraint(convert(Vector, c.a), c.b
 function load_modeling_toolkit_halfspace()
 return quote
 
+# returns `(true, sexpr)` if expr represents a half-space,
+# where sexpr is the simplified expression sexpr := LHS - RHS <= 0
+# otherwise, returns `(false, expr)`
+function _is_halfspace(expr::Symbolic)
+    got_halfspace = true
+
+    # find sense and normalize
+    op = operation(expr)
+    args = arguments(expr)
+    if op in (<=, <)
+        a, b = args
+        sexpr = simplify(a - b)
+
+    elseif op in (>=, >)
+        a, b = args
+        sexpr = simplify(b - a)
+
+    elseif (op == |) && (operation(args[1]) == <)
+        a, b = arguments(args[1])
+        sexpr = simplify(a - b)
+
+    elseif (op == |) && (operation(args[2]) == <)
+        a, b = arguments(args[2])
+        sexpr = simplify(a - b)
+
+    elseif (op == |) && (operation(args[1]) == >)
+        a, b = arguments(args[1])
+        sexpr = simplify(b - a)
+
+    elseif (op == |) && (operation(args[2]) == >)
+        a, b = arguments(args[2])
+        sexpr = simplify(b - a)
+
+    else
+        got_halfspace = false
+    end
+
+    return got_halfspace ? (true, sexpr) : (false, expr)
+end
+
 """
-    HalfSpace(expr::Operation, vars::Union{<:Operation, <:Vector{Operation}}=get_variables(expr); N::Type{<:Real}=Float64)
+    HalfSpace(expr::Symbolic, vars=_get_variables(expr); N::Type{<:Real}=Float64)
 
 Return the half-space given by a symbolic expression.
 
@@ -538,7 +577,8 @@ Return the half-space given by a symbolic expression.
 - `vars` -- (optional, default: `get_variables(expr)`), if an array of variables is given,
             use those as the ambient variables in the set with respect to which derivations
             take place; otherwise, use only the variables which appear in the given
-            expression (but be careful because the order may change; see the examples below for details)
+            expression (but be careful because the order may be incorrect; it is advised to
+            always pass `vars` explicitly; see the examples below for details)
 - `N`    -- (optional, default: `Float64`) the numeric type of the returned half-space
 
 ### Output
@@ -553,14 +593,14 @@ julia> using ModelingToolkit
 julia> vars = @variables x y
 (x, y)
 
-julia> HalfSpace(x - y <= 2)
+julia> HalfSpace(x - y <= 2, vars)
 HalfSpace{Float64,Array{Float64,1}}([1.0, -1.0], 2.0)
 
-julia> HalfSpace(x >= y)
-HalfSpace{Float64,Array{Float64,1}}([1.0, -1.0], -0.0)
+julia> HalfSpace(x >= y, vars)
+HalfSpace{Float64,Array{Float64,1}}([-1.0, 1.0], -0.0)
 
 julia> vars = @variables x[1:4]
-(Operation[x₁, x₂, x₃, x₄],)
+(Num[x₁, x₂, x₃, x₄],)
 
 julia> HalfSpace(x[1] >= x[2], x)
 HalfSpace{Float64,Array{Float64,1}}([-1.0, 1.0, 0.0, 0.0], -0.0)
@@ -573,11 +613,17 @@ order.
 julia> vars = @variables x y
 (x, y)
 
-julia> HalfSpace(2x ≥ 5y - 1) # wrong
-HalfSpace{Float64,Array{Float64,1}}([5.0, -2.0], 1.0)
+julia> HalfSpace(2x ≥ 5y - 1) # correct
+HalfSpace{Float64,Array{Float64,1}}([-2.0, 5.0], 1.0)
 
 julia> HalfSpace(2x ≥ 5y - 1, vars) # correct
 HalfSpace{Float64,Array{Float64,1}}([-2.0, 5.0], 1.0)
+
+julia> HalfSpace(y - x ≥ 1) # incorrect
+HalfSpace{Float64,Array{Float64,1}}([-1.0, 1.0], -1.0)
+
+julia> HalfSpace(y - x ≥ 1, vars) # correct
+HalfSpace{Float64,Array{Float64,1}}([1.0, -1.0], -1.0)
 ```
 
 ### Algorithm
@@ -593,50 +639,127 @@ Note in particular that strict inequalities are relaxed as being smaller-or-equa
 Finally, the returned set is the half-space with normal vector `[a1, …, an]` and
 displacement `b`.
 """
-function HalfSpace(expr::Operation, vars::Union{<:Operation, <:Vector{Operation}}=get_variables(expr); N::Type{<:Real}=Float64)
-
-    # find sense and normalize
-    if expr.op == <
-        a, b = expr.args
-        sexpr = simplify(a - b)
-
-    elseif expr.op == >
-        a, b = expr.args
-        sexpr = simplify(b - a)
-
-    elseif (expr.op == |) && (expr.args[1].op == <)
-        a, b = expr.args[1].args
-        sexpr = simplify(a - b)
-
-    elseif (expr.op == |) && (expr.args[2].op == <)
-        a, b = expr.args[2].args
-        sexpr = simplify(a - b)
-
-    elseif (expr.op == |) && (expr.args[1].op == >)
-        a, b = expr.args[1].args
-        sexpr = simplify(b - a)
-
-    elseif (expr.op == |) && (expr.args[2].op == >)
-        a, b = expr.args[2].args
-        sexpr = simplify(b - a)
-
-    else
+function HalfSpace(expr::Symbolic, vars=_get_variables(expr); N::Type{<:Real}=Float64)
+    valid, sexpr = _is_halfspace(expr)
+    if !valid
         throw(ArgumentError("expected an expression describing a half-space, got $expr"))
     end
 
     # compute the linear coefficients by taking first order derivatives
-    coeffs = [N(α.value) for α in gradient(sexpr, collect(vars))]
+    coeffs = [N(α.val) for α in gradient(sexpr, collect(vars))]
 
     # get the constant term by expression substitution
     zeroed_vars = Dict(v => zero(N) for v in vars)
-    β = -N(ModelingToolkit.substitute(sexpr, zeroed_vars).value)
+    β = -N(ModelingToolkit.substitute(sexpr, zeroed_vars))
 
     return HalfSpace(coeffs, β)
 end
 
-function HalfSpace(expr::Operation, vars::NTuple{L, Union{<:Operation, <:Vector{Operation}}}; N::Type{<:Real}=Float64) where {L}
+function HalfSpace(expr::Term, vars::NTuple{L, Union{<:Num, <:Vector{Num}}}; N::Type{<:Real}=Float64) where {L}
     vars = _vec(vars)
     return HalfSpace(expr, vars, N=N)
 end
 
 end end  # quote / load_modeling_toolkit_halfspace()
+
+"""
+    complement(H::HalfSpace)
+
+Return the complement of a half-space.
+
+### Input
+
+- `H` -- halfspace
+
+### Output
+
+The halfspace that is complementary to `H`. If ``H: \\langle a, x \\rangle ≤ b``,
+then this function returns the halfspace ``H′: \\langle a, x \\rangle ≥ b``.
+(Note that complementarity is understood in a relaxed sense, since the intersection
+of ``H`` and ``H′`` is non-empty).
+"""
+function complement(H::HalfSpace)
+    return HalfSpace(-H.a, -H.b)
+end
+
+"""
+    project(H::HalfSpace, block::AbstractVector{Int}; [kwargs...])
+
+Concrete projection of a half-space.
+
+### Input
+
+- `H`        -- set
+- `block`    -- block structure, a vector with the dimensions of interest
+
+### Output
+
+A set representing the projection of the half-space `H` on the dimensions
+specified by `block`.
+
+### Algorithm
+
+If the unconstrained dimensions of `H` are a subset of the `block` variables,
+the projection is applied to the normal direction of `H`.
+Otherwise, the projection results in the universal set.
+
+The latter can be seen as follows.
+Without loss of generality consider a projection onto a single and constrained
+dimension ``xₖ`` (projections in multiple dimensions can be modeled as repeated
+one-dimensional projections).
+We can write the projection as an existentially quantified linear constraint:
+
+```math
+    ∃xₖ: a₁x₁ + … + aₖxₖ + … + aₙxₙ ≤ b
+```
+
+Since ``aₖ ≠ 0``, there is always a value for ``xₖ`` that satisfies the
+constraint for any valuation of the other variables.
+
+### Examples
+
+Consider the half-space ``x + y + 0⋅z ≤ 1``, whose ambient dimension is `3`.
+The (trivial) projection in the three dimensions is achieved letting the block
+of variables to be `[1, 2, 3]`:
+
+```jldoctest project_halfspace
+julia> H = HalfSpace([1.0, 1.0, 0.0], 1.0)
+HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0, 0.0], 1.0)
+
+julia> project(H, [1, 2, 3])
+HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0, 0.0], 1.0)
+```
+
+Projecting along dimensions `1` and `2` only:
+
+```jldoctest project_halfspace
+julia> project(H, [1, 2])
+HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
+```
+
+In general, use the call syntax `project(H, constrained_dimensions(H))` to return
+the half-space projected on the dimensions where it is constrained only:
+
+```jldoctest project_halfspace
+julia> project(H, constrained_dimensions(H))
+HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
+```
+
+If a constrained dimension is projected, we get the universal set of the
+dimension corresponding to the projection.
+
+```jldoctest project_halfspace
+julia> project(H, [1, 3])
+Universe{Float64}(2)
+
+julia> project(H, [1])
+Universe{Float64}(1)
+```
+"""
+function project(H::HalfSpace{N}, block::AbstractVector{Int}; kwargs...) where {N}
+    if constrained_dimensions(H) ⊆ block
+        return HalfSpace(H.a[block], H.b)
+    else
+        return Universe{N}(length(block))
+    end
+end

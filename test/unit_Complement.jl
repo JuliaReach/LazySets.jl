@@ -40,4 +40,17 @@ for N in [Float64, Rational{Int}, Float32]
     @test isconvextype(typeof(Complement(Universe{N}(2))))
     @test isconvextype(typeof(Complement(EmptySet{N}(2))))
     @test isconvextype(typeof(Complement(HalfSpace(N[1], N(0)))))
+
+    # concrete complement
+    H = HalfSpace(N[1, 0], N(1)) # x <= 1
+    @test complement(H) == HalfSpace(N[-1, 0], N(-1))
+    @test constraints_list(Complement(H)) == [HalfSpace(N[-1, 0], N(-1))]
+    # test fallback for <: LazySet
+    c = complement(N[0 1; 1 0] * H)
+    @test c isa UnionSetArray && length(array(c)) == 1
+    @test first(array(c)) == HalfSpace(N[0, -1], N(-1)) # complement of y <= 1 is y >= 1
+
+    # boundedness
+    @test isboundedtype(typeof(Complement(Universe{N}(2))))
+    @test !isboundedtype(typeof(Complement(EmptySet{N}(2))))
 end
