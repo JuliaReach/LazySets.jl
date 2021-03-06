@@ -54,7 +54,6 @@ julia> InverseLinearMap(A, ZeroSet{Int}(3))
 ZeroSet{Int64}(3)
 ```
 """
-#struct InverseLinearMap{N<:Real, S<:LazySet{N},
 struct InverseLinearMap{N, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
     M::MAT
     X::S

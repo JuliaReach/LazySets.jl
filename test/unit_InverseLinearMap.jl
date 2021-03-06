@@ -1,13 +1,17 @@
 for N in [Float64, Rational{Int}, Float32]
+
     # π/2 trigonometric rotation
     b = BallInf(N[1, 2], N(1))
     M = N[0. -1 ; 1 0]
-    # Test Construction
+
+    # construction
     lm1 = InverseLinearMap(M, b)
     @test lm1.M == M
     @test lm1.X == b
-    # Test Dimension
+
+    # dimension
     @test dim(lm1) == 2
+
     # Test Support Vector and Support Function
     d = N[1., 1]
     @test σ(d, lm1) == N[3, 0]
@@ -29,7 +33,6 @@ for N in [Float64, Rational{Int}, Float32]
     @test ilm1 == ilm2
     @test overapproximate(concretize(ilm2.M*ilm2), Hyperrectangle) == overapproximate(b, Hyperrectangle)
 
-    # isempty
+    # emptiness check
     @test !isempty(ilm1)
-
 end
