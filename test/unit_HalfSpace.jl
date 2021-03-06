@@ -144,8 +144,8 @@ for N in [Float64]
     H = HalfSpace(N[-0.09291863543681655, -0.2176689899601838, -0.07453829739226348, 0.048948632014371496], N(0.1911363393469332))
     @test o ∈ H
 
-    # tests that require ModelingToolkit
-    @static if VERSION >= v"1.3" && isdefined(@__MODULE__, :ModelingToolkit)
+    # tests that require Symbolics
+    @static if VERSION >= v"1.3" && isdefined(@__MODULE__, :Symbolics)
         # case with only 1 variable
         vars = @variables x
         @test HalfSpace(x <= 2.0, vars) == HalfSpace([1.0], 2.0)

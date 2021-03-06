@@ -126,8 +126,8 @@ for N in [Float64]
     empty_intersection, v = is_intersection_empty(b, hp, true)
     @test !empty_intersection && !is_intersection_empty(b, hp) && v ∈ hp && v ∈ b
 
-    # tests that require ModelingToolkit
-    @static if VERSION >= v"1.3" && isdefined(@__MODULE__, :ModelingToolkit)
+    # tests that require Symbolics
+    @static if VERSION >= v"1.3" && isdefined(@__MODULE__, :Symbolics)
         vars = @variables x y
         @test Hyperplane(2x + 3y == 5) == Hyperplane([2.0, 3.0], 5.0)
         @test Hyperplane(2x + 3y == 5, N=Int) == Hyperplane([2, 3], 5)

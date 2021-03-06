@@ -19,7 +19,7 @@ using TaylorModels: set_variables, TaylorModelN
 using IntervalConstraintProgramming
 
 @static if VERSION >= v"1.3"
-    using ModelingToolkit
+    using Symbolics
 end
 
 # ==============================

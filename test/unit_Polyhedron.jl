@@ -385,8 +385,8 @@ for N in [Float64]
         @test ispermutation(constraints_list(πP), [HalfSpace(N[-1, 0], N(0)), HalfSpace(N[0, -1], N(0))])
     end
 
-    # tests that require ModelingToolkit
-    @static if VERSION >= v"1.3" && isdefined(@__MODULE__, :ModelingToolkit)
+    # tests that require Symbolics
+    @static if VERSION >= v"1.3" && isdefined(@__MODULE__, :Symbolics)
         vars = @variables x y
         p1 = HPolyhedron([x + y <= 1, x + y >= -1,  x - y <= 1, x - y >= -1], vars)
         b1 = Ball1(zeros(2), 1.0)

@@ -487,9 +487,9 @@ function project(hp::Hyperplane{N}, block::AbstractVector{Int}; kwargs...) where
 end
 
 # ============================================
-# Functionality that requires ModelingToolkit
+# Functionality that requires Symbolics
 # ============================================
-function load_modeling_toolkit_hyperplane()
+function load_symbolics_hyperplane()
 return quote
 
 # returns `(true, sexpr)` if expr represents a hyperplane,
@@ -527,7 +527,7 @@ A `Hyperplane`.
 ### Examples
 
 ```julia
-julia> using ModelingToolkit
+julia> using Symbolics
 
 julia> vars = @variables x y
 (x, y)
@@ -567,7 +567,7 @@ function Hyperplane(expr::Symbolic, vars=_get_variables(expr); N::Type{<:Real}=F
 
     # get the constant term by expression substitution
     zeroed_vars = Dict(v => zero(N) for v in vars)
-    β = -N(ModelingToolkit.substitute(sexpr, zeroed_vars))
+    β = -N(Symbolics.substitute(sexpr, zeroed_vars))
 
     return Hyperplane(coeffs, β)
 end

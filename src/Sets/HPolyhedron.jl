@@ -663,14 +663,14 @@ function _isbounded_stiemke(P::HPolyhedron{N}; solver=LazySets.default_lp_solver
 end
 
 # ============================================
-# Functionality that requires ModelingToolkit
+# Functionality that requires Symbolics
 # ============================================
-function load_modeling_toolkit_hpolyhedron()
+function load_symbolics_hpolyhedron()
 
 return quote
 
 """
-    HPolyhedron(expr::Vector{<:Symbolic}, vars=_get_variables(expr); N::Type{<:Real}=Float64)
+    HPolyhedron(expr::Vector{<:Num}, vars=_get_variables(expr); N::Type{<:Real}=Float64)
 
 Return the polyhedron in half-space representation given by a list of symbolic expressions.
 
@@ -691,7 +691,7 @@ An `HPolyhedron`.
 ### Examples
 
 ```julia
-julia> using ModelingToolkit
+julia> using Symbolics
 
 julia> vars = @variables x y
 (x, y)
@@ -705,7 +705,7 @@ HPolyhedron{Float64,Array{Float64,1}}(HalfSpace{Float64,Array{Float64,1}}[HalfSp
 ace{Float64,Array{Float64,1}}([-1.0, -0.0], 0.0), HalfSpace{Float64,Array{Float64,1}}([0.0, 1.0], -0.0)])
 ```
 """
-function HPolyhedron(expr::Vector{<:Symbolic}, vars=_get_variables(expr); N::Type{<:Real}=Float64)
+function HPolyhedron(expr::Vector{<:Num}, vars=_get_variables(expr); N::Type{<:Real}=Float64)
     clist = Vector{HalfSpace{N, Vector{N}}}()
     sizehint!(clist, length(expr))
     got_hyperplane = false
@@ -713,9 +713,10 @@ function HPolyhedron(expr::Vector{<:Symbolic}, vars=_get_variables(expr); N::Typ
     zeroed_vars = Dict(v => zero(N) for v in vars)
     vars_list = collect(vars)
     for ex in expr
-        got_hyperplane, sexpr = _is_hyperplane(ex)
+        exval = Symbolics.value(ex)
+        got_hyperplane, sexpr = _is_hyperplane(exval)
         if !got_hyperplane
-            got_halfspace, sexpr = _is_halfspace(ex)
+            got_halfspace, sexpr = _is_halfspace(exval)
             if !got_halfspace
                 throw(ArgumentError("expected an expression describing either " *
                     "a half-space of a hyperplane, got $expr"))
@@ -723,7 +724,7 @@ function HPolyhedron(expr::Vector{<:Symbolic}, vars=_get_variables(expr); N::Typ
         end
 
         coeffs = [N(α.val) for α in gradient(sexpr, vars_list)]
-        β = -N(ModelingToolkit.substitute(sexpr, zeroed_vars))
+        β = -N(Symbolics.substitute(sexpr, zeroed_vars))
 
         push!(clist, HalfSpace(coeffs, β))
         if got_hyperplane
