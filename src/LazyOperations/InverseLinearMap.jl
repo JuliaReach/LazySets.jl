@@ -320,7 +320,7 @@ The polytope representing the linear map of the lazy inverse linear map of a set
 ### Notes
 
 This function is inefficient in the sense that it requires computing the
-concrete inverse of M, which is what InverseLinearMap is supposed to avoid.
+concrete inverse of M, which is what `InverseLinearMap` is supposed to avoid.
 """
 function linear_map(M::AbstractMatrix{N}, ilm::InverseLinearMap{N}) where {N<:Real}
     return linear_map(M * inv(ilm.M), ilm.X)
