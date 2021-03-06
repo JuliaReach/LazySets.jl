@@ -36,7 +36,7 @@ julia> ilm = InverseLinearMap(A, X)
 InverseLinearMap{Int64,BallInf{Int64,Array{Int64,1}},Int64,Array{Int64,2}}([1 2 3; 2 3 1; 3 1 2], BallInf{Int64,Array{Int64,1}}([0, 0, 0], 1))
 ```
 
-Applying a linear map to a `InverseLinearMap` object combines the two maps into
+Applying an inverse linear map to a `InverseLinearMap` object combines the two maps into
 a single `InverseLinearMap` instance.
 
 ```jldoctest constructors
