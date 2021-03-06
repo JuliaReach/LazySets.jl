@@ -15,6 +15,7 @@ vertices_list(::InverseLinearMap)
 constraints_list(::InverseLinearMap)
 linear_map(::AbstractMatrix, ::InverseLinearMap)
 ```
+
 Inherited from [`AbstractAffineMap`](@ref):
 * [`isempty`](@ref isempty(::AbstractAffineMap))
 * [`isbounded`](@ref isbounded(::AbstractAffineMap))
