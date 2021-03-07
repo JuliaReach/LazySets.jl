@@ -70,17 +70,22 @@ struct InverseLinearMap{N, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} <: Abstra
 end
 
 # convenience constructor from a UniformScaling
-function InverseLinearMap(M::UniformScaling{N}, X::LazySet) where {N}
-    return InverseLinearMap(M.λ, X)
+function InverseLinearMap(M::UniformScaling{N}, X::LazySet; check_invertibility::Bool=false) where {N}
+    return InverseLinearMap(M.λ, X, check_invertibility=check_invertibility)
 end
 
 # convenience constructor from a scalar
-function InverseLinearMap(α::N, X::LazySet) where {N<:Real}
+function InverseLinearMap(α::N, X::LazySet; check_invertibility::Bool=false) where {N<:Real}
+    if check_invertibility
+        @assert !iszero(α) "the linear map is not invertible"
+    end
+
     if α == one(N)
         return X
     end
+
     D = Diagonal(fill(α, dim(X)))
-    return InverseLinearMap(D, X)
+    return InverseLinearMap(D, X, check_invertibility=false)
 end
 
 # combine two linear maps into a single linear map
@@ -89,14 +94,16 @@ function InverseLinearMap(M::AbstractMatrix, ilm::InverseLinearMap)
 end
 
 # ZeroSet is "almost absorbing" for InverseLinearMap (only the dimension changes)
-function InverseLinearMap(M::AbstractMatrix{N}, Z::ZeroSet{N}) where {N}
+function InverseLinearMap(M::AbstractMatrix, Z::ZeroSet)
     @assert dim(Z) == size(M, 2) "a linear map of size $(size(M)) cannot " *
             "be applied to a set of dimension $(dim(Z))"
-    return ZeroSet{N}(size(M, 1))
+    return Z
 end
 
 # EmptySet is absorbing for LinearMap
 function InverseLinearMap(M::AbstractMatrix, ∅::EmptySet)
+    @assert dim(∅) == size(M, 2) "a linear map of size $(size(M)) cannot " *
+            "be applied to a set of dimension $(dim(∅))"
     return ∅
 end
 
