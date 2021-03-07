@@ -26,10 +26,10 @@ function issubset end
 
 # this operation is forbidden, but it is a common error so we give a detailed error message
 function ⊆(::AbstractVector, ::LazySet)
-    error("cannot make an inclusion check if the left-hand side " *
+    throw(MethodError("cannot make an inclusion check if the left-hand side " *
           "is a vector; either wrap it as a set with one element, as in " *
           "`Singleton(v) ⊆ X`, or check for set membership, as in `v ∈ X` " *
-          "(they behave equivalently although the implementations may differ)")
+          "(they behave equivalently although the implementations may differ)"))
 end
 
 
