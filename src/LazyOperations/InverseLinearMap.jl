@@ -258,7 +258,7 @@ We assume that the underlying set `X` is polyhedral.
 Then the result is just the inverse linear map applied to the vertices of `X`.
 """
 function vertices_list(ilm::InverseLinearMap; prune::Bool=true)
-    # collect low-dimensional vertices lists
+    # collect vertices list of wrapped set
     vlist_X = vertices_list(ilm.X)
 
     # create resulting vertices list
