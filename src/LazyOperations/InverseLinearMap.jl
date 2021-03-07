@@ -12,7 +12,7 @@ transformation ``M⁻¹⋅X`` of a set ``X`` without actually computing ``M⁻¹
 
 ### Fields
 
-- `M` -- matrix
+- `M` -- invertible matrix
 - `X` -- set
 
 ### Notes
