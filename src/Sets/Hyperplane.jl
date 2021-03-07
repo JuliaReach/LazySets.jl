@@ -557,7 +557,7 @@ Finally, the returned set is the hyperplane with normal vector `[a1, …, an]` a
 displacement `b`.
 """
 function Hyperplane(expr::Num, vars=_get_variables(expr); N::Type{<:Real}=Float64)
-    valid, sexpr = _is_hyperplane(Symbolic.value(expr))
+    valid, sexpr = _is_hyperplane(Symbolics.value(expr))
     if !valid
         throw(ArgumentError("expected an expression of the form `ax == b`, got $expr"))
     end
@@ -577,4 +577,4 @@ function Hyperplane(expr::Num, vars::NTuple{L, Union{<:Num, <:Vector{Num}}}; N::
     return Hyperplane(expr, vars, N=N)
 end
 
-    end end  # quote / load_symbolic_hyperplane()
+end end  # quote / load_symbolics_hyperplane()
