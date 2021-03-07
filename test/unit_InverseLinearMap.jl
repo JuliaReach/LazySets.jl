@@ -2,7 +2,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # π/2 trigonometric rotation
     b = BallInf(N[1, 2], N(1))
-    M = N[0. -1 ; 1 0]
+    M = N[0 -1 ; 1 0]
 
     # construction
     lm1 = InverseLinearMap(M, b)
@@ -13,7 +13,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test dim(lm1) == 2
 
     # Test Support Vector and Support Function
-    d = N[1., 1]
+    d = N[1, 1]
     @test σ(d, lm1) == N[3, 0]
     @test ρ(d, lm1) == N(3)
     d = N[-1, 1]
