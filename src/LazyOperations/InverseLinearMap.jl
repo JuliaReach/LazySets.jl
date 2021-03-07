@@ -46,7 +46,7 @@ julia> ilm2.M == A*B
 true
 ```
 
-The application of a `InverseLinearMap` to a `ZeroSet` or an `EmptySet` is
+The application of an `InverseLinearMap` to a `ZeroSet` or an `EmptySet` is
 simplified automatically.
 
 ```jldoctest ilp_constructor
