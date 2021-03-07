@@ -309,7 +309,7 @@ Return the linear map of a lazy inverse linear map.
 
 ### Output
 
-The polytope representing the linear map of the lazy inverse linear map of a set.
+The set representing the linear map of the lazy inverse linear map of a set.
 
 ### Notes
 
