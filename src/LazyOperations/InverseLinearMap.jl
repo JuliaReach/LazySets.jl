@@ -105,7 +105,7 @@ end
 # --- AbstractAffineMap interface functions ---
 
 function matrix(ilm::InverseLinearMap)
-    return ilm.M
+    return inv(ilm.M)
 end
 
 function vector(ilm::InverseLinearMap{N}) where {N}
