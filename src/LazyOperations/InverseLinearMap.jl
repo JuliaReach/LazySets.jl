@@ -71,18 +71,16 @@ end
 
 # convenience constructor from a UniformScaling
 function InverseLinearMap(M::UniformScaling{N}, X::LazySet) where {N}
-    if M.λ == one(N)
-        return X
-    end
-    D = Diagonal(fill(M.λ, dim(X)))
-    return InverseLinearMap(D, X)
+    return InverseLinearMap(M.λ, X)
 end
 
-
 # convenience constructor from a scalar
-function InverseLinearMap(α::Real, X::LazySet)
-    n = dim(X)
-    return InverseLinearMap(sparse(α * I, n, n), X)
+function InverseLinearMap(α::N, X::LazySet) where {N<:Real}
+    if α == one(N)
+        return X
+    end
+    D = Diagonal(fill(α, dim(X)))
+    return InverseLinearMap(D, X)
 end
 
 # combine two linear maps into a single linear map
