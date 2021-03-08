@@ -121,7 +121,6 @@ if test_suite_basic
     @time @testset "LazySets.CartesianProduct" begin include("LazyOperations/CartesianProduct.jl") end
     @time @testset "LazySets.ResetMap" begin include("LazyOperations/ResetMap.jl") end
     @time @testset "LazySets.SymmetricIntervalHull" begin include("LazyOperations/SymmetricIntervalHull.jl") end
-    @time @testset "LazySets.concrete_convex_hull" begin include("LazyOperations/convex_hull.jl") end
     @time @testset "LazySets.Translation" begin include("LazyOperations/Translation.jl") end
     @time @testset "LazySets.AffineMap" begin include("LazyOperations/AffineMap.jl") end
 
@@ -142,6 +141,7 @@ if test_suite_basic
     # ===================
     # Concrete operations
     # ===================
+    @time @testset "LazySets.concrete_convex_hull" begin include("ConcreteOperations/convex_hull.jl") end
     @time @testset "LazySets.samples" begin include("ConcreteOperations/samples.jl") end
     @time @testset "LazySets.area" begin include("ConcreteOperations/area.jl") end
 
