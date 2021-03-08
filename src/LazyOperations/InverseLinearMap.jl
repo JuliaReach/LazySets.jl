@@ -5,7 +5,7 @@ export InverseLinearMap,
        constraints_list
 
 """
-   InverseLinearMap{N, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
+    InverseLinearMap{N, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
 
 Given a linear transformation ``M``, this type represents the linear
 transformation ``M⁻¹⋅X`` of a set ``X`` without actually computing ``M⁻¹``.
