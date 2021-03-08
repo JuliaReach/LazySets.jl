@@ -114,7 +114,7 @@ if test_suite_basic
     @time @testset "LazySets.Bloating" begin include("LazyOperations/Bloating.jl") end
     @time @testset "LazySets.Intersection" begin include("LazyOperations/Intersection.jl") end
     @time @testset "LazySets.ConvexHull" begin include("LazyOperations/ConvexHull.jl") end
-    @time @testset "LazySets.ExponentialMap" begin include("unit_ExponentialMap.jl") end
+    @time @testset "LazySets.ExponentialMap" begin include("LazyOperations/ExponentialMap.jl") end
     @time @testset "LazySets.LinearMap" begin include("LazyOperations/LinearMap.jl") end
     @time @testset "LazySets.InverseLinearMap" begin include("LazyOperations/InverseLinearMap.jl") end
     @time @testset "LazySets.MinkowskiSum" begin include("LazyOperations/MinkowskiSum.jl") end
