@@ -448,9 +448,9 @@ function tovrep(P::HPoly;
 end
 
 """
-   isempty(P::HPoly{N}, witness::Bool=false;
-           [use_polyhedra_interface]::Bool=false, [solver]=nothing,
-           [backend]=nothing) where {N}
+    isempty(P::HPoly{N}, witness::Bool=false;
+            [use_polyhedra_interface]::Bool=false, [solver]=nothing,
+            [backend]=nothing) where {N}
 
 Determine whether a polyhedron is empty.
 
