@@ -116,6 +116,7 @@ if test_suite_basic
     @time @testset "LazySets.ConvexHull" begin include("unit_ConvexHull.jl") end
     @time @testset "LazySets.ExponentialMap" begin include("unit_ExponentialMap.jl") end
     @time @testset "LazySets.LinearMap" begin include("unit_LinearMap.jl") end
+    @time @testset "LazySets.InverseLinearMap" begin include("unit_InverseLinearMap.jl") end
     @time @testset "LazySets.MinkowskiSum" begin include("unit_MinkowskiSum.jl") end
     @time @testset "LazySets.CartesianProduct" begin include("unit_CartesianProduct.jl") end
     @time @testset "LazySets.ResetMap" begin include("unit_ResetMap.jl") end

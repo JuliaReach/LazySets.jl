@@ -66,6 +66,7 @@ makedocs(
                 "ExponentialMap" => "lib/lazy_operations/ExponentialMap.md",
                 "Intersection" => "lib/lazy_operations/Intersection.md",
                 "LinearMap" => "lib/lazy_operations/LinearMap.md",
+                "InverseLinearMap" => "lib/lazy_operations/InverseLinearMap.md",
                 "MinkowskiSum" => "lib/lazy_operations/MinkowskiSum.md",
                 "Rectification" => "lib/lazy_operations/Rectification.md",
                 "ResetMap" => "lib/lazy_operations/ResetMap.md",
