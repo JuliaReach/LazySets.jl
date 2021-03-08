@@ -26,6 +26,14 @@ for N in [Float64, Rational{Int}, Float32]
         d2 = zeros(N, 3)
         @test σ(d2, hs) ∈ hs
     end
+
+    # membership with mixed numeric types
+    hsm = HalfSpace([-1.0, -1.0], 0.0)
+    @test N[1, 1] ∈ hsm
+    @test Singleton(N[1,1]) ⊆ hsm
+    @test_throws MethodError Singleton(N[1, 1]) ∈ hsm
+    @test_throws MethodError N[1, 1] ⊆ hsm
+
     # tests 1
     normal = ones(N, 3)
     d = ones(N, 3)
