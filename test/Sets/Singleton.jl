@@ -63,7 +63,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test N[1, 1] ∈ S
 
     # check membership error message
-    @test_throws ErrorException S.element ⊆ S
+    @test_throws MethodError S.element ⊆ S
 
     # an_element function
     @test an_element(S) == element(S)
@@ -130,7 +130,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # concrete minkowski sum
     @test minkowski_sum(Singleton(N[1, 2]), Singleton(N[3, 4])) == Singleton(N[4, 6])
-    
+
     # projection
     S = Singleton(N[1, 2, 3])
     @test project(S, 1:2) == Singleton(N[1, 2])

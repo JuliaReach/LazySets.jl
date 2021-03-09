@@ -40,7 +40,6 @@ import .Arrays: distance
 # ===================
 # Auxiliary functions
 # ===================
-include("Utils/compat.jl")
 include("Utils/helper_functions.jl")
 include("Utils/macros.jl")
 include("Utils/iterators.jl")
@@ -108,6 +107,7 @@ include("LazyOperations/ExponentialMap.jl")
 include("LazyOperations/Intersection.jl")
 include("LazyOperations/IntersectionArray.jl")
 include("LazyOperations/LinearMap.jl")
+include("LazyOperations/InverseLinearMap.jl")
 include("LazyOperations/AffineMap.jl")  # must come after LinearMap
 include("LazyOperations/MinkowskiSum.jl")
 include("LazyOperations/MinkowskiSumArray.jl")
