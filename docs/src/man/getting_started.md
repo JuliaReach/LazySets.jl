@@ -1,4 +1,4 @@
-# Getting Started
+Symbolics# Getting Started
 
 In this section we review the recommended setup to start working with this
 package.
@@ -67,10 +67,10 @@ although some extra functionality is available provided that you load that packa
 dependencies in Julia are handled with the package [Requires.jl](https://github.com/JuliaPackaging/Requires.jl).
 
 For example, if you want to work with sets defined using simple algebraic expressions you can install and
-use [ModelingToolkit.jl](https://github.com/SciML/ModelingToolkit.jl).
+use [Symbolics.jl](https://github.com/JuliaSymbolics/Symbolics.jl).
 
 ```julia
-julia> using LazySets, ModelingToolkit
+julia> using LazySets, Symbolics
 
 julia> var = @variables x[1:10]
 (Num[x₁, x₂, x₃, x₄, x₅, x₆, x₇, x₈, x₉, x₁₀],)
@@ -79,7 +79,7 @@ julia> Hyperplane(x[1] + x[2] == 1/2, var)
 Hyperplane{Float64,Array{Float64,1}}([1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 0.5)
 ```
 defines the hyperplane $H : \{ x \in \mathbb{R}^{10} : x_1 + x_2 = 1/2\}$. The `Hyperplane` constructor
-(and other constructors) automatically work with ModelingToolkit's variables once `using ModelingToolkit` is ran
+(and other constructors) automatically work with Symbolics's variables once `using Symbolics` is ran
 in your session. Another optional dependency is [Polyhedra.jl](http://github.com/JuliaPolyhedra/Polyhedra.jl)
 that is used whenever you want to work with concrete polyhedra representations in dimension higher than 2, e.g.
 to solve the vertex enumeration problem (converting from constraint to vertex representation of a polytope).
@@ -95,7 +95,7 @@ features available when used together with `LazySets.jl`:
 |`IntervalMatrices` |Set operations that involve matrices whose coefficients are intervals|
 |`Makie` |Plotting library, mainly for 3D and interactive plots|
 |`MiniQhull` |Voronoi-Delaunay triangulation of `LazySets` types|
-|`ModelingToolkit` |Create sets using symbolic expressions|
+|`Symbolics` |Create sets using symbolic expressions|
 |`Optim` |Numerical optimization package|
 |`Plots` |Plotting library, mainly 2D plots|
 |`Polyhedra` |Concrete polyhedra library|
@@ -108,7 +108,7 @@ load `Plots` to use `GR` as default (2D) plotting backend.
 Use the following command to install *all* optional dependencies:
 
 ```julia
-julia> ] add CDDLib Distributions Expokit IntervalConstraintProgramming IntervalMatrices Makie MiniQhull ModelingToolkit Optim Plots Polyhedra StaticArrays TaylorModels
+julia> ] add CDDLib Distributions Expokit IntervalConstraintProgramming IntervalMatrices Makie MiniQhull Symbolics Optim Plots Polyhedra StaticArrays TaylorModels
 ```
 In addition, to build the project's documentation locally you need to install [Documenter.jl](https://github.com/JuliaDocs/Documenter.jl).
 

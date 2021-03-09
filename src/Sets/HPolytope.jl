@@ -242,14 +242,14 @@ function _vertices_list(P::HPolytope, backend)
 end
 
 # ============================================
-# Functionality that requires ModelingToolkit
+# Functionality that requires Symbolics
 # ============================================
-function load_modeling_toolkit_hpolytope()
+function load_symbolics_hpolytope()
 
 return quote
 
 """
-    HPolytope(expr::Vector{<:Symbolic}, vars=_get_variables(expr); N::Type{<:Real}=Float64)
+    HPolytope(expr::Vector{<:Num}, vars=_get_variables(expr); N::Type{<:Real}=Float64)
 
 Return the polytope in half-space representation given by a list of symbolic expressions.
 
@@ -270,7 +270,7 @@ An `HPolytope`.
 ### Examples
 
 ```julia
-julia> using ModelingToolkit
+julia> using Symbolics
 
 julia> vars = @variables x y
 (x, y)
@@ -281,7 +281,7 @@ HalfSpace{Float64,Array{Float64,1}}([-1.0, 0.0], 0.0), HalfSpace{Float64,Array{F
 HalfSpace{Float64,Array{Float64,1}}([0.0, -1.0], 0.0)])
 ```
 """
-function HPolytope(expr::Vector{<:Symbolic}, vars=_get_variables(expr);
+function HPolytope(expr::Vector{<:Num}, vars=_get_variables(expr);
                    N::Type{<:Real}=Float64, check_boundedness::Bool=false)
     return HPolytope([HalfSpace(ex, vars; N=N) for ex in expr], check_boundedness=check_boundedness)
 end

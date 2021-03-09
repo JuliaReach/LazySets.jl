@@ -521,9 +521,9 @@ _normal_Vector(c::LinearConstraint) = LinearConstraint(convert(Vector, c.a), c.b
 
 
 # ============================================
-# Functionality that requires ModelingToolkit
+# Functionality that requires Symbolics
 # ============================================
-function load_modeling_toolkit_halfspace()
+function load_symbolics_halfspace()
 return quote
 
 # returns `(true, sexpr)` if expr represents a half-space,
@@ -567,7 +567,7 @@ function _is_halfspace(expr::Symbolic)
 end
 
 """
-    HalfSpace(expr::Symbolic, vars=_get_variables(expr); N::Type{<:Real}=Float64)
+    HalfSpace(expr::Num, vars=_get_variables(expr); N::Type{<:Real}=Float64)
 
 Return the half-space given by a symbolic expression.
 
@@ -588,7 +588,7 @@ A `HalfSpace`.
 ### Examples
 
 ```julia
-julia> using ModelingToolkit
+julia> using Symbolics
 
 julia> vars = @variables x y
 (x, y)
@@ -639,8 +639,8 @@ Note in particular that strict inequalities are relaxed as being smaller-or-equa
 Finally, the returned set is the half-space with normal vector `[a1, …, an]` and
 displacement `b`.
 """
-function HalfSpace(expr::Symbolic, vars=_get_variables(expr); N::Type{<:Real}=Float64)
-    valid, sexpr = _is_halfspace(expr)
+function HalfSpace(expr::Num, vars=_get_variables(expr); N::Type{<:Real}=Float64)
+    valid, sexpr = _is_halfspace(Symbolics.value(expr))
     if !valid
         throw(ArgumentError("expected an expression describing a half-space, got $expr"))
     end
@@ -650,12 +650,12 @@ function HalfSpace(expr::Symbolic, vars=_get_variables(expr); N::Type{<:Real}=Fl
 
     # get the constant term by expression substitution
     zeroed_vars = Dict(v => zero(N) for v in vars)
-    β = -N(ModelingToolkit.substitute(sexpr, zeroed_vars))
+    β = -N(Symbolics.substitute(sexpr, zeroed_vars))
 
     return HalfSpace(coeffs, β)
 end
 
-function HalfSpace(expr::Term, vars::NTuple{L, Union{<:Num, <:Vector{Num}}}; N::Type{<:Real}=Float64) where {L}
+function HalfSpace(expr::Num, vars::NTuple{L, Union{<:Num, <:Vector{Num}}}; N::Type{<:Real}=Float64) where {L}
     vars = _vec(vars)
     return HalfSpace(expr, vars, N=N)
 end

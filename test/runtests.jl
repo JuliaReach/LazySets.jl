@@ -17,10 +17,7 @@ import Distributions, Expokit, IntervalMatrices, Optim, TaylorModels, IntervalCo
 using IntervalMatrices: ±, IntervalMatrix
 using TaylorModels: set_variables, TaylorModelN
 using IntervalConstraintProgramming
-
-@static if VERSION >= v"1.4"
-    using ModelingToolkit
-end
+using Symbolics
 
 # ==============================
 # Non-exported helper functions

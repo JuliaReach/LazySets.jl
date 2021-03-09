@@ -1,5 +1,5 @@
 eval(quote
-    using .ModelingToolkit: gradient,
+    using .Symbolics: gradient,
                             simplify,
                             Num,  # variable like, e.g. x[1]
                             Term, # term like, eg. x[1] + x[2] == 1
@@ -41,11 +41,11 @@ eval(quote
     # case with a single variable
     _vec(vars::Tuple{Num}) = [vars[1]]
 
-    _get_variables(expr::Symbolic) = ModelingToolkit.get_variables(expr)
-    _get_variables(expr::Vector{<:Symbolic}) = unique(reduce(vcat, _get_variables(ex) for ex in expr))
+    _get_variables(expr::Num) = Symbolics.get_variables(expr)
+    _get_variables(expr::Vector{<:Num}) = unique(reduce(vcat, _get_variables(ex) for ex in expr))
 end)
 
-eval(load_modeling_toolkit_hyperplane())
-eval(load_modeling_toolkit_halfspace())
-eval(load_modeling_toolkit_hpolyhedron())
-eval(load_modeling_toolkit_hpolytope())
+eval(load_symbolics_hyperplane())
+eval(load_symbolics_halfspace())
+eval(load_symbolics_hpolyhedron())
+eval(load_symbolics_hpolytope())
