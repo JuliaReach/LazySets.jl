@@ -386,7 +386,7 @@ for N in [Float64]
     end
 
     # tests that require Symbolics
-    @static isdefined(@__MODULE__, :Symbolics)
+    @static if isdefined(@__MODULE__, :Symbolics)
         vars = @variables x y
         p1 = HPolyhedron([x + y <= 1, x + y >= -1,  x - y <= 1, x - y >= -1], vars)
         b1 = Ball1(zeros(2), 1.0)

@@ -153,7 +153,7 @@ for N in [Float64]
     @test o ∈ H
 
     # tests that require Symbolics
-    @static isdefined(@__MODULE__, :Symbolics)
+    @static if isdefined(@__MODULE__, :Symbolics)
         # case with only 1 variable
         vars = @variables x
         @test HalfSpace(x <= 2.0, vars) == HalfSpace([1.0], 2.0)
