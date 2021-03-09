@@ -18,7 +18,7 @@ using IntervalMatrices: ±, IntervalMatrix
 using TaylorModels: set_variables, TaylorModelN
 using IntervalConstraintProgramming
 
-@static if VERSION >= v"1.3"
+@static if VERSION >= v"1.4"
     using ModelingToolkit
 end
 
