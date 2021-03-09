@@ -1,8 +1,5 @@
 import IntervalArithmetic
-using IntervalArithmetic: AbstractInterval
-@static if VERSION >= v"1.1"
-    using IntervalArithmetic: mince
-end
+using IntervalArithmetic: AbstractInterval, mince
 import Base: +, -, *, ∈, ⊆, rand, min, max
 
 export Interval,
@@ -679,22 +676,6 @@ end
 function split(x::Interval, k::Int)
     @assert k > 0 "can only split into a positive number of intervals"
     return [Interval(x2) for x2 in mince(x.dat, k)]
-end
-
-@static if VERSION < v"1.1"
-    # IntervalArithmetic.mince() is not available -> define it here
-    function mince(x::IntervalArithmetic.Interval, n)
-        width = (x.hi - x.lo) / n
-        result = Vector{typeof(x)}(undef, n)
-        lo = x.lo
-        @inbounds for i in 1:n-1
-            hi = lo + width
-            result[i] = IntervalArithmetic.Interval(lo, hi)
-            lo = hi
-        end
-        result[n] = IntervalArithmetic.Interval(lo, x.hi)  # avoid rounding error
-        return result
-    end
 end
 
 function vertices_list(x::IntervalArithmetic.Interval{N}) where {N}

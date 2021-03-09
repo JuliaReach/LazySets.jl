@@ -153,7 +153,7 @@ for N in [Float64]
     @test o ∈ H
 
     # tests that require ModelingToolkit
-    @static if VERSION >= v"1.3" && isdefined(@__MODULE__, :ModelingToolkit)
+    @static if VERSION >= v"1.4" && isdefined(@__MODULE__, :ModelingToolkit)
         # case with only 1 variable
         vars = @variables x
         @test HalfSpace(x <= 2.0, vars) == HalfSpace([1.0], 2.0)

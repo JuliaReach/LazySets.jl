@@ -386,7 +386,7 @@ for N in [Float64]
     end
 
     # tests that require ModelingToolkit
-    @static if VERSION >= v"1.3" && isdefined(@__MODULE__, :ModelingToolkit)
+    @static if VERSION >= v"1.4" && isdefined(@__MODULE__, :ModelingToolkit)
         vars = @variables x y
         p1 = HPolyhedron([x + y <= 1, x + y >= -1,  x - y <= 1, x - y >= -1], vars)
         b1 = Ball1(zeros(2), 1.0)

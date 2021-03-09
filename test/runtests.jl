@@ -18,7 +18,7 @@ using IntervalMatrices: ±, IntervalMatrix
 using TaylorModels: set_variables, TaylorModelN
 using IntervalConstraintProgramming
 
-@static if VERSION >= v"1.3"
+@static if VERSION >= v"1.4"
     using ModelingToolkit
 end
 
@@ -161,12 +161,12 @@ if test_suite_basic
     # ========================
     # Testing method ambiguity
     # ========================
-    @static if VERSION >= v"1.1" @time @testset "LazySets.method_ambiguities" begin
+    @time @testset "LazySets.method_ambiguities" begin
         for package in [LazySets, Approximations, Arrays, Assertions, LazySets.Parallel]
             ambiguities = detect_ambiguities(package)
             @test isempty(ambiguities)
         end
-    end end
+    end
 
     # ====================================
     # Testing common API of all interfaces
@@ -178,17 +178,15 @@ if test_suite_basic
 end
 
 if test_suite_plotting
-    @static if VERSION >= v"1.1"
-        # define `plot` function as `RecipesBase.apply_recipe`
-        import RecipesBase
-        struct DummyBackend <: RecipesBase.AbstractBackend end
-        struct DummyPlot <: RecipesBase.AbstractPlot{DummyBackend} end
-        Base.length(::DummyPlot) = 0
-        dict = Dict{Symbol, Any}(:plot_object => DummyPlot())
-        plot(args...; kwargs...) = RecipesBase.apply_recipe(dict, args...; kwargs...)
+    # define `plot` function as `RecipesBase.apply_recipe`
+    import RecipesBase
+    struct DummyBackend <: RecipesBase.AbstractBackend end
+    struct DummyPlot <: RecipesBase.AbstractPlot{DummyBackend} end
+    Base.length(::DummyPlot) = 0
+    dict = Dict{Symbol, Any}(:plot_object => DummyPlot())
+    plot(args...; kwargs...) = RecipesBase.apply_recipe(dict, args...; kwargs...)
 
-        @time @testset "LazySets.plotting" begin include("Utils/plot.jl") end
-    end
+    @time @testset "LazySets.plotting" begin include("Utils/plot.jl") end
 end
 
 if test_suite_doctests

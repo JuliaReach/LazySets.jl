@@ -406,11 +406,11 @@ for N in [Float64, Float32]
     @test_throws AssertionError is_intersection_empty(Universe{N}(5), cpa2)
 
     # projection
-    @static if VERSION >= v"1.1"
-        cp = Interval(N(0), N(2)) × Hyperrectangle(N[2, 3], N[1, 1])
-        @test project(cp, 1:2) == Hyperrectangle(N[1, 2], N[1, 1])
-        @test project(cp, 2:3) == Hyperrectangle(N[2, 3], N[1, 1])
+    cp = Interval(N(0), N(2)) × Hyperrectangle(N[2, 3], N[1, 1])
+    @test project(cp, 1:2) == Hyperrectangle(N[1, 2], N[1, 1])
+    @test project(cp, 2:3) == Hyperrectangle(N[2, 3], N[1, 1])
 
+    if VERSION >= v"1.4" || N == Float64
         cp = Interval(N(0), N(2)) × Zonotope(N[2, 3], N[1 0; 0 1])
         @test isequivalent(project(cp, 1:2), Zonotope(N[1, 2], N[1 0; 0 1]))
         @test isequivalent(project(cp, 2:3), Zonotope(N[2, 3], N[1 0; 0 1]))

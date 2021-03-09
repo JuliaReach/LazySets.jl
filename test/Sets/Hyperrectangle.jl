@@ -229,11 +229,9 @@ for N in [Float64, Rational{Int}, Float32]
     # conversion from other hyperrectangular sets
     H = Hyperrectangle(N[1], N[1])
     @test convert(Hyperrectangle, BallInf(N[1], N(1))) == H
-    if VERSION >= v"1.1" || N == Float64
-        # in pre-v1.1 versions, IntervalArithmetic always returned a Float64
-        # vector in the `center(·)` implementation, leading to an error
-        @test convert(Hyperrectangle, Interval(N(0), N(2))) == H
-    end
+    # Note: in pre-v1.1 versions, IntervalArithmetic always returned a Float64
+    # vector in the `center(·)` implementation, leading to an error
+    @test convert(Hyperrectangle, Interval(N(0), N(2))) == H
 
     @test convert(Hyperrectangle, SymmetricIntervalHull(Singleton(N[1, 1]))) ==
           Hyperrectangle(N[0, 0], N[1, 1])

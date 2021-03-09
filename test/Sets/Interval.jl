@@ -1,11 +1,5 @@
-@static if VERSION >= v"1.1"
-    Ns = [Float64, Float32, Rational{Int}]
-else
-    # in pre-v1.1 versions, IntervalArithmetic always operated with Float64
-    Ns = [Float64]
-end
-
-for N in Ns
+# Note: in pre-v1.1 versions, IntervalArithmetic always operated with Float64
+for N in [Float64, Float32, Rational{Int}]
     # random interval
     rand(Interval)
 
