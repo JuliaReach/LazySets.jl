@@ -28,7 +28,7 @@ branches:
   - /^v[0-9]+\.[0-9]+\.[0-9]+$/  # version tags
 
 script:
- - julia --project --color=yes --check-bounds=yes -e 'using Pkg; Pkg.build(verbose=true); Pkg.test(coverage=true); Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
+ - julia --project --color=yes --check-bounds=yes -e 'using Pkg; include("deps/build_private.jl"); Pkg.build(verbose=true); Pkg.test(coverage=true); Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
 jobs:
   include:
     - stage: "Documentation"
