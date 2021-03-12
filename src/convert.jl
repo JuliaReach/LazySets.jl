@@ -378,6 +378,11 @@ end
 
 _convert_zonotope_fallback(Z) = Zonotope(center(Z), genmat(Z))
 
+function convert(::Type{Singleton},
+                 cp::CartesianProduct{N, S1, S2}) where {N, S1<:AbstractSingleton{N}, S2<:AbstractSingleton{N}}
+    return Singleton(vcat(element(cp.X), element(cp.Y)))
+end
+
 """
     convert(::Type{Zonotope}, cp::CartesianProduct{N, HN1, HN2}) where {N<:Real,
         HN1<:AbstractHyperrectangle{N}, HN2<:AbstractHyperrectangle{N}}
