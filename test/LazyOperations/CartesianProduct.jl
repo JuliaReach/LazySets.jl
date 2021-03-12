@@ -200,7 +200,7 @@ for N in [Float64, Float32, Rational{Int}]
     # cartesian product of singletons
     S1 = Singleton(N[1, 2, 3])
     S2 = Singleton(N[4, 5, 6])
-    @test convert(S1 × S2, Singleton) == Singleton(N[1, 2, 3, 4, 5, 6])
+    @test convert(Singleton, S1 × S2) == Singleton(N[1, 2, 3, 4, 5, 6])
 
     # =====================
     # CartesianProductArray
