@@ -145,3 +145,9 @@ function cartesian_product(I::Interval, P::Union{VPolygon, VPolytope})
     end
     return VPolytope(vout)
 end
+
+function cartesian_product(S1::AbstractSingleton, S2::AbstractSingleton)
+    v1 = element(S1)
+    v2 = element(S2)
+    return Singleton(vcat(v1, v2))
+end

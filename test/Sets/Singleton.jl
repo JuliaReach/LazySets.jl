@@ -135,4 +135,10 @@ for N in [Float64, Rational{Int}, Float32]
     S = Singleton(N[1, 2, 3])
     @test project(S, 1:2) == Singleton(N[1, 2])
     @test project(S, [1, 3]) == Singleton(N[1, 3])
+
+    # concrete cartesian product
+    S1 = Singleton(N[1, 2, 3])
+    S2 = Singleton(N[4, 5, 6])
+    @test cartesian_product(S1, S2) == Singleton(N[1, 2, 3, 4, 5, 6])
+    @test concretize(S1 × S2 × S1) == Singleton(N[1, 2, 3, 4, 5, 6, 1, 2, 3])
 end
