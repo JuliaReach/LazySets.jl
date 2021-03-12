@@ -385,7 +385,7 @@ end
 
 """
     convert(::Type{Zonotope}, cp::CartesianProduct{N, HN1, HN2}) where {N<:Real,
-        HN1<:AbstractHyperrectangle{N}, HN2<:AbstractHyperrectangle{N}}
+            HN1<:AbstractHyperrectangle{N}, HN2<:AbstractHyperrectangle{N}}
 
 Converts the cartesian product of two hyperrectangular sets to a zonotope.
 
