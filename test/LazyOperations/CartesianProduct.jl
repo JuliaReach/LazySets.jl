@@ -197,6 +197,11 @@ for N in [Float64, Float32, Rational{Int}]
     @test convert(Zonotope, cp) == Zonotope(N[0, 0, 1, 1], N[1 0 0 0; 0 1 0 0;
                                                              0 0 0 1; 0 0 1 0])
 
+    # cartesian product of singletons
+    S1 = Singleton(N[1, 2, 3])
+    S2 = Singleton(N[4, 5, 6])
+    @test convert(Singleton, S1 × S2) == Singleton(N[1, 2, 3, 4, 5, 6])
+
     # =====================
     # CartesianProductArray
     # =====================
