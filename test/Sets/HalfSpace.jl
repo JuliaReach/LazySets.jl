@@ -31,8 +31,8 @@ for N in [Float64, Rational{Int}, Float32]
     hsm = HalfSpace([-1.0, -1.0], 0.0)
     @test N[1, 1] ∈ hsm
     @test Singleton(N[1,1]) ⊆ hsm
-    @test_throws MethodError Singleton(N[1, 1]) ∈ hsm
-    @test_throws MethodError N[1, 1] ⊆ hsm
+    @test_throws ArgumentError Singleton(N[1, 1]) ∈ hsm
+    @test_throws ArgumentError N[1, 1] ⊆ hsm
 
     # tests 1
     normal = ones(N, 3)

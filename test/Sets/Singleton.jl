@@ -63,7 +63,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test N[1, 1] ∈ S
 
     # check membership error message
-    @test_throws MethodError S.element ⊆ S
+    @test_throws ArgumentError S.element ⊆ S
 
     # an_element function
     @test an_element(S) == element(S)
