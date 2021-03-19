@@ -430,7 +430,7 @@ for N in [Float64]
         @test _nonlinear_polynomial(p) == x[1]^2 - 4x[1]*x[2] + 4x[2]^2
 
         # auxiliary function to get nonlinear coefficients of Taylor1
-        t = Taylor1(6)
+        t = TaylorModels.Taylor1(6)
         qq = 1.0 + 2.0*t + 3t^2 + 6t^3
         @test _nonlinear_polynomial(qq) == 3t^2 + 6t^3
 
