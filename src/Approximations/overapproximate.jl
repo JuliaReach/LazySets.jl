@@ -720,7 +720,7 @@ return quote
 using .TaylorModels: Taylor1, TaylorN, TaylorModelN, TaylorModel1,
                      polynomial, remainder, domain,
                      normalize_taylor, linear_polynomial,
-                     constant_term, evaluate, mid, get_numvars
+                     constant_term, evaluate, mid, get_numvars, HomogeneousPolynomial
 
 @inline function get_linear_coeffs(p::Taylor1)
     if p.order == 0
@@ -736,6 +736,30 @@ end
     end
     return linear_polynomial(p).coeffs[2].coeffs
 end
+
+# compute the nonlinear part of the polynomial p, without truncation
+@inline function _nonlinear_polynomial(p::TaylorN{T}) where {T}
+    if p.order <= 1
+        return p
+    else
+        pnl = deepcopy(p)
+        pnl.coeffs[1] = HomogeneousPolynomial([zero(T)])
+        pnl.coeffs[2] = HomogeneousPolynomial([zero(T)])
+        return pnl
+    end
+end
+
+@inline function _nonlinear_polynomial(p::Taylor1{T}) where {T}
+    if p.order <= 1
+        return p
+    else
+        pnl = deepcopy(p)
+        pnl.coeffs[1] = zero(T)
+        pnl.coeffs[2] = zero(T)
+        return pnl
+    end
+end
+
 
 """
     overapproximate(vTM::Vector{TaylorModel1{T, S}},
@@ -811,13 +835,14 @@ range evaluation using interval arithmetic:
 
 ```julia
 julia> X = box_approximation(Z)
-Hyperrectangle{Float64}([1.0, -2.1], [2.5, 6.5])
+Hyperrectangle{Float64,Array{Float64,1},Array{Float64,1}}([1.0, -2.1], [2.5, 6.5])
 
 julia> Y = evaluate(vTM[1], vTM[1].dom) × evaluate(vTM[2], vTM[2].dom)
 [-1.5, 3.5] × [-8.60001, 4.40001]
 
 julia> H = convert(Hyperrectangle, Y) # this IntevalBox is the same as X
-Hyperrectangle{Float64}([1.0, -2.1], [2.5, 6.5])
+Hyperrectangle{Float64,StaticArrays.SArray{Tuple{2},Float64,1,2},
+               StaticArrays.SArray{Tuple{2},Float64,1,2}}([1.0, -2.1000000000000005], [2.5, 6.500000000000001])
 ```
 However, the zonotope returns better results if we want to approximate the `TM`,
 since it is not axis-aligned:
@@ -833,7 +858,8 @@ This function also works if the polynomials are non-linear; for example suppose
 that we add a third polynomial with a quadratic term:
 
 ```julia
-julia> p3 = Taylor1([0.9, 3.0, 1.0], 3);
+julia> p3 = Taylor1([0.9, 3.0, 1.0], 3)
+ 0.9 + 3.0 t + 1.0 t² + 𝒪(t⁴)
 
 julia> vTM = [TaylorModel1(pi, I, x₀, D) for pi in [p1, p2, p3]]
 3-element Array{TaylorModel1{Float64,Float64},1}:
@@ -847,7 +873,7 @@ julia> center(Z)
 3-element Array{Float64,1}:
   1.0
  -2.1
-  0.8999999999999999
+  2.4
 
 julia> Matrix(genmat(Z))
 3×4 Array{Float64,2}:
@@ -896,7 +922,7 @@ end
 
 """
     overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
-                    ::Type{<:Zonotope}) where {N,T, S}
+                    ::Type{<:Zonotope}) where {N, T, S}
 
 
 Overapproximate a multivariate taylor model with a zonotope.
@@ -991,7 +1017,7 @@ function _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
         rem_nonlin = remainder(x)
 
         # build an overapproximation of the nonlinear terms
-        pol_nonlin = xpol - pol_lin
+        pol_nonlin = _nonlinear_polynomial(xpol)
         rem_nonlin += evaluate(pol_nonlin, xdom)
 
         # normalize the linear polynomial to the symmetric interval [-1, 1]

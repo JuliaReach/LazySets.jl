@@ -1,7 +1,7 @@
 using LazySets.Approximations: project
 
 @static if VERSION >= v"1.4"
-    using LazySets.Approximations: get_linear_coeffs
+    using LazySets.Approximations: get_linear_coeffs, _nonlinear_polynomial
 end
 
 for N in [Float64, Rational{Int}, Float32]
@@ -423,6 +423,16 @@ for N in [Float64]
         y = set_variables("y", numvars=2, order=1)
         p = zero(y[1])
         @test get_linear_coeffs(p) == N[0, 0]
+
+        # auxiliary function to get nonlinear coefficients of TaylorN
+        x = set_variables("x", numvars=2, order=10)
+        p = (1 + x[1] - 2x[2])^2
+        @test _nonlinear_polynomial(p) == x[1]^2 - 4x[1]*x[2] + 4x[2]^2
+
+        # auxiliary function to get nonlinear coefficients of Taylor1
+        t = TaylorModels.Taylor1(6)
+        qq = 1.0 + 2.0*t + 3t^2 + 6t^3
+        @test _nonlinear_polynomial(qq) == 3t^2 + 6t^3
 
         # Zonotope approximation of convex hull array of zonotopes
         Z1 = Zonotope(N[3, 0], N[1 2 1; 1 1 2])
