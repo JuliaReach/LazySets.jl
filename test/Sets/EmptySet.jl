@@ -99,11 +99,8 @@ end
 
 # intersection
 for X in LazySets.subtypes(LazySet, true)
-    if X <: HParallelotope || isoperationtype(X)  # TODO #2390 and #2391
+    if X <: RotatedHyperrectangle || isoperationtype(X)  # TODO #2391
         continue
-    end
-    if X <: Line  # TODO #2219 (Line has type parameter by default)
-        X = Line
     end
     Y = rand(X)
     E = EmptySet(dim(Y))

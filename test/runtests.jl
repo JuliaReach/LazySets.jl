@@ -104,6 +104,7 @@ if test_suite_basic
     @time @testset "LazySets.Line" begin include("Sets/Line.jl") end
     @time @testset "LazySets.Universe" begin include("Sets/Universe.jl") end
     @time @testset "LazySets.HParallelotope" begin include("Sets/HParallelotope.jl") end
+    @time @testset "LazySets.RotatedHyperrectangle" begin include("Sets/RotatedHyperrectangle.jl") end
 
     # =========================================
     # Testing types representing set operations
