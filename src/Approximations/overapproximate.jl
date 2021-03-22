@@ -835,7 +835,7 @@ range evaluation using interval arithmetic:
 
 ```julia
 julia> X = box_approximation(Z)
-Hyperrectangle{Float64}([1.0, -2.1], [2.5, 6.5])
+Hyperrectangle{Float64,Array{Float64,1},Array{Float64,1}}([1.0, -2.1], [2.5, 6.5])
 
 julia> Y = evaluate(vTM[1], vTM[1].dom) × evaluate(vTM[2], vTM[2].dom)
 [-1.5, 3.5] × [-8.60001, 4.40001]
@@ -858,7 +858,8 @@ This function also works if the polynomials are non-linear; for example suppose
 that we add a third polynomial with a quadratic term:
 
 ```julia
-julia> p3 = Taylor1([0.9, 3.0, 1.0], 3);
+julia> p3 = Taylor1([0.9, 3.0, 1.0], 3)
+ 0.9 + 3.0 t + 1.0 t² + 𝒪(t⁴)
 
 julia> vTM = [TaylorModel1(pi, I, x₀, D) for pi in [p1, p2, p3]]
 3-element Array{TaylorModel1{Float64,Float64},1}:
@@ -995,16 +996,16 @@ We refer to the algorithm description for the univariate case.
 """
 function overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
                          ::Type{<:Zonotope}) where {N, T, S}
-        m = length(vTM)
-        n = N # number of variables is get_numvars() in TaylorSeries
+    m = length(vTM)
+    n = N # number of variables is get_numvars() in TaylorSeries
 
-        # preallocations
-        c = Vector{T}(undef, m) # center of the zonotope
-        gen_lin = Matrix{T}(undef, m, n) # generator of the linear part
-        gen_rem = Vector{T}(undef, m) # generators for the remainder
+    # preallocations
+    c = Vector{T}(undef, m) # center of the zonotope
+    gen_lin = Matrix{T}(undef, m, n) # generator of the linear part
+    gen_rem = Vector{T}(undef, m) # generators for the remainder
 
-        # compute overapproximation
-        return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
+    # compute overapproximation
+    return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
 end
 
 function _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
