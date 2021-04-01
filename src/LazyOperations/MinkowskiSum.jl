@@ -60,6 +60,10 @@ The symbolic Minkowski sum of ``X`` and ``Y``.
     ⊕(X::LazySet, Y::LazySet)
 
 Unicode alias constructor ⊕ (`oplus`) for the lazy Minkowski sum operator.
+
+### Notes
+
+Write `\times[TAB]` to enter this symbol.
 """
 ⊕(X::LazySet, Y::LazySet) = MinkowskiSum(X, Y)
 
