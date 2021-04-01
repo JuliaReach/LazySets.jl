@@ -71,8 +71,8 @@ Check whether two vectors point in the same direction.
 
 ### Output
 
-`(true, k)` iff the vectors are identical up to a positive scaling factor `k`,
-and `(false, 0)` otherwise.
+`(true, k)` iff the vectors are identical up to a positive scaling factor `k`
+such that `u = k * v`, and `(false, 0)` otherwise.
 
 
 ### Examples
@@ -107,8 +107,8 @@ Check whether two vectors point are linearly dependent.
 
 ### Output
 
-`(true, k)` iff the vectors are identical up to a scaling factor `k ≠ 0`, and
-`(false, 0)` otherwise.
+`(true, k)` iff the vectors are identical up to a scaling factor `k ≠ 0` such
+that `u = k * v`, and `(false, 0)` otherwise.
 
 
 ### Examples
