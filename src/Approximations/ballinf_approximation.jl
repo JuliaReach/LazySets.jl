@@ -18,7 +18,7 @@ A tight ball in the infinity norm.
 ### Algorithm
 
 The center and radius of the box are obtained by evaluating the support function
-of the given convex set along the canonical directions.
+of the given set along the canonical directions.
 """
 function ballinf_approximation(S::LazySet{N}) where {N}
     n = dim(S)

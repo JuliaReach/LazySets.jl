@@ -4,26 +4,33 @@ export AffineMap
     AffineMap{N, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM},
               VN<:AbstractVector{NM}} <: AbstractAffineMap{N, S}
 
-Type that represents an affine transformation ``M⋅X ⊕ v`` of a convex set ``X``.
+Type that represents an affine transformation ``M⋅X ⊕ v`` of a set ``X``,
+that is the set
+
+```
+Y = \\{ y ∈ \\mathbb{R}^n : y = Mx + v,\\qquad x ∈ X \\}.
+```
+If ``X`` is ``n``-dimensional then ``M`` should be an ``m × n`` matrix and  ``v ∈ \\mathbb{R}^m`.
 
 ### Fields
 
-- `M` -- matrix/linear map
-- `X` -- convex set
+- `M` -- matrix
+- `X` -- set
 - `v` -- translation vector
+
+The fields' getter functions are `matrix`, `set` and `vector` respectively.
 
 ### Notes
 
 An affine map is the composition of a linear map and a translation. This type is
 parametric in the coefficients of the linear map, `NM`, which may be different from
-the numeric type of the wrapped set (`N`). However, the numeric type of the
+the numeric type of the wrapped set, `N`. However, the numeric type of the
 translation vector should be `NM`.
 
 ### Examples
 
 For the examples we create a ``3×2`` matrix, a two-dimensional unit square, and
-a three-dimensional vector.
-Then we combine them in an `AffineMap`.
+a three-dimensional vector. Then we combine them in an `AffineMap`.
 
 ```jldoctest constructors
 julia> A = [1 2; 1 3; 1 4]; X = BallInf([0, 0], 1); b2 = [1, 2]; b3 = [1, 2, 3];
@@ -34,8 +41,7 @@ AffineMap{Int64,BallInf{Int64,Array{Int64,1}},Int64,Array{Int64,2},Array{Int64,1
 
 For convenience, `A` does not need to be a matrix but we also allow to use
 `UniformScaling`s resp. scalars (interpreted as a scaling, i.e., a scaled
-identity matrix).
-Scaling by ``1`` is ignored and simplified to a pure `Translation`.
+identity matrix). Scaling by ``1`` is ignored and simplified to a pure `Translation`.
 
 ```jldoctest constructors
 julia> using LinearAlgebra
@@ -51,8 +57,7 @@ Translation{Int64,Array{Int64,1},BallInf{Int64,Array{Int64,1}}}(BallInf{Int64,Ar
 ```
 
 Applying a linear map to an `AffineMap` object combines the two maps into a new
-`AffineMap` instance.
-Again we can make use of the conversion for convenience.
+`AffineMap` instance. Again we can make use of the conversion for convenience.
 
 ```jldoctest constructors
 julia> B = [2 0; 0 2]; am2 = B * am
