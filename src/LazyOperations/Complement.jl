@@ -7,7 +7,12 @@ export Complement,
 """
     Complement{N, S<:LazySet{N}}
 
-Type that represents the complement of a set.
+Type that represents the complement of a set, that is the set
+
+```math
+Y = \\{y ∈ \\mathbb{R}^n : y ∉ X\\},
+```
+and it is often denoted with the ``C`` superscript, ``Y = X^C``.
 
 ### Fields
 
