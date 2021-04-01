@@ -1,6 +1,7 @@
 export dot_zero,
        remove_duplicates_sorted!,
        samedir,
+       ismultiple,
        nonzero_indices,
        rectify,
        right_turn,
@@ -59,7 +60,7 @@ function remove_duplicates_sorted!(v::AbstractVector)
 end
 
 """
-    samedir(u::AbstractVector{N}, v::AbstractVector{N}) where {N<:Real}
+    samedir(u::AbstractVector{<:Real}, v::AbstractVector{<:Real})
 
 Check whether two vectors point in the same direction.
 
@@ -70,8 +71,8 @@ Check whether two vectors point in the same direction.
 
 ### Output
 
-`(true, k)` iff the vectors are identical up to a positive scaling factor `k`,
-and `(false, 0)` otherwise.
+`(true, k)` iff the vectors are identical up to a positive scaling factor `k`
+such that `u = k * v`, and `(false, 0)` otherwise.
 
 
 ### Examples
@@ -90,8 +91,47 @@ julia> samedir([1, 2, 3], [-1, -2, -3])
 
 ```
 """
-function samedir(u::AbstractVector{N},
-                 v::AbstractVector{N}) where {N<:Real}
+function samedir(u::AbstractVector{<:Real}, v::AbstractVector{<:Real})
+    return _ismultiple(u, v; allow_negative=false)
+end
+
+"""
+    ismultiple(u::AbstractVector{<:Real}, v::AbstractVector{<:Real})
+
+Check whether two vectors are linearly dependent.
+
+### Input
+
+- `u` -- first vector
+- `v` -- second vector
+
+### Output
+
+`(true, k)` iff the vectors are identical up to a scaling factor `k ≠ 0` such
+that `u = k * v`, and `(false, 0)` otherwise.
+
+
+### Examples
+
+```jldoctest
+julia> using LazySets: ismultiple
+
+julia> ismultiple([1, 2, 3], [2, 4, 6])
+(true, 0.5)
+
+julia> ismultiple([1, 2, 3], [3, 2, 1])
+(false, 0)
+
+julia> ismultiple([1, 2, 3], [-1, -2, -3])
+(true, -1.0)
+
+```
+"""
+function ismultiple(u::AbstractVector{<:Real}, v::AbstractVector{<:Real})
+    return _ismultiple(u, v; allow_negative=true)
+end
+
+function _ismultiple(u::AbstractVector, v::AbstractVector; allow_negative::Bool)
     @assert length(u) == length(v) "wrong dimension"
     no_factor = true
     factor = 0
@@ -107,7 +147,7 @@ function samedir(u::AbstractVector{N},
         if no_factor
             no_factor = false
             factor = u[i] / v[i]
-            if factor < 0
+            if !allow_negative && factor < 0
                 return (false, 0)
             end
         elseif !_isapprox(factor, u[i] / v[i])

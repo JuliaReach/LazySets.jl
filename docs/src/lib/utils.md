@@ -15,6 +15,7 @@ hasfullrowrank
 inner
 is_cyclic_permutation
 isinvertible
+ismultiple
 ispermutation
 is_right_turn
 issquare
