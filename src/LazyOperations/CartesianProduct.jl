@@ -85,7 +85,7 @@ Unicode alias constructor × (`times`) for the binary Cartesian product operator
 
 ### Notes
 
-Write `\times[TAB]` to enter this symbol.
+Write `\\times[TAB]` to enter this symbol.
 """
 ×(X::LazySet, Y::LazySet) = CartesianProduct(X, Y)
 
