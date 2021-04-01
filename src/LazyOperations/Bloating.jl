@@ -3,14 +3,14 @@ export Bloating
 """
     Bloating{N, S<:LazySet{N}} <:LazySet{N}
 
-Type that represents a uniform expansion of a convex set in a given norm (also
+Type that represents a uniform expansion of a set in a given norm (also
 known as *bloating*).
 
 ### Fields
 
-- `X` -- convex set
+- `X` -- set
 - `ε` -- (positive) bloating factor
-- `p` -- ``p``-norm (``≥ 1``; default: ``2``)
+- `p` -- ``p``-norm (should be ``≥ 1``; default: ``2``)
 
 ### Notes
 
@@ -36,11 +36,11 @@ isconvextype(::Type{Bloating{N, S}}) where {N, S} = isconvextype(S)
 """
     dim(B::Bloating)
 
-Return the dimension of a bloated convex set.
+Return the dimension of a bloated set.
 
 ### Input
 
-- `B` -- bloated convex set
+- `B` -- bloated set
 
 ### Output
 
@@ -58,19 +58,19 @@ end
 """
     σ(d::AbstractVector, B::Bloating)
 
-Return the support vector of a bloated convex set in a given direction.
+Return the support vector of a bloated set in a given direction.
 
 ### Input
 
 - `d` -- direction
-- `B` -- bloated convex set
+- `B` -- bloated set
 
 ### Output
 
 The support vector of the bloated set in the given direction.
 """
 function σ(d::AbstractVector, B::Bloating)
-    @assert !iszero(d) "the support vector of the zero direction is undefined"
+    @assert !iszero(d) "the support vector in the zero direction is undefined"
 
     return σ(d, B.X) + σ(d, _bloating_ball(B))
 end
@@ -78,19 +78,19 @@ end
 """
     ρ(d::AbstractVector, B::Bloating)
 
-Return the support function of a bloated convex set in a given direction.
+Return the support function of a bloated set in a given direction.
 
 ### Input
 
 - `d` -- direction
-- `B` -- bloated convex set
+- `B` -- bloated set
 
 ### Output
 
 The support function of the bloated set in the given direction.
 """
 function ρ(d::AbstractVector, B::Bloating)
-    @assert !iszero(d) "the support function of the zero direction is undefined"
+    @assert !iszero(d) "the support function in the zero direction is undefined"
 
     return ρ(d, B.X) + ρ(d, _bloating_ball(B))
 end
@@ -98,11 +98,11 @@ end
 """
     isbounded(B::Bloating)
 
-Determine whether a bloated convex set is bounded.
+Determine whether a bloated set is bounded.
 
 ### Input
 
-- `B` -- bloated convex set
+- `B` -- bloated set
 
 ### Output
 
@@ -115,11 +115,11 @@ end
 """
     isempty(B::Bloating)
 
-Determine whether a bloated convex set is empty.
+Determine whether a bloated set is empty.
 
 ### Input
 
-- `B` -- bloated convex set
+- `B` -- bloated set
 
 ### Output
 
@@ -132,15 +132,15 @@ end
 """
     an_element(B::Bloating)
 
-Return some element of a bloated convex set.
+Return some element of a bloated set.
 
 ### Input
 
-- `B` -- bloated convex set
+- `B` -- bloated set
 
 ### Output
 
-An element in the bloated convex set.
+An element in the bloated set.
 
 ### Algorithm
 
