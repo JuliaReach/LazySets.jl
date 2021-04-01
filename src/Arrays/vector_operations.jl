@@ -95,6 +95,38 @@ function samedir(u::AbstractVector{<:Real}, v::AbstractVector{<:Real})
     return _ismultiple(u, v; allow_negative=false)
 end
 
+"""
+    ismultiple(u::AbstractVector{<:Real}, v::AbstractVector{<:Real})
+
+Check whether two vectors point are linearly dependent.
+
+### Input
+
+- `u` -- first vector
+- `v` -- second vector
+
+### Output
+
+`(true, k)` iff the vectors are identical up to a scaling factor `k ≠ 0`, and
+`(false, 0)` otherwise.
+
+
+### Examples
+
+```jldoctest
+julia> using LazySets: ismultiple
+
+julia> ismultiple([1, 2, 3], [2, 4, 6])
+(true, 0.5)
+
+julia> ismultiple([1, 2, 3], [3, 2, 1])
+(false, 0)
+
+julia> ismultiple([1, 2, 3], [-1, -2, -3])
+(true, -1.0)
+
+```
+"""
 function ismultiple(u::AbstractVector{<:Real}, v::AbstractVector{<:Real})
     return _ismultiple(u, v; allow_negative=true)
 end
