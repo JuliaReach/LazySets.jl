@@ -8,7 +8,6 @@ export dot_zero,
        is_cyclic_permutation,
        is_right_turn,
        to_negative_vector,
-       to_bit_vector,
        _above,
        _dr,
        _up,
@@ -413,8 +412,4 @@ function allequal(x)
         x[i] == e1 || return false
     end
     return true
-end
-
-function to_bit_vector(v::AbstractVector{N}) where {N}
-    return [x == zero(N) for x in v]
 end

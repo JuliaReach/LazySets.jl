@@ -643,36 +643,34 @@ function remove_redundant_generators(Z::Zonotope{N}) where {N}
         return _remove_redundant_generators_1d(Z)
     end
 
-    G = genmat(Z)
-    patterns = values(column_bit_patterns(G))
     deleted = false
+    G = genmat(Z)
+    p = ngens(Z)
+    done = falses(p)
     G_new = _vector_type(typeof(G))[]  # list of new column vectors
-    for same_pattern in patterns
-        # check whether the generators are multiples
-        @inbounds for (idx1, j1) in enumerate(same_pattern)
-            gj1 = G[:, j1]
-            len = length(same_pattern)
-            idx2 = idx1 + 1
-            while idx2 <= len
-                j2 = same_pattern[idx2]
-                gj2 = G[:, j2]
-                answer, factor = ismultiple(gj1, gj2)
-                if answer
-                    # column j1 and j2 are merged
-                    if factor > zero(N)
-                        gj1 += gj2
-                    else
-                        gj1 -= gj2
-                    end
-                    deleteat!(same_pattern, idx2)
-                    len -= 1
-                    deleted = true
-                else
-                    idx2 += 1
-                end
-            end
-            push!(G_new, gj1)
+    @inbounds for j1 in 1:p
+        if done[j1]  # skip if the generator was already removed
+            continue
         end
+        gj1 = G[:, j1]
+        for j2 in (j1+1):p  # look at all generators to the right
+            if done[j2]  # skip if the generator was already removed
+                continue
+            end
+            gj2 = G[:, j2]
+            answer, factor = ismultiple(gj1, gj2)
+            if answer
+                # column j2 is a multiple of column j1
+                if factor > zero(N)
+                    gj1 += gj2
+                else
+                    gj1 -= gj2
+                end
+                done[j2] = true
+                deleted = true
+            end
+        end
+        push!(G_new, gj1)
     end
 
     if deleted
