@@ -889,7 +889,7 @@ end
     an_element(P::AbstractPolyhedron{N};
                [solver]=default_lp_solver(N)) where {N}
 
-Return some element of a convex set.
+Return some element of a polyhedron.
 
 ### Input
 

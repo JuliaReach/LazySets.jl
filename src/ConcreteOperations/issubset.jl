@@ -38,12 +38,12 @@ end
 """
     ⊆(X::LazySet, P::LazySet, [witness]::Bool=false)
 
-Check whether a convex set is contained in a polyhedral set, and if not,
+Check whether a set is contained in a polyhedral set, and if not,
 optionally compute a witness.
 
 ### Input
 
-- `X`       -- inner convex set
+- `X`       -- inner set
 - `Y`       -- outer polyhedral set
 - `witness` -- (optional, default: `false`) compute a witness if activated
 
