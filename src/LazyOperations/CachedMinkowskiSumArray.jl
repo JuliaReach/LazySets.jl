@@ -32,12 +32,12 @@ end
 """
     CachedMinkowskiSumArray{N, S<:LazySet{N}} <: LazySet{N}
 
-Type that represents the Minkowski sum of a finite number of convex sets.
+Type that represents the Minkowski sum of a finite number of sets.
 Support vector queries are cached.
 
 ### Fields
 
-- `array` -- array of convex sets
+- `array` -- array of sets
 - `cache` -- cache of support vector query results
 
 ### Notes
@@ -50,16 +50,15 @@ for `CachedMinkowskiSumArray`.
 The cache (field `cache`) is implemented as dictionary whose keys are directions
 and whose values are pairs `(k, s)` where `k` is the number of elements in the
 array `array` when the support vector was evaluated last time, and `s` is the
-support vector that was obtained.
-Thus this type assumes that `array` is not modified except by adding new sets at
-the end.
+support vector that was obtained. Thus this type assumes that `array` is not
+modified except by adding new sets at the end.
 
 Constructors:
 
 - `CachedMinkowskiSumArray(array::Vector{<:LazySet})` -- default constructor
 
-- `CachedMinkowskiSumArray([n]::Int=0, [N]::Type=Float64)`
-  -- constructor for an empty sum with optional size hint and numeric type
+- `CachedMinkowskiSumArray([n]::Int=0, [N]::Type=Float64)` -- constructor for an
+   empty sum with optional size hint and numeric type
 """
 struct CachedMinkowskiSumArray{N, S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
@@ -90,15 +89,15 @@ end
 """
     array(cms::CachedMinkowskiSumArray)
 
-Return the array of a caching Minkowski sum.
+Return the array of a cached Minkowski sum.
 
 ### Input
 
-- `cms` -- caching Minkowski sum
+- `cms` -- cached Minkowski sum
 
 ### Output
 
-The array of a caching Minkowski sum.
+The array of a cached Minkowski sum.
 """
 function array(cms::CachedMinkowskiSumArray)
     return cms.array
@@ -107,15 +106,15 @@ end
 """
     dim(cms::CachedMinkowskiSumArray)
 
-Return the dimension of a caching Minkowski sum.
+Return the dimension of a cached Minkowski sum.
 
 ### Input
 
-- `cms` -- caching Minkowski sum
+- `cms` -- cached Minkowski sum
 
 ### Output
 
-The ambient dimension of the caching Minkowski sum.
+The ambient dimension of the cached Minkowski sum.
 """
 function dim(cms::CachedMinkowskiSumArray)
     return length(cms.array) == 0 ? 0 : dim(cms.array[1])
@@ -124,12 +123,12 @@ end
 """
     σ(d::AbstractVector, cms::CachedMinkowskiSumArray)
 
-Return the support vector of a caching Minkowski sum in a given direction.
+Return the support vector of a cached Minkowski sum in a given direction.
 
 ### Input
 
 - `d`   -- direction
-- `cms` -- caching Minkowski sum
+- `cms` -- cached Minkowski sum
 
 ### Output
 
@@ -140,7 +139,7 @@ If the direction has norm zero, the result depends on the summand sets.
 
 The result is cached, i.e., any further query with the same direction runs in
 constant time.
-When sets are added to the caching Minkowski sum, the query is only performed
+When sets are added to the cached Minkowski sum, the query is only performed
 for the new sets.
 """
 function σ(d::AbstractVector, cms::CachedMinkowskiSumArray)
@@ -171,11 +170,11 @@ end
 """
 	isbounded(cms::CachedMinkowskiSumArray)
 
-Determine whether a caching Minkowski sum is bounded.
+Determine whether a cached Minkowski sum is bounded.
 
 ### Input
 
-- `cms` -- caching Minkowski sum
+- `cms` -- cached Minkowski sum
 
 ### Output
 
@@ -188,11 +187,11 @@ end
 """
     isempty(cms::CachedMinkowskiSumArray)
 
-Return if a caching Minkowski sum array is empty or not.
+Return if a cached Minkowski sum array is empty or not.
 
 ### Input
 
-- `cms` -- caching Minkowski sum
+- `cms` -- cached Minkowski sum
 
 ### Output
 
@@ -203,7 +202,7 @@ Return if a caching Minkowski sum array is empty or not.
 Forgotten sets cannot be checked anymore.
 Usually they have been empty because otherwise the support vector query should
 have crashed before.
-In that case, the caching Minkowski sum should not be used further.
+In that case, the cached Minkowski sum should not be used further.
 """
 function isempty(cms::CachedMinkowskiSumArray)
     return any(isempty, array(cms))
@@ -212,14 +211,13 @@ end
 """
     forget_sets!(cms::CachedMinkowskiSumArray)
 
-Tell a caching Minkowski sum to forget the stored sets (but not the support
-vectors).
-Only those sets are forgotten such that for each cached direction the support
-vector has been computed before.
+Tell a cached Minkowski sum to forget the stored sets (but not the support
+vectors). Only those sets are forgotten such that for each cached direction the
+support vector has been computed before.
 
 ### Input
 
-- `cms` -- caching Minkowski sum
+- `cms` -- cached Minkowski sum
 
 ### Output
 
