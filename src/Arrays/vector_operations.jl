@@ -1,12 +1,14 @@
 export dot_zero,
        remove_duplicates_sorted!,
        samedir,
+       ismultiple,
        nonzero_indices,
        rectify,
        right_turn,
        is_cyclic_permutation,
        is_right_turn,
        to_negative_vector,
+       to_bit_vector,
        _above,
        _dr,
        _up,
@@ -59,7 +61,7 @@ function remove_duplicates_sorted!(v::AbstractVector)
 end
 
 """
-    samedir(u::AbstractVector{N}, v::AbstractVector{N}) where {N<:Real}
+    samedir(u::AbstractVector{<:Real}, v::AbstractVector{<:Real})
 
 Check whether two vectors point in the same direction.
 
@@ -90,8 +92,15 @@ julia> samedir([1, 2, 3], [-1, -2, -3])
 
 ```
 """
-function samedir(u::AbstractVector{N},
-                 v::AbstractVector{N}) where {N<:Real}
+function samedir(u::AbstractVector{<:Real}, v::AbstractVector{<:Real})
+    return _ismultiple(u, v; allow_negative=false)
+end
+
+function ismultiple(u::AbstractVector{<:Real}, v::AbstractVector{<:Real})
+    return _ismultiple(u, v; allow_negative=true)
+end
+
+function _ismultiple(u::AbstractVector, v::AbstractVector; allow_negative::Bool)
     @assert length(u) == length(v) "wrong dimension"
     no_factor = true
     factor = 0
@@ -107,7 +116,7 @@ function samedir(u::AbstractVector{N},
         if no_factor
             no_factor = false
             factor = u[i] / v[i]
-            if factor < 0
+            if !allow_negative && factor < 0
                 return (false, 0)
             end
         elseif !_isapprox(factor, u[i] / v[i])
@@ -404,4 +413,8 @@ function allequal(x)
         x[i] == e1 || return false
     end
     return true
+end
+
+function to_bit_vector(v::AbstractVector{N}) where {N}
+    return [x == zero(N) for x in v]
 end

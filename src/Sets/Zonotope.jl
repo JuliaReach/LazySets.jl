@@ -5,7 +5,8 @@ export Zonotope,
        scale!,
        reduce_order,
        remove_zero_generators,
-       quadratic_map
+       quadratic_map,
+       remove_redundant_generators
 
 using LazySets.Arrays: _vector_type, _matrix_type
 
@@ -635,4 +636,50 @@ function _vertices_list_2D_order_one(c::VN, G::MN; apply_convex_hull::Bool) wher
         vlist[4] = c .- G * b
     end
     return apply_convex_hull ? _four_points_2d!(vlist) : vlist
+end
+
+function remove_redundant_generators(Z::Zonotope{N}) where {N}
+    if dim(Z) == 1  # more efficient implementation in 1D
+        return _remove_redundant_generators_1d(Z)
+    end
+
+    G = genmat(Z)
+    patterns = values(column_bit_patterns(G))
+    deleted = false
+    G_new = _vector_type(typeof(G))[]  # list of new column vectors
+    for same_pattern in patterns
+        # check whether the generators are multiples
+        @inbounds for (idx1, j1) in enumerate(same_pattern)
+            gj1 = G[:, j1]
+            len = length(same_pattern)
+            idx2 = idx1 + 1
+            while idx2 <= len
+                j2 = same_pattern[idx2]
+                gj2 = G[:, j2]
+                answer, _ = ismultiple(gj1, gj2)
+                if answer
+                    # column j1 and j2 are merged
+                    gj1 += gj2
+                    deleteat!(same_pattern, idx2)
+                    len -= 1
+                    deleted = true
+                else
+                    idx2 += 1
+                end
+            end
+            push!(G_new, gj1)
+        end
+    end
+
+    if deleted
+        G_new = hcat(G_new...)  # convert list of column vectors to matrix
+        return Zonotope(center(Z), G_new)
+    end
+    return Z
+end
+
+function _remove_redundant_generators_1d(Z)
+    G = genmat(Z)
+    g = sum(abs, G)
+    return Zonotope(center(Z), hcat(g))
 end

@@ -213,11 +213,22 @@ for N in [Float64, Rational{Int}, Float32]
     # concrete projection returns a zonotope
     πZ12 = project(Z, 1:2)
     @test πZ12 == Zonotope(zeros(N, 2), Matrix(N(1)*I, 2, 2))
-   
+
     # 1D projection works correctly even with zero generators (#2147)
     Z = convert(Zonotope, BallInf(N[0, 0], N(1)))
     Z2 = project(Z, [1])
     @test Z2 == Zonotope(N[0], hcat(N[1]))
+
+    # remove redundant generators
+    for (G, nG) in [(N[1 2 3 4 5;], 1),
+                    (N[1 1 1 1 1; 0 0 1 1 0; 1 2 0 0 1], 3)]
+        Z = Zonotope(zeros(N, size(G, 1)), G)
+        Z2 = remove_redundant_generators(Z)
+        @test ngens(Z2) == nG
+        if N<:AbstractFloat || test_suite_polyhedra
+            @test isequivalent(Z, Z2)
+        end
+    end
 end
 
 for N in [Float64]

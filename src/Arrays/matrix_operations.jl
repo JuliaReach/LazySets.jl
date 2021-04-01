@@ -8,7 +8,8 @@ export _At_mul_B,
        nonzero_columns,
        extend,
        projection_matrix,
-       remove_zero_columns
+       remove_zero_columns,
+       column_bit_patterns
 
 # default tolerance for matrix condition number (see 'isinvertible')
 const DEFAULT_COND_TOL = 1e6
@@ -300,4 +301,18 @@ function remove_zero_columns(A::AbstractMatrix)
     else
         return A[:, nzcol]
     end
+end
+
+function column_bit_patterns(A::AbstractMatrix)
+    patterns = Dict{Vector{Bool}, Vector{Int}}()
+    for (j, col) in enumerate(eachcol(A))
+        pattern = to_bit_vector(col)
+        old_list = get(patterns, pattern, nothing)
+        if old_list == nothing
+            patterns[pattern] = [j]
+        else
+            push!(old_list, j)
+        end
+    end
+    return patterns
 end
