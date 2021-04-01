@@ -7,7 +7,7 @@ export CartesianProductArray,
 """
    CartesianProductArray{N, S<:LazySet{N}} <: LazySet{N}
 
-Type that represents the Cartesian product of a finite number of convex sets.
+Type that represents the Cartesian product of a finite number of sets.
 
 ### Fields
 
@@ -45,9 +45,9 @@ isconvextype(::Type{CartesianProductArray{N, S}}) where {N, S} = isconvextype(S)
 @declare_array_version(CartesianProduct, CartesianProductArray)
 
 """
-   array(cpa::CartesianProductArray{N, S}) where {N, S<:LazySet{N}}
+   array(cpa::CartesianProductArray)
 
-Return the array of a Cartesian product of a finite number of convex sets.
+Return the array of a Cartesian product of a finite number of sets.
 
 ### Input
 
@@ -55,7 +55,7 @@ Return the array of a Cartesian product of a finite number of convex sets.
 
 ### Output
 
-The array of a Cartesian product of a finite number of convex sets.
+The array of a Cartesian product of a finite number of sets.
 """
 function array(cpa::CartesianProductArray)
    return cpa.array
@@ -64,7 +64,7 @@ end
 """
    dim(cpa::CartesianProductArray)
 
-Return the dimension of a Cartesian product of a finite number of convex sets.
+Return the dimension of a Cartesian product of a finite number of sets.
 
 ### Input
 
@@ -72,11 +72,10 @@ Return the dimension of a Cartesian product of a finite number of convex sets.
 
 ### Output
 
-The ambient dimension of the Cartesian product of a finite number of convex
-sets.
+The ambient dimension of the Cartesian product of a finite number of sets.
 """
 function dim(cpa::CartesianProductArray)
-   return length(cpa.array) == 0 ? 0 : sum([dim(Xi) for Xi in cpa.array])
+   return length(cpa.array) == 0 ? 0 : sum(dim(Xi) for Xi in cpa.array)
 end
 
 """
@@ -210,12 +209,12 @@ end
 """
    isbounded(cpa::CartesianProductArray)
 
-Determine whether a Cartesian product of a finite number of convex sets is
+Determine whether a Cartesian product of a finite number of sets is
 bounded.
 
 ### Input
 
-- `cpa` -- Cartesian product of a finite number of convex sets
+- `cpa` -- Cartesian product of a finite number of sets
 
 ### Output
 
@@ -457,6 +456,7 @@ index of the `i`-th block, depending on whether one of the block's dimension ind
 ### Output
 
 (i) A vector of tuples, where values in tuple relate to range of dimensions in the i-th block.
+
 (ii) Number of constrained blocks
 
 ### Example
@@ -557,12 +557,12 @@ end
 """
     linear_map(M::AbstractMatrix, cpa::CartesianProductArray)
 
-Concrete linear map of a Cartesian product of a finite number of convex sets.
+Concrete linear map of a Cartesian product of a finite number of (polyhedral) sets.
 
 ### Input
 
 - `M`   -- matrix
-- `cpa` -- Cartesian product of a finite number of convex sets
+- `cpa` -- Cartesian product of a finite number of sets
 
 ### Output
 
