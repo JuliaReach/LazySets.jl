@@ -7,18 +7,22 @@ export Complement,
 """
     Complement{N, S<:LazySet{N}}
 
-Type that represents the complement of a convex set.
+Type that represents the complement of a set, that is the set
+
+```math
+Y = \\{y ∈ \\mathbb{R}^n : y ∉ X\\},
+```
+and it is often denoted with the ``C`` superscript, ``Y = X^C``.
 
 ### Fields
 
-- `X` -- convex set
+- `X` -- set
 
 ### Notes
 
 Since `X` is assumed to be closed, unless `X` is empty or the universe, its
 complement is open (i.e., not closed).
-Since `X` is assumed to be closed, unless `X` is empty, the universe, or a
-half-space, its complement is not convex.
+If `X` is empty, the universe, or a half-space, its complement is convex.
 
 The complement of the complement is the original set again.
 
@@ -54,15 +58,15 @@ Complement(C::Complement) = C.X
 """
     dim(C::Complement)
 
-Return the dimension of the complement of a convex set.
+Return the dimension of the complement of a set.
 
 ### Input
 
-- `C` -- complement of a convex set
+- `C` -- complement of a set
 
 ### Output
 
-The dimension of the complement of a convex set.
+The dimension of the complement of a set.
 """
 function dim(C::Complement)
     return dim(C.X)
@@ -71,12 +75,12 @@ end
 """
     ∈(x::AbstractVector, C::Complement)
 
-Check whether a given point is contained in the complement of a convex set.
+Check whether a given point is contained in the complement of a set.
 
 ### Input
 
 - `x` -- point/vector
-- `C` -- complement of a convex set
+- `C` -- complement of a set
 
 ### Output
 
@@ -96,11 +100,11 @@ end
 """
     isempty(C::Complement)
 
-Return if the complement of a convex set is empty or not.
+Return if the complement of a set is empty or not.
 
 ### Input
 
-- `C` -- complement of a convex set
+- `C` -- complement of a set
 
 ### Output
 
