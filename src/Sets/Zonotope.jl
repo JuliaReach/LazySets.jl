@@ -699,7 +699,7 @@ function remove_redundant_generators(Z::Zonotope{N}) where {N}
     end
 
     if deleted
-        G_new = hcat(G_new...)  # convert list of column vectors to matrix
+        G_new = reduce(hcat, G_new)  # convert list of column vectors to matrix
         return Zonotope(center(Z), G_new)
     end
     return Z  # return the original zonotope if no generator was removed
