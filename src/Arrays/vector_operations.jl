@@ -98,7 +98,7 @@ end
 """
     ismultiple(u::AbstractVector{<:Real}, v::AbstractVector{<:Real})
 
-Check whether two vectors point are linearly dependent.
+Check whether two vectors are linearly dependent.
 
 ### Input
 
