@@ -656,10 +656,14 @@ function remove_redundant_generators(Z::Zonotope{N}) where {N}
             while idx2 <= len
                 j2 = same_pattern[idx2]
                 gj2 = G[:, j2]
-                answer, _ = ismultiple(gj1, gj2)
+                answer, factor = ismultiple(gj1, gj2)
                 if answer
                     # column j1 and j2 are merged
-                    gj1 += gj2
+                    if factor > zero(N)
+                        gj1 += gj2
+                    else
+                        gj1 -= gj2
+                    end
                     deleteat!(same_pattern, idx2)
                     len -= 1
                     deleted = true

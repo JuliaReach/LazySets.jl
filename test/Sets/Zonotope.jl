@@ -220,13 +220,17 @@ for N in [Float64, Rational{Int}, Float32]
     @test Z2 == Zonotope(N[0], hcat(N[1]))
 
     # remove redundant generators
-    for (G, nG) in [(N[1 2 3 4 5;], 1),
-                    (N[1 1 1 1 1; 0 0 1 1 0; 1 2 0 0 1], 3)]
+    zonotopes = [(N[1 2 3 4 5 -1;], 1, hcat(16)),
+                 (N[1 1 1 1 1 2 -2; 0 0 1 1 0 0 0; 1 2 0 0 1 2 -2], 3, nothing)]
+    for (G, nG, G2) in zonotopes
         Z = Zonotope(zeros(N, size(G, 1)), G)
         Z2 = remove_redundant_generators(Z)
         @test ngens(Z2) == nG
         if N<:AbstractFloat || test_suite_polyhedra
             @test isequivalent(Z, Z2)
+        end
+        if G2 != nothing
+            @test genmat(remove_redundant_generators(Z)) == G2
         end
     end
 end
