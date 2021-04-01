@@ -7,25 +7,35 @@ export CartesianProduct,
 """
     CartesianProduct{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
 
-Type that represents a Cartesian product of two convex sets.
+Type that represents the Cartesian product of two sets, that is the set
+
+```math
+Z = \\{ z ∈ \\mathbb{R}^{n + m} : z = (x, y),\\qquad x ∈ X, y ∈ Y \\}.
+```
+If ``X ⊆ \\mathbb{R}^n`` and ``Y ⊆ \\mathbb{R}^m``, then ``Z`` is ``n+m``-dimensional.
 
 ### Fields
 
-- `X` -- first convex set
-- `Y` -- second convex set
+- `X` -- first set
+- `Y` -- second set
 
 ### Notes
 
 The Cartesian product of three elements is obtained recursively.
-See also `CartesianProductArray` for an implementation of a Cartesian product of
-many sets without recursion, instead using an array.
+See also [`CartesianProductArray`](@ref) for an implementation of a Cartesian product of
+many sets without recursion, instead using an array, making the operations more efficient.
 
 The `EmptySet` is the absorbing element for `CartesianProduct`.
+
+In some docstrings the word "block" is used to denote each wrapped set, with the natural
+order, i.e. we say that the first block of a Cartesian product `cp` is `cp.X` and
+the second block is `cp.Y`.
 
 ### Examples
 
 The Cartesian product between two sets `X` and `Y` can be constructed either
-using `CartesianProduct(X, Y)` or the short-cut notation `X × Y`:
+using `CartesianProduct(X, Y)` or the short-cut notation `X × Y` (to enter the times
+symbol, write `\times[TAB]`).
 
 ```jldoctest cartesianproduct_constructor
 julia> I1 = Interval(0, 1);
@@ -71,7 +81,11 @@ Alias for the binary Cartesian product.
 """
     ×
 
-Alias for the binary Cartesian product.
+Unicode alias constructor × (`times`) for the binary Cartesian product operator.
+
+### Notes
+
+Write `\times[TAB]` to enter this symbol.
 """
 ×(X::LazySet, Y::LazySet) = CartesianProduct(X, Y)
 
@@ -82,7 +96,7 @@ Return a new `CartesianProduct` object with the arguments swapped.
 
 ### Input
 
-- `cp` -- Cartesian product of two convex sets
+- `cp` -- Cartesian product of two sets
 
 ### Output
 
@@ -266,7 +280,7 @@ Concrete linear map of a (polyhedral) Cartesian product.
 ### Input
 
 - `M`  -- matrix
-- `cp` -- Cartesian product of two convex sets
+- `cp` -- Cartesian product of two sets
 
 ### Output
 
@@ -276,6 +290,8 @@ A polytope if `cp` is bounded and a polyhedron otherwise.
 
 We convert the Cartesian product to constraint representation and then call
 `linear_map` on the corresponding polyhedron.
+
+This is a fallback implementation and it will fail if the wrapped sets are not polyhedral.
 """
 function linear_map(M::AbstractMatrix, cp::CartesianProduct)
     return linear_map_cartesian_product(M, cp)

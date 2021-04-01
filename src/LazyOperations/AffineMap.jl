@@ -7,7 +7,7 @@ export AffineMap
 Type that represents an affine transformation ``M⋅X ⊕ v`` of a set ``X``,
 that is the set
 
-```
+```math
 Y = \\{ y ∈ \\mathbb{R}^n : y = Mx + v,\\qquad x ∈ X \\}.
 ```
 If ``X`` is ``n``-dimensional then ``M`` should be an ``m × n`` matrix and  ``v ∈ \\mathbb{R}^m`.
