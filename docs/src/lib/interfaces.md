@@ -348,6 +348,7 @@ constraints_list(::AbstractZonotope{N}; ::Bool=true) where {N<:AbstractFloat}
 vertices_list(::AbstractZonotope)
 order(::AbstractZonotope)
 togrep(::AbstractZonotope)
+remove_redundant_generators(::AbstractZonotope)
 ```
 
 ### Implementations
