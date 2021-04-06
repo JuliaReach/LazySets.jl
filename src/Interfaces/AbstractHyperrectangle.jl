@@ -583,8 +583,6 @@ function split(H::AbstractHyperrectangle{N}, num_blocks::AbstractVector{Int}
     return result
 end
 
-import LazySets.Arrays: rectify
-
 """
     rectify(H::AbstractHyperrectangle)
 

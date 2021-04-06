@@ -428,14 +428,26 @@ for N in [Float64, Float32, Rational{Int}]
     I = Interval(N(0), N(1))
     Vcp = cartesian_product(I, V)
     Vcp′ = VPolytope([N[0, -1, 0], N[0, 1, 0], N[0, 0, 1], N[1, -1, 0], N[1, 1, 0], N[1, 0, 1]])
-    # FIXME isapprox between arrays isequivalent(cartesian_product(I, V), Vcp) # TODO isequivalent(....)
+    @test isequivalent(cartesian_product(I, V), Vcp)
     @test LazySets._issubset_vertices_list(Vcp, Vcp′, false)
     @test LazySets._issubset_vertices_list(Vcp′, Vcp, false)
 
     # concrete projection of a cartesian product
     @test project(I × V, 2:3) === V
     @test project(I×V, 1:1) == I
-    @test project(I×V, 1:2) == VPolygon([N[0, -1], N[1, -1], N[1, 1], [0, 1]]) # TODO use isequivalent
+    @test isequivalent(project(I×V, 1:2), VPolygon([N[0, -1], N[1, -1], N[1, 1], [0, 1]]))
+
+    # rectification
+    P = VPolygon([N[-1, 2], N[1, 1], N[1, 3]])
+    rectify(P)
+    Q1 = rectify(P, true)
+    Q2 = rectify(P, false)
+    for (d, res) in [(N[-1, 0], N(0)),
+                     (N[0, -1], N(-1)),
+                     (N[-1, -1], N(-3//2))]
+        @test ρ(d, Q1) == res
+        @test abs(ρ(d, Q1) - ρ(d, Q2)) < 1e-8  # precision of lazy intersection not good
+    end
 end
 
 for N in [Float64, Float32]
