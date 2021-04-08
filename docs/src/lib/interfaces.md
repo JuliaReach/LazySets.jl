@@ -75,10 +75,11 @@ surface(::LazySet{N}) where {N}
 area(::LazySet{N}) where {N}
 concretize(::LazySet)
 complement(::LazySet)
-project(S::LazySet{N}, ::AbstractVector{Int}, ::Nothing=nothing, ::Int=dim(S)) where {N}
-project(S::LazySet, ::AbstractVector{Int}, ::Type{TS}, ::Int=dim(S)) where {TS<:LazySet}
-project(S::LazySet, ::AbstractVector{Int}, ::Pair{T, N}, ::Int=dim(S)) where {T<:UnionAll, N<:Real}
-project(S::LazySet, ::AbstractVector{Int}, ::Real, ::Int=dim(S))
+project(::LazySet{N}, ::AbstractVector{Int}, ::Nothing=nothing, ::Int=dim(S)) where {N}
+project(::LazySet, ::AbstractVector{Int}, ::Type{TS}, ::Int=dim(S)) where {TS<:LazySet}
+project(::LazySet, ::AbstractVector{Int}, ::Pair{T, N}, ::Int=dim(S)) where {T<:UnionAll, N<:Real}
+project(::LazySet, ::AbstractVector{Int}, ::Real, ::Int=dim(S))
+rectify(::LazySet, ::Bool=false)
 ```
 
 Plotting is available for general one- or two-dimensional `LazySet`s, provided

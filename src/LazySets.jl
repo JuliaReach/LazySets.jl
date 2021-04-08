@@ -35,7 +35,8 @@ include("Utils/comparisons.jl")
 # =======================
 include("Arrays/Arrays.jl")
 using .Arrays
-import .Arrays: distance
+import .Arrays: distance,
+                rectify
 
 # ===================
 # Auxiliary functions

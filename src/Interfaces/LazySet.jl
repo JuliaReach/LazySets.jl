@@ -31,7 +31,8 @@ export LazySet,
        concretize,
        constraints,
        vertices,
-       project
+       project,
+       rectify
 
 """
     LazySet{N}
@@ -1356,4 +1357,29 @@ The target set type is chosen automatically.
                             "blocks"))
     end
     return project(S, block, set_type => ε, n)
+end
+
+"""
+    rectify(X::LazySet, [concrete_intersection]::Bool=false)
+
+Concrete rectification of a set.
+
+### Input
+
+- `X`                     -- set
+- `concrete_intersection` -- (optional, default: `false`) flag to compute
+                             concrete intersections for intermediate results
+
+### Output
+
+A set corresponding to the rectification of `X`, which is in general a union of
+linear maps of intersections.
+
+### Algorithm
+
+For each dimension in which `X` is both positive and negative we split `X` into
+these two parts. Additionally we project the negative part to zero.
+"""
+function rectify(X::LazySet, concrete_intersection::Bool=false)
+    return to_union_of_projections(Rectification(X), concrete_intersection)
 end
