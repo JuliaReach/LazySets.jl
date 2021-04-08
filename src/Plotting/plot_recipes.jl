@@ -45,6 +45,8 @@ end
 
 function _update_plot_limits!(lims, X::LazySet)
     box = box_approximation(X)
+    isempty(box) && return nothing  # can happen if X is empty or flat
+
     box_min = low(box)
     box_max = high(box)
     for (idx,symbol) in enumerate([:x, :y])
