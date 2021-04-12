@@ -62,7 +62,7 @@ for N in [Float64, Rational{Int}, Float32]
         rm_id = ResetMap(Matrix(one(N)*I, 3, 3) * b, r)
         X = HPolytope(constraints_list(rm))
         Y = HPolytope(constraints_list(rm_id))
-        @test (X ⊆ Y) && (Y ⊆ X) # TODO use isequivalent(X, Y), requires LazySets#2370 and #1914
+        @test isequivalent(X, Y)
     end
 end
 
