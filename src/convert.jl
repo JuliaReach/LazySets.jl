@@ -1178,3 +1178,24 @@ for T in [HPolygon, HPolygonOpt, HPolytope, HPolyhedron]
     end
 end
 end
+
+"""
+    convert(::Type{LazySets.STAR}, P::AbstractPolyhedron{N}) where {N}
+
+Converts a polyhedral set into a star set.
+
+### Input
+
+- `STAR` -- type used for dispatch
+- `P`    -- polyhedral set
+
+### Output
+
+A star set.
+"""
+function convert(::Type{LazySets.STAR}, P::AbstractPolyhedron{N}) where {N}
+    n = dim(P)
+    c = zeros(N, n)
+    V = Matrix(one(N)*I, n, n)
+    return Star(c, V, P)
+end

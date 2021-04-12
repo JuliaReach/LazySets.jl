@@ -25,4 +25,14 @@ for N in [Float64, Float32, Rational{Int}]
     @test σ(N[-1, -1], S) == N[2, 2]
     @test σ(N[1, -1], S) == N[4, 2]
     @test σ(N[-1, 1], S) == N[2, 4]
+
+    # conversion from a polyhedral set
+    P = HPolygon([HalfSpace(N[1, 1], N(-0.5)),
+                  HalfSpace(N[-1.5, 0.5], N(4)),
+                  HalfSpace(N[-0.5, -0.05], N(1.5)),
+                  HalfSpace(N[1.5, -0.25], N(-1.5))])
+    S = convert(STAR, P)
+    @test basis(S) == N[1 0; 0 1]
+    @test center(S) == N[0, 0]
+    @test predicate(S) == P
 end
