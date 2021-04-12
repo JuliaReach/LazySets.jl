@@ -513,15 +513,13 @@ end
 end
 
 """
-    constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true) where {N<:AbstractFloat}
+    constraints_list(Z::AbstractZonotope{N}) where {N<:AbstractFloat}
 
 Return the list of constraints defining a zonotopic set.
 
 ### Input
 
 - `Z`               -- zonotopic set
-- `check_full_rank` -- (optional; default: `true`) flag for checking whether the
-                       generator matrix has full rank
 
 ### Output
 
@@ -546,7 +544,7 @@ Reachable Sets of Hybrid Systems Using a Combination of Zonotopes and Polytopes.
 The one-dimensional case is not covered by that algorithm; we manually handle
 this case.
 """
-function constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true) where {N<:AbstractFloat}
+function constraints_list(Z::AbstractZonotope{N}) where {N<:AbstractFloat}
     n = dim(Z)
 
     # special handling of the 1D case
@@ -554,30 +552,21 @@ function constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true) wh
         return _constraints_list_1d(Z)
     end
 
-    G = genmat(Z)
     p = ngens(Z)
 
     # check whether to use the fallback implementation in V-rep
-    use_vrep = false
-    if p < n
-        # order < 1
-        use_vrep = true
-    elseif check_full_rank
-        if rank(G) < n
-            # matrix is not full rank
-            use_vrep = true
-        else
-            # remove redundant generators and check again
-            Z = remove_redundant_generators(Z)
-            G = genmat(Z)
-            p = ngens(Z)
-            use_vrep = (p < n) || (rank(G) < n)
-        end
+    use_vrep = (p < n)  # order < 1
+    if !use_vrep
+        # remove redundant generators and check again
+        Z = remove_redundant_generators(Z)
+        p = ngens(Z)
+        use_vrep = (p < n)
     end
     if use_vrep
         return _constraints_list_vrep(Z)
     end
 
+    G = genmat(Z)
     c = center(Z)
     m = binomial(p, n - 1)
     constraints = Vector{LinearConstraint{N, Vector{N}}}()
