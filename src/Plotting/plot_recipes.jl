@@ -91,7 +91,7 @@ end
 
 """
     plot_list(list::AbstractVector{VN}, [ε]::N=N(PLOT_PRECISION),
-              [Nφ]::Int=PLOT_POLAR_DIRECTIONS, [fast]::Bool=false; ...)
+              [Nφ]::Int=PLOT_POLAR_DIRECTIONS; [same_recipe]=false; ...)
         where {N, VN<:LazySet{N}}
 
 Plot a list of convex sets.
@@ -102,16 +102,16 @@ Plot a list of convex sets.
 - `ε`    -- (optional, default: `PLOT_PRECISION`) approximation error bound
 - `Nφ`   -- (optional, default: `PLOT_POLAR_DIRECTIONS`) number of polar
             directions (used to plot lazy intersections)
-- `fast` -- (optional, default: `false`) switch for faster plotting but without
-            individual plot recipes (see notes below)
+- `same_recipe` -- (optional, default: `false`) switch for faster plotting but
+            without individual plot recipes (see notes below)
 
 ### Notes
 
 For each set in the list we apply an individual plot recipe.
 
-The option `fast` provides access to a faster plotting scheme where all sets in
-the list are first converted to polytopes and then plotted in one single run.
-This, however, is not suitable when plotting flat sets (line segments,
+The option `same_recipe` provides access to a faster plotting scheme where all
+sets in the list are first converted to polytopes and then plotted in one single
+run. This, however, is not suitable when plotting flat sets (line segments,
 singletons) because then the polytope plot recipe does not deliver good results.
 Hence by default we do not use this option.
 For plotting a large number of (non-flat) polytopes, we highly advise activating
@@ -140,9 +140,9 @@ julia> plot(Bs, 1e-2)  # faster but less accurate than the previous call
 ```
 """
 @recipe function plot_list(list::AbstractVector{VN}, ε::N=N(PLOT_PRECISION),
-                           Nφ::Int=PLOT_POLAR_DIRECTIONS, fast::Bool=false
+                           Nφ::Int=PLOT_POLAR_DIRECTIONS; same_recipe=false
                           ) where {N, VN<:LazySet{N}}
-    if fast
+    if same_recipe
         label --> DEFAULT_LABEL
         grid --> DEFAULT_GRID
         if DEFAULT_ASPECT_RATIO != :none
@@ -151,44 +151,7 @@ julia> plot(Bs, 1e-2)  # faster but less accurate than the previous call
         seriesalpha --> DEFAULT_ALPHA
         seriescolor --> DEFAULT_COLOR
         seriestype --> :shape
-
-        first = true
-        x = Vector{N}()
-        y = Vector{N}()
-        for Xi in list
-            if Xi isa Intersection
-                res = plot_recipe(Xi, ε, Nφ)
-            else
-                # hard-code overapproximation here to avoid individual
-                # compilations for mixed sets
-                Pi = overapproximate(Xi, ε)
-                vlist = transpose(hcat(convex_hull(vertices_list(Pi))...))
-                if isempty(vlist)
-                    @warn "overapproximation during plotting was empty"
-                    continue
-                end
-                res = vlist[:, 1], vlist[:, 2]
-                if length(res[1]) > 2
-                    # add first vertex to "close" the polygon
-                    push!(res[1], vlist[1, 1])
-                    push!(res[2], vlist[1, 2])
-                end
-            end
-            if isempty(res)
-                continue
-            else
-                x_new, y_new = res
-            end
-            if first
-                first = false
-            else
-                push!(x, N(NaN))
-                push!(y, N(NaN))
-            end
-            append!(x, x_new)
-            append!(y, y_new)
-        end
-        x, y
+        return _plot_list_same_recipe(list, ε, Nφ)
     else
         for Xi in list
             if Xi isa Intersection
@@ -198,6 +161,47 @@ julia> plot(Bs, 1e-2)  # faster but less accurate than the previous call
             end
         end
     end
+end
+
+function _plot_list_same_recipe(list::AbstractVector{VN}, ε::N=N(PLOT_PRECISION),
+                               Nφ::Int=PLOT_POLAR_DIRECTIONS) where {N, VN<:LazySet{N}}
+    first = true
+    x = Vector{N}()
+    y = Vector{N}()
+    for Xi in list
+        if Xi isa Intersection
+            res = plot_recipe(Xi, ε, Nφ)
+        else
+            # hard-code overapproximation here to avoid individual
+            # compilations for mixed sets
+            Pi = overapproximate(Xi, ε)
+            vlist = transpose(hcat(convex_hull(vertices_list(Pi))...))
+            if isempty(vlist)
+                @warn "overapproximation during plotting was empty"
+                continue
+            end
+            res = vlist[:, 1], vlist[:, 2]
+            if length(res[1]) > 2
+                # add first vertex to "close" the polygon
+                push!(res[1], vlist[1, 1])
+                push!(res[2], vlist[1, 2])
+            end
+        end
+        if isempty(res)
+            continue
+        else
+            x_new, y_new = res
+        end
+        if first
+            first = false
+        else
+            push!(x, N(NaN))
+            push!(y, N(NaN))
+        end
+        append!(x, x_new)
+        append!(y, y_new)
+    end
+    x, y
 end
 
 # recipe for vector of singletons
@@ -494,10 +498,28 @@ end
 
 # non-convex sets
 
-@recipe function plot_union(cup::UnionSet{N}, ε::N=zero(N)) where {N}
-    @series [cup.X, cup.Y], ε
+@recipe function plot_union(cup::UnionSet{N}, ε::N=N(PLOT_PRECISION)) where {N}
+    label --> DEFAULT_LABEL
+    grid --> DEFAULT_GRID
+    if DEFAULT_ASPECT_RATIO != :none
+        aspect_ratio --> DEFAULT_ASPECT_RATIO
+    end
+    seriesalpha --> DEFAULT_ALPHA
+    seriescolor --> DEFAULT_COLOR
+    seriestype --> :shape
+
+    return _plot_list_same_recipe([cup.X, cup.Y], ε)
 end
 
-@recipe function plot_union(cup::UnionSetArray{N}, ε::N=zero(N)) where {N}
-    @series array(cup), ε
+@recipe function plot_union(cup::UnionSetArray{N}, ε::N=N(PLOT_PRECISION)) where {N}
+    label --> DEFAULT_LABEL
+    grid --> DEFAULT_GRID
+    if DEFAULT_ASPECT_RATIO != :none
+        aspect_ratio --> DEFAULT_ASPECT_RATIO
+    end
+    seriesalpha --> DEFAULT_ALPHA
+    seriescolor --> DEFAULT_COLOR
+    seriestype --> :shape
+
+    return _plot_list_same_recipe(array(cup), ε)
 end
