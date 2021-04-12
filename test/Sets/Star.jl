@@ -35,4 +35,10 @@ for N in [Float64, Float32, Rational{Int}]
     @test basis(S) == N[1 0; 0 1]
     @test center(S) == N[0, 0]
     @test predicate(S) == P
+
+    # intersection with HalfSpace
+    H = HalfSpace(N[0, 1], N(0))
+    I = intersection(S, H)
+    addconstraint!(P, H)
+    @test isequivalent(I, P)
 end

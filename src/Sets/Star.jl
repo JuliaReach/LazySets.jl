@@ -166,3 +166,44 @@ Return the predicate of a star.
 A polyhedral set representing the predicate of the star.
 """
 predicate(X::STAR) = set(X)
+
+function _intersection!(c, V, P::HPoly, H::HalfSpace)
+    a′ = transpose(V) * H.a
+    b′ = H.b - dot(H.a, c)
+    H′ = HalfSpace(a′, b′)
+    return addconstraint!(P, H′)
+end
+
+function intersection!(X::STAR, H::HalfSpace)
+    _intersection!(center(X), basis(X), predicate(X), H)
+    return X
+end
+
+function intersection(X::STAR{N, VN, MN, PT}, H::HalfSpace) where {N, VN, MN, PT<:Union{HPoly, HPolygon}}
+    return intersection!(copy(X), H)
+end
+
+"""
+    intersection(X::STAR, H::HalfSpace)
+
+Return the intersection between a star and a halfspace.
+
+### Input
+
+- `X` -- star
+- `H` -- halfspace
+
+### Output
+
+A star set representing the intersection between a star and a halfspace.
+"""
+function intersection(X::STAR, H::HalfSpace)
+    c = LazySets.center(X); V = basis(X);
+    Pnew = convert(HPolyhedron, predicate(X))
+    Xnew = Star(c, V, Pnew)
+    return intersection!(Xnew, H)
+end
+
+# symmetric methods
+intersection(H::HalfSpace, X::STAR) = intersection(X, H)
+intersection!(H::HalfSpace, X::STAR) = intersection!(X, H)
