@@ -167,7 +167,7 @@ A polyhedral set representing the predicate of the star.
 """
 predicate(X::STAR) = set(X)
 
-function _intersection!(c, V, P::HPoly, H::HalfSpace)
+function _intersection!(c, V, P::Union{HPoly, HPolygon}, H::HalfSpace)
     a′ = transpose(V) * H.a
     b′ = H.b - dot(H.a, c)
     H′ = HalfSpace(a′, b′)
