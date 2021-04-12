@@ -198,7 +198,8 @@ Return the intersection between a star and a halfspace.
 A star set representing the intersection between a star and a halfspace.
 """
 function intersection(X::STAR, H::HalfSpace)
-    c = LazySets.center(X); V = basis(X);
+    c = center(X)
+    V = basis(X)
     Pnew = convert(HPolyhedron, predicate(X))
     Xnew = Star(c, V, Pnew)
     return intersection!(Xnew, H)
