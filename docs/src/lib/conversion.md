@@ -58,4 +58,5 @@ convert(::Type{Interval}, ::MinkowskiSum{N, IT, IT}) where {N, IT<:Interval{N}}
 convert(::Type{HParallelotope}, Z::AbstractZonotope{N}) where {N}
 convert(::Type{Zonotope}, ::CartesianProduct{N, AZ1, AZ2}) where {N, AZ1<:AbstractZonotope{N}, AZ2<:AbstractZonotope{N}}
 convert(::Type{Zonotope}, ::CartesianProductArray{N, AZ}) where {N, AZ<:AbstractZonotope{N}}
+convert(::Type{STAR}, ::AbstractPolyhedron{N}) where {N}
 ```

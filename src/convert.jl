@@ -1180,7 +1180,7 @@ end
 end
 
 """
-    convert(::Type{LazySets.STAR}, P::AbstractPolyhedron{N}) where {N}
+    convert(::Type{STAR}, P::AbstractPolyhedron{N}) where {N}
 
 Converts a polyhedral set into a star set.
 
@@ -1193,7 +1193,7 @@ Converts a polyhedral set into a star set.
 
 A star set.
 """
-function convert(::Type{LazySets.STAR}, P::AbstractPolyhedron{N}) where {N}
+function convert(::Type{STAR}, P::AbstractPolyhedron{N}) where {N}
     n = dim(P)
     c = zeros(N, n)
     V = Matrix(one(N)*I, n, n)
