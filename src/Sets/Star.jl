@@ -1,7 +1,8 @@
 export Star,
        center,
        basis,
-       predicate
+       predicate,
+       intersection!
 
 """
     Star(c::VN, V::MN, P::PT) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:AbstractPolyhedron{N}}
