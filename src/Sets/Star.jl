@@ -168,7 +168,7 @@ A polyhedral set representing the predicate of the star.
 """
 predicate(X::STAR) = set(X)
 
-function _intersection!(c, V, P::Union{HPoly, HPolygon}, H::HalfSpace)
+function _intersection_star!(c, V, P::Union{HPoly, HPolygon, HPolygonOpt}, H::HalfSpace)
     a′ = transpose(V) * H.a
     b′ = H.b - dot(H.a, c)
     H′ = HalfSpace(a′, b′)
@@ -176,11 +176,11 @@ function _intersection!(c, V, P::Union{HPoly, HPolygon}, H::HalfSpace)
 end
 
 function intersection!(X::STAR, H::HalfSpace)
-    _intersection!(center(X), basis(X), predicate(X), H)
+    _intersection_star!(center(X), basis(X), predicate(X), H)
     return X
 end
 
-function intersection(X::STAR{N, VN, MN, PT}, H::HalfSpace) where {N, VN, MN, PT<:Union{HPoly, HPolygon}}
+function intersection(X::STAR{N, VN, MN, PT}, H::HalfSpace) where {N, VN, MN, PT<:Union{HPoly, HPolygon, HPolygonOpt}}
     return intersection!(copy(X), H)
 end
 
@@ -208,4 +208,3 @@ end
 
 # symmetric methods
 intersection(H::HalfSpace, X::STAR) = intersection(X, H)
-intersection!(H::HalfSpace, X::STAR) = intersection!(X, H)
