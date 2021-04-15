@@ -542,7 +542,7 @@ Reachable Sets of Hybrid Systems Using a Combination of Zonotopes and Polytopes.
 2009.*
 
 The one-dimensional case is not covered by that algorithm; we manually handle
-this case, assuming that there is only one generator.
+this case.
 """
 function constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true) where {N<:AbstractFloat}
     G = genmat(Z)
@@ -557,7 +557,7 @@ function constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true) wh
     # special handling of 1D case
     if n == 1
         c = center(Z, 1)
-        g = sum(abs.(view(G, 1, :)))
+        g = sum(abs, G)
         constraints = [LinearConstraint([N(1)], c + g),
                        LinearConstraint([N(-1)], g - c)]
         return constraints
@@ -572,7 +572,7 @@ function constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true) wh
         iszero(c⁺) && continue
         normalize!(c⁺, 2)
 
-        Δd = sum(abs.(transpose(G) * c⁺))
+        Δd = sum(abs, transpose(G) * c⁺)
 
         d⁺ = dot(c⁺, c) + Δd
         c⁻ = -c⁺
