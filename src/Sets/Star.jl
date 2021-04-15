@@ -180,7 +180,7 @@ function intersection!(X::STAR, H::HalfSpace)
     return X
 end
 
-function intersection(X::STAR{N, VN, MN, PT}, H::HalfSpace) where {N, VN, MN, PT<:Union{HPoly, HPolygon, HPolygonOpt}}
+function intersection(X::STAR{N, VN, MN, PT}, H::HalfSpace) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:Union{HPoly, HPolygon, HPolygonOpt}}
     Y = copy(X)
     return intersection!(Y, H)
 end
@@ -202,7 +202,8 @@ A star set representing the intersection between a star and a halfspace.
 function intersection(X::STAR, H::HalfSpace)
     c = center(X)
     V = basis(X)
-    Pnew = convert(HPolyhedron, predicate(X))
+    N = eltype(X)
+    Pnew = convert(HPolyhedron{N, Vector{N}}, predicate(X))
     Xnew = Star(c, V, Pnew)
     return intersection!(Xnew, H)
 end

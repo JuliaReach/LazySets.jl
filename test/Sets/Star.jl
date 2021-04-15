@@ -43,4 +43,10 @@ for N in [Float64, Float32, Rational{Int}]
     addconstraint!(P, H)
     @test isequivalent(I, P)
     @test isequivalent(S, P)
+
+    # check that we can intersect polyhedra that are axis-aligned
+    B = BallInf(N[0, 0], N(1))
+    S = Star(N[0, 0], N[1 0; 0 1], B)
+    I = intersection(S, H)
+    @test isequivalent(I, intersection(B, H))
 end
