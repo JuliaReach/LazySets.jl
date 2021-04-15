@@ -181,7 +181,8 @@ function intersection!(X::STAR, H::HalfSpace)
 end
 
 function intersection(X::STAR{N, VN, MN, PT}, H::HalfSpace) where {N, VN, MN, PT<:Union{HPoly, HPolygon, HPolygonOpt}}
-    return intersection!(copy(X), H)
+    Y = copy(X)
+    return intersection!(Y, H)
 end
 
 """
