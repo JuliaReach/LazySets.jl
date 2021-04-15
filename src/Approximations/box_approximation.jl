@@ -257,7 +257,7 @@ hybrid systems using a combination of zonotopes and polytopes. Nonlinear analysi
 hybrid systems, 4(2), 233-249.*
 """
 function box_approximation(Z::AbstractZonotope)
-    r = sum(abs.(genmat(Z)), dims=2)[:]
+    r = sum(abs, genmat(Z), dims=2)[:]
     return Hyperrectangle(center(Z), r)
 end
 
