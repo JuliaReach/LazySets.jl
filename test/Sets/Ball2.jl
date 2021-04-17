@@ -130,4 +130,13 @@ for N in [Float64, Float32]
     # projection
     b4 = Ball2(N[4, 3, 2, 1], N(2))
     @test project(b4, [2, 4]) == Ball2(N[3, 1], N(2))
+
+    # low/high
+    B = Ball2(N[1, 2], N(2))
+    l1 = low(B, 1)
+    l2 = low(B, 2)
+    h1 = high(B, 1)
+    h2 = high(B, 2)
+    @test l1 == N(-1) && l2 == N(0) && h1 == N(3) && h2 == N(4)
+    @test box_approximation(B) ≈ Hyperrectangle(low=[l1, l2], high=[h1, h2])
 end

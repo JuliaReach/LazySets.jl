@@ -1383,3 +1383,43 @@ these two parts. Additionally we project the negative part to zero.
 function rectify(X::LazySet, concrete_intersection::Bool=false)
     return to_union_of_projections(Rectification(X), concrete_intersection)
 end
+
+"""
+    low(X::LazySet, i::Int)
+
+Return the lower coordinate of a set in a given dimension.
+
+### Input
+
+- `H` -- set
+- `i` -- dimension of interest
+
+### Output
+
+The lower coordinate of the set in the given dimension.
+"""
+function low(X::LazySet{N}, i::Int) where {N}
+    n = dim(X)
+    d = SingleEntryVector(i, n, -one(N))
+    return -ρ(d, X)
+end
+
+"""
+    high(X::LazySet, i::Int)
+
+Return the higher coordinate of a set in a given dimension.
+
+### Input
+
+- `H` -- set
+- `i` -- dimension of interest
+
+### Output
+
+The higher coordinate of the set in the given dimension.
+"""
+function high(X::LazySet{N}, i::Int) where {N}
+    n = dim(X)
+    d = SingleEntryVector(i, n, one(N))
+    return ρ(d, X)
+end

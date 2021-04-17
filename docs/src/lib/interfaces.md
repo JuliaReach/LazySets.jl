@@ -64,13 +64,15 @@ _isbounded_unit_dimensions(::LazySet{N}) where {N}
 an_element(::LazySet{N}) where {N}
 tosimplehrep(::LazySet)
 isuniversal(::LazySet{N}, ::Bool=false) where {N}
-affine_map(::AbstractMatrix, ::LazySet, v::AbstractVector)
+affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector)
 reflect(::LazySet)
 is_interior_point(::AbstractVector{N}, ::LazySet{N}; p=Inf, ε=_rtol(N)) where {N<:Real}
 isoperationtype(::Type{<:LazySet})
 isoperation(::LazySet)
 isequivalent(::LazySet, ::LazySet)
 isconvextype(::Type{<:LazySet})
+low(::LazySet{N}, ::Int) where {N}
+high(::LazySet{N}, ::Int) where {N}
 surface(::LazySet{N}) where {N}
 area(::LazySet{N}) where {N}
 concretize(::LazySet)
