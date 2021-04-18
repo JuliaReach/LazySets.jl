@@ -171,12 +171,11 @@ set.
 
 ### Algorithm
 
-We compute a concrete set representation via `minkowski_sum` and call
-`constraints_list` on the result.
+We call `constraints_list` on the lazy Minkowski sum.
 """
 function constraints_list(B::Bloating)
     @assert (B.p == 1 || B.p == Inf) "the constraints list is only available " *
         "for bloating in the 1-norm or in the infinity norm"
 
-    return constraints_list(minkowski_sum(B.X, _bloating_ball(B)))
+    return constraints_list(MinkowskiSum(B.X, _bloating_ball(B)))
 end
