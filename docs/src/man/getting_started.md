@@ -1,4 +1,4 @@
-Symbolics# Getting Started
+# Getting Started
 
 In this section we review the recommended setup to start working with this
 package.
