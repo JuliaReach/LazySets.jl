@@ -628,9 +628,6 @@ function project(cpa::CartesianProductArray, block::AbstractVector{Int}; kwargs.
     end
 end
 
-function load_polyhedra_concretize_cpa() # function to be loaded by Requires
-return quote
-
 function concretize(cpa::CartesianProductArray)
     a = array(cpa)
     @assert !isempty(a) "an empty Cartesian product is not allowed"
@@ -644,6 +641,3 @@ function concretize(cpa::CartesianProductArray)
     end
     return X
 end
-
-end # quote
-end # function load_polyhedra_concretize_cpa()
