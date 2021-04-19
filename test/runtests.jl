@@ -105,6 +105,7 @@ if test_suite_basic
     @time @testset "LazySets.Universe" begin include("Sets/Universe.jl") end
     @time @testset "LazySets.HParallelotope" begin include("Sets/HParallelotope.jl") end
     @time @testset "LazySets.RotatedHyperrectangle" begin include("Sets/RotatedHyperrectangle.jl") end
+    @time @testset "LazySets.Star" begin include("Sets/Star.jl") end
 
     # =========================================
     # Testing types representing set operations
@@ -133,7 +134,6 @@ if test_suite_basic
     @time @testset "LazySets.Complement" begin include("LazyOperations/Complement.jl") end
     @time @testset "LazySets.PolynomialZonotope" begin include("Sets/PolynomialZonotope.jl") end
     @time @testset "LazySets.Rectification" begin include("LazyOperations/Rectification.jl") end
-    @time @testset "LazySets.Star" begin include("Sets/Star.jl") end
     @time @testset "LazySets.UnionSet" begin include("LazyOperations/UnionSet.jl") end
 
     # ===================
