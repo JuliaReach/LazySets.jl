@@ -20,4 +20,5 @@ constraints_list(::Star)
 linear_map(::AbstractMatrix, ::Star)
 affine_map(::AbstractMatrix, ::Star, v::AbstractVector)
 intersection(::Star, ::HalfSpace)
+rand(::Type{Star})
 ```

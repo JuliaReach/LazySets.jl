@@ -414,6 +414,40 @@ function affine_map(M::AbstractMatrix, X::Star, v::AbstractVector)
     return Star(c′, V′, P′)
 end
 
+"""
+    rand(::Type{Star}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
+
+Create a random star.
+
+### Input
+
+- `Star`       -- type for dispatch
+- `N`              -- (optional, default: `Float64`) numeric type
+- `dim`            -- (optional, default: 2) dimension
+- `rng`            -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed`           -- (optional, default: `nothing`) seed for reseeding
+
+### Output
+
+A random star.
+
+### Algorithm
+
+This functions calls the function to generate a random zonotope,
+because every zonotope is a star.
+"""
+function rand(::Type{Star};
+              N::Type{<:Real}=Float64,
+              dim::Int=2,
+              rng::AbstractRNG=GLOBAL_RNG,
+              seed::Union{Int, Nothing}=nothing)
+    rng = reseed(rng, seed)
+    Z = rand(Zonotope, N=N, dim=dim, rng=rng, seed=seed)
+    X = convert(Star, Z)
+    return X
+end
+
 # ============================
 # Concrete intersection
 # ============================
