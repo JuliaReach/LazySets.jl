@@ -9,6 +9,7 @@ Star
 center(::Star)
 predicate(::Star)
 basis(::Star)
+dim(::Star)
 σ(::AbstractVector, ::Star)
 ρ(::AbstractVector, ::Star)
 an_element(::Star)
