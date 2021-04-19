@@ -33,7 +33,7 @@ for N in [Float64, Float32, Rational{Int}]
                   HalfSpace(N[-1.5, 0.5], N(4)),
                   HalfSpace(N[-0.5, -0.05], N(1.5)),
                   HalfSpace(N[1.5, -0.25], N(-1.5))])
-    S = convert(STAR, P)
+    S = convert(Star, P)
     @test basis(S) == N[1 0; 0 1]
     @test center(S) == N[0, 0]
     @test predicate(S) == P
@@ -51,4 +51,16 @@ for N in [Float64, Float32, Rational{Int}]
     S = Star(N[0, 0], N[1 0; 0 1], B)
     I = intersection(S, H)
     @test isequivalent(I, intersection(B, H))
+
+    # concrete linear map (returns a star)
+    M = N[2 0; 0 2]
+    lm = linear_map(M, S)
+    @test isa(lm, Star)
+    @test isequivalent(lm, Star(N[0, 0], M, B))
+
+    # concrete affine map (returns a star)
+    v = N[1, 2]
+    am = affine_map(M, S, v)
+    @test isa(am, Star)
+    @test isequivalent(am, Star(v, M, B))
 end

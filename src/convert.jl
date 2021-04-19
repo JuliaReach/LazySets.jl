@@ -1188,7 +1188,7 @@ end
 """
     convert(::Type{STAR}, P::AbstractPolyhedron{N}) where {N}
 
-Converts a polyhedral set into a star set.
+Converts a polyhedral set into a star set represented as a lazy affine map.
 
 ### Input
 
@@ -1200,6 +1200,45 @@ Converts a polyhedral set into a star set.
 A star set.
 """
 function convert(::Type{STAR}, P::AbstractPolyhedron{N}) where {N}
+    n = dim(P)
+    c = zeros(N, n)
+    V = Matrix(one(N)*I, n, n)
+    return AffineMap(V, P, c)
+end
+
+"""
+    convert(::Type{STAR}, X::Star)
+
+Converts a star set into its equivalent representation as a lazy affine map.
+
+### Input
+
+- `STAR` -- type used for dispatch
+- `X`    -- star set
+
+### Output
+
+A star set.
+"""
+function convert(::Type{STAR}, X::Star)
+    return AffineMap(X.V, X.P, X.c)
+end
+
+"""
+    convert(::Type{Star}, P::AbstractPolyhedron{N}) where {N}
+
+Converts a polyhedral set into a star set.
+
+### Input
+
+- `Star` -- type used for dispatch
+- `P`    -- polyhedral set
+
+### Output
+
+A star set.
+"""
+function convert(::Type{Star}, P::AbstractPolyhedron{N}) where {N}
     n = dim(P)
     c = zeros(N, n)
     V = Matrix(one(N)*I, n, n)

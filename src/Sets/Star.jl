@@ -2,10 +2,11 @@ export Star,
        center,
        basis,
        predicate,
-       intersection!
+       intersection!,
+       dim
 
 """
-    Star(c::VN, V::MN, P::PT) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:AbstractPolyhedron{N}}
+    Star{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:AbstractPolyhedron{N}} <: AbstractPolyhedron{N}
 
 Generalized star set with a polyhedral predicate, i.e.
 
@@ -34,9 +35,9 @@ is also used to denote the subset of ``\\mathbb{R}^n`` such that ``P(α) = ⊤``
 The ``m`` basis vectors (each one ``n``-dimensional) are stored as the columns
 of an ``n × m`` matrix.
 
-Internally, this function is implemented as the lazy affine map of the polyhedral
-set `P`, with the transformation matrix and translation vector being `V` and `c`
-respectively.
+We remark that a `Star` is mathematically equivalent to the lazy affine map of
+the polyhedral set `P`, with the transformation matrix and translation vector
+being `V` and `c` respectively.
 
 ### Examples
 
@@ -60,7 +61,8 @@ Finally, the star set ``X = ⟨c, V, P⟩`` defines the set:
 
 ```jldoctest star_constructor
 julia> S = Star(c, V, P)
-AffineMap{Float64,BallInf{Float64,Array{Float64,1}},Float64,Array{Float64,2},Array{Float64,1}}([1.0 0.0; 0.0 1.0], BallInf{Float64,Array{Float64,1}}([0.0, 0.0], 1.0), [3.0, 3.0])
+Star{Float64, Array{Float64, 1}, Array{Float64, 2}, BallInf{Float64, Array{Float64, 1}}}([3.0, 3.0], [1.0 0.0; 0.0 1.0], BallInf{Float64, Array{Float
+64, 1}}([0.0, 0.0], 1.0))
 ```
 
 We can use getter functions for each component field:
@@ -104,8 +106,21 @@ definition. For applications in reachability analysis of neural networks, see
       *Star-based reachability analysis of deep neural networks.*
       In International Symposium on Formal Methods (pp. 670-686). Springer, Cham.
 """
-function Star(c::VN, V::MN, P::PT) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:AbstractPolyhedron{N}}
-    return AffineMap(V, P, c)
+struct Star{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:AbstractPolyhedron{N}} <: AbstractPolyhedron{N}
+    c::VN # center
+    V::MN # basis
+    P::PT # predicate
+
+    # default constructor with size checks
+    function Star(c::VN, V::MN, P::PT) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:AbstractPolyhedron{N}}
+        @assert length(c) == size(V, 1) "the center of the basis vectors should be compatible, " *
+                                        "but they are of length $(length(c)) and $(size(V, 1)) respectively"
+
+        @assert dim(P) == size(V, 2) "the number of basis vectors should be compatible " *
+                                     "with the predicates' dimension, but they are $(size(V, 2)) and $(dim(P)) respectively"
+
+        return new{N, VN, MN, PT}(c, V, P)
+    end
 end
 
 # constructor from center and list of generators
@@ -119,12 +134,15 @@ const STAR{N, VN<:AbstractVector{N},
               MN<:AbstractMatrix{N},
               PT<:AbstractPolyhedron{N}} = AffineMap{N, PT, N, MN, VN}
 
+isoperationtype(::Type{<:Star}) = false
+isconvextype(::Type{<:Star}) = true
+
 # ============================
 # Star set getter functions
 # ============================
 
 """
-    center(X::STAR)
+    center(X::Star)
 
 Return the center of a star.
 
@@ -136,10 +154,10 @@ Return the center of a star.
 
 The center of the star.
 """
-center(X::STAR) = vector(X)
+center(X::Star) = X.c
 
 """
-    basis(X::STAR)
+    basis(X::Star)
 
 Return the basis vectors of a star.
 
@@ -151,10 +169,10 @@ Return the basis vectors of a star.
 
 A matrix where each column is a basis vector of the star.
 """
-basis(X::STAR) = matrix(X)
+basis(X::Star) = X.V
 
 """
-    predicate(X::STAR)
+    predicate(X::Star)
 
 Return the predicate of a star.
 
@@ -166,7 +184,239 @@ Return the predicate of a star.
 
 A polyhedral set representing the predicate of the star.
 """
-predicate(X::STAR) = set(X)
+predicate(X::Star) = X.P
+
+# =============================
+# LazySets interface functions
+# =============================
+
+"""
+    dim(X::Star)
+
+Return the dimension of a star.
+
+### Input
+
+- `X` -- star
+
+### Output
+
+The dimension of a star.
+"""
+function dim(X::Star)
+    return length(X.c)
+end
+
+"""
+    σ(d::AbstractVector, X::Star)
+
+Return the support vector of a star.
+
+### Input
+
+- `d` -- direction
+- `X` -- star
+
+### Output
+
+The support vector in the given direction.
+"""
+function σ(d::AbstractVector, X::Star)
+    A = basis(X)
+    return A * σ(_At_mul_B(A, d), predicate(X)) + center(X)
+end
+
+"""
+    ρ(d::AbstractVector, X::Star)
+
+Return the support function of a star.
+
+### Input
+
+- `d` -- direction
+- `X` -- star
+
+### Output
+
+The support function in the given direction.
+"""
+function ρ(d::AbstractVector, X::Star)
+    return ρ(_At_mul_B(basis(X), d), predicate(X)) + dot(d, center(X))
+end
+
+"""
+    an_element(X::Star)
+
+Return some element of an affine map.
+
+### Input
+
+- `X` -- star
+
+### Output
+
+An element of the star. It relies on the `an_element` function of the
+wrapped set.
+"""
+function an_element(X::Star)
+    return basis(X) * an_element(predicate(X)) + center(X)
+end
+
+"""
+    isempty(X::Star)
+
+Return whether an affine map is empty or not.
+
+### Input
+
+- `am` -- affine map
+
+### Output
+
+`true` iff the predicate is empty.
+"""
+function isempty(X::Star)
+    return isempty(predicate(X))
+end
+
+"""
+    isbounded(am::Star; cond_tol::Number=DEFAULT_COND_TOL)
+
+Determine whether a star is bounded.
+
+### Input
+
+- `X`        -- star
+- `cond_tol` -- (optional) tolerance of matrix condition (used to check whether
+                the basis matrix is invertible)
+
+### Output
+
+`true` iff the star is bounded.
+
+### Algorithm
+
+See [`isbounded(::AbstractAffineMap)`](@ref).
+"""
+function isbounded(X::Star; cond_tol::Number=DEFAULT_COND_TOL)
+    am = convert(STAR, X)
+    return isbounded(am, cond_tol=cond_tol)
+end
+
+"""
+    ∈(v::AbstractVector, X::Star)
+
+Check whether a given point is contained in a star set.
+
+### Input
+
+- `v`  -- point/vector
+- `X` -- star
+
+### Output
+
+`true` iff ``v ∈ X``.
+
+### Algorithm
+
+See [`∈(::AbstractVector, ::AbstractAffineMap)`](@ref).
+"""
+function ∈(x::AbstractVector, X::Star)
+    return basis(X) \ (x - center(X)) ∈ predicate(X)
+end
+
+"""
+    vertices_list(X::Star; apply_convex_hull::Bool=true)
+
+Return the list of vertices of a star set.
+
+### Input
+
+- `X`                 -- star
+- `apply_convex_hull` -- (optional, default: `true`) if `true`, apply the convex
+                         hull operation to the list of vertices of the star
+
+### Output
+
+A list of vertices.
+
+### Algorithm
+
+See [`vertices_list(::AbstractAffineMap)`](@ref).
+"""
+function vertices_list(X::Star; apply_convex_hull::Bool=true)
+    am = convert(STAR, X)
+    return vertices_list(am, apply_convex_hull=apply_convex_hull)
+end
+
+"""
+    constraints_list(X::Star)
+
+Return the list of constraints of a star.
+
+### Input
+
+- `X` -- star
+
+### Output
+
+The list of constraints of the star.
+
+### Algorithm
+
+See [`constraints_list(::AbstractAffineMap)`](@ref).
+"""
+function constraints_list(X::Star)
+    am = convert(STAR, X)
+    return constraints_list(am)
+end
+
+"""
+    linear_map(M::AbstractMatrix, X::Star)
+
+Return the linear map of a star.
+
+### Input
+
+- `M` -- matrix
+- `X` -- star
+
+### Output
+
+The star obtained by applying `M` to `X`.
+"""
+function linear_map(M::AbstractMatrix, X::Star)
+    c′ = M * X.c
+    V′ = M * X.V
+    P′ = X.P
+    return Star(c′, V′, P′)
+end
+
+"""
+    affine_map(M::AbstractMatrix, X::Star, v::AbstractVector)
+
+Return the affine map of a star.
+
+### Input
+
+- `M` -- matrix
+- `X` -- star
+- `v` -- vector
+
+### Output
+
+The star obtained by the affine map with matrix `M` and displacement `v` to `X`.
+"""
+function affine_map(M::AbstractMatrix, X::Star, v::AbstractVector)
+    c′ = M * X.c + v
+    V′ = M * X.V
+    P′ = X.P
+    return Star(c′, V′, P′)
+end
+
+# ============================
+# Concrete intersection
+# ============================
 
 function _intersection_star!(c, V, P::Union{HPoly, HPolygon, HPolygonOpt}, H::HalfSpace)
     a′ = transpose(V) * H.a
@@ -175,18 +425,18 @@ function _intersection_star!(c, V, P::Union{HPoly, HPolygon, HPolygonOpt}, H::Ha
     return addconstraint!(P, H′)
 end
 
-function intersection!(X::STAR, H::HalfSpace)
+function intersection!(X::Star, H::HalfSpace)
     _intersection_star!(center(X), basis(X), predicate(X), H)
     return X
 end
 
-function intersection(X::STAR{N, VN, MN, PT}, H::HalfSpace) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:Union{HPoly, HPolygon, HPolygonOpt}}
+function intersection(X::Star{N, VN, MN, PT}, H::HalfSpace) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:Union{HPoly, HPolygon, HPolygonOpt}}
     Y = copy(X)
     return intersection!(Y, H)
 end
 
 """
-    intersection(X::STAR, H::HalfSpace)
+    intersection(X::Star, H::HalfSpace)
 
 Return the intersection between a star and a halfspace.
 
@@ -199,7 +449,7 @@ Return the intersection between a star and a halfspace.
 
 A star set representing the intersection between a star and a halfspace.
 """
-function intersection(X::STAR, H::HalfSpace)
+function intersection(X::Star, H::HalfSpace)
     c = center(X)
     V = basis(X)
     N = eltype(X)
@@ -209,4 +459,4 @@ function intersection(X::STAR, H::HalfSpace)
 end
 
 # symmetric methods
-intersection(H::HalfSpace, X::STAR) = intersection(X, H)
+intersection(H::HalfSpace, X::Star) = intersection(X, H)
