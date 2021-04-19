@@ -61,8 +61,7 @@ Finally, the star set ``X = ⟨c, V, P⟩`` defines the set:
 
 ```jldoctest star_constructor
 julia> S = Star(c, V, P)
-Star{Float64,Array{Float64,1},Array{Float64,2},BallInf{Float64,Array{Float64,1}}}([3.0, 3.0], [1.0 0.0; 0.0 1.0], BallInf{Float64,Array{Float
-64,1}}([0.0, 0.0], 1.0))
+Star{Float64,Array{Float64,1},Array{Float64,2},BallInf{Float64,Array{Float64,1}}}([3.0, 3.0], [1.0 0.0; 0.0 1.0], BallInf{Float64,Array{Float64,1}}([0.0, 0.0], 1.0))
 ```
 
 We can use getter functions for each component field:
