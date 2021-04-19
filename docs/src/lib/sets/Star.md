@@ -9,4 +9,5 @@ Star
 center(::LazySets.STAR)
 predicate(::LazySets.STAR)
 basis(::LazySets.STAR)
+intersection(::LazySets.STAR, H::HalfSpace)
 ```

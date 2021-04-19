@@ -1,7 +1,8 @@
 export Star,
        center,
        basis,
-       predicate
+       predicate,
+       intersection!
 
 """
     Star(c::VN, V::MN, P::PT) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:AbstractPolyhedron{N}}
@@ -166,3 +167,46 @@ Return the predicate of a star.
 A polyhedral set representing the predicate of the star.
 """
 predicate(X::STAR) = set(X)
+
+function _intersection_star!(c, V, P::Union{HPoly, HPolygon, HPolygonOpt}, H::HalfSpace)
+    a′ = transpose(V) * H.a
+    b′ = H.b - dot(H.a, c)
+    H′ = HalfSpace(a′, b′)
+    return addconstraint!(P, H′)
+end
+
+function intersection!(X::STAR, H::HalfSpace)
+    _intersection_star!(center(X), basis(X), predicate(X), H)
+    return X
+end
+
+function intersection(X::STAR{N, VN, MN, PT}, H::HalfSpace) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:Union{HPoly, HPolygon, HPolygonOpt}}
+    Y = copy(X)
+    return intersection!(Y, H)
+end
+
+"""
+    intersection(X::STAR, H::HalfSpace)
+
+Return the intersection between a star and a halfspace.
+
+### Input
+
+- `X` -- star
+- `H` -- halfspace
+
+### Output
+
+A star set representing the intersection between a star and a halfspace.
+"""
+function intersection(X::STAR, H::HalfSpace)
+    c = center(X)
+    V = basis(X)
+    N = eltype(X)
+    Pnew = convert(HPolyhedron{N, Vector{N}}, predicate(X))
+    Xnew = Star(c, V, Pnew)
+    return intersection!(Xnew, H)
+end
+
+# symmetric methods
+intersection(H::HalfSpace, X::STAR) = intersection(X, H)
