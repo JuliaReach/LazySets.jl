@@ -110,6 +110,25 @@ functions in the same directions.
     return c, r
 end
 
+@inline function box_approximation_helper(S::StarLI{N}) where {N}
+    n = dim(S)
+    c = Vector{N}(undef, n)
+    r = Vector{N}(undef, n)
+    @inbounds for i in 1:n
+        htop = ρ_upper_bound(SingleEntryVector(i, n, one(N)), S)
+        hbottom = -ρ_upper_bound(SingleEntryVector(i, n, -one(N)), S)
+        c[i] = (htop + hbottom) / 2
+        r[i] = (htop - hbottom) / 2
+        if r[i] < 0
+            # contradicting bounds => set is empty
+            # terminate with first radius entry being negative
+            r[1] = r[i]
+            break
+        end
+    end
+    return c, r
+end
+
 # ===============
 # Specializations
 # ===============

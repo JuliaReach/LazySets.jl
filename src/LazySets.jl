@@ -126,6 +126,7 @@ include("LazyOperations/Rectification.jl")  # must come after UnionSet
 # =======
 include("Interfaces/aliases.jl")
 include("Sets/Star.jl")
+include("Sets/StarLI.jl")
 
 # =============================
 # Conversions between set types

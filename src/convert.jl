@@ -1244,3 +1244,7 @@ function convert(::Type{Star}, P::AbstractPolyhedron{N}) where {N}
     V = Matrix(one(N)*I, n, n)
     return Star(c, V, P)
 end
+
+function convert(::Type{StarLI}, X::Star)
+    return StarLI(X.c, X.V, X.P)
+end
