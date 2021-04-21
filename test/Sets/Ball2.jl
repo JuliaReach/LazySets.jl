@@ -139,4 +139,6 @@ for N in [Float64, Float32]
     h2 = high(B, 2)
     @test l1 == N(-1) && l2 == N(0) && h1 == N(3) && h2 == N(4)
     @test box_approximation(B) ≈ Hyperrectangle(low=[l1, l2], high=[h1, h2])
+    @test low(B) == [N(-1), N(0)]
+    @test high(B) == [N(3), N(4)]
 end
