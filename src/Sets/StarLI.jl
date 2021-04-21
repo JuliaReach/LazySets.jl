@@ -141,7 +141,7 @@ function affine_map(M::AbstractMatrix, X::StarLI, v::AbstractVector)
     c′ = M * X.c + v
     V′ = M * X.V
     P′ = X.P
-    return Star(c′, V′, P′)
+    return StarLI(c′, V′, P′)
 end
 
 function rand(::Type{StarLI};
