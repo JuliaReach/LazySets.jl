@@ -1406,6 +1406,28 @@ function low(X::LazySet{N}, i::Int) where {N}
 end
 
 """
+    low(X::LazySet)
+
+Return a vector with the lowest coordinates of the set for each canonical direction.
+
+### Input
+
+- `H` -- set
+
+### Output
+
+A vector with the lower coordinate of the set for each dimension.
+
+### Notes
+
+See also [`low(X::LazySet, i::Int)`](@ref).
+"""
+function low(X::LazySet)
+    n = dim(X)
+    return [low(X, i) for i in 1:n]
+end
+
+"""
     high(X::LazySet, i::Int)
 
 Return the higher coordinate of a set in a given dimension.
@@ -1423,4 +1445,26 @@ function high(X::LazySet{N}, i::Int) where {N}
     n = dim(X)
     d = SingleEntryVector(i, n, one(N))
     return ρ(d, X)
+end
+
+"""
+    high(X::LazySet)
+
+Return a vector with the highest coordinate of the set for each canonical direction.
+
+### Input
+
+- `H` -- set
+
+### Output
+
+A vector with the highest coordinate of the set for each dimension.
+
+### Notes
+
+See also [`high(X::LazySet, i::Int)`](@ref).
+"""
+function high(X::LazySet)
+    n = dim(X)
+    return [high(X, i) for i in 1:n]
 end
