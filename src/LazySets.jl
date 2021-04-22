@@ -36,7 +36,8 @@ include("Utils/comparisons.jl")
 include("Arrays/Arrays.jl")
 using .Arrays
 import .Arrays: distance,
-                rectify
+                rectify,
+                _rationalize
 
 # ===================
 # Auxiliary functions

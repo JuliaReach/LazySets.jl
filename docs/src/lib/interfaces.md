@@ -84,6 +84,7 @@ project(::LazySet, ::AbstractVector{Int}, ::Type{TS}, ::Int=dim(S)) where {TS<:L
 project(::LazySet, ::AbstractVector{Int}, ::Pair{T, N}, ::Int=dim(S)) where {T<:UnionAll, N<:Real}
 project(::LazySet, ::AbstractVector{Int}, ::Real, ::Int=dim(S))
 rectify(::LazySet, ::Bool=false)
+rationalize(::Type{T}, ::LazySet{N}, ::Real) where {T<:Integer, N<:AbstractFloat}
 ```
 
 Plotting is available for general one- or two-dimensional `LazySet`s, provided

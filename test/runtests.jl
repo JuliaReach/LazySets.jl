@@ -74,6 +74,11 @@ if test_suite_basic
     @time @testset "LazySets.Comparisons" begin include("Utils/comparisons.jl") end
     @time @testset "LazySets.Interior" begin include("Utils/interior.jl") end
 
+    # ======================================================
+    # Testing auxiliary machinery for vectors and matrices
+    # ======================================================
+    @time @testset "LazySets.Arrays" begin include("Arrays/array_operations.jl") end
+
     # =======================================
     # Testing interfaces to external packages
     # =======================================

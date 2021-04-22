@@ -1,4 +1,5 @@
 import Base.rand
+import Base.rationalize
 
 export HPolytope,
        vertices_list,

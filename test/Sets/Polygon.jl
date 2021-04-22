@@ -594,6 +594,18 @@ for N in [Float64]
                   HalfSpace([0.17228094170254737, -0.3438765582974526], -0.5161575)
                  ])
     @test vertices_list(P) == [[-1.0, 1.0]]
+
+    # rationalization
+    P = HPolygon([HalfSpace([-1.0, 0.0], 0.0),
+              HalfSpace([0.0, -1.0], 0.0),
+              HalfSpace([1.0, 0.0], 1.0),
+              HalfSpace([0.0, 1.0], 1.0),
+              HalfSpace([-0.2, -0.8], -0.0),
+              HalfSpace([0.6, 0.4], 0.6)])
+    @test area(P) ≈ 2//3
+    @test area(rationalize(P)) == 2//3
+    Pr = rationalize(BigInt, P, 10*eps(Float64));
+    @test isa(Pr, HPolygon{Rational{BigInt}, Vector{Rational{BigInt}}})
 end
 
 # default Float64 constructors
