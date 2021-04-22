@@ -51,9 +51,9 @@ of the given integer type.
 
 ### Input
 
-- `T`   -- (optional, default: `Int`) integer type to represent the rational
+- `T`   -- (optional, default: `Int`) integer type to represent the rationals
 - `x`   -- vector of floating point numbers
-- `tol` -- (optional, default: `eps(x)`) tolerance the result at entry `i`
+- `tol` -- (optional, default: `eps(N)`) tolerance the result at entry `i`
            will differ from `x[i]` by no more than `tol`
 
 ### Output

@@ -1497,5 +1497,6 @@ end
 rationalize(X::LazySet{N}; kwargs...) where {N<:AbstractFloat} = rationalize(Int, X; kwargs...)
 rationalize(::Type{T}, X::LazySet{N}; tol::Real=eps(N)) where {T<:Integer, N<:AbstractFloat} = rationalize(T, X, tol)
 
-# method extension for vector of lazy sets
+# method extension for lazy sets
 _rationalize(::Type{T}, X::AbstractVector{<:LazySet{N}}, tol::Real) where {T<:Integer, N<:AbstractFloat} = rationalize.(Ref(T), X, Ref(tol))
+_rationalize(::Type{T}, X::LazySet{N}, tol::Real) where {T<:Integer, N<:AbstractFloat} = rationalize(T, X, tol)
