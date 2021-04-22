@@ -151,8 +151,8 @@ for N in [Float64]
     # rationalization
     H = HalfSpace([1.0, 2.0], 0.0)
     Hr = rationalize(H)
-    @test isa(Hr, HalfSpace{Rational{Int64}, Vector{Rational{Int64}}})
-    Hr.a == Rational{Int64}[1//1, 2//1]
+    @test isa(Hr, HalfSpace{Rational{Int}, Vector{Rational{Int}}})
+    Hr.a == Rational{Int}[1//1, 2//1]
     Hr = rationalize(BigInt, H)
     @test isa(Hr, HalfSpace{Rational{BigInt}, Vector{Rational{BigInt}}})
     Hr.a == Rational{BigInt}[1//1, 2//1]
