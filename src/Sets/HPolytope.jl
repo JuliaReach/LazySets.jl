@@ -287,4 +287,7 @@ function HPolytope(expr::Vector{<:Num}, vars=_get_variables(expr);
     return HPolytope([HalfSpace(ex, vars; N=N) for ex in expr], check_boundedness=check_boundedness)
 end
 
+HPolytope(expr::Vector{<:Num}; N::Type{<:Real}=Float64, check_boundedness::Bool=false) = HPolytope(expr, _get_variables(expr); N=N, check_boundedness=check_boundedness)
+HPolytope(expr::Vector{<:Num}, vars; N::Type{<:Real}=Float64, check_boundedness::Bool=false) = HPolytope(expr, _vec(vars); N=N, check_boundedness=check_boundedness)
+
 end end  # quote / load_modeling_toolkit_hpolytope()

@@ -639,7 +639,7 @@ Note in particular that strict inequalities are relaxed as being smaller-or-equa
 Finally, the returned set is the half-space with normal vector `[a1, …, an]` and
 displacement `b`.
 """
-function HalfSpace(expr::Num, vars=_get_variables(expr); N::Type{<:Real}=Float64)
+function HalfSpace(expr::Num, vars::Vector{Num}; N::Type{<:Real}=Float64)
     valid, sexpr = _is_halfspace(Symbolics.value(expr))
     if !valid
         throw(ArgumentError("expected an expression describing a half-space, got $expr"))
@@ -655,10 +655,8 @@ function HalfSpace(expr::Num, vars=_get_variables(expr); N::Type{<:Real}=Float64
     return HalfSpace(coeffs, β)
 end
 
-function HalfSpace(expr::Num, vars::NTuple{L, Union{<:Num, <:Vector{Num}}}; N::Type{<:Real}=Float64) where {L}
-    vars = _vec(vars)
-    return HalfSpace(expr, vars, N=N)
-end
+HalfSpace(expr::Num; N::Type{<:Real}=Float64) = HalfSpace(expr, _get_variables(expr); N=N)
+HalfSpace(expr::Num, vars; N::Type{<:Real}=Float64) = HalfSpace(expr, _vec(vars), N=N)
 
 end end  # quote / load_modeling_toolkit_halfspace()
 
