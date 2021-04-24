@@ -1,4 +1,4 @@
-import Base: ==, ≈, copy, eltype
+import Base: ==, ≈, copy, eltype, rationalize
 import Random.rand
 
 export LazySet,
@@ -1468,3 +1468,35 @@ function high(X::LazySet)
     n = dim(X)
     return [high(X, i) for i in 1:n]
 end
+
+"""
+    rationalize(::Type{T}, X::LazySet{N}, tol::Real) where {T<:Integer, N<:AbstractFloat}
+
+Approximate a LazySet of floating point numbers as a set whose entries are
+rationals of the given integer type.
+
+### Input
+
+- `T`   -- (optional, default: `Int`) integer type to represent the rationals
+- `X`   -- set which has floating-point components
+- `tol` -- (optional, default: `eps(N)`) tolerance of the result; each rationalized
+           component will differ by no more than `tol` with respect to the floating-point value
+
+### Output
+
+A LazySet of the same base type of `X` where each numerical component is of
+type `Rational{T}`.
+"""
+function rationalize(::Type{T}, X::LazySet{N}, tol::Real) where {T<:Integer, N<:AbstractFloat}
+    m = length(fieldnames(typeof(X)))
+    frat = ntuple(fi -> _rationalize(T, getfield(X, fi), tol), m)
+    ST = basetype(X)
+    return ST(frat...)
+end
+
+rationalize(X::LazySet{N}; kwargs...) where {N<:AbstractFloat} = rationalize(Int, X; kwargs...)
+rationalize(::Type{T}, X::LazySet{N}; tol::Real=eps(N)) where {T<:Integer, N<:AbstractFloat} = rationalize(T, X, tol)
+
+# method extension for lazy sets
+_rationalize(::Type{T}, X::AbstractVector{<:LazySet{N}}, tol::Real) where {T<:Integer, N<:AbstractFloat} = rationalize.(Ref(T), X, Ref(tol))
+_rationalize(::Type{T}, X::LazySet{N}, tol::Real) where {T<:Integer, N<:AbstractFloat} = rationalize(T, X, tol)
