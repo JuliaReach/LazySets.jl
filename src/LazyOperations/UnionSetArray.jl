@@ -21,6 +21,13 @@ end
 isoperationtype(::Type{<:UnionSetArray}) = true
 isconvextype(::Type{<:UnionSetArray}) = false
 
+# constructor for an empty union with optional size hint and numeric type
+function UnionSetArray(n::Int=0, N::Type=Float64)
+   arr = Vector{LazySet{N}}()
+   sizehint!(arr, n)
+   return UnionSetArray(arr)
+end
+
 # EmptySet is the neutral element for UnionSetArray
 @neutral(UnionSetArray, EmptySet)
 
