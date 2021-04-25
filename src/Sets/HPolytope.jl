@@ -250,7 +250,7 @@ function load_symbolics_hpolytope()
 return quote
 
 """
-    HPolytope(expr::Vector{<:Num}, vars=_get_variables(expr); N::Type{<:Real}=Float64)
+    HPolytope(expr::Vector{<:Num}, vars=_get_variables(expr); [N]::Type{<:Real}=Float64, [check_boundedness]::Bool=false)
 
 Return the polytope in half-space representation given by a list of symbolic expressions.
 
@@ -263,6 +263,7 @@ Return the polytope in half-space representation given by a list of symbolic exp
             expression (but be careful because the order may be incorrect; it is advised
             to always pass `vars` explicitly)
 - `N`    -- (optional, default: `Float64`) the numeric type of the returned half-space
+- `check_boundedness` -- (optional, default: `false`) flag to check boundedness
 
 ### Output
 
@@ -282,8 +283,10 @@ HalfSpace{Float64,Array{Float64,1}}([-1.0, 0.0], 0.0), HalfSpace{Float64,Array{F
 HalfSpace{Float64,Array{Float64,1}}([0.0, -1.0], 0.0)])
 ```
 """
-function HPolytope(expr::Vector{<:Num}, vars::Vector{Num}; N::Type{<:Real}=Float64, check_boundedness::Bool=false)
-    return HPolytope([HalfSpace(ex, vars; N=N) for ex in expr], check_boundedness=check_boundedness)
+function HPolytope(expr::Vector{<:Num}, vars::AbstractVector{Num};
+                   N::Type{<:Real}=Float64, check_boundedness::Bool=false)
+    return HPolytope([HalfSpace(ex, vars; N=N) for ex in expr],
+                     check_boundedness=check_boundedness)
 end
 
 HPolytope(expr::Vector{<:Num}; N::Type{<:Real}=Float64, check_boundedness::Bool=false) = HPolytope(expr, _get_variables(expr); N=N, check_boundedness=check_boundedness)
