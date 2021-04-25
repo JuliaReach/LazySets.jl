@@ -10,7 +10,7 @@ export ConvexHullArray, CHArray,
 """
     ConvexHullArray{N, S<:LazySet{N}} <: LazySet{N}
 
-Type that represents the symbolic convex hull of a finite number of convex sets.
+Type that represents the symbolic convex hull of a finite number of sets.
 
 ### Fields
 
@@ -29,7 +29,7 @@ Constructors:
 
 ### Examples
 
-Convex hull of 100 two-dimensional balls whose centers follows a sinusoidal:
+Convex hull of 100 two-dimensional balls whose centers follow a sinusoidal:
 
 ```jldoctest
 julia> b = [Ball2([2*pi*i/100, sin(2*pi*i/100)], 0.05) for i in 1:100];
@@ -70,7 +70,7 @@ const CHArray = ConvexHullArray
 """
     array(cha::ConvexHullArray)
 
-Return the array of a convex hull of a finite number of convex sets.
+Return the array of a convex hull of a finite number of sets.
 
 ### Input
 
@@ -78,7 +78,7 @@ Return the array of a convex hull of a finite number of convex sets.
 
 ### Output
 
-The array of a convex hull of a finite number of convex sets.
+The array of a convex hull of a finite number of sets.
 """
 function array(cha::ConvexHullArray)
     return cha.array
@@ -87,7 +87,7 @@ end
 """
     dim(cha::ConvexHullArray)
 
-Return the dimension of the convex hull of a finite number of convex sets.
+Return the dimension of the convex hull of a finite number of sets.
 
 ### Input
 
@@ -95,7 +95,7 @@ Return the dimension of the convex hull of a finite number of convex sets.
 
 ### Output
 
-The ambient dimension of the convex hull of a finite number of convex sets.
+The ambient dimension of the convex hull of a finite number of sets.
 """
 function dim(cha::ConvexHullArray)
     @assert !isempty(cha.array)
@@ -153,12 +153,11 @@ end
 """
     isbounded(cha::ConvexHullArray)
 
-Determine whether a convex hull of a finite number of convex sets is
-bounded.
+Determine whether a convex hull of a finite number of sets is bounded.
 
 ### Input
 
-- `cha` -- convex hull of a finite number of convex sets
+- `cha` -- convex hull of a finite number of sets
 
 ### Output
 
@@ -189,11 +188,11 @@ end
     vertices_list(cha::ConvexHullArray; apply_convex_hull::Bool=true,
                   backend=nothing)
 
-Return the list of vertices of the convex hull of a finite number of convex sets.
+Return the list of vertices of the convex hull of a finite number of sets.
 
 ### Input
 
-- `cha`               -- convex hull of a finite number of convex sets
+- `cha`               -- convex hull of a finite number of sets
 - `apply_convex_hull` -- (optional, default: `true`) if `true`, post-process the
                          vertices using a convex-hull algorithm
 - `backend`           -- (optional, default: `nothing`) backend for computing
