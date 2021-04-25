@@ -705,7 +705,7 @@ HPolyhedron{Float64,Array{Float64,1}}(HalfSpace{Float64,Array{Float64,1}}[HalfSp
 ace{Float64,Array{Float64,1}}([-1.0, -0.0], 0.0), HalfSpace{Float64,Array{Float64,1}}([0.0, 1.0], -0.0)])
 ```
 """
-function HPolyhedron(expr::Vector{<:Num}, vars=_get_variables(expr); N::Type{<:Real}=Float64)
+function HPolyhedron(expr::Vector{<:Num}, vars::Vector{Num}; N::Type{<:Real}=Float64)
     clist = Vector{HalfSpace{N, Vector{N}}}()
     sizehint!(clist, length(expr))
     got_hyperplane = false
@@ -733,5 +733,8 @@ function HPolyhedron(expr::Vector{<:Num}, vars=_get_variables(expr); N::Type{<:R
     end
     return HPolyhedron(clist)
 end
+
+HPolyhedron(expr::Vector{<:Num}; N::Type{<:Real}=Float64) = HPolyhedron(expr, _get_variables(expr); N=N)
+HPolyhedron(expr::Vector{<:Num}, vars; N::Type{<:Real}=Float64) = HPolyhedron(expr, _vec(vars); N=N)
 
 end end  # quote / load_modeling_toolkit_hpolyhedron()

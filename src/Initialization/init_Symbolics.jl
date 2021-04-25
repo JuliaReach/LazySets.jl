@@ -41,7 +41,11 @@ eval(quote
     # case with a single variable
     _vec(vars::Tuple{Num}) = [vars[1]]
 
-    _get_variables(expr::Num) = Symbolics.get_variables(expr)
+    # reduce for several variables e.g. when vars = @variables x[1:3] t
+    _vec(vars::Vector{Any}) = reduce(vcat, vars)
+    _vec(vars::Vector{Num}) = vars
+
+    _get_variables(expr::Num) = convert(Vector{Num}, Symbolics.get_variables(expr))
     _get_variables(expr::Vector{<:Num}) = unique(reduce(vcat, _get_variables(ex) for ex in expr))
 end)
 
