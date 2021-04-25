@@ -39,6 +39,7 @@ LazySets.Arrays.allequal
 LazySets.Arrays.distance(::AbstractVector, ::AbstractVector, ::Real=2.0)
 LazySets.Arrays.same_sign
 LazySets.Arrays.to_matrix
+LazySets.Arrays._rationalize
 ```
 
 ## Functions and Macros
