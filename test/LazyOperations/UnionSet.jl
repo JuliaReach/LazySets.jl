@@ -11,6 +11,9 @@ for N in [Float64, Rational{Int}, Float32]
     # array type (union of a finite number of convex sets)
     Uarr = UnionSetArray([B1, B2])
 
+    # constructor without argumenst
+    UnionSetArray()
+
     # swap
     U2 = swap(UXY)
     @test UXY.X == U2.Y && UXY.Y == U2.X
