@@ -282,8 +282,7 @@ HalfSpace{Float64,Array{Float64,1}}([-1.0, 0.0], 0.0), HalfSpace{Float64,Array{F
 HalfSpace{Float64,Array{Float64,1}}([0.0, -1.0], 0.0)])
 ```
 """
-function HPolytope(expr::Vector{<:Num}, vars=_get_variables(expr);
-                   N::Type{<:Real}=Float64, check_boundedness::Bool=false)
+function HPolytope(expr::Vector{<:Num}, vars::Vector{Num}; N::Type{<:Real}=Float64, check_boundedness::Bool=false)
     return HPolytope([HalfSpace(ex, vars; N=N) for ex in expr], check_boundedness=check_boundedness)
 end
 
