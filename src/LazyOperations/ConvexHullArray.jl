@@ -10,7 +10,7 @@ export ConvexHullArray, CHArray,
 """
     ConvexHullArray{N, S<:LazySet{N}} <: LazySet{N}
 
-Type that represents the symbolic convex hull of a finite number of convex sets.
+Type that represents the symbolic convex hull of a finite number of sets.
 
 ### Fields
 
@@ -29,7 +29,7 @@ Constructors:
 
 ### Examples
 
-Convex hull of 100 two-dimensional balls whose centers follows a sinusoidal:
+Convex hull of 100 two-dimensional balls whose centers follow a sinusoidal:
 
 ```jldoctest
 julia> b = [Ball2([2*pi*i/100, sin(2*pi*i/100)], 0.05) for i in 1:100];
@@ -70,7 +70,7 @@ const CHArray = ConvexHullArray
 """
     array(cha::ConvexHullArray)
 
-Return the array of a convex hull of a finite number of convex sets.
+Return the array of a convex hull of a finite number of sets.
 
 ### Input
 
@@ -78,7 +78,7 @@ Return the array of a convex hull of a finite number of convex sets.
 
 ### Output
 
-The array of a convex hull of a finite number of convex sets.
+The array of a convex hull of a finite number of sets.
 """
 function array(cha::ConvexHullArray)
     return cha.array
@@ -87,7 +87,7 @@ end
 """
     dim(cha::ConvexHullArray)
 
-Return the dimension of the convex hull of a finite number of convex sets.
+Return the dimension of the convex hull of a finite number of sets.
 
 ### Input
 
@@ -95,10 +95,10 @@ Return the dimension of the convex hull of a finite number of convex sets.
 
 ### Output
 
-The ambient dimension of the convex hull of a finite number of convex sets.
+The ambient dimension of the convex hull of a finite number of sets.
 """
 function dim(cha::ConvexHullArray)
-    @assert !isempty(cha.array)
+    @assert !isempty(cha.array) "an empty convex hull is not allowed"
     return dim(cha.array[1])
 end
 
@@ -113,18 +113,19 @@ Return the support vector of a convex hull array in a given direction.
 - `cha` -- convex hull array
 """
 function σ(d::AbstractVector, cha::ConvexHullArray)
-    s = σ(d, cha.array[1])
-    ri = dot(d, s)
-    rmax = ri
-    for (i, chi) in enumerate(cha.array[2:end])
+    @assert !isempty(cha.array) "an empty convex hull is not allowed"
+    svec = d
+    N = eltype(d)
+    rmax = N(-Inf)
+    for chi in cha.array
         si = σ(d, chi)
         ri = dot(d, si)
         if ri > rmax
             rmax = ri
-            s = si
+            svec = si
         end
     end
-    return s
+    return svec
 end
 
 """
@@ -147,18 +148,17 @@ This algorihm calculates the maximum over all ``ρ(d, X_i)`` where the
 ``X_1, …, X_k`` are the sets in the array `cha`.
 """
 function ρ(d::AbstractVector, cha::ConvexHullArray)
-    return maximum([ρ(d, Xi) for Xi in array(cha)])
+    return maximum(ρ(d, Xi) for Xi in array(cha))
 end
 
 """
     isbounded(cha::ConvexHullArray)
 
-Determine whether a convex hull of a finite number of convex sets is
-bounded.
+Determine whether a convex hull of a finite number of sets is bounded.
 
 ### Input
 
-- `cha` -- convex hull of a finite number of convex sets
+- `cha` -- convex hull of a finite number of sets
 
 ### Output
 
@@ -189,11 +189,11 @@ end
     vertices_list(cha::ConvexHullArray; apply_convex_hull::Bool=true,
                   backend=nothing)
 
-Return the list of vertices of the convex hull of a finite number of convex sets.
+Return the list of vertices of the convex hull of a finite number of sets.
 
 ### Input
 
-- `cha`               -- convex hull of a finite number of convex sets
+- `cha`               -- convex hull of a finite number of sets
 - `apply_convex_hull` -- (optional, default: `true`) if `true`, post-process the
                          vertices using a convex-hull algorithm
 - `backend`           -- (optional, default: `nothing`) backend for computing
@@ -222,7 +222,7 @@ function constraints_list(X::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
 end
 
 # membership in convex hull array of singletons
-function ∈(x::AbstractVector{N}, X::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
+function ∈(x::AbstractVector, X::ConvexHullArray)
     n = length(x)
     ST = n == 2 ? VPolygon : VPolytope
     V = convert(ST, X)
