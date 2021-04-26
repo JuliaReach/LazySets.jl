@@ -567,7 +567,7 @@ function _is_halfspace(expr::Symbolic)
 end
 
 """
-    HalfSpace(expr::Num, vars=_get_variables(expr); N::Type{<:Real}=Float64)
+    HalfSpace(expr::Num, vars=_get_variables(expr); [N]::Type{<:Real}=Float64)
 
 Return the half-space given by a symbolic expression.
 
@@ -639,7 +639,7 @@ Note in particular that strict inequalities are relaxed as being smaller-or-equa
 Finally, the returned set is the half-space with normal vector `[a1, …, an]` and
 displacement `b`.
 """
-function HalfSpace(expr::Num, vars::Vector{Num}; N::Type{<:Real}=Float64)
+function HalfSpace(expr::Num, vars::AbstractVector{Num}; N::Type{<:Real}=Float64)
     valid, sexpr = _is_halfspace(Symbolics.value(expr))
     if !valid
         throw(ArgumentError("expected an expression describing a half-space, got $expr"))

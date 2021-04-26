@@ -506,7 +506,7 @@ function _is_hyperplane(expr::Symbolic)
 end
 
 """
-    Hyperplane(expr::Num, vars=_get_variables(expr); N::Type{<:Real}=Float64)
+    Hyperplane(expr::Num, vars=_get_variables(expr); [N]::Type{<:Real}=Float64)
 
 Return the hyperplane given by a symbolic expression.
 
@@ -556,7 +556,7 @@ Therefore, the order in which the variables appear in `vars` affects the final r
 Finally, the returned set is the hyperplane with normal vector `[a1, …, an]` and
 displacement `b`.
 """
-function Hyperplane(expr::Num, vars::Vector{Num}; N::Type{<:Real}=Float64)
+function Hyperplane(expr::Num, vars::AbstractVector{Num}; N::Type{<:Real}=Float64)
     valid, sexpr = _is_hyperplane(Symbolics.value(expr))
     if !valid
         throw(ArgumentError("expected an expression of the form `ax == b`, got $expr"))
