@@ -145,6 +145,7 @@ if test_suite_basic
     # Concrete operations
     # ===================
     @time @testset "LazySets.concrete_convex_hull" begin include("ConcreteOperations/convex_hull.jl") end
+    @time @testset "LazySets.concrete_cartesian_product" begin include("ConcreteOperations/cartesian_product.jl") end
     @time @testset "LazySets.samples" begin include("ConcreteOperations/samples.jl") end
     @time @testset "LazySets.area" begin include("ConcreteOperations/area.jl") end
 

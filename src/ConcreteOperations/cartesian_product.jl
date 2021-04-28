@@ -151,3 +151,20 @@ function cartesian_product(S1::AbstractSingleton, S2::AbstractSingleton)
     v2 = element(S2)
     return Singleton(vcat(v1, v2))
 end
+
+function cartesian_product(Z1::AbstractZonotope, Z2::AbstractZonotope)
+    N = promote_type(eltype(Z1), eltype(Z2))
+    z1 = zeros(N, dim(Z1), ngens(Z2))
+    z2 = zeros(N, dim(Z2), ngens(Z1))
+    g1 = genmat(Z1)
+    g2 = genmat(Z2)
+    c = vcat(center(Z1), center(Z2))
+    G = [g1 z1; z2 g2]
+    return Zonotope(c, G)
+end
+
+function cartesian_product(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle)
+    c = vcat(center(H1), center(H2))
+    r = vcat(radius_hyperrectangle(H1), radius_hyperrectangle(H2))
+    return Hyperrectangle(c, r)
+end
