@@ -170,12 +170,12 @@ end
 """
     ExponentialMap{N, S<:LazySet{N}} <: AbstractAffineMap{N, S}
 
-Type that represents the action of an exponential map on a convex set.
+Type that represents the action of an exponential map on a set.
 
 ### Fields
 
 - `spmexp` -- sparse matrix exponential
-- `X`      -- convex set
+- `X`      -- set
 
 ### Examples
 
@@ -237,16 +237,16 @@ end
     *(spmexp::SparseMatrixExp, X::LazySet)
 ```
 
-Return the exponential map of a convex set from a sparse matrix exponential.
+Return the exponential map of a set from a sparse matrix exponential.
 
 ### Input
 
 - `spmexp` -- sparse matrix exponential
-- `X`      -- convex set
+- `X`      -- set
 
 ### Output
 
-The exponential map of the convex set.
+The exponential map of the set.
 """
 function *(spmexp::SparseMatrixExp, X::LazySet)
     return ExponentialMap(spmexp, X)
@@ -306,7 +306,7 @@ If the direction has norm zero, the result depends on the wrapped set.
 
 ### Notes
 
-If ``E = \\exp(M)⋅S``, where ``M`` is a matrix and ``S`` is a convex set, it
+If ``E = \\exp(M)⋅S``, where ``M`` is a matrix and ``S`` is a set, it
 follows that ``σ(d, E) = \\exp(M)⋅σ(\\exp(M)^T d, S)`` for any direction ``d``.
 
 We allow sparse direction vectors, but will convert them to dense vectors to be
@@ -337,7 +337,7 @@ The support function in the given direction.
 
 ### Notes
 
-If ``E = \\exp(M)⋅S``, where ``M`` is a matrix and ``S`` is a convex set, it
+If ``E = \\exp(M)⋅S``, where ``M`` is a matrix and ``S`` is a set, it
 follows that ``ρ(d, E) = ρ(\\exp(M)^T d, S)`` for any direction ``d``.
 
 We allow sparse direction vectors, but will convert them to dense vectors to be
@@ -355,12 +355,12 @@ end
 """
     ∈(x::AbstractVector, em::ExponentialMap)
 
-Check whether a given point is contained in an exponential map of a convex set.
+Check whether a given point is contained in an exponential map of a set.
 
 ### Input
 
 - `x`  -- point/vector
-- `em` -- exponential map of a convex set
+- `em` -- exponential map of a set
 
 ### Output
 
@@ -474,12 +474,12 @@ end
     ExponentialProjectionMap{N, S<:LazySet{N}} <: AbstractAffineMap{N, S}
 
 Type that represents the application of a projection of a sparse matrix
-exponential to a convex set.
+exponential to a set.
 
 ### Fields
 
 - `spmexp` -- projection of a sparse matrix exponential
-- `X`      -- convex set
+- `X`      -- set
 """
 struct ExponentialProjectionMap{N, S<:LazySet{N}} <: AbstractAffineMap{N, S}
     projspmexp::ProjectionSparseMatrixExp
@@ -494,18 +494,16 @@ isconvextype(::Type{ExponentialProjectionMap{N, S}}) where {N, S} = isconvextype
     *(projspmexp::ProjectionSparseMatrixExp, X::LazySet)
 ```
 
-Return the application of a projection of a sparse matrix exponential to a
-convex set.
+Return the application of a projection of a sparse matrix exponential to a set.
 
 ### Input
 
 - `projspmexp` -- projection of a sparse matrix exponential
-- `X`          -- convex set
+- `X`          -- set
 
 ### Output
 
-The application of the projection of a sparse matrix exponential to the convex
-set.
+The application of the projection of a sparse matrix exponential to the set.
 """
 function *(projspmexp::ProjectionSparseMatrixExp, X::LazySet)
     return ExponentialProjectionMap(projspmexp, X)
