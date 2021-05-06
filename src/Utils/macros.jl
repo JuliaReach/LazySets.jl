@@ -229,7 +229,7 @@ end
 """
     @neutral_absorbing(SET, NEUT, ABS)
 
-Create two functions to avoid method ambiguties for a lazy set operation with
+Create two functions to avoid method ambiguities for a lazy set operation with
 respect to neutral and absorbing element set types.
 
 ### Input
