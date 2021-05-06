@@ -28,13 +28,13 @@ end
 
 Base.size(e::SingleEntryVector) = (e.n,)
 
-function Base.:(*)(A::AbstractMatrix{N}, e::SingleEntryVector{N}) where {N}
-    return A[:, e.i] * e.v
-end
-
-function Base.:(*)(A::Transpose{N, <:AbstractMatrix{N}},
-                   e::SingleEntryVector{N}) where {N}
-    return A[:, e.i] * e.v
+# define matrix-vector multiplication with SingleEntryVector
+# due to type piracy in other packages, we need to enumerate the matrix types
+# explicitly here
+for MT in [Matrix, AbstractSparseMatrix]
+    function Base.:(*)(A::MT, e::SingleEntryVector)
+        return A[:, e.i] * e.v
+    end
 end
 
 # multiplication with diagonal matrix
