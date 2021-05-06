@@ -10,7 +10,7 @@ dim(::Interval)
 σ(::AbstractVector, ::Interval)
 ρ(::AbstractVector, ::Interval)
 ∈(::AbstractVector, ::Interval)
-∈(::N, ::Interval{N}) where {N}
+∈(::Number, ::Interval)
 an_element(::Interval)
 vertices_list(::Interval)
 translate(::Interval, ::AbstractVector)

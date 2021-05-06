@@ -231,7 +231,7 @@ function ∈(v::AbstractVector, x::Interval)
 end
 
 """
-    ∈(v::N, x::Interval{N}) where {N}
+    ∈(v::Number, x::Interval)
 
 Return whether a number is contained in the interval.
 
@@ -244,7 +244,7 @@ Return whether a number is contained in the interval.
 
 `true` iff `x` contains `v`.
 """
-function ∈(v::N, x::Interval{N}) where {N}
+function ∈(v::Number, x::Interval)
     return v ∈ x.dat
 end
 
