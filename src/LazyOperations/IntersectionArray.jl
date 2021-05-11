@@ -8,11 +8,11 @@ export IntersectionArray,
 """
     IntersectionArray{N, S<:LazySet{N}} <: LazySet{N}
 
-Type that represents the intersection of a finite number of convex sets.
+Type that represents the intersection of a finite number of sets.
 
 ### Fields
 
-- `array` -- array of convex sets
+- `array` -- array of sets
 
 ### Notes
 
@@ -53,15 +53,15 @@ end
 """
     array(ia::IntersectionArray)
 
-Return the array of an intersection of a finite number of convex sets.
+Return the array of an intersection of a finite number of sets.
 
 ### Input
 
-- `ia` -- intersection of a finite number of convex sets
+- `ia` -- intersection of a finite number of sets
 
 ### Output
 
-The array of an intersection of a finite number of convex sets.
+The array of an intersection of a finite number of sets.
 """
 function array(ia::IntersectionArray)
    return ia.array
@@ -78,7 +78,7 @@ Return the dimension of an intersection of a finite number of sets.
 
 ### Input
 
-- `ia` -- intersection of a finite number of convex sets
+- `ia` -- intersection of a finite number of sets
 
 ### Output
 
@@ -97,7 +97,7 @@ given direction.
 ### Input
 
 - `d`  -- direction
-- `ia` -- intersection of a finite number of convex sets
+- `ia` -- intersection of a finite number of sets
 
 ### Output
 
@@ -112,11 +112,11 @@ end
 """
     isbounded(ia::IntersectionArray)
 
-Determine whether an intersection of a finite number of convex sets is bounded.
+Determine whether an intersection of a finite number of sets is bounded.
 
 ### Input
 
-- `ia` -- intersection of a finite number of convex sets
+- `ia` -- intersection of a finite number of sets
 
 ### Output
 
@@ -138,12 +138,12 @@ end
     ∈(x::AbstractVector, ia::IntersectionArray)
 
 Check whether a given point is contained in an intersection of a finite number
-of convex sets.
+of sets.
 
 ### Input
 
 - `x`  -- point/vector
-- `ia` -- intersection of a finite number of convex sets
+- `ia` -- intersection of a finite number of sets
 
 ### Output
 
