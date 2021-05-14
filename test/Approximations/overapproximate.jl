@@ -446,6 +446,16 @@ for N in [Float64]
         p = (1 + x[1] - 2x[2])^2
         @test _nonlinear_polynomial(p) == x[1]^2 - 4x[1]*x[2] + 4x[2]^2
 
+        x = set_variables("x", numvars=2, order=1)
+
+        p = 1234.5 + 0 * x[1] + 0 * x[2]
+        @test get_linear_coeffs(p) == [0.0, 0.0]
+        @test iszero(_nonlinear_polynomial(p))
+
+        p = 1234.5 + 6 * x[1] + 7 * x[2]
+        @test get_linear_coeffs(p) == [6.0, 7.0]
+        @test iszero(_nonlinear_polynomial(p))
+
         # auxiliary function to get nonlinear coefficients of Taylor1
         t = TaylorModels.Taylor1(6)
         qq = 1.0 + 2.0*t + 3t^2 + 6t^3
