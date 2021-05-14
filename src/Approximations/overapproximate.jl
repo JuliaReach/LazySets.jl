@@ -739,27 +739,18 @@ end
 
 # compute the nonlinear part of the polynomial p, without truncation
 @inline function _nonlinear_polynomial(p::TaylorN{T}) where {T}
-    if p.order <= 1
-        return p
-    else
-        pnl = deepcopy(p)
-        pnl.coeffs[1] = HomogeneousPolynomial([zero(T)])
-        pnl.coeffs[2] = HomogeneousPolynomial([zero(T)])
-        return pnl
-    end
+    pnl = deepcopy(p)
+    pnl.coeffs[1] = HomogeneousPolynomial([zero(T)])
+    pnl.coeffs[2] = HomogeneousPolynomial([zero(T)])
+    return pnl
 end
 
 @inline function _nonlinear_polynomial(p::Taylor1{T}) where {T}
-    if p.order <= 1
-        return p
-    else
-        pnl = deepcopy(p)
-        pnl.coeffs[1] = zero(T)
-        pnl.coeffs[2] = zero(T)
-        return pnl
-    end
+    pnl = deepcopy(p)
+    pnl.coeffs[1] = zero(T)
+    pnl.coeffs[2] = zero(T)
+    return pnl
 end
-
 
 """
     overapproximate(vTM::Vector{TaylorModel1{T, S}},

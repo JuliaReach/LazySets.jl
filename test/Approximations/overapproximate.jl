@@ -426,6 +426,23 @@ for N in [Float64]
 
         # auxiliary function to get nonlinear coefficients of TaylorN
         x = set_variables("x", numvars=2, order=10)
+
+        p = (1 + x[1] - 2x[2])^2
+        @test get_linear_coeffs(p) == [2.0, -4.0]
+        @test _nonlinear_polynomial(p) == x[1]^2 - 4x[1]*x[2] + 4x[2]^2
+
+        p = 1234.5 + 0 * x[1] + 0 * x[2]
+        @test get_linear_coeffs(p) == [0.0, 0.0]
+        @test iszero(_nonlinear_polynomial(p))
+
+        p = 1234.5 + 6 * x[1] + 7 * x[2]
+        @test get_linear_coeffs(p) == [6.0, 7.0]
+        @test iszero(_nonlinear_polynomial(p))
+
+        p = 1234.5 + 6 * x[1] + 7 * x[2] + 8 * x[1] * x[2]^3
+        @test get_linear_coeffs(p) == [6.0, 7.0]
+        @test _nonlinear_polynomial(p) == 8 * x[1] * x[2]^3
+
         p = (1 + x[1] - 2x[2])^2
         @test _nonlinear_polynomial(p) == x[1]^2 - 4x[1]*x[2] + 4x[2]^2
 
