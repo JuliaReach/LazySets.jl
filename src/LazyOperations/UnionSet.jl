@@ -10,12 +10,12 @@ export UnionSet,
 """
     UnionSet{N, S1<:LazySet{N}, S2<:LazySet{N}}
 
-Type that represents the set union of two convex sets.
+Type that represents the set union of two sets.
 
 ### Fields
 
-- `X` -- convex set
-- `Y` -- convex set
+- `X` -- set
+- `Y` -- set
 
 ### Notes
 
@@ -55,7 +55,7 @@ Return a new `UnionSet` object with the arguments swapped.
 
 ### Input
 
-- `cup` -- union of two convex sets
+- `cup` -- union of two sets
 
 ### Output
 
@@ -68,15 +68,15 @@ end
 """
     dim(cup::UnionSet)
 
-Return the dimension of the set union of two convex sets.
+Return the dimension of the union of two sets.
 
 ### Input
 
-- `cup` -- union of two convex sets
+- `cup` -- union of two sets
 
 ### Output
 
-The ambient dimension of the union of two convex sets.
+The ambient dimension of the union of two sets.
 """
 function dim(cup::UnionSet)
     return dim(cup.X)
@@ -85,12 +85,12 @@ end
 """
     σ(d::AbstractVector, cup::UnionSet; [algorithm]="support_vector")
 
-Return the support vector of the union of two convex sets in a given direction.
+Return the support vector of the union of two sets in a given direction.
 
 ### Input
 
 - `d`         -- direction
-- `cup`       -- union of two convex sets
+- `cup`       -- union of two sets
 - `algorithm` -- (optional, default: "support_vector"): the algorithm to compute
                  the support vector; if "support_vector", use the support
                  vector of each argument; if "support_function" use the support
@@ -103,18 +103,19 @@ The support vector in the given direction.
 
 ### Algorithm
 
-The support vector of the union of two convex sets ``X`` and ``Y`` can be obtained
-as the vector that maximizes the support function of either ``X`` or ``Y``, i.e.
-it is sufficient to find the ``\\argmax(ρ(d, X), ρ(d, Y)])`` and evaluate its support
-vector.
+The support vector of the union of two sets ``X`` and ``Y`` can be obtained as
+the vector that maximizes the support function of either ``X`` or ``Y``, i.e.,
+it is sufficient to find the ``\\argmax(ρ(d, X), ρ(d, Y)])`` and evaluate its
+support vector.
 
 The default implementation, with option `algorithm="support_vector"`, computes
-the support vector of ``X`` and ``Y`` and then compares the support function using
-a dot product. If it happens that the support function can be more efficiently
-computed (without passing through the support vector), consider using the alternative
-`algorithm="support_function"` implementation, which evaluates the support function
-of each set directly and then calls only the support vector of either ``X`` *or*
-``Y``.
+the support vector of ``X`` and ``Y`` and then compares the support function
+using a dot product.
+
+If the support function can be computed more efficiently, the alternative
+implementation `algorithm="support_function"` can be used, which evaluates the
+support function of each set directly and then calls only the support vector of
+either ``X`` *or* ``Y``.
 """
 function σ(d::AbstractVector, cup::UnionSet; algorithm="support_vector")
     X, Y = cup.X, cup.Y
@@ -135,12 +136,12 @@ end
 """
     ρ(d::AbstractVector, cup::UnionSet)
 
-Return the support function of the union of two convex sets in a given direction.
+Return the support function of the union of two sets in a given direction.
 
 ### Input
 
 - `d`   -- direction
-- `cup` -- union of two convex sets
+- `cup` -- union of two sets
 
 ### Output
 
@@ -148,8 +149,8 @@ The support function in the given direction.
 
 ### Algorithm
 
-The support function of the union of two convex sets ``X`` and ``Y`` is the
-maximum of the support functions of ``X`` and ``Y``.
+The support function of the union of two sets ``X`` and ``Y`` is the maximum of
+the support function of ``X`` and ``Y``.
 """
 function ρ(d::AbstractVector, cup::UnionSet)
     X, Y = cup.X, cup.Y
@@ -159,33 +160,36 @@ end
 """
     an_element(cup::UnionSet)
 
-Return some element of a union of two convex sets.
+Return some element of the union of two sets.
 
 ### Input
 
-- `cup` -- union of two convex sets
+- `cup` -- union of two sets
 
 ### Output
 
-An element in the union of two convex sets.
+An element in the union of two sets.
 
 ### Algorithm
 
 We use `an_element` on the first wrapped set.
 """
 function an_element(cup::UnionSet)
+    if isempty(cup.X)
+        return an_element(cup.Y)
+    end
     return an_element(cup.X)
 end
 
 """
     ∈(x::AbstractVector, cup::UnionSet)
 
-Check whether a given point is contained in a union of two convex sets.
+Check whether a given point is contained in the union of two sets.
 
 ### Input
 
 - `x`   -- point/vector
-- `cup` -- union of two convex sets
+- `cup` -- union of two sets
 
 ### Output
 
@@ -198,11 +202,11 @@ end
 """
     isempty(cup::UnionSet)
 
-Check whether a union of two convex sets is empty.
+Check whether the union of two sets is empty.
 
 ### Input
 
-- `cup` -- union of two convex sets
+- `cup` -- union of two sets
 
 ### Output
 
@@ -215,11 +219,11 @@ end
 """
     isbounded(cup::UnionSet)
 
-Determine whether a union of two convex sets is bounded.
+Determine whether the union of two sets is bounded.
 
 ### Input
 
-- `cup` -- union of two convex sets
+- `cup` -- union of two sets
 
 ### Output
 
@@ -232,11 +236,11 @@ end
 """
     vertices_list(cup::UnionSet; apply_convex_hull::Bool=false, backend=nothing)
 
-Return the list of vertices of a union of two convex sets.
+Return the list of vertices of the union of two sets.
 
 ### Input
 
-- `cup`               -- union of two convex sets
+- `cup`               -- union of two sets
 - `apply_convex_hull` -- (optional, default: `false`) if `true`, post-process
                          the vertices using a convex-hull algorithm
 - `backend`           -- (optional, default: `nothing`) backend for computing
