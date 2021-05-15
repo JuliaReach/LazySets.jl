@@ -264,8 +264,10 @@ function get_radius!(sih::SymmetricIntervalHull{N},
                      i::Int,
                      n::Int=dim(sih)) where {N}
     if sih.cache[i] == -one(N)
-        right_bound = σ(sparsevec([i], [one(N)], n), sih.X)
-        left_bound = σ(sparsevec([i], [-one(N)], n), sih.X)
+        d = SingleEntryVector(i, n, one(N))
+        right_bound = σ(d, sih.X)
+        d = SingleEntryVector(i, n, -one(N))
+        left_bound = σ(d, sih.X)
         sih.cache[i] = max(right_bound[i], abs(left_bound[i]))
     end
     return sih.cache[i]
