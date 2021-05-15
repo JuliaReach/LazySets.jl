@@ -4,11 +4,11 @@ export SymmetricIntervalHull,
 """
     SymmetricIntervalHull{N, S<:LazySet{N}} <: AbstractHyperrectangle{N}
 
-Type that represents the symmetric interval hull of a compact convex set.
+Type that represents the symmetric interval hull of a compact set.
 
 ### Fields
 
-- `X`     -- compact convex set
+- `X`     -- compact set
 - `cache` -- partial storage of already computed bounds, organized as mapping
     from dimension to tuples `(bound, valid)`, where `valid` is a flag
     indicating if the `bound` entry has been computed
@@ -66,12 +66,12 @@ SymmetricIntervalHull(∅::EmptySet) = ∅
 """
     radius_hyperrectangle(sih::SymmetricIntervalHull, i::Int)
 
-Return the box radius of the symmetric interval hull of a convex set in a given
+Return the box radius of the symmetric interval hull of a set in a given
 dimension.
 
 ### Input
 
-- `sih` -- symmetric interval hull of a convex set
+- `sih` -- symmetric interval hull of a set
 - `i`   -- dimension of interest
 
 ### Output
@@ -87,16 +87,16 @@ end
 """
     radius_hyperrectangle(sih::SymmetricIntervalHull)
 
-Return the box radius of the symmetric interval hull of a convex set in every
+Return the box radius of the symmetric interval hull of a set in every
 dimension.
 
 ### Input
 
-- `sih` -- symmetric interval hull of a convex set
+- `sih` -- symmetric interval hull of a set
 
 ### Output
 
-The box radius of the symmetric interval hull of a convex set.
+The box radius of the symmetric interval hull of a set.
 
 ### Notes
 
@@ -113,16 +113,17 @@ end
 """
     center(sih::SymmetricIntervalHull{N}, i::Int) where {N}
 
-Return the center along a given dimension of a symmetric interval hull of a convex set.
+Return the center along a given dimension of the symmetric interval hull of a
+set.
 
 ### Input
 
-- `sih` -- symmetric interval hull of a convex set
+- `sih` -- symmetric interval hull of a set
 - `i`   -- dimension of interest
 
 ### Output
 
-The center along a given dimension of the symmetric interval hull of a convex set.
+The center along a given dimension of the symmetric interval hull of a set.
 """
 @inline function center(sih::SymmetricIntervalHull{N}, i::Int) where {N}
     @boundscheck _check_bounds(sih, i)
@@ -136,11 +137,11 @@ end
 """
     center(sih::SymmetricIntervalHull{N}) where {N}
 
-Return the center of a symmetric interval hull of a convex set.
+Return the center of the symmetric interval hull of a set.
 
 ### Input
 
-- `sih` -- symmetric interval hull of a convex set
+- `sih` -- symmetric interval hull of a set
 
 ### Output
 
@@ -157,15 +158,15 @@ end
 """
     dim(sih::SymmetricIntervalHull)
 
-Return the dimension of a symmetric interval hull of a convex set.
+Return the dimension of the symmetric interval hull of a set.
 
 ### Input
 
-- `sih` -- symmetric interval hull of a convex set
+- `sih` -- symmetric interval hull of a set
 
 ### Output
 
-The ambient dimension of the symmetric interval hull of a convex set.
+The ambient dimension of the symmetric interval hull of a set.
 """
 function dim(sih::SymmetricIntervalHull)
     return dim(sih.X)
@@ -174,17 +175,17 @@ end
 """
     σ(d::AbstractVector, sih::SymmetricIntervalHull)
 
-Return the support vector of a symmetric interval hull of a convex set in a
-given direction.
+Return the support vector of the symmetric interval hull of a set in a given
+direction.
 
 ### Input
 
 - `d`   -- direction
-- `sih` -- symmetric interval hull of a convex set
+- `sih` -- symmetric interval hull of a set
 
 ### Output
 
-The support vector of the symmetric interval hull of a convex set in the given
+The support vector of the symmetric interval hull of a set in the given
 direction.
 If the direction has norm zero, the origin is returned.
 
@@ -200,6 +201,7 @@ function σ(d::AbstractVector, sih::SymmetricIntervalHull)
     n = length(d)
     @assert n == dim(sih) "cannot compute the support vector of a " *
         "$(dim(sih))-dimensional set along a vector of length $n"
+
     N = promote_type(eltype(d), eltype(sih))
     svec = similar(d)
     for i in eachindex(d)
@@ -212,6 +214,26 @@ function σ(d::AbstractVector, sih::SymmetricIntervalHull)
     return svec
 end
 
+# Faster support vector calculation for sev and SymmetricIntervalHull
+function σ(d::SingleEntryVector, sih::SymmetricIntervalHull)
+    N = promote_type(eltype(d), eltype(sih))
+    @assert length(d) == dim(sih) "cannot compute the support vector of a " *
+                                  "$(dim(sih))-dimensional set along a vector of length $(d.n)"
+
+    entry = radius_hyperrectangle(sih, d.i)
+    if d.v < zero(N)
+        entry = -entry
+    end
+    return SingleEntryVector(d.i, d.n, entry)
+end
+
+# Faster support function calculation for sev and SymmetricIntervalHull
+function ρ(d::SingleEntryVector, H::SymmetricIntervalHull)
+    @assert length(d) == dim(H) "a $(d.n)-dimensional vector is " *
+                                "incompatible with a $(dim(H))-dimensional set"
+    return abs(d.v) * radius_hyperrectangle(H, d.i)
+end
+
 
 # --- SymmetricIntervalHull functions ---
 
@@ -221,18 +243,17 @@ end
                 i::Int,
                 n::Int=dim(sih)) where {N}
 
-Compute the radius of the symmetric interval hull of a convex set in a given
-dimension.
+Compute the radius of the symmetric interval hull of a set in a given dimension.
 
 ### Input
 
-- `sih` -- symmetric interval hull of a convex set
+- `sih` -- symmetric interval hull of a set
 - `i`   -- dimension in which the radius should be computed
 - `n`   -- (optional, default: `dim(sih)`) set dimension
 
 ### Output
 
-The radius of the symmetric interval hull of a convex set in a given dimension.
+The radius of the symmetric interval hull of a set in a given dimension.
 
 ### Algorithm
 
@@ -248,23 +269,4 @@ function get_radius!(sih::SymmetricIntervalHull{N},
         sih.cache[i] = max(right_bound[i], abs(left_bound[i]))
     end
     return sih.cache[i]
-end
-
-# Faster support function calculation for sev and SymmetricIntervalHull
-function ρ(d::SingleEntryVector, H::SymmetricIntervalHull)
-    @assert length(d) == dim(H) "a $(d.n)-dimensional vector is " *
-                                "incompatible with a $(dim(H))-dimensional set"
-    return abs(d.v) * radius_hyperrectangle(H, d.i)
-end
-
-# Faster support vector calculation for sev and SymmetricIntervalHull
-function σ(d::SingleEntryVector, sih::SymmetricIntervalHull)
-    N = promote_type(eltype(d), eltype(sih))
-    @assert length(d) == dim(sih) "cannot compute the support vector of a " *
-                                  "$(dim(sih))-dimensional set along a vector of length $(d.n)"
-    if d.v < zero(N)
-        return SingleEntryVector(d.i, d.n, -radius_hyperrectangle(sih, d.i))
-    else
-        return SingleEntryVector(d.i, d.n, radius_hyperrectangle(sih, d.i))
-    end
 end
