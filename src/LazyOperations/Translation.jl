@@ -17,11 +17,12 @@ x ↦ x + v,\\qquad x ∈ X
 ```
 
 A translation is a special case of an affine map ``A x + b, x ∈ X`` where the
-linear map ``A`` is the identity matrix and the translation vector ``b = v``.
+linear map ``A`` is the identity matrix and the translation vector ``b`` is
+``v``.
 
 ### Fields
 
-- `X` -- convex set
+- `X` -- set
 - `v` -- vector that defines the translation
 
 ### Example
@@ -165,7 +166,7 @@ Convenience constructor for a translation.
 
 ### Input
 
-- `X` -- convex set
+- `X` -- set
 - `v` -- vector
 
 ### Output
@@ -316,12 +317,12 @@ end
 """
     ∈(x::AbstractVector, tr::Translation)
 
-Check whether a given point is contained in the translation of a convex set.
+Check whether a given point is contained in the translation of a set.
 
 ### Input
 
 - `x`  -- point/vector
-- `tr` -- translation of a convex set
+- `tr` -- translation of a set
 
 ### Output
 
@@ -344,7 +345,7 @@ Concrete linear map of a polyhedron in constraint representation.
 ### Input
 
 - `M`  -- matrix
-- `tr` -- translation of a convex set
+- `tr` -- translation of a set
 
 ### Output
 
