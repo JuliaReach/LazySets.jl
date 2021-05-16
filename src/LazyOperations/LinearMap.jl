@@ -23,6 +23,9 @@ Typically `NM = N`, but there may be exceptions, e.g., if `NM` is an interval
 that holds numbers of type `N`, where `N` is a floating point number type such
 as `Float64`.
 
+The linear map preserves convexity: if `X` is convex, then an linear map of `X`
+is convex as well.
+
 ### Examples
 
 For the examples we create a ``3×2`` matrix and two unit squares, one of them

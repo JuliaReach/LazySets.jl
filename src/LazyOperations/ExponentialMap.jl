@@ -169,6 +169,11 @@ Type that represents the action of an exponential map on a set.
 - `spmexp` -- sparse matrix exponential
 - `X`      -- set
 
+### Notes
+
+The exponential map preserves convexity: if `X` is convex, then any exponential
+map of `X` is convex as well.
+
 ### Examples
 
 The `ExponentialMap` type is overloaded to the usual times `*` operator when the
@@ -472,6 +477,11 @@ exponential to a set.
 
 - `spmexp` -- projection of a sparse matrix exponential
 - `X`      -- set
+
+### Notes
+
+The exponential projection preserves convexity: if `X` is convex, then any
+exponential projection of `X` is convex as well.
 """
 struct ExponentialProjectionMap{N, S<:LazySet{N}} <: AbstractAffineMap{N, S}
     projspmexp::ProjectionSparseMatrixExp

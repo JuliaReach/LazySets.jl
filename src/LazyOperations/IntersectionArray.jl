@@ -20,6 +20,9 @@ This type assumes that the dimensions of all elements match.
 
 The `EmptySet` is the absorbing element for `IntersectionArray`.
 
+The intersection preserves convexity: if the set arguments are convex, then
+their intersection is convex as well.
+
 Constructors:
 
 - `IntersectionArray(array::Vector{<:LazySet})` -- default constructor

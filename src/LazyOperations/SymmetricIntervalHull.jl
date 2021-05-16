@@ -27,6 +27,8 @@ To be most efficient in such cases, this type stores the intermediately computed
 bounds in the `cache` field.
 
 The set `X` must be compact.
+
+The result is a hyperrectangle and hence in particular convex.
 """
 struct SymmetricIntervalHull{N, S<:LazySet{N}} <: AbstractHyperrectangle{N}
     X::S

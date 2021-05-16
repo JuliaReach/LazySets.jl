@@ -13,6 +13,10 @@ Type that represents the set union of a finite number of sets.
 ### Fields
 
 - `array` -- array of sets
+
+### Notes
+
+The union of convex sets is typically not convex.
 """
 struct UnionSetArray{N, S<:LazySet{N}}
    array::Vector{S}

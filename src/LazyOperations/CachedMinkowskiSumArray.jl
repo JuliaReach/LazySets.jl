@@ -53,6 +53,9 @@ array `array` when the support vector was evaluated last time, and `s` is the
 support vector that was obtained. Thus this type assumes that `array` is not
 modified except by adding new sets at the end.
 
+The Minkowski sum preserves convexity: if the set arguments are convex, then
+their Minkowski sum is convex as well.
+
 Constructors:
 
 - `CachedMinkowskiSumArray(array::Vector{<:LazySet})` -- default constructor

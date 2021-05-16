@@ -25,6 +25,11 @@ linear map ``A`` is the identity matrix and the translation vector ``b`` is
 - `X` -- set
 - `v` -- vector that defines the translation
 
+### Notes
+
+The translation preserves convexity: if `X` is convex, then any translation of
+`X` is convex as well.
+
 ### Example
 
 ```jldoctest translation
