@@ -156,11 +156,11 @@ function σ(d::AbstractVector, cms::CachedMinkowskiSumArray)
         else
             # has only stored the support vector of the first k sets
             @assert k < l "invalid cache index"
-            svec = svec1 + σ_helper(d, @view arr[k+1:l])
+            svec = svec1 + _σ_msum_array(d, @view arr[k+1:l])
         end
     else
         # first-time computation of support vector
-        svec = σ_helper(d, arr)
+        svec = _σ_msum_array(d, arr)
     end
     # NOTE: make a copy of the direction vector (can be modified outside)
     cache[copy(d)] = CachedPair(l, svec)
