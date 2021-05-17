@@ -74,6 +74,10 @@ for N in [Float64, Rational{Int}, Float32]
         @test ispermutation(vertices_list(U, apply_convex_hull=true),
             [N[1, -1], N[-1, 1], N[-1, -1], N[1, 2], N[2, 1]])
     end
+
+    # an_element and membership
+    Uarr = UnionSetArray([EmptySet{N}(2), B1])
+    @test an_element(Uarr) ∈ Uarr
 end
 
 for N in [Float64]
