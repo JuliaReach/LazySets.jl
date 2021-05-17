@@ -267,10 +267,9 @@ function vertices_list(ilm::InverseLinearMap; prune::Bool=true)
     vlist_X = vertices_list(ilm.X)
 
     # create resulting vertices list
-    vlist = Vector{eltype(vlist_X)}()
-    sizehint!(vlist, length(vlist_X))
-    for v in vlist_X
-        push!(vlist, ilm.M \ v)
+    vlist = Vector{eltype(vlist_X)}(undef, length(vlist_X))
+    @inbounds for (i, vi) in enumerate(vlist_X)
+        vlist[i] = ilm.M \ vi
     end
 
     return prune ? convex_hull(vlist) : vlist
