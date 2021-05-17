@@ -76,6 +76,9 @@ for N in [Float64, Rational{Int}, Float32]
     end
 
     # an_element and membership
+    X = HPolyhedron([HalfSpace(N[1, 0], N(0)), HalfSpace(N[-1, 0], N(-1))])
+    UXY = UnionSet(X, B1)
+    @test an_element(UXY) ∈ UXY
     Uarr = UnionSetArray([EmptySet{N}(2), B1])
     @test an_element(Uarr) ∈ Uarr
 end
