@@ -445,3 +445,21 @@ function allequal(x)
     end
     return true
 end
+
+# if `vector` has exactly one non-zero entry, return its index
+# otherwise return 0
+function find_unique_nonzero_entry(vector::AbstractVector{N}) where {N}
+    res = 0
+    for (i, v) in enumerate(vector)
+        if v != zero(N)
+            if res != 0
+                # at least two non-zero entries
+                return 0
+            else
+                # first non-zero entry so far
+                res = i
+            end
+        end
+    end
+    return res
+end

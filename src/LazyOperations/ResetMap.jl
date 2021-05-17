@@ -1,3 +1,4 @@
+using LazySets.Arrays: find_unique_nonzero_entry
 import Base: isempty
 
 export ResetMap
@@ -12,7 +13,7 @@ dimensions, and the translation vector ``b`` is zero in all other dimensions.
 
 ### Fields
 
-- `X`      -- convex set
+- `X`      -- set
 - `resets` -- resets (a mapping from an index to a new value)
 
 ### Examples
@@ -288,7 +289,7 @@ We then modify the right-hand side of these constraints to ``x₅ ≤ 4`` and
 function constraints_list(rm::ResetMap{N}) where {N}
     constraints = copy(constraints_list(LinearMap(matrix(rm), set(rm))))
     for (i, c) in enumerate(constraints)
-        constrained_dim = _find_unique_nonzero_entry(c.a)
+        constrained_dim = find_unique_nonzero_entry(c.a)
         if constrained_dim > 0  # constraint in only one dimension
             if !haskey(rm.resets, constrained_dim)
                 continue  # not a dimension we are interested in
@@ -306,24 +307,6 @@ function constraints_list(rm::ResetMap{N}) where {N}
         end
     end
     return constraints
-end
-
-# if `vector` has exactly one non-zero entry, return its index
-# otherwise return 0
-function _find_unique_nonzero_entry(vector::AbstractVector{N}) where {N}
-    res = 0
-    for (i, v) in enumerate(vector)
-        if v != zero(N)
-            if res != 0
-                # at least two non-zero entries
-                return 0
-            else
-                # first non-zero entry so far
-                res = i
-            end
-        end
-    end
-    return res
 end
 
 """
