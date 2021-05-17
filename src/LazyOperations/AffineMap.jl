@@ -27,6 +27,9 @@ parametric in the coefficients of the linear map, `NM`, which may be different f
 the numeric type of the wrapped set, `N`. However, the numeric type of the
 translation vector should be `NM`.
 
+The affine map preserves convexity: if `X` is convex, then any affine map of `X`
+is convex as well.
+
 ### Examples
 
 For the examples we create a ``3×2`` matrix, a two-dimensional unit square, and

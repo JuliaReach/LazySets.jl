@@ -21,6 +21,9 @@ This type assumes that the dimensions of all elements match.
 The `ZeroSet` is the neutral element and the `EmptySet` is the absorbing element
 for `MinkowskiSumArray`.
 
+The Minkowski sum preserves convexity: if the set arguments are convex, then
+their Minkowski sum is convex as well.
+
 Constructors:
 
 - `MinkowskiSumArray(array::Vector{<:LazySet})` -- default constructor

@@ -16,6 +16,10 @@ Type that represents the set union of two convex sets.
 
 - `X` -- convex set
 - `Y` -- convex set
+
+### Notes
+
+The union of convex sets is typically not convex.
 """
 struct UnionSet{N, S1<:LazySet{N}, S2<:LazySet{N}}
     X::S1

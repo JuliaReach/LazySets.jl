@@ -16,6 +16,11 @@ dimensions, and the translation vector ``b`` is zero in all other dimensions.
 - `X`      -- set
 - `resets` -- resets (a mapping from an index to a new value)
 
+### Notes
+
+The reset map preserves convexity: if `X` is convex, then any reset map of `X`
+is convex as well.
+
 ### Examples
 
 ```jldoctest resetmap

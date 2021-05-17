@@ -17,6 +17,9 @@ Type that represents the Cartesian product of a finite number of sets.
 
 The `EmptySet` is the absorbing element for `CartesianProductArray`.
 
+The Cartesian product preserves convexity: if the set arguments are convex, then
+their Cartesian product is convex as well.
+
 Constructors:
 
 - `CartesianProductArray(array::Vector{<:LazySet})` -- default constructor

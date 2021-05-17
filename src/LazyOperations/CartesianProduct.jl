@@ -27,6 +27,9 @@ many sets without recursion, instead using an array, making the operations more 
 
 The `EmptySet` is the absorbing element for `CartesianProduct`.
 
+The Cartesian product preserves convexity: if the set arguments are convex, then
+their Cartesian product is convex as well.
+
 In some docstrings the word "block" is used to denote each wrapped set, with the natural
 order, i.e. we say that the first block of a Cartesian product `cp` is `cp.X` and
 the second block is `cp.Y`.

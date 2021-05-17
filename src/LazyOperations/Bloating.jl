@@ -16,6 +16,9 @@ known as *bloating*).
 
 `Bloating(X, ε, p)` is equivalent to the Minkowski sum of `X` and a ball in the
 `p`-norm of radius `ε` centered in the origin `O` (i.e., `X ⊕ Ballp(p, O, ε)`).
+
+The `Bloating` operation preserves convexity: if `X` is convex, then any
+bloating of `X` is convex as well.
 """
 struct Bloating{N, S<:LazySet{N}} <:LazySet{N}
     X::S

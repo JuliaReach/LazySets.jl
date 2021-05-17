@@ -60,6 +60,9 @@ Type that represents the intersection of two sets.
 If the arguments of the lazy intersection are half-spaces, the set is simplified
 to a polyhedron in constraint representation (`HPolyhedron`).
 
+The intersection preserves convexity: if the set arguments are convex, then
+their intersection is convex as well.
+
 ### Examples
 
 Create an expression, ``Z``, that lazily represents the intersection of two
