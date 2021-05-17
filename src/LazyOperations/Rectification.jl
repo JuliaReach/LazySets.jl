@@ -28,11 +28,11 @@ end
 """
     Rectification{N, S<:LazySet{N}}
 
-Type that represents the rectification of a convex set.
+Type that represents the rectification of a set.
 
 ### Fields
 
-- `X`     -- convex set
+- `X`     -- set
 - `cache` -- storage of information computed before
 
 ### Notes
@@ -98,8 +98,8 @@ struct Rectification{N, S<:LazySet{N}}
                 X isa CartesianProductArray || X isa EmptySet
             # set types with efficient support-vector computations
             set = X
-        elseif dim(X) == 1 && isbounded(X)
-            # one-dimensional bounded sets are converted to Interval type
+        elseif isconvextype(S) && dim(X) == 1 && isbounded(X)
+            # one-dimensional convex bounded sets are converted to Interval type
             set = convert(Interval, X)
         else
             # do not pre-compute a set; computation is triggered later
@@ -201,12 +201,12 @@ end
     σ(d::AbstractVector, r::Rectification{N, <:CartesianProduct{N}}) where {N}
 
 Return the support vector of the rectification of a Cartesian product of two
-convex sets.
+sets.
 
 ### Input
 
 - `d` -- direction
-- `r` -- rectification of a Cartesian product of two convex sets
+- `r` -- rectification of a Cartesian product of two sets
 
 ### Output
 
@@ -230,12 +230,12 @@ end
     σ(d::AbstractVector, r::Rectification{N, <:CartesianProductArray{N}}) where {N}
 
 Return the support vector of the rectification of a Cartesian product of a
-finite number of convex sets.
+finite number of sets.
 
 ### Input
 
 - `d` -- direction
-- `r` -- rectification of a Cartesian product of a finite number of convex sets
+- `r` -- rectification of a Cartesian product of a finite number of sets
 
 ### Output
 
@@ -264,17 +264,16 @@ end
 """
     ρ(d::AbstractVector, r::Rectification)
 
-Evaluate the support function of a rectification of a convex set in a given
-direction.
+Evaluate the support function of a rectification of a set in a given direction.
 
 ### Input
 
 - `d` -- direction
-- `r` -- rectification of a convex set
+- `r` -- rectification of a set
 
 ### Output
 
-The support value of the rectification of a convex set in the given direction.
+The support value of the rectification of a set in the given direction.
 
 ### Algorithm
 
@@ -433,11 +432,11 @@ end
                             concrete_intersection::Bool=false
                            ) where {N}
 
-Compute an equivalent union of projections from a rectification of a convex set.
+Compute an equivalent union of projections from a rectification of a set.
 
 ### Input
 
-- `r`                     -- rectification of a convex set
+- `r`                     -- rectification of a set
 - `concrete_intersection` -- (optional, default: `false`) option to compute
                              all intersections concretely or lazily
 
