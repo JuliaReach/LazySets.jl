@@ -8,11 +8,11 @@ export MinkowskiSumArray,
 """
    MinkowskiSumArray{N, S<:LazySet{N}} <: LazySet{N}
 
-Type that represents the Minkowski sum of a finite number of convex sets.
+Type that represents the Minkowski sum of a finite number of sets.
 
 ### Fields
 
-- `array` -- array of convex sets
+- `array` -- array of sets
 
 ### Notes
 
@@ -55,7 +55,7 @@ end
 """
    array(msa::MinkowskiSumArray)
 
-Return the array of a Minkowski sum of a finite number of convex sets.
+Return the array of a Minkowski sum of a finite number of sets.
 
 ### Input
 
@@ -63,7 +63,7 @@ Return the array of a Minkowski sum of a finite number of convex sets.
 
 ### Output
 
-The array of a Minkowski sum of a finite number of convex sets.
+The array of a Minkowski sum of a finite number of sets.
 """
 function array(msa::MinkowskiSumArray)
    return msa.array
@@ -103,7 +103,12 @@ The support vector in the given direction.
 If the direction has norm zero, the result depends on the summand sets.
 """
 function σ(d::AbstractVector, msa::MinkowskiSumArray)
-   return σ_helper(d, msa.array)
+   return _σ_msum_array(d, msa.array)
+end
+
+@inline function _σ_msum_array(d::AbstractVector{N},
+                               array::AbstractVector{<:LazySet}) where {N}
+    return sum(σ(d, Xi) for Xi in array)
 end
 
 """
@@ -133,11 +138,11 @@ end
 """
 	isbounded(msa::MinkowskiSumArray)
 
-Determine whether a Minkowski sum of a finite number of convex sets is bounded.
+Determine whether a Minkowski sum of a finite number of sets is bounded.
 
 ### Input
 
-- `msa` -- Minkowski sum of a finite number of convex sets
+- `msa` -- Minkowski sum of a finite number of sets
 
 ### Output
 
