@@ -8,12 +8,12 @@ export LinearMap,
 """
     LinearMap{N, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
 
-Type that represents a linear transformation ``M⋅S`` of a convex set ``S``.
+Type that represents a linear transformation ``M⋅S`` of a set ``S``.
 
 ### Fields
 
 - `M` -- matrix/linear map
-- `X` -- convex set
+- `X` -- set
 
 ### Notes
 
@@ -121,7 +121,7 @@ Alias to create a `LinearMap` object.
 ### Input
 
 - `map` -- linear map
-- `X`   -- convex set
+- `X`   -- set
 
 ### Output
 
@@ -251,8 +251,8 @@ If the direction has norm zero, the result depends on the wrapped set.
 
 ### Notes
 
-If ``L = M⋅S``, where ``M`` is a matrix and ``S`` is a convex set, it follows
-that ``σ(d, L) = M⋅σ(M^T d, S)`` for any direction ``d``.
+If ``L = M⋅S``, where ``M`` is a matrix and ``S`` is a set, it follows that
+``σ(d, L) = M⋅σ(M^T d, S)`` for any direction ``d``.
 """
 function σ(d::AbstractVector, lm::LinearMap)
     return _σ_linear_map(d, lm.M, lm.X)
@@ -281,8 +281,8 @@ If the direction has norm zero, the result depends on the wrapped set.
 
 ### Notes
 
-If ``L = M⋅S``, where ``M`` is a matrix and ``S`` is a convex set, it follows
-that ``ρ(d, L) = ρ(M^T d, S)`` for any direction ``d``.
+If ``L = M⋅S``, where ``M`` is a matrix and ``S`` is a set, it follows that
+``ρ(d, L) = ρ(M^T d, S)`` for any direction ``d``.
 """
 function ρ(d::AbstractVector, lm::LinearMap; kwargs...)
     return _ρ_linear_map(d, lm.M, lm.X; kwargs...)
@@ -295,12 +295,12 @@ end
 """
     ∈(x::AbstractVector, lm::LinearMap)
 
-Check whether a given point is contained in a linear map of a convex set.
+Check whether a given point is contained in a linear map of a set.
 
 ### Input
 
 - `x`  -- point/vector
-- `lm` -- linear map of a convex set
+- `lm` -- linear map of a set
 
 ### Output
 
@@ -309,8 +309,9 @@ Check whether a given point is contained in a linear map of a convex set.
 ### Algorithm
 
 Note that ``x ∈ M⋅S`` iff ``M^{-1}⋅x ∈ S``.
-This implementation does not explicitly invert the matrix, which is why it also
-works for non-square matrices.
+This implementation does not explicitly invert the matrix: instead of
+``M^{-1}⋅x`` it computes ``M \\ x``.
+Hence it also works for non-square matrices.
 
 ### Examples
 
@@ -371,8 +372,8 @@ A list of vertices.
 
 ### Algorithm
 
-We assume that the underlying set `X` is polyhedral, and compute the list of vertices
-of `X`. The result is just the linear map applied to each vertex of `X`.
+We assume that the underlying set `X` is polyhedral, and compute the list of
+vertices of `X`. The result is just the linear map applied to each vertex of `X`.
 """
 function vertices_list(lm::LinearMap; prune::Bool=true)
     # collect list of vertices of the wrapped set
