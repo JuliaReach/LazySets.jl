@@ -13,7 +13,8 @@ PLOT_PRECISION = 1e-3
 PLOT_POLAR_DIRECTIONS = 40
 DEFAULT_PLOT_LIMIT = 1000
 
-function _extract_limits(p::RecipesBase.AbstractPlot)
+function _extract_limits(p::RecipesBase.AbstractPlot,
+                         plotattributes::AbstractDict)
     lims = Dict()
     if length(p) > 0
         subplot = p[1]
@@ -24,6 +25,15 @@ function _extract_limits(p::RecipesBase.AbstractPlot)
         lims[:x] = :auto
         lims[:y] = :auto
     end
+
+    # check whether the current call to `plot`/`plot!` passed new bounds
+    if haskey(plotattributes, :xlims)
+        lims[:x] = plotattributes[:xlims]
+    end
+    if haskey(plotattributes, :ylims)
+        lims[:y] = plotattributes[:ylims]
+    end
+
     return lims
 end
 
@@ -32,8 +42,9 @@ function _extract_extrema(p::RecipesBase.AbstractPlot)
     if length(p) > 0
         subplot = p[1]
         for symbol in [:x, :y]
-            emin = subplot[Symbol(symbol,:axis)][:extrema].emin
-            emax = subplot[Symbol(symbol,:axis)][:extrema].emax
+            bounds = subplot[Symbol(symbol,:axis)][:extrema]
+            emin = bounds.emin
+            emax = bounds.emax
             extrema[symbol] = (emin, emax)
         end
     else
@@ -86,7 +97,7 @@ end
 function _bounding_hyperrectangle(lims, N)
     low_lim = [lims[:x][1] - DEFAULT_PLOT_LIMIT, lims[:y][1] - DEFAULT_PLOT_LIMIT]
     high_lim = [lims[:x][2] + DEFAULT_PLOT_LIMIT, lims[:y][2] + DEFAULT_PLOT_LIMIT]
-    return Hyperrectangle(low=convert.(N,low_lim), high=convert.(N,high_lim))
+    return Hyperrectangle(low=convert.(N, low_lim), high=convert.(N, high_lim))
 end
 
 """
@@ -314,7 +325,7 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
 
         # extract limits and extrema of already plotted sets
         p = plotattributes[:plot_object]
-        lims = _extract_limits(p)
+        lims = _extract_limits(p, plotattributes)
         extr = _extract_extrema(p)
 
         if !isbounded(X)
@@ -382,7 +393,7 @@ julia> plot(Singleton([0.5, 1.0]))
     # update manually set plot limits if necessary
     p = plotattributes[:plot_object]
     if length(p) > 0
-        lims = _extract_limits(p)
+        lims = _extract_limits(p, plotattributes)
         _update_plot_limits!(lims, S)
         xlims --> lims[:x]
         ylims --> lims[:y]
@@ -471,7 +482,7 @@ julia> plot(X, -1., 100)  # equivalent to the above line
 
     # extract limits and extrema of already plotted sets
     p = plotattributes[:plot_object]
-    lims = _extract_limits(p)
+    lims = _extract_limits(p, plotattributes)
     extr = _extract_extrema(p)
 
     if !isbounded(cap)
