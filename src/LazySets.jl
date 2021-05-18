@@ -37,7 +37,10 @@ include("Arrays/Arrays.jl")
 using .Arrays
 import .Arrays: distance,
                 rectify,
-                _rationalize
+                _rationalize,
+                copy_vector,
+                finalize_vector,
+                adapt_vector_type
 
 # ===================
 # Auxiliary functions

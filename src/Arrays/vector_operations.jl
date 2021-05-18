@@ -463,3 +463,35 @@ function find_unique_nonzero_entry(vector::AbstractVector{N}) where {N}
     end
     return res
 end
+
+function copy_vector(x::AbstractVector)
+    return copy(x)  # copy by default
+end
+
+function finalize_vector(x::AbstractVector)
+    return x  # do nothing by default
+end
+
+function adapt_vector_type(x::AbstractVector, comparison)
+    return x  # do nothing by default
+end
+
+function load_copy_finalize_static()
+
+return quote
+    function copy_vector(x::SVector)
+        return MVector(x)
+    end
+
+    function finalize_vector(x::MVector)
+        return SVector(x)
+    end
+
+    function adapt_vector_type(x::AbstractVector, comparison::SVector)
+        return SVector{length(x)}(x)
+    end
+    function adapt_vector_type(x::SVector, comparison::SVector)
+        return x
+    end
+end # quote
+end # end load_copy_finalize_static

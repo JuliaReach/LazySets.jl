@@ -555,7 +555,7 @@ A list of `Hyperrectangle`s.
 function split(H::AbstractHyperrectangle{N}, num_blocks::AbstractVector{Int}
               ) where {N}
     @assert length(num_blocks) == dim(H) "need number of blocks in each dimension"
-    radius = copy(radius_hyperrectangle(H))
+    radius = copy_vector(radius_hyperrectangle(H))
     total_number = 1
     lo = low(H)
     hi = high(H)
@@ -574,11 +574,13 @@ function split(H::AbstractHyperrectangle{N}, num_blocks::AbstractVector{Int}
             total_number *= m
         end
     end
+    radius = finalize_vector(radius)
 
     # create hyperrectangles for every combination of the center points
     result = Vector{Hyperrectangle{N, typeof(center(H)), typeof(radius)}}(undef, total_number)
     @inbounds for (i, center) in enumerate(product(centers...))
-        result[i] = Hyperrectangle(collect(center), copy(radius))
+        c = adapt_vector_type(collect(center), radius)
+        result[i] = Hyperrectangle(c, copy(radius))
     end
     return result
 end
