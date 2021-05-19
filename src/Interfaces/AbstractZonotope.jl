@@ -565,7 +565,7 @@ function constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true) wh
 
     c = center(Z)
     m = binomial(p, n - 1)
-    constraints = Vector{LinearConstraint{N, Vector{N}}}()
+    constraints = Vector{LinearConstraint{N, _vector_type(typeof(c))}}()
     sizehint!(constraints, 2m)
     for columns in StrictlyIncreasingIndices(p, n-1)
         c⁺ = cross_product(view(G, :, columns))
@@ -578,8 +578,8 @@ function constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true) wh
         c⁻ = -c⁺
         d⁻ = -d⁺ + 2 * Δd  # identical to dot(c⁻, c) + Δd
 
-        push!(constraints, LinearConstraint(c⁺, d⁺))
-        push!(constraints, LinearConstraint(c⁻, d⁻))
+        push!(constraints, LinearConstraint(SVector(c⁺), d⁺))
+        push!(constraints, LinearConstraint(SVector(c⁻), d⁻))
     end
     return constraints
 end

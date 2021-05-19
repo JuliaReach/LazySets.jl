@@ -122,7 +122,7 @@ function cross_product(M::AbstractMatrix{N}) where {N<:Real}
     n = size(M, 1)
     @assert 1 < n == size(M, 2) + 1 "the matrix must be n x (n-1) dimensional"
 
-    v = Vector{N}(undef, n)
+    v = MVector{n, N}(undef) #Vector{N}(undef, n)
     minus = false
     for i in 1:n
         Mi = view(M, 1:n .!= i, :)  # remove i-th row
@@ -136,6 +136,7 @@ function cross_product(M::AbstractMatrix{N}) where {N<:Real}
         end
     end
     return v
+    #return SVector(v)
 end
 
 # det cannot handle sparse matrices in some cases
