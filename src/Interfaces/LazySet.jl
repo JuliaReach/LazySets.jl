@@ -32,7 +32,8 @@ export LazySet,
        constraints,
        vertices,
        project,
-       rectify
+       rectify,
+       permute
 
 """
     LazySet{N}
@@ -1500,3 +1501,19 @@ rationalize(::Type{T}, X::LazySet{N}; tol::Real=eps(N)) where {T<:Integer, N<:Ab
 # method extension for lazy sets
 _rationalize(::Type{T}, X::AbstractVector{<:LazySet{N}}, tol::Real) where {T<:Integer, N<:AbstractFloat} = rationalize.(Ref(T), X, Ref(tol))
 _rationalize(::Type{T}, X::LazySet{N}, tol::Real) where {T<:Integer, N<:AbstractFloat} = rationalize(T, X, tol)
+
+"""
+    permute(X::LazySet, p::AbstractVector{Int})
+
+Permute the dimensions of a set according to a given permutation vector.
+
+### Input
+
+- `X` -- set
+- `p` -- permutation vector
+
+### Output
+
+A new equivalent set where the dimensions have been permuted.
+"""
+function permute end

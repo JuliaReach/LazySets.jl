@@ -274,3 +274,9 @@ end
 function σ(d::SingleEntryVector, H::Hyperrectangle)
     return _σ_sev_hyperrectangle(d, H)
 end
+
+function permute(H::Hyperrectangle, p::AbstractVector{Int})
+    c = center(H)[p]
+    r = radius_hyperrectangle(H)[p]
+    return Hyperrectangle(c, r)
+end

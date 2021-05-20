@@ -7,6 +7,7 @@ using GLPKMathProgInterface, LinearAlgebra, MathProgBase, Reexport, Requires,
       SparseArrays
 using LinearAlgebra: checksquare
 import LinearAlgebra: norm, ×, normalize, normalize!
+import SparseArrays: permute
 import Random
 using Random: AbstractRNG, GLOBAL_RNG, SamplerType, shuffle
 import InteractiveUtils: subtypes
