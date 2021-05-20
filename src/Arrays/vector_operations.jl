@@ -463,14 +463,3 @@ function find_unique_nonzero_entry(vector::AbstractVector{N}) where {N}
     end
     return res
 end
-
-# no-op
-_similar_type(x::AbstractVector) = typeof(x)
-
-function load_copy_finalize_static()
-
-return quote
-    _similar_type(x::StaticArrays.StaticArray) = StaticArrays.similar_type(x)
-end # quote
-
-end # end load_copy_finalize_static
