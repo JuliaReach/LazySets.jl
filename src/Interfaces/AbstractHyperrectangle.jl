@@ -552,10 +552,13 @@ Partition a hyperrectangular set into uniform sub-hyperrectangles.
 
 A list of `Hyperrectangle`s.
 """
-function split(H::AbstractHyperrectangle{N}, num_blocks::AbstractVector{Int}
-              ) where {N}
+function split(H::AbstractHyperrectangle{N}, num_blocks::AbstractVector{Int}) where {N}
     @assert length(num_blocks) == dim(H) "need number of blocks in each dimension"
-    radius = copy(radius_hyperrectangle(H))
+    R = radius_hyperrectangle(H)
+    T = _similar_type(R)
+    radius = similar(R)
+    copyto!(radius, R)
+
     total_number = 1
     lo = low(H)
     hi = high(H)
@@ -574,11 +577,13 @@ function split(H::AbstractHyperrectangle{N}, num_blocks::AbstractVector{Int}
             total_number *= m
         end
     end
+    radius = convert(T, radius)
 
     # create hyperrectangles for every combination of the center points
-    result = Vector{Hyperrectangle{N, typeof(center(H)), typeof(radius)}}(undef, total_number)
+    result = Vector{Hyperrectangle{N, T, T}}(undef, total_number)
     @inbounds for (i, center) in enumerate(product(centers...))
-        result[i] = Hyperrectangle(collect(center), copy(radius))
+        c = convert(T, collect(center))
+        result[i] = Hyperrectangle(c, copy(radius))
     end
     return result
 end

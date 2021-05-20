@@ -154,6 +154,9 @@ for N in [Float64, Rational{Int}, Float32]
     H = Hyperrectangle(N[0, 0], N[1, 2])
     S = split(H, [2, 2])
     @test S isa Vector{typeof(H)}
+    H = Hyperrectangle(SA[N(0), N(0)], SA[N(1), N(2)])
+    S = split(H, [2, 2])
+    @test S isa Vector{typeof(H)}
 
     # subset
     H1 = Hyperrectangle(N[1, 3], N[0.5, 0.5])

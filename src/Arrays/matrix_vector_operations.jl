@@ -140,3 +140,14 @@ function to_matrix(vectors::AbstractVector{VN},
     end
     return M
 end
+
+# no-op
+_similar_type(x::AbstractVector) = typeof(x)
+
+function load_copy_finalize_static()
+
+return quote
+    _similar_type(x::StaticArrays.StaticArray) = StaticArrays.similar_type(x)
+end # quote
+
+end # end load_copy_finalize_static
