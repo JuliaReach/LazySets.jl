@@ -1514,6 +1514,7 @@ Permute the dimensions of a set according to a given permutation vector.
 
 ### Output
 
-A new equivalent set where the dimensions have been permuted.
+A new set corresponding to `X` where the dimensions have been permuted according
+to `p`.
 """
 function permute end
