@@ -270,4 +270,9 @@ for N in [Float64, Rational{Int}, Float32]
     # concrete projection
     @test project(Hyperrectangle(N[4, 3, 2, 1], N[8, 7, 6, 5]), [2, 4]) ==
         Hyperrectangle(N[3, 1], N[7, 5])
+
+    # permutation
+    H = Hyperrectangle(N[1, 2, 3], N[4, 5, 6])
+    @test permute(H, 1:3) == H
+    @test permute(H, [2, 1, 3]) == Hyperrectangle(N[2, 1, 3], N[5, 4, 6])
 end

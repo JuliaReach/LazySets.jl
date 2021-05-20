@@ -141,4 +141,9 @@ for N in [Float64, Rational{Int}, Float32]
     S2 = Singleton(N[4, 5, 6])
     @test cartesian_product(S1, S2) == Singleton(N[1, 2, 3, 4, 5, 6])
     @test concretize(S1 × S2 × S1) == Singleton(N[1, 2, 3, 4, 5, 6, 1, 2, 3])
+
+    # permutation
+    S = Singleton(N[3, 4, 5])
+    @test permute(S, 1:3) == S
+    @test permute(S, [2, 1, 3]) == Singleton(N[4, 3, 5])
 end

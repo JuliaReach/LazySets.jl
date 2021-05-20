@@ -152,3 +152,8 @@ specified by `block`.
 function project(S::Singleton, block::AbstractVector{Int}; kwargs...)
     return Singleton(element(S)[block])
 end
+
+function permute(S::Singleton, p::AbstractVector{Int})
+    e = element(S)[p]
+    return Singleton(e)
+end
