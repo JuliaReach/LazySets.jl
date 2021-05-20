@@ -38,9 +38,7 @@ using .Arrays
 import .Arrays: distance,
                 rectify,
                 _rationalize,
-                copy_vector,
-                finalize_vector,
-                adapt_vector_type
+                _similar_type
 
 # ===================
 # Auxiliary functions
