@@ -32,6 +32,8 @@ See the [Getting started](https://juliareach.github.io/LazySets.jl/dev/man/getti
 
 This library has been applied in a number of scientic works. In reverse chronological order,
 
+[12] **Combining Set Propagation with Finite Element Methods for Time Integration in Transient Solid Mechanics Problems.** Forets, Marcelo, Daniel Freire Caporale, and Jorge M. Pérez Zerpa.. arXiv preprint [arXiv:2105.05841](https://arxiv.org/abs/2105.05841) (2021).
+
 [11] **Efficient reachability analysis of parametric linear hybrid systems with time-triggered transitions.** Marcelo Forets, Daniel Freire, Christian Schilling, 2020. [arXiv: 2006.12325](https://arxiv.org/abs/2006.12325). Accepted in [18th ACM-IEEE International Conference on Formal Methods and Models for System Design
 ](https://iitjammu.ac.in/conferences/memocode2020/index.html).
 
