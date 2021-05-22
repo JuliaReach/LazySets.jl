@@ -18,6 +18,7 @@ tohrep(::VPolytope{N}) where {N}
 tovrep(::VPolytope)
 polyhedron(::VPolytope)
 linear_map(::AbstractMatrix, ::VPolytope)
+rectify(::VPolytope, ::Bool=false)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

@@ -210,6 +210,17 @@ for N in [Float64, Rational{Int}, Float32]
     vlist2 = vertices_list(Q2)
     @test ispermutation(vlist1, [N[1, 0], N[-1, 0]])
     @test ispermutation(vlist1, vlist2)
+
+    # rectification
+    P = convert(VPolytope, BallInf(zeros(N, 2), N(2)))
+    Q1 = rectify(P)
+    Q2 = BallInf(ones(N, 2), N(1))
+    Q2 = convert(VPolytope, Q2)  # TODO temporary workaround (see #2708)
+    @test isequivalent(Q1, Q2)
+    P = convert(VPolytope, BallInf(-3 * ones(N, 2), N(1)))
+    Q1 = rectify(P)
+    Q2 = Singleton(zeros(N, 2))
+    @test isequivalent(Q1, Q2)
 end
 
 # default Float64 constructors

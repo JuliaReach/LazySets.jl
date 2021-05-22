@@ -577,3 +577,26 @@ function _project_vrep(vlist::AbstractVector{VN}, n, block) where {N, VN<:Abstra
         return VPolytope(πvertices)
     end
 end
+
+"""
+    rectify(P::VPolytope; [apply_convex_hull]::Bool=false)
+
+Concrete rectification of a polytope in vertex representation.
+
+### Input
+
+- `S` -- polytope in vertex representation
+- `apply_convex_hull` -- (optional, default: `false`) flag for applying a convex
+                         hull to eliminate redundant vertices
+
+### Output
+
+The polytope that corresponds to the rectification of `P`.
+"""
+function rectify(P::VPolytope; apply_convex_hull::Bool=false)
+    vlist = map(rectify, P.vertices)
+    if apply_convex_hull
+        convex_hull!(vlist)
+    end
+    return VPolytope(vlist)
+end
