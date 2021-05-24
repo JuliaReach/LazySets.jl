@@ -644,3 +644,7 @@ function concretize(cpa::CartesianProductArray)
     end
     return X
 end
+
+function volume(cpa::CartesianProductArray)
+    return prod(volume, array(cpa))
+end

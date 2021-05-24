@@ -384,6 +384,12 @@ for N in [Float64, Float32, Rational{Int}]
     @test absorbing(CartesianProduct) == absorbing(CartesianProductArray) ==
           EmptySet
     @test b × e == e × b == cpa × e == e × cpa == e × e == e
+
+    # volume
+    b2 = BallInf(zeros(N, 3), N(3))
+    cp = CartesianProduct(b, b2)
+    cpa = CartesianProductArray([b, b2])
+    @test volume(cp) == volume(cpa) == N(3456)
 end
 
 for N in [Float64, Float32]
