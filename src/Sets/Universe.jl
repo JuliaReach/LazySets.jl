@@ -351,3 +351,7 @@ end
 function project(U::Universe{N}, block::AbstractVector{Int}; kwargs...) where {N}
     return Universe{N}(length(block))
 end
+
+function permute(U::Universe, p::AbstractVector{Int})
+    return U
+end
