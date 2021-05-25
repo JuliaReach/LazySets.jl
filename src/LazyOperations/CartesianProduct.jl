@@ -425,3 +425,7 @@ function project(cp::CartesianProduct{N, IT, Union{VP1, VP2}},
     end
     return Pout
 end
+
+function volume(cp::CartesianProduct)
+    return volume(cp.X) * volume(cp.Y)
+end
