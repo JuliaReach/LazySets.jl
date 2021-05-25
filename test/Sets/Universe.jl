@@ -94,6 +94,9 @@ for N in [Float64, Rational{Int}, Float32]
 
     # projection
     @test project(Universe{N}(5), [1, 4, 5]) == Universe{N}(3)
+
+    # permutation
+    @test permute(U, [1, 2]) == permute(U, [2, 1]) == U
 end
 
 # default Float64 constructor
