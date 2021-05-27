@@ -264,13 +264,8 @@ The singleton obtained by summing the elements in `X` and `Y`.
 function minkowski_sum(X::AbstractSingleton, Y::AbstractSingleton)
     @assert dim(X) == dim(Y) "expected that the singletons have the same dimension, " *
                 "but they are $(dim(X)) and $(dim(Y)) respectively"
-    return _minkowski_sum(X, Y)
+    return Singleton(element(X) + element(Y))
 end
-
-_minkowski_sum(X::AbstractSingleton, Y::AbstractSingleton) = Singleton(element(X) + element(Y))
-_minkowski_sum(X::AbstractSingleton, Y::ZeroSet) = X
-_minkowski_sum(X::ZeroSet, Y::AbstractSingleton) = Y
-_minkowski_sum(X::ZeroSet, Y::ZeroSet) = X
 
 """
     minkowski_sum(x::Interval, y::Interval)
@@ -471,3 +466,17 @@ end
 
 # symmetric method
 minkowski_sum(Z::AbstractZonotope, PZ::PolynomialZonotope) = minkowski_sum(PZ, Z)
+
+minkowski_sum(X::LazySet, ::ZeroSet) = X
+minkowski_sum(::ZeroSet, X::LazySet) = X
+minkowski_sum(Z::ZeroSet, ::ZeroSet) = Z
+
+# disambiguation
+minkowski_sum(::ZeroSet, P::AbstractPolyhedron) = P
+minkowski_sum(P::AbstractPolyhedron, ::ZeroSet) = P
+minkowski_sum(::ZeroSet, Z::AbstractZonotope) = Z
+minkowski_sum(Z::AbstractZonotope, ::ZeroSet) = Z
+minkowski_sum(::ZeroSet, H::AbstractHyperrectangle) = H
+minkowski_sum(H::AbstractHyperrectangle, ::ZeroSet) = H
+minkowski_sum(X::AbstractSingleton, Y::ZeroSet) = X
+minkowski_sum(::ZeroSet, X::AbstractSingleton) = X
