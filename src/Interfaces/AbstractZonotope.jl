@@ -505,21 +505,21 @@ It first computes the vertices and then converts the corresponding polytope
 to constraint representation.
 """
 function constraints_list(Z::AbstractZonotope)
-    return _constraints_list_fallback(Z)
+    return _constraints_list_vrep(Z)
 end
 
-@inline _constraints_list_fallback(Z) = constraints_list(VPolytope(vertices_list(Z)))
+@inline function _constraints_list_vrep(Z::AbstractZonotope)
+    return constraints_list(VPolytope(vertices_list(Z)))
+end
 
 """
-    constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true) where {N<:AbstractFloat}
+    constraints_list(Z::AbstractZonotope{N}) where {N<:AbstractFloat}
 
 Return the list of constraints defining a zonotopic set.
 
 ### Input
 
 - `Z`               -- zonotopic set
-- `check_full_rank` -- (optional; default: `true`) flag for checking whether the
-                       generator matrix has full rank
 
 ### Output
 
@@ -544,25 +544,29 @@ Reachable Sets of Hybrid Systems Using a Combination of Zonotopes and Polytopes.
 The one-dimensional case is not covered by that algorithm; we manually handle
 this case.
 """
-function constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true) where {N<:AbstractFloat}
-    G = genmat(Z)
-    p = ngens(Z)
+function constraints_list(Z::AbstractZonotope{N}) where {N<:AbstractFloat}
     n = dim(Z)
 
-    # use fallback implementation if order < 1 or matrix is not full rank
-    if p < n || (check_full_rank && rank(G) < n)
-        return _constraints_list_fallback(Z)
-    end
-
-    # special handling of 1D case
+    # special handling of the 1D case
     if n == 1
-        c = center(Z, 1)
-        g = sum(abs, G)
-        constraints = [LinearConstraint([N(1)], c + g),
-                       LinearConstraint([N(-1)], g - c)]
-        return constraints
+        return _constraints_list_1d(Z)
     end
 
+    p = ngens(Z)
+
+    # check whether to use the fallback implementation in V-rep
+    use_vrep = (p < n)  # order < 1
+    if !use_vrep
+        # remove redundant generators and check again
+        Z = remove_redundant_generators(Z)
+        p = ngens(Z)
+        use_vrep = (p < n)
+    end
+    if use_vrep
+        return _constraints_list_vrep(Z)
+    end
+
+    G = genmat(Z)
     c = center(Z)
     m = binomial(p, n - 1)
     constraints = Vector{LinearConstraint{N, Vector{N}}}()
@@ -582,6 +586,12 @@ function constraints_list(Z::AbstractZonotope{N}; check_full_rank::Bool=true) wh
         push!(constraints, LinearConstraint(c⁻, d⁻))
     end
     return constraints
+end
+
+function _constraints_list_1d(Z::AbstractZonotope{N}) where {N}
+    c = center(Z, 1)
+    g = sum(abs, genmat(Z))
+    return [LinearConstraint([N(1)], c + g), LinearConstraint([N(-1)], g - c)]
 end
 
 """
@@ -692,4 +702,27 @@ function project(Z::AbstractZonotope{N}, block::AbstractVector{Int}; kwargs...) 
     n = dim(Z)
     M = projection_matrix(block, n, N)
     return remove_zero_generators(linear_map(M, Z))
+end
+
+"""
+    remove_redundant_generators(Z::AbstractZonotope)
+
+Remove all redundant (pairwise linearly dependent) generators of a zonotope.
+
+### Input
+
+- `Z` -- zonotope
+
+### Output
+
+A new zonotope with fewer generators, or the same zonotope if no generator could
+be removed.
+
+### Algorithm
+
+By default this function returns the input zonotope. Subtypes of
+`AbstractZonotope` where generators can be removed have to define a new method.
+"""
+function remove_redundant_generators(Z::AbstractZonotope)
+    return Z  # fallback implementation
 end

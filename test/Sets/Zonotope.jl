@@ -232,7 +232,12 @@ for N in [Float64, Rational{Int}, Float32]
         if G2 != nothing
             @test genmat(remove_redundant_generators(Z)) == G2
         end
+
     end
+    Z = Zonotope(zeros(N, 3), N[0 0 0; 0 1 0; 0 0 0])
+    Z2 = remove_redundant_generators(Z)
+    @test center(Z) == center(Z2)
+    @test genmat(Z2) == N[0 1 0]'
 end
 
 for N in [Float64]
