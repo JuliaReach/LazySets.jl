@@ -669,7 +669,8 @@ function remove_redundant_generators(Z::Zonotope{N}) where {N}
     G = genmat(Z)
     G = remove_zero_columns(G)
     p = size(G, 2)
-    deleted = p < ngens(Z)
+    removed_zero_generators = p < ngens(Z)
+    deleted = false
     done = falses(p)
     G_new = _vector_type(typeof(G))[]  # list of new column vectors
     @inbounds for j1 in 1:p
@@ -701,6 +702,8 @@ function remove_redundant_generators(Z::Zonotope{N}) where {N}
     if deleted
         G_new = reduce(hcat, G_new)  # convert list of column vectors to matrix
         return Zonotope(center(Z), G_new)
+    elseif removed_zero_generators
+        return Zonotope(center(Z), G)
     end
     return Z  # return the original zonotope if no generator was removed
 end
