@@ -70,6 +70,8 @@ for N in [Float64, Rational{Int}, Float32]
 
     # vertices / vertices_list
     @test collect(vertices(E)) == vertices_list(E) == Vector{Vector{N}}()
+    @test typeof(collect(vertices(E))) == typeof(vertices_list(E)) ==
+          Vector{Vector{N}}
 
     # linear map of an empty set
     linear_map(ones(N, 2, 2), E) == E
