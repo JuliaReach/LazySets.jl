@@ -359,6 +359,10 @@ function convert(::Type{Zonotope}, S::Singleton{N, VN}) where {N, VN<:AbstractVe
     return Zonotope(element(S), zero_genmat)
 end
 
+function convert(::Type{Zonotope}, S::Singleton{N, VN}) where {N, VN<:SparseVector{N}}
+    return Zonotope(element(S), spzeros(N, dim(S), 0))
+end
+
 """
     convert(::Type{Zonotope}, Z::AbstractZonotope)
 
