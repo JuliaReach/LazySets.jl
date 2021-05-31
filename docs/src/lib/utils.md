@@ -106,3 +106,9 @@ LazySets.PolytopeSampler
 ```@docs
 volume
 ```
+
+## Symbolics
+
+```@docs
+LazySets._vec
+```
