@@ -7,7 +7,7 @@ CurrentModule = LazySets
 LazySets is a library for set-based computations in Euclidean space.
 The library offers both concrete and lazy set representations,
 where the latter stands for the ability to delay set computations until they are
-needed. The choice of the programming language Julia and the accompanying documentation
+needed. The choice of the programming language [Julia](https://julialang.org/) and the accompanying documentation
 allow researchers to easily translate set-based algorithms
 from mathematics to software in a platform-independent way, while achieving runtime
 performance that is comparable to statically compiled languages.
@@ -78,7 +78,6 @@ c = a × b
 
 In LazySets, intervals are implemented as a thin wrapper around those
 available in  [IntervalArithmetic.jl](https://github.com/JuliaIntervals/IntervalArithmetic.jl).
-
 Use the `convert` method to represent the set in hyperrectangular form (i.e. center and radius vectors):
 
 ```@example tour
@@ -95,11 +94,14 @@ Hbox = convert(IntervalBox, H)
 typeof(Hbox)
 ```
 
-Hyperrectangles are also special cases of [zonotopes](https://juliareach.github.io/LazySets.jl/dev/lib/sets/Zonotope/).
+Hyperrectangles are also special classes of [zonotopes](https://juliareach.github.io/LazySets.jl/dev/lib/sets/Zonotope/).
 
 ```@example tour
 Z = convert(Zonotope, c)
 ```
+
+There are many other set representations available in this library. They are introduced
+in further sections. Under doubt, rsemember that by tab-completion is your friend!
 
 ## Operating with sets
 
@@ -264,10 +266,11 @@ This way one can easily switch between, e.g., floating point
 (Float64) and exact (Rational) precision with no additional performance penalty:
 At runtime, Julia uses multiple dispatch on N and JIT-compiles into type-specific code.
 
-A way to visualize the type hierarchy is using [AbstractTrees](https://github.com/JuliaCollections/AbstractTrees.jl).
+Since the `LazySets` type hierarchy is rather involved, a way to visualize it is to
+use [AbstractTrees](https://github.com/JuliaCollections/AbstractTrees.jl).
 The package provides several utilities for working with tree-like data structures.
-The functios [`print_tree`](https://juliacollections.github.io/AbstractTrees.jl/stable/api/#AbstractTrees.print_tree)
-prints:
+The function [`print_tree`](https://juliacollections.github.io/AbstractTrees.jl/stable/api/#AbstractTrees.print_tree)
+provides a very detailed answer.
 
 ```@example tour
 using AbstractTrees
@@ -276,11 +279,35 @@ AbstractTrees.children(x::Type) = LazySets.subtypes(x, false)
 
 print_tree(LazySet)
 ```
-One of the key features of LazySets (which, admittedly, may be confusing at first)
-is that **sets and set operations subtype `LazySet`*. One of the advantages of
-these two mathematical concepts to be "just types" is to conveniently compose
-representations and operations (existing and user-created ones). An overview
-of only the set operations can be obtained like so:
+Since the list doesn't fit into the default size, some types are hidden.
+Visualizing the subtypes of a specific set interface can be done similarly.
+Consider the class of zonotopic sets, `AbstractZonotope`, which are those that
+can be represented as
+
+```math
+Z = \left\{ x ∈ \mathbb{R}^n : x = c + ∑_{i=1}^p ξ_i g_i,~~ ξ_i \in [-1, 1]~~ ∀ i = 1,…, p \right\},
+```
+where ``c \in \mathbb{R}^n`` is called the center and the vectors
+``\{g_i\}_{i=1}^p``, ``g_i \in \mathbb{R}^n``, are called the generators.
+
+```@example tour
+print_tree(AbstractZonotope)
+```
+
+All the sets belonging to the abstract zonotope interface have in common that they
+can be characterized by a center and a generators matrix (equivalently,
+as the finite Minkowski sum of line segments, or as the image of a unit infinity-norm
+ball in ``\mathbb{R}^n`` by an affine transformation). Hence, new set types
+defining a few interface functions can make use of all the available functionality
+that is implemented by generic algorithms, which work at the interface level.
+
+Last but not least, we remark that one of the key design choices of LazySets
+(which, admittedly, may be confusing at first) is that **both set representations and set operations subtype `LazySet`**.
+In other words, an "operation between sets" and "a set" are on the same footing in terms of belonging to the same
+type hierarchy. One of the advantages of these two mathematical concepts to be "just types" is to conveniently
+compose representations and operations (existing and user-created ones).
+
+An overview of only the set operations can be obtained like so:
 
 ```@example tour
 filter(isoperationtype, LazySets.subtypes(LazySet, true))
@@ -292,26 +319,6 @@ The total amount of available representations is larger (if we had used
 length(LazySets.subtypes(LazySet, true))
 ```
 
-Visualizing the subtypes of a specific set interface can be done similarly.
-Consider the class of zonotopic sets, `AbstractZonotope`,
-which are those that can be represented as
-
-```math
-Z = \left\{ c + ∑_{i=1}^p ξ_i g_i,~~ ξ_i \in [-1, 1]~~ ∀ i = 1,…, p \right\},
-```
-where ``c \in \mathbb{R}^n`` is called the center and the vectors
-``\{g_i\}_{i=1}^p``, ``g_i \in \mathbb{R}^n``, are called the generators.
-
-```@example tour
-print_tree(AbstractZonotope)
-```
-
-Al the sets belonging to the abstract zonotope interface have in common that they
-can be characterized by a center and a generators matrix (equivalently,
-as the finite Minkowski sum of line segments, or the the image of a unit infinity-norm
-ball in ``\\mathbb{R}^n`` by an affine transformation). Hence, new set types
-defining a few interface functions can make use of all the available functionality
-that is implemented by generic algorithms, which work at the interface level.
 
 ## Random sampling and splitting
 
@@ -408,7 +415,9 @@ using BenchmarkTools
 d = SingleEntryVector(50, 100, 1.0)
 M = rand(100, 100)
 H = rand(Hyperrectangle, dim=100)
-@btime ρ($d, $M * $H)
+
+out = @benchmark ρ($d, $M * $H)
+out
 ```
 
 ## The Lazy paradigm
