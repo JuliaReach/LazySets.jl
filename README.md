@@ -63,6 +63,9 @@ Schilling (2020) ARCH20. To appear in 7th International Workshop on Applied Veri
 `LazySets.jl` is applied in a number of projects in the Julia technical computing stack:
 
 - [ReachabilityAnalysis.jl](https://github.com/JuliaReach/ReachabilityAnalysis.jl) -- Methods to compute sets of states reachable by dynamical systems.
+- [NeuralNetworkAnalysis.jl](https://github.com/JuliaReach/NeuralNetworkAnalysis.jl) -- Methods to verify neural network controlled systems using reachability analysis
 - [NeuralVerification.jl](https://github.com/sisl/NeuralVerification.jl) -- Methods to soundly verify deep neural networks.
 - [Photometry.jl](https://github.com/JuliaAstro/Photometry.jl) -- Utilities for characterizing sources in astronomical images.
 - [InvariantSets.jl](https://github.com/ueliwechsler/InvariantSets.jl) -- Compute, approximate and display invariant sets.
+- [Swalbe.jl](https://github.com/Zitzeronion/Swalbe.jl) -- Simple Julia Lattice Boltzmann Solver for Thin Liquid Films and Droplets
+
