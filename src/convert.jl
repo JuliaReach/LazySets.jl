@@ -353,10 +353,8 @@ return quote
     end
 end end  # quote / load_genmat_2D_static
 
-function convert(::Type{Zonotope}, S::Singleton{N, VN}) where {N, VN<:AbstractVector{N}}
-    MT = LazySets.Arrays._matrix_type(VN)
-    zero_genmat = MT(undef, dim(S), 0)
-    return Zonotope(element(S), zero_genmat)
+function convert(::Type{Zonotope}, S::Singleton)
+    return Zonotope(center(S), genmat(S))
 end
 
 """

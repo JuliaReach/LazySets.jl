@@ -140,7 +140,8 @@ for N in [Float64, Rational{Int}, Float32]
     @test Z == convert(Zonotope, Z) && Z == togrep(Z)
     for AZ in [LineSegment(N[-1, -1], N[1, 1]),
                Hyperrectangle(N[0, 0], N[1, 1]),
-               Singleton(N[0, 0])]
+               Singleton(N[0, 0]),
+               Singleton(sparse(N[0, 0]))]
         Z = Zonotope(center(AZ), genmat(AZ))
         @test convert(Zonotope, AZ) == togrep(AZ) == Z
     end
