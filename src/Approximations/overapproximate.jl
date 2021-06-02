@@ -899,7 +899,7 @@ This algorithm proceeds in two steps:
    normalization onto the symmetric intervals ``[-1, 1]``.
 """
 function overapproximate(vTM::Vector{TaylorModel1{T, S}},
-                            ::Type{<:Zonotope}) where {T, S}
+                            ::Type{<:Zonotope}; remove_zero_generators::Bool=true) where {T, S}
     m = length(vTM)
 
     # preallocations
@@ -908,7 +908,8 @@ function overapproximate(vTM::Vector{TaylorModel1{T, S}},
     gen_rem = Vector{T}(undef, m) # generators of the remainder
 
     # compute overapproximation
-    return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
+    return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem;
+                                          remove_zero_generators=remove_zero_generators)
 end
 
 """
@@ -986,7 +987,7 @@ julia> Matrix(genmat(Z))
 We refer to the algorithm description for the univariate case.
 """
 function overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
-                         ::Type{<:Zonotope}) where {N, T, S}
+                         ::Type{<:Zonotope}; remove_zero_generators::Bool=true) where {N, T, S}
     m = length(vTM)
     n = N # number of variables is get_numvars() in TaylorSeries
 
@@ -996,10 +997,12 @@ function overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
     gen_rem = Vector{T}(undef, m) # generators for the remainder
 
     # compute overapproximation
-    return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
+    return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem;
+                                          remove_zero_generators=remove_zero_generators)
 end
 
-function _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
+function _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem;
+                                        remove_zero_generators::Bool=true)
     @inbounds for (i, x) in enumerate(vTM)
         xpol, xdom = polynomial(x), domain(x)
 
@@ -1021,7 +1024,10 @@ function _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
         gen_rem[i] = abs(rem_nonlin.hi - α)
     end
     Z = Zonotope(c, hcat(gen_lin, Diagonal(gen_rem)))
-    return remove_zero_generators(Z)
+    if remove_zero_generators
+        Z = LazySets.remove_zero_generators(Z)
+    end
+    return Z
 end
 
 end # quote
