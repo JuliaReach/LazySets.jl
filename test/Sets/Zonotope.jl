@@ -220,6 +220,13 @@ for N in [Float64, Rational{Int}, Float32]
     Z2 = project(Z, [1])
     @test Z2 == Zonotope(N[0], hcat(N[1]))
 
+    # removing zero generators in projection is optional
+    Z = Zonotope(zeros(N, 3), N[1 0 3; 4 0 6; 0 0 0])
+    Z2 = project(Z, [1,2])
+    @test Z2 == Zonotope(zeros(N, 2), N[1 3; 4 6])
+    Z2 = project(Z, [1,2]; remove_zero_generators=false)
+    @test Z2 == Zonotope(zeros(N, 2), N[1 0 3; 4 0 6])
+
     # remove redundant generators
     zonotopes = [(N[1 2 3 4 5 -1 0;], 1, hcat(16)),
                  (N[1 1 1 1 1 2 -2 0; 0 0 1 1 0 0 0 0; 1 2 0 0 1 2 -2 0], 3, nothing)]

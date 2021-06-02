@@ -701,7 +701,12 @@ end
 function project(Z::AbstractZonotope{N}, block::AbstractVector{Int}; kwargs...) where {N}
     n = dim(Z)
     M = projection_matrix(block, n, N)
-    return remove_zero_generators(linear_map(M, Z))
+    Z2 = linear_map(M, Z)
+
+    if get(kwargs, :remove_zero_generators, true)
+        Z2 = remove_zero_generators(Z2)
+    end
+    return Z2
 end
 
 """
