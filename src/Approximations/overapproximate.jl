@@ -999,7 +999,8 @@ function overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
     return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
 end
 
-function _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
+function _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem;
+                                        remove_zero_generators::Bool=true)
     @inbounds for (i, x) in enumerate(vTM)
         xpol, xdom = polynomial(x), domain(x)
 
@@ -1021,7 +1022,10 @@ function _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
         gen_rem[i] = abs(rem_nonlin.hi - α)
     end
     Z = Zonotope(c, hcat(gen_lin, Diagonal(gen_rem)))
-    return remove_zero_generators(Z)
+    if remove_zero_generators
+        Z = LazySets.remove_zero_generators(Z)
+    end
+    return Z
 end
 
 end # quote
