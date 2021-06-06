@@ -9,7 +9,9 @@ Abstract type for defining new sample methods.
 
 ### Notes
 
-All subtypes should implement a `_sample!` method.
+All subtypes should implement a `sample!(D, X, ::Method)` method where the
+first argument is the output, the second argument is the set to be sampled,
+and the third argument is the sampler instance.
 """
 abstract type Sampler end
 
@@ -29,10 +31,10 @@ Sampling of an arbitrary bounded set `X`.
 - `num_samples` -- number of random samples
 - `sampler`     -- (optional, default: `_default_sampler(X)`) the sampler used;
                    falls back to `RejectionSampler` or `UniformSampler` depending
-                   on the type of `X` 
+                   on the type of `X`
 - `rng`         -- (optional, default: `GLOBAL_RNG`) random number generator
 - `seed`        -- (optional, default: `nothing`) seed for reseeding
-- `include_vertices` -- (optional, default: `false`) option to include the vertices
+- `include_vertices` -- (optional, default: `false`) option to include the vertices of `X`
 - `VN`          -- (optional, default: `Vector{N}`) vector type of the sampled points
 
 ### Output
@@ -49,7 +51,7 @@ See the documentation of the respective `Sampler`.
 
 If `include_vertices == true`, we include all vertices computed with `vertices`.
 Alternatively if a number ``k`` is passed, we plot the first ``k`` vertices
-returned by `vertices`.
+returned by `vertices(X)`.
 """
 function sample(X::LazySet{N}, num_samples::Int;
                 sampler=_default_sampler(X),
@@ -60,7 +62,7 @@ function sample(X::LazySet{N}, num_samples::Int;
     @assert isbounded(X) "this function requires that the set `X` is bounded"
 
     D = Vector{VN}(undef, num_samples) # preallocate output
-    _sample!(D, sampler(X); rng=rng, seed=seed)
+    sample!(D, X, sampler; rng=rng, seed=seed)
 
     if include_vertices != false
         k = (include_vertices isa Bool) ? Inf : include_vertices
@@ -82,11 +84,11 @@ function sample(X::LazySet{N}; kwargs...) where {N}
 end
 
 # fallback implementation
-function _sample!(D::Vector{VN},
+function sample!(D::Vector{VN},
                   sampler::Sampler;
                   rng::AbstractRNG=GLOBAL_RNG,
                   seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
-    error("the method `_sample!` is not implemented for samplers of type " *
+    error("the method `sample!` is not implemented for samplers of type " *
           "$(typeof(sampler))")
 end
 
@@ -201,7 +203,7 @@ _default_sampler(X::LazySet) = RejectionSampler
 _default_sampler(X::LineSegment) = UniformSampler
 
 """
-    _sample!(D::Vector{VN},
+    sample!(D::Vector{VN},
              sampler::RejectionSampler;
              rng::AbstractRNG=GLOBAL_RNG,
              seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
@@ -219,7 +221,7 @@ Sample points using rejection sampling.
 
 A vector of `num_samples` vectors.
 """
-function _sample!(D::Vector{VN},
+function sample!(D::Vector{VN},
                   sampler::RejectionSampler;
                   rng::AbstractRNG=GLOBAL_RNG,
                   seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
@@ -235,7 +237,7 @@ function _sample!(D::Vector{VN},
 end
 
 """
-    _sample!(D::Vector{VN},
+    sample!(D::Vector{VN},
              sampler::UniformSampler{<:LineSegment, <:DefaultUniform};
              rng::AbstractRNG=GLOBAL_RNG,
              seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
@@ -253,7 +255,7 @@ Sample points of a line segment using uniform sampling in-place.
 
 A vector of `num_samples` vectors, where `num_samples` is the length of `D`.
 """
-function _sample!(D::Vector{VN},
+function sample!(D::Vector{VN},
                   sampler::UniformSampler{<:LineSegment, <:DefaultUniform};
                   rng::AbstractRNG=GLOBAL_RNG,
                   seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
@@ -280,7 +282,7 @@ function rand!(x, rng::AbstractRNG, U::DefaultUniform)
     end
 end
 
-function _sample!(D::Vector{VN},
+function sample!(D::Vector{VN},
                   sampler::PolytopeSampler{<:LazySet, <:DefaultUniform};
                   rng::AbstractRNG=GLOBAL_RNG,
                   seed::Union{Int, Nothing}=nothing
