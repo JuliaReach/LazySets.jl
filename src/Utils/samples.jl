@@ -137,20 +137,22 @@ end
 set(sampler::RejectionSampler) = sampler.X
 
 """
-    UniformSampler{S<:LazySet, D} <: Sampler
+    UniformSampler{S, D} <: Sampler
 
-Type used for uniform sampling of an arbitrary `LazySet` `X`.
+Type used for uniform sampling of an arbitrary `LazySet` of type `S`.
 
-### Fields
+### Parameters
 
-- `X` -- set to be sampled
+- `S` -- type of the set to be sampled
+
+- `D` -- distribution to generate the samples
 
 ### Algorithm
 
-Draw a sample ``x`` from a uniform distribution of the original set ``X``.
+Draw a sample ``x`` from a uniform distribution on the given set.
 """
-struct UniformSampler{S<:LazySet, D} <: Sampler
-    X::S
+struct UniformSampler{S, D} <: Sampler
+    #
 end
 
 UniformSampler(X::LazySet) = UniformSampler{typeof(X), DefaultUniform{eltype(X)}}(X)
@@ -158,7 +160,7 @@ UniformSampler(X::LazySet) = UniformSampler{typeof(X), DefaultUniform{eltype(X)}
 set(sampler::UniformSampler) = sampler.X
 
 """
-    PolytopeSampler{S<:LazySet, D} <: Sampler
+    PolytopeSampler{D} <: Sampler
 
 Type used for sampling of a convex polytope `X`.
 
@@ -190,17 +192,17 @@ likely to be sampled.
 
 [2] https://cs.stackexchange.com/questions/3227/uniform-sampling-from-a-simplex/3229
 """
-struct PolytopeSampler{S<:LazySet, D} <: Sampler
-    X::S
+struct PolytopeSampler{S, D} <: Sampler
+    #
 end
 
-PolytopeSampler(X::LazySet) = PolytopeSampler{typeof(X), DefaultUniform{eltype(X)}}(X)
+PolytopeSampler(X::LazySet) = PolytopeSampler{typeof(X), DefaultUniform{eltype(X)}}()
 
 set(sampler::PolytopeSampler) = sampler.X
 
 # default sampler algorithms
-_default_sampler(X::LazySet) = RejectionSampler
-_default_sampler(X::LineSegment) = UniformSampler
+_default_sampler(X::LazySet) = RejectionSampler()
+_default_sampler(X::LineSegment) = UniformSampler()
 
 """
     sample!(D::Vector{VN},
@@ -221,14 +223,14 @@ Sample points using rejection sampling.
 
 A vector of `num_samples` vectors.
 """
-function sample!(D::Vector{VN},
-                  sampler::RejectionSampler;
-                  rng::AbstractRNG=GLOBAL_RNG,
-                  seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
+function sample!(D::Vector{VN}, X::LazySet, sampler::RejectionSampler;
+                 rng::AbstractRNG=GLOBAL_RNG,
+                 seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
+    # box_approx ...
     rng = reseed(rng, seed)
     @inbounds for i in 1:length(D)
         w = rand.(Ref(rng), sampler.box_approx)
-        while w ∉ sampler.X
+        while w ∉ X
             w = rand.(Ref(rng), sampler.box_approx)
         end
         D[i] = w
@@ -255,10 +257,9 @@ Sample points of a line segment using uniform sampling in-place.
 
 A vector of `num_samples` vectors, where `num_samples` is the length of `D`.
 """
-function sample!(D::Vector{VN},
-                  sampler::UniformSampler{<:LineSegment, <:DefaultUniform};
-                  rng::AbstractRNG=GLOBAL_RNG,
-                  seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
+function sample!(D::Vector{VN}, X::LineSegment, sampler::DefaultUniform;
+                 rng::AbstractRNG=GLOBAL_RNG,
+                 seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
     rng = reseed(rng, seed)
     U = DefaultUniform(zero(N), one(N))
     L = set(sampler)
@@ -282,8 +283,7 @@ function rand!(x, rng::AbstractRNG, U::DefaultUniform)
     end
 end
 
-function sample!(D::Vector{VN},
-                  sampler::PolytopeSampler{<:LazySet, <:DefaultUniform};
+function sample!(D::Vector{VN}, X::LazySet, sampler::PolytopeSampler{DefaultUniform};
                   rng::AbstractRNG=GLOBAL_RNG,
                   seed::Union{Int, Nothing}=nothing
                  ) where {N, VN<:AbstractVector{N}}
