@@ -75,15 +75,22 @@ struct HyperrectangleGeneratorIterator{AH<:AbstractHyperrectangle}
     function HyperrectangleGeneratorIterator(H::AH) where {N,
             AH<:AbstractHyperrectangle{N}}
         n = dim(H)
-        nonflats = Vector{Int}()
-        sizehint!(nonflats, n)
-        @inbounds for i in 1:n
-            if radius_hyperrectangle(H, i) != zero(N)
-                push!(nonflats, i)
-            end
-        end
+        nonflats = _nonflat_dimensions(H)
         return new{AH}(H, nonflats, n)
     end
+end
+
+# return the dimensions of H which are non-flat
+function _nonflat_dimensions(H::AbstractHyperrectangle{N}) where {N}
+    n = dim(H)
+    nonflats = Vector{Int}()
+    sizehint!(nonflats, n)
+    @inbounds for i in 1:n
+        if radius_hyperrectangle(H, i) != zero(N)
+            push!(nonflats, i)
+        end
+    end
+    return nonflats
 end
 
 Base.length(it::HyperrectangleGeneratorIterator) = length(it.nonflats)

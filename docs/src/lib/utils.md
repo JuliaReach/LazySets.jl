@@ -95,10 +95,9 @@ _sample_unit_nsphere_muller!
 _sample_unit_nball_muller!
 sample
 LazySets.sample!
-LazySets.Sampler
+LazySets.AbstractSampler
 LazySets.RejectionSampler
-LazySets.UniformSampler
-LazySets.PolytopeSampler
+LazySets.RandomWalkSampler
 ```
 
 ## Volume
