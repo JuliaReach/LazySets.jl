@@ -129,7 +129,7 @@ Type used for rejection sampling of an arbitrary set `X`.
 - `distribution` -- (optional, default: `DefaultUniform`) distribution from which
                     the sample is drawn
 - `tight`        -- (optional, default: `false`) set to `true` if the support of
-                    the distribution is known to coincide the the set `X`
+                    the distribution is known to coincide with the set `X`
 
 ### Algorithm
 
