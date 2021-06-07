@@ -94,7 +94,6 @@ LazySets.read_gen(::String)
 _sample_unit_nsphere_muller!
 _sample_unit_nball_muller!
 sample
-LazySets.sample!
 LazySets.AbstractSampler
 LazySets.RejectionSampler
 LazySets.RandomWalkSampler
