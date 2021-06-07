@@ -196,6 +196,14 @@ PolytopeSampler(X::LazySet) = PolytopeSampler{typeof(X), DefaultUniform{eltype(X
 
 set(sampler::PolytopeSampler) = sampler.X
 
+struct PolytopeSampler2{S<:LazySet, D} <: Sampler
+    X::S
+end
+
+PolytopeSampler2(X::LazySet) = PolytopeSampler2{typeof(X), DefaultUniform{eltype(X)}}(X)
+
+set(sampler::PolytopeSampler2) = sampler.X
+
 # default sampler algorithms
 _default_sampler(X::LazySet) = RejectionSampler
 _default_sampler(X::LineSegment) = UniformSampler
@@ -307,6 +315,27 @@ function _sample!(D::Vector{VN},
         D[i] .+= (1 - r[m-1]) * vlist[m]
     end
 
+    return D
+end
+
+function _sample!(D::Vector{VN},
+                  sampler::PolytopeSampler2{<:LazySet, <:DefaultUniform};
+                  rng::AbstractRNG=GLOBAL_RNG,
+                  seed::Union{Int, Nothing}=nothing
+                 ) where {N, VN<:AbstractVector{N}}
+    rng = reseed(rng, seed)
+    U = DefaultUniform(zero(N), one(N))
+    P = set(sampler)
+    vlist = vertices_list(P)
+    m = length(vlist)
+
+    @inbounds for i in 1:length(D)
+        p = vlist[rand(1:m)]  # start from a random vertex
+        for j in Random.randperm(m)
+            p += rand(rng, U) * (vlist[j] - p)
+        end
+        D[i] = p
+    end
     return D
 end
 
