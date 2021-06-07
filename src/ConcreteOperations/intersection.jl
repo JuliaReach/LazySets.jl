@@ -1118,7 +1118,7 @@ Return the intersection between a zonotopic set and a halfspace.
 ### Output
 
 If the sets do not intersect, the output is the empty set, if the zonotopic set
-is fully contined in the halfspace, the zonotopic set is returned, otherwise the
+is fully contained in the halfspace, the zonotopic set is returned, otherwise the
 output is the concrete intersection between `Z` and `H`.
 
 ### Algorithm
