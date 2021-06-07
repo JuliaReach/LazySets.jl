@@ -126,21 +126,28 @@ Type used for rejection sampling of an arbitrary set `X`.
 
 ### Fields
 
-- `X`          -- (bounded) set to be sampled
-- `box_approx` -- Distribution from which the sample is drawn
+- `distribution` -- (optional, default: `DefaultUniform`) distribution from which
+                    the sample is drawn
+- `tight`        -- (optional, default: `false`) set to `true` if the support of
+                    the distribution is known to coincide the the set `X`
 
 ### Algorithm
 
-Draw a sample ``x`` from a uniform distribution of a box-overapproximation of the
+Draw a sample ``x`` from a given distribution of a box-overapproximation of the
 original set ``X`` in all ``n`` dimensions. The function rejects a drawn sample
 ``x`` and redraws as long as the sample is not contained in the original set
 ``X``, i.e., ``x ∉ X``.
 """
 struct RejectionSampler{D} <: AbstractSampler
     distribution::D
+    tight::Bool
 end
 
-function RejectionSampler(X::LazySet, distribution=DefaultUniform)
+function RejectionSampler(distr; tight::Bool=false)
+    return RejectionSampler(distr, tight)
+end
+
+function RejectionSampler(X::LazySet, distribution=DefaultUniform; tight::Bool=false)
     # define the support of the distribution as the smallest box enclosing X
     n = dim(X)
     B = box_approximation(X)
@@ -148,12 +155,19 @@ function RejectionSampler(X::LazySet, distribution=DefaultUniform)
     # distribution over B
     distr = [distribution(low(B, i), high(B, i)) for i in 1:n]
 
-    return RejectionSampler(distr)
+    return RejectionSampler(distr, tight)
+end
+
+# the support of this distribution is always tight wrt X
+function RejectionSampler(X::AbstractHyperrectangle)
+    n = dim(X)
+    distr = [DefaultUniform(low(X, i), high(X, i)) for i in 1:n]
+    return RejectionSampler(distr, true)
 end
 
 # default sampling for LazySets
 _default_sampler(X::LazySet) = RejectionSampler(X)
-_default_sampler(X::LineSegment{N}) where {N} = RejectionSampler(DefaultUniform(zero(N), one(N)))
+_default_sampler(X::LineSegment{N}) where {N} = RejectionSampler(DefaultUniform(zero(N), one(N)), true)
 
 function sample!(D::Vector{VN}, X::LazySet, sampler::RejectionSampler;
                  rng::AbstractRNG=GLOBAL_RNG,
@@ -163,47 +177,30 @@ function sample!(D::Vector{VN}, X::LazySet, sampler::RejectionSampler;
     rng = reseed(rng, seed)
     @inbounds for i in 1:length(D)
         w = rand.(Ref(rng), U)
-        while w ∉ X
-            w = rand.(Ref(rng), U)
+
+        if !(sampler.tight)
+            while w ∉ X
+                w = rand.(Ref(rng), U)
+            end
         end
         D[i] = w
     end
     return D
 end
 
-# ==========================================================================
-# Sampling hyperrectangular sets with a given probability distribution
-# ==========================================================================
-
-# directly sample from the distribution since no points are rejected
-function sample!(D::Vector{VN}, X::AbstractHyperrectangle, sampler::RejectionSampler) where {N, VN<:AbstractVector{N}}
-    return _sample!(D, X, sampler.distribution)
-end
-
-function _sample!(D::Vector{VN}, X::AbstractHyperrectangle, distribution;
+function sample!(D::Vector{VN}, L::LineSegment, sampler::RejectionSampler{<:DefaultUniform};
                  rng::AbstractRNG=GLOBAL_RNG,
                  seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
 
     rng = reseed(rng, seed)
-    @inbounds for i in 1:length(D)
-        D[i] = rand.(Ref(rng), distribution)
-    end
-    return D
-end
-
-function _sample!(D::Vector{VN}, X::LineSegment, distribution;
-                 rng::AbstractRNG=GLOBAL_RNG,
-                 seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
-
-    rng = reseed(rng, seed)
-    U = disribution(zero(N), one(N))
-    L = set(sampler)
+    U = sampler.distribution
+    @assert U.a >= zero(N) && U.b <= one(N)
     p = L.p
     q = L.q
 
     @inbounds for i in 1:length(D)
-     λ = rand(rng, U)
-     D[i] = p + λ * (q - p)
+        λ = rand(rng, U)
+        D[i] = p + λ * (q - p)
     end
     return D
 end
