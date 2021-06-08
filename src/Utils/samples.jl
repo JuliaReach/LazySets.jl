@@ -23,7 +23,7 @@ abstract type AbstractSampler end
            [include_vertices]=false,
            [VN]=Vector{N}) where {N}
 
-Sampling of an arbitrary bounded set `X`.
+Random sampling of an arbitrary set `X`.
 
 ### Input
 
@@ -57,12 +57,7 @@ function sample(X::LazySet{N}, num_samples::Int;
                 rng::AbstractRNG=GLOBAL_RNG,
                 seed::Union{Int, Nothing}=nothing,
                 include_vertices=false,
-                VN=Vector{N},
-                check_boundedness=true) where {N}
-
-    if check_boundedness
-        isbounded(X) || throw(ArgumentError("this function requires that the set `X` is bounded"))
-    end
+                VN=Vector{N}) where {N}
 
     D = Vector{VN}(undef, num_samples) # preallocate output
     sample!(D, X, sampler; rng=rng, seed=seed)
@@ -107,6 +102,10 @@ function Base.rand(rng::AbstractRNG, U::DefaultUniform, n::Int)
     return [rand(rng, U) for i in 1:n]
 end
 
+function Base.rand(rng::AbstractRNG, U::AbstractVector{<:DefaultUniform})
+    return rand.(Ref(rng), U)
+end
+
 function rand!(x, rng::AbstractRNG, U::DefaultUniform)
     @inbounds for i in eachindex(x)
         x[i] = rand(rng, U)
@@ -146,6 +145,10 @@ function RejectionSampler(distr; tight::Bool=false)
     return RejectionSampler(distr, tight)
 end
 
+function RejectionSampler(distr::DefaultUniform; tight::Bool=false)
+    return RejectionSampler([distr], tight)
+end
+
 function RejectionSampler(X::LazySet, distribution=DefaultUniform; tight::Bool=false)
     # define the support of the distribution as the smallest box enclosing X
     n = dim(X)
@@ -175,11 +178,11 @@ function sample!(D::Vector{VN}, X::LazySet, sampler::RejectionSampler;
     U = sampler.distribution
     rng = reseed(rng, seed)
     @inbounds for i in 1:length(D)
-        w = rand.(Ref(rng), U)
+        w = rand(rng, U)
 
         if !(sampler.tight)
             while w ∉ X
-                w = rand.(Ref(rng), U)
+                w = rand(rng, U)
             end
         end
         D[i] = w
@@ -275,8 +278,14 @@ end
 function load_distributions_samples()
 return quote
 
-using .Distributions: Uniform, Normal
+using .Distributions: Uniform, Normal, Distribution, UnivariateDistribution
 import .Distributions
+
+RejectionSampler(distr::UnivariateDistribution; tight::Bool=false) = RejectionSampler([distr], tight=tight)
+
+function Base.rand(rng::AbstractRNG, U::AbstractVector{<:UnivariateDistribution})
+    return rand.(Ref(rng), U)
+end
 
 # ======================================================
 # Sampling from a uniform distribution on balls/spheres
