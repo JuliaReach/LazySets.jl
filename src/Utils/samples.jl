@@ -30,8 +30,7 @@ Sampling of an arbitrary bounded set `X`.
 - `X`           -- (bounded) set to be sampled
 - `num_samples` -- number of random samples
 - `sampler`     -- (optional, default: `_default_sampler(X)`) the sampler used;
-                   falls back to `RejectionSampler` or `UniformSampler` depending
-                   on the type of `X`
+                   falls back to `RejectionSampler`
 - `rng`         -- (optional, default: `GLOBAL_RNG`) random number generator
 - `seed`        -- (optional, default: `nothing`) seed for reseeding
 - `include_vertices` -- (optional, default: `false`) option to include the vertices of `X`
