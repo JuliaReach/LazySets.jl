@@ -195,6 +195,10 @@ function convert(::Type{HPolyhedron}, P::AbstractPolytope)
     return HPolyhedron(constraints_list(P))
 end
 
+function convert(::Type{HPolyhedron}, X::AbstractPolyhedron) where {N}
+    return HPolyhedron(constraints_list(X))
+end
+
 # conversion of a lazyset to a polyhedron with dense normal vectors
 function convert(::Type{HPolyhedron{N, Vector{N}}}, X::AbstractPolyhedron) where {N}
     clist = constraints_list(X)
