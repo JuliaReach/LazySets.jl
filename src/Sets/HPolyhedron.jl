@@ -541,7 +541,7 @@ end
 
 function load_polyhedra_hpolyhedron() # function to be loaded by Requires
 return quote
-# see the interface file AbstractPolytope.jl for the imports
+# see the interface file init_Polyhedra.jl for the imports
 
 function convert(::Type{HPolyhedron}, P::HRep{N}) where {N}
     VN = Polyhedra.hvectortype(P)
