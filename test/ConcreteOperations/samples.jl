@@ -1,4 +1,4 @@
-using Distributions: Uniform, Normal
+using Distributions: Uniform, Normal, MultivariateNormal
 using LazySets: DefaultUniform
 
 for N in [Float64]
