@@ -29,6 +29,29 @@ for N in [Float64]
     @test LazySets.RejectionSampler(P2, Uniform).distribution == [Uniform(-3.0, 1.0), Uniform(-4.0,2.0)]
     @test LazySets.RejectionSampler(P2, Normal).distribution == [Normal(-3.0, 1.0), Normal(-4.0, 2.0)]
 
+    # test univariate distributions
+    X = Interval(1, 2.)
+    v = sample(X, 5)
+    @test all(vi ∈ X for vi in v)
+    d = Normal(1.5, 0.5)
+
+    v = sample(X, 5, sampler=RejectionSampler(d))
+    @test all(vi ∈ X for vi in v)
+
+    v = sample(X, 5, sampler=RejectionSampler([d]))
+    @test all(vi ∈ X for vi in v)
+
+    v = sample(X, 5, sampler=RejectionSampler([DefaultUniform(1, 2)]))
+    @test all(vi ∈ X for vi in v)
+
+    v = sample(X, 5, sampler=RejectionSampler(DefaultUniform(1, 2)))
+    @test all(vi ∈ X for vi in v)
+
+    # test multivariate distribution
+    H = rand(Hyperrectangle, dim=2)
+    sampler = RejectionSampler(MultivariateNormal(N[1 0; 0 1.]), tight=true)
+    v = sample(H, 5, sampler=sampler)
+
     # including vertices
     for k in 0:4
         p1 = sample(P1, 10; include_vertices=k)
