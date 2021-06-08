@@ -27,7 +27,7 @@ Random sampling of an arbitrary set `X`.
 
 ### Input
 
-- `X`           -- (bounded) set to be sampled
+- `X`           -- set to be sampled
 - `num_samples` -- number of random samples
 - `sampler`     -- (optional, default: `_default_sampler(X)`) the sampler used;
                    falls back to `RejectionSampler`
