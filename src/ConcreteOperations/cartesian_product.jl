@@ -40,7 +40,13 @@ function cartesian_product(X::LazySet, Y::LazySet; backend=nothing, algorithm::S
 
     elseif algorithm == "hrep"
         Xp = HPolyhedron(constraints_list(X))
+        if isempty(Xp.constraints) && isuniversal(X)
+            Xp = X isa Universe ? X : Universe(dim(X))
+        end
         Yp = HPolyhedron(constraints_list(Y))
+        if isempty(Yp.constraints) && isuniversal(Y)
+            Yp = Y isa Universe ? Y : Universe(dim(Y))
+        end
         Pout = cartesian_product(Xp, Yp, backend=backend)
 
     else
@@ -111,13 +117,17 @@ The polyhedron obtained by the concrete cartesian product of `P1` and `P2`.
 For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/).
 """
-function cartesian_product(P1::HPoly, P2::HPoly; backend=nothing)
+function cartesian_product(P1::Union{HPoly, Universe}, P2::Union{HPoly, Universe}; backend=nothing)
     require(:Polyhedra; fun_name="`cartesian_product")
 
     return _cartesian_product_hrep(P1, P2, backend1=backend, backend2=backend)
 end
 
-function _cartesian_product_hrep(P1, P2; backend1, backend2)
+function cartesian_product(U1::Universe, U2::Universe)
+    return Universe(dim(U1) + dim(U2))
+end
+
+function _cartesian_product_hrep(P1::PT1, P2::PT2; backend1, backend2) where {PT1, PT2}
     if isnothing(backend1)
         backend1 = default_polyhedra_backend(P1)
     end
@@ -128,7 +138,9 @@ function _cartesian_product_hrep(P1, P2; backend1, backend2)
     P1′ = polyhedron(P1; backend=backend1)
     P2′ = polyhedron(P2; backend=backend2)
     Pout = Polyhedra.hcartesianproduct(P1′, P2′)
-    return convert(basetype(P1), Pout)
+
+    PT = isboundedtype(PT1) && isboundedtype(PT2) ? HPolytope : HPolyhedron
+    return convert(PT, Pout)
 end
 
 # if the first set is an interval => the result is always a polytope

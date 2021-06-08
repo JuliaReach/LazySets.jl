@@ -14,7 +14,7 @@ CurrentModule = LazySets
 ## Cartesian product
 
 ```@docs
-cartesian_product(::HPoly, ::HPoly)
+cartesian_product(::Union{HPoly, Universe}, ::Union{HPoly, Universe})
 cartesian_product(::VPolytope, ::VPolytope)
 cartesian_product(::LazySet, ::LazySet)
 ```
