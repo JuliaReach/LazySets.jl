@@ -241,6 +241,10 @@ function isbounded(U::Universe)
     return false
 end
 
+function isboundedtype(::Type{<:Universe})
+    return false
+end
+
 """
     isuniversal(U::Universe{N}, [witness]::Bool=false) where {N}
 
@@ -355,3 +359,40 @@ end
 function permute(U::Universe, p::AbstractVector{Int})
     return U
 end
+
+function tosimplehrep(U::Universe)
+    return tosimplehrep(constraints_list(U); n=dim(U))
+end
+
+function load_polyhedra_universe() # function to be loaded by Requires
+return quote
+# see the interface file init_Polyhedra.jl for the imports
+
+"""
+    polyhedron(U::Universe; [backend]=default_polyhedra_backend(P))
+
+Return an `HRep` polyhedron from `Polyhedra.jl` given a universe.
+
+### Input
+
+- `U`       -- universe
+- `backend` -- (optional, default: call `default_polyhedra_backend(P)`)
+                the polyhedral computations backend
+
+### Output
+
+An `HRep` polyhedron.
+
+### Notes
+
+For further information on the supported backends see
+[Polyhedra's documentation](https://juliapolyhedra.github.io/).
+"""
+function polyhedron(U::Universe;
+                    backend=default_polyhedra_backend(U))
+    A, b = tosimplehrep(U)
+    return Polyhedra.polyhedron(Polyhedra.hrep(A, b), backend)
+end
+
+end # quote
+end # function load_polyhedra_universe()

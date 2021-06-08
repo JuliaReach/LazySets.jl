@@ -25,4 +25,11 @@ for N in [Float64, Float32, Rational{Int}]
             @test isequivalent(X, B1B2)
         end
     end
+
+    # Universe is handled correctly (#2735)
+    P = HalfSpace(N[1, 2], N(3))
+    U = Universe{N}(2)
+    @test isequivalent(cartesian_product(P, U), HalfSpace(N[1, 2, 0, 0], N(3)))
+    @test isequivalent(cartesian_product(U, P), HalfSpace(N[0, 0, 1, 2], N(3)))
+    @test cartesian_product(U, U) == Universe{N}(4)
 end
