@@ -641,9 +641,13 @@ emptiness of intersection before calling this function in those cases.
 This implementation unifies the constraints of the two sets obtained from the
 `constraints_list` method.
 """
-function intersection(P1::AbstractPolyhedron{N},
-                      P2::AbstractPolyhedron{N};
-                      backend=default_lp_solver(N)) where {N}
+intersection(P1::AbstractPolyhedron{N},
+             P2::AbstractPolyhedron{N};
+             backend=default_lp_solver(N)) where {N} = _intersection_poly(P1, P2, backend=backend)
+
+function _intersection_poly(P1::AbstractPolyhedron{N},
+                            P2::AbstractPolyhedron{N};
+                            backend=default_lp_solver(N)) where {N}
 
     # if one of P1 or P2 is bounded => the result is bounded
     HPOLY = (P1 isa AbstractPolytope || P2 isa AbstractPolytope) ?
@@ -1100,3 +1104,34 @@ intersection(S::AbstractSingleton, cpa::CartesianProductArray) = _intersection_s
 intersection(cpa::CartesianProductArray, S::AbstractSingleton) = _intersection_singleton(S, cpa)
 intersection(cpa::CartesianProductArray, X::Interval) = _intersection_interval(X, cpa)
 intersection(X::Interval, cpa::CartesianProductArray) = _intersection_interval(X, cpa)
+
+"""
+        intersection(Z::AbstractZonotope{N}, H::HalfSpace{N}; backend=default_lp_solver(N)) where {N}
+
+Return the intersection between a zonotopic set and a halfspace.
+
+### Input
+
+ - `Z` -- zonotopic set
+ - `H` -- halfspace
+
+### Output
+
+If the sets do not intersect, the output is the empty set, if the zonotopic set
+is fully contained in the halfspace, the zonotopic set is returned, otherwise the
+output is the concrete intersection between `Z` and `H`.
+
+### Algorithm
+
+First there is a disjointness test, if that is false, there is an inclusion test,
+if that is false then the concrete intersection is computed.
+"""
+function intersection(Z::AbstractZonotope{N}, H::HalfSpace{N}; backend=default_lp_solver(N)) where {N}
+    n = dim(Z)
+    isdisjoint(Z, H) && return EmptySet(n)
+    issubset(Z, H) && return Z
+    return _intersection_poly(Z, H, backend=backend)
+end
+
+# symmetric method
+intersection(H::HalfSpace{N}, Z::AbstractZonotope{N}; backend=default_lp_solver(N)) where {N} = intersection(Z, H, backend=backend)

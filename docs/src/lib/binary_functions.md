@@ -84,6 +84,7 @@ intersection(::LinearMap, ::LazySet)
 intersection(::CartesianProductArray, ::AbstractPolyhedron)
 intersection(::LineSegment, ::Line2D)
 intersection(::LineSegment, ::LineSegment)
+intersection(::AbstractZonotope{N}, ::HalfSpace{N}) where {N}
 ```
 
 ## Minkowski sum

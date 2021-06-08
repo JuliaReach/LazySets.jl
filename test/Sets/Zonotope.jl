@@ -367,4 +367,17 @@ for N in [Float64]
     Q1 = N[1 1; 1 1]
     Q2 = N[-1 0; 0 -1]
     @test quadratic_map([Q1, Q2], Z) == Zonotope(N[2.5, -1.5], N[0.5 2 4; -0.5 -1 -2])
+
+    # intersection with halfspace
+    Z = Zonotope(N[0, 0], N[1 0; 0 1])
+    H = HalfSpace(N[1, 0], N(-1.5))
+    @test intersection(H, Z) == EmptySet(2)
+    H = HalfSpace(N[1, 0], N(1.5))
+    @test intersection(H, Z) == Z
+    H = HalfSpace(N[1, 0], N(0))
+    P = HPolytope([HalfSpace(N[1, 0], N(0)),
+                   HalfSpace(N[-1, 0], N(1)),
+                   HalfSpace(N[0, 1], N(1)),
+                   HalfSpace(N[0, -1], N(1))])
+    @test isequivalent(intersection(H, Z), P)
 end
