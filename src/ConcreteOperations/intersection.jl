@@ -1130,7 +1130,7 @@ function intersection(Z::AbstractZonotope{N}, H::HalfSpace{N}; backend=default_l
     n = dim(Z)
     isdisjoint(Z, H) && return EmptySet(n)
     issubset(Z, H) && return Z
-    return _intersection_poly(Z, H)
+    return _intersection_poly(Z, H, backend=backend)
 end
 
 # symmetric method
