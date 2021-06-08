@@ -134,28 +134,39 @@ function constrained_dimensions(P::AbstractPolyhedron)
 end
 
 """
-    tosimplehrep(constraints::AbstractVector{LC}) where {N, LC<:LinearConstraint{N}}
+    tosimplehrep(constraints::AbstractVector{LC};
+                 [n]::Int=0) where {N, LC<:LinearConstraint{N}}
 
 Return the simple H-representation ``Ax ≤ b`` from a list of linear constraints.
 
 ### Input
 
 - `constraints` -- a list of linear constraints
+- `n`           -- (optional; default: `0`) dimension of the constraints
 
 ### Output
 
 The tuple `(A, b)` where `A` is the matrix of normal directions and `b` is the
 vector of offsets.
+
+### Notes
+
+The parameter `n` can be used to create a matrix with no constraints but a
+non-zero dimension.
 """
-function tosimplehrep(constraints::AbstractVector{LC}) where {N, LC<:LinearConstraint{N}}
-    n = length(constraints)
-    if n == 0
-        A = Matrix{N}(undef, 0, 0)
+function tosimplehrep(constraints::AbstractVector{LC};
+                      n::Int=0) where {N, LC<:LinearConstraint{N}}
+    m = length(constraints)
+    if m == 0
+        A = Matrix{N}(undef, 0, n)
         b = Vector{N}(undef, 0)
         return (A, b)
     end
-    A = zeros(N, n, dim(first(constraints)))
-    b = zeros(N, n)
+    if n <= 0
+        n = dim(first(constraints))
+    end
+    A = zeros(N, m, n)
+    b = zeros(N, m)
     @inbounds begin
         for (i, Pi) in enumerate(constraints)
             A[i, :] = Pi.a
