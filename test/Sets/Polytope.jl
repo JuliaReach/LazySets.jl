@@ -210,6 +210,11 @@ for N in [Float64, Rational{Int}, Float32]
     vlist2 = vertices_list(Q2)
     @test ispermutation(vlist1, [N[1, 0], N[-1, 0]])
     @test ispermutation(vlist1, vlist2)
+
+    # permutation
+    P = VPolytope([N[1, 2, 3], N[4, 5, 6]])
+    Q = VPolytope([N[3, 1, 2], N[6, 4, 5]])
+    @test permute(P, [3, 1, 2]) == Q
 end
 
 # default Float64 constructors
