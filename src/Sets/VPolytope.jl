@@ -577,3 +577,8 @@ function _project_vrep(vlist::AbstractVector{VN}, n, block) where {N, VN<:Abstra
         return VPolytope(πvertices)
     end
 end
+
+function permute(P::VPolytope, p::AbstractVector{Int})
+    vlist = [v[p] for v in vertices_list(P)]
+    return VPolytope(vlist)
+end
