@@ -35,7 +35,7 @@ jobs:
       julia: 1.5
       os: linux
       script:
-        - julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd()));
+        - julia --project=docs/ -e 'using Pkg; include("deps/build_private.jl"); Pkg.develop(PackageSpec(path=pwd()));
                                                Pkg.instantiate();'
         - travis_wait 40 julia --project=docs/ docs/make.jl
       after_success: skip
