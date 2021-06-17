@@ -25,14 +25,25 @@ jobs:
     env:
       JULIA_PKG_SERVER: ''
     steps:
-      - uses: actions/checkout@v2
-      - name: "Set up Julia"
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Set up Julia
         uses: julia-actions/setup-julia@v1
         with:
           version: ${{ matrix.julia-version }}
           arch: ${{ matrix.julia-arch }}
-      - run: |
-          julia --project --color=yes --check-bounds=yes -e 'using Pkg; include("deps/build_private.jl"); Pkg.build(verbose=true); Pkg.test(coverage=true); Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
+      - name: Install dependencies
+        run: |
+          julia --project --color=yes -e 'using Pkg;
+              include("deps/build_private.jl");
+              Pkg.build(verbose=true)'
+      - name: Build
+        run: |
+          julia --project --color=yes --check-bounds=yes -e 'using Pkg;
+              Pkg.test(coverage=true);
+              Pkg.add("Coverage");
+              using Coverage;
+              Codecov.submit(process_folder())'
       - uses: actions/cache@v1
         env:
           cache-name: cache-artifacts
