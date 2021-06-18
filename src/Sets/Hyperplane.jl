@@ -486,6 +486,10 @@ function project(hp::Hyperplane{N}, block::AbstractVector{Int}; kwargs...) where
     end
 end
 
+function ishyperplanar(::Hyperplane)
+    return true
+end
+
 # ============================================
 # Functionality that requires Symbolics
 # ============================================
