@@ -761,3 +761,14 @@ function project(H::HalfSpace{N}, block::AbstractVector{Int}; kwargs...) where {
         return Universe{N}(length(block))
     end
 end
+
+function iscomplement(H1::HalfSpace{N}, H2::HalfSpace) where {N}
+    # check that the half-spaces have converse directions
+    res, factor = ismultiple(H1.a, H2.a)
+    if !res || factor >= zero(N)
+        return false
+    end
+
+    # check that the half-spaces touch each other
+    return H1.b == factor * H2.b
+end
