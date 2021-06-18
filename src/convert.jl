@@ -1248,27 +1248,12 @@ function convert(::Type{Star}, P::AbstractPolyhedron{N}) where {N}
 end
 
 function convert(::Type{Hyperplane}, P::HPolyhedron; skip_check::Bool=false)
-    clist = constraints_list(P)
-    m = length(clist)
-
     # check that the number of constraints is fine
-    if !skip_check
-        if m > 2
-            # try to remove redundant constraints
-            clist = remove_redundant_constraints(clist)
-            m = length(clist)
-        end
-        if m != 2
-            throw(ArgumentError("expected a polyhedron with two complementary " *
-                                "constraints"))
-        end
-
-        @inbounds if !iscomplement(clist[1], clist[2])
-            throw(ArgumentError("the constraints are not complementary"))
-        end
+    if !skip_check && !ishyperplanar(P)
+        throw(ArgumentError("the polyhedron is not hyperplanar: $P"))
     end
 
     # construct hyperplane from first constraint
-    @inbounds c1 = clist[1]
+    c1 = @inbounds first(constraints_list(P))
     return Hyperplane(c1.a, c1.b)
 end
