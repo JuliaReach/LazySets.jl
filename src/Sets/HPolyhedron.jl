@@ -13,7 +13,7 @@ export HPolyhedron,
        remove_redundant_constraints,
        remove_redundant_constraints!,
        constrained_dimensions,
-       ishyperplanar
+       is_hyperplanar
 
 """
     HPolyhedron{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
@@ -663,7 +663,7 @@ function _isbounded_stiemke(P::HPolyhedron{N}; solver=LazySets.default_lp_solver
     return (lp.status == :Optimal)
 end
 
-function ishyperplanar(P::HPolyhedron)
+function is_hyperplanar(P::HPolyhedron)
     clist = P.constraints
     m = length(clist)
 

@@ -486,7 +486,7 @@ function project(hp::Hyperplane{N}, block::AbstractVector{Int}; kwargs...) where
     end
 end
 
-function ishyperplanar(::Hyperplane)
+function is_hyperplanar(::Hyperplane)
     return true
 end
 
