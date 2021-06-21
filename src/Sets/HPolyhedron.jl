@@ -12,7 +12,8 @@ export HPolyhedron,
        isempty,
        remove_redundant_constraints,
        remove_redundant_constraints!,
-       constrained_dimensions
+       constrained_dimensions,
+       is_hyperplanar
 
 """
     HPolyhedron{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
@@ -660,6 +661,24 @@ function _isbounded_stiemke(P::HPolyhedron{N}; solver=LazySets.default_lp_solver
     c = ones(N, m)
     lp = linprog(c, At, '=', zeros(n), one(N), Inf, solver)
     return (lp.status == :Optimal)
+end
+
+function is_hyperplanar(P::HPolyhedron)
+    clist = P.constraints
+    m = length(clist)
+
+    # check that the number of constraints is fine
+    if m > 2
+        # try to remove redundant constraints
+        clist = remove_redundant_constraints(clist)
+        m = length(clist)
+    end
+    if m != 2
+        return false
+    end
+
+    # check that the two half-spaces are complementary
+    return @inbounds iscomplement(clist[1], clist[2])
 end
 
 # ============================================

@@ -109,6 +109,28 @@ for N in [Float64, Rational{Int}, Float32]
     @test !is_intersection_empty(u, hp) && !res && v ∈ hp && v ∈ u
     res, v = is_intersection_empty(hp, u, true)
     @test !is_intersection_empty(hp, u) && !res && v ∈ hp && v ∈ u
+
+    # conversion from polyhedron
+    for (P, eq) in [
+            (HPolyhedron([HalfSpace(N[-1], N(0)), HalfSpace(N[1//2], N(0))]), true),
+            (HPolyhedron([HalfSpace(N[1, 3], N(1)), HalfSpace(N[-2, -6], N(-2))]), true),
+            (HPolyhedron([HalfSpace(N[1, 3], N(1)), HalfSpace(N[1, 3], N(1)),
+                          HalfSpace(N[-2, -6], N(-2))]), true),
+            (HPolyhedron([HalfSpace(N[1, 3], N(1))]), false),
+            (HPolyhedron([HalfSpace(N[1, 3], N(1)), HalfSpace(N[1, 4], N(1)),
+                          HalfSpace(N[-2, -6], N(-2))]), false),
+            (HPolyhedron([HalfSpace(N[1, 3], N(1)), HalfSpace(N[-2, 6], N(-2))]), false),
+            (HPolyhedron([HalfSpace(N[1, 3], N(1)), HalfSpace(N[-2, -6], N(2))]), false)
+           ]
+        @test is_hyperplanar(P) == eq
+        if eq
+            H = convert(Hyperplane, P)
+            @test is_hyperplanar(H)
+            @test H isa Hyperplane{N} && isequivalent(P, H)
+        else
+            @test_throws ArgumentError convert(Hyperplane, P)
+        end
+    end
 end
 
 # Polyhedra tests that only work with Float64

@@ -134,6 +134,16 @@ for N in [Float64, Rational{Int}, Float32]
     hs_sev = HalfSpace(SingleEntryVector(2, 3, N(1)), N(1))
     hs_vec = convert(HalfSpace{N, Vector{N}}, hs_sev)
     @test hs_vec.a == N[0, 1, 0] && hs_vec.b == N(1)
+
+    # complement check
+    for (h1, h2, eq) in [
+            (HalfSpace(N[-1], N(0)), HalfSpace(N[1//2], N(0)), true),
+            (HalfSpace(N[1, 3], N(1)), HalfSpace(N[-2, -6], N(-2)), true),
+            (HalfSpace(N[1, 3], N(1)), HalfSpace(N[-2, 6], N(-2)), false),
+            (HalfSpace(N[1, 3], N(1)), HalfSpace(N[-2, -6], N(2)), false)
+           ]
+        @test LazySets.iscomplement(h1, h2) == eq
+    end
 end
 
 # tests that only work with Float64 and Float32
