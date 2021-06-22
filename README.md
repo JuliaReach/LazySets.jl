@@ -1,6 +1,6 @@
 # LazySets.jl
 
-[![Build Status](https://travis-ci.org/JuliaReach/LazySets.jl.svg?branch=master)](https://travis-ci.org/JuliaReach/LazySets.jl)
+[![Build Status](https://github.com/JuliaReach/LazySets.jl/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/JuliaReach/LazySets.jl/actions/workflows/ci.yml?query=branch%3Amaster)
 [![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](http://juliareach.github.io/LazySets.jl/dev/)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/JuliaReach/LazySets.jl/blob/master/LICENSE)
 [![DOI](https://zenodo.org/badge/105701832.svg)](https://zenodo.org/badge/latestdoi/105701832)
