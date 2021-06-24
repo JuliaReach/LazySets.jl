@@ -13,7 +13,7 @@ function load_makie()
 return quote
 
 using .Makie: mesh, mesh!
-using .Makie.AbstractPlotting: Automatic
+using .Makie: Automatic
 
 end end  # quote / function load_makie()
 
@@ -57,7 +57,7 @@ Plot a three-dimensional convex set using `Makie`.
                     call `available_gradients()` to see what gradients are available,
                     and it can also be used as `[:red, :black]`
 - `colorrange`   -- (optional, default: `nothing`, which falls back to
-                    `Makie.AbstractPlotting.Automatic()`) a tuple `(min, max)`
+                    `Makie.Automatic()`) a tuple `(min, max)`
                     where `min` and `max` specify the data range to be used for
                     indexing the colormap
 - `interpolate`  -- (optional, default: `false`) a bool for heatmap and images,
