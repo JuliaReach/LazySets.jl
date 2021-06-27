@@ -21,14 +21,15 @@ Concrete Minkowski sum for a pair of lazy sets using their constraint representa
 
 ### Output
 
-An `HPolytope` that corresponds to the Minkowski sum of `P` and `Q` if both `P`
-and `Q` are bounded; otherwise an `HPolyhedron`.
+In two dimensions the result is a `VPolygon`. In higher dimensions, the result
+is an `HPolytope` if both `P` and `Q` are bounded, and an `HPolyhedron`
+otherwise.
 
 ### Notes
 
 This function requires that the list of constraints of both lazy sets `P` and
 `Q` can be obtained. After obtaining the respective lists of constraints, the
-`minkowski_sum` fucntion for polyhedral sets is used. For details see
+`minkowski_sum` function for polyhedral sets is used. For details see
 [`minkowski_sum(::VPolytope, ::VPolytope)`](@ref).
 
 This method requires `Polyhedra` and `CDDLib`, so you have to do:
@@ -45,6 +46,14 @@ function minkowski_sum(P::LazySet, Q::LazySet;
                        backend=nothing,
                        algorithm=nothing,
                        prune=true)
+    n = dim(P)
+    @assert n == dim(Q) "expected that the sets have the same dimension, " *
+                        "but they are $n and $(dim(Q)) respectively"
+
+    if n == 2 && applicable(vertices_list, P) && applicable(vertices_list, Q)
+        return _minkowski_sum_vpolygon(P, Q)
+    end
+
     @assert applicable(constraints_list, P) &&
         applicable(constraints_list, Q) "this function requires that the " *
         "list of constraints is available for both arguments; try " *
@@ -131,6 +140,22 @@ function minkowski_sum(P::AbstractPolyhedron, Q::AbstractPolyhedron;
                        backend=nothing,
                        algorithm=nothing,
                        prune=true)
+    return _minkowski_sum_hrep_preprocess(P, Q, backend, algorithm, prune)
+end
+
+function minkowski_sum(P::AbstractPolytope, Q::AbstractPolytope;
+                       backend=nothing,
+                       algorithm=nothing,
+                       prune=true)
+    n = dim(P)
+    @assert n == dim(Q) "expected that the sets have the same dimension, " *
+                        "but they are $n and $(dim(Q)) respectively"
+
+    if n == 2
+        return _minkowski_sum_vpolygon(P, Q)
+    end
+
+    # fallback
     return _minkowski_sum_hrep_preprocess(P, Q, backend, algorithm, prune)
 end
 
@@ -314,10 +339,12 @@ in counter-clockwise fashion and has linear complexity O(m+n) where m and n are
 the number of vertices of P and Q respectively.
 """
 function minkowski_sum(P::VPolygon, Q::VPolygon)
-    vlistP = vertices_list(P)
-    vlistQ = vertices_list(Q)
-    R = _minkowski_sum_vrep_2d(vlistP, vlistQ)
+    R = _minkowski_sum_vrep_2d(P.vertices, Q.vertices)
     return VPolygon(R)
+end
+
+function _minkowski_sum_vpolygon(P, Q)
+    return minkowski_sum(convert(VPolygon, P), convert(VPolygon, Q))
 end
 
 function _minkowski_sum_vrep_2d(vlistP::Vector{VT},
@@ -474,6 +501,8 @@ minkowski_sum(Z::ZeroSet, ::ZeroSet) = Z
 # disambiguation
 minkowski_sum(::ZeroSet, P::AbstractPolyhedron) = P
 minkowski_sum(P::AbstractPolyhedron, ::ZeroSet) = P
+minkowski_sum(P::AbstractPolytope, ::ZeroSet) = P
+minkowski_sum(::ZeroSet, P::AbstractPolytope) = P
 minkowski_sum(::ZeroSet, Z::AbstractZonotope) = Z
 minkowski_sum(Z::AbstractZonotope, ::ZeroSet) = Z
 minkowski_sum(::ZeroSet, H::AbstractHyperrectangle) = H
