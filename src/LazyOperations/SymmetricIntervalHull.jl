@@ -43,8 +43,22 @@ struct SymmetricIntervalHull{N, S<:LazySet{N}} <: AbstractHyperrectangle{N}
     end
 end
 
-isoperationtype(::Type{<:SymmetricIntervalHull}) = true
-isconvextype(::Type{<:SymmetricIntervalHull}) = true
+struct UnboundedSymmetricIntervalHull{N, S<:LazySet{N}} <: AbstractPolyhedron{N}
+    X::S
+    cache::Vector{N}
+
+    # default constructor that initializes cache
+    function UnboundedSymmetricIntervalHull(X::S) where {N, S<:LazySet{N}}
+        cache = fill(-one(N), dim(X))
+        return new{N, S}(X, cache)
+    end
+end
+
+const AbstractSIH{N} = Union{SymmetricIntervalHull{N},
+                             UnboundedSymmetricIntervalHull{N}}
+
+isoperationtype(::Type{<:AbstractSIH}) = true
+isconvextype(::Type{<:AbstractSIH}) = true
 
 """
     SymmetricIntervalHull(∅::EmptySet)
@@ -60,6 +74,7 @@ The symmetric interval hull of an empty set.
 The empty set because it is absorbing for the symmetric interval hull.
 """
 SymmetricIntervalHull(∅::EmptySet) = ∅
+UnboundedSymmetricIntervalHull(∅::EmptySet) = ∅
 
 
 # --- AbstractHyperrectangle interface functions ---
@@ -82,7 +97,7 @@ The radius in the given dimension.
 If it was computed before, this is just a look-up, otherwise it requires two
 support vector computations.
 """
-function radius_hyperrectangle(sih::SymmetricIntervalHull, i::Int)
+function radius_hyperrectangle(sih::AbstractSIH, i::Int)
     return get_radius!(sih, i)
 end
 
@@ -104,7 +119,7 @@ The box radius of the symmetric interval hull of a set.
 
 This function computes the symmetric interval hull explicitly.
 """
-function radius_hyperrectangle(sih::SymmetricIntervalHull)
+function radius_hyperrectangle(sih::AbstractSIH)
     n = dim(sih)
     for i in 1:n
         get_radius!(sih, i, n)
@@ -132,6 +147,10 @@ The center along a given dimension of the symmetric interval hull of a set.
     return zero(N)
 end
 
+@inline function center(sih::UnboundedSymmetricIntervalHull{N}, i::Int) where {N}
+    return zero(N)
+end
+
 
 # --- AbstractCentrallySymmetric interface functions ---
 
@@ -149,7 +168,7 @@ Return the center of the symmetric interval hull of a set.
 
 The origin.
 """
-function center(sih::SymmetricIntervalHull{N}) where {N}
+function center(sih::AbstractSIH{N}) where {N}
     return zeros(N, dim(sih))
 end
 
@@ -170,7 +189,7 @@ Return the dimension of the symmetric interval hull of a set.
 
 The ambient dimension of the symmetric interval hull of a set.
 """
-function dim(sih::SymmetricIntervalHull)
+function dim(sih::AbstractSIH)
     return dim(sih.X)
 end
 
@@ -199,7 +218,7 @@ queries.
 One such computation just asks for the support vector of the underlying set for
 both the positive and negative unit vector in the respective dimension.
 """
-function σ(d::AbstractVector, sih::SymmetricIntervalHull)
+function σ(d::AbstractVector, sih::AbstractSIH)
     n = length(d)
     @assert n == dim(sih) "cannot compute the support vector of a " *
         "$(dim(sih))-dimensional set along a vector of length $n"
@@ -217,7 +236,7 @@ function σ(d::AbstractVector, sih::SymmetricIntervalHull)
 end
 
 # Faster support vector calculation for sev and SymmetricIntervalHull
-function σ(d::SingleEntryVector, sih::SymmetricIntervalHull)
+function σ(d::SingleEntryVector, sih::AbstractSIH)
     N = promote_type(eltype(d), eltype(sih))
     @assert length(d) == dim(sih) "cannot compute the support vector of a " *
                                   "$(dim(sih))-dimensional set along a vector of length $(d.n)"
@@ -230,7 +249,7 @@ function σ(d::SingleEntryVector, sih::SymmetricIntervalHull)
 end
 
 # Faster support function calculation for sev and SymmetricIntervalHull
-function ρ(d::SingleEntryVector, H::SymmetricIntervalHull)
+function ρ(d::SingleEntryVector, H::AbstractSIH)
     @assert length(d) == dim(H) "a $(d.n)-dimensional vector is " *
                                 "incompatible with a $(dim(H))-dimensional set"
     return abs(d.v) * radius_hyperrectangle(H, d.i)
@@ -262,7 +281,7 @@ The radius of the symmetric interval hull of a set in a given dimension.
 We ask for the support vector of the underlying set for both the positive and
 negative unit vector in the dimension `i`.
 """
-function get_radius!(sih::SymmetricIntervalHull{N},
+function get_radius!(sih::AbstractSIH{N},
                      i::Int,
                      n::Int=dim(sih)) where {N}
     if sih.cache[i] == -one(N)
