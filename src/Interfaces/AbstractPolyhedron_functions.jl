@@ -1115,7 +1115,7 @@ function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int};
         clist = _project_polyhedron(P, block; kwargs...)
     end
 
-    if isbounded(P)
+    if isboundedtype(typeof(P))
          return HPolytope(clist; check_boundedness=false)
     else
          return HPolyhedron(clist)
