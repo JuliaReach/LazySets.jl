@@ -312,17 +312,21 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
 ```
 """
 @recipe function plot_lazyset(X::LazySet{N}, ε::N=N(PLOT_PRECISION)) where {N}
-    if dim(X) == 1
-        plot_recipe(X, ε)
-    else
-        label --> DEFAULT_LABEL
-        grid --> DEFAULT_GRID
-        if DEFAULT_ASPECT_RATIO != :none
-            aspect_ratio --> DEFAULT_ASPECT_RATIO
-        end
-        seriesalpha --> DEFAULT_ALPHA
-        seriescolor --> DEFAULT_COLOR
+    label --> DEFAULT_LABEL
+    grid --> DEFAULT_GRID
+    if DEFAULT_ASPECT_RATIO != :none
+        aspect_ratio --> DEFAULT_ASPECT_RATIO
+    end
+    seriesalpha --> DEFAULT_ALPHA
+    seriescolor --> DEFAULT_COLOR
 
+    if dim(X) == 1
+        x, y = plot_recipe(X, ε)
+        if length(x) == 1
+            seriestype := :scatter
+        end
+        x, y
+    else
         # extract limits and extrema of already plotted sets
         p = plotattributes[:plot_object]
         lims = _extract_limits(p, plotattributes)
