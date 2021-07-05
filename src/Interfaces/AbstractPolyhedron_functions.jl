@@ -821,7 +821,11 @@ function plot_recipe(P::AbstractPolyhedron{N}, ε=zero(N)) where {N}
     @assert isbounded(P) "cannot plot an unbounded $(typeof(P))"
 
     if dim(P) == 1
-        return plot_recipe(convert(Interval, P), ε)
+        Q = convert(Interval, P)
+        if diameter(Q) < _ztol(N)  # flat interval
+            Q = Singleton(center(Q))
+        end
+        return plot_recipe(Q, ε)
     else
         vlist = convex_hull(vertices_list(P))
         m = length(vlist)
