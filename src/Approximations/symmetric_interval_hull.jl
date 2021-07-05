@@ -19,6 +19,10 @@ A tight hyperrectangle that is centrally symmetric wrt. the origin.
 
 The center of the box is the origin, and the radius is obtained by computing the
 maximum value of the support function evaluated in the canonical directions.
+
+### Notes
+
+The result is a hyperrectangle and hence in particular convex.
 """
 function symmetric_interval_hull(S::LazySet{N}) where {N}
     # fallback returns a hyperrectangular set

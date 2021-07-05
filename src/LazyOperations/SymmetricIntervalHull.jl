@@ -26,9 +26,11 @@ computations may exceed ``2n``.
 To be most efficient in such cases, this type stores the intermediately computed
 bounds in the `cache` field.
 
-The set `X` must be compact.
+The set `X` must be bounded. The flag `check_boundedness` (which defaults to `true`)
+can be used to elide the boundedness check in the inner constructor. Misuse of this
+flag can result in incorrect behavior.
 
-The result is a hyperrectangle and hence in particular convex.
+The symmetric inteval hull of a set is a hyperrectangle, hence in particular convex.
 """
 struct SymmetricIntervalHull{N, S<:LazySet{N}} <: AbstractHyperrectangle{N}
     X::S
