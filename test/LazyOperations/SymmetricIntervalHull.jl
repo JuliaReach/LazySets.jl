@@ -7,7 +7,12 @@ for N in [Float64, Rational{Int}, Float32]
     h = SymmetricIntervalHull(Ball1(N[2, 3], N(4)))
 
     # constructor attempt from an unbounded set
-    @test_throws AssertionError SymmetricIntervalHull(HalfSpace(N[1], N(0)))
+    h0 = HalfSpace(N[1], N(0))
+    @test_throws AssertionError SymmetricIntervalHull(h0)
+
+    # pass boundedness constructor flag
+    S = SymmetricIntervalHull(h0, check_boundedness=false)
+    @test S.X == h0
 
     # dimension
     @test dim(h) == 2
