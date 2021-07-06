@@ -1,10 +1,9 @@
 eval(quote
-using .Javis: Luxor, background, sethue
+using .Javis: Luxor, background, sethue, Video, Background, Object, render
 
 export ground,
        luxify,
-       nfolds,
-       animate
+       nfolds
 
 # default canvas background
 function ground(args...)
@@ -42,7 +41,7 @@ end
 
 # animate an array of sets using Javis.jl
 # TODO pass colors, eg. with default cols = Javis.distinguishable_colors(length(X))
-function animate(X::AbstractVector{ST}; kwargs...) where {N, ST<:LazySet{N}}
+function Javis.animate(X::AbstractVector{ST}; kwargs...) where {N, ST<:LazySet{N}}
 
     # size of the animation
     sz = get(kwargs, :size, (500, 500))
@@ -69,7 +68,7 @@ function animate(X::AbstractVector{ST}; kwargs...) where {N, ST<:LazySet{N}}
 
     # add objects to the canvas
     for (dt, p) in zip(tdiv, Xlux)
-        Object(dt, (args...) -> poly(α .* p, :stroke, close=true))
+        Object(dt, (args...) -> Javis.poly(α .* p, :stroke, close=true))
     end
 
     # render video
