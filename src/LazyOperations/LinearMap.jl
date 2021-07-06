@@ -61,8 +61,8 @@ LinearMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, Matrix{Int64}}([2; 3], Ba
 
 julia> lm3 = 2 * X
 LinearMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, SparseArrays.SparseMatrixCSC{Int64, Int64}}(
-2  ⋅
-⋅  2, BallInf{Int64, Vector{Int64}}([0, 0], 1))
+ 2  ⋅
+ ⋅  2, BallInf{Int64, Vector{Int64}}([0, 0], 1))
 
 julia> 2I * X == lm3
 true
