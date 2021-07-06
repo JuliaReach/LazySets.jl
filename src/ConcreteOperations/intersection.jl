@@ -89,10 +89,10 @@ The line ``y = -x + 1`` intersected with the line ``y = x``:
 
 ```jldoctest
 julia> intersection(Line2D([-1., 1.], 0.), Line2D([1., 1.], 1.))
-Singleton{Float64,Array{Float64,1}}([0.5, 0.5])
+Singleton{Float64, Vector{Float64}}([0.5, 0.5])
 
 julia> intersection(Line2D([1., 1.], 1.), Line2D([1., 1.], 1.))
-Line2D{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
+Line2D{Float64, Vector{Float64}}([1.0, 1.0], 1.0)
 ```
 """
 function intersection(L1::Line2D, L2::Line2D)

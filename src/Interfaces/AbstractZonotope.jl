@@ -42,7 +42,7 @@ implementation of the other function call the fallback implementation
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractZonotope)
-5-element Array{Any,1}:
+5-element Vector{Any}:
  AbstractHyperrectangle
  HParallelotope
  LineSegment
@@ -656,12 +656,12 @@ Splitting of a two-dimensional zonotope along its first generator:
 
 ```jldoctest zonotope_label
 julia> Z = Zonotope([1.0, 0.0], [0.1 0.0; 0.0 0.1])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
+Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
 
 julia> split(Z, [1], [1])
-2-element Array{Zonotope{Float64,Array{Float64,1},Array{Float64,2}},1}:
- Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.95, 0.0], [0.05 0.0; 0.0 0.1])
- Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.05, 0.0], [0.05 0.0; 0.0 0.1])
+2-element Vector{Zonotope{Float64, Vector{Float64}, Matrix{Float64}}}:
+ Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([0.95, 0.0], [0.05 0.0; 0.0 0.1])
+ Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([1.05, 0.0], [0.05 0.0; 0.0 0.1])
 ```
 Here, the first vector in the arguments corresponds to the zonotope's
 generator to be split, and the second vector corresponds to the exponent of
@@ -671,26 +671,26 @@ Splitting of a two-dimensional zonotope along its generators:
 
 ```
 julia> Z = Zonotope([1.0, 0.0], [0.1 0.0; 0.0 0.1])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
+Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
 
 julia> split(Z, [1, 2], [2, 2])
-16-element Array{Zonotope{Float64,Array{Float64,1},Array{Float64,2}},1}:
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.925, -0.075], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.925, -0.025], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.925, 0.025], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.925, 0.075], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.975, -0.075], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.975, -0.025], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.975, 0.025], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([0.975, 0.075], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.025, -0.075], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.025, -0.025], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.025, 0.025], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.025, 0.075], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, -0.075], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, -0.025], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, 0.025], [0.025 0.0; 0.0 0.025])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.075, 0.075], [0.025 0.0; 0.0 0.025])
+16-element Vector{Zonotope{Float64, Vector{Float64}, Matrix{Float64}}}:
+Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([0.925, -0.075], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([0.925, -0.025], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([0.925, 0.025], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([0.925, 0.075], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([0.975, -0.075], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([0.975, -0.025], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([0.975, 0.025], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([0.975, 0.075], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([1.025, -0.075], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([1.025, -0.025], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([1.025, 0.025], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([1.025, 0.075], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([1.075, -0.075], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([1.075, -0.025], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([1.075, 0.025], [0.025 0.0; 0.0 0.025])
+Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([1.075, 0.075], [0.025 0.0; 0.0 0.025])
 ```
 Here the zonotope is split along both of its generators, each time into four parts.
 """

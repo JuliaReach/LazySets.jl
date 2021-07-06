@@ -21,7 +21,7 @@ It can be used with vector-valued arguments via the dot operator.
 
 ```jldoctest
 julia> LazySets.sign_cadlag.([-0.6, 1.3, 0.0])
-3-element Array{Float64,1}:
+3-element Vector{Float64}:
  -1.0
   1.0
   1.0
@@ -207,7 +207,7 @@ of this interface,
 julia> using LazySets: subtypes
 
 julia> subtypes(AbstractPolytope, false)
-4-element Array{Any,1}:
+4-element Vector{Any}:
  AbstractCentrallySymmetricPolytope
  AbstractPolygon
  HPolytope
@@ -220,7 +220,7 @@ concrete types are obtained), using the `concrete` flag:
 
 ```jldoctest subtypes
 julia> subtypes(AbstractPolytope, true)
-16-element Array{Type,1}:
+16-element Vector{Type}:
  Ball1
  BallInf
  HParallelotope
@@ -311,7 +311,7 @@ julia> using LazySets: implementing_sets
 julia> dict = implementing_sets(tovrep);
 
 julia> dict["available"]  # tovrep is only available for polyhedral set types
-6-element Array{Type,1}:
+6-element Vector{Type}:
  HPolygon
  HPolygonOpt
  HPolyhedron
@@ -329,7 +329,7 @@ julia> N = Rational{Int};  # restriction of the number type
 julia> dict = implementing_sets(σ; signature=Type[AbstractVector{N}], index=2, type_args=N);
 
 julia> dict["missing"]  # some set types are not available with number type N
-3-element Array{Type,1}:
+3-element Vector{Type}:
  Ball2
  Ballp
  Ellipsoid
@@ -486,9 +486,9 @@ and polygons are separated by empty lines (even the last polygon). For example:
 This is parsed as
 
 ```julia
-2-element Array{VPolygon{Float64,Array{Float64,1}},1}:
- VPolygon{Float64,Array{Float64,1}}([[1.01, 1.01], [0.99, 1.01], [0.99, 0.99], [1.01, 0.99]])
- VPolygon{Float64,Array{Float64,1}}([[0.908463, 1.31047], [0.873089, 1.31047], [0.873089, 1.28452], [0.908463, 1.28452]])
+2-element Array{VPolygon{Float64, Vector{Float64}},1}:
+ VPolygon{Float64, Vector{Float64}}([[1.01, 1.01], [0.99, 1.01], [0.99, 0.99], [1.01, 0.99]])
+ VPolygon{Float64, Vector{Float64}}([[0.908463, 1.31047], [0.873089, 1.31047], [0.873089, 1.28452], [0.908463, 1.28452]])
 ```
 """
 function read_gen(filename::String)

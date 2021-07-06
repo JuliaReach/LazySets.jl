@@ -20,12 +20,12 @@ of size `1` or one block of size `2`:
 
 ```jldoctest partition
 julia> LazySets.Approximations.uniform_partition(2, 1)
-2-element Array{UnitRange{Int64},1}:
+2-element Vector{UnitRange{Int64}}:
  1:1
  2:2
 
 julia> LazySets.Approximations.uniform_partition(2, 2)
-1-element Array{UnitRange{Int64},1}:
+1-element Vector{UnitRange{Int64}}:
  1:2
 ```
 
@@ -34,18 +34,18 @@ output is filled with one block of the size needed to reach `n`:
 
 ```jldoctest partition
 julia> LazySets.Approximations.uniform_partition(3, 1)
-3-element Array{UnitRange{Int64},1}:
+3-element Vector{UnitRange{Int64}}:
  1:1
  2:2
  3:3
 
 julia> LazySets.Approximations.uniform_partition(3, 2)
-2-element Array{UnitRange{Int64},1}:
+2-element Vector{UnitRange{Int64}}:
  1:2
  3:3
 
 julia> LazySets.Approximations.uniform_partition(10, 6)
-2-element Array{UnitRange{Int64},1}:
+2-element Vector{UnitRange{Int64}}:
  1:6
  7:10
 ```
@@ -165,7 +165,7 @@ julia> d(ε, bi) = array(decompose(S, P2d, (HPolygon => ε)))[bi]
 d (generic function with 1 method)
 
 julia> [length(constraints_list(d(ε, 1))) for ε in [Inf, 0.1, 0.01]]
-3-element Array{Int64,1}:
+3-element Vector{Int64}:
   4
   8
  32
@@ -211,7 +211,7 @@ For example:
 julia> res = array(decompose(S, P2d, Dict(1 => Hyperrectangle, 2 => 0.1)));
 
 julia> typeof(res[1]), typeof(res[2])
-(Hyperrectangle{Float64,Array{Float64,1},Array{Float64,1}}, HPolygon{Float64,Array{Float64,1}})
+(Hyperrectangle{Float64, Vector{Float64}, Vector{Float64}}, HPolygon{Float64, Vector{Float64}})
 ```
 """
 function decompose(S::LazySet{N},

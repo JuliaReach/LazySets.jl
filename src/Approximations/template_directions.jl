@@ -158,7 +158,7 @@ two,
 
 ```jldoctest dirs_Box
 julia> dirs = BoxDirections(2)
-BoxDirections{Float64,LazySets.Arrays.SingleEntryVector{Float64}}(2)
+BoxDirections{Float64, LazySets.Arrays.SingleEntryVector{Float64}}(2)
 
 julia> length(dirs)
 4
@@ -176,7 +176,7 @@ facets of a box.
 
 ```jldoctest dirs_Box
 julia> collect(dirs)
-4-element Array{LazySets.Arrays.SingleEntryVector{Float64},1}:
+4-element Vector{LazySets.Arrays.SingleEntryVector{Float64}}:
  [1.0, 0.0]
  [0.0, 1.0]
  [0.0, -1.0]
@@ -187,7 +187,7 @@ The numeric type can be specified as well:
 
 ```jldoctest
 julia> BoxDirections{Rational{Int}}(10)
-BoxDirections{Rational{Int64},LazySets.Arrays.SingleEntryVector{Rational{Int64}}}(10)
+BoxDirections{Rational{Int64}, LazySets.Arrays.SingleEntryVector{Rational{Int64}}}(10)
 
 julia> length(ans)
 20
@@ -271,7 +271,7 @@ two,
 
 ```jldoctest dirs_Oct
 julia> dirs = OctDirections(2)
-OctDirections{Float64,SparseArrays.SparseVector{Float64,Int64}}(2)
+OctDirections{Float64, SparseArrays.SparseVector{Float64, Int64}}(2)
 
 julia> length(dirs) # number of directions
 8
@@ -280,19 +280,19 @@ By default, each direction is represented in this iterator as a sparse vector:
 
 ```jldoctest dirs_Oct
 julia> eltype(dirs)
-SparseArrays.SparseVector{Float64,Int64}
+SparseArrays.SparseVector{Float64, Int64}
 ```
 In two dimensions, the directions defined by `OctDirections` are normal to
 the facets of an octagon.
 
 ```jldoctest dirs_Oct
 julia> first(dirs)
-2-element SparseArrays.SparseVector{Float64,Int64} with 2 stored entries:
+2-element SparseArrays.SparseVector{Float64, Int64} with 2 stored entries:
   [1]  =  1.0
   [2]  =  1.0
 
 julia> Vector.(collect(dirs))
-8-element Array{Array{Float64,1},1}:
+8-element Vector{Vector{Float64}}:
  [1.0, 1.0]
  [1.0, -1.0]
  [-1.0, 1.0]
@@ -307,7 +307,7 @@ The numeric type can be specified as well:
 
 ```jldoctest
 julia> OctDirections{Rational{Int}}(10)
-OctDirections{Rational{Int64},SparseArrays.SparseVector{Rational{Int64},Int64}}(10)
+OctDirections{Rational{Int64}, SparseArrays.SparseVector{Rational{Int64}, Int64}}(10)
 
 julia> length(ans)
 200
@@ -438,7 +438,7 @@ dimension two,
 
 ```jldoctest dirs_Diag
 julia> dirs = DiagDirections(2)
-DiagDirections{Float64,Array{Float64,1}}(2)
+DiagDirections{Float64, Vector{Float64}}(2)
 
 julia> length(dirs) # number of directions
 4
@@ -447,14 +447,14 @@ By default, each direction is represented in this iterator as a regular vector:
 
 ```jldoctest dirs_Diag
 julia> eltype(dirs)
-Array{Float64,1}
+Vector{Float64} (alias for Array{Float64, 1})
 ```
 In two dimensions, the directions defined by `DiagDirections` are normal to
 the facets of a ball in the 1-norm.
 
 ```jldoctest dirs_Diag
 julia> collect(dirs)
-4-element Array{Array{Float64,1},1}:
+4-element Vector{Vector{Float64}}:
  [1.0, 1.0]
  [-1.0, 1.0]
  [1.0, -1.0]
@@ -465,7 +465,7 @@ The numeric type can be specified as well:
 
 ```jldoctest
 julia> DiagDirections{Rational{Int}}(10)
-DiagDirections{Rational{Int64},Array{Rational{Int64},1}}(10)
+DiagDirections{Rational{Int64}, Vector{Rational{Int64}}}(10)
 
 julia> length(ans)
 1024
@@ -537,7 +537,7 @@ two,
 
 ```jldoctest dirs_BoxDiag
 julia> dirs = BoxDiagDirections(2)
-BoxDiagDirections{Float64,Array{Float64,1}}(2)
+BoxDiagDirections{Float64, Vector{Float64}}(2)
 
 julia> length(dirs) # number of directions
 8
@@ -546,14 +546,14 @@ By default, each direction is represented in this iterator as a regular vector:
 
 ```jldoctest dirs_BoxDiag
 julia> eltype(dirs)
-Array{Float64,1}
+Vector{Float64} (alias for Array{Float64, 1})
 ```
 In two dimensions, the directions defined by `BoxDiagDirections` are normal to
 the facets of an octagon.
 
 ```jldoctest dirs_BoxDiag
 julia> collect(dirs)
-8-element Array{Array{Float64,1},1}:
+8-element Vector{Vector{Float64}}:
  [1.0, 1.0]
  [-1.0, 1.0]
  [1.0, -1.0]
@@ -568,7 +568,7 @@ The numeric type can be specified as well:
 
 ```jldoctest
 julia> BoxDiagDirections{Rational{Int}}(10)
-BoxDiagDirections{Rational{Int64},Array{Rational{Int64},1}}(10)
+BoxDiagDirections{Rational{Int64}, Vector{Rational{Int64}}}(10)
 
 julia> length(ans)
 1044
@@ -658,7 +658,7 @@ The integer passed as an argument is used to discretize ``φ``:
 julia> pd = PolarDirections(2);
 
 julia> pd.stack
-2-element Array{Array{Float64,1},1}:
+2-element Vector{Vector{Float64}}:
  [1.0, 0.0]
  [-1.0, 1.2246467991473532e-16]
 
@@ -849,7 +849,7 @@ Creating a template with box directions in dimension two:
 julia> dirs = CustomDirections([[1.0, 0.0], [-1.0, 0.0], [0.0, 1.0], [0.0, -1.0]]);
 
 julia> dirs.directions
-4-element Array{Array{Float64,1},1}:
+4-element Vector{Vector{Float64}}:
  [1.0, 0.0]
  [-1.0, 0.0]
  [0.0, 1.0]

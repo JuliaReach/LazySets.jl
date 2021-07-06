@@ -34,7 +34,7 @@ New subtypes should be added to the `convert` method in order to be convertible.
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractHPolygon)
-2-element Array{Any,1}:
+2-element Vector{Any}:
  HPolygon
  HPolygonOpt
 ```

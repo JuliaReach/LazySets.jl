@@ -39,7 +39,7 @@ a three-dimensional vector. Then we combine them in an `AffineMap`.
 julia> A = [1 2; 1 3; 1 4]; X = BallInf([0, 0], 1); b2 = [1, 2]; b3 = [1, 2, 3];
 
 julia> AffineMap(A, X, b3)
-AffineMap{Int64,BallInf{Int64,Array{Int64,1}},Int64,Array{Int64,2},Array{Int64,1}}([1 2; 1 3; 1 4], BallInf{Int64,Array{Int64,1}}([0, 0], 1), [1, 2, 3])
+AffineMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, Matrix{Int64}, Vector{Int64}}([1 2; 1 3; 1 4], BallInf{Int64, Vector{Int64}}([0, 0], 1), [1, 2, 3])
 ```
 
 For convenience, `A` does not need to be a matrix but we also allow to use
@@ -50,13 +50,13 @@ identity matrix). Scaling by ``1`` is ignored and simplified to a pure `Translat
 julia> using LinearAlgebra
 
 julia> am = AffineMap(2I, X, b2)
-AffineMap{Int64,BallInf{Int64,Array{Int64,1}},Int64,Diagonal{Int64,Array{Int64,1}},Array{Int64,1}}([2 0; 0 2], BallInf{Int64,Array{Int64,1}}([0, 0], 1), [1, 2])
+AffineMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, Diagonal{Int64, Vector{Int64}}, Vector{Int64}}([2 0; 0 2], BallInf{Int64, Vector{Int64}}([0, 0], 1), [1, 2])
 
 julia> AffineMap(2, X, b2) == am
 true
 
 julia> AffineMap(1, X, b2)
-Translation{Int64,Array{Int64,1},BallInf{Int64,Array{Int64,1}}}(BallInf{Int64,Array{Int64,1}}([0, 0], 1), [1, 2])
+Translation{Int64, Vector{Int64}, BallInf{Int64, Vector{Int64}}}(BallInf{Int64, Vector{Int64}}([0, 0], 1), [1, 2])
 ```
 
 Applying a linear map to an `AffineMap` object combines the two maps into a new
@@ -64,7 +64,7 @@ Applying a linear map to an `AffineMap` object combines the two maps into a new
 
 ```jldoctest constructors
 julia> B = [2 0; 0 2]; am2 = B * am
-AffineMap{Int64,BallInf{Int64,Array{Int64,1}},Int64,Array{Int64,2},Array{Int64,1}}([4 0; 0 4], BallInf{Int64,Array{Int64,1}}([0, 0], 1), [2, 4])
+AffineMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, Matrix{Int64}, Vector{Int64}}([4 0; 0 4], BallInf{Int64, Vector{Int64}}([0, 0], 1), [2, 4])
 
 julia> 2 * am == am2
 true
@@ -75,7 +75,7 @@ automatically.
 
 ```jldoctest constructors
 julia> AffineMap(A, ZeroSet{Int}(2), b3)
-Singleton{Int64,Array{Int64,1}}([1, 2, 3])
+Singleton{Int64, Vector{Int64}}([1, 2, 3])
 
 julia> AffineMap(A, EmptySet{Int}(2), b3)
 EmptySet{Int64}(2)

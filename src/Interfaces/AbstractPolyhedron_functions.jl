@@ -1052,7 +1052,7 @@ whole space behaves as expected:
 
 ```jldoctest project_polyhedron
 julia> constrained_dimensions(P)
-4-element Array{Int64,1}:
+4-element Vector{Int64}:
  1
  2
  3
@@ -1069,14 +1069,14 @@ Now let's take a ball in the infinity norm and remove some constraints:
 julia> B = BallInf(zeros(4), 1.0);
 
 julia> c = constraints_list(B)[1:2]
-2-element Array{HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}},1}:
- HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}}([1.0, 0.0, 0.0, 0.0], 1.0)
- HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}}([0.0, 1.0, 0.0, 0.0], 1.0)
+2-element Vector{HalfSpace{Float64, LazySets.Arrays.SingleEntryVector{Float64}}}:
+ HalfSpace{Float64, LazySets.Arrays.SingleEntryVector{Float64}}([1.0, 0.0, 0.0, 0.0], 1.0)
+ HalfSpace{Float64, LazySets.Arrays.SingleEntryVector{Float64}}([0.0, 1.0, 0.0, 0.0], 1.0)
 
 julia> P = HPolyhedron(c);
 
 julia> constrained_dimensions(P)
-2-element Array{Int64,1}:
+2-element Vector{Int64}:
  1
  2
 ```
@@ -1085,9 +1085,9 @@ Finally we take the concrete projection onto variables `1` and `2`:
 
 ```jldoctest project_polyhedron
 julia> project(P, [1, 2]) |> constraints_list
-2-element Array{HalfSpace{Float64,Array{Float64,1}},1}:
- HalfSpace{Float64,Array{Float64,1}}([1.0, 0.0], 1.0)
- HalfSpace{Float64,Array{Float64,1}}([0.0, 1.0], 1.0)
+2-element Vector{HalfSpace{Float64, Vector{Float64}}}:
+ HalfSpace{Float64, Vector{Float64}}([1.0, 0.0], 1.0)
+ HalfSpace{Float64, Vector{Float64}}([0.0, 1.0], 1.0)
 ```
 """
 function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int};

@@ -50,13 +50,13 @@ vector `b`) corresponding to a given reset map.
 
 ```jldoctest resetmap
 julia> matrix(rm)
-3×3 LinearAlgebra.Diagonal{Float64,Array{Float64,1}}:
+3×3 LinearAlgebra.Diagonal{Float64, Vector{Float64}}:
  0.0   ⋅    ⋅
   ⋅   1.0   ⋅
   ⋅    ⋅   0.0
 
 julia> vector(rm)
-3-element SparseArrays.SparseVector{Float64,Int64} with 1 stored entry:
+3-element SparseArrays.SparseVector{Float64, Int64} with 1 stored entry:
   [1]  =  4.0
 ```
 
@@ -65,17 +65,17 @@ automatically.
 
 ```jldoctest resetmap
 julia> ResetMap(ZeroSet(3), r)
-Singleton{Float64,SparseArrays.SparseVector{Float64,Int64}}(  [1]  =  4.0)
+Singleton{Float64, SparseArrays.SparseVector{Float64, Int64}}(  [1]  =  4.0)
 
 julia> ResetMap(EmptySet(3), r)
-EmptySet{Float64}(3)
+∅(3)
 ```
 
 The (in this case unique) support vector of `rm` in direction `ones(3)` is:
 
 ```jldoctest resetmap
 julia> σ(ones(3), rm)
-3-element Array{Float64,1}:
+3-element Vector{Float64}:
  4.0
  3.0
  0.0

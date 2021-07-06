@@ -29,14 +29,14 @@ julia> c = [-1.0, 1.0];
 julia> r = [2.0, 1.0];
 
 julia> H = Hyperrectangle(c, r)
-Hyperrectangle{Float64,Array{Float64,1},Array{Float64,1}}([-1.0, 1.0], [2.0, 1.0])
+Hyperrectangle{Float64, Vector{Float64}, Vector{Float64}}([-1.0, 1.0], [2.0, 1.0])
 ```
 
 Which creates the hyperrectangle with vertices:
 
 ```jldoctest hyperrectangle_constructor
 julia> vertices_list(H)
-4-element Array{Array{Float64,1},1}:
+4-element Vector{Vector{Float64}}:
  [1.0, 2.0]
  [-3.0, 2.0]
  [1.0, 0.0]
@@ -49,12 +49,12 @@ enclosing ball of minimal volume):
 
 ```jldoctest hyperrectangle_constructor
 julia> center(H)
-2-element Array{Float64,1}:
+2-element Vector{Float64}:
  -1.0
   1.0
 
 julia> radius_hyperrectangle(H)
-2-element Array{Float64,1}:
+2-element Vector{Float64}:
  2.0
  1.0
 ```
@@ -69,7 +69,7 @@ julia> l = [-3.0, 0.0];
 julia> h = [1.0, 2.0];
 
 julia> Hyperrectangle(low=l, high=h)
-Hyperrectangle{Float64,Array{Float64,1},Array{Float64,1}}([-1.0, 1.0], [2.0, 1.0])
+Hyperrectangle{Float64, Vector{Float64}, Vector{Float64}}([-1.0, 1.0], [2.0, 1.0])
 ```
 
 By default, the constructor checks that that radius of the hyperrecatangle

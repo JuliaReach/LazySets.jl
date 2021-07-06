@@ -42,7 +42,7 @@ For instance, we create a two-dimensional ellipsoid with center `[1, 1]`:
 julia> using LinearAlgebra
 
 julia> E = Ellipsoid(ones(2), Diagonal([2.0, 0.5]))
-Ellipsoid{Float64,Array{Float64,1},Diagonal{Float64,Array{Float64,1}}}([1.0, 1.0], [2.0 0.0; 0.0 0.5])
+Ellipsoid{Float64, Vector{Float64}, Diagonal{Float64, Vector{Float64}}}([1.0, 1.0], [2.0 0.0; 0.0 0.5])
 ```
 
 If the center is not specified, it is assumed that it is the origin. For instance,
@@ -51,7 +51,7 @@ the identity can be created with:
 
 ```jldoctest ellipsoid_constructor
 julia> E = Ellipsoid(Matrix(1.0I, 3, 3))
-Ellipsoid{Float64,Array{Float64,1},Array{Float64,2}}([0.0, 0.0, 0.0], [1.0 0.0 0.0; 0.0 1.0 0.0; 0.0 0.0 1.0])
+Ellipsoid{Float64, Vector{Float64}, Matrix{Float64}}([0.0, 0.0, 0.0], [1.0 0.0 0.0; 0.0 1.0 0.0; 0.0 0.0 1.0])
 
 julia> dim(E)
 3
@@ -61,13 +61,13 @@ The center and shape matrix of the ellipsoid can be retrieved with the functions
 
 ```jldoctest ellipsoid_constructor
 julia> center(E)
-3-element Array{Float64,1}:
+3-element Vector{Float64}:
  0.0
  0.0
  0.0
 
 julia> shape_matrix(E)
-3×3 Array{Float64,2}:
+3×3 Matrix{Float64}:
  1.0  0.0  0.0
  0.0  1.0  0.0
  0.0  0.0  1.0
@@ -77,7 +77,7 @@ The function `an_element` returns some element of the ellipsoid:
 
 ```jldoctest ellipsoid_constructor
 julia> an_element(E)
-3-element Array{Float64,1}:
+3-element Vector{Float64}:
  0.0
  0.0
  0.0
@@ -90,7 +90,7 @@ We can evaluate its support vector in a given direction, say `[1, 1, 1]`:
 
 ```jldoctest ellipsoid_constructor
 julia> σ(ones(3), E)
-3-element Array{Float64,1}:
+3-element Vector{Float64}:
  0.5773502691896258
  0.5773502691896258
  0.5773502691896258

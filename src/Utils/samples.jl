@@ -167,6 +167,10 @@ function RejectionSampler(X::AbstractHyperrectangle)
     return RejectionSampler(distr, true)
 end
 
+# ambiguity fix
+function RejectionSampler(X::LazySet, tight::Bool)
+    RejectionSampler(X, DefaultUniform; tight=tight)
+end
 # default sampling for LazySets
 _default_sampler(X::LazySet) = RejectionSampler(X)
 _default_sampler(X::LineSegment{N}) where {N} = RejectionSampler(DefaultUniform(zero(N), one(N)), true)

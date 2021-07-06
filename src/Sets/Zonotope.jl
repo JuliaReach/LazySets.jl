@@ -44,18 +44,18 @@ A two-dimensional zonotope with given center and set of generators:
 
 ```jldoctest zonotope_label
 julia> Z = Zonotope([1.0, 0.0], [0.1 0.0; 0.0 0.1])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
+Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
 
 julia> dim(Z)
 2
 
 julia> center(Z)
-2-element Array{Float64,1}:
+2-element Vector{Float64}:
  1.0
  0.0
 
 julia> genmat(Z)
-2×2 Array{Float64,2}:
+2×2 Matrix{Float64}:
  0.1  0.0
  0.0  0.1
 ```
@@ -68,7 +68,7 @@ We can collect its vertices using `vertices_list`:
 
 ```jldoctest zonotope_label
 julia> vertices_list(Z)
-4-element Array{Array{Float64,1},1}:
+4-element Vector{Vector{Float64}}:
  [1.1, 0.1]
  [0.9, 0.1]
  [0.9, -0.1]
@@ -80,7 +80,7 @@ The support vector along a given direction can be computed using `σ`
 
 ```jldoctest zonotope_label
 julia> σ([1., 1.], Z)
-2-element Array{Float64,1}:
+2-element Vector{Float64}:
  1.1
  0.1
 ```
@@ -90,10 +90,10 @@ vectors, each vector representing a generator:
 
 ```jldoctest
 julia> Z = Zonotope(ones(2), [[1., 0.], [0., 1.], [1., 1.]])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.0, 1.0], [1.0 0.0 1.0; 0.0 1.0 1.0])
+Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([1.0, 1.0], [1.0 0.0 1.0; 0.0 1.0 1.0])
 
 julia> genmat(Z)
-2×3 Array{Float64,2}:
+2×3 Matrix{Float64}:
  1.0  0.0  1.0
  0.0  1.0  1.0
 ```

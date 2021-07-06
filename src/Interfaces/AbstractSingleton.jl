@@ -19,7 +19,7 @@ Every concrete `AbstractSingleton` must define the following functions:
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractSingleton)
-2-element Array{Any,1}:
+2-element Vector{Any}:
  Singleton
  ZeroSet
 ```

@@ -426,7 +426,7 @@ julia> using LazySets: block_structure
 julia> cpa = CartesianProductArray([BallInf(zeros(n), 1.0) for n in [3, 1, 2]]);
 
 julia> block_structure(cpa)
-3-element Array{UnitRange{Int64},1}:
+3-element Vector{UnitRange{Int64}}:
  1:3
  4:4
  5:6
@@ -472,7 +472,7 @@ julia> cpa = CartesianProductArray([BallInf(zeros(n), 1.0) for n in [1, 3, 2, 3]
 julia> m, k = block_to_dimension_indices(cpa, [2, 4, 8]);
 
 julia> m
-4-element Array{Tuple{Int64,Int64},1}:
+4-element Vector{Tuple{Int64, Int64}}:
  (-1, -1)
  (2, 4)
  (-1, -1)

@@ -247,12 +247,12 @@ A sparse matrix that corresponds to the projection onto the variables in `block`
 julia> using LazySets: projection_matrix
 
 julia> projection_matrix([1, 3], 4)
-2×4 SparseArrays.SparseMatrixCSC{Float64,Int64} with 2 stored entries:
-  [1, 1]  =  1.0
-  [2, 3]  =  1.0
+2×4 SparseArrays.SparseMatrixCSC{Float64, Int64} with 2 stored entries:
+ 1.0   ⋅    ⋅    ⋅
+  ⋅    ⋅   1.0   ⋅
 
 julia> Matrix(ans)
-2×4 Array{Float64,2}:
+2×4 Matrix{Float64}:
  1.0  0.0  0.0  0.0
  0.0  0.0  1.0  0.0
 ```

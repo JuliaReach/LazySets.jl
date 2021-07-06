@@ -28,7 +28,7 @@ eval(quote
    (Num[x₁, x₂], y)
 
    julia> LazySets._vec(vars)
-   3-element Array{Num,1}:
+   3-element Vector{Num}:
     x₁
     x₂
     y

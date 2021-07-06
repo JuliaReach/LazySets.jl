@@ -21,7 +21,7 @@ The plane ``y = 0``:
 
 ```jldoctest
 julia> Hyperplane([0, 1.], 0.)
-Hyperplane{Float64,Array{Float64,1}}([0.0, 1.0], 0.0)
+Hyperplane{Float64, Vector{Float64}}([0.0, 1.0], 0.0)
 ```
 """
 struct Hyperplane{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
@@ -537,16 +537,16 @@ julia> vars = @variables x y
 (x, y)
 
 julia> Hyperplane(x - y == 2)
-Hyperplane{Float64,Array{Float64,1}}([1.0, -1.0], 2.0)
+Hyperplane{Float64, Vector{Float64}}([1.0, -1.0], 2.0)
 
 julia> Hyperplane(x == y)
-Hyperplane{Float64,Array{Float64,1}}([1.0, -1.0], -0.0)
+Hyperplane{Float64, Vector{Float64}}([1.0, -1.0], -0.0)
 
 julia> vars = @variables x[1:4]
 (Num[x₁, x₂, x₃, x₄],)
 
 julia> Hyperplane(x[1] == x[2], x)
-Hyperplane{Float64,Array{Float64,1}}([1.0, -1.0, 0.0, 0.0], -0.0)
+Hyperplane{Float64, Vector{Float64}}([1.0, -1.0, 0.0, 0.0], -0.0)
 ```
 
 ### Algorithm

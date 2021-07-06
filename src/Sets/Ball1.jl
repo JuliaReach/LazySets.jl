@@ -28,7 +28,7 @@ Unit ball in the 1-norm in the plane:
 
 ```jldoctest ball1_constructor
 julia> B = Ball1(zeros(2), 1.)
-Ball1{Float64,Array{Float64,1}}([0.0, 0.0], 1.0)
+Ball1{Float64, Vector{Float64}}([0.0, 0.0], 1.0)
 julia> dim(B)
 2
 ```
@@ -37,7 +37,7 @@ We evaluate the support vector in the East direction:
 
 ```jldoctest ball1_constructor
 julia> σ([0.,1], B)
-2-element Array{Float64,1}:
+2-element Vector{Float64}:
  0.0
  1.0
 ```

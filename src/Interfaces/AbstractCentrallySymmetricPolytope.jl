@@ -25,7 +25,7 @@ functions:
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractCentrallySymmetricPolytope)
-2-element Array{Any,1}:
+2-element Vector{Any}:
  AbstractZonotope
  Ball1
 ```

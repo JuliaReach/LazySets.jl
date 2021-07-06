@@ -27,7 +27,7 @@ using LazySets.Arrays: isinvertible, inner, allequal,
                        is_cyclic_permutation, SingleEntryVector
 
 global test_suite_basic = true
-global test_suite_doctests = true
+global test_suite_doctests = VERSION >= v"1.6"
 global test_suite_polyhedra = true
 global test_suite_plotting = true
 

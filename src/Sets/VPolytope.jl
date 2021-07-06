@@ -26,7 +26,7 @@ vertices. For example, we can build the tetrahedron:
 julia> P = VPolytope([0 0 0; 1 0 0; 0 1 0; 0 0 1]);
 
 julia> P.vertices
-3-element Array{Array{Int64,1},1}:
+3-element Vector{Vector{Int64}}:
  [0, 1, 0, 0]
  [0, 0, 1, 0]
  [0, 0, 0, 1]
@@ -37,7 +37,7 @@ where each *column* represents a vertex:
 
 ```jldoctest
 julia> M = [0 0 0; 1 0 0; 0 1 0; 0 0 1]'
-3×4 LinearAlgebra.Adjoint{Int64,Array{Int64,2}}:
+3×4 adjoint(::Matrix{Int64}) with eltype Int64:
  0  1  0  0
  0  0  1  0
  0  0  0  1
@@ -45,7 +45,7 @@ julia> M = [0 0 0; 1 0 0; 0 1 0; 0 0 1]'
 julia> P = VPolytope(M);
 
 julia> P.vertices
-4-element Array{Array{Int64,1},1}:
+4-element Vector{Vector{Int64}}:
  [0, 0, 0]
  [1, 0, 0]
  [0, 1, 0]
@@ -110,7 +110,7 @@ julia> dim(v)
 julia> v = VPolytope([ones(3)]);
 
 julia> v.vertices
-1-element Array{Array{Float64,1},1}:
+1-element Vector{Vector{Float64}}:
  [1.0, 1.0, 1.0]
 
 julia> dim(v) == 3
