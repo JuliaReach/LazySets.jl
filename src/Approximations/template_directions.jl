@@ -482,25 +482,25 @@ DiagDirections(n::Int) = DiagDirections{Float64, Vector{Float64}}(n)
 DiagDirections{N}(n::Int) where {N} = DiagDirections{N, Vector{N}}(n)
 
 Base.eltype(::Type{DiagDirections{N, VN}}) where {N, VN} = VN
-Base.length(bdd::DiagDirections) = 2^bdd.n
+Base.length(dd::DiagDirections) = 2^dd.n
 
 # interface function
-dim(bdd::DiagDirections) = bdd.n
+dim(dd::DiagDirections) = dd.n
 isbounding(::Type{<:DiagDirections}) = true
 isnormalized(::Type{<:DiagDirections}) = false
 
-function Base.iterate(bdd::DiagDirections{N, Vector{N}}) where {N}
-    return (ones(N, bdd.n), ones(N, bdd.n))
+function Base.iterate(dd::DiagDirections{N, Vector{N}}) where {N}
+    return (ones(N, dd.n), ones(N, dd.n))
 end
 
-function Base.iterate(bdd::DiagDirections{N}, state::Vector{N}) where {N}
+function Base.iterate(dd::DiagDirections{N}, state::Vector{N}) where {N}
     i = 1
-    while i <= bdd.n && state[i] < 0
+    while i <= dd.n && state[i] < 0
         state[i] = -state[i]
         i = i+1
     end
-    if i > bdd.n
-        if bdd.n == 1
+    if i > dd.n
+        if dd.n == 1
             # finish here to avoid duplicates
             return nothing
         end
