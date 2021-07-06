@@ -131,7 +131,7 @@ for N in [Float64, Rational{Int}, Float32]
     # other: Diagonal
     mat = Diagonal(N[1, 2])
     @test _vector_type(typeof(mat)) == Vector{N}
-    @assert _matrix_type(typeof(mat)) == Diagonal{N,Array{N,1}}
+    @assert _matrix_type(typeof(mat)) == Diagonal{N, Vector{N}}
 end
 
 for N in [Float64, Float32]

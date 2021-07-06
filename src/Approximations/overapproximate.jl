@@ -809,12 +809,12 @@ julia> using LazySets.Approximations
 julia> Z = overapproximate(vTM, Zonotope);
 
 julia> center(Z)
-2-element Array{Float64,1}:
+2-element Vector{Float64}:
   1.0
  -2.1
 
 julia> Matrix(genmat(Z))
-2×3 Array{Float64,2}:
+2×3 Matrix{Float64}:
  2.0  0.5  0.0
  6.0  0.0  0.5
 ```
@@ -826,7 +826,7 @@ range evaluation using interval arithmetic:
 
 ```julia
 julia> X = box_approximation(Z)
-Hyperrectangle{Float64,Array{Float64,1},Array{Float64,1}}([1.0, -2.1], [2.5, 6.5])
+Hyperrectangle{Float64, Vector{Float64}, Vector{Float64}}([1.0, -2.1], [2.5, 6.5])
 
 julia> Y = evaluate(vTM[1], vTM[1].dom) × evaluate(vTM[2], vTM[2].dom)
 [-1.5, 3.5] × [-8.60001, 4.40001]
@@ -861,13 +861,13 @@ julia> vTM = [TaylorModel1(pi, I, x₀, D) for pi in [p1, p2, p3]]
 julia> Z = overapproximate(vTM, Zonotope);
 
 julia> center(Z)
-3-element Array{Float64,1}:
+3-element Vector{Float64}:
   1.0
  -2.1
   2.4
 
 julia> Matrix(genmat(Z))
-3×4 Array{Float64,2}:
+3×4 Matrix{Float64}:
  2.0  0.5  0.0  0.0
  6.0  0.0  0.5  0.0
  6.0  0.0  0.0  6.5
@@ -939,7 +939,7 @@ julia> using LazySets, LazySets.Approximations, TaylorModels
 julia> const IA = IntervalArithmetic;
 
 julia> x₁, x₂ = set_variables(Float64, ["x₁", "x₂"], order=8)
-2-element Array{TaylorN{Float64},1}:
+2-element Vector{TaylorN{Float64}}:
   1.0 x₁ + 𝒪(‖x‖⁹)
   1.0 x₂ + 𝒪(‖x‖⁹)
 
@@ -972,12 +972,12 @@ julia> vTM = [TaylorModelN(pi, r, x₀, D) for pi in [p1, p2]]
 julia> Z = overapproximate(vTM, Zonotope);
 
 julia> center(Z)
-2-element Array{Float64,1}:
+2-element Vector{Float64}:
    5.5
  124.0
 
 julia> Matrix(genmat(Z))
-2×4 Array{Float64,2}:
+2×4 Matrix{Float64}:
  0.0  -1.0  5.0    0.0
  1.5   0.0  0.0  123.0
 ```

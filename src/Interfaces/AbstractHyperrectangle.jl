@@ -33,7 +33,7 @@ Every hyperrectangular set is also a zonotopic set; see [`AbstractZonotope`](@re
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractHyperrectangle)
-5-element Array{Any,1}:
+5-element Vector{Any}:
  AbstractSingleton
  BallInf
  Hyperrectangle

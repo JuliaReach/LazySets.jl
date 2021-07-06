@@ -13,7 +13,7 @@ Every concrete `AbstractPolyhedron` must define the following functions:
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractPolyhedron)
-8-element Array{Any,1}:
+8-element Vector{Any}:
  AbstractPolytope
  HPolyhedron
  HalfSpace

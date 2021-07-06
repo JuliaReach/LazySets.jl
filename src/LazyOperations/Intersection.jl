@@ -74,7 +74,7 @@ julia> X, Y = BallInf([0.0, 0.0], 0.5), BallInf([1.0, 0.0], 0.75);
 julia> Z = X ∩ Y;
 
 julia> typeof(Z)
-Intersection{Float64,BallInf{Float64,Array{Float64,1}},BallInf{Float64,Array{Float64,1}}}
+Intersection{Float64,BallInf{Float64, Vector{Float64}},BallInf{Float64, Vector{Float64}}}
 
 julia> dim(Z)
 2
@@ -92,7 +92,7 @@ with the lowercase `intersection` function:
 
 ```jldoctest lazy_intersection
 julia> W = intersection(X, Y)
-Hyperrectangle{Float64,Array{Float64,1},Array{Float64,1}}([0.375, 0.0], [0.125, 0.5])
+Hyperrectangle{Float64, Vector{Float64}, Vector{Float64}}([0.375, 0.0], [0.125, 0.5])
 ```
 """
 struct Intersection{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}

@@ -34,7 +34,7 @@ radius 0.5:
 
 ```jldoctest ball2_label
 julia> B = Ball2(zeros(5), 0.5)
-Ball2{Float64,Array{Float64,1}}([0.0, 0.0, 0.0, 0.0, 0.0], 0.5)
+Ball2{Float64, Vector{Float64}}([0.0, 0.0, 0.0, 0.0, 0.0], 0.5)
 
 julia> dim(B)
 5
@@ -44,7 +44,7 @@ Evaluate `B`'s support vector in the direction ``[1,2,3,4,5]``:
 
 ```jldoctest ball2_label
 julia> σ([1.,2.,3.,4.,5.], B)
-5-element Array{Float64,1}:
+5-element Vector{Float64}:
  0.06741998624632421
  0.13483997249264842
  0.20225995873897262
@@ -192,7 +192,7 @@ Then ``x ∈ B`` iff ``\\left( ∑_{i=1}^n |c_i - x_i|^2 \\right)^{1/2} ≤ r``.
 
 ```jldoctest
 julia> B = Ball2([1., 1.], sqrt(0.5))
-Ball2{Float64,Array{Float64,1}}([1.0, 1.0], 0.7071067811865476)
+Ball2{Float64, Vector{Float64}}([1.0, 1.0], 0.7071067811865476)
 
 julia> [.5, 1.6] ∈ B
 false

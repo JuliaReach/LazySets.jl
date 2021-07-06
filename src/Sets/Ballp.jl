@@ -36,7 +36,7 @@ A five-dimensional ball in the ``p=3/2`` norm centered at the origin of radius
 
 ```jldoctest ballp_constructor
 julia> B = Ballp(3/2, zeros(5), 0.5)
-Ballp{Float64,Array{Float64,1}}(1.5, [0.0, 0.0, 0.0, 0.0, 0.0], 0.5)
+Ballp{Float64, Vector{Float64}}(1.5, [0.0, 0.0, 0.0, 0.0, 0.0], 0.5)
 
 julia> dim(B)
 5
@@ -46,7 +46,7 @@ We evaluate the support vector in direction ``[1,2,…,5]``:
 
 ```jldoctest ballp_constructor
 julia> σ([1., 2, 3, 4, 5], B)
-5-element Array{Float64,1}:
+5-element Vector{Float64}:
  0.013516004434607558
  0.05406401773843023
  0.12164403991146802
@@ -182,7 +182,7 @@ Then ``x ∈ B`` iff ``\\left( ∑_{i=1}^n |c_i - x_i|^p \\right)^{1/p} ≤ r``.
 
 ```jldoctest
 julia> B = Ballp(1.5, [1., 1.], 1.)
-Ballp{Float64,Array{Float64,1}}(1.5, [1.0, 1.0], 1.0)
+Ballp{Float64, Vector{Float64}}(1.5, [1.0, 1.0], 1.0)
 
 julia> [.5, -.5] ∈ B
 false

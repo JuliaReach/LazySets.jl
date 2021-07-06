@@ -25,7 +25,7 @@ The half-space ``x + 2y - z ≤ 3``:
 
 ```jldoctest
 julia> HalfSpace([1, 2, -1.], 3.)
-HalfSpace{Float64,Array{Float64,1}}([1.0, 2.0, -1.0], 3.0)
+HalfSpace{Float64, Vector{Float64}}([1.0, 2.0, -1.0], 3.0)
 ```
 
 To represent the set ``y ≥ 0`` in the plane, we have to
@@ -33,7 +33,7 @@ rearrange the expression as ``0x - y ≤ 0``:
 
 ```jldoctest
 julia> HalfSpace([0, -1.], 0.)
-HalfSpace{Float64,Array{Float64,1}}([0.0, -1.0], 0.0)
+HalfSpace{Float64, Vector{Float64}}([0.0, -1.0], 0.0)
 ```
 """
 struct HalfSpace{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
@@ -378,10 +378,10 @@ the upper and lower half-spaces:
 julia> using LazySets: halfspace_left
 
 julia> halfspace_left([0.0, 0.0], [1.0, 0.0])
-HalfSpace{Float64,Array{Float64,1}}([0.0, -1.0], 0.0)
+HalfSpace{Float64, Vector{Float64}}([0.0, -1.0], 0.0)
 
 julia> halfspace_left([0.0, 0.0], [-1.0, 0.0])
-HalfSpace{Float64,Array{Float64,1}}([0.0, 1.0], 0.0)
+HalfSpace{Float64, Vector{Float64}}([0.0, 1.0], 0.0)
 ```
 
 We create a box from the sequence of line segments that describe its edges:
@@ -594,16 +594,16 @@ julia> vars = @variables x y
 (x, y)
 
 julia> HalfSpace(x - y <= 2, vars)
-HalfSpace{Float64,Array{Float64,1}}([1.0, -1.0], 2.0)
+HalfSpace{Float64, Vector{Float64}}([1.0, -1.0], 2.0)
 
 julia> HalfSpace(x >= y, vars)
-HalfSpace{Float64,Array{Float64,1}}([-1.0, 1.0], -0.0)
+HalfSpace{Float64, Vector{Float64}}([-1.0, 1.0], -0.0)
 
 julia> vars = @variables x[1:4]
 (Num[x₁, x₂, x₃, x₄],)
 
 julia> HalfSpace(x[1] >= x[2], x)
-HalfSpace{Float64,Array{Float64,1}}([-1.0, 1.0, 0.0, 0.0], -0.0)
+HalfSpace{Float64, Vector{Float64}}([-1.0, 1.0, 0.0, 0.0], -0.0)
 ```
 
 Be careful with using the default `vars` value because it may introduce a wrong
@@ -614,16 +614,16 @@ julia> vars = @variables x y
 (x, y)
 
 julia> HalfSpace(2x ≥ 5y - 1) # correct
-HalfSpace{Float64,Array{Float64,1}}([-2.0, 5.0], 1.0)
+HalfSpace{Float64, Vector{Float64}}([-2.0, 5.0], 1.0)
 
 julia> HalfSpace(2x ≥ 5y - 1, vars) # correct
-HalfSpace{Float64,Array{Float64,1}}([-2.0, 5.0], 1.0)
+HalfSpace{Float64, Vector{Float64}}([-2.0, 5.0], 1.0)
 
 julia> HalfSpace(y - x ≥ 1) # incorrect
-HalfSpace{Float64,Array{Float64,1}}([-1.0, 1.0], -1.0)
+HalfSpace{Float64, Vector{Float64}}([-1.0, 1.0], -1.0)
 
 julia> HalfSpace(y - x ≥ 1, vars) # correct
-HalfSpace{Float64,Array{Float64,1}}([1.0, -1.0], -1.0)
+HalfSpace{Float64, Vector{Float64}}([1.0, -1.0], -1.0)
 ```
 
 ### Algorithm
@@ -722,17 +722,17 @@ of variables to be `[1, 2, 3]`:
 
 ```jldoctest project_halfspace
 julia> H = HalfSpace([1.0, 1.0, 0.0], 1.0)
-HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0, 0.0], 1.0)
+HalfSpace{Float64, Vector{Float64}}([1.0, 1.0, 0.0], 1.0)
 
 julia> project(H, [1, 2, 3])
-HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0, 0.0], 1.0)
+HalfSpace{Float64, Vector{Float64}}([1.0, 1.0, 0.0], 1.0)
 ```
 
 Projecting along dimensions `1` and `2` only:
 
 ```jldoctest project_halfspace
 julia> project(H, [1, 2])
-HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
+HalfSpace{Float64, Vector{Float64}}([1.0, 1.0], 1.0)
 ```
 
 In general, use the call syntax `project(H, constrained_dimensions(H))` to return
@@ -740,7 +740,7 @@ the half-space projected on the dimensions where it is constrained only:
 
 ```jldoctest project_halfspace
 julia> project(H, constrained_dimensions(H))
-HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
+HalfSpace{Float64, Vector{Float64}}([1.0, 1.0], 1.0)
 ```
 
 If a constrained dimension is projected, we get the universal set of the

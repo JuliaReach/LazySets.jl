@@ -61,7 +61,7 @@ julia> dim(x)
 1
 
 julia> center(x)
-1-element Array{Float64,1}:
+1-element Vector{Float64}:
  0.5
 ```
 

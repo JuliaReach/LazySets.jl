@@ -18,7 +18,7 @@ Every concrete `AbstractCentrallySymmetric` must define the following functions:
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractCentrallySymmetric)
-3-element Array{Any,1}:
+3-element Vector{Any}:
  Ball2
  Ballp
  Ellipsoid

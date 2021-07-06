@@ -40,13 +40,13 @@ julia> v = [1.0, 0.0, 0.0]; # translation along dimension 1
 julia> tr = Translation(X, v);
 
 julia> typeof(tr)
-Translation{Float64,Array{Float64,1},BallInf{Float64,Array{Float64,1}}}
+Translation{Float64, Vector{Float64},BallInf{Float64, Vector{Float64}}}
 
 julia> tr.X
-BallInf{Float64,Array{Float64,1}}([2.0, 2.0, 2.0], 1.0)
+BallInf{Float64, Vector{Float64}}([2.0, 2.0, 2.0], 1.0)
 
 julia> tr.v
-3-element Array{Float64,1}:
+3-element Vector{Float64}:
  1.0
  0.0
  0.0
@@ -68,10 +68,10 @@ The translation of a translation is performed immediately:
 
 ```jldoctest translation
 julia> tr = (X+v)+v
-Translation{Float64,Array{Float64,1},BallInf{Float64,Array{Float64,1}}}(BallInf{Float64,Array{Float64,1}}([2.0, 2.0, 2.0], 1.0), [2.0, 0.0, 0.0])
+Translation{Float64, Vector{Float64},BallInf{Float64, Vector{Float64}}}(BallInf{Float64, Vector{Float64}}([2.0, 2.0, 2.0], 1.0), [2.0, 0.0, 0.0])
 
 julia> tr.v
-3-element Array{Float64,1}:
+3-element Vector{Float64}:
  2.0
  0.0
  0.0
@@ -89,7 +89,7 @@ For the support vector (resp. support function) along vector `d`, use `σ` and
 
 ```jldoctest translation
 julia> σ([1.0, 0.0, 0.0], tr)
-3-element Array{Float64,1}:
+3-element Vector{Float64}:
  5.0
  3.0
  3.0
@@ -103,7 +103,7 @@ The `an_element` function is useful to obtain an element of a translation:
 
 ```jldoctest translation
 julia> e = an_element(tr)
-3-element Array{Float64,1}:
+3-element Vector{Float64}:
  4.0
  2.0
  2.0

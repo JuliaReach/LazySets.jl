@@ -32,7 +32,7 @@ positive ``x=y`` direction:
 
 ```jldoctest
 julia> B = BallInf(zeros(2), 1.0)
-BallInf{Float64,Array{Float64,1}}([0.0, 0.0], 1.0)
+BallInf{Float64, Vector{Float64}}([0.0, 0.0], 1.0)
 
 julia> dim(B)
 2

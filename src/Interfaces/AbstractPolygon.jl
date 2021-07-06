@@ -19,7 +19,7 @@ Every concrete `AbstractPolygon` must define the following functions:
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractPolygon)
-2-element Array{Any,1}:
+2-element Vector{Any}:
  AbstractHPolygon
  VPolygon
 ```

@@ -36,7 +36,7 @@ vertices. For example, we can build the right triangle
 julia> P = VPolygon([[0, 0], [1, 0], [0, 1]]);
 
 julia> P.vertices
-3-element Array{Array{Int64,1},1}:
+3-element Vector{Vector{Int64}}:
  [0, 0]
  [1, 0]
  [0, 1]
@@ -47,14 +47,14 @@ where each *column* represents a vertex:
 
 ```jldoctest polygon_vrep
 julia> M = [0 1 0; 0 0 1.]
-2×3 Array{Float64,2}:
+2×3 Matrix{Float64}:
  0.0  1.0  0.0
  0.0  0.0  1.0
 
 julia> P = VPolygon(M);
 
 julia> P.vertices
-3-element Array{Array{Float64,1},1}:
+3-element Vector{Vector{Float64}}:
  [0.0, 0.0]
  [1.0, 0.0]
  [0.0, 1.0]

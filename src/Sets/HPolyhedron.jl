@@ -716,12 +716,12 @@ julia> vars = @variables x y
 (x, y)
 
 julia> HPolyhedron([x + y <= 1, x + y >= -1], vars)
-HPolyhedron{Float64,Array{Float64,1}}(HalfSpace{Float64,Array{Float64,1}}[HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0], 1.
-0), HalfSpace{Float64,Array{Float64,1}}([-1.0, -1.0], 1.0)])
+HPolyhedron{Float64, Vector{Float64}}(HalfSpace{Float64, Vector{Float64}}[HalfSpace{Float64, Vector{Float64}}([1.0, 1.0], 1.
+0), HalfSpace{Float64, Vector{Float64}}([-1.0, -1.0], 1.0)])
 
 julia> X = HPolyhedron([x == 0, y <= 0], vars)
-HPolyhedron{Float64,Array{Float64,1}}(HalfSpace{Float64,Array{Float64,1}}[HalfSpace{Float64,Array{Float64,1}}([1.0, 0.0], -0.0), HalfSp
-ace{Float64,Array{Float64,1}}([-1.0, -0.0], 0.0), HalfSpace{Float64,Array{Float64,1}}([0.0, 1.0], -0.0)])
+HPolyhedron{Float64, Vector{Float64}}(HalfSpace{Float64, Vector{Float64}}[HalfSpace{Float64, Vector{Float64}}([1.0, 0.0], -0.0), HalfSp
+ace{Float64, Vector{Float64}}([-1.0, -0.0], 0.0), HalfSpace{Float64, Vector{Float64}}([0.0, 1.0], -0.0)])
 ```
 """
 function HPolyhedron(expr::Vector{<:Num}, vars::AbstractVector{Num}; N::Type{<:Real}=Float64)

@@ -22,7 +22,7 @@ The line ``y = -x + 1``:
 
 ```jldoctest
 julia> Line2D([1., 1.], 1.)
-Line2D{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
+Line2D{Float64, Vector{Float64}}([1.0, 1.0], 1.0)
 ```
 """
 struct Line2D{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
