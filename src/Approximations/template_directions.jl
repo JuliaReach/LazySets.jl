@@ -438,7 +438,7 @@ dimension two,
 
 ```jldoctest dirs_Diag
 julia> dirs = DiagDirections(2)
-DiagDirections{Float64,Array{Float64,1}}(2)
+DiagDirections{Float64, Vector{Float64}}(2)
 
 julia> length(dirs) # number of directions
 4
@@ -447,14 +447,14 @@ By default, each direction is represented in this iterator as a regular vector:
 
 ```jldoctest dirs_Diag
 julia> eltype(dirs)
-Array{Float64,1}
+Vector{Float64}
 ```
 In two dimensions, the directions defined by `DiagDirections` are normal to
 the facets of a ball in the 1-norm.
 
 ```jldoctest dirs_Diag
 julia> collect(dirs)
-4-element Array{Array{Float64,1},1}:
+4-element Vector{Vector{Float64}}:
  [1.0, 1.0]
  [-1.0, 1.0]
  [1.0, -1.0]
@@ -465,7 +465,7 @@ The numeric type can be specified as well:
 
 ```jldoctest
 julia> DiagDirections{Rational{Int}}(10)
-DiagDirections{Rational{Int64},Array{Rational{Int64},1}}(10)
+DiagDirections{Rational{Int64}, Matrix{Rational{Int64}}}(10)
 
 julia> length(ans)
 1024
