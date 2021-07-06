@@ -32,7 +32,7 @@ julia> A = [1 2 3; 2 3 1; 3 1 2];
 julia> X = BallInf([0, 0, 0], 1);
 
 julia> ilm = InverseLinearMap(A, X)
-InverseLinearMap{Int64,BallInf{Int64, Vector{Int64}},Int64, Matrix{Int64}}([1 2 3; 2 3 1; 3 1 2], BallInf{Int64, Vector{Int64}}([0, 0, 0], 1))
+InverseLinearMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, Matrix{Int64}}([1 2 3; 2 3 1; 3 1 2], BallInf{Int64, Vector{Int64}}([0, 0, 0], 1))
 ```
 
 Applying an inverse linear map to a `InverseLinearMap` object combines the two maps into
@@ -40,7 +40,7 @@ a single `InverseLinearMap` instance.
 
 ```jldoctest ilp_constructor
 julia> B = transpose(A); ilm2 = InverseLinearMap(B, ilm)
-InverseLinearMap{Int64,BallInf{Int64, Vector{Int64}},Int64, Matrix{Int64}}([14 11 11; 11 14 11; 11 11 14], BallInf{Int64, Vector{Int64}}([0, 0, 0], 1))
+InverseLinearMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, Matrix{Int64}}([14 11 11; 11 14 11; 11 11 14], BallInf{Int64, Vector{Int64}}([0, 0, 0], 1))
 
 julia> ilm2.M == A*B
 true

@@ -619,7 +619,7 @@ An interval.
 
 ```jldoctest
 julia> convert(Interval, Hyperrectangle([0.5], [0.5]))
-Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
+Interval{Float64, IntervalArithmetic.Interval{Float64}}([0, 1])
 ```
 """
 function convert(::Type{Interval}, H::AbstractHyperrectangle)

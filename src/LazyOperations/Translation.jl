@@ -40,7 +40,7 @@ julia> v = [1.0, 0.0, 0.0]; # translation along dimension 1
 julia> tr = Translation(X, v);
 
 julia> typeof(tr)
-Translation{Float64, Vector{Float64},BallInf{Float64, Vector{Float64}}}
+Translation{Float64, Vector{Float64}, BallInf{Float64, Vector{Float64}}}
 
 julia> tr.X
 BallInf{Float64, Vector{Float64}}([2.0, 2.0, 2.0], 1.0)
@@ -68,7 +68,7 @@ The translation of a translation is performed immediately:
 
 ```jldoctest translation
 julia> tr = (X+v)+v
-Translation{Float64, Vector{Float64},BallInf{Float64, Vector{Float64}}}(BallInf{Float64, Vector{Float64}}([2.0, 2.0, 2.0], 1.0), [2.0, 0.0, 0.0])
+Translation{Float64, Vector{Float64}, BallInf{Float64, Vector{Float64}}}(BallInf{Float64, Vector{Float64}}([2.0, 2.0, 2.0], 1.0), [2.0, 0.0, 0.0])
 
 julia> tr.v
 3-element Vector{Float64}:
@@ -136,13 +136,13 @@ whose `constraints_list` is available) can be computed from a lazy translation:
 
 ```jldoctest translation
 julia> constraints_list(tr)
-6-element Array{HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}},1}:
- HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}}([1.0, 0.0, 0.0], 5.0)
- HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}}([0.0, 1.0, 0.0], 3.0)
- HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}}([0.0, 0.0, 1.0], 3.0)
- HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}}([-1.0, 0.0, 0.0], -3.0)
- HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}}([0.0, -1.0, 0.0], -1.0)
- HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}}([0.0, 0.0, -1.0], -1.0)
+6-element Vector{HalfSpace{Float64, LazySets.Arrays.SingleEntryVector{Float64}}}:
+ HalfSpace{Float64, LazySets.Arrays.SingleEntryVector{Float64}}([1.0, 0.0, 0.0], 5.0)
+ HalfSpace{Float64, LazySets.Arrays.SingleEntryVector{Float64}}([0.0, 1.0, 0.0], 3.0)
+ HalfSpace{Float64, LazySets.Arrays.SingleEntryVector{Float64}}([0.0, 0.0, 1.0], 3.0)
+ HalfSpace{Float64, LazySets.Arrays.SingleEntryVector{Float64}}([-1.0, 0.0, 0.0], -3.0)
+ HalfSpace{Float64, LazySets.Arrays.SingleEntryVector{Float64}}([0.0, -1.0, 0.0], -1.0)
+ HalfSpace{Float64, LazySets.Arrays.SingleEntryVector{Float64}}([0.0, 0.0, -1.0], -1.0)
 ```
 """
 struct Translation{N, VN<:AbstractVector{N}, S<:LazySet{N}} <: AbstractAffineMap{N, S}

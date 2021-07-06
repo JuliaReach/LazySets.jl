@@ -74,7 +74,7 @@ julia> X, Y = BallInf([0.0, 0.0], 0.5), BallInf([1.0, 0.0], 0.75);
 julia> Z = X ∩ Y;
 
 julia> typeof(Z)
-Intersection{Float64,BallInf{Float64, Vector{Float64}},BallInf{Float64, Vector{Float64}}}
+Intersection{Float64, BallInf{Float64, Vector{Float64}}, BallInf{Float64, Vector{Float64}}}
 
 julia> dim(Z)
 2

@@ -37,7 +37,7 @@ where each *column* represents a vertex:
 
 ```jldoctest
 julia> M = [0 0 0; 1 0 0; 0 1 0; 0 0 1]'
-3×4 LinearAlgebra.Adjoint{Int64, Matrix{Int64}}:
+3×4 adjoint(::Matrix{Int64}) with eltype Int64:
  0  1  0  0
  0  0  1  0
  0  0  0  1

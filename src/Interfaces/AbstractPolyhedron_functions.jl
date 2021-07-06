@@ -1069,9 +1069,9 @@ Now let's take a ball in the infinity norm and remove some constraints:
 julia> B = BallInf(zeros(4), 1.0);
 
 julia> c = constraints_list(B)[1:2]
-2-element Array{HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}},1}:
- HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}}([1.0, 0.0, 0.0, 0.0], 1.0)
- HalfSpace{Float64,LazySets.Arrays.SingleEntryVector{Float64}}([0.0, 1.0, 0.0, 0.0], 1.0)
+2-element Vector{HalfSpace{Float64, LazySets.Arrays.SingleEntryVector{Float64}}}:
+ HalfSpace{Float64, LazySets.Arrays.SingleEntryVector{Float64}}([1.0, 0.0, 0.0, 0.0], 1.0)
+ HalfSpace{Float64, LazySets.Arrays.SingleEntryVector{Float64}}([0.0, 1.0, 0.0, 0.0], 1.0)
 
 julia> P = HPolyhedron(c);
 
@@ -1085,7 +1085,7 @@ Finally we take the concrete projection onto variables `1` and `2`:
 
 ```jldoctest project_polyhedron
 julia> project(P, [1, 2]) |> constraints_list
-2-element Array{HalfSpace{Float64, Vector{Float64}},1}:
+2-element Vector{HalfSpace{Float64, Vector{Float64}}}:
  HalfSpace{Float64, Vector{Float64}}([1.0, 0.0], 1.0)
  HalfSpace{Float64, Vector{Float64}}([0.0, 1.0], 1.0)
 ```

@@ -37,13 +37,13 @@ of numbers:
 
 ```jldoctest interval_constructor
 julia> x = Interval(0.0, 1.0)
-Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
+Interval{Float64, IntervalArithmetic.Interval{Float64}}([0, 1])
 ```
 or a 2-vector:
 
 ```jldoctest interval_constructor
 julia> x = Interval([0.0, 1.0])
-Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
+Interval{Float64, IntervalArithmetic.Interval{Float64}}([0, 1])
 ```
 
 Note that if the package `IntervalArithmetic` is loaded in the current scope,
@@ -55,7 +55,7 @@ julia> using IntervalArithmetic
 WARNING: using IntervalArithmetic.Interval in module Main conflicts with an existing identifier.
 
 julia> x = Interval(IntervalArithmetic.Interval(0.0, 1.0))
-Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
+Interval{Float64, IntervalArithmetic.Interval{Float64}}([0, 1])
 
 julia> dim(x)
 1
@@ -73,7 +73,7 @@ Interval of other numeric types can be created as well, eg. a rational interval:
 
 ```jldoctest interval_constructor
 julia> Interval(0//1, 2//1)
-Interval{Rational{Int64},IntervalArithmetic.Interval{Rational{Int64}}}([0//1, 2//1])
+Interval{Rational{Int64}, IntervalArithmetic.Interval{Rational{Int64}}}([0//1, 2//1])
 ```
 """
 struct Interval{N, IN<:AbstractInterval{N}} <: AbstractHyperrectangle{N}

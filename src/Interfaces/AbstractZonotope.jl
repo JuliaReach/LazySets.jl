@@ -659,7 +659,7 @@ julia> Z = Zonotope([1.0, 0.0], [0.1 0.0; 0.0 0.1])
 Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
 
 julia> split(Z, [1], [1])
-2-element Array{Zonotope{Float64, Vector{Float64}, Matrix{Float64}},1}:
+2-element Vector{Zonotope{Float64, Vector{Float64}, Matrix{Float64}}}:
  Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([0.95, 0.0], [0.05 0.0; 0.0 0.1])
  Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([1.05, 0.0], [0.05 0.0; 0.0 0.1])
 ```
@@ -674,7 +674,7 @@ julia> Z = Zonotope([1.0, 0.0], [0.1 0.0; 0.0 0.1])
 Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
 
 julia> split(Z, [1, 2], [2, 2])
-16-element Array{Zonotope{Float64, Vector{Float64}, Matrix{Float64}},1}:
+16-element Vector{Zonotope{Float64, Vector{Float64}, Matrix{Float64}}}:
 Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([0.925, -0.075], [0.025 0.0; 0.0 0.025])
 Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([0.925, -0.025], [0.025 0.0; 0.0 0.025])
 Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([0.925, 0.025], [0.025 0.0; 0.0 0.025])

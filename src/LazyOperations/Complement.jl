@@ -32,7 +32,7 @@ The complement of the complement is the original set again.
 julia> B = BallInf(zeros(2), 1.);
 
 julia> C = Complement(B)
-Complement{Float64,BallInf{Float64, Vector{Float64}}}(BallInf{Float64, Vector{Float64}}([0.0, 0.0], 1.0))
+Complement{Float64, BallInf{Float64, Vector{Float64}}}(BallInf{Float64, Vector{Float64}}([0.0, 0.0], 1.0))
 
 julia> Complement(C)
 BallInf{Float64, Vector{Float64}}([0.0, 0.0], 1.0)

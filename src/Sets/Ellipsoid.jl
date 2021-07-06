@@ -42,7 +42,7 @@ For instance, we create a two-dimensional ellipsoid with center `[1, 1]`:
 julia> using LinearAlgebra
 
 julia> E = Ellipsoid(ones(2), Diagonal([2.0, 0.5]))
-Ellipsoid{Float64, Vector{Float64},Diagonal{Float64, Vector{Float64}}}([1.0, 1.0], [2.0 0.0; 0.0 0.5])
+Ellipsoid{Float64, Vector{Float64}, Diagonal{Float64, Vector{Float64}}}([1.0, 1.0], [2.0 0.0; 0.0 0.5])
 ```
 
 If the center is not specified, it is assumed that it is the origin. For instance,

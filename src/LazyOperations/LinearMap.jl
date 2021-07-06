@@ -39,10 +39,10 @@ The function ``*`` can be used as an alias to construct a `LinearMap` object.
 
 ```jldoctest constructors
 julia> lm = LinearMap(A, X)
-LinearMap{Int64,BallInf{Int64, Vector{Int64}},Int64, Matrix{Int64}}([1 2; 1 3; 1 4], BallInf{Int64, Vector{Int64}}([0, 0], 1))
+LinearMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, Matrix{Int64}}([1 2; 1 3; 1 4], BallInf{Int64, Vector{Int64}}([0, 0], 1))
 
 julia> lm2 = A * X
-LinearMap{Int64,BallInf{Int64, Vector{Int64}},Int64, Matrix{Int64}}([1 2; 1 3; 1 4], BallInf{Int64, Vector{Int64}}([0, 0], 1))
+LinearMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, Matrix{Int64}}([1 2; 1 3; 1 4], BallInf{Int64, Vector{Int64}}([0, 0], 1))
 
 julia> lm == lm2
 true
@@ -57,12 +57,12 @@ Scaling by ``1`` is ignored.
 julia> using LinearAlgebra: I
 
 julia> [2, 3] * Y
-LinearMap{Int64,BallInf{Int64, Vector{Int64}},Int64, Matrix{Int64}}([2; 3], BallInf{Int64, Vector{Int64}}([0], 1))
+LinearMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, Matrix{Int64}}([2; 3], BallInf{Int64, Vector{Int64}}([0], 1))
 
 julia> lm3 = 2 * X
-LinearMap{Int64,BallInf{Int64, Vector{Int64}},Int64,SparseArrays.SparseMatrixCSC{Int64,Int64}}(
-  [1, 1]  =  2
-  [2, 2]  =  2, BallInf{Int64, Vector{Int64}}([0, 0], 1))
+LinearMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, SparseArrays.SparseMatrixCSC{Int64, Int64}}(
+2  ⋅
+⋅  2, BallInf{Int64, Vector{Int64}}([0, 0], 1))
 
 julia> 2I * X == lm3
 true
@@ -77,13 +77,13 @@ Again we can make use of the conversion for convenience.
 
 ```jldoctest constructors
 julia> B = transpose(A); B * lm
-LinearMap{Int64,BallInf{Int64, Vector{Int64}},Int64, Matrix{Int64}}([3 9; 9 29], BallInf{Int64, Vector{Int64}}([0, 0], 1))
+LinearMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, Matrix{Int64}}([3 9; 9 29], BallInf{Int64, Vector{Int64}}([0, 0], 1))
 
 julia> B = [3, 4, 5]; B * lm
-LinearMap{Int64,BallInf{Int64, Vector{Int64}},Int64, Matrix{Int64}}([12 38], BallInf{Int64, Vector{Int64}}([0, 0], 1))
+LinearMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, Matrix{Int64}}([12 38], BallInf{Int64, Vector{Int64}}([0, 0], 1))
 
 julia> B = 2; B * lm
-LinearMap{Int64,BallInf{Int64, Vector{Int64}},Int64, Matrix{Int64}}([2 4; 2 6; 2 8], BallInf{Int64, Vector{Int64}}([0, 0], 1))
+LinearMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, Matrix{Int64}}([2 4; 2 6; 2 8], BallInf{Int64, Vector{Int64}}([0, 0], 1))
 ```
 
 The application of a `LinearMap` to a `ZeroSet` or an `EmptySet` is simplified
@@ -460,9 +460,9 @@ julia> B = BallInf(zeros(3), 1.0)
 BallInf{Float64, Vector{Float64}}([0.0, 0.0, 0.0], 1.0)
 
 julia> Bproj = Projection(B, [1, 2])
-LinearMap{Float64,BallInf{Float64, Vector{Float64}},Float64,SparseArrays.SparseMatrixCSC{Float64,Int64}}(
-  [1, 1]  =  1.0
-  [2, 2]  =  1.0, BallInf{Float64, Vector{Float64}}([0.0, 0.0, 0.0], 1.0))
+LinearMap{Float64, BallInf{Float64, Vector{Float64}}, Float64, SparseArrays.SparseMatrixCSC{Float64, Int64}}(
+ 1.0   ⋅    ⋅
+  ⋅   1.0   ⋅ , BallInf{Float64, Vector{Float64}}([0.0, 0.0, 0.0], 1.0))
 
 julia> isequivalent(Bproj, BallInf(zeros(2), 1.0))
 true

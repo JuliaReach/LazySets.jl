@@ -36,7 +36,7 @@ julia> b1, b2 = Ball2(zeros(100), 0.1), Ball2(4*ones(100), 0.2);
 julia> c = ConvexHull(b1, b2);
 
 julia> typeof(c)
-ConvexHull{Float64,Ball2{Float64, Vector{Float64}},Ball2{Float64, Vector{Float64}}}
+ConvexHull{Float64, Ball2{Float64, Vector{Float64}}, Ball2{Float64, Vector{Float64}}}
 ```
 """
 struct ConvexHull{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}

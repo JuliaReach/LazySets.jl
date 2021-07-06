@@ -129,7 +129,7 @@ julia> points = [randn(2) for i in 1:30]; # 30 random points in 2D
 julia> hull = convex_hull(points);
 
 julia> typeof(hull)
-Vector{Vector{Float64}}
+Vector{Vector{Float64}} (alias for Array{Array{Float64, 1}, 1})
 ```
 """
 function convex_hull(points::Vector{VN};
