@@ -414,6 +414,103 @@ function Base.iterate(od::OctDirections{N, Vector{N}}, state::Int) where {N}
 end
 
 # ==================================================
+# Diagonal directions
+# ==================================================
+
+"""
+    DiagDirections{N, VN} <: AbstractDirections{N, VN}
+
+Diagonal directions representation.
+
+### Fields
+
+- `n` -- dimension
+
+### Notes
+
+Diagonal directions can be seen as all diagonal directions (all
+entries are ±1). In dimension ``n``, there are in total ``2^n`` such directions.
+
+## Examples
+
+The template can be constructed by passing the dimension. For example, in
+dimension two,
+
+```jldoctest dirs_Diag
+julia> dirs = DiagDirections(2)
+DiagDirections{Float64,Array{Float64,1}}(2)
+
+julia> length(dirs) # number of directions
+4
+```
+By default, each direction is represented in this iterator as a regular vector:
+
+```jldoctest dirs_Diag
+julia> eltype(dirs)
+Array{Float64,1}
+```
+In two dimensions, the directions defined by `DiagDirections` are normal to
+the facets of a ball in the 1-norm.
+
+```jldoctest dirs_Diag
+julia> collect(dirs)
+4-element Array{Array{Float64,1},1}:
+ [1.0, 1.0]
+ [-1.0, 1.0]
+ [1.0, -1.0]
+ [-1.0, -1.0]
+```
+
+The numeric type can be specified as well:
+
+```jldoctest
+julia> DiagDirections{Rational{Int}}(10)
+DiagDirections{Rational{Int64},Array{Rational{Int64},1}}(10)
+
+julia> length(ans)
+1024
+```
+"""
+struct DiagDirections{N, VN} <: AbstractDirections{N, VN}
+    n::Int
+end
+
+# constructor for type Float64
+DiagDirections(n::Int) = DiagDirections{Float64, Vector{Float64}}(n)
+
+# constructor where only N is specified
+DiagDirections{N}(n::Int) where {N} = DiagDirections{N, Vector{N}}(n)
+
+Base.eltype(::Type{DiagDirections{N, VN}}) where {N, VN} = VN
+Base.length(dd::DiagDirections) = 2^dd.n
+
+# interface function
+dim(dd::DiagDirections) = dd.n
+isbounding(::Type{<:DiagDirections}) = true
+isnormalized(::Type{<:DiagDirections}) = false
+
+function Base.iterate(dd::DiagDirections{N, Vector{N}}) where {N}
+    return (ones(N, dd.n), ones(N, dd.n))
+end
+
+function Base.iterate(dd::DiagDirections{N}, state::Vector{N}) where {N}
+    i = 1
+    while i <= dd.n && state[i] < 0
+        state[i] = -state[i]
+        i = i+1
+    end
+    if i > dd.n
+        if dd.n == 1
+            # finish here to avoid duplicates
+            return nothing
+        end
+    else
+        state[i] = -state[i]
+        return (copy(state), state)
+    end
+end
+
+# ==================================================
 # Box-diagonal directions
 # ==================================================
 

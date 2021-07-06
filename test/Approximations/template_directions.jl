@@ -32,6 +32,17 @@ for N in [Float64, Float32, Rational{Int}]
         box2 = overapproximate(X, HPolytope, dir)
         @test box == box2
 
+        # diag directions
+        dir = DiagDirections{N}(n)
+        @test isbounding(dir)
+        @test dim(dir) == n
+        Xdiag = overapproximate(X, dir)
+        @test length(dir) == length(Xdiag.constraints) == 2^n
+        Xdiag = overapproximate(X, DiagDirections)
+        @test length(dir) == length(Xdiag.constraints) == 2^n
+        Xdiag2 = overapproximate(X, HPolytope, dir)
+        @test Xdiag == Xdiag2
+
         # octagon directions
         dir = OctDirections{N}(n)
         @test isbounding(dir)

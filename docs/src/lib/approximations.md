@@ -81,6 +81,7 @@ isbounding
 isnormalized
 project(::LazySet, ::AbstractVector{Int}, ::Type{<:AbstractDirections})
 BoxDirections
+DiagDirections
 OctDirections
 BoxDiagDirections
 PolarDirections
