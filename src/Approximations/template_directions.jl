@@ -454,7 +454,7 @@ the facets of a ball in the 1-norm.
 
 ```jldoctest dirs_Diag
 julia> collect(dirs)
-8-element Array{Array{Float64,1},1}:
+4-element Array{Array{Float64,1},1}:
  [1.0, 1.0]
  [-1.0, 1.0]
  [1.0, -1.0]
