@@ -383,6 +383,11 @@ for N in [Float64]
         πP = project(P, [1, 2])
         @test πP isa HPolyhedron{N}
         @test ispermutation(constraints_list(πP), [HalfSpace(N[-1, 0], N(0)), HalfSpace(N[0, -1], N(0))])
+
+        # projection in unconstrained dimensions
+        P = HPolyhedron([HalfSpace(N[1, 0], N(1)), HalfSpace(N[-1, 0], N(0))])
+        πP = project(P, [2])
+        @test πP isa Universe{N} && dim(πP) == 2
     end
 
     # tests that require Symbolics
