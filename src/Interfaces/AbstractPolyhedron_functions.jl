@@ -1119,6 +1119,10 @@ function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int};
         clist = _project_polyhedron(P, block; kwargs...)
     end
 
+    if isnothing(clist)  # set is unconstrained in the given dimensions
+        return Universe{N}(dim(P))
+    end
+
     if isboundedtype(typeof(P))
          return HPolytope(clist; check_boundedness=false)
     else
