@@ -212,7 +212,7 @@ For balls with dimensions less than 30 we use the implementation for
     ∑_{i=1}^n d_i * (c_i + \\textrm{sgn}(d_i) * r)
 ```
 
-where ``\\textrm{sgn}(α) = 1`` if ``α ≥ 0`` and ``\\textrm{sgn}(α) = 1`` if ``α < 0``.
+where ``\\textrm{sgn}(α) = 1`` if ``α ≥ 0`` and ``\\textrm{sgn}(α) = -1`` if ``α < 0``.
 
 For balls of higher dimension, we instead exploit that for a support vector
 ``v = σ(d, B) = c + \\textrm{sgn}(d) * (r, …, r)ᵀ`` we have
