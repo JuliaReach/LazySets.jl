@@ -11,7 +11,6 @@ Depth = 3
 ## Preliminaries
 
 Let us introduce some notation.
-Let ``\mathbb{I}_n`` be the identity matrix of dimension ``n\times n``.
 For ``p \geq 1``, the ``p``-norm of an ``n``-dimensional vector
 ``x \in \mathbb{R}^n`` is denoted ``\Vert x \Vert_p``.
 
