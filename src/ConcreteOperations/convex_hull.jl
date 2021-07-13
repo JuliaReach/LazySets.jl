@@ -167,22 +167,26 @@ function convex_hull!(points::Vector{VN};
             return _convex_hull_1d!(points)
         end
     elseif n == 2
-        if m == 2
-            # two points case in 2d
-            return _two_points_2d!(points)
-        elseif m == 3
-            # three points case in 2d
-            return _three_points_2d!(points)
-        elseif m == 4
-            # four points case in 2d
-            return _four_points_2d!(points)
-        else
-            # general case in 2d
-            return _convex_hull_2d!(points, algorithm=algorithm)
-        end
+        return _convex_hull_2d_preprocess!(points, m; algorithm=algorithm)
     else
         # general case in nd
         return _convex_hull_nd!(points, backend=backend, solver=solver)
+    end
+end
+
+function _convex_hull_2d_preprocess!(points, m=length(points); algorithm=nothing)
+    if m == 2
+        # two points case in 2d
+        return _two_points_2d!(points)
+    elseif m == 3
+        # three points case in 2d
+        return _three_points_2d!(points)
+    elseif m == 4
+        # four points case in 2d
+        return _four_points_2d!(points)
+    else
+        # general case in 2d
+        return _convex_hull_2d!(points, algorithm=algorithm)
     end
 end
 

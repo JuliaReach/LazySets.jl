@@ -170,6 +170,10 @@ function isbounded(ms::MinkowskiSum)
     return isbounded(ms.X) && isbounded(ms.Y)
 end
 
+function isboundedtype(::Type{MinkowskiSum{N, S1, S2}}) where {N, S1, S2}
+    return isboundedtype(S1) && isboundedtype(S2)
+end
+
 """
     isempty(ms::MinkowskiSum)
 

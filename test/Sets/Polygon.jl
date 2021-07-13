@@ -448,6 +448,16 @@ for N in [Float64, Float32, Rational{Int}]
         @test ρ(d, Q1) == res
         @test abs(ρ(d, Q1) - ρ(d, Q2)) < 1e-8  # precision of lazy intersection not good
     end
+
+    # concrete Minkowski sum for arbitrary polytopic sets performs 2D computation
+    X = BallInf(zeros(N, 2), N(1))
+    Y = Ball1(zeros(N, 2), N(1))
+    Z = minkowski_sum(X, Y)
+    # the vertices are [±1, ±2] and [±2, ±1]
+    vlist = [[[N(-1)^i * k, N(-1)^j * (3-k)] for i in 1:2, j in 1:2, k in 1:2]...]
+    @test Z isa VPolygon{N} && ispermutation(vertices_list(Z), vlist)
+    Z = minkowski_sum(X + Y, Singleton(zeros(N, 2)))
+    @test Z isa VPolygon{N} && ispermutation(vertices_list(Z), vlist)
 end
 
 for N in [Float64, Float32]
