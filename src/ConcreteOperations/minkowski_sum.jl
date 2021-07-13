@@ -53,7 +53,13 @@ function minkowski_sum(P::LazySet, Q::LazySet;
     if n == 2 && applicable(vertices_list, P) && applicable(vertices_list, Q) &&
                  isboundedtype(typeof(P)) && isboundedtype(typeof(Q))
         Pv = vertices_list(P)
+        if length(Pv) > 1
+            Pv = _convex_hull_2d_preprocess!(copy(Pv))
+        end
         Qv = vertices_list(Q)
+        if length(Qv) > 1
+            Qv = _convex_hull_2d_preprocess!(copy(Qv))
+        end
         R = _minkowski_sum_vrep_2d(Pv, Qv)
         return VPolygon(R)
         # return _minkowski_sum_vpolygon(P, Q) # crashes, see JuliaLang#41561
