@@ -120,14 +120,14 @@ for N in [Float64, Float32, Rational{Int}]
     plot(cp)
     plot(cpa)
 
-    # -----
-    # cases that are not implemented
-    # -----
-    @test_throws ErrorException plot(itsa) # TODO not implemented yet
+    if N == Float64
+        plot(itsa)
+    end
 end
 
 for N in [Float64]
     # test plot with static arrays input
     Z = Zonotope(SA[N(1), N(0)], SA[N(1) N(0); N(0) N(1)])
     plot(Z)
+
 end
