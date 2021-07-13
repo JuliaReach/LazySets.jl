@@ -224,7 +224,8 @@ direction.
 The support vector in the given direction.
 """
 function σ(d::AbstractVector, cap::Intersection)
-    error("the exact support vector of an intersection is not implemented")
+    X = concretize(cap)
+    return σ(d, X)
 end
 
 """
