@@ -13,8 +13,8 @@ for N in [Float64, Rational{Int}, Float32]
     # dim
     @test dim(I) == 2
 
-    # support vector (currently throws an error)
-    @test_throws ErrorException σ(ones(N, 2), I)
+    # support vector
+    @test σ(ones(N, 2), I) == N[2, 2]
 
     # membership
     @test ones(N, 2) ∈ I && N[5, 5] ∉ I
@@ -65,8 +65,8 @@ for N in [Float64, Rational{Int}, Float32]
     # dim
     @test dim(IArr) == 2
 
-    # support vector (currently throws an error)
-    @test_throws ErrorException σ(ones(N, 2), IArr)
+    # support vector
+    @test σ(ones(N, 2), IArr) == N[2, 2]
 
     # boundedness
     @test isbounded(IArr)
