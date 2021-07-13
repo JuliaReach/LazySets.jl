@@ -108,8 +108,8 @@ The support vector in the given direction.
 If the direction has norm zero, the result depends on the individual sets.
 """
 function σ(d::AbstractVector, ia::IntersectionArray)
-   # TODO implement
-   error("not implemented yet")
+    X = concretize(ia)
+    return σ(d, X)
 end
 
 """

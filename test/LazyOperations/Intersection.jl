@@ -13,8 +13,8 @@ for N in [Float64, Rational{Int}, Float32]
     # dim
     @test dim(I) == 2
 
-    # support vector (currently throws an error)
-    @test_throws ErrorException σ(ones(N, 2), I)
+    # support vector
+    @test σ(ones(N, 2), I) == N[2, 2]
 
     # membership
     @test ones(N, 2) ∈ I && N[5, 5] ∉ I
@@ -65,15 +65,13 @@ for N in [Float64, Rational{Int}, Float32]
     # dim
     @test dim(IArr) == 2
 
-    # support vector (currently throws an error)
-    @test_throws ErrorException σ(ones(N, 2), IArr)
+    # support vector
+    @test σ(ones(N, 2), IArr) == N[2, 2]
 
     # boundedness
     @test isbounded(IArr)
     @test isbounded(IntersectionArray([Singleton(N[1]), HalfSpace(N[1], N(1))]))
-    # the following tests crash because ρ(::IntersectionArray) is not implemented yet
-    @test_throws ErrorException isbounded(IntersectionArray([HalfSpace(N[1], N(1)), HalfSpace(N[1], N(-1))]))
-    @test_throws ErrorException !isbounded(IntersectionArray([HalfSpace(ones(N, 2), N(1)), HalfSpace(ones(N, 2), N(-1))]))
+    @test isbounded(IntersectionArray([HalfSpace(N[1], N(1)), HalfSpace(N[-1], N(1))]))
 
     # isempty
     @test_throws MethodError isempty(IArr)
@@ -154,6 +152,8 @@ for N in [Float64]
     # boundedness
     @test isbounded(HalfSpace(N[1], N(1)) ∩ HalfSpace(N[-1], N(1)))
     @test !isbounded(HalfSpace(ones(N, 2), N(1)) ∩ HalfSpace(-ones(N, 2), N(1)))
+    @test !isbounded(IntersectionArray([HalfSpace(N[1], N(1)), HalfSpace(N[1], N(-1))]))
+    @test !isbounded(IntersectionArray([HalfSpace(ones(N, 2), N(1)), HalfSpace(ones(N, 2), N(-1))]))
 
     # HalfSpace vs. Ball2 intersection
     B2 = Ball2(zeros(2), N(1));

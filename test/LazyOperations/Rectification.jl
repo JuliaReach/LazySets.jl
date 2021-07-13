@@ -44,8 +44,6 @@ for N in [Float64, Rational{Int}, Float32]
     @test σ(N[1], Rectification(Ball1(N[0], N(1)))) == N[1]
     # other sets in higher dimensions compute lazy linear maps and intersections
     @test σ(N[-1, -1], Rectification(Ball1(N[-2, -2], N(1)))) == N[0, 0]
-    # this may throw an error due to a lazy intersection
-    @test_throws ErrorException σ(N[1, 1], Rectification(Ball1(N[0, 0], N(1))))
 
     # an_element
     x = an_element(RI1)
@@ -135,4 +133,6 @@ for N in [Float64]
     @test N(0) ≤ ρ(N[0, -1], RP) ≤ N(1e-8)
 #     @test ρ(N[-1, -1], RP) ≈ N(0)
     @test N(0) ≤ ρ(N[-1, -1], RP) ≤ N(1.1e-1)
+
+    @test σ(N[1, 1], Rectification(Ball1(N[0, 0], N(1)))) == N[0, 1]
 end
