@@ -146,4 +146,9 @@ for N in [Float64, Rational{Int}, Float32]
     S = Singleton(N[3, 4, 5])
     @test permute(S, 1:3) == S
     @test permute(S, [2, 1, 3]) == Singleton(N[4, 3, 5])
+
+    # Chebyshev center
+    c = chebyshev_center(S)
+    c2, r = chebyshev_center(S, compute_radius=true)
+    @test c == c2 == element(S) && r == zero(N)
 end

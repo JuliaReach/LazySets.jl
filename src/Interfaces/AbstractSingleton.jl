@@ -352,6 +352,13 @@ function ∈(S::AbstractSingleton, X::LazySet)
           "the implementations may differ)"))
 end
 
+function chebyshev_center(S::AbstractSingleton{N}; compute_radius::Bool=false) where {N}
+    if compute_radius
+        return element(S), zero(N)
+    end
+    return element(S)
+end
+
 """
     plot_recipe(S::AbstractSingleton{N}, [ε]=zero(N)) where {N}
 
