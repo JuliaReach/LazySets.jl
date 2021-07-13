@@ -214,4 +214,9 @@ for N in [Float64, Float32, Rational{Int}]
 
     vlistI = vertices_list(b[1])
     @test is_cyclic_permutation(vlistI, [SA[N(0)], SA[N(1)]])
+
+    # Chebyshev center
+    c = chebyshev_center(x)
+    c2, r = chebyshev_center(x, compute_radius=true)
+    @test c == c2 == center(x) && r == zero(N)
 end

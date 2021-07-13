@@ -692,3 +692,10 @@ end
 function vertices_list(H::IntervalArithmetic.IntervalBox)
     return vertices_list(convert(Hyperrectangle, H))
 end
+
+function chebyshev_center(x::Interval{N}; compute_radius::Bool=false) where {N}
+    if compute_radius
+        return center(x), zero(N)
+    end
+    return center(x)
+end
