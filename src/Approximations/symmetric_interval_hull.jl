@@ -72,3 +72,9 @@ function symmetric_interval_hull(H::Hyperrectangle{N}) where {N}
     end
     return Hyperrectangle(zeros(N, n), r)
 end
+
+function symmetric_interval_hull(S::AbstractSingleton{N}) where {N}
+    n = dim(S)
+    r = abs.(element(S))
+    return Hyperrectangle(zeros(N, n), r)
+end
