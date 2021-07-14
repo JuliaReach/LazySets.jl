@@ -78,3 +78,15 @@ function symmetric_interval_hull(S::AbstractSingleton{N}) where {N}
     r = abs.(element(S))
     return Hyperrectangle(zeros(N, n), r)
 end
+
+function symmetric_interval_hull(X::LinearMap{N, <:AbstractSingleton}) where {N}
+    n = dim(X)
+    r = abs.(X.M * element(X.X))
+    return Hyperrectangle(zeros(N, n), r)
+end
+
+function symmetric_interval_hull(X::MinkowskiSum{N, <:AbstractSingleton, <:AbstractSingleton}) where {N}
+    n = dim(X)
+    r = abs.(element(X.X) + element(X.Y))
+    return Hyperrectangle(zeros(N, n), r)
+end
