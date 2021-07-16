@@ -98,6 +98,11 @@ function Interval(x::AbstractVector)
     Interval(x[1], x[2])
 end
 
+# constructor from a single number
+function Interval(x::Real)
+    Interval(IntervalArithmetic.Interval(x))
+end
+
 isoperationtype(::Type{<:Interval}) = false
 isconvextype(::Type{<:Interval}) = true
 
