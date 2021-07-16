@@ -157,6 +157,7 @@ if test_suite_basic
     @time @testset "LazySets.Approximations.template_directions" begin include("Approximations/template_directions.jl") end
     @time @testset "LazySets.Approximations.box_approximation" begin include("Approximations/box_approximation.jl") end
     @time @testset "LazySets.Approximations.ballinf_approximation" begin include("Approximations/ballinf_approximation.jl") end
+    @time @testset "LazySets.Approximations.symmetric_interval_hull" begin include("Approximations/symmetric_interval_hull.jl") end
     @time @testset "LazySets.Approximations.radiusdiameter" begin include("Approximations/radiusdiameter.jl") end
     @time @testset "LazySets.Approximations.decompose" begin include("Approximations/decompose.jl") end
     @time @testset "LazySets.Approximations.distance" begin include("Approximations/distance.jl") end
