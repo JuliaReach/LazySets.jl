@@ -9,6 +9,10 @@ for N in [Float64, Float32, Rational{Int}]
     # constructor from a vector
     x = Interval(N[0, 1])
 
+    # constructor from a number
+    x = Interval(N(0))
+    @test x == Interval(N[0, 0])
+
     # type-less constructor
     x = Interval(N(0), N(1))
 
