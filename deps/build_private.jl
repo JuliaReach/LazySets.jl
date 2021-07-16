@@ -10,5 +10,6 @@ import Pkg
 end
 
 @static if VERSION > v"1.4"
-    Pkg.add([Pkg.PackageSpec(name="Symbolics", version=v"0.1.32")])
+    Pkg.add([Pkg.PackageSpec(name="Javis", version=v"0.5"),
+             Pkg.PackageSpec(name="Symbolics", version=v"0.1.32")])
 end
