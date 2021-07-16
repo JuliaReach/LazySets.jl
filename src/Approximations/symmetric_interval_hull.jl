@@ -64,11 +64,11 @@ end
     return c >= zero(N) ? c + r : -c + r
 end
 
-function symmetric_interval_hull(H::Hyperrectangle{N}) where {N}
+function symmetric_interval_hull(H::AbstractHyperrectangle{N}) where {N}
     n = dim(H)
     r = Vector{N}(undef, n)
     @inbounds for i in 1:n
-        r[i] = _maxabs(H.center[i], H.radius[i])
+        r[i] = _maxabs(center(H, i), radius_hyperrectangle(H, i))
     end
     return Hyperrectangle(zeros(N, n), r)
 end
@@ -88,5 +88,13 @@ end
 function symmetric_interval_hull(X::MinkowskiSum{N, <:AbstractSingleton, <:AbstractSingleton}) where {N}
     n = dim(X)
     r = abs.(element(X.X) + element(X.Y))
+    return Hyperrectangle(zeros(N, n), r)
+end
+
+function symmetric_interval_hull(lm::LinearMap{N, <:AbstractHyperrectangle}) where {N}
+    n = dim(lm)
+    M = lm.M
+    H = lm.X
+    r = abs.(M * center(H)) .+ abs.(M) * radius_hyperrectangle(H)
     return Hyperrectangle(zeros(N, n), r)
 end
