@@ -571,7 +571,7 @@ end
 """
     copy(S::LazySet)
 
-Return a deep copy of the given set by copying its values recursively.
+Return a copy of the given set by copying its values recursively.
 
 ### Input
 
@@ -583,11 +583,14 @@ A copy of `S`.
 
 ### Notes
 
-This function performs a `deepcopy` of each field in `S`, resulting in a
-completely independent object. See the documentation of `?deepcopy` for further
-details.
+This function performs a `copy` of each field in `S`.
+See the documentation of `?copy` for further details.
 """
-copy(S::LazySet) = deepcopy(S)
+function copy(S::T) where {T<:LazySet}
+    args = [copy(getfield(S, f)) for f in fieldnames(T)]
+    BT = basetype(S)
+    return BT(args...)
+end
 
 """
     tosimplehrep(S::LazySet)
