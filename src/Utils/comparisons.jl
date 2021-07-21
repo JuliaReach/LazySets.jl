@@ -56,6 +56,12 @@ default_tolerance(N::Type{<:Rational}) = Tolerance(zero(N), zero(N), zero(N))
 default_tolerance(N::Type{<:Integer}) = Tolerance(zero(N), zero(N), zero(N))
 default_tolerance(N::Type{<:AbstractFloat}) = Tolerance(Base.rtoldefault(N), sqrt(eps(N)), zero(N))
 
+function set_tolerance(N, tolerance::Tolerance=default_tolerance(N))
+    set_rtol(N, tolerance.rtol)
+    set_ztol(N, tolerance.ztol)
+    set_atol(N, tolerance.atol)
+end
+
 # global Float64 tolerances
 const _TOL_F64 = default_tolerance(Float64)
 
