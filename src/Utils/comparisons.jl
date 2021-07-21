@@ -51,8 +51,13 @@ mutable struct Tolerance{N<:Number}
     atol::N
 end
 
+default_tolerance(N::Type{<:Number}) = error("default tolerance for numeric type $N is not defined")
+default_tolerance(N::Type{<:Rational}) = Tolerance(zero(N), zero(N), zero(N))
+default_tolerance(N::Type{<:Integer}) = Tolerance(zero(N), zero(N), zero(N))
+default_tolerance(N::Type{<:AbstractFloat}) = Tolerance(Base.rtoldefault(N), sqrt(eps(N)), zero(N))
+
 # global Float64 tolerances
-const _TOL_F64 = Tolerance(Base.rtoldefault(Float64), Float64(10)*sqrt(eps(Float64)), zero(Float64))
+const _TOL_F64 = default_tolerance(Float64)
 
 _rtol(N::Type{Float64}) = _TOL_F64.rtol
 _ztol(N::Type{Float64}) = _TOL_F64.ztol
@@ -63,7 +68,7 @@ set_ztol(N::Type{Float64}, ε::Float64) = _TOL_F64.ztol = ε
 set_atol(N::Type{Float64}, ε::Float64) = _TOL_F64.atol = ε
 
 # global rational tolerances
-const _TOL_RAT = Tolerance(zero(Rational), zero(Rational), zero(Rational))
+const _TOL_RAT = default_tolerance(Rational)
 
 _rtol(N::Type{<:Rational}) = _TOL_RAT.rtol
 _ztol(N::Type{<:Rational}) = _TOL_RAT.ztol
@@ -99,11 +104,6 @@ set_atol(N::Type{NT}, ε::NT) where {NT<:Number} = begin
     end
     TOL_N[N].atol = ε
 end
-
-default_tolerance(N::Type{<:Number}) = error("default tolerance for numeric type $N is not defined")
-default_tolerance(N::Type{<:Rational}) = Tolerance(zero(N), zero(N), zero(N))
-default_tolerance(N::Type{<:Integer}) = Tolerance(zero(N), zero(N), zero(N))
-default_tolerance(N::Type{<:AbstractFloat}) = Tolerance(Base.rtoldefault(N), sqrt(eps(N)), zero(N))
 
 """
     _leq(x::N, y::N; [kwargs...]) where {N<:Real}
