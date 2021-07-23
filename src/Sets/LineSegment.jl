@@ -28,7 +28,10 @@ julia> dim(s)
 ```
 
 Use `plot(s)` to plot the extreme points of `s` and the line segment joining
-them. Membership test is computed with ∈ (`in`):
+them. If it is desired to remove the endpoints, pass the options `markershape=:none`
+and `seriestype=:shape`.
+
+Membership is checked with ∈ (`in`):
 
 ```jldoctest linesegment_constructor
 julia> [0., 0] ∈ s && [.25, .25] ∈ s && [1., 1] ∈ s && [.5, .25] ∉ s
