@@ -270,7 +270,7 @@ function translate(B::Ball2, v::AbstractVector)
 end
 
 """
-    sample(B::Ball2{N}, [nsamples]::Int=1;
+    sample(B::Ball2{N}, [nsamples]::Int;
            [rng]::AbstractRNG=GLOBAL_RNG,
            [seed]::Union{Int, Nothing}=nothing) where {N}
 
@@ -279,7 +279,7 @@ Return samples from a uniform distribution on the given ball in the 2-norm.
 ### Input
 
 - `B`        -- ball in the 2-norm
-- `nsamples` -- (optional, default: `1`) number of samples
+- `nsamples` -- number of random samples
 - `rng`      -- (optional, default: `GLOBAL_RNG`) random number generator
 - `seed`     -- (optional, default: `nothing`) seed for reseeding
 
@@ -293,7 +293,7 @@ Random sampling with uniform distribution in `B` is computed using Muller's meth
 of normalized Gaussians. This function requires the package `Distributions`.
 See `_sample_unit_nball_muller!` for implementation details.
 """
-function sample(B::Ball2{N}, nsamples::Int=1;
+function sample(B::Ball2{N}, nsamples::Int;
                 rng::AbstractRNG=GLOBAL_RNG,
                 seed::Union{Int, Nothing}=nothing) where {N}
     require(:Distributions; fun_name="sample")
