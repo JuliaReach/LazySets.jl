@@ -14,8 +14,9 @@ known as *bloating*).
 
 ### Notes
 
-`Bloating(X, ε, p)` is equivalent to the Minkowski sum of `X` and a ball in the
-`p`-norm of radius `ε` centered in the origin `O` (i.e., `X ⊕ Ballp(p, O, ε)`).
+If `ε` is positive, then `Bloating(X, ε, p)` is equivalent to the Minkowski sum
+of `X` and a ball in the `p`-norm of radius `ε` centered in the origin `O`
+(i.e., `X ⊕ Ballp(p, O, ε)`).
 
 The `Bloating` operation preserves convexity: if `X` is convex, then any
 bloating of `X` is convex as well.
@@ -26,7 +27,6 @@ struct Bloating{N, S<:LazySet{N}} <:LazySet{N}
     p::N
 
     function Bloating(X::S, ε::N, p::N=N(2)) where {N, S<:LazySet{N}}
-        @assert ε > zero(N) "bloating requires a distance > 0, but $ε was given"
         @assert p >= one(N) "bloating requires a norm >= 1, but $p was given"
 
         return new{N, S}(X, ε, p)
@@ -55,7 +55,7 @@ end
 
 # helper function to compute the bloating ball
 function _bloating_ball(B::Bloating{N}) where {N}
-    return Ballp(B.p, zeros(N, dim(B)), B.ε)
+    return Ballp(B.p, zeros(N, dim(B)), abs(B.ε))
 end
 
 """
@@ -74,8 +74,10 @@ The support vector of the bloated set in the given direction.
 """
 function σ(d::AbstractVector, B::Bloating)
     @assert !iszero(d) "the support vector in the zero direction is undefined"
+    @assert B.ε >= 0 || B.p > 1 "the support vector for negative bloating " *
+        "in the 1-norm is not implemented"
 
-    return σ(d, B.X) + σ(d, _bloating_ball(B))
+    return σ(d, B.X) + sign_cadlag(B.ε) * σ(d, _bloating_ball(B))
 end
 
 """
@@ -95,7 +97,7 @@ The support function of the bloated set in the given direction.
 function ρ(d::AbstractVector, B::Bloating)
     @assert !iszero(d) "the support function in the zero direction is undefined"
 
-    return ρ(d, B.X) + ρ(d, _bloating_ball(B))
+    return ρ(d, B.X) + sign_cadlag(B.ε) * ρ(d, _bloating_ball(B))
 end
 
 """
@@ -179,6 +181,10 @@ We call `constraints_list` on the lazy Minkowski sum.
 function constraints_list(B::Bloating)
     @assert (B.p == 1 || B.p == Inf) "the constraints list is only available " *
         "for bloating in the 1-norm or in the infinity norm"
+    if B.ε < 0
+        throw(ArgumentError("computing the constraints list of a negatively " *
+                            "bloated set is not supported yet"))
+    end
 
     return constraints_list(MinkowskiSum(B.X, _bloating_ball(B)))
 end
