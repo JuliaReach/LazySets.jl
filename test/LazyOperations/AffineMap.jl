@@ -26,7 +26,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test αam isa AffineMap && αam.M == α * am.M && αam.v == α * am.v
 
     # support vector
-    @test σ(N[1, 0, 0], am) == N[2, 2, 3]
+    sv = σ(N[1, 0, 0], am)
+    @test sv[1] == N(2) &&
+          sv[2:3] ∈ linear_map(Diagonal(N[2, 3]), BallInf(zeros(N, 2), N(1)))
 
     # support function
     @test ρ(N[1, 0, 0], am) == N(2)

@@ -37,7 +37,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test σ(d, b) == N[0, 3]
     d = N[-1, -1]
     @test σ(d, b) == N[0, 1]
-    d = N[0, -1]
+    d = N[1, -1]
     @test σ(d, b) == N[2, 1]
 
     # 2D BallInf radius =/= 1

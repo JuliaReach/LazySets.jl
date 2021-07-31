@@ -91,8 +91,8 @@ For the support vector (resp. support function) along vector `d`, use `σ` and
 julia> σ([1.0, 0.0, 0.0], tr)
 3-element Vector{Float64}:
  5.0
- 3.0
- 3.0
+ 2.0
+ 2.0
 
 julia> ρ([1.0, 0.0, 0.0], tr)
 5.0
