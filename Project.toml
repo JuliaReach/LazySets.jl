@@ -42,6 +42,7 @@ Requires = "0.5, 1"
 StaticArrays = "0.12, 1"
 Symbolics = "0.1"
 TaylorModels = "0.0.1, 0.1, 0.2, 0.3, 0.4"
+WriteVTK = "1.10.1"
 julia = "1.3"
 
 [extras]
@@ -62,6 +63,7 @@ StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7"
 TaylorModels = "314ce334-5f6e-57ae-acf6-00b6e903104a"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+WriteVTK = "64499a7a-5c06-52f2-abe2-ccb03c286192"
 
 [targets]
 test = ["CDDLib", "Distributions", "Documenter", "Expokit", "GR", "IntervalConstraintProgramming", "IntervalMatrices", "Makie", "Optim", "Polyhedra", "RecipesBase", "StaticArrays", "Symbolics", "TaylorModels", "Test"]
