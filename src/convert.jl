@@ -205,6 +205,10 @@ function convert(::Type{HPolyhedron{N, Vector{N}}}, X::AbstractPolyhedron) where
     return HPolyhedron([HalfSpace(Vector(c.a), c.b) for c in clist])
 end
 
+function convert(::Type{HPolyhedron}, X::LazySet)
+    return HPolyhedron(constraints_list(X))
+end
+
 """
     convert(::Type{HPolytope}, P::VPolytope)
 
@@ -225,6 +229,10 @@ The `tohrep` function is invoked. It requires the `Polyhedra` package.
 """
 function convert(::Type{HPolytope}, P::VPolytope)
     return tohrep(P)
+end
+
+function convert(::Type{HPolytope}, X::LazySet)
+    return HPolytope(constraints_list(X))
 end
 
 """

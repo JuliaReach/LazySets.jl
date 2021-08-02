@@ -536,9 +536,9 @@ function isempty(P::HPoly{N},
     end
 end
 
-# ==========================================
-# Lower level methods that use Polyhedra.jl
-# ==========================================
+# ==================================
+# Methods that use Polyhedra.jl
+# ==================================
 
 function load_polyhedra_hpolyhedron() # function to be loaded by Requires
 return quote
@@ -600,6 +600,28 @@ function polyhedron(P::HPoly;
                     backend=default_polyhedra_backend(P))
     A, b = tosimplehrep(P)
     return Polyhedra.polyhedron(Polyhedra.hrep(A, b), backend)
+end
+
+function triangulate(X::LazySet)
+
+    dim(X) == 3 || throw(ArgumentError("the dimension of the set should be three, got $(dim(X))"))
+
+    poly = polyhedron(convert(HPolyhedron, X))
+    mes = Mesh(poly)
+    coords = Polyhedra.GeometryBasics.coordinates(mes)
+    connec = Polyhedra.GeometryBasics.faces(mes)
+
+    ntriangles = length(connec)
+    npoints = 3*ntriangles
+    points = Matrix{Float32}(undef, 3, npoints)
+
+    for i in 1:npoints
+        points[:, i] .= coords[i].data
+    end
+
+    connec_tup = getfield.(connec, :data)
+
+    return points, connec_tup
 end
 
 end # quote
@@ -756,4 +778,4 @@ end
 HPolyhedron(expr::Vector{<:Num}; N::Type{<:Real}=Float64) = HPolyhedron(expr, _get_variables(expr); N=N)
 HPolyhedron(expr::Vector{<:Num}, vars; N::Type{<:Real}=Float64) = HPolyhedron(expr, _vec(vars); N=N)
 
-end end  # quote / load_modeling_toolkit_hpolyhedron()
+end end  # quote / load_symbolics_hpolyhedron()
