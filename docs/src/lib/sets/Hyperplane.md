@@ -18,6 +18,7 @@ isempty(::Hyperplane)
 constrained_dimensions(::Hyperplane)
 constraints_list(::Hyperplane)
 translate(::Hyperplane, ::AbstractVector)
+normalize(::Hyperplane{N}, p=N(2)) where {N}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

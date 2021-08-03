@@ -72,12 +72,16 @@ A new half-space whose normal direction ``a`` is normalized, i.e., such that
 ``‖a‖_p = 1`` holds.
 """
 function normalize(hs::HalfSpace{N}, p=N(2)) where {N}
-    nₐ = norm(hs.a, p)
-    a = LinearAlgebra.normalize(hs.a, p)
-    b = hs.b / nₐ
+    a, b = _normalize_halfspace(hs, p)
     return HalfSpace(a, b)
 end
 
+function _normalize_halfspace(H, p=2)
+    nₐ = norm(H.a, p)
+    a = LinearAlgebra.normalize(H.a, p)
+    b = H.b / nₐ
+    return a, b
+end
 
 # --- LazySet interface functions ---
 
