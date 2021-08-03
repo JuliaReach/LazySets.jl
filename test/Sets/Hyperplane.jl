@@ -141,6 +141,13 @@ for N in [Float64, Float32]
     @test norm(H2.a) ≈ N(1) && H2.b == H1.b / norm(H1.a)
     @test normalize(H1, N(1)) == Hyperplane(N[1//3, 2//3], N(1))
     @test normalize(H1, N(Inf)) == Hyperplane(N[1//2, 1], N(3//2))
+
+    # distance
+    H = Hyperplane(N[1, -1], N(0))  # x <= y
+    y = N[1, 1]  # closest point in the half-space
+    for x in [N[2, 0], N[1, 1], N[0, 2]]
+        @test distance(x, H) == distance(H, x) ≈ distance(x, y, p=N(2))
+    end
 end
 
 # Polyhedra tests that only work with Float64
