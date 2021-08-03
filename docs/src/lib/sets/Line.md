@@ -21,8 +21,7 @@ translate(::Line, ::AbstractVector)
 translate!(::Line, ::AbstractVector)
 normalize(::Line, ::Real=2.0)
 normalize!(::Line, ::Real=2.0)
-distance(::AbstractVector, ::Line, ::Real=2.0)
-distance(::AbstractSingleton, ::Line, ::Real=2.0)
+distance(::AbstractVector, ::Line; ::Real=2.0)
 linear_map(::AbstractMatrix, ::Line)
 ```
 Inherited from [`LazySet`](@ref):

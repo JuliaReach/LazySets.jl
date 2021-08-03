@@ -25,8 +25,7 @@ of the shortest line segment between any pair of points.
 
 See also [`hausdorff_distance`](@ref) for an alternative distance notion.
 """
-function distance(H1::AbstractHyperrectangle,
-                  H2::AbstractHyperrectangle;
+function distance(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle;
                   p::Real=2)
     n = dim(H1)
     @assert n == dim(H2) "incompatible set dimensions $n and $(dim(H2))"
@@ -51,3 +50,27 @@ function distance(H1::AbstractHyperrectangle,
     end
     return norm(d, p)
 end
+
+"""
+    distance(S::AbstractSingleton, L::Line; [p]::Real=2.0)
+
+Compute the distance between the singleton `S` and the line `L` with respect to
+the given `p`-norm.
+
+### Input
+
+- `S` -- singleton, i.e. a set with one element
+- `L` -- line
+- `p` -- (optional, default: `2.0`) the `p`-norm used; `p = 2.0` corresponds to
+         the usual Euclidean norm
+
+### Output
+
+A scalar representing the distance between the element wrapped by `S` and the
+line `L`.
+"""
+function distance(S::AbstractSingleton, L::Line; p::Real=2.0)
+    return distance(element(S), L; p=p)
+end
+
+distance(L::Line, S::AbstractSingleton; p::Real=2.0) = distance(S, L; p=p)

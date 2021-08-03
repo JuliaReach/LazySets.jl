@@ -5,8 +5,7 @@ import Base: rand,
 export Line,
        an_element,
        translate,
-       translate!,
-       distance
+       translate!
 
 """
     Line{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
@@ -463,7 +462,7 @@ function translate!(L::Line, v::AbstractVector)
 end
 
 """
-    distance(x::AbstractVector, L::Line, p::Real=2.0)
+    distance(x::AbstractVector, L::Line; [p]::Real=2.0)
 
 Compute the distance between point `x` and the line with respect to the given
 `p`-norm.
@@ -479,34 +478,13 @@ Compute the distance between point `x` and the line with respect to the given
 
 A scalar representing the distance between `x` and the line `L`.
 """
-function distance(x::AbstractVector, L::Line, p::Real=2.0)
+function distance(x::AbstractVector, L::Line; p::Real=2.0)
     d = L.d  # direction of the line
     t = dot(x - L.p, d) / dot(d, d)
-    return distance(x, L.p + t*d, p)
+    return distance(x, L.p + t*d; p=p)
 end
-distance(L::Line, x::AbstractVector, p::Real=2.0) = distance(x, L, p)
 
-"""
-    distance(x::AbstractSingleton, L::Line, p::Real=2.0)
-
-Compute the distance between the singleton `x` and the line with respect to the given
-`p`-norm.
-
-### Input
-
-- `x` -- singleton, i.e. a set with one element
-- `L` -- line
-- `p` -- (optional, default: `2.0`) the `p`-norm used; `p = 2.0` corresponds to
-         the usual Euclidean norm
-
-### Output
-
-A scalar representing the distance between the element wrapped by `x` and the line `L`.
-"""
-function distance(x::AbstractSingleton, L::Line, p::Real=2.0)
-    return distance(element(x), L, p)
-end
-distance(L::Line, x::AbstractSingleton, p::Real=2.0) = distance(x, L, p)
+distance(L::Line, x::AbstractVector; p::Real=2.0) = distance(x, L; p=p)
 
 """
     linear_map(M::AbstractMatrix, L::Line)

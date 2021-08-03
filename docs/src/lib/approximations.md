@@ -91,15 +91,7 @@ CustomDirections
 
 See also `overapproximate(X::LazySet, dir::AbstractDirections)::HPolytope`.
 
-## Distances
-
-### Infimum distance
-
-```@docs
-distance
-```
-
-### Hausdorff distance
+## Hausdorff distance
 
 ```@docs
 hausdorff_distance
