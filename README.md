@@ -70,3 +70,22 @@ Schilling (2020) ARCH20. To appear in 7th International Workshop on Applied Veri
 - [InvariantSets.jl](https://github.com/ueliwechsler/InvariantSets.jl) -- Compute, approximate and display invariant sets.
 - [Swalbe.jl](https://github.com/Zitzeronion/Swalbe.jl) -- Simple Julia Lattice Boltzmann Solver for Thin Liquid Films and Droplets
 
+## 👨‍🏫 Workshop at JuliaCon 2021
+
+<details>
+<summary>Abstract</summary>
+
+We present [JuliaReach](https://github.com/JuliaReach), a Julia ecosystem to perform reachability analysis of dynamical systems. JuliaReach builds on sound scientific approaches and was, in two occasions (2018 and 2020) the winner of the annual friendly competition on Applied Verification for Continuous and Hybrid Systems ([ARCH-COMP](https://cps-vo.org/group/ARCH)).
+
+The workshop consists of three parts (respectively packages) in [JuliaReach](https://github.com/JuliaReach): our core package for set representations, our main package for reachability analysis, and a new package applying reachability analysis with potential use in domain of control, robotics and autonomous systems.
+
+In the first part we present [LazySets.jl](https://github.com/JuliaReach/LazySet...), which provides ways to symbolically represent sets of points as geometric shapes, with a special focus on convex sets and polyhedral approximations. [LazySets.jl](https://github.com/JuliaReach/LazySet...) provides methods to apply common set operations, convert between different set representations, and efficiently compute with sets in high dimensions.
+
+In the second part we present [ReachabilityAnalysis.jl](https://github.com/JuliaReach/Reachab...), which provides tools to approximate the set of reachable states of systems with both continuous and mixed discrete-continuous dynamics, also known as hybrid systems. It implements conservative discretization and set-propagation techniques at the state-of-the-art.
+
+In the third part we present [NeuralNetworkAnalysis.jl](https://github.com/JuliaReach/NeuralN...), which is an application of [ReachabilityAnalysis.jl](https://github.com/JuliaReach/Reachab...) to analyze dynamical systems that are controlled by neural networks. This package can be used to validate or invalidate specifications, for instance about the safety of such systems.
+
+Workshop materials are available here: https://github.com/JuliaReach/JuliaCon-2021-Workshop-Its-All-Set
+</details>
+
+[![JuliaCon 2021 video](https://img.youtube.com/vi/P4I7pTvQ4nk/0.jpg)](https://youtu.be/P4I7pTvQ4nk)
