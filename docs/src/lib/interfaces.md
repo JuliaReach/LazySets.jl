@@ -386,6 +386,7 @@ genmat(::AbstractHyperrectangle)
 ngens(::AbstractHyperrectangle{N}) where {N}
 rectify(::AbstractHyperrectangle)
 volume(::AbstractHyperrectangle)
+distance(::AbstractVector, ::AbstractHyperrectangle{N}; ::Real=N(2)) where {N}
 ```
 
 ### Implementations

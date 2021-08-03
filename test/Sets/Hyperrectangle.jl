@@ -276,3 +276,16 @@ for N in [Float64, Rational{Int}, Float32]
     @test permute(H, 1:3) == H
     @test permute(H, [2, 1, 3]) == Hyperrectangle(N[2, 1, 3], N[5, 4, 6])
 end
+
+# tests that only work with Float64 and Float32
+for N in [Float64, Float32]
+    # distance
+    H = Hyperrectangle(N[1, 2], N[2, 3])
+    xs = [N[1, 1], N[8, 1], N[1, 6], N[-3, 2], N[-4, -5]]
+    ys = [N[1, 1], N[3, 1], N[1, 5], N[-1, 2], N[-1, -1]]  # closest points in H
+    for (x, y) in zip(xs, ys)
+        for p in N[1, 2, Inf]
+            @test distance(x, H) == distance(H, x) ≈ distance(x, y, p=N(2))
+        end
+    end
+end
