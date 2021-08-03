@@ -776,3 +776,25 @@ function iscomplement(H1::HalfSpace{N}, H2::HalfSpace) where {N}
     # check that the half-spaces touch each other
     return H1.b == factor * H2.b
 end
+
+"""
+    distance(x::AbstractVector, H::HalfSpace{N}) where {N}
+
+Compute the distance between point `x` and half-space `H` with respect to the
+Euclidean norm.
+
+### Input
+
+- `x` -- vector
+- `H` -- half-space
+
+### Output
+
+A scalar representing the distance between point `x` and half-space `H`.
+"""
+function distance(x::AbstractVector, H::HalfSpace{N}) where {N}
+    a, b = _normalize_halfspace(H, N(2))
+    return max(dot(x, a) - b, zero(N))
+end
+
+distance(H::HalfSpace, x::AbstractVector) = distance(x, H)
