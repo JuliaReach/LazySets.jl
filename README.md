@@ -30,7 +30,12 @@ See the [Getting started](https://juliareach.github.io/LazySets.jl/dev/man/getti
 
 ## :blue_book: Publications
 
-This library has been applied in a number of scientic works. In reverse chronological order,
+This library has been applied in a number of scientic works.
+
+<details>
+<summary>List</summary>
+  
+In reverse chronological order,
 
 [12] **Combining Set Propagation with Finite Element Methods for Time Integration in Transient Solid Mechanics Problems.** Forets, Marcelo, Daniel Freire Caporale, and Jorge M. Pérez Zerpa.. arXiv preprint [arXiv:2105.05841](https://arxiv.org/abs/2105.05841) (2021).
 
@@ -58,6 +63,8 @@ Schilling (2020) ARCH20. To appear in 7th International Workshop on Applied Veri
 [2] **ARCH-COMP18 Category Report: Continuous and Hybrid Systems with Linear Continuous Dynamics.** Matthias Althoff, Stanley Bak, Xin Chen, Chuchu Fan, Marcelo Forets, Goran Frehse, Niklas Kochdumper, Yangge Li, Sayan Mitra, Rajarshi Ray, Christian Schilling and Stefan Schupp (2018) ARCH18. 5th International Workshop on Applied Verification of Continuous and Hybrid Systems, 54: 23–52. doi: [10.29007/73mb](https://dx.doi.org/10.29007/73mb).
 
 [1] **Reach Set Approximation through Decomposition with Low-dimensional Sets and High-dimensional Matrices.** Sergiy Bogomolov, Marcelo Forets, Goran Frehse, Frédéric Viry, Andreas Podelski and Christian Schilling (2018) [HSCC'18](https://www.hscc2018.deib.polimi.it/) Proceedings of the 21st International Conference on Hybrid Systems: Computation and Control: 41–50. See the [ACM Digital Library link](http://dx.doi.org/10.1145/3178126.3178128), or the [arXiv: 1801.09526](https://arxiv.org/abs/1801.09526).
+
+</details>
 
 ## :earth_africa: Ecosystem
 
