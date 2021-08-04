@@ -407,11 +407,11 @@ If the sets do not intersect, the result is the empty set.
 Otherwise the result is the interval that describes the intersection, which may
 be of type `Singleton` if the intersection is very small.
 """
-function intersection(X::Interval, Y::LazySet)
+@commutative function intersection(X::Interval, Y::LazySet)
     return _intersection_interval(X, Y)
 end
 
-@commutative function _intersection_interval(X::Interval, Y::LazySet)
+function _intersection_interval(X::Interval, Y::LazySet)
     N = promote_type(eltype(X), eltype(Y))
     lower = max(min(X), -ρ(N[-1], Y))
     upper = min(max(X), ρ(N[1], Y))
