@@ -41,7 +41,7 @@ Return the intersection of a singleton with another set.
 If the sets intersect, the result is `S`.
 Otherwise, the result is the empty set.
 """
-function intersection(S::AbstractSingleton, X::LazySet)
+@commutative function intersection(S::AbstractSingleton, X::LazySet)
     return _intersection_singleton(S, X)
 end
 
@@ -49,9 +49,6 @@ function _intersection_singleton(S::AbstractSingleton, X)
     N = promote_type(eltype(S), eltype(X))
     return element(S) ∈ X ? S : EmptySet{N}(dim(S))
 end
-
-# symmetric method
-intersection(X::LazySet, S::AbstractSingleton) = intersection(S, X)
 
 # disambiguation
 function intersection(S1::AbstractSingleton, S2::AbstractSingleton)
@@ -410,7 +407,7 @@ If the sets do not intersect, the result is the empty set.
 Otherwise the result is the interval that describes the intersection, which may
 be of type `Singleton` if the intersection is very small.
 """
-function intersection(X::Interval, Y::LazySet)
+@commutative function intersection(X::Interval, Y::LazySet)
     return _intersection_interval(X, Y)
 end
 
@@ -426,16 +423,11 @@ function _intersection_interval(X::Interval, Y::LazySet)
         return EmptySet{N}(1)
     end
 end
-# symmetric method
-intersection(Y::LazySet, X::Interval) = _intersection_interval(X, Y)
 
 # disambiguations
-intersection(X::Interval, H::AbstractHyperrectangle) = _intersection_interval(X, H)
-intersection(H::AbstractHyperrectangle, X::Interval) = _intersection_interval(X, H)
-intersection(X::Interval, S::AbstractSingleton) = _intersection_singleton(S, X)
-intersection(S::AbstractSingleton, X::Interval) = _intersection_singleton(S, X)
-intersection(X::Interval, L::LinearMap) = _intersection_interval(X, L)
-intersection(L::LinearMap, X::Interval) = _intersection_interval(X, L)
+@commutative intersection(X::Interval, H::AbstractHyperrectangle) = _intersection_interval(X, H)
+@commutative intersection(X::Interval, S::AbstractSingleton) = _intersection_singleton(S, X)
+@commutative intersection(X::Interval, L::LinearMap) = _intersection_interval(X, L)
 
 # special case of an axis-aligned half-space and a hyperrectangular set
 function intersection(B::AbstractHyperrectangle, H::HalfSpace{N, <:SingleEntryVector{N}}) where {N}
