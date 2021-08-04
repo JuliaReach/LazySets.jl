@@ -356,7 +356,7 @@ macro commutative(FUN)
 
     _FUN = combinedef(defswap)
     return quote
-        $(esc(FUN))
+        Core.@__doc__ $(esc(FUN))
         $(esc(_FUN))
     end
 end
