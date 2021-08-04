@@ -66,6 +66,7 @@ get_constrained_lowdimset
 @declare_array_version
 @array_neutral
 @array_absorbing
+@commutative
 ```
 
 ## Types
