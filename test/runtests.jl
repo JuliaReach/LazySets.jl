@@ -144,10 +144,11 @@ if test_suite_basic
     # ===================
     # Concrete operations
     # ===================
+    @time @testset "LazySets.area" begin include("ConcreteOperations/area.jl") end
     @time @testset "LazySets.concrete_convex_hull" begin include("ConcreteOperations/convex_hull.jl") end
     @time @testset "LazySets.concrete_cartesian_product" begin include("ConcreteOperations/cartesian_product.jl") end
+    @time @testset "LazySets.distance" begin include("ConcreteOperations/distance.jl") end
     @time @testset "LazySets.samples" begin include("ConcreteOperations/samples.jl") end
-    @time @testset "LazySets.area" begin include("ConcreteOperations/area.jl") end
 
     # =================================================================
     # Algorithms for approximation of convex sets using support vectors
@@ -160,7 +161,6 @@ if test_suite_basic
     @time @testset "LazySets.Approximations.symmetric_interval_hull" begin include("Approximations/symmetric_interval_hull.jl") end
     @time @testset "LazySets.Approximations.radiusdiameter" begin include("Approximations/radiusdiameter.jl") end
     @time @testset "LazySets.Approximations.decompose" begin include("Approximations/decompose.jl") end
-    @time @testset "LazySets.Approximations.distance" begin include("Approximations/distance.jl") end
     @time @testset "LazySets.Approximations.hausdorff_distance" begin include("Approximations/hausdorff_distance.jl") end
 
     # ========================

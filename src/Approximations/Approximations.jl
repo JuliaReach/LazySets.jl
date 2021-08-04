@@ -12,7 +12,7 @@ using LazySets, LazySets.Arrays, Requires, LinearAlgebra, SparseArrays,
 using LazySets: _isapprox, _leq, _geq, _rtol, _normal_Vector, isapproxzero,
                 default_lp_solver, _isbounded_stiemke
 
-import LazySets: distance, project
+import LazySets: project
 
 using ..Assertions: @assert, activate_assertions
 # activate assertions by default
@@ -43,7 +43,6 @@ include("overapproximate.jl")
 include("underapproximate.jl")
 include("approximate.jl")
 include("decompositions.jl")
-include("distance.jl")
 include("hausdorff_distance.jl")
 include("init.jl")
 

@@ -395,7 +395,7 @@ end
 end
 
 """
-    distance(x::AbstractVector, y::AbstractVector, p::Real=2.0)
+    distance(x::AbstractVector, y::AbstractVector; [p]::Real=2.0)
 
 Compute the distance between two vectors with respect to the given `p`-norm,
 computed as
@@ -415,7 +415,7 @@ computed as
 
 A scalar representing ``‖ x - y ‖_p``.
 """
-function distance(x::AbstractVector, y::AbstractVector, p::Real=2.0)
+function distance(x::AbstractVector, y::AbstractVector; p::Real=2.0)
     return norm(x - y, p)
 end
 
