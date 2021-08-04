@@ -180,3 +180,11 @@ function cartesian_product(H1::AbstractHyperrectangle, H2::AbstractHyperrectangl
     r = vcat(radius_hyperrectangle(H1), radius_hyperrectangle(H2))
     return Hyperrectangle(c, r)
 end
+
+@commutative function cartesian_product(H::AbstractHyperrectangle{N},
+                                        U::Universe) where {N}
+    n = dim(H) + dim(U)
+    constraints = [HalfSpace(SingleEntryVector(c.a.i, n, c.a.v), c.b) for c in
+                   constraints_list(H)]
+    return HPolyhedron(constraints)
+end

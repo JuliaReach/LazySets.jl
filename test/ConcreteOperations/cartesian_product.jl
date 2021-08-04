@@ -32,4 +32,13 @@ for N in [Float64, Float32, Rational{Int}]
     @test isequivalent(cartesian_product(P, U), HalfSpace(N[1, 2, 0, 0], N(3)))
     @test isequivalent(cartesian_product(U, P), HalfSpace(N[0, 0, 1, 2], N(3)))
     @test cartesian_product(U, U) == Universe{N}(4)
+
+    # Universe with hyperrectangle (#2741)
+    H = Hyperrectangle(N[1, 2], N[3, 4])
+    HU = cartesian_product(H, U)
+    @test HU isa HPolyhedron{N, SingleEntryVector{N}} && isequivalent(HU,
+        HPolyhedron([HalfSpace(N[1, 0, 0, 0], N(4)),
+                     HalfSpace(N[-1, 0, 0, 0], N(2)),
+                     HalfSpace(N[0, 1, 0, 0], N(6)),
+                     HalfSpace(N[0, -1, 0, 0], N(2))]))
 end
