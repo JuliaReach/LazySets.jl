@@ -154,6 +154,19 @@ for N in [Float64, Float32]
     @test norm(hs2.a) ≈ N(1) && hs2.b == hs1.b / norm(hs1.a)
     @test normalize(hs1, N(1)) == HalfSpace(N[1//3, 2//3], N(1))
     @test normalize(hs1, N(Inf)) == HalfSpace(N[1//2, 1], N(3//2))
+
+    # distance
+    H = HalfSpace(N[1, -1], N(0))  # x <= y
+    y = N[1, 1]  # closest point in the half-space
+    # point outside
+    x = N[2, 0]
+    @test distance(x, H) == distance(H, x) ≈ distance(x, y, p=N(2))
+    # point at the border
+    x = N[1, 1]
+    @test distance(x, H) == distance(H, x) ≈ distance(x, y, p=N(2))
+    # point strictly inside
+    x = N[0, 2]
+    @test distance(x, H) == distance(H, x) == N(0)
 end
 
 for N in [Float64]

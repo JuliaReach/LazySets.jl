@@ -28,6 +28,7 @@ remove_redundant_constraints
 remove_redundant_constraints!
 complement(::HalfSpace)
 project(::HalfSpace{N}, ::AbstractVector{Int}) where {N}
+distance(::AbstractVector, ::HalfSpace{N}) where {N}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

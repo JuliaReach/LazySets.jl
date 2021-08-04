@@ -72,12 +72,16 @@ A new half-space whose normal direction ``a`` is normalized, i.e., such that
 ``‖a‖_p = 1`` holds.
 """
 function normalize(hs::HalfSpace{N}, p=N(2)) where {N}
-    nₐ = norm(hs.a, p)
-    a = LinearAlgebra.normalize(hs.a, p)
-    b = hs.b / nₐ
+    a, b = _normalize_halfspace(hs, p)
     return HalfSpace(a, b)
 end
 
+function _normalize_halfspace(H, p=2)
+    nₐ = norm(H.a, p)
+    a = LinearAlgebra.normalize(H.a, p)
+    b = H.b / nₐ
+    return a, b
+end
 
 # --- LazySet interface functions ---
 
@@ -772,3 +776,25 @@ function iscomplement(H1::HalfSpace{N}, H2::HalfSpace) where {N}
     # check that the half-spaces touch each other
     return H1.b == factor * H2.b
 end
+
+"""
+    distance(x::AbstractVector, H::HalfSpace{N}) where {N}
+
+Compute the distance between point `x` and half-space `H` with respect to the
+Euclidean norm.
+
+### Input
+
+- `x` -- vector
+- `H` -- half-space
+
+### Output
+
+A scalar representing the distance between point `x` and half-space `H`.
+"""
+function distance(x::AbstractVector, H::HalfSpace{N}) where {N}
+    a, b = _normalize_halfspace(H, N(2))
+    return max(dot(x, a) - b, zero(N))
+end
+
+distance(H::HalfSpace, x::AbstractVector) = distance(x, H)

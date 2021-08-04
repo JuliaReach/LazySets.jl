@@ -37,6 +37,26 @@ end
 isoperationtype(::Type{<:Hyperplane}) = false
 isconvextype(::Type{<:Hyperplane}) = true
 
+"""
+    normalize(H::Hyperplane{N}, p=N(2)) where {N}
+
+Normalize a hyperplane.
+
+### Input
+
+- `H` -- hyperplane
+- `p`  -- (optional, default: `2`) norm
+
+### Output
+
+A new hyperplane whose normal direction ``a`` is normalized, i.e., such that
+``‖a‖_p = 1`` holds.
+"""
+function normalize(H::Hyperplane{N}, p=N(2)) where {N}
+    a, b = _normalize_halfspace(H, p)
+    return Hyperplane(a, b)
+end
+
 
 # --- polyhedron interface functions ---
 
@@ -580,3 +600,25 @@ Hyperplane(expr::Num; N::Type{<:Real}=Float64) = Hyperplane(expr, _get_variables
 Hyperplane(expr::Num, vars; N::Type{<:Real}=Float64) = Hyperplane(expr, _vec(vars), N=N)
 
 end end  # quote / load_symbolics_hyperplane()
+
+"""
+    distance(x::AbstractVector, H::Hyperplane{N}) where {N}
+
+Compute the distance between point `x` and hyperplane `H` with respect to the
+Euclidean norm.
+
+### Input
+
+- `x` -- vector
+- `H` -- hyperplane
+
+### Output
+
+A scalar representing the distance between point `x` and hyperplane `H`.
+"""
+function distance(x::AbstractVector, H::Hyperplane{N}) where {N}
+    a, b = _normalize_halfspace(H, N(2))
+    return abs(dot(x, a) - b)
+end
+
+distance(H::Hyperplane, x::AbstractVector) = distance(x, H)

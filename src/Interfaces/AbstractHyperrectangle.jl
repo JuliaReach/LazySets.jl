@@ -640,3 +640,52 @@ function project(H::AbstractHyperrectangle, block::AbstractVector{Int}; kwargs..
     πr = radius_hyperrectangle(H)[block]
     return Hyperrectangle(πc, πr, check_bounds=false)
 end
+
+"""
+    distance(x::AbstractVector, H::AbstractHyperrectangle{N};
+             [p]::Real=N(2)) where {N}
+
+Compute the distance between point `x` and hyperrectangle `H` with respect to
+the given `p`-norm.
+
+### Input
+
+- `x` -- vector
+- `H` -- hyperrectangle
+
+### Output
+
+A scalar representing the distance between point `x` and hyperrectangle `H`.
+"""
+function distance(x::AbstractVector, H::AbstractHyperrectangle{N};
+                  p::Real=N(2)) where {N}
+    @assert length(x) == dim(H) "a vector of length $(length(x)) is " *
+        "incompatible with a set of dimension $(dim(H))"
+
+    # compute closest point
+    y = similar(x)
+    outside = false
+    @inbounds for i in 1:length(x)
+        ci = center(H, i)
+        ri = radius_hyperrectangle(H, i)
+        d = x[i] - ci
+        if abs(d) <= ri
+            # point is inside in the projection → y[i] is x[i]
+            y[i] = x[i]
+        else
+            # point is outside in the projection → y[i] is on the border
+            y[i] = ci + sign_cadlag(d) * ri
+            outside = true
+        end
+    end
+
+    if !outside
+        # point is inside
+        return zero(N)
+    end
+
+    return distance(x, y; p=p)
+end
+
+distance(H::AbstractHyperrectangle{N}, x::AbstractVector; p::Real=N(2)) where {N} =
+    distance(x, H; p=p)
