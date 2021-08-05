@@ -126,7 +126,7 @@ Compute the intersection of a line and a line segment in two dimensions.
 If the sets do not intersect, the result is the empty set.
 Otherwise the result is the singleton or line segment that describes the intersection.
 """
-function intersection(a::LineSegment, b::Line2D)
+@commutative function intersection(a::LineSegment, b::Line2D)
     # cast a as line
     ap = Line2D(a.p, a.q)
     # find intersection between a' and b
@@ -143,9 +143,6 @@ function intersection(a::LineSegment, b::Line2D)
         return EmptySet{N}(2)
     end
 end
-
-# symmetric method
-intersection(a::Line2D, b::LineSegment) = intersection(b, a)
 
 """
     intersection(a::LineSegment, b::LineSegment)
@@ -246,8 +243,8 @@ function intersection(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle)
 end
 
 # disambiguations
-intersection(S::AbstractSingleton, H::AbstractHyperrectangle) = _intersection_singleton(S, H)
-intersection(H::AbstractHyperrectangle, S::AbstractSingleton) = _intersection_singleton(S, H)
+@commutative intersection(S::AbstractSingleton, H::AbstractHyperrectangle) =
+    _intersection_singleton(S, H)
 
 """
     intersection(x::Interval, y::Interval)
@@ -294,7 +291,7 @@ interval. Otherwise the result is the interval that describes the intersection.
 We first handle the special case that the normal vector `a` of `hs` is close to
 zero. Then we distinguish the cases that `hs` is a lower or an upper bound.
 """
-function intersection(X::Interval, hs::HalfSpace)
+@commutative function intersection(X::Interval, hs::HalfSpace)
     @assert dim(hs) == 1 "cannot take the intersection between an interval " *
                          "and a $(dim(hs))-dimensional half-space"
 
@@ -356,9 +353,6 @@ function _intersection_interval_halfspace(lo, hi, a, b, N)
     return (true, hi, lo)
 end
 
-# symmetric method
-intersection(hs::HalfSpace, X::Interval) = intersection(X, hs)
-
 """
     intersection(X::Interval, hp::Hyperplane)
 
@@ -374,7 +368,7 @@ Compute the intersection of an interval and a hyperplane.
 If the sets do not intersect, the result is the empty set.
 Otherwise the result is the singleton that describes the intersection.
 """
-function intersection(X::Interval, hp::Hyperplane)
+@commutative function intersection(X::Interval, hp::Hyperplane)
     @assert dim(hp) == 1 "cannot take the intersection between an interval " *
                          "and a $(dim(hp))-dimensional hyperplane"
 
@@ -387,9 +381,6 @@ function intersection(X::Interval, hp::Hyperplane)
         return EmptySet{N}(1)
     end
 end
-
-# symmetric method
-intersection(hp::Hyperplane, X::Interval) = intersection(X, hp)
 
 """
     intersection(X::Interval, Y::LazySet)
@@ -430,7 +421,7 @@ end
 @commutative intersection(X::Interval, L::LinearMap) = _intersection_interval(X, L)
 
 # special case of an axis-aligned half-space and a hyperrectangular set
-function intersection(B::AbstractHyperrectangle, H::HalfSpace{N, <:SingleEntryVector{N}}) where {N}
+@commutative function intersection(B::AbstractHyperrectangle, H::HalfSpace{N, <:SingleEntryVector{N}}) where {N}
     n = dim(H)
     a = H.a
     b = H.b
@@ -457,18 +448,13 @@ function intersection(B::AbstractHyperrectangle, H::HalfSpace{N, <:SingleEntryVe
     end
  end
 
-# symmetric method
-intersection(H::HalfSpace{N, <:SingleEntryVector{N}}, B::AbstractHyperrectangle) where {N} = intersection(B, H)
-
 # disambiguations
-intersection(H::HalfSpace{N, <:SingleEntryVector{N}}, X::Interval) where {N} = _intersection_interval(X, H)
-intersection(X::Interval, H::HalfSpace{N, <:SingleEntryVector{N}}) where {N} = _intersection_interval(X, H)
-intersection(S::AbstractSingleton, H::HalfSpace) = _intersection_singleton(S, H)
-intersection(H::HalfSpace, S::AbstractSingleton) = _intersection_singleton(S, H)
-intersection(S::AbstractSingleton, H::HalfSpace{N, <:SingleEntryVector{N}}) where {N} =
+@commutative intersection(H::HalfSpace{N, <:SingleEntryVector{N}}, X::Interval) where {N} =
+    _intersection_interval(X, H)
+@commutative intersection(S::AbstractSingleton, H::HalfSpace) =
     _intersection_singleton(S, H)
-intersection(H::HalfSpace{N, <:SingleEntryVector{N}}, S::AbstractSingleton) where {N} =
-     _intersection_singleton(S, H)
+@commutative intersection(S::AbstractSingleton, H::HalfSpace{N, <:SingleEntryVector{N}}) where {N} =
+    _intersection_singleton(S, H)
 
 """
     intersection(P1::AbstractHPolygon, P2::AbstractHPolygon, [prune]::Bool=true)
@@ -680,10 +666,10 @@ function _intersection_poly(P1::AbstractPolyhedron{N},
 end
 
 # disambiguations
-intersection(S::AbstractSingleton, P::AbstractPolyhedron) = _intersection_singleton(S, P)
-intersection(P::AbstractPolyhedron, S::AbstractSingleton) = _intersection_singleton(S, P)
-intersection(X::Interval, P::AbstractPolyhedron) = _intersection_interval(X, P)
-intersection(P::AbstractPolyhedron, X::Interval) = _intersection_interval(X, P)
+@commutative intersection(S::AbstractSingleton, P::AbstractPolyhedron) =
+    _intersection_singleton(S, P)
+@commutative intersection(X::Interval, P::AbstractPolyhedron) =
+    _intersection_interval(X, P)
 
 """
     intersection(P1::Union{VPolygon, VPolytope}, P2::Union{VPolygon, VPolytope};
@@ -792,18 +778,13 @@ Return the intersection of a union of two convex sets and another convex set.
 The union of the pairwise intersections, expressed as a `UnionSet`.
 If one of those sets is empty, only the other set is returned.
 """
-function intersection(cup::UnionSet, X::LazySet)
+@commutative function intersection(cup::UnionSet, X::LazySet)
     return intersection(cup.X, X) ∪ intersection(cup.Y, X)
 end
 
-# symmetric method
-function intersection(X::LazySet, cup::UnionSet)
-    return intersection(cup, X)
-end
-
 # disambiguation
-intersection(S::AbstractSingleton, cup::UnionSet) = _intersection_singleton(S, cup)
-intersection(cup::UnionSet, S::AbstractSingleton) = _intersection_singleton(S, cup)
+@commutative intersection(S::AbstractSingleton, cup::UnionSet) =
+    _intersection_singleton(S, cup)
 
 """
     intersection(cup::UnionSetArray, X::LazySet)
@@ -820,16 +801,13 @@ convex set.
 
 The union of the pairwise intersections, expressed as a `UnionSetArray`.
 """
-function intersection(cup::UnionSetArray, X::LazySet)
+@commutative function intersection(cup::UnionSetArray, X::LazySet)
     return UnionSetArray([intersection(Y, X) for Y in array(cup)])
 end
 
-# symmetric method
-intersection(X::LazySet, cup::UnionSetArray) = intersection(cup, X)
-
 # disambiguation
-intersection(S::AbstractSingleton, cup::UnionSetArray) = _intersection_singleton(S, cup)
-intersection(cup::UnionSetArray, S::AbstractSingleton) = _intersection_singleton(S, cup)
+@commutative intersection(S::AbstractSingleton, cup::UnionSetArray) =
+    _intersection_singleton(S, cup)
 
 """
     intersection(L::LinearMap, S::LazySet)
@@ -845,19 +823,16 @@ Return the intersection of a lazy linear map and a convex set.
 
 The polytope obtained by the intersection of `l.M * L.X` and `S`.
 """
-function intersection(L::LinearMap, S::LazySet)
+@commutative function intersection(L::LinearMap, S::LazySet)
     return intersection(linear_map(L.M, L.X), S)
 end
-
-# symmetric method
-intersection(S::LazySet, L::LinearMap) = intersection(L, S)
 
 # disambiguation
 function intersection(L1::LinearMap, L2::LinearMap)
     return intersection(linear_map(L1.M, L1.X), linear_map(L2.M, L2.X))
 end
-intersection(S::AbstractSingleton, L::LinearMap) = _intersection_singleton(S, L)
-intersection(L::LinearMap, S::AbstractSingleton) = _intersection_singleton(S, L)
+@commutative intersection(S::AbstractSingleton, L::LinearMap) =
+    _intersection_singleton(S, L)
 
 """
     intersection(U::Universe, X::LazySet)
@@ -873,23 +848,16 @@ Return the intersection of a universe and a convex set.
 
 The set `X`.
 """
-function intersection(U::Universe, X::LazySet)
+@commutative function intersection(U::Universe, X::LazySet)
     return X
 end
 
-# symmetric method
-intersection(X::LazySet, U::Universe) = X
-
 # disambiguations
 intersection(U::Universe, ::Universe) = U
-intersection(U::Universe, P::AbstractPolyhedron) = P
-intersection(P::AbstractPolyhedron, U::Universe) = P
-intersection(U::Universe, S::AbstractSingleton) = S
-intersection(S::AbstractSingleton, U::Universe) = S
-intersection(X::Interval, U::Universe) = X
-intersection(U::Universe, X::Interval) = X
-intersection(L::LinearMap, U::Universe) = L
-intersection(U::Universe, L::LinearMap) = L
+@commutative intersection(U::Universe, P::AbstractPolyhedron) = P
+@commutative intersection(U::Universe, S::AbstractSingleton) = S
+@commutative intersection(X::Interval, U::Universe) = X
+@commutative intersection(L::LinearMap, U::Universe) = L
 
 """
     intersection(P::AbstractPolyhedron, rm::ResetMap)
@@ -910,45 +878,28 @@ A polyhedron.
 We assume that `rm` is polyhedral, i.e., has a `constraints_list` method
 defined.
 """
-function intersection(P::AbstractPolyhedron, rm::ResetMap)
+@commutative function intersection(P::AbstractPolyhedron, rm::ResetMap)
     return intersection(P, HPolyhedron(constraints_list(rm)))
 end
 
-# symmetric method
-intersection(rm::ResetMap, P::AbstractPolyhedron) = intersection(P, rm)
-
 # more efficient version for polytopic
-function intersection(P::AbstractPolyhedron,
-                      rm::ResetMap{N, <:AbstractPolytope}) where {N}
+@commutative function intersection(P::AbstractPolyhedron,
+                                   rm::ResetMap{N, <:AbstractPolytope}) where {N}
     return intersection(P, HPolytope(constraints_list(rm)))
 end
 
-# symmetric method
-function intersection(rm::ResetMap{N, <:AbstractPolytope},
-                      P::AbstractPolyhedron) where {N}
-    return intersection(P, rm)
-end
-
-intersection(U::Universe, X::CartesianProductArray) = X
-
-# symmetric method
-intersection(X::CartesianProductArray, U::Universe) = intersection(U, X)
+@commutative intersection(U::Universe, X::CartesianProductArray) = X
 
 # disambiguation
-intersection(P::AbstractSingleton, rm::ResetMap) = _intersection_singleton(S, rm)
-intersection(rm::ResetMap, P::AbstractSingleton) = _intersection_singleton(S, rm)
-intersection(P::AbstractSingleton, rm::ResetMap{N, <:AbstractPolytope}) where {N} =
+@commutative intersection(P::AbstractSingleton, rm::ResetMap) =
     _intersection_singleton(S, rm)
-intersection(rm::ResetMap{N, <:AbstractPolytope}, P::AbstractSingleton) where {N} =
+@commutative intersection(P::AbstractSingleton,
+                          rm::ResetMap{N, <:AbstractPolytope}) where {N} =
     _intersection_singleton(S, rm)
-intersection(U::Universe, rm::ResetMap) = rm
-intersection(rm::ResetMap, U::Universe) = rm
-intersection(U::Universe, rm::ResetMap{N, <:AbstractPolytope}) where {N} = rm
-intersection(rm::ResetMap{N, <:AbstractPolytope}, U::Universe) where {N} = rm
-intersection(rm::ResetMap, X::Interval) = _intersection_interval(X, Y)
-intersection(X::Interval, rm::ResetMap) = _intersection_interval(X, Y)
-intersection(rm::ResetMap{N, <:AbstractPolytope}, X::Interval) where {N} = _intersection_interval(X, Y)
-intersection(X::Interval, rm::ResetMap{N, <:AbstractPolytope}) where {N} = _intersection_interval(X, Y)
+@commutative intersection(U::Universe, rm::ResetMap) = rm
+@commutative intersection(U::Universe, rm::ResetMap{N, <:AbstractPolytope}) where {N} = rm
+@commutative intersection(rm::ResetMap, X::Interval) = _intersection_interval(X, Y)
+@commutative intersection(rm::ResetMap{N, <:AbstractPolytope}, X::Interval) where {N} = _intersection_interval(X, Y)
 
 """
         intersection(X::CartesianProductArray, Y::CartesianProductArray)
@@ -1033,7 +984,7 @@ minimal dimension.
 Finally, we convert ``Y`` to a polyhedron and intersect it with a suitable
 projection of `P`.
 """
-function intersection(cpa::CartesianProductArray, P::AbstractPolyhedron)
+@commutative function intersection(cpa::CartesianProductArray, P::AbstractPolyhedron)
     return _intersection_cpa_polyhedron(cpa, P)
 end
 
@@ -1088,14 +1039,11 @@ function _intersection_cpa_polyhedron_constrained(cpa::CartesianProductArray,
     cap_low_dim = intersection(hpoly_low_dim, project(P, constrained_dims))
 end
 
-# symmetric method
-intersection(P::AbstractPolyhedron, cpa::CartesianProductArray) = _intersection_cpa_polyhedron(cpa, P)
-
 # disambiguation
-intersection(S::AbstractSingleton, cpa::CartesianProductArray) = _intersection_singleton(S, cpa)
-intersection(cpa::CartesianProductArray, S::AbstractSingleton) = _intersection_singleton(S, cpa)
-intersection(cpa::CartesianProductArray, X::Interval) = _intersection_interval(X, cpa)
-intersection(X::Interval, cpa::CartesianProductArray) = _intersection_interval(X, cpa)
+@commutative intersection(S::AbstractSingleton, cpa::CartesianProductArray) =
+    _intersection_singleton(S, cpa)
+@commutative intersection(cpa::CartesianProductArray, X::Interval) =
+    _intersection_interval(X, cpa)
 
 """
         intersection(Z::AbstractZonotope{N}, H::HalfSpace{N}; backend=default_lp_solver(N)) where {N}
@@ -1118,12 +1066,50 @@ output is the concrete intersection between `Z` and `H`.
 First there is a disjointness test, if that is false, there is an inclusion test,
 if that is false then the concrete intersection is computed.
 """
-function intersection(Z::AbstractZonotope{N}, H::HalfSpace{N}; backend=default_lp_solver(N)) where {N}
+@commutative function intersection(Z::AbstractZonotope{N}, H::HalfSpace{N}; backend=default_lp_solver(N)) where {N}
     n = dim(Z)
     isdisjoint(Z, H) && return EmptySet(n)
     issubset(Z, H) && return Z
     return _intersection_poly(Z, H, backend=backend)
 end
 
-# symmetric method
-intersection(H::HalfSpace{N}, Z::AbstractZonotope{N}; backend=default_lp_solver(N)) where {N} = intersection(Z, H, backend=backend)
+function intersection!(X::Star, H::HalfSpace)
+    _intersection_star!(center(X), basis(X), predicate(X), H)
+    return X
+end
+
+function _intersection_star!(c, V, P::Union{HPoly, HPolygon, HPolygonOpt}, H::HalfSpace)
+    a′ = transpose(V) * H.a
+    b′ = H.b - dot(H.a, c)
+    H′ = HalfSpace(a′, b′)
+    return addconstraint!(P, H′)
+end
+
+@commutative function intersection(X::Star{N, VN, MN, PT}, H::HalfSpace) where {N,
+        VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:Union{HPoly, HPolygon, HPolygonOpt}}
+    Y = copy(X)
+    return intersection!(Y, H)
+end
+
+"""
+    intersection(X::Star, H::HalfSpace)
+
+Return the intersection between a star and a halfspace.
+
+### Input
+
+- `X` -- star
+- `H` -- halfspace
+
+### Output
+
+A star set representing the intersection between a star and a halfspace.
+"""
+@commutative function intersection(X::Star, H::HalfSpace)
+    c = center(X)
+    V = basis(X)
+    N = eltype(X)
+    Pnew = convert(HPolyhedron{N, Vector{N}}, predicate(X))
+    Xnew = Star(c, V, Pnew)
+    return intersection!(Xnew, H)
+end

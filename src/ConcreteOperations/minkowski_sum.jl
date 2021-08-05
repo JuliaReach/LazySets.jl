@@ -496,27 +496,16 @@ Return the Minkowski sum of a polynomial zonotope and a usual zonotopic set.
 A polynomial zonotope whose center is the sum of the centers of `PZ` and `Z`
 and whose generators are the concatenation of the generators of `PZ` and `Z`.
 """
-function minkowski_sum(PZ::PolynomialZonotope, Z::AbstractZonotope)
+@commutative function minkowski_sum(PZ::PolynomialZonotope, Z::AbstractZonotope)
     c = PZ.c + center(Z)
     G = [PZ.G genmat(Z)]
     return PolynomialZonotope(c, PZ.E, PZ.F, G)
 end
 
-# symmetric method
-minkowski_sum(Z::AbstractZonotope, PZ::PolynomialZonotope) = minkowski_sum(PZ, Z)
-
-minkowski_sum(X::LazySet, ::ZeroSet) = X
-minkowski_sum(::ZeroSet, X::LazySet) = X
+@commutative minkowski_sum(::ZeroSet, X::LazySet) = X
+@commutative minkowski_sum(::ZeroSet, P::AbstractPolyhedron) = P
+@commutative minkowski_sum(::ZeroSet, P::AbstractPolytope) = P
+@commutative minkowski_sum(::ZeroSet, Z::AbstractZonotope) = Z
+@commutative minkowski_sum(::ZeroSet, H::AbstractHyperrectangle) = H
+@commutative minkowski_sum(::ZeroSet, X::AbstractSingleton) = X
 minkowski_sum(Z::ZeroSet, ::ZeroSet) = Z
-
-# disambiguation
-minkowski_sum(::ZeroSet, P::AbstractPolyhedron) = P
-minkowski_sum(P::AbstractPolyhedron, ::ZeroSet) = P
-minkowski_sum(P::AbstractPolytope, ::ZeroSet) = P
-minkowski_sum(::ZeroSet, P::AbstractPolytope) = P
-minkowski_sum(::ZeroSet, Z::AbstractZonotope) = Z
-minkowski_sum(Z::AbstractZonotope, ::ZeroSet) = Z
-minkowski_sum(::ZeroSet, H::AbstractHyperrectangle) = H
-minkowski_sum(H::AbstractHyperrectangle, ::ZeroSet) = H
-minkowski_sum(X::AbstractSingleton, Y::ZeroSet) = X
-minkowski_sum(::ZeroSet, X::AbstractSingleton) = X
