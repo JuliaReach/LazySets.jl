@@ -32,4 +32,40 @@ for N in [Float64, Float32, Rational{Int}]
     @test isequivalent(cartesian_product(P, U), HalfSpace(N[1, 2, 0, 0], N(3)))
     @test isequivalent(cartesian_product(U, P), HalfSpace(N[0, 0, 1, 2], N(3)))
     @test cartesian_product(U, U) == Universe{N}(4)
+
+    # hyperrectangle and Universe
+    H = Hyperrectangle(N[1, 2], N[3, 4])
+    HU = cartesian_product(H, U)
+    @test HU isa HPolyhedron{N, SingleEntryVector{N}} && isequivalent(HU,
+        HPolyhedron([HalfSpace(N[1, 0, 0, 0], N(4)),
+                     HalfSpace(N[-1, 0, 0, 0], N(2)),
+                     HalfSpace(N[0, 1, 0, 0], N(6)),
+                     HalfSpace(N[0, -1, 0, 0], N(2))]))
+    UH = cartesian_product(U, H)
+    @test UH isa HPolyhedron{N, SingleEntryVector{N}} && isequivalent(UH,
+        HPolyhedron([HalfSpace(N[0, 0, 1, 0], N(4)),
+                     HalfSpace(N[0, 0, -1, 0], N(2)),
+                     HalfSpace(N[0, 0, 0, 1], N(6)),
+                     HalfSpace(N[0, 0, 0, -1], N(2))]))
+
+    # HalfSpace and Universe
+    H1 = HalfSpace(N[0, 4, 0], N(5))
+    H2 = HalfSpace(sparsevec([2], N[4], 3), N(5))
+    H3 = HalfSpace(SingleEntryVector(2, 3, N(4)), N(5))
+    @test isequivalent(H1, H2) && isequivalent(H1, H3)
+    H1a = cartesian_product(H1, Universe{N}(2))
+    H1p = cartesian_product(Universe{N}(2), H1)
+    @test isequivalent(H1a, cartesian_product(H2, Universe{N}(2))) &&
+          isequivalent(H1a, cartesian_product(H3, Universe{N}(2))) &&
+          isequivalent(H1a, HalfSpace(N[0, 4, 0, 0, 0], N(5)))
+    @test isequivalent(H1p, cartesian_product(Universe{N}(2), H2)) &&
+          isequivalent(H1p, cartesian_product(Universe{N}(2), H3)) &&
+          isequivalent(H1p, HalfSpace(N[0, 0, 0, 4, 0], N(5)))
+
+    # polyhedron and Universe
+    P = HPolyhedron([HalfSpace(N[1], N(2))])
+    PU = cartesian_product(P, U)
+    @test isequivalent(PU, HPolyhedron([HalfSpace(N[1, 0, 0], N(2))]))
+    UP = cartesian_product(U, P)
+    @test isequivalent(UP, HPolyhedron([HalfSpace(N[0, 0, 1], N(2))]))
 end

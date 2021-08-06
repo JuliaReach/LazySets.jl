@@ -57,3 +57,11 @@ end
 function LinearAlgebra.norm(e::SingleEntryVector, p::Real=Inf)
     return abs(e.v)
 end
+
+function append_zeros(e::SingleEntryVector, n::Int)
+    return SingleEntryVector(e.i, e.n + n, e.v)
+end
+
+function prepend_zeros(e::SingleEntryVector, n::Int)
+    return SingleEntryVector(e.i + n, e.n + n, e.v)
+end

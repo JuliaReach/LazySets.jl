@@ -117,7 +117,7 @@ The polyhedron obtained by the concrete cartesian product of `P1` and `P2`.
 For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/).
 """
-function cartesian_product(P1::Union{HPoly, Universe}, P2::Union{HPoly, Universe}; backend=nothing)
+function cartesian_product(P1::HPoly, P2::HPoly; backend=nothing)
     require(:Polyhedra; fun_name="`cartesian_product")
 
     return _cartesian_product_hrep(P1, P2, backend1=backend, backend2=backend)
@@ -179,4 +179,22 @@ function cartesian_product(H1::AbstractHyperrectangle, H2::AbstractHyperrectangl
     c = vcat(center(H1), center(H2))
     r = vcat(radius_hyperrectangle(H1), radius_hyperrectangle(H2))
     return Hyperrectangle(c, r)
+end
+
+function cartesian_product(P::AbstractPolyhedron, U::Universe)
+    clist = [cartesian_product(H, U) for H in constraints_list(P)]
+    return HPolyhedron(clist)
+end
+
+function cartesian_product(U::Universe, P::AbstractPolyhedron)
+    clist = [cartesian_product(U, H) for H in constraints_list(P)]
+    return HPolyhedron(clist)
+end
+
+function cartesian_product(H::HalfSpace, U::Universe)
+    return HalfSpace(append_zeros(H.a, dim(U)), H.b)
+end
+
+function cartesian_product(U::Universe, H::HalfSpace)
+    return HalfSpace(prepend_zeros(H.a, dim(U)), H.b)
 end

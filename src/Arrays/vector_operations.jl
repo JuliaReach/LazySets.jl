@@ -11,7 +11,9 @@ export dot_zero,
        _above,
        _dr,
        _up,
-       distance
+       distance,
+       append_zeros,
+       prepend_zeros
 
 """
     dot_zero(x::AbstractVector{N}, y::AbstractVector{N}) where{N<:Real}
@@ -462,4 +464,20 @@ function find_unique_nonzero_entry(vector::AbstractVector{N}) where {N}
         end
     end
     return res
+end
+
+function append_zeros(v::AbstractVector{N}, n::Int) where {N}
+    return vcat(v, zeros(N, n))
+end
+
+function append_zeros(v::SparseVector{N}, n::Int) where {N}
+    return sparsevec(v.nzind, v.nzval, v.n + n)
+end
+
+function prepend_zeros(v::AbstractVector{N}, n::Int) where {N}
+    return vcat(zeros(N, n), v)
+end
+
+function prepend_zeros(v::SparseVector{N}, n::Int) where {N}
+    return sparsevec(v.nzind .+ n, v.nzval, v.n + n)
 end
