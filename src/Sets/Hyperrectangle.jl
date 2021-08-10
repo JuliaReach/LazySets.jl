@@ -175,6 +175,11 @@ return quote
 end
 end
 
+function genmat(H::Hyperrectangle{N, SparseVector{N, T}, SparseVector{N, T}}) where {N, T}
+    n = dim(H)
+    return sparse(1:n, 1:n, H.radius, n, n)
+end
+
 # --- AbstractCentrallySymmetric interface functions ---
 
 
