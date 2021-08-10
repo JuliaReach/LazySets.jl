@@ -23,7 +23,6 @@ for N in [Float64, Rational{Int}, Float32]
     @test ispermutation(gens, [N[1, 0], N[0, 1]])
     @test genmat(h) ∈ [N[1 0; 0 1], N[0 1; 1 0]]
     @test ngens(h) == 2
-    @test genmat(h) isa SparseMatrixCSC
     h_flat = Hyperrectangle(N[1, 2, 3, 4, 5], N[1, 0, 2, 0, 3])
     @test collect(generators(h_flat)) ==
         [SingleEntryVector(1, 5, N(1)), SingleEntryVector(3, 5, N(2)),
@@ -96,6 +95,9 @@ for N in [Float64, Rational{Int}, Float32]
     # diameter
     @test diameter(h) == norm(N[5, 3] - N[1, 1], Inf)
 
+    # generators matrix for sparse hyperrectangle
+    @test genmat(Hyperrectangle(sparsevec(N[3, 2]), sparsevec(N[2, 1]))) isa SparseMatrixCSC
+        
     # alternative constructor
     c = ones(N, 2)
     r = N[2, 3]
