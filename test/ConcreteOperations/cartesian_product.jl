@@ -68,4 +68,14 @@ for N in [Float64, Float32, Rational{Int}]
     @test isequivalent(PU, HPolyhedron([HalfSpace(N[1, 0, 0], N(2))]))
     UP = cartesian_product(U, P)
     @test isequivalent(UP, HPolyhedron([HalfSpace(N[0, 0, 1], N(2))]))
+
+    # polytopes and polyhedra
+    X = Interval(N(1), N(3))
+    XX = BallInf(N[2, 2], N(1))
+    P = convert(HPolytope, X)
+    Q = convert(HPolyhedron, X)
+    PP = cartesian_product(P, P)
+    @test PP isa HPolytope{N} && isequivalent(PP, XX)
+    QQ = cartesian_product(Q, Q)
+    @test QQ isa HPolyhedron{N} && isequivalent(QQ, XX)
 end
