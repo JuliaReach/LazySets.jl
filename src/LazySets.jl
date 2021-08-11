@@ -47,6 +47,7 @@ import .Arrays: distance,
 # ===================
 # Auxiliary functions
 # ===================
+include("Utils/require.jl")
 include("Utils/helper_functions.jl")
 include("Utils/macros.jl")
 include("Utils/iterators.jl")
