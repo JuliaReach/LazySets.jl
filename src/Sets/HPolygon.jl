@@ -83,6 +83,11 @@ function HPolygon()
     HPolygon{Float64}()
 end
 
+# constructor for an HPolyhedron with constraints of mixed type
+function HPolygon(constraints::Vector{<:LinearConstraint})
+    HPolygon(_normal_Vector(constraints))
+end
+
 # constructor from a simple H-representation
 HPolygon(A::AbstractMatrix,
          b::AbstractVector;
