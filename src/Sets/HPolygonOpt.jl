@@ -92,6 +92,11 @@ function HPolygonOpt()
     HPolygonOpt{Float64}()
 end
 
+# constructor for an HPolyhedron with constraints of mixed type
+function HPolygonOpt(constraints::Vector{<:LinearConstraint})
+    HPolygonOpt(_normal_Vector(constraints))
+end
+
 # constructor from a simple H-representation
 HPolygonOpt(A::AbstractMatrix,
             b::AbstractVector;

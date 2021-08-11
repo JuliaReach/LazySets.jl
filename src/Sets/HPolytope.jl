@@ -59,6 +59,11 @@ function HPolytope()
     HPolytope{Float64}()
 end
 
+# constructor for an HPolytope with constraints of mixed type
+function HPolytope(constraints::Vector{<:LinearConstraint})
+    HPolytope(_normal_Vector(constraints))
+end
+
 # constructor from a simple H-representation
 HPolytope(A::AbstractMatrix, b::AbstractVector;
           check_boundedness::Bool=false) =

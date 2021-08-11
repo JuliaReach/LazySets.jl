@@ -57,6 +57,11 @@ function HPolyhedron()
     HPolyhedron{Float64}()
 end
 
+# constructor for an HPolyhedron with constraints of mixed type
+function HPolyhedron(constraints::Vector{<:LinearConstraint})
+    HPolyhedron(_normal_Vector(constraints))
+end
+
 # constructor from a simple H-representation
 HPolyhedron(A::AbstractMatrix, b::AbstractVector) =
     HPolyhedron(constraints_list(A, b))
