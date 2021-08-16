@@ -117,6 +117,10 @@ function symmetric_interval_hull(E::ExponentialMap{N, <:AbstractHyperrectangle})
     r = abs.(expmv(one(N), E.spmexp.M, center(H)))
     @inbounds for i in 1:n
         x[i] = radius_hyperrectangle(H, i)
+        if isapproxzero(x[i])
+            x[i] = 0
+            continue
+        end
         r .+= abs.(expmv(one(N), E.spmexp.M, x))
         x[i] = 0
     end
