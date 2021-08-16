@@ -11,13 +11,17 @@ Compute the Cartesian product of two sets.
 - `Y`         -- another set
 - `backend`   -- (optional, default: `nothing`) the polyhedral computations backend
 - `algorithm` -- (optional, default: "hrep") the method used to transform each set
-                 `X` and `Y` before taking the Cartesian product; choose between
-                 "vrep" (use the vertex representation) and "hrep" (use the constraint representation)
+                 `X` and `Y` before taking the Cartesian product; choose between:
+                 - "vrep" (use the vertex representation)
+                 - "hrep" (use the constraint representation)
+                 - "hrep_polyhedra" (use the constraint representation and
+                   `Polyhedra`)
 
 ### Output
 
-The `VPolytope` (if "vrep" was used) or `HPolytope` (if "hrep" was used)
-obtained by the concrete Cartesian product of `X` and `Y`.
+The `VPolytope` (if `"vrep"` was used) or `HPolytope` (if `"hrep"` or
+`"hrep_polyhedra"` was used) obtained by the concrete Cartesian product of `X`
+and `Y`.
 
 ### Notes
 
@@ -39,6 +43,9 @@ function cartesian_product(X::LazySet, Y::LazySet; backend=nothing, algorithm::S
         Pout = cartesian_product(Xv, Yv, backend=backend)
 
     elseif algorithm == "hrep"
+        Pout = _cartesian_product_hrep(X, Y)
+
+    elseif algorithm == "hrep_polyhedra"
         Xp = HPolyhedron(constraints_list(X))
         if isempty(Xp.constraints) && isuniversal(X)
             Xp = X isa Universe ? X : Universe(dim(X))
@@ -47,7 +54,8 @@ function cartesian_product(X::LazySet, Y::LazySet; backend=nothing, algorithm::S
         if isempty(Yp.constraints) && isuniversal(Y)
             Yp = Y isa Universe ? Y : Universe(dim(Y))
         end
-        Pout = cartesian_product(Xp, Yp, backend=backend)
+        Pout = _cartesian_product_hrep_polyhedra(Xp, Yp; backend1=backend,
+                                                         backend2=backend)
 
     else
         throw(ArgumentError("expected algorithm `vrep` or `hrep`, got $algorithm"))
@@ -97,37 +105,26 @@ function _cartesian_product_vrep(P1, P2;
     return VPolytope(Pout)
 end
 
-"""
-    cartesian_product(P1::HPoly, P2::HPoly; [backend]=nothing)
-
-Compute the Cartesian product of two polyhedra in H-representaion.
-
-### Input
-
-- `P1`         -- polyhedron
-- `P2`         -- another polyhedron
-- `backend`    -- (optional, default: `nothing`) the polyhedral computations backend
-
-### Output
-
-The polyhedron obtained by the concrete cartesian product of `P1` and `P2`.
-
-### Notes
-
-For further information on the supported backends see
-[Polyhedra's documentation](https://juliapolyhedra.github.io/).
-"""
-function cartesian_product(P1::HPoly, P2::HPoly; backend=nothing)
-    require(:Polyhedra; fun_name="`cartesian_product")
-
-    return _cartesian_product_hrep(P1, P2, backend1=backend, backend2=backend)
-end
-
 function cartesian_product(U1::Universe, U2::Universe)
     return Universe(dim(U1) + dim(U2))
 end
 
-function _cartesian_product_hrep(P1::PT1, P2::PT2; backend1, backend2) where {PT1, PT2}
+function _cartesian_product_hrep(X::S1, Y::S2) where {S1<:LazySet{N}, S2<:LazySet} where {N}
+    U1 = Universe{N}(dim(X))
+    clist1 = [cartesian_product(U1, c) for c in constraints_list(Y)]
+    U2 = Universe{N}(dim(Y))
+    clist2 = [cartesian_product(c, U2) for c in constraints_list(X)]
+    clist = vcat(clist1, clist2)
+    if isboundedtype(S1) && isboundedtype(S2)
+        return HPolytope(clist)
+    else
+        return HPolyhedron(clist)
+    end
+end
+
+function _cartesian_product_hrep_polyhedra(P1::PT1, P2::PT2; backend1, backend2) where {PT1, PT2}
+    require(:Polyhedra; fun_name="`cartesian_product")
+
     if isnothing(backend1)
         backend1 = default_polyhedra_backend(P1)
     end
