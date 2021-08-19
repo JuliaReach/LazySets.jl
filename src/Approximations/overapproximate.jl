@@ -903,17 +903,9 @@ This algorithm proceeds in two steps:
 function overapproximate(vTM::Vector{TaylorModel1{T, S}}, ::Type{<:Zonotope};
                          remove_zero_generators::Bool=true,
                          normalize::Bool=true) where {T, S}
-    m = length(vTM)
-
-    # preallocations
-    c = Vector{T}(undef, m) # center of the zonotope
-    gen_lin = Matrix{T}(undef, m, 1) # generator of the linear part
-    gen_rem = Vector{T}(undef, m) # generators of the remainder
-
-    # compute overapproximation
-    return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem;
-                                          remove_zero_generators=remove_zero_generators,
-                                          normalize=normalize)
+    return _overapproximate_vTM_zonotope(vTM, 1, T;
+                                         remove_zero_generators=remove_zero_generators,
+                                         normalize=normalize)
 end
 
 """
@@ -998,44 +990,46 @@ We refer to the algorithm description for the univariate case.
 function overapproximate(vTM::Vector{TaylorModelN{N, T, S}}, ::Type{<:Zonotope};
                          remove_zero_generators::Bool=true,
                          normalize::Bool=true) where {N, T, S}
-    m = length(vTM)
     n = N # number of variables is get_numvars() in TaylorSeries
-
-    # preallocations
-    c = Vector{T}(undef, m) # center of the zonotope
-    gen_lin = Matrix{T}(undef, m, n) # generator of the linear part
-    gen_rem = Vector{T}(undef, m) # generators for the remainder
-
-    # compute overapproximation
-    return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem;
-                                          remove_zero_generators=remove_zero_generators,
-                                          normalize=normalize)
+    return _overapproximate_vTM_zonotope(vTM, n, T;
+                                         remove_zero_generators=remove_zero_generators,
+                                         normalize=normalize)
 end
 
-function _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem;
-                                        remove_zero_generators::Bool=true,
-                                        normalize::Bool=true)
-    @inbounds for (i, x) in enumerate(vTM)
-        xpol, xdom = polynomial(x), domain(x)
+function _overapproximate_vTM_zonotope(vTM, n, N;
+                                       remove_zero_generators::Bool=true,
+                                       normalize::Bool=true)
+    m = length(vTM)
+
+    # preallocations
+    c = Vector{N}(undef, m) # center of the zonotope
+    G = Matrix{N}(undef, m, n + m) # generator matrix
+
+    @inbounds for (i, p) in enumerate(vTM)
+        pol, dom = polynomial(p), domain(p)
 
         # linearize the TM
-        pol_lin = constant_term(xpol) + linear_polynomial(xpol)
-        rem_nonlin = remainder(x)
-
-        # build an overapproximation of the nonlinear terms
-        pol_nonlin = _nonlinear_polynomial(xpol)
-        rem_nonlin += evaluate(pol_nonlin, xdom)
+        pol_lin = constant_term(pol) + linear_polynomial(pol)
 
         # normalize the linear polynomial to the symmetric interval [-1, 1]
-        Q = normalize ? normalize_taylor(pol_lin, xdom, true) : pol_lin
+        pol_lin_norm = normalize ? normalize_taylor(pol_lin, dom, true) : pol_lin
+
+        # overapproximate the nonlinear terms with an interval
+        pol_nonlin = _nonlinear_polynomial(pol)
+        rem_nonlin = evaluate(pol_nonlin, dom) + remainder(p)
 
         # build the generators
         α = mid(rem_nonlin)
-        c[i] = constant_term(Q) + α  # constant terms
-        gen_lin[i, :] = get_linear_coeffs(Q) # linear terms
-        gen_rem[i] = abs(rem_nonlin.hi - α)
+        c[i] = constant_term(pol_lin_norm) + α  # constant terms
+        G[i, 1:n] = get_linear_coeffs(pol_lin_norm)  # linear terms
+        # interval generator
+        for j in n+1:n+m
+            G[i, j] = zero(N)
+        end
+        G[i, n+i] = abs(rem_nonlin.hi - α)
     end
-    Z = Zonotope(c, hcat(gen_lin, Diagonal(gen_rem)))
+
+    Z = Zonotope(c, G)
     if remove_zero_generators
         Z = LazySets.remove_zero_generators(Z)
     end
