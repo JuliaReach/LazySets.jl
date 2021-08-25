@@ -753,15 +753,20 @@ end
 end
 
 """
-    overapproximate(vTM::Vector{TaylorModel1{T, S}},
-                    ::Type{<:Zonotope}) where {T, S}
+    overapproximate(vTM::Vector{TaylorModel1{T, S}}, ::Type{<:Zonotope};
+                    [remove_zero_generators]::Bool=true
+                    [normalize]::Bool=true) where {T, S}
 
 Overapproximate a taylor model in one variable with a zonotope.
 
 ### Input
 
-- `vTM`      -- `TaylorModel1`
-- `Zonotope` --  type for dispatch
+- `vTM`       -- `TaylorModel1`
+- `Zonotope`  --  type for dispatch
+- `remove_zero_generators` -- (optional; default: `true`) flag to remove zero
+                              generators of the resulting zonotope
+- `normalize` -- (optional; default: `true`) flag to skip the normalization of
+                 the Taylor models
 
 ### Output
 
@@ -898,8 +903,9 @@ This algorithm proceeds in two steps:
 2- Transform the linear taylor model to a zonotope exactly through variable
    normalization onto the symmetric intervals ``[-1, 1]``.
 """
-function overapproximate(vTM::Vector{TaylorModel1{T, S}},
-                            ::Type{<:Zonotope}; remove_zero_generators::Bool=true) where {T, S}
+function overapproximate(vTM::Vector{TaylorModel1{T, S}}, ::Type{<:Zonotope};
+                         remove_zero_generators::Bool=true,
+                         normalize::Bool=true) where {T, S}
     m = length(vTM)
 
     # preallocations
@@ -909,20 +915,26 @@ function overapproximate(vTM::Vector{TaylorModel1{T, S}},
 
     # compute overapproximation
     return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem;
-                                          remove_zero_generators=remove_zero_generators)
+                                          remove_zero_generators=remove_zero_generators,
+                                          normalize=normalize)
 end
 
 """
-    overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
-                    ::Type{<:Zonotope}) where {N, T, S}
+    overapproximate(vTM::Vector{TaylorModelN{N, T, S}}, ::Type{<:Zonotope};
+                    [remove_zero_generators]::Bool=true
+                    [normalize]::Bool=true) where {N, T, S}
 
 
 Overapproximate a multivariate taylor model with a zonotope.
 
 ### Input
 
-- `vTM`      -- `TaylorModelN`
-- `Zonotope` -- type for dispatch
+- `vTM`       -- `TaylorModelN`
+- `Zonotope`  -- type for dispatch
+- `remove_zero_generators` -- (optional; default: `true`) flag to remove zero
+                              generators of the resulting zonotope
+- `normalize` -- (optional; default: `true`) flag to skip the normalization of
+                 the Taylor models
 
 ### Output
 
@@ -986,8 +998,9 @@ julia> Matrix(genmat(Z))
 
 We refer to the algorithm description for the univariate case.
 """
-function overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
-                         ::Type{<:Zonotope}; remove_zero_generators::Bool=true) where {N, T, S}
+function overapproximate(vTM::Vector{TaylorModelN{N, T, S}}, ::Type{<:Zonotope};
+                         remove_zero_generators::Bool=true,
+                         normalize::Bool=true) where {N, T, S}
     m = length(vTM)
     n = N # number of variables is get_numvars() in TaylorSeries
 
@@ -998,11 +1011,13 @@ function overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
 
     # compute overapproximation
     return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem;
-                                          remove_zero_generators=remove_zero_generators)
+                                          remove_zero_generators=remove_zero_generators,
+                                          normalize=normalize)
 end
 
 function _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem;
-                                        remove_zero_generators::Bool=true)
+                                        remove_zero_generators::Bool=true,
+                                        normalize::Bool=true)
     @inbounds for (i, x) in enumerate(vTM)
         xpol, xdom = polynomial(x), domain(x)
 
@@ -1015,7 +1030,7 @@ function _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem;
         rem_nonlin += evaluate(pol_nonlin, xdom)
 
         # normalize the linear polynomial to the symmetric interval [-1, 1]
-        Q = normalize_taylor(pol_lin, xdom, true)
+        Q = normalize ? normalize_taylor(pol_lin, xdom, true) : pol_lin
 
         # build the generators
         α = mid(rem_nonlin)
