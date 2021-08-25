@@ -9,7 +9,7 @@ using LinearAlgebra: checksquare
 import LinearAlgebra: norm, ×, normalize, normalize!
 import SparseArrays: permute
 import Random
-using Random: AbstractRNG, GLOBAL_RNG, SamplerType, shuffle
+using Random: AbstractRNG, GLOBAL_RNG, SamplerType, shuffle, randperm
 import InteractiveUtils: subtypes
 
 import IntervalArithmetic
