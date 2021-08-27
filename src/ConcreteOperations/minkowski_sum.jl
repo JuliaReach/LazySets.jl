@@ -32,7 +32,7 @@ This function requires that the list of constraints of both lazy sets `P` and
 `minkowski_sum` function for polyhedral sets is used. For details see
 [`minkowski_sum(::VPolytope, ::VPolytope)`](@ref).
 
-This method requires `Polyhedra` and `CDDLib`, so you have to do:
+This method requires to load the packages `Polyhedra` and `CDDLib`, like so:
 
 ```julia
 julia> using LazySets, Polyhedra, CDDLib
@@ -103,7 +103,7 @@ A polyhedron in H-representation that corresponds to the Minkowski sum of `P` an
 
 ### Notes
 
-This method requires `Polyhedra` and `CDDLib`, so you have to do:
+This method requires to load the packages `Polyhedra` and `CDDLib`, like so:
 
 ```julia
 julia> using LazySets, Polyhedra, CDDLib
