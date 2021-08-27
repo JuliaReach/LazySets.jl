@@ -932,7 +932,7 @@ Consider a vector of two 2-dimensional taylor models of order 2 and 4
 respectively.
 
 ```julia
-julia> using LazySets, LazySets.Approximations, TaylorModels
+julia> using LazySets, TaylorModels
 
 julia> const IA = IntervalArithmetic;
 
