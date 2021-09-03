@@ -30,7 +30,7 @@ Random sampling of an arbitrary set `X`.
 - `X`           -- set to be sampled
 - `num_samples` -- number of random samples
 - `sampler`     -- (optional, default: `_default_sampler(X)`) the sampler used;
-                   falls back to `RejectionSampler`
+                   falls back to [`CombinedSampler`](@ref)
 - `rng`         -- (optional, default: `GLOBAL_RNG`) random number generator
 - `seed`        -- (optional, default: `nothing`) seed for reseeding
 - `include_vertices` -- (optional, default: `false`) option to include the vertices of `X`
@@ -80,6 +80,11 @@ end
 function sample(X::LazySet; kwargs...)
     return sample(X, 1; kwargs...)[1]
 end
+
+# default sampling for LazySets
+_default_sampler(X::LazySet) = CombinedSampler()
+_default_sampler(X::LineSegment{N}) where {N} =
+    RejectionSampler(DefaultUniform(zero(N), one(N)), true, Inf)
 
 # =====================
 # Uniform distribution
@@ -139,17 +144,19 @@ original set ``X`` in all ``n`` dimensions. The function rejects a drawn sample
 struct RejectionSampler{D} <: AbstractSampler
     distribution::D
     tight::Bool
+    bound::Number
 end
 
-function RejectionSampler(distr; tight::Bool=false)
-    return RejectionSampler(distr, tight)
+function RejectionSampler(distr; tight::Bool=false, bound=Inf)
+    return RejectionSampler(distr, tight, bound)
 end
 
-function RejectionSampler(distr::DefaultUniform; tight::Bool=false)
-    return RejectionSampler([distr], tight)
+function RejectionSampler(distr::DefaultUniform; tight::Bool=false, bound=Inf)
+    return RejectionSampler([distr], tight, bound)
 end
 
-function RejectionSampler(X::LazySet, distribution=DefaultUniform; tight::Bool=false)
+function RejectionSampler(X::LazySet, distribution=DefaultUniform;
+                          tight::Bool=false, bound=Inf)
     # define the support of the distribution as the smallest box enclosing X
     n = dim(X)
     B = box_approximation(X)
@@ -157,36 +164,32 @@ function RejectionSampler(X::LazySet, distribution=DefaultUniform; tight::Bool=f
     # distribution over B
     distr = [distribution(low(B, i), high(B, i)) for i in 1:n]
 
-    return RejectionSampler(distr, tight)
+    return RejectionSampler(distr, tight, bound)
 end
 
 # the support of this distribution is always tight wrt X
 function RejectionSampler(X::AbstractHyperrectangle)
     n = dim(X)
     distr = [DefaultUniform(low(X, i), high(X, i)) for i in 1:n]
-    return RejectionSampler(distr, true)
+    return RejectionSampler(distr, true, Inf)
 end
-
-# ambiguity fix
-function RejectionSampler(X::LazySet, tight::Bool)
-    RejectionSampler(X, DefaultUniform; tight=tight)
-end
-# default sampling for LazySets
-_default_sampler(X::LazySet) = RejectionSampler(X)
-_default_sampler(X::LineSegment{N}) where {N} = RejectionSampler(DefaultUniform(zero(N), one(N)), true)
 
 function sample!(D::Vector{VN}, X::LazySet, sampler::RejectionSampler;
                  rng::AbstractRNG=GLOBAL_RNG,
                  seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
-
     U = sampler.distribution
     rng = reseed(rng, seed)
     @inbounds for i in 1:length(D)
         w = rand(rng, U)
 
         if !(sampler.tight)
-            while w ∉ X
+            j = 1
+            while w ∉ X && j <= sampler.bound
                 w = rand(rng, U)
+                j += 1
+            end
+            if j > sampler.bound
+                return D
             end
         end
         D[i] = w
@@ -290,6 +293,47 @@ function sample!(D::Vector{VN}, X::LazySet, sampler::RandomWalkSampler;
     end
 
     return D
+end
+
+"""
+    CombinedSampler <: AbstractSampler
+
+Type used for sampling arbitrary sets by trying different sampling strategies.
+
+### Algorithm
+
+The algorithm is to first try a [`RejectionSampler`](@ref) 100 times.
+If that fails, it tries a [`RandomWalkSampler`](@ref).
+"""
+struct CombinedSampler <: AbstractSampler
+    #
+end
+
+function sample!(D::Vector{VN}, X::LazySet, sampler::CombinedSampler;
+                 rng::AbstractRNG=GLOBAL_RNG,
+                 seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
+    # try rejection sampling 100 times
+    tmp_sampler = RejectionSampler(X; bound=10)
+    D2 = Vector{VN}(undef, 1)
+    D2[1] = fill(N(NaN), dim(X))
+    sample!(D2, X, tmp_sampler)
+    if !isnan(D2[1][1])
+        # it worked
+        tmp_sampler = RejectionSampler(X)
+        return sample!(D, X, tmp_sampler; rng=rng, seed=seed)
+    end
+
+    # try random-walk sampler
+    tmp_sampler = RandomWalkSampler()
+    try
+        sample!(D, X, tmp_sampler; rng=rng, seed=seed)
+        return D
+    catch e
+        #
+    end
+
+    # no sampler worked, give up
+    throw(ErrorException("sampling failed"))
 end
 
 # =============================
