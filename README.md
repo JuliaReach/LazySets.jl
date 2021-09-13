@@ -41,7 +41,7 @@ The articles appear in reverse chronological order.
   
 [19] **Reachability of weakly nonlinear systems using Carleman linearization.** Marcelo Forets and Christian Schilling. arXiv preprint arXiv:2108.10390 (2021). Accepted in: 15th International Conference on Reachability Problems (2021). October 25-27 2021, Liverpool, UK.
 
-[18] **Combined Exact and Heuristics Based Approach to Hamiltonian Path Problem Optimization for Route Planning.** Fernando Hernandez, Rafael Sotelo and Marcelo Forets (2021).
+[18] **Combined Exact and Heuristics Based Approach to Hamiltonian Path Problem Optimization for Route Planning.** Fernando Hernandez, Rafael Sotelo and Marcelo Forets (2021). In Winkenbach, M., Parks, S., & Noszek, J. (Eds.), [Technical Proceedings of the 2021 Amazon Last Mile Routing Research Challenge](https://hdl.handle.net/1721.1/131235) (pp. XXI.1–XXI.12). MIT Libraries.
   
 [17] **Synthesis of hybrid automata with affine dynamics from time-series data.**  Miriam García Soto, Thomas A. Henzinger and Christian Schilling. Proceedings of the 24th International Conference on Hybrid Systems: Computation and Control. 2021.
 
