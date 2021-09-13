@@ -35,8 +35,22 @@ This library has been applied in a number of scientic works.
 <details>
 <summary>List</summary>
   
-In reverse chronological order,
+The articles appear in reverse chronological order.
 
+[20] **Verification of Neural-Network Control Systems by Integrating Taylor Models and Zonotopes.** Christian Schilling, Marcelo Forets and Sebastian Guadalupe.* Submitted (2021).
+  
+[19] **Reachability of weakly nonlinear systems using Carleman linearization.** Marcelo Forets and Christian Schilling. arXiv preprint arXiv:2108.10390 (2021). Accepted in: 15th International Conference on Reachability Problems (2021). October 25-27 2021, Liverpool, UK.
+
+[18] **Combined Exact and Heuristics Based Approach to Hamiltonian Path Problem Optimization for Route Planning.** Fernando Hernandez, Rafael Sotelo and Marcelo Forets (2021).
+  
+[17] **Synthesis of hybrid automata with affine dynamics from time-series data.**  Miriam García Soto, Thomas A. Henzinger and Christian Schilling. Proceedings of the 24th International Conference on Hybrid Systems: Computation and Control. 2021.
+
+[16] **ARCH-COMP21 Category Report: Artificial Intelligence and Neural Network Controlled Systems for Continuous and Hybrid Systems Plants.** Taylor T. Johnson, Diego Manzanas Lopez, Luis Benet, Marcelo Forets, Christian Schilling, Radoslav Ivanov, Taylor Carpenter, James Weimer, and Insup Lee. (2021) ARCH21. 8th International Workshop on Applied Verification of Continuous and Hybrid Systems (ARCH21).
+
+[15] **ARCH-COMP21 Category Report: Continuous and Hybrid Systems with Linear Continuous Dynamics.** Matthias Althoff, Erika Abraham, Marcelo Forets, Goran Frehse, Daniel Freire, Christian Schilling, Stefan Schupp, and Mark Wetzlinger. (2021) ARCH21. 8th International Workshop on Applied Verification of Continuous and Hybrid Systems (ARCH21).
+
+[14] **ARCH-COMP21 Category Report: Continuous and Hybrid Systems with Nonlinear Dynamics.** Luca Geretti, Julien Alexandre dit Sandretto, Matthias Althoff, Luis Benet, Alexandre Chapoutot, Pieter Collins, Parasara Sridhar Duggirala, Marcelo Forets, Edward Kim, Uziel Linares, David P. Sanders, Christian Schilling, and Mark Wetzlinger. (2021) ARCH21. 8th International Workshop on Applied Verification of Continuous and Hybrid Systems (ARCH21).
+  
 [13] **Combining Set Propagation with Finite Element Methods for Time Integration in Transient Solid Mechanics Problems.** Forets, Marcelo, Daniel Freire Caporale, and Jorge M. Pérez Zerpa. arXiv preprint [arXiv:2105.05841](https://arxiv.org/abs/2105.05841) (2021).
 
 [12] **Synthesis of hybrid automata with affine dynamics from time-series data.** García Soto, Miriam, Thomas A. Henzinger, and Christian Schilling. [HSCC](https://hscc.acm.org/2021/) (2021). doi: [10.1145/3447928.3456704](https://doi.org/10.1145/3447928.3456704). [Get pdf from arXiv: 2102.12734](https://arxiv.org/abs/2102.12734)
@@ -44,9 +58,9 @@ In reverse chronological order,
 [11] **Efficient reachability analysis of parametric linear hybrid systems with time-triggered transitions.** Marcelo Forets, Daniel Freire, Christian Schilling, 2020. [arXiv: 2006.12325](https://arxiv.org/abs/2006.12325). [18th ACM-IEEE International Conference on Formal Methods and Models for System Design
 ](https://ieeexplore.ieee.org/document/9314994). See [conference page](https://iitjammu.ac.in/conferences/memocode2020/index.html).
 
-[10] **ARCH-COMP20 Category Report: Continuous and Hybrid Systems with Linear Continuous Dynamics.** Matthias Althoff, Stanley Bak, Zongnan Bao, Marcelo Forets, Daniel Freire, Goran Frehse, Niklas Kochdumper, Yangge Li, Sayan Mitra, Rajarshi Ray, Christian Schilling, Stefan Schupp, and Mark Wetzlinger (2020) ARCH20. 7th International Workshop on Applied Verification of Continuous and Hybrid Systems. 7th International Workshop on Applied Verification of Continuous and Hybrid Systems (ARCH20), vol 74, pages 16--48. [10.29007/7dt2](https://easychair.org/publications/paper/DRpS).
+[10] **ARCH-COMP20 Category Report: Continuous and Hybrid Systems with Linear Continuous Dynamics.** Matthias Althoff, Stanley Bak, Zongnan Bao, Marcelo Forets, Daniel Freire, Goran Frehse, Niklas Kochdumper, Yangge Li, Sayan Mitra, Rajarshi Ray, Christian Schilling, Stefan Schupp, and Mark Wetzlinger (2020) ARCH20. 7th International Workshop on Applied Verification of Continuous and Hybrid Systems (ARCH20), vol 74, pages 16--48. [10.29007/7dt2](https://easychair.org/publications/paper/DRpS).
 
-[9] **ARCH-COMP20 Category Report: Continuous and Hybrid Systems with Nonlinear Dynamics.** Luca Geretti, Julien Alexandre dit Sandretto, Matthias Althoff, Luis Benet, Alexandre Chapoutot, Xin Chen, Pieter Collins, Marcelo Forets, Daniel Freire, Fabian Immler, Niklas Kochdumper, David P. Sanders and Christian Schilling (2020) ARCH20. To appear in 7th International Workshop on Applied Verification of Continuous and Hybrid Systems. 7th International Workshop on Applied Verification of Continuous and Hybrid Systems (ARCH20), vol 74, pages 49--75. [10.29007/zkf6](https://easychair.org/publications/paper/nrdD).
+[9] **ARCH-COMP20 Category Report: Continuous and Hybrid Systems with Nonlinear Dynamics.** Luca Geretti, Julien Alexandre dit Sandretto, Matthias Althoff, Luis Benet, Alexandre Chapoutot, Xin Chen, Pieter Collins, Marcelo Forets, Daniel Freire, Fabian Immler, Niklas Kochdumper, David P. Sanders and Christian Schilling (2020) ARCH20. 7th International Workshop on Applied Verification of Continuous and Hybrid Systems (ARCH20), vol 74, pages 49--75. [10.29007/zkf6](https://easychair.org/publications/paper/nrdD).
 
 [8] **Case Study: Reachability Analysis of a unified Combat-Command-and-Control Model.** Sergiy Bogomolov, Marcelo Forets, Kostiantyn Potomkin. *International Conference on Reachability Problems (2020). Lecture Notes in Computer Science, vol 12448.* (2020) doi: [10.1007/978-3-030-61739-4_4](https://dx.doi.org/10.1007/978-3-030-61739-4_4). Presented in the [14th International Conference on Reachability Problems 2020](https://www.irif.fr/~rp2020/). [article](https://link.springer.com/chapter/10.1007/978-3-030-61739-4_4)
 
