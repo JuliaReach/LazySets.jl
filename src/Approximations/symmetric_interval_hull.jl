@@ -23,6 +23,8 @@ maximum value of the support function evaluated in the canonical directions.
 ### Notes
 
 The result is a hyperrectangle and hence in particular convex.
+
+An alias for this function is `box_approximation_symmetric`.
 """
 function symmetric_interval_hull(S::LazySet{N}) where {N}
     # fallback returns a hyperrectangular set

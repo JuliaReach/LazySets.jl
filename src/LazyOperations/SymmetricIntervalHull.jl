@@ -1,4 +1,4 @@
-export SymmetricIntervalHull,
+export SymmetricIntervalHull, ⊡,
        an_element
 
 """
@@ -31,6 +31,8 @@ can be used to elide the boundedness check in the inner constructor. Misuse of t
 flag can result in incorrect behavior.
 
 The symmetric inteval hull of a set is a hyperrectangle, hence in particular convex.
+
+An alias for this function is `⊡`.
 """
 struct SymmetricIntervalHull{N, S<:LazySet{N}} <: AbstractHyperrectangle{N}
     X::S
@@ -43,6 +45,13 @@ struct SymmetricIntervalHull{N, S<:LazySet{N}} <: AbstractHyperrectangle{N}
         return new{N, S}(X, cache)
     end
 end
+
+"""
+    ⊡
+
+Alias for `SymmetricIntervalHull`.
+"""
+const ⊡ = SymmetricIntervalHull
 
 isoperationtype(::Type{<:SymmetricIntervalHull}) = true
 isconvextype(::Type{<:SymmetricIntervalHull}) = true
