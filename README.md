@@ -36,14 +36,10 @@ This library has been applied in a number of scientic works.
 <summary>List</summary>
   
 The articles appear in reverse chronological order.
-
-[20] **Verification of Neural-Network Control Systems by Integrating Taylor Models and Zonotopes.** Christian Schilling, Marcelo Forets and Sebastian Guadalupe. Submitted (2021).
   
-[19] **Reachability of weakly nonlinear systems using Carleman linearization.** Marcelo Forets and Christian Schilling. arXiv preprint arXiv:2108.10390 (2021). Accepted in: 15th International Conference on Reachability Problems (2021). October 25-27 2021, Liverpool, UK.
+[18] **Reachability of weakly nonlinear systems using Carleman linearization.** Marcelo Forets and Christian Schilling. arXiv preprint arXiv:2108.10390 (2021). Accepted in: 15th International Conference on Reachability Problems (2021). October 25-27 2021, Liverpool, UK.
 
-[18] **Combined Exact and Heuristics Based Approach to Hamiltonian Path Problem Optimization for Route Planning.** Fernando Hernandez, Rafael Sotelo and Marcelo Forets (2021). In Winkenbach, M., Parks, S., & Noszek, J. (Eds.), [Technical Proceedings of the 2021 Amazon Last Mile Routing Research Challenge](https://hdl.handle.net/1721.1/131235) (pp. XXI.1–XXI.12). MIT Libraries.
-  
-[17] **Synthesis of hybrid automata with affine dynamics from time-series data.**  Miriam García Soto, Thomas A. Henzinger and Christian Schilling. Proceedings of the 24th International Conference on Hybrid Systems: Computation and Control. 2021.
+[17] **Combined Exact and Heuristics Based Approach to Hamiltonian Path Problem Optimization for Route Planning.** Fernando Hernandez, Rafael Sotelo and Marcelo Forets (2021). In Winkenbach, M., Parks, S., & Noszek, J. (Eds.), [Technical Proceedings of the 2021 Amazon Last Mile Routing Research Challenge](https://hdl.handle.net/1721.1/131235) (pp. XXI.1–XXI.12). MIT Libraries.
 
 [16] **ARCH-COMP21 Category Report: Artificial Intelligence and Neural Network Controlled Systems for Continuous and Hybrid Systems Plants.** Taylor T. Johnson, Diego Manzanas Lopez, Luis Benet, Marcelo Forets, Christian Schilling, Radoslav Ivanov, Taylor Carpenter, James Weimer, and Insup Lee. (2021) ARCH21. 8th International Workshop on Applied Verification of Continuous and Hybrid Systems (ARCH21).
 
