@@ -37,7 +37,7 @@ This library has been applied in a number of scientic works.
   
 The articles appear in reverse chronological order.
 
-[20] **Verification of Neural-Network Control Systems by Integrating Taylor Models and Zonotopes.** Christian Schilling, Marcelo Forets and Sebastian Guadalupe.* Submitted (2021).
+[20] **Verification of Neural-Network Control Systems by Integrating Taylor Models and Zonotopes.** Christian Schilling, Marcelo Forets and Sebastian Guadalupe. Submitted (2021).
   
 [19] **Reachability of weakly nonlinear systems using Carleman linearization.** Marcelo Forets and Christian Schilling. arXiv preprint arXiv:2108.10390 (2021). Accepted in: 15th International Conference on Reachability Problems (2021). October 25-27 2021, Liverpool, UK.
 
