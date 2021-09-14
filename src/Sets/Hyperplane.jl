@@ -158,10 +158,10 @@ Determine whether a hyperplane is bounded.
 
 ### Output
 
-`false`.
+`true` iff `hp` is one-dimensional.
 """
-function isbounded(::Hyperplane)
-    return false
+function isbounded(hp::Hyperplane)
+    return dim(hp) == 1
 end
 
 """

@@ -44,6 +44,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # boundedness
     @test !isbounded(hp)
+    @test isbounded(Hyperplane(ones(N, 1), N(1)))
 
     # universality
     @test !isuniversal(hp)
