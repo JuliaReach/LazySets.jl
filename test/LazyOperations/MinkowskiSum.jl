@@ -56,8 +56,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test ρ(N[-1], ms) == N(-6)
 
     # boundedness
-    @test isbounded(ms)
-    @test !isbounded(Singleton(N[1]) + HalfSpace(N[1], N(1)))
+    @test isbounded(ms) && isboundedtype(typeof(ms))
+    ms2 = Singleton(N[1]) + HalfSpace(N[1], N(1))
+    @test !isbounded(ms2) && !isboundedtype(typeof(ms2))
 
     # isempty
     @test !isempty(ms)
@@ -128,8 +129,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test σ(d, ms) == σ(d, msa)
 
     # boundedness
-    @test isbounded(msa)
-    @test !isbounded(MinkowskiSumArray([Singleton(N[1]), HalfSpace(N[1], N(1))]))
+    @test isbounded(msa) && isboundedtype(typeof(msa))
+    msa2 = MinkowskiSumArray([Singleton(N[1]), HalfSpace(N[1], N(1))])
+    @test !isbounded(msa2) && !isboundedtype(typeof(msa2))
 
     # isempty
     @test !isempty(msa)

@@ -35,7 +35,7 @@ for N in [Float64, Rational{Int}, Float32]
     lm = N(2) * b
     @test lm == b * N(2)
     # repeated scalar multiplication
-    lm2 = N(2) * lm
+    N(2) * lm
     # Test Dimension
     @test dim(lm) == 2
     # Test Support Vector
@@ -54,8 +54,10 @@ for N in [Float64, Rational{Int}, Float32]
     @test lm1_copy.X == lm1.X
 
     # boundedness
-    @test isbounded(ones(N, 2, 2) * Singleton(N[1, 2]))  # bounded set
-    @test isbounded(zeros(N, 2, 2) * HalfSpace(N[1, 1], N(1)))  # zero map
+    lm1 = ones(N, 2, 2) * Singleton(N[1, 2])  # bounded set
+    @test isbounded(lm1) && isboundedtype(typeof(lm1))
+    lm2 = zeros(N, 2, 2) * HalfSpace(N[1, 1], N(1))  # zero map
+    @test isbounded(lm2) && !isboundedtype(typeof(lm2))
     @test !isbounded(N[2 3; 1 2] * HalfSpace(N[1, 1], N(1)))  # invertible matrix
     @test !isbounded(N[2 3; 0 0] * HalfSpace(N[1, 1], N(1)))  # singular matrix (expensive check)
 

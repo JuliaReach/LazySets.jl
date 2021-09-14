@@ -70,8 +70,9 @@ for N in [Float64, Float32]
     @test svec ≈ svec_explicit
 
     # boundedness
-    @test isbounded(emap)
-    @test !isbounded(me * HalfSpace(ones(N, n), N(1)))
+    @test isbounded(emap) && isboundedtype(typeof(emap))
+    emap2 = me * HalfSpace(ones(N, n), N(1))
+    @test !isbounded(emap2) && !isboundedtype(typeof(emap2))
 
     # isempty
     @test !isempty(emap)

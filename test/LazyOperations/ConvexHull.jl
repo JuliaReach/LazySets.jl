@@ -23,8 +23,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test σ(d, ch) == N[0, -1]
 
     # boundedness
-    @test isbounded(ch)
-    @test !isbounded(CH(Singleton(N[1]), HalfSpace(N[1], N(1))))
+    @test isbounded(ch) && isboundedtype(typeof(ch))
+    ch2 = CH(Singleton(N[1]), HalfSpace(N[1], N(1)))
+    @test !isbounded(ch2) && !isboundedtype(typeof(ch2))
 
     # isempty
     @test !isempty(ch)
@@ -59,8 +60,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test σ(d, cha) == N[0, -1]
 
     # boundedness
-    @test isbounded(cha)
-    @test !isbounded(ConvexHullArray([Singleton(N[1]), HalfSpace(N[1], N(1))]))
+    @test isbounded(cha) && isboundedtype(typeof(cha))
+    cha2 = ConvexHullArray([Singleton(N[1]), HalfSpace(N[1], N(1))])
+    @test !isbounded(cha2) && !isboundedtype(typeof(cha2))
 
     # isempty
     @test !isempty(cha)

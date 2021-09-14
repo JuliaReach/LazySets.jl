@@ -139,7 +139,7 @@ function ρ(d::AbstractVector, msa::MinkowskiSumArray)
 end
 
 """
-	isbounded(msa::MinkowskiSumArray)
+    isbounded(msa::MinkowskiSumArray)
 
 Determine whether a Minkowski sum of a finite number of sets is bounded.
 
@@ -153,6 +153,10 @@ Determine whether a Minkowski sum of a finite number of sets is bounded.
 """
 function isbounded(msa::MinkowskiSumArray)
    return all(isbounded, msa.array)
+end
+
+function isboundedtype(::Type{<:MinkowskiSumArray{N, S}}) where {N, S}
+    return isboundedtype(S)
 end
 
 """

@@ -34,8 +34,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test ρ(N[1, 0, 0], am) == N(2)
 
     # boundedness
-    @test isbounded(am)
-    @test !isbounded(AffineMap(M, Universe{N}(3), v))
+    @test isbounded(am) && isboundedtype(typeof(am))
+    am2 = AffineMap(M, Universe{N}(3), v)
+    @test !isbounded(am2) && !isboundedtype(typeof(am2))
 
     # function to get an element
     @test (an_element(am) - am.v) ∈ (am.M * am.X)

@@ -427,6 +427,10 @@ function isbounded(r::Rectification{N}) where {N}
     return true
 end
 
+function isboundedtype(::Type{<:Rectification{N, S}}) where {N, S}
+    return isboundedtype(S)
+end
+
 """
     to_union_of_projections(r::Rectification{N},
                             concrete_intersection::Bool=false

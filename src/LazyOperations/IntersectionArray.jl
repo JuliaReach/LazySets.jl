@@ -137,6 +137,10 @@ function isbounded(ia::IntersectionArray)
    return _isbounded_unit_dimensions(ia)
 end
 
+function isboundedtype(::Type{<:IntersectionArray{N, S}}) where {N, S}
+    return isboundedtype(S)
+end
+
 """
     ∈(x::AbstractVector, ia::IntersectionArray)
 

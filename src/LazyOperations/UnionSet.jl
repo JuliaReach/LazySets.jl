@@ -233,6 +233,10 @@ function isbounded(cup::UnionSet)
     return isbounded(cup.X) && isbounded(cup.Y)
 end
 
+function isboundedtype(::Type{<:UnionSet{N, S1, S2}}) where {N, S1, S2}
+    return isboundedtype(S1) && isboundedtype(S2)
+end
+
 """
     vertices_list(cup::UnionSet; apply_convex_hull::Bool=false, backend=nothing)
 

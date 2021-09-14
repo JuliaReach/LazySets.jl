@@ -168,6 +168,10 @@ function isbounded(cha::ConvexHullArray)
     return all(isbounded, cha.array)
 end
 
+function isboundedtype(::Type{<:ConvexHullArray{N, S}}) where {N, S}
+    return isboundedtype(S)
+end
+
 """
     isempty(cha::ConvexHullArray)
 

@@ -548,6 +548,10 @@ function isbounded(cap::Intersection)
     return _isbounded_unit_dimensions(cap)
 end
 
+function isboundedtype(::Type{<:Intersection{N, S1, S2}}) where {N, S1, S2}
+    return isboundedtype(S1) || isboundedtype(S2)
+end
+
 """
     ∈(x::AbstractVector, cap::Intersection)
 

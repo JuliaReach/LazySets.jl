@@ -260,6 +260,10 @@ function an_element(rm::ResetMap)
     return substitute(rm.resets, an_element(rm.X))
 end
 
+function isboundedtype(::Type{<:ResetMap{N, S}}) where {N, S}
+    return isboundedtype(S)
+end
+
 """
     constraints_list(rm::ResetMap{N}) where {N}
 

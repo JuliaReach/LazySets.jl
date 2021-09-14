@@ -63,9 +63,10 @@ for N in [Float64, Rational{Int}, Float32]
     @test isempty(Rectification(EmptySet{N}(1)))
 
     # boundedness
-    @test isbounded(RI1)
+    @test isbounded(RI1) && isboundedtype(typeof(RI1))
     @test isbounded(Rectification(HalfSpace(N[1], N(0))))
-    @test !isbounded(Rectification(Universe{N}(2)))
+    RI4 = Rectification(Universe{N}(2))
+    @test !isbounded(RI4) && !isboundedtype(typeof(RI4))
     @test !isbounded(Rectification(HalfSpace(N[-1], N(0))))
 
     # conversion

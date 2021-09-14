@@ -117,6 +117,10 @@ function isbounded(B::Bloating)
     return isbounded(B.X)
 end
 
+function isboundedtype(::Type{<:Bloating{N, S}}) where {N, S}
+    return isboundedtype(S)
+end
+
 """
     isempty(B::Bloating)
 
