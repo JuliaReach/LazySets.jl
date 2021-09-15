@@ -85,8 +85,6 @@ If the function `constraints_list` is not applicable to your set `S`, try
 overapproximation first; e.g. via
 
 ```julia
-julia> using LazySets.Approximations
-
 julia> Sapprox = overapproximate(S, SphericalDirections(10))
 
 julia> plot3d(Sapprox)

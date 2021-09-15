@@ -1,8 +1,6 @@
 using RecipesBase
 import RecipesBase.apply_recipe
 
-using LazySets.Approximations: overapproximate, PolarDirections
-
 # global values
 DEFAULT_COLOR = :auto
 DEFAULT_ALPHA = 0.5
@@ -447,14 +445,11 @@ vector (but see
 [#1187](https://github.com/JuliaReach/LazySets.jl/issues/1187))).
 
 Also note that if the set is a *nested* intersection, you may have to manually
-overapproximate this set before plotting (see
-`LazySets.Approximations.overapproximate` for details).
+overapproximate this set before plotting (see `overapproximate` for details).
 
 ### Examples
 
 ```julia
-julia> using LazySets.Approximations
-
 julia> X = Ball2(zeros(2), 1.) ∩ Ball2(ones(2), 1.5);  # lazy intersection
 
 julia> plot(X)

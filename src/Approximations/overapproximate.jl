@@ -773,7 +773,7 @@ If the polynomials are linear, this functions exactly transforms to a zonotope.
 However, the nonlinear case necessarily introduces overapproximation error.
 Consider the linear case first:
 
-```julia
+```jldoctest oa_tm1
 julia> using LazySets, TaylorModels
 
 julia> const IA = IntervalArithmetic;
@@ -794,16 +794,16 @@ julia> p2 = Taylor1([0.9, 3.0], 2) # define another linear polynomial
  0.9 + 3.0 t + 𝒪(t³)
 
 julia> vTM = [TaylorModel1(pi, I, x₀, D) for pi in [p1, p2]]
-2-element Array{TaylorModel1{Float64,Float64},1}:
- 2.0 + 1.0 t + [-0.5, 0.5]
- 0.9 + 3.0 t + [-0.5, 0.5]
+2-element Vector{TaylorModel1{Float64, Float64}}:
+  2.0 + 1.0 t + [-0.5, 0.5]
+  0.9 + 3.0 t + [-0.5, 0.5]
 ```
 
 Here, `vTM` is a taylor model vector, since each component is a taylor model in
 one variable (`TaylorModel1`). Using `overapproximate(vTM, Zonotope)` we can
 compute its associated zonotope in generator representation:
 
-```julia
+```jldoctest oa_tm1
 julia> Z = overapproximate(vTM, Zonotope);
 
 julia> center(Z)
@@ -822,7 +822,7 @@ from the linear part of the polynomials, and another one that corresponds to the
 interval remainder. This conversion gives the same upper and lower bounds as the
 range evaluation using interval arithmetic:
 
-```julia
+```jldoctest oa_tm1
 julia> X = box_approximation(Z)
 Hyperrectangle{Float64, Vector{Float64}, Vector{Float64}}([1.0, -2.1], [2.5, 6.5])
 
@@ -830,13 +830,12 @@ julia> Y = evaluate(vTM[1], vTM[1].dom) × evaluate(vTM[2], vTM[2].dom)
 [-1.5, 3.5] × [-8.60001, 4.40001]
 
 julia> H = convert(Hyperrectangle, Y) # this IntevalBox is the same as X
-Hyperrectangle{Float64,StaticArrays.SArray{Tuple{2},Float64,1,2},
-               StaticArrays.SArray{Tuple{2},Float64,1,2}}([1.0, -2.1000000000000005], [2.5, 6.500000000000001])
+Hyperrectangle{Float64, StaticArrays.SVector{2, Float64}, StaticArrays.SVector{2, Float64}}([1.0, -2.1000000000000005], [2.5, 6.500000000000001])
 ```
 However, the zonotope returns better results if we want to approximate the `TM`,
 since it is not axis-aligned:
 
-```julia
+```jldoctest oa_tm1
 julia> d = [-0.35, 0.93];
 
 julia> ρ(d, Z) < ρ(d, X)
@@ -846,12 +845,12 @@ true
 This function also works if the polynomials are non-linear; for example suppose
 that we add a third polynomial with a quadratic term:
 
-```julia
+```jldoctest oa_tm1
 julia> p3 = Taylor1([0.9, 3.0, 1.0], 3)
  0.9 + 3.0 t + 1.0 t² + 𝒪(t⁴)
 
 julia> vTM = [TaylorModel1(pi, I, x₀, D) for pi in [p1, p2, p3]]
-3-element Array{TaylorModel1{Float64,Float64},1}:
+3-element Vector{TaylorModel1{Float64, Float64}}:
            2.0 + 1.0 t + [-0.5, 0.5]
            0.9 + 3.0 t + [-0.5, 0.5]
   0.9 + 3.0 t + 1.0 t² + [-0.5, 0.5]
@@ -868,9 +867,9 @@ julia> Matrix(genmat(Z))
 3×4 Matrix{Float64}:
  2.0  0.5  0.0  0.0
  6.0  0.0  0.5  0.0
- 6.0  0.0  0.0  6.5
+ 6.0  0.0  0.0  5.0
 ```
-The fourth and last generator corresponds to the addition between the interval
+The fourth and last generator corresponds to the addition of the interval
 remainder and the box overapproximation of the nonlinear part of `p3` over the
 domain.
 
@@ -931,8 +930,8 @@ A zonotope that overapproximates the range of the given taylor model.
 Consider a vector of two 2-dimensional taylor models of order 2 and 4
 respectively.
 
-```julia
-julia> using LazySets, LazySets.Approximations, TaylorModels
+```jldoctest
+julia> using LazySets, TaylorModels
 
 julia> const IA = IntervalArithmetic;
 
@@ -963,9 +962,9 @@ julia> p2 = x₂^3 + 3x₁^4 + x₁ + 1
  1.0 + 1.0 x₁ + 1.0 x₂³ + 3.0 x₁⁴ + 𝒪(‖x‖⁹)
 
 julia> vTM = [TaylorModelN(pi, r, x₀, D) for pi in [p1, p2]]
-2-element Array{TaylorModelN{2,Float64,Float64},1}:
-             1.0 - 1.0 x₂ + 1.0 x₁² + [-0.5, 0.5]
-   1.0 + 1.0 x₁ + 1.0 x₂³ + 3.0 x₁⁴ + [-0.5, 0.5]
+2-element Vector{TaylorModelN{2, Float64, Float64}}:
+            1.0 - 1.0 x₂ + 1.0 x₁² + [-0.5, 0.5]
+  1.0 + 1.0 x₁ + 1.0 x₂³ + 3.0 x₁⁴ + [-0.5, 0.5]
 
 julia> Z = overapproximate(vTM, Zonotope);
 

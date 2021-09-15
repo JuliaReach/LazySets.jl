@@ -37,7 +37,7 @@ for that numeric type is used. For floating-point types, a default value has bee
 defined through `default_tolerance` as follows:
 
 ```julia
-default_tolerance(N::Type{<:AbstractFloat}) = Tolerance(Base.rtoldefault(N), sqrt(eps(N)), zero(N))
+default_tolerance(N::Type{<:AbstractFloat}) = Tolerance(Base.rtoldefault(N), N(10) * sqrt(eps(N)), zero(N))
 ```
 Hence to set a single tolerance (either `rtol`, `ztol` or `atol`) for a given
 floating-point type, use the corresponding `set_rtol` function, while the values

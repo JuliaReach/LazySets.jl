@@ -783,7 +783,7 @@ julia> v[1]
 
 We can specify the upper bound in Brent's method:
 
-```julia _line_search
+```jldoctest _line_search
 julia> v = _line_search([1.0, 0.0], X, H, upper=1e3);
 
 julia> v[1]
@@ -792,7 +792,7 @@ julia> v[1]
 
 Instead of Brent's method we can use the Golden Section method:
 
-```julia _line_search
+```jldoctest _line_search
 julia> v = _line_search([1.0, 0.0], X, H, upper=1e3, method=GoldenSection());
 
 julia> v[1]
