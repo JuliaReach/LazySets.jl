@@ -96,6 +96,7 @@ _sample_unit_nsphere_muller!
 _sample_unit_nball_muller!
 sample
 LazySets.AbstractSampler
+LazySets.CombinedSampler
 LazySets.RejectionSampler
 LazySets.RandomWalkSampler
 ```

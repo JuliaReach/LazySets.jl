@@ -28,6 +28,12 @@ for N in [Float64]
         end
     end
 
+    # random-walk sampler
+    for P in [P1, P2, P3]
+        p_samples = LazySets.sample(P, 100, sampler=LazySets.CombinedSampler())
+        @test all(v ∈ P for v in p_samples)
+    end
+
     # specifying a distribution from Distributions.jl
     @test LazySets.RejectionSampler(P2, Uniform).distribution == [Uniform(-3.0, 1.0), Uniform(-4.0,2.0)]
     @test LazySets.RejectionSampler(P2, Normal).distribution == [Normal(-3.0, 1.0), Normal(-4.0, 2.0)]
