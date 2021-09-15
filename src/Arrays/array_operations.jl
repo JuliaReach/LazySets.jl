@@ -1,4 +1,5 @@
-export same_sign
+export same_sign,
+       rectify
 
 """
     same_sign(A::AbstractArray{N}; [optimistic]::Bool=false) where {N}
@@ -75,3 +76,20 @@ _rationalize(x::AbstractVecOrMat{N}; kwargs...) where {N<:AbstractFloat} = _rati
 
 # fallback for scalars
 _rationalize(::Type{T}, x::AbstractFloat, tol::Real) where {T<:Integer} = rationalize(T, x, tol)
+
+"""
+    rectify(x::AbstractArray{N}) where {N<:Real}
+
+Rectify an array, i.e., take the element-wise maximum with zero.
+
+### Input
+
+- `x` -- array
+
+### Output
+
+A copy of the array where each negative entry is replaced by zero.
+"""
+function rectify(x::AbstractArray{N}) where {N<:Real}
+    return map(xi -> max(xi, zero(N)), x)
+end
