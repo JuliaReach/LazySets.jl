@@ -6,6 +6,7 @@ CurrentModule = LazySets
 
 ```@docs
 SymmetricIntervalHull
+⊡
 dim(::SymmetricIntervalHull)
 σ(::AbstractVector, ::SymmetricIntervalHull)
 center(::SymmetricIntervalHull{N}, ::Int) where {N}

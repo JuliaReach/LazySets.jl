@@ -4,7 +4,11 @@ for N in [Float64, Rational{Int}, Float32]
     @test SymmetricIntervalHull(E) == E
 
     # normal constructor
-    h = SymmetricIntervalHull(Ball1(N[2, 3], N(4)))
+    B = Ball1(N[2, 3], N(4))
+    h = SymmetricIntervalHull(B)
+
+    # alias
+    @test ⊡(B) == h
 
     # constructor attempt from an unbounded set
     h0 = HalfSpace(N[1], N(0))
@@ -37,7 +41,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test an_element(h) == N[0, 0]
 
     # radius_hyperrectangle function (uncached and cached)
-    h = SymmetricIntervalHull(Ball1(N[2, 3], N(4)))
+    h = SymmetricIntervalHull(B)
     for i in 1:2
         @test radius_hyperrectangle(h, 1) == 6
         @test radius_hyperrectangle(h) == N[6, 7]
