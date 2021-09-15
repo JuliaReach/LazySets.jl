@@ -118,7 +118,7 @@ end
 # ===================
 
 """
-    RejectionSampler{D} <: Sampler
+    RejectionSampler{D} <: AbstractSampler
 
 Type used for rejection sampling of an arbitrary set `X`.
 
@@ -212,18 +212,21 @@ function sample!(D::Vector{VN}, L::LineSegment, sampler::RejectionSampler{<:Defa
 end
 
 """
-    RandomWalkSampler{D} <: Sampler
+    RandomWalkSampler <: AbstractSampler
 
 Type used for sampling of a convex polytope `X` using its vertex representation.
+This is especially useful if rejection sampling does not work because the
+polytope is flat.
 
 ### Fields
 
-- `X` -- convex polytope to be sampled
+- `variant` -- (default: `true`) option to choose a variant (see below)
 
 ### Algorithm
 
 Choose a random convex combination of the vertices of `X`.
 
+If `variant == false`, we proceed as follows.
 Let ``V = \\{v_i\\}_i`` denote the set of vertices of `X`.
 Then any point ``p \\in \\mathbb{R}^n`` of the convex polytope ``X`` is a convex
 combination of its vertices, i.e., ``p = \\sum_{i} v_i α_i`` for some
@@ -231,6 +234,9 @@ combination of its vertices, i.e., ``p = \\sum_{i} v_i α_i`` for some
 The algorithm chooses a random convex combination (the ``α_i``).
 To produce such combination we apply the finite difference operator on a sorted
 uniform sample over ``[0, 1]``; the method can be found in [1] and [2].
+
+If `variant == true`, we start from a random vertex and then repeatedly walk
+toward a random vertex inside the polytope.
 
 ### Notes
 
@@ -245,8 +251,10 @@ likely to be sampled.
 [2] https://cs.stackexchange.com/questions/3227/uniform-sampling-from-a-simplex/3229
 """
 struct RandomWalkSampler <: AbstractSampler
-    #
+    variant::Bool
 end
+
+RandomWalkSampler() = RandomWalkSampler(true)
 
 function sample!(D::Vector{VN}, X::LazySet, sampler::RandomWalkSampler;
                  rng::AbstractRNG=GLOBAL_RNG,
@@ -256,20 +264,29 @@ function sample!(D::Vector{VN}, X::LazySet, sampler::RandomWalkSampler;
     vlist = vertices_list(X)
     m = length(vlist)
 
-    # vector used to store the combination coefficients
-    r = Vector{N}(undef, m-1)
-
-    @inbounds for i in 1:length(D)
-        # get a list of m uniform numbers (https://cs.stackexchange.com/a/3229)
-        # and compute the corresponding linear combination in-place
-        rand!(r, rng, U)
-        sort!(r)
-        D[i] = r[1] * vlist[1]  # r[1] - 0 == r[1]
-        for j in 2:m-1
-            α = r[j] - r[j-1]
-            D[i] .+= α * vlist[j]
+    if sampler.variant
+        @inbounds for i in 1:length(D)
+            p = vlist[rand(1:m)]  # start from a random vertex
+            for j in Random.randperm(m)  # choose a random target vertex
+                p += rand(rng, U) * (vlist[j] - p)  # move toward next vertex
+            end
+            D[i] = p
         end
-        D[i] .+= (1 - r[m-1]) * vlist[m]
+    else
+        # vector used to store the combination coefficients
+        r = Vector{N}(undef, m-1)
+        @inbounds for i in 1:length(D)
+            # get a list of m uniform numbers (https://cs.stackexchange.com/a/3229)
+            # and compute the corresponding linear combination in-place
+            rand!(r, rng, U)
+            sort!(r)
+            D[i] = r[1] * vlist[1]  # r[1] - 0 == r[1]
+            for j in 2:m-1
+                α = r[j] - r[j-1]
+                D[i] .+= α * vlist[j]
+            end
+            D[i] .+= (1 - r[m-1]) * vlist[m]
+        end
     end
 
     return D
