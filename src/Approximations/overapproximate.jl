@@ -726,7 +726,7 @@ using .TaylorModels: Taylor1, TaylorN, TaylorModelN, TaylorModel1,
     if p.order == 0
         return zeros(eltype(p), 1)
     end
-    return linear_polynomial(p).coeffs[2:end]
+    return linear_polynomial(p).coeffs[2:2]
 end
 
 @inline function get_linear_coeffs(p::TaylorN)
@@ -804,8 +804,6 @@ one variable (`TaylorModel1`). Using `overapproximate(vTM, Zonotope)` we can
 compute its associated zonotope in generator representation:
 
 ```julia
-julia> using LazySets.Approximations
-
 julia> Z = overapproximate(vTM, Zonotope);
 
 julia> center(Z)
