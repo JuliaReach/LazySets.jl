@@ -33,7 +33,7 @@ See the [Getting started](https://juliareach.github.io/LazySets.jl/dev/man/getti
 This library has been applied in a number of scientic works.
 
 <details>
-<summary>List</summary>
+<summary>Click to see the full list of publications that use LazySets.</summary>
   
 The articles appear in reverse chronological order.
   
@@ -78,8 +78,11 @@ The articles appear in reverse chronological order.
 
 ## :earth_africa: Ecosystem
 
-`LazySets.jl` is applied in a number of projects in the Julia technical computing stack:
+`LazySets.jl` is applied in a number of projects in the Julia technical computing stack.
 
+<details>
+<summary>Click to see the full list of Julia packages that use LazySets.</summary>
+  
 - [ReachabilityAnalysis.jl](https://github.com/JuliaReach/ReachabilityAnalysis.jl) -- Methods to compute sets of states reachable by dynamical systems.
 - [NeuralNetworkAnalysis.jl](https://github.com/JuliaReach/NeuralNetworkAnalysis.jl) -- Methods to verify neural network controlled systems using reachability analysis
 - [NeuralVerification.jl](https://github.com/sisl/NeuralVerification.jl) -- Methods to soundly verify deep neural networks.
@@ -87,6 +90,9 @@ The articles appear in reverse chronological order.
 - [OpticSim.jl](https://github.com/microsoft/OpticSim.jl) -- Ray tracing for procedurally generated systems.
 - [Photometry.jl](https://github.com/JuliaAstro/Photometry.jl) -- Utilities for characterizing sources in astronomical images.
 - [Swalbe.jl](https://github.com/Zitzeronion/Swalbe.jl) -- Simple Julia Lattice Boltzmann Solver for Thin Liquid Films and Droplets
+- [IntervalLinearAlgebra.jl](https://github.com/JuliaIntervals/IntervalLinearAlgebra.jl) -- Routines to perform numerical linear algebra using interval arithmetic
+
+</details>
 
 ## 👨‍🏫 Workshop at JuliaCon 2021
 
