@@ -73,8 +73,10 @@ isequivalent(::LazySet, ::LazySet)
 isconvextype(::Type{<:LazySet})
 low(::LazySet{N}, ::Int) where {N}
 high(::LazySet{N}, ::Int) where {N}
+low_high(::LazySet, ::Int)
 low(::LazySet)
 high(::LazySet)
+low_high(::LazySet)
 surface(::LazySet{N}) where {N}
 area(::LazySet{N}) where {N}
 concretize(::LazySet)

@@ -33,7 +33,8 @@ export LazySet,
        vertices,
        project,
        rectify,
-       permute
+       permute,
+       low_high
 
 """
     LazySet{N}
@@ -1393,7 +1394,7 @@ Return the lower coordinate of a set in a given dimension.
 
 ### Input
 
-- `H` -- set
+- `X` -- set
 - `i` -- dimension of interest
 
 ### Output
@@ -1413,7 +1414,7 @@ Return a vector with the lowest coordinates of the set for each canonical direct
 
 ### Input
 
-- `H` -- set
+- `X` -- set
 
 ### Output
 
@@ -1435,7 +1436,7 @@ Return the higher coordinate of a set in a given dimension.
 
 ### Input
 
-- `H` -- set
+- `X` -- set
 - `i` -- dimension of interest
 
 ### Output
@@ -1455,7 +1456,7 @@ Return a vector with the highest coordinate of the set for each canonical direct
 
 ### Input
 
-- `H` -- set
+- `X` -- set
 
 ### Output
 
@@ -1468,6 +1469,58 @@ See also [`high(X::LazySet, i::Int)`](@ref).
 function high(X::LazySet)
     n = dim(X)
     return [high(X, i) for i in 1:n]
+end
+
+"""
+    low_high(X::LazySet)
+
+Return two vectors with the lowest and highest coordinate of the set for each
+canonical direction.
+
+### Input
+
+- `X` -- set
+- `i` -- dimension of interest
+
+### Output
+
+Two vectors with the lowest and highest coordinates of the set for each
+dimension.
+
+### Notes
+
+The result is equivalent to `(low(X), high(X))`, but sometimes it can be
+computed more efficiently.
+"""
+function low_high(X::LazySet)
+    l = low(X)
+    h = high(X)
+    return (l, h)
+end
+
+"""
+    low_high(X::LazySet, i::Int)
+
+Return the lower and higher coordinate of a set in a given dimension.
+
+### Input
+
+- `X` -- set
+- `i` -- dimension of interest
+
+### Output
+
+The lower and higher coordinate of the set in the given dimension.
+
+### Notes
+
+The result is equivalent to `(low(X, i), high(X, i))`, but sometimes it can be
+computed more efficiently.
+"""
+function low_high(X::LazySet, i::Int)
+    l = low(X, i)
+    h = high(X, i)
+    return (l, h)
 end
 
 """
