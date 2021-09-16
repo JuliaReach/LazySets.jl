@@ -391,3 +391,9 @@ function _box_approximation_chull_twobox(X, Y)
     r = h - ci
     return Hyperrectangle(c, r)
 end
+
+function box_approximation(ms::MinkowskiSum)
+    H1 = box_approximation(ms.X)
+    H2 = box_approximation(ms.Y)
+    return minkowski_sum(H1, H2)
+end
