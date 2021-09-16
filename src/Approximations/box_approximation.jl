@@ -131,7 +131,6 @@ number of convex sets with and hyperrectangle.
 ### Input
 
 - `S`              -- Cartesian product array of a finite number of convex set
-- `Hyperrectangle` -- type for dispatch
 
 ### Output
 
@@ -156,7 +155,6 @@ hyperrectangles by a new hyperrectangle.
 ### Input
 
 - `S`              -- Cartesian product of two hyperrectangular sets
-- `Hyperrectangle` -- type for dispatch
 
 ### Output
 
@@ -181,7 +179,6 @@ using a hyperrectangle.
 ### Input
 
 - `S`              -- linear map of a hyperrectangular set
-- `Hyperrectangle` -- type for dispatch
 
 ### Output
 
@@ -209,7 +206,6 @@ Overapproximate the rectification of a convex set by a tight hyperrectangle.
 ### Input
 
 - `r`              -- rectification of a convex set
-- `Hyperrectangle` -- type for dispatch
 
 ### Output
 
@@ -238,7 +234,6 @@ Return a tight overapproximation of a zonotope with an axis-aligned box.
 ### Input
 
 - `Z`              -- zonotope
-- `Hyperrectangle` -- type for dispatch
 
 ### Output
 
@@ -270,7 +265,6 @@ using a hyperrectangle.
 ### Input
 
 - `am`             -- affine map of a hyperrectangular set
-- `Hyperrectangle` -- type for dispatch
 
 ### Output
 
@@ -330,4 +324,70 @@ end
 # balls result in a hypercube with the same radius
 function box_approximation(B::Union{Ball1, Ball2, BallInf, Ballp})
     return Hyperrectangle(center(B), fill(B.radius, dim(B)))
+end
+
+"""
+    box_approximation(ch::ConvexHull; [algorithm]::String="lowhigh")
+
+Overapproximate a convex hull with a tight hyperrectangle.
+
+### Input
+
+- `ch`        -- convex hull
+- `algorithm` -- (optional; default: `"lowhigh"`) algorithm choice
+
+### Output
+
+A hyperrectangle.
+
+### Algorithm
+
+Let `X` and `Y` be the two sets of `ch`.
+
+If `algorithm == "lowhigh"`, we compute the low and high coordinates of `X` and
+`Y` via `low_high`.
+
+If `algorithm == "twobox"`, we instead compute the box approximations of `X` and
+`Y` via `box_approximation`.
+
+In both cases we then take the interval hull.
+The `"lowhigh"` algorithm is more efficient if `low_high` is efficient because
+it does not need to allocate the intermediate hyperrectangles.
+"""
+function box_approximation(ch::ConvexHull; algorithm::String="lowhigh")
+    if algorithm == "lowhigh"
+        return _box_approximation_chull_lowhigh(ch.X, ch.Y)
+    elseif algorithm == "twobox"
+        return _box_approximation_chull_twobox(ch.X, ch.Y)
+    else
+        throw(ArgumentError("unknown algorithm $algorithm"))
+    end
+end
+
+function _box_approximation_chull_lowhigh(X::LazySet{N}, Y) where {N}
+    n = dim(X)
+    c = Vector{N}(undef, n)
+    r = Vector{N}(undef, n)
+    for i in 1:n
+        l1, h1 = low_high(X, i)
+        l2, h2 = low_high(Y, i)
+        l = min(l1, l2)
+        h = max(h1, h2)
+        ci = (h + l) / 2
+        c[i] = ci
+        r[i] = h - ci
+    end
+    return Hyperrectangle(c, r)
+end
+
+function _box_approximation_chull_twobox(X, Y)
+    n = dim(X)
+    H1 = box_approximation(X)
+    H2 = box_approximation(Y)
+    l = [min(low(H1, i), low(H2, i)) for i in 1:n]
+    h = [max(high(H1, i), high(H2, i)) for i in 1:n]
+    ci = (h + l) / 2
+    c = ci
+    r = h - ci
+    return Hyperrectangle(c, r)
 end
