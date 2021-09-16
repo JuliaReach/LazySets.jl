@@ -14,44 +14,47 @@ CurrentModule = LazySets
 ## Cartesian product
 
 ```@docs
-cartesian_product(::HPoly{N}, ::HPoly{N}) where {N<:Real}
-cartesian_product(::VPolytope{N}, ::VPolytope{N}) where N
+cartesian_product(::VPolytope, ::VPolytope)
+cartesian_product(::LazySet, ::LazySet)
 ```
 
 ## Check for emptiness of intersection
 
+!!! note
+    `isdisjoint` can be used as an alternative name to `is_intersection_empty`.
+
 ```@docs
-isdisjoint
-is_intersection_empty(::LazySet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-is_intersection_empty(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
-is_intersection_empty(::LazySet{N}, ::AbstractSingleton{N}, ::Bool=false) where {N<:Real}
-is_intersection_empty(::AbstractHyperrectangle{N}, ::AbstractSingleton{N}, ::Bool=false) where {N<:Real}
-is_intersection_empty(::AbstractSingleton{N}, ::AbstractSingleton{N}, ::Bool=false) where {N<:Real}
-is_intersection_empty(::Zonotope{N}, ::Hyperplane{N}, ::Bool=false) where {N<:Real}
-is_intersection_empty(::Ball2{N}, ::Ball2{N}, ::Bool=false) where {N<:AbstractFloat}
-is_intersection_empty(::LineSegment{N}, ::LineSegment{N}, ::Bool=false) where {N<:Real}
-is_intersection_empty(::LazySet{N}, ::Union{Hyperplane{N}, Line2D{N}}, ::Bool=false) where {N<:Real}
-is_intersection_empty(::LazySet{N}, ::HalfSpace{N}, ::Bool=false) where {N<:Real}
-is_intersection_empty(::HalfSpace{N}, ::HalfSpace{N}, ::Bool=false) where {N<:Real}
-is_intersection_empty(::AbstractPolyhedron{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-is_intersection_empty(::UnionSet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-is_intersection_empty(::UnionSetArray{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-is_intersection_empty(::Universe{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-is_intersection_empty(::Complement{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-is_intersection_empty(::Zonotope{N}, ::Zonotope{N}, ::Bool=false) where {N<:Real}
-is_intersection_empty(::Interval{N}, ::Interval{N}, ::Bool=false) where {N<:Real}
-is_intersection_empty(::CartesianProductArray{N}, ::AbstractPolyhedron{N}) where {N<:Real}
-is_intersection_empty(::CartesianProductArray{N}, ::CartesianProductArray{N}) where {N<:Real}
-is_intersection_empty(::CartesianProductArray{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
+is_intersection_empty(::LazySet, ::LazySet, ::Bool=false)
+is_intersection_empty(::AbstractHyperrectangle, ::AbstractHyperrectangle, ::Bool=false)
+is_intersection_empty(::LazySet, ::AbstractSingleton, ::Bool=false)
+is_intersection_empty(::AbstractHyperrectangle, ::AbstractSingleton, ::Bool=false)
+is_intersection_empty(::AbstractSingleton, ::AbstractSingleton, ::Bool=false)
+is_intersection_empty(::AbstractZonotope, ::Union{Hyperplane, Line2D}, ::Bool=false)
+is_intersection_empty(::Ball2, ::Ball2, ::Bool=false)
+is_intersection_empty(::LineSegment, ::LineSegment, ::Bool=false)
+is_intersection_empty(::LazySet, ::Union{Hyperplane, Line2D}, ::Bool=false)
+is_intersection_empty(::LazySet, ::HalfSpace, ::Bool=false)
+is_intersection_empty(::HalfSpace, ::HalfSpace, ::Bool=false)
+is_intersection_empty(::AbstractPolyhedron, ::LazySet, ::Bool=false)
+is_intersection_empty(::UnionSet, ::LazySet, ::Bool=false)
+is_intersection_empty(::UnionSetArray, ::LazySet, ::Bool=false)
+is_intersection_empty(::Universe, ::LazySet, ::Bool=false)
+is_intersection_empty(::Complement, ::LazySet, ::Bool=false)
+is_intersection_empty(::AbstractZonotope, ::AbstractZonotope, ::Bool=false)
+is_intersection_empty(::Interval, ::Interval, ::Bool=false)
+is_intersection_empty(::CartesianProductArray, ::AbstractPolyhedron)
+is_intersection_empty(::CartesianProductArray, ::CartesianProductArray)
+is_intersection_empty(::CartesianProductArray, ::AbstractHyperrectangle, ::Bool=false)
+is_intersection_empty(::Line2D, ::Line2D, ::Bool=false)
 ```
 
 ## Convex hull
 
 ```@docs
 convex_hull(::LazySet{N}, ::LazySet{N}) where {N<:Real}
-convex_hull(::HPoly{N}, ::HPoly{N}) where {N<:Real}
-convex_hull(::VPolytope{N}, ::VPolytope{N}) where {N<:Real}
-convex_hull(::VPolygon{N}, ::VPolygon{N}) where {N<:Real}
+convex_hull(::HPoly, ::HPoly)
+convex_hull(::VPolytope, ::VPolytope)
+convex_hull(::VPolygon, ::VPolygon)
 convex_hull(::Vector{VN}) where {N<:Real, VN<:AbstractVector{N}}
 convex_hull(::UnionSetArray{N, PT}; kwargs...) where {N, PT<:AbstractPolytope{N}}
 monotone_chain!
@@ -60,70 +63,78 @@ monotone_chain!
 ## Intersection of two sets
 
 ```@docs
-intersection(::AbstractSingleton{N}, ::LazySet{N}) where {N<:Real}
-intersection(::Line2D{N}, ::Line2D{N}) where {N<:Real}
-intersection(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}) where {N<:Real}
-intersection(::Interval{N}, ::Interval{N}) where {N<:Real}
-intersection(::Interval{N}, ::HalfSpace{N}) where {N<:Real}
-intersection(::Interval{N}, ::Hyperplane{N}) where {N<:Real}
-intersection(::Interval{N}, ::LazySet{N}) where {N<:Real}
-intersection(::AbstractHPolygon{N}, ::AbstractHPolygon{N}, ::Bool=true) where {N<:Real}
-intersection(::AbstractPolyhedron{N}, ::AbstractPolyhedron{N}) where {N<:Real}
-intersection(::Union{VPolytope{N}, VPolygon{N}}, ::Union{VPolytope{N}, VPolygon{N}}) where {N<:Real}
-intersection(::UnionSet{N}, ::LazySet{N}) where {N<:Real}
-intersection(::UnionSetArray{N}, ::LazySet{N}) where {N<:Real}
-intersection(::Universe{N}, ::LazySet{N}) where {N<:Real}
-intersection(::AbstractPolyhedron{N}, ::ResetMap{N}) where {N<:Real}
-intersection(::CartesianProductArray{N}, ::CartesianProductArray{N}) where {N<:Real}
-intersection(::LinearMap{N}, ::LazySet{N}) where {N<:Real}
-intersection(::CartesianProductArray{N}, ::AbstractPolyhedron{N}) where {N<:Real}
+intersection(::AbstractSingleton, ::LazySet)
+intersection(::Line2D, ::Line2D)
+intersection(::AbstractHyperrectangle, ::AbstractHyperrectangle)
+intersection(::Interval, ::Interval)
+intersection(::Interval, ::HalfSpace)
+intersection(::Interval, ::Hyperplane)
+intersection(::Interval, ::LazySet)
+intersection(::AbstractHPolygon, ::AbstractHPolygon, ::Bool=true)
+intersection(::AbstractPolyhedron{N}, ::AbstractPolyhedron{N}) where {N}
+intersection(::Union{VPolytope, VPolygon}, ::Union{VPolytope, VPolygon})
+intersection(::VPolygon, ::VPolygon; ::Bool=true)
+intersection(::UnionSet, ::LazySet)
+intersection(::UnionSetArray, ::LazySet)
+intersection(::Universe, ::LazySet)
+intersection(::AbstractPolyhedron, ::ResetMap)
+intersection(::CartesianProductArray, ::CartesianProductArray)
+intersection(::LinearMap, ::LazySet)
+intersection(::CartesianProductArray, ::AbstractPolyhedron)
+intersection(::LineSegment, ::Line2D)
+intersection(::LineSegment, ::LineSegment)
+intersection(::AbstractZonotope{N}, ::HalfSpace{N}) where {N}
 ```
 
 ## Minkowski sum
 
 ```@docs
-minkowski_sum(::LazySet{N}, ::LazySet{N}) where {N<:Real}
-minkowski_sum(::AbstractPolyhedron{N}, ::AbstractPolyhedron{N}) where {N<:Real}
-minkowski_sum(::VPolytope{N}, ::VPolytope{N}) where {N<:Real}
-minkowski_sum(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}) where {N<:Real}
-minkowski_sum(::AbstractZonotope{N}, ::AbstractZonotope{N}) where {N<:Real}
-minkowski_sum(::VPolygon{N}, ::VPolygon{N}) where {N<:Real}
-minkowski_sum(::PolynomialZonotope, ::Zonotope)
+minkowski_sum(::LazySet, ::LazySet)
+minkowski_sum(::AbstractPolyhedron, ::AbstractPolyhedron)
+minkowski_sum(::VPolytope, ::VPolytope)
+minkowski_sum(::AbstractHyperrectangle, ::AbstractHyperrectangle)
+minkowski_sum(::AbstractZonotope, ::AbstractZonotope)
+minkowski_sum(::VPolygon, ::VPolygon)
+minkowski_sum(::PolynomialZonotope, ::AbstractZonotope)
 minkowski_sum(::Interval, ::Interval)
+minkowski_sum(::AbstractSingleton, ::AbstractSingleton)
 ```
 
 ## Minkowski difference
 ```@docs
-minkowski_difference(::LazySet{N}, ::LazySet{N}) where {N<:Real}
+minkowski_difference(::LazySet, ::LazySet)
 pontryagin_difference
 ```
 
 ## Subset check
 
 ```@docs
-⊆(::LazySet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-⊆(::LazySet{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
-⊆(::AbstractPolytope{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-⊆(::AbstractPolytope{N}, ::AbstractHyperrectangle, ::Bool=false) where {N<:Real}
-⊆(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
-⊆(::LazySet{N}, ::AbstractPolyhedron{N}, ::Bool=false) where {N<:Real}
-⊆(::AbstractSingleton{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-⊆(::AbstractSingleton{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
-⊆(::AbstractSingleton{N}, ::AbstractSingleton{N}, ::Bool=false) where {N<:Real}
-⊆(::Ball2{N}, ::Ball2{N}, ::Bool=false) where {N<:AbstractFloat}
-⊆(::Union{Ball2{N}, Ballp{N}}, ::AbstractSingleton{N}, ::Bool=false) where {N<:AbstractFloat}
-⊆(::LineSegment{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-⊆(::LineSegment{N}, ::AbstractHyperrectangle{N}, ::Bool=false) where {N<:Real}
-⊆(::Interval, ::Interval)
-⊆(::EmptySet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-⊆(::LazySet{N}, ::EmptySet{N}, ::Bool=false) where {N<:Real}
-⊆(::UnionSet{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-⊆(::UnionSetArray{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-⊆(::LazySet{N}, ::Universe{N}, ::Bool=false) where {N<:Real}
-⊆(::Universe{N}, ::LazySet{N}, ::Bool=false) where {N<:Real}
-⊆(::LazySet{N}, ::Complement{N}, ::Bool=false) where {N<:Real}
-⊆(::CartesianProduct{N}, ::CartesianProduct{N}, ::Bool=false) where {N<:Real}
-⊆(::CartesianProductArray{N}, ::CartesianProductArray{N}, ::Bool=false) where {N<:Real}
+issubset
+⊆(::LazySet, ::LazySet, ::Bool=false)
+⊆(::LazySet, ::AbstractHyperrectangle, ::Bool=false)
+⊆(::AbstractPolytope, ::LazySet, ::Bool=false)
+⊆(::AbstractPolytope, ::AbstractHyperrectangle, ::Bool=false)
+⊆(::AbstractZonotope, ::AbstractHyperrectangle)
+⊆(::AbstractHyperrectangle, ::AbstractHyperrectangle, ::Bool=false)
+⊆(::LazySet, ::AbstractPolyhedron, ::Bool=false)
+⊆(::AbstractSingleton, ::LazySet, ::Bool=false)
+⊆(::AbstractSingleton, ::AbstractHyperrectangle, ::Bool=false)
+⊆(::AbstractSingleton, ::AbstractSingleton, ::Bool=false)
+⊆(::Ball2, ::Ball2, ::Bool=false)
+⊆(::Union{Ball2, Ballp}, ::AbstractSingleton, ::Bool=false)
+⊆(::LineSegment, ::LazySet, ::Bool=false)
+⊆(::LineSegment, ::AbstractHyperrectangle, ::Bool=false)
+⊆(::Interval, ::Interval, ::Bool=false)
+⊆(::EmptySet, ::LazySet, ::Bool=false)
+⊆(::LazySet, ::EmptySet, ::Bool=false)
+⊆(::UnionSet, ::LazySet, ::Bool=false)
+⊆(::UnionSetArray, ::LazySet, ::Bool=false)
+⊆(::LazySet, ::Universe, ::Bool=false)
+⊆(::Universe, ::LazySet, ::Bool=false)
+⊆(::LazySet, ::Complement, ::Bool=false)
+⊆(::CartesianProduct, ::CartesianProduct, ::Bool=false)
+⊆(::CartesianProductArray, ::CartesianProductArray, ::Bool=false)
+⊆(::AbstractZonotope, ::AbstractHyperrectangle, ::Bool=false)
 ```
 
 ## Set difference
@@ -132,4 +143,11 @@ pontryagin_difference
 \(::LazySet, ::LazySet)
 difference(::IN, ::IN) where {N, IN<:Interval{N}}
 difference(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}) where {N}
+```
+
+## Distance
+
+```@docs
+distance(::AbstractSingleton, ::LazySet; ::Real=2.0)
+distance(::AbstractHyperrectangle, ::AbstractHyperrectangle; ::Real=2.0)
 ```

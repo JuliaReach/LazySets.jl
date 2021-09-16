@@ -4,7 +4,7 @@ export BallInf,
        volume
 
 """
-    BallInf{N<:Real, VN<:AbstractVector{N}} <: AbstractHyperrectangle{N}
+    BallInf{N, VN<:AbstractVector{N}} <: AbstractHyperrectangle{N}
 
 Type that represents a ball in the infinity norm.
 
@@ -32,7 +32,7 @@ positive ``x=y`` direction:
 
 ```jldoctest
 julia> B = BallInf(zeros(2), 1.0)
-BallInf{Float64,Array{Float64,1}}([0.0, 0.0], 1.0)
+BallInf{Float64, Vector{Float64}}([0.0, 0.0], 1.0)
 
 julia> dim(B)
 2
@@ -41,12 +41,12 @@ julia> ρ([1., 1.], B)
 2.0
 ```
 """
-struct BallInf{N<:Real, VN<:AbstractVector{N}} <: AbstractHyperrectangle{N}
+struct BallInf{N, VN<:AbstractVector{N}} <: AbstractHyperrectangle{N}
     center::VN
     radius::N
 
     # default constructor with domain constraint for radius
-    function BallInf(center::VN, radius::N) where {N<:Real, VN<:AbstractVector{N}}
+    function BallInf(center::VN, radius::N) where {N, VN<:AbstractVector{N}}
         @assert radius >= zero(N) "radius must not be negative"
         return new{N, VN}(center, radius)
     end
@@ -60,7 +60,7 @@ isconvextype(::Type{<:BallInf}) = true
 
 
 """
-    radius_hyperrectangle(B::BallInf{N}, i::Int) where {N<:Real}
+    radius_hyperrectangle(B::BallInf, i::Int)
 
 Return the box radius of a ball in the infinity norm in a given dimension.
 
@@ -73,12 +73,12 @@ Return the box radius of a ball in the infinity norm in a given dimension.
 
 The box radius of the ball in the infinity norm in the given dimension.
 """
-function radius_hyperrectangle(B::BallInf{N}, i::Int) where {N<:Real}
+function radius_hyperrectangle(B::BallInf, i::Int)
     return B.radius
 end
 
 """
-    radius_hyperrectangle(B::BallInf{N}) where {N<:Real}
+    radius_hyperrectangle(B::BallInf)
 
 Return the box radius of a ball in the infinity norm, which is the same in every
 dimension.
@@ -91,7 +91,7 @@ dimension.
 
 The box radius of the ball in the infinity norm.
 """
-function radius_hyperrectangle(B::BallInf{N}) where {N<:Real}
+function radius_hyperrectangle(B::BallInf)
     return fill(B.radius, dim(B))
 end
 
@@ -119,12 +119,28 @@ function isflat(B::BallInf)
     return isapproxzero(B.radius)
 end
 
+function load_genmat_ballinf_static()
+return quote
+    function genmat(B::BallInf{N, SVector{L, N}}) where {L, N}
+        r = B.radius
+        if isapproxzero(B.radius)
+            return SMatrix{L, 0, N, 0}()
+        else
+            gens = zeros(MMatrix{L, L})
+            @inbounds for i in 1:L
+                gens[i, i] = r
+            end
+            return SMatrix(gens)
+        end
+    end
+end
+end
 
 # --- AbstractCentrallySymmetric interface functions ---
 
 
 """
-    center(B::BallInf{N}) where {N<:Real}
+    center(B::BallInf)
 
 Return the center of a ball in the infinity norm.
 
@@ -136,7 +152,7 @@ Return the center of a ball in the infinity norm.
 
 The center of the ball in the infinity norm.
 """
-function center(B::BallInf{N}) where {N<:Real}
+function center(B::BallInf)
     return B.center
 end
 
@@ -145,7 +161,7 @@ end
 
 
 """
-    σ(d::AbstractVector{N}, B::BallInf{N}) where {N<:Real}
+    σ(d::AbstractVector, B::BallInf)
 
 Return the support vector of a ball in the infinity norm in a given direction.
 
@@ -159,19 +175,19 @@ Return the support vector of a ball in the infinity norm in a given direction.
 The support vector in the given direction.
 If the direction has norm zero, the vertex with biggest values is returned.
 """
-function σ(d::AbstractVector{N}, B::BallInf{N}) where {N<:Real}
+function σ(d::AbstractVector, B::BallInf)
     @assert length(d) == dim(B) "a $(length(d))-dimensional vector is " *
                                 "incompatible with a $(dim(B))-dimensional set"
-    return center(B) .+ sign_cadlag.(d) .* B.radius
+    return center(B) .+ sign.(d) .* B.radius
 end
 
 # Particular dispatch for SingleEntryVector
-function σ(d::SingleEntryVector{N}, B::BallInf{N}) where {N<:Real}
+function σ(d::SingleEntryVector, B::BallInf)
     return _σ_sev_hyperrectangle(d, B)
 end
 
 """
-    ρ(d::AbstractVector{N}, B::BallInf{N}) where {N<:Real}
+    ρ(d::AbstractVector, B::BallInf)
 
 Evaluate the support function of a ball in the infinity norm in a given
 direction.
@@ -196,7 +212,7 @@ For balls with dimensions less than 30 we use the implementation for
     ∑_{i=1}^n d_i * (c_i + \\textrm{sgn}(d_i) * r)
 ```
 
-where ``\\textrm{sgn}(α) = 1`` if ``α ≥ 0`` and ``\\textrm{sgn}(α) = 1`` if ``α < 0``.
+where ``\\textrm{sgn}(α) = 1`` if ``α ≥ 0`` and ``\\textrm{sgn}(α) = -1`` if ``α < 0``.
 
 For balls of higher dimension, we instead exploit that for a support vector
 ``v = σ(d, B) = c + \\textrm{sgn}(d) * (r, …, r)ᵀ`` we have
@@ -207,7 +223,7 @@ For balls of higher dimension, we instead exploit that for a support vector
 
 where ``⟨·, ·⟩`` denotes the dot product.
 """
-function ρ(d::AbstractVector{N}, B::BallInf{N}) where {N<:Real}
+function ρ(d::AbstractVector, B::BallInf)
     @assert length(d) == dim(B) "a $(length(d))-dimensional vector is " *
                                 "incompatible with a $(dim(B))-dimensional set"
     c = center(B)
@@ -216,6 +232,7 @@ function ρ(d::AbstractVector{N}, B::BallInf{N}) where {N<:Real}
         # more efficient for higher dimensions
         return dot(d, c) + r * sum(abs, d)
     end
+    N = promote_type(eltype(d), eltype(B))
     res = zero(N)
     @inbounds for (i, di) in enumerate(d)
         if di < zero(N)
@@ -228,7 +245,7 @@ function ρ(d::AbstractVector{N}, B::BallInf{N}) where {N<:Real}
 end
 
 # Particular dispatch for SingleEntryVector
-function ρ(d::SingleEntryVector{N}, B::BallInf{N}) where {N<:Real}
+function ρ(d::SingleEntryVector, B::BallInf)
     return _ρ_sev_hyperrectangle(d, B)
 end
 
@@ -290,7 +307,7 @@ function rand(::Type{BallInf};
 end
 
 """
-    translate(B::BallInf{N}, v::AbstractVector{N}) where {N<:Real}
+    translate(B::BallInf, v::AbstractVector)
 
 Translate (i.e., shift) a ball in the infinity norm by a given vector.
 
@@ -307,13 +324,13 @@ A translated ball in the infinity norm.
 
 We add the vector to the center of the ball.
 """
-function translate(B::BallInf{N}, v::AbstractVector{N}) where {N<:Real}
+function translate(B::BallInf, v::AbstractVector)
     @assert length(v) == dim(B) "cannot translate a $(dim(B))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     return BallInf(center(B) + v, B.radius)
 end
 
-@inline function _vol_prod(B::BallInf{N}, n) where {N<:Real}
+@inline function _vol_prod(B::BallInf{N}, n) where {N}
     vol = one(N)
     diam = 2 * B.radius
     for i in 1:n
@@ -322,6 +339,7 @@ end
     return vol
 end
 
+# computation for floating-point results
 function volume(B::BallInf{N}) where {N<:AbstractFloat}
     n = dim(B)
     if n < 50
@@ -333,8 +351,12 @@ function volume(B::BallInf{N}) where {N<:AbstractFloat}
     return vol
 end
 
-function volume(B::BallInf{N}) where {N<:Real}
+function volume(B::BallInf)
     n = dim(B)
     vol = _vol_prod(B, n)
     return vol
+end
+
+function project(B::BallInf, block::AbstractVector{Int}; kwargs...)
+    return BallInf(B.center[block], B.radius)
 end

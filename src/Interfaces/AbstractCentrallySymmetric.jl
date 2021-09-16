@@ -5,7 +5,7 @@ export AbstractCentrallySymmetric,
        an_element
 
 """
-    AbstractCentrallySymmetric{N<:Real} <: LazySet{N}
+    AbstractCentrallySymmetric{N} <: LazySet{N}
 
 Abstract type for centrally symmetric sets.
 
@@ -13,19 +13,18 @@ Abstract type for centrally symmetric sets.
 
 Every concrete `AbstractCentrallySymmetric` must define the following functions:
 
-- `center(::AbstractCentrallySymmetric{N})` -- return the center
-    point
-- `center(::AbstractCentrallySymmetric{N}, i::Int)` -- return the center point at index `i`
+- `center(::AbstractCentrallySymmetric)` -- return the center point
+- `center(::AbstractCentrallySymmetric, i::Int)` -- return the center point at index `i`
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractCentrallySymmetric)
-3-element Array{Any,1}:
+3-element Vector{Any}:
  Ball2
  Ballp
  Ellipsoid
 ```
 """
-abstract type AbstractCentrallySymmetric{N<:Real} <: LazySet{N} end
+abstract type AbstractCentrallySymmetric{N} <: LazySet{N} end
 
 isconvextype(::Type{<:AbstractCentrallySymmetric}) = false
 
@@ -46,6 +45,10 @@ The ambient dimension of the set.
     return length(center(S))
 end
 
+function isboundedtype(::Type{<:AbstractCentrallySymmetric})
+    return true
+end
+
 """
     isbounded(S::AbstractCentrallySymmetric)
 
@@ -64,7 +67,7 @@ function isbounded(::AbstractCentrallySymmetric)
 end
 
 """
-    an_element(S::AbstractCentrallySymmetric{N}) where {N<:Real}
+    an_element(S::AbstractCentrallySymmetric)
 
 Return some element of a centrally symmetric set.
 
@@ -76,7 +79,7 @@ Return some element of a centrally symmetric set.
 
 The center of the centrally symmetric set.
 """
-function an_element(S::AbstractCentrallySymmetric{N}) where {N<:Real}
+function an_element(S::AbstractCentrallySymmetric)
     return center(S)
 end
 
@@ -99,7 +102,7 @@ end
 
 """
     isuniversal(S::AbstractCentrallySymmetric{N}, [witness]::Bool=false
-               ) where {N<:Real}
+               ) where {N}
 
 Check whether a centrally symmetric set is universal.
 
@@ -119,7 +122,7 @@ A witness is obtained by computing the support vector in direction
 `d = [1, 0, …, 0]` and adding `d` on top.
 """
 function isuniversal(S::AbstractCentrallySymmetric{N}, witness::Bool=false
-                    ) where {N<:Real}
+                    ) where {N}
     if witness
         d = SingleEntryVector{N}(1, dim(S))
         w = σ(d, S) + d
@@ -130,7 +133,7 @@ function isuniversal(S::AbstractCentrallySymmetric{N}, witness::Bool=false
 end
 
 """
-    center(H::AbstractCentrallySymmetric{N}, i::Int) where {N<:Real}
+    center(H::AbstractCentrallySymmetric, i::Int)
 
 Return the center along a given dimension of a centrally symmetric set.
 
@@ -143,6 +146,6 @@ Return the center along a given dimension of a centrally symmetric set.
 
 The center along a given dimension of the centrally symmetric set.
 """
-@inline function center(S::AbstractCentrallySymmetric{N}, i::Int) where {N<:Real}
+@inline function center(S::AbstractCentrallySymmetric, i::Int)
     return center(S)[i]
 end

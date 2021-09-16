@@ -7,17 +7,19 @@ CurrentModule = LazySets
 ```@docs
 Hyperplane
 dim(::Hyperplane)
-ρ(::AbstractVector{N}, ::Hyperplane{N}) where {N<:Real}
-σ(::AbstractVector{N}, ::Hyperplane{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::Hyperplane{N}) where {N<:Real}
-an_element(::Hyperplane{N}) where {N<:Real}
+ρ(::AbstractVector, ::Hyperplane)
+σ(::AbstractVector, ::Hyperplane)
+∈(::AbstractVector, ::Hyperplane)
+an_element(::Hyperplane)
 rand(::Type{Hyperplane})
 isbounded(::Hyperplane)
-isuniversal(::Hyperplane{N}, ::Bool=false) where {N<:Real}
+isuniversal(::Hyperplane, ::Bool=false)
 isempty(::Hyperplane)
-constrained_dimensions(::Hyperplane{N}) where {N<:Real}
-constraints_list(::Hyperplane{N}) where {N<:Real}
-translate(::Hyperplane{N}, ::AbstractVector{N}) where {N<:Real}
+constrained_dimensions(::Hyperplane)
+constraints_list(::Hyperplane)
+translate(::Hyperplane, ::AbstractVector)
+normalize(::Hyperplane{N}, p=N(2)) where {N}
+distance(::AbstractVector, ::Hyperplane{N}) where {N}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

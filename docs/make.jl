@@ -1,6 +1,6 @@
 ENV["GKSwstype"] = "100"  # set 'GR environment' to 'no output' (for Travis CI)
 using Documenter, LazySets
-import Polyhedra, Optim, Expokit, TaylorModels, Distributions, MiniQhull
+import Polyhedra, Optim, Expokit, TaylorModels, Distributions, MiniQhull, Symbolics
 
 include("init.jl")
 
@@ -14,6 +14,7 @@ makedocs(
         "Home" => "index.md",
         "Manual" => Any[
             "Getting Started" => "man/getting_started.md",
+            "A Tour of LazySets" => "man/tour.md",
             "Introduction to Convex Sets" => "man/convex_sets.md",
             "Polyhedral Approximations" => "man/polyhedral_approximations.md",
             "Decomposing an Affine Map" => "man/decompose_example.md",
@@ -50,6 +51,7 @@ makedocs(
                 "LineSegment" => "lib/sets/LineSegment.md",
                 "PolynomialZonotope" => "lib/sets/PolynomialZonotope.md",
                 "Singleton" => "lib/sets/Singleton.md",
+                "Star" => "lib/sets/Star.md",
                 "Universe" => "lib/sets/Universe.md",
                 "VPolygon" => "lib/sets/VPolygon.md",
                 "VPolytope" => "lib/sets/VPolytope.md",
@@ -65,6 +67,7 @@ makedocs(
                 "ExponentialMap" => "lib/lazy_operations/ExponentialMap.md",
                 "Intersection" => "lib/lazy_operations/Intersection.md",
                 "LinearMap" => "lib/lazy_operations/LinearMap.md",
+                "InverseLinearMap" => "lib/lazy_operations/InverseLinearMap.md",
                 "MinkowskiSum" => "lib/lazy_operations/MinkowskiSum.md",
                 "Rectification" => "lib/lazy_operations/Rectification.md",
                 "ResetMap" => "lib/lazy_operations/ResetMap.md",

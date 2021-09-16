@@ -1,9 +1,10 @@
+using LazySets.Arrays: find_unique_nonzero_entry
 import Base: isempty
 
 export ResetMap
 
 """
-    ResetMap{N<:Real, S<:LazySet{N}} <: AbstractAffineMap{N, S}
+    ResetMap{N, S<:LazySet{N}} <: AbstractAffineMap{N, S}
 
 Type that represents a lazy reset map.
 A reset map is a special case of an affine map ``A x + b, x ∈ X`` where the
@@ -12,8 +13,13 @@ dimensions, and the translation vector ``b`` is zero in all other dimensions.
 
 ### Fields
 
-- `X`      -- convex set
+- `X`      -- set
 - `resets` -- resets (a mapping from an index to a new value)
+
+### Notes
+
+The reset map preserves convexity: if `X` is convex, then any reset map of `X`
+is convex as well.
 
 ### Examples
 
@@ -44,13 +50,13 @@ vector `b`) corresponding to a given reset map.
 
 ```jldoctest resetmap
 julia> matrix(rm)
-3×3 LinearAlgebra.Diagonal{Float64,Array{Float64,1}}:
+3×3 LinearAlgebra.Diagonal{Float64, Vector{Float64}}:
  0.0   ⋅    ⋅
   ⋅   1.0   ⋅
   ⋅    ⋅   0.0
 
 julia> vector(rm)
-3-element SparseArrays.SparseVector{Float64,Int64} with 1 stored entry:
+3-element SparseArrays.SparseVector{Float64, Int64} with 1 stored entry:
   [1]  =  4.0
 ```
 
@@ -59,23 +65,23 @@ automatically.
 
 ```jldoctest resetmap
 julia> ResetMap(ZeroSet(3), r)
-Singleton{Float64,SparseArrays.SparseVector{Float64,Int64}}(  [1]  =  4.0)
+Singleton{Float64, SparseArrays.SparseVector{Float64, Int64}}(  [1]  =  4.0)
 
 julia> ResetMap(EmptySet(3), r)
-EmptySet{Float64}(3)
+∅(3)
 ```
 
 The (in this case unique) support vector of `rm` in direction `ones(3)` is:
 
 ```jldoctest resetmap
 julia> σ(ones(3), rm)
-3-element Array{Float64,1}:
+3-element Vector{Float64}:
  4.0
  3.0
  0.0
 ```
 """
-struct ResetMap{N<:Real, S<:LazySet{N}} <: AbstractAffineMap{N, S}
+struct ResetMap{N, S<:LazySet{N}} <: AbstractAffineMap{N, S}
     X::S
     resets::Dict{Int, N}
 end
@@ -85,12 +91,12 @@ isconvextype(::Type{ResetMap{N, S}}) where {N, S} = isconvextype(S)
 
 # ZeroSet is "almost absorbing" for the linear map (only the dimension changes)
 # such that only the translation vector remains
-function ResetMap(Z::ZeroSet{N}, resets::Dict{Int, N}) where {N<:Real}
+function ResetMap(Z::ZeroSet{N}, resets::Dict{Int, N}) where {N}
     return Singleton(_vector_from_dictionary(resets, dim(Z)))
 end
 
 # EmptySet is absorbing for ResetMap
-function ResetMap(∅::EmptySet{N}, resets::Dict{Int, N}) where {N<:Real}
+function ResetMap(∅::EmptySet{N}, resets::Dict{Int, N}) where {N}
     return ∅
 end
 
@@ -99,7 +105,7 @@ end
 
 
 """
-    matrix(rm::ResetMap{N}) where {N<:Real}
+    matrix(rm::ResetMap{N}) where {N}
 
 Return the ``A`` matrix of the affine map ``A x + b, x ∈ X`` represented by a
 reset map.
@@ -118,7 +124,7 @@ reset map.
 We construct the identity matrix and set all entries in the reset dimensions to
 zero.
 """
-function matrix(rm::ResetMap{N}) where {N<:Real}
+function matrix(rm::ResetMap{N}) where {N}
     n = dim(rm)
     v = ones(N, n)
     for i in keys(rm.resets)
@@ -128,7 +134,7 @@ function matrix(rm::ResetMap{N}) where {N<:Real}
 end
 
 """
-    vector(rm::ResetMap{N}) where {N<:Real}
+    vector(rm::ResetMap)
 
 Return the ``b`` vector of the affine map ``A x + b, x ∈ X`` represented by a
 reset map.
@@ -144,11 +150,11 @@ reset map.
 The vector contains the reset value for all reset dimensions, and is zero for
 all other dimensions.
 """
-function vector(rm::ResetMap{N}) where {N<:Real}
+function vector(rm::ResetMap)
     return _vector_from_dictionary(rm.resets, dim(rm))
 end
 
-function _vector_from_dictionary(dict::Dict{Int, N}, n::Int) where {N<:Real}
+function _vector_from_dictionary(dict::Dict{Int, N}, n::Int) where {N}
     b = sparsevec(Int[], N[], n)
     for (i, val) in dict
         b[i] = val
@@ -182,7 +188,7 @@ function dim(rm::ResetMap)
 end
 
 """
-    σ(d::AbstractVector{N}, rm::ResetMap{N}) where {N<:Real}
+    σ(d::AbstractVector, rm::ResetMap)
 
 Return the support vector of a reset map.
 
@@ -196,7 +202,8 @@ Return the support vector of a reset map.
 The support vector in the given direction.
 If the direction has norm zero, the result depends on the wrapped set.
 """
-function σ(d::AbstractVector{N}, rm::ResetMap{N}) where {N<:Real}
+function σ(d::AbstractVector, rm::ResetMap)
+    N = promote_type(eltype(d), eltype(rm))
     d_reset = copy(d)
     for var in keys(rm.resets)
         d_reset[var] = zero(N)
@@ -205,7 +212,7 @@ function σ(d::AbstractVector{N}, rm::ResetMap{N}) where {N<:Real}
 end
 
 """
-    ρ(d::AbstractVector{N}, rm::ResetMap{N}) where {N<:Real}
+    ρ(d::AbstractVector, rm::ResetMap)
 
 Return the support function of a reset map.
 
@@ -231,7 +238,7 @@ NaN
 See the discussion
 [here](https://math.stackexchange.com/questions/28940/why-is-infty-cdot-0-not-clearly-equal-to-0).
 """
-function ρ(d::AbstractVector{N}, rm::ResetMap{N}) where {N<:Real}
+function ρ(d::AbstractVector, rm::ResetMap)
     return dot_zero(d, σ(d, rm))
 end
 
@@ -254,7 +261,7 @@ function an_element(rm::ResetMap)
 end
 
 """
-    constraints_list(rm::ResetMap{N}) where {N<:Real}
+    constraints_list(rm::ResetMap{N}) where {N}
 
 Return the list of constraints of a polytopic reset map.
 
@@ -284,25 +291,7 @@ constraints ``x₅ ≤ 0`` and ``-x₅ ≤ 0``.
 We then modify the right-hand side of these constraints to ``x₅ ≤ 4`` and
 ``-x₅ ≤ -4``, respectively.
 """
-function constraints_list(rm::ResetMap{N}) where {N<:Real}
-    # if `vector` has exactly one non-zero entry, return its index
-    # otherwise return 0
-    function find_unique_nonzero_entry(vector::AbstractVector{N})
-        res = 0
-        for (i, v) in enumerate(vector)
-            if v != zero(N)
-                if res != 0
-                    # at least two non-zero entries
-                    return 0
-                else
-                    # first non-zero entry so far
-                    res = i
-                end
-            end
-        end
-        return res
-    end
-
+function constraints_list(rm::ResetMap{N}) where {N}
     constraints = copy(constraints_list(LinearMap(matrix(rm), set(rm))))
     for (i, c) in enumerate(constraints)
         constrained_dim = find_unique_nonzero_entry(c.a)
@@ -326,8 +315,7 @@ function constraints_list(rm::ResetMap{N}) where {N<:Real}
 end
 
 """
-    constraints_list(rm::ResetMap{N, S}) where
-        {N<:Real, S<:AbstractHyperrectangle}
+    constraints_list(rm::ResetMap{N, S}) where {N, S<:AbstractHyperrectangle}
 
 Return the list of constraints of a hyperrectangular reset map.
 
@@ -345,8 +333,7 @@ We iterate through all dimensions.
 If there is a reset, we construct the corresponding (flat) constraints.
 Otherwise, we construct the corresponding constraints of the underlying set.
 """
-function constraints_list(rm::ResetMap{N, S}
-                         ) where {N<:Real, S<:AbstractHyperrectangle}
+function constraints_list(rm::ResetMap{N, S}) where {N, S<:AbstractHyperrectangle}
     H = rm.X
     n = dim(H)
     constraints = Vector{LinearConstraint{N, SingleEntryVector{N}}}(undef, 2*n)

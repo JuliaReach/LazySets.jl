@@ -5,8 +5,7 @@ import Base: rand,
 export Line,
        an_element,
        translate,
-       translate!,
-       distance
+       translate!
 
 """
     Line{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
@@ -31,7 +30,7 @@ The line passing through the point ``[-1, 2, 3]`` and parallel to the vector
 
 ```jldoctest
 julia> Line([-1, 2, 3.], [3, 0, -1.])
-Line{Float64,Array{Float64,1}}([-1.0, 2.0, 3.0], [3.0, 0.0, -1.0])
+Line{Float64, Vector{Float64}}([-1.0, 2.0, 3.0], [3.0, 0.0, -1.0])
 ```
 """
 struct Line{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
@@ -79,6 +78,49 @@ function Line(; from::AbstractVector, to::AbstractVector, normalize=true)
     end
     d_n = normalize ? d / dot(d, d) : d
     return Line(from, d_n)
+end
+
+"""
+    Line(a::AbstractVector{N}, b::N; normalize=true) where {N}
+
+Constructor of a two-dimensional line given `ax = b`.
+
+### Input
+
+- `a`         -- two-dimensional vector
+- `b`         -- scalar
+- `normalize` -- (optional, default: `true`) if `true`, the direction of the line
+                 has norm 1 (w.r.t the Euclidean norm)
+
+### Output
+
+The `Line` that satisfies `a ⋅ x = b`.
+"""
+function Line(a::AbstractVector{N}, b::N; normalize=true) where {N}
+    @assert length(a) == 2 "expected a normal vector of length two, but it is $(length(a))-dimensional"
+
+    got_horizontal = iszero(a[1])
+    got_vertical = iszero(a[2])
+
+    if got_horizontal && got_vertical
+        throw(ArgumentError("the vector $a must be non-zero"))
+    end
+
+    if got_horizontal
+        α = b / a[2]
+        p = [zero(N), α]
+        q = [one(N), α]
+    elseif got_vertical
+        β = b / a[1]
+        p = [β, zero(N)]
+        q = [β, one(N)]
+    else
+        α = b / a[2]
+        μ = a[1] / a[2]
+        p = [zero(N), α]
+        q = [one(N), α - μ]
+    end
+    return Line(from=p, to=q, normalize=normalize)
 end
 
 """
@@ -212,7 +254,6 @@ Return the support function of a line in a given direction.
 The support function in the given direction.
 """
 ρ(d::AbstractVector, L::Line) = _ρ(d, L)
-ρ(d::AbstractVector{N}, L::Line{N, <:AbstractVector{N}}) where {N<:Real} = _ρ(d, L) # disambiguation
 
 function _ρ(d::AbstractVector, L::Line)
     if isapproxzero(dot(d, L.d))
@@ -315,10 +356,7 @@ Check whether a given point is contained in a line.
 The point ``x`` belongs to the line ``L : p + λd`` if and only if
 ``x - p`` is proportional to the direction ``d``.
 """
-∈(x::AbstractVector, L::Line) = __in(x, L)
-∈(x::AbstractVector{N}, L::Line{N, VN}) where {N<:Real, VN<:AbstractVector{N}} = __in(x, L)
-
-function __in(x::AbstractVector, L::Line)
+function ∈(x::AbstractVector, L::Line)
     @assert length(x) == dim(L) "expected the point and the line to have the same dimension, " *
                                 "but they are $(length(x)) and $(dim(L)) respectively"
     _isapprox(x, L.p) && return true
@@ -424,7 +462,7 @@ function translate!(L::Line, v::AbstractVector)
 end
 
 """
-    distance(x::AbstractVector, L::Line, p::Real=2.0)
+    distance(x::AbstractVector, L::Line; [p]::Real=2.0)
 
 Compute the distance between point `x` and the line with respect to the given
 `p`-norm.
@@ -440,34 +478,13 @@ Compute the distance between point `x` and the line with respect to the given
 
 A scalar representing the distance between `x` and the line `L`.
 """
-function distance(x::AbstractVector, L::Line, p::Real=2.0)
+function distance(x::AbstractVector, L::Line; p::Real=2.0)
     d = L.d  # direction of the line
     t = dot(x - L.p, d) / dot(d, d)
-    return distance(x, L.p + t*d, p)
+    return distance(x, L.p + t*d; p=p)
 end
-distance(L::Line, x::AbstractVector, p::Real=2.0) = distance(x, L, p)
 
-"""
-    distance(x::AbstractSingleton, L::Line, p::Real=2.0)
-
-Compute the distance between the singleton `x` and the line with respect to the given
-`p`-norm.
-
-### Input
-
-- `x` -- singleton, i.e. a set with one element
-- `L` -- line
-- `p` -- (optional, default: `2.0`) the `p`-norm used; `p = 2.0` corresponds to
-         the usual Euclidean norm
-
-### Output
-
-A scalar representing the distance between the element wrapped by `x` and the line `L`.
-"""
-function distance(x::AbstractSingleton, L::Line, p::Real=2.0)
-    return distance(element(x), L, p)
-end
-distance(L::Line, x::AbstractSingleton, p::Real=2.0) = distance(x, L, p)
+distance(L::Line, x::AbstractVector; p::Real=2.0) = distance(x, L; p=p)
 
 """
     linear_map(M::AbstractMatrix, L::Line)
@@ -483,15 +500,22 @@ Concrete linear map of a line.
 
 The line obtained by applying the linear map to the point and direction of `L`.
 """
-linear_map(M::AbstractMatrix, L::Line) = _linear_map(M, L)
-
-linear_map(M::AbstractMatrix{N}, L::Line{N,VN}) where {N<:Real, VN<:AbstractVector{N}} = _linear_map(M, L)
-
-function _linear_map(M::AbstractMatrix, L::Line)
+function linear_map(M::AbstractMatrix, L::Line)
     @assert dim(L) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
                                  "applied to a set of dimension $(dim(L))"
 
     Mp = M * L.p
     Md = M * L.d
     return Line(Mp, Md)
+end
+
+function project(L::Line{N}, block::AbstractVector{Int}; kwargs...) where {N}
+    d = L.d[block]
+    if iszero(d)
+        return Singleton(L.p[block])  # projected out all nontrivial dimensions
+    elseif length(d) == 1
+        return Universe{N}(1)  # special case: 1D line is a universe
+    else
+        return Line(L.p[block], d)
+    end
 end

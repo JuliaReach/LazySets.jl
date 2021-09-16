@@ -37,7 +37,7 @@ for that numeric type is used. For floating-point types, a default value has bee
 defined through `default_tolerance` as follows:
 
 ```julia
-default_tolerance(N::Type{<:AbstractFloat}) = Tolerance(Base.rtoldefault(N), sqrt(eps(N)), zero(N))
+default_tolerance(N::Type{<:AbstractFloat}) = Tolerance(Base.rtoldefault(N), N(10) * sqrt(eps(N)), zero(N))
 ```
 Hence to set a single tolerance (either `rtol`, `ztol` or `atol`) for a given
 floating-point type, use the corresponding `set_rtol` function, while the values
@@ -51,8 +51,19 @@ mutable struct Tolerance{N<:Number}
     atol::N
 end
 
+default_tolerance(N::Type{<:Number}) = error("default tolerance for numeric type $N is not defined")
+default_tolerance(N::Type{<:Rational}) = Tolerance(zero(N), zero(N), zero(N))
+default_tolerance(N::Type{<:Integer}) = Tolerance(zero(N), zero(N), zero(N))
+default_tolerance(N::Type{<:AbstractFloat}) = Tolerance(Base.rtoldefault(N), N(10) * sqrt(eps(N)), zero(N))
+
+function set_tolerance(N, tolerance::Tolerance=default_tolerance(N))
+    set_rtol(N, tolerance.rtol)
+    set_ztol(N, tolerance.ztol)
+    set_atol(N, tolerance.atol)
+end
+
 # global Float64 tolerances
-const _TOL_F64 = Tolerance(Base.rtoldefault(Float64), Float64(10)*sqrt(eps(Float64)), zero(Float64))
+const _TOL_F64 = default_tolerance(Float64)
 
 _rtol(N::Type{Float64}) = _TOL_F64.rtol
 _ztol(N::Type{Float64}) = _TOL_F64.ztol
@@ -63,7 +74,7 @@ set_ztol(N::Type{Float64}, ε::Float64) = _TOL_F64.ztol = ε
 set_atol(N::Type{Float64}, ε::Float64) = _TOL_F64.atol = ε
 
 # global rational tolerances
-const _TOL_RAT = Tolerance(zero(Rational), zero(Rational), zero(Rational))
+const _TOL_RAT = default_tolerance(Rational)
 
 _rtol(N::Type{<:Rational}) = _TOL_RAT.rtol
 _ztol(N::Type{<:Rational}) = _TOL_RAT.ztol
@@ -99,11 +110,6 @@ set_atol(N::Type{NT}, ε::NT) where {NT<:Number} = begin
     end
     TOL_N[N].atol = ε
 end
-
-default_tolerance(N::Type{<:Number}) = error("default tolerance for numeric type $N is not defined")
-default_tolerance(N::Type{<:Rational}) = Tolerance(zero(N), zero(N), zero(N))
-default_tolerance(N::Type{<:Integer}) = Tolerance(zero(N), zero(N), zero(N))
-default_tolerance(N::Type{<:AbstractFloat}) = Tolerance(Base.rtoldefault(N), sqrt(eps(N)), zero(N))
 
 """
     _leq(x::N, y::N; [kwargs...]) where {N<:Real}
@@ -250,40 +256,8 @@ function _isapprox(x::N, y::M; kwargs...) where {N<:Real, M<:Real}
     return _isapprox(promote(x, y)...; kwargs...)
 end
 
-# generic "dense"
-function _isapprox(x::AbstractVector{N}, y::AbstractVector{N};
-                   rtol::Real=_rtol(N),
-                   ztol::Real=_ztol(N),
-                   atol::Real=_atol(N)) where {N<:Real}
-    n = length(x)
-    if length(x) != length(y)
-        return false
-    end
-    @inbounds for i in 1:n
-        if !_isapprox(x[i], y[i], rtol=rtol, ztol=ztol, atol=atol)
-            return false
-        end
-    end
-    return true
-end
-
-# sparse
-function _isapprox(x::SparseVector{N}, y::SparseVector{N};
-                   rtol::Real=_rtol(N),
-                   ztol::Real=_ztol(N),
-                   atol::Real=_atol(N)) where {N<:Real}
-    @assert length(x) == length(y)
-    return x.nzind == y.nzind && _isapprox(x.nzval, y.nzval, rtol=rtol, ztol=ztol, atol=atol)
-end
-
-# different numeric types with promotion
-function _isapprox(x::AbstractVector{N}, y::AbstractVector{M};
-                   kwargs...) where {N<:Real, M<:Real}
-    _isapprox(promote(x, y)...; kwargs...)
-end
-
-# matrices
-function _isapprox(A::AbstractMatrix{N}, B::AbstractMatrix{N};
+# numeric arrays
+function _isapprox(A::AbstractArray{N}, B::AbstractArray{N};
                    rtol::Real=_rtol(N),
                    ztol::Real=_ztol(N),
                    atol::Real=_atol(N)) where {N<:Real}
@@ -298,10 +272,28 @@ function _isapprox(A::AbstractMatrix{N}, B::AbstractMatrix{N};
     return true
 end
 
-# matrices with different numeric types with promotion
-function _isapprox(A::AbstractMatrix{N}, B::AbstractMatrix{M};
+# sparse numeric vectors
+function _isapprox(x::SparseVector{N}, y::SparseVector{N};
+                   rtol::Real=_rtol(N),
+                   ztol::Real=_ztol(N),
+                   atol::Real=_atol(N)) where {N<:Real}
+    if length(x) != length(y)
+        return false
+    elseif x.nzind != y.nzind
+        return false
+    end
+    return _isapprox(x.nzval, y.nzval, rtol=rtol, ztol=ztol, atol=atol)
+end
+
+# numeric arrays with different numeric types with promotion
+function _isapprox(A::AbstractArray{N}, B::AbstractArray{M};
                    kwargs...) where {N<:Real, M<:Real}
     _isapprox(promote(A, B)...; kwargs...)
+end
+
+# fallback definition
+function _isapprox(x, y; kwargs...)
+    return x ≈ y
 end
 
 """
@@ -333,6 +325,9 @@ false
 Containment check is performed using `LazySets._in(e, v)`, so in the case of
 floating point numbers, the precision to which the check is made is determined
 by the type of elements in `v`. See `_in` and `_isapprox` for more information.
+
+Note that approximate equality is not an equivalence relation.
+Hence the result may depend on the order of the elements.
 """
 function ispermutation(u::AbstractVector{T}, v::AbstractVector) where {T}
     if length(u) != length(v)
@@ -344,19 +339,35 @@ function ispermutation(u::AbstractVector{T}, v::AbstractVector) where {T}
         if !_in(e, v)
             return false
         end
-        if haskey(occurrence_map, e)
-            occurrence_map[e] += 1
-            has_duplicates = true
-        else
+        found = false
+        for k in keys(occurrence_map)
+            if _isapprox(k, e)
+                occurrence_map[k] += 1
+                has_duplicates = true
+                found = true
+                break
+            end
+        end
+        if !found
             occurrence_map[e] = 1
         end
     end
     if has_duplicates
         for e in v
-            if !haskey(occurrence_map, e) || occurrence_map[e] == 0
+            found = false
+            for k in keys(occurrence_map)
+                if _isapprox(k, e)
+                    found = true
+                    occurrence_map[k] -= 1
+                    if occurrence_map[k] < 0
+                        return false
+                    end
+                    break
+                end
+            end
+            if !found
                 return false
             end
-            occurrence_map[e] -= 1
         end
     end
     return true

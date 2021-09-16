@@ -10,7 +10,7 @@ export AbstractHyperrectangle,
        volume
 
 """
-    AbstractHyperrectangle{N<:Real} <: AbstractZonotope{N}
+    AbstractHyperrectangle{N} <: AbstractZonotope{N}
 
 Abstract type for hyperrectangular sets.
 
@@ -19,16 +19,21 @@ Abstract type for hyperrectangular sets.
 See [`Hyperrectangle`](@ref) for a standard implementation of this interface.
 
 Every concrete `AbstractHyperrectangle` must define the following functions:
-- `radius_hyperrectangle(::AbstractHyperrectangle{N})` -- return the
+
+- `radius_hyperrectangle(::AbstractHyperrectangle)` -- return the
     hyperrectangle's radius, which is a full-dimensional vector
-- `radius_hyperrectangle(::AbstractHyperrectangle{N}, i::Int)` -- return the
+
+- `radius_hyperrectangle(::AbstractHyperrectangle, i::Int)` -- return the
     hyperrectangle's radius in the `i`-th dimension
-- `isflat(::AbstractHyperrectangle{N})` -- determine whether the
+
+- `isflat(::AbstractHyperrectangle)` -- determine whether the
     hyperrectangle's radius is zero in some dimension
+
+Every hyperrectangular set is also a zonotopic set; see [`AbstractZonotope`](@ref).
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractHyperrectangle)
-5-element Array{Any,1}:
+5-element Vector{Any}:
  AbstractSingleton
  BallInf
  Hyperrectangle
@@ -36,7 +41,7 @@ julia> subtypes(AbstractHyperrectangle)
  SymmetricIntervalHull
 ```
 """
-abstract type AbstractHyperrectangle{N<:Real} <: AbstractZonotope{N} end
+abstract type AbstractHyperrectangle{N} <: AbstractZonotope{N} end
 
 isconvextype(::Type{<:AbstractHyperrectangle}) = true
 
@@ -67,18 +72,25 @@ struct HyperrectangleGeneratorIterator{AH<:AbstractHyperrectangle}
     nonflats::Vector{Int}  # dimensions along which `H` is not flat
     dim::Int  # total number of dimensions of `H` (stored for efficiency)
 
-    function HyperrectangleGeneratorIterator(H::AH) where {N<:Real,
+    function HyperrectangleGeneratorIterator(H::AH) where {N,
             AH<:AbstractHyperrectangle{N}}
         n = dim(H)
-        nonflats = Vector{Int}()
-        sizehint!(nonflats, n)
-        @inbounds for i in 1:n
-            if radius_hyperrectangle(H, i) != zero(N)
-                push!(nonflats, i)
-            end
-        end
+        nonflats = _nonflat_dimensions(H)
         return new{AH}(H, nonflats, n)
     end
+end
+
+# return the dimensions of H which are non-flat
+function _nonflat_dimensions(H::AbstractHyperrectangle{N}) where {N}
+    n = dim(H)
+    nonflats = Vector{Int}()
+    sizehint!(nonflats, n)
+    @inbounds for i in 1:n
+        if radius_hyperrectangle(H, i) != zero(N)
+            push!(nonflats, i)
+        end
+    end
+    return nonflats
 end
 
 Base.length(it::HyperrectangleGeneratorIterator) = length(it.nonflats)
@@ -116,7 +128,7 @@ function generators(H::AbstractHyperrectangle)
 end
 
 """
-    ngens(H::AbstractHyperrectangle{N}) where {N<:Real}
+    ngens(H::AbstractHyperrectangle{N}) where {N}
 
 Return the number of generators of a hyperrectangular set.
 
@@ -132,7 +144,7 @@ The number of generators.
 
 A hyperrectangular set has one generator for each non-flat dimension.
 """
-function ngens(H::AbstractHyperrectangle{N}) where {N<:Real}
+function ngens(H::AbstractHyperrectangle{N}) where {N}
     return sum(i -> radius_hyperrectangle(H, i) > zero(N), 1:dim(H))
 end
 
@@ -141,7 +153,7 @@ end
 
 
 """
-    vertices_list(H::AbstractHyperrectangle{N}) where {N<:Real}
+    vertices_list(H::AbstractHyperrectangle)
 
 Return the list of vertices of a hyperrectangular set.
 
@@ -180,7 +192,7 @@ entry `1` (but changing it to `-1`).
 This way we only need to change the vertex in those dimensions where `v` has
 changed, which usually is a smaller number than `n`.
 """
-function vertices_list(H::AbstractHyperrectangle{N}) where {N<:Real}
+function vertices_list(H::AbstractHyperrectangle)
     n = dim(H)
 
     # identify flat dimensions and store them in a binary vector whose entry in
@@ -189,7 +201,8 @@ function vertices_list(H::AbstractHyperrectangle{N}) where {N<:Real}
     trivector = Vector{Int8}(undef, n)
     m = 1
     c = center(H)
-    v = copy(c)
+    v = similar(c)
+    copyto!(v, c)
     @inbounds for i in 1:n
         ri = radius_hyperrectangle(H, i)
         if iszero(ri)
@@ -204,7 +217,7 @@ function vertices_list(H::AbstractHyperrectangle{N}) where {N<:Real}
     # create vertices by modifying the three-valued vector and constructing the
     # corresponding point; for efficiency, we create a copy of the old point and
     # modify every entry that has changed in the three-valued vector
-    vlist = Vector{Vector{N}}(undef, m)
+    vlist = Vector{typeof(c)}(undef, m)
     vlist[1] = copy(v)
     @inbounds for i in 2:m
         for j in 1:length(v)
@@ -223,7 +236,7 @@ function vertices_list(H::AbstractHyperrectangle{N}) where {N<:Real}
 end
 
 """
-    constraints_list(H::AbstractHyperrectangle{N}) where {N<:Real}
+    constraints_list(H::AbstractHyperrectangle{N}) where {N}
 
 Return the list of constraints of an axis-aligned hyperrectangular set.
 
@@ -235,7 +248,7 @@ Return the list of constraints of an axis-aligned hyperrectangular set.
 
 A list of linear constraints.
 """
-function constraints_list(H::AbstractHyperrectangle{N}) where {N<:Real}
+function constraints_list(H::AbstractHyperrectangle{N}) where {N}
     n = dim(H)
     constraints = Vector{LinearConstraint{N, SingleEntryVector{N}}}(undef, 2*n)
     b, c = high(H), -low(H)
@@ -252,7 +265,7 @@ end
 
 
 """
-    σ(d::AbstractVector{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
+    σ(d::AbstractVector, H::AbstractHyperrectangle)
 
 Return the support vector of a hyperrectangular set in a given direction.
 
@@ -266,17 +279,18 @@ Return the support vector of a hyperrectangular set in a given direction.
 The support vector in the given direction.
 If the direction has norm zero, the vertex with biggest values is returned.
 """
-function σ(d::AbstractVector{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
+function σ(d::AbstractVector, H::AbstractHyperrectangle)
     @assert length(d) == dim(H) "a $(length(d))-dimensional vector is " *
                                 "incompatible with a $(dim(H))-dimensional set"
     return center(H) .+ sign_cadlag.(d) .* radius_hyperrectangle(H)
 end
 
 # helper function for single entry vector
-function _σ_sev_hyperrectangle(d::SingleEntryVector{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
-
+function _σ_sev_hyperrectangle(d::SingleEntryVector, H::AbstractHyperrectangle)
     @assert d.n == dim(H) "a $(d.n)-dimensional vector is " *
                           "incompatible with a $(dim(H))-dimensional set"
+
+    N = promote_type(eltype(d), eltype(H))
     s = copy(center(H))
     idx = d.i
     if d.v < zero(N)
@@ -288,7 +302,7 @@ function _σ_sev_hyperrectangle(d::SingleEntryVector{N}, H::AbstractHyperrectang
 end
 
 """
-    ρ(d::AbstractVector{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
+    ρ(d::AbstractVector, H::AbstractHyperrectangle)
 
 Evaluate the support function of a hyperrectangular set in a given direction.
 
@@ -301,26 +315,29 @@ Evaluate the support function of a hyperrectangular set in a given direction.
 
 Evaluation of the support function in the given direction.
 """
-function ρ(d::AbstractVector{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
+function ρ(d::AbstractVector, H::AbstractHyperrectangle)
     @assert length(d) == dim(H) "a $(length(d))-dimensional vector is " *
                                 "incompatible with a $(dim(H))-dimensional set"
+
+    N = promote_type(eltype(d), eltype(H))
     c = center(H)
     res = zero(N)
     @inbounds for (i, di) in enumerate(d)
+        ri = radius_hyperrectangle(H, i)
         if di < zero(N)
-            res += di * (c[i] - radius_hyperrectangle(H, i))
+            res += di * (c[i] - ri)
         elseif di > zero(N)
-            res += di * (c[i] + radius_hyperrectangle(H, i))
+            res += di * (c[i] + ri)
         end
     end
     return res
 end
 
 # helper function for single entry vector
-function _ρ_sev_hyperrectangle(d::SingleEntryVector{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
-
+function _ρ_sev_hyperrectangle(d::SingleEntryVector, H::AbstractHyperrectangle)
     @assert d.n == dim(H) "a $(d.n)-dimensional vector is " *
-                                "incompatible with a $(dim(H))-dimensional set"
+                          "incompatible with a $(dim(H))-dimensional set"
+
     return d.v * center(H, d.i) + abs(d.v) * radius_hyperrectangle(H, d.i)
 end
 
@@ -400,7 +417,7 @@ function radius(H::AbstractHyperrectangle, p::Real=Inf)
 end
 
 """
-    ∈(x::AbstractVector{N}, H::AbstractHyperrectangle{N}) where {N<:Real}
+    ∈(x::AbstractVector, H::AbstractHyperrectangle)
 
 Check whether a given point is contained in a hyperrectangular set.
 
@@ -420,8 +437,7 @@ the box's center and radius and ``x_i`` be the vector ``x`` in dimension ``i``,
 respectively.
 Then ``x ∈ H`` iff ``|c_i - x_i| ≤ r_i`` for all ``i=1,…,n``.
 """
-function ∈(x::AbstractVector{N},
-           H::AbstractHyperrectangle{N}) where {N<:Real}
+function ∈(x::AbstractVector, H::AbstractHyperrectangle)
     @assert length(x) == dim(H)
     @inbounds for i in eachindex(x)
         ri = radius_hyperrectangle(H, i)
@@ -435,7 +451,7 @@ end
 # --- common AbstractHyperrectangle functions ---
 
 """
-    high(H::AbstractHyperrectangle{N}) where {N<:Real}
+    high(H::AbstractHyperrectangle)
 
 Return the higher coordinates of a hyperrectangular set.
 
@@ -447,12 +463,12 @@ Return the higher coordinates of a hyperrectangular set.
 
 A vector with the higher coordinates of the hyperrectangular set.
 """
-function high(H::AbstractHyperrectangle{N}) where {N<:Real}
+function high(H::AbstractHyperrectangle)
     return center(H) .+ radius_hyperrectangle(H)
 end
 
 """
-    high(H::AbstractHyperrectangle{N}, i::Int) where {N<:Real}
+    high(H::AbstractHyperrectangle, i::Int)
 
 Return the higher coordinate of a hyperrectangular set in a given dimension.
 
@@ -465,12 +481,12 @@ Return the higher coordinate of a hyperrectangular set in a given dimension.
 
 The higher coordinate of the hyperrectangular set in the given dimension.
 """
-function high(H::AbstractHyperrectangle{N}, i::Int) where {N<:Real}
+function high(H::AbstractHyperrectangle, i::Int)
     return center(H, i) + radius_hyperrectangle(H, i)
 end
 
 """
-    low(H::AbstractHyperrectangle{N}) where {N<:Real}
+    low(H::AbstractHyperrectangle)
 
 Return the lower coordinates of a hyperrectangular set.
 
@@ -482,12 +498,12 @@ Return the lower coordinates of a hyperrectangular set.
 
 A vector with the lower coordinates of the hyperrectangular set.
 """
-function low(H::AbstractHyperrectangle{N}) where {N<:Real}
+function low(H::AbstractHyperrectangle)
     return center(H) .- radius_hyperrectangle(H)
 end
 
 """
-    low(H::AbstractHyperrectangle{N}, i::Int) where {N<:Real}
+    low(H::AbstractHyperrectangle, i::Int)
 
 Return the lower coordinate of a hyperrectangular set in a given dimension.
 
@@ -500,7 +516,7 @@ Return the lower coordinate of a hyperrectangular set in a given dimension.
 
 The lower coordinate of the hyperrectangular set in the given dimension.
 """
-function low(H::AbstractHyperrectangle{N}, i::Int) where {N<:Real}
+function low(H::AbstractHyperrectangle, i::Int)
     return center(H, i) - radius_hyperrectangle(H, i)
 end
 
@@ -530,7 +546,7 @@ end
 
 """
     split(H::AbstractHyperrectangle{N}, num_blocks::AbstractVector{Int}
-         ) where {N<:Real}
+         ) where {N}
 
 Partition a hyperrectangular set into uniform sub-hyperrectangles.
 
@@ -543,10 +559,13 @@ Partition a hyperrectangular set into uniform sub-hyperrectangles.
 
 A list of `Hyperrectangle`s.
 """
-function split(H::AbstractHyperrectangle{N}, num_blocks::AbstractVector{Int}
-              ) where {N<:Real}
+function split(H::AbstractHyperrectangle{N}, num_blocks::AbstractVector{Int}) where {N}
     @assert length(num_blocks) == dim(H) "need number of blocks in each dimension"
-    radius = copy(radius_hyperrectangle(H))
+    R = radius_hyperrectangle(H)
+    T = _similar_type(R)
+    radius = similar(R)
+    copyto!(radius, R)
+
     total_number = 1
     lo = low(H)
     hi = high(H)
@@ -565,16 +584,16 @@ function split(H::AbstractHyperrectangle{N}, num_blocks::AbstractVector{Int}
             total_number *= m
         end
     end
+    radius = convert(T, radius)
 
     # create hyperrectangles for every combination of the center points
-    result = Vector{Hyperrectangle{N, typeof(center(H)), typeof(radius)}}(undef, total_number)
+    result = Vector{Hyperrectangle{N, T, T}}(undef, total_number)
     @inbounds for (i, center) in enumerate(product(centers...))
-        result[i] = Hyperrectangle(collect(center), copy(radius))
+        c = convert(T, collect(center))
+        result[i] = Hyperrectangle(c, copy(radius))
     end
     return result
 end
-
-import LazySets.Arrays: rectify
 
 """
     rectify(H::AbstractHyperrectangle)
@@ -594,7 +613,7 @@ function rectify(H::AbstractHyperrectangle)
 end
 
 """
-    volume(H::AbstractHyperrectangle{N}) where {N<:Real}
+    volume(H::AbstractHyperrectangle)
 
 Return the volume of a hyperrectangular set.
 
@@ -608,10 +627,65 @@ The volume of ``H``.
 
 ### Algorithm
 
-The volume of the ``n``-dimensional hyperrectangle ``H`` with vector radius ``r`` is
-``2ⁿ ∏ᵢ rᵢ`` where ``rᵢ`` denotes the ``i``-th component of ``r``.
+The volume of the ``n``-dimensional hyperrectangle ``H`` with vector radius
+``r`` is ``2ⁿ ∏ᵢ rᵢ`` where ``rᵢ`` denotes the ``i``-th component of ``r``.
 """
-function volume(H::AbstractHyperrectangle{N}) where {N<:Real}
+function volume(H::AbstractHyperrectangle)
     vol = mapreduce(x -> 2x, *, radius_hyperrectangle(H))
     return vol
 end
+
+function project(H::AbstractHyperrectangle, block::AbstractVector{Int}; kwargs...)
+    πc = center(H)[block]
+    πr = radius_hyperrectangle(H)[block]
+    return Hyperrectangle(πc, πr, check_bounds=false)
+end
+
+"""
+    distance(x::AbstractVector, H::AbstractHyperrectangle{N};
+             [p]::Real=N(2)) where {N}
+
+Compute the distance between point `x` and hyperrectangle `H` with respect to
+the given `p`-norm.
+
+### Input
+
+- `x` -- vector
+- `H` -- hyperrectangle
+
+### Output
+
+A scalar representing the distance between point `x` and hyperrectangle `H`.
+"""
+function distance(x::AbstractVector, H::AbstractHyperrectangle{N};
+                  p::Real=N(2)) where {N}
+    @assert length(x) == dim(H) "a vector of length $(length(x)) is " *
+        "incompatible with a set of dimension $(dim(H))"
+
+    # compute closest point
+    y = similar(x)
+    outside = false
+    @inbounds for i in 1:length(x)
+        ci = center(H, i)
+        ri = radius_hyperrectangle(H, i)
+        d = x[i] - ci
+        if abs(d) <= ri
+            # point is inside in the projection → y[i] is x[i]
+            y[i] = x[i]
+        else
+            # point is outside in the projection → y[i] is on the border
+            y[i] = ci + sign_cadlag(d) * ri
+            outside = true
+        end
+    end
+
+    if !outside
+        # point is inside
+        return zero(N)
+    end
+
+    return distance(x, y; p=p)
+end
+
+distance(H::AbstractHyperrectangle{N}, x::AbstractVector; p::Real=N(2)) where {N} =
+    distance(x, H; p=p)

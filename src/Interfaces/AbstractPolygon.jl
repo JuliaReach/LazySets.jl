@@ -5,7 +5,7 @@ export AbstractPolygon,
        tovrep
 
 """
-    AbstractPolygon{N<:Real} <: AbstractPolytope{N}
+    AbstractPolygon{N} <: AbstractPolytope{N}
 
 Abstract type for polygons (i.e., 2D polytopes).
 
@@ -19,12 +19,12 @@ Every concrete `AbstractPolygon` must define the following functions:
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractPolygon)
-2-element Array{Any,1}:
+2-element Vector{Any}:
  AbstractHPolygon
  VPolygon
 ```
 """
-abstract type AbstractPolygon{N<:Real} <: AbstractPolytope{N} end
+abstract type AbstractPolygon{N} <: AbstractPolytope{N} end
 
 isconvextype(::Type{<:AbstractPolygon}) = true
 
@@ -81,7 +81,7 @@ julia> jump2pi(0.5)
 end
 
 """
-    quadrant(w::AbstractVector{N}) where {N<:Real}
+    quadrant(w::AbstractVector{N}) where {N}
 
 Compute the quadrant where the direction `w` belongs.
 
@@ -108,14 +108,14 @@ The idea is to encode the following logic function:
 This function is inspired from AGPX's answer in:
 [Sort points in clockwise order?](https://stackoverflow.com/a/46635372)
 """
-@inline function quadrant(w::AbstractVector{N}) where {N<:Real}
+@inline function quadrant(w::AbstractVector{N}) where {N}
     dwx = w[1] >= zero(N) ? 1 : 0
     dwy = w[2] >= zero(N) ? 1 : 0
     return (1 - dwx) + (1 - dwy) + ((dwx & (1 - dwy)) << 1)
 end
 
 """
-    <=(u::AbstractVector{N}, v::AbstractVector{N}) where {N<:Real}
+    <=(u::AbstractVector, v::AbstractVector)
 
 Compare two 2D vectors by their direction.
 
@@ -139,7 +139,7 @@ The implementation checks the quadrant of each direction, and compares
 directions using the right-hand rule (see [`is_right_turn`](@ref)).
 In particular, this method does not use the arctangent.
 """
-function <=(u::AbstractVector{N}, v::AbstractVector{N}) where {N<:Real}
+function <=(u::AbstractVector, v::AbstractVector)
     @assert length(u) == length(v) == 2 "comparison of vectors `u` and `v` " *
            "by their direction requires they are of length 2, " *
            "but their lengths are $(length(u)) and $(length(v)) respectively"
@@ -147,7 +147,7 @@ function <=(u::AbstractVector{N}, v::AbstractVector{N}) where {N<:Real}
     return _leq_quadrant(u, v)
 end
 
-function _leq_quadrant(u::AbstractVector{N}, v::AbstractVector{N}) where {N<:Real}
+function _leq_quadrant(u::AbstractVector, v::AbstractVector)
     qu, qv = quadrant(u), quadrant(v)
     if qu == qv
         # same quadrant, check right-turn with center 0

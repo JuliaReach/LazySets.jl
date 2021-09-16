@@ -13,18 +13,20 @@ function load_makie()
 return quote
 
 using .Makie: mesh, mesh!
-using .Makie.AbstractPlotting: Automatic
+using .Makie: Automatic
 
 end end  # quote / function load_makie()
 
 
 # helper function for 3D plotting; converts S to a polytope in H-representation
-function _plot3d_helper(S::LazySet{N}, backend) where {N}
+function _plot3d_helper(S::LazySet, backend)
     @assert dim(S) <= 3 "plot3d can only be used to plot sets of dimension three (or lower); " *
         "but the given set is $(dim(S))-dimensional"
 
     @assert applicable(constraints_list, S) "plot3d requires that the list of constraints of `S`, " *
         "`constraints_list(S)` is applicable; try overapproximating with an `HPolytope` first"
+
+    @assert isbounded(S) "plot3d requires a bounded set"
 
     P = HPolytope(constraints_list(S))
     remove_redundant_constraints!(P)
@@ -34,17 +36,17 @@ function _plot3d_helper(S::LazySet{N}, backend) where {N}
 end
 
 """
-    plot3d(S::LazySet{N}; backend=default_polyhedra_backend(S, N),
+    plot3d(S::LazySet; backend=default_polyhedra_backend(S),
            alpha=1.0, color=:blue, colormap=:viridis, colorrange=nothing,
            interpolate=false, linewidth=1, overdraw=false, shading=true,
-           transparency=true, visible=true) where {N}
+           transparency=true, visible=true)
 
 Plot a three-dimensional convex set using `Makie`.
 
 ### Input
 
 - `S`            -- convex set
-- `backend`      -- (optional, default: `default_polyhedra_backend(S, N)`) polyhedral
+- `backend`      -- (optional, default: `default_polyhedra_backend(S)`) polyhedral
                     computations backend 
 - `alpha`        -- (optional, default: `1.0`) float in `[0,1]`; the alpha or
                     transparency value
@@ -55,7 +57,7 @@ Plot a three-dimensional convex set using `Makie`.
                     call `available_gradients()` to see what gradients are available,
                     and it can also be used as `[:red, :black]`
 - `colorrange`   -- (optional, default: `nothing`, which falls back to
-                    `Makie.AbstractPlotting.Automatic()`) a tuple `(min, max)`
+                    `Makie.Automatic()`) a tuple `(min, max)`
                     where `min` and `max` specify the data range to be used for
                     indexing the colormap
 - `interpolate`  -- (optional, default: `false`) a bool for heatmap and images,
@@ -83,8 +85,6 @@ If the function `constraints_list` is not applicable to your set `S`, try
 overapproximation first; e.g. via
 
 ```julia
-julia> using LazySets.Approximations
-
 julia> Sapprox = overapproximate(S, SphericalDirections(10))
 
 julia> plot3d(Sapprox)
@@ -114,9 +114,9 @@ julia> plot3d(10. * rand(Hyperrectangle, dim=3))
 julia> plot3d!(10. * rand(Hyperrectangle, dim=3), color=:red)
 ```
 """
-function plot3d(S::LazySet{N}; backend=default_polyhedra_backend(S, N),
+function plot3d(S::LazySet; backend=default_polyhedra_backend(S),
                 alpha=1.0, color=:blue, colormap=:viridis, colorrange=nothing, interpolate=false,
-                linewidth=1, overdraw=false, shading=true, transparency=true, visible=true) where {N}
+                linewidth=1, overdraw=false, shading=true, transparency=true, visible=true)
     require(:Makie; fun_name="plot3d")
     require(:Polyhedra; fun_name="plot3d")
 
@@ -129,9 +129,9 @@ function plot3d(S::LazySet{N}; backend=default_polyhedra_backend(S, N),
 end
 
 """
-    plot3d!(S::LazySet{N}; backend=default_polyhedra_backend(S, N),
+    plot3d!(S::LazySet; backend=default_polyhedra_backend(S),
             alpha=1.0, color=:blue, colormap=:viridis, colorrange=nothing, interpolate=false,
-            linewidth=1, overdraw=false, shading=true, transparency=true, visible=true) where {N}
+            linewidth=1, overdraw=false, shading=true, transparency=true, visible=true)
 
 Plot a three-dimensional convex set using Makie.
 
@@ -145,9 +145,9 @@ documentation](http://makie.juliaplots.org/stable/plot-attributes).
 
 See the documentation of `plot3d` for examples.
 """
-function plot3d!(S::LazySet{N}; backend=default_polyhedra_backend(S, N),
+function plot3d!(S::LazySet; backend=default_polyhedra_backend(S),
                 alpha=1.0, color=:blue, colormap=:viridis, colorrange=nothing, interpolate=false,
-                linewidth=1, overdraw=false, shading=true, transparency=true, visible=true) where {N}
+                linewidth=1, overdraw=false, shading=true, transparency=true, visible=true)
     require(:Makie; fun_name="plot3d!")
     require(:Polyhedra; fun_name="plot3d!")
 

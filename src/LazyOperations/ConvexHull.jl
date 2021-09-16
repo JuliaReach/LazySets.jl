@@ -7,18 +7,24 @@ export ConvexHull, CH,
        swap
 
 """
-    ConvexHull{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
+    ConvexHull{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
 
-Type that represents the convex hull of the union of two convex sets.
+Type that represents the convex hull of the union of two sets, that is the set
+
+```math
+Z = \\{z ∈ \\mathbb{R}^n : z = λx + (1-λ)y,\\qquad x ∈ X, y ∈ Y,λ ∈ [0, 1] \\}.
+```
 
 ### Fields
 
-- `X` -- convex set
-- `Y` -- convex set
+- `X` -- set
+- `Y` -- set
 
 ### Notes
 
 The `EmptySet` is the neutral element for `ConvexHull`.
+
+This type is always convex.
 
 ### Examples
 
@@ -30,19 +36,17 @@ julia> b1, b2 = Ball2(zeros(100), 0.1), Ball2(4*ones(100), 0.2);
 julia> c = ConvexHull(b1, b2);
 
 julia> typeof(c)
-ConvexHull{Float64,Ball2{Float64,Array{Float64,1}},Ball2{Float64,Array{Float64,1}}}
+ConvexHull{Float64, Ball2{Float64, Vector{Float64}}, Ball2{Float64, Vector{Float64}}}
 ```
 """
-struct ConvexHull{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
+struct ConvexHull{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     X::S1
     Y::S2
 
     # default constructor with dimension check
-    function ConvexHull(X::S1, Y::S2) where {N<:Real, S1<:LazySet{N},
-                                             S2<:LazySet{N}}
-        @assert dim(X) == dim(Y) "sets in a convex hull must have the same " *
-            "dimension"
-        return new{N, S1, S2}(X, Y)
+    function ConvexHull(X::LazySet{N}, Y::LazySet{N}) where {N}
+        @assert dim(X) == dim(Y) "sets in a convex hull must have the same dimension"
+        return new{N, typeof(X), typeof(Y)}(X, Y)
     end
 end
 
@@ -69,7 +73,7 @@ Return a new `ConvexHull` object with the arguments swapped.
 
 ### Input
 
-- `ch` -- convex hull of two convex sets
+- `ch` -- convex hull of two sets
 
 ### Output
 
@@ -82,36 +86,35 @@ end
 """
     dim(ch::ConvexHull)
 
-Return the dimension of a convex hull of two convex sets.
+Return the dimension of a convex hull of two sets.
 
 ### Input
 
-- `ch` -- convex hull of two convex sets
+- `ch` -- convex hull of two sets
 
 ### Output
 
-The ambient dimension of the convex hull of two convex sets.
+The ambient dimension of the convex hull of two sets.
 """
 function dim(ch::ConvexHull)
     return dim(ch.X)
 end
 
 """
-    σ(d::AbstractVector{N}, ch::ConvexHull{N}) where {N<:Real}
+    σ(d::AbstractVector, ch::ConvexHull)
 
-Return the support vector of a convex hull of two convex sets in a given
-direction.
+Return the support vector of the convex hull of two sets in a given direction.
 
 ### Input
 
 - `d`  -- direction
-- `ch` -- convex hull of two convex sets
+- `ch` -- convex hull of two sets
 
 ### Output
 
 The support vector of the convex hull in the given direction.
 """
-function σ(d::AbstractVector{N}, ch::ConvexHull{N}) where {N<:Real}
+function σ(d::AbstractVector, ch::ConvexHull)
     σ1 = σ(d, ch.X)
     σ2 = σ(d, ch.Y)
     ρ1 = dot(d, σ1)
@@ -120,32 +123,31 @@ function σ(d::AbstractVector{N}, ch::ConvexHull{N}) where {N<:Real}
 end
 
 """
-    ρ(d::AbstractVector{N}, ch::ConvexHull{N}) where {N<:Real}
+    ρ(d::AbstractVector, ch::ConvexHull)
 
-Return the support function of a convex hull of two convex sets in a given
-direction.
+Return the support function of the convex hull of two sets in a given direction.
 
 ### Input
 
 - `d`  -- direction
-- `ch` -- convex hull of two convex sets
+- `ch` -- convex hull of two sets
 
 ### Output
 
 The support function of the convex hull in the given direction.
 """
-function ρ(d::AbstractVector{N}, ch::ConvexHull{N}) where {N<:Real}
+function ρ(d::AbstractVector, ch::ConvexHull)
     return max(ρ(d, ch.X), ρ(d, ch.Y))
 end
 
 """
     isbounded(ch::ConvexHull)
 
-Determine whether a convex hull of two convex sets is bounded.
+Determine whether the convex hull of two sets is bounded.
 
 ### Input
 
-- `ch` -- convex hull of two convex sets
+- `ch` -- convex hull of two sets
 
 ### Output
 
@@ -158,7 +160,7 @@ end
 """
     isempty(ch::ConvexHull)
 
-Return if a convex hull of two convex sets is empty or not.
+Return if the convex hull of two sets is empty or not.
 
 ### Input
 
@@ -175,11 +177,11 @@ end
 """
     vertices_list(ch::ConvexHull; apply_convex_hull::Bool=true, backend=nothing)
 
-Return the list of vertices of the convex hull of two convex sets.
+Return the list of vertices of the convex hull of two sets.
 
 ### Input
 
-- `ch`               -- convex hull of two convex sets
+- `ch`                -- convex hull of two sets
 - `apply_convex_hull` -- (optional, default: `true`) if `true`, post-process the
                          vertices using a convex-hull algorithm
 - `backend`           -- (optional, default: `nothing`) backend for computing
@@ -199,6 +201,8 @@ function vertices_list(ch::ConvexHull;
     return vlist
 end
 
+# concretization of a convex hull computes the (concrete) convex hull of the
+# concretization of each wrapped set
 function concretize(ch::ConvexHull)
     return convex_hull(concretize(ch.X), concretize(ch.Y))
 end

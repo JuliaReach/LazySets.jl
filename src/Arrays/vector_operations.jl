@@ -1,9 +1,8 @@
 export dot_zero,
-       sign_cadlag,
        remove_duplicates_sorted!,
        samedir,
+       ismultiple,
        nonzero_indices,
-       rectify,
        right_turn,
        is_cyclic_permutation,
        is_right_turn,
@@ -11,7 +10,9 @@ export dot_zero,
        _above,
        _dr,
        _up,
-       distance
+       distance,
+       append_zeros,
+       prepend_zeros
 
 """
     dot_zero(x::AbstractVector{N}, y::AbstractVector{N}) where{N<:Real}
@@ -60,7 +61,7 @@ function remove_duplicates_sorted!(v::AbstractVector)
 end
 
 """
-    samedir(u::AbstractVector{N}, v::AbstractVector{N}) where {N<:Real}
+    samedir(u::AbstractVector{<:Real}, v::AbstractVector{<:Real})
 
 Check whether two vectors point in the same direction.
 
@@ -71,8 +72,8 @@ Check whether two vectors point in the same direction.
 
 ### Output
 
-`(true, k)` iff the vectors are identical up to a positive scaling factor `k`,
-and `(false, 0)` otherwise.
+`(true, k)` iff the vectors are identical up to a positive scaling factor `k`
+such that `u = k * v`, and `(false, 0)` otherwise.
 
 
 ### Examples
@@ -91,8 +92,47 @@ julia> samedir([1, 2, 3], [-1, -2, -3])
 
 ```
 """
-function samedir(u::AbstractVector{N},
-                 v::AbstractVector{N}) where {N<:Real}
+function samedir(u::AbstractVector{<:Real}, v::AbstractVector{<:Real})
+    return _ismultiple(u, v; allow_negative=false)
+end
+
+"""
+    ismultiple(u::AbstractVector{<:Real}, v::AbstractVector{<:Real})
+
+Check whether two vectors are linearly dependent.
+
+### Input
+
+- `u` -- first vector
+- `v` -- second vector
+
+### Output
+
+`(true, k)` iff the vectors are identical up to a scaling factor `k ≠ 0` such
+that `u = k * v`, and `(false, 0)` otherwise.
+
+
+### Examples
+
+```jldoctest
+julia> using LazySets: ismultiple
+
+julia> ismultiple([1, 2, 3], [2, 4, 6])
+(true, 0.5)
+
+julia> ismultiple([1, 2, 3], [3, 2, 1])
+(false, 0)
+
+julia> ismultiple([1, 2, 3], [-1, -2, -3])
+(true, -1.0)
+
+```
+"""
+function ismultiple(u::AbstractVector{<:Real}, v::AbstractVector{<:Real})
+    return _ismultiple(u, v; allow_negative=true)
+end
+
+function _ismultiple(u::AbstractVector, v::AbstractVector; allow_negative::Bool)
     @assert length(u) == length(v) "wrong dimension"
     no_factor = true
     factor = 0
@@ -108,10 +148,10 @@ function samedir(u::AbstractVector{N},
         if no_factor
             no_factor = false
             factor = u[i] / v[i]
-            if factor < 0
+            if !allow_negative && factor < 0
                 return (false, 0)
             end
-        elseif factor != u[i] / v[i]
+        elseif !_isapprox(factor, u[i] / v[i])
             return (false, 0)
         end
     end
@@ -150,23 +190,6 @@ end
 
 function nonzero_indices(v::SparseVector{N}) where {N<:Real}
     return v.nzind
-end
-
-"""
-    rectify(x::AbstractVector{N}) where {N<:Real}
-
-Rectify a vector, i.e., take the element-wise maximum with zero.
-
-### Input
-
-- `x` -- vector
-
-### Output
-
-A copy of the vector where each negative entry is replaced by zero.
-"""
-function rectify(x::AbstractVector{N}) where {N<:Real}
-    return map(xi -> max(xi, zero(N)), x)
 end
 
 """
@@ -356,7 +379,7 @@ end
 end
 
 """
-    distance(x::AbstractVector, y::AbstractVector, p::Real=2.0)
+    distance(x::AbstractVector, y::AbstractVector; [p]::Real=2.0)
 
 Compute the distance between two vectors with respect to the given `p`-norm,
 computed as
@@ -376,6 +399,67 @@ computed as
 
 A scalar representing ``‖ x - y ‖_p``.
 """
-function distance(x::AbstractVector, y::AbstractVector, p::Real=2.0)
+function distance(x::AbstractVector, y::AbstractVector; p::Real=2.0)
     return norm(x - y, p)
+end
+
+"""
+    allequal(x)
+
+Check whether all elements in a sequence are equal
+
+### Input
+
+- `x` -- sequence
+
+### Output
+
+`true` iff all elements in `x` are equal.
+
+### Notes
+
+The code is taken from [here](https://stackoverflow.com/a/47578613).
+"""
+function allequal(x)
+    length(x) < 2 && return true
+    e1 = @inbounds x[1]
+    i = 2
+    @inbounds for i=2:length(x)
+        x[i] == e1 || return false
+    end
+    return true
+end
+
+# if `vector` has exactly one non-zero entry, return its index
+# otherwise return 0
+function find_unique_nonzero_entry(vector::AbstractVector{N}) where {N}
+    res = 0
+    for (i, v) in enumerate(vector)
+        if v != zero(N)
+            if res != 0
+                # at least two non-zero entries
+                return 0
+            else
+                # first non-zero entry so far
+                res = i
+            end
+        end
+    end
+    return res
+end
+
+function append_zeros(v::AbstractVector{N}, n::Int) where {N}
+    return vcat(v, zeros(N, n))
+end
+
+function append_zeros(v::SparseVector{N}, n::Int) where {N}
+    return sparsevec(v.nzind, v.nzval, v.n + n)
+end
+
+function prepend_zeros(v::AbstractVector{N}, n::Int) where {N}
+    return vcat(zeros(N, n), v)
+end
+
+function prepend_zeros(v::SparseVector{N}, n::Int) where {N}
+    return sparsevec(v.nzind .+ n, v.nzval, v.n + n)
 end

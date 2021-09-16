@@ -3,7 +3,7 @@ export SingleEntryVector
 """
     SingleEntryVector{N} <: AbstractVector{N}
 
-A lazy unit vector with arbitrary one-element.
+A sparse unit vector with arbitrary one-element.
 
 ### Fields
 
@@ -28,13 +28,13 @@ end
 
 Base.size(e::SingleEntryVector) = (e.n,)
 
-function Base.:(*)(A::AbstractMatrix{N}, e::SingleEntryVector{N}) where {N}
-    return A[:, e.i] * e.v
-end
-
-function Base.:(*)(A::Transpose{N, <:AbstractMatrix{N}},
-                   e::SingleEntryVector{N}) where {N}
-    return A[:, e.i] * e.v
+# define matrix-vector multiplication with SingleEntryVector
+# due to type piracy in other packages, we need to enumerate the matrix types
+# explicitly here
+for MT in [Matrix, AbstractSparseMatrix]
+    function Base.:(*)(A::MT, e::SingleEntryVector)
+        return A[:, e.i] * e.v
+    end
 end
 
 # multiplication with diagonal matrix
@@ -51,4 +51,17 @@ end
 function inner(e1::SingleEntryVector{N}, A::AbstractMatrix{N},
                e2::SingleEntryVector{N}) where {N}
     return A[e1.i, e2.i] * e1.v * e2.v
+end
+
+# norm
+function LinearAlgebra.norm(e::SingleEntryVector, p::Real=Inf)
+    return abs(e.v)
+end
+
+function append_zeros(e::SingleEntryVector, n::Int)
+    return SingleEntryVector(e.i, e.n + n, e.v)
+end
+
+function prepend_zeros(e::SingleEntryVector, n::Int)
+    return SingleEntryVector(e.i + n, e.n + n, e.v)
 end

@@ -44,29 +44,37 @@ function set_isempty!(c::IntersectionCache, isempty::Bool)
 end
 
 """
-    Intersection{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
+    Intersection{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
 
-Type that represents the intersection of two convex sets.
+Type that represents the intersection of two sets.
 
 ### Fields
 
-- `X`     -- convex set
-- `Y`     -- convex set
+- `X`     -- set
+- `Y`     -- set
 - `cache` -- internal cache for avoiding recomputation; see
              [`IntersectionCache`](@ref)
 
+### Notes
+
+If the arguments of the lazy intersection are half-spaces, the set is simplified
+to a polyhedron in constraint representation (`HPolyhedron`).
+
+The intersection preserves convexity: if the set arguments are convex, then
+their intersection is convex as well.
+
 ### Examples
 
-Create an expression, ``Z``, which lazily represents the intersection of two
+Create an expression, ``Z``, that lazily represents the intersection of two
 squares ``X`` and ``Y``:
 
 ```jldoctest lazy_intersection
-julia> X, Y = BallInf([0,0.], 0.5), BallInf([1,0.], 0.75);
+julia> X, Y = BallInf([0.0, 0.0], 0.5), BallInf([1.0, 0.0], 0.75);
 
 julia> Z = X ∩ Y;
 
 julia> typeof(Z)
-Intersection{Float64,BallInf{Float64,Array{Float64,1}},BallInf{Float64,Array{Float64,1}}}
+Intersection{Float64, BallInf{Float64, Vector{Float64}}, BallInf{Float64, Vector{Float64}}}
 
 julia> dim(Z)
 2
@@ -84,21 +92,18 @@ with the lowercase `intersection` function:
 
 ```jldoctest lazy_intersection
 julia> W = intersection(X, Y)
-Hyperrectangle{Float64,Array{Float64,1},Array{Float64,1}}([0.375, 0.0], [0.125, 0.5])
+Hyperrectangle{Float64, Vector{Float64}, Vector{Float64}}([0.375, 0.0], [0.125, 0.5])
 ```
 """
-struct Intersection{N<:Real, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
+struct Intersection{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     X::S1
     Y::S2
     cache::IntersectionCache
 
     # default constructor with dimension check
-    function Intersection(X::S1, Y::S2;
-                          cache::IntersectionCache=IntersectionCache()
-                         ) where {N<:Real, S1<:LazySet{N}, S2<:LazySet{N}}
-        @assert dim(X) == dim(Y) "sets in an intersection must have the same " *
-            "dimension"
-        return new{N, S1, S2}(X, Y, cache)
+    function Intersection(X::LazySet{N}, Y::LazySet{N}; cache::IntersectionCache=IntersectionCache()) where {N}
+        @assert dim(X) == dim(Y) "sets in an intersection must have the same dimension"
+        return new{N, typeof(X), typeof(Y)}(X, Y, cache)
     end
 end
 
@@ -118,6 +123,11 @@ Alias for `Intersection`.
 """
 ∩(X::LazySet, Y::LazySet) = Intersection(X, Y)
 
+# --- simplifications ---
+
+Intersection(H1::HalfSpace, H2::HalfSpace) = HPolyhedron([H1, H2])
+Intersection(H::HalfSpace, P::HPolyhedron) = HPolyhedron(vcat(P.constraints, H))
+Intersection(P::HPolyhedron, H::HalfSpace) = HPolyhedron(vcat(P.constraints, H))
 
 # --- cache propagation functions ---
 
@@ -129,7 +139,7 @@ Ask whether the status of emptiness is known.
 
 ### Input
 
-- `cap` -- intersection of two convex sets
+- `cap` -- intersection of two sets
 
 ### Output
 
@@ -147,7 +157,7 @@ Set the status of emptiness in the cache.
 
 ### Input
 
-- `cap`     -- intersection of two convex sets
+- `cap`     -- intersection of two sets
 - `isempty` -- new status of emptiness
 """
 function set_isempty!(cap::Intersection, isempty::Bool)
@@ -155,13 +165,13 @@ function set_isempty!(cap::Intersection, isempty::Bool)
 end
 
 """
-    swap(cap::Intersection{N, S1, S2}) where {N<:Real, S1, S2}
+    swap(cap::Intersection)
 
 Return a new `Intersection` object with the arguments swapped.
 
 ### Input
 
-- `cap` -- intersection of two convex sets
+- `cap` -- intersection of two sets
 
 ### Output
 
@@ -173,7 +183,7 @@ The old cache is shared between the old and new objects.
 The advantage of using this function instead of manually swapping the arguments
 is that the cache is shared.
 """
-function swap(cap::Intersection{N, S1, S2}) where {N<:Real, S1, S2}
+function swap(cap::Intersection)
     return Intersection(cap.Y, cap.X, cache=cap.cache)
 end
 
@@ -184,70 +194,72 @@ end
 """
     dim(cap::Intersection)
 
-Return the dimension of an intersection of two convex sets.
+Return the dimension of an intersection of two sets.
 
 ### Input
 
-- `cap` -- intersection of two convex sets
+- `cap` -- intersection of two sets
 
 ### Output
 
-The ambient dimension of the intersection of two convex sets.
+The ambient dimension of the intersection of two sets.
 """
 function dim(cap::Intersection)
     return dim(cap.X)
 end
 
 """
-    σ(d::AbstractVector{N}, cap::Intersection{N}) where {N<:Real}
+    σ(d::AbstractVector, cap::Intersection)
 
-Return the support vector of an intersection of two convex sets in a given
+Return the support vector of an intersection of two sets in a given
 direction.
 
 ### Input
 
 - `d`   -- direction
-- `cap` -- intersection of two convex sets
+- `cap` -- intersection of two sets
 
 ### Output
 
 The support vector in the given direction.
 """
-function σ(d::AbstractVector{N}, cap::Intersection{N}) where {N<:Real}
-    error("the exact support vector of an intersection is not implemented")
+function σ(d::AbstractVector, cap::Intersection)
+    X = concretize(cap)
+    return σ(d, X)
 end
 
 """
-    ρ(d::AbstractVector{N}, cap::Intersection{N}) where {N<:Real}
+    ρ(d::AbstractVector, cap::Intersection)
 
-Return an upper bound on the support function of the intersection of two convex
-sets in a given direction.
+Return an upper bound on the support function of the intersection of two sets in
+a given direction.
 
 ### Input
 
 - `d`    -- direction
-- `cap`  -- intersection of two convex sets
+- `cap`  -- intersection of two sets
 
 ### Output
 
-An uper bound on the support function in the given direction.
+An upper bound on the support function in the given direction.
 
 ### Algorithm
 
 The support function of an intersection of ``X`` and ``Y`` is upper bounded by
 the minimum of the support functions of ``X`` and ``Y``.
 """
-function ρ(d::AbstractVector{N}, cap::Intersection{N}) where {N<:Real}
+function ρ(d::AbstractVector, cap::Intersection)
     return min(ρ(d, cap.X), ρ(d, cap.Y))
 end
 
-function ρ_helper(d::AbstractVector{N},
-                  cap::Intersection{N,
-                                    <:LazySet{N},
+function ρ_helper(d::AbstractVector{M},
+                  cap::Intersection{N, S1,
                                     <:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}},
                   algorithm::String;
-                  kwargs...) where {N<:Real}
-    @assert isbounded(cap.X) "the first set in the intersection must be bounded"
+                  kwargs...) where {M, N, S1<:LazySet{N}}
+    if !isbounded(cap.X)
+        raise(ArgumentError("the first set in the intersection must be bounded"))
+    end
     X = cap.X # compact set
     H = cap.Y # halfspace or hyperplane or line
 
@@ -257,7 +269,8 @@ function ρ_helper(d::AbstractVector{N},
     end
 
     if !use_precise_ρ(cap) || algorithm == "simple"
-        return invoke(ρ, Tuple{typeof(d), Intersection{N}}, d, cap)
+        NN = promote_type(N, M)
+        return invoke(ρ, Tuple{typeof(d), Intersection{NN}}, d, cap)
     elseif algorithm == "line_search"
         require(:Optim; fun_name="ρ", explanation="(algorithm $algorithm)")
         (s, _) = _line_search(d, X, H; kwargs...)
@@ -267,18 +280,18 @@ function ρ_helper(d::AbstractVector{N},
             "with a $(typeof(H)); it only works with hyperplanes"
         return _projection(d, X, H; kwargs...)
     else
-        error("algorithm $(algorithm) unknown")
+        error("algorithm $algorithm unknown")
     end
 end
 
 """
-    use_precise_ρ(cap::Intersection{N}) where {N<:Real}
+    use_precise_ρ(cap::Intersection)
 
 Determine whether a precise algorithm for computing ``ρ`` shall be applied.
 
 ### Input
 
-- `cap` -- intersection of two convex sets
+- `cap` -- intersection of two sets
 
 ### Output
 
@@ -293,17 +306,15 @@ returned.
 
 This function can be overwritten by the user to control the policy.
 """
-function use_precise_ρ(cap::Intersection{N}) where {N<:Real}
+function use_precise_ρ(cap::Intersection)
     return true
 end
 
 """
-    ρ(d::AbstractVector{N},
+    ρ(d::AbstractVector,
       cap::Intersection{N, S1, S2};
-      [algorithm]::String="line_search",
-      [kwargs...]) where {N<:Real,
-                          S1<:LazySet{N},
-                          S2<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}}
+      algorithm::String="line_search",
+      kwargs...) where {N, S1<:LazySet{N}, S2<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}}
 
 Return the support function of the intersection of a compact set and a
 half-space/hyperplane/line in a given direction.
@@ -359,28 +370,24 @@ For additional information we refer to:
 - [T. Rockafellar, R. Wets.
   Variational Analysis](https://www.springer.com/us/book/9783540627722).
 """
-function ρ(d::AbstractVector{N},
+function ρ(d::AbstractVector,
            cap::Intersection{N, S1, S2};
            algorithm::String="line_search",
-           kwargs...) where {N<:Real,
-                             S1<:LazySet{N},
-                             S2<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}}
+           kwargs...) where {N, S1<:LazySet{N}, S2<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}}
     return ρ_helper(d, cap, algorithm; kwargs...)
 end
 
 # symmetric method
-function ρ(d::AbstractVector{N},
+function ρ(d::AbstractVector,
            cap::Intersection{N, S1, S2};
            algorithm::String="line_search",
-           kwargs...) where {N<:Real,
-                             S1<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}},
-                             S2<:LazySet{N}}
+           kwargs...) where {N, S1<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}, S2<:LazySet{N}}
     return ρ_helper(d, swap(cap), algorithm; kwargs...)
 end
 
 """
-    ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2}; kwargs...)
-        where {N<:Real, S1<:LazySet{N}, S2<:AbstractPolyhedron{N}}
+    ρ(d::AbstractVector, cap::Intersection{N, S1, S2};
+      kwargs...) where {N, S1<:LazySet{N}, S2<:AbstractPolyhedron{N}}
 
 Return an upper bound on the support function of the intersection between a
 compact set and a polyhedron along a given direction.
@@ -410,25 +417,25 @@ Functions](https://www.sciencedirect.com/science/article/pii/S1474667015371809).
 
 This method relies on the `constraints_list` of the polyhedron.
 """
-function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2}; kwargs...
-          ) where {N<:Real, S1<:LazySet{N}, S2<:AbstractPolyhedron{N}}
+function ρ(d::AbstractVector, cap::Intersection{N, S1, S2};
+           kwargs...) where {N, S1<:LazySet{N}, S2<:AbstractPolyhedron{N}}
     return ρ_helper(d, cap; kwargs...)
 end
 
 # symmetric method
-function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2}; kwargs...
-          ) where {N<:Real, S1<:AbstractPolyhedron{N}, S2<:LazySet{N}}
+function ρ(d::AbstractVector, cap::Intersection{N, S1, S2}; kwargs...
+          ) where {N, S1<:AbstractPolyhedron{N}, S2<:LazySet{N}}
     return ρ_helper(d, swap(cap); kwargs...)
 end
 
 # disambiguation
-function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2}; kwargs...
-          ) where {N<:Real, S1<:AbstractPolytope{N}, S2<:AbstractPolyhedron{N}}
+function ρ(d::AbstractVector, cap::Intersection{N, S1, S2}; kwargs...
+          ) where {N, S1<:AbstractPolytope{N}, S2<:AbstractPolyhedron{N}}
     return ρ_helper(d, cap; kwargs...)
 end
 
-function ρ_helper(d::AbstractVector{N}, cap::Intersection{N, S1, S2}; kwargs...
-                 ) where {N<:Real, S1<:LazySet{N}, S2<:AbstractPolyhedron{N}}
+function ρ_helper(d::AbstractVector, cap::Intersection{N, S1, S2}; kwargs...
+                 ) where {N, S1<:LazySet{N}, S2<:AbstractPolyhedron{N}}
     if !use_precise_ρ(cap)
         use_simple_method = true
     else
@@ -449,7 +456,7 @@ function ρ_helper(d::AbstractVector{N}, cap::Intersection{N, S1, S2}; kwargs...
 end
 
 """
-    ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2}; kwargs...
+    ρ(d::AbstractVector, cap::Intersection{N, S1, S2}; kwargs...
      ) where {N<:Real, S1<:AbstractPolyhedron{N}, S2<:AbstractPolyhedron{N}}
 
 Return an upper bound on the support function of the intersection between two
@@ -471,46 +478,47 @@ The support function for the given direction.
 We combine the constraints of the two polyhedra to a new `HPolyhedron`, for
 which we then evaluate the support function.
 """
-function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2}; kwargs...
-          ) where {N<:Real, S1<:AbstractPolyhedron{N}, S2<:AbstractPolyhedron{N}}
+function ρ(d::AbstractVector, cap::Intersection{N, S1, S2}; kwargs...
+          ) where {N, S1<:AbstractPolyhedron{N}, S2<:AbstractPolyhedron{N}}
     return ρ(d, HPolyhedron([constraints_list(cap.X); constraints_list(cap.Y)]))
 end
 
 # disambiguation
-function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2};
+function ρ(d::AbstractVector, cap::Intersection{N, S1, S2};
            algorithm::String="line_search", kwargs...
-          ) where {N<:Real, S1<:AbstractPolytope{N},
+          ) where {N, S1<:AbstractPolytope{N},
                    S2<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}}
     return ρ_helper(d, cap, algorithm; kwargs...)
 end
 
 # symmetric method
-function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2};
+function ρ(d::AbstractVector, cap::Intersection{N, S1, S2};
            algorithm::String="line_search", kwargs...
-          ) where {N<:Real, S1<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}},
+          ) where {N, S1<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}},
                    S2<:AbstractPolytope{N}}
     return ρ_helper(d, swap(cap), algorithm; kwargs...)
 end
 
 # disambiguation
-function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2};
+function ρ(d::AbstractVector, cap::Intersection{N, S1, S2};
            algorithm::String="line_search", kwargs...
-          ) where {N<:Real, S1<:AbstractPolyhedron{N},
+          ) where {N, S1<:AbstractPolyhedron{N},
                    S2<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}}
     return ρ(d, HPolyhedron([constraints_list(cap.X); constraints_list(cap.Y)]))
 end
 
 # symmetric method
-function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2};
+function ρ(d::AbstractVector, cap::Intersection{N, S1, S2};
            algorithm::String="line_search", kwargs...
-          ) where {N<:Real, S1<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}},
+          ) where {N, S1<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}},
                    S2<:AbstractPolyhedron{N}}
     return ρ(d, HPolyhedron([constraints_list(cap.X); constraints_list(cap.Y)]))
 end
 
 # disambiguation
-function ρ(d::AbstractVector{N}, cap::Intersection{N, S1, S2}
-          ) where {N<:Real, S1<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}},
+function ρ(d::AbstractVector, cap::Intersection{N, S1, S2};
+           algorithm::String="line_search", kwargs...
+          ) where {N, S1<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}},
                    S2<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}}
     return ρ(d, HPolyhedron([constraints_list(cap.X); constraints_list(cap.Y)]))
 end
@@ -518,11 +526,11 @@ end
 """
     isbounded(cap::Intersection)
 
-Determine whether an intersection of two convex sets is bounded.
+Determine whether an intersection of two sets is bounded.
 
 ### Input
 
-- `cap` -- intersection of two convex sets
+- `cap` -- intersection of two sets
 
 ### Output
 
@@ -531,7 +539,7 @@ Determine whether an intersection of two convex sets is bounded.
 ### Algorithm
 
 We first check if any of the wrapped sets is bounded.
-Otherwise, we check boundedness via [`_isbounded_unit_dimensions`](@ref).
+Otherwise, we check boundedness via [`LazySets._isbounded_unit_dimensions`](@ref).
 """
 function isbounded(cap::Intersection)
     if isbounded(cap.X) || isbounded(cap.Y)
@@ -541,25 +549,25 @@ function isbounded(cap::Intersection)
 end
 
 """
-    ∈(x::AbstractVector{N}, cap::Intersection{N}) where {N<:Real}
+    ∈(x::AbstractVector, cap::Intersection)
 
-Check whether a given point is contained in an intersection of two convex sets.
+Check whether a given point is contained in an intersection of two sets.
 
 ### Input
 
 - `x`   -- point/vector
-- `cap` -- intersection of two convex sets
+- `cap` -- intersection of two sets
 
 ### Output
 
 `true` iff ``x ∈ cap``.
 """
-function ∈(x::AbstractVector{N}, cap::Intersection{N}) where {N<:Real}
+function ∈(x::AbstractVector, cap::Intersection)
     return (x ∈ cap.X) && (x ∈ cap.Y)
 end
 
 """
-    constraints_list(cap::Intersection{N}) where {N<:Real}
+    constraints_list(cap::Intersection)
 
 Return the list of constraints of an intersection of two (polyhedral) sets.
 
@@ -585,10 +593,37 @@ This function ignores the boolean output from the in-place `remove_redundant_con
 which may inform the user that the constraints are infeasible. In that case, the
 list of constraints at the moment when the infeasibility was detected is returned.
 """
-function constraints_list(cap::Intersection{N}) where {N<:Real}
+function constraints_list(cap::Intersection)
     constraints = [constraints_list(cap.X); constraints_list(cap.Y)]
     remove_redundant_constraints!(constraints)
     return constraints
+end
+
+"""
+    vertices_list(cap::Intersection)
+
+Return the list of vertices of a lazy intersection of two sets.
+
+### Input
+
+- `cap` -- intersection of two (polyhedral) sets
+
+### Output
+
+A list containing the vertices of the lazy intersection of two sets.
+
+### Notes
+
+We assume that the underlying sets are polyhedral and that the intersection is
+bounded.
+
+### Algorithm
+
+We compute the concrete intersection using `intersection` and then take the
+vertices of that representation.
+"""
+function vertices_list(cap::Intersection)
+    return vertices_list(intersection(cap.X, cap.Y))
 end
 
 
@@ -598,11 +633,11 @@ end
 """
     isempty(cap::Intersection)
 
-Return if the intersection is empty or not.
+Return if the intersection of two sets is empty or not.
 
 ### Input
 
-- `cap` -- intersection of two convex sets
+- `cap` -- intersection of two sets
 
 ### Output
 
@@ -649,6 +684,9 @@ function plot_recipe(cap::Intersection{N}, ε::N=zero(N),
     if isempty(cap)
         return plot_recipe(EmptySet{N}(dim(cap)), ε)
     elseif dim(cap) == 1
+        if !isconvextype(cap)
+            raise(ArgumentError("cannot plot a one-dimensional $(typeof(cap))"))
+        end
         return plot_recipe(convert(Interval, cap), ε)
     else
         # construct polygon approximation using polar directions
@@ -662,7 +700,7 @@ end
 # ==========================================================
 
 """
-    linear_map(M::AbstractMatrix{N}, cap::Intersection{N}) where {N}
+    linear_map(M::AbstractMatrix, cap::Intersection)
 
 Return the concrete linear map of a lazy intersection.
 
@@ -675,12 +713,11 @@ Return the concrete linear map of a lazy intersection.
 
 The set obtained by applying the given linear map to the lazy intersection.
 
-### Notes
+### Algorithm
 
-This function relies on computing `cap` concretely (i.e. as a set representation),
-and then applying the linear map.
+This method computes the concrete intersection.
 """
-function linear_map(M::AbstractMatrix{N}, cap::Intersection{N}) where {N}
+function linear_map(M::AbstractMatrix, cap::Intersection)
     return linear_map(M, intersection(cap.X, cap.Y))
 end
 
@@ -746,7 +783,7 @@ julia> v[1]
 
 We can specify the upper bound in Brent's method:
 
-```julia _line_search
+```jldoctest _line_search
 julia> v = _line_search([1.0, 0.0], X, H, upper=1e3);
 
 julia> v[1]
@@ -755,15 +792,19 @@ julia> v[1]
 
 Instead of Brent's method we can use the Golden Section method:
 
-```julia _line_search
+```jldoctest _line_search
 julia> v = _line_search([1.0, 0.0], X, H, upper=1e3, method=GoldenSection());
 
 julia> v[1]
 1.0
 ```
 """
-function _line_search(ℓ, X, H::Union{<:HalfSpace, <:Hyperplane, <:Line2D};
-                      kwargs...)
+function _line_search(ℓ, X::S, H::Union{<:HalfSpace, <:Hyperplane, <:Line2D};
+                      kwargs...) where {S<:LazySet}
+    if !isconvextype(S)
+        raise(ArgumentError("the first set in the intersection must be convex"))
+    end
+
     options = Dict(kwargs)
 
     # Initialization
@@ -855,11 +896,14 @@ if it is not given, the default support function algorithm is used (e.g. `"line_
 You can still pass additional arguments to the `"line_search"` backend through the
 `kwargs`.
 """
-function _projection(ℓ, X, H::Union{Hyperplane{N}, Line2D{N}};
+function _projection(ℓ, X::S, H::Union{Hyperplane{N}, Line2D{N}};
                      lazy_linear_map=false,
                      lazy_2d_intersection=true,
                      algorithm_2d_intersection=nothing,
-                     kwargs...) where {N}
+                     kwargs...) where {N, S<:LazySet}
+    if !isconvextype(S)
+        raise(ArgumentError("the first set in the intersection must be convex"))
+    end
 
     n = H.a                  # normal vector to the hyperplane
     γ = H.b                  # displacement of the hyperplane
@@ -883,27 +927,33 @@ end
 """
     get_constrained_lowdimset(cpa::CartesianProductArray{N, S},
                               P::AbstractPolyhedron{N}
-                             ) where {N<:Real, S<:LazySet{N}}
+                              ) where {N, S<:LazySet{N}}
 
-Preprocess step for intersection between Cartesian product array and polyhedron.
-Returns low-dimensional a `CartesianProductArray` in the constrained dimensions
-of the original cpa,
-constrained variables and variables in corresponding blocks, original block
-structure of low-dimensional set and list of constrained blocks.
+Preprocessing step for the intersection between a Cartesian product array and a
+polyhedron.
 
 ### Input
 
-- `cpa` -- Cartesian product array of convex sets
+- `cpa` -- Cartesian product array of sets
 - `P`   -- polyhedron
 
 ### Output
 
 A tuple of low-dimensional set, list of constrained dimensions, original block
 structure of low-dimensional set and corresponding blocks indices.
+
+### Notes
+
+This method returns a four-tuple with the following entries:
+1. a low-dimensional `CartesianProductArray` in the constrained dimensions of
+the original `cpa`
+2. the constrained variables and variables in corresponding blocks
+3. the original block structure of the low-dimensional sets
+4. the list of the constrained blocks.
 """
 function get_constrained_lowdimset(cpa::CartesianProductArray{N, S},
                                    P::AbstractPolyhedron{N}
-                                  ) where {N<:Real, S<:LazySet{N}}
+                                  ) where {N, S<:LazySet{N}}
 
     if isbounded(P)
         blocks, non_empty_length = block_to_dimension_indices(cpa)

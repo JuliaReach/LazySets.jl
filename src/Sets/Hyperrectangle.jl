@@ -3,7 +3,7 @@ import Base.rand
 export Hyperrectangle
 
 """
-    Hyperrectangle{N<:Real, VNC<:AbstractVector{N}, VNR<:AbstractVector{N}
+    Hyperrectangle{N, VNC<:AbstractVector{N}, VNR<:AbstractVector{N}
                   } <: AbstractHyperrectangle{N}
 
 Type that represents a hyperrectangle.
@@ -29,14 +29,14 @@ julia> c = [-1.0, 1.0];
 julia> r = [2.0, 1.0];
 
 julia> H = Hyperrectangle(c, r)
-Hyperrectangle{Float64,Array{Float64,1},Array{Float64,1}}([-1.0, 1.0], [2.0, 1.0])
+Hyperrectangle{Float64, Vector{Float64}, Vector{Float64}}([-1.0, 1.0], [2.0, 1.0])
 ```
 
 Which creates the hyperrectangle with vertices:
 
 ```jldoctest hyperrectangle_constructor
 julia> vertices_list(H)
-4-element Array{Array{Float64,1},1}:
+4-element Vector{Vector{Float64}}:
  [1.0, 2.0]
  [-3.0, 2.0]
  [1.0, 0.0]
@@ -49,12 +49,12 @@ enclosing ball of minimal volume):
 
 ```jldoctest hyperrectangle_constructor
 julia> center(H)
-2-element Array{Float64,1}:
+2-element Vector{Float64}:
  -1.0
   1.0
 
 julia> radius_hyperrectangle(H)
-2-element Array{Float64,1}:
+2-element Vector{Float64}:
  2.0
  1.0
 ```
@@ -69,7 +69,7 @@ julia> l = [-3.0, 0.0];
 julia> h = [1.0, 2.0];
 
 julia> Hyperrectangle(low=l, high=h)
-Hyperrectangle{Float64,Array{Float64,1},Array{Float64,1}}([-1.0, 1.0], [2.0, 1.0])
+Hyperrectangle{Float64, Vector{Float64}, Vector{Float64}}([-1.0, 1.0], [2.0, 1.0])
 ```
 
 By default, the constructor checks that that radius of the hyperrecatangle
@@ -77,14 +77,14 @@ is nonnegative. To supress this check, use the `check_bounds` optional flag
 in the constructor. Note that if `check_bounds` is set to `false`, the behavior
 of a set with contradictory bounds is undefined.
 """
-struct Hyperrectangle{N<:Real, VNC<:AbstractVector{N}, VNR<:AbstractVector{N}
+struct Hyperrectangle{N, VNC<:AbstractVector{N}, VNR<:AbstractVector{N}
                      } <: AbstractHyperrectangle{N}
     center::VNC
     radius::VNR
 
     # default constructor with length comparison & domain constraint for radius
     function Hyperrectangle(center::VNC, radius::VNR; check_bounds::Bool=true) where
-            {N<:Real, VNC<:AbstractVector{N}, VNR<:AbstractVector{N}}
+            {N, VNC<:AbstractVector{N}, VNR<:AbstractVector{N}}
         @assert length(center) == length(radius) "length of center and " *
             "radius must be equal"
         if check_bounds
@@ -98,9 +98,9 @@ isoperationtype(::Type{<:Hyperrectangle}) = false
 isconvextype(::Type{<:Hyperrectangle}) = true
 
 # constructor from keyword arguments (lower and upper bounds)
-function Hyperrectangle(; high::AbstractVector{N},
-                          low::AbstractVector{N},
-                          check_bounds::Bool=true) where {N<:Real}
+function Hyperrectangle(; high::AbstractVector,
+                          low::AbstractVector,
+                          check_bounds::Bool=true)
     # compute center and radius from high and low vectors
     center = (high .+ low) ./ 2
     radius = high .- center
@@ -112,7 +112,7 @@ end
 
 
 """
-    radius_hyperrectangle(H::Hyperrectangle{N}, i::Int) where {N<:Real}
+    radius_hyperrectangle(H::Hyperrectangle, i::Int)
 
 Return the box radius of a hyperrectangle in a given dimension.
 
@@ -125,12 +125,12 @@ Return the box radius of a hyperrectangle in a given dimension.
 
 The radius in the given dimension.
 """
-function radius_hyperrectangle(H::Hyperrectangle{N}, i::Int) where {N<:Real}
+function radius_hyperrectangle(H::Hyperrectangle, i::Int)
     return H.radius[i]
 end
 
 """
-    radius_hyperrectangle(H::Hyperrectangle{N}) where {N<:Real}
+    radius_hyperrectangle(H::Hyperrectangle)
 
 Return the box radius of a hyperrectangle in every dimension.
 
@@ -142,16 +142,49 @@ Return the box radius of a hyperrectangle in every dimension.
 
 The box radius of the hyperrectangle.
 """
-function radius_hyperrectangle(H::Hyperrectangle{N}) where {N<:Real}
+function radius_hyperrectangle(H::Hyperrectangle)
     return H.radius
 end
 
+function load_genmat_hyperrectangle_static()
+return quote
+    function genmat(H::Hyperrectangle{N, SVector{L, N}, SVector{L, N}}) where {L, N}
+        gens = zeros(MMatrix{L, L, N})
+        nzcol = Vector{Int}()
+        @inbounds for i in 1:L
+            r = H.radius[i]
+            if !isapproxzero(r)
+                gens[i, i] = r
+                push!(nzcol, i)
+            end
+        end
+        m = length(nzcol)
+        return SMatrix{L, m}(view(gens, :, nzcol))
+    end
+
+    # this function is type-stable, though it doesn't prune the generators according
+    # to flat dimensions of H
+    function _genmat_static(H::Hyperrectangle{N, SVector{L, N}, SVector{L, N}}) where {L, N}
+        gens = zeros(MMatrix{L, L, N})
+        @inbounds for i in 1:L
+            r = H.radius[i]
+            gens[i, i] = r
+        end
+        return SMatrix{L, L}(gens)
+    end
+end
+end
+
+function genmat(H::Hyperrectangle{N, SparseVector{N, T}, SparseVector{N, T}}) where {N, T}
+    n = dim(H)
+    return sparse(1:n, 1:n, H.radius, n, n)
+end
 
 # --- AbstractCentrallySymmetric interface functions ---
 
 
 """
-    center(H::Hyperrectangle{N}) where {N<:Real}
+    center(H::Hyperrectangle)
 
 Return the center of a hyperrectangle.
 
@@ -163,7 +196,7 @@ Return the center of a hyperrectangle.
 
 The center of the hyperrectangle.
 """
-function center(H::Hyperrectangle{N}) where {N<:Real}
+function center(H::Hyperrectangle)
     return H.center
 end
 
@@ -206,8 +239,7 @@ function rand(::Type{Hyperrectangle};
 end
 
 """
-    translate(H::Hyperrectangle{N}, v::AbstractVector{N}; share::Bool=false
-             ) where {N<:Real}
+    translate(H::Hyperrectangle, v::AbstractVector; [share]::Bool=false)
 
 Translate (i.e., shift) a hyperrectangle by a given vector.
 
@@ -230,8 +262,7 @@ The radius vector is shared with the original hyperrectangle if `share == true`.
 
 We add the vector to the center of the hyperrectangle.
 """
-function translate(H::Hyperrectangle{N}, v::AbstractVector{N}; share::Bool=false
-                  ) where {N<:Real}
+function translate(H::Hyperrectangle, v::AbstractVector; share::Bool=false)
     @assert length(v) == dim(H) "cannot translate a $(dim(H))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     c = center(H) + v
@@ -240,11 +271,17 @@ function translate(H::Hyperrectangle{N}, v::AbstractVector{N}; share::Bool=false
 end
 
 # Particular dispatch for SingleEntryVector
-function ρ(d::SingleEntryVector{N}, H::Hyperrectangle{N}) where {N<:Real}
+function ρ(d::SingleEntryVector, H::Hyperrectangle)
     return _ρ_sev_hyperrectangle(d, H)
 end
 
 # Particular dispatch for SingleEntryVector
-function σ(d::SingleEntryVector{N}, H::Hyperrectangle{N}) where {N<:Real}
+function σ(d::SingleEntryVector, H::Hyperrectangle)
     return _σ_sev_hyperrectangle(d, H)
+end
+
+function permute(H::Hyperrectangle, p::AbstractVector{Int})
+    c = center(H)[p]
+    r = radius_hyperrectangle(H)[p]
+    return Hyperrectangle(c, r)
 end

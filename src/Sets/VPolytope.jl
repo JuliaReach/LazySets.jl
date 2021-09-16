@@ -3,16 +3,13 @@ import Base: rand,
 
 export VPolytope,
        vertices_list,
-       convex_hull,
-       cartesian_product,
        linear_map,
        remove_redundant_vertices,
-       minkowski_sum,
        tohrep,
        tovrep
 
 """
-    VPolytope{N<:Real, VN<:AbstractVector{N}} <: AbstractPolytope{N}
+    VPolytope{N, VN<:AbstractVector{N}} <: AbstractPolytope{N}
 
 Type that represents a convex polytope in V-representation.
 
@@ -29,7 +26,7 @@ vertices. For example, we can build the tetrahedron:
 julia> P = VPolytope([0 0 0; 1 0 0; 0 1 0; 0 0 1]);
 
 julia> P.vertices
-3-element Array{Array{Int64,1},1}:
+3-element Vector{Vector{Int64}}:
  [0, 1, 0, 0]
  [0, 0, 1, 0]
  [0, 0, 0, 1]
@@ -40,7 +37,7 @@ where each *column* represents a vertex:
 
 ```jldoctest
 julia> M = [0 0 0; 1 0 0; 0 1 0; 0 0 1]'
-3×4 LinearAlgebra.Adjoint{Int64,Array{Int64,2}}:
+3×4 adjoint(::Matrix{Int64}) with eltype Int64:
  0  1  0  0
  0  0  1  0
  0  0  0  1
@@ -48,14 +45,14 @@ julia> M = [0 0 0; 1 0 0; 0 1 0; 0 0 1]'
 julia> P = VPolytope(M);
 
 julia> P.vertices
-4-element Array{Array{Int64,1},1}:
+4-element Vector{Vector{Int64}}:
  [0, 0, 0]
  [1, 0, 0]
  [0, 1, 0]
  [0, 0, 1]
 ```
 """
-struct VPolytope{N<:Real, VN<:AbstractVector{N}} <: AbstractPolytope{N}
+struct VPolytope{N, VN<:AbstractVector{N}} <: AbstractPolytope{N}
     vertices::Vector{VN}
 end
 
@@ -63,7 +60,7 @@ isoperationtype(::Type{<:VPolytope}) = false
 isconvextype(::Type{<:VPolytope}) = true
 
 # constructor for a VPolytope with empty vertices list
-VPolytope{N}() where {N<:Real} = VPolytope(Vector{Vector{N}}())
+VPolytope{N}() where {N} = VPolytope(Vector{Vector{N}}())
 
 # constructor for a VPolytope with no vertices of type Float64
 VPolytope() = VPolytope{Float64}()
@@ -104,8 +101,8 @@ If it is empty, the result is ``-1``.
 ```jldoctest
 julia> v = VPolytope();
 
-julia> v.vertices
-0-element Array{Array{Float64,1},1}
+julia> isempty(v.vertices)
+true
 
 julia> dim(v)
 -1
@@ -113,7 +110,7 @@ julia> dim(v)
 julia> v = VPolytope([ones(3)]);
 
 julia> v.vertices
-1-element Array{Array{Float64,1},1}:
+1-element Vector{Vector{Float64}}:
  [1.0, 1.0, 1.0]
 
 julia> dim(v) == 3
@@ -125,7 +122,7 @@ function dim(P::VPolytope)
 end
 
 """
-    σ(d::AbstractVector{N}, P::VPolytope{N}) where {N<:Real}
+    σ(d::AbstractVector, P::VPolytope)
 
 Return the support vector of a polytope in V-representation in a given
 direction.
@@ -145,7 +142,7 @@ A support vector maximizes the support function.
 For a polytope, the support function is always maximized in some vertex.
 Hence it is sufficient to check all vertices.
 """
-function σ(d::AbstractVector{N}, P::VPolytope{N}) where {N<:Real}
+function σ(d::AbstractVector, P::VPolytope)
     # base cases
     m = length(P.vertices)
     if m == 0
@@ -155,6 +152,7 @@ function σ(d::AbstractVector{N}, P::VPolytope{N}) where {N<:Real}
     end
 
     # evaluate support function in every vertex
+    N = promote_type(eltype(d), eltype(P))
     max_ρ = N(-Inf)
     max_idx = 0
     for (i, vi) in enumerate(P.vertices)
@@ -169,7 +167,7 @@ end
 
 """
     ∈(x::AbstractVector{N}, P::VPolytope{N};
-      solver=default_lp_solver(N)) where {N<:Real}
+      solver=default_lp_solver(N)) where {N}
 
 Check whether a given point is contained in a polytope in vertex representation.
 
@@ -200,7 +198,7 @@ Then we solve the following ``m``-dimensional linear program.
 ```
 """
 function ∈(x::AbstractVector{N}, P::VPolytope{N};
-           solver=default_lp_solver(N)) where {N<:Real}
+           solver=default_lp_solver(N)) where {N}
     vertices = P.vertices
     m = length(vertices)
 
@@ -286,7 +284,7 @@ function rand(::Type{VPolytope};
 end
 
 """
-    linear_map(M::AbstractMatrix{N}, P::VPolytope{N}) where {N<:Real}
+    linear_map(M::AbstractMatrix, P::VPolytope; [apply_convex_hull]::Bool=false)
 
 Concrete linear map of a polytope in vertex representation.
 
@@ -294,6 +292,8 @@ Concrete linear map of a polytope in vertex representation.
 
 - `M` -- matrix
 - `P` -- polytope in vertex representation
+- `apply_convex_hull` -- (optional, default: `false`) flag for applying a convex
+                         hull to eliminate redundant vertices
 
 ### Output
 
@@ -304,17 +304,25 @@ A polytope in vertex representation.
 The linear map ``M`` is applied to each vertex of the given set ``P``, obtaining
 a polytope in V-representation. The output type is again a `VPolytope`.
 """
-function linear_map(M::AbstractMatrix{N}, P::VPolytope{N}) where {N<:Real}
-    @assert dim(P) == size(M, 2) "a linear map of size $(size(M)) cannot be applied to a set of dimension $(dim(P))"
-    return _linear_map_vrep(M, P)
+function linear_map(M::AbstractMatrix, P::VPolytope; apply_convex_hull::Bool=false)
+    @assert dim(P) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
+        "applied to a set of dimension $(dim(P))"
+
+    return _linear_map_vrep(M, P; apply_convex_hull=apply_convex_hull)
 end
 
-@inline function _linear_map_vrep(M::AbstractMatrix{N}, P::VPolytope{N}) where {N<:Real}
-    return broadcast(v -> M * v, vertices_list(P)) |> VPolytope
+@inline function _linear_map_vrep(M::AbstractMatrix, P::VPolytope,
+                                  algo::LinearMapVRep=LinearMapVRep(nothing);
+                                  apply_convex_hull::Bool=false)
+    vlist = broadcast(v -> M * v, vertices_list(P))
+    if apply_convex_hull
+        convex_hull!(vlist)
+    end
+    return VPolytope(vlist)
 end
 
 """
-    translate(P::VPolytope{N}, v::AbstractVector{N}) where {N<:Real}
+    translate(P::VPolytope, v::AbstractVector)
 
 Translate (i.e., shift) a polytope in vertex representation by a given vector.
 
@@ -331,7 +339,7 @@ A translated polytope in vertex representation.
 
 We add the vector to each vertex of the polytope.
 """
-function translate(P::VPolytope{N}, v::AbstractVector{N}) where {N<:Real}
+function translate(P::VPolytope, v::AbstractVector)
     @assert length(v) == dim(P) "cannot translate a $(dim(P))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     return VPolytope([x + v for x in vertices_list(P)])
@@ -340,7 +348,7 @@ end
 # --- AbstractPolytope interface functions ---
 
 """
-    vertices_list(P::VPolytope{N}) where {N<:Real}
+    vertices_list(P::VPolytope)
 
 Return the list of vertices of a polytope in V-representation.
 
@@ -352,12 +360,12 @@ Return the list of vertices of a polytope in V-representation.
 
 List of vertices.
 """
-function vertices_list(P::VPolytope{N}) where {N<:Real}
+function vertices_list(P::VPolytope)
     return P.vertices
 end
 
 """
-    constraints_list(P::VPolytope{N}) where {N<:Real}
+    constraints_list(P::VPolytope)
 
 Return the list of constraints defining a polytope in V-representation.
 
@@ -374,75 +382,14 @@ The list of constraints of the polytope.
 First the H-representation of ``P`` is computed, then its list of constraints
 is returned.
 """
-function constraints_list(P::VPolytope{N}) where {N<:Real}
+function constraints_list(P::VPolytope)
     return constraints_list(tohrep(P))
-end
-
-"""
-    convex_hull(P1::VPolytope{N}, P2::VPolytope{N};
-                [backend]=default_polyhedra_backend(P1, N)) where {N<:Real}
-
-Compute the convex hull of the set union of two polytopes in V-representation.
-
-### Input
-
-- `P1`         -- polytope
-- `P2`         -- another polytope
-- `backend`    -- (optional, default: `nothing`) the polyhedral
-                  computations backend
-
-### Output
-
-The `VPolytope` obtained by the concrete convex hull of `P1` and `P2`.
-
-### Notes
-
-This function takes the union of the vertices of each polytope and then relies
-on a concrete convex hull algorithm. For low dimensions, a specialized implementation
-for polygons is used. For higher dimensions, `convex_hull` relies on the polyhedral
-computations backend that can be specified using the `backend` keyword argument.
-
-For performance reasons, it is suggested to use the `CDDLib.Library()` backend
-for the `convex_hull`.
-"""
-function convex_hull(P1::VPolytope{N}, P2::VPolytope{N};
-                     backend=nothing) where {N<:Real}
-    vunion = [P1.vertices; P2.vertices]
-    convex_hull!(vunion; backend=backend)
-    return VPolytope(vunion)
-end
-
-"""
-    cartesian_product(P1::VPolytope{N}, P2::VPolytope{N};
-                      [backend]=default_polyhedra_backend(P1, N)) where {N}
-
-Compute the Cartesian product of two polytopes in V-representation.
-
-### Input
-
-- `P1`      -- polytope
-- `P2`      -- another polytope
-- `backend` -- (optional, default: `default_polyhedra_backend(P1, N)`) the
-               backend for polyhedral computations; see [Polyhedra's
-               documentation](https://juliapolyhedra.github.io/) for further
-               information
-
-### Output
-
-The `VPolytope` obtained by the concrete Cartesian product of `P1` and `P2`.
-"""
-function cartesian_product(P1::VPolytope{N}, P2::VPolytope{N};
-                           backend=default_polyhedra_backend(P1, N)) where {N}
-    require(:Polyhedra; fun_name="cartesian_product")
-    Pcp = Polyhedra.vcartesianproduct(polyhedron(P1; backend=backend),
-                                      polyhedron(P2; backend=backend))
-    return VPolytope(Pcp)
 end
 
 """
     remove_redundant_vertices(P::VPolytope{N};
                               [backend]=nothing,
-                              [solver]=nothing) where {N<:Real}
+                              [solver]=nothing) where {N}
 
 Return the polytope obtained by removing the redundant vertices of the given polytope.
 
@@ -450,7 +397,7 @@ Return the polytope obtained by removing the redundant vertices of the given pol
 
 - `P`       -- polytope in vertex representation
 - `backend` -- (optional, default: `nothing`) the backend for polyhedral
-               computations; see `default_polyhedra_backend(P, N)` or
+               computations; see `default_polyhedra_backend(P)` or
                [Polyhedra's documentation](https://juliapolyhedra.github.io/)
                for further information
 - `solver`  -- (optional, default: `nothing`) the linear programming
@@ -471,10 +418,10 @@ Otherwise, the redundancy removal function of the polyhedral backend is used.
 """
 function remove_redundant_vertices(P::VPolytope{N};
                                    backend=nothing,
-                                   solver=nothing) where {N<:Real}
+                                   solver=nothing) where {N}
     require(:Polyhedra; fun_name="remove_redundant_vertices")
     if backend == nothing
-        backend = default_polyhedra_backend(P, N)
+        backend = default_polyhedra_backend(P)
     end
     Q = polyhedron(P; backend=backend)
     if Polyhedra.supportssolver(typeof(Q))
@@ -491,14 +438,14 @@ end
 
 """
     tohrep(P::VPolytope{N};
-           [backend]=default_polyhedra_backend(P, N)) where {N<:Real}
+           [backend]=default_polyhedra_backend(P)) where {N}
 
 Transform a polytope in V-representation to a polytope in H-representation.
 
 ### Input
 
 - `P`       -- polytope in vertex representation
-- `backend` -- (optional, default: `default_polyhedra_backend(P, N)`) the
+- `backend` -- (optional, default: `default_polyhedra_backend(P)`) the
                backend for polyhedral computations; see [Polyhedra's
                documentation](https://juliapolyhedra.github.io/) for further
                information
@@ -514,7 +461,7 @@ The conversion may not preserve the numeric type (e.g., with `N == Float32`)
 depending on the backend.
 """
 function tohrep(P::VPolytope{N};
-                backend=default_polyhedra_backend(P, N)) where {N<:Real}
+                backend=default_polyhedra_backend(P)) where {N}
     vl = P.vertices
     if isempty(vl)
         return EmptySet{N}(dim(P))
@@ -541,60 +488,6 @@ function tovrep(P::VPolytope)
     return P
 end
 
-"""
-    minkowski_sum(P1::VPolytope{N}, P2::VPolytope{N};
-                  [apply_convex_hull]=true,
-                  [backend]=nothing,
-                  [solver]=nothing) where {N<:Real}
-
-Compute the Minkowski sum between two polytopes in vertex representation.
-
-### Input
-
-- `P1`                -- polytope
-- `P2`                -- another polytope
-- `apply_convex_hull` -- (optional, default: `true`) if `true`, post-process the
-                         pairwise sums using a convex hull algorithm
-- `backend`           -- (optional, default: `nothing`) the backend for
-                         polyhedral computations used to post-process with a
-                         convex hull; see `default_polyhedra_backend(P1, N)`
-- `solver`            -- (optional, default: `nothing`) the backend used to
-                         solve the linear program; see
-                         `default_lp_solver_polyhedra(N)`
-
-### Output
-
-A new polytope in vertex representation whose vertices are the convex hull of
-the sum of all possible sums of vertices of `P1` and `P2`.
-"""
-function minkowski_sum(P1::VPolytope{N}, P2::VPolytope{N};
-                       apply_convex_hull::Bool=true,
-                       backend=nothing,
-                       solver=nothing) where {N<:Real}
-
-    @assert dim(P1) == dim(P2) "cannot compute the Minkowski sum between a polyotope " *
-        "of dimension $(dim(P1)) and a polytope of dimension $((dim(P2)))"
-
-    vlist1 = _vertices_list(P1, backend)
-    vlist2 = _vertices_list(P2, backend)
-    n, m = length(vlist1), length(vlist2)
-    Vout = Vector{Vector{N}}() # TODO: use common inner array type from P1 and P2, #2011
-    sizehint!(Vout, n * m)
-    for vi in vlist1
-        for vj in vlist2
-            push!(Vout, vi + vj)
-        end
-    end
-    if apply_convex_hull
-        if backend == nothing
-            backend = default_polyhedra_backend(P1, N)
-            solver = default_lp_solver_polyhedra(N)
-        end
-        convex_hull!(Vout, backend=backend, solver=solver)
-    end
-    return VPolytope(Vout)
-end
-
 # ==========================================
 # Lower level methods that use Polyhedra.jl
 # ==========================================
@@ -614,15 +507,16 @@ function VPolytope(P::VRep{N}) where {N}
 end
 
 """
-    polyhedron(P::VPolytope{N};
-               [backend]=default_polyhedra_backend(P, N)) where {N<:Real}
+    polyhedron(P::VPolytope;
+               [backend]=default_polyhedra_backend(P),
+               [relative_dimension]=nothing)
 
 Return an `VRep` polyhedron from `Polyhedra.jl` given a polytope in V-representation.
 
 ### Input
 
 - `P`       -- polytope
-- `backend` -- (optional, default: `default_polyhedra_backend(P, N)`) the
+- `backend` -- (optional, default: `default_polyhedra_backend(P)`) the
                backend for polyhedral computations; see [Polyhedra's
                documentation](https://juliapolyhedra.github.io/) for further
                information
@@ -645,9 +539,9 @@ such that a line segment in two dimensions has dimension two. However,
 `Polyhedra.dim` will assign a dimension equal to one to a line segment
 because it uses a different convention.
 """
-function polyhedron(P::VPolytope{N};
-                    backend=default_polyhedra_backend(P, N),
-                    relative_dimension=nothing) where {N<:Real}
+function polyhedron(P::VPolytope;
+                    backend=default_polyhedra_backend(P),
+                    relative_dimension=nothing)
     if isempty(P)
         if relative_dimension == nothing
             error("the conversion to a `Polyhedra.polyhedron` requires the (relative) dimension " *
@@ -661,3 +555,30 @@ end
 
 end # quote
 end # function load_polyhedra_vpolytope()
+
+function project(V::VPolytope, block::AbstractVector{Int}; kwargs...)
+    return _project_vrep(vertices_list(V), dim(V), block)
+end
+
+function _project_vrep(vlist::AbstractVector{VN}, n, block) where {N, VN<:AbstractVector{N}}
+    M = projection_matrix(block, n, VN)
+    πvertices = broadcast(v -> M * v, vlist)
+
+    m = size(M, 1)
+    if m == 1
+        # convex_hull in 1d returns the minimum and maximum points, in that order
+        aux = convex_hull(πvertices)
+        a = first(aux[1])
+        b = length(aux) == 1 ? a : first(aux[2])
+        return Interval(a, b)
+    elseif m == 2
+        return VPolygon(πvertices; apply_convex_hull=true)
+    else
+        return VPolytope(πvertices)
+    end
+end
+
+function permute(P::VPolytope, p::AbstractVector{Int})
+    vlist = [v[p] for v in vertices_list(P)]
+    return VPolytope(vlist)
+end

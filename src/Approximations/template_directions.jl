@@ -98,6 +98,37 @@ end
 
 isnormalized(::AD) where {AD<:AbstractDirections} = isnormalized(AD)
 
+"""
+    project(S::LazySet,
+            block::AbstractVector{Int},
+            directions::Type{<:AbstractDirections},
+            [n]::Int;
+            [kwargs...]
+           )
+
+Project a high-dimensional set to a given block using template directions.
+
+### Input
+
+- `S`          -- set
+- `block`      -- block structure - a vector with the dimensions of interest
+- `directions` -- template directions
+- `n`          -- (optional, default: `dim(S)`) ambient dimension of the set `S`
+
+### Output
+
+The template direction approximation of the projection of `S`.
+"""
+@inline function project(S::LazySet,
+                         block::AbstractVector{Int},
+                         directions::Type{<:AbstractDirections},
+                         n::Int=dim(S);
+                         kwargs...
+                        )
+    lm = project(S, block, LinearMap, n; kwargs...)
+    return overapproximate(lm, directions(length(block)))
+end
+
 # ==================================================
 # Box directions
 # ==================================================
@@ -127,7 +158,7 @@ two,
 
 ```jldoctest dirs_Box
 julia> dirs = BoxDirections(2)
-BoxDirections{Float64,LazySets.Arrays.SingleEntryVector{Float64}}(2)
+BoxDirections{Float64, LazySets.Arrays.SingleEntryVector{Float64}}(2)
 
 julia> length(dirs)
 4
@@ -145,7 +176,7 @@ facets of a box.
 
 ```jldoctest dirs_Box
 julia> collect(dirs)
-4-element Array{LazySets.Arrays.SingleEntryVector{Float64},1}:
+4-element Vector{LazySets.Arrays.SingleEntryVector{Float64}}:
  [1.0, 0.0]
  [0.0, 1.0]
  [0.0, -1.0]
@@ -156,7 +187,7 @@ The numeric type can be specified as well:
 
 ```jldoctest
 julia> BoxDirections{Rational{Int}}(10)
-BoxDirections{Rational{Int64},LazySets.Arrays.SingleEntryVector{Rational{Int64}}}(10)
+BoxDirections{Rational{Int64}, LazySets.Arrays.SingleEntryVector{Rational{Int64}}}(10)
 
 julia> length(ans)
 20
@@ -240,7 +271,7 @@ two,
 
 ```jldoctest dirs_Oct
 julia> dirs = OctDirections(2)
-OctDirections{Float64,SparseArrays.SparseVector{Float64,Int64}}(2)
+OctDirections{Float64, SparseArrays.SparseVector{Float64, Int64}}(2)
 
 julia> length(dirs) # number of directions
 8
@@ -249,19 +280,19 @@ By default, each direction is represented in this iterator as a sparse vector:
 
 ```jldoctest dirs_Oct
 julia> eltype(dirs)
-SparseArrays.SparseVector{Float64,Int64}
+SparseArrays.SparseVector{Float64, Int64}
 ```
 In two dimensions, the directions defined by `OctDirections` are normal to
 the facets of an octagon.
 
 ```jldoctest dirs_Oct
 julia> first(dirs)
-2-element SparseArrays.SparseVector{Float64,Int64} with 2 stored entries:
+2-element SparseArrays.SparseVector{Float64, Int64} with 2 stored entries:
   [1]  =  1.0
   [2]  =  1.0
 
 julia> Vector.(collect(dirs))
-8-element Array{Array{Float64,1},1}:
+8-element Vector{Vector{Float64}}:
  [1.0, 1.0]
  [1.0, -1.0]
  [-1.0, 1.0]
@@ -276,7 +307,7 @@ The numeric type can be specified as well:
 
 ```jldoctest
 julia> OctDirections{Rational{Int}}(10)
-OctDirections{Rational{Int64},SparseArrays.SparseVector{Rational{Int64},Int64}}(10)
+OctDirections{Rational{Int64}, SparseArrays.SparseVector{Rational{Int64}, Int64}}(10)
 
 julia> length(ans)
 200
@@ -383,6 +414,103 @@ function Base.iterate(od::OctDirections{N, Vector{N}}, state::Int) where {N}
 end
 
 # ==================================================
+# Diagonal directions
+# ==================================================
+
+"""
+    DiagDirections{N, VN} <: AbstractDirections{N, VN}
+
+Diagonal directions representation.
+
+### Fields
+
+- `n` -- dimension
+
+### Notes
+
+Diagonal directions can be seen as all diagonal directions (all
+entries are ±1). In dimension ``n``, there are in total ``2^n`` such directions.
+
+## Examples
+
+The template can be constructed by passing the dimension. For example, in
+dimension two,
+
+```jldoctest dirs_Diag
+julia> dirs = DiagDirections(2)
+DiagDirections{Float64, Vector{Float64}}(2)
+
+julia> length(dirs) # number of directions
+4
+```
+By default, each direction is represented in this iterator as a regular vector:
+
+```jldoctest dirs_Diag
+julia> eltype(dirs)
+Vector{Float64} (alias for Array{Float64, 1})
+```
+In two dimensions, the directions defined by `DiagDirections` are normal to
+the facets of a ball in the 1-norm.
+
+```jldoctest dirs_Diag
+julia> collect(dirs)
+4-element Vector{Vector{Float64}}:
+ [1.0, 1.0]
+ [-1.0, 1.0]
+ [1.0, -1.0]
+ [-1.0, -1.0]
+```
+
+The numeric type can be specified as well:
+
+```jldoctest
+julia> DiagDirections{Rational{Int}}(10)
+DiagDirections{Rational{Int64}, Vector{Rational{Int64}}}(10)
+
+julia> length(ans)
+1024
+```
+"""
+struct DiagDirections{N, VN} <: AbstractDirections{N, VN}
+    n::Int
+end
+
+# constructor for type Float64
+DiagDirections(n::Int) = DiagDirections{Float64, Vector{Float64}}(n)
+
+# constructor where only N is specified
+DiagDirections{N}(n::Int) where {N} = DiagDirections{N, Vector{N}}(n)
+
+Base.eltype(::Type{DiagDirections{N, VN}}) where {N, VN} = VN
+Base.length(dd::DiagDirections) = 2^dd.n
+
+# interface function
+dim(dd::DiagDirections) = dd.n
+isbounding(::Type{<:DiagDirections}) = true
+isnormalized(::Type{<:DiagDirections}) = false
+
+function Base.iterate(dd::DiagDirections{N, Vector{N}}) where {N}
+    return (ones(N, dd.n), ones(N, dd.n))
+end
+
+function Base.iterate(dd::DiagDirections{N}, state::Vector{N}) where {N}
+    i = 1
+    while i <= dd.n && state[i] < 0
+        state[i] = -state[i]
+        i = i+1
+    end
+    if i > dd.n
+        if dd.n == 1
+            # finish here to avoid duplicates
+            return nothing
+        end
+    else
+        state[i] = -state[i]
+        return (copy(state), state)
+    end
+end
+
+# ==================================================
 # Box-diagonal directions
 # ==================================================
 
@@ -409,7 +537,7 @@ two,
 
 ```jldoctest dirs_BoxDiag
 julia> dirs = BoxDiagDirections(2)
-BoxDiagDirections{Float64,Array{Float64,1}}(2)
+BoxDiagDirections{Float64, Vector{Float64}}(2)
 
 julia> length(dirs) # number of directions
 8
@@ -418,14 +546,14 @@ By default, each direction is represented in this iterator as a regular vector:
 
 ```jldoctest dirs_BoxDiag
 julia> eltype(dirs)
-Array{Float64,1}
+Vector{Float64} (alias for Array{Float64, 1})
 ```
 In two dimensions, the directions defined by `BoxDiagDirections` are normal to
 the facets of an octagon.
 
 ```jldoctest dirs_BoxDiag
 julia> collect(dirs)
-8-element Array{Array{Float64,1},1}:
+8-element Vector{Vector{Float64}}:
  [1.0, 1.0]
  [-1.0, 1.0]
  [1.0, -1.0]
@@ -440,7 +568,7 @@ The numeric type can be specified as well:
 
 ```jldoctest
 julia> BoxDiagDirections{Rational{Int}}(10)
-BoxDiagDirections{Rational{Int64},Array{Rational{Int64},1}}(10)
+BoxDiagDirections{Rational{Int64}, Vector{Rational{Int64}}}(10)
 
 julia> length(ans)
 1044
@@ -530,7 +658,7 @@ The integer passed as an argument is used to discretize ``φ``:
 julia> pd = PolarDirections(2);
 
 julia> pd.stack
-2-element Array{Array{Float64,1},1}:
+2-element Vector{Vector{Float64}}:
  [1.0, 0.0]
  [-1.0, 1.2246467991473532e-16]
 
@@ -552,7 +680,7 @@ function PolarDirections{N, Vector{N}}(Nφ::Int) where {N}
         throw(ArgumentError("Nφ = $Nφ is invalid; it shoud be at least 1"))
     end
     stack = Vector{Vector{N}}(undef, Nφ)
-    φ = range(N(0), N(2*pi), length=Nφ+1)  # discretization of the polar angle
+    φ = range(N(0), stop=N(2*pi), length=Nφ+1)  # discretization of the polar angle
 
     @inbounds for i in 1:Nφ  # skip last (repeated) angle
         stack[i] = N[cos(φ[i]), sin(φ[i])]
@@ -652,8 +780,8 @@ function SphericalDirections{N, Vector{N}}(Nθ::Int, Nφ::Int) where {N}
         throw(ArgumentError("(Nθ, Nφ) = ($Nθ, $Nφ) is invalid; both shoud be at least 2"))
     end
     stack = Vector{Vector{N}}()
-    θ = range(N(0), N(pi), length=Nθ)    # discretization of the azimuthal angle
-    φ = range(N(0), N(2*pi), length=Nφ)  # discretization of the polar angle
+    θ = range(N(0), stop=N(pi), length=Nθ)    # discretization of the azimuthal angle
+    φ = range(N(0), stop=N(2*pi), length=Nφ)  # discretization of the polar angle
 
     # add north pole (θ = 0)
     push!(stack, N[0, 0, 1])
@@ -694,9 +822,11 @@ User-defined template directions.
 
 ### Fields
 
-- `directions` -- list of template directions
-- `n`          -- dimension
-- `isbounding` -- boundedness status
+- `directions`          -- list of template directions
+- `n`                   -- (optional; default: computed from `directions) dimension
+- `check_boundedness`   -- (optional; default: `true`) flag to check boundedness
+- `check_normalization` -- (optional; default: `true`) flag to check whether all
+                           directions are normalized
 
 ### Notes
 
@@ -719,7 +849,7 @@ Creating a template with box directions in dimension two:
 julia> dirs = CustomDirections([[1.0, 0.0], [-1.0, 0.0], [0.0, 1.0], [0.0, -1.0]]);
 
 julia> dirs.directions
-4-element Array{Array{Float64,1},1}:
+4-element Vector{Vector{Float64}}:
  [1.0, 0.0]
  [-1.0, 0.0]
  [0.0, 1.0]
@@ -763,7 +893,7 @@ function _isbounding(directions::Vector{VN}) where {N, VN<:AbstractVector{N}}
 end
 
 function _isnormalized(directions::Vector{VN}) where {N, VN<:AbstractVector{N}}
-    return all(x -> _isapprox(x, one(N)), norm.(directions, 2))
+    return all(x -> _isapprox(norm(x, 2), one(N)), directions)
 end
 
 Base.eltype(::Type{CustomDirections{N, VN}}) where {N, VN} = VN

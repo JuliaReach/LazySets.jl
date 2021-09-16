@@ -24,9 +24,39 @@ function overapproximate(X::S, ::Type{S}, args...) where {S<:LazySet}
 end
 
 """
+    overapproximate(S::LazySet)
+
+Alias for `overapproximate(S, Hyperrectangle)` resp. `box_approximation(S)`.
+"""
+overapproximate(S::LazySet) = box_approximation(S)
+
+"""
+    overapproximate(S::LazySet, ::Type{<:Hyperrectangle})
+
+Alias for `box_approximation(S)`.
+"""
+function overapproximate(S::LazySet, ::Type{<:Hyperrectangle})
+    return box_approximation(S)
+end
+
+# alias while Rectification is not a LazySet (#1895)
+function overapproximate(r::Rectification, ::Type{<:Hyperrectangle})
+    return box_approximation(r)
+end
+
+"""
+    overapproximate(S::LazySet, ::Type{<:BallInf})
+
+Alias for `ballinf_approximation(S)`.
+"""
+function overapproximate(S::LazySet, ::Type{<:BallInf})
+    return ballinf_approximation(S)
+end
+
+"""
     overapproximate(S::LazySet{N},
                     ::Type{<:HPolygon},
-                    [ε]::Real=Inf) where {N<:Real}
+                    [ε]::Real=Inf) where {N}
 
 Return an approximation of a given 2D set using iterative refinement.
 
@@ -35,6 +65,8 @@ Return an approximation of a given 2D set using iterative refinement.
 - `S`        -- convex set, assumed to be two-dimensional
 - `HPolygon` -- type for dispatch
 - `ε`        -- (optional, default: `Inf`) error tolerance
+- `prune`    -- (optional, default: `true`) flag for removing redundant
+                constraints in the end
 
 ### Output
 
@@ -48,9 +80,10 @@ If no error tolerance ε is given, or is `Inf`, the result is a box-shaped polyg
 For convex input sets, the result is an ε-close approximation as a polygon,
 with respect to the Hausdorff distance.
 """
-function overapproximate(S::ST,
+function overapproximate(S::LazySet{N},
                          ::Type{<:HPolygon},
-                         ε::Real=Inf) where {N<:Real, ST<:LazySet{N}}
+                         ε::Real=Inf;
+                         prune::Bool=true) where {N}
     @assert dim(S) == 2 "epsilon-close approximation is only available for " *
                         "two-dimensional sets"
     if ε == Inf
@@ -61,7 +94,11 @@ function overapproximate(S::ST,
         constraints[4] = LinearConstraint(DIR_SOUTH(N), ρ(DIR_SOUTH(N), S))
         return HPolygon(constraints, sort_constraints=false)
     else
-        return tohrep(_approximate(S, ε))
+        P = tohrep(_approximate(S, ε))
+        if prune
+            remove_redundant_constraints!(P)
+        end
+        return P
     end
 end
 
@@ -87,217 +124,24 @@ function overapproximate(S::LazySet, ε::Real)
     return overapproximate(S, HPolygon, ε)
 end
 
-"""
-    overapproximate(S::LazySet, Type{<:Hyperrectangle})
-
-Return an approximation of a given set as a hyperrectangle.
-
-### Input
-
-- `S`              -- set
-- `Hyperrectangle` -- type for dispatch
-
-### Output
-
-A hyperrectangle.
-
-### Algorithm
-
-The center of the hyperrectangle is obtained by averaging the support function
-of the given set in the canonical directions, and the lengths of the sides can
-be recovered from the distance among support functions in the same directions.
-"""
-function overapproximate(S::LazySet{N},
-                         ::Type{<:Hyperrectangle}) where {N<:Real}
-    c, r = box_approximation_helper(S)
-    if r[1] < 0
-        return EmptySet{N}(dim(S))
-    end
-    return Hyperrectangle(c, r)
-end
-
-"""
-    overapproximate(S::CartesianProductArray{N, <:AbstractHyperrectangle{N}},
-                    ::Type{<:Hyperrectangle}) where {N<:Real}
-
-Return a tight overapproximation of the Cartesian product array of a finite
-number of convex sets with and hyperrectangle.
-
-### Input
-
-- `S`              -- Cartesian product array of a finite number of convex set
-- `Hyperrectangle` -- type for dispatch
-
-### Output
-
-A hyperrectangle.
-
-### Algorithm
-
-This method falls back to the corresponding `convert` method. Since the sets wrapped
-by the Cartesian product array are hyperrectangles, it can be done efficiently
-without overapproximation.
-"""
-function overapproximate(S::CartesianProductArray{N, <:AbstractHyperrectangle{N}},
-                          ::Type{<:Hyperrectangle}) where {N<:Real}
-    return convert(Hyperrectangle, S)
-end
-
-"""
-    overapproximate(S::CartesianProduct{N, <:AbstractHyperrectangle{N}, <:AbstractHyperrectangle{N}},
-                    ::Type{<:Hyperrectangle}) where {N<:Real}
-
-Return a tight overapproximation of the Cartesian product of two
-hyperrectangles by a new hyperrectangle.
-
-### Input
-
-- `S`              -- Cartesian product of two hyperrectangular sets
-- `Hyperrectangle` -- type for dispatch
-
-### Output
-
-A hyperrectangle.
-
-### Algorithm
-
-This method falls back to the corresponding `convert` method. Since the sets wrapped
-by the Cartesian product are hyperrectangles, it can be done efficiently
-without overapproximation.
-"""
-function overapproximate(S::CartesianProduct{N, <:AbstractHyperrectangle{N}, <:AbstractHyperrectangle{N}},
-                          ::Type{<:Hyperrectangle}) where {N<:Real}
-    return convert(Hyperrectangle, S)
-end
-
-"""
-    overapproximate(lm::LinearMap{N, <:AbstractHyperrectangle{N}},
-                    ::Type{<:Hyperrectangle}) where {N}
-
-Return a tight overapproximation of the linear map of a hyperrectangular set
-using a hyperrectangle.
-
-### Input
-
-- `S`              -- linear map of a hyperrectangular set
-- `Hyperrectangle` -- type for dispatch
-
-### Output
-
-A hyperrectangle.
-
-### Algorithm
-
-If `c` and `r` denote the center and vector radius of a hyperrectangle `H`,
-a tight hyperrectangular overapproximation of `M * H` is obtained by transforming
-`c ↦ M*c` and `r ↦ abs.(M) * r`, where `abs.(⋅)` denotes the element-wise absolute
-value operator.
-"""
-function overapproximate(lm::LinearMap{N, <:AbstractHyperrectangle{N}},
-                         ::Type{<:Hyperrectangle}) where {N<:Real}
-    M, X = lm.M, lm.X
-    center_MX = M * center(X)
-    radius_MX = abs.(M) * radius_hyperrectangle(X)
-    return Hyperrectangle(center_MX, radius_MX)
-end
-
-"""
-    overapproximate(r::Rectification{N}, ::Type{<:Hyperrectangle}
-                   ) where {N<:Real}
-
-Overapproximate the rectification of a convex set by a tight hyperrectangle.
-
-### Input
-
-- `r`              -- rectification of a convex set
-- `Hyperrectangle` -- type for dispatch
-
-### Output
-
-A hyperrectangle.
-
-### Algorithm
-
-Box approximation and rectification distribute.
-Hence we first check whether the wrapped set is empty.
-If so, we return the empty set.
-Otherwise, we compute the box approximation of the wrapped set, rectify the
-resulting box (which is simple), and finally convert the resulting set to a box.
-"""
-function overapproximate(r::Rectification{N}, ::Type{<:Hyperrectangle}
-                        ) where {N<:Real}
-    if isempty(r.X)
-        return EmptySet{N}(dim(r))
-    end
-    return convert(Hyperrectangle, Rectification(box_approximation(r.X)))
-end
-
-# special case: box approximation of a box
-function overapproximate(S::AbstractHyperrectangle, ::Type{<:Hyperrectangle})
-    return Hyperrectangle(center(S), radius_hyperrectangle(S))
-end
-
 # special case: overapproximation of empty set
 overapproximate(∅::EmptySet, options...) = ∅
 
 # disambiguation
 overapproximate(∅::EmptySet) = ∅
-overapproximate(∅::EmptySet, ::Type{<:Hyperrectangle}) = ∅
-overapproximate(∅::EmptySet, ::Type{<:EmptySet}) = ∅
-
-"""
-    overapproximate(S::LazySet)
-
-Alias for `overapproximate(S, Hyperrectangle)`.
-"""
-overapproximate(S::LazySet) = overapproximate(S, Hyperrectangle)
-
-"""
-    overapproximate(S::LazySet{N}, ::Type{<:BallInf}) where {N<:Real}
-
-Overapproximate a convex set by a tight ball in the infinity norm.
-
-### Input
-
-- `S`       -- convex set
-- `BallInf` -- type for dispatch
-
-### Output
-
-A tight ball in the infinity norm.
-
-### Algorithm
-
-The center and radius of the box are obtained by evaluating the support function
-of the given convex set along the canonical directions.
-"""
-function overapproximate(S::LazySet{N}, ::Type{<:BallInf}) where {N<:Real}
-    n = dim(S)
-    c = Vector{N}(undef, n)
-    r = zero(N)
-    d = zeros(N, n)
-
-    @inbounds for i in 1:n
-        d[i] = one(N)
-        htop = ρ(d, S)
-        d[i] = -one(N)
-        hbottom = -ρ(d, S)
-        d[i] = zero(N)
-        c[i] = (htop + hbottom) / 2
-        rcur = (htop - hbottom) / 2
-        if (rcur > r)
-            r = rcur
-        elseif rcur < 0
-            # contradicting bounds => set is empty
-            return EmptySet{N}(dim(S))
-        end
+for ST in LazySets.subtypes(LazySet, true)
+    if ST == HPolygon  # must be defined separately below with extra argument
+        continue
     end
-    return BallInf(c, r)
+    @eval overapproximate(∅::EmptySet, ::Type{<:$ST}) = ∅
 end
+overapproximate(∅::EmptySet, ::Real) = ∅
+overapproximate(∅::EmptySet, ::Type{<:HPolygon}, ε::Real=Inf) = ∅
+overapproximate(∅::EmptySet, ::Type{<:EmptySet}, args...) = ∅
 
 """
-    overapproximate(X::ConvexHull{N, <:AbstractZonotope{N}, <:AbstractZonotope{N}},
-                    ::Type{<:Zonotope}) where {N<:Real}
+    overapproximate(X::ConvexHull{N, <:AbstractZonotope, <:AbstractZonotope},
+                    ::Type{<:Zonotope}) where {N}
 
 Overapproximate the convex hull of two zonotopes.
 
@@ -384,9 +228,9 @@ constructed in the first phase.
 [3] The zonotope abstract domain Taylor1+. K. Ghorbal, E. Goubault, S. Putot.
     CAV 2009.
 """
-function overapproximate(X::ConvexHull{N, <:AbstractZonotope{N}, <:AbstractZonotope{N}},
+function overapproximate(X::ConvexHull{N, <:AbstractZonotope, <:AbstractZonotope},
                          ::Type{<:Zonotope};
-                         algorithm="mean") where {N<:Real}
+                         algorithm="mean") where {N}
     # execute specific algorithm
     if algorithm == "mean"
         return _overapproximate_convex_hull_zonotope_G05(X)
@@ -397,8 +241,7 @@ function overapproximate(X::ConvexHull{N, <:AbstractZonotope{N}, <:AbstractZonot
     end
 end
 
-function _overapproximate_convex_hull_zonotope_G05(
-        X::ConvexHull{N}) where {N<:Real}
+function _overapproximate_convex_hull_zonotope_G05(X::ConvexHull{N}) where {N}
     # reduce to the same order if possible
     m1, m2 = ngens(X.X), ngens(X.Y)
     if m1 < m2
@@ -436,8 +279,7 @@ function _overapproximate_convex_hull_zonotope_G05(
     return remove_zero_generators(Z)
 end
 
-function _overapproximate_convex_hull_zonotope_GGP09(
-        X::ConvexHull{N}) where {N<:Real}
+function _overapproximate_convex_hull_zonotope_GGP09(X::ConvexHull{N}) where {N}
     Z1, Z2 = X.X, X.Y
     m = min(ngens(Z1), ngens(Z2))
     G1, G2 = genmat(Z1), genmat(Z2)
@@ -483,8 +325,8 @@ function _overapproximate_convex_hull_zonotope_GGP09(
 end
 
 """
-    overapproximate(lm::LinearMap{N, <:AbstractZonotope{N}},
-                    ::Type{<:Zonotope}) where {N<:Real}
+    overapproximate(lm::LinearMap{N, <:AbstractZonotope},
+                    ::Type{<:Zonotope}) where {N}
 
 Overapproximate a lazy linear map of a zonotopic set with a zonotope.
 
@@ -497,72 +339,85 @@ Overapproximate a lazy linear map of a zonotopic set with a zonotope.
 
 The tight zonotope corresponding to `lm`.
 """
-function overapproximate(lm::LinearMap{N, <:AbstractZonotope{N}},
-                         ::Type{<:Zonotope}) where {N<:Real}
+function overapproximate(lm::LinearMap{N, <:AbstractZonotope},
+                         ::Type{<:Zonotope}) where {N}
     return convert(Zonotope, lm)
 end
 
 """
-    overapproximate(Z::AbstractZonotope, ::Type{<:Hyperrectangle})
+    overapproximate(X::LazySet{N}, dir::AbstractDirections; [prune]::Bool=true) where {N}
 
-Return a tight overapproximation of a zonotope with an axis-aligned box.
-
-### Input
-
-- `Z`              -- zonotope
-- `Hyperrectangle` -- type for dispatch
-
-### Output
-
-A hyperrectangle.
-
-### Algorithm
-
-This function implements the method in [Section 5.1.2, 1]. A zonotope
-``Z = ⟨c, G⟩`` can be overapproximated tightly by an axis-aligned box
-(i.e. a `Hyperrectangle`) such that its center is ``c`` and the radius along
-dimension ``i`` is the column-sum of the absolute values of the ``i``-th row
-of ``G`` for ``i = 1,…, p``, where ``p`` is the number of generators of ``Z``.
-
-[1] *Althoff, M., Stursberg, O., & Buss, M. (2010). Computing reachable sets of
-hybrid systems using a combination of zonotopes and polytopes. Nonlinear analysis:
-hybrid systems, 4(2), 233-249.*
-"""
-function overapproximate(Z::AbstractZonotope, ::Type{<:Hyperrectangle})
-    r = sum(abs.(genmat(Z)), dims=2)[:]
-    return Hyperrectangle(center(Z), r)
-end
-
-"""
-    overapproximate(X::LazySet{N}, dir::AbstractDirections{N}) where {N}
-
-Overapproximating a set with template directions.
+Overapproximate a (possibly unbounded) set with template directions.
 
 ### Input
 
-- `X`   -- set
-- `dir` -- (concrete) direction representation
+- `X`     -- set
+- `dir`   -- (concrete) direction representation
+- `prune` -- (optional, default: `true`) flag for removing redundant
+             constraints in the end
 
 ### Output
 
 A polyhedron overapproximating the set `X` with the directions from `dir`.
-If the directions are known to be bounded, the result is an `HPolytope`,
-otherwise the result is an `HPolyhedron`.
+The overapproximation is computed using support functions. If the obtained set is
+bounded, the result is an `HPolytope`. Otherwise the result is an `HPolyhedron`.
 """
-function overapproximate(X::LazySet{N}, dir::AbstractDirections{N, VN}) where {N, VN}
-    halfspaces = Vector{LinearConstraint{N, VN}}()
-    sizehint!(halfspaces, length(dir))
-    T = isbounding(dir) ? HPolytope : HPolyhedron
-    H = T(halfspaces)
+function overapproximate(X::LazySet{N}, dir::AbstractDirections{N, VN}; prune::Bool=true) where {N, VN}
+    n = dim(X)
+    H = Vector{LinearConstraint{N, VN}}()
+    sizehint!(H, length(dir))
+
     for d in dir
-        addconstraint!(H, LinearConstraint(d, ρ(d, X)))
+        sf = ρ(d, X)
+        if !isinf(sf)
+            push!(H, LinearConstraint(d, sf))
+        end
     end
-    return H
+    if prune
+        remove_redundant_constraints!(H) || throw(ArgumentError("unable to remove redundant constraints"))
+    end
+
+    # if the input is bounded and the directions are bounding => output is bounded
+    # otherwise, check boundedness of the output
+    if (isbounded(X) && isbounding(dir)) || _isbounded_stiemke(HPolyhedron(H))
+        return HPolytope(H, check_boundedness=false)
+    else
+        return HPolyhedron(H)
+    end
 end
 
 # alias with HPolytope type as second argument
-function overapproximate(X::LazySet{N}, ::Type{<:HPolytope}, dirs::AbstractDirections{N}) where {N}
-    return overapproximate(X, dirs)
+function overapproximate(X::LazySet{N}, ::Type{<:HPolytope}, dirs::AbstractDirections{N}; prune::Bool=true) where {N}
+    P = overapproximate(X, dirs, prune=prune)
+    isbounded(P) || throw(ArgumentError("can't overapproximate with an `HPolytope` " *
+                                        "because the set is unbounded; try using an `HPolyhedron`"))
+    return convert(HPolytope, P)
+end
+
+# alias with HPolyhedron type as second argument
+function overapproximate(X::LazySet{N}, ::Type{<:HPolyhedron}, dirs::AbstractDirections{N}; prune::Bool=true) where {N}
+    return convert(HPolyhedron, overapproximate(X, dirs, prune=true))
+end
+
+# disambiguation
+overapproximate(∅::EmptySet{N}, ::Type{<:HPolytope}, dirs::AbstractDirections{N};
+                prune::Bool=true) where {N} = ∅
+overapproximate(∅::EmptySet{N}, ::Type{<:HPolyhedron},
+                dirs::AbstractDirections{N}; prune::Bool=true) where {N} = ∅
+
+# this function overapproximates a bounded polyhedron with a list of directions
+# that define a bounded set (without checking these assumptions); the result is always bounded
+function _overapproximate_bounded_polyhedron(X::LazySet{N}, dir::AbstractDirections{N, VN}; prune::Bool=true) where {N, VN}
+    H = Vector{LinearConstraint{N, VN}}()
+    sizehint!(H, length(dir))
+    for d in dir
+        sf = ρ(d, X)
+        push!(H, LinearConstraint(d, sf))
+    end
+    if prune
+        remove_redundant_constraints!(H) || throw(ArgumentError("unable to remove redundant constraints"))
+    end
+    return HPolytope(H, check_boundedness=false)
 end
 
 """
@@ -582,12 +437,16 @@ If the directions are known to be bounded, the result is an `HPolytope`,
 otherwise the result is an `HPolyhedron`.
 """
 function overapproximate(X::LazySet{N},
-                         dir::Type{<:AbstractDirections}) where {N}
-    return overapproximate(X, dir{N}(dim(X)))
+                         dir::Type{<:AbstractDirections}; kwargs...) where {N}
+    return overapproximate(X, dir{N}(dim(X)); kwargs...)
 end
 
+# disambiguation
+overapproximate(∅::EmptySet, dir::Type{<:AbstractDirections}; kwargs...) = ∅
+overapproximate(∅::EmptySet, dir::AbstractDirections; prune::Bool=true) = ∅
+
 """
-    overapproximate(S::LazySet{N}, ::Type{<:Interval}) where {N<:Real}
+    overapproximate(S::LazySet{N}, ::Type{<:Interval}) where {N}
 
 Return the overapproximation of a unidimensional set with an interval.
 
@@ -604,14 +463,14 @@ An interval.
 
 We use two support-function evaluations.
 """
-function overapproximate(S::LazySet{N}, ::Type{<:Interval}) where {N<:Real}
+function overapproximate(S::LazySet{N}, ::Type{<:Interval}) where {N}
     @assert dim(S) == 1 "cannot overapproximate a $(dim(S))-dimensional set " *
                         "with an `Interval`"
     return Interval(-ρ(N[-1], S), ρ(N[1], S))
 end
 
 """
-    overapproximate(cap::Intersection{N}, ::Type{<:Interval}) where {N<:Real}
+    overapproximate(cap::Intersection, ::Type{<:Interval})
 
 Return the overapproximation of a unidimensional intersection with an interval.
 
@@ -629,7 +488,7 @@ An interval.
 The algorithm recursively overapproximates the two intersected sets with
 intervals and then intersects these.
 """
-function overapproximate(cap::Intersection{N}, ::Type{<:Interval}) where {N<:Real}
+function overapproximate(cap::Intersection, ::Type{<:Interval})
     @assert dim(cap) == 1 "cannot overapproximate a $(dim(cap))-dimensional " *
                         "intersection with an `Interval`"
     X = overapproximate(cap.X, Interval)
@@ -638,7 +497,7 @@ function overapproximate(cap::Intersection{N}, ::Type{<:Interval}) where {N<:Rea
 end
 
 """
-    overapproximate(cap::IntersectionArray{N}, ::Type{<:Interval}) where {N<:Real}
+    overapproximate(cap::IntersectionArray, ::Type{<:Interval})
 
 Return the overapproximation of a unidimensional intersection with an interval.
 
@@ -656,8 +515,7 @@ An interval.
 The algorithm recursively overapproximates the two intersected sets with
 intervals and then intersects these.
 """
-function overapproximate(cap::IntersectionArray{N},
-                         ::Type{<:Interval}) where {N<:Real}
+function overapproximate(cap::IntersectionArray, ::Type{<:Interval})
     @assert dim(cap) == 1 "cannot overapproximate a $(dim(cap))-dimensional " *
                         "intersection with an `Interval`"
     a = array(cap)
@@ -672,13 +530,14 @@ function overapproximate(cap::IntersectionArray{N},
     return X
 end
 
-function overapproximate_cap_helper(X::LazySet{N},             # convex set
-                                    P::AbstractPolyhedron{N},  # polyhedron
-                                    dir::AbstractDirections{N};
+function overapproximate_cap_helper(X::LazySet,             # convex set
+                                    P::AbstractPolyhedron,  # polyhedron
+                                    dir::AbstractDirections;
                                     kwargs...
-                                   ) where {N<:Real}
+                                   )
     Hi = constraints_list(P)
     m = length(Hi)
+    N = promote_type(eltype(X), eltype(P))
     constraints = Vector{HalfSpace{N, Vector{N}}}() # TODO: use directions type, see #2031
     sizehint!(constraints, length(dir))
     return_type = HPolytope
@@ -702,10 +561,10 @@ function overapproximate_cap_helper(X::LazySet{N},             # convex set
 end
 
 """
-    overapproximate(cap::Intersection{N, <:LazySet, <:AbstractPolyhedron{N}},
-                    dir::AbstractDirections{N};
+    overapproximate(cap::Intersection{N, <:LazySet, <:AbstractPolyhedron},
+                    dir::AbstractDirections;
                     kwargs...
-                   ) where {N<:Real}
+                   ) where {N}
 
 Return the overapproximation of the intersection between a compact set and a
 polytope given a set of template directions.
@@ -747,69 +606,69 @@ intersection is empty.
 """
 function overapproximate(cap::Intersection{N,
                                            <:LazySet,
-                                           <:AbstractPolyhedron{N}},
-                         dir::AbstractDirections{N};
+                                           <:AbstractPolyhedron},
+                         dir::AbstractDirections;
                          kwargs...
-                        ) where {N<:Real}
+                        ) where {N}
     return overapproximate_cap_helper(cap.X, cap.Y, dir; kwargs...)
 end
 
 # symmetric method
 function overapproximate(cap::Intersection{N,
-                                           <:AbstractPolyhedron{N},
+                                           <:AbstractPolyhedron,
                                            <:LazySet},
-                         dir::AbstractDirections{N};
+                         dir::AbstractDirections;
                          kwargs...
-                        ) where {N<:Real}
+                        ) where {N}
     return overapproximate_cap_helper(cap.Y, cap.X, dir; kwargs...)
 end
 
 # disambiguation
 function overapproximate(cap::Intersection{N,
-                                           <:AbstractPolyhedron{N},
-                                           <:AbstractPolyhedron{N}},
-                         dir::AbstractDirections{N};
+                                           <:AbstractPolyhedron,
+                                           <:AbstractPolyhedron},
+                         dir::AbstractDirections;
                          kwargs...
-                        ) where {N<:Real}
+                        ) where {N}
     # important: the result may not be a polytope!
     return overapproximate_cap_helper(cap.X, cap.Y, dir; kwargs...)
 end
 
 # disambiguation
 function overapproximate(cap::Intersection{N,
-                                           <:AbstractPolytope{N},
-                                           <:AbstractPolyhedron{N}},
-                         dir::AbstractDirections{N};
+                                           <:AbstractPolytope,
+                                           <:AbstractPolyhedron},
+                         dir::AbstractDirections;
                          kwargs...
-                        ) where {N<:Real}
+                        ) where {N}
     return overapproximate_cap_helper(cap.X, cap.Y, dir; kwargs...)
 end
 
 # symmetric method
 function overapproximate(cap::Intersection{N,
-                                           <:AbstractPolyhedron{N},
-                                           <:AbstractPolytope{N}},
-                         dir::AbstractDirections{N};
+                                           <:AbstractPolyhedron,
+                                           <:AbstractPolytope},
+                         dir::AbstractDirections;
                          kwargs...
-                        ) where {N<:Real}
+                        ) where {N}
     return overapproximate_cap_helper(cap.Y, cap.X, dir; kwargs...)
 end
 
 # disambiguation
 function overapproximate(cap::Intersection{N,
-                                           <:AbstractPolytope{N},
-                                           <:AbstractPolytope{N}},
-                         dir::AbstractDirections{N};
+                                           <:AbstractPolytope,
+                                           <:AbstractPolytope},
+                         dir::AbstractDirections;
                          kwargs...
-                        ) where {N<:Real}
+                        ) where {N}
     return overapproximate_cap_helper(cap.X, cap.Y, dir; kwargs...)
 end
 
 """
-    overapproximate(cap::Intersection{N, <:HalfSpace{N}, <:AbstractPolytope{N}},
-                    dir::AbstractDirections{N};
+    overapproximate(cap::Intersection{N, <:HalfSpace, <:AbstractPolytope},
+                    dir::AbstractDirections;
                     [kwargs]...
-                   ) where {N<:Real}
+                   ) where {N}
 
 Return the overapproximation of the intersection between a half-space and a
 polytope given a set of template directions.
@@ -827,11 +686,11 @@ A polytope in H-representation such that the normal direction of each half-space
 is given by an element of `dir`.
 """
 function overapproximate(cap::Intersection{N,
-                                           <:HalfSpace{N},
-                                           <:AbstractPolytope{N}},
-                         dir::AbstractDirections{N};
+                                           <:HalfSpace,
+                                           <:AbstractPolytope},
+                         dir::AbstractDirections;
                          kwargs...
-                        ) where {N<:Real}
+                        ) where {N}
     H = HPolytope{N, Vector{N}}()
     c = H.constraints
     push!(c, _normal_Vector(cap.X))
@@ -841,11 +700,11 @@ end
 
 # symmetric method
 function overapproximate(cap::Intersection{N,
-                                           <:AbstractPolytope{N},
-                                           <:HalfSpace{N}},
-                         dir::AbstractDirections{N};
+                                           <:AbstractPolytope,
+                                           <:HalfSpace},
+                         dir::AbstractDirections;
                          kwargs...
-                        ) where {N<:Real}
+                        ) where {N}
     return overapproximate(swap(cap), dir; kwargs...)
 end
 
@@ -861,13 +720,13 @@ return quote
 using .TaylorModels: Taylor1, TaylorN, TaylorModelN, TaylorModel1,
                      polynomial, remainder, domain,
                      normalize_taylor, linear_polynomial,
-                     constant_term, evaluate, mid, get_numvars
+                     constant_term, evaluate, mid, get_numvars, HomogeneousPolynomial
 
 @inline function get_linear_coeffs(p::Taylor1)
     if p.order == 0
         return zeros(eltype(p), 1)
     end
-    return linear_polynomial(p).coeffs[2:end]
+    return linear_polynomial(p).coeffs[2:2]
 end
 
 @inline function get_linear_coeffs(p::TaylorN)
@@ -878,16 +737,36 @@ end
     return linear_polynomial(p).coeffs[2].coeffs
 end
 
+# compute the nonlinear part of the polynomial p, without truncation
+@inline function _nonlinear_polynomial(p::TaylorN{T}) where {T}
+    pnl = deepcopy(p)
+    pnl.coeffs[1] = HomogeneousPolynomial([zero(T)])
+    pnl.coeffs[2] = HomogeneousPolynomial([zero(T)])
+    return pnl
+end
+
+@inline function _nonlinear_polynomial(p::Taylor1{T}) where {T}
+    pnl = deepcopy(p)
+    pnl.coeffs[1] = zero(T)
+    pnl.coeffs[2] = zero(T)
+    return pnl
+end
+
 """
-    overapproximate(vTM::Vector{TaylorModel1{T, S}},
-                    ::Type{<:Zonotope}) where {T, S}
+    overapproximate(vTM::Vector{TaylorModel1{T, S}}, ::Type{<:Zonotope};
+                    [remove_zero_generators]::Bool=true
+                    [normalize]::Bool=true) where {T, S}
 
 Overapproximate a taylor model in one variable with a zonotope.
 
 ### Input
 
-- `vTM`      -- `TaylorModel1`
-- `Zonotope` --  type for dispatch
+- `vTM`       -- `TaylorModel1`
+- `Zonotope`  --  type for dispatch
+- `remove_zero_generators` -- (optional; default: `true`) flag to remove zero
+                              generators of the resulting zonotope
+- `normalize` -- (optional; default: `true`) flag to skip the normalization of
+                 the Taylor models
 
 ### Output
 
@@ -899,7 +778,7 @@ If the polynomials are linear, this functions exactly transforms to a zonotope.
 However, the nonlinear case necessarily introduces overapproximation error.
 Consider the linear case first:
 
-```julia
+```jldoctest oa_tm1
 julia> using LazySets, TaylorModels
 
 julia> const IA = IntervalArithmetic;
@@ -920,27 +799,25 @@ julia> p2 = Taylor1([0.9, 3.0], 2) # define another linear polynomial
  0.9 + 3.0 t + 𝒪(t³)
 
 julia> vTM = [TaylorModel1(pi, I, x₀, D) for pi in [p1, p2]]
-2-element Array{TaylorModel1{Float64,Float64},1}:
- 2.0 + 1.0 t + [-0.5, 0.5]
- 0.9 + 3.0 t + [-0.5, 0.5]
+2-element Vector{TaylorModel1{Float64, Float64}}:
+  2.0 + 1.0 t + [-0.5, 0.5]
+  0.9 + 3.0 t + [-0.5, 0.5]
 ```
 
 Here, `vTM` is a taylor model vector, since each component is a taylor model in
 one variable (`TaylorModel1`). Using `overapproximate(vTM, Zonotope)` we can
 compute its associated zonotope in generator representation:
 
-```julia
-julia> using LazySets.Approximations
-
+```jldoctest oa_tm1
 julia> Z = overapproximate(vTM, Zonotope);
 
 julia> center(Z)
-2-element Array{Float64,1}:
+2-element Vector{Float64}:
   1.0
  -2.1
 
 julia> Matrix(genmat(Z))
-2×3 Array{Float64,2}:
+2×3 Matrix{Float64}:
  2.0  0.5  0.0
  6.0  0.0  0.5
 ```
@@ -950,20 +827,20 @@ from the linear part of the polynomials, and another one that corresponds to the
 interval remainder. This conversion gives the same upper and lower bounds as the
 range evaluation using interval arithmetic:
 
-```julia
+```jldoctest oa_tm1
 julia> X = box_approximation(Z)
-Hyperrectangle{Float64}([1.0, -2.1], [2.5, 6.5])
+Hyperrectangle{Float64, Vector{Float64}, Vector{Float64}}([1.0, -2.1], [2.5, 6.5])
 
 julia> Y = evaluate(vTM[1], vTM[1].dom) × evaluate(vTM[2], vTM[2].dom)
 [-1.5, 3.5] × [-8.60001, 4.40001]
 
 julia> H = convert(Hyperrectangle, Y) # this IntevalBox is the same as X
-Hyperrectangle{Float64}([1.0, -2.1], [2.5, 6.5])
+Hyperrectangle{Float64, StaticArrays.SVector{2, Float64}, StaticArrays.SVector{2, Float64}}([1.0, -2.1000000000000005], [2.5, 6.500000000000001])
 ```
 However, the zonotope returns better results if we want to approximate the `TM`,
 since it is not axis-aligned:
 
-```julia
+```jldoctest oa_tm1
 julia> d = [-0.35, 0.93];
 
 julia> ρ(d, Z) < ρ(d, X)
@@ -973,11 +850,12 @@ true
 This function also works if the polynomials are non-linear; for example suppose
 that we add a third polynomial with a quadratic term:
 
-```julia
-julia> p3 = Taylor1([0.9, 3.0, 1.0], 3);
+```jldoctest oa_tm1
+julia> p3 = Taylor1([0.9, 3.0, 1.0], 3)
+ 0.9 + 3.0 t + 1.0 t² + 𝒪(t⁴)
 
 julia> vTM = [TaylorModel1(pi, I, x₀, D) for pi in [p1, p2, p3]]
-3-element Array{TaylorModel1{Float64,Float64},1}:
+3-element Vector{TaylorModel1{Float64, Float64}}:
            2.0 + 1.0 t + [-0.5, 0.5]
            0.9 + 3.0 t + [-0.5, 0.5]
   0.9 + 3.0 t + 1.0 t² + [-0.5, 0.5]
@@ -985,18 +863,18 @@ julia> vTM = [TaylorModel1(pi, I, x₀, D) for pi in [p1, p2, p3]]
 julia> Z = overapproximate(vTM, Zonotope);
 
 julia> center(Z)
-3-element Array{Float64,1}:
+3-element Vector{Float64}:
   1.0
  -2.1
-  0.8999999999999999
+  2.4
 
 julia> Matrix(genmat(Z))
-3×4 Array{Float64,2}:
+3×4 Matrix{Float64}:
  2.0  0.5  0.0  0.0
  6.0  0.0  0.5  0.0
- 6.0  0.0  0.0  6.5
+ 6.0  0.0  0.0  5.0
 ```
-The fourth and last generator corresponds to the addition between the interval
+The fourth and last generator corresponds to the addition of the interval
 remainder and the box overapproximation of the nonlinear part of `p3` over the
 domain.
 
@@ -1022,8 +900,9 @@ This algorithm proceeds in two steps:
 2- Transform the linear taylor model to a zonotope exactly through variable
    normalization onto the symmetric intervals ``[-1, 1]``.
 """
-function overapproximate(vTM::Vector{TaylorModel1{T, S}},
-                            ::Type{<:Zonotope}) where {T, S}
+function overapproximate(vTM::Vector{TaylorModel1{T, S}}, ::Type{<:Zonotope};
+                         remove_zero_generators::Bool=true,
+                         normalize::Bool=true) where {T, S}
     m = length(vTM)
 
     # preallocations
@@ -1032,20 +911,27 @@ function overapproximate(vTM::Vector{TaylorModel1{T, S}},
     gen_rem = Vector{T}(undef, m) # generators of the remainder
 
     # compute overapproximation
-    return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
+    return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem;
+                                          remove_zero_generators=remove_zero_generators,
+                                          normalize=normalize)
 end
 
 """
-    overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
-                    ::Type{<:Zonotope}) where {N,T, S}
+    overapproximate(vTM::Vector{TaylorModelN{N, T, S}}, ::Type{<:Zonotope};
+                    [remove_zero_generators]::Bool=true
+                    [normalize]::Bool=true) where {N, T, S}
 
 
 Overapproximate a multivariate taylor model with a zonotope.
 
 ### Input
 
-- `vTM`      -- `TaylorModelN`
-- `Zonotope` -- type for dispatch
+- `vTM`       -- `TaylorModelN`
+- `Zonotope`  -- type for dispatch
+- `remove_zero_generators` -- (optional; default: `true`) flag to remove zero
+                              generators of the resulting zonotope
+- `normalize` -- (optional; default: `true`) flag to skip the normalization of
+                 the Taylor models
 
 ### Output
 
@@ -1056,13 +942,13 @@ A zonotope that overapproximates the range of the given taylor model.
 Consider a vector of two 2-dimensional taylor models of order 2 and 4
 respectively.
 
-```julia
-julia> using LazySets, LazySets.Approximations, TaylorModels
+```jldoctest
+julia> using LazySets, TaylorModels
 
 julia> const IA = IntervalArithmetic;
 
 julia> x₁, x₂ = set_variables(Float64, ["x₁", "x₂"], order=8)
-2-element Array{TaylorN{Float64},1}:
+2-element Vector{TaylorN{Float64}}:
   1.0 x₁ + 𝒪(‖x‖⁹)
   1.0 x₂ + 𝒪(‖x‖⁹)
 
@@ -1088,19 +974,19 @@ julia> p2 = x₂^3 + 3x₁^4 + x₁ + 1
  1.0 + 1.0 x₁ + 1.0 x₂³ + 3.0 x₁⁴ + 𝒪(‖x‖⁹)
 
 julia> vTM = [TaylorModelN(pi, r, x₀, D) for pi in [p1, p2]]
-2-element Array{TaylorModelN{2,Float64,Float64},1}:
-             1.0 - 1.0 x₂ + 1.0 x₁² + [-0.5, 0.5]
-   1.0 + 1.0 x₁ + 1.0 x₂³ + 3.0 x₁⁴ + [-0.5, 0.5]
+2-element Vector{TaylorModelN{2, Float64, Float64}}:
+            1.0 - 1.0 x₂ + 1.0 x₁² + [-0.5, 0.5]
+  1.0 + 1.0 x₁ + 1.0 x₂³ + 3.0 x₁⁴ + [-0.5, 0.5]
 
 julia> Z = overapproximate(vTM, Zonotope);
 
 julia> center(Z)
-2-element Array{Float64,1}:
+2-element Vector{Float64}:
    5.5
  124.0
 
 julia> Matrix(genmat(Z))
-2×4 Array{Float64,2}:
+2×4 Matrix{Float64}:
  0.0  -1.0  5.0    0.0
  1.5   0.0  0.0  123.0
 ```
@@ -1109,8 +995,9 @@ julia> Matrix(genmat(Z))
 
 We refer to the algorithm description for the univariate case.
 """
-function overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
-                         ::Type{<:Zonotope}) where {N, T, S}
+function overapproximate(vTM::Vector{TaylorModelN{N, T, S}}, ::Type{<:Zonotope};
+                         remove_zero_generators::Bool=true,
+                         normalize::Bool=true) where {N, T, S}
     m = length(vTM)
     n = N # number of variables is get_numvars() in TaylorSeries
 
@@ -1120,10 +1007,14 @@ function overapproximate(vTM::Vector{TaylorModelN{N, T, S}},
     gen_rem = Vector{T}(undef, m) # generators for the remainder
 
     # compute overapproximation
-    return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
+    return _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem;
+                                          remove_zero_generators=remove_zero_generators,
+                                          normalize=normalize)
 end
 
-function _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
+function _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem;
+                                        remove_zero_generators::Bool=true,
+                                        normalize::Bool=true)
     @inbounds for (i, x) in enumerate(vTM)
         xpol, xdom = polynomial(x), domain(x)
 
@@ -1132,11 +1023,11 @@ function _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
         rem_nonlin = remainder(x)
 
         # build an overapproximation of the nonlinear terms
-        pol_nonlin = xpol - pol_lin
+        pol_nonlin = _nonlinear_polynomial(xpol)
         rem_nonlin += evaluate(pol_nonlin, xdom)
 
         # normalize the linear polynomial to the symmetric interval [-1, 1]
-        Q = normalize_taylor(pol_lin, xdom, true)
+        Q = normalize ? normalize_taylor(pol_lin, xdom, true) : pol_lin
 
         # build the generators
         α = mid(rem_nonlin)
@@ -1145,7 +1036,10 @@ function _overapproximate_vTM_zonotope!(vTM, c, gen_lin, gen_rem)
         gen_rem[i] = abs(rem_nonlin.hi - α)
     end
     Z = Zonotope(c, hcat(gen_lin, Diagonal(gen_rem)))
-    return remove_zero_generators(Z)
+    if remove_zero_generators
+        Z = LazySets.remove_zero_generators(Z)
+    end
+    return Z
 end
 
 end # quote
@@ -1167,9 +1061,9 @@ function convert(::Type{IntervalMatrices.Interval{T}},
 end
 
 """
-    overapproximate(lm::LinearMap{N, <:AbstractZonotope{N}, NM,
+    overapproximate(lm::LinearMap{N, <:AbstractZonotope, NM,
                                   <:AbstractIntervalMatrix{NM}},
-                    ::Type{<:Zonotope}) where {N<:Real, NM}
+                    ::Type{<:Zonotope}) where {N, NM}
 
 Overapproximate an interval-matrix linear map of a zonotopic set by a new
 zonotope.
@@ -1201,9 +1095,9 @@ conventional matrix and a symmetric interval matrix) and a zonotope
 [1] Althoff, Stursberg, Buss. Reachability analysis of linear systems with
 uncertain parameters and inputs. CDC 2007.
 """
-function overapproximate(lm::LinearMap{N, <:AbstractZonotope{N}, NM,
+function overapproximate(lm::LinearMap{N, <:AbstractZonotope, NM,
                                        <:AbstractIntervalMatrix{NM}},
-                         ::Type{<:Zonotope}) where {N<:Real, NM}
+                         ::Type{<:Zonotope}) where {N, NM}
     Mc, Ms = split(lm.M)
     Z = lm.X
     c = Mc * center(Z)
@@ -1229,9 +1123,9 @@ end end  # quote / load_intervalmatrices_overapproximation()
 # ==========================================
 
 """
-    overapproximate(lm::LinearMap{N, <:CartesianProductArray{N}},
+    overapproximate(lm::LinearMap{N, <:CartesianProductArray},
                     ::Type{CartesianProductArray{N, S}}
-                   ) where {N, S<:LazySet{N}}
+                   ) where {N, S<:LazySet}
 
 Decompose a lazy linear map of a Cartesian product array while keeping the
 original block structure.
@@ -1245,16 +1139,16 @@ original block structure.
 
 A `CartesianProductArray` representing the decomposed linear map.
 """
-function overapproximate(lm::LinearMap{N, <:CartesianProductArray{N}},
+function overapproximate(lm::LinearMap{N, <:CartesianProductArray},
                          ::Type{CartesianProductArray{N, S}}
-                        ) where {N, S<:LazySet{N}}
+                        ) where {N, S<:LazySet}
     cpa = array(lm.X)
     arr = Vector{S}(undef, length(cpa))
     return _overapproximate_lm_cpa!(arr, lm.M, cpa, S)
 end
 
 """
-    overapproximate(lm::LinearMap{N, <:CartesianProductArray{N}},
+    overapproximate(lm::LinearMap{N, <:CartesianProductArray},
                     ::Type{<:CartesianProductArray},
                     dir::Type{<:AbstractDirections}) where {N}
 
@@ -1271,7 +1165,7 @@ directions while keeping the original block structure.
 
 A `CartesianProductArray` representing the decomposed linear map.
 """
-function overapproximate(lm::LinearMap{N, <:CartesianProductArray{N}},
+function overapproximate(lm::LinearMap{N, <:CartesianProductArray},
                          ::Type{<:CartesianProductArray},
                          dir::Type{<:AbstractDirections}) where {N}
     cpa = array(lm.X)
@@ -1280,7 +1174,7 @@ function overapproximate(lm::LinearMap{N, <:CartesianProductArray{N}},
 end
 
 """
-    overapproximate(lm::LinearMap{N, <:CartesianProductArray{N}},
+    overapproximate(lm::LinearMap{N, <:CartesianProductArray},
                     ::Type{<:CartesianProductArray},
                     set_type::Type{<:LazySet}) where {N}
 
@@ -1297,7 +1191,7 @@ while keeping the original block structure.
 
 A `CartesianProductArray` representing the decomposed linear map.
 """
-function overapproximate(lm::LinearMap{N, <:CartesianProductArray{N}},
+function overapproximate(lm::LinearMap{N, <:CartesianProductArray},
                          ::Type{<:CartesianProductArray},
                          set_type::Type{<:LazySet}) where {N}
     cpa = array(lm.X)
@@ -1307,7 +1201,7 @@ end
 
 function _overapproximate_lm_cpa!(arr, M, cpa, overapprox_option)
     # construct Minkowski sum for block row
-    function _block_row(cpa::Vector{S}, M::AbstractMatrix{N},
+    function _block_row(cpa::Vector{S}, M::AbstractMatrix,
                         row_range::UnitRange{Int}) where {N, S<:LazySet{N}}
         arr_inner = Vector{LinearMap{N, <:S}}(undef, length(cpa))
         col_start_ind, col_end_ind = 1, 0
@@ -1332,7 +1226,7 @@ function _overapproximate_lm_cpa!(arr, M, cpa, overapprox_option)
 end
 
 """
-    overapproximate(rm::ResetMap{N, <:CartesianProductArray{N}},
+    overapproximate(rm::ResetMap{N, <:CartesianProductArray},
                     ::Type{<:CartesianProductArray}, oa) where {N}
 
 Overapproximate a reset map (that only resets to zero) of a Cartesian product
@@ -1357,7 +1251,7 @@ This implementation currently only supports resets to zero.
 We convert the `ResetMap` into a `LinearMap` and then call the corresponding
 overapproximation method.
 """
-function overapproximate(rm::ResetMap{N, <:CartesianProductArray{N}},
+function overapproximate(rm::ResetMap{N, <:CartesianProductArray},
                          ::Type{<:CartesianProductArray}, oa) where {N}
     if any(!iszero, values(rm.resets))
         error("we currently only support resets to zero")
@@ -1369,8 +1263,8 @@ end
 
 """
     overapproximate(cap::Intersection{N,
-                                      <:CartesianProductArray{N},
-                                      <:AbstractPolyhedron{N}},
+                                      <:CartesianProductArray,
+                                      <:AbstractPolyhedron},
                     ::Type{CartesianProductArray}, oa) where {N}
 
 Return the intersection of the Cartesian product of a finite number of convex
@@ -1401,8 +1295,8 @@ blocks and the newly computed blocks.
 The result is a `CartesianProductArray` with the same block structure as in `X`.
 """
 function overapproximate(cap::Intersection{N,
-                                           <:CartesianProductArray{N},
-                                           <:AbstractPolyhedron{N}},
+                                           <:CartesianProductArray,
+                                           <:AbstractPolyhedron},
                             ::Type{CartesianProductArray}, oa) where {N}
 
     cpa, P = cap.X, cap.Y
@@ -1424,14 +1318,14 @@ end
 
 # symmetric method
 function overapproximate(cap::Intersection{N,
-                                            <:AbstractPolyhedron{N},
-                                            <:CartesianProductArray{N}},
+                                            <:AbstractPolyhedron,
+                                            <:CartesianProductArray},
                             ::Type{CartesianProductArray}, oa) where {N}
     overapproximate(Intersection(cap.Y, cap.X), oa)
 end
 
 """
-    overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, Rational}) where {N<:Real}
+    overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, Rational}) where {N}
 
 Reduce the order of a zonotope by overapproximating with a zonotope with less
 generators.
@@ -1453,7 +1347,7 @@ This function implements the algorithm described in A. Girard's
 
 If the desired order is smaller than one, the zonotope is *not* reduced.
 """
-function overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, Rational}) where {N<:Real}
+function overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, Rational}) where {N}
     c, G = Z.center, Z.generators
     d, p = dim(Z), ngens(Z)
 
@@ -1472,7 +1366,7 @@ function overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, R
     rg = G[:, ind[1:m]] # reduced generators
 
     # interval hull computation of reduced generators
-    Gbox = Diagonal(sum(abs.(rg), dims=2)[:])
+    Gbox = Diagonal(sum(abs, rg, dims=2)[:])
     if m < p
         Gnotred = G[:, ind[m+1:end]]
         Gred = [Gnotred Gbox]
@@ -1483,40 +1377,73 @@ function overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, R
 end
 
 """
-    overapproximate(am::AbstractAffineMap{N, <:AbstractHyperrectangle{N}},
-                    ::Type{<:Hyperrectangle}) where {N}
+    overapproximate(X::LazySet, ZT::Type{<:Zonotope},
+                    dir::AbstractDirections;
+                    [algorithm]="vrep", kwargs...)
 
-Overapproximate the affine map of a hyperrectangular set
-using a hyperrectangle.
+Overapproximate a polytopic set with a zonotope.
 
 ### Input
 
-- `am`             -- affine map of a hyperrectangular set
-- `Hyperrectangle` -- type for dispatch
+- `X`         -- polytopic set
+- `Zonotope`  -- type for dispatch
+- `dir`       -- directions used for the generators
+- `algorithm` -- (optional, default: `"vrep"`) method used to compute the overapproximation
+- `kwargs`    -- further algorithm choices
 
 ### Output
 
-A hyperrectangle.
+A zonotope that overapproximates `X` and uses at most the directions provided in
+`dir` (redundant directions will be ignored).
 
-### Algorithm
+### Notes
 
-If `c` and `r` denote the center and vector radius of a hyperrectangle `H`
-and `v` the translation vector, a tight hyperrectangular overapproximation of
-`M * H + v` is obtained by transforming `c ↦ M*c+v` and `r ↦ abs.(M) * r`, where
-`abs.(⋅)` denotes the element-wise absolute value operator.
+Two algorithms are available:
+
+- `"vrep"` -- Overapproximate a polytopic set with a zonotope of minimal total generator sum
+              using only generators in the given directions. Under this constraint,
+              the zonotope has the minimal sum of generator vectors. See the docstring
+              of [`_overapproximate_zonotope_vrep`](@ref) for further details.
+
+- `"cpa"` -- Overapproximate a polytopic set with a zonotope using a cartesian
+             decomposition into two-dimensional blocks. See the docstring
+             of [`_overapproximate_zonotope_cpa`](@ref) for further details.
 """
-function overapproximate(am::AbstractAffineMap{N, <:AbstractHyperrectangle{N}},
-                         ::Type{<:Hyperrectangle}) where {N<:Real}
-    M, X, v = matrix(am), set(am), vector(am)
-    center_MXv = M * center(X) + v
-    radius_MX = abs.(M) * radius_hyperrectangle(X)
-    return Hyperrectangle(center_MXv, radius_MX)
+function overapproximate(X::LazySet, ZT::Type{<:Zonotope},
+                         dir::AbstractDirections;
+                         algorithm="vrep", kwargs...)
+    if algorithm == "vrep"
+        return  _overapproximate_zonotope_vrep(X, dir, kwargs...)
+    elseif algorithm == "cpa"
+        cpa = _overapproximate_zonotope_cpa(X, dir)
+        return convert(Zonotope, cpa)
+    else
+        throw(ArgumentError("algorithm $algorithm is not known"))
+    end
+end
+
+function overapproximate(X::LazySet, ZT::Type{<:Zonotope},
+                         dir::Type{<:AbstractDirections};
+                         algorithm="vrep", kwargs...)
+    overapproximate(X, ZT, dir(dim(X)), algorithm=algorithm, kwargs...)
+end
+
+# disambiguation
+function overapproximate(∅::EmptySet, ZT::Type{<:Zonotope},
+                         dir::AbstractDirections;
+                         algorithm="vrep", kwargs...)
+    return ∅
+end
+function overapproximate(∅::EmptySet, ZT::Type{<:Zonotope},
+                         dir::Type{<:AbstractDirections};
+                         algorithm="vrep", kwargs...)
+    return ∅
 end
 
 """
-    overapproximate(X::LazySet{N}, ::Type{<:Zonotope},
-                    dir::AbstractDirections{N};
-                    solver=default_lp_solver(N)) where {N<:Real}
+    _overapproximate_zonotope_vrep(X::LazySet{N},
+                                   dir::AbstractDirections;
+                                   solver=default_lp_solver(N)) where {N}
 
 Overapproximate a polytopic set with a zonotope of minimal total generator sum
 using only generators in the given directions.
@@ -1524,7 +1451,6 @@ using only generators in the given directions.
 ### Input
 
 - `X`        -- polytopic set
-- `Zonotope` -- type for dispatch
 - `dir`      -- directions used for the generators
 - `solver`   -- (optional, default: `default_lp_solver(N)`) the backend used to
                 solve the linear program
@@ -1564,9 +1490,9 @@ nonnegativity constraints (last type) are not stated explicitly in [1].
 [1] Zonotopes as bounding volumes, L. J. Guibas et al, Proc. of Symposium on
     Discrete Algorithms, pp. 803-812.
 """
-function overapproximate(X::LazySet{N}, ::Type{<:Zonotope},
-                         dir::AbstractDirections{N};
-                         solver=default_lp_solver(N)) where {N<:Real}
+function _overapproximate_zonotope_vrep(X::LazySet{N},
+                                        dir::AbstractDirections;
+                                        solver=default_lp_solver(N)) where {N}
     # TODO "normalization" here involves two steps: removing opposite directions
     # and normalizing the direction vector
     # for the latter we can use the normalization information from dispatch on
@@ -1636,8 +1562,72 @@ function overapproximate(X::LazySet{N}, ::Type{<:Zonotope},
     return Zonotope(c, G)
 end
 
+# overload on direction type
+function _overapproximate_zonotope_vrep(X::LazySet{N},
+                                        dir::Type{<:AbstractDirections};
+                                        solver=default_lp_solver(N)) where {N}
+    return _overapproximate_zonotope_vrep(X, dir(dim(X)), solver=solver)
+end
+
 """
-    overapproximate(r::Rectification{N, <:AbstractZonotope{N}}, ::Type{<:Zonotope}) where {N}
+    _overapproximate_zonotope_cpa(X::LazySet, dir::Type{<:AbstractDirections})
+
+Overapproximate a polytopic set with a zonotope using cartesian decomposition.
+
+### Input
+
+- `X`        -- polytopic set
+- `dir`      -- directions used for the generators
+
+### Output
+
+A zonotope that overapproximates `X`.
+
+### Notes
+
+The algorithm decomposes `X` in 2D sets and overapproximates those sets with
+zonotopes, and finally takes the cartesian product of the sets and converts to a zonotope.
+
+### Algorithm
+
+The algorithm used is based on the section 8.2.4 of [1].
+
+[1] Le Guernic, C. (2009). Reachability analysis of hybrid systems with linear
+continuous dynamics (Doctoral dissertation).
+"""
+function _overapproximate_zonotope_cpa(X::LazySet, dir::Type{<:AbstractDirections})
+    n = dim(X)
+    # overapproximate 2D blocks
+    if n > 1
+        πX_2D = [project(X, [i, i+1]) for i in 1:2:n-1]
+        Z_2D = [_overapproximate_zonotope_vrep(poly, dir(2)) for poly in πX_2D]
+    end
+
+    if iseven(n)
+        out = Z_2D
+    else
+        # odd case projects onto an interval
+        πX_n = project(X, [n])
+        πX_n = overapproximate(πX_n, Interval)
+        πX_n = convert(Zonotope, πX_n)
+
+        if n == 1
+            out = [πX_n]
+        else
+            out = vcat(Z_2D, πX_n)
+        end
+    end
+    return CartesianProductArray(out)
+end
+
+# overload on direction type
+function _overapproximate_zonotope_cpa(X::LazySet,
+                                       dir::AbstractDirections)
+    _overapproximate_zonotope_cpa(X, typeof(dir))
+end
+
+"""
+    overapproximate(r::Rectification{N, <:AbstractZonotope}, ::Type{<:Zonotope}) where {N}
 
 Overapproximation of the rectification of a zonotopic set.
 
@@ -1658,7 +1648,7 @@ This function implements [Theorem 3.1, 1].
 and effective robustness certification. In Advances in Neural Information
 Processing Systems (pp. 10802-10813).*
 """
-function overapproximate(r::Rectification{N, <:AbstractZonotope{N}}, ::Type{<:Zonotope}) where {N}
+function overapproximate(r::Rectification{N, <:AbstractZonotope}, ::Type{<:Zonotope}) where {N}
     Z = copy(set(r))
     c = center(Z)
     G = genmat(Z)
@@ -1705,7 +1695,7 @@ function overapproximate(r::Rectification{N, <:AbstractZonotope{N}}, ::Type{<:Zo
 end
 
 """
-    overapproximate(CHA::ConvexHullArray{N, <:AbstractZonotope{N}}, ::Type{<:Zonotope}) where {N}
+    overapproximate(CHA::ConvexHullArray{N, <:AbstractZonotope}, ::Type{<:Zonotope}) where {N}
 
 Overapproximation of the convex hull array of zonotopic sets.
 
@@ -1723,7 +1713,7 @@ A zonotope overapproximation of the convex hull array of zonotopic sets.
 This function iteratively applies the overapproximation algorithm for the
 convex hull of two zonotopes to the given array of zonotopes.
 """
-function overapproximate(CHA::ConvexHullArray{N, <:AbstractZonotope{N}}, ::Type{<:Zonotope}) where {N}
+function overapproximate(CHA::ConvexHullArray{N, <:AbstractZonotope}, ::Type{<:Zonotope}) where {N}
     arr = array(CHA)
     n = length(arr)
     if n == 1
@@ -1783,3 +1773,117 @@ function _overapproximate_hparallelotope(Z::AbstractZonotope, indices=1:dim(Z))
     □Γ⁻¹Z = box_approximation(linear_map(inv(Γ), Z))
     return linear_map(Γ, □Γ⁻¹Z)
 end
+
+"""
+    overapproximate(X::Intersection{N, <:AbstractZonotope, <:Hyperplane},
+                    dirs::AbstractDirections) where {N}
+
+Overapproximation of the intersection between a zonotopic set and a hyperplane
+
+### Input
+
+- `X`    -- intersection between a zonotopic set and a hyperplane
+- `dirs` -- type of direction representation
+
+### Output
+
+An overapproximation of the intersection between a zonotopic set and a hyperplane.
+
+### Algorithm
+
+This function implements [Algorithm 8.1, 1].
+
+[1] *Colas Le Guernic. Reachability Analysis of Hybrid Systems with Linear
+Continuous Dynamics. Computer Science [cs]. Université Joseph-Fourier - Grenoble
+I, 2009. English. fftel-00422569v2f*
+"""
+function overapproximate(X::Intersection{N, <:AbstractZonotope, <:Hyperplane},
+                         dirs::AbstractDirections) where {N}
+    dim(X) == dim(dirs) || throw(ArgumentError("the dimension of the set, $(dim(X)) doesn't" *
+                                 " match the dimension of the template, $(dim(dirs))"))
+    Z, G = X.X, X.Y
+
+    if isdisjoint(Z, G)
+        return EmptySet{N}(dim(Z))
+    end
+
+    n = G.a                           # normal vector to the hyperplane
+    γ = G.b                           # displacement of the hyperplane
+    Lᵧ = Line2D([one(N), zero(N)], γ)  # line (x, y) : x = γ
+
+    constraints = Vector{HalfSpace{N, eltype(dirs)}}()
+    for l in dirs
+        Πₙₗ = vcat(n', l')              # projection map
+        πZₙₗ = linear_map(Πₙₗ, Z)
+
+        ρₗ = LazySets._bound_intersect_2D(πZₙₗ, Lᵧ)
+
+        push!(constraints, HalfSpace(l, ρₗ))
+    end
+    T = isbounding(dirs) ? HPolytope : HPolyhedron
+    return T(constraints)
+end
+
+function overapproximate(X::Intersection{N, <:Hyperplane, <:AbstractZonotope},
+                         dirs::AbstractDirections) where {N}
+    return overapproximate(X.Y ∩ X.X, dirs)
+end
+
+function overapproximate(X::Intersection{N, <:AbstractZonotope,
+                         <:Hyperplane}, dirs::Type{<:AbstractDirections}) where {N}
+    return overapproximate(X, dirs(dim(X)))
+end
+
+function overapproximate(X::Intersection{N, <:Hyperplane, <:AbstractZonotope},
+                         dirs::Type{<:AbstractDirections}) where {N}
+    return overapproximate(X.Y ∩ X.X, dirs(dim(X)))
+end
+
+# ===========================================================
+# Functionality that requires IntervalConstraintProgramming
+# ===========================================================
+
+# function to be loaded by Requires
+function load_paving_overapproximation()
+
+return quote
+
+using .IntervalConstraintProgramming: Paving
+
+
+"""
+    overapproximate(p::Paving{L, N}, dirs::AbstractDirections{N, VN}) where {L, N, VN}
+
+Overapproximation of a Paving-type set representation using a polyhedron in constraint representation.
+
+### Input
+
+- `p`    -- paving
+- `dirs` -- template directions
+
+### Output
+
+An overapproximation of a paving using a polyhedron in constraint representation (`HPolyhedron`) with constraints in direction `dirs`.
+
+### Algorithm
+
+This function takes the union of the elements in the boundary of p, first
+converted into hyperrectangles, and then calculates the support function of the
+set along each  direction in dirs, to compute the `HPolyhedron` constraints.
+
+### Requires IntervalConstraintProgramming
+"""
+function overapproximate(p::Paving{L, N}, dirs::AbstractDirections{N, VN}) where {L, N, VN}
+    # enclose outer approximation
+    Uouter = UnionSetArray(convert.(Hyperrectangle, p.boundary))
+    constraints = [HalfSpace(d, ρ(d, Uouter)) for d in dirs]
+    return HPolyhedron(constraints)
+end
+
+# alias with HPolyhedron type as second argument
+function overapproximate(p::Paving{L, N}, ::Type{<:HPolyhedron}, dirs::AbstractDirections{N, VN}) where {L, N, VN}
+    return overapproximate(p, dirs)
+end
+
+end # quote
+end # load_paving_overapproximation

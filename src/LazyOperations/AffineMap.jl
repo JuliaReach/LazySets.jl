@@ -1,62 +1,70 @@
 export AffineMap
 
 """
-    AffineMap{N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM},
+    AffineMap{N, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM},
               VN<:AbstractVector{NM}} <: AbstractAffineMap{N, S}
 
-Type that represents an affine transformation ``M⋅X ⊕ v`` of a convex set ``X``.
+Type that represents an affine transformation ``M⋅X ⊕ v`` of a set ``X``,
+that is the set
+
+```math
+Y = \\{ y ∈ \\mathbb{R}^n : y = Mx + v,\\qquad x ∈ X \\}.
+```
+If ``X`` is ``n``-dimensional then ``M`` should be an ``m × n`` matrix and  ``v ∈ \\mathbb{R}^m`.
 
 ### Fields
 
-- `M` -- matrix/linear map
-- `X` -- convex set
+- `M` -- matrix
+- `X` -- set
 - `v` -- translation vector
+
+The fields' getter functions are `matrix`, `set` and `vector` respectively.
 
 ### Notes
 
 An affine map is the composition of a linear map and a translation. This type is
 parametric in the coefficients of the linear map, `NM`, which may be different from
-the numeric type of the wrapped set (`N`). However, the numeric type of the
+the numeric type of the wrapped set, `N`. However, the numeric type of the
 translation vector should be `NM`.
+
+The affine map preserves convexity: if `X` is convex, then any affine map of `X`
+is convex as well.
 
 ### Examples
 
 For the examples we create a ``3×2`` matrix, a two-dimensional unit square, and
-a three-dimensional vector.
-Then we combine them in an `AffineMap`.
+a three-dimensional vector. Then we combine them in an `AffineMap`.
 
 ```jldoctest constructors
 julia> A = [1 2; 1 3; 1 4]; X = BallInf([0, 0], 1); b2 = [1, 2]; b3 = [1, 2, 3];
 
 julia> AffineMap(A, X, b3)
-AffineMap{Int64,BallInf{Int64,Array{Int64,1}},Int64,Array{Int64,2},Array{Int64,1}}([1 2; 1 3; 1 4], BallInf{Int64,Array{Int64,1}}([0, 0], 1), [1, 2, 3])
+AffineMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, Matrix{Int64}, Vector{Int64}}([1 2; 1 3; 1 4], BallInf{Int64, Vector{Int64}}([0, 0], 1), [1, 2, 3])
 ```
 
 For convenience, `A` does not need to be a matrix but we also allow to use
 `UniformScaling`s resp. scalars (interpreted as a scaling, i.e., a scaled
-identity matrix).
-Scaling by ``1`` is ignored and simplified to a pure `Translation`.
+identity matrix). Scaling by ``1`` is ignored and simplified to a pure `Translation`.
 
 ```jldoctest constructors
 julia> using LinearAlgebra
 
 julia> am = AffineMap(2I, X, b2)
-AffineMap{Int64,BallInf{Int64,Array{Int64,1}},Int64,Diagonal{Int64,Array{Int64,1}},Array{Int64,1}}([2 0; 0 2], BallInf{Int64,Array{Int64,1}}([0, 0], 1), [1, 2])
+AffineMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, Diagonal{Int64, Vector{Int64}}, Vector{Int64}}([2 0; 0 2], BallInf{Int64, Vector{Int64}}([0, 0], 1), [1, 2])
 
 julia> AffineMap(2, X, b2) == am
 true
 
 julia> AffineMap(1, X, b2)
-Translation{Int64,Array{Int64,1},BallInf{Int64,Array{Int64,1}}}(BallInf{Int64,Array{Int64,1}}([0, 0], 1), [1, 2])
+Translation{Int64, Vector{Int64}, BallInf{Int64, Vector{Int64}}}(BallInf{Int64, Vector{Int64}}([0, 0], 1), [1, 2])
 ```
 
 Applying a linear map to an `AffineMap` object combines the two maps into a new
-`AffineMap` instance.
-Again we can make use of the conversion for convenience.
+`AffineMap` instance. Again we can make use of the conversion for convenience.
 
 ```jldoctest constructors
 julia> B = [2 0; 0 2]; am2 = B * am
-AffineMap{Int64,BallInf{Int64,Array{Int64,1}},Int64,Array{Int64,2},Array{Int64,1}}([4 0; 0 4], BallInf{Int64,Array{Int64,1}}([0, 0], 1), [2, 4])
+AffineMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, Matrix{Int64}, Vector{Int64}}([4 0; 0 4], BallInf{Int64, Vector{Int64}}([0, 0], 1), [2, 4])
 
 julia> 2 * am == am2
 true
@@ -67,20 +75,20 @@ automatically.
 
 ```jldoctest constructors
 julia> AffineMap(A, ZeroSet{Int}(2), b3)
-Singleton{Int64,Array{Int64,1}}([1, 2, 3])
+Singleton{Int64, Vector{Int64}}([1, 2, 3])
 
 julia> AffineMap(A, EmptySet{Int}(2), b3)
 EmptySet{Int64}(2)
 ```
 """
-struct AffineMap{N<:Real, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM},
+struct AffineMap{N, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM},
                  VN<:AbstractVector{NM}} <: AbstractAffineMap{N, S}
     M::MAT
     X::S
     v::VN
 
     # default constructor with dimension match check
-    function AffineMap(M::MAT, X::S, v::VN) where {N<:Real, S<:LazySet{N}, NM,
+    function AffineMap(M::MAT, X::S, v::VN) where {N, S<:LazySet{N}, NM,
                                                    MAT<:AbstractMatrix{NM},
                                                    VN<:AbstractVector{NM}}
 
@@ -122,8 +130,7 @@ end
 
 # ZeroSet is "almost absorbing" for the linear map (only the dimension changes)
 # such that only the translation vector remains
-function AffineMap(M::AbstractMatrix{N}, Z::ZeroSet{N}, v::AbstractVector{N}
-                  ) where {N<:Real}
+function AffineMap(M::AbstractMatrix, Z::ZeroSet, v::AbstractVector)
     @assert dim(Z) == size(M, 2) "a matrix of size $(size(M)) cannot be " *
         "applied to a set of dimension $(dim(Z))"
 
@@ -135,8 +142,7 @@ function AffineMap(M::AbstractMatrix{N}, Z::ZeroSet{N}, v::AbstractVector{N}
 end
 
 # EmptySet is absorbing for AffineMap
-function AffineMap(M::AbstractMatrix{N}, ∅::EmptySet{N}, v::AbstractVector{N}
-                  ) where {N<:Real}
+function AffineMap(M::AbstractMatrix, ∅::EmptySet, v::AbstractVector)
     return ∅
 end
 
@@ -148,7 +154,7 @@ function matrix(am::AffineMap)
     return am.M
 end
 
-function vector(am::AffineMap{N}) where {N<:Real}
+function vector(am::AffineMap)
     return am.v
 end
 

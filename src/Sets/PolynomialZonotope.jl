@@ -2,8 +2,7 @@ export PolynomialZonotope, dim, σ,
        polynomial_order,
        order,
        linear_map,
-       scale,
-       minkowski_sum
+       scale
 
 """
     PolynomialZonotope{N, VT, VMT, MT}
@@ -103,7 +102,7 @@ An integer representing the ambient dimension of the polynomial zonotope.
 dim(pz::PolynomialZonotope) = length(pz.c)
 
 """
-    σ(d::AbstractVector{N}, pz::PolynomialZonotope{N}) where {N}
+    σ(d::AbstractVector, pz::PolynomialZonotope)
 
 Return the support vector of a polynomial zonotope along direction `d`.
 
@@ -116,12 +115,12 @@ Return the support vector of a polynomial zonotope along direction `d`.
 
 Vector representing the support vector.
 """
-function σ(d::AbstractVector{N}, pz::PolynomialZonotope{N}) where {N}
+function σ(d::AbstractVector, pz::PolynomialZonotope)
     error("this function is not yet implemented")
 end
 
 """
-    ρ(d::AbstractVector{N}, pz::PolynomialZonotope{N}) where {N}
+    ρ(d::AbstractVector, pz::PolynomialZonotope)
 
 Return the support function of a polynomial zonotope along direction `d`.
 
@@ -134,7 +133,7 @@ Return the support function of a polynomial zonotope along direction `d`.
 
 Value of the support function.
 """
-function ρ(d::AbstractVector{N}, pz::PolynomialZonotope{N}) where {N}
+function ρ(d::AbstractVector, pz::PolynomialZonotope)
     error("this function is not yet implemented")
 end
 
@@ -222,27 +221,3 @@ function scale(α::Number, pz::PolynomialZonotope)
     G = α * pz.G
     return PolynomialZonotope(c, E, F, G)
 end
-
-"""
-    minkowski_sum(pz::PolynomialZonotope, z::Zonotope)
-
-Return the Minkowski sum of a polynomial zonotope and a usual zonotope.
-
-### Input
-
-- `pz` -- polynomial zonotope
-- `z`  -- usual zonotope
-
-## Output
-
-Polynomial zonotope such that its center is the sum of the centers of `pz` and `z`
-and its generators is the matrix that results by concatenating them.
-"""
-function minkowski_sum(pz::PolynomialZonotope, z::Zonotope)
-    c = pz.c + z.center
-    G = [pz.G z.generators]
-    return PolynomialZonotope(c, pz.E, pz.F, G)
-end
-
-# symmetric method
-minkowski_sum(z::Zonotope, pz::PolynomialZonotope) = minkowski_sum(pz, z)

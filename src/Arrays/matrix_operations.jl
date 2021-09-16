@@ -19,11 +19,6 @@ const DEFAULT_COND_TOL = 1e6
 # matrix-matrix division
 @inline _At_ldiv_B(A, B) = transpose(A) \ B
 
-@static if VERSION < v"1.2"
-    # rank of sparse matrix (see JuliaLang #30415)
-    LinearAlgebra.rank(M::SparseMatrixCSC) = rank(qr(M))
-end
-
 # rank of sparse submatrix (see #1497)
 LinearAlgebra.rank(M::SubArray{N, 2, <:SparseMatrixCSC}) where {N} = rank(sparse(M))
 
@@ -231,7 +226,7 @@ function extend(M::AbstractMatrix; check_rank=true)
 end
 
 """
-    projection_matrix(block::AbstractVector{Int}, n::Int, [N]::DataType=Float64)
+    projection_matrix(block::AbstractVector{Int}, n::Int, [N]::Type{<:Number}=Float64)
 
 Return the projection matrix associated to the given block of variables.
 
@@ -252,20 +247,37 @@ A sparse matrix that corresponds to the projection onto the variables in `block`
 julia> using LazySets: projection_matrix
 
 julia> projection_matrix([1, 3], 4)
-2×4 SparseArrays.SparseMatrixCSC{Float64,Int64} with 2 stored entries:
-  [1, 1]  =  1.0
-  [2, 3]  =  1.0
+2×4 SparseArrays.SparseMatrixCSC{Float64, Int64} with 2 stored entries:
+ 1.0   ⋅    ⋅    ⋅
+  ⋅    ⋅   1.0   ⋅
 
 julia> Matrix(ans)
-2×4 Array{Float64,2}:
+2×4 Matrix{Float64}:
  1.0  0.0  0.0  0.0
  0.0  0.0  1.0  0.0
 ```
 """
-function projection_matrix(block::AbstractVector{Int}, n::Int, N::DataType=Float64)
+function projection_matrix(block::AbstractVector{Int}, n::Int, N::Type{<:Number}=Float64)
     m = length(block)
     return sparse(1:m, block, ones(N, m), m, n)
 end
+
+# fallback: represent the projection matrix as a sparse array
+function projection_matrix(block::AbstractVector{Int}, n::Int, VN::Type{<:AbstractVector{N}}) where {N}
+    return projection_matrix(block, n, N)
+end
+
+function load_projection_matrix_static()
+
+return quote
+    # represent the projection matrix with a static array
+    function projection_matrix(block::AbstractVector{Int}, n::Int, VN::Type{<:SVector{L, N}}) where {L, N}
+        mat = projection_matrix(block, n, N)
+        m = size(mat, 1)
+        return SMatrix{m, n}(mat)
+    end
+end # quote
+end # end load_projection_matrix_static
 
 """
     remove_zero_columns(A::AbstractMatrix)

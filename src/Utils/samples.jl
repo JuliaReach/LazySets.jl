@@ -3,32 +3,38 @@
 # ========================
 
 """
-    Sampler
+    AbstractSampler
 
-Abstract type for defining new sample methods.
+Abstract type for defining new sampling methods.
 
 ### Notes
 
-All subtypes should implement a `_sample!` method.
+All subtypes should implement a `sample!(D, X, ::Method)` method where the
+first argument is the output (vector of vectors), the second argument is the
+set to be sampled, and the third argument is the sampler instance.
 """
-abstract type Sampler end
+abstract type AbstractSampler end
 
 """
     sample(X::LazySet{N}, num_samples::Int;
-           [sampler]=nothing,
+           [sampler]=_default_sampler(X),
            [rng]::AbstractRNG=GLOBAL_RNG,
-           [seed]::Union{Int, Nothing}=nothing) where {N}
+           [seed]::Union{Int, Nothing}=nothing,
+           [include_vertices]=false,
+           [VN]=Vector{N}) where {N}
 
-Sampling of an arbitrary bounded set `X`.
+Random sampling of an arbitrary set `X`.
 
 ### Input
 
-- `X`           -- (bounded) set to be sampled
+- `X`           -- set to be sampled
 - `num_samples` -- number of random samples
-- `sampler`     -- sampler used (default: `nothing`, which falls back to
-                   `RejectionSampler`)
+- `sampler`     -- (optional, default: `_default_sampler(X)`) the sampler used;
+                   falls back to [`CombinedSampler`](@ref)
 - `rng`         -- (optional, default: `GLOBAL_RNG`) random number generator
 - `seed`        -- (optional, default: `nothing`) seed for reseeding
+- `include_vertices` -- (optional, default: `false`) option to include the vertices of `X`
+- `VN`          -- (optional, default: `Vector{N}`) vector type of the sampled points
 
 ### Output
 
@@ -39,35 +45,301 @@ vector).
 ### Algorithm
 
 See the documentation of the respective `Sampler`.
+
+### Notes
+
+If `include_vertices == true`, we include all vertices computed with `vertices`.
+Alternatively if a number ``k`` is passed, we plot the first ``k`` vertices
+returned by `vertices(X)`.
 """
 function sample(X::LazySet{N}, num_samples::Int;
-                sampler=nothing,
+                sampler=_default_sampler(X),
                 rng::AbstractRNG=GLOBAL_RNG,
-                seed::Union{Int, Nothing}=nothing) where {N<:Real}
-    @assert isbounded(X) "this function requires that the set `X` is bounded"
+                seed::Union{Int, Nothing}=nothing,
+                include_vertices=false,
+                VN=Vector{N}) where {N}
 
-    if sampler == nothing
-        require(:Distributions; fun_name="sample",
-                explanation="using the default `RejectionSampler` algorithm")
-        sampler = RejectionSampler
+    D = Vector{VN}(undef, num_samples) # preallocate output
+    sample!(D, X, sampler; rng=rng, seed=seed)
+
+    if include_vertices != false
+        k = (include_vertices isa Bool) ? Inf : include_vertices
+        for v in vertices(X)
+            push!(D, v)
+            k -= 1
+            if k <= 0
+                break
+            end
+        end
     end
-    D = Vector{Vector{N}}(undef, num_samples) # preallocate output
-    _sample!(D, sampler(X); rng=rng, seed=seed)
+
     return D
 end
 
 # without argument, returns a single element (instead of a singleton)
-function sample(X::LazySet{N}; kwargs...) where {N<:Real}
+function sample(X::LazySet; kwargs...)
     return sample(X, 1; kwargs...)[1]
 end
 
-# fallback implementation
-function _sample!(D::Vector{Vector{N}},
-                  sampler::Sampler;
-                  rng::AbstractRNG=GLOBAL_RNG,
-                  seed::Union{Int, Nothing}=nothing) where {N<:Real}
-    error("the method `_sample!` is not implemented for samplers of type " *
-          "$(typeof(sampler))")
+# default sampling for LazySets
+_default_sampler(X::LazySet) = CombinedSampler()
+_default_sampler(X::LineSegment{N}) where {N} =
+    RejectionSampler(DefaultUniform(zero(N), one(N)), true, Inf)
+
+# =====================
+# Uniform distribution
+# =====================
+
+# represents a uniform distribution over the interval [a, b]
+# using `rand` from the Julia standard library
+struct DefaultUniform{N}
+    a::N
+    b::N
+end
+
+function Base.rand(rng::AbstractRNG, U::DefaultUniform)
+    r = rand(rng)
+    Δ = U.b - U.a
+    return Δ * r + U.a
+end
+
+function Base.rand(rng::AbstractRNG, U::DefaultUniform, n::Int)
+    return [rand(rng, U) for i in 1:n]
+end
+
+function Base.rand(rng::AbstractRNG, U::AbstractVector{<:DefaultUniform})
+    return rand.(Ref(rng), U)
+end
+
+function rand!(x, rng::AbstractRNG, U::DefaultUniform)
+    @inbounds for i in eachindex(x)
+        x[i] = rand(rng, U)
+    end
+    return x
+end
+
+# ===================
+# Rejection Sampling
+# ===================
+
+"""
+    RejectionSampler{D} <: AbstractSampler
+
+Type used for rejection sampling of an arbitrary set `X`.
+
+### Fields
+
+- `distribution` -- (optional, default: `DefaultUniform`) distribution from which
+                    the sample is drawn
+- `tight`        -- (optional, default: `false`) set to `true` if the support of
+                    the distribution is known to coincide with the set `X`
+- `maxiter`      -- (optional, default: `Inf`) maximum number of iterations
+                    before giving up
+
+### Algorithm
+
+Draw a sample ``x`` from a given distribution of a box-overapproximation of the
+original set ``X`` in all ``n`` dimensions. The function rejects a drawn sample
+``x`` and redraws as long as the sample is not contained in the original set
+``X``, i.e., ``x ∉ X``.
+
+### Notes
+
+The `maxiter` parameter is useful when sampling from sets that are small
+compared to their box approximation, e.g., flat sets, for which the probability
+of sampling from within the set is close to zero.
+"""
+struct RejectionSampler{D} <: AbstractSampler
+    distribution::D
+    tight::Bool
+    maxiter::Number
+end
+
+function RejectionSampler(distr; tight::Bool=false, maxiter=Inf)
+    return RejectionSampler(distr, tight, maxiter)
+end
+
+function RejectionSampler(distr::DefaultUniform; tight::Bool=false, maxiter=Inf)
+    return RejectionSampler([distr], tight, maxiter)
+end
+
+function RejectionSampler(X::LazySet, distribution=DefaultUniform;
+                          tight::Bool=false, maxiter=Inf)
+    # define the support of the distribution as the smallest box enclosing X
+    n = dim(X)
+    B = box_approximation(X)
+
+    # distribution over B
+    distr = [distribution(low(B, i), high(B, i)) for i in 1:n]
+
+    return RejectionSampler(distr, tight, maxiter)
+end
+
+# the support of this distribution is always tight wrt X
+function RejectionSampler(X::AbstractHyperrectangle)
+    n = dim(X)
+    distr = [DefaultUniform(low(X, i), high(X, i)) for i in 1:n]
+    return RejectionSampler(distr, true, Inf)
+end
+
+function sample!(D::Vector{VN}, X::LazySet, sampler::RejectionSampler;
+                 rng::AbstractRNG=GLOBAL_RNG,
+                 seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
+    U = sampler.distribution
+    rng = reseed(rng, seed)
+    @inbounds for i in 1:length(D)
+        w = rand(rng, U)
+
+        if !(sampler.tight)
+            j = 1
+            while w ∉ X && j <= sampler.maxiter
+                w = rand(rng, U)
+                j += 1
+            end
+            if j > sampler.maxiter
+                return D
+            end
+        end
+        D[i] = w
+    end
+    return D
+end
+
+function sample!(D::Vector{VN}, L::LineSegment, sampler::RejectionSampler{<:DefaultUniform};
+                 rng::AbstractRNG=GLOBAL_RNG,
+                 seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
+
+    rng = reseed(rng, seed)
+    U = sampler.distribution
+    @assert U.a >= zero(N) && U.b <= one(N)
+    p = L.p
+    q = L.q
+
+    @inbounds for i in 1:length(D)
+        λ = rand(rng, U)
+        D[i] = p + λ * (q - p)
+    end
+    return D
+end
+
+"""
+    RandomWalkSampler <: AbstractSampler
+
+Type used for sampling of a convex polytope `X` using its vertex representation.
+This is especially useful if rejection sampling does not work because the
+polytope is flat.
+
+### Fields
+
+- `variant` -- (default: `true`) option to choose a variant (see below)
+
+### Algorithm
+
+Choose a random convex combination of the vertices of `X`.
+
+If `variant == false`, we proceed as follows.
+Let ``V = \\{v_i\\}_i`` denote the set of vertices of `X`.
+Then any point ``p \\in \\mathbb{R}^n`` of the convex polytope ``X`` is a convex
+combination of its vertices, i.e., ``p = \\sum_{i} v_i α_i`` for some
+(non-negative) coefficients ``\\{α_i\\}_i`` that add up to 1.
+The algorithm chooses a random convex combination (the ``α_i``).
+To produce such combination we apply the finite difference operator on a sorted
+uniform sample over ``[0, 1]``; the method can be found in [1] and [2].
+
+If `variant == true`, we start from a random vertex and then repeatedly walk
+toward a random vertex inside the polytope.
+
+### Notes
+
+The sampling is not uniform - points in the center of the polytope are more
+likely to be sampled.
+
+### References
+
+[1] *Rubin, Donald B. The bayesian bootstrap. The annals of statistics (1981):
+130-134.*
+
+[2] https://cs.stackexchange.com/questions/3227/uniform-sampling-from-a-simplex/3229
+"""
+struct RandomWalkSampler <: AbstractSampler
+    variant::Bool
+end
+
+RandomWalkSampler() = RandomWalkSampler(true)
+
+function sample!(D::Vector{VN}, X::LazySet, sampler::RandomWalkSampler;
+                 rng::AbstractRNG=GLOBAL_RNG,
+                 seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
+    rng = reseed(rng, seed)
+    U = DefaultUniform(zero(N), one(N))
+    vlist = vertices_list(X)
+    m = length(vlist)
+
+    if sampler.variant
+        @inbounds for i in 1:length(D)
+            p = vlist[rand(1:m)]  # start from a random vertex
+            for j in Random.randperm(m)  # choose a random target vertex
+                p += rand(rng, U) * (vlist[j] - p)  # move toward next vertex
+            end
+            D[i] = p
+        end
+    else
+        # vector used to store the combination coefficients
+        r = Vector{N}(undef, m-1)
+        @inbounds for i in 1:length(D)
+            # get a list of m uniform numbers (https://cs.stackexchange.com/a/3229)
+            # and compute the corresponding linear combination in-place
+            rand!(r, rng, U)
+            sort!(r)
+            D[i] = r[1] * vlist[1]  # r[1] - 0 == r[1]
+            for j in 2:m-1
+                α = r[j] - r[j-1]
+                D[i] .+= α * vlist[j]
+            end
+            D[i] .+= (1 - r[m-1]) * vlist[m]
+        end
+    end
+
+    return D
+end
+
+"""
+    CombinedSampler <: AbstractSampler
+
+Type used for sampling arbitrary sets by trying different sampling strategies.
+
+### Algorithm
+
+The algorithm is to first try a [`RejectionSampler`](@ref) 100 times.
+If that fails, it tries a [`RandomWalkSampler`](@ref).
+"""
+struct CombinedSampler <: AbstractSampler
+    #
+end
+
+function sample!(D::Vector{VN}, X::LazySet, sampler::CombinedSampler;
+                 rng::AbstractRNG=GLOBAL_RNG,
+                 seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
+    # try rejection sampling 100 times
+    tmp_sampler = RejectionSampler(X; maxiter=10)
+    D2 = Vector{VN}(undef, 1)
+    D2[1] = fill(N(NaN), dim(X))
+    sample!(D2, X, tmp_sampler)
+    if !isnan(D2[1][1])
+        # it worked
+        tmp_sampler = RejectionSampler(X)
+        return sample!(D, X, tmp_sampler; rng=rng, seed=seed)
+    end
+
+    # try random-walk sampler
+    tmp_sampler = RandomWalkSampler()
+    try
+        sample!(D, X, tmp_sampler; rng=rng, seed=seed)
+        return D
+    catch e
+        @warn "sampling failed with the following error message:"
+        rethrow(e)
+    end
 end
 
 # =============================
@@ -77,8 +349,14 @@ end
 function load_distributions_samples()
 return quote
 
-using .Distributions: Distribution, Uniform, Normal
+using .Distributions: Uniform, Normal, Distribution, UnivariateDistribution
 import .Distributions
+
+RejectionSampler(distr::UnivariateDistribution; tight::Bool=false) = RejectionSampler([distr], tight=tight)
+
+function Base.rand(rng::AbstractRNG, U::AbstractVector{<:UnivariateDistribution})
+    return rand.(Ref(rng), U)
+end
 
 # ======================================================
 # Sampling from a uniform distribution on balls/spheres
@@ -194,74 +472,6 @@ function _sample_unit_nball_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
         r = rand(rng, Zrad)
         β = r^one_over_n / sqrt(α)
         D[j] = v .* β
-    end
-    return D
-end
-
-# =====================
-# Rejection Sampling
-# =====================
-
-"""
-    RejectionSampler{S<:LazySet, D<:Distribution} <: Sampler
-
-Type used for rejection sampling of an arbitrary `LazySet` `X`.
-
-### Fields
-
-- `X`          -- (bounded) set to be sampled
-- `box_approx` -- Distribution from which the sample is drawn
-
-### Algorithm
-
-Draw a sample ``x`` from a uniform distribution of a box-overapproximation of the
-original set ``X`` in all ``n`` dimensions. The function rejects a drawn sample ``x``
-and redraws as long as the sample is not contained in the original set ``X``,
-i.e., ``x ∉ X``.
-"""
-struct RejectionSampler{S<:LazySet, D<:Distribution} <: Sampler
-    X::S
-    box_approx::Vector{D}
-end
-
-function RejectionSampler(X, distribution=Uniform)
-    B = box_approximation(X)
-    canonical_support = hcat(low(B), high(B))
-    dims = size(canonical_support, 1)
-    box_approx = [distribution(canonical_support[i,:]...) for i = 1:dims]
-    return RejectionSampler(X, box_approx)
-end
-
-"""
-    _sample!(D::Vector{Vector{N}},
-             sampler::RejectionSampler;
-             rng::AbstractRNG=GLOBAL_RNG,
-             seed::Union{Int, Nothing}=nothing) where {N<:Real}
-
-Sample points using rejection sampling.
-
-### Input
-
-- `D`           -- output, vector of points
-- `sampler`     -- Sampler from which the points are sampled
-- `rng`         -- (optional, default: `GLOBAL_RNG`) random number generator
-- `seed`        -- (optional, default: `nothing`) seed for reseeding
-
-### Output
-
-A vector of `num_samples` vectors.
-"""
-function _sample!(D::Vector{Vector{N}},
-                  sampler::RejectionSampler;
-                  rng::AbstractRNG=GLOBAL_RNG,
-                  seed::Union{Int, Nothing}=nothing) where {N<:Real}
-    rng = reseed(rng, seed)
-    @inbounds for i in 1:length(D)
-        w = rand.(Ref(rng), sampler.box_approx)
-        while w ∉ sampler.X
-            w = rand.(Ref(rng), sampler.box_approx)
-        end
-        D[i] = w
     end
     return D
 end

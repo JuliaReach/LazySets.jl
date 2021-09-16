@@ -8,15 +8,17 @@ module Approximations
 
 using LazySets, LazySets.Arrays, Requires, LinearAlgebra, SparseArrays,
       MathProgBase
-using LazySets: _isapprox, _leq, _rtol, _normal_Vector, isapproxzero,
-                default_lp_solver, dim
-import LazySets: distance
+
+using LazySets: _isapprox, _leq, _geq, _rtol, _normal_Vector, isapproxzero,
+                default_lp_solver, _isbounded_stiemke, require, dim
+
+import LazySets: project
+
 using ..Assertions: @assert, activate_assertions
 # activate assertions by default
 activate_assertions(Approximations)
 
 export approximate,
-       project,
        ballinf_approximation,
        box_approximation, interval_hull,
        decompose,
@@ -24,6 +26,7 @@ export approximate,
        underapproximate,
        box_approximation_symmetric, symmetric_interval_hull,
        BoxDirections,
+       DiagDirections,
        BoxDiagDirections,
        OctDirections,
        PolarDirections,
@@ -31,19 +34,15 @@ export approximate,
        CustomDirections,
        isbounding
 
-const DIR_EAST(N) = [one(N), zero(N)]
-const DIR_NORTH(N) = [zero(N), one(N)]
-const DIR_WEST(N) = [-one(N), zero(N)]
-const DIR_SOUTH(N) = [zero(N), -one(N)]
-
+include("box_approximation.jl")
 include("iterative_refinement.jl")
-include("box_approximations.jl")
+include("symmetric_interval_hull.jl")
+include("ballinf_approximation.jl")
 include("template_directions.jl")
 include("overapproximate.jl")
 include("underapproximate.jl")
 include("approximate.jl")
 include("decompositions.jl")
-include("distance.jl")
 include("hausdorff_distance.jl")
 include("init.jl")
 

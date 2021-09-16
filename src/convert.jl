@@ -10,36 +10,6 @@ for T in subtypes(LazySet, true)
 end
 
 """
-    convert(::Type{HPOLYGON1},
-            P::HPOLYGON2) where {HPOLYGON1<:AbstractHPolygon,
-                                 HPOLYGON2<:AbstractHPolygon}
-
-Convert between polygon types in H-representation.
-
-### Input
-
-- `type` -- target type
-- `P`    -- source polygon
-
-### Output
-
-The polygon represented as the target type.
-
-### Notes
-
-We need the `Union` type for `HPOLYGON1` because the target type must be
-concrete.
-"""
-function convert(::Type{HPOLYGON1},
-                 P::HPOLYGON2) where {HPOLYGON1<:AbstractHPolygon,
-                                      HPOLYGON2<:AbstractHPolygon}
-    if P isa HPOLYGON1
-        return P
-    end
-    return HPOLYGON1(P.constraints)
-end
-
-"""
     convert(T::Type{HPOLYGON}, P::VPolygon) where {HPOLYGON<:AbstractHPolygon}
 
 Converts a polygon in vertex representation to a polygon in constraint representation.
@@ -55,6 +25,35 @@ A polygon in constraint representation.
 """
 function convert(T::Type{HPOLYGON}, P::VPolygon) where {HPOLYGON<:AbstractHPolygon}
     return tohrep(P, T)
+end
+
+"""
+    convert(::Type{HPOLYGON}, X::LazySet; [check_boundedness]::Bool=true) where {HPOLYGON<:AbstractHPolygon}
+
+Converts a polyhedral set to a polygon in vertex representation.
+
+### Input
+
+- `PT` -- type used for dispatch
+- `X`  -- set
+- `check_boundedness` -- (optional, default `true`) if `true` check whether the
+                         set `X` is bounded before creating the polygon
+
+### Output
+
+A polygon in constraint representation.
+
+### Algorithm
+
+We compute the list of constraints of `X`, then instantiate the polygon.
+"""
+function convert(::Type{HPOLYGON}, X::LazySet; check_boundedness::Bool=true) where {HPOLYGON<:AbstractHPolygon}
+    @assert dim(X) == 2 "set must be two-dimensional for conversion, but it is of dimension $(dim(X))"
+    PT = basetype(HPOLYGON)
+    if check_boundedness && !isbounded(X)
+        throw(ArgumentError("expected a bounded set for conversion to `HPolygon`"))
+    end
+    return PT(constraints_list(X))
 end
 
 """
@@ -131,6 +130,31 @@ function convert(::Type{VPolygon}, P::AbstractPolytope)
 end
 
 """
+    convert(::Type{VPolygon}, X::LazySet)
+
+Generic conversion to polygon in vertex representation.
+
+### Input
+
+- `type` -- target type
+- `X`    -- set
+
+### Output
+
+The 2D set represented as a polygon.
+
+### Algorithm
+
+We compute the list of vertices of `X` and wrap the result in a polygon in
+vertex representation, which guarantees that the vertices are sorted in
+counter-clockwise fashion.
+"""
+function convert(::Type{VPolygon}, X::LazySet)
+    @assert dim(X) == 2 "set must be two-dimensional for conversion"
+    return VPolygon(vertices_list(X))
+end
+
+"""
     convert(::Type{HPolytope}, P::AbstractPolytope)
 
 Convert a polytopic set to a polytope in H-representation.
@@ -171,6 +195,20 @@ function convert(::Type{HPolyhedron}, P::AbstractPolytope)
     return HPolyhedron(constraints_list(P))
 end
 
+function convert(::Type{HPolyhedron}, X::AbstractPolyhedron) where {N}
+    return HPolyhedron(constraints_list(X))
+end
+
+# conversion of a lazyset to a polyhedron with dense normal vectors
+function convert(::Type{HPolyhedron{N, Vector{N}}}, X::AbstractPolyhedron) where {N}
+    clist = constraints_list(X)
+    return HPolyhedron([HalfSpace(Vector(c.a), c.b) for c in clist])
+end
+
+function convert(::Type{HPolyhedron}, X::LazySet)
+    return HPolyhedron(constraints_list(X))
+end
+
 """
     convert(::Type{HPolytope}, P::VPolytope)
 
@@ -191,6 +229,35 @@ The `tohrep` function is invoked. It requires the `Polyhedra` package.
 """
 function convert(::Type{HPolytope}, P::VPolytope)
     return tohrep(P)
+end
+
+function convert(::Type{HPolytope}, X::LazySet)
+    return HPolytope(constraints_list(X))
+end
+
+"""
+    convert(::Type{VPolytope}, X::LazySet; [prune]::Bool=true)
+
+Generic conversion to polytope in vertex representation.
+
+### Input
+
+- `type`  -- target type
+- `X`     -- set
+- `prune` -- (optional, default: `true`) option to remove redundant vertices
+
+### Output
+
+The given set represented as a polytope in vertex representation.
+
+### Algorithm
+
+We compute the list of vertices of `X` and wrap the result in a polytope in
+vertex representation, `VPolytope`. Use the option `prune` to select whether or not
+to remove redundant vertices before constructing the polytope.
+"""
+function convert(::Type{VPolytope}, X::LazySet; prune::Bool=true)
+    return VPolytope(vertices_list(X, prune=prune))
 end
 
 """
@@ -241,47 +308,65 @@ function convert(::Type{HPOLYGON}, P::HPolytope{N, VN};
     return H
 end
 
-"""
-    convert(::Type{Zonotope}, H::AbstractHyperrectangle)
-
-Converts a hyperrectangular set to a zonotope.
-
-### Input
-
-- `Zonotope` -- type, used for dispatch
-- `H`        -- hyperrectangular set
-
-### Output
-
-A zonotope.
-"""
-function convert(::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
-    if isflat(H)
-        r = radius_hyperrectangle(H)
-        n = length(r)
-
-        nzgen = 0
-        Gnz = Vector{N}()
-        sizehint!(Gnz, n * n)
-        @inbounds for (i, ri) in enumerate(r)
-            if ri != zero(N)
-                col = zeros(N, n)
-                col[i] = ri
-                append!(Gnz, col)
-                nzgen += 1
-            end
-        end
-        G = reshape(Gnz, n, nzgen)
-    else
-        G = genmat(H)
-    end
-    return Zonotope(center(H), G)
+# fast conversion from a 2D hyperrectangular set to a zonotope
+function _convert_2D(::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
+    c = center(H)
+    rx = radius_hyperrectangle(H, 1)
+    ry = radius_hyperrectangle(H, 2)
+    G = _genmat_2D(c, rx, ry)
+    return Zonotope(c, G)
 end
 
-function convert(::Type{Zonotope}, S::Singleton{N, VN}) where {N, VN<:AbstractVector{N}}
-    MT = LazySets.Arrays._matrix_type(VN)
-    zero_genmat = MT(undef, dim(S), 0)
-    return Zonotope(element(S), zero_genmat)
+@inline function _genmat_2D(c::AbstractVector{N}, rx, ry) where {N}
+    flat_x = isapproxzero(rx)
+    flat_y = isapproxzero(ry)
+    ncols = !flat_x + !flat_y
+    G = Matrix{N}(undef, 2, ncols)
+    if !flat_x
+        @inbounds begin G[1] = rx; G[2] = zero(N) end
+        if !flat_y
+            @inbounds begin G[3] = zero(N); G[4] = ry end
+        end
+    elseif !flat_y
+        @inbounds begin G[1] = zero(N); G[2] = ry end
+    end
+    return G
+end
+
+function load_genmat_2D_static()
+return quote
+    @inline function _genmat_2D(c::SVector{L, N}, rx, ry) where {L, N}
+        flat_x = isapproxzero(rx)
+        flat_y = isapproxzero(ry)
+        if !flat_x && !flat_y
+            G = SMatrix{2, 2, N, 4}(rx, zero(N), zero(N), ry)
+        elseif !flat_x && flat_y
+            G = SMatrix{2, 1, N, 2}(rx, zero(N))
+        elseif flat_x && !flat_y
+            G = SMatrix{2, 1, N, 2}(zero(N), ry)
+        else
+            G = SMatrix{2, 0, N, 0}()
+        end
+        return G
+    end
+
+    # this function is type-stable but doesn't prune the generators according
+    # to flat dimensions of H
+    function _convert_2D_static(::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
+        c = center(H)
+        rx = radius_hyperrectangle(H, 1)
+        ry = radius_hyperrectangle(H, 2)
+        G = SMatrix{2, 2, N, 4}(rx, zero(N), zero(N), ry)
+        return Zonotope(c, G)
+    end
+
+    function _convert_static(::Type{Zonotope}, H::Hyperrectangle{N, <:SVector, <:SVector}) where {N}
+        return Zonotope(center(H), _genmat_static(H))
+    end
+end end  # quote / load_genmat_2D_static
+
+function convert(::Type{Zonotope}, S::Singleton)
+    return Zonotope(center(S), genmat(S))
 end
 
 """
@@ -299,12 +384,24 @@ Converts a zonotopic set to a zonotope.
 A zonotope.
 """
 function convert(::Type{Zonotope}, Z::AbstractZonotope)
-    return Zonotope(center(Z), genmat(Z))
+    return _convert_zonotope_fallback(Z)
+end
+
+function convert(::Type{Zonotope}, H::AbstractHyperrectangle)
+    dim(H) == 2 && return _convert_2D(Zonotope, H)
+    return _convert_zonotope_fallback(H)
+end
+
+_convert_zonotope_fallback(Z) = Zonotope(center(Z), genmat(Z))
+
+function convert(::Type{Singleton},
+                 cp::CartesianProduct{N, S1, S2}) where {N, S1<:AbstractSingleton{N}, S2<:AbstractSingleton{N}}
+    return Singleton(vcat(element(cp.X), element(cp.Y)))
 end
 
 """
     convert(::Type{Zonotope}, cp::CartesianProduct{N, HN1, HN2}) where {N<:Real,
-        HN1<:AbstractHyperrectangle{N}, HN2<:AbstractHyperrectangle{N}}
+            HN1<:AbstractHyperrectangle{N}, HN2<:AbstractHyperrectangle{N}}
 
 Converts the cartesian product of two hyperrectangular sets to a zonotope.
 
@@ -505,7 +602,7 @@ A hyperrectangle.
 
 ```jldoctest
 julia> convert(Hyperrectangle, Interval(0.0, 1.0))
-Hyperrectangle{Float64,Array{Float64,1},Array{Float64,1}}([0.5], [0.5])
+Hyperrectangle{Float64, Vector{Float64}, Vector{Float64}}([0.5], [0.5])
 ```
 """
 function convert(::Type{Hyperrectangle}, H::AbstractHyperrectangle)
@@ -530,12 +627,12 @@ An interval.
 
 ```jldoctest
 julia> convert(Interval, Hyperrectangle([0.5], [0.5]))
-Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
+Interval{Float64, IntervalArithmetic.Interval{Float64}}([0, 1])
 ```
 """
 function convert(::Type{Interval}, H::AbstractHyperrectangle)
-    @assert dim(H) == 1 "cannot convert a $(dim(H))-dimensional $(typeof(H)) to `Interval`"
-    return Interval(low(H)[1], high(H)[1])
+    @assert dim(H) == 1 "can only convert a one-dimensional $(typeof(H)) to `Interval`"
+    return Interval(low(H, 1), high(H, 1))
 end
 
 """
@@ -983,8 +1080,8 @@ end
 function convert(::Type{Zonotope},
                  am::AbstractAffineMap{N, <:AbstractZonotope{N}}) where {N<:Real}
     Z1 = convert(Zonotope, linear_map(matrix(am), set(am)))
-    Z2 = translate(Z1, vector(am), share=true)
-    return Z2
+    translate!(Z1, vector(am))
+    return Z1
 end
 
 """
@@ -1025,4 +1122,146 @@ function convert(::Type{HParallelotope}, Z::AbstractZonotope{N}) where {N}
         j += 2
     end
     return HParallelotope(D, c)
+end
+
+"""
+    convert(::Type{Zonotope}, cp::CartesianProduct{N, AZ1, AZ2}) where
+         {N, AZ1<:AbstractZonotope{N}, AZ2<:AbstractZonotope{N}}
+
+Converts a cartesian product of two zonotopes into a zonotope.
+
+### Input
+
+- `Zonotope` -- type used for dispatch
+- `cp`       -- cartesian product of two zonotopes
+
+### Output
+
+A zonotope.
+
+### Notes
+
+This implementation creates a `Zonotope` with sparse vector and matrix representation.
+"""
+function convert(::Type{Zonotope}, cp::CartesianProduct{N, AZ1, AZ2}) where
+         {N, AZ1<:AbstractZonotope{N}, AZ2<:AbstractZonotope{N}}
+    Z1, Z2 = cp.X, cp.Y
+    c = vcat(center(Z1), center(Z2))
+    G = blockdiag(sparse(genmat(Z1)), sparse(genmat(Z2)))
+    return Zonotope(c, G)
+end
+
+"""
+    convert(::Type{Zonotope}, cpa::CartesianProductArray{N, AZ})
+        where {N, AZ<:AbstractZonotope{N}}
+
+Converts a cartesian product array of zonotopes into a zonotope.
+
+### Input
+
+- `Zonotope` -- type used for dispatch
+- `cpa`       -- cartesian product array of zonotopes
+
+### Output
+
+A zonotope.
+
+### Notes
+
+This function requires the use of `SparseArrays`.
+"""
+function convert(::Type{Zonotope}, cpa::CartesianProductArray{N, AZ}) where
+        {N, AZ<:AbstractZonotope{N}}
+    arr = array(cpa)
+    c = reduce(vcat, center.(arr))
+    G = reduce(blockdiag, sparse.(genmat.(arr)))
+    return Zonotope(c, G)
+end
+
+convert(::Type{HPolytope}, P::HPolyhedron) = HPolytope(copy(constraints_list(P)))
+convert(::Type{HPolyhedron}, P::HPolytope) = HPolyhedron(copy(constraints_list(P)))
+
+for T in [HPolygon, HPolygonOpt, HPolytope, HPolyhedron]
+@eval begin
+    function convert(::Type{$T}, P::Intersection{N, S1, S2}) where {N, S1<:AbstractPolyhedron{N}, S2<:AbstractPolyhedron{N}}
+        clist = vcat(constraints_list(P.X), constraints_list(P.Y))
+        return ($T)(clist)
+    end
+
+    function convert(::Type{$T}, P::IntersectionArray{N, S}) where {N, S<:AbstractPolyhedron}
+        clist = reduce(vcat, constraints_list.(array(P)))
+        return ($T)(clist)
+    end
+end
+end
+
+"""
+    convert(::Type{STAR}, P::AbstractPolyhedron{N}) where {N}
+
+Converts a polyhedral set into a star set represented as a lazy affine map.
+
+### Input
+
+- `STAR` -- type used for dispatch
+- `P`    -- polyhedral set
+
+### Output
+
+A star set.
+"""
+function convert(::Type{STAR}, P::AbstractPolyhedron{N}) where {N}
+    n = dim(P)
+    c = zeros(N, n)
+    V = Matrix(one(N)*I, n, n)
+    return AffineMap(V, P, c)
+end
+
+"""
+    convert(::Type{STAR}, X::Star)
+
+Converts a star set into its equivalent representation as a lazy affine map.
+
+### Input
+
+- `STAR` -- type used for dispatch
+- `X`    -- star set
+
+### Output
+
+A star set.
+"""
+function convert(::Type{STAR}, X::Star)
+    return AffineMap(X.V, X.P, X.c)
+end
+
+"""
+    convert(::Type{Star}, P::AbstractPolyhedron{N}) where {N}
+
+Converts a polyhedral set into a star set.
+
+### Input
+
+- `Star` -- type used for dispatch
+- `P`    -- polyhedral set
+
+### Output
+
+A star set.
+"""
+function convert(::Type{Star}, P::AbstractPolyhedron{N}) where {N}
+    n = dim(P)
+    c = zeros(N, n)
+    V = Matrix(one(N)*I, n, n)
+    return Star(c, V, P)
+end
+
+function convert(::Type{Hyperplane}, P::HPolyhedron; skip_check::Bool=false)
+    # check that the number of constraints is fine
+    if !skip_check && !is_hyperplanar(P)
+        throw(ArgumentError("the polyhedron is not hyperplanar: $P"))
+    end
+
+    # construct hyperplane from first constraint
+    c1 = @inbounds first(constraints_list(P))
+    return Hyperplane(c1.a, c1.b)
 end

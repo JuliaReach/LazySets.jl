@@ -18,7 +18,7 @@ export AbstractHPolygon,
 const BINARY_SEARCH_THRESHOLD = 10
 
 """
-    AbstractHPolygon{N<:Real} <: AbstractPolygon{N}
+    AbstractHPolygon{N} <: AbstractPolygon{N}
 
 Abstract type for polygons in H-representation (i.e., constraints).
 
@@ -34,12 +34,12 @@ New subtypes should be added to the `convert` method in order to be convertible.
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractHPolygon)
-2-element Array{Any,1}:
+2-element Vector{Any}:
  HPolygon
  HPolygonOpt
 ```
 """
-abstract type AbstractHPolygon{N<:Real} <: AbstractPolygon{N} end
+abstract type AbstractHPolygon{N} <: AbstractPolygon{N} end
 
 isconvextype(::Type{<:AbstractHPolygon}) = true
 
@@ -47,7 +47,7 @@ isconvextype(::Type{<:AbstractHPolygon}) = true
 
 
 """
-    tovrep(P::AbstractHPolygon{N}) where {N<:Real}
+    tovrep(P::AbstractHPolygon)
 
 Build a vertex representation of the given polygon.
 
@@ -59,7 +59,7 @@ Build a vertex representation of the given polygon.
 
 The same polygon but in vertex representation, a `VPolygon`.
 """
-function tovrep(P::AbstractHPolygon{N}) where {N<:Real}
+function tovrep(P::AbstractHPolygon)
     return VPolygon(vertices_list(P; apply_convex_hull=false))
 end
 
@@ -81,7 +81,7 @@ function tohrep(P::HPOLYGON) where {HPOLYGON<:AbstractHPolygon}
 end
 
 """
-    normalize(P::AbstractHPolygon{N}, p=N(2)) where {N<:Real}
+    normalize(P::AbstractHPolygon{N}, p=N(2)) where {N}
 
 Normalize a polygon in constraint representation.
 
@@ -95,7 +95,7 @@ Normalize a polygon in constraint representation.
 A new polygon in constraint representation whose normal directions ``a_i``
 are normalized, i.e., such that ``‖a_i‖_p = 1`` holds.
 """
-function normalize(P::AbstractHPolygon{N}, p=N(2)) where {N<:Real}
+function normalize(P::AbstractHPolygon{N}, p=N(2)) where {N}
     constraints = [normalize(hs, p) for hs in constraints_list(P)]
     T = basetype(P)
     return T(constraints)
@@ -108,7 +108,7 @@ end
 """
     vertices_list(P::AbstractHPolygon{N};
                   apply_convex_hull::Bool=true,
-                  check_feasibility::Bool=true) where {N<:Real}
+                  check_feasibility::Bool=true) where {N}
 
 Return the list of vertices of a polygon in constraint representation.
 
@@ -136,7 +136,7 @@ constraint.
 """
 function vertices_list(P::AbstractHPolygon{N};
                        apply_convex_hull::Bool=true,
-                       check_feasibility::Bool=true) where {N<:Real}
+                       check_feasibility::Bool=true) where {N}
     n = length(P.constraints)
     points = Vector{Vector{N}}(undef, n)
     if n == 0
@@ -169,7 +169,7 @@ function vertices_list(P::AbstractHPolygon{N};
 end
 
 """
-    constraints_list(P::AbstractHPolygon{N}) where {N<:Real}
+    constraints_list(P::AbstractHPolygon)
 
 Return the list of constraints defining a polygon in H-representation.
 
@@ -182,7 +182,7 @@ Return the list of constraints defining a polygon in H-representation.
 The list of constraints of the polygon.
 The implementation guarantees that the constraints are sorted counter-clockwise.
 """
-function constraints_list(P::AbstractHPolygon{N}) where {N<:Real}
+function constraints_list(P::AbstractHPolygon)
     return P.constraints
 end
 
@@ -191,7 +191,7 @@ end
 
 
 """
-    an_element(P::AbstractHPolygon{N}) where {N<:Real}
+    an_element(P::AbstractHPolygon)
 
 Return some element of a polygon in constraint representation.
 
@@ -204,14 +204,14 @@ Return some element of a polygon in constraint representation.
 A vertex of the polygon in constraint representation (the first one in the order
 of the constraints).
 """
-function an_element(P::AbstractHPolygon{N}) where {N<:Real}
+function an_element(P::AbstractHPolygon)
     @assert length(P.constraints) >= 2 "polygon has less than two constraints"
     return element(intersection(Line2D(P.constraints[1]),
                                 Line2D(P.constraints[2])))
 end
 
 """
-    ∈(x::AbstractVector{N}, P::AbstractHPolygon{N}) where {N<:Real}
+    ∈(x::AbstractVector, P::AbstractHPolygon)
 
 Check whether a given 2D point is contained in a polygon in constraint
 representation.
@@ -229,7 +229,7 @@ representation.
 
 This implementation checks if the point lies on the outside of each edge.
 """
-function ∈(x::AbstractVector{N}, P::AbstractHPolygon{N}) where {N<:Real}
+function ∈(x::AbstractVector, P::AbstractHPolygon)
     @assert length(x) == 2
 
     for c in P.constraints
@@ -241,7 +241,7 @@ function ∈(x::AbstractVector{N}, P::AbstractHPolygon{N}) where {N<:Real}
 end
 
 """
-    rand(::Type{HPOLYGON}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
+    rand(::Type{HPOLYGON}; [N]::Type=Float64, [dim]::Int=2,
          [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing,
          [num_constraints]::Int=-1) where {HPOLYGON<:AbstractHPolygon}
 
@@ -270,7 +270,7 @@ For non-flat polygons the number of vertices and the number of constraints are
 identical.
 """
 function rand(::Type{HPOLYGON};
-              N::Type{<:Real}=Float64,
+              N::Type=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int, Nothing}=nothing,
@@ -288,8 +288,8 @@ end
 # --- common AbstractHPolygon functions ---
 
 """
-    isredundant(cmid::LinearConstraint{N}, cright::LinearConstraint{N},
-                cleft::LinearConstraint{N}) where {N<:Real}
+    isredundant(cmid::LinearConstraint, cright::LinearConstraint,
+                cleft::LinearConstraint)
 
 Check whether a linear constraint is redundant wrt. two surrounding constraints.
 
@@ -314,9 +314,9 @@ If the angle is strictly between 0° and 180°, the constraint `cmid` is redunda
 if and only if the vertex defined by the other two constraints lies inside the
 set defined by `cmid`.
 """
-function isredundant(cmid::LinearConstraint{N},
-                     cright::LinearConstraint{N},
-                     cleft::LinearConstraint{N}) where {N<:Real}
+function isredundant(cmid::LinearConstraint,
+                     cright::LinearConstraint,
+                     cleft::LinearConstraint)
     samedir_check = false
     # determine angle between surrounding constraints
     if !is_right_turn(cright.a, cleft.a)
@@ -407,11 +407,11 @@ function remove_redundant_constraints!(P::AbstractHPolygon)
 end
 
 """
-    addconstraint!(P::AbstractHPolygon{N},
-                   constraint::LinearConstraint{N};
+    addconstraint!(P::AbstractHPolygon,
+                   constraint::LinearConstraint;
                    [linear_search]::Bool=(length(P.constraints) <
                                           BINARY_SEARCH_THRESHOLD),
-                   [prune]::Bool=true) where {N<:Real}
+                   [prune]::Bool=true)
 
 Add a linear constraint to a polygon in constraint representation, keeping the
 constraints sorted by their normal directions.
@@ -426,22 +426,22 @@ constraints sorted by their normal directions.
 - `prune`         -- (optional, default: `true`) flag for removing redundant
                      constraints in the end
 """
-function addconstraint!(P::AbstractHPolygon{N},
-                        constraint::LinearConstraint{N};
+function addconstraint!(P::AbstractHPolygon,
+                        constraint::LinearConstraint;
                         linear_search::Bool=(length(P.constraints) <
                                              BINARY_SEARCH_THRESHOLD),
-                        prune::Bool=true) where {N<:Real}
+                        prune::Bool=true)
     return addconstraint!(P.constraints, constraint,
                           linear_search=linear_search, prune=prune)
 end
 
 """
     addconstraint!(constraints::Vector{LC},
-                   new_constraint::LinearConstraint{N};
+                   new_constraint::LinearConstraint;
                    [linear_search]::Bool=(length(P.constraints) <
                                           BINARY_SEARCH_THRESHOLD),
                    [prune]::Bool=true
-                  ) where {N<:Real, LC<:LinearConstraint{N}}
+                  ) where {LC<:LinearConstraint}
 
 Add a linear constraint to a sorted vector of constrains, keeping the
 constraints sorted by their normal directions.
@@ -464,11 +464,11 @@ If the constraint is not redundant, we perform the same check to the left and to
 the right until we find the first constraint that is not redundant.
 """
 function addconstraint!(constraints::Vector{LC},
-                        new_constraint::LinearConstraint{N};
+                        new_constraint::LinearConstraint;
                         linear_search::Bool=(length(constraints) <
                                              BINARY_SEARCH_THRESHOLD),
                         prune::Bool=true
-                       ) where {N<:Real, LC<:LinearConstraint{N}}
+                       ) where {LC<:LinearConstraint}
     m = length(constraints)
     k = m
     if k > 0

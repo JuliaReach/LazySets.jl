@@ -34,7 +34,7 @@ radius 0.5:
 
 ```jldoctest ball2_label
 julia> B = Ball2(zeros(5), 0.5)
-Ball2{Float64,Array{Float64,1}}([0.0, 0.0, 0.0, 0.0, 0.0], 0.5)
+Ball2{Float64, Vector{Float64}}([0.0, 0.0, 0.0, 0.0, 0.0], 0.5)
 
 julia> dim(B)
 5
@@ -44,7 +44,7 @@ Evaluate `B`'s support vector in the direction ``[1,2,3,4,5]``:
 
 ```jldoctest ball2_label
 julia> σ([1.,2.,3.,4.,5.], B)
-5-element Array{Float64,1}:
+5-element Vector{Float64}:
  0.06741998624632421
  0.13483997249264842
  0.20225995873897262
@@ -71,7 +71,7 @@ isconvextype(::Type{<:Ball2}) = true
 
 
 """
-    center(B::Ball2{N}) where {N<:AbstractFloat}
+    center(B::Ball2)
 
 Return the center of a ball in the 2-norm.
 
@@ -83,16 +83,45 @@ Return the center of a ball in the 2-norm.
 
 The center of the ball in the 2-norm.
 """
-function center(B::Ball2{N}) where {N<:AbstractFloat}
+function center(B::Ball2)
     return B.center
 end
 
 
 # --- LazySet interface functions ---
 
+"""
+    ρ(d::AbstractVector, B::Ball2)
+
+Return the support function of a 2-norm ball in a given direction.
+
+### Input
+
+- `d` -- direction
+- `B` -- ball in the 2-norm
+
+### Output
+
+The support function in the given direction.
+
+### Notes
+
+Let ``c`` and ``r`` be the center and radius of the ball ``B`` in the 2-norm,
+respectively. Then:
+
+```math
+ρ(d, B) = ⟨d, c⟩ + r ‖d‖_2.
+```
+"""
+function ρ(d::AbstractVector, B::Ball2)
+    c = B.center
+    r = B.radius
+    dnorm = norm(d, 2)
+    return dot(d, c) + dnorm * r
+end
 
 """
-    σ(d::AbstractVector{N}, B::Ball2{N}) where {N<:AbstractFloat}
+    σ(d::AbstractVector, B::Ball2)
 
 Return the support vector of a 2-norm ball in a given direction.
 
@@ -121,8 +150,9 @@ performed in the given precision of the numeric datatype of both the direction
 and the set.
 Exact inputs are not supported.
 """
-function σ(d::AbstractVector{N}, B::Ball2{N}) where {N<:AbstractFloat}
+function σ(d::AbstractVector, B::Ball2)
     dnorm = norm(d, 2)
+    N = promote_type(eltype(d), eltype(B))
     if dnorm <= zero(N)
         return zeros(N, length(d))
     else
@@ -131,7 +161,7 @@ function σ(d::AbstractVector{N}, B::Ball2{N}) where {N<:AbstractFloat}
 end
 
 """
-    ∈(x::AbstractVector{N}, B::Ball2{N}) where {N<:AbstractFloat}
+    ∈(x::AbstractVector, B::Ball2)
 
 Check whether a given point is contained in a ball in the 2-norm.
 
@@ -162,7 +192,7 @@ Then ``x ∈ B`` iff ``\\left( ∑_{i=1}^n |c_i - x_i|^2 \\right)^{1/2} ≤ r``.
 
 ```jldoctest
 julia> B = Ball2([1., 1.], sqrt(0.5))
-Ball2{Float64,Array{Float64,1}}([1.0, 1.0], 0.7071067811865476)
+Ball2{Float64, Vector{Float64}}([1.0, 1.0], 0.7071067811865476)
 
 julia> [.5, 1.6] ∈ B
 false
@@ -171,8 +201,9 @@ julia> [.5, 1.5] ∈ B
 true
 ```
 """
-function ∈(x::AbstractVector{N}, B::Ball2{N}) where {N<:AbstractFloat}
+function ∈(x::AbstractVector, B::Ball2)
     @assert length(x) == dim(B)
+    N = promote_type(eltype(x), eltype(B))
     sum = zero(N)
     @inbounds for i in eachindex(x)
         sum += (B.center[i] - x[i])^2
@@ -215,7 +246,7 @@ function rand(::Type{Ball2};
 end
 
 """
-    translate(B::Ball2{N}, v::AbstractVector{N}) where {N<:AbstractFloat}
+    translate(B::Ball2, v::AbstractVector)
 
 Translate (i.e., shift) a ball in the 2-norm by a given vector.
 
@@ -232,23 +263,23 @@ A translated ball in the 2-norm.
 
 We add the vector to the center of the ball.
 """
-function translate(B::Ball2{N}, v::AbstractVector{N}) where {N<:AbstractFloat}
+function translate(B::Ball2, v::AbstractVector)
     @assert length(v) == dim(B) "cannot translate a $(dim(B))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     return Ball2(center(B) + v, B.radius)
 end
 
 """
-    sample(B::Ball2{N, VN}, nsamples::Int=1;
+    sample(B::Ball2{N}, [nsamples]::Int;
            [rng]::AbstractRNG=GLOBAL_RNG,
-           [seed]::Union{Int, Nothing}=nothing) where {N<:AbstractFloat, VN<:AbstractVector{N}}
+           [seed]::Union{Int, Nothing}=nothing) where {N}
 
 Return samples from a uniform distribution on the given ball in the 2-norm.
 
 ### Input
 
 - `B`        -- ball in the 2-norm
-- `nsamples` -- (optional, default: `1`) number of samples
+- `nsamples` -- number of random samples
 - `rng`      -- (optional, default: `GLOBAL_RNG`) random number generator
 - `seed`     -- (optional, default: `nothing`) seed for reseeding
 
@@ -262,9 +293,9 @@ Random sampling with uniform distribution in `B` is computed using Muller's meth
 of normalized Gaussians. This function requires the package `Distributions`.
 See `_sample_unit_nball_muller!` for implementation details.
 """
-function sample(B::Ball2{N, VN}, nsamples::Int=1;
+function sample(B::Ball2{N}, nsamples::Int;
                 rng::AbstractRNG=GLOBAL_RNG,
-                seed::Union{Int, Nothing}=nothing) where {N<:AbstractFloat, VN<:AbstractVector{N}}
+                seed::Union{Int, Nothing}=nothing) where {N}
     require(:Distributions; fun_name="sample")
     n = dim(B)
     D = Vector{Vector{N}}(undef, nsamples) # preallocate output
@@ -283,8 +314,7 @@ end
 
 
 """
-    chebyshev_center(B::Ball2{N}; compute_radius::Bool=false
-                    ) where {N<:AbstractFloat}
+    chebyshev_center(B::Ball2; [compute_radius]::Bool=false)
 
 Compute the [Chebyshev center](https://en.wikipedia.org/wiki/Chebyshev_center)
 of a ball in the 2-norm.
@@ -307,8 +337,7 @@ Chebyshev center of `B` and `r` is the radius of the largest ball with center
 
 The Chebyshev center of a ball in the 2-norm is just the center of the ball.
 """
-function chebyshev_center(B::Ball2{N}; compute_radius::Bool=false
-                         ) where {N<:AbstractFloat}
+function chebyshev_center(B::Ball2; compute_radius::Bool=false)
     if compute_radius
         return center(B), B.radius
     end
@@ -316,7 +345,7 @@ function chebyshev_center(B::Ball2{N}; compute_radius::Bool=false
 end
 
 """
-    volume(B::Ball2{N}) where {N<:AbstractFloat}
+    volume(B::Ball2)
 
 Return the volume of a ball in the 2-norm.
 
@@ -334,14 +363,18 @@ This function implements the well-known formula for the volume of an n-dimension
 ball using factorials. For details see the wikipedia article
 [Volume of an n-ball](https://en.wikipedia.org/wiki/Volume_of_an_n-ball).
 """
-function volume(B::Ball2{N}) where {N<:AbstractFloat}
+function volume(B::Ball2)
     n = dim(B)
     k = div(n, 2)
-    R = radius(B)
+    R = B.radius
     if iseven(n)
         vol = Base.pi^k * R^n / factorial(k)
     else
         vol = 2 * factorial(k) * (4*Base.pi)^k * R^n / factorial(n)
     end
     return vol
+end
+
+function project(B::Ball2, block::AbstractVector{Int}; kwargs...)
+    return Ball2(B.center[block], B.radius)
 end

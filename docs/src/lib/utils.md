@@ -15,6 +15,7 @@ hasfullrowrank
 inner
 is_cyclic_permutation
 isinvertible
+ismultiple
 ispermutation
 is_right_turn
 issquare
@@ -34,7 +35,11 @@ extend
 projection_matrix
 LazySets.Arrays._vector_type
 LazySets.Arrays._matrix_type
-LazySets.Arrays.distance(::AbstractVector, ::AbstractVector, ::Real=2.0)
+LazySets.Arrays.allequal
+LazySets.Arrays.distance(::AbstractVector, ::AbstractVector; ::Real=2.0)
+LazySets.Arrays.same_sign
+LazySets.Arrays.to_matrix
+LazySets.Arrays._rationalize
 ```
 
 ## Functions and Macros
@@ -61,6 +66,7 @@ get_constrained_lowdimset
 @declare_array_version
 @array_neutral
 @array_absorbing
+@commutative
 ```
 
 ## Types
@@ -77,19 +83,32 @@ LazySets.subtypes(::Any, ::Bool)
 implementing_sets
 ```
 
+## Reading and writing
+
+```@docs
+LazySets.read_gen(::String)
+```
+
 ## Sampling
 
 ```@docs
 _sample_unit_nsphere_muller!
 _sample_unit_nball_muller!
 sample
-LazySets.Sampler
-LazySets.RejectionSampler{S<:LazySet, D<:Distribution}
-LazySets._sample!
+LazySets.AbstractSampler
+LazySets.CombinedSampler
+LazySets.RejectionSampler
+LazySets.RandomWalkSampler
 ```
 
 ## Volume
 
 ```@docs
 volume
+```
+
+## Symbolics
+
+```@docs
+LazySets._vec
 ```

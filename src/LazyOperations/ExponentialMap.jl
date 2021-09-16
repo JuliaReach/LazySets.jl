@@ -106,17 +106,13 @@ function get_columns(spmexp::SparseMatrixExp{N}, J::AbstractArray) where {N}
 
     n = size(spmexp, 1)
     aux = zeros(N, n)
-    ans = zeros(N, n, length(J))
-    count = 1
-    one_N = one(N)
-    zero_N = zero(N)
-    @inbounds for j in J
-        aux[j] = one_N
-        ans[:, count] = expmv(one_N, spmexp.M, aux)
-        aux[j] = zero_N
-        count += 1
+    res = zeros(N, n, length(J))
+    @inbounds for (k, j) in enumerate(J)
+        aux[j] = one(N)
+        res[:, k] = expmv(one(N), spmexp.M, aux)
+        aux[j] = zero(N)
     end
-    return ans
+    return res
 end
 
 """
@@ -153,29 +149,30 @@ function get_rows(spmexp::SparseMatrixExp{N}, I::AbstractArray{Int}) where {N}
 
     n = size(spmexp, 1)
     aux = zeros(N, n)
-    ans = zeros(N, length(I), n)
+    res = zeros(N, length(I), n)
     Mtranspose = transpose(spmexp.M)
-    count = 1
-    one_N = one(N)
-    zero_N = zero(N)
-    @inbounds for i in I
-        aux[i] = one_N
-        ans[count, :] = expmv(one_N, Mtranspose, aux)
-        aux[i] = zero_N
-        count += 1
+    @inbounds for (k, i) in enumerate(I)
+        aux[i] = one(N)
+        res[k, :] = expmv(one(N), Mtranspose, aux)
+        aux[i] = zero(N)
     end
-    return ans
+    return res
 end
 
 """
-    ExponentialMap{N<:Real, S<:LazySet{N}} <: AbstractAffineMap{N, S}
+    ExponentialMap{N, S<:LazySet{N}} <: AbstractAffineMap{N, S}
 
-Type that represents the action of an exponential map on a convex set.
+Type that represents the action of an exponential map on a set.
 
 ### Fields
 
 - `spmexp` -- sparse matrix exponential
-- `X`      -- convex set
+- `X`      -- set
+
+### Notes
+
+The exponential map preserves convexity: if `X` is convex, then any exponential
+map of `X` is convex as well.
 
 ### Examples
 
@@ -208,17 +205,17 @@ julia> E * ZeroSet(100)
 ZeroSet{Float64}(100)
 
 julia> E * EmptySet(2)
-EmptySet{Float64}(2)
+∅(2)
 ```
 """
-struct ExponentialMap{N<:Real, S<:LazySet{N}} <: AbstractAffineMap{N, S}
+struct ExponentialMap{N, S<:LazySet{N}} <: AbstractAffineMap{N, S}
     spmexp::SparseMatrixExp{N}
     X::S
 end
 
 # ZeroSet is "almost absorbing" for ExponentialMap (only the dimension changes)
-function ExponentialMap(spmexp::SparseMatrixExp{N}, Z::ZeroSet{N}
-                       ) where {N<:Real}
+function ExponentialMap(spmexp::SparseMatrixExp, Z::ZeroSet)
+    N = promote_type(eltype(spmexp), eltype(Z))
     @assert dim(Z) == size(spmexp, 2) "an exponential map of size " *
             "$(size(spmexp)) cannot be applied to a set of dimension $(dim(Z))"
     return ZeroSet{N}(size(spmexp, 1))
@@ -228,28 +225,27 @@ isoperationtype(::Type{<:ExponentialMap}) = true
 isconvextype(::Type{ExponentialMap{N, S}}) where {N, S} = isconvextype(S)
 
 # EmptySet is absorbing for ExponentialMap
-function ExponentialMap(spmexp::SparseMatrixExp{N}, ∅::EmptySet{N}
-                       ) where {N<:Real}
+function ExponentialMap(spmexp::SparseMatrixExp, ∅::EmptySet)
     return ∅
 end
 
 """
 ```
-    *(spmexp::SparseMatrixExp{N}, X::LazySet{N}) where {N<:Real}
+    *(spmexp::SparseMatrixExp, X::LazySet)
 ```
 
-Return the exponential map of a convex set from a sparse matrix exponential.
+Return the exponential map of a set from a sparse matrix exponential.
 
 ### Input
 
 - `spmexp` -- sparse matrix exponential
-- `X`      -- convex set
+- `X`      -- set
 
 ### Output
 
-The exponential map of the convex set.
+The exponential map of the set.
 """
-function *(spmexp::SparseMatrixExp{N}, X::LazySet{N}) where {N<:Real}
+function *(spmexp::SparseMatrixExp, X::LazySet)
     return ExponentialMap(spmexp, X)
 end
 
@@ -261,7 +257,7 @@ function matrix(em::ExponentialMap)
     return em.spmexp
 end
 
-function vector(em::ExponentialMap{N}) where {N<:Real}
+function vector(em::ExponentialMap{N}) where {N}
     return spzeros(N, dim(em))
 end
 
@@ -287,11 +283,11 @@ Return the dimension of an exponential map.
 The ambient dimension of the exponential map.
 """
 function dim(em::ExponentialMap)
-    return size(em.spmexp.M, 1)
+    return size(em.spmexp, 1)
 end
 
 """
-    σ(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
+    σ(d::AbstractVector, em::ExponentialMap)
 
 Return the support vector of the exponential map.
 
@@ -307,22 +303,23 @@ If the direction has norm zero, the result depends on the wrapped set.
 
 ### Notes
 
-If ``E = \\exp(M)⋅S``, where ``M`` is a matrix and ``S`` is a convex set, it
+If ``E = \\exp(M)⋅S``, where ``M`` is a matrix and ``S`` is a set, it
 follows that ``σ(d, E) = \\exp(M)⋅σ(\\exp(M)^T d, S)`` for any direction ``d``.
 
 We allow sparse direction vectors, but will convert them to dense vectors to be
 able to use `expmv`.
 """
-function σ(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
+function σ(d::AbstractVector, em::ExponentialMap)
     require(:Expokit; fun_name="σ")
 
+    N = promote_type(eltype(d), eltype(em))
     d_dense = d isa Vector ? d : Vector(d)
-    v = expmv(one(N), transpose(em.spmexp.M), d_dense) # v   <- exp(M') * d
+    v = expmv(one(N), transpose(em.spmexp.M), d_dense) # v   <- exp(M^T) * d
     return expmv(one(N), em.spmexp.M, σ(v, em.X)) # res <- exp(M) * σ(v, S)
 end
 
 """
-    ρ(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
+    ρ(d::AbstractVector, em::ExponentialMap)
 
 Return the support function of the exponential map.
 
@@ -337,29 +334,30 @@ The support function in the given direction.
 
 ### Notes
 
-If ``E = \\exp(M)⋅S``, where ``M`` is a matrix and ``S`` is a convex set, it
+If ``E = \\exp(M)⋅S``, where ``M`` is a matrix and ``S`` is a set, it
 follows that ``ρ(d, E) = ρ(\\exp(M)^T d, S)`` for any direction ``d``.
 
 We allow sparse direction vectors, but will convert them to dense vectors to be
 able to use `expmv`.
 """
-function ρ(d::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
+function ρ(d::AbstractVector, em::ExponentialMap)
     require(:Expokit; fun_name="ρ")
 
+    N = promote_type(eltype(d), eltype(em))
     d_dense = d isa Vector ? d : Vector(d)
     v = expmv(one(N), transpose(em.spmexp.M), d_dense) # v <- exp(M^T) * d
     return ρ(v, em.X)
 end
 
 """
-    ∈(x::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
+    ∈(x::AbstractVector, em::ExponentialMap)
 
-Check whether a given point is contained in an exponential map of a convex set.
+Check whether a given point is contained in an exponential map of a set.
 
 ### Input
 
 - `x`  -- point/vector
-- `em` -- exponential map of a convex set
+- `em` -- exponential map of a set
 
 ### Output
 
@@ -385,15 +383,18 @@ julia> [1.0, 1.0] ∈ em
 true
 ```
 """
-function ∈(x::AbstractVector{N}, em::ExponentialMap{N}) where {N<:Real}
+function ∈(x::AbstractVector, em::ExponentialMap)
     require(:Expokit; fun_name="∈")
 
-    @assert length(x) == dim(em)
-    return expmv(-one(N), em.spmexp.M, x) ∈ em.X
+    @assert length(x) == dim(em) "a vector of length $(length(x)) is " *
+        "incompatible with a set of dimension $(dim(em))"
+    N = promote_type(eltype(x), eltype(em))
+    y = expmv(-one(N), em.spmexp.M, x)
+    return y ∈ em.X
 end
 
 """
-    vertices_list(em::ExponentialMap{N}) where {N<:Real}
+    vertices_list(em::ExponentialMap{N}) where {N}
 
 Return the list of vertices of a (polytopic) exponential map.
 
@@ -410,17 +411,16 @@ A list of vertices.
 We assume that the underlying set `X` is polytopic.
 Then the result is just the exponential map applied to the vertices of `X`.
 """
-function vertices_list(em::ExponentialMap{N}) where {N<:Real}
+function vertices_list(em::ExponentialMap{N}) where {N}
     require(:Expokit; fun_name="vertices_list")
 
     # collect low-dimensional vertices lists
     vlist_X = vertices_list(em.X)
 
     # create resulting vertices list
-    vlist = Vector{Vector{N}}()
-    sizehint!(vlist, length(vlist_X))
-    for v in vlist_X
-        push!(vlist, expmv(one(N), em.spmexp.M, v))
+    vlist = Vector{Vector{N}}(undef, length(vlist_X))
+    @inbounds for (i, v) in enumerate(vlist_X)
+        vlist[i] = expmv(one(N), em.spmexp.M, v)
     end
 
     return vlist
@@ -446,7 +446,9 @@ end
 # --- ProjectionSparseMatrixExp & ExponentialProjectionMap ---
 
 """
-    ProjectionSparseMatrixExp{N<:Real}
+    ProjectionSparseMatrixExp{N, MN1<:AbstractSparseMatrix{N},
+                                 MN2<:AbstractSparseMatrix{N},
+                                 MN3<:AbstractSparseMatrix{N}}
 
 Type that represents the projection of a sparse matrix exponential, i.e.,
 ``L⋅\\exp(M)⋅R`` for a given sparse matrix ``M``.
@@ -457,7 +459,7 @@ Type that represents the projection of a sparse matrix exponential, i.e.,
 - `E` -- sparse matrix exponential
 - `R` -- right multiplication matrix
 """
-struct ProjectionSparseMatrixExp{N<:Real, MN1<:AbstractSparseMatrix{N},
+struct ProjectionSparseMatrixExp{N, MN1<:AbstractSparseMatrix{N},
                                  MN2<:AbstractSparseMatrix{N},
                                  MN3<:AbstractSparseMatrix{N}}
     L::MN1
@@ -466,17 +468,22 @@ struct ProjectionSparseMatrixExp{N<:Real, MN1<:AbstractSparseMatrix{N},
 end
 
 """
-    ExponentialProjectionMap{N<:Real, S<:LazySet{N}} <: AbstractAffineMap{N, S}
+    ExponentialProjectionMap{N, S<:LazySet{N}} <: AbstractAffineMap{N, S}
 
 Type that represents the application of a projection of a sparse matrix
-exponential to a convex set.
+exponential to a set.
 
 ### Fields
 
 - `spmexp` -- projection of a sparse matrix exponential
-- `X`      -- convex set
+- `X`      -- set
+
+### Notes
+
+The exponential projection preserves convexity: if `X` is convex, then any
+exponential projection of `X` is convex as well.
 """
-struct ExponentialProjectionMap{N<:Real, S<:LazySet{N}} <: AbstractAffineMap{N, S}
+struct ExponentialProjectionMap{N, S<:LazySet{N}} <: AbstractAffineMap{N, S}
     projspmexp::ProjectionSparseMatrixExp
     X::S
 end
@@ -489,18 +496,16 @@ isconvextype(::Type{ExponentialProjectionMap{N, S}}) where {N, S} = isconvextype
     *(projspmexp::ProjectionSparseMatrixExp, X::LazySet)
 ```
 
-Return the application of a projection of a sparse matrix exponential to a
-convex set.
+Return the application of a projection of a sparse matrix exponential to a set.
 
 ### Input
 
 - `projspmexp` -- projection of a sparse matrix exponential
-- `X`          -- convex set
+- `X`          -- set
 
 ### Output
 
-The application of the projection of a sparse matrix exponential to the convex
-set.
+The application of the projection of a sparse matrix exponential to the set.
 """
 function *(projspmexp::ProjectionSparseMatrixExp, X::LazySet)
     return ExponentialProjectionMap(projspmexp, X)
@@ -545,8 +550,7 @@ function dim(eprojmap::ExponentialProjectionMap)
 end
 
 """
-    σ(d::AbstractVector{N},
-      eprojmap::ExponentialProjectionMap{N}) where {N<:Real}
+    σ(d::AbstractVector, eprojmap::ExponentialProjectionMap)
 
 Return the support vector of a projection of an exponential map.
 
@@ -569,12 +573,12 @@ exponential, and ``X`` is a set, it follows that
 We allow sparse direction vectors, but will convert them to dense vectors to be
 able to use `expmv`.
 """
-function σ(d::AbstractVector{N},
-           eprojmap::ExponentialProjectionMap{N}) where {N<:Real}
+function σ(d::AbstractVector, eprojmap::ExponentialProjectionMap)
     require(:Expokit; fun_name="σ")
 
     d_dense = d isa Vector ? d : Vector(d)
     daux = transpose(eprojmap.projspmexp.L) * d_dense
+    N = promote_type(eltype(d), eltype(eprojmap))
     aux1 = expmv(one(N), transpose(eprojmap.projspmexp.spmexp.M), daux)
     daux = _At_mul_B(eprojmap.projspmexp.R, aux1)
     svec = σ(daux, eprojmap.X)
@@ -601,11 +605,10 @@ Determine whether an exponential projection map is bounded.
 
 We first check if the left or right projection matrix is zero or the wrapped set
 is bounded.
-Otherwise, we check boundedness via [`_isbounded_unit_dimensions`](@ref).
+Otherwise, we check boundedness via [`LazySets._isbounded_unit_dimensions`](@ref).
 """
 function isbounded(eprojmap::ExponentialProjectionMap)
-    if iszero(eprojmap.projspmexp.L) || iszero(eprojmap.projspmexp.R) ||
-            isbounded(eprojmap.X)
+    if iszero(eprojmap.projspmexp.L) || iszero(eprojmap.projspmexp.R) || isbounded(eprojmap.X)
         return true
     end
     return _isbounded_unit_dimensions(eprojmap)

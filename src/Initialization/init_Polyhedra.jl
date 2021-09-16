@@ -5,7 +5,7 @@ eval(quote
                       removehredundancy!, removevredundancy!
     import JuMP, GLPK
 
-    function default_polyhedra_backend(P, N::Type{<:Number})
+    function default_polyhedra_backend(P::LazySet{N}) where {N}
         if LazySets.dim(P) == 1
             return default_polyhedra_backend_1d(N)
         else
@@ -48,5 +48,5 @@ end)
 eval(load_polyhedra_hpolytope())
 eval(load_polyhedra_hpolyhedron())
 eval(load_polyhedra_vpolytope())
+eval(load_polyhedra_universe())
 eval(load_polyhedra_mesh())
-eval(load_polyhedra_concretize_cpa())

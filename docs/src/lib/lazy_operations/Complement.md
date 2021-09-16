@@ -10,6 +10,13 @@ Hence this set type is not part of the convex-set family `LazySet`.
 ```@docs
 Complement
 dim(::Complement)
-∈(::AbstractVector{N}, ::Complement{N}) where {N<:Real}
+∈(::AbstractVector, ::Complement)
 isempty(::Complement)
+```
+
+The concrete complement can be computed with the function `complement` (mind the lowercase,
+as it is usual for functions).
+
+```@docs
+constraints_list(::Complement)
 ```

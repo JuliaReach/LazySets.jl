@@ -3,7 +3,7 @@ import Base: ∈
 export Rectification
 
 """
-    RectificationCache{N<:Real}
+    RectificationCache{N}
 
 Struct that is used as a cache for [`Rectification`](@ref)s.
 
@@ -14,25 +14,25 @@ Struct that is used as a cache for [`Rectification`](@ref)s.
 - `use_support_vector` -- flag indicating whether to use support-vector
                           computations for the cached set
 """
-mutable struct RectificationCache{N<:Real}
+mutable struct RectificationCache{N}
     set::Union{LazySet{N}, UnionSetArray{N}, Nothing}
     use_support_vector::Bool
 
     # constructor without a set
-    RectificationCache{N}(::Nothing) where {N<:Real} = new{N}(nothing, false)
+    RectificationCache{N}(::Nothing) where {N} = new{N}(nothing, false)
 
     # constructor with a set
-    RectificationCache{N}(set::LazySet{N}) where {N<:Real} = new{N}(set, true)
+    RectificationCache{N}(set::LazySet{N}) where {N} = new{N}(set, true)
 end
 
 """
-    Rectification{N<:Real, S<:LazySet{N}}
+    Rectification{N, S<:LazySet{N}}
 
-Type that represents the rectification of a convex set.
+Type that represents the rectification of a set.
 
 ### Fields
 
-- `X`     -- convex set
+- `X`     -- set
 - `cache` -- storage of information computed before
 
 ### Notes
@@ -88,18 +88,18 @@ containing the origin.
 The rectification of ``X ∩ O_2`` and ``X ∩ O_4`` both result in flat
 ``1``-dimensional line segments on the corresponding hyperplane of ``O_1``.
 """
-struct Rectification{N<:Real, S<:LazySet{N}}
+struct Rectification{N, S<:LazySet{N}}
     X::S
     cache::RectificationCache{N}
 
     # default constructor that initializes cache
-    function Rectification(X::S) where {N<:Real, S<:LazySet{N}}
+    function Rectification(X::S) where {N, S<:LazySet{N}}
         if X isa AbstractHyperrectangle || X isa CartesianProduct ||
                 X isa CartesianProductArray || X isa EmptySet
             # set types with efficient support-vector computations
             set = X
-        elseif dim(X) == 1 && isbounded(X)
-            # one-dimensional bounded sets are converted to Interval type
+        elseif isconvextype(S) && dim(X) == 1 && isbounded(X)
+            # one-dimensional convex bounded sets are converted to Interval type
             set = convert(Interval, X)
         else
             # do not pre-compute a set; computation is triggered later
@@ -112,6 +112,10 @@ end
 
 isoperationtype(::Type{<:Rectification}) = true
 isconvextype(::Type{<:Rectification}) = false
+
+# redundant if Rectification <: LazySet
+eltype(::Type{<:Rectification{N}}) where {N} = N
+eltype(r::Rectification) = eltype(typeof(r))
 
 """
     set(r::Rectification)
@@ -148,7 +152,7 @@ function dim(r::Rectification)
 end
 
 """
-    σ(d::AbstractVector{N}, r::Rectification{N}) where {N<:Real}
+    σ(d::AbstractVector, r::Rectification)
 
 Return the support vector of a rectification.
 
@@ -162,7 +166,7 @@ Return the support vector of a rectification.
 The support vector in the given direction.
 If the direction has norm zero, the result depends on the wrapped set.
 """
-function σ(d::AbstractVector{N}, r::Rectification{N}) where {N<:Real}
+function σ(d::AbstractVector, r::Rectification)
     if r.cache.set == nothing
         r.cache.set = to_union_of_projections(r)
     end
@@ -170,8 +174,7 @@ function σ(d::AbstractVector{N}, r::Rectification{N}) where {N<:Real}
 end
 
 """
-    σ(d::AbstractVector{N},
-      r::Rectification{N, <:AbstractHyperrectangle{N}}) where {N<:Real}
+    σ(d::AbstractVector, r::Rectification{N, <:AbstractHyperrectangle{N}}) where {N}
 
 Return the support vector of the rectification of a hyperrectangular set.
 
@@ -190,22 +193,20 @@ Let ``r(·)`` be the rectification of a vector respectively a set, and let ``H``
 be a hyperrectangle.
 Then ``σ_{r(H)}(d) = r(σ_{H}(d))``.
 """
-function σ(d::AbstractVector{N},
-           r::Rectification{N, <:AbstractHyperrectangle{N}}) where {N<:Real}
+function σ(d::AbstractVector, r::Rectification{N, <:AbstractHyperrectangle{N}}) where {N}
     return rectify(σ(d, r.X))
 end
 
 """
-    σ(d::AbstractVector{N},
-      r::Rectification{N, <:CartesianProduct{N}}) where {N<:Real}
+    σ(d::AbstractVector, r::Rectification{N, <:CartesianProduct{N}}) where {N}
 
 Return the support vector of the rectification of a Cartesian product of two
-convex sets.
+sets.
 
 ### Input
 
 - `d` -- direction
-- `r` -- rectification of a Cartesian product of two convex sets
+- `r` -- rectification of a Cartesian product of two sets
 
 ### Output
 
@@ -219,24 +220,22 @@ We can just query the support vector for ``r(X)`` and ``r(Y)`` recursively:
 ``σ_{r(X × Y)}(d) = σ_{r(X)}(d_X) × σ_{r(Y)}(d_Y)``, where ``x × y``
 concatenates vectors ``x`` and ``y``.
 """
-function σ(d::AbstractVector{N},
-           r::Rectification{N, <:CartesianProduct{N}}) where {N<:Real}
+function σ(d::AbstractVector, r::Rectification{N, <:CartesianProduct{N}}) where {N}
     X, Y = r.X.X, r.X.Y
     n1 = dim(X)
     return vcat(σ(d[1:n1], Rectification(X)), σ(d[n1+1:end], Rectification(Y)))
 end
 
 """
-    σ(d::AbstractVector{N},
-      r::Rectification{N, <:CartesianProductArray{N}}) where {N<:Real}
+    σ(d::AbstractVector, r::Rectification{N, <:CartesianProductArray{N}}) where {N}
 
 Return the support vector of the rectification of a Cartesian product of a
-finite number of convex sets.
+finite number of sets.
 
 ### Input
 
 - `d` -- direction
-- `r` -- rectification of a Cartesian product of a finite number of convex sets
+- `r` -- rectification of a Cartesian product of a finite number of sets
 
 ### Output
 
@@ -250,8 +249,7 @@ We can just query the support vector for each subspace recursively:
 ``σ_{r(X_1 × ⋯ × X_m)}(d) = σ_{r(X_1)}(d_{X_1}) × ⋯ × σ_{r(X_m)}(d_{X_m})``,
 where ``x × y`` concatenates vectors ``x`` and ``y``.
 """
-function σ(d::AbstractVector{N},
-           r::Rectification{N, <:CartesianProductArray{N}}) where {N<:Real}
+function σ(d::AbstractVector, r::Rectification{N, <:CartesianProductArray{N}}) where {N}
     svec = similar(d)
     i = 1
     for X in array(r.X)
@@ -264,19 +262,18 @@ function σ(d::AbstractVector{N},
 end
 
 """
-    ρ(d::AbstractVector{N}, r::Rectification{N}) where {N<:Real}
+    ρ(d::AbstractVector, r::Rectification)
 
-Evaluate the support function of a rectification of a convex set in a given
-direction.
+Evaluate the support function of a rectification of a set in a given direction.
 
 ### Input
 
 - `d` -- direction
-- `r` -- rectification of a convex set
+- `r` -- rectification of a set
 
 ### Output
 
-The support value of the rectification of a convex set in the given direction.
+The support value of the rectification of a set in the given direction.
 
 ### Algorithm
 
@@ -289,7 +286,7 @@ Otherwise we compute the union of projections to obtain a precise result (see
 this union.
 (The union is cached internally, so subsequent queries are more efficient.)
 """
-function ρ(d::AbstractVector{N}, r::Rectification{N}) where {N<:Real}
+function ρ(d::AbstractVector, r::Rectification)
     if r.cache.use_support_vector
         return dot(d, σ(d, r))
     end
@@ -300,7 +297,7 @@ function ρ(d::AbstractVector{N}, r::Rectification{N}) where {N<:Real}
 end
 
 """
-    an_element(r::Rectification{N}) where {N<:Real}
+    an_element(r::Rectification)
 
 Return some element of a rectification.
 
@@ -313,12 +310,12 @@ Return some element of a rectification.
 An element in the rectification.
 The implementation relies on the `an_element` function of the wrapped set.
 """
-function an_element(r::Rectification{N}) where {N<:Real}
+function an_element(r::Rectification)
     return rectify(an_element(r.X))
 end
 
 """
-    ∈(x::AbstractVector{N}, r::Rectification{N}) where {N<:Real}
+    ∈(x::AbstractVector, r::Rectification)
 
 Check whether a given point is contained in a rectification.
 
@@ -346,7 +343,8 @@ the answer is negative.
 Finally, if there are zero entries in the vector and the vector is not contained
 in the wrapped set, we give up and throw an error.
 """
-function ∈(x::AbstractVector{N}, r::Rectification{N}) where {N<:Real}
+function ∈(x::AbstractVector, r::Rectification)
+    N = promote_type(eltype(x), eltype(r))
     # scan for negative entries
     if any(xi -> xi < zero(N), x)
         return false
@@ -385,7 +383,7 @@ function isempty(r::Rectification)
 end
 
 """
-    isbounded(r::Rectification)
+    isbounded(r::Rectification{N}) where {N}
 
 Determine whether a rectification is bounded.
 
@@ -407,7 +405,7 @@ a heuristics.
 Otherwise, we check boundedness of ``X`` in every positive unit direction, which
 is sufficient and necessary for boundedness of ``r``.
 """
-function isbounded(r::Rectification{N}) where {N<:Real}
+function isbounded(r::Rectification{N}) where {N}
     # check boundedness of the wrapped set
     if isbounded(r.X)
         return true
@@ -432,13 +430,13 @@ end
 """
     to_union_of_projections(r::Rectification{N},
                             concrete_intersection::Bool=false
-                           ) where {N<:Real}
+                           ) where {N}
 
-Compute an equivalent union of projections from a rectification of a convex set.
+Compute an equivalent union of projections from a rectification of a set.
 
 ### Input
 
-- `r`                     -- rectification of a convex set
+- `r`                     -- rectification of a set
 - `concrete_intersection` -- (optional, default: `false`) option to compute
                              all intersections concretely or lazily
 
@@ -480,7 +478,7 @@ The result can be one of three cases depending on the wrapped set ``X``, namely
 """
 function to_union_of_projections(r::Rectification{N},
                                  concrete_intersection::Bool=false
-                                ) where {N<:Real}
+                                ) where {N}
     n = dim(r.X)
 
     negative_dimensions, mixed_dimensions, mixed_dimensions_enumeration =
@@ -541,7 +539,7 @@ end
 
 # identify dimensions where set is negative and mixed (positive/negative) and
 # also fill a bit vector for mixed dimensions
-function compute_negative_and_mixed_dimensions(X::LazySet{N}, n) where {N<:Real}
+function compute_negative_and_mixed_dimensions(X::LazySet{N}, n) where {N}
     negative_dimensions = Vector{Int}()
     mixed_dimensions = Vector{Int}()
     mixed_dimensions_enumeration = BitArray(undef, 0)
@@ -560,7 +558,7 @@ end
 
 # construct a polyhedron corresponding to an index vector and a bit vector
 # (see `to_union_of_projections`)
-function construct_constraints(indices, bits, n, ::Type{N}) where {N<:Real}
+function construct_constraints(indices, bits, n, ::Type{N}) where {N}
     P = HPolyhedron{N, SingleEntryVector{N}}()
     for (i, b) in enumerate(bits)
         direction = SingleEntryVector(indices[i], n,
@@ -574,7 +572,7 @@ end
 # project negative dimensions to zero (see `to_union_of_projections`)
 function construct_projection(set::LazySet{N}, negative_dimensions,
                               mixed_dimensions, mixed_dimensions_enumeration, n
-                             ) where {N<:Real}
+                             ) where {N}
     # initialize negative indices to zero and all other dimensions to one
     v = ones(N, n)
     v[negative_dimensions] .= zero(N)

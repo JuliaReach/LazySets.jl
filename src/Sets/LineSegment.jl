@@ -6,7 +6,7 @@ export LineSegment,
        constraints_list
 
 """
-    LineSegment{N<:Real, VN<:AbstractVector{N}} <: AbstractZonotope{N}
+    LineSegment{N, VN<:AbstractVector{N}} <: AbstractZonotope{N}
 
 Type that represents a line segment in 2D between two points ``p`` and ``q``.
 
@@ -21,14 +21,17 @@ A line segment along the ``x = y`` diagonal:
 
 ```jldoctest linesegment_constructor
 julia> s = LineSegment([0., 0], [1., 1.])
-LineSegment{Float64,Array{Float64,1}}([0.0, 0.0], [1.0, 1.0])
+LineSegment{Float64, Vector{Float64}}([0.0, 0.0], [1.0, 1.0])
 
 julia> dim(s)
 2
 ```
 
 Use `plot(s)` to plot the extreme points of `s` and the line segment joining
-them. Membership test is computed with ∈ (`in`):
+them. If it is desired to remove the endpoints, pass the options `markershape=:none`
+and `seriestype=:shape`.
+
+Membership is checked with ∈ (`in`):
 
 ```jldoctest linesegment_constructor
 julia> [0., 0] ∈ s && [.25, .25] ∈ s && [1., 1] ∈ s && [.5, .25] ∉ s
@@ -40,7 +43,7 @@ a witness (which is just the common point in this case):
 
 ```jldoctest linesegment_constructor
 julia> sn = LineSegment([1., 0], [0., 1.])
-LineSegment{Float64,Array{Float64,1}}([1.0, 0.0], [0.0, 1.0])
+LineSegment{Float64, Vector{Float64}}([1.0, 0.0], [0.0, 1.0])
 
 julia> isempty(s ∩ sn)
 false
@@ -49,12 +52,12 @@ julia> is_intersection_empty(s, sn, true)
 (false, [0.5, 0.5])
 ```
 """
-struct LineSegment{N<:Real, VN<:AbstractVector{N}} <: AbstractZonotope{N}
+struct LineSegment{N, VN<:AbstractVector{N}} <: AbstractZonotope{N}
     p::VN
     q::VN
 
     # default constructor with length constraint
-    function LineSegment(p::VN, q::VN) where {N<:Real, VN<:AbstractVector{N}}
+    function LineSegment(p::VN, q::VN) where {N, VN<:AbstractVector{N}}
         @assert length(p) == length(q) == 2 "points for line segments must " *
             "be two-dimensional but their lengths are $(length(p)) and $(length(q))"
         return new{N, VN}(p, q)
@@ -86,7 +89,7 @@ function dim(L::LineSegment)
 end
 
 """
-    σ(d::AbstractVector{N}, L::LineSegment{N}) where {N<:Real}
+    σ(d::AbstractVector, L::LineSegment)
 
 Return the support vector of a line segment in a given direction.
 
@@ -107,12 +110,12 @@ it is ``q``.
 If the angle is exactly 90° or 270°, or if the direction has norm zero, this
 implementation returns ``q``.
 """
-function σ(d::AbstractVector{N}, L::LineSegment{N}) where {N<:Real}
+function σ(d::AbstractVector, L::LineSegment)
     return sign(dot(L.q - L.p, d)) >= 0 ? L.q : L.p
 end
 
 """
-    an_element(L::LineSegment{N}) where {N<:Real}
+    an_element(L::LineSegment)
 
 Return some element of a line segment.
 
@@ -124,12 +127,12 @@ Return some element of a line segment.
 
 The first vertex of the line segment.
 """
-function an_element(L::LineSegment{N}) where {N<:Real}
+function an_element(L::LineSegment)
     return L.p
 end
 
 """
-    ∈(x::AbstractVector{N}, L::LineSegment{N}) where {N<:Real}
+    ∈(x::AbstractVector, L::LineSegment)
 
 Check whether a given point is contained in a line segment.
 
@@ -157,7 +160,7 @@ Let ``L = (p, q)`` be the line segment with extremes ``p`` and ``q``, and let
 
 The algorithm is inspired from [here](https://stackoverflow.com/a/328110).
 """
-function ∈(x::AbstractVector{N}, L::LineSegment{N}) where {N<:Real}
+function ∈(x::AbstractVector, L::LineSegment)
     @assert length(x) == dim(L)
 
     # check if point x is on the line through the line segment (p, q)
@@ -165,8 +168,8 @@ function ∈(x::AbstractVector{N}, L::LineSegment{N}) where {N<:Real}
     q = L.q
     if isapproxzero(right_turn(p, q, x))
         # check if the point is inside the box approximation of the line segment
-        return min(p[1], q[1]) <= x[1] <= max(p[1], q[1]) &&
-               min(p[2], q[2]) <= x[2] <= max(p[2], q[2])
+        return _leq(min(p[1], q[1]), x[1]) && _leq(x[1], max(p[1], q[1])) &&
+               _leq(min(p[2], q[2]), x[2]) && _leq(x[2], max(p[2], q[2]))
     else
         return false
     end
@@ -177,7 +180,7 @@ end
 
 
 """
-    center(L::LineSegment{N}) where {N<:Real}
+    center(L::LineSegment)
 
 Return the center of a line segment.
 
@@ -189,7 +192,7 @@ Return the center of a line segment.
 
 The center of the line segment.
 """
-function center(L::LineSegment{N}) where {N<:Real}
+function center(L::LineSegment)
     return L.p + (L.q - L.p) / 2
 end
 
@@ -216,7 +219,7 @@ function genmat(L::LineSegment)
 end
 
 """
-    generators(L::LineSegment{N}) where {N<:Real}
+    generators(L::LineSegment{N}) where {N}
 
 Return an iterator over the (single) generator of a line segment.
 
@@ -228,7 +231,7 @@ Return an iterator over the (single) generator of a line segment.
 
 A one-element iterator over the generator of `L`.
 """
-function generators(L::LineSegment{N}) where {N<:Real}
+function generators(L::LineSegment{N}) where {N}
     p = L.p
     q = L.q
     if _isapprox(p, q)
@@ -243,7 +246,7 @@ end
 
 
 """
-    vertices_list(L::LineSegment{N}) where {N<:Real}
+    vertices_list(L::LineSegment)
 
 Return the list of vertices of a line segment.
 
@@ -255,7 +258,7 @@ Return the list of vertices of a line segment.
 
 The list of end points of the line segment.
 """
-function vertices_list(L::LineSegment{N}) where {N<:Real}
+function vertices_list(L::LineSegment)
     return [L.p, L.q]
 end
 
@@ -336,7 +339,7 @@ describes the right-hand side of the directed line segment `pq`.
 halfspace_right(L::LineSegment) = halfspace_right(L.p, L.q)
 
 """
-    constraints_list(L::LineSegment{N}) where {N<:Real}
+    constraints_list(L::LineSegment)
 
 Return the list of constraints defining a line segment in 2D.
 
@@ -360,7 +363,7 @@ through each opposite vertex.
 This function returns a vector of halfspaces. It does not return equality
 constraints.
 """
-function constraints_list(L::LineSegment{N}) where {N<:Real}
+function constraints_list(L::LineSegment)
     p, q = L.p, L.q
     d = [p[2] - q[2], q[1] - p[1]]
     return [halfspace_left(L), halfspace_right(L),
@@ -368,7 +371,7 @@ function constraints_list(L::LineSegment{N}) where {N<:Real}
 end
 
 """
-    translate(L::LineSegment{N}, v::AbstractVector{N}) where {N<:Real}
+    translate(L::LineSegment, v::AbstractVector)
 
 Translate (i.e., shift) a line segment by a given vector.
 
@@ -385,7 +388,7 @@ A translated line segment.
 
 We add the vector to both defining points of the line segment.
 """
-function translate(L::LineSegment{N}, v::AbstractVector{N}) where {N<:Real}
+function translate(L::LineSegment, v::AbstractVector)
     @assert length(v) == dim(L) "cannot translate a $(dim(L))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     return LineSegment(L.p + v, L.q + v)

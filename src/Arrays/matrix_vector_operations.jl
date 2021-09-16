@@ -1,4 +1,40 @@
-export inner
+export inner,
+       _abs_sum,
+       to_matrix
+
+# computes ‖a^T G‖₁
+@inline function _abs_sum(a::AbstractVector, G::AbstractMatrix)
+   n, p = size(G)
+   N = promote_type(eltype(a), eltype(G))
+   abs_sum = zero(N)
+   @inbounds for j in 1:p
+       aux = zero(N)
+       @simd for i in 1:n
+           aux += a[i] * G[i, j]
+       end
+       abs_sum += abs(aux)
+   end
+   return abs_sum
+end
+
+# computes ‖a^T G‖₁ for `a` being a sparse vector
+@inline function _abs_sum(a::AbstractSparseVector, G::AbstractMatrix)
+   return sum(abs, transpose(a) * G)
+end
+
+# computes ‖a^T G‖₁ for `a` having only one nonzero element
+@inline function _abs_sum(a::SingleEntryVector, G::AbstractMatrix)
+   p = size(G, 2)
+   i = a.i
+   v = abs(a.v)
+   N = promote_type(eltype(a), eltype(G))
+   abs_sum = zero(N)
+   @inbounds for j in 1:p
+       abs_sum += abs(G[i, j])
+   end
+   abs_sum *= v
+   return abs_sum
+end
 
 """
     inner(x::AbstractVector{N}, A::AbstractMatrix{N}, y::AbstractVector{N}
@@ -74,3 +110,44 @@ _vector_type(::Type{<:AbstractMatrix{T}}) where T = Vector{T}
 _matrix_type(::Type{<:AbstractVector{T}}) where T = Matrix{T}
 _matrix_type(MT::Type{<:AbstractMatrix{T}}) where T = MT
 _matrix_type(::Type{<:AbstractSparseVector{T}}) where T = SparseMatrixCSC{T, Int}
+
+# matrix constructors
+_matrix(m, n, MT::Type{<:AbstractMatrix{T}}) where T = Matrix{T}(undef, m, n)
+_matrix(m, n, MT::Type{<:SparseMatrixCSC{T}}) where T = spzeros(T, m, n)
+
+"""
+    to_matrix(vectors::AbstractVector{VN},
+              [m]=length(vectors[1]),
+              [MT]=_matrix_type(VN)) where {VN}
+
+### Input
+
+- `vectors` -- list of vectors
+- `m`       -- (optional; default: `length(vectors[1])`) number of rows
+- `MT`      -- (optional; default: `_matrix_type(VN)`) type of target matrix
+
+### Output
+
+A matrix with the column vectors from `vectors` in the same order.
+"""
+function to_matrix(vectors::AbstractVector{VN},
+                   m=length(vectors[1]),
+                   mat_type=_matrix_type(VN)) where {VN}
+    n = length(vectors)
+    M = _matrix(m, n, mat_type)
+    @inbounds for (j, vj) in enumerate(vectors)
+        M[:, j] = vj
+    end
+    return M
+end
+
+# no-op
+_similar_type(x::AbstractVector) = typeof(x)
+
+function load_copy_finalize_static()
+
+return quote
+    _similar_type(x::StaticArrays.StaticArray) = StaticArrays.similar_type(x)
+end # quote
+
+end # end load_copy_finalize_static

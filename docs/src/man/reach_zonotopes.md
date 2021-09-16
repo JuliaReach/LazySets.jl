@@ -37,7 +37,7 @@ wrapper (represented as a multiplication `*` of a matrix and a set) and a
 If the parameter `lazy` is `false`, the implementation calls the concrete
 counterparts `linear_map` and `minkowski_sum`.
 
-For further applications of LazySets in reachability analysis, we refer to the library [JuliaReach/Reachability.jl](https://github.com/JuliaReach/Reachability.jl).
+For further applications of LazySets in reachability analysis, we refer to the library [JuliaReach/ReachabilityAnalysis.jl](https://github.com/JuliaReach/ReachabilityAnalysis.jl).
 
 ## Algorithm
 
@@ -106,7 +106,7 @@ R = Algorithm1(A, X0, δ, μ, 2 * δ); # warm-up
 
 R = Algorithm1(A, X0, δ, μ, T)
 
-plot(R, 1e-2, 0, true; fillalpha=0.1)
+plot(R, 1e-2, 0; same_recipe=true, fillalpha=0.1)
 ```
 
 
@@ -128,5 +128,5 @@ R = Algorithm1(A, X0, δ, μ, 2 * δ); # warm-up
 R = Algorithm1(A, X0, δ, μ, T)
 Rproj = project(R, [1, 3], 5)
 
-plot(Rproj, 1e-2, 0, true; fillalpha=0.1, xlabel="x1", ylabel="x3")
+plot(Rproj, 1e-2, 0; same_recipe=true, fillalpha=0.1, xlabel="x1", ylabel="x3")
 ```

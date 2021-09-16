@@ -1,3 +1,5 @@
+export convex_hull
+
 function default_convex_hull_algorithm(points)
     if length(points) != 0 && length(first(points)) == 2
         return "monotone_chain"
@@ -127,17 +129,7 @@ julia> points = [randn(2) for i in 1:30]; # 30 random points in 2D
 julia> hull = convex_hull(points);
 
 julia> typeof(hull)
-Array{Array{Float64,1},1}
-```
-
-Plot both the random points and the computed convex hull polygon:
-
-```jldoctest ch_label
-julia> using Plots;
-
-julia> plot([Tuple(pi) for pi in points], seriestype=:scatter);
-
-julia> plot!(VPolygon(hull), alpha=0.2);
+Vector{Vector{Float64}} (alias for Array{Array{Float64, 1}, 1})
 ```
 """
 function convex_hull(points::Vector{VN};
@@ -175,22 +167,26 @@ function convex_hull!(points::Vector{VN};
             return _convex_hull_1d!(points)
         end
     elseif n == 2
-        if m == 2
-            # two points case in 2d
-            return _two_points_2d!(points)
-        elseif m == 3
-            # three points case in 2d
-            return _three_points_2d!(points)
-        elseif m == 4
-            # four points case in 2d
-            return _four_points_2d!(points)
-        else
-            # general case in 2d
-            return _convex_hull_2d!(points, algorithm=algorithm)
-        end
+        return _convex_hull_2d_preprocess!(points, m; algorithm=algorithm)
     else
         # general case in nd
         return _convex_hull_nd!(points, backend=backend, solver=solver)
+    end
+end
+
+function _convex_hull_2d_preprocess!(points, m=length(points); algorithm=nothing)
+    if m == 2
+        # two points case in 2d
+        return _two_points_2d!(points)
+    elseif m == 3
+        # three points case in 2d
+        return _three_points_2d!(points)
+    elseif m == 4
+        # four points case in 2d
+        return _four_points_2d!(points)
+    else
+        # general case in 2d
+        return _convex_hull_2d!(points, algorithm=algorithm)
     end
 end
 
@@ -493,4 +489,101 @@ A list of the vertices of the convex hull.
 function convex_hull(U::UnionSetArray{N, PT}; kwargs...) where {N, PT<:AbstractPolytope{N}}
     vlist = mapreduce(vertices_list, vcat, U.array)
     return convex_hull(vlist; kwargs...)
+end
+
+"""
+    convex_hull(P::VPolygon, Q::VPolygon; [algorithm]::String="monotone_chain")
+
+Return the convex hull of two polygons in vertex representation.
+
+### Input
+
+- `P`         -- polygon in vertex representation
+- `Q`         -- another polygon in vertex representation
+- `algorithm` -- (optional, default: "monotone_chain") the algorithm used to
+                 compute the convex hull
+
+### Output
+
+A new polygon such that its vertices are the convex hull of the given two polygons.
+
+### Algorithm
+
+A convex hull algorithm is used to compute the convex hull of the vertices of the
+given input polygons `P` and `Q`; see `?convex_hull` for details on the available
+algorithms. The vertices of the output polygon are sorted in counter-clockwise
+fashion.
+"""
+function convex_hull(P::VPolygon, Q::VPolygon;
+                     algorithm::String="monotone_chain")
+    vunion = [P.vertices; Q.vertices]
+    convex_hull!(vunion; algorithm=algorithm)
+    return VPolygon(vunion, apply_convex_hull=false)
+end
+
+"""
+    convex_hull(P1::VPolytope, P2::VPolytope; [backend]=nothing)
+
+Compute the convex hull of the set union of two polytopes in V-representation.
+
+### Input
+
+- `P1`         -- polytope
+- `P2`         -- another polytope
+- `backend`    -- (optional, default: `nothing`) the polyhedral
+                  computations backend
+
+### Output
+
+The `VPolytope` obtained by the concrete convex hull of `P1` and `P2`.
+
+### Notes
+
+This function takes the union of the vertices of each polytope and then relies
+on a concrete convex hull algorithm.
+For low dimensions, a specialized implementation for polygons is used.
+For higher dimensions, `convex_hull` relies on the polyhedral backend that can
+be specified using the `backend` keyword argument.
+
+For performance reasons, it is suggested to use the `CDDLib.Library()` backend.
+"""
+function convex_hull(P1::VPolytope, P2::VPolytope; backend=nothing)
+    vunion = [P1.vertices; P2.vertices]
+    convex_hull!(vunion; backend=backend)
+    return VPolytope(vunion)
+end
+
+"""
+    convex_hull(P1::HPoly, P2::HPoly;
+               [backend]=default_polyhedra_backend(P1))
+
+Compute the convex hull of the set union of two polyhedra in H-representation.
+
+### Input
+
+- `P1`         -- polyhedron
+- `P2`         -- another polyhedron
+- `backend`    -- (optional, default: `default_polyhedra_backend(P1)`)
+                  the polyhedral computations backend
+
+### Output
+
+The `HPolyhedron` (resp. `HPolytope`) obtained by the concrete convex hull of
+`P1` and `P2`.
+
+### Notes
+
+For performance reasons, it is suggested to use the `CDDLib.Library()` backend
+for the `convex_hull`.
+
+For further information on the supported backends see
+[Polyhedra's documentation](https://juliapolyhedra.github.io/).
+"""
+function convex_hull(P1::HPoly, P2::HPoly;
+                     backend=default_polyhedra_backend(P1))
+    require(:Polyhedra; fun_name="convex_hull")
+    Pch = Polyhedra.convexhull(polyhedron(P1; backend=backend),
+                               polyhedron(P2; backend=backend))
+    removehredundancy!(Pch)
+    return convert(basetype(P1), Pch)
 end

@@ -2,14 +2,16 @@ import Base: rand
 
 export Zonotope,
        scale,
+       scale!,
        reduce_order,
        remove_zero_generators,
-       quadratic_map
+       quadratic_map,
+       remove_redundant_generators
 
 using LazySets.Arrays: _vector_type, _matrix_type
 
 """
-    Zonotope{N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
+    Zonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
 
 Type that represents a zonotope.
 
@@ -42,18 +44,18 @@ A two-dimensional zonotope with given center and set of generators:
 
 ```jldoctest zonotope_label
 julia> Z = Zonotope([1.0, 0.0], [0.1 0.0; 0.0 0.1])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
+Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([1.0, 0.0], [0.1 0.0; 0.0 0.1])
 
 julia> dim(Z)
 2
 
 julia> center(Z)
-2-element Array{Float64,1}:
+2-element Vector{Float64}:
  1.0
  0.0
 
 julia> genmat(Z)
-2×2 Array{Float64,2}:
+2×2 Matrix{Float64}:
  0.1  0.0
  0.0  0.1
 ```
@@ -66,7 +68,7 @@ We can collect its vertices using `vertices_list`:
 
 ```jldoctest zonotope_label
 julia> vertices_list(Z)
-4-element Array{Array{Float64,1},1}:
+4-element Vector{Vector{Float64}}:
  [1.1, 0.1]
  [0.9, 0.1]
  [0.9, -0.1]
@@ -78,7 +80,7 @@ The support vector along a given direction can be computed using `σ`
 
 ```jldoctest zonotope_label
 julia> σ([1., 1.], Z)
-2-element Array{Float64,1}:
+2-element Vector{Float64}:
  1.1
  0.1
 ```
@@ -88,19 +90,19 @@ vectors, each vector representing a generator:
 
 ```jldoctest
 julia> Z = Zonotope(ones(2), [[1., 0.], [0., 1.], [1., 1.]])
-Zonotope{Float64,Array{Float64,1},Array{Float64,2}}([1.0, 1.0], [1.0 0.0 1.0; 0.0 1.0 1.0])
+Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([1.0, 1.0], [1.0 0.0 1.0; 0.0 1.0 1.0])
 
 julia> genmat(Z)
-2×3 Array{Float64,2}:
+2×3 Matrix{Float64}:
  1.0  0.0  1.0
  0.0  1.0  1.0
 ```
 """
-struct Zonotope{N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
+struct Zonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
     center::VN
     generators::MN
 
-    function Zonotope(center::VN, generators::MN) where {N<:Real,
+    function Zonotope(center::VN, generators::MN) where {N,
                                                          VN<:AbstractVector{N},
                                                          MN<:AbstractMatrix{N}}
         @assert length(center) == size(generators, 1) "the dimension of the " *
@@ -114,19 +116,13 @@ isoperationtype(::Type{<:Zonotope}) = false
 isconvextype(::Type{<:Zonotope}) = true
 
 # constructor from center and list of generators
-function Zonotope(center::VN, generators_list::AbstractVector{VN}) where {N<:Real, VN<:AbstractVector{N}}
-    MT = _matrix_type(VN)
-    G = MT(undef, length(center), length(generators_list))
-    for (j, gj) in enumerate(generators_list)
-        @inbounds G[:, j] = gj
-    end
+function Zonotope(center::VN, generators_list::AbstractVector{VN}) where {VN<:AbstractVector}
+    G = to_matrix(generators_list, length(center))
     return Zonotope(center, G)
 end
 
 """
-    remove_zero_generators(Z::Zonotope{N, VN, MN}) where {N<:Real,
-                                                          VN<:AbstractVector{N},
-                                                          MN<:AbstractMatrix{N}}
+    remove_zero_generators(Z::Zonotope)
 
 Return a new zonotope removing the generators which are zero of the given zonotope.
 
@@ -140,9 +136,7 @@ If there are no zero generators, the result is the original zonotope `Z`.
 Otherwise the result is a new zonotope that has the center and generators as `Z`
 except for those generators that are zero.
 """
-function remove_zero_generators(Z::Zonotope{N, VN, MN}) where {N<:Real,
-                                                               VN<:AbstractVector{N},
-                                                               MN<:AbstractMatrix{N}}
+function remove_zero_generators(Z::Zonotope)
     G = Z.generators
     G2 = remove_zero_columns(G)
     if G === G2
@@ -155,7 +149,7 @@ end
 
 
 """
-    center(Z::Zonotope{N}) where {N<:Real}
+    center(Z::Zonotope)
 
 Return the center of a zonotope.
 
@@ -167,7 +161,7 @@ Return the center of a zonotope.
 
 The center of the zonotope.
 """
-function center(Z::Zonotope{N}) where {N<:Real}
+function center(Z::Zonotope)
     return Z.center
 end
 
@@ -314,9 +308,31 @@ function scale(α::Real, Z::Zonotope)
 end
 
 """
+    scale!(α::Real, Z::Zonotope)
+
+Concrete scaling of a zonotope modifing `Z` in-place
+
+### Input
+
+- `α` -- scalar
+- `Z` -- zonotope
+
+### Output
+
+The zonotope `Z` after applying the numerical scale `α` to its center and generators.
+"""
+function scale!(α::Real, Z::Zonotope)
+    c = Z.center
+    G = Z.generators
+    c .= α .* c
+    G .= α .* G
+    return Z
+end
+
+"""
     reduce_order(Z::Zonotope, r::Union{Integer, Rational})
 
-Reduce the order of a zonotope by overapproximating with a zonotope with less
+Reduce the order of a zonotope by overapproximating with a zonotope with fewer
 generators.
 
 ### Input
@@ -326,13 +342,14 @@ generators.
 
 ### Output
 
-A new zonotope with less generators, if possible.
+A new zonotope with fewer generators, if possible.
 
 ### Algorithm
 
-See `overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, Rational}) where {N<:Real}` for details.
+See `overapproximate(Z::Zonotope, ::Type{<:Zonotope}, r::Union{Integer, Rational})`
+for details.
 """
-function reduce_order(Z::Zonotope{N}, r::Union{Integer, Rational}) where {N<:Real}
+function reduce_order(Z::Zonotope, r::Union{Integer, Rational})
     return overapproximate(Z, Zonotope, r)
 end
 
@@ -376,7 +393,7 @@ end
 
 _split_ret(Z₁::Zonotope, Z₂::Zonotope) = (Z₁, Z₂)
 
-function load_static_arrays()
+function load_split_static()
 return quote
 
 function _split_ret(Z₁::Zonotope{N, SV, SM}, Z₂::Zonotope{N, SV, SM}) where {N, n, p, SV<:MVector{n, N}, SM<:MMatrix{n, p, N}}
@@ -385,7 +402,7 @@ function _split_ret(Z₁::Zonotope{N, SV, SM}, Z₂::Zonotope{N, SV, SM}) where 
     return Z₁, Z₂
 end
 
-end end  # quote / load_static_arrays
+end end  # quote / load_split_static
 
 function _split(Z::Zonotope, gens::AbstractVector, n::AbstractVector)
     p = length(gens)
@@ -491,4 +508,208 @@ function quadratic_map(Q::Vector{MT}, Z::Zonotope{N}) where {N, MT<:AbstractMatr
         end
     end
     return Zonotope(d, remove_zero_columns(h))
+end
+
+"""
+    _bound_intersect_2D(Z::Zonotope, L::Line2D)
+
+Return the support function in the direction [0, 1] of the intersection between
+the given zonotope and line.
+
+### Input
+
+- `Z` -- zonotope
+- `L` -- vertical line 2D
+
+### Output
+
+The support function in the direction [0, 1] of the intersection between the
+given zonotope and line.
+
+### Notes
+
+The algorithm assumes that the given line is vertical and that the intersection
+between the given sets is not empty.
+
+### Algorithm
+
+This function implements [Algorithm 8.2, 1].
+
+[1] *Colas Le Guernic. Reachability Analysis of Hybrid Systems with Linear
+Continuous Dynamics. Computer Science [cs]. Université Joseph-Fourier - Grenoble
+I, 2009. English. fftel-00422569v2f*
+"""
+function _bound_intersect_2D(Z::Zonotope, L::Line2D)
+    c = center(Z)
+    P = copy(c)
+    G = genmat(Z)
+    r = ngens(Z)
+    g(x) = view(G, :, x)
+    for i = 1:r
+        gi = g(i)
+        if !_isupwards(gi)
+            gi .= -gi
+        end
+        P .= P - gi
+    end
+    G = sortslices(G, dims=2, by=x->atan(x[2], x[1])) # sort gens
+    if P[1] < L.b
+        G .= G[:,end:-1:1]
+    end
+    j = 1
+    while isdisjoint(LineSegment(P, P+2g(j)), L)
+        P .= P + 2g(j)
+        j += 1
+        if j > size(G, 2)
+            error("Got unexpected error, check that the sets intersect")
+        end
+    end
+    singleton = intersection(LineSegment(P, P+2g(j)), L)
+    return element(singleton)[2]
+end
+# ====================================
+# Zonotope vertex enumeration methods
+# ====================================
+
+function _vertices_list_2D(c::AbstractVector{N}, G::AbstractMatrix{N}; apply_convex_hull::Bool) where {N}
+    if same_sign(G)
+        return _vertices_list_2D_positive(c, G, apply_convex_hull=apply_convex_hull)
+    else
+        # FIXME generalized 2D vertices list function is not implemented yet
+        # See LazySets#2209
+        return _vertices_list_iterative(c, G, apply_convex_hull=apply_convex_hull)
+    end
+end
+
+function _vertices_list_2D_positive(c::AbstractVector{N}, G::AbstractMatrix{N}; apply_convex_hull::Bool) where {N}
+    n, p = size(G)
+
+    # TODO special case p = 1 or p = 2 ?
+
+    sorted_G = sortslices(G, dims=2, by=x->atan(x[2], x[1]))
+    index = ones(N, p, 2*p)
+    @inbounds for i in 1:p
+        index[i, i+1:i+p-1] .= -one(N)
+    end
+    index[:, 1] .= -one(N)
+    V = sorted_G * index .+ c
+    vlist = [V[:, i] for i in 1:2*p]
+
+    if apply_convex_hull
+        convex_hull!(vlist)
+    end
+    return vlist
+end
+
+function _vertices_list_iterative(c::VN, G::MN; apply_convex_hull::Bool) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}}
+    p = size(G, 2)
+    vlist = Vector{VN}()
+    sizehint!(vlist, 2^p)
+
+    for ξi in Iterators.product([(1, -1) for i = 1:p]...)
+        push!(vlist, c .+ G * collect(ξi))
+    end
+
+    return apply_convex_hull ? convex_hull!(vlist) : vlist
+end
+
+# special case 2D zonotope of order 1/2
+function _vertices_list_2D_order_one_half(c::VN, G::MN; apply_convex_hull::Bool) where {N, VN<:AbstractVector{N}, MN}
+    vlist = Vector{VN}(undef, 2)
+    g = view(G, :, 1)
+    @inbounds begin
+        vlist[1] = c .+ g
+        vlist[2] = c .- g
+    end
+    return apply_convex_hull ? _two_points_2d!(vlist) : vlist
+end
+
+# special case 2D zonotope of order 1
+function _vertices_list_2D_order_one(c::VN, G::MN; apply_convex_hull::Bool) where {N, VN<:AbstractVector{N}, MN}
+    vlist = Vector{VN}(undef, 4)
+    a = [one(N), one(N)]
+    b = [one(N), -one(N)]
+    @inbounds begin
+        vlist[1] = c .+ G * a
+        vlist[2] = c .- G * a
+        vlist[3] = c .+ G * b
+        vlist[4] = c .- G * b
+    end
+    return apply_convex_hull ? _four_points_2d!(vlist) : vlist
+end
+
+"""
+    remove_redundant_generators(Z::Zonotope{N}) where {N}
+
+Remove all redundant (pairwise linearly dependent) generators of a zonotope.
+
+### Input
+
+- `Z` -- zonotope
+
+### Output
+
+A new zonotope with fewer generators, or the same zonotope if no generator could
+be removed.
+
+### Algorithm
+
+For each generator ``g_j`` that has not been checked yet, we find all other
+generators that are linearly dependent with ``g_j``.
+Then we combine those generators into a single generator.
+
+For one-dimensional zonotopes we use a more efficient implementation where we
+just take the absolute sum of all generators.
+"""
+function remove_redundant_generators(Z::Zonotope{N}) where {N}
+    if dim(Z) == 1  # more efficient implementation in 1D
+        return _remove_redundant_generators_1d(Z)
+    end
+
+    G = genmat(Z)
+    G = remove_zero_columns(G)
+    p = size(G, 2)
+    removed_zero_generators = p < ngens(Z)
+    deleted = false
+    done = falses(p)
+    G_new = _vector_type(typeof(G))[]  # list of new column vectors
+    @inbounds for j1 in 1:p
+        if done[j1]  # skip if the generator was already removed
+            continue
+        end
+        # "done[j1] = true" not needed because we will never look at it again
+        gj1 = G[:, j1]
+        for j2 in (j1+1):p  # look at all generators to the right
+            if done[j2]  # skip if the generator was already removed
+                continue
+            end
+            gj2 = G[:, j2]
+            answer, factor = ismultiple(gj1, gj2)
+            if answer
+                # column j2 is a multiple of column j1
+                if factor > zero(N)
+                    gj1 += gj2
+                else
+                    gj1 -= gj2
+                end
+                done[j2] = true
+                deleted = true
+            end
+        end
+        push!(G_new, gj1)
+    end
+
+    if deleted
+        G_new = reduce(hcat, G_new)  # convert list of column vectors to matrix
+        return Zonotope(center(Z), G_new)
+    elseif removed_zero_generators
+        return Zonotope(center(Z), G)
+    end
+    return Z  # return the original zonotope if no generator was removed
+end
+
+function _remove_redundant_generators_1d(Z)
+    G = genmat(Z)
+    g = sum(abs, G)
+    return Zonotope(center(Z), hcat(g))
 end

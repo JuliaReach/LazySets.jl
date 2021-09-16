@@ -6,7 +6,7 @@ export Line2D,
        an_element
 
 """
-    Line2D{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
+    Line2D{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
 
 Type that represents a line in 2D of the form ``a⋅x = b`` (i.e., a special case
 of a `Hyperplane`).
@@ -22,15 +22,15 @@ The line ``y = -x + 1``:
 
 ```jldoctest
 julia> Line2D([1., 1.], 1.)
-Line2D{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
+Line2D{Float64, Vector{Float64}}([1.0, 1.0], 1.0)
 ```
 """
-struct Line2D{N<:Real, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
+struct Line2D{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
     a::VN
     b::N
 
     # default constructor with length constraint
-    function Line2D(a::VN, b::N) where {N<:Real, VN<:AbstractVector{N}}
+    function Line2D(a::VN, b::N) where {N, VN<:AbstractVector{N}}
         @assert length(a) == 2 "lines must be two-dimensional"
         @assert !iszero(a) "a line needs a non-zero normal vector"
         return new{N, VN}(a, b)
@@ -41,11 +41,11 @@ isoperationtype(::Type{<:Line2D}) = false
 isconvextype(::Type{<:Line2D}) = true
 
 # constructor from a LinearConstraint
-Line2D(c::LinearConstraint{N}) where {N<:Real} = Line2D(c.a, c.b)
+Line2D(c::LinearConstraint) = Line2D(c.a, c.b)
 
 
 """
-    Line2D(p::AbstractVector{N}, q::AbstractVector{N}) where {N<:Real}
+    Line2D(p::AbstractVector, q::AbstractVector)
 
 Constructor a line give two points.
 
@@ -68,10 +68,11 @@ two points is
 ```
 The particular case ``x₂ = x₁`` defines a line parallel to the ``y``-axis (vertical line).
 """
-function Line2D(p::AbstractVector{N}, q::AbstractVector{N}) where {N<:Real}
+function Line2D(p::AbstractVector, q::AbstractVector)
     x₁, y₁ = p[1], p[2]
     x₂, y₂ = q[1], q[2]
 
+    N = promote_type(eltype(p), eltype(q))
     if x₁ == x₂  # line is vertical
         a = [one(N), zero(N)]
         b = x₁
@@ -89,7 +90,7 @@ end
 
 
 """
-    constraints_list(L::Line2D{N}) where {N<:Real}
+    constraints_list(L::Line2D)
 
 Return the list of constraints of a line.
 
@@ -101,7 +102,7 @@ Return the list of constraints of a line.
 
 A list containing two half-spaces.
 """
-function constraints_list(L::Line2D{N}) where {N<:Real}
+function constraints_list(L::Line2D)
     return _constraints_list_hyperplane(L.a, L.b)
 end
 
@@ -127,7 +128,7 @@ function dim(L::Line2D)
 end
 
 """
-    σ(d::AbstractVector{N}, L::Line2D{N}) where {N<:Real}
+    σ(d::AbstractVector, L::Line2D)
 
 Return the support vector of a line in a given direction.
 
@@ -141,7 +142,7 @@ Return the support vector of a line in a given direction.
 The support vector in the given direction, which is defined the same way as for
 the more general `Hyperplane`.
 """
-function σ(d::AbstractVector{N}, L::Line2D{N}) where {N<:Real}
+function σ(d::AbstractVector, L::Line2D)
     return σ(d, Hyperplane(L.a, L.b))
 end
 
@@ -163,7 +164,7 @@ function isbounded(::Line2D)
 end
 
 """
-    isuniversal(L::Line2D{N}, [witness]::Bool=false) where {N<:Real}
+    isuniversal(L::Line2D, [witness]::Bool=false)
 
 Check whether a line is universal.
 
@@ -181,7 +182,7 @@ Check whether a line is universal.
 
 Witness production falls back to `isuniversal(::Hyperplane)`.
 """
-function isuniversal(L::Line2D{N}, witness::Bool=false) where {N<:Real}
+function isuniversal(L::Line2D, witness::Bool=false)
     if witness
         return isuniversal(Hyperplane(L.a, L.b), true)
     else
@@ -190,7 +191,7 @@ function isuniversal(L::Line2D{N}, witness::Bool=false) where {N<:Real}
 end
 
 """
-    an_element(L::Line2D{N}) where {N<:Real}
+    an_element(L::Line2D{N}) where {N}
 
 Return some element of a line.
 
@@ -209,7 +210,7 @@ Otherwise the result is some ``x = [x1, x2]`` such that ``a·[x1, x2] = b``.
 We first find out in which dimension ``a`` is nonzero, say, dimension 1, and
 then choose ``x1 = 1`` and accordingly ``x2 = \\frac{b - a1}{a2}``.
 """
-function an_element(L::Line2D{N}) where {N<:Real}
+function an_element(L::Line2D{N}) where {N}
     if L.b == zero(N)
         return zeros(N, 2)
     end
@@ -221,7 +222,7 @@ function an_element(L::Line2D{N}) where {N<:Real}
 end
 
 """
-    ∈(x::AbstractVector{N}, L::Line2D{N}) where {N<:Real}
+    ∈(x::AbstractVector, L::Line2D)
 
 Check whether a given point is contained in a line.
 
@@ -238,7 +239,7 @@ Check whether a given point is contained in a line.
 
 The point ``x`` belongs to the line if and only if ``a⋅x = b`` holds.
 """
-function ∈(x::AbstractVector{N}, L::Line2D{N}) where {N<:Real}
+function ∈(x::AbstractVector, L::Line2D)
     @assert length(x) == dim(L)
     return dot(L.a, x) == L.b
 end
@@ -299,7 +300,7 @@ function isempty(L::Line2D)
 end
 
 """
-    constrained_dimensions(L::Line2D{N}) where {N<:Real}
+    constrained_dimensions(L::Line2D)
 
 Return the indices in which a line is constrained.
 
@@ -316,12 +317,12 @@ A vector of ascending indices `i` such that the line is constrained in dimension
 
 A line with constraint ``x1 = 0`` is constrained in dimension 1 only.
 """
-function constrained_dimensions(L::Line2D{N}) where {N<:Real}
+function constrained_dimensions(L::Line2D)
     return nonzero_indices(L.a)
 end
 
 function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::Line2D{N},
-                                 algo::AbstractLinearMapAlgorithm) where {N<:Real}
+                                 algo::AbstractLinearMapAlgorithm) where {N}
     constraints = _linear_map_hrep(M, P, algo)
     if length(constraints) == 2
         # assuming these constraints define a line
@@ -335,8 +336,7 @@ function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::Line2D{N},
 end
 
 """
-    translate(L::Line2D{N}, v::AbstractVector{N}; share::Bool=false
-             ) where {N<:Real}
+    translate(L::Line2D, v::AbstractVector; [share]::Bool=false)
 
 Translate (i.e., shift) a line by a given vector.
 
@@ -361,11 +361,36 @@ original line if `share == true`.
 A line ``a⋅x = b`` is transformed to the line ``a⋅x = b + a⋅v``.
 In other words, we add the dot product ``a⋅v`` to ``b``.
 """
-function translate(L::Line2D{N}, v::AbstractVector{N}; share::Bool=false
-                  ) where {N<:Real}
+function translate(L::Line2D, v::AbstractVector; share::Bool=false)
     @assert length(v) == dim(L) "cannot translate a $(dim(L))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     a = share ? L.a : copy(L.a)
     b = L.b + dot(L.a, v)
     return Line2D(a, b)
+end
+
+function project(L::Line2D{N}, block::AbstractVector{Int}; kwargs...) where {N}
+    m = length(block)
+    if m == 2
+        @assert ispermutation(block, 1:2) "invalid dimensions $block for projection"
+        return L  # no projection
+    elseif m == 1
+        # projection to dimension i
+        cdims = constrained_dimensions(L)
+        if length(cdims) == 1
+            @inbounds if cdims[1] == block[1]
+                # L: aᵢxᵢ = b where aᵢ ≠ 0
+                return Singleton([L.b / L.a[cdims[1]]])
+            else
+                # L: aⱼxⱼ = b where i ≠ j
+                return Universe{N}(1)
+            end
+        else
+            # L is constrained in both dimensions
+            @assert length(cdims) == 2
+            return Universe{N}(1)
+        end
+    else
+        throw(ArgumentError("cannot project a two-dimensional line to $m dimensions"))
+    end
 end

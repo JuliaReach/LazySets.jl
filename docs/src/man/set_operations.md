@@ -331,21 +331,18 @@ plot1
 
 This function checks whether the intersection of two sets is empty.
 It can optionally produce a witness if the intersection is nonempty.
+Disjointness checks with `Ball2` are not supported yet.
 
 ```@example set_operations
 println(is_intersection_empty(BI, H))
 w1 = is_intersection_empty(BI, H, true)[2]
-# none of the other combinations are supported yet
-# is_intersection_empty(B1, B2)
-# is_intersection_empty(B1, BI)
-# is_intersection_empty(B1, H)
-# w2 = is_intersection_empty(B1, H, true)[2]
-# is_intersection_empty(B2, BI)
-# is_intersection_empty(B2, H)
+println(is_intersection_empty(B1, BI))
+w2 = is_intersection_empty(B1, BI, true)[2]
+println(is_intersection_empty(B1, H))
 ```
 
 ```@example set_operations
-witnesses = [w1]
+witnesses = [w1, w2]
 
 plot1 = plot()
 plot_sets(sets)

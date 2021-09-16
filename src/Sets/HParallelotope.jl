@@ -10,7 +10,7 @@ export HParallelotope,
        constraints_list
 
 """
-    HParallelotope{N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
+    HParallelotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
 
 Type that represents a parallelotope in constraint form.
 
@@ -53,17 +53,20 @@ we refer to [3].
 [3] Matthias Althoff, Olaf Stursberg, and Martin Buss. *Computing reachable sets of hybrid systems using
     a combination of zonotopes and polytopes.* Nonlinear analysis: hybrid systems 4.2 (2010): 233-249.
 """
-struct HParallelotope{N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
+struct HParallelotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
     directions::MN
     offset::VN
 
     # default constructor with dimension check
-    function HParallelotope(D::MN, c::VN) where {N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}}
+    function HParallelotope(D::MN, c::VN) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}}
         @assert length(c) == 2*checksquare(D) "the length of the offset direction should be twice the size " *
             "of the directions matrix, but they are $(length(c)) and $(size(D)) dimensional respectively"
         return new{N, VN, MN}(D, c)
     end
 end
+
+isoperationtype(::Type{<:HParallelotope}) = false
+isconvextype(::Type{<:HParallelotope}) = true
 
 # =================
 # Getter functions
@@ -308,4 +311,37 @@ function constraints_list(P::HParallelotope{N, VN}) where {N, VN}
         clist[i+n] = LinearConstraint(-D[i, :], c[i+n])
     end
     return clist
+end
+
+"""
+    rand(::Type{HParallelotope}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
+
+Create a random parallelotope.
+
+### Input
+
+- `HParallelotope` -- type for dispatch
+- `N`             -- (optional, default: `Float64`) numeric type
+- `dim`           -- (optional, default: 2) dimension
+- `rng`           -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed`          -- (optional, default: `nothing`) seed for reseeding
+
+### Output
+
+A random parallelotope.
+
+### Notes
+
+All numbers are normally distributed with mean 0 and standard deviation 1.
+"""
+function rand(::Type{HParallelotope};
+              N::Type{<:Real}=Float64,
+              dim::Int=2,
+              rng::AbstractRNG=GLOBAL_RNG,
+              seed::Union{Int, Nothing}=nothing)
+    rng = reseed(rng, seed)
+    D = randn(N, dim, dim)
+    offset = randn(N, 2 * dim)
+    return HParallelotope(D, offset)
 end

@@ -1,3 +1,5 @@
+using ExprTools: splitdef, combinedef
+
 """
     @neutral(SET, NEUT)
 
@@ -35,13 +37,13 @@ macro neutral(SET, NEUT)
         end
 
         # create functions to declare the neutral element
-        function $SET(X::LazySet{N}, ::$NEUT{N}) where {N<:Real}
+        function $SET(X::LazySet{N}, ::$NEUT{N}) where {N}
             return X
         end
-        function $SET(::$NEUT{N}, X::LazySet{N}) where {N<:Real}
+        function $SET(::$NEUT{N}, X::LazySet{N}) where {N}
             return X
         end
-        function $SET(Y::$NEUT{N}, ::$NEUT{N}) where {N<:Real}
+        function $SET(Y::$NEUT{N}, ::$NEUT{N}) where {N}
             return Y
         end
 
@@ -105,13 +107,13 @@ macro absorbing(SET, ABS)
         end
 
         # create functions to declare the absorbing element
-        function $SET(::LazySet{N}, Y::$ABS{N}) where {N<:Real}
+        function $SET(::LazySet{N}, Y::$ABS{N}) where {N}
             return Y
         end
-        function $SET(Y::$ABS{N}, ::LazySet{N}) where {N<:Real}
+        function $SET(Y::$ABS{N}, ::LazySet{N}) where {N}
             return Y
         end
-        function $SET(Y::$ABS{N}, ::$ABS{N}) where {N<:Real}
+        function $SET(Y::$ABS{N}, ::$ABS{N}) where {N}
             return Y
         end
 
@@ -183,19 +185,19 @@ macro declare_array_version(SET, SETARR)
         end
 
         # create in-place modification functions for array version
-        function $_SET!(X::LazySet{N}, Y::LazySet{N}) where {N<:Real}
+        function $_SET!(X::LazySet{N}, Y::LazySet{N}) where {N}
             # no array type: just use the lazy operation
             return $SET(X, Y)
         end
-        function $_SET!(X::LazySet{N}, arr::$SETARR{N}) where {N<:Real}
+        function $_SET!(X::LazySet{N}, arr::$SETARR{N}) where {N}
             push!(array(arr), X)
             return arr
         end
-        function $_SET!(arr::$SETARR{N}, X::LazySet{N}) where {N<:Real}
+        function $_SET!(arr::$SETARR{N}, X::LazySet{N}) where {N}
             push!(array(arr), X)
             return arr
         end
-        function $_SET!(arr1::$SETARR{N}, arr2::$SETARR{N}) where {N<:Real}
+        function $_SET!(arr1::$SETARR{N}, arr2::$SETARR{N}) where {N}
             append!(array(arr1), array(arr2))
             return arr1
         end
@@ -229,7 +231,7 @@ end
 """
     @neutral_absorbing(SET, NEUT, ABS)
 
-Create two functions to avoid method ambiguties for a lazy set operation with
+Create two functions to avoid method ambiguities for a lazy set operation with
 respect to neutral and absorbing element set types.
 
 ### Input
@@ -251,10 +253,10 @@ quoted expressions:
 """
 macro neutral_absorbing(SET, NEUT, ABS)
     return quote
-        function $SET(::$NEUT{N}, Y::$ABS{N}) where {N<:Real}
+        function $SET(::$NEUT{N}, Y::$ABS{N}) where {N}
             return Y
         end
-        function $SET(Y::$ABS{N}, ::$NEUT{N}) where {N<:Real}
+        function $SET(Y::$ABS{N}, ::$NEUT{N}) where {N}
             return Y
         end
     end
@@ -285,10 +287,10 @@ quoted expressions:
 """
 macro array_neutral(FUN, NEUT, SETARR)
     return quote
-        function $FUN(::$NEUT{N}, X::$SETARR{N}) where {N<:Real}
+        function $FUN(::$NEUT{N}, X::$SETARR{N}) where {N}
             return X
         end
-        function $FUN(X::$SETARR{N}, ::$NEUT{N}) where {N<:Real}
+        function $FUN(X::$SETARR{N}, ::$NEUT{N}) where {N}
             return X
         end
     end
@@ -319,11 +321,42 @@ quoted expressions:
 """
 macro array_absorbing(FUN, ABS, SETARR)
     return quote
-        function $FUN(Y::$ABS{N}, ::$SETARR{N}) where {N<:Real}
+        function $FUN(Y::$ABS{N}, ::$SETARR{N}) where {N}
             return Y
         end
-        function $FUN(::$SETARR{N}, Y::$ABS{N}) where {N<:Real}
+        function $FUN(::$SETARR{N}, Y::$ABS{N}) where {N}
             return Y
         end
+    end
+end
+
+"""
+    @commutative(FUN)
+
+Macro to declare that a given function `FUN` is commutative, returning the original
+`FUN` and a new method of `FUN` where the first and second arguments are swapped.
+
+### Input
+
+- `FUN` -- function name
+
+### Output
+
+A quoted expression containing the function definitions.
+"""
+macro commutative(FUN)
+    # split the function definition expression
+    def = splitdef(FUN)
+    defswap = deepcopy(def)
+
+    # swap arguments 1 and 2
+    aux = defswap[:args][1]
+    defswap[:args][1] = defswap[:args][2]
+    defswap[:args][2] = aux
+
+    _FUN = combinedef(defswap)
+    return quote
+        Core.@__doc__ $(esc(FUN))
+        $(esc(_FUN))
     end
 end
