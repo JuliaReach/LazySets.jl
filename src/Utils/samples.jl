@@ -337,11 +337,9 @@ function sample!(D::Vector{VN}, X::LazySet, sampler::CombinedSampler;
         sample!(D, X, tmp_sampler; rng=rng, seed=seed)
         return D
     catch e
-        #
+        @warn "sampling failed with the following error message:"
+        rethrow(e)
     end
-
-    # no sampler worked, give up
-    throw(ErrorException("sampling failed"))
 end
 
 # =============================
