@@ -19,7 +19,7 @@ along the directions determined by `dirs`.
 
 Since the support vectors are not always unique, this algorithm may return
 a strict underapproximation even if the set can be exactly approximated using
-the given template. For example,
+the given template.
 """
 function underapproximate(X::LazySet{N}, dirs::AbstractDirections;
                           apply_convex_hull::Bool=false) where {N}
