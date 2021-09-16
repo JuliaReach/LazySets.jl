@@ -520,6 +520,22 @@ function low(H::AbstractHyperrectangle, i::Int)
     return center(H, i) - radius_hyperrectangle(H, i)
 end
 
+function low_high(H::AbstractHyperrectangle)
+    c = center(H)
+    r = radius_hyperrectangle(H)
+    l = c .- r
+    h = c .+ r
+    return (l, h)
+end
+
+function low_high(H::AbstractHyperrectangle, i::Int)
+    c = center(H, i)
+    r = radius_hyperrectangle(H, i)
+    l = c - r
+    h = c + r
+    return (l, h)
+end
+
 """
     isflat(H::AbstractHyperrectangle)
 
