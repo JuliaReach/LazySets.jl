@@ -56,7 +56,7 @@ julia> AffineMap(2, X, b2) == am
 true
 
 julia> AffineMap(1, X, b2)
-Translation{Int64, Vector{Int64}, BallInf{Int64, Vector{Int64}}}(BallInf{Int64, Vector{Int64}}([0, 0], 1), [1, 2])
+Translation{Int64, BallInf{Int64, Vector{Int64}}, Vector{Int64}}(BallInf{Int64, Vector{Int64}}([0, 0], 1), [1, 2])
 ```
 
 Applying a linear map to an `AffineMap` object combines the two maps into a new
