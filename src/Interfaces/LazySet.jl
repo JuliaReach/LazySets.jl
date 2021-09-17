@@ -1,4 +1,4 @@
-import Base: ==, ≈, copy, eltype, rationalize
+import Base: ==, ≈, copy, eltype, rationalize, extrema
 import Random.rand
 
 export LazySet,
@@ -33,8 +33,7 @@ export LazySet,
        vertices,
        project,
        rectify,
-       permute,
-       low_high
+       permute
 
 """
     LazySet{N}
@@ -1472,34 +1471,32 @@ function high(X::LazySet)
 end
 
 """
-    low_high(X::LazySet)
+    extrema(X::LazySet)
 
-Return two vectors with the lowest and highest coordinate of the set for each
-canonical direction.
+Return two vectors with the lowest and highest coordinate of `X` for each
+dimension.
 
 ### Input
 
 - `X` -- set
-- `i` -- dimension of interest
 
 ### Output
 
-Two vectors with the lowest and highest coordinates of the set for each
-dimension.
+Two vectors with the lowest and highest coordinates of `X` for each dimension.
 
 ### Notes
 
 The result is equivalent to `(low(X), high(X))`, but sometimes it can be
 computed more efficiently.
 """
-function low_high(X::LazySet)
+function extrema(X::LazySet)
     l = low(X)
     h = high(X)
     return (l, h)
 end
 
 """
-    low_high(X::LazySet, i::Int)
+    extrema(X::LazySet, i::Int)
 
 Return the lower and higher coordinate of a set in a given dimension.
 
@@ -1517,7 +1514,7 @@ The lower and higher coordinate of the set in the given dimension.
 The result is equivalent to `(low(X, i), high(X, i))`, but sometimes it can be
 computed more efficiently.
 """
-function low_high(X::LazySet, i::Int)
+function extrema(X::LazySet, i::Int)
     l = low(X, i)
     h = high(X, i)
     return (l, h)

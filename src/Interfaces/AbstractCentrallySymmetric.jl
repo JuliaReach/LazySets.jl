@@ -150,7 +150,7 @@ The center along a given dimension of the centrally symmetric set.
     return center(S)[i]
 end
 
-function low_high(S::AbstractCentrallySymmetric, i::Int)
+function extrema(S::AbstractCentrallySymmetric, i::Int)
     # h = c + r
     h = high(S, i)
     # l = c - r = -c - r + 2 * c = -h + 2 * c
