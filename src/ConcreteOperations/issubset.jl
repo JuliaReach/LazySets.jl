@@ -508,17 +508,12 @@ end
 
 """
     ⊆(x::Interval, y::Interval, [witness]::Bool=false)
-
 Check whether an interval is contained in another interval.
-
 ### Input
-
 - `x`       -- interval
 - `y`       -- interval
 - `witness` -- (optional, default: `false`) compute a witness if activated
-
 ### Output
-
 `true` iff ``x ⊆ y``.
 """
 function ⊆(x::Interval, y::Interval, witness::Bool=false)
@@ -526,43 +521,107 @@ function ⊆(x::Interval, y::Interval, witness::Bool=false)
     return x.dat ⊆ y.dat
 end
 
+"""
+    ⊆(x::Interval, U::UnionSet, [witness]::Bool=false)
+
+Check whether an interval is contained in the union of two sets.
+
+### Input
+
+- `x` -- interval
+- `U` -- union of two sets
+
+### Output
+
+`true` iff `x ⊆ U`.
+
+### Notes
+
+This implementation assumes that `U` is a union of one-dimensional convex sets.
+Since these are equivalent to intervals, we convert to `Interval`s.
+
+### Algorithm
+
+Let ``U = a ∪ b `` where ``a`` and ``b`` are intervals and assume that the lower
+bound of ``a`` is to the left of ``b``.
+If the lower bound of ``x`` is to the left of ``a``, we have a counterexample.
+Otherwise we compute the set difference ``y = x \\ a`` and check whether
+``y ⊆ b`` holds.
+"""
 function ⊆(x::Interval, U::UnionSet, witness::Bool=false)
-    @assert dim(U) == 1 "an interval is incompatible with a set of dimension $(dim(U))"
-    V = [U.X, U.Y]
-    if !(V isa AbstractVector{<:Interval})
-        V = [convert(Interval, Y) for Y in V]
+    @assert dim(U) == 1 "an interval is incompatible with a set of dimension " *
+        "$(dim(U))"
+    return _issubset_interval(x, convert(Interval, U.X), convert(Interval, U.Y),
+                              witness)
+end
+
+function ⊆(x::Interval, U::UnionSet{N, <:Interval, <:Interval},
+           witness::Bool=false) where {N}
+    return _issubset_interval(x, U.X, U.Y, witness)
+end
+
+function _issubset_interval(x::Interval{N}, a::Interval, b::Interval,
+                            witness) where {N}
+    if min(a) > min(b)
+        c = b
+        b = a
+        a = c
     end
-    return _issubset_interval(x, V, witness)
+    # a is on the left of b
+    if min(x) < min(a)
+        witness && return (false, low(x))
+        return false
+    end
+    y = difference(x, a)
+    if y ⊆ b
+        witness && return (true, N[])
+        return true
+    elseif witness
+        if min(b) > min(y)
+            w = [(min(y) + min(b)) / 2]
+        else
+            w = high(y)
+        end
+        return (false, w)
+    else
+        return false
+    end
 end
 
 function ⊆(x::Interval, U::UnionSetArray, witness::Bool=false)
-    @assert dim(U) == 1 "an interval is incompatible with a set of dimension $(dim(U))"
-    V = array(U)
-    if !(V isa AbstractVector{<:Interval})
-        V = [convert(Interval, Y) for Y in V]
-    end
-    return _issubset_interval(x, array(U), witness)
+    @assert dim(U) == 1 "an interval is incompatible with a set of dimension " *
+        "$(dim(U))"
+    V = _get_interval_array_copy(U)
+    return _issubset_interval!(x, V, witness)
 end
 
-function _issubset_interval(X::Interval{N}, intervals, witness) where {N}
-    # sort intervals by lower bound
-    sort!(intervals, lt=(x, y)->low(x, 1) <= low(y, 1))
+function _get_interval_array_copy(U::UnionSetArray)
+    return [convert(Interval, X) for X in array(U)]
+end
 
-    # subtract intervals from X
-    for Y in intervals
-        if low(Y, 1) > low(X, 1)
-            # lowest point of X is not contained
-            witness && return (false, center(Interval(low(X, 1), low(Y, 1))))
-            break
+function _get_interval_array_copy(U::UnionSetArray{N, <:AbstractVector{<:Interval}}) where {N}
+    return copy(array(U))
+end
+
+function _issubset_interval!(x::Interval{N}, intervals, witness) where {N}
+    # sort intervals by lower bound
+    sort!(intervals, lt=(x, y) -> min(x) <= min(y))
+
+    # subtract intervals from x
+    for y in intervals
+        if min(y) > min(x)
+            # lowest point of x is not contained
+            witness && return (false, center(Interval(min(x), min(y))))
+            return false
         end
-        X = difference(X, Y)
-        if isempty(X)
+        x = difference(x, y)
+        if isempty(x)
             witness && return (true, N[])
             return true
         end
     end
 
-    witness && return (false, low(X))
+    witness && return (false, low(x))
     return false
 end
 
