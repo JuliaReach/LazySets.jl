@@ -507,18 +507,30 @@ end
 
 
 """
-    ⊆(x::Interval, y::Interval, [witness]::Bool=false)
+    ⊆(x::Interval{N}, y::Interval, [witness]::Bool=false) where {N}
+
 Check whether an interval is contained in another interval.
+
 ### Input
+
 - `x`       -- interval
 - `y`       -- interval
 - `witness` -- (optional, default: `false`) compute a witness if activated
+
 ### Output
+
 `true` iff ``x ⊆ y``.
 """
-function ⊆(x::Interval, y::Interval, witness::Bool=false)
-    witness && raise(ValueError("witness production is not supported yet"))
-    return x.dat ⊆ y.dat
+function ⊆(x::Interval{N}, y::Interval, witness::Bool=false) where {N}
+    if min(y) > min(x)
+        witness && return (false, low(x))
+        return false
+    elseif max(x) > max(y)
+        witness && return (false, high(x))
+        return false
+    end
+    witness && return (true, N[])
+    return true
 end
 
 """
