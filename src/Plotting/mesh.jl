@@ -47,7 +47,7 @@ Plot a three-dimensional convex set using `Makie`.
 
 - `S`            -- convex set
 - `backend`      -- (optional, default: `default_polyhedra_backend(S)`) polyhedral
-                    computations backend 
+                    computations backend
 - `alpha`        -- (optional, default: `1.0`) float in `[0,1]`; the alpha or
                     transparency value
 - `color`        -- (optional, default: `:blue`) `Symbol` or `Colorant`; the color
@@ -89,9 +89,11 @@ julia> using LazySets.Approximations
 
 julia> Sapprox = overapproximate(S, SphericalDirections(10))
 
+julia> using Polyhedra, GLMakie
+
 julia> plot3d(Sapprox)
 ```
-The number `10` above corresponds to the number of directions considered; for 
+The number `10` above corresponds to the number of directions considered; for
 better resolution use higher values (but it will take longer).
 
 For efficiency consider using the `CDDLib` backend, as in
@@ -104,12 +106,11 @@ julia> plot3d(Sapprox, backend=CDDLib.Library())
 
 ### Examples
 
-The functionality requires *both* `Polyhedra` and `Makie`; so after
-loading `LazySets`, do `using Makie, Polyhedra` (or `using Polyhedra, Makie`, the
-order doesn't matter).
+The functionality requires *both* `Polyhedra` and a `Makie` backend. After
+loading `LazySets`, do `using Polyhedra, GLMakie` (or another Makie backend).
 
 ```julia
-julia> using LazySets, Makie, Polyhedra
+julia> using LazySets, Polyhedra, GLMakie
 
 julia> plot3d(10. * rand(Hyperrectangle, dim=3))
 
@@ -159,4 +160,16 @@ function plot3d!(S::LazySet; backend=default_polyhedra_backend(S),
     P_poly_mesh = _plot3d_helper(S, backend)
     return mesh!(P_poly_mesh, alpha=alpha, color=color, colormap=colormap, colorrange=colorrange,
                  interpolate=interpolate, linewidth=linewidth, transparency=transparency, visible=visible)
+end
+
+function plot3d(list::AbstractVector{SN}; backend=default_polyhedra_backend(first(list)),
+                alpha=1.0, color=:blue, colormap=:viridis, colorrange=nothing, interpolate=false,
+                linewidth=1, overdraw=false, shading=true, transparency=true, visible=true) where {N, SN<:LazySet{N}}
+
+    for S in list
+        P_poly_mesh = _plot3d_helper(S, backend)
+        mes = mesh!(P_poly_mesh, alpha=alpha, color=color, colormap=colormap, colorrange=colorrange,
+                    interpolate=interpolate, linewidth=linewidth, transparency=transparency, visible=visible)
+    end
+    return mes
 end
