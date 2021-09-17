@@ -23,9 +23,16 @@ the given template.
 """
 function underapproximate(X::LazySet{N}, dirs::AbstractDirections;
                           apply_convex_hull::Bool=false) where {N}
-    @assert dim(X) == dim(dirs) "the dimension of the set, $(dim(X)), doesn't match " *
-                                "the dimension of the template directions, $(dim(dirs))"
     vinner = Vector{Vector{N}}(undef, length(dirs))
+    underapproximate!(vinner, X, dirs; apply_convex_hull=apply_convex_hull)
+end
+
+# in-place version
+function underapproximate!(vinner, X::LazySet{N}, dirs::AbstractDirections;
+                           apply_convex_hull::Bool=false) where {N}
+   @assert dim(X) == dim(dirs) "the dimension of the set, $(dim(X)), doesn't match " *
+                               "the dimension of the template directions, $(dim(dirs))"
+
     @inbounds for (i, di) in enumerate(dirs)
         vinner[i] = σ(di, X)
     end
