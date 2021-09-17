@@ -526,6 +526,46 @@ function ⊆(x::Interval, y::Interval, witness::Bool=false)
     return x.dat ⊆ y.dat
 end
 
+function ⊆(x::Interval, U::UnionSet, witness::Bool=false)
+    @assert dim(U) == 1 "an interval is incompatible with a set of dimension $(dim(U))"
+    V = [U.X, U.Y]
+    if !(V isa AbstractVector{<:Interval})
+        V = [convert(Interval, Y) for Y in V]
+    end
+    return _issubset_interval(x, V, witness)
+end
+
+function ⊆(x::Interval, U::UnionSetArray, witness::Bool=false)
+    @assert dim(U) == 1 "an interval is incompatible with a set of dimension $(dim(U))"
+    V = array(U)
+    if !(V isa AbstractVector{<:Interval})
+        V = [convert(Interval, Y) for Y in V]
+    end
+    return _issubset_interval(x, array(U), witness)
+end
+
+function _issubset_interval(X::Interval{N}, intervals, witness) where {N}
+    # sort intervals by lower bound
+    sort!(intervals, lt=(x, y)->low(x, 1) <= low(y, 1))
+
+    # subtract intervals from X
+    for Y in intervals
+        if low(Y, 1) > low(X, 1)
+            # lowest point of X is not contained
+            witness && return (false, center(Interval(low(X, 1), low(Y, 1))))
+            break
+        end
+        X = difference(X, Y)
+        if isempty(X)
+            witness && return (true, N[])
+            return true
+        end
+    end
+
+    witness && return (false, low(X))
+    return false
+end
+
 
 # --- EmptySet ---
 
