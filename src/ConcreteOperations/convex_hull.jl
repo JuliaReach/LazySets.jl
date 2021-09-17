@@ -587,3 +587,7 @@ function convex_hull(P1::HPoly, P2::HPoly;
     removehredundancy!(Pch)
     return convert(basetype(P1), Pch)
 end
+
+function convex_hull(X::UnionSet)
+    return convex_hull(X.X, X.Y)
+end
