@@ -111,25 +111,6 @@ function convert(::Type{VPolytope}, P::AbstractPolytope)
 end
 
 """
-    convert(::Type{VPolygon}, P::AbstractPolytope)
-
-Convert polytopic set to polygon in V-representation.
-
-### Input
-
-- `type` -- target type
-- `P`    -- source polytope
-
-### Output
-
-The 2D polytope represented as a polygon.
-"""
-function convert(::Type{VPolygon}, P::AbstractPolytope)
-    @assert dim(P) == 2 "polytope must be two-dimensional for conversion"
-    return VPolygon(vertices_list(P))
-end
-
-"""
     convert(::Type{VPolygon}, X::LazySet)
 
 Generic conversion to polygon in vertex representation.
@@ -1012,27 +993,6 @@ A polytope in vertex representation.
 function convert(::Type{VPolytope},
                  X::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
     return VPolytope(vertices_list(X))
-end
-
-"""
-    convert(::Type{VPolygon},
-            X::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
-
-Converts the convex hull array of singletons to a polygon in V-representation.
-
-### Input
-
-- `VPolygon`  -- type used for dispatch
-- `X`         -- convex hull array of singletons
-
-### Output
-
-A polygon in vertex representation.
-"""
-function convert(::Type{VPolygon},
-                 X::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
-    @assert dim(X) == 2
-    return VPolygon(vertices_list(X))
 end
 
 """

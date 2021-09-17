@@ -30,7 +30,6 @@ convert(::Type{HPolytope}, ::AbstractHyperrectangle)
 convert(::Type{HPolytope}, ::AbstractPolytope)
 convert(::Type{HPolytope}, ::VPolytope)
 convert(::Type{VPolygon}, ::AbstractHPolygon)
-convert(::Type{VPolygon}, ::AbstractPolytope)
 convert(::Type{VPolytope}, ::LazySet)
 convert(::Type{VPolytope}, ::AbstractPolytope)
 convert(::Type{VPolytope}, ::HPolytope)
@@ -51,7 +50,6 @@ convert(::Type{Interval}, ::Rectification{N, IN}) where {N<:Real, IN<:Interval{N
 convert(::Type{IntervalArithmetic.Interval}, ::Interval)
 convert(::Type{Interval}, ::IntervalArithmetic.Interval)
 convert(::Type{VPolytope}, ::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
-convert(::Type{VPolygon}, ::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
 convert(::Type{VPolygon}, ::LazySet)
 convert(::Type{MinkowskiSumArray}, ::MinkowskiSum{N, ST, MinkowskiSumArray{N, ST}}) where {N, ST}
 convert(::Type{Interval}, ::MinkowskiSum{N, IT, IT}) where {N, IT<:Interval{N}}
