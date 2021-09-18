@@ -131,7 +131,6 @@ number of convex sets with and hyperrectangle.
 ### Input
 
 - `S`              -- Cartesian product array of a finite number of convex set
-- `Hyperrectangle` -- type for dispatch
 
 ### Output
 
@@ -156,7 +155,6 @@ hyperrectangles by a new hyperrectangle.
 ### Input
 
 - `S`              -- Cartesian product of two hyperrectangular sets
-- `Hyperrectangle` -- type for dispatch
 
 ### Output
 
@@ -181,7 +179,6 @@ using a hyperrectangle.
 ### Input
 
 - `S`              -- linear map of a hyperrectangular set
-- `Hyperrectangle` -- type for dispatch
 
 ### Output
 
@@ -209,7 +206,6 @@ Overapproximate the rectification of a convex set by a tight hyperrectangle.
 ### Input
 
 - `r`              -- rectification of a convex set
-- `Hyperrectangle` -- type for dispatch
 
 ### Output
 
@@ -238,7 +234,6 @@ Return a tight overapproximation of a zonotope with an axis-aligned box.
 ### Input
 
 - `Z`              -- zonotope
-- `Hyperrectangle` -- type for dispatch
 
 ### Output
 
@@ -270,7 +265,6 @@ using a hyperrectangle.
 ### Input
 
 - `am`             -- affine map of a hyperrectangular set
-- `Hyperrectangle` -- type for dispatch
 
 ### Output
 
@@ -330,4 +324,112 @@ end
 # balls result in a hypercube with the same radius
 function box_approximation(B::Union{Ball1, Ball2, BallInf, Ballp})
     return Hyperrectangle(center(B), fill(B.radius, dim(B)))
+end
+
+"""
+    box_approximation(ch::ConvexHull; [algorithm]::String="box")
+
+Overapproximate a convex hull with a tight hyperrectangle.
+
+### Input
+
+- `ch`        -- convex hull
+- `algorithm` -- (optional; default: `"box"`) algorithm choice
+
+### Output
+
+A hyperrectangle.
+
+### Algorithm
+
+Let `X` and `Y` be the two sets of `ch`.
+We make use of the following property:
+
+```math
+\\square(CH(X, Y))
+    = \\square\\left( X \\cup Y \\right)
+    = \\square\\left( \\square(X) \\cup \\square(Y) \\right)
+```
+
+If `algorithm == "extrema"`, we compute the low and high coordinates of `X` and
+`Y` via `extrema`.
+
+If `algorithm == "box"`, we instead compute the box approximations of `X` and
+`Y` via `box_approximation`.
+
+In both cases we then take the box approximation of the result.
+
+The `"extrema"` algorithm is more efficient if `extrema` is efficient because
+it does not need to allocate the intermediate hyperrectangles.
+"""
+function box_approximation(ch::ConvexHull; algorithm::String="box")
+    if algorithm == "extrema"
+        return _box_approximation_chull_extrema(ch.X, ch.Y)
+    elseif algorithm == "box"
+        return _box_approximation_chull_box(ch.X, ch.Y)
+    else
+        throw(ArgumentError("unknown algorithm $algorithm"))
+    end
+end
+
+function _box_approximation_chull_extrema(X::LazySet{N}, Y) where {N}
+    n = dim(X)
+    c = Vector{N}(undef, n)
+    r = Vector{N}(undef, n)
+    for i in 1:n
+        l1, h1 = extrema(X, i)
+        l2, h2 = extrema(Y, i)
+        li = min(l1, l2)
+        hi = max(h1, h2)
+        ci = (hi + li) / 2
+        c[i] = ci
+        r[i] = hi - ci
+    end
+    return Hyperrectangle(c, r)
+end
+
+function _box_approximation_chull_box(X::LazySet{N}, Y) where {N}
+    n = dim(X)
+    H1 = box_approximation(X)
+    H2 = box_approximation(Y)
+    c = Vector{N}(undef, n)
+    r = Vector{N}(undef, n)
+    @inbounds for i in 1:n
+        li = min(low(H1, i), low(H2, i))
+        hi = max(high(H1, i), high(H2, i))
+        ci = (hi + li) / 2
+        c[i] = ci
+        r[i] = hi - ci
+    end
+    return Hyperrectangle(c, r)
+end
+
+"""
+    box_approximation(ms::MinkowskiSum)
+
+Compute the box approximation of the Minkowski sum of two sets.
+
+### Input
+
+- `ms` -- Minkowski sum
+
+### Output
+
+A hyperrectangle representing the box approximation of `ms`.
+
+### Algorithm
+
+The box approximation distributes over the Minkowski sum:
+
+```math
+\\square(X \\oplus Y) = \\square(X) \\oplus \\square(Y)
+```
+
+It suffices to compute the box approximation of each summand and then take the
+concrete Minkowski sum for hyperrectangles.
+"""
+function box_approximation(ms::MinkowskiSum)
+    H1 = box_approximation(ms.X)
+    H2 = box_approximation(ms.Y)
+    return minkowski_sum(H1, H2)
 end

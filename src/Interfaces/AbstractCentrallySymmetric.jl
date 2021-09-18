@@ -149,3 +149,11 @@ The center along a given dimension of the centrally symmetric set.
 @inline function center(S::AbstractCentrallySymmetric, i::Int)
     return center(S)[i]
 end
+
+function extrema(S::AbstractCentrallySymmetric, i::Int)
+    # h = c + r
+    h = high(S, i)
+    # l = c - r = -c - r + 2 * c = -h + 2 * c
+    l = - h + 2 * center(S, i)
+    return (l, h)
+end
