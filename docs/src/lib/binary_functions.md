@@ -135,6 +135,7 @@ issubset
 ⊆(::CartesianProduct, ::CartesianProduct, ::Bool=false)
 ⊆(::CartesianProductArray, ::CartesianProductArray, ::Bool=false)
 ⊆(::AbstractZonotope, ::AbstractHyperrectangle, ::Bool=false)
+⊂
 ```
 
 ## Set difference
