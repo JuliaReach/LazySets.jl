@@ -124,7 +124,8 @@ issubset
 ⊆(::Union{Ball2, Ballp}, ::AbstractSingleton, ::Bool=false)
 ⊆(::LineSegment, ::LazySet, ::Bool=false)
 ⊆(::LineSegment, ::AbstractHyperrectangle, ::Bool=false)
-⊆(::Interval, ::Interval, ::Bool=false)
+⊆(::Interval{N}, ::Interval, ::Bool=false) where {N}
+⊆(::Interval, ::UnionSet, ::Bool=false)
 ⊆(::EmptySet, ::LazySet, ::Bool=false)
 ⊆(::LazySet, ::EmptySet, ::Bool=false)
 ⊆(::UnionSet, ::LazySet, ::Bool=false)
