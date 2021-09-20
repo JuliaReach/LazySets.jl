@@ -6,7 +6,7 @@ export Translation,
        linear_map
 
 """
-    Translation{N, VN<:AbstractVector{N}, S<:LazySet{N}} <: AbstractAffineMap{N, S}
+    Translation{N, S<:LazySet{N}, VN<:AbstractVector{N}} <: AbstractAffineMap{N, S}
 
 Type that represents a lazy translation.
 
@@ -40,7 +40,7 @@ julia> v = [1.0, 0.0, 0.0]; # translation along dimension 1
 julia> tr = Translation(X, v);
 
 julia> typeof(tr)
-Translation{Float64, Vector{Float64}, BallInf{Float64, Vector{Float64}}}
+Translation{Float64, BallInf{Float64, Vector{Float64}}, Vector{Float64}}
 
 julia> tr.X
 BallInf{Float64, Vector{Float64}}([2.0, 2.0, 2.0], 1.0)
@@ -68,7 +68,7 @@ The translation of a translation is performed immediately:
 
 ```jldoctest translation
 julia> tr = (X+v)+v
-Translation{Float64, Vector{Float64}, BallInf{Float64, Vector{Float64}}}(BallInf{Float64, Vector{Float64}}([2.0, 2.0, 2.0], 1.0), [2.0, 0.0, 0.0])
+Translation{Float64, BallInf{Float64, Vector{Float64}}, Vector{Float64}}(BallInf{Float64, Vector{Float64}}([2.0, 2.0, 2.0], 1.0), [2.0, 0.0, 0.0])
 
 julia> tr.v
 3-element Vector{Float64}:
@@ -145,7 +145,7 @@ julia> constraints_list(tr)
  HalfSpace{Float64, LazySets.Arrays.SingleEntryVector{Float64}}([0.0, 0.0, -1.0], -1.0)
 ```
 """
-struct Translation{N, VN<:AbstractVector{N}, S<:LazySet{N}} <: AbstractAffineMap{N, S}
+struct Translation{N, S<:LazySet{N}, VN<:AbstractVector{N}} <: AbstractAffineMap{N, S}
     X::S
     v::VN
 
@@ -154,12 +154,12 @@ struct Translation{N, VN<:AbstractVector{N}, S<:LazySet{N}} <: AbstractAffineMap
         @assert dim(X) == length(v) "cannot create a translation of a set of " *
             "dimension $(dim(X)) along a vector of length $(length(v))"
 
-        return new{N, VN, S}(X, v)
+        return new{N, S, VN}(X, v)
     end
 end
 
 isoperationtype(::Type{<:Translation}) = true
-isconvextype(::Type{Translation{N, VN, S}}) where {N, VN, S} = isconvextype(S)
+isconvextype(::Type{Translation{N, S, VN}}) where {N, S, VN} = isconvextype(S)
 
 # constructor from a Translation: perform the translation immediately
 Translation(tr::Translation{N}, v::AbstractVector{N}) where {N} = Translation(tr.X, tr.v + v)
