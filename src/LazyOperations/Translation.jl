@@ -279,7 +279,7 @@ function an_element(tr::Translation)
     return an_element(tr.X) + tr.v
 end
 
-function isboundedtype(::Type{<:Translation{N, VN, S}}) where {N, VN, S}
+function isboundedtype(::Type{<:Translation{N, S}}) where {N, S}
     return isboundedtype(S)
 end
 
