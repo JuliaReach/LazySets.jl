@@ -25,9 +25,10 @@ for N in [Float64, Rational{Int}, Float32]
     @test svec == N[1, 0] && element(s) == N[0, 0]  # does not modify s
 
     # boundedness
-    @test isbounded(rm)  # bounded set
+    @test isbounded(rm) && isboundedtype(typeof(rm))  # bounded set
     @test isbounded(ResetMap(Singleton(N[1, 2]), r_none))  # bounded set without resets
-    @test !isbounded(ResetMap(Universe{N}(2), r_1))  # unbounded set without enough resets
+    rm2 = ResetMap(Universe{N}(2), r_1)  # unbounded set without enough
+    @test !isbounded(rm2) && !isboundedtype(typeof(rm2))
     @test isbounded(ResetMap(Universe{N}(2), r_12))  # unbounded set with enough resets
 
     # an_element function

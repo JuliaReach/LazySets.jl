@@ -443,6 +443,10 @@ function isbounded(em::ExponentialMap)
     return isbounded(em.X)
 end
 
+function isboundedtype(::Type{<:ExponentialMap{N, S}}) where {N, S}
+    return isboundedtype(S)
+end
+
 # --- ProjectionSparseMatrixExp & ExponentialProjectionMap ---
 
 """

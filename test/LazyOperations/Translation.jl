@@ -25,8 +25,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test ρ(N[1, 0, 0], tr) == N(2)
 
     # boundedness
-    @test isbounded(tr)
-    @test !isbounded(Translation(Universe{N}(3), v))
+    @test isbounded(tr) && isboundedtype(typeof(tr))
+    tr2 = Translation(Universe{N}(3), v)
+    @test !isbounded(tr2) && !isboundedtype(typeof(tr2))
 
     if N ∈ [Float64]
         @test !isbounded(Translation(HPolyhedron([HalfSpace(N[1, 1], N(1))]), N[0, 0]))

@@ -157,6 +157,10 @@ function isbounded(ch::ConvexHull)
     return isbounded(ch.X) && isbounded(ch.Y)
 end
 
+function isboundedtype(::Type{<:ConvexHull{N, S1, S2}}) where {N, S1, S2}
+    return isboundedtype(S1) && isboundedtype(S2)
+end
+
 """
     isempty(ch::ConvexHull)
 

@@ -35,8 +35,9 @@ for N in [Float64, Float32, Rational{Int}]
     @test σ(d, cp) == N[-1, -1, -1]
 
     # boundedness
-    @test isbounded(cp)
-    @test !isbounded(Singleton(N[1]) * HalfSpace(N[1], N(1)))
+    @test isbounded(cp) && isboundedtype(typeof(cp))
+    cp2 = Singleton(N[1]) * HalfSpace(N[1], N(1))
+    @test !isbounded(cp2) && !isboundedtype(typeof(cp2))
 
     # isempty
     @test !isempty(cp)
@@ -211,7 +212,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test LazySets.is_array_constructor(CartesianProductArray)
 
     # standard constructor
-    v = Vector{LazySet{N}}()
+    v = Vector{Singleton{N}}()
     push!(v, Singleton(N[1, 2]))
     push!(v, Singleton(N[3, 4]))
     cpa = CartesianProductArray(v)
@@ -231,8 +232,9 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # boundedness
-    @test isbounded(cpa)
-    @test !isbounded(CartesianProductArray([Singleton(N[1]), HalfSpace(N[1], N(1))]))
+    @test isbounded(cpa) && isboundedtype(typeof(cpa))
+    cpa2 = CartesianProductArray([Singleton(N[1]), HalfSpace(N[1], N(1))])
+    @test !isbounded(cpa2) && !isboundedtype(typeof(cpa2))
 
     # membership
     @test N[1, 2, 3, 4] ∈ cpa

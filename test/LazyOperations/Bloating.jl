@@ -16,10 +16,11 @@ for N in [Float64, Float32]
     @test dim(X) == dim(X⁻) == 2 && dim(Y) == 1 && dim(Z) == 3
 
     # isbounded
-    @test isbounded(X) && isbounded(X⁻) && isbounded(Y) && !isbounded(Z)
+    @test isbounded(X) && isbounded(X⁻) && isbounded(Y) && !isbounded(Z) &&
+        isboundedtype(typeof(X)) && !isboundedtype(typeof(Z))
 
     # isempty
-    @test !isempty(X) && isbounded(X⁻) && isempty(Y) && !isempty(Z)
+    @test !isempty(X) && !isempty(X⁻) && isempty(Y) && !isempty(Z)
 
     # an_element
     for S ∈ [X, X⁻, Z]

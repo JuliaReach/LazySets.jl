@@ -234,6 +234,10 @@ function isbounded(cup::UnionSetArray)
    return all(isbounded, array(cup))
 end
 
+function isboundedtype(::Type{<:UnionSetArray{N, S}}) where {N, S}
+    return isboundedtype(S)
+end
+
 """
     vertices_list(cup::UnionSetArray; apply_convex_hull::Bool=false,
                   backend=nothing)

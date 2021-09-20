@@ -202,7 +202,6 @@ for N in [Float64]
     # concrete Minkowski sum
     b = BallInf(N[1, 2], N(1))
     p = minkowski_sum(b, N[2 0; 0 1] * b)
-    @test p isa HPolytope{N} && ispermutation(constraints_list(p),
-        [HalfSpace(N[0, -1], N(-2)), HalfSpace(N[0, 1], N(6)),
-         HalfSpace(N[-1, 0], N(0)), HalfSpace(N[1, 0], N(6))])
+    @test p isa VPolygon{N} &&
+        ispermutation(vertices_list(p), [N[6, 6], N[0, 6], N[0, 2], N[6, 2]])
 end

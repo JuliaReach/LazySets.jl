@@ -279,6 +279,10 @@ function an_element(tr::Translation)
     return an_element(tr.X) + tr.v
 end
 
+function isboundedtype(::Type{<:Translation{N, VN, S}}) where {N, VN, S}
+    return isboundedtype(S)
+end
+
 """
     constraints_list(tr::Translation)
 

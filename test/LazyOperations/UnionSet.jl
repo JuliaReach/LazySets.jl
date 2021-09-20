@@ -48,7 +48,7 @@ for N in [Float64, Rational{Int}, Float32]
         @test !isempty(U)
 
         # boundedness
-        @test isbounded(U)
+        @test isbounded(U) && isboundedtype(typeof(U))
 
         # inclusion
         subset, point = ⊆(U, B3, true)
@@ -81,6 +81,11 @@ for N in [Float64, Rational{Int}, Float32]
     @test an_element(UXY) ∈ UXY
     Uarr = UnionSetArray([EmptySet{N}(2), B1])
     @test an_element(Uarr) ∈ Uarr
+
+    # boundedness of unbounded unions
+    @test !isbounded(UXY) && !isboundedtype(typeof(UXY))
+    Uarr = UnionSetArray([X, B1])
+    @test !isbounded(Uarr) && !isboundedtype(typeof(Uarr))
 end
 
 for N in [Float64]

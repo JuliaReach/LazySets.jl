@@ -28,7 +28,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test σ(d, h)[2] == N(7) && σ(-d, h)[2] == N(-7)
 
     # boundedness
-    @test isbounded(h)
+    @test isbounded(h) && isboundedtype(typeof(h))
 
     # isempty
     @test !isempty(h)

@@ -169,3 +169,7 @@ end
 function concretize(am::AffineMap)
     return affine_map(am.M, concretize(am.X), am.v)
 end
+
+function isboundedtype(::Type{<:AffineMap{N, S}}) where {N, S}
+    return isboundedtype(S)
+end

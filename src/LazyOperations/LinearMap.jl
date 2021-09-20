@@ -359,6 +359,10 @@ function an_element(lm::LinearMap)
     return lm.M * an_element(lm.X)
 end
 
+function isboundedtype(::Type{<:LinearMap{N, S}}) where {N, S}
+    return isboundedtype(S)
+end
+
 """
     vertices_list(lm::LinearMap; prune::Bool=true)
 

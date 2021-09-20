@@ -20,8 +20,11 @@ for N in [Float64, Rational{Int}, Float32]
     @test ones(N, 2) ∈ I && N[5, 5] ∉ I
 
     # boundedness (more tests in Float64-only section)
-    @test isbounded(I)
-    @test isbounded(Singleton(N[1]) ∩ HalfSpace(N[1], N(1)))
+    @test isbounded(I) && isboundedtype(typeof(I))
+    I2 = Singleton(N[1]) ∩ HalfSpace(N[1], N(1))
+    @test isbounded(I2) && isboundedtype(typeof(I2))
+    I2 = Hyperplane(ones(N, 2), N(1)) ∩ HalfSpace(ones(N, 2), N(1))
+    @test !isbounded(I2) && !isboundedtype(typeof(I2))
 
     # emptiness of intersection
     @test !isempty_known(I)
@@ -69,9 +72,11 @@ for N in [Float64, Rational{Int}, Float32]
     @test σ(ones(N, 2), IArr) == N[2, 2]
 
     # boundedness
-    @test isbounded(IArr)
+    @test isbounded(IArr) && isboundedtype(typeof(IArr))
     @test isbounded(IntersectionArray([Singleton(N[1]), HalfSpace(N[1], N(1))]))
     @test isbounded(IntersectionArray([HalfSpace(N[1], N(1)), HalfSpace(N[-1], N(1))]))
+    IArr2 = IntersectionArray([HalfSpace(N[1], N(1))])
+    @test !isboundedtype(typeof(IArr2))
 
     # isempty
     @test_throws MethodError isempty(IArr)

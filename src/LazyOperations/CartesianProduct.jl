@@ -183,6 +183,10 @@ function isbounded(cp::CartesianProduct)
     return isbounded(cp.X) && isbounded(cp.Y)
 end
 
+function isboundedtype(::Type{<:CartesianProduct{N, S1, S2}}) where {N, S1, S2}
+    return isboundedtype(S1) && isboundedtype(S2)
+end
+
 """
     ∈(x::AbstractVector, cp::CartesianProduct)
 
