@@ -14,6 +14,9 @@ for N in [Float64, Rational{Int}, Float32]
     # constructor without argumenst
     UnionSetArray()
 
+    # getindex
+    @test Uarr[1] == B1 && Uarr[2] == B2
+
     # swap
     U2 = swap(UXY)
     @test UXY.X == U2.Y && UXY.Y == U2.X

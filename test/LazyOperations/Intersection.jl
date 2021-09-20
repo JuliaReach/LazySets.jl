@@ -65,6 +65,9 @@ for N in [Float64, Rational{Int}, Float32]
     # intersection of an array of sets
     IArr = IntersectionArray([B, H])
 
+    # getindex
+    @test IArr[1] == B && IArr[2] == H
+
     # dim
     @test dim(IArr) == 2
 
