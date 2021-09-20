@@ -8,3 +8,7 @@ const AbstractArraySet = Union{CartesianProductArray,
 function Base.getindex(X::AbstractArraySet, i)
     return getindex(array(X), i)
 end
+
+function Base.length(X::AbstractArraySet)
+    return length(array(X))
+end

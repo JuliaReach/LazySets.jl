@@ -225,8 +225,9 @@ for N in [Float64, Float32, Rational{Int}]
     # array getter
     @test array(cpa) ≡ v
 
-    # getindex
+    # getindex & length
     @test cpa[1] == S1 && cpa[2] == S2
+    @test length(cpa) == 2
 
     # support function & support vector
     svec = N[1, 2, 3, 4]

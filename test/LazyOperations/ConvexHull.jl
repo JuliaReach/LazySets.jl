@@ -59,8 +59,9 @@ for N in [Float64, Rational{Int}, Float32]
     d = N[0, -1]
     @test σ(d, cha) == N[0, -1]
 
-    # getindex
+    # getindex & length
     @test cha[1] == b1 && cha[2] == b2
+    @test length(cha) == 2
 
     # boundedness
     @test isbounded(cha) && isboundedtype(typeof(cha))

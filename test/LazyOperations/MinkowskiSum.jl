@@ -119,8 +119,9 @@ for N in [Float64, Rational{Int}, Float32]
     ms = MinkowskiSum(b1, b2)
     msa = MinkowskiSumArray([b1, b2])
 
-    # getindex
+    # getindex & length
     @test msa[1] == b1 && msa[2] == b2
+    @test length(msa) == 2
 
     # dimension
     @test dim(msa) == 2
