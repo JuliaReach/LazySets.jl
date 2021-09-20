@@ -1,4 +1,4 @@
-export ⊂
+import IntervalArithmetic: ⊂
 
 """
     ⊂(X::LazySet{N}, Y::LazySet, [witness]::Bool=false) where {N}
