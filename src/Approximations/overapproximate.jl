@@ -738,17 +738,21 @@ end
 end
 
 # compute the nonlinear part of the polynomial p, without truncation
-@inline function _nonlinear_polynomial(p::TaylorN{T}) where {T}
-    pnl = deepcopy(p)
-    pnl.coeffs[1] = HomogeneousPolynomial([zero(T)])
-    pnl.coeffs[2] = HomogeneousPolynomial([zero(T)])
-    return pnl
-end
-
 @inline function _nonlinear_polynomial(p::Taylor1{T}) where {T}
     pnl = deepcopy(p)
     pnl.coeffs[1] = zero(T)
-    pnl.coeffs[2] = zero(T)
+    if p.order > 0
+        pnl.coeffs[2] = zero(T)
+    end
+    return pnl
+end
+
+@inline function _nonlinear_polynomial(p::TaylorN{T}) where {T}
+    pnl = deepcopy(p)
+    pnl.coeffs[1] = HomogeneousPolynomial([zero(T)])
+    if p.order > 0
+        pnl.coeffs[2] = HomogeneousPolynomial([zero(T)])
+    end
     return pnl
 end
 
