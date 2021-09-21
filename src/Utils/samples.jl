@@ -364,6 +364,14 @@ For a three-dimensional polytope, the following face dimensions exist:
 
 For more information see
 [Wikipedia](https://en.wikipedia.org/wiki/Face_(geometry)#k-face).
+
+### Algorithm
+
+For each point to be sampled, we randomly split the integers `1 .. n` into two
+subgroups of size `k` and `n-k` respectively. For the i-th coordinate in the
+first group, we sample in the interval `low(H, i) .. high(H, i)`. For the i-th
+coordinate in the second group, we randomly pick either `low(H, i)` or
+`high(H, i)`.
 """
 struct FaceSampler <: AbstractSampler
     dim::Int
@@ -392,11 +400,10 @@ function sample!(D::Vector{VN}, X::LazySet, sampler::FaceSampler;
     return _sample_faces!(D, X, rng, k)
 end
 
-_choose_sorted(k, n; rng=GLOBAL_RNG) = sort!((1:n)[randperm(rng, end)][1:k])
+_choose_sorted(k, n; rng=GLOBAL_RNG) = sort!((1:n)[randperm(rng, n)][1:k])
 
 function _sample_faces!(D::Vector{VN}, H::AbstractHyperrectangle, rng, k) where {N, VN<:AbstractVector{N}}
     n = dim(H)
-    b = 1:2
 
     @inbounds for j in 1:length(D)
         indices = _choose_sorted(k, n; rng=rng)
