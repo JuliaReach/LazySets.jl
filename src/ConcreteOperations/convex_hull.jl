@@ -10,7 +10,7 @@ end
 
 """
     convex_hull(X::LazySet{N}, Y::LazySet{N}; [algorithm]=nothing,
-                [backend]=nothing, [solver]=nothing) where {N<:Real}
+                [backend]=nothing, [solver]=nothing) where {N}
 
 Compute the convex hull of the given convex sets.
 
@@ -41,7 +41,7 @@ function convex_hull(X::LazySet{N}, Y::LazySet{N};
                      algorithm=nothing,
                      backend=nothing,
                      solver=nothing
-                    ) where {N<:Real}
+                    ) where {N}
     n = dim(X)
     @assert n == dim(Y) "the convex hull requires two sets of the same " *
                         "dimension, but the sets had dimension $n and $(dim(Y))"
@@ -74,7 +74,7 @@ end
                 [algorithm]=nothing,
                 [backend]=nothing,
                 [solver]=nothing
-                ) where {N<:Real, VN<:AbstractVector{N}}
+                ) where {N, VN<:AbstractVector{N}}
 
 Compute the convex hull of the given points.
 
@@ -136,14 +136,14 @@ function convex_hull(points::Vector{VN};
                      algorithm=nothing,
                      backend=nothing,
                      solver=nothing
-                     ) where {N<:Real, VN<:AbstractVector{N}}
+                     ) where {N, VN<:AbstractVector{N}}
     return convex_hull!(copy(points), algorithm=algorithm, backend=backend, solver=solver)
 end
 
 function convex_hull!(points::Vector{VN};
                       algorithm=nothing,
                       backend=nothing,
-                      solver=nothing) where {N<:Real, VN<:AbstractVector{N}}
+                      solver=nothing) where {N, VN<:AbstractVector{N}}
 
     m = length(points)
 
@@ -206,7 +206,7 @@ function _two_points_2d!(points)
     return points
 end
 
-function _three_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N<:Real}
+function _three_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N}
     # Algorithm: the function takes three points and uses the formula
     #            from here: https://stackoverflow.com/questions/2122305/convex-hull-of-4-points/2122620#2122620
     #            to decide if the points are ordered in a counter-clockwise fashion or not, the result is saved
@@ -278,7 +278,7 @@ function _collinear_case!(points, A, B, C, D)
     return _three_points_2d!(points)
 end
 
-function _four_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N<:Real}
+function _four_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N}
     A, B, C, D = points[1], points[2], points[3], points[4]
     tri_ABC = right_turn(A, B, C)
     tri_ABD = right_turn(A, B, D)
@@ -368,7 +368,7 @@ function _four_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N<
     return points
 end
 
-function _convex_hull_1d!(points::Vector{VN}) where {N<:Real, VN<:AbstractVector{N}}
+function _convex_hull_1d!(points::Vector{VN}) where {N, VN<:AbstractVector{N}}
     points[1:2] = [minimum(points), maximum(points)]
     return resize!(points, 2)
 end
@@ -376,7 +376,7 @@ end
 function _convex_hull_nd!(points::Vector{VN};
                           backend=nothing,
                           solver=nothing
-                          ) where {N<:Real, VN<:AbstractVector{N}}
+                          ) where {N, VN<:AbstractVector{N}}
     V = VPolytope(points)
     Vch = remove_redundant_vertices(V, backend=backend, solver=solver)
     m = length(Vch.vertices)
@@ -386,7 +386,7 @@ end
 
 function _convex_hull_2d!(points::Vector{VN};
                           algorithm="monotone_chain"
-                         ) where {N<:Real, VN<:AbstractVector{N}}
+                         ) where {N, VN<:AbstractVector{N}}
     if algorithm == nothing
         algorithm = default_convex_hull_algorithm(points)
     end
@@ -401,7 +401,7 @@ end
 
 """
     monotone_chain!(points::Vector{VN}; sort::Bool=true
-                   ) where {N<:Real, VN<:AbstractVector{N}}
+                   ) where {N, VN<:AbstractVector{N}}
 
 Compute the convex hull of points in the plane using Andrew's monotone chain
 method.
@@ -434,7 +434,7 @@ For further details see
 [Monotone chain](https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain)
 """
 function monotone_chain!(points::Vector{VN}; sort::Bool=true
-                        ) where {N<:Real, VN<:AbstractVector{N}}
+                        ) where {N, VN<:AbstractVector{N}}
 
     @inline function build_hull!(semihull, iterator, points)
         @inbounds for i in iterator
@@ -591,3 +591,7 @@ end
 function convex_hull(X::UnionSet)
     return convex_hull(X.X, X.Y)
 end
+
+convex_hull(X::LazySet, ::EmptySet) = X
+convex_hull(::EmptySet, X::LazySet) = X
+convex_hull(∅::EmptySet, ::EmptySet) = ∅
