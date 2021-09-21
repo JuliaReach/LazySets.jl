@@ -132,6 +132,7 @@ include("LazyOperations/Rectification.jl")  # must come after UnionSet
 # Aliases
 # =======
 include("Interfaces/aliases.jl")
+include("Interfaces/AbstractArraySet.jl")
 include("Sets/Star.jl")
 
 # =============================

@@ -213,8 +213,10 @@ for N in [Float64, Float32, Rational{Int}]
 
     # standard constructor
     v = Vector{Singleton{N}}()
-    push!(v, Singleton(N[1, 2]))
-    push!(v, Singleton(N[3, 4]))
+    S1 = Singleton(N[1, 2])
+    S2 = Singleton(N[3, 4])
+    push!(v, S1)
+    push!(v, S2)
     cpa = CartesianProductArray(v)
 
     # constructor with size hint and type
@@ -222,6 +224,10 @@ for N in [Float64, Float32, Rational{Int}]
 
     # array getter
     @test array(cpa) ≡ v
+
+    # getindex & length
+    @test cpa[1] == S1 && cpa[2] == S2
+    @test length(cpa) == 2
 
     # support function & support vector
     svec = N[1, 2, 3, 4]
