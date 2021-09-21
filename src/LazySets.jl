@@ -13,10 +13,10 @@ using Random: AbstractRNG, GLOBAL_RNG, SamplerType, shuffle
 import InteractiveUtils: subtypes
 
 import IntervalArithmetic
-import IntervalArithmetic: radius
+import IntervalArithmetic: radius, ⊂
 
 export Arrays
-export ×, normalize
+export ×, normalize, ⊂
 
 # ==========
 # Assertions
