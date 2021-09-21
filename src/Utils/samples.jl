@@ -225,7 +225,7 @@ end
 """
     RandomWalkSampler <: AbstractSampler
 
-Type used for sampling of a convex polytope `X` using its vertex representation.
+Type used for sampling from a convex polytope using its vertex representation.
 This is especially useful if rejection sampling does not work because the
 polytope is flat.
 
@@ -235,7 +235,7 @@ polytope is flat.
 
 ### Algorithm
 
-Choose a random convex combination of the vertices of `X`.
+Choose a random convex combination of the vertices of a convex polytope `X`.
 
 If `variant == false`, we proceed as follows.
 Let ``V = \\{v_i\\}_i`` denote the set of vertices of `X`.
@@ -340,6 +340,92 @@ function sample!(D::Vector{VN}, X::LazySet, sampler::CombinedSampler;
         @warn "sampling failed with the following error message:"
         rethrow(e)
     end
+end
+
+"""
+    FaceSampler <: AbstractSampler
+
+Type used for sampling from the `k`-faces of a set.
+
+### Fields
+
+- `dim` -- dimension of the faces to be sampled; a negative number is
+           interpreted as `n - dim` where `n` is the dimension of the set
+
+### Notes
+
+For a three-dimensional polytope, the following face dimensions exist:
+- 3-face – the polytope itself
+- 2-faces – 2-dimensional polygonal faces
+- 1-faces – 1-dimensional edges
+- 0-faces – 0-dimensional vertices
+
+For more information see
+[Wikipedia](https://en.wikipedia.org/wiki/Face_(geometry)#k-face).
+
+### Algorithm
+
+For each point to be sampled, we randomly split the integers `1 .. n` into two
+subgroups of size `k` and `n-k` respectively. For the i-th coordinate in the
+first group, we sample in the interval `low(H, i) .. high(H, i)`. For the i-th
+coordinate in the second group, we randomly pick either `low(H, i)` or
+`high(H, i)`.
+"""
+struct FaceSampler <: AbstractSampler
+    dim::Int
+end
+
+function sample!(D::Vector{VN}, X::LazySet, sampler::FaceSampler;
+                 rng::AbstractRNG=GLOBAL_RNG,
+                 seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
+    n = dim(X)
+    k = sampler.dim
+
+    # translate negative dimension
+    if k < 0
+        k += n
+    end
+
+    # full-dimensional sampling
+    if k == n
+        return sample!(D, X, _default_sampler(X); rng=rng, seed=seed)
+    end
+
+    0 <= k < n || throw(ArgumentError("cannot sample from " *
+        "$(sampler.dim)-dimensional faces for a set of dimension $n"))
+
+    rng = reseed(rng, seed)
+    return _sample_faces!(D, X, rng, k)
+end
+
+_choose_sorted(k, n; rng=GLOBAL_RNG) = sort!((1:n)[randperm(rng, n)][1:k])
+
+function _sample_faces!(D::Vector{VN}, H::AbstractHyperrectangle, rng, k) where {N, VN<:AbstractVector{N}}
+    n = dim(H)
+
+    @inbounds for j in 1:length(D)
+        indices = _choose_sorted(k, n; rng=rng)
+        # add one more index that is never visited
+        indices = vcat(indices, 0)
+
+        x = Vector{N}(undef, n)
+        idx = 1
+        for i in 1:n
+            if indices[idx] == i
+                # sample from interior in this dimension
+                l = low(H, i)
+                Δ = high(H, i) - l
+                x[i] = Δ * rand(rng) + l
+                idx += 1
+            else
+                # sample from border in this dimension
+                x[i] = rand(rng, Bool) ? low(H, i) : high(H, i)
+            end
+        end
+        D[j] = x
+    end
+
+    return D
 end
 
 # =============================

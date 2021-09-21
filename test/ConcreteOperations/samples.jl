@@ -68,4 +68,14 @@ for N in [Float64]
     end
     @test length(sample(P1, 10; include_vertices=false)) == 10
     @test length(sample(P1, 10; include_vertices=true)) == 42
+
+    # face sampling
+    H = Hyperrectangle(N[1, 2], N[3, 4])
+    v0 = sample(H, 10; sampler=LazySets.FaceSampler(0))
+    v1 = sample(H, 10; sampler=LazySets.FaceSampler(1))
+    v2 = sample(H, 10; sampler=LazySets.FaceSampler(2))
+    @test all(all(vi ∈ H for vi in v) for v in [v0, v1, v2])
+    vs = vertices_list(H)
+    @test all(vi ∈ vs for vi in v0)  # 0-faces are the vertices
+    @test all(any(vi[i:i] ∈ project(H, [i]) for i in 1:2) for vi in v1)  # 1-faces are at the border
 end
