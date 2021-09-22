@@ -13,6 +13,7 @@ center(::Ball2)
 rand(::Type{Ball2})
 sample(::Ball2{N}, ::Int) where {N}
 translate(::Ball2, ::AbstractVector)
+translate!(::Ball2, ::AbstractVector)
 chebyshev_center(::Ball2)
 volume(::Ball2)
 ```
