@@ -52,6 +52,8 @@ for N in [Float64, Float32]
 
     # translation
     @test translate(b, N[1, 2]) == Ballp(N(3), N[1, 2], N(2))
+    bb = Ballp(N(3), N[0, 0], N(1))
+    @test translate!(bb, N[1, 1]) == Ballp(N(3), N[1, 1], N(1)) == bb
 
     # projection
     b4 = Ballp(N(3), N[4, 3, 2, 1], N(2))

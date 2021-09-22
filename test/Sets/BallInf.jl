@@ -127,6 +127,8 @@ for N in [Float64, Rational{Int}, Float32]
     # translation
     b = BallInf(N[1, 2], N(1))
     @test translate(b, N[1, 2]) == BallInf(N[2, 4], N(1))
+    bb = BallInf(N[0, 0], N(1))
+    @test translate!(bb, N[1, 1]) == BallInf(N[1, 1], N(1)) == bb
 
     # affine map
     M = N[2 1; 0 2]

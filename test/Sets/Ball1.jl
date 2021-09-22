@@ -79,6 +79,8 @@ for N in [Float64, Rational{Int}, Float32]
 
     # translation
     @test translate(b, N[1, 2]) == Ball1(N[1, 2], N(2))
+    bb = Ball1(N[0, 0], N(1))
+    @test translate!(bb, N[1, 1]) == Ball1(N[1, 1], N(1)) == bb
 
     # vertices_list
     vl = vertices_list(b)

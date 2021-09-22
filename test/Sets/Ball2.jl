@@ -72,6 +72,8 @@ for N in [Float64, Float32]
 
     # translation
     @test translate(b, N[1, 2]) == Ball2(N[2, 4], N(2))
+    bb = Ball2(N[0, 0], N(1))
+    @test translate!(bb, N[1, 1]) == Ball2(N[1, 1], N(1)) == bb
 
     # inclusion of a Ball2 in a Ball2
     b1 = Ball2(N[1, 2], N(2))
