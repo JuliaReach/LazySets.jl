@@ -13,6 +13,7 @@ center(::Ball1)
 rand(::Type{Ball1})
 constraints_list(::Ball1{N}) where {N}
 translate(::Ball1, ::AbstractVector)
+translate!(::Ball1, ::AbstractVector)
 ```
 
 Inherited from [`LazySet`](@ref):

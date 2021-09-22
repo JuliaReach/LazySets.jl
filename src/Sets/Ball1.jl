@@ -278,11 +278,39 @@ A translated ball in the 1-norm.
 ### Algorithm
 
 We add the vector to the center of the ball.
+
+### Notes
+
+See also [`translate!(::Ball1, AbstractVector)`](@ref) for the in-place version.
 """
 function translate(B::Ball1, v::AbstractVector)
+    return translate(copy(B), v)
+end
+
+"""
+    translate!(B::Ball1, v::AbstractVector)
+
+Translate (i.e., shift) a ball in the 1-norm by a given vector, in-place.
+
+### Input
+
+- `B` -- ball in the 1-norm
+- `v` -- translation vector
+
+### Output
+
+The ball `B` translated by `v`.
+
+### Notes
+
+See also [`translate(::Ball1, AbstractVector)`](@ref) for the out-of-place version.
+"""
+function translate!(B::Ball1, v::AbstractVector)
     @assert length(v) == dim(B) "cannot translate a $(dim(B))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
-    return Ball1(center(B) + v, B.radius)
+    c = center(B)
+    c .+= v
+    return B
 end
 
 function project(B::Ball1, block::AbstractVector{Int}; kwargs...)
