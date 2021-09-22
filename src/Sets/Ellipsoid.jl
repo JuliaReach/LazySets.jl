@@ -311,33 +311,53 @@ function rand(::Type{Ellipsoid};
 end
 
 """
-    translate(E::Ellipsoid, v::AbstractVector; [share]::Bool=false)
+    translate(E::Ellipsoid, v::AbstractVector)
 
 Translate (i.e., shift) an ellipsoid by a given vector.
 
 ### Input
 
-- `E`     -- ellipsoid
-- `v`     -- translation vector
-- `share` -- (optional, default: `false`) flag for sharing unmodified parts of
-             the original set representation
+- `E`  -- ellipsoid
+- `v`  -- translation vector
 
 ### Output
 
 A translated ellipsoid.
 
-### Notes
-
-The shape matrix is shared with the original ellipsoid if `share == true`.
-
 ### Algorithm
 
 We add the vector to the center of the ellipsoid.
+
+### Notes
+
+See also [`translate!(::Ellipsoid, ::AbstractVector)`](@ref) for the in-place version.
 """
-function translate(E::Ellipsoid, v::AbstractVector; share::Bool=false)
+function translate(E::Ellipsoid, v::AbstractVector)
+    return translate!(copy(E), v)
+end
+
+"""
+    translate!(E::Ellipsoid, v::AbstractVector)
+
+Translate (i.e., shift) an ellipsoid by a given vector, in-place.
+
+### Input
+
+- `E`  -- ellipsoid
+- `v`  -- translation vector
+
+### Output
+
+The ellipsoid `E` translated by `v`.
+
+### Notes
+
+See also [`translate(::Ellipsoid, ::AbstractVector)`](@ref) for the out-of-place version.
+"""
+function translate!(E::Ellipsoid, v::AbstractVector)
     @assert length(v) == dim(E) "cannot translate a $(dim(E))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
-    c = center(E) + v
-    shape_matrix = share ? E.shape_matrix : copy(E.shape_matrix)
-    return Ellipsoid(c, shape_matrix)
+    c = center(E)
+    c .+= v
+    return E
 end

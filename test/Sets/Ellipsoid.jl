@@ -79,6 +79,8 @@ for N in [Float64, Float32]
 
     # translation
     @test translate(E, N[1, 2]) == Ellipsoid(N[2, 4], M)
+    EE = copy(E)
+    @test translate!(EE, N[1, 1]) == Ellipsoid(N[2, 3], M) == EE
 
     # check_posdef optional constructor flag
     @test_throws ArgumentError Ellipsoid(N[1 1; 1 1])
