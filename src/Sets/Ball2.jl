@@ -268,7 +268,7 @@ We add the vector to the center of the ball.
 See also [`translate!(::Ball2, AbstractVector)`](@ref) for the in-place version.
 """
 function translate(B::Ball2, v::AbstractVector)
-    return translate(copy(B), v)
+    return translate!(copy(B), v)
 end
 
 """
