@@ -287,7 +287,7 @@ The ball `B` translated by `v`.
 
 ### Notes
 
-See also [`translate(::Ball2, AbstractVector)`](@ref) for the out-of-place version.
+See also [`translate(::Ball2, ::AbstractVector)`](@ref) for the out-of-place version.
 """
 function translate!(B::Ball2, v::AbstractVector)
     @assert length(v) == dim(B) "cannot translate a $(dim(B))-dimensional " *
