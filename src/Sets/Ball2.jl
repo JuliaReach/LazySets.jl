@@ -274,7 +274,7 @@ end
 """
     translate!(B::Ball2, v::AbstractVector)
 
-Translate (i.e., shift) a ball in the 1-norm by a given vector, in-place.
+Translate (i.e., shift) a ball in the 2-norm by a given vector, in-place.
 
 ### Input
 
