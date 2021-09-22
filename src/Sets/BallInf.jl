@@ -323,11 +323,39 @@ A translated ball in the infinity norm.
 ### Algorithm
 
 We add the vector to the center of the ball.
+
+### Notes
+
+See also [`translate!(::BallInf, AbstractVector)`](@ref) for the in-place version.
 """
 function translate(B::BallInf, v::AbstractVector)
+    return translate(copy(B), v)
+end
+
+"""
+    translate!(B::BallInf, v::AbstractVector)
+
+Translate (i.e., shift) a ball in the infinity norm by a given vector, in-place.
+
+### Input
+
+- `B` -- ball in the infinity norm
+- `v` -- translation vector
+
+### Output
+
+The ball `B` translated by `v`.
+
+### Notes
+
+See also [`translate(::BallInf, AbstractVector)`](@ref) for the out-of-place version.
+"""
+function translate!(B::BallInf, v::AbstractVector)
     @assert length(v) == dim(B) "cannot translate a $(dim(B))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
-    return BallInf(center(B) + v, B.radius)
+    c = center(B)
+    c .+= v
+    return B
 end
 
 @inline function _vol_prod(B::BallInf{N}, n) where {N}
