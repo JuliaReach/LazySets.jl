@@ -583,7 +583,8 @@ using MathProgBase.SolverInterface: AbstractMathProgSolver
 """
     intersection(P1::AbstractPolyhedron{N},
                  P2::AbstractPolyhedron{N};
-                 [backend]=default_lp_solver(N)) where {N}
+                 [backend]=default_lp_solver(N),
+                 [prune]::Bool=true) where {N}
 
 Compute the intersection of two polyhedra.
 
@@ -594,6 +595,8 @@ Compute the intersection of two polyhedra.
 - `backend` -- (optional, default: `default_lp_solver(N)`) the LP solver used
                for the removal of redundant constraints; see the `Notes` section
                below for details
+- `prune`   -- (optional, default: `true`) flag for removing redundant
+               constraints
 
 ### Output
 
@@ -619,13 +622,17 @@ emptiness of intersection before calling this function in those cases.
 This implementation unifies the constraints of the two sets obtained from the
 `constraints_list` method.
 """
-intersection(P1::AbstractPolyhedron{N},
-             P2::AbstractPolyhedron{N};
-             backend=default_lp_solver(N)) where {N} = _intersection_poly(P1, P2, backend=backend)
+function intersection(P1::AbstractPolyhedron{N},
+                      P2::AbstractPolyhedron{N};
+                      backend=default_lp_solver(N),
+                      prune::Bool=true) where {N}
+    return _intersection_poly(P1, P2, backend=backend, prune=prune)
+end
 
 function _intersection_poly(P1::AbstractPolyhedron{N},
                             P2::AbstractPolyhedron{N};
-                            backend=default_lp_solver(N)) where {N}
+                            backend=default_lp_solver(N),
+                            prune::Bool=true) where {N}
 
     # if one of P1 or P2 is bounded => the result is bounded
     HPOLY = (P1 isa AbstractPolytope || P2 isa AbstractPolytope) ?
@@ -640,7 +647,7 @@ function _intersection_poly(P1::AbstractPolyhedron{N},
     if backend isa AbstractMathProgSolver
         # if Q is empty => the feasiblity LP for the list of constraints of Q
         # is infeasible and remove_redundant_constraints! returns `false`
-        if remove_redundant_constraints!(Q, backend=backend)
+        if !prune || remove_redundant_constraints!(Q, backend=backend)
             return Q
         else
             return EmptySet{N}(dim(P1))
@@ -654,7 +661,9 @@ function _intersection_poly(P1::AbstractPolyhedron{N},
         Qph = polyhedron(Q; backend=backend)
 
         # remove the redundancies
-        removehredundancy!(Qph)
+        if prune
+            removehredundancy!(Qph)
+        end
 
         if isempty(Qph)
             return EmptySet{N}(dim(P1))
@@ -1046,14 +1055,19 @@ end
     _intersection_interval(X, cpa)
 
 """
-        intersection(Z::AbstractZonotope{N}, H::HalfSpace{N}; backend=default_lp_solver(N)) where {N}
+    intersection(Z::AbstractZonotope{N}, H::HalfSpace{N};
+                 [backend]=default_lp_solver(N), [prune]::Bool=true) where {N}
 
 Return the intersection between a zonotopic set and a halfspace.
 
 ### Input
 
- - `Z` -- zonotopic set
- - `H` -- halfspace
+- `Z`       -- zonotopic set
+- `H`       -- half-space
+- `backend` -- (optional, default: `default_lp_solver(N)`) the LP solver used
+               for the removal of redundant constraints
+- `prune`   -- (optional, default: `true`) flag for removing redundant
+               constraints
 
 ### Output
 
@@ -1066,11 +1080,13 @@ output is the concrete intersection between `Z` and `H`.
 First there is a disjointness test, if that is false, there is an inclusion test,
 if that is false then the concrete intersection is computed.
 """
-@commutative function intersection(Z::AbstractZonotope{N}, H::HalfSpace{N}; backend=default_lp_solver(N)) where {N}
+@commutative function intersection(Z::AbstractZonotope{N}, H::HalfSpace{N};
+                                   backend=default_lp_solver(N),
+                                   prune::Bool=true) where {N}
     n = dim(Z)
     isdisjoint(Z, H) && return EmptySet(n)
     issubset(Z, H) && return Z
-    return _intersection_poly(Z, H, backend=backend)
+    return _intersection_poly(Z, H, backend=backend, prune=prune)
 end
 
 function intersection!(X::Star, H::HalfSpace)
