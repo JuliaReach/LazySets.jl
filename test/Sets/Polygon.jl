@@ -336,6 +336,8 @@ for N in [Float64, Float32, Rational{Int}]
     # translation
     vp2 = VPolygon([N[0, 0], N[1, 0], N[0, 1]])
     @test translate(vp2, N[1, 2]) == VPolygon([N[1, 2], N[2, 2], N[1, 3]])
+    vp2cp = copy(vp2)
+    @test translate!(vp2cp, N[1, 2]) == VPolygon([N[1, 2], N[2, 2], N[1, 3]]) == vp2cp
 
     # subset
     p1 = VPolygon([N[0, 0], N[2, 0]])

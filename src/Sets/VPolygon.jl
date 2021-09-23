@@ -621,11 +621,45 @@ A translated polygon in vertex representation.
 ### Algorithm
 
 We add the vector to each vertex of the polygon.
+
+### Notes
+
+
+See also [`translate!(::VPolygon, AbstractVector)`](@ref) for the in-place version.
 """
 function translate(P::VPolygon, v::AbstractVector)
+    return translate!(copy(P), v)
+end
+
+"""
+    translate!(P::VPolygon, v::AbstractVector)
+
+Translate (i.e., shift) a polygon in vertex representation by a given vector, in-place.
+
+### Input
+
+- `P` -- polygon in vertex representation
+- `v` -- translation vector
+
+### Output
+
+A translated polygon in vertex representation.
+
+### Algorithm
+
+We add the vector to each vertex of the polygon.
+
+### Notes
+
+See also [`translate(::VPolygon, AbstractVector)`](@ref) for the out-of-place version.
+"""
+function translate!(P::VPolygon, v::AbstractVector)
     @assert length(v) == dim(P) "cannot translate a $(dim(P))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
-    return VPolygon([x + v for x in vertices_list(P)])
+    for x in P.vertices
+        x .+= v
+    end
+    return P
 end
 
 # =======================
