@@ -340,33 +340,11 @@ Translate (i.e., shift) an empty set by a given vector.
 ### Output
 
 The empty set.
-
-### Notes
-
-See also [`translate!(::EmptySet, ::AbstractVector)`](@ref) for the in-place version.
 """
 function translate(∅::EmptySet, v::AbstractVector)
     return translate!(∅, v)
 end
 
-"""
-    translate!(∅::EmptySet, v::AbstractVector)
-
-Translate (i.e., shift) an empty set by a given vector, in-place.
-
-### Input
-
-- `∅` -- empty set
-- `v` -- translation vector
-
-### Output
-
-The empty set.
-
-### Notes
-
-See also [`translate(::EmptySet, ::AbstractVector)`](@ref) for the out-of-place version.
-"""
 function translate!(∅::EmptySet, v::AbstractVector)
     @assert length(v) == dim(∅) "cannot translate a $(dim(∅))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"

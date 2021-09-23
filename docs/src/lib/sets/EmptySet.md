@@ -23,7 +23,6 @@ radius(::EmptySet, ::Real=Inf)
 diameter(::EmptySet, ::Real=Inf)
 linear_map(::AbstractMatrix{N}, ::EmptySet{N}) where {N}
 translate(::EmptySet, ::AbstractVector)
-translate!(::EmptySet, ::AbstractVector)
 plot_recipe(::EmptySet{N}, ::Any=zero(N)) where {N}
 RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::EmptySet{N}, ::N=zero(N)) where {N}
 area(::EmptySet{N}) where {N}

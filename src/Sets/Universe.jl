@@ -325,25 +325,6 @@ function diameter(U::Universe, p::Real=Inf)
     error("a universe does not have a diameter")
 end
 
-"""
-    translate!(U::Universe, v::AbstractVector)
-
-Translate (i.e., shift) a universe by a given vector, in-place.
-
-### Input
-
-- `U` -- universe
-- `v` -- translation vector
-
-### Output
-
-The universe.
-
-### Notes
-
-See also [`translate!(::Universe, ::AbstractVector)`](@ref) for the out-of-place
-version.
-"""
 function translate(U::Universe, v::AbstractVector)
     return translate!(U, v)
 end
