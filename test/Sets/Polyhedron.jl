@@ -42,6 +42,9 @@ for N in [Float64, Rational{Int}, Float32]
     # support vector of polyhedron with no constraints
     @test σ(N[1], p_univ) == N[Inf]
 
+    # is_polyhedral
+    @test is_polyhedral(p)
+
     # universality
     @test !isuniversal(p)
     res, w = isuniversal(p, true)

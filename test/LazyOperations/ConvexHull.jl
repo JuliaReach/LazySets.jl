@@ -27,6 +27,13 @@ for N in [Float64, Rational{Int}, Float32]
     ch2 = CH(Singleton(N[1]), HalfSpace(N[1], N(1)))
     @test !isbounded(ch2) && !isboundedtype(typeof(ch2))
 
+    # is_polyhedral
+    @test is_polyhedral(ch)
+    if N isa AbstractFloat
+        ch2 = CH(b1, Ball2(N[0, 0], N(1)))
+        @test !is_polyhedral(ch2)
+    end
+
     # isempty
     @test !isempty(ch)
 

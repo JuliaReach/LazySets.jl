@@ -94,6 +94,9 @@ for N in [Float64, Float32, Rational{Int}]
     r = minkowski_sum(x, y) - minkowski_sum(d, p)
     @test min(r) == N(-5.5) && max(r) == N(4)
 
+    # is_polyhedral
+    @test is_polyhedral(x)
+
     # isempty
     @test !isempty(x)
 

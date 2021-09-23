@@ -90,6 +90,13 @@ for N in [Float64, Rational{Int}, Float32]
     @test !isbounded(UXY) && !isboundedtype(typeof(UXY))
     Uarr = UnionSetArray([X, B1])
     @test !isbounded(Uarr) && !isboundedtype(typeof(Uarr))
+
+    # is_polyhedral
+    @test is_polyhedral(UXY)
+    if N isa AbstractFloat
+        U2 = UnionSet(B1, Ball2(zeros(N, 2), N(1)))
+        @test !is_polyhedral(U2)
+    end
 end
 
 for N in [Float64]

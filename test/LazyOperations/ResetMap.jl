@@ -31,6 +31,13 @@ for N in [Float64, Rational{Int}, Float32]
     @test !isbounded(rm2) && !isboundedtype(typeof(rm2))
     @test isbounded(ResetMap(Universe{N}(2), r_12))  # unbounded set with enough resets
 
+    # is_polyhedral
+    @test is_polyhedral(rm)
+    if N isa AbstractFloat
+        rm2 = ResetMap(Ball2(zeros(N, 3), N(1)), r_1)
+        @test !is_polyhedral(rm2)
+    end
+
     # an_element function
     an_element(rm)
     elem = an_element(ResetMap(s, r_1))

@@ -46,6 +46,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test !isbounded(hp)
     @test isbounded(Hyperplane(ones(N, 1), N(1)))
 
+    # is_polyhedral
+    @test is_polyhedral(hp)
+
     # universality
     @test !isuniversal(hp)
     res, w = isuniversal(hp, true)

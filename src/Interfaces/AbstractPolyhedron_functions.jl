@@ -38,6 +38,8 @@ function default_lp_solver_polyhedra(N, varargs...)
     error("no default solver for numeric type $N")
 end
 
+is_polyhedral(::AbstractPolyhedron) = true
+
 """
     ∈(x::AbstractVector, P::AbstractPolyhedron)
 

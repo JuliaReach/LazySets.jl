@@ -35,6 +35,7 @@ end
 
 isoperationtype(::Type{<:MinkowskiSum}) = true
 isconvextype(::Type{MinkowskiSum{N, S1, S2}}) where {N, S1, S2} = isconvextype(S1) && isconvextype(S2)
+is_polyhedral(ms::MinkowskiSum) = is_polyhedral(ms.X) && is_polyhedral(ms.Y)
 
 # ZeroSet is the neutral element for MinkowskiSum
 @neutral(MinkowskiSum, ZeroSet)

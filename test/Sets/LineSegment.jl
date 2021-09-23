@@ -49,6 +49,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test genmat(l_degenerate) == Matrix{N}(undef, 2, 0)
     @test ngens(l_degenerate) == 0
 
+    # is_polyhedral
+    @test is_polyhedral(l)
+
     # isempty
     @test !isempty(l)
 

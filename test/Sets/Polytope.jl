@@ -49,6 +49,9 @@ for N in [Float64, Rational{Int}, Float32]
     p2 = HPolytope{N}()
     @test isbounded(p2) && !isbounded(p2, false) && isboundedtype(typeof(p2))
 
+    # is_polyhedral
+    @test is_polyhedral(p)
+
     # isuniversal
     answer, w = isuniversal(p, true)
     @test !isuniversal(p) && !answer && w ∉ p
@@ -160,6 +163,9 @@ for N in [Float64, Rational{Int}, Float32]
 
     # boundedness
     @test isbounded(p)
+
+    # is_polyhedral
+    @test is_polyhedral(p)
 
     # isempty
     @test !isempty(p)

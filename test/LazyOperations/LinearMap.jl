@@ -61,6 +61,13 @@ for N in [Float64, Rational{Int}, Float32]
     @test !isbounded(N[2 3; 1 2] * HalfSpace(N[1, 1], N(1)))  # invertible matrix
     @test !isbounded(N[2 3; 0 0] * HalfSpace(N[1, 1], N(1)))  # singular matrix (expensive check)
 
+    # is_polyhedral
+    @test is_polyhedral(lm1)
+    if N isa AbstractFloat
+        lm2 = M * Ball2(N[0, 0], N(1))
+        @test !is_polyhedral(lm2)
+    end
+
     # isempty
     @test !isempty(lm)
 

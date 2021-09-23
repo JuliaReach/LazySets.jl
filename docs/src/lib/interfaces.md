@@ -61,6 +61,7 @@ diameter(::LazySet, ::Real=Inf)
 isboundedtype(::Type{<:LazySet})
 isbounded(::LazySet)
 _isbounded_unit_dimensions(::LazySet{N}) where {N}
+is_polyhedral(::LazySet)
 an_element(::LazySet{N}) where {N}
 tosimplehrep(::LazySet)
 isuniversal(::LazySet{N}, ::Bool=false) where {N}

@@ -58,6 +58,9 @@ for N in [Float64, Rational{Int}, Float32]
     # boundedness
     @test isbounded(z)
 
+    # is_polyhedral
+    @test is_polyhedral(z)
+
     # isempty
     @test !isempty(z)
 
