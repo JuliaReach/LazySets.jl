@@ -11,6 +11,7 @@ dim(::VPolytope)
 ∈(::AbstractVector{N}, ::VPolytope{N}) where {N}
 rand(::Type{VPolytope})
 translate(::VPolytope, ::AbstractVector)
+translate!(::VPolytope, ::AbstractVector)
 vertices_list(::VPolytope)
 remove_redundant_vertices(::VPolytope{N}) where {N}
 constraints_list(::VPolytope)

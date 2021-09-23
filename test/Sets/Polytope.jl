@@ -186,6 +186,8 @@ for N in [Float64, Rational{Int}, Float32]
 
     # translation
     @test translate(p, N[1, 2]) == VPolytope([N[1, 2], N[2, 2], N[1, 3]])
+    pp = copy(p)
+    @test translate!(pp, N[1, 2]) == VPolytope([N[1, 2], N[2, 2], N[1, 3]]) == pp
 
     # copy (see #1002)
     p, q = [N(1)], [N(2)]
