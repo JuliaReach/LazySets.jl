@@ -78,6 +78,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # translation
     @test translate(E, N[1, 2]) == E
+    @test translate!(E, N[1, 2]) == E
 
     # disjointness
     for X in [B, Singleton(N[0, 0])]
