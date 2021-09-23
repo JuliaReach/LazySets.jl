@@ -346,7 +346,7 @@ The empty set.
 See also [`translate!(::EmptySet, ::AbstractVector)`](@ref) for the in-place version.
 """
 function translate(∅::EmptySet, v::AbstractVector)
-    return ∅
+    return translate!(∅, v)
 end
 
 """
@@ -368,6 +368,8 @@ The empty set.
 See also [`translate(::EmptySet, ::AbstractVector)`](@ref) for the out-of-place version.
 """
 function translate!(∅::EmptySet, v::AbstractVector)
+    @assert length(v) == dim(∅) "cannot translate a $(dim(∅))-dimensional " *
+                                "set by a $(length(v))-dimensional vector"
     return ∅
 end
 
