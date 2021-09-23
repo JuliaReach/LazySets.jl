@@ -85,6 +85,8 @@ for N in [Float64, Rational{Int}, Float32]
 
     # translation
     @test translate(s, N[1, 2]) == Singleton(N[2, 4])
+    ss = copy(s)
+    @test translate!(ss, N[1, 2]) == Singleton(N[2, 4]) == ss
 
     # subset
     s1 = Singleton(N[0, 1])
