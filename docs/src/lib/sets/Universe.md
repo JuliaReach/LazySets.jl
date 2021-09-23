@@ -22,5 +22,6 @@ constraints(::Universe{N}) where {N}
 constraints_list(::Universe{N}) where {N}
 constrained_dimensions(::Universe)
 translate(::Universe, ::AbstractVector)
+translate!(::Universe, ::AbstractVector)
 polyhedron(::Universe)
 ```

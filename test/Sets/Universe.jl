@@ -59,6 +59,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # translation
     @test translate(U, N[1, 2]) == U
+    @test translate!(U, N[1, 2]) == U
 
     # constraints / constraints_list
     @test collect(constraints(U)) == constraints_list(U) == Vector{N}()
