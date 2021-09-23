@@ -429,6 +429,11 @@ A translated interval.
 ### Algorithm
 
 We add the vector to the left and right of the interval.
+
+### Notes
+
+The in-place version is not available because interval types
+are immutable.
 """
 function translate(x::Interval, v::AbstractVector)
     @assert length(v) == dim(x) "cannot translate a $(dim(x))-dimensional " *
