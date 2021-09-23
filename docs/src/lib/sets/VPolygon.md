@@ -15,6 +15,7 @@ tohrep(::VPolygon{N}, ::Type{HPOLYGON}=HPolygon) where {N, HPOLYGON<:AbstractHPo
 tovrep(::VPolygon)
 constraints_list(::VPolygon)
 translate(::VPolygon, ::AbstractVector)
+translate!(::VPolygon, ::AbstractVector)
 remove_redundant_vertices(::VPolygon; ::String="monotone_chain")
 remove_redundant_vertices!(::VPolygon; ::String="monotone_chain")
 ```
