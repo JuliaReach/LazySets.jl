@@ -326,9 +326,9 @@ function diameter(U::Universe, p::Real=Inf)
 end
 
 """
-    translate(U::Universe, v::AbstractVector)
+    translate!(U::Universe, v::AbstractVector)
 
-Translate (i.e., shift) a universe by a given vector.
+Translate (i.e., shift) a universe by a given vector, in-place.
 
 ### Input
 
