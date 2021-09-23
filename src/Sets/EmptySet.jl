@@ -342,6 +342,12 @@ Translate (i.e., shift) an empty set by a given vector.
 The empty set.
 """
 function translate(∅::EmptySet, v::AbstractVector)
+    return translate!(∅, v)
+end
+
+function translate!(∅::EmptySet, v::AbstractVector)
+    @assert length(v) == dim(∅) "cannot translate a $(dim(∅))-dimensional " *
+                                "set by a $(length(v))-dimensional vector"
     return ∅
 end
 

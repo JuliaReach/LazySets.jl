@@ -10,6 +10,7 @@ rand(::Type{Singleton})
 element(::Singleton)
 element(::Singleton, ::Int)
 translate(::Singleton, ::AbstractVector)
+translate!(::Singleton, ::AbstractVector)
 rectify(S::Singleton)
 project(::Singleton, ::AbstractVector{Int})
 ```
