@@ -628,7 +628,7 @@ We add the vector to each vertex of the polygon.
 See also [`translate!(::VPolygon, AbstractVector)`](@ref) for the in-place version.
 """
 function translate(P::VPolygon, v::AbstractVector)
-    return translate!(copy(P), v)
+    return translate!(deepcopy(P), v)
 end
 
 """

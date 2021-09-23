@@ -344,7 +344,7 @@ We add the vector to each vertex of the polytope.
 See also [`translate!(::VPolytope, AbstractVector)`](@ref) for the in-place version.
 """
 function translate(P::VPolytope, v::AbstractVector)
-    return translate!(copy(P), v)
+    return translate!(deepcopy(P), v)
 end
 
 """
