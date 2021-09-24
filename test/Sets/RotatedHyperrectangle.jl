@@ -35,6 +35,9 @@ for N in [Float64, Rational{Int}, Float32]
     # boundedness
     @test isbounded(R)
 
+    # is_polyhedral
+    @test is_polyhedral(R)
+
     # isempty
     @test !isempty(R)
 

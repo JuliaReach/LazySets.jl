@@ -97,7 +97,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # generators matrix for sparse hyperrectangle
     @test genmat(Hyperrectangle(sparsevec(N[3, 2]), sparsevec(N[2, 1]))) isa SparseMatrixCSC
-        
+
     # alternative constructor
     c = ones(N, 2)
     r = N[2, 3]
@@ -121,6 +121,9 @@ for N in [Float64, Rational{Int}, Float32]
 
     # boundedness
     @test isbounded(H)
+
+    # is_polyhedral
+    @test is_polyhedral(H)
 
     # isempty
     @test !isempty(H)

@@ -21,6 +21,9 @@ for N in [Float64, Rational{Int}, Float32]
     # boundedness
     @test isbounded(Z)
 
+    # is_polyhedral
+    @test is_polyhedral(Z)
+
     # element & an_element function
     @test element(Z) ∈ Z
     @test element(Z, 1) == 0

@@ -26,6 +26,13 @@ for N in [Float64, Rational{Int}, Float32]
     I2 = Hyperplane(ones(N, 2), N(1)) ∩ HalfSpace(ones(N, 2), N(1))
     @test !isbounded(I2) && !isboundedtype(typeof(I2))
 
+    # is_polyhedral
+    @test is_polyhedral(I)
+    if N isa AbstractFloat
+        I2 = Intersection(B, Ball2(N[0, 0], N(1)))
+        @test !is_polyhedral(I2)
+    end
+
     # emptiness of intersection
     @test !isempty_known(I)
     @test !isempty(I)

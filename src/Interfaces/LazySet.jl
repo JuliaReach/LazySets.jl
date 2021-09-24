@@ -25,6 +25,7 @@ export LazySet,
        isoperationtype,
        isequivalent,
        isconvextype,
+       is_polyhedral,
        area,
        surface,
        singleton_list,
@@ -338,6 +339,25 @@ function _isbounded_unit_dimensions(S::LazySet{N}) where {N}
         end
     end
     return true
+end
+
+"""
+    is_polyhedral(S::LazySet)
+
+Trait for polyhedral sets.
+
+### Input
+
+- `S` -- set
+
+### Output
+
+`true` only if the set behaves like an [`AbstractPolyhedron`](@ref).
+The answer is conservative, i.e., may sometimes be `false` even if the set is
+polyhedral.
+"""
+function is_polyhedral(S::LazySet)
+    return false
 end
 
 """

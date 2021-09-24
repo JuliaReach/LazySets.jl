@@ -48,9 +48,10 @@ isoperationtype(::Type{<:Complement}) = true
 isconvextype(::Type{<:Complement}) = false
 
 # special cases which are always convex
-isconvextype(::Type{Complement{N, HalfSpace{N, VN}}}) where {N, VN} = true
-isconvextype(::Type{Complement{N, EmptySet{N}}}) where {N} = true
-isconvextype(::Type{Complement{N, Universe{N}}}) where {N} = true
+isconvextype(::Type{<:Complement{N, <:Union{EmptySet, HalfSpace, Universe}}}) where {N} = true
+
+is_polyhedral(::Complement) where {N} = false
+is_polyhedral(::Complement{N, <:Union{EmptySet, HalfSpace}}) where {N} = true
 
 # the complement of the complement is the original set again
 Complement(C::Complement) = C.X

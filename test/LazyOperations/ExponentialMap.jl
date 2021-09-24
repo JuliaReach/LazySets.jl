@@ -74,6 +74,13 @@ for N in [Float64, Float32]
     emap2 = me * HalfSpace(ones(N, n), N(1))
     @test !isbounded(emap2) && !isboundedtype(typeof(emap2))
 
+    # is_polyhedral
+    @test is_polyhedral(emap)
+    if N isa AbstractFloat
+        emap2 = me * Ball2(zeros(N, n), N(1))
+        @test !is_polyhedral(emap2)
+    end
+
     # isempty
     @test !isempty(emap)
 

@@ -91,10 +91,6 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws AssertionError HPolygonOpt(LinearConstraint{N, Vector{N}}[];
                                            check_boundedness=true)
 
-    # isempty
-    @test !isempty(p)
-    @test !isempty(po)
-
     # subset
     b1 = Ball1(N[0, 0], N(1))
     b2 = Ball1(N[1, 1], N(4))
@@ -153,9 +149,15 @@ for N in [Float64, Float32, Rational{Int}]
         addconstraint!(hp_shallow, c1)
         @test_throws AssertionError an_element(hp_shallow)
 
+        # is_polyhedral
+        @test is_polyhedral(hp)
+
         # isuniversal
         answer, w = isuniversal(hp, true)
         @test !isuniversal(hp) && !answer && w ∉ hp
+
+        # isempty
+        @test !isempty(hp)
 
         # hrep conversion
         @test tohrep(hp) == hp
@@ -321,6 +323,9 @@ for N in [Float64, Float32, Rational{Int}]
     v = N[-1, -17//5]
     p = VPolygon([N[2, 3], v])
     @test v ∈ p
+
+    # is_polyhedral
+    @test is_polyhedral(p)
 
     # an_element function
     p = VPolygon([N[2, 3]])

@@ -12,6 +12,9 @@ for N in [Float32, Float64, Rational{Int}]
     @test offset(P) == c
     @test dim(P) == 3
 
+    # is_polyhedral
+    @test is_polyhedral(P)
+
     # check constructor's size check
     @test_throws AssertionError HParallelotope(D, vcat(c, c))
 

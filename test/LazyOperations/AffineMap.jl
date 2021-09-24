@@ -38,6 +38,13 @@ for N in [Float64, Rational{Int}, Float32]
     am2 = AffineMap(M, Universe{N}(3), v)
     @test !isbounded(am2) && !isboundedtype(typeof(am2))
 
+    # is_polyhedral
+    @test is_polyhedral(am)
+    if N isa AbstractFloat
+        am3 = AffineMap(M, Ball2(zeros(N, 3), N(1)), v)
+        @test !is_polyhedral(am3)
+    end
+
     # function to get an element
     @test (an_element(am) - am.v) ∈ (am.M * am.X)
     @test an_element(am) ∈ am.M * am.X ⊕ am.v

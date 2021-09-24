@@ -44,6 +44,9 @@ for N in [Float64, Rational{Int}, Float32]
     # boundedness
     @test isbounded(s)
 
+    # is_polyhedral
+    @test is_polyhedral(s)
+
     # element function
     @test element(s) == s.element
     for i in 1:2

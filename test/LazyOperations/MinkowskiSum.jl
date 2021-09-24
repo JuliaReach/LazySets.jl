@@ -60,6 +60,13 @@ for N in [Float64, Rational{Int}, Float32]
     ms2 = Singleton(N[1]) + HalfSpace(N[1], N(1))
     @test !isbounded(ms2) && !isboundedtype(typeof(ms2))
 
+    # is_polyhedral
+    @test is_polyhedral(ms)
+    if N isa AbstractFloat
+        ms2 = MinkowskiSum(b1, Ball2(N[0, 0], N(1)))
+        @test !is_polyhedral(ms2)
+    end
+
     # isempty
     @test !isempty(ms)
 

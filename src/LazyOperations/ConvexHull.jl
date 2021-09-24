@@ -52,6 +52,7 @@ end
 
 isoperationtype(::Type{<:ConvexHull}) = true
 isconvextype(::Type{<:ConvexHull}) = true
+is_polyhedral(ch::ConvexHull) = is_polyhedral(ch.X) && is_polyhedral(ch.Y)
 
 # EmptySet is the neutral element for ConvexHull
 @neutral(ConvexHull, EmptySet)

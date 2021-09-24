@@ -68,6 +68,7 @@ end
 
 isoperationtype(::Type{<:CartesianProduct}) = true
 isconvextype(::Type{CartesianProduct{N, S1, S2}}) where {N, S1, S2} = isconvextype(S1) && isconvextype(S2)
+is_polyhedral(cp::CartesianProduct) = is_polyhedral(cp.X) && is_polyhedral(cp.Y)
 
 # EmptySet is the absorbing element for CartesianProduct
 @absorbing(CartesianProduct, EmptySet)

@@ -33,6 +33,7 @@ abstract type AbstractAffineMap{N, S<:LazySet{N}} <: LazySet{N} end
 
 isoperationtype(::Type{<:AbstractAffineMap}) = true
 isconvextype(::Type{<:AbstractAffineMap{N, S}}) where {N, S} = isconvextype(S)
+is_polyhedral(am::AbstractAffineMap) = is_polyhedral(set(am))
 
 
 # --- common AbstractAffineMap functions ---

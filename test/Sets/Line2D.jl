@@ -39,6 +39,9 @@ for N in [Float64, Rational{Int}, Float32]
     # boundedness
     @test !isbounded(l1)
 
+    # is_polyhedral
+    @test is_polyhedral(l1)
+
     # universality
     @test !isuniversal(l1)
     res, w = isuniversal(l1, true)
