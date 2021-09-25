@@ -304,6 +304,10 @@ for N in [Float64]
         constraints = [HalfSpace(N[1], N(0)), HalfSpace(N[-1], N(-1)), HalfSpace(N[-1], N(-1))]
         result = remove_redundant_constraints!(constraints)
         @test !result
+        # removing redundant constraints does not alter the original polyhedron
+        P = HPolyhedron([HalfSpace(N[1], N(0)), HalfSpace(N[1], N(1))])
+        Q = remove_redundant_constraints(P)
+        @test length(P.constraints) == 2 && length(Q.constraints) == 1
 
         # checking for empty intersection (also test symmetric calls)
         P = convert(HPolytope, BallInf(zeros(N, 2), N(1)))
