@@ -77,6 +77,11 @@ _rationalize(x::AbstractVecOrMat{N}; kwargs...) where {N<:AbstractFloat} = _rati
 # fallback for scalars
 _rationalize(::Type{T}, x::AbstractFloat, tol::Real) where {T<:Integer} = rationalize(T, x, tol)
 
+# nested vectors
+function _rationalize(::Type{T}, x::AbstractVecOrMat{<:AbstractVecOrMat{N}}, tol::Real) where {T<:Integer, N<:AbstractFloat}
+    return _rationalize.(Ref(T), x, Ref(tol))
+end
+
 """
     rectify(x::AbstractArray{N}) where {N<:Real}
 
