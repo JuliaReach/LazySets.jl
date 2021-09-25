@@ -120,6 +120,7 @@ The vertices of the output polygon are sorted in counter-clockwise fashion.
 function remove_redundant_vertices!(P::VPolygon;
                                     algorithm::String="monotone_chain")
     convex_hull!(P.vertices; algorithm=algorithm)
+    return P
 end
 
 """
