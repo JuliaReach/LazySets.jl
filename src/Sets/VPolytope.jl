@@ -65,15 +65,6 @@ VPolytope{N}() where {N} = VPolytope(Vector{Vector{N}}())
 # constructor for a VPolytope with no vertices of type Float64
 VPolytope() = VPolytope{Float64}()
 
-# constructor from a polygon in V-representation
-function VPolytope(P::VPolygon, share::Bool=false)
-    v = vertices_list(P)
-    if !share
-        v = copy(v)
-    end
-    return VPolytope(v)
-end
-
 # constructor from rectangular matrix
 function VPolytope(vertices_matrix::MT) where {N, MT<:AbstractMatrix{N}}
     vertices = [vertices_matrix[:, j] for j in 1:size(vertices_matrix, 2)]

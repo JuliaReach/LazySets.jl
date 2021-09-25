@@ -151,7 +151,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # constructor from a VPolygon
     polygon = VPolygon([N[0, 0], N[1, 0], N[0, 1]])
-    p = VPolytope(polygon)
+    p = convert(VPolytope, polygon)
     @test vertices_list(polygon) == vertices_list(p)
 
     # dim
