@@ -324,6 +324,10 @@ for N in [Float64, Float32, Rational{Int}]
     p = VPolygon([N[2, 3], v])
     @test v ∈ p
 
+    P = VPolygon([N[0, 0], [0, 1], [0, 2]], apply_convex_hull=false)
+    Q = remove_redundant_vertices(P)
+    @test length(P.vertices) == 3 && length(Q.vertices) == 2
+
     # is_polyhedral
     @test is_polyhedral(p)
 
