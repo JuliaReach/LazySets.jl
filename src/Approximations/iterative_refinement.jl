@@ -176,7 +176,7 @@ function tohrep(Ω::PolygonalOverapproximation)
         return HPolygon(Ω.constraints, sort_constraints=false)
     end
     # some constraints not finalized yet
-    constraints = copy(Ω.constraints)
+    constraints = Ω.constraints
     for approx in Ω.approx_stack
         push!(constraints, constraint(approx))
     end
