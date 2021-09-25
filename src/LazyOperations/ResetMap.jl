@@ -296,7 +296,7 @@ We then modify the right-hand side of these constraints to ``x₅ ≤ 4`` and
 ``-x₅ ≤ -4``, respectively.
 """
 function constraints_list(rm::ResetMap{N}) where {N}
-    constraints = copy(constraints_list(LinearMap(matrix(rm), set(rm))))
+    constraints = constraints_list(LinearMap(matrix(rm), set(rm)))
     for (i, c) in enumerate(constraints)
         constrained_dim = find_unique_nonzero_entry(c.a)
         if constrained_dim > 0  # constraint in only one dimension
