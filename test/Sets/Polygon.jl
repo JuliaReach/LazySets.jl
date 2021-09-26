@@ -556,6 +556,10 @@ for N in [Float64, Float32]
     x = VPolygon([N[1, 1]])
     y = VPolygon([N[2, 1]])
     @test minkowski_sum(x, y) == VPolygon([N[3, 2]])
+
+    # rationalize
+    P = VPolygon([N[1, 2], N[3, 4]])
+    @test rationalize(P) == VPolygon([[1//1, 2//1], [3//1, 4//1]])
 end
 
 for N in [Float64]
