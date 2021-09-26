@@ -58,9 +58,14 @@ struct HParallelotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: Abstra
     offset::VN
 
     # default constructor with dimension check
-    function HParallelotope(D::MN, c::VN) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}}
+    function HParallelotope(D::MN, c::VN;
+                            check_emptiness::Bool=true) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}}
         @assert length(c) == 2*checksquare(D) "the length of the offset direction should be twice the size " *
             "of the directions matrix, but they are $(length(c)) and $(size(D)) dimensional respectively"
+        if check_emptiness
+            @assert !isempty(HPolyhedron(_constraints_list_hparallelotope(D, c))) "the " *
+                "parallelotope is empty"
+        end
         return new{N, VN, MN}(D, c)
     end
 end
@@ -301,7 +306,11 @@ The list of constraints of `P`.
 """
 function constraints_list(P::HParallelotope{N, VN}) where {N, VN}
     D, c = P.directions, P.offset
-    n = dim(P)
+    return _constraints_list_hparallelotope(D, c)
+end
+
+function _constraints_list_hparallelotope(D, c::VN) where {N, VN<:AbstractVector{N}}
+    n = size(D, 1)
     if isempty(D)
         return Vector{LinearConstraint{N, VN}}()
     end
@@ -334,6 +343,12 @@ A random parallelotope.
 ### Notes
 
 All numbers are normally distributed with mean 0 and standard deviation 1.
+
+### Algorithm
+
+We construct random constraints and then check for emptiness of the result.
+If the result is empty, we repeat the process, and hence the run time is not
+predictable.
 """
 function rand(::Type{HParallelotope};
               N::Type{<:Real}=Float64,
@@ -341,7 +356,11 @@ function rand(::Type{HParallelotope};
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int, Nothing}=nothing)
     rng = reseed(rng, seed)
-    D = randn(N, dim, dim)
-    offset = randn(N, 2 * dim)
-    return HParallelotope(D, offset)
+    while true
+        D = randn(N, dim, dim)
+        offset = randn(N, 2 * dim)
+        if !isempty(HPolyhedron(_constraints_list_hparallelotope(D, offset)))
+            return HParallelotope(D, offset; check_emptiness=false)
+        end
+    end
 end

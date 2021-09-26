@@ -7,6 +7,10 @@ for N in [Float32, Float64, Rational{Int}]
     c = N[-0.80, -0.95, 0.0, 0.85, 1.0, 0.0]
     P = HParallelotope(D, c)
 
+    D2 = N[1 1; 0 1]
+    c2 = N[2, 2, -4, -1]
+    @test_throws AssertionError HParallelotope(D2, c2)
+
     # test getter functions
     @test directions(P) == D
     @test offset(P) == c
