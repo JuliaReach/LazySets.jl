@@ -69,6 +69,10 @@ for N in [Float64, Float32]
     svec_explicit = σ(d, exp(Matrix(m)) * b)
     @test svec ≈ svec_explicit
 
+    # concretize
+    X = concretize(emap)
+    @test σ(d, X) ≈ svec
+
     # boundedness
     @test isbounded(emap) && isboundedtype(typeof(emap))
     emap2 = me * HalfSpace(ones(N, n), N(1))
