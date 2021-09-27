@@ -202,7 +202,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test !is_intersection_empty(H1, B2) && !intersection_empty && point ∈ H1 &&
           point ∈ B2
 
-    # linear map (concrete)
+    # concrete linear map
     P = linear_map(N[1 0; 0 2], H1)
     @test P isa Zonotope
     P = linear_map(Diagonal(N[1, 2, 3, 4]), overapproximate(H1 * H1))
@@ -294,4 +294,9 @@ for N in [Float64, Float32]
             @test distance(x, H) == distance(H, x) ≈ distance(x, y, p=N(2))
         end
     end
+
+    # concrete exponential map
+    Z = exponential_map(N[1 0; 0 2], H)
+    @test Z isa Zonotope && center(Z) == N[exp(1), 2 * exp(2)] &&
+        genmat(Z) == N[2 * exp(1) 0; 0 3 * exp(2)]
 end

@@ -66,6 +66,7 @@ an_element(::LazySet{N}) where {N}
 tosimplehrep(::LazySet)
 isuniversal(::LazySet{N}, ::Bool=false) where {N}
 affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector)
+exponential_map(::AbstractMatrix, ::LazySet)
 reflect(::LazySet)
 is_interior_point(::AbstractVector{N}, ::LazySet{N}; p=Inf, ε=_rtol(N)) where {N<:Real}
 isoperationtype(::Type{<:LazySet})
