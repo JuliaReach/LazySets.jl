@@ -19,6 +19,7 @@ export LazySet,
        isuniversal,
        translate,
        affine_map,
+       exponential_map,
        reflect,
        is_interior_point,
        isoperation,
@@ -450,6 +451,28 @@ The implementation applies the functions `linear_map` and `translate`.
 """
 function affine_map(M::AbstractMatrix, X::LazySet, v::AbstractVector; kwargs...)
     return translate(linear_map(M, X; kwargs...), v)
+end
+
+"""
+    exponential_map(M::AbstractMatrix, X::LazySet)
+
+Compute the concrete exponential map of `M` and `X`, i.e., `exp(M) * X`.
+
+### Input
+
+- `M` -- matrix
+- `X` -- set
+
+### Output
+
+A set representing the exponential map of `M` and `X`.
+
+### Algorithm
+
+The implementation applies the functions `exp` and `linear_map`.
+"""
+function exponential_map(M::AbstractMatrix, X::LazySet)
+    return linear_map(exp(M), X)
 end
 
 """

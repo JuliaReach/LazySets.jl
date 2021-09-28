@@ -349,6 +349,10 @@ function ρ(d::AbstractVector, em::ExponentialMap)
     return ρ(v, em.X)
 end
 
+function concretize(em::ExponentialMap)
+    return exponential_map(Matrix(em.spmexp.M), concretize(em.X))
+end
+
 """
     ∈(x::AbstractVector, em::ExponentialMap)
 
