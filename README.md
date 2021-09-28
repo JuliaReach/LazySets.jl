@@ -7,7 +7,7 @@
 [![Code coverage](http://codecov.io/github/JuliaReach/LazySets.jl/coverage.svg?branch=master)](https://codecov.io/github/JuliaReach/LazySets.jl?branch=master)
 [![Join the chat at https://gitter.im/JuliaReach/Lobby](https://badges.gitter.im/JuliaReach/Lobby.svg)](https://gitter.im/JuliaReach/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-`LazySets` is a [Julia](http://julialang.org) package for calculus with convex sets.
+**Scalable Symbolic-Numeric Set Computations**
 
 ## 🎯 Resources
 
