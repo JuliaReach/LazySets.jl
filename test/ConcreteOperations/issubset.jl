@@ -22,7 +22,7 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # using IA types
-    X = interval(N(0), N(1)) # IA
+    X = IA.interval(N(0), N(1)) # IA
     Y = Interval(N(-1), N(2))
     @test X ⊆ Y
     @test !(Y ⊆ X)
