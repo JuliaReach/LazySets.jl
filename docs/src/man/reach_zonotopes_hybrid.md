@@ -53,7 +53,7 @@ function reach_hybrid(As, Ts, init, δ, μ, T, max_order, instant_transitions)
             S = R[i]
             push!(res, (S, loc))
             for (guard, tgt_loc) in Ts[loc]
-                if !is_intersection_empty(S, guard)
+                if !isdisjoint(S, guard)
                     new_t = t + δ * i
                     push!(queue, (S, tgt_loc, new_t))
                     found_transition = true
