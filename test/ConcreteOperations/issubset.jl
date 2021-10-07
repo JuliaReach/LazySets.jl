@@ -27,7 +27,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test X ⊆ Y
     @test !(Y ⊆ X)
 
-    X = IntervalBox(N(0) .. N(1), N(0) .. N(1))
+    X = IntervalBox(IA.interval(N(0), N(1)), IA.interval(N(0), N(1)))
     Y = Hyperrectangle(low=[N(-1), N(-1)], high=[N(2), N(2)])
     @test X ⊆ Y
     @test !(Y ⊆ X)
