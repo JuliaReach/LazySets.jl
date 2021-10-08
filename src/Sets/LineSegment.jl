@@ -48,7 +48,7 @@ LineSegment{Float64, Vector{Float64}}([1.0, 0.0], [0.0, 1.0])
 julia> isempty(s ∩ sn)
 false
 
-julia> is_intersection_empty(s, sn, true)
+julia> isdisjoint(s, sn, true)
 (false, [0.5, 0.5])
 ```
 """

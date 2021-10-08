@@ -658,7 +658,7 @@ function isempty(cap::Intersection)
         return isempty(cap.cache)
     end
     # compute result
-    empty_intersection = is_intersection_empty(cap.X, cap.Y)
+    empty_intersection = isdisjoint(cap.X, cap.Y)
     # update cache
     set_isempty!(cap, empty_intersection)
 

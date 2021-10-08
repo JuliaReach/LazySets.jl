@@ -327,18 +327,18 @@ plot_points(witnesses, "w")
 plot1
 ```
 
-### `is_intersection_empty`
+### `isdisjoint`
 
 This function checks whether the intersection of two sets is empty.
 It can optionally produce a witness if the intersection is nonempty.
 Disjointness checks with `Ball2` are not supported yet.
 
 ```@example set_operations
-println(is_intersection_empty(BI, H))
-w1 = is_intersection_empty(BI, H, true)[2]
-println(is_intersection_empty(B1, BI))
-w2 = is_intersection_empty(B1, BI, true)[2]
-println(is_intersection_empty(B1, H))
+println(isdisjoint(BI, H))
+w1 = isdisjoint(BI, H, true)[2]
+println(isdisjoint(B1, BI))
+w2 = isdisjoint(B1, BI, true)[2]
+println(isdisjoint(B1, H))
 ```
 
 ```@example set_operations
