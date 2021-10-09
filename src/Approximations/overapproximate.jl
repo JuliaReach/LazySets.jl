@@ -1050,7 +1050,7 @@ end # load_taylormodels_overapproximation
 function load_intervalmatrices_overapproximation()
 return quote
 
-using .IntervalMatrices: AbstractIntervalMatrix, split
+using .IntervalMatrices: AbstractIntervalMatrix, midpoint_radius
 
 # temporary patch for IntervalArithmetic#317
 function convert(::Type{IntervalMatrices.Interval{T}},
@@ -1096,7 +1096,7 @@ uncertain parameters and inputs. CDC 2007.
 function overapproximate(lm::LinearMap{N, <:AbstractZonotope, NM,
                                        <:AbstractIntervalMatrix{NM}},
                          ::Type{<:Zonotope}) where {N, NM}
-    Mc, Ms = split(lm.M)
+    Mc, Ms = midpoint_radius(lm.M)
     Z = lm.X
     c = Mc * center(Z)
     n = dim(lm)
