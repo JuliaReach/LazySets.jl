@@ -2,7 +2,7 @@ for N in [Float64, Float32, Rational{Int}]
 
     # using IA types
     X = IA.interval(N(0), N(1)) # IA
-    Y = IA.Interval(N(-1), N(2))
+    Y = Interval(N(-1), N(2))
     @test !isdisjoint(X, Y)
     @test !isdisjoint(Y, X)
 
