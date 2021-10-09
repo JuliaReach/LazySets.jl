@@ -51,11 +51,11 @@ end
 const is_intersection_empty = isdisjoint
 
 # conversion for IA types
-is_intersection_empty(X::LazySet, Y::IA.Interval) = is_intersection_empty(X, Interval(Y))
-is_intersection_empty(X::IA.Interval, Y::LazySet) = is_intersection_empty(Interval(X), Y)
+isdisjoint(X::LazySet, Y::IA.Interval) = isdisjoint(X, Interval(Y))
+isdisjoint(X::IA.Interval, Y::LazySet) = isdisjoint(Interval(X), Y)
 
-is_intersection_empty(X::LazySet, Y::IA.IntervalBox) = is_intersection_empty(X, convert(Hyperrectangle, Y))
-is_intersection_empty(X::IA.IntervalBox, Y::LazySet) = is_intersection_empty(convert(Hyperrectangle, X), Y)
+isdisjoint(X::LazySet, Y::IA.IntervalBox) = isdisjoint(X, convert(Hyperrectangle, Y))
+isdisjoint(X::IA.IntervalBox, Y::LazySet) = isdisjoint(convert(Hyperrectangle, X), Y)
 
 # --- AbstractHyperrectangle ---
 
