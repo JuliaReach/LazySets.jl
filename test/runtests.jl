@@ -148,6 +148,7 @@ if test_suite_basic
     @time @testset "LazySets.concrete_convex_hull" begin include("ConcreteOperations/convex_hull.jl") end
     @time @testset "LazySets.concrete_cartesian_product" begin include("ConcreteOperations/cartesian_product.jl") end
     @time @testset "LazySets.issubset" begin include("ConcreteOperations/issubset.jl") end
+    @time @testset "LazySets.isdisjoint" begin include("ConcreteOperations/isdisjoint.jl") end
     @time @testset "LazySets.distance" begin include("ConcreteOperations/distance.jl") end
     @time @testset "LazySets.isstrictsubset" begin include("ConcreteOperations/isstrictsubset.jl") end
     @time @testset "LazySets.samples" begin include("ConcreteOperations/samples.jl") end

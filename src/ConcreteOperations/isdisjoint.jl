@@ -50,6 +50,13 @@ end
 
 const is_intersection_empty = isdisjoint
 
+# conversion for IA types
+isdisjoint(X::LazySet, Y::IA.Interval) = isdisjoint(X, Interval(Y))
+isdisjoint(X::IA.Interval, Y::LazySet) = isdisjoint(Interval(X), Y)
+
+isdisjoint(X::LazySet, Y::IA.IntervalBox) = isdisjoint(X, convert(Hyperrectangle, Y))
+isdisjoint(X::IA.IntervalBox, Y::LazySet) = isdisjoint(convert(Hyperrectangle, X), Y)
+
 # --- AbstractHyperrectangle ---
 
 """
