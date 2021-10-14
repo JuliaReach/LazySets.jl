@@ -6,7 +6,7 @@ authors:
   orcid: "https://orcid.org/0000-0002-9831-7801"
 - family-names: "Schilling"
   given-names: "Christian"
-  orcid: "https://orcid.org/"
+  orcid: "https://orcid.org/0000-0003-3658-1065"
 title: "LazySets.jl: Scalable Symbolic-Numeric Set Computations"
 doi: 10.5281/zenodo.5558803
 date-released: 2021-09-01
