@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Forets"
+  given-names: "Marcelo"
+  orcid: "https://orcid.org/0000-0002-9831-7801"
+- family-names: "Schilling"
+  given-names: "Christian"
+  orcid: "https://orcid.org/"
+title: "LazySets.jl: Scalable Symbolic-Numeric Set Computations"
+doi: 10.5281/zenodo.5558803
+date-released: 2021-09-01
+repository-code: "https://github.com/JuliaReach/LazySets.jl"
+preferred-citation:
+  type: software
+  authors:
+  - family-names: "Forets"
+    given-names: "Marcelo"
+    orcid: "https://orcid.org/0000-0002-9831-7801"
+  - family-names: "Schilling"
+    given-names: "Christian"
+    orcid: "https://orcid.org/0000-0003-3658-1065"
+  doi: ""
+  title: "LazySets.jl: Scalable Symbolic-Numeric Set Computations"
+  month: "September"
+  year: 2021
+  url: "https://github.com/JuliaReach/LazySets.jl"
