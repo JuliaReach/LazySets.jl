@@ -46,7 +46,9 @@ This library has been applied in a number of scientic works.
 <summary>Click to see the full list of publications that use LazySets.</summary>
   
 The articles appear in reverse chronological order.
-  
+
+[19] **LazySets. jl: Scalable Symbolic-Numeric Set Computations.** Marcelo Forets and Christian Schilling. arXiv preprint arXiv:2110.01711 (2021). Submitted to JuliaCon'21 Proceedings.
+ 
 [18] **Reachability of weakly nonlinear systems using Carleman linearization.** Marcelo Forets and Christian Schilling. arXiv preprint arXiv:2108.10390 (2021). Accepted in: 15th International Conference on Reachability Problems (2021). October 25-27 2021, Liverpool, UK.
 
 [17] **Combined Exact and Heuristics Based Approach to Hamiltonian Path Problem Optimization for Route Planning.** Fernando Hernandez, Rafael Sotelo and Marcelo Forets (2021). In Winkenbach, M., Parks, S., & Noszek, J. (Eds.), [Technical Proceedings of the 2021 Amazon Last Mile Routing Research Challenge](https://hdl.handle.net/1721.1/131235) (pp. XXI.1–XXI.12). MIT Libraries.
