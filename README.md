@@ -125,3 +125,8 @@ Workshop materials are available here: https://github.com/JuliaReach/JuliaCon-20
 </details>
 
 [![JuliaCon 2021 video](https://img.youtube.com/vi/P4I7pTvQ4nk/0.jpg)](https://youtu.be/P4I7pTvQ4nk)
+
+
+## How to cite
+
+If you use this package in your work, please cite it using the metadata in [CITATION.bib](https://github.com/JuliaReach/LazySets.jl/blob/master/CITATION.bib).
