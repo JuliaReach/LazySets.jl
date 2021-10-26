@@ -56,12 +56,14 @@ for N in [Float64, Rational{Int}, Float32]
     @test radius(p, Inf) ≈ N(3//10)
     @test diameter(p, Inf) ≈ N(6//10)
 
+    # metrics in the 2-norm
+    @test norm(p, 2) ≈ norm(high(p), 2)
+
     # ====================================
     #  failing case (not implemented yet)
     # ====================================
 
     s = MinkowskiSum(b, b)
-    @test_throws ErrorException norm(s, 2)
     @test_throws ErrorException radius(s, 2)
     @test_throws ErrorException diameter(s, 2)
 end
