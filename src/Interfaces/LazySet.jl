@@ -379,7 +379,7 @@ A real number representing the norm.
 """
 function norm(S::LazySet, p::Real=Inf)
     if p == Inf
-        return norm(Approximations.ballinf_approximation(S), p)
+        return norm(box_approximation(S), p)
     else
         error("the norm for this value of p=$p is not implemented")
     end

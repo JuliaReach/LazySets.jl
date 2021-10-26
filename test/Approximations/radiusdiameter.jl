@@ -46,6 +46,16 @@ for N in [Float64, Rational{Int}, Float32]
     @test radius(b, 2) ≈ N(sqrt(0.2^2 * 3))
     @test diameter(b, 2) ≈ N(2*sqrt(0.2^2 * 3))
 
+    # =========
+    #  Polygon
+    # =========
+
+    # metrics in the infinity norm (default)
+    p = convert(VPolygon, Hyperrectangle(N[0, 1], N[3//10, 2//10]))
+    @test norm(p, Inf) ≈ N(6//5)
+    @test radius(p, Inf) ≈ N(3//10)
+    @test diameter(p, Inf) ≈ N(6//10)
+
     # ====================================
     #  failing case (not implemented yet)
     # ====================================
