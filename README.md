@@ -1,6 +1,5 @@
 # LazySets.jl
-
-*Scalable Symbolic-Numeric Set Computations.*
+## *Scalable Symbolic-Numeric Set Computations*
 
 | **Documentation** |**Build Status** |**Community** |**Citation** |
 |:------------:|:----------------:|:-----------------:|:------------:|
@@ -18,6 +17,10 @@
 [doi-url]: https://zenodo.org/badge/latestdoi/105701832
 [lic-img]: https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000
 [lic-url]: https://github.com/JuliaReach/LazySets.jl/blob/master/LICENSE
+
+The following article showcases the basic functionality, highlighting some of the key design choices:
+
+> Forets, Marcelo, and Christian Schilling. *LazySets. jl: Scalable Symbolic-Numeric Set Computations.* [arXiv preprint arXiv:2110.01711](https://arxiv.org/abs/2110.01711) (2021).
 
 ## 🎯 Resources
 
@@ -90,7 +93,7 @@ The articles appear in reverse chronological order.
 
 ## :earth_africa: Ecosystem
 
-`LazySets.jl` is applied in a number of projects in the Julia technical computing stack.
+Several projects in the Julia technical computing stack use this library.
 
 <details>
 <summary>Click to see the full list of Julia packages that use LazySets.</summary>
@@ -127,6 +130,20 @@ Workshop materials are available here: https://github.com/JuliaReach/JuliaCon-20
 [![JuliaCon 2021 video](https://img.youtube.com/vi/P4I7pTvQ4nk/0.jpg)](https://youtu.be/P4I7pTvQ4nk)
 
 
-## How to cite
+## 📜 How to cite
 
 If you use this package in your work, please cite it using the metadata in [CITATION.bib](https://github.com/JuliaReach/LazySets.jl/blob/master/CITATION.bib).
+
+<details>
+<summary>Click to see BibTeX entry. </summary>
+
+```
+@article{lazysets21,
+  title={{LazySets.jl: Scalable Symbolic-Numeric Set Computations}},
+  author={Forets, Marcelo and Schilling, Christian},
+  journal={arXiv preprint arXiv:2110.01711},
+  year={2021}
+}
+```
+
+</details>
