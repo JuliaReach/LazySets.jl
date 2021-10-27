@@ -379,7 +379,9 @@ A real number representing the norm.
 """
 function norm(S::LazySet, p::Real=Inf)
     if p == Inf
-        return norm(Approximations.ballinf_approximation(S), p)
+        return norm(box_approximation(S), p)
+    elseif applicable(vertices_list, S)
+        return maximum(norm(v, p) for v in vertices_list(S))
     else
         error("the norm for this value of p=$p is not implemented")
     end

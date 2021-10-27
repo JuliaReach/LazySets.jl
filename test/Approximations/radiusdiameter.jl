@@ -46,12 +46,24 @@ for N in [Float64, Rational{Int}, Float32]
     @test radius(b, 2) ≈ N(sqrt(0.2^2 * 3))
     @test diameter(b, 2) ≈ N(2*sqrt(0.2^2 * 3))
 
+    # =========
+    #  Polygon
+    # =========
+
+    # metrics in the infinity norm (default)
+    p = convert(VPolygon, Hyperrectangle(N[0, 1], N[3//10, 2//10]))
+    @test norm(p, Inf) ≈ N(6//5)
+    @test radius(p, Inf) ≈ N(3//10)
+    @test diameter(p, Inf) ≈ N(6//10)
+
+    # metrics in the 2-norm
+    @test norm(p, 2) ≈ norm(high(p), 2)
+
     # ====================================
     #  failing case (not implemented yet)
     # ====================================
 
     s = MinkowskiSum(b, b)
-    @test_throws ErrorException norm(s, 2)
     @test_throws ErrorException radius(s, 2)
     @test_throws ErrorException diameter(s, 2)
 end
