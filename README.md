@@ -1,9 +1,9 @@
 # LazySets.jl
 ## *Scalable Symbolic-Numeric Set Computations*
 
-| **Documentation** |**Build Status** |**Community** |**Citation** |
-|:------------:|:----------------:|:-----------------:|:------------:|
-| [![docs-dev][dev-img]][dev-url] |[![CI][ci-img]][ci-url] [![codecov][cov-img]][cov-url]|[![gitter][chat-img]][chat-url]|[![zenodo][doi-img]][doi-url] [![license][lic-img]][lic-url]|
+| **Documentation** |**Build Status** |**Community** |**Version-specific Citation** | **License** |
+|:-----------------:|:---------------:|:------------:|:----------------------------:|:-----------:|
+| [![docs-dev][dev-img]][dev-url] |[![CI][ci-img]][ci-url] [![codecov][cov-img]][cov-url]|[![gitter][chat-img]][chat-url]|[![zenodo][doi-img]][doi-url] |[![license][lic-img]][lic-url]|
 
 [dev-img]: https://img.shields.io/badge/docs-latest-blue.svg
 [dev-url]: http://juliareach.github.io/LazySets.jl/dev/
