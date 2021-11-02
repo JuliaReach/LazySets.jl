@@ -43,7 +43,7 @@ Reexport = "0.2, 1"
 Requires = "0.5, 1"
 StaticArrays = "0.12, 1"
 Symbolics = "0.1"
-TaylorModels = "0.0.1, 0.1, 0.2, 0.3, 0.4"
+TaylorModels = "0.0.1, 0.1, 0.2, 0.3, 0.4, 0.5"
 WriteVTK = "1.10.1"
 julia = "1.3"
 
