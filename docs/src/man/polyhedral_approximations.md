@@ -24,11 +24,13 @@ The *support function* of ``\mathcal{X}`` is the function
 $\rho_\mathcal{X}(\ell) := \max\limits_{x \in \mathcal{X}} \ell^\mathrm{T} x.$
 
 We recall the following elementary properties of the support function.
+Let ``(\ell_1, \ell_2)`` denote the concatenation of vectors ``\ell_1`` and ``\ell_2``.
 
 **Proposition.** For all compact convex sets
-``\mathcal{X}``, ``\mathcal{Y}`` in ``\mathbb{R}^n``, for all ``n\times n`` real
-matrices ``M``, all scalars ``\lambda``, and all vectors
-``\ell \in \mathbb{R}^n``, we have:
+``\mathcal{X}``, ``\mathcal{Y}`` in ``\mathbb{R}^n``, ``\mathcal{Z}`` in ``\mathbb{R}^m``,
+all ``n\times n`` real matrices ``M``,
+all scalars ``\lambda``,
+and all vectors ``\ell, \ell_1 \in \mathbb{R}^n``, ``\ell_2 \in \mathbb{R}^m``, we have:
 
 ```math
 \begin{aligned}
@@ -39,7 +41,7 @@ matrices ``M``, all scalars ``\lambda``, and all vectors
 %
 \quad \rho_{\mathcal{X} \oplus \mathcal{Y}} (\ell) &= \rho_{\mathcal{X}} (\ell) + \rho_{\mathcal{Y}} (\ell) \\[1mm]
 %
-\quad \rho_{\mathcal{X} \times \mathcal{Y}} (\ell) &= \ell^\mathrm{T} \sigma_{\mathcal{X} \times \mathcal{Y}}(\ell) = \rho_{\mathcal{X}}(\ell_1) + \rho_{\mathcal{Y}}(\ell_2) \\[1mm]
+\quad \rho_{\mathcal{X} \times \mathcal{Z}} (\ell_1, \ell_2) &= (\ell_1, \ell_2)^\mathrm{T} \sigma_{\mathcal{X} \times \mathcal{Z}}(\ell_1, \ell_2) = \rho_{\mathcal{X}}(\ell_1) + \rho_{\mathcal{Z}}(\ell_2) \\[1mm]
 %
 \quad \rho_{\mathrm{CH}(\mathcal{X}\cup\mathcal{Y})} (\ell) &= \max (\rho_{\mathcal{X}} (\ell), \rho_{\mathcal{Y}} (\ell))
 \end{aligned}
@@ -70,7 +72,7 @@ as in Proposition 1, the following hold:
 %
 \quad \sigma_{\mathcal{X} \oplus \mathcal{Y}} (\ell) &= \sigma_{\mathcal{X}} (\ell) \oplus \sigma_{\mathcal{Y}} (\ell) \\[1mm]
 %
-\quad \sigma_{\mathcal{X} \times \mathcal{Y}} (\ell) &= (\sigma_{\mathcal{X}}(\ell_1), \sigma_{\mathcal{Y}}(\ell_2)), \text{ where } \ell = (\ell_1, \ell_2) \\[1mm]
+\quad \sigma_{\mathcal{X} \times \mathcal{Z}} (\ell_1, \ell_2) &= (\sigma_{\mathcal{X}}(\ell_1), \sigma_{\mathcal{Z}}(\ell_2)) \\[1mm]
 %
 \quad \sigma_{\mathrm{CH}(\mathcal{X}\cup\mathcal{Y})} (\ell) &=
 \text{argmax}_{x, y} (\ell^\mathrm{T} x, \ell^\mathrm{T} y),
