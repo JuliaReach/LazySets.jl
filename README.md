@@ -1,7 +1,7 @@
 # LazySets.jl
 ## *Scalable Symbolic-Numeric Set Computations*
 
-| **Documentation** |**Build Status** |**Community** |**Version-specific Citation** | **License** |
+| **Documentation** |**Status** |**Community** |**Version-specific Citation** | **License** |
 |:-----------------:|:---------------:|:------------:|:----------------------------:|:-----------:|
 | [![docs-dev][dev-img]][dev-url] |[![CI][ci-img]][ci-url] [![codecov][cov-img]][cov-url]|[![gitter][chat-img]][chat-url]|[![zenodo][doi-img]][doi-url] |[![license][lic-img]][lic-url]|
 
@@ -18,9 +18,13 @@
 [lic-img]: https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000
 [lic-url]: https://github.com/JuliaReach/LazySets.jl/blob/master/LICENSE
 
+## ❓ Introduction
+
 The following article showcases the basic functionality, highlighting some of the key design choices:
 
 > Forets, Marcelo, and Christian Schilling. *LazySets. jl: Scalable Symbolic-Numeric Set Computations.* [arXiv preprint arXiv:2110.01711](https://arxiv.org/abs/2110.01711) (2021).
+
+See [below](#how-to-cite) for how to cite it.
 
 ## 🎯 Resources
 
@@ -41,7 +45,7 @@ pkg> add LazySets
 
 See the [Getting started](https://juliareach.github.io/LazySets.jl/dev/man/getting_started/) section of the manual for other options.
 
-## :blue_book: Publications
+## 📘 Publications
 
 This library has been applied in a number of scientic works.
 
@@ -91,7 +95,7 @@ The articles appear in reverse chronological order.
 
 </details>
 
-## :earth_africa: Ecosystem
+## 🗺 Ecosystem
 
 Several projects in the Julia technical computing stack use this library.
 
