@@ -24,7 +24,7 @@ The following article showcases the basic functionality, highlighting some of th
 
 > Forets, Marcelo, and Christian Schilling. *LazySets. jl: Scalable Symbolic-Numeric Set Computations.* [arXiv preprint arXiv:2110.01711](https://arxiv.org/abs/2110.01711) (2021).
 
-See [below](#how-to-cite) for how to cite it.
+See [below](#-how-to-cite) for how to cite it.
 
 ## 🎯 Resources
 
