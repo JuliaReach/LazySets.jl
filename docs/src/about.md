@@ -102,7 +102,7 @@ Here we list the names of the maintainers of the `LazySets.jl` library, as well 
 ### Core developers
 
 - [Marcelo Forets](http://github.com/mforets), Universidad de la República
-- [Christian Schilling](https://schillic.github.io/), University of Konstanz
+- [Christian Schilling](https://www.christianschilling.net/), Aalborg University
 
 ### Contributors
 
