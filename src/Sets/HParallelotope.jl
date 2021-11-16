@@ -345,3 +345,7 @@ function rand(::Type{HParallelotope};
     offset = randn(N, 2 * dim)
     return HParallelotope(D, offset)
 end
+
+function isempty(P::HParallelotope)
+    return isempty(convert(HPolyhedron, P))
+end
