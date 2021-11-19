@@ -79,6 +79,18 @@ for N in [Float64, Rational{Int}, Float32]
             [N[1, -1], N[-1, 1], N[-1, -1], N[1, 2], N[2, 1]])
     end
 
+   # linear map
+   # (only a sufficient test because there is currently no equivalence check:
+   #  test that the map of the union is equivalent to the union of each map)
+   A = N[1 0; 0 1]
+   Y = linear_map(A, UXY)
+   @test isequivalent(Y.X, linear_map(A, UXY.X))
+   @test isequivalent(Y.Y, linear_map(A, UXY.Y))
+   Y = linear_map(A, Uarr)
+   for k in 1:length(array(Uarr))
+       @test isequivalent(array(Y)[k], linear_map(A, array(Uarr)[k]))
+   end
+
     # an_element and membership
     X = HPolyhedron([HalfSpace(N[1, 0], N(0)), HalfSpace(N[-1, 0], N(-1))])
     UXY = UnionSet(X, B1)
