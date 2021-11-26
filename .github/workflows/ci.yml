@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     paths-ignore:
-      - 'LICENSE.md'
+      - 'LICENSE'
       - 'README.md'
     branches:
       - master
@@ -40,21 +40,8 @@ jobs:
         with:
           version: ${{ matrix.julia-version }}
           arch: ${{ matrix.julia-arch }}
-      - name: Install dependencies
-        run: |
-          julia --project --color=yes -e 'using Pkg;
-              include(joinpath("deps", "build_private.jl"));
-              Pkg.build(verbose=true)'
-        shell: bash
-      - name: Build
-        run: |
-          julia --project --color=yes --check-bounds=yes -e 'using Pkg;
-              Pkg.test(coverage=true);
-              Pkg.add("Coverage");
-              using Coverage;
-              Codecov.submit(process_folder())'
-        shell: bash
-      - uses: actions/cache@v1
+      - name: Cache artifacts
+        uses: actions/cache@v1
         env:
           cache-name: cache-artifacts
         with:
@@ -64,7 +51,19 @@ jobs:
             ${{ runner.os }}-test-${{ env.cache-name }}-
             ${{ runner.os }}-test-
             ${{ runner.os }}-
-      - uses: julia-actions/julia-buildpkg@v1
+      - name: Install dependencies
+        run: |
+          julia --project --color=yes -e 'using Pkg;
+              include(joinpath("deps", "build_private.jl"));
+              Pkg.build(verbose=true)'
+        shell: bash
         continue-on-error: ${{ matrix.julia-version == 'nightly' }}
-      - uses: julia-actions/julia-runtest@v1
+      - name: Run tests
+        uses: julia-actions/julia-runtest@v1
         continue-on-error: ${{ matrix.julia-version == 'nightly' }}
+      - name: Process coverage
+        uses: julia-actions/julia-processcoverage@v1
+      - name: Upload coverage
+        uses: codecov/codecov-action@v2
+        with:
+          files: lcov.info
