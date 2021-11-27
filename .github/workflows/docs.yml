@@ -2,6 +2,9 @@ name: Documentation
 
 on:
   push:
+    paths-ignore:
+      - 'LICENSE'
+      - 'README.md'
     branches:
       - master
     tags: '*'
