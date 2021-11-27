@@ -2,10 +2,6 @@ using LazySets, LazySets.Approximations, Test, LinearAlgebra, SparseArrays, Stat
 
 using LazySets: _leq, _geq, isapproxzero, _isapprox, _ztol
 
-import IntervalArithmetic
-const IA = IntervalArithmetic
-using IntervalArithmetic: IntervalBox
-
 # fix random number generator seed
 using Random
 Random.seed!(1234)
@@ -13,7 +9,10 @@ Random.seed!(1234)
 # ========================
 # Optional dependencies
 # ========================
-import Distributions, Expokit, IntervalMatrices, Optim, TaylorModels, IntervalConstraintProgramming
+import Distributions, ExponentialUtilities, Expokit, IntervalArithmetic,
+       IntervalMatrices, Optim, TaylorModels, IntervalConstraintProgramming
+const IA = IntervalArithmetic
+using IntervalArithmetic: IntervalBox
 using IntervalMatrices: ±, IntervalMatrix
 using TaylorModels: set_variables, TaylorModelN
 using IntervalConstraintProgramming
