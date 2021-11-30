@@ -87,6 +87,9 @@ for N in [Float64, Rational{Int}, Float32]
 
     # projection
     @test project(EmptySet{N}(5), [1, 4, 5]) == EmptySet{N}(3)
+
+    # volume
+    @test volume(E) == zero(N)
 end
 
 # tests that only work with Float64 and Float32
