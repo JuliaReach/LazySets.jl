@@ -98,6 +98,7 @@ sample
 LazySets.AbstractSampler
 LazySets.CombinedSampler
 LazySets.FaceSampler
+LazySets.HalfSpaceSampler
 LazySets.RejectionSampler
 LazySets.RandomWalkSampler
 ```

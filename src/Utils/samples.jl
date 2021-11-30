@@ -82,9 +82,10 @@ function sample(X::LazySet; kwargs...)
 end
 
 # default sampling for LazySets
-_default_sampler(X::LazySet) = CombinedSampler()
-_default_sampler(X::LineSegment{N}) where {N} =
+_default_sampler(::LazySet) = CombinedSampler()
+_default_sampler(::LineSegment{N}) where {N} =
     RejectionSampler(DefaultUniform(zero(N), one(N)), true, Inf)
+_default_sampler(::HalfSpace) = HalfSpaceSampler()
 
 # =====================
 # Uniform distribution
@@ -426,6 +427,58 @@ function _sample_faces!(D::Vector{VN}, H::AbstractHyperrectangle, rng, k) where 
     end
 
     return D
+end
+
+# ==================
+# Half-space Sampler
+# ==================
+
+"""
+    HalfSpaceSampler{D} <: AbstractSampler
+
+Type used for sampling from a half-space.
+
+### Fields
+
+- `distribution` -- (optional, default: `nothing`) distribution from which
+                    samples are drawn
+
+### Notes
+
+If `distribution` is `nothing` (default), the sampling algorithm uses a
+`DefaultUniform` over ``[0, 1]^n``.
+"""
+struct HalfSpaceSampler{D} <: AbstractSampler
+    distribution::D
+end
+
+function HalfSpaceSampler()
+    return HalfSpaceSampler(nothing)
+end
+
+function sample!(D::Vector{VN}, H::HalfSpace, sampler::HalfSpaceSampler;
+                 rng::AbstractRNG=GLOBAL_RNG,
+                 seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
+    rng = reseed(rng, seed)
+    U = sampler.distribution
+    if isnothing(U)
+        U = DefaultUniform(zero(N), one(N))
+    end
+    n = dim(H)
+    @inbounds for i in 1:length(D)
+        # sample a random point
+        x = rand(rng, U, n)
+
+        # check if the point is in H
+        if x ∈ H
+            D[i] = x
+            continue
+        end
+
+        # reflect point at the defining hyperplane
+        y = _reflect_point_hyperplane(x, H.a, H.b)
+        D[i] = y
+    end
 end
 
 # =============================

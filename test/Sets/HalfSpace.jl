@@ -147,6 +147,11 @@ for N in [Float64, Rational{Int}, Float32]
            ]
         @test LazySets.iscomplement(h1, h2) == eq
     end
+
+    # sampling
+    for x in sample(H, 10)
+        @test x ∈ H
+    end
 end
 
 # tests that only work with Float64 and Float32
