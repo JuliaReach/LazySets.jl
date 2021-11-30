@@ -20,6 +20,7 @@ constraints_list(::Hyperplane)
 translate(::Hyperplane, ::AbstractVector)
 normalize(::Hyperplane{N}, p=N(2)) where {N}
 distance(::AbstractVector, ::Hyperplane{N}) where {N}
+reflect(::AbstractVector, ::Hyperplane)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

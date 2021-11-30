@@ -622,3 +622,35 @@ function distance(x::AbstractVector, H::Hyperplane{N}) where {N}
 end
 
 distance(H::Hyperplane, x::AbstractVector) = distance(x, H)
+
+"""
+    reflect(x::AbstractVector, H::Hyperplane)
+
+Reflect (mirror) a vector in a hyperplane.
+
+### Input
+
+- `x` -- vector
+- `H` -- hyperplane
+
+### Output
+
+The reflection of `x` in `H`.
+
+### Algorithm
+
+The reflection of a point ``p`` in the hyperplane ``a ⋅ x = b`` is
+
+```math
+    p − 2 \frac{p ⋅ a − c}{a ⋅ a} a
+```
+
+where ``x · y`` denotes the dot product.
+"""
+function reflect(x::AbstractVector, H::Hyperplane)
+    return _reflect_point_hyperplane(x, H.a, H.b)
+end
+
+function _reflect_point_hyperplane(x, a, b)
+    return x - 2 * (dot(x, a) - b) / dot(a, a) * a
+end
