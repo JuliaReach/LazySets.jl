@@ -6,9 +6,8 @@ include("init.jl")
 makedocs(
     sitename = "LazySets.jl",
     modules = [LazySets, Approximations, Arrays, LazySets.Parallel],
-    format = Documenter.HTML(
-        prettyurls = get(ENV, "CI", nothing) == "true",
-        assets = ["assets/juliareach.css"]),
+    format = Documenter.HTML(prettyurls = get(ENV, "CI", nothing) == "true",
+                             assets = ["assets/aligned.css"]),
     pages = [
         "Home" => "index.md",
         "Manual" => Any[
