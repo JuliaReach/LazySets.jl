@@ -987,3 +987,7 @@ function get_constrained_lowdimset(cpa::CartesianProductArray{N, S},
 
     return CartesianProductArray(array), variables, block_structure, blocks
 end
+
+function volume(cap::Intersection)
+    return volume(intersection(cap.X, cap.Y))
+end

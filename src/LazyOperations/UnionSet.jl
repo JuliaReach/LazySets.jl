@@ -269,3 +269,7 @@ end
 function linear_map(A::AbstractMatrix, cup::UnionSet)
     return UnionSet(linear_map(A, cup.X), linear_map(A, cup.Y))
 end
+
+function volume(cup::UnionSet)
+    return volume(cup.X) + volume(cup.Y) - volume(Intersection(cup.X, cup.Y))
+end

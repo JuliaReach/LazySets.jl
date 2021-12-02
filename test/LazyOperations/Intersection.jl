@@ -42,6 +42,9 @@ for N in [Float64, Rational{Int}, Float32]
     # concretize
     @test concretize(I) == intersection(B, H)
 
+    # volume
+    @test volume(I) == N(4)
+
     # conversion of intersection of polyhedral types to polyhedral types
     H1 = HalfSpace(N[1, 1], N(1))
     H2 = HalfSpace(N[-1, -1], N(1))
