@@ -12,7 +12,8 @@ function set_exponential_backend!(backend::Module)
 end
 
 function get_exponential_backend()
-    ismissing(exponential_backend) && error("the exponential backend is not loaded")
+    ismissing(exponential_backend) && error("no exponential backend is loaded; " *
+        "load one of these packages: $SUPPORTED_EXPONENTIAL_PACKAGES")
     return exponential_backend
 end
 
