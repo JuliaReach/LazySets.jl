@@ -86,34 +86,39 @@ function size(spmexp::SparseMatrixExp, ax::Int)
     return size(spmexp.M, ax)
 end
 
-function get_column(spmexp::SparseMatrixExp{N}, j::Int) where {N}
+function get_column(spmexp::SparseMatrixExp{N}, j::Int;
+                    backend=get_exponential_backend()) where {N}
     n = size(spmexp, 1)
     aux = zeros(N, n)
     aux[j] = one(N)
-    return _expmv(one(N), spmexp.M, aux)
+    return _expmv(backend, one(N), spmexp.M, aux)
 end
 
-function get_columns(spmexp::SparseMatrixExp{N}, J::AbstractArray) where {N}
+function get_columns(spmexp::SparseMatrixExp{N}, J::AbstractArray;
+                     backend=get_exponential_backend()) where {N}
     n = size(spmexp, 1)
     aux = zeros(N, n)
     res = zeros(N, n, length(J))
     @inbounds for (k, j) in enumerate(J)
         aux[j] = one(N)
-        res[:, k] = _expmv(one(N), spmexp.M, aux)
+        res[:, k] = _expmv(backend, one(N), spmexp.M, aux)
         aux[j] = zero(N)
     end
     return res
 end
 
 """
-    get_row(spmexp::SparseMatrixExp{N}, i::Int) where {N}
+    get_row(spmexp::SparseMatrixExp{N}, i::Int;
+            [backend]=get_exponential_backend()) where {N}
 
 Return a single row of a sparse matrix exponential.
 
 ### Input
 
-- `spmexp` -- sparse matrix exponential
-- `i`      -- row index
+- `spmexp`  -- sparse matrix exponential
+- `i`       -- row index
+- `backend` -- (optional; default: `get_exponential_backend()`) exponentiation
+               backend
 
 ### Output
 
@@ -125,21 +130,23 @@ This function uses Julia's `transpose` function to create the result.
 The result is of type `Transpose`; in Julia versions older than v0.7, the result
 was of type `RowVector`.
 """
-function get_row(spmexp::SparseMatrixExp{N}, i::Int) where {N}
+function get_row(spmexp::SparseMatrixExp{N}, i::Int;
+                 backend=get_exponential_backend()) where {N}
     n = size(spmexp, 1)
     aux = zeros(N, n)
     aux[i] = one(N)
-    return transpose(_expmv(one(N), transpose(spmexp.M), aux))
+    return transpose(_expmv(backend, one(N), transpose(spmexp.M), aux))
 end
 
-function get_rows(spmexp::SparseMatrixExp{N}, I::AbstractArray{Int}) where {N}
+function get_rows(spmexp::SparseMatrixExp{N}, I::AbstractArray{Int};
+                  backend=get_exponential_backend()) where {N}
     n = size(spmexp, 1)
     aux = zeros(N, n)
     res = zeros(N, length(I), n)
     Mtranspose = transpose(spmexp.M)
     @inbounds for (k, i) in enumerate(I)
         aux[i] = one(N)
-        res[k, :] = _expmv(one(N), Mtranspose, aux)
+        res[k, :] = _expmv(backend, one(N), Mtranspose, aux)
         aux[i] = zero(N)
     end
     return res
@@ -273,14 +280,16 @@ function dim(em::ExponentialMap)
 end
 
 """
-    σ(d::AbstractVector, em::ExponentialMap)
+    σ(d::AbstractVector, em::ExponentialMap; [backend]=get_exponential_backend())
 
 Return the support vector of the exponential map.
 
 ### Input
 
-- `d`  -- direction
-- `em` -- exponential map
+- `d`       -- direction
+- `em`      -- exponential map
+- `backend` -- (optional; default: `get_exponential_backend()`) exponentiation
+               backend
 
 ### Output
 
@@ -292,21 +301,24 @@ If the direction has norm zero, the result depends on the wrapped set.
 If ``E = \\exp(M)⋅S``, where ``M`` is a matrix and ``S`` is a set, it
 follows that ``σ(d, E) = \\exp(M)⋅σ(\\exp(M)^T d, S)`` for any direction ``d``.
 """
-function σ(d::AbstractVector, em::ExponentialMap)
+function σ(d::AbstractVector, em::ExponentialMap;
+           backend=get_exponential_backend())
     N = promote_type(eltype(d), eltype(em))
-    v = _expmv(one(N), transpose(em.spmexp.M), d)  # v   <- exp(M^T) * d
-    return _expmv(one(N), em.spmexp.M, σ(v, em.X)) # res <- exp(M) * σ(v, S)
+    v = _expmv(backend, one(N), transpose(em.spmexp.M), d)  # v   <- exp(M^T) * d
+    return _expmv(backend, one(N), em.spmexp.M, σ(v, em.X)) # res <- exp(M) * σ(v, S)
 end
 
 """
-    ρ(d::AbstractVector, em::ExponentialMap)
+    ρ(d::AbstractVector, em::ExponentialMap; [backend]=get_exponential_backend())
 
 Return the support function of the exponential map.
 
 ### Input
 
-- `d`  -- direction
-- `em` -- exponential map
+- `d`       -- direction
+- `em`      -- exponential map
+- `backend` -- (optional; default: `get_exponential_backend()`) exponentiation
+               backend
 
 ### Output
 
@@ -317,9 +329,10 @@ The support function in the given direction.
 If ``E = \\exp(M)⋅S``, where ``M`` is a matrix and ``S`` is a set, it
 follows that ``ρ(d, E) = ρ(\\exp(M)^T d, S)`` for any direction ``d``.
 """
-function ρ(d::AbstractVector, em::ExponentialMap)
+function ρ(d::AbstractVector, em::ExponentialMap;
+           backend=get_exponential_backend())
     N = promote_type(eltype(d), eltype(em))
-    v = _expmv(one(N), transpose(em.spmexp.M), d) # v <- exp(M^T) * d
+    v = _expmv(backend, one(N), transpose(em.spmexp.M), d) # v <- exp(M^T) * d
     return ρ(v, em.X)
 end
 
@@ -328,14 +341,16 @@ function concretize(em::ExponentialMap)
 end
 
 """
-    ∈(x::AbstractVector, em::ExponentialMap)
+    ∈(x::AbstractVector, em::ExponentialMap; [backend]=get_exponential_backend())
 
 Check whether a given point is contained in an exponential map of a set.
 
 ### Input
 
-- `x`  -- point/vector
-- `em` -- exponential map of a set
+- `x`       -- point/vector
+- `em`      -- exponential map of a set
+- `backend` -- (optional; default: `get_exponential_backend()`) exponentiation
+               backend
 
 ### Output
 
@@ -361,22 +376,26 @@ julia> [1.0, 1.0] ∈ em
 true
 ```
 """
-function ∈(x::AbstractVector, em::ExponentialMap)
+function ∈(x::AbstractVector, em::ExponentialMap;
+           backend=get_exponential_backend())
     @assert length(x) == dim(em) "a vector of length $(length(x)) is " *
         "incompatible with a set of dimension $(dim(em))"
     N = promote_type(eltype(x), eltype(em))
-    y = _expmv(-one(N), em.spmexp.M, x)
+    y = _expmv(backend, -one(N), em.spmexp.M, x)
     return y ∈ em.X
 end
 
 """
-    vertices_list(em::ExponentialMap{N}) where {N}
+    vertices_list(em::ExponentialMap{N};
+                  [backend]=get_exponential_backend()) where {N}
 
 Return the list of vertices of a (polytopic) exponential map.
 
 ### Input
 
-- `em` -- exponential map
+- `em`      -- exponential map
+- `backend` -- (optional; default: `get_exponential_backend()`) exponentiation
+               backend
 
 ### Output
 
@@ -387,14 +406,15 @@ A list of vertices.
 We assume that the underlying set `X` is polytopic.
 Then the result is just the exponential map applied to the vertices of `X`.
 """
-function vertices_list(em::ExponentialMap{N}) where {N}
+function vertices_list(em::ExponentialMap{N};
+                       backend=get_exponential_backend()) where {N}
     # collect low-dimensional vertices lists
     vlist_X = vertices_list(em.X)
 
     # create resulting vertices list
     vlist = Vector{Vector{N}}(undef, length(vlist_X))
     @inbounds for (i, v) in enumerate(vlist_X)
-        vlist[i] = _expmv(one(N), em.spmexp.M, v)
+        vlist[i] = _expmv(backend, one(N), em.spmexp.M, v)
     end
 
     return vlist
@@ -528,7 +548,8 @@ function dim(eprojmap::ExponentialProjectionMap)
 end
 
 """
-    σ(d::AbstractVector, eprojmap::ExponentialProjectionMap)
+    σ(d::AbstractVector, eprojmap::ExponentialProjectionMap;
+      [backend]=get_exponential_backend())
 
 Return the support vector of a projection of an exponential map.
 
@@ -536,6 +557,8 @@ Return the support vector of a projection of an exponential map.
 
 - `d`        -- direction
 - `eprojmap` -- projection of an exponential map
+- `backend`  -- (optional; default: `get_exponential_backend()`) exponentiation
+                backend
 
 ### Output
 
@@ -548,15 +571,16 @@ If ``S = (L⋅M⋅R)⋅X``, where ``L`` and ``R`` are matrices, ``M`` is a matri
 exponential, and ``X`` is a set, it follows that
 ``σ(d, S) = L⋅M⋅R⋅σ(R^T⋅M^T⋅L^T⋅d, X)`` for any direction ``d``.
 """
-function σ(d::AbstractVector, eprojmap::ExponentialProjectionMap)
+function σ(d::AbstractVector, eprojmap::ExponentialProjectionMap;
+           backend=get_exponential_backend())
     daux = transpose(eprojmap.projspmexp.L) * d
     N = promote_type(eltype(d), eltype(eprojmap))
-    aux1 = _expmv(one(N), transpose(eprojmap.projspmexp.spmexp.M), daux)
+    aux1 = _expmv(backend, one(N), transpose(eprojmap.projspmexp.spmexp.M), daux)
     daux = _At_mul_B(eprojmap.projspmexp.R, aux1)
     svec = σ(daux, eprojmap.X)
 
     aux2 = eprojmap.projspmexp.R * svec
-    daux = _expmv(one(N), eprojmap.projspmexp.spmexp.M, aux2)
+    daux = _expmv(backend, one(N), eprojmap.projspmexp.spmexp.M, aux2)
     return eprojmap.projspmexp.L * daux
 end
 
