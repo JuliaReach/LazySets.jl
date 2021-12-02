@@ -17,8 +17,8 @@ function get_exponential_backend()
     return exponential_backend
 end
 
-function _expmat(t, A, b)
-    return _expmat(get_exponential_backend(), t, A, b)
+function _expmv(t, A, b)
+    return _expmv(get_exponential_backend(), t, A, b)
 end
 
 # ====================
@@ -35,7 +35,7 @@ end
 end end  # quote / load_exponentialutilities
 
 
-function _expmat(::Val{:ExponentialUtilities}, t, A, b)
+function _expmv(::Val{:ExponentialUtilities}, t, A, b)
     return ExponentialUtilities.expv(t, A, b)
 end
 
@@ -52,11 +52,11 @@ end
 
 end end  # quote / load_expokit
 
-function _expmat(::Val{:Expokit}, t, A, b::Vector)
+function _expmv(::Val{:Expokit}, t, A, b::Vector)
     return Expokit.expmv(t, A, b)
 end
 
-function _expmat(::Val{:Expokit}, t, A, b)
+function _expmv(::Val{:Expokit}, t, A, b)
     b = Vector(b)  # Expokit requires a dense vector
-    return _expmat(t, A, b)
+    return _expmv(t, A, b)
 end

@@ -90,7 +90,7 @@ function get_column(spmexp::SparseMatrixExp{N}, j::Int) where {N}
     n = size(spmexp, 1)
     aux = zeros(N, n)
     aux[j] = one(N)
-    return _expmat(one(N), spmexp.M, aux)
+    return _expmv(one(N), spmexp.M, aux)
 end
 
 function get_columns(spmexp::SparseMatrixExp{N}, J::AbstractArray) where {N}
@@ -99,7 +99,7 @@ function get_columns(spmexp::SparseMatrixExp{N}, J::AbstractArray) where {N}
     res = zeros(N, n, length(J))
     @inbounds for (k, j) in enumerate(J)
         aux[j] = one(N)
-        res[:, k] = _expmat(one(N), spmexp.M, aux)
+        res[:, k] = _expmv(one(N), spmexp.M, aux)
         aux[j] = zero(N)
     end
     return res
@@ -129,7 +129,7 @@ function get_row(spmexp::SparseMatrixExp{N}, i::Int) where {N}
     n = size(spmexp, 1)
     aux = zeros(N, n)
     aux[i] = one(N)
-    return transpose(_expmat(one(N), transpose(spmexp.M), aux))
+    return transpose(_expmv(one(N), transpose(spmexp.M), aux))
 end
 
 function get_rows(spmexp::SparseMatrixExp{N}, I::AbstractArray{Int}) where {N}
@@ -139,7 +139,7 @@ function get_rows(spmexp::SparseMatrixExp{N}, I::AbstractArray{Int}) where {N}
     Mtranspose = transpose(spmexp.M)
     @inbounds for (k, i) in enumerate(I)
         aux[i] = one(N)
-        res[k, :] = _expmat(one(N), Mtranspose, aux)
+        res[k, :] = _expmv(one(N), Mtranspose, aux)
         aux[i] = zero(N)
     end
     return res
@@ -294,8 +294,8 @@ follows that ``σ(d, E) = \\exp(M)⋅σ(\\exp(M)^T d, S)`` for any direction ``d
 """
 function σ(d::AbstractVector, em::ExponentialMap)
     N = promote_type(eltype(d), eltype(em))
-    v = _expmat(one(N), transpose(em.spmexp.M), d)  # v   <- exp(M^T) * d
-    return _expmat(one(N), em.spmexp.M, σ(v, em.X)) # res <- exp(M) * σ(v, S)
+    v = _expmv(one(N), transpose(em.spmexp.M), d)  # v   <- exp(M^T) * d
+    return _expmv(one(N), em.spmexp.M, σ(v, em.X)) # res <- exp(M) * σ(v, S)
 end
 
 """
@@ -319,7 +319,7 @@ follows that ``ρ(d, E) = ρ(\\exp(M)^T d, S)`` for any direction ``d``.
 """
 function ρ(d::AbstractVector, em::ExponentialMap)
     N = promote_type(eltype(d), eltype(em))
-    v = _expmat(one(N), transpose(em.spmexp.M), d) # v <- exp(M^T) * d
+    v = _expmv(one(N), transpose(em.spmexp.M), d) # v <- exp(M^T) * d
     return ρ(v, em.X)
 end
 
@@ -365,7 +365,7 @@ function ∈(x::AbstractVector, em::ExponentialMap)
     @assert length(x) == dim(em) "a vector of length $(length(x)) is " *
         "incompatible with a set of dimension $(dim(em))"
     N = promote_type(eltype(x), eltype(em))
-    y = _expmat(-one(N), em.spmexp.M, x)
+    y = _expmv(-one(N), em.spmexp.M, x)
     return y ∈ em.X
 end
 
@@ -394,7 +394,7 @@ function vertices_list(em::ExponentialMap{N}) where {N}
     # create resulting vertices list
     vlist = Vector{Vector{N}}(undef, length(vlist_X))
     @inbounds for (i, v) in enumerate(vlist_X)
-        vlist[i] = _expmat(one(N), em.spmexp.M, v)
+        vlist[i] = _expmv(one(N), em.spmexp.M, v)
     end
 
     return vlist
@@ -551,12 +551,12 @@ exponential, and ``X`` is a set, it follows that
 function σ(d::AbstractVector, eprojmap::ExponentialProjectionMap)
     daux = transpose(eprojmap.projspmexp.L) * d
     N = promote_type(eltype(d), eltype(eprojmap))
-    aux1 = _expmat(one(N), transpose(eprojmap.projspmexp.spmexp.M), daux)
+    aux1 = _expmv(one(N), transpose(eprojmap.projspmexp.spmexp.M), daux)
     daux = _At_mul_B(eprojmap.projspmexp.R, aux1)
     svec = σ(daux, eprojmap.X)
 
     aux2 = eprojmap.projspmexp.R * svec
-    daux = _expmat(one(N), eprojmap.projspmexp.spmexp.M, aux2)
+    daux = _expmv(one(N), eprojmap.projspmexp.spmexp.M, aux2)
     return eprojmap.projspmexp.L * daux
 end
 
