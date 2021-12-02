@@ -135,6 +135,11 @@ for N in [Float64, Rational{Int}, Float32]
             @test_throws ArgumentError convert(Hyperplane, P)
         end
     end
+
+    # reflection
+    H = Hyperplane(N[1, 1], N(1))
+    p = N[0, 0]
+    @test reflect(p, H) == N[1, 1]
 end
 
 # tests that only work with Float64 and Float32
