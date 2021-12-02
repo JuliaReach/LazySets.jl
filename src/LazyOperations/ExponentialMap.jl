@@ -87,8 +87,6 @@ function size(spmexp::SparseMatrixExp, ax::Int)
 end
 
 function get_column(spmexp::SparseMatrixExp{N}, j::Int) where {N}
-    require(SUPPORTED_EXPONENTIAL_PACKAGES; fun_name="get_column")
-
     n = size(spmexp, 1)
     aux = zeros(N, n)
     aux[j] = one(N)
@@ -96,8 +94,6 @@ function get_column(spmexp::SparseMatrixExp{N}, j::Int) where {N}
 end
 
 function get_columns(spmexp::SparseMatrixExp{N}, J::AbstractArray) where {N}
-    require(SUPPORTED_EXPONENTIAL_PACKAGES; fun_name="get_columns")
-
     n = size(spmexp, 1)
     aux = zeros(N, n)
     res = zeros(N, n, length(J))
@@ -130,8 +126,6 @@ The result is of type `Transpose`; in Julia versions older than v0.7, the result
 was of type `RowVector`.
 """
 function get_row(spmexp::SparseMatrixExp{N}, i::Int) where {N}
-    require(SUPPORTED_EXPONENTIAL_PACKAGES; fun_name="get_row")
-
     n = size(spmexp, 1)
     aux = zeros(N, n)
     aux[i] = one(N)
@@ -139,8 +133,6 @@ function get_row(spmexp::SparseMatrixExp{N}, i::Int) where {N}
 end
 
 function get_rows(spmexp::SparseMatrixExp{N}, I::AbstractArray{Int}) where {N}
-    require(SUPPORTED_EXPONENTIAL_PACKAGES; fun_name="get_rows")
-
     n = size(spmexp, 1)
     aux = zeros(N, n)
     res = zeros(N, length(I), n)
@@ -301,8 +293,6 @@ If ``E = \\exp(M)⋅S``, where ``M`` is a matrix and ``S`` is a set, it
 follows that ``σ(d, E) = \\exp(M)⋅σ(\\exp(M)^T d, S)`` for any direction ``d``.
 """
 function σ(d::AbstractVector, em::ExponentialMap)
-    require(SUPPORTED_EXPONENTIAL_PACKAGES; fun_name="σ")
-
     N = promote_type(eltype(d), eltype(em))
     v = _expmat(one(N), transpose(em.spmexp.M), d)  # v   <- exp(M^T) * d
     return _expmat(one(N), em.spmexp.M, σ(v, em.X)) # res <- exp(M) * σ(v, S)
@@ -328,8 +318,6 @@ If ``E = \\exp(M)⋅S``, where ``M`` is a matrix and ``S`` is a set, it
 follows that ``ρ(d, E) = ρ(\\exp(M)^T d, S)`` for any direction ``d``.
 """
 function ρ(d::AbstractVector, em::ExponentialMap)
-    require(SUPPORTED_EXPONENTIAL_PACKAGES; fun_name="ρ")
-
     N = promote_type(eltype(d), eltype(em))
     v = _expmat(one(N), transpose(em.spmexp.M), d) # v <- exp(M^T) * d
     return ρ(v, em.X)
@@ -374,8 +362,6 @@ true
 ```
 """
 function ∈(x::AbstractVector, em::ExponentialMap)
-    require(SUPPORTED_EXPONENTIAL_PACKAGES; fun_name="∈")
-
     @assert length(x) == dim(em) "a vector of length $(length(x)) is " *
         "incompatible with a set of dimension $(dim(em))"
     N = promote_type(eltype(x), eltype(em))
@@ -402,8 +388,6 @@ We assume that the underlying set `X` is polytopic.
 Then the result is just the exponential map applied to the vertices of `X`.
 """
 function vertices_list(em::ExponentialMap{N}) where {N}
-    require(SUPPORTED_EXPONENTIAL_PACKAGES; fun_name="vertices_list")
-
     # collect low-dimensional vertices lists
     vlist_X = vertices_list(em.X)
 
@@ -565,8 +549,6 @@ exponential, and ``X`` is a set, it follows that
 ``σ(d, S) = L⋅M⋅R⋅σ(R^T⋅M^T⋅L^T⋅d, X)`` for any direction ``d``.
 """
 function σ(d::AbstractVector, eprojmap::ExponentialProjectionMap)
-    require(SUPPORTED_EXPONENTIAL_PACKAGES; fun_name="σ")
-
     daux = transpose(eprojmap.projspmexp.L) * d
     N = promote_type(eltype(d), eltype(eprojmap))
     aux1 = _expmat(one(N), transpose(eprojmap.projspmexp.spmexp.M), daux)
