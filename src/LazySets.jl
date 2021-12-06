@@ -51,6 +51,7 @@ include("Utils/require.jl")
 include("Utils/helper_functions.jl")
 include("Utils/macros.jl")
 include("Utils/iterators.jl")
+include("Utils/matrix_exponential.jl")
 
 # ==================
 # Abstract set types
