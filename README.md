@@ -110,6 +110,7 @@ Several projects in the Julia technical computing stack use this library.
 - [Photometry.jl](https://github.com/JuliaAstro/Photometry.jl) -- Utilities for characterizing sources in astronomical images.
 - [Swalbe.jl](https://github.com/Zitzeronion/Swalbe.jl) -- Simple Julia Lattice Boltzmann Solver for Thin Liquid Films and Droplets
 - [IntervalLinearAlgebra.jl](https://github.com/JuliaIntervals/IntervalLinearAlgebra.jl) -- Routines to perform numerical linear algebra using interval arithmetic
+- [InvariantSetApproximation.jl](https://github.com/psace-uofa/InvariantSetApproximation.jl) --  Package for computing invariant sets of general discrete-time dynamical systems with controls and uncertainties using graph-based algorithms. 
 
 </details>
 
