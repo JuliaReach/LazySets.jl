@@ -57,12 +57,10 @@ Scaling by ``1`` is ignored.
 julia> using LinearAlgebra: I
 
 julia> [2, 3] * Y
-LinearMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, Matrix{Int64}}([2; 3], BallInf{Int64, Vector{Int64}}([0], 1))
+LinearMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, Matrix{Int64}}([2; 3;;], BallInf{Int64, Vector{Int64}}([0], 1))
 
 julia> lm3 = 2 * X
-LinearMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, SparseArrays.SparseMatrixCSC{Int64, Int64}}(
- 2  ⋅
- ⋅  2, BallInf{Int64, Vector{Int64}}([0, 0], 1))
+LinearMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, SparseArrays.SparseMatrixCSC{Int64, Int64}}(sparse([1, 2], [1, 2], [2, 2], 2, 2), BallInf{Int64, Vector{Int64}}([0, 0], 1))
 
 julia> 2I * X == lm3
 true
@@ -464,9 +462,7 @@ julia> B = BallInf(zeros(3), 1.0)
 BallInf{Float64, Vector{Float64}}([0.0, 0.0, 0.0], 1.0)
 
 julia> Bproj = Projection(B, [1, 2])
-LinearMap{Float64, BallInf{Float64, Vector{Float64}}, Float64, SparseArrays.SparseMatrixCSC{Float64, Int64}}(
- 1.0   ⋅    ⋅
-  ⋅   1.0   ⋅ , BallInf{Float64, Vector{Float64}}([0.0, 0.0, 0.0], 1.0))
+LinearMap{Float64, BallInf{Float64, Vector{Float64}}, Float64, SparseArrays.SparseMatrixCSC{Float64, Int64}}(sparse([1, 2], [1, 2], [1.0, 1.0], 2, 3), BallInf{Float64, Vector{Float64}}([0.0, 0.0, 0.0], 1.0))
 
 julia> isequivalent(Bproj, BallInf(zeros(2), 1.0))
 true

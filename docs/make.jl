@@ -1,5 +1,6 @@
 using Documenter, LazySets
-import Polyhedra, Optim, Expokit, TaylorModels, Distributions, MiniQhull, Symbolics
+import Polyhedra, Optim, ExponentialUtilities, TaylorModels, Distributions,
+       MiniQhull, Symbolics
 
 include("init.jl")
 
