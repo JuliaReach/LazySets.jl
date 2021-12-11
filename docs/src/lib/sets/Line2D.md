@@ -17,6 +17,7 @@ isempty(::Line2D)
 constrained_dimensions(::Line2D)
 constraints_list(::Line2D)
 translate(::Line2D, ::AbstractVector)
+project(::AbstractVector, ::Line2D)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

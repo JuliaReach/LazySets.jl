@@ -140,6 +140,10 @@ for N in [Float64, Rational{Int}, Float32]
     H = Hyperplane(N[1, 1], N(1))
     p = N[0, 0]
     @test reflect(p, H) == N[1, 1]
+
+    # projecting a point onto a line
+    H = Hyperplane(N[1, -1], N(0))  # x = y
+    @test project(N[1, 0], H) ≈ N[1//2, 1//2]
 end
 
 # tests that only work with Float64 and Float32
