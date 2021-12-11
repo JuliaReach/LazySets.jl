@@ -161,6 +161,13 @@ for N in [Float64, Float32]
     for x in [N[2, 0], N[1, 1], N[0, 2]]
         @test distance(x, H) == distance(H, x) ≈ distance(x, y, p=N(2))
     end
+
+    # sampling
+    H = Hyperplane(N[1, -1], N(0))  # x = y
+    for x in sample(H, 10)
+        # approximate membership test due to floating-point errors
+        @test isapproxzero(dot(x, H.a) - H.b)
+    end
 end
 
 # Polyhedra tests that only work with Float64
