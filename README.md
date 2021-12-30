@@ -22,7 +22,7 @@
 
 The following article showcases the basic functionality, highlighting some of the key design choices:
 
-> Forets, Marcelo, and Christian Schilling. *LazySets. jl: Scalable Symbolic-Numeric Set Computations.* [arXiv preprint arXiv:2110.01711](https://arxiv.org/abs/2110.01711) (2021).
+> Forets, Marcelo, and Christian Schilling. *LazySets.jl: Scalable Symbolic-Numeric Set Computations.* [Proceedings of the JuliaCon Conferences](https://doi.org/10.21105/jcon.00097) (2021).
 
 See [below](#-how-to-cite) for how to cite it.
 
@@ -144,10 +144,15 @@ If you use this package in your work, please cite it using the metadata in [CITA
 
 ```
 @article{lazysets21,
-  title={{LazySets.jl: Scalable Symbolic-Numeric Set Computations}},
-  author={Forets, Marcelo and Schilling, Christian},
-  journal={arXiv preprint arXiv:2110.01711},
-  year={2021}
+  title     = {{LazySets.jl: Scalable Symbolic-Numeric Set Computations}},
+  author    = {Forets, Marcelo and Schilling, Christian},
+  journal   = {Proceedings of the JuliaCon Conferences},
+  year      = {2021},
+  publisher = {The Open Journal},
+  volume    = {1},
+  number    = {1},
+  pages     = {11},
+  doi       = {10.21105/jcon.00097}
 }
 ```
 
