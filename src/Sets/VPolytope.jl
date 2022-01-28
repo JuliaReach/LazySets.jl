@@ -216,7 +216,7 @@ function ∈(x::AbstractVector{N}, P::VPolytope{N};
     end
     b = [x; one(N)]
 
-    lbounds = zeros(N, m)
+    lbounds = zero(N)
     ubounds = Inf
     sense = '='
     obj = zeros(N, m)
