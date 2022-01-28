@@ -330,7 +330,7 @@ function ∈(x::AbstractVector, Z::AbstractZonotope; solver=nothing)
         solver = default_lp_solver(N)
     end
     lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
-    return (lp.status == :Optimal) # Infeasible or Unbounded => false
+    return (lp.status == OPTIMAL) # Infeasible or Unbounded => false
 end
 
 """

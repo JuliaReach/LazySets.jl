@@ -642,7 +642,7 @@ function _intersection_poly(P1::AbstractPolyhedron{N},
     Q = HPOLY([clist_P1; clist_P2])
 
     # remove redundant constraints
-    if backend isa AbstractMathProgSolver
+    if (backend isa AbstractOptimizer) || (backend isa OptimizerWithAttributes)
         # if Q is empty => the feasiblity LP for the list of constraints of Q
         # is infeasible and remove_redundant_constraints! returns `false`
         if !prune || remove_redundant_constraints!(Q, backend=backend)

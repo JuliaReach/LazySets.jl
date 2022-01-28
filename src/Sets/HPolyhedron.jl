@@ -188,9 +188,9 @@ function σ_helper(d::AbstractVector, P::HPoly, solver)
         l = -Inf
         u = Inf
         lp = linprog(c, A, sense, b, l, u, solver)
-        if lp.status == :Unbounded
+        if lp.status == UNBOUNDED
             unbounded = true
-        elseif lp.status == :Infeasible
+        elseif lp.status == INFEASIBLE
             error("the support vector is undefined because the polyhedron is " *
                   "empty")
         else
@@ -532,9 +532,9 @@ function isempty(P::HPoly{N},
             solver = default_lp_solver(N)
         end
         lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
-        if lp.status == :Optimal
+        if lp.status == OPTIMAL
             return witness ? (false, lp.sol) : false
-        elseif lp.status == :Infeasible
+        elseif lp.status == INFEASIBLE
             return witness ? (true, N[]) : true
         end
         error("LP returned status $(lp.status) unexpectedly")
@@ -687,7 +687,7 @@ function _isbounded_stiemke(P::HPolyhedron{N}; solver=LazySets.default_lp_solver
     At = copy(transpose(A))
     c = ones(N, m)
     lp = linprog(c, At, '=', zeros(n), one(N), Inf, solver)
-    return (lp.status == :Optimal)
+    return (lp.status == OPTIMAL)
 end
 
 function is_hyperplanar(P::HPolyhedron)

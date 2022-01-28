@@ -1548,7 +1548,7 @@ function _overapproximate_zonotope_vrep(X::LazySet{N},
     lower_bounds = vcat(zeros(N, l), fill(N(-Inf), nvariables - l))
     lp = linprog(obj, A, sense, b, lower_bounds, Inf, solver)
 
-    if lp.status != :Optimal
+    if lp.status != OPTIMAL
         error("got unexpected status from LP solver: $(lp.status)")
     end
     c = lp.sol[(col_offset_p+1):(col_offset_p+n)]

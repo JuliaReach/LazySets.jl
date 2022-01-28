@@ -11,12 +11,12 @@ export constrained_dimensions,
 
 # default LP solver for floating-point numbers
 function default_lp_solver(N::Type{<:AbstractFloat})
-    GLPK.Optimizer(method=GLPK.SIMPLEX)
+    JuMP.optimizer_with_attributes(() -> GLPK.Optimizer(method=GLPK.SIMPLEX))
 end
 
 # default LP solver for rational numbers
 function default_lp_solver(N::Type{<:Rational})
-    GLPK.Optimizer(method=GLPK.EXACT)
+    JuMP.optimizer_with_attributes(() -> GLPK.Optimizer(method=GLPK.EXACT))
 end
 
 # helper function given two possibly different numeric types
@@ -233,10 +233,10 @@ function remove_redundant_constraints!(constraints::AbstractVector{<:LinearConst
         br = b[non_redundant_indices]
         br[i] = b[j] + one(N)
         lp = linprog(-α, Ar, '<', br, -Inf, Inf, backend)
-        if lp.status == :Infeasible
+        if lp.status == INFEASIBLE
             # the polyhedron is empty
             return false
-        elseif lp.status == :Optimal
+        elseif lp.status == OPTIMAL
             objval = -lp.objval
             if _leq(objval, b[j])
                 # the constraint is redundant
@@ -931,9 +931,9 @@ function an_element(P::AbstractPolyhedron{N};
     obj = zeros(N, size(A, 2))
     lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
 
-    if lp.status == :Optimal
+    if lp.status == OPTIMAL
         return lp.sol
-    elseif lp.status == :Infeasible
+    elseif lp.status == INFEASIBLE
         error("can't return an element, the polyhedron is empty")
     else
         error("LP returned status $(lp.status) unexpectedly")

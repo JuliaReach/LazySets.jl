@@ -222,9 +222,9 @@ function ∈(x::AbstractVector{N}, P::VPolytope{N};
     obj = zeros(N, m)
 
     lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
-    if lp.status == :Optimal
+    if lp.status == OPTIMAL
         return true
-    elseif lp.status == :Infeasible
+    elseif lp.status == INFEASIBLE
         return false
     end
     @assert false "LP returned status $(lp.status) unexpectedly"

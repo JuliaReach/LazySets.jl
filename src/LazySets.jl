@@ -3,7 +3,7 @@ __precompile__(true)
 # main module for `LazySets.jl`
 module LazySets
 
-using LinearAlgebra, MathProgBase, Reexport, Requires, SparseArrays
+using LinearAlgebra, Reexport, Requires, SparseArrays
 using LinearAlgebra: checksquare
 import LinearAlgebra: norm, ×, normalize, normalize!
 import SparseArrays: permute
@@ -11,7 +11,6 @@ import Random
 using Random: AbstractRNG, GLOBAL_RNG, SamplerType, shuffle, randperm
 import InteractiveUtils: subtypes
 import JuMP, GLPK
-using JuMP.MathOptInterface: AbstractOptimizer
 import IntervalArithmetic
 import IntervalArithmetic: radius, ⊂
 
