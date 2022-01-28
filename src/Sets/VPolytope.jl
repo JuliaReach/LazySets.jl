@@ -215,13 +215,8 @@ function ∈(x::AbstractVector{N}, P::VPolytope{N};
         A[n+1, j] = one(N)
     end
     b = [x; one(N)]
-
-    lbounds = zero(N)
-    ubounds = Inf
-    sense = '='
     obj = zeros(N, m)
-
-    lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
+    lp = linprog(obj, A, '=', b, Inf, zero(N), solver)
     if lp.status == OPTIMAL
         return true
     elseif lp.status == INFEASIBLE
