@@ -11,12 +11,12 @@ export constrained_dimensions,
 
 # default LP solver for floating-point numbers
 function default_lp_solver(N::Type{<:AbstractFloat})
-    GLPKSolverLP(method=:Simplex)
+    GLPK.Optimizer(method=GLPK.SIMPLEX)
 end
 
 # default LP solver for rational numbers
 function default_lp_solver(N::Type{<:Rational})
-    GLPKSolverLP(method=:Exact)
+    GLPK.Optimizer(method=GLPK.EXACT)
 end
 
 # helper function given two possibly different numeric types

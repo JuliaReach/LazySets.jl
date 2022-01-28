@@ -27,7 +27,6 @@ Expokit = "0.2"
 ExponentialUtilities = "1"
 ExprTools = "0.1"
 GLPK = "0.11 - 0.15"
-GLPKMathProgInterface = "0.4 - 0.5"
 GR = "0"
 IntervalArithmetic = "0.15 - 0.20"
 IntervalConstraintProgramming = "0.9 - 0.12"
@@ -35,7 +34,6 @@ IntervalMatrices = "0.8"
 Javis = "0.5 - 0.7"
 JuMP = "0.21 - 0.22"
 Makie = "0.9 - 0.16"
-MathProgBase = "0.7"
 MiniQhull = "0.1 - 0.3"
 Optim = "0.15 - 1"
 Polyhedra = "0.6"
@@ -70,4 +68,5 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 WriteVTK = "64499a7a-5c06-52f2-abe2-ccb03c286192"
 
 [targets]
-test = ["CDDLib", "Distributions", "Documenter", "Expokit", "ExponentialUtilities", "GR", "IntervalConstraintProgramming", "IntervalMatrices", "Makie", "Optim", "Polyhedra", "RecipesBase", "StaticArrays", "Symbolics", "TaylorModels", "Test"]
+test = ["CDDLib", "Distributions", "Documenter", "Expokit", "ExponentialUtilities", "GR", "IntervalConstraintProgramming",
+        "IntervalMatrices", "Makie", "Optim", "Polyhedra", "RecipesBase", "StaticArrays", "Symbolics", "TaylorModels", "Test"]

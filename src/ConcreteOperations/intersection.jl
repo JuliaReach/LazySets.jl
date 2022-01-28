@@ -578,8 +578,6 @@ function intersection(P1::AbstractHPolygon, P2::AbstractHPolygon, prune::Bool=tr
     return P
 end
 
-using MathProgBase.SolverInterface: AbstractMathProgSolver
-
 """
     intersection(P1::AbstractPolyhedron{N},
                  P2::AbstractPolyhedron{N};

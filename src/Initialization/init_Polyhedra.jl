@@ -3,7 +3,6 @@ eval(quote
     export polyhedron
     using .Polyhedra: HRep, VRep,
                       removehredundancy!, removevredundancy!
-    import JuMP, GLPK
 
     function default_polyhedra_backend(P::LazySet{N}) where {N}
         if LazySets.dim(P) == 1
