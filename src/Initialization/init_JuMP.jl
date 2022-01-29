@@ -1,11 +1,33 @@
 using JuMP.MathOptInterface: AbstractOptimizer, OptimizerWithAttributes
-using JuMP: Model, @variable, @objective, @constraint, optimize!, termination_status, objective_value, value 
+using JuMP: Model, @variable, @objective, @constraint, optimize!,
+            termination_status, objective_value, value
 
-# solver statuses
-const OPTIMAL = JuMP.MathOptInterface.OPTIMAL
-const INFEASIBLE = JuMP.MathOptInterface.INFEASIBLE
-const UNBOUNDED = JuMP.MathOptInterface.INFEASIBLE_OR_UNBOUNDED
+# solver status
+function is_lp_optimal(status)
+    return status == JuMP.MathOptInterface.OPTIMAL
+end
 
+function is_lp_infeasible(status; strict::Bool=false)
+    if status == JuMP.MathOptInterface.INFEASIBLE
+        return true
+    end
+    if strict
+        return false
+    end
+    return status == JuMP.MathOptInterface.INFEASIBLE_OR_UNBOUNDED
+end
+
+function is_lp_unbounded(status; strict::Bool=false)
+    if status == JuMP.MathOptInterface.DUAL_INFEASIBLE
+        return true
+    end
+    if strict
+        return false
+    end
+    return status == JuMP.MathOptInterface.INFEASIBLE_OR_UNBOUNDED
+end
+
+# solve a linear program (in the old MathProgBase interface)
 function linprog(c, A, sense::Char, b, l::Number, u::Number, solver)
     n = length(c)
     m = length(b)
