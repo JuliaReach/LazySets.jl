@@ -23,7 +23,7 @@ jobs:
         julia-arch: [x64]
         os: [ubuntu-latest, windows-latest]
         include:
-          - julia-version: '1.3'  # test on oldest supported version
+          - julia-version: '1.5'  # test on oldest supported version
             julia-arch: x64
             os: ubuntu-latest
 #          - julia-version: 'nightly'  # test on latest version

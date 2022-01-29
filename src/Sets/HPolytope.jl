@@ -276,16 +276,16 @@ An `HPolytope`.
 
 ### Examples
 
-```julia
+```jldoctest
 julia> using Symbolics
 
 julia> vars = @variables x y
-(x, y)
+2-element Vector{Num}:
+ x
+ y
 
 julia> HPolytope([x <= 1, x >= 0, y <= 1, y >= 0], vars)
-HPolytope{Float64, Vector{Float64}}(HalfSpace{Float64, Vector{Float64}}[HalfSpace{Float64, Vector{Float64}}([1.0, 0.0], 1.0),
-HalfSpace{Float64, Vector{Float64}}([-1.0, 0.0], 0.0), HalfSpace{Float64, Vector{Float64}}([0.0, 1.0], 1.0),
-HalfSpace{Float64, Vector{Float64}}([0.0, -1.0], 0.0)])
+HPolytope{Float64, Vector{Float64}}(HalfSpace{Float64, Vector{Float64}}[HalfSpace{Float64, Vector{Float64}}([1.0, 0.0], 1.0), HalfSpace{Float64, Vector{Float64}}([-1.0, 0.0], 0.0), HalfSpace{Float64, Vector{Float64}}([0.0, 1.0], 1.0), HalfSpace{Float64, Vector{Float64}}([0.0, -1.0], 0.0)])
 ```
 """
 function HPolytope(expr::Vector{<:Num}, vars::AbstractVector{Num};

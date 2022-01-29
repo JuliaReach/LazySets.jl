@@ -591,11 +591,13 @@ A `HalfSpace`.
 
 ### Examples
 
-```julia
+```jldoctest halfspace_symbolics
 julia> using Symbolics
 
 julia> vars = @variables x y
-(x, y)
+2-element Vector{Num}:
+ x
+ y
 
 julia> HalfSpace(x - y <= 2, vars)
 HalfSpace{Float64, Vector{Float64}}([1.0, -1.0], 2.0)
@@ -604,7 +606,8 @@ julia> HalfSpace(x >= y, vars)
 HalfSpace{Float64, Vector{Float64}}([-1.0, 1.0], -0.0)
 
 julia> vars = @variables x[1:4]
-(Num[x₁, x₂, x₃, x₄],)
+1-element Vector{Symbolics.Arr{Num, 1}}:
+ x[1:4]
 
 julia> HalfSpace(x[1] >= x[2], x)
 HalfSpace{Float64, Vector{Float64}}([-1.0, 1.0, 0.0, 0.0], -0.0)
@@ -613,9 +616,11 @@ HalfSpace{Float64, Vector{Float64}}([-1.0, 1.0, 0.0, 0.0], -0.0)
 Be careful with using the default `vars` value because it may introduce a wrong
 order.
 
-```julia
+```jldoctest halfspace_symbolics
 julia> vars = @variables x y
-(x, y)
+2-element Vector{Num}:
+ x
+ y
 
 julia> HalfSpace(2x ≥ 5y - 1) # correct
 HalfSpace{Float64, Vector{Float64}}([-2.0, 5.0], 1.0)

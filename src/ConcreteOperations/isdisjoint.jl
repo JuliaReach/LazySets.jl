@@ -1,6 +1,4 @@
-@static if VERSION >= v"1.5.0-beta1.0"
-    import Base: isdisjoint
-end
+import Base: isdisjoint
 
 export isdisjoint, is_intersection_empty
 

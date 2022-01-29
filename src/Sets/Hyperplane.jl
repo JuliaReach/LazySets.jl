@@ -576,11 +576,13 @@ A `Hyperplane`.
 
 ### Examples
 
-```julia
+```jldoctest
 julia> using Symbolics
 
 julia> vars = @variables x y
-(x, y)
+2-element Vector{Num}:
+ x
+ y
 
 julia> Hyperplane(x - y == 2)
 Hyperplane{Float64, Vector{Float64}}([1.0, -1.0], 2.0)
@@ -589,7 +591,8 @@ julia> Hyperplane(x == y)
 Hyperplane{Float64, Vector{Float64}}([1.0, -1.0], -0.0)
 
 julia> vars = @variables x[1:4]
-(Num[x₁, x₂, x₃, x₄],)
+1-element Vector{Symbolics.Arr{Num, 1}}:
+ x[1:4]
 
 julia> Hyperplane(x[1] == x[2], x)
 Hyperplane{Float64, Vector{Float64}}([1.0, -1.0, 0.0, 0.0], -0.0)

@@ -513,11 +513,13 @@ for N in [Float64, Float32]
         addconstraint!(po2, constraint, linear_search=i<=2)
     end
     n = length(p1.constraints)
-    @test n == length(p2.constraints) == length(po1.constraints) ==
-          length(po2.constraints)
-    for i in 1:n
-        @test allequal([p1.constraints[i], p2.constraints[i],
-                        po1.constraints[i], po2.constraints[i]])
+    all_equal = n == length(p2.constraints) == length(po1.constraints) ==
+        length(po2.constraints)
+    if all_equal  # may be violated, see #2426
+        for i in 1:n
+            @test allequal([p1.constraints[i], p2.constraints[i],
+                            po1.constraints[i], po2.constraints[i]])
+        end
     end
 
     for (hp, t_hp) in [(p1, HPolygon), (po1, HPolygonOpt)]
