@@ -153,8 +153,8 @@ function σ(d::AbstractVector{M}, P::HPoly{N};
         # construct the solution from the solver's ray result
         if lp == nothing
             ray = d
-        elseif haskey(lp.attrs, :unboundedray)
-            ray = lp.attrs[:unboundedray]
+        elseif has_lp_infeasibility_ray(lp.model)
+            ray = lp.sol  # infeasibility ray is stored as the solution
         else
             error("LP solver did not return an infeasibility ray")
         end
