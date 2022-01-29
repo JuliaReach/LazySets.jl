@@ -28,6 +28,11 @@ import .Assertions: activate_assertions, deactivate_assertions
 # activate assertions by default
 activate_assertions(LazySets)
 
+# ==================
+# Linear programming
+# ==================
+include("Initialization/init_JuMP.jl")
+
 # =====================
 # Numeric approximation
 # =====================

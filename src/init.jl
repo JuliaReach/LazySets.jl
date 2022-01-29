@@ -1,5 +1,3 @@
-include("Initialization/init_JuMP.jl")
-
 function __init__()
     @require CDDLib = "3391f64e-dcde-5f30-b752-e11513730f60" include("Initialization/init_CDDLib.jl")
     @require Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f" include("Initialization/init_Distributions.jl")
