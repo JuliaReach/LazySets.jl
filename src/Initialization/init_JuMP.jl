@@ -6,7 +6,7 @@ const OPTIMAL = JuMP.MathOptInterface.OPTIMAL
 const INFEASIBLE = JuMP.MathOptInterface.INFEASIBLE
 const UNBOUNDED = JuMP.MathOptInterface.INFEASIBLE_OR_UNBOUNDED
 
-function linprog(c, A, sense::Char, b, l::AbstractFloat, u::AbstractFloat, solver)
+function linprog(c, A, sense::Char, b, l::Number, u::Number, solver)
     n = length(c)
     m = length(b)
     return linprog(c, A, fill(sense, m), b, fill(l, n), fill(u, n), solver)

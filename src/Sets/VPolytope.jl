@@ -216,7 +216,7 @@ function ∈(x::AbstractVector{N}, P::VPolytope{N};
     end
     b = [x; one(N)]
     obj = zeros(N, m)
-    lp = linprog(obj, A, '=', b, zero(N), Inf, solver)
+    lp = linprog(obj, A, '=', b, zero(N), N(Inf), solver)
     if lp.status == OPTIMAL
         return true
     elseif lp.status == INFEASIBLE
