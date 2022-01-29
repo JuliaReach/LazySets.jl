@@ -86,6 +86,8 @@ _default_sampler(::LazySet) = CombinedSampler()
 _default_sampler(::LineSegment{N}) where {N} =
     RejectionSampler(DefaultUniform(zero(N), one(N)), true, Inf)
 _default_sampler(::HalfSpace) = HalfSpaceSampler()
+_default_sampler(::Hyperplane) = HyperplaneSampler()
+_default_sampler(::Line2D) = HyperplaneSampler()
 
 # =====================
 # Uniform distribution
@@ -430,7 +432,7 @@ function _sample_faces!(D::Vector{VN}, H::AbstractHyperrectangle, rng, k) where 
 end
 
 # ==================
-# Half-space Sampler
+# Half-space sampler
 # ==================
 
 """
@@ -477,6 +479,53 @@ function sample!(D::Vector{VN}, H::HalfSpace, sampler::HalfSpaceSampler;
 
         # reflect point at the defining hyperplane
         y = _reflect_point_hyperplane(x, H.a, H.b)
+        D[i] = y
+    end
+end
+
+# ==================
+# Hyperplane sampler
+# ==================
+
+"""
+    HyperplaneSampler{D} <: AbstractSampler
+
+Type used for sampling from a hyperplane.
+
+### Fields
+
+- `distribution` -- (optional, default: `nothing`) distribution from which
+                    samples are drawn
+
+### Notes
+
+If `distribution` is `nothing` (default), the sampling algorithm uses a
+`DefaultUniform` over ``[0, 1]^n``.
+"""
+struct HyperplaneSampler{D} <: AbstractSampler
+    distribution::D
+end
+
+function HyperplaneSampler()
+    return HyperplaneSampler(nothing)
+end
+
+function sample!(D::Vector{VN}, hp::Union{Hyperplane, Line2D},
+                 sampler::HyperplaneSampler;
+                 rng::AbstractRNG=GLOBAL_RNG,
+                 seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
+    rng = reseed(rng, seed)
+    U = sampler.distribution
+    if isnothing(U)
+        U = DefaultUniform(zero(N), one(N))
+    end
+    n = dim(hp)
+    @inbounds for i in 1:length(D)
+        # sample a random point
+        x = rand(rng, U, n)
+
+        # project the point onto hp
+        y = project(x, hp)
         D[i] = y
     end
 end

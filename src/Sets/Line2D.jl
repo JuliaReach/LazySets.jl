@@ -394,3 +394,29 @@ function project(L::Line2D{N}, block::AbstractVector{Int}; kwargs...) where {N}
         throw(ArgumentError("cannot project a two-dimensional line to $m dimensions"))
     end
 end
+
+"""
+    project(x::AbstractVector, L::Line2D)
+
+Project a point onto a line.
+
+### Input
+
+- `x` -- point
+- `L` -- line
+
+### Output
+
+The projection of `x` onto `L`.
+
+### Algorithm
+
+The projection of ``x`` onto the line of the form ``a⋅x = b`` is
+
+```math
+    x - \\dfrac{a (a⋅x - b)}{‖a‖²}
+```
+"""
+function project(x::AbstractVector, L::Line2D)
+    return x - L.a * (dot(L.a, x) - L.b) / norm(L.a, 2)^2
+end

@@ -100,6 +100,7 @@ LazySets.AbstractSampler
 LazySets.CombinedSampler
 LazySets.FaceSampler
 LazySets.HalfSpaceSampler
+LazySets.HyperplaneSampler
 LazySets.RejectionSampler
 LazySets.RandomWalkSampler
 ```

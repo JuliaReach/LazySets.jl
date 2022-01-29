@@ -105,4 +105,18 @@ for N in [Float64, Rational{Int}, Float32]
 
     # translation
     @test translate(l1, N[1, 2]) == Line2D(a1, N(3))
+
+    # projecting a point onto a line
+    L = Line2D(N[1, -1], N(0))  # x = y
+    @test project(N[1, 0], L) ≈ N[1//2, 1//2]
+end
+
+# tests that only work with Float64 and Float32
+for N in [Float64, Float32]
+    # sampling
+    L = Line2D(N[1, -1], N(0))  # x = y
+    for x in sample(L, 10)
+        # approximate membership test due to floating-point errors
+        @test isapproxzero(dot(x, L.a) - L.b)
+    end
 end

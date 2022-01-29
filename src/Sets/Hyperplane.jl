@@ -506,6 +506,32 @@ function project(hp::Hyperplane{N}, block::AbstractVector{Int}; kwargs...) where
     end
 end
 
+"""
+    project(x::AbstractVector, hp::Hyperplane)
+
+Project a point onto a hyperplane.
+
+### Input
+
+- `x`  -- point
+- `hp` -- hyperplane
+
+### Output
+
+The projection of `x` onto `hp`.
+
+### Algorithm
+
+The projection of ``x`` onto the hyperplane of the form ``a⋅x = b`` is
+
+```math
+    x - \\dfrac{a (a⋅x - b)}{‖a‖²}
+```
+"""
+function project(x::AbstractVector, hp::Hyperplane)
+    return x - hp.a * (dot(hp.a, x) - hp.b) / norm(hp.a, 2)^2
+end
+
 function is_hyperplanar(::Hyperplane)
     return true
 end
