@@ -51,12 +51,8 @@ jobs:
             ${{ runner.os }}-test-${{ env.cache-name }}-
             ${{ runner.os }}-test-
             ${{ runner.os }}-
-      - name: Install dependencies
-        run: |
-          julia --project --color=yes -e 'using Pkg;
-              include(joinpath("deps", "build_private.jl"));
-              Pkg.build(verbose=true)'
-        shell: bash
+      - name: Build package
+        uses: julia-actions/julia-buildpkg@v1
         continue-on-error: ${{ matrix.julia-version == 'nightly' }}
       - name: Run tests
         uses: julia-actions/julia-runtest@v1
