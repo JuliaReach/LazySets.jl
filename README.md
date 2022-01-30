@@ -1,10 +1,12 @@
 # LazySets.jl
 ## *Scalable Symbolic-Numeric Set Computations*
 
-| **Documentation** |**Status** |**Community** |**Version-specific Citation** | **License** |
+| **Introduction & Documentation** |**Status** |**Community** |**Version-specific Citation** | **License** |
 |:-----------------:|:---------------:|:------------:|:----------------------------:|:-----------:|
-| [![docs-dev][dev-img]][dev-url] |[![CI][ci-img]][ci-url] [![codecov][cov-img]][cov-url]|[![gitter][chat-img]][chat-url]|[![zenodo][doi-img]][doi-url] |[![license][lic-img]][lic-url]|
+| [![paper][paper-img]][paper-url] [![docs-dev][dev-img]][dev-url] | [![CI][ci-img]][ci-url] [![codecov][cov-img]][cov-url] | [![gitter][chat-img]][chat-url] | [![zenodo][doi-img]][doi-url] | [![license][lic-img]][lic-url] |
 
+[paper-img]: https://proceedings.juliacon.org/papers/10.21105/jcon.00097/status.svg
+[paper-url]: https://doi.org/10.21105/jcon.00097
 [dev-img]: https://img.shields.io/badge/docs-latest-blue.svg
 [dev-url]: http://juliareach.github.io/LazySets.jl/dev/
 [ci-img]: https://github.com/JuliaReach/LazySets.jl/actions/workflows/ci.yml/badge.svg?branch=master
