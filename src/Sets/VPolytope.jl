@@ -215,16 +215,14 @@ function ∈(x::AbstractVector{N}, P::VPolytope{N};
         A[n+1, j] = one(N)
     end
     b = [x; one(N)]
-
-    lbounds = zeros(N, m)
-    ubounds = Inf
-    sense = fill('=', n + 1)
+    lbounds = zero(N)
+    ubounds = N(Inf)
+    sense = '='
     obj = zeros(N, m)
-
     lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
-    if lp.status == :Optimal
+    if is_lp_optimal(lp.status)
         return true
-    elseif lp.status == :Infeasible
+    elseif is_lp_infeasible(lp.status)
         return false
     end
     @assert false "LP returned status $(lp.status) unexpectedly"

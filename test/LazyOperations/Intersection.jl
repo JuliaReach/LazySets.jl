@@ -24,8 +24,10 @@ for N in [Float64, Rational{Int}, Float32]
     I2 = Singleton(N[1]) ∩ HalfSpace(N[1], N(1))
     @test isbounded(I2) && isboundedtype(typeof(I2))
     I2 = Hyperplane(ones(N, 2), N(1)) ∩ HalfSpace(ones(N, 2), N(1))
-    @test !isbounded(I2) && !isboundedtype(typeof(I2))
-
+    if N != Rational{Int}
+        # Julia crashes if GLPK is used with rationals here, see https://github.com/jump-dev/GLPK.jl/issues/207
+        @test !isbounded(I2) && !isboundedtype(typeof(I2))
+    end
     # is_polyhedral
     @test is_polyhedral(I)
     if N isa AbstractFloat

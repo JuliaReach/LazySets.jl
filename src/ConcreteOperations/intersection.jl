@@ -578,8 +578,6 @@ function intersection(P1::AbstractHPolygon, P2::AbstractHPolygon, prune::Bool=tr
     return P
 end
 
-using MathProgBase.SolverInterface: AbstractMathProgSolver
-
 """
     intersection(P1::AbstractPolyhedron{N},
                  P2::AbstractPolyhedron{N};
@@ -644,7 +642,7 @@ function _intersection_poly(P1::AbstractPolyhedron{N},
     Q = HPOLY([clist_P1; clist_P2])
 
     # remove redundant constraints
-    if backend isa AbstractMathProgSolver
+    if (backend isa AbstractOptimizer) || (backend isa OptimizerWithAttributes)
         # if Q is empty => the feasiblity LP for the list of constraints of Q
         # is infeasible and remove_redundant_constraints! returns `false`
         if !prune || remove_redundant_constraints!(Q, backend=backend)
