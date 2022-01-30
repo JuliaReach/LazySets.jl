@@ -25,7 +25,6 @@ jobs:
       - name: Install dependencies
         run: |
           julia --project=docs/ -e 'using Pkg;
-              include("deps/build_private.jl");
               Pkg.develop(PackageSpec(path=pwd()));
               Pkg.instantiate()'
       - name: Build and deploy
