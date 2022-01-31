@@ -57,6 +57,7 @@ Javis = "78b212ba-a7f9-42d4-b726-60726080707e"
 Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
 MiniQhull = "978d7f02-9e05-4691-894f-ae31a51d76ca"
 Optim = "429524aa-4258-5aef-a3af-852621145aeb"
+Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 Polyhedra = "67491407-f73d-577b-9b50-8179a7c68029"
 RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
@@ -67,4 +68,5 @@ WriteVTK = "64499a7a-5c06-52f2-abe2-ccb03c286192"
 
 [targets]
 test = ["CDDLib", "Distributions", "Documenter", "Expokit", "ExponentialUtilities", "GR", "IntervalConstraintProgramming",
-        "IntervalMatrices", "Makie", "Optim", "Polyhedra", "RecipesBase", "StaticArrays", "Symbolics", "TaylorModels", "Test"]
+        "IntervalMatrices", "Makie", "Optim", "Pkg", "Polyhedra", "RecipesBase", "StaticArrays", "Symbolics", "TaylorModels",
+        "Test"]

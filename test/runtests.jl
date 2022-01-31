@@ -10,7 +10,7 @@ Random.seed!(1234)
 # Optional dependencies
 # ========================
 import Distributions, ExponentialUtilities, Expokit, IntervalArithmetic,
-       IntervalMatrices, Optim, TaylorModels, IntervalConstraintProgramming
+       IntervalMatrices, Optim, Pkg, TaylorModels, IntervalConstraintProgramming
 const IA = IntervalArithmetic
 using IntervalArithmetic: IntervalBox
 using IntervalMatrices: ±, IntervalMatrix
