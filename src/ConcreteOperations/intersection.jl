@@ -578,6 +578,11 @@ function intersection(P1::AbstractHPolygon, P2::AbstractHPolygon; prune::Bool=tr
     return P
 end
 
+# use H-rep algorithm for mixed polygons
+function intersection(P::AbstractPolygon, Q::AbstractPolygon; prune::Bool=true)
+    return intersection(tohrep(P), tohrep(Q); prune=prune)
+end
+
 """
     intersection(P1::AbstractPolyhedron{N},
                  P2::AbstractPolyhedron{N};

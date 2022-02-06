@@ -224,6 +224,13 @@ for N in [Float64, Float32, Rational{Int}]
     @test xaux ⊆ oaux && oaux ⊆ xaux # TODO use isequivalent
     @test LazySets._intersection_vrep_2d(paux.vertices, qaux.vertices) == xaux.vertices
 
+    # concrete intersection of H-rep and V-rep
+    q1 = intersection(paux, p)
+    q2 = intersection(p, paux)
+    @test isequivalent(q1, q2)
+    # HPolygons have the same constraints in the same order
+    @test q1 isa HPolygon && q2 isa HPolygon && q1 == q2
+
     # check that tighter constraints are used in intersection (#883)
     h1 = HalfSpace([N(1), N(0)], N(3))
     h2 = HalfSpace([N(-1), N(0)], N(-3))
