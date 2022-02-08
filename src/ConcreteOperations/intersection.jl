@@ -457,7 +457,7 @@ end
     _intersection_singleton(S, H)
 
 """
-    intersection(P1::AbstractHPolygon, P2::AbstractHPolygon, [prune]::Bool=true)
+    intersection(P1::AbstractHPolygon, P2::AbstractHPolygon; [prune]::Bool=true)
 
 Return the intersection of two polygons in constraint representation.
 
@@ -482,7 +482,7 @@ one.
 Redundancy of constraints is checked with
 [`remove_redundant_constraints!(::AbstractHPolygon)`](@ref).
 """
-function intersection(P1::AbstractHPolygon, P2::AbstractHPolygon, prune::Bool=true)
+function intersection(P1::AbstractHPolygon, P2::AbstractHPolygon; prune::Bool=true)
 
     # all constraints of one polygon are processed; now add the other polygon's
     # constraints
@@ -576,6 +576,11 @@ function intersection(P1::AbstractHPolygon, P2::AbstractHPolygon, prune::Bool=tr
         end
     end
     return P
+end
+
+# use H-rep algorithm for mixed polygons
+function intersection(P::AbstractPolygon, Q::AbstractPolygon; prune::Bool=true)
+    return intersection(tohrep(P), tohrep(Q); prune=prune)
 end
 
 """
