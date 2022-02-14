@@ -66,7 +66,7 @@ An optional dependency is a package that is not required to compile and use `Laz
 although some extra functionality is available provided that you load that package. 
 For example, if you want to work with sets defined using simple algebraic expressions you can install
 [Symbolics.jl](https://github.com/JuliaSymbolics/Symbolics.jl) as usual with the package manager,
-`] add Symbolics`, then load it after loading `LazySets` to have new functionality.
+`] add Symbolics`, then load it together with `LazySets` to have new functionality.
 
 ```julia
 julia> using LazySets, Symbolics
