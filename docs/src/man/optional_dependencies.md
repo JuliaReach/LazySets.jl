@@ -107,7 +107,7 @@ The optional package [Polyhedra.jl](http://github.com/JuliaPolyhedra/Polyhedra.j
 
 ## Visualization
 
-As in other Julia packages, the user has to manually install and load the package [`Plots`](https://github.com/JuliaPlots/Plots.jl) on each session in order to produce visual results. As a plotting backend we recommend using [GR](https://github.com/jheinen/GR.jl). To install them, just do `] add Plots GR` once. Then, `using Plots` in your Julia session will use `GR` as the default plotting engine.
+As in other Julia packages, the user has to manually install and load the package [`Plots`](https://github.com/JuliaPlots/Plots.jl) in order to produce visual results. As a plotting backend we recommend using [GR](https://github.com/jheinen/GR.jl), which is the default backend and is automatically installed together with Plots.
 
 |Dependency|Features|
 |----------|-------|
