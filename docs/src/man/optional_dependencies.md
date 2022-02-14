@@ -66,7 +66,7 @@ The package [`IntervalLinearAlgebra`](https://github.com/JuliaIntervals/Interval
 
 ## Optimization algorithms
 
-Some computations require use of external numerical optimization solvers. The modeling language [`JuMP`](https://github.com/jump-dev/JuMP.jl) is loaded by default, together with the [GLPK](https://en.wikipedia.org/wiki/GNU_Linear_Programming_Kit) solver for linear programs (LPs). Other solvers can be loaded on-demand, even commercial ones, provided that you have the appropriate license. See JuMP's documentation page [Supported solvers](https://jump.dev/JuMP.jl/stable/installation/#Supported-solvers) for further details.
+Some computations require use of external numerical optimization solvers. The modeling language [`JuMP`](https://github.com/jump-dev/JuMP.jl) is loaded by default, together with the [GLPK](https://en.wikipedia.org/wiki/GNU_Linear_Programming_Kit) solver for linear programs (LPs). Other solvers can be loaded on-demand, even commercial ones, provided that you have the appropriate license. See JuMP's [documentation page on supported solvers](https://jump.dev/JuMP.jl/stable/installation/#Supported-solvers) for further details.
 
 For other uses, such as line search methods to compute the support function of lazy intersections of certain sets, [`Optim`](https://github.com/JuliaNLSolvers/Optim.jl) can be optionally loaded. 
 
