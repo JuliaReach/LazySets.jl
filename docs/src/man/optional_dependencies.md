@@ -49,7 +49,7 @@ Exponential backends are used to compute the action of matrix exponentials over 
 
 |Dependency|Features|
 |----------|-------|
-|[`ExponentialUtilities`](https://github.com/SciML/ExponentialUtilities.jl) | Utility functions for exponential integrators for the SciML scientific machine learning ecosystem.|
+|[`ExponentialUtilities`](https://github.com/SciML/ExponentialUtilities.jl) | Utility functions for exponential integrators from the SciML scientific machine learning ecosystem.|
 |[`Expokit`](https://github.com/acroy/Expokit.jl) |Julia implementation of EXPOKIT routines.|
 
 ## Interval methods
