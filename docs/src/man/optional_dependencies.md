@@ -13,24 +13,19 @@ Use the following command to install *all* optional dependencies. Installing all
 if you want to run the full test suite and build the documentation locally. 
 
 ```julia
-julia> ] add AbstractTrees
-             BenchmarkTools
-             CDDLib
+julia> ] add CDDLib
              Distributions
              Documenter
              Expokit
              ExponentialUtilities
              IntervalConstraintProgramming
              IntervalMatrices
-             LaTeXStrings
              Makie
-             MiniQhull
-             RecipesBase
-             Symbolics
              Optim
-             Plots
              Polyhedra
+             RecipesBase
              StaticArrays
+             Symbolics
              TaylorModels
 ```
 
