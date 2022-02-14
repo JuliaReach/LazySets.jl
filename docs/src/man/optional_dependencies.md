@@ -77,7 +77,7 @@ For other uses, such as line search methods to compute the support function of l
 
 ## Polyhedral computations
 
-The optional package [Polyhedra.jl](http://github.com/JuliaPolyhedra/Polyhedra.jl) is required whenever you want to work with concrete polyhedra representations in dimension higher than 2, e.g. to solve the vertex enumeration problem (converting from constraint to vertex representation of a polytope). While [Polyhedra.jl](http://github.com/JuliaPolyhedra/Polyhedra.jl) implements its own default backend, it is also possible to load external ones, such as [cdd](https://www.inf.ethz.ch/personal/fukudak/cdd_home/) through [CDDLib.jl](https://github.com/JuliaPolyhedra/CDDLib.jl). For a list of available polyhedra backends, see the webiste of the [JuliaPolyhedra ecosystem](https://juliapolyhedra.github.io/).
+The optional package [Polyhedra.jl](http://github.com/JuliaPolyhedra/Polyhedra.jl) is required whenever you want to work with concrete polyhedra representations in dimension higher than 2, e.g. to solve the vertex enumeration problem (converting from constraint to vertex representation of a polytope). While Polyhedra implements its own default backend, it is also possible to load external ones, such as [cdd](https://www.inf.ethz.ch/personal/fukudak/cdd_home/) through [CDDLib.jl](https://github.com/JuliaPolyhedra/CDDLib.jl). For a list of available polyhedra backends, see the website of the [JuliaPolyhedra ecosystem](https://juliapolyhedra.github.io/).
 
 |Dependency|Features|
 |----------|-------|
