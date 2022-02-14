@@ -54,7 +54,7 @@ Exponential backends are used to compute the action of matrix exponentials over 
 
 ## Interval methods
 
-For validated numerics, we build upon the Julia ecosystem [JuliaIntervals](https://github.com/JuliaIntervals). The package [IntervalArithmetic.jl](https://github.com/JuliaIntervals/IntervalArithmetic.jl), which is a hard dependency of LazySets, implements igorous floating-point calculations using interval arithmetic in Julia and is the basis for the implementation of [`Interval`](@ref). There are other interval packages that can also be used in conjunction with LazySets and provide additional functionality.
+For validated numerics, we build upon the Julia ecosystem [JuliaIntervals](https://github.com/JuliaIntervals). The package [IntervalArithmetic.jl](https://github.com/JuliaIntervals/IntervalArithmetic.jl), which is a hard dependency of LazySets, implements rigorous floating-point calculations using interval arithmetic in Julia and is the basis for the implementation of [`Interval`](@ref). There are other interval packages that can also be used in conjunction with LazySets and provide additional functionality.
 
 The package [`IntervalLinearAlgebra`](https://github.com/JuliaIntervals/IntervalLinearAlgebra.jl) is not an optional dependency of LazySets, but these packages can be used in conjunction to compute [solution sets of interval linear systems](https://juliaintervals.github.io/IntervalLinearAlgebra.jl/dev/explanations/solution_set/).
 
