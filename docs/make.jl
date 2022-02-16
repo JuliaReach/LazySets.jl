@@ -13,6 +13,7 @@ makedocs(
         "Home" => "index.md",
         "Manual" => Any[
             "Getting Started" => "man/getting_started.md",
+            "Optional Features" => "man/optional_dependencies.md",
             "A Tour of LazySets" => "man/tour.md",
             "Introduction to Convex Sets" => "man/convex_sets.md",
             "Polyhedral Approximations" => "man/polyhedral_approximations.md",
