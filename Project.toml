@@ -19,7 +19,7 @@ SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [compat]
 ExprTools = "0.1"
-GLPK = "0.11 - 0.15"
+GLPK = "0.11 - 0.15, 1"
 IntervalArithmetic = "0.15 - 0.20"
 JuMP = "0.21 - 0.22"
 RecipesBase = "0.6 - 0.8, 1"
