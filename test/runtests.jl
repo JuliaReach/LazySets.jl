@@ -1,6 +1,5 @@
-using LazySets, LazySets.Approximations, Test, LinearAlgebra, SparseArrays, StaticArrays
-
-using LazySets: _leq, _geq, isapproxzero, _isapprox, _ztol
+using LazySets, LazySets.Approximations, Test, LinearAlgebra, SparseArrays,
+      StaticArrays
 
 # fix random number generator seed
 using Random
@@ -10,18 +9,19 @@ Random.seed!(1234)
 # Optional dependencies
 # ========================
 import Distributions, ExponentialUtilities, Expokit, IntervalArithmetic,
-       IntervalMatrices, Optim, Pkg, TaylorModels, IntervalConstraintProgramming
+       IntervalMatrices, Optim, Pkg, TaylorModels
 const IA = IntervalArithmetic
 using IntervalArithmetic: IntervalBox
 using IntervalMatrices: ±, IntervalMatrix
 using TaylorModels: set_variables, TaylorModelN
-using IntervalConstraintProgramming
+# ICP currently leads to unsatisfiable package requirements
+# using IntervalConstraintProgramming
 using Symbolics
 
 # ==============================
 # Non-exported helper functions
 # ==============================
-using LazySets: ispermutation
+using LazySets: _leq, _geq, isapproxzero, _isapprox, _ztol, ispermutation
 using LazySets.Arrays: isinvertible, inner, allequal,
                        is_cyclic_permutation, SingleEntryVector
 
