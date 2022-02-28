@@ -7,7 +7,7 @@ using LinearAlgebra, Reexport, Requires, SparseArrays
 using LinearAlgebra: checksquare
 import LinearAlgebra: norm, ×, normalize, normalize!
 import SparseArrays: permute
-import Random
+import Pkg, Random
 using Random: AbstractRNG, GLOBAL_RNG, SamplerType, shuffle, randperm
 import InteractiveUtils: subtypes
 import JuMP, GLPK
@@ -31,6 +31,7 @@ activate_assertions(LazySets)
 # ==================
 # Linear programming
 # ==================
+include("Initialization/init_GLPK.jl")
 include("Initialization/init_JuMP.jl")
 
 # =====================

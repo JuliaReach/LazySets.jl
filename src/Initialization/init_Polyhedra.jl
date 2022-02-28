@@ -25,7 +25,7 @@ eval(quote
                                          presolve::Bool=true)
         if presolve
             return JuMP.optimizer_with_attributes(GLPK.Optimizer,
-                                                  "presolve" => GLPK.ON)
+                                                  "presolve" => GLPK_ON)
         else
             return JuMP.optimizer_with_attributes(GLPK.Optimizer)
         end
@@ -36,7 +36,7 @@ eval(quote
         if presolve
             return JuMP.optimizer_with_attributes(
                 () -> GLPK.Optimizer(method=GLPK.EXACT),
-                "presolve" => GLPK.ON)
+                "presolve" => GLPK_ON)
         else
             return JuMP.optimizer_with_attributes(
                 () -> GLPK.Optimizer(method=GLPK.EXACT))
