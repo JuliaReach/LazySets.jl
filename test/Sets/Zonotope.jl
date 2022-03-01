@@ -249,6 +249,11 @@ for N in [Float64, Rational{Int}, Float32]
     Z2 = remove_redundant_generators(Z)
     @test center(Z) == center(Z2)
     @test genmat(Z2) == N[0 1 0]'
+
+    # low/high
+    Z = Zonotope(N[1, 1], N[1 2 -3; -2 -3 4])
+    @test low(Z, 1) == -5 && low(Z, 2) == -8
+    @test high(Z, 1) == 7 && high(Z, 2) == 10
 end
 
 for N in [Float64]
