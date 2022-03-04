@@ -949,7 +949,7 @@ julia> x₁, x₂ = set_variables(Float64, ["x₁", "x₂"], order=8)
   1.0 x₂ + 𝒪(‖x‖⁹)
 
 julia> x₀ = IntervalBox(0..0, 2) # expansion point
-[0, 0] × [0, 0]
+[0, 0]²
 
 julia> Dx₁ = IA.Interval(0.0, 3.0) # domain for x₁
 [0, 3]
