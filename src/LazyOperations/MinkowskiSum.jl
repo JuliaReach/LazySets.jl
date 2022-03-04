@@ -7,7 +7,11 @@ export MinkowskiSum, ⊕,
 """
     MinkowskiSum{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
 
-Type that represents the Minkowski sum of two sets.
+Type that represents the Minkowski sum of two sets, i.e., the set
+
+```math
+X \\oplus Y = \\{x + y : x \\in X, y \\in Y\\}.
+```
 
 ### Fields
 
