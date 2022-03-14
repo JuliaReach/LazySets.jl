@@ -29,6 +29,9 @@ for N in [Float64, Float32]
     end
     @test_throws ErrorException an_element(Y)
 
+    # center
+    @test center(X) == center(B)
+
     # tests for different norms
     for p in N[1, 2, Inf]
         B = BallInf(zeros(N, 2), N(1))
