@@ -13,20 +13,20 @@ Use the following command to install *all* optional dependencies. Installing all
 if you want to run the full test suite and build the documentation locally. 
 
 ```julia
-julia> ] add CDDLib
-             Distributions
-             Documenter
-             Expokit
-             ExponentialUtilities
-             IntervalConstraintProgramming
-             IntervalMatrices
-             Makie
-             Optim
-             Polyhedra
-             RecipesBase
-             StaticArrays
-             Symbolics
-             TaylorModels
+julia> using Pkg; Pkg.add(["CDDLib",
+                           "Distributions",
+                           "Documenter",
+                           "Expokit",
+                           "ExponentialUtilities",
+                           "IntervalConstraintProgramming",
+                           "IntervalMatrices",
+                           "Makie",
+                           "Optim",
+                           "Polyhedra",
+                           "RecipesBase",
+                           "StaticArrays",
+                           "Symbolics",
+                           "TaylorModels"])
 ```
 
 ## Documentation
