@@ -1,7 +1,7 @@
 export Bloating
 
 """
-    Bloating{N, S<:LazySet{N}} <:LazySet{N}
+    Bloating{N, S<:LazySet{N}} <: LazySet{N}
 
 Type that represents a uniform expansion of a set in a given norm (also
 known as *bloating*).
@@ -21,7 +21,7 @@ of `X` and a ball in the `p`-norm of radius `ε` centered in the origin `O`
 The `Bloating` operation preserves convexity: if `X` is convex, then any
 bloating of `X` is convex as well.
 """
-struct Bloating{N, S<:LazySet{N}} <:LazySet{N}
+struct Bloating{N, S<:LazySet{N}} <: LazySet{N}
     X::S
     ε::N
     p::N
@@ -191,4 +191,21 @@ function constraints_list(B::Bloating)
     end
 
     return constraints_list(MinkowskiSum(B.X, _bloating_ball(B)))
+end
+
+"""
+    center(B::Bloating)
+
+Return the center of a bloated set.
+
+### Input
+
+- `B` -- bloated set
+
+### Output
+
+The center of the wrapped set.
+"""
+function center(B::Bloating)
+    center(B.X)
 end

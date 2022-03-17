@@ -14,6 +14,7 @@ an_element(::Translation)
 constraints_list(::Translation)
 linear_map(::AbstractMatrix, ::Translation)
 ∈(::AbstractVector, ::Translation)
+center(::Translation)
 ```
 Inherited from [`AbstractAffineMap`](@ref):
 * [`dim`](@ref dim(::AbstractAffineMap))

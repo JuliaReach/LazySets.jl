@@ -60,6 +60,9 @@ for N in [Float64, Rational{Int}, Float32]
     # concretize
     @test concretize(tr) == translate(B, v)
 
+    # center
+    @test center(tr) == center(B) + v
+
     # ==================================
     # Type-specific methods
     # ==================================

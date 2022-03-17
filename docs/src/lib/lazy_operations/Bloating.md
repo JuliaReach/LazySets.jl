@@ -13,6 +13,7 @@ isbounded(::Bloating)
 isempty(::Bloating)
 an_element(::Bloating)
 constraints_list(::Bloating)
+center(::Bloating)
 ```
 
 Inherited from [`LazySet`](@ref):

@@ -3,7 +3,8 @@ import Base: isempty
 export Translation,
        an_element,
        constraints_list,
-       linear_map
+       linear_map,
+       center
 
 """
     Translation{N, S<:LazySet{N}, VN<:AbstractVector{N}} <: AbstractAffineMap{N, S}
@@ -374,4 +375,21 @@ end
 
 function concretize(tr::Translation)
     return translate(concretize(tr.X), tr.v)
+end
+
+"""
+    center(tr::Translation)
+
+Return the center of the translation of a set.
+
+### Input
+
+- `tr` -- translation of a set
+
+### Output
+
+The translation of the center of the wrapped set by the translation vector.
+"""
+function center(tr::Translation)
+    center(tr.X) + tr.v
 end
