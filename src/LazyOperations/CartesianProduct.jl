@@ -38,7 +38,7 @@ the second block is `cp.Y`.
 
 The Cartesian product between two sets `X` and `Y` can be constructed either
 using `CartesianProduct(X, Y)` or the short-cut notation `X × Y` (to enter the times
-symbol, write `\times[TAB]`).
+symbol, write `\\times[TAB]`).
 
 ```jldoctest cartesianproduct_constructor
 julia> I1 = Interval(0, 1);
