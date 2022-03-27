@@ -161,9 +161,10 @@ for N in [Float64, Float32]
     end
 
     # static vectors
-    b = BallInf(SVector{2}(N[1, 0]), N(1))
-    p = overapproximate(b, ε)
-    @test isequivalent(b, p)
+    # temporarily deactivated, see #2954
+#     b = BallInf(SVector{2}(N[1, 0]), N(1))
+#     p = overapproximate(b, ε)
+#     @test isequivalent(b, p)
 
     # Check that there are no redundant constraints for a ballinf
     b = BallInf(N[0.5, 0.5], N(0.1))
