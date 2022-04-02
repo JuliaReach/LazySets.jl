@@ -236,7 +236,7 @@ function vertices_list(P::HPolytope{N};
         end
         Q = polyhedron(P; backend=backend)
         if prune
-            removevredundancy!(Q)
+            removevredundancy!(Q; ztol=_ztol(N))
         end
         return collect(Polyhedra.points(Q))
     end

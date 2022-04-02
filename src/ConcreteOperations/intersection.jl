@@ -686,7 +686,7 @@ end
 """
     intersection(P1::Union{VPolygon, VPolytope}, P2::Union{VPolygon, VPolytope};
                  [backend]=nothing,
-                 [prunefunc]=removevredundancy!)
+                 [prunefunc]=(X -> removevredundancy!(X; ztol=_ztol(eltype(P1)))))
 
 Compute the intersection of two polytopes in vertex representation.
 
@@ -696,8 +696,9 @@ Compute the intersection of two polytopes in vertex representation.
 - `P2`        -- polytope in vertex representation
 - `backend`   -- (optional, default: `nothing`) the backend for polyhedral
                  computations
-- `prunefunc` -- (optional, default: `removevredundancy!`) function to prune
-                 the vertices of the result
+- `prunefunc` -- (optional, default:
+                 `(X -> removevredundancy!(X; ztol=_ztol(eltype(P1))))!`)
+                 function to prune the vertices of the result
 
 ### Output
 
@@ -728,7 +729,7 @@ function intersection(P1::Union{VPolygon, VPolytope},
         backend = default_polyhedra_backend(P1)
     end
     if isnothing(prunefunc)
-        prunefunc = removevredundancy!
+        prunefunc = (X -> removevredundancy!(X; ztol=_ztol(eltype(P1))))
     end
 
     # general case: convert to half-space representation
