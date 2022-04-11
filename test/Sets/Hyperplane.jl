@@ -200,11 +200,6 @@ for N in [Float64]
 
         # test passing a combination of operations
         vars = @variables x[1:2] t
-        if VERSION < v"1.6"
-            @test Hyperplane(x[1] == t, vars) == Hyperplane([1.0, 0.0, -1.0], 0.0)
-        else
-            # temporarily broken in Symbolics (https://github.com/JuliaSymbolics/Symbolics.jl/issues/559)
-            @test_throws ErrorException Hyperplane(x[1] == t, vars)
-        end
+        @test Hyperplane(x[1] == t, vars) == Hyperplane([1.0, 0.0, -1.0], 0.0)
     end
 end
