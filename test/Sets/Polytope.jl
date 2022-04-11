@@ -145,6 +145,7 @@ for N in [Float64, Rational{Int}, Float32]
             # ρ(::Vector{Float64}, ::HPolytope{Float32})
         end
     end
+
     # -----
     # V-rep
     # -----
@@ -189,6 +190,9 @@ for N in [Float64, Rational{Int}, Float32]
         @test_throws ErrorException polyhedron(Vempty) # needs to pass the (relative) dim
         Pe = polyhedron(Vempty, relative_dimension=2)
     end
+
+    # volume
+    @test volume(p) == N(1//2)
 
     # translation
     @test translate(p, N[1, 2]) == VPolytope([N[1, 2], N[2, 2], N[1, 3]])

@@ -237,6 +237,7 @@ This interface defines the following functions:
 isbounded(::AbstractPolytope)
 isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N}
 isempty(::AbstractPolytope)
+volume(::AbstractPolytope)
 ```
 
 ### Implementations

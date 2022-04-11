@@ -152,3 +152,33 @@ end
 function _vertices_list(P::AbstractPolytope, backend)
     return vertices_list(P)
 end
+
+"""
+    volume(P::AbstractPolytope; backend=default_polyhedra_backend(P))
+
+Compute the volume of a polytope.
+
+### Input
+
+- `P`       -- polytope
+- `backend` -- (optional, default: `default_polyhedra_backend(P)`) the backend
+               for polyhedral computations; see [Polyhedra's
+               documentation](https://juliapolyhedra.github.io/) for further
+               information
+
+### Output
+
+The volume of `P`.
+
+### Algorithm
+
+The volume is computed by the `Polyhedra` library.
+"""
+function volume(P::AbstractPolytope; backend=nothing)
+    require(:Polyhedra; fun_name="volume")
+    if isnothing(backend)
+        backend = default_polyhedra_backend(P)
+    end
+
+    return Polyhedra.volume(polyhedron(P; backend=backend))
+end
