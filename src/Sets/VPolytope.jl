@@ -449,7 +449,7 @@ function remove_redundant_vertices(P::VPolytope{N};
         vQ = Polyhedra.vrep(Q)
         Polyhedra.setvrep!(Q, Polyhedra.removevredundancy(vQ, solver))
     else
-        Polyhedra.removevredundancy!(Q)
+        Polyhedra.removevredundancy!(Q; ztol=_ztol(N))
     end
     return VPolytope(Q)
 end
