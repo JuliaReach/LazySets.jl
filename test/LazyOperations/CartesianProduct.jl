@@ -49,6 +49,9 @@ for N in [Float64, Float32, Rational{Int}]
     # isempty
     @test !isempty(cp)
 
+    # center
+    @test center(cp) == N[0, 0, 0]
+
     # Cartesian Product of a not-centered 1D BallInf and a not-centered 2D BallInf
     # Here a Hyperrectangle where c = [1, -3, 4] and r = [3, 2, 2]
     b1 = BallInf(N[1], N(3))
@@ -243,6 +246,9 @@ for N in [Float64, Float32, Rational{Int}]
         @test σ(dd, cpa) == σ(ds, cpa) == svec
         @test ρ(dd, cpa) == ρ(ds, cpa) == dot(svec, dd)
     end
+
+    # center
+    @test center(cpa) == N[1, 2, 3, 4]
 
     # boundedness
     @test isbounded(cpa) && isboundedtype(typeof(cpa))

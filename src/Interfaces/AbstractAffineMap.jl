@@ -210,6 +210,23 @@ function ∈(x::AbstractVector, am::AbstractAffineMap)
 end
 
 """
+    center(am::AbstractAffineMap)
+
+Return the center of an affine map of a centrally-symmetric set.
+
+### Input
+
+- `cp` -- affine map of a centrally-symmetric set
+
+### Output
+
+The center of the affine map.
+"""
+function center(am::AbstractAffineMap)
+    matrix(am) * center(set(am)) + vector(am)
+end
+
+"""
     vertices_list(am::AbstractAffineMap; [apply_convex_hull]::Bool)
 
 Return the list of vertices of a (polyhedral) affine map.

@@ -278,6 +278,23 @@ function isempty(cpa::CartesianProductArray)
 end
 
 """
+    center(cpa::CartesianProductArray)
+
+Return the center of a Cartesian product array of centrally-symmetric sets.
+
+### Input
+
+- `cpa` -- Cartesian product array of centrally-symmetric sets
+
+### Output
+
+The center of the Cartesian product array.
+"""
+function center(cpa::CartesianProductArray)
+    reduce(vcat, center(X) for X in array(cpa))
+end
+
+"""
    constraints_list(cpa::CartesianProductArray{N}) where {N}
 
 Return the list of constraints of a (polyhedral) Cartesian product of a finite

@@ -17,6 +17,8 @@ for N in [Float64, Rational{Int}, Float32]
     @test σ(d, lm1) == N[-3, 0]
     d = N[1, -1]
     @test σ(d, lm1) == N[-1, 0]
+    # center
+    @test center(lm1) == N[-2, 1]
 
     # 2D -> 1D Projection
     b = BallInf(N[1, 2], N(1))
