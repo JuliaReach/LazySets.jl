@@ -45,6 +45,9 @@ for N in [Float64, Rational{Int}, Float32]
     v = σ(d, s)
     @test v[2] == N(2)
 
+    # center
+    @test center(s) == N[0, 5]
+
     # Sum of array of LazySet
     # 2-elements
     ms = MinkowskiSum(Singleton(N[1]), Singleton(N[2]))
@@ -146,6 +149,9 @@ for N in [Float64, Rational{Int}, Float32]
 
     # isempty
     @test !isempty(msa)
+
+    # center
+    @test center(msa) == N[0, 5]
 
     # convert m-sum of m-sum array to m-sum array (#1678)
     s = Singleton(N[1, 2, 3])

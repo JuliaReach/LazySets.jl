@@ -17,6 +17,7 @@ dim(::CartesianProduct)
 isbounded(::CartesianProduct)
 ∈(::AbstractVector, ::CartesianProduct)
 isempty(::CartesianProduct)
+center(::CartesianProduct)
 constraints_list(::CartesianProduct)
 vertices_list(cp::CartesianProduct{N}) where {N}
 linear_map(M::AbstractMatrix, cp::CartesianProduct)
@@ -41,6 +42,7 @@ dim(::CartesianProductArray)
 isbounded(::CartesianProductArray)
 ∈(::AbstractVector, ::CartesianProductArray)
 isempty(::CartesianProductArray)
+center(::CartesianProductArray)
 constraints_list(cpa::CartesianProductArray{N}) where {N}
 vertices_list(::CartesianProductArray{N}) where {N}
 linear_map(M::AbstractMatrix, cpa::CartesianProductArray)

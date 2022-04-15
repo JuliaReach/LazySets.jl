@@ -197,6 +197,23 @@ function isempty(ms::MinkowskiSum)
 end
 
 """
+    center(ms::MinkowskiSum)
+
+Return the center of a Minkowski sum of centrally-symmetric sets.
+
+### Input
+
+- `ms` -- Minkowski sum of centrally-symmetric sets
+
+### Output
+
+The center of the Minkowski sum.
+"""
+function center(ms::MinkowskiSum)
+    center(ms.X) + center(ms.Y)
+end
+
+"""
     constraints_list(ms::MinkowskiSum)
 
 Return the list of constraints of a lazy Minkowski sum of two polyhedral sets.

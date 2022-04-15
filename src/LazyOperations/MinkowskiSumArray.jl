@@ -176,6 +176,23 @@ function isempty(msa::MinkowskiSumArray)
    return any(isempty, array(msa))
 end
 
+"""
+    center(msa::MinkowskiSumArray)
+
+Return the center of a Minkowski sum array of centrally-symmetric sets.
+
+### Input
+
+- `msa` -- Minkowski sum array of centrally-symmetric sets
+
+### Output
+
+The center of the Minkowski sum array.
+"""
+function center(msa::MinkowskiSumArray)
+    sum(center(X) for X in array(msa))
+end
+
 function concretize(msa::MinkowskiSumArray)
     a = array(msa)
     @assert !isempty(a) "an empty Minkowski sum is not allowed"

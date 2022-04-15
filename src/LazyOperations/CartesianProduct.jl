@@ -228,6 +228,23 @@ function isempty(cp::CartesianProduct)
 end
 
 """
+    center(cp::CartesianProduct)
+
+Return the center of a Cartesian product of centrally-symmetric sets.
+
+### Input
+
+- `cp` -- Cartesian product of centrally-symmetric sets
+
+### Output
+
+The center of the Cartesian product.
+"""
+function center(cp::CartesianProduct)
+    vcat(center(cp.X), center(cp.Y))
+end
+
+"""
     constraints_list(cp::CartesianProduct)
 
 Return the list of constraints of a (polyhedral) Cartesian product.
