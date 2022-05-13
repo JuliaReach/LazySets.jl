@@ -1097,3 +1097,9 @@ function ⊆(Z::AbstractZonotope, C::CartesianProduct{N, <:LazySet, <:Universe})
     Zp = project(Z, 1:dim(X))
     return ⊆(Zp, X)
 end
+
+function ⊆(Z::AbstractZonotope, C::CartesianProduct{N, <:Universe, <:LazySet}) where N
+    Y = C.Y
+    Zp = project(Z, dim(C.X)+1:dim(C))
+    return ⊆(Zp, Y)
+end
