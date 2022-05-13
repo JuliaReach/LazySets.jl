@@ -1091,3 +1091,9 @@ function ⊆(Z::AbstractZonotope, H::AbstractHyperrectangle, witness::Bool=false
     end
     return true
 end
+
+function ⊆(Z::AbstractZonotope, C::CartesianProduct{N, <:LazySet, <:Universe}) where N
+    X = C.X
+    Zp = project(Z, 1:dim(X))
+    return ⊆(Zp, X)
+end

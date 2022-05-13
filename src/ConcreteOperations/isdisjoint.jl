@@ -1373,3 +1373,9 @@ end
 @inline function _det(L1::Line2D, L2::Line2D)
     @inbounds det = L1.a[1] * L2.a[2] - L1.a[2] * L2.a[1]
 end
+
+@commutative function isdisjoint(C::CartesianProduct{N, <:LazySet, <:Universe}, Z::AbstractZonotope) where N
+    X = C.X
+    Zp = project(Z, 1:dim(X))
+    return isdisjoint(X, Zp)
+end
