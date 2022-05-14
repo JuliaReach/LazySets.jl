@@ -1091,3 +1091,22 @@ function ⊆(Z::AbstractZonotope, H::AbstractHyperrectangle, witness::Bool=false
     end
     return true
 end
+
+for ST in (AbstractZonotope, AbstractSingleton, LineSegment)
+    @eval function ⊆(Z::$(ST), C::CartesianProduct{N, <:LazySet, <:Universe}) where N
+        X = C.X
+        Zp = project(Z, 1:dim(X))
+        return ⊆(Zp, X)
+    end
+
+    @eval function ⊆(Z::$(ST), C::CartesianProduct{N, <:Universe, <:LazySet}) where N
+        Y = C.Y
+        Zp = project(Z, dim(C.X)+1:dim(C))
+        return ⊆(Zp, Y)
+    end
+
+    # disambiguation
+    @eval function ⊆(Z::$(ST), C::CartesianProduct{N, <:Universe, <:Universe}) where N
+        return true
+    end
+end
