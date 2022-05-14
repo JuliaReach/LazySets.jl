@@ -1374,8 +1374,21 @@ end
     @inbounds det = L1.a[1] * L2.a[2] - L1.a[2] * L2.a[1]
 end
 
-@commutative function isdisjoint(C::CartesianProduct{N, <:LazySet, <:Universe}, Z::AbstractZonotope) where N
-    X = C.X
-    Zp = project(Z, 1:dim(X))
-    return isdisjoint(X, Zp)
+for ST in (AbstractZonotope, AbstractSingleton)
+    @eval @commutative function isdisjoint(C::CartesianProduct{N, <:LazySet, <:Universe}, Z::$(ST)) where N
+        X = C.X
+        Zp = project(Z, 1:dim(X))
+        return isdisjoint(X, Zp)
+    end
+
+    @eval @commutative function isdisjoint(C::CartesianProduct{N, <:Universe, <:LazySet}, Z::$(ST)) where N
+        Y = C.Y
+        Zp = project(Z, dim(C.X)+1:dim(C))
+        return isdisjoint(Y, Zp)
+    end
+
+    # disambiguation
+    @eval @commutative function isdisjoint(C::CartesianProduct{N, <:Universe, <:Universe}, Z::$(ST)) where N
+        return false
+    end
 end
