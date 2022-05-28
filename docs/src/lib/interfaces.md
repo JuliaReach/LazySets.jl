@@ -489,7 +489,7 @@ AbstractStar
 ## [Polynomial zonotope sets (AbstractPolynomialZonotope)](@id def_AbstractPolynomialZonotope)
 
 ```@docs
-AbstractPolynomialZonotope
+LazySets.AbstractPolynomialZonotope
 ```
 
 ### Implementations
