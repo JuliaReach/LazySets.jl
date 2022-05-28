@@ -129,7 +129,7 @@ NonCompactSet
 Concrete set representations:
 
 * [Empty set (EmptySet)](@ref def_EmptySet)
-* [Polynomial zonotope (PolynomialZonotope)](@ref def_PolynomialZonotope)
+* [Polynomial zonotope (DensePolynomialZonotope)](@ref def_PolynomialZonotope)
 
 Lazy set operations:
 
@@ -485,3 +485,13 @@ AbstractStar
 ### Implementations
 
 * [Star](@ref def_Star)
+
+## [Polynomial zonotope sets (AbstractPolynomialZonotope)](@id def_AbstractPolynomialZonotope)
+
+```@docs
+AbstractPolynomialZonotope
+```
+
+### Implementations
+
+* [DensePolynomialZonotope](@ref ref_DensePolynomialZonotope)

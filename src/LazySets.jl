@@ -107,7 +107,7 @@ include("Sets/HParallelotope.jl")
 # ==================================
 # Types representing non-convex sets
 # ==================================
-include("Sets/PolynomialZonotope.jl")
+include("Sets/DensePolynomialZonotope.jl")
 
 # =================================
 # Types representing set operations

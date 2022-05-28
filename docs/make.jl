@@ -50,7 +50,7 @@ makedocs(
                 "Line2D" => "lib/sets/Line2D.md",
                 "Line" => "lib/sets/Line.md",
                 "LineSegment" => "lib/sets/LineSegment.md",
-                "PolynomialZonotope" => "lib/sets/PolynomialZonotope.md",
+                "DensePolynomialZonotope" => "lib/sets/DensePolynomialZonotope.md",
                 "RotatedHyperrectangle" => "lib/sets/RotatedHyperrectangle.md",
                 "Singleton" => "lib/sets/Singleton.md",
                 "Star" => "lib/sets/Star.md",

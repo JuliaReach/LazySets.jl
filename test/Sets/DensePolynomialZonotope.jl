@@ -7,7 +7,7 @@ for N in [Float64, Float32, Rational{Int}]
     F2 = hcat(N[-0.5, 1])
     F = [F2]
     G = Matrix(N(0.3)I, 2, 2)
-    p = PolynomialZonotope(c, E, F, G)
+    p = DensePolynomialZonotope(c, E, F, G)
 
     @test dim(p) == 2
     @test order(p) == 7//2
