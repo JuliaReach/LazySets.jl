@@ -16,3 +16,4 @@ julia> subtypes(AbstractPolynomialZonotope)
 abstract type AbstractPolynomialZonotope{N} end
 
 isconvextype(::Type{<:AbstractPolynomialZonotope}) = false
+isboundedtype(::Type{<:AbstractPolynomialZonotope}) = true
