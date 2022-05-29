@@ -316,14 +316,17 @@ function constraints_list(cpa::CartesianProductArray{N}) where {N}
    # create high-dimensional constraints list
    for c_low in array(cpa)
        c_low_list = constraints_list(c_low)
-       if !isempty(c_low_list)
-           indices = prev_step : (dim(c_low_list[1]) + prev_step - 1)
+       if isempty(c_low_list)
+           n_low = dim(c_low)
+       else
+           n_low = dim(c_low_list[1])
+           indices = prev_step : (prev_step + n_low - 1)
        end
        for constr in c_low_list
            new_constr = LinearConstraint(sparsevec(indices, constr.a, n), constr.b)
            push!(clist, new_constr)
        end
-       prev_step += dim(c_low_list[1])
+       prev_step += n_low
    end
 
    return clist

@@ -130,6 +130,10 @@ for N in [Float64, Float32, Rational{Int}]
         LinearConstraint(sparsevec(N[2], N[1], 2),  N(3)),
         LinearConstraint(sparsevec(N[2], N[-1], 2), N(-2))])
     @test all(H -> dim(H) == 2, hlist)
+    # empty constraints list is handled correctly
+    H = HalfSpace(N[1], N(0))
+    hlist = constraints_list(CartesianProduct(H, Universe{N}(2)))
+    @test hlist == [HalfSpace(N[1, 0, 0], N(0))]
 
     # linear_map
     cp = CartesianProduct(Interval(N(0), N(1)), Interval(N(2), N(3)))
@@ -290,6 +294,11 @@ for N in [Float64, Float32, Rational{Int}]
         LinearConstraint(sparsevec(N[3], N[-1], 3), N(-4)),
         ])
     @test all(H -> dim(H) == 3, hlist)
+    # empty constraints list is handled correctly
+    H = HalfSpace(N[1], N(0))
+    hlist = constraints_list(CartesianProductArray([H, Universe{N}(2)]))
+    @test hlist == [HalfSpace(N[1, 0, 0], N(0))]
+
     # is_intersection_empty
     cpa = CartesianProductArray([BallInf(ones(N, 5), N(1)),
                                  BallInf(2 * ones(N, 5), N(0.5))])
