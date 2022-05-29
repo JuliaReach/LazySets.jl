@@ -60,6 +60,9 @@ for N in [Float64, Rational{Int}, Float32]
     answer, w = isuniversal(s, true)
     @test !isuniversal(s) && !answer && w ∉ s
 
+    # sampling
+    @test sample(s, 2) == [element(s), element(s)]
+
     # membership
     S = Singleton(N[1, 1])
     @test N[0.9, 1.1] ∉ S
