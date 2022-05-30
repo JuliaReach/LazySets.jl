@@ -576,7 +576,8 @@ Partition a hyperrectangular set into uniform sub-hyperrectangles.
 A list of `Hyperrectangle`s.
 """
 function split(H::AbstractHyperrectangle{N}, num_blocks::AbstractVector{Int}) where {N}
-    @assert length(num_blocks) == dim(H) "need number of blocks in each dimension"
+    @assert length(num_blocks) == dim(H) "the number of blocks " *
+	    "($(length(num_blocks))) must be specified in each dimension ($(dim(H)))"
     R = radius_hyperrectangle(H)
     T = _similar_type(R)
     radius = similar(R)
