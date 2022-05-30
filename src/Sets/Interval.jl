@@ -709,3 +709,38 @@ function chebyshev_center(x::Interval{N}; compute_radius::Bool=false) where {N}
     end
     return center(x)
 end
+
+"""
+    fast_interval_pow(a::IA.Interval, n::Int)
+
+Computes the `n`th power of the given interval `a` without using correct rounding.
+
+### Input
+
+- `a` -- interval (from `IntervalArithmetic.jl`)
+- `n` -- integer
+
+### Output
+
+A non-rigorous approximation of `a^n`.
+
+### Notes
+
+For a rigorous approximation with correct rounding,
+use `a^n` from `IntervalArithmetic.jl`."""
+const IA = IntervalArithmetic
+function fast_interval_pow(a::IA.Interval, n::Int)
+    if iszero(n)
+        return one(a)
+    elseif isodd(n)
+        return IA.Interval(a.lo ^ n, a.hi ^ n)
+    else
+        lon = a.lo ^ n
+        hin = a.hi ^ n
+        if 0 ∈ a
+            return IA.Interval(zero(lon), max(lon, hin))
+        else
+            return IA.Interval(min(lon, hin), max(lon, hin))
+        end
+    end
+end
