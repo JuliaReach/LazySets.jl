@@ -8,7 +8,7 @@ Abstract type for polynomial zonotope sets.
 Polynomial zonotopes are in general non-convex. They are always bounded.
 
 ```jldoctest; setup = :(using LazySets: subtypes)
-julia> subtypes(AbstractPolynomialZonotope)
+julia> subtypes(LazySets.AbstractPolynomialZonotope)
 1-element Vector{Any}:
  DensePolynomialZonotope
 ```
