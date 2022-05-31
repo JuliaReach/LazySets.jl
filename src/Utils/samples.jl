@@ -88,6 +88,7 @@ _default_sampler(::LineSegment{N}) where {N} =
 _default_sampler(::HalfSpace) = HalfSpaceSampler()
 _default_sampler(::Hyperplane) = HyperplaneSampler()
 _default_sampler(::Line2D) = HyperplaneSampler()
+_default_sampler(::AbstractSingleton) = SingletonSampler()
 
 # =====================
 # Uniform distribution
@@ -527,6 +528,28 @@ function sample!(D::Vector{VN}, hp::Union{Hyperplane, Line2D},
         # project the point onto hp
         y = project(x, hp)
         D[i] = y
+    end
+end
+
+# ==================
+# Singleton sampler
+# ==================
+
+"""
+    SingletonSampler <: AbstractSampler
+
+Type used for sampling from a singleton.
+"""
+struct SingletonSampler <: AbstractSampler
+end
+
+function sample!(D::Vector{VN}, S::AbstractSingleton,
+                 sampler::SingletonSampler;
+                 rng::AbstractRNG=GLOBAL_RNG,
+                 seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
+    x = element(S)
+    @inbounds for i in 1:length(D)
+        D[i] = copy(x)
     end
 end
 
