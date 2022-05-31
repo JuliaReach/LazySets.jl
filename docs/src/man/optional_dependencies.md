@@ -18,7 +18,6 @@ julia> using Pkg; Pkg.add(["CDDLib",
                            "Documenter",
                            "Expokit",
                            "ExponentialUtilities",
-                           "IntervalConstraintProgramming",
                            "IntervalMatrices",
                            "Makie",
                            "Optim",
@@ -58,6 +57,8 @@ The package [`IntervalLinearAlgebra`](https://github.com/JuliaIntervals/Interval
 |[`IntervalConstraintProgramming`](https://github.com/JuliaIntervals/IntervalConstraintProgramming.jl) |Conservative polyhedral approximation of a region defined implicitly via nonlinear constraints.|
 |[`IntervalMatrices`](https://github.com/JuliaReach/IntervalMatrices.jl) | Set operations that involve matrices whose coefficients are intervals.|
 |[`TaylorModels`](https://github.com/JuliaIntervals/TaylorModels.jl) |Taylor expansion of functions with rigorous interval remainder.|
+
+Note: `IntervalConstraintProgramming` is currently not tested due to compatibility issues.
 
 ## Optimization algorithms
 
