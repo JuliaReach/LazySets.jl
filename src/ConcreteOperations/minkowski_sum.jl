@@ -482,7 +482,7 @@ function _minkowski_sum_vrep_nd(vlist1::Vector{VT}, vlist2::Vector{VT};
 end
 
 """
-    minkowski_sum(PZ::PolynomialZonotope, Z::AbstractZonotope)
+    minkowski_sum(PZ::DensePolynomialZonotope, Z::AbstractZonotope)
 
 Return the Minkowski sum of a polynomial zonotope and a usual zonotopic set.
 
@@ -496,10 +496,10 @@ Return the Minkowski sum of a polynomial zonotope and a usual zonotopic set.
 A polynomial zonotope whose center is the sum of the centers of `PZ` and `Z`
 and whose generators are the concatenation of the generators of `PZ` and `Z`.
 """
-@commutative function minkowski_sum(PZ::PolynomialZonotope, Z::AbstractZonotope)
+@commutative function minkowski_sum(PZ::DensePolynomialZonotope, Z::AbstractZonotope)
     c = PZ.c + center(Z)
     G = [PZ.G genmat(Z)]
-    return PolynomialZonotope(c, PZ.E, PZ.F, G)
+    return DensePolynomialZonotope(c, PZ.E, PZ.F, G)
 end
 
 @commutative minkowski_sum(::ZeroSet, X::LazySet) = X

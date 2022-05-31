@@ -1,11 +1,14 @@
-export PolynomialZonotope, dim, σ,
+export PolynomialZonotope,
+       DensePolynomialZonotope,
+       dim,
+       σ,
        polynomial_order,
        order,
        linear_map,
        scale
 
 """
-    PolynomialZonotope{N, VT, VMT, MT}
+    DensePolynomialZonotope{N, VT, VMT, MT} <: AbstractPolynomialZonotope{N}
 
 Type that represents a polynomial zonotope.
 
@@ -67,14 +70,14 @@ the polynomial order ``η``.
     polynomialization and non-convex sets*, Hybrid Systems: Computation and
     Control, 2013, pp. 173–182.
 """
-struct PolynomialZonotope{N, VT, VMT, MT}
+struct DensePolynomialZonotope{N, VT, VMT, MT} <: AbstractPolynomialZonotope{N}
     c::VT
     E::VMT
     F::VMT
     G::MT
 
     # default constructor with dimension check
-    function PolynomialZonotope(c::VT, E::VMT, F::VMT, G::MT) where {VT, VMT, MT}
+    function DensePolynomialZonotope(c::VT, E::VMT, F::VMT, G::MT) where {VT, VMT, MT}
         # check polynomial order
         @assert length(E) == 1 + length(F)
         N = typeof(c[1])
@@ -83,11 +86,25 @@ struct PolynomialZonotope{N, VT, VMT, MT}
     end
 end
 
-isoperationtype(::Type{<:PolynomialZonotope}) = false
-isconvextype(::Type{<:PolynomialZonotope}) = false
+isoperationtype(::Type{<:DensePolynomialZonotope}) = false
+isconvextype(::Type{<:DensePolynomialZonotope}) = false
 
 """
-    dim(pz::PolynomialZonotope)
+    PolynomialZonotope = DensePolynomialZonotope
+
+Alias for `DensePolynomialZonotope`.
+
+### Notes
+
+To be reviewed after LazySets#1543 (should use [1]).
+
+[1] Kochdumper, N, and M. Althoff. *Sparse polynomial zonotopes: A novel set representation for reachability analysis.*
+    IEEE Transactions on Automatic Control 66.9 (2020): 4043-4058.
+"""
+const PolynomialZonotope = DensePolynomialZonotope
+
+"""
+    dim(pz::DensePolynomialZonotope)
 
 Return the ambient dimension of a polynomial zonotope.
 
@@ -99,10 +116,10 @@ Return the ambient dimension of a polynomial zonotope.
 
 An integer representing the ambient dimension of the polynomial zonotope.
 """
-dim(pz::PolynomialZonotope) = length(pz.c)
+dim(pz::DensePolynomialZonotope) = length(pz.c)
 
 """
-    σ(d::AbstractVector, pz::PolynomialZonotope)
+    σ(d::AbstractVector, pz::DensePolynomialZonotope)
 
 Return the support vector of a polynomial zonotope along direction `d`.
 
@@ -115,12 +132,12 @@ Return the support vector of a polynomial zonotope along direction `d`.
 
 Vector representing the support vector.
 """
-function σ(d::AbstractVector, pz::PolynomialZonotope)
+function σ(d::AbstractVector, pz::DensePolynomialZonotope)
     error("this function is not yet implemented")
 end
 
 """
-    ρ(d::AbstractVector, pz::PolynomialZonotope)
+    ρ(d::AbstractVector, pz::DensePolynomialZonotope)
 
 Return the support function of a polynomial zonotope along direction `d`.
 
@@ -133,12 +150,12 @@ Return the support function of a polynomial zonotope along direction `d`.
 
 Value of the support function.
 """
-function ρ(d::AbstractVector, pz::PolynomialZonotope)
+function ρ(d::AbstractVector, pz::DensePolynomialZonotope)
     error("this function is not yet implemented")
 end
 
 """
-    polynomial_order(pz::PolynomialZonotope)
+    polynomial_order(pz::DensePolynomialZonotope)
 
 Polynomial order of a polynomial zonotope.
 
@@ -151,10 +168,10 @@ Polynomial order of a polynomial zonotope.
 The polynomial order, defined as the maximal power of the scale factors ``β_i``.
 Usually denoted ``η``.
 """
-polynomial_order(pz::PolynomialZonotope) = length(pz.E)
+polynomial_order(pz::DensePolynomialZonotope) = length(pz.E)
 
 """
-    order(pz::PolynomialZonotope)
+    order(pz::DensePolynomialZonotope)
 
 Order of a polynomial zonotope.
 
@@ -167,7 +184,7 @@ Order of a polynomial zonotope.
 The order, a rational number defined as the total number of generators divided
 by the ambient dimension.
 """
-function order(pz::PolynomialZonotope)
+function order(pz::DensePolynomialZonotope)
     η = polynomial_order(pz)  # polynomial order
     p = size(pz.E[1], 2)  # number of dependent factors
     q = size(pz.G, 2)  # number of independent factors
@@ -177,7 +194,7 @@ function order(pz::PolynomialZonotope)
 end
 
 """
-    linear_map(M::Matrix, pz::PolynomialZonotope)
+    linear_map(M::Matrix, pz::DensePolynomialZonotope)
 
 Return the linear map of a polynomial zonotope.
 
@@ -191,16 +208,16 @@ Return the linear map of a polynomial zonotope.
 Polynomial zonotope such that its starting point and generators are those of `pz`
 multiplied by the matrix `M`.
 """
-function linear_map(M::Matrix, pz::PolynomialZonotope)
+function linear_map(M::Matrix, pz::DensePolynomialZonotope)
     c = M * pz.c
     E = [M*Ei for Ei in pz.E]
     F = [M*Fi for Fi in pz.F]
     G = M * pz.G
-    return PolynomialZonotope(c, E, F, G)
+    return DensePolynomialZonotope(c, E, F, G)
 end
 
 """
-    scale(α::Number, pz::PolynomialZonotope)
+    scale(α::Number, pz::DensePolynomialZonotope)
 
 Return a polynomial zonotope modified by a scale factor.
 
@@ -214,10 +231,10 @@ Return a polynomial zonotope modified by a scale factor.
 Polynomial zonotope such that its center and generators are multiples of those
 of `pz` by a factor ``α``.
 """
-function scale(α::Number, pz::PolynomialZonotope)
+function scale(α::Number, pz::DensePolynomialZonotope)
     c = α * pz.c
     E = [α*Ei for Ei in pz.E]
     F = [α*Fi for Fi in pz.F]
     G = α * pz.G
-    return PolynomialZonotope(c, E, F, G)
+    return DensePolynomialZonotope(c, E, F, G)
 end

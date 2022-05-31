@@ -95,7 +95,7 @@ minkowski_sum(::VPolytope, ::VPolytope)
 minkowski_sum(::AbstractHyperrectangle, ::AbstractHyperrectangle)
 minkowski_sum(::AbstractZonotope, ::AbstractZonotope)
 minkowski_sum(::VPolygon, ::VPolygon)
-minkowski_sum(::PolynomialZonotope, ::AbstractZonotope)
+minkowski_sum(::DensePolynomialZonotope, ::AbstractZonotope)
 minkowski_sum(::Interval, ::Interval)
 minkowski_sum(::AbstractSingleton, ::AbstractSingleton)
 ```

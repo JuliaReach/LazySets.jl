@@ -136,7 +136,7 @@ if test_suite_basic
     # Testing other set types that do not inherit from LazySet
     # =========================================================
     @time @testset "LazySets.Complement" begin include("LazyOperations/Complement.jl") end
-    @time @testset "LazySets.PolynomialZonotope" begin include("Sets/PolynomialZonotope.jl") end
+    @time @testset "LazySets.DensePolynomialZonotope" begin include("Sets/DensePolynomialZonotope.jl") end
     @time @testset "LazySets.Rectification" begin include("LazyOperations/Rectification.jl") end
     @time @testset "LazySets.UnionSet" begin include("LazyOperations/UnionSet.jl") end
 

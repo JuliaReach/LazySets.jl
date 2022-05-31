@@ -218,7 +218,7 @@ Pages = [
     "lib/sets/Ball2.md",
     "lib/sets/Ellipsoid.md",
     "lib/sets/Ballp.md",
-    "lib/sets/PolynomialZonotope.md",
+    "lib/sets/DensePolynomialZonotope.md",
     "lib/lazy_operations/Bloating.md",
     "lib/lazy_operations/CartesianProduct.md",
     "lib/lazy_operations/ConvexHull.md",
