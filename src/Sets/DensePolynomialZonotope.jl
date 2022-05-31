@@ -8,7 +8,7 @@ export PolynomialZonotope,
        scale
 
 """
-    DensePolynomialZonotope{N, VT, VMT, MT}
+    DensePolynomialZonotope{N, VT, VMT, MT} <: AbstractPolynomialZonotope{N}
 
 Type that represents a polynomial zonotope.
 
@@ -70,7 +70,7 @@ the polynomial order ``η``.
     polynomialization and non-convex sets*, Hybrid Systems: Computation and
     Control, 2013, pp. 173–182.
 """
-struct DensePolynomialZonotope{N, VT, VMT, MT}
+struct DensePolynomialZonotope{N, VT, VMT, MT} <: AbstractPolynomialZonotope{N}
     c::VT
     E::VMT
     F::VMT

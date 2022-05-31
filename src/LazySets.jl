@@ -63,6 +63,7 @@ include("Utils/matrix_exponential.jl")
 # ==================
 include("Interfaces/LazySet.jl")
 include("Interfaces/AbstractStar.jl")
+include("Interfaces/AbstractPolynomialZonotope.jl")
 include("Interfaces/AbstractPolyhedron.jl")
 include("Sets/HalfSpace.jl")  # must come before AbstractPolyhedron_functions
 include("Interfaces/AbstractPolyhedron_functions.jl")
