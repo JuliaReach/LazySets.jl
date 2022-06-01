@@ -727,7 +727,10 @@ A non-rigorous approximation of `a^n`.
 ### Notes
 
 For a rigorous approximation with correct rounding,
-use `a^n` from `IntervalArithmetic.jl`."""
+use `a^n` from `IntervalArithmetic.jl`.
+
+Review after IntervalArithmetic.jl#388
+"""
 const IA = IntervalArithmetic
 function fast_interval_pow(a::IA.Interval, n::Int)
     if iszero(n)

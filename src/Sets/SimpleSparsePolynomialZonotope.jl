@@ -3,14 +3,15 @@
 
 Type that represents a sparse polynomial zonotope.
 
-Given a constant offset ``c ∈ \\mathbb{R}^n``, a generator matrix ``G ∈ \\mathbb{R}^{n \times h}`` and an exponent matrix
-``E ∈ \\mathbb{N}^{q×h}_{≥0}``, a sparse polynomial zonotope ``\\mathcal{PZ} ⊂ \\mathbb{R}^n``.
+A sparse polynomial zonotope ``\\mathcal{PZ} ⊂ \\mathbb{R}^n`` is represented by
+a constant offset ``c ∈ \\mathbb{R}^n``, a generator matrix ``G ∈ \\mathbb{R}^{n \times h}`` and an exponent matrix
+``E ∈ \\mathbb{N}^{q×h}_{≥0}``.
 
 ### Fields
 
 - `c` -- constant offset vector
-- `G` -- generators matrix
-- `E` -- exponents matrix
+- `G` -- generator matrix
+- `E` -- exponent matrix
 
 ### Notes
 
@@ -50,7 +51,7 @@ Returns a zonotope containing ``p``.
 ### Input
 
 - `p`     -- simple sparse polynomial zonotope
-- `nsdiv` -- (optional, default: `1`)
+- `nsdiv` -- (optional, default: `1`) size of uniform partitioning grid
 
 ### Output
 
@@ -86,7 +87,7 @@ function overapproximate(p::SSPZ, ::Type{Zonotope}, dom::IntervalBox)
     Gnew = similar(G)
     @inbounds for (j, g) in enumerate(eachcol(G))
         α = IA.Interval(1, 1)
-         for (i, vi) in enumerate(dom)
+        for (i, vi) in enumerate(dom)
             α *= _fast_interval_pow(vi, E[i, j])
         end
         # α = mapreduce(x -> _fast_interval_pow(x[1],  x[2]), *, zip(dom, E[:, i])) # monomial value over the domain
