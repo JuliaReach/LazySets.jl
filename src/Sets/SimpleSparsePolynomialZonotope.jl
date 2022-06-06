@@ -1,4 +1,4 @@
-export SimpleSparsePolynomialZonotope, expmat
+export SimpleSparsePolynomialZonotope, expmat, nparams
 
 """
     SimpleSparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, ME<:AbstractMatrix{<:Integer}} <: AbstractPolynomialZonotope{N}

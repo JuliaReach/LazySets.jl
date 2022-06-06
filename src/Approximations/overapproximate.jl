@@ -1,5 +1,7 @@
 import Base: convert
 
+using IntervalArithmetic: IntervalBox
+
 using LazySets: block_to_dimension_indices,
                 substitute_blocks,
                 get_constrained_lowdimset
@@ -714,7 +716,7 @@ end
 # ================================================
 
 """
-    overapproximate(P::SSPZ, ::Type{Zonotope}; nsdiv=1)
+    overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{Zonotope}; nsdiv=1)
 
 Returns a zonotope containing ``P``.
 
@@ -728,7 +730,7 @@ Returns a zonotope containing ``P``.
 A zonotope containing `P`.
 
 """
-function overapproximate(P::SSPZ, ::Type{Zonotope}; nsdiv=1)
+function overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{Zonotope}; nsdiv=1)
     (nsdiv != 1) && return overapproximate(P, UnionSetArray{Zonotope}; nsdiv=nsdiv)
 
     G = genmat(P)
@@ -745,12 +747,12 @@ function overapproximate(P::SSPZ, ::Type{Zonotope}; nsdiv=1)
 end
 
 """
-    overapproximate(P::SSPZ, ::Type{Zonotope}, dom::IntervalBox)
+    overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{Zonotope}, dom::IntervalBox)
 
 Compute the zonotope overapproximation of the given sparse polynomial zonotope over
 the parameter domain `dom`, which should be a subset of `[-1, 1]^q`, where `q = nparams(P)`.
 """
-function overapproximate(P::SSPZ, ::Type{Zonotope}, dom::IntervalBox)
+function overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{Zonotope}, dom::IntervalBox)
     @assert dom ⊆ IntervalBox(-1..1, nparams(P)) "dom should be a subset of [-1, 1]^q"
     G = genmat(P)
     E = expmat(P)
@@ -769,7 +771,7 @@ function overapproximate(P::SSPZ, ::Type{Zonotope}, dom::IntervalBox)
     return Zonotope(cnew, Gnew)
 end
 
-function overapproximate(P::SSPZ, ::Type{UnionSetArray{Zonotope}}; nsdiv=100)
+function overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{UnionSetArray{Zonotope}}; nsdiv=100)
     q = size(P.E, 1)
     dom = IntervalBox(IA.Interval(-1, 1), q)
     cells = mince(dom, nsdiv)
