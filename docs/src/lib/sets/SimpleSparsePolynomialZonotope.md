@@ -2,7 +2,7 @@
 CurrentModule = LazySets
 ```
 
-# [SimpleSparsePolynomialZonotope](@id def_DensePolynomialZonotope)
+# [SimpleSparsePolynomialZonotope](@id def_SimpleSparsePolynomialZonotope)
 
 ```@docs
 SimpleSparsePolynomialZonotope
