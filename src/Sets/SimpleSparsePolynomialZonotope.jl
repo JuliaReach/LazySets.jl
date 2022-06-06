@@ -1,3 +1,5 @@
+export SimpleSparsePolynomialZonotope, expmat
+
 """
     SimpleSparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, ME<:AbstractMatrix{<:Integer}} <: AbstractPolynomialZonotope{N}
 
@@ -42,65 +44,3 @@ order(P::SSPZ) = ngens(P) // dim(P)
 center(P::SSPZ) = P.c
 genmat(P::SSPZ) = P.G
 expmat(P::SSPZ) = P.E
-"""
-    overapproximate(P::SSPZ, ::Type{Zonotope}; nsdiv=1)
-
-Returns a zonotope containing ``P``.
-
-### Input
-
-- `P`     -- simple sparse polynomial zonotope
-- `nsdiv` -- (optional, default: `1`) size of uniform partitioning grid
-
-### Output
-
-A zonotope containing `P`.
-
-"""
-function overapproximate(P::SSPZ, ::Type{Zonotope}; nsdiv=1)
-    (nsdiv != 1) && return overapproximate(P, UnionSetArray{Zonotope}; nsdiv=nsdiv)
-
-    G = genmat(P)
-    E = expmat(P)
-    cnew = copy(center(P))
-    Gnew = copy(G)
-    @inbounds for (j, g) in enumerate(eachcol(G))
-        if all(iseven, E[:, j])
-            cnew .+= 0.5 * g
-            Gnew[:, j] ./= 2
-        end
-    end
-    return Zonotope(cnew, Gnew)
-end
-
-"""
-    overapproximate(P::SSPZ, ::Type{Zonotope}, dom::IntervalBox)
-
-Compute the zonotope overapproximation of the given sparse polynomial zonotope over
-the parameter domain `dom`, which should be a subset of `[-1, 1]^q`, where `q = nparams(P)`.
-"""
-function overapproximate(P::SSPZ, ::Type{Zonotope}, dom::IntervalBox)
-    @assert dom ⊆ IntervalBox(-1..1, nparams(P)) "dom should be a subset of [-1, 1]^q"
-    G = genmat(P)
-    E = expmat(P)
-    cnew = copy(center(P))
-    Gnew = similar(G)
-    @inbounds for (j, g) in enumerate(eachcol(G))
-        α = IA.Interval(1, 1)
-        for (i, vi) in enumerate(dom)
-            α *= _fast_interval_pow(vi, E[i, j])
-        end
-        # α = mapreduce(x -> _fast_interval_pow(x[1],  x[2]), *, zip(dom, E[:, i])) # monomial value over the domain
-        m, r = midpoint_radius(α)
-        cnew .+= m * g
-        Gnew[:, j] .= abs.(g) * r
-    end
-    return Zonotope(cnew, Gnew)
-end
-
-function overapproximate(P::SSPZ, ::Type{UnionSetArray{Zonotope}}; nsdiv=100)
-    q = size(P.E, 1)
-    dom = IntervalBox(IA.Interval(-1, 1), q)
-    cells = mince(dom, nsdiv)
-    return UnionSetArray([overapproximate(P, Zonotope, c) for c in cells])
-end
