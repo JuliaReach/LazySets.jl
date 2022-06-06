@@ -715,7 +715,7 @@ end
 # ================================================
 
 """
-    overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{Zonotope}; nsdiv=1)
+    overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{Zonotope}; nsdiv=1, partition=nothing)
 
 Returns a zonotope containing ``P``.
 
@@ -723,6 +723,8 @@ Returns a zonotope containing ``P``.
 
 - `P`     -- simple sparse polynomial zonotope
 - `nsdiv` -- (optional, default: `1`) size of uniform partitioning grid
+- `partition` -- (optional, default: `nothing`) tuple of integers indicating the number of partitions
+                 in each dimensino, the length should match `nparams(P)`
 
 ### Output
 
