@@ -6,6 +6,9 @@ support vectors.
 """
 module Approximations
 
+import IntervalArithmetic
+const IA = IntervalArithmetic
+
 using LazySets, LazySets.Arrays, Requires, LinearAlgebra, SparseArrays
 
 using LazySets: _isapprox, _leq, _geq, _rtol, _normal_Vector, isapproxzero,

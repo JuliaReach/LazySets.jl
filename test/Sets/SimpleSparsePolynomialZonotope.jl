@@ -13,5 +13,7 @@
     @test nparams(S) == 2
     @test order(S) == 1 // 1
 
-    @test overapproximate(S, Zonotope) == Z
+    @test overapproximate(S, Zonotope) == Zonotope([3., 1], [1 1;2 1.])
+    @test length(overapproximate(S, Zonotope; nsdiv=3)) == 9
+    @test length(overapproximate(S, Zonotope; partition=(2, 3))) == 6
 end

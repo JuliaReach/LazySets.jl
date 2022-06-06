@@ -739,7 +739,7 @@ function fast_interval_pow(a::IA.Interval, n::Int)
         return IA.Interval(a.lo ^ n, a.hi ^ n)
     else
         if 0 ∈ a
-            return IA.Interval(zero(lon), max(abs(lon), abs(hin)) ^ n)
+            return IA.Interval(zero(a.lo), max(abs(a.lo), abs(a.hi)) ^ n)
         else
             lon = a.lo ^ n
             hin = a.hi ^ n
