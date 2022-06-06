@@ -42,7 +42,7 @@ ngens(P::SSPZ) = size(P.G, 2)
 """
     nparams(P::SimpleSparsePolynomialZonotope)
 
-Returns the number of variables used in the polynomial representation, this corresponds to
+Returns the number of variables used in the polynomial representation, which corresponds to
 the number of rows in the exponents matrix.
 
 ### Input
@@ -51,7 +51,7 @@ the number of rows in the exponents matrix.
 
 ### Output
 
-number of variables in the polynomial representation of P.
+The number of variables in the polynomial representation of P.
 
 ### Examples
 
@@ -83,7 +83,7 @@ row corresponds to a variable and each column to a monomial.
 
 ### Output
 
-matrix of exponents, each column is a multidegree.
+The matrix of exponents, where each column is a multidegree.
 
 ### Examples
 
