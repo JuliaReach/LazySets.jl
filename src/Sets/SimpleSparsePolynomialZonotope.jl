@@ -36,7 +36,19 @@ end
 
 const SSPZ = SimpleSparsePolynomialZonotope
 
+"""
+    dim(P::SimpleSparsePolynomialZonotope)
+
+Computes the dimension of the simple sparse polynomiali zonotope `P`.
+"""
 dim(P::SSPZ) = size(P.c, 1)
+
+"""
+    ngens(P::SimpleSparsePolynomialZonotope)
+
+Computes the number of generators of the simple sparse polynomial zonotope `P`. This is
+equivalent to the number of monomials in the polynomial representation of `P`.
+"""
 ngens(P::SSPZ) = size(P.G, 2)
 
 """
@@ -65,10 +77,25 @@ julia> nparams(S)
 """
 nparams(P::SSPZ) = size(P.E, 1)
 
+"""
+    order(P::SimpleSparsePolynomialZonotope)
+
+Computes the order of simple sparse polynomial zonotope `P`.
+"""
 order(P::SSPZ) = ngens(P) // dim(P)
 
+"""
+    center(P::SimpleSparsePolynomialZonotope)
+
+Returns the center of the simple sparse polynomial zonotope `P`.
+"""
 center(P::SSPZ) = P.c
 
+"""
+    genmat(P::SimpleSparsePolynomialZonotope)
+
+Returns the matrix of generators of the simple sparse polynomial zonotope `P`.
+"""
 genmat(P::SSPZ) = P.G
 
 """

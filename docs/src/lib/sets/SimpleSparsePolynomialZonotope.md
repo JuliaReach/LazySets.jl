@@ -6,6 +6,11 @@ CurrentModule = LazySets
 
 ```@docs
 SimpleSparsePolynomialZonotope
-nparams
-expmat
+center(::SimpleSparsePolynomialZonotope)
+genmat(::SimpleSparsePolynomialZonotope)
+expmat(::SimpleSparsePolynomialZonotope)
+dim(::SimpleSparsePolynomialZonotope)
+ngens(::SimpleSparsePolynomialZonotope)
+nparams(::SimpleSparsePolynomialZonotope)
+order(::SimpleSparsePolynomialZonotope)
 ```
