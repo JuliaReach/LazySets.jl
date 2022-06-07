@@ -39,7 +39,7 @@ const SSPZ = SimpleSparsePolynomialZonotope
 """
     dim(P::SimpleSparsePolynomialZonotope)
 
-Computes the dimension of the simple sparse polynomiali zonotope `P`.
+Computes the dimension of the simple sparse polynomial zonotope `P`.
 """
 dim(P::SSPZ) = size(P.c, 1)
 
@@ -80,7 +80,7 @@ nparams(P::SSPZ) = size(P.E, 1)
 """
     order(P::SimpleSparsePolynomialZonotope)
 
-Computes the order of simple sparse polynomial zonotope `P`.
+Computes the order of the simple sparse polynomial zonotope `P`.
 """
 order(P::SSPZ) = ngens(P) // dim(P)
 
