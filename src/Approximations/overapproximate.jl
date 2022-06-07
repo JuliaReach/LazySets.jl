@@ -2,6 +2,7 @@ import Base: convert
 
 using LazySets: block_to_dimension_indices,
                 substitute_blocks,
+                fast_interval_pow,
                 get_constrained_lowdimset
 
 """
@@ -707,6 +708,80 @@ function overapproximate(cap::Intersection{N,
                         ) where {N}
     return overapproximate(swap(cap), dir; kwargs...)
 end
+
+
+# ================================================
+# Overapproximation of Sparse Polynomial Zonotopes
+# ================================================
+
+"""
+    overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{Zonotope}; nsdiv=1, partition=nothing)
+
+Returns a zonotope containing ``P``.
+
+### Input
+
+- `P`     -- simple sparse polynomial zonotope
+- `nsdiv` -- (optional, default: `1`) size of uniform partitioning grid
+- `partition` -- (optional, default: `nothing`) tuple of integers indicating the number of partitions
+                 in each dimensino, the length should match `nparams(P)`
+
+### Output
+
+A zonotope containing `P`.
+
+"""
+function overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{Zonotope}; nsdiv=1, partition=nothing)
+    if !isnothing(partition) || nsdiv != 1
+        return overapproximate(P, UnionSetArray{Zonotope}; nsdiv=nsdiv, partition=partition)
+    end
+
+    G = genmat(P)
+    E = expmat(P)
+    cnew = copy(center(P))
+    Gnew = copy(G)
+    @inbounds for (j, g) in enumerate(eachcol(G))
+        if all(iseven, E[:, j])
+            cnew .+= 0.5 * g
+            Gnew[:, j] ./= 2
+        end
+    end
+    return Zonotope(cnew, Gnew)
+end
+
+"""
+    overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{Zonotope}, dom::IntervalBox)
+
+Compute the zonotope overapproximation of the given sparse polynomial zonotope over
+the parameter domain `dom`, which should be a subset of `[-1, 1]^q`, where `q = nparams(P)`.
+"""
+function overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{Zonotope}, dom::IA.IntervalBox)
+    @assert dom ⊆ IA.IntervalBox(IA.Interval(-1, 1), nparams(P)) "dom should be a subset of [-1, 1]^q"
+    G = genmat(P)
+    E = expmat(P)
+    cnew = copy(center(P))
+    Gnew = similar(G)
+    @inbounds for (j, g) in enumerate(eachcol(G))
+        α = IA.Interval(1, 1)
+        for (i, vi) in enumerate(dom)
+            α *= fast_interval_pow(vi, E[i, j])
+        end
+        # α = mapreduce(x -> _fast_interval_pow(x[1],  x[2]), *, zip(dom, E[:, i])) # monomial value over the domain
+        m, r = IA.midpoint_radius(α)
+        cnew .+= m * g
+        Gnew[:, j] .= abs.(g) * r
+    end
+    return Zonotope(cnew, Gnew)
+end
+
+function overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{UnionSetArray{Zonotope}};
+                         nsdiv=100, partition=nothing)
+    q = nparams(P)
+    dom = IA.IntervalBox(IA.Interval(-1, 1), q)
+    cells = IA.mince(dom, isnothing(partition) ? nsdiv : partition)
+    return UnionSetArray([overapproximate(P, Zonotope, c) for c in cells])
+end
+
 
 # ==========================================
 # Functionality that requires TaylorModels
