@@ -1,5 +1,5 @@
 for N in [Float64, Float32, Rational{Int}]
-    # example from slide 13 of Niklas talk at JRJID3
+    # example from slide 13 of Niklas talk at JuliaReach & JuliaIntervals Days 3
     c = N[2.0, 0.0]
     G = N[1 2;2 2.]
     E = [1 4;1 2]
