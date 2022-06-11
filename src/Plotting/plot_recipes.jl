@@ -533,3 +533,16 @@ end
 
     return _plot_list_same_recipe(array(cup), ε)
 end
+
+@recipe function plot_polyzono(P::SimpleSparsePolynomialZonotope{N}, ε::N=N(PLOT_PRECISION); nsdiv=100, partition=nothing) where {N}
+    label --> DEFAULT_LABEL
+    grid --> DEFAULT_GRID
+    if DEFAULT_ASPECT_RATIO != :none
+        aspect_ratio --> DEFAULT_ASPECT_RATIO
+    end
+    seriesalpha --> DEFAULT_ALPHA
+    seriescolor --> DEFAULT_COLOR
+    seriestype --> :shape
+    Poa = overapproximate(P, UnionSetArray{Zonotope}; nsdiv, partition)
+    return _plot_list_same_recipe(array(Poa), ε)
+end
