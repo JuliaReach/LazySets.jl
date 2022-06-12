@@ -13,4 +13,7 @@ dim(::SimpleSparsePolynomialZonotope)
 ngens(::SimpleSparsePolynomialZonotope)
 nparams(::SimpleSparsePolynomialZonotope)
 order(::SimpleSparsePolynomialZonotope)
+linear_map(::AbstractMatrix, ::SimpleSparsePolynomialZonotope)
+minkowski_sum(::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZonotope)
+cartesian_product(::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZonotope)
 ```

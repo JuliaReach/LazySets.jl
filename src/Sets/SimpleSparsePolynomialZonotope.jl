@@ -1,4 +1,5 @@
-export SimpleSparsePolynomialZonotope, expmat, nparams
+export SimpleSparsePolynomialZonotope, expmat, nparams,
+       linear_map, minkowski_sum, cartesian_product
 
 """
     SimpleSparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, ME<:AbstractMatrix{<:Integer}} <: AbstractPolynomialZonotope{N}
@@ -125,3 +126,36 @@ julia> expmat(S)
 ```
 """
 expmat(P::SSPZ) = P.E
+
+"""
+    linear_map(M::AbstractMatrix, P::SimpleSparsePolynomialZonotope)
+
+applies the linear mapping `M` to the simple sparse polynomial zonotope `P`.
+"""
+function linear_map(M::AbstractMatrix, P::SSPZ)
+    return SimpleSparsePolynomialZonotope(M * center(P), M * genmat(P), expmat(P))
+end
+
+"""
+    minkowski_sum(P1::SimpleSparsePolynomialZonotope, P2::SimpleSparsePolynomialZonotope)
+
+computes the Minkowski sum of the simple sparse polynomial zonotopes `P1` and `P2`.
+"""
+function minkowski_sum(P1::SimpleSparsePolynomialZonotope, P2::SimpleSparsePolynomialZonotope)
+    c = center(P1) + center(P2)
+    G = hcat(genmat(P1), genmat(P2))
+    E = cat(expmat(P1), expmat(P2), dims=(1, 2)) # ? maybe using sparse arrays might be better?
+    return SimpleSparsePolynomialZonotope(c, G, E)
+end
+
+"""
+    cartesian_product(P1::SimpleSparsePolynomialZonotope, P2::SimpleSparsePolynomialZonotope)
+
+computes the cartesian product of the simple sparse polynomial zonotopes `P1` and `P2`.
+"""
+function cartesian_product(P1::SimpleSparsePolynomialZonotope, P2::SimpleSparsePolynomialZonotope)
+    c = vcat(center(P1), center(P2))
+    G = cat(genmat(P1), genmat(P2), dims=(1, 2))
+    E = cat(expmat(P1), expmat(P2), dims=(1, 2))
+    return SimpleSparsePolynomialZonotope(c, G, E)
+end
