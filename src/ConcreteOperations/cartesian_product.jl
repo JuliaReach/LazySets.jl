@@ -195,3 +195,24 @@ end
 function cartesian_product(U::Universe, H::HalfSpace)
     return HalfSpace(prepend_zeros(H.a, dim(U)), H.b)
 end
+
+"""
+    cartesian_product(P1::SimpleSparsePolynomialZonotope, P2::SimpleSparsePolynomialZonotope)
+
+computes the cartesian product of the simple sparse polynomial zonotopes `P1` and `P2`.
+
+### Input
+
+- `P1` -- simple sparse polynomial zonotope
+- `P2` -- simple sparse polynomial zonotope
+
+### Output
+
+The cartesian product of `P1` and `P2`
+"""
+function cartesian_product(P1::SimpleSparsePolynomialZonotope, P2::SimpleSparsePolynomialZonotope)
+    c = vcat(center(P1), center(P2))
+    G = cat(genmat(P1), genmat(P2), dims=(1, 2))
+    E = cat(expmat(P1), expmat(P2), dims=(1, 2))
+    return SimpleSparsePolynomialZonotope(c, G, E)
+end

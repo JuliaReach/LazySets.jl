@@ -509,3 +509,24 @@ end
 @commutative minkowski_sum(::ZeroSet, H::AbstractHyperrectangle) = H
 @commutative minkowski_sum(::ZeroSet, X::AbstractSingleton) = X
 minkowski_sum(Z::ZeroSet, ::ZeroSet) = Z
+
+"""
+    minkowski_sum(P1::SimpleSparsePolynomialZonotope, P2::SimpleSparsePolynomialZonotope)
+
+computes the Minkowski sum of the simple sparse polynomial zonotopes `P1` and `P2`.
+
+### Input
+
+- `P1` -- simple sparse polynomial zonotope
+- `P2` -- simple sparse polynomial zonotope
+
+### Output
+
+The Minkowski sum of `P1` and `P2`
+"""
+function minkowski_sum(P1::SimpleSparsePolynomialZonotope, P2::SimpleSparsePolynomialZonotope)
+    c = center(P1) + center(P2)
+    G = hcat(genmat(P1), genmat(P2))
+    E = cat(expmat(P1), expmat(P2), dims=(1, 2))
+    return SimpleSparsePolynomialZonotope(c, G, E)
+end
