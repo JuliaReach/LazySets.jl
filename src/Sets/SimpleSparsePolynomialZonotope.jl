@@ -131,6 +131,15 @@ expmat(P::SSPZ) = P.E
     linear_map(M::AbstractMatrix, P::SimpleSparsePolynomialZonotope)
 
 applies the linear mapping `M` to the simple sparse polynomial zonotope `P`.
+
+### Input
+
+- `M` -- square matrix with size(M) == dim(P)
+- `P` -- simple sparse polynomial zonotope
+
+### Output
+
+The set resulting from applying the linear map `M` to `P`.
 """
 function linear_map(M::AbstractMatrix, P::SSPZ)
     return SimpleSparsePolynomialZonotope(M * center(P), M * genmat(P), expmat(P))
@@ -140,11 +149,20 @@ end
     minkowski_sum(P1::SimpleSparsePolynomialZonotope, P2::SimpleSparsePolynomialZonotope)
 
 computes the Minkowski sum of the simple sparse polynomial zonotopes `P1` and `P2`.
+
+### Input
+
+- `P1` -- simple sparse polynomial zonotope
+- `P2` -- simple sparse polynomial zonotope
+
+### Output
+
+The Minkowski sum of `P1` and `P2`
 """
 function minkowski_sum(P1::SimpleSparsePolynomialZonotope, P2::SimpleSparsePolynomialZonotope)
     c = center(P1) + center(P2)
     G = hcat(genmat(P1), genmat(P2))
-    E = cat(expmat(P1), expmat(P2), dims=(1, 2)) # ? maybe using sparse arrays might be better?
+    E = cat(expmat(P1), expmat(P2), dims=(1, 2))
     return SimpleSparsePolynomialZonotope(c, G, E)
 end
 
@@ -152,6 +170,15 @@ end
     cartesian_product(P1::SimpleSparsePolynomialZonotope, P2::SimpleSparsePolynomialZonotope)
 
 computes the cartesian product of the simple sparse polynomial zonotopes `P1` and `P2`.
+
+### Input
+
+- `P1` -- simple sparse polynomial zonotope
+- `P2` -- simple sparse polynomial zonotope
+
+### Output
+
+The cartesian product of `P1` and `P2`
 """
 function cartesian_product(P1::SimpleSparsePolynomialZonotope, P2::SimpleSparsePolynomialZonotope)
     c = vcat(center(P1), center(P2))
