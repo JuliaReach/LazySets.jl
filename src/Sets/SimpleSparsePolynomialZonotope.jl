@@ -1,4 +1,5 @@
-export SimpleSparsePolynomialZonotope, expmat, nparams
+export SimpleSparsePolynomialZonotope, expmat, nparams,
+       linear_map
 
 """
     SimpleSparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, ME<:AbstractMatrix{<:Integer}} <: AbstractPolynomialZonotope{N}
@@ -125,3 +126,21 @@ julia> expmat(S)
 ```
 """
 expmat(P::SSPZ) = P.E
+
+"""
+    linear_map(M::AbstractMatrix, P::SimpleSparsePolynomialZonotope)
+
+applies the linear mapping `M` to the simple sparse polynomial zonotope `P`.
+
+### Input
+
+- `M` -- square matrix with size(M) == dim(P)
+- `P` -- simple sparse polynomial zonotope
+
+### Output
+
+The set resulting from applying the linear map `M` to `P`.
+"""
+function linear_map(M::AbstractMatrix, P::SSPZ)
+    return SimpleSparsePolynomialZonotope(M * center(P), M * genmat(P), expmat(P))
+end
