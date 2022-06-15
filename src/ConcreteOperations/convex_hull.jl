@@ -599,14 +599,14 @@ convex_hull(∅::EmptySet, ::EmptySet) = ∅
 """
     convex_hull(P1::SimpleSparsePolynomialZonotope, P2::SimpleSparsePolynomialZonotope)
 
-computes the convex hull of the simple spare polynomial zonotopes `P1` and `P2`.
+Computes the convex hull of the simple sparse polynomial zonotopes `P1` and `P2`.
 
 ### Input
 
 - `P1` : simple sparse polynomial zonotopes
 - `P2` : simple sparse polynomial zonotopes
 
-### Outuput
+### Output
 
 Tightest convex simple sparse polynomial zonotope containing `P1` and `P2`.
 """
@@ -617,13 +617,13 @@ end
 """
     convex_hull(P::SimpleSparsePolynomialZonotope)
 
-computes the convex hull of the simple spare polynomial zonotope `P`.
+Computes the convex hull of the simple sparse polynomial zonotope `P`.
 
 ### Input
 
 - `P` -- simple sparse polynomial zonotopes
 
-### Outuput
+### Output
 
 Tightest convex simple sparse polynomial zonotope containing `P`.
 """

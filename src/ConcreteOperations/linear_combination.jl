@@ -13,6 +13,10 @@ compute the linear combination of simple sparse polynomial zonotopes `P1` and `P
 ### Output
 
 linear combination of `P1` and `P2`.
+
+### Notes
+
+...
 """
 function linear_combination(P1::SimpleSparsePolynomialZonotope, P2::SimpleSparsePolynomialZonotope)
     c = 0.5 * (center(P1) + center(P2))
