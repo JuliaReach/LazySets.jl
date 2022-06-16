@@ -16,7 +16,11 @@ linear combination of `P1` and `P2`.
 
 ### Notes
 
-...
+The linear combination of two sets ``P₁`` and ``P₂`` is defined as
+
+```math
+\\{λp₁ + (1-λ)p₂ | p₁ ∈ P₁, p₂ ∈ P₂, λ ∈ [0, 1]\\}
+```
 """
 function linear_combination(P1::SimpleSparsePolynomialZonotope, P2::SimpleSparsePolynomialZonotope)
     c = 0.5 * (center(P1) + center(P2))

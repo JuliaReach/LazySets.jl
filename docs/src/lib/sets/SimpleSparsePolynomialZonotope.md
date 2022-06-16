@@ -16,4 +16,7 @@ order(::SimpleSparsePolynomialZonotope)
 linear_map(::AbstractMatrix, ::SimpleSparsePolynomialZonotope)
 minkowski_sum(::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZonotope)
 cartesian_product(::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZonotope)
+linear_combination(::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZonotope)
+convex_hull(::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZonotope)
+convex_hull(::SimpleSparsePolynomialZonotope)
 ```
