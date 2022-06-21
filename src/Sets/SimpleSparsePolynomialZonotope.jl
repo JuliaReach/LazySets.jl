@@ -35,6 +35,14 @@ struct SimpleSparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatr
     end
 end
 
+"""
+    PolynomialZonotope = DensePolynomialZonotope
+
+Alias for `SimpleSparsePolynomialZonotope`.
+"""
+const PolynomialZonotope = SimpleSparsePolynomialZonotope
+
+
 const SSPZ = SimpleSparsePolynomialZonotope
 
 """

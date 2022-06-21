@@ -1,5 +1,4 @@
-export PolynomialZonotope,
-       DensePolynomialZonotope,
+export DensePolynomialZonotope,
        dim,
        σ,
        polynomial_order,
@@ -88,20 +87,6 @@ end
 
 isoperationtype(::Type{<:DensePolynomialZonotope}) = false
 isconvextype(::Type{<:DensePolynomialZonotope}) = false
-
-"""
-    PolynomialZonotope = DensePolynomialZonotope
-
-Alias for `DensePolynomialZonotope`.
-
-### Notes
-
-To be reviewed after LazySets#1543 (should use [1]).
-
-[1] Kochdumper, N, and M. Althoff. *Sparse polynomial zonotopes: A novel set representation for reachability analysis.*
-    IEEE Transactions on Automatic Control 66.9 (2020): 4043-4058.
-"""
-const PolynomialZonotope = DensePolynomialZonotope
 
 """
     dim(pz::DensePolynomialZonotope)

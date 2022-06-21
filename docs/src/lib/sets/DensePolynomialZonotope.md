@@ -6,7 +6,6 @@ CurrentModule = LazySets
 
 ```@docs
 DensePolynomialZonotope
-PolynomialZonotope
 dim(::DensePolynomialZonotope)
 σ(::AbstractVector, ::DensePolynomialZonotope)
 ρ(::AbstractVector, ::DensePolynomialZonotope)
