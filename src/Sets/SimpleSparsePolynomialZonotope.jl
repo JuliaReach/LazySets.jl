@@ -1,4 +1,4 @@
-export SimpleSparsePolynomialZonotope, expmat, nparams,
+export SimpleSparsePolynomialZonotope, PolynomialZonotope, expmat, nparams,
        linear_map
 
 """
