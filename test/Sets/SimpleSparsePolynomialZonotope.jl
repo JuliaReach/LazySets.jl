@@ -32,4 +32,25 @@ for N in [Float64, Float32, Rational{Int}]
     @test genmat(CPS) == [1 2 0 0;2 2 0 0;0 0 1 2;0 0 2 2.]
     @test expmat(CPS) == [1 4 0 0;1 2 0 0;0 0 1 4;0 0 1 2]
 
+    _c = N[2.0, 0.0]
+    _g = N[ 0.0  0.5  1.0  0.5  1.0  0.5  1.0  -0.5  -1.0
+           0.0  1.0  1.0  1.0  1.0  1.0  1.0  -1.0  -1.0]
+
+    _e = [0  1  4  1  4  0  0  0  0
+          0  1  2  1  2  0  0  0  0
+          0  0  0  0  0  1  4  1  4
+          0  0  0  0  0  1  2  1  2
+          1  0  0  1  1  0  0  1  1]
+
+    LCS = linear_combination(S, S)
+
+    @test center(LCS) == _c
+    @test genmat(LCS) == _g
+    @test expmat(LCS) == _e
+
+    CH1 = convex_hull(S)
+
+    @test center(CH1) == _c
+    @test genmat(CH1) == _g
+    @test expmat(CH1) == _e
 end
