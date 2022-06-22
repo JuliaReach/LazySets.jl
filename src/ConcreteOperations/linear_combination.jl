@@ -34,7 +34,7 @@ function linear_combination(P1::SimpleSparsePolynomialZonotope, P2::SimpleSparse
     E = hcat(vcat(zeros(N, nparams(P1) + nparams(P2)), one(N)),
              vcat(E1, zeros(N, nparams(P2) + 1, ngens(P1))),
              vcat(E2, zeros(N, nparams(P2), ngens(P1)), ones(N, 1, ngens(P1))),
-             vcat(zeros(N, nparams(P1), ngens(P2)), E2, zeros(N 1, ngens(P2))),
+             vcat(zeros(N, nparams(P1), ngens(P2)), E2, zeros(N, 1, ngens(P2))),
              vcat(zeros(N, nparams(P1), ngens(P2)), E2, ones(N, 1, ngens(P2))))
 
     return SimpleSparsePolynomialZonotope(c, G, E)
