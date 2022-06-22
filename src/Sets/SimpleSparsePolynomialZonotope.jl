@@ -1,4 +1,4 @@
-export SimpleSparsePolynomialZonotope, expmat, nparams,
+export SimpleSparsePolynomialZonotope, PolynomialZonotope, expmat, nparams,
        linear_map
 
 """
@@ -34,6 +34,14 @@ struct SimpleSparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatr
         return new{N, VN, MN, ME}(c, G, E)
     end
 end
+
+"""
+    PolynomialZonotope = SimpleSparsePolynomialZonotope
+
+Alias for `SimpleSparsePolynomialZonotope`.
+"""
+const PolynomialZonotope = SimpleSparsePolynomialZonotope
+
 
 const SSPZ = SimpleSparsePolynomialZonotope
 
