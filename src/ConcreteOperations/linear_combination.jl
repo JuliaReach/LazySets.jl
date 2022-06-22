@@ -30,12 +30,12 @@ function linear_combination(P1::SimpleSparsePolynomialZonotope, P2::SimpleSparse
     c = 0.5 * (c1 + c2)
     G = 0.5 * hcat(c1 - c2, G1, G1, G2, -G2)
 
-    et = promote_type(eltype(E1), eltype(E2))
-    E = hcat(vcat(zeros(et, nparams(P1) + nparams(P2)), one(et)),
-             vcat(E1, zeros(et, nparams(P2) + 1, ngens(P1))),
-             vcat(E2, zeros(et, nparams(P2), ngens(P1)), ones(et, 1, ngens(P1))),
-             vcat(zeros(et, nparams(P1), ngens(P2)), E2, zeros(et, 1, ngens(P2))),
-             vcat(zeros(et, nparams(P1), ngens(P2)), E2, ones(et, 1, ngens(P2))))
+    N = promote_type(eltype(E1), eltype(E2))
+    E = hcat(vcat(zeros(N, nparams(P1) + nparams(P2)), one(N)),
+             vcat(E1, zeros(N, nparams(P2) + 1, ngens(P1))),
+             vcat(E2, zeros(N, nparams(P2), ngens(P1)), ones(N, 1, ngens(P1))),
+             vcat(zeros(N, nparams(P1), ngens(P2)), E2, zeros(N 1, ngens(P2))),
+             vcat(zeros(N, nparams(P1), ngens(P2)), E2, ones(N, 1, ngens(P2))))
 
     return SimpleSparsePolynomialZonotope(c, G, E)
 end
