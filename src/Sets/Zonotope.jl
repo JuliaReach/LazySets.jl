@@ -329,29 +329,148 @@ function scale!(α::Real, Z::Zonotope)
     return Z
 end
 
-"""
-    reduce_order(Z::Zonotope, r::Union{Integer, Rational})
+# ==================================
+# Zonotope order reduction methods
+# ==================================
 
-Reduce the order of a zonotope by overapproximating with a zonotope with fewer
-generators.
+# These methods split the given zonotope Z into two zonotopes, K and L, where
+# K contains the most "representative" generators and L contains the generators
+# that are reduced, Lred using a box overapproximation
+struct GIR05 <: AbstractReductionMethod end
+struct COMB03 <: AbstractReductionMethod end
 
-### Input
+const _GIR05 = GIR05()
+const _COMB03 = COMB03()
 
-- `Z` -- zonotope
-- `r` -- desired order
+# Implements zonotope order reduction method from [COMB03]
+# We follow the notation from [YS18]
+function _reduce_order(Z::Zonotope, r::Number, ::COMB03)
+    r >= 1 || throw(ArgumentError("the target order should be at least 1, but it is $r"))
+    c = Z.center
+    G = Z.generators
+    n, p = size(G)
 
-### Output
+    # r is bigger than the order of Z => don't reduce
+    (r * n >= p) && return Z
 
-A new zonotope with fewer generators, if possible.
+    # this algorithm sort generators by decreasing 2-norm
+    indices = Vector{Int}(undef, p)
+    _weighted_gens!(indices, G, _COMB03)
 
-### Algorithm
+    # the first m generators have greatest weight
+    m = floor(Int, n * (r - 1))
 
-See `overapproximate(Z::Zonotope, ::Type{<:Zonotope}, r::Union{Integer, Rational})`
-for details.
-"""
-function reduce_order(Z::Zonotope, r::Union{Integer, Rational})
-    return overapproximate(Z, Zonotope, r)
+    # compute interval hull of L
+    Lred = _interval_hull(G, view(indices, (m+1):p))
+
+    isone(r) && return Zonotope(c, Lred)
+
+    Gred = _hcat_KLred(G, view(indices, 1:m), Lred)
+    return Zonotope(c, Gred)
 end
+
+# Implements zonotope order reduction method from [GIR05]
+# We follow the notation from [YS18]
+function _reduce_order(Z::Zonotope, r::Number, ::GIR05)
+    r >= 1 || throw(ArgumentError("the target order should be at least 1, but it is $r"))
+    c = Z.center
+    G = Z.generators
+    n, p = size(G)
+
+    # r is bigger than the order of Z => don't reduce
+    (r * n >= p) && return Z
+
+    # this algorithm sorts generators by ||⋅||₁ - ||⋅||∞ difference
+    indices = Vector{Int}(undef, p)
+    _weighted_gens!(indices, G, _GIR05)
+
+    # the first m generators have greatest weight
+    m = floor(Int, n * (r - 1))
+
+    # compute interval hull of L
+    Lred = _interval_hull(G, view(indices, (m+1):p))
+
+    isone(r) && return Zonotope(c, Lred)
+
+    Gred = _hcat_KLred(G, view(indices, 1:m), Lred)
+    return Zonotope(c, Gred)
+end
+
+# return the indices of the generators in G (= columns) sorted according to the COMB03 method
+# the generator index with highest score goes first
+function _weighted_gens!(indices, G::AbstractMatrix{N}, ::COMB03) where {N}
+    p = size(G, 2)
+    weights = Vector{N}(undef, p)
+    @inbounds for j in 1:p
+        v = view(G, :, j)
+        weights[j] = norm(v, 2)
+    end
+    sortperm!(indices, weights, rev=true, initialized=false)
+    return indices
+end
+
+# return the indices of the generators in G (= columns) sorted according to the GIR05 method
+# the generator index with highest score goes first
+function _weighted_gens!(indices, G::AbstractMatrix{N}, ::GIR05) where {N}
+    n, p = size(G)
+    weights = Vector{N}(undef, p)
+    @inbounds for j in 1:p
+        aux_norm_1 = zero(N)
+        aux_norm_inf = zero(N)
+        for i in 1:n
+            abs_Gij = abs(G[i, j])
+            aux_norm_1 += abs_Gij
+            if aux_norm_inf < abs_Gij
+                aux_norm_inf = abs_Gij
+            end
+        end
+        weights[j] = aux_norm_1 - aux_norm_inf
+    end
+    sortperm!(indices, weights, rev=true, initialized=false)
+    return indices
+end
+
+# compute interval hull of the generators of G (= columns) corresponding to `indices`
+function _interval_hull(G::AbstractMatrix{N}, indices) where {N}
+    n, p = size(G)
+    Lred = zeros(N, n, n)
+    @inbounds for i in 1:n
+        for j in indices
+            Lred[i, i] += abs(G[i, j])
+        end
+    end
+    return Lred
+end
+
+# given an n x p matrix G and a vector of m integer indices with m <= p,
+# concatenate the columns of G given by `indices` with the matrix Lred
+function _hcat_KLred(G::AbstractMatrix, indices, Lred::AbstractMatrix)
+    K = view(G, :, indices)
+    return hcat(K, Lred)
+end
+
+function load_reduce_order_static()
+return quote
+
+# implementation for static arrays
+function _interval_hull(G::SMatrix{n, p, N, L}, indices) where {n, p, N, L}
+    Lred = zeros(MMatrix{n, n, N})
+    @inbounds for i in 1:n
+        for j in indices
+            Lred[i, i] += abs(G[i, j])
+        end
+    end
+    return SMatrix{n, n}(Lred)
+end
+
+# implementation for static arrays
+function _hcat_KLred(G::SMatrix{n, p, N, L1}, indices, Lred::SMatrix{n, n, N, L2}) where {n, p, N, L1, L2}
+    m = length(indices)
+    K = SMatrix{n, m}(view(G, :, indices))
+    return hcat(K, Lred)
+end
+
+end end # quote / load_reduce_order_static
 
 # ============================
 # Zonotope splitting methods

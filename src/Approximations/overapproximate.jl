@@ -1400,14 +1400,13 @@ end
 """
     overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, Rational}) where {N}
 
-Reduce the order of a zonotope by overapproximating with a zonotope with less
-generators.
+Reduce the order of a zonotope by overapproximating with a zonotope with less generators.
 
 ### Input
 
-- `Z` -- zonotope
+- `Z`        -- zonotope
 - `Zonotope` -- desired type for dispatch
-- `r` -- desired order
+- `r`        -- desired order
 
 ### Output
 
@@ -1415,38 +1414,14 @@ A new zonotope with less generators, if possible.
 
 ### Algorithm
 
-This function implements the algorithm described in A. Girard's
-*Reachability of Uncertain Linear Systems Using Zonotopes*, HSCC. Vol. 5. 2005.
+This function implements the algorithm described in [G05]. See `reduce_order` for alternative algorithms.
 
 If the desired order is smaller than one, the zonotope is *not* reduced.
+
+[G05] A. Girard. *Reachability of Uncertain Linear Systems Using Zonotopes*, HSCC. Vol. 5. 2005.
 """
 function overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, Rational}) where {N}
-    c, G = Z.center, Z.generators
-    d, p = dim(Z), ngens(Z)
-
-    if r * d >= p || r < 1
-        # do not reduce
-        return Z
-    end
-
-    h = zeros(N, p)
-    for i in 1:p
-        h[i] = norm(G[:, i], 1) - norm(G[:, i], Inf)
-    end
-    ind = sortperm(h)
-
-    m = p - floor(Int, d * (r - 1)) # subset of ngens that are reduced
-    rg = G[:, ind[1:m]] # reduced generators
-
-    # interval hull computation of reduced generators
-    Gbox = Diagonal(sum(abs, rg, dims=2)[:])
-    if m < p
-        Gnotred = G[:, ind[m+1:end]]
-        Gred = [Gnotred Gbox]
-    else
-        Gred = Gbox
-    end
-    return Zonotope(c, Gred)
+    reduce_order(Z, r)
 end
 
 """

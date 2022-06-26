@@ -8,7 +8,8 @@ export AbstractZonotope,
        translate,
        translate!,
        togrep,
-       split!
+       split!,
+       reduce_order
 
 """
     AbstractZonotope{N} <: AbstractCentrallySymmetricPolytope{N}
@@ -730,4 +731,37 @@ By default this function returns the input zonotope. Subtypes of
 """
 function remove_redundant_generators(Z::AbstractZonotope)
     return Z  # fallback implementation
+end
+
+"""
+    AbstractReductionMethod
+
+Abstract supertype for zonotope order reduction methods.
+"""
+abstract type AbstractReductionMethod end
+
+"""
+    reduce_order(Z::AbstractZonotope, r::Number, method::AbstractReductionMethod=GIR05())
+
+Reduce the order of a zonotope by overapproximating with a zonotope with less generators.
+
+### Input
+
+- `Z`      -- zonotope
+- `r`      -- desired order
+- `method` -- (optional, default: `GIR05()`) the reduction method used
+
+### Output
+
+A new zonotope with less generators, if possible.
+
+### Algorithm
+
+The available algorithms are:
+
+- `GIR05()`
+- `COMB03()`
+"""
+function reduce_order(Z::AbstractZonotope, r::Number, method::AbstractReductionMethod=GIR05())
+    _reduce_order(convert(Zonotope, Z), r, method)
 end
