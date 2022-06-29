@@ -233,7 +233,7 @@ Return a tight overapproximation of a zonotope with an axis-aligned box.
 
 ### Input
 
-- `Z`              -- zonotope
+- `Z` -- zonotope
 
 ### Output
 
