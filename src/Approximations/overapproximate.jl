@@ -914,7 +914,7 @@ julia> Y = evaluate(vTM[1], vTM[1].dom) × evaluate(vTM[2], vTM[2].dom)
 [-1.5, 3.5] × [-8.60001, 4.40001]
 
 julia> H = convert(Hyperrectangle, Y) # this IntevalBox is the same as X
-Hyperrectangle{Float64, StaticArrays.SVector{2, Float64}, StaticArrays.SVector{2, Float64}}([1.0, -2.1000000000000005], [2.5, 6.500000000000001])
+Hyperrectangle{Float64, StaticArraysCore.SVector{2, Float64}, StaticArraysCore.SVector{2, Float64}}([1.0, -2.1000000000000005], [2.5, 6.500000000000001])
 ```
 However, the zonotope returns better results if we want to approximate the `TM`,
 since it is not axis-aligned:
