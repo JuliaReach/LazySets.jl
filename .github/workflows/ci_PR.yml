@@ -1,12 +1,10 @@
-name: CI
+name: CI-PR
 
 on:
-  push:
+  pull_request:
     paths-ignore:
       - 'LICENSE'
       - 'README.md'
-    branches:
-      - master
 
 jobs:
   test:
@@ -20,8 +18,13 @@ jobs:
           - '1.7'
         os:
           - ubuntu-latest
+          - windows-latest
         arch:
           - x64
+        include:
+          - version: '1.6'  # test on oldest supported version
+            arch: x64
+            os: ubuntu-latest
     env:
       JULIA_PKG_SERVER: ''
     steps:
