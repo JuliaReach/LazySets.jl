@@ -60,7 +60,7 @@ The articles appear in reverse chronological order.
 
 [21] **Conservative Time Discretization: A Comparative Study.** Marcelo Forets and Christian Schilling (2022). Proceedings of the [17th International Conference on integrated Formal Methods (iFM)](https://ifm22.si.usi.ch/). [arXiv: 2111.01454](https://arxiv.org/abs/2111.01454).
 
-[20] **Verification of Neural-Network Control Systems by Integrating Taylor Models and Zonotopes.** Christian Schilling, Marcelo Forets, and Sebastián Guadalupe (2022). Proceedings of the [35th Conference on Artificial Intelligence (AAAI)](https://aaai.org/Conferences/AAAI-22/). [arXiv: 2112.09197](https://arxiv.org/abs/2112.09197).
+[20] **Verification of Neural-Network Control Systems by Integrating Taylor Models and Zonotopes.** Christian Schilling, Marcelo Forets, and Sebastián Guadalupe (2022). Proceedings of the [36th Conference on Artificial Intelligence (AAAI)](https://aaai.org/Conferences/AAAI-22/). [doi: 10.1609/aaai.v36i7.20790](https://doi.org/10.1609/aaai.v36i7.20790).
 
 [19] **Combining Set Propagation with Finite Element Methods for Time Integration in Transient Solid Mechanics Problems.** Marcelo Forets, Daniel Freire Caporale, and Jorge M. Pérez Zerpa (2022). Computers & Structures, vol 259. [doi: 10.1016/j.compstruc.2021.106699](https://doi.org/10.1016/j.compstruc.2021.106699), [arXiv: 2105.05841](https://arxiv.org/abs/2105.05841).
 
