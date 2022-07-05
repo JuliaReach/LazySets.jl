@@ -56,9 +56,11 @@ This library has been applied in a number of scientic works.
 
 The articles appear in reverse chronological order.
 
+[22] **Decomposing reach set computations with low-dimensional sets and high-dimensional matrices (extended version).** Sergiy Bogomolov, Marcelo Forets, Goran Frehse, Andreas Podelski, and Christian Schilling (2022). Information and Computation. [doi: 10.1016/j.ic.2022.104937](https://doi.org/10.1016/j.ic.2022.104937).
+
 [21] **Conservative Time Discretization: A Comparative Study.** Marcelo Forets and Christian Schilling (2022). Proceedings of the [17th International Conference on integrated Formal Methods (iFM)](https://ifm22.si.usi.ch/). [arXiv: 2111.01454](https://arxiv.org/abs/2111.01454).
 
-[20] **Verification of Neural-Network Control Systems by Integrating Taylor Models and Zonotopes.** Christian Schilling, Marcelo Forets, and Sebastián Guadalupe (2022). Proceedings of the [35th Conference on Artificial Intelligence (AAAI)](https://aaai.org/Conferences/AAAI-22/). [arXiv: 2112.09197](https://arxiv.org/abs/2112.09197).
+[20] **Verification of Neural-Network Control Systems by Integrating Taylor Models and Zonotopes.** Christian Schilling, Marcelo Forets, and Sebastián Guadalupe (2022). Proceedings of the [36th Conference on Artificial Intelligence (AAAI)](https://aaai.org/Conferences/AAAI-22/). [doi: 10.1609/aaai.v36i7.20790](https://doi.org/10.1609/aaai.v36i7.20790).
 
 [19] **Combining Set Propagation with Finite Element Methods for Time Integration in Transient Solid Mechanics Problems.** Marcelo Forets, Daniel Freire Caporale, and Jorge M. Pérez Zerpa (2022). Computers & Structures, vol 259. [doi: 10.1016/j.compstruc.2021.106699](https://doi.org/10.1016/j.compstruc.2021.106699), [arXiv: 2105.05841](https://arxiv.org/abs/2105.05841).
 
@@ -74,7 +76,7 @@ The articles appear in reverse chronological order.
 
 [13] **ARCH-COMP21 Category Report: Artificial Intelligence and Neural Network Controlled Systems for Continuous and Hybrid Systems Plants.** Taylor T. Johnson, Diego Manzanas Lopez, Luis Benet, Marcelo Forets, Christian Schilling, Radoslav Ivanov, Taylor Carpenter, James Weimer, and Insup Lee. (2021). 8th International Workshop on Applied Verification of Continuous and Hybrid Systems (ARCH21), vol 80, pp. 90-119. [doi: https://doi.org/10.29007/kfk9](https://doi.org/10.29007/kfk9).
 
-[12] **Synthesis of hybrid automata with affine dynamics from time-series data.** García Soto, Miriam, Thomas A. Henzinger, and Christian Schilling (2021). [24th International Conference on Hybrid Systems: Computation and Control (HSCC)](https://hscc.acm.org/2021/), pp. 2:1-2:11. [doi: 10.1145/3447928.3456704](https://doi.org/10.1145/3447928.3456704), [arXiv: 2102.12734](https://arxiv.org/abs/2102.12734).
+[12] **Synthesis of hybrid automata with affine dynamics from time-series data.** Miriam García Soto, Thomas A. Henzinger, and Christian Schilling (2021). [24th International Conference on Hybrid Systems: Computation and Control (HSCC)](https://hscc.acm.org/2021/), pp. 2:1-2:11. [doi: 10.1145/3447928.3456704](https://doi.org/10.1145/3447928.3456704), [arXiv: 2102.12734](https://arxiv.org/abs/2102.12734).
 
 [11] **Algorithms for verifying deep neural networks.** Changliu Liu, Tomer Arnon, Christopher Lazarus, Christopher A. Strong, Clark W. Barrett, and Mykel J. Kochenderfer (2021). Foundations and Trends in Optimization, vol 4, pp. 244-404. [doi: 10.1561/2400000035](https://doi.org/10.1561/2400000035), [arXiv: 1903.06758](https://arxiv.org/abs/1903.06758).
 
