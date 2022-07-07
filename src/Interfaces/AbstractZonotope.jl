@@ -753,7 +753,7 @@ Reduce the order of a zonotope by overapproximating with a zonotope with fewer g
 
 ### Output
 
-A new zonotope with less generators, if possible.
+A new zonotope with fewer generators, if possible.
 
 ### Algorithm
 
