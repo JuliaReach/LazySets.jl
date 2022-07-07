@@ -1414,11 +1414,7 @@ A new zonotope with less generators, if possible.
 
 ### Algorithm
 
-This function implements the algorithm described in [G05]. See `reduce_order` for alternative algorithms.
-
-If the desired order is smaller than one, the zonotope is *not* reduced.
-
-[G05] A. Girard. *Reachability of Uncertain Linear Systems Using Zonotopes*, HSCC. Vol. 5. 2005.
+This function falls back to `reduce_order` with the default algorithm.
 """
 function overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, Rational}) where {N}
     reduce_order(Z, r)
