@@ -743,7 +743,7 @@ abstract type AbstractReductionMethod end
 """
     reduce_order(Z::AbstractZonotope, r::Number, method::AbstractReductionMethod=GIR05())
 
-Reduce the order of a zonotope by overapproximating with a zonotope with less generators.
+Reduce the order of a zonotope by overapproximating with a zonotope with fewer generators.
 
 ### Input
 
