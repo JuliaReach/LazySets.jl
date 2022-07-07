@@ -371,6 +371,7 @@ end
 
 # Implements zonotope order reduction method from [GIR05]
 # We follow the notation from [YS18]
+# [G05] A. Girard. *Reachability of Uncertain Linear Systems Using Zonotopes*, HSCC. Vol. 5. 2005.
 function _reduce_order(Z::Zonotope, r::Number, ::GIR05)
     r >= 1 || throw(ArgumentError("the target order should be at least 1, but it is $r"))
     c = Z.center
