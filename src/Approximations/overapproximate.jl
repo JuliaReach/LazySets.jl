@@ -1400,7 +1400,7 @@ end
 """
     overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, Rational}) where {N}
 
-Reduce the order of a zonotope by overapproximating with a zonotope with less generators.
+Reduce the order of a zonotope by overapproximating with a zonotope with fewer generators.
 
 ### Input
 
