@@ -1225,3 +1225,19 @@ function convert(::Type{Hyperplane}, P::HPolyhedron; skip_check::Bool=false)
     c1 = @inbounds first(constraints_list(P))
     return Hyperplane(c1.a, c1.b)
 end
+
+
+"""
+    convert(::Type{SimpleSparsePolynomialZonotope}, P::Zonotope)
+
+convert a zonotope to a simple sparse polynomial zonotope.
+
+"""
+function convert(::Type{SimpleSparsePolynomialZonotope}, P::Zonotope)
+    c = center(P)
+    G = genmat(P)
+    n = ngens(P)
+    E = 1 * Matrix(I, n, n)
+
+    return SimpleSparsePolynomialZonotope(c, G, E)
+end
