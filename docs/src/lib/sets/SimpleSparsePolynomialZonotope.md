@@ -20,4 +20,5 @@ cartesian_product(::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZono
 linear_combination(::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZonotope)
 convex_hull(::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZonotope)
 convex_hull(::SimpleSparsePolynomialZonotope)
+quadratic_map(::Vector{MT}, ::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
 ```

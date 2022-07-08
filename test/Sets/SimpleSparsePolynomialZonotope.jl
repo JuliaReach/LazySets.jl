@@ -53,4 +53,16 @@ for N in [Float64, Float32, Rational{Int}]
     @test center(CH1) == _c
     @test genmat(CH1) == _g
     @test expmat(CH1) == _e
+
+    S2 = SimpleSparsePolynomialZonotope(N[0.2, -0.6], N[1 0;0 0.4], [1 0;0 1])
+    Q = [[0. 1;1 0], [-3.2 1.2;1.2 0]]
+
+    q1 = quadratic_map(Q, S2)
+
+    @test center(q1) ≈ [-0.24, -0.416]
+    @test genmat(q1) ≈ [-1.2   0.16    0.0  0.4   0.4   0.0;
+                         -2.72  0.192  -3.2  0.48  0.48  0.0]
+
+    @test expmat(q1) == [ 1  0  2  1  1  0;
+                          0  1  0  1  1  2]
 end
