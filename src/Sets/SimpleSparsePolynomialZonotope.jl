@@ -1,5 +1,5 @@
 export SimpleSparsePolynomialZonotope, PolynomialZonotope, expmat, nparams,
-       linear_map
+       linear_map, quadratic_map
 
 """
     SimpleSparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, ME<:AbstractMatrix{<:Integer}} <: AbstractPolynomialZonotope{N}
@@ -151,4 +151,46 @@ The set resulting from applying the linear map `M` to `P`.
 """
 function linear_map(M::AbstractMatrix, P::SSPZ)
     return SimpleSparsePolynomialZonotope(M * center(P), M * genmat(P), expmat(P))
+end
+
+"""
+    quadratic_map(Q::Vector{MT}, S::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
+
+Return an overapproximation of the quadratic map of the given zonotope.
+
+### Input
+
+- `S` -- simple sparse polynomial zonotope
+- `Q` -- array of square matrices
+
+### Output
+
+An overapproximation of the quadratic map of the given zonotope.
+"""
+function quadratic_map(Q::Vector{MT}, S::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
+    m = length(Q)
+    c = center(S)
+    h = ngens(S)
+    G = genmat(S)
+    E = expmat(S)
+
+    cnew = similar(c, m)
+    Gnew = similar(G, m, h^2 + h)
+    tmp = similar(Q)
+    @inbounds for (i, q) in enumerate(Q)
+        cnew[i] = dot(c, q, c)
+        Gnew[i, 1:h] = c' * (q + q')*G
+        tmp[i] = q * G
+    end
+
+    Enew = repeat(E, 1, h + 1)
+    @inbounds for i in 1:h
+        idxstart = h * i + 1
+        idxend = (i + 1) * h
+        Enew[:, idxstart:idxend] .+= E[:, i]
+        for j in eachindex(tmp)
+            Gnew[j, idxstart:idxend] = G[:, i]' * tmp[j]
+        end
+    end
+    return SimpleSparsePolynomialZonotope(cnew, Gnew, Enew)
 end
