@@ -56,8 +56,8 @@ function Algorithm1(A, X0, δ, μ, T; lazy::Bool=false)
     N = floor(Int, T / δ)
 
     # preallocate arrays
-    Q = Vector{LazySet{Float64}}(undef, N)
-    R = Vector{LazySet{Float64}}(undef, N)
+    Q = Vector{ConvexSet{Float64}}(undef, N)
+    R = Vector{ConvexSet{Float64}}(undef, N)
 
     # initial reach set in the time interval [0, δ]
     ϕp = (I+ϕ) / 2

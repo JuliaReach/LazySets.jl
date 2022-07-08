@@ -52,7 +52,7 @@ function distance(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle;
 end
 
 """
-    distance(S::AbstractSingleton, X::LazySet; [p]::Real=2.0)
+    distance(S::AbstractSingleton, X::ConvexSet; [p]::Real=2.0)
 
 Compute the distance between the singleton `S` and the set `X` with respect to
 the given `p`-norm.
@@ -69,11 +69,11 @@ the given `p`-norm.
 A scalar representing the distance between the element wrapped by `S` and the
 set `X`.
 """
-function distance(S::AbstractSingleton, X::LazySet; p::Real=2.0)
+function distance(S::AbstractSingleton, X::ConvexSet; p::Real=2.0)
     return distance(element(S), X; p=p)
 end
 
-distance(X::LazySet, S::AbstractSingleton; p::Real=2.0) = distance(S, X; p=p)
+distance(X::ConvexSet, S::AbstractSingleton; p::Real=2.0) = distance(S, X; p=p)
 
 distance(S1::AbstractSingleton, S2::AbstractSingleton; p::Real=2.0) =
     distance(element(S1), element(S2); p=p)

@@ -3,7 +3,7 @@ import Base.convert
 #= conversion between set types =#
 
 # convert methods for identity (no-ops)
-for T in subtypes(LazySet, true)
+for T in subtypes(ConvexSet, true)
     @eval begin
         Base.convert(::Type{$T}, X::$T) = X
     end
@@ -28,7 +28,7 @@ function convert(T::Type{HPOLYGON}, P::VPolygon) where {HPOLYGON<:AbstractHPolyg
 end
 
 """
-    convert(::Type{HPOLYGON}, X::LazySet; [check_boundedness]::Bool=true) where {HPOLYGON<:AbstractHPolygon}
+    convert(::Type{HPOLYGON}, X::ConvexSet; [check_boundedness]::Bool=true) where {HPOLYGON<:AbstractHPolygon}
 
 Converts a polyhedral set to a polygon in vertex representation.
 
@@ -47,7 +47,7 @@ A polygon in constraint representation.
 
 We compute the list of constraints of `X`, then instantiate the polygon.
 """
-function convert(::Type{HPOLYGON}, X::LazySet; check_boundedness::Bool=true) where {HPOLYGON<:AbstractHPolygon}
+function convert(::Type{HPOLYGON}, X::ConvexSet; check_boundedness::Bool=true) where {HPOLYGON<:AbstractHPolygon}
     @assert dim(X) == 2 "set must be two-dimensional for conversion, but it is of dimension $(dim(X))"
     PT = basetype(HPOLYGON)
     if check_boundedness && !isbounded(X)
@@ -111,7 +111,7 @@ function convert(::Type{VPolytope}, P::AbstractPolytope)
 end
 
 """
-    convert(::Type{VPolygon}, X::LazySet)
+    convert(::Type{VPolygon}, X::ConvexSet)
 
 Generic conversion to polygon in vertex representation.
 
@@ -130,7 +130,7 @@ We compute the list of vertices of `X` and wrap the result in a polygon in
 vertex representation, which guarantees that the vertices are sorted in
 counter-clockwise fashion.
 """
-function convert(::Type{VPolygon}, X::LazySet)
+function convert(::Type{VPolygon}, X::ConvexSet)
     @assert dim(X) == 2 "set must be two-dimensional for conversion"
     return VPolygon(vertices_list(X))
 end
@@ -186,7 +186,7 @@ function convert(::Type{HPolyhedron{N, Vector{N}}}, X::AbstractPolyhedron) where
     return HPolyhedron([HalfSpace(Vector(c.a), c.b) for c in clist])
 end
 
-function convert(::Type{HPolyhedron}, X::LazySet)
+function convert(::Type{HPolyhedron}, X::ConvexSet)
     return HPolyhedron(constraints_list(X))
 end
 
@@ -212,12 +212,12 @@ function convert(::Type{HPolytope}, P::VPolytope)
     return tohrep(P)
 end
 
-function convert(::Type{HPolytope}, X::LazySet)
+function convert(::Type{HPolytope}, X::ConvexSet)
     return HPolytope(constraints_list(X))
 end
 
 """
-    convert(::Type{VPolytope}, X::LazySet; [prune]::Bool=true)
+    convert(::Type{VPolytope}, X::ConvexSet; [prune]::Bool=true)
 
 Generic conversion to polytope in vertex representation.
 
@@ -237,7 +237,7 @@ We compute the list of vertices of `X` and wrap the result in a polytope in
 vertex representation, `VPolytope`. Use the option `prune` to select whether or not
 to remove redundant vertices before constructing the polytope.
 """
-function convert(::Type{VPolytope}, X::LazySet; prune::Bool=true)
+function convert(::Type{VPolytope}, X::ConvexSet; prune::Bool=true)
     return VPolytope(vertices_list(X, prune=prune))
 end
 
@@ -617,7 +617,7 @@ function convert(::Type{Interval}, H::AbstractHyperrectangle)
 end
 
 """
-    convert(::Type{Interval}, S::LazySet{N}) where {N<:Real}
+    convert(::Type{Interval}, S::ConvexSet{N}) where {N<:Real}
 
 Converts a convex set to an interval.
 
@@ -630,7 +630,7 @@ Converts a convex set to an interval.
 
 An interval.
 """
-function convert(::Type{Interval}, S::LazySet{N}) where {N<:Real}
+function convert(::Type{Interval}, S::ConvexSet{N}) where {N<:Real}
     @assert dim(S) == 1 "cannot convert a $(dim(S))-dimensional $(typeof(S)) to `Interval`"
     return Interval(-ρ(N[-1], S), ρ(N[1], S))
 end

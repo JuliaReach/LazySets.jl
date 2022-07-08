@@ -222,7 +222,7 @@ function order(Z::AbstractZonotope)
 end
 
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """

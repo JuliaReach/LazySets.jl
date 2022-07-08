@@ -8,8 +8,8 @@ CurrentModule = LazySets
 
 ```@docs
 MinkowskiSum
-⊕(::LazySet, ::LazySet)
-+(::LazySet, ::LazySet)
+⊕(::ConvexSet, ::ConvexSet)
++(::ConvexSet, ::ConvexSet)
 swap(::MinkowskiSum)
 dim(::MinkowskiSum)
 ρ(::AbstractVector, ::MinkowskiSum)
@@ -18,15 +18,15 @@ isbounded(::MinkowskiSum)
 isempty(::MinkowskiSum)
 center(::MinkowskiSum)
 constraints_list(::MinkowskiSum)
-∈(::AbstractVector, ::MinkowskiSum{N, S1, S2}) where {N, S1<:AbstractSingleton, S2<:LazySet}
+∈(::AbstractVector, ::MinkowskiSum{N, S1, S2}) where {N, S1<:AbstractSingleton, S2<:ConvexSet}
 vertices_list(::MinkowskiSum)
 ```
-Inherited from [`LazySet`](@ref):
-* [`norm`](@ref norm(::LazySet, ::Real))
-* [`radius`](@ref radius(::LazySet, ::Real))
-* [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`an_element`](@ref an_element(::LazySet{N}) where {N})
-* [`singleton_list`](@ref singleton_list(::LazySet))
+Inherited from [`ConvexSet`](@ref):
+* [`norm`](@ref norm(::ConvexSet, ::Real))
+* [`radius`](@ref radius(::ConvexSet, ::Real))
+* [`diameter`](@ref diameter(::ConvexSet, ::Real))
+* [`an_element`](@ref an_element(::ConvexSet{N}) where {N})
+* [`singleton_list`](@ref singleton_list(::ConvexSet))
 
 ## [``n``-ary Minkowski sum (MinkowskiSumArray)](@id def_MinkowskiSumArray)
 
@@ -40,12 +40,12 @@ isempty(::MinkowskiSumArray)
 array(::MinkowskiSumArray)
 center(::MinkowskiSumArray)
 ```
-Inherited from [`LazySet`](@ref):
-* [`norm`](@ref norm(::LazySet, ::Real))
-* [`radius`](@ref radius(::LazySet, ::Real))
-* [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`an_element`](@ref an_element(::LazySet{N}) where {N})
-* [`singleton_list`](@ref singleton_list(::LazySet))
+Inherited from [`ConvexSet`](@ref):
+* [`norm`](@ref norm(::ConvexSet, ::Real))
+* [`radius`](@ref radius(::ConvexSet, ::Real))
+* [`diameter`](@ref diameter(::ConvexSet, ::Real))
+* [`an_element`](@ref an_element(::ConvexSet{N}) where {N})
+* [`singleton_list`](@ref singleton_list(::ConvexSet))
 
 ## [``n``-ary Minkowski sum with cache (CachedMinkowskiSumArray)](@id def_CachedMinkowskiSumArray)
 
@@ -58,9 +58,9 @@ isempty(::CachedMinkowskiSumArray)
 array(::CachedMinkowskiSumArray)
 forget_sets!(::CachedMinkowskiSumArray)
 ```
-Inherited from [`LazySet`](@ref):
-* [`norm`](@ref norm(::LazySet, ::Real))
-* [`radius`](@ref radius(::LazySet, ::Real))
-* [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`an_element`](@ref an_element(::LazySet))
-* [`singleton_list`](@ref singleton_list(::LazySet))
+Inherited from [`ConvexSet`](@ref):
+* [`norm`](@ref norm(::ConvexSet, ::Real))
+* [`radius`](@ref radius(::ConvexSet, ::Real))
+* [`diameter`](@ref diameter(::ConvexSet, ::Real))
+* [`an_element`](@ref an_element(::ConvexSet))
+* [`singleton_list`](@ref singleton_list(::ConvexSet))

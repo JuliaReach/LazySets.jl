@@ -13,7 +13,7 @@ the respective sections.
 
 !!! note
     The naming convention is such that all interface names (with the exception
-    of the main abstract type `LazySet`) should be preceded by `Abstract`.
+    of the main abstract type `ConvexSet`) should be preceded by `Abstract`.
 
 The following diagram shows the interface hierarchy.
 
@@ -28,26 +28,26 @@ Depth = 3
 CurrentModule = LazySets
 ```
 
-## [General sets (LazySet)](@id def_LazySet)
+## [General sets (ConvexSet)](@id def_LazySet)
 
 Every convex set in this library implements this interface.
 
 ```@docs
-LazySet
+ConvexSet
 ```
 
 ### Support function and support vector
 
-Every `LazySet` type must define a function `σ` to compute the support vector.
+Every `ConvexSet` type must define a function `σ` to compute the support vector.
 
 ```@docs
 support_vector
-ρ(::AbstractVector, ::LazySet)
+ρ(::AbstractVector, ::ConvexSet)
 support_function
 σ
-singleton_list(::LazySet)
-constraints(::LazySet)
-vertices(::LazySet)
+singleton_list(::ConvexSet)
+constraints(::ConvexSet)
+vertices(::ConvexSet)
 delaunay
 ```
 
@@ -55,50 +55,50 @@ delaunay
 
 ```@docs
 basetype
-norm(::LazySet, ::Real=Inf)
-radius(::LazySet, ::Real=Inf)
-diameter(::LazySet, ::Real=Inf)
-isboundedtype(::Type{<:LazySet})
-isbounded(::LazySet)
-_isbounded_unit_dimensions(::LazySet{N}) where {N}
-is_polyhedral(::LazySet)
-an_element(::LazySet{N}) where {N}
-tosimplehrep(::LazySet)
-isuniversal(::LazySet{N}, ::Bool=false) where {N}
-affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector)
-exponential_map(::AbstractMatrix, ::LazySet)
-reflect(::LazySet)
-is_interior_point(::AbstractVector{N}, ::LazySet{N}; p=Inf, ε=_rtol(N)) where {N<:Real}
-isoperationtype(::Type{<:LazySet})
-isoperation(::LazySet)
-isequivalent(::LazySet, ::LazySet)
-isconvextype(::Type{<:LazySet})
-low(::LazySet{N}, ::Int) where {N}
-high(::LazySet{N}, ::Int) where {N}
-extrema(::LazySet, ::Int)
-low(::LazySet)
-high(::LazySet)
-extrema(::LazySet)
-surface(::LazySet{N}) where {N}
-area(::LazySet{N}) where {N}
-concretize(::LazySet)
-complement(::LazySet)
-project(::LazySet{N}, ::AbstractVector{Int}, ::Nothing=nothing, ::Int=dim(S)) where {N}
-project(::LazySet, ::AbstractVector{Int}, ::Type{TS}, ::Int=dim(S)) where {TS<:LazySet}
-project(::LazySet, ::AbstractVector{Int}, ::Pair{T, N}, ::Int=dim(S)) where {T<:UnionAll, N<:Real}
-project(::LazySet, ::AbstractVector{Int}, ::Real, ::Int=dim(S))
-rectify(::LazySet, ::Bool=false)
+norm(::ConvexSet, ::Real=Inf)
+radius(::ConvexSet, ::Real=Inf)
+diameter(::ConvexSet, ::Real=Inf)
+isboundedtype(::Type{<:ConvexSet})
+isbounded(::ConvexSet)
+_isbounded_unit_dimensions(::ConvexSet{N}) where {N}
+is_polyhedral(::ConvexSet)
+an_element(::ConvexSet{N}) where {N}
+tosimplehrep(::ConvexSet)
+isuniversal(::ConvexSet{N}, ::Bool=false) where {N}
+affine_map(::AbstractMatrix, ::ConvexSet, ::AbstractVector)
+exponential_map(::AbstractMatrix, ::ConvexSet)
+reflect(::ConvexSet)
+is_interior_point(::AbstractVector{N}, ::ConvexSet{N}; p=Inf, ε=_rtol(N)) where {N<:Real}
+isoperationtype(::Type{<:ConvexSet})
+isoperation(::ConvexSet)
+isequivalent(::ConvexSet, ::ConvexSet)
+isconvextype(::Type{<:ConvexSet})
+low(::ConvexSet{N}, ::Int) where {N}
+high(::ConvexSet{N}, ::Int) where {N}
+extrema(::ConvexSet, ::Int)
+low(::ConvexSet)
+high(::ConvexSet)
+extrema(::ConvexSet)
+surface(::ConvexSet{N}) where {N}
+area(::ConvexSet{N}) where {N}
+concretize(::ConvexSet)
+complement(::ConvexSet)
+project(::ConvexSet{N}, ::AbstractVector{Int}, ::Nothing=nothing, ::Int=dim(S)) where {N}
+project(::ConvexSet, ::AbstractVector{Int}, ::Type{TS}, ::Int=dim(S)) where {TS<:ConvexSet}
+project(::ConvexSet, ::AbstractVector{Int}, ::Pair{T, N}, ::Int=dim(S)) where {T<:UnionAll, N<:Real}
+project(::ConvexSet, ::AbstractVector{Int}, ::Real, ::Int=dim(S))
+rectify(::ConvexSet, ::Bool=false)
 permute
-rationalize(::Type{T}, ::LazySet{N}, ::Real) where {T<:Integer, N<:AbstractFloat}
+rationalize(::Type{T}, ::ConvexSet{N}, ::Real) where {T<:Integer, N<:AbstractFloat}
 ```
 
-Plotting is available for general one- or two-dimensional `LazySet`s, provided
+Plotting is available for general one- or two-dimensional `ConvexSet`s, provided
 that the overapproximation using iterative refinement is available:
 
 ```@docs
-plot_recipe(::LazySet{N}, ::Any=zero(N)) where {N}
-RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::LazySet{N}, ::N=N(1e-3)) where {N}
-RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractVector{VN}, ::N=N(1e-3), ::Int=40; ::Bool=false) where {N, VN<:LazySet{N}}
+plot_recipe(::ConvexSet{N}, ::Any=zero(N)) where {N}
+RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::ConvexSet{N}, ::N=N(1e-3)) where {N}
+RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractVector{VN}, ::N=N(1e-3), ::Int=40; ::Bool=false) where {N, VN<:ConvexSet{N}}
 ```
 
 For three-dimensional sets, we support `Makie`:
@@ -111,9 +111,9 @@ plot3d!
 ### Set functions that override Base functions
 
 ```@docs
-==(::LazySet, ::LazySet)
-≈(::LazySet, ::LazySet)
-copy(::LazySet)
+==(::ConvexSet, ::ConvexSet)
+≈(::ConvexSet, ::ConvexSet)
+copy(::ConvexSet)
 eltype
 ```
 

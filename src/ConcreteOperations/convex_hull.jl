@@ -9,7 +9,7 @@ function default_convex_hull_algorithm(points)
 end
 
 """
-    convex_hull(X::LazySet{N}, Y::LazySet{N}; [algorithm]=nothing,
+    convex_hull(X::ConvexSet{N}, Y::ConvexSet{N}; [algorithm]=nothing,
                 [backend]=nothing, [solver]=nothing) where {N}
 
 Compute the convex hull of the given convex sets.
@@ -37,7 +37,7 @@ One-dimensional sets are resolved by using `overapproximate` with an `Interval`
 For higher-dimensional sets, we compute the vertices of both `X` and `Y` using
 `vertices_list` and then compute the convex hull of the union of those vertices.
 """
-function convex_hull(X::LazySet{N}, Y::LazySet{N};
+function convex_hull(X::ConvexSet{N}, Y::ConvexSet{N};
                      algorithm=nothing,
                      backend=nothing,
                      solver=nothing
@@ -592,8 +592,8 @@ function convex_hull(X::UnionSet)
     return convex_hull(X.X, X.Y)
 end
 
-convex_hull(X::LazySet, ::EmptySet) = X
-convex_hull(::EmptySet, X::LazySet) = X
+convex_hull(X::ConvexSet, ::EmptySet) = X
+convex_hull(::EmptySet, X::ConvexSet) = X
 convex_hull(∅::EmptySet, ::EmptySet) = ∅
 
 """

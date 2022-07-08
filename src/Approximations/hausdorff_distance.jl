@@ -1,7 +1,7 @@
 export hausdorff_distance
 
 """
-    hausdorff_distance(X::LazySet{N}, Y::LazySet{N}; [p]::N=N(Inf),
+    hausdorff_distance(X::ConvexSet{N}, Y::ConvexSet{N}; [p]::N=N(Inf),
                        [ε]=N(1e-3)) where {N}
 
 Compute the Hausdorff distance between two convex sets up to a given threshold.
@@ -51,7 +51,7 @@ Given a value ``δ``, to check whether the sets are within Hausdorff distance
 ``δ``, we simply check the inclusions given above, where on the right-hand side
 we use a lazy `Bloating`.
 """
-function hausdorff_distance(X::LazySet{N}, Y::LazySet{N}; p::N=N(Inf),
+function hausdorff_distance(X::ConvexSet{N}, Y::ConvexSet{N}; p::N=N(Inf),
                             ε=N(1e-3)) where {N}
     @assert ε > zero(N) "the value ε must be positive"
     @assert isbounded(X) && isbounded(Y) "the Hausdorff distance is only " *
@@ -89,7 +89,7 @@ function _mutual_issubset_in_δ_bloating(X, Y, δ, n, p)
            _issubset_in_δ_bloating(Y, X, δ, n, p)
 end
 
-function _issubset_in_δ_bloating(X::LazySet{N}, Y, δ, n, p) where {N}
+function _issubset_in_δ_bloating(X::ConvexSet{N}, Y, δ, n, p) where {N}
     return X ⊆ Bloating(Y, δ, p)
 end
 

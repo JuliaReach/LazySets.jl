@@ -153,7 +153,7 @@ function get_rows(spmexp::SparseMatrixExp{N}, I::AbstractArray{Int};
 end
 
 """
-    ExponentialMap{N, S<:LazySet{N}} <: AbstractAffineMap{N, S}
+    ExponentialMap{N, S<:ConvexSet{N}} <: AbstractAffineMap{N, S}
 
 Type that represents the action of an exponential map on a set.
 
@@ -201,7 +201,7 @@ julia> E * EmptySet(2)
 ∅(2)
 ```
 """
-struct ExponentialMap{N, S<:LazySet{N}} <: AbstractAffineMap{N, S}
+struct ExponentialMap{N, S<:ConvexSet{N}} <: AbstractAffineMap{N, S}
     spmexp::SparseMatrixExp{N}
     X::S
 end
@@ -224,7 +224,7 @@ end
 
 """
 ```
-    *(spmexp::SparseMatrixExp, X::LazySet)
+    *(spmexp::SparseMatrixExp, X::ConvexSet)
 ```
 
 Return the exponential map of a set from a sparse matrix exponential.
@@ -238,7 +238,7 @@ Return the exponential map of a set from a sparse matrix exponential.
 
 The exponential map of the set.
 """
-function *(spmexp::SparseMatrixExp, X::LazySet)
+function *(spmexp::SparseMatrixExp, X::ConvexSet)
     return ExponentialMap(spmexp, X)
 end
 
@@ -259,7 +259,7 @@ function set(em::ExponentialMap)
 end
 
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """
@@ -466,7 +466,7 @@ struct ProjectionSparseMatrixExp{N, MN1<:AbstractSparseMatrix{N},
 end
 
 """
-    ExponentialProjectionMap{N, S<:LazySet{N}} <: AbstractAffineMap{N, S}
+    ExponentialProjectionMap{N, S<:ConvexSet{N}} <: AbstractAffineMap{N, S}
 
 Type that represents the application of a projection of a sparse matrix
 exponential to a set.
@@ -481,7 +481,7 @@ exponential to a set.
 The exponential projection preserves convexity: if `X` is convex, then any
 exponential projection of `X` is convex as well.
 """
-struct ExponentialProjectionMap{N, S<:LazySet{N}} <: AbstractAffineMap{N, S}
+struct ExponentialProjectionMap{N, S<:ConvexSet{N}} <: AbstractAffineMap{N, S}
     projspmexp::ProjectionSparseMatrixExp
     X::S
 end
@@ -491,7 +491,7 @@ isconvextype(::Type{ExponentialProjectionMap{N, S}}) where {N, S} = isconvextype
 
 """
 ```
-    *(projspmexp::ProjectionSparseMatrixExp, X::LazySet)
+    *(projspmexp::ProjectionSparseMatrixExp, X::ConvexSet)
 ```
 
 Return the application of a projection of a sparse matrix exponential to a set.
@@ -505,7 +505,7 @@ Return the application of a projection of a sparse matrix exponential to a set.
 
 The application of the projection of a sparse matrix exponential to the set.
 """
-function *(projspmexp::ProjectionSparseMatrixExp, X::LazySet)
+function *(projspmexp::ProjectionSparseMatrixExp, X::ConvexSet)
     return ExponentialProjectionMap(projspmexp, X)
 end
 
@@ -527,7 +527,7 @@ function set(epm::ExponentialProjectionMap)
 end
 
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """

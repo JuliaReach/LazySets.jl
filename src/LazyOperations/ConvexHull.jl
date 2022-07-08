@@ -7,7 +7,7 @@ export ConvexHull, CH,
        swap
 
 """
-    ConvexHull{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
+    ConvexHull{N, S1<:ConvexSet{N}, S2<:ConvexSet{N}} <: ConvexSet{N}
 
 Type that represents the convex hull of the union of two sets, that is the set
 
@@ -39,12 +39,12 @@ julia> typeof(c)
 ConvexHull{Float64, Ball2{Float64, Vector{Float64}}, Ball2{Float64, Vector{Float64}}}
 ```
 """
-struct ConvexHull{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
+struct ConvexHull{N, S1<:ConvexSet{N}, S2<:ConvexSet{N}} <: ConvexSet{N}
     X::S1
     Y::S2
 
     # default constructor with dimension check
-    function ConvexHull(X::LazySet{N}, Y::LazySet{N}) where {N}
+    function ConvexHull(X::ConvexSet{N}, Y::ConvexSet{N}) where {N}
         @assert dim(X) == dim(Y) "sets in a convex hull must have the same dimension"
         return new{N, typeof(X), typeof(Y)}(X, Y)
     end

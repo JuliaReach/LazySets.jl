@@ -3,7 +3,7 @@
 # ===========================================================
 
 """
-    ballinf_approximation(S::LazySet)
+    ballinf_approximation(S::ConvexSet)
 
 Overapproximate a set by a tight ball in the infinity norm.
 
@@ -20,7 +20,7 @@ A tight ball in the infinity norm.
 The center and radius of the box are obtained by evaluating the support function
 of the given set along the canonical directions.
 """
-function ballinf_approximation(S::LazySet{N}) where {N}
+function ballinf_approximation(S::ConvexSet{N}) where {N}
     n = dim(S)
     c = Vector{N}(undef, n)
     r = zero(N)

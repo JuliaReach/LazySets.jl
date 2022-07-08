@@ -277,12 +277,12 @@ binary) concrete set operations.
 
 - `op`        -- set operation (respectively its `Function` object)
 - `signature` -- (optional, default: `Type[]`) the type signature of the
-                 function without the `LazySet` type(s) (see also the `index`
+                 function without the `ConvexSet` type(s) (see also the `index`
                  option and the `Examples` section below)
 - `index`     -- (optional, default: `1`) index of the set type in the signature
                  in the unary case (see the `binary` option)
 - `type_args` -- (optional, default: `Float64`) type arguments added to the
-                 `LazySet`(s) when searching for available methods; valid
+                 `ConvexSet`(s) when searching for available methods; valid
                  inputs are a type or `nothing`, and in the unary case (see the
                  `binary` option) it can also be a list of types
 - `binary`    -- (optional, default: `false`) flag indicating whether `op` is a
@@ -364,8 +364,8 @@ function implementing_sets(op::Function;
         "missing" => Vector{Tuple{Type, Type}}(),
         "specific" => Vector{Tuple{Type, Type}}())
     signature_copy = copy(signature)
-    insert!(signature_copy, 1, LazySet)  # insert a dummy type
-    for set_type in subtypes(LazySet, true)
+    insert!(signature_copy, 1, ConvexSet)  # insert a dummy type
+    for set_type in subtypes(ConvexSet, true)
         augmented_set_type = set_type
         try
             if type_args isa Type
@@ -376,7 +376,7 @@ function implementing_sets(op::Function;
             end
         catch e
             # type combination not available
-            push!(binary_dict["missing"], (set_type, LazySet))
+            push!(binary_dict["missing"], (set_type, ConvexSet))
             continue
         end
         signature_copy[1] = augmented_set_type  # replace dummy type
@@ -406,7 +406,7 @@ function _implementing_sets_unary!(dict, op, signature, index, type_args)
         return Tuple{new_signature...}
     end
 
-    for set_type in subtypes(LazySet, true)
+    for set_type in subtypes(ConvexSet, true)
         augmented_set_type = set_type
         try
             if type_args isa Type

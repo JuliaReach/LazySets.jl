@@ -25,7 +25,7 @@ function default_lp_solver(M::Type{<:Number}, N::Type{<:Number})
 end
 
 # Polyhedra backend (fallback method)
-function default_polyhedra_backend(P::LazySet{N}) where {N}
+function default_polyhedra_backend(P::ConvexSet{N}) where {N}
     require(:Polyhedra; fun_name="default_polyhedra_backend")
     error("no default backend for numeric type $N")
 end
@@ -1157,7 +1157,7 @@ function _check_constrained_dimensions(c::HalfSpace, block)
     return status
 end
 
-function _project_polyhedron(P::LazySet{N}, block; kwargs...) where {N}
+function _project_polyhedron(P::ConvexSet{N}, block; kwargs...) where {N}
     M = projection_matrix(block, dim(P), N)
     πP = linear_map(M, P; kwargs...)
     return constraints_list(πP)

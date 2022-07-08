@@ -5,7 +5,7 @@ export CartesianProductArray,
        same_block_structure
 
 """
-   CartesianProductArray{N, S<:LazySet{N}} <: LazySet{N}
+   CartesianProductArray{N, S<:ConvexSet{N}} <: ConvexSet{N}
 
 Type that represents the Cartesian product of a finite number of sets.
 
@@ -22,18 +22,18 @@ their Cartesian product is convex as well.
 
 Constructors:
 
-- `CartesianProductArray(array::Vector{<:LazySet})` -- default constructor
+- `CartesianProductArray(array::Vector{<:ConvexSet})` -- default constructor
 
 - `CartesianProductArray([n]::Int=0, [N]::Type=Float64)`
  -- constructor for an empty product with optional size hint and numeric type
 """
-struct CartesianProductArray{N, S<:LazySet{N}} <: LazySet{N}
+struct CartesianProductArray{N, S<:ConvexSet{N}} <: ConvexSet{N}
    array::Vector{S}
 end
 
 # constructor for an empty product with optional size hint and numeric type
 function CartesianProductArray(n::Int=0, N::Type=Float64)
-   arr = Vector{LazySet{N}}()
+   arr = Vector{ConvexSet{N}}()
    sizehint!(arr, n)
    return CartesianProductArray(arr)
 end
@@ -402,7 +402,7 @@ end
 
 """
    same_block_structure(x::AbstractVector{S1}, y::AbstractVector{S2}
-                       ) where {S1<:LazySet, S2<:LazySet}
+                       ) where {S1<:ConvexSet, S2<:ConvexSet}
 
 Check whether two vectors of sets have the same block structure, i.e., the
 ``i``-th entry in the vectors have the same dimension.
@@ -417,7 +417,7 @@ Check whether two vectors of sets have the same block structure, i.e., the
 `true` iff the vectors have the same block structure.
 """
 function same_block_structure(x::AbstractVector{S1}, y::AbstractVector{S2}
-                            ) where {S1<:LazySet, S2<:LazySet}
+                            ) where {S1<:ConvexSet, S2<:ConvexSet}
    if length(x) != length(y)
        return false
    end
@@ -567,7 +567,7 @@ function substitute_blocks(low_dim_cpa::CartesianProductArray{N},
                            orig_cpa::CartesianProductArray{N},
                            blocks::Vector{Tuple{Int,Int}}) where {N}
 
-   array = Vector{LazySet{N}}(undef, length(orig_cpa.array))
+   array = Vector{ConvexSet{N}}(undef, length(orig_cpa.array))
    index = 1
    for bi in 1:length(orig_cpa.array)
        start_ind, end_index = blocks[bi]
@@ -607,7 +607,7 @@ function linear_map(M::AbstractMatrix, cpa::CartesianProductArray)
 end
 
 function project(cpa::CartesianProductArray, block::AbstractVector{Int}; kwargs...)
-    target_sets = LazySet[]
+    target_sets = ConvexSet[]
     m = length(block)
 
     # find first set

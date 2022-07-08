@@ -79,7 +79,7 @@ function constraints_list(hp::Hyperplane)
 end
 
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """

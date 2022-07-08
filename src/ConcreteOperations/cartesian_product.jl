@@ -1,7 +1,7 @@
 export cartesian_product
 
 """
-    cartesian_product(X::LazySet, Y::LazySet; [backend]=nothing, [algorithm]::String="vrep")
+    cartesian_product(X::ConvexSet, Y::ConvexSet; [backend]=nothing, [algorithm]::String="vrep")
 
 Compute the Cartesian product of two sets.
 
@@ -31,7 +31,7 @@ For further information on the supported backends see
 If `X` can be converted to a one-dimensional interval and the vertices of `Y`
 are available use `algorithm="vrep"`.
 """
-function cartesian_product(X::LazySet, Y::LazySet; backend=nothing, algorithm::String="hrep")
+function cartesian_product(X::ConvexSet, Y::ConvexSet; backend=nothing, algorithm::String="hrep")
 
     if algorithm == "vrep"
         Yv = VPolytope(vertices_list(Y))
@@ -109,7 +109,7 @@ function cartesian_product(U1::Universe, U2::Universe)
     return Universe(dim(U1) + dim(U2))
 end
 
-function _cartesian_product_hrep(X::S1, Y::S2) where {S1<:LazySet{N}, S2<:LazySet} where {N}
+function _cartesian_product_hrep(X::S1, Y::S2) where {S1<:ConvexSet{N}, S2<:ConvexSet} where {N}
     U1 = Universe{N}(dim(X))
     clist1 = [cartesian_product(U1, c) for c in constraints_list(Y)]
     U2 = Universe{N}(dim(Y))

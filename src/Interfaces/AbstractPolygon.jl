@@ -28,7 +28,7 @@ abstract type AbstractPolygon{N} <: AbstractPolytope{N} end
 
 isconvextype(::Type{<:AbstractPolygon}) = true
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """

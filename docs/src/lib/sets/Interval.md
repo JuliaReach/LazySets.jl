@@ -34,8 +34,8 @@ rectify(::Interval{N}) where {N}
 diameter(::Interval, ::Real=Inf)
 split(::Interval, ::AbstractVector{Int})
 ```
-Inherited from [`LazySet`](@ref):
-* [`singleton_list`](@ref singleton_list(::LazySet))
+Inherited from [`ConvexSet`](@ref):
+* [`singleton_list`](@ref singleton_list(::ConvexSet))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))

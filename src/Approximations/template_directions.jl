@@ -99,7 +99,7 @@ end
 isnormalized(::AD) where {AD<:AbstractDirections} = isnormalized(AD)
 
 """
-    project(S::LazySet,
+    project(S::ConvexSet,
             block::AbstractVector{Int},
             directions::Type{<:AbstractDirections},
             [n]::Int;
@@ -119,7 +119,7 @@ Project a high-dimensional set to a given block using template directions.
 
 The template direction approximation of the projection of `S`.
 """
-@inline function project(S::LazySet,
+@inline function project(S::ConvexSet,
                          block::AbstractVector{Int},
                          directions::Type{<:AbstractDirections},
                          n::Int=dim(S);

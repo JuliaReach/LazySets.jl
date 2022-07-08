@@ -84,9 +84,9 @@ if test_suite_basic
     @time @testset "LazySets.CDDLib" begin include("Interfaces/CDDLib.jl") end
 
     # =======================================
-    # Testing types that inherit from LazySet
+    # Testing types that inherit from ConvexSet
     # =======================================
-    @time @testset "LazySets.LazySet" begin include("Interfaces/LazySet.jl") end
+    @time @testset "LazySets.ConvexSet" begin include("Interfaces/ConvexSet.jl") end
     @time @testset "LazySets.Singleton" begin include("Sets/Singleton.jl") end
     @time @testset "LazySets.Ball1" begin include("Sets/Ball1.jl") end
     @time @testset "LazySets.Ball2" begin include("Sets/Ball2.jl") end
@@ -133,7 +133,7 @@ if test_suite_basic
     @time @testset "LazySets.CompactSet" begin include("Interfaces/CompactSet.jl") end
 
     # =========================================================
-    # Testing other set types that do not inherit from LazySet
+    # Testing other set types that do not inherit from ConvexSet
     # =========================================================
     @time @testset "LazySets.Complement" begin include("LazyOperations/Complement.jl") end
     @time @testset "LazySets.DensePolynomialZonotope" begin include("Sets/DensePolynomialZonotope.jl") end

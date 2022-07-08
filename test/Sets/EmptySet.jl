@@ -104,7 +104,7 @@ end
 @test EmptySet(2) == ∅(2) == EmptySet{Float64}(2)
 
 # intersection
-for X in LazySets.subtypes(LazySet, true)
+for X in LazySets.subtypes(ConvexSet, true)
     if X <: RotatedHyperrectangle || isoperationtype(X)  # TODO #2391
         continue
     end

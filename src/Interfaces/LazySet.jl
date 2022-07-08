@@ -1,7 +1,7 @@
 import Base: ==, ≈, copy, eltype, rationalize, extrema
 import Random.rand
 
-export LazySet,
+export ConvexSet,
        basetype,
        ρ, support_function,
        σ, support_vector,
@@ -38,7 +38,7 @@ export LazySet,
        permute
 
 """
-    LazySet{N}
+    ConvexSet{N}
 
 Abstract type for convex sets, i.e., sets characterized by a (possibly infinite)
 intersection of halfspaces, or equivalently, sets ``S`` such that for any two
@@ -46,25 +46,25 @@ elements ``x, y ∈ S`` and ``0 ≤ λ ≤ 1`` it holds that ``λ·x + (1-λ)·y
 
 ### Notes
 
-`LazySet` types should be parameterized with a type `N`, typically `N<:Real`,
+`ConvexSet` types should be parameterized with a type `N`, typically `N<:Real`,
 for using different numeric types.
 
-Every concrete `LazySet` must define the following functions:
-- `σ(d::AbstractVector, S::LazySet)` -- the support vector of `S` in a given
+Every concrete `ConvexSet` must define the following functions:
+- `σ(d::AbstractVector, S::ConvexSet)` -- the support vector of `S` in a given
     direction `d`
-- `dim(S::LazySet)` -- the ambient dimension of `S`
+- `dim(S::ConvexSet)` -- the ambient dimension of `S`
 
 The function
-- `ρ(d::AbstractVector, S::LazySet)` -- the support function of `S` in a given
+- `ρ(d::AbstractVector, S::ConvexSet)` -- the support function of `S` in a given
     direction `d`
 is optional because there is a fallback implementation relying on `σ`.
 However, for unbounded sets (which includes most lazy set types) this fallback
 cannot be used and an explicit method must be implemented.
 
-The subtypes of `LazySet` (including abstract interfaces):
+The subtypes of `ConvexSet` (including abstract interfaces):
 
 ```jldoctest; setup = :(using LazySets: subtypes)
-julia> subtypes(LazySet, false)
+julia> subtypes(ConvexSet, false)
 14-element Vector{Any}:
  AbstractAffineMap
  AbstractCentrallySymmetric
@@ -85,7 +85,7 @@ julia> subtypes(LazySet, false)
 If we only consider *concrete* subtypes, then:
 
 ```jldoctest; setup = :(using LazySets: subtypes)
-julia> concrete_subtypes = subtypes(LazySet, true);
+julia> concrete_subtypes = subtypes(ConvexSet, true);
 
 julia> length(concrete_subtypes)
 44
@@ -137,13 +137,13 @@ ZeroSet
 Zonotope
 ```
 """
-abstract type LazySet{N} end
+abstract type ConvexSet{N} end
 
 
-# --- common LazySet functions ---
+# --- common ConvexSet functions ---
 
 """
-    eltype(::Type{<:LazySet{N}}) where {N}
+    eltype(::Type{<:ConvexSet{N}}) where {N}
 
 Return the numeric type (`N`) of the given set type.
 
@@ -155,10 +155,10 @@ Return the numeric type (`N`) of the given set type.
 
 The numeric type of `T`.
 """
-eltype(::Type{<:LazySet{N}}) where {N} = N
+eltype(::Type{<:ConvexSet{N}}) where {N} = N
 
 """
-    eltype(::LazySet{N}) where {N}
+    eltype(::ConvexSet{N}) where {N}
 
 Return the numeric type (`N`) of the given set.
 
@@ -170,10 +170,10 @@ Return the numeric type (`N`) of the given set.
 
 The numeric type of `X`.
 """
-eltype(::LazySet{N}) where {N} = N
+eltype(::ConvexSet{N}) where {N} = N
 
 """
-    basetype(T::Type{<:LazySet})
+    basetype(T::Type{<:ConvexSet})
 
 Return the base type of the given set type (i.e., without type parameters).
 
@@ -185,10 +185,10 @@ Return the base type of the given set type (i.e., without type parameters).
 
 The base type of `T`.
 """
-basetype(T::Type{<:LazySet}) = Base.typename(T).wrapper
+basetype(T::Type{<:ConvexSet}) = Base.typename(T).wrapper
 
 """
-    basetype(S::LazySet)
+    basetype(S::ConvexSet)
 
 Return the base type of the given set (i.e., without type parameters).
 
@@ -215,10 +215,10 @@ julia> basetype(LinearMap(rand(2, 2), z + z))
 LinearMap
 ```
 """
-basetype(S::LazySet) = Base.typename(typeof(S)).wrapper
+basetype(S::ConvexSet) = Base.typename(typeof(S)).wrapper
 
 """
-    ρ(d::AbstractVector, S::LazySet)
+    ρ(d::AbstractVector, S::ConvexSet)
 
 Evaluate the support function of a set in a given direction.
 
@@ -231,7 +231,7 @@ Evaluate the support function of a set in a given direction.
 
 The support function of the set `S` for the direction `d`.
 """
-function ρ(d::AbstractVector, S::LazySet)
+function ρ(d::AbstractVector, S::ConvexSet)
     return dot(d, σ(d, S))
 end
 
@@ -257,13 +257,13 @@ Alias for the support vector σ.
 const support_vector = σ
 
 """
-    isboundedtype(::Type{<:LazySet})
+    isboundedtype(::Type{<:ConvexSet})
 
 Determine whether a set type only represents bounded sets.
 
 ### Input
 
-- `LazySet` -- set type for dispatch
+- `ConvexSet` -- set type for dispatch
 
 ### Output
 
@@ -277,12 +277,12 @@ non-bounding linear constraints is allowed).
 By default this function returns `false`.
 All set types that can determine boundedness should override this behavior.
 """
-function isboundedtype(::Type{T}) where {T<:LazySet}
+function isboundedtype(::Type{T}) where {T<:ConvexSet}
     return false
 end
 
 """
-    isbounded(S::LazySet)
+    isbounded(S::ConvexSet)
 
 Determine whether a set is bounded.
 
@@ -301,7 +301,7 @@ Determine whether a set is bounded.
 See the documentation of `_isbounded_unit_dimensions` or `_isbounded_stiemke`
 for details.
 """
-function isbounded(S::LazySet; algorithm="support_function")
+function isbounded(S::ConvexSet; algorithm="support_function")
     if algorithm == "support_function"
         return _isbounded_unit_dimensions(S)
     elseif algorithm == "stiemke"
@@ -312,7 +312,7 @@ function isbounded(S::LazySet; algorithm="support_function")
 end
 
 """
-    _isbounded_unit_dimensions(S::LazySet{N}) where {N}
+    _isbounded_unit_dimensions(S::ConvexSet{N}) where {N}
 
 Determine whether a set is bounded in each unit dimension.
 
@@ -329,7 +329,7 @@ Determine whether a set is bounded in each unit dimension.
 This function performs ``2n`` support function checks, where ``n`` is the
 ambient dimension of `S`.
 """
-function _isbounded_unit_dimensions(S::LazySet{N}) where {N}
+function _isbounded_unit_dimensions(S::ConvexSet{N}) where {N}
     n = dim(S)
     @inbounds for i in 1:n
         for o in [one(N), -one(N)]
@@ -343,7 +343,7 @@ function _isbounded_unit_dimensions(S::LazySet{N}) where {N}
 end
 
 """
-    is_polyhedral(S::LazySet)
+    is_polyhedral(S::ConvexSet)
 
 Trait for polyhedral sets.
 
@@ -357,12 +357,12 @@ Trait for polyhedral sets.
 The answer is conservative, i.e., may sometimes be `false` even if the set is
 polyhedral.
 """
-function is_polyhedral(S::LazySet)
+function is_polyhedral(S::ConvexSet)
     return false
 end
 
 """
-    norm(S::LazySet, [p]::Real=Inf)
+    norm(S::ConvexSet, [p]::Real=Inf)
 
 Return the norm of a convex set.
 It is the norm of the enclosing ball (of the given ``p``-norm) of minimal volume
@@ -377,7 +377,7 @@ that is centered in the origin.
 
 A real number representing the norm.
 """
-function norm(S::LazySet, p::Real=Inf)
+function norm(S::ConvexSet, p::Real=Inf)
     if p == Inf
         return norm(box_approximation(S), p)
     elseif applicable(vertices_list, S)
@@ -388,7 +388,7 @@ function norm(S::LazySet, p::Real=Inf)
 end
 
 """
-    radius(S::LazySet, [p]::Real=Inf)
+    radius(S::ConvexSet, [p]::Real=Inf)
 
 Return the radius of a convex set.
 It is the radius of the enclosing ball (of the given ``p``-norm) of minimal
@@ -403,7 +403,7 @@ volume with the same center.
 
 A real number representing the radius.
 """
-function radius(S::LazySet, p::Real=Inf)
+function radius(S::ConvexSet, p::Real=Inf)
     if p == Inf
         return radius(Approximations.ballinf_approximation(S), p)
     else
@@ -412,7 +412,7 @@ function radius(S::LazySet, p::Real=Inf)
 end
 
 """
-    diameter(S::LazySet, [p]::Real=Inf)
+    diameter(S::ConvexSet, [p]::Real=Inf)
 
 Return the diameter of a convex set.
 It is the maximum distance between any two elements of the set, or,
@@ -428,12 +428,12 @@ minimal volume with the same center.
 
 A real number representing the diameter.
 """
-function diameter(S::LazySet, p::Real=Inf)
+function diameter(S::ConvexSet, p::Real=Inf)
     return radius(S, p) * 2
 end
 
 """
-    affine_map(M::AbstractMatrix, X::LazySet, v::AbstractVector; kwargs...)
+    affine_map(M::AbstractMatrix, X::ConvexSet, v::AbstractVector; kwargs...)
 
 Compute a concrete affine map.
 
@@ -451,12 +451,12 @@ A set representing the affine map of `X`.
 
 The implementation applies the functions `linear_map` and `translate`.
 """
-function affine_map(M::AbstractMatrix, X::LazySet, v::AbstractVector; kwargs...)
+function affine_map(M::AbstractMatrix, X::ConvexSet, v::AbstractVector; kwargs...)
     return translate(linear_map(M, X; kwargs...), v)
 end
 
 """
-    exponential_map(M::AbstractMatrix, X::LazySet)
+    exponential_map(M::AbstractMatrix, X::ConvexSet)
 
 Compute the concrete exponential map of `M` and `X`, i.e., `exp(M) * X`.
 
@@ -473,12 +473,12 @@ A set representing the exponential map of `M` and `X`.
 
 The implementation applies the functions `exp` and `linear_map`.
 """
-function exponential_map(M::AbstractMatrix, X::LazySet)
+function exponential_map(M::AbstractMatrix, X::ConvexSet)
     return linear_map(exp(M), X)
 end
 
 """
-    an_element(S::LazySet{N}) where {N}
+    an_element(S::ConvexSet{N}) where {N}
 
 Return some element of a convex set.
 
@@ -495,20 +495,20 @@ An element of a convex set.
 An element of the set is obtained by evaluating its support vector along
 direction ``[1, 0, …, 0]``.
 """
-function an_element(S::LazySet{N}) where {N}
+function an_element(S::ConvexSet{N}) where {N}
     e₁ = SingleEntryVector(1, dim(S), one(N))
     return σ(e₁, S)
 end
 
 """
-    ==(X::LazySet, Y::LazySet)
+    ==(X::ConvexSet, Y::ConvexSet)
 
 Return whether two LazySets of the same type are exactly equal.
 
 ### Input
 
-- `X` -- any `LazySet`
-- `Y` -- another `LazySet` of the same type as `X`
+- `X` -- any `ConvexSet`
+- `Y` -- another `ConvexSet` of the same type as `X`
 
 ### Output
 
@@ -538,7 +538,7 @@ julia> Ball1([0.], 1.) == Ball2([0.], 1.)
 false
 ```
 """
-function ==(X::LazySet, Y::LazySet)
+function ==(X::ConvexSet, Y::ConvexSet)
     # if the common supertype of X and Y is abstract, they cannot be compared
     if isabstracttype(promote_type(typeof(X), typeof(Y)))
         return false
@@ -553,14 +553,14 @@ function ==(X::LazySet, Y::LazySet)
     return true
 end
 """
-    ≈(X::LazySet, Y::LazySet)
+    ≈(X::ConvexSet, Y::ConvexSet)
 
 Return whether two LazySets of the same type are approximately equal.
 
 ### Input
 
-- `X` -- any `LazySet`
-- `Y` -- another `LazySet` of the same type as `X`
+- `X` -- any `ConvexSet`
+- `Y` -- another `ConvexSet` of the same type as `X`
 
 ### Output
 
@@ -593,7 +593,7 @@ julia> Ball1([0.], 1.) ≈ Ball2([0.], 1.)
 false
 ```
 """
-function ≈(X::LazySet, Y::LazySet)
+function ≈(X::ConvexSet, Y::ConvexSet)
     # if the common supertype of X and Y is abstract, they cannot be compared
     if isabstracttype(promote_type(typeof(X), typeof(Y)))
         return false
@@ -609,18 +609,18 @@ function ≈(X::LazySet, Y::LazySet)
 end
 
 # hook into random API
-function rand(rng::AbstractRNG, ::SamplerType{T}) where T<:LazySet
+function rand(rng::AbstractRNG, ::SamplerType{T}) where T<:ConvexSet
     rand(T, rng=rng)
 end
 
 """
-    copy(S::LazySet)
+    copy(S::ConvexSet)
 
 Return a copy of the given set by copying its values recursively.
 
 ### Input
 
-- `S` -- any `LazySet`
+- `S` -- any `ConvexSet`
 
 ### Output
 
@@ -631,14 +631,14 @@ A copy of `S`.
 This function performs a `copy` of each field in `S`.
 See the documentation of `?copy` for further details.
 """
-function copy(S::T) where {T<:LazySet}
+function copy(S::T) where {T<:ConvexSet}
     args = [copy(getfield(S, f)) for f in fieldnames(T)]
     BT = basetype(S)
     return BT(args...)
 end
 
 """
-    tosimplehrep(S::LazySet)
+    tosimplehrep(S::ConvexSet)
 
 Return the simple H-representation ``Ax ≤ b`` of a set from its list of linear
 constraints.
@@ -658,10 +658,10 @@ This function only works for sets that can be represented exactly by a finite
 list of linear constraints.
 This fallback implementation relies on `constraints_list(S)`.
 """
-tosimplehrep(S::LazySet) = tosimplehrep(constraints_list(S))
+tosimplehrep(S::ConvexSet) = tosimplehrep(constraints_list(S))
 
 """
-    reflect(P::LazySet)
+    reflect(P::ConvexSet)
 
 Concrete reflection of a convex set `P`, resulting in the reflected set `-P`.
 
@@ -678,7 +678,7 @@ A ⊖ B = \\{a − b | a ∈ A, b ∈ B\\} = A ⊕ (-B)
 ```
 by calling `minkowski_sum(A, reflect(B))`.
 """
-function reflect(P::LazySet)
+function reflect(P::ConvexSet)
     @assert applicable(constraints_list, P)  "this function " *
         "requires that the list of constraints is available, but it is not; " *
         "if the set is bounded, try overapproximating with an `HPolytope` first"
@@ -689,7 +689,7 @@ function reflect(P::LazySet)
 end
 
 """
-    isuniversal(X::LazySet{N}, [witness]::Bool=false) where {N}
+    isuniversal(X::ConvexSet{N}, [witness]::Bool=false) where {N}
 
 Check whether a given convex set is universal, and otherwise optionally compute
 a witness.
@@ -710,7 +710,7 @@ a witness.
 
 This is a naive fallback implementation.
 """
-function isuniversal(X::LazySet{N}, witness::Bool=false) where {N}
+function isuniversal(X::ConvexSet{N}, witness::Bool=false) where {N}
     if isbounded(X)
         result = false
     else
@@ -727,7 +727,7 @@ function isuniversal(X::LazySet{N}, witness::Bool=false) where {N}
 end
 
 """
-    is_interior_point(d::AbstractVector{N}, P::LazySet{N};
+    is_interior_point(d::AbstractVector{N}, P::ConvexSet{N};
                       p=N(Inf), ε=_rtol(N)) where {N<:Real}
 
 Check if the point `d` is contained in the interior of the convex set `P`.
@@ -750,13 +750,13 @@ The implementation checks if a `Ballp` of norm `p` with center `d` and radius
 `ε` is contained in the set `P`.
 This is a numerical check for `d ∈ interior(P)` with error tolerance `ε`.
 """
-function is_interior_point(d::AbstractVector{N}, P::LazySet{N};
+function is_interior_point(d::AbstractVector{N}, P::ConvexSet{N};
                            p=N(Inf), ε=_rtol(N)) where {N<:Real}
     return Ballp(p, d, ε) ⊆ P
 end
 
 """
-    plot_recipe(X::LazySet{N}, [ε]=N(PLOT_PRECISION)) where {N}
+    plot_recipe(X::ConvexSet{N}, [ε]=N(PLOT_PRECISION)) where {N}
 
 Convert a convex set to a pair `(x, y)` of points for plotting.
 
@@ -785,7 +785,7 @@ On the other hand, if you only want to produce a fast box-overapproximation of
 `X`, pass `ε=Inf`.
 Finally, we use the plot recipe for polygons.
 """
-function plot_recipe(X::LazySet{N}, ε=N(PLOT_PRECISION)) where {N}
+function plot_recipe(X::ConvexSet{N}, ε=N(PLOT_PRECISION)) where {N}
     @assert dim(X) <= 2 "cannot plot a $(dim(X))-dimensional $(typeof(X))"
     @assert isbounded(X) "cannot plot an unbounded $(typeof(X))"
 
@@ -798,13 +798,13 @@ function plot_recipe(X::LazySet{N}, ε=N(PLOT_PRECISION)) where {N}
 end
 
 """
-    isoperation(X::LazySet)
+    isoperation(X::ConvexSet)
 
-Check whether the given `LazySet` is an instance of a set operation or not.
+Check whether the given `ConvexSet` is an instance of a set operation or not.
 
 ### Input
 
-- `X` -- a `LazySet`
+- `X` -- a `ConvexSet`
 
 ### Output
 
@@ -815,7 +815,7 @@ Check whether the given `LazySet` is an instance of a set operation or not.
 The fallback implementation returns whether the set type of the input is an
 operation or not using `isoperationtype`.
 
-See also [`isoperationtype(X::Type{<:LazySet})`](@ref).
+See also [`isoperationtype(X::Type{<:ConvexSet})`](@ref).
 
 ### Examples
 
@@ -829,21 +829,21 @@ julia> isoperation(B ⊕ B)
 true
 ```
 """
-function isoperation(X::LazySet)
+function isoperation(X::ConvexSet)
     return isoperationtype(typeof(X))
 end
 
-isoperation(::Type{<:LazySet}) = error("`isoperation` cannot be applied to a set " *
+isoperation(::Type{<:ConvexSet}) = error("`isoperation` cannot be applied to a set " *
                                        "type; use `isoperationtype` instead")
 
 """
-    isoperationtype(X::Type{<:LazySet})
+    isoperationtype(X::Type{<:ConvexSet})
 
-Check whether the given `LazySet` type is an operation or not.
+Check whether the given `ConvexSet` type is an operation or not.
 
 ### Input
 
-- `X` -- subtype of `LazySet`
+- `X` -- subtype of `ConvexSet`
 
 ### Output
 
@@ -852,9 +852,9 @@ Check whether the given `LazySet` type is an operation or not.
 ### Notes
 
 The fallback for this function returns an error that `isoperationtype` is not
-implemented. Subtypes of `LazySet` should dispatch on this function as required.
+implemented. Subtypes of `ConvexSet` should dispatch on this function as required.
 
-See also [`isoperation(X<:LazySet)`](@ref).
+See also [`isoperation(X<:ConvexSet)`](@ref).
 
 ### Examples
 
@@ -866,22 +866,22 @@ julia> isoperationtype(LinearMap)
 true
 ```
 """
-function isoperationtype(X::Type{<:LazySet})
+function isoperationtype(X::Type{<:ConvexSet})
     error("`isoperationtype` is not implemented for type $X")
 end
 
-isoperationtype(::LazySet) = error("`isoperationtype` cannot be applied to " *
+isoperationtype(::ConvexSet) = error("`isoperationtype` cannot be applied to " *
                                    "a set instance; use `isoperation` instead")
 
 """
-    isequivalent(X::LazySet, Y::LazySet)
+    isequivalent(X::ConvexSet, Y::ConvexSet)
 
 Return whether two LazySets are equal in the mathematical sense, i.e. equivalent.
 
 ### Input
 
-- `X` -- any `LazySet`
-- `Y` -- another `LazySet`
+- `X` -- any `ConvexSet`
+- `Y` -- another `ConvexSet`
 
 ### Output
 
@@ -907,7 +907,7 @@ julia> isequivalent(X, Y)
 true
 ```
 """
-function isequivalent(X::LazySet, Y::LazySet)
+function isequivalent(X::ConvexSet, Y::ConvexSet)
     try  # TODO temporary try-catch construct until ≈ is fixed for all set types
         if X ≈ Y
             return true
@@ -917,18 +917,18 @@ function isequivalent(X::LazySet, Y::LazySet)
     return _isequivalent_inclusion(X, Y)
 end
 
-function _isequivalent_inclusion(X::LazySet, Y::LazySet)
+function _isequivalent_inclusion(X::ConvexSet, Y::ConvexSet)
     return X ⊆ Y && Y ⊆ X
 end
 
 """
-    isconvextype(X::Type{<:LazySet})
+    isconvextype(X::Type{<:ConvexSet})
 
-Check whether the given `LazySet` type is convex.
+Check whether the given `ConvexSet` type is convex.
 
 ### Input
 
-- `X` -- subtype of `LazySet`
+- `X` -- subtype of `ConvexSet`
 
 ### Output
 
@@ -969,10 +969,10 @@ julia> isconvextype(Intersection{Float64, BallInf{Float64}, BallInf{Float64}})
 true
 ```
 """
-isconvextype(X::Type{<:LazySet}) = false
+isconvextype(X::Type{<:ConvexSet}) = false
 
 """
-    surface(X::LazySet{N}) where {N}
+    surface(X::ConvexSet{N}) where {N}
 
 Compute the surface area of a set.
 
@@ -984,7 +984,7 @@ Compute the surface area of a set.
 
 A number representing the surface area of `X`.
 """
-function surface(X::LazySet{N}) where {N}
+function surface(X::ConvexSet{N}) where {N}
     if dim(X) == 2
         return area(X)
     else
@@ -994,7 +994,7 @@ function surface(X::LazySet{N}) where {N}
 end
 
 """
-    area(X::LazySet{N}) where {N}
+    area(X::ConvexSet{N}) where {N}
 
 Compute the area of a two-dimensional polytopic set using the Shoelace formula.
 
@@ -1023,7 +1023,7 @@ Let `m` be the number of vertices of `X`. The following instances are considered
 Otherwise, the general Shoelace formula is used; for detals see the wikipedia
 article [Shoelace formula](https://en.wikipedia.org/wiki/Shoelace_formula).
 """
-function area(X::LazySet{N}) where {N}
+function area(X::ConvexSet{N}) where {N}
     @assert dim(X) == 2 "this function only applies to two-dimensional sets, " *
     "but the given set is $(dim(X))-dimensional"
 
@@ -1075,7 +1075,7 @@ function _area_polygon(v::Vector{VN}) where {N, VN<:AbstractVector{N}}
 end
 
 """
-    singleton_list(P::LazySet)
+    singleton_list(P::ConvexSet)
 
 Return the vertices of a polytopic set as a list of singletons.
 
@@ -1092,12 +1092,12 @@ The list of vertices of `P`, as `Singleton`.
 This function relies on `vertices_list`, which raises an error if the set is
 not polytopic (e.g., unbounded).
 """
-function singleton_list(P::LazySet)
+function singleton_list(P::ConvexSet)
     return [Singleton(x) for x in vertices_list(P)]
 end
 
 """
-    concretize(X::LazySet)
+    concretize(X::ConvexSet)
 
 Construct a concrete representation of a (possibly lazy) set.
 
@@ -1114,12 +1114,12 @@ A concrete representation of `X` (as far as possible).
 Since not every lazy set has a concrete set representation in this library, the
 result may be partially lazy.
 """
-function concretize(X::LazySet)
+function concretize(X::ConvexSet)
     return X
 end
 
 """
-    constraints(X::LazySet)
+    constraints(X::ConvexSet)
 
 Construct an iterator over the constraints of a polyhedral set.
 
@@ -1131,12 +1131,12 @@ Construct an iterator over the constraints of a polyhedral set.
 
 An iterator over the constraints of `X`.
 """
-function constraints(X::LazySet)
+function constraints(X::ConvexSet)
     return _constraints_fallback(X)
 end
 
 """
-    vertices(X::LazySet)
+    vertices(X::ConvexSet)
 
 Construct an iterator over the vertices of a polyhedral set.
 
@@ -1148,15 +1148,15 @@ Construct an iterator over the vertices of a polyhedral set.
 
 An iterator over the vertices of `X`.
 """
-function vertices(X::LazySet)
+function vertices(X::ConvexSet)
     return _vertices_fallback(X)
 end
 
-function _constraints_fallback(X::LazySet)
+function _constraints_fallback(X::ConvexSet)
     return VectorIterator(constraints_list(X))
 end
 
-function _vertices_fallback(X::LazySet)
+function _vertices_fallback(X::ConvexSet)
     return VectorIterator(vertices_list(X))
 end
 
@@ -1171,7 +1171,7 @@ import .MiniQhull: delaunay
 export delaunay
 
 """
-    delaunay(X::LazySet)
+    delaunay(X::ConvexSet)
 
 Compute the Delaunay triangulation of the given convex set.
 
@@ -1192,7 +1192,7 @@ This function requires that you have properly installed the package
 The method works in arbitrary dimension and the requirement is that the list of
 vertices of `X` can be obtained.
 """
-function delaunay(X::LazySet)
+function delaunay(X::ConvexSet)
     n = dim(X)
     v = vertices_list(X)
     m = length(v)
@@ -1206,7 +1206,7 @@ end
 end end  # load_delaunay_MiniQhull
 
 """
-    complement(X::LazySet)
+    complement(X::ConvexSet)
 
 Return the complement of a set.
 
@@ -1226,14 +1226,14 @@ then ``(X ∩ Y)^C = X^C ∪ Y^C``. In particular, we can apply this rule for ea
 that defines a polyhedral set, hence the concrete complement can be represented as the set
 union of the complement of each constraint.
 """
-function complement(X::LazySet)
+function complement(X::ConvexSet)
     return UnionSetArray(constraints_list(Complement(X)))
 end
 
 # -- concrete projection --
 
 """
-    project(S::LazySet{N},
+    project(S::ConvexSet{N},
             block::AbstractVector{Int},
             [::Nothing=nothing],
             [n]::Int=dim(S);
@@ -1257,7 +1257,7 @@ A set representing the projection of the set `S` to block `block`.
 
 We apply the function `linear_map`.
 """
-@inline function project(S::LazySet{N},
+@inline function project(S::ConvexSet{N},
                          block::AbstractVector{Int},
                          ::Nothing=nothing,
                          n::Int=dim(S);
@@ -1266,7 +1266,7 @@ We apply the function `linear_map`.
     return _project_linear_map(S, block, n; kwargs...)
 end
 
-@inline function _project_linear_map(S::LazySet{N},
+@inline function _project_linear_map(S::ConvexSet{N},
                                      block::AbstractVector{Int},
                                      n::Int=dim(S);
                                      kwargs...
@@ -1276,12 +1276,12 @@ end
 end
 
 """
-    project(S::LazySet,
+    project(S::ConvexSet,
             block::AbstractVector{Int},
             set_type::Type{TS},
             [n]::Int=dim(S);
             [kwargs...]
-           ) where {TS<:LazySet}
+           ) where {TS<:ConvexSet}
 
 Project a high-dimensional set to a given block and set type, possibly involving
 an overapproximation.
@@ -1305,18 +1305,18 @@ coordinates and zero otherwise.
 2. Overapproximate the projected lazy set using `overapproximate` and
 `set_type`.
 """
-@inline function project(S::LazySet,
+@inline function project(S::ConvexSet,
                          block::AbstractVector{Int},
                          set_type::Type{TS},
                          n::Int=dim(S);
                          kwargs...
-                        ) where {TS<:LazySet}
+                        ) where {TS<:ConvexSet}
     lm = project(S, block, LinearMap, n)
     return overapproximate(lm, set_type)
 end
 
 """
-    project(S::LazySet,
+    project(S::ConvexSet,
             block::AbstractVector{Int},
             set_type_and_precision::Pair{T, N},
             [n]::Int=dim(S);
@@ -1349,7 +1349,7 @@ must be two-dimensional.
 coordinates and zero otherwise.
 2. Overapproximate the projected lazy set with the given error bound `ε`.
 """
-@inline function project(S::LazySet,
+@inline function project(S::ConvexSet,
                          block::AbstractVector{Int},
                          set_type_and_precision::Pair{T, N},
                          n::Int=dim(S);
@@ -1365,7 +1365,7 @@ coordinates and zero otherwise.
 end
 
 """
-    project(S::LazySet,
+    project(S::ConvexSet,
             block::AbstractVector{Int},
             ε::Real,
             [n]::Int=dim(S);
@@ -1393,7 +1393,7 @@ coordinates and zero otherwise.
 2. Overapproximate the projected lazy set with the given error bound `ε`.
 The target set type is chosen automatically.
 """
-@inline function project(S::LazySet,
+@inline function project(S::ConvexSet,
                          block::AbstractVector{Int},
                          ε::Real,
                          n::Int=dim(S);
@@ -1410,7 +1410,7 @@ The target set type is chosen automatically.
 end
 
 """
-    rectify(X::LazySet, [concrete_intersection]::Bool=false)
+    rectify(X::ConvexSet, [concrete_intersection]::Bool=false)
 
 Concrete rectification of a set.
 
@@ -1430,12 +1430,12 @@ linear maps of intersections.
 For each dimension in which `X` is both positive and negative we split `X` into
 these two parts. Additionally we project the negative part to zero.
 """
-function rectify(X::LazySet, concrete_intersection::Bool=false)
+function rectify(X::ConvexSet, concrete_intersection::Bool=false)
     return to_union_of_projections(Rectification(X), concrete_intersection)
 end
 
 """
-    low(X::LazySet, i::Int)
+    low(X::ConvexSet, i::Int)
 
 Return the lower coordinate of a set in a given dimension.
 
@@ -1448,14 +1448,14 @@ Return the lower coordinate of a set in a given dimension.
 
 The lower coordinate of the set in the given dimension.
 """
-function low(X::LazySet{N}, i::Int) where {N}
+function low(X::ConvexSet{N}, i::Int) where {N}
     n = dim(X)
     d = SingleEntryVector(i, n, -one(N))
     return -ρ(d, X)
 end
 
 """
-    low(X::LazySet)
+    low(X::ConvexSet)
 
 Return a vector with the lowest coordinates of the set for each canonical direction.
 
@@ -1469,15 +1469,15 @@ A vector with the lower coordinate of the set for each dimension.
 
 ### Notes
 
-See also [`low(X::LazySet, i::Int)`](@ref).
+See also [`low(X::ConvexSet, i::Int)`](@ref).
 """
-function low(X::LazySet)
+function low(X::ConvexSet)
     n = dim(X)
     return [low(X, i) for i in 1:n]
 end
 
 """
-    high(X::LazySet, i::Int)
+    high(X::ConvexSet, i::Int)
 
 Return the higher coordinate of a set in a given dimension.
 
@@ -1490,14 +1490,14 @@ Return the higher coordinate of a set in a given dimension.
 
 The higher coordinate of the set in the given dimension.
 """
-function high(X::LazySet{N}, i::Int) where {N}
+function high(X::ConvexSet{N}, i::Int) where {N}
     n = dim(X)
     d = SingleEntryVector(i, n, one(N))
     return ρ(d, X)
 end
 
 """
-    high(X::LazySet)
+    high(X::ConvexSet)
 
 Return a vector with the highest coordinate of the set for each canonical direction.
 
@@ -1511,15 +1511,15 @@ A vector with the highest coordinate of the set for each dimension.
 
 ### Notes
 
-See also [`high(X::LazySet, i::Int)`](@ref).
+See also [`high(X::ConvexSet, i::Int)`](@ref).
 """
-function high(X::LazySet)
+function high(X::ConvexSet)
     n = dim(X)
     return [high(X, i) for i in 1:n]
 end
 
 """
-    extrema(X::LazySet)
+    extrema(X::ConvexSet)
 
 Return two vectors with the lowest and highest coordinate of `X` for each
 dimension.
@@ -1537,14 +1537,14 @@ Two vectors with the lowest and highest coordinates of `X` for each dimension.
 The result is equivalent to `(low(X), high(X))`, but sometimes it can be
 computed more efficiently.
 """
-function extrema(X::LazySet)
+function extrema(X::ConvexSet)
     l = low(X)
     h = high(X)
     return (l, h)
 end
 
 """
-    extrema(X::LazySet, i::Int)
+    extrema(X::ConvexSet, i::Int)
 
 Return the lower and higher coordinate of a set in a given dimension.
 
@@ -1562,16 +1562,16 @@ The lower and higher coordinate of the set in the given dimension.
 The result is equivalent to `(low(X, i), high(X, i))`, but sometimes it can be
 computed more efficiently.
 """
-function extrema(X::LazySet, i::Int)
+function extrema(X::ConvexSet, i::Int)
     l = low(X, i)
     h = high(X, i)
     return (l, h)
 end
 
 """
-    rationalize(::Type{T}, X::LazySet{N}, tol::Real) where {T<:Integer, N<:AbstractFloat}
+    rationalize(::Type{T}, X::ConvexSet{N}, tol::Real) where {T<:Integer, N<:AbstractFloat}
 
-Approximate a LazySet of floating point numbers as a set whose entries are
+Approximate a ConvexSet of floating point numbers as a set whose entries are
 rationals of the given integer type.
 
 ### Input
@@ -1583,25 +1583,25 @@ rationals of the given integer type.
 
 ### Output
 
-A LazySet of the same base type of `X` where each numerical component is of
+A ConvexSet of the same base type of `X` where each numerical component is of
 type `Rational{T}`.
 """
-function rationalize(::Type{T}, X::LazySet{N}, tol::Real) where {T<:Integer, N<:AbstractFloat}
+function rationalize(::Type{T}, X::ConvexSet{N}, tol::Real) where {T<:Integer, N<:AbstractFloat}
     m = length(fieldnames(typeof(X)))
     frat = ntuple(fi -> _rationalize(T, getfield(X, fi), tol), m)
     ST = basetype(X)
     return ST(frat...)
 end
 
-rationalize(X::LazySet{N}; kwargs...) where {N<:AbstractFloat} = rationalize(Int, X; kwargs...)
-rationalize(::Type{T}, X::LazySet{N}; tol::Real=eps(N)) where {T<:Integer, N<:AbstractFloat} = rationalize(T, X, tol)
+rationalize(X::ConvexSet{N}; kwargs...) where {N<:AbstractFloat} = rationalize(Int, X; kwargs...)
+rationalize(::Type{T}, X::ConvexSet{N}; tol::Real=eps(N)) where {T<:Integer, N<:AbstractFloat} = rationalize(T, X, tol)
 
 # method extension for lazy sets
-_rationalize(::Type{T}, X::AbstractVector{<:LazySet{N}}, tol::Real) where {T<:Integer, N<:AbstractFloat} = rationalize.(Ref(T), X, Ref(tol))
-_rationalize(::Type{T}, X::LazySet{N}, tol::Real) where {T<:Integer, N<:AbstractFloat} = rationalize(T, X, tol)
+_rationalize(::Type{T}, X::AbstractVector{<:ConvexSet{N}}, tol::Real) where {T<:Integer, N<:AbstractFloat} = rationalize.(Ref(T), X, Ref(tol))
+_rationalize(::Type{T}, X::ConvexSet{N}, tol::Real) where {T<:Integer, N<:AbstractFloat} = rationalize(T, X, tol)
 
 """
-    permute(X::LazySet, p::AbstractVector{Int})
+    permute(X::ConvexSet, p::AbstractVector{Int})
 
 Permute the dimensions of a set according to a given permutation vector.
 

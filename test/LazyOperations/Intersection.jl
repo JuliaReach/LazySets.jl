@@ -105,7 +105,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test ones(N, 2) ∈ IArr && N[5, 5] ∉ IArr
 
     # array getter
-    v = Vector{LazySet{N}}()
+    v = Vector{ConvexSet{N}}()
     @test array(IntersectionArray(v)) ≡ v
 
     # constructor with size hint and type

@@ -1,7 +1,7 @@
 export AbstractPolyhedron
 
 """
-    AbstractPolyhedron{N} <: LazySet{N}
+    AbstractPolyhedron{N} <: ConvexSet{N}
 
 Abstract type for compact convex polyhedral sets.
 
@@ -29,7 +29,7 @@ half-spaces.
 As such, polyhedra are closed and convex but not necessarily bounded.
 Bounded polyhedra are called *polytopes* (see [`AbstractPolytope`](@ref)).
 """
-abstract type AbstractPolyhedron{N} <: LazySet{N} end
+abstract type AbstractPolyhedron{N} <: ConvexSet{N} end
 
 isconvextype(::Type{<:AbstractPolyhedron}) = true
 

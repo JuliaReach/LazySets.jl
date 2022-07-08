@@ -6,7 +6,7 @@ export MinkowskiSumArray,
 # ==================================
 
 """
-   MinkowskiSumArray{N, S<:LazySet{N}} <: LazySet{N}
+   MinkowskiSumArray{N, S<:ConvexSet{N}} <: ConvexSet{N}
 
 Type that represents the Minkowski sum of a finite number of sets.
 
@@ -26,12 +26,12 @@ their Minkowski sum is convex as well.
 
 Constructors:
 
-- `MinkowskiSumArray(array::Vector{<:LazySet})` -- default constructor
+- `MinkowskiSumArray(array::Vector{<:ConvexSet})` -- default constructor
 
 - `MinkowskiSumArray([n]::Int=0, [N]::Type=Float64)`
  -- constructor for an empty sum with optional size hint and numeric type
 """
-struct MinkowskiSumArray{N, S<:LazySet{N}} <: LazySet{N}
+struct MinkowskiSumArray{N, S<:ConvexSet{N}} <: ConvexSet{N}
    array::Vector{S}
 end
 
@@ -40,7 +40,7 @@ isconvextype(::Type{MinkowskiSumArray{N, S}}) where {N, S} = isconvextype(S)
 
 # constructor for an empty sum with optional size hint and numeric type
 function MinkowskiSumArray(n::Int=0, N::Type=Float64)
-   arr = Vector{LazySet{N}}()
+   arr = Vector{ConvexSet{N}}()
    sizehint!(arr, n)
    return MinkowskiSumArray(arr)
 end
@@ -110,7 +110,7 @@ function σ(d::AbstractVector, msa::MinkowskiSumArray)
 end
 
 @inline function _σ_msum_array(d::AbstractVector{N},
-                               array::AbstractVector{<:LazySet}) where {N}
+                               array::AbstractVector{<:ConvexSet}) where {N}
     return sum(σ(d, Xi) for Xi in array)
 end
 

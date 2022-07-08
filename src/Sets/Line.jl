@@ -221,7 +221,7 @@ function constraints_list(L::Line{N, VN}) where {N, VN}
     return out
 end
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """

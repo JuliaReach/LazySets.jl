@@ -63,7 +63,7 @@ function element(S::ZeroSet{N}, ::Int) where {N}
 end
 
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """

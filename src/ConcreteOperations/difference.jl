@@ -6,7 +6,7 @@ import Base: \
 const IA = IntervalArithmetic
 
 """
-    \\(X::LazySet, Y::LazySet)
+    \\(X::ConvexSet, Y::ConvexSet)
 
 Convenience alias for set difference.
 
@@ -35,7 +35,7 @@ julia> X.dat \\ Y.dat  # computing the left division
 [0.5, ∞]
 ```
 """
-\(X::LazySet, Y::LazySet) = difference(X, Y)
+\(X::ConvexSet, Y::ConvexSet) = difference(X, Y)
 
 # =================================
 # Set difference between intervals

@@ -45,7 +45,7 @@ function constraint(approx::LocalApproximation)
 end
 
 """
-    PolygonalOverapproximation{N, SN<:LazySet{N}, VN<:AbstractVector{N}}
+    PolygonalOverapproximation{N, SN<:ConvexSet{N}, VN<:AbstractVector{N}}
 
 Type that represents the polygonal approximation of a convex set.
 
@@ -56,20 +56,20 @@ Type that represents the polygonal approximation of a convex set.
 - `constraints`  -- vector of linear constraints that are already finalized
                     (i.e., they satisfy the given error bound)
 """
-struct PolygonalOverapproximation{N, SN<:LazySet{N}, VN<:AbstractVector{N}}
+struct PolygonalOverapproximation{N, SN<:ConvexSet{N}, VN<:AbstractVector{N}}
     S::SN
     approx_stack::Vector{LocalApproximation{N, VN}}
     constraints::Vector{LinearConstraint{N, VN}}
 end
 
-function PolygonalOverapproximation(S::SN) where {N, SN<:LazySet{N}}
+function PolygonalOverapproximation(S::SN) where {N, SN<:ConvexSet{N}}
     empty_local_approx = Vector{LocalApproximation{N, Vector{N}}}()
     empty_constraints = Vector{LinearConstraint{N,Vector{N}}}()
     return PolygonalOverapproximation(S, empty_local_approx, empty_constraints)
 end
 
 """
-    new_approx(S::LazySet, p1::VN, d1::VN,
+    new_approx(S::ConvexSet, p1::VN, d1::VN,
                p2::VN, d2::VN) where {N<:AbstractFloat, VN<:AbstractVector{N}}
 
 Create a `LocalApproximation` instance for the given excerpt of a polygonal
@@ -87,7 +87,7 @@ approximation.
 
 A local approximation of `S` in the given directions.
 """
-function new_approx(S::LazySet, p1::VN, d1::VN,
+function new_approx(S::ConvexSet, p1::VN, d1::VN,
                     p2::VN, d2::VN) where {N<:AbstractFloat, VN<:AbstractVector{N}}
     if norm(p1-p2, 2) <= _rtol(N)
         # this approximation cannot be refined and we set q = p1 by convention
@@ -129,7 +129,7 @@ function addapproximation!(Ω::PolygonalOverapproximation, p1::VN, d1::VN,
 end
 
 """
-    refine(approx::LocalApproximation, S::LazySet)
+    refine(approx::LocalApproximation, S::ConvexSet)
 
 Refine a given local approximation of the polygonal approximation of a convex
 set by splitting along the normal direction of the approximation.
@@ -143,7 +143,7 @@ set by splitting along the normal direction of the approximation.
 
 The tuple consisting of the refined right and left local approximations.
 """
-function refine(approx::LocalApproximation, S::LazySet)
+function refine(approx::LocalApproximation, S::ConvexSet)
     @assert approx.refinable
     ndir = normalize([approx.p2[2]-approx.p1[2], approx.p1[1]-approx.p2[1]])
     s = σ(ndir, S)
@@ -184,7 +184,7 @@ function tohrep(Ω::PolygonalOverapproximation)
 end
 
 """
-    _approximate(S::LazySet{N}, ε::Real) where {N<:AbstractFloat}
+    _approximate(S::ConvexSet{N}, ε::Real) where {N<:AbstractFloat}
 
 Return an ε-close approximation of the given 2D convex set (in terms of
 Hausdorff distance) as an inner and an outer approximation composed by sorted
@@ -199,7 +199,7 @@ local `Approximation2D`.
 
 An ε-close approximation of the given 2D convex set.
 """
-function _approximate(S::LazySet{N}, ε::Real) where {N<:AbstractFloat}
+function _approximate(S::ConvexSet{N}, ε::Real) where {N<:AbstractFloat}
     # initialize box directions
     pe = σ(DIR_EAST(N), S)
     pn = σ(DIR_NORTH(N), S)

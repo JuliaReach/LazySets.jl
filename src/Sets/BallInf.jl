@@ -157,7 +157,7 @@ function center(B::BallInf)
 end
 
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """

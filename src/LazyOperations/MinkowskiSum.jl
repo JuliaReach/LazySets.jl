@@ -5,7 +5,7 @@ export MinkowskiSum, ⊕,
        swap
 
 """
-    MinkowskiSum{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
+    MinkowskiSum{N, S1<:ConvexSet{N}, S2<:ConvexSet{N}} <: ConvexSet{N}
 
 Type that represents the Minkowski sum of two sets, i.e., the set
 
@@ -26,12 +26,12 @@ for `MinkowskiSum`.
 The Minkowski sum preserves convexity: if the set arguments are convex, then
 their Minkowski sum is convex as well.
 """
-struct MinkowskiSum{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
+struct MinkowskiSum{N, S1<:ConvexSet{N}, S2<:ConvexSet{N}} <: ConvexSet{N}
     X::S1
     Y::S2
 
     # default constructor with dimension check
-    function MinkowskiSum(X::LazySet{N}, Y::LazySet{N}) where {N}
+    function MinkowskiSum(X::ConvexSet{N}, Y::ConvexSet{N}) where {N}
         @assert dim(X) == dim(Y) "sets in a Minkowski sum must have the same dimension"
         return new{N, typeof(X), typeof(Y)}(X, Y)
     end
@@ -62,10 +62,10 @@ Convenience constructor for Minkowski sum.
 
 The symbolic Minkowski sum of ``X`` and ``Y``.
 """
-+(X::LazySet, Y::LazySet) = MinkowskiSum(X, Y)
++(X::ConvexSet, Y::ConvexSet) = MinkowskiSum(X, Y)
 
 """
-    ⊕(X::LazySet, Y::LazySet)
+    ⊕(X::ConvexSet, Y::ConvexSet)
 
 Unicode alias constructor ⊕ (`oplus`) for the lazy Minkowski sum operator.
 
@@ -73,7 +73,7 @@ Unicode alias constructor ⊕ (`oplus`) for the lazy Minkowski sum operator.
 
 Write `\\oplus[TAB]` to enter this symbol.
 """
-⊕(X::LazySet, Y::LazySet) = MinkowskiSum(X, Y)
+⊕(X::ConvexSet, Y::ConvexSet) = MinkowskiSum(X, Y)
 
 """
     swap(ms::MinkowskiSum)
@@ -236,7 +236,7 @@ function constraints_list(ms::MinkowskiSum)
 end
 
 """
-    ∈(x::AbstractVector, ms::MinkowskiSum{N, S1, S2}) where {N, S1<:AbstractSingleton, S2<:LazySet}
+    ∈(x::AbstractVector, ms::MinkowskiSum{N, S1, S2}) where {N, S1<:AbstractSingleton, S2<:ConvexSet}
 
 Check whether a given point is contained in the Minkowski sum of a singleton
 and a set.
@@ -255,12 +255,12 @@ and a set.
 Note that ``x ∈ (S ⊕ P)``, where ``S`` is a singleton set, ``S = \\{s\\}`` and
 ``P`` is a set, if and only if ``(x-s) ∈ P``.
 """
-function ∈(x::AbstractVector, ms::MinkowskiSum{N, S1, S2}) where {N, S1<:AbstractSingleton, S2<:LazySet}
+function ∈(x::AbstractVector, ms::MinkowskiSum{N, S1, S2}) where {N, S1<:AbstractSingleton, S2<:ConvexSet}
     return _in_singleton_msum(x, ms.X, ms.Y)
 end
 
 # symmetric method
-function ∈(x::AbstractVector, ms::MinkowskiSum{N, <:LazySet, <:AbstractSingleton}) where {N}
+function ∈(x::AbstractVector, ms::MinkowskiSum{N, <:ConvexSet, <:AbstractSingleton}) where {N}
     return _in_singleton_msum(x, ms.Y, ms.X)
 end
 

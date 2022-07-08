@@ -5,7 +5,7 @@ CurrentModule = LazySets
 # [Rectification](@id def_Rectification)
 
 Note that the rectification of a convex set is generally not convex.
-Hence this set type is not part of the convex-set family `LazySet`.
+Hence this set type is not part of the convex-set family `ConvexSet`.
 
 ```@docs
 Rectification
@@ -23,8 +23,8 @@ isbounded(::Rectification{N}) where {N}
 to_union_of_projections(::Rectification, ::Bool=false)
 ```
 
-Inherited from [`LazySet`](@ref):
-* [`singleton_list`](@ref singleton_list(::LazySet))
+Inherited from [`ConvexSet`](@ref):
+* [`singleton_list`](@ref singleton_list(::ConvexSet))
 
 ## Rectification cache
 

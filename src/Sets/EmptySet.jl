@@ -7,11 +7,11 @@ export EmptySet, ∅,
        linear_map
 
 """
-    EmptySet{N} <: LazySet{N}
+    EmptySet{N} <: ConvexSet{N}
 
 Type that represents the empty set, i.e., the set with no elements.
 """
-struct EmptySet{N} <: LazySet{N}
+struct EmptySet{N} <: ConvexSet{N}
     dim::Int
 end
 
@@ -29,7 +29,7 @@ Alias for `EmptySet{Float64}`.
 const ∅ = EmptySet{Float64}
 
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """

@@ -281,7 +281,7 @@ function linear_map(M::AbstractMatrix, S::AbstractSingleton)
     return T(M * element(S))
 end
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """
@@ -345,7 +345,7 @@ function ∈(x::AbstractVector, S::AbstractSingleton)
 end
 
 # this operation is forbidden, but it is a common error
-function ∈(S::AbstractSingleton, X::LazySet)
+function ∈(S::AbstractSingleton, X::ConvexSet)
     throw(ArgumentError("cannot make a point-in-set check if the left-hand side is " *
           "a set; either check for set inclusion, as in `S ⊆ X`, or check for " *
           "membership, as in `element(S) ∈ X` (the results are equivalent but " *

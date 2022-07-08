@@ -100,7 +100,7 @@ function center(B::Ballp)
 end
 
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """

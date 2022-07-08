@@ -158,7 +158,7 @@ sparse vector:
 
 In this part we illustrate some functions to obtain metric properties of sets,
 applied to the sets `X`, `Y` and `Z` defined previously, in the infinity norm.
-These functions apply generally to any `LazySet`.
+These functions apply generally to any `ConvexSet`.
 For some types, specialized methods are triggered automatically through
 multiple-dispatch.
 

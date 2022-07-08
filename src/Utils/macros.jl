@@ -37,10 +37,10 @@ macro neutral(SET, NEUT)
         end
 
         # create functions to declare the neutral element
-        function $SET(X::LazySet{N}, ::$NEUT{N}) where {N}
+        function $SET(X::ConvexSet{N}, ::$NEUT{N}) where {N}
             return X
         end
-        function $SET(::$NEUT{N}, X::LazySet{N}) where {N}
+        function $SET(::$NEUT{N}, X::ConvexSet{N}) where {N}
             return X
         end
         function $SET(Y::$NEUT{N}, ::$NEUT{N}) where {N}
@@ -107,10 +107,10 @@ macro absorbing(SET, ABS)
         end
 
         # create functions to declare the absorbing element
-        function $SET(::LazySet{N}, Y::$ABS{N}) where {N}
+        function $SET(::ConvexSet{N}, Y::$ABS{N}) where {N}
             return Y
         end
-        function $SET(Y::$ABS{N}, ::LazySet{N}) where {N}
+        function $SET(Y::$ABS{N}, ::ConvexSet{N}) where {N}
             return Y
         end
         function $SET(Y::$ABS{N}, ::$ABS{N}) where {N}
@@ -185,15 +185,15 @@ macro declare_array_version(SET, SETARR)
         end
 
         # create in-place modification functions for array version
-        function $_SET!(X::LazySet{N}, Y::LazySet{N}) where {N}
+        function $_SET!(X::ConvexSet{N}, Y::ConvexSet{N}) where {N}
             # no array type: just use the lazy operation
             return $SET(X, Y)
         end
-        function $_SET!(X::LazySet{N}, arr::$SETARR{N}) where {N}
+        function $_SET!(X::ConvexSet{N}, arr::$SETARR{N}) where {N}
             push!(array(arr), X)
             return arr
         end
-        function $_SET!(arr::$SETARR{N}, X::LazySet{N}) where {N}
+        function $_SET!(arr::$SETARR{N}, X::ConvexSet{N}) where {N}
             push!(array(arr), X)
             return arr
         end

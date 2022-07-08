@@ -3,7 +3,7 @@
 # ================================
 
 """
-    symmetric_interval_hull(S::LazySet{N}) where {N}
+    symmetric_interval_hull(S::ConvexSet{N}) where {N}
 
 Overapproximate a set by a tight hyperrectangle centered in the origin.
 
@@ -26,7 +26,7 @@ The result is a hyperrectangle and hence in particular convex.
 
 An alias for this function is `box_approximation_symmetric`.
 """
-function symmetric_interval_hull(S::LazySet{N}) where {N}
+function symmetric_interval_hull(S::ConvexSet{N}) where {N}
     # fallback returns a hyperrectangular set
     (c, r) = box_approximation_helper(S)
     if r[1] < 0

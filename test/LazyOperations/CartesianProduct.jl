@@ -265,7 +265,7 @@ for N in [Float64, Float32, Rational{Int}]
 
     # in-place modification
     b = BallInf(N[0, 0], N(2))
-    cpa = CartesianProductArray(LazySet{N}[])
+    cpa = CartesianProductArray(ConvexSet{N}[])
     @test CartesianProduct!(b, b) isa CartesianProduct &&
           length(array(cpa)) == 0
     res = CartesianProduct!(b, cpa)

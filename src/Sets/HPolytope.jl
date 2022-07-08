@@ -70,7 +70,7 @@ HPolytope(A::AbstractMatrix, b::AbstractVector;
     HPolytope(constraints_list(A, b); check_boundedness=check_boundedness)
 
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """

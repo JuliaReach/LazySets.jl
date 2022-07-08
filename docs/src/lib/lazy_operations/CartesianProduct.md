@@ -8,8 +8,8 @@ CurrentModule = LazySets
 
 ```@docs
 CartesianProduct
-×(::LazySet, ::LazySet)
-*(::LazySet, ::LazySet)
+×(::ConvexSet, ::ConvexSet)
+*(::ConvexSet, ::ConvexSet)
 swap(::CartesianProduct)
 dim(::CartesianProduct)
 ρ(::AbstractVector, ::CartesianProduct)
@@ -25,12 +25,12 @@ project(::CartesianProduct{N, IT, HT}, ::AbstractVector{Int}) where {N, IT<:Inte
 project(::CartesianProduct{N, IT, ZT}, ::AbstractVector{Int}) where {N, IT<:Interval, ZT<:AbstractZonotope{N}}
 project(::CartesianProduct{N, IT, Union{VP1, VP2}}, ::AbstractVector{Int}) where {N, IT<:Interval, VP1<:VPolygon{N}, VP2<:VPolytope{N}}
 ```
-Inherited from [`LazySet`](@ref):
-* [`norm`](@ref norm(::LazySet, ::Real))
-* [`radius`](@ref radius(::LazySet, ::Real))
-* [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`an_element`](@ref an_element(::LazySet)
-* [`singleton_list`](@ref singleton_list(::LazySet))
+Inherited from [`ConvexSet`](@ref):
+* [`norm`](@ref norm(::ConvexSet, ::Real))
+* [`radius`](@ref radius(::ConvexSet, ::Real))
+* [`diameter`](@ref diameter(::ConvexSet, ::Real))
+* [`an_element`](@ref an_element(::ConvexSet)
+* [`singleton_list`](@ref singleton_list(::ConvexSet))
 
 ## [``n``-ary Cartesian product (CartesianProductArray)](@id def_CartesianProductArray)
 
@@ -51,9 +51,9 @@ block_structure(cpa::CartesianProductArray)
 block_to_dimension_indices(cpa::CartesianProductArray, vars::Vector{Int})
 substitute_blocks(low_dim_cpa::CartesianProductArray{N}, orig_cpa::CartesianProductArray{N}, blocks::Vector{Tuple{Int,Int}}) where{N}
 ```
-Inherited from [`LazySet`](@ref):
-* [`norm`](@ref norm(::LazySet, ::Real))
-* [`radius`](@ref radius(::LazySet, ::Real))
-* [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`an_element`](@ref an_element(::LazySet{N}) where {N})
-* [`singleton_list`](@ref singleton_list(::LazySet))
+Inherited from [`ConvexSet`](@ref):
+* [`norm`](@ref norm(::ConvexSet, ::Real))
+* [`radius`](@ref radius(::ConvexSet, ::Real))
+* [`diameter`](@ref diameter(::ConvexSet, ::Real))
+* [`an_element`](@ref an_element(::ConvexSet{N}) where {N})
+* [`singleton_list`](@ref singleton_list(::ConvexSet))

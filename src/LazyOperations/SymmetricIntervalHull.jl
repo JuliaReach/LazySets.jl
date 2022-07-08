@@ -2,7 +2,7 @@ export SymmetricIntervalHull, ⊡,
        an_element
 
 """
-    SymmetricIntervalHull{N, S<:LazySet{N}} <: AbstractHyperrectangle{N}
+    SymmetricIntervalHull{N, S<:ConvexSet{N}} <: AbstractHyperrectangle{N}
 
 Type that represents the symmetric interval hull of a compact set.
 
@@ -34,12 +34,12 @@ The symmetric inteval hull of a set is a hyperrectangle, hence in particular con
 
 An alias for this function is `⊡`.
 """
-struct SymmetricIntervalHull{N, S<:LazySet{N}} <: AbstractHyperrectangle{N}
+struct SymmetricIntervalHull{N, S<:ConvexSet{N}} <: AbstractHyperrectangle{N}
     X::S
     cache::Vector{N}
 
     # default constructor that initializes cache
-    function SymmetricIntervalHull(X::S; check_boundedness::Bool=true) where {N, S<:LazySet{N}}
+    function SymmetricIntervalHull(X::S; check_boundedness::Bool=true) where {N, S<:ConvexSet{N}}
         @assert !check_boundedness || isbounded(X) "the symmetric interval hull is only defined for bounded sets"
         cache = fill(-one(N), dim(X))
         return new{N, S}(X, cache)
@@ -164,7 +164,7 @@ function center(sih::SymmetricIntervalHull{N}) where {N}
 end
 
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """

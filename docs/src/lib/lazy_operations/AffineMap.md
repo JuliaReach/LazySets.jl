@@ -20,5 +20,5 @@ Inherited from [`AbstractAffineMap`](@ref):
 * [`constraints_list`](@ref constraints_list(::AbstractAffineMap))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractAffineMap))
 
-Inherited from [`LazySet`](@ref):
-* [`singleton_list`](@ref singleton_list(::LazySet))
+Inherited from [`ConvexSet`](@ref):
+* [`singleton_list`](@ref singleton_list(::ConvexSet))

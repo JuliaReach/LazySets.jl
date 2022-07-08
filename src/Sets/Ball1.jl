@@ -116,7 +116,7 @@ function vertices_list(B::Ball1{N, VN}) where {N, VN<:AbstractVector}
 end
 
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """

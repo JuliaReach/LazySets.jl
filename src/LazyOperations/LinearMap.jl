@@ -6,7 +6,7 @@ export LinearMap,
        Projection
 
 """
-    LinearMap{N, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
+    LinearMap{N, S<:ConvexSet{N}, NM, MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
 
 Type that represents a linear transformation ``M⋅S`` of a set ``S``.
 
@@ -95,13 +95,13 @@ julia> A * EmptySet{Int}(2)
 EmptySet{Int64}(2)
 ```
 """
-struct LinearMap{N, S<:LazySet{N},
+struct LinearMap{N, S<:ConvexSet{N},
                  NM, MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
     M::MAT
     X::S
 
     # default constructor with dimension match check
-    function LinearMap(M::MAT, X::S) where {N, S<:LazySet{N}, NM,
+    function LinearMap(M::MAT, X::S) where {N, S<:ConvexSet{N}, NM,
                                             MAT<:AbstractMatrix{NM}}
         @assert dim(X) == size(M, 2) "a linear map of size $(size(M)) cannot " *
             "be applied to a set of dimension $(dim(X))"
@@ -114,7 +114,7 @@ isconvextype(::Type{<:LinearMap{N, S}}) where {N, S} = isconvextype(S)
 
 """
 ```
-    *(map::Union{AbstractMatrix, UniformScaling, AbstractVector, Real}, X::LazySet)
+    *(map::Union{AbstractMatrix, UniformScaling, AbstractVector, Real}, X::ConvexSet)
 ```
 
 Alias to create a `LinearMap` object.
@@ -128,17 +128,17 @@ Alias to create a `LinearMap` object.
 
 A lazy linear map, i.e., a `LinearMap` instance.
 """
-function *(map::Union{AbstractMatrix, UniformScaling, AbstractVector, Real}, X::LazySet)
+function *(map::Union{AbstractMatrix, UniformScaling, AbstractVector, Real}, X::ConvexSet)
     return LinearMap(map, X)
 end
 
 # scaling from the right
-function *(X::LazySet, map::Real)
+function *(X::ConvexSet, map::Real)
     return LinearMap(map, X)
 end
 
 # convenience constructor from a vector
-function LinearMap(v::AbstractVector, X::LazySet)
+function LinearMap(v::AbstractVector, X::ConvexSet)
     n = dim(X)
     m = length(v)
     if n == m
@@ -150,7 +150,7 @@ function LinearMap(v::AbstractVector, X::LazySet)
 end
 
 # convenience constructor from a UniformScaling
-function LinearMap(M::UniformScaling{N}, X::LazySet) where {N}
+function LinearMap(M::UniformScaling{N}, X::ConvexSet) where {N}
     if M.λ == one(N)
         return X
     end
@@ -158,7 +158,7 @@ function LinearMap(M::UniformScaling{N}, X::LazySet) where {N}
 end
 
 # convenience constructor from a scalar
-function LinearMap(α::Real, X::LazySet)
+function LinearMap(α::Real, X::ConvexSet)
     n = dim(X)
     return LinearMap(sparse(α * I, n, n), X)
 end
@@ -170,11 +170,11 @@ end
 
 # disambiguations
 function LinearMap(v::AbstractVector, lm::LinearMap)
-    return invoke(LinearMap, Tuple{AbstractVector, LazySet}, v, lm)
+    return invoke(LinearMap, Tuple{AbstractVector, ConvexSet}, v, lm)
 end
 
 function LinearMap(α::Real, lm::LinearMap)
-    return invoke(LinearMap, Tuple{Real, LazySet}, α, lm)
+    return invoke(LinearMap, Tuple{Real, ConvexSet}, α, lm)
 end
 
 # more efficient version
@@ -215,7 +215,7 @@ function set(lm::LinearMap)
 end
 
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """
@@ -259,7 +259,7 @@ function σ(d::AbstractVector, lm::LinearMap)
     return _σ_linear_map(d, lm.M, lm.X)
 end
 
-function _σ_linear_map(d::AbstractVector, M::AbstractMatrix, X::LazySet)
+function _σ_linear_map(d::AbstractVector, M::AbstractMatrix, X::ConvexSet)
     return M * σ(_At_mul_B(M, d), X)
 end
 
@@ -289,7 +289,7 @@ function ρ(d::AbstractVector, lm::LinearMap; kwargs...)
     return _ρ_linear_map(d, lm.M, lm.X; kwargs...)
 end
 
-function _ρ_linear_map(d::AbstractVector, M::AbstractMatrix, X::LazySet; kwargs...)
+function _ρ_linear_map(d::AbstractVector, M::AbstractMatrix, X::ConvexSet; kwargs...)
     return ρ(_At_mul_B(M, d), X; kwargs...)
 end
 
@@ -439,7 +439,7 @@ function concretize(lm::LinearMap)
 end
 
 """
-    Projection(X::LazySet{N}, variables::AbstractVector{Int}) where {N<:Real}
+    Projection(X::ConvexSet{N}, variables::AbstractVector{Int}) where {N<:Real}
 
 Return the lazy projection of a set.
 
@@ -468,13 +468,13 @@ julia> isequivalent(Bproj, BallInf(zeros(2), 1.0))
 true
 ```
 """
-function Projection(X::LazySet{N}, variables::AbstractVector{Int}) where {N}
+function Projection(X::ConvexSet{N}, variables::AbstractVector{Int}) where {N}
     M = projection_matrix(variables, dim(X), N)
     return LinearMap(M, X)
 end
 
 """
-    project(S::LazySet{N},
+    project(S::ConvexSet{N},
             block::AbstractVector{Int},
             set_type::Type{LM},
             [n]::Int=dim(S);
@@ -494,7 +494,7 @@ Project a high-dimensional set to a given block by using a lazy linear map.
 
 A lazy `LinearMap` representing the projection of the set `S` to block `block`.
 """
-@inline function project(S::LazySet{N},
+@inline function project(S::ConvexSet{N},
                          block::AbstractVector{Int},
                          set_type::Type{LM},
                          n::Int=dim(S);

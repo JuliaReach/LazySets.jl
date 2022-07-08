@@ -187,7 +187,7 @@ function constraints_list(P::AbstractHPolygon)
 end
 
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """

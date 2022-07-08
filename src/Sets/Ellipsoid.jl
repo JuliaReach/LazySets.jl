@@ -162,7 +162,7 @@ function shape_matrix(E::Ellipsoid)
     return E.shape_matrix
 end
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """

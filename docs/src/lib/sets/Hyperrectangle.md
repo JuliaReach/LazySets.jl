@@ -12,9 +12,9 @@ radius_hyperrectangle(::Hyperrectangle)
 radius_hyperrectangle(::Hyperrectangle, ::Int)
 translate(::Hyperrectangle, ::AbstractVector)
 ```
-Inherited from [`LazySet`](@ref):
-* [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`singleton_list`](@ref singleton_list(::LazySet))
+Inherited from [`ConvexSet`](@ref):
+* [`diameter`](@ref diameter(::ConvexSet, ::Real))
+* [`singleton_list`](@ref singleton_list(::ConvexSet))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))

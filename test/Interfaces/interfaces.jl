@@ -1,12 +1,12 @@
 # check that all interace functions are provided
 
-# --- LazySet ---
+# --- ConvexSet ---
 
 # support vector
-@test check_method_implementation(LazySet, σ,
+@test check_method_implementation(ConvexSet, σ,
                                   Function[S -> (Vector{Float64}, S{Float64})])
 # dimension
-check_method_implementation(LazySet, dim, Function[S -> (S{Float64},)])
+check_method_implementation(ConvexSet, dim, Function[S -> (S{Float64},)])
 
 # --- AbstractPolyhedron ---
 
