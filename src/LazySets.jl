@@ -61,6 +61,7 @@ include("Utils/matrix_exponential.jl")
 # ==================
 # Abstract set types
 # ==================
+include("Interfaces/LazySet.jl")
 include("Interfaces/ConvexSet.jl")
 include("Interfaces/AbstractStar.jl")
 include("Interfaces/AbstractPolynomialZonotope.jl")

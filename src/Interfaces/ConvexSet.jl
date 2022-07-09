@@ -38,7 +38,7 @@ export ConvexSet,
        permute
 
 """
-    ConvexSet{N}
+    ConvexSet{N} <: LazySet{N}
 
 Abstract type for convex sets, i.e., sets characterized by a (possibly infinite)
 intersection of halfspaces, or equivalently, sets ``S`` such that for any two
@@ -137,7 +137,7 @@ ZeroSet
 Zonotope
 ```
 """
-abstract type ConvexSet{N} end
+abstract type ConvexSet{N} <: LazySet{N} end
 
 
 # --- common ConvexSet functions ---
