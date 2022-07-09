@@ -160,12 +160,22 @@ Return an overapproximation of the quadratic map of the given zonotope.
 
 ### Input
 
+- `Q` -- vector of square matrices
 - `S` -- simple sparse polynomial zonotope
-- `Q` -- array of square matrices
 
 ### Output
 
 An overapproximation of the quadratic map of the given zonotope.
+
+### Algorithm
+
+This method implements Proposition 12 in [1].
+See also Proposition 3.1.30 and Proposition 3.1.31 in [2].
+
+[1] Kochdumper, Althoff. *Sparse polynomial zonotopes - a novel set
+representation for reachability analysis*. 2021
+[2] Kochdumper. *Extensions of polynomial zonotopes and their application to
+verification of cyber-physical systems*. 2021.
 """
 function quadratic_map(Q::Vector{MT}, S::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
     m = length(Q)
@@ -176,11 +186,11 @@ function quadratic_map(Q::Vector{MT}, S::SimpleSparsePolynomialZonotope) where {
 
     cnew = similar(c, m)
     Gnew = similar(G, m, h^2 + h)
-    tmp = similar(Q)
-    @inbounds for (i, q) in enumerate(Q)
-        cnew[i] = dot(c, q, c)
-        Gnew[i, 1:h] = c' * (q + q')*G
-        tmp[i] = q * G
+    QiG = similar(Q)
+    @inbounds for (i, Qi) in enumerate(Q)
+        cnew[i] = dot(c, Qi, c)
+        Gnew[i, 1:h] = c' * (Qi + Qi') * G
+        QiG[i] = Qi * G
     end
 
     Enew = repeat(E, 1, h + 1)
@@ -188,8 +198,8 @@ function quadratic_map(Q::Vector{MT}, S::SimpleSparsePolynomialZonotope) where {
         idxstart = h * i + 1
         idxend = (i + 1) * h
         Enew[:, idxstart:idxend] .+= E[:, i]
-        for j in eachindex(tmp)
-            Gnew[j, idxstart:idxend] = G[:, i]' * tmp[j]
+        for j in eachindex(QiG)
+            Gnew[j, idxstart:idxend] = G[:, i]' * QiG[j]
         end
     end
     return SimpleSparsePolynomialZonotope(cnew, Gnew, Enew)
