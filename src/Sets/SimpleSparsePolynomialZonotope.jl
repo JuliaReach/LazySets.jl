@@ -170,11 +170,11 @@ An overapproximation of the quadratic map of the given zonotope.
 ### Algorithm
 
 This method implements Proposition 12 in [1].
-See also Proposition 3.1.30 and Proposition 3.1.31 in [2].
+See also Proposition 3.1.30 in [2].
 
-[1] Kochdumper, Althoff. *Sparse polynomial zonotopes - a novel set
+[1] N. Kochdumper, M. Althoff. *Sparse polynomial zonotopes: A novel set
 representation for reachability analysis*. 2021
-[2] Kochdumper. *Extensions of polynomial zonotopes and their application to
+[2] N. Kochdumper. *Extensions of polynomial zonotopes and their application to
 verification of cyber-physical systems*. 2021.
 """
 function quadratic_map(Q::Vector{MT}, S::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
