@@ -1230,14 +1230,20 @@ end
 """
     convert(::Type{SimpleSparsePolynomialZonotope}, P::Zonotope)
 
-convert a zonotope to a simple sparse polynomial zonotope.
+Convert a zonotope to a simple sparse polynomial zonotope.
 
+### Algorithm
+
+This method implements Proposition 3 in [1].
+
+[1] Kochdumper, Althoff. *Sparse polynomial zonotopes - a novel set
+representation for reachability analysis*. 2021
 """
 function convert(::Type{SimpleSparsePolynomialZonotope}, P::Zonotope)
     c = center(P)
     G = genmat(P)
     n = ngens(P)
-    E = 1 * Matrix(I, n, n)
+    E = Matrix(1 * I, n, n)
 
     return SimpleSparsePolynomialZonotope(c, G, E)
 end
