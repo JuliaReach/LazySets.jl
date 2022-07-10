@@ -759,8 +759,8 @@ A new zonotope with fewer generators, if possible.
 
 The available algorithms are:
 
-```jldoctest
-julia> subtypes(LazySets.AbstractReductionMethod)
+```jldoctest; setup = :(using LazySets: subtypes, AbstractReductionMethod)
+julia> subtypes(AbstractReductionMethod)
 2-element Vector{Any}:
  LazySets.COMB03
  LazySets.GIR05
