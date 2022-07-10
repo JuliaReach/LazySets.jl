@@ -8,7 +8,8 @@ export AbstractZonotope,
        translate,
        translate!,
        togrep,
-       split!
+       split!,
+       reduce_order
 
 """
     AbstractZonotope{N} <: AbstractCentrallySymmetricPolytope{N}
@@ -730,4 +731,48 @@ By default this function returns the input zonotope. Subtypes of
 """
 function remove_redundant_generators(Z::AbstractZonotope)
     return Z  # fallback implementation
+end
+
+"""
+    AbstractReductionMethod
+
+Abstract supertype for zonotope order reduction methods.
+"""
+abstract type AbstractReductionMethod end
+
+"""
+    reduce_order(Z::AbstractZonotope, r::Number, method::AbstractReductionMethod=GIR05())
+
+Reduce the order of a zonotope by overapproximating with a zonotope with fewer generators.
+
+### Input
+
+- `Z`      -- zonotope
+- `r`      -- desired order
+- `method` -- (optional, default: `GIR05()`) the reduction method used
+
+### Output
+
+A new zonotope with fewer generators, if possible.
+
+### Algorithm
+
+The available algorithms are:
+
+```jldoctest; setup = :(using LazySets: subtypes, AbstractReductionMethod)
+julia> subtypes(AbstractReductionMethod)
+2-element Vector{Any}:
+ LazySets.COMB03
+ LazySets.GIR05
+```
+
+See the documentation of each algorithm for references. These methods split the given zonotope `Z` into two zonotopes,
+`K` and `L`, where `K` contains the most "representative" generators and `L` contains the generators that are reduced, `Lred`,
+using a box overapproximation. We follow the notation from [YS18]. See also [KSA17].
+
+- [KSA17] Kopetzki, A. K., Schürmann, B., & Althoff, M. (2017). *Methods for order reduction of zonotopes.* In 2017 IEEE 56th Annual CDC (pp. 5626-5633). IEEE.
+- [YS18] Yang, X., & Scott, J. K. (2018). *A comparison of zonotope order reduction techniques.* Automatica, 95, 378-384.
+"""
+function reduce_order(Z::AbstractZonotope, r::Number, method::AbstractReductionMethod=GIR05())
+    reduce_order(convert(Zonotope, Z), r, method)
 end

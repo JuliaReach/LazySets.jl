@@ -14,7 +14,6 @@ scale(::Real, ::Zonotope)
 scale!(::Real, Z::Zonotope)
 ngens(::Zonotope)
 togrep(::Zonotope)
-reduce_order(::Zonotope, ::Union{Integer, Rational})
 low(::Zonotope, ::Int)
 high(::Zonotope, ::Int)
 remove_zero_generators(::Zonotope)
@@ -52,3 +51,11 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`constraints_list`](@ref constraints_list(::AbstractZonotope{N}; ::Bool=true) where {N<:AbstractFloat})
 * [`vertices_list`](@ref vertices_list(::AbstractZonotope))
 * [`order`](@ref order(::AbstractZonotope))
+* [`reduce_order`](@ref reduce_order(::AbstractZonotope, ::Number, ::AbstractReductionMethod))
+
+## Order reduction methods
+
+```@docs
+LazySets.COMB03
+LazySets.GIR05
+```
