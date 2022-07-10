@@ -759,9 +759,20 @@ A new zonotope with fewer generators, if possible.
 
 The available algorithms are:
 
-- `GIR05()`
-- `COMB03()`
+```jldoctest
+julia> subtypes(LazySets.AbstractReductionMethod)
+2-element Vector{Any}:
+ LazySets.COMB03
+ LazySets.GIR05
+```
+
+See the documentation of each algorithm for references. These methods split the given zonotope `Z` into two zonotopes,
+`K` and `L`, where `K` contains the most "representative" generators and `L` contains the generators that are reduced, `Lred`,
+using a box overapproximation. We follow the notation from [YS18]. See also [KSA17].
+
+- [KSA17] Kopetzki, A. K., Schürmann, B., & Althoff, M. (2017). *Methods for order reduction of zonotopes.* In 2017 IEEE 56th Annual CDC (pp. 5626-5633). IEEE.
+- [YS18] Yang, X., & Scott, J. K. (2018). *A comparison of zonotope order reduction techniques.* Automatica, 95, 378-384.
 """
 function reduce_order(Z::AbstractZonotope, r::Number, method::AbstractReductionMethod=GIR05())
-    _reduce_order(convert(Zonotope, Z), r, method)
+    reduce_order(convert(Zonotope, Z), r, method)
 end

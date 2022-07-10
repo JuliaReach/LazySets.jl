@@ -333,18 +333,25 @@ end
 # Zonotope order reduction methods
 # ==================================
 
-# These methods split the given zonotope Z into two zonotopes, K and L, where
-# K contains the most "representative" generators and L contains the generators
-# that are reduced, Lred using a box overapproximation
+"""
+    GIR05 <: AbstractReductionMethod
+
+Zonotope order reduction method from [GIR05].
+
+- [G05] A. Girard. *Reachability of Uncertain Linear Systems Using Zonotopes*, HSCC. Vol. 5. 2005.
+"""
 struct GIR05 <: AbstractReductionMethod end
+
+"""
+    COMB03 <: AbstractReductionMethod
+
+Zonotope order reduction method from [COMB03].
+
+- [COMB03] C. Combastel. *A state bounding observer based on zonotopes.* In Proc. of the European Control Conference, p. 2589–2594, 2003.
+"""
 struct COMB03 <: AbstractReductionMethod end
 
-const _GIR05 = GIR05()
-const _COMB03 = COMB03()
-
-# Implements zonotope order reduction method from [COMB03]
-# We follow the notation from [YS18]
-function _reduce_order(Z::Zonotope, r::Number, ::COMB03)
+function reduce_order(Z::Zonotope, r::Number, method::AbstractReductionMethod=GIR05())
     r >= 1 || throw(ArgumentError("the target order should be at least 1, but it is $r"))
     c = Z.center
     G = Z.generators
@@ -353,9 +360,15 @@ function _reduce_order(Z::Zonotope, r::Number, ::COMB03)
     # r is bigger than the order of Z => don't reduce
     (r * n >= p) && return Z
 
-    # this algorithm sort generators by decreasing 2-norm
+    if isone(r)
+        # if r = 1 => m = 0 and the generators need not be sorted
+        Lred = _interval_hull(G, 1:p) 
+        return Zonotope(c, Lred)
+    end
+
+    # sort generators
     indices = Vector{Int}(undef, p)
-    _weighted_gens!(indices, G, _COMB03)
+    _weighted_gens!(indices, G, method)
 
     # the first m generators have greatest weight
     m = floor(Int, n * (r - 1))
@@ -363,42 +376,14 @@ function _reduce_order(Z::Zonotope, r::Number, ::COMB03)
     # compute interval hull of L
     Lred = _interval_hull(G, view(indices, (m+1):p))
 
-    isone(r) && return Zonotope(c, Lred)
-
+    # concatenate non-reduced and reduced generators
     Gred = _hcat_KLred(G, view(indices, 1:m), Lred)
+
     return Zonotope(c, Gred)
 end
 
-# Implements zonotope order reduction method from [GIR05]
-# We follow the notation from [YS18]
-# [G05] A. Girard. *Reachability of Uncertain Linear Systems Using Zonotopes*, HSCC. Vol. 5. 2005.
-function _reduce_order(Z::Zonotope, r::Number, ::GIR05)
-    r >= 1 || throw(ArgumentError("the target order should be at least 1, but it is $r"))
-    c = Z.center
-    G = Z.generators
-    n, p = size(G)
-
-    # r is bigger than the order of Z => don't reduce
-    (r * n >= p) && return Z
-
-    # this algorithm sorts generators by ||⋅||₁ - ||⋅||∞ difference
-    indices = Vector{Int}(undef, p)
-    _weighted_gens!(indices, G, _GIR05)
-
-    # the first m generators have greatest weight
-    m = floor(Int, n * (r - 1))
-
-    # compute interval hull of L
-    Lred = _interval_hull(G, view(indices, (m+1):p))
-
-    isone(r) && return Zonotope(c, Lred)
-
-    Gred = _hcat_KLred(G, view(indices, 1:m), Lred)
-    return Zonotope(c, Gred)
-end
-
-# return the indices of the generators in G (= columns) sorted according to the COMB03 method
-# the generator index with highest score goes first
+# Return the indices of the generators in G (= columns) sorted according to decreasing 2-norm.
+# The generator index with highest score goes first.
 function _weighted_gens!(indices, G::AbstractMatrix{N}, ::COMB03) where {N}
     p = size(G, 2)
     weights = Vector{N}(undef, p)
@@ -410,8 +395,8 @@ function _weighted_gens!(indices, G::AbstractMatrix{N}, ::COMB03) where {N}
     return indices
 end
 
-# return the indices of the generators in G (= columns) sorted according to the GIR05 method
-# the generator index with highest score goes first
+# Return the indices of the generators in G (= columns) sorted according to ||⋅||₁ - ||⋅||∞ difference.
+# The generator index with highest score goes first.
 function _weighted_gens!(indices, G::AbstractMatrix{N}, ::GIR05) where {N}
     n, p = size(G)
     weights = Vector{N}(undef, p)
