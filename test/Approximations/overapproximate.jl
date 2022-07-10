@@ -265,6 +265,11 @@ for N in [Float64, Float32]
     @test Y_polygon ⊆ Y_zonotope_1
     @test Y_polygon ⊆ Y_zonotope_2
 
+    # corner cases
+    Z1 = Zonotope(N[0, 4], Matrix{N}(undef, 2, 0))
+    Z2 = Zonotope(N[2, 2], N[1 2; 3 4])
+    @test overapproximate(ConvexHull(Z1, Z2), Zonotope) == Zonotope(N[1, 3], N[1 1 2; -1 3 4])
+
     # ResetMap and CPA
     X = CartesianProductArray([Ball1(N[0, 0], N(1)), Ball1(N[0, 0], N(2)),
                                Ball1(N[0, 0], N(3))])

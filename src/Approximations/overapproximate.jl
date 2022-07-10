@@ -246,9 +246,9 @@ function _overapproximate_convex_hull_zonotope_G05(X::ConvexHull{N}) where {N}
     # reduce to the same order if possible
     m1, m2 = ngens(X.X), ngens(X.Y)
     if m1 < m2
-        Y = CH(X.X, reduce_order(X.Y, m1))
+        Y = CH(X.X, reduce_order(X.Y, max(1, m1)))
     elseif m1 > m2
-        Y = CH(reduce_order(X.X, m2), X.Y)
+        Y = CH(reduce_order(X.X, max(1, m2)), X.Y)
     else
         Y = X
     end
