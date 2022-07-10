@@ -138,7 +138,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test ngens(Znogen) == 0
     @test genmat(Znogen) == Matrix{N}(undef, 2, 0)
     @test collect(generators(Znogen)) == Vector{N}()
-    Zs = Zonotope(SVector{2}(Z.center), SMatrix{2, 4}(Z.generators))
+    Zs = Zonotope(SVector{2}(Z.center), SMatrix{2, 6}(Z.generators))
     @test reduce_order(Zs, 2) isa Zonotope{Float64, SVector{2, Float64}, SMatrix{2, 4, Float64, 8}}
 
     # conversion from zonotopic sets
