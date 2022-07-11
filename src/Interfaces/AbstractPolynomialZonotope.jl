@@ -12,7 +12,6 @@ julia> subtypes(LazySets.AbstractPolynomialZonotope)
 2-element Vector{Any}:
  DensePolynomialZonotope
  SimpleSparsePolynomialZonotope
-
 ```
 """
 abstract type AbstractPolynomialZonotope{N} end
