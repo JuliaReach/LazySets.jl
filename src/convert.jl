@@ -1239,10 +1239,10 @@ This method implements Proposition 3 in [1].
 [1] Kochdumper, Althoff. *Sparse polynomial zonotopes - a novel set
 representation for reachability analysis*. 2021
 """
-function convert(::Type{SimpleSparsePolynomialZonotope}, P::Zonotope)
-    c = center(P)
-    G = genmat(P)
-    n = ngens(P)
+function convert(::Type{SimpleSparsePolynomialZonotope}, Z::AbstractZonotope)
+    c = center(Z)
+    G = genmat(Z)
+    n = ngens(Z)
     E = Matrix(1 * I, n, n)
 
     return SimpleSparsePolynomialZonotope(c, G, E)

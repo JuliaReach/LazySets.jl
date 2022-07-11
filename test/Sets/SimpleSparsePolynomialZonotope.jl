@@ -13,11 +13,12 @@ for N in [Float64, Float32, Rational{Int}]
     @test nparams(S) == 2
     @test order(S) == 1 // 1
 
-    Z = rand(Zonotope)
-    ZS = convert(SimpleSparsePolynomialZonotope, Z)
-    @test center(ZS) == center(Z)
-    @test genmat(ZS) == genmat(Z)
-    @test expmat(ZS) == I
+    for Z in [rand(Zonotope), rand(Hyperrectangle)]
+        ZS = convert(SimpleSparsePolynomialZonotope, Z)
+        @test center(ZS) == center(Z)
+        @test genmat(ZS) == genmat(Z)
+        @test expmat(ZS) == I
+    end
 
     @test overapproximate(S, Zonotope) == Zonotope(N[3., 1], N[1 1;2 1.])
     @test length(overapproximate(S, Zonotope; nsdiv=3)) == 9
