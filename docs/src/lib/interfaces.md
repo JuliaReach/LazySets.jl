@@ -28,7 +28,15 @@ Depth = 3
 CurrentModule = LazySets
 ```
 
-## [General sets (ConvexSet)](@id def_LazySet)
+## [General set (LazySet)](@id def_LazySet)
+
+Every set in this library is a subtype of the abstract type `LazySet`.
+
+```@docs
+LazySet
+```
+
+## [General sets (ConvexSet)](@id def_ConvexSet)
 
 Every convex set in this library implements this interface.
 
