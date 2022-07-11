@@ -59,5 +59,5 @@ convert(::Type{Zonotope}, ::CartesianProductArray{N, AZ}) where {N, AZ<:Abstract
 convert(::Type{STAR}, ::AbstractPolyhedron{N}) where {N}
 convert(::Type{STAR}, ::Star)
 convert(::Type{Star}, ::AbstractPolyhedron{N}) where {N}
-convert(::Type{SimpleSparsePolynomialZonotope}, P::Zonotope)
+convert(::Type{SimpleSparsePolynomialZonotope}, ::AbstractZonotope)
 ```
