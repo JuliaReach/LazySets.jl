@@ -99,7 +99,7 @@ The number of parameters in the polynomial representation of P.
 
 ### Notes
 
-This corresponds to the number of ``\alpha_k``'s in the sets' definition, i.e. the number rows in the exponent matrix ``E``.
+This corresponds to the number rows in the exponent matrix ``E`` (`p` in the set definition).
 
 ### Examples
 
