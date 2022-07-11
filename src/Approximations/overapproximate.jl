@@ -717,19 +717,18 @@ end
 """
     overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{Zonotope}; nsdiv=1, partition=nothing)
 
-Returns a zonotope containing ``P``.
+Return a zonotope containing ``P``.
 
 ### Input
 
-- `P`     -- simple sparse polynomial zonotope
-- `nsdiv` -- (optional, default: `1`) size of uniform partitioning grid
+- `P`         -- simple sparse polynomial zonotope
+- `nsdiv`     -- (optional, default: `1`) size of uniform partitioning grid
 - `partition` -- (optional, default: `nothing`) tuple of integers indicating the number of partitions
                  in each dimensino, the length should match `nparams(P)`
 
 ### Output
 
 A zonotope containing `P`.
-
 """
 function overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{Zonotope}; nsdiv=1, partition=nothing)
     if !isnothing(partition) || nsdiv != 1

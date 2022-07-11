@@ -4,22 +4,27 @@ export SimpleSparsePolynomialZonotope, PolynomialZonotope, expmat, nparams,
 """
     SimpleSparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, ME<:AbstractMatrix{<:Integer}} <: AbstractPolynomialZonotope{N}
 
-Type that represents a sparse polynomial zonotope.
+Type that represents a sparse polynomial zonotope that is *simple* in the sense that there is no distinction between independent and dependent generators.
 
-A sparse polynomial zonotope ``\\mathcal{PZ} ⊂ \\mathbb{R}^n`` is represented by
-a constant offset ``c ∈ \\mathbb{R}^n``, a generator matrix ``G ∈ \\mathbb{R}^{n \times h}`` and an exponent matrix
-``E ∈ \\mathbb{N}^{q×h}_{≥0}``.
+A simple sparse polynomial zonotope ``\\mathcal{PZ} ⊂ \\mathbb{R}^n`` is represented by the set
+```math
+\\mathcal{PZ} = \\left\\{x \\in \\mathbb{R}^n : x = c + \\sum_{i=1}^h \\left(\\prod_{k=1}^p \\alpha_k^{E_{k, i}} \\right) g_i,~~ \\alpha_k \\in [-1, 1]~~ \\forall i = 1,\\ldots,p \\right\\},
+```
+where ``c ∈ \\mathbb{R}^n`` is the offest vector (or center), ``G ∈ \\mathbb{R}^{n \\times h}`` is the generator matrix with columns ``g_i``
+(each ``g_i`` is called a *generator*), and where ``E ∈ \\mathbb{N}^{p×h}_{≥0}`` is the exponent matrix with matrix elements ``E_{k, i}``.
 
 ### Fields
 
-- `c` -- constant offset vector
+- `c` -- offset vector
 - `G` -- generator matrix
 - `E` -- exponent matrix
 
 ### Notes
 
-Sparse polynomial zonotopes were introduced in N. Kochdumper and M. Althoff.
-*Sparse Polynomial Zonotopes: A Novel Set Representation for Reachability Analysis*. Transactions on Automatic Control, 2021.
+Sparse polynomial zonotopes were introduced in [KA21]. The *simple* variation was defined in [K22].
+
+- [KA21] N. Kochdumper and M. Althoff. *Sparse Polynomial Zonotopes: A Novel Set Representation for Reachability Analysis*. Transactions on Automatic Control, 2021.
+- [K21] N. Kochdumper. *Challenge Problem 5: Polynomial Zonotopes in Julia.* JuliaReach and JuliaIntervals Days 3, 2021.
 """
 struct SimpleSparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, ME<:AbstractMatrix{<:Integer}} <: AbstractPolynomialZonotope{N}
     c::VN
@@ -48,23 +53,7 @@ const SSPZ = SimpleSparsePolynomialZonotope
 """
     dim(P::SimpleSparsePolynomialZonotope)
 
-Computes the dimension of the simple sparse polynomial zonotope `P`.
-"""
-dim(P::SSPZ) = size(P.c, 1)
-
-"""
-    ngens(P::SimpleSparsePolynomialZonotope)
-
-Computes the number of generators of the simple sparse polynomial zonotope `P`. This is
-equivalent to the number of monomials in the polynomial representation of `P`.
-"""
-ngens(P::SSPZ) = size(P.G, 2)
-
-"""
-    nparams(P::SimpleSparsePolynomialZonotope)
-
-Returns the number of variables used in the polynomial representation, which corresponds to
-the number of rows in the exponents matrix.
+Return the dimension of `P`.
 
 ### Input
 
@@ -72,7 +61,45 @@ the number of rows in the exponents matrix.
 
 ### Output
 
-The number of variables in the polynomial representation of P.
+The ambient dimension of `P`.
+"""
+dim(P::SSPZ) = size(P.c, 1)
+
+"""
+    ngens(P::SimpleSparsePolynomialZonotope)
+
+Return the number of generators of `P`.
+
+### Input
+
+- `P` -- simple sparse polynomial zonotope
+
+### Output
+
+The number of generators of `P`.
+
+### Notes
+
+This is equivalent to the number of monomials in the polynomial representation of `P`.
+"""
+ngens(P::SSPZ) = size(P.G, 2)
+
+"""
+    nparams(P::SimpleSparsePolynomialZonotope)
+
+Return the number of parameters in the polynomial representation of `P`.
+
+### Input
+
+- `P` -- simple sparse polynomial zonotope
+
+### Output
+
+The number of parameters in the polynomial representation of P.
+
+### Notes
+
+This corresponds to the number of ``\alpha_k``'s in the sets' definition, i.e. the number rows in the exponent matrix ``E``.
 
 ### Examples
 
@@ -89,29 +116,52 @@ nparams(P::SSPZ) = size(P.E, 1)
 """
     order(P::SimpleSparsePolynomialZonotope)
 
-Computes the order of the simple sparse polynomial zonotope `P`.
+Return the order of `P`.
+
+### Input
+
+- `P` -- simple sparse polynomial zonotope
+
+### Output
+
+The order of `P`, defined as the quotient between the number of generators and the ambient dimension.
 """
 order(P::SSPZ) = ngens(P) // dim(P)
 
 """
     center(P::SimpleSparsePolynomialZonotope)
 
-Returns the center of the simple sparse polynomial zonotope `P`.
+Return the center of `P`.
+
+### Input
+
+- `P` -- simple sparse polynomial zonotope
+
+### Output
+
+The center of `P`.
 """
 center(P::SSPZ) = P.c
 
 """
     genmat(P::SimpleSparsePolynomialZonotope)
 
-Returns the matrix of generators of the simple sparse polynomial zonotope `P`.
+Return the matrix of generators of `P`.
+
+### Input
+
+- `P` -- simple sparse polynomial zonotope
+
+### Output
+
+The matrix of generators of `P`.
 """
 genmat(P::SSPZ) = P.G
 
 """
     expmat(P::SimpleSparsePolynomialZonotope)
 
-Returns the matrix of exponents of the sparse polynomial zonotope. In the matrix, each
-row corresponds to a variable and each column to a monomial.
+Return the matrix of exponents of the sparse polynomial zonotope.
 
 ### Input
 
@@ -120,6 +170,10 @@ row corresponds to a variable and each column to a monomial.
 ### Output
 
 The matrix of exponents, where each column is a multidegree.
+
+### Notes
+
+In the exponent matrix, each row corresponds to a parameter (``\alpha_k`` in the definition) and each column to a monomial.
 
 ### Examples
 
