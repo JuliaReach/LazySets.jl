@@ -1228,7 +1228,7 @@ end
 
 
 """
-    convert(::Type{SimpleSparsePolynomialZonotope}, P::Zonotope)
+    convert(::Type{SimpleSparsePolynomialZonotope}, Z::Zonotope)
 
 Convert a zonotope to a simple sparse polynomial zonotope.
 
