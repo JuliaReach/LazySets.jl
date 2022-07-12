@@ -1225,3 +1225,25 @@ function convert(::Type{Hyperplane}, P::HPolyhedron; skip_check::Bool=false)
     c1 = @inbounds first(constraints_list(P))
     return Hyperplane(c1.a, c1.b)
 end
+
+
+"""
+    convert(::Type{SimpleSparsePolynomialZonotope}, Z::Zonotope)
+
+Convert a zonotope to a simple sparse polynomial zonotope.
+
+### Algorithm
+
+This method implements Proposition 3 in [1].
+
+[1] Kochdumper, Althoff. *Sparse polynomial zonotopes - a novel set
+representation for reachability analysis*. 2021
+"""
+function convert(::Type{SimpleSparsePolynomialZonotope}, Z::AbstractZonotope)
+    c = center(Z)
+    G = genmat(Z)
+    n = ngens(Z)
+    E = Matrix(1 * I, n, n)
+
+    return SimpleSparsePolynomialZonotope(c, G, E)
+end
