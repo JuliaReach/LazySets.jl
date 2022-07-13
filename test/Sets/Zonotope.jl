@@ -2,7 +2,7 @@ for N in [Float64, Rational{Int}, Float32]
     # random zonotope
     rand(Zonotope)
     # Test dimension assertion
-    @test_throws AssertionError Zonotope([1., 1], [[0. 0]; [0.5 0]; [0. 0.5]; [0. 0]])
+    @test_throws AssertionError Zonotope(N[1, 1], [N[0 0]; N[1//2 0]; N[0 1//2]; N[0 0]])
 
     # 1D Zonotope
     z = Zonotope(N[0], Matrix{N}(I, 1, 1))
@@ -75,7 +75,7 @@ for N in [Float64, Rational{Int}, Float32]
     gens = N[1 1; -1 1]
     Z1 = Zonotope(N[1, 1], gens)
     Z2 = Zonotope(N[-1, 1], Matrix{N}(I, 2, 2))
-    A = N[0.5 1; 1 0.5]
+    A = N[1//2 1; 1 1//2]
 
     # translation
     @test translate(Z1, N[1, 2]) == Zonotope(N[2, 3], gens)
@@ -91,10 +91,10 @@ for N in [Float64, Rational{Int}, Float32]
     # concrete linear map and scale
     Z4 = linear_map(A, Z3)
     @test Z4.center == N[2, 1]
-    @test Z4.generators == N[-0.5 1.5 0.5 1; 0.5 1.5 1 0.5]
-    Z5 = scale(0.5, Z3)
+    @test Z4.generators == N[-1//2 3//2 1//2 1; 1//2 3//2 1 1//2]
+    Z5 = scale(1//2, Z3)
     @test Z5.center == N[0, 1]
-    @test Z5.generators == N[0.5 0.5 0.5 0; -0.5 0.5 0 0.5]
+    @test Z5.generators == N[1//2 1//2 1//2 0; -1//2 1//2 0 1//2]
 
     # in-place linear map
     Zin = convert(Zonotope, BallInf(zeros(N, 2), N(1)))
@@ -105,7 +105,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # in-place scale
     Z5aux = copy(Z3)
-    scale!(N(0.5), Z5aux)
+    scale!(N(1//2), Z5aux)
     @test isequivalent(Z5, Z5aux)
 
     # intersection with a hyperplane
@@ -118,7 +118,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test is_intersection_empty(H2, Z1) && is_intersection_empty(H2, Z1, true)[1]
 
     # test number of generators
-    Z = Zonotope(N[2, 1], N[-0.5 1.5 0.5 1; 0.5 1.5 1 0.5])
+    Z = Zonotope(N[2, 1], N[-1//2 3//2 1//2 1; 1//2 3//2 1 1//2])
     @test ngens(Z) == 4
     @test genmat(Z) == Z.generators
     @test ispermutation(collect(generators(Z)), [genmat(Z)[:, j] for j in 1:ngens(Z)])
@@ -130,7 +130,7 @@ for N in [Float64, Rational{Int}, Float32]
     Zred2 = reduce_order(Z, 2)
     @test ngens(Zred2) == 4
     @test order(Zred2) == 2
-    Z = Zonotope(N[2, 1], N[-0.5 1.5 0.5 1 0 1; 0.5 1.5 1 0.5 1 0])
+    Z = Zonotope(N[2, 1], N[-1//2 3//2 1//2 1 0 1; 1//2 3//2 1 1//2 1 0])
     Zred3 = reduce_order(Z, 2)
     @test ngens(Zred3) == 4
     @test order(Zred3) == 2
@@ -169,7 +169,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # convert the cartesian product of two hyperrectangles to a zonotope
     h1 = Hyperrectangle(N[1/2],  N[1/2])
-    h2 = Hyperrectangle(N[2.5, 4.5],  N[1/2, 1/2])
+    h2 = Hyperrectangle(N[5//2, 9//2],  N[1/2, 1/2])
     H = convert(Hyperrectangle, h1 × h2)
     Z = convert(Zonotope, h1 × h2)
     @test Z ⊆ H && H ⊆ Z
@@ -372,18 +372,20 @@ for N in [Float64]
     Z = Zonotope(N[0, 0], N[1 0; 0 1])
     Q1 = N[1/2 0; 0 1/2]
     Q2 = N[0 1/2; 1/2 0]
-    # note that there may be repeated generators (though zero generaors are removed)
-    @test quadratic_map([Q1, Q2], Z) == Zonotope(N[0.5, 0], N[0.25 0.25 0; 0 0 1])
+    # note that there may be repeated generators (though zero generators are removed)
+    @test overapproximate(QuadraticMap([Q1, Q2], Z), Zonotope) ==
+        Zonotope(N[1//2, 0], N[1//4 1//4 0; 0 0 1])
     Z = Zonotope(N[0, 0], N[1 1; 0 1])
     Q1 = N[1 1; 1 1]
     Q2 = N[-1 0; 0 -1]
-    @test quadratic_map([Q1, Q2], Z) == Zonotope(N[2.5, -1.5], N[0.5 2 4; -0.5 -1 -2])
+    @test overapproximate(QuadraticMap([Q1, Q2], Z), Zonotope) ==
+        Zonotope(N[5//2, -3//2], N[1//2 2 4; -1//2 -1 -2])
 
     # intersection with halfspace
     Z = Zonotope(N[0, 0], N[1 0; 0 1])
-    H = HalfSpace(N[1, 0], N(-1.5))
+    H = HalfSpace(N[1, 0], N(-3//2))
     @test intersection(H, Z) == EmptySet(2)
-    H = HalfSpace(N[1, 0], N(1.5))
+    H = HalfSpace(N[1, 0], N(3//2))
     @test intersection(H, Z) == Z
     H = HalfSpace(N[1, 0], N(0))
     P = HPolytope([HalfSpace(N[1, 0], N(0)),
