@@ -165,8 +165,8 @@ for N in [Float64, Float32]
     # sampling
     H = Hyperplane(N[1, -1], N(0))  # x = y
     for x in sample(H, 10)
-        # approximate membership test due to floating-point errors
-        @test isapproxzero(dot(x, H.a) - H.b)
+        # membership
+        @test x ∈ H
     end
 end
 
