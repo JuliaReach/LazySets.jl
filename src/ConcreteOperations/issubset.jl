@@ -606,7 +606,16 @@ function _issubset_interval(x::Interval{N}, a::Interval, b::Interval,
     end
 end
 
-function ⊆(x::Interval, U::UnionSetArray, witness::Bool=false)
+function ⊆(x::Interval, U::UnionSetArray, witness::Bool=false) where {N}
+    @assert dim(U) == 1 "an interval is incompatible with a set of dimension " *
+        "$(dim(U))"
+    V = _get_interval_array_copy(U)
+    return _issubset_interval!(x, V, witness)
+end
+
+# disambiguation
+function ⊆(x::Interval, U::UnionSetArray{N, <:AbstractHyperrectangle},
+           witness::Bool=false) where {N}
     @assert dim(U) == 1 "an interval is incompatible with a set of dimension " *
         "$(dim(U))"
     V = _get_interval_array_copy(U)
@@ -641,6 +650,73 @@ function _issubset_interval!(x::Interval{N}, intervals, witness) where {N}
 
     witness && return (false, low(x))
     return false
+end
+
+function ⊆(H::AbstractHyperrectangle, U::UnionSetArray{N, <:AbstractHyperrectangle},
+           witness::Bool=false; filter_redundant_sets::Bool=true) where {N}
+    # sufficient check: is H contained in any set in U?
+    for B in array(U)
+        if H ⊆ B
+            if witness
+                return (true, N[])
+            else
+                return true
+            end
+        end
+    end
+
+    if filter_redundant_sets
+        # filter out those sets in U that do not intersect with H
+        boxes = Vector{eltype(array(U))}()
+        for B in array(U)
+            if !isdisjoint(H, B)
+                push!(boxes, B)
+            end
+        end
+    else
+        boxes = array(U)
+    end
+
+    queue = AbstractHyperrectangle{N}[]  # vector types become SVector below
+    push!(queue, H)
+    while !isempty(queue)
+        X = pop!(queue)
+        # first check if X is fully contained to avoid splitting/recursion
+        # keep track of the first box that intersects with X
+        idx = 0
+        contained = false
+        for (i, B) in enumerate(boxes)
+            if X ⊆ B
+                contained = true
+                break
+            elseif idx == 0 && !isdisjoint(X, B)
+                # does not terminate if the intersection is flat
+                cap = intersection(X, B)
+                if !isempty(cap) && !isflat(cap)
+                    idx = i
+                end
+            end
+        end
+        if contained
+            continue
+        end
+        if idx == 0
+            if witness
+                return (false, an_element(X))
+            else
+                return false
+            end
+        end
+        # split wrt. the i-th box
+        B = boxes[idx]
+        append!(queue, array(difference(X, B)))
+    end
+
+    if witness
+        return (true, N[])
+    else
+        return true
+    end
 end
 
 

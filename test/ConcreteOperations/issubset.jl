@@ -32,4 +32,11 @@ for N in [Float64, Float32, Rational{Int}]
     @test X ⊆ Y
     @test !(Y ⊆ X)
 
+    B = Hyperrectangle(N[0, 0], N[1, 1])
+    U = UnionSetArray([Hyperrectangle(N[0, 1], N[3, 1]), Hyperrectangle(N[0, -1], N[3, 1])])
+    res, w = ⊆(B, U, true)
+    @test B ⊆ U && res && w == N[]
+    U = UnionSetArray([Hyperrectangle(N[0, 1], N[3, 1]), Hyperrectangle(N[3, -1], N[3, 1])])
+    res, w = ⊆(B, U, true)
+    @test !(B ⊆ U) && !res && w ∈ B && w ∉ U
 end
