@@ -229,7 +229,7 @@ Check whether a given point is contained in a hyperplane.
 We just check if ``x`` satisfies ``a⋅x = b``.
 """
 function ∈(x::AbstractVector, hp::Hyperplane)
-    return dot(x, hp.a) == hp.b
+    return _isapprox(dot(hp.a, x), hp.b)
 end
 
 """

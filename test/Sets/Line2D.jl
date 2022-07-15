@@ -116,7 +116,7 @@ for N in [Float64, Float32]
     # sampling
     L = Line2D(N[1, -1], N(0))  # x = y
     for x in sample(L, 10)
-        # approximate membership test due to floating-point errors
-        @test isapproxzero(dot(x, L.a) - L.b)
+        # membership
+        @test x ∈ L
     end
 end

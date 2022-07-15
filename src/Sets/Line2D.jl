@@ -241,7 +241,7 @@ The point ``x`` belongs to the line if and only if ``a⋅x = b`` holds.
 """
 function ∈(x::AbstractVector, L::Line2D)
     @assert length(x) == dim(L)
-    return dot(L.a, x) == L.b
+    return _isapprox(dot(L.a, x), L.b)
 end
 
 """
