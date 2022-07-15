@@ -47,7 +47,7 @@ Plot a three-dimensional convex set using `Makie`.
 
 - `S`            -- convex set
 - `backend`      -- (optional, default: `default_polyhedra_backend(S)`) polyhedral
-                    computations backend 
+                    computations backend
 - `alpha`        -- (optional, default: `1.0`) float in `[0,1]`; the alpha or
                     transparency value
 - `color`        -- (optional, default: `:blue`) `Symbol` or `Colorant`; the color
@@ -87,9 +87,11 @@ overapproximation first; e.g. via
 ```julia
 julia> Sapprox = overapproximate(S, SphericalDirections(10))
 
+julia> using Polyhedra, GLMakie
+
 julia> plot3d(Sapprox)
 ```
-The number `10` above corresponds to the number of directions considered; for 
+The number `10` above corresponds to the number of directions considered; for
 better resolution use higher values (but it will take longer).
 
 For efficiency consider using the `CDDLib` backend, as in
@@ -102,12 +104,11 @@ julia> plot3d(Sapprox, backend=CDDLib.Library())
 
 ### Examples
 
-The functionality requires *both* `Polyhedra` and `Makie`; so after
-loading `LazySets`, do `using Makie, Polyhedra` (or `using Polyhedra, Makie`, the
-order doesn't matter).
+The functionality requires *both* `Polyhedra` and a `Makie` backend. After
+loading `LazySets`, do `using Polyhedra, GLMakie` (or another Makie backend).
 
 ```julia
-julia> using LazySets, Makie, Polyhedra
+julia> using LazySets, Polyhedra, GLMakie
 
 julia> plot3d(10. * rand(Hyperrectangle, dim=3))
 
