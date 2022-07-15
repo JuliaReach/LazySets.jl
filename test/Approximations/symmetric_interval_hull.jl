@@ -18,6 +18,12 @@ for N in [Float64, Rational{Int}, Float32]
     H1 = Hyperrectangle(5 * ones(N, 4), N[1, 2, 3, 4])
     H2 = Hyperrectangle(zeros(N, 4), N[6, 7, 16, 18])
     @test symmetric_interval_hull(M * H1) == H2
+
+    # LineSegment & V-rep
+    v = [N[1, 0], [0, 2]]
+    for V in (LineSegment(v[1], v[2]), VPolygon(v), VPolytope(v))
+        @test symmetric_interval_hull(V) == Hyperrectangle(zeros(N, 2), N[1, 2])
+    end
 end
 
 # tests that only work with Float64 and Float32

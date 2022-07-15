@@ -81,6 +81,23 @@ function symmetric_interval_hull(S::AbstractSingleton{N}) where {N}
     return Hyperrectangle(zeros(N, n), r)
 end
 
+function symmetric_interval_hull(P::Union{VPolygon{N}, VPolytope{N}}) where {N}
+    n = dim(P)
+    r = zeros(N, n)
+    @inbounds for v in vertices(P)
+        for i in 1:n
+            r[i] = max(r[i], abs(v[i]))
+        end
+    end
+    return Hyperrectangle(zeros(N, n), r)
+end
+
+function symmetric_interval_hull(L::LineSegment{N}) where {N}
+    r = @inbounds [max(abs(L.p[1]), abs(L.q[1])),
+                   max(abs(L.p[2]), abs(L.q[2]))]
+    return Hyperrectangle(zeros(N, 2), r)
+end
+
 function symmetric_interval_hull(X::LinearMap{N, <:AbstractSingleton}) where {N}
     n = dim(X)
     r = abs.(X.M * element(X.X))
