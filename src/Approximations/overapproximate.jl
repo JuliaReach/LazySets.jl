@@ -1883,6 +1883,69 @@ function overapproximate(X::Intersection{N, <:Hyperplane, <:AbstractZonotope},
     return overapproximate(X.Y ∩ X.X, dirs(dim(X)))
 end
 
+"""
+    overapproximate(qm::QuadraticMap{N, <:AbstractZonotope}, ::Type{<:Zonotope}) where {N}
+
+Return a zonotopic overapproximation of the quadratic map of the given zonotope.
+
+### Input
+
+- `Z` -- zonotope
+- `Q` -- array of square matrices
+
+### Output
+
+A zonotopic overapproximation of the quadratic map of the given zonotope.
+
+### Notes
+
+Mathematically, a quadratic map of a zonotope is defined as:
+
+```math
+Z_Q = \\right\\{ \\lambda | \\lambda_i = x^T Q\\^{(i)} x,~i = 1, \\ldots, n,~x \\in Z \\left\\}
+```
+
+### Algorithm
+
+This function implements [Lemma 1, 1].
+
+[1] *Matthias Althoff and Bruce H. Krogh. 2012. Avoiding geometric intersection
+operations in reachability analysis of hybrid systems. In Proceedings of the
+15th ACM international conference on Hybrid Systems: Computation and Control
+(HSCC ’12). Association for Computing Machinery, New York, NY, USA, 45–54.*
+"""
+function overapproximate(qm::QuadraticMap{N, <:AbstractZonotope}, ::Type{<:Zonotope}) where {N}
+    Z = qm.X
+    G = genmat(Z)
+    c = center(Z)
+    n, p = size(G)
+    h = Matrix{N}(undef, n, binomial(p+2, 2)-1)
+    d = Vector{N}(undef, n)
+    g(x) = view(G, :, x)
+    cᵀ = c'
+    for (i, Qᵢ) in enumerate(qm.Q)
+        cᵀQᵢ = cᵀ * Qᵢ
+        Qᵢc = Qᵢ * c
+        aux = zero(N)
+        for j=1:p
+            aux += g(j)' * Qᵢ * g(j)
+            h[i, j] = cᵀQᵢ * g(j) + g(j)' * Qᵢc
+            h[i, p+j] = 0.5 * g(j)' * Qᵢ * g(j)
+        end
+        d[i] = cᵀQᵢ * c + 0.5 * aux
+        l = 0
+        for j=1:p-1
+            gjᵀQᵢ = g(j)' * Qᵢ
+            Qᵢgj = Qᵢ * g(j)
+            for k=j+1:p
+                l += 1
+                h[i, 2p+l] = gjᵀQᵢ * g(k) + g(k)' * Qᵢgj
+            end
+        end
+    end
+    return Zonotope(d, remove_zero_columns(h))
+end
+
 # ===========================================================
 # Functionality that requires IntervalConstraintProgramming
 # ===========================================================

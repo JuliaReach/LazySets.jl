@@ -18,7 +18,6 @@ low(::Zonotope, ::Int)
 high(::Zonotope, ::Int)
 remove_zero_generators(::Zonotope)
 linear_map!(::Zonotope, ::AbstractMatrix, ::Zonotope)
-quadratic_map(::Vector{MT}, ::Zonotope{N}) where {N, MT<:AbstractMatrix{N}}
 LazySets._bound_intersect_2D(::Zonotope, ::Line2D)
 remove_redundant_generators(Z::Zonotope{N}) where {N}
 ```

@@ -5,7 +5,6 @@ export Zonotope,
        scale!,
        reduce_order,
        remove_zero_generators,
-       quadratic_map,
        remove_redundant_generators
 
 using LazySets.Arrays: _vector_type, _matrix_type
@@ -549,70 +548,6 @@ function linear_map!(Zout::Zonotope, M::AbstractMatrix, Z::Zonotope)
     mul!(Zout.center, M, Z.center)
     mul!(Zout.generators, M, Z.generators)
     return Zout
-end
-
-"""
-    quadratic_map(Q::Vector{MT}, Z::Zonotope{N}) where {N, MT<:AbstractMatrix{N}}
-
-Return an overapproximation of the quadratic map of the given zonotope.
-
-### Input
-
-- `Z` -- zonotope
-- `Q` -- array of square matrices
-
-### Output
-
-An overapproximation of the quadratic map of the given zonotope.
-
-### Notes
-
-Mathematically, a quadratic map of a zonotope is defined as:
-
-```math
-Z_Q = \\right\\{ \\lambda | \\lambda_i = x^T Q\\^{(i)} x,~i = 1, \\ldots, n,~x \\in Z \\left\\}
-```
-such that each coordinate ``i`` of the resulting zonotope is influenced by ``Q\\^{(i)}``
-
-### Algorithm
-
-This function implements [Lemma 1, 1].
-
-[1] *Matthias Althoff and Bruce H. Krogh. 2012. Avoiding geometric intersection
-operations in reachability analysis of hybrid systems. In Proceedings of the
-15th ACM international conference on Hybrid Systems: Computation and Control
-(HSCC ’12). Association for Computing Machinery, New York, NY, USA, 45–54.*
-"""
-function quadratic_map(Q::Vector{MT}, Z::Zonotope{N}) where {N, MT<:AbstractMatrix{N}}
-    @assert length(Q) == dim(Z) "the number of matrices needs to match the dimension of the zonotope"
-    G = genmat(Z)
-    c = center(Z)
-    n, p = size(G)
-    h = Matrix{N}(undef, n, binomial(p+2, 2)-1)
-    d = Vector{N}(undef, n)
-    g(x) = view(G, :, x)
-    cᵀ = c'
-    for (i, Qᵢ) in enumerate(Q)
-        cᵀQᵢ = cᵀ * Qᵢ
-        Qᵢc = Qᵢ * c
-        aux = zero(N)
-        for j=1:p
-            aux += g(j)' * Qᵢ * g(j)
-            h[i, j] = cᵀQᵢ * g(j) + g(j)' * Qᵢc
-            h[i, p+j] = 0.5 * g(j)' * Qᵢ * g(j)
-        end
-        d[i] = cᵀQᵢ * c + 0.5 * aux
-        l = 0
-        for j=1:p-1
-            gjᵀQᵢ = g(j)' * Qᵢ
-            Qᵢgj = Qᵢ * g(j)
-            for k=j+1:p
-                l += 1
-                h[i, 2p+l] = gjᵀQᵢ * g(k) + g(k)' * Qᵢgj
-            end
-        end
-    end
-    return Zonotope(d, remove_zero_columns(h))
 end
 
 """
