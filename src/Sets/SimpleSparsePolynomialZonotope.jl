@@ -1,5 +1,5 @@
 export SimpleSparsePolynomialZonotope, PolynomialZonotope, expmat, nparams,
-       linear_map
+       linear_map, quadratic_map
 
 """
     SimpleSparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, ME<:AbstractMatrix{<:Integer}} <: AbstractPolynomialZonotope{N}
@@ -205,4 +205,56 @@ The set resulting from applying the linear map `M` to `P`.
 """
 function linear_map(M::AbstractMatrix, P::SSPZ)
     return SimpleSparsePolynomialZonotope(M * center(P), M * genmat(P), expmat(P))
+end
+
+"""
+    quadratic_map(Q::Vector{MT}, S::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
+
+Return an overapproximation of the quadratic map of the given zonotope.
+
+### Input
+
+- `Q` -- vector of square matrices
+- `S` -- simple sparse polynomial zonotope
+
+### Output
+
+The quadratic map of the given zonotope represented as a polynomial zonotope.
+
+### Algorithm
+
+This method implements Proposition 12 in [1].
+See also Proposition 3.1.30 in [2].
+
+[1] N. Kochdumper, M. Althoff. *Sparse polynomial zonotopes: A novel set
+representation for reachability analysis*. 2021
+[2] N. Kochdumper. *Extensions of polynomial zonotopes and their application to
+verification of cyber-physical systems*. 2021.
+"""
+function quadratic_map(Q::Vector{MT}, S::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
+    m = length(Q)
+    c = center(S)
+    h = ngens(S)
+    G = genmat(S)
+    E = expmat(S)
+
+    cnew = similar(c, m)
+    Gnew = similar(G, m, h^2 + h)
+    QiG = similar(Q)
+    @inbounds for (i, Qi) in enumerate(Q)
+        cnew[i] = dot(c, Qi, c)
+        Gnew[i, 1:h] = c' * (Qi + Qi') * G
+        QiG[i] = Qi * G
+    end
+
+    Enew = repeat(E, 1, h + 1)
+    @inbounds for i in 1:h
+        idxstart = h * i + 1
+        idxend = (i + 1) * h
+        Enew[:, idxstart:idxend] .+= E[:, i]
+        for j in eachindex(QiG)
+            Gnew[j, idxstart:idxend] = G[:, i]' * QiG[j]
+        end
+    end
+    return SimpleSparsePolynomialZonotope(cnew, Gnew, Enew)
 end
