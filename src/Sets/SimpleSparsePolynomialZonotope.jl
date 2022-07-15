@@ -165,7 +165,7 @@ Return an overapproximation of the quadratic map of the given zonotope.
 
 ### Output
 
-An overapproximation of the quadratic map of the given zonotope.
+The quadratic map of the given zonotope represented as a polynomial zonotope.
 
 ### Algorithm
 
