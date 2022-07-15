@@ -161,15 +161,3 @@ function plot3d!(S::LazySet; backend=default_polyhedra_backend(S),
     return mesh!(P_poly_mesh, alpha=alpha, color=color, colormap=colormap, colorrange=colorrange,
                  interpolate=interpolate, linewidth=linewidth, transparency=transparency, visible=visible)
 end
-
-function plot3d(list::AbstractVector{SN}; backend=default_polyhedra_backend(first(list)),
-                alpha=1.0, color=:blue, colormap=:viridis, colorrange=nothing, interpolate=false,
-                linewidth=1, overdraw=false, shading=true, transparency=true, visible=true) where {N, SN<:LazySet{N}}
-
-    for S in list
-        P_poly_mesh = _plot3d_helper(S, backend)
-        mes = mesh!(P_poly_mesh, alpha=alpha, color=color, colormap=colormap, colorrange=colorrange,
-                    interpolate=interpolate, linewidth=linewidth, transparency=transparency, visible=visible)
-    end
-    return mes
-end
