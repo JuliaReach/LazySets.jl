@@ -1697,12 +1697,11 @@ function overapproximate(r::Rectification{N, <:AbstractZonotope}, ::Type{<:Zonot
     c = copy(center(Z))
     G = copy(genmat(Z))
     n, m = size(G)
-    H = overapproximate(Z, Hyperrectangle)
     row_idx = Vector{Int}()
     μ_idx = Vector{N}()
 
     @inbounds for i in 1:n
-        lx, ux = low(H, i), high(H, i)
+        lx, ux = low(Z, i), high(Z, i)
         if !_leq(lx, zero(N))
             nothing
         elseif _leq(ux, zero(N))
