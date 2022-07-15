@@ -490,7 +490,12 @@ Since ``S`` is convex, ``L ⊆ S`` iff ``p ∈ S`` and ``q ∈ S``, where ``p, q
 the end points of ``L``.
 """
 function ⊆(L::LineSegment, S::ConvexSet, witness::Bool=false)
-    return _issubset_line_segment(L, S)
+    return _issubset_line_segment(L, S, witness)
+end
+
+function ⊆(L::LineSegment, S::LazySet, witness::Bool=false)
+    throw(ArgumentError("this function requires the set type to be convex, but " *
+    "it is not the case for a $(typeof(S))"))
 end
 
 function _issubset_line_segment(L, S, witness)
