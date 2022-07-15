@@ -490,7 +490,7 @@ Since ``S`` is convex, ``L ⊆ S`` iff ``p ∈ S`` and ``q ∈ S``, where ``p, q
 the end points of ``L``.
 """
 function ⊆(L::LineSegment, S::ConvexSet, witness::Bool=false)
-    return _issubset_line_segment(L, S)
+    return _issubset_line_segment(L, S, witness)
 end
 
 function ⊆(L::LineSegment, S::LazySet, witness::Bool=false)
