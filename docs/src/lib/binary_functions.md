@@ -122,7 +122,7 @@ issubset
 ⊆(::AbstractSingleton, ::AbstractSingleton, ::Bool=false)
 ⊆(::Ball2, ::Ball2, ::Bool=false)
 ⊆(::Union{Ball2, Ballp}, ::AbstractSingleton, ::Bool=false)
-⊆(::LineSegment, ::ConvexSet, ::Bool=false)
+⊆(::LineSegment{N}, ::ST, ::Bool=false) where {ST<:LazySet{N}}
 ⊆(::LineSegment, ::AbstractHyperrectangle, ::Bool=false)
 ⊆(::Interval{N}, ::Interval, ::Bool=false) where {N}
 ⊆(::Interval, ::UnionSet, ::Bool=false)

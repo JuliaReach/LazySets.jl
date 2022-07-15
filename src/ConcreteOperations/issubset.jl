@@ -466,7 +466,7 @@ end
 
 
 """
-    ⊆(L::LineSegment, S::ConvexSet, witness::Bool=false)
+    ⊆(L::LineSegment{N}, S::ST, witness::Bool=false) where {N, ST<:LazySet{N}}
 
 Check whether a line segment is contained in a convex set, and if not,
 optionally compute a witness.
@@ -489,7 +489,9 @@ optionally compute a witness.
 Since ``S`` is convex, ``L ⊆ S`` iff ``p ∈ S`` and ``q ∈ S``, where ``p, q`` are
 the end points of ``L``.
 """
-function ⊆(L::LineSegment, S::ConvexSet, witness::Bool=false)
+function ⊆(L::LineSegment{N}, S::ST, witness::Bool=false) where {N, ST<:LazySet{N}}
+    isconvextype(ST) || throw(ArgumentError("this function requires the set type to be convex, but " *
+                                            "it is not the case for a $ST"))
     return _issubset_line_segment(L, S)
 end
 
