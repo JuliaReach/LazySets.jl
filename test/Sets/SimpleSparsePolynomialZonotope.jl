@@ -72,4 +72,24 @@ for N in [Float64, Float32, Rational{Int}]
 
     @test expmat(q1) == [ 1  0  2  1  1  0;
                           0  1  0  1  1  2]
+
+    c = N[1., 2, 3]
+
+    G = N[0.0  1.0  4.0  7.0  10.0  13.0  16.0
+         0.0  2.0  5.0  8.0  11.0  14.0  17.0
+         0.0  3.0  6.0  9.0  12.0  15.0  18.0]
+
+    E = [1  4  1  3  0  3  7
+         2  5  2  4  0  4  8
+         3  6  3  5  0  5  9]
+
+    Sred = remove_redundant_generators(SimpleSparsePolynomialZonotope(c, G, E))
+    @test center(Sred) == [11., 13, 15]
+    @test genmat(Sred) == N[ 1.0  4.0  20.0  16.0
+                            2.0  5.0  22.0  17.0
+                            3.0  6.0  24.0  18.0]
+
+    @test expmat(Sred) == [ 4  1  3  7
+                            5  2  4  8
+                            6  3  5  9]
 end

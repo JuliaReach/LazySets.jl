@@ -1,5 +1,5 @@
 export SimpleSparsePolynomialZonotope, PolynomialZonotope, expmat, nparams,
-       linear_map, quadratic_map
+       linear_map, quadratic_map, remove_redundant_generators
 
 """
     SimpleSparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, ME<:AbstractMatrix{<:Integer}} <: AbstractPolynomialZonotope{N}
@@ -256,5 +256,33 @@ function quadratic_map(Q::Vector{MT}, S::SimpleSparsePolynomialZonotope) where {
             Gnew[j, idxstart:idxend] = G[:, i]' * QiG[j]
         end
     end
+    return SimpleSparsePolynomialZonotope(cnew, Gnew, Enew)
+end
+
+function remove_redundant_generators(S::SimpleSparsePolynomialZonotope)
+
+    c = center(S)
+    G = genmat(S)
+    E = expmat(S)
+
+    Gnew = Matrix{eltype(G)}(undef, size(G, 1), 0)
+    Enew = Matrix{eltype(E)}(undef, size(E, 1), 0)
+    cnew = copy(c)
+
+    visited_exps = Dict{Vector{Int}, Int}()
+    @inbounds for (gi, ei) in zip(eachcol(G), eachcol(E))
+        iszero(gi) && continue
+        if iszero(ei)
+            cnew += gi
+        elseif haskey(visited_exps, ei) # repeated exponent
+            idx = visited_exps[ei]
+            Gnew[:, idx] += gi
+        else
+            Gnew = hcat(Gnew, gi)
+            Enew = hcat(Enew, ei)
+            visited_exps[ei] = size(Enew, 2)
+        end
+    end
+
     return SimpleSparsePolynomialZonotope(cnew, Gnew, Enew)
 end
