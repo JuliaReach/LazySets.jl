@@ -259,6 +259,16 @@ function quadratic_map(Q::Vector{MT}, S::SimpleSparsePolynomialZonotope) where {
     return SimpleSparsePolynomialZonotope(cnew, Gnew, Enew)
 end
 
+"""
+    remove_redundant_generators(S::SimpleSparsePolynomialZonotope)
+
+remove redundant generators from the representation of `S`. Let `G` the generator matrix and
+`E` the exponent matrix. The following simplifications are performed
+
+- Zero columns in `G` and the corresponding columns in `E` are eliminated.
+- For zero columns in `E`, the corresponding column in `G` is summed to the center.
+- Repeated columns in `E` are grouped together by summing the corresponding columns in `G`.
+"""
 function remove_redundant_generators(S::SimpleSparsePolynomialZonotope)
 
     c = center(S)
