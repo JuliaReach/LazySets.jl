@@ -262,7 +262,7 @@ end
 """
     remove_redundant_generators(S::SimpleSparsePolynomialZonotope)
 
-remove redundant generators from the representation of `S`. Let `G` the generator matrix and
+Remove redundant generators from the representation of `S`. Let `G` be the generator matrix and
 `E` the exponent matrix. The following simplifications are performed
 
 - Zero columns in `G` and the corresponding columns in `E` are eliminated.
