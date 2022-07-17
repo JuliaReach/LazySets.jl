@@ -192,7 +192,7 @@ expmat(P::SSPZ) = P.E
 """
     linear_map(M::AbstractMatrix, P::SimpleSparsePolynomialZonotope)
 
-applies the linear mapping `M` to the simple sparse polynomial zonotope `P`.
+Apply the linear map `M` to the simple sparse polynomial zonotope `P`.
 
 ### Input
 
@@ -210,7 +210,7 @@ end
 """
     quadratic_map(Q::Vector{MT}, S::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
 
-Return an overapproximation of the quadratic map of the given zonotope.
+Return an overapproximation of the quadratic map of the given polynomial zonotope.
 
 ### Input
 
@@ -262,8 +262,23 @@ end
 """
     remove_redundant_generators(S::SimpleSparsePolynomialZonotope)
 
-Remove redundant generators from the representation of `S`. Let `G` be the generator matrix and
-`E` the exponent matrix. The following simplifications are performed
+Remove redundant generators from `S`.
+
+### Input
+
+- `S` -- simple sparse polynomial zonotope
+
+### Output
+
+A new simple simple sparse polynomial zonotope such that redundant generators have been reduced.
+
+## Notes
+
+The result uses dense arrays irrespective of the array type of `S`.
+
+### Algorithm
+
+Let `G` be the generator matrix and `E` the exponent matrix of `S`. The following simplifications are performed:
 
 - Zero columns in `G` and the corresponding columns in `E` are eliminated.
 - For zero columns in `E`, the corresponding column in `G` is summed to the center.
