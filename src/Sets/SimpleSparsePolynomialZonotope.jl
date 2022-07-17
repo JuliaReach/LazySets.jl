@@ -1,5 +1,5 @@
 export SimpleSparsePolynomialZonotope, PolynomialZonotope, expmat, nparams,
-       linear_map, quadratic_map
+       linear_map, quadratic_map, remove_redundant_generators
 
 """
     SimpleSparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, ME<:AbstractMatrix{<:Integer}} <: AbstractPolynomialZonotope{N}
@@ -192,7 +192,7 @@ expmat(P::SSPZ) = P.E
 """
     linear_map(M::AbstractMatrix, P::SimpleSparsePolynomialZonotope)
 
-applies the linear mapping `M` to the simple sparse polynomial zonotope `P`.
+Apply the linear map `M` to the simple sparse polynomial zonotope `P`.
 
 ### Input
 
@@ -210,7 +210,7 @@ end
 """
     quadratic_map(Q::Vector{MT}, S::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
 
-Return an overapproximation of the quadratic map of the given zonotope.
+Return an overapproximation of the quadratic map of the given polynomial zonotope.
 
 ### Input
 
@@ -256,5 +256,58 @@ function quadratic_map(Q::Vector{MT}, S::SimpleSparsePolynomialZonotope) where {
             Gnew[j, idxstart:idxend] = G[:, i]' * QiG[j]
         end
     end
+    return SimpleSparsePolynomialZonotope(cnew, Gnew, Enew)
+end
+
+"""
+    remove_redundant_generators(S::SimpleSparsePolynomialZonotope)
+
+Remove redundant generators from `S`.
+
+### Input
+
+- `S` -- simple sparse polynomial zonotope
+
+### Output
+
+A new simple simple sparse polynomial zonotope such that redundant generators have been reduced.
+
+## Notes
+
+The result uses dense arrays irrespective of the array type of `S`.
+
+### Algorithm
+
+Let `G` be the generator matrix and `E` the exponent matrix of `S`. The following simplifications are performed:
+
+- Zero columns in `G` and the corresponding columns in `E` are eliminated.
+- For zero columns in `E`, the corresponding column in `G` is summed to the center.
+- Repeated columns in `E` are grouped together by summing the corresponding columns in `G`.
+"""
+function remove_redundant_generators(S::SimpleSparsePolynomialZonotope)
+
+    c = center(S)
+    G = genmat(S)
+    E = expmat(S)
+
+    Gnew = Matrix{eltype(G)}(undef, size(G, 1), 0)
+    Enew = Matrix{eltype(E)}(undef, size(E, 1), 0)
+    cnew = copy(c)
+
+    visited_exps = Dict{Vector{Int}, Int}()
+    @inbounds for (gi, ei) in zip(eachcol(G), eachcol(E))
+        iszero(gi) && continue
+        if iszero(ei)
+            cnew += gi
+        elseif haskey(visited_exps, ei) # repeated exponent
+            idx = visited_exps[ei]
+            Gnew[:, idx] += gi
+        else
+            Gnew = hcat(Gnew, gi)
+            Enew = hcat(Enew, ei)
+            visited_exps[ei] = size(Enew, 2)
+        end
+    end
+
     return SimpleSparsePolynomialZonotope(cnew, Gnew, Enew)
 end
