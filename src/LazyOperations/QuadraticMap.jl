@@ -12,13 +12,13 @@ Type that represents a quadratic map of a set.
 
 ### Notes
 
-The quadratic map of set ``X`` for matrices ``Q\\^{(i)}`` is defined as
+The quadratic map of a set ``X`` given ``n`` square matrices ``Q^{(i)}`` is defined as
 
 ```math
-\\left\\{ \\lambda | \\lambda_i = x^T Q\\^{(i)} x,~i = 1, \\ldots, n,~x \\in X \\right\\}
+\\left\\{ \\lambda | \\lambda_i = x^T Q^{(i)} x,~i = 1, \\ldots, n,~x \\in X \\right\\}
 ```
 
-where each coordinate ``i`` is influenced by the ``i``-th matrix ``Q\\^{(i)}``.
+where each coordinate ``i`` is influenced by the ``i``-th matrix ``Q^{(i)}``.
 """
 struct QuadraticMap{N, S<:LazySet{N}, MVT<:AbstractVector{<:AbstractMatrix{N}}}
     Q::MVT

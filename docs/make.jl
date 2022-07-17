@@ -72,6 +72,7 @@ makedocs(
                 "LinearMap" => "lib/lazy_operations/LinearMap.md",
                 "InverseLinearMap" => "lib/lazy_operations/InverseLinearMap.md",
                 "MinkowskiSum" => "lib/lazy_operations/MinkowskiSum.md",
+                "QuadraticMap" => "lib/lazy_operations/QuadraticMap.md",
                 "Rectification" => "lib/lazy_operations/Rectification.md",
                 "ResetMap" => "lib/lazy_operations/ResetMap.md",
                 "SymmetricIntervalHull" => "lib/lazy_operations/SymmetricIntervalHull.md",
