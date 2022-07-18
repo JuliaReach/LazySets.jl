@@ -4,7 +4,6 @@ version = "1.59.1"
 
 [deps]
 Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
-ExprTools = "e2ba6199-217a-4e67-a87a-7c52f15ade04"
 GLPK = "60bf3e95-4087-53dc-ae20-288a0d20c6a6"
 InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 IntervalArithmetic = "d1acc4aa-44c8-5952-acd4-ba5d80a2a253"
@@ -20,7 +19,6 @@ SharedArrays = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
 SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [compat]
-ExprTools = "0.1"
 GLPK = "0.11 - 0.15, 1"
 IntervalArithmetic = "0.15 - 0.20"
 JuliaReachBase = "0.1"

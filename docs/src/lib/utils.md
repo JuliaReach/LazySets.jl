@@ -65,7 +65,6 @@ arg_minmax
 @declare_array_version
 @array_neutral
 @array_absorbing
-@commutative
 ```
 
 ## Types

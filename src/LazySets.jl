@@ -6,7 +6,6 @@ module LazySets
 using LinearAlgebra, RecipesBase, Reexport, Requires, SparseArrays
 import GLPK, IntervalArithmetic, JuliaReachBase, JuMP, Pkg, Random
 
-using ExprTools: splitdef, combinedef
 import InteractiveUtils: subtypes
 using IntervalArithmetic: AbstractInterval, mince
 import IntervalArithmetic: radius, ⊂
@@ -35,6 +34,7 @@ require(package; fun_name::String="", explanation::String="") =
 
 using JuliaReachBase.Comparison
 using JuliaReachBase.Iteration
+using JuliaReachBase.Commutative
 
 # ==================
 # Linear programming
