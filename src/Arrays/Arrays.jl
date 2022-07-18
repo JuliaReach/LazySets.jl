@@ -7,7 +7,7 @@ module Arrays
 
 using LinearAlgebra, SparseArrays, Requires
 
-using ..Assertions: @assert, activate_assertions
+using ..LazySets: @assert, activate_assertions
 # activate assertions by default
 activate_assertions(Arrays)
 

@@ -171,7 +171,7 @@ if test_suite_basic
     # Testing method ambiguity
     # ========================
     @time @testset "LazySets.method_ambiguities" begin
-        for package in [LazySets, Approximations, Arrays, Assertions, LazySets.Parallel]
+        for package in [LazySets, Approximations, Arrays, LazySets.Parallel]
             ambiguities = detect_ambiguities(package)
             @test isempty(ambiguities)
         end

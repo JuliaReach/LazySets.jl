@@ -17,7 +17,7 @@ using LazySets: _isapprox, _leq, _geq, _rtol, _normal_Vector, isapproxzero,
 
 import LazySets: project
 
-using ..Assertions: @assert, activate_assertions
+using ..LazySets: @assert, activate_assertions
 # activate assertions by default
 activate_assertions(Approximations)
 

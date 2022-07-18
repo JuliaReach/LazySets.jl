@@ -4,7 +4,7 @@ __precompile__(true)
 module LazySets
 
 using LinearAlgebra, RecipesBase, Reexport, Requires, SparseArrays
-import GLPK, IntervalArithmetic, JuMP, Pkg, Random
+import GLPK, IntervalArithmetic, JuliaReachBase, JuMP, Pkg, Random
 
 using ExprTools: splitdef, combinedef
 import InteractiveUtils: subtypes
@@ -19,16 +19,14 @@ import SparseArrays: permute
 export Arrays
 export ×, normalize, ⊂
 
-# ==========
-# Assertions
-# ==========
+# ==============
+# JuliaReachBase
+# ==============
 
-include("Assertions/Assertions.jl")
-@reexport using .Assertions
-using .Assertions: @assert
-import .Assertions: activate_assertions, deactivate_assertions
-# activate assertions by default
-activate_assertions(LazySets)
+using JuliaReachBase.Assertions: @assert
+import JuliaReachBase.Assertions: activate_assertions, deactivate_assertions
+activate_assertions(LazySets)  # activate assertions by default
+include("Utils/assertions.jl")
 
 # ==================
 # Linear programming
@@ -193,19 +191,5 @@ include("Parallel/Parallel.jl")
 # Load external packages on-demand (using 'Requires')
 # ===================================================
 include("init.jl")
-
-# ================================================
-# Convenience functions to (de)activate assertions
-# ================================================
-function activate_assertions()
-    for m in [LazySets, Arrays, Approximations, Parallel]
-        Assertions.activate_assertions(m)
-    end
-end
-function deactivate_assertions()
-    for m in [LazySets, Arrays, Approximations, Parallel]
-        Assertions.deactivate_assertions(m)
-    end
-end
 
 end # module
