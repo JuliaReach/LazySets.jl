@@ -70,7 +70,6 @@ if test_suite_basic
     # Testing utility functions
     # =========================
     @time @testset "LazySets.Util" begin include("Utils/util.jl") end
-    @time @testset "LazySets.Comparisons" begin include("Utils/comparisons.jl") end
     @time @testset "LazySets.Interior" begin include("Utils/interior.jl") end
 
     # ======================================================

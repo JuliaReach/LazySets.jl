@@ -33,16 +33,13 @@ import JuliaReachBase.Require: require
 require(package; fun_name::String="", explanation::String="") =
     require(@__MODULE__, package; fun_name=fun_name, explanation=explanation)
 
+using JuliaReachBase.Comparison
+
 # ==================
 # Linear programming
 # ==================
 include("Initialization/init_GLPK.jl")
 include("Initialization/init_JuMP.jl")
-
-# =====================
-# Numeric approximation
-# =====================
-include("Utils/comparisons.jl")
 
 # =======================
 # Arrays auxiliary module

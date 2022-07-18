@@ -82,7 +82,6 @@ makedocs(
             ],
             "Concrete Operations" => "lib/binary_functions.md",
             "Conversions between set representations" => "lib/conversion.md",
-            "Comparisons" => "lib/comparisons.md",
             "Approximations" => "lib/approximations.md",
             "Utility Functions" => "lib/utils.md",
             "Parallel" => "lib/parallel.md",
