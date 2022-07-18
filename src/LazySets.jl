@@ -28,6 +28,11 @@ import JuliaReachBase.Assertions: activate_assertions, deactivate_assertions
 activate_assertions(LazySets)  # activate assertions by default
 include("Utils/assertions.jl")
 
+using JuliaReachBase.Require
+import JuliaReachBase.Require: require
+require(package; fun_name::String="", explanation::String="") =
+    require(@__MODULE__, package; fun_name=fun_name, explanation=explanation)
+
 # ==================
 # Linear programming
 # ==================
@@ -52,7 +57,6 @@ import .Arrays: distance,
 # ===================
 # Auxiliary functions
 # ===================
-include("Utils/require.jl")
 include("Utils/helper_functions.jl")
 include("Utils/macros.jl")
 include("Utils/iterators.jl")

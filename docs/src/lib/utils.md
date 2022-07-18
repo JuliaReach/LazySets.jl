@@ -53,8 +53,6 @@ sign_cadlag
 _leq_trig
 _random_zero_sum_vector
 rectify
-require(::Symbol)
-require(::Vector{Symbol})
 reseed
 same_block_structure
 substitute
