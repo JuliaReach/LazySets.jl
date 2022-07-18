@@ -34,6 +34,7 @@ require(package; fun_name::String="", explanation::String="") =
     require(@__MODULE__, package; fun_name=fun_name, explanation=explanation)
 
 using JuliaReachBase.Comparison
+using JuliaReachBase.Iteration
 
 # ==================
 # Linear programming
@@ -56,7 +57,6 @@ import .Arrays: distance,
 # ===================
 include("Utils/helper_functions.jl")
 include("Utils/macros.jl")
-include("Utils/iterators.jl")
 include("Utils/matrix_exponential.jl")
 
 # ==================

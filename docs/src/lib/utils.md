@@ -72,7 +72,6 @@ arg_minmax
 
 ```@docs
 CachedPair
-StrictlyIncreasingIndices
 ```
 
 ## Inspection of set interfaces

@@ -16,13 +16,6 @@ for _dummy_ in 1:1 # avoid global variable warnings
     n2 = rand(Int)
     @test n1 == n2
 
-    # StrictlyIncreasingIndices
-    vectors = Vector{AbstractVector{Int}}()
-    for v in LazySets.StrictlyIncreasingIndices(5, 4)
-        push!(vectors, copy(v))
-    end
-    @test vectors == [[1, 2, 3, 4], [1, 2, 3, 5], [1, 2, 4, 5], [1, 3, 4, 5], [2, 3, 4, 5]]
-
     # square matrix
     @test LazySets.issquare([2 3; 0 0])
     @test LazySets.issquare(sparse([1], [1], [1], 3, 3))
