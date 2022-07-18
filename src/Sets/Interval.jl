@@ -1,4 +1,3 @@
-using IntervalArithmetic: AbstractInterval, mince
 import Base: +, -, *, ∈, ⊆, rand, min, max
 
 export Interval,

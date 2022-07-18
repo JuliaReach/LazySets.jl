@@ -3,16 +3,18 @@ __precompile__(true)
 # main module for `LazySets.jl`
 module LazySets
 
-using LinearAlgebra, Reexport, Requires, SparseArrays
+using LinearAlgebra, RecipesBase, Reexport, Requires, SparseArrays
+import GLPK, IntervalArithmetic, JuMP, Pkg, Random
+
+using ExprTools: splitdef, combinedef
+import InteractiveUtils: subtypes
+using IntervalArithmetic: AbstractInterval, mince
+import IntervalArithmetic: radius, ⊂
 using LinearAlgebra: checksquare
 import LinearAlgebra: norm, ×, normalize, normalize!
-import SparseArrays: permute
-import Pkg, Random
 using Random: AbstractRNG, GLOBAL_RNG, SamplerType, shuffle, randperm
-import InteractiveUtils: subtypes
-import JuMP, GLPK
-import IntervalArithmetic
-import IntervalArithmetic: radius, ⊂
+import RecipesBase: apply_recipe
+import SparseArrays: permute
 
 export Arrays
 export ×, normalize, ⊂
