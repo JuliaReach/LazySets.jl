@@ -75,7 +75,6 @@ CachedPair
 ## Inspection of set interfaces
 
 ```@docs
-LazySets.subtypes(::Any, ::Bool)
 implementing_sets
 ```
 

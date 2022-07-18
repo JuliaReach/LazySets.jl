@@ -6,7 +6,6 @@ module LazySets
 using LinearAlgebra, RecipesBase, Reexport, Requires, SparseArrays
 import GLPK, IntervalArithmetic, JuliaReachBase, JuMP, Pkg, Random
 
-import InteractiveUtils: subtypes
 using IntervalArithmetic: AbstractInterval, mince
 import IntervalArithmetic: radius, ⊂
 using LinearAlgebra: checksquare
@@ -16,7 +15,8 @@ import RecipesBase: apply_recipe
 import SparseArrays: permute
 
 export Arrays
-export ×, normalize, ⊂
+export ×, normalize, ⊂,
+       subtypes
 
 # ==============
 # JuliaReachBase
@@ -36,6 +36,7 @@ using JuliaReachBase.Comparison
 using JuliaReachBase.Iteration
 using JuliaReachBase.Commutative
 using JuliaReachBase.Distribution
+using JuliaReachBase.Subtypes
 
 # ==================
 # Linear programming
