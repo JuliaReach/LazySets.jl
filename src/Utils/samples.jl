@@ -90,38 +90,6 @@ _default_sampler(::Hyperplane) = HyperplaneSampler()
 _default_sampler(::Line2D) = HyperplaneSampler()
 _default_sampler(::AbstractSingleton) = SingletonSampler()
 
-# =====================
-# Uniform distribution
-# =====================
-
-# represents a uniform distribution over the interval [a, b]
-# using `rand` from the Julia standard library
-struct DefaultUniform{N}
-    a::N
-    b::N
-end
-
-function Base.rand(rng::AbstractRNG, U::DefaultUniform)
-    r = rand(rng)
-    Δ = U.b - U.a
-    return Δ * r + U.a
-end
-
-function Base.rand(rng::AbstractRNG, U::DefaultUniform, n::Int)
-    return [rand(rng, U) for i in 1:n]
-end
-
-function Base.rand(rng::AbstractRNG, U::AbstractVector{<:DefaultUniform})
-    return rand.(Ref(rng), U)
-end
-
-function rand!(x, rng::AbstractRNG, U::DefaultUniform)
-    @inbounds for i in eachindex(x)
-        x[i] = rand(rng, U)
-    end
-    return x
-end
-
 # ===================
 # Rejection Sampling
 # ===================

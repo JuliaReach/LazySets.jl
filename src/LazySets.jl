@@ -35,6 +35,7 @@ require(package; fun_name::String="", explanation::String="") =
 using JuliaReachBase.Comparison
 using JuliaReachBase.Iteration
 using JuliaReachBase.Commutative
+using JuliaReachBase.Distribution
 
 # ==================
 # Linear programming

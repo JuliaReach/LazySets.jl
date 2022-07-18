@@ -32,27 +32,6 @@ function sign_cadlag(x::N) where {N<:Real}
 end
 
 """
-    reseed(rng::AbstractRNG, seed::Union{Int, Nothing})
-
-Reset the RNG seed if the seed argument is a number.
-
-### Input
-
-- `rng`  -- random number generator
-- `seed` -- seed for reseeding
-
-### Output
-
-The input RNG if the seed is `nothing`, and a reseeded RNG otherwise.
-"""
-function reseed(rng::AbstractRNG, seed::Union{Int, Nothing})
-    if seed != nothing
-        return Random.seed!(rng, seed)
-    end
-    return rng
-end
-
-"""
     subtypes(interface, concrete::Bool)
 
 Return the concrete subtypes of a given interface.

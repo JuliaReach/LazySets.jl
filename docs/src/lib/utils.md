@@ -53,7 +53,6 @@ sign_cadlag
 _leq_trig
 _random_zero_sum_vector
 rectify
-reseed
 same_block_structure
 σ_helper
 get_constrained_lowdimset

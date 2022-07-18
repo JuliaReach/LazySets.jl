@@ -7,15 +7,6 @@ using LazySets.Arrays: extend,
                        same_sign
 
 for _dummy_ in 1:1 # avoid global variable warnings
-    # reseeding with random seed
-    rng = LazySets.GLOBAL_RNG
-    seed = rand(1:10000)
-    LazySets.reseed(rng, seed)
-    n1 = rand(Int)
-    LazySets.reseed(rng, seed)
-    n2 = rand(Int)
-    @test n1 == n2
-
     # square matrix
     @test LazySets.issquare([2 3; 0 0])
     @test LazySets.issquare(sparse([1], [1], [1], 3, 3))
