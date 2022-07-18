@@ -16,7 +16,6 @@ inner
 is_cyclic_permutation
 isinvertible
 ismultiple
-ispermutation
 is_right_turn
 issquare
 nonzero_indices
@@ -29,17 +28,18 @@ to_negative_vector
 _up
 _dr
 _above
-minmax
-arg_minmax
 extend
 projection_matrix
 LazySets.Arrays._vector_type
 LazySets.Arrays._matrix_type
 LazySets.Arrays.allequal
 LazySets.Arrays.distance(::AbstractVector, ::AbstractVector; ::Real=2.0)
+LazySets.Arrays.ispermutation
 LazySets.Arrays.same_sign
 LazySets.Arrays.to_matrix
 LazySets.Arrays._rationalize
+LazySets.Arrays.substitute
+LazySets.Arrays.substitute!
 ```
 
 ## Functions and Macros
@@ -55,10 +55,10 @@ _random_zero_sum_vector
 rectify
 reseed
 same_block_structure
-substitute
-substitute!
 σ_helper
 get_constrained_lowdimset
+minmax
+arg_minmax
 @neutral
 @absorbing
 @neutral_absorbing

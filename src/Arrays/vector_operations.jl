@@ -463,3 +463,134 @@ end
 function prepend_zeros(v::SparseVector{N}, n::Int) where {N}
     return sparsevec(v.nzind .+ n, v.nzval, v.n + n)
 end
+
+"""
+    ispermutation(u::AbstractVector{T}, v::AbstractVector) where {T}
+
+Check that two vectors contain the same elements up to reordering.
+
+### Input
+
+- `u` -- first vector
+- `v` -- second vector
+
+### Output
+
+`true` iff the vectors are identical up to reordering.
+
+### Examples
+
+```jldoctest
+julia> LazySets.ispermutation([1, 2, 2], [2, 2, 1])
+true
+
+julia> LazySets.ispermutation([1, 2, 2], [1, 1, 2])
+false
+```
+
+### Notes
+
+Containment check is performed using `LazySets._in(e, v)`, so in the case of
+floating point numbers, the precision to which the check is made is determined
+by the type of elements in `v`. See `_in` and `_isapprox` for more information.
+
+Note that approximate equality is not an equivalence relation.
+Hence the result may depend on the order of the elements.
+"""
+function ispermutation(u::AbstractVector{T}, v::AbstractVector) where {T}
+    if length(u) != length(v)
+        return false
+    end
+    occurrence_map = Dict{T, Int}()
+    has_duplicates = false
+    for e in u
+        if !_in(e, v)
+            return false
+        end
+        found = false
+        for k in keys(occurrence_map)
+            if _isapprox(k, e)
+                occurrence_map[k] += 1
+                has_duplicates = true
+                found = true
+                break
+            end
+        end
+        if !found
+            occurrence_map[e] = 1
+        end
+    end
+    if has_duplicates
+        for e in v
+            found = false
+            for k in keys(occurrence_map)
+                if _isapprox(k, e)
+                    found = true
+                    occurrence_map[k] -= 1
+                    if occurrence_map[k] < 0
+                        return false
+                    end
+                    break
+                end
+            end
+            if !found
+                return false
+            end
+        end
+    end
+    return true
+end
+
+"""
+    substitute(substitution::Dict{Int, T}, x::AbstractVector{T}) where {T}
+
+Apply a substitution to a given vector.
+
+### Input
+
+- `substitution` -- substitution (a mapping from an index to a new value)
+- `x`            -- vector
+
+### Output
+
+A fresh vector corresponding to `x` after `substitution` was applied.
+"""
+function substitute(substitution::Dict{Int, T}, x::AbstractVector{T}) where {T}
+    return substitute!(substitution, copy(x))
+end
+
+"""
+    substitute!(substitution::Dict{Int, T}, x::AbstractVector{T}) where {T}
+
+Apply a substitution to a given vector.
+
+### Input
+
+- `substitution` -- substitution (a mapping from an index to a new value)
+- `x`            -- vector (modified in this function)
+
+### Output
+
+The same (but see the Notes below) vector `x` but after `substitution` was
+applied.
+
+### Notes
+
+The vector `x` is modified in-place if it has type `Vector` or `SparseVector`.
+Otherwise, we first create a new `Vector` from it.
+"""
+function substitute!(substitution::Dict{Int, T}, x::AbstractVector{T}) where {T}
+    return substitute!(Vector(x), substitution)
+end
+
+function substitute!(substitution::Dict{Int, T},
+                     x::Union{Vector{T}, SparseVector{T}}) where {T}
+    for (index, value) in substitution
+        x[index] = value
+    end
+    return x
+end
+
+function _isupwards(vec)
+    return vec[2] > 0 || (vec[2] == 0 && vec[1] > 0)
+end
