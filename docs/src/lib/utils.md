@@ -4,44 +4,6 @@ CurrentModule = LazySets
 
 # Utility functions
 
-## Arrays module
-
-```@docs
-Arrays
-cross_product(::AbstractMatrix{N}) where {N<:Real}
-nonzero_columns
-dot_zero
-hasfullrowrank
-inner
-is_cyclic_permutation
-isinvertible
-ismultiple
-is_right_turn
-issquare
-nonzero_indices
-remove_duplicates_sorted!
-remove_zero_columns
-right_turn
-samedir
-SingleEntryVector
-to_negative_vector
-_up
-_dr
-_above
-extend
-projection_matrix
-LazySets.Arrays._vector_type
-LazySets.Arrays._matrix_type
-LazySets.Arrays.allequal
-LazySets.Arrays.distance(::AbstractVector, ::AbstractVector; ::Real=2.0)
-LazySets.Arrays.ispermutation
-LazySets.Arrays.same_sign
-LazySets.Arrays.to_matrix
-LazySets.Arrays._rationalize
-LazySets.Arrays.substitute
-LazySets.Arrays.substitute!
-```
-
 ## Functions and Macros
 
 ```@docs

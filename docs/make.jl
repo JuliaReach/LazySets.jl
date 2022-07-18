@@ -6,7 +6,7 @@ include("init.jl")
 
 makedocs(
     sitename = "LazySets.jl",
-    modules = [LazySets, Approximations, Arrays, LazySets.Parallel],
+    modules = [LazySets, Approximations, LazySets.Parallel],
     format = Documenter.HTML(prettyurls = get(ENV, "CI", nothing) == "true",
                              assets = ["assets/aligned.css"]),
     pages = [

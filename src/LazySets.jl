@@ -38,21 +38,14 @@ using JuliaReachBase.Commutative
 using JuliaReachBase.Distribution
 using JuliaReachBase.Subtypes
 
+using JuliaReachBase.Arrays
+import .Arrays: distance, rectify, _rationalize, _similar_type
+
 # ==================
 # Linear programming
 # ==================
 include("Initialization/init_GLPK.jl")
 include("Initialization/init_JuMP.jl")
-
-# =======================
-# Arrays auxiliary module
-# =======================
-include("Arrays/Arrays.jl")
-using .Arrays
-import .Arrays: distance,
-                rectify,
-                _rationalize,
-                _similar_type
 
 # ===================
 # Auxiliary functions

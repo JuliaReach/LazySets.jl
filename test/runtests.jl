@@ -65,18 +65,6 @@ if test_suite_polyhedra || test_suite_plotting
 end
 
 if test_suite_basic
-
-    # =========================
-    # Testing utility functions
-    # =========================
-    @time @testset "LazySets.Util" begin include("Utils/util.jl") end
-    @time @testset "LazySets.Interior" begin include("Utils/interior.jl") end
-
-    # ======================================================
-    # Testing auxiliary machinery for vectors and matrices
-    # ======================================================
-    @time @testset "LazySets.Arrays" begin include("Arrays/array_operations.jl") end
-
     # =======================================
     # Testing interfaces to external packages
     # =======================================
@@ -145,6 +133,7 @@ if test_suite_basic
     # Concrete operations
     # ===================
     @time @testset "LazySets.area" begin include("ConcreteOperations/area.jl") end
+    @time @testset "LazySets.Interior" begin include("ConcreteOperations/interior.jl") end
     @time @testset "LazySets.concrete_convex_hull" begin include("ConcreteOperations/convex_hull.jl") end
     @time @testset "LazySets.concrete_cartesian_product" begin include("ConcreteOperations/cartesian_product.jl") end
     @time @testset "LazySets.issubset" begin include("ConcreteOperations/issubset.jl") end
@@ -170,7 +159,7 @@ if test_suite_basic
     # Testing method ambiguity
     # ========================
     @time @testset "LazySets.method_ambiguities" begin
-        for package in [LazySets, Approximations, Arrays, LazySets.Parallel]
+        for package in [LazySets, Approximations, LazySets.Parallel]
             ambiguities = detect_ambiguities(package)
             @test isempty(ambiguities)
         end
