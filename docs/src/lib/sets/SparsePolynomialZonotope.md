@@ -6,15 +6,15 @@ CurrentModule = LazySets
 
 ```@docs
 SparsePolynomialZonotope
-center(::SimpleSparsePolynomialZonotope)
-dependent_genmat(::SimpleSparsePolynomialZonotope)
+center(::SparsePolynomialZonotope)
+dependent_genmat(::SparsePolynomialZonotope)
 independent_genmat(::SparsePolynomialZonotope)
-expmat(::SimpleSparsePolynomialZonotope)
-dim(::SimpleSparsePolynomialZonotope)
+expmat(::SparsePolynomialZonotope)
+dim(::SparsePolynomialZonotope)
 ndependentgens(::SparsePolynomialZonotope)
 nindependentgens(::SparsePolynomialZonotope)
-ngens(::SimpleSparsePolynomialZonotope)
-nparams(::SimpleSparsePolynomialZonotope)
-order(::SimpleSparsePolynomialZonotope)
-linear_map(::AbstractMatrix, ::SimpleSparsePolynomialZonotope)
+ngens(::SparsePolynomialZonotope)
+nparams(::SparsePolynomialZonotope)
+order(::SparsePolynomialZonotope)
+linear_map(::AbstractMatrix, ::SparsePolynomialZonotope)
 ```
