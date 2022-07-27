@@ -35,13 +35,13 @@ struct SparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N},
     E::ME
     idx::VI
 
-    function SparsePolynomialZonotope(c::VN, G::MN, GI::MN, E::ME, idx::VI) where {N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, ME<:AbstractMatrix{<:Integer}}
+    function SparsePolynomialZonotope(c::VN, G::MN, GI::MN, E::ME, idx::VI) where {N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, ME<:AbstractMatrix{<:Integer}, VI<:AbstractVector{<:Integer}}
         @assert length(c) == size(G, 1) throw(DimensionMismatch("c and G should have the same number of rows"))
         @assert length(c) == size(GI, 1) throw(DimensionMismatch("c and GI should have the same number of rows"))
         @assert size(G, 2) == size(E, 2) throw(DimensionMismatch("G and E should have the same number of columns"))
         @assert all(>=(0), E) throw(ArgumentError("E should have non-negative integers"))
         @assert all(>(0), idx) throw(ArgumentError("identifiers in index vector must be positive integers"))
-        return new{N, VN, MN, ME}(c, G, GI, E, idx)
+        return new{N, VN, MN, ME, VI}(c, G, GI, E, idx)
     end
 end
 
@@ -52,7 +52,7 @@ function SparsePolynomialZonotope(c::AbstractVector{N}, G::MN, GI::MN, E::Abstra
 end
 
 
-const SPZ = SimpleSparsePolynomialZonotope
+const SPZ = SparsePolynomialZonotope
 
 """
     dim(P::SparsePolynomialZonotope)
