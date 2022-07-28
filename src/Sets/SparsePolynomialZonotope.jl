@@ -3,7 +3,7 @@ export SparsePolynomialZonotope, expmat, nparams, ndependentgens, nindependentge
        linear_map, quadratic_map, remove_redundant_generators
 
 """
-    SparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, ME<:AbstractMatrix{<:Integer}, VI<:AbstractVector{<:Integer}} <: AbstractPolynomialZonotope{N}
+    SparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, MNI<:AbstractVecOrMat{N}, ME<:AbstractMatrix{<:Integer}, VI<:AbstractVector{<:Integer}} <: AbstractPolynomialZonotope{N}
 
 Type that represents a sparse polynomial zonotope.
 
@@ -28,24 +28,29 @@ Sparse polynomial zonotopes were introduced in [KA21].
 
 - [KA21] N. Kochdumper and M. Althoff. *Sparse Polynomial Zonotopes: A Novel Set Representation for Reachability Analysis*. Transactions on Automatic Control, 2021.
 """
-struct SparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, ME<:AbstractMatrix{<:Integer}, VI<:AbstractVector{<:Integer}} <: AbstractPolynomialZonotope{N}
+struct SparsePolynomialZonotope{N,
+                                VN<:AbstractVector{N},
+                                MN<:AbstractMatrix{N},
+                                MNI<:AbstractVecOrMat{N},
+                                ME<:AbstractMatrix{<:Integer},
+                                VI<:AbstractVector{<:Integer}} <: AbstractPolynomialZonotope{N}
     c::VN
     G::MN
-    GI::MN
+    GI::MNI
     E::ME
     idx::VI
 
-    function SparsePolynomialZonotope(c::VN, G::MN, GI::MN, E::ME, idx::VI) where {N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, ME<:AbstractMatrix{<:Integer}, VI<:AbstractVector{<:Integer}}
+    function SparsePolynomialZonotope(c::VN, G::MN, GI::MNI, E::ME, idx::VI) where {N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, MNI<:AbstractVecOrMat{N}, ME<:AbstractMatrix{<:Integer}, VI<:AbstractVector{<:Integer}}
         @assert length(c) == size(G, 1) throw(DimensionMismatch("c and G should have the same number of rows"))
         @assert length(c) == size(GI, 1) throw(DimensionMismatch("c and GI should have the same number of rows"))
         @assert size(G, 2) == size(E, 2) throw(DimensionMismatch("G and E should have the same number of columns"))
         @assert all(>=(0), E) throw(ArgumentError("E should have non-negative integers"))
         @assert all(>(0), idx) throw(ArgumentError("identifiers in index vector must be positive integers"))
-        return new{N, VN, MN, ME, VI}(c, G, GI, E, idx)
+        return new{N, VN, MN, MNI, ME, VI}(c, G, GI, E, idx)
     end
 end
 
-function SparsePolynomialZonotope(c::AbstractVector{N}, G::MN, GI::MN, E::AbstractMatrix{<:Integer}) where {N, MN<:AbstractMatrix{N}}
+function SparsePolynomialZonotope(c::AbstractVector, G::AbstractMatrix, GI::AbstractVecOrMat, E::AbstractMatrix{<:Integer})
     n = size(E, 1)
     idx = collect(1:n)
     return SparsePolynomialZonotope(c, G, GI, E, idx)
