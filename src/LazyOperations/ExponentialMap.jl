@@ -576,7 +576,7 @@ function σ(d::AbstractVector, eprojmap::ExponentialProjectionMap;
     daux = transpose(eprojmap.projspmexp.L) * d
     N = promote_type(eltype(d), eltype(eprojmap))
     aux1 = _expmv(backend, one(N), transpose(eprojmap.projspmexp.spmexp.M), daux)
-    daux = _At_mul_B(eprojmap.projspmexp.R, aux1)
+    daux = At_mul_B(eprojmap.projspmexp.R, aux1)
     svec = σ(daux, eprojmap.X)
 
     aux2 = eprojmap.projspmexp.R * svec

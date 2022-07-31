@@ -7,8 +7,6 @@ export Zonotope,
        remove_zero_generators,
        remove_redundant_generators
 
-using LazySets.Arrays: _vector_type, _matrix_type
-
 """
     Zonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
 
@@ -587,7 +585,7 @@ function _bound_intersect_2D(Z::Zonotope, L::Line2D)
     g(x) = view(G, :, x)
     for i = 1:r
         gi = g(i)
-        if !_isupwards(gi)
+        if !isupwards(gi)
             gi .= -gi
         end
         P .= P - gi
@@ -712,7 +710,7 @@ function remove_redundant_generators(Z::Zonotope{N}) where {N}
     removed_zero_generators = p < ngens(Z)
     deleted = false
     done = falses(p)
-    G_new = _vector_type(typeof(G))[]  # list of new column vectors
+    G_new = vector_type(typeof(G))[]  # list of new column vectors
     @inbounds for j1 in 1:p
         if done[j1]  # skip if the generator was already removed
             continue

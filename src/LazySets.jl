@@ -39,7 +39,7 @@ using JuliaReachBase.Distribution
 using JuliaReachBase.Subtypes
 
 using JuliaReachBase.Arrays
-import .Arrays: distance, rectify, _rationalize, _similar_type
+import .Arrays: distance, rectify, rationalize
 
 # ==================
 # Linear programming

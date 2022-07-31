@@ -1512,17 +1512,14 @@ type `Rational{T}`.
 """
 function rationalize(::Type{T}, X::ConvexSet{N}, tol::Real) where {T<:Integer, N<:AbstractFloat}
     m = length(fieldnames(typeof(X)))
-    frat = ntuple(fi -> _rationalize(T, getfield(X, fi), tol), m)
+    frat = ntuple(fi -> rationalize(T, getfield(X, fi), tol), m)
     ST = basetype(X)
     return ST(frat...)
 end
 
 rationalize(X::ConvexSet{N}; kwargs...) where {N<:AbstractFloat} = rationalize(Int, X; kwargs...)
 rationalize(::Type{T}, X::ConvexSet{N}; tol::Real=eps(N)) where {T<:Integer, N<:AbstractFloat} = rationalize(T, X, tol)
-
-# method extension for lazy sets
-_rationalize(::Type{T}, X::AbstractVector{<:ConvexSet{N}}, tol::Real) where {T<:Integer, N<:AbstractFloat} = rationalize.(Ref(T), X, Ref(tol))
-_rationalize(::Type{T}, X::ConvexSet{N}, tol::Real) where {T<:Integer, N<:AbstractFloat} = rationalize(T, X, tol)
+rationalize(::Type{T}, X::AbstractVector{<:ConvexSet{N}}, tol::Real) where {T<:Integer, N<:AbstractFloat} = rationalize.(Ref(T), X, Ref(tol))
 
 """
     permute(X::ConvexSet, p::AbstractVector{Int})

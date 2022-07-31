@@ -349,7 +349,7 @@ function _binary_support_vector(d::AbstractVector, vlist::Vector{VT}) where {T, 
     upA = _similar_direction(d, A)
 
     # test if P.vertices[0] is a local maximum
-    if (!upA && !_above(d, vlist[m], vlist[1]))
+    if (!upA && !isabove(d, vlist[m], vlist[1]))
         # if vlist[1] is the maximum, remove the extra point added
         pop!(vlist)
         return 1
@@ -359,7 +359,7 @@ function _binary_support_vector(d::AbstractVector, vlist::Vector{VT}) where {T, 
         c = round(Int, (a + b) / 2)
         C = vlist[c + 1] - vlist[c]
         upC = _similar_direction(d, C)
-        if (!upC && !_above(d, vlist[c - 1], vlist[c]))
+        if (!upC && !isabove(d, vlist[c - 1], vlist[c]))
             # vlist[c] is a local maximum, remove the extra point added
             pop!(vlist)
             return c
@@ -367,8 +367,8 @@ function _binary_support_vector(d::AbstractVector, vlist::Vector{VT}) where {T, 
 
         # no max yet, so continue with the binary search
         # pick one of the two subchains [a,c] or [c,b]
-        if (upA && upC && !_above(d, vlist[a], vlist[c])) ||
-        (!upA && (upC || (!upC && _above(d, vlist[a], vlist[c]))))
+        if (upA && upC && !isabove(d, vlist[a], vlist[c])) ||
+        (!upA && (upC || (!upC && isabove(d, vlist[a], vlist[c]))))
             a = c
             A = C
             upA = upC

@@ -579,7 +579,7 @@ function split(H::AbstractHyperrectangle{N}, num_blocks::AbstractVector{Int}) wh
     @assert length(num_blocks) == dim(H) "the number of blocks " *
 	    "($(length(num_blocks))) must be specified in each dimension ($(dim(H)))"
     R = radius_hyperrectangle(H)
-    T = _similar_type(R)
+    T = similar_type(R)
     radius = similar(R)
     copyto!(radius, R)
 

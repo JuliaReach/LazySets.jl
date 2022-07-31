@@ -248,7 +248,7 @@ the generator matrix of `Z`.
 function ρ(d::AbstractVector, Z::AbstractZonotope)
     c = center(Z)
     G = genmat(Z)
-    return dot(c, d) + _abs_sum(d, G)
+    return dot(c, d) + abs_sum(d, G)
 end
 
 """
@@ -269,7 +269,7 @@ is returned.
 """
 function σ(d::AbstractVector, Z::AbstractZonotope)
     G = genmat(Z)
-    return center(Z) .+ G * sign_cadlag.(_At_mul_B(G, d))
+    return center(Z) .+ G * sign_cadlag.(At_mul_B(G, d))
 end
 
 """

@@ -1,5 +1,5 @@
 using LazySets.Arrays: extend,
-                       _vector_type, _matrix_type,
+                       vector_type, matrix_type,
                        to_negative_vector,
                        nonzero_columns,
                        remove_zero_columns,
@@ -99,23 +99,23 @@ for N in [Float64, Rational{Int}, Float32]
     # sparse
     vec = sparsevec([1, 3], N[1, 3], 3)
     mat = sparse([1, 3], [1, 3], N[1, 3], 3, 3)
-    @test _vector_type(typeof(vec)) == SparseVector{N, Int}
-    @test _matrix_type(typeof(vec)) == SparseMatrixCSC{N,Int64}
-    @test _vector_type(typeof(mat)) == SparseVector{N, Int}
-    @test _matrix_type(typeof(mat)) == SparseMatrixCSC{N,Int64}
+    @test vector_type(typeof(vec)) == SparseVector{N, Int}
+    @test matrix_type(typeof(vec)) == SparseMatrixCSC{N,Int64}
+    @test vector_type(typeof(mat)) == SparseVector{N, Int}
+    @test matrix_type(typeof(mat)) == SparseMatrixCSC{N,Int64}
 
     # regular
     vec = N[1, 0, 3]
     mat = N[1 0 0; 0 0 0; 0 0 3]
-    @assert _vector_type(typeof(vec)) == Vector{N}
-    @assert _matrix_type(typeof(vec)) == Matrix{N}
-    @assert _vector_type(typeof(mat)) == Vector{N}
-    @assert _matrix_type(typeof(mat)) == Matrix{N}
+    @assert vector_type(typeof(vec)) == Vector{N}
+    @assert matrix_type(typeof(vec)) == Matrix{N}
+    @assert vector_type(typeof(mat)) == Vector{N}
+    @assert matrix_type(typeof(mat)) == Matrix{N}
 
     # other: Diagonal
     mat = Diagonal(N[1, 2])
-    @test _vector_type(typeof(mat)) == Vector{N}
-    @assert _matrix_type(typeof(mat)) == Diagonal{N, Vector{N}}
+    @test vector_type(typeof(mat)) == Vector{N}
+    @assert matrix_type(typeof(mat)) == Diagonal{N, Vector{N}}
 end
 
 for N in [Float64, Float32]

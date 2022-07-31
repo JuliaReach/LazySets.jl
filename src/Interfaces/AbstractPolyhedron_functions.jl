@@ -716,7 +716,7 @@ function _linear_map_inverse_hrep(Minv::AbstractMatrix, P::AbstractPolyhedron)
     constraints_P = constraints_list(P)
     constraints_MP = _preallocate_constraints(constraints_P)
     @inbounds for (i, c) in enumerate(constraints_P)
-        cinv = vec(_At_mul_B(c.a, Minv))
+        cinv = vec(At_mul_B(c.a, Minv))
         constraints_MP[i] = LinearConstraint(cinv, c.b)
     end
     return constraints_MP
@@ -729,7 +729,7 @@ function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
     constraints_MP = _preallocate_constraints(constraints_P)
     @inbounds for (i, c) in enumerate(constraints_P)
         # take left division for each constraint c, transpose(M) \ c.a
-        cinv = _At_ldiv_B(M, c.a)
+        cinv = At_ldiv_B(M, c.a)
         constraints_MP[i] = LinearConstraint(cinv, c.b)
     end
     return constraints_MP

@@ -222,7 +222,7 @@ The support vector in the given direction.
 """
 function σ(d::AbstractVector, X::Star)
     A = basis(X)
-    return A * σ(_At_mul_B(A, d), predicate(X)) + center(X)
+    return A * σ(At_mul_B(A, d), predicate(X)) + center(X)
 end
 
 """
@@ -240,7 +240,7 @@ Return the support function of a star.
 The support function in the given direction.
 """
 function ρ(d::AbstractVector, X::Star)
-    return ρ(_At_mul_B(basis(X), d), predicate(X)) + dot(d, center(X))
+    return ρ(At_mul_B(basis(X), d), predicate(X)) + dot(d, center(X))
 end
 
 """

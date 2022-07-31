@@ -72,7 +72,7 @@ The support vector in the given direction.
 """
 function σ(d::AbstractVector, am::AbstractAffineMap)
     A = matrix(am)
-    return A * σ(_At_mul_B(A, d), set(am)) + vector(am)
+    return A * σ(At_mul_B(A, d), set(am)) + vector(am)
 end
 
 """
@@ -90,7 +90,7 @@ Return the support function of an affine map.
 The support function in the given direction.
 """
 function ρ(d::AbstractVector, am::AbstractAffineMap)
-    return ρ(_At_mul_B(matrix(am), d), set(am)) + dot(d, vector(am))
+    return ρ(At_mul_B(matrix(am), d), set(am)) + dot(d, vector(am))
 end
 
 """
