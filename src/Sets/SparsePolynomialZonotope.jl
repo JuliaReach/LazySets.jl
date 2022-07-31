@@ -1,5 +1,5 @@
 export SparsePolynomialZonotope, expmat, nparams, ndependentgens, nindependentgens, ngens,
-        dependent_genmat, independent_genmat, indexvector,
+       dependent_genmat, independent_genmat, indexvector,
        linear_map, quadratic_map, remove_redundant_generators
 
 """
@@ -12,15 +12,15 @@ A sparse polynomial zonotope ``\\mathcal{PZ} ⊂ \\mathbb{R}^n`` is represented 
 \\mathcal{PZ} = \\left\\{x \\in \\mathbb{R}^n : x = c + ∑ᵢ₌₁ʰ\\left(∏ₖ₌₁ᵖ α_k^{E_{k, i}} \\right)Gᵢ+∑ⱼ₌₁^qβⱼGIⱼ,~~ α_k ∈ [-1, 1]~~ ∀ i = 1,…,p, j=1,…,q \\right\\},
 ```
 where ``c ∈ \\mathbb{R}^n`` is the offset vector (or center), ``G ∈ \\mathbb{R}^{n \\times h}`` is the dependent generator matrix with columns ``Gᵢ``,
-``GI ∈ \\mathbb{R}^{n×q}`` is the independent generator matrix and where ``E ∈ \\mathbb{N}^{p×h}_{≥0}`` is the exponent matrix with matrix elements ``E_{k, i}``.
+``GI ∈ \\mathbb{R}^{n×q}`` is the independent generator matrix and ``E ∈ \\mathbb{N}^{p×h}_{≥0}`` is the exponent matrix with matrix elements ``E_{k, i}``.
 
 ### Fields
 
-- `c` -- offset vector
-- `G` -- dependent generator matrix
-- `GI` -- independent generator matrix
-- `E` -- exponent matrix
-- `idx` -- identifiers vector
+- `c`   -- offset vector
+- `G`   -- dependent generator matrix
+- `GI`  -- independent generator matrix
+- `E`   -- exponent matrix
+- `idx` -- identifier vector
 
 ### Notes
 
@@ -52,8 +52,7 @@ end
 
 function SparsePolynomialZonotope(c::AbstractVector, G::AbstractMatrix, GI::AbstractVecOrMat, E::AbstractMatrix{<:Integer})
     n = size(E, 1)
-    idx = collect(1:n)
-    return SparsePolynomialZonotope(c, G, GI, E, idx)
+    return SparsePolynomialZonotope(c, G, GI, E, 1:n)
 end
 
 
@@ -72,10 +71,10 @@ Return the dimension of `P`.
 
 The ambient dimension of `P`.
 """
-dim(P::SPZ) = size(P.c, 1)
+dim(P::SPZ) = length(P.c)
 
 """
-ndependentgens(P::SparsePolynomialZonotope)
+    ndependentgens(P::SparsePolynomialZonotope)
 
 Return the number of dependent generators of `P`.
 
@@ -86,7 +85,7 @@ Return the number of dependent generators of `P`.
 ndependentgens(P::SPZ) = size(P.G, 2)
 
 """
-nindependentgens(P::SparsePolynomialZonotope)
+    nindependentgens(P::SparsePolynomialZonotope)
 
 Return the number of independent generators of `P`.
 
@@ -223,7 +222,7 @@ Apply the linear map `M` to the sparse polynomial zonotope `P`.
 
 ### Input
 
-- `M` -- square matrix with size(M) == dim(P)
+- `M` -- square matrix with `size(M) == dim(P)`
 - `P` -- sparse polynomial zonotope
 
 ### Output
