@@ -330,6 +330,11 @@ function _binary_support_vector(d::AbstractVector, P::VPolygon)
     return _binary_support_vector(d, P.vertices)
 end
 
+# checks if the given vector is pointing toward the given direction
+@inline function _similar_direction(u::AbstractVector, v::AbstractVector)
+    dot(u, v) > 0
+end
+
 function _binary_support_vector(d::AbstractVector, vlist::Vector{VT}) where {T, VT<:AbstractVector{T}}
     m = length(vlist)
     @assert m > 2 "the number of vertices in the binary support vector approach should " *
@@ -341,7 +346,7 @@ function _binary_support_vector(d::AbstractVector, vlist::Vector{VT}) where {T, 
     # start chain = [1,n+1] with P.vertices[n+1] = P.vertices[1]
     a = 1; b = m + 1
     A = vlist[2] - vlist[1]
-    upA = _up(d, A)
+    upA = _similar_direction(d, A)
 
     # test if P.vertices[0] is a local maximum
     if (!upA && !_above(d, vlist[m], vlist[1]))
@@ -353,7 +358,7 @@ function _binary_support_vector(d::AbstractVector, vlist::Vector{VT}) where {T, 
         # midpoint of [a,b], and 1<c<n+1
         c = round(Int, (a + b) / 2)
         C = vlist[c + 1] - vlist[c]
-        upC = _up(d, C)
+        upC = _similar_direction(d, C)
         if (!upC && !_above(d, vlist[c - 1], vlist[c]))
             # vlist[c] is a local maximum, remove the extra point added
             pop!(vlist)
