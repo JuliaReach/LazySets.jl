@@ -4,7 +4,7 @@ __precompile__(true)
 module LazySets
 
 using LinearAlgebra, RecipesBase, Reexport, Requires, SparseArrays
-import GLPK, IntervalArithmetic, JuliaReachBase, JuMP, Pkg, Random
+import GLPK, IntervalArithmetic, ReachabilityBase, JuMP, Pkg, Random
 
 using IntervalArithmetic: AbstractInterval, mince
 import IntervalArithmetic: radius, ⊂
@@ -19,26 +19,26 @@ export ×, normalize, ⊂,
        subtypes
 
 # ==============
-# JuliaReachBase
+# ReachabilityBase
 # ==============
 
-using JuliaReachBase.Assertions: @assert
-import JuliaReachBase.Assertions: activate_assertions, deactivate_assertions
+using ReachabilityBase.Assertions: @assert
+import ReachabilityBase.Assertions: activate_assertions, deactivate_assertions
 activate_assertions(LazySets)  # activate assertions by default
 include("Utils/assertions.jl")
 
-using JuliaReachBase.Require
-import JuliaReachBase.Require: require
+using ReachabilityBase.Require
+import ReachabilityBase.Require: require
 require(package; fun_name::String="", explanation::String="") =
     require(@__MODULE__, package; fun_name=fun_name, explanation=explanation)
 
-using JuliaReachBase.Comparison
-using JuliaReachBase.Iteration
-using JuliaReachBase.Commutative
-using JuliaReachBase.Distribution
-using JuliaReachBase.Subtypes
+using ReachabilityBase.Comparison
+using ReachabilityBase.Iteration
+using ReachabilityBase.Commutative
+using ReachabilityBase.Distribution
+using ReachabilityBase.Subtypes
 
-using JuliaReachBase.Arrays
+using ReachabilityBase.Arrays
 import .Arrays: distance, rectify, rationalize
 
 # ==================

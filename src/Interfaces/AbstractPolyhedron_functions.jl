@@ -578,7 +578,7 @@ i.e. extending all constraints of `P` to `m` dimensions, and constraining the la
 `m - n` dimensions to `0`. The matrix resulting matrix is extended to an invertible
 `m × m` matrix and the algorithm using the inverse of the linear map is applied.
 For the technical details of the extension of `M` to a higher-dimensional
-invertible matrix, see `JuliaReachBase.Arrays.extend`.
+invertible matrix, see `ReachabilityBase.Arrays.extend`.
 
 ### Vertex representation
 
@@ -1071,9 +1071,9 @@ Now let's take a ball in the infinity norm and remove some constraints:
 julia> B = BallInf(zeros(4), 1.0);
 
 julia> c = constraints_list(B)[1:2]
-2-element Vector{HalfSpace{Float64, JuliaReachBase.Arrays.SingleEntryVector{Float64}}}:
- HalfSpace{Float64, JuliaReachBase.Arrays.SingleEntryVector{Float64}}([1.0, 0.0, 0.0, 0.0], 1.0)
- HalfSpace{Float64, JuliaReachBase.Arrays.SingleEntryVector{Float64}}([0.0, 1.0, 0.0, 0.0], 1.0)
+2-element Vector{HalfSpace{Float64, ReachabilityBase.Arrays.SingleEntryVector{Float64}}}:
+ HalfSpace{Float64, ReachabilityBase.Arrays.SingleEntryVector{Float64}}([1.0, 0.0, 0.0, 0.0], 1.0)
+ HalfSpace{Float64, ReachabilityBase.Arrays.SingleEntryVector{Float64}}([0.0, 1.0, 0.0, 0.0], 1.0)
 
 julia> P = HPolyhedron(c);
 

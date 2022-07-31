@@ -9,9 +9,9 @@ module Approximations
 import IntervalArithmetic
 const IA = IntervalArithmetic
 
-using LazySets, JuliaReachBase.Arrays, Requires, LinearAlgebra, SparseArrays
+using LazySets, ReachabilityBase.Arrays, Requires, LinearAlgebra, SparseArrays
 
-using JuliaReachBase.Comparison: _isapprox, _leq, _geq, _rtol, isapproxzero
+using ReachabilityBase.Comparison: _isapprox, _leq, _geq, _rtol, isapproxzero
 using LazySets: default_lp_solver, _isbounded_stiemke, require, dim, linprog,
                 is_lp_optimal, _normal_Vector
 
