@@ -20,7 +20,7 @@ where ``c ∈ \\mathbb{R}^n`` is the offset vector (or center), ``G ∈ \\mathbb
 - `G`   -- dependent generator matrix
 - `GI`  -- independent generator matrix
 - `E`   -- exponent matrix
-- `idx` -- identifier vector
+- `idx` -- identifier vector, vector of positive integers identifing the dependent parameters of `PZ`.
 
 ### Notes
 
@@ -180,6 +180,18 @@ Return the matrix of independent generators of `P`.
 - `P` -- sparse polynomial zonotope
 """
 independent_genmat(P::SPZ) = P.GI
+
+
+"""
+    genmat(P::SparsePolynomialZonotope)
+
+Return the full generator matrix of `P`, including dependent and independent generators.
+
+### Input
+
+- `P` -- sparse polynomial zonotope
+"""
+genmat(P::SPZ) = hcat(P.G, P.GI)
 
 """
     expmat(P::SparsePolynomialZonotope)

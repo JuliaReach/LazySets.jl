@@ -10,6 +10,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test center(PZ) == c
     @test dependent_genmat(PZ) == G
     @test independent_genmat(PZ) == GI
+    @test genmat(PZ) == hcat(G, GI)
     @test expmat(PZ) == E
     @test indexvector(PZ) == [1, 2]
 
