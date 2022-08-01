@@ -60,4 +60,7 @@ convert(::Type{STAR}, ::AbstractPolyhedron{N}) where {N}
 convert(::Type{STAR}, ::Star)
 convert(::Type{Star}, ::AbstractPolyhedron{N}) where {N}
 convert(::Type{SimpleSparsePolynomialZonotope}, ::AbstractZonotope)
+convert(::Type{SimpleSparsePolynomialZonotope}, ::SparsePolynomialZonotope)
+convert(::Type{SparsePolynomialZonotope}, ::AbstractZonotope)
+convert(::Type{SparsePolynomialZonotope}, ::SimpleSparsePolynomialZonotope)
 ```
