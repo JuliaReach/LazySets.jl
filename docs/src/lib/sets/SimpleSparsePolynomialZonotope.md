@@ -7,6 +7,7 @@ CurrentModule = LazySets
 ```@docs
 SimpleSparsePolynomialZonotope
 PolynomialZonotope
+rand(::SimpleSparsePolynomialZonotope)
 center(::SimpleSparsePolynomialZonotope)
 genmat(::SimpleSparsePolynomialZonotope)
 expmat(::SimpleSparsePolynomialZonotope)
