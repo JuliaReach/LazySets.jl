@@ -1249,6 +1249,21 @@ function convert(::Type{SimpleSparsePolynomialZonotope}, Z::AbstractZonotope)
 end
 
 """
+    convert(::Type{SimpleSparsePolynomialZonotope}, SPZ::SparsePolynomialZonotope)
+
+Convert a sparse polynomial zonotope to simple sparse polynomial zonotope.
+"""
+function convert(::Type{SimpleSparsePolynomialZonotope}, SPZ::SparsePolynomialZonotope)
+    c = center(SPZ)
+    G = genmat(SPZ)
+    n = nindependentgens(SPZ)
+    E = cat(expmat(SPZ), Matrix(1 * I, n, n), dims=(1, 2))
+
+    return SimpleSparsePolynomialZonotope(c, G, E)
+end
+
+
+"""
     convert(::Type{SparsePolynomialZonotope}, Z::AbstractZonotope{N}) where {N}
 
 Convert a zonotope to sparse polynomial zonotope.
@@ -1278,18 +1293,4 @@ function convert(::Type{SparsePolynomialZonotope}, SSPZ::SimpleSparsePolynomialZ
     GI = zeros(N, dim(SSPZ), 0)
 
     return SparsePolynomialZonotope(c, G, GI, E, idx)
-end
-
-"""
-    convert(::Type{SimpleSparsePolynomialZonotope}, SPZ::SparsePolynomialZonotope)
-
-Convert a sparse polynomial zonotope to simple sparse polynomial zonotope.
-"""
-function convert(::Type{SimpleSparsePolynomialZonotope}, SPZ::SparsePolynomialZonotope)
-    c = center(SPZ)
-    G = genmat(SPZ)
-    n = nindependentgens(SPZ)
-    E = cat(expmat(SPZ), Matrix(1 * I, n, n), dims=(1, 2))
-
-    return SimpleSparsePolynomialZonotope(c, G, E)
 end
