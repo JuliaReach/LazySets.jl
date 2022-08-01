@@ -315,7 +315,7 @@ end
 
 """
     rand(::Type{SimpleSparsePolynomialZonotope};
-         [N]::Type{<:Real}=Float64, [dim]::Int=2, [nparams]::Int=2, maxdeg::Int=3,
+         [N]::Type{<:Real}=Float64, [dim]::Int=2, [nparams]::Int=2, [maxdeg]::Int=3,
          [num_generators]::Int=-1,
          [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
 
