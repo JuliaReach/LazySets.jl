@@ -1,4 +1,4 @@
-export SparsePolynomialZonotope, expmat, nparams, ndependentgens, nindependentgens, ngens,
+export SparsePolynomialZonotope, expmat, nparams, ndependentgens, nindependentgens,
        dependent_genmat, independent_genmat, indexvector,
        linear_map, quadratic_map, remove_redundant_generators
 
@@ -96,21 +96,6 @@ Return the number of independent generators of `P`.
 nindependentgens(P::SPZ) = size(P.GI, 2)
 
 """
-    ngens(P::SparsePolynomialZonotope)
-
-Return the total number of generators of `P`.
-
-### Input
-
-- `P` -- sparse polynomial zonotope
-
-### Notes
-
-This is equivalent to the number of monomials in the polynomial representation of `P`.
-"""
-ngens(P::SPZ) = ndependentgens(P) + nindependentgens(P)
-
-"""
     nparams(P::SparsePolynomialZonotope)
 
 Return the number of dependent parameters in the polynomial representation of `P`.
@@ -142,7 +127,7 @@ Return the order of `P`.
 
 The order of `P`, defined as the quotient between the number of generators and the ambient dimension.
 """
-order(P::SPZ) = ngens(P) // dim(P)
+order(P::SPZ) = (ndependentgens(P) + nindependentgens(P)) // dim(P)
 
 """
     center(P::SparsePolynomialZonotope)
@@ -180,18 +165,6 @@ Return the matrix of independent generators of `P`.
 - `P` -- sparse polynomial zonotope
 """
 independent_genmat(P::SPZ) = P.GI
-
-
-"""
-    genmat(P::SparsePolynomialZonotope)
-
-Return the full generator matrix of `P`, including dependent and independent generators.
-
-### Input
-
-- `P` -- sparse polynomial zonotope
-"""
-genmat(P::SPZ) = hcat(P.G, P.GI)
 
 """
     expmat(P::SparsePolynomialZonotope)
