@@ -3,7 +3,7 @@ export SparsePolynomialZonotope, expmat, nparams, ndependentgens, nindependentge
        linear_map, quadratic_map, remove_redundant_generators
 
 """
-    SparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, MNI<:AbstractVecOrMat{N}, ME<:AbstractMatrix{<:Integer}, VI<:AbstractVector{<:Integer}} <: AbstractPolynomialZonotope{N}
+    SparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, MNI<:AbstractMatrix{N}, ME<:AbstractMatrix{<:Integer}, VI<:AbstractVector{<:Integer}} <: AbstractPolynomialZonotope{N}
 
 Type that represents a sparse polynomial zonotope.
 
@@ -31,7 +31,7 @@ Sparse polynomial zonotopes were introduced in [KA21].
 struct SparsePolynomialZonotope{N,
                                 VN<:AbstractVector{N},
                                 MN<:AbstractMatrix{N},
-                                MNI<:AbstractVecOrMat{N},
+                                MNI<:AbstractMatrix{N},
                                 ME<:AbstractMatrix{<:Integer},
                                 VI<:AbstractVector{<:Integer}} <: AbstractPolynomialZonotope{N}
     c::VN
@@ -40,7 +40,7 @@ struct SparsePolynomialZonotope{N,
     E::ME
     idx::VI
 
-    function SparsePolynomialZonotope(c::VN, G::MN, GI::MNI, E::ME, idx::VI) where {N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, MNI<:AbstractVecOrMat{N}, ME<:AbstractMatrix{<:Integer}, VI<:AbstractVector{<:Integer}}
+    function SparsePolynomialZonotope(c::VN, G::MN, GI::MNI, E::ME, idx::VI) where {N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, MNI<:AbstractMatrix{N}, ME<:AbstractMatrix{<:Integer}, VI<:AbstractVector{<:Integer}}
         @assert length(c) == size(G, 1) throw(DimensionMismatch("c and G should have the same number of rows"))
         @assert length(c) == size(GI, 1) throw(DimensionMismatch("c and GI should have the same number of rows"))
         @assert size(G, 2) == size(E, 2) throw(DimensionMismatch("G and E should have the same number of columns"))
@@ -50,7 +50,7 @@ struct SparsePolynomialZonotope{N,
     end
 end
 
-function SparsePolynomialZonotope(c::AbstractVector, G::AbstractMatrix, GI::AbstractVecOrMat, E::AbstractMatrix{<:Integer})
+function SparsePolynomialZonotope(c::AbstractVector, G::AbstractMatrix, GI::AbstractMatrix, E::AbstractMatrix{<:Integer})
     n = size(E, 1)
     return SparsePolynomialZonotope(c, G, GI, E, 1:n)
 end

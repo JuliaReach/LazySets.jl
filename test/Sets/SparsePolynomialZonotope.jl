@@ -3,7 +3,7 @@ for N in [Float64, Float32, Rational{Int}]
     # example from Niklas thesis (page 32)
     c = N[4, 4]
     G = N[2 1 2;0 2 2]
-    GI = N[1; 0]
+    GI = hcat(N[1; 0])
     E = [1 0 3;0 1 1]
     PZ = SparsePolynomialZonotope(c, G, GI, E)
 
