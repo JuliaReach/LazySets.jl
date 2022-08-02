@@ -9,9 +9,10 @@ Polynomial zonotopes are in general non-convex. They are always bounded.
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(LazySets.AbstractPolynomialZonotope)
-2-element Vector{Any}:
+3-element Vector{Any}:
  DensePolynomialZonotope
  SimpleSparsePolynomialZonotope
+ SparsePolynomialZonotope
 ```
 """
 abstract type AbstractPolynomialZonotope{N} end

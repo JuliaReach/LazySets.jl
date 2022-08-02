@@ -53,6 +53,7 @@ makedocs(
                 "DensePolynomialZonotope" => "lib/sets/DensePolynomialZonotope.md",
                 "RotatedHyperrectangle" => "lib/sets/RotatedHyperrectangle.md",
                 "SimpleSparsePolynomialZonotope" => "lib/sets/SimpleSparsePolynomialZonotope.md",
+                "SparsePolynomialZonotope" => "lib/sets/SparsePolynomialZonotope.md",
                 "Singleton" => "lib/sets/Singleton.md",
                 "Star" => "lib/sets/Star.md",
                 "Universe" => "lib/sets/Universe.md",
