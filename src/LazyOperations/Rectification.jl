@@ -26,7 +26,7 @@ mutable struct RectificationCache{N}
 end
 
 """
-    Rectification{N, S<:ConvexSet{N}}
+    Rectification{N, S<:ConvexSet{N}} <: LazySet{N}
 
 Type that represents the rectification of a set.
 
@@ -88,7 +88,7 @@ containing the origin.
 The rectification of ``X ∩ O_2`` and ``X ∩ O_4`` both result in flat
 ``1``-dimensional line segments on the corresponding hyperplane of ``O_1``.
 """
-struct Rectification{N, S<:ConvexSet{N}}
+struct Rectification{N, S<:ConvexSet{N}} <: LazySet{N}
     X::S
     cache::RectificationCache{N}
 

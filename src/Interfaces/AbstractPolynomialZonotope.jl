@@ -1,5 +1,7 @@
+export AbstractPolynomialZonotope
+
 """
-    AbstractPolynomialZonotope{N} <: ConvexSet{N}
+    AbstractPolynomialZonotope{N} <: LazySet{N}
 
 Abstract type for polynomial zonotope sets.
 
@@ -15,7 +17,7 @@ julia> subtypes(LazySets.AbstractPolynomialZonotope)
  SparsePolynomialZonotope
 ```
 """
-abstract type AbstractPolynomialZonotope{N} end
+abstract type AbstractPolynomialZonotope{N} <: LazySet{N} end
 
 isconvextype(::Type{<:AbstractPolynomialZonotope}) = false
 isboundedtype(::Type{<:AbstractPolynomialZonotope}) = true
