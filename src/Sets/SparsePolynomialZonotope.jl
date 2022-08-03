@@ -52,7 +52,7 @@ end
 
 function SparsePolynomialZonotope(c::AbstractVector, G::AbstractMatrix, GI::AbstractMatrix, E::AbstractMatrix{<:Integer})
     n = size(E, 1)
-    return SparsePolynomialZonotope(c, G, GI, E, 1:n)
+    return SparsePolynomialZonotope(c, G, GI, E, uniqueID(n))
 end
 
 
@@ -200,6 +200,13 @@ The index vector is a vector of positive integers identifing the dependent param
 """
 indexvector(P::SPZ) = P.idx
 
+
+"""
+    uniqueID(n::Int)
+
+Returns a collection of n unique identifiers (intergers 1, …, n).
+"""
+uniqueID(n::Int) = 1:n
 """
     linear_map(M::AbstractMatrix, P::SparsePolynomialZonotope)
 
