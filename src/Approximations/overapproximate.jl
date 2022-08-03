@@ -6,7 +6,7 @@ using LazySets: block_to_dimension_indices,
                 get_constrained_lowdimset
 
 """
-    overapproximate(X::S, ::Type{S}, args...) where {S<:LazySet}
+    overapproximate(X::S, ::Type{S}, args...) where {S<:ConvexSet}
 
 Overapproximating a set of type `S` with type `S` is a no-op.
 
@@ -20,42 +20,42 @@ Overapproximating a set of type `S` with type `S` is a no-op.
 
 The input set.
 """
-function overapproximate(X::S, ::Type{S}, args...) where {S<:LazySet}
+function overapproximate(X::S, ::Type{S}, args...) where {S<:ConvexSet}
     return X
 end
 
 """
-    overapproximate(S::LazySet)
+    overapproximate(S::ConvexSet)
 
 Alias for `overapproximate(S, Hyperrectangle)` resp. `box_approximation(S)`.
 """
-overapproximate(S::LazySet) = box_approximation(S)
+overapproximate(S::ConvexSet) = box_approximation(S)
 
 """
-    overapproximate(S::LazySet, ::Type{<:Hyperrectangle})
+    overapproximate(S::ConvexSet, ::Type{<:Hyperrectangle})
 
 Alias for `box_approximation(S)`.
 """
-function overapproximate(S::LazySet, ::Type{<:Hyperrectangle})
+function overapproximate(S::ConvexSet, ::Type{<:Hyperrectangle})
     return box_approximation(S)
 end
 
-# alias while Rectification is not a LazySet (#1895)
+# alias while Rectification is not a ConvexSet (#1895)
 function overapproximate(r::Rectification, ::Type{<:Hyperrectangle})
     return box_approximation(r)
 end
 
 """
-    overapproximate(S::LazySet, ::Type{<:BallInf})
+    overapproximate(S::ConvexSet, ::Type{<:BallInf})
 
 Alias for `ballinf_approximation(S)`.
 """
-function overapproximate(S::LazySet, ::Type{<:BallInf})
+function overapproximate(S::ConvexSet, ::Type{<:BallInf})
     return ballinf_approximation(S)
 end
 
 """
-    overapproximate(S::LazySet{N},
+    overapproximate(S::ConvexSet{N},
                     ::Type{<:HPolygon},
                     [ε]::Real=Inf) where {N}
 
@@ -81,7 +81,7 @@ If no error tolerance ε is given, or is `Inf`, the result is a box-shaped polyg
 For convex input sets, the result is an ε-close approximation as a polygon,
 with respect to the Hausdorff distance.
 """
-function overapproximate(S::LazySet{N},
+function overapproximate(S::ConvexSet{N},
                          ::Type{<:HPolygon},
                          ε::Real=Inf;
                          prune::Bool=true) where {N}
@@ -104,7 +104,7 @@ function overapproximate(S::LazySet{N},
 end
 
 # no-go functions for dispatch in HPolytope
-function overapproximate(X::S, ::Type{<:HPolytope}) where {S<:LazySet}
+function overapproximate(X::S, ::Type{<:HPolytope}) where {S<:ConvexSet}
     if dim(X) == 2
         throw(ArgumentError("ε-close approximation is only available using " *
               "polygons in constraint representation; try `overapproximate(X, HPolygon)`"))
@@ -117,11 +117,11 @@ function overapproximate(X::S, ::Type{<:HPolytope}) where {S<:LazySet}
 end
 
 """
-    overapproximate(S::LazySet, ε::Real)
+    overapproximate(S::ConvexSet, ε::Real)
 
 Alias for `overapproximate(S, HPolygon, ε)`.
 """
-function overapproximate(S::LazySet, ε::Real)
+function overapproximate(S::ConvexSet, ε::Real)
     return overapproximate(S, HPolygon, ε)
 end
 
@@ -130,7 +130,7 @@ overapproximate(∅::EmptySet, options...) = ∅
 
 # disambiguation
 overapproximate(∅::EmptySet) = ∅
-for ST in LazySets.subtypes(LazySet, true)
+for ST in LazySets.subtypes(ConvexSet, true)
     if ST == HPolygon  # must be defined separately below with extra argument
         continue
     end
@@ -346,7 +346,7 @@ function overapproximate(lm::LinearMap{N, <:AbstractZonotope},
 end
 
 """
-    overapproximate(X::LazySet{N}, dir::AbstractDirections; [prune]::Bool=true) where {N}
+    overapproximate(X::ConvexSet{N}, dir::AbstractDirections; [prune]::Bool=true) where {N}
 
 Overapproximate a (possibly unbounded) set with template directions.
 
@@ -363,7 +363,7 @@ A polyhedron overapproximating the set `X` with the directions from `dir`.
 The overapproximation is computed using support functions. If the obtained set is
 bounded, the result is an `HPolytope`. Otherwise the result is an `HPolyhedron`.
 """
-function overapproximate(X::LazySet{N}, dir::AbstractDirections{N, VN}; prune::Bool=true) where {N, VN}
+function overapproximate(X::ConvexSet{N}, dir::AbstractDirections{N, VN}; prune::Bool=true) where {N, VN}
     n = dim(X)
     H = Vector{LinearConstraint{N, VN}}()
     sizehint!(H, length(dir))
@@ -388,7 +388,7 @@ function overapproximate(X::LazySet{N}, dir::AbstractDirections{N, VN}; prune::B
 end
 
 # alias with HPolytope type as second argument
-function overapproximate(X::LazySet{N}, ::Type{<:HPolytope}, dirs::AbstractDirections{N}; prune::Bool=true) where {N}
+function overapproximate(X::ConvexSet{N}, ::Type{<:HPolytope}, dirs::AbstractDirections{N}; prune::Bool=true) where {N}
     P = overapproximate(X, dirs, prune=prune)
     isbounded(P) || throw(ArgumentError("can't overapproximate with an `HPolytope` " *
                                         "because the set is unbounded; try using an `HPolyhedron`"))
@@ -396,7 +396,7 @@ function overapproximate(X::LazySet{N}, ::Type{<:HPolytope}, dirs::AbstractDirec
 end
 
 # alias with HPolyhedron type as second argument
-function overapproximate(X::LazySet{N}, ::Type{<:HPolyhedron}, dirs::AbstractDirections{N}; prune::Bool=true) where {N}
+function overapproximate(X::ConvexSet{N}, ::Type{<:HPolyhedron}, dirs::AbstractDirections{N}; prune::Bool=true) where {N}
     return convert(HPolyhedron, overapproximate(X, dirs, prune=true))
 end
 
@@ -408,7 +408,7 @@ overapproximate(∅::EmptySet{N}, ::Type{<:HPolyhedron},
 
 # this function overapproximates a bounded polyhedron with a list of directions
 # that define a bounded set (without checking these assumptions); the result is always bounded
-function _overapproximate_bounded_polyhedron(X::LazySet{N}, dir::AbstractDirections{N, VN}; prune::Bool=true) where {N, VN}
+function _overapproximate_bounded_polyhedron(X::ConvexSet{N}, dir::AbstractDirections{N, VN}; prune::Bool=true) where {N, VN}
     H = Vector{LinearConstraint{N, VN}}()
     sizehint!(H, length(dir))
     for d in dir
@@ -422,7 +422,7 @@ function _overapproximate_bounded_polyhedron(X::LazySet{N}, dir::AbstractDirecti
 end
 
 """
-    overapproximate(X::LazySet{N}, dir::Type{<:AbstractDirections}) where {N}
+    overapproximate(X::ConvexSet{N}, dir::Type{<:AbstractDirections}) where {N}
 
 Overapproximating a set with template directions.
 
@@ -437,7 +437,7 @@ A polyhedron overapproximating the set `X` with the directions from `dir`.
 If the directions are known to be bounded, the result is an `HPolytope`,
 otherwise the result is an `HPolyhedron`.
 """
-function overapproximate(X::LazySet{N},
+function overapproximate(X::ConvexSet{N},
                          dir::Type{<:AbstractDirections}; kwargs...) where {N}
     return overapproximate(X, dir{N}(dim(X)); kwargs...)
 end
@@ -447,7 +447,7 @@ overapproximate(∅::EmptySet, dir::Type{<:AbstractDirections}; kwargs...) = ∅
 overapproximate(∅::EmptySet, dir::AbstractDirections; prune::Bool=true) = ∅
 
 """
-    overapproximate(S::LazySet{N}, ::Type{<:Interval}) where {N}
+    overapproximate(S::ConvexSet{N}, ::Type{<:Interval}) where {N}
 
 Return the overapproximation of a unidimensional set with an interval.
 
@@ -464,7 +464,7 @@ An interval.
 
 We use two support-function evaluations.
 """
-function overapproximate(S::LazySet{N}, ::Type{<:Interval}) where {N}
+function overapproximate(S::ConvexSet{N}, ::Type{<:Interval}) where {N}
     @assert dim(S) == 1 "cannot overapproximate a $(dim(S))-dimensional set " *
                         "with an `Interval`"
     return Interval(-ρ(N[-1], S), ρ(N[1], S))
@@ -531,7 +531,7 @@ function overapproximate(cap::IntersectionArray, ::Type{<:Interval})
     return X
 end
 
-function overapproximate_cap_helper(X::LazySet,             # convex set
+function overapproximate_cap_helper(X::ConvexSet,             # convex set
                                     P::AbstractPolyhedron,  # polyhedron
                                     dir::AbstractDirections;
                                     kwargs...
@@ -562,7 +562,7 @@ function overapproximate_cap_helper(X::LazySet,             # convex set
 end
 
 """
-    overapproximate(cap::Intersection{N, <:LazySet, <:AbstractPolyhedron},
+    overapproximate(cap::Intersection{N, <:ConvexSet, <:AbstractPolyhedron},
                     dir::AbstractDirections;
                     kwargs...
                    ) where {N}
@@ -606,7 +606,7 @@ This method of overapproximations can return a non-empty set even if the origina
 intersection is empty.
 """
 function overapproximate(cap::Intersection{N,
-                                           <:LazySet,
+                                           <:ConvexSet,
                                            <:AbstractPolyhedron},
                          dir::AbstractDirections;
                          kwargs...
@@ -617,7 +617,7 @@ end
 # symmetric method
 function overapproximate(cap::Intersection{N,
                                            <:AbstractPolyhedron,
-                                           <:LazySet},
+                                           <:ConvexSet},
                          dir::AbstractDirections;
                          kwargs...
                         ) where {N}
@@ -1197,7 +1197,7 @@ end end  # quote / load_intervalmatrices_overapproximation()
 """
     overapproximate(lm::LinearMap{N, <:CartesianProductArray},
                     ::Type{CartesianProductArray{N, S}}
-                   ) where {N, S<:LazySet}
+                   ) where {N, S<:ConvexSet}
 
 Decompose a lazy linear map of a Cartesian product array while keeping the
 original block structure.
@@ -1213,7 +1213,7 @@ A `CartesianProductArray` representing the decomposed linear map.
 """
 function overapproximate(lm::LinearMap{N, <:CartesianProductArray},
                          ::Type{CartesianProductArray{N, S}}
-                        ) where {N, S<:LazySet}
+                        ) where {N, S<:ConvexSet}
     cpa = array(lm.X)
     arr = Vector{S}(undef, length(cpa))
     return _overapproximate_lm_cpa!(arr, lm.M, cpa, S)
@@ -1248,7 +1248,7 @@ end
 """
     overapproximate(lm::LinearMap{N, <:CartesianProductArray},
                     ::Type{<:CartesianProductArray},
-                    set_type::Type{<:LazySet}) where {N}
+                    set_type::Type{<:ConvexSet}) where {N}
 
 Decompose a lazy linear map of a Cartesian product array with a given set type
 while keeping the original block structure.
@@ -1265,7 +1265,7 @@ A `CartesianProductArray` representing the decomposed linear map.
 """
 function overapproximate(lm::LinearMap{N, <:CartesianProductArray},
                          ::Type{<:CartesianProductArray},
-                         set_type::Type{<:LazySet}) where {N}
+                         set_type::Type{<:ConvexSet}) where {N}
     cpa = array(lm.X)
     arr = Vector{set_type{N}}(undef, length(cpa))
     return _overapproximate_lm_cpa!(arr, lm.M, cpa, set_type)
@@ -1274,7 +1274,7 @@ end
 function _overapproximate_lm_cpa!(arr, M, cpa, overapprox_option)
     # construct Minkowski sum for block row
     function _block_row(cpa::Vector{S}, M::AbstractMatrix,
-                        row_range::UnitRange{Int}) where {N, S<:LazySet{N}}
+                        row_range::UnitRange{Int}) where {N, S<:ConvexSet{N}}
         arr_inner = Vector{LinearMap{N, <:S}}(undef, length(cpa))
         col_start_ind, col_end_ind = 1, 0
         @inbounds for (j, bj) in enumerate(cpa)
@@ -1420,7 +1420,7 @@ function overapproximate(Z::Zonotope{N}, ::Type{<:Zonotope}, r::Union{Integer, R
 end
 
 """
-    overapproximate(X::LazySet, ZT::Type{<:Zonotope},
+    overapproximate(X::ConvexSet, ZT::Type{<:Zonotope},
                     dir::AbstractDirections;
                     [algorithm]="vrep", kwargs...)
 
@@ -1452,7 +1452,7 @@ Two algorithms are available:
              decomposition into two-dimensional blocks. See the docstring
              of [`_overapproximate_zonotope_cpa`](@ref) for further details.
 """
-function overapproximate(X::LazySet, ZT::Type{<:Zonotope},
+function overapproximate(X::ConvexSet, ZT::Type{<:Zonotope},
                          dir::AbstractDirections;
                          algorithm="vrep", kwargs...)
     if algorithm == "vrep"
@@ -1465,7 +1465,7 @@ function overapproximate(X::LazySet, ZT::Type{<:Zonotope},
     end
 end
 
-function overapproximate(X::LazySet, ZT::Type{<:Zonotope},
+function overapproximate(X::ConvexSet, ZT::Type{<:Zonotope},
                          dir::Type{<:AbstractDirections};
                          algorithm="vrep", kwargs...)
     overapproximate(X, ZT, dir(dim(X)), algorithm=algorithm, kwargs...)
@@ -1484,7 +1484,7 @@ function overapproximate(∅::EmptySet, ZT::Type{<:Zonotope},
 end
 
 """
-    _overapproximate_zonotope_vrep(X::LazySet{N},
+    _overapproximate_zonotope_vrep(X::ConvexSet{N},
                                    dir::AbstractDirections;
                                    solver=default_lp_solver(N)) where {N}
 
@@ -1533,7 +1533,7 @@ nonnegativity constraints (last type) are not stated explicitly in [1].
 [1] Zonotopes as bounding volumes, L. J. Guibas et al, Proc. of Symposium on
     Discrete Algorithms, pp. 803-812.
 """
-function _overapproximate_zonotope_vrep(X::LazySet{N},
+function _overapproximate_zonotope_vrep(X::ConvexSet{N},
                                         dir::AbstractDirections;
                                         solver=default_lp_solver(N)) where {N}
     # TODO "normalization" here involves two steps: removing opposite directions
@@ -1607,14 +1607,14 @@ function _overapproximate_zonotope_vrep(X::LazySet{N},
 end
 
 # overload on direction type
-function _overapproximate_zonotope_vrep(X::LazySet{N},
+function _overapproximate_zonotope_vrep(X::ConvexSet{N},
                                         dir::Type{<:AbstractDirections};
                                         solver=default_lp_solver(N)) where {N}
     return _overapproximate_zonotope_vrep(X, dir(dim(X)), solver=solver)
 end
 
 """
-    _overapproximate_zonotope_cpa(X::LazySet, dir::Type{<:AbstractDirections})
+    _overapproximate_zonotope_cpa(X::ConvexSet, dir::Type{<:AbstractDirections})
 
 Overapproximate a polytopic set with a zonotope using cartesian decomposition.
 
@@ -1639,7 +1639,7 @@ The algorithm used is based on the section 8.2.4 of [1].
 [1] Le Guernic, C. (2009). Reachability analysis of hybrid systems with linear
 continuous dynamics (Doctoral dissertation).
 """
-function _overapproximate_zonotope_cpa(X::LazySet, dir::Type{<:AbstractDirections})
+function _overapproximate_zonotope_cpa(X::ConvexSet, dir::Type{<:AbstractDirections})
     n = dim(X)
     # overapproximate 2D blocks
     if n > 1
@@ -1665,7 +1665,7 @@ function _overapproximate_zonotope_cpa(X::LazySet, dir::Type{<:AbstractDirection
 end
 
 # overload on direction type
-function _overapproximate_zonotope_cpa(X::LazySet,
+function _overapproximate_zonotope_cpa(X::ConvexSet,
                                        dir::AbstractDirections)
     _overapproximate_zonotope_cpa(X, typeof(dir))
 end

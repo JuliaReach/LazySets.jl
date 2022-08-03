@@ -201,7 +201,7 @@ function center(H::Hyperrectangle)
 end
 
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """

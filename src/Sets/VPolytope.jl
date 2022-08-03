@@ -71,7 +71,7 @@ function VPolytope(vertices_matrix::MT) where {N, MT<:AbstractMatrix{N}}
     return VPolytope(vertices)
 end
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 """
     dim(P::VPolytope)

@@ -261,7 +261,7 @@ function constraints_list(H::AbstractHyperrectangle{N}) where {N}
     return constraints
 end
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """

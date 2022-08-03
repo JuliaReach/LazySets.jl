@@ -4,7 +4,7 @@ export AbstractAffineMap,
        matrix, vector, set
 
 """
-    AbstractAffineMap{N, S<:LazySet{N}} <: LazySet{N}
+    AbstractAffineMap{N, S<:ConvexSet{N}} <: ConvexSet{N}
 
 Abstract type for affine maps.
 
@@ -29,7 +29,7 @@ julia> subtypes(AbstractAffineMap)
  Translation
 ```
 """
-abstract type AbstractAffineMap{N, S<:LazySet{N}} <: LazySet{N} end
+abstract type AbstractAffineMap{N, S<:ConvexSet{N}} <: ConvexSet{N} end
 
 isoperationtype(::Type{<:AbstractAffineMap}) = true
 isconvextype(::Type{<:AbstractAffineMap{N, S}}) where {N, S} = isconvextype(S)

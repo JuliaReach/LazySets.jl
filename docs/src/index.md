@@ -30,7 +30,7 @@ common convex set class or operation between sets.
 Concrete information is obtained through evaluating the set in specific
 directions.
 More precisely, each concrete subtype $\mathcal{X}$ of the abstract type
-`LazySet` exports a method to calculate its support vector
+`ConvexSet` exports a method to calculate its support vector
 $σ(d, \mathcal{X})$ in a given (arbitrary) direction $d \in \mathbb{R}^n$.
 Representing sets exactly but lazily has the advantage of being able to perform
 only the required operations on-demand.

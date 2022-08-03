@@ -62,11 +62,11 @@ New functions and types should be documented according to the
 
 You can view the source code documentation from inside the REPL by typing `?`
 followed by the name of the type or function.
-For example, the following command will print the documentation of the `LazySet`
+For example, the following command will print the documentation of the `ConvexSet`
 type:
 
 ```julia
-julia> ?LazySet
+julia> ?ConvexSet
 ```
 
 The documentation you are currently reading is written in [Markdown](https://en.wikipedia.org/wiki/Markdown), and it

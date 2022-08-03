@@ -210,7 +210,7 @@ h(1.), h(0.1), h(0.01)
 ```
 
 !!! note
-    Actually, the plotting function for an arbitrary `LazySet` `plot(...)`,
+    Actually, the plotting function for an arbitrary `ConvexSet` `plot(...)`,
     called *recipe* in the context of
     [Plots.jl](https://github.com/JuliaPlots/Plots.jl), is such that it receives
     a numeric argument `ε` and the routine itself calls `overapproximate`.

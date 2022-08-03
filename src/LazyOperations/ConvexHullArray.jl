@@ -8,7 +8,7 @@ export ConvexHullArray, CHArray,
 # ================================
 
 """
-    ConvexHullArray{N, S<:LazySet{N}} <: LazySet{N}
+    ConvexHullArray{N, S<:ConvexSet{N}} <: ConvexSet{N}
 
 Type that represents the symbolic convex hull of a finite number of sets.
 
@@ -22,7 +22,7 @@ The `EmptySet` is the neutral element for `ConvexHullArray`.
 
 Constructors:
 
-- `ConvexHullArray(array::Vector{<:LazySet})` -- default constructor
+- `ConvexHullArray(array::Vector{<:ConvexSet})` -- default constructor
 
 - `ConvexHullArray([n]::Int=0, [N]::Type=Float64)`
   -- constructor for an empty hull with optional size hint and numeric type
@@ -37,7 +37,7 @@ julia> b = [Ball2([2*pi*i/100, sin(2*pi*i/100)], 0.05) for i in 1:100];
 julia> c = ConvexHullArray(b);
 ```
 """
-struct ConvexHullArray{N, S<:LazySet{N}} <: LazySet{N}
+struct ConvexHullArray{N, S<:ConvexSet{N}} <: ConvexSet{N}
     array::Vector{S}
 end
 
@@ -46,7 +46,7 @@ isconvextype(::Type{<:ConvexHullArray}) = true
 
 # constructor for an empty hull with optional size hint and numeric type
 function ConvexHullArray(n::Int=0, N::Type=Float64)
-    a = Vector{LazySet{N}}()
+    a = Vector{ConvexSet{N}}()
     sizehint!(a, n)
     return ConvexHullArray(a)
 end

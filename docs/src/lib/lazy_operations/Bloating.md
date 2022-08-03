@@ -16,5 +16,5 @@ constraints_list(::Bloating)
 center(::Bloating)
 ```
 
-Inherited from [`LazySet`](@ref):
-* [`singleton_list`](@ref singleton_list(::LazySet))
+Inherited from [`ConvexSet`](@ref):
+* [`singleton_list`](@ref singleton_list(::ConvexSet))

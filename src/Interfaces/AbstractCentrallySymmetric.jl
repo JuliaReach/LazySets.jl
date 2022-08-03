@@ -5,7 +5,7 @@ export AbstractCentrallySymmetric,
        an_element
 
 """
-    AbstractCentrallySymmetric{N} <: LazySet{N}
+    AbstractCentrallySymmetric{N} <: ConvexSet{N}
 
 Abstract type for centrally symmetric sets.
 
@@ -24,7 +24,7 @@ julia> subtypes(AbstractCentrallySymmetric)
  Ellipsoid
 ```
 """
-abstract type AbstractCentrallySymmetric{N} <: LazySet{N} end
+abstract type AbstractCentrallySymmetric{N} <: ConvexSet{N} end
 
 isconvextype(::Type{<:AbstractCentrallySymmetric}) = false
 

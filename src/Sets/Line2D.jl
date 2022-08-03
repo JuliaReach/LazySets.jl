@@ -107,7 +107,7 @@ function constraints_list(L::Line2D)
 end
 
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """

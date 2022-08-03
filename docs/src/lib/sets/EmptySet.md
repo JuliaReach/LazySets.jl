@@ -27,5 +27,5 @@ plot_recipe(::EmptySet{N}, ::Any=zero(N)) where {N}
 RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::EmptySet{N}, ::N=zero(N)) where {N}
 area(::EmptySet{N}) where {N}
 ```
-Inherited from [`LazySet`](@ref):
-* [`singleton_list`](@ref singleton_list(::LazySet))
+Inherited from [`ConvexSet`](@ref):
+* [`singleton_list`](@ref singleton_list(::ConvexSet))

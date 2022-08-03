@@ -70,7 +70,7 @@ HPolyhedron(A::AbstractMatrix, b::AbstractVector) =
 const HPoly{N} = Union{HPolytope{N}, HPolyhedron{N}}
 
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """
@@ -609,7 +609,7 @@ function polyhedron(P::HPoly;
     return Polyhedra.polyhedron(Polyhedra.hrep(A, b), backend)
 end
 
-function triangulate(X::LazySet)
+function triangulate(X::ConvexSet)
 
     dim(X) == 3 || throw(ArgumentError("the dimension of the set should be three, got $(dim(X))"))
 

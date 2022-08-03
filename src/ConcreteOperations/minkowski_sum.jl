@@ -1,7 +1,7 @@
 export minkowski_sum
 
 """
-    minkowski_sum(P::LazySet, Q::LazySet;
+    minkowski_sum(P::ConvexSet, Q::ConvexSet;
                   [backend]=nothing,
                   [algorithm]=nothing,
                   [prune]=true)
@@ -42,7 +42,7 @@ julia> ...
 julia> minkowski_sum(P, Q)
 ```
 """
-function minkowski_sum(P::LazySet, Q::LazySet;
+function minkowski_sum(P::ConvexSet, Q::ConvexSet;
                        backend=nothing,
                        algorithm=nothing,
                        prune=true)
@@ -502,7 +502,7 @@ and whose generators are the concatenation of the generators of `PZ` and `Z`.
     return DensePolynomialZonotope(c, PZ.E, PZ.F, G)
 end
 
-@commutative minkowski_sum(::ZeroSet, X::LazySet) = X
+@commutative minkowski_sum(::ZeroSet, X::ConvexSet) = X
 @commutative minkowski_sum(::ZeroSet, P::AbstractPolyhedron) = P
 @commutative minkowski_sum(::ZeroSet, P::AbstractPolytope) = P
 @commutative minkowski_sum(::ZeroSet, Z::AbstractZonotope) = Z

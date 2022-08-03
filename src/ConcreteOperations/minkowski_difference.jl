@@ -1,7 +1,7 @@
 export minkowski_difference, pontryagin_difference
 
 """
-    minkowski_difference(P::LazySet, Q::LazySet)
+    minkowski_difference(P::ConvexSet, Q::ConvexSet)
 
 Concrete Minkowski difference (geometric difference) for a pair of
 convex sets.
@@ -45,7 +45,7 @@ of disturbance invariant sets for discrete-time linear systems.*
 [Mathematical Problems in Engineering Volume 4, Issue 4, Pages
 317-367.](http://dx.doi.org/10.1155/S1024123X98000866)
 """
-function minkowski_difference(P::LazySet, Q::LazySet)
+function minkowski_difference(P::ConvexSet, Q::ConvexSet)
 
     @assert applicable(constraints_list, P)  "this function " *
         "requires that the list of constraints of its first argument is applicable, but it is not; " *
@@ -62,7 +62,7 @@ function minkowski_difference(P::LazySet, Q::LazySet)
 end
 
 """
-    pontryagin_difference(P::LazySet, Q::LazySet)
+    pontryagin_difference(P::ConvexSet, Q::ConvexSet)
 
 An alias for the function `minkowski_difference`.
 
@@ -75,5 +75,5 @@ Due to inconsistent naming conventions, both the name *Minkowski difference* and
 const pontryagin_difference = minkowski_difference
 
 # concrete minkowski difference with singleton
-minkowski_difference(X::LazySet, S::AbstractSingleton) = translate(X, -element(S))
-minkowski_difference(X::LazySet, ::ZeroSet) = X
+minkowski_difference(X::ConvexSet, S::AbstractSingleton) = translate(X, -element(S))
+minkowski_difference(X::ConvexSet, ::ZeroSet) = X

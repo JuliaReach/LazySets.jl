@@ -5,7 +5,7 @@ export CartesianProduct,
        swap
 
 """
-    CartesianProduct{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
+    CartesianProduct{N, S1<:ConvexSet{N}, S2<:ConvexSet{N}} <: ConvexSet{N}
 
 Type that represents the Cartesian product of two sets, that is the set
 
@@ -58,10 +58,10 @@ julia> convert(Hyperrectangle, I12)
 Hyperrectangle{Float64, Vector{Float64}, Vector{Float64}}([0.5, 3.0], [0.5, 1.0])
 ```
 """
-struct CartesianProduct{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
+struct CartesianProduct{N, S1<:ConvexSet{N}, S2<:ConvexSet{N}} <: ConvexSet{N}
     X::S1
     Y::S2
-    function CartesianProduct(X::LazySet{N}, Y::LazySet{N}) where {N}
+    function CartesianProduct(X::ConvexSet{N}, Y::ConvexSet{N}) where {N}
         return new{N, typeof(X), typeof(Y)}(X, Y)
     end
 end
@@ -75,12 +75,12 @@ is_polyhedral(cp::CartesianProduct) = is_polyhedral(cp.X) && is_polyhedral(cp.Y)
 
 """
 ```
-    *(X::LazySet, Y::LazySet)
+    *(X::ConvexSet, Y::ConvexSet)
 ```
 
 Alias for the binary Cartesian product.
 """
-*(X::LazySet, Y::LazySet) = CartesianProduct(X, Y)
+*(X::ConvexSet, Y::ConvexSet) = CartesianProduct(X, Y)
 
 """
     ×
@@ -91,7 +91,7 @@ Unicode alias constructor × (`times`) for the binary Cartesian product operator
 
 Write `\\times[TAB]` to enter this symbol.
 """
-×(X::LazySet, Y::LazySet) = CartesianProduct(X, Y)
+×(X::ConvexSet, Y::ConvexSet) = CartesianProduct(X, Y)
 
 """
     swap(cp::CartesianProduct)

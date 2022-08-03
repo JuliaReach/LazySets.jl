@@ -64,12 +64,12 @@ box_approximation_helper
 ```@docs
 LocalApproximation
 PolygonalOverapproximation
-new_approx(S::LazySet, p1::VN, d1::VN,
+new_approx(S::ConvexSet, p1::VN, d1::VN,
            p2::VN, d2::VN) where {N<:AbstractFloat, VN<:AbstractVector{N}}
 addapproximation!(Ω::PolygonalOverapproximation, p1::VN, d1::VN, p2::VN, d2::VN) where {N<:Real, VN<:AbstractVector{N}}
-refine(::LocalApproximation, ::LazySet)
+refine(::LocalApproximation, ::ConvexSet)
 tohrep(::PolygonalOverapproximation)
-_approximate(S::LazySet{N}, ε::Real) where {N<:AbstractFloat}
+_approximate(S::ConvexSet{N}, ε::Real) where {N<:AbstractFloat}
 constraint(::LocalApproximation)
 ```
 
@@ -79,7 +79,7 @@ constraint(::LocalApproximation)
 AbstractDirections
 isbounding
 isnormalized
-project(::LazySet, ::AbstractVector{Int}, ::Type{<:AbstractDirections})
+project(::ConvexSet, ::AbstractVector{Int}, ::Type{<:AbstractDirections})
 BoxDirections
 DiagDirections
 OctDirections
@@ -89,7 +89,7 @@ SphericalDirections
 CustomDirections
 ```
 
-See also `overapproximate(X::LazySet, dir::AbstractDirections)::HPolytope`.
+See also `overapproximate(X::ConvexSet, dir::AbstractDirections)::HPolytope`.
 
 ## Hausdorff distance
 

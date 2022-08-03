@@ -8,7 +8,7 @@ export UnionSet,
 # ========================================
 
 """
-    UnionSet{N, S1<:LazySet{N}, S2<:LazySet{N}}
+    UnionSet{N, S1<:ConvexSet{N}, S2<:ConvexSet{N}}
 
 Type that represents the set union of two sets.
 
@@ -21,12 +21,12 @@ Type that represents the set union of two sets.
 
 The union of convex sets is typically not convex.
 """
-struct UnionSet{N, S1<:LazySet{N}, S2<:LazySet{N}}
+struct UnionSet{N, S1<:ConvexSet{N}, S2<:ConvexSet{N}}
     X::S1
     Y::S2
 
     # default constructor with dimension check
-    function UnionSet(X::LazySet{N}, Y::LazySet{N}) where {N}
+    function UnionSet(X::ConvexSet{N}, Y::ConvexSet{N}) where {N}
         @assert dim(X) == dim(Y) "sets in a union must have the same dimension"
         return new{N, typeof(X), typeof(Y)}(X, Y)
     end
@@ -47,7 +47,7 @@ is_polyhedral(U::UnionSet) = is_polyhedral(U.X) && is_polyhedral(U.Y)
 
 Alias for `UnionSet`.
 """
-∪(X::LazySet, Y::LazySet) = UnionSet(X, Y)
+∪(X::ConvexSet, Y::ConvexSet) = UnionSet(X, Y)
 
 """
     swap(cup::UnionSet)

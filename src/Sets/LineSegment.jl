@@ -68,7 +68,7 @@ isoperationtype(::Type{<:LineSegment}) = false
 isconvextype(::Type{<:LineSegment}) = true
 
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """
@@ -263,7 +263,7 @@ function vertices_list(L::LineSegment)
 end
 
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """

@@ -8,11 +8,11 @@ CurrentModule = LazySets
 
 ```@docs
 Intersection
-∩(::LazySet, ::LazySet)
+∩(::ConvexSet, ::ConvexSet)
 dim(::Intersection)
 ρ(::AbstractVector, ::Intersection)
-ρ(::AbstractVector, ::Intersection{N, S1, S2}) where {N, S1<:LazySet{N}, S2<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}}
-ρ(::AbstractVector, ::Intersection{N, S1, S2}) where {N, S1<:LazySet{N}, S2<:AbstractPolyhedron{N}}
+ρ(::AbstractVector, ::Intersection{N, S1, S2}) where {N, S1<:ConvexSet{N}, S2<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}}
+ρ(::AbstractVector, ::Intersection{N, S1, S2}) where {N, S1<:ConvexSet{N}, S2<:AbstractPolyhedron{N}}
 ρ(::AbstractVector, ::Intersection{N, S1, S2}) where {N, S1<:AbstractPolyhedron{N}, S2<:AbstractPolyhedron{N}}
 σ(::AbstractVector, ::Intersection)
 isbounded(::Intersection)
@@ -31,12 +31,12 @@ plot_recipe(::Intersection{N}, ::N=zero(N), ::Int=40) where {N<:Real}
 RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::Intersection{N}, ::N=zero(N), ::Int=40) where {N}
 ```
 
-Inherited from [`LazySet`](@ref):
-* [`norm`](@ref norm(::LazySet, ::Real))
-* [`radius`](@ref radius(::LazySet, ::Real))
-* [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`an_element`](@ref an_element(::LazySet{N}) where {N})
-* [`singleton_list`](@ref singleton_list(::LazySet))
+Inherited from [`ConvexSet`](@ref):
+* [`norm`](@ref norm(::ConvexSet, ::Real))
+* [`radius`](@ref radius(::ConvexSet, ::Real))
+* [`diameter`](@ref diameter(::ConvexSet, ::Real))
+* [`an_element`](@ref an_element(::ConvexSet{N}) where {N})
+* [`singleton_list`](@ref singleton_list(::ConvexSet))
 
 ### Intersection cache
 
@@ -55,9 +55,9 @@ isbounded(::IntersectionArray)
 array(::IntersectionArray)
 constraints_list(::IntersectionArray{N}) where {N}
 ```
-Inherited from [`LazySet`](@ref):
-* [`norm`](@ref norm(::LazySet, ::Real))
-* [`radius`](@ref radius(::LazySet, ::Real))
-* [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`an_element`](@ref an_element(::LazySet{N}) where {N})
-* [`singleton_list`](@ref singleton_list(::LazySet))
+Inherited from [`ConvexSet`](@ref):
+* [`norm`](@ref norm(::ConvexSet, ::Real))
+* [`radius`](@ref radius(::ConvexSet, ::Real))
+* [`diameter`](@ref diameter(::ConvexSet, ::Real))
+* [`an_element`](@ref an_element(::ConvexSet{N}) where {N})
+* [`singleton_list`](@ref singleton_list(::ConvexSet))

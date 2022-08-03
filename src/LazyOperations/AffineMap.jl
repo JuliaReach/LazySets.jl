@@ -1,7 +1,7 @@
 export AffineMap
 
 """
-    AffineMap{N, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM},
+    AffineMap{N, S<:ConvexSet{N}, NM, MAT<:AbstractMatrix{NM},
               VN<:AbstractVector{NM}} <: AbstractAffineMap{N, S}
 
 Type that represents an affine transformation ``M⋅X ⊕ v`` of a set ``X``,
@@ -81,14 +81,14 @@ julia> AffineMap(A, EmptySet{Int}(2), b3)
 EmptySet{Int64}(2)
 ```
 """
-struct AffineMap{N, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM},
+struct AffineMap{N, S<:ConvexSet{N}, NM, MAT<:AbstractMatrix{NM},
                  VN<:AbstractVector{NM}} <: AbstractAffineMap{N, S}
     M::MAT
     X::S
     v::VN
 
     # default constructor with dimension match check
-    function AffineMap(M::MAT, X::S, v::VN) where {N, S<:LazySet{N}, NM,
+    function AffineMap(M::MAT, X::S, v::VN) where {N, S<:ConvexSet{N}, NM,
                                                    MAT<:AbstractMatrix{NM},
                                                    VN<:AbstractVector{NM}}
 
@@ -107,12 +107,12 @@ isoperationtype(::Type{<:AffineMap}) = true
 isconvextype(::Type{<:AffineMap{N, S}}) where {N, S} = isconvextype(S)
 
 # convenience constructor from a UniformScaling
-function AffineMap(M::UniformScaling, X::LazySet, v::AbstractVector)
+function AffineMap(M::UniformScaling, X::ConvexSet, v::AbstractVector)
     return AffineMap(M.λ, X, v)
 end
 
 # convenience constructor from a scalar
-function AffineMap(α::N, X::LazySet, v::AbstractVector) where {N<:Real}
+function AffineMap(α::N, X::ConvexSet, v::AbstractVector) where {N<:Real}
     if α == one(N)
         return Translation(X, v)
     end
@@ -163,7 +163,7 @@ function set(am::AffineMap)
 end
 
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 function concretize(am::AffineMap)

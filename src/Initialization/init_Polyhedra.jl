@@ -4,7 +4,7 @@ eval(quote
     using .Polyhedra: HRep, VRep,
                       removehredundancy!, removevredundancy!
 
-    function default_polyhedra_backend(P::LazySet{N}) where {N}
+    function default_polyhedra_backend(P::ConvexSet{N}) where {N}
         if LazySets.dim(P) == 1
             return default_polyhedra_backend_1d(N)
         else

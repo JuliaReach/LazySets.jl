@@ -16,21 +16,21 @@ CurrentModule = LazySets
 convert(::Type{HPOLYGON}, ::VPolygon) where {HPOLYGON<:AbstractHPolygon}
 convert(::Type{Hyperrectangle}, ::AbstractHyperrectangle)
 convert(::Type{Interval}, ::AbstractHyperrectangle)
-convert(::Type{Interval}, ::LazySet{N}) where {N<:Real}
+convert(::Type{Interval}, ::ConvexSet{N}) where {N<:Real}
 convert(::Type{Hyperrectangle}, cpa::CartesianProductArray{N, HN}) where {N<:Real, HN<:AbstractHyperrectangle{N}}
 convert(::Type{Hyperrectangle}, cpa::CartesianProductArray{N, Interval{N}}) where {N<:Real}
 convert(::Type{HPOLYGON}, ::AbstractHyperrectangle) where {HPOLYGON<:AbstractHPolygon}
 convert(::Type{HPOLYGON}, ::HPolytope{N, VN}) where {N<:Real, VN<:AbstractVector{N}, HPOLYGON<:AbstractHPolygon}
 convert(::Type{HPOLYGON}, ::AbstractSingleton{N}) where {N<:Real, HPOLYGON<:AbstractHPolygon}
 convert(::Type{HPOLYGON}, ::LineSegment{N}) where {N<:Real, HPOLYGON<:AbstractHPolygon}
-convert(::Type{HPOLYGON}, ::LazySet) where {HPOLYGON<:AbstractHPolygon}
+convert(::Type{HPOLYGON}, ::ConvexSet) where {HPOLYGON<:AbstractHPolygon}
 convert(::Type{HPolyhedron}, ::AbstractPolytope)
 convert(::Type{HPolytope}, ::AbstractHPolygon)
 convert(::Type{HPolytope}, ::AbstractHyperrectangle)
 convert(::Type{HPolytope}, ::AbstractPolytope)
 convert(::Type{HPolytope}, ::VPolytope)
 convert(::Type{VPolygon}, ::AbstractHPolygon)
-convert(::Type{VPolytope}, ::LazySet)
+convert(::Type{VPolytope}, ::ConvexSet)
 convert(::Type{VPolytope}, ::AbstractPolytope)
 convert(::Type{VPolytope}, ::HPolytope)
 convert(::Type{Zonotope}, ::AbstractZonotope)
@@ -50,7 +50,7 @@ convert(::Type{Interval}, ::Rectification{N, IN}) where {N<:Real, IN<:Interval{N
 convert(::Type{IntervalArithmetic.Interval}, ::Interval)
 convert(::Type{Interval}, ::IntervalArithmetic.Interval)
 convert(::Type{VPolytope}, ::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
-convert(::Type{VPolygon}, ::LazySet)
+convert(::Type{VPolygon}, ::ConvexSet)
 convert(::Type{MinkowskiSumArray}, ::MinkowskiSum{N, ST, MinkowskiSumArray{N, ST}}) where {N, ST}
 convert(::Type{Interval}, ::MinkowskiSum{N, IT, IT}) where {N, IT<:Interval{N}}
 convert(::Type{HParallelotope}, Z::AbstractZonotope{N}) where {N}

@@ -13,7 +13,7 @@ end
 
 # convert a lazysets to a polygonal overapproximation with the given tolerance,
 # and then to the function `poly` from Luxor.jl that receives array of points
-function luxify(X::LazySet; tol=1e-3)
+function luxify(X::ConvexSet; tol=1e-3)
 
     # ε-close outer polygonal approximation of X
     P = overapproximate(X, HPolygon, tol)
@@ -41,7 +41,7 @@ end
 
 # animate an array of sets using Javis.jl
 # TODO pass colors, eg. with default cols = Javis.distinguishable_colors(length(X))
-function Javis.animate(X::AbstractVector{ST}; kwargs...) where {N, ST<:LazySet{N}}
+function Javis.animate(X::AbstractVector{ST}; kwargs...) where {N, ST<:ConvexSet{N}}
 
     # size of the animation
     sz = get(kwargs, :size, (500, 500))

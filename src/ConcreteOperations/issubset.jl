@@ -1,7 +1,7 @@
 import Base.issubset
 
 """
-    issubset(X::LazySet, Y::LazySet, [witness]::Bool=false, args...)
+    issubset(X::ConvexSet, Y::ConvexSet, [witness]::Bool=false, args...)
 
 Alias for `⊆` (inclusion check).
 
@@ -25,7 +25,7 @@ For more documentation see `⊆`.
 function issubset end
 
 # this operation is forbidden, but it is a common error so we give a detailed error message
-function ⊆(::AbstractVector, ::LazySet)
+function ⊆(::AbstractVector, ::ConvexSet)
     throw(ArgumentError("cannot make an inclusion check if the left-hand side " *
           "is a vector; either wrap it as a set with one element, as in " *
           "`Singleton(v) ⊆ X`, or check for set membership, as in `v ∈ X` " *
@@ -33,16 +33,16 @@ function ⊆(::AbstractVector, ::LazySet)
 end
 
 # conversion for IA types
-⊆(X::LazySet, Y::IA.Interval) = ⊆(X, Interval(Y))
-⊆(X::IA.Interval, Y::LazySet) = ⊆(Interval(X), Y)
+⊆(X::ConvexSet, Y::IA.Interval) = ⊆(X, Interval(Y))
+⊆(X::IA.Interval, Y::ConvexSet) = ⊆(Interval(X), Y)
 
-⊆(X::LazySet, Y::IA.IntervalBox) = ⊆(X, convert(Hyperrectangle, Y))
-⊆(X::IA.IntervalBox, Y::LazySet) = ⊆(convert(Hyperrectangle, X), Y)
+⊆(X::ConvexSet, Y::IA.IntervalBox) = ⊆(X, convert(Hyperrectangle, Y))
+⊆(X::IA.IntervalBox, Y::ConvexSet) = ⊆(convert(Hyperrectangle, X), Y)
 
 # --- fall-back with constraints_list of rhs ---
 
 """
-    ⊆(X::LazySet, P::LazySet, [witness]::Bool=false)
+    ⊆(X::ConvexSet, P::ConvexSet, [witness]::Bool=false)
 
 Check whether a set is contained in a polyhedral set, and if not,
 optionally compute a witness.
@@ -68,7 +68,7 @@ We require that `constraints_list(P)` is available.
 
 We check inclusion of `X` in every constraint of `P`.
 """
-function ⊆(X::LazySet, P::LazySet, witness::Bool=false)
+function ⊆(X::ConvexSet, P::ConvexSet, witness::Bool=false)
     if applicable(constraints_list, P)
         return _issubset_constraints_list(X, P, witness)
     else
@@ -82,7 +82,7 @@ end
 
 
 """
-    ⊆(S::LazySet, H::AbstractHyperrectangle, [witness]::Bool=false)
+    ⊆(S::ConvexSet, H::AbstractHyperrectangle, [witness]::Bool=false)
 
 Check whether a convex set is contained in a hyperrectangular set, and if not,
 optionally compute a witness.
@@ -105,7 +105,7 @@ optionally compute a witness.
 ``S ⊆ H`` iff ``\\operatorname{ihull}(S) ⊆ H``, where  ``\\operatorname{ihull}``
 is the interval hull operator.
 """
-function ⊆(S::LazySet, H::AbstractHyperrectangle, witness::Bool=false)
+function ⊆(S::ConvexSet, H::AbstractHyperrectangle, witness::Bool=false)
     return _issubset_in_hyperrectangle(S, H, witness)
 end
 
@@ -177,7 +177,7 @@ end
 
 
 """
-    ⊆(P::AbstractPolytope, S::LazySet, [witness]::Bool=false;
+    ⊆(P::AbstractPolytope, S::ConvexSet, [witness]::Bool=false;
       algorithm=_default_issubset(P, S))
 
 Check whether a polytope is contained in a convex set, and if not, optionally
@@ -210,7 +210,7 @@ compute a witness.
 Since ``S`` is convex, ``P ⊆ S`` iff ``v_i ∈ S`` for all vertices ``v_i`` of
 ``P``.
 """
-function ⊆(P::AbstractPolytope, S::LazySet, witness::Bool=false;
+function ⊆(P::AbstractPolytope, S::ConvexSet, witness::Bool=false;
            algorithm=_default_issubset(P, S))
     @assert dim(P) == dim(S)
 
@@ -250,7 +250,7 @@ function _issubset_vertices_list(P, S, witness)
 end
 
 """
-    ⊆(X::LazySet, P::AbstractPolyhedron, [witness]::Bool=false)
+    ⊆(X::ConvexSet, P::AbstractPolyhedron, [witness]::Bool=false)
 
 Check whether a convex set is contained in a polyhedron, and if not, optionally
 compute a witness.
@@ -276,13 +276,13 @@ each direction of the constraints of ``P``.
 For witness generation, we use the support vector in the first direction where
 the above check fails.
 """
-function ⊆(X::LazySet, P::AbstractPolyhedron, witness::Bool=false)
+function ⊆(X::ConvexSet, P::AbstractPolyhedron, witness::Bool=false)
     return _issubset_constraints_list(X, P, witness)
 end
 
 # for documentation see
-# ⊆(X::LazySet, P::AbstractPolyhedron, witness::Bool=false)
-function _issubset_constraints_list(S::LazySet, P::LazySet, witness::Bool=false)
+# ⊆(X::ConvexSet, P::AbstractPolyhedron, witness::Bool=false)
+function _issubset_constraints_list(S::ConvexSet, P::ConvexSet, witness::Bool=false)
     @assert dim(S) == dim(P)
 
     @inbounds for H in constraints_list(P)
@@ -306,7 +306,7 @@ end
 # --- AbstractSingleton ---
 
 """
-    ⊆(S::AbstractSingleton, X::LazySet, [witness]::Bool=false)
+    ⊆(S::AbstractSingleton, X::ConvexSet, [witness]::Bool=false)
 
 Check whether a given set with a single value is contained in a convex set, and
 if not, optionally compute a witness.
@@ -324,7 +324,7 @@ if not, optionally compute a witness.
   * `(true, [])` iff ``S ⊆ X``
   * `(false, v)` iff ``S ⊈ X`` and ``v ∈ S \\setminus X``
 """
-function ⊆(S::AbstractSingleton, X::LazySet, witness::Bool=false)
+function ⊆(S::AbstractSingleton, X::ConvexSet, witness::Bool=false)
     return _issubset_singleton(S, X, witness)
 end
 
@@ -466,7 +466,7 @@ end
 
 
 """
-    ⊆(L::LineSegment, S::LazySet, witness::Bool=false)
+    ⊆(L::LineSegment, S::ConvexSet, witness::Bool=false)
 
 Check whether a line segment is contained in a convex set, and if not,
 optionally compute a witness.
@@ -489,8 +489,13 @@ optionally compute a witness.
 Since ``S`` is convex, ``L ⊆ S`` iff ``p ∈ S`` and ``q ∈ S``, where ``p, q`` are
 the end points of ``L``.
 """
+function ⊆(L::LineSegment, S::ConvexSet, witness::Bool=false)
+    return _issubset_line_segment(L, S, witness)
+end
+
 function ⊆(L::LineSegment, S::LazySet, witness::Bool=false)
-    return _issubset_line_segment(L, S)
+    throw(ArgumentError("this function requires the set type to be convex, but " *
+    "it is not the case for a $(typeof(S))"))
 end
 
 function _issubset_line_segment(L, S, witness)
@@ -724,7 +729,7 @@ end
 
 
 """
-    ⊆(∅::EmptySet, X::LazySet, witness::Bool=false)
+    ⊆(∅::EmptySet, X::ConvexSet, witness::Bool=false)
 
 Check whether an empty set is contained in another set.
 
@@ -739,7 +744,7 @@ Check whether an empty set is contained in another set.
 
 `true`.
 """
-function ⊆(∅::EmptySet, X::LazySet, witness::Bool=false)
+function ⊆(∅::EmptySet, X::ConvexSet, witness::Bool=false)
     return _issubset_emptyset(∅, X, witness)
 end
 
@@ -753,7 +758,7 @@ end
 ⊆(∅::EmptySet, H::AbstractHyperrectangle, witness::Bool=false) = _issubset_emptyset(∅, H, witness)
 
 """
-    ⊆(X::LazySet, ∅::EmptySet, [witness]::Bool=false)
+    ⊆(X::ConvexSet, ∅::EmptySet, [witness]::Bool=false)
 
 Check whether a set is contained in an empty set.
 
@@ -772,7 +777,7 @@ Check whether a set is contained in an empty set.
 We rely on `isempty(X)` for the emptiness check and on `an_element(X)` for
 witness production.
 """
-function ⊆(X::LazySet, ∅::EmptySet, witness::Bool=false)
+function ⊆(X::ConvexSet, ∅::EmptySet, witness::Bool=false)
     return _issubset_in_emptyset(X, ∅, witness)
 end
 
@@ -806,7 +811,7 @@ end
 
 
 """
-    ⊆(cup::UnionSet, X::LazySet, [witness]::Bool=false)
+    ⊆(cup::UnionSet, X::ConvexSet, [witness]::Bool=false)
 
 Check whether a union of two convex sets is contained in another set.
 
@@ -824,12 +829,12 @@ Check whether a union of two convex sets is contained in another set.
   * `(false, v)` iff ``\\text{cup} \\not\\subseteq X`` and
     ``v ∈ \\text{cup} \\setminus X``
 """
-function ⊆(cup::UnionSet, X::LazySet, witness::Bool=false)
+function ⊆(cup::UnionSet, X::ConvexSet, witness::Bool=false)
     return ⊆(UnionSetArray([cup.X, cup.Y]), X, witness) # TODO implement here
 end
 
 """
-    ⊆(cup::UnionSetArray, X::LazySet, [witness]::Bool=false)
+    ⊆(cup::UnionSetArray, X::ConvexSet, [witness]::Bool=false)
 
 Check whether a union of a finite number of convex sets is contained in another
 set.
@@ -848,7 +853,7 @@ set.
   * `(false, v)` iff ``\\text{cup} \\not\\subseteq X`` and
     ``v ∈ \\text{cup} \\setminus X``
 """
-function ⊆(cup::UnionSetArray, X::LazySet, witness::Bool=false)
+function ⊆(cup::UnionSetArray, X::ConvexSet, witness::Bool=false)
     result = true
     N = promote_type(eltype(cup), eltype(X))
     w = N[]
@@ -870,7 +875,7 @@ end
 
 
 """
-    ⊆(X::LazySet, U::Universe, [witness]::Bool=false)
+    ⊆(X::ConvexSet, U::Universe, [witness]::Bool=false)
 
 Check whether a convex set is contained in a universe.
 
@@ -885,7 +890,7 @@ Check whether a convex set is contained in a universe.
 * If `witness` option is deactivated: `true`
 * If `witness` option is activated: `(true, [])`
 """
-function ⊆(X::LazySet, U::Universe, witness::Bool=false)
+function ⊆(X::ConvexSet, U::Universe, witness::Bool=false)
     return _issubset_universe(X, U, witness)
 end
 
@@ -900,7 +905,7 @@ for ST in [AbstractPolytope, AbstractHyperrectangle, AbstractSingleton, LineSegm
 end
 
 """
-    ⊆(U::Universe, X::LazySet, [witness]::Bool=false)
+    ⊆(U::Universe, X::ConvexSet, [witness]::Bool=false)
 
 Check whether a universe is contained in another convex set, and otherwise
 optionally compute a witness.
@@ -923,7 +928,7 @@ optionally compute a witness.
 
 We fall back to `isuniversal(X)`.
 """
-function ⊆(U::Universe, X::LazySet, witness::Bool=false)
+function ⊆(U::Universe, X::ConvexSet, witness::Bool=false)
     return isuniversal(X, witness)
 end
 
@@ -942,7 +947,7 @@ end
 
 
 """
-    ⊆(X::LazySet, C::Complement, [witness]::Bool=false)
+    ⊆(X::ConvexSet, C::Complement, [witness]::Bool=false)
 
 Check whether a convex set is contained in the complement of another convex set,
 and otherwise optionally compute a witness.
@@ -969,7 +974,7 @@ We fall back to `isdisjoint(X, C.X)`, which can be justified as follows.
     X ⊆ Y^C ⟺ X ∩ Y = ∅
 ```
 """
-function ⊆(X::LazySet, C::Complement, witness::Bool=false)
+function ⊆(X::ConvexSet, C::Complement, witness::Bool=false)
     return isdisjoint(X, C.X, witness)
 end
 
@@ -1169,13 +1174,13 @@ function ⊆(Z::AbstractZonotope, H::AbstractHyperrectangle, witness::Bool=false
 end
 
 for ST in (AbstractZonotope, AbstractSingleton, LineSegment)
-    @eval function ⊆(Z::$(ST), C::CartesianProduct{N, <:LazySet, <:Universe}) where N
+    @eval function ⊆(Z::$(ST), C::CartesianProduct{N, <:ConvexSet, <:Universe}) where N
         X = C.X
         Zp = project(Z, 1:dim(X))
         return ⊆(Zp, X)
     end
 
-    @eval function ⊆(Z::$(ST), C::CartesianProduct{N, <:Universe, <:LazySet}) where N
+    @eval function ⊆(Z::$(ST), C::CartesianProduct{N, <:Universe, <:ConvexSet}) where N
         Y = C.Y
         Zp = project(Z, dim(C.X)+1:dim(C))
         return ⊆(Zp, Y)

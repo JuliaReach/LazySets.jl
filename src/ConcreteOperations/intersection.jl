@@ -2,7 +2,7 @@
 
 export intersection
 
-for T in [:LazySet, :AbstractSingleton, :Interval, :Universe, :LinearMap]
+for T in [:ConvexSet, :AbstractSingleton, :Interval, :Universe, :LinearMap]
     @eval begin
         function intersection(∅::EmptySet, X::$T)
             @assert dim(∅) == dim(X) "cannot take the intersection between a " *
@@ -27,7 +27,7 @@ function intersection(∅₁::EmptySet, ∅₂::EmptySet)
 end
 
 """
-    intersection(S::AbstractSingleton, X::LazySet)
+    intersection(S::AbstractSingleton, X::ConvexSet)
 
 Return the intersection of a singleton with another set.
 
@@ -41,7 +41,7 @@ Return the intersection of a singleton with another set.
 If the sets intersect, the result is `S`.
 Otherwise, the result is the empty set.
 """
-@commutative function intersection(S::AbstractSingleton, X::LazySet)
+@commutative function intersection(S::AbstractSingleton, X::ConvexSet)
     return _intersection_singleton(S, X)
 end
 
@@ -383,7 +383,7 @@ Otherwise the result is the singleton that describes the intersection.
 end
 
 """
-    intersection(X::Interval, Y::LazySet)
+    intersection(X::Interval, Y::ConvexSet)
 
 Compute the intersection of an interval and a convex set.
 
@@ -398,11 +398,11 @@ If the sets do not intersect, the result is the empty set.
 Otherwise the result is the interval that describes the intersection, which may
 be of type `Singleton` if the intersection is very small.
 """
-@commutative function intersection(X::Interval, Y::LazySet)
+@commutative function intersection(X::Interval, Y::ConvexSet)
     return _intersection_interval(X, Y)
 end
 
-function _intersection_interval(X::Interval, Y::LazySet)
+function _intersection_interval(X::Interval, Y::ConvexSet)
     N = promote_type(eltype(X), eltype(Y))
     lower = max(min(X), -ρ(N[-1], Y))
     upper = min(max(X), ρ(N[1], Y))
@@ -777,7 +777,7 @@ function intersection(P1::VPolygon, P2::VPolygon; apply_convex_hull::Bool=true)
 end
 
 """
-    intersection(cup::UnionSet, X::LazySet)
+    intersection(cup::UnionSet, X::ConvexSet)
 
 Return the intersection of a union of two convex sets and another convex set.
 
@@ -791,7 +791,7 @@ Return the intersection of a union of two convex sets and another convex set.
 The union of the pairwise intersections, expressed as a `UnionSet`.
 If one of those sets is empty, only the other set is returned.
 """
-@commutative function intersection(cup::UnionSet, X::LazySet)
+@commutative function intersection(cup::UnionSet, X::ConvexSet)
     return intersection(cup.X, X) ∪ intersection(cup.Y, X)
 end
 
@@ -800,7 +800,7 @@ end
     _intersection_singleton(S, cup)
 
 """
-    intersection(cup::UnionSetArray, X::LazySet)
+    intersection(cup::UnionSetArray, X::ConvexSet)
 
 Return the intersection of a union of a finite number of convex sets and another
 convex set.
@@ -814,7 +814,7 @@ convex set.
 
 The union of the pairwise intersections, expressed as a `UnionSetArray`.
 """
-@commutative function intersection(cup::UnionSetArray, X::LazySet)
+@commutative function intersection(cup::UnionSetArray, X::ConvexSet)
     return UnionSetArray([intersection(Y, X) for Y in array(cup)])
 end
 
@@ -823,7 +823,7 @@ end
     _intersection_singleton(S, cup)
 
 """
-    intersection(L::LinearMap, S::LazySet)
+    intersection(L::LinearMap, S::ConvexSet)
 
 Return the intersection of a lazy linear map and a convex set.
 
@@ -836,7 +836,7 @@ Return the intersection of a lazy linear map and a convex set.
 
 The polytope obtained by the intersection of `l.M * L.X` and `S`.
 """
-@commutative function intersection(L::LinearMap, S::LazySet)
+@commutative function intersection(L::LinearMap, S::ConvexSet)
     return intersection(linear_map(L.M, L.X), S)
 end
 
@@ -848,7 +848,7 @@ end
     _intersection_singleton(S, L)
 
 """
-    intersection(U::Universe, X::LazySet)
+    intersection(U::Universe, X::ConvexSet)
 
 Return the intersection of a universe and a convex set.
 
@@ -861,7 +861,7 @@ Return the intersection of a universe and a convex set.
 
 The set `X`.
 """
-@commutative function intersection(U::Universe, X::LazySet)
+@commutative function intersection(U::Universe, X::ConvexSet)
     return X
 end
 

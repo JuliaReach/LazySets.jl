@@ -98,7 +98,7 @@ HPolygon(A::AbstractMatrix,
              check_boundedness=check_boundedness, prune=prune)
 
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """

@@ -67,7 +67,7 @@ julia> LazySets.Approximations.uniform_partition(10, 6)
 end
 
 """
-    decompose(S::LazySet{N},
+    decompose(S::ConvexSet{N},
               partition::AbstractVector{<:AbstractVector{Int}},
               block_options
              ) where {N}
@@ -214,12 +214,12 @@ julia> typeof(res[1]), typeof(res[2])
 (Hyperrectangle{Float64, Vector{Float64}, Vector{Float64}}, HPolygon{Float64, Vector{Float64}})
 ```
 """
-function decompose(S::LazySet{N},
+function decompose(S::ConvexSet{N},
                    partition::AbstractVector{<:AbstractVector{Int}},
                    block_options
                   ) where {N}
     n = dim(S)
-    result = Vector{LazySet{N}}(undef, length(partition))
+    result = Vector{ConvexSet{N}}(undef, length(partition))
 
     @inbounds for (i, block) in enumerate(partition)
         result[i] = project(S, block, block_options[i], n)
@@ -228,9 +228,9 @@ function decompose(S::LazySet{N},
 end
 
 # convenience method with uniform block options
-function decompose(S::LazySet{N},
+function decompose(S::ConvexSet{N},
                    partition::AbstractVector{<:AbstractVector{Int}},
-                   block_options::Union{Type{<:LazySet},
+                   block_options::Union{Type{<:ConvexSet},
                                         Pair{<:UnionAll, <:Real},
                                         Real,
                                         Type{<:AbstractDirections},
@@ -238,7 +238,7 @@ function decompose(S::LazySet{N},
                                        }
                   ) where {N}
     n = dim(S)
-    result = Vector{LazySet{N}}(undef, length(partition))
+    result = Vector{ConvexSet{N}}(undef, length(partition))
 
     @inbounds for (i, block) in enumerate(partition)
         result[i] = project(S, block, block_options, n)
@@ -247,7 +247,7 @@ function decompose(S::LazySet{N},
 end
 
 # convenience method with uniform block size
-function decompose(S::LazySet, block_options; block_size::Int=1)
+function decompose(S::ConvexSet, block_options; block_size::Int=1)
     partition = uniform_partition(dim(S), block_size)
     return decompose(S, partition, block_options)
 end

@@ -5,7 +5,7 @@ export InverseLinearMap,
        constraints_list
 
 """
-    InverseLinearMap{N, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
+    InverseLinearMap{N, S<:ConvexSet{N}, NM, MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
 
 Given a linear transformation ``M``, this type represents the linear
 transformation ``M⁻¹⋅X`` of a set ``X`` without actually computing ``M⁻¹``.
@@ -54,12 +54,12 @@ julia> InverseLinearMap(A, ZeroSet{Int}(3))
 ZeroSet{Int64}(3)
 ```
 """
-struct InverseLinearMap{N, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
+struct InverseLinearMap{N, S<:ConvexSet{N}, NM, MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
     M::MAT
     X::S
 
     # default constructor with dimension match check
-    function InverseLinearMap(M::MAT, X::S; check_invertibility::Bool=false) where {N, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}}
+    function InverseLinearMap(M::MAT, X::S; check_invertibility::Bool=false) where {N, S<:ConvexSet{N}, NM, MAT<:AbstractMatrix{NM}}
         @assert dim(X) == size(M, 1) "a linear map of size $(size(M)) cannot " *
                                      "be applied to a set of dimension $(dim(X))"
         if check_invertibility
@@ -70,12 +70,12 @@ struct InverseLinearMap{N, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} <: Abstra
 end
 
 # convenience constructor from a UniformScaling
-function InverseLinearMap(M::UniformScaling{N}, X::LazySet; check_invertibility::Bool=false) where {N}
+function InverseLinearMap(M::UniformScaling{N}, X::ConvexSet; check_invertibility::Bool=false) where {N}
     return InverseLinearMap(M.λ, X, check_invertibility=check_invertibility)
 end
 
 # convenience constructor from a scalar
-function InverseLinearMap(α::N, X::LazySet; check_invertibility::Bool=false) where {N<:Real}
+function InverseLinearMap(α::N, X::ConvexSet; check_invertibility::Bool=false) where {N<:Real}
     if check_invertibility
         @assert !iszero(α) "the linear map is not invertible"
     end

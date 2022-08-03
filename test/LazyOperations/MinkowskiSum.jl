@@ -48,7 +48,7 @@ for N in [Float64, Rational{Int}, Float32]
     # center
     @test center(s) == N[0, 5]
 
-    # Sum of array of LazySet
+    # Sum of array of ConvexSet
     # 2-elements
     ms = MinkowskiSum(Singleton(N[1]), Singleton(N[2]))
     @test ρ(N[1], ms) == 3
@@ -110,14 +110,14 @@ for N in [Float64, Rational{Int}, Float32]
     @test LazySets.is_array_constructor(MinkowskiSumArray)
 
     # array getter
-    v = Vector{LazySet{N}}()
+    v = Vector{ConvexSet{N}}()
     @test array(MinkowskiSumArray(v)) ≡ v
 
     # constructor with size hint and type
     MinkowskiSumArray(10, N)
 
     # in-place modification
-    msa = MinkowskiSumArray(LazySet{N}[])
+    msa = MinkowskiSumArray(ConvexSet{N}[])
     @test MinkowskiSum!(b1, b1) isa MinkowskiSum && length(array(msa)) == 0
     res = MinkowskiSum!(b1, msa)
     @test res isa MinkowskiSumArray && length(array(msa)) == 1
@@ -206,8 +206,8 @@ for N in [Float64, Rational{Int}, Float32]
 
     # neutral element
     z = ZeroSet{N}(2)
-    msa = MinkowskiSumArray(LazySet{N}[])
-    cms = CachedMinkowskiSumArray(LazySet{N}[])
+    msa = MinkowskiSumArray(ConvexSet{N}[])
+    cms = CachedMinkowskiSumArray(ConvexSet{N}[])
     @test neutral(MinkowskiSum) == neutral(MinkowskiSumArray) ==
           neutral(CachedMinkowskiSumArray) == ZeroSet
     @test b1 + z == z + b1 == b1

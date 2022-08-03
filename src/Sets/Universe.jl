@@ -74,7 +74,7 @@ function constrained_dimensions(U::Universe)
 end
 
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """

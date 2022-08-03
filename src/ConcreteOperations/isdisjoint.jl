@@ -5,7 +5,7 @@ export isdisjoint, is_intersection_empty
 # --- disjointness check for general sets ---
 
 """
-    isdisjoint(X::LazySet, Y::LazySet, witness::Bool=false)
+    isdisjoint(X::ConvexSet, Y::ConvexSet, witness::Bool=false)
 
 Check whether two sets do not intersect, and otherwise optionally compute a
 witness.
@@ -30,7 +30,7 @@ This is a fallback implementation that computes the concrete intersection,
 
 A witness is constructed using the `an_element` implementation of the result.
 """
-function isdisjoint(X::LazySet, Y::LazySet, witness::Bool=false)
+function isdisjoint(X::ConvexSet, Y::ConvexSet, witness::Bool=false)
     cap = intersection(X, Y)
     empty_intersection = isempty(cap)
     if witness
@@ -49,11 +49,11 @@ end
 const is_intersection_empty = isdisjoint
 
 # conversion for IA types
-isdisjoint(X::LazySet, Y::IA.Interval) = isdisjoint(X, Interval(Y))
-isdisjoint(X::IA.Interval, Y::LazySet) = isdisjoint(Interval(X), Y)
+isdisjoint(X::ConvexSet, Y::IA.Interval) = isdisjoint(X, Interval(Y))
+isdisjoint(X::IA.Interval, Y::ConvexSet) = isdisjoint(Interval(X), Y)
 
-isdisjoint(X::LazySet, Y::IA.IntervalBox) = isdisjoint(X, convert(Hyperrectangle, Y))
-isdisjoint(X::IA.IntervalBox, Y::LazySet) = isdisjoint(convert(Hyperrectangle, X), Y)
+isdisjoint(X::ConvexSet, Y::IA.IntervalBox) = isdisjoint(X, convert(Hyperrectangle, Y))
+isdisjoint(X::IA.IntervalBox, Y::ConvexSet) = isdisjoint(convert(Hyperrectangle, X), Y)
 
 # --- AbstractHyperrectangle ---
 
@@ -175,7 +175,7 @@ end
 
 # common code for singletons
 @inline function isdisjoint_helper_singleton(
-        S::AbstractSingleton, X::LazySet, witness::Bool=false)
+        S::AbstractSingleton, X::ConvexSet, witness::Bool=false)
     empty_intersection = element(S) ∉ X
     if witness
         N = promote_type(eltype(S), eltype(X))
@@ -186,7 +186,7 @@ end
 end
 
 """
-    isdisjoint(X::LazySet, S::AbstractSingleton, witness::Bool=false)
+    isdisjoint(X::ConvexSet, S::AbstractSingleton, witness::Bool=false)
 
 Check whether a convex set and a singleton do not intersect, and otherwise
 optionally compute a witness.
@@ -209,7 +209,7 @@ optionally compute a witness.
 
 ``S ∩ X = ∅`` iff `element(S)` ``∉ X``.
 """
-@commutative function isdisjoint(X::LazySet, S::AbstractSingleton,
+@commutative function isdisjoint(X::ConvexSet, S::AbstractSingleton,
                                             witness::Bool=false)
     return isdisjoint_helper_singleton(S, X, witness)
 end
@@ -575,7 +575,7 @@ end
 
 @inline function isdisjoint_helper_hyperplane(
         hp::Union{Hyperplane, Line2D},
-        X::LazySet,
+        X::ConvexSet,
         witness::Bool=false
        )
     normal_hp = hp.a
@@ -606,7 +606,7 @@ end
 
 
 """
-    isdisjoint(X::LazySet,
+    isdisjoint(X::ConvexSet,
                           hp::Union{Hyperplane, Line2D},
                           [witness]::Bool=false
                          )
@@ -648,7 +648,7 @@ We follow
 [this algorithm](https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection#Algebraic_form)
 for the line-hyperplane intersection.
 """
-@commutative function isdisjoint(X::LazySet,
+@commutative function isdisjoint(X::ConvexSet,
                                             hp::Union{Hyperplane, Line2D},
                                             witness::Bool=false)
     return isdisjoint_helper_hyperplane(hp, X, witness)
@@ -696,7 +696,7 @@ end
 
 @inline function isdisjoint_helper_halfspace(
         hs::HalfSpace,
-        X::LazySet,
+        X::ConvexSet,
         witness::Bool=false
        )
     if !witness
@@ -712,7 +712,7 @@ end
 end
 
 """
-    isdisjoint(X::LazySet, hs::HalfSpace, [witness]::Bool=false)
+    isdisjoint(X::ConvexSet, hs::HalfSpace, [witness]::Bool=false)
 
 Check whether a compact set an a half-space do not intersect, and otherwise
 optionally compute a witness.
@@ -745,7 +745,7 @@ The support vector is thus also a witness.
 Optional keyword arguments can be passed to the `ρ` function. In particular, if
 `X` is a lazy intersection, options can be passed to the line search algorithm.
 """
-@commutative function isdisjoint(X::LazySet, hs::HalfSpace,
+@commutative function isdisjoint(X::ConvexSet, hs::HalfSpace,
                                             witness::Bool=false)
     return isdisjoint_helper_halfspace(hs, X, witness)
 end
@@ -853,7 +853,7 @@ end
 
 """
     isdisjoint(P::AbstractPolyhedron,
-                          X::LazySet,
+                          X::ConvexSet,
                           witness::Bool=false;
                           solver=nothing
                          )
@@ -896,7 +896,7 @@ With the sufficiency algorithm, this function may return `false` even in the cas
 where the intersection is empty. On the other hand, if the algorithm returns
 `true`, then it is guaranteed that the intersection is empty.
 """
-@commutative function isdisjoint(P::AbstractPolyhedron, X::LazySet,
+@commutative function isdisjoint(P::AbstractPolyhedron, X::ConvexSet,
                                             witness::Bool=false;
                                             solver=nothing, algorithm="exact")
     return _isdisjoint_polyhedron(P, X, witness;
@@ -904,7 +904,7 @@ where the intersection is empty. On the other hand, if the algorithm returns
 end
 
 function _isdisjoint_polyhedron(P::AbstractPolyhedron,
-                                           X::LazySet,
+                                           X::ConvexSet,
                                            witness::Bool=false;
                                            solver=nothing,
                                            algorithm="exact"
@@ -974,7 +974,7 @@ end
 
 
 """
-    isdisjoint(cup::UnionSet, X::LazySet, [witness]::Bool=false)
+    isdisjoint(cup::UnionSet, X::ConvexSet, [witness]::Bool=false)
 
 Check whether a union of two convex sets and another set do not intersect.
 
@@ -987,7 +987,7 @@ Check whether a union of two convex sets and another set do not intersect.
 
 `true` iff ``\\text{cup} ∩ X = ∅``.
 """
-@commutative function isdisjoint(cup::UnionSet, X::LazySet,
+@commutative function isdisjoint(cup::UnionSet, X::ConvexSet,
                                             witness::Bool=false)
     return isdisjoint(UnionSetArray([cup.X, cup.Y]), X, witness)
 end
@@ -1000,7 +1000,7 @@ function isdisjoint(cup1::UnionSet, cup2::UnionSet,
 end
 
 """
-    isdisjoint(cup::UnionSetArray, X::LazySet, [witness]::Bool=false)
+    isdisjoint(cup::UnionSetArray, X::ConvexSet, [witness]::Bool=false)
 
 Check whether a union of a finite number of convex sets and another set do not
 intersect.
@@ -1014,7 +1014,7 @@ intersect.
 
 `true` iff ``\\text{cup} ∩ X = ∅``.
 """
-@commutative function isdisjoint(cup::UnionSetArray, X::LazySet,
+@commutative function isdisjoint(cup::UnionSetArray, X::ConvexSet,
                                             witness::Bool=false)
     result = true
     N = promote_type(eltype(cup), eltype(X))
@@ -1064,7 +1064,7 @@ end
 
 
 """
-    isdisjoint(U::Universe, X::LazySet, [witness]::Bool=false)
+    isdisjoint(U::Universe, X::ConvexSet, [witness]::Bool=false)
 
 Check whether a universe and another set do not intersect.
 
@@ -1077,7 +1077,7 @@ Check whether a universe and another set do not intersect.
 
 `true` iff ``X ≠ ∅``.
 """
-@commutative function isdisjoint(U::Universe, X::LazySet,
+@commutative function isdisjoint(U::Universe, X::ConvexSet,
                                             witness::Bool=false)
     return _isdisjoint_universe(X, U, witness)
 end
@@ -1101,21 +1101,21 @@ end
 @commutative function isdisjoint(P::AbstractPolyhedron, U::Universe,
                                             witness::Bool=false)
     return invoke(isdisjoint,
-                  Tuple{Universe, LazySet, Bool},
+                  Tuple{Universe, ConvexSet, Bool},
                   U, P, witness)
 end
 
 @commutative function isdisjoint(S::AbstractSingleton, U::Universe,
                                             witness::Bool=false)
     return invoke(isdisjoint,
-                  Tuple{Universe, LazySet, Bool},
+                  Tuple{Universe, ConvexSet, Bool},
                   U, S, witness)
 end
 
 @commutative function isdisjoint(hs::HalfSpace, U::Universe,
                                             witness::Bool=false)
     return invoke(isdisjoint,
-                  Tuple{Universe, LazySet, Bool},
+                  Tuple{Universe, ConvexSet, Bool},
                   U, hs, witness)
 end
 
@@ -1123,7 +1123,7 @@ end
                                             hp::Union{Hyperplane, Line2D},
                                             witness::Bool=false)
     return invoke(isdisjoint,
-                  Tuple{Universe, LazySet, Bool},
+                  Tuple{Universe, ConvexSet, Bool},
                   U, hp, witness)
 end
 
@@ -1132,7 +1132,7 @@ end
 
 
 """
-    isdisjoint(C::Complement, X::LazySet, [witness]::Bool=false)
+    isdisjoint(C::Complement, X::ConvexSet, [witness]::Bool=false)
 
 Check whether the complement of a convex set and another set do not intersect.
 
@@ -1156,7 +1156,7 @@ We fall back to `X ⊆ C.X`, which can be justified as follows:
     X ∩ Y^C = ∅ ⟺ X ⊆ Y
 ```
 """
-@commutative function isdisjoint(C::Complement, X::LazySet,
+@commutative function isdisjoint(C::Complement, X::ConvexSet,
                                             witness::Bool=false)
     return ⊆(X, C.X, witness)
 end
@@ -1300,7 +1300,7 @@ We perform these checks sequentially.
     return witness ? (false, w) : false
 end
 
-@commutative function isdisjoint(::EmptySet, ::LazySet)
+@commutative function isdisjoint(::EmptySet, ::ConvexSet)
     return true
 end
 
@@ -1375,13 +1375,13 @@ end
 end
 
 for ST in (AbstractZonotope, AbstractSingleton)
-    @eval @commutative function isdisjoint(C::CartesianProduct{N, <:LazySet, <:Universe}, Z::$(ST)) where N
+    @eval @commutative function isdisjoint(C::CartesianProduct{N, <:ConvexSet, <:Universe}, Z::$(ST)) where N
         X = C.X
         Zp = project(Z, 1:dim(X))
         return isdisjoint(X, Zp)
     end
 
-    @eval @commutative function isdisjoint(C::CartesianProduct{N, <:Universe, <:LazySet}, Z::$(ST)) where N
+    @eval @commutative function isdisjoint(C::CartesianProduct{N, <:Universe, <:ConvexSet}, Z::$(ST)) where N
         Y = C.Y
         Zp = project(Z, dim(C.X)+1:dim(C))
         return isdisjoint(Y, Zp)

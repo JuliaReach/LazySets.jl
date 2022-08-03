@@ -1,5 +1,5 @@
 """
-    AbstractPolynomialZonotope{N} <: LazySet{N}
+    AbstractPolynomialZonotope{N} <: ConvexSet{N}
 
 Abstract type for polynomial zonotope sets.
 

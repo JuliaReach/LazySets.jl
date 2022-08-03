@@ -33,7 +33,7 @@ This function can also print all intermediate results to STDOUT.
 ### Examples
 
 ```jldoctest
-julia> check_method_implementation(LazySet, σ,
+julia> check_method_implementation(ConvexSet, σ,
         Function[S -> (AbstractVector{Float64}, S)])
 true
 ```

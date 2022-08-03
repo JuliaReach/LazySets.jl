@@ -43,7 +43,7 @@ function reach_hybrid(As, Ts, init, δ, μ, T, max_order, instant_transitions)
     queue = Vector{Tuple{Zonotope, Integer, Float64}}(undef, 1)
     queue[1] = (init[1], init[2], 0.0)
 
-    res = Tuple{LazySet, Int}[]
+    res = Tuple{ConvexSet, Int}[]
     while !isempty(queue)
         init, loc, t = pop!(queue)
         println("currently in location $loc at time $t")
@@ -92,7 +92,7 @@ function reach_continuous(A, X0, δ, μ, T, max_order)
     N = floor(Int, T/δ)
 
     # preallocate array
-    R = Vector{LazySet}(undef, N)
+    R = Vector{ConvexSet}(undef, N)
     if N == 0
         return R
     end

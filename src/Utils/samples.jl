@@ -1,5 +1,5 @@
 # ========================
-# Sampling from a LazySet
+# Sampling from a ConvexSet
 # ========================
 
 """
@@ -16,7 +16,7 @@ set to be sampled, and the third argument is the sampler instance.
 abstract type AbstractSampler end
 
 """
-    sample(X::LazySet{N}, num_samples::Int;
+    sample(X::ConvexSet{N}, num_samples::Int;
            [sampler]=_default_sampler(X),
            [rng]::AbstractRNG=GLOBAL_RNG,
            [seed]::Union{Int, Nothing}=nothing,
@@ -52,7 +52,7 @@ If `include_vertices == true`, we include all vertices computed with `vertices`.
 Alternatively if a number ``k`` is passed, we plot the first ``k`` vertices
 returned by `vertices(X)`.
 """
-function sample(X::LazySet{N}, num_samples::Int;
+function sample(X::ConvexSet{N}, num_samples::Int;
                 sampler=_default_sampler(X),
                 rng::AbstractRNG=GLOBAL_RNG,
                 seed::Union{Int, Nothing}=nothing,
@@ -77,12 +77,12 @@ function sample(X::LazySet{N}, num_samples::Int;
 end
 
 # without argument, returns a single element (instead of a singleton)
-function sample(X::LazySet; kwargs...)
+function sample(X::ConvexSet; kwargs...)
     return sample(X, 1; kwargs...)[1]
 end
 
 # default sampling for LazySets
-_default_sampler(::LazySet) = CombinedSampler()
+_default_sampler(::ConvexSet) = CombinedSampler()
 _default_sampler(::LineSegment{N}) where {N} =
     RejectionSampler(DefaultUniform(zero(N), one(N)), true, Inf)
 _default_sampler(::HalfSpace) = HalfSpaceSampler()
@@ -167,7 +167,7 @@ function RejectionSampler(distr::DefaultUniform; tight::Bool=false, maxiter=Inf)
     return RejectionSampler([distr], tight, maxiter)
 end
 
-function RejectionSampler(X::LazySet, distribution=DefaultUniform;
+function RejectionSampler(X::ConvexSet, distribution=DefaultUniform;
                           tight::Bool=false, maxiter=Inf)
     # define the support of the distribution as the smallest box enclosing X
     n = dim(X)
@@ -186,7 +186,7 @@ function RejectionSampler(X::AbstractHyperrectangle)
     return RejectionSampler(distr, true, Inf)
 end
 
-function sample!(D::Vector{VN}, X::LazySet, sampler::RejectionSampler;
+function sample!(D::Vector{VN}, X::ConvexSet, sampler::RejectionSampler;
                  rng::AbstractRNG=GLOBAL_RNG,
                  seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
     U = sampler.distribution
@@ -271,7 +271,7 @@ end
 
 RandomWalkSampler() = RandomWalkSampler(true)
 
-function sample!(D::Vector{VN}, X::LazySet, sampler::RandomWalkSampler;
+function sample!(D::Vector{VN}, X::ConvexSet, sampler::RandomWalkSampler;
                  rng::AbstractRNG=GLOBAL_RNG,
                  seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
     rng = reseed(rng, seed)
@@ -321,7 +321,7 @@ struct CombinedSampler <: AbstractSampler
     #
 end
 
-function sample!(D::Vector{VN}, X::LazySet, sampler::CombinedSampler;
+function sample!(D::Vector{VN}, X::ConvexSet, sampler::CombinedSampler;
                  rng::AbstractRNG=GLOBAL_RNG,
                  seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
     # try rejection sampling 100 times
@@ -379,7 +379,7 @@ struct FaceSampler <: AbstractSampler
     dim::Int
 end
 
-function sample!(D::Vector{VN}, X::LazySet, sampler::FaceSampler;
+function sample!(D::Vector{VN}, X::ConvexSet, sampler::FaceSampler;
                  rng::AbstractRNG=GLOBAL_RNG,
                  seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
     n = dim(X)

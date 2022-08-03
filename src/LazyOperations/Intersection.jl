@@ -44,7 +44,7 @@ function set_isempty!(c::IntersectionCache, isempty::Bool)
 end
 
 """
-    Intersection{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
+    Intersection{N, S1<:ConvexSet{N}, S2<:ConvexSet{N}} <: ConvexSet{N}
 
 Type that represents the intersection of two sets.
 
@@ -95,13 +95,13 @@ julia> W = intersection(X, Y)
 Hyperrectangle{Float64, Vector{Float64}, Vector{Float64}}([0.375, 0.0], [0.125, 0.5])
 ```
 """
-struct Intersection{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
+struct Intersection{N, S1<:ConvexSet{N}, S2<:ConvexSet{N}} <: ConvexSet{N}
     X::S1
     Y::S2
     cache::IntersectionCache
 
     # default constructor with dimension check
-    function Intersection(X::LazySet{N}, Y::LazySet{N}; cache::IntersectionCache=IntersectionCache()) where {N}
+    function Intersection(X::ConvexSet{N}, Y::ConvexSet{N}; cache::IntersectionCache=IntersectionCache()) where {N}
         @assert dim(X) == dim(Y) "sets in an intersection must have the same dimension"
         return new{N, typeof(X), typeof(Y)}(X, Y, cache)
     end
@@ -122,7 +122,7 @@ is_polyhedral(cap::Intersection) = is_polyhedral(cap.X) && is_polyhedral(cap.Y)
 
 Alias for `Intersection`.
 """
-∩(X::LazySet, Y::LazySet) = Intersection(X, Y)
+∩(X::ConvexSet, Y::ConvexSet) = Intersection(X, Y)
 
 # --- simplifications ---
 
@@ -189,7 +189,7 @@ function swap(cap::Intersection)
 end
 
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """
@@ -257,7 +257,7 @@ function ρ_helper(d::AbstractVector{M},
                   cap::Intersection{N, S1,
                                     <:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}},
                   algorithm::String;
-                  kwargs...) where {M, N, S1<:LazySet{N}}
+                  kwargs...) where {M, N, S1<:ConvexSet{N}}
     if !isbounded(cap.X)
         raise(ArgumentError("the first set in the intersection must be bounded"))
     end
@@ -315,7 +315,7 @@ end
     ρ(d::AbstractVector,
       cap::Intersection{N, S1, S2};
       algorithm::String="line_search",
-      kwargs...) where {N, S1<:LazySet{N}, S2<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}}
+      kwargs...) where {N, S1<:ConvexSet{N}, S2<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}}
 
 Return the support function of the intersection of a compact set and a
 half-space/hyperplane/line in a given direction.
@@ -374,7 +374,7 @@ For additional information we refer to:
 function ρ(d::AbstractVector,
            cap::Intersection{N, S1, S2};
            algorithm::String="line_search",
-           kwargs...) where {N, S1<:LazySet{N}, S2<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}}
+           kwargs...) where {N, S1<:ConvexSet{N}, S2<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}}
     return ρ_helper(d, cap, algorithm; kwargs...)
 end
 
@@ -382,13 +382,13 @@ end
 function ρ(d::AbstractVector,
            cap::Intersection{N, S1, S2};
            algorithm::String="line_search",
-           kwargs...) where {N, S1<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}, S2<:LazySet{N}}
+           kwargs...) where {N, S1<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}, S2<:ConvexSet{N}}
     return ρ_helper(d, swap(cap), algorithm; kwargs...)
 end
 
 """
     ρ(d::AbstractVector, cap::Intersection{N, S1, S2};
-      kwargs...) where {N, S1<:LazySet{N}, S2<:AbstractPolyhedron{N}}
+      kwargs...) where {N, S1<:ConvexSet{N}, S2<:AbstractPolyhedron{N}}
 
 Return an upper bound on the support function of the intersection between a
 compact set and a polyhedron along a given direction.
@@ -419,13 +419,13 @@ Functions](https://www.sciencedirect.com/science/article/pii/S1474667015371809).
 This method relies on the `constraints_list` of the polyhedron.
 """
 function ρ(d::AbstractVector, cap::Intersection{N, S1, S2};
-           kwargs...) where {N, S1<:LazySet{N}, S2<:AbstractPolyhedron{N}}
+           kwargs...) where {N, S1<:ConvexSet{N}, S2<:AbstractPolyhedron{N}}
     return ρ_helper(d, cap; kwargs...)
 end
 
 # symmetric method
 function ρ(d::AbstractVector, cap::Intersection{N, S1, S2}; kwargs...
-          ) where {N, S1<:AbstractPolyhedron{N}, S2<:LazySet{N}}
+          ) where {N, S1<:AbstractPolyhedron{N}, S2<:ConvexSet{N}}
     return ρ_helper(d, swap(cap); kwargs...)
 end
 
@@ -436,7 +436,7 @@ function ρ(d::AbstractVector, cap::Intersection{N, S1, S2}; kwargs...
 end
 
 function ρ_helper(d::AbstractVector, cap::Intersection{N, S1, S2}; kwargs...
-                 ) where {N, S1<:LazySet{N}, S2<:AbstractPolyhedron{N}}
+                 ) where {N, S1<:ConvexSet{N}, S2<:AbstractPolyhedron{N}}
     if !use_precise_ρ(cap)
         use_simple_method = true
     else
@@ -805,7 +805,7 @@ julia> v[1]
 ```
 """
 function _line_search(ℓ, X::S, H::Union{<:HalfSpace, <:Hyperplane, <:Line2D};
-                      kwargs...) where {S<:LazySet}
+                      kwargs...) where {S<:ConvexSet}
     if !isconvextype(S)
         raise(ArgumentError("the first set in the intersection must be convex"))
     end
@@ -905,7 +905,7 @@ function _projection(ℓ, X::S, H::Union{Hyperplane{N}, Line2D{N}};
                      lazy_linear_map=false,
                      lazy_2d_intersection=true,
                      algorithm_2d_intersection=nothing,
-                     kwargs...) where {N, S<:LazySet}
+                     kwargs...) where {N, S<:ConvexSet}
     if !isconvextype(S)
         raise(ArgumentError("the first set in the intersection must be convex"))
     end
@@ -932,7 +932,7 @@ end
 """
     get_constrained_lowdimset(cpa::CartesianProductArray{N, S},
                               P::AbstractPolyhedron{N}
-                              ) where {N, S<:LazySet{N}}
+                              ) where {N, S<:ConvexSet{N}}
 
 Preprocessing step for the intersection between a Cartesian product array and a
 polyhedron.
@@ -958,7 +958,7 @@ the original `cpa`
 """
 function get_constrained_lowdimset(cpa::CartesianProductArray{N, S},
                                    P::AbstractPolyhedron{N}
-                                  ) where {N, S<:LazySet{N}}
+                                  ) where {N, S<:ConvexSet{N}}
 
     if isbounded(P)
         blocks, non_empty_length = block_to_dimension_indices(cpa)

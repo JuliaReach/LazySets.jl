@@ -83,7 +83,7 @@ function _normalize_halfspace(H, p=2)
     return a, b
 end
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """
@@ -522,7 +522,7 @@ end
 # TODO: after #2032, #2041 remove use of this function
 _normal_Vector(c::LinearConstraint) = LinearConstraint(convert(Vector, c.a), c.b)
 _normal_Vector(C::Vector{<:LinearConstraint}) = [_normal_Vector(c) for c in C]
-_normal_Vector(P::LazySet) = _normal_Vector(constraints_list(P))
+_normal_Vector(P::ConvexSet) = _normal_Vector(constraints_list(P))
 
 # ============================================
 # Functionality that requires Symbolics

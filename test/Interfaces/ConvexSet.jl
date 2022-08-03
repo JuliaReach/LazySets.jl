@@ -1,4 +1,4 @@
-for ST in LazySets.subtypes(LazySet, true)
+for ST in LazySets.subtypes(ConvexSet, true)
     # check that certain methods are implemented
     isconvextype(ST)
     isoperationtype(ST)

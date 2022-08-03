@@ -15,18 +15,18 @@ Struct that is used as a cache for [`Rectification`](@ref)s.
                           computations for the cached set
 """
 mutable struct RectificationCache{N}
-    set::Union{LazySet{N}, UnionSetArray{N}, Nothing}
+    set::Union{ConvexSet{N}, UnionSetArray{N}, Nothing}
     use_support_vector::Bool
 
     # constructor without a set
     RectificationCache{N}(::Nothing) where {N} = new{N}(nothing, false)
 
     # constructor with a set
-    RectificationCache{N}(set::LazySet{N}) where {N} = new{N}(set, true)
+    RectificationCache{N}(set::ConvexSet{N}) where {N} = new{N}(set, true)
 end
 
 """
-    Rectification{N, S<:LazySet{N}}
+    Rectification{N, S<:ConvexSet{N}}
 
 Type that represents the rectification of a set.
 
@@ -88,12 +88,12 @@ containing the origin.
 The rectification of ``X ∩ O_2`` and ``X ∩ O_4`` both result in flat
 ``1``-dimensional line segments on the corresponding hyperplane of ``O_1``.
 """
-struct Rectification{N, S<:LazySet{N}}
+struct Rectification{N, S<:ConvexSet{N}}
     X::S
     cache::RectificationCache{N}
 
     # default constructor that initializes cache
-    function Rectification(X::S) where {N, S<:LazySet{N}}
+    function Rectification(X::S) where {N, S<:ConvexSet{N}}
         if X isa AbstractHyperrectangle || X isa CartesianProduct ||
                 X isa CartesianProductArray || X isa EmptySet
             # set types with efficient support-vector computations
@@ -113,7 +113,7 @@ end
 isoperationtype(::Type{<:Rectification}) = true
 isconvextype(::Type{<:Rectification}) = false
 
-# redundant if Rectification <: LazySet
+# redundant if Rectification <: ConvexSet
 eltype(::Type{<:Rectification{N}}) where {N} = N
 eltype(r::Rectification) = eltype(typeof(r))
 
@@ -543,7 +543,7 @@ end
 
 # identify dimensions where set is negative and mixed (positive/negative) and
 # also fill a bit vector for mixed dimensions
-function compute_negative_and_mixed_dimensions(X::LazySet{N}, n) where {N}
+function compute_negative_and_mixed_dimensions(X::ConvexSet{N}, n) where {N}
     negative_dimensions = Vector{Int}()
     mixed_dimensions = Vector{Int}()
     mixed_dimensions_enumeration = BitArray(undef, 0)
@@ -574,7 +574,7 @@ function construct_constraints(indices, bits, n, ::Type{N}) where {N}
 end
 
 # project negative dimensions to zero (see `to_union_of_projections`)
-function construct_projection(set::LazySet{N}, negative_dimensions,
+function construct_projection(set::ConvexSet{N}, negative_dimensions,
                               mixed_dimensions, mixed_dimensions_enumeration, n
                              ) where {N}
     # initialize negative indices to zero and all other dimensions to one

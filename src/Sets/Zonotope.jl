@@ -235,7 +235,7 @@ Integer representing the number of generators.
 ngens(Z::Zonotope) = size(Z.generators, 2)
 
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """

@@ -256,7 +256,7 @@ function vertices_list(P::VPolygon)
 end
 
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """

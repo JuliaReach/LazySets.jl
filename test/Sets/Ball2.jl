@@ -94,7 +94,7 @@ for N in [Float64, Float32]
     subset, point = ⊆(b1, b3, true)
     @test b1 ⊈ b3 && !subset && point ∈ b1 && point ∉ b3
     @test b3 ⊆ b1 && ⊆(b3, b1, true)[1]
-    # inclusion of a Ball2 in a polyhedral LazySet
+    # inclusion of a Ball2 in a polyhedral ConvexSet
     b = Ball2(zeros(N, 4), N(1))
     p = BallInf(zeros(N, 2), N(1)) × BallInf(zeros(N, 2), N(1))
     subset, point = ⊆(b, p, true)

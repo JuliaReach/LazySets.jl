@@ -27,11 +27,11 @@ remove_redundant_constraints!(::HPoly{N}) where {N}
 LazySets._isbounded_stiemke(::HPolyhedron{N}) where {N}
 ```
 
-Inherited from [`LazySet`](@ref):
-* [`norm`](@ref norm(::LazySet, ::Real))
-* [`radius`](@ref radius(::LazySet, ::Real))
-* [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`singleton_list`](@ref singleton_list(::LazySet))
+Inherited from [`ConvexSet`](@ref):
+* [`norm`](@ref norm(::ConvexSet, ::Real))
+* [`radius`](@ref radius(::ConvexSet, ::Real))
+* [`diameter`](@ref diameter(::ConvexSet, ::Real))
+* [`singleton_list`](@ref singleton_list(::ConvexSet))
 
 Inherited from [`AbstractPolyhedron`](@ref):
 * [`∈`](@ref ∈(::AbstractVector, ::AbstractPolyhedron))

@@ -13,10 +13,10 @@ rand(::Type{Ballp})
 translate(::Ballp, ::AbstractVector)
 translate!(::Ballp, ::AbstractVector)
 ```
-Inherited from [`LazySet`](@ref):
-* [`norm`](@ref norm(::LazySet, ::Real))
-* [`radius`](@ref radius(::LazySet, ::Real))
-* [`diameter`](@ref diameter(::LazySet, ::Real))
+Inherited from [`ConvexSet`](@ref):
+* [`norm`](@ref norm(::ConvexSet, ::Real))
+* [`radius`](@ref radius(::ConvexSet, ::Real))
+* [`diameter`](@ref diameter(::ConvexSet, ::Real))
 
 Inherited from [`AbstractCentrallySymmetric`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetric))

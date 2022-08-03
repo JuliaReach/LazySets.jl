@@ -71,7 +71,7 @@ function element(S::Singleton, i::Int)
 end
 
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 
 """

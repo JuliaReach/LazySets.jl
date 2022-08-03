@@ -7,7 +7,7 @@ export Translation,
        center
 
 """
-    Translation{N, S<:LazySet{N}, VN<:AbstractVector{N}} <: AbstractAffineMap{N, S}
+    Translation{N, S<:ConvexSet{N}, VN<:AbstractVector{N}} <: AbstractAffineMap{N, S}
 
 Type that represents a lazy translation.
 
@@ -146,12 +146,12 @@ julia> constraints_list(tr)
  HalfSpace{Float64, LazySets.Arrays.SingleEntryVector{Float64}}([0.0, 0.0, -1.0], -1.0)
 ```
 """
-struct Translation{N, S<:LazySet{N}, VN<:AbstractVector{N}} <: AbstractAffineMap{N, S}
+struct Translation{N, S<:ConvexSet{N}, VN<:AbstractVector{N}} <: AbstractAffineMap{N, S}
     X::S
     v::VN
 
     # default constructor with dimension check
-    function Translation(X::S, v::VN) where {N, VN<:AbstractVector{N}, S<:LazySet{N}}
+    function Translation(X::S, v::VN) where {N, VN<:AbstractVector{N}, S<:ConvexSet{N}}
         @assert dim(X) == length(v) "cannot create a translation of a set of " *
             "dimension $(dim(X)) along a vector of length $(length(v))"
 
@@ -166,7 +166,7 @@ isconvextype(::Type{Translation{N, S, VN}}) where {N, S, VN} = isconvextype(S)
 Translation(tr::Translation{N}, v::AbstractVector{N}) where {N} = Translation(tr.X, tr.v + v)
 
 """
-    +(X::LazySet, v::AbstractVector)
+    +(X::ConvexSet, v::AbstractVector)
 
 Convenience constructor for a translation.
 
@@ -179,20 +179,20 @@ Convenience constructor for a translation.
 
 The symbolic translation of ``X`` along vector ``v``.
 """
-+(X::LazySet, v::AbstractVector) = Translation(X, v)
++(X::ConvexSet, v::AbstractVector) = Translation(X, v)
 
 # translation from the left
-+(v::AbstractVector, X::LazySet) = Translation(X, v)
++(v::AbstractVector, X::ConvexSet) = Translation(X, v)
 
 """
-    ⊕(X::LazySet, v::AbstractVector)
+    ⊕(X::ConvexSet, v::AbstractVector)
 
 Unicode alias constructor ⊕ (`oplus`) for the lazy translation operator.
 """
-⊕(X::LazySet, v::AbstractVector) = Translation(X, v)
+⊕(X::ConvexSet, v::AbstractVector) = Translation(X, v)
 
 # translation from the left
-⊕(v::AbstractVector, X::LazySet) = Translation(X, v)
+⊕(v::AbstractVector, X::ConvexSet) = Translation(X, v)
 
 # the translation of a lazy linear map is a (lazy) affine map
 Translation(lm::LinearMap, v::AbstractVector) = AffineMap(lm.M, lm.X, v)
@@ -218,7 +218,7 @@ function set(tr::Translation)
 end
 
 # ============================
-# LazySet interface functions
+# ConvexSet interface functions
 # ============================
 
 """
@@ -312,7 +312,7 @@ function constraints_list(tr::Translation)
     return _constraints_list_translation(tr.X, tr.v)
 end
 
-function _constraints_list_translation(X::LazySet, v::AbstractVector)
+function _constraints_list_translation(X::ConvexSet, v::AbstractVector)
     @assert applicable(constraints_list, X) "this function requires that " *
         "the `constraints_list` method is applicable"
 

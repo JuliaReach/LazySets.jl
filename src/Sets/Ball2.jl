@@ -88,7 +88,7 @@ function center(B::Ball2)
 end
 
 
-# --- LazySet interface functions ---
+# --- ConvexSet interface functions ---
 
 """
     ρ(d::AbstractVector, B::Ball2)

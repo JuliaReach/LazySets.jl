@@ -19,7 +19,7 @@ end end  # quote / function load_makie()
 
 
 # helper function for 3D plotting; converts S to a polytope in H-representation
-function _plot3d_helper(S::LazySet, backend)
+function _plot3d_helper(S::ConvexSet, backend)
     @assert dim(S) <= 3 "plot3d can only be used to plot sets of dimension three (or lower); " *
         "but the given set is $(dim(S))-dimensional"
 
@@ -36,7 +36,7 @@ function _plot3d_helper(S::LazySet, backend)
 end
 
 """
-    plot3d(S::LazySet; backend=default_polyhedra_backend(S),
+    plot3d(S::ConvexSet; backend=default_polyhedra_backend(S),
            alpha=1.0, color=:blue, colormap=:viridis, colorrange=nothing,
            interpolate=false, linewidth=1, overdraw=false, shading=true,
            transparency=true, visible=true)
@@ -115,7 +115,7 @@ julia> plot3d(10. * rand(Hyperrectangle, dim=3))
 julia> plot3d!(10. * rand(Hyperrectangle, dim=3), color=:red)
 ```
 """
-function plot3d(S::LazySet; backend=default_polyhedra_backend(S),
+function plot3d(S::ConvexSet; backend=default_polyhedra_backend(S),
                 alpha=1.0, color=:blue, colormap=:viridis, colorrange=nothing, interpolate=false,
                 linewidth=1, overdraw=false, shading=true, transparency=true, visible=true)
     require(:Makie; fun_name="plot3d")
@@ -130,7 +130,7 @@ function plot3d(S::LazySet; backend=default_polyhedra_backend(S),
 end
 
 """
-    plot3d!(S::LazySet; backend=default_polyhedra_backend(S),
+    plot3d!(S::ConvexSet; backend=default_polyhedra_backend(S),
             alpha=1.0, color=:blue, colormap=:viridis, colorrange=nothing, interpolate=false,
             linewidth=1, overdraw=false, shading=true, transparency=true, visible=true)
 
@@ -146,7 +146,7 @@ documentation](http://makie.juliaplots.org/stable/plot-attributes).
 
 See the documentation of `plot3d` for examples.
 """
-function plot3d!(S::LazySet; backend=default_polyhedra_backend(S),
+function plot3d!(S::ConvexSet; backend=default_polyhedra_backend(S),
                 alpha=1.0, color=:blue, colormap=:viridis, colorrange=nothing, interpolate=false,
                 linewidth=1, overdraw=false, shading=true, transparency=true, visible=true)
     require(:Makie; fun_name="plot3d!")
