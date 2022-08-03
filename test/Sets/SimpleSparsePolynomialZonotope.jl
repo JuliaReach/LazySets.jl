@@ -95,8 +95,8 @@ for Z in [rand(Zonotope), rand(Hyperrectangle)]
     @test expmat(ZS) == I
 end
 
-SPZ = SparsePolynomialZonotope([4., 4], [2. 1 2;0 2 2], [1.; 0], [1 0 3;0 1 1])
+SPZ = SparsePolynomialZonotope([4., 4], [2. 1 2;0 2 2], hcat([1.; 0]), [1 0 3;0 1 1])
 SSPZ = convert(SimpleSparsePolynomialZonotope, SPZ)
 @test center(SSPZ) == center(SPZ)
-@test genmat(SSPZ) == genmat(SPZ)
+@test genmat(SSPZ) == hcat(SPZ.G, SPZ.GI)
 @test expmat(SSPZ) == [1 0 3 0;0 1 1 0;0 0 0 1]

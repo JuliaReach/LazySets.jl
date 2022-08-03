@@ -32,7 +32,7 @@ end
 SSPZ = SimpleSparsePolynomialZonotope([0.2, -0.6], [1 0;0 0.4], [1 0;0 1])
 SPZ = convert(SparsePolynomialZonotope, SSPZ)
 @test center(SPZ) == center(SSPZ)
-@test genmat(SPZ) == genmat(SSPZ)
+@test dependent_genmat(SPZ) == genmat(SSPZ)
 @test expmat(SPZ) == expmat(SSPZ)
 @test isempty(independent_genmat(SPZ))
 @test indexvector(SPZ) == 1:2
@@ -40,7 +40,7 @@ SPZ = convert(SparsePolynomialZonotope, SSPZ)
 for Z in [rand(Zonotope), rand(Hyperrectangle)]
     ZS = convert(SparsePolynomialZonotope, Z)
     @test center(ZS) == center(Z)
-    @test genmat(ZS) == genmat(Z)
+    @test dependent_genmat(ZS) == genmat(Z)
     @test isempty(independent_genmat(ZS))
     @test expmat(ZS) == I
 end

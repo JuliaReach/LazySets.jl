@@ -1255,7 +1255,7 @@ Convert a sparse polynomial zonotope to simple sparse polynomial zonotope.
 """
 function convert(::Type{SimpleSparsePolynomialZonotope}, SPZ::SparsePolynomialZonotope)
     c = center(SPZ)
-    G = genmat(SPZ)
+    G = hcat(dependent_genmat(SPZ), independent_genmat(SPZ))
     n = nindependentgens(SPZ)
     E = cat(expmat(SPZ), Matrix(1 * I, n, n), dims=(1, 2))
 

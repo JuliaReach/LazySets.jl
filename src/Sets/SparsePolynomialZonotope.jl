@@ -1,5 +1,5 @@
 export SparsePolynomialZonotope, expmat, nparams, ndependentgens, nindependentgens,
-       dependent_genmat, independent_genmat, indexvector, uniqueID
+       dependent_genmat, independent_genmat, indexvector,
        linear_map, quadratic_map, remove_redundant_generators
 
 """
