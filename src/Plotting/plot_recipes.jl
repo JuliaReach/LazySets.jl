@@ -1,6 +1,3 @@
-using RecipesBase
-import RecipesBase.apply_recipe
-
 # global values
 DEFAULT_COLOR = :auto
 DEFAULT_ALPHA = 0.5

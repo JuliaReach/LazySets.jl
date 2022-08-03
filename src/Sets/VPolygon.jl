@@ -330,6 +330,11 @@ function _binary_support_vector(d::AbstractVector, P::VPolygon)
     return _binary_support_vector(d, P.vertices)
 end
 
+# checks if the given vector is pointing toward the given direction
+@inline function _similar_direction(u::AbstractVector, v::AbstractVector)
+    dot(u, v) > 0
+end
+
 function _binary_support_vector(d::AbstractVector, vlist::Vector{VT}) where {T, VT<:AbstractVector{T}}
     m = length(vlist)
     @assert m > 2 "the number of vertices in the binary support vector approach should " *
@@ -341,10 +346,10 @@ function _binary_support_vector(d::AbstractVector, vlist::Vector{VT}) where {T, 
     # start chain = [1,n+1] with P.vertices[n+1] = P.vertices[1]
     a = 1; b = m + 1
     A = vlist[2] - vlist[1]
-    upA = _up(d, A)
+    upA = _similar_direction(d, A)
 
     # test if P.vertices[0] is a local maximum
-    if (!upA && !_above(d, vlist[m], vlist[1]))
+    if (!upA && !isabove(d, vlist[m], vlist[1]))
         # if vlist[1] is the maximum, remove the extra point added
         pop!(vlist)
         return 1
@@ -353,8 +358,8 @@ function _binary_support_vector(d::AbstractVector, vlist::Vector{VT}) where {T, 
         # midpoint of [a,b], and 1<c<n+1
         c = round(Int, (a + b) / 2)
         C = vlist[c + 1] - vlist[c]
-        upC = _up(d, C)
-        if (!upC && !_above(d, vlist[c - 1], vlist[c]))
+        upC = _similar_direction(d, C)
+        if (!upC && !isabove(d, vlist[c - 1], vlist[c]))
             # vlist[c] is a local maximum, remove the extra point added
             pop!(vlist)
             return c
@@ -362,8 +367,8 @@ function _binary_support_vector(d::AbstractVector, vlist::Vector{VT}) where {T, 
 
         # no max yet, so continue with the binary search
         # pick one of the two subchains [a,c] or [c,b]
-        if (upA && upC && !_above(d, vlist[a], vlist[c])) ||
-        (!upA && (upC || (!upC && _above(d, vlist[a], vlist[c]))))
+        if (upA && upC && !isabove(d, vlist[a], vlist[c])) ||
+        (!upA && (upC || (!upC && isabove(d, vlist[a], vlist[c]))))
             a = c
             A = C
             upA = upC

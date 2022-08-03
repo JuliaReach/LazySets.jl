@@ -1,5 +1,3 @@
-using ExprTools: splitdef, combinedef
-
 """
     @neutral(SET, NEUT)
 
@@ -327,36 +325,5 @@ macro array_absorbing(FUN, ABS, SETARR)
         function $FUN(::$SETARR{N}, Y::$ABS{N}) where {N}
             return Y
         end
-    end
-end
-
-"""
-    @commutative(FUN)
-
-Macro to declare that a given function `FUN` is commutative, returning the original
-`FUN` and a new method of `FUN` where the first and second arguments are swapped.
-
-### Input
-
-- `FUN` -- function name
-
-### Output
-
-A quoted expression containing the function definitions.
-"""
-macro commutative(FUN)
-    # split the function definition expression
-    def = splitdef(FUN)
-    defswap = deepcopy(def)
-
-    # swap arguments 1 and 2
-    aux = defswap[:args][1]
-    defswap[:args][1] = defswap[:args][2]
-    defswap[:args][2] = aux
-
-    _FUN = combinedef(defswap)
-    return quote
-        Core.@__doc__ $(esc(FUN))
-        $(esc(_FUN))
     end
 end

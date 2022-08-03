@@ -4,44 +4,6 @@ CurrentModule = LazySets
 
 # Utility functions
 
-## Arrays module
-
-```@docs
-Arrays
-cross_product(::AbstractMatrix{N}) where {N<:Real}
-nonzero_columns
-dot_zero
-hasfullrowrank
-inner
-is_cyclic_permutation
-isinvertible
-ismultiple
-ispermutation
-is_right_turn
-issquare
-nonzero_indices
-remove_duplicates_sorted!
-remove_zero_columns
-right_turn
-samedir
-SingleEntryVector
-to_negative_vector
-_up
-_dr
-_above
-minmax
-arg_minmax
-extend
-projection_matrix
-LazySets.Arrays._vector_type
-LazySets.Arrays._matrix_type
-LazySets.Arrays.allequal
-LazySets.Arrays.distance(::AbstractVector, ::AbstractVector; ::Real=2.0)
-LazySets.Arrays.same_sign
-LazySets.Arrays.to_matrix
-LazySets.Arrays._rationalize
-```
-
 ## Functions and Macros
 
 ```@docs
@@ -53,34 +15,28 @@ sign_cadlag
 _leq_trig
 _random_zero_sum_vector
 rectify
-require(::Symbol)
-require(::Vector{Symbol})
-reseed
 same_block_structure
-substitute
-substitute!
 σ_helper
 get_constrained_lowdimset
+minmax
+arg_minmax
 @neutral
 @absorbing
 @neutral_absorbing
 @declare_array_version
 @array_neutral
 @array_absorbing
-@commutative
 ```
 
 ## Types
 
 ```@docs
 CachedPair
-StrictlyIncreasingIndices
 ```
 
 ## Inspection of set interfaces
 
 ```@docs
-LazySets.subtypes(::Any, ::Bool)
 implementing_sets
 ```
 

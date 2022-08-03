@@ -3,30 +3,43 @@ __precompile__(true)
 # main module for `LazySets.jl`
 module LazySets
 
-using LinearAlgebra, Reexport, Requires, SparseArrays
+using LinearAlgebra, RecipesBase, Reexport, Requires, SparseArrays
+import GLPK, IntervalArithmetic, ReachabilityBase, JuMP, Pkg, Random
+
+using IntervalArithmetic: AbstractInterval, mince
+import IntervalArithmetic: radius, ⊂
 using LinearAlgebra: checksquare
 import LinearAlgebra: norm, ×, normalize, normalize!
-import SparseArrays: permute
-import Pkg, Random
 using Random: AbstractRNG, GLOBAL_RNG, SamplerType, shuffle, randperm
-import InteractiveUtils: subtypes
-import JuMP, GLPK
-import IntervalArithmetic
-import IntervalArithmetic: radius, ⊂
+import RecipesBase: apply_recipe
+import SparseArrays: permute
 
 export Arrays
-export ×, normalize, ⊂
+export ×, normalize, ⊂,
+       subtypes
 
-# ==========
-# Assertions
-# ==========
+# ==============
+# ReachabilityBase
+# ==============
 
-include("Assertions/Assertions.jl")
-@reexport using .Assertions
-using .Assertions: @assert
-import .Assertions: activate_assertions, deactivate_assertions
-# activate assertions by default
-activate_assertions(LazySets)
+using ReachabilityBase.Assertions: @assert
+import ReachabilityBase.Assertions: activate_assertions, deactivate_assertions
+activate_assertions(LazySets)  # activate assertions by default
+include("Utils/assertions.jl")
+
+using ReachabilityBase.Require
+import ReachabilityBase.Require: require
+require(package; fun_name::String="", explanation::String="") =
+    require(@__MODULE__, package; fun_name=fun_name, explanation=explanation)
+
+using ReachabilityBase.Comparison
+using ReachabilityBase.Iteration
+using ReachabilityBase.Commutative
+using ReachabilityBase.Distribution
+using ReachabilityBase.Subtypes
+
+using ReachabilityBase.Arrays
+import .Arrays: distance, rectify, rationalize
 
 # ==================
 # Linear programming
@@ -34,28 +47,11 @@ activate_assertions(LazySets)
 include("Initialization/init_GLPK.jl")
 include("Initialization/init_JuMP.jl")
 
-# =====================
-# Numeric approximation
-# =====================
-include("Utils/comparisons.jl")
-
-# =======================
-# Arrays auxiliary module
-# =======================
-include("Arrays/Arrays.jl")
-using .Arrays
-import .Arrays: distance,
-                rectify,
-                _rationalize,
-                _similar_type
-
 # ===================
 # Auxiliary functions
 # ===================
-include("Utils/require.jl")
 include("Utils/helper_functions.jl")
 include("Utils/macros.jl")
-include("Utils/iterators.jl")
 include("Utils/matrix_exponential.jl")
 
 # ==================
@@ -191,19 +187,5 @@ include("Parallel/Parallel.jl")
 # Load external packages on-demand (using 'Requires')
 # ===================================================
 include("init.jl")
-
-# ================================================
-# Convenience functions to (de)activate assertions
-# ================================================
-function activate_assertions()
-    for m in [LazySets, Arrays, Approximations, Parallel]
-        Assertions.activate_assertions(m)
-    end
-end
-function deactivate_assertions()
-    for m in [LazySets, Arrays, Approximations, Parallel]
-        Assertions.deactivate_assertions(m)
-    end
-end
 
 end # module

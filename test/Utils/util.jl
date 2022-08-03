@@ -1,5 +1,5 @@
 using LazySets.Arrays: extend,
-                       _vector_type, _matrix_type,
+                       vector_type, matrix_type,
                        to_negative_vector,
                        nonzero_columns,
                        remove_zero_columns,
@@ -7,22 +7,6 @@ using LazySets.Arrays: extend,
                        same_sign
 
 for _dummy_ in 1:1 # avoid global variable warnings
-    # reseeding with random seed
-    rng = LazySets.GLOBAL_RNG
-    seed = rand(1:10000)
-    LazySets.reseed(rng, seed)
-    n1 = rand(Int)
-    LazySets.reseed(rng, seed)
-    n2 = rand(Int)
-    @test n1 == n2
-
-    # StrictlyIncreasingIndices
-    vectors = Vector{AbstractVector{Int}}()
-    for v in LazySets.StrictlyIncreasingIndices(5, 4)
-        push!(vectors, copy(v))
-    end
-    @test vectors == [[1, 2, 3, 4], [1, 2, 3, 5], [1, 2, 4, 5], [1, 3, 4, 5], [2, 3, 4, 5]]
-
     # square matrix
     @test LazySets.issquare([2 3; 0 0])
     @test LazySets.issquare(sparse([1], [1], [1], 3, 3))
@@ -115,23 +99,23 @@ for N in [Float64, Rational{Int}, Float32]
     # sparse
     vec = sparsevec([1, 3], N[1, 3], 3)
     mat = sparse([1, 3], [1, 3], N[1, 3], 3, 3)
-    @test _vector_type(typeof(vec)) == SparseVector{N, Int}
-    @test _matrix_type(typeof(vec)) == SparseMatrixCSC{N,Int64}
-    @test _vector_type(typeof(mat)) == SparseVector{N, Int}
-    @test _matrix_type(typeof(mat)) == SparseMatrixCSC{N,Int64}
+    @test vector_type(typeof(vec)) == SparseVector{N, Int}
+    @test matrix_type(typeof(vec)) == SparseMatrixCSC{N,Int64}
+    @test vector_type(typeof(mat)) == SparseVector{N, Int}
+    @test matrix_type(typeof(mat)) == SparseMatrixCSC{N,Int64}
 
     # regular
     vec = N[1, 0, 3]
     mat = N[1 0 0; 0 0 0; 0 0 3]
-    @assert _vector_type(typeof(vec)) == Vector{N}
-    @assert _matrix_type(typeof(vec)) == Matrix{N}
-    @assert _vector_type(typeof(mat)) == Vector{N}
-    @assert _matrix_type(typeof(mat)) == Matrix{N}
+    @assert vector_type(typeof(vec)) == Vector{N}
+    @assert matrix_type(typeof(vec)) == Matrix{N}
+    @assert vector_type(typeof(mat)) == Vector{N}
+    @assert matrix_type(typeof(mat)) == Matrix{N}
 
     # other: Diagonal
     mat = Diagonal(N[1, 2])
-    @test _vector_type(typeof(mat)) == Vector{N}
-    @assert _matrix_type(typeof(mat)) == Diagonal{N, Vector{N}}
+    @test vector_type(typeof(mat)) == Vector{N}
+    @assert matrix_type(typeof(mat)) == Diagonal{N, Vector{N}}
 end
 
 for N in [Float64, Float32]

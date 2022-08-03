@@ -6,7 +6,7 @@ include("init.jl")
 
 makedocs(
     sitename = "LazySets.jl",
-    modules = [LazySets, Approximations, Arrays, LazySets.Parallel],
+    modules = [LazySets, Approximations, LazySets.Parallel],
     format = Documenter.HTML(prettyurls = get(ENV, "CI", nothing) == "true",
                              assets = ["assets/aligned.css"]),
     pages = [
@@ -82,7 +82,6 @@ makedocs(
             ],
             "Concrete Operations" => "lib/binary_functions.md",
             "Conversions between set representations" => "lib/conversion.md",
-            "Comparisons" => "lib/comparisons.md",
             "Approximations" => "lib/approximations.md",
             "Utility Functions" => "lib/utils.md",
             "Parallel" => "lib/parallel.md",

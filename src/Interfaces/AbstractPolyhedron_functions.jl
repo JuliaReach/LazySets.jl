@@ -578,7 +578,7 @@ i.e. extending all constraints of `P` to `m` dimensions, and constraining the la
 `m - n` dimensions to `0`. The matrix resulting matrix is extended to an invertible
 `m × m` matrix and the algorithm using the inverse of the linear map is applied.
 For the technical details of the extension of `M` to a higher-dimensional
-invertible matrix, see `LazySets.Arrays.extend`.
+invertible matrix, see `ReachabilityBase.Arrays.extend`.
 
 ### Vertex representation
 
@@ -716,7 +716,7 @@ function _linear_map_inverse_hrep(Minv::AbstractMatrix, P::AbstractPolyhedron)
     constraints_P = constraints_list(P)
     constraints_MP = _preallocate_constraints(constraints_P)
     @inbounds for (i, c) in enumerate(constraints_P)
-        cinv = vec(_At_mul_B(c.a, Minv))
+        cinv = vec(At_mul_B(c.a, Minv))
         constraints_MP[i] = LinearConstraint(cinv, c.b)
     end
     return constraints_MP
@@ -729,7 +729,7 @@ function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
     constraints_MP = _preallocate_constraints(constraints_P)
     @inbounds for (i, c) in enumerate(constraints_P)
         # take left division for each constraint c, transpose(M) \ c.a
-        cinv = _At_ldiv_B(M, c.a)
+        cinv = At_ldiv_B(M, c.a)
         constraints_MP[i] = LinearConstraint(cinv, c.b)
     end
     return constraints_MP
@@ -1071,9 +1071,9 @@ Now let's take a ball in the infinity norm and remove some constraints:
 julia> B = BallInf(zeros(4), 1.0);
 
 julia> c = constraints_list(B)[1:2]
-2-element Vector{HalfSpace{Float64, LazySets.Arrays.SingleEntryVector{Float64}}}:
- HalfSpace{Float64, LazySets.Arrays.SingleEntryVector{Float64}}([1.0, 0.0, 0.0, 0.0], 1.0)
- HalfSpace{Float64, LazySets.Arrays.SingleEntryVector{Float64}}([0.0, 1.0, 0.0, 0.0], 1.0)
+2-element Vector{HalfSpace{Float64, ReachabilityBase.Arrays.SingleEntryVector{Float64}}}:
+ HalfSpace{Float64, ReachabilityBase.Arrays.SingleEntryVector{Float64}}([1.0, 0.0, 0.0, 0.0], 1.0)
+ HalfSpace{Float64, ReachabilityBase.Arrays.SingleEntryVector{Float64}}([0.0, 1.0, 0.0, 0.0], 1.0)
 
 julia> P = HPolyhedron(c);
 

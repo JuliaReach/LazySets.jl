@@ -136,7 +136,7 @@ direction (1, 0).
 ### Algorithm
 
 The implementation checks the quadrant of each direction, and compares
-directions using the right-hand rule (see [`is_right_turn`](@ref)).
+directions using the right-hand rule.
 In particular, this method does not use the arctangent.
 """
 function <=(u::AbstractVector, v::AbstractVector)

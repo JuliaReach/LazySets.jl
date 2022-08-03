@@ -260,7 +260,7 @@ function σ(d::AbstractVector, lm::LinearMap)
 end
 
 function _σ_linear_map(d::AbstractVector, M::AbstractMatrix, X::ConvexSet)
-    return M * σ(_At_mul_B(M, d), X)
+    return M * σ(At_mul_B(M, d), X)
 end
 
 """
@@ -290,7 +290,7 @@ function ρ(d::AbstractVector, lm::LinearMap; kwargs...)
 end
 
 function _ρ_linear_map(d::AbstractVector, M::AbstractMatrix, X::ConvexSet; kwargs...)
-    return ρ(_At_mul_B(M, d), X; kwargs...)
+    return ρ(At_mul_B(M, d), X; kwargs...)
 end
 
 """

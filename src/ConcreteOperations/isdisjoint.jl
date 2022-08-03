@@ -398,8 +398,8 @@ function _isdisjoint(Z::AbstractZonotope, H::Union{Hyperplane, Line2D}, ::Val{fa
 
     n, p = size(G)
     p == 0 && return !isapproxzero(v)
-    abs_sum = _abs_sum(H.a, G)
-    return !_geq(v, -abs_sum) || !_leq(v, abs_sum)
+    asum = abs_sum(H.a, G)
+    return !_geq(v, -asum) || !_leq(v, asum)
 end
 
 function _isdisjoint(Z::AbstractZonotope, H::Union{Hyperplane, Line2D}, ::Val{true})

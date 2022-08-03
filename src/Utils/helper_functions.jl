@@ -32,240 +32,6 @@ function sign_cadlag(x::N) where {N<:Real}
 end
 
 """
-    substitute(substitution::Dict{Int, T}, x::AbstractVector{T}) where {T}
-
-Apply a substitution to a given vector.
-
-### Input
-
-- `substitution` -- substitution (a mapping from an index to a new value)
-- `x`            -- vector
-
-### Output
-
-A fresh vector corresponding to `x` after `substitution` was applied.
-"""
-function substitute(substitution::Dict{Int, T}, x::AbstractVector{T}) where {T}
-    return substitute!(substitution, copy(x))
-end
-
-"""
-    substitute!(substitution::Dict{Int, T}, x::AbstractVector{T}) where {T}
-
-Apply a substitution to a given vector.
-
-### Input
-
-- `substitution` -- substitution (a mapping from an index to a new value)
-- `x`            -- vector (modified in this function)
-
-### Output
-
-The same (but see the Notes below) vector `x` but after `substitution` was
-applied.
-
-### Notes
-
-The vector `x` is modified in-place if it has type `Vector` or `SparseVector`.
-Otherwise, we first create a new `Vector` from it.
-"""
-function substitute!(substitution::Dict{Int, T}, x::AbstractVector{T}) where {T}
-    return substitute!(Vector(x), substitution)
-end
-
-function substitute!(substitution::Dict{Int, T},
-                     x::Union{Vector{T}, SparseVector{T}}) where {T}
-    for (index, value) in substitution
-        x[index] = value
-    end
-    return x
-end
-
-"""
-    reseed(rng::AbstractRNG, seed::Union{Int, Nothing})
-
-Reset the RNG seed if the seed argument is a number.
-
-### Input
-
-- `rng`  -- random number generator
-- `seed` -- seed for reseeding
-
-### Output
-
-The input RNG if the seed is `nothing`, and a reseeded RNG otherwise.
-"""
-function reseed(rng::AbstractRNG, seed::Union{Int, Nothing})
-    if seed != nothing
-        return Random.seed!(rng, seed)
-    end
-    return rng
-end
-
-"""
-    StrictlyIncreasingIndices
-
-Iterator over the vectors of `m` strictly increasing indices from 1 to `n`.
-
-### Fields
-
-- `n` -- size of the index domain
-- `m` -- number of indices to choose (resp. length of the vectors)
-
-### Notes
-
-The vectors are modified in-place.
-
-The iterator ranges over ``\\binom{n}{m}`` (`n` choose `m`) possible vectors.
-
-This implementation results in a lexicographic order with the last index growing
-first.
-
-### Examples
-
-```jldoctest
-julia> for v in LazySets.StrictlyIncreasingIndices(4, 2)
-           println(v)
-       end
-[1, 2]
-[1, 3]
-[1, 4]
-[2, 3]
-[2, 4]
-[3, 4]
-```
-"""
-struct StrictlyIncreasingIndices
-    n::Int
-    m::Int
-
-    function StrictlyIncreasingIndices(n::Int, m::Int)
-        @assert n >= m > 0 "require n >= m > 0"
-        new(n, m)
-    end
-end
-
-Base.eltype(::Type{StrictlyIncreasingIndices}) = Vector{Int}
-Base.length(sii::StrictlyIncreasingIndices) = binomial(sii.n, sii.m)
-
-# initialization
-function Base.iterate(sii::StrictlyIncreasingIndices)
-    v = [1:sii.m;]
-    return (v, v)
-end
-
-# normal iteration
-function Base.iterate(sii::StrictlyIncreasingIndices, state::AbstractVector{Int})
-    v = state
-    i = sii.m
-    diff = sii.n
-    if i == diff
-        return nothing
-    end
-    while v[i] == diff
-        i -= 1
-        diff -= 1
-    end
-    # update vector
-    v[i] += 1
-    for j in i+1:sii.m
-        v[j] = v[j-1] + 1
-    end
-    # detect termination: first index has maximum value
-    if i == 1 && v[1] == (sii.n - sii.m + 1)
-        return (v, nothing)
-    end
-    return (v, v)
-end
-
-# termination
-function Base.iterate(sii::StrictlyIncreasingIndices, state::Nothing)
-    return nothing
-end
-
-"""
-    subtypes(interface, concrete::Bool)
-
-Return the concrete subtypes of a given interface.
-
-### Input
-
-- `interface` -- an abstract type, usually a set interface
-- `concrete`  -- if `true`, seek further the inner abstract subtypes of the given
-                 interface, otherwise return only the direct subtypes of `interface`
-
-### Output
-
-A list with the subtypes of the abstract type `interface`, sorted alphabetically.
-
-### Examples
-
-Consider the `AbstractPolytope` interface. If we include the abstract subtypes
-of this interface,
-
-```jldoctest subtypes
-julia> using LazySets: subtypes
-
-julia> subtypes(AbstractPolytope, false)
-4-element Vector{Any}:
- AbstractCentrallySymmetricPolytope
- AbstractPolygon
- HPolytope
- VPolytope
-```
-
-We can use this function to obtain the concrete subtypes of
-`AbstractCentrallySymmetricPolytope` and `AbstractPolygon` (further until all
-concrete types are obtained), using the `concrete` flag:
-
-```jldoctest subtypes
-julia> subtypes(AbstractPolytope, true)
-16-element Vector{Type}:
- Ball1
- BallInf
- HParallelotope
- HPolygon
- HPolygonOpt
- HPolytope
- Hyperrectangle
- Interval
- LineSegment
- RotatedHyperrectangle
- Singleton
- SymmetricIntervalHull
- VPolygon
- VPolytope
- ZeroSet
- Zonotope
-```
-"""
-function subtypes(interface, concrete::Bool)
-
-    subtypes_to_test = subtypes(interface)
-
-    # do not seek the concrete subtypes further
-    if !concrete
-        return sort(subtypes_to_test, by=string)
-    end
-
-    result = Vector{Type}()
-    i = 0
-    while i < length(subtypes_to_test)
-        i += 1
-        subtype = subtypes_to_test[i]
-        new_subtypes = subtypes(subtype)
-        if isempty(new_subtypes)
-            # base type found
-            push!(result, subtype)
-        else
-            # yet another interface layer
-            append!(subtypes_to_test, new_subtypes)
-        end
-    end
-    return sort(result, by=string)
-end
-
-"""
     implementing_sets(op::Function;
                       signature::Tuple{Vector{Type}, Int}=(Type[], 1),
                       type_args=Float64, binary::Bool=false)
@@ -447,11 +213,6 @@ end
     1 <= i <= dim(X) || throw(ArgumentError("there is no index at coordinate $i, since the set is of dimension $(dim(X))"))
 end
 
-function _isupwards(vec)
-    return vec[2] > 0 || (vec[2] == 0 && vec[1] > 0)
-end
-
-
 """
     read_gen(filename::String)
 
@@ -511,4 +272,78 @@ function read_gen(filename::String)
         end
     end
     return P
+end
+
+"""
+    minmax(A, B, C)
+
+Compute the minimum and maximum of three numbers A, B, C.
+
+### Input
+
+- `A` -- first number
+- `B` -- second number
+- `C` -- third number
+
+### Output
+
+The minimum and maximum of three given numbers.
+
+### Examples
+
+```jldoctest
+julia> LazySets.minmax(1.4, 52.4, -5.2)
+(-5.2, 52.4)
+```
+"""
+function minmax(A, B, C)
+    if A > B
+        min, max = B, A
+    else
+        min, max = A, B
+    end
+    if C > max
+        max = C
+    elseif C < min
+        min = C
+    end
+    return min, max
+end
+
+"""
+    arg_minmax(A, B, C)
+
+Compute the index (1, 2, 3) of the minimum and maximum of three numbers A, B, C.
+
+### Input
+
+- `A` -- first number
+- `B` -- second number
+- `C` -- third number
+
+### Output
+
+The index of the minimum and maximum of the three given numbers.
+
+### Examples
+
+```jldoctest
+julia> LazySets.arg_minmax(1.4, 52.4, -5.2)
+(3, 2)
+```
+"""
+function arg_minmax(A, B, C)
+    if A > B
+        min, max = B, A
+        imin, imax = 2, 1
+    else
+        min, max = A, B
+        imin, imax = 1, 2
+    end
+    if C > max
+        imax = 3
+    elseif C < min
+        imin = 3
+    end
+    return imin, imax
 end
