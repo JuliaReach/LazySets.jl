@@ -4,6 +4,8 @@ for N in [Float64, Float32, Rational{Int}]
     G = N[1 2;2 2.]
     E = [1 4;1 2]
 
+    @test rand(SimpleSparsePolynomialZonotope) isa SimpleSparsePolynomialZonotope
+
     S = SimpleSparsePolynomialZonotope(c, G, E)
 
     @test genmat(S) == G
