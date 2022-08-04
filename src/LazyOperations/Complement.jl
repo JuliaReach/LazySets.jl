@@ -5,7 +5,7 @@ export Complement,
        complement
 
 """
-    Complement{N, S<:ConvexSet{N}}
+    Complement{N, S<:ConvexSet{N}} <: LazySet{N}
 
 Type that represents the complement of a set, that is the set
 
@@ -38,7 +38,7 @@ julia> Complement(C)
 BallInf{Float64, Vector{Float64}}([0.0, 0.0], 1.0)
 ```
 """
-struct Complement{N, S<:ConvexSet{N}}
+struct Complement{N, S<:ConvexSet{N}} <: LazySet{N}
     X::S
 end
 

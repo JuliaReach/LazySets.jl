@@ -20,7 +20,7 @@ The quadratic map of a set ``X`` given ``n`` square matrices ``Q^{(i)}`` is defi
 
 where each coordinate ``i`` is influenced by the ``i``-th matrix ``Q^{(i)}``.
 """
-struct QuadraticMap{N, S<:LazySet{N}, MVT<:AbstractVector{<:AbstractMatrix{N}}}
+struct QuadraticMap{N, S<:LazySet{N}, MVT<:AbstractVector{<:AbstractMatrix{N}}} <: LazySet{N}
     Q::MVT
     X::S
 

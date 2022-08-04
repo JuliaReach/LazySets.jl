@@ -8,7 +8,7 @@ export UnionSet,
 # ========================================
 
 """
-    UnionSet{N, S1<:ConvexSet{N}, S2<:ConvexSet{N}}
+    UnionSet{N, S1<:ConvexSet{N}, S2<:ConvexSet{N}} <: LazySet{N}
 
 Type that represents the set union of two sets.
 
@@ -21,7 +21,7 @@ Type that represents the set union of two sets.
 
 The union of convex sets is typically not convex.
 """
-struct UnionSet{N, S1<:ConvexSet{N}, S2<:ConvexSet{N}}
+struct UnionSet{N, S1<:ConvexSet{N}, S2<:ConvexSet{N}} <: LazySet{N}
     X::S1
     Y::S2
 

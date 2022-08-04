@@ -6,7 +6,7 @@ export UnionSetArray,
 # ========================================
 
 """
-   UnionSetArray{N, S<:ConvexSet{N}}
+   UnionSetArray{N, S<:ConvexSet{N}} <: LazySet{N}
 
 Type that represents the set union of a finite number of sets.
 
@@ -18,7 +18,7 @@ Type that represents the set union of a finite number of sets.
 
 The union of convex sets is typically not convex.
 """
-struct UnionSetArray{N, S<:ConvexSet{N}}
+struct UnionSetArray{N, S<:ConvexSet{N}} <: LazySet{N}
    array::Vector{S}
 end
 
