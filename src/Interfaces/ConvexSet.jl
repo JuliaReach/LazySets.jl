@@ -49,10 +49,9 @@ elements ``x, y ∈ S`` and ``0 ≤ λ ≤ 1`` it holds that ``λ·x + (1-λ)·y
 `ConvexSet` types should be parameterized with a type `N`, typically `N<:Real`,
 for using different numeric types.
 
-Every concrete `ConvexSet` must define the following functions:
+Every concrete `ConvexSet` must define the following function:
 - `σ(d::AbstractVector, S::ConvexSet)` -- the support vector of `S` in a given
     direction `d`
-- `dim(S::ConvexSet)` -- the ambient dimension of `S`
 
 The function
 - `ρ(d::AbstractVector, S::ConvexSet)` -- the support function of `S` in a given
