@@ -1,5 +1,7 @@
 for N in [Float64, Float32, Rational{Int}]
 
+    @test rand(SparsePolynomialZonotope) isa SparsePolynomialZonotope
+
     # example from Niklas thesis (page 32)
     c = N[4, 4]
     G = N[2 1 2;0 2 2]

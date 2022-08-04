@@ -6,6 +6,7 @@ CurrentModule = LazySets
 
 ```@docs
 SparsePolynomialZonotope
+rand(::Type{SparsePolynomialZonotope})
 center(::SparsePolynomialZonotope)
 dependent_genmat(::SparsePolynomialZonotope)
 independent_genmat(::SparsePolynomialZonotope)
