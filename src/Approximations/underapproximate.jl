@@ -45,3 +45,43 @@ end
 function underapproximate(X::ConvexSet, dirs::Type{<:AbstractDirections}; kwargs...)
     return underapproximate(X, dirs(dim(X)), kwargs...)
 end
+
+"""
+    underapproximate(X::ConvexSet, ::Type{<:Hyperrectangle};
+                     solver=nothing) where {N}
+
+Underapproximate a polygon with a hyperrectangle of maximal area.
+
+### Input
+
+- `X`              -- convex polygon
+- `Hyperrectangle` -- type for dispatch
+- `solver`         -- (optional; default: `nothing`) nonlinear solver; if
+                      `nothing`, `default_nln_solver(N)` will be used
+
+### Output
+
+A hyperrectangle underapproximation with maximal area.
+
+### Notes
+
+The implementation only works for 2D sets, but the algorithm can be generalized.
+
+Due to numerical issues, the result may be slightly outside the set.
+
+### Algorithm
+
+The algorithm is taken from [1, Theorem 17] and solves a convex program (in fact
+a linear program with nonlinear objective). (The objective is modified to an
+equivalent version due to solver issues.)
+
+[1] Mehdi Behroozi - *Largest inscribed rectangles in geometric convex sets.*
+arXiv:1905.13246.
+"""
+function underapproximate(X::ConvexSet{N}, ::Type{<:Hyperrectangle};
+                          solver=nothing) where {N}
+    require(:Ipopt; fun_name="underapproximate")
+
+    solver = default_nln_solver(N)
+    return _underapproximate_box(X, solver)
+end
