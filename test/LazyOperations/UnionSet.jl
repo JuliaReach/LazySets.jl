@@ -114,6 +114,13 @@ for N in [Float64, Rational{Int}, Float32]
     X = Interval(N(1), N(2))
     Y = Interval(N(3), N(4))
     @test volume(UnionSet(X, Y)) == N(2)
+
+    # projection
+    X = project(UnionSetArray([Singleton(N[1, 2, 3]), Singleton(N[4, 5, 6])]),
+                [1, 3])
+    # equality is not properly supported yet
+#     @test X == UnionSetArray([Singleton(N[1, 3]), Singleton(N[4, 6])])
+    @test X isa UnionSetArray && array(X) == [Singleton(N[1, 3]), Singleton(N[4, 6])]
 end
 
 for N in [Float64]
