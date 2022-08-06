@@ -180,10 +180,13 @@ for N in [Float64, Float32, Rational{Int}]
     A = convert(Interval, H)
     @test A isa Interval && low(A) == [N(-1/2)] && high(A) == [N(1/2)]
 
-    # conversion from a lazyset to an interval
+    # conversion from a LazySet to an interval
     M = hcat(N[2])
     B = convert(Interval, M*H)
     @test B isa Interval && low(B) == [N(-1)] && high(B) == [N(1)]
+    # conversion to an IntervalArithmetic.Interval
+    B2 = convert(IntervalArithmetic.Interval, M*H)
+    @test B2 == B.dat
 
     # set difference
     A = Interval(N(5), N(8))
