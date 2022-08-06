@@ -53,3 +53,20 @@ for Z in [rand(Zonotope), rand(Hyperrectangle)]
     @test isempty(independent_genmat(ZS))
     @test expmat(ZS) == I
 end
+
+E1 = [1 2 3; 4 5 6;7 8 9]
+E2 = [1 2 0;1 1 1]
+PZ1 = SparsePolynomialZonotope(rand(2), rand(2, 3), rand(2, 2), E1, 1:3)
+PZ2 = SparsePolynomialZonotope(rand(2), rand(2, 3), rand(2, 2), E2, [2, 4])
+
+mPZ1, mPZ2 = mergeID(PZ1, PZ2)
+@test indexvector(mPZ1) == [1, 2, 3, 4]
+@test indexvector(mPZ2) == [1, 2, 3, 4]
+
+for f in (:center, :dependent_genmat, :independent_genmat)
+    @eval @test $f(mPZ1) == $f(PZ1)
+    @eval @test $f(mPZ2) == $f(PZ2)
+end
+
+@test expmat(mPZ1) == [1 2 3;4 5 6;7 8 9;0 0 0]
+@test expmat(mPZ2) == [0 0 0;1 2 0;0 0 0;1 1 1]

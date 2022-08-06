@@ -1,5 +1,5 @@
 export SparsePolynomialZonotope, expmat, nparams, ndependentgens, nindependentgens,
-       dependent_genmat, independent_genmat, indexvector, exact_sum, ⊞,
+       dependent_genmat, independent_genmat, indexvector, mergeID, exact_sum, ⊞,
        linear_map, quadratic_map, remove_redundant_generators
 
 """
@@ -207,6 +207,43 @@ indexvector(P::SPZ) = P.idx
 Returns a collection of n unique identifiers (intergers 1, …, n).
 """
 uniqueID(n::Int) = 1:n
+
+"""
+    mergeID(P1::SparsePolynomialZonotope, P2::SparsePolynomialZonotope)
+
+Returns two polynomial zonotopes equivalent to the correspondent input but with the same
+index vector.
+
+### Input
+
+- `P1` -- sparse polynomial zonotope
+- `P2` -- sprase polynomial zonotope
+
+### Output
+
+two polynomial zonotopes with the same index vector
+"""
+function mergeID(P1::SparsePolynomialZonotope, P2::SparsePolynomialZonotope)
+
+    idx1 = indexvector(P1)
+    idx2 = indexvector(P2)
+    idx1 == idx2 && return (P1, P2)
+
+    H = setdiff(idx2, idx1)
+    idx_new = vcat(idx1, H)
+    @show idx_new
+    E1 = vcat(expmat(P1), zeros(Int, length(H), ndependentgens(P1)))
+    E2 = zeros(Int, length(idx1) + length(H), ndependentgens(P2))
+    E2_old = expmat(P2)
+    @inbounds for (i, idx) in enumerate(idx_new)
+        j = findfirst(isequal(idx), idx2)
+        !isnothing(j) && (E2[i, :] .= E2_old[j, :])
+    end
+    P1_new = SparsePolynomialZonotope(center(P1), dependent_genmat(P1), independent_genmat(P1), E1, idx_new)
+    P2_new = SparsePolynomialZonotope(center(P2), dependent_genmat(P2), independent_genmat(P2), E2, idx_new)
+    return (P1_new, P2_new)
+end
+
 """
     linear_map(M::AbstractMatrix, P::SparsePolynomialZonotope)
 
