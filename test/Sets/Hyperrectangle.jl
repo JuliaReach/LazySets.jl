@@ -235,6 +235,11 @@ for N in [Float64, Rational{Int}, Float32]
     H = convert(Hyperrectangle, B)
     @test convert(IntervalBox, H) == B
 
+    # conversion to and from IntervalArithmetic's Interval type
+    I = IntervalArithmetic.Interval(0, 1)
+    H = convert(Hyperrectangle, I)
+    @test convert(IntervalArithmetic.Interval, H) == I
+
     # conversion from other hyperrectangular sets
     H = Hyperrectangle(N[1], N[1])
     @test convert(Hyperrectangle, BallInf(N[1], N(1))) == H

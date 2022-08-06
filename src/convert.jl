@@ -855,21 +855,22 @@ function convert(X::Type{HPOLYGON},
 end
 
 """
-    convert(::Type{IntervalArithmetic.Interval}, x::Interval)
+    convert(::Type{IntervalArithmetic.Interval}, X::ConvexSet)
 
-Converts a `LazySets` interval to an `Interval` from `IntervalArithmetic`.
+Converts a convex set to an `Interval` from `IntervalArithmetic`.
 
 ### Input
 
 - `Interval` -- type used for dispatch, from `IntervalArithmetic`
-- `x`        -- interval (`LazySets.Interval`)
+- `X`        -- convex set
 
 ### Output
 
 An `IntervalArithmetic.Interval`.
 """
-function convert(::Type{IntervalArithmetic.Interval}, x::Interval)
-    return IntervalArithmetic.interval(min(x), max(x))
+function convert(::Type{IntervalArithmetic.Interval}, X::ConvexSet)
+    @assert dim(X) == 1 "cannot convert a $(dim(X))-dimensional set to an interval"
+    return convert(Interval, X).dat
 end
 
 """
@@ -932,6 +933,13 @@ function convert(::Type{Hyperrectangle}, IB::IntervalArithmetic.IntervalBox)
     low_IB = IntervalArithmetic.inf.(IB)
     high_IB = IntervalArithmetic.sup.(IB)
     return Hyperrectangle(low=low_IB, high=high_IB)
+end
+
+# method for Interval
+function convert(::Type{Hyperrectangle}, I::IntervalArithmetic.Interval)
+    low_I = [IntervalArithmetic.inf(I)]
+    high_I = [IntervalArithmetic.sup(I)]
+    return Hyperrectangle(low=low_I, high=high_I)
 end
 
 """
