@@ -22,13 +22,20 @@ for N in [Float64, Float32, Rational{Int}]
     @test order(PZ) == 2//1
 
     M = N[-0.5 0.2;-0.1 0.6]
-    PZ = SparsePolynomialZonotope(zeros(N, 2), N[2 0 1;1 2 1], zeros(N, 2, 0), [1 0 1;0 1 3])
-    LMPZ = linear_map(M, PZ)
-    @test center(PZ) == zeros(N, 2)
+    PZ2 = SparsePolynomialZonotope(zeros(N, 2), N[2 0 1;1 2 1], zeros(N, 2, 0), [1 0 1;0 1 3])
+    LMPZ = linear_map(M, PZ2)
+    @test center(LMPZ) == zeros(N, 2)
     @test dependent_genmat(LMPZ) ≈ N[-0.8 0.4 -0.3;0.4 1.2 0.5] atol=1e-7
     @test isempty(independent_genmat(LMPZ))
     @test expmat(LMPZ) == [1 0 1;0 1 3]
     @test indexvector(LMPZ) == indexvector(PZ)
+
+    ESPZ = PZ ⊞ PZ2
+    @test center(ESPZ) == [4, 4]
+    @test dependent_genmat(ESPZ) == [2 1 2 2 0 1;0 2 2 1 2 1]
+    @test independent_genmat(ESPZ) == hcat([1, 0])
+    @test expmat(ESPZ) == [1 0 3 1 0 1;0 1 1 0 1 3]
+    @test indexvector(ESPZ) == indexvector(PZ)
 end
 
 SSPZ = SimpleSparsePolynomialZonotope([0.2, -0.6], [1 0;0 0.4], [1 0;0 1])

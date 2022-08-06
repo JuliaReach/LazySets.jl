@@ -1,5 +1,5 @@
 export SparsePolynomialZonotope, expmat, nparams, ndependentgens, nindependentgens,
-       dependent_genmat, independent_genmat, indexvector,
+       dependent_genmat, independent_genmat, indexvector, exact_sum, ⊞,
        linear_map, quadratic_map, remove_redundant_generators
 
 """
@@ -287,6 +287,37 @@ function rand(::Type{SparsePolynomialZonotope};
 
     return SparsePolynomialZonotope(center(SSPZ), genmat(SSPZ), GI, expmat(SSPZ))
 end
+
+
+"""
+    exact_sum(P1::SparsePolynomialZonotope, P2::SparsePolynomialZonotope)
+
+Compute the exact sum of sparse polyomial zonotopes ``P₁`` and ``P₂``.
+
+### Input
+
+- `P1` -- sparse polynomial zonotope
+- `P2` -- sparse polynomial zonotope
+
+### Output
+
+exact sum ``P₁ ⊞ P₂``
+
+"""
+function exact_sum(P1::SparsePolynomialZonotope, P2::SparsePolynomialZonotope)
+
+    indexvector(P1) == indexvector(P2) || throw(ArgumentError("Exact sum currently only implemented for Sparse Polynomial Zonotopes with the same index vector"))
+
+    c = center(P1) + center(P2)
+    G = hcat(dependent_genmat(P1), dependent_genmat(P2))
+    GI = hcat(independent_genmat(P1), independent_genmat(P2))
+    E = hcat(expmat(P1), expmat(P2))
+    idx = indexvector(P1)
+
+    return SparsePolynomialZonotope(c, G, GI, E, idx)
+end
+
+const ⊞ = exact_sum
 
 # function quadratic_map(Q::Vector{MT}, S::SparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
 #     m = length(Q)

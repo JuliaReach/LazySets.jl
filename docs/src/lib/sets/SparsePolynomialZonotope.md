@@ -19,4 +19,5 @@ nindependentgens(::SparsePolynomialZonotope)
 nparams(::SparsePolynomialZonotope)
 order(::SparsePolynomialZonotope)
 linear_map(::AbstractMatrix, ::SparsePolynomialZonotope)
+exact_sum(::SparsePolynomialZonotope, ::SparsePolynomialZonotope)
 ```
