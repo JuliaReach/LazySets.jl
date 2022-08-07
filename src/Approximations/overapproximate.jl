@@ -715,6 +715,22 @@ end
 # ================================================
 
 """
+Given center, (dependent) generator matrix and exponent matrix of a (simple) sparse polynomial
+zonotope, compute thew new center and generator matrix of its zonotope overapproximation.
+"""
+function _zonotope_overapprox(c, G, E)
+    cnew = copy(c)
+    Gnew = copy(G)
+    @inbounds for (j, g) in enumerate(eachcol(G))
+        if all(iseven, E[:, j])
+            cnew .+= 0.5 * g
+            Gnew[:, j] ./= 2
+        end
+    end
+    return cnew, Gnew
+end
+
+"""
     overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{Zonotope}; nsdiv=1, partition=nothing)
 
 Return a zonotope containing ``P``.
@@ -735,16 +751,7 @@ function overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{Zonotope}; ns
         return overapproximate(P, UnionSetArray{Zonotope}; nsdiv=nsdiv, partition=partition)
     end
 
-    G = genmat(P)
-    E = expmat(P)
-    cnew = copy(center(P))
-    Gnew = copy(G)
-    @inbounds for (j, g) in enumerate(eachcol(G))
-        if all(iseven, E[:, j])
-            cnew .+= 0.5 * g
-            Gnew[:, j] ./= 2
-        end
-    end
+    cnew, Gnew = _zonotope_overapprox(center(P), genmat(P), expmat(P))
     return Zonotope(cnew, Gnew)
 end
 
@@ -781,6 +788,15 @@ function overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{UnionSetArray
     return UnionSetArray([overapproximate(P, Zonotope, c) for c in cells])
 end
 
+"""
+    overapproximate(P::SparsePolynomialZonotope, ::Type{Zonotope})
+
+Return a zonotope containing ``P``.
+"""
+function overapproximate(P::SparsePolynomialZonotope, ::Type{Zonotope})
+    cnew, Gnew = _zonotope_overapprox(center(P), dependent_genmat(P), expmat(P))
+    return Zonotope(cnew, hcat(Gnew, independent_genmat(P)))
+end
 
 # ==========================================
 # Functionality that requires TaylorModels
