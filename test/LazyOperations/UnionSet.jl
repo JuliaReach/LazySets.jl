@@ -119,7 +119,7 @@ for N in [Float64, Rational{Int}, Float32]
     X = project(UnionSetArray([Singleton(N[1, 2, 3]), Singleton(N[4, 5, 6])]),
                 [1, 3])
     # equality is not properly supported yet
-#     @test X == UnionSetArray([Singleton(N[1, 3]), Singleton(N[4, 6])])
+    @test_broken X == UnionSetArray([Singleton(N[1, 3]), Singleton(N[4, 6])])
     @test X isa UnionSetArray && array(X) == [Singleton(N[1, 3]), Singleton(N[4, 6])]
 end
 
