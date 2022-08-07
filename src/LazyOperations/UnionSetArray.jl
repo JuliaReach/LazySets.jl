@@ -270,3 +270,7 @@ end
 function linear_map(A::AbstractMatrix, cup::UnionSetArray)
     return UnionSetArray([linear_map(A, X) for X in array(cup)])
 end
+
+function project(cup::UnionSetArray, block::AbstractVector{Int}; kwargs...)
+    return UnionSetArray([project(X, block; kwargs...) for X in array(cup)])
+end
