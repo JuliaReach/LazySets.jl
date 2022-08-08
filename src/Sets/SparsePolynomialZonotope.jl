@@ -231,7 +231,6 @@ function mergeID(P1::SparsePolynomialZonotope, P2::SparsePolynomialZonotope)
 
     H = setdiff(idx2, idx1)
     idx_new = vcat(idx1, H)
-    @show idx_new
     E1 = vcat(expmat(P1), zeros(Int, length(H), ndependentgens(P1)))
     E2 = zeros(Int, length(idx1) + length(H), ndependentgens(P2))
     E2_old = expmat(P2)
