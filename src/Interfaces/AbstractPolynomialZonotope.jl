@@ -21,3 +21,7 @@ abstract type AbstractPolynomialZonotope{N} <: LazySet{N} end
 
 isconvextype(::Type{<:AbstractPolynomialZonotope}) = false
 isboundedtype(::Type{<:AbstractPolynomialZonotope}) = true
+
+function Base.:*(M::Union{Real, AbstractMatrix, AbstractVector, LinearAlgebra.UniformScaling}, P::AbstractPolynomialZonotope)
+    return linear_map(M, P)
+end
