@@ -10,14 +10,14 @@ for N in [Float64, Float32, Rational{Int}]
     PZ = SparsePolynomialZonotope(c, G, GI, E)
 
     @test center(PZ) == c
-    @test dependent_genmat(PZ) == G
-    @test independent_genmat(PZ) == GI
+    @test genmat_dep(PZ) == G
+    @test genmat_indep(PZ) == GI
     @test expmat(PZ) == E
     @test indexvector(PZ) == [1, 2]
 
     @test dim(PZ) == 2
-    @test ndependentgens(PZ) == 3
-    @test nindependentgens(PZ) == 1
+    @test ngens_dep(PZ) == 3
+    @test ngens_indep(PZ) == 1
     @test nparams(PZ) == 2
     @test order(PZ) == 2//1
 
@@ -25,15 +25,15 @@ for N in [Float64, Float32, Rational{Int}]
     PZ2 = SparsePolynomialZonotope(zeros(N, 2), N[2 0 1;1 2 1], zeros(N, 2, 0), [1 0 1;0 1 3])
     LMPZ = linear_map(M, PZ2)
     @test center(LMPZ) == zeros(N, 2)
-    @test dependent_genmat(LMPZ) ≈ N[-0.8 0.4 -0.3;0.4 1.2 0.5] atol=1e-7
-    @test isempty(independent_genmat(LMPZ))
+    @test genmat_dep(LMPZ) ≈ N[-0.8 0.4 -0.3;0.4 1.2 0.5] atol=1e-7
+    @test isempty(genmat_indep(LMPZ))
     @test expmat(LMPZ) == [1 0 1;0 1 3]
     @test indexvector(LMPZ) == indexvector(PZ)
 
     ESPZ = PZ ⊞ PZ2
     @test center(ESPZ) == [4, 4]
-    @test dependent_genmat(ESPZ) == [2 1 2 2 0 1;0 2 2 1 2 1]
-    @test independent_genmat(ESPZ) == hcat([1, 0])
+    @test genmat_dep(ESPZ) == [2 1 2 2 0 1;0 2 2 1 2 1]
+    @test genmat_indep(ESPZ) == hcat([1, 0])
     @test expmat(ESPZ) == [1 0 3 1 0 1;0 1 1 0 1 3]
     @test indexvector(ESPZ) == indexvector(PZ)
 end
@@ -41,15 +41,15 @@ end
 SSPZ = SimpleSparsePolynomialZonotope([0.2, -0.6], [1 0;0 0.4], [1 0;0 1])
 SPZ = convert(SparsePolynomialZonotope, SSPZ)
 @test center(SPZ) == center(SSPZ)
-@test dependent_genmat(SPZ) == genmat(SSPZ)
+@test genmat_dep(SPZ) == genmat(SSPZ)
 @test expmat(SPZ) == expmat(SSPZ)
-@test isempty(independent_genmat(SPZ))
+@test isempty(genmat_indep(SPZ))
 @test indexvector(SPZ) == 1:2
 
 for Z in [rand(Zonotope), rand(Hyperrectangle)]
     ZS = convert(SparsePolynomialZonotope, Z)
     @test center(ZS) == center(Z)
-    @test dependent_genmat(ZS) == genmat(Z)
-    @test isempty(independent_genmat(ZS))
+    @test genmat_dep(ZS) == genmat(Z)
+    @test isempty(genmat_indep(ZS))
     @test expmat(ZS) == I
 end
