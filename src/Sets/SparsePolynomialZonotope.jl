@@ -1,5 +1,5 @@
-export SparsePolynomialZonotope, expmat, nparams, ndependentgens, nindependentgens,
-       dependent_genmat, independent_genmat, indexvector, exact_sum, ⊞,
+export SparsePolynomialZonotope, expmat, nparams, ngens_dep, ngens_indep,
+       genmat_dep, genmat_indep, indexvector, exact_sum, ⊞,
        linear_map, quadratic_map, remove_redundant_generators
 
 """
@@ -74,7 +74,7 @@ The ambient dimension of `P`.
 dim(P::SPZ) = length(P.c)
 
 """
-    ndependentgens(P::SparsePolynomialZonotope)
+    ngens_dep(P::SparsePolynomialZonotope)
 
 Return the number of dependent generators of `P`.
 
@@ -82,10 +82,10 @@ Return the number of dependent generators of `P`.
 
 - `P` -- sparse polynomial zonotope
 """
-ndependentgens(P::SPZ) = size(P.G, 2)
+ngens_dep(P::SPZ) = size(P.G, 2)
 
 """
-    nindependentgens(P::SparsePolynomialZonotope)
+    ngens_indep(P::SparsePolynomialZonotope)
 
 Return the number of independent generators of `P`.
 
@@ -93,7 +93,7 @@ Return the number of independent generators of `P`.
 
 - `P` -- sparse polynomial zonotope
 """
-nindependentgens(P::SPZ) = size(P.GI, 2)
+ngens_indep(P::SPZ) = size(P.GI, 2)
 
 """
     nparams(P::SparsePolynomialZonotope)
@@ -127,7 +127,7 @@ Return the order of `P`.
 
 The order of `P`, defined as the quotient between the number of generators and the ambient dimension.
 """
-order(P::SPZ) = (ndependentgens(P) + nindependentgens(P)) // dim(P)
+order(P::SPZ) = (ngens_dep(P) + ngens_indep(P)) // dim(P)
 
 """
     center(P::SparsePolynomialZonotope)
@@ -145,7 +145,7 @@ The center of `P`.
 center(P::SPZ) = P.c
 
 """
-    dependent_genmat(P::SparsePolynomialZonotope)
+    genmat_dep(P::SparsePolynomialZonotope)
 
 Return the matrix of dependent generators of `P`.
 
@@ -153,10 +153,10 @@ Return the matrix of dependent generators of `P`.
 
 - `P` -- sparse polynomial zonotope
 """
-dependent_genmat(P::SPZ) = P.G
+genmat_dep(P::SPZ) = P.G
 
 """
-    independent_genmat(P::SparsePolynomialZonotope)
+    genmat_indep(P::SparsePolynomialZonotope)
 
 Return the matrix of independent generators of `P`.
 
@@ -164,7 +164,7 @@ Return the matrix of independent generators of `P`.
 
 - `P` -- sparse polynomial zonotope
 """
-independent_genmat(P::SPZ) = P.GI
+genmat_indep(P::SPZ) = P.GI
 
 """
     expmat(P::SparsePolynomialZonotope)
@@ -223,8 +223,8 @@ The set resulting from applying the linear map `M` to `P`.
 """
 function linear_map(M::AbstractMatrix, P::SPZ)
     return SparsePolynomialZonotope(M * center(P),
-                                    M * dependent_genmat(P),
-                                    M * independent_genmat(P),
+                                    M * genmat_dep(P),
+                                    M * genmat_indep(P),
                                     expmat(P),
                                     indexvector(P)
                                     )
@@ -309,8 +309,8 @@ function exact_sum(P1::SparsePolynomialZonotope, P2::SparsePolynomialZonotope)
     indexvector(P1) == indexvector(P2) || throw(ArgumentError("Exact sum currently only implemented for Sparse Polynomial Zonotopes with the same index vector"))
 
     c = center(P1) + center(P2)
-    G = hcat(dependent_genmat(P1), dependent_genmat(P2))
-    GI = hcat(independent_genmat(P1), independent_genmat(P2))
+    G = hcat(genmat_dep(P1), genmat_dep(P2))
+    GI = hcat(genmat_indep(P1), genmat_indep(P2))
     E = hcat(expmat(P1), expmat(P2))
     idx = indexvector(P1)
 
