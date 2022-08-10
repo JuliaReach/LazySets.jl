@@ -18,6 +18,6 @@ ngens_dep(::SparsePolynomialZonotope)
 ngens_indep(::SparsePolynomialZonotope)
 nparams(::SparsePolynomialZonotope)
 order(::SparsePolynomialZonotope)
-linear_map(::Union{Real, AbstractMatrix, AbstractVector, LinearAlgebra.UniformScaling}, ::SparsePolynomialZonotope)
+linear_map(::Union{Real, AbstractMatrix, LinearAlgebra.UniformScaling}, ::SparsePolynomialZonotope)
 exact_sum(::SparsePolynomialZonotope, ::SparsePolynomialZonotope)
 ```
