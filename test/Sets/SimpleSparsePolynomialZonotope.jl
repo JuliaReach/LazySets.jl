@@ -24,7 +24,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test genmat(LMS) == [5.0 6.0;11.0 14.0]
     @test expmat(LMS) == expmat(S)
 
-    LMS2 = 0.5 * S
+    LMS2 = linear_map(0.5, S)
     @test center(LMS2) == [1.0, 0.0]
     @test genmat(LMS2) == [0.5 1;1 1]
     @test expmat(LMS2) == expmat(LMS2)

@@ -22,7 +22,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test order(PZ) == 2//1
 
 
-    LM = 0.5 * PZ
+    LM = linear_map(0.5, PZ)
     @test center(LM) == [2, 2]
     @test genmat_dep(LM) == [1 0.5 1;0 1 1]
     @test genmat_indep(LM) == hcat([0.5, 0.0])
