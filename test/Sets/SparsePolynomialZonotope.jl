@@ -21,6 +21,13 @@ for N in [Float64, Float32, Rational{Int}]
     @test nparams(PZ) == 2
     @test order(PZ) == 2//1
 
+
+    LM = linear_map(0.5, PZ)
+    @test center(LM) == [2, 2]
+    @test genmat_dep(LM) == [1 0.5 1;0 1 1]
+    @test genmat_indep(LM) == hcat([0.5, 0.0])
+    @test expmat(LM) == expmat(PZ)
+
     M = N[-0.5 0.2;-0.1 0.6]
     PZ2 = SparsePolynomialZonotope(zeros(N, 2), N[2 0 1;1 2 1], zeros(N, 2, 0), [1 0 1;0 1 3])
     LMPZ = linear_map(M, PZ2)
@@ -29,6 +36,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test isempty(genmat_indep(LMPZ))
     @test expmat(LMPZ) == [1 0 1;0 1 3]
     @test indexvector(LMPZ) == indexvector(PZ)
+
 
     ESPZ = PZ ⊞ PZ2
     @test center(ESPZ) == [4, 4]
