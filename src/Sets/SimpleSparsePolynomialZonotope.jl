@@ -273,7 +273,8 @@ Return the quadratic map of the given simple sparse polynomial zonotopes.
 
 ### Output
 
-The quadratic map of the given zonotope represented as a polynomial zonotope.
+The quadratic map of the given polynomial zonotopes represented as a simple
+sparse polynomial zonotope.
 
 ### Algorithm
 
