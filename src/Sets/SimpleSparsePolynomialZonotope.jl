@@ -210,7 +210,7 @@ end
 """
     quadratic_map(Q::Vector{MT}, S::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
 
-Return an overapproximation of the quadratic map of the given polynomial zonotope.
+Return the quadratic map of the given polynomial zonotope.
 
 ### Input
 
@@ -256,7 +256,51 @@ function quadratic_map(Q::Vector{MT}, S::SimpleSparsePolynomialZonotope) where {
             Gnew[j, idxstart:idxend] = G[:, i]' * QiG[j]
         end
     end
-    return SimpleSparsePolynomialZonotope(cnew, Gnew, Enew)
+    return remove_redundant_generators(SimpleSparsePolynomialZonotope(cnew, Gnew, Enew))
+end
+
+
+"""
+    quadratic_map(Q::Vector{MT}, S1::SimpleSparsePolynomialZonotope, S2::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
+
+Return the quadratic map of the given simple sparse polynomial zonotopes.
+
+### Input
+
+- `Q` -- vector of square matrices
+- `S1` -- simple sparse polynomial zonotope
+- `S2` -- simple sparse polynomial zonotope
+
+### Output
+
+The quadratic map of the given zonotope represented as a polynomial zonotope.
+
+### Algorithm
+
+This method implements Proposition 3.1.30 in [1].
+
+[1] N. Kochdumper. *Extensions of polynomial zonotopes and their application to
+verification of cyber-physical systems*. 2021.
+"""
+function quadratic_map(Q::Vector{MT}, S1::SimpleSparsePolynomialZonotope, S2::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
+    @assert nparams(S1) == nparams(S2)
+	m = length(Q)
+    c1 = center(S1)
+	c2 = center(S2)
+    h = ngens(S1)
+    G1 = genmat(S1)
+	G2 = genmat(S2)
+    E1 = expmat(S1)
+	E2 = expmat(S2)
+
+    c = [dot(c1, Qi, c2) for Qi in Q]
+	Ghat1 = reduce(vcat, c2' * Qi' * G1 for Qi in Q)
+	Ghat2 = reduce(vcat, c1' * Qi * G2 for Qi in Q)
+    Gbar = [reduce(vcat, Gj' * Qi * G2 for Qi in Q) for Gj in eachcol(G1)]
+	Ebar = [E2 .+ E1j for E1j in eachcol(E1)]
+	G = hcat(Ghat1, Ghat2, Gbar...)
+	E = hcat(E1, E2, Ebar...)
+	return remove_redundant_generators(SimpleSparsePolynomialZonotope(c, G, E))
 end
 
 """

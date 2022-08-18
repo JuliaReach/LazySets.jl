@@ -67,11 +67,19 @@ for N in [Float64, Float32, Rational{Int}]
     q1 = quadratic_map(Q, S2)
 
     @test center(q1) ≈ [-0.24, -0.416]
-    @test genmat(q1) ≈ [-1.2   0.16    0.0  0.4   0.4   0.0;
-                         -2.72  0.192  -3.2  0.48  0.48  0.0]
+    @test genmat(q1) ≈ [-1.2   0.16    0.0  0.8;
+                         -2.72  0.192  -3.2  0.96]
 
-    @test expmat(q1) == [ 1  0  2  1  1  0;
-                          0  1  0  1  1  2]
+    @test expmat(q1) == [ 1  0  2  1;
+                          0  1  0  1]
+
+    q2 = quadratic_map(Q, S2, S2)
+    @test center(q2) ≈ [-0.24, -0.416]
+    @test genmat(q2) ≈ [-1.2   0.16    0.0  0.8;
+                         -2.72  0.192  -3.2  0.96]
+
+    @test expmat(q2) == [ 1  0  2  1;
+                          0  1  0  1]
 
     c = N[1., 2, 3]
 

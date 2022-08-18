@@ -22,5 +22,6 @@ linear_combination(::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZon
 convex_hull(::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZonotope)
 convex_hull(::SimpleSparsePolynomialZonotope)
 quadratic_map(::Vector{MT}, ::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
+quadratic_map(Q::Vector{MT}, S1::SimpleSparsePolynomialZonotope, S2::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
 remove_redundant_generators(::SimpleSparsePolynomialZonotope)
 ```
