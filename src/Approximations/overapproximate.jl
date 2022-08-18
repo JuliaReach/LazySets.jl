@@ -718,16 +718,18 @@ end
 Given center, (dependent) generator matrix and exponent matrix of a (simple) sparse polynomial zonotope,
 compute thew new center and generator matrix of its zonotope overapproximation.
 =#
-function _zonotope_overapprox(c, G, E)
-    cnew = copy(c)
-    Gnew = copy(G)
+function _zonotope_overapprox!(c, G, E)
     @inbounds for (j, g) in enumerate(eachcol(G))
         if all(iseven, E[:, j])
-            cnew .+= g / 2
-            Gnew[:, j] ./= 2
+            c .+= g / 2
+            G[:, j] ./= 2
         end
     end
-    return cnew, Gnew
+    return c, G
+end
+
+function _zonotope_overapprox(c, G, E)
+    return _zonotope_overapprox!(copy(c), copy(G), E)
 end
 
 """
