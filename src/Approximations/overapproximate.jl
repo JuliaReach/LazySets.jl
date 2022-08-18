@@ -714,10 +714,10 @@ end
 # Overapproximation of Sparse Polynomial Zonotopes
 # ================================================
 
-"""
-Given center, (dependent) generator matrix and exponent matrix of a (simple) sparse polynomial
-zonotope, compute thew new center and generator matrix of its zonotope overapproximation.
-"""
+#=
+Given center, (dependent) generator matrix and exponent matrix of a (simple) sparse polynomialzonotope,
+compute thew new center and generator matrix of its zonotope overapproximation.
+=#
 function _zonotope_overapprox(c, G, E)
     cnew = copy(c)
     Gnew = copy(G)
