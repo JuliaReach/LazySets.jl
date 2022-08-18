@@ -794,8 +794,8 @@ end
 Return a zonotope containing ``P``.
 """
 function overapproximate(P::SparsePolynomialZonotope, ::Type{Zonotope})
-    cnew, Gnew = _zonotope_overapprox(center(P), dependent_genmat(P), expmat(P))
-    return Zonotope(cnew, hcat(Gnew, independent_genmat(P)))
+    cnew, Gnew = _zonotope_overapprox(center(P), genmat_dep(P), expmat(P))
+    return Zonotope(cnew, hcat(Gnew, genmat_indep(P)))
 end
 
 # ==========================================

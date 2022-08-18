@@ -44,6 +44,13 @@ for N in [Float64, Float32, Rational{Int}]
     @test genmat_indep(ESPZ) == hcat([1, 0])
     @test expmat(ESPZ) == [1 0 3 1 0 1;0 1 1 0 1 3]
     @test indexvector(ESPZ) == indexvector(PZ)
+
+    S = SparsePolynomialZonotope(N[-0.5, -0.5], N[1. 1 1 1;1 0 -1 1], zeros(N, 2, 0), [1 0 1 2;0 1 1 0])
+    Z = overappromate(S, Zonotope)
+
+    @test center(Z) == N[0, 0]
+    @test genmat(Z) == N[1 1 1 0.5;1 0 -1 0.5]
+
 end
 
 SSPZ = SimpleSparsePolynomialZonotope([0.2, -0.6], [1 0;0 0.4], [1 0;0 1])
