@@ -46,7 +46,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test indexvector(ESPZ) == indexvector(PZ)
 
     S = SparsePolynomialZonotope(N[-0.5, -0.5], N[1. 1 1 1;1 0 -1 1], zeros(N, 2, 0), [1 0 1 2;0 1 1 0])
-    Z = overappromate(S, Zonotope)
+    Z = overapproximate(S, Zonotope)
 
     @test center(Z) == N[0, 0]
     @test genmat(Z) == N[1 1 1 0.5;1 0 -1 0.5]
