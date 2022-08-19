@@ -264,6 +264,7 @@ end
     quadratic_map(Q::Vector{MT}, S1::SimpleSparsePolynomialZonotope, S2::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
 
 Return the quadratic map of the given simple sparse polynomial zonotopes.
+The quadratic map is the set ``\{x | xᵢ = s₁ᵀQᵢs₂, s₁∈S₁, s₂∈S₂, Qᵢ ∈ Q\}``
 
 ### Input
 
@@ -285,22 +286,25 @@ verification of cyber-physical systems*. 2021.
 """
 function quadratic_map(Q::Vector{MT}, S1::SimpleSparsePolynomialZonotope, S2::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
     @assert nparams(S1) == nparams(S2)
-    m = length(Q)
+
     c1 = center(S1)
     c2 = center(S2)
-    h = ngens(S1)
     G1 = genmat(S1)
     G2 = genmat(S2)
     E1 = expmat(S1)
     E2 = expmat(S2)
 
     c = [dot(c1, Qi, c2) for Qi in Q]
+
     Ghat1 = reduce(vcat, c2' * Qi' * G1 for Qi in Q)
     Ghat2 = reduce(vcat, c1' * Qi * G2 for Qi in Q)
-    Gbar = [reduce(vcat, gj' * Qi * G2 for Qi in Q) for gj in eachcol(G1)]
-    Ebar = [E2 .+ e1j for e1j in eachcol(E1)]
-    G = hcat(Ghat1, Ghat2, Gbar...)
-    E = hcat(E1, E2, Ebar...)
+
+    Gbar = reduce(hcat, reduce(vcat, gj' * Qi * G2 for Qi in Q) for gj in eachcol(G1))
+    Ebar = reduce(hcat, E2 .+ e1j for e1j in eachcol(E1))
+
+    G = hcat(Ghat1, Ghat2, Gbar)
+    E = hcat(E1, E2, Ebar)
+
     return remove_redundant_generators(SimpleSparsePolynomialZonotope(c, G, E))
 end
 
