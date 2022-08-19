@@ -335,12 +335,12 @@ Let `G` be the generator matrix and `E` the exponent matrix of `S`. The followin
 """
 function remove_redundant_generators(S::SimpleSparsePolynomialZonotope)
 
-    c, G, E = _compat(center(S), genmat(S), expmat(S))
+    c, G, E = _remove_redundant_generators_polyzono(center(S), genmat(S), expmat(S))
 
     return SimpleSparsePolynomialZonotope(c, G, E)
 end
 
-function _compat(c, G, E)
+function _remove_redundant_generators_polyzono(c, G, E)
     Gnew = Matrix{eltype(G)}(undef, size(G, 1), 0)
     Enew = Matrix{eltype(E)}(undef, size(E, 1), 0)
     cnew = copy(c)
