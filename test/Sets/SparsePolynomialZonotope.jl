@@ -51,6 +51,15 @@ for N in [Float64, Float32, Rational{Int}]
     @test center(Z) == N[0, 0]
     @test genmat(Z) == N[1 1 1 0.5;1 0 -1 0.5]
 
+    PZ = SparsePolynomialZonotope(N[-1., 2], N[1. 2 0 2;0 1 2 -1], N[1. 0;2 0], [1 0 1 2;0 0 0 1])
+    PZreduced = remove_redundant_generators(PZ)
+
+    @test center(PZreduced) == N[1, 3]
+    @test genmat_dep(PZreduced) == N[1 2;2 -1]
+    @test genmat_indep(PZreduced) == hcat(N[1, 2])
+    @test expmat(PZreduced) == [1 2;0 1]
+
+
 end
 
 SSPZ = SimpleSparsePolynomialZonotope([0.2, -0.6], [1 0;0 0.4], [1 0;0 1])

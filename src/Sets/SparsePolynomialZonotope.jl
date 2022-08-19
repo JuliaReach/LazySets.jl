@@ -318,6 +318,42 @@ end
 
 const ⊞ = exact_sum
 
+"""
+    remove_redundant_generators(S::SparsePolynomialZonotope)
+
+Remove redundant generators from `S`.
+
+### Input
+
+- `S` -- sparse polynomial zonotope
+
+### Output
+
+A new sparse polynomial zonotope such that redundant generators have been reduced.
+
+## Notes
+
+The result uses dense arrays irrespective of the array type of `S`.
+
+### Algorithm
+
+Let `G` be the dependent generator matrix, `E` the exponent matrix and `GI` the independent generator matrix of `S`.
+The following simplifications are performed:
+
+- Zero columns in `G` and the corresponding columns in `E` are removed.
+- Zero columns in `GI` are removed.
+- For zero columns in `E`, the corresponding column in `G` is summed to the center.
+- Repeated columns in `E` are grouped together by summing the corresponding columns in `G`.
+"""
+function remove_redundant_generators(S::SparsePolynomialZonotope)
+
+    c, G, E = _compat(center(S), genmat_dep(S), expmat(S))
+
+    GI = hcat(reduce(hcat, gi for gi in eachcol(genmat_indep(S)) if !iszero(gi)))
+
+    return SparsePolynomialZonotope(c, G, GI, E)
+end
+
 # function quadratic_map(Q::Vector{MT}, S::SparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
 #     m = length(Q)
 #     c = center(S)
@@ -343,33 +379,5 @@ const ⊞ = exact_sum
 #             Gnew[j, idxstart:idxend] = G[:, i]' * QiG[j]
 #         end
 #     end
-#     return SparsePolynomialZonotope(cnew, Gnew, Enew)
-# end
-
-# function remove_redundant_generators(S::SparsePolynomialZonotope)
-
-#     c = center(S)
-#     G = genmat(S)
-#     E = expmat(S)
-
-#     Gnew = Matrix{eltype(G)}(undef, size(G, 1), 0)
-#     Enew = Matrix{eltype(E)}(undef, size(E, 1), 0)
-#     cnew = copy(c)
-
-#     visited_exps = Dict{Vector{Int}, Int}()
-#     @inbounds for (gi, ei) in zip(eachcol(G), eachcol(E))
-#         iszero(gi) && continue
-#         if iszero(ei)
-#             cnew += gi
-#         elseif haskey(visited_exps, ei) # repeated exponent
-#             idx = visited_exps[ei]
-#             Gnew[:, idx] += gi
-#         else
-#             Gnew = hcat(Gnew, gi)
-#             Enew = hcat(Enew, ei)
-#             visited_exps[ei] = size(Enew, 2)
-#         end
-#     end
-
 #     return SparsePolynomialZonotope(cnew, Gnew, Enew)
 # end

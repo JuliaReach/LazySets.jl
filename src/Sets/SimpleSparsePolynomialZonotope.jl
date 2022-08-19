@@ -319,7 +319,7 @@ Remove redundant generators from `S`.
 
 ### Output
 
-A new simple simple sparse polynomial zonotope such that redundant generators have been reduced.
+A new simple sparse polynomial zonotope such that redundant generators have been reduced.
 
 ## Notes
 
@@ -329,16 +329,18 @@ The result uses dense arrays irrespective of the array type of `S`.
 
 Let `G` be the generator matrix and `E` the exponent matrix of `S`. The following simplifications are performed:
 
-- Zero columns in `G` and the corresponding columns in `E` are eliminated.
+- Zero columns in `G` and the corresponding columns in `E` are removed.
 - For zero columns in `E`, the corresponding column in `G` is summed to the center.
 - Repeated columns in `E` are grouped together by summing the corresponding columns in `G`.
 """
 function remove_redundant_generators(S::SimpleSparsePolynomialZonotope)
 
-    c = center(S)
-    G = genmat(S)
-    E = expmat(S)
+    c, G, E = _compat(center(S), genmat(S), expmat(S))
 
+    return SimpleSparsePolynomialZonotope(c, G, E)
+end
+
+function _compat(c, G, E)
     Gnew = Matrix{eltype(G)}(undef, size(G, 1), 0)
     Enew = Matrix{eltype(E)}(undef, size(E, 1), 0)
     cnew = copy(c)
@@ -358,9 +360,8 @@ function remove_redundant_generators(S::SimpleSparsePolynomialZonotope)
         end
     end
 
-    return SimpleSparsePolynomialZonotope(cnew, Gnew, Enew)
+    return cnew, Gnew, Enew
 end
-
 
 """
     rand(::Type{SimpleSparsePolynomialZonotope};
