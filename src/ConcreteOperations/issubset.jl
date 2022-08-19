@@ -652,11 +652,42 @@ function _issubset_interval!(x::Interval{N}, intervals, witness) where {N}
     return false
 end
 
-function ⊆(H::AbstractHyperrectangle, U::UnionSetArray{N, <:AbstractHyperrectangle},
+"""
+    ⊆(X::LazySet{N}, U::UnionSetArray, witness::Bool=false;
+      filter_redundant_sets::Bool=true) where {N}
+
+Check whether a set is contained in a union of a finite number of sets.
+
+### Input
+
+- `Z`       -- set
+- `U`       -- union of a finite number of sets
+- `witness` -- (optional, default: `false`) compute a witness if activated
+- `filter_redundant_sets` -- (optional, default: `true`) ignore sets in `U` that
+               do not intersect with `X`
+
+### Output
+
+`true` iff ``X ⊆ U``, `false` otherwise.
+
+### Algorithm
+
+This implementation is general and successively removes parts from `X` that are
+covered by the sets in the union ``U`` using the `difference` function. For the
+resulting subsets, this implementation relies on the methods `isdisjoint`, `⊆`,
+and `intersection`.
+
+As a preprocessing, this implementation checks if `X` is contained in any of the
+sets in `U`.
+
+The `filter_redundant_sets` option controls whether sets in `U` that do not
+intersect with `X` should be ignored.
+"""
+function ⊆(X::LazySet{N}, U::UnionSetArray,
            witness::Bool=false; filter_redundant_sets::Bool=true) where {N}
-    # sufficient check: is H contained in any set in U?
-    for B in array(U)
-        if H ⊆ B
+    # necessary check: is X contained in any set in U?
+    for rhs in array(U)
+        if X ⊆ rhs
             if witness
                 return (true, N[])
             else
@@ -666,33 +697,33 @@ function ⊆(H::AbstractHyperrectangle, U::UnionSetArray{N, <:AbstractHyperrecta
     end
 
     if filter_redundant_sets
-        # filter out those sets in U that do not intersect with H
-        boxes = Vector{eltype(array(U))}()
-        for B in array(U)
-            if !isdisjoint(H, B)
-                push!(boxes, B)
+        # filter out those sets in U that do not intersect with X
+        sets = Vector{eltype(array(U))}()
+        for rhs in array(U)
+            if !isdisjoint(X, rhs)
+                push!(sets, rhs)
             end
         end
     else
-        boxes = array(U)
+        sets = array(U)
     end
 
-    queue = AbstractHyperrectangle{N}[]  # vector types become SVector below
-    push!(queue, H)
+    queue = _inclusion_in_union_container(X, U)
+    push!(queue, X)
     while !isempty(queue)
-        X = pop!(queue)
-        # first check if X is fully contained to avoid splitting/recursion
-        # keep track of the first box that intersects with X
+        Y = pop!(queue)
+        # first check if Y is fully contained to avoid splitting/recursion
+        # keep track of the first set that intersects with Y
         idx = 0
         contained = false
-        for (i, B) in enumerate(boxes)
-            if X ⊆ B
+        for (i, rhs) in enumerate(sets)
+            if Y ⊆ rhs
                 contained = true
                 break
-            elseif idx == 0 && !isdisjoint(X, B)
+            elseif idx == 0 && !isdisjoint(Y, rhs)
                 # does not terminate if the intersection is flat
-                cap = intersection(X, B)
-                if !isempty(cap) && !isflat(cap)
+                cap = intersection(Y, rhs)
+                if !isempty(cap) && !_inclusion_in_union_isflat(cap)
                     idx = i
                 end
             end
@@ -702,14 +733,14 @@ function ⊆(H::AbstractHyperrectangle, U::UnionSetArray{N, <:AbstractHyperrecta
         end
         if idx == 0
             if witness
-                return (false, an_element(X))
+                return (false, an_element(Y))
             else
                 return false
             end
         end
-        # split wrt. the i-th box
-        B = boxes[idx]
-        append!(queue, array(difference(X, B)))
+        # split wrt. the i-th set
+        rhs = sets[idx]
+        append!(queue, array(difference(Y, rhs)))
     end
 
     if witness
@@ -717,6 +748,26 @@ function ⊆(H::AbstractHyperrectangle, U::UnionSetArray{N, <:AbstractHyperrecta
     else
         return true
     end
+end
+
+# general container
+function _inclusion_in_union_container(X, U::UnionSetArray)
+    return LazySet{N}[]
+end
+
+# hyperrectangle container
+function _inclusion_in_union_container(H::AbstractHyperrectangle,
+                                       U::UnionSetArray{N, <:AbstractHyperrectangle}) where {N}
+    return AbstractHyperrectangle{N}[]
+end
+
+# generally ignore check for flat sets
+function _inclusion_in_union_isflat(X)
+    return false
+end
+
+function _inclusion_in_union_isflat(H::AbstractHyperrectangle)
+    return isflat(H)
 end
 
 
