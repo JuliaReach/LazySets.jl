@@ -1,6 +1,6 @@
 for N in [Float64, Float32, Rational{Int}]
     # example from slide 13 of Niklas talk at JuliaReach & JuliaIntervals Days 3
-    c = N[2.0, 0.0]
+    c = N[2, 0]
     G = N[1 2;2 2.]
     E = [1 4;1 2]
 
@@ -39,9 +39,9 @@ for N in [Float64, Float32, Rational{Int}]
     @test genmat(CPS) == [1 2 0 0;2 2 0 0;0 0 1 2;0 0 2 2.]
     @test expmat(CPS) == [1 4 0 0;1 2 0 0;0 0 1 4;0 0 1 2]
 
-    _c = N[2.0, 0.0]
-    _g = N[ 0.0  0.5  1.0  0.5  1.0  0.5  1.0  -0.5  -1.0
-           0.0  1.0  1.0  1.0  1.0  1.0  1.0  -1.0  -1.0]
+    _c = N[2, 0]
+    _g = N[0  0.5  1  0.5  1  0.5  1  -0.5  -1
+           0  1    1  1    1  1    1  -1    -1]
 
     _e = [0  1  4  1  4  0  0  0  0
           0  1  2  1  2  0  0  0  0
@@ -61,37 +61,37 @@ for N in [Float64, Float32, Rational{Int}]
     @test genmat(CH1) == _g
     @test expmat(CH1) == _e
 
-    S2 = SimpleSparsePolynomialZonotope(N[0.2, -0.6], N[1 0;0 0.4], [1 0;0 1])
-    Q = [[0. 1;1 0], [-3.2 1.2;1.2 0]]
+    S2 = SimpleSparsePolynomialZonotope(N[1//5, -3//5], N[1 0; 0 2//5], [1 0; 0 1])
+    Q = [N[0 1; 1 0], N[-16//5 6//5; 6//5 0]]
 
     q1 = quadratic_map(Q, S2)
+    q2 = quadratic_map(Q, S2, S2)
 
-    @test center(q1) ≈ [-0.24, -0.416]
-    @test genmat(q1) ≈ [-1.2   0.16    0.0  0.4   0.4   0.0;
-                         -2.72  0.192  -3.2  0.48  0.48  0.0]
+    @test center(q1) == center(q2) ≈ N[-6//25, -52//125]
+    @test genmat(q1) ≈ genmat(q2) ≈ N[-6//5       4//25     0     4//5;
+                                      -272//100 192//1000 -16//5 96//100]
 
-    @test expmat(q1) == [ 1  0  2  1  1  0;
-                          0  1  0  1  1  2]
+    @test expmat(q1) == expmat(q2) == [1  0  2  1;
+                                       0  1  0  1]
 
-    c = N[1., 2, 3]
+    c = N[1, 2, 3]
 
-    G = N[0.0  1.0  4.0  7.0  10.0  13.0  16.0
-         0.0  2.0  5.0  8.0  11.0  14.0  17.0
-         0.0  3.0  6.0  9.0  12.0  15.0  18.0]
+    G = N[0  1  4  7  10  13  16
+          0  2  5  8  11  14  17
+          0  3  6  9  12  15  18]
 
     E = [1  4  1  3  0  3  7
          2  5  2  4  0  4  8
          3  6  3  5  0  5  9]
 
     Sred = remove_redundant_generators(SimpleSparsePolynomialZonotope(c, G, E))
-    @test center(Sred) == [11., 13, 15]
-    @test genmat(Sred) == N[ 1.0  4.0  20.0  16.0
-                            2.0  5.0  22.0  17.0
-                            3.0  6.0  24.0  18.0]
-
-    @test expmat(Sred) == [ 4  1  3  7
-                            5  2  4  8
-                            6  3  5  9]
+    @test center(Sred) == N[11, 13, 15]
+    @test genmat(Sred) == N[1 4 20 16
+                            2 5 22 17
+                            3 6 24 18]
+    @test expmat(Sred) == [4 1 3 7
+                           5 2 4 8
+                           6 3 5 9]
 end
 
 
