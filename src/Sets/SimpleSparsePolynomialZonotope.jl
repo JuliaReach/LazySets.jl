@@ -264,7 +264,7 @@ end
     quadratic_map(Q::Vector{MT}, S1::SimpleSparsePolynomialZonotope, S2::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
 
 Return the quadratic map of the given simple sparse polynomial zonotopes.
-The quadratic map is the set ``\{x | xᵢ = s₁ᵀQᵢs₂, s₁∈S₁, s₂∈S₂, Qᵢ ∈ Q\}``
+The quadratic map is the set ``\\{x | xᵢ = s₁ᵀQᵢs₂, s₁ ∈ S₁, s₂ ∈ S₂, Qᵢ ∈ Q\\}``
 
 ### Input
 
