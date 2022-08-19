@@ -297,8 +297,8 @@ function quadratic_map(Q::Vector{MT}, S1::SimpleSparsePolynomialZonotope, S2::Si
     c = [dot(c1, Qi, c2) for Qi in Q]
     Ghat1 = reduce(vcat, c2' * Qi' * G1 for Qi in Q)
     Ghat2 = reduce(vcat, c1' * Qi * G2 for Qi in Q)
-    Gbar = [reduce(vcat, Gj' * Qi * G2 for Qi in Q) for Gj in eachcol(G1)]
-    Ebar = [E2 .+ E1j for E1j in eachcol(E1)]
+    Gbar = [reduce(vcat, gj' * Qi * G2 for Qi in Q) for gj in eachcol(G1)]
+    Ebar = [E2 .+ e1j for e1j in eachcol(E1)]
     G = hcat(Ghat1, Ghat2, Gbar...)
     E = hcat(E1, E2, Ebar...)
     return remove_redundant_generators(SimpleSparsePolynomialZonotope(c, G, E))
