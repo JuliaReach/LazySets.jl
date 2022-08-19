@@ -319,7 +319,7 @@ Remove redundant generators from `S`.
 
 ### Output
 
-A new simple sparse polynomial zonotope such that redundant generators have been reduced.
+A new simple sparse polynomial zonotope such that redundant generators have been removed.
 
 ## Notes
 

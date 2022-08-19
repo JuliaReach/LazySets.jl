@@ -329,7 +329,7 @@ Remove redundant generators from `S`.
 
 ### Output
 
-A new sparse polynomial zonotope such that redundant generators have been reduced.
+A new sparse polynomial zonotope such that redundant generators have been removed.
 
 ## Notes
 
@@ -349,7 +349,7 @@ function remove_redundant_generators(S::SparsePolynomialZonotope)
 
     c, G, E = _compat(center(S), genmat_dep(S), expmat(S))
 
-    GI = hcat(reduce(hcat, gi for gi in eachcol(genmat_indep(S)) if !iszero(gi)))
+    GI = remove_zero_columns(genmat_indep(S))
 
     return SparsePolynomialZonotope(c, G, GI, E)
 end
