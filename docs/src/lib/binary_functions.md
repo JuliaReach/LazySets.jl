@@ -136,6 +136,7 @@ issubset
 ⊆(::CartesianProduct, ::CartesianProduct, ::Bool=false)
 ⊆(::CartesianProductArray, ::CartesianProductArray, ::Bool=false)
 ⊆(::AbstractZonotope, ::AbstractHyperrectangle, ::Bool=false)
+⊆(::LazySet{N}, ::UnionSetArray, ::Bool=false; ::Bool=true) where {N}
 ⊂
 ```
 
