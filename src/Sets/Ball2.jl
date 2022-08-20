@@ -43,7 +43,7 @@ julia> dim(B)
 Evaluate `B`'s support vector in the direction ``[1,2,3,4,5]``:
 
 ```jldoctest ball2_label
-julia> σ([1.,2.,3.,4.,5.], B)
+julia> σ([1.0, 2, 3, 4, 5], B)
 5-element Vector{Float64}:
  0.06741998624632421
  0.13483997249264842
@@ -58,13 +58,12 @@ struct Ball2{N<:AbstractFloat, VN<:AbstractVector{N}} <: AbstractCentrallySymmet
 
     # default constructor with domain constraint for radius
     function Ball2(center::VN, radius::N) where {N<:AbstractFloat, VN<:AbstractVector{N}}
-        @assert radius >= zero(N) "radius must not be negative"
+        @assert radius >= zero(N) "the radius must not be negative"
         return new{N, VN}(center, radius)
     end
 end
 
 isoperationtype(::Type{<:Ball2}) = false
-isconvextype(::Type{<:Ball2}) = true
 
 
 # --- AbstractCentrallySymmetric interface functions ---
@@ -88,12 +87,12 @@ function center(B::Ball2)
 end
 
 
-# --- ConvexSet interface functions ---
+# --- LazySet interface functions ---
 
 """
     ρ(d::AbstractVector, B::Ball2)
 
-Return the support function of a 2-norm ball in a given direction.
+Return the support function of a 2-norm ball in the given direction.
 
 ### Input
 
@@ -123,7 +122,7 @@ end
 """
     σ(d::AbstractVector, B::Ball2)
 
-Return the support vector of a 2-norm ball in a given direction.
+Return the support vector of a 2-norm ball in the given direction.
 
 ### Input
 
@@ -142,7 +141,7 @@ respectively.
 For nonzero direction ``d`` we have
 
 ```math
-σ_B(d) = c + r \\frac{d}{‖d‖_2}.
+σ(d, B) = c + r \\frac{d}{‖d‖_2}.
 ```
 
 This function requires computing the 2-norm of the input direction, which is
@@ -248,7 +247,7 @@ end
 """
     translate(B::Ball2, v::AbstractVector)
 
-Translate (i.e., shift) a ball in the 2-norm by a given vector.
+Translate (i.e., shift) a ball in the 2-norm by the given vector.
 
 ### Input
 
@@ -259,13 +258,10 @@ Translate (i.e., shift) a ball in the 2-norm by a given vector.
 
 A translated ball in the 2-norm.
 
-### Algorithm
-
-We add the vector to the center of the ball.
-
 ### Notes
 
-See also [`translate!(::Ball2, AbstractVector)`](@ref) for the in-place version.
+See also [`translate!(::Ball2, ::AbstractVector)`](@ref) for the in-place
+version.
 """
 function translate(B::Ball2, v::AbstractVector)
     return translate!(copy(B), v)
@@ -274,7 +270,7 @@ end
 """
     translate!(B::Ball2, v::AbstractVector)
 
-Translate (i.e., shift) a ball in the 2-norm by a given vector, in-place.
+Translate (i.e., shift) a ball in the 2-norm by the given vector, in-place.
 
 ### Input
 
@@ -285,6 +281,10 @@ Translate (i.e., shift) a ball in the 2-norm by a given vector, in-place.
 
 The ball `B` translated by `v`.
 
+### Algorithm
+
+We add the vector to the center of the ball.
+
 ### Notes
 
 See also [`translate(::Ball2, ::AbstractVector)`](@ref) for the out-of-place version.
@@ -292,7 +292,7 @@ See also [`translate(::Ball2, ::AbstractVector)`](@ref) for the out-of-place ver
 function translate!(B::Ball2, v::AbstractVector)
     @assert length(v) == dim(B) "cannot translate a $(dim(B))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
-    c = center(B)
+    c = B.center
     c .+= v
     return B
 end
@@ -367,9 +367,9 @@ The Chebyshev center of a ball in the 2-norm is just the center of the ball.
 """
 function chebyshev_center(B::Ball2; compute_radius::Bool=false)
     if compute_radius
-        return center(B), B.radius
+        return B.center, B.radius
     end
-    return center(B)
+    return B.center
 end
 
 """
