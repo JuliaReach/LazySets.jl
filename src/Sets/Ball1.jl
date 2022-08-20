@@ -24,19 +24,19 @@ where ``c ∈ \\mathbb{R}^n`` is its center and ``r ∈ \\mathbb{R}_+`` its radi
 
 ### Examples
 
-Unit ball in the 1-norm in the plane:
+The unit ball in the 1-norm in the plane:
 
 ```jldoctest ball1_constructor
-julia> B = Ball1(zeros(2), 1.)
+julia> B = Ball1(zeros(2), 1.0)
 Ball1{Float64, Vector{Float64}}([0.0, 0.0], 1.0)
 julia> dim(B)
 2
 ```
 
-We evaluate the support vector in the East direction:
+We evaluate the support vector in the North direction:
 
 ```jldoctest ball1_constructor
-julia> σ([0.,1], B)
+julia> σ([0.0, 1.0], B)
 2-element Vector{Float64}:
  0.0
  1.0
@@ -48,13 +48,14 @@ struct Ball1{N, VN<:AbstractVector{N}} <: AbstractCentrallySymmetricPolytope{N}
 
     # default constructor with domain constraint for radius
     function Ball1(center::VN, radius::N) where {N, VN<:AbstractVector{N}}
-        @assert radius >= zero(N) "radius must not be negative"
+        @assert radius >= zero(N) "the radius must not be negative"
         return new{N, VN}(center, radius)
     end
 end
 
 isoperationtype(::Type{<:Ball1}) = false
-isconvextype(::Type{<:Ball1}) = true
+
+_vector_type(B::Ball1{N, VN}) where {N, VN} = VN
 
 
 # --- AbstractCentrallySymmetric interface functions ---
@@ -82,7 +83,7 @@ end
 
 
 """
-    vertices_list(B::Ball1{N, VN}) where {N, VN<:AbstractVector}
+    vertices_list(B::Ball1)
 
 Return the list of vertices of a ball in the 1-norm.
 
@@ -93,12 +94,17 @@ Return the list of vertices of a ball in the 1-norm.
 ### Output
 
 A list containing the vertices of the ball in the 1-norm.
+
+### Notes
+
+In ``n`` dimensions there are ``2n`` vertices (unless the radius is 0).
 """
-function vertices_list(B::Ball1{N, VN}) where {N, VN<:AbstractVector}
+function vertices_list(B::Ball1)
     # fast evaluation if B has radius 0
     if iszero(B.radius)
         return [B.center]
     end
+    VN = _vector_type(B)
     vertices = Vector{VN}(undef, 2 * dim(B))
     j = 0
     v = copy(B.center)
@@ -116,13 +122,13 @@ function vertices_list(B::Ball1{N, VN}) where {N, VN<:AbstractVector}
 end
 
 
-# --- ConvexSet interface functions ---
+# --- LazySet interface functions ---
 
 
 """
     σ(d::AbstractVector, B::Ball1)
 
-Return the support vector of a ball in the 1-norm in a given direction.
+Return the support vector of a ball in the 1-norm in the given direction.
 
 ### Input
 
@@ -131,11 +137,11 @@ Return the support vector of a ball in the 1-norm in a given direction.
 
 ### Output
 
-Support vector in the given direction.
+The support vector in the given direction.
 """
 function σ(d::AbstractVector, B::Ball1)
     res = copy(B.center)
-    imax = argmax(abs.(d))
+    imax = argmaxabs(d)
     res[imax] += sign(d[imax]) * B.radius
     return res
 end
@@ -173,11 +179,11 @@ Then ``x ∈ B`` iff ``∑_{i=1}^n |c_i - x_i| ≤ r``.
 ### Examples
 
 ```jldoctest
-julia> B = Ball1([1., 1.], 1.);
+julia> B = Ball1([1.0, 1.0], 1.0);
 
-julia> [.5, -.5] ∈ B
+julia> [0.5, -0.5] ∈ B
 false
-julia> [.5, 1.5] ∈ B
+julia> [0.5, 1.5] ∈ B
 true
 ```
 """
@@ -232,9 +238,9 @@ function rand(::Type{Ball1};
 end
 
 """
-    constraints_list(P::Ball1{N}) where {N}
+    constraints_list(P::Ball1)
 
-Return the list of constraints defining a ball in the 1-norm.
+Return the list of constraints of a ball in the 1-norm.
 
 ### Input
 
@@ -244,19 +250,24 @@ Return the list of constraints defining a ball in the 1-norm.
 
 The list of constraints of the ball.
 
+### Notes
+
+In ``n`` dimensions there are ``2^n`` constraints (unless the radius is 0).
+
 ### Algorithm
 
 The constraints can be defined as ``d_i^T (x-c) ≤ r`` for all ``d_i``, where
 ``d_i`` is a vector with elements ``1`` or ``-1`` in ``n`` dimensions. To span
 all possible ``d_i``, the function `Iterators.product` is used.
 """
-function constraints_list(B::Ball1{N}) where {N}
+function constraints_list(B::Ball1)
     n = dim(B)
     c, r = B.center, B.radius
-    clist = Vector{LinearConstraint{N, Vector{N}}}(undef, 2^n)
+    N = eltype(B)
+    clist = Vector{HalfSpace{N, Vector{N}}}(undef, 2^n)
     for (i, di) in enumerate(Iterators.product([[one(N), -one(N)] for i = 1:n]...))
         d = collect(di) # tuple -> vector
-        clist[i] = LinearConstraint(d, dot(d, c) + r)
+        clist[i] = HalfSpace(d, dot(d, c) + r)
     end
     return clist
 end
@@ -264,7 +275,7 @@ end
 """
     translate(B::Ball1, v::AbstractVector)
 
-Translate (i.e., shift) a ball in the 1-norm by a given vector.
+Translate (i.e., shift) a ball in the 1-norm by the given vector.
 
 ### Input
 
@@ -273,11 +284,7 @@ Translate (i.e., shift) a ball in the 1-norm by a given vector.
 
 ### Output
 
-A translated ball in the 1-norm.
-
-### Algorithm
-
-We add the vector to the center of the ball.
+The translated ball in the 1-norm.
 
 ### Notes
 
@@ -290,7 +297,7 @@ end
 """
     translate!(B::Ball1, v::AbstractVector)
 
-Translate (i.e., shift) a ball in the 1-norm by a given vector, in-place.
+Translate (i.e., shift) a ball in the 1-norm by the given vector, in-place.
 
 ### Input
 
@@ -299,7 +306,11 @@ Translate (i.e., shift) a ball in the 1-norm by a given vector, in-place.
 
 ### Output
 
-The ball `B` translated by `v`.
+The in-place translated ball in the 1-norm.
+
+### Algorithm
+
+We add the vector to the center of the ball.
 
 ### Notes
 
@@ -308,7 +319,7 @@ See also [`translate(::Ball1, ::AbstractVector)`](@ref) for the out-of-place ver
 function translate!(B::Ball1, v::AbstractVector)
     @assert length(v) == dim(B) "cannot translate a $(dim(B))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
-    c = center(B)
+    c = B.center
     c .+= v
     return B
 end
