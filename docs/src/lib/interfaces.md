@@ -189,6 +189,8 @@ isuniversal(::AbstractCentrallySymmetric{N}, ::Bool=false) where {N}
 an_element(::AbstractCentrallySymmetric)
 isempty(::AbstractCentrallySymmetric)
 center(::AbstractCentrallySymmetric, ::Int)
+extrema(::AbstractCentrallySymmetric, ::Int)
+extrema(::AbstractCentrallySymmetric)
 ```
 
 ### Implementations
@@ -336,6 +338,8 @@ an_element(::AbstractCentrallySymmetricPolytope)
 isempty(::AbstractCentrallySymmetricPolytope)
 isuniversal(::AbstractCentrallySymmetricPolytope{N}, ::Bool=false) where {N}
 center(::AbstractCentrallySymmetricPolytope, ::Int)
+extrema(::AbstractCentrallySymmetricPolytope, ::Int)
+extrema(::AbstractCentrallySymmetricPolytope)
 ```
 
 ### Implementations

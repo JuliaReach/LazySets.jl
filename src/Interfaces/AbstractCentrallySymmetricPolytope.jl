@@ -139,3 +139,57 @@ The center along a given dimension of the centrally symmetric polytope.
 @inline function center(S::AbstractCentrallySymmetricPolytope, i::Int)
     return center(S)[i]
 end
+
+"""
+    extrema(S::AbstractCentrallySymmetricPolytope)
+
+Return two vectors with the lowest and highest coordinate of a centrally
+symmetric set.
+
+### Input
+
+- `S` -- centrally symmetric set
+
+### Output
+
+Two vectors with the lowest and highest coordinates of `S`.
+
+### Notes
+
+The result is equivalent to `(low(S), high(S))`.
+"""
+function extrema(S::AbstractCentrallySymmetricPolytope)
+    # h = c + r
+    h = high(S)
+    # l = c - r = -c - r + 2 * c = -h + 2 * c
+    l = 2 .* center(S) .- h
+    return (l, h)
+end
+
+"""
+    extrema(S::AbstractCentrallySymmetricPolytope, i::Int)
+
+Return the lower and higher coordinate of a centrally symmetric set in a given
+dimension.
+
+### Input
+
+- `S` -- centrally symmetric set
+- `i` -- dimension of interest
+
+### Output
+
+The lower and higher coordinate of the centrally symmetric set in the given
+dimension.
+
+### Notes
+
+The result is equivalent to `(low(S, i), high(S, i))`.
+"""
+function extrema(S::AbstractCentrallySymmetricPolytope, i::Int)
+    # h = c + r
+    h = high(S, i)
+    # l = c - r = -c - r + 2 * c = -h + 2 * c
+    l = - h + 2 * center(S, i)
+    return (l, h)
+end
