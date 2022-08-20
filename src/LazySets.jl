@@ -28,10 +28,6 @@ activate_assertions(LazySets)  # activate assertions by default
 include("Utils/assertions.jl")
 
 using ReachabilityBase.Require
-import ReachabilityBase.Require: require
-require(package; fun_name::String="", explanation::String="") =
-    require(@__MODULE__, package; fun_name=fun_name, explanation=explanation)
-
 using ReachabilityBase.Comparison
 using ReachabilityBase.Iteration
 using ReachabilityBase.Commutative
