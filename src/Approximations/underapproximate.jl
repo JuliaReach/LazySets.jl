@@ -85,3 +85,26 @@ function underapproximate(X::ConvexSet{N}, ::Type{<:Hyperrectangle};
     solver = default_nln_solver(N)
     return _underapproximate_box(X, solver)
 end
+
+"""
+    underapproximate(X::LazySet, ::Type{<:Ball2})
+
+Compute the largest inscribed Euclidean ball in a set `X`.
+
+### Input
+
+- `X`     -- set
+- `Ball2` -- target type
+
+### Output
+
+A largest `Ball2` contained in `X`.
+
+### Algorithm
+
+We use `chebyshev_center(X; compute_radius=true)`.
+"""
+function underapproximate(X::LazySet, ::Type{<:Ball2})
+    c, r = chebyshev_center(X; compute_radius=true)
+    return Ball2(c, r)
+end
