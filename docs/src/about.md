@@ -49,7 +49,7 @@ Alternatively, you can achieve the same from inside the REPL using the following
 command:
 
 ```julia
-julia> Pkg.test("LazySets")
+julia> import Pkg; Pkg.test("LazySets")
 ```
 
 We also advise adding new unit tests when adding new features to ensure
