@@ -15,8 +15,6 @@ dir_south(N, ::AbstractVector) = DIR_SOUTH(N)
 function load_staticarrays_directions()
 return quote
 
-using .StaticArrays: SVector
-
 const DIR_EAST_STATIC(N) = SVector{2}([one(N), zero(N)])
 const DIR_NORTH_STATIC(N) = SVector{2}([zero(N), one(N)])
 const DIR_WEST_STATIC(N) = SVector{2}([-one(N), zero(N)])

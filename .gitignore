@@ -4,6 +4,7 @@
 deps/deps.jl
 *.svg
 *.DS_Store
+.vscode
 
 docs/build/
 docs/site/
