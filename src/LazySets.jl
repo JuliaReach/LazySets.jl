@@ -4,7 +4,7 @@ __precompile__(true)
 module LazySets
 
 using LinearAlgebra, RecipesBase, Reexport, Requires, SparseArrays
-import GLPK, IntervalArithmetic, ReachabilityBase, JuMP, Pkg, Random
+import GLPK, IntervalArithmetic, ReachabilityBase, JuMP, Random
 
 using IntervalArithmetic: AbstractInterval, mince
 import IntervalArithmetic: radius, ⊂
