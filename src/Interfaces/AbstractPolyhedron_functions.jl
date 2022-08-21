@@ -854,7 +854,7 @@ end
 
 """
     chebyshev_center(P::AbstractPolyhedron{N};
-                     [get_radius]::Bool=false,
+                     [compute_radius]::Bool=false,
                      [backend]=default_polyhedra_backend(P),
                      [solver]=default_lp_solver_polyhedra(N; presolve=true)
                      ) where {N}
@@ -865,7 +865,7 @@ of a polytope.
 ### Input
 
 - `P`          -- polytope
-- `get_radius` -- (optional; default: `false`) option to additionally return the
+- `compute_radius` -- (optional; default: `false`) option to additionally return the
                   radius of the largest ball enclosed by `P` around the
                   Chebyshev center
 - `backend`    -- (optional; default: `default_polyhedra_backend(P)`) the
@@ -876,8 +876,8 @@ of a polytope.
 
 ### Output
 
-If `get_radius` is `false`, the result is the Chebyshev center of `P`.
-If `get_radius` is `true`, the result is the pair `(c, r)` where `c` is the
+If `compute_radius` is `false`, the result is the Chebyshev center of `P`.
+If `compute_radius` is `true`, the result is the pair `(c, r)` where `c` is the
 Chebyshev center of `P` and `r` is the radius of the largest ball with center
 `c` enclosed by `P`.
 
@@ -887,7 +887,7 @@ The Chebyshev center is the center of a largest Euclidean ball enclosed by `P`.
 In general, the center of such a ball is not unique (but the radius is).
 """
 function chebyshev_center(P::AbstractPolyhedron{N};
-                          get_radius::Bool=false,
+                          compute_radius::Bool=false,
                           backend=default_polyhedra_backend(P),
                           solver=default_lp_solver_polyhedra(N; presolve=true)
                          ) where {N}
@@ -896,7 +896,7 @@ function chebyshev_center(P::AbstractPolyhedron{N};
     Q = polyhedron(convert(HPolyhedron, P); backend=backend)
     c, r = Polyhedra.chebyshevcenter(Q, solver)
 
-    if get_radius
+    if compute_radius
         return c, r
     end
     return c

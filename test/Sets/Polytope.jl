@@ -544,7 +544,7 @@ for N in [Float64]
         c1 = chebyshev_center(B)
         P = convert(HPolytope, B)
         c2 = chebyshev_center(P)
-        c3, r = chebyshev_center(P; get_radius=true)
+        c3, r = chebyshev_center(P; compute_radius=true)
         @test c1 == c2 == c3 == center(B) && c1 isa AbstractVector{N}
         @test r == B.radius
 
