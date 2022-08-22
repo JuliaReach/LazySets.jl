@@ -1991,8 +1991,8 @@ function overapproximate(QM::QuadraticMap, ::Type{SparsePolynomialZonotope})
 	chat = center(PZhat)
 	Ehat = expmat(PZhat)
 	Ghat = genmat(PZhat)
-	K = [any(>(0), Ei[p1+1:end]) for Ei in eachcol(Ehat)]
-	H = [all(>(0), Ei[p1+1:end]) for Ei in eachcol(Ehat)]
+    H = [iszero(Ei[p1+1:end]) for Ei in eachcol(Ehat)]
+    K = .!H
 	PZK = SimpleSparsePolynomialZonotope(chat, Ghat[:, K], Ehat[:, K])
 	Z = overapproximate(PZK, Zonotope)
 	cz = center(Z)

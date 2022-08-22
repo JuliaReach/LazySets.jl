@@ -98,7 +98,10 @@ let
     Q = QuadraticMap([[0.5 0.5;1 -0.5], [-1.0 0;1 0]], PZ1)
     QPZ = overapproximate(Q, SparsePolynomialZonotope)
     @test_broken center(QPZ) == [0.0025, -0.005]
-    @test_broken genmat_dep(QPZ) == [-4.5 5.5 -1.5 -1.5 2 1.5;-3 5 -2 3 -2 0]
+    @test genmat_dep(QPZ) ==  [-1.5  5.5   2.0  -4.5  -1.5  1.5;
+                               -2.0  5.0  -2.0  -3.0   3.0  0.0]
     @test_broken genmat_indep(QPZ) == [0.0025 -0.05 0.15 0.15 0 0.05 0.1;-0.005 -0.2 0.3 0 -0.1 0.1 -0.1]
-    @test_broken expmat(QPZ) == [0 1 2 2 3 4;2 1 0 2 1 2]
+    @test expmat(QPZ) ==  [2  1  3  0  2  4;
+                                  0  1  1  2  2  2]
+
 end
