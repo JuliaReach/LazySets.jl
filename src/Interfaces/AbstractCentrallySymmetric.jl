@@ -7,7 +7,7 @@ export AbstractCentrallySymmetric,
 """
     AbstractCentrallySymmetric{N} <: ConvexSet{N}
 
-Abstract type for centrally symmetric sets.
+Abstract type for centrally symmetric convex sets.
 
 ### Notes
 
@@ -26,7 +26,7 @@ julia> subtypes(AbstractCentrallySymmetric)
 """
 abstract type AbstractCentrallySymmetric{N} <: ConvexSet{N} end
 
-isconvextype(::Type{<:AbstractCentrallySymmetric}) = false
+isconvextype(::Type{<:AbstractCentrallySymmetric}) = true
 
 """
     dim(S::AbstractCentrallySymmetric)

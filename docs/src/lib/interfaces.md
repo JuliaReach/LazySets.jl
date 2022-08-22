@@ -36,6 +36,12 @@ Every set in this library is a subtype of the abstract type `LazySet`.
 LazySet
 ```
 
+### Globally defined set functions
+
+```@docs
+isconvextype(::Type{<:LazySet})
+```
+
 ## [General sets (ConvexSet)](@id def_ConvexSet)
 
 Every convex set in this library implements this interface.
@@ -47,16 +53,14 @@ ConvexSet
 ### Support function and support vector
 
 Every `ConvexSet` type must define a function `σ` to compute the support vector.
+The support function, `ρ`, can optionally be defined; otherwise, a fallback
+definition based on `σ` is used.
 
 ```@docs
+σ
 support_vector
 ρ(::AbstractVector, ::ConvexSet)
 support_function
-σ
-singleton_list(::ConvexSet)
-constraints(::ConvexSet)
-vertices(::ConvexSet)
-delaunay
 ```
 
 ### Other globally defined set functions
@@ -80,7 +84,6 @@ is_interior_point(::AbstractVector{N}, ::ConvexSet{N}; p=Inf, ε=_rtol(N)) where
 isoperationtype(::Type{<:ConvexSet})
 isoperation(::ConvexSet)
 isequivalent(::ConvexSet, ::ConvexSet)
-isconvextype(::Type{<:ConvexSet})
 low(::ConvexSet{N}, ::Int) where {N}
 high(::ConvexSet{N}, ::Int) where {N}
 extrema(::ConvexSet, ::Int)
@@ -98,6 +101,10 @@ project(::ConvexSet, ::AbstractVector{Int}, ::Real, ::Int=dim(S))
 rectify(::ConvexSet, ::Bool=false)
 permute
 rationalize(::Type{T}, ::ConvexSet{N}, ::Real) where {T<:Integer, N<:AbstractFloat}
+singleton_list(::ConvexSet)
+constraints(::ConvexSet)
+vertices(::ConvexSet)
+delaunay
 ```
 
 Plotting is available for general one- or two-dimensional `ConvexSet`s, provided
