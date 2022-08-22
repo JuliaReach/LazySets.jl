@@ -8,6 +8,7 @@ import GLPK, IntervalArithmetic, ReachabilityBase, JuMP, Random
 
 using IntervalArithmetic: AbstractInterval, mince
 import IntervalArithmetic: radius, ⊂
+const IA = IntervalArithmetic
 using LinearAlgebra: checksquare
 import LinearAlgebra: norm, ×, normalize, normalize!
 using Random: AbstractRNG, GLOBAL_RNG, SamplerType, shuffle, randperm

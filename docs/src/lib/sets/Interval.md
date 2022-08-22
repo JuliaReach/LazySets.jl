@@ -33,6 +33,8 @@ constraints_list(::Interval{N}) where {N}
 rectify(::Interval{N}) where {N}
 diameter(::Interval, ::Real=Inf)
 split(::Interval, ::AbstractVector{Int})
+chebyshev_center_radius(::Interval)
+fast_interval_pow(::IA.Interval, ::Int)
 ```
 Inherited from [`ConvexSet`](@ref):
 * [`singleton_list`](@ref singleton_list(::ConvexSet))

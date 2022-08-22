@@ -35,7 +35,8 @@ export ConvexSet,
        vertices,
        project,
        rectify,
-       permute
+       permute,
+       chebyshev_center_radius
 
 """
     ConvexSet{N} <: LazySet{N}
@@ -1488,3 +1489,46 @@ A new set corresponding to `X` where the dimensions have been permuted according
 to `p`.
 """
 function permute end
+
+"""
+    chebyshev_center_radius(P::ConvexSet{N};
+                            [backend]=default_polyhedra_backend(P),
+                            [solver]=default_lp_solver_polyhedra(N; presolve=true)
+                           ) where {N}
+
+Compute a [Chebyshev center](https://en.wikipedia.org/wiki/Chebyshev_center)
+and the corresponding radius of a polytopic set.
+
+### Input
+
+- `P`       -- polytopic set
+- `backend` -- (optional; default: `default_polyhedra_backend(P)`) the backend
+               for polyhedral computations
+- `solver`  -- (optional; default:
+               `default_lp_solver_polyhedra(N; presolve=true)`) the LP solver
+               passed to `Polyhedra`
+
+### Output
+
+The pair `(c, r)` where `c` is a Chebyshev center of `P` and `r` is the radius
+of the largest ball with center `c` enclosed by `P`.
+
+### Notes
+
+The Chebyshev center is the center of a largest Euclidean ball enclosed by `P`.
+In general, the center of such a ball is not unique, but the radius is.
+
+### Algorithm
+
+We call `Polyhedra.chebyshevcenter`.
+"""
+function chebyshev_center_radius(P::ConvexSet{N};
+                                 backend=default_polyhedra_backend(P),
+                                 solver=default_lp_solver_polyhedra(N; presolve=true)
+                                ) where {N}
+    require(:Polyhedra; fun_name="chebyshev_center")
+    # convert to HPolyhedron to ensure `polyhedron` is applicable (see #1505)
+    Q = polyhedron(convert(HPolyhedron, P); backend=backend)
+    c, r = Polyhedra.chebyshevcenter(Q, solver)
+    return c, r
+end

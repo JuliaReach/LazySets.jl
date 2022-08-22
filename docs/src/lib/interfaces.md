@@ -105,6 +105,7 @@ singleton_list(::ConvexSet)
 constraints(::ConvexSet)
 vertices(::ConvexSet)
 delaunay
+chebyshev_center_radius(::ConvexSet{N}) where {N}
 ```
 
 Plotting is available for general one- or two-dimensional `ConvexSet`s, provided
@@ -215,7 +216,6 @@ This interface defines the following functions:
 isuniversal(::AbstractPolyhedron{N}, ::Bool=false) where {N}
 constrained_dimensions(::AbstractPolyhedron)
 linear_map(::AbstractMatrix{NM}, ::AbstractPolyhedron{NP}) where {NM, NP}
-chebyshev_center(::AbstractPolyhedron{N}) where {N}
 an_element(::AbstractPolyhedron{N}) where {N}
 isbounded(::AbstractPolyhedron{N}) where {N}
 vertices_list(::AbstractPolyhedron)

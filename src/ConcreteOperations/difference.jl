@@ -3,8 +3,6 @@ export difference
 # alias for set difference
 import Base: \
 
-const IA = IntervalArithmetic
-
 """
     \\(X::ConvexSet, Y::ConvexSet)
 

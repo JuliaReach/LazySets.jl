@@ -352,11 +352,8 @@ function ∈(S::AbstractSingleton, X::ConvexSet)
           "the implementations may differ)"))
 end
 
-function chebyshev_center(S::AbstractSingleton{N}; compute_radius::Bool=false) where {N}
-    if compute_radius
-        return element(S), zero(N)
-    end
-    return element(S)
+function chebyshev_center_radius(S::AbstractSingleton{N}) where {N}
+    return element(S), zero(N)
 end
 
 """

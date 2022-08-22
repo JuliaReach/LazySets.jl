@@ -541,12 +541,11 @@ for N in [Float64]
 
         # Chebyshev center
         B = BallInf(N[0, 0], N(1))  # Chebyshev center is unique
-        c1 = chebyshev_center(B)
+        c1, r1 = chebyshev_center_radius(B)
         P = convert(HPolytope, B)
-        c2 = chebyshev_center(P)
-        c3, r = chebyshev_center(P; get_radius=true)
-        @test c1 == c2 == c3 == center(B) && c1 isa AbstractVector{N}
-        @test r == B.radius
+        c2, r2 = chebyshev_center_radius(P)
+        @test c1 == c2 == center(B) && c1 isa AbstractVector{N}
+        @test r1 == r2 == B.radius
 
         # concrete projection
         πP = project(P, [1])
