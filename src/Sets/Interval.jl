@@ -444,6 +444,10 @@ end
 # --- AbstractHyperrectangle interface functions ---
 
 
+function _radius(x::Interval{N}) where {N}
+    return (max(x) - min(x)) / N(2)
+end
+
 """
     radius_hyperrectangle(x::Interval{N}, i::Int) where {N}
 
@@ -460,7 +464,7 @@ The box radius in the given dimension.
 """
 function radius_hyperrectangle(x::Interval{N}, i::Int) where {N}
     @assert i == 1 "an interval is one-dimensional"
-    return (max(x) - min(x)) / N(2)
+    return _radius(x)
 end
 
 """
@@ -477,7 +481,7 @@ Return the box radius of an interval in every dimension.
 The box radius of the interval (a one-dimensional vector).
 """
 function radius_hyperrectangle(x::Interval)
-    return [radius_hyperrectangle(x, 1)]
+    return [_radius(x)]
 end
 
 """
@@ -702,11 +706,28 @@ function vertices_list(H::IntervalArithmetic.IntervalBox)
     return vertices_list(convert(Hyperrectangle, H))
 end
 
-function chebyshev_center(x::Interval{N}; compute_radius::Bool=false) where {N}
-    if compute_radius
-        return center(x), zero(N)
-    end
-    return center(x)
+"""
+    chebyshev_center_radius(x::Interval; [kwargs]...)
+
+Compute the [Chebyshev center](https://en.wikipedia.org/wiki/Chebyshev_center)
+and the corresponding radius of an interval.
+
+### Input
+
+- `x`      -- interval
+- `kwargs` -- further keyword arguments (ignored)
+
+### Output
+
+The pair `(c, r)` where `c` is the Chebyshev center of `x` and `r` is the radius
+of the largest ball with center `c` enclosed by `x`.
+
+### Notes
+
+The Chebyshev center of an interval is just the center of the interval.
+"""
+function chebyshev_center_radius(x::Interval; kwargs...)
+    return center(x), _radius(x)
 end
 
 """
@@ -730,7 +751,6 @@ use `a^n` from `IntervalArithmetic.jl`.
 
 Review after IntervalArithmetic.jl#388
 """
-const IA = IntervalArithmetic
 function fast_interval_pow(a::IA.Interval, n::Int)
     if iszero(n)
         return one(a)

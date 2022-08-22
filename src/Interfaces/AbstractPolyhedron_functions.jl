@@ -5,7 +5,6 @@ export constrained_dimensions,
        remove_redundant_constraints,
        remove_redundant_constraints!,
        linear_map,
-       chebyshev_center,
        an_element,
        vertices_list
 
@@ -850,56 +849,6 @@ function plot_recipe(P::AbstractPolyhedron{N}, ε=zero(N)) where {N}
         end
         return x, y
     end
-end
-
-"""
-    chebyshev_center(P::AbstractPolyhedron{N};
-                     [compute_radius]::Bool=false,
-                     [backend]=default_polyhedra_backend(P),
-                     [solver]=default_lp_solver_polyhedra(N; presolve=true)
-                     ) where {N}
-
-Compute the [Chebyshev center](https://en.wikipedia.org/wiki/Chebyshev_center)
-of a polytope.
-
-### Input
-
-- `P`          -- polytope
-- `compute_radius` -- (optional; default: `false`) option to additionally return the
-                  radius of the largest ball enclosed by `P` around the
-                  Chebyshev center
-- `backend`    -- (optional; default: `default_polyhedra_backend(P)`) the
-                  backend for polyhedral computations
-- `solver`     -- (optional; default:
-                  `default_lp_solver_polyhedra(N; presolve=true)`) the LP
-                  solver passed to `Polyhedra`
-
-### Output
-
-If `compute_radius` is `false`, the result is the Chebyshev center of `P`.
-If `compute_radius` is `true`, the result is the pair `(c, r)` where `c` is the
-Chebyshev center of `P` and `r` is the radius of the largest ball with center
-`c` enclosed by `P`.
-
-### Notes
-
-The Chebyshev center is the center of a largest Euclidean ball enclosed by `P`.
-In general, the center of such a ball is not unique (but the radius is).
-"""
-function chebyshev_center(P::AbstractPolyhedron{N};
-                          compute_radius::Bool=false,
-                          backend=default_polyhedra_backend(P),
-                          solver=default_lp_solver_polyhedra(N; presolve=true)
-                         ) where {N}
-    require(:Polyhedra; fun_name="chebyshev_center")
-    # convert to HPolyhedron to ensure `polyhedron` is applicable (see #1505)
-    Q = polyhedron(convert(HPolyhedron, P); backend=backend)
-    c, r = Polyhedra.chebyshevcenter(Q, solver)
-
-    if compute_radius
-        return c, r
-    end
-    return c
 end
 
 """

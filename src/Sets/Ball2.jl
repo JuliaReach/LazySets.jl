@@ -342,34 +342,27 @@ end
 
 
 """
-    chebyshev_center(B::Ball2; [compute_radius]::Bool=false)
+    chebyshev_center_radius(B::Ball2; [kwargs]...)
 
 Compute the [Chebyshev center](https://en.wikipedia.org/wiki/Chebyshev_center)
-of a ball in the 2-norm.
+and the corresponding radius of a ball in the 2-norm.
 
 ### Input
 
-- `B`              -- ball in the 2-norm
-- `compute_radius` -- (optional; default: `false`) option to additionally return
-                      the radius of the largest ball enclosed by `B` around the
-                      Chebyshev center
+- `B`      -- ball in the 2-norm
+- `kwargs` -- further keyword arguments (ignored)
 
 ### Output
 
-If `compute_radius` is `false`, the result is the Chebyshev center of `B`.
-If `compute_radius` is `true`, the result is the pair `(c, r)` where `c` is the
-Chebyshev center of `B` and `r` is the radius of the largest ball with center
-`c` enclosed by `B`.
+The pair `(c, r)` where `c` is the Chebyshev center of `B` and `r` is the radius
+of the largest ball with center `c` enclosed by `B`.
 
 ### Notes
 
 The Chebyshev center of a ball in the 2-norm is just the center of the ball.
 """
-function chebyshev_center(B::Ball2; compute_radius::Bool=false)
-    if compute_radius
-        return B.center, B.radius
-    end
-    return B.center
+function chebyshev_center_radius(B::Ball2; kwargs...)
+    return B.center, B.radius
 end
 
 """

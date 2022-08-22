@@ -125,7 +125,8 @@ for N in [Float64, Float32]
     @test s isa AbstractVector{N} && s ∈ B
 
     # Chebyshev center
-    @test chebyshev_center(B) == center(B)
+    c, r = chebyshev_center_radius(B)
+    @test c == center(B) && r == B.radius
 
     # volume in dimension 2
     B = Ball2(zeros(N, 2), N(2))

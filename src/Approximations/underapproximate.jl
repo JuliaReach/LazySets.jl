@@ -102,9 +102,9 @@ A largest `Ball2` contained in `X`.
 
 ### Algorithm
 
-We use `chebyshev_center(X; compute_radius=true)`.
+We use `chebyshev_center_radius(X)`.
 """
 function underapproximate(X::LazySet, ::Type{<:Ball2})
-    c, r = chebyshev_center(X; compute_radius=true)
+    c, r = chebyshev_center_radius(X)
     return Ball2(c, r)
 end
