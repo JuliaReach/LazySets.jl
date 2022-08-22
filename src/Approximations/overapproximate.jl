@@ -1972,32 +1972,32 @@ polynomial zonotope. Implements Proposition 3.1.31 of [1].
 [1] N. Kochdumper. *Extensions of polynomial zonotopes and their application to
 verification of cyber-physical systems*. 2021.
 """
-function overapproximate(QM::QuadraticMap, ::Type{SparsePolynomialZonotope})
-	PZ = QM.X
-	Q = QM.Q
-	c = center(PZ)
-	n = dim(PZ)
-	G = genmat_dep(PZ)
-	GI = genmat_indep(PZ)
-	q1 = ngens_indep(PZ)
-	q = 2q1
-	p1 = nparams(PZ)
-	G1 = hcat(G, GI, zeros(eltype(G), n, q1))
-	G2 = hcat(G, zeros(eltype(G), n, q1), GI)
-	Ebar = cat(expmat(PZ), Matrix(1 * I, q, q); dims=(1, 2))
-	PZ1 = SimpleSparsePolynomialZonotope(c, G1, Ebar)
-	PZ2 = SimpleSparsePolynomialZonotope(c, G2, Ebar)
-	PZhat = quadratic_map(Q, PZ1, PZ2)
-	chat = center(PZhat)
-	Ehat = expmat(PZhat)
-	Ghat = genmat(PZhat)
+function overapproximate(QM::QuadraticMap{N, <:SparsePolynomialZonotope}, ::Type{SparsePolynomialZonotope}) where {N}
+    PZ = QM.X
+    Q = QM.Q
+    c = center(PZ)
+    n = dim(PZ)
+    G = genmat_dep(PZ)
+    GI = genmat_indep(PZ)
+    q1 = ngens_indep(PZ)
+    q = 2q1
+    p1 = nparams(PZ)
+    G1 = hcat(G, GI, zeros(eltype(G), n, q1))
+    G2 = hcat(G, zeros(eltype(G), n, q1), GI)
+    Ebar = cat(expmat(PZ), Matrix(1 * I, q, q); dims=(1, 2))
+    PZ1 = SimpleSparsePolynomialZonotope(c, G1, Ebar)
+    PZ2 = SimpleSparsePolynomialZonotope(c, G2, Ebar)
+    PZhat = quadratic_map(Q, PZ1, PZ2)
+    chat = center(PZhat)
+    Ehat = expmat(PZhat)
+    Ghat = genmat(PZhat)
     H = [iszero(Ei[p1+1:end]) for Ei in eachcol(Ehat)]
     K = .!H
-	PZK = SimpleSparsePolynomialZonotope(chat, Ghat[:, K], Ehat[1:p1, K])
-	Z = overapproximate(PZK, Zonotope)
-	cz = center(Z)
-	Gz = genmat(Z)
-	return SparsePolynomialZonotope(cz, Ghat[:, H], Gz, Ehat[1:p1, H])
+    PZK = SimpleSparsePolynomialZonotope(chat, Ghat[:, K], Ehat[1:p1, K])
+    Z = overapproximate(PZK, Zonotope)
+    cz = center(Z)
+    Gz = genmat(Z)
+    return SparsePolynomialZonotope(cz, Ghat[:, H], Gz, Ehat[1:p1, H])
 end
 
 # ===========================================================
