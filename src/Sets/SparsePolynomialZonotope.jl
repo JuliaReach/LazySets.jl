@@ -319,6 +319,28 @@ end
 const ⊞ = exact_sum
 
 """
+    minkowski_sum(P1::SparsePolynomialZonotope, P2::SparsePolynomialZonotope)
+
+Compute the Minkowski sum of sparse polyomial zonotopes ``P₁`` and ``P₂``.
+
+### Input
+
+- `P1` -- sparse polynomial zonotope
+- `P2` -- sparse polynomial zonotope
+
+### Output
+
+Minkowski sum ``P₁ ⊕ P₂``
+"""
+function minkowski_sum(P1::SparsePolynomialZonotope, P2::SparsePolynomialZonotope)
+    c = center(P1) + center(P2)
+    G = hcat(genmat_dep(P1), genmat_dep(P2))
+    GI = hcat(genmat_indep(P1), genmat_indep(P2))
+    E = cat(expmat(P1), expmat(P2); dims=(1, 2))
+    return SparsePolynomialZonotope(c, G, GI, E)
+end
+
+"""
     remove_redundant_generators(S::SparsePolynomialZonotope)
 
 Remove redundant generators from `S`.
