@@ -369,31 +369,3 @@ function remove_redundant_generators(S::SparsePolynomialZonotope)
     GI = remove_zero_columns(genmat_indep(S))
     return SparsePolynomialZonotope(c, G, GI, E)
 end
-
-# function quadratic_map(Q::Vector{MT}, S::SparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
-#     m = length(Q)
-#     c = center(S)
-#     h = ngens(S)
-#     G = genmat(S)
-#     E = expmat(S)
-
-#     cnew = similar(c, m)
-#     Gnew = similar(G, m, h^2 + h)
-#     QiG = similar(Q)
-#     @inbounds for (i, Qi) in enumerate(Q)
-#         cnew[i] = dot(c, Qi, c)
-#         Gnew[i, 1:h] = c' * (Qi + Qi') * G
-#         QiG[i] = Qi * G
-#     end
-
-#     Enew = repeat(E, 1, h + 1)
-#     @inbounds for i in 1:h
-#         idxstart = h * i + 1
-#         idxend = (i + 1) * h
-#         Enew[:, idxstart:idxend] .+= E[:, i]
-#         for j in eachindex(QiG)
-#             Gnew[j, idxstart:idxend] = G[:, i]' * QiG[j]
-#         end
-#     end
-#     return SparsePolynomialZonotope(cnew, Gnew, Enew)
-# end
