@@ -45,6 +45,12 @@ for N in [Float64, Float32, Rational{Int}]
     @test expmat(ESPZ) == [1 0 3 1 0 1;0 1 1 0 1 3]
     @test indexvector(ESPZ) == indexvector(PZ)
 
+    TPZ = translate(PZ, N[1, 2])
+    @test center(TPZ) == N[5, 6]
+    @test genmat_dep(TPZ) == genmat_dep(TPZ)
+    @test genmat_indep(TPZ) == genmat_indep(TPZ)
+    @test expmat(TPZ) == expmat(TPZ)
+
     S = SparsePolynomialZonotope(N[-0.5, -0.5], N[1. 1 1 1;1 0 -1 1], zeros(N, 2, 0), [1 0 1 2;0 1 1 0])
     Z = overapproximate(S, Zonotope)
 
