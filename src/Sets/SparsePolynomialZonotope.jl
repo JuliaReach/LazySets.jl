@@ -326,7 +326,7 @@ Translate (i.e., shift) a sparse polynomial zonotope by a given vector.
 ### Input
 
 - `S` -- sparse polynomial zonotope
-- `v` -- transaltion vector
+- `v` -- translation vector
 
 ### Output
 

@@ -20,6 +20,6 @@ nparams(::SparsePolynomialZonotope)
 order(::SparsePolynomialZonotope)
 linear_map(::Union{Real, AbstractMatrix, LinearAlgebra.UniformScaling}, ::SparsePolynomialZonotope)
 exact_sum(::SparsePolynomialZonotope, ::SparsePolynomialZonotope)
-translate(S::SparsePolynomialZonotope, v::AbstractVector)
+translate(::SparsePolynomialZonotope, ::AbstractVector)
 remove_redundant_generators(::SparsePolynomialZonotope)
 ```
