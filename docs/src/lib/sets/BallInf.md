@@ -16,22 +16,23 @@ rand(::Type{BallInf})
 ρ(::AbstractVector, ::BallInf)
 translate(::BallInf, ::AbstractVector)
 translate!(::BallInf, ::AbstractVector)
+volume(B::BallInf)
 ```
 Inherited from [`ConvexSet`](@ref):
 * [`diameter`](@ref diameter(::ConvexSet, ::Real))
 * [`singleton_list`](@ref singleton_list(::ConvexSet))
+* [`area`](@ref area(::ConvexSet))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
-* [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N})
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetricPolytope))
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
 * [`an_element`](@ref an_element(::AbstractCentrallySymmetricPolytope))
+* [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N})
 
 Inherited from [`AbstractZonotope`](@ref):
-* [`ngens`](@ref ngens(::AbstractZonotope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractZonotope))
 * [`order`](@ref order(::AbstractZonotope))
 * [`togrep`](@ref togrep(::AbstractZonotope))
@@ -44,4 +45,6 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`low`](@ref low(::AbstractHyperrectangle))
 * [`generators`](@ref generators(::AbstractHyperrectangle))
 * [`genmat`](@ref genmat(::AbstractHyperrectangle))
+* [`ngens`](@ref ngens(::AbstractHyperrectangle))
 * [`constraints_list`](@ref constraints_list(::AbstractHyperrectangle{N}) where {N})
+* [`rectify`](@ref rectify(::AbstractHyperrectangle))
