@@ -119,7 +119,7 @@ function symmetric_interval_hull(lm::LinearMap{N, <:AbstractHyperrectangle}) whe
 end
 
 function symmetric_interval_hull(E::ExponentialMap{N, <:AbstractSingleton}) where {N}
-    require(:Expokit; fun_name="symmetric_interval_hull")
+    require(@__MODULE__, :Expokit; fun_name="symmetric_interval_hull")
 
     v = expmv(one(N), E.spmexp.M, element(E.X))
     c = zeros(N, dim(E))
@@ -128,7 +128,7 @@ function symmetric_interval_hull(E::ExponentialMap{N, <:AbstractSingleton}) wher
 end
 
 function symmetric_interval_hull(E::ExponentialMap{N, <:AbstractHyperrectangle}) where {N}
-    require(:Expokit; fun_name="symmetric_interval_hull")
+    require(@__MODULE__, :Expokit; fun_name="symmetric_interval_hull")
 
     H = set(E)
     n = dim(H)

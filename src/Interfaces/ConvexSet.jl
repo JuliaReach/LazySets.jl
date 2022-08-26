@@ -1526,7 +1526,7 @@ function chebyshev_center_radius(P::ConvexSet{N};
                                  backend=default_polyhedra_backend(P),
                                  solver=default_lp_solver_polyhedra(N; presolve=true)
                                 ) where {N}
-    require(:Polyhedra; fun_name="chebyshev_center")
+    require(@__MODULE__, :Polyhedra; fun_name="chebyshev_center")
     # convert to HPolyhedron to ensure `polyhedron` is applicable (see #1505)
     Q = polyhedron(convert(HPolyhedron, P); backend=backend)
     c, r = Polyhedra.chebyshevcenter(Q, solver)

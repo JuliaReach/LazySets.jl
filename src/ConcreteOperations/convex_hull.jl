@@ -581,7 +581,7 @@ For further information on the supported backends see
 """
 function convex_hull(P1::HPoly, P2::HPoly;
                      backend=default_polyhedra_backend(P1))
-    require(:Polyhedra; fun_name="convex_hull")
+    require(@__MODULE__, :Polyhedra; fun_name="convex_hull")
     Pch = Polyhedra.convexhull(polyhedron(P1; backend=backend),
                                polyhedron(P2; backend=backend))
     removehredundancy!(Pch)

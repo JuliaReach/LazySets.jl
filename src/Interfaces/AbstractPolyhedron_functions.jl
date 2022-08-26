@@ -25,7 +25,7 @@ end
 
 # Polyhedra backend (fallback method)
 function default_polyhedra_backend(P::ConvexSet{N}) where {N}
-    require(:Polyhedra; fun_name="default_polyhedra_backend")
+    require(@__MODULE__, :Polyhedra; fun_name="default_polyhedra_backend")
     error("no default backend for numeric type $N")
 end
 
@@ -33,7 +33,7 @@ end
 # NOTE: exists in parallel to `default_lp_solver` because we use different
 # interfaces (see #1493)
 function default_lp_solver_polyhedra(N, varargs...)
-    require(:Polyhedra; fun_name="default_lp_solver_polyhedra")
+    require(@__MODULE__, :Polyhedra; fun_name="default_lp_solver_polyhedra")
     error("no default solver for numeric type $N")
 end
 
@@ -379,9 +379,9 @@ function _check_algorithm_applies(M::AbstractMatrix{N}, P::AbstractPolyhedron{N}
 end
 
 function _get_elimination_instance(N, backend, elimination_method)
-    require(:Polyhedra; fun_name="linear_map with elimination")
+    require(@__MODULE__, :Polyhedra; fun_name="linear_map with elimination")
     if backend == nothing
-        require(:CDDLib; fun_name="linear_map with elimination")
+        require(@__MODULE__, :CDDLib; fun_name="linear_map with elimination")
         backend = default_cddlib_backend(N)
     end
     if elimination_method == nothing
@@ -679,7 +679,7 @@ function _linear_map_vrep(M::AbstractMatrix, P::AbstractPolyhedron,
         throw(ArgumentError("the linear map in vertex representation for an " *
                             "unbounded set is not defined"))
     end
-    require(:Polyhedra; fun_name="linear_map",
+    require(@__MODULE__, :Polyhedra; fun_name="linear_map",
             explanation="of a $(typeof(P)) by a non-invertible matrix")
     # since P is bounded, we pass an HPolytope and then convert it to vertex representation
 

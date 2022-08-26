@@ -175,7 +175,7 @@ The volume of `P`.
 The volume is computed by the `Polyhedra` library.
 """
 function volume(P::AbstractPolytope; backend=nothing)
-    require(:Polyhedra; fun_name="volume")
+    require(@__MODULE__, :Polyhedra; fun_name="volume")
     if isnothing(backend)
         backend = default_polyhedra_backend(P)
     end

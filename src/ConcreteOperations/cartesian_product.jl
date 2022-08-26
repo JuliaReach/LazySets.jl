@@ -84,7 +84,7 @@ For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/).
 """
 function cartesian_product(P1::VPolytope, P2::VPolytope; backend=nothing)
-    require(:Polyhedra; fun_name="cartesian_product")
+    require(@__MODULE__, :Polyhedra; fun_name="cartesian_product")
 
     return _cartesian_product_vrep(P1, P2, backend1=backend, backend2=backend)
 end
@@ -123,7 +123,7 @@ function _cartesian_product_hrep(X::S1, Y::S2) where {S1<:ConvexSet{N}, S2<:Conv
 end
 
 function _cartesian_product_hrep_polyhedra(P1::PT1, P2::PT2; backend1, backend2) where {PT1, PT2}
-    require(:Polyhedra; fun_name="`cartesian_product")
+    require(@__MODULE__, :Polyhedra; fun_name="`cartesian_product")
 
     if isnothing(backend1)
         backend1 = default_polyhedra_backend(P1)

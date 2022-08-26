@@ -180,8 +180,8 @@ end
 
 # common code before calling _minkowski_sum_hrep
 function _minkowski_sum_hrep_preprocess(P, Q, backend, algorithm, prune)
-    require(:Polyhedra; fun_name="minkowski_sum")
-    require(:CDDLib; fun_name="minkowski_sum")
+    require(@__MODULE__, :Polyhedra; fun_name="minkowski_sum")
+    require(@__MODULE__, :CDDLib; fun_name="minkowski_sum")
 
     A, b = tosimplehrep(P)
     C, d = tosimplehrep(Q)
@@ -472,7 +472,7 @@ function _minkowski_sum_vrep_nd(vlist1::Vector{VT}, vlist2::Vector{VT};
     end
     if apply_convex_hull
         if backend == nothing
-            require(:Polyhedra; fun_name="minkowski_sum")
+            require(@__MODULE__, :Polyhedra; fun_name="minkowski_sum")
             backend = default_polyhedra_backend_nd(N)
             solver = default_lp_solver_polyhedra(N)
         end
