@@ -23,8 +23,8 @@ of an ellipse.
 ### Fields
 
 - `center`       -- center of the ellipsoid
-- `shape_matrix` -- real positive definite matrix, i.e. it is equal to its transpose
-                    and ``x^\\mathrm{T}Qx > 0`` for all nonzero ``x``
+- `shape_matrix` -- real positive definite matrix, i.e., it is equal to its
+                    transpose and ``x^\\mathrm{T}Qx > 0`` for all nonzero ``x``
 
 ## Notes
 
@@ -33,10 +33,7 @@ definite. Use the flag `check_posdef=false` to disable this check.
 
 ### Examples
 
-An ellipsoid can be created passing its center and shape matrix (which should be
-positive definite).
-
-For instance, we create a two-dimensional ellipsoid with center `[1, 1]`:
+We create a two-dimensional ellipsoid with center `[1, 1]`:
 
 ```jldoctest ellipsoid_constructor
 julia> using LinearAlgebra
@@ -45,9 +42,9 @@ julia> E = Ellipsoid(ones(2), Diagonal([2.0, 0.5]))
 Ellipsoid{Float64, Vector{Float64}, Diagonal{Float64, Vector{Float64}}}([1.0, 1.0], [2.0 0.0; 0.0 0.5])
 ```
 
-If the center is not specified, it is assumed that it is the origin. For instance,
-a three-dimensional ellipsoid centered at the origin and the shape matrix being
-the identity can be created with:
+If the center is not specified, it is assumed that it is the origin. For
+instance, a three-dimensional ellipsoid centered in the origin with the shape
+matrix being the identity can be created as follows:
 
 ```jldoctest ellipsoid_constructor
 julia> E = Ellipsoid(Matrix(1.0I, 3, 3))
@@ -57,7 +54,7 @@ julia> dim(E)
 3
 ```
 The center and shape matrix of the ellipsoid can be retrieved with the functions
-`center` and `shape_matrix` respectively:
+`center` and `shape_matrix`, respectively:
 
 ```jldoctest ellipsoid_constructor
 julia> center(E)
@@ -86,7 +83,7 @@ julia> an_element(E) ∈ E
 true
 ```
 
-We can evaluate its support vector in a given direction, say `[1, 1, 1]`:
+We can evaluate the support vector in a given direction, say `[1, 1, 1]`:
 
 ```jldoctest ellipsoid_constructor
 julia> σ(ones(3), E)
@@ -105,8 +102,9 @@ struct Ellipsoid{N<:AbstractFloat, VN<:AbstractVector{N},
     function Ellipsoid(c::VN, Q::MN; check_posdef::Bool=true) where
             {N<:AbstractFloat, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}}
 
-        @assert length(c) == checksquare(Q) "the length of the center and the size "
-            "of the shape matrix do not match; they are $(length(c)) and $(size(Q)) respectively"
+        @assert length(c) == checksquare(Q) "the length of the center and " *
+            "the size of the shape matrix do not match; they are " *
+            "$(length(c)) and $(size(Q)) respectively"
 
         if check_posdef
             isposdef(Q) || throw(ArgumentError("an ellipsoid's shape matrix " *
@@ -117,13 +115,13 @@ struct Ellipsoid{N<:AbstractFloat, VN<:AbstractVector{N},
 end
 
 isoperationtype(::Type{<:Ellipsoid}) = false
-isconvextype(::Type{<:Ellipsoid}) = true
 
-# convenience constructor for ellipsoid centered in the origin
+# convenience constructor for an ellipsoid centered in the origin
 function Ellipsoid(Q::AbstractMatrix{N}; check_posdef::Bool=true) where {N}
     # TODO: use similar vector type for the center, see #2032
     return Ellipsoid(zeros(N, size(Q, 1)), Q; check_posdef=check_posdef)
 end
+
 
 # --- AbstractCentrallySymmetric interface functions ---
 
@@ -162,7 +160,8 @@ function shape_matrix(E::Ellipsoid)
     return E.shape_matrix
 end
 
-# --- ConvexSet interface functions ---
+
+# --- LazySet interface functions ---
 
 
 """
@@ -177,7 +176,7 @@ Return the support vector of an ellipsoid in a given direction.
 
 ### Output
 
-Support vector in the given direction.
+The support vector in the given direction.
 
 ### Algorithm
 
@@ -192,12 +191,11 @@ vector,
 ```
 """
 function σ(d::AbstractVector, E::Ellipsoid)
-    N = promote_type(eltype(d), eltype(E))
-    if norm(d, 2) == zero(N)
-        return an_element(E)
+    if iszero(norm(d, 2))
+        return E.center
     end
-    α = sqrt(dot(d, E.shape_matrix * d))
-    return E.center .+ E.shape_matrix * d ./ α
+    Qd = E.shape_matrix * d
+    return E.center .+ Qd ./ sqrt(dot(d, Qd))
 end
 
 """
@@ -216,11 +214,11 @@ The support function of the ellipsoid in the given direction.
 
 ### Algorithm
 
-The support value is ``cᵀ d + ‖Bᵀ d‖₂`` where ``c`` is the center and
+The support value is ``cᵀ d + ‖Bᵀ d‖₂``, where ``c`` is the center and
 ``Q = B Bᵀ`` is the shape matrix of `E`.
 """
 function ρ(d::AbstractVector, E::Ellipsoid)
-    return dot(center(E), d) + sqrt(inner(d, E.shape_matrix, d))
+    return dot(E.center, d) + sqrt(inner(d, E.shape_matrix, d))
 end
 
 """
@@ -247,8 +245,10 @@ if and only if
 ```
 """
 function ∈(x::AbstractVector, E::Ellipsoid)
-    @assert length(x) == dim(E)
-    w, Q = x-E.center, E.shape_matrix
+    @assert length(x) == dim(E) "cannot check membership of a vector of " *
+        "length $(length(x)) in an ellipsoid of dimension $(dim(E))"
+    w = x - E.center
+    Q = E.shape_matrix
     return dot(w, Q \ w) ≤ 1
 end
 
@@ -282,8 +282,8 @@ The matrix is symmetric positive definite, but also diagonally dominant.
 ```math
 Q =  \\frac{1}{2}(S + S^T) + nI,
 ```
-where ``n`` = `dim` (defaults to 2), and ``S`` is a ``n \\times n`` random
-matrix whose coefficients are uniformly distributed in the interval ``[-1, 1]``.
+where ``n`` = `dim` and ``S`` is a ``n \\times n`` random matrix whose
+coefficients are uniformly distributed in the interval ``[-1, 1]``.
 """
 function rand(::Type{Ellipsoid};
               N::Type{<:AbstractFloat}=Float64,
@@ -317,20 +317,17 @@ Translate (i.e., shift) an ellipsoid by a given vector.
 
 ### Input
 
-- `E`  -- ellipsoid
-- `v`  -- translation vector
+- `E` -- ellipsoid
+- `v` -- translation vector
 
 ### Output
 
 A translated ellipsoid.
 
-### Algorithm
-
-We add the vector to the center of the ellipsoid.
-
 ### Notes
 
-See also [`translate!(::Ellipsoid, ::AbstractVector)`](@ref) for the in-place version.
+See also [`translate!(::Ellipsoid, ::AbstractVector)`](@ref) for the in-place
+version.
 """
 function translate(E::Ellipsoid, v::AbstractVector)
     return translate!(copy(E), v)
@@ -343,8 +340,8 @@ Translate (i.e., shift) an ellipsoid by a given vector, in-place.
 
 ### Input
 
-- `E`  -- ellipsoid
-- `v`  -- translation vector
+- `E` -- ellipsoid
+- `v` -- translation vector
 
 ### Output
 
@@ -352,12 +349,17 @@ The ellipsoid `E` translated by `v`.
 
 ### Notes
 
-See also [`translate(::Ellipsoid, ::AbstractVector)`](@ref) for the out-of-place version.
+See also [`translate(::Ellipsoid, ::AbstractVector)`](@ref) for the out-of-place
+version.
+
+### Algorithm
+
+We add the vector to the center of the ellipsoid.
 """
 function translate!(E::Ellipsoid, v::AbstractVector)
     @assert length(v) == dim(E) "cannot translate a $(dim(E))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
-    c = center(E)
+    c = E.center
     c .+= v
     return E
 end
