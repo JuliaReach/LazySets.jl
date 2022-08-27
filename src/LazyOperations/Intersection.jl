@@ -273,7 +273,7 @@ function ρ_helper(d::AbstractVector{M},
         NN = promote_type(N, M)
         return invoke(ρ, Tuple{typeof(d), Intersection{NN}}, d, cap)
     elseif algorithm == "line_search"
-        require(:Optim; fun_name="ρ", explanation="(algorithm $algorithm)")
+        require(@__MODULE__, :Optim; fun_name="ρ", explanation="(algorithm $algorithm)")
         (s, _) = _line_search(d, X, H; kwargs...)
         return s
     elseif algorithm == "projection"

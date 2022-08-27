@@ -80,7 +80,7 @@ arXiv:1905.13246.
 """
 function underapproximate(X::ConvexSet{N}, ::Type{<:Hyperrectangle};
                           solver=nothing) where {N}
-    require(:Ipopt; fun_name="underapproximate")
+    require(@__MODULE__, :Ipopt; fun_name="underapproximate")
 
     solver = default_nln_solver(N)
     return _underapproximate_box(X, solver)

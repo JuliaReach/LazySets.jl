@@ -105,7 +105,7 @@ function rand(::Type{HPolytope};
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int, Nothing}=nothing,
               num_vertices::Int=-1)
-    require(:Polyhedra; fun_name="rand")
+    require(@__MODULE__, :Polyhedra; fun_name="rand")
     rng = reseed(rng, seed)
     vpolytope = rand(VPolytope; N=N, dim=dim, rng=rng, seed=seed,
                     num_vertices=num_vertices)
@@ -230,7 +230,7 @@ function vertices_list(P::HPolytope{N};
     if dim(P) == 2 && backend == nothing
         return vertices_list(convert(HPolygon, P, prune=prune))
     else
-        require(:Polyhedra; fun_name="vertices_list")
+        require(@__MODULE__, :Polyhedra; fun_name="vertices_list")
         if backend == nothing
             backend = default_polyhedra_backend(P)
         end

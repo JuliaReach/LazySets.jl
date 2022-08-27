@@ -324,7 +324,7 @@ See `_sample_unit_nball_muller!` for implementation details.
 function sample(B::Ball2{N}, nsamples::Int;
                 rng::AbstractRNG=GLOBAL_RNG,
                 seed::Union{Int, Nothing}=nothing) where {N}
-    require(:Distributions; fun_name="sample")
+    require(@__MODULE__, :Distributions; fun_name="sample")
     n = dim(B)
     D = Vector{Vector{N}}(undef, nsamples) # preallocate output
     _sample_unit_nball_muller!(D, n, nsamples, rng=rng, seed=seed)

@@ -118,8 +118,8 @@ julia> plot3d!(10. * rand(Hyperrectangle, dim=3), color=:red)
 function plot3d(S::ConvexSet; backend=default_polyhedra_backend(S),
                 alpha=1.0, color=:blue, colormap=:viridis, colorrange=nothing, interpolate=false,
                 linewidth=1, overdraw=false, shading=true, transparency=true, visible=true)
-    require(:Makie; fun_name="plot3d")
-    require(:Polyhedra; fun_name="plot3d")
+    require(@__MODULE__, :Makie; fun_name="plot3d")
+    require(@__MODULE__, :Polyhedra; fun_name="plot3d")
 
     if colorrange == nothing
         colorrange = Automatic()
@@ -149,8 +149,8 @@ See the documentation of `plot3d` for examples.
 function plot3d!(S::ConvexSet; backend=default_polyhedra_backend(S),
                 alpha=1.0, color=:blue, colormap=:viridis, colorrange=nothing, interpolate=false,
                 linewidth=1, overdraw=false, shading=true, transparency=true, visible=true)
-    require(:Makie; fun_name="plot3d!")
-    require(:Polyhedra; fun_name="plot3d!")
+    require(@__MODULE__, :Makie; fun_name="plot3d!")
+    require(@__MODULE__, :Polyhedra; fun_name="plot3d!")
 
     if colorrange == nothing
         colorrange = Automatic()

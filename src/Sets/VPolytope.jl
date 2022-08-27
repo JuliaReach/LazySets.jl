@@ -437,7 +437,7 @@ Otherwise, the redundancy removal function of the polyhedral backend is used.
 function remove_redundant_vertices(P::VPolytope{N};
                                    backend=nothing,
                                    solver=nothing) where {N}
-    require(:Polyhedra; fun_name="remove_redundant_vertices")
+    require(@__MODULE__, :Polyhedra; fun_name="remove_redundant_vertices")
     if backend == nothing
         backend = default_polyhedra_backend(P)
     end
@@ -484,7 +484,7 @@ function tohrep(P::VPolytope{N};
     if isempty(vl)
         return EmptySet{N}(dim(P))
     end
-    require(:Polyhedra; fun_name="tohrep")
+    require(@__MODULE__, :Polyhedra; fun_name="tohrep")
     return convert(HPolytope, polyhedron(P; backend=backend))
 end
 

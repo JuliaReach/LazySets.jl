@@ -450,7 +450,7 @@ documentation](https://juliapolyhedra.github.io/).
 """
 function tovrep(P::HPoly;
                 backend=default_polyhedra_backend(P))
-    require(:Polyhedra; fun_name="tovrep")
+    require(@__MODULE__, :Polyhedra; fun_name="tovrep")
     P = polyhedron(P; backend=backend)
     return VPolytope(P)
 end
@@ -505,7 +505,7 @@ function isempty(P::HPoly{N},
         return witness ? (false, an_element(P)) : false
     end
     if use_polyhedra_interface
-        require(:Polyhedra; fun_name="isempty", explanation="with the active " *
+        require(@__MODULE__, :Polyhedra; fun_name="isempty", explanation="with the active " *
             "option `use_polyhedra_interface`")
 
         if backend == nothing
