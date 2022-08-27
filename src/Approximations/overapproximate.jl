@@ -1964,12 +1964,28 @@ function overapproximate(qm::QuadraticMap{N, <:AbstractZonotope}, ::Type{<:Zonot
 end
 
 """
-    overapproximate(overapproximate(QM::QuadraticMap, ::Type{SparsePolynomialZonotope}))
+    overapproximate(QM::QuadraticMap{N, <:SparsePolynomialZonotope},
+                    ::Type{SparsePolynomialZonotope}) where {N}
 
-Return a sparse polynomial zonotope overapproximation of the quadratic map of a sparse
-polynomial zonotope. Implements Proposition 13 of [1].
+Return a sparse polynomial zonotope overapproximating the quadratic map of a
+sparse polynomial zonotope.
 
-[1] N. Kochdumper and M. Althoff. Sparse Polynomial Zonotopes: A Novel Set Representation for Reachability Analysis. Transactions on Automatic Control, 2021.
+### Input
+
+- `QM` -- quadratic map of a sparse polynomial zonotope
+- `SparsePolynomialZonotope` -- target type
+
+### Output
+
+A sparse polynomial zonotope overapproximating the quadratic map of a sparse
+polynomial zonotope.
+
+### Algorithm
+
+This method implements Proposition 3.1.31 of [1].
+
+[1] N. Kochdumper. *Extensions of polynomial zonotopes and their application to
+verification of cyber-physical systems*. 2021.
 """
 function overapproximate(QM::QuadraticMap{N, <:SparsePolynomialZonotope}, ::Type{SparsePolynomialZonotope}) where {N}
     PZ = QM.X
