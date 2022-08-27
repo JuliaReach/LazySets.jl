@@ -108,16 +108,17 @@ Several projects in the Julia technical computing stack use this library.
 
 <details>
 <summary>Click to see the full list of Julia packages that use LazySets.</summary>
-  
-- [ReachabilityAnalysis.jl](https://github.com/JuliaReach/ReachabilityAnalysis.jl) -- Methods to compute sets of states reachable by dynamical systems.
-- [NeuralNetworkAnalysis.jl](https://github.com/JuliaReach/NeuralNetworkAnalysis.jl) -- Methods to verify neural network controlled systems using reachability analysis
-- [NeuralVerification.jl](https://github.com/sisl/NeuralVerification.jl) -- Methods to soundly verify deep neural networks.
+
+- [ClosedLoopReachability.jl](https://github.com/JuliaReach/ClosedLoopReachability.jl) -- Reachability analysis for closed-loop control systems.
+- [IntervalLinearAlgebra.jl](https://github.com/JuliaIntervals/IntervalLinearAlgebra.jl) -- Routines to perform numerical linear algebra using interval arithmetic.
 - [InvariantSets.jl](https://github.com/ueliwechsler/InvariantSets.jl) -- Compute, approximate and display invariant sets.
+- [InvariantSetApproximation.jl](https://github.com/psace-uofa/InvariantSetApproximation.jl) -- Invariant sets of general discrete-time dynamical systems with controls and uncertainties using graph-based algorithms.
+- [NeuralVerification.jl](https://github.com/sisl/NeuralVerification.jl) -- Methods to verify deep neural networks.
 - [OpticSim.jl](https://github.com/microsoft/OpticSim.jl) -- Ray tracing for procedurally generated systems.
 - [Photometry.jl](https://github.com/JuliaAstro/Photometry.jl) -- Utilities for characterizing sources in astronomical images.
-- [Swalbe.jl](https://github.com/Zitzeronion/Swalbe.jl) -- Simple Julia Lattice Boltzmann Solver for Thin Liquid Films and Droplets
-- [IntervalLinearAlgebra.jl](https://github.com/JuliaIntervals/IntervalLinearAlgebra.jl) -- Routines to perform numerical linear algebra using interval arithmetic
-- [InvariantSetApproximation.jl](https://github.com/psace-uofa/InvariantSetApproximation.jl) --  Package for computing invariant sets of general discrete-time dynamical systems with controls and uncertainties using graph-based algorithms. 
+- [ReachabilityAnalysis.jl](https://github.com/JuliaReach/ReachabilityAnalysis.jl) -- Methods to compute the sets of states reachable in dynamical systems.
+- [Swalbe.jl](https://github.com/Zitzeronion/Swalbe.jl) -- Simple Julia Lattice Boltzmann Solver for Thin Liquid Films and Droplets.
+- [TrajectoryGamesBase.jl](https://github.com/lassepe/TrajectoryGamesBase.jl) -- Interface to define trajectory games.
 
 </details>
 
