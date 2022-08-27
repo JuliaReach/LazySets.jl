@@ -45,6 +45,12 @@ for N in [Float64, Float32, Rational{Int}]
     @test expmat(ESPZ) == [1 0 3 1 0 1;0 1 1 0 1 3]
     @test indexvector(ESPZ) == indexvector(PZ)
 
+    TPZ = translate(PZ, N[1, 2])
+    @test center(TPZ) == N[5, 6]
+    @test genmat_dep(TPZ) == genmat_dep(TPZ)
+    @test genmat_indep(TPZ) == genmat_indep(TPZ)
+    @test expmat(TPZ) == expmat(TPZ)
+
     MSPZ = minkowski_sum(PZ, PZ2)
     @test center(MSPZ) == [4, 4]
     @test genmat_dep(MSPZ) == [2 1 2 2 0 1;0 2 2 1 2 1]
