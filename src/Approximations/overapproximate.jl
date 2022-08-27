@@ -2006,8 +2006,8 @@ function overapproximate(QM::QuadraticMap{N, <:SparsePolynomialZonotope}, ::Type
     Ē = expmat(PZbar)
     Ḡ = genmat(PZbar)
 
-    H = [iszero(Ei[p+1:end]) for Ei in eachcol(Ē)]
-    K = .!H
+    K = [!iszero(Ei[p+1:end]) for Ei in eachcol(Ē)]
+    H = .!K
     PZK = SimpleSparsePolynomialZonotope(c̄, Ḡ[:, K], Ē[:, K])
     Z = overapproximate(PZK, Zonotope)
     cz = center(Z)
