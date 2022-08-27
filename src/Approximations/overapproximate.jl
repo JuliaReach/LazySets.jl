@@ -1982,10 +1982,10 @@ polynomial zonotope.
 
 ### Algorithm
 
-This method implements Proposition 3.1.31 of [1].
+This method implements Proposition 13 of [1].
 
-[1] N. Kochdumper. *Extensions of polynomial zonotopes and their application to
-verification of cyber-physical systems*. 2021.
+[1] N. Kochdumper and M. Althoff. Sparse Polynomial Zonotopes: A Novel Set Representation for
+Reachability Analysis. Transactions on Automatic Control, 2021.
 """
 function overapproximate(QM::QuadraticMap{N, <:SparsePolynomialZonotope}, ::Type{SparsePolynomialZonotope}) where {N}
     PZ = QM.X
