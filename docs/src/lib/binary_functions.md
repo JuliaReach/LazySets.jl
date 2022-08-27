@@ -98,6 +98,7 @@ minkowski_sum(::VPolygon, ::VPolygon)
 minkowski_sum(::DensePolynomialZonotope, ::AbstractZonotope)
 minkowski_sum(::Interval, ::Interval)
 minkowski_sum(::AbstractSingleton, ::AbstractSingleton)
+minkowski_sum(::SparsePolynomialZonotope, ::SparsePolynomialZonotope)
 ```
 
 ## Minkowski difference
