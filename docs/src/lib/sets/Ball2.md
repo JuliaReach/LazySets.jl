@@ -21,7 +21,6 @@ Inherited from [`ConvexSet`](@ref):
 * [`norm`](@ref norm(::ConvexSet, ::Real))
 * [`radius`](@ref radius(::ConvexSet, ::Real))
 * [`diameter`](@ref diameter(::ConvexSet, ::Real))
-* [`area`](@ref area(::ConvexSet))
 * [`rectify`](@ref rectify(::ConvexSet))
 * [`low`](@ref low(::ConvexSet))
 * [`low`](@ref low(::ConvexSet{N}, ::Int) where {N})
