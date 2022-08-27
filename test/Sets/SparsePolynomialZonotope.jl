@@ -45,6 +45,15 @@ for N in [Float64, Float32, Rational{Int}]
     @test expmat(ESPZ) == [1 0 3 1 0 1;0 1 1 0 1 3]
     @test indexvector(ESPZ) == indexvector(PZ)
 
+    MSPZ = minkowski_sum(PZ, PZ2)
+    @test center(MSPZ) == [4, 4]
+    @test genmat_dep(MSPZ) == [2 1 2 2 0 1;0 2 2 1 2 1]
+    @test genmat_indep(MSPZ) == hcat([1, 0])
+    @test expmat(MSPZ) == [ 1  0  3  0  0  0;
+                            0  1  1  0  0  0;
+                            0  0  0  1  0  1;
+                            0  0  0  0  1  3]
+
     S = SparsePolynomialZonotope(N[-0.5, -0.5], N[1. 1 1 1;1 0 -1 1], zeros(N, 2, 0), [1 0 1 2;0 1 1 0])
     Z = overapproximate(S, Zonotope)
 
