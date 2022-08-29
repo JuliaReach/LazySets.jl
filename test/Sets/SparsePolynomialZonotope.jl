@@ -92,3 +92,28 @@ for Z in [rand(Zonotope), rand(Hyperrectangle)]
     @test isempty(genmat_indep(ZS))
     @test expmat(ZS) == I
 end
+
+let
+    c = [0.0, 0]
+    G = [ -1.0  -2.0  -1.0  2.0  0.01  0.4
+           1.0   0.0  -1.0  1.0  0.2   0.0]
+
+    GI = [ 0.2    0.01
+           0.02  -0.4]
+
+    E = [ 1  0  1  2  2  0
+          0  1  1  0  0  2
+          0  0  0  0  1  2]
+
+    P = SparsePolynomialZonotope(c, G, GI, E)
+    Pred = reduce_order(P, 3)
+
+    @test_broken center(Pred) == [0.2, 0]
+    @test_broken genmat_dep(Pred) == [-1 -2 -1 2;
+                                       1  0 -1 1]
+
+    @test_broken genmat_indep(Pred) == [0.42 0;0 0.62]
+
+    @test_broken expmat(Pred) == [1 0 1 2;0 1 1 0]
+    @test_broken indexvector(Pred) == [1, 2]
+end
