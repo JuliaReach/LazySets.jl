@@ -371,15 +371,17 @@ function remove_redundant_generators(S::SparsePolynomialZonotope)
 end
 
 """
-    reduce_order(P::SparsePolynomialZonotope, r::Real[, method::AbstractReductionMethod=GIR05()])
+    reduce_order(P::SparsePolynomialZonotope, r::Real,
+                 [method]::AbstractReductionMethod=GIR05())
 
 Overapproximate the sparse polynomial zonotope `P` by one which has at most order `r`.
 
 ### Input
 
 - `P`       -- sparse polynomial zonotope
-- `r`       -- maximum order of the final sparse polynomial zonotope
-- `method`  -- algorithm used internally for the order reduction of the zonotope (optional default [`GIR05`](@ref))
+- `r`       -- maximum order of the resulting sparse polynomial zonotope (≥ 1)
+- `method`  -- (optional default [`GIR05`](@ref)) algorithm used internally for
+               the order reduction of a (normal) zonotope
 
 ### Output
 
@@ -387,7 +389,7 @@ A sparse polynomial zonotope with order at most `r`.
 
 ### Notes
 
-This method implements the algorithm described in Proposition 3.1.39 of [1]
+This method implements the algorithm described in Proposition 3.1.39 of [1].
 
 [1] N. Kochdumper. *Extensions of polynomial zonotopes and their application to
 verification of cyber-physical systems*. 2021.

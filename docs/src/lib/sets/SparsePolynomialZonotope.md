@@ -22,5 +22,5 @@ linear_map(::Union{Real, AbstractMatrix, LinearAlgebra.UniformScaling}, ::Sparse
 exact_sum(::SparsePolynomialZonotope, ::SparsePolynomialZonotope)
 translate(::SparsePolynomialZonotope, ::AbstractVector)
 remove_redundant_generators(::SparsePolynomialZonotope)
-reduce_order(P::SparsePolynomialZonotope, r::Real)
+reduce_order(::SparsePolynomialZonotope, ::Real, ::AbstractReductionMethod=GIR05())
 ```
