@@ -108,12 +108,12 @@ let
     P = SparsePolynomialZonotope(c, G, GI, E)
     Pred = reduce_order(P, 3)
 
-    @test_broken center(Pred) == [0.2, 0]
-    @test_broken genmat_dep(Pred) == [-1 -2 -1 2;
+    @test center(Pred) == [0.2, 0]
+    @test genmat_dep(Pred) == [-1 -2 -1 2;
                                        1  0 -1 1]
 
-    @test_broken genmat_indep(Pred) == [0.42 0;0 0.62]
+    @test genmat_indep(Pred) ≈ [0.42 0;0 0.62]
 
-    @test_broken expmat(Pred) == [1 0 1 2;0 1 1 0]
-    @test_broken indexvector(Pred) == [1, 2]
+    @test expmat(Pred) == [1 0 1 2;0 1 1 0]
+    @test indexvector(Pred) == [1, 2]
 end

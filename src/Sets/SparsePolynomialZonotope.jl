@@ -370,8 +370,30 @@ function remove_redundant_generators(S::SparsePolynomialZonotope)
     return SparsePolynomialZonotope(c, G, GI, E)
 end
 
-function reduce_order(P::SparsePolynomialZonotope, ρ::Real)
-    @assert ρ ≥ 1
+"""
+    reduce_order(P::SparsePolynomialZonotope, r::Real[, method::AbstractReductionMethod=GIR05()])
+
+Overapproximate the sparse polynomial zonotope `P` by one which has at most order `r`.
+
+### Input
+
+- `P`       -- sparse polynomial zonotope
+- `r`       -- maximum order of the final sparse polynomial zonotope
+- `method`  -- algorithm used internally for the order reduction of the zonotope (optional default [`GIR05`](@ref))
+
+### Output
+
+A sparse polynomial zonotope with order at most `r`.
+
+### Notes
+
+This method implements the algorithm described in Proposition 3.1.39 of [1]
+
+[1] N. Kochdumper. *Extensions of polynomial zonotopes and their application to
+verification of cyber-physical systems*. 2021.
+"""
+function reduce_order(P::SparsePolynomialZonotope, r::Real, method::AbstractReductionMethod=GIR05())
+    @assert r ≥ 1
     n = dim(P)
     h = ngens_dep(P)
     q = ngens_indep(P)
@@ -382,7 +404,7 @@ function reduce_order(P::SparsePolynomialZonotope, ρ::Real)
     E = expmat(P)
     idx = indexvector(P)
 
-    a = max(0, min(h + q, ceil(Int, h + q - n * (ρ - 1))))
+    a = max(0, min(h + q, ceil(Int, h + q - n * (r - 1))))
     Gbar = hcat(G, GI)
     norms = [norm(g) for g in eachcol(Gbar)]
     th = sort(norms)[a]
@@ -395,7 +417,7 @@ function reduce_order(P::SparsePolynomialZonotope, ρ::Real)
     Hbar = .!H
 
     PZ = SparsePolynomialZonotope(c, G[:, K], GI[:, H], E[:, K], idx)
-    Z = reduce_order(overapproximate(PZ, Zonotope), 1)
+    Z = reduce_order(overapproximate(PZ, Zonotope), 1, method)
 
     Ebar = E[:, Kbar]
     N = [!iszero(e) for e in eachrow(Ebar)]
