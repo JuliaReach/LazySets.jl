@@ -383,9 +383,9 @@ function reduce_order(P::SparsePolynomialZonotope, ρ::Real)
     idx = indexvector(P)
 
     a = max(0, min(h + q, ceil(Int, h + q - n * (ρ - 1))))
-    Gbar = hcat(genmat_dep(P), genmat_indep(P))
-    norms = sort([norm(g) for g in eachcol(Gbar)])
-    th = norms[a]
+    Gbar = hcat(G, GI)
+    norms = [norm(g) for g in eachcol(Gbar)]
+    th = sort(norms)[a]
 
     # TODO: case a = 0
     K = [norms[i] ≤ th for i in 1:h] # ? Is constructing an array of booleans the most efficient way?
