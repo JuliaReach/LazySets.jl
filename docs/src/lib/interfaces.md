@@ -375,8 +375,15 @@ vertices_list(::AbstractZonotope)
 order(::AbstractZonotope)
 togrep(::AbstractZonotope)
 remove_redundant_generators(::AbstractZonotope)
-reduce_order(::AbstractZonotope, ::Number, ::AbstractReductionMethod=GIR05())
+reduce_order(::AbstractZonotope, ::Real, ::AbstractReductionMethod=GIR05())
+```
+
+### Order reduction methods
+
+```@docs
 LazySets.AbstractReductionMethod
+LazySets.COMB03
+LazySets.GIR05
 ```
 
 ### Implementations
