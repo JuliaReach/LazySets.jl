@@ -32,7 +32,7 @@ end end  # quote / load_staticarrays_directions
 # ================================================
 
 """
-    box_approximation(S::ConvexSet{N}) where {N}
+    box_approximation(S::LazySet{N}) where {N}
 
 Overapproximate a set by a tight hyperrectangle.
 
@@ -50,7 +50,7 @@ The center of the hyperrectangle is obtained by averaging the support function
 of the given set in the canonical directions, and the lengths of the sides can
 be recovered from the distance among support functions in the same directions.
 """
-function box_approximation(S::ConvexSet{N}) where {N}
+function box_approximation(S::LazySet{N}) where {N}
     c, r = box_approximation_helper(S)
     if r[1] < 0
         return EmptySet{N}(dim(S))
@@ -66,7 +66,7 @@ Alias for `box_approximation`.
 interval_hull = box_approximation
 
 """
-    box_approximation_helper(S::ConvexSet{N}) where {N}
+    box_approximation_helper(S::LazySet{N}) where {N}
 
 Common code of `box_approximation` and `box_approximation_symmetric`.
 
@@ -89,7 +89,7 @@ of the given set in the canonical directions.
 The lengths of the sides can be recovered from the distance among support
 functions in the same directions.
 """
-@inline function box_approximation_helper(S::ConvexSet{N}) where {N}
+@inline function box_approximation_helper(S::LazySet{N}) where {N}
     n = dim(S)
     c = Vector{N}(undef, n)
     r = Vector{N}(undef, n)
@@ -370,7 +370,7 @@ function box_approximation(ch::ConvexHull; algorithm::String="box")
     end
 end
 
-function _box_approximation_chull_extrema(X::ConvexSet{N}, Y) where {N}
+function _box_approximation_chull_extrema(X::LazySet{N}, Y) where {N}
     n = dim(X)
     c = Vector{N}(undef, n)
     r = Vector{N}(undef, n)
@@ -386,7 +386,7 @@ function _box_approximation_chull_extrema(X::ConvexSet{N}, Y) where {N}
     return Hyperrectangle(c, r)
 end
 
-function _box_approximation_chull_box(X::ConvexSet{N}, Y) where {N}
+function _box_approximation_chull_box(X::LazySet{N}, Y) where {N}
     n = dim(X)
     H1 = box_approximation(X)
     H2 = box_approximation(Y)
