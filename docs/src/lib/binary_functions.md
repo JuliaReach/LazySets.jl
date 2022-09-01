@@ -16,6 +16,7 @@ CurrentModule = LazySets
 ```@docs
 cartesian_product(::VPolytope, ::VPolytope)
 cartesian_product(::ConvexSet, ::ConvexSet)
+cartesian_product(::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZonotope)
 ```
 
 ## Check for emptiness of intersection
@@ -58,6 +59,12 @@ convex_hull(::VPolygon, ::VPolygon)
 convex_hull(::Vector{VN}) where {N, VN<:AbstractVector{N}}
 convex_hull(::UnionSetArray{N, PT}; kwargs...) where {N, PT<:AbstractPolytope{N}}
 monotone_chain!
+convex_hull(::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZonotope)
+```
+## Exact sum
+
+```@docs
+exact_sum(::SparsePolynomialZonotope, ::SparsePolynomialZonotope)
 ```
 
 ## Intersection of two sets
@@ -85,6 +92,11 @@ intersection(::LineSegment, ::Line2D)
 intersection(::LineSegment, ::LineSegment)
 intersection(::AbstractZonotope{N}, ::HalfSpace{N}) where {N}
 ```
+## Linear Combination
+
+```@docs
+linear_combination(::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZonotope)
+```
 
 ## Minkowski sum
 
@@ -98,6 +110,7 @@ minkowski_sum(::VPolygon, ::VPolygon)
 minkowski_sum(::DensePolynomialZonotope, ::AbstractZonotope)
 minkowski_sum(::Interval, ::Interval)
 minkowski_sum(::AbstractSingleton, ::AbstractSingleton)
+minkowski_sum(::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZonotope)
 minkowski_sum(::SparsePolynomialZonotope, ::SparsePolynomialZonotope)
 ```
 
