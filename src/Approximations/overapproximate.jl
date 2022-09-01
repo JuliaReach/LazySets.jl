@@ -1963,6 +1963,58 @@ function overapproximate(qm::QuadraticMap{N, <:AbstractZonotope}, ::Type{<:Zonot
     return Zonotope(d, remove_zero_columns(h))
 end
 
+"""
+    overapproximate(QM::QuadraticMap{N, <:SparsePolynomialZonotope},
+                    ::Type{SparsePolynomialZonotope}) where {N}
+
+Return a sparse polynomial zonotope overapproximating the quadratic map of a
+sparse polynomial zonotope.
+
+### Input
+
+- `QM` -- quadratic map of a sparse polynomial zonotope
+- `SparsePolynomialZonotope` -- target type
+
+### Output
+
+A sparse polynomial zonotope overapproximating the quadratic map of a sparse
+polynomial zonotope.
+
+### Algorithm
+
+This method implements Proposition 13 of [1].
+
+[1] N. Kochdumper and M. Althoff. Sparse Polynomial Zonotopes: A Novel Set Representation for
+Reachability Analysis. Transactions on Automatic Control, 2021.
+"""
+function overapproximate(QM::QuadraticMap{N, <:SparsePolynomialZonotope}, ::Type{SparsePolynomialZonotope}) where {N}
+    PZ = QM.X
+    Q = QM.Q
+
+    p = nparams(PZ)
+    q = ngens_indep(PZ)
+
+    c = center(PZ)
+    G = genmat_dep(PZ)
+    GI = genmat_indep(PZ)
+    Ĝ = hcat(G, GI)
+    Ê = cat(expmat(PZ), Matrix(1 * I, q, q); dims=(1, 2))
+
+    PZ1 = SimpleSparsePolynomialZonotope(c, Ĝ, Ê)
+    PZbar = quadratic_map(Q, PZ1)
+    c̄ = center(PZbar)
+    Ē = expmat(PZbar)
+    Ḡ = genmat(PZbar)
+
+    K = [!iszero(Ei[p+1:end]) for Ei in eachcol(Ē)]
+    H = .!K
+    PZK = SimpleSparsePolynomialZonotope(c̄, Ḡ[:, K], Ē[:, K])
+    Z = overapproximate(PZK, Zonotope)
+    cz = center(Z)
+    Gz = genmat(Z)
+    return SparsePolynomialZonotope(cz, Ḡ[:, H], Gz, Ē[1:p, H], indexvector(PZ))
+end
+
 # ===========================================================
 # Functionality that requires IntervalConstraintProgramming
 # ===========================================================

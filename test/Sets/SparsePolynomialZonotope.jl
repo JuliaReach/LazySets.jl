@@ -94,6 +94,20 @@ for Z in [rand(Zonotope), rand(Hyperrectangle)]
 end
 
 let
+    # example 3.1.32 from Niklas' thesis (page 60)
+    PZ1 = SparsePolynomialZonotope([0.0, 0.0], [1. -1 1;-1 2 1], hcat([0.1, 0]), [1 0 2;0 1 1], 1:2)
+    Q = QuadraticMap([[0.5 0.5;1 -0.5], [-1.0 0;1 0]], PZ1)
+    QPZ = overapproximate(Q, SparsePolynomialZonotope)
+    @test center(QPZ) ≈ [0.0025, -0.005]
+    @test genmat_dep(QPZ) ==  [-1.5  5.5   2.0  -4.5  -1.5  1.5;
+                               -2.0  5.0  -2.0  -3.0   3.0  0.0]
+    @test genmat_indep(QPZ) ≈ [-0.05 0.2  0.25  0.0025;
+                               -0.3  0.4 -0.10 -0.005]
+    @test expmat(QPZ) == [2  1  3  0  2  4;
+                          0  1  1  2  2  2]
+
+
+    # example 3.1.40 from Nilkas' thesis (page 68)
     c = [0.0, 0]
     G = [ -1.0  -2.0  -1.0  2.0  0.01  0.4
            1.0   0.0  -1.0  1.0  0.2   0.0]
