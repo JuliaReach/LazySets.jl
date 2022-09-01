@@ -1,6 +1,6 @@
 export SparsePolynomialZonotope, expmat, nparams, ngens_dep, ngens_indep,
        genmat_dep, genmat_indep, indexvector, translate,
-       linear_map, quadratic_map, remove_redundant_generators, reduce_order
+       linear_map, quadratic_map, remove_redundant_generators, reduce_order, ρ
 
 """
     SparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N},
@@ -466,4 +466,36 @@ function reduce_order(P::SparsePolynomialZonotope, r::Real,
     Gz = genmat(Z)
     return SparsePolynomialZonotope(cz, G[:, Kbar], hcat(GI[:, Hbar], Gz),
                                     Ebar[N, :], idx[N])
+end
+
+"""
+    ρ(d::AbstractVector, P::SparsePolynomialZonotope{N}; method)
+
+Bound the support function over ``P`` in the direction ``d``.
+"""
+@inline function ρ(d::AbstractVector, P::SparsePolynomialZonotope{N}; method=nothing) where {N}
+    require(@__MODULE__, :RangeEnclosures; fun_name="ρ")
+    return _ρ_range_enclosures(d, P, method)
+end
+
+function _load_rho_range_enclosures()
+    return quote
+        function _ρ_range_enclosures(d::AbstractVector, P::SparsePolynomialZonotope, method::Union{RangeEnclosures.AbstractEnclosureAlgorithm, Nothing})
+            isnothing(method) && (method = BranchAndBoundEnclosure())
+
+            c = center(P)
+            G = genmat_dep(P)
+            GI = genmat_indep(P)
+            E = expmat(P)
+            n = dim(P)
+
+            res = d' * c + sum(abs.(d' * gi) for gi in eachcol(GI))
+
+            f(x) = sum(d' * gi * prod(x .^ ei) for (gi, ei) in zip(eachcol(G), eachcol(E)) )
+
+            dom = IA.IntervalBox(IA.Interval(-1, 1), n)
+            res += sup(enclose(f, dom, method))
+            return res
+        end
+    end
 end
