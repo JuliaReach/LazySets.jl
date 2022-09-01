@@ -1,6 +1,6 @@
 export SparsePolynomialZonotope, expmat, nparams, ngens_dep, ngens_indep,
        genmat_dep, genmat_indep, indexvector, translate,
-       linear_map, quadratic_map, remove_redundant_generators
+       linear_map, quadratic_map, remove_redundant_generators, reduce_order
 
 """
     SparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, MNI<:AbstractMatrix{N}, ME<:AbstractMatrix{<:Integer}, VI<:AbstractVector{<:Integer}} <: AbstractPolynomialZonotope{N}
@@ -337,6 +337,65 @@ function remove_redundant_generators(S::SparsePolynomialZonotope)
     c, G, E = _remove_redundant_generators_polyzono(center(S), genmat_dep(S), expmat(S))
     GI = remove_zero_columns(genmat_indep(S))
     return SparsePolynomialZonotope(c, G, GI, E)
+end
+
+"""
+    reduce_order(P::SparsePolynomialZonotope, r::Real,
+                 [method]::AbstractReductionMethod=GIR05())
+
+Overapproximate the sparse polynomial zonotope `P` by one which has at most order `r`.
+
+### Input
+
+- `P`       -- sparse polynomial zonotope
+- `r`       -- maximum order of the resulting sparse polynomial zonotope (≥ 1)
+- `method`  -- (optional default [`GIR05`](@ref)) algorithm used internally for
+               the order reduction of a (normal) zonotope
+
+### Output
+
+A sparse polynomial zonotope with order at most `r`.
+
+### Notes
+
+This method implements the algorithm described in Proposition 3.1.39 of [1].
+
+[1] N. Kochdumper. *Extensions of polynomial zonotopes and their application to
+verification of cyber-physical systems*. 2021.
+"""
+function reduce_order(P::SparsePolynomialZonotope, r::Real, method::AbstractReductionMethod=GIR05())
+    @assert r ≥ 1
+    n = dim(P)
+    h = ngens_dep(P)
+    q = ngens_indep(P)
+
+    c = center(P)
+    G = genmat_dep(P)
+    GI = genmat_indep(P)
+    E = expmat(P)
+    idx = indexvector(P)
+
+    a = max(0, min(h + q, ceil(Int, h + q - n * (r - 1))))
+    Gbar = hcat(G, GI)
+    norms = [norm(g) for g in eachcol(Gbar)]
+    th = sort(norms)[a]
+
+    # TODO: case a = 0
+    K = [norms[i] ≤ th for i in 1:h] # ? Is constructing an array of booleans the most efficient way?
+    Kbar = .!K
+
+    H = [norms[h+i] ≤ th for i in 1:q]
+    Hbar = .!H
+
+    PZ = SparsePolynomialZonotope(c, G[:, K], GI[:, H], E[:, K], idx)
+    Z = reduce_order(overapproximate(PZ, Zonotope), 1, method)
+
+    Ebar = E[:, Kbar]
+    N = [!iszero(e) for e in eachrow(Ebar)]
+
+    cz = center(Z)
+    Gz = genmat(Z)
+    return SparsePolynomialZonotope(cz, G[:, Kbar], hcat(GI[:, Hbar], Gz), Ebar[N, :], idx[N])
 end
 
 # function quadratic_map(Q::Vector{MT}, S::SparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
