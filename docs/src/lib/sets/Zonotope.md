@@ -50,11 +50,4 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`constraints_list`](@ref constraints_list(::AbstractZonotope{N}; ::Bool=true) where {N<:AbstractFloat})
 * [`vertices_list`](@ref vertices_list(::AbstractZonotope))
 * [`order`](@ref order(::AbstractZonotope))
-* [`reduce_order`](@ref reduce_order(::AbstractZonotope, ::Number, ::AbstractReductionMethod))
-
-## Order reduction methods
-
-```@docs
-LazySets.COMB03
-LazySets.GIR05
-```
+* [`reduce_order`](@ref reduce_order(::AbstractZonotope, ::Real, ::AbstractReductionMethod=GIR05()))
