@@ -274,3 +274,7 @@ end
 function project(cup::UnionSetArray, block::AbstractVector{Int}; kwargs...)
     return UnionSetArray([project(X, block; kwargs...) for X in array(cup)])
 end
+
+function translate(cup::UnionSetArray, v::AbstractVector)
+    return UnionSetArray([translate(X, v) for X in array(cup)])
+end
