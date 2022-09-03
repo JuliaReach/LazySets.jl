@@ -1,4 +1,4 @@
-import Base: ==, ≈, copy, eltype, rationalize, extrema
+import Base: ==, ≈, copy, eltype, rationalize
 import Random.rand
 
 export ConvexSet,
@@ -1311,13 +1311,13 @@ function rectify(X::ConvexSet, concrete_intersection::Bool=false)
 end
 
 """
-    low(X::ConvexSet, i::Int)
+    low(X::ConvexSet{N}, i::Int) where {N}
 
-Return the lower coordinate of a set in a given dimension.
+Return the lower coordinate of a convex set in a given dimension.
 
 ### Input
 
-- `X` -- set
+- `X` -- convex set
 - `i` -- dimension of interest
 
 ### Output
@@ -1325,41 +1325,19 @@ Return the lower coordinate of a set in a given dimension.
 The lower coordinate of the set in the given dimension.
 """
 function low(X::ConvexSet{N}, i::Int) where {N}
-    n = dim(X)
-    d = SingleEntryVector(i, n, -one(N))
-    return -ρ(d, X)
+    # Note: this method is needed for documentation reasons
+    # (see the method for LazySet)
+    return _low(X, i)
 end
 
 """
-    low(X::ConvexSet)
+    high(X::ConvexSet{N}, i::Int) where {N}
 
-Return a vector with the lowest coordinates of the set for each canonical direction.
-
-### Input
-
-- `X` -- set
-
-### Output
-
-A vector with the lower coordinate of the set for each dimension.
-
-### Notes
-
-See also [`low(X::ConvexSet, i::Int)`](@ref).
-"""
-function low(X::ConvexSet)
-    n = dim(X)
-    return [low(X, i) for i in 1:n]
-end
-
-"""
-    high(X::ConvexSet, i::Int)
-
-Return the higher coordinate of a set in a given dimension.
+Return the higher coordinate of a convex set in a given dimension.
 
 ### Input
 
-- `X` -- set
+- `X` -- convex set
 - `i` -- dimension of interest
 
 ### Output
@@ -1367,81 +1345,9 @@ Return the higher coordinate of a set in a given dimension.
 The higher coordinate of the set in the given dimension.
 """
 function high(X::ConvexSet{N}, i::Int) where {N}
-    n = dim(X)
-    d = SingleEntryVector(i, n, one(N))
-    return ρ(d, X)
-end
-
-"""
-    high(X::ConvexSet)
-
-Return a vector with the highest coordinate of the set for each canonical direction.
-
-### Input
-
-- `X` -- set
-
-### Output
-
-A vector with the highest coordinate of the set for each dimension.
-
-### Notes
-
-See also [`high(X::ConvexSet, i::Int)`](@ref).
-"""
-function high(X::ConvexSet)
-    n = dim(X)
-    return [high(X, i) for i in 1:n]
-end
-
-"""
-    extrema(X::ConvexSet)
-
-Return two vectors with the lowest and highest coordinate of `X` for each
-dimension.
-
-### Input
-
-- `X` -- set
-
-### Output
-
-Two vectors with the lowest and highest coordinates of `X` for each dimension.
-
-### Notes
-
-The result is equivalent to `(low(X), high(X))`, but sometimes it can be
-computed more efficiently.
-"""
-function extrema(X::ConvexSet)
-    l = low(X)
-    h = high(X)
-    return (l, h)
-end
-
-"""
-    extrema(X::ConvexSet, i::Int)
-
-Return the lower and higher coordinate of a set in a given dimension.
-
-### Input
-
-- `X` -- set
-- `i` -- dimension of interest
-
-### Output
-
-The lower and higher coordinate of the set in the given dimension.
-
-### Notes
-
-The result is equivalent to `(low(X, i), high(X, i))`, but sometimes it can be
-computed more efficiently.
-"""
-function extrema(X::ConvexSet, i::Int)
-    l = low(X, i)
-    h = high(X, i)
-    return (l, h)
+    # Note: this method is needed for documentation reasons
+    # (see the method for LazySet)
+    return _high(X, i)
 end
 
 """

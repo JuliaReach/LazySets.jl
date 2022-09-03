@@ -1,4 +1,8 @@
-export LazySet
+import Base: extrema
+
+export LazySet,
+       low,
+       high
 
 """
     LazySet{N}
@@ -144,3 +148,138 @@ true
 ```
 """
 isconvextype(X::Type{<:LazySet}) = false
+
+# Note: this method cannot be documented due to a bug in Julia
+function low(X::LazySet, i::Int)
+    return _low(X, i)
+end
+
+function _low(X::LazySet{N}, i::Int) where {N}
+    n = dim(X)
+    d = SingleEntryVector(i, n, -one(N))
+    return -ρ(d, X)
+end
+
+"""
+    low(X::LazySet)
+
+Return a vector with the lowest coordinates of the set in each canonical
+direction.
+
+### Input
+
+- `X` -- set
+
+### Output
+
+A vector with the lower coordinate of the set in each dimension.
+
+### Notes
+
+See also [`low(X::LazySet, i::Int)`](@ref).
+
+The result is the lowermost corner of the box approximation, so it is not
+necessarily contained in `X`.
+"""
+function low(X::LazySet)
+    n = dim(X)
+    return [low(X, i) for i in 1:n]
+end
+
+# Note: this method cannot be documented due to a bug in Julia
+function high(X::LazySet, i::Int)
+    return _high(X, i)
+end
+
+function _high(X::LazySet{N}, i::Int) where {N}
+    n = dim(X)
+    d = SingleEntryVector(i, n, one(N))
+    return ρ(d, X)
+end
+
+"""
+    high(X::LazySet)
+
+Return a vector with the highest coordinate of the set in each canonical
+direction.
+
+### Input
+
+- `X` -- set
+
+### Output
+
+A vector with the highest coordinate of the set in each dimension.
+
+### Notes
+
+See also [`high(X::LazySet, i::Int)`](@ref).
+
+The result is the uppermost corner of the box approximation, so it is not
+necessarily contained in `X`.
+"""
+function high(X::LazySet)
+    n = dim(X)
+    return [high(X, i) for i in 1:n]
+end
+
+"""
+    extrema(X::LazySet, i::Int)
+
+Return the lower and higher coordinate of a set in a given dimension.
+
+### Input
+
+- `X` -- set
+- `i` -- dimension of interest
+
+### Output
+
+The lower and higher coordinate of the set in the given dimension.
+
+### Notes
+
+The result is equivalent to `(low(X, i), high(X, i))`, but sometimes it can be
+computed more efficiently.
+
+### Algorithm
+
+The bounds are computed with `low` and `high`.
+"""
+function extrema(X::LazySet, i::Int)
+    l = low(X, i)
+    h = high(X, i)
+    return (l, h)
+end
+
+"""
+    extrema(X::LazySet)
+
+Return two vectors with the lowest and highest coordinate of `X` in each
+canonical direction.
+
+### Input
+
+- `X` -- set
+
+### Output
+
+Two vectors with the lowest and highest coordinates of `X` in each dimension.
+
+### Notes
+
+The result is equivalent to `(low(X), high(X))`, but sometimes it can be
+computed more efficiently.
+
+The resulting points are the lowermost and uppermost corners of the box
+approximation, so they are not necessarily contained in `X`.
+
+### Algorithm
+
+The bounds are computed with `low` and `high`.
+"""
+function extrema(X::LazySet)
+    l = low(X)
+    h = high(X)
+    return (l, h)
+end

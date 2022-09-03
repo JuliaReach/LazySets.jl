@@ -40,6 +40,18 @@ LazySet
 
 ```@docs
 isconvextype(::Type{<:LazySet})
+low(::LazySet)
+high(::LazySet)
+extrema(::LazySet, ::Int)
+extrema(::LazySet)
+```
+
+The following methods are also defined for `LazySet` but cannot be documented
+due to a bug.
+
+```@docs
+low(::ConvexSet{N}, ::Int) where {N}
+high(::ConvexSet{N}, ::Int) where {N}
 ```
 
 ## [General sets (ConvexSet)](@id def_ConvexSet)
@@ -84,12 +96,6 @@ is_interior_point(::AbstractVector{N}, ::ConvexSet{N}; p=Inf, ε=_rtol(N)) where
 isoperationtype(::Type{<:ConvexSet})
 isoperation(::ConvexSet)
 isequivalent(::ConvexSet, ::ConvexSet)
-low(::ConvexSet{N}, ::Int) where {N}
-high(::ConvexSet{N}, ::Int) where {N}
-extrema(::ConvexSet, ::Int)
-low(::ConvexSet)
-high(::ConvexSet)
-extrema(::ConvexSet)
 surface(::ConvexSet{N}) where {N}
 area(::ConvexSet{N}) where {N}
 concretize(::ConvexSet)
