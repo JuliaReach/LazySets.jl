@@ -6,7 +6,7 @@ using LazySets: block_to_dimension_indices,
                 get_constrained_lowdimset
 
 """
-    overapproximate(X::S, ::Type{S}, args...) where {S<:ConvexSet}
+    overapproximate(X::S, ::Type{S}, args...) where {S<:LazySet}
 
 Overapproximating a set of type `S` with type `S` is a no-op.
 
@@ -20,42 +20,37 @@ Overapproximating a set of type `S` with type `S` is a no-op.
 
 The input set.
 """
-function overapproximate(X::S, ::Type{S}, args...) where {S<:ConvexSet}
+function overapproximate(X::S, ::Type{S}, args...) where {S<:LazySet}
     return X
 end
 
 """
-    overapproximate(S::ConvexSet)
+    overapproximate(S::LazySet)
 
 Alias for `overapproximate(S, Hyperrectangle)` resp. `box_approximation(S)`.
 """
-overapproximate(S::ConvexSet) = box_approximation(S)
+overapproximate(S::LazySet) = box_approximation(S)
 
 """
-    overapproximate(S::ConvexSet, ::Type{<:Hyperrectangle})
+    overapproximate(S::LazySet, ::Type{<:Hyperrectangle})
 
 Alias for `box_approximation(S)`.
 """
-function overapproximate(S::ConvexSet, ::Type{<:Hyperrectangle})
+function overapproximate(S::LazySet, ::Type{<:Hyperrectangle})
     return box_approximation(S)
 end
 
-# alias while Rectification is not a ConvexSet (#1895)
-function overapproximate(r::Rectification, ::Type{<:Hyperrectangle})
-    return box_approximation(r)
-end
-
 """
-    overapproximate(S::ConvexSet, ::Type{<:BallInf})
+    overapproximate(S::LazySet, ::Type{<:BallInf})
 
 Alias for `ballinf_approximation(S)`.
 """
-function overapproximate(S::ConvexSet, ::Type{<:BallInf})
+function overapproximate(S::LazySet, ::Type{<:BallInf})
     return ballinf_approximation(S)
 end
 
 """
-    overapproximate(S::ConvexSet{N},
+    overapproximate(S::LazySet{N},
                     ::Type{<:HPolygon},
                     [ε]::Real=Inf) where {N}
 
@@ -81,7 +76,7 @@ If no error tolerance ε is given, or is `Inf`, the result is a box-shaped polyg
 For convex input sets, the result is an ε-close approximation as a polygon,
 with respect to the Hausdorff distance.
 """
-function overapproximate(S::ConvexSet{N},
+function overapproximate(S::LazySet{N},
                          ::Type{<:HPolygon},
                          ε::Real=Inf;
                          prune::Bool=true) where {N}
@@ -104,7 +99,7 @@ function overapproximate(S::ConvexSet{N},
 end
 
 # no-go functions for dispatch in HPolytope
-function overapproximate(X::S, ::Type{<:HPolytope}) where {S<:ConvexSet}
+function overapproximate(X::S, ::Type{<:HPolytope}) where {S<:LazySet}
     if dim(X) == 2
         throw(ArgumentError("ε-close approximation is only available using " *
               "polygons in constraint representation; try `overapproximate(X, HPolygon)`"))
@@ -117,11 +112,11 @@ function overapproximate(X::S, ::Type{<:HPolytope}) where {S<:ConvexSet}
 end
 
 """
-    overapproximate(S::ConvexSet, ε::Real)
+    overapproximate(S::LazySet, ε::Real)
 
 Alias for `overapproximate(S, HPolygon, ε)`.
 """
-function overapproximate(S::ConvexSet, ε::Real)
+function overapproximate(S::LazySet, ε::Real)
     return overapproximate(S, HPolygon, ε)
 end
 
@@ -130,7 +125,7 @@ overapproximate(∅::EmptySet, options...) = ∅
 
 # disambiguation
 overapproximate(∅::EmptySet) = ∅
-for ST in LazySets.subtypes(ConvexSet, true)
+for ST in LazySets.subtypes(LazySet, true)
     if ST == HPolygon  # must be defined separately below with extra argument
         continue
     end
@@ -346,7 +341,7 @@ function overapproximate(lm::LinearMap{N, <:AbstractZonotope},
 end
 
 """
-    overapproximate(X::ConvexSet{N}, dir::AbstractDirections; [prune]::Bool=true) where {N}
+    overapproximate(X::LazySet{N}, dir::AbstractDirections; [prune]::Bool=true) where {N}
 
 Overapproximate a (possibly unbounded) set with template directions.
 
@@ -363,7 +358,7 @@ A polyhedron overapproximating the set `X` with the directions from `dir`.
 The overapproximation is computed using support functions. If the obtained set is
 bounded, the result is an `HPolytope`. Otherwise the result is an `HPolyhedron`.
 """
-function overapproximate(X::ConvexSet{N}, dir::AbstractDirections{N, VN}; prune::Bool=true) where {N, VN}
+function overapproximate(X::LazySet{N}, dir::AbstractDirections{N, VN}; prune::Bool=true) where {N, VN}
     n = dim(X)
     H = Vector{LinearConstraint{N, VN}}()
     sizehint!(H, length(dir))
@@ -388,7 +383,8 @@ function overapproximate(X::ConvexSet{N}, dir::AbstractDirections{N, VN}; prune:
 end
 
 # alias with HPolytope type as second argument
-function overapproximate(X::ConvexSet{N}, ::Type{<:HPolytope}, dirs::AbstractDirections{N}; prune::Bool=true) where {N}
+function overapproximate(X::LazySet{N}, ::Type{<:HPolytope},
+                         dirs::AbstractDirections{N}; prune::Bool=true) where {N}
     P = overapproximate(X, dirs, prune=prune)
     isbounded(P) || throw(ArgumentError("can't overapproximate with an `HPolytope` " *
                                         "because the set is unbounded; try using an `HPolyhedron`"))
@@ -396,7 +392,7 @@ function overapproximate(X::ConvexSet{N}, ::Type{<:HPolytope}, dirs::AbstractDir
 end
 
 # alias with HPolyhedron type as second argument
-function overapproximate(X::ConvexSet{N}, ::Type{<:HPolyhedron}, dirs::AbstractDirections{N}; prune::Bool=true) where {N}
+function overapproximate(X::LazySet{N}, ::Type{<:HPolyhedron}, dirs::AbstractDirections{N}; prune::Bool=true) where {N}
     return convert(HPolyhedron, overapproximate(X, dirs, prune=true))
 end
 
@@ -408,7 +404,7 @@ overapproximate(∅::EmptySet{N}, ::Type{<:HPolyhedron},
 
 # this function overapproximates a bounded polyhedron with a list of directions
 # that define a bounded set (without checking these assumptions); the result is always bounded
-function _overapproximate_bounded_polyhedron(X::ConvexSet{N}, dir::AbstractDirections{N, VN}; prune::Bool=true) where {N, VN}
+function _overapproximate_bounded_polyhedron(X::LazySet{N}, dir::AbstractDirections{N, VN}; prune::Bool=true) where {N, VN}
     H = Vector{LinearConstraint{N, VN}}()
     sizehint!(H, length(dir))
     for d in dir
@@ -422,7 +418,7 @@ function _overapproximate_bounded_polyhedron(X::ConvexSet{N}, dir::AbstractDirec
 end
 
 """
-    overapproximate(X::ConvexSet{N}, dir::Type{<:AbstractDirections}) where {N}
+    overapproximate(X::LazySet{N}, dir::Type{<:AbstractDirections}) where {N}
 
 Overapproximating a set with template directions.
 
@@ -437,7 +433,7 @@ A polyhedron overapproximating the set `X` with the directions from `dir`.
 If the directions are known to be bounded, the result is an `HPolytope`,
 otherwise the result is an `HPolyhedron`.
 """
-function overapproximate(X::ConvexSet{N},
+function overapproximate(X::LazySet{N},
                          dir::Type{<:AbstractDirections}; kwargs...) where {N}
     return overapproximate(X, dir{N}(dim(X)); kwargs...)
 end
