@@ -52,7 +52,7 @@ be recovered from the distance among support functions in the same directions.
 """
 function box_approximation(S::LazySet{N}) where {N}
     c, r = box_approximation_helper(S)
-    if r[1] < 0
+    if r[1] < zero(N)
         return EmptySet{N}(dim(S))
     end
     return Hyperrectangle(c, r)
@@ -84,8 +84,7 @@ overapproximating hyperrectangle.
 
 ### Algorithm
 
-The center of the hyperrectangle is obtained by averaging the support function
-of the given set in the canonical directions.
+The center of the hyperrectangle is obtained by averaging the low and high coordinates of `S` obtained via `extrema`.
 The lengths of the sides can be recovered from the distance among support
 functions in the same directions.
 """
@@ -94,9 +93,7 @@ functions in the same directions.
     c = Vector{N}(undef, n)
     r = Vector{N}(undef, n)
     @inbounds for i in 1:n
-        htop = ρ(SingleEntryVector(i, n, one(N)), S)
-        hbottom = -ρ(SingleEntryVector(i, n, -one(N)), S)
-        c[i] = (htop + hbottom) / 2
+        hbottom, htop = extrema(S, i)
         r[i] = (htop - hbottom) / 2
         if r[i] < 0
             # contradicting bounds => set is empty
@@ -104,6 +101,7 @@ functions in the same directions.
             r[1] = r[i]
             break
         end
+        c[i] = (htop + hbottom) / 2
     end
     return c, r
 end
