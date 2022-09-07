@@ -228,6 +228,15 @@ vertices_list(::AbstractPolyhedron)
 project(::AbstractPolyhedron{N}, ::AbstractVector{Int}) where {N}
 ```
 
+Some common functions to work with linear constraints:
+
+```@docs
+constraints_list(::AbstractMatrix, ::AbstractVector)
+tosimplehrep(::AbstractVector{LC}) where {N, LC<:HalfSpace{N}}
+remove_redundant_constraints(::AbstractVector{S}) where {S<:HalfSpace}
+remove_redundant_constraints!(::AbstractVector{S}) where {S<:HalfSpace}
+```
+
 Plotting (bounded) polyhedra is available, too:
 
 ```@docs
