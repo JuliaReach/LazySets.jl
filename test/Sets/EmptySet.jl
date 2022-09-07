@@ -5,7 +5,7 @@ for N in [Float64, Rational{Int}, Float32]
     E = EmptySet{N}(2)
     B = BallInf(ones(N, 2), N(1))
 
-    # testing that the empty set is an absorbing element for the cartesian product
+    # testing that the empty set is an absorbing element for the Cartesian product
     @test B * E isa EmptySet && E * B isa EmptySet
     # testing the mathematical alias ×
     @test B × E isa EmptySet && E × B isa EmptySet
@@ -14,7 +14,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test cpa * E isa EmptySet && E * cpa isa EmptySet
     @test cpa × E isa EmptySet && E × cpa isa EmptySet
 
-    # testing cp of empty set with itself
+    # testing Cartesian product of empty set with itself
     @test E * E == E
 
     # testing that the empty set is an absorbing element for the Minkowski sum
@@ -74,7 +74,8 @@ for N in [Float64, Rational{Int}, Float32]
           Vector{Vector{N}}
 
     # linear map of an empty set
-    linear_map(ones(N, 2, 2), E) == E
+    @test linear_map(ones(N, 2, 2), E) == E
+    @test linear_map(ones(N, 3, 2), E) == EmptySet{N}(3)
 
     # translation
     @test translate(E, N[1, 2]) == E
@@ -90,6 +91,9 @@ for N in [Float64, Rational{Int}, Float32]
 
     # volume
     @test volume(E) == zero(N)
+
+    # concrete rectification
+    @test rectify(E) == E
 end
 
 # tests that only work with Float64 and Float32
@@ -105,7 +109,7 @@ end
 
 # intersection
 for X in LazySets.subtypes(ConvexSet, true)
-    if X <: RotatedHyperrectangle || isoperationtype(X)  # TODO #2391
+    if X <: RotatedHyperrectangle || isoperationtype(X)  # TODO missing rand()
         continue
     end
     Y = rand(X)
