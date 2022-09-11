@@ -26,6 +26,13 @@ translate(::EmptySet, ::AbstractVector)
 plot_recipe(::EmptySet{N}, ::Any=zero(N)) where {N}
 RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::EmptySet{N}, ::N=zero(N)) where {N}
 area(::EmptySet{N}) where {N}
+volume(::EmptySet{N}) where {N}
+chebyshev_center_radius(::EmptySet; kwargs...)
+low(::EmptySet)
+high(::EmptySet)
+low(::EmptySet, ::Int)
+high(::EmptySet, ::Int)
+rectify(::EmptySet)
 ```
 Inherited from [`ConvexSet`](@ref):
 * [`singleton_list`](@ref singleton_list(::ConvexSet))
