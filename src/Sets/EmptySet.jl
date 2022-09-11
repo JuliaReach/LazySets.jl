@@ -277,7 +277,7 @@ function diameter(∅::EmptySet, p::Real=Inf)
 end
 
 """
-    vertices(∅::EmptySet{N}) where {N}
+    vertices(∅::EmptySet)
 
 Construct an iterator over the vertices of an empty set.
 
@@ -289,12 +289,13 @@ Construct an iterator over the vertices of an empty set.
 
 The empty iterator, as the empty set does not contain any vertices.
 """
-function vertices(∅::EmptySet{N}) where {N}
+function vertices(∅::EmptySet)
+    N = eltype(∅)
     return EmptyIterator{Vector{N}}()
 end
 
 """
-    vertices_list(∅::EmptySet{N}) where {N}
+    vertices_list(∅::EmptySet)
 
 Return the list of vertices of an empty set.
 
@@ -306,7 +307,8 @@ Return the list of vertices of an empty set.
 
 The empty list of vertices, as the empty set does not contain any vertices.
 """
-function vertices_list(∅::EmptySet{N}) where {N}
+function vertices_list(∅::EmptySet)
+    N = eltype(∅)
     return Vector{Vector{N}}()
 end
 
@@ -375,7 +377,7 @@ function plot_recipe(∅::EmptySet{N}, ε=zero(N)) where {N}
 end
 
 """
-    area(∅::EmptySet{N}) where {N}
+    area(∅::EmptySet)
 
 Return the area of an empty set.
 
@@ -387,7 +389,8 @@ Return the area of an empty set.
 
 ``0``.
 """
-function area(∅::EmptySet{N}) where {N}
+function area(∅::EmptySet)
+    N = eltype(∅)
     return zero(N)
 end
 
