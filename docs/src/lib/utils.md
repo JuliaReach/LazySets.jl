@@ -16,7 +16,7 @@ _leq_trig
 _random_zero_sum_vector
 rectify
 same_block_structure
-σ_helper
+_σ_hyperplane_halfspace
 get_constrained_lowdimset
 minmax
 arg_minmax
