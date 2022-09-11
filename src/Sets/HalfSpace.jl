@@ -187,14 +187,19 @@ Check whether a half-space is universal.
 
 ### Algorithm
 
-Witness production falls back to `isuniversal(::Hyperplane)`.
+Witness production falls back to `an_element(::Hyperplane)`.
 """
 function isuniversal(hs::HalfSpace, witness::Bool=false)
     if witness
-        return isuniversal(Hyperplane(hs.a, hs.b), true)
+        v = _non_element_halfspace(hs.a, hs.b)
+        return (false, v)
     else
         return false
     end
+end
+
+function _non_element_halfspace(a, b)
+    return _an_element_helper_hyperplane(a, b) + a
 end
 
 """
@@ -211,7 +216,7 @@ Return some element of a half-space.
 An element on the defining hyperplane.
 """
 function an_element(hs::HalfSpace)
-    return an_element_helper(Hyperplane(hs.a, hs.b))
+    return _an_element_helper_hyperplane(hs.a, hs.b)
 end
 
 """

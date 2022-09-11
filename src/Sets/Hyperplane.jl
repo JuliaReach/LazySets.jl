@@ -188,7 +188,7 @@ hyperplane.
 """
 function isuniversal(hp::Hyperplane, witness::Bool=false)
     if witness
-        v = an_element(hp) + hp.a
+        v = _non_element_halfspace(hp.a, hp.b)
         return (false, v)
     else
         return false
@@ -209,7 +209,7 @@ Return some element of a hyperplane.
 An element on the hyperplane.
 """
 function an_element(hp::Hyperplane)
-    return an_element_helper(hp)
+    return _an_element_helper_hyperplane(hp.a, hp.b)
 end
 
 """
@@ -326,8 +326,8 @@ Return the support vector of a hyperplane ``a⋅x = b`` in direction `d`.
 ### Input
 
 - `d`         -- direction
-- `a`         -- constraint's normal direction
-- `b`         -- constraint's bound
+- `a`         -- normal direction
+- `b`         -- constraint
 - `error_unbounded` -- (optional, default: `true`) `true` if an error should be
                  thrown whenever the set is
                  unbounded in the given direction
@@ -372,7 +372,7 @@ to `d`.
     unbounded = false
     if iszero(d)
         # zero vector
-        return (an_element(Hyperplane(a, b)), false)
+        return (_an_element_helper_hyperplane(a, b), false)
     else
         # not the zero vector, check if it is a normal vector
         N = promote_type(eltype(d), eltype(a))
@@ -401,7 +401,7 @@ to `d`.
             end
         end
         if !unbounded
-            return (an_element_helper(Hyperplane(a, b), first_nonzero_entry_a), false)
+            return (_an_element_helper_hyperplane(a, b, first_nonzero_entry_a), false)
         end
         if error_unbounded
             error("the support vector for the " *
@@ -414,16 +414,17 @@ to `d`.
 end
 
 """
-    an_element_helper(hp::Hyperplane{N},
-                      [nonzero_entry_a]::Int) where {N}
+    _an_element_helper_hyperplane(a::AbstractVector{N}, b,
+                                  [nonzero_entry_a]::Int) where {N}
 
-Helper function that computes an element on a hyperplane's hyperplane.
+Helper function that computes an element on a hyperplane ``a⋅x = b``.
 
 ### Input
 
-- `hp` -- hyperplane
+- `a`               -- normal direction
+- `b`               -- constraint
 - `nonzero_entry_a` -- (optional, default: computes the first index) index `i`
-                       such that `hp.a[i]` is different from 0
+                       such that `a[i]` is different from 0
 
 ### Output
 
@@ -436,13 +437,13 @@ We compute the point on the hyperplane as follows:
 - We set ``x[i] = b / a[i]``.
 - We set ``x[j] = 0`` for all ``j ≠ i``.
 """
-@inline function an_element_helper(hp::Hyperplane{N},
-                                   nonzero_entry_a::Int=findnext(x -> x!=zero(N), hp.a, 1)
-                                  ) where {N}
-    @assert nonzero_entry_a in 1:length(hp.a) "invalid index " *
+@inline function _an_element_helper_hyperplane(a::AbstractVector{N}, b,
+                                               nonzero_entry_a::Int=findnext(x -> x!=zero(N), a, 1)
+                                              ) where {N}
+    @assert nonzero_entry_a in 1:length(a) "invalid index " *
         "$nonzero_entry_a for hyperplane"
-    x = zeros(N, dim(hp))
-    x[nonzero_entry_a] = hp.b / hp.a[nonzero_entry_a]
+    x = zeros(N, length(a))
+    x[nonzero_entry_a] = b / a[nonzero_entry_a]
     return x
 end
 
