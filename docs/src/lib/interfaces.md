@@ -28,7 +28,7 @@ Depth = 3
 CurrentModule = LazySets
 ```
 
-## [General set (LazySet)](@id def_LazySet)
+## [General sets (LazySet)](@id def_LazySet)
 
 Every set in this library is a subtype of the abstract type `LazySet`.
 
@@ -54,7 +54,7 @@ low(::ConvexSet{N}, ::Int) where {N}
 high(::ConvexSet{N}, ::Int) where {N}
 ```
 
-## [General sets (ConvexSet)](@id def_ConvexSet)
+## [Convex sets (ConvexSet)](@id def_ConvexSet)
 
 Every convex set in this library implements this interface.
 
@@ -151,7 +151,6 @@ NonCompactSet
 Concrete set representations:
 
 * [Empty set (EmptySet)](@ref def_EmptySet)
-* [Polynomial zonotope (DensePolynomialZonotope)](@ref def_DensePolynomialZonotope)
 
 Lazy set operations:
 
@@ -528,4 +527,6 @@ LazySets.AbstractPolynomialZonotope
 
 ### Implementations
 
-* [DensePolynomialZonotope](@ref def_DensePolynomialZonotope)
+* [Polynomial zonotope (DensePolynomialZonotope)](@ref def_DensePolynomialZonotope)
+* [Simplified sparse polynomial zonotope (SimpleSparsePolynomialZonotope)](@ref def_SimpleSparsePolynomialZonotope)
+* [Sparse polynomial zonotope (SparsePolynomialZonotope)](@ref def_SparsePolynomialZonotope)
