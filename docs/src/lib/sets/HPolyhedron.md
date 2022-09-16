@@ -22,8 +22,8 @@ normalize(::HPoly{N}, p=N(2)) where {N}
 isempty(::HPoly{N}, ::Bool=false) where {N}
 translate(::HPoly, ::AbstractVector)
 polyhedron(::HPoly)
-remove_redundant_constraints(::HPoly{N}) where {N}
-remove_redundant_constraints!(::HPoly{N}) where {N}
+remove_redundant_constraints(::HPoly)
+remove_redundant_constraints!(::HPoly)
 LazySets._isbounded_stiemke(::HPolyhedron{N}) where {N}
 ```
 

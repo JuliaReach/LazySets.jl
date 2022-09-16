@@ -326,15 +326,15 @@ end
 
 """
     remove_redundant_constraints(P::HPoly{N};
-                                 backend=default_lp_solver(N)) where {N}
+                                 backend=nothing) where {N}
 
 Remove the redundant constraints in a polyhedron in H-representation.
 
 ### Input
 
 - `P`       -- polyhedron
-- `backend` -- (optional, default: `default_lp_solver(N)`) the backend used to
-               solve the linear program
+- `backend` -- (optional, default: `nothing`) the backend used to solve the
+               linear program
 
 ### Output
 
@@ -342,24 +342,27 @@ A polyhedron equivalent to `P` but with no redundant constraints, or an empty
 set if `P` is detected to be empty, which may happen if the constraints are
 infeasible.
 
+### Notes
+
+If `backend` is `nothing`, it defaults to `default_lp_solver(N)`.
+
 ### Algorithm
 
-See `remove_redundant_constraints!(::AbstractVector{<:LinearConstraint})` for
-details.
+See `remove_redundant_constraints!(::AbstractVector{<:HalfSpace})` for details.
 """
-function remove_redundant_constraints(P::HPoly{N};
-                                      backend=default_lp_solver(N)) where {N}
+function remove_redundant_constraints(P::HPoly; backend=nothing)
     Pred = copy(P)
     if remove_redundant_constraints!(Pred, backend=backend)
         return Pred
     else # the polyhedron P is empty
+        N = eltype(P)
         return EmptySet{N}(dim(P))
     end
 end
 
 """
     remove_redundant_constraints!(P::HPoly{N};
-                                  backend=default_lp_solver(N)) where {N}
+                                  backend=nothing) where {N}
 
 Remove the redundant constraints in a polyhedron in H-representation; the
 polyhedron is updated in-place.
@@ -367,8 +370,8 @@ polyhedron is updated in-place.
 ### Input
 
 - `P`       -- polyhedron
-- `backend` -- (optional, default: `default_lp_solver(N)`) the backend used to
-               solve the linear program
+- `backend` -- (optional, default: `nothing`) the backend used to solve the
+               linear program
 
 ### Output
 
@@ -376,13 +379,15 @@ polyhedron is updated in-place.
 removing its redundant constraints, and `false` if `P` is detected to be empty,
 which may happen if the constraints are infeasible.
 
+### Notes
+
+If `backend` is `nothing`, it defaults to `default_lp_solver(N)`.
+
 ### Algorithm
 
-See `remove_redundant_constraints!(::AbstractVector{<:LinearConstraint})` for
-details.
+See `remove_redundant_constraints!(::AbstractVector{<:HalfSpace})` for details.
 """
-function remove_redundant_constraints!(P::HPoly{N};
-                                       backend=default_lp_solver(N)) where {N}
+function remove_redundant_constraints!(P::HPoly; backend=nothing)
     remove_redundant_constraints!(P.constraints, backend=backend)
 end
 

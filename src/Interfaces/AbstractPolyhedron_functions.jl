@@ -136,7 +136,7 @@ end
 
 """
     tosimplehrep(constraints::AbstractVector{LC};
-                 [n]::Int=0) where {N, LC<:LinearConstraint{N}}
+                 [n]::Int=0) where {N, LC<:HalfSpace{N}}
 
 Return the simple H-representation ``Ax ≤ b`` from a list of linear constraints.
 
@@ -156,7 +156,7 @@ The parameter `n` can be used to create a matrix with no constraints but a
 non-zero dimension.
 """
 function tosimplehrep(constraints::AbstractVector{LC};
-                      n::Int=0) where {N, LC<:LinearConstraint{N}}
+                      n::Int=0) where {N, LC<:HalfSpace{N}}
     m = length(constraints)
     if m == 0
         A = Matrix{N}(undef, 0, n)
@@ -178,8 +178,8 @@ function tosimplehrep(constraints::AbstractVector{LC};
 end
 
 """
-    remove_redundant_constraints!(constraints::AbstractVector{<:LinearConstraint{N}};
-                                  backend=default_lp_solver(N)) where {N}
+    remove_redundant_constraints!(constraints::AbstractVector{S};
+                                  backend=nothing) where {S<:HalfSpace}
 
 Remove the redundant constraints of a given list of linear constraints; the list
 is updated in-place.
@@ -187,8 +187,8 @@ is updated in-place.
 ### Input
 
 - `constraints` -- list of constraints
-- `backend`     -- (optional, default: `default_lp_solver(N)`) the backend used
-                   to solve the linear program
+- `backend`     -- (optional, default: `nothing`) the backend used to solve the
+                   linear program
 ### Output
 
 `true` if the function was successful and the list of constraints `constraints`
@@ -202,6 +202,8 @@ For example, ``x ≤ 0 && x ≥ 1`` will return `true` without removing any
 constraint.
 To check if the constraints are infeasible, use
 `isempty(HPolyhedron(constraints))`.
+
+If `backend` is `nothing`, it defaults to `default_lp_solver(N)`.
 
 ### Algorithm
 
@@ -217,9 +219,15 @@ If the calculation finished successfully, this function returns `true`.
 For details, see [Fukuda's Polyhedra
 FAQ](https://www.cs.mcgill.ca/~fukuda/soft/polyfaq/node24.html).
 """
-function remove_redundant_constraints!(constraints::AbstractVector{<:LinearConstraint{N}};
-                                       backend=default_lp_solver(N)) where {N}
-
+function remove_redundant_constraints!(constraints::AbstractVector{S};
+                                       backend=nothing) where {S<:HalfSpace}
+    if isempty(constraints)
+        return true
+    end
+    N = eltype(first(constraints))
+    if isnothing(backend)
+        backend = default_lp_solver(N)
+    end
     A, b = tosimplehrep(constraints)
     m, n = size(A)
     non_redundant_indices = 1:m
@@ -254,32 +262,37 @@ function remove_redundant_constraints!(constraints::AbstractVector{<:LinearConst
 end
 
 """
-    remove_redundant_constraints(constraints::AbstractVector{<:LinearConstraint{N}};
-                                 backend=default_lp_solver(N)) where {N}
+    remove_redundant_constraints(constraints::AbstractVector{S};
+                                 backend=nothing) where {S<:HalfSpace}
 
 Remove the redundant constraints of a given list of linear constraints.
 
 ### Input
 
 - `constraints` -- list of constraints
-- `backend`     -- (optional, default: `default_lp_solver(N)`) the backend used
-                   to solve the linear program
+- `backend`     -- (optional, default: `nothing`) the backend used to solve the
+                   linear program
 ### Output
 
 The list of constraints with the redundant ones removed, or an empty set if the
 constraints are infeasible.
 
+### Notes
+
+If `backend` is `nothing`, it defaults to `default_lp_solver(N)`.
+
 ### Algorithm
 
-See `remove_redundant_constraints!(::AbstractVector{<:LinearConstraint})` for
+See `remove_redundant_constraints!(::AbstractVector{<:HalfSpace})` for
 details.
 """
-function remove_redundant_constraints(constraints::AbstractVector{<:LinearConstraint{N}};
-                                      backend=default_lp_solver(N)) where {N}
+function remove_redundant_constraints(constraints::AbstractVector{S};
+                                      backend=nothing) where {S<:HalfSpace}
     constraints_copy = copy(constraints)
     if remove_redundant_constraints!(constraints_copy, backend=backend)
         return constraints_copy
     else  # the constraints are infeasible
+        N = eltype(first(constraints))
         return EmptySet{N}(dim(constraints[1]))
     end
 end
@@ -716,7 +729,7 @@ function _linear_map_inverse_hrep(Minv::AbstractMatrix, P::AbstractPolyhedron)
     constraints_MP = _preallocate_constraints(constraints_P)
     @inbounds for (i, c) in enumerate(constraints_P)
         cinv = vec(At_mul_B(c.a, Minv))
-        constraints_MP[i] = LinearConstraint(cinv, c.b)
+        constraints_MP[i] = HalfSpace(cinv, c.b)
     end
     return constraints_MP
 end
@@ -729,7 +742,7 @@ function _linear_map_hrep(M::AbstractMatrix{N}, P::AbstractPolyhedron{N},
     @inbounds for (i, c) in enumerate(constraints_P)
         # take left division for each constraint c, transpose(M) \ c.a
         cinv = At_ldiv_B(M, c.a)
-        constraints_MP[i] = LinearConstraint(cinv, c.b)
+        constraints_MP[i] = HalfSpace(cinv, c.b)
     end
     return constraints_MP
 end
@@ -788,8 +801,8 @@ function _linear_map_hrep(M::AbstractMatrix{NM}, P::AbstractPolyhedron{NP},
     return constraints_list(HPolyhedron(Peli_block))
 end
 
-@inline function _preallocate_constraints(constraints::Vector{LinearConstraint{N, VN}}) where {N, VN<:AbstractVector{N}}
-    return Vector{LinearConstraint{N, Vector{N}}}(undef, length(constraints))
+@inline function _preallocate_constraints(constraints::Vector{HalfSpace{N, VN}}) where {N, VN<:AbstractVector{N}}
+    return Vector{HalfSpace{N, Vector{N}}}(undef, length(constraints))
 end
 
 """

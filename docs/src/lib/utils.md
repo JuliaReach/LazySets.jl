@@ -7,7 +7,7 @@ CurrentModule = LazySets
 ## Functions and Macros
 
 ```@docs
-an_element_helper
+_an_element_helper_hyperplane
 binary_search_constraints
 get_radius!
 is_tighter_same_dir_2D
@@ -16,7 +16,7 @@ _leq_trig
 _random_zero_sum_vector
 rectify
 same_block_structure
-σ_helper
+_σ_hyperplane_halfspace
 get_constrained_lowdimset
 minmax
 arg_minmax
