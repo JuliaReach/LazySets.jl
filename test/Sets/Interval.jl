@@ -27,7 +27,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test dim(x) == 1
     @test center(x) == N[0.5]
     @test center(x, 1) == N(0.5)
-    @test_throws ArgumentError center(x, 2)
+    @test_throws AssertionError center(x, 2)
     @test min(x) == N(0) && max(x) == N(1)
     v = vertices_list(x)
     @test N[0] in v && N[1] in v

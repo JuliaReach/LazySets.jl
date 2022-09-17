@@ -38,10 +38,11 @@ using ReachabilityBase.Subtypes
 using ReachabilityBase.Arrays
 import .Arrays: distance, rectify, rationalize
 
-# ==================
-# Linear programming
-# ==================
+# =================
+# External packages
+# =================
 include("Initialization/init_GLPK.jl")
+include("Initialization/init_IntervalArithmetic.jl")
 include("Initialization/init_JuMP.jl")
 
 # ===================

@@ -18,8 +18,8 @@ center(::Interval)
 center(::Interval, ::Int)
 min(::Interval)
 max(::Interval)
-low(::Interval{N}) where {N}
-high(::Interval{N}) where {N}
+low(::Interval)
+high(::Interval)
 radius_hyperrectangle(::Interval)
 radius_hyperrectangle(::Interval{N}, ::Int) where {N}
 -(::Interval, ::Interval)
@@ -34,8 +34,8 @@ rectify(::Interval{N}) where {N}
 diameter(::Interval, ::Real=Inf)
 split(::Interval, ::AbstractVector{Int})
 chebyshev_center_radius(::Interval)
-fast_interval_pow(::IA.Interval, ::Int)
 ```
+
 Inherited from [`ConvexSet`](@ref):
 * [`singleton_list`](@ref singleton_list(::ConvexSet))
 
@@ -47,12 +47,20 @@ Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
 
 Inherited from [`AbstractZonotope`](@ref):
-* [`ngens`](@ref ngens(::AbstractZonotope))
 * [`order`](@ref order(::AbstractZonotope))
 * [`togrep`](@ref togrep(::AbstractZonotope))
 
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
+* [`ngens`](@ref ngens(::AbstractHyperrectangle))
 * [`generators`](@ref generators(::AbstractHyperrectangle))
 * [`genmat`](@ref genmat(::AbstractHyperrectangle))
+* [`low`](@ref low(::AbstractHyperrectangle, ::Int))
+* [`high`](@ref high(::AbstractHyperrectangle, ::Int))
+
+Some additional functionality is available for `IntervalArithmetic.Interval`s:
+
+```@docs
+fast_interval_pow(::IA.Interval, ::Int)
+```
