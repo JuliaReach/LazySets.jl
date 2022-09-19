@@ -31,23 +31,21 @@ struct Line2D{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
 
     # default constructor with length constraint
     function Line2D(a::VN, b::N) where {N, VN<:AbstractVector{N}}
-        @assert length(a) == 2 "lines must be two-dimensional"
+        @assert length(a) == 2 "a Line2D must be two-dimensional"
         @assert !iszero(a) "a line needs a non-zero normal vector"
         return new{N, VN}(a, b)
     end
 end
 
 isoperationtype(::Type{<:Line2D}) = false
-isconvextype(::Type{<:Line2D}) = true
 
-# constructor from a LinearConstraint
-Line2D(c::LinearConstraint) = Line2D(c.a, c.b)
-
+# constructor from a HalfSpace
+Line2D(c::HalfSpace) = Line2D(c.a, c.b)
 
 """
     Line2D(p::AbstractVector, q::AbstractVector)
 
-Constructor a line give two points.
+Constructor of a 2D line from two points.
 
 ### Input
 
@@ -60,20 +58,24 @@ The line which passes through `p` and `q`.
 
 ### Algorithm
 
-Given two points ``p = (x₁, y₁)`` and ``q = (x₂, y₂)`` the line that passes through these
-two points is
+Given two points ``p = (x₁, y₁)`` and ``q = (x₂, y₂)``, the line that passes
+through these points is
 
 ```math
 ℓ:~~y - y₁ = \\dfrac{(y₂ - y₁)}{(x₂ - x₁)} ⋅ (x-x₁).
 ```
-The particular case ``x₂ = x₁`` defines a line parallel to the ``y``-axis (vertical line).
+The particular case ``x₂ = x₁`` defines a line parallel to the ``y``-axis
+(vertical line).
 """
 function Line2D(p::AbstractVector, q::AbstractVector)
-    x₁, y₁ = p[1], p[2]
-    x₂, y₂ = q[1], q[2]
+    @assert length(p) == length(q) == 2 "a Line2D must be two-dimensional"
 
     N = promote_type(eltype(p), eltype(q))
+    x₁, y₁ = @inbounds p[1], p[2]
+    x₂, y₂ = @inbounds q[1], q[2]
+
     if x₁ == x₂  # line is vertical
+        @assert y₁ != y₂ "a line needs two distinct points"
         a = [one(N), zero(N)]
         b = x₁
         return LazySets.Line2D(a, b)
@@ -85,18 +87,14 @@ function Line2D(p::AbstractVector, q::AbstractVector)
     return Line2D(a, b)
 end
 
-
-# --- polyhedron interface functions ---
-
-
 """
     constraints_list(L::Line2D)
 
-Return the list of constraints of a line.
+Return the list of constraints of a 2D line.
 
 ### Input
 
-- `L` -- line
+- `L` -- 2D line
 
 ### Output
 
@@ -106,18 +104,14 @@ function constraints_list(L::Line2D)
     return _constraints_list_hyperplane(L.a, L.b)
 end
 
-
-# --- ConvexSet interface functions ---
-
-
 """
     dim(L::Line2D)
 
-Return the ambient dimension of a line.
+Return the ambient dimension of a 2D line.
 
 ### Input
 
-- `L` -- line
+- `L` -- 2D line
 
 ### Output
 
@@ -130,12 +124,12 @@ end
 """
     σ(d::AbstractVector, L::Line2D)
 
-Return the support vector of a line in a given direction.
+Return the support vector of a 2D line in a given direction.
 
 ### Input
 
 - `d` -- direction
-- `L` -- line
+- `L` -- 2D line
 
 ### Output
 
@@ -143,17 +137,19 @@ The support vector in the given direction, which is defined the same way as for
 the more general `Hyperplane`.
 """
 function σ(d::AbstractVector, L::Line2D)
-    return σ(d, Hyperplane(L.a, L.b))
+    v, unbounded = _σ_hyperplane_halfspace(d, L.a, L.b, error_unbounded=true,
+                                           halfspace=false)
+    return v
 end
 
 """
     isbounded(L::Line2D)
 
-Determine whether a line is bounded.
+Check whether a 2D line is bounded.
 
 ### Input
 
-- `L` -- line
+- `L` -- 2D line
 
 ### Output
 
@@ -166,17 +162,17 @@ end
 """
     isuniversal(L::Line2D, [witness]::Bool=false)
 
-Check whether a line is universal.
+Check whether a 2D line is universal.
 
 ### Input
 
-- `P`       -- line
+- `L`       -- 2D line
 - `witness` -- (optional, default: `false`) compute a witness if activated
 
 ### Output
 
 * If `witness` option is deactivated: `false`
-* If `witness` option is activated: `(false, v)` where ``v ∉ P``
+* If `witness` option is activated: `(false, v)` where ``v ∉ L``
 
 ### Algorithm
 
@@ -184,20 +180,21 @@ Witness production falls back to `isuniversal(::Hyperplane)`.
 """
 function isuniversal(L::Line2D, witness::Bool=false)
     if witness
-        return isuniversal(Hyperplane(L.a, L.b), true)
+        v = _non_element_halfspace(L.a, L.b)
+        return (false, v)
     else
         return false
     end
 end
 
 """
-    an_element(L::Line2D{N}) where {N}
+    an_element(L::Line2D)
 
-Return some element of a line.
+Return some element of a 2D line.
 
 ### Input
 
-- `L` -- line
+- `L` -- 2D line
 
 ### Output
 
@@ -205,31 +202,34 @@ An element on the line.
 
 ### Algorithm
 
+The algorithm is a 2D specialization of the `Hyperplane` algorithm.
+
 If the ``b`` value of the line is zero, the result is the origin.
-Otherwise the result is some ``x = [x1, x2]`` such that ``a·[x1, x2] = b``.
-We first find out in which dimension ``a`` is nonzero, say, dimension 1, and
-then choose ``x1 = 1`` and accordingly ``x2 = \\frac{b - a1}{a2}``.
+Otherwise the result is some ``x = (x_1, x_2)ᵀ`` such that ``a·x = b``.
+We first find out the dimension ``i`` in which ``a = (a_1, a_2)ᵀ`` is nonzero
+and then choose ``x_i = \\frac{b}{a_i}`` and ``x_{3-i} = 0``.
 """
-function an_element(L::Line2D{N}) where {N}
-    if L.b == zero(N)
+function an_element(L::Line2D)
+    N = eltype(L)
+    if iszero(L.b)
         return zeros(N, 2)
     end
-    i = L.a[1] == zero(N) ? 2 : 1
+    i = @inbounds iszero(L.a[1]) ? 2 : 1
     x = Vector{N}(undef, 2)
-    x[3-i] = one(N)
-    x[i] = (L.b - L.a[3-i]) / L.a[i]
+    @inbounds x[i] = L.b / L.a[i]
+    @inbounds x[3-i] = zero(N)
     return x
 end
 
 """
     ∈(x::AbstractVector, L::Line2D)
 
-Check whether a given point is contained in a line.
+Check whether a given point is contained in a 2D line.
 
 ### Input
 
 - `x` -- point/vector
-- `L` -- line
+- `L` -- 2D line
 
 ### Output
 
@@ -240,7 +240,8 @@ Check whether a given point is contained in a line.
 The point ``x`` belongs to the line if and only if ``a⋅x = b`` holds.
 """
 function ∈(x::AbstractVector, L::Line2D)
-    @assert length(x) == dim(L)
+    @assert length(x) == 2 "a $(length(x))-dimensional vector is " *
+        "incompatible with a 2-dimensional line"
     return _isapprox(dot(L.a, x), L.b)
 end
 
@@ -285,11 +286,11 @@ end
 """
     isempty(L::Line2D)
 
-Return if a line is empty or not.
+Check whether a 2D line is empty.
 
 ### Input
 
-- `L` -- line
+- `L` -- 2D line
 
 ### Output
 
@@ -302,11 +303,11 @@ end
 """
     constrained_dimensions(L::Line2D)
 
-Return the indices in which a line is constrained.
+Return the indices in which a 2D line is constrained.
 
 ### Input
 
-- `L` -- line
+- `L` -- 2D line
 
 ### Output
 
@@ -315,7 +316,8 @@ A vector of ascending indices `i` such that the line is constrained in dimension
 
 ### Examples
 
-A line with constraint ``x1 = 0`` is constrained in dimension 1 only.
+A line with constraint ``x_i = 0`` (``i ∈ \\{1, 2\\}``) is only constrained in
+dimension ``i``.
 """
 function constrained_dimensions(L::Line2D)
     return nonzero_indices(L.a)
@@ -338,11 +340,11 @@ end
 """
     translate(L::Line2D, v::AbstractVector; [share]::Bool=false)
 
-Translate (i.e., shift) a line by a given vector.
+Translate (i.e., shift) a 2D line by a given vector.
 
 ### Input
 
-- `L`     -- line
+- `L`     -- 2D line
 - `v`     -- translation vector
 - `share` -- (optional, default: `false`) flag for sharing unmodified parts of
              the original set representation
@@ -369,11 +371,18 @@ function translate(L::Line2D, v::AbstractVector; share::Bool=false)
     return Line2D(a, b)
 end
 
+# the algorithm is a 2D specialization of the `Hyperplane` algorithm, except
+# that it returns a `Singleton` for a 1D line
 function project(L::Line2D{N}, block::AbstractVector{Int}; kwargs...) where {N}
     m = length(block)
     if m == 2
-        @assert ispermutation(block, 1:2) "invalid dimensions $block for projection"
-        return L  # no projection
+        @inbounds if block[1] == 1 && block[2] == 2
+            return L  # no projection
+        elseif block[1] == 2 && block[2] == 1
+            return Line2D(L.a[block], L.b)  # swap a vector
+        else
+            throw(ArgumentError("invalid projection to $block"))
+        end
     elseif m == 1
         # projection to dimension i
         cdims = constrained_dimensions(L)
@@ -398,12 +407,12 @@ end
 """
     project(x::AbstractVector, L::Line2D)
 
-Project a point onto a line.
+Project a point onto a 2D line.
 
 ### Input
 
-- `x` -- point
-- `L` -- line
+- `x` -- point/vector
+- `L` -- 2D line
 
 ### Output
 
@@ -411,10 +420,10 @@ The projection of `x` onto `L`.
 
 ### Algorithm
 
-The projection of ``x`` onto the line of the form ``a⋅x = b`` is
+The projection of ``x`` onto a line of the form ``a⋅x = b`` is
 
 ```math
-    x - \\dfrac{a (a⋅x - b)}{‖a‖²}
+    x - \\dfrac{a (a⋅x - b)}{‖a‖²}.
 ```
 """
 function project(x::AbstractVector, L::Line2D)
