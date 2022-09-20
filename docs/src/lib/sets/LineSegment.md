@@ -17,22 +17,28 @@ halfspace_right(::LineSegment)
 vertices_list(::LineSegment)
 constraints_list(::LineSegment)
 translate(::LineSegment, ::AbstractVector)
-generators(::LineSegment{N}) where {N}
+generators(::LineSegment)
 genmat(::LineSegment)
 ```
+Inherited from [`LazySet`](@ref):
+* [`high`](@ref high(::LazySet))
+* [`low`](@ref low(::LazySet))
+
 Inherited from [`ConvexSet`](@ref):
 * [`norm`](@ref norm(::ConvexSet, ::Real))
 * [`radius`](@ref radius(::ConvexSet, ::Real))
 * [`diameter`](@ref diameter(::ConvexSet, ::Real))
 * [`singleton_list`](@ref singleton_list(::ConvexSet))
+* [`high`](@ref high(::ConvexSet, ::Int))
+* [`low`](@ref low(::ConvexSet, ::Int))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
-* [`isuniversal`](@ref isuniversal(::AbstractPolytope, ::Bool=false))
 * [`volume`](@ref volume(::AbstractPolytope))
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
+* [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetricPolytope))
 
 Inherited from [`AbstractZonotope`](@ref):
 * [`ngens`](@ref ngens(::AbstractZonotope))
